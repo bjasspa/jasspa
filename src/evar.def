@@ -98,7 +98,6 @@ DEFVAR ("fill-mode",           EVFILLMODE)      /* Justify mode */
 #if MEOPT_SPELL
 DEFVAR ("find-words",          EVFINDWORDS)     /* Find words matching mask, sim. to file-names */
 #endif
-DEFVAR ("pause-time",          EVPAUSETIME)     /* Pause time (used in Fence matching etc) */
 DEFVAR ("frame-depth",         EVFRMDPTH)       /* frame depth */
 #if MEOPT_EXTENDED
 DEFVAR ("frame-id",            EVFRMID)         /* frame unique id */
@@ -140,6 +139,7 @@ DEFVAR ("mouse-y",             EVMOUSEY)        /* last mouse y position */
 #if MEOPT_COLOR && MEOPT_OSD
 DEFVAR ("osd-scheme",          EVOSDSCHM)       /* Main osd color scheme */
 #endif
+DEFVAR ("pause-time",          EVPAUSETIME)     /* Pause time (used in Fence matching etc) */
 DEFVAR ("platform",            EVMACHINE)       /* the name of the platform */ 
 DEFVAR ("progname",            EVPROGNM)        /* argv[0] */ 
 #if MEOPT_EXTENDED
