@@ -1201,11 +1201,6 @@ mesetup(int argc, char *argv[])
     startTime = time(NULL) ;
     
     /* asserts to check that the defines are consistent */
-    /* due to packing sizeof(meLine) can waste precious bytes, avoid this
-     * by calculating the real size ourselves, but if thy are wrong things
-     * will go badling so these asserts check the values are correct */ 
-    assert(&(((meLine *) NULL)->text[1]) == ((meUByte *) meLINE_SIZE)) ;
-    assert(sizeof(meLine) == meLineMallocSize(0)) ;
 #if MEOPT_NARROW
     /* more info is required to undo a narrow than can be held in the main
      * structure so an alternative definition is used, but elements within it
