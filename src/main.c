@@ -613,38 +613,42 @@ exitEmacs(int f, int n)
             extern void TTfreeTranslateKey(void) ;
             extern meUByte *defHistFile ;
             extern meUInt *colTable ;
+            mePosition   *pos ;
+            meBuffer     *bc, *bn ;
+            meFrame      *fc, *fn ;
             meMacro      *mac ;
             meVariable   *nuv, *cuv ;
-            meKill        *thiskl ;
-            meKillNode         *next, *kill ;
+            meKill       *thiskl ;
+            meKillNode   *next, *kill ;
             meAbbrev     *abrev ;
             int           ii, jj ;
-
-            while(bheadp->next != NULL)
+                        
+            /* remove all but a simple *scratch* */
+            bc = bheadp ;
+            while(bc != NULL)
             {
-                bheadp->next->intFlag |= BIFBLOW ;
-                zotbuf(bheadp->next,1) ;
+                bn = bc->next ;
+                bc->intFlag |= BIFBLOW ;
+                zotbuf(bc,1) ;
+                bc = bn ;
             }
-            /* ensure the buffer we're left with is a simple *scratch* */
-            bheadp->intFlag |= BIFBLOW ;
-            zotbuf(bheadp,1) ;
-            bclear(bheadp) ;
-            meFree(bheadp->baseLine);             /* Release header line. */
-            meNullFree(bheadp->fileName) ;
-            meNullFree(bheadp->name) ;
-            meNullFree(bheadp->modeLineStr) ;
-            meFree(bheadp);                             /* Release buffer block */
-            meNullFree(mlBinds) ;
+            addFileHook(meTRUE,0) ;
 
-            meFrameLoopBegin() ;
-            meFrameFree(loopFrame) ;
-            meFrameLoopEnd() ;
+            dictionaryDelete(1,6) ;
+            spellRuleAdd(1,0) ;
+            printFreeMemory() ;
+            osdFreeMemory() ;
+            regFreeMemory() ;
+            srchFreeMemory() ;
+            TTfreeTranslateKey() ;
             
+            meNullFree(mlBinds) ;
             meFree(hilBlock) ;
             meNullFree(defHistFile) ;
 #ifdef _XTERM
             meNullFree(colTable) ;
 #endif
+            meNullFree(disLineBuff) ;
             meNullFree(searchPath) ;
             meNullFree(homedir) ;
             meNullFree(curdir) ;
@@ -673,6 +677,11 @@ exitEmacs(int f, int n)
                     kill = next;
                 }
                 free(thiskl) ;
+            }
+            while((pos=position) != NULL)
+            {
+                position = pos->next ;
+                free(pos) ;
             }
             for(ii=0 ; ii<CK_MAX ; ii++)
             {
@@ -718,8 +727,8 @@ exitEmacs(int f, int n)
             meNullFree(flNextFileTemp) ;
             meNullFree(flNextLineTemp) ;
             
-            meNullFree(userName) ; 
-            meNullFree(userPath) ;  
+            meNullFree(meUserName) ; 
+            meNullFree(meUserPath) ;  
 
             meNullFree(rcsFile) ;
             meNullFree(rcsCiStr) ;
@@ -763,30 +772,32 @@ exitEmacs(int f, int n)
                 meFree(nextLineStr) ;
                 meFree(nextName) ;
             }
-            addFileHook(meTRUE,0) ;
-
-            deleteDict(1,6) ;
-            addSpellRule(1,0) ;
-            printFreeMemory() ;
-            osdFreeMemory() ;
-            regFreeMemory() ;
-            srchFreeMemory() ;
-            TTfreeTranslateKey() ;
 #if MEOPT_HILIGHT
             if(noHilights > 0)
             {
-                meUByte hilno ;
-
-                for(hilno=0 ; hilno < noHilights ; hilno++)
+                for(ii=0 ; ii < noHilights ; ii++)
                 {
-                    if(hilights[hilno] != NULL)
+                    if(hilights[ii] != NULL)
                     {
-                        hilights[hilno]->close = NULL ;
-                        hilights[hilno]->rtoken = NULL ;
-                        freeToken(hilights[hilno]) ;
+                        hilights[ii]->close = NULL ;
+                        hilights[ii]->rtoken = NULL ;
+                        freeToken(hilights[ii]) ;
                     }
                 }
                 meFree(hilights) ;
+            }
+            if(noIndents > 0)
+            {
+                for(ii=0 ; ii < noIndents ; ii++)
+                {
+                    if(indents[ii] != NULL)
+                    {
+                        indents[ii]->close = NULL ;
+                        indents[ii]->rtoken = NULL ;
+                        freeToken(indents[ii]) ;
+                    }
+                }
+                meFree(indents) ;
             }
 #endif
             meNullFree (fileIgnore) ;
@@ -799,6 +810,28 @@ exitEmacs(int f, int n)
                 meFree(abrev) ;
             }
             meFree(styleTable) ;
+            
+            fc = frameList ;
+            while(fc != NULL)
+            {
+                fn = fc->next ;
+                meFrameFree(fc) ;
+                fc = fn ;
+            }
+            /* as we have deleted all frames the *scratch* is not show, so we
+             * don't need a replacement so ztbuf does the lot! */
+            bheadp->intFlag |= BIFBLOW ;
+            zotbuf(bheadp,1) ;
+        }
+#endif
+#ifdef _ME_WIN32_FULL_DEBUG
+        {
+            _CrtMemState ss ;
+            
+            _CrtMemCheckpoint( &ss );
+            _CrtMemDumpStatistics(&ss) ;
+            _CrtCheckMemory() ;
+            _CrtDumpMemoryLeaks() ;
         }
 #endif
         meExit(0);

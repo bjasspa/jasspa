@@ -4485,7 +4485,7 @@ TTwaitForChar(void)
 
         /* Suspend until there is another message to process. */
         TTflush () ;                /* Make sure the screen is up-to-date */
-#ifdef _ME_FULL_DEBUG
+#ifdef _ME_WIN32_FULL_DEBUG
         /* Do heap walk in idle time */
         _CrtCheckMemory();
 #endif
@@ -5698,7 +5698,13 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmd
     int  argc;                          /* Argument count */
 #endif
 
-#ifdef _ME_FULL_DEBUG
+#ifdef _ME_WIN32_FULL_DEBUG
+    _CrtSetReportMode( _CRT_WARN, _CRTDBG_MODE_FILE );
+    _CrtSetReportFile( _CRT_WARN, _CRTDBG_FILE_STDERR );
+    _CrtSetReportMode( _CRT_ERROR, _CRTDBG_MODE_FILE );
+    _CrtSetReportFile( _CRT_ERROR, _CRTDBG_FILE_STDERR );
+    _CrtSetReportMode( _CRT_ASSERT, _CRTDBG_MODE_FILE );
+    _CrtSetReportFile( _CRT_ASSERT, _CRTDBG_FILE_STDERR );
     /* Enable heap checking on each allocate and free */
     _CrtSetDbgFlag (_CRTDBG_ALLOC_MEM_DF|_CRTDBG_DELAY_FREE_MEM_DF|
                     _CRTDBG_LEAK_CHECK_DF|_CRTDBG_DELAY_FREE_MEM_DF);

@@ -278,7 +278,7 @@ lineMakeSpace(int n)
         frameCur->bufferCur->lineCount++ ;
         lp_new->next = lp_old;
         lp_new->prev = lp_old->prev;
-        lp_new->flag = lp_old->flag|meLINE_CHANGED ;
+        lp_new->flag = (lp_old->flag & ~meLINE_ANCHOR) | meLINE_CHANGED ;
 #if MEOPT_EXTENDED
         /* only the new line should have any $line-scheme */
         lp_old->flag &= ~meLINE_SCHEME_MASK ;
@@ -325,7 +325,7 @@ lineMakeSpace(int n)
             lp_new->prev = lp_old->prev;
             lp_new->next = lp_old->next;
             /* preserve the $line-scheme */
-            lp_new->flag = lp_old->flag|meLINE_CHANGED ;
+            lp_new->flag = (lp_old->flag & ~meLINE_ANCHOR) | meLINE_CHANGED ;
             lp_old->prev->next = lp_new;
             lp_old->next->prev = lp_new;
             if(lp_old->flag & meLINE_ANCHOR)
@@ -438,18 +438,22 @@ lineInsertString(register int n, register meUByte *cp)
  * split forces more updating.
  */
 int
-lineInsertNewline(int ignoreProtect)
+lineInsertNewline(meInt undoCall)
 {
     meLine   *lp1;
     meLine   *lp2;
-    meUShort  doto, llen ;
     meWindow *wp;
-    meInt   lineno ;
+    meInt     lineno ;
+    meUShort  doto, llen ;
+    meLineFlag lflag ;
     
     lp1 = frameCur->windowCur->dotLine ;
     doto = frameCur->windowCur->dotOffset;
+    lflag = meLineGetFlag(lp1) ;
 #if MEOPT_EXTENDED
-    if(!ignoreProtect && doto && (meLineGetFlag(lp1) & meLINE_PROTECT))
+    if((lflag & meLINE_PROTECT) == 0)
+        undoCall = 0 ;
+    else if(!undoCall)
         return mlwrite(MWABORT,(meUByte *)"[Protected Line!]") ;
 #endif
     lineSetChanged(WFMOVEL|WFMAIN|WFSBOX);
@@ -457,14 +461,14 @@ lineInsertNewline(int ignoreProtect)
     if((doto == 0) || (llen > doto+32))
     {
         /* the length of the rest of the line is greater than doto+32
-         * so use the current line for the next line and create a new this line
-         */
-        if ((lp2=meLineMalloc(doto,1)) == NULL) /* New second line      */
+         * so use the current line for the next line and create a new this line */
+        lp2 = lp1 ;
+        if ((lp1=meLineMalloc(doto,1)) == NULL) /* New second line      */
             return meFALSE ;
-        lp2->prev = lp1->prev;
-        lp1->prev->next = lp2;
-        lp2->next = lp1 ;
-        lp1->prev = lp2 ;
+        lp1->prev = lp2->prev;
+        lp2->prev->next = lp1;
+        lp1->next = lp2 ;
+        lp2->prev = lp1 ;
         if(doto)
         {
             /* Shuffle text around  */
@@ -472,70 +476,35 @@ lineInsertNewline(int ignoreProtect)
             int ii ;
             
             ii = doto ;
-            cp1 = lp1->text ;
-            cp2 = lp2->text ;
+            cp1 = lp2->text ;
+            cp2 = lp1->text ;
             while(ii--)
                 *cp2++ = *cp1++ ;
-            cp2 = lp1->text ;
+            cp2 = lp2->text ;
             while((*cp2++ = *cp1++))
                 ;
             *cp2 = '\0' ;
-            lp1 = meLineShrink(lp1,llen) ;
-            /* sort out the line flags: anchors, schemes etc */ 
-            if(lp1->flag & meLINE_ANCHOR)
+            lp2 = meLineShrink(lp2,llen) ;
+        }
+#if MEOPT_EXTENDED
+        /* special case: when undoing the PROTECTed flag is overridden, but if the
+         * offest is 0 the anchors must remain on the original line */
+        if(doto || !undoCall)
+#endif
+        {
+            /* sort out the line anchors */ 
+            if(lp2->flag & meLINE_ANCHOR)
             {
                 /* update the position of any anchors */
-                /* move ones before split over to the first line (lp2) */
+                /* move ones before split over to the first line (lp1) */
                 meLineResetAnchors(meLINEANCHOR_IF_LESS|meLINEANCHOR_RETAIN,frameCur->bufferCur,
-                                   lp1,lp2,doto,0) ;
-                /* adjust offset of remaining ones on the second line (lp1) */
-                if(lp1->flag & meLINE_ANCHOR)
+                                   lp2,lp1,doto,0) ;
+                /* adjust offset of remaining ones on the second line (lp2) */
+                if(doto && (lp2->flag & meLINE_ANCHOR))
                     meLineResetAnchors(meLINEANCHOR_IF_GREATER|meLINEANCHOR_RELATIVE,frameCur->bufferCur,
-                                       lp1,lp1,doto,0-((meInt)doto)) ;
+                                       lp2,lp2,doto,0-((meInt)doto)) ;
             }
-#if MEOPT_EXTENDED
-            /* share most of the line flags */ 
-            lp2->flag |= lp1->flag & (meLINE_MARKUP|meLINE_SCHEME_MASK) ;
-#endif
         }
-        /* with no offset all anchors schemes etc stay on the second line */
-        lineno = frameCur->windowCur->dotLineNo ;
-        meFrameLoopBegin() ;
-        wp = loopFrame->windowList ;
-        while(wp != NULL)
-        {
-            if(wp->buffer == frameCur->bufferCur)
-            {
-                if(wp->vertScroll > lineno)
-                    wp->vertScroll++ ;
-                if(wp->dotLineNo == lineno)
-                {
-                    if (wp->dotOffset >= doto)
-                    {
-                        wp->dotLineNo++ ;
-                        wp->dotOffset -= doto;
-                    }
-                    else
-                        wp->dotLine = lp2;
-                }
-                else if(wp->dotLineNo > lineno)
-                    wp->dotLineNo++ ;
-                if(wp->markLineNo == lineno)
-                {
-                    if (wp->markOffset > doto)
-                    {
-                        wp->markLineNo++ ;
-                        wp->markOffset -= doto;
-                    }
-                    else
-                        wp->markLine = lp2;
-                }
-                else if(wp->markLineNo > lineno)
-                    wp->markLineNo++ ;
-            }
-            wp = wp->next;
-        }
-        meFrameLoopEnd() ;
     }
     else
     {
@@ -558,50 +527,59 @@ lineInsertNewline(int ignoreProtect)
             /* move to the second line anchors with an offset greater than the split offset */
             meLineResetAnchors(meLINEANCHOR_IF_GREATER|meLINEANCHOR_RELATIVE,frameCur->bufferCur,
                                lp1,lp2,doto,0-((meInt)doto)) ;
-        /* share most of the line flags */ 
-#if MEOPT_EXTENDED
-        lp2->flag |= lp1->flag & (meLINE_NOEOL|meLINE_MARKUP|meLINE_SCHEME_MASK) ;
-#else
-        lp2->flag |= lp1->flag & meLINE_NOEOL ;
-#endif
-        lp1->flag &= ~meLINE_NOEOL ;
-        
-        lineno = frameCur->windowCur->dotLineNo ;
-        meFrameLoopBegin() ;
-        wp = loopFrame->windowList;                            /* Windows              */
-        while(wp != NULL)
-        {
-            if(wp->buffer == frameCur->bufferCur)
-            {
-                if(wp->vertScroll > lineno)
-                    wp->vertScroll++ ;
-                if(wp->dotLineNo == lineno)
-                {
-                    if (wp->dotOffset >= doto)
-                    {
-                        wp->dotLine = lp2;
-                        wp->dotLineNo++ ;
-                        wp->dotOffset -= doto;
-                    }
-                }
-                else if(wp->dotLineNo > lineno)
-                    wp->dotLineNo++ ;
-                if(wp->markLineNo == lineno)
-                {
-                    if (wp->markOffset > doto)
-                    {
-                        wp->markLine = lp2;
-                        wp->markLineNo++ ;
-                        wp->markOffset -= doto;
-                    }
-                }
-                else if(wp->markLineNo > lineno)
-                    wp->markLineNo++ ;
-            }
-            wp = wp->next;
-        }
-        meFrameLoopEnd() ;
     }
+    if(lflag & meLINE_NOEOL)
+    {
+        lp1->flag &= ~meLINE_NOEOL ;
+        lp2->flag |= meLINE_NOEOL ;
+    }
+#if MEOPT_EXTENDED
+    /* scheme & user set flags should remain on the top line even if offset was 0 - important for narrows etc */ 
+    if(doto || !undoCall)
+    {
+        lp1->flag |= lflag & (meLINE_MARKUP|meLINE_PROTECT|meLINE_SET_MASK|meLINE_SCHEME_MASK) ;
+        lp2->flag &= ~(meLINE_MARKUP|meLINE_PROTECT|meLINE_SET_MASK|meLINE_SCHEME_MASK) ;
+    }
+#endif
+    lineno = frameCur->windowCur->dotLineNo ;
+    meFrameLoopBegin() ;
+    wp = loopFrame->windowList ;
+    while(wp != NULL)
+    {
+        if(wp->buffer == frameCur->bufferCur)
+        {
+            if(wp->vertScroll > lineno)
+                wp->vertScroll++ ;
+            if(wp->dotLineNo == lineno)
+            {
+                if (wp->dotOffset >= doto)
+                {
+                    wp->dotLine = lp2;
+                    wp->dotLineNo++ ;
+                    wp->dotOffset -= doto;
+                }
+                else
+                    wp->dotLine = lp1;
+            }
+            else if(wp->dotLineNo > lineno)
+                wp->dotLineNo++ ;
+            if(wp->markLineNo == lineno)
+            {
+                if (wp->markOffset > doto)
+                {
+                    wp->markLine = lp2;
+                    wp->markLineNo++ ;
+                    wp->markOffset -= doto;
+                }
+                else
+                    wp->markLine = lp1;
+            }
+            else if(wp->markLineNo > lineno)
+                wp->markLineNo++ ;
+        }
+        wp = wp->next;
+    }
+    meFrameLoopEnd() ;
     frameCur->bufferCur->lineCount++ ;
     return meTRUE ;
 }
@@ -614,8 +592,7 @@ bufferIsTextInsertLegal(meUByte *str)
     
     if((str[0] != '\0') &&
        (meLineGetFlag(frameCur->windowCur->dotLine) & meLINE_PROTECT) &&
-       ((ss=meStrchr(str,meCHAR_NL)) != NULL) &&
-       (frameCur->windowCur->dotOffset || (ss[strlen(ss)-1] != meCHAR_NL)))
+       ((ss=meStrchr(str,meCHAR_NL)) != NULL))
         return mlwrite(MWABORT,(meUByte *)"[Protected Line!]") ;
     return meTRUE ;
 }
@@ -625,7 +602,7 @@ bufferIsTextInsertLegal(meUByte *str)
  * Note - this function avoids any meLINE_PROTECT issues, it assumes that
  * the legality of the action is already checked */
 int
-bufferInsertText(meUByte *str)
+bufferInsertText(meUByte *str, meInt undoCall)
 {
     meUByte *ss=str, cc ;
     meInt status, lineCount=0, lineNo, len, tlen=0 ;
@@ -657,7 +634,7 @@ bufferInsertText(meUByte *str)
             if(len && (lineInsertString(len,str) <= 0))
                 break ;
             tlen += len ;
-            if(lineInsertNewline(meTRUE) <= 0)
+            if(lineInsertNewline(undoCall) <= 0)
                 break ;
             tlen++ ;
         }
@@ -673,10 +650,18 @@ bufferInsertText(meUByte *str)
             *ss = meCHAR_NL ;
             if(status <= 0)
                 break ;
-            if(!tlen && (frameCur->windowCur->dotLine->flag & meLINE_ANCHOR))
+            if(!tlen & !undoCall)
+            {
                 /* Update the position of any anchors at the start of the line, these are left behind */
-                meLineResetAnchors(meLINEANCHOR_IF_LESS|meLINEANCHOR_RETAIN,frameCur->bufferCur,
-                                   frameCur->windowCur->dotLine,meLineGetNext(line),0,0) ;
+                if(frameCur->windowCur->dotLine->flag & meLINE_ANCHOR)
+                    meLineResetAnchors(meLINEANCHOR_IF_LESS|meLINEANCHOR_RETAIN,frameCur->bufferCur,
+                                       frameCur->windowCur->dotLine,meLineGetNext(line),0,0) ;
+#if MEOPT_EXTENDED
+                /* scheme & user set flags should remain on the top line as well - important for narrows etc */ 
+                meLineGetNext(line)->flag |= frameCur->windowCur->dotLine->flag & (meLINE_MARKUP|meLINE_PROTECT|meLINE_SET_MASK|meLINE_SCHEME_MASK) ;
+                frameCur->windowCur->dotLine->flag &= ~(meLINE_MARKUP|meLINE_PROTECT|meLINE_SET_MASK|meLINE_SCHEME_MASK) ;
+#endif
+            }
             tlen += len+1 ;
             lineCount++ ;
         }
@@ -768,7 +753,7 @@ bufferInsertString(int f, int n)
     
     /* insert it */
     for(; n>0 ; n--)
-        count += bufferInsertText(tstring) ;
+        count += bufferInsertText(tstring,meFALSE) ;
 
 #if MEOPT_UNDO
     meUndoAddInsChars(count) ;
@@ -1450,52 +1435,23 @@ yankfrom(struct meKill *pklist)
     meKillNode *killp ;
 
 #if MEOPT_EXTENDED
-    meLineFlag lflag ;
-    meUShort doto ;
-    meLine *lp ;
-    
-    lp = frameCur->windowCur->dotLine ;
-    doto = frameCur->windowCur->dotOffset ;
-    lflag = meLineGetFlag(lp) ;
-    if(lflag & meLINE_PROTECT)
+    if(meLineGetFlag(frameCur->windowCur->dotLine) & meLINE_PROTECT)
     {
         killp = pklist->kill;
         while(killp != NULL)
         {
             if(meStrchr(killp->data,meCHAR_NL) != NULL)
-                break ;
+                return mlwrite(MWABORT,(meUByte *)"[Protected Line!]") ;
             killp = killp->next;
         }
-        if(killp != NULL)
-        {
-            meKillNode *kk ;
-            if(doto)
-                return mlwrite(MWABORT,(meUByte *)"[Protected Line!]") ;
-            kk = killp ;
-            while((kk=kk->next)  != NULL)
-                if(kk->data[0] != '\0')
-                    killp = kk ;
-            if(killp->data[meStrlen(killp->data)-1] != meCHAR_NL)
-                return mlwrite(MWABORT,(meUByte *)"[Protected Line!]") ;
-        }
     }
-    lp->flag &= ~(meLINE_MARKUP|meLINE_PROTECT|meLINE_SCHEME_MASK) ;
-    lp = meLineGetPrev(lp) ;
 #endif
-    /* if pasting to the end of a very long line, the combined length could
-     * be too lone (> 0xfff0), try to cope with this. */
     killp = pklist->kill;
     while (killp != NULL)
     {
-        len += bufferInsertText(killp->data) ;
+        len += bufferInsertText(killp->data,meFALSE) ;
         killp = killp->next;
     }
-#if MEOPT_EXTENDED
-    if(doto)
-        (meLineGetNext(lp))->flag |= lflag ;
-    else
-        frameCur->windowCur->dotLine->flag |= lflag ;
-#endif
     return len ;
 }
 

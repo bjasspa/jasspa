@@ -42,6 +42,7 @@
 #endif
 #endif
 
+#ifndef _ME_WIN32_FULL_DEBUG
 void *
 meMalloc(size_t s)
 {
@@ -67,6 +68,7 @@ meStrdup(const meUByte *s)
         mlwrite(MWCURSOR|MWABORT|MWWAIT,(meUByte *)"Warning! Malloc failure") ;
     return r ;
 }
+#endif
 
 void
 meStrrep(meUByte **d, const meUByte *s)
@@ -2507,7 +2509,7 @@ try_again:
                         {
                             /* We've found the mark in this narrow, remove the
                              * narrow and try again */
-                            meBufferRemoveNarrow(bp,nrrw,0,NULL) ;
+                            meBufferRemoveNarrow(bp,nrrw,NULL,0) ;
                             goto try_again ;
                         }
                         if(lp == nrrw->elp)

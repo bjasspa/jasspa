@@ -400,7 +400,7 @@ meUndoAddUnnarrow(meInt sln, meInt eln, meInt name, meScheme scheme,
     meUndoNarrow *nn ;
     int ll ;
     
-    ll = (markupCmd) ? meLineGetLength(markupLine):0 ;
+    ll = (markupLine) ? meLineGetLength(markupLine):0 ;
     if((frameCur->bufferCur->undoHead != NULL) &&
        ((nn = (meUndoNarrow*) meUndoCreateNode(sizeof(meUndoNarrow)+ll)) != NULL))
     {
@@ -410,8 +410,13 @@ meUndoAddUnnarrow(meInt sln, meInt eln, meInt name, meScheme scheme,
         nn->name = name ;
         nn->scheme = scheme ;
         nn->markupCmd = markupCmd ;
-        if(markupCmd)
+        if(markupLine != NULL)
+        {
+            nn->markupFlag = meTRUE ;
             meStrcpy(nn->str,meLineGetText(markupLine)) ;
+        }
+        else
+            nn->markupFlag = meFALSE ;
     }
 }
 #endif
@@ -563,8 +568,8 @@ meUndo(int f, int n)
                         frameCur->bufferCur->dotLine = frameCur->windowCur->dotLine ;
                         frameCur->bufferCur->dotLineNo = frameCur->windowCur->dotLineNo ;
                         frameCur->bufferCur->dotOffset = 0 ;
-                        meBufferRemoveNarrow(frameCur->bufferCur,nrrw,1,
-                                             (nun->markupCmd > 0) ? nun->str:NULL) ;
+                        meBufferRemoveNarrow(frameCur->bufferCur,nrrw,
+                                             (nun->markupCmd > 0) ? nun->str:NULL,1) ;
                     }
                     else
                     {
@@ -573,7 +578,7 @@ meUndo(int f, int n)
                         windowGotoLine(meTRUE,ccount+1) ;
                         meBufferCreateNarrow(frameCur->bufferCur,slp,frameCur->windowCur->dotLine,
                                              nun->dotp,ccount,name,nun->scheme,
-                                             (nun->markupCmd) ? nun->str:NULL,nun->markupCmd) ;
+                                             (nun->markupFlag) ? nun->str:NULL,nun->markupCmd,1) ;
                     }
                 }
 #endif
@@ -640,7 +645,7 @@ meUndo(int f, int n)
                 else
                 {
                     /* Deal with a multiple character undo. */
-                    count = bufferInsertText(ss) ;
+                    count = bufferInsertText(ss,meTRUE) ;
                     if(count > 0)
                         meUndoAddInsChars(count) ;
                 }

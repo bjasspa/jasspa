@@ -44,11 +44,11 @@
 #define __EMAIN_H__
 
 /* the following 2 defines are used for debugging and memory leak checking,
- * _ME_FULL_DEBUG      - Enables Windows debugging
- * _ME_FREE_ALL_MEMORY - Frees all memory before exiting
+ * _ME_WIN32_FULL_DEBUG - Enables Windows debugging
+ * _ME_FREE_ALL_MEMORY  - Frees all memory before exiting
  */
-/*#define _ME_FULL_DEBUG*/
-/*#define _ME_FREE_ALL_MEMORY*/
+#define _ME_WIN32_FULL_DEBUG
+#define _ME_FREE_ALL_MEMORY
 
 /* These next define is platform specific, but as all supported 
  * platforms use these and all future ones should I've put them here
@@ -522,11 +522,9 @@
 #include <string.h>                     /* Usually need this             */
 #include <errno.h>                      /* Need errno and sys_errlist    */
 
-#ifdef _ME_FULL_DEBUG
-#ifdef _WIN32
+#ifdef _ME_WIN32_FULL_DEBUG
 #define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
-#endif
 #endif
 
 /**************************************************************************

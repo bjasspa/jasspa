@@ -1162,7 +1162,7 @@ typedef struct meUndoNarrow {
     meInt              count ;
     meScheme           scheme ;
     meUByte            type ;
-    meUByte            pad1 ;
+    meUByte            markupFlag ;
     meInt              name ;
     meInt              markupCmd ;
     meUByte            str[1] ;

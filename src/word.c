@@ -1175,7 +1175,7 @@ noIndent:
                         if(fillState & FILL_SPACE)
                             /* the saved space is not required, delete it */
                             ldelete(1L,0);
-                        lineInsertNewline(meTRUE);
+                        lineInsertNewline(meFALSE);
                         if (fillState & FILL_JUSTIFY)
                         {
                             ccol = justify (icol,fdoto);
@@ -1205,14 +1205,14 @@ noIndent:
                 {
                     if (fillState & FILL_JUSTIFY)
                     {
-                        lineInsertNewline(meTRUE);
+                        lineInsertNewline(meFALSE);
                         ccol = justify (icol,fdoto);
                         fdoto = -1 ;
                     }
                     else
                     {
                         ccol = frameCur->windowCur->dotOffset;
-                        lineInsertNewline(meTRUE);
+                        lineInsertNewline(meFALSE);
                     }
 #if MEOPT_UNDO
                     paralen += ccol + 1;
@@ -1245,7 +1245,7 @@ noIndent:
 #if MEOPT_UNDO
             paralen += frameCur->windowCur->dotOffset + 1;
 #endif
-            lineInsertNewline(meTRUE);
+            lineInsertNewline(meFALSE);
         }
 #if MEOPT_UNDO
         meUndoAddReplaceEnd(paralen);
