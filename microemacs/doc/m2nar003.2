@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sun Aug 23 15:42:05 1998
 .\"
-.Id $Id: m2nar003.2,v 2.8 2004-02-04 22:54:22 jon Exp $
+.Id $Id: m2nar003.2,v 2.9 2004-02-22 18:37:19 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .TH "User Profiles" 2
@@ -253,11 +253,10 @@ global-bind-key undo                    "f4"
 ; Change the default diff command-line for GNU diff utility all platforms
 set-variable %diff-com "diff --context --minimal --ignore-space-change --report-identical-files --recursive"
 set-variable %gdiff-com "diff --context --ignore-space-change -w"
-; Setup for cygnus
+; Setup for cygwin
 !if &seq $platform "win32"
-    set-variable %cygnus-bin-path "c:/cygwin/bin"
-    set-variable %cygnus-hilight 1
-    set-variable %cygnus-prompt "$"
+    set-variable %cygwin-path "c:/cygwin"
+    set-variable %cygwin-hilight 1
 !endif
 ; Set up the ftp flags. The letters have the following meaning:
 ; c   - Create a console (*ftp-console* for ftp, *http-console* for http)
