@@ -340,7 +340,6 @@ extern	int	writeout(meBuffer *bp, int flags, meUByte *fn);
 extern	int     saveSomeBuffers(int f, int n) ;
 extern	void	resetBufferNames(meBuffer *bp, meUByte *fname);
 extern	int	changeFileName(int f, int n);
-extern	int	changeDir(int f, int n);
 #ifdef _CONVDIR_CHAR
 extern  void    fileNameConvertDirChar(meUByte *fname) ;
 #else
@@ -739,7 +738,6 @@ extern	int	windowDeleteBlankLines(int f, int n);
 extern	int	forwDelChar(int f, int n);
 extern	int	backDelChar(int f, int n);
 extern	int	killLine(int f, int n);
-extern	int	mlClear(int f, int n);
 extern	int	mlWrite(int f, int n);
 extern  void    makestrlow(meUByte *str);
 #if MEOPT_CFENCE
