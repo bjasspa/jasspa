@@ -305,6 +305,7 @@ set-variable .fhook-perl.item-list-r1 "Sub   \ecB\\1\ecA"
     indent .hilight.perl b "\\[" "]"
     indent .hilight.perl b "(" ")"
     indent .hilight.perl s "<[^ \t\n>]*>" 0
+    indent .hilight.perl e "\\$#" "." ""
     indent .hilight.perl i "#"  
 !endif
 

@@ -8,7 +8,7 @@
  *  Object Name  : macro.c
  *  Created      : 1995
  *  Author       : Steve Philips
- *  Last Modified: <010305.0801> 
+ *  Last Modified: <010822.1507> 
  *
  *  Description	
  *
@@ -302,6 +302,7 @@ helpBufferFind(void)
     meModeClear(hbp->b_mode,MDUNDO) ;
     meModeClear(hbp->b_mode,MDCRYPT) ;
     meModeClear(hbp->b_mode,MDBINRY) ;
+    meModeClear(hbp->b_mode,MDRBIN) ;
     meModeClear(hbp->b_mode,MDNACT) ;
     meModeSet(hbp->b_mode,MDHIDE) ;
     return hbp ;
@@ -672,7 +673,7 @@ nameKbdMacro(int f, int n)
     if((ss=macroDefine(FALSE, TRUE)) == TRUE)
     {
         meStrcpy(buf,"execute-string \"") ;
-        n = expandexp(lkbdlen,lkbdptr,MAXBUF-2,16,buf,-1,NULL,meEXPAND_BACKSLASH|meEXPAND_FFZERO) ;
+        n = expandexp(lkbdlen,lkbdptr,MAXBUF-2,16,buf,-1,NULL,meEXPAND_BACKSLASH|meEXPAND_FFZERO|meEXPAND_PRINTABLE) ;
         meStrcpy(buf+n,"\"") ;
         addLine(lpStore,buf) ;
     }

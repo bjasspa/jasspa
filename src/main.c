@@ -10,7 +10,7 @@
 *
 *	Author:			Jon Green
 *
-*	Creation Date:		03/05/91 17:19		<010807.1414>
+*	Creation Date:		03/05/91 17:19		<011015.1321>
 *
 *	Modification date:	%G% : %U%
 *
@@ -107,6 +107,7 @@ static char meHelpPage[]=
 #ifdef _UNIX
 "  -x      : Don't catch signals\n"
 #endif
+"  -y      : Load next file as a reduced binary file\n"
 "\n"
 ;
 
@@ -574,9 +575,11 @@ exitEmacs(int f, int n)
 #endif
         TTend();
 #ifdef _TCAP
+        if(!(alarmState & meALARM_PIPED)
 #ifdef _XTERM
-        if(meSystemCfg & meSYSTEM_CONSOLE)
+           && (meSystemCfg & meSYSTEM_CONSOLE)
 #endif
+           )
             TCAPputc('\n');
 #endif
 #ifdef _ME_FREE_ALL_MEMORY
@@ -1350,6 +1353,7 @@ mesetup(int argc, char *argv[])
             {
             case 'b':    /* -b bin flag */
             case 'k':    /* -k crypt flag */
+            case 'y':    /* -y rbin flag */
                 /* don't want these options yet as they apply to the
                  * next file on the command line
                  */
@@ -1543,6 +1547,9 @@ missing_arg:
                     if (argv[carg][2] == 0)
                         carg++ ;
                     break ;
+                case 'y':    /* -y rbin flag */
+                    binflag |= BFND_RBIN ;
+                    break;
                 }
             }
             else if (argv[carg][0] == '+')
@@ -1565,6 +1572,8 @@ missing_arg:
                 uint8 buff[MAXBUF+30], *ss ;
                 if(meModeTest(bp->b_mode,MDBINRY))
                     ss = "b" ;
+                else if(meModeTest(bp->b_mode,MDRBIN))
+                    ss = "r" ;
                 else if(meModeTest(bp->b_mode,MDCRYPT))
                     ss = "c" ;
                 else
@@ -1668,6 +1677,9 @@ missing_arg:
                     else
                         searchStr = (uint8 *) argv[carg]+2 ;
                     break ;
+                case 'y':    /* -y rbin flag */
+                    binflag |= BFND_RBIN ;
+                    break;
                 }
             }
             else if (argv[carg][0] == '+')
@@ -1868,6 +1880,17 @@ commandWait(int f, int n)
     int execlevelSv ;
     uint8 *ss ;
     
+    if(f)
+    {
+        f = clexec ;
+        clexec = FALSE ;
+        if(n < 0)
+            TTsleep(0-n,1) ;
+        else
+            TTsleep(n,0) ;
+        clexec = f ;
+        return TRUE ;
+    }
     if((meRegCurr->commandName != NULL) &&
        ((f=decode_fncname(meRegCurr->commandName,1)) >= 0))
         varList = &(cmdTable[f]->varList) ;

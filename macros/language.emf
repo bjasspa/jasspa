@@ -2,73 +2,62 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Thu May 7 20:18:08 1998
-;  Last Modified : <010520.2314>
-;
 ;  Description   : Configure ME for the users language
 ;
 ;  Notes
-;      Set help on command set-language(3) for adding support for a new lanugage
+;      See help on command set-language(3) for adding support for a new lanugage
 ;
-;  Copyright (c) 1999 JASSPA
+;  Copyright (c) 1999-2001 JASSPA
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-set-variable %language-names "|Default|American|American (Ext)|British|British (Ext)|Francais|Espanol|Portugues|Deutsch|Deutsch (Ext)|Italiano|"
-set-variable %language-val   "||1american|2american|1british|2british|1francais|1espanol|1portuges|1deutsch|2deutsch|1italiano|"
-define-macro-file langutl charset-change charset-iso-to-user charset-user-to-iso
-define-macro-file word describe-word
-global-bind-key describe-word "C-h w"
+!if &les @# 1
+    ; if executed with an argument of 0 or less, return the list
+    set-variable %language-names "|Default|American|British|Deutsch|Espanol|Francais|Italiano|Polish|Portugues|"
+    !return
+!endif
 
-0 define-macro set-language-list
-    set-variable #l0 2
-    set-variable #l3 ""
-    !while &not &seq "" &set #l2 &lget %language-val #l0
-        !if &seq #l3 #l2
-            set-variable #l0 &add #l0 1
-        !elif &seq &find &rig #l2 1 ".emf" "ERROR"
-            set-variable %language-names &ldel %language-names #l0
-            set-variable %language-val   &ldel %language-val   #l0
-        !else
-            set-variable #l3 #l2
-            set-variable #l0 &add #l0 1
-        !endif
-    !done
-!emacro
-
-define-macro set-language
-    !force set-variable #l0 @1
-    !if &not $status
-        set-language-list
-        set-variable #l0 @ml19 "Language" %language %language-names
-    !endif
-    ; is it the same, if so do nothing
-    !if &seq %language #l0
-        !return
-    !endif
-    ; if a language has already been set, undo the damage first
-    !if &not &seq %language "ERROR"
-        3 save-dictionary @mna
-        2 delete-dictionary @mna
-        language-tidy
-        unset-variable %language
-    !endif
-    set-variable #l0 &lfind %language-names #l0
-    !if &seq &set #l1 &lget %language-val #l0 ""
-        set-variable %language &lget %language-names 1
-        0 define-macro spell-rules-init
-        !emacro
-        0 define-macro language-tidy
-        !emacro
-        ; default private dictionary is Your logname
-        set-variable #l0 &reg "/history/spell" "default" $MENAME
-    !else
-        &lef #l1 1 exec-file &rig #l1 1
-        set-variable %language &lget %language-names #l0
-        set-variable #l0 &reg "/history/spell" &rig #l1 1 &reg "/history/spell" "default" $MENAME
-    !endif
-    add-dictionary #l0
-!emacro
+; remove extended chars from current language first
+!if &exi .set-char-mask.rm-chars
+    -1 set-char-mask "a" .set-char-mask.rm-chars
+    unset-variable .set-char-mask.rm-chars
+!endif
+!if &exi .spell.language
+    3 save-dictionary @mna
+    2 delete-dictionary @mna
+    unset-variable .spell.language
+!endif
 
 ; set up MicroEmacs for the users language
-set-variable #l0 &reg "/history" "language" &lget %language-names 1
-set-language #l0
+set-variable #l0 &reg "/history" "language" ""
+!if &seq #l0 ""
+!elif &seq #l0 "Default"
+!elif &seq #l0 "American"
+    set-variable .spell.language "enus"
+!elif &seq #l0 "British"
+    set-variable .spell.language "engb"
+!elif &seq #l0 "Deutsch"
+    set-char-mask "dpa" "ÄäÖöÜüßßAaOoUu"
+    set-variable .set-char-mask.rm-chars "ÄäÖöÜüß"
+    set-variable .spell.language "dede"
+!elif &seq #l0 "Espanol"
+    set-char-mask "dpa" "ÁáÉéÍíÑñÓóÚúÜüAaEeIiNnOoUu"
+    set-variable .set-char-mask.rm-chars "ÁáÉéÍíÑñÓóÚúÜü"
+    set-variable .spell.language "eses"
+!elif &seq #l0 "Francais"
+    set-char-mask "dpa" "ÀàÂâÁáÇçÈèÊêÉéËëÎîÍíÏïÑñÒòÔôÓóÖöÙùÛûÚúÜüAaCcEeIiNnOoUu"
+    set-variable .set-char-mask.rm-chars "ÀàÂâÁáÇçÈèÊêÉéËëÎîÍíÏïÑñÒòÔôÓóÖöÙùÛûÚúÜü"
+    set-variable .spell.language "frfr"
+!elif &seq #l0 "Italiano"
+    set-char-mask "dpa" "ÁáÈèÉéÌìÍíÒòÓóÀàÙùÚúAaCcEeIiOoRrUu"
+    set-variable .set-char-mask.rm-chars "ÁáÈèÉéÌìÍíÒòÓóÀàÙùÚú"
+    set-variable .spell.language "itit"
+!elif &seq #l0 "Polish"
+    set-char-mask "dpa" "ÊêÓó¡±¦¶£³¯¿¬¼ÆæÑñAaCcEeLlNnOoSsZz"
+    set-variable .set-char-mask.rm-chars "ÊêÓó¡±¦¶£³¯¿¬¼ÆæÑñ"
+    set-variable .spell.language "plpl"
+!elif &seq #l0 "Portugues"
+    set-char-mask "dpa" "ÀàÂâÁáÃãÇçÈèÊêÉéÌìÍíÒòÔôÓóÕõÙùÚúÜüAaCcEeIiOoUu"
+    set-variable .set-char-mask.rm-chars "ÀàÂâÁáÃãÇçÈèÊêÉéÌìÍíÒòÔôÓóÕõÙùÚúÜü"
+    set-variable .spell.language "ptpt"
+!endif
 

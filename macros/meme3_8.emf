@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Aug 1 10:12:48 1998
-;  Last Modified : <001002.1216>
+;  Last Modified : <011010.0756>
 ;
 ;  Description
 ;
@@ -275,7 +275,7 @@ define-macro transpose-characters
     transpose-chars
 !emacro
 define-macro update-screen
-    1 screen-update
+    screen-update
 !emacro
 define-macro write-message
     !force ml-write @1

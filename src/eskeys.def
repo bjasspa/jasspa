@@ -6,7 +6,7 @@
  *  Object Name   : eskeys.def
  *  Author        : Steve Philips
  *  Created       : Thu Sep 18 15:32:46 1997
- *  Last Modified : <000718.2344>
+ *  Last Modified : <011015.0923>
  *
  *  Description	
  *       Extended key definitions.
@@ -27,6 +27,7 @@ DEFSKEY ("",             NULL, NULL,      SKEY_error ) /* Don't want a key with 
 DEFSKEY ("backspace",    "kb", "\010",    SKEY_backspace )
 DEFSKEY ("bell",         NULL, NULL,      SKEY_bell )
 DEFSKEY ("callback",     NULL, NULL,      SKEY_callback )
+DEFSKEY ("caps-lock",    NULL, NULL,      SKEY_caps_lock )
 DEFSKEY ("delete",       "kD", "\177",    SKEY_delete )
 DEFSKEY ("down",         "kd", "\033[B",  SKEY_down )
 DEFSKEY ("drop",         NULL, NULL,      SKEY_drop )
@@ -95,12 +96,15 @@ DEFSKEY ("mouse-time-4", NULL, NULL,      SKEY_mouse_time_4 )
 DEFSKEY ("mouse-time-5", NULL, NULL,      SKEY_mouse_time_5 )
 DEFSKEY ("mouse-wdown",  NULL, NULL,      SKEY_mouse_wdown )
 DEFSKEY ("mouse-wup",    NULL, NULL,      SKEY_mouse_wup )
+DEFSKEY ("num-lock",     NULL, NULL,      SKEY_num_lock )
 DEFSKEY ("page-down",    "%5", "\033[6~", SKEY_page_down )
 DEFSKEY ("page-up",      "%8", "\033[5~", SKEY_page_up )
+DEFSKEY ("pause",        NULL, NULL,      SKEY_pause )
 DEFSKEY ("pick",         NULL, NULL,      SKEY_pick )
 DEFSKEY ("redraw",       NULL, NULL,      SKEY_redraw )
 DEFSKEY ("return",       NULL, "\015",    SKEY_return )
 DEFSKEY ("right",        "kr", "\033[C",  SKEY_right )
+DEFSKEY ("scroll-lock",  NULL, NULL,      SKEY_scroll_lock )
 DEFSKEY ("space",        NULL, NULL,      SKEY_space )
 DEFSKEY ("tab",          NULL, NULL,      SKEY_tab )
 DEFSKEY ("up",           "ku", "\033[A",  SKEY_up )

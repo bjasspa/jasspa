@@ -1,21 +1,41 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
-;  Author        : $Author: jon $
 ;  Created By    : Steven Phillips
 ;  Created       : Wed May 13 15:17:09 1998
-;  Last Modified : <280299.0137>
-;
-;  Description
+;  Description   : Spell checker rules for Francais
 ;
 ;  Notes
 ;
-;  History
-;      Rules must be given in standard Latin font
+;  The following copyright apply to the rules and dictionary
+;
+;      IREQ-Francais.dico -- A French dictionary for use with ispell 3.1
+;      
+;        Copyright (c) 1993, 1994 Martin Boyer and Hydro-Quebec.
+;      
+;          This program is free software; you can redistribute it and/or modify
+;          it under the terms of the GNU General Public License as published by
+;          the Free Software Foundation; either version 2 of the License, or
+;          (at your option) any later version.
+;      
+;          This program is distributed in the hope that it will be useful,
+;          but WITHOUT ANY WARRANTY; without even the implied warranty of
+;          MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;          GNU General Public License for more details.
+;      
+;          You should have received a copy of the GNU General Public License
+;          along with this program; if not, write to the Free Software
+;          Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+;      
+;      
+;      This set of data and program files implements a French dictionary to
+;      be used with the ispell program, version 3.1.04 and following.  The
+;      dictionary contains roughly 50,000 roots, which expand to about
+;      220,000 words.  Since I don't see why a person who doesn't understand
+;      French would need a French spelling checker, the rest of the
+;      description and installation instructions are in French, in the file
+;      "LISEZMOI".
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-0 define-macro spell-rules-init
-!emacro
 
 set-variable .spell.rules "ABCDLNPQRSTX"
 

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Jun 13 13:00:52 1998
-;  Last Modified : <010805.0023>
+;  Last Modified : <011015.0909>
 ;
 ;  Description     Macros to implement typical Mouse functionality 
 ;
@@ -229,6 +229,9 @@
             execute-named-command @cc
             !return
         !endif
+    !elif &seq @cck "idle-pick"
+        @# execute-named-command @cc
+        !return
     !endif
     !if &seq .pick @cck
         set-variable .type &cond &equ .type 2 .itype &add .type 1
@@ -562,9 +565,13 @@
         ; work out the mouse mask
         set-variable .mode $mouse-pos
         set-variable .mask &cat &cat &lef #l1 #l0 "%s" &rig #l1 &add #l0 4
+        set-variable .state 1
+    !elif &not .state
+        !return
     !elif &set #l0 &sin "-drop" #l1
         !force set-cursor-to-mouse
         set-variable #l1 &spr .mask "drop"
+        set-variable .state 0
     !else
         !return
     !endif

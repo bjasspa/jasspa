@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips & Jon Green
 ;  Created       : Sat Jul 18 14:58:08 1998
-;  Last Modified : <010227.1530>
+;  Last Modified : <010902.1200>
 ;
 ;  Description   : Compile, grep and macro to wrap the diff utility.
 ;
@@ -269,7 +269,7 @@ define-macro reread-file
     !if &bmod "crypt"
         1 global-mode "crypt"
     !endif
-    !force !force read-file $buffer-fname @mna
+    !force !force @# read-file $buffer-fname @mna
     set-variable #l0 $status
     -1 global-mode "binary"
     -1 global-mode "crypt"
@@ -281,3 +281,12 @@ define-macro reread-file
         end-of-buffer
     !endif
 !emacro
+
+define-macro find-bfile
+    &cond @# 3 2 find-file @mna
+!emacro
+
+define-macro find-cfile
+    &cond @# 5 4 find-file @mna
+!emacro
+

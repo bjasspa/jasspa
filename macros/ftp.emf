@@ -168,7 +168,7 @@ define-macro ftp
         mark-registry "/url" "u"
         previous-window
         ftp-create-layout
-        1 screen-update
+        screen-update
     !elif &not #l0
         !abort
     !endif

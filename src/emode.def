@@ -6,7 +6,7 @@
  *  Object Name   : emode.def
  *  Author        : Steve Philips
  *  Created       : Thu Jan 15 20:06:23 1998
- *  Last Modified : <000718.2342>
+ *  Last Modified : <010822.1456>
  *
  *  Description	
  *       Definition of the modes.
@@ -26,7 +26,7 @@
 DEFMODE(MDAUTO, "auto",   'A')              /* Auto-file type detection     */
 DEFMODE(MDATSV, "autosv", 'a')              /* Auto-save the buffer         */
 DEFMODE(MDBACK, "backup", 'B')              /* Do file backup               */
-DEFMODE(MDBINRY,"binary", 'b')              /* Do file backup               */
+DEFMODE(MDBINRY,"binary", 'b')              /* File loaded in binary mode   */
 DEFMODE(MDCMOD, "cmode",  'C')              /* C indentation and fence match*/
 DEFMODE(MDCRLF, "crlf",   'c')              /* Save \r's on end of line     */
 DEFMODE(MDCRYPT,"crypt",  'Y')              /* encrytion mode active        */
@@ -47,6 +47,7 @@ DEFMODE(MDNRRW, "narrow", 'N')              /* Buffer has a narrowing       */
 DEFMODE(MDOVER, "over",   'O')              /* overwrite mode               */
 DEFMODE(MDPIPE, "pipe",   'P')              /* Buffer is an ipipe buffer    */
 DEFMODE(MDQUIET,"quiet",  'Q')              /* Quiet bell mode, global only */
+DEFMODE(MDRBIN, "rbin",   'r')              /* File loaded in reduced binary*/
 DEFMODE(MDSAVE, "save",   'S')              /* Flag buffer to be saved      */
 DEFMODE(MDTAB,  "tab",    'T')              /* Virtual tabs                 */
 DEFMODE(MDTIME, "time",   't')              /* Time stamping mode           */

@@ -10,7 +10,7 @@
 *
 *       Author:                 Danial Lawrence
 *
-*       Creation Date:          10/05/91 08:27          <001005.1226>
+*       Creation Date:          10/05/91 08:27          <011024.0802>
 *
 *       Modification date:      %G% : %U%
 *
@@ -2222,7 +2222,8 @@ gotoPosition(int f, int n)		/* restore the saved screen */
                 wp = wp->w_wndp;
             }
         }
-        makeCurWind(bwp) ;
+        if(bwp != curwp)
+            makeCurWind(bwp) ;
     }
     if(n & mePOS_BUFFER)
     {
@@ -2233,7 +2234,8 @@ gotoPosition(int f, int n)		/* restore the saved screen */
         {
             if(bp == pos->buffer)
             {
-                swbuffer(curwp,bp) ;
+                if(bp != curbp)
+                    swbuffer(curwp,bp) ;
                 break ;
             }
             bp = bp->b_bufp;

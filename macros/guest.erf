@@ -20,15 +20,6 @@
  "scheme" = "schemebc"
  "scroll-bar" = "0x1be"
 }
-"history" {
- "active"
- "buffer"
- "command"
- "file"
- "search"
- "string"
- "version" = "4"
-}
 "hpux" {
  "ext-char-set" = "1"
  "file-ignore" = "~ ./"

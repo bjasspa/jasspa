@@ -3,7 +3,7 @@
 ;  Copyright (c) 1999-2001 JASSPA
 ;
 ; Is this macro release compatible with the binary?
-!if &les $version "20010801"
+!if &les $version "20011010"
     5000 ml-write "[Warning: The MicroEmacs executable is not compatible with this macro release]"
 !endif
 ; If mename isn't set or registry file isn't found then set it to guest
@@ -32,17 +32,19 @@
 ; Define extern file macros first
 0 define-macro-file etfinsrt
 0 define-macro-file scheme scheme
+0 define-macro-file langutl spell-rules-init
 0 define-macro-file osd osd-main osd-dialog osd-xdialog osd-entry
 0 define-macro-file buffinit buffer-initialize buffer-bind-create
 0 define-macro-file utils ascii-time regex-forward regex-backward var-str-sub str-to-regex filemask-to-regex copy-registry create-file-path
 define-macro-file format clean sort-lines-ignore-case normal-tab tabs-to-spaces paragraph-to-line delete-indentation restyle-region restyle-buffer ifill-paragraph
 define-macro-file cvs cvs cvs-state cvs-update cvs-commit cvs-log cvs-diff cvs-gdiff cvs-add cvs-remove cvs-resolve-conflicts
+define-macro-file tools compile grep rgrep which diff diff-changes execute-tool uniq reread-file find-bfile find-cfile
 define-macro-file comment comment-line uncomment-line comment-to-end-of-line comment-start comment-restyle
 define-macro-file abbrev expand-abbrev-handle spell-complete-word iso-accents-mode iso-accents-expand
 define-macro-file misc symbol check-line-length alarm time compare-windows-exact display-white-chars
 define-macro-file search replace-all-string query-replace-all-string replace-all-pairs line-scheme
-define-macro-file tools compile grep rgrep which diff diff-changes execute-tool uniq reread-file
 define-macro-file hkdirlst file-browser file-browser-close file-browser-swap-buffers
+define-macro-file charsutl charset-change charset-iso-to-user charset-user-to-iso
 define-macro-file spell spell-word spell-buffer spell-edit-word find-word
 define-macro-file games Metris Patience Triangle Mahjongg Match-It
 define-macro-file buffstp buffer-setup buffer-help buffer-tool
@@ -57,11 +59,13 @@ define-macro-file printstp print-setup
 define-macro-file fattrib file-attrib
 define-macro-file organize organizer
 define-macro-file userstp user-setup
+define-macro-file word describe-word
 define-macro-file gdiff
 define-macro-file calc
 define-macro-file draw
 define-macro-file ftp
 define-macro-file vm
+
 ; More useful than execute-file - helps in fixing problems.
 0 define-macro exec-file
     set-variable #g0 1
@@ -97,12 +101,12 @@ define-macro save-all
 set-variable %platform &cat $platform &cond &band $system 0x01 "c" ""
 set-variable $system &bor &band $system &bnot 0x10f000 &reg "/history" "system" 0x007000
 set-variable $system &bor &band $system &bnot 0x0e041c &reg "/history" &cat %platform "/system" 0x040010
-; setup the display char set
-!force exec-file "charset"
 set-variable $mouse &reg "/history" &cat %platform "/mouse" $mouse
 set-variable $scroll &reg "/history" &cat %platform "/scroll" $scroll
 set-variable $show-modes &reg "/history" "show-modes" $show-modes
 set-variable $cursor-blink &reg "/history" &cat %platform "/blink" $cursor-blink
+; setup the display char set, keyboard and language
+!force exec-file "charset"
 !force exec-file "keyboard"
 !force exec-file "language"
 ; execute msshift if using MS Shift style region definition
@@ -118,6 +122,7 @@ scheme
 global-bind-key set-position             "C-c C-a"
 global-bind-key goto-position            "C-c a"
 global-bind-key grep                     "C-c g"
+global-bind-key describe-word            "C-h w"
 global-bind-key replace-all-string       "A-C-r"
 global-bind-key query-replace-all-string "esc A-C-r"
 4 global-bind-key find-tag               "esc C-t"

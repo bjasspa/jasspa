@@ -10,7 +10,7 @@
  *
  *	Author:			Danial Lawrence.
  *
- *	Creation Date:		07/05/91 08:19		<010807.0802>
+ *	Creation Date:		07/05/91 08:19		<011011.0758>
  *
  *	Modification date:	%G% : %U%
  *
@@ -699,17 +699,17 @@ meTab(int f, int n)
     if(n<=0)
         return TRUE ;
     
-    if((meSystemCfg & meSYSTEM_TABINDALW) || (curwp->w_doto == 0))
-    {
 #if HILIGHT
-        if(curbp->indent)
-            return indentLine() ;
+    if(curbp->indent &&
+       (!(indents[curbp->indent]->type & HITABANY) ||
+        (!(indents[curbp->indent]->type & HITABFST) && (curwp->w_doto == 0))))
+        return indentLine() ;
 #endif
 #if CFENCE
-        if(meModeTest(curbp->b_mode,MDCMOD))
-            return doCindent(&ii) ;
+    if(meModeTest(curbp->b_mode,MDCMOD) &&
+       ((meSystemCfg & meSYSTEM_TABINDALW) || (curwp->w_doto == 0)))
+        return doCindent(&ii) ;
 #endif
-    }
     if((ii=bchange()) != TRUE)               /* Check we can change the buffer */
         return ii ;
     
@@ -898,9 +898,10 @@ winsert(void)	/* insert a newline and indentation for Wrap indent mode */
 #if HILIGHT
 static int
 indentInsert(void)
-/* insert a newline and indentation for C */
+/* insert a newline and indentation for current buffers indent scheme */
 {
     indentLine() ;
+    
     /* put in the newline */
 #if MEUNDO
     meUndoAddInsChar() ;
@@ -978,7 +979,7 @@ meNewline(int f, int n)
     while (n--)
     {
 #if HILIGHT
-        if(curbp->indent)
+        if(curbp->indent && !(indents[curbp->indent]->type & HINEWLINE))
             s = indentInsert() ;
         else
 #endif
@@ -2053,6 +2054,9 @@ find_bracket_fence:
                             indent = 3 ;
                             normCont = 0 ;
                         }
+                        else if((cc == 'n') &&
+                                !meStrncmp(curwp->w_dotp->l_text+curwp->w_doto,"namespace",9))
+                            indent = 2 ;
                         if(indent)
                             off = curwp->w_doto ;
                         else

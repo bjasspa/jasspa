@@ -12,7 +12,7 @@
 *
 *	Creation Date:		17/10/91
 *
-*	Modification date:	%G%		<010304.2351>
+*	Modification date:	%G%		<010902.1153>
 *
 *	Current rev:		%I%
 *
@@ -105,10 +105,8 @@ DEFFUNC ("exit-emacs",			0x00, exitEmacs,	CK_EXIT, __meFunc_EXIT, &__meFunc_EXAB
 DEFFUNC	("expand-abbrev",		0x04, expandAbbrev,	CK_EXABREV, __meFunc_EXABREV, &__meFunc_FILEOP, 0)
 DEFFUNC ("file-op",			0x04, fileOp,		CK_FILEOP, __meFunc_FILEOP, &__meFunc_FILPAR, 0)
 DEFFUNC ("fill-paragraph",		0x04, fillPara,		CK_FILPAR, __meFunc_FILPAR, &__meFunc_FILTBUF, 0)
-DEFFUNC ("filter-buffer",		0x04, meFilter,		CK_FILTBUF, __meFunc_FILTBUF, &__meFunc_FNDBFIL, 0)
-DEFFUNC ("find-bfile",			0x42, findBFile,	CK_FNDBFIL, __meFunc_FNDBFIL, &__meFunc_USEBUF, &__meFunc_PREFIX)
-DEFFUNC ("find-buffer",			0x42, findBuffer,	CK_USEBUF, __meFunc_USEBUF, &__meFunc_FNDCFIL, &__meFunc_LSTREGY)
-DEFFUNC ("find-cfile",			0x42, findCFile,	CK_FNDCFIL, __meFunc_FNDCFIL, &__meFunc_FNDFIL, 0)
+DEFFUNC ("filter-buffer",		0x04, meFilter,		CK_FILTBUF, __meFunc_FILTBUF, &__meFunc_USEBUF, 0)
+DEFFUNC ("find-buffer",			0x42, findBuffer,	CK_USEBUF, __meFunc_USEBUF, &__meFunc_FNDFIL, &__meFunc_LSTREGY)
 DEFFUNC ("find-file",			0x42, findFile,		CK_FNDFIL, __meFunc_FNDFIL, &__meFunc_FNDREGY, 0)
 DEFFUNC ("find-registry",		0x42, findRegistry,	CK_FNDREGY, __meFunc_FNDREGY, &__meFunc_FNDTAG, 0)
 DEFFUNC ("find-tag",		        0x42, findTag,		CK_FNDTAG, __meFunc_FNDTAG, &__meFunc_FORCHR, 0)

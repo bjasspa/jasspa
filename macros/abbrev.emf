@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Wed Jul 7 13:22:00 1999
-;  Last Modified : <000719.0012>
+;  Last Modified : <011010.0756>
 ;
 ;  Description
 ;
@@ -99,7 +99,7 @@ define-macro spell-complete-word
         -3 show-region
         set-variable $window-col #l3
         3 show-region
-        0 screen-update
+        2 screen-update
         !force !force set-variable #l5 @ml6a "spell-complete-word" #l4 "*spell-complete*"
         !if &not $status
             0 delete-buffer "*spell-complete*"

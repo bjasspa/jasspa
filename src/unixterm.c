@@ -5,7 +5,7 @@
  *  Synopsis      : Unix X-Term and Termcap support routines
  *  Created By    : Steven Phillips
  *  Created       : 1993
- *  Last Modified : <010806.2030>
+ *  Last Modified : <011015.1221>
  *
  *  Description
  *    This implementation of unix support currently only supports Unix v5 (_USG),
@@ -290,26 +290,29 @@ static uint8 iconBits[] = {
  0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-#define ME_KP_COUNT 16
-#define ME_KP_FLAG  0x80
-#define ME_KP_MASK  0x7f
+#define ME_KP_COUNT   16
+#define ME_KP_FLAG    0x80
+#define ME_KP_MASK    0x7f
+#define ME_BIND_FLAG  0x40
+#define ME_BIND_COUNT 3
+#define ME_BIND_MASK  0x3f
 uint8 TTextkey_lut [256] =
 {
   0,  0,  0,  0,  0,  0,  0,  0,  SKEY_backspace,  SKEY_tab,  0,  0,  0, SKEY_return,  0,  0,
-  SKEY_f11,SKEY_f12,  0,  0,  0,  0,  0,  0,  0,  0,  0, SKEY_esc,  0,  0,  0,  0,
+  SKEY_f11,SKEY_f12,  0,  SKEY_pause,  ME_KP_FLAG|ME_BIND_FLAG|2,  0,  0,  0,  0,  0,  0, SKEY_esc,  0,  0,  0,  0,
   SKEY_tab,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
   SKEY_home,SKEY_left,SKEY_up,SKEY_right,SKEY_down,SKEY_page_up,SKEY_page_down,SKEY_end,0,0,0,0,0,0,0,0,
   0,  0,  0,SKEY_insert,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,SKEY_tab,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,SKEY_tab,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, ME_KP_FLAG|ME_BIND_FLAG|1,
   ME_KP_FLAG|5,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, ME_KP_FLAG|15,  0,  0,
   0,  0,  0,  0,  0,ME_KP_FLAG|7,ME_KP_FLAG|4,ME_KP_FLAG|8,ME_KP_FLAG|6,ME_KP_FLAG|2,ME_KP_FLAG|9,ME_KP_FLAG|3,ME_KP_FLAG|1,ME_KP_FLAG|5,ME_KP_FLAG|0,ME_KP_FLAG|10,
   0,0,0,0,0,0,0,0,0,0,ME_KP_FLAG|12,ME_KP_FLAG|14,0,ME_KP_FLAG|13,ME_KP_FLAG|10, ME_KP_FLAG|11,
   ME_KP_FLAG|0,ME_KP_FLAG|1,ME_KP_FLAG|2,ME_KP_FLAG|3,ME_KP_FLAG|4,ME_KP_FLAG|5,ME_KP_FLAG|6,ME_KP_FLAG|7,ME_KP_FLAG|8,ME_KP_FLAG|9,0,0,0,0,SKEY_f1,SKEY_f2,
   SKEY_f3,SKEY_f4,SKEY_f5,SKEY_f6,SKEY_f7,SKEY_f8,SKEY_f9,SKEY_f10,SKEY_f11,SKEY_f12,  0,  0,  0,  0,  0,  0,
   0,  0,  0,  0,  0,ME_KP_FLAG|13,ME_KP_FLAG|11,ME_KP_FLAG|12,ME_KP_FLAG|7,0,ME_KP_FLAG|9,0,0,0,ME_KP_FLAG|1,  0,
-  ME_KP_FLAG|3,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  ME_KP_FLAG|3,  0,  0,  0,  0, ME_KP_FLAG|ME_BIND_FLAG|0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,SKEY_delete
 };	/* Extended Keyboard lookup table */
 
@@ -321,6 +324,7 @@ uint16 NumLockLookUpOff[ME_KP_COUNT]=
     ME_SPECIAL|SKEY_kp_up, ME_SPECIAL|SKEY_kp_page_up, ME_SPECIAL|SKEY_kp_delete,
     '/', '*', '-', '+', ME_SPECIAL|SKEY_return
 } ;
+uint16 bindKeyLookUp[ME_BIND_COUNT]={ SKEY_caps_lock, SKEY_num_lock, SKEY_scroll_lock } ;
 #else  /* _XTERM */
 #define meStdin 0
 #endif /* _XTERM */
@@ -1108,10 +1112,9 @@ meXEventHandler(void)
             uint16 ii, ss ;
             KeySym keySym ;
             char   keyStr[20];
-            int    keyLen ;
 
             ss = event.xkey.state ;
-            keyLen = XLookupString(&event.xkey,keyStr,20,&keySym,NULL);
+            XLookupString(&event.xkey,keyStr,20,&keySym,NULL);
             /* Map Mod2 which is ALT-GR onto A-C */
 #if (defined _SUNOS_X86)
             /* SunOS mapped to modifier key 2 */
@@ -1125,7 +1128,7 @@ meXEventHandler(void)
 #endif
 #endif
 #if 0
-            keyStr[keyLen] = '\0' ;
+            keyStr[19] = '\0' ;
             printf("got key %x, ss=%x [%s]\n",(unsigned int) keySym, ss, keyStr) ;
 #endif
             if(keySym > 0xff)
@@ -1134,7 +1137,9 @@ meXEventHandler(void)
                 if(keySym == 0)
                     break ;
                 /* Cope with the num lock state on the key pad */
-                if(keySym & ME_KP_FLAG)
+                if((keySym & ME_KP_FLAG) == 0)
+                    ii = (ME_SPECIAL | keySym | ((ss & 0x01) << 8) | ((ss & 0x0C) << 7)) ;
+                else if((keySym & ME_BIND_FLAG) == 0)
                 {
                     if(ss & 0x10)
                         ii = (NumLockLookUpOff[keySym & ME_KP_MASK] | ((ss & 0x0C) << 7)) ;
@@ -1145,7 +1150,12 @@ meXEventHandler(void)
                         ii |= ((ss & 0x01) << 8) ;
                 }
                 else
-                    ii = (ME_SPECIAL | keySym | ((ss & 0x01) << 8) | ((ss & 0x0C) << 7)) ;
+                {
+                    uint32 arg;
+                    ii = (ME_SPECIAL | bindKeyLookUp[keySym & ME_BIND_MASK] | ((ss & 0x01) << 8) | ((ss & 0x0C) << 7)) ;
+                    if (decode_key(ii,&arg) == -1)  /* Key bound ?? */
+                        break ;
+                }
             }
             else
             {

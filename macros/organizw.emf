@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Jul 26 14:36:36 1997
-;  Last Modified : <000719.0012>
+;  Last Modified : <011010.0756>
 ;
 ;  Description   : cal calendar macro
 ;
@@ -205,7 +205,7 @@ set-variable .org.bind-r1 "|1|1|1|1|"
         !endif
     !until &equ #l6 7
     insert-newline
-    1 screen-update
+    screen-update
 !emacro
 
 

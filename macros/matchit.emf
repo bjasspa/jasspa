@@ -2,7 +2,7 @@
 ;
 ; Author:           Steven Phillips
 ; Created:          05th June 1997
-; Last Modified:    <010805.0021>
+; Last Modified:    <011010.0756>
 ;
 ; History:
 ;
@@ -197,7 +197,7 @@
     !until &equ $window-line 49
     !force 0 find-buffer "*mi"
     !if &not $status
-        !force 1 find-file &find "matchit" ".edf"
+        !force 0 find-file &find "matchit" ".edf"
         !if &not $status
             2000 ml-write "[Failed to find Match-It data file matchit.edf]"
             !abort
@@ -278,7 +278,7 @@
     set-variable #g2 :mi-level
     !force 0 find-buffer "*mi"
     !if &not $status
-        !force 1 find-file &find "matchit" ".edf"
+        !force 0 find-file &find "matchit" ".edf"
         !if &not $status
             2000 ml-write "[Failed to find Match-It data file matchit.edf]"
             !abort
@@ -1106,7 +1106,7 @@
     !if &not @#
         !return
     !endif
-    1 screen-update
+    screen-update
     35 screen-poke  5 40 .scheme.mi1 "Match-It II"
     35 screen-poke  6 40 .scheme.mi1 "==========="
     35 screen-poke 15 70 .scheme.mi1 &sprint "%s%4s%s"  &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
@@ -1136,7 +1136,7 @@ define-macro mi-main-menu
     set-variable :mi-status 4
     !force 0 find-buffer "*mi"
     !if &not $status
-        !force 1 find-file &find "matchit" ".edf"
+        !force 0 find-file &find "matchit" ".edf"
         !if &not $status
             2000 ml-write "[Failed to find Match-It data file matchit.edf]"
             !abort

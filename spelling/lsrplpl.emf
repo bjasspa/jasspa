@@ -1,0 +1,4059 @@
+; Ver. 1999.01.29
+; Autorzy: 
+;	Piotr Gackiewicz <gacek@ds14.agh.edu.pl>
+;	W³odzimierz Macewicz <MACEWICZ@ia.pw.edu.pl>
+;
+; ftp site: ftp://ftp.ds14.agh.edu.pl/pub/ispell
+;
+; Wszelkie uwagi dotycz±ce niniejszego pliku, poprawki b³êdów, braków i
+; niedoci±gniêæ proszê wysy³aæ na adres autora. Ponadto bardzo proszê o to,
+; by nie rozpowszechniaæ modyfikowanych nie przez autora wersji tego pliku.
+; Nie jest to co prawda zabronione, ale mam na uwadze tutaj integralno¶æ tej
+; pracy i s³ownika, który mam nadziejê jako efekt koñcowy powstanie.
+;
+; Ten plik s³u¿y jako pomoc przy tworzeniu polskiego s³ownika do ispella.
+; Dziêki dodawaniu odpowiednich flag do wyrazów z pliku ¼rod³owego s³ownika
+; ispella mo¿na upro¶ciæ sobie tworzenie kompletnej listy s³ów, któr± s³ownik
+; powinien zawieraæ. Przed ka¿d± flag± z tego pliku (s³owo kluczowe 'flag')
+; znajduje siê komentarz wyja¶niaj±cy, kiedy powinno siê dan± flagê stosowaæ.
+; Np. we¼my pod uwagê czasownik 'stosowaæ'. Jest to czasownik, a wiêkszo¶æ
+; czasowników pasuje do flagi 'H'. Czasownik ten odmienia siê przez osoby w
+; czasie tera¼niejszym nastêpuj±co:
+;
+; on, ona, ono	stosuje
+; oni, one	stosuj±
+; wy		stosujecie
+;
+; itd., itp. S³owo to pasuje do flagi 'I'. Powinno siê wiêc umie¶ciæ ci±g
+; znaków 'stosowaæ/HI' w pliku ¼ród³owym s³ownika.
+;
+; Poza komentarzami przy flagach, z plikiem polish.aff rozprowadzany jest
+; tak¿e plik 'przyklady_odmian', który podpowiada, jakim flagom odpowiadaj±
+; konkretne przyk³ady wyrazów. Ponadto, w pliku "words.wyjatki" znajduj± siê
+; wyrazy (bez pe³nych odmian), które nie kwalifikuj± siê do ¿adnej z flag - s±
+; to wyj±tki, jak równie¿ s³owa, w których odmianie wystêpuje za du¿a
+; oboczno¶æ tematu, np.:
+; ci±æ - on tnie
+; umieæ - ja umiem
+;
+; Tabelki opisuj±ce u¿yteczno¶æ poszczególnych flag
+; Rzeczowniki rodzaju mêskiego:
+; lp. |lm.
+;      M. D. C. B. N. Ms
+; ----------------------
+; O   |o |D |             osobowe
+; Q   |q |T |S            osobowe
+;     |s |  |             nieosobowe
+; ----------------------
+; P   |w |                osobowe   
+; R   |t |Z               osobowe   
+;     |z |                nieosobowe
+; ----------------------
+; p   |u                  miêkkokoñcówkowe
+; r   |
+;
+; Rzeczowniki rodzaju ¿eñskiego (oraz w lp. meskie odmieniane jak ¿eñskie):
+; lp. |lm.
+;      M. D. C. B. N. Ms
+; ----------------------
+; L   |A |m |             
+; M   |  |n |N            
+;     |  |  |             
+; ----------------------
+; Rzeczowniki rodzaju nijakiego:
+; lp. |lm.
+;      M. D. C. B. N. Ms
+; ----------------------
+; U   |V
+; ----------------------
+; Rzeczowniki bez liczby pojedynczej
+; lp. |lm.
+;      M. D. C. B. N. Ms
+; ----------------------
+;     |   l |
+;     |   f |W
+;     |   v |
+; ----------------------
+;
+; Oto charakterystyczne grupy flag, które najczê¶ciej mog± wystêpowaæ: 
+;
+; Dla czasowników:
+; /HI
+; /HJ
+; /HG (bardzo rzadko)
+; /g    - rzeczowniki ods³owne od flagi G
+; /HF   - czas przeszly, tryb przypuszczaj±cy -n±³ -> ...
+; /B    - tryb rozkazuj±cy
+; /h    - czas przysz³y
+; /i    - rzeczowniki ods³owne i formy bezosobowe od flagi I
+; /k    - tryb rozkazuj±cy dla flagi i
+; /j    - rzeczowniki i formy bezosobowe dla flagi J
+;
+; Dla rzeczowników rodzaju ¿eñskiego:
+; /LN
+; /MN
+; /Lm
+; /Mm  -- D. lm
+; /Mn  -- D. lm
+;
+; Dla rzeczowników rodzaju mêskiego:
+; /OSo	(osobowe)
+; /OSq	(osobowe)
+; /QSs	(nieosobowe)
+; /KOSq (dla rzeczowników osobowych rodzaju mêskiego, od których mo¿na te¿
+;	utworzyæ rzeczowniki osobowe rodzaju ¿eñskiego, np. 
+;	administrator -> administratorka)
+; /OZq,/KOZq (dla rzeczowników okre¶laj±cych cz³onków sekt, zakonów, wyznawców
+;	wiary, np.:
+;	arianin - lmn. kim? czym? arianami
+;	flaga K, je¶li rzeczownik dotyczy równie¿ rodzaju ¿eñskiego
+;	(ariankami, chrze¶cijankami))
+; /PZt	(osobowe)
+; /PZz	(nieosobowe)
+; /RZz	(nieosobowe)
+; /pu	(tzw. miêkkokoñcówkowe: ¿uraw - ¿urawia, czerw - czerwia)
+; /ru	(tzw. miêkkokoñcówkowe: jedwab - jedwabiu, o³ów)
+; /w    mianownik lmn., rzeczowniki mêskoosobowe dla flag p i r
+;
+; Dla rzeczowników rodzaju nijakiego:
+; /UV
+;
+; Dla przymiotników i imies³owów oraz rzeczowników rodzaju mêskiego
+; odmienianych jak przymiotniki:
+; /xX (okre¶lenia niedotycz±ce osób)
+; /XY (je¿eli wyraz okre¶la osobê, np. du¿y, a nie np. przeczytany)
+; /Xo (je¿eli wyraz okre¶la osobê, i w mianownku lmn. koñczy siê na '-owie')
+; /XYb (je¿eli wyraz jest okre¶leniem, które mo¿na po³±czyæ sensownie z
+; partku³± "nie", np. dobry - niedobry, niedobrzy)
+;
+;zestaw flag a b c d e f g h i j k l m n o p q r s t u v w x y z
+;            - - - - - - - - - - - - - - - - - - - - - - - -   -
+;            A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+;            - - - -   - - - - - - - - - - - - - - - - - - - - -
+
+set-variable .spell.rules "abcdefghijklmnopqrstuvwxzABCDFGHIJKLMNOPQRSTUVWXYZ"
+
+; reset the spell rules
+0 add-spell-rule
+
+; Now add the polish spell rules
+;
+; prefixes
+;
+; flag *a:
+-2 add-spell-rule "a" "." "" "nad" ;naturalny -> nadnaturalny
+
+; flag *b:
+-2 add-spell-rule "b" "." "" "nie" ;dobry -> niedobry
+
+; flag *c:
+-2 add-spell-rule "c" "." "" "anty" ;klerykalny -> antyklerykalny
+
+; flag *d:
+-2 add-spell-rule "d" "." "" "a" ;spo³eczny -> aspo³eczny
+
+; flag *e:
+-2 add-spell-rule "e" "." "" "bez" ;awarjny -> bezawaryjny
+
+
+;suffixes
+;
+; Czasownki dokonane, koñcz±ce siê na '-n±æ' i odmieniaj±ce siê na '-n±³', '-nê³a' itp.
+; flag *F:
+ 2 add-spell-rule "F" "n±æ" "æ" "³em" ;splun±æ, usun±æ, cisn±æ (on mnie ci¶nie), machn±æ 
+ 2 add-spell-rule "F" "n±æ" "±æ" "ê³am" ;
+ 2 add-spell-rule "F" "n±æ" "æ" "³e¶" ;
+ 2 add-spell-rule "F" "n±æ" "±æ" "ê³a¶" ;
+ 2 add-spell-rule "F" "n±æ" "æ" "³" ;
+ 2 add-spell-rule "F" "n±æ" "±æ" "ê³a" ;
+ 2 add-spell-rule "F" "n±æ" "±æ" "ê³o" ;
+ 2 add-spell-rule "F" "n±æ" "±æ" "êli¶my" ;
+ 2 add-spell-rule "F" "n±æ" "±æ" "ê³y¶my" ;
+ 2 add-spell-rule "F" "n±æ" "±æ" "êli¶cie" ;
+ 2 add-spell-rule "F" "n±æ" "±æ" "ê³y¶cie" ;
+ 2 add-spell-rule "F" "n±æ" "±æ" "êli" ;
+ 2 add-spell-rule "F" "n±æ" "±æ" "ê³y" ;
+ 2 add-spell-rule "F" "n±æ" "æ" "³bym" ;
+ 2 add-spell-rule "F" "n±æ" "±æ" "ê³abym" ;
+ 2 add-spell-rule "F" "n±æ" "æ" "³by¶" ;
+ 2 add-spell-rule "F" "n±æ" "±æ" "ê³aby¶" ;
+ 2 add-spell-rule "F" "n±æ" "æ" "³by" ;
+ 2 add-spell-rule "F" "n±æ" "±æ" "ê³aby" ;
+ 2 add-spell-rule "F" "n±æ" "±æ" "ê³oby" ;
+ 2 add-spell-rule "F" "n±æ" "±æ" "êliby" ;
+ 2 add-spell-rule "F" "n±æ" "±æ" "ê³yby" ;
+ 2 add-spell-rule "F" "n±æ" "±æ" "êliby¶cie" ;
+ 2 add-spell-rule "F" "n±æ" "±æ" "ê³yby¶cie" ;
+
+; Czasowniki niedokonane, koñcz±ce siê na '-waæ', odmieniaj±ce siê w 3 os.
+; lp. na '-wuje'
+; koñcówka -iwaæ odmienia siê na -iwuje (w fladze H - na -uje) np.:
+
+; rozstrzeliwaæ - rozstrzeliwuje
+
+; flag *G:
+
+ 2 add-spell-rule "G" "iwaæ" "aæ" "uje" ;rozstrzeliwaæ
+ 2 add-spell-rule "G" "iwaæ" "aæ" "ujecie" ;
+ 2 add-spell-rule "G" "iwaæ" "aæ" "ujemy" ;
+ 2 add-spell-rule "G" "iwaæ" "aæ" "ujesz" ;
+ 2 add-spell-rule "G" "iwaæ" "aæ" "uj±" ;
+ 2 add-spell-rule "G" "iwaæ" "aæ" "ujê" ;
+
+
+; Rzeczowniki ods³owne pochodz±ce od czasowników z grupy flagi G i F oraz
+; formy bezosobowe
+; flag *g:
+ 2 add-spell-rule "g" "iwaæ" "æ" "nia" ;
+ 2 add-spell-rule "g" "iwaæ" "æ" "nie" ;
+ 2 add-spell-rule "g" "iwaæ" "æ" "niem" ;
+ 2 add-spell-rule "g" "iwaæ" "æ" "niu" ;
+ 2 add-spell-rule "g" "iwaæ" "æ" "no" ;
+ 2 add-spell-rule "g" "iwaæ" "aæ" "uj±c" ;
+	
+ 2 add-spell-rule "g" "n±æ" "±æ" "iêcie" ;
+ 2 add-spell-rule "g" "n±æ" "±æ" "iêcia" ;
+ 2 add-spell-rule "g" "n±æ" "±æ" "iêciu" ;
+ 2 add-spell-rule "g" "n±æ" "±æ" "iêciem" ;
+ 2 add-spell-rule "g" "n±æ" "æ" "wszy" ;
+
+; Wszelkie czasowniki nie za³apuj±ce siê pod flagê F.
+; Flaga ta zapewnia odmianê czasownika przez osoby w czasie przesz³ym i w
+; trybie przypuszczaj±cym
+
+; flag *H:
+
+ 2 add-spell-rule "H" "[^±e¶¼]æ" "æ" "³em" ;porwaæ, piæ, grywaæ, !chudn±æ,!lecieæ
+ 2 add-spell-rule "H" "[^±e¶¼]æ" "æ" "³am" ;
+ 2 add-spell-rule "H" "[^±e¶¼]æ" "æ" "³e¶" ;
+ 2 add-spell-rule "H" "[^±e¶¼]æ" "æ" "³a¶" ;
+ 2 add-spell-rule "H" "[^±e¶¼]æ" "æ" "³" ;
+ 2 add-spell-rule "H" "[^±e¶¼]æ" "æ" "³a" ;
+ 2 add-spell-rule "H" "[^±e¶¼]æ" "æ" "³o" ;
+ 2 add-spell-rule "H" "[^±e¶¼]æ" "æ" "li¶my" ;
+ 2 add-spell-rule "H" "[^±e¶¼]æ" "æ" "³y¶my" ;
+ 2 add-spell-rule "H" "[^±e¶¼]æ" "æ" "li¶cie" ;
+ 2 add-spell-rule "H" "[^±e¶¼]æ" "æ" "³y¶cie" ;
+ 2 add-spell-rule "H" "[^±e¶¼]æ" "æ" "li" ;
+ 2 add-spell-rule "H" "[^±e¶¼]æ" "æ" "³y" ;
+ 2 add-spell-rule "H" "[^±e¶¼]æ" "æ" "³bym" ;
+ 2 add-spell-rule "H" "[^±e¶¼]æ" "æ" "³abym" ;
+ 2 add-spell-rule "H" "[^±e¶¼]æ" "æ" "³by¶" ;
+ 2 add-spell-rule "H" "[^±e¶¼]æ" "æ" "³aby¶" ;
+ 2 add-spell-rule "H" "[^±e¶¼]æ" "æ" "³by" ;
+ 2 add-spell-rule "H" "[^±e¶¼]æ" "æ" "³aby" ;
+ 2 add-spell-rule "H" "[^±e¶¼]æ" "æ" "³oby" ;
+ 2 add-spell-rule "H" "[^±e¶¼]æ" "æ" "liby" ;
+ 2 add-spell-rule "H" "[^±e¶¼]æ" "æ" "³yby" ;
+ 2 add-spell-rule "H" "[^±e¶¼]æ" "æ" "liby¶cie" ;
+ 2 add-spell-rule "H" "[^±e¶¼]æ" "æ" "³yby¶cie" ;
+
+ 2 add-spell-rule "H" "a¶æ" "¶æ" "d³em" ;spa¶æ, kra¶æ, k³a¶æ
+ 2 add-spell-rule "H" "a¶æ" "¶æ" "d³am" ;
+ 2 add-spell-rule "H" "a¶æ" "¶æ" "d³e¶" ;
+ 2 add-spell-rule "H" "a¶æ" "¶æ" "d³a¶" ;
+ 2 add-spell-rule "H" "a¶æ" "¶æ" "d³" ;
+ 2 add-spell-rule "H" "a¶æ" "¶æ" "d³a" ;
+ 2 add-spell-rule "H" "a¶æ" "¶æ" "d³o" ;
+ 2 add-spell-rule "H" "a¶æ" "¶æ" "dli¶my" ;
+ 2 add-spell-rule "H" "a¶æ" "¶æ" "d³y¶my" ;
+ 2 add-spell-rule "H" "a¶æ" "¶æ" "dli¶cie" ;
+ 2 add-spell-rule "H" "a¶æ" "¶æ" "d³y¶cie" ;
+ 2 add-spell-rule "H" "a¶æ" "¶æ" "dli" ;
+ 2 add-spell-rule "H" "a¶æ" "¶æ" "d³y" ;
+ 2 add-spell-rule "H" "a¶æ" "¶æ" "d³bym" ;
+ 2 add-spell-rule "H" "a¶æ" "¶æ" "d³abym" ;
+ 2 add-spell-rule "H" "a¶æ" "¶æ" "d³by¶" ;
+ 2 add-spell-rule "H" "a¶æ" "¶æ" "d³aby¶" ;
+ 2 add-spell-rule "H" "a¶æ" "¶æ" "d³by" ;
+ 2 add-spell-rule "H" "a¶æ" "¶æ" "d³aby" ;
+ 2 add-spell-rule "H" "a¶æ" "¶æ" "d³oby" ;
+ 2 add-spell-rule "H" "a¶æ" "¶æ" "dliby" ;
+ 2 add-spell-rule "H" "a¶æ" "¶æ" "d³yby" ;
+ 2 add-spell-rule "H" "a¶æ" "¶æ" "dliby¶cie" ;
+ 2 add-spell-rule "H" "a¶æ" "¶æ" "d³yby¶cie" ;
+
+ 2 add-spell-rule "H" "±¶æ" "±¶æ" "ad³em" ;usi±¶æ
+ 2 add-spell-rule "H" "±¶æ" "±¶æ" "ad³am" ;
+ 2 add-spell-rule "H" "±¶æ" "±¶æ" "ad³e¶" ;
+ 2 add-spell-rule "H" "±¶æ" "±¶æ" "ad³a¶" ;
+ 2 add-spell-rule "H" "±¶æ" "±¶æ" "ad³" ;
+ 2 add-spell-rule "H" "±¶æ" "±¶æ" "ad³a" ;
+ 2 add-spell-rule "H" "±¶æ" "±¶æ" "ad³o" ;
+ 2 add-spell-rule "H" "±¶æ" "±¶æ" "edli¶my" ;
+ 2 add-spell-rule "H" "±¶æ" "±¶æ" "ad³y¶my" ;
+ 2 add-spell-rule "H" "±¶æ" "±¶æ" "edli¶cie" ;
+ 2 add-spell-rule "H" "±¶æ" "±¶æ" "ad³y¶cie" ;
+ 2 add-spell-rule "H" "±¶æ" "±¶æ" "eli" ;
+ 2 add-spell-rule "H" "±¶æ" "±¶æ" "ad³y" ;
+ 2 add-spell-rule "H" "±¶æ" "±¶æ" "ad³bym" ;
+ 2 add-spell-rule "H" "±¶æ" "±¶æ" "ad³abym" ;
+ 2 add-spell-rule "H" "±¶æ" "±¶æ" "ad³by¶" ;
+ 2 add-spell-rule "H" "±¶æ" "±¶æ" "ad³aby¶" ;
+ 2 add-spell-rule "H" "±¶æ" "±¶æ" "ad³by" ;
+ 2 add-spell-rule "H" "±¶æ" "±¶æ" "ad³aby" ;
+ 2 add-spell-rule "H" "±¶æ" "±¶æ" "ad³oby" ;
+ 2 add-spell-rule "H" "±¶æ" "±¶æ" "edliby" ;
+ 2 add-spell-rule "H" "±¶æ" "±¶æ" "ad³yby" ;
+ 2 add-spell-rule "H" "±¶æ" "±¶æ" "edliby¶cie" ;
+ 2 add-spell-rule "H" "±¶æ" "±¶æ" "ad³yby¶cie" ;
+
+ 2 add-spell-rule "H" "ie¶æ" "e¶æ" "os³em" ;nie¶æ
+ 2 add-spell-rule "H" "ie¶æ" "e¶æ" "os³am" ;
+ 2 add-spell-rule "H" "ie¶æ" "e¶æ" "os³e¶" ;
+ 2 add-spell-rule "H" "ie¶æ" "e¶æ" "os³a¶" ;
+ 2 add-spell-rule "H" "ie¶æ" "e¶æ" "ós³" ;
+ 2 add-spell-rule "H" "ie¶æ" "e¶æ" "os³a" ;
+ 2 add-spell-rule "H" "ie¶æ" "e¶æ" "os³o" ;
+ 2 add-spell-rule "H" "ie¶æ" "¶æ" "¶li¶my" ;
+ 2 add-spell-rule "H" "ie¶æ" "e¶æ" "os³y¶my" ;
+ 2 add-spell-rule "H" "ie¶æ" "¶æ" "¶li¶cie" ;
+ 2 add-spell-rule "H" "ie¶æ" "e¶æ" "os³y¶cie" ;
+ 2 add-spell-rule "H" "ie¶æ" "¶æ" "¶li" ;
+ 2 add-spell-rule "H" "ie¶æ" "e¶æ" "os³y" ;
+ 2 add-spell-rule "H" "ie¶æ" "e¶æ" "ós³bym" ;
+ 2 add-spell-rule "H" "ie¶æ" "e¶æ" "os³abym" ;
+ 2 add-spell-rule "H" "ie¶æ" "e¶æ" "ós³by¶" ;
+ 2 add-spell-rule "H" "ie¶æ" "e¶æ" "os³aby¶" ;
+ 2 add-spell-rule "H" "ie¶æ" "e¶æ" "ós³by" ;
+ 2 add-spell-rule "H" "ie¶æ" "e¶æ" "os³aby" ;
+ 2 add-spell-rule "H" "ie¶æ" "e¶æ" "os³oby" ;
+ 2 add-spell-rule "H" "ie¶æ" "¶æ" "¶liby" ;
+ 2 add-spell-rule "H" "ie¶æ" "e¶æ" "os³yby" ;
+ 2 add-spell-rule "H" "ie¶æ" "¶æ" "¶liby¶cie" ;
+ 2 add-spell-rule "H" "ie¶æ" "e¶æ" "os³yby¶cie" ;
+
+ 2 add-spell-rule "H" "je¶æ" "e¶æ" "ad³em" ;je¶æ
+ 2 add-spell-rule "H" "je¶æ" "e¶æ" "ad³am" ;
+ 2 add-spell-rule "H" "je¶æ" "e¶æ" "ad³e¶" ;
+ 2 add-spell-rule "H" "je¶æ" "e¶æ" "ad³a¶" ;
+ 2 add-spell-rule "H" "je¶æ" "e¶æ" "ad³" ;
+ 2 add-spell-rule "H" "je¶æ" "e¶æ" "ad³a" ;
+ 2 add-spell-rule "H" "je¶æ" "e¶æ" "ad³o" ;
+ 2 add-spell-rule "H" "je¶æ" "¶æ" "dli¶my" ;
+ 2 add-spell-rule "H" "je¶æ" "e¶æ" "ad³y¶my" ;
+ 2 add-spell-rule "H" "je¶æ" "¶æ" "dli¶cie" ;
+ 2 add-spell-rule "H" "je¶æ" "e¶æ" "ad³y¶cie" ;
+ 2 add-spell-rule "H" "je¶æ" "¶æ" "dli" ;
+ 2 add-spell-rule "H" "je¶æ" "e¶æ" "ad³y" ;
+ 2 add-spell-rule "H" "je¶æ" "e¶æ" "ad³bym" ;
+ 2 add-spell-rule "H" "je¶æ" "e¶æ" "ad³abym" ;
+ 2 add-spell-rule "H" "je¶æ" "e¶æ" "ad³by¶" ;
+ 2 add-spell-rule "H" "je¶æ" "e¶æ" "ad³aby¶" ;
+ 2 add-spell-rule "H" "je¶æ" "e¶æ" "ad³by" ;
+ 2 add-spell-rule "H" "je¶æ" "e¶æ" "ad³aby" ;
+ 2 add-spell-rule "H" "je¶æ" "e¶æ" "ad³oby" ;
+ 2 add-spell-rule "H" "je¶æ" "¶æ" "dliby" ;
+ 2 add-spell-rule "H" "je¶æ" "e¶æ" "ad³yby" ;
+ 2 add-spell-rule "H" "je¶æ" "¶æ" "dliby¶cie" ;
+ 2 add-spell-rule "H" "je¶æ" "e¶æ" "ad³yby¶cie" ;
+
+ 2 add-spell-rule "H" "le¶æ" "e¶æ" "ot³em" ;ple¶æ
+ 2 add-spell-rule "H" "le¶æ" "e¶æ" "ot³am" ;
+ 2 add-spell-rule "H" "le¶æ" "e¶æ" "ot³e¶" ;
+ 2 add-spell-rule "H" "le¶æ" "e¶æ" "ot³a¶" ;
+ 2 add-spell-rule "H" "le¶æ" "e¶æ" "ót³" ;
+ 2 add-spell-rule "H" "le¶æ" "e¶æ" "ot³a" ;
+ 2 add-spell-rule "H" "le¶æ" "e¶æ" "ot³o" ;
+ 2 add-spell-rule "H" "le¶æ" "¶æ" "¶li¶my" ;
+ 2 add-spell-rule "H" "le¶æ" "e¶æ" "ot³y¶my" ;
+ 2 add-spell-rule "H" "le¶æ" "¶æ" "¶li¶cie" ;
+ 2 add-spell-rule "H" "le¶æ" "e¶æ" "ot³y¶cie" ;
+ 2 add-spell-rule "H" "le¶æ" "¶æ" "¶li" ;
+ 2 add-spell-rule "H" "le¶æ" "e¶æ" "ot³y" ;
+ 2 add-spell-rule "H" "le¶æ" "e¶æ" "ót³bym" ;
+ 2 add-spell-rule "H" "le¶æ" "e¶æ" "ot³abym" ;
+ 2 add-spell-rule "H" "le¶æ" "e¶æ" "ót³by¶" ;
+ 2 add-spell-rule "H" "le¶æ" "e¶æ" "ot³aby¶" ;
+ 2 add-spell-rule "H" "le¶æ" "e¶æ" "ót³by" ;
+ 2 add-spell-rule "H" "le¶æ" "e¶æ" "ot³aby" ;
+ 2 add-spell-rule "H" "le¶æ" "e¶æ" "ot³oby" ;
+ 2 add-spell-rule "H" "le¶æ" "¶æ" "¶liby" ;
+ 2 add-spell-rule "H" "le¶æ" "e¶æ" "ot³yby" ;
+ 2 add-spell-rule "H" "le¶æ" "¶æ" "¶liby¶cie" ;
+ 2 add-spell-rule "H" "le¶æ" "e¶æ" "ot³yby¶cie" ;
+
+ 2 add-spell-rule "H" "y¼æ" "¼æ" "z³em" ;gry¼æ
+ 2 add-spell-rule "H" "y¼æ" "¼æ" "z³am" ;
+ 2 add-spell-rule "H" "y¼æ" "¼æ" "z³e¶" ;
+ 2 add-spell-rule "H" "y¼æ" "¼æ" "z³a¶" ;
+ 2 add-spell-rule "H" "y¼æ" "¼æ" "z³" ;
+ 2 add-spell-rule "H" "y¼æ" "¼æ" "z³a" ;
+ 2 add-spell-rule "H" "y¼æ" "¼æ" "z³o" ;
+ 2 add-spell-rule "H" "y¼æ" "æ" "li¶my" ;
+ 2 add-spell-rule "H" "y¼æ" "¼æ" "z³y¶my" ;
+ 2 add-spell-rule "H" "y¼æ" "æ" "li¶cie" ;
+ 2 add-spell-rule "H" "y¼æ" "¼æ" "z³y¶cie" ;
+ 2 add-spell-rule "H" "y¼æ" "æ" "li" ;
+ 2 add-spell-rule "H" "y¼æ" "¼æ" "z³y" ;
+ 2 add-spell-rule "H" "y¼æ" "¼æ" "z³bym" ;
+ 2 add-spell-rule "H" "y¼æ" "¼æ" "z³abym" ;
+ 2 add-spell-rule "H" "y¼æ" "¼æ" "z³by¶" ;
+ 2 add-spell-rule "H" "y¼æ" "¼æ" "z³aby¶" ;
+ 2 add-spell-rule "H" "y¼æ" "¼æ" "z³by" ;
+ 2 add-spell-rule "H" "y¼æ" "¼æ" "z³aby" ;
+ 2 add-spell-rule "H" "y¼æ" "¼æ" "z³oby" ;
+ 2 add-spell-rule "H" "y¼æ" "æ" "liby" ;
+ 2 add-spell-rule "H" "y¼æ" "¼æ" "z³yby" ;
+ 2 add-spell-rule "H" "y¼æ" "æ" "liby¶cie" ;
+ 2 add-spell-rule "H" "y¼æ" "¼æ" "z³yby¶cie" ;
+
+ 2 add-spell-rule "H" "[^i]e¼æ" "e¼æ" "az³em" ;znale¼æ
+ 2 add-spell-rule "H" "[^i]e¼æ" "e¼æ" "az³am" ;
+ 2 add-spell-rule "H" "[^i]e¼æ" "e¼æ" "az³e¶" ;
+ 2 add-spell-rule "H" "[^i]e¼æ" "e¼æ" "az³a¶" ;
+ 2 add-spell-rule "H" "[^i]e¼æ" "e¼æ" "az³" ;
+ 2 add-spell-rule "H" "[^i]e¼æ" "e¼æ" "az³a" ;
+ 2 add-spell-rule "H" "[^i]e¼æ" "e¼æ" "az³o" ;
+ 2 add-spell-rule "H" "[^i]e¼æ" "æ" "li¶my" ;
+ 2 add-spell-rule "H" "[^i]e¼æ" "e¼æ" "az³y¶my" ;
+ 2 add-spell-rule "H" "[^i]e¼æ" "æ" "li¶cie" ;
+ 2 add-spell-rule "H" "[^i]e¼æ" "e¼æ" "az³y¶cie" ;
+ 2 add-spell-rule "H" "[^i]e¼æ" "æ" "li" ;
+ 2 add-spell-rule "H" "[^i]e¼æ" "e¼æ" "az³y" ;
+ 2 add-spell-rule "H" "[^i]e¼æ" "e¼æ" "az³bym" ;
+ 2 add-spell-rule "H" "[^i]e¼æ" "e¼æ" "az³abym" ;
+ 2 add-spell-rule "H" "[^i]e¼æ" "e¼æ" "az³by¶" ;
+ 2 add-spell-rule "H" "[^i]e¼æ" "e¼æ" "az³aby¶" ;
+ 2 add-spell-rule "H" "[^i]e¼æ" "e¼æ" "az³by" ;
+ 2 add-spell-rule "H" "[^i]e¼æ" "e¼æ" "az³aby" ;
+ 2 add-spell-rule "H" "[^i]e¼æ" "e¼æ" "az³oby" ;
+ 2 add-spell-rule "H" "[^i]e¼æ" "æ" "liby" ;
+ 2 add-spell-rule "H" "[^i]e¼æ" "e¼æ" "az³yby" ;
+ 2 add-spell-rule "H" "[^i]e¼æ" "æ" "liby¶cie" ;
+ 2 add-spell-rule "H" "[^i]e¼æ" "e¼æ" "az³yby¶cie" ;
+
+ 2 add-spell-rule "H" "ie¼æ" "e¼æ" "oz³em" ;wie¼æ
+ 2 add-spell-rule "H" "ie¼æ" "e¼æ" "oz³am" ;
+ 2 add-spell-rule "H" "ie¼æ" "e¼æ" "oz³e¶" ;
+ 2 add-spell-rule "H" "ie¼æ" "e¼æ" "oz³a¶" ;
+ 2 add-spell-rule "H" "ie¼æ" "e¼æ" "óz³" ;
+ 2 add-spell-rule "H" "ie¼æ" "e¼æ" "oz³a" ;
+ 2 add-spell-rule "H" "ie¼æ" "e¼æ" "oz³o" ;
+ 2 add-spell-rule "H" "ie¼æ" "æ" "li¶my" ;
+ 2 add-spell-rule "H" "ie¼æ" "e¼æ" "oz³y¶my" ;
+ 2 add-spell-rule "H" "ie¼æ" "æ" "li¶cie" ;
+ 2 add-spell-rule "H" "ie¼æ" "e¼æ" "oz³y¶cie" ;
+ 2 add-spell-rule "H" "ie¼æ" "æ" "li" ;
+ 2 add-spell-rule "H" "ie¼æ" "e¼æ" "oz³y" ;
+ 2 add-spell-rule "H" "ie¼æ" "e¼æ" "óz³bym" ;
+ 2 add-spell-rule "H" "ie¼æ" "e¼æ" "oz³abym" ;
+ 2 add-spell-rule "H" "ie¼æ" "e¼æ" "óz³by¶" ;
+ 2 add-spell-rule "H" "ie¼æ" "e¼æ" "oz³aby¶" ;
+ 2 add-spell-rule "H" "ie¼æ" "e¼æ" "óz³by" ;
+ 2 add-spell-rule "H" "ie¼æ" "e¼æ" "oz³aby" ;
+ 2 add-spell-rule "H" "ie¼æ" "e¼æ" "oz³oby" ;
+ 2 add-spell-rule "H" "ie¼æ" "æ" "liby" ;
+ 2 add-spell-rule "H" "ie¼æ" "e¼æ" "oz³yby" ;
+ 2 add-spell-rule "H" "ie¼æ" "æ" "liby¶cie" ;
+ 2 add-spell-rule "H" "ie¼æ" "e¼æ" "oz³yby¶cie" ;
+
+ 2 add-spell-rule "H" "eæ" "eæ" "a³em" ;lecieæ
+ 2 add-spell-rule "H" "eæ" "eæ" "a³am" ;
+ 2 add-spell-rule "H" "eæ" "eæ" "a³e¶" ;
+ 2 add-spell-rule "H" "eæ" "eæ" "a³a¶" ;
+ 2 add-spell-rule "H" "eæ" "eæ" "a³" ;
+ 2 add-spell-rule "H" "eæ" "eæ" "a³a" ;
+ 2 add-spell-rule "H" "eæ" "eæ" "a³o" ;
+ 2 add-spell-rule "H" "eæ" "æ" "li¶my" ;
+ 2 add-spell-rule "H" "eæ" "eæ" "a³y¶my" ;
+ 2 add-spell-rule "H" "eæ" "æ" "li¶cie" ;
+ 2 add-spell-rule "H" "eæ" "eæ" "a³y¶cie" ;
+ 2 add-spell-rule "H" "eæ" "æ" "li" ;
+ 2 add-spell-rule "H" "eæ" "eæ" "a³y" ;
+ 2 add-spell-rule "H" "eæ" "eæ" "a³bym" ;
+ 2 add-spell-rule "H" "eæ" "eæ" "a³abym" ;
+ 2 add-spell-rule "H" "eæ" "eæ" "a³by¶" ;
+ 2 add-spell-rule "H" "eæ" "eæ" "a³aby¶" ;
+ 2 add-spell-rule "H" "eæ" "eæ" "a³by" ;
+ 2 add-spell-rule "H" "eæ" "eæ" "a³aby" ;
+ 2 add-spell-rule "H" "eæ" "eæ" "a³oby" ;
+ 2 add-spell-rule "H" "eæ" "æ" "liby" ;
+ 2 add-spell-rule "H" "eæ" "eæ" "a³yby" ;
+ 2 add-spell-rule "H" "eæ" "æ" "liby¶cie" ;
+ 2 add-spell-rule "H" "eæ" "eæ" "a³yby¶cie" ;
+
+ 2 add-spell-rule "H" "[^aêo][^hsz]n±æ" "n±æ" "³em" ;chudn±æ-chud³em
+ 2 add-spell-rule "H" "[^aêo][^hsz]n±æ" "n±æ" "³am" ;
+ 2 add-spell-rule "H" "[^aêo][^hsz]n±æ" "n±æ" "³e¶" ;
+ 2 add-spell-rule "H" "[^aêo][^hsz]n±æ" "n±æ" "³a¶" ;
+ 2 add-spell-rule "H" "[^aêo][^hsz]n±æ" "n±æ" "³" ;
+ 2 add-spell-rule "H" "[^aêo][^hsz]n±æ" "n±æ" "³a" ;
+ 2 add-spell-rule "H" "[^aêo][^hsz]n±æ" "n±æ" "³o" ;
+ 2 add-spell-rule "H" "[^aêo][^hsz]n±æ" "n±æ" "li¶my" ;
+ 2 add-spell-rule "H" "[^aêo][^hsz]n±æ" "n±æ" "³y¶my" ;
+ 2 add-spell-rule "H" "[^aêo][^hsz]n±æ" "n±æ" "li¶cie" ;
+ 2 add-spell-rule "H" "[^aêo][^hsz]n±æ" "n±æ" "³y¶cie" ;
+ 2 add-spell-rule "H" "[^aêo][^hsz]n±æ" "n±æ" "li" ;
+ 2 add-spell-rule "H" "[^aêo][^hsz]n±æ" "n±æ" "³y" ;
+ 2 add-spell-rule "H" "[^aêo][^hsz]n±æ" "n±æ" "³bym" ;
+ 2 add-spell-rule "H" "[^aêo][^hsz]n±æ" "n±æ" "³abym" ;
+ 2 add-spell-rule "H" "[^aêo][^hsz]n±æ" "n±æ" "³by¶" ;
+ 2 add-spell-rule "H" "[^aêo][^hsz]n±æ" "n±æ" "³aby¶" ;
+ 2 add-spell-rule "H" "[^aêo][^hsz]n±æ" "n±æ" "³by" ;
+ 2 add-spell-rule "H" "[^aêo][^hsz]n±æ" "n±æ" "³aby" ;
+ 2 add-spell-rule "H" "[^aêo][^hsz]n±æ" "n±æ" "³oby" ;
+ 2 add-spell-rule "H" "[^aêo][^hsz]n±æ" "n±æ" "liby" ;
+ 2 add-spell-rule "H" "[^aêo][^hsz]n±æ" "n±æ" "³yby" ;
+ 2 add-spell-rule "H" "[^aêo][^hsz]n±æ" "n±æ" "liby¶cie" ;
+ 2 add-spell-rule "H" "[^aêo][^hsz]n±æ" "n±æ" "³yby¶cie" ;
+
+ 2 add-spell-rule "H" "ichn±æ" "n±æ" "³em" ;ucichn±æ
+ 2 add-spell-rule "H" "ichn±æ" "n±æ" "³am" ;
+ 2 add-spell-rule "H" "ichn±æ" "n±æ" "³e¶" ;
+ 2 add-spell-rule "H" "ichn±æ" "n±æ" "³a¶" ;
+ 2 add-spell-rule "H" "ichn±æ" "n±æ" "³" ;
+ 2 add-spell-rule "H" "ichn±æ" "n±æ" "³a" ;
+ 2 add-spell-rule "H" "ichn±æ" "n±æ" "³o" ;
+ 2 add-spell-rule "H" "ichn±æ" "n±æ" "li¶my" ;
+ 2 add-spell-rule "H" "ichn±æ" "n±æ" "³y¶my" ;
+ 2 add-spell-rule "H" "ichn±æ" "n±æ" "li¶cie" ;
+ 2 add-spell-rule "H" "ichn±æ" "n±æ" "³y¶cie" ;
+ 2 add-spell-rule "H" "ichn±æ" "n±æ" "li" ;
+ 2 add-spell-rule "H" "ichn±æ" "n±æ" "³y" ;
+ 2 add-spell-rule "H" "ichn±æ" "n±æ" "³bym" ;
+ 2 add-spell-rule "H" "ichn±æ" "n±æ" "³abym" ;
+ 2 add-spell-rule "H" "ichn±æ" "n±æ" "³by¶" ;
+ 2 add-spell-rule "H" "ichn±æ" "n±æ" "³aby¶" ;
+ 2 add-spell-rule "H" "ichn±æ" "n±æ" "³by" ;
+ 2 add-spell-rule "H" "ichn±æ" "n±æ" "³aby" ;
+ 2 add-spell-rule "H" "ichn±æ" "n±æ" "³oby" ;
+ 2 add-spell-rule "H" "ichn±æ" "n±æ" "liby" ;
+ 2 add-spell-rule "H" "ichn±æ" "n±æ" "³yby" ;
+ 2 add-spell-rule "H" "ichn±æ" "n±æ" "liby¶cie" ;
+ 2 add-spell-rule "H" "ichn±æ" "n±æ" "³yby¶cie" ;
+
+ 2 add-spell-rule "H" "schn±æ" "n±æ" "³em" ;uschn±æ
+ 2 add-spell-rule "H" "schn±æ" "n±æ" "³am" ;
+ 2 add-spell-rule "H" "schn±æ" "n±æ" "³e¶" ;
+ 2 add-spell-rule "H" "schn±æ" "n±æ" "³a¶" ;
+ 2 add-spell-rule "H" "[^e]schn±æ" "chn±æ" "ech³" ;
+ 2 add-spell-rule "H" "[^z]eschn±æ" "eschn±æ" "sech³" ;
+ 2 add-spell-rule "H" "zeschn±æ" "chn±æ" "ech³" ;
+ 2 add-spell-rule "H" "schn±æ" "n±æ" "³a" ;
+ 2 add-spell-rule "H" "schn±æ" "n±æ" "³o" ;
+ 2 add-spell-rule "H" "schn±æ" "n±æ" "li¶my" ;
+ 2 add-spell-rule "H" "schn±æ" "n±æ" "³y¶my" ;
+ 2 add-spell-rule "H" "schn±æ" "n±æ" "li¶cie" ;
+ 2 add-spell-rule "H" "schn±æ" "n±æ" "³y¶cie" ;
+ 2 add-spell-rule "H" "schn±æ" "n±æ" "li" ;
+ 2 add-spell-rule "H" "schn±æ" "n±æ" "³y" ;
+ 2 add-spell-rule "H" "[^e]schn±æ" "chn±æ" "ech³bym" ;
+ 2 add-spell-rule "H" "[^z]eschn±æ" "eschn±æ" "sech³bym" ;
+ 2 add-spell-rule "H" "zeschn±æ" "chn±æ" "ech³bym" ;
+ 2 add-spell-rule "H" "schn±æ" "n±æ" "³abym" ;
+ 2 add-spell-rule "H" "[^e]schn±æ" "chn±æ" "ech³by¶" ;
+ 2 add-spell-rule "H" "[^z]eschn±æ" "eschn±æ" "sech³by¶" ;
+ 2 add-spell-rule "H" "zeschn±æ" "chn±æ" "ech³by¶" ;
+ 2 add-spell-rule "H" "schn±æ" "n±æ" "³aby¶" ;
+ 2 add-spell-rule "H" "[^e]schn±æ" "chn±æ" "ech³by" ;
+ 2 add-spell-rule "H" "[^z]eschn±æ" "eschn±æ" "sech³by" ;
+ 2 add-spell-rule "H" "zeschn±æ" "chn±æ" "ech³by" ;
+ 2 add-spell-rule "H" "schn±æ" "n±æ" "³aby" ;
+ 2 add-spell-rule "H" "schn±æ" "n±æ" "³oby" ;
+ 2 add-spell-rule "H" "schn±æ" "n±æ" "liby" ;
+ 2 add-spell-rule "H" "schn±æ" "n±æ" "³yby" ;
+ 2 add-spell-rule "H" "schn±æ" "n±æ" "liby¶cie" ;
+ 2 add-spell-rule "H" "schn±æ" "n±æ" "³yby¶cie" ;
+
+ 2 add-spell-rule "H" "odn±æ" "n±æ" "³em" ;bodn±æ
+ 2 add-spell-rule "H" "odn±æ" "n±æ" "³am" ;
+ 2 add-spell-rule "H" "odn±æ" "n±æ" "³e¶" ;
+ 2 add-spell-rule "H" "odn±æ" "n±æ" "³a¶" ;
+ 2 add-spell-rule "H" "odn±æ" "odn±æ" "ód³" ;
+ 2 add-spell-rule "H" "odn±æ" "n±æ" "³a" ;
+ 2 add-spell-rule "H" "odn±æ" "n±æ" "³o" ;
+ 2 add-spell-rule "H" "odn±æ" "n±æ" "li¶my" ;
+ 2 add-spell-rule "H" "odn±æ" "n±æ" "³y¶my" ;
+ 2 add-spell-rule "H" "odn±æ" "n±æ" "li¶cie" ;
+ 2 add-spell-rule "H" "odn±æ" "n±æ" "³y¶cie" ;
+ 2 add-spell-rule "H" "odn±æ" "n±æ" "li" ;
+ 2 add-spell-rule "H" "odn±æ" "n±æ" "³y" ;
+ 2 add-spell-rule "H" "odn±æ" "odn±æ" "ód³bym" ;
+ 2 add-spell-rule "H" "odn±æ" "n±æ" "³abym" ;
+ 2 add-spell-rule "H" "odn±æ" "odn±æ" "ód³by¶" ;
+ 2 add-spell-rule "H" "odn±æ" "n±æ" "³aby¶" ;
+ 2 add-spell-rule "H" "odn±æ" "odn±æ" "ód³by" ;
+ 2 add-spell-rule "H" "odn±æ" "n±æ" "³aby" ;
+ 2 add-spell-rule "H" "odn±æ" "n±æ" "³oby" ;
+ 2 add-spell-rule "H" "odn±æ" "n±æ" "liby" ;
+ 2 add-spell-rule "H" "odn±æ" "n±æ" "³yby" ;
+ 2 add-spell-rule "H" "odn±æ" "n±æ" "liby¶cie" ;
+ 2 add-spell-rule "H" "odn±æ" "n±æ" "³yby¶cie" ;
+
+ 2 add-spell-rule "H" "okn±æ" "n±æ" "³em" ;mokn±æ
+ 2 add-spell-rule "H" "okn±æ" "n±æ" "³am" ;
+ 2 add-spell-rule "H" "okn±æ" "n±æ" "³e¶" ;
+ 2 add-spell-rule "H" "okn±æ" "n±æ" "³a¶" ;
+ 2 add-spell-rule "H" "okn±æ" "okn±æ" "ók³" ;
+ 2 add-spell-rule "H" "okn±æ" "n±æ" "³a" ;
+ 2 add-spell-rule "H" "okn±æ" "n±æ" "³o" ;
+ 2 add-spell-rule "H" "okn±æ" "n±æ" "li¶my" ;
+ 2 add-spell-rule "H" "okn±æ" "n±æ" "³y¶my" ;
+ 2 add-spell-rule "H" "okn±æ" "n±æ" "li¶cie" ;
+ 2 add-spell-rule "H" "okn±æ" "n±æ" "³y¶cie" ;
+ 2 add-spell-rule "H" "okn±æ" "n±æ" "li" ;
+ 2 add-spell-rule "H" "okn±æ" "n±æ" "³y" ;
+ 2 add-spell-rule "H" "okn±æ" "okn±æ" "ók³bym" ;
+ 2 add-spell-rule "H" "okn±æ" "n±æ" "³abym" ;
+ 2 add-spell-rule "H" "okn±æ" "okn±æ" "ók³by¶" ;
+ 2 add-spell-rule "H" "okn±æ" "n±æ" "³aby¶" ;
+ 2 add-spell-rule "H" "okn±æ" "okn±æ" "ók³by" ;
+ 2 add-spell-rule "H" "okn±æ" "n±æ" "³aby" ;
+ 2 add-spell-rule "H" "okn±æ" "n±æ" "³oby" ;
+ 2 add-spell-rule "H" "okn±æ" "n±æ" "liby" ;
+ 2 add-spell-rule "H" "okn±æ" "n±æ" "³yby" ;
+ 2 add-spell-rule "H" "okn±æ" "n±æ" "liby¶cie" ;
+ 2 add-spell-rule "H" "okn±æ" "n±æ" "³yby¶cie" ;
+
+ 2 add-spell-rule "H" "osn±æ" "n±æ" "³em" ;urosn±æ
+ 2 add-spell-rule "H" "osn±æ" "n±æ" "³am" ;
+ 2 add-spell-rule "H" "osn±æ" "n±æ" "³e¶" ;
+ 2 add-spell-rule "H" "osn±æ" "n±æ" "³a¶" ;
+ 2 add-spell-rule "H" "osn±æ" "osn±æ" "ós³" ;
+ 2 add-spell-rule "H" "osn±æ" "n±æ" "³a" ;
+ 2 add-spell-rule "H" "osn±æ" "n±æ" "³o" ;
+ 2 add-spell-rule "H" "osn±æ" "sn±æ" "¶li¶my" ;
+ 2 add-spell-rule "H" "osn±æ" "n±æ" "³y¶my" ;
+ 2 add-spell-rule "H" "osn±æ" "sn±æ" "¶li¶cie" ;
+ 2 add-spell-rule "H" "osn±æ" "n±æ" "³y¶cie" ;
+ 2 add-spell-rule "H" "osn±æ" "sn±æ" "¶li" ;
+ 2 add-spell-rule "H" "osn±æ" "n±æ" "³y" ;
+ 2 add-spell-rule "H" "osn±æ" "osn±æ" "ós³bym" ;
+ 2 add-spell-rule "H" "osn±æ" "n±æ" "³abym" ;
+ 2 add-spell-rule "H" "osn±æ" "osn±æ" "ós³by¶" ;
+ 2 add-spell-rule "H" "osn±æ" "n±æ" "³aby¶" ;
+ 2 add-spell-rule "H" "osn±æ" "osn±æ" "ós³by" ;
+ 2 add-spell-rule "H" "osn±æ" "n±æ" "³aby" ;
+ 2 add-spell-rule "H" "osn±æ" "n±æ" "³oby" ;
+ 2 add-spell-rule "H" "osn±æ" "sn±æ" "¶liby" ;
+ 2 add-spell-rule "H" "osn±æ" "n±æ" "³yby" ;
+ 2 add-spell-rule "H" "osn±æ" "sn±æ" "¶liby¶cie" ;
+ 2 add-spell-rule "H" "osn±æ" "n±æ" "³yby¶cie" ;
+
+ 2 add-spell-rule "H" "[aiy]sn±æ" "n±æ" "³em" ;gasn±æ
+ 2 add-spell-rule "H" "[aiy]sn±æ" "n±æ" "³am" ;
+ 2 add-spell-rule "H" "[aiy]sn±æ" "n±æ" "³e¶" ;
+ 2 add-spell-rule "H" "[aiy]sn±æ" "n±æ" "³a¶" ;
+ 2 add-spell-rule "H" "[aiy]sn±æ" "n±æ" "³" ;
+ 2 add-spell-rule "H" "[aiy]sn±æ" "n±æ" "³a" ;
+ 2 add-spell-rule "H" "[aiy]sn±æ" "n±æ" "³o" ;
+ 2 add-spell-rule "H" "[aiy]sn±æ" "sn±æ" "¶li¶my" ;
+ 2 add-spell-rule "H" "[aiy]sn±æ" "n±æ" "³y¶my" ;
+ 2 add-spell-rule "H" "[aiy]sn±æ" "sn±æ" "¶li¶cie" ;
+ 2 add-spell-rule "H" "[aiy]sn±æ" "n±æ" "³y¶cie" ;
+ 2 add-spell-rule "H" "[aiy]sn±æ" "sn±æ" "¶li" ;
+ 2 add-spell-rule "H" "[aiy]sn±æ" "n±æ" "³y" ;
+ 2 add-spell-rule "H" "[aiy]sn±æ" "n±æ" "³bym" ;
+ 2 add-spell-rule "H" "[aiy]sn±æ" "n±æ" "³abym" ;
+ 2 add-spell-rule "H" "[aiy]sn±æ" "n±æ" "³by¶" ;
+ 2 add-spell-rule "H" "[aiy]sn±æ" "n±æ" "³aby¶" ;
+ 2 add-spell-rule "H" "[aiy]sn±æ" "n±æ" "³by" ;
+ 2 add-spell-rule "H" "[aiy]sn±æ" "n±æ" "³aby" ;
+ 2 add-spell-rule "H" "[aiy]sn±æ" "n±æ" "³oby" ;
+ 2 add-spell-rule "H" "[aiy]sn±æ" "sn±æ" "¶liby" ;
+ 2 add-spell-rule "H" "[aiy]sn±æ" "n±æ" "³yby" ;
+ 2 add-spell-rule "H" "[aiy]sn±æ" "sn±æ" "¶liby¶cie" ;
+ 2 add-spell-rule "H" "[aiy]sn±æ" "n±æ" "³yby¶cie" ;
+
+ 2 add-spell-rule "H" "adn±æ" "n±æ" "³em" ;bladn±æ
+ 2 add-spell-rule "H" "adn±æ" "n±æ" "³am" ;
+ 2 add-spell-rule "H" "adn±æ" "n±æ" "³e¶" ;
+ 2 add-spell-rule "H" "adn±æ" "n±æ" "³a¶" ;
+ 2 add-spell-rule "H" "adn±æ" "n±æ" "³" ;
+ 2 add-spell-rule "H" "adn±æ" "n±æ" "³a" ;
+ 2 add-spell-rule "H" "adn±æ" "n±æ" "³o" ;
+ 2 add-spell-rule "H" "adn±æ" "adn±æ" "edli¶my" ;
+ 2 add-spell-rule "H" "adn±æ" "n±æ" "³y¶my" ;
+ 2 add-spell-rule "H" "adn±æ" "adn±æ" "edli¶cie" ;
+ 2 add-spell-rule "H" "adn±æ" "n±æ" "³y¶cie" ;
+ 2 add-spell-rule "H" "adn±æ" "adn±æ" "edli" ;
+ 2 add-spell-rule "H" "adn±æ" "n±æ" "³y" ;
+ 2 add-spell-rule "H" "adn±æ" "adn±æ" "±d³bym" ;
+ 2 add-spell-rule "H" "adn±æ" "n±æ" "³abym" ;
+ 2 add-spell-rule "H" "adn±æ" "adn±æ" "±d³by¶" ;
+ 2 add-spell-rule "H" "adn±æ" "n±æ" "³aby¶" ;
+ 2 add-spell-rule "H" "adn±æ" "adn±æ" "±d³by" ;
+ 2 add-spell-rule "H" "adn±æ" "n±æ" "³aby" ;
+ 2 add-spell-rule "H" "adn±æ" "n±æ" "³oby" ;
+ 2 add-spell-rule "H" "adn±æ" "n±æ" "liby" ;
+ 2 add-spell-rule "H" "adn±æ" "n±æ" "³yby" ;
+ 2 add-spell-rule "H" "adn±æ" "n±æ" "liby¶cie" ;
+ 2 add-spell-rule "H" "adn±æ" "n±æ" "³yby¶cie" ;
+
+ 2 add-spell-rule "H" "akn±æ" "n±æ" "³em" ;blakn±æ
+ 2 add-spell-rule "H" "akn±æ" "n±æ" "³am" ;
+ 2 add-spell-rule "H" "akn±æ" "n±æ" "³e¶" ;
+ 2 add-spell-rule "H" "akn±æ" "n±æ" "³a¶" ;
+ 2 add-spell-rule "H" "akn±æ" "n±æ" "³" ;
+ 2 add-spell-rule "H" "akn±æ" "n±æ" "³a" ;
+ 2 add-spell-rule "H" "akn±æ" "n±æ" "³o" ;
+ 2 add-spell-rule "H" "akn±æ" "n±æ" "li¶my" ;
+ 2 add-spell-rule "H" "akn±æ" "n±æ" "³y¶my" ;
+ 2 add-spell-rule "H" "akn±æ" "n±æ" "li¶cie" ;
+ 2 add-spell-rule "H" "akn±æ" "n±æ" "³y¶cie" ;
+ 2 add-spell-rule "H" "akn±æ" "n±æ" "li" ;
+ 2 add-spell-rule "H" "akn±æ" "n±æ" "³y" ;
+ 2 add-spell-rule "H" "akn±æ" "n±æ" "³bym" ;
+ 2 add-spell-rule "H" "akn±æ" "n±æ" "³abym" ;
+ 2 add-spell-rule "H" "akn±æ" "n±æ" "³by¶" ;
+ 2 add-spell-rule "H" "akn±æ" "n±æ" "³aby¶" ;
+ 2 add-spell-rule "H" "akn±æ" "n±æ" "³by" ;
+ 2 add-spell-rule "H" "akn±æ" "n±æ" "³aby" ;
+ 2 add-spell-rule "H" "akn±æ" "n±æ" "³oby" ;
+ 2 add-spell-rule "H" "akn±æ" "n±æ" "liby" ;
+ 2 add-spell-rule "H" "akn±æ" "n±æ" "³yby" ;
+ 2 add-spell-rule "H" "akn±æ" "n±æ" "liby¶cie" ;
+ 2 add-spell-rule "H" "akn±æ" "n±æ" "³yby¶cie" ;
+
+ 2 add-spell-rule "H" "êbn±æ" "n±æ" "³em" ;zziêbn±æ
+ 2 add-spell-rule "H" "êbn±æ" "n±æ" "³am" ;
+ 2 add-spell-rule "H" "êbn±æ" "êbn±æ" "±b³e¶" ;
+ 2 add-spell-rule "H" "êbn±æ" "n±æ" "³a¶" ;
+ 2 add-spell-rule "H" "êbn±æ" "êbn±æ" "±b³" ;
+ 2 add-spell-rule "H" "êbn±æ" "n±æ" "³a" ;
+ 2 add-spell-rule "H" "êbn±æ" "n±æ" "³o" ;
+ 2 add-spell-rule "H" "êbn±æ" "n±æ" "li¶my" ;
+ 2 add-spell-rule "H" "êbn±æ" "n±æ" "³y¶my" ;
+ 2 add-spell-rule "H" "êbn±æ" "n±æ" "li¶cie" ;
+ 2 add-spell-rule "H" "êbn±æ" "n±æ" "³y¶cie" ;
+ 2 add-spell-rule "H" "êbn±æ" "n±æ" "li" ;
+ 2 add-spell-rule "H" "êbn±æ" "n±æ" "³y" ;
+ 2 add-spell-rule "H" "êbn±æ" "êbn±æ" "±b³bym" ;
+ 2 add-spell-rule "H" "êbn±æ" "n±æ" "³abym" ;
+ 2 add-spell-rule "H" "êbn±æ" "êbn±æ" "±b³by¶" ;
+ 2 add-spell-rule "H" "êbn±æ" "n±æ" "³aby¶" ;
+ 2 add-spell-rule "H" "êbn±æ" "êbn±æ" "±b³by" ;
+ 2 add-spell-rule "H" "êbn±æ" "n±æ" "³aby" ;
+ 2 add-spell-rule "H" "êbn±æ" "n±æ" "³oby" ;
+ 2 add-spell-rule "H" "êbn±æ" "n±æ" "liby" ;
+ 2 add-spell-rule "H" "êbn±æ" "n±æ" "³yby" ;
+ 2 add-spell-rule "H" "êbn±æ" "n±æ" "liby¶cie" ;
+ 2 add-spell-rule "H" "êbn±æ" "n±æ" "³yby¶cie" ;
+
+ 2 add-spell-rule "H" "êdn±æ" "n±æ" "³em" ;grzêzn±æ
+ 2 add-spell-rule "H" "êdn±æ" "n±æ" "³am" ;
+ 2 add-spell-rule "H" "êdn±æ" "êdn±æ" "±d³e¶" ;
+ 2 add-spell-rule "H" "êdn±æ" "n±æ" "³a¶" ;
+ 2 add-spell-rule "H" "êdn±æ" "êdn±æ" "±d³" ;
+ 2 add-spell-rule "H" "êdn±æ" "n±æ" "³a" ;
+ 2 add-spell-rule "H" "êdn±æ" "n±æ" "³o" ;
+ 2 add-spell-rule "H" "êdn±æ" "n±æ" "li¶my" ;
+ 2 add-spell-rule "H" "êdn±æ" "n±æ" "³y¶my" ;
+ 2 add-spell-rule "H" "êdn±æ" "n±æ" "li¶cie" ;
+ 2 add-spell-rule "H" "êdn±æ" "n±æ" "³y¶cie" ;
+ 2 add-spell-rule "H" "êdn±æ" "n±æ" "li" ;
+ 2 add-spell-rule "H" "êdn±æ" "n±æ" "³y" ;
+ 2 add-spell-rule "H" "êdn±æ" "êdn±æ" "±d³bym" ;
+ 2 add-spell-rule "H" "êdn±æ" "n±æ" "³abym" ;
+ 2 add-spell-rule "H" "êdn±æ" "êdn±æ" "±d³by¶" ;
+ 2 add-spell-rule "H" "êdn±æ" "n±æ" "³aby¶" ;
+ 2 add-spell-rule "H" "êdn±æ" "êdn±æ" "±d³by" ;
+ 2 add-spell-rule "H" "êdn±æ" "n±æ" "³aby" ;
+ 2 add-spell-rule "H" "êdn±æ" "n±æ" "³oby" ;
+ 2 add-spell-rule "H" "êdn±æ" "n±æ" "liby" ;
+ 2 add-spell-rule "H" "êdn±æ" "n±æ" "³yby" ;
+ 2 add-spell-rule "H" "êdn±æ" "n±æ" "liby¶cie" ;
+ 2 add-spell-rule "H" "êdn±æ" "n±æ" "³yby¶cie" ;
+
+ 2 add-spell-rule "H" "êzn±æ" "n±æ" "³em" ;grzêzn±æ
+ 2 add-spell-rule "H" "êzn±æ" "n±æ" "³am" ;
+ 2 add-spell-rule "H" "êzn±æ" "êzn±æ" "±z³e¶" ;
+ 2 add-spell-rule "H" "êzn±æ" "n±æ" "³a¶" ;
+ 2 add-spell-rule "H" "êzn±æ" "êzn±æ" "±z³" ;
+ 2 add-spell-rule "H" "êzn±æ" "n±æ" "³a" ;
+ 2 add-spell-rule "H" "êzn±æ" "n±æ" "³o" ;
+ 2 add-spell-rule "H" "êzn±æ" "n±æ" "li¶my" ;
+ 2 add-spell-rule "H" "êzn±æ" "n±æ" "³y¶my" ;
+ 2 add-spell-rule "H" "êzn±æ" "n±æ" "li¶cie" ;
+ 2 add-spell-rule "H" "êzn±æ" "n±æ" "³y¶cie" ;
+ 2 add-spell-rule "H" "êzn±æ" "n±æ" "li" ;
+ 2 add-spell-rule "H" "êzn±æ" "n±æ" "³y" ;
+ 2 add-spell-rule "H" "êzn±æ" "êzn±æ" "±z³bym" ;
+ 2 add-spell-rule "H" "êzn±æ" "n±æ" "³abym" ;
+ 2 add-spell-rule "H" "êzn±æ" "êzn±æ" "±z³by¶" ;
+ 2 add-spell-rule "H" "êzn±æ" "n±æ" "³aby¶" ;
+ 2 add-spell-rule "H" "êzn±æ" "êzn±æ" "±z³by" ;
+ 2 add-spell-rule "H" "êzn±æ" "n±æ" "³aby" ;
+ 2 add-spell-rule "H" "êzn±æ" "n±æ" "³oby" ;
+ 2 add-spell-rule "H" "êzn±æ" "n±æ" "liby" ;
+ 2 add-spell-rule "H" "êzn±æ" "n±æ" "³yby" ;
+ 2 add-spell-rule "H" "êzn±æ" "n±æ" "liby¶cie" ;
+ 2 add-spell-rule "H" "êzn±æ" "n±æ" "³yby¶cie" ;
+
+ 2 add-spell-rule "H" "[^n]±æ" "æ" "³em" ;
+ 2 add-spell-rule "H" "[^a±eêioóu]zn±æ" "n±æ" "³em" ;
+ 2 add-spell-rule "H" "[^n]±æ" "±æ" "ê³am" ;
+ 2 add-spell-rule "H" "[^a±eêioóu]zn±æ" "n±æ" "³am" ;
+ 2 add-spell-rule "H" "[^n]±æ" "æ" "³e¶" ;
+ 2 add-spell-rule "H" "[^a±eêioóu]zn±æ" "n±æ" "³e¶" ;
+ 2 add-spell-rule "H" "[^n]±æ" "±æ" "ê³a¶" ;
+ 2 add-spell-rule "H" "[^a±eêioóu]zn±æ" "n±æ" "³a¶" ;
+ 2 add-spell-rule "H" "[^n]±æ" "æ" "³" ;
+ 2 add-spell-rule "H" "[^a±eêioóu]zn±æ" "n±æ" "³" ;
+ 2 add-spell-rule "H" "[^n]±æ" "±æ" "ê³a" ;
+ 2 add-spell-rule "H" "[^a±eêioóu]zn±æ" "n±æ" "³a" ;
+ 2 add-spell-rule "H" "[^n]±æ" "±æ" "ê³o" ;
+ 2 add-spell-rule "H" "[^a±eêioóu]zn±æ" "n±æ" "³o" ;
+ 2 add-spell-rule "H" "[^n]±æ" "±æ" "êli¶my" ;
+ 2 add-spell-rule "H" "[^a±eêioóu]zn±æ" "n±æ" "li¶my" ;
+ 2 add-spell-rule "H" "[^n]±æ" "±æ" "ê³y¶my" ;
+ 2 add-spell-rule "H" "[^a±eêioóu]zn±æ" "n±æ" "³y¶my" ;
+ 2 add-spell-rule "H" "[^n]±æ" "±æ" "êli¶cie" ;
+ 2 add-spell-rule "H" "[^a±eêioóu]zn±æ" "n±æ" "li¶cie" ;
+ 2 add-spell-rule "H" "[^n]±æ" "±æ" "ê³y¶cie" ;
+ 2 add-spell-rule "H" "[^a±eêioóu]zn±æ" "n±æ" "³y¶cie" ;
+ 2 add-spell-rule "H" "[^n]±æ" "±æ" "êli" ;
+ 2 add-spell-rule "H" "[^a±eêioóu]zn±æ" "n±æ" "li" ;
+ 2 add-spell-rule "H" "[^n]±æ" "±æ" "ê³y" ;
+ 2 add-spell-rule "H" "[^a±eêioóu]zn±æ" "n±æ" "³y" ;
+ 2 add-spell-rule "H" "[^n]±æ" "æ" "³bym" ;
+ 2 add-spell-rule "H" "[^a±eêioóu]zn±æ" "n±æ" "³bym" ;
+ 2 add-spell-rule "H" "[^n]±æ" "±æ" "ê³abym" ;
+ 2 add-spell-rule "H" "[^a±eêioóu]zn±æ" "n±æ" "³abym" ;
+ 2 add-spell-rule "H" "[^n]±æ" "æ" "³by¶" ;
+ 2 add-spell-rule "H" "[^a±eêioóu]zn±æ" "n±æ" "³by¶" ;
+ 2 add-spell-rule "H" "[^n]±æ" "±æ" "ê³aby¶" ;
+ 2 add-spell-rule "H" "[^a±eêioóu]zn±æ" "n±æ" "³aby¶" ;
+ 2 add-spell-rule "H" "[^n]±æ" "æ" "³by" ;
+ 2 add-spell-rule "H" "[^a±eêioóu]zn±æ" "n±æ" "³by" ;
+ 2 add-spell-rule "H" "[^n]±æ" "±æ" "ê³aby" ;
+ 2 add-spell-rule "H" "[^a±eêioóu]zn±æ" "n±æ" "³aby" ;
+ 2 add-spell-rule "H" "[^n]±æ" "±æ" "ê³oby" ;
+ 2 add-spell-rule "H" "[^a±eêioóu]zn±æ" "n±æ" "³oby" ;
+ 2 add-spell-rule "H" "[^n]±æ" "±æ" "êliby" ;
+ 2 add-spell-rule "H" "[^a±eêioóu]zn±æ" "n±æ" "liby" ;
+ 2 add-spell-rule "H" "[^n]±æ" "±æ" "ê³yby" ;
+ 2 add-spell-rule "H" "[^a±eêioóu]zn±æ" "n±æ" "³yby" ;
+ 2 add-spell-rule "H" "[^n]±æ" "±æ" "êliby¶cie" ;
+ 2 add-spell-rule "H" "[^a±eêioóu]zn±æ" "n±æ" "liby¶cie" ;
+ 2 add-spell-rule "H" "[^n]±æ" "±æ" "ê³yby¶cie" ;
+ 2 add-spell-rule "H" "[^a±eêioóu]zn±æ" "n±æ" "³yby¶cie" ;
+
+ 2 add-spell-rule "H" "[^l]±c" "±c" "êg³em" ;przysi±c
+ 2 add-spell-rule "H" "[^l]±c" "±c" "êg³am" ;
+ 2 add-spell-rule "H" "[^l]±c" "±c" "êg³e¶" ;
+ 2 add-spell-rule "H" "[^l]±c" "±c" "êg³a¶" ;
+ 2 add-spell-rule "H" "[^l]±c" "c" "g³" ;
+ 2 add-spell-rule "H" "[^l]±c" "±c" "êg³a" ;
+ 2 add-spell-rule "H" "[^l]±c" "±c" "êg³o" ;
+ 2 add-spell-rule "H" "[^l]±c" "±c" "êgli¶my" ;
+ 2 add-spell-rule "H" "[^l]±c" "±c" "êg³y¶my" ;
+ 2 add-spell-rule "H" "[^l]±c" "±c" "êgli¶cie" ;
+ 2 add-spell-rule "H" "[^l]±c" "±c" "êg³y¶cie" ;
+ 2 add-spell-rule "H" "[^l]±c" "±c" "êgli" ;
+ 2 add-spell-rule "H" "[^l]±c" "±c" "êg³y" ;
+ 2 add-spell-rule "H" "[^l]±c" "c" "g³bym" ;
+ 2 add-spell-rule "H" "[^l]±c" "±c" "êg³abym" ;
+ 2 add-spell-rule "H" "[^l]±c" "c" "g³by¶" ;
+ 2 add-spell-rule "H" "[^l]±c" "±c" "êg³aby¶" ;
+ 2 add-spell-rule "H" "[^l]±c" "c" "g³by" ;
+ 2 add-spell-rule "H" "[^l]±c" "±c" "êg³aby" ;
+ 2 add-spell-rule "H" "[^l]±c" "±c" "êg³oby" ;
+ 2 add-spell-rule "H" "[^l]±c" "±c" "êgliby" ;
+ 2 add-spell-rule "H" "[^l]±c" "±c" "êg³yby" ;
+ 2 add-spell-rule "H" "[^l]±c" "±c" "êgliby¶cie" ;
+ 2 add-spell-rule "H" "[^l]±c" "±c" "êg³yby¶cie" ;
+
+ 2 add-spell-rule "H" "l±c" "±c" "êk³em" ;przel±c
+ 2 add-spell-rule "H" "l±c" "±c" "êk³am" ;
+ 2 add-spell-rule "H" "l±c" "±c" "êk³e¶" ;
+ 2 add-spell-rule "H" "l±c" "±c" "êk³a¶" ;
+ 2 add-spell-rule "H" "l±c" "c" "k³" ;
+ 2 add-spell-rule "H" "l±c" "±c" "êk³a" ;
+ 2 add-spell-rule "H" "l±c" "±c" "êk³o" ;
+ 2 add-spell-rule "H" "l±c" "±c" "êkli¶my" ;
+ 2 add-spell-rule "H" "l±c" "±c" "êk³y¶my" ;
+ 2 add-spell-rule "H" "l±c" "±c" "êkli¶cie" ;
+ 2 add-spell-rule "H" "l±c" "±c" "êk³y¶cie" ;
+ 2 add-spell-rule "H" "l±c" "±c" "êkli" ;
+ 2 add-spell-rule "H" "l±c" "±c" "êk³y" ;
+ 2 add-spell-rule "H" "l±c" "c" "k³bym" ;
+ 2 add-spell-rule "H" "l±c" "±c" "êk³abym" ;
+ 2 add-spell-rule "H" "l±c" "c" "k³by¶" ;
+ 2 add-spell-rule "H" "l±c" "±c" "êk³aby¶" ;
+ 2 add-spell-rule "H" "l±c" "c" "k³by" ;
+ 2 add-spell-rule "H" "l±c" "±c" "êk³aby" ;
+ 2 add-spell-rule "H" "l±c" "±c" "êk³oby" ;
+ 2 add-spell-rule "H" "l±c" "±c" "êkliby" ;
+ 2 add-spell-rule "H" "l±c" "±c" "êk³yby" ;
+ 2 add-spell-rule "H" "l±c" "±c" "êkliby¶cie" ;
+ 2 add-spell-rule "H" "l±c" "±c" "êk³yby¶cie" ;
+
+ 2 add-spell-rule "H" "[cps]iec" "c" "k³em" ;dopiec, uciec, usiec
+ 2 add-spell-rule "H" "[cps]iec" "c" "k³am" ;
+ 2 add-spell-rule "H" "[cps]iec" "c" "k³e¶" ;
+ 2 add-spell-rule "H" "[cps]iec" "c" "k³a¶" ;
+ 2 add-spell-rule "H" "[cps]iec" "c" "k³" ;
+ 2 add-spell-rule "H" "[cps]iec" "c" "k³a" ;
+ 2 add-spell-rule "H" "[cps]iec" "c" "k³o" ;
+ 2 add-spell-rule "H" "[cps]iec" "c" "kli¶my" ;
+ 2 add-spell-rule "H" "[cps]iec" "c" "k³y¶my" ;
+ 2 add-spell-rule "H" "[cps]iec" "c" "kli¶cie" ;
+ 2 add-spell-rule "H" "[cps]iec" "c" "k³y¶cie" ;
+ 2 add-spell-rule "H" "[cps]iec" "c" "kli" ;
+ 2 add-spell-rule "H" "[cps]iec" "c" "k³y" ;
+ 2 add-spell-rule "H" "[cps]iec" "c" "k³bym" ;
+ 2 add-spell-rule "H" "[cps]iec" "c" "k³abym" ;
+ 2 add-spell-rule "H" "[cps]iec" "c" "k³by¶" ;
+ 2 add-spell-rule "H" "[cps]iec" "c" "k³aby¶" ;
+ 2 add-spell-rule "H" "[cps]iec" "c" "k³by" ;
+ 2 add-spell-rule "H" "[cps]iec" "c" "k³aby" ;
+ 2 add-spell-rule "H" "[cps]iec" "c" "k³oby" ;
+ 2 add-spell-rule "H" "[cps]iec" "c" "kliby" ;
+ 2 add-spell-rule "H" "[cps]iec" "c" "k³yby" ;
+ 2 add-spell-rule "H" "[cps]iec" "c" "kliby¶cie" ;
+ 2 add-spell-rule "H" "[cps]iec" "c" "k³yby¶cie" ;
+
+ 2 add-spell-rule "H" "strz[ey]c" "c" "g³em" ;dostrzec, strzyc
+ 2 add-spell-rule "H" "strz[ey]c" "c" "g³am" ;
+ 2 add-spell-rule "H" "strz[ey]c" "c" "g³e¶" ;
+ 2 add-spell-rule "H" "strz[ey]c" "c" "g³a¶" ;
+ 2 add-spell-rule "H" "strz[ey]c" "c" "g³" ;
+ 2 add-spell-rule "H" "strz[ey]c" "c" "g³a" ;
+ 2 add-spell-rule "H" "strz[ey]c" "c" "g³o" ;
+ 2 add-spell-rule "H" "strz[ey]c" "c" "gli¶my" ;
+ 2 add-spell-rule "H" "strz[ey]c" "c" "g³y¶my" ;
+ 2 add-spell-rule "H" "strz[ey]c" "c" "gli¶cie" ;
+ 2 add-spell-rule "H" "strz[ey]c" "c" "g³y¶cie" ;
+ 2 add-spell-rule "H" "strz[ey]c" "c" "gli" ;
+ 2 add-spell-rule "H" "strz[ey]c" "c" "g³y" ;
+ 2 add-spell-rule "H" "strz[ey]c" "c" "g³bym" ;
+ 2 add-spell-rule "H" "strz[ey]c" "c" "g³abym" ;
+ 2 add-spell-rule "H" "strz[ey]c" "c" "g³by¶" ;
+ 2 add-spell-rule "H" "strz[ey]c" "c" "g³aby¶" ;
+ 2 add-spell-rule "H" "strz[ey]c" "c" "g³by" ;
+ 2 add-spell-rule "H" "strz[ey]c" "c" "g³aby" ;
+ 2 add-spell-rule "H" "strz[ey]c" "c" "g³oby" ;
+ 2 add-spell-rule "H" "strz[ey]c" "c" "gliby" ;
+ 2 add-spell-rule "H" "strz[ey]c" "c" "g³yby" ;
+ 2 add-spell-rule "H" "strz[ey]c" "c" "gliby¶cie" ;
+ 2 add-spell-rule "H" "strz[ey]c" "c" "g³yby¶cie" ;
+
+ 2 add-spell-rule "H" "móc" "óc" "og³em" ;pomóc
+ 2 add-spell-rule "H" "móc" "óc" "og³am" ;
+ 2 add-spell-rule "H" "móc" "óc" "og³e¶" ;
+ 2 add-spell-rule "H" "móc" "óc" "og³a¶" ;
+ 2 add-spell-rule "H" "móc" "c" "g³" ;
+ 2 add-spell-rule "H" "móc" "óc" "og³a" ;
+ 2 add-spell-rule "H" "móc" "óc" "og³o" ;
+ 2 add-spell-rule "H" "móc" "óc" "ogli¶my" ;
+ 2 add-spell-rule "H" "móc" "óc" "og³y¶my" ;
+ 2 add-spell-rule "H" "móc" "óc" "ogli¶cie" ;
+ 2 add-spell-rule "H" "móc" "óc" "og³y¶cie" ;
+ 2 add-spell-rule "H" "móc" "óc" "ogli" ;
+ 2 add-spell-rule "H" "móc" "óc" "og³y" ;
+ 2 add-spell-rule "H" "móc" "c" "g³bym" ;
+ 2 add-spell-rule "H" "móc" "óc" "og³abym" ;
+ 2 add-spell-rule "H" "móc" "c" "g³by¶" ;
+ 2 add-spell-rule "H" "móc" "óc" "og³aby¶" ;
+ 2 add-spell-rule "H" "móc" "c" "g³by" ;
+ 2 add-spell-rule "H" "móc" "óc" "og³aby" ;
+ 2 add-spell-rule "H" "móc" "óc" "og³oby" ;
+ 2 add-spell-rule "H" "móc" "óc" "ogliby" ;
+ 2 add-spell-rule "H" "móc" "óc" "og³yby" ;
+ 2 add-spell-rule "H" "móc" "óc" "ogliby¶cie" ;
+ 2 add-spell-rule "H" "móc" "óc" "og³yby¶cie" ;
+
+ 2 add-spell-rule "H" "uc" "c" "k³em" ;st³uc, dot³uc
+ 2 add-spell-rule "H" "uc" "c" "k³am" ;
+ 2 add-spell-rule "H" "uc" "c" "k³e¶" ;
+ 2 add-spell-rule "H" "uc" "c" "k³a¶" ;
+ 2 add-spell-rule "H" "uc" "c" "k³" ;
+ 2 add-spell-rule "H" "uc" "c" "k³a" ;
+ 2 add-spell-rule "H" "uc" "c" "k³o" ;
+ 2 add-spell-rule "H" "uc" "c" "kli¶my" ;
+ 2 add-spell-rule "H" "uc" "c" "k³y¶my" ;
+ 2 add-spell-rule "H" "uc" "c" "kli¶cie" ;
+ 2 add-spell-rule "H" "uc" "c" "k³y¶cie" ;
+ 2 add-spell-rule "H" "uc" "c" "kli" ;
+ 2 add-spell-rule "H" "uc" "c" "k³y" ;
+ 2 add-spell-rule "H" "uc" "c" "k³bym" ;
+ 2 add-spell-rule "H" "uc" "c" "k³abym" ;
+ 2 add-spell-rule "H" "uc" "c" "k³by¶" ;
+ 2 add-spell-rule "H" "uc" "c" "k³aby¶" ;
+ 2 add-spell-rule "H" "uc" "c" "k³by" ;
+ 2 add-spell-rule "H" "uc" "c" "k³aby" ;
+ 2 add-spell-rule "H" "uc" "c" "k³oby" ;
+ 2 add-spell-rule "H" "uc" "c" "kliby" ;
+ 2 add-spell-rule "H" "uc" "c" "k³yby" ;
+ 2 add-spell-rule "H" "uc" "c" "kliby¶cie" ;
+ 2 add-spell-rule "H" "uc" "c" "k³yby¶cie" ;
+	
+ 2 add-spell-rule "H" "[bw]lec" "c" "k³em" ;wlec
+ 2 add-spell-rule "H" "[bw]lec" "c" "k³am" ;
+ 2 add-spell-rule "H" "[bw]lec" "c" "k³e¶" ;
+ 2 add-spell-rule "H" "[bw]lec" "c" "k³a¶" ;
+ 2 add-spell-rule "H" "[bw]lec" "c" "k³" ;
+ 2 add-spell-rule "H" "[bw]lec" "c" "k³a" ;
+ 2 add-spell-rule "H" "[bw]lec" "c" "k³o" ;
+ 2 add-spell-rule "H" "[bw]lec" "c" "kli¶my" ;
+ 2 add-spell-rule "H" "[bw]lec" "c" "k³y¶my" ;
+ 2 add-spell-rule "H" "[bw]lec" "c" "kli¶cie" ;
+ 2 add-spell-rule "H" "[bw]lec" "c" "k³y¶cie" ;
+ 2 add-spell-rule "H" "[bw]lec" "c" "kli" ;
+ 2 add-spell-rule "H" "[bw]lec" "c" "k³y" ;
+ 2 add-spell-rule "H" "[bw]lec" "c" "k³bym" ;
+ 2 add-spell-rule "H" "[bw]lec" "c" "k³abym" ;
+ 2 add-spell-rule "H" "[bw]lec" "c" "k³by¶" ;
+ 2 add-spell-rule "H" "[bw]lec" "c" "k³aby¶" ;
+ 2 add-spell-rule "H" "[bw]lec" "c" "k³by" ;
+ 2 add-spell-rule "H" "[bw]lec" "c" "k³aby" ;
+ 2 add-spell-rule "H" "[bw]lec" "c" "k³oby" ;
+ 2 add-spell-rule "H" "[bw]lec" "c" "kliby" ;
+ 2 add-spell-rule "H" "[bw]lec" "c" "k³yby" ;
+ 2 add-spell-rule "H" "[bw]lec" "c" "kliby¶cie" ;
+ 2 add-spell-rule "H" "[bw]lec" "c" "k³yby¶cie" ;
+
+ 2 add-spell-rule "H" "ó¶æ" "ó¶æ" "od³em" ;bó¶æ
+ 2 add-spell-rule "H" "ó¶æ" "ó¶æ" "od³am" ;
+ 2 add-spell-rule "H" "ó¶æ" "ó¶æ" "od³e¶" ;
+ 2 add-spell-rule "H" "ó¶æ" "ó¶æ" "od³a¶" ;
+ 2 add-spell-rule "H" "ó¶æ" "¶æ" "d³" ;
+ 2 add-spell-rule "H" "ó¶æ" "ó¶æ" "od³a" ;
+ 2 add-spell-rule "H" "ó¶æ" "ó¶æ" "od³o" ;
+ 2 add-spell-rule "H" "ó¶æ" "ó¶æ" "odli¶my" ;
+ 2 add-spell-rule "H" "ó¶æ" "ó¶æ" "od³y¶my" ;
+ 2 add-spell-rule "H" "ó¶æ" "ó¶æ" "odli¶cie" ;
+ 2 add-spell-rule "H" "ó¶æ" "ó¶æ" "od³y¶cie" ;
+ 2 add-spell-rule "H" "ó¶æ" "ó¶æ" "odli" ;
+ 2 add-spell-rule "H" "ó¶æ" "ó¶æ" "od³y" ;
+ 2 add-spell-rule "H" "ó¶æ" "¶æ" "d³bym" ;
+ 2 add-spell-rule "H" "ó¶æ" "ó¶æ" "od³abym" ;
+ 2 add-spell-rule "H" "ó¶æ" "¶æ" "d³by¶" ;
+ 2 add-spell-rule "H" "ó¶æ" "ó¶æ" "od³aby¶" ;
+ 2 add-spell-rule "H" "ó¶æ" "¶æ" "d³by" ;
+ 2 add-spell-rule "H" "ó¶æ" "ó¶æ" "od³aby" ;
+ 2 add-spell-rule "H" "ó¶æ" "ó¶æ" "od³oby" ;
+ 2 add-spell-rule "H" "ó¶æ" "ó¶æ" "odliby" ;
+ 2 add-spell-rule "H" "ó¶æ" "ó¶æ" "od³yby" ;
+ 2 add-spell-rule "H" "ó¶æ" "ó¶æ" "odliby¶cie" ;
+ 2 add-spell-rule "H" "ó¶æ" "ó¶æ" "od³yby¶cie" ;
+
+; Tryb rozkazuj±cy dla czasowników dokonanych (flagi 'F' i 'H') oraz
+; niedokonanych z flagi 'J'
+; flag *B:
+ 2 add-spell-rule "B" "d±æ" "±æ" "mij" ;d±æ
+ 2 add-spell-rule "B" "d±æ" "±æ" "mijmy" ;
+ 2 add-spell-rule "B" "d±æ" "±æ" "mijcie" ;
+
+ 2 add-spell-rule "B" "[lz]±æ" "±æ" "nij" ;kl±æ, zacz±æ
+ 2 add-spell-rule "B" "[lz]±æ" "±æ" "nijmy" ;
+ 2 add-spell-rule "B" "[lz]±æ" "±æ" "nijcie" ;
+	
+ 2 add-spell-rule "B" "[^aeiouy]gi±æ" "gi±æ" "egnij" ;zgi±æ
+ 2 add-spell-rule "B" "[^aeiouy]gi±æ" "gi±æ" "egnijmy" ;
+ 2 add-spell-rule "B" "[^aeiouy]gi±æ" "gi±æ" "egnijcie" ;
+
+ 2 add-spell-rule "B" "[aeiouy]gi±æ" "i±æ" "nij" ;zagi±æ
+ 2 add-spell-rule "B" "[aeiouy]gi±æ" "i±æ" "nijmy" ;
+ 2 add-spell-rule "B" "[aeiouy]gi±æ" "i±æ" "nijcie" ;
+
+ 2 add-spell-rule "B" "[^aeoy]j±æ" "j±æ" "ejmij" ;obj±æ
+ 2 add-spell-rule "B" "[^aeoy]j±æ" "j±æ" "ejmijmy" ;
+ 2 add-spell-rule "B" "[^aeoy]j±æ" "j±æ" "ejmijcie" ;
+
+ 2 add-spell-rule "B" "[aeoy]j±æ" "±æ" "mij" ;zaj±æ, przyj±æ
+ 2 add-spell-rule "B" "[aeoy]j±æ" "±æ" "mijmy" ;
+ 2 add-spell-rule "B" "[aeoy]j±æ" "±æ" "mijcie" ;
+
+ 2 add-spell-rule "B" "[^isuz]n±æ" "±æ" "ij" ;bachn±æ
+ 2 add-spell-rule "B" "[^isuz]n±æ" "±æ" "ijmy" ;
+ 2 add-spell-rule "B" "[^isuz]n±æ" "±æ" "ijcie" ;
+
+ 2 add-spell-rule "B" "[iu]n±æ" "n±æ" "ñ" ;gin±æ
+ 2 add-spell-rule "B" "[iu]n±æ" "n±æ" "ñmy" ;
+ 2 add-spell-rule "B" "[iu]n±æ" "n±æ" "ñcie" ;
+	
+ 2 add-spell-rule "B" "sn±æ" "sn±æ" "¶nij" ;zasn±æ
+ 2 add-spell-rule "B" "sn±æ" "sn±æ" "¶nijmy" ;
+ 2 add-spell-rule "B" "sn±æ" "sn±æ" "¶nijcie" ;
+	
+ 2 add-spell-rule "B" "zn±æ" "zn±æ" "¼nij" ;lizn±æ
+ 2 add-spell-rule "B" "zn±æ" "zn±æ" "¼nijmy" ;
+ 2 add-spell-rule "B" "zn±æ" "zn±æ" "¼nijcie" ;
+	
+ 2 add-spell-rule "B" "a¶æ" "¶æ" "dnij" ;spa¶æ, kra¶æ, k³a¶æ
+ 2 add-spell-rule "B" "a¶æ" "¶æ" "dnijmy" ;
+ 2 add-spell-rule "B" "a¶æ" "¶æ" "dnijcie" ;
+
+ 2 add-spell-rule "B" "±¶æ" "¶æ" "d¼" ;usi±¶æ
+ 2 add-spell-rule "B" "±¶æ" "¶æ" "d¼cie" ;
+ 2 add-spell-rule "B" "±¶æ" "¶æ" "d¼my" ;
+
+ 2 add-spell-rule "B" "ó¶æ" "ó¶æ" "o¶nij" ;uró¶æ
+ 2 add-spell-rule "B" "ó¶æ" "ó¶æ" "o¶nijmy" ;
+ 2 add-spell-rule "B" "ó¶æ" "ó¶æ" "o¶nijcie" ;
+
+ 2 add-spell-rule "B" "e¶æ" "æ" "" ;nie¶æ
+ 2 add-spell-rule "B" "e¶æ" "æ" "my" ;
+ 2 add-spell-rule "B" "e¶æ" "æ" "cie" ;
+;niestety nie za³apuje siê ple¶æ, wie¶æ (¿ycie)
+
+ 2 add-spell-rule "B" "¼æ" "æ" "" ;gry¼æ
+ 2 add-spell-rule "B" "¼æ" "æ" "my" ;
+ 2 add-spell-rule "B" "¼æ" "æ" "cie" ;
+
+ 2 add-spell-rule "B" "[ps]iec" "" "z" ;dopiec, usiec
+ 2 add-spell-rule "B" "[ps]iec" "" "zmy" ;
+ 2 add-spell-rule "B" "[ps]iec" "" "zcie" ;
+
+ 2 add-spell-rule "B" "ciec" "c" "knij" ;uciec
+ 2 add-spell-rule "B" "ciec" "c" "knijmy" ;
+ 2 add-spell-rule "B" "ciec" "c" "knijcie" ;
+
+ 2 add-spell-rule "B" "strz[ey]c" "c" "¿" ;dostrzec, strzyc
+ 2 add-spell-rule "B" "strz[ey]c" "c" "¿my" ;
+ 2 add-spell-rule "B" "strz[ey]c" "c" "¿cie" ;
+
+ 2 add-spell-rule "B" "móc" "c" "¿" ;pomóc
+ 2 add-spell-rule "B" "móc" "c" "¿my" ;
+ 2 add-spell-rule "B" "móc" "c" "¿cie" ;
+
+ 2 add-spell-rule "B" "uc" "" "z" ;st³uc, dot³uc
+ 2 add-spell-rule "B" "uc" "" "zmy" ;
+ 2 add-spell-rule "B" "uc" "" "zcie" ;
+
+ 2 add-spell-rule "B" "[bw]lec" "" "z" ;wlec
+ 2 add-spell-rule "B" "[bw]lec" "" "zmy" ;
+ 2 add-spell-rule "B" "[bw]lec" "" "zcie" ;
+	
+ 2 add-spell-rule "B" "oleæ" "æ" "j" ;boleæ
+ 2 add-spell-rule "B" "oleæ" "æ" "jmy" ;
+ 2 add-spell-rule "B" "oleæ" "æ" "jcie" ;
+
+ 2 add-spell-rule "B" "[aeu]iæ" "iæ" "j" ;dokleiæ
+ 2 add-spell-rule "B" "[aeu]iæ" "iæ" "jmy" ;
+ 2 add-spell-rule "B" "[aeu]iæ" "iæ" "jcie" ;
+
+ 2 add-spell-rule "B" "niæ" "æ" "j" ;gniæ
+ 2 add-spell-rule "B" "niæ" "æ" "jmy" ;
+ 2 add-spell-rule "B" "niæ" "æ" "jcie" ;
+	
+ 2 add-spell-rule "B" "[^a]biæ" "æ" "j" ;pobiæ
+ 2 add-spell-rule "B" "[^a]biæ" "æ" "jmy" ;
+ 2 add-spell-rule "B" "[^a]biæ" "æ" "jcie" ;
+	
+ 2 add-spell-rule "B" "³abiæ" "iæ" "" ;os³abiæ
+ 2 add-spell-rule "B" "³abiæ" "iæ" "my" ;
+ 2 add-spell-rule "B" "³abiæ" "iæ" "cie" ;
+	
+ 2 add-spell-rule "B" "[^e]piæ" "æ" "j" ;dopiæ
+ 2 add-spell-rule "B" "[^e]piæ" "æ" "jmy" ;
+ 2 add-spell-rule "B" "[^e]piæ" "æ" "jcie" ;
+
+ 2 add-spell-rule "B" "epiæ" "iæ" "" ;zlepiæ
+ 2 add-spell-rule "B" "epiæ" "iæ" "my" ;
+ 2 add-spell-rule "B" "epiæ" "iæ" "cie" ;
+
+ 2 add-spell-rule "B" "uæ" "æ" "j" ;czuæ
+ 2 add-spell-rule "B" "uæ" "æ" "jmy" ;
+ 2 add-spell-rule "B" "uæ" "æ" "jcie" ;
+	
+ 2 add-spell-rule "B" "[^dj]rzeæ" "æ" "j" ;chorzeæ
+ 2 add-spell-rule "B" "[^dj]rzeæ" "æ" "jmy" ;
+ 2 add-spell-rule "B" "[^dj]rzeæ" "æ" "jcie" ;
+
+ 2 add-spell-rule "B" "[dj]rzeæ" "eæ" "yj" ;dojrzeæ, drzeæ
+ 2 add-spell-rule "B" "[dj]rzeæ" "eæ" "yjmy" ;
+ 2 add-spell-rule "B" "[dj]rzeæ" "eæ" "yjcie" ;
+
+
+ 2 add-spell-rule "B" "[ae]waæ" "æ" "j" ;nadawaæ, podrwiwaæ, dojrzewaæ
+ 2 add-spell-rule "B" "[ae]waæ" "æ" "jmy" ;
+ 2 add-spell-rule "B" "[ae]waæ" "æ" "jcie" ;
+
+ 2 add-spell-rule "B" "iwaæ" "aæ" "uj" ;rozstrzeliwaæ
+ 2 add-spell-rule "B" "iwaæ" "aæ" "ujmy" ;
+ 2 add-spell-rule "B" "iwaæ" "aæ" "ujcie" ;
+
+ 2 add-spell-rule "B" "owaæ" "owaæ" "uj" ;budowaæ
+ 2 add-spell-rule "B" "owaæ" "owaæ" "ujmy" ;
+ 2 add-spell-rule "B" "owaæ" "owaæ" "ujcie" ;
+
+ 2 add-spell-rule "B" "rwaæ" "aæ" "ij" ;rwaæ
+ 2 add-spell-rule "B" "rwaæ" "aæ" "ijmy" ;
+ 2 add-spell-rule "B" "rwaæ" "aæ" "ijcie" ;
+
+ 2 add-spell-rule "B" "ywaæ" "ywaæ" "uj" ;zgadywaæ
+ 2 add-spell-rule "B" "ywaæ" "ywaæ" "ujmy" ;
+ 2 add-spell-rule "B" "ywaæ" "ywaæ" "ujcie" ;
+
+ 2 add-spell-rule "B" "ieæ" "æ" "j" ;chcieæ
+ 2 add-spell-rule "B" "ieæ" "æ" "jmy" ;
+ 2 add-spell-rule "B" "ieæ" "æ" "jcie" ;
+
+ 2 add-spell-rule "B" "daæ" "æ" "j" ;daæ, dodaæ
+ 2 add-spell-rule "B" "daæ" "æ" "jmy" ;
+ 2 add-spell-rule "B" "daæ" "æ" "jcie" ;
+
+ 2 add-spell-rule "B" "[il]aæ" "aæ" "ej" ;¶miaæ siê, chlaæ
+ 2 add-spell-rule "B" "[il]aæ" "aæ" "ejmy" ;
+ 2 add-spell-rule "B" "[il]aæ" "aæ" "ejcie" ;
+
+ 2 add-spell-rule "B" "kaæ" "kaæ" "cz" ;gdakaæ, krakaæ
+ 2 add-spell-rule "B" "kaæ" "kaæ" "czmy" ;
+ 2 add-spell-rule "B" "kaæ" "kaæ" "czcie" ;
+	
+ 2 add-spell-rule "B" "[op]taæ" "taæ" "cz" ;³omotaæ, ch³eptaæ
+ 2 add-spell-rule "B" "[op]taæ" "taæ" "czmy" ;
+ 2 add-spell-rule "B" "[op]taæ" "taæ" "czcie" ;
+
+ 2 add-spell-rule "B" "[aeoy][bp]aæ" "aæ" "" ;chlapaæ, dziobaæ
+ 2 add-spell-rule "B" "[aeoy][bp]aæ" "aæ" "my" ;
+ 2 add-spell-rule "B" "[aeoy][bp]aæ" "aæ" "cie" ;
+
+ 2 add-spell-rule "B" "[^s]saæ" "aæ" "z" ;czesaæ
+ 2 add-spell-rule "B" "[^s]saæ" "aæ" "zmy" ;
+ 2 add-spell-rule "B" "[^s]saæ" "aæ" "zcie" ;
+
+ 2 add-spell-rule "B" "ssaæ" "aæ" "ij" ;ssaæ
+ 2 add-spell-rule "B" "ssaæ" "aæ" "ijmy" ;
+ 2 add-spell-rule "B" "ssaæ" "aæ" "ijcie" ;
+
+ 2 add-spell-rule "B" "staæ" "taæ" "zcz" ;ch³ostaæ
+ 2 add-spell-rule "B" "staæ" "taæ" "zczmy" ;
+ 2 add-spell-rule "B" "staæ" "taæ" "zczcie" ;
+
+ 2 add-spell-rule "B" "[^bp]raæ" "æ" "j" ;bazgraæ
+ 2 add-spell-rule "B" "[^bp]raæ" "æ" "jmy" ;
+ 2 add-spell-rule "B" "[^bp]raæ" "æ" "jcie" ;
+
+ 2 add-spell-rule "B" "[bp]raæ" "raæ" "ierz" ;praæ, braæ
+ 2 add-spell-rule "B" "[bp]raæ" "raæ" "ierzmy" ;
+ 2 add-spell-rule "B" "[bp]raæ" "raæ" "ierzcie" ;
+
+ 2 add-spell-rule "B" "[^cdr]zaæ" "zaæ" "¿" ;lizaæ, wi±zaæ
+ 2 add-spell-rule "B" "[^cdr]zaæ" "zaæ" "¿my" ;
+ 2 add-spell-rule "B" "[^cdr]zaæ" "zaæ" "¿cie" ;
+
+ 2 add-spell-rule "B" "rzaæ" "aæ" "ej" ;grzaæ
+ 2 add-spell-rule "B" "rzaæ" "aæ" "ejmy" ;
+ 2 add-spell-rule "B" "rzaæ" "aæ" "ejcie" ;
+	
+ 2 add-spell-rule "B" "byæ" "yæ" "±d¼" ;byæ, dobyæ
+ 2 add-spell-rule "B" "byæ" "yæ" "±d¼my" ;
+ 2 add-spell-rule "B" "byæ" "yæ" "±d¼cie" ;
+
+; Flaga tworzy odmiany w czasie przysz³ym dla niektórych czasowników z flagi
+; 'H' (forma dokonana).
+
+; flag *h:
+ 2 add-spell-rule "h" "[^blmptw]aæ" "aæ" "ê" ;porwaæ
+ 2 add-spell-rule "h" "[^blmptw]aæ" "aæ" "iesz" ;
+ 2 add-spell-rule "h" "[^blmptw]aæ" "aæ" "ie" ;
+ 2 add-spell-rule "h" "[^blmptw]aæ" "aæ" "iemy" ;
+ 2 add-spell-rule "h" "[^blmptw]aæ" "aæ" "iecie" ;
+ 2 add-spell-rule "h" "[^blmptw]aæ" "aæ" "±" ;
+	
+ 2 add-spell-rule "h" "[bp]aæ" "aæ" "iê" ;zdrapaæ
+ 2 add-spell-rule "h" "[bp]aæ" "aæ" "iesz" ;
+ 2 add-spell-rule "h" "[bp]aæ" "aæ" "ie" ;
+ 2 add-spell-rule "h" "[bp]aæ" "aæ" "iemy" ;
+ 2 add-spell-rule "h" "[bp]aæ" "aæ" "iecie" ;
+ 2 add-spell-rule "h" "[bp]aæ" "aæ" "i±" ;
+	
+ 2 add-spell-rule "h" "taæ" "æ" "nê" ;dostaæ
+ 2 add-spell-rule "h" "taæ" "æ" "niesz" ;
+ 2 add-spell-rule "h" "taæ" "æ" "nie" ;
+ 2 add-spell-rule "h" "taæ" "æ" "niemy" ;
+ 2 add-spell-rule "h" "taæ" "æ" "niecie" ;
+ 2 add-spell-rule "h" "taæ" "æ" "n±" ;
+	
+ 2 add-spell-rule "h" "waæ" "waæ" "jê" ;dojrzewaæ
+ 2 add-spell-rule "h" "waæ" "waæ" "jesz" ;
+ 2 add-spell-rule "h" "waæ" "waæ" "je" ;
+ 2 add-spell-rule "h" "waæ" "waæ" "jemy" ;
+ 2 add-spell-rule "h" "waæ" "waæ" "jecie" ;
+ 2 add-spell-rule "h" "waæ" "waæ" "j±" ;
+	
+ 2 add-spell-rule "h" "[^abceloswz]iæ" "æ" "ê" ;zast±piæ
+ 2 add-spell-rule "h" "[^abceloswz]iæ" "æ" "sz" ;
+ 2 add-spell-rule "h" "[^abceloswz]iæ" "æ" "" ;
+ 2 add-spell-rule "h" "[^abceloswz]iæ" "æ" "my" ;
+ 2 add-spell-rule "h" "[^abceloswz]iæ" "æ" "cie" ;
+ 2 add-spell-rule "h" "[^abceloswz]iæ" "æ" "±" ;
+
+ 2 add-spell-rule "h" "eiæ" "iæ" "jê" ;dokleiæ
+ 2 add-spell-rule "h" "eiæ" "æ" "sz" ;
+ 2 add-spell-rule "h" "eiæ" "æ" "" ;
+ 2 add-spell-rule "h" "eiæ" "æ" "my" ;
+ 2 add-spell-rule "h" "eiæ" "æ" "cie" ;
+ 2 add-spell-rule "h" "eiæ" "iæ" "j±" ;
+
+ 2 add-spell-rule "h" "[^ê]ziæ" "iæ" "ê" ;wych³odziæ
+ 2 add-spell-rule "h" "[^ê]ziæ" "æ" "sz" ;
+ 2 add-spell-rule "h" "[^ê]ziæ" "æ" "" ;
+ 2 add-spell-rule "h" "[^ê]ziæ" "æ" "my" ;
+ 2 add-spell-rule "h" "[^ê]ziæ" "æ" "cie" ;
+ 2 add-spell-rule "h" "[^ê]ziæ" "iæ" "±" ;
+
+ 2 add-spell-rule "h" "êziæ" "ziæ" "¿ê" ;zwêziæ
+ 2 add-spell-rule "h" "êziæ" "æ" "sz" ;
+ 2 add-spell-rule "h" "êziæ" "æ" "" ;
+ 2 add-spell-rule "h" "êziæ" "æ" "my" ;
+ 2 add-spell-rule "h" "êziæ" "æ" "cie" ;
+ 2 add-spell-rule "h" "êziæ" "ziæ" "¿±" ;
+
+ 2 add-spell-rule "h" "gi±æ" "gi±æ" "egnê" ;zgi±æ
+ 2 add-spell-rule "h" "gi±æ" "gi±æ" "egniesz" ;
+ 2 add-spell-rule "h" "gi±æ" "gi±æ" "egnie" ;
+ 2 add-spell-rule "h" "gi±æ" "gi±æ" "egniemy" ;
+ 2 add-spell-rule "h" "gi±æ" "gi±æ" "egniecie" ;
+ 2 add-spell-rule "h" "gi±æ" "gi±æ" "egn±" ;
+
+ 2 add-spell-rule "h" "[^ijmnz]±æ" "±æ" "ê" ;
+ 2 add-spell-rule "h" "[^ijmnz]±æ" "±æ" "iesz" ;
+ 2 add-spell-rule "h" "[^ijmnz]±æ" "±æ" "ie" ;
+ 2 add-spell-rule "h" "[^ijmnz]±æ" "±æ" "iemy" ;
+ 2 add-spell-rule "h" "[^ijmnz]±æ" "±æ" "iecie" ;
+ 2 add-spell-rule "h" "[^ijmnz]±æ" "æ" "" ;
+
+ 2 add-spell-rule "h" "[^s]n±æ" "±æ" "ê" ;³upn±æ
+ 2 add-spell-rule "h" "[^s]n±æ" "±æ" "iesz" ;
+ 2 add-spell-rule "h" "[^s]n±æ" "±æ" "ie" ;
+ 2 add-spell-rule "h" "[^s]n±æ" "±æ" "iemy" ;
+ 2 add-spell-rule "h" "[^s]n±æ" "±æ" "iecie" ;
+ 2 add-spell-rule "h" "[^s]n±æ" "æ" "" ;
+
+ 2 add-spell-rule "h" "sn±æ" "±æ" "ê" ;b³ysn±æ
+ 2 add-spell-rule "h" "sn±æ" "sn±æ" "¶niesz" ;
+ 2 add-spell-rule "h" "sn±æ" "sn±æ" "¶nie" ;
+ 2 add-spell-rule "h" "sn±æ" "sn±æ" "¶niemy" ;
+ 2 add-spell-rule "h" "sn±æ" "sn±æ" "¶niecie" ;
+ 2 add-spell-rule "h" "sn±æ" "æ" "" ;
+           
+ 2 add-spell-rule "h" "[^aeoy]j±æ" "j±æ" "ejmê" ;obj±æ
+ 2 add-spell-rule "h" "[^aeoy]j±æ" "j±æ" "ejmiesz" ;
+ 2 add-spell-rule "h" "[^aeoy]j±æ" "j±æ" "ejmie" ;
+ 2 add-spell-rule "h" "[^aeoy]j±æ" "j±æ" "ejmiemy" ;
+ 2 add-spell-rule "h" "[^aeoy]j±æ" "j±æ" "ejmiecie" ;
+ 2 add-spell-rule "h" "[^aeoy]j±æ" "j±æ" "ejm±" ;
+
+ 2 add-spell-rule "h" "[aeoy]j±æ" "±æ" "mê" ;zaj±æ, przyj±æ
+ 2 add-spell-rule "h" "[aeoy]j±æ" "±æ" "miesz" ;
+ 2 add-spell-rule "h" "[aeoy]j±æ" "±æ" "mie" ;
+ 2 add-spell-rule "h" "[aeoy]j±æ" "±æ" "miemy" ;
+ 2 add-spell-rule "h" "[aeoy]j±æ" "±æ" "miecie" ;
+ 2 add-spell-rule "h" "[aeoy]j±æ" "±æ" "m±" ;
+
+ 2 add-spell-rule "h" "z±æ" "±æ" "nê" ;zacz±æ
+ 2 add-spell-rule "h" "z±æ" "±æ" "niesz" ;
+ 2 add-spell-rule "h" "z±æ" "±æ" "nie" ;
+ 2 add-spell-rule "h" "z±æ" "±æ" "niemy" ;
+ 2 add-spell-rule "h" "z±æ" "±æ" "niecie" ;
+ 2 add-spell-rule "h" "z±æ" "±æ" "n±" ;
+
+ 2 add-spell-rule "h" "±¶æ" "¶æ" "dê" ;dosi±¶æ
+ 2 add-spell-rule "h" "±¶æ" "¶æ" "dziesz" ;
+ 2 add-spell-rule "h" "±¶æ" "¶æ" "dzie" ;
+ 2 add-spell-rule "h" "±¶æ" "¶æ" "dziemy" ;
+ 2 add-spell-rule "h" "±¶æ" "¶æ" "dziecie" ;
+ 2 add-spell-rule "h" "±¶æ" "¶æ" "d±" ;
+
+ 2 add-spell-rule "h" "byæ" "yæ" "êdê" ;dobyæ
+ 2 add-spell-rule "h" "byæ" "yæ" "êdziesz" ;
+ 2 add-spell-rule "h" "byæ" "yæ" "êdzie" ;
+ 2 add-spell-rule "h" "byæ" "yæ" "êdziemy" ;
+ 2 add-spell-rule "h" "byæ" "yæ" "êdziecie" ;
+ 2 add-spell-rule "h" "byæ" "yæ" "êd±" ;
+	
+ 2 add-spell-rule "h" "ciec" "c" "knê" ;dociec
+ 2 add-spell-rule "h" "ciec" "c" "kniesz" ;
+ 2 add-spell-rule "h" "ciec" "c" "knie" ;
+ 2 add-spell-rule "h" "ciec" "c" "kniemy" ;
+ 2 add-spell-rule "h" "ciec" "c" "kniecie" ;
+ 2 add-spell-rule "h" "ciec" "c" "kn±" ;
+	
+ 2 add-spell-rule "h" "eæ" "eæ" "ê" ;dojrzeæ, ujrzeæ
+ 2 add-spell-rule "h" "eæ" "eæ" "ysz" ;
+ 2 add-spell-rule "h" "eæ" "eæ" "y" ;
+ 2 add-spell-rule "h" "eæ" "eæ" "ymy" ;
+ 2 add-spell-rule "h" "eæ" "eæ" "ycie" ;
+ 2 add-spell-rule "h" "eæ" "eæ" "±" ;
+	
+; Czasowniki odmieniaj±ce siê na '-a', '-i', '-y' w 3 os. lmn.
+; badaæ		-> on bada
+; prawiæ	-> on prawi
+; mo¶ciæ	-> on mo¶ci, oni moszcz±
+; prosiæ	-> oni prosz±
+; kochaæ	-> on kocha, oni kochaj±
+
+; Flaga zapewnia odmianê czasownika przez osoby w czasie tera¼niejszym
+
+; flag *I:
+ 2 add-spell-rule "I" "[^il]eæ" "eæ" "ê" ;brzêczeæ
+ 2 add-spell-rule "I" "[^il]eæ" "eæ" "ysz" ;
+ 2 add-spell-rule "I" "[^il]eæ" "eæ" "y" ;
+ 2 add-spell-rule "I" "[^il]eæ" "eæ" "ymy" ;
+ 2 add-spell-rule "I" "[^il]eæ" "eæ" "ycie" ;
+ 2 add-spell-rule "I" "[^il]eæ" "eæ" "±" ;
+
+ 2 add-spell-rule "I" "leæ" "eæ" "ê" ;woleæ
+ 2 add-spell-rule "I" "leæ" "eæ" "isz" ;
+ 2 add-spell-rule "I" "leæ" "eæ" "i" ;
+ 2 add-spell-rule "I" "leæ" "eæ" "imy" ;
+ 2 add-spell-rule "I" "leæ" "eæ" "icie" ;
+ 2 add-spell-rule "I" "leæ" "eæ" "±" ;
+
+ 2 add-spell-rule "I" "[mp]ieæ" "eæ" "ê" ;brzmieæ
+ 2 add-spell-rule "I" "[mp]ieæ" "eæ" "sz" ;
+ 2 add-spell-rule "I" "[mp]ieæ" "eæ" "" ;
+ 2 add-spell-rule "I" "[mp]ieæ" "eæ" "my" ;
+ 2 add-spell-rule "I" "[mp]ieæ" "eæ" "cie" ;
+ 2 add-spell-rule "I" "[mp]ieæ" "eæ" "±" ;
+
+ 2 add-spell-rule "I" "ecieæ" "ieæ" "ê" ;lecieæ
+ 2 add-spell-rule "I" "ecieæ" "eæ" "sz" ;
+ 2 add-spell-rule "I" "ecieæ" "eæ" "" ;
+ 2 add-spell-rule "I" "ecieæ" "eæ" "my" ;
+ 2 add-spell-rule "I" "ecieæ" "eæ" "cie" ;
+ 2 add-spell-rule "I" "ecieæ" "ieæ" "±" ;
+	
+ 2 add-spell-rule "I" "hcieæ" "ieæ" "ê" ;chcieæ
+ 2 add-spell-rule "I" "hcieæ" "ieæ" "esz" ;
+ 2 add-spell-rule "I" "hcieæ" "ieæ" "e" ;
+ 2 add-spell-rule "I" "hcieæ" "ieæ" "emy" ;
+ 2 add-spell-rule "I" "hcieæ" "ieæ" "ecie" ;
+ 2 add-spell-rule "I" "hcieæ" "ieæ" "±" ;
+	
+ 2 add-spell-rule "I" "siedzieæ" "ieæ" "ê" ;siedzieæ
+ 2 add-spell-rule "I" "siedzieæ" "eæ" "sz" ;
+ 2 add-spell-rule "I" "siedzieæ" "eæ" "" ;
+ 2 add-spell-rule "I" "siedzieæ" "eæ" "my" ;
+ 2 add-spell-rule "I" "siedzieæ" "eæ" "cie" ;
+ 2 add-spell-rule "I" "siedzieæ" "ieæ" "±" ;
+
+ 2 add-spell-rule "I" "widzieæ" "ieæ" "ê" ;widzieæ
+ 2 add-spell-rule "I" "widzieæ" "eæ" "sz" ;
+ 2 add-spell-rule "I" "widzieæ" "eæ" "" ;
+ 2 add-spell-rule "I" "widzieæ" "eæ" "my" ;
+ 2 add-spell-rule "I" "widzieæ" "eæ" "cie" ;
+ 2 add-spell-rule "I" "widzieæ" "ieæ" "±" ;
+
+ 2 add-spell-rule "I" "[êr]dzieæ" "ieæ" "ê" ;pierdzieæ, swêdzieæ
+ 2 add-spell-rule "I" "[êr]dzieæ" "eæ" "sz" ;
+ 2 add-spell-rule "I" "[êr]dzieæ" "eæ" "" ;
+ 2 add-spell-rule "I" "[êr]dzieæ" "eæ" "my" ;
+ 2 add-spell-rule "I" "[êr]dzieæ" "eæ" "cie" ;
+ 2 add-spell-rule "I" "[êr]dzieæ" "ieæ" "±" ;
+
+ 2 add-spell-rule "I" "[^acelosz]iæ" "æ" "ê" ;prawiæ, !prosiæ, !wierciæ, !biadoliæ
+ 2 add-spell-rule "I" "[^acelosz]iæ" "æ" "sz" ;
+ 2 add-spell-rule "I" "[^acelosz]iæ" "æ" "" ;
+ 2 add-spell-rule "I" "[^acelosz]iæ" "æ" "my" ;
+ 2 add-spell-rule "I" "[^acelosz]iæ" "æ" "cie" ;
+ 2 add-spell-rule "I" "[^acelosz]iæ" "æ" "±" ;
+
+ 2 add-spell-rule "I" "[aeo]iæ" "iæ" "jê" ;czaiæ
+ 2 add-spell-rule "I" "[aeo]iæ" "æ" "sz" ;
+ 2 add-spell-rule "I" "[aeo]iæ" "æ" "" ;
+ 2 add-spell-rule "I" "[aeo]iæ" "æ" "my" ;
+ 2 add-spell-rule "I" "[aeo]iæ" "æ" "cie" ;
+ 2 add-spell-rule "I" "[aeo]iæ" "iæ" "j±" ;
+
+ 2 add-spell-rule "I" "[^¼][^ê]ziæ" "iæ" "ê" ;p³odziæ, !gnie¼dziæ
+ 2 add-spell-rule "I" "[^¼][^ê]ziæ" "æ" "sz" ;
+ 2 add-spell-rule "I" "[^¼][^ê]ziæ" "æ" "" ;
+ 2 add-spell-rule "I" "[^¼][^ê]ziæ" "æ" "my" ;
+ 2 add-spell-rule "I" "[^¼][^ê]ziæ" "æ" "cie" ;
+ 2 add-spell-rule "I" "[^¼][^ê]ziæ" "iæ" "±" ;
+
+ 2 add-spell-rule "I" "¼dziæ" "¼dziæ" "¿d¿ê" ;bru¼dziæ
+ 2 add-spell-rule "I" "¼dziæ" "æ" "sz" ;
+ 2 add-spell-rule "I" "¼dziæ" "æ" "" ;
+ 2 add-spell-rule "I" "¼dziæ" "æ" "my" ;
+ 2 add-spell-rule "I" "¼dziæ" "æ" "cie" ;
+ 2 add-spell-rule "I" "¼dziæ" "¼dziæ" "¿d¿±" ;
+
+ 2 add-spell-rule "I" "êziæ" "ziæ" "¿ê" ;rzêziæ
+ 2 add-spell-rule "I" "êziæ" "æ" "sz" ;
+ 2 add-spell-rule "I" "êziæ" "æ" "" ;
+ 2 add-spell-rule "I" "êziæ" "æ" "cie" ;
+ 2 add-spell-rule "I" "êziæ" "æ" "my" ;
+ 2 add-spell-rule "I" "êziæ" "ziæ" "¿±" ;
+
+ 2 add-spell-rule "I" "liæ" "iæ" "ê" ;biadoliæ
+ 2 add-spell-rule "I" "liæ" "æ" "sz" ;
+ 2 add-spell-rule "I" "liæ" "æ" "" ;
+ 2 add-spell-rule "I" "liæ" "æ" "my" ;
+ 2 add-spell-rule "I" "liæ" "æ" "cie" ;
+ 2 add-spell-rule "I" "liæ" "iæ" "±" ;
+
+ 2 add-spell-rule "I" "[^¶z]ciæ" "iæ" "ê" ;wierciæ
+ 2 add-spell-rule "I" "[^¶z]ciæ" "æ" "sz" ;
+ 2 add-spell-rule "I" "[^¶z]ciæ" "iæ" "i" ;
+ 2 add-spell-rule "I" "[^¶z]ciæ" "æ" "my" ;
+ 2 add-spell-rule "I" "[^¶z]ciæ" "æ" "cie" ;
+ 2 add-spell-rule "I" "[^¶z]ciæ" "iæ" "±" ;
+
+ 2 add-spell-rule "I" "zciæ" "iæ" "zê" ;chrzciæ, czciæ
+ 2 add-spell-rule "I" "zciæ" "æ" "sz" ;
+ 2 add-spell-rule "I" "zciæ" "æ" "" ;
+ 2 add-spell-rule "I" "zciæ" "æ" "my" ;
+ 2 add-spell-rule "I" "zciæ" "æ" "cie" ;
+ 2 add-spell-rule "I" "zciæ" "iæ" "z±" ;
+
+ 2 add-spell-rule "I" "siæ" "iæ" "zê" ;proszê
+ 2 add-spell-rule "I" "siæ" "æ" "sz" ;
+ 2 add-spell-rule "I" "siæ" "æ" "" ;
+ 2 add-spell-rule "I" "siæ" "æ" "my" ;
+ 2 add-spell-rule "I" "siæ" "æ" "cie" ;
+ 2 add-spell-rule "I" "siæ" "iæ" "z±" ;
+
+ 2 add-spell-rule "I" "[^b]yæ" "yæ" "ê" ;wierzyæ
+ 2 add-spell-rule "I" "[^b]yæ" "æ" "sz" ;
+ 2 add-spell-rule "I" "[^b]yæ" "æ" "" ;
+ 2 add-spell-rule "I" "[^b]yæ" "æ" "my" ;
+ 2 add-spell-rule "I" "[^b]yæ" "æ" "cie" ;
+ 2 add-spell-rule "I" "[^b]yæ" "yæ" "±" ;
+	
+ 2 add-spell-rule "I" "byæ" "æ" "wam" ;byæ
+ 2 add-spell-rule "I" "byæ" "æ" "wasz" ;
+ 2 add-spell-rule "I" "byæ" "æ" "wa" ;
+ 2 add-spell-rule "I" "byæ" "æ" "wamy" ;
+ 2 add-spell-rule "I" "byæ" "æ" "wacie" ;
+ 2 add-spell-rule "I" "byæ" "c" "waj±" ;
+
+ 2 add-spell-rule "I" "[^p]aæ" "æ" "m" ;sprz±taæ, bekaæ, graæ
+ 2 add-spell-rule "I" "[^p]aæ" "æ" "sz" ;
+ 2 add-spell-rule "I" "[^p]aæ" "æ" "" ;
+ 2 add-spell-rule "I" "[^p]aæ" "æ" "my" ;
+ 2 add-spell-rule "I" "[^p]aæ" "æ" "cie" ;
+ 2 add-spell-rule "I" "[^p]aæ" "æ" "j±" ;
+
+ 2 add-spell-rule "I" "spaæ" "spaæ" "¶piê" ;spaæ
+ 2 add-spell-rule "I" "spaæ" "spaæ" "¶pisz" ;
+ 2 add-spell-rule "I" "spaæ" "spaæ" "¶pi" ;
+ 2 add-spell-rule "I" "spaæ" "spaæ" "¶pimy" ;
+ 2 add-spell-rule "I" "spaæ" "spaæ" "¶picie" ;
+ 2 add-spell-rule "I" "spaæ" "spaæ" "¶pi±" ;
+
+ 2 add-spell-rule "I" "¶ciæ" "¶ciæ" "szczê" ;mo¶ciæ, go¶ciæ
+ 2 add-spell-rule "I" "¶ciæ" "æ" "sz" ;
+ 2 add-spell-rule "I" "¶ciæ" "æ" "" ;
+ 2 add-spell-rule "I" "¶ciæ" "æ" "cie" ;
+ 2 add-spell-rule "I" "¶ciæ" "æ" "my" ;
+ 2 add-spell-rule "I" "¶ciæ" "¶ciæ" "szcz±" ;
+
+;Flaga tworzy tryb rozkazuj±cy dla czasowników z flagi I.
+
+; flag *k:
+ 2 add-spell-rule "k" "[^il]eæ" "eæ" "" ;brzêczeæ
+ 2 add-spell-rule "k" "[^il]eæ" "eæ" "my" ;
+ 2 add-spell-rule "k" "[^il]eæ" "eæ" "cie" ;
+
+ 2 add-spell-rule "k" "mieæ" "eæ" "j" ;brzmieæ
+ 2 add-spell-rule "k" "mieæ" "eæ" "jmy" ;
+ 2 add-spell-rule "k" "mieæ" "eæ" "jcie" ;
+
+ 2 add-spell-rule "k" "pieæ" "ieæ" "" ;cierpieæ
+ 2 add-spell-rule "k" "pieæ" "ieæ" "my" ;
+ 2 add-spell-rule "k" "pieæ" "ieæ" "cie" ;
+
+ 2 add-spell-rule "k" "ecieæ" "cieæ" "æ" ;lecieæ
+ 2 add-spell-rule "k" "ecieæ" "cieæ" "æmy" ;
+ 2 add-spell-rule "k" "ecieæ" "cieæ" "æcie" ;
+
+ 2 add-spell-rule "k" "hcieæ" "æ" "j" ;chcieæ
+ 2 add-spell-rule "k" "hcieæ" "æ" "jmy" ;
+ 2 add-spell-rule "k" "hcieæ" "æ" "jcie" ;
+	
+ 2 add-spell-rule "k" "siedzieæ" "zieæ" "¼" ;siedzieæ
+ 2 add-spell-rule "k" "siedzieæ" "zieæ" "¼my" ;
+ 2 add-spell-rule "k" "siedzieæ" "zieæ" "¼cie" ;
+
+ 2 add-spell-rule "k" "wiedzieæ" "ieæ" "" ;wiedzieæ
+ 2 add-spell-rule "k" "wiedzieæ" "ieæ" "my" ;
+ 2 add-spell-rule "k" "wiedzieæ" "ieæ" "cie" ;
+
+ 2 add-spell-rule "k" "[^e]dzieæ" "zieæ" "¼" ;pierdzieæ, swêdzieæ
+ 2 add-spell-rule "k" "[^e]dzieæ" "zieæ" "¼my" ;
+ 2 add-spell-rule "k" "[^e]dzieæ" "zieæ" "¼cie" ;
+
+ 2 add-spell-rule "k" "[^abclonsz]iæ" "iæ" "" ;prawiæ, !prosiæ, !wierciæ, !biadoliæ
+ 2 add-spell-rule "k" "[^abclonsz]iæ" "iæ" "my" ;
+ 2 add-spell-rule "k" "[^abclonsz]iæ" "iæ" "cie" ;
+	
+ 2 add-spell-rule "k" "aiæ" "iæ" "j" ;czaiæ
+ 2 add-spell-rule "k" "aiæ" "iæ" "jmy" ;
+ 2 add-spell-rule "k" "aiæ" "iæ" "jcie" ;
+
+ 2 add-spell-rule "k" "oiæ" "oiæ" "ój" ;broiæ
+ 2 add-spell-rule "k" "oiæ" "oiæ" "ójmy" ;
+ 2 add-spell-rule "k" "oiæ" "oiæ" "ójcie" ;
+
+ 2 add-spell-rule "k" "niæ" "niæ" "ñ" ;broniæ
+ 2 add-spell-rule "k" "niæ" "niæ" "ñmy" ;
+ 2 add-spell-rule "k" "niæ" "niæ" "ñcie" ;
+
+ 2 add-spell-rule "k" "siæ" "siæ" "¶" ;prosiæ
+ 2 add-spell-rule "k" "siæ" "siæ" "¶my" ;
+ 2 add-spell-rule "k" "siæ" "siæ" "¶cie" ;
+
+ 2 add-spell-rule "k" "[^ê]ziæ" "ziæ" "¼" ;p³odziæ, !gnie¼dziæ
+ 2 add-spell-rule "k" "[^ê]ziæ" "ziæ" "¼my" ;
+ 2 add-spell-rule "k" "[^ê]ziæ" "ziæ" "¼cie" ;
+
+ 2 add-spell-rule "k" "êziæ" "ziæ" "¿" ;rzêziæ
+ 2 add-spell-rule "k" "êziæ" "ziæ" "¿my" ;
+ 2 add-spell-rule "k" "êziæ" "ziæ" "¿cie" ;
+
+ 2 add-spell-rule "k" "liæ" "iæ" "" ;biadoliæ
+ 2 add-spell-rule "k" "liæ" "iæ" "my" ;
+ 2 add-spell-rule "k" "liæ" "iæ" "cie" ;
+
+ 2 add-spell-rule "k" "[^¶z]ciæ" "ciæ" "æ" ;wierciæ
+ 2 add-spell-rule "k" "[^¶z]ciæ" "ciæ" "æmy" ;
+ 2 add-spell-rule "k" "[^¶z]ciæ" "ciæ" "æcie" ;
+
+ 2 add-spell-rule "k" "zciæ" "æ" "j" ;chrzciæ, czciæ
+ 2 add-spell-rule "k" "zciæ" "æ" "jmy" ;
+ 2 add-spell-rule "k" "zciæ" "æ" "jcie" ;
+
+ 2 add-spell-rule "k" "[^b¿]yæ" "yæ" "" ;pouczyæ
+ 2 add-spell-rule "k" "[^b¿]yæ" "yæ" "my" ;
+ 2 add-spell-rule "k" "[^b¿]yæ" "yæ" "cie" ;
+
+ 2 add-spell-rule "k" "byæ" "æ" "waj" ;byæ
+ 2 add-spell-rule "k" "byæ" "æ" "wajmy" ;
+ 2 add-spell-rule "k" "byæ" "æ" "wajcie" ;
+
+ 2 add-spell-rule "k" "[^o]¿yæ" "yæ" "" ;wierzyæ
+ 2 add-spell-rule "k" "[^o]¿yæ" "yæ" "my" ;
+ 2 add-spell-rule "k" "[^o]¿yæ" "yæ" "cie" ;
+	
+ 2 add-spell-rule "k" "obiæ" "obiæ" "ób" ;robiæ, drobiæ
+ 2 add-spell-rule "k" "obiæ" "obiæ" "óbmy" ;
+ 2 add-spell-rule "k" "obiæ" "obiæ" "óbcie" ;
+
+ 2 add-spell-rule "k" "o¿yæ" "o¿yæ" "ó¿" ;³o¿yæ
+ 2 add-spell-rule "k" "o¿yæ" "o¿yæ" "ó¿my" ;
+ 2 add-spell-rule "k" "o¿yæ" "o¿yæ" "ó¿cie" ;
+	
+ 2 add-spell-rule "k" "[^p]aæ" "æ" "j" ;porywaæ
+ 2 add-spell-rule "k" "[^p]aæ" "æ" "jmy" ;
+ 2 add-spell-rule "k" "[^p]aæ" "æ" "jcie" ;
+
+ 2 add-spell-rule "k" "spaæ" "spaæ" "¶pij" ;spaæ
+ 2 add-spell-rule "k" "spaæ" "spaæ" "¶pijmy" ;
+ 2 add-spell-rule "k" "spaæ" "spaæ" "¶pijcie" ;
+
+ 2 add-spell-rule "k" "¶ciæ" "ciæ" "æ" ;mo¶ciæ, go¶ciæ
+ 2 add-spell-rule "k" "¶ciæ" "ciæ" "æcie" ;
+ 2 add-spell-rule "k" "¶ciæ" "ciæ" "æmy" ;
+
+; Flaga tworzy rzeczowniki ods³owne oraz formy bezosobowe pochodz±ce
+; od czasowników z grupy flagi I
+
+; flag *i:
+
+ 2 add-spell-rule "i" "[^il]eæ" "eæ" "±c" ;
+ 2 add-spell-rule "i" "leæ" "eæ" "±c" ;
+ 2 add-spell-rule "i" "[mp]ieæ" "eæ" "±c" ;
+ 2 add-spell-rule "i" "[eh]cieæ" "ieæ" "±c" ;
+ 2 add-spell-rule "i" "siedzieæ" "ieæ" "±c" ;
+ 2 add-spell-rule "i" "widzieæ" "ieæ" "±c" ;
+ 2 add-spell-rule "i" "[êr]dzieæ" "ieæ" "±c" ;
+ 2 add-spell-rule "i" "[^aeclosz]iæ" "æ" "±c" ;
+ 2 add-spell-rule "i" "[aeo]iæ" "iæ" "j±c" ;
+ 2 add-spell-rule "i" "[^¼].ziæ" "ziæ" "¿±c" ;
+ 2 add-spell-rule "i" "¼dziæ" "¼dziæ" "¿d¿±c" ;
+ 2 add-spell-rule "i" "liæ" "iæ" "±c" ;
+ 2 add-spell-rule "i" "[^¶z]ciæ" "iæ" "±c" ;
+ 2 add-spell-rule "i" "zciæ" "iæ" "z±c" ;
+ 2 add-spell-rule "i" "siæ" "iæ" "z±c" ;
+ 2 add-spell-rule "i" "yæ" "yæ" "±c" ;
+ 2 add-spell-rule "i" "[^p]aæ" "æ" "j±c" ;
+ 2 add-spell-rule "i" "spaæ" "spaæ" "¶pi±c" ;
+ 2 add-spell-rule "i" "¶ciæ" "¶ciæ" "szcz±c" ;
+
+ 2 add-spell-rule "i" "[^i][ae]æ" "æ" "nia" ;podawaæ, kochaæ
+ 2 add-spell-rule "i" "[^i][ae]æ" "æ" "nie" ;
+ 2 add-spell-rule "i" "[^i][ae]æ" "æ" "niem" ;
+ 2 add-spell-rule "i" "[^i][ae]æ" "æ" "niu" ;
+ 2 add-spell-rule "i" "[^i]aæ" "æ" "no" ;
+ 2 add-spell-rule "i" "[^i]eæ" "eæ" "ono" ;
+ 2 add-spell-rule "i" "[^cz]i[ae]æ" "æ" "nia" ;cierpieæ, !siedzieæ !widzieæ
+ 2 add-spell-rule "i" "[^cz]i[ae]æ" "æ" "nie" ;
+ 2 add-spell-rule "i" "[^cz]i[ae]æ" "æ" "niem" ;
+ 2 add-spell-rule "i" "[^cz]i[ae]æ" "æ" "niu" ;
+ 2 add-spell-rule "i" "[^c]iaæ" "æ" "no" ;
+ 2 add-spell-rule "i" "[^cpz]ieæ" "eæ" "ono" ;!lecieæ, !cierpieæ
+ 2 add-spell-rule "i" "pieæ" "eæ" "ano" ;
+	
+ 2 add-spell-rule "i" "cieæ" "ieæ" "enia" ;chcieæ, lecieæ
+ 2 add-spell-rule "i" "cieæ" "ieæ" "enie" ;
+ 2 add-spell-rule "i" "cieæ" "ieæ" "eniem" ;
+ 2 add-spell-rule "i" "cieæ" "ieæ" "eniu" ;
+ 2 add-spell-rule "i" "cieæ" "eæ" "ano" ;
+
+ 2 add-spell-rule "i" "dzieæ" "ieæ" "enia" ;
+ 2 add-spell-rule "i" "dzieæ" "ieæ" "enie" ;
+ 2 add-spell-rule "i" "dzieæ" "ieæ" "eniem" ;
+ 2 add-spell-rule "i" "dzieæ" "ieæ" "eniu" ;
+
+ 2 add-spell-rule "i" "wiedzieæ" "ieæ" "ono" ;
+ 2 add-spell-rule "i" "siedzieæ" "eæ" "ano" ;
+ 2 add-spell-rule "i" "widzieæ" "eæ" "ano" ;
+ 2 add-spell-rule "i" "[êr]dzieæ" "eæ" "ano" ;
+	
+	
+ 2 add-spell-rule "i" "[^acelosz]iæ" "æ" "enia" ;
+ 2 add-spell-rule "i" "[^acelosz]iæ" "æ" "enie" ;
+ 2 add-spell-rule "i" "[^acelosz]iæ" "æ" "eniem" ;
+ 2 add-spell-rule "i" "[^acelosz]iæ" "æ" "eniu" ;
+ 2 add-spell-rule "i" "[^acelosz]iæ" "æ" "ono" ;
+
+ 2 add-spell-rule "i" "[aeo]iæ" "iæ" "jenia" ;
+ 2 add-spell-rule "i" "[aeo]iæ" "iæ" "jenie" ;
+ 2 add-spell-rule "i" "[aeo]iæ" "iæ" "jeniem" ;
+ 2 add-spell-rule "i" "[aeo]iæ" "iæ" "jeniu" ;
+ 2 add-spell-rule "i" "[aeo]iæ" "iæ" "jono" ;
+
+ 2 add-spell-rule "i" "[^¶z][cln]iæ" "iæ" "enia" ;
+ 2 add-spell-rule "i" "[^¶z][cln]iæ" "iæ" "enie" ;
+ 2 add-spell-rule "i" "[^¶z][cln]iæ" "iæ" "eniem" ;
+ 2 add-spell-rule "i" "[^¶z][cln]iæ" "iæ" "eniu" ;
+ 2 add-spell-rule "i" "[^¶z][cln]iæ" "iæ" "ono" ;
+
+ 2 add-spell-rule "i" "¶ciæ" "¶ciæ" "szczenia" ;
+ 2 add-spell-rule "i" "¶ciæ" "¶ciæ" "szczenie" ;
+ 2 add-spell-rule "i" "¶ciæ" "¶ciæ" "szczeniem" ;
+ 2 add-spell-rule "i" "¶ciæ" "¶ciæ" "szczeniu" ;
+ 2 add-spell-rule "i" "¶ciæ" "¶ciæ" "szczono" ;
+
+ 2 add-spell-rule "i" "siæ" "iæ" "zenia" ;
+ 2 add-spell-rule "i" "siæ" "iæ" "zenie" ;
+ 2 add-spell-rule "i" "siæ" "iæ" "zeniem" ;
+ 2 add-spell-rule "i" "siæ" "iæ" "zeniu" ;
+ 2 add-spell-rule "i" "siæ" "iæ" "zono" ;
+
+ 2 add-spell-rule "i" "zciæ" "iæ" "zczenia" ;
+ 2 add-spell-rule "i" "zciæ" "iæ" "zczenie" ;
+ 2 add-spell-rule "i" "zciæ" "iæ" "zczeniem" ;
+ 2 add-spell-rule "i" "zciæ" "iæ" "zczeniu" ;
+ 2 add-spell-rule "i" "zciæ" "iæ" "zczono" ;
+
+ 2 add-spell-rule "i" "[^¼][^ê]ziæ" "iæ" "enia" ;
+ 2 add-spell-rule "i" "[^¼][^ê]ziæ" "iæ" "enie" ;
+ 2 add-spell-rule "i" "[^¼][^ê]ziæ" "iæ" "eniem" ;
+ 2 add-spell-rule "i" "[^¼][^ê]ziæ" "iæ" "eniu" ;
+ 2 add-spell-rule "i" "[^¼][^ê]ziæ" "iæ" "ono" ;
+
+ 2 add-spell-rule "i" "¼dziæ" "¼dziæ" "¿d¿enia" ;bru¼dziæ
+ 2 add-spell-rule "i" "¼dziæ" "¼dziæ" "¿d¿enie" ;
+ 2 add-spell-rule "i" "¼dziæ" "¼dziæ" "¿d¿eniem" ;
+ 2 add-spell-rule "i" "¼dziæ" "¼dziæ" "¿d¿eniu" ;
+ 2 add-spell-rule "i" "¼dziæ" "¼dziæ" "¿d¿ono" ;
+
+ 2 add-spell-rule "i" "êziæ" "ziæ" "¿enia" ;rzêziæ
+ 2 add-spell-rule "i" "êziæ" "ziæ" "¿enie" ;
+ 2 add-spell-rule "i" "êziæ" "ziæ" "¿eniem" ;
+ 2 add-spell-rule "i" "êziæ" "ziæ" "¿eniu" ;
+ 2 add-spell-rule "i" "êziæ" "ziæ" "¿ono" ;
+	
+ 2 add-spell-rule "i" "yæ" "yæ" "enia" ;
+ 2 add-spell-rule "i" "yæ" "yæ" "enie" ;
+ 2 add-spell-rule "i" "yæ" "yæ" "eniem" ;
+ 2 add-spell-rule "i" "yæ" "yæ" "eniu" ;
+ 2 add-spell-rule "i" "yæ" "yæ" "ono" ;
+
+; Czasowniki odmieniaj±ce siê na '-e' w 3 os. lp.
+; budowaæ	-> on buduje
+; zgadywaæ	-> on zgaduje
+; zamieszkiwaæ	-> on zamieszkuje
+; butwieæ	-> on butwieje
+; czuæ		-> on czuje
+; ¶miaæ siê	-> on ¶mieje siê		
+; frun±æ	-> on frunie
+; grzêzn±æ	-> on grzê¼nie
+; chcieæ	-> on chce
+; butwieæ	-> on butwieje
+; czuæ		-> on czuje
+; piæ		-> on pije
+; oraæ		-> on orze
+
+; Flaga zapewnia odmianê czasownika przez osoby w czasie tera¼niejszym
+
+; flag *J:
+
+ 2 add-spell-rule "J" "d±æ" "±æ" "mê" ;d±æ
+ 2 add-spell-rule "J" "d±æ" "±æ" "miesz" ;
+ 2 add-spell-rule "J" "d±æ" "±æ" "mie" ;
+ 2 add-spell-rule "J" "d±æ" "±æ" "miemy" ;
+ 2 add-spell-rule "J" "d±æ" "±æ" "miecie" ;
+ 2 add-spell-rule "J" "d±æ" "±æ" "m±" ;
+
+ 2 add-spell-rule "J" "gi±æ" "i±æ" "nê" ;gi±æ
+ 2 add-spell-rule "J" "gi±æ" "i±æ" "niesz" ;
+ 2 add-spell-rule "J" "gi±æ" "i±æ" "nie" ;
+ 2 add-spell-rule "J" "gi±æ" "i±æ" "niemy" ;
+ 2 add-spell-rule "J" "gi±æ" "i±æ" "niecie" ;
+ 2 add-spell-rule "J" "gi±æ" "i±æ" "n±" ;
+
+ 2 add-spell-rule "J" "l±æ" "±æ" "nê" ;kl±æ
+ 2 add-spell-rule "J" "l±æ" "±æ" "niesz" ;
+ 2 add-spell-rule "J" "l±æ" "±æ" "nie" ;
+ 2 add-spell-rule "J" "l±æ" "±æ" "niemy" ;
+ 2 add-spell-rule "J" "l±æ" "±æ" "niecie" ;
+ 2 add-spell-rule "J" "l±æ" "±æ" "n±" ;
+
+ 2 add-spell-rule "J" "n±æ" "±æ" "ê" ;frun±æ
+ 2 add-spell-rule "J" "n±æ" "æ" "" ;
+
+ 2 add-spell-rule "J" "[^sz]n±æ" "±æ" "iesz" ;frun±æ	
+ 2 add-spell-rule "J" "[^sz]n±æ" "±æ" "ie" ;
+ 2 add-spell-rule "J" "[^sz]n±æ" "±æ" "iemy" ;
+ 2 add-spell-rule "J" "[^sz]n±æ" "±æ" "iecie" ;
+
+ 2 add-spell-rule "J" "sn±æ" "sn±æ" "¶niesz" ;cisn±æ(uciskaæ)
+ 2 add-spell-rule "J" "sn±æ" "sn±æ" "¶nie" ;
+ 2 add-spell-rule "J" "sn±æ" "sn±æ" "¶niemy" ;
+ 2 add-spell-rule "J" "sn±æ" "sn±æ" "¶niecie" ;
+
+ 2 add-spell-rule "J" "zn±æ" "zn±æ" "¼niesz" ;grzêzn±æ
+ 2 add-spell-rule "J" "zn±æ" "zn±æ" "¼nie" ;
+ 2 add-spell-rule "J" "zn±æ" "zn±æ" "¼niemy" ;
+ 2 add-spell-rule "J" "zn±æ" "zn±æ" "¼niecie" ;
+
+ 2 add-spell-rule "J" "[^a±eêioóu]zn±æ" "±æ" "iesz" ;
+ 2 add-spell-rule "J" "[^a±eêioóu]zn±æ" "±æ" "ie" ;
+ 2 add-spell-rule "J" "[^a±eêioóu]zn±æ" "±æ" "iemy" ;
+ 2 add-spell-rule "J" "[^a±eêioóu]zn±æ" "±æ" "iecie" ;
+
+ 2 add-spell-rule "J" "owaæ" "owaæ" "ujê" ;budowaæ -> buduje
+ 2 add-spell-rule "J" "owaæ" "owaæ" "ujesz" ;
+ 2 add-spell-rule "J" "owaæ" "owaæ" "uje" ;
+ 2 add-spell-rule "J" "owaæ" "owaæ" "ujemy" ;
+ 2 add-spell-rule "J" "owaæ" "owaæ" "ujecie" ;
+ 2 add-spell-rule "J" "owaæ" "owaæ" "uj±" ;
+
+ 2 add-spell-rule "J" "ywaæ" "ywaæ" "ujê" ;zgadywaæ -> zgaduje
+ 2 add-spell-rule "J" "ywaæ" "ywaæ" "ujesz" ;
+ 2 add-spell-rule "J" "ywaæ" "ywaæ" "uje" ;
+ 2 add-spell-rule "J" "ywaæ" "ywaæ" "ujemy" ;
+ 2 add-spell-rule "J" "ywaæ" "ywaæ" "ujecie" ;
+ 2 add-spell-rule "J" "ywaæ" "ywaæ" "uj±" ;
+
+ 2 add-spell-rule "J" "iwaæ" "iwaæ" "ujê" ;pomieszkiwaæ - pomieszkuje
+ 2 add-spell-rule "J" "iwaæ" "iwaæ" "ujesz" ;
+ 2 add-spell-rule "J" "iwaæ" "iwaæ" "uje" ;
+ 2 add-spell-rule "J" "iwaæ" "iwaæ" "ujemy" ;
+ 2 add-spell-rule "J" "iwaæ" "iwaæ" "ujecie" ;
+ 2 add-spell-rule "J" "iwaæ" "iwaæ" "uj±" ;
+
+ 2 add-spell-rule "J" "awaæ" "waæ" "jê" ;nadawaæ -> nadaje
+ 2 add-spell-rule "J" "awaæ" "waæ" "jesz" ;
+ 2 add-spell-rule "J" "awaæ" "waæ" "je" ;
+ 2 add-spell-rule "J" "awaæ" "waæ" "jemy" ;
+ 2 add-spell-rule "J" "awaæ" "waæ" "jecie" ;
+ 2 add-spell-rule "J" "awaæ" "waæ" "j±" ;
+	
+ 2 add-spell-rule "J" "[iu]æ" "æ" "jê" ;czuæ, piæ
+ 2 add-spell-rule "J" "[iu]æ" "æ" "jesz" ;
+ 2 add-spell-rule "J" "[iu]æ" "æ" "je" ;
+ 2 add-spell-rule "J" "[iu]æ" "æ" "jemy" ;
+ 2 add-spell-rule "J" "[iu]æ" "æ" "jecie" ;
+ 2 add-spell-rule "J" "[iu]æ" "æ" "j±" ;
+
+ 2 add-spell-rule "J" "[^z]ieæ" "æ" "jê" ;butwieæ
+ 2 add-spell-rule "J" "[^z]ieæ" "æ" "jesz" ;
+ 2 add-spell-rule "J" "[^z]ieæ" "æ" "je" ;
+ 2 add-spell-rule "J" "[^z]ieæ" "æ" "jemy" ;
+ 2 add-spell-rule "J" "[^z]ieæ" "æ" "jecie" ;
+ 2 add-spell-rule "J" "[^z]ieæ" "æ" "j±" ;
+
+ 2 add-spell-rule "J" "wiedzieæ" "dzieæ" "m" ;wiedzieæ
+ 2 add-spell-rule "J" "wiedzieæ" "dzieæ" "sz" ;
+ 2 add-spell-rule "J" "wiedzieæ" "dzieæ" "" ;
+ 2 add-spell-rule "J" "wiedzieæ" "dzieæ" "my" ;
+ 2 add-spell-rule "J" "wiedzieæ" "dzieæ" "cie" ;
+ 2 add-spell-rule "J" "wiedzieæ" "ieæ" "±" ;
+	
+ 2 add-spell-rule "J" "kaæ" "kaæ" "czê" ;gdakaæ, krakaæ
+ 2 add-spell-rule "J" "kaæ" "kaæ" "czesz" ;
+ 2 add-spell-rule "J" "kaæ" "kaæ" "cze" ;
+ 2 add-spell-rule "J" "kaæ" "kaæ" "czemy" ;
+ 2 add-spell-rule "J" "kaæ" "kaæ" "czecie" ;
+ 2 add-spell-rule "J" "kaæ" "kaæ" "cz±" ;
+
+ 2 add-spell-rule "J" "[il]aæ" "aæ" "ejê" ;¶miaæ siê, chlaæ
+ 2 add-spell-rule "J" "[il]aæ" "aæ" "ejesz" ;
+ 2 add-spell-rule "J" "[il]aæ" "aæ" "eje" ;
+ 2 add-spell-rule "J" "[il]aæ" "aæ" "ejemy" ;
+ 2 add-spell-rule "J" "[il]aæ" "aæ" "ejecie" ;
+ 2 add-spell-rule "J" "[il]aæ" "aæ" "ej±" ;
+	
+ 2 add-spell-rule "J" "leæ" "æ" "jê" ;bieleæ
+ 2 add-spell-rule "J" "leæ" "æ" "jesz" ;
+ 2 add-spell-rule "J" "leæ" "æ" "je" ;
+ 2 add-spell-rule "J" "leæ" "æ" "jemy" ;
+ 2 add-spell-rule "J" "leæ" "æ" "jecie" ;
+ 2 add-spell-rule "J" "leæ" "æ" "j±" ;
+	
+ 2 add-spell-rule "J" "[op]taæ" "taæ" "czê" ;³omotaæ, ch³eptaæ
+ 2 add-spell-rule "J" "[op]taæ" "taæ" "czesz" ;
+ 2 add-spell-rule "J" "[op]taæ" "taæ" "cze" ;
+ 2 add-spell-rule "J" "[op]taæ" "taæ" "czemy" ;
+ 2 add-spell-rule "J" "[op]taæ" "taæ" "czecie" ;
+ 2 add-spell-rule "J" "[op]taæ" "taæ" "cz±" ;
+
+ 2 add-spell-rule "J" "[bp]aæ" "aæ" "iê" ;chlapaæ, dziobaæ
+ 2 add-spell-rule "J" "[bp]aæ" "aæ" "iesz" ;
+ 2 add-spell-rule "J" "[bp]aæ" "aæ" "ie" ;
+ 2 add-spell-rule "J" "[bp]aæ" "aæ" "iemy" ;
+ 2 add-spell-rule "J" "[bp]aæ" "aæ" "iecie" ;
+ 2 add-spell-rule "J" "[bp]aæ" "aæ" "i±" ;
+
+ 2 add-spell-rule "J" "[^s]saæ" "aæ" "zê" ;czesaæ
+ 2 add-spell-rule "J" "[^s]saæ" "aæ" "zesz" ;
+ 2 add-spell-rule "J" "[^s]saæ" "aæ" "ze" ;
+ 2 add-spell-rule "J" "[^s]saæ" "aæ" "zemy" ;
+ 2 add-spell-rule "J" "[^s]saæ" "aæ" "zecie" ;
+ 2 add-spell-rule "J" "[^s]saæ" "aæ" "z±" ;
+
+ 2 add-spell-rule "J" "ssaæ" "aæ" "ê" ;ssaæ
+ 2 add-spell-rule "J" "ssaæ" "aæ" "iesz" ;
+ 2 add-spell-rule "J" "ssaæ" "aæ" "ie" ;
+ 2 add-spell-rule "J" "ssaæ" "aæ" "iemy" ;
+ 2 add-spell-rule "J" "ssaæ" "aæ" "iecie" ;
+ 2 add-spell-rule "J" "ssaæ" "aæ" "±" ;
+
+ 2 add-spell-rule "J" "staæ" "taæ" "zczê" ;ch³ostaæ, chlustaæ
+ 2 add-spell-rule "J" "staæ" "taæ" "zczesz" ;
+ 2 add-spell-rule "J" "staæ" "taæ" "zcze" ;
+ 2 add-spell-rule "J" "staæ" "taæ" "zczemy" ;
+ 2 add-spell-rule "J" "staæ" "taæ" "zczecie" ;
+ 2 add-spell-rule "J" "staæ" "taæ" "zcz±" ;
+
+ 2 add-spell-rule "J" "[^bp]raæ" "aæ" "zê" ;bazgraæ
+ 2 add-spell-rule "J" "[^bp]raæ" "aæ" "zesz" ;
+ 2 add-spell-rule "J" "[^bp]raæ" "aæ" "ze" ;
+ 2 add-spell-rule "J" "[^bp]raæ" "aæ" "zemy" ;
+ 2 add-spell-rule "J" "[^bp]raæ" "aæ" "zecie" ;
+ 2 add-spell-rule "J" "[^bp]raæ" "aæ" "z±" ;
+
+ 2 add-spell-rule "J" "[bp]raæ" "raæ" "iorê" ;praæ, braæ
+ 2 add-spell-rule "J" "[bp]raæ" "raæ" "ierzesz" ;
+ 2 add-spell-rule "J" "[bp]raæ" "raæ" "ierze" ;
+ 2 add-spell-rule "J" "[bp]raæ" "raæ" "ierzemy" ;
+ 2 add-spell-rule "J" "[bp]raæ" "raæ" "ierzecie" ;
+ 2 add-spell-rule "J" "[bp]raæ" "raæ" "ior±" ;
+
+ 2 add-spell-rule "J" "[^cdr]zaæ" "zaæ" "¿ê" ;lizaæ, wi±zaæ
+ 2 add-spell-rule "J" "[^cdr]zaæ" "zaæ" "¿esz" ;
+ 2 add-spell-rule "J" "[^cdr]zaæ" "zaæ" "¿e" ;
+ 2 add-spell-rule "J" "[^cdr]zaæ" "zaæ" "¿emy" ;
+ 2 add-spell-rule "J" "[^cdr]zaæ" "zaæ" "¿ecie" ;
+ 2 add-spell-rule "J" "[^cdr]zaæ" "zaæ" "¿±" ;
+
+ 2 add-spell-rule "J" "rzaæ" "aæ" "ejê" ;grzaæ
+ 2 add-spell-rule "J" "rzaæ" "aæ" "ejesz" ;
+ 2 add-spell-rule "J" "rzaæ" "aæ" "eje" ;
+ 2 add-spell-rule "J" "rzaæ" "aæ" "ejemy" ;
+ 2 add-spell-rule "J" "rzaæ" "aæ" "ejecie" ;
+ 2 add-spell-rule "J" "rzaæ" "aæ" "ej±" ;
+
+ 2 add-spell-rule "J" "[ao]rzeæ" "æ" "jê" ;chorzeæ
+ 2 add-spell-rule "J" "[ao]rzeæ" "æ" "jesz" ;
+ 2 add-spell-rule "J" "[ao]rzeæ" "æ" "je" ;
+ 2 add-spell-rule "J" "[ao]rzeæ" "æ" "jemy" ;
+ 2 add-spell-rule "J" "[ao]rzeæ" "æ" "jecie" ;
+ 2 add-spell-rule "J" "[ao]rzeæ" "æ" "j±" ;
+
+ 2 add-spell-rule "J" "[^ao]rzeæ" "zeæ" "ê" ;drzeæ
+ 2 add-spell-rule "J" "[^ao]rzeæ" "æ" "sz" ;
+ 2 add-spell-rule "J" "[^ao]rzeæ" "æ" "" ;
+ 2 add-spell-rule "J" "[^ao]rzeæ" "æ" "my" ;
+ 2 add-spell-rule "J" "[^ao]rzeæ" "æ" "cie" ;
+ 2 add-spell-rule "J" "[^ao]rzeæ" "zeæ" "±" ;
+
+ 2 add-spell-rule "J" "e¶æ" "e¶æ" "osê" ;nie¶æ
+ 2 add-spell-rule "J" "e¶æ" "¶æ" "siesz" ;
+ 2 add-spell-rule "J" "e¶æ" "¶æ" "sie" ;
+ 2 add-spell-rule "J" "e¶æ" "¶æ" "siemy" ;
+ 2 add-spell-rule "J" "e¶æ" "¶æ" "siecie" ;
+ 2 add-spell-rule "J" "e¶æ" "e¶æ" "os±" ;
+
+ 2 add-spell-rule "J" "[^e]¼æ" "¼æ" "zê" ;gry¼æ
+ 2 add-spell-rule "J" "[^e]¼æ" "¼æ" "ziesz" ;
+ 2 add-spell-rule "J" "[^e]¼æ" "¼æ" "zie" ;
+ 2 add-spell-rule "J" "[^e]¼æ" "¼æ" "ziemy" ;
+ 2 add-spell-rule "J" "[^e]¼æ" "¼æ" "ziecie" ;
+ 2 add-spell-rule "J" "[^e]¼æ" "¼æ" "z±" ;
+
+ 2 add-spell-rule "J" "e¼æ" "e¼æ" "ozê" ;wie¼æ
+ 2 add-spell-rule "J" "e¼æ" "¼æ" "ziesz" ;
+ 2 add-spell-rule "J" "e¼æ" "¼æ" "zie" ;
+ 2 add-spell-rule "J" "e¼æ" "¼æ" "ziemy" ;
+ 2 add-spell-rule "J" "e¼æ" "¼æ" "ziecie" ;
+ 2 add-spell-rule "J" "e¼æ" "e¼æ" "oz±" ;
+
+ 2 add-spell-rule "J" "ó¶æ" "ó¶æ" "odê" ;bó¶æ
+ 2 add-spell-rule "J" "ó¶æ" "ó¶æ" "odziesz" ;
+ 2 add-spell-rule "J" "ó¶æ" "ó¶æ" "odzie" ;
+ 2 add-spell-rule "J" "ó¶æ" "ó¶æ" "odziemy" ;
+ 2 add-spell-rule "J" "ó¶æ" "ó¶æ" "odziecie" ;
+ 2 add-spell-rule "J" "ó¶æ" "ó¶æ" "od±" ;
+
+ 2 add-spell-rule "J" "ec" "ec" "okê" ;wlec
+ 2 add-spell-rule "J" "ec" "" "zesz" ;
+ 2 add-spell-rule "J" "ec" "" "ze" ;
+ 2 add-spell-rule "J" "ec" "" "zemy" ;
+ 2 add-spell-rule "J" "ec" "" "zecie" ;
+ 2 add-spell-rule "J" "ec" "ec" "ok±" ;
+
+ 2 add-spell-rule "J" "uc" "c" "kê" ;t³uc
+ 2 add-spell-rule "J" "uc" "" "zesz" ;
+ 2 add-spell-rule "J" "uc" "" "ze" ;
+ 2 add-spell-rule "J" "uc" "" "zemy" ;
+ 2 add-spell-rule "J" "uc" "" "zecie" ;
+ 2 add-spell-rule "J" "uc" "c" "k±" ;
+
+; Flaga tworzy rzeczowniki ods³owne oraz formy bezosobowe pochodz±ce
+; od czasowników z grupy flagi J
+
+; flag *j:
+ 2 add-spell-rule "j" "[^i]±æ" "æ" "c" ;frun±æ, grzêzn±æ
+ 2 add-spell-rule "j" "gi±æ" "i±æ" "n±c" ;
+ 2 add-spell-rule "j" "owaæ" "owaæ" "uj±c" ;
+ 2 add-spell-rule "j" "ywaæ" "ywaæ" "uj±c" ;
+ 2 add-spell-rule "j" "iwaæ" "iwaæ" "uj±c" ;
+ 2 add-spell-rule "j" "awaæ" "waæ" "j±c" ;
+ 2 add-spell-rule "j" "[iu]æ" "æ" "j±c" ;
+ 2 add-spell-rule "j" "cieæ" "æ" "j±c" ;
+ 2 add-spell-rule "j" "iaæ" "aæ" "ej±c" ;
+ 2 add-spell-rule "j" "kaæ" "æ" "j±c" ;
+ 2 add-spell-rule "j" "[op]taæ" "taæ" "cz±c" ;
+ 2 add-spell-rule "j" "[bp]aæ" "aæ" "i±c" ;
+ 2 add-spell-rule "j" "saæ" "aæ" "z±c" ;
+ 2 add-spell-rule "j" "ostaæ" "taæ" "zcz±c" ;
+ 2 add-spell-rule "j" "raæ" "aæ" "z±c" ;
+ 2 add-spell-rule "j" "[bp]raæ" "raæ" "ior±c" ;
+ 2 add-spell-rule "j" "[^cdr]zaæ" "zaæ" "¿±c" ;
+ 2 add-spell-rule "j" "[^e]¼æ" "¼æ" "z±c" ;
+ 2 add-spell-rule "j" "e¼æ" "e¼æ" "oz±c" ;
+ 2 add-spell-rule "j" "e¶æ" "e¶æ" "os±c" ;
+ 2 add-spell-rule "j" "dzieæ" "ieæ" "±c" ;
+
+ 2 add-spell-rule "j" "[^±ei¶u¼]æ" "æ" "nia" ;administrowaæ, !czuæ, !piæ, !chcieæ, !wiedzieæ
+ 2 add-spell-rule "j" "[^±ei¶u¼]æ" "æ" "nie" ;
+ 2 add-spell-rule "j" "[^±ei¶u¼]æ" "æ" "niem" ;
+ 2 add-spell-rule "j" "[^±ei¶u¼]æ" "æ" "niu" ;
+ 2 add-spell-rule "j" "aæ" "æ" "no" ;
+ 2 add-spell-rule "j" "[^i]eæ" "eæ" "ono" ;
+
+ 2 add-spell-rule "j" "cieæ" "ieæ" "enia" ;chcieæ
+ 2 add-spell-rule "j" "cieæ" "ieæ" "enie" ;
+ 2 add-spell-rule "j" "cieæ" "ieæ" "eniem" ;
+ 2 add-spell-rule "j" "cieæ" "ieæ" "eniu" ;
+ 2 add-spell-rule "j" "cieæ" "eæ" "ano" ;
+
+ 2 add-spell-rule "j" "[dil]±æ" "±æ" "êcia" ;gi±æ, kl±æ, d±æ
+ 2 add-spell-rule "j" "[dil]±æ" "±æ" "êcie" ;
+ 2 add-spell-rule "j" "[dil]±æ" "±æ" "êciem" ;
+ 2 add-spell-rule "j" "[dil]±æ" "±æ" "êciu" ;
+ 2 add-spell-rule "j" "[dil]±æ" "±æ" "êto" ;
+
+ 2 add-spell-rule "j" "[^s]n±æ" "±æ" "iêcia" ;chudn±æ
+ 2 add-spell-rule "j" "[^s]n±æ" "±æ" "iêcie" ;
+ 2 add-spell-rule "j" "[^s]n±æ" "±æ" "iêciem" ;
+ 2 add-spell-rule "j" "[^s]n±æ" "±æ" "iêciu" ;
+ 2 add-spell-rule "j" "[^s]n±æ" "±æ" "iêto" ;
+
+ 2 add-spell-rule "j" "sn±æ" "sn±æ" "¶niêcia" ;cisn±æ
+ 2 add-spell-rule "j" "sn±æ" "sn±æ" "¶niêcie" ;
+ 2 add-spell-rule "j" "sn±æ" "sn±æ" "¶niêciem" ;
+ 2 add-spell-rule "j" "sn±æ" "sn±æ" "¶niêciu" ;
+ 2 add-spell-rule "j" "sn±æ" "sn±æ" "¶niêto" ;
+
+ 2 add-spell-rule "j" "[^cz]ieæ" "æ" "nia" ;butwieæ
+ 2 add-spell-rule "j" "[^cz]ieæ" "æ" "nie" ;
+ 2 add-spell-rule "j" "[^cz]ieæ" "æ" "niem" ;
+ 2 add-spell-rule "j" "[^cz]ieæ" "æ" "niu" ;
+ 2 add-spell-rule "j" "[^cz]ieæ" "eæ" "ono" ;
+
+ 2 add-spell-rule "j" "wiedzieæ" "eæ" "ano" ;wiedzieæ, powiedzieæ
+
+ 2 add-spell-rule "j" "¶æ" "¶æ" "sienia" ;nie¶æ
+ 2 add-spell-rule "j" "¶æ" "¶æ" "sienie" ;
+ 2 add-spell-rule "j" "¶æ" "¶æ" "sieniem" ;
+ 2 add-spell-rule "j" "¶æ" "¶æ" "sieniu" ;
+ 2 add-spell-rule "j" "¶æ" "¶æ" "siono" ;
+
+ 2 add-spell-rule "j" "¼æ" "¼æ" "zienia" ;gry¼æ
+ 2 add-spell-rule "j" "¼æ" "¼æ" "zienie" ;
+ 2 add-spell-rule "j" "¼æ" "¼æ" "zieniem" ;
+ 2 add-spell-rule "j" "¼æ" "¼æ" "zieniu" ;
+ 2 add-spell-rule "j" "¼æ" "¼æ" "ziono" ;
+	
+ 2 add-spell-rule "j" "uæ" "æ" "cia" ;czuæ
+ 2 add-spell-rule "j" "uæ" "æ" "cie" ;
+ 2 add-spell-rule "j" "uæ" "æ" "ciem" ;
+ 2 add-spell-rule "j" "uæ" "æ" "ciu" ;
+ 2 add-spell-rule "j" "uæ" "æ" "to" ;
+
+ 2 add-spell-rule "j" "[^ac]iæ" "æ" "cia" ;piæ
+ 2 add-spell-rule "j" "[^ac]iæ" "æ" "cie" ;
+ 2 add-spell-rule "j" "[^ac]iæ" "æ" "ciem" ;
+ 2 add-spell-rule "j" "[^ac]iæ" "æ" "ciu" ;
+ 2 add-spell-rule "j" "[^ac]iæ" "æ" "to" ;
+
+ 2 add-spell-rule "j" "[ae]iæ" "iæ" "jenia" ;czaiæ
+ 2 add-spell-rule "j" "[ae]iæ" "iæ" "jenie" ;
+ 2 add-spell-rule "j" "[ae]iæ" "iæ" "jeniem" ;
+ 2 add-spell-rule "j" "[ae]iæ" "iæ" "jeniu" ;
+ 2 add-spell-rule "j" "[ae]iæ" "iæ" "jono" ;
+
+ 2 add-spell-rule "j" "ciæ" "iæ" "enia" ;cuciæ
+ 2 add-spell-rule "j" "ciæ" "iæ" "enie" ;
+ 2 add-spell-rule "j" "ciæ" "iæ" "eniem" ;
+ 2 add-spell-rule "j" "ciæ" "iæ" "eniu" ;
+ 2 add-spell-rule "j" "ciæ" "iæ" "ono" ;
+
+; Rzeczowniki
+
+; Rodzaj mêski - mo¿na z tych rzeczowników skonstruowaæ rzeczowniki 
+; rodz. ¿eñskiego
+; ten adiministrator(ta administratorka)
+; ten abonamentowicz(ta abonamentowiczka)
+; ten alkoholik(ta alkoholiczka)
+; ten akcjonariusz(ta akcjonariuszka)
+
+; Flaga zapewnia odmianê tych rzeczowników przez przypadki w lp. i w lmn.
+
+; flag *K:
+
+ 2 add-spell-rule "K" "[^c]a" "a" "ka" ;archiwista, archiwistka
+ 2 add-spell-rule "K" "[^c]a" "a" "ki" ;
+ 2 add-spell-rule "K" "[^c]a" "a" "ce" ;
+ 2 add-spell-rule "K" "[^c]a" "a" "kê" ;
+ 2 add-spell-rule "K" "[^c]a" "a" "k±" ;
+
+ 2 add-spell-rule "K" "[^c]a" "a" "ek" ;
+ 2 add-spell-rule "K" "[^c]a" "a" "kom" ;
+ 2 add-spell-rule "K" "[^c]a" "a" "kami" ;
+ 2 add-spell-rule "K" "[^ct]a" "" "ch" ;
+ 2 add-spell-rule "K" "ta" "a" "kach" ;
+	
+ 2 add-spell-rule "K" "[^z]ca" "a" "zyni" ;dawca - dawczyni
+ 2 add-spell-rule "K" "[^z]ca" "a" "zyniê" ;
+ 2 add-spell-rule "K" "[^z]ca" "a" "zyni±" ;
+
+ 2 add-spell-rule "K" "[^z]ca" "a" "zyñ" ;
+ 2 add-spell-rule "K" "[^z]ca" "a" "zyniom" ;
+ 2 add-spell-rule "K" "[^z]ca" "a" "zyniami" ;
+ 2 add-spell-rule "K" "[^z]ca" "a" "zyniach" ;
+
+ 2 add-spell-rule "K" "[^ê]zca" "a" "zyni" ;znalazca
+ 2 add-spell-rule "K" "[^ê]zca" "a" "zyniê" ;
+ 2 add-spell-rule "K" "[^ê]zca" "a" "zyni±" ;
+
+ 2 add-spell-rule "K" "[^ê]zca" "a" "zyñ" ;
+ 2 add-spell-rule "K" "[^ê]zca" "a" "zyniom" ;
+ 2 add-spell-rule "K" "[^ê]zca" "a" "zyniami" ;
+ 2 add-spell-rule "K" "[^ê]zca" "a" "zyniach" ;
+
+ 2 add-spell-rule "K" "êzca" "zca" "¿czyni" ;zwyciêzca - zwyciê¿czyni
+ 2 add-spell-rule "K" "êzca" "zca" "¿czyniê" ;
+ 2 add-spell-rule "K" "êzca" "zca" "¿czyni±" ;
+
+ 2 add-spell-rule "K" "êzca" "zca" "¿czyñ" ;
+ 2 add-spell-rule "K" "êzca" "zca" "¿czyniom" ;
+ 2 add-spell-rule "K" "êzca" "zca" "¿czyniami" ;
+ 2 add-spell-rule "K" "êzca" "zca" "¿czyniach" ;
+	
+
+ 2 add-spell-rule "K" "[^z][aiuy]k" "k" "czka" ;alkoholik, wie¶niak, 
+ 2 add-spell-rule "K" "[^z][aiuy]k" "k" "czki" ;
+ 2 add-spell-rule "K" "[^z][aiuy]k" "k" "czce" ;
+ 2 add-spell-rule "K" "[^z][aiuy]k" "k" "czkê" ;
+ 2 add-spell-rule "K" "[^z][aiuy]k" "k" "czk±" ;
+
+ 2 add-spell-rule "K" "[^z][aiuy]k" "k" "czek" ;
+ 2 add-spell-rule "K" "[^z][aiuy]k" "k" "czkom" ;
+ 2 add-spell-rule "K" "[^z][aiuy]k" "k" "czkami" ;
+ 2 add-spell-rule "K" "[^z][aiuy]k" "k" "czkach" ;
+	
+	
+ 2 add-spell-rule "K" "[nt]ek" "ek" "ka" ;lp M.
+ 2 add-spell-rule "K" "[nt]ek" "ek" "ki" ;D	M B lm
+ 2 add-spell-rule "K" "[nt]ek" "ek" "ce" ;C Ms
+ 2 add-spell-rule "K" "[nt]ek" "ek" "kê" ;B
+ 2 add-spell-rule "K" "[nt]ek" "ek" "k±" ;N
+;	[NT] E K	>			#D jak m lp. (meski)
+ 2 add-spell-rule "K" "[nt]ek" "ek" "kom" ;C
+ 2 add-spell-rule "K" "[nt]ek" "ek" "kami" ;N
+ 2 add-spell-rule "K" "[nt]ek" "ek" "kach" ;Ms
+
+ 2 add-spell-rule "K" "pek" "ek" "aczka" ;lp M.
+ 2 add-spell-rule "K" "pek" "ek" "aczki" ;D	lm M B
+ 2 add-spell-rule "K" "pek" "ek" "aczce" ;C Ms
+ 2 add-spell-rule "K" "pek" "ek" "aczkê" ;B
+ 2 add-spell-rule "K" "pek" "ek" "aczk±" ;N
+ 2 add-spell-rule "K" "pek" "ek" "aczek" ;lm D
+ 2 add-spell-rule "K" "pek" "ek" "aczkom" ;C
+ 2 add-spell-rule "K" "pek" "ek" "aczkami" ;N
+ 2 add-spell-rule "K" "pek" "ek" "aczkach" ;Ms
+
+	
+ 2 add-spell-rule "K" "[^i].l" "" "ka" ;debil, dyskobol, grekofil, kumpel, #obywatel
+ 2 add-spell-rule "K" "[^i].l" "" "ki" ;
+ 2 add-spell-rule "K" "[^i].l" "" "ce" ;
+ 2 add-spell-rule "K" "[^i].l" "" "kê" ;
+ 2 add-spell-rule "K" "[^i].l" "" "k±" ;
+
+ 2 add-spell-rule "K" "[^i].l" "" "ek" ;
+ 2 add-spell-rule "K" "[^i].l" "" "kom" ;
+ 2 add-spell-rule "K" "[^i].l" "" "kami" ;
+ 2 add-spell-rule "K" "[^i].l" "" "kach" ;
+
+	
+ 2 add-spell-rule "K" "czyk" "czyk" "ka" ;Boliwijczyk
+ 2 add-spell-rule "K" "czyk" "czyk" "ki" ;
+ 2 add-spell-rule "K" "czyk" "czyk" "ce" ;
+ 2 add-spell-rule "K" "czyk" "czyk" "kê" ;
+ 2 add-spell-rule "K" "czyk" "czyk" "k±" ;
+
+ 2 add-spell-rule "K" "czyk" "czyk" "ek" ;
+ 2 add-spell-rule "K" "czyk" "czyk" "kom" ;
+ 2 add-spell-rule "K" "czyk" "czyk" "kami" ;
+ 2 add-spell-rule "K" "czyk" "czyk" "kach" ;
+
+ 2 add-spell-rule "K" "[cs]z" "" "ka" ;akcjonariusz
+ 2 add-spell-rule "K" "[cs]z" "" "ki" ;
+ 2 add-spell-rule "K" "[cs]z" "" "ce" ;
+ 2 add-spell-rule "K" "[cs]z" "" "kê" ;
+ 2 add-spell-rule "K" "[cs]z" "" "k±" ;
+
+ 2 add-spell-rule "K" "[cs]z" "" "ek" ;
+ 2 add-spell-rule "K" "[cs]z" "" "kom" ;
+ 2 add-spell-rule "K" "[cs]z" "" "kami" ;
+ 2 add-spell-rule "K" "[cs]z" "" "kach" ;
+
+ 2 add-spell-rule "K" "ch" "ch" "szka" ;Czech
+ 2 add-spell-rule "K" "ch" "ch" "szki" ;
+ 2 add-spell-rule "K" "ch" "ch" "szce" ;
+ 2 add-spell-rule "K" "ch" "ch" "szkê" ;
+ 2 add-spell-rule "K" "ch" "ch" "szk±" ;
+	
+ 2 add-spell-rule "K" "ch" "ch" "szek" ;
+ 2 add-spell-rule "K" "ch" "ch" "szkom" ;
+ 2 add-spell-rule "K" "ch" "ch" "szkami" ;
+ 2 add-spell-rule "K" "ch" "ch" "szkach" ;
+
+ 2 add-spell-rule "K" "ic" "" "zka" ;dziedzic
+ 2 add-spell-rule "K" "ic" "" "zki" ;
+ 2 add-spell-rule "K" "ic" "" "zce" ;
+ 2 add-spell-rule "K" "ic" "" "zkê" ;
+ 2 add-spell-rule "K" "ic" "" "zk±" ;
+	
+ 2 add-spell-rule "K" "ic" "" "zek" ;
+ 2 add-spell-rule "K" "ic" "" "zkom" ;
+ 2 add-spell-rule "K" "ic" "" "zkami" ;
+ 2 add-spell-rule "K" "ic" "" "zkach" ;
+
+ 2 add-spell-rule "K" "[^achkln¶yz]" "" "ka" ;administrator
+ 2 add-spell-rule "K" "[^achkln¶yz]" "" "ki" ;
+ 2 add-spell-rule "K" "[^achkln¶yz]" "" "ce" ;
+ 2 add-spell-rule "K" "[^achkln¶yz]" "" "kê" ;
+ 2 add-spell-rule "K" "[^achkln¶yz]" "" "k±" ;
+
+ 2 add-spell-rule "K" "[^achkln¶yz]" "" "ek" ;
+ 2 add-spell-rule "K" "[^achkln¶yz]" "" "kom" ;
+ 2 add-spell-rule "K" "[^achkln¶yz]" "" "kami" ;
+ 2 add-spell-rule "K" "[^achkln¶yz]" "" "kach" ;
+
+ 2 add-spell-rule "K" "¼ny" "y" "a" ;wo¼ny
+ 2 add-spell-rule "K" "¼ny" "y" "ej" ;
+ 2 add-spell-rule "K" "¼ny" "y" "±" ;
+ 2 add-spell-rule "K" "¼ny" "y" "e" ;
+ 2 add-spell-rule "K" "¼ny" "" "ch" ;
+ 2 add-spell-rule "K" "¼ny" "" "m" ;
+ 2 add-spell-rule "K" "¼ny" "" "mi" ;
+	
+ 2 add-spell-rule "K" "[jw]ni¶" "¶" "sia" ;¿artowni¶, strojni¶
+ 2 add-spell-rule "K" "[jw]ni¶" "¶" "si" ;
+ 2 add-spell-rule "K" "[jw]ni¶" "¶" "siê" ;
+ 2 add-spell-rule "K" "[jw]ni¶" "¶" "si±" ;
+
+ 2 add-spell-rule "K" "[jw]ni¶" "¶" "sie" ;
+ 2 add-spell-rule "K" "[jw]ni¶" "¶" "siom" ;
+ 2 add-spell-rule "K" "[jw]ni¶" "¶" "siami" ;
+ 2 add-spell-rule "K" "[jw]ni¶" "¶" "siach" ;
+	
+ 2 add-spell-rule "K" "aciel" "el" "ó³ka" ;przyjaciel
+ 2 add-spell-rule "K" "aciel" "el" "ó³ki" ;
+ 2 add-spell-rule "K" "aciel" "el" "ó³ce" ;
+ 2 add-spell-rule "K" "aciel" "el" "ó³kê" ;
+ 2 add-spell-rule "K" "aciel" "el" "ó³k±" ;
+
+ 2 add-spell-rule "K" "aciel" "el" "ó³ek" ;
+ 2 add-spell-rule "K" "aciel" "el" "ó³kom" ;
+ 2 add-spell-rule "K" "aciel" "el" "ó³kami" ;
+ 2 add-spell-rule "K" "aciel" "el" "ó³kach" ;
+	
+ 2 add-spell-rule "K" "[iy]ciel" "" "ka" ;nauczyciel, wielbiciel
+ 2 add-spell-rule "K" "[iy]ciel" "" "ki" ;
+ 2 add-spell-rule "K" "[iy]ciel" "" "ce" ;
+ 2 add-spell-rule "K" "[iy]ciel" "" "kê" ;
+ 2 add-spell-rule "K" "[iy]ciel" "" "k±" ;
+
+ 2 add-spell-rule "K" "[iy]ciel" "" "ek" ;
+ 2 add-spell-rule "K" "[iy]ciel" "" "kom" ;
+ 2 add-spell-rule "K" "[iy]ciel" "" "kami" ;
+ 2 add-spell-rule "K" "[iy]ciel" "" "kach" ;
+
+ 2 add-spell-rule "K" "[^i]n" "" "ka" ;mitoman, sportsmen, kretyn, kuzyn, chuligan, krajan opiekun, patron
+ 2 add-spell-rule "K" "[^i]n" "" "ki" ;
+ 2 add-spell-rule "K" "[^i]n" "" "ce" ;
+ 2 add-spell-rule "K" "[^i]n" "" "kê" ;
+ 2 add-spell-rule "K" "[^i]n" "" "k±" ;
+	
+ 2 add-spell-rule "K" "[^i]n" "" "ek" ;
+ 2 add-spell-rule "K" "[^i]n" "" "kom" ;
+ 2 add-spell-rule "K" "[^i]n" "" "kami" ;
+ 2 add-spell-rule "K" "[^i]n" "" "kach" ;
+
+ 2 add-spell-rule "K" "nin" "in" "ka" ;Afrykanin
+ 2 add-spell-rule "K" "nin" "in" "ki" ;
+ 2 add-spell-rule "K" "nin" "in" "ce" ;
+ 2 add-spell-rule "K" "nin" "in" "kê" ;
+ 2 add-spell-rule "K" "nin" "in" "k±" ;
+	
+ 2 add-spell-rule "K" "nin" "in" "ek" ;
+ 2 add-spell-rule "K" "nin" "in" "kom" ;
+ 2 add-spell-rule "K" "nin" "in" "kami" ;
+ 2 add-spell-rule "K" "nin" "in" "kach" ;
+
+ 2 add-spell-rule "K" "iec" "iec" "ka" ;cudzoziemiec
+ 2 add-spell-rule "K" "iec" "iec" "ki" ;
+ 2 add-spell-rule "K" "iec" "iec" "ce" ;
+ 2 add-spell-rule "K" "iec" "iec" "kê" ;
+ 2 add-spell-rule "K" "iec" "iec" "k±" ;
+	
+ 2 add-spell-rule "K" "iec" "iec" "ek" ;
+ 2 add-spell-rule "K" "iec" "iec" "kom" ;
+ 2 add-spell-rule "K" "iec" "iec" "kami" ;
+ 2 add-spell-rule "K" "iec" "iec" "kach" ;
+
+ 2 add-spell-rule "K" "[^t]rz" "z" "ka" ;kwiaciarz, adwersarz
+ 2 add-spell-rule "K" "[^t]rz" "z" "ki" ;
+ 2 add-spell-rule "K" "[^t]rz" "z" "ce" ;
+ 2 add-spell-rule "K" "[^t]rz" "z" "kê" ;
+ 2 add-spell-rule "K" "[^t]rz" "z" "k±" ;
+
+;	[^T] R Z	>	-Z,KI		#= D lp
+ 2 add-spell-rule "K" "[^t]rz" "z" "ek" ;
+ 2 add-spell-rule "K" "[^t]rz" "z" "kom" ;
+ 2 add-spell-rule "K" "[^t]rz" "z" "kami" ;
+ 2 add-spell-rule "K" "[^t]rz" "z" "kach" ;
+	
+ 2 add-spell-rule "K" "trz" "" "yni" ;mistrz
+ 2 add-spell-rule "K" "trz" "" "yni±" ;N
+ 2 add-spell-rule "K" "trz" "" "yniê" ;B
+
+ 2 add-spell-rule "K" "trz" "" "ynie" ;lm M B
+ 2 add-spell-rule "K" "trz" "" "yñ" ;D
+ 2 add-spell-rule "K" "trz" "" "yniom" ;C
+ 2 add-spell-rule "K" "trz" "" "yniami" ;N
+ 2 add-spell-rule "K" "trz" "" "yniach" ;Ms
+	
+
+; Rzeczowniki rodzaju ¿eñskiego - bez odpowiedników r. mêskiego
+; Koñcz±ce siê na '-ja', '-ia' odmieniaj±ce siê na krótkie 'i'.
+; ziemia -> ziemi (nie ziemii)
+; aleja -> alei (nie aleji)
+
+; Flaga zapewnia odmianê tych rzeczowników przez przypadki w lp.
+
+; flag *L:
+ 2 add-spell-rule "L" "ia" "ia" "i" ;ziemia - ziemi
+ 2 add-spell-rule "L" "ja" "ja" "i" ;aleja - alei
+ 2 add-spell-rule "L" "[ij]a" "a" "ê" ;
+ 2 add-spell-rule "L" "[ij]a" "a" "±" ;
+
+; Pozosta³e rzeczowniki rodzaju ¿eñskiego, ¿eñskie imiona
+; Tylko odmiana w liczbie pojedynczej
+; abolicja -> abolicji
+; Adrianna -> Arianny
+; lito¶æ -> lito¶ci
+; adrenalina -> adrenaliny
+; fobia -> fobii
+; akcyza -> akcyzy
+; alkowa -> alkowy
+
+; Flaga zapewnia odmianê tych rzeczowników przez przypadki w lp.
+
+; flag *M:
+; dope³niacz lp.:
+ 2 add-spell-rule "M" "[^bcdfh³mnprstwz¿]a" "a" "i" ;aborcja, balanga, !barakuda, !akcyza, !baletnica...
+ 2 add-spell-rule "M" "[bcdfh³mprstwz¿]a" "a" "y" ;barakuda
+ 2 add-spell-rule "M" "c" "" "y" ;Wielkanoc
+ 2 add-spell-rule "M" "[^e¶]æ" "æ" "ci" ;!lito¶æ !p³eæ
+ 2 add-spell-rule "M" "[^h³]eæ" "æ" "ci" ;
+ 2 add-spell-rule "M" "[h³]eæ" "eæ" "ci" ;p³acheæ, p³eæ
+ 2 add-spell-rule "M" "[^e]¶æ" "æ" "ci" ;lito¶æ
+ 2 add-spell-rule "M" "[^z]e¶æ" "æ" "ci" ;rêkoje¶æ
+ 2 add-spell-rule "M" "ze¶æ" "e¶æ" "ci" ;cze¶æ
+ 2 add-spell-rule "M" "[^e]ñ" "ñ" "ni" ;ba¶ñ
+ 2 add-spell-rule "M" "[^d]eñ" "ñ" "ni" ;jesieñ
+ 2 add-spell-rule "M" "deñ" "eñ" "ni" ;bezdeñ
+ 2 add-spell-rule "M" "[^±]¿" "" "y" ;poda¿
+ 2 add-spell-rule "M" "±¿" "±¿" "ê¿y" ;uprz±¿
+ 2 add-spell-rule "M" "[^s]z" "" "y" ;smycz
+ 2 add-spell-rule "M" "[^e]sz" "" "y" ;
+ 2 add-spell-rule "M" "esz" "esz" "szy" ;wesz
+ 2 add-spell-rule "M" "na" "a" "y" ;
+ 2 add-spell-rule "M" "[gk]iew" "iew" "wi" ;chor±giew, brukiew
+ 2 add-spell-rule "M" "[hnt]ew" "ew" "wi" ;marchew, konew, kotew
+ 2 add-spell-rule "M" "[^ó]l" "" "i" ;
+ 2 add-spell-rule "M" "ól" "ól" "oli" ;sól
+ 2 add-spell-rule "M" "[^±d]¼" "¼" "zi" ;kad¼
+ 2 add-spell-rule "M" "[^±ó]d¼" "¼" "zi" ;
+ 2 add-spell-rule "M" "ód¼" "ód¼" "odzi" ;³ód¼
+ 2 add-spell-rule "M" "±d¼" "±d¼" "êdzi" ;¿o³±d¼
+ 2 add-spell-rule "M" "±¼" "±¼" "êzi" ;ga³±¼
+ 2 add-spell-rule "M" "rew" "ew" "wi" ;brew
+ 2 add-spell-rule "M" "[^e]¶" "¶" "si" ;gê¶
+ 2 add-spell-rule "M" "[^i]e¶" "¶" "si" ;
+ 2 add-spell-rule "M" "[^w]ie¶" "¶" "si" ;przycie¶
+ 2 add-spell-rule "M" "wie¶" "ie¶" "si" ;wie¶
+ 2 add-spell-rule "M" "j" "j" "i" ;kolej
+ 2 add-spell-rule "M" "p" "" "i" ;sz³ap
+	
+; celownik lp.:
+ 2 add-spell-rule "M" "[^cdghijkl³nrtz¿]a" "a" "ie" ;mama, !amatorszczyzna
+ 2 add-spell-rule "M" "[^sz]na" "a" "ie" ;kwarantanna
+ 2 add-spell-rule "M" "[^z]da" "a" "zie" ;porada
+ 2 add-spell-rule "M" "[^a]zda" "zda" "¼dzie" ;bruzda
+ 2 add-spell-rule "M" "azda" "azda" "e¼dzie" ;jazda
+ 2 add-spell-rule "M" "ga" "ga" "dze" ;
+ 2 add-spell-rule "M" "cha" "cha" "sze" ;jucha
+ 2 add-spell-rule "M" "[^ac]ha" "ha" "¿e" ;duha
+ 2 add-spell-rule "M" "aha" "ha" "sze" ;wataha
+ 2 add-spell-rule "M" "ka" "ka" "ce" ;
+ 2 add-spell-rule "M" "[^³s]³a" "³a" "le" ;
+ 2 add-spell-rule "M" "s³a" "s³a" "¶le" ;
+ 2 add-spell-rule "M" "³³a" "³³a" "lle" ;
+ 2 add-spell-rule "M" "[^a]ra" "a" "ze" ;opera, !wiara
+ 2 add-spell-rule "M" "[^i]ara" "a" "ze" ;kopara
+ 2 add-spell-rule "M" "[^fmw]iara" "a" "ze" ;
+ 2 add-spell-rule "M" "[fmw]iara" "ara" "erze" ;miara, wiara, ofiara
+ 2 add-spell-rule "M" "[^cs]zna" "zna" "¼nie" ;mielizna
+ 2 add-spell-rule "M" "szna" "a" "ie" ;moszna
+ 2 add-spell-rule "M" "sna" "sna" "¶nie" ;wiosna
+ 2 add-spell-rule "M" "[^s]ta" "ta" "cie" ;akwaforta !asysta
+ 2 add-spell-rule "M" "[^a]sta" "sta" "¶cie" ;asysta
+ 2 add-spell-rule "M" "[^i]asta" "sta" "¶cie" ;omasta
+ 2 add-spell-rule "M" "[^w]iasta" "sta" "¶cie" ;
+ 2 add-spell-rule "M" "wiasta" "asta" "e¶cie" ;niewiasta
+ 2 add-spell-rule "M" "[^cdrs]za" "a" "ie" ;geneza, kabza
+;	[CDRS] Z A	>	-A,Y		#dacza, brosza, w³adza, burza
+;						jest ju¿ w dope³niaczu
+	
+; biernik lp.:
+ 2 add-spell-rule "M" "a" "a" "ê" ;
+ 2 add-spell-rule "M" "[yi]ni" "" "ê" ;gospodyni
+
+; narzêdnik lp.:
+ 2 add-spell-rule "M" "a" "a" "±" ;
+ 2 add-spell-rule "M" "c" "" "±" ;
+ 2 add-spell-rule "M" "[^e¶]æ" "æ" "ci±" ;!lito¶æ !p³eæ
+ 2 add-spell-rule "M" "[^h³]eæ" "æ" "ci±" ;
+ 2 add-spell-rule "M" "[h³]eæ" "eæ" "ci±" ;p³acheæ, p³eæ
+ 2 add-spell-rule "M" "[^e]¶æ" "æ" "ci±" ;lito¶æ
+ 2 add-spell-rule "M" "[^z]e¶æ" "æ" "ci±" ;rêkoje¶æ
+ 2 add-spell-rule "M" "ze¶æ" "e¶æ" "ci±" ;cze¶æ
+ 2 add-spell-rule "M" "ñ" "ñ" "ni±" ;
+ 2 add-spell-rule "M" "¿" "" "±" ;
+ 2 add-spell-rule "M" "[^s]z" "" "±" ;
+ 2 add-spell-rule "M" "[^e]sz" "" "±" ;
+ 2 add-spell-rule "M" "esz" "esz" "sz±" ;wesz
+ 2 add-spell-rule "M" "[^ó]l" "" "±" ;
+ 2 add-spell-rule "M" "ól" "ól" "ol±" ;
+ 2 add-spell-rule "M" "[gk]iew" "iew" "wi±" ;
+ 2 add-spell-rule "M" "[rt]ew" "ew" "wi±" ;brew, p³atew
+ 2 add-spell-rule "M" "[yi]ni" "" "±" ;
+ 2 add-spell-rule "M" "[^d]¼" "¼" "zi±" ;ma¼
+ 2 add-spell-rule "M" "[^ó]d¼" "¼" "zi±" ;spad¼
+ 2 add-spell-rule "M" "ód¼" "ód¼" "odzi±" ;powód¼
+
+; miejscownik lp.: podobnie jak celownik lp.
+	
+; Uzupe³nienie rzeczowników policzalnych rodz. ¿eñskiego (flagi L,M) o liczbê
+; mnog±
+
+; flag *m:
+ 2 add-spell-rule "m" "oba" "oba" "ób" ;w±troba
+ 2 add-spell-rule "m" "oda" "oda" "ód" ;woda
+ 2 add-spell-rule "m" "oga" "oga" "óg" ;toga
+ 2 add-spell-rule "m" "oja" "oja" "ój" ;zbroja
+ 2 add-spell-rule "m" "ola" "ola" "ól" ;rola
+ 2 add-spell-rule "m" "o³a" "o³a" "ó³" ;pszczo³a
+ 2 add-spell-rule "m" "opa" "opa" "óp" ;stopa
+ 2 add-spell-rule "m" "ora" "ora" "ór" ;pora
+ 2 add-spell-rule "m" "ota" "ota" "ót" ;cnota
+ 2 add-spell-rule "m" "owa" "owa" "ów" ;krowa
+ 2 add-spell-rule "m" "oza" "oza" "óz" ;koza
+ 2 add-spell-rule "m" "o¿a" "o¿a" "ó¿" ;lo¿a
+ 2 add-spell-rule "m" "odza" "odza" "ódz" ;grodza
+ 2 add-spell-rule "m" "orza" "orza" "órz" ;zorza
+ 2 add-spell-rule "m" "o¶ba" "o¶ba" "ó¶b" ;pro¶ba
+ 2 add-spell-rule "m" "o¼ba" "o¼ba" "ó¼b" ;gro¼ba
+ 2 add-spell-rule "m" "cia" "cia" "æ" ;ciocia
+ 2 add-spell-rule "m" "mia" "ia" "" ;ziemia
+ 2 add-spell-rule "m" "[^djh¶t]nia" "nia" "ñ" ;babunia
+ 2 add-spell-rule "m" "tnia" "nia" "eñ" ;lutnia
+ 2 add-spell-rule "m" "dnia" "nia" "zieñ" ;studnia
+ 2 add-spell-rule "m" "[hj]nia" "nia" "en" ;kuchnia, stajnia
+ 2 add-spell-rule "m" "¶nia" "¶nia" "sien" ;wi¶nia
+ 2 add-spell-rule "m" "sia" "sia" "¶" ;babusia
+ 2 add-spell-rule "m" "zia" "zia" "¼" ;buzia
+ 2 add-spell-rule "m" "êba" "êba" "±b" ;ksiêga
+ 2 add-spell-rule "m" "[^êo¶¼]ba" "ba" "eb" ;torba
+ 2 add-spell-rule "m" "êga" "êga" "±g" ;ksiêga
+ 2 add-spell-rule "m" "[^êo]ga" "ga" "eg" ;drzazga
+ 2 add-spell-rule "m" "ni" "ni" "ñ" ;gospodyni, pani
+ 2 add-spell-rule "m" "[^æêo¶ñ¼]ka" "ka" "ek" ;kolbka
+ 2 add-spell-rule "m" "æka" "æka" "ciek" ;paæka
+ 2 add-spell-rule "m" "êka" "êka" "±k" ;rêka, mêka
+ 2 add-spell-rule "m" "¶ka" "¶ka" "siek" ;
+ 2 add-spell-rule "m" "ñka" "ñka" "niek" ;
+ 2 add-spell-rule "m" "¼ka" "¼ka" "ziek" ;
+ 2 add-spell-rule "m" "[^o]la" "la" "el" ;chochla
+ 2 add-spell-rule "m" "[^ogk]³a" "³a" "e³" ;per³a, cios³a, jod³a
+ 2 add-spell-rule "m" "[gk]³a" "³a" "ie³" ;ig³a, kuk³a
+ 2 add-spell-rule "m" "ma" "ma" "em" ;ci¿ma
+ 2 add-spell-rule "m" "[mnw]na" "na" "ien" ;trumna, panna, grzywna
+ 2 add-spell-rule "m" "[^mnow]na" "na" "en" ;wiosna, buziuchna
+ 2 add-spell-rule "m" "[^gkot]ra" "ra" "er" ;centra
+ 2 add-spell-rule "m" "ostra" "ostra" "óstr" ;siostra
+ 2 add-spell-rule "m" "[gk]ra" "ra" "ier" ;gra, iskra
+ 2 add-spell-rule "m" "[^ko]wa" "wa" "ew" ;kotwa
+ 2 add-spell-rule "m" "kwa" "wa" "iew" ;pluskwa
+ 2 add-spell-rule "m" "orga" "orga" "órg" ;morga
+ 2 add-spell-rule "m" "[^o]ca" "ca" "iec" ;owca
+ 2 add-spell-rule "m" "æma" "æma" "ciem" ;æma
+ 2 add-spell-rule "m" "[^ó]¿a" "¿a" "e¿" ;kom¿a
+ 2 add-spell-rule "m" "[^dó]za" "za" "ez" ;³za
+
+; flag *C:
+ 2 add-spell-rule "C" "ja" "ja" "yj" ;abazja
+ 2 add-spell-rule "C" "[^drt]ia" "ia" "ij" ;akademia
+ 2 add-spell-rule "C" "[drt]ia" "ia" "yj" ;encyklopedia, antypatia, asesoria
+;reszta pokrywana przez mianownik lp.
+
+
+; flag *n:
+ 2 add-spell-rule "n" ".a" "a" "" ;
+
+
+; flag *A:
+; mianownik lm.: podobnie jak dope³niacz lp., ponadto:
+ 2 add-spell-rule "A" "[gk]iew" "iew" "wie" ;
+ 2 add-spell-rule "A" "[hnt]ew" "ew" "wie" ;konew
+ 2 add-spell-rule "A" "[cijl¿]a" "a" "e" ;
+ 2 add-spell-rule "A" "wna" "a" "e" ;aptekarzówna
+ 2 add-spell-rule "A" "[iy]ni" "" "e" ;
+ 2 add-spell-rule "A" "[cj]" "" "e" ;moc, kolej
+ 2 add-spell-rule "A" "[^ó]l" "" "e" ;grz±dziel
+ 2 add-spell-rule "A" "ól" "ól" "ole" ;sól
+ 2 add-spell-rule "A" "[^±d]¼" "¼" "zie" ;
+ 2 add-spell-rule "A" "[^±ó]d¼" "¼" "zie" ;
+ 2 add-spell-rule "A" "±d¼" "±d¼" "êdzie" ;¿o³±d¼
+ 2 add-spell-rule "A" "ód¼" "ód¼" "odzie" ;
+ 2 add-spell-rule "A" "±¼" "±¼" "êzie" ;ga³±¼
+ 2 add-spell-rule "A" "[^e]æ" "æ" "cie" ;p³oæ
+ 2 add-spell-rule "A" "[^h³]eæ" "æ" "cie" ;
+ 2 add-spell-rule "A" "[h³]eæ" "eæ" "cie" ;p³acheæ, p³eæ
+ 2 add-spell-rule "A" "[^±]¿" "" "e" ;
+ 2 add-spell-rule "A" "±¿" "±¿" "ê¿e" ;uprz±¿
+ 2 add-spell-rule "A" "ñ" "ñ" "nie" ;przyja¼ñ
+ 2 add-spell-rule "A" "[ou]¶" "¶" "sie" ;matu¶, o¶
+ 2 add-spell-rule "A" "[^i]e¶" "¶" "sie" ;przycie¶
+ 2 add-spell-rule "A" "wie¶" "ie¶" "sie" ;
+
+; flag *N:
+; celownik lm.:
+ 2 add-spell-rule "N" "a" "a" "om" ;
+ 2 add-spell-rule "N" "[^e]æ" "æ" "ciom" ;!p³eæ
+ 2 add-spell-rule "N" "[^³]eæ" "æ" "ciom" ;
+ 2 add-spell-rule "N" "³eæ" "eæ" "ciom" ;p³eæ
+ 2 add-spell-rule "N" "ñ" "ñ" "niom" ;
+ 2 add-spell-rule "N" "[gk]iew" "iew" "wiom" ;
+ 2 add-spell-rule "N" "c" "" "om" ;
+ 2 add-spell-rule "N" "[^s]z" "" "om" ;
+ 2 add-spell-rule "N" "[^e]sz" "" "om" ;
+ 2 add-spell-rule "N" "esz" "esz" "szom" ;wszy
+ 2 add-spell-rule "N" "[^ó]l" "" "om" ;
+ 2 add-spell-rule "N" "ól" "ól" "olom" ;
+ 2 add-spell-rule "N" "[iy]ni" "" "om" ;
+ 2 add-spell-rule "N" "[^d]¼" "¼" "ziom" ;
+ 2 add-spell-rule "N" "[^ó]d¼" "¼" "ziom" ;
+ 2 add-spell-rule "N" "ód¼" "ód¼" "odziom" ;
+ 2 add-spell-rule "N" "rew" "ew" "wiom" ;
+ 2 add-spell-rule "N" "[^±]¿" "" "om" ;
+ 2 add-spell-rule "N" "±¿" "±¿" "ê¿om" ;
+
+; narzêdnik lm.:
+ 2 add-spell-rule "N" "a" "" "mi" ;
+ 2 add-spell-rule "N" "[^e]æ" "æ" "ciami" ;!p³eæ
+ 2 add-spell-rule "N" "[^³]eæ" "æ" "ciami" ;
+ 2 add-spell-rule "N" "³eæ" "eæ" "ciami" ;p³eæ
+ 2 add-spell-rule "N" "ñ" "ñ" "niami" ;
+ 2 add-spell-rule "N" "[gk]iew" "iew" "wiami" ;
+ 2 add-spell-rule "N" "c" "" "ami" ;
+ 2 add-spell-rule "N" "[^s]z" "" "ami" ;
+ 2 add-spell-rule "N" "[^e]sz" "" "ami" ;
+ 2 add-spell-rule "N" "esz" "esz" "szami" ;wszy
+ 2 add-spell-rule "N" "[^ó]l" "" "ami" ;
+ 2 add-spell-rule "N" "ól" "ól" "olami" ;
+ 2 add-spell-rule "N" "[iy]ni" "" "ami" ;
+ 2 add-spell-rule "N" "[^d]¼" "¼" "ziami" ;
+ 2 add-spell-rule "N" "[^ó]d¼" "¼" "ziami" ;
+ 2 add-spell-rule "N" "ód¼" "ód¼" "odziami" ;
+ 2 add-spell-rule "N" "rew" "ew" "wiami" ;
+ 2 add-spell-rule "N" "[^±]¿" "" "ami" ;
+ 2 add-spell-rule "N" "±¿" "±¿" "ê¿ami" ;
+
+; biernik lm.: podobnie jak mianownik lm.
+
+; miejscownik lm.:
+ 2 add-spell-rule "N" "a" "" "ch" ;
+ 2 add-spell-rule "N" "[^e]æ" "æ" "ciach" ;!p³eæ
+ 2 add-spell-rule "N" "[^³]eæ" "æ" "ciach" ;
+ 2 add-spell-rule "N" "³eæ" "eæ" "ciach" ;p³eæ
+ 2 add-spell-rule "N" "ñ" "ñ" "niach" ;
+ 2 add-spell-rule "N" "[gk]iew" "iew" "wiach" ;
+ 2 add-spell-rule "N" "c" "" "ach" ;
+ 2 add-spell-rule "N" "[^s]z" "" "ach" ;
+ 2 add-spell-rule "N" "[^e]sz" "" "ach" ;
+ 2 add-spell-rule "N" "esz" "esz" "szach" ;wszy
+ 2 add-spell-rule "N" "[^ó]l" "" "ach" ;
+ 2 add-spell-rule "N" "ól" "ól" "olach" ;
+ 2 add-spell-rule "N" "[iy]ni" "" "ach" ;
+ 2 add-spell-rule "N" "[^d]¼" "¼" "ziach" ;
+ 2 add-spell-rule "N" "[^ó]d¼" "¼" "ziach" ;
+ 2 add-spell-rule "N" "ód¼" "ód¼" "odziach" ;
+ 2 add-spell-rule "N" "rew" "ew" "wiach" ;
+ 2 add-spell-rule "N" "[^±]¿" "" "ach" ;
+ 2 add-spell-rule "N" "±¿" "±¿" "ê¿ach" ;
+	
+; Rzeczowniki rodzaju mêskiego, w dope³niaczu lp. nie znika ostatnia
+; samog³oska tematu, odmiana w dope³niaczu lp. koñczy siê na "a"
+; Tylko liczba pojedyncza.
+; komputer -> komputera
+; abonent  -> abonenta
+
+; Flaga zapewnia odmianê tych rzeczowników przez przypadki w lp.
+
+; flag *O:
+; dope³niacz lp.:
+ 2 add-spell-rule "O" "[^æño¶¼]" "" "a" ;komputer
+ 2 add-spell-rule "O" "æ" "æ" "cia" ;go¶æ
+ 2 add-spell-rule "O" "ñ" "ñ" "nia" ;cieñ
+ 2 add-spell-rule "O" "o" "o" "a" ;apollo
+ 2 add-spell-rule "O" "¶" "¶" "sia" ;gogu¶
+ 2 add-spell-rule "O" "¼" "¼" "zia" ;knia¼
+	
+; celownik lp.:
+ 2 add-spell-rule "O" "[^æño¶t¼]" "" "owi" ;
+ 2 add-spell-rule "O" "æ" "æ" "ciowi" ;
+ 2 add-spell-rule "O" "ñ" "ñ" "niowi" ;
+ 2 add-spell-rule "O" "o" "o" "u" ;
+ 2 add-spell-rule "O" "¶" "¶" "siowi" ;
+ 2 add-spell-rule "O" "¼" "¼" "ziowi" ;
+ 2 add-spell-rule "O" "[^a]t" "" "owi" ;
+ 2 add-spell-rule "O" "[^i]at" "" "owi" ;
+ 2 add-spell-rule "O" "[^w]iat" "" "owi" ;
+ 2 add-spell-rule "O" "[^¶]wiat" "" "owi" ;
+ 2 add-spell-rule "O" "¶wiat" "" "u" ;
+	
+; biernik lp. == dope³niacz lp.
+
+
+; narzêdnik lp.:
+ 2 add-spell-rule "O" "[^ægkño¶¼]" "" "em" ;
+ 2 add-spell-rule "O" "[gk]" "" "iem" ;
+ 2 add-spell-rule "O" "æ" "æ" "ciem" ;
+ 2 add-spell-rule "O" "ñ" "ñ" "niem" ;
+ 2 add-spell-rule "O" "o" "o" "em" ;
+ 2 add-spell-rule "O" "¶" "¶" "siem" ;
+ 2 add-spell-rule "O" "¼" "¼" "ziem" ;
+	
+; miejscownik lp.:
+ 2 add-spell-rule "O" "[^cædghjkl³ñor¶tz¿¼]" "" "ie" ;
+ 2 add-spell-rule "O" "[^z]d" "" "zie" ;
+ 2 add-spell-rule "O" "ozd" "zd" "¼dzie" ;drozd
+ 2 add-spell-rule "O" "[cghkl¿]" "" "u" ;
+ 2 add-spell-rule "O" "uz" "" "ie" ;
+ 2 add-spell-rule "O" "[^u]z" "" "u" ;
+ 2 add-spell-rule "O" "r" "" "ze" ;
+ 2 add-spell-rule "O" "[^s]t" "t" "cie" ;
+ 2 add-spell-rule "O" "st" "st" "¶cie" ;
+ 2 add-spell-rule "O" "nio³" "o³" "ele" ;
+ 2 add-spell-rule "O" "[^n][^i].³" "³" "le" ;
+ 2 add-spell-rule "O" "æ" "æ" "ciu" ;
+ 2 add-spell-rule "O" "ñ" "ñ" "niu" ;
+ 2 add-spell-rule "O" "o" "o" "u" ;
+ 2 add-spell-rule "O" "¶" "¶" "siu" ;
+ 2 add-spell-rule "O" "¼" "¼" "ziu" ;
+
+; podobnie jak dla O, lecz ró¿ni± siê dope³niaczem lp.
+; absolut->absolutu
+; flag *Q:
+
+; dope³niacz lp.:
+ 2 add-spell-rule "Q" "[^ñ]" "" "u" ;absolut
+ 2 add-spell-rule "Q" "ñ" "ñ" "niu" ;budyñ
+	
+; celownik lp.:
+ 2 add-spell-rule "Q" "[^ñ]" "" "owi" ;
+ 2 add-spell-rule "Q" "ñ" "ñ" "niowi" ;
+	
+; biernik lp. == dope³niacz lp.
+
+; narzêdnik lp.:
+ 2 add-spell-rule "Q" "[^gkñ]" "" "em" ;luz, !¶nieg 
+ 2 add-spell-rule "Q" "[gk]" "" "iem" ;¶nieg, Atlantyk
+ 2 add-spell-rule "Q" "ñ" "ñ" "niem" ;
+	
+; miejscownik lp.:
+ 2 add-spell-rule "Q" "[^cædghjkl³mñrtz¿¼]" "" "ie" ;
+ 2 add-spell-rule "Q" "[rtuz]m" "" "ie" ;
+ 2 add-spell-rule "Q" "[^z]d" "" "zie" ;kostium
+ 2 add-spell-rule "Q" "azd" "azd" "e¼dzie" ;wyjazd
+ 2 add-spell-rule "Q" "[aeiou]z" "" "ie" ;ko³choz
+ 2 add-spell-rule "Q" "r" "" "ze" ;
+ 2 add-spell-rule "Q" "[^s]t" "t" "cie" ;chwyt
+ 2 add-spell-rule "Q" "st" "st" "¶cie" ;agrest
+ 2 add-spell-rule "Q" "[^s]³" "³" "le" ;¿ywio³
+ 2 add-spell-rule "Q" "s³" "s³" "¶le" ;namys³
+
+
+; Uzupe³nienie flag O,Q o liczbê mnog± - dla policzalnych rzeczowników rodz.
+; mêskiego
+
+; Mianownik lmn. dla rzeczowników mêskoosobowych odmienianych na '-owie'
+
+; flag *o:
+; mianownik lmn.:
+ 2 add-spell-rule "o" "[^aæioñ¶y¼]" "" "owie" ;in¿ynier
+ 2 add-spell-rule "o" "æ" "æ" "ciowie" ;ichmo¶æ, te¶æ
+ 2 add-spell-rule "o" "ñ" "ñ" "niowie" ;
+ 2 add-spell-rule "o" "¶" "¶" "siowie" ;
+ 2 add-spell-rule "o" "¼" "¼" "ziowie" ;pa¼
+ 2 add-spell-rule "o" "[z¿]y" "y" "owie" ;budowniczy, chor±¿y
+ 2 add-spell-rule "o" "[^l]i" "" "owie" ;podstaro¶ci
+ 2 add-spell-rule "o" "li" "i" "owie" ;podstoli
+ 2 add-spell-rule "o" "o" "" "wie" ;apollo
+ 2 add-spell-rule "o" "a" "a" "owie" ;baca
+
+; Mianownik lmn. dla rzeczowników mêskoosobowych nie odmienianych na '-owie'
+	
+; flag *q:
+ 2 add-spell-rule "q" "r" "" "zy" ;Afrykaner, aktor
+ 2 add-spell-rule "q" "rz" "" "e" ;adwersarz
+ 2 add-spell-rule "q" "[ou]z" "" "i" ;wirtuoz
+; 2 add-spell-rule "q" "an" "" "ie" ;cygan, krajan
+ 2 add-spell-rule "q" "[bmnpsw]" "" "i" ;ch³op, prymas, Aborygen
+ 2 add-spell-rule "q" "ch" "ch" "si" ;mnich
+ 2 add-spell-rule "q" "d" "" "zi" ;negroid
+ 2 add-spell-rule "q" "g" "g" "dzy" ;klimatolog
+ 2 add-spell-rule "q" "k" "k" "cy" ;Australijczyk, Austriak
+ 2 add-spell-rule "q" "t" "t" "ci" ;student
+ 2 add-spell-rule "q" "da" "a" "zi" ;antypoda
+ 2 add-spell-rule "q" "ga" "ga" "dzy" ;kolega
+ 2 add-spell-rule "q" "ka" "ka" "cy" ;zawadiaka
+ 2 add-spell-rule "q" "ra" "a" "zy" ;geometra
+ 2 add-spell-rule "q" "[^s]ta" "ta" "ci" ;wierszokleta
+ 2 add-spell-rule "q" "sta" "sta" "¶ci" ;artysta
+ 2 add-spell-rule "q" "zna" "zna" "¼ni" ;mê¿czyzna
+ 2 add-spell-rule "q" "ena" "a" "i" ;indygena
+
+; Mianownik lmn. dla rzeczowników nieosobowych rodzaju mêskiego oraz
+; osobowych, lecz odmienianych identycznie jak nieosobowe (odmiana +'-e' i
+; +'-y', np. partacz, Lach) 
+
+; flag *s:
+; mianownik lmn.:
+ 2 add-spell-rule "s" "[^acægjklño¶z¼¿]" "" "y" ;kompurtery
+ 2 add-spell-rule "s" "[cjly¿]" "" "e" ;instrukta¿
+ 2 add-spell-rule "s" "[^cds]z" "" "y" ;aplauz
+ 2 add-spell-rule "s" "[cds]z" "" "e" ;utleniacz
+ 2 add-spell-rule "s" "[kg]" "" "i" ;bli¼niak, poci±g
+ 2 add-spell-rule "s" "æ" "æ" "cie" ;go¶æ
+ 2 add-spell-rule "s" "ñ" "ñ" "nie" ;boleñ
+ 2 add-spell-rule "s" "¶" "¶" "sie" ;gogu¶
+ 2 add-spell-rule "s" "¼" "¼" "zie" ;chaba¼
+ 2 add-spell-rule "s" "o" "o" "e" ;brudzio
+; 2 add-spell-rule "s" "za" "a" "e" ;oczajdusza
+
+; Dope³niacz lmn. dla rzeczowników mêskoosobowych zakoñczonych w mianowniku
+; lp. na '-l', odmienianych w lmn. na '-ów'
+; flag *T:
+	
+ 2 add-spell-rule "T" "[^aæoñ¶¼]" "" "ów" ;in¿ynier
+ 2 add-spell-rule "T" "a" "a" "ów" ;artysta, oprawca
+ 2 add-spell-rule "T" "æ" "æ" "ciów" ;ichmo¶æ, te¶æ
+ 2 add-spell-rule "T" "ñ" "ñ" "niów" ;
+ 2 add-spell-rule "T" "¶" "¶" "siów" ;
+ 2 add-spell-rule "T" "¼" "¼" "ziów" ;pa¼
+ 2 add-spell-rule "T" "o" "o" "ów" ;apollo
+
+; Dope³niacz lmn. dla rzeczowników mêskoosobowych zakoñczonych w mianowniku
+; lp. na '-l', odmienianych w lmn. na '-i'
+
+; flag *D:
+ 2 add-spell-rule "D" "[jl]" "" "i" ;donosiciel
+ 2 add-spell-rule "D" "[z¿]" "" "y" ;zjadacz
+ 2 add-spell-rule "D" "æ" "æ" "ci" ;go¶cie
+ 2 add-spell-rule "D" "ñ" "ñ" "ni" ;boleñ
+ 2 add-spell-rule "D" "¶" "¶" "si" ;³o¶
+ 2 add-spell-rule "D" "¼" "¼" "zi" ;chaba¼
+	
+; Pozosta³e przypadki lmn. dla rzeczowników rodzaju mêskiego.
+
+; flag *S:
+; celownik lm.:
+ 2 add-spell-rule "S" "[^aæño¶¼]" "" "om" ;
+ 2 add-spell-rule "S" "¶" "¶" "siom" ;
+ 2 add-spell-rule "S" "æ" "æ" "ciom" ;
+ 2 add-spell-rule "S" "ñ" "ñ" "niom" ;
+ 2 add-spell-rule "S" "¼" "¼" "ziom" ;
+ 2 add-spell-rule "S" "a" "a" "om" ;
+ 2 add-spell-rule "S" "o" "" "m" ;
+
+; narzêdnik lm.:
+ 2 add-spell-rule "S" "[^aæño¶¼]" "" "ami" ;
+ 2 add-spell-rule "S" "¶" "¶" "siami" ;
+ 2 add-spell-rule "S" "æ" "æ" "ciami" ;
+ 2 add-spell-rule "S" "ñ" "ñ" "niami" ;
+ 2 add-spell-rule "S" "¼" "¼" "ziami" ;
+ 2 add-spell-rule "S" "a" "" "mi" ;
+ 2 add-spell-rule "S" "o" "o" "ami" ;
+
+; miejscownik lm.:
+ 2 add-spell-rule "S" "[^aæño¶¼]" "" "ach" ;
+ 2 add-spell-rule "S" "¶" "¶" "siach" ;
+ 2 add-spell-rule "S" "æ" "æ" "ciach" ;
+ 2 add-spell-rule "S" "ñ" "ñ" "niach" ;
+ 2 add-spell-rule "S" "¼" "¼" "ziach" ;
+ 2 add-spell-rule "S" "a" "" "ch" ;
+ 2 add-spell-rule "S" "o" "o" "ach" ;
+
+
+; Rzeczowniki typu skafander -> skafandra - w dope³niaczu lp. znika ostatnia
+; samog³oska + takie, w których siê ona wymienia (ó->o)
+; karze³ek -> karze³ka
+; karze³ -> kar³a
+; goniec -> goñca
+; giez -> gza
+;	
+; Flagi te (PRtZz) nie obejmuj± "miêkkokoñcówkowych" rzeczowników rodzaju
+; mêskiego (np. karp, drop, czerw, go³±b)
+
+; Liczba pojedyncza
+
+; flag *P:
+ 2 add-spell-rule "P" "eb" "eb" "ba" ;³eb
+ 2 add-spell-rule "P" "eb" "eb" "bowi" ;
+ 2 add-spell-rule "P" "eb" "eb" "bem" ;
+ 2 add-spell-rule "P" "eb" "eb" "bie" ;
+
+ 2 add-spell-rule "P" "ew" "ew" "wa" ;lew
+ 2 add-spell-rule "P" "ew" "ew" "wu" ;
+ 2 add-spell-rule "P" "ew" "ew" "wem" ;
+ 2 add-spell-rule "P" "ew" "ew" "wie" ;
+
+ 2 add-spell-rule "P" "[^i]er" "er" "ra" ;skafander -> skafandra
+ 2 add-spell-rule "P" "[^i]er" "er" "rowi" ;
+ 2 add-spell-rule "P" "[^i]er" "er" "rem" ;
+ 2 add-spell-rule "P" "[^i]er" "er" "rze" ;
+
+ 2 add-spell-rule "P" "iep" "iep" "pa" ;kiep
+ 2 add-spell-rule "P" "iep" "iep" "powi" ;
+ 2 add-spell-rule "P" "iep" "iep" "pem" ;
+ 2 add-spell-rule "P" "iep" "iep" "pie" ;
+
+ 2 add-spell-rule "P" "ier" "ier" "ra" ;bunkier
+ 2 add-spell-rule "P" "ier" "ier" "rowi" ;
+ 2 add-spell-rule "P" "ier" "ier" "rem" ;
+ 2 add-spell-rule "P" "ier" "ier" "rze" ;
+
+ 2 add-spell-rule "P" "ies" "ies" "sa" ;owies
+ 2 add-spell-rule "P" "ies" "ies" "su" ;
+ 2 add-spell-rule "P" "ies" "ies" "sem" ;
+ 2 add-spell-rule "P" "ies" "ies" "sie" ;
+
+ 2 add-spell-rule "P" "[^i]en" "en" "na" ;bochen -> bochna
+ 2 add-spell-rule "P" "[^i]en" "en" "nowi" ;
+ 2 add-spell-rule "P" "[^i]en" "en" "nem" ;
+ 2 add-spell-rule "P" "[^iz]en" "en" "nie" ;
+ 2 add-spell-rule "P" "zen" "zen" "¼nie" ;b³azen
+	
+
+ 2 add-spell-rule "P" "[^i]el" "el" "la" ;bubel -> bubla
+ 2 add-spell-rule "P" "[^i]el" "el" "lowi" ;
+ 2 add-spell-rule "P" "[^i]el" "el" "lem" ;
+ 2 add-spell-rule "P" "[^i]el" "el" "lu" ;
+
+ 2 add-spell-rule "P" "iel" "iel" "la" ;cyngiel
+ 2 add-spell-rule "P" "iel" "iel" "lowi" ;
+ 2 add-spell-rule "P" "iel" "iel" "lem" ;
+ 2 add-spell-rule "P" "iel" "iel" "lu" ;
+
+ 2 add-spell-rule "P" "[^i]ek" "ek" "ka" ;anio³ek-anio³ka
+ 2 add-spell-rule "P" "[^i]ek" "ek" "kowi" ;
+ 2 add-spell-rule "P" "[^i]ek" "ek" "kiem" ;
+ 2 add-spell-rule "P" "[^i]ek" "ek" "ku" ;
+
+ 2 add-spell-rule "P" "ciek" "ciek" "æka" ;bociek
+ 2 add-spell-rule "P" "ciek" "ciek" "ækowi" ;
+ 2 add-spell-rule "P" "ciek" "ciek" "ækiem" ;
+ 2 add-spell-rule "P" "ciek" "ciek" "æku" ;
+
+ 2 add-spell-rule "P" "niek" "niek" "ñka" ;ogieniek, pieniek
+ 2 add-spell-rule "P" "niek" "niek" "ñkowi" ;
+ 2 add-spell-rule "P" "niek" "niek" "ñkiem" ;
+ 2 add-spell-rule "P" "niek" "niek" "ñku" ;
+
+ 2 add-spell-rule "P" "siek" "siek" "¶ka" ;misiek
+ 2 add-spell-rule "P" "siek" "siek" "¶kowi" ;
+ 2 add-spell-rule "P" "siek" "siek" "¶kiem" ;
+ 2 add-spell-rule "P" "siek" "siek" "¶ku" ;
+
+ 2 add-spell-rule "P" "ieæ" "ieæ" "cia" ;³okieæ
+ 2 add-spell-rule "P" "ieæ" "ieæ" "ciowi" ;
+ 2 add-spell-rule "P" "ieæ" "ieæ" "ciem" ;
+ 2 add-spell-rule "P" "ieæ" "ieæ" "ciu" ;
+
+ 2 add-spell-rule "P" "[^i]eæ" "eæ" "cia" ;kapeæ
+ 2 add-spell-rule "P" "[^i]eæ" "eæ" "ciowi" ;
+ 2 add-spell-rule "P" "[^i]eæ" "eæ" "ciem" ;
+ 2 add-spell-rule "P" "[^i]eæ" "eæ" "ciu" ;
+
+ 2 add-spell-rule "P" "ie³" "ie³" "³a" ;kie³, szczygie³
+ 2 add-spell-rule "P" "ie³" "ie³" "³owi" ;
+ 2 add-spell-rule "P" "ie³" "ie³" "³em" ;
+ 2 add-spell-rule "P" "ie³" "ie³" "le" ;
+
+ 2 add-spell-rule "P" "iez" "iez" "za" ;giez-gza
+ 2 add-spell-rule "P" "iez" "iez" "zowi" ;
+ 2 add-spell-rule "P" "iez" "iez" "zem" ;
+ 2 add-spell-rule "P" "iez" "iez" "zie" ;
+
+ 2 add-spell-rule "P" "[^r]ze³" "e³" "³a" ;guze³
+ 2 add-spell-rule "P" "[^r]ze³" "e³" "³owi" ;
+ 2 add-spell-rule "P" "[^r]ze³" "e³" "³em" ;
+ 2 add-spell-rule "P" "[^r]ze³" "ze³" "¼le" ;
+
+ 2 add-spell-rule "P" "rze³" "ze³" "³a" ;karze³, orze³
+ 2 add-spell-rule "P" "rze³" "ze³" "³u" ;
+ 2 add-spell-rule "P" "rze³" "ze³" "³em" ;
+ 2 add-spell-rule "P" "rze³" "ze³" "le" ;
+
+ 2 add-spell-rule "P" "rzec" "zec" "ca" ;dworzec
+ 2 add-spell-rule "P" "rzec" "zec" "cowi" ;
+ 2 add-spell-rule "P" "rzec" "zec" "cem" ;
+ 2 add-spell-rule "P" "rzec" "zec" "cu" ;
+
+ 2 add-spell-rule "P" "[cs]zec" "ec" "ca" ;g³uszec, ³yszczec
+ 2 add-spell-rule "P" "[cs]zec" "ec" "cowi" ;
+ 2 add-spell-rule "P" "[cs]zec" "ec" "cem" ;
+ 2 add-spell-rule "P" "[cs]zec" "ec" "cu" ;
+
+ 2 add-spell-rule "P" "[djlp¿]ec" "ec" "ca" ;dzioboro¿ec, zakalec, kapec, kojec, ose³edec
+ 2 add-spell-rule "P" "[djlp¿]ec" "ec" "cowi" ;
+ 2 add-spell-rule "P" "[djlp¿]ec" "ec" "cem" ;
+ 2 add-spell-rule "P" "[djlp¿]ec" "ec" "cu" ;
+	
+ 2 add-spell-rule "P" "niec" "niec" "ñca" ;babiniec-babiñca
+ 2 add-spell-rule "P" "niec" "niec" "ñcowi" ;
+ 2 add-spell-rule "P" "niec" "niec" "ñcem" ;
+ 2 add-spell-rule "P" "niec" "niec" "ñcu" ;
+	
+ 2 add-spell-rule "P" "[^cnsz]iec" "iec" "ca" ;bankowiec -> bankowca
+ 2 add-spell-rule "P" "[^cnsz]iec" "iec" "cowi" ;
+ 2 add-spell-rule "P" "[^cnsz]iec" "iec" "cem" ;
+ 2 add-spell-rule "P" "[^cnsz]iec" "iec" "cu" ;
+
+ 2 add-spell-rule "P" "ziec" "ziec" "¼ca" ;bodziec -> bod¼ca
+ 2 add-spell-rule "P" "ziec" "ziec" "¼cowi" ;
+ 2 add-spell-rule "P" "ziec" "ziec" "¼cem" ;
+ 2 add-spell-rule "P" "ziec" "ziec" "¼cu" ;
+
+ 2 add-spell-rule "P" "siec" "siec" "¶ca" ;brzusiec, Susiec
+ 2 add-spell-rule "P" "siec" "siec" "¶cowi" ;
+ 2 add-spell-rule "P" "siec" "siec" "¶cem" ;
+ 2 add-spell-rule "P" "siec" "siec" "¶cu" ;
+	
+ 2 add-spell-rule "P" "jciec" "iec" "a" ;ojciec -> ojca
+ 2 add-spell-rule "P" "jciec" "iec" "u" ;
+ 2 add-spell-rule "P" "jciec" "iec" "em" ;
+	
+ 2 add-spell-rule "P" "[^j]ciec" "ciec" "æca" ;kosaciec, ko¶ciec¶æca 
+ 2 add-spell-rule "P" "[^j]ciec" "ciec" "æcowi" ;
+ 2 add-spell-rule "P" "[^j]ciec" "ciec" "æcem" ;
+ 2 add-spell-rule "P" "[^j]ciec" "ciec" "æcu" ;
+	
+ 2 add-spell-rule "P" "óbr" "óbr" "obra" ;bóbr
+ 2 add-spell-rule "P" "óbr" "óbr" "obrowi" ;
+ 2 add-spell-rule "P" "óbr" "óbr" "obrem" ;
+ 2 add-spell-rule "P" "óbr" "óbr" "obrze" ;
+
+ 2 add-spell-rule "P" "órg" "órg" "orga" ;mórg
+ 2 add-spell-rule "P" "órg" "órg" "orgowi" ;
+ 2 add-spell-rule "P" "órg" "órg" "orgiem" ;
+ 2 add-spell-rule "P" "órg" "órg" "orgu" ;
+	
+ 2 add-spell-rule "P" "ób" "ób" "oba" ;dziób
+ 2 add-spell-rule "P" "ób" "ób" "obowi" ;
+ 2 add-spell-rule "P" "ób" "ób" "obem" ;
+ 2 add-spell-rule "P" "ób" "ób" "obie" ;
+	
+ 2 add-spell-rule "P" "ód" "ód" "oda" ;grzbietoród
+ 2 add-spell-rule "P" "ód" "ód" "odowi" ;
+ 2 add-spell-rule "P" "ód" "ód" "odem" ;
+ 2 add-spell-rule "P" "ód" "ód" "odzie" ;
+
+ 2 add-spell-rule "P" "ódz" "ódz" "odza" ;wódz
+ 2 add-spell-rule "P" "ódz" "ódz" "odzowi" ;
+ 2 add-spell-rule "P" "ódz" "ódz" "odzem" ;
+ 2 add-spell-rule "P" "ódz" "ódz" "odzu" ;
+
+ 2 add-spell-rule "P" "ó¼d¼" "ó¼d¼" "o¼dzia" ;gwó¼d¼
+ 2 add-spell-rule "P" "ó¼d¼" "ó¼d¼" "o¼dziowi" ;
+ 2 add-spell-rule "P" "ó¼d¼" "ó¼d¼" "o¼dziem" ;
+ 2 add-spell-rule "P" "ó¼d¼" "ó¼d¼" "o¼dziu" ;
+
+ 2 add-spell-rule "P" "óg" "óg" "oga" ;bóg
+ 2 add-spell-rule "P" "óg" "óg" "ogowi" ;
+ 2 add-spell-rule "P" "óg" "óg" "ogiem" ;
+ 2 add-spell-rule "P" "óg" "óg" "ogu" ;
+
+ 2 add-spell-rule "P" "ój" "ój" "oja" ;kozodój
+ 2 add-spell-rule "P" "ój" "ój" "ojowi" ;
+ 2 add-spell-rule "P" "ój" "ój" "ojem" ;
+ 2 add-spell-rule "P" "ój" "ój" "oju" ;
+
+ 2 add-spell-rule "P" "ól" "ól" "ola" ;mól
+ 2 add-spell-rule "P" "ól" "ól" "olowi" ;
+ 2 add-spell-rule "P" "ól" "ól" "olem" ;
+ 2 add-spell-rule "P" "ól" "ól" "olu" ;
+
+ 2 add-spell-rule "P" "ó³" "ó³" "o³a" ;ko¶ció³
+ 2 add-spell-rule "P" "ó³" "ó³" "o³owi" ;
+ 2 add-spell-rule "P" "ó³" "ó³" "o³em" ;
+ 2 add-spell-rule "P" "[^i]ó³" "ól" "ole" ;sokó³
+ 2 add-spell-rule "P" "ció³" "ó³" "ele" ;
+	
+ 2 add-spell-rule "P" "ór" "ór" "ora" ;upiór
+ 2 add-spell-rule "P" "ór" "ór" "orowi" ;
+ 2 add-spell-rule "P" "ór" "ór" "orem" ;
+ 2 add-spell-rule "P" "ór" "ór" "orze" ;
+
+ 2 add-spell-rule "P" "ót" "ót" "ota" ;ko³owrót
+ 2 add-spell-rule "P" "ót" "ót" "otowi" ;
+ 2 add-spell-rule "P" "ót" "ót" "otem" ;
+ 2 add-spell-rule "P" "ót" "ót" "ocie" ;
+
+ 2 add-spell-rule "P" "ów" "ów" "owa" ;wygwizdów, krabo³ów
+ 2 add-spell-rule "P" "ów" "ów" "owowi" ;
+ 2 add-spell-rule "P" "ów" "ów" "owem" ;
+ 2 add-spell-rule "P" "ów" "ów" "owie" ;
+
+ 2 add-spell-rule "P" "ó¿" "ó¿" "o¿a" ;nó¿
+ 2 add-spell-rule "P" "ó¿" "ó¿" "o¿owi" ;
+ 2 add-spell-rule "P" "ó¿" "ó¿" "o¿em" ;
+ 2 add-spell-rule "P" "ó¿" "ó¿" "o¿u" ;
+	
+ 2 add-spell-rule "P" "at" "" "a" ;¶wiat
+ 2 add-spell-rule "P" "at" "" "u" ;
+ 2 add-spell-rule "P" "at" "" "em" ;
+ 2 add-spell-rule "P" "at" "at" "cie" ;
+	
+ 2 add-spell-rule "P" "±b" "±b" "êba" ;z±b
+ 2 add-spell-rule "P" "±b" "±b" "êbowi" ;
+ 2 add-spell-rule "P" "±b" "±b" "êbem" ;
+ 2 add-spell-rule "P" "±b" "±b" "êbie" ;
+
+	
+ 2 add-spell-rule "P" "±dz" "±dz" "êdza" ;ksi±dz
+ 2 add-spell-rule "P" "±dz" "±dz" "êdzu" ;
+ 2 add-spell-rule "P" "±dz" "±dz" "êdzem" ;
+
+ 2 add-spell-rule "P" "±z" "±z" "êza" ;paw±z
+ 2 add-spell-rule "P" "±z" "±z" "êzowi" ;
+ 2 add-spell-rule "P" "±z" "±z" "êzem" ;
+ 2 add-spell-rule "P" "±z" "±z" "êzie" ;
+
+ 2 add-spell-rule "P" "±¿" "±¿" "ê¿a" ;m±¿
+ 2 add-spell-rule "P" "±¿" "±¿" "ê¿owi" ;
+ 2 add-spell-rule "P" "±¿" "±¿" "ê¿em" ;
+ 2 add-spell-rule "P" "±¿" "±¿" "ê¿u" ;
+
+ 2 add-spell-rule "P" "[bps¿]e³" "e³" "³a" ;diabe³, wy¿e³, supe³
+ 2 add-spell-rule "P" "[bps¿]e³" "e³" "³owi" ;
+ 2 add-spell-rule "P" "[bps¿]e³" "e³" "³em" ;
+ 2 add-spell-rule "P" "[bp¿]e³" "e³" "le" ;
+ 2 add-spell-rule "P" "se³" "se³" "¶le" ;pose³
+	
+ 2 add-spell-rule "P" "cieñ" "cieñ" "tnia" ;kwiecieñ
+ 2 add-spell-rule "P" "cieñ" "cieñ" "tniowi" ;
+ 2 add-spell-rule "P" "cieñ" "cieñ" "tniem" ;
+ 2 add-spell-rule "P" "cieñ" "cieñ" "tniu" ;
+
+ 2 add-spell-rule "P" "pieñ" "ieñ" "nia" ;pieñ
+ 2 add-spell-rule "P" "pieñ" "ieñ" "niowi" ;
+ 2 add-spell-rule "P" "pieñ" "ieñ" "niem" ;
+ 2 add-spell-rule "P" "pieñ" "ieñ" "niu" ;
+
+ 2 add-spell-rule "P" "sieñ" "sieñ" "¶nia" ;wrzesieñ
+ 2 add-spell-rule "P" "sieñ" "sieñ" "¶niowi" ;
+ 2 add-spell-rule "P" "sieñ" "sieñ" "¶niem" ;
+ 2 add-spell-rule "P" "sieñ" "sieñ" "¶niu" ;
+
+ 2 add-spell-rule "P" "[^d]zieñ" "zieñ" "¼nia" ;wiêzieñ
+ 2 add-spell-rule "P" "[^d]zieñ" "zieñ" "¼niowi" ;
+ 2 add-spell-rule "P" "[^d]zieñ" "zieñ" "¼niem" ;
+ 2 add-spell-rule "P" "[^d]zieñ" "zieñ" "¼niu" ;
+
+ 2 add-spell-rule "P" "dzieñ" "zieñ" "nia" ;dzieñ
+ 2 add-spell-rule "P" "dzieñ" "zieñ" "niowi" ;
+ 2 add-spell-rule "P" "dzieñ" "zieñ" "niem" ;
+ 2 add-spell-rule "P" "dzieñ" "zieñ" "niu" ;
+
+ 2 add-spell-rule "P" "[rtz¿]eñ" "eñ" "nia" ;dureñ, truteñ, uczeñ, s±¿eñ
+ 2 add-spell-rule "P" "[rtz¿]eñ" "eñ" "niowi" ;
+ 2 add-spell-rule "P" "[rtz¿]eñ" "eñ" "niem" ;
+ 2 add-spell-rule "P" "[rtz¿]eñ" "eñ" "niu" ;
+
+ 2 add-spell-rule "P" "cio³" "cio³" "t³a" ;kocio³
+ 2 add-spell-rule "P" "cio³" "cio³" "t³u" ;
+ 2 add-spell-rule "P" "cio³" "cio³" "t³em" ;
+ 2 add-spell-rule "P" "cio³" "cio³" "tle" ;
+
+ 2 add-spell-rule "P" "zio³" "zio³" "z³a" ;kozio³
+ 2 add-spell-rule "P" "zio³" "zio³" "z³u" ;
+ 2 add-spell-rule "P" "zio³" "zio³" "z³em" ;
+ 2 add-spell-rule "P" "zio³" "zio³" "¼le" ;
+
+ 2 add-spell-rule "P" "sio³" "io³" "³a" ;osio³
+ 2 add-spell-rule "P" "sio³" "io³" "³u" ;
+ 2 add-spell-rule "P" "sio³" "io³" "³em" ;
+ 2 add-spell-rule "P" "sio³" "sio³" "¶le" ;
+	
+ 2 add-spell-rule "P" "³o" "o" "y" ;zapiewaj³o
+ 2 add-spell-rule "P" "³o" "³o" "le" ;
+ 2 add-spell-rule "P" "³o" "o" "em" ;
+
+; Podobnie, jak dla P, lecz w dope³niaczu lp. odmieniaj± siê na 'u'.
+; Rzeczowniki typu any¿ek -> any¿ku
+; wóz -> wozu
+; bez -> bzu
+
+; Liczba pojedyncza
+
+; flag *R:	
+ 2 add-spell-rule "R" "ech" "ech" "chu" ;mech
+ 2 add-spell-rule "R" "ech" "ech" "chem" ;
+
+ 2 add-spell-rule "R" "ec" "ec" "cu" ;kruszec
+ 2 add-spell-rule "R" "ec" "ec" "cowi" ;
+ 2 add-spell-rule "R" "ec" "ec" "cem" ;
+
+ 2 add-spell-rule "R" "ek" "ek" "ku" ;any¿ek
+ 2 add-spell-rule "R" "ek" "ek" "kowi" ;
+ 2 add-spell-rule "R" "ek" "ek" "kiem" ;
+
+ 2 add-spell-rule "R" "em" "em" "mu" ;najem
+ 2 add-spell-rule "R" "em" "em" "mowi" ;
+ 2 add-spell-rule "R" "em" "em" "mem" ;
+ 2 add-spell-rule "R" "em" "em" "mie" ;
+
+ 2 add-spell-rule "R" "en" "en" "nu" ;sen
+ 2 add-spell-rule "R" "en" "en" "nowi" ;
+ 2 add-spell-rule "R" "en" "en" "nem" ;
+ 2 add-spell-rule "R" "[^s]en" "en" "nie" ;
+ 2 add-spell-rule "R" "sen" "sen" "¶nie" ;
+
+ 2 add-spell-rule "R" "ep" "ep" "pu" ;pó³wysep
+ 2 add-spell-rule "R" "ep" "ep" "powi" ;
+ 2 add-spell-rule "R" "ep" "ep" "pem" ;
+ 2 add-spell-rule "R" "ep" "ep" "pie" ;
+	
+ 2 add-spell-rule "R" "est" "est" "tu" ;chrzest
+ 2 add-spell-rule "R" "est" "est" "towi" ;
+ 2 add-spell-rule "R" "est" "est" "tem" ;
+ 2 add-spell-rule "R" "est" "est" "cie" ;
+
+ 2 add-spell-rule "R" "[^i]er" "er" "ru" ;alabaster
+ 2 add-spell-rule "R" "[^i]er" "er" "rowi" ;
+ 2 add-spell-rule "R" "[^i]er" "er" "rem" ;
+ 2 add-spell-rule "R" "[^i]er" "er" "rze" ;
+
+ 2 add-spell-rule "R" "ier" "ier" "ru" ;cukier
+ 2 add-spell-rule "R" "ier" "ier" "rowi" ;
+ 2 add-spell-rule "R" "ier" "ier" "rem" ;
+ 2 add-spell-rule "R" "ier" "ier" "rze" ;
+	
+ 2 add-spell-rule "R" "et" "et" "tu" ;ocet
+ 2 add-spell-rule "R" "et" "et" "towi" ;
+ 2 add-spell-rule "R" "et" "et" "tem" ;
+ 2 add-spell-rule "R" "[^s]et" "et" "cie" ;
+ 2 add-spell-rule "R" "set" "set" "¶cie" ;oset
+
+ 2 add-spell-rule "R" "ew" "ew" "wu" ;pozew
+ 2 add-spell-rule "R" "ew" "ew" "wowi" ;
+ 2 add-spell-rule "R" "ew" "ew" "wem" ;
+ 2 add-spell-rule "R" "ew" "ew" "wie" ;
+
+ 2 add-spell-rule "R" "ez" "ez" "zu" ;bez
+ 2 add-spell-rule "R" "ez" "ez" "zowi" ;
+ 2 add-spell-rule "R" "ez" "ez" "zem" ;
+ 2 add-spell-rule "R" "ez" "ez" "zie" ;
+	
+ 2 add-spell-rule "R" "[^i]el" "el" "lu" ;bajzel
+ 2 add-spell-rule "R" "[^i]el" "el" "lowi" ;
+ 2 add-spell-rule "R" "[^i]el" "el" "lem" ;
+
+ 2 add-spell-rule "R" "iel" "iel" "lu" ;konwentykiel
+ 2 add-spell-rule "R" "iel" "iel" "lowi" ;
+ 2 add-spell-rule "R" "iel" "iel" "lem" ;
+
+ 2 add-spell-rule "R" "[zl]ec" "ec" "cu" ;kruszec
+ 2 add-spell-rule "R" "[zl]ec" "ec" "cowi" ;
+ 2 add-spell-rule "R" "[zl]ec" "ec" "cem" ;
+
+ 2 add-spell-rule "R" "ób" "ób" "obu" ;bób
+ 2 add-spell-rule "R" "ób" "ób" "obowi" ;
+ 2 add-spell-rule "R" "ób" "ób" "obem" ;
+ 2 add-spell-rule "R" "ób" "ób" "obie" ;
+
+ 2 add-spell-rule "R" "ód" "ód" "odu" ;smród, bród
+ 2 add-spell-rule "R" "ód" "ód" "odowi" ;
+ 2 add-spell-rule "R" "ód" "ód" "odem" ;
+ 2 add-spell-rule "R" "ód" "ód" "odzie" ;
+
+ 2 add-spell-rule "R" "óg" "óg" "ogu" ;bar³óg
+ 2 add-spell-rule "R" "óg" "óg" "ogowi" ;
+ 2 add-spell-rule "R" "óg" "óg" "ogiem" ;
+
+ 2 add-spell-rule "R" "óz" "óz" "ozu" ;wóz
+ 2 add-spell-rule "R" "óz" "óz" "ozowi" ;
+ 2 add-spell-rule "R" "óz" "óz" "ozem" ;
+ 2 add-spell-rule "R" "óz" "óz" "ozie" ;
+
+ 2 add-spell-rule "R" "ó³" "ó³" "o³u" ;wó³
+ 2 add-spell-rule "R" "ó³" "ó³" "o³owi" ;
+ 2 add-spell-rule "R" "ó³" "ó³" "o³em" ;
+ 2 add-spell-rule "R" "ó³" "ó³" "ole" ;
+
+ 2 add-spell-rule "R" "ój" "ój" "oju" ;bój, rój
+ 2 add-spell-rule "R" "ój" "ój" "ojowi" ;
+ 2 add-spell-rule "R" "ój" "ój" "ojem" ;
+
+ 2 add-spell-rule "R" "ór" "ór" "oru" ;bór
+ 2 add-spell-rule "R" "ór" "ór" "orowi" ;
+ 2 add-spell-rule "R" "ór" "ór" "orem" ;
+ 2 add-spell-rule "R" "ór" "ór" "orze" ;
+
+ 2 add-spell-rule "R" "ót" "ót" "otu" ;ko³owrót
+ 2 add-spell-rule "R" "ót" "ót" "otowi" ;
+ 2 add-spell-rule "R" "ót" "ót" "otem" ;
+ 2 add-spell-rule "R" "ót" "ót" "ocie" ;
+
+ 2 add-spell-rule "R" "ów" "ów" "owu" ;³ów
+ 2 add-spell-rule "R" "ów" "ów" "owowi" ;
+ 2 add-spell-rule "R" "ów" "ów" "owem" ;
+ 2 add-spell-rule "R" "ów" "ów" "owie" ;
+
+ 2 add-spell-rule "R" "±b" "±b" "êbu" ;d±b
+ 2 add-spell-rule "R" "±b" "±b" "êbowi" ;
+ 2 add-spell-rule "R" "±b" "±b" "êbem" ;
+ 2 add-spell-rule "R" "±b" "±b" "êbie" ;
+
+ 2 add-spell-rule "R" "±d" "±d" "êdu" ;b³±d
+ 2 add-spell-rule "R" "±d" "±d" "êdowi" ;
+ 2 add-spell-rule "R" "±d" "±d" "êdem" ;
+ 2 add-spell-rule "R" "±d" "±d" "êdzie" ;
+
+ 2 add-spell-rule "R" "±g" "±g" "êgu" ;kr±g
+ 2 add-spell-rule "R" "±g" "±g" "êgowi" ;
+ 2 add-spell-rule "R" "±g" "±g" "êgiem" ;
+	
+ 2 add-spell-rule "R" "ieæ" "ieæ" "ciu" ;dziegieæ
+ 2 add-spell-rule "R" "ieæ" "ieæ" "ciowi" ;
+ 2 add-spell-rule "R" "ieæ" "ieæ" "ciem" ;
+
+; Uzupe³nienie flag P,R o odmianê policzalnych rzeczowników rodz. mêskiego
+
+; Mianownik lmn., rzeczowniki mêskoosobowe:
+
+; flag *w:
+ 2 add-spell-rule "w" "ter" "er" "rowie" ;filister
+ 2 add-spell-rule "w" "ier" "ier" "rowie" ;szwagier
+ 2 add-spell-rule "w" "jciec" "iec" "owie" ;ojciec
+ 2 add-spell-rule "w" "ód" "ód" "odowie" ;powód
+ 2 add-spell-rule "w" "óg" "óg" "ogowie" ;bóg
+ 2 add-spell-rule "w" "ódz" "ódz" "odzowie" ;wódz
+ 2 add-spell-rule "w" "±¿" "±¿" "ê¿owie" ;m±¿
+ 2 add-spell-rule "w" "e³" "e³" "³owie" ;pose³
+ 2 add-spell-rule "w" "ek" "ek" "kowie" ;braciszek
+ 2 add-spell-rule "w" "zieñ" "zieñ" "¼niowie" ;wiêzieñ
+ 2 add-spell-rule "w" "zeñ" "eñ" "niowie" ;uczeñ
+ 2 add-spell-rule "w" "³o" "" "wie" ;zapiewaj³o
+
+; flag *t:
+ 2 add-spell-rule "t" "ier" "ier" "rzy" ;kwakier
+ 2 add-spell-rule "t" "ter" "er" "rzy" ;arbiter
+ 2 add-spell-rule "t" "lec" "ec" "cy" ;bywalec
+ 2 add-spell-rule "t" "rzec" "zec" "cy" ;starzec
+ 2 add-spell-rule "t" "nin" "n" "e" ;Amerykanin
+ 2 add-spell-rule "t" "ian" "" "ie" ;gwardian
+ 2 add-spell-rule "t" "niec" "niec" "ñcy" ;jeniec
+ 2 add-spell-rule "t" "[mpw]iec" "iec" "cy" ;d³ugodystansowiec, g³upiec
+ 2 add-spell-rule "t" "ziec" "ziec" "¼cy" ;uchodziec
+; 2 add-spell-rule "t" "sta" "sta" "¶ci" ;artysta
+; 2 add-spell-rule "t" "zna" "zna" "¼ni" ;mê¿czyzna
+
+; Mianownik lmn., rzeczowniki nieosobowe rodzaju mêskiego (lub odmieniane
+; jak nieosobowe - patrz dureñ)
+
+; flag *z:
+
+ 2 add-spell-rule "z" "ech" "ech" "chy" ;mech
+ 2 add-spell-rule "z" "iep" "iep" "py" ;kiep
+ 2 add-spell-rule "z" "[^i]er" "er" "ry" ;skafander
+ 2 add-spell-rule "z" "ier" "ier" "ry" ;bunkier
+ 2 add-spell-rule "z" "ies" "ies" "sy" ;pies
+ 2 add-spell-rule "z" "[^i]en" "en" "ny" ;sen
+ 2 add-spell-rule "z" "[^i]el" "el" "le" ;szwindel
+ 2 add-spell-rule "z" "ie³" "ie³" "³y" ;kie³, szczygie³
+ 2 add-spell-rule "z" "iel" "iel" "le" ;magiel
+ 2 add-spell-rule "z" "pieñ" "ieñ" "nie" ;pieñ
+ 2 add-spell-rule "z" "cieñ" "cieñ" "tnie" ;kwiecieñ
+ 2 add-spell-rule "z" "[^i]ek" "ek" "ki" ;bo¿ek
+ 2 add-spell-rule "z" "ciek" "ciek" "æki" ;bociek
+ 2 add-spell-rule "z" "niek" "niek" "ñki" ;pieniek, ogieniek
+ 2 add-spell-rule "z" "siek" "siek" "¶ki" ;misiek
+ 2 add-spell-rule "z" "iez" "iez" "zy" ;giez
+ 2 add-spell-rule "z" "[^i]ez" "ez" "zy" ;
+ 2 add-spell-rule "z" "[^r]ze³" "e³" "³y" ;wêze³
+ 2 add-spell-rule "z" "rze³" "ze³" "³y" ;orze³
+ 2 add-spell-rule "z" "[cs]zec" "ec" "ce" ;³yszczec, g³uszec
+ 2 add-spell-rule "z" "rzec" "zec" "ce" ;dworzec
+ 2 add-spell-rule "z" "¿e³" "e³" "³y" ;wy¿e³
+ 2 add-spell-rule "z" "[djlp¿]ec" "ec" "ce" ;dzioboro¿ec, bywalec, kapec, kojec, ose³edec
+ 2 add-spell-rule "z" "[^cnsz]iec" "iec" "ce" ;szczerbiec
+ 2 add-spell-rule "z" "ciec" "ciec" "æce" ;kosaciec, ko¶ciec
+ 2 add-spell-rule "z" "niec" "niec" "ñce" ;biedrzeniec
+ 2 add-spell-rule "z" "siec" "siec" "¶ce" ;brzusiec
+ 2 add-spell-rule "z" "ziec" "ziec" "¼ce" ;bodziec
+ 2 add-spell-rule "z" "óbr" "óbr" "obry" ;bóbr
+ 2 add-spell-rule "z" "órg" "órg" "orgi" ;mórg
+ 2 add-spell-rule "z" "óg" "óg" "ogi" ;z³óg
+ 2 add-spell-rule "z" "ób" "ób" "oby" ;nierób
+ 2 add-spell-rule "z" "óz" "óz" "ozy" ;wóz
+ 2 add-spell-rule "z" "ó¿" "ó¿" "o¿e" ;nó¿
+ 2 add-spell-rule "z" "ó¼d¼" "ó¼d¼" "o¼dzie" ;gwó¼d¼
+ 2 add-spell-rule "z" "ól" "ól" "ole" ;mól
+ 2 add-spell-rule "z" "ó³" "ó³" "o³y" ;wó³
+ 2 add-spell-rule "z" "ój" "ój" "oje" ;s³ój
+ 2 add-spell-rule "z" "ód" "ód" "ody" ;korowód
+ 2 add-spell-rule "z" "ódz" "ódz" "odze" ;?
+ 2 add-spell-rule "z" "ór" "ór" "ory" ;bór
+ 2 add-spell-rule "z" "ót" "ót" "oty" ;ko³owrót
+ 2 add-spell-rule "z" "ów" "ów" "owy" ;cudzys³ów
+ 2 add-spell-rule "z" "±b" "±b" "êby" ;d±b
+; 2 add-spell-rule "z" "±c" "±c" "êce" ;
+ 2 add-spell-rule "z" "±d" "±d" "êdy" ;b³±d
+ 2 add-spell-rule "z" "±g" "±g" "êgi" ;kr±g
+ 2 add-spell-rule "z" "±z" "±z" "êzy" ;paw±z
+ 2 add-spell-rule "z" "±¿" "±¿" "ê¿e" ;w±¿
+ 2 add-spell-rule "z" "eb" "eb" "by" ;³eb
+ 2 add-spell-rule "z" "[^i]eæ" "eæ" "cie" ;kapeæ
+ 2 add-spell-rule "z" "ieæ" "ieæ" "cie" ;³okieæ
+ 2 add-spell-rule "z" "ep" "ep" "py" ;pó³wysep
+ 2 add-spell-rule "z" "est" "est" "ty" ;chrzest
+ 2 add-spell-rule "z" "et" "et" "ty" ;ocet
+ 2 add-spell-rule "z" "ew" "ew" "wy" ;lew
+ 2 add-spell-rule "z" "[^iz]e³" "e³" "³y" ;diabe³
+ 2 add-spell-rule "z" "dzieñ" "zieñ" "nie" ;dzieñ
+ 2 add-spell-rule "z" "sieñ" "sieñ" "¶nie" ;wrzesieñ
+ 2 add-spell-rule "z" "[rtz¿]eñ" "eñ" "nie" ;dureñ, t³uczeñ, s±¿eñ
+ 2 add-spell-rule "z" "cio³" "cio³" "t³y" ;kocio³
+ 2 add-spell-rule "z" "zio³" "zio³" "z³y" ;kozio³
+ 2 add-spell-rule "z" "sio³" "io³" "³y" ;osio³
+ 2 add-spell-rule "z" "ns" "" "e" ;konwenans
+
+; flag *Z:
+
+ 2 add-spell-rule "Z" "ech" "ech" "chów" ;mech
+ 2 add-spell-rule "Z" "ech" "ech" "chom" ;
+ 2 add-spell-rule "Z" "ech" "ech" "chami" ;
+ 2 add-spell-rule "Z" "ech" "ech" "chach" ;
+
+ 2 add-spell-rule "Z" "[^i]er" "er" "rów" ;skafander
+ 2 add-spell-rule "Z" "[^i]er" "er" "rom" ;
+ 2 add-spell-rule "Z" "[^i]er" "er" "rami" ;
+ 2 add-spell-rule "Z" "[^i]er" "er" "rach" ;
+
+ 2 add-spell-rule "Z" "ieæ" "ieæ" "ci" ;³okieæ
+ 2 add-spell-rule "Z" "ieæ" "ieæ" "ciom" ;
+ 2 add-spell-rule "Z" "ieæ" "ieæ" "ciami" ;
+ 2 add-spell-rule "Z" "ieæ" "ieæ" "ciach" ;
+
+ 2 add-spell-rule "Z" "iep" "iep" "pów" ;kiep
+ 2 add-spell-rule "Z" "iep" "iep" "pom" ;
+ 2 add-spell-rule "Z" "iep" "iep" "pami" ;
+ 2 add-spell-rule "Z" "iep" "iep" "pach" ;
+
+ 2 add-spell-rule "Z" "ier" "ier" "rów" ;szwagier, bunkier
+ 2 add-spell-rule "Z" "ier" "ier" "rom" ;
+ 2 add-spell-rule "Z" "ier" "ier" "rami" ;
+ 2 add-spell-rule "Z" "ier" "ier" "rach" ;
+
+ 2 add-spell-rule "Z" "ies" "ies" "sów" ;pies
+ 2 add-spell-rule "Z" "ies" "ies" "som" ;
+ 2 add-spell-rule "Z" "ies" "ies" "sami" ;
+ 2 add-spell-rule "Z" "ies" "ies" "sach" ;
+
+ 2 add-spell-rule "Z" "[^i]en" "en" "nów" ;sen
+ 2 add-spell-rule "Z" "[^i]en" "en" "nom" ;
+ 2 add-spell-rule "Z" "[^i]en" "en" "nami" ;
+ 2 add-spell-rule "Z" "[^i]en" "en" "nach" ;
+
+ 2 add-spell-rule "Z" "[^i]el" "el" "li" ;szwindel
+ 2 add-spell-rule "Z" "[^i]el" "el" "lom" ;
+ 2 add-spell-rule "Z" "[^i]el" "el" "lami" ;
+ 2 add-spell-rule "Z" "[^i]el" "el" "lach" ;
+	
+ 2 add-spell-rule "Z" "ie³" "ie³" "³ów" ;kie³, szczygie³
+ 2 add-spell-rule "Z" "ie³" "ie³" "³om" ;
+ 2 add-spell-rule "Z" "ie³" "ie³" "³ami" ;
+ 2 add-spell-rule "Z" "ie³" "ie³" "³ach" ;
+
+ 2 add-spell-rule "Z" "iel" "iel" "li" ;magiel
+ 2 add-spell-rule "Z" "iel" "iel" "lom" ;
+ 2 add-spell-rule "Z" "iel" "iel" "lami" ;
+ 2 add-spell-rule "Z" "iel" "iel" "lach" ;
+
+ 2 add-spell-rule "Z" "[^i]ek" "ek" "ków" ;bo¿ek
+ 2 add-spell-rule "Z" "[^i]ek" "ek" "kom" ;
+ 2 add-spell-rule "Z" "[^i]ek" "ek" "kami" ;
+ 2 add-spell-rule "Z" "[^i]ek" "ek" "kach" ;
+
+ 2 add-spell-rule "Z" "ciek" "ciek" "æków" ;bociek
+ 2 add-spell-rule "Z" "ciek" "ciek" "ækom" ;
+ 2 add-spell-rule "Z" "ciek" "ciek" "ækami" ;
+ 2 add-spell-rule "Z" "ciek" "ciek" "ækach" ;
+
+ 2 add-spell-rule "Z" "niek" "niek" "ñków" ;pieniek, ogieniek
+ 2 add-spell-rule "Z" "niek" "niek" "ñkom" ;
+ 2 add-spell-rule "Z" "niek" "niek" "ñkami" ;
+ 2 add-spell-rule "Z" "niek" "niek" "ñkach" ;
+
+ 2 add-spell-rule "Z" "siek" "siek" "¶ków" ;misiek
+ 2 add-spell-rule "Z" "siek" "siek" "¶kom" ;
+ 2 add-spell-rule "Z" "siek" "siek" "¶kami" ;
+ 2 add-spell-rule "Z" "siek" "siek" "¶kach" ;
+
+ 2 add-spell-rule "Z" "iez" "iez" "zów" ;giez
+ 2 add-spell-rule "Z" "iez" "iez" "zom" ;
+ 2 add-spell-rule "Z" "iez" "iez" "zami" ;
+ 2 add-spell-rule "Z" "iez" "iez" "zach" ;
+
+ 2 add-spell-rule "Z" "[^i]ez" "ez" "zów" ;bez
+ 2 add-spell-rule "Z" "[^i]ez" "ez" "zom" ;
+ 2 add-spell-rule "Z" "[^i]ez" "ez" "zami" ;
+ 2 add-spell-rule "Z" "[^i]ez" "ez" "zach" ;
+
+ 2 add-spell-rule "Z" "[^r]ze³" "e³" "³ów" ;wêze³
+ 2 add-spell-rule "Z" "[^r]ze³" "e³" "³om" ;
+ 2 add-spell-rule "Z" "[^r]ze³" "e³" "³ami" ;
+ 2 add-spell-rule "Z" "[^r]ze³" "e³" "³ach" ;
+
+ 2 add-spell-rule "Z" "rze³" "ze³" "³ów" ;orze³
+ 2 add-spell-rule "Z" "rze³" "ze³" "³om" ;
+ 2 add-spell-rule "Z" "rze³" "ze³" "³ami" ;
+ 2 add-spell-rule "Z" "rze³" "ze³" "³ach" ;
+
+ 2 add-spell-rule "Z" "rzec" "zec" "ców" ;starzec
+ 2 add-spell-rule "Z" "rzec" "zec" "com" ;
+ 2 add-spell-rule "Z" "rzec" "zec" "cami" ;
+ 2 add-spell-rule "Z" "rzec" "zec" "cach" ;
+
+ 2 add-spell-rule "Z" "[cs]zec" "ec" "ców" ;³yszczec, g³uszec
+ 2 add-spell-rule "Z" "[cs]zec" "ec" "com" ;
+ 2 add-spell-rule "Z" "[cs]zec" "ec" "cami" ;
+ 2 add-spell-rule "Z" "[cs]zec" "ec" "cach" ;
+
+ 2 add-spell-rule "Z" "[^iz]ec" "ec" "ców" ;dzioboro¿ec, bywalec, kapec, kojec, ose³edec
+ 2 add-spell-rule "Z" "[^iz]ec" "ec" "com" ;
+ 2 add-spell-rule "Z" "[^iz]ec" "ec" "cami" ;
+ 2 add-spell-rule "Z" "[^iz]ec" "ec" "cach" ;
+
+ 2 add-spell-rule "Z" "niec" "niec" "ñców" ;jeniec
+ 2 add-spell-rule "Z" "niec" "niec" "ñcom" ;
+ 2 add-spell-rule "Z" "niec" "niec" "ñcami" ;
+ 2 add-spell-rule "Z" "niec" "niec" "ñcach" ;
+
+; 2 add-spell-rule "Z" "nin" "in" "ów" ;Amerykanów <-> bydgoszczan?
+ 2 add-spell-rule "Z" "nin" "in" "om" ;
+ 2 add-spell-rule "Z" "nin" "in" "ami" ;
+ 2 add-spell-rule "Z" "nin" "in" "ach" ;
+
+ 2 add-spell-rule "Z" "[^cnsz]iec" "iec" "ców" ;szczerbiec
+ 2 add-spell-rule "Z" "[^cnsz]iec" "iec" "com" ;
+ 2 add-spell-rule "Z" "[^cnsz]iec" "iec" "cami" ;
+ 2 add-spell-rule "Z" "[^cnsz]iec" "iec" "cach" ;
+
+ 2 add-spell-rule "Z" "ziec" "ziec" "¼ców" ;je¼dziec
+ 2 add-spell-rule "Z" "ziec" "ziec" "¼com" ;
+ 2 add-spell-rule "Z" "ziec" "ziec" "¼cami" ;
+ 2 add-spell-rule "Z" "ziec" "ziec" "¼cach" ;
+
+ 2 add-spell-rule "Z" "siec" "siec" "¶ców" ;brzusiec
+ 2 add-spell-rule "Z" "siec" "siec" "¶com" ;
+ 2 add-spell-rule "Z" "siec" "siec" "¶cami" ;
+ 2 add-spell-rule "Z" "siec" "siec" "¶cach" ;
+
+ 2 add-spell-rule "Z" "jciec" "iec" "ów" ;ojciec
+ 2 add-spell-rule "Z" "jciec" "iec" "om" ;
+ 2 add-spell-rule "Z" "jciec" "iec" "ami" ;
+ 2 add-spell-rule "Z" "jciec" "iec" "ach" ;
+
+ 2 add-spell-rule "Z" "[^j]ciec" "ciec" "æców" ;kosaciec, ko¶ciec
+ 2 add-spell-rule "Z" "[^j]ciec" "ciec" "æcom" ;
+ 2 add-spell-rule "Z" "[^j]ciec" "ciec" "æcami" ;
+ 2 add-spell-rule "Z" "[^j]ciec" "ciec" "æcach" ;
+
+ 2 add-spell-rule "Z" "ób" "ób" "obów" ;nierób
+ 2 add-spell-rule "Z" "ób" "ób" "obom" ;
+ 2 add-spell-rule "Z" "ób" "ób" "obami" ;
+ 2 add-spell-rule "Z" "ób" "ób" "obach" ;
+
+ 2 add-spell-rule "Z" "óbr" "óbr" "obrów" ;bóbr
+ 2 add-spell-rule "Z" "óbr" "óbr" "obrom" ;
+ 2 add-spell-rule "Z" "óbr" "óbr" "obrami" ;
+ 2 add-spell-rule "Z" "óbr" "óbr" "obrach" ;
+
+ 2 add-spell-rule "Z" "ód" "ód" "odów" ;korowód
+ 2 add-spell-rule "Z" "ód" "ód" "odom" ;
+ 2 add-spell-rule "Z" "ód" "ód" "odami" ;
+ 2 add-spell-rule "Z" "ód" "ód" "odach" ;
+
+ 2 add-spell-rule "Z" "ódz" "ódz" "odzów" ;wódz
+ 2 add-spell-rule "Z" "ódz" "ódz" "odzom" ;
+ 2 add-spell-rule "Z" "ódz" "ódz" "odzami" ;
+ 2 add-spell-rule "Z" "ódz" "ódz" "odzach" ;
+
+ 2 add-spell-rule "Z" "ó¼d¼" "ó¼d¼" "o¼dzi" ;gwó¼d¼
+ 2 add-spell-rule "Z" "ó¼d¼" "ó¼d¼" "o¼dziom" ;
+ 2 add-spell-rule "Z" "ó¼d¼" "ó¼d¼" "o¼dziami" ;
+ 2 add-spell-rule "Z" "ó¼d¼" "ó¼d¼" "o¼dziach" ;
+
+ 2 add-spell-rule "Z" "óg" "óg" "ogów" ;bóg
+ 2 add-spell-rule "Z" "óg" "óg" "ogom" ;
+ 2 add-spell-rule "Z" "óg" "óg" "ogami" ;
+ 2 add-spell-rule "Z" "óg" "óg" "ogach" ;
+
+ 2 add-spell-rule "Z" "ój" "ój" "ojów" ;s³ój
+ 2 add-spell-rule "Z" "ój" "ój" "ojom" ;
+ 2 add-spell-rule "Z" "ój" "ój" "ojami" ;
+ 2 add-spell-rule "Z" "ój" "ój" "ojach" ;
+
+ 2 add-spell-rule "Z" "ól" "ól" "oli" ;mól
+ 2 add-spell-rule "Z" "ól" "ól" "olom" ;
+ 2 add-spell-rule "Z" "ól" "ól" "olami" ;
+ 2 add-spell-rule "Z" "ól" "ól" "olach" ;
+
+ 2 add-spell-rule "Z" "ó³" "ó³" "o³ów" ;wó³
+ 2 add-spell-rule "Z" "ó³" "ó³" "o³om" ;
+ 2 add-spell-rule "Z" "ó³" "ó³" "o³ami" ;
+ 2 add-spell-rule "Z" "ó³" "ó³" "o³ach" ;
+
+ 2 add-spell-rule "Z" "ór" "ór" "orów" ;bór
+ 2 add-spell-rule "Z" "ór" "ór" "orom" ;
+ 2 add-spell-rule "Z" "ór" "ór" "orami" ;
+ 2 add-spell-rule "Z" "ór" "ór" "orach" ;
+
+ 2 add-spell-rule "Z" "ót" "ót" "otów" ;ko³owrót
+ 2 add-spell-rule "Z" "ót" "ót" "otom" ;
+ 2 add-spell-rule "Z" "ót" "ót" "otami" ;
+ 2 add-spell-rule "Z" "ót" "ót" "otach" ;
+
+ 2 add-spell-rule "Z" "ów" "ów" "owów" ;cudzys³ów
+ 2 add-spell-rule "Z" "ów" "ów" "owom" ;
+ 2 add-spell-rule "Z" "ów" "ów" "owami" ;
+ 2 add-spell-rule "Z" "ów" "ów" "owach" ;
+
+ 2 add-spell-rule "Z" "óz" "óz" "ozów" ;wóz
+ 2 add-spell-rule "Z" "óz" "óz" "ozom" ;
+ 2 add-spell-rule "Z" "óz" "óz" "ozami" ;
+ 2 add-spell-rule "Z" "óz" "óz" "ozach" ;
+	
+ 2 add-spell-rule "Z" "ó¿" "ó¿" "o¿y" ;nó¿
+ 2 add-spell-rule "Z" "ó¿" "ó¿" "o¿om" ;
+ 2 add-spell-rule "Z" "ó¿" "ó¿" "o¿ami" ;
+ 2 add-spell-rule "Z" "ó¿" "ó¿" "o¿ach" ;
+	
+ 2 add-spell-rule "Z" "±b" "±b" "êbów" ;d±b
+ 2 add-spell-rule "Z" "±b" "±b" "êbom" ;
+ 2 add-spell-rule "Z" "±b" "±b" "êbami" ;
+ 2 add-spell-rule "Z" "±b" "±b" "êbach" ;
+	
+
+ 2 add-spell-rule "Z" "±c" "±c" "êcy" ;miesi±c, tysi±c
+ 2 add-spell-rule "Z" "±c" "" "om" ;
+ 2 add-spell-rule "Z" "±c" "" "ami" ;
+ 2 add-spell-rule "Z" "±c" "" "ach" ;
+
+ 2 add-spell-rule "Z" "±d" "±d" "êdów" ;b³±d
+ 2 add-spell-rule "Z" "±d" "±d" "êdom" ;
+ 2 add-spell-rule "Z" "±d" "±d" "êdami" ;
+ 2 add-spell-rule "Z" "±d" "±d" "êdach" ;
+
+ 2 add-spell-rule "Z" "±g" "±g" "êgów" ;kr±g
+ 2 add-spell-rule "Z" "±g" "±g" "êgom" ;
+ 2 add-spell-rule "Z" "±g" "±g" "êgami" ;
+ 2 add-spell-rule "Z" "±g" "±g" "êgach" ;
+
+ 2 add-spell-rule "Z" "±z" "±z" "êzów" ;paw±z 
+ 2 add-spell-rule "Z" "±z" "±z" "êzom" ;
+ 2 add-spell-rule "Z" "±z" "±z" "êzami" ;
+ 2 add-spell-rule "Z" "±z" "±z" "êzach" ;
+
+ 2 add-spell-rule "Z" "±¿" "±¿" "ê¿ów" ;m±¿
+ 2 add-spell-rule "Z" "±¿" "±¿" "ê¿om" ;
+ 2 add-spell-rule "Z" "±¿" "±¿" "ê¿ami" ;
+ 2 add-spell-rule "Z" "±¿" "±¿" "ê¿ach" ;
+
+ 2 add-spell-rule "Z" "eb" "eb" "bów" ;³eb
+ 2 add-spell-rule "Z" "eb" "eb" "bom" ;
+ 2 add-spell-rule "Z" "eb" "eb" "bami" ;
+ 2 add-spell-rule "Z" "eb" "eb" "bach" ;
+
+ 2 add-spell-rule "Z" "[^i]eæ" "eæ" "ci" ;kapeæ
+ 2 add-spell-rule "Z" "[^i]eæ" "eæ" "ciom" ;
+ 2 add-spell-rule "Z" "[^i]eæ" "eæ" "ciami" ;
+ 2 add-spell-rule "Z" "[^i]eæ" "eæ" "ciach" ;
+
+ 2 add-spell-rule "Z" "ep" "ep" "pów" ;pó³wysep
+ 2 add-spell-rule "Z" "ep" "ep" "pom" ;
+ 2 add-spell-rule "Z" "ep" "ep" "pami" ;
+ 2 add-spell-rule "Z" "ep" "ep" "pach" ;
+
+ 2 add-spell-rule "Z" "est" "est" "tów" ;chrzest
+ 2 add-spell-rule "Z" "est" "est" "tom" ;
+ 2 add-spell-rule "Z" "est" "est" "tami" ;
+ 2 add-spell-rule "Z" "est" "est" "tach" ;
+
+ 2 add-spell-rule "Z" "et" "et" "tów" ;ocet
+ 2 add-spell-rule "Z" "et" "et" "tom" ;
+ 2 add-spell-rule "Z" "et" "et" "tami" ;
+ 2 add-spell-rule "Z" "et" "et" "tach" ;
+
+ 2 add-spell-rule "Z" "ew" "ew" "wów" ;lew
+ 2 add-spell-rule "Z" "ew" "ew" "wom" ;
+ 2 add-spell-rule "Z" "ew" "ew" "wami" ;
+ 2 add-spell-rule "Z" "ew" "ew" "wach" ;
+
+ 2 add-spell-rule "Z" "[^iz]e³" "e³" "³ów" ;diabe³, pose³
+ 2 add-spell-rule "Z" "[^iz]e³" "e³" "³om" ;
+ 2 add-spell-rule "Z" "[^iz]e³" "e³" "³ami" ;
+ 2 add-spell-rule "Z" "[^iz]e³" "e³" "³ach" ;
+
+ 2 add-spell-rule "Z" "cieñ" "cieñ" "tni" ;kwiecieñ
+ 2 add-spell-rule "Z" "cieñ" "cieñ" "tniom" ;
+ 2 add-spell-rule "Z" "cieñ" "cieñ" "tniami" ;
+ 2 add-spell-rule "Z" "cieñ" "cieñ" "tniach" ;
+
+ 2 add-spell-rule "Z" "pieñ" "ieñ" "ni" ;pieñ
+ 2 add-spell-rule "Z" "pieñ" "ieñ" "niom" ;
+ 2 add-spell-rule "Z" "pieñ" "ieñ" "niami" ;
+ 2 add-spell-rule "Z" "pieñ" "ieñ" "niach" ;
+
+ 2 add-spell-rule "Z" "sieñ" "sieñ" "¶ni" ;wrzesieñ
+ 2 add-spell-rule "Z" "sieñ" "sieñ" "¶niom" ;
+ 2 add-spell-rule "Z" "sieñ" "sieñ" "¶niami" ;
+ 2 add-spell-rule "Z" "sieñ" "sieñ" "¶niach" ;
+
+ 2 add-spell-rule "Z" "[^d]zieñ" "zieñ" "¼niów" ;wiêzieñ
+ 2 add-spell-rule "Z" "[^d]zieñ" "zieñ" "¼niom" ;
+ 2 add-spell-rule "Z" "[^d]zieñ" "zieñ" "¼niami" ;
+ 2 add-spell-rule "Z" "[^d]zieñ" "zieñ" "¼niach" ;
+
+ 2 add-spell-rule "Z" "dzieñ" "zieñ" "ni" ;dzieñ
+ 2 add-spell-rule "Z" "dzieñ" "zieñ" "niom" ;
+ 2 add-spell-rule "Z" "dzieñ" "zieñ" "niami" ;
+ 2 add-spell-rule "Z" "dzieñ" "zieñ" "niach" ;
+
+ 2 add-spell-rule "Z" "[rt¿]eñ" "eñ" "ni" ;dureñ
+ 2 add-spell-rule "Z" "[rtz¿]eñ" "eñ" "niom" ;
+ 2 add-spell-rule "Z" "[rtz¿]eñ" "eñ" "niami" ;
+ 2 add-spell-rule "Z" "[rtz¿]eñ" "eñ" "niach" ;
+; 2 add-spell-rule "Z" "zeñ" "eñ" "ni" ;t³uczeñ, uczeñ?
+
+ 2 add-spell-rule "Z" "cio³" "cio³" "t³ów" ;kocio³
+ 2 add-spell-rule "Z" "cio³" "cio³" "t³om" ;
+ 2 add-spell-rule "Z" "cio³" "cio³" "t³ami" ;
+ 2 add-spell-rule "Z" "cio³" "cio³" "t³ach" ;
+
+ 2 add-spell-rule "Z" "zio³" "zio³" "z³ów" ;kozio³
+ 2 add-spell-rule "Z" "zio³" "zio³" "z³om" ;
+ 2 add-spell-rule "Z" "zio³" "zio³" "z³ami" ;
+ 2 add-spell-rule "Z" "zio³" "zio³" "z³ach" ;
+
+ 2 add-spell-rule "Z" "sio³" "io³" "³ów" ;osio³
+ 2 add-spell-rule "Z" "sio³" "io³" "³om" ;
+ 2 add-spell-rule "Z" "sio³" "io³" "³ami" ;
+ 2 add-spell-rule "Z" "sio³" "io³" "³ach" ;
+
+ 2 add-spell-rule "Z" "³o" "o" "ów" ;zapiewaj³o
+ 2 add-spell-rule "Z" "³o" "o" "om" ;
+ 2 add-spell-rule "Z" "³o" "o" "ami" ;
+ 2 add-spell-rule "Z" "³o" "o" "ach" ;
+
+; Rzeczowniki "miêkkokoñcówkowe" rodzaju mêskiego, odmieniane w dope³niaczu
+; lp. na '-a'
+
+; flag *p:
+ 2 add-spell-rule "p" "[^±ó][bpw]" "" "ia" ;drop, karp, czerw, ¿ó³w, ¿uraw
+ 2 add-spell-rule "p" "[^±ó][bpw]" "" "iowi" ;
+ 2 add-spell-rule "p" "[^±ó][bpw]" "" "iem" ;
+ 2 add-spell-rule "p" "[^±ó][bpw]" "" "iu" ;
+
+ 2 add-spell-rule "p" "ów" "ów" "owia" ;tu³ów
+ 2 add-spell-rule "p" "ów" "ów" "owiowi" ;
+ 2 add-spell-rule "p" "ów" "ów" "owiem" ;
+ 2 add-spell-rule "p" "ów" "ów" "owiu" ;
+
+ 2 add-spell-rule "p" "±b" "±b" "êbia" ;go³±b
+ 2 add-spell-rule "p" "±b" "±b" "êbiowi" ;
+ 2 add-spell-rule "p" "±b" "±b" "êbiem" ;
+ 2 add-spell-rule "p" "±b" "±b" "êbiu" ;
+	
+ 2 add-spell-rule "p" "±p" "" "ia" ;kr±p
+ 2 add-spell-rule "p" "±p" "" "iowi" ;
+ 2 add-spell-rule "p" "±p" "" "iem" ;
+ 2 add-spell-rule "p" "±p" "" "iu" ;
+	
+	
+
+; Rzeczowniki "miêkkokoñcówkowe" rodzaju mêskiego, odmieniane w dope³niaczu
+; lp. na '-u'
+
+; flag *r:
+ 2 add-spell-rule "r" "[^ó][bpw]" "" "iu" ;jedwab
+ 2 add-spell-rule "r" "[^ó][bpw]" "" "iowi" ;
+ 2 add-spell-rule "r" "[^ó][bpw]" "" "iem" ;
+
+ 2 add-spell-rule "r" "ób" "ób" "obiu" ;drób
+ 2 add-spell-rule "r" "ób" "ób" "obiowi" ;
+ 2 add-spell-rule "r" "ób" "ób" "obiem" ;
+
+ 2 add-spell-rule "r" "ów" "ów" "owiu" ;o³ów
+ 2 add-spell-rule "r" "ów" "ów" "owiowi" ;
+ 2 add-spell-rule "r" "ów" "ów" "owiem" ;
+
+; Uzupe³nienie flag pr o liczbê mnog±
+
+; flag *u:
+ 2 add-spell-rule "u" "[^±ó][bpw]" "" "ie" ;czerw
+ 2 add-spell-rule "u" "[^±ó][bpw]" "" "i" ;
+ 2 add-spell-rule "u" "[^±ó][bpw]" "" "iom" ;
+ 2 add-spell-rule "u" "[^±ó][bpw]" "" "iami" ;
+ 2 add-spell-rule "u" "[^±ó][bpw]" "" "iach" ;
+
+ 2 add-spell-rule "u" "ów" "ów" "owie" ;tu³ów
+ 2 add-spell-rule "u" "ów" "ów" "owi" ;
+ 2 add-spell-rule "u" "ów" "ów" "owiom" ;
+ 2 add-spell-rule "u" "ów" "ów" "owiami" ;
+ 2 add-spell-rule "u" "ów" "ów" "owiach" ;
+
+ 2 add-spell-rule "u" "±b" "±b" "êbie" ;go³±b
+ 2 add-spell-rule "u" "±b" "±b" "êbi" ;
+ 2 add-spell-rule "u" "±b" "±b" "êbiom" ;
+ 2 add-spell-rule "u" "±b" "±b" "êbiami" ;
+ 2 add-spell-rule "u" "±b" "±b" "êbiach" ;
+
+ 2 add-spell-rule "u" "±p" "" "ie" ;kr±p 
+ 2 add-spell-rule "u" "±p" "" "i" ;
+ 2 add-spell-rule "u" "±p" "" "iom" ;
+ 2 add-spell-rule "u" "±p" "" "iami" ;
+ 2 add-spell-rule "u" "±p" "" "iach" ;
+
+; Rzeczowniki rodzaju nijakiego
+; abecad³o
+; cielê
+; zdjêcie
+; cia³o -> w ciele
+
+; Flaga zapewnia odmianê przez przypadki w lp.
+
+; flag *U:
+; dope³niacz lp.:
+ 2 add-spell-rule "U" "o" "o" "a" ;abecad³o -> abecad³a
+ 2 add-spell-rule "U" "e" "e" "a" ;zdjêcie
+ 2 add-spell-rule "U" "[^i]ê" "" "cia" ;cielê
+ 2 add-spell-rule "U" "miê" "ê" "enia" ;brzemiê
+ 2 add-spell-rule "U" "[^m]iê" "" "cia" ;bocianiê, ch³opiê
+	
+; celownik lp.:
+ 2 add-spell-rule "U" "o" "o" "u" ;
+ 2 add-spell-rule "U" "e" "e" "u" ;
+ 2 add-spell-rule "U" "[^i]ê" "" "ciu" ;
+ 2 add-spell-rule "U" "iê" "ê" "eniu" ;
+
+; narzêdnik lp.:
+ 2 add-spell-rule "U" "[^gk]o" "o" "em" ;!szkie³ko
+ 2 add-spell-rule "U" "e" "" "m" ;
+ 2 add-spell-rule "U" "[gk]o" "o" "iem" ;
+ 2 add-spell-rule "U" "[^i]ê" "" "ciem" ;
+ 2 add-spell-rule "U" "iê" "ê" "eniem" ;
+
+; miejscownik lp.:
+ 2 add-spell-rule "U" "[^astz]³o" "³o" "le" ;abecad³o !cia³o
+ 2 add-spell-rule "U" "a³o" "a³o" "ele" ;cia³o
+ 2 add-spell-rule "U" "s³o" "s³o" "¶le" ;has³o
+ 2 add-spell-rule "U" "z³o" "z³o" "¼le" ;z³o, giez³o
+ 2 add-spell-rule "U" "[^a]t³o" "t³o" "tle" ;
+ 2 add-spell-rule "U" "at³o" "at³o" "etle" ;¶wiat³o
+ 2 add-spell-rule "U" "[mwz]o" "o" "ie" ;amatorstwo
+ 2 add-spell-rule "U" "smo" "smo" "¶mie" ;pasmo, pismo
+ 2 add-spell-rule "U" "[^z]no" "o" "ie" ;
+ 2 add-spell-rule "U" "zno" "zno" "¼nie" ;kie³zno
+ 2 add-spell-rule "U" "[^ast]to" "to" "cie" ;auto
+ 2 add-spell-rule "U" "tto" "o" "cie" ;alegretto
+ 2 add-spell-rule "U" "asto" "asto" "e¶cie" ;ciasto
+ 2 add-spell-rule "U" "[^l]ato" "to" "cie" ;
+ 2 add-spell-rule "U" "lato" "ato" "ecie" ;lato
+ 2 add-spell-rule "U" "[ki]o" "o" "u" ;ciastko, radio
+ 2 add-spell-rule "U" "ro" "o" "ze" ;bajoro
+ 2 add-spell-rule "U" "[^z]do" "o" "zie" ;cudo
+ 2 add-spell-rule "U" "[^a]zdo" "o" "zie" ;
+ 2 add-spell-rule "U" "azdo" "azdo" "e¼dzie" ;gniazdo
+
+; Uzupe³nienie flagi U o odmianê policzalnych rzeczowników rodzaju nijakiego
+; w liczbie mnogiej.
+
+; flag *V:
+; mianownik lm.:
+ 2 add-spell-rule "V" "um" "um" "a" ;
+ 2 add-spell-rule "V" "iê" "ê" "ona" ;
+ 2 add-spell-rule "V" "ko" "o" "a" ;
+
+; dope³niacz lm.:
+ 2 add-spell-rule "V" "[^aegko]³o" "³o" "e³" ;abecad³o
+ 2 add-spell-rule "V" "[ae]³o" "³o" "³" ;dzie³o
+ 2 add-spell-rule "V" "o³o" "o³o" "ó³" ;czo³o
+ 2 add-spell-rule "V" "[gk]³o" "³o" "ie³" ;szk³o, ciêg³o
+ 2 add-spell-rule "V" "[^bcdjl³mnñprtwz¿]ko" "ko" "k" ;boisko
+ 2 add-spell-rule "V" "[bcdjl³mnprtwz¿]ko" "ko" "ek" ;bia³ko
+ 2 add-spell-rule "V" "ñko" "ñko" "niek" ;cudeñko
+ 2 add-spell-rule "V" "lê" "ê" "±t" ;
+; 2 add-spell-rule "V" "cie" "cie" "æ" ;zdjêcie, nadburci?
+ 2 add-spell-rule "V" "nie" "nie" "ñ" ;brzmienie
+ 2 add-spell-rule "V" "um" "um" "ów" ;
+ 2 add-spell-rule "V" "[^ê]to" "to" "t" ;auto
+ 2 add-spell-rule "V" "êto" "êto" "±t" ;¶wiêto
+ 2 add-spell-rule "V" "¿e" "e" "y" ;bezdro¿e ???
+ 2 add-spell-rule "V" "cze" "e" "y" ;bo¿yszcze ???	
+ 2 add-spell-rule "V" "iê" "ê" "on" ;brzemiê
+ 2 add-spell-rule "V" "[^d][mrw]o" "o" "" ;arcybiskupstwo
+ 2 add-spell-rule "V" "dro" "o" "er" ;biodro
+ 2 add-spell-rule "V" "[gk]no" "o" "ien" ;bagno, okno
+ 2 add-spell-rule "V" "ono" "o" "" ;bierwiono
+ 2 add-spell-rule "V" "[wz]ie" "e" "" ;bezkrólewie
+
+; celownik lm.:
+ 2 add-spell-rule "V" "o" "" "m" ;
+ 2 add-spell-rule "V" "e" "e" "om" ;
+ 2 add-spell-rule "V" "um" "um" "om" ;
+ 2 add-spell-rule "V" "iê" "ê" "onom" ;
+
+; biernik lm. == mianownik lm.
+
+; narzêdnik lm.:
+ 2 add-spell-rule "V" "o" "o" "ami" ;
+ 2 add-spell-rule "V" "e" "e" "ami" ;
+ 2 add-spell-rule "V" "um" "um" "ami" ;
+ 2 add-spell-rule "V" "iê" "ê" "onami" ;
+
+; miejscownik lm.:	
+ 2 add-spell-rule "V" "o" "o" "ach" ;
+ 2 add-spell-rule "V" "e" "e" "ach" ;
+ 2 add-spell-rule "V" "um" "um" "ach" ;
+ 2 add-spell-rule "V" "iê" "ê" "onach" ;
+
+	
+; Rzeczowniki nie posiadaj±ce liczby pojedynczej
+; Alpy,Baleary,aktywa,chaszcze
+
+; Flaga zapewnia odmianê przez przypadki (bez dope³niacza)
+; Flagi l,f,v uzupe³niaj± o dope³niacz
+
+; flag *W:
+
+; celownik:
+ 2 add-spell-rule "w" "a" "a" "om" ;
+ 2 add-spell-rule "w" "e" "e" "om" ;
+ 2 add-spell-rule "w" "y" "y" "om" ;
+ 2 add-spell-rule "w" "[gk]i" "i" "om" ;
+ 2 add-spell-rule "w" "[^gk]i" "" "om" ;drzwi
+
+; biernik:
+; podobnie, jak mianownik
+
+; narzêdnik:
+ 2 add-spell-rule "w" "[^i]a" "" "mi" ;
+ 2 add-spell-rule "w" "[^c]ia" "" "mi" ;
+ 2 add-spell-rule "w" "e" "e" "ami" ;
+ 2 add-spell-rule "w" "cia" "cia" "æmi" ;
+ 2 add-spell-rule "w" "y" "y" "ami" ;
+ 2 add-spell-rule "w" "[gk]i" "i" "ami" ;
+ 2 add-spell-rule "w" "[^gk]i" "" "ami" ;
+	
+; miejscownik:
+ 2 add-spell-rule "w" "a" "" "ch" ;
+ 2 add-spell-rule "w" "e" "e" "ach" ;
+ 2 add-spell-rule "w" "y" "y" "ach" ;
+ 2 add-spell-rule "w" "[gk]i" "i" "ach" ;
+ 2 add-spell-rule "w" "[^gk]i" "" "ach" ;
+
+; Rodzaj mêski:
+
+; flag *l:
+; dope³niacz:
+ 2 add-spell-rule "l" "a" "a" "ów" ;arkana
+ 2 add-spell-rule "l" "e" "e" "ów" ;auspicje
+ 2 add-spell-rule "l" "y" "y" "ów" ;Baleary, adidasy
+ 2 add-spell-rule "l" "i" "i" "ów" ;c±¿ki
+
+
+; flag *f:
+; dope³niacz:
+ 2 add-spell-rule "f" "[^k³nt]a" "a" "i" ;
+ 2 add-spell-rule "f" "[^æñ¶¼]ka" "ka" "ek" ;jase³ka, usteczka
+ 2 add-spell-rule "f" "³a" "³a" "e³" ;gus³a
+ 2 add-spell-rule "f" "na" "na" "en" ;¿arna
+ 2 add-spell-rule "f" "[^êo]ta" "a" "" ;usta
+ 2 add-spell-rule "f" "ota" "ota" "ót" ;wrota
+ 2 add-spell-rule "f" "êta" "êta" "±t" ;oczêta, karciêta
+ 2 add-spell-rule "f" "[^cijl]e" "e" "y" ;chaszcze
+ 2 add-spell-rule "f" "[jl]e" "e" "i" ;bambetle
+ 2 add-spell-rule "f" "[^n]ie" "e" "i" ;bakalie
+ 2 add-spell-rule "f" "nie" "nie" "ñ" ;sanie
+ 2 add-spell-rule "f" "pce" "ce" "iec" ;skrzypce
+ 2 add-spell-rule "f" "ice" "e" "" ;sukiennice
+ 2 add-spell-rule "f" "[^b³]y" "y" "" ;Chiny
+ 2 add-spell-rule "f" "[^ê]by" "y" "" ;
+ 2 add-spell-rule "f" "êby" "êby" "±b" ;otrêby
+ 2 add-spell-rule "f" "u³y" "y" "" ;floku³y
+ 2 add-spell-rule "f" "d³y" "³y" "e³" ;kud³y, wid³y
+ 2 add-spell-rule "f" "[^æiño¶¼]ki" "ki" "ek" ;sanki, andrzejki
+ 2 add-spell-rule "f" "[io]ki" "i" "" ;bazyliki, zw³oki, czepigi
+ 2 add-spell-rule "f" "igi" "i" "" ;czepigi
+ 2 add-spell-rule "f" "ñki" "ñki" "niek" ;spodeñki
+
+; flag *v:
+ 2 add-spell-rule "v" "ie" "e" "" ;kroci
+ 2 add-spell-rule "v" "te" "e" "ych" ;niesnujowate, dorszowate
+ 2 add-spell-rule "v" "je" "je" "i" ;wierzeje
+ 2 add-spell-rule "v" "ia" "a" "" ;odrzwia, trzewia, bracia
+ 2 add-spell-rule "v" "ca" "ca" "ków" ;judaica
+	
+	
+; Przymiotniki, imies³owy, przymiotniki zestopniowane (np. wiêkszy, cichszy,
+; lepszy)
+; bia³y -> bia³e
+; po¿arty -> po¿arte
+; lepszy -> lepszego
+
+; flaga x: obs³uguje mianownik lp. i lmn. okre¶leñ rzeczowników rodzaju
+; nijakiego i ¿eñskiego oraz lmn. rzeczowników rodzaju mêskiego
+
+; flag *x:
+; mianownik lp.:
+ 2 add-spell-rule "x" "[gkl]i" "i" "a" ;srogi, szeroki, sokoli
+ 2 add-spell-rule "x" "[^gkl]i" "" "a" ;czarci
+ 2 add-spell-rule "x" "y" "y" "a" ;dobry
+ 2 add-spell-rule "x" "en" "en" "a" ;tamten
+	
+; rodzaj nijaki:
+ 2 add-spell-rule "x" "[^l]i" "" "e" ;
+ 2 add-spell-rule "x" "li" "i" "e" ;
+ 2 add-spell-rule "x" "y" "y" "e" ;
+ 2 add-spell-rule "x" "en" "en" "o" ;
+
+;dope³niacz
+ 2 add-spell-rule "x" "[^l]i" "" "ej" ;
+ 2 add-spell-rule "x" "li" "i" "ej" ;
+ 2 add-spell-rule "x" "y" "y" "ej" ;
+ 2 add-spell-rule "x" "en" "n" "j" ;
+
+;narzêdnik
+ 2 add-spell-rule "x" "[gkl]i" "i" "±" ;
+ 2 add-spell-rule "x" "[^gkl]i" "" "±" ;
+ 2 add-spell-rule "x" "y" "y" "±" ;
+	
+; flag *X:
+; dope³niacz lp.:
+ 2 add-spell-rule "X" "[^l]i" "" "ego" ;
+ 2 add-spell-rule "X" "li" "i" "ego" ;
+ 2 add-spell-rule "X" "y" "y" "ego" ;
+ 2 add-spell-rule "X" "en" "n" "go" ;
+
+; celownik lp.:
+ 2 add-spell-rule "X" "[^l]i" "" "emu" ;
+ 2 add-spell-rule "X" "li" "i" "emu" ;
+ 2 add-spell-rule "X" "y" "y" "emu" ;
+ 2 add-spell-rule "X" "en" "n" "mu" ;
+
+	
+; biernik lp.:
+; podobnie, jak dope³niacz lp. lub jak narzêdnik lp.
+
+; narzêdnik lp.:
+ 2 add-spell-rule "X" "[iy]" "" "m" ;
+ 2 add-spell-rule "X" "en" "en" "ym" ;
+
+; mianownik lm.:
+; podobnie, jak mianownik lp., rodz. nijaki
+
+; dope³niacz lm.:
+ 2 add-spell-rule "X" "[iy]" "" "ch" ;
+ 2 add-spell-rule "X" "en" "en" "ych" ;
+
+; narzêdnik lm.:
+ 2 add-spell-rule "X" "[iy]" "" "mi" ;
+ 2 add-spell-rule "X" "en" "en" "ymi" ;
+
+; przymiotniki, które równie¿ pasuj± do osób (jedn± z flag Yy dodaje siê
+; zwykle do flag X(x), je¿eli pasuje)
+
+; bia³y -> biali 
+; ca³y -> cali
+; po¿arty -> po¿arci
+; flag *Y:
+ 2 add-spell-rule "Y" "[^cdh³nrtz¿]y" "y" "i" ;!bia³y
+ 2 add-spell-rule "Y" "dy" "y" "zi" ;blady
+ 2 add-spell-rule "Y" "ki" "ki" "cy" ;niebieski
+ 2 add-spell-rule "Y" "³y" "³y" "li" ;bia³y
+ 2 add-spell-rule "Y" "[^w]ony" "ony" "eni" ;broniony
+ 2 add-spell-rule "Y" "wony" "y" "i" ;czerwony
+ 2 add-spell-rule "Y" "sny" "sny" "¶ni" ;ciasny
+ 2 add-spell-rule "Y" "szy" "zy" "i" ;szerszy
+ 2 add-spell-rule "Y" "ry" "y" "zy" ;ponury
+ 2 add-spell-rule "Y" "¿y" "¿y" "zi" ;du¿y
+ 2 add-spell-rule "Y" "[^so]ny" "y" "i" ;wybrany
+ 2 add-spell-rule "Y" "[^s]ty" "ty" "ci" ;obdarty
+ 2 add-spell-rule "Y" "sty" "sty" "¶ci" ;kanciasty
+ 2 add-spell-rule "Y" "chy" "chy" "si" ;cichy
+ 2 add-spell-rule "Y" "ten" "ten" "ci" ;tamten
+

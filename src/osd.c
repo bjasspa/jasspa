@@ -5,7 +5,7 @@
  *  Synopsis      : On-Screen Display routines
  *  Created By    : Jon Green & Steven Phillips
  *  Created       : 26/07/97
- *  Last Modified : <010804.1012>
+ *  Last Modified : <010823.1242>
  *
  *  Description
  *     This file contains the on screen display routines that
@@ -379,7 +379,12 @@ dialogDestruct (int id)
             meFree(rp->strData) ;       /* Destruct the str data */
             rp->strData = NULL ;
         }
+        /* reset the flags and dialog size */
         rp->flags = 0 ;
+        rp->width[0] = 0 ;
+        rp->width[1] = 0 ;
+        rp->depth[0] = 0 ;
+        rp->depth[1] = 0 ;
         dialogResetDisplays(rp,2) ;
     }
 }
@@ -651,6 +656,8 @@ menuExecute (osdITEM *mp, int flags, int n)
     if(mp->cmdIndex < 0)
         return ABORT;
 
+    oldAllKeys = TTallKeys ;
+    TTallKeys = 0 ;
     if (mpflags & MF_ENTRY)
     {
         /* If entry then must set mlStatus to 0x08 bit to get entries at the osd
@@ -659,7 +666,6 @@ menuExecute (osdITEM *mp, int flags, int n)
          */
         mlStatusStore = mlStatus ;
         oldUseMlBinds = useMlBinds ;
-        oldAllKeys = TTallKeys ;
         
         useMlBinds = 1 ;
     
@@ -669,10 +675,9 @@ menuExecute (osdITEM *mp, int flags, int n)
         if(osdCol >= 0)
             mlStatus |= MLSTATUS_OSDPOS ;
         if(n < 0)
-        {
-            TTallKeys = 0 ;
             TTinflush() ;
-        }
+        else if(osdCol >= 0)
+            TTallKeys = oldAllKeys ;
     }
     else
     {
@@ -725,8 +730,8 @@ menuExecute (osdITEM *mp, int flags, int n)
         /* Restore the previous mlStatus value */
         mlStatus = mlStatusStore ;
         useMlBinds = oldUseMlBinds ;
-        TTallKeys = oldAllKeys ;
     }
+    TTallKeys = oldAllKeys ;
     return f;
 }
 

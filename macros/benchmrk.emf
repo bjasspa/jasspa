@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Jon Green
 ;  Created       : Mon Feb 22 19:31:58 1999
-;  Last Modified : <010305.0809>
+;  Last Modified : <011010.0756>
 ;
 ;  Description
 ;
@@ -184,7 +184,7 @@ define-macro start-up
 define-macro disptest
     set-variable #l0 100
     !while &dec #l0 1
-        1 screen-update
+        screen-update
     !done
 !emacro
 

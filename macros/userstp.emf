@@ -35,6 +35,10 @@ set-variable %scrollb-names "|Disabled|Narrow, no splitter|Narrow with splitter|
 set-variable %scrollb-value "|0|0x13e|0x1be|0x13f|0x1bf|"
 ; Get a list of display char sets
 0 exec-file "charset"
+; Get a list of keyboards
+0 exec-file "keyboard"
+; Get a list of languages
+0 exec-file "language"
 ; Get a list of schemes
 0 exec-file "schemes"
 ; Implemented Emulation modes
@@ -61,11 +65,6 @@ set-variable .user-setup.path ""
         set-variable #l1 &reg "/history" "language" &lget %language-names 1
     !endif
     osd .osd.user-start 560 "MtxmsfH" 560 .scheme.osd-entry &spr "%s%n" #l1 &sub 14 &len #l1 " " .osd.user-lang
-    !if &set #l2 &sin " (Ext)" #l1
-        set-variable #l1 &lef #l1 &sub #l2 1
-    !endif
-    osd .osd.user-start 570 "fh" &spr "%nPers %s &Dic : " &sub 10 &len #l1 " " #l1
-    osd .osd.user-start 580 "EtxHf" 580 .scheme.osd-entry "##############" f user-set-usrdict
 !emacro
 
 0 define-macro user-setup-color
@@ -373,24 +372,6 @@ set-variable .user-setup.path ""
         set-registry "/history" #l2 #l0
     !elif &not #l0
         !abort
-    !endif
-!emacro
-0 define-macro user-set-usrdict
-    set-variable #l2 &reg "/history" "language" &lget %language-names 1
-    set-variable #l2 &lfind %language-names #l2
-    set-variable #l2 &lget %language-val #l2
-    set-variable #l2 &cat "spell/" &cond &seq #l2 "" "default" &rig #l2 1
-    !if &les @# 0
-        set-variable #l1 &reg "/history" #l2 &reg "/history/spell" "default" .user-setup.name
-        set-variable #l0 @ml2 "" #l1
-        ; me file name entered remove the .e?f extension, if found must force an osd update
-        !if &xis &rig #l0 &sub &len #l0 4 "\\.e.f"
-            set-variable #l0 &lef #l0 &sub &len #l0 4
-            -1 osd
-        !endif
-        set-registry "/history" #l2 #l0
-    !else
-        set-variable $result &reg "/history" #l2 &reg "/history/spell" "default" .user-setup.name
     !endif
 !emacro
 0 define-macro user-set-save
@@ -1004,18 +985,14 @@ osd .osd.user-ftype 620 "BtcfhxH" 6 .scheme.osd-ebtt " C&hange " 2 user-filetype
 osd .osd.user-ftype 630 "BtcfxH"  7 .scheme.osd-ebtt " &Delete " 3 user-filetype-com
     
 ; The keyboard and language menus ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Get a list of keyboard names
-0 exec-file "keyboard"
 -1 osd .osd.user-keyb
-osd .osd.user-keyb 0 "Abs" 20 0 0 0
+osd .osd.user-keyb 0 "Abs" 16 0 0 0
 set-variable #l0 0
 !while &not &seq "" &set #l1 &lget %keyboard-names &inc #l0 1
     osd .osd.user-keyb 1 "" #l1 #l0 user-setup-keyb
 !done
-; setup the language list first
-set-language-list
 -1 osd .osd.user-lang
-osd .osd.user-lang 0 "Abs" 20 0 0 0
+osd .osd.user-lang 0 "Abs" 16 0 0 0
 set-variable #l0 0
 !while &not &seq "" &set #l1 &lget %language-names &inc #l0 1
     osd .osd.user-lang 1 "" #l1 #l0 user-setup-lang
@@ -1249,10 +1226,10 @@ osd .osd.user-start 530 "Sfh" "           &Keyboard : " 540
 osd .osd.user-start 540 "MtxmsfH" 540 .scheme.osd-entry "" .osd.user-keyb
 osd .osd.user-start 550 "Sfh" "           &Language : " 560
 osd .osd.user-start 560 "MtxmsfH" 560 .scheme.osd-entry "" .osd.user-lang
+osd .osd.user-start 570 "Sfh" "     &Auto Save Dics : " 580
+osd .osd.user-start 580 "Ctfx" 5800 "^^NY^^" 2 user-set-checkbox
 osd .osd.user-start 590 "Sfh" "         Au&to Spell : " 600
 osd .osd.user-start 600 "Ctfhx" 600 "^^NY^^" 11 user-set-checkbox
-osd .osd.user-start 610 "Sfh" "      &Auto Save Dics : " 620
-osd .osd.user-start 620 "Ctfx" 620 "^^NY^^" 2 user-set-checkbox
 
 ; The note-book ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 osd .osd.user-nb 0 "Ns" 57 22 -1 -1

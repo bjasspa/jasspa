@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Jul 26 14:36:36 1997
-;  Last Modified : <000719.0012>
+;  Last Modified : <011010.0756>
 ;
 ;  Description   : cal calendar macro
 ;
@@ -148,7 +148,7 @@ set-variable .org.bind-r2 "|1|1|1|1|"
     beginning-of-line
     insert-string &spr "       %s %d %s %d\n\n" &lget .org.days &add 1 &mid .org.info 4 1 .org.day &lget .org.months .org.month .org.year
     insert-string &spr "%s\n\n" &reg "/org" &spr "cal/%s/%s/%s" .org.year .org.month .org.day &reg "/org" &spr "cal/*/%s/%s" .org.month .org.day ""
-    1 screen-update
+    screen-update
 !emacro
 
 osd .osd.orgd 10 ""

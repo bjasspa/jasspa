@@ -5,7 +5,7 @@
  *  Synopsis      : Narrow out regions of a buffer
  *  Created By    : Steven Phillips
  *  Created       : 01/01/99
- *  Last Modified : <000723.2038>
+ *  Last Modified : <010915.2102>
  *
  *  Description
  *     Narrow can narrow out or narrow to a region of text, a buffer can have
@@ -343,6 +343,8 @@ narrowBuffer(int f, int n)
         int32   sln,  eln ;
         if(curwp->w_markp == NULL)
             return noMarkSet() ;
+        if(curwp->line_no == curwp->mlineno)
+            return mlwrite(MWABORT,(uint8 *)"[Illegal narrow]") ;
         if(curwp->line_no < curwp->mlineno)
         {
             slp = curwp->w_dotp ;
@@ -358,11 +360,7 @@ narrowBuffer(int f, int n)
             eln = curwp->line_no ;
         }
         if(n == 4)
-        {
-            if(slp == elp)
-                return mlwrite(MWABORT,(uint8 *)"[Illegal narrow]") ;
             createNarrow(curbp,slp,elp,sln,eln,0) ;
-        }
         else if(n == 3)
         {
             if(elp != curbp->b_linep)

@@ -5,7 +5,7 @@
  *  Synopsis      : Next file/line goto routines
  *  Created By    : Steven Phillips
  *  Created       : 01/06/1994
- *  Last Modified : <010820.2225>
+ *  Last Modified : <010822.1006>
  *
  *  Description
  *
@@ -260,7 +260,7 @@ getNextLine(int f,int n)
     }
     curwp->w_doto = 0 ;
     curwp->w_flag |= WFMOVEL ;
-    return mlwrite(MWABORT,(uint8 *)"[No more lines found]") ;
+    return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[No more lines found]") ;
 }
 
 int
