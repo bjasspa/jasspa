@@ -91,6 +91,10 @@ define-macro comment-to-end-of-line
 
 
 define-macro comment-start
+    !force 0 find-buffer "*comment*"
+    !if $status
+        !return
+    !endif
     set-variable #l0 &ind &spr ".%s.comment"  $buffer-fhook
     !if &seq  &lget #l0 1 ""
         ml-write "[Comments not setup for this buffer]"
@@ -98,14 +102,13 @@ define-macro comment-start
     !endif
     ; check we can edit the buffer 
     1 buffer-mode "edit" @mna
+    set-position "\x84"
     set-variable #l1 $window-acol
-    set-variable #l2 $buffer-bname
     find-buffer "*comment*"
     1 buffer-mode "indent"
     1 buffer-mode "wrap"
     set-variable :comment #l0
     set-variable :column #l1
-    set-variable :buffer-name #l2
     set-variable :fill-col $fill-col
     set-variable $fill-col &sub $fill-col &sub #l1 &len &lget #l0 4
     !if &sin "b" &lget :comment 6
@@ -125,8 +128,8 @@ define-macro comment-end
     !if &not &len &set #l8 &lget :comment 3
         set-variable #l8 " "
     !endif
-    insert-string &lget :comment 1
     !if &sin "h" &lget :comment 6
+        insert-string &lget :comment 1
         !if &sin "b" &lget :comment 6
             set-variable #l1 &cond &sin "H" &lget :comment 6 #l8 " "
             set-variable #l2 &add $fill-col &sub &len #l0 &len &lget :comment 1
@@ -141,19 +144,29 @@ define-macro comment-end
         !endif
         insert-newline
     !else
+        ; if the line starts with a fill string don't insert any white spaces etc
+        set-variable #l1 &or &sin #l8 " " &not &seq &mid @wl $window-col &len #l8 #l8
         !if &sin "b" &lget :comment 6
             end-of-line
             &sub $fill-col $window-acol insert-space
+            !if &not #l1
+                &sub &len #l0 &len &lget :comment 1 insert-space
+            !endif
             insert-string &trr #l9
             beginning-of-line
         !endif
-        insert-string &rig #l0 &len &lget :comment 1
+        insert-string &lget :comment 1
+        !if #l1
+            insert-string &rig #l0 &len &lget :comment 1
+        !endif
         beginning-of-line
         forward-line
+    !else
+        insert-string &lget :comment 1
     !endif
     set-variable #l1 #l8
     str-to-regex #l1
-    set-variable #l1 &spr "^\\(%s\\)\\{4,\\}$" #l1
+    set-variable #l1 &spr "^\\(%s\\)\\{3,\\}$" #l1
     !while &not &seq @wc ""
         !if &xse @wl #l1
             end-of-line
@@ -217,10 +230,9 @@ define-macro comment-end
     end-of-buffer
     set-variable #l1 :column
     copy-region
-    set-variable #l0 :buffer-name
     set-variable $fill-col :fill-col
     0 delete-buffer $buffer-bname
-    find-buffer #l0
+    goto-position "\x84"
     yank
     -1 yank
     !if &seq @wl ""
@@ -248,10 +260,10 @@ define-macro comment-end
     !endif
     -1 search-forward #p8
     -2 show-region
+    set-position "\x84"
     kill-region @mna
     set-variable #p0 $window-acol
-    set-variable #p1 $buffer-bname
-    find-buffer "*comment-restyle*"
+    find-buffer "*comment*"
     yank
     -1 yank
     backward-delete-char
@@ -265,10 +277,10 @@ define-macro comment-end
     !endif
     set-mark
     search-backward #p8
+    set-position "\x84"
     kill-region @mna
     set-variable #p0 $window-acol
-    set-variable #p1 $buffer-bname
-    find-buffer "*comment-restyle*"
+    find-buffer "*comment*"
     yank
     -1 yank
     set-mark
@@ -290,18 +302,17 @@ define-macro comment-end
     set-variable #l9 #p9
     set-variable #l8 &lget #l9 1
     set-variable #l7 &lget #l9 2
-    !force 0 delete-buffer "*comment-restyle*"
     !if &seq #l7 ""
         comment-restyle-get-s
     !else
         comment-restyle-get-e
+        forward-line
     !endif
     1 buffer-mode "indent"
     1 buffer-mode "wrap"
     1 buffer-mode "magic"
     1 buffer-mode "justify"
     set-variable :column #l0
-    set-variable :buffer-name #l1
     set-variable :fill-col $fill-col
     set-variable $fill-col &sub $fill-col &add #l0 &len &lget #l9 4
     set-variable #l2 &lget #l9 4
@@ -321,18 +332,18 @@ define-macro comment-end
     beginning-of-buffer
     set-variable #l2 &trb &lget #l9 5
     str-to-regex #l2
-    set-variable #l0 &spr "\\s *%s\\s *$" #l2
+    set-variable #l0 &spr "\\(.*[ a-zA-Z1-9].*\\)\\s *%s\\s *$" #l2
     set-variable #l1 0
-    !force 1 replace-string #l0 ""
+    !force 1 replace-string #l0 "\\1"
     !if $status
-        set-variable #l1 &add #l1 1
+        set-variable #l1 1
         !jump -3
     !endif
     clean
-    set-variable #l3 &lget #l9 6
+    set-variable #l3 ""
     set-variable #l2 &lget #l9 3
     str-to-regex #l2
-    set-variable #l0 &spr "^%s%s%s%s\\(\\(%s\\)*\\)$" #l2 #l2 #l2 #l2 #l2
+    set-variable #l0 &spr "^%s%s%s\\(\\(%s\\)*\\)$" #l2 #l2 #l2 #l2
     ; check for a header line
     beginning-of-buffer
     !force -1 search-forward #l0
@@ -344,18 +355,13 @@ define-macro comment-end
         kill-region
         -1 yank
         set-variable #l3 &cat #l3 "Hh"
-        set-variable #l1 &sub #l1 1
     !elif &seq @wl ""
         ; got an empty header line
         forward-delete-char
-        var-str-sub #l3 "H" ""        
         set-variable #l3 &cat #l3 "h"
-    !else
-        var-str-sub #l3 "h" ""        
     !endif
     ; check for a footer line
     !if #l4
-        var-str-sub #l3 "F" ""        
         set-variable #l3 &cat #l3 "f"
     !else
         end-of-buffer
@@ -369,9 +375,6 @@ define-macro comment-end
             kill-region
             -1 yank
             set-variable #l3 &cat #l3 "Ff"
-            set-variable #l1 &sub #l1 1
-        !else
-            var-str-sub #l3 "f" ""        
         !endif
     !endif
     ; find any dividing lines
@@ -380,12 +383,16 @@ define-macro comment-end
     !if $status
         &len @s1 backward-delete-char
         -1 yank
-        set-variable #l1 &sub #l1 1
         !jump -5
     !endif
-    !if &gre #l1 0
-        set-variable #l3 &cat #l3 "b"
+    !if #l1
         set-variable $fill-col &sub $fill-col &len &lget #l9 5
+        set-variable #l3 &cat #l3 "b"
+        !if &sin "H" #l3
+            ; if we have a Header and a right hand end then alway
+            ; force to a box
+            set-variable #l3 &cat #l3 "Ff"
+        !endif
     !endif
     set-variable :comment &lset #l9 6 #l3
     !if &les $fill-col 20
@@ -397,6 +404,10 @@ define-macro comment-end
 !emacro
 
 define-macro comment-restyle
+    !force 0 find-buffer "*comment*"
+    !if $status
+        !return
+    !endif
     set-variable #l9 &ind &spr ".%s.comment"  $buffer-fhook
     !if &seq &lget #l9 1 ""
         ml-write "[Comments not setup for this buffer]"
