@@ -22,8 +22,8 @@ define-macro fhook-cpp
 
 ; buffer-init variables
 set-variable .fhook-cpp.name "C++"
-set-variable .fhook-cpp.setup &reg "/history/fhook/cpp" "bdfghnopx986"
-set-variable .fhook-cpp.setup-mask "abdefghikmnoptux9876"
+set-variable .fhook-cpp.setup &reg "/history/fhook/cpp" "bdfghnopxlqv"
+set-variable .fhook-cpp.setup-mask "abdefghikmnoptuxlqrv"
 set-variable .fhook-cpp.tags "ctags"
 
 ; Comments
@@ -78,7 +78,7 @@ set-variable .fhook-cpp.command-kbind "|||||||||"
 set-variable .fhook-cpp.command-desc  "|Slashify region|Deslashify region||\HSet #define|\HUnset #define|Evaluate \H#'s|Evaluate #'s use \HNarrow|\HRemove # evaluation|"
 
 ; Set up menu items for C++ mode.
-set-variable .fhook-cpp.setup-flags   "|9|8|7|6|"
+set-variable .fhook-cpp.setup-flags   "|l|q|r|v|"
 set-variable .fhook-cpp.setup-labels  "|Doxygen highlighting|<stdint.h> hilighting|Brace highlighting|Bad C++ highlighting|"
 
 ; Set up the collaspe for C++
@@ -202,7 +202,7 @@ set-variable .fhook-cpp.item-list-r6 "Clss \ecB\\1\ecA"
     !endif
 
     ; Doxygen highlighting extensions. Highlights keywords in Doxygen
-    !if &sin "9" .fhook-cpp.setup
+    !if &sin "l" .fhook-cpp.setup
         ; Create a new doxygen hilighting scheme
         !if &not &exi .hilight.cppdoxygen
             set-variable .hilight.cppdoxygen  &pinc .hilight.next 1
@@ -250,7 +250,7 @@ set-variable .fhook-cpp.item-list-r6 "Clss \ecB\\1\ecA"
 
     ; Extend the hilighting for the IEEE Std 1003.1 <stdint.h>
     ; See http://www.opengroup.org/onlinepubs/007904975/basedefs/stdint.h.html
-    !if &sin "8" .fhook-cpp.setup
+    !if &sin "q" .fhook-cpp.setup
         hilight .hilight.cpp    1 "uint8_t"          .scheme.type
         hilight .hilight.cpp    1 "int8_t"           .scheme.type
         hilight .hilight.cpp    1 "uint16_t"         .scheme.type
@@ -355,13 +355,13 @@ set-variable .fhook-cpp.item-list-r6 "Clss \ecB\\1\ecA"
 
     ; Hilight curly braces used when it is difficult to differentiate between
     ; a round bracket and curly brace.
-    !if &sin "7" .fhook-cpp.setup
+    !if &sin "r" .fhook-cpp.setup
         hilight .hilight.cpp 1 "{"                             .scheme.keyword
         hilight .hilight.cpp 1 "}"                             .scheme.keyword
     !endif
 
     ; Pick up bogus C++ constructs extension
-    !if &sin "6" .fhook-cpp.setup
+    !if &sin "v" .fhook-cpp.setup
         ; Detect a for loop with no body - put semi-colon on next line, i.e.
         ; for (i = 1; i < 10; i++);
         ; { ... }
