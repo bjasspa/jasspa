@@ -42,3 +42,5 @@ set-variable $rcs-co-com   "co %f"
 set-variable $rcs-cou-com  "co -l %f"
 set-variable $rcs-ci-com   "ci -u -m\"%m\" %f"
 ;set-variable $rcs-cif-com  "ci -u -m\"%m\" %f"
+; Declare the .dir file found in X11 font directory, this is not an info file.
+add-file-hook ".dir"                                          fhook-txt
