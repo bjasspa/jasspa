@@ -113,6 +113,19 @@ set-variable #l0 0
     !endif
 !emacro
 
+0 define-macro cvs-get-tag-info
+    !force 0 delete-buffer "*cvs-tag-temp*"
+    find-buffer "*cvs-tag-temp*"
+    !force insert-file &cat @1 "CVS/Tag"
+    !if $status
+        beginning-of-buffer
+        set-variable @2 &rig @wl 1
+    !else
+        set-variable @2 "HEAD"
+    !endif
+    !force 0 delete-buffer "*cvs-tag-temp*"
+!emacro
+
 0 define-macro cvs-log-list-gen-prep-single
     set-mark
     search-forward "^RCS file:"
@@ -348,10 +361,12 @@ define-macro cvs-log-list
 
 0 define-macro cvs-get-checkout-info
     set-variable #l0 ""
+    set-variable #l5 "1"
     !force 0 find-file "./CVS/Repository"
     !if $status
         beginning-of-buffer
         set-variable #l1 @wl
+        set-variable #l6 &lef $buffer-fname &sub &len $buffer-fname 14
         0 delete-buffer $buffer-bname
         set-variable #l2 .cvs.cwd
         ; .cvs.cwd has a trailing '/', #l1 does not
@@ -374,9 +389,16 @@ define-macro cvs-log-list
             !endif
         !endif
         set-variable .cvs.cwd #l2
+        cvs-get-tag-info #l6 #l1
+        !if &not &seq #l1 "HEAD"
+            set-variable #l5 "2"
+            set-variable .cvs.revs &lset .cvs.revs 1 #l1
+        !endif
     !endif
     set-variable .find-file.file1 #l0
     set-variable .find-file.file-count 1
+    set-variable #l0 &sin "v" .cvs.options
+    set-variable .cvs.values &cat &cat &lef .cvs.values &sub #l0 1 #l5 &rig .cvs.values #l0
     0x10 goto-position "\x82"
 !emacro
     
@@ -499,9 +521,9 @@ define-macro cvs-log-list
 0 define-macro cvs-exec-state-ipipe
     end-of-buffer
     1 buffer-mode "magic"
-    !force search-backward "^cvs update: warning: \\(.*\\) was lost"
+    !force search-backward "^cvs \\(update\\|server\\): warning: \\(.*\\) was lost"
     !while $status
-        set-variable #l1 @s1
+        set-variable #l1 @s2
         set-variable #l2 $window-line
         str-to-regex #l1
         end-of-buffer
@@ -515,10 +537,12 @@ define-macro cvs-log-list
         !else
             set-variable $window-line #l2
         !endif
-        !force search-backward "^cvs update: warning: \\(.*\\) was lost"
+        !force search-backward "^cvs \\(update\\|server\\): warning: \\(.*\\) was lost"
     !done
     beginning-of-buffer
     !force replace-string "^cvs update: Updating " "cvs-state: "
+    beginning-of-buffer
+    !force replace-string "^cvs server: Updating " "cvs-state: "
     beginning-of-buffer
     !force replace-string "^RCS file: .*\n" ""
     beginning-of-buffer
@@ -1477,15 +1501,7 @@ define-macro cvs-resolve-conflicts
         !endif
         !return
     !endif
-    !force 0 delete-buffer "*cvs-temp*"
-    find-buffer "*cvs-temp*"
-    !force insert-file &cat #l2 "CVS/Tag"
-    !if $status
-        beginning-of-buffer
-        set-variable #l7 &rig @wl 1
-    !else
-        set-variable #l7 "HEAD"
-    !endif
+    cvs-get-tag-info #l2 #l7
     ; make sure that the main window is only displayed once
     -1 find-buffer #l1
     0x10 goto-position "\x83"
