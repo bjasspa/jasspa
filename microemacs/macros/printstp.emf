@@ -340,7 +340,7 @@ define-macro print-setup
     !force exec-file "print"
     !if &not &reg "/" "print/setup" "0"
         ; attempt to fix the print registry
-        ml-clear
+        0 ml-write
         set-registry "/" "print-history" "print"
         mark-registry "/print-history" "fau"
         set-registry "/print-history" &cat $platform "/driver" "printd"

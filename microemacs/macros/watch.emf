@@ -47,7 +47,7 @@
         3 next-window
     !until &equ $window-id #l0
     !if #l9
-        ml-clear
+        0 ml-write
         screen-update
     !endif
     .watch.time create-callback watch-callback

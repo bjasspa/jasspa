@@ -230,7 +230,7 @@ hilight .hilight.zfile 0x44 "\eE" "" "\\}\e" "" "" .scheme.file
     !endif
     set-variable $buffer-fname ""
     -1 find-buffer "*zfile log*"
-    ml-clear
+    0 ml-write
 !emacro
 ;
 ; Extract a file from a compressed single file archive
