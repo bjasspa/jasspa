@@ -33,6 +33,7 @@
 #include "eskeys.h"
 #include "esearch.h"
 #include "evers.h"
+#include "eopt.h"
 
 #if (defined _UNIX) || (defined _DOS) || (defined _WIN32)
 #include <sys/types.h>
@@ -45,25 +46,27 @@
 #endif
 #endif
 
-meUByte evalResult[TOKENBUF];    /* resulting string */
+meUByte evalResult[meTOKENBUF_SIZE_MAX];    /* resulting string */
 static meUByte machineName[]=meSYSTEM_NAME;    /* resulting string */
 
-#if TIMSTMP
+#if MEOPT_TIMSTMP
 extern meUByte time_stamp[];   /* Time stamp string */
 #endif
 
+#if MEOPT_EXTENDED
 static time_t timeOffset=0 ;            /* Time offset in seconds */
 
 #ifdef _INSENSE_CASE
-meNAMESVAR buffNames={0,0} ;
-meDIRLIST  fileNames={0,0} ;
+meNamesList buffNames={0,0} ;
+meDirList  fileNames={0,0} ;
 #else
-meNAMESVAR buffNames={1,0} ;
-meDIRLIST  fileNames={1,0} ;
+meNamesList buffNames={1,0} ;
+meDirList  fileNames={1,0} ;
 #endif
-meNAMESVAR commNames={1,0} ;
-meNAMESVAR modeNames={0,MDNUMMODES,modeName,0} ;
-meNAMESVAR varbNames={1,0} ;
+meNamesList commNames={1,0} ;
+meNamesList modeNames={0,MDNUMMODES,modeName,0} ;
+meNamesList varbNames={1,0} ;
+#endif
 
 /* The following horrid global variable solves a horrid problem, consider:
    define-macro l3
@@ -90,9 +93,9 @@ meNAMESVAR varbNames={1,0} ;
  * may occur which could (probably will) change the value of gmaLocalRegPtr
  * so the value must be cached as soon as the variable to be set is obtained.
  */
-static meREGISTERS *gmaLocalRegPtr=NULL ;
+static meRegister *gmaLocalRegPtr=NULL ;
 
-#if MAGIC
+#if MEOPT_MAGIC
 static meRegex meRegexStrCmp={0} ;
 /* Quick and easy interface to regex compare
  * 
@@ -291,14 +294,14 @@ meItoa(int i)
 }
 
 
-meVARIABLE *
-SetUsrLclCmdVar(meUByte *vname, meUByte *vvalue, register meVARLIST *varList)
+meVariable *
+SetUsrLclCmdVar(meUByte *vname, meUByte *vvalue, register meVarList *varList)
 {
     /* set a user variable */
-    register meVARIABLE *vptr, *vp ;
+    register meVariable *vptr, *vp ;
     register int ii, jj ;
     
-    vptr = (meVARIABLE *) varList ;
+    vptr = (meVariable *) varList ;
     ii = varList->count ;
     /* scan the list looking for the user var name */
     while(ii)
@@ -330,7 +333,7 @@ SetUsrLclCmdVar(meUByte *vname, meUByte *vvalue, register meVARLIST *varList)
     }
     
     /* Not found so create a new one */
-    if((vp = (meVARIABLE *) meMalloc(sizeof(meVARIABLE)+meStrlen(vname))) != NULL)
+    if((vp = (meVariable *) meMalloc(sizeof(meVariable)+meStrlen(vname))) != NULL)
     {
         meStrcpy(vp->name,vname) ;
         vp->next = vptr->next ;
@@ -342,7 +345,7 @@ SetUsrLclCmdVar(meUByte *vname, meUByte *vvalue, register meVARLIST *varList)
 }
 
 int
-setVar(meUByte *vname, meUByte *vvalue, meREGISTERS *regs)
+setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
 {
     register int status ;         /* status return */
     meUByte *nn ;
@@ -359,18 +362,18 @@ setVar(meUByte *vname, meUByte *vvalue, meREGISTERS *regs)
             else if(cc == 'p')
                 regs = regs->prev ;
             cc = nn[1] - '0' ;
-            if(cc >= ('0'+meNUMREG))
+            if(cc >= ('0'+meREGISTER_MAX))
                 return mlwrite(MWABORT,(meUByte *)"[No such register %s]",vname);
             meStrcpy(regs->reg[cc],vvalue) ;
             break ;
         }
     case TKVAR:
         if(SetUsrLclCmdVar(nn,vvalue,&usrVarList) == NULL)
-            return FALSE ;
+            return meFALSE ;
         break ;
     case TKLVR:
         {
-            BUFFER *bp ;
+            meBuffer *bp ;
             meUByte *ss ;
             if((ss=meStrrchr(nn,':')) != NULL)
             {
@@ -383,14 +386,14 @@ setVar(meUByte *vname, meUByte *vvalue, meREGISTERS *regs)
                 nn = ss ;
             }
             else
-                bp = curbp ;
+                bp = frameCur->bufferCur ;
             if(SetUsrLclCmdVar(nn,vvalue,&(bp->varList)) == NULL)
-                return FALSE ;
+                return meFALSE ;
             break ;
         }
     case TKCVR:
         {
-            meVARLIST *varList ;
+            meVarList *varList ;
             meUByte *ss ;
             if((ss=meStrrchr(nn,'.')) != NULL)
             {
@@ -408,52 +411,52 @@ setVar(meUByte *vname, meUByte *vvalue, meREGISTERS *regs)
             else if((varList = regs->varList) == NULL)
                 return mlwrite(MWABORT,(meUByte *)"[No such variable]");
             if(SetUsrLclCmdVar(nn,vvalue,varList) == NULL)
-                return FALSE ;
+                return meFALSE ;
             break ;
         }
     
     case TKARG:
         if(*nn == 'w')
         {
-            if((status=bchange()) != TRUE)
+            if((status=bchange()) != meTRUE)
                 return status ;
             if(nn[1] == 'l')
             {
                 int ll=0 ;
                 meUByte cc ;
                 
-                if (curwp->w_dotp >= curbp->b_linep)
+                if (frameCur->windowCur->dotLine >= frameCur->bufferCur->baseLine)
                     return mlwrite(MWABORT,(meUByte *)"[Cannot set @wl here]");
                 
-                curwp->w_doto = 0 ;
-#if MEUNDO
-                meUndoAddDelChars(llength(curwp->w_dotp)) ;
+                frameCur->windowCur->dotOffset = 0 ;
+#if MEOPT_UNDO
+                meUndoAddDelChars(meLineGetLength(frameCur->windowCur->dotLine)) ;
 #endif
-                mldelete(llength(curwp->w_dotp),NULL) ;
+                mldelete(meLineGetLength(frameCur->windowCur->dotLine),NULL) ;
                 while((cc=*vvalue++))
                 {
                     if (cc == 0x0a)
                         status = lnewline();
                     else
                         status = linsert(1,cc);
-                    if (status != TRUE)
+                    if (status != meTRUE)
                         return status ;
                     ll++ ;
                 }
-#if MEUNDO
+#if MEOPT_UNDO
                 meUndoAddReplaceEnd(ll) ;
 #endif
             }
             else
             {
-                if (curwp->w_doto >= curwp->w_dotp->l_used)
+                if (frameCur->windowCur->dotOffset >= frameCur->windowCur->dotLine->length)
                     return mlwrite(MWABORT,(meUByte *)"[Cannot set @wc here]");
                 
                 lchange(WFMAIN);
-#if MEUNDO
+#if MEOPT_UNDO
                 meUndoAddRepChar() ;
 #endif
-                lputc(curwp->w_dotp,curwp->w_doto,vvalue[0]) ;
+                meLineSetChar(frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset,vvalue[0]) ;
             }
         }
         else if(*nn == 'c')
@@ -466,16 +469,19 @@ setVar(meUByte *vname, meUByte *vvalue, meREGISTERS *regs)
                 /* use the macro string to key evaluator to get the value,
                  * must set this up carefully and restore state */
                 savcle = clexec;        /* save execution mode */
-                clexec = TRUE;      /* get the argument */
+                clexec = meTRUE;      /* get the argument */
                 saves = execstr ;
                 execstr = vvalue ;
                 ii = meGetKey(meGETKEY_SILENT) ;
                 execstr = saves ;
                 clexec = savcle;        /* restore execution mode */
-                if(nn[1] == 'c')
-                    thisCommand = ii ;
-                else
-                    lastCommand = ii ;
+                if(ii != 0)
+                {
+                    if(nn[1] == 'c')
+                        thisCommand = ii ;
+                    else
+                        lastCommand = ii ;
+                }
             }
             else
             {
@@ -486,29 +492,33 @@ setVar(meUByte *vname, meUByte *vvalue, meREGISTERS *regs)
                     {
                     case CK_BAKLIN:
                     case CK_FORLIN:
-                        thisflag = CFCPCN;
+                        thisflag = meCFCPCN;
                         break ;
                     case CK_DELBAK:
                     case CK_DELFOR:
-                        if(!meModeTest(curbp->b_mode,MDLETTR))
+                        if(!meModeTest(frameCur->bufferCur->mode,MDLETTR))
                             break ;
                     case CK_DELWBAK:
                     case CK_CPYREG:
                     case CK_DELFWRD:
                     case CK_KILEOL:
+#if MEOPT_WORDPRO
                     case CK_KILPAR:
+#endif
                     case CK_KILREG:
-                        thisflag = CFKILL;
+                        thisflag = meCFKILL;
                         break ;
                     case CK_REYANK:
-                        thisflag = CFRYANK ;
+                        thisflag = meCFRYANK ;
                         break ;
                     case CK_YANK:
-                        thisflag = CFYANK ;
+                        thisflag = meCFYANK ;
                         break ;
+#if MEOPT_UNDO
                     case CK_UNDO:
-                        thisflag = CFUNDO ;
+                        thisflag = meCFUNDO ;
                         break ;
+#endif
                     }
                     lastIndex = ii ;
                 }
@@ -558,10 +568,17 @@ setVar(meUByte *vname, meUByte *vvalue, meREGISTERS *regs)
                 }
             }
             break;
+#if MEOPT_CALLBACK
         case EVIDLETIME:
             idletime = (meUInt) meAtoi(vvalue);
             if (idletime < 10)
                 idletime = 10;
+            break;
+#endif
+#if MEOPT_MOUSE
+        case EVMOUSE:
+            meMouseCfg = meAtoi(vvalue) ;
+            TTinitMouse() ;
             break;
         case EVDELAYTIME:
             delaytime = (meUInt) meAtoi(vvalue);
@@ -573,6 +590,7 @@ setVar(meUByte *vname, meUByte *vvalue, meREGISTERS *regs)
             if (repeattime < 10)
                 repeattime = 10;
             break;
+#endif
         case EVMODELINE:
             if(modeLineStr != orgModeLineStr)
                 meFree(modeLineStr) ;
@@ -580,16 +598,14 @@ setVar(meUByte *vname, meUByte *vvalue, meREGISTERS *regs)
             modeLineFlags = assessModeLine(vvalue) ;
             addModeToWindows(WFMODE) ;
             break ;
+#if MEOPT_EXTENDED
         case EVBMDLINE:
-            meNullFree(curbp->modeLineStr) ;
-            curbp->modeLineStr = meStrdup(vvalue) ;
-            curbp->modeLineFlags = assessModeLine(vvalue) ;
+            meNullFree(frameCur->bufferCur->modeLineStr) ;
+            frameCur->bufferCur->modeLineStr = meStrdup(vvalue) ;
+            frameCur->bufferCur->modeLineFlags = assessModeLine(vvalue) ;
             addModeToWindows(WFMODE) ;
             break ;
-        case EVMOUSE:
-            meMouseCfg = meAtoi(vvalue) ;
-            TTinitMouse() ;
-            break;
+#endif
         case EVSYSTEM:
             {
                 meSystemCfg = (meSystemCfg & ~meSYSTEM_MASK) | 
@@ -613,7 +629,7 @@ setVar(meUByte *vname, meUByte *vvalue, meREGISTERS *regs)
                 if(!(meSystemCfg & meSYSTEM_CONSOLE))
                     meSystemCfg &= ~(meSYSTEM_ANSICOLOR|meSYSTEM_XANSICOLOR) ;
 #endif
-#ifdef _CLIENTSERVER
+#if MEOPT_CLIENTSERVER
                 /* open or close the client server files */
                 if(meSystemCfg & meSYSTEM_CLNTSRVR)
                     TTopenClientServer ();
@@ -621,9 +637,10 @@ setVar(meUByte *vname, meUByte *vvalue, meREGISTERS *regs)
                     TTkillClientServer ();
 #endif
                 /* may changes may case a redraw so always redraw next time */
-                sgarbf = TRUE ;
+                sgarbf = meTRUE ;
                 break;
             }
+#if MEOPT_WORDPRO
         case EVFILLBULLET:
             meStrncpy(fillbullet,vvalue,15);
             fillbullet[15] = '\0' ;
@@ -648,17 +665,17 @@ setVar(meUByte *vname, meUByte *vvalue, meREGISTERS *regs)
         case EVFILLMODE:
             fillmode = *vvalue ;
             break;
+#endif
+#if MEOPT_EXTENDED
         case EVTIME:
             timeOffset = meAtoi(vvalue) ;
             break;
-        case EVMATCHLEN:
-            matchlen = (meShort) meAtoi (vvalue);
-            break;
-        case EVPAGELEN:
-            return changeScreenDepth(TRUE, meAtoi(vvalue));
         case EVRANDOM:
             srand(time(NULL)) ;
             break ;
+#endif
+        case EVPAGELEN:
+            return frameChangeDepth(meTRUE, meAtoi(vvalue));
         case EVABSCOL:
             return setcwcol(meAtoi(vvalue));
         case EVABSLINE:
@@ -666,18 +683,18 @@ setVar(meUByte *vname, meUByte *vvalue, meREGISTERS *regs)
         case EVCURCOL:
             if((status=meAtoi(vvalue)) < 0)
             {
-                curwp->w_doto = 0 ;
-                return FALSE ;
+                frameCur->windowCur->dotOffset = 0 ;
+                return meFALSE ;
             }
-            else if(status > llength(curwp->w_dotp))
+            else if(status > meLineGetLength(frameCur->windowCur->dotLine))
             {
-                curwp->w_doto = llength(curwp->w_dotp) ;
-                return FALSE ;
+                frameCur->windowCur->dotOffset = meLineGetLength(frameCur->windowCur->dotLine) ;
+                return meFALSE ;
             }
-            curwp->w_doto = status ;
-            return TRUE ;
+            frameCur->windowCur->dotOffset = status ;
+            return meTRUE ;
         case EVCURLINE:
-            return gotoLine(TRUE, meAtoi(vvalue));
+            return gotoLine(meTRUE, meAtoi(vvalue));
         case EVWINCHRS:
             {
                 meUByte cc ;
@@ -700,73 +717,77 @@ setVar(meUByte *vname, meUByte *vvalue, meREGISTERS *regs)
                 }
             }
             break;
+#if MEOPT_EXTENDED
         case EVWXSCROLL:
             if((status=meAtoi(vvalue)) < 0)
                 status = 0 ;
-            if(curwp->w_sscroll != status)
+            if(frameCur->windowCur->horzScrollRest != status)
             {
-                curwp->w_sscroll = status ;
-                curwp->w_flag |= WFREDRAW ;        /* Force a screen update */
-                updCursor(curwp) ;
+                frameCur->windowCur->horzScrollRest = status ;
+                frameCur->windowCur->flag |= WFREDRAW ;        /* Force a screen update */
+                updCursor(frameCur->windowCur) ;
             }
-            return TRUE ;
+            return meTRUE ;
         case EVWXCLSCROLL:
             if((status=meAtoi(vvalue)) < 0)
                 status = 0 ;
-            else if(status >= llength(curwp->w_dotp))
-                status = llength(curwp->w_dotp)-1 ;
-            if(curwp->w_scscroll != status)
+            else if(status >= meLineGetLength(frameCur->windowCur->dotLine))
+                status = meLineGetLength(frameCur->windowCur->dotLine)-1 ;
+            if(frameCur->windowCur->horzScroll != status)
             {
-                curwp->w_scscroll = status ;
-                curwp->w_flag |= WFREDRAW ;        /* Force a screen update */
-                updCursor(curwp) ;
+                frameCur->windowCur->horzScroll = status ;
+                frameCur->windowCur->flag |= WFREDRAW ;        /* Force a screen update */
+                updCursor(frameCur->windowCur) ;
             }
-            return TRUE ;
+            return meTRUE ;
         case EVWYSCROLL:
             if((status=meAtoi(vvalue)) < 0)
                 status = 0 ;
-            else if(curbp->elineno && (status >= curbp->elineno))
-                status = curbp->elineno-1 ;
-            if(curwp->topLineNo != status)
+            else if(frameCur->bufferCur->lineCount && (status >= frameCur->bufferCur->lineCount))
+                status = frameCur->bufferCur->lineCount-1 ;
+            if(frameCur->windowCur->vertScroll != status)
             {
-                curwp->topLineNo = status ;
-                curwp->w_flag |= WFMAIN|WFSBOX|WFLOOKBK ;
-                reframe(curwp) ;
+                frameCur->windowCur->vertScroll = status ;
+                frameCur->windowCur->flag |= WFMAIN|WFSBOX|WFLOOKBK ;
+                reframe(frameCur->windowCur) ;
             }
-            return TRUE ;
+            return meTRUE ;
+#endif
         case EVCURWIDTH:
-            return changeScreenWidth(TRUE, meAtoi(vvalue));
+            return frameChangeWidth(meTRUE, meAtoi(vvalue));
         case EVCBUFNAME:
-            unlinkBuffer(curbp) ;
+            unlinkBuffer(frameCur->bufferCur) ;
             if((vvalue[0] == '\0') || (bfind(vvalue,0) != NULL))
             {
                 /* if the name is used */
-                linkBuffer(curbp) ;
-                return ABORT ;
+                linkBuffer(frameCur->bufferCur) ;
+                return meABORT ;
             }
-            meFree(curbp->b_bname) ;
-            curbp->b_bname = meStrdup(vvalue);
+            meFree(frameCur->bufferCur->name) ;
+            frameCur->bufferCur->name = meStrdup(vvalue);
             addModeToWindows(WFMODE) ;
-            linkBuffer(curbp) ;
+            linkBuffer(frameCur->bufferCur) ;
             break;
         case EVBUFFMOD:
-            curbp->stats.stmode = (meUShort) meAtoi(vvalue) ;
+            frameCur->bufferCur->stats.stmode = (meUShort) meAtoi(vvalue) ;
             break ;
         case EVGLOBFMOD:
             meUmask = (meUShort) meAtoi(vvalue) ;
             break ;
         case EVCFNAME:
-            meNullFree(curbp->b_fname) ;
-            curbp->b_fname = meStrdup(vvalue);
+            meNullFree(frameCur->bufferCur->fileName) ;
+            frameCur->bufferCur->fileName = meStrdup(vvalue);
             addModeToWindows(WFMODE) ;
             break;
+#if MEOPT_DEBUGM
         case EVDEBUG:
             macbug = (meByte) meAtoi(vvalue);
             break;
-#if TIMSTMP
+#endif
+#if MEOPT_TIMSTMP
         case EVTIMSTMP:
-            meStrncpy(&time_stamp[0], vvalue, TSTMPLEN-1);
-            time_stamp[TSTMPLEN-1] = '\0';
+            meStrncpy(&time_stamp[0], vvalue, meTIME_STAMP_SIZE_MAX-1);
+            time_stamp[meTIME_STAMP_SIZE_MAX-1] = '\0';
             break;
 #endif
         case EVTABSIZE:
@@ -784,7 +805,7 @@ setVar(meUByte *vname, meUByte *vvalue, meREGISTERS *regs)
             meNullFree(homedir) ;
             homedir = meStrdup(vvalue) ;
             break;
-#if CFENCE
+#if MEOPT_CFENCE
         case EVCBRACE:
             braceIndent = (meShort) meAtoi (vvalue);
             break;
@@ -811,7 +832,11 @@ setVar(meUByte *vname, meUByte *vvalue, meREGISTERS *regs)
         case EVCSWITCH:
             switchIndent = (meShort) meAtoi (vvalue);
             break;
+        case EVMATCHLEN:
+            matchlen = (meShort) meAtoi (vvalue);
+            break;
 #endif
+#if MEOPT_EXTENDED
         case EVSHWMDS:
             {
                 meUByte cc ;
@@ -831,19 +856,17 @@ setVar(meUByte *vname, meUByte *vvalue, meREGISTERS *regs)
         case EVSHWRGN:
             selhilight.uFlags = (meUShort) meAtoi(vvalue);
             break;
+#endif
         case EVCURSORBLK:
             timerKill(CURSOR_TIMER_ID) ;
             if((cursorBlink = meAtoi(vvalue)) > 0)
                 /* kick off the timer */
                 TThandleBlink(1) ;
             break ;
-#if COLOR
+#if MEOPT_COLOR
         case EVCURSORCOL:
-            if((cursorColor = (meCOLOR) meAtoi(vvalue)) >= noColors)
+            if((cursorColor = (meColor) meAtoi(vvalue)) >= noColors)
                 cursorColor = meCOLOR_FDEFAULT ;
-            break ;
-        case EVOSDSCHM:
-            osdScheme = convertUserScheme(meAtoi(vvalue),osdScheme);
             break ;
         case EVMLSCHM:
             mlScheme = convertUserScheme(meAtoi(vvalue),mlScheme);
@@ -854,86 +877,94 @@ setVar(meUByte *vname, meUByte *vvalue, meREGISTERS *regs)
             break ;
         case EVGLOBSCHM:
             globScheme = convertUserScheme(meAtoi(vvalue),globScheme);
-            vvideo.video [TTnrow].endp = TTncol ;
-            sgarbf = TRUE ;
+            frameCur->video.lineArray[frameCur->depth].endp = frameCur->width ;
+            sgarbf = meTRUE ;
             TTsetBgcol() ;
             break ;
         case EVTRNCSCHM:
             trncScheme = convertUserScheme(meAtoi(vvalue),trncScheme);
-            sgarbf = TRUE ;
+            sgarbf = meTRUE ;
             break ;
         case EVBUFSCHM:
-            curbp->scheme = convertUserScheme(meAtoi(vvalue),curbp->scheme);
-            addModeToBufferWindows(curbp,WFRESIZE) ;
+            frameCur->bufferCur->scheme = convertUserScheme(meAtoi(vvalue),frameCur->bufferCur->scheme);
+            addModeToBufferWindows(frameCur->bufferCur,WFRESIZE) ;
             break ;
-        case EVLINESCHM:
-            {
-                register int ii ;
-                meSCHEME schm ;
-                
-                ii = meAtoi(vvalue) ;
-                if(ii >= 0)
-                {
-                    schm = convertUserScheme(ii,curbp->scheme);
-                    for(ii=1 ; ii<LNNOSCHM ; ii++)
-                        if(curbp->lscheme[ii] == schm)
-                            break ;
-                    if(ii == LNNOSCHM)
-                    {
-                        if((ii=curbp->lschemeNext+1) == LNNOSCHM)
-                            ii = 1 ;
-                        curbp->lscheme[ii] = schm ;
-                        curbp->lschemeNext = (ii+1) & LNSMASK ;
-                    }
-                    curwp->w_dotp->l_flag = (curwp->w_dotp->l_flag & ~LNSMASK) | ii ;
-                }
-                else if(curwp->w_dotp->l_flag & LNSMASK)
-                    curwp->w_dotp->l_flag = (curwp->w_dotp->l_flag & ~LNSMASK) ;
-                lchange(WFMAIN) ;
-                break ;
-            }
-        case EVSBAR:    
-            gsbarmode = meAtoi(vvalue) & WMUSER;
-            resizeAllWnd (TRUE, 0);         /* Force window update */
-            break;
         case EVSBARSCHM:
             sbarScheme = convertUserScheme(meAtoi(vvalue),sbarScheme);
             addModeToWindows(WFRESIZE|WFSBAR) ;
             break;
+#if MEOPT_OSD
+        case EVOSDSCHM:
+            osdScheme = convertUserScheme(meAtoi(vvalue),osdScheme);
+            break ;
 #endif
-#if _IPIPES
+#endif
+        case EVSBAR:    
+            gsbarmode = meAtoi(vvalue) & WMUSER;
+            resizeAllWnd (meTRUE, 0);         /* Force window update */
+            break;
+#if MEOPT_IPIPES
         case EVBUFIPIPE:
-            curbp->ipipeFunc = decode_fncname(vvalue,1) ;
+            frameCur->bufferCur->ipipeFunc = decode_fncname(vvalue,1) ;
             break ;
 #endif
         case EVBUFINP:
-            curbp->inputFunc = decode_fncname(vvalue,1) ;
+            frameCur->bufferCur->inputFunc = decode_fncname(vvalue,1) ;
             break ;
+#if MEOPT_FILEHOOK
         case EVBUFBHK:
-            curbp->bhook = decode_fncname(vvalue,1) ;
+            frameCur->bufferCur->bhook = decode_fncname(vvalue,1) ;
             break ;
         case EVBUFDHK:
-            curbp->dhook = decode_fncname(vvalue,1) ;
+            frameCur->bufferCur->dhook = decode_fncname(vvalue,1) ;
             break ;
         case EVBUFEHK:
-            curbp->ehook = decode_fncname(vvalue,1) ;
+            frameCur->bufferCur->ehook = decode_fncname(vvalue,1) ;
             break ;
         case EVBUFFHK:    
-            curbp->fhook = decode_fncname(vvalue,1) ;
-            break ;
-#if HILIGHT
-        case EVBUFHIL:
-            if(((curbp->hiLight = (meUByte) meAtoi(vvalue)) >= noHilights) ||
-               (hilights[curbp->hiLight] == NULL))
-                curbp->hiLight = 0 ;
-            addModeToBufferWindows(curbp,WFRESIZE) ;
-            break ;
-        case EVBUFIND:
-            if(((curbp->indent = (meUByte) meAtoi(vvalue)) >= noIndents) ||
-               (indents[curbp->indent] == NULL))
-                curbp->indent = 0 ;
+            frameCur->bufferCur->fhook = decode_fncname(vvalue,1) ;
             break ;
 #endif
+#if MEOPT_HILIGHT
+        case EVLINESCHM:
+            {
+                register int ii ;
+                meScheme schm ;
+                
+                ii = meAtoi(vvalue) ;
+                if(ii >= 0)
+                {
+                    schm = convertUserScheme(ii,frameCur->bufferCur->scheme);
+                    for(ii=1 ; ii<meLINE_SCHEME_MAX ; ii++)
+                        if(frameCur->bufferCur->lscheme[ii] == schm)
+                            break ;
+                    if(ii == meLINE_SCHEME_MAX)
+                    {
+                        if((ii=frameCur->bufferCur->lschemeNext+1) == meLINE_SCHEME_MAX)
+                            ii = 1 ;
+                        frameCur->bufferCur->lscheme[ii] = schm ;
+                        frameCur->bufferCur->lschemeNext = (ii+1) & meLINE_SCHEME_MASK ;
+                    }
+                    frameCur->windowCur->dotLine->flag = (frameCur->windowCur->dotLine->flag & ~meLINE_SCHEME_MASK) | ii ;
+                }
+                else if(frameCur->windowCur->dotLine->flag & meLINE_SCHEME_MASK)
+                    frameCur->windowCur->dotLine->flag = (frameCur->windowCur->dotLine->flag & ~meLINE_SCHEME_MASK) ;
+                lchange(WFMAIN) ;
+                break ;
+            }
+        case EVBUFHIL:
+            if(((frameCur->bufferCur->hilight = (meUByte) meAtoi(vvalue)) >= noHilights) ||
+               (hilights[frameCur->bufferCur->hilight] == NULL))
+                frameCur->bufferCur->hilight = 0 ;
+            addModeToBufferWindows(frameCur->bufferCur,WFRESIZE) ;
+            break ;
+        case EVBUFIND:
+            if(((frameCur->bufferCur->indent = (meUByte) meAtoi(vvalue)) >= noIndents) ||
+               (indents[frameCur->bufferCur->indent] == NULL))
+                frameCur->bufferCur->indent = 0 ;
+            break ;
+#endif
+#if MEOPT_EXTENDED
         case EVBUFMASK:
             {
                 int ii ;
@@ -941,20 +972,17 @@ setVar(meUByte *vname, meUByte *vvalue, meREGISTERS *regs)
                 for(ii=0 ; ii<8 ; ii++)
                     if(meStrchr(vvalue,charMaskFlags[ii]) != NULL)
                         isWordMask |= 1<<ii ;
-                if(curbp->isWordMask != isWordMask)
+                if(frameCur->bufferCur->isWordMask != isWordMask)
                 {
-                    curbp->isWordMask = isWordMask ;
-#if MAGIC
+                    frameCur->bufferCur->isWordMask = isWordMask ;
+#if MEOPT_MAGIC
                     mereRegexClassChanged() ;
 #endif
                 }
                 break ;
             }
-        case EVFILEIGNORE:
-            meNullFree(fileIgnore) ;
-            fileIgnore = meStrdup(vvalue) ;
-            break ;
-#if FLNEXT
+#endif
+#if MEOPT_FILENEXT
         case EVFILETEMP:
             meNullFree(flNextFileTemp) ;
             flNextFileTemp = meStrdup(vvalue) ;
@@ -964,7 +992,7 @@ setVar(meUByte *vname, meUByte *vvalue, meREGISTERS *regs)
             flNextLineTemp = meStrdup(vvalue) ;
             break ;
 #endif
-#if DORCS
+#if MEOPT_RCS
         case EVRCSFILE:
             meNullFree(rcsFile) ;
             rcsFile = meStrdup(vvalue) ;
@@ -992,6 +1020,11 @@ setVar(meUByte *vname, meUByte *vvalue, meREGISTERS *regs)
 #endif
         case EVSCROLL:
             scrollFlag = (meUByte) meAtoi(vvalue) ;
+            break ;
+#if MEOPT_EXTENDED
+        case EVFILEIGNORE:
+            meNullFree(fileIgnore) ;
+            fileIgnore = meStrdup(vvalue) ;
             break ;
         case EVBNAMES:
             meNullFree(buffNames.list) ;
@@ -1027,7 +1060,7 @@ setVar(meUByte *vname, meUByte *vvalue, meREGISTERS *regs)
                 }
                 if((fileNames.mask = meStrdup(mm)) != NULL)
                 {
-                    meUByte buff[FILEBUF] ;
+                    meUByte buff[meFILEBUF_SIZE_MAX] ;
 #ifdef _DRV_CHAR
                     if((isAlpha(mm[0]) || (mm[0] == '.' )) && (mm[1] == _DRV_CHAR))
                     {
@@ -1039,7 +1072,7 @@ setVar(meUByte *vname, meUByte *vvalue, meREGISTERS *regs)
 #endif
                     {
                         *mm = '\0' ;
-                        getFilePath(curbp->b_fname,buff) ;
+                        getFilePath(frameCur->bufferCur->fileName,buff) ;
                         meStrcat(buff,vvalue) ;
                         pathNameCorrect(buff,PATHNAME_COMPLETE,resultStr,NULL) ;
                         getDirectoryList(resultStr,&fileNames) ;
@@ -1061,7 +1094,8 @@ setVar(meUByte *vname, meUByte *vvalue, meREGISTERS *regs)
                 varbNames.size = createVarList(&varbNames.list) ;
             varbNames.curr = 0 ;
             break ;
-#if SPELL
+#endif
+#if MEOPT_SPELL
         case EVFINDWORDS:
             findWordsInit(vvalue) ;
             break ;
@@ -1072,7 +1106,7 @@ setVar(meUByte *vname, meUByte *vvalue, meREGISTERS *regs)
         case -1:
             {
                 /* unknown so set an environment variable */
-                char buff[MAXBUF+NSTRING] ;
+                char buff[meBUF_SIZE_MAX+meSBUF_SIZE_MAX] ;
                 sprintf(buff,"%s=%s",nn,vvalue) ;
                 mePutenv(meStrdup(buff)) ;
                 break ;
@@ -1082,14 +1116,14 @@ setVar(meUByte *vname, meUByte *vvalue, meREGISTERS *regs)
              * EVSYSRET EVUSEX, EVVERSION, EVWMDLINE or system dependant vars
              * where this isn't the system (e.g. use-x) which cant be set
              */
-            return FALSE ;
+            return meFALSE ;
         }
         break ;
     default:
         /* else its not legal....bitch */
         return mlwrite(MWABORT,(meUByte *)"[No such variable]");
     }
-    return TRUE ;
+    return meTRUE ;
 }
 
 static meUByte *
@@ -1097,7 +1131,9 @@ gtenv(meUByte *vname)   /* vname   name of environment variable to retrieve */
 {
     int ii ;
     register meUByte *ret ;
-    register meNAMESVAR *mv ;
+#if MEOPT_EXTENDED
+    register meNamesList *mv ;
+#endif
     
     /* scan the list, looking for the referenced name */
 #ifdef _MACRO_COMP
@@ -1112,19 +1148,26 @@ gtenv(meUByte *vname)   /* vname   name of environment variable to retrieve */
     case EVAUTOTIME:    return (meItoa(autotime));
     case EVKEPTVERS:    return (meItoa(keptVersions));
     case EVBOXCHRS:     return boxChars;
+#if MEOPT_MOUSE
     case EVDELAYTIME:   return (meItoa(delaytime));
-    case EVIDLETIME:    return (meItoa(idletime));
     case EVREPEATTIME:  return (meItoa(repeattime));
+#endif
+#if MEOPT_CALLBACK
+    case EVIDLETIME:    return (meItoa(idletime));
+#endif
     case EVMODELINE:    return modeLineStr ;
     case EVMACHINE:     return machineName ;
     case EVPROGNM:      return progName ;
-    case EVCURSORX:     return (meItoa(mwCol));
-    case EVCURSORY:     return (meItoa(mwRow));
+    case EVCURSORX:     return (meItoa(frameCur->mainColumn));
+    case EVCURSORY:     return (meItoa(frameCur->mainRow));
+#if MEOPT_MOUSE
     case EVMOUSE:       return (meItoa(meMouseCfg));
     case EVMOUSEPOS:    return (meItoa(mouse_pos));
     case EVMOUSEX:      return (meItoa(mouse_X));
     case EVMOUSEY:      return (meItoa(mouse_Y));
+#endif
     case EVSYSTEM:      return (meItoa(meSystemCfg));
+#if MEOPT_WORDPRO
     case EVFILLBULLET:  return fillbullet;
     case EVFILLBULLETLEN:return (meItoa(fillbulletlen));
     case EVFILLCOL:     return (meItoa(fillcol));
@@ -1135,6 +1178,8 @@ gtenv(meUByte *vname)   /* vname   name of environment variable to retrieve */
         evalResult[0] = fillmode ;
         evalResult[1] = '\0' ;
         return evalResult ;
+#endif
+#if MEOPT_EXTENDED
     case EVBNAMES:
         mv = &buffNames ;
         goto handle_namesvar ;
@@ -1142,7 +1187,7 @@ gtenv(meUByte *vname)   /* vname   name of environment variable to retrieve */
         mv = &commNames ;
         goto handle_namesvar ;
     case EVFNAMES:
-        mv = (meNAMESVAR *) &fileNames ;
+        mv = (meNamesList *) &fileNames ;
         goto handle_namesvar ;
     case EVMNAMES:
         mv = &modeNames ;
@@ -1159,14 +1204,16 @@ handle_namesvar:
                 return ss ;
         }
         return emptym ;
-    case EVVERSION:
-        return (meUByte *) meVERSION_CODE ;
     case EVTEMPNAME:
         mkTempName (evalResult, NULL,NULL);
         return evalResult ;
-#if SPELL
+#endif
+    case EVVERSION:
+        return (meUByte *) meVERSION_CODE ;
+#if MEOPT_SPELL
     case EVFINDWORDS:   return findWordsNext() ;
 #endif
+#if MEOPT_EXTENDED
     case EVRECENTKEYS:
         {
             int ii, jj, kk ;
@@ -1174,7 +1221,7 @@ handle_namesvar:
             for(ii=100,jj=TTnextKeyIdx,kk=0 ; --ii>0 ; )
             {
                 if(((cc=TTkeyBuf[jj++]) == 0) ||
-                   ((kk+=meGetStringFromChar(cc,evalResult+kk)) > MAXBUF-20))
+                   ((kk+=meGetStringFromChar(cc,evalResult+kk)) > meBUF_SIZE_MAX-20))
                     break ;
                 evalResult[kk++] = ' ' ;
                 if(jj == KEYBUFSIZ)
@@ -1183,7 +1230,9 @@ handle_namesvar:
             evalResult[kk] = '\0' ;
             return evalResult;
         }
+#endif
     case EVRESULT:      return resultStr;
+#if MEOPT_EXTENDED
     case EVTIME:
         {
             struct meTimeval tp ;           /* Time interval for current time */
@@ -1224,57 +1273,61 @@ handle_namesvar:
                      (int) (tp.tv_usec/1000));/* Milliseconds */
             return evalResult;
         }
-    case EVMATCHLEN:    return (meItoa(matchlen));
-    case EVPAGELEN:     return (meItoa(TTnrow + 1));
     case EVRANDOM:      return (meItoa(rand()));
+#endif
+    case EVPAGELEN:     return (meItoa(frameCur->depth + 1));
     case EVABSCOL:      return (meItoa(getcwcol()));
     case EVABSLINE:     return (meItoa(gotoAbsLine(-1)+1));
-    case EVCURCOL:      return (meItoa(curwp->w_doto));
-    case EVCURLINE:     return (meItoa(curwp->line_no+1));
+    case EVCURCOL:      return (meItoa(frameCur->windowCur->dotOffset));
+    case EVCURLINE:     return (meItoa(frameCur->windowCur->dotLineNo+1));
     case EVWINCHRS:     return windowChars;
-    case EVWXSCROLL:    return (meItoa(curwp->w_sscroll));
-    case EVWXCLSCROLL:  return (meItoa(curwp->w_scscroll));
-    case EVWYSCROLL:    return (meItoa(curwp->topLineNo));
+#if MEOPT_EXTENDED
     case EVBMDLINE:
-        if(curbp->modeLineStr == NULL)
+        if(frameCur->bufferCur->modeLineStr == NULL)
             return modeLineStr ;
-        return curbp->modeLineStr ;
-    case EVWMDLINE:     return (meItoa(curwp->firstRow+curwp->numTxtRows));
-    case EVWSBAR:       return (meItoa(curwp->firstCol+curwp->numTxtCols));
-    case EVWDEPTH:      return (meItoa(curwp->numTxtRows));
-    case EVWWIDTH:      return (meItoa(curwp->numTxtCols));
-    case EVCURWIDTH:    return (meItoa(TTncol));
+        return frameCur->bufferCur->modeLineStr ;
+    case EVWXSCROLL:    return (meItoa(frameCur->windowCur->horzScrollRest));
+    case EVWXCLSCROLL:  return (meItoa(frameCur->windowCur->horzScroll));
+    case EVWYSCROLL:    return (meItoa(frameCur->windowCur->vertScroll));
+    case EVWMDLINE:     return (meItoa(frameCur->windowCur->frameRow+frameCur->windowCur->textDepth));
+    case EVWSBAR:       return (meItoa(frameCur->windowCur->frameColumn+frameCur->windowCur->textWidth));
+    case EVWDEPTH:      return (meItoa(frameCur->windowCur->textDepth));
+    case EVWWIDTH:      return (meItoa(frameCur->windowCur->textWidth));
+#endif
+    case EVCURWIDTH:    return (meItoa(frameCur->width));
     case EVCBUFBACKUP:
-        if((curbp->b_fname == NULL) || createBackupName(evalResult,curbp->b_fname,'~',0))
+        if((frameCur->bufferCur->fileName == NULL) || createBackupName(evalResult,frameCur->bufferCur->fileName,'~',0))
             return (meUByte *) "" ;
 #ifndef _DOS
         if(!(meSystemCfg & meSYSTEM_DOSFNAMES) && (keptVersions > 0))
             meStrcpy(evalResult+meStrlen(evalResult)-1,".~0~") ;
 #endif
         return evalResult ;
-    case EVCBUFNAME:    return (curbp->b_bname);
+    case EVCBUFNAME:    return (frameCur->bufferCur->name);
 #ifdef _UNIX
     case EVBUFFMOD:
-        sprintf((char *)evalResult,"0%o",(int) curbp->stats.stmode);
+        sprintf((char *)evalResult,"0%o",(int) frameCur->bufferCur->stats.stmode);
         return evalResult ;
     case EVGLOBFMOD:
         sprintf((char *)evalResult,"0%o",(int) meUmask);
         return evalResult ;
 #else
-    case EVBUFFMOD:     return (meItoa(curbp->stats.stmode));
+    case EVBUFFMOD:     return (meItoa(frameCur->bufferCur->stats.stmode));
     case EVGLOBFMOD:    return (meItoa(meUmask));
 #endif
-    case EVCFNAME:      return ((curbp->b_fname == NULL) ? (meUByte *)"":curbp->b_fname);
+    case EVCFNAME:      return ((frameCur->bufferCur->fileName == NULL) ? (meUByte *)"":frameCur->bufferCur->fileName);
+#if MEOPT_DEBUGM
     case EVDEBUG:       return (meItoa(macbug));
+#endif
     case EVSTATUS:      return (meLtoa(cmdstatus));
-#if TIMSTMP
+#if MEOPT_TIMSTMP
     case EVTIMSTMP:     return time_stamp ;
 #endif
     case EVTABSIZE:     return (meItoa(tabsize));
     case EVTABWIDTH:    return (meItoa(tabwidth));
     case EVSRCHPATH:    return searchPath ;
     case EVHOMEDIR:     return homedir ;
-#if CFENCE
+#if MEOPT_CFENCE
     case EVCBRACE:      return meItoa(braceIndent) ;
     case EVCCASE:       return meItoa(caseIndent) ;
     case EVCCONTCOMM:   return commentCont ;
@@ -1283,7 +1336,9 @@ handle_namesvar:
     case EVCMARGIN:     return meItoa(commentMargin) ;
     case EVCSTATEMENT:  return meItoa(statementIndent) ;
     case EVCSWITCH:     return meItoa(switchIndent) ;
+    case EVMATCHLEN:    return meItoa(matchlen);
 #endif
+#if MEOPT_EXTENDED
     case EVSHWMDS:
         {
             ret = evalResult;
@@ -1293,41 +1348,42 @@ handle_namesvar:
             return evalResult;
         }
     case EVSHWRGN:      return meItoa(selhilight.uFlags);
+#endif
     case EVCURSORBLK:   return meItoa(cursorBlink);
-#if COLOR
+#if MEOPT_COLOR
     case EVCURSORCOL:   return meItoa(cursorColor);
-    case EVOSDSCHM:     return meItoa(osdScheme/meSCHEME_STYLES);
     case EVMLSCHM:      return meItoa(mlScheme/meSCHEME_STYLES);
     case EVMDLNSCHM:    return meItoa(mdLnScheme/meSCHEME_STYLES);
     case EVSBARSCHM:    return meItoa(sbarScheme/meSCHEME_STYLES);
     case EVGLOBSCHM:    return meItoa(globScheme/meSCHEME_STYLES);
     case EVTRNCSCHM:    return meItoa(trncScheme/meSCHEME_STYLES);
-    case EVBUFSCHM:     return meItoa(curbp->scheme/meSCHEME_STYLES);
-    case EVLINESCHM:    return meItoa((curwp->w_dotp->l_flag & LNSMASK) ? 
-                                      (curbp->lscheme[curwp->w_dotp->l_flag & LNSMASK]/meSCHEME_STYLES):-1) ;
+    case EVBUFSCHM:     return meItoa(frameCur->bufferCur->scheme/meSCHEME_STYLES);
     case EVSBAR:        return meItoa(gsbarmode);
-#endif  /* COLOR  */
-    case EVBUFIPIPE:
-#if _IPIPES
-        ii = curbp->ipipeFunc ;
-#else
-        ii = -1 ;
+#if MEOPT_OSD
+    case EVOSDSCHM:     return meItoa(osdScheme/meSCHEME_STYLES);
 #endif
+#endif
+#if MEOPT_IPIPES
+    case EVBUFIPIPE:
+        ii = frameCur->bufferCur->ipipeFunc ;
         goto hook_jump ;
+#endif
     case EVBUFINP:
-        ii = curbp->inputFunc ;
+        ii = frameCur->bufferCur->inputFunc ;
         goto hook_jump ;
+#if MEOPT_FILEHOOK
     case EVBUFBHK:
-        ii = curbp->bhook ;
+        ii = frameCur->bufferCur->bhook ;
         goto hook_jump ;
     case EVBUFDHK:
-        ii = curbp->dhook ;
+        ii = frameCur->bufferCur->dhook ;
         goto hook_jump ;
     case EVBUFEHK:
-        ii = curbp->ehook ;
+        ii = frameCur->bufferCur->ehook ;
         goto hook_jump ;
     case EVBUFFHK:    
-        ii = curbp->fhook ;
+        ii = frameCur->bufferCur->fhook ;
+#endif
 hook_jump:
         if(ii < 0)
             evalResult[0] = '\0';
@@ -1335,10 +1391,13 @@ hook_jump:
             meStrcpy(evalResult,getCommandName(ii)) ;
         return evalResult ;
 
-#if HILIGHT
-    case EVBUFHIL:      return meItoa(curbp->hiLight);
-    case EVBUFIND:      return meItoa(curbp->indent);
+#if MEOPT_HILIGHT
+    case EVLINESCHM:    return meItoa((frameCur->windowCur->dotLine->flag & meLINE_SCHEME_MASK) ? 
+                                      (frameCur->bufferCur->lscheme[frameCur->windowCur->dotLine->flag & meLINE_SCHEME_MASK]/meSCHEME_STYLES):-1) ;
+    case EVBUFHIL:      return meItoa(frameCur->bufferCur->hilight);
+    case EVBUFIND:      return meItoa(frameCur->bufferCur->indent);
 #endif
+#if MEOPT_EXTENDED
     case EVBUFMASK:
         {
             meUByte *ss=evalResult ;
@@ -1350,11 +1409,12 @@ hook_jump:
             return evalResult ;
         }
     case EVFILEIGNORE:  return fileIgnore ;
-#if FLNEXT
+#endif
+#if MEOPT_FILENEXT
     case EVFILETEMP:    return flNextFileTemp ;
     case EVLINETEMP:    return flNextLineTemp ;
 #endif
-#if DORCS
+#if MEOPT_RCS
     case EVRCSFILE:     return rcsFile ;
     case EVRCSCOCOM:    return rcsCoStr ;
     case EVRCSCOUCOM:   return rcsCoUStr ;
@@ -1373,9 +1433,9 @@ hook_jump:
 /* look up a user var's value */
 /* vname - name of user variable to fetch */
 meUByte *
-getUsrLclCmdVar(meUByte *vname, register meVARLIST *varList)
+getUsrLclCmdVar(meUByte *vname, register meVarList *varList)
 {
-    register meVARIABLE *vptr, *vp ;
+    register meVariable *vptr, *vp ;
     register int ii, jj ;
     
     vptr = varList->head ;
@@ -1410,7 +1470,7 @@ getUsrLclCmdVar(meUByte *vname, register meVARLIST *varList)
 static meUByte *
 getMacroArg(int index)
 {
-    meREGISTERS *crp ;
+    meRegister *crp ;
     meUByte *oldestr, *ss ;
     
     /* move the register pointer to the parent as any # reference
@@ -1450,10 +1510,10 @@ getval(meUByte *tkn)   /* find the value of a token */
                 register int blen ;
                 meUByte *ss, *dd ;
                 /* Current buffer line fetch */
-                blen = curwp->w_dotp->l_used;
-                if (blen >= MAXBUF)
-                    blen = MAXBUF-1 ;
-                ss = curwp->w_dotp->l_text ;
+                blen = frameCur->windowCur->dotLine->length;
+                if (blen >= meBUF_SIZE_MAX)
+                    blen = meBUF_SIZE_MAX-1 ;
+                ss = frameCur->windowCur->dotLine->text ;
                 dd = evalResult ;
                 while(--blen >= 0)
                     *dd++ = *ss++ ;
@@ -1462,7 +1522,7 @@ getval(meUByte *tkn)   /* find the value of a token */
             else
             {
                 /* Current Buffer character fetch */
-                evalResult[0] = getCurChar(curwp) ;
+                evalResult[0] = getCurChar(frameCur->windowCur) ;
                 evalResult[1] = '\0';
             }
         }
@@ -1497,19 +1557,19 @@ getval(meUByte *tkn)   /* find the value of a token */
         {
             int ii ;
             
-            if(srchLastState != TRUE)
+            if(srchLastState != meTRUE)
                 return abortm ;
             if((ii=tkn[2]-'0') == 0)
                 return srchLastMatch ;
-#if MAGIC
+#if MEOPT_MAGIC
             if(srchLastMagic && (ii <= mereRegexGroupNo()))
             {
                 int jj ;
                 if((jj=mereRegexGroupStart(ii)) >= 0)
                 {
                     ii=mereRegexGroupEnd(ii) - jj ;
-                    if(ii >= MAXBUF)
-                        ii = MAXBUF-1 ;
+                    if(ii >= meBUF_SIZE_MAX)
+                        ii = meBUF_SIZE_MAX-1 ;
                     memcpy(evalResult,srchLastMatch+jj,ii) ;
                 }
                 else
@@ -1524,14 +1584,14 @@ getval(meUByte *tkn)   /* find the value of a token */
         {
             /* Don't use the X or windows clipboard in this case */
             register meUByte *ss, *dd, cc ;
-            register int   ii=MAXBUF-1 ;
-            KILL          *killp;
+            register int   ii=meBUF_SIZE_MAX-1 ;
+            meKillNode          *killp;
             
 #ifdef _CLIPBRD
             if(clipState & CLIP_TRY_GET)
                 TTgetClipboard() ;
 #endif
-            if(klhead == (KLIST*) NULL)
+            if(klhead == (meKill*) NULL)
                 return abortm ;
             dd = evalResult ;
             killp = klhead->kill;
@@ -1570,7 +1630,7 @@ getval(meUByte *tkn)   /* find the value of a token */
                 {
                     /* intercative single char read which will be quoted */
                     int cc ;
-                    key = meGetKeyFromUser(FALSE,0,meGETKEY_SILENT|meGETKEY_SINGLE) ;
+                    key = meGetKeyFromUser(meFALSE,0,meGETKEY_SILENT|meGETKEY_SINGLE) ;
                     if((cc=quoteKeyToChar(key)) > 0)
                     {
                         if(tkn[3] == 'k')
@@ -1583,7 +1643,7 @@ getval(meUByte *tkn)   /* find the value of a token */
                     }
                 }
                 else
-                    key = meGetKeyFromUser(FALSE, 1, 0) ;
+                    key = meGetKeyFromUser(meFALSE, 1, 0) ;
                 if(!kk)
                 {
                     meUInt arg ;
@@ -1613,9 +1673,9 @@ getval(meUByte *tkn)   /* find the value of a token */
                  */
                 static meUByte **strList=NULL ;
                 static int    strListSize=0 ;
-                meUByte cc, *ss, buff[TOKENBUF] ;
+                meUByte cc, *ss, buff[meTOKENBUF_SIZE_MAX] ;
                 meUByte divChr ;
-                meUByte prompt[MAXBUF] ;
+                meUByte prompt[meBUF_SIZE_MAX] ;
                 int  option=0 ;
                 int  flag, defH ;
                 
@@ -1704,30 +1764,30 @@ getval(meUByte *tkn)   /* find the value of a token */
                     /* Get and evaluate the next argument - this is the
                      * completion list
                      */
-                    meUByte comp[TOKENBUF], *tt ;
+                    meUByte comp[meTOKENBUF_SIZE_MAX], *tt ;
                     execstr = token(execstr,comp) ;
                     if((ss = getval(comp)) == abortm)
                         return abortm ;
                     if(flag & 0x200)
                     {
-                        BUFFER *bp ;
-                        LINE *lp ;
+                        meBuffer *bp ;
+                        meLine *lp ;
                         flag &= ~0x100 ;
                         if((bp = bfind(ss,0)) == NULL)
                             return abortm ;
-                        if(bp->elineno > strListSize)
+                        if(bp->lineCount > strListSize)
                         {
-                            strListSize = bp->elineno ;
+                            strListSize = bp->lineCount ;
                             if((strList = meRealloc(strList,strListSize*sizeof(meUByte *))) == NULL)
                             {
                                 strListSize = 0 ;
                                 return abortm ;
                             }
                         }
-                        lp = bp->b_linep ;
+                        lp = bp->baseLine ;
                         mlgsStrListSize = 0 ;
-                        while((lp=lforw(lp)) != bp->b_linep)
-                            strList[mlgsStrListSize++] = lp->l_text ;
+                        while((lp=meLineGetNext(lp)) != bp->baseLine)
+                            strList[mlgsStrListSize++] = lp->text ;
                     }
                     else
                     {
@@ -1736,7 +1796,7 @@ getval(meUByte *tkn)   /* find the value of a token */
                          * then we MUST not restore the list after, so remove
                          * the flag
                          */
-                        if((ss >= evalResult) && (ss < evalResult+MAXBUF))
+                        if((ss >= evalResult) && (ss < evalResult+meBUF_SIZE_MAX))
                             flag &= ~0x100 ;
                         divChr = *ss++ ;
                         mlgsStrListSize = 0 ;
@@ -1761,14 +1821,14 @@ getval(meUByte *tkn)   /* find the value of a token */
                 if(cc == 1)
                 {
                     if(!(option & MLNORESET))
-                        getFilePath(curbp->b_fname,buff) ;
+                        getFilePath(frameCur->bufferCur->fileName,buff) ;
                     option &= MLHIDEVAL ;
                     option |= MLFILECASE|MLNORESET|MLMACNORT ;
 
-                    clexec = FALSE ;
-                    if((cc = meGetString(prompt,option,0,buff,MAXBUF)) == TRUE)
+                    clexec = meFALSE ;
+                    if((cc = meGetString(prompt,option,0,buff,meBUF_SIZE_MAX)) == meTRUE)
                         fileNameCorrect(buff,evalResult,NULL) ;
-                    clexec = TRUE ;
+                    clexec = meTRUE ;
                 }
                 else
                 {
@@ -1777,9 +1837,9 @@ getval(meUByte *tkn)   /* find the value of a token */
                      * so use a temp buffer and copy across. note that inputFileName
                      * above doesn't suffer from this as the function uses a temp buffer
                      */
-                    cc = meGetStringFromUser(prompt,option,defH,buff,MAXBUF) ;
-                    meStrncpy(evalResult,buff,MAXBUF) ;
-                    evalResult[MAXBUF-1] = '\0' ;
+                    cc = meGetStringFromUser(prompt,option,defH,buff,meBUF_SIZE_MAX) ;
+                    meStrncpy(evalResult,buff,meBUF_SIZE_MAX) ;
+                    evalResult[meBUF_SIZE_MAX-1] = '\0' ;
                 }
                 if(flag & 0x100)
                 {
@@ -1790,13 +1850,13 @@ getval(meUByte *tkn)   /* find the value of a token */
                         s1[meStrlen(s1)] = divChr ;
                     }
                 }
-                if(cc == ABORT)
+                if(cc == meABORT)
                     return abortm ;
             }
             else if(tkn[2] == 'c')
             {
-                meUByte *ss, buff[TOKENBUF] ;
-                meUByte prompt[MAXBUF] ;
+                meUByte *ss, buff[meTOKENBUF_SIZE_MAX] ;
+                meUByte prompt[meBUF_SIZE_MAX] ;
                 int ret ;
                 
                 if((ret=tkn[3]) != '\0')
@@ -1825,9 +1885,9 @@ getval(meUByte *tkn)   /* find the value of a token */
                     ss = NULL ;
                 ret = (ret & 0x02) ? mlCR_QUOTE_CHAR:0 ;
                 
-                clexec = FALSE ;
+                clexec = meFALSE ;
                 ret = mlCharReply(prompt,ret,ss,NULL) ;
-                clexec = TRUE ;
+                clexec = meTRUE ;
                 if(ret < 0)
                     return abortm ;
                 evalResult[0] = ret ;
@@ -1847,7 +1907,7 @@ getval(meUByte *tkn)   /* find the value of a token */
         else if((tkn[1] == 'f') && (tkn[2] == 's'))
         {
             /* frame store @fs <row> <col> */
-            meUByte *ss, buff[TOKENBUF] ;
+            meUByte *ss, buff[meTOKENBUF_SIZE_MAX] ;
             int row, col ;
             
             /* Get and evaluate the arguments */
@@ -1860,12 +1920,12 @@ getval(meUByte *tkn)   /* find the value of a token */
                 return abortm ;
             col = meAtoi(ss) ;
             /* Off the screen ?? */
-            if((row < 0) || (row > TTnrow) ||
-               (col < 0) || (col >= TTncol))
+            if((row < 0) || (row > frameCur->depth) ||
+               (col < 0) || (col >= frameCur->width))
                 evalResult[0] = 0 ;
             else
             {
-                evalResult[0] = frameStore[row].text[col] ;
+                evalResult[0] = frameCur->store[row].text[col] ;
                 evalResult[1] = 0 ;
             }
         }
@@ -1880,7 +1940,7 @@ getval(meUByte *tkn)   /* find the value of a token */
         if(alarmState & meALARM_VARIABLE)
             return tkn ;
         {
-            meREGISTERS *rp ;
+            meRegister *rp ;
             meUByte cc ;
             
             if((cc=tkn[1]) == 'l')
@@ -1890,7 +1950,7 @@ getval(meUByte *tkn)   /* find the value of a token */
             else
                 rp = meRegHead ;
             cc = tkn[2] - '0' ;
-            if(cc < ('0'+meNUMREG))
+            if(cc < ('0'+meREGISTER_MAX))
                 return rp->reg[cc] ;
             break ;
         }
@@ -1903,7 +1963,7 @@ getval(meUByte *tkn)   /* find the value of a token */
     case TKLVR:
         {
             meUByte *ss, *tt ;
-            BUFFER *bp ;
+            meBuffer *bp ;
             if(alarmState & meALARM_VARIABLE)
                 return tkn ;
             tt = tkn+1 ;
@@ -1918,7 +1978,7 @@ getval(meUByte *tkn)   /* find the value of a token */
                 tt = ss ;
             }
             else
-                bp = curbp ;
+                bp = frameCur->bufferCur ;
             return getUsrLclCmdVar(tt,&(bp->varList)) ;
         }
         
@@ -1974,14 +2034,35 @@ queryMode(meUByte *name, meUByte *mode)
     return abortm ;
 }
 
+#if (defined _DOS) || (defined _WIN32)
+meInt
+meGetDayOfYear(meInt year, meInt month, meInt day)
+{
+    static int dom[11]={31,28,31,30,31,30,31,31,30,31,30} ;
+    
+    if(month > 2)
+    {
+        if(((year & 0x03) == 0) &&
+           (((year % 100) != 0) || ((year % 400) == 0)))
+            day++ ;
+    }
+    month-- ;
+    while(--month >= 0)
+        day += dom[month] ;
+    return day ;
+}
+#endif
+
 meUByte *
 gtfun(meUByte *fname)  /* evaluate a function given name of function */
 {
+#if MEOPT_EXTENDED
+    meRegister *regs ;     /* pointer to relevant regs if setting var */
+#endif
     register int fnum;      /* index to function to eval */
-    meREGISTERS *regs ;     /* pointer to relevant regs if setting var */
-    meUByte arg1[MAXBUF];      /* value of first argument */
-    meUByte arg2[MAXBUF];      /* value of second argument */
-    meUByte arg3[MAXBUF];      /* value of third argument */
+    meUByte arg1[meBUF_SIZE_MAX];      /* value of first argument */
+    meUByte arg2[meBUF_SIZE_MAX];      /* value of second argument */
+    meUByte arg3[meBUF_SIZE_MAX];      /* value of third argument */
     meUByte *varVal ;
     
     /* look the function up in the function table */
@@ -1995,6 +2076,7 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
         mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unknown function &%s]",fname);
         return abortm ;
     }
+#if MEOPT_EXTENDED
     if((fnum == UFCBIND) || (fnum == UFNBIND))
     {
         meUInt arg ;
@@ -2012,11 +2094,13 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             return meItoa((int) (arg + 0x80000000)) ;
         return evalResult ;
     }
+#endif
     /* retrieve the arguments */
     {
         meUByte alarmStateStr=alarmState ;
         int ii ;
         
+#if MEOPT_EXTENDED
         if(funcTypes[fnum] & FUN_SETVAR)
         {
             /* horrid global variable, see notes at definition */
@@ -2025,20 +2109,21 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             ii = macarg(arg1) ;
             alarmState &= ~meALARM_VARIABLE ;
             regs = gmaLocalRegPtr ;
-            if((ii == TRUE) && (funcTypes[fnum] & FUN_GETVAR) &&
+            if((ii == meTRUE) && (funcTypes[fnum] & FUN_GETVAR) &&
                ((varVal = getval(arg1)) == abortm))
-                ii = FALSE ;
+                ii = meFALSE ;
         }
         else
+#endif
         {
             alarmState &= ~meALARM_VARIABLE ;
             ii = macarg(arg1) ;
         }
-        if((ii != TRUE) ||
+        if((ii != meTRUE) ||
            ((funcTypes[fnum] & FUN_ARG2) &&
-            ((macarg(arg2) != TRUE) ||
+            ((macarg(arg2) != meTRUE) ||
              ((funcTypes[fnum] & FUN_ARG3) &&
-              (macarg(arg3) != TRUE)))))
+              (macarg(arg3) != meTRUE)))))
         {
             mlwrite(MWABORT|MWWAIT,(meUByte *)"[Failed to get argument for function &%s]",fname);
             return abortm ;
@@ -2057,6 +2142,7 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             return varVal ;
         meStrcpy (evalResult, arg1);
         return evalResult;
+#if MEOPT_EXTENDED
     case UFEXIST:
         switch (getMacroTypeS(arg1)) 
         {
@@ -2091,13 +2177,13 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
                 narg = 0 ;
             else
                 narg = (meUInt) (0x80000000+meAtoi(arg1)) ;
-#if LCLBIND
-            for(ii=0 ; ii<curbp->nobbinds ; ii++)
+#if MEOPT_LOCALBIND
+            for(ii=0 ; ii<frameCur->bufferCur->bindCount ; ii++)
             {
-                if((curbp->bbinds[ii].index == idx) &&
-                   (curbp->bbinds[ii].arg == narg))
+                if((frameCur->bufferCur->bindList[ii].index == idx) &&
+                   (frameCur->bufferCur->bindList[ii].arg == narg))
                 {
-                    code = curbp->bbinds[ii].code ;
+                    code = frameCur->bufferCur->bindList[ii].code ;
                     break ;
                 }
             }
@@ -2118,6 +2204,7 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
                 evalResult[0] = '\0' ;
             return evalResult ;
         }
+#endif
     case UFABS:        return meItoa(abs(meAtoi(arg1)));
     case UFADD:        return meItoa(meAtoi(arg1) + meAtoi(arg2));
     case UFSUB:        return meItoa(meAtoi(arg1) - meAtoi(arg2));
@@ -2153,6 +2240,11 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             return meItoa(ii);
         }
     case UFNEG:        return meItoa(0-meAtoi(arg1));
+    case UFOPT:
+        arg1[3] = '\0' ;
+        return meLtoa(meStrstr(meOptionList,arg1) != NULL) ;
+        
+#if MEOPT_EXTENDED
     case UFATOI:       return meItoa(arg1[0]) ;
     case UFITOA:
         {
@@ -2167,10 +2259,11 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
                 evalResult[1] = '\0' ;
             return evalResult ;
         }
+#endif
     case UFCAT:
         {
             meUByte *dd, *ss ;
-            int ii = MAXBUF-1 ;
+            int ii = meBUF_SIZE_MAX-1 ;
             
             /* first string can be copied, second we must check the left */
             dd = evalResult ;
@@ -2281,6 +2374,7 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             }
             return meItoa(ii) ;
         }
+#if MEOPT_EXTENDED
     case UFSLOWER:
         {
             meUByte cc, *dd, *ss ;
@@ -2308,7 +2402,7 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
     case UFISIN:
     case UFRISIN:
         {
-            Fintssi cmpIFunc ;
+            meIFuncSSI cmpIFunc ;
             meUByte cc, *ss=arg2, *lss=NULL ;
             int len, off=0 ;
             len = meStrlen(arg1) ;
@@ -2339,7 +2433,7 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
     case UFREP:
     case UFIREP:
         {
-            Fintssi cmpIFunc ;
+            meIFuncSSI cmpIFunc ;
             meUByte cc, *ss=arg1 ;
             int mlen, dlen=0, rlen, ii ;
             mlen = meStrlen(arg2) ;
@@ -2370,11 +2464,12 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
                     }
                     evalResult[dlen++] = cc ;
                 }
-            } while(dlen+rlen < MAXBUF) ;
+            } while(dlen+rlen < meBUF_SIZE_MAX) ;
             evalResult[dlen] = '\0' ;
             return evalResult ;
         }
-#if MAGIC
+#endif
+#if MEOPT_MAGIC
     case UFXREP:
     case UFXIREP:
         {
@@ -2391,14 +2486,14 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
                 if(ii)
                 {
                     mlen = meRegexStrCmp.group[0].start - soff ;
-                    if(dlen+mlen >= MAXBUF)
+                    if(dlen+mlen >= meBUF_SIZE_MAX)
                         break ;
                     meStrncpy(evalResult+dlen,arg1+soff,mlen) ;
                     dlen += mlen ;
                     rr = arg3 ;
                     while((cc=*rr++) != '\0')
                     {
-                        if(dlen >= MAXBUF-1)
+                        if(dlen >= meBUF_SIZE_MAX-1)
                             break ;
                         if((cc == '\\') && (*rr != '\0'))
                         {
@@ -2411,7 +2506,7 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
                                 if((soff=meRegexStrCmp.group[cc].start) >= 0)
                                 {
                                     mlen = meRegexStrCmp.group[cc].end - soff ;
-                                    if(dlen+mlen >= MAXBUF)
+                                    if(dlen+mlen >= meBUF_SIZE_MAX)
                                         break ;
                                     if(cc)
                                         soff += meRegexStrCmp.group[0].start ;
@@ -2440,7 +2535,7 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
                     break ;
                 if(!ii || (mlen == 0))
                 {
-                    if(dlen >= MAXBUF-2)
+                    if(dlen >= meBUF_SIZE_MAX-2)
                         break ;
                     soff++ ;
                     if(cc == 0xff)
@@ -2455,20 +2550,23 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             return evalResult ;
         }
 #endif
+#if MEOPT_EXTENDED
     case UFNBMODE:
         {
-            BUFFER *bp ;
+            meBuffer *bp ;
             if((bp = bfind(arg1,0)) == NULL)
                 return abortm ;
-            return queryMode(arg2,bp->b_mode) ;
+            return queryMode(arg2,bp->mode) ;
         }
-    case UFBMODE:      return queryMode(arg1,curbp->b_mode) ;
+    case UFINWORD:     return(meLtoa(isWord(arg1[0])));
+#endif
+    case UFBMODE:      return queryMode(arg1,frameCur->bufferCur->mode) ;
     case UFGMODE:      return queryMode(arg1,globMode) ;
     case UFBAND:       return(meItoa(meAtoi(arg1) & meAtoi(arg2)));
     case UFBNOT:       return(meItoa(~meAtoi(arg1))) ;
     case UFBOR:        return(meItoa(meAtoi(arg1) |  meAtoi(arg2)));
     case UFBXOR:       return(meItoa(meAtoi(arg1) ^  meAtoi(arg2)));
-    case UFNOT:        return(meLtoa(meAtol(arg1) == FALSE));
+    case UFNOT:        return(meLtoa(meAtol(arg1) == meFALSE));
     case UFAND:        return(meLtoa(meAtol(arg1) && meAtol(arg2)));
     case UFOR:         return(meLtoa(meAtol(arg1) || meAtol(arg2)));
     case UFEQUAL:      return(meLtoa(meAtoi(arg1) == meAtoi(arg2)));
@@ -2477,12 +2575,12 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
     case UFSEQUAL:     return(meLtoa(meStrcmp(arg1,arg2) == 0));
     case UFSLESS:      return(meLtoa(meStrcmp(arg1,arg2) < 0));
     case UFSGREAT:     return(meLtoa(meStrcmp(arg1,arg2) > 0));
-    case UFINWORD:     return(meLtoa(isWord(arg1[0])));
     case UFISEQUAL:    return(meLtoa(meStricmp(arg1,arg2) == 0));
-#if MAGIC
+#if MEOPT_MAGIC
     case UFXSEQ:       return(meLtoa(regexStrCmp(arg1,arg2,1) == 1));
     case UFXISEQ:      return(meLtoa(regexStrCmp(arg1,arg2,0) == 1));
 #endif
+#if MEOPT_EXTENDED
     case UFLDEL:
         {
             int  index=meAtoi(arg2) ;
@@ -2570,14 +2668,14 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             index = (int) (s1 - arg1) ;
             meStrncpy(evalResult,arg1,index) ;
             ii = meStrlen(arg3) ;
-            if(ii+index < MAXBUF)
+            if(ii+index < meBUF_SIZE_MAX)
             {
                 meStrncpy(evalResult+index,arg3,ii) ;
                 index += ii ;
                 if(fnum == UFLINS)
                     s2 = s1-1 ;
                 ii = meStrlen(s2) ;
-                if(ii+index < MAXBUF)
+                if(ii+index < meBUF_SIZE_MAX)
                 {
                     meStrcpy(evalResult+index,s2) ;
                     index += ii ;
@@ -2660,7 +2758,7 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
         }
     case UFSET:
         {
-            if(setVar(arg1,arg2,regs) != TRUE)
+            if(setVar(arg1,arg2,regs) != meTRUE)
                 return abortm ;
             meStrcpy (evalResult, arg2);
             return evalResult;
@@ -2668,14 +2766,14 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
     case UFDEC:
         {
             varVal = meItoa(meAtoi(varVal) - meAtoi(arg2));
-            if(setVar(arg1,varVal,regs) != TRUE)
+            if(setVar(arg1,varVal,regs) != meTRUE)
                 return abortm ;
             return varVal ;
         }
     case UFINC:
         {
             varVal = meItoa(meAtoi(varVal) + meAtoi(arg2));
-            if(setVar(arg1,varVal,regs) != TRUE)
+            if(setVar(arg1,varVal,regs) != meTRUE)
                 return abortm ;
             return varVal ;
         }
@@ -2684,7 +2782,7 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             /* cannot copy into evalResult here cos meItoa uses it */
             meStrcpy(arg3,varVal) ;
             varVal = meItoa(meAtoi(varVal) - meAtoi(arg2));
-            if(setVar(arg1,varVal,regs) != TRUE)
+            if(setVar(arg1,varVal,regs) != meTRUE)
                 return abortm ;
             meStrcpy(evalResult,arg3) ;
             return evalResult ;
@@ -2694,15 +2792,16 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             /* cannot copy into evalResult here cos meItoa uses it */
             meStrcpy(arg3,varVal) ;
             varVal = meItoa(meAtoi(varVal) + meAtoi(arg2));
-            if(setVar(arg1,varVal,regs) != TRUE)
+            if(setVar(arg1,varVal,regs) != meTRUE)
                 return abortm ;
             meStrcpy(evalResult,arg3) ;
             return evalResult ;
         }
-#if REGSTRY
+#endif
+#if MEOPT_REGISTRY
     case UFREGISTRY:
         {
-            REGHANDLE reg;
+            meRegNode *reg;
             meUByte *p = arg3;
             /*
              * Read a value from the registry.
@@ -2724,6 +2823,7 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             return evalResult;
         }
 #endif
+#if MEOPT_EXTENDED
     case UFSPRINT:                         /* Monamic function !! */
         {
             /*
@@ -2772,16 +2872,16 @@ get_flag:
                     switch((c = *s++))
                     {
                     case 'n':                   /* Replicate string */
-                        if (macarg (arg2) != TRUE) 
+                        if (macarg (arg2) != meTRUE) 
                             return abortm;
                         count *= meAtoi(arg2);
                     case 's':                   /* String */
-                        if (macarg (arg2) != TRUE)
+                        if (macarg (arg2) != meTRUE)
                             return abortm;
                         nn = meStrlen(arg2) ;
                         while(--count >= 0)
                         {
-                            if(index+nn >= MAXBUF)
+                            if(index+nn >= meBUF_SIZE_MAX)
                                 /* break if we dont have enough space */
                                 break ;
                             meStrcpy(arg3+index,arg2) ;
@@ -2792,12 +2892,12 @@ get_flag:
                     case 'x':                   /* Hexadecimal */
                     case 'd':                   /* Decimal */
                     case 'o':                   /* Octal */
-                        if (macarg (arg2) != TRUE) 
+                        if (macarg (arg2) != meTRUE) 
                             return abortm;
                         nn = meAtoi(arg2) ;
                         c = *s ;
                         *s = '\0' ;
-                        if(index < MAXBUF-16)
+                        if(index < meBUF_SIZE_MAX-16)
                             /* Only do it if we have enough space */
                             index += sprintf((char *)arg3+index,(char *)p,nn) ;
                         *s = c ;
@@ -2811,13 +2911,13 @@ get_flag:
                             s-- ;
                             goto get_flag ;
                         }
-                        else if(index >= MAXBUF)
+                        else if(index >= meBUF_SIZE_MAX)
                             break ;
                         else
                             arg3[index++] = c;  /* Just a literal char - pass in */
                     }
                 }
-                else if(index >= MAXBUF)
+                else if(index >= meBUF_SIZE_MAX)
                     break ;
                 else
                     arg3[index++] = c;          /* Just a literal char - pass in */
@@ -2829,7 +2929,7 @@ get_flag:
     case UFSTAT:
         {
             static meUByte typeRet[] = "NRDXHF" ;
-            meSTAT stats ;
+            meStat stats ;
             int    ftype ;
             /*
              * 0 -> N - If file is nasty
@@ -2860,22 +2960,67 @@ get_flag:
                 
             case 'd':
                 /* file date stamp */
-                ftype = stats.stmtime ;
+                ftype = meFiletimeToInt(stats.stmtime) ;
                 break ;
                 
+            case 'm':
+                {
+                    /* file modified date stamp in a useable form */
+                    /* Format same as $time variable */
+#ifdef _UNIX
+                    struct tm *tmp;            /* Pointer to time frame. */
+                    if ((tmp = localtime(&stats.stmtime)) != NULL)
+                        sprintf((char *)evalResult, "%4d%3d%2d%2d%1d%2d%2d%2d  -",
+                                tmp->tm_year+1900,tmp->tm_yday,tmp->tm_mon+1,tmp->tm_mday,
+                                tmp->tm_wday,tmp->tm_hour,tmp->tm_min,tmp->tm_sec);
+                    else
+#endif
+#ifdef _DOS
+                    if((stats.stmtime & 0x0ffff) != 0x7fff)
+                    {
+                        meInt year, month, day, doy ;
+                        
+                        year = ((stats.stmtime >> 25) & 0x007f)+1980 ;
+                        month = ((stats.stmtime >> 21) & 0x000f) ;
+                        day = ((stats.stmtime >> 16) & 0x001f) ;
+                        doy = meGetDayOfYear(year,month,day) ;
+                        sprintf((char *)evalResult,"%4d%3d%2d%2d-%2d%2d%2d  -",
+                                (int) year,(int) doy,(int) month,(int) day,
+                                (int) ((stats.stmtime >> 11) & 0x001f),
+                                (int) ((stats.stmtime >>  5) & 0x003f),
+                                (int) ((stats.stmtime & 0x001f)  << 1)) ;
+                    }
+                    else
+#endif
+#ifdef _WIN32
+                    SYSTEMTIME tmp;
+                    FILETIME ftmp;
+                    meInt doy ;
+                    
+                    if(FileTimeToLocalFileTime(&stats.stmtime,&ftmp) && FileTimeToSystemTime(&ftmp,&tmp))
+                    {
+                        doy = meGetDayOfYear(tmp.wYear,tmp.wMonth,tmp.wDay) ;
+                        sprintf((char *)evalResult, "%4d%3d%2d%2d%1d%2d%2d%2d%3d",
+                                tmp.wYear,doy,tmp.wMonth,tmp.wDay,tmp.wDayOfWeek,tmp.wHour,
+                                tmp.wMinute,tmp.wSecond,tmp.wMilliseconds) ;
+                    }
+                    else
+#endif
+                        sprintf((char *)evalResult, "   -  - - -- - - -  -") ;
+                    return evalResult;
+                }
+            
             case 'r':
                 /* File read permission */
                 /* If its a nasty or it doesn't exist - no */
                 if((ftype == meFILETYPE_NASTY) || (ftype == meFILETYPE_NOTEXIST))
                     return meLtoa(0) ;
                 /* If its a url then do we support url ? */
-#if URLAWAR
                 if((ftype == meFILETYPE_HTTP) || (ftype == meFILETYPE_FTP))
-#ifdef _URLSUPP
+#if MEOPT_SOCKET
                     return meLtoa(1) ;
 #else
                     return meLtoa(0) ;
-#endif
 #endif
                 /* If its a DOS/WIN directory - yes */
 #if (defined _DOS) || (defined _WIN32)
@@ -2896,10 +3041,11 @@ get_flag:
                 /* File type - use look up table, see first comment */
                 if((ftype == meFILETYPE_DIRECTORY) &&
 #ifdef _UNIX
-                   (stats.stmtime == -1))
+                   meFiletimeIsInit(stats.stmtime)
 #else
-                   meTestDir(arg2))
+                   meTestDir(arg2)
 #endif
+                   )
                     ftype = meFILETYPE_NOTEXIST ;
                 evalResult[0] = typeRet[ftype] ;
                 evalResult[1] = '\0' ;
@@ -2908,12 +3054,10 @@ get_flag:
             case 'w':
                 /* File write permission */
                 /* If nasty or url - no */
-                if((ftype == meFILETYPE_NASTY)
-#if URLAWAR
-                   || (ftype == meFILETYPE_HTTP) || (ftype == meFILETYPE_FTP)
-#endif
-                   )
+                if((ftype == meFILETYPE_NASTY) || (ftype == meFILETYPE_HTTP) ||
+                   (ftype == meFILETYPE_FTP))
                     return meLtoa(0) ;
+                
                 /* if it doesnt exist or its an DOS/WIN directory - yes */
                 if((ftype == meFILETYPE_NOTEXIST)
 #if (defined _DOS) || (defined _WIN32)
@@ -2926,11 +3070,8 @@ get_flag:
             case 'x':
                 /* File execute permission */
                 /* If nasty or doesnt exist, or url then no */
-                if((ftype == meFILETYPE_NASTY) || (ftype == meFILETYPE_NOTEXIST) 
-#if URLAWAR
-                   || (ftype == meFILETYPE_HTTP) || (ftype == meFILETYPE_FTP)
-#endif
-                   )
+                if((ftype == meFILETYPE_NASTY) || (ftype == meFILETYPE_NOTEXIST) ||
+                   (ftype == meFILETYPE_HTTP) || (ftype == meFILETYPE_FTP))
                     return meLtoa(0) ;
 #if (defined _DOS) || (defined _WIN32)
                 /* If directory, simulate unix style execute flag and return yes */
@@ -2949,6 +3090,7 @@ get_flag:
             }                
             return meItoa(ftype) ;
         }
+#endif
     }
     return abortm ;
 }
@@ -2958,11 +3100,11 @@ get_flag:
 int
 unsetVariable(int f, int n)     /* Delete a variable */
 {
-    register meVARLIST  *varList ;      /* User variable pointer */
-    register meVARIABLE *vptr, *prev;   /* User variable pointer */
+    register meVarList  *varList ;      /* User variable pointer */
+    register meVariable *vptr, *prev;   /* User variable pointer */
     register int   vnum;                /* ordinal number of var refrenced */
-    meREGISTERS *regs ;
-    meUByte var[NSTRING] ;                 /* name of variable to fetch */
+    meRegister *regs ;
+    meUByte var[meSBUF_SIZE_MAX] ;                 /* name of variable to fetch */
     meUByte *vv ;
     
     /* First get the variable to set.. */
@@ -2971,10 +3113,10 @@ unsetVariable(int f, int n)     /* Delete a variable */
     alarmState |= meALARM_VARIABLE ;
     /* horrid global variable, see notes at definition */
     gmaLocalRegPtr = meRegCurr ;
-    vnum = meGetString((meUByte *)"Unset variable", MLVARBL, 0, var, NSTRING) ;
+    vnum = meGetString((meUByte *)"Unset variable", MLVARBL, 0, var, meSBUF_SIZE_MAX) ;
     regs = gmaLocalRegPtr ;
     alarmState &= ~meALARM_VARIABLE ;
-    if(vnum != TRUE)
+    if(vnum != meTRUE)
         return vnum ;
     
     /* Check the legality and find the var */
@@ -2985,7 +3127,7 @@ unsetVariable(int f, int n)     /* Delete a variable */
     else if(vnum == TKLVR)
     {        
         meUByte *ss ;
-        BUFFER *bp ;
+        meBuffer *bp ;
         
         if((ss=meStrrchr(vv,':')) != NULL)
         {
@@ -2998,7 +3140,7 @@ unsetVariable(int f, int n)     /* Delete a variable */
             vv = ss ;
         }
         else
-            bp = curbp ;
+            bp = frameCur->bufferCur ;
         varList = &(bp->varList) ;
     }
     else if(vnum == TKCVR)
@@ -3037,7 +3179,7 @@ unsetVariable(int f, int n)     /* Delete a variable */
             varList->count-- ;
             meNullFree(vptr->value) ;
             meFree(vptr) ;
-            return TRUE ;           /* True exit */
+            return meTRUE ;           /* True exit */
         }
         if(vnum > 0)
             break ;
@@ -3050,49 +3192,49 @@ unsetVariable(int f, int n)     /* Delete a variable */
 }
 
 int
-descVariable(int f, int n)      /* describe a variable */
-{
-    meUByte  var[NSTRING]; /* name of variable to fetch */
-    meUByte *ss ;
-    int    status ;
-    
-    /* first get the variable to describe */
-    if((status = meGetString((meUByte *)"Show variable",MLVARBL,0,var,NSTRING)) != TRUE)
-        return(status);
-    if((ss = getval(var)) == NULL)
-        return mlwrite(MWABORT,(meUByte *)"Unknown variable type") ;
-    mlwrite(0,(meUByte *)"Current setting is \"%s\"", ss) ;
-    return TRUE ;
-} 
-
-
-int
 setVariable(int f, int n)       /* set a variable */
 {
     register int   status ;         /* status return */
-    meUByte var[NSTRING] ;            /* name of variable to fetch */
-    meUByte value[MAXBUF] ;           /* value to set variable to */
-    meREGISTERS *regs ;
+    meUByte var[meSBUF_SIZE_MAX] ;            /* name of variable to fetch */
+    meUByte value[meBUF_SIZE_MAX] ;           /* value to set variable to */
+    meRegister *regs ;
     
     /* horrid global variable, see notes at definition */
     gmaLocalRegPtr = meRegCurr ;
     /* set this flag to indicate that the variable name is required, NOT
      * its value */
     alarmState |= meALARM_VARIABLE ;
-    status = meGetString((meUByte *)"Set variable", MLVARBL, 0, var,NSTRING) ;
+    status = meGetString((meUByte *)"Set variable", MLVARBL, 0, var,meSBUF_SIZE_MAX) ;
     alarmState &= ~meALARM_VARIABLE ;
     regs = gmaLocalRegPtr ;
-    if(status != TRUE)
+    if(status != meTRUE)
         return status ;
     /* get the value for that variable */
-    if (f == TRUE)
+    if (f == meTRUE)
         meStrcpy(value, meItoa(n));
-    else if((status = meGetString((meUByte *)"Value", MLFFZERO, 0, value,MAXBUF)) != TRUE)
+    else if((status = meGetString((meUByte *)"Value", MLFFZERO, 0, value,meBUF_SIZE_MAX)) != meTRUE)
         return status ;
     
     return setVar(var,value,regs) ;
 }
 
+int
+descVariable(int f, int n)      /* describe a variable */
+{
+    meUByte  var[meSBUF_SIZE_MAX]; /* name of variable to fetch */
+    meUByte *ss ;
+    int    status ;
+    
+    /* first get the variable to describe */
+    if((status = meGetString((meUByte *)"Show variable",MLVARBL,0,var,meSBUF_SIZE_MAX)) != meTRUE)
+        return(status);
+    if((ss = getval(var)) == NULL)
+        return mlwrite(MWABORT,(meUByte *)"Unknown variable type") ;
+    mlwrite(0,(meUByte *)"Current setting is \"%s\"", ss) ;
+    return meTRUE ;
+} 
+
+#if MEOPT_EXTENDED
 /*
  * showVariable
  * Format a variable for display. This is a helper function for 
@@ -3109,9 +3251,9 @@ setVariable(int f, int n)       /* set a variable */
  *    name......... "value"
  */
 static void
-showVariable (BUFFER *bp, meUByte prefix, meUByte *name, meUByte *value)
+showVariable (meBuffer *bp, meUByte prefix, meUByte *name, meUByte *value)
 {
-    meUByte buf[MAXBUF+NSTRING+16] ;
+    meUByte buf[meBUF_SIZE_MAX+meSBUF_SIZE_MAX+16] ;
     int len;
     
     if (value == NULL)
@@ -3122,7 +3264,7 @@ showVariable (BUFFER *bp, meUByte prefix, meUByte *name, meUByte *value)
         buf[len++] = '.';
     buf[len++] = ' ';
     buf[len++] = '"';
-    len = expandexp(-1,value,MAXBUF+NSTRING+16-2,len,buf,-1,NULL,meEXPAND_BACKSLASH|meEXPAND_FFZERO) ;
+    len = expandexp(-1,value,meBUF_SIZE_MAX+meSBUF_SIZE_MAX+16-2,len,buf,-1,NULL,meEXPAND_BACKSLASH|meEXPAND_FFZERO) ;
     buf[len++] = '"';
     buf[len] = '\0';
     addLineToEob(bp,buf);
@@ -3136,31 +3278,31 @@ showVariable (BUFFER *bp, meUByte prefix, meUByte *name, meUByte *value)
 int
 listVariables (int f, int n)
 {
-    meVARIABLE *tv ;
-    WINDOW *wp ;
-    BUFFER *bp ;
-    meUByte   buf[MAXBUF] ;
+    meVariable *tv ;
+    meWindow *wp ;
+    meBuffer *bp ;
+    meUByte   buf[meBUF_SIZE_MAX] ;
     int     ii ;
     
     if((wp = wpopup(BvariablesN,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR))) == NULL)
-        return FALSE ;
-    bp = wp->w_bufp ;
+        return meFALSE ;
+    bp = wp->buffer ;
     
     addLineToEob(bp,(meUByte *)"Register variables:");
     addLineToEob(bp,(meUByte *)"") ;
     
     buf[0] = 'g';
     buf[2] = '\0';
-    for(ii = 0; ii<meNUMREG ; ii++)
+    for(ii = 0; ii<meREGISTER_MAX ; ii++)
     {
         buf[1] = (int)('0') + ii;
         showVariable (bp, '#', buf,meRegHead->reg[ii]);
     }
     addLineToEob(bp,(meUByte *)"") ;
-    sprintf((char *)buf,"Buffer [%s] variables:", curbp->b_bname);
+    sprintf((char *)buf,"Buffer [%s] variables:", frameCur->bufferCur->name);
     addLineToEob(bp,buf);
     addLineToEob(bp,(meUByte *)"") ;
-    tv = curbp->varList.head ;
+    tv = frameCur->bufferCur->varList.head ;
     while(tv != NULL)
     {
         showVariable (bp, ':', tv->name,tv->value);
@@ -3179,12 +3321,14 @@ listVariables (int f, int n)
     for (tv=usrVarList.head ; tv != NULL ; tv = tv->next)
         showVariable (bp, '%', tv->name,tv->value);
     
-    bp->b_dotp = lforw(bp->b_linep);
-    bp->b_doto = 0 ;
-    bp->line_no = 0 ;
-    meModeClear(bp->b_mode,MDEDIT) ;    /* don't flag this as a change */
-    meModeSet(bp->b_mode,MDVIEW) ;      /* put this buffer view mode */
+    bp->dotLine = meLineGetNext(bp->baseLine);
+    bp->dotOffset = 0 ;
+    bp->dotLineNo = 0 ;
+    meModeClear(bp->mode,MDEDIT) ;    /* don't flag this as a change */
+    meModeSet(bp->mode,MDVIEW) ;      /* put this buffer view mode */
     resetBufferWindows(bp) ;            /* Update the window */
     mlerase(MWCLEXEC);                  /* clear the mode line */
-    return TRUE ;
+    return meTRUE ;
 }
+#endif
+

@@ -35,25 +35,34 @@
 DEFVAR ("auto-time",           EVAUTOTIME)      /* auto save buffer time */
 DEFVAR ("box-chars",           EVBOXCHRS)       /* Box character set */
 DEFVAR ("buffer-backup",       EVCBUFBACKUP)    /* current buffer backup name */
+#if MEOPT_FILEHOOK
 DEFVAR ("buffer-bhook",        EVBUFBHK)        /* Buffer bhook  */
+#endif
 DEFVAR ("buffer-bname",        EVCBUFNAME)      /* current buffer name */
+#if MEOPT_FILEHOOK
 DEFVAR ("buffer-dhook",        EVBUFDHK)        /* Buffer dhook  */
 DEFVAR ("buffer-ehook",        EVBUFEHK)        /* Buffer ehook  */
 DEFVAR ("buffer-fhook",        EVBUFFHK)        /* Buffer fhook  */
+#endif
 DEFVAR ("buffer-fmod",         EVBUFFMOD)       /* file mod or attributes */
 DEFVAR ("buffer-fname",        EVCFNAME)        /* current file name */
-#if HILIGHT
+#if MEOPT_HILIGHT
 DEFVAR ("buffer-hilight",      EVBUFHIL)        /* Buffers hilight scheme */
 DEFVAR ("buffer-indent",       EVBUFIND)        /* Buffers indent scheme */
 #endif
 DEFVAR ("buffer-input",        EVBUFINP)        /* buffer input handler */
+#if MEOPT_IPIPES
 DEFVAR ("buffer-ipipe",        EVBUFIPIPE)      /* buffer ipipe input handler */
+#endif
 DEFVAR ("buffer-mask",         EVBUFMASK)       /* buffer isWord mask */
+#if MEOPT_EXTENDED
 DEFVAR ("buffer-mode-line",    EVBMDLINE)       /* buffer mode-line format string */
 DEFVAR ("buffer-names",        EVBNAMES)        /* buffer names access variable */
-#if COLOR
+#endif
+#if MEOPT_COLOR
 DEFVAR ("buffer-scheme",       EVBUFSCHM)       /* Window colour  */
 #endif
+#if MEOPT_CFENCE
 DEFVAR ("c-brace",             EVCBRACE)        /* c-mode brace indent   */
 DEFVAR ("c-case",              EVCCASE)         /* c-mode case indent    */
 DEFVAR ("c-contcomm",          EVCCONTCOMM)     /* c-mode cont comm str  */
@@ -62,20 +71,30 @@ DEFVAR ("c-contmax",           EVCCONTMAX)      /* c-mode cont state ind */
 DEFVAR ("c-margin",            EVCMARGIN)       /* c-mode comm margin    */
 DEFVAR ("c-statement",         EVCSTATEMENT)    /* c-mode statement ind  */
 DEFVAR ("c-switch",            EVCSWITCH)       /* c-mode switch indent   */
+#endif
+#if MEOPT_EXTENDED
 DEFVAR ("command-names",       EVCNAMES)        /* command names access variable */
+#endif
 DEFVAR ("cursor-blink",        EVCURSORBLK)     /* cursor blink rate */
-#if COLOR
+#if MEOPT_COLOR
 DEFVAR ("cursor-color",        EVCURSORCOL)     /* cursor color */
 #endif
 DEFVAR ("cursor-x",            EVCURSORX)       /* cursor x position */
 DEFVAR ("cursor-y",            EVCURSORY)       /* cursor y position */
+#if MEOPT_DEBUGM
 DEFVAR ("debug",               EVDEBUG)         /* macro debugging */
+#endif
+#if MEOPT_MOUSE
 DEFVAR ("delay-time",          EVDELAYTIME)     /* mouse-time delay time (msec) */
+#endif
+#if MEOPT_EXTENDED
 DEFVAR ("file-ignore",         EVFILEIGNORE)    /* file extension ignore list*/
 DEFVAR ("file-names",          EVFNAMES)        /* file names access variable*/
-#if FLNEXT
+#endif
+#if MEOPT_FILENEXT
 DEFVAR ("file-template",       EVFILETEMP)      /* file next file template   */
 #endif
+#if MEOPT_WORDPRO
 DEFVAR ("fill-bullet",         EVFILLBULLET)    /* Fill bullet character set */
 DEFVAR ("fill-bullet-len",     EVFILLBULLETLEN) /* Fill bullet lookahead length */ 
 DEFVAR ("fill-col",            EVFILLCOL)       /* current fill column */
@@ -83,42 +102,53 @@ DEFVAR ("fill-eos",            EVFILLEOS)       /* Fill end-of-sentance characte
 DEFVAR ("fill-eos-len",        EVFILLEOSLEN)    /* number of ' ' to insert after an eos  */
 DEFVAR ("fill-ignore",         EVFILLIGNORE)    /* Fill ignore character set */
 DEFVAR ("fill-mode",           EVFILLMODE)      /* Justify mode */
-#if SPELL
+#endif
+#if MEOPT_SPELL
 DEFVAR ("find-words",          EVFINDWORDS)     /* Find words matching mask, sim. to file-names */
 #endif
+#if MEOPT_CFENCE
 DEFVAR ("fmatchdelay",         EVMATCHLEN)      /* Fence matchin length */
+#endif
 DEFVAR ("global-fmod",         EVGLOBFMOD)      /* file mod or attributes */
-#if COLOR
+#if MEOPT_COLOR
 DEFVAR ("global-scheme",       EVGLOBSCHM)      /* Global colour  */
 #endif
 DEFVAR ("home",                EVHOMEDIR)       /* Home directory */
+#if MEOPT_CALLBACK
 DEFVAR ("idle-time",           EVIDLETIME)      /* idle-time time period (msec)*/
+#endif
 DEFVAR ("kept-versions",       EVKEPTVERS)      /* Number of backup files */
-#if COLOR
+#if MEOPT_HILIGHT
 DEFVAR ("line-scheme",         EVLINESCHM)      /* Current line color scheme */
 #endif
-#if FLNEXT
+#if MEOPT_FILENEXT
 DEFVAR ("line-template",       EVLINETEMP)      /* file next line template   */
 #endif
-#if COLOR
+#if MEOPT_COLOR
 DEFVAR ("ml-scheme",           EVMLSCHM)        /* Message line color scheme */
 #endif
 DEFVAR ("mode-line",           EVMODELINE)      /* mode-line format string */
-#if COLOR
+#if MEOPT_COLOR
 DEFVAR ("mode-line-scheme",    EVMDLNSCHM)      /* Mode line colour */
 #endif
+#if MEOPT_EXTENDED
 DEFVAR ("mode-names",          EVMNAMES)        /* mode names access variable */
+#endif
+#if MEOPT_MOUSE
 DEFVAR ("mouse",               EVMOUSE)         /* mouse config variable */
 DEFVAR ("mouse-pos",           EVMOUSEPOS)      /* decoded last mouse position */
 DEFVAR ("mouse-x",             EVMOUSEX)        /* last mouse x position */
 DEFVAR ("mouse-y",             EVMOUSEY)        /* last mouse y position */
-#if COLOR
+#endif
+#if MEOPT_COLOR && MEOPT_OSD
 DEFVAR ("osd-scheme",          EVOSDSCHM)       /* Main osd color scheme */
 #endif
 DEFVAR ("platform",            EVMACHINE)       /* the name of the platform */ 
 DEFVAR ("progname",            EVPROGNM)        /* argv[0] */ 
+#if MEOPT_EXTENDED
 DEFVAR ("random",              EVRANDOM)        /* A random number       */
-#if DORCS
+#endif
+#if MEOPT_RCS
 DEFVAR ("rcs-ci-com",          EVRCSCICOM)      /* rcs ci command-line       */
 DEFVAR ("rcs-cif-com",         EVRCSCIFCOM)     /* rcs ci first time com     */
 DEFVAR ("rcs-co-com",          EVRCSCOCOM)      /* rcs co command-line       */
@@ -126,8 +156,12 @@ DEFVAR ("rcs-cou-com",         EVRCSCOUCOM)     /* rcs co & unlock com-line  */
 DEFVAR ("rcs-file",            EVRCSFILE)       /* rcs ci file extension     */
 DEFVAR ("rcs-ue-com",          EVRCSUECOM)      /* rcs unedit file com-line  */
 #endif
+#if MEOPT_EXTENDED
 DEFVAR ("recent-keys",         EVRECENTKEYS)    /* returns a list of recent key presses */
+#endif
+#if MEOPT_MOUSE
 DEFVAR ("repeat-time",         EVREPEATTIME)    /* mouse-time repeat time (msec) */
+#endif
 DEFVAR ("result",              EVRESULT)        /* Resultant status from call */
 DEFVAR ("screen-depth",        EVPAGELEN)       /* screen depth */
 DEFVAR ("screen-width",        EVCURWIDTH)      /* screen width */
@@ -135,98 +169,141 @@ DEFVAR ("scroll",              EVSCROLL)        /* horiz/vert scrolling method *
 DEFVAR ("scroll-bar",          EVSBAR)          /* Scroll bar */
 DEFVAR ("scroll-bar-scheme",   EVSBARSCHM)      /* Scroll bar color scheme */
 DEFVAR ("search-path",         EVSRCHPATH)      /* emf search path */
+#if MEOPT_EXTENDED
 DEFVAR ("show-modes",          EVSHWMDS)        /* Modes to show on the modeline */
 DEFVAR ("show-region",         EVSHWRGN)        /* selection hilighting flag */
+#endif
 DEFVAR ("status",              EVSTATUS)        /* returns the status of the last command */
 DEFVAR ("system",              EVSYSTEM)        /* System config variable  */
 DEFVAR ("tabsize",             EVTABSIZE)       /* TAB size - space substitution */
 DEFVAR ("tabwidth",            EVTABWIDTH)      /* TAB width in spaces */
+#if MEOPT_EXTENDED
 DEFVAR ("temp-name",           EVTEMPNAME)      /* Temporary file name */
 DEFVAR ("time",                EVTIME)          /* Current time */
+#endif
 DEFVAR ("timestamp",           EVTIMSTMP)       /* Time stamp string */
-#if COLOR
+#if MEOPT_COLOR
 DEFVAR ("trunc-scheme",        EVTRNCSCHM)      /* Truncate colour  */
 #endif
+#if MEOPT_EXTENDED
 DEFVAR ("variable-names",      EVVNAMES)        /* variable names access variable */
+#endif
 DEFVAR ("version",             EVVERSION)       /* ME version - the date code */
 DEFVAR ("window-acol",         EVABSCOL)        /* Absolute current column pos of cursor */
 DEFVAR ("window-aline",        EVABSLINE)       /* The Absolute current line # in file */
 DEFVAR ("window-chars",        EVWINCHRS)       /* Window character set */
 DEFVAR ("window-col",          EVCURCOL)        /* current column pos of cursor */
+#if MEOPT_EXTENDED
 DEFVAR ("window-depth",        EVWDEPTH)        /* Current wimdow depth */
+#endif
 DEFVAR ("window-line",         EVCURLINE)       /* current line # in file */
+#if MEOPT_EXTENDED
 DEFVAR ("window-mode-line",    EVWMDLINE)       /* window depth  */
 DEFVAR ("window-scroll-bar",   EVWSBAR)         /* window right scroll bar position */
 DEFVAR ("window-width",        EVWWIDTH)        /* Width of the current window */
 DEFVAR ("window-x-scroll",     EVWXSCROLL)      /* window x scroll position */
 DEFVAR ("window-xcl-scroll",   EVWXCLSCROLL)    /* window x cur line scroll position */
 DEFVAR ("window-y-scroll",     EVWYSCROLL)      /* window y scroll position */
+#endif
 
 DEFFUN (UFABS,      "abs", FUN_MONAMIC)     /* absolute value of a number */
 DEFFUN (UFADD,      "add", FUN_DYNAMIC)     /* add two numbers together */
 DEFFUN (UFAND,      "and", FUN_DYNAMIC)     /* boolean 'and' two logics together */
+#if MEOPT_EXTENDED
 DEFFUN (UFATOI,     "ato", FUN_MONAMIC)     /* char to integer i.e. "A" to "41" */
+#endif
 DEFFUN (UFBAND,     "ban", FUN_DYNAMIC)     /* Binary and test */
 DEFFUN (UFBMODE,    "bmo", FUN_MONAMIC)     /* Test for a given buffer mode */
 DEFFUN (UFBNOT,     "bno", FUN_MONAMIC)     /* Binary not test */
 DEFFUN (UFBOR,      "bor", FUN_DYNAMIC)     /* Binary or test */
 DEFFUN (UFBXOR,     "bxo", FUN_DYNAMIC)     /* Binary xor test */
 DEFFUN (UFCAT,      "cat", FUN_DYNAMIC)     /* concatinate string */
+#if MEOPT_EXTENDED
 DEFFUN (UFCBIND,    "cbi", FUN_MONAMIC)     /* Get keys command binding */
 DEFFUN (UFCOND,     "con", FUN_TRINAMIC)    /* conditional */
 DEFFUN (UFDEC,      "dec", FUN_DYNAMIC|FUN_SETVAR|FUN_GETVAR)     /* decrement variable and set */
+#endif
 DEFFUN (UFDIV,      "div", FUN_DYNAMIC)     /* division */
 DEFFUN (UFEQUAL,    "equ", FUN_DYNAMIC)     /* logical equality check */
+#if MEOPT_EXTENDED
 DEFFUN (UFEXIST,    "exi", FUN_MONAMIC|FUN_SETVAR) /* does the var/command exist */
 DEFFUN (UFFIND,     "fin", FUN_DYNAMIC)     /* find file */
+#endif
 DEFFUN (UFGMODE,    "gmo", FUN_MONAMIC)     /* Test for a given global mode */
 DEFFUN (UFGREATER,  "gre", FUN_DYNAMIC)     /* logical greater than */
+#if MEOPT_EXTENDED
 DEFFUN (UFINC,      "inc", FUN_DYNAMIC|FUN_SETVAR|FUN_GETVAR)     /* increment variable and set */
+#endif
 DEFFUN (UFIND,      "ind", FUN_MONAMIC)     /* evaluate indirect value */
+#if MEOPT_EXTENDED
 DEFFUN (UFINWORD,   "inw", FUN_MONAMIC)     /* given char inword? */
 DEFFUN (UFIREP,     "ire", FUN_TRINAMIC)    /* case insensitive replace str in str */
+#endif
 DEFFUN (UFISEQUAL,  "ise", FUN_DYNAMIC)     /* case insensitive string logical equality check */
+#if MEOPT_EXTENDED
 DEFFUN (UFISIN,     "isi", FUN_DYNAMIC)     /* case insensitive str in str */
 DEFFUN (UFITOA,     "ito", FUN_MONAMIC)     /* integer to char i.e. "41" to "A" */
 DEFFUN (UFKBIND,    "kbi", FUN_DYNAMIC)     /* Get commands key binding */
 DEFFUN (UFLDEL,     "lde", FUN_DYNAMIC)     /* delete list index value */
+#endif
 DEFFUN (UFLEFT,     "lef", FUN_DYNAMIC)     /* left string(string, len) */
 DEFFUN (UFLEN,      "len", FUN_MONAMIC)     /* Length of a string */
 DEFFUN (UFLESS,     "les", FUN_DYNAMIC)     /* logical less than */
+#if MEOPT_EXTENDED
 DEFFUN (UFLFIND,    "lfi", FUN_DYNAMIC)     /* list find value return index */
 DEFFUN (UFLGET,     "lge", FUN_DYNAMIC)     /* list get index value */
 DEFFUN (UFLINS,     "lin", FUN_TRINAMIC)    /* list insert index value */
 DEFFUN (UFLSET,     "lse", FUN_TRINAMIC)    /* list set index value */
+#endif
 DEFFUN (UFMID,      "mid", FUN_TRINAMIC)    /* mid string(string, pos, len) */
 DEFFUN (UFMOD,      "mod", FUN_DYNAMIC)     /* mod */
 DEFFUN (UFMUL,      "mul", FUN_DYNAMIC)     /* multiplication */
+#if MEOPT_EXTENDED
 DEFFUN (UFNBIND,    "nbi", FUN_MONAMIC)     /* Get keys command binding narg */
 DEFFUN (UFNBMODE,   "nbm", FUN_DYNAMIC)     /* Test for a given named buffer mode */
+#endif
 DEFFUN (UFNEG,      "neg", FUN_MONAMIC)     /* negate */
 DEFFUN (UFNOT,      "not", FUN_MONAMIC)     /* logical not */
+DEFFUN (UFOPT,      "opt", FUN_MONAMIC)     /* MEOPT availability test */
 DEFFUN (UFOR,       "or",  FUN_DYNAMIC)     /* boolean 'or' two logics together */
+#if MEOPT_EXTENDED
 DEFFUN (UFPDEC,     "pde", FUN_DYNAMIC|FUN_SETVAR|FUN_GETVAR)     /* post decrement variable and set */
 DEFFUN (UFPINC,     "pin", FUN_DYNAMIC|FUN_SETVAR|FUN_GETVAR)     /* post increment variable and set */
+#endif
+#if MEOPT_REGISTRY
 DEFFUN (UFREGISTRY, "reg", FUN_TRINAMIC)    /* Retreive a registry value */
+#endif
+#if MEOPT_EXTENDED
 DEFFUN (UFREP,      "rep", FUN_TRINAMIC)    /* replace str in str */
+#endif
 DEFFUN (UFRIGHT,    "rig", FUN_DYNAMIC)     /* right string(string, pos) */
+#if MEOPT_EXTENDED
 DEFFUN (UFRISIN,    "ris", FUN_DYNAMIC)     /* recursive case insensitive str in str */
 DEFFUN (UFRSIN,     "rsi", FUN_DYNAMIC)     /* recursive str in str */
+#endif
 DEFFUN (UFSEQUAL,   "seq", FUN_DYNAMIC)     /* string logical equality check */
+#if MEOPT_EXTENDED
 DEFFUN (UFSET,      "set", FUN_DYNAMIC|FUN_SETVAR)     /* Set variable */
+#endif
 DEFFUN (UFSGREAT,   "sgr", FUN_DYNAMIC)     /* string logical greater than */
+#if MEOPT_EXTENDED
 DEFFUN (UFSIN,      "sin", FUN_DYNAMIC)     /* str in str */
+#endif
 DEFFUN (UFSLESS,    "sle", FUN_DYNAMIC)     /* string logical less than */
+#if MEOPT_EXTENDED
 DEFFUN (UFSLOWER,   "slo", FUN_MONAMIC)     /* string to lower case */
 DEFFUN (UFSPRINT,   "spr", FUN_MONAMIC)     /* string logical less than */
 DEFFUN (UFSTAT,     "sta", FUN_DYNAMIC)     /* file stats */
+#endif
 DEFFUN (UFSUB,      "sub", FUN_DYNAMIC)     /* subtraction */
+#if MEOPT_EXTENDED
 DEFFUN (UFSUPPER,   "sup", FUN_MONAMIC)     /* string to upper case */
 DEFFUN (UFTRIMB,    "trb", FUN_MONAMIC)     /* Trim whitespace both */
 DEFFUN (UFTRIML,    "trl", FUN_MONAMIC)     /* Trim whitespace left */
 DEFFUN (UFTRIMR,    "trr", FUN_MONAMIC)     /* Trim whitespace right */
 DEFFUN (UFWHICH,    "whi", FUN_MONAMIC)     /* Does a which on a given program name */
-#if MAGIC
+#endif
+#if MEOPT_MAGIC
 DEFFUN (UFXIREP,    "xir", FUN_TRINAMIC)    /* regexp case insensitive replace str in str */
 DEFFUN (UFXISEQ,    "xis", FUN_DYNAMIC)     /* regexp case insensitive string logical equality check */
 DEFFUN (UFXREP,     "xre", FUN_TRINAMIC)    /* regexp replace str in str */

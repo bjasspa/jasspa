@@ -31,7 +31,7 @@
 
 #define	DEFBIND(x,y,z)	{(meUShort)(x), (meUShort)(z), (meUInt)(y)},
 
-KEYTAB  keytab[NBINDS] = {
+meBind  keytab[meBIND_MAX] = {
 
 #include	"ebind.def"
     

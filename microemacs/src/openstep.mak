@@ -24,6 +24,9 @@
 # Created:     Sat Jan 24 1998
 # Synopsis:    Make file for Openstep 4.2 on NeXT Motorola 040
 # Notes:
+#       ME's XTerm support has not yet been ported to NeXT so there is no
+#       'Window' builds.
+# 
 #	Run "make -f openstep.mak"      for optimised build produces ./me
 #	Run "make -f openstep.mak med"  for debug build produces     ./med
 #
@@ -37,48 +40,63 @@ INSTDIR	      = /usr/local/bin
 INSTPROGFLAGS = -s -o root -g root -m 0775
 #
 # Local Definitions
+CP            = cp
 RM            = rm -f
 CC            = cc 
 # -posix
 LD            = $(CC)
 STRIP         =	strip
-CDEBUG        =	-g  -Wall
+INSTALL       =	install
+CDEBUG        =	-g -Wall
 COPTIMISE     =	-O
 CDEFS         = -D_NEXT -I.
-LIBS          = -ltermcap
-LDFLAGS       = 
-INSTALL       =	install
+CONSOLE_DEFS  = -D_ME_CONSOLE
+NANOEMACS_DEFS= -D_NANOEMACS
+LDDEBUG       =
+LDOPTIMISE    =
+LDFLAGS       =
+LIBS          =
+CONSOLE_LIBS  = -ltermcap
 #
 # Rules
-.SUFFIXES: .c .o .od
+.SUFFIXES: .c .oc .on .odc .odn
 
-.c.o:	
-	$(CC) $(COPTIMISE) $(CDEFS) $(MAKECDEFS) -c $<
+.c.oc:
+	$(CC) $(COPTIMISE) $(CDEFS) $(MICROEMACS_DEFS) $(CONSOLE_DEFS) $(MAKECDEFS) -o $@ -c $<
 
-.c.od:	
-	$(CC) $(CDEBUG) $(CDEFS) $(MAKECDEFS) -o $@ -c $<
+.c.on:
+	$(CC) $(COPTIMISE) $(CDEFS) $(NANOEMACS_DEFS) $(CONSOLE_DEFS) $(MAKECDEFS) -o $@ -c $<
+
+# Debug Builds
+.c.odc:
+	$(CC) $(CDEBUG) $(CDEFS) $(MICROEMACS_DEFS) $(CONSOLE_DEFS) $(MAKECDEFS) -o $@ -c $<
+
+.c.odn:
+	$(CC) $(CDEBUG) $(CDEFS) $(NANOEMACS_DEFS) $(CONSOLE_DEFS) $(MAKECDEFS) -o $@ -c $<
 #
 # Source files
 STDHDR	= ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h \
-	  esearch.h eskeys.h estruct.h eterm.h evar.h evers.h \
+	  esearch.h eskeys.h estruct.h eterm.h evar.h evers.h eopt.h \
 	  ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def
 STDSRC	= abbrev.c basic.c bind.c buffer.c crypt.c dirlist.c display.c \
-	  eval.c exec.c file.c fileio.c hilight.c history.c input.c \
+	  eval.c exec.c file.c fileio.c frame.c hilight.c history.c input.c \
 	  isearch.c key.c line.c macro.c main.c narrow.c next.c osd.c \
 	  print.c random.c regex.c region.c registry.c search.c spawn.c \
 	  spell.c tag.c termio.c time.c undo.c window.c word.c
 
 PLTHDR  = 
 PLTSRC  = unixterm.c
+
+HEADERS = $(STDHDR) $(PLTHDR)
+SRC     = $(STDSRC) $(PLTSRC)
 #
 # Object files
-STDOBJ	= $(STDSRC:.c=.o)	
-PLTOBJ  = $(PLTSRC:.c=.o)
-OBJ	= $(STDOBJ) $(PLTOBJ)
+OBJ_C    = $(SRC:.c=.oc)
+OBJ_N    = $(SRC:.c=.on)
 
-DSTDOBJ	= $(STDSRC:.c=.od)	
-DPLTOBJ = $(PLTSRC:.c=.od)
-DOBJ	= $(DSTDOBJ) $(DPLTOBJ)
+# Debug Builds
+OBJ_DC   = $(SRC:.c=.odc)
+OBJ_DN   = $(SRC:.c=.odn)
 #
 # Targets
 all: me
@@ -88,25 +106,49 @@ install: me
 	@echo "install done"
 
 clean:
-	$(RM) me med *.o *.od core
+	$(RM) core me mec mew mecw ne nec new necw med medc medw medcw ned nedc nedw nedcw
+	$(RM) *.oc *.ow *.ob *.on *.ov *.oe
+	$(RM) *.odc *.odw *.odb *.odn *.odv *.ode
 
 spotless: clean
 	$(RM) tags *~
 
-me:	$(OBJ)
+mec:	$(OBJ_C)
 	$(RM) $@
-	$(LD) $(LDFLAGS) -o $@ $(OBJ) $(LIBS)
+	$(LD) $(LDFLAGS) $(LDOPTIMISE) -o $@ $(OBJ_C) $(CONSOLE_LIBS) $(LIBS)
 	$(STRIP) $@
 
+me:	mec
+	$(CP) mec $@
 
-med:	$(DOBJ)
+nec:	$(OBJ_N)
 	$(RM) $@
-	$(LD) $(LDFLAGS) -o $@ $(DOBJ) $(LIBS)
+	$(LD) $(LDFLAGS) $(LDOPTIMISE) -o $@ $(OBJ_N) $(CONSOLE_LIBS) $(LIBS)
+	$(STRIP) $@
+
+ne:	nec
+	$(CP) nec $@
+
+# Debug Builds
+medc:	$(OBJ_DC)
+	$(RM) $@
+	$(LD) $(LDFLAGS) $(LDDEBUG) -o $@ $(OBJ_DC) $(CONSOLE_LIBS) $(LIBS)
+
+med:	medc
+	$(CP) medc $@
+
+nedc:	$(OBJ_DN)
+	$(RM) $@
+	$(LD) $(LDFLAGS) $(LDDEBUG) -o $@ $(OBJ_DC) $(CONSOLE_LIBS) $(LIBS)
+
+ned:	nedc
+	$(CP) nedc $@
 #
 # Dependancies
-$(STDOBJ): $(STDHDR)
-$(PLTOBJ): $(STDHDR) $(PLTHDR)
+$(OBJ_C): $(HEADERS)
+$(OBJ_N): $(HEADERS)
 
-$(DSTDOBJ): $(STDHDR)
-$(DPLTOBJ): $(STDHDR) $(PLTHDR)
+# Debug Builds
+$(OBJ_DC): $(HEADERS)
+$(OBJ_DN): $(HEADERS)
 

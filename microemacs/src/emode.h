@@ -47,19 +47,19 @@ enum
 };
 #undef DEFMODE
 
-#define MDNUMBYTES (MDNUMMODES+7)/8
+#define meMODE_BYTE_SIZE (MDNUMMODES+7)/8
 
-#define meModeCopy(md,ms)     (memcpy((md),(ms),sizeof(meMODE)))
+#define meModeCopy(md,ms)     (memcpy((md),(ms),sizeof(meMode)))
 #define meModeTest(mb,flag)   ((mb)[(flag) >> 3] &   (1 << ((flag) & 0x07)))
 #define meModeSet(mb,flag)    ((mb)[(flag) >> 3] |=  (1 << ((flag) & 0x07)))
 #define meModeClear(mb,flag)  ((mb)[(flag) >> 3] &= ~(1 << ((flag) & 0x07)))
 #define meModeToggle(mb,flag) ((mb)[(flag) >> 3] ^=  (1 << ((flag) & 0x07)))
 
-typedef meUByte meMODE[MDNUMBYTES] ;
+typedef meUByte meMode[meMODE_BYTE_SIZE] ;
 
 
-extern meMODE globMode ;                /* global editor mode		*/
-extern meMODE modeLineDraw ;
+extern meMode globMode ;                /* global editor mode		*/
+extern meMode modeLineDraw ;
 extern meUByte *modeName[] ;		/* name of modes		*/
 extern meUByte  modeCode[] ;		/* letters to represent modes	*/
 
@@ -87,7 +87,7 @@ enum
 } ;
 #undef DEFMODE
 
-meMODE globMode =
+meMode globMode =
 #ifdef _WIN32
 { MDAUTO_MASK|MDATSV_MASK|MDBACK_MASK|MDCRLF_MASK, MDEXACT_MASK|MDFENCE_MASK, MDMAGIC_MASK, MDQUIET_MASK|MDTAB_MASK|MDUNDO_MASK, 0 } ;
 #else
@@ -98,7 +98,7 @@ meMODE globMode =
 #endif /* _DOS */
 #endif /* _WIN32 */
 
-meMODE modeLineDraw = { 
+meMode modeLineDraw = { 
     MDAUTO_MASK|MDATSV_MASK|MDBACK_MASK|MDBINRY_MASK|MDCMOD_MASK|MDCRYPT_MASK,
     MDDIR_MASK|MDEXACT_MASK|MDINDEN_MASK|MDJUST_MASK,
     MDMAGIC_MASK|MDNRRW_MASK|MDOVER_MASK,

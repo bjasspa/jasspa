@@ -26,12 +26,10 @@
  * Notes:
  *     every system must provide the following variables / constants
  *
- *        TTmrow    - maximum number of rows
- *        TTnrow    - current number of rows
- *        TTmcol    - maximum number of columns
- *        TTncol    - current number of columns
- *        TTmargin  - minimum margin for extended lines
- *        TTscrsiz  - size of scroll region
+ *        frameCur->depthMax    - maximum number of rows
+ *        frameCur->depth    - current number of rows
+ *        frameCur->widthMax    - maximum number of columns
+ *        frameCur->width    - current number of columns
  *        TTpause   - # times thru update to pause
  *
  *     every system must provide the following functions
@@ -47,7 +45,7 @@
  *        TTshowCur - show the cursor
  *        TTNbell   - Do a noisy beep
  *
- *     The following must be provided if TYPEAH=TRUE
+ *     The following must be provided if MEOPT_TYPEAH=meTRUE
  *
  *        TTahead   - any characters waiting ?
  *
@@ -80,9 +78,8 @@ typedef struct meTRANSKEY {
 #define TTSPECCHARS    32               /* End of the special chars     */
 
 extern meTRANSKEY TTtransKey ;          /* A translated key             */
-extern int        TTcurr;               /* Windows current row.         */
-extern int        TTcurc;               /* Windows current column       */
-extern int        TTfocus;              /* Is window current focus ?    */
+extern meUShort   TTwidthDefault ;      /* Default no. of cols per frame*/
+extern meUShort   TTdepthDefault ;      /* Default no. of rows per frame*/
 extern meUShort   TTkeyBuf[KEYBUFSIZ] ; /* Key beuffer/pending keys     */
 extern meUByte ttSpeChars [TTSPECCHARS];/* Special characters           */
 extern meUByte    TTnextKeyIdx ;        /* Circular buffer index        */
@@ -97,9 +94,10 @@ extern void       TThandleBlink APRAM((int initFlag)) ;
 extern void       TTmove APRAM((int r, int c)) ;
 #define TTinflush()   (TTahead(),TTlastKeyIdx=TTnextKeyIdx,TTnoKeys=0)
 extern void       addKeyToBuffer APRAM((meUShort cc)) ;
+#if MEOPT_CALLBACK
 extern void       doIdlePickEvent APRAM((void)) ;
+#endif
 extern void       setAlarm APRAM((meInt absTime, meInt offTime)) ;
-
 
 #ifdef _UNIX
 
@@ -162,7 +160,6 @@ extern void sigAlarm(SIGNAL_PROTOTYPE) ;
 #define	TIMER_MIN     10	/* Only one itimer available  */
 
 /* Additional UNIX externals */
-extern meUShort TTmrow, TTnrow, TTsrow, TTmcol, TTncol, TTmargin, TTscrsiz ;
 extern char  *CM, *CL ;
 
 #ifndef _CYGWIN
@@ -178,9 +175,15 @@ extern	char *tgoto(char *, int, int ) ;
                         (TTbreakCnt=TTBREAKCNT,TTahead(),TTbreakFlag)))
 extern void TTwaitForChar(void) ;
 extern void TTsleep(int msec, int intable) ;
-#if TYPEAH
+#if MEOPT_TYPEAH
 extern int  TTahead(void) ;
 #endif
+#if MEOPT_MOUSE
+extern void TTinitMouse(void);
+#endif
+
+#ifdef _ME_CONSOLE
+#ifdef _TCAP
 
 /* Following are termcap function */
 extern int TCAPstart(void) ;
@@ -193,21 +196,63 @@ extern void TCAPhideCur(void) ;
 extern void TCAPshowCur(void) ;
 extern void TCAPhandleBlink(void) ;
 
-#if COLOR
-extern int  TCAPaddColor(meCOLOR index, meUByte r, meUByte g, meUByte b) ;
-extern void TCAPschemeSet(meSCHEME scheme) ;
+#if MEOPT_COLOR
+extern int  TCAPaddColor(meColor index, meUByte r, meUByte g, meUByte b) ;
+extern void TCAPschemeSet(meScheme scheme) ;
 extern void TCAPschemeReset(void) ;
 #endif
 
-#ifdef _XTERM
+#endif /* _TCAP */
+
+#ifndef _ME_WINDOW
+/* If no window then just use the console ones */
+#define TTstart    TCAPstart
+#define TTopen     TCAPopen
+#define TTclose    TCAPclose
+#define TTend      TCAPclose
+#define TTflush    TCAPflush
+#define TThideCur  TCAPhideCur
+#define TTshowCur  TCAPshowCur
+#define TTaddColor TCAPaddColor
+#define TTsetBgcol()
+#define meFrameTermInit(f,s) meTRUE
+#define meFrameTermFree(f,s)
+#define meFrameTermMakeCur(f)
+
+#endif /* !_ME_WINDOW */
+
+#endif /* _ME_CONSOLE */
+
+#ifdef _ME_WINDOW
 /* Display information */
 
 typedef struct
 {
-    Display  *xdisplay ;                /* the x display */
     Window    xwindow ;                 /* the x window */
     GC        xgc ;                     /* the x draw style */
     XGCValues xgcv;                     /* X colour values */
+    meUByte   fcol;                     /* Foreground color */
+    meUByte   bcol;                     /* Background color */
+    meUByte   font;                     /* Font style */
+    Font      fontId;                   /* Font X id */
+} meFrameData ;
+
+#define meFrameGetXWindow(ff)     (((meFrameData *) ff->termData)->xwindow)
+#define meFrameGetXGC(ff)         (((meFrameData *) ff->termData)->xgc)
+#define meFrameGetXGCValues(ff)   (((meFrameData *) ff->termData)->xgcv)
+#define meFrameGetXGCFCol(ff)     (((meFrameData *) ff->termData)->fcol)
+#define meFrameGetXGCBCol(ff)     (((meFrameData *) ff->termData)->bcol)
+#define meFrameGetXGCFont(ff)     (((meFrameData *) ff->termData)->font)
+#define meFrameGetXGCFontId(ff)   (((meFrameData *) ff->termData)->fontId)
+#define meFrameSetXGCFCol(ff,v)   (((meFrameData *) ff->termData)->fcol = (v))
+#define meFrameSetXGCBCol(ff,v)   (((meFrameData *) ff->termData)->bcol = (v))
+#define meFrameSetXGCFont(ff,v)   (((meFrameData *) ff->termData)->font = (v))
+#define meFrameSetXGCFontId(ff,v) (((meFrameData *) ff->termData)->fontId = (v))
+
+typedef struct
+{
+    Display  *xdisplay ;                /* the x display */
+    Font      fontId;                   /* Font X id */
     int       fwidth ;                  /* Font width in pixels */
     int       fdepth ;                  /* Font depth in pixels */
     int       fhwidth ;                 /* Font half width in pixels */
@@ -217,13 +262,9 @@ typedef struct
     int       descent ;                 /* Font descent */
     int       underline ;               /* The underline position */
     meUByte  *fontName;                 /* The current Font name */
-    Font      fontId;                   /* Font X id */
     Font      fontTbl[meFONT_MAX];      /* table of font X ids for diff styles */
     meUByte  *fontPart[meFONT_MAX];     /* pointers to parts in fontname */
     meUByte   fontFlag[meFONT_MAX];     /* Font loaded ? */
-    meUByte   fcol;                     /* Foreground color */
-    meUByte   bcol;                     /* Background color */
-    meUByte   font;                     /* Font style */
 } meCellMetrics;                        /* The character cell metrics */
 
 extern meCellMetrics mecm ;
@@ -234,63 +275,77 @@ extern meCellMetrics mecm ;
 #define rowToClientTop(y) (mecm.fdepth*(y))                /* Convert row char => pixel (top of row) */
 #define clientToRow(y)    ((y)/mecm.fdepth)                /* Convert row pixel => char */
 #define clientToCol(x)    ((x)/mecm.fwidth)                /* Convert column pixel => char */
-#define XTERMstringDraw(col,row,str,len)                                           \
+
+extern int  meFrameXTermInit(meFrame *frame, meFrame *sibling) ;
+extern void meFrameXTermFree(meFrame *frame, meFrame *sibling) ;
+extern void meFrameXTermMakeCur(meFrame *frame) ;
+extern void meFrameXTermHideCursor(meFrame *frame) ;
+extern void meFrameXTermShowCursor(meFrame *frame) ;
+extern void meFrameXTermSetScheme(meFrame *frame,meScheme scheme) ;
+extern void meFrameXTermDraw(meFrame *frame, int srow, int scol, int erow, int ecol) ;
+extern void meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc) ;
+#define     meFrameXTermDrawString(frame,col,row,str,len)                            \
 do {                                                                               \
-    XDrawImageString(mecm.xdisplay,mecm.xwindow,mecm.xgc,(col),(row),(char *)(str),(len)); \
-    if(mecm.font & meFONT_UNDERLINE)                                               \
-        XDrawLine(mecm.xdisplay,mecm.xwindow,mecm.xgc,(col),(row)+mecm.underline,  \
+    XDrawImageString(mecm.xdisplay,meFrameGetXWindow(frame),                       \
+                     meFrameGetXGC(frame),(col),(row),(char *)(str),(len));        \
+    if(meFrameGetXGCFont(frame) & meFONT_UNDERLINE)                                \
+        XDrawLine(mecm.xdisplay,meFrameGetXWindow(frame),                          \
+                  meFrameGetXGC(frame),(col),(row)+mecm.underline,                 \
                   (col)+colToClient(len)-1,(row)+mecm.underline);                  \
 } while(0)
+#define XTERMstringDraw(col,row,str,len) meFrameXTermDrawString(frameCur,col,row,str,len)                                           \                                          \
 
-extern void XTERMschemeSet(meSCHEME scheme) ;
-extern int  XTERMstartStage2(void);
-extern void XTERMinitMouse(void);
+extern int  XTERMstart(void);
 extern void XTERMmove(int r, int c) ;
 extern void XTERMclear(void) ;
-extern void XTERMhideCur(void) ;
-extern void XTERMshowCur(void) ;
-extern int  XTERMaddColor(meCOLOR index, meUByte r, meUByte g, meUByte b) ;
-extern void XTERMSpecialChar(int x, int y, meUByte cc) ;
-extern void XTERMPaint(int srow, int scol, int erow, int ecol) ;
-
-extern void TTsetBgcol(void) ;
-extern int  TTstart(void) ;
-#define TTstartStage2() ((!(meSystemCfg & meSYSTEM_CONSOLE)) ? XTERMstartStage2():0)
-
-#define TTend()     ((meSystemCfg & meSYSTEM_CONSOLE) ? TCAPclose():0)
-#define TTopen()    ((meSystemCfg & meSYSTEM_CONSOLE) ? TCAPopen():0)
-#define TTclose()   ((meSystemCfg & meSYSTEM_CONSOLE) ? TCAPclose():0)
-#define TTflush()   ((meSystemCfg & meSYSTEM_CONSOLE) ? TCAPflush():(XFlush(mecm.xdisplay),1))
-#define TThideCur() ((meSystemCfg & meSYSTEM_CONSOLE) ? TCAPhideCur():XTERMhideCur())
-#define TTshowCur() ((meSystemCfg & meSYSTEM_CONSOLE) ? TCAPshowCur():XTERMshowCur())
-#define TTaddColor(i,r,g,b) ((meSystemCfg & meSYSTEM_CONSOLE) ? TCAPaddColor(i,r,g,b):XTERMaddColor(i,r,g,b))
+extern int  XTERMaddColor(meColor index, meUByte r, meUByte g, meUByte b) ;
+extern void XTERMsetBgcol(void) ;
 
 /* Some extra function, only available to xterms */
-extern void TTtitleText (meUByte *str) ;
-extern void TTdepth(int y) ;
-extern void TTwidth(int x) ;
+extern void meFrameSetWindowTitle(meFrame *frame, meUByte *str) ;
+extern void meFrameSetWindowSize(meFrame *frame) ;
 
 #ifdef _CLIPBRD
 extern void TTgetClipboard(void);
 extern void TTsetClipboard(void);
 #endif
 
-#else
-/* If no xterm then just use the termcap ones */
-#define TTstart    TCAPstart
-#define TTstartStage2()                 /* No stage 2 startup */
-#define TTopen     TCAPopen
-#define TTclose    TCAPclose
-#define TTend      TCAPclose
-#define TTflush    TCAPflush
-#define TThideCur  TCAPhideCur
-#define TTshowCur  TCAPshowCur
-#define TTaddColor TCAPaddColor
-#define TTsetBgcol()
+#ifdef _ME_CONSOLE
 
-#endif /* _XTERM */
+/* If both console and window must test which one should be used */
+extern int  TTstart(void) ;
+#define TTend()               ((meSystemCfg & meSYSTEM_CONSOLE) ? TCAPclose():0)
+#define TTopen()              ((meSystemCfg & meSYSTEM_CONSOLE) ? TCAPopen():0)
+#define TTclose()             ((meSystemCfg & meSYSTEM_CONSOLE) ? TCAPclose():0)
+#define TTflush()             ((meSystemCfg & meSYSTEM_CONSOLE) ? TCAPflush():(XFlush(mecm.xdisplay),1))
+#define TThideCur()           ((meSystemCfg & meSYSTEM_CONSOLE) ? TCAPhideCur():meFrameXTermHideCursor(frameCur))
+#define TTshowCur()           ((meSystemCfg & meSYSTEM_CONSOLE) ? TCAPshowCur():meFrameXTermShowCursor(frameCur))
+#define TTaddColor(i,r,g,b)   ((meSystemCfg & meSYSTEM_CONSOLE) ? TCAPaddColor(i,r,g,b):XTERMaddColor(i,r,g,b))
+#define TTsetBgcol()          ((meSystemCfg & meSYSTEM_CONSOLE) ? 0:(XTERMsetBgcol(),0))
+#define meFrameTermInit(f,s)  ((meSystemCfg & meSYSTEM_CONSOLE) ? meTRUE:meFrameXTermInit(f,s))
+#define meFrameTermFree(f,s)  ((meSystemCfg & meSYSTEM_CONSOLE) ? 0:(meFrameXTermFree(f,s),0))
+#define meFrameTermMakeCur(f) ((meSystemCfg & meSYSTEM_CONSOLE) ? 0:(meFrameXTermMakeCur(f),0))
 
-#ifdef _CLIENTSERVER
+#else /* _ME_CONSOLE */
+
+/* If no console then just use the window ones */
+#define TTstart()             XTERMstart()
+#define TTend()     
+#define TTopen()    
+#define TTclose()   
+#define TTflush()             XFlush(mecm.xdisplay)
+#define TThideCur()           meFrameXTermHideCursor(frameCur)
+#define TTshowCur()           meFrameXTermShowCursor(frameCur)
+#define TTaddColor(i,r,g,b)   XTERMaddColor(i,r,g,b)
+#define TTsetBgcol()          XTERMsetBgcol()
+#define meFrameTermInit(f,s)  meFrameXTermInit(f,s)
+#define meFrameTermFree(f,s)  meFrameXTermFree(f,s)
+#define meFrameTermMakeCur(f) meFrameXTermMakeCur(f)
+
+#endif /* _ME_CONSOLE */
+#endif /* _ME_WINDOW */
+
+#if MEOPT_CLIENTSERVER
 extern void TTopenClientServer(void) ;
 extern void TTkillClientServer(void) ;
 extern int  TTconnectClientServer(void) ;
@@ -302,8 +357,9 @@ extern void TTsendClientServer(meUByte *) ;
 
 #ifdef _WIN32
 
+#define meHWndNull NULL
 #define	_MULTI_TIMER 1		     /* Multiple timers can be set at once */
-#ifdef _WINCON
+#ifdef _ME_CONSOLE
 /* strange but true, when running as a console app, you can't assign ids
  * so effectively when a timer pops you have to work out which one has
  * if any. Bummer is you can kill them either! Thank you Bill */
@@ -315,21 +371,14 @@ extern void TTsendClientServer(meUByte *) ;
 #define noExecExtensions 4
 extern meUByte *execExtensions[noExecExtensions] ;
 
-extern HWND ttHwnd ;                 /* This is the window handle */
-extern RECT ttRect ;                 /* Area of screen to update */
-extern int fdepth, fwidth ;
-extern int ascent ;
-
-extern meUShort TTmrow, TTnrow, TTsrow, TTmcol, TTncol, TTmargin, TTscrsiz ;
-
 extern meUInt *colTable ;
+extern HWND baseHwnd ;               /* This is the base hidden window handle */
 
 extern int TTstart(void) ;
-extern int TTstartStage2(void);
-extern int  TTopen(void) ;
+extern int TTopen(void) ;
 #define TTclose()
 
-#ifdef _WINCON
+#ifdef _ME_CONSOLE
 extern BOOL ConsolePaint(void) ;
 extern void ConsoleDrawString(meUByte *s, WORD wAttribute, int x, int y, int len) ;
 #define TTcolorSet(f,b) ((f) | ((b) << 4))
@@ -339,8 +388,19 @@ TTcolorSet(colTable[meStyleGetFColor(meSchemeGetStyle(scheme))], \
 
 
 extern int TTend(void) ;
-#define TTflush()   ((meSystemCfg & meSYSTEM_CONSOLE) ? ConsolePaint () : UpdateWindow (ttHwnd))
+
+#ifdef _ME_WINDOW
+
+#define TTflush()   ((meSystemCfg & meSYSTEM_CONSOLE) ? ConsolePaint () : UpdateWindow (meFrameGetWinHandle(frameCur)))
+
 #else
+
+#define TTflush()   ConsolePaint ()
+
+#endif /* _ME_WINDOW */
+
+#else
+
 #define TTend()
 /*
  * TTflush()
@@ -349,44 +409,33 @@ extern int TTend(void) ;
  * will update the display leaving the remaining messages on the
  * input queue.
  */
-#define TTflush()   UpdateWindow (ttHwnd)
+#define TTflush()   UpdateWindow (meFrameGetWinHandle(frameCur))
 #endif
 
-extern void TTtitleText (meUByte *str) ;
+#ifdef _ME_WINDOW
 
-extern void TTwaitForChar(void) ;
-extern void TThideCur(void) ;
-extern void TTshowCur(void) ;
-#define TTNbell()  MessageBeep(0xffffffff)
-extern void TTdepth(int y) ;
-extern void TTwidth(int x) ;
+extern RECT ttRect ;                 /* Area of screen to update */
+extern int fdepth, fwidth ;
+extern int ascent ;
 
-#ifdef _CLIPBRD
-extern void TTgetClipboard(void);
-extern void TTsetClipboard(void);
-#endif
+typedef struct
+{
+    HWND     hwnd;                      /* This is the window handle */
+    RECT     canvas;                    /* Screen extents */
+    int      maximized;                 /* Maximised flags */
+    int      paintAll;                  /* Screen paint all flag */
+    int      paintDepth;                /* Screen paint depth */
+    meShort *paintStartCol;             /* Screen paint start col */
+    meShort *paintEndCol;               /* Screen paint end col */
+} meFrameData ;
 
-#ifdef _CLIENTSERVER
-extern int  ttServerToRead;
-extern void TTopenClientServer(void) ;
-extern void TTkillClientServer(void) ;
-extern int  TTcheckClientServer(void) ;
-extern int  TTconnectClientServer(void) ;
-extern void TTsendClientServer(meUByte *) ;
-#endif
-
-
-extern void TTsleep(int msec, int intable) ;
-#if TYPEAH
-extern int TTahead(void) ;
-#endif
-extern int TTaheadFlush(void);
-#define TTdieTest()
-#define TTbreakTest(x) ((TTbreakCnt-- ==  0) ? (TTbreakCnt=TTBREAKCNT,((x==0)?TTahead():TTaheadFlush()),TTbreakFlag):(TTbreakFlag))
-
-extern int  TTaddColor(meCOLOR index, meUByte r, meUByte g, meUByte b);
-extern void TTsetBgcol(void);
-extern void TTcolour (int fg, int bg);
+#define meFrameGetWinHandle(ff)         (((meFrameData *) (ff)->termData)->hwnd)
+#define meFrameGetWinCanvas(ff)         (((meFrameData *) (ff)->termData)->canvas)
+#define meFrameGetWinMaximized(ff)      (((meFrameData *) (ff)->termData)->maximized)
+#define meFrameGetWinPaintAll(ff)       (((meFrameData *) (ff)->termData)->paintAll)
+#define meFrameGetWinPaintDepth(ff)     (((meFrameData *) (ff)->termData)->paintDepth)
+#define meFrameGetWinPaintStartCol(ff)  (((meFrameData *) (ff)->termData)->paintStartCol)
+#define meFrameGetWinPaintEndCol(ff)    (((meFrameData *) (ff)->termData)->paintEndCol)
 
 extern void TTputs(int row, int col, int len) ;
 
@@ -409,10 +458,58 @@ do {                                                                         \
 } while(0)
 
 extern void TTapplyArea (void) ;
+
+extern void meFrameTermFree(meFrame *frame, meFrame *sibling) ;
+extern void meFrameTermMakeCur(meFrame *frame) ;
+#else
+
+#define meFrameTermFree(frame,sibling)
+#define meFrameTermMakeCur(frame)
+
+#endif /* _ME_WINDOW */
+
+extern int  meFrameTermInit(meFrame *frame, meFrame *sibling) ;
+extern void meFrameSetWindowTitle(meFrame *frame, meUByte *str) ;
+extern void meFrameSetWindowSize(meFrame *frame) ;
+extern void meFrameShowCursor(meFrame *frame) ;
+extern void meFrameHideCursor(meFrame *frame) ;
+
+extern void TTwaitForChar(void) ;
+#define TTshowCur() meFrameShowCursor(frameCur)
+#define TThideCur() meFrameHideCursor(frameCur)
+#define TTNbell()   MessageBeep(0xffffffff)
+
+#ifdef _CLIPBRD
+extern void TTgetClipboard(void);
+extern void TTsetClipboard(void);
+#endif
+
+#if MEOPT_CLIENTSERVER
+extern int  ttServerToRead;
+extern void TTopenClientServer(void) ;
+extern void TTkillClientServer(void) ;
+extern int  TTcheckClientServer(void) ;
+extern int  TTconnectClientServer(void) ;
+extern void TTsendClientServer(meUByte *) ;
+#endif
+
+
+extern void TTsleep(int msec, int intable) ;
+#if MEOPT_TYPEAH
+extern int TTahead(void) ;
+#endif
+extern int TTaheadFlush(void);
+#define TTdieTest()
+#define TTbreakTest(x) ((TTbreakCnt-- ==  0) ? (TTbreakCnt=TTBREAKCNT,((x==0)?TTahead():TTaheadFlush()),TTbreakFlag):(TTbreakFlag))
+
+extern int  TTaddColor(meColor index, meUByte r, meUByte g, meUByte b);
+extern void TTsetBgcol(void);
+extern void TTcolour (int fg, int bg);
+
 extern int  WinMouseMode (int buttonMask, int highlight, int cursorShape);
 extern int  WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
-#ifdef _IPIPES
-                              meIPIPE *ipipe,
+#if MEOPT_IPIPES
+                              meIPipe *ipipe,
 #endif
                               int *sysRet);
 
@@ -427,27 +524,25 @@ extern int  WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte 
 #define noExecExtensions 4
 extern meUByte *execExtensions[noExecExtensions] ;
 
-extern meUShort TTmrow, TTmcol, TTnrow, TTsrow, TTncol, TTmargin, TTscrsiz ;
-
 extern meUByte *colTable ;
 
 extern int  TTstart(void) ;
-#define TTstartStage2()                 /* No stage 2 startup */
 #define TTend()   TTclose()
 extern int  TTopen(void) ;
 extern int  TTclose(void) ;
+#define meFrameTermInit(f,s) meTRUE
+#define meFrameTermFree(f,s)
+#define meFrameTermMakeCur(f)
 
 extern void TTwaitForChar(void) ;
 #define TTflush()
-extern void DOShideCur(void) ;
-extern void DOSshowCur(void) ;
 extern void TThideCur(void) ;
 extern void TTshowCur(void) ;
 extern int  bdos(int func, unsigned dx, unsigned al);
 #define TTNbell()   bdos(6, BELL, 0);
 
 extern void TTsleep(int msec, int intable) ;
-#if TYPEAH
+#if MEOPT_TYPEAH
 extern int TTahead(void) ;
 #endif
 #define TTdieTest()
@@ -455,7 +550,7 @@ extern int TTahead(void) ;
 
 extern meUByte Cattr ;
 
-extern int TTaddColor(meCOLOR index, meUByte r, meUByte g, meUByte b);
+extern int TTaddColor(meColor index, meUByte r, meUByte g, meUByte b);
 #define TTsetBgcol()
 #define TTcolorSet(f,b)     ((f) | ((b) << 4))
 #define TTschemeSet(scheme) \
@@ -464,7 +559,7 @@ TTcolorSet(colTable[meStyleGetFColor(meSchemeGetStyle(scheme))], \
 
 #endif /* _DOS */
 
-#if MOUSE
+#if MEOPT_MOUSE
 void TTinitMouse(void) ;
 #define meCURSOR_DEFAULT   0
 #define meCURSOR_ARROW     1
@@ -484,13 +579,15 @@ enum
 {
     AUTOS_TIMER_ID=0,          /* Auto save timer handle         */
     SLEEP_TIMER_ID,            /* Sleep timer                    */
+    CURSOR_TIMER_ID,           /* Cursor blink timer handle      */
+#if MEOPT_CALLBACK
     CALLB_TIMER_ID,            /* Macro callback timer           */
     IDLE_TIMER_ID,             /* Idle timer handle              */
-    CURSOR_TIMER_ID,           /* Cursor blink timer handle      */
-#if MOUSE
+#endif
+#if MEOPT_MOUSE
     MOUSE_TIMER_ID,            /* Mouse timer handle             */
 #endif
-#ifdef _URLSUPP
+#if MEOPT_SOCKET
     SOCKET_TIMER_ID,           /* socket connection time-out     */
 #endif
     NUM_TIMERS                 /* Number of timers               */
@@ -511,7 +608,7 @@ typedef struct TIMERBLOCK
 
 /*
  * isTimerActive
- * Returns a boolean state (0==FALSE) depending on if the timer
+ * Returns a boolean state (0==meFALSE) depending on if the timer
  * is outstanding or not.
  */
 #define isTimerActive(id)  (meTimerState[id] & (TIMER_SET|TIMER_EXPIRED))

@@ -36,6 +36,7 @@
 #include "efunc.h"
 #include "eskeys.h"
 #include "evar.h"
+#include "evers.h"
 
 
 #define DRTESTFAIL   0x80
@@ -93,8 +94,8 @@ biChopFindString(register meUByte *ss, register int len, register meUByte **tbl,
  * return a pointer past the token
  *
  * src - source string,
- * tok - destination token string (must be TOKENBUF in size, 
- * returning a string no bigger than MAXBUF with the \0)
+ * tok - destination token string (must be meTOKENBUF_SIZE_MAX in size, 
+ * returning a string no bigger than meBUF_SIZE_MAX with the \0)
  */
 meUByte *
 token(meUByte *src, meUByte *tok)
@@ -105,8 +106,8 @@ token(meUByte *src, meUByte *tok)
     
     ss = src ;
     dd = tok ;
-    /* note tokEnd is set to tok+MAXBUF-1 to leave room for the terminating \0 */
-    tokEnd = dd + MAXBUF-1 ;
+    /* note tokEnd is set to tok+meBUF_SIZE_MAX-1 to leave room for the terminating \0 */
+    tokEnd = dd + meBUF_SIZE_MAX-1 ;
     
     /*---       First scan past any whitespace in the source string */
     
@@ -153,10 +154,18 @@ token(meUByte *src, meUByte *tok)
                 *dd = 0;
                 return ss ;
                 
+            case 'B':
+                /* backspace key - replace with backspace */
+                key = ME_SPECIAL|SKEY_backspace ;
+                goto quote_spec_key ;
             case 'C':
                 /* Control key - \C? */
                 *dd++ = *++ss - '@'; 
                 break;
+            case 'D':
+                /* Delete key - replace with delete */
+                key = ME_SPECIAL|SKEY_delete ;
+                goto quote_spec_key ;
             case 'E':
                 /* Escape key - replace with esc */
                 key = ME_SPECIAL|SKEY_esc ;
@@ -268,9 +277,9 @@ int
 meGetString(meUByte *prompt, int option, int defnum, meUByte *buffer, int size)
 {
     /* if we are not interactive, go get it! */
-    if (clexec == TRUE)
+    if (clexec == meTRUE)
     {
-        meUByte buff[TOKENBUF], *res, *ss, cc ;
+        meUByte buff[meTOKENBUF_SIZE_MAX], *res, *ss, cc ;
         
         /* grab token and advance past */
         ss = execstr ;
@@ -283,11 +292,11 @@ meGetString(meUByte *prompt, int option, int defnum, meUByte *buffer, int size)
             if(cc == 'a')
                 execstr = ss ;
             meStrcpy(resultStr,prompt) ;
-            if(lineExec (0, 1, buff) != TRUE)
-                return ABORT ;
+            if(lineExec (0, 1, buff) != meTRUE)
+                return meABORT ;
             meStrncpy(buffer,resultStr,size-1) ;
             buffer[size-1] = '\0' ;
-            return TRUE ;
+            return meTRUE ;
         }
         else if((buff[0] != '@') || (buff[1] != 'm') || (buff[2] != 'n'))
         {
@@ -296,7 +305,7 @@ meGetString(meUByte *prompt, int option, int defnum, meUByte *buffer, int size)
             if(res == (meUByte *) abortm)
             {
                 *buffer = '\0' ;
-                return FALSE ;
+                return meFALSE ;
             }
             ss = buffer ;
             if(option & MLMACNORT)
@@ -315,7 +324,7 @@ meGetString(meUByte *prompt, int option, int defnum, meUByte *buffer, int size)
                 *ss++ = cc ;
             }
             *ss = '\0' ;
-            return TRUE ;
+            return meTRUE ;
         }
         /* if @mna (get all input from user) then rewind the execstr */
         if(buff[3] == 'a')
@@ -331,8 +340,8 @@ macarg(meUByte *tok)               /* get a macro line argument */
     int status;
     
     savcle = clexec;            /* save execution mode */
-    clexec = TRUE;              /* get the argument */
-    status = meGetString((meUByte *)"", MLNOHIST|MLFFZERO, 0, tok, MAXBUF) ;
+    clexec = meTRUE;              /* get the argument */
+    status = meGetString((meUByte *)"", MLNOHIST|MLFFZERO, 0, tok, meBUF_SIZE_MAX) ;
     clexec = savcle;            /* restore execution mode */
     
     return(status);
@@ -345,8 +354,8 @@ macarg(meUByte *tok)               /* get a macro line argument */
 int
 fnctest(void)
 {
-    register KEYTAB *ktp;                       /* Keyboard character array */
-    register meCMD *cmd ;                       /* Names pointer */
+    register meBind *ktp;                       /* Keyboard character array */
+    register meCommand *cmd ;                       /* Names pointer */
     meUInt key ;
     meUByte outseq[12];
     int count=0, ii;                            /* Counter of errors */
@@ -402,18 +411,20 @@ domstore(meUByte *cline)
     
     if(mcStore == 2)
     {
+#if MEOPT_EXTENDED
         /* check to see if this line ends definition */
         if(meStrncmp(cline, "!ehe",4) == 0)
         {
             helpBufferReset(lpStoreBp) ;
             mcStore = 0 ;
             lpStore = NULL;
-            return TRUE ;
+            return meTRUE ;
         }
+#endif
         if(addLine(lpStore,cline) == 0)
-            return FALSE ;
-        lpStoreBp->elineno++ ;
-        return TRUE ;
+            return meFALSE ;
+        lpStoreBp->lineCount++ ;
+        return meTRUE ;
     }
     cc = *cline ;
     /* eat leading spaces */
@@ -422,7 +433,7 @@ domstore(meUByte *cline)
     
     /* dump comments and empties here */
     if((cc == ';') || (cc == '\0'))
-        return TRUE ;
+        return meTRUE ;
 #ifdef _MACRO_COMP
     /* check to see if this line turns macro storage off */
     if((cc == '!') &&
@@ -430,14 +441,14 @@ domstore(meUByte *cline)
         (meStrncmp(cline+1, "ema", 3) == 0)) && 
        !execlevel--)
     {
-        mcStore = FALSE;
+        mcStore = meFALSE;
         lpStore = NULL;
         execlevel = 0 ;
-        return TRUE ;
+        return meTRUE ;
     }
     if(macbug == -3)
     {
-        LINE           *lp, *ilp ;
+        meLine           *lp, *ilp ;
         meUByte  *ss ;
         register int    status ;
         int             len=0 ;
@@ -446,13 +457,13 @@ domstore(meUByte *cline)
         while((*ss++))
             len++ ;
         if ((lp=lalloc(len)) == NULL)
-            return FALSE ;
+            return meFALSE ;
         ilp = lpStore ;
-        ilp->l_bp->l_fp = lp;
-        lp->l_bp = ilp->l_bp;
-        ilp->l_bp = lp;
-        lp->l_fp = ilp ;
-        ss = lp->l_text ;
+        ilp->prev->next = lp;
+        lp->prev = ilp->prev;
+        ilp->prev = lp;
+        lp->next = ilp ;
+        ss = lp->text ;
         for(;;)
         {
             meUByte dd, *s1 ;
@@ -463,8 +474,8 @@ domstore(meUByte *cline)
             if((dd == '\0') || (dd == ';'))
             {
                 *--ss = '\0' ;
-                lp->l_used = ss-lp->l_text ;
-                return TRUE ;
+                lp->length = ss-lp->text ;
+                return meTRUE ;
             }
             s1 = cline ;
             cc = dd ;
@@ -566,10 +577,10 @@ cpy_str:
     /* check to see if this line turns macro storage off */
     if((cc == '!') && !meStrncmp(cline+1, "ema", 3) && !execlevel--)
     {
-        mcStore = FALSE;
+        mcStore = meFALSE;
         lpStore = NULL;
         execlevel = 0 ;
-        return TRUE ;
+        return meTRUE ;
     }
     else
     {
@@ -631,9 +642,9 @@ docmd(meUByte *cline, register meUByte *tkn)
     
     /* dump comments, empties and labels here */
     if((cc == ';') || (cc == '\0') || (cc == '*'))
-        return TRUE ;
+        return meTRUE ;
     
-    nmacro = FALSE;
+    nmacro = meFALSE;
     execstr = cline;    /* and set this one as current */
     meRegCurr->force = 0 ;
     
@@ -652,7 +663,7 @@ try_again:
             if((status = biChopFindString(tkn+1,3,derNames,NDERIV)) < 0)
             {
                 mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unknown directive %s]",tkn);
-                return FALSE ;
+                return meFALSE ;
             }
         dirType = dirTypes[status] ;
         
@@ -661,8 +672,8 @@ try_again:
 elif_jump:
             if(dirType & DRFLAG_TEST)
             {
-                if(macarg(tkn) != TRUE)
-                    return FALSE ;
+                if(macarg(tkn) != meTRUE)
+                    return meFALSE ;
                 if(!meAtol(tkn))
                 {
                     /* if DRTGOTO or DRTJUMP and the test failed, we dont
@@ -677,16 +688,16 @@ elif_jump:
                 execlevel += 2 ;
             if(dirType & DRFLAG_ARG)
             {
-                if(macarg(tkn) != TRUE)
+                if(macarg(tkn) != meTRUE)
                 {
                     if(!(dirType & DRFLAG_OPTARG))
-                        return FALSE ;
-                    f = FALSE;
+                        return meFALSE ;
+                    f = meFALSE;
                     n = 1 ;
                 }
                 else if(dirType & DRFLAG_NARG)
                 {
-                    f = TRUE;
+                    f = meTRUE;
                     n = meAtoi(tkn) ;
                     if(dirType & DRFLAG_JUMP)
                         relJumpTo = n ;
@@ -706,22 +717,22 @@ elif_jump:
 #endif
             case DREMACRO:
                 mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unexpected !emacro]");
-                return FALSE ;
+                return meFALSE ;
             case DRFORCE:
                 (meRegCurr->force)++ ;
                 goto try_again;
             case DRNMACRO:
-                nmacro = TRUE;
+                nmacro = meTRUE;
                 goto try_again;
             case DRABORT:
                 if(f)
                     TTdoBell(n) ;
-                return FALSE ;
+                return meFALSE ;
             case DRBELL:
                 TTdoBell(n) ;
-                return TRUE ;
+                return meTRUE ;
             case DRRETURN:
-                return (n) ? DRRETURN:FALSE ;
+                return (n) ? DRRETURN:meFALSE ;
             }
         }
         
@@ -742,14 +753,14 @@ elif_jump:
         else if(dirType & DRFLAG_AMSKEXECLVL)
             execlevel += 2 ;
         
-        return TRUE ;
+        return meTRUE ;
     }
     /* if not a directive and execlevel > 0 ignore it */
     if(execlevel)
-        return TRUE ;
+        return meTRUE ;
     
     /* first set up the default command values */
-    f = FALSE;
+    f = meFALSE;
     n = 1;
     
     if(status != TKCMD)
@@ -757,30 +768,30 @@ elif_jump:
         meUByte *tmp ;
         
         if((tmp = getval(tkn)) == abortm)
-            return FALSE ;
+            return meFALSE ;
         n = meAtoi(tmp) ;
-        f = TRUE;
+        f = meTRUE;
         
         execstr = token(execstr, tkn);
         if(getMacroTypeS(tkn) != TKCMD)
-            return FALSE ;
+            return meFALSE ;
     }
     
     {
         register int idx ; /* index to function to execute */
         
         if(execlevel)
-            return TRUE ;
+            return meTRUE ;
         
         /* and match the token to see if it exists */
         if ((idx = decode_fncname(tkn,0)) < 0)
-            return(FALSE);
+            return(meFALSE);
         if(nmacro)
-            clexec = FALSE ;
-        cmdstatus = (execFunc(idx,f,n) == TRUE) ;       /* call the function */
-        clexec = TRUE ;
-        if(cmdstatus == TRUE)
-            status = TRUE ;
+            clexec = meFALSE ;
+        cmdstatus = (execFunc(idx,f,n) == meTRUE) ;       /* call the function */
+        clexec = meTRUE ;
+        if(cmdstatus == meTRUE)
+            status = meTRUE ;
         else if(TTbreakFlag)
         {
             if(meRegCurr->force > 1)
@@ -790,15 +801,15 @@ elif_jump:
                  */
                 TTinflush() ;
                 TTbreakFlag = 0 ;
-                status = TRUE ;
+                status = meTRUE ;
             }
             else
-                status = FALSE ;
+                status = meFALSE ;
         }
         else if(meRegCurr->force)
-            status = TRUE ;
+            status = meTRUE ;
         else
-            status = FALSE ;
+            status = meFALSE ;
         return status ;
     }
 }
@@ -806,34 +817,34 @@ elif_jump:
 /*      dobuf:  execute the contents of the buffer pointed to
    by the passed BP                                */
 /* bp - buffer to execute */
-static meUByte __dobufStr1[]="(^G)Abort, (^L)redraw, (V)ariable, (!)Continue, (S)tep, <any>=next ?" ;
-static LINE *errorLine=NULL ;
+static meLine *errorLine=NULL ;
 
 static int
-dobuf(LINE *hlp)
+dobuf(meLine *hlp)
 {
-#if     DEBUGM
+#if MEOPT_DEBUGM
+    static meUByte __dobufStr1[]="(^G)Abort, (^L)redraw, (V)ariable, (!)Continue, (S)tep, <any>=next ?" ;
     meByte debug=0;
 #endif
     meUByte *tline;               /* Temp line */
     int status;                 /* status return */
-    LINE *lp;                   /* pointer to line to execute */
-    LINE *wlp;                  /* line to while */
-    LINE *rlp;                  /* line to repeat */
+    meLine *lp;                   /* pointer to line to execute */
+    meLine *wlp;                  /* line to while */
+    meLine *rlp;                  /* line to repeat */
     
-    clexec = TRUE;                      /* in cline execution */
+    clexec = meTRUE;                      /* in cline execution */
     execstr = NULL ;
     execlevel = 0;                      /* Reset execution level */
     
     /* starting at the beginning of the buffer */
     wlp = NULL;
     rlp = NULL;
-    lp = hlp->l_fp;
+    lp = hlp->next;
     while (lp != hlp)
     {
-        tline = lp->l_text;
-#if     DEBUGM
-        /* if $debug == TRUE, every line to execute
+        tline = lp->text;
+#if MEOPT_DEBUGM
+        /* if $debug == meTRUE, every line to execute
            gets echoed and a key needs to be pressed to continue
            ^G will abort the command */
         
@@ -841,8 +852,8 @@ dobuf(LINE *hlp)
         {
             if((macbug > 1) || (macbug && !execlevel))
             {
-                meUByte dd=macbug, outline[MAXBUF];   /* string to hold debug line text */
-                LINE *tlp=hlp ;
+                meUByte dd=macbug, outline[meBUF_SIZE_MAX];   /* string to hold debug line text */
+                meLine *tlp=hlp ;
                 meUShort cc ;
                 int lno=0 ;
                 
@@ -854,7 +865,7 @@ dobuf(LINE *hlp)
                 /*---   Generate the debugging line for the 'programmer' !! */
                 do 
                     lno++ ;
-                while ((tlp=lforw(tlp)) != lp)
+                while ((tlp=meLineGetNext(tlp)) != lp)
                     ;
                 sprintf((char *)outline,"%s:%d:%d [%s] ?",meRegCurr->commandName,lno,execlevel,tline) ;
 loop_round2:
@@ -863,14 +874,14 @@ loop_round2:
                  * we will end up in an infinite loop, the best we can do is
                  * call the screenUpdate function
                  */
-                screenUpdate(TRUE,2-sgarbf) ;
+                screenUpdate(meTRUE,2-sgarbf) ;
                 /* reset garbled status */
-                sgarbf = FALSE ;
+                sgarbf = meFALSE ;
                 if(dd <= 2)
                 {
 loop_round:
                     /* and get the keystroke */
-                    cc = meGetKeyFromUser(FALSE,0,meGETKEY_SILENT|meGETKEY_SINGLE) ;
+                    cc = meGetKeyFromUser(meFALSE,0,meGETKEY_SILENT|meGETKEY_SINGLE) ;
                     switch(cc)
                     {
                     case '?':
@@ -881,12 +892,12 @@ loop_round:
                     case 'v':
                         {
                             meUByte mlStatusStore ;
-                            mlStatusStore = mlStatus ;
-                            mlStatus = 0 ;
-                            clexec = FALSE ;
-                            descVariable(FALSE,1) ;
-                            clexec = TRUE ;
-                            mlStatus = mlStatusStore ;
+                            mlStatusStore = frameCur->mlStatus ;
+                            frameCur->mlStatus = 0 ;
+                            clexec = meFALSE ;
+                            descVariable(meFALSE,1) ;
+                            clexec = meTRUE ;
+                            frameCur->mlStatus = mlStatusStore ;
                             goto loop_round ;
                         }
                     default:
@@ -894,8 +905,8 @@ loop_round:
                         {
                             /* Abort - Must exit the usual way so that macro
                              * storing and execlevel are corrected */
-                            ctrlg(FALSE,1) ;
-                            status = ABORT ;
+                            ctrlg(meFALSE,1) ;
+                            status = meABORT ;
                             errorLine = lp ;
                             macbug = dd ;
                             goto dobuf_exit ;
@@ -913,20 +924,20 @@ loop_round:
 #endif
         if(TTbreakTest(0))
         {
-            mcStore = FALSE;
+            mcStore = meFALSE;
             lpStore = NULL;
             execlevel = 0 ;
-            status = ctrlg(FALSE,1) ;
+            status = ctrlg(meFALSE,1) ;
         }
         else
         {
-            meUByte tkn[TOKENBUF] ;
+            meUByte tkn[meTOKENBUF_SIZE_MAX] ;
             
             if(mcStore)
                 status = domstore(tline) ;
             else
                 status = docmd(tline,tkn) ;
-#if     DEBUGM
+#if     MEOPT_DEBUGM
             if(debug)
             {
                 macbug = debug ;
@@ -935,35 +946,35 @@ loop_round:
 #endif
             switch(status)
             {
-            case FALSE:
-            case TRUE:
+            case meFALSE:
+            case meTRUE:
                 break ;
                 
             case DRGOTO:
             case DRTGOTO:
                 {
                     register int linlen;        /* length of line to execute */
-                    register LINE *glp;         /* line to goto */
+                    register meLine *glp;         /* line to goto */
                     
                     linlen = meStrlen(tkn) ;
-                    glp = hlp->l_fp;
+                    glp = hlp->next;
                     while (glp != hlp)
                     {
-                        if (*glp->l_text == '*' &&
-                            (meStrncmp(glp->l_text+1,tkn,linlen) == 0) &&
-                            isSpace(glp->l_text[linlen+1]))
+                        if (*glp->text == '*' &&
+                            (meStrncmp(glp->text+1,tkn,linlen) == 0) &&
+                            isSpace(glp->text[linlen+1]))
                         {
                             lp = glp;
-                            status = TRUE;
+                            status = meTRUE;
                             break ;
                         }
-                        glp = glp->l_fp;
+                        glp = glp->next;
                     }
                     
                     if (status == DRRGOTO)
                     {
                         mlwrite(MWABORT|MWWAIT,(meUByte *)"No such label");
-                        status = FALSE;
+                        status = meFALSE;
                     }
                     break;
                 }
@@ -971,37 +982,37 @@ loop_round:
                 if (rlp != NULL)
                 {
                     mlwrite(MWABORT|MWWAIT,(meUByte *)"Nested Repeat");
-                    status = FALSE;
+                    status = meFALSE;
                     break;
                 }
                 rlp = lp;               /* Save line */
-                status = TRUE;
+                status = meTRUE;
                 break;
-            case DRUNTIL:                       /* TRUE UNTIL */
+            case DRUNTIL:                       /* meTRUE UNTIL */
                 if (rlp == NULL)
                 {
                     mlwrite(MWABORT|MWWAIT,(meUByte *)"No repeat set");
-                    status = FALSE;
+                    status = meFALSE;
                     break;
                 }
                 rlp = NULL;
-                status = TRUE;
+                status = meTRUE;
                 break;  
-            case DRUNTILF:                      /* FALSE UNTIL */
+            case DRUNTILF:                      /* meFALSE UNTIL */
                 if (rlp == NULL)
                 {
                     mlwrite(MWABORT|MWWAIT,(meUByte *)"No repeat set");
-                    status = FALSE;
+                    status = meFALSE;
                     break;
                 }
                 lp = rlp;               /* Back to 'repeat' */
-                status = TRUE;
+                status = meTRUE;
                 break; 
             case DRCONTIN:
                 if (wlp == NULL)
                 {
                     mlwrite(MWABORT|MWWAIT,(meUByte *)"No while");
-                    status = FALSE;
+                    status = meFALSE;
                     break;
                 }
                 lp = wlp;
@@ -1011,7 +1022,7 @@ loop_round:
                 if (wlp == NULL)
                 {
                     mlwrite(MWABORT|MWWAIT,(meUByte *)"No while");
-                    status = FALSE;
+                    status = meFALSE;
                     break;
                 }
                 lp = wlp;
@@ -1020,29 +1031,29 @@ loop_round:
                 
             case DRWHILE:                       
                 wlp = lp;
-                status = TRUE;
+                status = meTRUE;
                 break;
                 
             case DRJUMP:
             case DRTJUMP:
                 if(relJumpTo < 0)
                     for( ; relJumpTo < 0 ; relJumpTo++)
-                        lp = lp->l_bp ;
+                        lp = lp->prev ;
                 else
                     for( ; relJumpTo > 0 ; relJumpTo--)
-                        lp = lp->l_fp ;
+                        lp = lp->next ;
                 continue;
                 
             case DRRETURN:      /* if it is a !RETURN directive...do so */
-                status = TRUE ;
+                status = meTRUE ;
                 goto dobuf_exit ;
             default:
-                status = TRUE ;
+                status = meTRUE ;
                 
             }
         }
         /* check for a command error */
-        if (status != TRUE)
+        if (status != meTRUE)
         {
             /* in any case set the buffer . */
             errorLine = lp;
@@ -1050,12 +1061,12 @@ loop_round:
         }
         
         /* on to the next line */
-        lp = lp->l_fp;
+        lp = lp->next;
     }
     if(mcStore)
         mlwrite(MWABORT|MWWAIT,(meUByte *)"[Missing !emacro termination]");
     else
-        status = TRUE ;
+        status = meTRUE ;
     
     /* exit the current function */
 dobuf_exit:
@@ -1066,7 +1077,7 @@ dobuf_exit:
         lpStore = NULL ;
         execlevel = 0 ;
         errorLine = hlp;
-        status = FALSE ;
+        status = meFALSE ;
     }
     
     return status ;
@@ -1074,9 +1085,9 @@ dobuf_exit:
 
 
 static int
-donbuf(LINE *hlp, meVARLIST *varList, meUByte *commandName, int f, int n)
+donbuf(meLine *hlp, meVarList *varList, meUByte *commandName, int f, int n)
 {
-    meREGISTERS  rp ;
+    meRegister  rp ;
     meUByte oldcle ;
     int oldexec, status ;
     
@@ -1113,10 +1124,15 @@ execFunc(int index, int f, int n)
     {
         thisflag = 0 ;
         status = cmdTable[index]->func(f,n) ;
+        if(isComIgnore(index))
+        {
+            thisflag = lastflag ;
+            return status ;
+        }
         lastflag = thisflag;
         if(selhilight.uFlags)
         {
-            if((status == TRUE) || isComSelIgnFail(index))
+            if((status == meTRUE) || isComSelIgnFail(index))
             {
                 if(isComSelKill(index))
                 {
@@ -1127,7 +1143,7 @@ execFunc(int index, int f, int n)
                 {
                     if(isComSelStart(index))
                     {
-                        selhilight.bp = curbp;                  /* Select the current buffer */
+                        selhilight.bp = frameCur->bufferCur;                  /* Select the current buffer */
                         selhilight.flags = SELHIL_ACTIVE|SELHIL_CHANGED ;
                     }
                     if(selhilight.flags & SELHIL_FIXED)
@@ -1138,20 +1154,20 @@ execFunc(int index, int f, int n)
                     else if(selhilight.flags & SELHIL_ACTIVE)
                     {
                         if(isComSelSetMark(index) &&
-                           ((selhilight.mlineoff != curwp->w_marko) ||
-                            (selhilight.mlineno != curwp->mlineno)))
+                           ((selhilight.markOffset != frameCur->windowCur->markOffset) ||
+                            (selhilight.markLineNo != frameCur->windowCur->markLineNo)))
                         {
                             selhilight.flags |= SELHIL_CHANGED ;
-                            selhilight.mlineoff = curwp->w_marko;   /* Current mark offset */
-                            selhilight.mlineno = curwp->mlineno;    /* Current mark line number */
+                            selhilight.markOffset = frameCur->windowCur->markOffset;   /* Current mark offset */
+                            selhilight.markLineNo = frameCur->windowCur->markLineNo;    /* Current mark line number */
                         }
                         if(isComSelSetDot(index) &&
-                           ((selhilight.dlineoff != curwp->w_doto) ||
-                            (selhilight.dlineno != curwp->line_no)))
+                           ((selhilight.dotOffset != frameCur->windowCur->dotOffset) ||
+                            (selhilight.dotLineNo != frameCur->windowCur->dotLineNo)))
                         {
                             selhilight.flags |= SELHIL_CHANGED ;
-                            selhilight.dlineoff = curwp->w_doto;   /* Current mark offset */
-                            selhilight.dlineno = curwp->line_no;    /* Current mark line number */
+                            selhilight.dotOffset = frameCur->windowCur->dotOffset;   /* Current mark offset */
+                            selhilight.dotLineNo = frameCur->windowCur->dotLineNo;    /* Current mark line number */
                         }
                         if(isComSelSetFix(index))
                         {
@@ -1172,25 +1188,25 @@ execFunc(int index, int f, int n)
     }
     else
     {
-        meMACRO *mac ;
+        meMacro *mac ;
         meUByte firstExec ;                    /* set if this is first */
-        LINE *hlp ;
+        meLine *hlp ;
         
         mac = getMacro(index) ;
         hlp = mac->hlp ;
-        if(!(hlp->l_flag & MACEXEC))
+        if(!(hlp->flag & meMACRO_EXEC))
         {
-            if(hlp->l_flag & MACFILE)
+            if(hlp->flag & meMACRO_FILE)
             {
                 if(mac->fname != NULL)
                     dofile(mac->fname,0,1) ;
                 else
                     dofile(mac->name,0,1) ;
                 hlp = mac->hlp ;
-                if(hlp->l_flag & MACFILE)
+                if(hlp->flag & meMACRO_FILE)
                     return mlwrite(MWABORT,(meUByte *)"[file-macro %s not defined]",mac->name);
             }
-            hlp->l_flag |= MACEXEC ;
+            hlp->flag |= meMACRO_EXEC ;
             firstExec = 1 ;
         }
         else
@@ -1203,7 +1219,7 @@ execFunc(int index, int f, int n)
             if(mac->hlp != hlp)
                 freeLineLoop(hlp,1) ;
             else
-                hlp->l_flag &= ~MACEXEC ;
+                hlp->flag &= ~meMACRO_EXEC ;
         }
     }
     
@@ -1241,10 +1257,10 @@ execFuncHidden(int keyCode, int index, meUInt arg)
         f = 0 ;
         n = 1 ;
     }
-    if((ii=curbp->inputFunc) >= 0)
+    if((ii=frameCur->bufferCur->inputFunc) >= 0)
     {
         meUByte *ss ;
-        if((execFunc(ii,f,n) == TRUE) ||
+        if((execFunc(ii,f,n) == meTRUE) ||
            ((ss=getUsrLclCmdVar((meUByte *)"status",&(cmdTable[ii]->varList))) == errorm) || meAtoi(ss))
             index = -1 ;
     }
@@ -1260,9 +1276,9 @@ execFuncHidden(int keyCode, int index, meUInt arg)
 }
 
 void
-execBufferFunc(BUFFER *bp, int index, int flags, int n)
+execBufferFunc(meBuffer *bp, int index, int flags, int n)
 {
-    int movePos = ((flags & meEBF_HIDDEN) && (bp == curbp)) ; 
+    int movePos = ((flags & meEBF_HIDDEN) && (bp == frameCur->bufferCur)) ; 
     meUByte tf, lf, cs;
     int tc, ti ;
     
@@ -1275,51 +1291,55 @@ execBufferFunc(BUFFER *bp, int index, int flags, int n)
     if(movePos)
     {
         /* drop an alpha mark and return back to it after */
-        alphaMarkSet(curbp,meAM_EXECBUFF,curwp->w_dotp,curwp->w_doto,1) ;
-        curwp->w_dotp = curbp->b_dotp ;
-        curwp->w_doto = curbp->b_doto ;
-        curwp->line_no = curbp->line_no ;
+        alphaMarkSet(frameCur->bufferCur,meAM_EXECBUFF,frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset,1) ;
+        frameCur->windowCur->dotLine = frameCur->bufferCur->dotLine ;
+        frameCur->windowCur->dotOffset = frameCur->bufferCur->dotOffset ;
+        frameCur->windowCur->dotLineNo = frameCur->bufferCur->dotLineNo ;
     }
-    if(bp != curbp)
+    if(bp != frameCur->bufferCur)
     {
         /* swap this buffer into the current window, execute the function
          * and then swap back out */
-        register BUFFER *tbp = curbp ;
-        meUInt w_flag;
-        meInt topLineNo ;
+        register meBuffer *tbp = frameCur->bufferCur ;
+        meUInt flag;
+        meInt vertScroll ;
         
-        storeWindBSet(tbp,curwp) ;
-        w_flag = curwp->w_flag ;
-        topLineNo = curwp->topLineNo ;
+        storeWindBSet(tbp,frameCur->windowCur) ;
+        flag = frameCur->windowCur->flag ;
+        vertScroll = frameCur->windowCur->vertScroll ;
         
-        tbp->b_nwnd-- ;
-        curbp = curwp->w_bufp = bp ;
-        restoreWindBSet(curwp,bp) ;
+        tbp->windowCount-- ;
+        frameCur->bufferCur = frameCur->windowCur->buffer = bp ;
+        restoreWindBSet(frameCur->windowCur,bp) ;
+#if MEOPT_EXTENDED
         isWordMask = bp->isWordMask ;
-        bp->b_nwnd++ ;
+#endif
+        bp->windowCount++ ;
         
         execFunc(index,(flags & meEBF_ARG_GIVEN),n) ;
         
-        curbp->b_nwnd-- ;
-        storeWindBSet(curbp,curwp) ;
-        curbp = curwp->w_bufp = tbp ;
-        tbp->b_nwnd++ ;
-        curwp->topLineNo = topLineNo ;
+        frameCur->bufferCur->windowCount-- ;
+        storeWindBSet(frameCur->bufferCur,frameCur->windowCur) ;
+        frameCur->bufferCur = frameCur->windowCur->buffer = tbp ;
+        tbp->windowCount++ ;
+        frameCur->windowCur->vertScroll = vertScroll ;
         /* force a check on update, just incase the Func has done something behind our back */
-        curwp->w_flag |= (w_flag|WFMOVEL|WFMAIN) ;
-        restoreWindBSet(curwp,tbp) ;
+        frameCur->windowCur->flag |= (flag|WFMOVEL|WFMAIN) ;
+        restoreWindBSet(frameCur->windowCur,tbp) ;
+#if MEOPT_EXTENDED
         isWordMask = tbp->isWordMask ;
+#endif
     }
     else
         execFunc(index,(flags & meEBF_ARG_GIVEN),n) ;
     if(movePos)
     {
         /* return back to the alpha mark */
-        alphaMarkGet(curbp,meAM_EXECBUFF) ;
-        curwp->w_dotp = curbp->b_dotp ;
-        curwp->w_doto = curbp->b_doto ;
-        curwp->line_no = curbp->line_no ;
-        curwp->w_flag |= WFMOVEL ;
+        alphaMarkGet(frameCur->bufferCur,meAM_EXECBUFF) ;
+        frameCur->windowCur->dotLine = frameCur->bufferCur->dotLine ;
+        frameCur->windowCur->dotOffset = frameCur->bufferCur->dotOffset ;
+        frameCur->windowCur->dotLineNo = frameCur->bufferCur->dotLineNo ;
+        frameCur->windowCur->flag |= WFMOVEL ;
     }
     thisflag = tf;
     lastflag = lf;
@@ -1329,20 +1349,20 @@ execBufferFunc(BUFFER *bp, int index, int flags, int n)
 }
 
 static long
-macroPrintError(LINE *hlp, meUByte *macName)
+macroPrintError(meLine *hlp, meUByte *macName)
 {
-    LINE *lp ;
+    meLine *lp ;
     long  ln ;
     
     if(errorLine == NULL)
         /* Quit if there is no error line */
         return -1 ;
     
-    lp=lforw(hlp) ;
+    lp=meLineGetNext(hlp) ;
     ln=0 ;
     while(lp != errorLine)
     {
-        lp = lforw(lp) ;
+        lp = meLineGetNext(lp) ;
         ln++ ;
     }
     mlwrite(MWABORT|MWWAIT,(meUByte *)"[Error executing %s, line %d]",macName,ln+1) ;
@@ -1353,14 +1373,14 @@ macroPrintError(LINE *hlp, meUByte *macName)
 int
 execBuffer(int f, int n)
 {
-    register BUFFER *bp;                /* ptr to buffer to execute */
+    register meBuffer *bp;                /* ptr to buffer to execute */
     register int s;                     /* status return */
-    meVARLIST varList={NULL,0} ;
-    meUByte  bufn[MAXBUF];                /* name of buffer to execute */
+    meVarList varList={NULL,0} ;
+    meUByte  bufn[meBUF_SIZE_MAX];                /* name of buffer to execute */
     meInt  ln ;
     
     /* find out what buffer the user wants to execute */
-    if((s = getBufferName((meUByte *)"Execute buffer", 0, 1, bufn)) != TRUE)
+    if((s = getBufferName((meUByte *)"Execute buffer", 0, 1, bufn)) != meTRUE)
         return s ;
     
     /* find the pointer to that buffer */
@@ -1368,37 +1388,39 @@ execBuffer(int f, int n)
         return mlwrite(MWABORT,(meUByte *)"No such buffer");
     
     /* and now execute it as asked */
-    if(((s = donbuf(bp->b_linep,&varList,bp->b_bname,f,n)) != TRUE) &&
-       ((ln = macroPrintError(bp->b_linep,bufn)) >= 0))
+    if(((s = donbuf(bp->baseLine,&varList,bp->name,f,n)) != meTRUE) &&
+       ((ln = macroPrintError(bp->baseLine,bufn)) >= 0))
     {
         /* the execution failed lets go to the line that caused the grief */
-        bp->b_dotp  = errorLine ;
-        bp->line_no = ln ;
-        bp->b_doto  = 0 ;
+        bp->dotLine  = errorLine ;
+        bp->dotLineNo = ln ;
+        bp->dotOffset  = 0 ;
         /* look if buffer is showing */
-        if(bp->b_nwnd)
+        if(bp->windowCount)
         {
-            register WINDOW *wp;        /* ptr to windows to scan */
+            register meWindow *wp;        /* ptr to windows to scan */
             
-            wp = wheadp;
+            meFrameLoopBegin() ;
+            wp = loopFrame->windowList;
             while (wp != NULL)
             {
-                if (wp->w_bufp == bp)
+                if (wp->buffer == bp)
                 {
                     /* and point it */
-                    wp->w_dotp = errorLine ;
-                    wp->w_doto = 0 ;
-                    wp->line_no = ln ;
-                    wp->w_flag |= WFMOVEL ;
+                    wp->dotLine = errorLine ;
+                    wp->dotOffset = 0 ;
+                    wp->dotLineNo = ln ;
+                    wp->flag |= WFMOVEL ;
                 }
-                wp = wp->w_wndp;
+                wp = wp->next;
             }
+            meFrameLoopEnd() ;
         }
     }
     /* free off any command variables */
     if(varList.head != NULL)
     {
-        meVARIABLE *cv=varList.head, *ncv ;
+        meVariable *cv=varList.head, *ncv ;
         while(cv != NULL)
         {
             ncv = cv->next ;
@@ -1418,27 +1440,27 @@ execBuffer(int f, int n)
 int
 dofile(meUByte *fname, int f, int n)
 {
-    meVARLIST     varList={NULL,0} ;
-    meUByte         fn[FILEBUF] ;
-    LINE          hlp ;
+    meVarList     varList={NULL,0} ;
+    meUByte         fn[meFILEBUF_SIZE_MAX] ;
+    meLine          hlp ;
     register int  status ;      /* results of various calls */
     
-    hlp.l_fp = &hlp ;
-    hlp.l_bp = &hlp ;
+    hlp.next = &hlp ;
+    hlp.prev = &hlp ;
     /* use a new buffer to ensure it doesn't mess with any loaded files */
     if(!fileLookup(fname,(meUByte *)".emf",meFL_CHECKDOT|meFL_USESRCHPATH,fn) ||
-       (ffReadFile(fn,meRWFLAG_SILENT,NULL,&hlp) == ABORT))
+       (ffReadFile(fn,meRWFLAG_SILENT,NULL,&hlp) == meABORT))
         return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[Failed to load file %s]", fname);
     
     /* go execute it! */
-    if((status = donbuf(&hlp,&varList,fn,f,n)) != TRUE)
+    if((status = donbuf(&hlp,&varList,fn,f,n)) != meTRUE)
         /* the execution failed lets go to the line that caused the grief */
         macroPrintError(&hlp,fn) ;
     freeLineLoop(&hlp,0) ;
     /* free off any command variables */
     if(varList.head != NULL)
     {
-        meVARIABLE *cv=varList.head, *ncv ;
+        meVariable *cv=varList.head, *ncv ;
         while(cv != NULL)
         {
             ncv = cv->next ;
@@ -1454,11 +1476,11 @@ dofile(meUByte *fname, int f, int n)
 int
 execFile(int f, int n)  /* execute a series of commands in a file */
 {
-    meUByte filename[MAXBUF];      /* Filename */
+    meUByte filename[meBUF_SIZE_MAX];      /* Filename */
     int status;
     
     if ((status=meGetString((meUByte *)"Execute File",MLFILECASE, 0, filename, 
-                        MAXBUF)) != TRUE)
+                        meBUF_SIZE_MAX)) != meTRUE)
         return status ;
     
     /* otherwise, execute it */
@@ -1473,7 +1495,7 @@ startup(meUByte *sfname)
 {
     /* look up the startup file */
     if(sfname == NULL)
-        sfname = (meUByte *)"me" ;
+        sfname = (meUByte *) ME_SHORTNAME ;
     
     return dofile(sfname,0,1) ;
 }
@@ -1485,22 +1507,22 @@ int
 execCommand(int f, int n)
 {
     register int idx ;       /* index to the requested function */
-    meUByte buf[MAXBUF];       /* buffer to hold tentative command name */
+    meUByte buf[meBUF_SIZE_MAX];       /* buffer to hold tentative command name */
     meUByte prm[30] ;
     
     /* setup prompt */
-    if(f==TRUE)
+    if(f==meTRUE)
         sprintf((char *)prm,"Arg %d: Command",n) ;
     else
         meStrcpy(prm,"Command") ;
     
     /* if we are executing a command line get the next arg and match it */
-    if((idx = meGetString(prm, MLCOMMAND, 1, buf, MAXBUF)) != TRUE)
+    if((idx = meGetString(prm, MLCOMMAND, 1, buf, meBUF_SIZE_MAX)) != meTRUE)
         return idx ;
     
     /* decode the function name, if -ve then duff */
     if((idx = decode_fncname(buf,0)) < 0)
-        return(FALSE);
+        return(meFALSE);
     
     /* and then execute the command */
     return execFunc(idx,f,n) ;
@@ -1517,7 +1539,7 @@ lineExec (int f, int n, meUByte *cmdstr)
     register int status;                /* status return */
     meUByte *oldestr;                     /* original exec string */
     meUByte  oldcle ;                     /* old contents of clexec flag */
-    meUByte  tkn[TOKENBUF] ;
+    meUByte  tkn[meTOKENBUF_SIZE_MAX] ;
     int oldexec, oldF, oldN, oldForce ;
     
     /* save the arguments */
@@ -1528,7 +1550,7 @@ lineExec (int f, int n, meUByte *cmdstr)
     oldN = meRegCurr->n ;
     oldForce = meRegCurr->force ;
     
-    clexec = TRUE;                      /* in cline execution */
+    clexec = meTRUE;                      /* in cline execution */
     execstr = NULL ;
     execlevel = 0;                      /* Reset execution level */
     meRegCurr->f = f ;
@@ -1552,10 +1574,10 @@ int
 execLine(int f, int n)
 {
     register int status;                /* status return */
-    meUByte cmdstr[MAXBUF];               /* string holding command to execute */
+    meUByte cmdstr[meBUF_SIZE_MAX];               /* string holding command to execute */
     
     /* get the line wanted */
-    if ((status = meGetString((meUByte *)":", 0, 0, cmdstr, MAXBUF)) != TRUE)
+    if ((status = meGetString((meUByte *)":", 0, 0, cmdstr, meBUF_SIZE_MAX)) != meTRUE)
         return status ;
     
     return lineExec(f,n,cmdstr) ;

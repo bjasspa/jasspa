@@ -30,12 +30,18 @@
 
 DEFSKEY ("",             NULL, NULL,      SKEY_error ) /* Don't want a key with value 0x00 */
 DEFSKEY ("backspace",    "kb", "\010",    SKEY_backspace )
+#if MEOPT_CALLBACK
 DEFSKEY ("bell",         NULL, NULL,      SKEY_bell )
+#endif
+#if MEOPT_CALLBACK
 DEFSKEY ("callback",     NULL, NULL,      SKEY_callback )
+#endif
 DEFSKEY ("caps-lock",    NULL, NULL,      SKEY_caps_lock )
 DEFSKEY ("delete",       "kD", "\177",    SKEY_delete )
 DEFSKEY ("down",         "kd", "\033[B",  SKEY_down )
+#if MEOPT_CALLBACK
 DEFSKEY ("drop",         NULL, NULL,      SKEY_drop )
+#endif
 DEFSKEY ("end",          "@7", "\033[4~", SKEY_end )
 DEFSKEY ("esc",          NULL, "\033",    SKEY_esc )
 DEFSKEY ("f1",           "k1", "\033[11~",SKEY_f1 )
@@ -59,9 +65,11 @@ DEFSKEY ("f7",           "k7", "\033[18~",SKEY_f7 )
 DEFSKEY ("f8",           "k8", "\033[19~",SKEY_f8 )
 DEFSKEY ("f9",           "k9", "\033[20~",SKEY_f9 )
 DEFSKEY ("home",         "kh", "\033[3~", SKEY_home )
+#if MEOPT_CALLBACK
 DEFSKEY ("idle-drop",    NULL, NULL,      SKEY_idle_drop )
 DEFSKEY ("idle-pick",    NULL, NULL,      SKEY_idle_pick )
 DEFSKEY ("idle-time",    NULL, NULL,      SKEY_idle_time )
+#endif
 DEFSKEY ("insert",       "kI", "\033[2~", SKEY_insert )
 DEFSKEY ("kp-begin",     "K2", NULL,      SKEY_kp_begin )
 DEFSKEY ("kp-delete",    NULL, NULL,      SKEY_kp_delete )
@@ -77,6 +85,7 @@ DEFSKEY ("kp-up",        NULL, NULL,      SKEY_kp_up )
 DEFSKEY ("left",         "kl", "\033[D",  SKEY_left )
 /* Windows 105 keyboard; application button */
 DEFSKEY ("menu",         NULL, NULL,      SKEY_menu )
+#if MEOPT_MOUSE
 DEFSKEY ("mouse-drop-1", NULL, NULL,      SKEY_mouse_drop_1 )
 DEFSKEY ("mouse-drop-2", NULL, NULL,      SKEY_mouse_drop_2 )
 DEFSKEY ("mouse-drop-3", NULL, NULL,      SKEY_mouse_drop_3 )
@@ -101,12 +110,15 @@ DEFSKEY ("mouse-time-4", NULL, NULL,      SKEY_mouse_time_4 )
 DEFSKEY ("mouse-time-5", NULL, NULL,      SKEY_mouse_time_5 )
 DEFSKEY ("mouse-wdown",  NULL, NULL,      SKEY_mouse_wdown )
 DEFSKEY ("mouse-wup",    NULL, NULL,      SKEY_mouse_wup )
+#endif
 DEFSKEY ("num-lock",     NULL, NULL,      SKEY_num_lock )
 DEFSKEY ("page-down",    "%5", "\033[6~", SKEY_page_down )
 DEFSKEY ("page-up",      "%8", "\033[5~", SKEY_page_up )
 DEFSKEY ("pause",        NULL, NULL,      SKEY_pause )
+#if MEOPT_CALLBACK
 DEFSKEY ("pick",         NULL, NULL,      SKEY_pick )
 DEFSKEY ("redraw",       NULL, NULL,      SKEY_redraw )
+#endif
 DEFSKEY ("return",       NULL, "\015",    SKEY_return )
 DEFSKEY ("right",        "kr", "\033[C",  SKEY_right )
 DEFSKEY ("scroll-lock",  NULL, NULL,      SKEY_scroll_lock )

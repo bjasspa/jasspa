@@ -34,6 +34,8 @@
 #include "emain.h"
 #include "esearch.h"
 
+#if MEOPT_TAGS
+
 #define TAG_MIN_LINE 6
 static meUByte *tagLastFile=NULL ;
 static meInt  tagLastPos=-1 ;
@@ -52,7 +54,7 @@ findTagInFile(meUByte *file, meUByte *baseName, meUByte *tagTemp,
               int tagOption, meUByte *key, meUByte *patt)
 {
     FILE  *fp ;
-    meUByte  function[MAXBUF] ;
+    meUByte  function[meBUF_SIZE_MAX] ;
     meInt  opos, pos, start, end, found=-1;
     int    tmp ;
     
@@ -115,7 +117,7 @@ findTagInFile(meUByte *file, meUByte *baseName, meUByte *tagTemp,
 /*
  * Find the function in the tag file.  From Mike Rendell.
  * Return the line of the tags file, and let do_tag handle it from here.
- * Note file must be an array MAXBUF big
+ * Note file must be an array meBUF_SIZE_MAX big
  */
 
 static int
@@ -148,7 +150,7 @@ findTagSearch(meUByte *key, meUByte *file, meUByte *patt)
     
     /* Get the current directory location of our file and use this to locate
      * the tag file. */
-    getFilePath(curbp->b_fname,file) ;
+    getFilePath(frameCur->bufferCur->fileName,file) ;
     baseName = file + meStrlen(file) ;
     for(;;)
     {
@@ -161,7 +163,7 @@ findTagSearch(meUByte *key, meUByte *file, meUByte *patt)
             if(tagOption & 4)
             {
                 if(tagLastFile == NULL)
-                    tagLastFile = meMalloc(FILEBUF) ;
+                    tagLastFile = meMalloc(meFILEBUF_SIZE_MAX) ;
                 if(tagLastFile != NULL)
                 {
                     ii = (size_t) baseName - (size_t) file ;
@@ -171,7 +173,7 @@ findTagSearch(meUByte *key, meUByte *file, meUByte *patt)
                 else
                     tagLastPos = -1 ;
             }
-            return TRUE ;
+            return meTRUE ;
         }
         if(ii == 1)
         {
@@ -204,7 +206,7 @@ static int
 findTagSearchNext(meUByte *key, meUByte *file, meUByte *patt)
 {
     FILE *fp ;
-    meUByte function[MAXBUF], *baseName, *tagTemp ;
+    meUByte function[meBUF_SIZE_MAX], *baseName, *tagTemp ;
     meInt pos ;
     
     if((tagLastPos < 0) ||
@@ -231,28 +233,28 @@ findTagSearchNext(meUByte *key, meUByte *file, meUByte *patt)
         /* no more found */
         return mlwrite(MWABORT,(meUByte *)"[No more \"%s\" tags]",key) ;
     tagLastPos = pos ;
-    return TRUE ;
+    return meTRUE ;
 }
 
 static	int
 findTagExec(int nn, meUByte tag[])
 {
-    meUByte file[FILEBUF];	/* File name */
-    meUByte fpatt[MAXBUF];	/* tag file pattern */
-    meUByte mpatt[MAXBUF];	/* magic pattern */
+    meUByte file[meFILEBUF_SIZE_MAX];	/* File name */
+    meUByte fpatt[meBUF_SIZE_MAX];	/* tag file pattern */
+    meUByte mpatt[meBUF_SIZE_MAX];	/* magic pattern */
     int   flags ;
     
     if(nn & 0x04)
     {
-        if(findTagSearchNext(tag, file, fpatt) != TRUE)
-            return FALSE ;
+        if(findTagSearchNext(tag, file, fpatt) != meTRUE)
+            return meFALSE ;
     }
-    else if(findTagSearch(tag, file, fpatt) != TRUE)
-        return FALSE ;
+    else if(findTagSearch(tag, file, fpatt) != meTRUE)
+        return meFALSE ;
     
     if((nn & 0x01) && (wpopup(NULL,WPOP_MKCURR) == NULL))
-        return FALSE ;
-    if(findSwapFileList(file,(BFND_CREAT|BFND_MKNAM),0) != TRUE)
+        return meFALSE ;
+    if(findSwapFileList(file,(BFND_CREAT|BFND_MKNAM),0) != meTRUE)
         return mlwrite(MWABORT,(meUByte *)"[Can't find %s]", file);
     
     /* now convert the tag file search pattern into a magic search string */
@@ -265,12 +267,12 @@ findTagExec(int nn, meUByte tag[])
         if(ee == '?')
         {
             flags = ISCANNER_BACKW|ISCANNER_PTBEG|ISCANNER_MAGIC|ISCANNER_EXACT ;
-            gotoeob(TRUE, 0);
+            gotoeob(meTRUE, 0);
         }            
         else
         {
             flags = ISCANNER_PTBEG|ISCANNER_MAGIC|ISCANNER_EXACT ;
-            gotobob(TRUE, 0);
+            gotobob(meTRUE, 0);
             if(ee != '/')
             {
                 ee = '\0' ;
@@ -320,10 +322,10 @@ findTagExec(int nn, meUByte tag[])
             *dd = '\0' ;
     }
     
-    if(iscanner(mpatt,0,flags,NULL) != TRUE)
+    if(iscanner(mpatt,0,flags,NULL) != meTRUE)
         return mlwrite(MWABORT,(meUByte *)"[Can't find %s]",fpatt) ;
     
-    return TRUE ;
+    return meTRUE ;
 }
 
 /*ARGSUSED*/
@@ -331,8 +333,8 @@ findTagExec(int nn, meUByte tag[])
 int
 findTag(int f, int n)
 {
-    meUByte  tag [MAXBUF];
-    LINE  *startp;
+    meUByte  tag [meBUF_SIZE_MAX];
+    meLine  *startp;
     meShort  starto, i;
     
     /* Determine if we are in a word. If not then get a word from the 
@@ -340,47 +342,47 @@ findTag(int f, int n)
     
     if(n & 0x04)
         ;
-    else if((n & 0x02) || (inWord() == FALSE))
+    else if((n & 0x02) || (inWord() == meFALSE))
     {
 	/*---	Get user word. */
-        if((meGetString((meUByte *)"Enter Tag", MLNOSPACE, 0, tag,MAXBUF) != TRUE) || (tag[0] == '\0'))
-            return ctrlg(FALSE,1) ;
+        if((meGetString((meUByte *)"Enter Tag", MLNOSPACE, 0, tag,meBUF_SIZE_MAX) != meTRUE) || (tag[0] == '\0'))
+            return ctrlg(meFALSE,1) ;
     }
     else
     {
 	/*---	Save the current cursor postion. */
         
-        startp = curwp->w_dotp;		
-        starto = curwp->w_doto;
+        startp = frameCur->windowCur->dotLine;		
+        starto = frameCur->windowCur->dotOffset;
         
 	/*---	Go to the start of the word. */
 
-        while(WbackChar(curwp,1) != FALSE)	/* Back up */
-            if(inWord() == FALSE)
+        while(WbackChar(frameCur->windowCur,1) != meFALSE)	/* Back up */
+            if(inWord() == meFALSE)
             {
-                WforwChar(curwp, 1);		/* Back into the word */
+                WforwChar(frameCur->windowCur, 1);		/* Back into the word */
                 break ;
             }
         
 	/*---	Get the word required. */
         
         i = 0;
-        while (inWord() != FALSE)
+        while (inWord() != meFALSE)
         {
-            tag[i++] = lgetc(curwp->w_dotp, curwp->w_doto);
-            if (i >= MAXBUF-1)
+            tag[i++] = meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset);
+            if (i >= meBUF_SIZE_MAX-1)
             {
                 i = 0;	/* Too big !! */
                 break;	/* Break out */
             }
-            WforwChar(curwp, 1);
+            WforwChar(frameCur->windowCur, 1);
         }
         tag[i] = 0;			/* End of string */
         
 	/*---	Restore old cursor position, find tag type and find the string */
         
-        curwp->w_dotp = startp;
-        curwp->w_doto = starto;
+        frameCur->windowCur->dotLine = startp;
+        frameCur->windowCur->dotOffset = starto;
 
     }	/* End of 'if' */
     
@@ -390,4 +392,4 @@ findTag(int f, int n)
 
 }
 
-
+#endif

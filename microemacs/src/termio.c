@@ -91,21 +91,28 @@ meUByte ttSpeChars [TTSPECCHARS] =
 void
 TTdoBell(int n)
 {  
+#if MEOPT_CALLBACK
     register int index;
     meUInt arg ;
+#endif
     
+#if MEOPT_DEBUGM
     if(macbug < -1)
         macbug = 1 ;
+#endif
+#if MEOPT_CALLBACK
     if((index = decode_key(ME_SPECIAL|SKEY_bell,&arg)) >= 0)
         execFuncHidden(ME_SPECIAL|SKEY_bell,index,arg) ;
-    else if((n == 0) || ((n == 1) && meModeTest(globMode,MDQUIET)))
+    else
+#endif
+        if((n == 0) || ((n == 1) && meModeTest(globMode,MDQUIET)))
     {
         meUByte scheme=(globScheme/meSCHEME_STYLES) ;
-        pokeScreen(POKE_NOMARK+0x10,TTnrow,TTncol-6,&scheme,
+        pokeScreen(POKE_NOMARK+0x10,frameCur->depth,frameCur->width-6,&scheme,
                    (meUByte *) "[BELL]") ;
-        vvideo.video[TTnrow].endp = TTncol ;
+        frameCur->video.lineArray[frameCur->depth].endp = frameCur->width ;
         resetCursor() ;
-        mlStatus |= MLSTATUS_CLEAR ;
+        frameCur->mlStatus |= MLSTATUS_CLEAR ;
     }
     else
     {
@@ -115,9 +122,9 @@ TTdoBell(int n)
 void
 TTbell(void)
 {  
-    if(kbdmode == PLAY)
+    if(kbdmode == mePLAY)
     {
-        kbdmode = STOP ;
+        kbdmode = meSTOP ;
         if(meRegCurr->force < 2)
             /* a double !force says \CG is okay so don't complain */
             mlwrite(0,(meUByte *)"Macro terminated by ringing the bell") ;
@@ -133,12 +140,12 @@ meInt meTimerTime[NUM_TIMERS]={0} ; /* Absolute time of the timers */
 
 #ifdef _WIN32
 static INT meTimerId[NUM_TIMERS]={0} ;      /* Windows timer handles          */
-#define meSetMultiTimer(id,tim)  (meTimerId[id]=SetTimer(ttHwnd,id,tim,(TIMERPROC)(LPVOID)NULL))
+#define meSetMultiTimer(id,tim)  (meTimerId[id]=SetTimer(baseHwnd,id,tim,(TIMERPROC)(LPVOID)NULL))
 #define meKillMultiTimer(id)                                                 \
 do {                                                                         \
     if(meTimerId[id] != 0)                                                   \
     {                                                                        \
-        KillTimer(ttHwnd,meTimerId[id]) ;                                    \
+        KillTimer(baseHwnd,meTimerId[id]) ;                                    \
         meTimerId[id] = 0 ;                                                  \
     }                                                                        \
 } while(0)
@@ -186,13 +193,15 @@ timerAlarm(int id)
 static TIMERBLOCK tblock[NUM_TIMERS]={      /* Timer block storage            */
     { NULL, 0, AUTOS_TIMER_ID },
     { NULL, 0, SLEEP_TIMER_ID },
-    { NULL, 0, CALLB_TIMER_ID },
-    { NULL, 0, IDLE_TIMER_ID },
-    { NULL, 0, CURSOR_TIMER_ID }
-#if MOUSE
+    { NULL, 0, CURSOR_TIMER_ID}
+#if MEOPT_CALLBACK
+   ,{ NULL, 0, CALLB_TIMER_ID }
+   ,{ NULL, 0, IDLE_TIMER_ID  }
+#endif
+#if MEOPT_MOUSE
    ,{ NULL, 0, MOUSE_TIMER_ID }
 #endif
-#ifdef _URLSUPP
+#if MEOPT_SOCKET
    ,{ NULL, 0, SOCKET_TIMER_ID }
 #endif
 } ;
@@ -239,7 +248,7 @@ timerCheck(long tim)
     {
         ntbp = tbp->next ;              /* Save the next timer in list */
         /* Timer expired ?? */
-        if (tim+TIMER_MIN >= tbp->abstime)
+        if (((meUInt) tim+TIMER_MIN) >= tbp->abstime)
         {
 /*            fprintf(fplog,"Timer %d %d Expired\n",tbp->id,tbp->abstime) ;*/
             /* Report it as expired */
@@ -305,8 +314,10 @@ timerSet(int id, meInt tim, meInt offset)
     {
 #ifdef _MULTI_NOID_TIMER
         /* each timer does not keep the id, so kill the current timer if set */
-#ifdef _WINCON
+#ifdef _WIN32
+#ifdef _ME_WINDOW
         if (meSystemCfg & meSYSTEM_CONSOLE)
+#endif
 #endif
             meKillMultiTimer(id) ;
 #endif
@@ -461,13 +472,36 @@ _timerKill (int id)
 void
 handleTimerExpired(void)
 {
+#if MEOPT_MWFRAME
+    extern int commandDepth ;
+    
+    /* if the user has changed the window focus using the OS
+     * and this is the top level then change frames */
+    if((frameFocus != NULL) && (frameFocus != frameCur) &&
+       (commandDepth == 0))
+    {
+        if(frameCur->mlLine->length > 0)
+        {
+            /* erase the ml line of old current frame */
+            frameCur->mlLine->text[0] = '\0' ;
+            frameCur->mlLine->length = 0 ;
+            frameCur->mlLine->flag |= meLINE_CHANGED ;
+        }
+        mlerase(MWCLEXEC) ;
+        frameCur = frameFocus ;
+        frameFocus = NULL ;
+    }
+#endif
+    
     if(isTimerExpired(AUTOS_TIMER_ID))  /* Alarm expired ?? */
         autoSaveHandler();              /* Initiate an auto save */
+#if MEOPT_CALLBACK
     if(isTimerExpired(CALLB_TIMER_ID))  /* Alarm expired ?? */
         callBackHandler();              /* Initiate any callbacks */
+#endif
     if(isTimerExpired(CURSOR_TIMER_ID)) /* Alarm expired ?? */
         TThandleBlink(0);               /* Initiate a cursor blink */
-#ifdef _URLSUPP
+#if MEOPT_SOCKET
     if(isTimerExpired(SOCKET_TIMER_ID)) /* socket connection time-out */
         ffFileOp(NULL,NULL,meRWFLAG_FTPCLOSE|meRWFLAG_SILENT) ;
 #endif
@@ -486,15 +520,14 @@ meUByte  TTbreakFlag = 0;
 meUByte  TTbreakCnt = TTBREAKCNT;
 meUByte  TTallKeys = 0;           /* Report all keys */
 
-int TTcurr =  0;                 /* Windows current row. */
-int TTcurc =  0;                 /* Windows current column */
-int TTfocus = 1;                 /* Is the window the current focus */
+meUShort TTwidthDefault=0 ;      /* Default no. of cols per frame*/
+meUShort TTdepthDefault=0 ;      /* Default no. of rows per frame*/
 
 
 void
 TThandleBlink(int initFlag)
 {
-    if((cursorState < 0) || !TTfocus)
+    if((cursorState < 0) || (frameCur->flags & meFRAME_NOT_FOCUS))
         timerClearExpired(CURSOR_TIMER_ID) ;
     else
     {
@@ -533,12 +566,12 @@ TThandleBlink(int initFlag)
 void
 TTmove(int row, int col)
 {
-    if ((row != TTcurr) || (col != TTcurc))
+    if ((row != frameCur->cursorRow) || (col != frameCur->cursorColumn))
     {
         if((cursorState >= 0) && blinkState)
             TThideCur() ;
-        TTcurr = row ;
-        TTcurc = col ;
+        frameCur->cursorRow = row ;
+        frameCur->cursorColumn = col ;
     }
     if((cursorState >= 0) && blinkState)
         TTshowCur() ;
@@ -626,14 +659,15 @@ charListToShorts(meUShort *sl, meUByte *cl)
     return ii ;
 }
 
+#if MEOPT_EXTENDED
 static void
-translateKeyShow(meTRANSKEY *tcapKeys, BUFFER *bp, meUByte *key, int depth)
+translateKeyShow(meTRANSKEY *tcapKeys, meBuffer *bp, meUByte *key, int depth)
 {
     int ii, nd ;
     
     if(tcapKeys->map != ME_INVALID_KEY)
     {
-        meUByte buf[MAXBUF] ;
+        meUByte buf[meBUF_SIZE_MAX] ;
         
         meStrcpy(buf,"    \"") ;
         ii = 5 ;
@@ -662,6 +696,7 @@ translateKeyShow(meTRANSKEY *tcapKeys, BUFFER *bp, meUByte *key, int depth)
         translateKeyShow(tcapKeys->child+ii,bp,key,nd) ;
     }
 }
+#endif
 
 int
 translateKey(int f, int n)
@@ -671,47 +706,49 @@ translateKey(int f, int n)
     meUByte buf[128] ;
     int ii ;
     
+#if MEOPT_EXTENDED
     if(n == 0)
     {
-        WINDOW *wp ;
-        BUFFER *bp ;
+        meWindow *wp ;
+        meBuffer *bp ;
     
         if((wp = wpopup(BtranskeyN,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR))) == NULL)
-            return FALSE ;
-        bp = wp->w_bufp ;
+            return meFALSE ;
+        bp = wp->buffer ;
         
         translateKeyShow(&TTtransKey,bp,buf,0) ;
-        bp->b_dotp = lforw(bp->b_linep);
-        bp->b_doto = 0 ;
-        bp->line_no = 0 ;
-        meModeClear(bp->b_mode,MDEDIT) ;    /* don't flag this as a change */
-        meModeSet(bp->b_mode,MDVIEW) ;      /* put this buffer view mode */
+        bp->dotLine = meLineGetNext(bp->baseLine);
+        bp->dotOffset = 0 ;
+        bp->dotLineNo = 0 ;
+        meModeClear(bp->mode,MDEDIT) ;    /* don't flag this as a change */
+        meModeSet(bp->mode,MDVIEW) ;      /* put this buffer view mode */
         resetBufferWindows(bp) ;            /* Update the window */
         mlerase(MWCLEXEC);	                /* clear the mode line */
     }
     else
+#endif
     {
         meStrcpy(tnkyPrompt+19,"code") ;
-        if((meGetString(tnkyPrompt,0,0,buf,128) != TRUE) ||
+        if((meGetString(tnkyPrompt,0,0,buf,128) != meTRUE) ||
            ((ii=keyListToShorts(c_from,buf)) <= 0))
-            return FALSE ;
+            return meFALSE ;
 
         if(n == -1)
             c_to[0] = ME_INVALID_KEY ;
         else
         {
-            if(f == FALSE)
+            if(f == meFALSE)
                 n = TTtransKey.time ;
             meStrcpy(tnkyPrompt+19,"to") ;
-            if((meGetString(tnkyPrompt,0,0,buf,128) != TRUE) ||
+            if((meGetString(tnkyPrompt,0,0,buf,128) != meTRUE) ||
                ((f=keyListToShorts(c_to,buf)) < 0))
-                return FALSE ;
+                return meFALSE ;
             if(f == 0)
                 c_to[0] = ME_DELETE_KEY ;
         }
         translateKeyAdd(&TTtransKey,ii,n,c_from,*c_to) ;
     }
-    return TRUE ;
+    return meTRUE ;
 }
 
 meUShort
@@ -804,6 +841,7 @@ TTgetc(void)
     return cc ;
 }
 
+#if MEOPT_CALLBACK
 /*
  * doIdlePickEvent
  * Handle the idle event.
@@ -848,6 +886,7 @@ doIdleDropEvent(void)
         execFuncHidden(ME_SPECIAL|SKEY_idle_drop,index,arg) ;
     meTimerState[IDLE_TIMER_ID] = 0;
 }
+#endif
 
 /*
  * addKeyToBuffer
@@ -858,22 +897,26 @@ addKeyToBuffer(meUShort cc)
 {
     if(cc == breakc)
     {
+#if MEOPT_DEBUGM
         if(macbug < 0)
         {
             macbug = 1 ;
             return ;
         }
+#endif
         TTbreakFlag = 1 ;
     }
-#if MOUSE
+#if MEOPT_MOUSE
     /* Reset the mouse context if mouse interaction is outstanding. 
      * This should only be timer keys
      * Kill off the timer */
     timerKill(MOUSE_TIMER_ID);
 #endif
+#if MEOPT_CALLBACK
     /* Flag the end of the idle if necessary */
     if(meTimerState[IDLE_TIMER_ID] != 0)
         doIdleDropEvent() ;
+#endif
     
     /* If cursor is blinking, ensure the cursor is visible */
     if((cursorState >= 0) && cursorBlink)
@@ -891,6 +934,18 @@ addKeyToBuffer(meUShort cc)
         TTNbell() ;
 }
 
+#ifdef _ME_CONSOLE
+#ifdef _TCAP
+#ifndef _USETPARM
+#define MENEED_TPARM 1
+#endif /* _USETPARM */
+#endif /* _TCAP */
+#endif /* _ME_CONSOLE */
+#ifndef MENEED_TPARM
+#define MENEED_TPARM MEOPT_PRINT
+#endif /* MENEED_TPARM */
+
+#if MENEED_TPARM
 #ifdef _STDARG
 char *
 meTParm(char *str, ...)
@@ -1130,4 +1185,4 @@ arg_print:
     tbuff[len] = '\0' ;
     return tbuff ;
 }
-
+#endif

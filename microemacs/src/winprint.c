@@ -33,7 +33,7 @@
 
 #include "emain.h"
 
-#if PRINT
+#if MEOPT_PRINT
 
 #include "evers.h"                      /* Version information */
 #include "eskeys.h"                     /* Emacs special keys */
@@ -88,7 +88,6 @@ static HWND hDlgCancel;                 /* Cancel Dialogue */
 PRINTDLG printDlg;                      /* Print Dialogue */
 static int bPrint;
 
-extern HWND   ttHwnd;                   /* This is the window handle */
 extern HANDLE ttInstance;
 
 /*
@@ -104,7 +103,7 @@ static const char *pcdExactlyStrings[] =
 };
 
 static char *regPrintName = "/print" ;
-static REGHANDLE regPrint;
+static meRegNode *regPrint;
 
 /*
  * printFont
@@ -114,14 +113,14 @@ static void
 printFont (LOGFONT *plf, char *fontName)
 {
     plf->lfWeight = FW_NORMAL;
-    plf->lfItalic = FALSE;
-    plf->lfUnderline = FALSE;
+    plf->lfItalic = meFALSE;
+    plf->lfUnderline = meFALSE;
     plf->lfCharSet = ttlogfont.lfCharSet;
     plf->lfWidth = 0;
     plf->lfHeight = 0;
     plf->lfEscapement = 0;
     plf->lfOrientation = 0;
-    plf->lfStrikeOut = FALSE;
+    plf->lfStrikeOut = meFALSE;
     plf->lfOutPrecision = OUT_DEVICE_PRECIS/*|OUT_TT_PRECIS*/;
     plf->lfClipPrecision = CLIP_DEFAULT_PRECIS;
     plf->lfQuality = DEFAULT_QUALITY;
@@ -319,14 +318,14 @@ constructFontTable (HDC hDC, HFONT *fontTable, int charx, int chary, char *fontN
     for (ii = 0; ii < PFONT_MAX; ii++)
     {
         logfont.lfWeight = (ii & PFONT_BOLD) ? FW_BOLD : FW_NORMAL;
-        logfont.lfItalic = (ii & PFONT_ITALIC) ? TRUE : FALSE;
-        logfont.lfUnderline = (ii & PFONT_UNDER) ? TRUE : FALSE;
+        logfont.lfItalic = (ii & PFONT_ITALIC) ? meTRUE : meFALSE;
+        logfont.lfUnderline = (ii & PFONT_UNDER) ? meTRUE : meFALSE;
 
         if (ii == 0)
         {
             /* Create the font */
             if ((fontTable [ii] = CreateFontIndirect (&logfont)) == 0)
-                return FALSE;
+                return meFALSE;
 
             /* Get the width and height of the font. This is a mono font so all
              * fonts should be the same size */
@@ -347,7 +346,7 @@ constructFontTable (HDC hDC, HFONT *fontTable, int charx, int chary, char *fontN
             }
         }
     }
-    return TRUE;
+    return meTRUE;
 }
 
 /*
@@ -401,10 +400,10 @@ AbortProc(HDC hdc, int nCode)
     }
 
     /*
-     * Return the global bPrint flag (which is set to FALSE
+     * Return the global bPrint flag (which is set to meFALSE
      * if the user presses the Cancel button).
      */
-     return /*(printStatus & PRINT_SPOOLING) ? TRUE : FALSE;*/ bPrint;
+     return /*(printStatus & PRINT_SPOOLING) ? meTRUE : meFALSE;*/ bPrint;
 }
 
 
@@ -423,21 +422,21 @@ AbortPrintJob (HWND hwndDlg,     /* window handle of dialog box     */
             SetDlgItemText(hwndDlg, IDC_FILE, "**NO INFORMATION**");
         else
             SetDlgItemText(hwndDlg, IDC_FILE, printJob);
-        return TRUE;
+        return meTRUE;
 
     case WM_COMMAND:     /* message: received a command */
         /* User pressed "Cancel" button--stop print job. */
         if ((LOWORD (wParam)) == IDABORT)
         {
             /*        printStatus &= ~PRINT_SPOOLING;*/
-            bPrint = FALSE;
+            bPrint = meFALSE;
         }
-        return TRUE;
+        return meTRUE;
     }
     UNREFERENCED_PARAMETER(lParam);
     UNREFERENCED_PARAMETER(wParam);
     UNREFERENCED_PARAMETER(message);
-    return FALSE;     /* didn't process a message   */
+    return meFALSE;     /* didn't process a message   */
 }
 
 /*************************************************************************
@@ -605,7 +604,7 @@ done:
     else
         pd->upagey = (pd->papery - xtraDepth) / printer.param [mePI_ROWS].l;
     pd->upapery = (pd->upagey * printer.param[mePI_ROWS].l) + xtraDepth;
-    return TRUE;
+    return meTRUE;
 }
 
 
@@ -634,7 +633,7 @@ pcdEnumFontFamiliesCallback (ENUMLOGFONT *lpelf, NEWTEXTMETRIC *lpntm, int fontT
             (strcmp (printer.param [mePI_FONTFACE].p,  lpelf->elfLogFont.lfFaceName) == 0))
             SendMessage ((HWND) lParam, CB_SETCURSEL, index, 0);
     }
-    return TRUE;
+    return meTRUE;
 }
 
 /*
@@ -927,7 +926,7 @@ pcdDialogue (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 #endif
         /* Set up the rows & columns */
         SetTimer (hWnd, PRINT_TIMER_ID, PRINT_TIMER_RESPONSE, (TIMERPROC) pcdTimerCallback);
-        return TRUE;
+        return meTRUE;
 
     case WM_COMMAND:
         switch (LOWORD (wParam))
@@ -960,15 +959,15 @@ pcdDialogue (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                         regSet (regPrint, printNames [ii], printer.param [ii].p);
                 }
             }
-            EndDialog (hWnd, TRUE);
-            return TRUE;
+            EndDialog (hWnd, meTRUE);
+            return meTRUE;
 
         case IDCANCEL:
         case IDC_PC_CANCEL:
-            //            EnableWindow  (ttHwnd, TRUE);
+            //            EnableWindow(meFrameGetWinHandle(frameCur), meTRUE);
             KillTimer (hWnd, 10);
-            EndDialog (hWnd, FALSE);
-            return TRUE;
+            EndDialog (hWnd, meFALSE);
+            return meTRUE;
 
             /* Buttons */
         case IDC_HEADER:
@@ -976,7 +975,7 @@ pcdDialogue (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case IDC_LINE_NOS:
             if (HIWORD(wParam) == BN_CLICKED)
                 break;
-            return FALSE;
+            return meFALSE;
 
             /* Combo boxes */
         case IDC_ROWS:
@@ -1012,23 +1011,23 @@ pcdDialogue (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 }
                 break;
             }
-            return FALSE;
+            return meFALSE;
             /* The page size specifiers */
         case IDC_FONTFACE:
         case IDC_WIDTH_EXACTLY:
         case IDC_HEIGHT_EXACTLY:
             if ((HIWORD(wParam) == CBN_EDITCHANGE) || (HIWORD(wParam) == CBN_CLOSEUP))
                 break;
-            return FALSE;
+            return meFALSE;
         default:
-            return FALSE;
+            return meFALSE;
         }
 
         /* Schedule an update of the rest of the dialogue. */
         SetTimer (hWnd, PRINT_TIMER_ID, PRINT_TIMER_RESPONSE, (TIMERPROC) pcdTimerCallback);
-        return TRUE;
+        return meTRUE;
     }
-    return FALSE;
+    return meFALSE;
 }
 
 void
@@ -1171,18 +1170,32 @@ WinPrintSetColor(HDC hDC, int colNo, int setBgCol)
 static void
 WinPrintThread (LPVOID wParam)
 {
-    static const char title[] = ENAME " " meVERSION " Print Spooler";
-
+    static const char title[] = ME_FULLNAME " " meVERSION " Print Spooler";
+    
+    HWND curHwnd ;
     DOCINFO di;                         /* Document information. */
     RECT paperArea;                     /* Paper area */
     HFONT fontTab [PFONT_MAX];          /* Font table */
-    char nambuf [MAXBUF];               /* Name buffer */
+    char nambuf [meBUF_SIZE_MAX];               /* Name buffer */
     char *docName;
-    LINE *ihead;
+    meLine *ihead;
+    
+#ifdef _ME_CONSOLE
+#ifdef _ME_WINDOW
+    if (meSystemCfg & meSYSTEM_CONSOLE)
+#endif /* _ME_WINDOW */
+        curHwnd = meHWndNull ;
+#ifdef _ME_WINDOW
+    else
+#endif /* _ME_WINDOW */
+#endif /* _ME_CONSOLE */
+#ifdef _ME_WINDOW
+        curHwnd = meFrameGetWinHandle(frameCur) ;
+#endif /* _ME_WINDOW */
     
     /* Pick up the arguments */
     docName = ((char **)(wParam))[0];
-    ihead = (LINE *)(((char **)(wParam)) [1]);
+    ihead = (meLine *)(((char **)(wParam)) [1]);
 
     /* Mark as spooling */
     printStatus |= PRINT_SPOOLING;
@@ -1192,12 +1205,12 @@ WinPrintThread (LPVOID wParam)
 
     if (ihead == NULL)
     {
-        char msgbuf [MAXBUF];           /* Message buffer */
+        char msgbuf [meBUF_SIZE_MAX];           /* Message buffer */
         sprintf (msgbuf, "Nothing to spool \"%s\"", docName);
-        MessageBox (ttHwnd, msgbuf, title, MB_ICONEXCLAMATION|MB_OK);
+        MessageBox (curHwnd, msgbuf, title, MB_ICONEXCLAMATION|MB_OK);
         goto quick_exit;
     }
-    bPrint = TRUE;
+    bPrint = meTRUE;
     printDlg.hDC = NULL;
     printDlg.hDC = printGetDC();
 
@@ -1205,7 +1218,7 @@ WinPrintThread (LPVOID wParam)
 /*    if (((printStatus & PRINT_DIALOGUE) == 0) || (printDlg.hDC == NULL))*/
     if (printDlg.hDC == NULL)
     {
-        MessageBox (ttHwnd, "Device context not configured", title, MB_ICONEXCLAMATION|MB_OK);
+        MessageBox (curHwnd, "Device context not configured", title, MB_ICONEXCLAMATION|MB_OK);
         goto quick_exit;
     }
 
@@ -1218,9 +1231,9 @@ WinPrintThread (LPVOID wParam)
        window. */
     hDlgCancel = CreateDialog (ttInstance,
                                MAKEINTRESOURCE (IDD_ABORT),
-                               ttHwnd,
+                               curHwnd,
                                (DLGPROC) AbortPrintJob);
-/*    EnableWindow(ttHwnd, FALSE);*/
+/*    EnableWindow(curHwnd, meFALSE);*/
 
     /* Initialise the document indormation structure for the spool job */
     memset (&di, 0, sizeof (DOCINFO));
@@ -1238,7 +1251,7 @@ WinPrintThread (LPVOID wParam)
     paperArea.top    = GetDeviceCaps(printDlg.hDC, LOGPIXELSY);   /* 1/4 inch */
 
     /* Set up the font size */
-    if (constructFontTable (printDlg.hDC, fontTab, pd.cell.sizeX, pd.cell.sizeY, pd.fontName) == FALSE)
+    if (constructFontTable (printDlg.hDC, fontTab, pd.cell.sizeX, pd.cell.sizeY, pd.fontName) == meFALSE)
         goto dlg_exit;
 
 #define FlushBuffer() \
@@ -1257,7 +1270,7 @@ do { \
     /* Start the printing */
     if (StartDoc (printDlg.hDC, &di) != SP_ERROR)
     {
-        char buffer [MAXBUF];
+        char buffer [meBUF_SIZE_MAX];
         int bindex = 0;
         int charSet = 0;                /* The current character set */
         int lineNo = 0;
@@ -1269,12 +1282,12 @@ do { \
         for(;;)
         {
             /* Advance the line pointer if no characters left */
-            while (charIdx >= ihead->l_used)
+            while (charIdx >= ihead->length)
             {
-                LINE *lp = ihead;
+                meLine *lp = ihead;
                 /* Move to the next line and destruct. */
                 charIdx = 0;
-                ihead = lforw(ihead);
+                ihead = meLineGetNext(ihead);
                 meFree (lp);
                 if (ihead == NULL)
                     break;
@@ -1283,15 +1296,15 @@ do { \
                 break ;
             
             /* Get the next character */
-            cc = ihead->l_text [charIdx++];
+            cc = ihead->text [charIdx++];
 
             /* Handle any commands - Escape charcter */
-            if ((cc == 0x1b) && (charIdx < ihead->l_used))
+            if ((cc == 0x1b) && (charIdx < ihead->length))
             {
                 FlushBuffer();
                 
                 /* Get the command character */
-                cc = ihead->l_text [charIdx++];
+                cc = ihead->text [charIdx++];
                 
                 /* Change Font or color */
                 if((cc == 'c') || (cc == 'f'))
@@ -1300,7 +1313,7 @@ do { \
                     for(;;)
                     {
                         ll = (cc == 'c') ? 3:1 ;
-                        if((charIdx+ll) > ihead->l_used)
+                        if((charIdx+ll) > ihead->length)
                         {
                             mlwrite (0, "[Illegal printer character Esc-%02x]", cc);
                             break ;
@@ -1308,17 +1321,17 @@ do { \
                         if(cc == 'c')
                         {
                             /* change the color */
-                            cc = ihead->l_text [charIdx++];
+                            cc = ihead->text [charIdx++];
                             ll = (hexToNum(cc)) << 4 ;
-                            cc = ihead->l_text [charIdx++];
+                            cc = ihead->text [charIdx++];
                             ll |= hexToNum(cc) ;
-                            cc = ihead->l_text [charIdx++];
+                            cc = ihead->text [charIdx++];
                             WinPrintSetColor(printDlg.hDC,ll,(cc == 'B')) ;
                         }
                         else
                         {
                             /* change the font */
-                            cc = ihead->l_text [charIdx++];
+                            cc = ihead->text [charIdx++];
                             if((cc >= 'A') && (cc < ('A'+PFONT_COUNT)))
                             {
                                 charSet |= 1 << (cc - 'A') ;
@@ -1328,9 +1341,9 @@ do { \
                                 charSet &= ~(1 << (cc - 'a')) ;
                             }
                         }
-                        if((charIdx+3 > ihead->l_used) ||
-                           (ihead->l_text[charIdx] != 0x1b) ||
-                           (((cc=ihead->l_text[charIdx+1]) != 'c') && (cc != 'f')))
+                        if((charIdx+3 > ihead->length) ||
+                           (ihead->text[charIdx] != 0x1b) ||
+                           (((cc=ihead->text[charIdx+1]) != 'c') && (cc != 'f')))
                             break ;
                         charIdx += 2 ;
                     }
@@ -1411,7 +1424,7 @@ error_exit:
 
 dlg_exit:
     /* Abort dialogue is up, destruct the dialogue and enable main window. */
-/*    EnableWindow (ttHwnd, TRUE);*/
+/*    EnableWindow (curHwnd, meTRUE);*/
     DestroyWindow (hDlgCancel);
     /* free of colorTbl etc */
     WinPrintSetColor(NULL,-1,0) ;
@@ -1427,8 +1440,8 @@ quick_exit:
     /* Destruct the line list if it already exists. */
     while (ihead != NULL)
     {
-        LINE *lp = ihead;
-        ihead = lforw (ihead);
+        meLine *lp = ihead;
+        ihead = meLineGetNext (ihead);
         meFree (lp);
     }
 
@@ -1452,7 +1465,7 @@ quick_exit:
  * NOTE: This is not a thread at the moment !!
  */
 int
-WinPrint (meUByte *docName, LINE *ihead)
+WinPrint (meUByte *docName, meLine *ihead)
 {
     static char *args[2];
     DWORD threadId;
@@ -1469,7 +1482,7 @@ WinPrint (meUByte *docName, LINE *ihead)
                        (LPVOID) args, 0, &threadId))
         return mlwrite (MWABORT, "Cannot create printing thread");
 
-    return TRUE;
+    return meTRUE;
 }
 
 /*
@@ -1492,15 +1505,30 @@ printSetup (int n)
     if ((n == -2) || (n == 0))
     {
         /* Set up the dialogue box and return the status.
-         * Note that we explicitly test the return status for TRUE which is
+         * Note that we explicitly test the return status for meTRUE which is
          * returned if the dialogue 'Print' button is pressed. Any other value
          * that is returned indicates that the 'Cancel' button was pressed or
          * the dialogue could not be created (-1). */
+        HWND curHwnd ;
+
+#ifdef _ME_CONSOLE
+#ifdef _ME_WINDOW
+        if (meSystemCfg & meSYSTEM_CONSOLE)
+#endif /* _ME_WINDOW */
+            curHwnd = meHWndNull ;
+#ifdef _ME_WINDOW
+        else
+#endif /* _ME_WINDOW */
+#endif /* _ME_CONSOLE */
+#ifdef _ME_WINDOW
+            curHwnd = meFrameGetWinHandle(frameCur) ;
+#endif /* _ME_WINDOW */
+        
         if (DialogBox (ttInstance,
                        MAKEINTRESOURCE (IDD_PRINTER_CONFIGURATION),
-                       ttHwnd,
-                       (DLGPROC) pcdDialogue) != TRUE)
-            return FALSE;
+                       curHwnd,
+                       (DLGPROC) pcdDialogue) != meTRUE)
+            return meFALSE;
     }
     else if(n > 0)
     {
@@ -1514,7 +1542,7 @@ printSetup (int n)
                         printer.param [mePI_PAGEY].l, printer.param[mePI_SPECY].l,
                         10);
     }
-    return TRUE;
+    return meTRUE;
 }
 
 #endif

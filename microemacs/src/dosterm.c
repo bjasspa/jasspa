@@ -34,7 +34,7 @@
 #include <sys/time.h>
 #include <pc.h>
 
-#if MOUSE
+#if MEOPT_MOUSE
 
 /* Local definitions for mouse handling code */
 /* mouseState
@@ -51,12 +51,9 @@ static int  mouseState = 0;             /* State of the mouse. */
 /* bit button lookup - [0] = no keys, [1] = left, [2] = right, [4]=middle */
 static meUShort mouseKeys[8] = { 0, 1, 3, 0, 2, 0, 0, 0 } ;
 
-#endif /* MOUSE */
+#endif /* MEOPT_MOUSE */
 
 meUByte  Cattr = 0x07 ;
-meUShort TTmargin = 8  ;		/* size of minimim margin and	*/
-meUShort TTscrsiz = 64 ;		/* scroll size for extended lines */
-meUShort TTmrow, TTmcol,TTnrow, TTncol ;
 
 static meShort dosOrgMode ;
 static meShort dosOrgDepth ;
@@ -100,11 +97,11 @@ static meUByte dosColors[dosNumColors*3] =
     
 
 void
-TTdump(BUFFER *bp)
+TTdump(meBuffer *bp)
 {
     meUShort r1, r2, c1, c2 ;
-    meUByte buff[TTmrow*TTmcol*2], *ss ;
-    meUByte line[TTmcol] ;
+    meUByte buff[TTdepthDefault*TTdepthDefault*2], *ss ;
+    meUByte line[TTwidthDefault] ;
 
     ScreenRetrieve(buff) ;
     r1 = ScreenRows() ;
@@ -234,7 +231,7 @@ return_spec:
             ii = cc ;
     }
     addKeyToBuffer(ii) ;
-#if MOUSE
+#if MEOPT_MOUSE
     /* If the mouse is active and flagged to show, as the user has pressed a
      * key, we should now flag to not automatically show the mouse.
      */
@@ -304,7 +301,7 @@ TTwaitForChar(void)
     union REGS rg ;
     meUShort cc;                  /* Local character code */
 
-#if MOUSE
+#if MEOPT_MOUSE
     if(meMouseCfg & meMOUSE_ENBLE)
     {
         meUShort mc ;
@@ -338,17 +335,19 @@ TTwaitForChar(void)
         }
     }
 #endif
+#if MEOPT_CALLBACK
     /* IDLE TIME: Check the idle time events */        
-    if(kbdmode == KBD_IDLE)
+    if(kbdmode == meIDLE)
         /* Check the idle event */
         doIdlePickEvent() ;
+#endif
     
     for(;;)
     {
         handleTimerExpired() ;
         if(TTahead())
             break ;
-#if MOUSE
+#if MEOPT_MOUSE
         if(meMouseCfg & meMOUSE_ENBLE)
         {
             meShort row, col, but ;
@@ -431,7 +430,7 @@ TTwaitForChar(void)
 #endif
     } /* ' for' */
     
-#if MOUSE
+#if MEOPT_MOUSE
     if(mouseState & MOUSE_STATE_VISIBLE)
     {
         /* Turn mouse off - NOTE that we dont change the 'show' state, If
@@ -450,46 +449,46 @@ TTwaitForChar(void)
 void
 TThideCur(void)
 {
-    if((TTcurr <= TTnrow) && (TTcurc < TTncol))
+    if((frameCur->cursorRow <= frameCur->depth) && (frameCur->cursorColumn < frameCur->width))
     {
-        FRAMELINE *flp;                     /* Frame store line pointer */
-        meSCHEME schm;                      /* Current colour */
+        meFrameLine *flp;                     /* Frame store line pointer */
+        meScheme schm;                      /* Current colour */
         meUByte cc ;                          /* Current cchar  */
         meUByte dcol;
 
-        flp  = frameStore + TTcurr ;
-        cc   = flp->text[TTcurc] ;          /* Get char under cursor */
-        schm = flp->scheme[TTcurc] ;        /* Get colour under cursor */
+        flp  = frameCur->store + frameCur->cursorRow ;
+        cc   = flp->text[frameCur->cursorColumn] ;          /* Get char under cursor */
+        schm = flp->scheme[frameCur->cursorColumn] ;        /* Get colour under cursor */
 
         dcol = TTschemeSet(schm) ;
         
-        ScreenPutChar(cc, dcol, TTcurc, TTcurr);
+        ScreenPutChar(cc, dcol, frameCur->cursorColumn, frameCur->cursorRow);
     }
 }
 
 void
 TTshowCur(void)
 {
-    if((TTcurr <= TTnrow) && (TTcurc < TTncol))
+    if((frameCur->cursorRow <= frameCur->depth) && (frameCur->cursorColumn < frameCur->width))
     {
-        FRAMELINE *flp;                     /* Frame store line pointer */
-        meSCHEME schm;                      /* Current colour */
+        meFrameLine *flp;                     /* Frame store line pointer */
+        meScheme schm;                      /* Current colour */
         meUByte cc ;                          /* Current cchar  */
         meUByte dcol;
 
-        flp  = frameStore + TTcurr ;
-        cc   = flp->text[TTcurc] ;          /* Get char under cursor */
-        schm = flp->scheme[TTcurc] ;        /* Get colour under cursor */
+        flp  = frameCur->store + frameCur->cursorRow ;
+        cc   = flp->text[frameCur->cursorColumn] ;          /* Get char under cursor */
+        schm = flp->scheme[frameCur->cursorColumn] ;        /* Get colour under cursor */
 
         dcol = TTcolorSet(colTable[meStyleGetBColor(meSchemeGetStyle(schm))],
                           colTable[cursorColor]) ;
 
-        ScreenPutChar(cc, dcol, TTcurc, TTcurr);
+        ScreenPutChar(cc, dcol, frameCur->cursorColumn, frameCur->cursorRow);
     }
 }
 
 
-#if MOUSE
+#if MEOPT_MOUSE
 void
 TTinitMouse(void)
 {
@@ -541,8 +540,8 @@ ibmChangeSRes(void)
         rg.h.bh = 0 ;		/* set screen page number */
         int86(0x10, &rg, &rg);
 #endif
-        changeScreenDepth(TRUE,row);
-        changeScreenWidth(TRUE,col);
+        frameChangeDepth(meTRUE,row);
+        frameChangeWidth(meTRUE,col);
     }
     /* Stop that horrible blinking */
     rg.x.ax = 0x1003;		/* blink state dos call */
@@ -554,7 +553,7 @@ ibmChangeSRes(void)
     rg.x.cx = 0x2607;		/* set invisible */
     int86(0x10, &rg, &rg);
 
-#if MOUSE
+#if MEOPT_MOUSE
     if(meMouseCfg & meMOUSE_ENBLE)
     {
         /* initialise the mouse and flag if okay */
@@ -564,12 +563,12 @@ ibmChangeSRes(void)
         /* set mouse hor range */
         rg.x.ax = 0x0007 ;
         rg.x.cx = 0x0000 ;
-        rg.x.dx = (TTncol-1) << 3 ;
+        rg.x.dx = (frameCur->width-1) << 3 ;
         int86(0x33, &rg, &rg) ;
         /* set mouse vert range */
         rg.x.ax = 0x0008 ;
         rg.x.cx = 0x0000 ;
-        rg.x.dx = (TTnrow) << 3 ;
+        rg.x.dx = (frameCur->depth) << 3 ;
         int86(0x33, &rg, &rg) ;
         /* get the current status */
         rg.x.ax = 0x0003 ;
@@ -579,7 +578,7 @@ ibmChangeSRes(void)
         mouseState |= (rg.x.bx & MOUSE_STATE_BUTTONS) ;
     }
 #endif
-    sgarbf = TRUE ;
+    sgarbf = meTRUE ;
 }
 
 int
@@ -595,15 +594,15 @@ TTstart(void)
     dosOrgMode = ScreenMode() ;
     dosOrgDepth = ScreenRows() ;
 
-    TTmrow = TTnrow = dosOrgDepth ;
-    TTmcol = TTncol = ScreenCols() ;
-    TTnrow-- ;
+    TTdepthDefault = dosOrgDepth ;
+    TTwidthDefault = ScreenCols() ;
 
     /* vga cursor emulation */
     rg.h.bl = 0x34;
     rg.x.ax = 0x1200;
     int86(0x10, &rg, &rg);
     
+#if MEOPT_MOUSE
     /* initialise the mouse and flag if okay */
     rg.x.ax = 0x0000 ;
     int86(0x33, &rg, &rg) ;
@@ -622,7 +621,8 @@ TTstart(void)
     }
     else
         meMouseCfg &= ~meMOUSE_ENBLE ;
-
+#endif
+    
     return TTopen() ;
 }
 
@@ -639,7 +639,7 @@ TTopen(void)
 
     ibmChangeSRes() ;
 
-    return TRUE ;
+    return meTRUE ;
 }
 
 int
@@ -687,22 +687,22 @@ TTclose(void)
 int
 changeFont(int f, int n)
 {
-    char buf[NSTRING] ;
+    char buf[meSBUF_SIZE_MAX] ;
     int  mode ;
 
-    if(meGetString("Res mode",0,0,buf,NBUFN) != TRUE)
-        return FALSE ;
+    if(meGetString("Res mode",0,0,buf,meSBUF_SIZE_MAX) != meTRUE)
+        return meFALSE ;
     mode = meAtoi(buf) ;
-    if(meGetString("Res special",0,0,buf,NBUFN) != TRUE)
-        return FALSE ;
+    if(meGetString("Res special",0,0,buf,meSBUF_SIZE_MAX) != meTRUE)
+        return meFALSE ;
     dosResMode = mode ;
     dosResSpecial = meAtoi(buf) ;
     ibmChangeSRes() ;
-    return TRUE ;
+    return meTRUE ;
 }
 
 int
-TTaddColor(meCOLOR index, meUByte r, meUByte g, meUByte b)
+TTaddColor(meColor index, meUByte r, meUByte g, meUByte b)
 {
     meUByte *ss ;
     int ii, jj, idif, jdif ;
@@ -727,13 +727,13 @@ TTaddColor(meCOLOR index, meUByte r, meUByte g, meUByte b)
     }
     colTable[index] = jj ;
     
-    return TRUE ;
+    return meTRUE ;
 }
 
 void
 TTsleep(int msec, int intable)
 {
-    if(intable && ((kbdmode == PLAY) || (clexec == TRUE)))
+    if(intable && ((kbdmode == mePLAY) || (clexec == meTRUE)))
         return ;
 
     timerSet(SLEEP_TIMER_ID,-1,msec);
@@ -747,7 +747,7 @@ TTsleep(int msec, int intable)
 }
 
 
-#if	TYPEAH
+#if	MEOPT_TYPEAH
 /* TTahead:	Check to see if any characters are already in the
 		keyboard buffer
 */
@@ -770,7 +770,7 @@ TTahead(void)
     if(TTnoKeys)
         return TTnoKeys ;
 
-#if MOUSE
+#if MEOPT_MOUSE
     /* If an alarm hCheck the mouse */
     if(isTimerExpired(MOUSE_TIMER_ID))
     {
@@ -801,6 +801,7 @@ TTahead(void)
         }
     }
 #endif
+#if MEOPT_CALLBACK
     if(isTimerExpired(IDLE_TIMER_ID))
     {
         meUInt arg;           /* Decode key argument */
@@ -819,6 +820,7 @@ TTahead(void)
         else
             meTimerState[IDLE_TIMER_ID] = 0 ;
     }
+#endif
     return TTnoKeys ;
 }
 #endif

@@ -34,44 +34,44 @@
 
 #include "emain.h"
 
-#if	CRYPT
+#if MEOPT_CRYPT
 
 #define USE_OLD_CRYPT 0                 /* 0 = me3.8; 1 = me3.12 */
 
 /* reset encryption key of given buffer */
 int
-setBufferCryptKey(BUFFER *bp, meUByte *key)
+setBufferCryptKey(meBuffer *bp, meUByte *key)
 {
-    meUByte keybuf[NPAT]; 	/* new encryption string */
+    meUByte keybuf[mePATBUF_SIZE_MAX]; 	/* new encryption string */
 	
     if(key == NULL)
     {
 	/* get the string to use as an encrytion string */
-        if(meGetString((meUByte *)"Encryption String",MLNOHIST|MLHIDEVAL,0,keybuf,NPAT-1) != TRUE)
-            return FALSE ;
+        if(meGetString((meUByte *)"Encryption String",MLNOHIST|MLHIDEVAL,0,keybuf,mePATBUF_SIZE_MAX-1) != meTRUE)
+            return meFALSE ;
         key = keybuf ;
         mlerase(MWCLEXEC);		/* clear it off the bottom line */
     }
-    meNullFree(bp->b_key) ;
-    bp->b_key = NULL ;
+    meNullFree(bp->cryptKey) ;
+    bp->cryptKey = NULL ;
     if((key[0] == 0) ||
-       ((bp->b_key = meStrdup(key)) == NULL))
-        meModeClear(bp->b_mode,MDCRYPT) ;
+       ((bp->cryptKey = meStrdup(key)) == NULL))
+        meModeClear(bp->mode,MDCRYPT) ;
     else
     {
         /* and encrypt it */
-        meModeSet(bp->b_mode,MDCRYPT) ;
+        meModeSet(bp->mode,MDCRYPT) ;
         meCrypt(NULL, 0);
-        meCrypt(bp->b_key, meStrlen(key));
+        meCrypt(bp->cryptKey, meStrlen(key));
     }
     addModeToBufferWindows(bp,WFMODE) ;
-    return TRUE ;
+    return meTRUE ;
 }
 
 int
 setCryptKey(int f, int n)	/* reset encryption key of current buffer */
 {
-    return setBufferCryptKey(curbp,NULL) ;
+    return setBufferCryptKey(frameCur->bufferCur,NULL) ;
 }
 
 #if USE_OLD_CRYPT            
@@ -202,7 +202,7 @@ meCrypt(register meUByte *bptr, register meUInt len)
     {	/* is there anything here to encrypt? */
         key = len;	/* set the new key */
         salt = len;	/* set the new salt */
-        return(TRUE);
+        return(meTRUE);
     }
     while (len--)
     { 	/* for every character in the buffer */
@@ -323,6 +323,6 @@ meCrypt(register meUByte *bptr, register meUInt len)
 #endif
         *bptr++ = cc;	/* put character back into buffer */
     }
-    return(TRUE);
+    return(meTRUE);
 }
 #endif

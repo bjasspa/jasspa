@@ -40,48 +40,63 @@ INSTDIR		= c:\emacs
 INSTPROGFLAGS	= 
 #
 # Local Definitions
-COFF          = coff2exe
+CP            = copy
 RM            = del
 CC            = gcc
 LD            = $(CC)
 STRIP         =	strip
+COFF          = coff2exe
+INSTALL       =	copy
 CDEBUG        =	-g -Wall
 COPTIMISE     =	-O2 -DNDEBUG=1 -Wall
 CDEFS         = -D_DOS -D__DJGPP2__ -I.
-LIBS          = -lpc
+CONSOLE_DEFS  = -D_ME_CONSOLE
+NANOEMACS_DEFS= -D_NANOEMACS
+LDDEBUG       =
+LDOPTIMISE    =	
 LDFLAGS       = 
-INSTALL       =	copy
+LIBS          = -lpc 
+CONSOLE_LIBS  =
 #
 # Rules
-.SUFFIXES: .c .o .od
+.SUFFIXES: .c .oc .on .odc .odn
 
-.c.o:	
-	$(CC) $(COPTIMISE) $(CDEFS) -c $<
+.c.oc:
+	$(CC) $(COPTIMISE) $(CDEFS) $(MICROEMACS_DEFS) $(CONSOLE_DEFS) $(MAKECDEFS) -o $@ -c $<
 
-.c.od:	
-	$(CC) $(CDEBUG) $(CDEFS) -o $*.od -c $<
+.c.on:
+	$(CC) $(COPTIMISE) $(CDEFS) $(NANOEMACS_DEFS) $(CONSOLE_DEFS) $(MAKECDEFS) -o $@ -c $<
+
+# Debug Builds
+.c.odc:	
+	$(CC) $(CDEBUG) $(CDEFS) $(MICROEMACS_DEFS) $(CONSOLE_DEFS) $(MAKECDEFS) -o $@ -c $<
+
+.c.odn:	
+	$(CC) $(CDEBUG) $(CDEFS) $(NANOEMACS_DEFS) $(CONSOLE_DEFS) $(MAKECDEFS) -o $@ -c $<
 #
 # Source files
 STDHDR	= ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h \
-	  esearch.h eskeys.h estruct.h eterm.h evar.h evers.h \
+	  esearch.h eskeys.h estruct.h eterm.h evar.h evers.h eopt.h \
 	  ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def
 STDSRC	= abbrev.c basic.c bind.c buffer.c crypt.c dirlist.c display.c \
-	  eval.c exec.c file.c fileio.c hilight.c history.c input.c \
+	  eval.c exec.c file.c fileio.c frame.c hilight.c history.c input.c \
 	  isearch.c key.c line.c macro.c main.c narrow.c next.c osd.c \
 	  print.c random.c regex.c region.c registry.c search.c spawn.c \
 	  spell.c tag.c termio.c time.c undo.c window.c word.c
 
 PLTHDR  = 
 PLTSRC  = dosterm.c
+
+HEADERS = $(STDHDR) $(PLTHDR)
+SRC     = $(STDSRC) $(PLTSRC)
 #
 # Object files
-STDOBJ	= $(STDSRC:.c=.o)	
-PLTOBJ  = $(PLTSRC:.c=.o)
-OBJ	= $(STDOBJ) $(PLTOBJ)
+OBJ_C    = $(SRC:.c=.oc)
+OBJ_N    = $(SRC:.c=.on)
 
-DSTDOBJ	= $(STDSRC:.c=.od)	
-DPLTOBJ = $(PLTSRC:.c=.od)
-DOBJ	= $(DSTDOBJ) $(DPLTOBJ)
+# Debug Builds
+OBJ_DC   = $(SRC:.c=.odc)
+OBJ_DN   = $(SRC:.c=.odn)
 #
 # Targets
 all: me
@@ -92,37 +107,78 @@ install: me
 
 clean:
 	$(RM) me.exe
+	$(RM) mec.exe
+	$(RM) mec.386
+	$(RM) ne.exe
+	$(RM) nec.exe
+	$(RM) nec.386
 	$(RM) med.exe
-	$(RM) me.386
-	$(RM) med.386
-	$(RM) *.o
-	$(RM) *.od
+	$(RM) medc.exe
+	$(RM) medc.386
+	$(RM) ned.exe
+	$(RM) nedc.exe
+	$(RM) nedc.386
+	$(RM) *.oc
+	$(RM) *.on
+	$(RM) *.odc
+	$(RM) *.odn
 
 spotless: clean
 	$(RM) tags
 	$(RM) *~
 
-me:	me.exe
+mec: mec.exe
+mec.exe: $(OBJ_C)
+	$(RM) mec.386
+	$(RM) mec.exe
+	$(LD) $(LDFLAGS) $(LDOPTIMISE) -o mec.386 $(OBJ_C) $(CONSOLE_LIBS) $(LIBS)
+	$(STRIP) mec.386
+	$(COFF) mec.386
 
-me.exe:	$(OBJ)
-	$(RM) me.386
-	$(RM) me.exe
-	$(LD) $(LDFLAGS) -o me.386 $(OBJ) $(LIBS)
-	$(STRIP) me.386
-	$(COFF) me.386
+me: me.exe
+me.exe:	mec.exe
+	$(CP) mec.exe $@
 
-med:	med.exe
+nec:	nec.exe
+nec.exe: $(OBJ_N)
+	$(RM) nec.386
+	$(RM) nec.exe
+	$(LD) $(LDFLAGS) $(LDOPTIMISE) -o nec.386 $(OBJ_N) $(CONSOLE_LIBS) $(LIBS)
+	$(STRIP) nec.386
+	$(COFF) nec.386
 
-med.exe: $(DOBJ)
-	$(RM) med.386
-	$(RM) med.exe
-	$(LD) $(LDFLAGS) -o med.386 $(DOBJ) $(LIBS)
-	$(COFF) med.386
+ne: ne.exe
+ne.exe:	nec.exe
+	$(CP) nec.exe $@
+
+medc: medc.exe
+medc.exe: $(OBJ_DC)
+	$(RM) medc.386
+	$(RM) medc.exe
+	$(LD) $(LDFLAGS) $(LDDEBUG) -o medc.386 $(OBJ_DC) $(CONSOLE_LIBS) $(LIBS)
+	$(COFF) medc.386
+
+med: med.exe
+med.exe: medc.exe
+	$(CP) medc.exe $@
+
+nedc: nedc.exe
+nedc.exe: $(OBJ_DN)
+	$(RM) nedc.386
+	$(RM) nedc.exe
+	$(LD) $(LDFLAGS) $(LDDEBUG) -o nedc.386 $(OBJ_DN) $(CONSOLE_LIBS) $(LIBS)
+	$(STRIP) nedc.386
+	$(COFF) nedc.386
+
+ned: ned.exe
+ned.exe: nedc.exe
+	$(CP) nedc.exe $@
 #
 # Dependancies
-$(STDOBJ): $(STDHDR)
-$(PLTOBJ): $(STDHDR) $(PLTHDR)
+$(OBJ_C): $(HEADERS)
+$(OBJ_N): $(HEADERS)
 
-$(DSTDOBJ): $(STDHDR)
-$(DPLTOBJ): $(STDHDR) $(PLTHDR)
+# Debug Builds
+$(OBJ_DC): $(HEADERS)
+$(OBJ_DN): $(HEADERS)
 

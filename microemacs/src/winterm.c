@@ -105,21 +105,10 @@
 #include "win32s/w32sut.h"              /* Local to the win32s directory */
 #endif
 
-/* External References */
-extern LINE   *mline;                   /* Pointer to the message line */
-
 /* Ini-file reference */
+#ifndef _NANOEMACS
 #define ME_INI_FILE    "ME32.INI"       /* Name of the ini file */
-
-/* When we get a message that we can't completely handle we must dispatch the
- * message and let windows handle it. Used a define for easy searching */
-#define meMessageHandler(msg) DispatchMessage(msg)
-
-/* Macros to move into and out of screen <=> character space */
-#define rowToClient(y) ((eCellMetrics.cell.sizeY * (y))+eCellMetrics.offsetY)
-#define colToClient(x) ((eCellMetrics.cell.sizeX * (x))+eCellMetrics.offsetX)
-#define clientToRow(y) (((y) - eCellMetrics.offsetY) / eCellMetrics.cell.sizeY)
-#define clientToCol(x) (((x) - eCellMetrics.offsetX) / eCellMetrics.cell.sizeX)
+#endif
 
 /* Define the default search sections in the .ini file */
 static char *iniSections [] =
@@ -130,7 +119,29 @@ static char *iniSections [] =
 };
 /* define the user-name, used for the server file names */
 static char *meUserName="guest" ;
+HWND baseHwnd = meHWndNull;                 /* Handle to base hidden window */
 
+#ifdef _ME_WINDOW
+/* When we get a message that we can't completely handle we must dispatch the
+ * message and let windows handle it. Used a define for easy searching */
+#define meMessageHandler(msg) DispatchMessage(msg)
+
+#define meFrameGetWinData(ff)               ((meFrameData *) (ff)->termData)
+#define meFrameDataGetWinHandle(ff)         ((ff)->hwnd)
+#define meFrameDataGetWinCanvas(ff)         ((ff)->canvas)
+#define meFrameDataGetWinMaximized(ff)      ((ff)->maximized)
+#define meFrameDataGetWinPaintAll(ff)       ((ff)->paintAll)
+#define meFrameDataGetWinPaintDepth(ff)     ((ff)->paintDepth)
+#define meFrameDataGetWinPaintStartCol(ff)  ((ff)->paintStartCol)
+#define meFrameDataGetWinPaintEndCol(ff)    ((ff)->paintEndCol)
+
+/* Macros to move into and out of screen <=> character space */
+#define rowToClient(y) ((y) * eCellMetrics.cell.sizeY)
+#define colToClient(x) ((x) * eCellMetrics.cell.sizeX)
+#define clientToRow(y) ((y) / eCellMetrics.cell.sizeY)
+#define clientToCol(x) ((x) / eCellMetrics.cell.sizeX)
+static int TTdefaultPosX=CW_USEDEFAULT ;
+static int TTdefaultPosY=CW_USEDEFAULT ;
 int meInitGeom[4]={CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT } ;
 
 /* Define the font file that we might want to load from the .ini file.
@@ -144,12 +155,8 @@ static int   fontAdded=0 ;
  * screen. Thise details the size of the font in screen space and
  * also contains the windows definition of the font.
  *
- * The charCellPosX/Y is a look up table for screen to client
+ * The cellRowPos/cellColPos is a look up table for screen to client
  * coordinates. This is the text position.
- *
- * The screenCellPosX/Y is a lookup table for screen to client
- * coordinates. This is the cell position including padding
- * that appears around the edge of the screen.
  *
  * The LUT's provide a faster and more convienient method
  * of moving from screen coordinate space to client coordinate
@@ -175,29 +182,20 @@ typedef struct
 
 typedef struct
 {
-    RECT canvas;                        /* Screen extents */
     MINMAXINFO minMaxInfo;              /* Window extent information */
-    int maximized;                      /* Maximised flags */
-    int offsetX;                        /* Offset of column 0 */
-    int offsetY;                        /* Offset of row 0 */
-    int leadingY;                       /* External leading between rows */
     CharMetrics cell;                   /* Metrics of a character cell */
-    int cellX;                          /* Number of cells in x */
-    int cellY;                          /* Number of cells in y */
-    meShort screenCellNrow;               /* Screen cell number of rows */
-    meShort screenCellNcol;               /* Screen cell number of columns */
-    meShort *screenCellPosX;              /* Screen cell position in X */
-    meShort *screenCellPosY;              /* Screen cell position in Y */
-    meShort *charCellPosX;                /* Character cell position in X */
-    meShort *charCellPosY;                /* Character cell position in Y */
-    meUByte *charCellTmpX;                /* Temporary X position */
-    meShort *paintStartCol;               /* Screen paint start col */
-    meShort *paintEndCol;                 /* Screen paint end col */
-    int    paintAll;                    /* Screen paint all flag */
+    meShort cellDepthCount;             /* Screen cell number of rows */
+    meShort cellWidthCount;             /* Screen cell number of columns */
+    meShort *cellRowPos;                /* Character cell position in Y */
+    meShort *cellColPos;                /* Character cell position in X */
+    meUByte *cellColTmpPos;             /* Temporary X position */
     INT   *cellSpacing;                 /* Spacing of cells */
     HFONT fontdef[meFONT_MAX];          /* Definition of the font. */
     PaletteInfo pInfo;                  /* Emacs colour palette tables */
 } CellMetrics;
+
+CellMetrics eCellMetrics={0};           /* Cell metrics */
+RECT   ttRect;                          /* Area of screen to update */
 
 #ifdef _DRAGNDROP
 /* Retain a list of drag and drop files with thier raw screen position and
@@ -212,7 +210,9 @@ typedef struct s_DragAndDrop
 
 static struct s_DragAndDrop *dadHead = NULL;
 #endif
-#ifdef _CLIENTSERVER
+#endif /* _ME_WINDOW */
+
+#if MEOPT_CLIENTSERVER
 HANDLE *clientHandle = INVALID_HANDLE_VALUE;
 HANDLE *serverHandle = INVALID_HANDLE_VALUE;
 HANDLE *connectHandle= INVALID_HANDLE_VALUE;
@@ -220,15 +220,11 @@ int ttServerSize = 0;
 int ttServerToRead = 0;
 #endif
 
-CellMetrics eCellMetrics={0};           /* Cell metrics */
-HWND   ttHwnd=NULL;                     /* This is the window handle */
-#define ttHwndNull NULL
-RECT   ttRect;                          /* Area of screen to update */
 LONG APIENTRY
 MainWndProc (HWND hWnd, UINT message, UINT wParam, LONG lParam) ;
 
 /***************************************************************************/
-#ifdef _WINCON
+#ifdef _ME_CONSOLE
 /* Windows NT Console screen buffer handle.  All console I/O is done through
  * this handle.
  */
@@ -236,8 +232,9 @@ static HANDLE hInput, hOutput;			/* Handles to console I/O */
 static char chConsoleTitle[256];	    	/* Preserve the title of the console. */
 static DWORD ConsoleMode, OldConsoleMode;	/* Current and old console modes */
 static SMALL_RECT consolePaintArea={0};		/* Update area for console */
+static int ciScreenSize = 0 ;			/* Size of screen buffer memory */
 static CHAR_INFO *ciScreenBuffer = NULL;	/* Copy of screen buffer memory */
-static COORD ConsoleSize, OldConsoleSize ;
+static COORD OldConsoleSize ;
 meUInt *colTable=NULL ;				/* Currently allocated colour table */
 #define consoleNumColors 16			/* Number of colours in console window */
 static meUByte consoleColors[consoleNumColors*3] =
@@ -247,31 +244,18 @@ static meUByte consoleColors[consoleNumColors*3] =
 } ;
 
 /* Function prototypes */
-static void
-WinTermCellResize (int x, int y) ;
-void
-WinTermResize (void);
 HANDLE
 WinKillToClipboard (void);
 #endif
 /***************************************************************************/
-
-/* Standard EMACS terminal definitions */
-meUShort TTnrow = 0;                    /* Number of rows */
-meUShort TTncol = 0;                    /* Number of columns */
-meUShort TTmrow = 0;                    /* Maximum number of rows */
-meUShort TTmcol = 0;                    /* Maximum number of columns */
-meUShort TTmargin = 8;                  /* Minimum size of margin. */
-meUShort TTscrsiz = 64;
 
 /* Local variables holding context state */
 #define TIMER_INACTIVE      0           /* Inactive value for the mouse */
 
 static int ttfcol = meCOLOR_FDEFAULT;   /* Foregound colour */
 static int ttbcol = meCOLOR_BDEFAULT;   /* Background colour */
-static int ttinitialised = 0;           /* Window has initialised. */
+static meUShort ttmodif = 0;            /* Modified keyboard state */
 static int ttshowState;                 /* Show state of the window */
-static int ttmodif = 0;                 /* Modified keyboard state */
 HANDLE ttInstance;                      /* Instance of the application */
 static DWORD ttThreadId = 0;            /* Current thread identity */
 static HBRUSH ttBrush = NULL;           /* Current background brush */
@@ -279,7 +263,7 @@ static HBRUSH ttBrush = NULL;           /* Current background brush */
 /* Font type settings */
 LOGFONT ttlogfont={0};                  /* Current logical font */
 
-#if MOUSE
+#if MEOPT_MOUSE
 /* Local definitions for mouse handling code */
 /* mouseState
  * A integer interpreted as a bit mask that holds the current state of
@@ -296,6 +280,7 @@ static int  mouseState =0;              /* State of the mouse. */
 /* bit button lookup - [0] = no keys, [1] = left, [2]=middle, [4] = right */
 static meUShort mouseKeys[8] = { 0, 1, 2, 0, 3, 0, 0, 0 } ;
 
+#ifdef _ME_WINDOW
 #define mouseHide() ((mouseState & MOUSE_STATE_VISIBLE) ? (SetCursor(NULL),(mouseState &= ~MOUSE_STATE_VISIBLE)):0)
 #define mouseShow() ((mouseState & MOUSE_STATE_VISIBLE) ? 0:(SetCursor(meCursors[meCurCursor]),(mouseState |= MOUSE_STATE_VISIBLE)))
 
@@ -312,6 +297,10 @@ static LPCTSTR meCursorName[meCURSOR_COUNT]=
     IDC_WAIT,
     IDC_NO
 } ;
+#else
+#define mouseHide() 
+#define mouseShow() 
+#endif /* _ME_WINDOW */
 
 /* Convert the mouse coordinates to cell space. Compute the fractional bits
  * which are 1/128ths. Because we lock the mouse into the window then cater
@@ -326,8 +315,8 @@ static LPCTSTR meCursorName[meCURSOR_COUNT]=
         mouse_X = clientToCol (LOWORD(lpos));                                \
         mouse_dX = ((((LOWORD(lpos)) - colToClient(mouse_X)) << 8) /         \
                     eCellMetrics.cell.sizeX);                                \
-        if (mouse_X > TTncol)                                                \
-            mouse_X = TTncol;                                                \
+        if (mouse_X > frameCur->width)                                                \
+            mouse_X = frameCur->width;                                                \
     }                                                                        \
     if (HIWORD(lpos) & 0x8000)        /* Dirty check for -ve */              \
         mouse_Y = 0, mouse_dY = 0;                                           \
@@ -336,11 +325,12 @@ static LPCTSTR meCursorName[meCURSOR_COUNT]=
         mouse_Y = clientToRow (HIWORD(lpos));                                \
         mouse_dY = ((((HIWORD(lpos)) - rowToClient(mouse_Y)) << 8) /         \
                     eCellMetrics.cell.sizeY);                                \
-        if (mouse_Y > TTnrow)                                                \
-            mouse_Y = TTnrow;                                                \
+        if (mouse_Y > frameCur->depth)                                                \
+            mouse_Y = frameCur->depth;                                                \
     }
 
-#ifdef _WINCON
+#ifdef _ME_CONSOLE
+#ifdef _ME_WINDOW
 #define mousePosUpdate(lpos)                                                 \
 do {                                                                         \
     if (meSystemCfg & meSYSTEM_CONSOLE)                                      \
@@ -354,14 +344,71 @@ do {                                                                         \
         __winMousePosUpdate(lpos)                                            \
     }                                                                        \
 } while(0)
-#else
+
+#else /* _ME_WINDOW */
+
+#define mousePosUpdate(lpos)                                                 \
+do {                                                                         \
+    mouse_X = LOWORD(lpos) ;                                                 \
+    mouse_Y = HIWORD(lpos) ;                                                 \
+    mouse_dX = mouse_dY = 0 ;                                                \
+} while(0)
+
+#endif /* _ME_WINDOW */
+
+#else /* _ME_CONSOLE - window only */
+
 #define mousePosUpdate(lpos)                                                 \
 do {                                                                         \
     __winMousePosUpdate(lpos)                                                \
 } while(0)
+#endif /* _ME_CONSOLE */
+
+#else /* MEOPT_MOUSE */
+/* if the mouse is disabled we must still do some work or it will look very
+ * neglected - do the bare minumum */
+
+#ifdef _ME_WINDOW
+#define MOUSE_STATE_VISIBLE      0x0400 /* Mouse is currently visible    */
+
+static int  mouseState=0;               /* State of the mouse. */
+
+#define meCURSOR_DEFAULT 0
+#define meCURSOR_ARROW   0
+#define meCurCursor      0
+#define mouseHide() ((mouseState & MOUSE_STATE_VISIBLE) ? (SetCursor(NULL),(mouseState &= ~MOUSE_STATE_VISIBLE)):0)
+#define mouseShow() ((mouseState & MOUSE_STATE_VISIBLE) ? 0:(SetCursor(meCursors[meCurCursor]),(mouseState |= MOUSE_STATE_VISIBLE)))
+
+static HCURSOR meCursors[1]={NULL} ;
+#else
+#define mouseHide() 
+#define mouseShow() 
+#endif /* _ME_WINDOW */
+
+#endif /* MEOPT_MOUSE */
+
+#if MEOPT_MWFRAME
+
+static meFrame *
+meMessageGetFrame(HWND hwnd)
+{
+    meFrameLoopBegin() ;
+    
+    if(((loopFrame->flags & meFRAME_HIDDEN) == 0) &&
+       (meFrameGetWinHandle(loopFrame) == hwnd))
+            return loopFrame ;
+
+    meFrameLoopEnd() ;
+    
+    return NULL ;
+}
+
+#else
+
+#define meMessageGetFrame(event) frameCur
+
 #endif
 
-#endif /* MOUSE */
 
 int platformId;                         /* Running under NT, 95, or Win32s? */
 
@@ -404,7 +451,7 @@ again:
                     "UTProc",           /* 16-bit dispatch routine */
                     &pfnUTProc,         /* Receives thunk address */
                     NULL,               /* No callback function */
-                    NULL) == FALSE)     /* no shared memroy */
+                    NULL) == meFALSE)     /* no shared memroy */
     {
 
         /* This fails the first time !! */
@@ -451,17 +498,17 @@ gettimeofday (struct meTimeval *tp, struct meTimezone *tz)
  * Client/Server Functions
  *
  **************************************************************************/
-#ifdef _CLIENTSERVER
+#if MEOPT_CLIENTSERVER
 void
 TTopenClientServer (void)
 {
     /* If the server has not been created then create it now */
     if (serverHandle == INVALID_HANDLE_VALUE)
     {
-        meIPIPE *ipipe ;
-        BUFFER *bp ;
-        meMODE sglobMode ;
-        meUByte fname [MAXBUF];
+        meIPipe *ipipe ;
+        meBuffer *bp ;
+        meMode sglobMode ;
+        meUByte fname [meBUF_SIZE_MAX];
         int ii ;
 
         /* create the response file name */
@@ -503,7 +550,7 @@ TTopenClientServer (void)
         meModeClear(globMode,MDWRAP) ;
         meModeClear(globMode,MDUNDO) ;
         if(((bp=bfind("*server*",BFND_CREAT)) == NULL) ||
-           ((ipipe = meMalloc(sizeof(meIPIPE))) == NULL))
+           ((ipipe = meMalloc(sizeof(meIPipe))) == NULL))
         {
             CloseHandle (clientHandle);
             CloseHandle (serverHandle);
@@ -528,19 +575,19 @@ TTopenClientServer (void)
         ipipe->bp = bp ;
         /* setup the response file and server buffer */
         {
-            meUByte buff[MAXBUF] ;
+            meUByte buff[meBUF_SIZE_MAX] ;
 
-            ii = sprintf((char *)buff,"%d\n",ttHwnd) ;
+            ii = sprintf((char *)buff,"%d\n",baseHwnd) ;
             WriteFile(clientHandle,buff,ii,&ii,NULL) ;
 
             sprintf((char *)buff,"Client Server: %s",fname) ;
             addLineToEob(bp,buff) ;     /* Add string */
             addLineToEob(bp,"") ;       /* Add string */
             addLineToEob(bp,"") ;       /* Add string */
-            bp->b_dotp = lback(bp->b_linep) ;
-            bp->b_doto = 0 ;
-            bp->line_no = bp->elineno-1 ;
-            alphaMarkSet(bp,'I',bp->b_dotp,bp->b_doto,1) ;
+            bp->dotLine = meLineGetPrev(bp->baseLine) ;
+            bp->dotOffset = 0 ;
+            bp->dotLineNo = bp->lineCount-1 ;
+            alphaMarkSet(bp,'I',bp->dotLine,bp->dotOffset,1) ;
         }
         /* Set up the window dimensions - default to having auto wrap */
         ipipe->flag = 0 ;
@@ -548,9 +595,9 @@ TTopenClientServer (void)
         ipipe->strCol = 0 ;
         ipipe->noRows = 0 ;
         ipipe->noCols = 0 ;
-        ipipe->curRow = (meShort) bp->line_no ;
+        ipipe->curRow = (meShort) bp->dotLineNo ;
         /* get a popup window for the command output */
-        ipipeSetSize(curwp,bp) ;
+        ipipeSetSize(frameCur->windowCur,bp) ;
     }
 }
 
@@ -576,8 +623,8 @@ TTkillClientServer (void)
 {
     if (serverHandle != INVALID_HANDLE_VALUE)
     {
-        meIPIPE *ipipe ;
-        meUByte fname [MAXBUF];
+        meIPipe *ipipe ;
+        meUByte fname [meBUF_SIZE_MAX];
 
         /* get the ipipe node */
         ipipe = ipipes ;
@@ -613,14 +660,27 @@ TTkillClientServer (void)
     {
         CloseHandle (connectHandle);
         connectHandle = INVALID_HANDLE_VALUE;
-        if(ttHwnd != NULL)
+#if 0
+        /* With the introduction of multi-frames this does not make sense
+         * (which frame do you pop-up?) (it wasn't very safe anyway, what if
+         * the main ME is a console?) Instead a make-current command should be
+         * passed down to the main ME and let it do the work */
+#ifdef _ME_WINDOW
+#ifdef _ME_CONSOLE
+        if (!(meSystemCfg & meSYSTEM_CONSOLE))
+#endif /* _ME_CONSOLE */
         {
-            /* make this the current window */
-            if (IsIconic (ttHwnd))
-                ShowWindow (ttHwnd, SW_SHOWNORMAL);
-            else
-                SetForegroundWindow (ttHwnd);
+            if(meFrameGetWinHandle(frameCur) != NULL)
+            {
+                /* make this the current window */
+                if (IsIconic (meFrameGetWinHandle(frameCur)))
+                    ShowWindow (meFrameGetWinHandle(frameCur), SW_SHOWNORMAL);
+                else
+                    SetForegroundWindow (meFrameGetWinHandle(frameCur));
+            }
         }
+#endif /* _ME_WINDOW */
+#endif
     }
 }
 
@@ -631,7 +691,7 @@ TTconnectClientServer (void)
     if (connectHandle == INVALID_HANDLE_VALUE)
     {
         HANDLE hndl;
-        meUByte fname [MAXBUF];
+        meUByte fname [meBUF_SIZE_MAX];
         DWORD ii ;
 
         /* Create the file name, if the file exists, or deleting it
@@ -645,13 +705,13 @@ TTconnectClientServer (void)
         /* Goto the end of the file */
         SetFilePointer (connectHandle,0,NULL,FILE_END);
 
-        /* Try opening the response file and get the ttHwnd value */
+        /* Try opening the response file and get the base window handle value */
         mkTempName (fname, meUserName, ".rsp");
         if ((hndl = CreateFile (fname, GENERIC_READ, FILE_SHARE_READ|FILE_SHARE_WRITE, NULL,
                                  OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL)) != INVALID_HANDLE_VALUE)
         {
             if((ReadFile(hndl,&fname,20,&ii,NULL) != 0) && (ii > 0))
-                ttHwnd = (HWND) atoi(fname) ;
+                baseHwnd = (HWND) atoi(fname) ;
             CloseHandle (hndl);
         }
     }
@@ -670,7 +730,7 @@ TTsendClientServer(meUByte *line)
 
 #endif
 
-#ifdef _WINCON
+#ifdef _ME_CONSOLE
 /****************************************************************************
  *
  * WINDOWS CONSOLE FUNCTIONS
@@ -706,8 +766,8 @@ ConsolePaint (void)
         COORD coordUpdateBegin, coordBufferSize;
 
         /* Set size of screen buffer */
-        coordBufferSize.X = TTncol;
-        coordBufferSize.Y = TTnrow+1;
+        coordBufferSize.X = frameCur->width;
+        coordBufferSize.Y = frameCur->depth+1;
 
         consolePaintArea.Right-- ;
         /* top left cord of buffer to write from */
@@ -730,12 +790,12 @@ void
 ConsoleDrawString(meUByte *ss, WORD wAttribute, int x, int y, int len)
 {
     CHAR_INFO *pCI;     /* Pointer to current screen buffer location */
-    BOOL bAny = FALSE;  /* Anything to refresh? */
+    BOOL bAny = meFALSE;  /* Anything to refresh? */
     meUByte cc ;
     int r=x+len ;
 
     /* Get pointer to correct location in screen buffer */
-    pCI = &ciScreenBuffer[(y * TTncol) + x];
+    pCI = &ciScreenBuffer[(y * frameCur->width) + x];
 
     /* Copy the string to the screen buffer memory, and flag any changes */
     while (--len >= 0)
@@ -743,7 +803,7 @@ ConsoleDrawString(meUByte *ss, WORD wAttribute, int x, int y, int len)
         if (((cc=*ss++) != pCI->Char.AsciiChar) ||
             (wAttribute != pCI->Attributes))
         {
-            bAny = TRUE;
+            bAny = meTRUE;
             pCI->Char.AsciiChar = cc ;
             pCI->Attributes = wAttribute;
         }
@@ -777,7 +837,7 @@ ConsoleHandlerRoutine(DWORD dwCtrlType)
     case CTRL_SHUTDOWN_EVENT:
         meDie() ;
     }
-    return FALSE ;
+    return meFALSE ;
 }
 
 /*
@@ -787,7 +847,9 @@ ConsoleHandlerRoutine(DWORD dwCtrlType)
 int
 TTend (void)
 {
+#ifdef _ME_WINDOW
     if (meSystemCfg & meSYSTEM_CONSOLE)
+#endif /* _ME_WINDOW */
     {
         CONSOLE_CURSOR_INFO CursorInfo;
         COORD dwCursorPosition;
@@ -801,16 +863,16 @@ TTend (void)
 
         /* Show the cursor */
         GetConsoleCursorInfo (hOutput, &CursorInfo);
-        CursorInfo.bVisible = TRUE;
+        CursorInfo.bVisible = meTRUE;
         SetConsoleCursorInfo (hOutput, &CursorInfo);
 
         /* Set cursor to bottom of screen, and print a newline */
         dwCursorPosition.X = 0;
-        dwCursorPosition.Y = ConsoleSize.Y - 1;
+        dwCursorPosition.Y = TTdepthDefault - 1;
         SetConsoleCursorPosition(hOutput, dwCursorPosition);
         putchar ('\n');
     }
-    return TRUE ;
+    return meTRUE ;
 }
 
 /* Get a console message and format as a standard windows message */
@@ -884,7 +946,7 @@ meGetConsoleMessage(MSG *msg)
                 msg->lParam |= 1<<29;
             if(kr->dwControlKeyState & ENHANCED_KEY)
                 msg->lParam |= 0x01000000 ;
-            return TRUE ;
+            return meTRUE ;
         }
     }
     else if (ir.EventType == MOUSE_EVENT)
@@ -964,7 +1026,7 @@ meGetConsoleMessage(MSG *msg)
             /* Set up mouse position */
             msg->lParam = ((mr->dwMousePosition.Y) << 16) | mr->dwMousePosition.X;
 
-            return TRUE ;
+            return meTRUE ;
         }
     }
     else if (ir.EventType == WINDOW_BUFFER_SIZE_EVENT)
@@ -982,18 +1044,20 @@ meGetConsoleMessage(MSG *msg)
          * as this needs the scroll-bar to use */
         size.X = Console.srWindow.Right-Console.srWindow.Left+1;
         size.Y = Console.srWindow.Bottom-Console.srWindow.Top+1;
-
+        
         SetConsoleScreenBufferSize(hOutput, size);
 
         /* Tell micro-emacs about it */
-        WinTermCellResize (size.X,size.Y) ;
+        frameCur->width = size.X ;
+        frameCur->depth = size.Y-1 ;
+        meFrameSetWindowSize(frameCur) ;
     }
     else if (ir.EventType == FOCUS_EVENT)
     {
         if(ir.Event.FocusEvent.bSetFocus)
         {
             /* Record the fact we have focus */
-            TTfocus = 1;
+            frameCur->flags &= ~meFRAME_NOT_FOCUS ;
 
             /* Kick of the blinker - as default value for cursorBlink
              * is 0 this will not happen until after the window is created */
@@ -1002,16 +1066,16 @@ meGetConsoleMessage(MSG *msg)
         }
         else
         {
-            TTfocus = 0;
+            frameCur->flags |= meFRAME_NOT_FOCUS ;
             if(cursorState >= 0)
             {
                 /* because the cursor is a part of the solid cursor we must
                  * remove the old one first and then redraw
                  */
                 if(blinkState)
-                    TThideCur() ;
+                    meFrameHideCursor(frameCur) ;
                 blinkState = 1 ;
-                TTshowCur() ;
+                meFrameShowCursor(frameCur) ;
             }
         }
     }
@@ -1020,10 +1084,12 @@ meGetConsoleMessage(MSG *msg)
         /* Menu or focus events, so do nowt */
         /* printf("Got unknown console input %d\n",ir.EventType) ;*/
     }
-    return FALSE ;
+    return meFALSE ;
 }
 
-#endif
+#endif /* _ME_CONSOLE */
+
+#ifdef _ME_WINDOW
 
 /****************************************************************************
  *
@@ -1223,30 +1289,30 @@ makePoly:
 
 
 
-/* WinDrawCursor; Draw the cursor on the screen. We use the information from
+/* meFrameDrawCursor; Draw the cursor on the screen. We use the information from
  * the frame store to determine what character to render */
 void
-WinDrawCursor(HDC hdc)
+meFrameDrawCursor(meFrame *frame, HDC hdc)
 {
     RECT rline;                         /* Rectangle of line */
     int clientRow;                      /* Text region row start - client units */
     int clientCol;                      /* Text region col start - client units */
-    FRAMELINE *flp;                     /* Frame store line pointer */
-    meSTYLE style;                      /* Current style */
+    meFrameLine *flp;                     /* Frame store line pointer */
+    meStyle style;                      /* Current style */
     meUByte cc ;                          /* Current char  */
 
     /* Set up the drawing borders. */
-    rline.top    = eCellMetrics.screenCellPosY [TTcurr];
-    rline.bottom = eCellMetrics.screenCellPosY [TTcurr+1];
-    rline.left   = eCellMetrics.screenCellPosX [TTcurc];
-    rline.right  = eCellMetrics.screenCellPosX [TTcurc+1];
+    rline.top    = eCellMetrics.cellRowPos [frame->cursorRow];
+    rline.bottom = eCellMetrics.cellRowPos [frame->cursorRow+1];
+    rline.left   = eCellMetrics.cellColPos [frame->cursorColumn];
+    rline.right  = eCellMetrics.cellColPos [frame->cursorColumn+1];
     /* Set up text start position */
-    clientRow = eCellMetrics.charCellPosY [TTcurr];
-    clientCol = eCellMetrics.charCellPosX [TTcurc];
+    clientRow = eCellMetrics.cellRowPos [frame->cursorRow];
+    clientCol = eCellMetrics.cellColPos [frame->cursorColumn];
 
-    flp = frameStore + TTcurr ;
-    cc = flp->text[TTcurc];                          /* Get char under cursor */
-    style = meSchemeGetStyle(flp->scheme[TTcurc]) ;  /* Get style under cursor */
+    flp = frame->store + frame->cursorRow ;
+    cc = flp->text[frame->cursorColumn];                          /* Get char under cursor */
+    style = meSchemeGetStyle(flp->scheme[frame->cursorColumn]) ;  /* Get style under cursor */
 
     /* Check the current character set and select the special font or convert
      * the character for the current font. Bring the appropriate font into the
@@ -1258,7 +1324,7 @@ WinDrawCursor(HDC hdc)
 	HPEN oldpen;                /* first pen */
 	COLORREF cref;              /* Background color */
 
-	if (!TTfocus)
+	if (frame->flags & meFRAME_NOT_FOCUS)
 	    cref = eCellMetrics.pInfo.cPal [meStyleGetBColor(style)].cpixel;
 	else
 	    cref = eCellMetrics.pInfo.cPal [cursorColor].cpixel;
@@ -1277,7 +1343,7 @@ WinDrawCursor(HDC hdc)
 	WinSpecialChar (hdc, &eCellMetrics.cell, rline.left, rline.top, cc, 
                         eCellMetrics.pInfo.cPal [meStyleGetFColor(style)].cpixel);
 
-	if (!TTfocus)
+	if (frame->flags & meFRAME_NOT_FOCUS)
 	{
 	    /* If there is no focus then put a rectangle around the
 	     * object; bring in the backgound color */
@@ -1314,7 +1380,7 @@ WinDrawCursor(HDC hdc)
                 1,                        /* Length of string */
                 eCellMetrics.cellSpacing);
 
-    if(!TTfocus)
+    if(frame->flags & meFRAME_NOT_FOCUS)
     {
         /* on top draw the normal character but smaller, this creates the
          * rectangle effect */
@@ -1352,8 +1418,8 @@ WinLoadFont(int font)
             ttlogfont.lfWeight = FW_EXTRALIGHT ;
         else
             ttlogfont.lfWeight = FW_NORMAL ;
-        ttlogfont.lfItalic    = (font & meFONT_ITALIC)    ? TRUE : FALSE;
-        ttlogfont.lfUnderline = (font & meFONT_UNDERLINE) ? TRUE : FALSE;
+        ttlogfont.lfItalic    = (font & meFONT_ITALIC)    ? meTRUE : meFALSE;
+        ttlogfont.lfUnderline = (font & meFONT_UNDERLINE) ? meTRUE : meFALSE;
         
         /* Create the font - use the existing font if it exists */
         if ((eCellMetrics.fontdef[font] = CreateFontIndirect (&ttlogfont)) == NULL)
@@ -1380,34 +1446,37 @@ WinLoadFont(int font)
  */
 
 static void
-WinPaint (HWND hWnd)
+meFrameDraw(meFrame *frame)
 {
     PAINTSTRUCT ps;                     /* Paint structure */
     RECT rline;                         /* Rectangle of line */
     int col;                            /* Current column position */
-    meSTYLE schm;                       /* Current style */
-    meCOLOR font;                       /* Text font type */
-    meCOLOR fcol;                       /* Foreground colour */
-    meCOLOR bcol;                       /* Background colour */
-    meCOLOR pfcol;                      /* Pen foreground colour */
-    meCOLOR pbcol;                      /* Pen background colour */
+    meStyle schm;                       /* Current style */
+    meColor font;                       /* Text font type */
+    meColor fcol;                       /* Foreground colour */
+    meColor bcol;                       /* Background colour */
+    meColor pfcol;                      /* Pen foreground colour */
+    meColor pbcol;                      /* Pen background colour */
     int srow;                           /* Start row */
     int erow;                           /* End row */
     int scol;                           /* Start column */
     int ecol;                           /* End column */
     int clientRow;                      /* Text region row start - client units */
-    FRAMELINE *flp;                     /* Frame store line pointer */
+    meFrameData *fd;                    /* Pointer to Frame data */
+    meFrameLine *flp;                   /* Frame store line pointer */
     int drawCursor;                     /* draw cursor flag */
     HBRUSH bbrush = NULL;               /* Background brush */
     HPEN pen;                           /* Foreground pen */
     HPEN oldpen = NULL;                 /* fist pen */
+    
+    fd = meFrameGetWinData(frame) ;
 #define DEBUG_BG 0
 #if DEBUG_BG
     static meUByte bgcol=0 ;
     if(++bgcol >= noColors)
         bgcol=0 ;
 #endif
-    BeginPaint (hWnd, &ps);
+    BeginPaint(meFrameDataGetWinHandle(fd), &ps);
 
     /* I'm not sure if I need these here or not ?? */
     SetMapMode (ps.hdc, MM_TEXT);       /* Text mode */
@@ -1417,7 +1486,7 @@ WinPaint (HWND hWnd)
     if ((ps.rcPaint.top == ps.rcPaint.bottom) ||
         (ps.rcPaint.left == ps.rcPaint.right))
     {
-        EndPaint(hWnd, &ps);
+        EndPaint(meFrameDataGetWinHandle(fd), &ps);
         return;
     }
 
@@ -1427,7 +1496,7 @@ WinPaint (HWND hWnd)
 #endif
     if (eCellMetrics.pInfo.hPal != NULL)
     {
-        SelectPalette (ps.hdc, eCellMetrics.pInfo.hPal, FALSE);
+        SelectPalette (ps.hdc, eCellMetrics.pInfo.hPal, meFALSE);
         RealizePalette (ps.hdc);
     }
 
@@ -1443,58 +1512,58 @@ WinPaint (HWND hWnd)
      * Note that the end row/column is rounded down at the sub-pixel level. */
     srow = clientToRow (ps.rcPaint.top);
     erow = clientToRow (ps.rcPaint.bottom + eCellMetrics.cell.sizeY - 1);
-    if (erow > TTnrow)
-        erow = TTnrow;
+    if (erow > frame->depth)
+        erow = frame->depth;
 
     scol = clientToCol (ps.rcPaint.left);
     
     /* As we  draw  in  character  space  then  make  sure we are  within  the
      * character  canvas, the only  special case is the left hand edge when we
      * are running with an offset. */
-    if (ps.rcPaint.right > eCellMetrics.offsetX)
+    if (ps.rcPaint.right > 0)
         ecol = clientToCol (ps.rcPaint.right + eCellMetrics.cell.sizeX - 1);
     else
         ecol = 1;                       /* Render 1st column */
-    if (ecol > TTncol)
-        ecol = TTncol;
+    if (ecol > frame->width)
+        ecol = frame->width;
     
     /* Redraw the cursor if we have zapped it */
     if ((cursorState >= 0) && blinkState)
-        drawCursor = ((srow <= TTcurr) && (erow >= TTcurr) &&
-                      (scol <= TTcurc) && (ecol > TTcurc)) ;
+        drawCursor = ((srow <= frame->cursorRow) && (erow >= frame->cursorRow) &&
+                      (scol <= frame->cursorColumn) && (ecol > frame->cursorColumn)) ;
     else
         drawCursor = 0 ;
 
     /* Process each row in turn until we reach the end of the line */
-    for (flp = frameStore + srow; srow <= erow; srow++, flp++)
+    for (flp = frame->store + srow; srow <= erow; srow++, flp++)
     {
-        meSCHEME *fschm;
+        meScheme *fschm;
         meUByte *tbp, cc;
         meUByte *ftext;
         int   length;
         int   tcol, spFlag;
         
         /* Determine the boundaries we are painting around */
-        if(eCellMetrics.paintAll)
+        if(meFrameDataGetWinPaintAll(fd))
             col = ecol;
-        else if((col = eCellMetrics.paintEndCol[srow]) > 0)
-            scol = eCellMetrics.paintStartCol[srow] ;
+        else if((col = meFrameDataGetWinPaintEndCol(fd)[srow]) > 0)
+            scol = meFrameDataGetWinPaintStartCol(fd)[srow] ;
         else
             continue ;
         
         /* Reset the paint extremities - we set these for optimisation
          * purposes. */
-        eCellMetrics.paintStartCol[srow] = TTncol ;
-        eCellMetrics.paintEndCol[srow] = 0 ;
-        tbp = eCellMetrics.charCellTmpX;
+        meFrameDataGetWinPaintStartCol(fd)[srow] = frame->width ;
+        meFrameDataGetWinPaintEndCol(fd)[srow] = 0 ;
+        tbp = eCellMetrics.cellColTmpPos;
 
         /* Set up the drawing borders. */
-        rline.top    = eCellMetrics.screenCellPosY [srow];
-        rline.bottom = eCellMetrics.screenCellPosY [srow+1];
-        rline.right  = eCellMetrics.screenCellPosX [col];
+        rline.top    = eCellMetrics.cellRowPos [srow];
+        rline.bottom = eCellMetrics.cellRowPos [srow+1];
+        rline.right  = eCellMetrics.cellColPos [col];
         
         /* Set up text start position */
-        clientRow = eCellMetrics.charCellPosY [srow];
+        clientRow = eCellMetrics.cellRowPos [srow];
 
         /* As we render right to left then we start with the end character - 1 */
         col--;
@@ -1507,7 +1576,7 @@ WinPaint (HWND hWnd)
 	    if(schm != *fschm)
 	    {
 		/* Set up the colour change */
-                meSTYLE style ;
+                meStyle style ;
                 meUByte ff ;
                 
 		schm = *fschm ;
@@ -1572,11 +1641,11 @@ WinPaint (HWND hWnd)
              * and determine the length of text that we have to output. */
 	    length = tcol - col;
             col++;                      /* Move to current position */
-	    rline.left = eCellMetrics.screenCellPosX [col];
+	    rline.left = eCellMetrics.cellColPos [col];
 
 	    /* Output regular text */
 	    ExtTextOut (ps.hdc,
-			eCellMetrics.charCellPosX [col], /* Text start position */
+			eCellMetrics.cellColPos [col], /* Text start position */
 			clientRow,
 			ETO_OPAQUE,     /* Fill background */
 			&rline,         /* Background area */
@@ -1619,7 +1688,7 @@ WinPaint (HWND hWnd)
                         tcol-- ;
                     
                     WinSpecialChar (ps.hdc, &eCellMetrics.cell,
-                                    eCellMetrics.screenCellPosX [tcol],
+                                    eCellMetrics.cellColPos [tcol],
                                     rline.top, ftext[tcol],
                                     eCellMetrics.pInfo.cPal [fcol].cpixel) ;
                     tcol-- ;
@@ -1635,9 +1704,9 @@ WinPaint (HWND hWnd)
 	}
     }
     if (drawCursor)
-        WinDrawCursor(ps.hdc) ;
+        meFrameDrawCursor(frame,ps.hdc) ;
 
-    eCellMetrics.paintAll = 0 ;
+    meFrameDataGetWinPaintAll(fd) = 0 ;
 
     /* Relinquish the resources */
     if (oldpen != NULL)
@@ -1649,8 +1718,36 @@ WinPaint (HWND hWnd)
     if (bbrush)
         DeleteObject (bbrush);
 
-    EndPaint(hWnd, &ps);
+    EndPaint(meFrameDataGetWinHandle(fd), &ps);
 }
+
+LRESULT CALLBACK
+WinQuitExit (HWND hwndDlg,     /* window handle of dialog box     */
+             UINT message,     /* type of message                 */
+             WPARAM wParam,    /* message-specific information    */
+             LPARAM lParam)    /* message-specific information    */
+{
+    switch (message)
+    {
+    case WM_INITDIALOG:  /* message: initialize dialog box  */
+        return meTRUE;
+
+    case WM_COMMAND:     /* message: received a command */
+        /* User pressed "Cancel" button--stop print job. */
+        if ((LOWORD (wParam)) == IDOK)
+            EndDialog (hwndDlg, meTRUE);
+        else if ((LOWORD (wParam)) == IDCANCEL)
+            EndDialog (hwndDlg, meFALSE);
+        else
+            return meFALSE;
+        return meTRUE;
+    default:
+        return meFALSE;     /* didn't process a message   */
+
+    }
+}
+#endif /* _ME_WINDOW */
+
 
 /*
  * WinKillToClipboard
@@ -1661,7 +1758,7 @@ WinKillToClipboard (void)
 {
     HANDLE hmem;                        /* Windows global memory handle */
     meUByte *bufp;                        /* Windows global memory pointer */
-    KILL *killp;                        /* Pointer to the kill data */
+    meKillNode *killp;                        /* Pointer to the kill data */
     meUByte cc;                           /* Local character pointer */
     meUByte *dd;                          /* Pointer to the kill data */
     int killSize = 0;                   /* Number of bytes in kill buffer */
@@ -1730,7 +1827,7 @@ TTsetClipboard (void)
      * In this case we need to reset the clipboard so that the application may
      * aquire our next data block that has changed. */
     if (((clipState ^ CLIP_OWNER) & (CLIP_OWNER|CLIP_STALE)) &&
-        (OpenClipboard(ttHwnd) == TRUE))
+        (OpenClipboard(baseHwnd) == meTRUE))
     {
         EmptyClipboard ();
         SetClipboardData (((ttlogfont.lfCharSet == OEM_CHARSET) ? CF_OEMTEXT : CF_TEXT), NULL);
@@ -1759,7 +1856,7 @@ TTgetClipboard(void)
         return;                         /* Must be already saved */
 
     /* Get the data from the clipboard */
-    OpenClipboard (ttHwnd);
+    OpenClipboard (baseHwnd);
     if ((hmem = GetClipboardData ((ttlogfont.lfCharSet == OEM_CHARSET) ? CF_OEMTEXT : CF_TEXT)) != NULL)
     {
         int len;
@@ -1799,7 +1896,7 @@ TTgetClipboard(void)
             ksave ();
             if ((dd = kaddblock (len+1)) != NULL)
                 memcpy (dd, tmpbuf, len+1);
-            thisflag = CFKILL ;
+            thisflag = meCFKILL ;
         }
         meFree (tmpbuf);                /* Relinquish temp buffer */
 do_unlock:
@@ -1809,6 +1906,7 @@ do_unlock:
 }
 
 
+#if MEOPT_SPAWN
 void
 mkTempCommName(meUByte *filename, meUByte *basename)
 {
@@ -1831,9 +1929,10 @@ mkTempCommName(meUByte *filename, meUByte *basename)
         sprintf(ss,"%d~",ii) ;
     }
 }
+#endif /* MEOPT_SPAWN */
 
 
-#ifdef _IPIPES
+#if MEOPT_IPIPES
 #ifdef USE_BEGINTHREAD
 void
 childActiveThread(void *lpParam)
@@ -1842,7 +1941,7 @@ DWORD WINAPI
 childActiveThread(LPVOID lpParam)
 #endif
 {
-    meIPIPE *ipipe=(meIPIPE *) lpParam ;
+    meIPipe *ipipe=(meIPipe *) lpParam ;
     DWORD bytesRead ;
     meUByte buff[4] ;
     
@@ -1852,23 +1951,23 @@ childActiveThread(LPVOID lpParam)
            (bytesRead > 0))
         {
             ipipe->nextChar = buff[0]  ;
-            ipipe->flag |= IPIPE_NEXT_CHAR ;
+            ipipe->flag |= meIPIPE_NEXT_CHAR ;
         }
         else
-            ipipe->flag |= IPIPE_CHILD_EXIT ;
+            ipipe->flag |= meIPIPE_CHILD_EXIT ;
         
         /* flag the child is active! */
         if(!SetEvent(ipipe->childActive))
             break ;
         
         /* if there was a problem, the pipe is dead - exit */ 
-        if(ipipe->flag & IPIPE_CHILD_EXIT)
+        if(ipipe->flag & meIPIPE_CHILD_EXIT)
             break ;
         
         /* wait for the main thread to read all available output and
          * flag for us to start waiting again */
     } while((WaitForSingleObject(ipipe->threadContinue,INFINITE) == WAIT_OBJECT_0) &&
-            !(ipipe->flag & IPIPE_CHILD_EXIT)) ;
+            !(ipipe->flag & meIPIPE_CHILD_EXIT)) ;
 #ifndef USE_BEGINTHREAD
     return 0 ;
 #endif
@@ -1876,17 +1975,18 @@ childActiveThread(LPVOID lpParam)
 
 #endif
 
+#if MEOPT_SPAWN
 /*
  * WinLaunchProgram
  * Launches an external program using the DOS shell.
  *
- * Returns TRUE if all went well, FALSE if wait cancelled and FAILED if
+ * Returns meTRUE if all went well, meFALSE if wait cancelled and FAILED if
  * failed to launch.
  *
  * Cmd is the command string to launch.
  *
- * DOSApp is TRUE if the external program is a DOS program to be run
- * under a DOS shell. If DOSApp is FALSE, the program is launched
+ * DOSApp is meTRUE if the external program is a DOS program to be run
+ * under a DOS shell. If DOSApp is meFALSE, the program is launched
  * directly as a Windows application. In that case, the InFile parameter
  * is ignored, and the value of the OutFile parameter is used only to
  * determine if the program should be monitored. the text of the string
@@ -1904,7 +2004,7 @@ childActiveThread(LPVOID lpParam)
  * If OutFile is not NULL, the external program is monitored.
  * LaunchPrg returns only when the external program has terminated or
  * the user has cancelled the wait (in which case LaunchPrg returns
- * FALSE).
+ * meFALSE).
  *
  * NOTE: Jon 14/05/97:
  *
@@ -1922,16 +2022,16 @@ childActiveThread(LPVOID lpParam)
  */
 int
 WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
-#ifdef _IPIPES
-                  meIPIPE *ipipe,
+#if MEOPT_IPIPES
+                  meIPipe *ipipe,
 #endif
                   int *sysRet)
 {
     PROCESS_INFORMATION mePInfo ;
     STARTUPINFO meSuInfo ;
-    meUByte  cmdLine[MAXBUF+102], *cp ;          /* Buffer for the command line */
-    meUByte  dummyInFile[FILEBUF] ;              /* Dummy input file */
-    meUByte  pipeOutFile[FILEBUF] ;              /* Pipe output file */
+    meUByte  cmdLine[meBUF_SIZE_MAX+102], *cp ;          /* Buffer for the command line */
+    meUByte  dummyInFile[meFILEBUF_SIZE_MAX] ;              /* Dummy input file */
+    meUByte  pipeOutFile[meFILEBUF_SIZE_MAX] ;              /* Pipe output file */
     int    status ;
 #ifdef _WIN32s
     meUByte *endOfComString = NULL;             /* End of the com string */
@@ -2022,8 +2122,8 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
         }
 
 
-        if((((int) dd)-((int)cmdLine)+strlen(cmd)) >= MAXBUF+100)
-            return FALSE ;
+        if((((int) dd)-((int)cmdLine)+strlen(cmd)) >= meBUF_SIZE_MAX+100)
+            return meFALSE ;
         if((platformId == VER_PLATFORM_WIN32_NT) &&
            ((flags & LAUNCH_NOCOMSPEC) == 0))
             *dd++ = '"';
@@ -2066,7 +2166,7 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
 
             sbuts.nLength = sizeof(SECURITY_ATTRIBUTES) ;
             sbuts.lpSecurityDescriptor = NULL ;
-            sbuts.bInheritHandle = TRUE ;
+            sbuts.bInheritHandle = meTRUE ;
 
             if(flags & LAUNCH_FILTER)
             {
@@ -2080,31 +2180,31 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
                 HANDLE h ;
                 if((meSuInfo.hStdInput=CreateFile(inFile,GENERIC_READ,FILE_SHARE_READ,&sbuts,
                                                   OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL)) == INVALID_HANDLE_VALUE)
-                    return FALSE ;
+                    return meFALSE ;
                 if((meSuInfo.hStdOutput=CreateFile(outFile,GENERIC_WRITE,FILE_SHARE_READ,&sbuts,
                                                    OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL)) == INVALID_HANDLE_VALUE)
                 {
                     CloseHandle(meSuInfo.hStdInput) ;
-                    return FALSE ;
+                    return meFALSE ;
                 }
                 if(CreatePipe(&meSuInfo.hStdError,&h,&sbuts,0) != 0)
                     CloseHandle(h) ;
 #endif
             }
-#ifdef _IPIPES
+#if MEOPT_IPIPES
             else if(flags & LAUNCH_IPIPE)
             {
                 /* Its an IPIPE so create the pipes */
                 if(CreatePipe(&meSuInfo.hStdInput,&inHdl,&sbuts,0) == 0)
-                    return FALSE ;
+                    return meFALSE ;
                 if(CreatePipe(&outHdl,&meSuInfo.hStdOutput,&sbuts,0) == 0)
                 {
                     CloseHandle(meSuInfo.hStdInput) ;
-                    return FALSE ;
+                    return meFALSE ;
                 }
                 /* Duplicate stdout => stderr, don't really care if this fails */
                 DuplicateHandle (GetCurrentProcess(),meSuInfo.hStdOutput,
-                                 GetCurrentProcess(),&meSuInfo.hStdError,0,TRUE,
+                                 GetCurrentProcess(),&meSuInfo.hStdError,0,meTRUE,
                                  DUPLICATE_SAME_ACCESS) ;
             }
 #endif
@@ -2127,7 +2227,7 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
                 meSuInfo.hStdOutput=CreateFile(outFile,GENERIC_WRITE,FILE_SHARE_WRITE,
                                                &sbuts,CREATE_ALWAYS,FILE_ATTRIBUTE_TEMPORARY,NULL) ;
                 if(meSuInfo.hStdOutput == INVALID_HANDLE_VALUE)
-                    return FALSE ;
+                    return meFALSE ;
                 /* Under Windows 95 (and I assume win32s) if there is no
                  * standard input then create an empty file as stdin. This
                  * allows commands such as Grep to not lock up when they
@@ -2163,12 +2263,12 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
                 {
                     DeleteFile(dummyInFile) ;
                     CloseHandle(meSuInfo.hStdOutput) ;
-                    return FALSE;
+                    return meFALSE;
                 }
                 meSuInfo.hStdInput = dumHdl;
                 /* Duplicate stdout => stderr, don't really care if this fails */
                 DuplicateHandle (GetCurrentProcess (), meSuInfo.hStdOutput,
-                                 GetCurrentProcess (), &meSuInfo.hStdError,0,TRUE,
+                                 GetCurrentProcess (), &meSuInfo.hStdError,0,meTRUE,
                                  DUPLICATE_SAME_ACCESS) ;
 #endif
             }
@@ -2215,7 +2315,7 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
         }
         /* Correct the status frpom the call */
         if (status != 1)
-            status = FALSE;
+            status = meFALSE;
     }
 #else /* ! _WIN32s */
     /* start the process and get a handle on it */
@@ -2223,14 +2323,14 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
                       cp,
                       NULL,
                       NULL,
-                      ((flags & LAUNCH_SHELL) ? FALSE:TRUE),
+                      ((flags & LAUNCH_SHELL) ? meFALSE:meTRUE),
                       ((flags & LAUNCH_DETACHED) ? DETACHED_PROCESS : CREATE_NEW_CONSOLE),
                       NULL,
                       NULL,
                       &meSuInfo,
                       &mePInfo))
     {
-        status = TRUE ;
+        status = meTRUE ;
 #if 0
         /* We do not do this here as it causes problems for win95 ipipes on
          * network drives */
@@ -2253,14 +2353,14 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
                     if (procStatus == WAIT_TIMEOUT)
                     {
                         if (TTahead() && (TTbreakFlag != 0))
-                            status = TRUE;
+                            status = meTRUE;
                         else
                             continue;
                     }
                     else if (procStatus == WAIT_FAILED)
-                        status = FALSE;
+                        status = meFALSE;
                     else
-                        status = TRUE;
+                        status = meTRUE;
                     /* If we're interested in the result, get it */
                     if(sysRet != NULL)
                         GetExitCodeProcess(mePInfo.hProcess,sysRet) ;
@@ -2274,7 +2374,7 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
     else
     {
         mlwrite(0,"[Failed to run \"%s\"]",cp) ;
-        status = FALSE ;
+        status = meFALSE ;
     }
     /* Close the file handles */
     if(meSuInfo.hStdInput != INVALID_HANDLE_VALUE)
@@ -2285,10 +2385,10 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
         CloseHandle(meSuInfo.hStdError);
 #endif /* WIN32s */
 
-#ifdef _IPIPES
+#if MEOPT_IPIPES
     if(flags & LAUNCH_IPIPE)
     {
-        if(status == FALSE)
+        if(status == meFALSE)
         {
             CloseHandle(inHdl);
             CloseHandle(outHdl);
@@ -2316,16 +2416,16 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
 #ifdef USE_BEGINTHREAD
             {
                 unsigned long thread ;
-                if(((ipipe->childActive=CreateEvent(NULL, TRUE, FALSE, NULL)) != 0) &&
-                   ((ipipe->threadContinue=CreateEvent(NULL, FALSE, FALSE, NULL)) != 0) &&
+                if(((ipipe->childActive=CreateEvent(NULL, meTRUE, meFALSE, NULL)) != 0) &&
+                   ((ipipe->threadContinue=CreateEvent(NULL, meFALSE, meFALSE, NULL)) != 0) &&
                    ((thread=_beginthread(childActiveThread,0,ipipe)) != -1))
                     ipipe->thread = (HANDLE) thread ;
                 else
                     ipipe->thread = NULL ;
             }
 #else                
-            if(((ipipe->childActive=CreateEvent(NULL, TRUE, FALSE, NULL)) != 0) &&
-               ((ipipe->threadContinue=CreateEvent(NULL, FALSE, FALSE, NULL)) != 0))
+            if(((ipipe->childActive=CreateEvent(NULL, meTRUE, meFALSE, NULL)) != 0) &&
+               ((ipipe->threadContinue=CreateEvent(NULL, meFALSE, meFALSE, NULL)) != 0))
                ipipe->thread = CreateThread(NULL,0,childActiveThread,ipipe,0,&(ipipe->threadId)) ;
             else
                 ipipe->thread = NULL ;
@@ -2341,252 +2441,61 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
     }
     return status ;
 }
+#endif /* MEOPT_SPAWN */
 
 /*
- * WinTermCellResize()
- * This forces the screen to row/column size as determined by the current
- * font.
- */
-
-static void
-WinTermCellResize (int x, int y)
-{
-    int hWindow;                        /* Height of Window in pixels */
-    int wWindow;                        /* Width of Window in pixels */
-    int wBorder;                        /* Width of the boarder */
-    int hBorder;                        /* Height of the border */
-    RECT wRect;                         /* Window rectangle */
-    RECT cRect;                         /* Client rectangle */
-
-    if ((x < 0) && (y < 0))             /* Wasting out time !! */
-        return;
-
-    /* If in console mode, do nothing */
-#ifdef _WINCON
-    if (meSystemCfg & meSYSTEM_CONSOLE)
-    {
-        /* Always force the original console size upon the user - if ya wanna
-         * change the size, use the window mode! */
-        if(x <= 0)
-            x = eCellMetrics.cellX ;
-        if(y <= 0)
-            y = eCellMetrics.cellY ;
-
-        /* Must re-allocate the screen buffer if the size changed (can only happen via
-         * window properties */
-        if ((x != eCellMetrics.cellX) ||
-            (y != eCellMetrics.cellY))
-        {
-            /* Store the size of the screen */
-            eCellMetrics.cellX = x ;
-            eCellMetrics.cellY = y ;
-
-            /* Re-allocate memory for screen buffer */
-            if (ciScreenBuffer != NULL)
-                free (ciScreenBuffer) ;
-            ciScreenBuffer = (CHAR_INFO *)malloc (sizeof (CHAR_INFO) * x * y);
-            memset ((void *)ciScreenBuffer, 0, sizeof (CHAR_INFO) * x * y);
-        }
-        return ;
-    }
-#endif
-
-    /* Get the current screen widths */
-    GetWindowRect (ttHwnd, &wRect);
-    GetClientRect (ttHwnd, &cRect);
-
-    /* Compute the new window widths in terms of pixels */
-    /* Resize the x axis if requested.
-     * Compute the desired window width, if a resize is requested. */
-    if (x > 0)
-        wWindow = (x * eCellMetrics.cell.sizeX) + (2 * eCellMetrics.offsetX);
-    else
-        wWindow = cRect.right - cRect.left;
-
-    /* Add on the boarders by differencing the window and the client area */
-    wBorder = (wRect.right - wRect.left) - cRect.right;
-    wWindow += wBorder;
-
-    /* Re-size in place if possible */
-    if ((wWindow + wBorder + eCellMetrics.cell.sizeX - 1) > eCellMetrics.minMaxInfo.ptMaxSize.x)
-    {
-        wRect.left = eCellMetrics.minMaxInfo.ptMaxPosition.x;
-        wRect.right = wRect.left + eCellMetrics.minMaxInfo.ptMaxSize.x;
-    }
-    else
-    {
-        wRect.right = wRect.left + wWindow;
-        if (wRect.right > (eCellMetrics.minMaxInfo.ptMaxSize.x +
-                           eCellMetrics.minMaxInfo.ptMaxPosition.x))
-        {
-            wRect.right = (eCellMetrics.minMaxInfo.ptMaxSize.x +
-                           eCellMetrics.minMaxInfo.ptMaxPosition.x);
-            wRect.left = wRect.right - wWindow;
-        }
-        else if (wRect.left < eCellMetrics.minMaxInfo.ptMaxPosition.x)
-            wRect.left = eCellMetrics.minMaxInfo.ptMaxPosition.x;
-    }
-
-    /* Resize the y axis if requested. If an explicit size is requested the
-     * assume that size. Otherwise take the client area as is. */
-    if (y > 0)
-        hWindow = (y * eCellMetrics.cell.sizeY) + (2 * eCellMetrics.offsetY);
-    else
-        hWindow = cRect.bottom - cRect.top;
-
-    /* Re-align the vertical window - reposition if necessary
-     * Add on the boarders by differencing the window and the client area. */
-    hBorder =  (wRect.bottom - wRect.top) - cRect.bottom;
-    hWindow += hBorder;
-
-    /* Re-size in place if possible */
-    if ((hWindow + hBorder + eCellMetrics.cell.sizeY - 1) > eCellMetrics.minMaxInfo.ptMaxSize.y)
-    {
-        wRect.top = eCellMetrics.minMaxInfo.ptMaxPosition.y;
-        wRect.bottom = wRect.top + eCellMetrics.minMaxInfo.ptMaxSize.y;
-    }
-    else
-    {
-        wRect.bottom = wRect.top + hWindow;
-        if (wRect.bottom > (eCellMetrics.minMaxInfo.ptMaxSize.y +
-                            eCellMetrics.minMaxInfo.ptMaxPosition.y))
-        {
-            wRect.bottom = (eCellMetrics.minMaxInfo.ptMaxSize.y +
-                            eCellMetrics.minMaxInfo.ptMaxPosition.y);
-            wRect.top = wRect.bottom - hWindow;
-        }
-        else if (wRect.top < eCellMetrics.minMaxInfo.ptMaxPosition.y)
-            wRect.top = eCellMetrics.minMaxInfo.ptMaxPosition.y;
-    }
-
-    /* Change the position of the window and get the new client area. */
-    SetWindowPos (ttHwnd, NULL, wRect.left, wRect.top,
-                  wRect.right - wRect.left,
-                  wRect.bottom - wRect.top,
-                  SWP_NOZORDER);
-    GetClientRect (ttHwnd, &eCellMetrics.canvas); /* Get the new canvas size */
-}
-
-/*
- * WinTermResize()
+ * meFrameResizeWindow()
  * Note that this is a bit of a nasty one.
- * Once TTmcol and TTmrow are defined we may not alter their value
- * until EMACS has initialised (that includes calling changeScreenWidth/depth.
+ * Once frameCur->widthMax and frameCur->depthMax are defined we may not alter their value
+ * until EMACS has initialised (that includes calling frameChangeWidth/depth.
  * We rely on the ttinitialised state to ensure that we set these
  * values only once.
  *
- * Once initialised we immediately call WinTermResize() to change the
+ * Once initialised we immediately call meFrameResizeWindow() to change the
  * screen size. This resizes the screen if the font has been changed
  * during the initialisation phase. The resize is then coped with
  * properly within EMACS.
  */
 void
-WinTermResize (void)
+meFrameResizeWindow(meFrame *frame)
 {
     int nrow;
     int ncol;
-    int ii;
 
-#ifdef _WINCON
+#ifdef _ME_CONSOLE
+#ifdef _ME_WINDOW
     /* If in console mode... */
     if (meSystemCfg & meSYSTEM_CONSOLE)
+#endif /* _ME_CONSOLE */
     {
         /* nothing to do for console version */
-        ncol = eCellMetrics.cellX ;
-        nrow = eCellMetrics.cellY ;
+        ncol = TTwidthDefault ;
+        nrow = TTdepthDefault ;
     }
+#ifdef _ME_WINDOW
     else
-#endif
+#endif /* _ME_WINDOW */
+#endif /* _ME_CONSOLE */
+#ifdef _ME_WINDOW
     {
         /* Get the new canvas and invalidate the whole screen. */
-        GetClientRect (ttHwnd, &eCellMetrics.canvas); /* Get the new canvas size */
-        InvalidateRect (ttHwnd, &eCellMetrics.canvas, FALSE);
-        eCellMetrics.paintAll = 1 ;
+        GetClientRect (meFrameGetWinHandle(frame), &meFrameGetWinCanvas(frame)); /* Get the new canvas size */
 
-        nrow = (eCellMetrics.canvas.bottom - (2 * eCellMetrics.offsetY)) / eCellMetrics.cell.sizeY;
+        nrow = meFrameGetWinCanvas(frame).bottom / eCellMetrics.cell.sizeY;
         if (nrow < 1)
             nrow = 1;
 
-        ncol = (eCellMetrics.canvas.right - (2 * eCellMetrics.offsetX)) / eCellMetrics.cell.sizeX;
+        ncol = meFrameGetWinCanvas(frame).right / eCellMetrics.cell.sizeX;
         if (ncol < 1)
             ncol = 1;
 
-        /* Force a cell resize to close down the left and right margin spaces,
-         * making the window fit the display correctly. */
-        WinTermCellResize (ncol, nrow);
-
-        /* Get the new number of rows. */
-        nrow = (eCellMetrics.canvas.bottom - (2 * eCellMetrics.offsetY)) / eCellMetrics.cell.sizeY;
-        ncol = (eCellMetrics.canvas.right - (2 * eCellMetrics.offsetX)) / eCellMetrics.cell.sizeX;
-
-        /* Store the size of the screen */
-        eCellMetrics.cellX = ncol;
-        eCellMetrics.cellY = nrow;
-
-        /* Set up the frame store */
-        if (ncol > eCellMetrics.screenCellNcol)
-        {
-            /* Set up the column cell LUT positions. Note allocate a single
-             * array and split into two for re-use */
-            eCellMetrics.screenCellPosX = realloc (eCellMetrics.screenCellPosX,
-                                                   sizeof (meShort) * 2 * (ncol + 1));
-            eCellMetrics.charCellPosX = &eCellMetrics.screenCellPosX [ncol+1];
-            eCellMetrics.screenCellNcol = ncol;
-            /* Construct the cell spacing. This is the  width of the characters. */
-            eCellMetrics.cellSpacing = (INT *) realloc (eCellMetrics.cellSpacing,
-                                                        sizeof (INT) * (ncol + 1));
-            /* Construct the temporary rendering buffer */
-            eCellMetrics.charCellTmpX = realloc (eCellMetrics.charCellTmpX, ncol+1);
-        }
-
-        /* Grow the existing rows */
-        if (nrow > eCellMetrics.screenCellNrow)
-        {
-            /* Set up the row cell LUT positions. Note allocate a single
-             * array and split into 4 for re-use. */
-            eCellMetrics.screenCellPosY = realloc (eCellMetrics.screenCellPosY, sizeof (meShort) * 4 * (nrow + 1));
-            eCellMetrics.charCellPosY   = &eCellMetrics.screenCellPosY [nrow+1];
-            eCellMetrics.paintStartCol  = &eCellMetrics.charCellPosY [nrow+1];
-            eCellMetrics.paintEndCol    = &eCellMetrics.paintStartCol [nrow+1];
-            eCellMetrics.screenCellNrow = nrow;
-        }
-
-        /* Initialise the row cell LUT tables */
-        for (ii = 0; ii <= nrow; ii++)
-        {
-            eCellMetrics.charCellPosY [ii] =
-                      (eCellMetrics.screenCellPosY [ii] = rowToClient (ii));
-            eCellMetrics.paintStartCol[ii] = ncol ;
-            eCellMetrics.paintEndCol  [ii] = 0 ;
-        }
-        eCellMetrics.screenCellPosY [0] = (meShort) eCellMetrics.canvas.top;
-        eCellMetrics.screenCellPosY [nrow] = (meShort) eCellMetrics.canvas.bottom;
-
-        /* Initialise the column cell LUT tables. */
-        for (ii = 0; ii <= ncol; ii++)
-        {
-            eCellMetrics.charCellPosX [ii] =
-                      (eCellMetrics.screenCellPosX [ii] = colToClient (ii));
-            eCellMetrics.cellSpacing [ii] = eCellMetrics.cell.sizeX;
-        }
-        eCellMetrics.screenCellPosX [0] = (meShort) eCellMetrics.canvas.left;
-        eCellMetrics.screenCellPosX [ncol] = (meShort) eCellMetrics.canvas.right;
     }
+#endif /* _ME_WINDOW */
 
-    /* If this is the initial startup state then set the TT values */
-    if (ttinitialised == 0)
-    {
-        TTmcol = ncol;
-        TTmrow = nrow;
-        TTnrow = TTmrow - 1;
-        TTncol = TTmcol;
-    }
-    else
-    {
-        /* Inform Emacs window S/W that the window has changed size */
-        changeScreenWidth (TRUE, ncol);
-        changeScreenDepth (TRUE, nrow);
-    }
+    /* Inform Emacs window S/W that the window has changed size */
+    meFrameChangeWidth(frame,ncol) ;
+    meFrameChangeDepth(frame,nrow) ;
+    meFrameSetWindowSize(frame) ;
 }
 
 /*
@@ -2599,11 +2508,13 @@ WinTermResize (void)
 void
 WinExit (int status)
 {
-#ifdef _WINCON
+#ifdef _ME_WINDOW
+#ifdef _ME_CONSOLE
     /* If not in console mode... */
     if (!(meSystemCfg & meSYSTEM_CONSOLE))
-#endif
-        DestroyWindow (ttHwnd);
+#endif /* _ME_CONSOLE */
+        DestroyWindow (meFrameGetWinHandle(frameCur));
+#endif /* _ME_WINDOW */
     exit (status);
 }
 
@@ -2614,7 +2525,7 @@ void
 WinShutdown (void)
 {
     /* ZZZZ - should this have console support */
-#ifdef _CLIENTSERVER
+#if MEOPT_CLIENTSERVER
     /* Close & delete the client file */
     TTkillClientServer ();
 #endif
@@ -2624,67 +2535,75 @@ WinShutdown (void)
      * it. Now try and drag 'n' drop in the first again, it fails! taken out this code */
 #ifdef _DRAGNDROP
     /* Disable drag and drop handling */
-    if (ttHwnd)
-        DragAcceptFiles (ttHwnd, FALSE);
+    if (meFrameGetWinHandle(frameCur))
+        DragAcceptFiles (meFrameGetWinHandle(frameCur), meFALSE);
 #endif
 #endif
-    /* Free off the fonts - (not loaded if console version) */
-    if(fontAdded && (RemoveFontResource (fontFile) == TRUE))
+#ifdef _ME_WINDOW
+#ifdef _ME_CONSOLE
+    /* If not in console mode... */
+    if (!(meSystemCfg & meSYSTEM_CONSOLE))
+#endif /* _ME_CONSOLE */
     {
-        /* Tell other windows that we have removed the font
-         * resource. Note that the accepted convention here is to
-         * use a SendMessage(), however this has the effect of
-         * locking up since the Send is synchronous. Instead we
-         * use a PostMessage() which sends the message but without
-         * blocking. */
-        PostMessage (HWND_BROADCAST, WM_FONTCHANGE, 0, 0);
-    }
+        /* Free off the fonts - (not loaded if console version) */
+        if(fontAdded && (RemoveFontResource (fontFile) == meTRUE))
+        {
+            /* Tell other windows that we have removed the font
+             * resource. Note that the accepted convention here is to
+             * use a SendMessage(), however this has the effect of
+             * locking up since the Send is synchronous. Instead we
+             * use a PostMessage() which sends the message but without
+             * blocking. */
+            PostMessage (HWND_BROADCAST, WM_FONTCHANGE, 0, 0);
+        }
+        
+        /* Destroy the palette information */
+        if (eCellMetrics.pInfo.hPal != NULL)  /* Release the palette */
+        {
+            DeleteObject (eCellMetrics.pInfo.hPal);
+            eCellMetrics.pInfo.hPal = NULL;
+        }
+        if (eCellMetrics.pInfo.cPal != NULL)
+        {
+            meFree (eCellMetrics.pInfo.cPal);
+            eCellMetrics.pInfo.cPal = NULL;
+        }
+        if (eCellMetrics.pInfo.hPalRefCount != NULL)
+        {
+            meFree (eCellMetrics.pInfo.hPalRefCount);
+            eCellMetrics.pInfo.hPalRefCount = NULL;
+        }
+        eCellMetrics.pInfo.hPalSize = 0;
+        noColors = 0;
 
-    /* Destroy the palette information */
-    if (eCellMetrics.pInfo.hPal != NULL)  /* Release the palette */
-    {
-        DeleteObject (eCellMetrics.pInfo.hPal);
-        eCellMetrics.pInfo.hPal = NULL;
+        /* Free off the background brush */
+        if (ttBrush != NULL)
+        {
+            DeleteObject (ttBrush);
+            ttBrush = NULL;
+        }
     }
-    if (eCellMetrics.pInfo.cPal != NULL)
-    {
-        meFree (eCellMetrics.pInfo.cPal);
-        eCellMetrics.pInfo.cPal = NULL;
-    }
-    if (eCellMetrics.pInfo.hPalRefCount)
-    {
-        meFree (eCellMetrics.pInfo.hPalRefCount);
-        eCellMetrics.pInfo.hPalRefCount = NULL;
-    }
-    eCellMetrics.pInfo.hPalSize = 0;
-    noColors = 0;
-
-    /* Free off the background brush */
-    if (ttBrush != NULL)
-    {
-        DeleteObject (ttBrush);
-        ttBrush = NULL;
-    }
+#endif /* _ME_WINDOW */
 
     /* Save any buffers as an emergency quit */
 #ifdef WE_SHOULD_NOT_NEED_THIS_HERE
     /* Save any buffers as an emergency quit */
     {
-        register BUFFER *bp;    /* scanning pointer to buffers */
+        register meBuffer *bp;    /* scanning pointer to buffers */
 
         bp = bheadp;
         while (bp != NULL)
         {
             if(bufferNeedSaving(bp))
                 autowriteout(bp) ;
-            bp = bp->b_bufp;            /* on to the next buffer */
+            bp = bp->next;            /* on to the next buffer */
         }
-        saveHistory(TRUE,0) ;
+        saveHistory(meTRUE,0) ;
     }
 #endif
 }
 
-#if MOUSE
+#if MEOPT_MOUSE
 /*
  * TTinitMouse
  * Sort out what to do with the mouse buttons.
@@ -2694,7 +2613,6 @@ TTinitMouse(void)
 {
     if(meMouseCfg & meMOUSE_ENBLE)
     {
-        meUByte cc ;
         int b1, b2, b3 ;
 
         if(meMouseCfg & meMOUSE_SWAPBUTTONS)
@@ -2709,11 +2627,12 @@ TTinitMouse(void)
         mouseKeys[2] = b2 ;
         mouseKeys[4] = b3 ;
 
-#ifdef _WINCON
+#ifdef _ME_WINDOW
+#ifdef _ME_CONSOLE
         if (!(meSystemCfg & meSYSTEM_CONSOLE))
 #endif
         {
-            cc = (meUByte) ((meMouseCfg & meMOUSE_ICON) >> 16) ;
+            meUByte cc = (meUByte) ((meMouseCfg & meMOUSE_ICON) >> 16) ;
             if(cc >= meCURSOR_COUNT)
                 cc = 0 ;
             if(cc != meCurCursor)
@@ -2728,17 +2647,23 @@ TTinitMouse(void)
                 }
             }
         }
+#endif
     }
 }
 
 /*
  * WinMouse
  * Handle mouse events from the message queues.
- * Returning TRUE if the event is handled; otherwise FALSE.
+ * Returning meTRUE if the event is handled; otherwise meFALSE.
  */
 int
-WinMouse (UINT message, UINT wParam, LONG lParam)
+WinMouse(HWND hwnd, UINT message, UINT wParam, LONG lParam)
 {
+    meFrame *frame ;
+    
+    if((frame = meMessageGetFrame(hwnd)) == NULL)
+        return meFALSE ;
+        
     if(!(meMouseCfg & meMOUSE_ENBLE))
     {
         switch (message)
@@ -2750,9 +2675,9 @@ WinMouse (UINT message, UINT wParam, LONG lParam)
         case WM_LBUTTONUP:
         case WM_MBUTTONUP:
         case WM_RBUTTONUP:
-            return TRUE ;
+            return meTRUE ;
         }
-        return FALSE ;
+        return meFALSE ;
     }
     switch (message)
     {
@@ -2784,7 +2709,7 @@ WinMouse (UINT message, UINT wParam, LONG lParam)
         }
         /* Jon 00/02/12: Fault report by "Dave E" that the screen was
          * always selected under Windows '95 when double clicking from an
-         * icon. A trace from his machine reveieled that the mouse was
+         * icon. A trace from his machine revealed that the mouse was
          * showing the left button pressed on a mouse move. The left mouse
          * was not in fact pressed.
          * 
@@ -2797,7 +2722,7 @@ WinMouse (UINT message, UINT wParam, LONG lParam)
          * I have not been able to re-create the above. The fix has
          * not yet shown any adverse effects - although I would not
          * expect it to. */
-        return FALSE;
+        return meFALSE;
     
     case WM_LBUTTONDOWN:
     case WM_MBUTTONDOWN:
@@ -2836,19 +2761,26 @@ WinMouse (UINT message, UINT wParam, LONG lParam)
             }
             mouseState = (mouseState & ~MOUSE_STATE_BUTTONS)|mouseCode ;
             mouseShow() ;
-            if (mouseState & MOUSE_STATE_BUTTONS)
+#ifdef _ME_WINDOW
+#ifdef _ME_CONSOLE
+            if (!(meSystemCfg & meSYSTEM_CONSOLE))
+#endif /* _ME_CONSOLE */
             {
-                if ((mouseState & MOUSE_STATE_LOCKED) == 0)
+                if (mouseState & MOUSE_STATE_BUTTONS)
                 {
-                    SetCapture (ttHwnd);    /* Lock the mouse */
-                    mouseState |= MOUSE_STATE_LOCKED;
+                    if ((mouseState & MOUSE_STATE_LOCKED) == 0)
+                    {
+                        SetCapture (meFrameGetWinHandle(frame));    /* Lock the mouse */
+                        mouseState |= MOUSE_STATE_LOCKED;
+                    }
+                }
+                else if (mouseState & MOUSE_STATE_LOCKED)
+                {
+                    ReleaseCapture ();         /* Relinquish the mouse */
+                    mouseState &= ~MOUSE_STATE_LOCKED;
                 }
             }
-            else if (mouseState & MOUSE_STATE_LOCKED)
-            {
-                ReleaseCapture ();         /* Relinquish the mouse */
-                mouseState &= ~MOUSE_STATE_LOCKED;
-            }
+#endif /* _ME_WINDOW */
             break;
         }
 #ifdef WM_MOUSEWHEEL
@@ -2868,23 +2800,27 @@ WinMouse (UINT message, UINT wParam, LONG lParam)
         }
 #endif
     default:
-        return (FALSE);
+        return (meFALSE);
     }
 
-    return (TRUE);
+    return (meTRUE);
 }
 #endif
 
 /*
  * WinKeyboard
  * Handle keyboard message types.
- * Returning TRUE if the event is handled; otherwise FALSE.
+ * Returning meTRUE if the event is handled; otherwise meFALSE.
  */
 int
-WinKeyboard (UINT message, UINT wParam, LONG lParam)
+WinKeyboard (HWND hwnd, UINT message, UINT wParam, LONG lParam)
 {
+    meFrame *frame ;
     meUShort cc;                  /* Local keyboard character */
-
+    
+    if((frame = meMessageGetFrame(hwnd)) == NULL)
+        return meFALSE ;
+        
 #ifdef _WIN_KEY_DEBUGGING
     {
         FILE *fp = NULL;
@@ -2932,11 +2868,18 @@ WinKeyboard (UINT message, UINT wParam, LONG lParam)
          * press will generate a SYSKEYDOWN, cope with this oddity */
         if (wParam != VK_F10)
         {
-            if ((lParam & (1<<29)) == 0)    /* Windows got no input focus ? */
+#ifdef _ME_WINDOW
+#ifdef _ME_CONSOLE
+            if (!(meSystemCfg & meSYSTEM_CONSOLE))
+#endif /* _ME_CONSOLE */
             {
-                SetFocus (ttHwnd);          /* No - aquire focus */
-                return FALSE;
+                if ((lParam & (1<<29)) == 0)    /* Windows got no input focus ? */
+                {
+                    SetFocus (meFrameGetWinHandle(frame));          /* No - aquire focus */
+                    return meFALSE;
+                }
             }
+#endif /* _ME_WINDOW */
 
             ttmodif |= ME_ALT;              /* The ALT key is pressed */
             goto done_syskeydown;
@@ -3025,7 +2968,7 @@ done_syskeydown:
 test_do_keydown:
             {
                 meUInt arg;
-                if (decode_key((ME_SPECIAL|ttmodif|cc),&arg) != -1)  /* Key bound ?? */
+                if (decode_key((meUShort) (ME_SPECIAL|ttmodif|cc),&arg) != -1)  /* Key bound ?? */
                     goto do_keydown;
             }
             break ;
@@ -3042,9 +2985,9 @@ test_do_keydown:
                 cc = ME_SPECIAL | ttmodif | ((wParam == VK_LWIN) ? SKEY_start_left : SKEY_start_right);
                 if (decode_key(cc,&arg) != -1)  /* Key bound ?? */
                     goto do_addbuf;             /* Yes - allow key to be pr0ocessed */
-                return FALSE;                   /* *IMPORTANT* Key is not processed */
+                return meFALSE;                   /* *IMPORTANT* Key is not processed */
             }
-            return FALSE;                       /* *IMPORTANT* Key is not processed */
+            return meFALSE;                       /* *IMPORTANT* Key is not processed */
 #endif
         case VK_F1:
             cc = SKEY_f1;
@@ -3083,9 +3026,9 @@ do_keydown:
             }
 #endif
             addKeyToBuffer (cc);
-#if MOUSE
+            /* hide the mouse cursor
+             * This must be done whether MEOPT_MOUSE is enabled or not */
             mouseHide() ;
-#endif
             break;
 
         default:
@@ -3106,7 +3049,7 @@ do_keydown:
              *!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
             if (message != WM_KEYDOWN)
-                return (FALSE);           /* NOT PROCESSED - return a false state */
+                return (meFALSE);           /* NOT PROCESSED - return a false state */
             /* found that C-1, C-2 etc come down this route */
             if((ttmodif & ME_CONTROL) && (wParam >= '0') && (wParam <= '9'))
             {
@@ -3124,7 +3067,7 @@ do_keydown:
                  *
                  * Fail on most keys */
                 if ((ttmodif & ME_ALT) || ((ttmodif & ME_CONTROL) == 0))
-                    return FALSE;
+                    return meFALSE;
 
                 /* The only keys we want to process here are those that do not
                  * come back to use as WM_CHAR. Fail on all of the others - we
@@ -3159,7 +3102,7 @@ do_keydown:
                             /* Other specials */
                             /* cc = ttmodif | (wParam & 0x7f);*/
                         default:
-                            return FALSE;;
+                            return meFALSE;;
                         }
                     }
                     else
@@ -3193,7 +3136,7 @@ do_keydown:
                         case 0x3c:
                             cc = (~ME_SHIFT & ttmodif) | wParam; break;
                         default:
-                            return FALSE;
+                            return meFALSE;
                         }
                     }
                     /*                cc = ttmodif | (wParam & 0x7f);*/
@@ -3204,7 +3147,7 @@ do_keydown:
                     goto return_spec;
                 }
                 else
-                    return FALSE;
+                    return meFALSE;
             }
             else if ((wParam >= 'A') && (wParam <= 'Z'))
             {
@@ -3264,7 +3207,7 @@ do_keydown:
                     /* Special case for Alt-Tab - this is not for us !! Windows does not
                        intercept this key on win32s. */
                     if ((wParam == '\t') && ((ttmodif & (ME_CONTROL|ME_SHIFT)) == 0))
-                        return FALSE;    /* Not processed */
+                        return meFALSE;    /* Not processed */
 #endif
                     /* Process the rest */
                     switch (wParam)
@@ -3290,7 +3233,7 @@ do_keydown:
 /*                cc = ttmodif | (wParam & 0x7f);*/
             }
             else
-                return (FALSE);          /* NOT PROCESSED - return a false state */
+                return (meFALSE);          /* NOT PROCESSED - return a false state */
 
             /* Add the character to the typeahead buffer.
              * Note that we do no process (lParam & 0xff) which is the
@@ -3308,12 +3251,12 @@ do_keydown:
             }
 #endif
             addKeyToBuffer (cc);
-#if MOUSE
+            /* hide the mouse cursor
+             * This must be done whether MEOPT_MOUSE is enabled or not */
             mouseHide() ;
-#endif
 
 #else  /* DISABLE_ALT_C_KEY_DETECTION */
-            return (TRUE);
+            return (meTRUE);
 #endif /* DISABLE_ALT_C_KEY_DETECTION */
         }
         break;
@@ -3326,7 +3269,7 @@ do_keydown:
         case VK_SHIFT:   ttmodif &= ~ME_SHIFT; break;
         case VK_CONTROL: ttmodif &= ~ME_CONTROL;  break;
         default:
-            return (FALSE);
+            return (meFALSE);
         }
         break;
 
@@ -3345,8 +3288,10 @@ done_syschar:
         switch (wParam)
         {
         case VK_RETURN:
-#ifdef _WINCON
+#ifdef _ME_CONSOLE
+#ifdef _ME_WINDOW
             if (meSystemCfg & meSYSTEM_CONSOLE)
+#endif /* _ME_WINDOW */
             {
                 /* For the console check the control flag. A control flag will
                  * indicate that the control C-m has been pressed as opposed
@@ -3380,7 +3325,7 @@ done_syschar:
         if (cc == 0x20)
         {
             if((ttmodif == ME_ALT) && !(meSystemCfg & meSYSTEM_CTCHASPC))
-                return (FALSE);          /* NOT PROCESSED - return a false state */
+                return (meFALSE);          /* NOT PROCESSED - return a false state */
         }
         else if (cc < 0x20)
         {
@@ -3446,9 +3391,9 @@ done_syschar:
         }
 #endif
         addKeyToBuffer(cc) ;
-#if MOUSE
+        /* hide the mouse cursor
+         * This must be done whether MEOPT_MOUSE is enabled or not */
         mouseHide() ;
-#endif
         break;
 return_spec:
         cc = (ME_SPECIAL | ttmodif | cc) ;
@@ -3465,14 +3410,14 @@ return_spec:
         }
 #endif
         addKeyToBuffer(cc) ;
-#if MOUSE
+        /* hide the mouse cursor
+         * This must be done whether MEOPT_MOUSE is enabled or not */
         mouseHide() ;
-#endif
         break;
     default:
-        return (FALSE);
+        return (meFALSE);
     }
-    return (TRUE);
+    return (meTRUE);
 }
 
 /****************************************************************************
@@ -3494,10 +3439,12 @@ return_spec:
  * in the palette table moves to the vacant position.
  */
 int
-TTaddColor(meCOLOR index, meUByte r, meUByte g, meUByte b)
+TTaddColor(meColor index, meUByte r, meUByte g, meUByte b)
 {
-#ifdef _WINCON
+#ifdef _ME_CONSOLE
+#ifdef _ME_WINDOW
     if (meSystemCfg & meSYSTEM_CONSOLE)
+#endif /* _ME_WINDOW */
     {
         meUByte *ss ;
         int            ii, jj, idif, jdif ;
@@ -3522,8 +3469,11 @@ TTaddColor(meCOLOR index, meUByte r, meUByte g, meUByte b)
         }
         colTable[index] = jj ;
     }
+#ifdef _ME_WINDOW
     else
-#endif
+#endif /* _ME_WINDOW */
+#endif /* _ME_CONSOLE */
+#ifdef _ME_WINDOW
     {
         COLORREF cReq;                      /* Color requested */
         COLORREF cAsg;                      /* Color assigned */
@@ -3608,7 +3558,7 @@ TTaddColor(meCOLOR index, meUByte r, meUByte g, meUByte b)
                     {
                         /* ERROR - not enough colours */
                         ReleaseDC(NULL, hDC);
-                        return FALSE ;
+                        return meFALSE ;
                     }
                     else
                     {
@@ -3688,9 +3638,11 @@ TTaddColor(meCOLOR index, meUByte r, meUByte g, meUByte b)
         eCellMetrics.pInfo.cPal [index].cpixel = cAsg;
         eCellMetrics.pInfo.cPal [index].rgb = cReq;
     }
-    return TRUE ;
+#endif /* _ME_WINDOW */
+    return meTRUE ;
 }
 
+#ifdef _ME_WINDOW
 /*
  * TTchangeFont
  * Change the current font setting. Re-compute the cell metrics for the
@@ -3707,9 +3659,9 @@ TTchangeFont (meUByte *fontName, int fontType, int fontWeight,
     RECT  rect;                         /* Area of the client window */
     TEXTMETRIC textmetric;              /* Text metrics */
     LOGFONT logfont;                    /* Logical font */
-    int   status = TRUE;                /* Status of the invocation */
+    int   status = meTRUE;                /* Status of the invocation */
 
-    hDC = GetDC(ttHwnd);
+    hDC = GetDC(baseHwnd);
     SetMapMode (hDC, MM_TEXT);
     SetMapperFlags (hDC, 1);            /* Allow interpolation */
 
@@ -3728,7 +3680,7 @@ TTchangeFont (meUByte *fontName, int fontType, int fontWeight,
 
             memset (&chooseFont, 0, sizeof (CHOOSEFONT));
             chooseFont.lStructSize = sizeof (CHOOSEFONT);
-            chooseFont.hwndOwner = ttHwnd;
+            chooseFont.hwndOwner = baseHwnd;
             chooseFont.lpLogFont = &logfont;
             chooseFont.Flags = CF_FIXEDPITCHONLY|CF_SCREENFONTS;
 
@@ -3736,13 +3688,13 @@ TTchangeFont (meUByte *fontName, int fontType, int fontWeight,
              * size not sizeof (CHOOSEFONT). Typical Microsoft !! */
             if (ChooseFont (&chooseFont) == 0)
                 /* SWP - if the user cancelled just return false leaving the font alone */
-                return FALSE ;
+                return meFALSE ;
             /* Save the values in $result */
             sprintf(resultStr,"%1d%4d%4d%4d%s",(logfont.lfWeight/100),logfont.lfWidth,
                     logfont.lfHeight,logfont.lfCharSet,logfont.lfFaceName) ;
             if (fontType < -2)
                 /* if a -ve argument was past to changeFont then don't set the font */
-                return TRUE ;
+                return meTRUE ;
             
             /* SWP - we dont want italic as the main font */
             logfont.lfItalic = 0;
@@ -3781,7 +3733,7 @@ TTchangeFont (meUByte *fontName, int fontType, int fontWeight,
 
         /* Create the new font */
         if ((newFont = CreateFontIndirect (&logfont)) == NULL)
-            status = FALSE;
+            status = meFALSE;
     }
     else
         fontType = ttlogfont.lfCharSet ;
@@ -3836,13 +3788,6 @@ defaultFont:
     eCellMetrics.cell.midX = eCellMetrics.cell.sizeX / 2;
     eCellMetrics.cell.midY = eCellMetrics.cell.sizeY / 2;
 
-    eCellMetrics.leadingY = textmetric.tmExternalLeading;
-
-    /* Offsets from the edge of the window 1/4 of width and 1/8 of height is nice */
-    eCellMetrics.offsetX = eCellMetrics.cell.sizeX / 4;
-    if ((eCellMetrics.offsetY = (eCellMetrics.cell.sizeY / 8) - (eCellMetrics.leadingY/2)) < 0)
-        eCellMetrics.offsetY = 0;
-
     /* Store logfont into the ttlogfont for font style and language char set changes  */
     memcpy(&ttlogfont, &logfont, sizeof (LOGFONT));
     GetTextFace (hDC, sizeof (ttlogfont.lfFaceName), ttlogfont.lfFaceName);
@@ -3850,10 +3795,19 @@ defaultFont:
     ttlogfont.lfWidth = eCellMetrics.cell.sizeX;
     
     /* Release the window */
-    ReleaseDC(ttHwnd, hDC);
-    WinTermResize ();
+    ReleaseDC(baseHwnd, hDC);
+    
+    meFrameLoopBegin() ;
+    
+    meFrameLoopContinue(loopFrame->flags & meFRAME_HIDDEN) ;
+    
+    meFrameSetWindowSize(loopFrame) ;
+
+    meFrameLoopEnd() ;
+    
     return (status);
 }
+#endif /* _ME_WINDOW */
 
 /* changeFont
  * Change the size of the font.
@@ -3929,88 +3883,101 @@ defaultFont:
 int
 changeFont(int f, int n)
 {
-    meUByte fontName[FONTBUFSIZ] ;        /* Input font name buffer */
-    meUByte buff[FONTBUFSIZ] ;            /* Input buffer */
-    int  fontType;                      /* Type of font 0=ANSI,255=OEM etc */
-    int  fontWeight;                    /* Weight of font (0-9) */
-    int  fontHeight;                    /* Height of font */
-    int  fontWidth;                     /* Width of font */
+#ifdef _ME_WINDOW
     int  status;                        /* Status of invocation */
-
-#ifdef _WINCON
+#endif
+    
+#ifdef _ME_CONSOLE
     /* Ignore this function for console mode */
+#ifdef _ME_WINDOW
     if (meSystemCfg & meSYSTEM_CONSOLE)
+#endif /* _ME_WINDOW */
         return notAvailable(f,n) ;
 #endif
 
+#ifdef _ME_WINDOW
     /* Call up the dialog if no argument is supplied */
     if (!f || (n < 0))
         status = TTchangeFont (NULL, n-3, 0, 0, 0);
     else
     {
+        meUByte fontName[FONTBUFSIZ] ;        /* Input font name buffer */
+        meUByte buff[FONTBUFSIZ] ;            /* Input buffer */
+        int  fontType;                      /* Type of font 0=ANSI,255=OEM etc */
+        int  fontWeight;                    /* Weight of font (0-9) */
+        int  fontHeight;                    /* Height of font */
+        int  fontWidth;                     /* Width of font */
+        
         /* Get the name of the font. If it is specified as default then
          * do not collect the remaining arguments */
-        if (meGetString ("Font Name ['' for default]", 0, 0, fontName, FONTBUFSIZ) == ABORT)
-            return (FALSE);
+        if (meGetString ("Font Name ['' for default]", 0, 0, fontName, FONTBUFSIZ) == meABORT)
+            return (meFALSE);
         if (fontName[0] == '\0')
             status = TTchangeFont (NULL, -1, 0, 0, 0);
-        else if ((meGetString ("Font Type [ANSI=0]", 0, 0, buff, FONTBUFSIZ) == TRUE) &&
+        else if ((meGetString ("Font Type [ANSI=0]", 0, 0, buff, FONTBUFSIZ) == meTRUE) &&
                  ((fontType = meAtoi(buff)),
-                  (meGetString ("Font Weight [1-9; 0=don't care]", 0, 0, buff, FONTBUFSIZ) == TRUE)) &&
+                  (meGetString ("Font Weight [1-9; 0=don't care]", 0, 0, buff, FONTBUFSIZ) == meTRUE)) &&
                  ((fontWeight = meAtoi(buff)),
-                  (meGetString ("Font Width", 0, 0, buff, FONTBUFSIZ) == TRUE)) &&
+                  (meGetString ("Font Width", 0, 0, buff, FONTBUFSIZ) == meTRUE)) &&
                  ((fontWidth = meAtoi(buff)),
-                  (meGetString ("Font Height", 0, 0, buff, FONTBUFSIZ) == TRUE)))
+                  (meGetString ("Font Height", 0, 0, buff, FONTBUFSIZ) == meTRUE)))
         {
             fontHeight = meAtoi (buff);
             status = TTchangeFont (fontName, fontType,
                                    fontWeight, fontHeight, fontWidth);
         }
         else
-            status = FALSE;
+            status = meFALSE;
     }
     return status;
-
+#endif /* _ME_WINDOW */
 }
 #undef FONTBUFSIZ
 
 /*
- * TThideCur - hide the cursor
+ * meFrameHideCursor - hide the cursor
  */
 void
-TThideCur (void)
+meFrameHideCursor(meFrame *frame)
 {
-    if((TTcurr <= TTnrow) && (TTcurc < TTncol) && !eCellMetrics.paintAll)
+    if((frame->cursorRow <= frame->depth) && (frame->cursorColumn < frame->width))
     {
-#ifdef _WINCON
+#ifdef _ME_CONSOLE
+#ifdef _ME_WINDOW
         if (meSystemCfg & meSYSTEM_CONSOLE)
+#endif /* _ME_WINDOW */
         {
-            FRAMELINE *flp;                     /* Frame store line pointer */
-            meSCHEME schm;                      /* Current colour */
+            meFrameLine *flp;                     /* Frame store line pointer */
+            meScheme schm;                      /* Current colour */
             meUByte cc ;                          /* Current cchar  */
             WORD dcol;
 
-            flp  = frameStore + TTcurr ;
-            cc   = flp->text[TTcurc] ;          /* Get char under cursor */
-            schm = flp->scheme[TTcurc] ;        /* Get colour under cursor */
+            flp  = frame->store + frame->cursorRow ;
+            cc   = flp->text[frame->cursorColumn] ;          /* Get char under cursor */
+            schm = flp->scheme[frame->cursorColumn] ;        /* Get colour under cursor */
 
-            dcol = TTschemeSet(schm) ;
-            ConsoleDrawString (&cc, dcol, TTcurc, TTcurr, 1);
+            dcol = (WORD) TTschemeSet(schm) ;
+            ConsoleDrawString (&cc, dcol, frame->cursorColumn, frame->cursorRow, 1);
         }
-        else
-#endif
+#ifdef _ME_WINDOW
+        else if(!meFrameGetWinPaintAll(frame))
+#endif /* _ME_WINDOW */
+#else
+        if(!meFrameGetWinPaintAll(frame))
+#endif /* _ME_CONSOLE */
+#ifdef _ME_WINDOW
         {
             RECT rect;                  /* Area of screen to update */
-            int startCol = TTcurc;
+            int startCol = frame->cursorColumn;
 #if meFONT_MAX
             /* If the cursor preceeeds an italic character then we need to fix
              * the previous character. This is done by ME drawing the previous
              * char but not invalidating the area so that only the overhang into
              * the next char is drawn.
              */
-            FRAMELINE *flp;             /* Frame store line pointer */
+            meFrameLine *flp;             /* Frame store line pointer */
             
-            flp = frameStore + TTcurr;
+            flp = frame->store + frame->cursorRow;
             if(startCol > 0)
             {
                 if ((meSchemeGetStyle(flp->scheme[startCol-1]) & meSTYLE_ITALIC) &&
@@ -4021,60 +3988,68 @@ TThideCur (void)
                 }
             }
 #endif
-            if(eCellMetrics.paintStartCol[TTcurr] > startCol)
-                eCellMetrics.paintStartCol[TTcurr] = startCol ;
-            if(eCellMetrics.paintEndCol[TTcurr] <= TTcurc)
-                eCellMetrics.paintEndCol[TTcurr] = TTcurc+1 ;
+            if(meFrameGetWinPaintStartCol(frame)[frame->cursorRow] > startCol)
+                meFrameGetWinPaintStartCol(frame)[frame->cursorRow] = startCol ;
+            if(meFrameGetWinPaintEndCol(frame)[frame->cursorRow] <= frame->cursorColumn)
+                meFrameGetWinPaintEndCol(frame)[frame->cursorRow] = frame->cursorColumn+1 ;
             /* Set up the area on the client window to be modified
                and signal that the client is about to be updated */
-            rect.left   = eCellMetrics.screenCellPosX[TTcurc];
-            rect.right  = eCellMetrics.screenCellPosX[TTcurc+1];
-            rect.top    = eCellMetrics.screenCellPosY[TTcurr];
-            rect.bottom = eCellMetrics.screenCellPosY[TTcurr+1];
-            InvalidateRect (ttHwnd, &rect, FALSE);
+            rect.left   = eCellMetrics.cellColPos[frame->cursorColumn];
+            rect.right  = eCellMetrics.cellColPos[frame->cursorColumn+1];
+            rect.top    = eCellMetrics.cellRowPos[frame->cursorRow];
+            rect.bottom = eCellMetrics.cellRowPos[frame->cursorRow+1];
+            InvalidateRect (meFrameGetWinHandle(frame), &rect, meFALSE);
         }
+#endif /* _ME_WINDOW */
     }
 }
 
 /*
- * TTshowCur - show the cursor
+ * meFrameShowCursor - show the cursor
  */
 void
-TTshowCur (void)
+meFrameShowCursor(meFrame *frame)
 {
-    if((TTcurr <= TTnrow) && (TTcurc < TTncol) && !eCellMetrics.paintAll)
+    if((frame->cursorRow <= frame->depth) && (frame->cursorColumn < frame->width))
     {
-#ifdef _WINCON
+#ifdef _ME_CONSOLE
+#ifdef _ME_WINDOW
         if (meSystemCfg & meSYSTEM_CONSOLE)
+#endif /* _ME_WINDOW */
         {
-            FRAMELINE *flp;                     /* Frame store line pointer */
-            meSCHEME schm;                      /* Current colour */
+            meFrameLine *flp;                     /* Frame store line pointer */
+            meScheme schm;                      /* Current colour */
             meUByte cc ;                          /* Current cchar  */
             WORD dcol;
 
-            flp  = frameStore + TTcurr ;
-            cc   = flp->text[TTcurc] ;          /* Get char under cursor */
-            schm = flp->scheme[TTcurc] ;        /* Get colour under cursor */
+            flp  = frame->store + frame->cursorRow ;
+            cc   = flp->text[frame->cursorColumn] ;          /* Get char under cursor */
+            schm = flp->scheme[frame->cursorColumn] ;        /* Get colour under cursor */
 
-            dcol = TTcolorSet(colTable[meStyleGetBColor(meSchemeGetStyle(schm))],
-                              colTable[cursorColor]) ;
+            dcol = (WORD) TTcolorSet(colTable[meStyleGetBColor(meSchemeGetStyle(schm))],
+                                     colTable[cursorColor]) ;
 
-            ConsoleDrawString (&cc, dcol, TTcurc, TTcurr, 1);
+            ConsoleDrawString (&cc, dcol, frame->cursorColumn, frame->cursorRow, 1);
         }
-        else
-#endif
+#ifdef _ME_WINDOW
+        else if(!meFrameGetWinPaintAll(frame))
+#endif /* _ME_WINDOW */
+#else
+        if(!meFrameGetWinPaintAll(frame))
+#endif /* _ME_CONSOLE */
+#ifdef _ME_WINDOW
         {
             RECT rect;                  /* Area of screen to update */
-            int startCol = TTcurc;
+            int startCol = frame->cursorColumn;
 #if meFONT_MAX
             /* If the cursor preceeeds an italic character then we need to fix
              * the previous character. This is done by ME drawing the previous
              * char but not invalidating the area so that only the overhang into
              * the next char is drawn.
              */
-            FRAMELINE *flp;             /* Frame store line pointer */
+            meFrameLine *flp;             /* Frame store line pointer */
             
-            flp = frameStore + TTcurr;
+            flp = frame->store + frame->cursorRow;
             if(startCol > 0)
             {
                 if ((meSchemeGetStyle(flp->scheme[startCol-1]) & meSTYLE_ITALIC) &&
@@ -4085,18 +4060,19 @@ TTshowCur (void)
                 }
             }
 #endif
-            if(eCellMetrics.paintStartCol[TTcurr] > startCol)
-                eCellMetrics.paintStartCol[TTcurr] = startCol ;
-            if(eCellMetrics.paintEndCol[TTcurr] <= TTcurc)
-                eCellMetrics.paintEndCol[TTcurr] = TTcurc+1 ;
+            if(meFrameGetWinPaintStartCol(frame)[frame->cursorRow] > startCol)
+                meFrameGetWinPaintStartCol(frame)[frame->cursorRow] = startCol ;
+            if(meFrameGetWinPaintEndCol(frame)[frame->cursorRow] <= frame->cursorColumn)
+                meFrameGetWinPaintEndCol(frame)[frame->cursorRow] = frame->cursorColumn+1 ;
             /* Set up the area on the client window to be modified
                and signal that the client is about to be updated */
-            rect.left   = eCellMetrics.screenCellPosX[TTcurc];
-            rect.right  = eCellMetrics.screenCellPosX[TTcurc+1];
-            rect.top    = eCellMetrics.screenCellPosY[TTcurr];
-            rect.bottom = eCellMetrics.screenCellPosY[TTcurr+1];
-            InvalidateRect (ttHwnd, &rect, FALSE);
+            rect.left   = eCellMetrics.cellColPos[frame->cursorColumn];
+            rect.right  = eCellMetrics.cellColPos[frame->cursorColumn+1];
+            rect.top    = eCellMetrics.cellRowPos[frame->cursorRow];
+            rect.bottom = eCellMetrics.cellRowPos[frame->cursorRow+1];
+            InvalidateRect (meFrameGetWinHandle(frame), &rect, meFALSE);
         }
+#endif /* _ME_WINDOW */
     }
 }
 
@@ -4121,15 +4097,19 @@ TTcolour (int fcol, int bcol)
 void
 meGetMessage (MSG *msg)
 {
-#if (defined _WINCON) || (defined _IPIPES)
+#if MEOPT_IPIPES || (defined _ME_CONSOLE)
     if (
-#ifdef _WINCON
+#ifdef _ME_CONSOLE
+#ifdef _ME_WINDOW
         (meSystemCfg & meSYSTEM_CONSOLE)
-#ifdef _IPIPES
+#else
+        1
+#endif /* _ME_WINDOW */
+#if MEOPT_IPIPES
         ||
 #endif
-#endif
-#ifdef _IPIPES
+#endif /* _ME_CONSOLE */
+#if MEOPT_IPIPES
         noIpipes
 #endif
         )
@@ -4137,14 +4117,16 @@ meGetMessage (MSG *msg)
         static HANDLE *hTable ;
         static int hTableSize=0 ;
         int ii, jj ;
-#ifdef _IPIPES
-        meIPIPE *ipipe, *pp ;
+#if MEOPT_IPIPES
+        meIPipe *ipipe, *pp ;
         ii = noIpipes ;
 #else
         ii = 0 ;
 #endif
-#ifdef _WINCON
+#ifdef _ME_CONSOLE
+#ifdef _ME_WINDOW
         if(meSystemCfg & meSYSTEM_CONSOLE)
+#endif /* _ME_WINDOW */
             ii++ ;
 #endif
         if(ii > hTableSize)
@@ -4159,7 +4141,7 @@ meGetMessage (MSG *msg)
         }
         for(;;)
         {
-#ifdef _IPIPES
+#if MEOPT_IPIPES
             /* Loop round first time to read anything available and close
              * those processes that have finished
              */
@@ -4168,7 +4150,7 @@ meGetMessage (MSG *msg)
             {
                 DWORD doRead ;
                 pp = ipipe->next ;
-#ifdef _CLIENTSERVER
+#if MEOPT_CLIENTSERVER
                 if(ipipe->pid == 0)
                 {
                     if(TTcheckClientServer())
@@ -4185,7 +4167,7 @@ meGetMessage (MSG *msg)
                                 ResetEvent(ipipe->childActive) ;
                         }
                         else if(PeekNamedPipe(ipipe->rfd, (LPVOID) NULL, (DWORD) 0,
-                                              (LPDWORD) NULL, &doRead, (LPDWORD) NULL) == FALSE)
+                                              (LPDWORD) NULL, &doRead, (LPDWORD) NULL) == meFALSE)
                         {
                             /* If peek failed, wipe our hands of it. Close the process */
                             CloseHandle(ipipe->process);
@@ -4195,7 +4177,7 @@ meGetMessage (MSG *msg)
                     if((ipipe->pid < 0) || doRead)
                         ipipeRead(ipipe) ;
                     else if((platformId != VER_PLATFORM_WIN32_NT) &&
-                            /* ipipe->bp->b_nwnd &&*/
+                            /* ipipe->bp->windowCount &&*/
                             (!GetExitCodeProcess(ipipe->process,&doRead) || (doRead != STILL_ACTIVE)))
                     {
                         /* Win95 fails to spot the exit state some times, this fixes it */
@@ -4211,15 +4193,17 @@ meGetMessage (MSG *msg)
              * processes & console.
              */
             ii = 0 ;
-#ifdef _WINCON
+#ifdef _ME_CONSOLE
+#ifdef _ME_WINDOW
             if(meSystemCfg & meSYSTEM_CONSOLE)
+#endif /* _ME_WINDOW */
                 hTable[ii++] = hInput ;
 #endif
-#ifdef _IPIPES
+#if MEOPT_IPIPES
             ipipe = ipipes ;
             while(ipipe != NULL)
             {
-#ifdef _CLIENTSERVER
+#if MEOPT_CLIENTSERVER
                 if(ipipe->pid > 0)
 #endif
                 {
@@ -4232,25 +4216,31 @@ meGetMessage (MSG *msg)
             }
 #endif
             /* Wait for either user or process activity */
-            jj = MsgWaitForMultipleObjects(ii,hTable,FALSE,INFINITE,QS_ALLINPUT) - WAIT_OBJECT_0 ;
-#ifdef _WINCON
+            jj = MsgWaitForMultipleObjects(ii,hTable,meFALSE,INFINITE,QS_ALLINPUT) - WAIT_OBJECT_0 ;
+#ifdef _ME_CONSOLE
+#ifdef _ME_WINDOW
             if(meSystemCfg & meSYSTEM_CONSOLE)
+#endif /* _ME_WINDOW */
             {
-                if((PeekMessage(msg, ttHwndNull, WM_TIMER, WM_TIMER, PM_REMOVE) != FALSE) ||
+                if((PeekMessage(msg, meHWndNull, WM_TIMER, WM_TIMER, PM_REMOVE) != meFALSE) ||
                    (((jj <= 0) || (jj >= ii)) && meGetConsoleMessage(msg)))
                     return ;
             }
+#ifdef _ME_WINDOW
             else
+#endif /* _ME_WINDOW */
 #endif
+#ifdef _ME_WINDOW
                 if((jj < 0) || (jj >= ii))
                 /* User activity, go get it! */
                 break ;
+#endif /* _ME_WINDOW */
         }
     }
-#endif /* _IPIPES & _WINCON */
+#endif /* MEOPT_IPIPES & _ME_CONSOLE */
     /* Note: console versions cannot get here */
     if(GetMessage(msg,              /* address of structure with message */
-                  ttHwndNull,           /* handle of window */
+                  meHWndNull,       /* handle of window */
                   0,                /* first message */
                   0) <= 0)          /* last message */
         meDie() ;
@@ -4264,7 +4254,7 @@ meGetMessage (MSG *msg)
 void
 TTwaitForChar(void)
 {
-#if MOUSE
+#if MEOPT_MOUSE
     meUShort mc ;
     meUInt arg ;
     /* If no keys left then if theres currently no mouse timer and
@@ -4285,10 +4275,12 @@ TTwaitForChar(void)
         }
     }
 #endif
+#if MEOPT_CALLBACK
     /* IDLE TIME: Check the idle time events */
-    if(kbdmode == KBD_IDLE)
+    if(kbdmode == meIDLE)
         doIdlePickEvent ();         /* Check the idle event */
-
+#endif
+    
     /* Pend for messages */
     for (;;)
     {
@@ -4301,9 +4293,24 @@ TTwaitForChar(void)
          * before we wait for the next message */
         handleTimerExpired() ;
 
-        if (sgarbf == TRUE)
+#if MEOPT_MWFRAME
+        /* if the user has changed the window focus using the OS
+         * but ME can swap to this frame because there is an active frame
+         * then give a warning */ 
+        if((frameFocus != NULL) && (frameFocus != frameCur))
         {
-            update (FALSE);
+            meUByte scheme=(globScheme/meSCHEME_STYLES) ;
+            meFrame *fc=frameCur ;
+            frameCur = frameFocus ;
+            pokeScreen(0x10,frameCur->depth,(frameCur->width >> 1)-5,&scheme,
+                       (meUByte *) "[NOT FOCUS]") ;
+            frameCur = fc ;
+        }
+#endif
+
+        if (sgarbf == meTRUE)
+        {
+            update (meFALSE);
             mlerase (MWCLEXEC);
         }
 
@@ -4321,23 +4328,29 @@ TTwaitForChar(void)
         /* Timer - handle short and sweet here */
         else if (msg.message == WM_TIMER)
         {
-#ifdef _WINCON
+#ifdef _ME_CONSOLE
+#ifdef _ME_WINDOW
             if (meSystemCfg & meSYSTEM_CONSOLE)
+#endif /* _ME_WINDOW */
                 timerAlarm(msg.wParam) ;
+#ifdef _ME_WINDOW
             else
+#endif /* _ME_WINDOW */
 #endif
+#ifdef _ME_WINDOW
                 if(msg.wParam < NUM_TIMERS)
             {
                 meTimerState[msg.wParam] = (meTimerState[msg.wParam] & ~TIMER_SET) | TIMER_EXPIRED;
                 continue;
             }
+#endif /* _ME_WINDOW */
         }
-#if MOUSE
+#if MEOPT_MOUSE
         /* Mouse movement or button press */
         else if ((msg.message >= WM_MOUSEFIRST) &&
                  (msg.message <= WM_MOUSELAST))
         {
-            if (WinMouse (msg.message, msg.wParam, msg.lParam))
+            if (WinMouse(msg.hwnd, msg.message, msg.wParam, msg.lParam))
                 continue;
         }
 #endif
@@ -4347,45 +4360,48 @@ TTwaitForChar(void)
         {
             if (!(meSystemCfg & meSYSTEM_CONSOLE))
                 TranslateMessage (&msg);    /* Translate keyboard characters */
-            if (WinKeyboard (msg.message, msg.wParam, msg.lParam))
+            if (WinKeyboard (msg.hwnd, msg.message, msg.wParam, msg.lParam))
                 continue;
         }
 
+#ifdef _ME_WINDOW
         /* Only get here if we have not handled the message
          * post to the dispatcher if not a console. */
-#ifdef _WINCON
+#ifdef _ME_CONSOLE
         if (!(meSystemCfg & meSYSTEM_CONSOLE))
 #endif
             meMessageHandler(&msg) ;
+#endif /* _ME_WINDOW */
     }
 }
 
+#ifdef _ME_WINDOW
 /*
  * TTputs
  * Put a string to the screen simply by invalidating the region. The
- * display functions should have updated the frameStore which is what
+ * display functions should have updated the frameCur->store which is what
  * is used for rendering so it is only necessary to invalidate the
  * screen region to invoke a paint operation.
  */
 void
 TTputs (int row, int col, int len)
 {
-    if(!eCellMetrics.paintAll)
+    if(!meFrameGetWinPaintAll(frameCur))
     {
         RECT rect;                          /* Area of screen to update */
 
-        if(eCellMetrics.paintStartCol[row] > col)
-            eCellMetrics.paintStartCol[row] = col ;
-        if(eCellMetrics.paintEndCol[row] < (col+len))
-            eCellMetrics.paintEndCol[row] = col+len ;
+        if(meFrameGetWinPaintStartCol(frameCur)[row] > col)
+            meFrameGetWinPaintStartCol(frameCur)[row] = col ;
+        if(meFrameGetWinPaintEndCol(frameCur)[row] < (col+len))
+            meFrameGetWinPaintEndCol(frameCur)[row] = col+len ;
 
         /* Set up the area on the client window to be modified
            and signal that the client is about to be updated */
-        rect.left   = eCellMetrics.screenCellPosX [col];
-        rect.right  = eCellMetrics.screenCellPosX [col+len];
-        rect.top    = eCellMetrics.screenCellPosY [row];
-        rect.bottom = eCellMetrics.screenCellPosY [row+1];
-        InvalidateRect (ttHwnd, &rect, FALSE);
+        rect.left   = eCellMetrics.cellColPos [col];
+        rect.right  = eCellMetrics.cellColPos [col+len];
+        rect.top    = eCellMetrics.cellRowPos [row];
+        rect.bottom = eCellMetrics.cellRowPos [row+1];
+        InvalidateRect (meFrameGetWinHandle(frameCur), &rect, meFALSE);
     }
 }
 
@@ -4397,22 +4413,101 @@ TTputs (int row, int col, int len)
 void
 TTapplyArea(void)
 {
-    if((ttRect.right >= 0) && !eCellMetrics.paintAll)
+    if((ttRect.right >= 0) && !meFrameGetWinPaintAll(frameCur))
     {
         int row ;
         for(row=ttRect.top; row < ttRect.bottom ; row++)
         {
-            if(eCellMetrics.paintStartCol[row] > (meShort) ttRect.left)
-                eCellMetrics.paintStartCol[row] = (meShort) ttRect.left ;
-            if(eCellMetrics.paintEndCol[row] < (meShort) ttRect.right)
-                eCellMetrics.paintEndCol[row] = (meShort) ttRect.right ;
+            if(meFrameGetWinPaintStartCol(frameCur)[row] > (meShort) ttRect.left)
+                meFrameGetWinPaintStartCol(frameCur)[row] = (meShort) ttRect.left ;
+            if(meFrameGetWinPaintEndCol(frameCur)[row] < (meShort) ttRect.right)
+                meFrameGetWinPaintEndCol(frameCur)[row] = (meShort) ttRect.right ;
         }
-        ttRect.left   = eCellMetrics.screenCellPosX[ttRect.left] ;
-        ttRect.right  = eCellMetrics.screenCellPosX[ttRect.right] ;
-        ttRect.top    = eCellMetrics.screenCellPosY[ttRect.top] ;
-        ttRect.bottom = eCellMetrics.screenCellPosY[ttRect.bottom] ;
-        InvalidateRect (ttHwnd, &ttRect, FALSE) ;
+        ttRect.left   = eCellMetrics.cellColPos[ttRect.left] ;
+        ttRect.right  = eCellMetrics.cellColPos[ttRect.right] ;
+        ttRect.top    = eCellMetrics.cellRowPos[ttRect.top] ;
+        ttRect.bottom = eCellMetrics.cellRowPos[ttRect.bottom] ;
+        InvalidateRect (meFrameGetWinHandle(frameCur), &ttRect, meFALSE) ;
     }
+}
+
+void
+meFrameTermMakeCur(meFrame *frame)
+{
+#ifdef _ME_CONSOLE
+    if(!(meSystemCfg & meSYSTEM_CONSOLE))
+#endif /* _ME_CONSOLE */
+    {
+        if (IsIconic (meFrameGetWinHandle(frame)))
+            ShowWindow (meFrameGetWinHandle(frame), SW_SHOWNORMAL);
+        else
+            SetForegroundWindow(meFrameGetWinHandle(frame));
+    }
+}
+
+void
+meFrameTermFree(meFrame *frame, meFrame *sibling)
+{
+#ifdef _ME_CONSOLE
+    if(!(meSystemCfg & meSYSTEM_CONSOLE))
+#endif /* _ME_CONSOLE */
+    {
+        /* if another internal frame exists then theres nothing to do */
+        if(sibling == NULL)
+        {
+            DestroyWindow(meFrameGetWinHandle(frame)) ;
+            free(meFrameGetWinPaintStartCol(frame)) ;
+            free(frame->termData) ;
+        }
+    }
+}
+
+#endif /* _ME_WINDOW */
+
+int
+meFrameTermInit(meFrame *frame, meFrame *sibling)
+{
+    if(sibling == NULL)
+    {
+#ifdef _ME_CONSOLE
+#ifdef _ME_WINDOW
+        if(meSystemCfg & meSYSTEM_CONSOLE)
+#endif /* _ME_WINDOW */
+            meFrameSetWindowSize(frame) ;
+#ifdef _ME_WINDOW
+        else
+#endif /* _ME_WINDOW */
+#endif /* _ME_CONSOLE */
+#ifdef _ME_WINDOW
+        {
+            meFrameData *frameData ;
+            
+            if((frameData = calloc(1,sizeof(meFrameData))) == NULL)
+                return meFALSE ;
+            frame->termData = frameData ;
+            frameData->hwnd = CreateWindow ("MicroEmacsClass",
+                                            ME_FULLNAME " " meVERSION,
+                                            WS_OVERLAPPEDWINDOW,  /* No scroll bars */
+                                            TTdefaultPosX,
+                                            TTdefaultPosY,
+                                            CW_USEDEFAULT,
+                                            CW_USEDEFAULT,
+                                            NULL,
+                                            NULL,
+                                            ttInstance,
+                                            NULL);
+            meFrameSetWindowSize(frame) ;
+            ShowWindow(frameData->hwnd, ttshowState);    /* Create the window */
+            UpdateWindow(frameData->hwnd);               /* Show it off - ready for errors */
+        }
+#endif /* _ME_WINDOW */
+    }
+#ifdef _ME_WINDOW
+    else
+        /* internal frame, just copy the window handler */
+        frame->termData = sibling->termData ;
+#endif /* _ME_WINDOW */
+    return meTRUE ;
 }
 
 /*
@@ -4422,12 +4517,16 @@ TTapplyArea(void)
  */
 TTstart (void)
 {
-#ifdef _WINCON
+#ifdef _ME_CONSOLE
+#ifdef _ME_WINDOW
     if (meSystemCfg & meSYSTEM_CONSOLE)
+#else
+    meSystemCfg |= meSYSTEM_CONSOLE ;
+#endif /* _ME_WINDOW */
     {
         CONSOLE_SCREEN_BUFFER_INFO Console;
         CONSOLE_CURSOR_INFO CursorInfo;
-        COORD dwCursorPosition;
+        COORD coord ;
         
         /* console can't support fonts and only has XANSI */
         meSYSTEM_MASK &= ~meSYSTEM_FONTS ;
@@ -4457,13 +4556,13 @@ TTstart (void)
         /* let MicroEMACS know our starting screen size */
         /* this should be the window size, not the buffer size
          * as this needs the scroll-bar to use */
-        ConsoleSize.X = Console.srWindow.Right-Console.srWindow.Left+1;
-        ConsoleSize.Y = Console.srWindow.Bottom-Console.srWindow.Top+1;
+        TTwidthDefault = Console.srWindow.Right-Console.srWindow.Left+1;
+        TTdepthDefault = Console.srWindow.Bottom-Console.srWindow.Top+1;
         /* now fix the window buffer size to this window size to
          * get rid of the horrid scroll bars! */
-        SetConsoleScreenBufferSize(hOutput,ConsoleSize);
-        WinTermCellResize (ConsoleSize.X,ConsoleSize.Y) ;
-        WinTermResize () ;
+        coord.X = TTwidthDefault ;
+        coord.Y = TTdepthDefault ;
+        SetConsoleScreenBufferSize(hOutput,coord);
 
         consolePaintArea.Right = consolePaintArea.Bottom = 0 ;
         consolePaintArea.Left = consolePaintArea.Top = (SHORT) 0x7fff ;
@@ -4479,40 +4578,43 @@ TTstart (void)
         SetConsoleMode(hInput, ConsoleMode);
 
         /* Set emergency quit handler routine */
-        SetConsoleCtrlHandler (ConsoleHandlerRoutine, TRUE);
+        SetConsoleCtrlHandler (ConsoleHandlerRoutine, meTRUE);
 
         /* Hide the cursor - this does not seem to work on win98!! */
         GetConsoleCursorInfo (hOutput, &CursorInfo);
-        CursorInfo.bVisible = FALSE;
+        CursorInfo.bVisible = meFALSE;
         SetConsoleCursorInfo (hOutput, &CursorInfo);
         /* so move the cursor to a fixed less annoying position */
-        dwCursorPosition.X = ConsoleSize.X-1;
-        dwCursorPosition.Y = 0;
-        SetConsoleCursorPosition(hOutput, dwCursorPosition);
+        coord.X = TTwidthDefault-1;
+        coord.Y = 0;
+        SetConsoleCursorPosition(hOutput,coord);
     }
+#ifdef _ME_WINDOW
     else
-#endif
+#endif /* _ME_WINDOW */
+#endif /* _ME_CONSOLE */
+#ifdef _ME_WINDOW
     {
-#ifdef _WINCON
+#ifdef _ME_CONSOLE
         /* If in window mode, then bin the console we were given */
         FreeConsole ();
-#endif
-        ttHwnd = CreateWindow ("MicroEmacsClass",
-                               "MicroEmacs " meVERSION,
-                               WS_OVERLAPPEDWINDOW,  /* No scroll bars */
-                               meInitGeom[2],
-                               meInitGeom[3],
-                               meInitGeom[0],
-                               meInitGeom[1],
-                               NULL,
-                               NULL,
-                               ttInstance,
-                               NULL);
+#endif /* _ME_CONSOLE */
 
-        if (!ttHwnd)
-            return (FALSE);
-        TTchangeFont (NULL, -1, 0, 0, 0);
+        baseHwnd = CreateWindow ("MicroEmacsClass",
+                                 ME_FULLNAME " " meVERSION,
+                                 WS_DISABLED,
+                                 CW_USEDEFAULT,CW_USEDEFAULT,
+                                 CW_USEDEFAULT,CW_USEDEFAULT,
+                                 NULL,
+                                 NULL,
+                                 ttInstance,
+                                 NULL);
+
+        if (!baseHwnd)
+            return (meFALSE);
+        TTchangeFont(NULL, -1, 0, 0, 0);
     }
+#endif /* _ME_WINDOW */
 
     /* Create the default colours */
     /* Construct the palette. Add two colours; black and white. */
@@ -4520,31 +4622,11 @@ TTstart (void)
     TTaddColor (meCOLOR_BDEFAULT,  0,   0,   0);  /* Black */
     TTcolour (meCOLOR_FDEFAULT,meCOLOR_BDEFAULT);  /* Default colours - none created yet */
 
-    /* To be continued in TTstartStage2() after the display memory
+    /* To be continued in meFrameTermInit after the display memory
      * has been initialised */
-    return (TRUE);
+    return (meTRUE);
 }
 
-/*
- * TTstartStage2
- * Display memory sub-system is initialised. Start up the window
- */
-int
-TTstartStage2 (void)
-{
-    /* Create the cursor */
-    TTshowCur ();                       /* Show the cursor */
-
-#ifdef _WINCON
-    if (!(meSystemCfg & meSYSTEM_CONSOLE))
-#endif
-    {
-        ShowWindow(ttHwnd, ttshowState);    /* Create the window */
-        UpdateWindow(ttHwnd);               /* Show it off - ready for errors */
-    }
-    ttinitialised = 1;                  /* TT is now initialised */
-    return (TRUE);
-}
 
 /*
  * TTahead()
@@ -4559,8 +4641,10 @@ TTahead (void)
 
     /* Peek all Keyboard and Mouse messages until there are no another
        message to process. */
-#ifdef _WINCON
+#ifdef _ME_CONSOLE
+#ifdef _ME_WINDOW
     if (meSystemCfg & meSYSTEM_CONSOLE)
+#endif /* _ME_WINDOW */
     {
         DWORD dwCount;
         INPUT_RECORD ir;
@@ -4574,43 +4658,48 @@ TTahead (void)
          * them. */
         while(TTnoKeys != KEYBUFSIZ)
         {
-            if ((PeekConsoleInput(hInput, &ir, 1, &dwCount) == TRUE) && (dwCount > 0))
+            if ((PeekConsoleInput(hInput, &ir, 1, &dwCount) == meTRUE) && (dwCount > 0))
             {
                 if(meGetConsoleMessage(&msg))
                 {
                     /* Keyboard message */
                     if ((msg.message >= WM_KEYFIRST) && (msg.message <= WM_KEYLAST))
-                        WinKeyboard (msg.message, msg.wParam, msg.lParam) ;
+                        WinKeyboard (msg.hwnd, msg.message, msg.wParam, msg.lParam) ;
+#if MEOPT_MOUSE
                     else if ((msg.message >= WM_MOUSEFIRST) && (msg.message <= WM_MOUSELAST))
-                        WinMouse (msg.message, msg.wParam, msg.lParam) ;
+                        WinMouse(msg.hwnd, msg.message, msg.wParam, msg.lParam) ;
+#endif
                 }
             }
-            else if (PeekMessage (&msg, ttHwndNull, WM_TIMER, WM_TIMER, PM_REMOVE) != FALSE)
+            else if (PeekMessage (&msg, meHWndNull, WM_TIMER, WM_TIMER, PM_REMOVE) != meFALSE)
                 timerAlarm(msg.wParam) ;
             else
                 break;
         }
     }
+#ifdef _ME_WINDOW
     else
-#endif
+#endif /* _ME_WINDOW */
+#endif /* _ME_CONSOLE */
+#ifdef _ME_WINDOW
     {
         for (;;)
         {
-            if (PeekMessage (&msg, ttHwndNull, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE) != FALSE)
+            if (PeekMessage (&msg, meHWndNull, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE) != meFALSE)
             {
                 TranslateMessage (&msg);    /* Translate keyboard characters */
-                if (!WinKeyboard (msg.message, msg.wParam, msg.lParam))
+                if (!WinKeyboard (msg.hwnd, msg.message, msg.wParam, msg.lParam))
                     meMessageHandler(&msg) ;
             }
-#if MOUSE
+#if MEOPT_MOUSE
             /* Check out the mouse. */
-            else if (PeekMessage (&msg, ttHwndNull, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE) != FALSE)
+            else if (PeekMessage (&msg, meHWndNull, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE) != meFALSE)
             {
-                if (WinMouse (msg.message, msg.wParam, msg.lParam) == FALSE)
+                if (WinMouse(msg.hwnd, msg.message, msg.wParam, msg.lParam) == meFALSE)
                     meMessageHandler(&msg) ;
             }
 #endif
-            else if (PeekMessage (&msg, ttHwndNull, WM_TIMER, WM_TIMER, PM_REMOVE) != FALSE)
+            else if (PeekMessage (&msg, meHWndNull, WM_TIMER, WM_TIMER, PM_REMOVE) != meFALSE)
             {
                 /* Check out the timers */
                 if(msg.wParam < NUM_TIMERS)
@@ -4622,6 +4711,8 @@ TTahead (void)
                 break;
         }
     }
+#endif /* _ME_WINDOW */
+    
     /* don't process the timers if we have a key waiting!
      * This is because the timers can generate a lot of timer
      * keys, filling up the input buffer - these are not wanted.
@@ -4629,7 +4720,7 @@ TTahead (void)
      */
     if(TTnoKeys)
         return TTnoKeys ;
-#if MOUSE
+#if MEOPT_MOUSE
     /* If the mouse alarm has returned Check the mouse */
     if (isTimerExpired(MOUSE_TIMER_ID))
     {
@@ -4651,6 +4742,7 @@ TTahead (void)
     }
 #endif
 
+#if MEOPT_CALLBACK
     /* If the idle timer has gone then deal with it */
     if (isTimerExpired(IDLE_TIMER_ID))
     {
@@ -4670,6 +4762,7 @@ TTahead (void)
         else
             meTimerState[IDLE_TIMER_ID] = 0 ;
     }
+#endif
     return TTnoKeys;
 }
 
@@ -4690,25 +4783,29 @@ TTaheadFlush (void)
 {
     MSG msg;                            /* Local message buffer */
 
-#ifdef _WINCON
+#ifdef _ME_CONSOLE
+#ifdef _ME_WINDOW
     if (meSystemCfg & meSYSTEM_CONSOLE)
+#endif /* _ME_WINDOW */
     {
         DWORD dwCount;
         INPUT_RECORD ir;
         for (;;)
         {
-            if ((PeekConsoleInput(hInput, &ir, 1, &dwCount) == TRUE) && (dwCount > 0))
+            if ((PeekConsoleInput(hInput, &ir, 1, &dwCount) == meTRUE) && (dwCount > 0))
             {
                 if(meGetConsoleMessage(&msg))
                 {
                     /* Keyboard message */
                     if ((msg.message >= WM_KEYFIRST) && (msg.message <= WM_KEYLAST))
-                        WinKeyboard (msg.message, msg.wParam, msg.lParam) ;
+                        WinKeyboard (msg.hwnd, msg.message, msg.wParam, msg.lParam) ;
+#if MEOPT_MOUSE
                     else if ((msg.message >= WM_MOUSEFIRST) && (msg.message <= WM_MOUSELAST))
-                        WinMouse (msg.message, msg.wParam, msg.lParam) ;
+                        WinMouse(msg.hwnd, msg.message, msg.wParam, msg.lParam) ;
+#endif
                 }
             }
-            else if (PeekMessage (&msg, ttHwndNull, 0, 0, PM_REMOVE) != FALSE)
+            else if (PeekMessage (&msg, meHWndNull, 0, 0, PM_REMOVE) != meFALSE)
             {
                 if (msg.message == WM_TIMER)
                     /* Timer has expired */
@@ -4718,27 +4815,30 @@ TTaheadFlush (void)
                 break;
         }
     }
+#ifdef _ME_WINDOW
     else
-#endif
+#endif /* _ME_WINDOW */
+#endif /* _ME_CONSOLE */
+#ifdef _ME_WINDOW
     {
         /* Peek all Keyboard and Mouse messages until there are no another
            message to process. */
         for (;;)
         {
-            if (PeekMessage (&msg, ttHwndNull, 0, 0, PM_REMOVE) != FALSE)
+            if (PeekMessage (&msg, meHWndNull, 0, 0, PM_REMOVE) != meFALSE)
             {
                 /* Check out the keyboard. */
                 if ((msg.message >=  WM_KEYFIRST) && (msg.message <= WM_KEYLAST))
                 {
                     TranslateMessage (&msg);    /* Translate keyboard characters */
-                    if (!WinKeyboard (msg.message, msg.wParam, msg.lParam))
+                    if (!WinKeyboard (msg.hwnd, msg.message, msg.wParam, msg.lParam))
                         meMessageHandler(&msg) ;
                 }
-#if MOUSE
+#if MEOPT_MOUSE
                 /* Check out the mouse. */
                 else if ((msg.message >= WM_MOUSEFIRST) && (msg.message <= WM_MOUSELAST))
                 {
-                    if (WinMouse (msg.message, msg.wParam, msg.lParam) == FALSE)
+                    if (WinMouse(msg.hwnd, msg.message, msg.wParam, msg.lParam) == meFALSE)
                         meMessageHandler(&msg) ;
                 }
 #endif
@@ -4757,7 +4857,8 @@ TTaheadFlush (void)
                 break;
         }
     }
-#if MOUSE
+#endif /* _ME_WINDOW */
+#if MEOPT_MOUSE
     /* If the mouse alarm has returned Check the mouse */
     if (isTimerExpired(MOUSE_TIMER_ID))
     {
@@ -4779,6 +4880,7 @@ TTaheadFlush (void)
     }
 #endif
 
+#if MEOPT_CALLBACK
     /* If the idle timer has gone then deal with it */
     if (isTimerExpired(IDLE_TIMER_ID))
     {
@@ -4798,6 +4900,7 @@ TTaheadFlush (void)
         else
             meTimerState[IDLE_TIMER_ID] = 0 ;
     }
+#endif
     return TTnoKeys;
 }
 
@@ -4809,7 +4912,7 @@ TTaheadFlush (void)
 void
 TTsleep (int msec, int intable)
 {
-    if (intable && ((kbdmode == PLAY) || (clexec == TRUE)))
+    if (intable && ((kbdmode == mePLAY) || (clexec == meTRUE)))
         return;
 
     /* Do not actually need the absolute time as this will
@@ -4833,78 +4936,213 @@ TTsleep (int msec, int intable)
 
         /* Suspend until there is another message to process. */
         meGetMessage (&msg);
-#ifdef _WINCON
+#ifdef _ME_CONSOLE
+#ifdef _ME_WINDOW
         if (meSystemCfg & meSYSTEM_CONSOLE)
+#endif /* _ME_WINDOW */
         {
             /* Keyboard message */
             if ((msg.message >= WM_KEYFIRST) && (msg.message <= WM_KEYLAST))
-                WinKeyboard (msg.message, msg.wParam, msg.lParam) ;
+                WinKeyboard (msg.hwnd, msg.message, msg.wParam, msg.lParam) ;
+#if MEOPT_MOUSE
             else if ((msg.message >= WM_MOUSEFIRST) && (msg.message <= WM_MOUSELAST))
-                WinMouse (msg.message, msg.wParam, msg.lParam) ;
+                WinMouse(msg.hwnd, msg.message, msg.wParam, msg.lParam) ;
+#endif
             else if (msg.message == WM_TIMER)
                 /* Timer has expired */
                 timerAlarm(msg.wParam) ;
         }
+#ifdef _ME_WINDOW
         else
-#endif
+#endif /* _ME_WINDOW */
+#endif /* _ME_CONSOLE */
+#ifdef _ME_WINDOW
         {
             TranslateMessage (&msg);    /* Translate keyboard characters */
             meMessageHandler(&msg) ;
         }
+#endif /* _ME_WINDOW */
     } while (!isTimerExpired(SLEEP_TIMER_ID));
 
     timerKill(SLEEP_TIMER_ID);              /* Kill off the timer */
 }
 
+
 /*
- * TTdepth
- * Change the size of the screen height.
+ * meFrameSetWindowSize
+ * 
+ * Changes the width and depth of the screen.
  *
- * This function is initiated from window.c in changeScreenDepth ()
+ * This function is initiated from window.c in frameChangeDepth ()
  * [Emacs command change-screen-depth]. This presents a problem in that
- * WinTermResize() also calls changeScreenDepth (). This causes a recursive loop !!
- * So to make sure that we do not get stuck WinTermResize() ONLY invokes
- * changeScreenDepth () when the current TTnrow is not equal to it's new depth.
+ * meFrameResizeWindow() also calls frameChangeDepth (). This causes a recursive loop !!
+ * So to make sure that we do not get stuck meFrameResizeWindow() ONLY invokes
+ * frameChangeDepth () when the current frameCur->depth is not equal to it's new depth.
  *
  * As it turns out this recursive loop is useful. The user might request a
- * screen depth of 1000 columns changeScreenDepth() will allocate these and call
- * TTdepth() when it has finished. TTdepth() invokes WinTermCellResize()
+ * screen depth of 1000 columns frameChangeDepth() will allocate these and call
+ * meFrameSetWindowSize() when it has finished. meFrameSetWindowSize() invokes WinTermCellResize()
  * which will try to establish the new width which will fail and truncate to
- * the largest width it can allocate. On invocation of WinTermResize() a
+ * the largest width it can allocate. On invocation of meFrameResizeWindow() a
  * new number of rows is computed from the window size (now the truncated)
- * and changeScreenDepth() is invoked. changeScreenDepth() will fix it's rows to match the
- * screen size and invokes TTdepth() again. TTdepth() drops out immediatly
+ * and frameChangeDepth() is invoked. frameChangeDepth() will fix it's rows to match the
+ * screen size and invokes meFrameSetWindowSize() again. meFrameSetWindowSize() drops out immediatly
  * since the CellMetrics should now match the screen depth, hence we recurse
  * out and everybody is happy !!.
  */
 void
-TTdepth (int y)
+meFrameSetWindowSize(meFrame *frame)
 {
-    if (y != eCellMetrics.cellY)
+    int width ;
+    int depth ;
+
+    width = frame->width ;
+    depth = frame->depth+1 ;
+
+#ifdef _ME_CONSOLE
+#ifdef _ME_WINDOW
+    /* If in console mode... */
+    if (meSystemCfg & meSYSTEM_CONSOLE)
+#endif /* _ME_CONSOLE */
     {
-        eCellMetrics.maximized = 0;         /* Knock off the maximise flag */
-        WinTermCellResize (-1, y);          /* Kick off cellular resize */
-        WinTermResize ();                   /* Resize the terminal */
+        if((width*depth) > ciScreenSize)
+        {
+            if (ciScreenBuffer != NULL)
+                free(ciScreenBuffer) ;
+            ciScreenBuffer = (CHAR_INFO *)malloc (sizeof (CHAR_INFO) * width * depth);
+            memset ((void *)ciScreenBuffer, 0, sizeof (CHAR_INFO) * width * depth);
+        }
     }
+#ifdef _ME_WINDOW
+    else
+#endif /* _ME_WINDOW */
+#endif /* _ME_CONSOLE */
+#ifdef _ME_WINDOW
+    {
+        int dWindow;                        /* Depth of Window in pixels */
+        int wWindow;                        /* Width of Window in pixels */
+        int dBorder;                        /* Depth of the border */
+        int wBorder;                        /* Width of the boarder */
+        RECT wRect;                         /* Window rectangle */
+        RECT cRect;                         /* Client rectangle */
+        int ii ;
+        
+        /* Get the current screen widths */
+        GetWindowRect (meFrameGetWinHandle(frame), &wRect);
+        GetClientRect (meFrameGetWinHandle(frame), &cRect);
+        
+        /* Compute the new window widths in terms of pixels */
+        /* Resize the x axis if requested.
+         * Compute the desired window width, if a resize is requested. */
+        wWindow = (width * eCellMetrics.cell.sizeX) ;
+        
+        /* Add on the boarders by differencing the window and the client area */
+        wBorder = (wRect.right - wRect.left) - cRect.right;
+        wWindow += wBorder;
+        
+        /* Re-size in place if possible */
+        if ((wWindow + wBorder + eCellMetrics.cell.sizeX - 1) > eCellMetrics.minMaxInfo.ptMaxSize.x)
+        {
+            wRect.left = eCellMetrics.minMaxInfo.ptMaxPosition.x;
+            wRect.right = wRect.left + eCellMetrics.minMaxInfo.ptMaxSize.x;
+        }
+        else
+        {
+            wRect.right = wRect.left + wWindow;
+            if (wRect.right > (eCellMetrics.minMaxInfo.ptMaxSize.x +
+                               eCellMetrics.minMaxInfo.ptMaxPosition.x))
+            {
+                wRect.right = (eCellMetrics.minMaxInfo.ptMaxSize.x +
+                               eCellMetrics.minMaxInfo.ptMaxPosition.x);
+                wRect.left = wRect.right - wWindow;
+            }
+            else if (wRect.left < eCellMetrics.minMaxInfo.ptMaxPosition.x)
+                wRect.left = eCellMetrics.minMaxInfo.ptMaxPosition.x;
+        }
+        
+        /* Resize the y axis if requested. If an explicit size is requested the
+         * assume that size. Otherwise take the client area as is. */
+        dWindow = (depth * eCellMetrics.cell.sizeY) ;
+        
+        /* Re-align the vertical window - reposition if necessary
+         * Add on the boarders by differencing the window and the client area. */
+        dBorder =  (wRect.bottom - wRect.top) - cRect.bottom;
+        dWindow += dBorder;
+        
+        /* Re-size in place if possible */
+        if ((dWindow + dBorder + eCellMetrics.cell.sizeY - 1) > eCellMetrics.minMaxInfo.ptMaxSize.y)
+        {
+            wRect.top = eCellMetrics.minMaxInfo.ptMaxPosition.y;
+            wRect.bottom = wRect.top + eCellMetrics.minMaxInfo.ptMaxSize.y;
+        }
+        else
+        {
+            wRect.bottom = wRect.top + dWindow;
+            if (wRect.bottom > (eCellMetrics.minMaxInfo.ptMaxSize.y +
+                                eCellMetrics.minMaxInfo.ptMaxPosition.y))
+            {
+                wRect.bottom = (eCellMetrics.minMaxInfo.ptMaxSize.y +
+                                eCellMetrics.minMaxInfo.ptMaxPosition.y);
+                wRect.top = wRect.bottom - dWindow;
+            }
+            else if (wRect.top < eCellMetrics.minMaxInfo.ptMaxPosition.y)
+                wRect.top = eCellMetrics.minMaxInfo.ptMaxPosition.y;
+        }
+        
+        /* Change the position of the window and get the new client area. */
+        SetWindowPos (meFrameGetWinHandle(frame), NULL, wRect.left, wRect.top,
+                      wRect.right - wRect.left,
+                      wRect.bottom - wRect.top,
+                      SWP_NOZORDER);
+        GetClientRect (meFrameGetWinHandle(frame), &meFrameGetWinCanvas(frame)); /* Get the new canvas size */
+        InvalidateRect (meFrameGetWinHandle(frame), &meFrameGetWinCanvas(frame), meFALSE);
+        meFrameGetWinPaintAll(frame) = 1 ;
+
+        /* Set up the frame store */
+        if(width > eCellMetrics.cellWidthCount)
+        {
+            /* Set up the column cell LUT positions. Note allocate a single
+             * array and split into two for re-use */
+            eCellMetrics.cellColPos = realloc (eCellMetrics.cellColPos,
+                                                   sizeof (meShort) * (width + 1));
+            /* Construct the cell spacing. This is the  width of the characters. */
+            eCellMetrics.cellSpacing = (INT *) realloc (eCellMetrics.cellSpacing,
+                                                        sizeof (INT) * (width + 1));
+            /* Construct the temporary rendering buffer */
+            eCellMetrics.cellColTmpPos = realloc (eCellMetrics.cellColTmpPos, width+1);
+            eCellMetrics.cellWidthCount = width ;
+        }
+        /* Initialise the column cell LUT tables - this must always be done as only the font may have changed. */
+        for (ii = 0; ii <= width; ii++)
+        {
+            eCellMetrics.cellColPos [ii] = colToClient (ii) ;
+            eCellMetrics.cellSpacing [ii] = eCellMetrics.cell.sizeX;
+        }
+
+        /* Grow the existing rows */
+        if (depth > eCellMetrics.cellDepthCount)
+        {
+            /* Set up the row cell LUT positions. Note allocate a single
+             * array and split into 4 for re-use. */
+            eCellMetrics.cellRowPos = realloc (eCellMetrics.cellRowPos, sizeof (meShort) * 2 * (depth + 1));
+            eCellMetrics.cellDepthCount = depth;
+        }
+        /* Initialise the row cell LUT tables - this must always be done as only the font may have changed. */
+        for (ii = 0; ii <= depth; ii++)
+            eCellMetrics.cellRowPos [ii] = rowToClient (ii) ;
+        
+        /* resize the frame specific data */
+        if(depth > meFrameGetWinPaintDepth(frame))
+        {
+            meFrameGetWinPaintStartCol(frame) = realloc(meFrameGetWinPaintStartCol(frame), sizeof (meShort) * 2 * (depth + 1));
+            meFrameGetWinPaintEndCol(frame)   = &(meFrameGetWinPaintStartCol(frame)[depth+1]) ;
+            meFrameGetWinPaintDepth(frame)    = depth ;
+        }
+    }
+#endif /* _ME_WINDOW */
 }
 
-/*
- * TTwidth
- * Changes the width of the screen.
- *
- * See TTdepth notes, apply similarly to the width.
- */
-void
-TTwidth (int x)
-{
-    if (x != eCellMetrics.cellX)
-    {
-        eCellMetrics.maximized = 0;         /* Knock off the maximise flag */
-        WinTermCellResize (x, -1);          /* Kill off cellular resize */
-        WinTermResize ();                   /* Resize the terminal */
-    }
-}
-
+#ifndef _NANOEMACS
 /****************************************************************************
  *
  * Read me32.ini
@@ -4914,20 +5152,20 @@ void
 readIniFile (void)
 {
     DWORD status;
-    char  buf1 [MAXBUF];
-    char  buf2 [MAXBUF];
-    char  buf3 [MAXBUF];
-    char  logname [MAXBUF];
+    char  buf1 [meBUF_SIZE_MAX];
+    char  buf2 [meBUF_SIZE_MAX];
+    char  buf3 [meBUF_SIZE_MAX];
+    char  logname [meBUF_SIZE_MAX];
     int   len;
     char  *p;
     LPTSTR lpSectionNames;
     LPTSTR lpTemp;
     int ii;
 
-    status = MAXBUF;                    /* Size of the retrieve buffer */
+    status = meBUF_SIZE_MAX;                    /* Size of the retrieve buffer */
     if (((p = meGetenv ("MENAME")) != NULL) && (*p != '\0'))
         strcpy (logname, p);
-    else if ((GetUserName (logname, &status) == TRUE) && (logname[0] != '\0'))
+    else if ((GetUserName (logname, &status) == meTRUE) && (logname[0] != '\0'))
         ;
     else if (((p = meGetenv ("LOGNAME")) != NULL) && (*p != '\0'))
         strcpy (logname, p);
@@ -4942,7 +5180,7 @@ readIniFile (void)
                              0x7fff, ME_INI_FILE);
     for (lpTemp = lpSectionNames; *lpTemp; lpTemp += lstrlen(lpTemp) + 1)
     {
-        GetPrivateProfileString (buf2,lpTemp,"",buf1,MAXBUF,ME_INI_FILE);
+        GetPrivateProfileString (buf2,lpTemp,"",buf1,meBUF_SIZE_MAX,ME_INI_FILE);
         /* Get the environment name and make upper case. */
         strcpy (buf3, lpTemp);
         for (p = buf3; *p != '\0'; p++)
@@ -4959,7 +5197,7 @@ readIniFile (void)
         }
     }
     HeapFree (GetProcessHeap(), 0L, lpSectionNames);
-
+    
     /* set the $MENAME env to logname */
     strcpy (buf1,"MENAME=");
     strcpy (buf1+7,logname);
@@ -4979,7 +5217,7 @@ readIniFile (void)
     /* Search for the default search path */
     for (ii = 0; iniSections [ii] != NULL; ii++)
     {
-        GetPrivateProfileString (iniSections [ii],"mepath","",buf1,MAXBUF,ME_INI_FILE);
+        GetPrivateProfileString (iniSections [ii],"mepath","",buf1,meBUF_SIZE_MAX,ME_INI_FILE);
         if (buf1[0] != '\0')
             break;
     }
@@ -4987,7 +5225,7 @@ readIniFile (void)
     /* Search for the default user path */
     for (ii = 0; iniSections [ii] != NULL; ii++)
     {
-        GetPrivateProfileString (iniSections [ii],"userpath","",buf2,MAXBUF,ME_INI_FILE);
+        GetPrivateProfileString (iniSections [ii],"userpath","",buf2,meBUF_SIZE_MAX,ME_INI_FILE);
         if (buf2[0] != '\0')
             break;
     }
@@ -5038,7 +5276,8 @@ readIniFile (void)
         mePutenv (p);
     }
 
-#ifdef _WINCON
+#ifdef _ME_WINDOW
+#ifdef _ME_CONSOLE
     if(!(meSystemCfg & meSYSTEM_CONSOLE))
 #endif
     {
@@ -5050,54 +5289,35 @@ readIniFile (void)
         buf1[0] = '\0';
         for (ii = 0; iniSections [ii] != NULL; ii++)
         {
-            GetPrivateProfileString (iniSections [ii],"geometry","",buf1,MAXBUF,ME_INI_FILE);
+            GetPrivateProfileString (iniSections [ii],"geometry","",buf1,meBUF_SIZE_MAX,ME_INI_FILE);
             if (buf1[0] != '\0')
                 break;
         }
         if (buf1[0] != '\0')
-            sscanf(buf1,"%dx%d+%d+%d",meInitGeom,meInitGeom+1,meInitGeom+2,meInitGeom+3) ;
-
+        {
+            int ww=TTwidthDefault, dd=TTdepthDefault ;
+            sscanf(buf1,"%dx%d+%d+%d",&ww,&dd,&TTdefaultPosX,&TTdefaultPosY) ;
+            TTwidthDefault = ww ;
+            TTdepthDefault = dd ;
+        }
         /*
          * [Defaults]
          * fontfile=app850.fon
          *
          * Get the font file resources into memory */
         buf1[0] = '\0';
-        GetPrivateProfileString (iniSections [0],fontId,"",buf1,MAXBUF,ME_INI_FILE);
+        GetPrivateProfileString (iniSections [0],fontId,"",buf1,meBUF_SIZE_MAX,ME_INI_FILE);
         if (buf1[0] == '\0')
-            GetPrivateProfileString (iniSections [1],fontId,"",buf1,MAXBUF,ME_INI_FILE);
+            GetPrivateProfileString (iniSections [1],fontId,"",buf1,meBUF_SIZE_MAX,ME_INI_FILE);
         if (((len = strlen (buf1)) > 0) && (strcmp (buf1, "none") != 0))
             fontFile = meStrdup (buf1);
     }
+#endif /* _ME_WINDOW */
 }
+#endif /* _NANOEMACS */
 
-LRESULT CALLBACK
-WinQuitExit (HWND hwndDlg,     /* window handle of dialog box     */
-             UINT message,     /* type of message                 */
-             WPARAM wParam,    /* message-specific information    */
-             LPARAM lParam)    /* message-specific information    */
-{
-    switch (message)
-    {
-    case WM_INITDIALOG:  /* message: initialize dialog box  */
-        return TRUE;
 
-    case WM_COMMAND:     /* message: received a command */
-        /* User pressed "Cancel" button--stop print job. */
-        if ((LOWORD (wParam)) == IDOK)
-            EndDialog (hwndDlg, TRUE);
-        else if ((LOWORD (wParam)) == IDCANCEL)
-            EndDialog (hwndDlg, FALSE);
-        else
-            return FALSE;
-        return TRUE;
-    default:
-        return FALSE;     /* didn't process a message   */
-
-    }
-}
-
-#ifdef _WINCON
+#ifdef _ME_CONSOLE
 /****************************************************************************
 
     FUNCTION: main (int, char *[])
@@ -5111,7 +5331,6 @@ main (int argc, char *argv[])
 {
     HMODULE hInstance, hPrevInstance;
     int nCmdShow = 1;
-    int ii;
 
     hInstance = GetModuleHandle (NULL);
     hPrevInstance = NULL;	/* Can we do something more safe here? */
@@ -5141,6 +5360,7 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmd
 /*    if(logfp == NULL)*/
 /*        logfp = fopen("log","w+") ;*/
 
+#ifdef _ME_WINDOW
     /* Initialise the window data and register window class */
     if (!hPrevInstance)
     {
@@ -5158,11 +5378,12 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmd
         wc.lpszClassName = "MicroEmacsClass";
 
         if (!RegisterClass (&wc))
-            return (FALSE);
+            return (meFALSE);
 
         ttInstance =  hInstance;
         ttshowState = nCmdShow;
     }
+#endif /* _ME_WINDOW */
     {
         OSVERSIONINFO os;
 
@@ -5171,7 +5392,7 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmd
         platformId = os.dwPlatformId;
         if(platformId != VER_PLATFORM_WIN32s)
         {
-#ifdef _IPIPES
+#if MEOPT_IPIPES
             meSYSTEM_MASK |= meSYSTEM_DOSFNAMES|meSYSTEM_IPIPES ;
             meSystemCfg |= meSYSTEM_IPIPES ;
 #else
@@ -5179,10 +5400,15 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmd
 #endif
         }
     }
+    TTwidthDefault=80 ;
+    TTdepthDefault=50 ;
+#ifndef _NANOEMACS
     readIniFile();
+#endif /*  _NANOEMACS */
     ttThreadId = GetCurrentThreadId ();
 
-#ifdef _WINCON
+#ifdef _ME_WINDOW
+#ifdef _ME_CONSOLE
     if(!(meSystemCfg & meSYSTEM_CONSOLE))
 #endif
     {
@@ -5199,7 +5425,7 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmd
         }
     }
 
-#ifndef _WINCON
+#ifndef _ME_CONSOLE
     /* Transpose the argument string into a standard argc, argv line since
      * Windows abandons all standard 'C' practices and does it's own thing
      * (bunch of M***** F*****'s !!). */
@@ -5220,7 +5446,7 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmd
         else
         {
             char *qq, cc, ec ;
-            char nambuf [MAXBUF];
+            char nambuf [meBUF_SIZE_MAX];
 
             /* ingore the first quote, if 2 quotes then the progname was in
              * quotes so don't stop at a space */
@@ -5303,7 +5529,8 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmd
             }
         }
     }
-#endif
+#endif /* !_ME_CONSOLE */
+#endif /* _ME_WINDOW */
 
     /* Call EMACS with the command line that we have just constructed.
      * Note that we cannot delete the string that we have allocated since
@@ -5311,7 +5538,7 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmd
     mesetup (argc, argv);
 
     /* Just incase the window has been resized during start up go and check */
-    WinTermResize ();                   /* Resize the screen */
+    meFrameResizeWindow(frameCur) ;                    /* Resize the screen */
 
     /* Sint in a continual loop and process messages. */
     while (1)
@@ -5324,6 +5551,7 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmd
                 selhilight.flags &= ~SELHIL_ACTIVE ;
             TTbreakFlag = 0 ;
         }
+#ifdef _ME_WINDOW
 #ifdef _DRAGNDROP
         /* if drag and drop is enabled then process the drag and drop
          * files now. Note we make the invocation here as we
@@ -5336,25 +5564,29 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmd
 
             /* Disable the cursor to allow the mouse position to be
              * artificially moved */
+#if MEOPT_DEBUGM
             macbug = 0;                 /* Force macro debugging off */
-#if MOUSE
-            mouseHide();                /* Hide the cursor */
 #endif
+            /* hide the mouse cursor
+             * This must be done whether MEOPT_MOUSE is enabled or not */
+            mouseHide();                /* Hide the cursor */
             /* Iterate down the list and get the files. */
             while ((dadp = dadHead) != NULL)
             {
+#if MEOPT_MOUSE
                 /* Re-position the mouse */
                 mouse_X = clientToCol (dadp->mousePos.x);
                 mouse_Y = clientToRow (dadp->mousePos.y);
                 mouse_dX = ((dadp->mousePos.x - colToClient(mouse_X)) << 8) / eCellMetrics.cell.sizeX;
                 mouse_dY = ((dadp->mousePos.y - rowToClient(mouse_Y)) << 8) / eCellMetrics.cell.sizeY;
-                if (mouse_X > TTncol)
-                    mouse_X = TTncol;
-                if (mouse_Y > TTnrow)
-                    mouse_Y = TTnrow;
+                if (mouse_X > frameCur->width)
+                    mouse_X = frameCur->width;
+                if (mouse_Y > frameCur->depth)
+                    mouse_Y = frameCur->depth;
 
                 /* Find the window with the mouse */
-                setCursorToMouse (FALSE, 0);
+                setCursorToMouse (meFALSE, 0);
+#endif
 
                 /* Find the file into buffer */
                 findSwapFileList (dadp->fname,BFND_CREAT|BFND_MKNAM,0);
@@ -5366,9 +5598,88 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmd
             /* Display a message indicating last trasaction */
             mlwrite (0, "Drag and Drop transaction completed");
         }
-#endif
+#endif /* _DRAGNDROP */
+#endif /* _ME_WINDOW */
     }
     return (0);
+}
+
+#ifdef _ME_WINDOW
+
+static void
+meFrameGainFocus(meFrame *frame)
+{
+    /* have we not got the focus? */
+    if(frame->flags & meFRAME_NOT_FOCUS)
+    {
+        BYTE keyBuf [256];          /* Keyboard buffer */
+        
+        /* Record the fact we have focus */
+        frame->flags &= ~meFRAME_NOT_FOCUS ;
+        if(frameCur != frame)
+            frameFocus = frame ;
+        
+        /* Mark the screen as invalid */
+        InvalidateRect(meFrameGetWinHandle(frame), NULL, meFALSE);
+        meFrameGetWinPaintAll(frame) = 1 ;
+        
+#if 0
+        /* Kick of the blinker - as default value for cursorBlink
+         * is 0 this will not happen until after the window is created */
+        if((cursorState >= 0) && cursorBlink)
+            TThandleBlink(2) ;
+#endif
+        
+        /* We have been swapped out. Therefore we potentially do not
+         * own the clipboard contents*/
+        clipState &= ~CLIP_OWNER ;
+        
+        /* Get the state of the keyboard keys into sync */
+        GetKeyboardState (keyBuf);
+        
+        ttmodif = 0;
+        if (keyBuf [VK_SHIFT] & 0x80)
+            ttmodif |= ME_SHIFT;
+        if (keyBuf [VK_MENU] & 0x80)
+            ttmodif |= ME_ALT;
+        if (keyBuf [VK_CONTROL] & 0x80)
+            ttmodif |= ME_CONTROL;
+        /* Make sure the cursor is ok
+         * This must be done whether MEOPT_MOUSE is enabled or not */
+        SetCursor (meCursors[meCurCursor]);
+        mouseState |= MOUSE_STATE_VISIBLE ;
+    }
+}
+
+static void
+meFrameKillFocus(meFrame *frame)
+{
+    /* have we got the focus to loose it? */
+    if(!(frame->flags & meFRAME_NOT_FOCUS))
+    {
+        frame->flags |= meFRAME_NOT_FOCUS ;
+        if(frameFocus == frame)
+            frameFocus = NULL ;
+        
+        if(cursorState >= 0)
+        {
+            /* because the cursor is a part of the solid cursor we must
+             * remove the old one first and then redraw
+             */
+            if(blinkState)
+                meFrameHideCursor(frame) ;
+            blinkState = 1 ;
+            meFrameShowCursor(frame) ;
+        }
+#if MEOPT_MOUSE
+        /* Relinquish control of the mouse */
+        if (mouseState & MOUSE_STATE_LOCKED)
+        {
+            ReleaseCapture ();          /* Relinquish the mouse */
+            mouseState &= ~MOUSE_STATE_LOCKED;
+        }
+#endif
+    }
 }
 
 /****************************************************************************
@@ -5402,74 +5713,33 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmd
 LONG APIENTRY
 MainWndProc (HWND hWnd, UINT message, UINT wParam, LONG lParam)
 {
-    meAssert ((ttHwnd == 0) || (hWnd == ttHwnd));
-
+    meFrame *frame ;
+    
     switch (message)
     {
     case WM_SETFOCUS:
+        if((frame = meMessageGetFrame(hWnd)) != NULL)
         {
-            BYTE keyBuf [256];          /* Keyboard buffer */
-
-            /* Record the fact we have focus */
-            TTfocus = 1;
-
-            /* Mark the screen as invalid */
-            InvalidateRect (hWnd, NULL, FALSE);
-            eCellMetrics.paintAll = 1 ;
-
-            /* Kick of the blinker - as default value for cursorBlink
-             * is 0 this will not happen until after the window is created */
-            if((cursorState >= 0) && cursorBlink)
-                TThandleBlink(2) ;
-
-            /* We have been swapped out. Therefore we potentially do not
-             * own the clipboard contents*/
-            clipState &= ~CLIP_OWNER ;
-
-            /* Get the state of the keyboard keys into sync */
-            GetKeyboardState (keyBuf);
-
-            ttmodif = 0;
-            if (keyBuf [VK_SHIFT] & 0x80)
-                ttmodif |= ME_SHIFT;
-            if (keyBuf [VK_MENU] & 0x80)
-                ttmodif |= ME_ALT;
-            if (keyBuf [VK_CONTROL] & 0x80)
-                ttmodif |= ME_CONTROL;
-#if MOUSE
-            /* Make sure the cursor is ok */
-            SetCursor (meCursors[meCurCursor]);
-            mouseState |= MOUSE_STATE_VISIBLE ;
+#if 0
+            if(frame != frameCur)
+            {
+                meFrameKillFocus(frameCur) ;
+                frameCur = frame ;
+            }
 #endif
+            meFrameGainFocus(frame) ;
         }
         break;
 
     case WM_KILLFOCUS:
-        TTfocus = 0;
-        if(cursorState >= 0)
-        {
-            /* because the cursor is a part of the solid cursor we must
-             * remove the old one first and then redraw
-             */
-            if(blinkState)
-                TThideCur() ;
-            blinkState = 1 ;
-            TTshowCur() ;
-        }
-#if MOUSE
-        /* Relinquish control of the mouse */
-        if (mouseState & MOUSE_STATE_LOCKED)
-        {
-            ReleaseCapture ();          /* Relinquish the mouse */
-            mouseState &= ~MOUSE_STATE_LOCKED;
-        }
-#endif
+        if((frame = meMessageGetFrame(hWnd)) != NULL)
+            meFrameKillFocus(frame) ;
         break;
 
-#if MOUSE
     case WM_SETCURSOR:
         /* If we have not got the focus or this is not the main window cursor
-         * then we dont handle it, use the default Proc handle */
+         * then we dont handle it, use the default Proc handle
+        * This must be done whether MEOPT_MOUSE is enabled or not */
         {
             static LONG lstLParam=-1 ;
 
@@ -5486,51 +5756,56 @@ MainWndProc (HWND hWnd, UINT message, UINT wParam, LONG lParam)
             }
         }
         break ;
-#endif
         
     case WM_QUERYNEWPALETTE:
         /* About to get focus, realise our palette */
-        if (eCellMetrics.pInfo.hPal != NULL)
+        if(eCellMetrics.pInfo.hPal != NULL)
         {
-            HDC hDC = GetDC (hWnd);
-
-            SelectPalette (hDC, eCellMetrics.pInfo.hPal, FALSE);
-            if (RealizePalette (hDC))
-            {
-                InvalidateRect (hWnd, NULL, FALSE);
-                eCellMetrics.paintAll = 1 ;
-            }
-            ReleaseDC (hWnd, hDC);
-            return TRUE;
+            /* we have a palette simply return TRUE as the WM_PALETTECHANGED
+             * message will handle the actual ins and outs of palette swapping */
+            return meTRUE;
         }
         break;
 
     case WM_PALETTECHANGED:
         /* Another application has changed the palette */
-        if (((HWND) wParam != hWnd) && (eCellMetrics.pInfo.hPal != NULL))
+        /* we only want to do this once so only do it if this is to the baseHwnd.
+         * Note that it could be us changing the palette. */
+        if ((eCellMetrics.pInfo.hPal != NULL) && (hWnd == baseHwnd))
         {
-            HDC hDC = GetDC (hWnd);
+            HDC hDC = GetDC(baseHwnd);
 
-            SelectPalette (hDC, eCellMetrics.pInfo.hPal, TRUE);
-            if (RealizePalette (hDC) != GDI_ERROR)
-                UpdateColors (hDC);
-            ReleaseDC (hWnd, hDC);
+            SelectPalette (hDC, eCellMetrics.pInfo.hPal, meTRUE);
+            if (RealizePalette(hDC) != GDI_ERROR)
+            {
+                UpdateColors(hDC);
+                meFrameLoopBegin() ;
+                
+                meFrameLoopContinue(loopFrame->flags & meFRAME_HIDDEN) ;
+                
+                InvalidateRect (meFrameGetWinHandle(loopFrame), NULL, meFALSE);
+                meFrameGetWinPaintAll(loopFrame) = 1 ;
+                
+                meFrameLoopEnd() ;
+            }
+            ReleaseDC(baseHwnd, hDC);
         }
         break;
 
     case WM_CREATE:
-#if MOUSE
+#if MEOPT_MOUSE
         /* Set the default mouse state. Get the number of buttons. Note
          * under windows we do not need to worry about a left/right swap
          * since that is performed beneath us. */
         meMouseCfg |= GetSystemMetrics(SM_CMOUSEBUTTONS) & meMOUSE_NOBUTTONS ;
         TTinitMouse() ;
+#endif
+        /* still must do some work if mouse is disabled */
         meCursors[meCURSOR_DEFAULT] = meCursors[meCURSOR_ARROW] = LoadCursor (NULL,IDC_ARROW) ;
         mouseShow() ;
-#endif
 #ifdef _DRAGNDROP
         /* Enable drag and drop handling */
-        DragAcceptFiles (hWnd, TRUE);
+        DragAcceptFiles (hWnd, meTRUE);
 #endif
         break;
 
@@ -5544,7 +5819,7 @@ MainWndProc (HWND hWnd, UINT message, UINT wParam, LONG lParam)
         {
             POINT pt;                   /* Position in the window */
             WORD fcount;                /* Count of the number of files */
-            meUByte dfname [MAXBUF];       /* Dropped filename */
+            meUByte dfname [meBUF_SIZE_MAX];       /* Dropped filename */
 
             /* Get the position of the mouse */
             DragQueryPoint ((HANDLE)(wParam), &pt);
@@ -5561,7 +5836,7 @@ MainWndProc (HWND hWnd, UINT message, UINT wParam, LONG lParam)
                     struct s_DragAndDrop *dadp;
 
                     if ((len = DragQueryFile ((HANDLE)(wParam), ii,
-                                              dfname, MAXBUF)) <= 0)
+                                              dfname, meBUF_SIZE_MAX)) <= 0)
                         continue;
 
                     /* Get the drag and drop buffer and add to the list */
@@ -5582,7 +5857,7 @@ MainWndProc (HWND hWnd, UINT message, UINT wParam, LONG lParam)
         }
         break;
 #endif
-#if MOUSE
+#if MEOPT_MOUSE
      /************************************************************************
      * MOUSE Handling
      ************************************************************************/
@@ -5596,9 +5871,13 @@ MainWndProc (HWND hWnd, UINT message, UINT wParam, LONG lParam)
 #ifdef WM_MOUSEWHEEL
     case WM_MOUSEWHEEL:
 #endif
-        if (WinMouse (message, wParam, lParam) == FALSE)
+        if (WinMouse(hWnd, message, wParam, lParam) == meFALSE)
             goto unhandled_message;
         break;
+#else
+    case WM_MOUSEMOVE:
+        mouseShow() ;
+        goto unhandled_message;
 #endif
         
      /************************************************************************
@@ -5610,7 +5889,7 @@ MainWndProc (HWND hWnd, UINT message, UINT wParam, LONG lParam)
     case WM_KEYUP:
     case WM_SYSCHAR:
     case WM_CHAR:
-        if (WinKeyboard (message, wParam, lParam) == FALSE)
+        if (WinKeyboard (hWnd, message, wParam, lParam) == meFALSE)
             goto unhandled_message;
         break;
 
@@ -5621,26 +5900,28 @@ MainWndProc (HWND hWnd, UINT message, UINT wParam, LONG lParam)
     case WM_TIMER:
         if(wParam >= NUM_TIMERS)
             /* unhandled timer */
-            return TRUE;
+            return meTRUE;
         meTimerState[wParam] = (meTimerState[wParam] & ~TIMER_SET) | TIMER_EXPIRED;
         break;
 
     case WM_SIZE:
         /* Resize the window when requested. */
-        switch (wParam)
+        if((frame = meMessageGetFrame(hWnd)) != NULL)
         {
-        case SIZE_MAXIMIZED:
-            eCellMetrics.maximized = 1; /* Set the maximised state */
-            goto do_window_resize;
-        case SIZE_RESTORED:
-            eCellMetrics.maximized = 0; /* Release the minimised state */
+            switch (wParam)
+            {
+            case SIZE_MAXIMIZED:
+                meFrameGetWinMaximized(frame) = 1; /* Set the maximized state */
+                goto do_window_resize;
+            case SIZE_RESTORED:
+                meFrameGetWinMaximized(frame) = 0; /* Release the minimised state */
 do_window_resize:
-            if (ttinitialised)
-                WinTermResize ();
-        case SIZE_MINIMIZED:            /* Minimized - ignore this case
-                                         * Do not re-size the screen */
-        default:
-            break;
+                meFrameResizeWindow(frame) ;
+            case SIZE_MINIMIZED:            /* Minimized - ignore this case
+                                             * Do not re-size the screen */
+            default:
+                break;
+            }
         }
         break;
 
@@ -5658,8 +5939,8 @@ do_window_resize:
             if (hmem == NULL)
                 hmem = GlobalAlloc (GHND, 1);
 
-            OpenClipboard (ttHwnd);
-            EmptyClipboard ();
+            OpenClipboard(baseHwnd);
+            EmptyClipboard();
             SetClipboardData ((ttlogfont.lfCharSet == OEM_CHARSET) ? CF_OEMTEXT : CF_TEXT, hmem);
             CloseClipboard ();
             /* Force the stale state. If another application is pulling data
@@ -5673,54 +5954,67 @@ do_window_resize:
         break;
 
     case WM_PAINT:
-        if (ttinitialised)
-            WinPaint (hWnd);            /* Paint the Window */
+        if((frame = meMessageGetFrame(hWnd)) != NULL)
+            meFrameDraw(frame) ;            /* Paint the frame */
         break;
 
     case WM_CLOSE:
-        if (ttThreadId != GetCurrentThreadId ())
-            PostMessage (ttHwnd, WM_CLOSE, 0, 0);
-        else if(TTfocus)
+        if((frame = meMessageGetFrame(hWnd)) != NULL)
         {
-            /* Use the normal command to save buffers and exit
-             * if we have focus.
-             * If it doesn't exit then carry on as normal
-             * Must ensure we ask the user, not a macro
-             */
-            int savcle ;
-            savcle = clexec ;
-            clexec = FALSE ;
-            saveExitEmacs(0,1) ;
-            clexec = savcle ;
-            return FALSE ;
+#if MEOPT_MWFRAME
+            if(meFrameDelete(frame,6) == meTRUE)
+                return meFALSE ;
+#endif
+            if (ttThreadId != GetCurrentThreadId ())
+                PostMessage(hWnd, WM_CLOSE, 0, 0);
+            else if(((frame = meMessageGetFrame(hWnd)) != NULL) &&
+                    !(frame->flags & meFRAME_NOT_FOCUS))
+            {
+                /* Use the normal command to save buffers and exit
+                 * if we have focus.
+                 * If it doesn't exit then carry on as normal
+                 * Must ensure we ask the user, not a macro
+                 */
+                int savcle ;
+                savcle = clexec ;
+                clexec = meFALSE ;
+                saveExitEmacs(0,1) ;
+                clexec = savcle ;
+                return meFALSE ;
+            }
+            else if ((anyChangedBuffer() == meFALSE)
+#if MEOPT_SPELL
+                     || (anyChangedDictionary() != meFALSE)
+#endif
+#if MEOPT_REGISTRY
+                     || (anyChangedRegistry() != meFALSE)
+#endif
+#if MEOPT_IPIPES
+                     || (anyActiveIpipe() != meFALSE)
+#endif
+                     )
+            {
+                /* Display the modeless Cancel dialog box and disable the
+                 * application window. */
+                if (DialogBox (ttInstance,
+                               MAKEINTRESOURCE (IDD_QUITEXIT),
+                               meFrameGetWinHandle(frameCur),
+                               (DLGPROC) WinQuitExit) == meFALSE)
+                    return meFALSE ;
+            }
+            meDie ();
         }
-        else if ((anyChangedBuffer() == FALSE)
-#if SPELL
-                 || (anyChangedDictionary() != FALSE)
-#endif
-#if REGSTRY
-                 || (anyChangedRegistry() != FALSE)
-#endif
-#ifdef _IPIPES
-                 || (anyActiveIpipe() != FALSE)
-#endif
-                 )
-        {
-            /* Display the modeless Cancel dialog box and disable the
-             * application window. */
-            if (DialogBox (ttInstance,
-                           MAKEINTRESOURCE (IDD_QUITEXIT),
-                           ttHwnd,
-                           (DLGPROC) WinQuitExit) == FALSE)
-                return FALSE ;
-        }
-        meDie ();
         break;
 
     case WM_DESTROY:
-        WinShutdown ();
-        /* End of call */
-        PostQuitMessage(0);
+        /* if just closing down a frame the frame will already be unlinked so
+         * we won't find the frame */
+        if((frame = meMessageGetFrame(hWnd)) != NULL)
+        {
+            WinShutdown ();
+            /* End of call */
+            PostQuitMessage(0);
+        }
         break;
         
 #ifdef WM_INPUTLANGCHANGE
@@ -5735,17 +6029,21 @@ do_window_resize:
 #endif
         
     case WM_MOVE:
-        /* Move; Handle the position of the window changing. Need to force a
-         * re-paint of then window. */
-        InvalidateRect (hWnd, NULL, FALSE);
-        eCellMetrics.paintAll = 1 ;
+        if((frame = meMessageGetFrame(hWnd)) != NULL)
+        {
+            /* Move; Handle the position of the window changing. Need to force a
+             * re-paint of then window. */
+            InvalidateRect (hWnd, NULL, meFALSE);
+            meFrameGetWinPaintAll(frame) = 1 ;
+        }
         break;
 
         /* Indicate to the PAINT that we must honour the next draw region and
          * not try to optimise the painting otherwise we will not re-paint the
          * screen fully. */
     case WM_ERASEBKGND:
-        eCellMetrics.paintAll = 1 ;
+        if((frame = meMessageGetFrame(hWnd)) != NULL)
+            meFrameGetWinPaintAll(frame) = 1 ;
         goto unhandled_message;         /* Assume unhandled */
 
     default:
@@ -5758,34 +6056,39 @@ unhandled_message:
             return ii ;
         }
     }
-    return FALSE ;
+    return meFALSE ;
 }
+#endif /* _ME_WINDOW */
 
 /*
  * TTtitle. Put the name of the buffer into the window frame
  */
 
 void
-TTtitleText (meUByte *str)
+meFrameSetWindowTitle(meFrame *frame, meUByte *str)
 {
-    static meUByte buf [MAXBUF];           /* This must be static */
+    static meUByte buf [meBUF_SIZE_MAX];           /* This must be static */
 
     if (str != NULL)
         meStrcpy (buf, str);
     else
         buf [0] = '\0';
 #ifdef _TITLE_VER_MINOR
-    meStrcat (buf, " - MicroEmacs '" meVERSION "." meVERSION_MINOR);
+    meStrcat (buf, " - " ME_FULLNAME " '" meVERSION "." meVERSION_MINOR);
 #else
-    meStrcat (buf, " - MicroEmacs '" meVERSION) ;
+    meStrcat (buf, " - " ME_FULLNAME " '" meVERSION) ;
 #endif
 
-#ifdef _WINCON
+#ifdef _ME_CONSOLE
     if (meSystemCfg & meSYSTEM_CONSOLE)
         SetConsoleTitle (buf);	            /* Set console window title */
+#ifdef _ME_WINDOW
     else
-#endif
-        SetWindowText (ttHwnd, buf);        /* Change the window text */
+#endif /* _ME_WINDOW */
+#endif /* _ME_CONSOLE */
+#ifdef _ME_WINDOW
+        SetWindowText (meFrameGetWinHandle(frame), buf);        /* Change the window text */
+#endif /* _ME_WINDOW */
 }
 
 /* TTsetBgcol; Set the default fill of the background. Now in windows then we
@@ -5794,15 +6097,23 @@ TTtitleText (meUByte *str)
 void
 TTsetBgcol (void)
 {
+#ifdef _ME_WINDOW
+#ifdef _ME_CONSOLE
     if (!(meSystemCfg & meSYSTEM_CONSOLE))
+#endif /* _ME_CONSOLE */
     {
         HBRUSH newBrush ;
         int bcol;
 
         /* Get the new background color scheme */
         bcol = meStyleGetBColor(meSchemeGetStyle(globScheme)) ;
+        
+        meFrameLoopBegin() ;
+    
+        meFrameLoopContinue(loopFrame->flags & meFRAME_HIDDEN) ;
+        
         if (((newBrush = CreateSolidBrush (eCellMetrics.pInfo.cPal [bcol].cpixel)) != NULL) &&
-            (SetClassLong (ttHwnd, GCL_HBRBACKGROUND, (LONG)(newBrush)) != (LONG)(NULL)))
+            (SetClassLong(meFrameGetWinHandle(loopFrame), GCL_HBRBACKGROUND, (LONG)(newBrush)) != (LONG)(NULL)))
         {
             /* The new brush has been installed. Delete the old brush if we
              * have defined it and remember the old context */
@@ -5812,5 +6123,9 @@ TTsetBgcol (void)
         }
         else if (newBrush != NULL)
             DeleteObject (newBrush);
+        
+        meFrameLoopEnd() ;
+    
     }
+#endif /* _ME_WINDOW */
 }

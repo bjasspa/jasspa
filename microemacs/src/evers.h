@@ -24,9 +24,6 @@
  * Synopsis:    The build version definition.
  * Authors:     Jon Green & Steven Phillips
  * Description:
- *     This file contains ENAME, what you want MicroEMACS to call itself
- *     on the display line, and the version number VERSION.
- *
  *     These are put in here so that you wont have to grub around in the depths
  *     of display.c & main.c etc every time you want to remind yourself that
  *     you've hacked emacs by updating the version number.
@@ -39,9 +36,6 @@
  *     The history was removed from this file as CVS and the help pages are used
  *     instead.
  */
-
-/* The name that appears every where */
-#define	ENAME           "MicroEmacs"
 
 /* THESE MAY ONLY BE MODIFIED BY JASSPA THEY REPRESENT THE CURRENT 
  * RELEASE OF THE BUILD AND ARE USED AS A REFERENCE POINT WHEN
@@ -61,3 +55,11 @@
 /* Version information - Version as a numeric date code */
 #define meVERSION_CODE  meCENTURY meYEAR meMONTH meDAY 
 
+/* The program names - these values are also used in the rc files */
+#define ME_MICROEMACS_FULLNAME  "MicroEmacs"
+#define ME_MICROEMACS_SHORTNAME "me"
+#define ME_NANOEMACS_FULLNAME   "NanoEmacs"
+#define ME_NANOEMACS_SHORTNAME  "ne"
+
+#define ME_COMPANY_NAME         "JASSPA"
+#define ME_COMPANY_SITE         "www.jasspa.com"

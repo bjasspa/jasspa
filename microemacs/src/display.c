@@ -54,10 +54,6 @@
  * idea during the early stages.
  */
 
-VVIDEO        vvideo;                   /* Head of the virtual video list */
-LINE          *mline;                   /* message line. */
-meUShort TTsrow = 0;                    /* Terminal starting row */
-
 /* Poke screen flags
  * Poke screen maintains the rectangular extents of the region of the
  * screen that has been damaged. These screen areas are fixed on the next
@@ -68,100 +64,6 @@ meUShort TTsrow = 0;                    /* Terminal starting row */
  * Note that all poke extents are 'inclusive' values.
  */
 static void pokeUpdate (void);          /* The poke screen update function */
-static char poke_flag = 0;              /* Boolean TRUE/FALSE flag. TRUE
-                                         * when a poke operation has been
-                                         * performed. */
-static int poke_xmin;                   /* Minimum column extent of poke   */
-static int poke_xmax;                   /* Maximum column extent of poke   */
-static int poke_ymin;                   /* Minimum row extent of poke      */
-static int poke_ymax;                   /* Maximum row extent of poke      */
-
-/*
- * Initialize the data structures used by the display code. The edge vectors
- * used to access the screens are set up. The operating system's terminal I/O
- * channel is set up. All the other things get initialized at compile time.
- * The original window has "WFCHG" set, so that it will get completely
- * redrawn on the first call to "update".
- */
-static meSTYLE defScheme [meSCHEME_STYLES*2] =
-{
-    meSTYLE_NDEFAULT,meSTYLE_RDEFAULT,            /* Normal style */
-    meSTYLE_NDEFAULT,meSTYLE_RDEFAULT,            /* Current style */
-    meSTYLE_NDEFAULT,meSTYLE_RDEFAULT,            /* Region style */
-    meSTYLE_NDEFAULT,meSTYLE_RDEFAULT,            /* Current region style */
-    meSTYLE_RDEFAULT,meSTYLE_NDEFAULT,            /* Normal style */
-    meSTYLE_RDEFAULT,meSTYLE_NDEFAULT,            /* Current style */
-    meSTYLE_RDEFAULT,meSTYLE_NDEFAULT,            /* Region style */
-    meSTYLE_RDEFAULT,meSTYLE_NDEFAULT,            /* Current region style */
-};
-
-void
-vtinit(void)
-{
-    FRAMELINE *flp;                     /* Frame store line pointer */
-    int ii, jj ;                        /* Local loop counters */
-
-    if (TTstart() == FALSE)             /* Started ?? */
-        meExit (1);                     /* No quit */
-    
-    /* add 2 to hilBlockS to allow for a double trunc-scheme change */
-    if(((styleTable = malloc(2*meSCHEME_STYLES*sizeof(meSTYLE))) == NULL) ||
-       ((vvideo.video = malloc((TTmrow)*sizeof(VIDEO))) == NULL) ||
-       ((hilBlock = malloc((hilBlockS+2)*sizeof(HILBLOCK))) == NULL) ||
-       ((disLineBuff = malloc((disLineSize+32)*sizeof(meUByte))) == NULL) ||
-       ((mline   = malloc(sizeof(LINE)+TTmcol)) == NULL) ||
-       ((mlStore = malloc(TTmcol+1)) == NULL))
-        meExit(1);
-
-    memcpy(styleTable,defScheme,2*meSCHEME_STYLES*sizeof(meSTYLE));
-
-    /* Initialise the virtual video structure. Allocate and reset to
-     * zero. */
-    memset(vvideo.video,0,TTmrow*sizeof(VIDEO)) ;
-    memset(mline,0,sizeof(LINE)) ;
-    vvideo.video [TTnrow].flag = VFMESSL ;
-    vvideo.video [TTnrow].line = mline ;
-    /* Reset the video list block */
-    vvideo.next = NULL;                 /* No next block */
-    vvideo.window = NULL;               /* No windows attached */
-
-    /* Set the fore and back colours */
-    TTaddColor(meCOLOR_FDEFAULT,255,255,255) ;
-    TTaddColor(meCOLOR_BDEFAULT,0,0,0) ;
-
-    /* Set up the size of the line */
-    mline->l_size = TTncol;             /* Set the length of the line */
-    mlStore [0] = '\0';                 /* Reset the length of the store */
-
-    /* Frame Store storage
-     * The frame store hold's 'n' lines of video information.
-     * The frameStore is an array of points to FRAMELINE structures
-     * which hold the physical line contents.
-     *
-     * Allocate lines in the frame store to hold the video information.
-     */
-    if ((frameStore = (FRAMELINE *) meMalloc (sizeof (FRAMELINE) * TTmrow)) == NULL)
-        meExit (1);
-    for (flp = frameStore, ii = 0; ii < TTmrow; ii++, flp++)
-    {
-        if ((flp->scheme = meMalloc(TTmcol*(sizeof(meUByte)+sizeof(meSTYLE)))) == NULL)
-            meExit (1);
-        flp->text = (meUByte *) (flp->scheme+TTmcol) ;
-        /* Fill with data */
-        jj=TTmcol ;
-        while(--jj >= 0)
-        {
-            flp->text[jj] = ' ' ;
-            flp->scheme[jj] = meSCHEME_NDEFAULT ;
-        }
-    }
-
-    /* Some windowing systems require a 2 stage start. Kick off the second
-     * stage of the start up process after the display memory has been
-     * initialised */
-    TTstartStage2();
-}
-
 
 /*
  * convertSchemeToStyle
@@ -182,16 +84,16 @@ convertUserScheme(int n, int defaultStyle)
  * Apply selection hilighting to the window
  */
 static void
-shilightWindow(WINDOW *wp)
+shilightWindow(meWindow *wp)
 {
     meInt lineNo;           /* Toprow line number */
 
     /* Check to see if any selection hilighting is to be removed. */
     if(((selhilight.flags & SELHIL_ACTIVE) == 0) ||
-       (wp->w_bufp != selhilight.bp))
+       (wp->buffer != selhilight.bp))
         goto remove_hilight;
 
-    if((wp->w_flag & (WFSELHIL|WFREDRAW)) == 0)
+    if((wp->flag & (WFSELHIL|WFREDRAW)) == 0)
         return ;
 
     /* Hilight selection has been modified. Work out the start and
@@ -202,37 +104,37 @@ shilightWindow(WINDOW *wp)
         selhilight.flags &= ~(SELHIL_CHANGED|SELHIL_SAME);
 
         /* dot ahead of mark line */
-        if (selhilight.dlineno > selhilight.mlineno)
+        if (selhilight.dotLineNo > selhilight.markLineNo)
         {
-            selhilight.sline = selhilight.mlineno;
-            selhilight.eline = selhilight.dlineno;
-            selhilight.soff = selhilight.mlineoff;
-            selhilight.eoff = selhilight.dlineoff;
+            selhilight.sline = selhilight.markLineNo;
+            selhilight.eline = selhilight.dotLineNo;
+            selhilight.soff = selhilight.markOffset;
+            selhilight.eoff = selhilight.dotOffset;
         }
         /* dot behind mark line */
-        else if (selhilight.dlineno < selhilight.mlineno)
+        else if (selhilight.dotLineNo < selhilight.markLineNo)
         {
-            selhilight.sline = selhilight.dlineno;
-            selhilight.eline = selhilight.mlineno;
-            selhilight.soff = selhilight.dlineoff;
-            selhilight.eoff = selhilight.mlineoff;
+            selhilight.sline = selhilight.dotLineNo;
+            selhilight.eline = selhilight.markLineNo;
+            selhilight.soff = selhilight.dotOffset;
+            selhilight.eoff = selhilight.markOffset;
         }
         /* dot and mark on same line */
         else
         {
-            selhilight.sline = selhilight.mlineno;
-            selhilight.eline = selhilight.mlineno;
+            selhilight.sline = selhilight.markLineNo;
+            selhilight.eline = selhilight.markLineNo;
             /* dot ahead of mark */
-            if (selhilight.mlineoff > selhilight.dlineoff)
+            if (selhilight.markOffset > selhilight.dotOffset)
             {
-                selhilight.soff = selhilight.dlineoff;
-                selhilight.eoff = selhilight.mlineoff;
+                selhilight.soff = selhilight.dotOffset;
+                selhilight.eoff = selhilight.markOffset;
             }
             /* dot behind mark line */
-            else if (selhilight.mlineoff < selhilight.dlineoff)
+            else if (selhilight.markOffset < selhilight.dotOffset)
             {
-                selhilight.soff = selhilight.mlineoff;
-                selhilight.eoff = selhilight.dlineoff;
+                selhilight.soff = selhilight.markOffset;
+                selhilight.eoff = selhilight.dotOffset;
             }
             /* dot and mark on same offset */
             else
@@ -240,22 +142,22 @@ shilightWindow(WINDOW *wp)
         }
     }
 
-    lineNo = wp->topLineNo ;
+    lineNo = wp->vertScroll ;
     if ((selhilight.flags & SELHIL_SAME) ||
         (lineNo > selhilight.eline) ||
-        (lineNo+wp->numTxtRows-1 < selhilight.sline))
+        (lineNo+wp->textDepth-1 < selhilight.sline))
     {
 remove_hilight:
-        if(wp->w_flag & WFSELDRAWN)
+        if(wp->flag & WFSELDRAWN)
         {
-            VIDEO  *vptr;                     /* Pointer to the video block */
+            meVideoLine  *vptr;               /* Pointer to the video block */
             meUShort  sline, eline ;          /* physical screen line to update */
 
             /* Determine the video line position and determine the video block that
              * is being used. */
-            vptr = wp->w_vvideo->video;       /* Video block */
-            sline = wp->firstRow;             /* Start line */
-            eline = sline + wp->numTxtRows ;  /* End line */
+            vptr = wp->video->lineArray;      /* Video block */
+            sline = wp->frameRow;             /* Start line */
+            eline = sline + wp->textDepth ;  /* End line */
 
             while (sline < eline)
             {
@@ -265,19 +167,19 @@ remove_hilight:
                     vptr[sline].flag = (vflag & ~VFSHMSK)|VFCHNGD;
                 sline++;
             }
-            wp->w_flag = (wp->w_flag & ~WFSELDRAWN) | WFMAIN ;
+            wp->flag = (wp->flag & ~WFSELDRAWN) | WFMAIN ;
         }
     }
     else
     {
-        VIDEO          *vptr;             /* Pointer to the video block */
+        meVideoLine *vptr;                /* Pointer to the video block */
         meUShort  sline, eline ;          /* physical screen line to update */
 
         /* Determine the video line position and determine the video block that
          * is being used. */
-        vptr = wp->w_vvideo->video;       /* Video block */
-        sline = wp->firstRow;             /* Start line */
-        eline = sline + wp->numTxtRows ;  /* End line */
+        vptr = wp->video->lineArray;      /* Video block */
+        sline = wp->frameRow;             /* Start line */
+        eline = sline + wp->textDepth ;  /* End line */
 
         /* Mark all of the video lines with the update. */
         while (sline < eline)
@@ -309,11 +211,12 @@ remove_hilight:
             sline++;                        /* Next video line */
             lineNo++;                       /* Next line number */
         }
-        wp->w_flag |= (WFSELDRAWN|WFMAIN) ;
+        wp->flag |= (WFSELDRAWN|WFMAIN) ;
     }
 }
 
 
+#if MEOPT_EXTENDED
 int
 showCursor(int f, int n)
 {
@@ -334,7 +237,7 @@ showCursor(int f, int n)
     }
     else if((cursorState < 0) && (ii >= 0))
         TThideCur() ;
-    return TRUE ;
+    return meTRUE ;
 }
 
 int
@@ -346,28 +249,28 @@ showRegion(int f, int n)
 
     if(((absn == 1) || (absn == 2)) && !(selhilight.flags & SELHIL_FIXED))
         return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[No current region]") ;
-    if(((absn == 2) || (n == 4)) && (selhilight.bp != curbp))
+    if(((absn == 2) || (n == 4)) && (selhilight.bp != frameCur->bufferCur))
         return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[Current region not in this buffer]") ;
     switch(n)
     {
     case -3:
-        selhilight.bp = curbp;                  /* Select the current buffer */
+        selhilight.bp = frameCur->bufferCur;                  /* Select the current buffer */
         selhilight.flags = SELHIL_ACTIVE|SELHIL_CHANGED ;
-        selhilight.mlineoff = curwp->w_doto;   /* Current mark offset */
-        selhilight.mlineno = curwp->line_no;    /* Current mark line number */
-        selhilight.dlineoff = curwp->w_doto;   /* Current mark offset */
-        selhilight.dlineno = curwp->line_no;    /* Current mark line number */
+        selhilight.markOffset = frameCur->windowCur->dotOffset;   /* Current mark offset */
+        selhilight.markLineNo = frameCur->windowCur->dotLineNo;    /* Current mark line number */
+        selhilight.dotOffset = frameCur->windowCur->dotOffset;   /* Current mark offset */
+        selhilight.dotLineNo = frameCur->windowCur->dotLineNo;    /* Current mark line number */
         break ;
     
     case -2:
-        curwp->w_flag |= WFMOVEL ;
-        if((gotoLine(TRUE,selhilight.mlineno+1) == TRUE) &&
-           (selhilight.mlineoff <= llength(curwp->w_dotp)))
+        frameCur->windowCur->flag |= WFMOVEL ;
+        if((gotoLine(meTRUE,selhilight.markLineNo+1) == meTRUE) &&
+           (selhilight.markOffset <= meLineGetLength(frameCur->windowCur->dotLine)))
         {
-            curwp->w_doto = (meUShort) selhilight.mlineoff ;
-            return TRUE ;
+            frameCur->windowCur->dotOffset = (meUShort) selhilight.markOffset ;
+            return meTRUE ;
         }
-        return FALSE ;
+        return meFALSE ;
         
     case -1:
         selhilight.flags &= ~SELHIL_ACTIVE ;
@@ -378,24 +281,24 @@ showRegion(int f, int n)
             n |= 1 ;
         if(selhilight.flags & SELHIL_FIXED)
             n |= 2 ;
-        if(selhilight.bp == curbp)
+        if(selhilight.bp == frameCur->bufferCur)
         {
             n |= 4 ;
             /* check for d >= dot > m */
-            if(((selhilight.dlineno < curwp->line_no) ||
-                ((selhilight.dlineno == curwp->line_no) && (selhilight.dlineoff <= curwp->w_doto))) &&
-               ((selhilight.mlineno > curwp->line_no) ||
-                ((selhilight.mlineno == curwp->line_no) && (selhilight.mlineoff >  curwp->w_doto))))
+            if(((selhilight.dotLineNo < frameCur->windowCur->dotLineNo) ||
+                ((selhilight.dotLineNo == frameCur->windowCur->dotLineNo) && (selhilight.dotOffset <= frameCur->windowCur->dotOffset))) &&
+               ((selhilight.markLineNo > frameCur->windowCur->dotLineNo) ||
+                ((selhilight.markLineNo == frameCur->windowCur->dotLineNo) && (selhilight.markOffset >  frameCur->windowCur->dotOffset))))
                 n |= 8 ;
             /* check for m >= dot > d */
-            else if(((selhilight.mlineno < curwp->line_no) ||
-                     ((selhilight.mlineno == curwp->line_no) && (selhilight.mlineoff <= curwp->w_doto))) &&
-                    ((selhilight.dlineno > curwp->line_no) ||
-                     ((selhilight.dlineno == curwp->line_no) && (selhilight.dlineoff >  curwp->w_doto))))
+            else if(((selhilight.markLineNo < frameCur->windowCur->dotLineNo) ||
+                     ((selhilight.markLineNo == frameCur->windowCur->dotLineNo) && (selhilight.markOffset <= frameCur->windowCur->dotOffset))) &&
+                    ((selhilight.dotLineNo > frameCur->windowCur->dotLineNo) ||
+                     ((selhilight.dotLineNo == frameCur->windowCur->dotLineNo) && (selhilight.dotOffset >  frameCur->windowCur->dotOffset))))
                 n |= 8 ;
         }
         sprintf((char *)resultStr,"%d",n) ;
-        return TRUE ;
+        return meTRUE ;
 
     case 1:
         selhilight.flags |= SELHIL_ACTIVE;
@@ -404,60 +307,61 @@ showRegion(int f, int n)
         break ;
    
     case 2:
-        curwp->w_flag |= WFMOVEL ;
-        if((gotoLine(TRUE,selhilight.dlineno+1) == TRUE) &&
-           (selhilight.dlineoff <= llength(curwp->w_dotp)))
+        frameCur->windowCur->flag |= WFMOVEL ;
+        if((gotoLine(meTRUE,selhilight.dotLineNo+1) == meTRUE) &&
+           (selhilight.dotOffset <= meLineGetLength(frameCur->windowCur->dotLine)))
         {
-            curwp->w_doto = (meUShort) selhilight.dlineoff ;
-            return TRUE ;
+            frameCur->windowCur->dotOffset = (meUShort) selhilight.dotOffset ;
+            return meTRUE ;
         }
-        return FALSE ;
+        return meFALSE ;
         
     case 3:
         if(((selhilight.flags & (SELHIL_FIXED|SELHIL_ACTIVE)) == 0) ||
-           (selhilight.bp != curbp))
+           (selhilight.bp != frameCur->bufferCur))
         {
-            selhilight.bp = curbp ;
-            selhilight.mlineoff = curwp->w_doto;  /* Current mark offset */
-            selhilight.mlineno = curwp->line_no;  /* Current mark line number */
+            selhilight.bp = frameCur->bufferCur ;
+            selhilight.markOffset = frameCur->windowCur->dotOffset;  /* Current mark offset */
+            selhilight.markLineNo = frameCur->windowCur->dotLineNo;  /* Current mark line number */
         }
         selhilight.flags |= SELHIL_FIXED|SELHIL_CHANGED|SELHIL_ACTIVE ;
         if(selhilight.uFlags & SELHILU_KEEP)
             selhilight.flags |= SELHIL_KEEP ;
-        selhilight.dlineoff = curwp->w_doto;      /* Current mark offset */
-        selhilight.dlineno = curwp->line_no;      /* Current mark line number */
+        selhilight.dotOffset = frameCur->windowCur->dotOffset;      /* Current mark offset */
+        selhilight.dotLineNo = frameCur->windowCur->dotLineNo;      /* Current mark line number */
         break ;
    
     case 4:
         selhilight.flags = SELHIL_ACTIVE|SELHIL_CHANGED ;
-        selhilight.dlineoff = curwp->w_doto;      /* Current mark offset */
-        selhilight.dlineno = curwp->line_no;      /* Current mark line number */
+        selhilight.dotOffset = frameCur->windowCur->dotOffset;      /* Current mark offset */
+        selhilight.dotLineNo = frameCur->windowCur->dotLineNo;      /* Current mark line number */
         break ;
    
    default:
-        return ABORT ;
+        return meABORT ;
     }
     addModeToBufferWindows(selhilight.bp, WFSELHIL);
-    return TRUE ;
+    return meTRUE ;
 }
+#endif
 
 void
-windCurLineOffsetEval(WINDOW *wp)
+windCurLineOffsetEval(meWindow *wp)
 {
-    if((wp->curLineOff->l_fp == wp->w_dotp) &&
-       !(wp->w_dotp->l_flag & LNCHNG))
+    if((wp->dotCharOffset->next == wp->dotLine) &&
+       !(wp->dotLine->flag & meLINE_CHANGED))
         return ;
-    if(wp->curLineOff->l_size < wp->w_dotp->l_size)
+    if(wp->dotCharOffset->size < wp->dotLine->size)
     {
-        meFree(wp->curLineOff) ;
-        wp->curLineOff = lalloc(wp->w_dotp->l_size) ;
+        meFree(wp->dotCharOffset) ;
+        wp->dotCharOffset = lalloc(wp->dotLine->size) ;
     }
     /* store dotp as the last line done */
-    wp->curLineOff->l_fp = wp->w_dotp ;
-#if COLOR
-#if HILIGHT
-    if((wp->w_bufp->hiLight != 0) &&
-       (hilights[wp->w_bufp->hiLight]->type & HFRPLCDIFF))
+    wp->dotCharOffset->next = wp->dotLine ;
+#if MEOPT_COLOR
+#if MEOPT_HILIGHT
+    if((wp->buffer->hilight != 0) &&
+       (hilights[wp->buffer->hilight]->type & HFRPLCDIFF))
         hilightCurLineOffsetEval(wp) ;
     else
 #endif
@@ -466,14 +370,14 @@ windCurLineOffsetEval(WINDOW *wp)
         register meUByte cc, *ss, *off ;
         register int pos, ii ;
 
-        ss = wp->w_dotp->l_text ;
-        off = wp->curLineOff->l_text ;
+        ss = wp->dotLine->text ;
+        off = wp->dotCharOffset->text ;
         pos = 0 ;
 #ifndef NDEBUG
-        if(wp->w_dotp->l_text[wp->w_dotp->l_used] != '\0')
+        if(wp->dotLine->text[wp->dotLine->length] != '\0')
         {
             _meAssert(__FILE__,__LINE__) ;
-            wp->w_dotp->l_text[wp->w_dotp->l_used] = '\0' ;
+            wp->dotLine->text[wp->dotLine->length] = '\0' ;
         }
 #endif
         while((cc=*ss++) != 0)
@@ -494,27 +398,27 @@ windCurLineOffsetEval(WINDOW *wp)
 }
 
 void
-updCursor(register WINDOW *wp)
+updCursor(register meWindow *wp)
 {
     register meUInt ii, jj ;
     int leftMargin;                     /* Base left margin position (scrolled) */
 
-    if(wp->w_flag & (WFREDRAW|WFRESIZE))
-        /* reset the curLineOff to force a recalc when needed */
-        wp->curLineOff->l_fp = NULL ;
+    if(wp->flag & (WFREDRAW|WFRESIZE))
+        /* reset the dotCharOffset to force a recalc when needed */
+        wp->dotCharOffset->next = NULL ;
 
     /* set ii to cursors screen col & jj to the require screen scroll */
-    if(wp->w_doto == 0)
+    if(wp->dotOffset == 0)
     {
         /* simple express case when offset is zero */
         ii = 0 ;
         jj = 0 ;
-        /* must reset the curLineOff if its changed cos the flag will be lost
+        /* must reset the dotCharOffset if its changed cos the flag will be lost
          * for next time! Nasty bug!! Must check the line is still dotp if we
          * are to keep it cos it could have been freed.
          */
-        if((wp->curLineOff->l_fp != wp->w_dotp) || (wp->w_dotp->l_flag & LNCHNG))
-            wp->curLineOff->l_fp = NULL ;
+        if((wp->dotCharOffset->next != wp->dotLine) || (wp->dotLine->flag & meLINE_CHANGED))
+            wp->dotCharOffset->next = NULL ;
     }
     else
     {
@@ -522,30 +426,30 @@ updCursor(register WINDOW *wp)
 
         windCurLineOffsetEval(wp) ;
         jj = 0 ;
-        ii = wp->w_doto ;
-        off = wp->curLineOff->l_text ;
+        ii = wp->dotOffset ;
+        off = wp->dotCharOffset->text ;
         while(ii--)
             jj += *off++ ;
 
         /* jj - is the character offset of the cursor on the screen */
         if((scrollFlag & 0x0f) == 3)
-            leftMargin = wp->w_sscroll ;
+            leftMargin = wp->horzScrollRest ;
         else
-            leftMargin = wp->w_scscroll;
+            leftMargin = wp->horzScroll;
 
         if(((int) jj) <= leftMargin)
         {
             /* Cursor behind the current scroll position */
-            ii = wp->numTxtCols - (((leftMargin - jj) % wp->w_scrsiz) + wp->w_margin);
+            ii = wp->textWidth - (((leftMargin - jj) % (wp->textWidth - (wp->marginWidth << 1))) + wp->marginWidth);
             if (ii > jj)                   /* Make sure we have enough info to show */
                 ii = jj;                   /* No - shoe the start of the line */
             jj -= ii;                      /* Correct the screen offset position */
         }
-        else if (((int) jj) >= leftMargin + (wp->numTxtCols-1))
+        else if (((int) jj) >= leftMargin + (wp->textWidth-1))
         {
             /* Cursor ahead of the scroll position and off screen */
             /* Move onto the next screen */
-            ii = ((jj - leftMargin - wp->numTxtCols) % wp->w_scrsiz) + wp->w_margin;
+            ii = ((jj - leftMargin - wp->textWidth) % (wp->textWidth - (wp->marginWidth << 1))) + wp->marginWidth;
             jj -= ii;                      /* Screen offset */
         }
         else
@@ -556,37 +460,37 @@ updCursor(register WINDOW *wp)
         }
     }
 
-    mwRow = wp->firstRow + (wp->line_no - wp->topLineNo) ;
-    mwCol = wp->firstCol + ii ;
-    if(wp->w_scscroll != (int) jj)         /* Screen scroll correct ?? */
+    frameCur->mainRow = wp->frameRow + (wp->dotLineNo - wp->vertScroll) ;
+    frameCur->mainColumn = wp->frameColumn + ii ;
+    if(wp->horzScroll != (int) jj)         /* Screen scroll correct ?? */
     {
-        wp->w_scscroll = (meUShort) jj;    /* Scrolled line offset */
-        wp->w_flag |= WFDOT ;
+        wp->horzScroll = (meUShort) jj;    /* Scrolled line offset */
+        wp->flag |= WFDOT ;
     }
     switch(scrollFlag & 0x0f)
     {
     case 0:
-        if(wp->w_sscroll)
+        if(wp->horzScrollRest)
         {
             /* Reset scroll column */
-            wp->w_sscroll = 0 ;            /* Set scroll column to base position */
-            wp->w_flag |= WFREDRAW;        /* Force a screen update */
+            wp->horzScrollRest = 0 ;            /* Set scroll column to base position */
+            wp->flag |= WFREDRAW;        /* Force a screen update */
         }
         break ;
     case 1:
-        if((wp->w_sscroll != (int) jj) && wp->w_sscroll)
+        if((wp->horzScrollRest != (int) jj) && wp->horzScrollRest)
         {
             /* Reset scroll column */
-            wp->w_sscroll = 0 ;            /* Set scroll column to base position */
-            wp->w_flag |= WFREDRAW;        /* Force a screen update */
+            wp->horzScrollRest = 0 ;            /* Set scroll column to base position */
+            wp->flag |= WFREDRAW;        /* Force a screen update */
         }
         break ;
     case 2:
-        if(wp->w_sscroll != (int) jj)
+        if(wp->horzScrollRest != (int) jj)
         {
             /* Reset scroll column */
-            wp->w_sscroll = (meUShort) jj ;/* Set scroll column to base position */
-            wp->w_flag |= WFREDRAW;        /* Force a screen update */
+            wp->horzScrollRest = (meUShort) jj ;/* Set scroll column to base position */
+            wp->flag |= WFREDRAW;        /* Force a screen update */
         }
         break ;
         /* case 3 leaves the scroll alone */
@@ -659,52 +563,49 @@ renderLine (meUByte *s1, int len, int wid)
 
 /* row of screen to update, virtual screen image */
 static int
-updateline(register int row, register VIDEO *vp1, WINDOW *window)
+updateline(register int row, register meVideoLine *vp1, meWindow *window)
 {
     register meUByte *s1;       /* Text line pointer */
     register meUShort flag ;    /* Video line flag */
-    HILBLOCK *blkp;             /* Style change list */
-    meSCHEME *fssp;             /* Frame store - colour pointer */
+    meSchemeSet *blkp;             /* Style change list */
+    meScheme *fssp;             /* Frame store - colour pointer */
     meUByte    *fstp;           /* Frame store - text pointer */
     meUShort noColChng;         /* Number of colour changes */
     meUShort scol;              /* Lines starting column */
     meUShort ncol;              /* Lines number of columns */
 
     /* Get column size/offset */
-    s1 = vp1->line->l_text;
+    s1 = vp1->line->text;
     if(window != NULL)
     {
-        scol = window->firstCol ;
-        ncol = window->numTxtCols ;
+        scol = window->frameColumn ;
+        ncol = window->textWidth ;
     }
     else
     {
         scol = 0 ;
-        ncol = TTncol ;
+        ncol = frameCur->width ;
     }
 
     if((flag = vp1->flag) & VFMAINL)
     {
-        meSCHEME scheme;
-#if COLOR
-        if(vp1->line->l_flag & LNSMASK)
+        meScheme scheme;
+#if MEOPT_HILIGHT
+        if(vp1->line->flag & meLINE_SCHEME_MASK)
         {
-            scheme = window->w_bufp->lscheme[vp1->line->l_flag & LNSMASK] ;
-#if HILIGHT
+            scheme = window->buffer->lscheme[vp1->line->flag & meLINE_SCHEME_MASK] ;
             /* We have to assume this line is an exception and the hilno & bracket
              * for the next line should be what this line would have been */
-            if(window->w_bufp->hiLight &&
+            if(window->buffer->hilight &&
                ((vp1[1].hilno != vp1[0].hilno) || (vp1[1].bracket != vp1[0].bracket)))
             {
                 vp1[1].flag |= VFCHNGD ;
                 vp1[1].hilno = vp1[0].hilno ;
                 vp1[1].bracket = vp1[0].bracket ;
             }
-#endif
             goto hideLineJump ;
         }
-#if HILIGHT
-        else if(window->w_bufp->hiLight)
+        else if(window->buffer->hilight)
         {
             meUByte tempIsWordMask;
 
@@ -713,28 +614,29 @@ updateline(register int row, register VIDEO *vp1, WINDOW *window)
              * word mask and restore from the buffer. Do the hilighting
              * and then restore the previous setting. */
             tempIsWordMask = isWordMask;
-            isWordMask = window->w_bufp->isWordMask;
+            isWordMask = window->buffer->isWordMask;
             noColChng = hilightLine(vp1) ;
             isWordMask = tempIsWordMask;
 
             /* Export the information from the higlighting request */
             blkp = hilBlock + 1 ;
-            scheme = (meSCHEME) ((size_t) hilights[vp1->hilno]->close) ;
+            scheme = (meScheme) ((size_t) hilights[vp1->hilno]->close) ;
         }
-#endif
         else
 #endif
         {
             meUShort lineLen;
 
-#if COLOR
-            scheme = window->w_bufp->scheme;
-hideLineJump:
+#if MEOPT_COLOR
+            scheme = window->buffer->scheme;
 #else
             scheme = globScheme;
 #endif
+#if MEOPT_HILIGHT
+hideLineJump:
+#endif
             blkp = hilBlock + 1 ;
-            lineLen = vp1->line->l_used;
+            lineLen = vp1->line->length;
 
             if (flag & VFCURRL)
                 scheme += meSCHEME_CURRENT;
@@ -814,9 +716,9 @@ hideLineJump:
             register meUShort scroll ;
 
             if (flag & VFCURRL)
-                scroll = window->w_scscroll ;   /* Current line scroll */
+                scroll = window->horzScroll ;   /* Current line scroll */
             else
-                scroll = window->w_sscroll ;    /* Hard window scroll */
+                scroll = window->horzScrollRest ;    /* Hard window scroll */
             if(scroll != 0)
             {
                 register meUShort ii ;
@@ -874,7 +776,7 @@ hideLineJump:
         {
             /* An extra space is added to the last column so that
              * the cursor will be the right colour */
-            if(vp1->line != window->w_bufp->b_linep)
+            if(vp1->line != window->buffer->baseLine)
                 s1[blkp[noColChng-1].column] = displayNewLine ;
             else
                 s1[blkp[noColChng-1].column] = ' ' ;
@@ -903,133 +805,34 @@ hideLineJump:
     else
     {
         blkp = hilBlock ;
-        blkp->column = vp1->line->l_used ;
+        blkp->column = vp1->line->length ;
         noColChng = 1 ;
         if(flag & VFMODEL)
             blkp->scheme = mdLnScheme + ((flag & VFCURRL) ? meSCHEME_CURRENT:meSCHEME_NORMAL);
+#if MEOPT_OSD
         else if (flag & VFMENUL)        /* Menu line */
             blkp->scheme = osdScheme;
+#endif
         else
             blkp->scheme = mlScheme;
     }
 
     /* Get the frame store colour and text pointers */
-    fssp = &frameStore[row].scheme[scol] ;
-    fstp = &frameStore[row].text[scol] ;
-
-    /************************************************************************
-     *
-     * X-WINDOWS
-     *
-     ***********************************************************************/
-#ifdef _XTERM
-    if(!(meSystemCfg & meSYSTEM_CONSOLE))
+    fssp = &frameCur->store[row].scheme[scol] ;
+    fstp = &frameCur->store[row].text[scol] ;
+    
+#ifdef _UNIX
+    
+#ifdef _ME_CONSOLE
+#ifdef _ME_WINDOW
+    if(meSystemCfg & meSYSTEM_CONSOLE)
+#endif /* _ME_WINDOW */
     {
-        register int ii, len, col, cno ;
-        register meSCHEME scheme ;
-
-        row = rowToClient(row) ;
-        col = cno = 0 ;                 /* Virtual column start */
-
-        if (meSystemCfg & meSYSTEM_FONTFIX)
-        {
-            meUByte cc, *sfstp=fstp;
-            int spFlag, ccol ;
-            do {
-                scheme = blkp->scheme ;
-                XTERMschemeSet(scheme) ;
-                ii = blkp->column ;
-                ii -= col;
-                len = ii ;
-                blkp++ ;
-                ccol = col ;
-                spFlag = 0 ;
-                /* Maintain the frame store and copy the string into
-                 * the frame store with the colour information
-                 * copy a space in place of special chars, they are
-                 * drawn separately after the XDraw, the spaces are
-                 * replaced with the correct chars */
-                while (--len >= 0)
-                {
-                    *fssp++ = scheme;
-                    if(((cc=s1[col++]) & 0xe0) == 0)
-                    {
-                        cc = ' ' ;
-                        spFlag++ ;
-                    }
-                    *fstp++ = cc ;
-                }
-                XTERMstringDraw(colToClient(scol+ccol),row,(char *)sfstp+ccol,ii);
-                while(--spFlag >= 0)
-                {
-                    while (((cc=s1[ccol]) & 0xe0) != 0)
-                        ccol++ ;
-                    sfstp[ccol] = cc ;
-                    XTERMSpecialChar(colToClient(scol+ccol),row-mecm.ascent,cc) ;
-                    ccol++ ;
-                }
-            } while(++cno < noColChng) ;
-        }
-        else
-        {
-            do {
-                scheme = blkp->scheme ;
-                XTERMschemeSet(scheme) ;
-                ii = blkp->column ;
-                len = ii-col;
-                XTERMstringDraw(colToClient(scol+col),row,(char *)s1+col,len);
-                blkp++ ;
-
-                /* Maintain the frame store and copy the string into
-                 * the frame store with the colour information */
-                while (--len >= 0)
-                {
-                    *fssp++ = scheme;
-                    *fstp++ = s1[col++];
-                }
-            } while(++cno < noColChng) ;
-        }
-        if (meStyleCmpBColor(meSchemeGetStyle(vp1->eolScheme),meSchemeGetStyle(scheme)))
-        {
-            ii = ncol ;
-            vp1->eolScheme = scheme;
-        }
-        else
-            ii = vp1->endp ;
-        vp1->endp = col ;
-
-        if(ii > col)
-        {
-            char buff[MAXBUF] ;
-
-            ii -= col ;
-            cno = ii ;
-            s1 = (meUByte *) buff ;
-            do
-            {
-                *s1++ = ' ' ;           /* End fill with spaces */
-                *fstp++ = ' ';         /* Frame store space fill */
-                *fssp++ = scheme;      /* Frame store colour fill */
-            }
-            while(--cno) ;
-            XTERMstringDraw(colToClient(scol+col),row,(char *)buff,ii);
-        }
-#if DEBUGGING
-        else
-            ii = 0 ;
-        XTERMstringDraw(colToClient(scol+col+ii-1),row,&drawno,1);
-#endif
-    }
-    else
-#endif
-    /************************************************************************
-     *
-     * TERMCAP
-     *
-     ***********************************************************************/
 #ifdef _TCAP
-    {
-        meSCHEME scheme ;
+        /********************************************************************
+         * TERMCAP                                                          *
+         ********************************************************************/
+        meScheme scheme ;
         register int ii, col, cno ;
 
         TCAPmove(row,scol);	/* Go to start of line. */
@@ -1072,9 +875,118 @@ hideLineJump:
         TCAPputc(drawno) ;
 #endif
         TCAPschemeReset() ;
-    }
-
 #endif /* _TCAP */
+    }
+#ifdef _ME_WINDOW
+    else
+#endif /* _ME_WINDOW */
+#endif /* _ME_CONSOLE */
+#ifdef _ME_WINDOW
+    {
+#ifdef _XTERM
+        /********************************************************************
+         * X-WINDOWS                                                        *
+         ********************************************************************/
+        register int ii, len, col, cno ;
+        register meScheme scheme ;
+
+        row = rowToClient(row) ;
+        col = cno = 0 ;                 /* Virtual column start */
+
+        if (meSystemCfg & meSYSTEM_FONTFIX)
+        {
+            meUByte cc, *sfstp=fstp;
+            int spFlag, ccol ;
+            do {
+                scheme = blkp->scheme ;
+                meFrameXTermSetScheme(frameCur,scheme) ;
+                ii = blkp->column ;
+                ii -= col;
+                len = ii ;
+                blkp++ ;
+                ccol = col ;
+                spFlag = 0 ;
+                /* Maintain the frame store and copy the string into
+                 * the frame store with the colour information
+                 * copy a space in place of special chars, they are
+                 * drawn separately after the XDraw, the spaces are
+                 * replaced with the correct chars */
+                while (--len >= 0)
+                {
+                    *fssp++ = scheme;
+                    if(((cc=s1[col++]) & 0xe0) == 0)
+                    {
+                        cc = ' ' ;
+                        spFlag++ ;
+                    }
+                    *fstp++ = cc ;
+                }
+                meFrameXTermDrawString(frameCur,colToClient(scol+ccol),row,(char *)sfstp+ccol,ii);
+                while(--spFlag >= 0)
+                {
+                    while (((cc=s1[ccol]) & 0xe0) != 0)
+                        ccol++ ;
+                    sfstp[ccol] = cc ;
+                    meFrameXTermDrawSpecialChar(frameCur,colToClient(scol+ccol),row-mecm.ascent,cc) ;
+                    ccol++ ;
+                }
+            } while(++cno < noColChng) ;
+        }
+        else
+        {
+            do {
+                scheme = blkp->scheme ;
+                meFrameXTermSetScheme(frameCur,scheme) ;
+                ii = blkp->column ;
+                len = ii-col;
+                meFrameXTermDrawString(frameCur,colToClient(scol+col),row,(char *)s1+col,len);
+                blkp++ ;
+
+                /* Maintain the frame store and copy the string into
+                 * the frame store with the colour information */
+                while (--len >= 0)
+                {
+                    *fssp++ = scheme;
+                    *fstp++ = s1[col++];
+                }
+            } while(++cno < noColChng) ;
+        }
+        if (meStyleCmpBColor(meSchemeGetStyle(vp1->eolScheme),meSchemeGetStyle(scheme)))
+        {
+            ii = ncol ;
+            vp1->eolScheme = scheme;
+        }
+        else
+            ii = vp1->endp ;
+        vp1->endp = col ;
+
+        if(ii > col)
+        {
+            char buff[meBUF_SIZE_MAX] ;
+
+            ii -= col ;
+            cno = ii ;
+            s1 = (meUByte *) buff ;
+            do
+            {
+                *s1++ = ' ' ;           /* End fill with spaces */
+                *fstp++ = ' ';         /* Frame store space fill */
+                *fssp++ = scheme;      /* Frame store colour fill */
+            }
+            while(--cno) ;
+            meFrameXTermDrawString(frameCur,colToClient(scol+col),row,(char *)buff,ii);
+        }
+#if DEBUGGING
+        else
+            ii = 0 ;
+        meFrameXTermDrawString(frameCur,colToClient(scol+col+ii-1),row,&drawno,1);
+#endif
+#endif /* _XTERM */
+    }
+#endif /* _ME_WINDOW */
+
+#endif /* _UNIX */
+
     /************************************************************************
      *
      * MS-DOS
@@ -1082,7 +994,7 @@ hideLineJump:
      ***********************************************************************/
 #ifdef _DOS
     {
-        register meSCHEME scheme ;
+        register meScheme scheme ;
         register meUShort ii, len ;
         register meUByte  cc ;
 
@@ -1131,10 +1043,12 @@ hideLineJump:
      *
      ************************************************************************/
 #ifdef _WIN32
-#ifdef _WINCON
+#ifdef _ME_CONSOLE
+#ifdef _ME_WINDOW
     if (meSystemCfg & meSYSTEM_CONSOLE)
+#endif /* _ME_WINDOW */
     {
-        register meSCHEME scheme ;
+        register meScheme scheme ;
         register meUShort ii, ccol ;
         register WORD  cc ;
         register int ll ;
@@ -1142,7 +1056,7 @@ hideLineJump:
         ccol = 0 ;
         do {
             scheme = blkp->scheme ;
-            cc = TTschemeSet(scheme) ;
+            cc = (WORD) TTschemeSet(scheme) ;
 
             /* Update the screen.
              * Maintain the frame store and copy the sting into the
@@ -1189,10 +1103,13 @@ hideLineJump:
 #endif
 /*        TTflush() ;*/
     }
+#ifdef _ME_WINDOW
     else
-#endif
+#endif /* _ME_WINDOW */
+#endif /* _ME_CONSOLE */
+#ifdef _ME_WINDOW
     {
-        register meSCHEME scheme ;
+        register meScheme scheme ;
         int offset;                     /* Offset into the line */
         int len;                        /* Local line column */
 
@@ -1246,75 +1163,78 @@ hideLineJump:
             /* other areas we want to set and apply */
             TTputs(row,scol,len) ;
     }
-#endif
+#endif /* _ME_WINDOW */
+#endif /* _WIN32 */
 
-    return TRUE ;
+    return meTRUE ;
 }
 
 /*
  * updateWindow() - update all the lines in a window on the virtual screen
- * The screen now consists of TTnrow array of VIDEO's which point to the
- * actual LINE's (dummy ones if its a modeline) the flags indicate if the
- * LINE is mess or mode or main line and if its current
+ * The screen now consists of frameCur->depth array of meVideoLine's which point to the
+ * actual meLine's (dummy ones if its a modeline) the flags indicate if the
+ * meLine is mess or mode or main line and if its current
  */
 static void
-updateWindow(WINDOW *wp)
+updateWindow(meWindow *wp)
 {
-    BUFFER *bp = wp->w_bufp ;
-    VIDEO   *vptr;                    /* Pointer to the video block */
-    register LINE *lp ;               /* Line to update */
-    register int   row, nrows ;       /* physical screen line to update */
+    meBuffer *bp = wp->buffer ;
+    meVideoLine   *vptr;                  /* Pointer to the video block */
+    register meLine *lp ;                 /* Line to update */
+    register int   row, nrows ;           /* physical screen line to update */
     register meUByte force ;
 
-    force = (meUByte) (wp->w_flag & (WFREDRAW|WFRESIZE)) ;
+    force = (meUByte) (wp->flag & (WFREDRAW|WFRESIZE)) ;
     /* Determine the video line position and determine the video block that
      * is being used. */
-    row   = wp->firstRow ;
-    vptr  = wp->w_vvideo->video + row ;  /* Video block */
-    nrows = wp->numTxtRows ;
+    row   = wp->frameRow ;
+    vptr  = wp->video->lineArray + row ;  /* Video block */
+    nrows = wp->textDepth ;
 
     /* Search down the lines, updating them */
     {
         int ii ;
-        ii = (wp->line_no - wp->topLineNo) ;
-        lp = wp->w_dotp ;
+        ii = (wp->dotLineNo - wp->vertScroll) ;
+        lp = wp->dotLine ;
         while(--ii >= 0)
-            lp = lback(lp) ;
+            lp = meLineGetPrev(lp) ;
     }
-#if COLOR
-#if HILIGHT
-    if(bp->hiLight)
+#if MEOPT_COLOR
+#if MEOPT_HILIGHT
+    if(bp->hilight)
     {
         if(force)
         {
-            vptr->hilno   = bp->hiLight ;
+            vptr->hilno   = bp->hilight ;
             vptr->bracket = NULL ;
-            wp->w_flag |= WFLOOKBK ;
+            wp->flag |= WFLOOKBK ;
         }
-        if((wp->w_flag & WFLOOKBK) && !TTahead())
+        if((wp->flag & WFLOOKBK) && !TTahead())
         {
-            if(hilights[bp->hiLight]->ignore)
+            if(hilights[bp->hilight]->ignore)
                 hilightLookBack(wp) ;
-            wp->w_flag &= ~WFLOOKBK ;
+            wp->flag &= ~WFLOOKBK ;
         }
     }
 #endif
 #endif
 #ifdef _WIN32
-#ifdef _WINCON
+#ifdef _ME_WINDOW
+#ifdef _ME_CONSOLE
     if (!(meSystemCfg & meSYSTEM_CONSOLE))
-#endif
+#endif /* _ME_CONSOLE */
         TTinitArea() ;
-#endif
+#endif /* _ME_WINDOW */
+#endif /* _WIN32 */
     while(--nrows >= 0)
     {
         register meUByte update=force|(vptr->flag & VFCHNGD) ;
 
         /*---	 and update the virtual line */
-        if(lp == wp->w_dotp)
+        if(lp == wp->dotLine)
         {
             if(((vptr->flag & VFTPMSK) != (VFMAINL|VFCURRL)) ||
-               (wp->w_flag & WFDOT))
+               (wp->flag & WFDOT))
                 update = 1 ;
             vptr->flag = (vptr->flag & ~VFTPMSK) | VFMAINL | VFCURRL ;
         }
@@ -1327,17 +1247,17 @@ updateWindow(WINDOW *wp)
         if(force)
         {
             if(force & WFRESIZE)
-                vptr->endp = wp->numTxtCols ;
+                vptr->endp = wp->textWidth ;
             vptr->wind = wp ;
             vptr->line = lp ;
-#if COLOR
-#if HILIGHT
-            vptr[1].hilno = bp->hiLight ;
+#if MEOPT_COLOR
+#if MEOPT_HILIGHT
+            vptr[1].hilno = bp->hilight ;
             vptr[1].bracket = NULL ;
 #endif
 #endif
         }
-        else if((lp->l_flag & LNCHNG) ||
+        else if((lp->flag & meLINE_CHANGED) ||
                 (vptr->line != lp))
         {
             vptr->line = lp ;
@@ -1347,19 +1267,19 @@ updateWindow(WINDOW *wp)
             updateline(row,vptr,wp);
         row++ ;
         vptr++ ;
-        if(lp == bp->b_linep)
+        if(lp == bp->baseLine)
             break ;
-        lp=lforw(lp) ;
+        lp=meLineGetNext(lp) ;
     }
 
     if(nrows > 0)
     {
         /* if we are at the end */
-        meSCHEME scheme = vptr[-1].eolScheme ;
-        meUByte l_flag ;
-        /* store the b_linep l_flag and set to 0 as it may have a $line-scheme */
-        l_flag=lp->l_flag ;
-        lp->l_flag = 0 ;
+        meScheme scheme = vptr[-1].eolScheme ;
+        meUByte flag ;
+        /* store the baseLine flag and set to 0 as it may have a $line-scheme */
+        flag=lp->flag ;
+        lp->flag = 0 ;
         for( ; (--nrows >= 0) ; row++,vptr++)
         {
             vptr->line = lp ;
@@ -1369,18 +1289,20 @@ updateWindow(WINDOW *wp)
                 vptr->flag = VFMAINL ;
                 vptr->wind = wp ;
                 if(force & WFRESIZE)
-                    vptr->endp = wp->numTxtCols ;
+                    vptr->endp = wp->textWidth ;
                 updateline(row,vptr,wp);
             }
         }
-        lp->l_flag = l_flag ;
+        lp->flag = flag ;
     }
 #ifdef _WIN32
-#ifdef _WINCON
+#ifdef _ME_WINDOW
+#ifdef _ME_CONSOLE
     if (!(meSystemCfg & meSYSTEM_CONSOLE))
-#endif
+#endif /* _ME_CONSOLE */
         TTapplyArea() ;
-#endif
+#endif /* _ME_WINDOW */
+#endif /* _WIN32 */
 }
 
 meUByte
@@ -1418,39 +1340,44 @@ assessModeLine(meUByte *ml)
  * any time there is a dirty window.
  */
 static void
-updateModeLine(WINDOW *wp)
+updateModeLine(meWindow *wp)
 {
     time_t          clock;		    /* Time in machine format. */
     struct tm	   *time_ptr;	            /* Pointer to time frame. */
     register meUByte *ml, *cp, *ss ;
     register meUByte  cc, lchar ;
-    register BUFFER *bp ;
+    register meBuffer *bp ;
     register int    ii ;	            /* loop index */
     register int    lineLen ;               /* Max length of the line */
 
     /* See if there's anything to do first */
-    bp = wp->w_bufp;
-    if((ml = bp->modeLineStr) == NULL)
+    bp = wp->buffer;
+#if MEOPT_EXTENDED
+    if((ml = bp->modeLineStr) != NULL)
     {
-        if((wp->w_flag & modeLineFlags) == 0)
+        if((wp->flag & bp->modeLineFlags) == 0)
+            return ;
+    }
+    else
+#endif
+    {
+        if((wp->flag & modeLineFlags) == 0)
             return ;
         ml = modeLineStr ;
     }
-    else if((wp->w_flag & bp->modeLineFlags) == 0)
-        return ;
 
-    lineLen = wp->numTxtCols ;              /* Max length of line. Only need to
+    lineLen = wp->textWidth ;              /* Max length of line. Only need to
                                              * evaluate this many characters */
-    wp->model->l_used = lineLen ;
+    wp->modeLine->length = lineLen ;
 
-    if (wp == curwp)                        /* mark the current buffer */
+    if (wp == frameCur->windowCur)                        /* mark the current buffer */
         lchar = windowChars [WCMLCWSEP];    /* Typically '=' */
     else
         lchar = windowChars [WCMLIWSEP];    /* Typically '-' */
 
     clock = time(0);	                    /* Get system time */
     time_ptr = (struct tm *) localtime (&clock);	/* Get time frame */
-    cp = wp->model->l_text ;
+    cp = wp->modeLine->text ;
     while((lineLen > 0) && ((cc = *ml++) != '\0'))
     {
         if(cc == '%')
@@ -1483,9 +1410,9 @@ updateModeLine(WINDOW *wp)
 
             case 'u':
                 /* buffer changed */
-                if(meModeTest(bp->b_mode,MDEDIT))        /* "*" if changed. */
+                if(meModeTest(bp->mode,MDEDIT))        /* "*" if changed. */
                     *cp++ = windowChars [WCMLBCHNG];     /* Typically '*' */
-                else if (meModeTest(bp->b_mode,MDVIEW))  /* "%" if view. */
+                else if (meModeTest(bp->mode,MDVIEW))  /* "%" if view. */
                     *cp++ = windowChars [WCMLBVIEW];     /* Typically '%' */
                 else
                     *cp++ = lchar ;
@@ -1496,7 +1423,7 @@ updateModeLine(WINDOW *wp)
                 /* add in the mode flags */
                 for (ii = 0; ii < MDNUMMODES; ii++)
                     if(meModeTest(modeLineDraw,ii) &&
-                       meModeTest(bp->b_mode,ii))
+                       meModeTest(bp->mode,ii))
                     {
                         *cp++ = modeCode[ii] ;
                         if (--lineLen == 0)
@@ -1505,7 +1432,7 @@ updateModeLine(WINDOW *wp)
                 break ;
 
             case 'k':
-                if (kbdmode == RECORD)           /* if playing macro */
+                if (kbdmode == meRECORD)           /* if playing macro */
                 {
                     ss = (meUByte *) "REC" ;
                     goto model_copys ;
@@ -1513,25 +1440,25 @@ updateModeLine(WINDOW *wp)
                 break ;
 
             case 'l':
-                ss = meItoa(wp->line_no+1);
+                ss = meItoa(wp->dotLineNo+1);
                 goto model_copys ;
 
             case 'n':
-                ss = meItoa(wp->w_bufp->elineno+1);
+                ss = meItoa(wp->buffer->lineCount+1);
                 goto model_copys ;
 
             case 'c':
-                ss = meItoa(wp->w_doto) ;
+                ss = meItoa(wp->dotOffset) ;
                 goto model_copys ;
 
             case 'b':
-                ss = bp->b_bname ;
+                ss = bp->name ;
                 goto model_copys ;
 
             case 'f':
-                if((bp->b_bname[0] == '*') || (bp->b_fname == NULL))
+                if((bp->name[0] == '*') || (bp->fileName == NULL))
                     break ;
-                ss = bp->b_fname ;
+                ss = bp->fileName ;
                 if((ii=meStrlen(ss)) > lineLen)
                 {
                     *cp++ = '$' ;
@@ -1592,24 +1519,24 @@ model_copys:
             lineLen--;
         }
     }
-    while(lineLen-- > 0)              /* Pad to full width. */
+    while(lineLen-- > 0)                       /* Pad to full width. */
         *cp++ = lchar ;
 
     {
-        register VIDEO *vptr ;        /* Pointer to the video block */
+        register meVideoLine *vptr ;           /* Pointer to the video block */
 
         /* Determine the video line position and determine the video block that
          * is being used. */
-        ii = wp->firstRow + wp->numTxtRows ;
-        vptr = wp->w_vvideo->video + ii ;        /* Video block */
+        ii = wp->frameRow + wp->textDepth ;
+        vptr = wp->video->lineArray + ii ;     /* Video block */
 
-        if(wp->w_flag & WFRESIZE)
-            vptr->endp = wp->numTxtCols ;
-        if(curwp == wp)
+        if(wp->flag & WFRESIZE)
+            vptr->endp = wp->textWidth ;
+        if(frameCur->windowCur == wp)
             vptr->flag = VFMODEL|VFCURRL ;
         else
             vptr->flag = VFMODEL ;
-        vptr->line = wp->model ;
+        vptr->line = wp->modeLine ;
         updateline(ii,vptr,wp) ;
     }
 }
@@ -1618,116 +1545,117 @@ model_copys:
         and re-frame it if needed or wanted		*/
 
 void
-reframe(WINDOW *wp)
+reframe(meWindow *wp)
 {
     register long  ii ;
 
     /* See if the selection hilighting is enabled for the buffer */
     if ((selhilight.flags & SELHIL_ACTIVE) &&
-        (selhilight.bp == wp->w_bufp))
-        wp->w_flag |= WFSELHIL;
+        (selhilight.bp == wp->buffer))
+        wp->flag |= WFSELHIL;
 
-#ifdef _IPIPES
-    if(meModeTest(wp->w_bufp->b_mode,MDLOCK) &&
-       (wp->w_dotp->l_flag & LNMARK))
+#if MEOPT_IPIPES
+    if(meModeTest(wp->buffer->mode,MDLOCK) &&
+       (wp->dotLine->flag & meLINE_AMARK))
     {
-        meAMARK *ap=wp->w_bufp->b_amark ;
+        meAMark *ap=wp->buffer->amarkList ;
 
         /* Are we at the input line? */
         while((ap != NULL) && (ap->name != 'I'))
             ap = ap->next ;
 
         if((ap != NULL) &&
-           (ap->line == wp->w_dotp) &&
-           (ap->offs == wp->w_doto))
+           (ap->line == wp->dotLine) &&
+           (ap->offs == wp->dotOffset))
         {
-            meIPIPE *ipipe ;
+            meIPipe *ipipe ;
 
             /* Yes we are at the right place, find the ipipe node */
             ipipe = ipipes ;
-            while(ipipe->bp != wp->w_bufp)
+            while(ipipe->bp != wp->buffer)
                 ipipe = ipipe->next ;
 
-            if((ii = ipipe->curRow) >= wp->numTxtRows)
-                ii = wp->numTxtRows-1 ;
-            if((ii = wp->line_no-ii) < 0)
+            if((ii = ipipe->curRow) >= wp->textDepth)
+                ii = wp->textDepth-1 ;
+            if((ii = wp->dotLineNo-ii) < 0)
                 ii = 0 ;
-            if((wp->w_flag & WFFORCE) || (ii != wp->topLineNo))
+            if((wp->flag & WFFORCE) || (ii != wp->vertScroll))
             {
-                wp->topLineNo = ii ;
+                wp->vertScroll = ii ;
                 /* Force the scroll box to be updated if present. */
-                wp->w_flag |= WFSBOX ;
+                wp->flag |= WFSBOX ;
             }
             return ;
         }
     }
 #endif
     /* if not a requested reframe, check for a needed one */
-    if(!(wp->w_flag & WFFORCE))
+    if(!(wp->flag & WFFORCE))
     {
-        ii = wp->line_no - wp->topLineNo ;
-        if((ii >= 0) && (ii < wp->numTxtRows))
+        ii = wp->dotLineNo - wp->vertScroll ;
+        if((ii >= 0) && (ii < wp->textDepth))
             return ;
     }
     /* reaching here, we need a window refresh */
-    ii = wp->w_force ;
+    ii = wp->recenter ;
 
     /* how far back to reframe? */
     if(ii > 0)
     {	/* only one screen worth of lines max */
-        if (--ii >= wp->numTxtRows)
-            ii = wp->numTxtRows - 1;
+        if (--ii >= wp->textDepth)
+            ii = wp->textDepth - 1;
     }
     else if(ii < 0)
     {	/* negative update???? */
-        ii += wp->numTxtRows;
+        ii += wp->textDepth;
         if(ii < 0)
             ii = 0;
     }
     else
-        ii = wp->numTxtRows / 2;
+        ii = wp->textDepth / 2;
 
-    ii = wp->line_no-ii ;
-    if(ii != wp->topLineNo)
+    ii = wp->dotLineNo-ii ;
+    if(ii != wp->vertScroll)
     {
         if(ii <= 0)
-            wp->topLineNo = 0 ;
+            wp->vertScroll = 0 ;
         else
-            wp->topLineNo = ii ;
+            wp->vertScroll = ii ;
         /* Force the scroll box and lookBack to be updated if present. */
-        wp->w_flag |= WFSBOX|WFLOOKBK ;
+        wp->flag |= WFSBOX|WFLOOKBK ;
     }
 }
 
 
+#if MEOPT_SCROLL
 /*
  * updateSrollBar
  * Update the scroll bar
  */
 static void
-updateScrollBar (WINDOW *wp)
+updateScrollBar (meWindow *wp)
 {
     int ii;                             /* index into split string */
     int col;                            /* The column */
     int row;                            /* Current row */
     int endrow;                         /* Terminating row */
-    meSCHEME scheme;                    /* Region scheme */
+    meScheme scheme;                    /* Region scheme */
     meUByte *wbase;                       /* Base window character */
     int  len;                           /* Length of bar */
     int  flipBox;                       /* Flip colours for the box */
 
     /* Has this window got a bar present ?? */
-    if (!(wp->w_mode & WMVBAR))
+    if (!(wp->vertScrollBarMode & WMVBAR))
         return;                         /* No quit */
 
     /* Sort out the colours we should be using */
-    scheme = sbarScheme + ((curwp == wp) ? meSCHEME_CURRENT:meSCHEME_NORMAL);
+    scheme = sbarScheme + ((frameCur->windowCur == wp) ? meSCHEME_CURRENT:meSCHEME_NORMAL);
 
     /* Get the extents of the bar line */
-    row = wp->firstRow;                 /* Start of row */
-    col = wp->firstCol + wp->numTxtCols;  /* Start column */
+    row = wp->frameRow;                 /* Start of row */
+    col = wp->frameColumn + wp->textWidth;  /* Start column */
 
-    if (wp->w_mode & WMVWIDE)
+    if (wp->vertScrollBarMode & WMVWIDE)
     {
         len = 2;
         wbase = &windowChars[WCVSBSPLIT1];
@@ -1747,28 +1675,30 @@ updateScrollBar (WINDOW *wp)
      * and bcol when we get there. If it is not defined then set to the end of
      * scroll bar + 1.
      */
-    if (wp->w_mode & WMRVBOX)
+    if (wp->vertScrollBarMode & WMRVBOX)
         flipBox = 1 << (WCVSBBOX-WCVSBSPLIT) ;
     else
         flipBox = 0 ;
 
 #ifdef _WIN32
-#ifdef _WINCON
+#ifdef _ME_WINDOW
+#ifdef _ME_CONSOLE
     if (!(meSystemCfg & meSYSTEM_CONSOLE))
-#endif
+#endif /* _ME_CONSOLE */
         /* Initialize the invalid screen area */
         TTinitArea() ;
+#endif /* _ME_WINDOW */
 #endif /* _WIN32 */
 
     /* Iterate down the length of the split line */
     for (ii = 0; ii <= (WCVSBML-WCVSBSPLIT); ii++, wbase += len)
     {
         scheme = (scheme & ~1) ^ (flipBox & 1) ;  /* Select component scheme */
-        endrow = wp->w_sbpos [ii] ;
+        endrow = wp->vertScrollBarPos [ii] ;
         flipBox >>= 1;
 
         /* See if there is anything to do. */
-        if ((wp->w_flag & (WFSBSPLIT << ii)) == 0)
+        if ((wp->flag & (WFSBSPLIT << ii)) == 0)
         {
             row = endrow ;
             continue ;
@@ -1776,39 +1706,41 @@ updateScrollBar (WINDOW *wp)
 
         /* Perform the update */
 #ifdef _WIN32
-#ifdef _WINCON
+#ifdef _ME_WINDOW
+#ifdef _ME_CONSOLE
         if (!(meSystemCfg & meSYSTEM_CONSOLE))
-#endif
+#endif /* _ME_CONSOLE */
             /* Invalidate the screen */
             TTaddArea (row, col, endrow-row, len);
+#endif /* _ME_WINDOW */
 #endif /* _WIN32 */
-
+        
         for (; row < endrow; row++)
         {
             /* Update the frame store with the character and scheme
              * information - this is nearly the same for all platforms
              */
             meUByte    *fstp ;      /* Frame store text pointer */
-            meSCHEME *fssp ;      /* Frame store scheme pointer */
+            meScheme *fssp ;      /* Frame store scheme pointer */
 
-            fstp = frameStore[row].text + col ;
-            fssp = frameStore[row].scheme + col ;
+            fstp = frameCur->store[row].text + col ;
+            fssp = frameCur->store[row].scheme + col ;
 
 #ifdef _WIN32
-            /***************************************************************
-             *
-             * Windows
-             *
-             **************************************************************/
-
-#ifdef _WINCON
+            /****************************************************************
+             * MS-Windows                                                   *
+             ****************************************************************/
+            
+#ifdef _ME_CONSOLE
+#ifdef _ME_WINDOW
             if (meSystemCfg & meSYSTEM_CONSOLE)
+#endif /* _ME_WINDOW */
             {
                 WORD cc ;
-                cc = TTschemeSet(scheme) ;
+                cc = (WORD) TTschemeSet(scheme) ;
                 ConsoleDrawString(wbase,cc,col,row,len) ;
             }
-#endif
+#endif /* _ME_CONSOLE */
             fssp[0] = scheme;         /* Assign the scheme */
             fstp[0] = wbase[0];       /* Assign the text */
             if(len > 1)
@@ -1818,64 +1750,16 @@ updateScrollBar (WINDOW *wp)
             }
 #endif /* _WIN32 */
 
-#ifdef _XTERM
-            /***************************************************************
-             *
-             * X-WINDOWS
-             *
-             **************************************************************/
-            if(!(meSystemCfg & meSYSTEM_CONSOLE))
+#ifdef _UNIX
+#ifdef _ME_CONSOLE
+#ifdef _ME_WINDOW
+            if(meSystemCfg & meSYSTEM_CONSOLE)
+#endif /* _ME_WINDOW */
             {
-                XTERMschemeSet(scheme) ;
-
-                if (meSystemCfg & meSYSTEM_FONTFIX)
-                {
-                    meUByte cc;
-                    fssp[0] = scheme;  /* Assign the colour */
-                    if(!((cc = *wbase) & 0xe0))
-                        cc = ' ' ;    /* Assign the text */
-                    fstp[0] = cc ;    /* Assign the text */
-
-                    if(len > 1)
-                    {
-                        fssp[1] = scheme;  /* Assign the colour */
-                        if(!((cc = wbase[1]) & 0xe0))
-                            cc = ' ' ;    /* Assign the text */
-                        fstp[1] = cc ;    /* Assign the text */
-                    }
-                    XTERMstringDraw(colToClient(col),rowToClient(row),fstp,len);
-                    if(!((cc = *wbase) & 0xe0))
-                    {
-                        XTERMSpecialChar(colToClient(col),rowToClientTop(row),cc) ;
-                        fstp[0] = cc ;   /* Assign the text */
-                    }
-                    if((len > 1) && !((cc = *wbase) & 0xe0))
-                    {
-                        XTERMSpecialChar(colToClient(col+1),rowToClientTop(row),cc) ;
-                        fstp[1] = cc ;   /* Assign the text */
-                    }
-                }
-                else
-                {
-                    fssp[0] = scheme ;   /* Assign the colour */
-                    fstp[0] = *wbase ;   /* Assign the text */
-                    if(len > 1)
-                    {
-                        fssp[1] = scheme ;  /* Assign the colour */
-                        fstp[1] = wbase[1] ;
-                    }
-                    XTERMstringDraw(colToClient(col),rowToClient(row),wbase,len);
-                }
-            }
-            else
-#endif
 #ifdef _TCAP
-            /***************************************************************
-             *
-             * TERMCAP
-             *
-             **************************************************************/
-            {
+                /************************************************************
+                 * TERMCAP                                                  *
+                 ************************************************************/
                 meUByte cc;
 
                 TCAPmove(row, col);    /* Go to correct place. */
@@ -1893,14 +1777,67 @@ updateScrollBar (WINDOW *wp)
                     TCAPputc(cc) ;
                 }
                 TCAPschemeReset() ;
-            }
 #endif /* _TCAP */
+            }
+#ifdef _ME_WINDOW
+            else
+#endif /* _ME_WINDOW */
+#endif /* _ME_CONSOLE */
+#ifdef _ME_WINDOW
+            {
+#ifdef _XTERM
+                /************************************************************
+                 * X-WINDOWS                                                *
+                 ************************************************************/
+                meFrameXTermSetScheme(frameCur,scheme) ;
+
+                if (meSystemCfg & meSYSTEM_FONTFIX)
+                {
+                    meUByte cc;
+                    fssp[0] = scheme;  /* Assign the colour */
+                    if(!((cc = *wbase) & 0xe0))
+                        cc = ' ' ;    /* Assign the text */
+                    fstp[0] = cc ;    /* Assign the text */
+
+                    if(len > 1)
+                    {
+                        fssp[1] = scheme;  /* Assign the colour */
+                        if(!((cc = wbase[1]) & 0xe0))
+                            cc = ' ' ;    /* Assign the text */
+                        fstp[1] = cc ;    /* Assign the text */
+                    }
+                    meFrameXTermDrawString(frameCur,colToClient(col),rowToClient(row),fstp,len);
+                    if(!((cc = *wbase) & 0xe0))
+                    {
+                        meFrameXTermDrawSpecialChar(frameCur,colToClient(col),rowToClientTop(row),cc) ;
+                        fstp[0] = cc ;   /* Assign the text */
+                    }
+                    if((len > 1) && !((cc = *wbase) & 0xe0))
+                    {
+                        meFrameXTermDrawSpecialChar(frameCur,colToClient(col+1),rowToClientTop(row),cc) ;
+                        fstp[1] = cc ;   /* Assign the text */
+                    }
+                }
+                else
+                {
+                    fssp[0] = scheme ;   /* Assign the colour */
+                    fstp[0] = *wbase ;   /* Assign the text */
+                    if(len > 1)
+                    {
+                        fssp[1] = scheme ;  /* Assign the colour */
+                        fstp[1] = wbase[1] ;
+                    }
+                    meFrameXTermDrawString(frameCur,colToClient(col),rowToClient(row),wbase,len);
+                }
+#endif /* _XTERM */
+            }
+#endif /* _ME_WINDOW */
+#endif /* _UNIX */
+
 #ifdef _DOS
-            /***************************************************************
-             *
-             * MS-DOS
-             *
-             **************************************************************/
+            /****************************************************************
+             * MS-DOS                                                       *
+             ****************************************************************/
             {
                 meUByte ss ;
                 int cc ;
@@ -1923,13 +1860,16 @@ updateScrollBar (WINDOW *wp)
         }
     }
 #ifdef _WIN32
-#ifdef _WINCON
-    if (!(meSystemCfg & meSYSTEM_CONSOLE))
-#endif
-        /* Apply the invalid area */
-        TTapplyArea () ;
+#ifdef _ME_WINDOW
+#ifdef _ME_CONSOLE
+        if (!(meSystemCfg & meSYSTEM_CONSOLE))
+#endif /* _ME_CONSOLE */
+            /* Apply the invalid area */
+            TTapplyArea () ;
+#endif /* _ME_WINDOW */
 #endif /* _WIN32 */
 }
+#endif /* MEOPT_SCROLL */
 
 
 /*
@@ -1943,63 +1883,64 @@ updateScrollBar (WINDOW *wp)
 static void
 pokeUpdate (void)
 {
-    WINDOW *wp;                         /* Window pointer */
-    VIDEO  *vp1;                        /* Video pointer */
+    meWindow *wp;                         /* Window pointer */
+    meVideoLine  *vp1;                        /* Video pointer */
 
     /* Fix up the message line - special case */
-    if (poke_ymax == TTnrow)
+    if (frameCur->pokeRowMax == frameCur->depth)
     {
-        vp1 = vvideo.video + TTnrow;
+        vp1 = frameCur->video.lineArray + frameCur->depth;
         vp1->flag |= VFCHNGD;
-        vp1->endp = TTncol;             /* Force update to EOL        */
+        vp1->endp = frameCur->width;             /* Force update to EOL        */
     }
 
+#if MEOPT_OSD
     /* Fix up the menu line - spacial case */
-    if (poke_ymin < TTsrow)
+    if (frameCur->pokeRowMin < frameCur->menuDepth)
     {
-        vvideo.video->flag |= VFCHNGD;
-        vvideo.video->endp = TTncol;
+        frameCur->video.lineArray->flag |= VFCHNGD;
+        frameCur->video.lineArray->endp = frameCur->width;
     }
-
+#endif
     /* Fix up the windows */
-    for (wp = wheadp; wp != NULL; wp = wp->w_wndp)
+    for (wp = frameCur->windowList; wp != NULL; wp = wp->next)
     {
         int ii, jj;                      /* Offset/Length counter */
 
         /* Bounding box test agains the window extents */
-        if (wp->firstCol > poke_xmax)
+        if (wp->frameColumn > frameCur->pokeColumnMax)
             continue;
-        if (wp->firstRow > poke_ymax)
+        if (wp->frameRow > frameCur->pokeRowMax)
             continue;
-        if ((wp->firstCol + wp->numCols) <= poke_xmin)
+        if ((wp->frameColumn + wp->width) <= frameCur->pokeColumnMin)
             continue;
-        if ((wp->firstRow + wp->numRows) <= poke_ymin)
+        if ((wp->frameRow + wp->depth) <= frameCur->pokeRowMin)
             continue;
 
         /* Got here - therefore overlaps the window.
          * Determine vertical starting position on the frame.
          *
          * ii initially contains the startOffset */
-        if (wp->firstRow > poke_ymin)
-            ii = wp->firstRow;            /* Start at top of window */
+        if (wp->frameRow > frameCur->pokeRowMin)
+            ii = wp->frameRow;            /* Start at top of window */
         else
-            ii = poke_ymin;             /* Start at top of poke */
+            ii = frameCur->pokeRowMin;             /* Start at top of poke */
 
         /* Get starting point og the Video frame pointer */
-        vp1 = (VIDEO *)(wp->w_vvideo->video) + ii;
+        vp1 = (meVideoLine *)(wp->video->lineArray) + ii;
 
         /* Determine the end position on the frame and work out
          * the number of lines that need to be updated.
          *
          * ii will contain the (endOffset - startOffset) i.e the
          * number of video rows to be updated */
-        if ((jj=wp->firstRow+wp->numRows-1) <= poke_ymax)
+        if ((jj=wp->frameRow+wp->depth-1) <= frameCur->pokeRowMax)
         {
             ii = jj - ii - 1 ;
-            wp->w_flag |= WFMODE ;
+            wp->flag |= WFMODE ;
         }
         else
-            ii = poke_ymax - ii;        /* End at poke max */
+            ii = frameCur->pokeRowMax - ii;        /* End at poke max */
 
         /* Iterate down the video frame until we have exhausted our
          * row count. Note that we only mark the underlying video structure
@@ -2009,30 +1950,32 @@ pokeUpdate (void)
         do
         {
             vp1->flag |= VFCHNGD;       /* Mark video line as changed */
-            vp1->endp = wp->numTxtCols; /* Force update to EOL        */
+            vp1->endp = wp->textWidth; /* Force update to EOL        */
             vp1++;                      /* Next line                  */
         }
         while (ii-- > 0);               /* Until exhaused line count  */
 
         /* flag the window as needing attension */
-        wp->w_flag |= WFMAIN ;
+        wp->flag |= WFMAIN ;
 
+#if MEOPT_SCROLL
         /* Fix up the vertical scroll bar if we have invaded it's space,
          * note that we do not modify the underlying separator bar in the
          * VVIDOE structure since it has not been re-sized. It is only
          * necessary to mark the scroll bar itself as changed */
-        if ((poke_xmax >= (wp->firstCol + wp->numTxtCols)) &&
-            (wp->w_mode & WMVBAR))
-            wp->w_flag |= WFSBAR;
+        if ((frameCur->pokeColumnMax >= (wp->frameColumn + wp->textWidth)) &&
+            (wp->vertScrollBarMode & WMVBAR))
+            wp->flag |= WFSBAR;
+#endif /* MEOPT_SCROLL */
     }
 
     /* Reset the poke flags for next time. Set to their maximal limits
      * that will force a fail on the next poke screen operation */
-    poke_xmin = TTncol;
-    poke_xmax = 0;
-    poke_ymin = TTnrow;
-    poke_ymax = 0;
-    poke_flag = 0;
+    frameCur->pokeColumnMin = frameCur->width;
+    frameCur->pokeColumnMax = 0;
+    frameCur->pokeRowMin = frameCur->depth;
+    frameCur->pokeRowMax = 0;
+    frameCur->pokeFlag = 0;
 }
 
 /*
@@ -2049,8 +1992,12 @@ static int screenUpdateDisabledCount=0 ;
 int
 screenUpdate(int f, int n)
 {
-    register WINDOW *wp;
-
+#if MEOPT_MWFRAME
+    meFrame *fc ;
+#endif
+    meWindow *wp ;
+    int force ;
+    
 #if DEBUGGING
     if(drawno++ == 'Z')
         drawno = 'A' ;
@@ -2058,192 +2005,241 @@ screenUpdate(int f, int n)
     if(n <= 0)
     {
         screenUpdateDisabledCount = n ;
-        return TRUE ;
+        return meTRUE ;
     }
     if(n == 3)
     {
         /* only update the screen enough to get the $window vars correct */
-        if(curwp->l_bufp != curwp->w_bufp)
+        if(frameCur->windowCur->bufferLast != frameCur->windowCur->buffer)
         {
-            curwp->l_bufp = curwp->w_bufp ;
-            curwp->w_flag |= WFMODE|WFREDRAW|WFMOVEL|WFSBOX ;
+            frameCur->windowCur->bufferLast = frameCur->windowCur->buffer ;
+            frameCur->windowCur->flag |= WFMODE|WFREDRAW|WFMOVEL|WFSBOX ;
         }
         /* if top of window is the last line and there's more than
          * one, force refame and draw */
-        if((curwp->topLineNo == curwp->w_bufp->elineno) && curwp->topLineNo)
-            curwp->w_flag |= WFFORCE ;
+        if((frameCur->windowCur->vertScroll == frameCur->windowCur->buffer->lineCount) && frameCur->windowCur->vertScroll)
+            frameCur->windowCur->flag |= WFFORCE ;
 
         /* if the window has changed, service it */
-        if(curwp->w_flag & (WFMOVEL|WFFORCE))
-            reframe(curwp) ;	        /* check the framing */
+        if(frameCur->windowCur->flag & (WFMOVEL|WFFORCE))
+            reframe(frameCur->windowCur) ;	        /* check the framing */
 
-        if(curwp->w_flag & (WFREDRAW|WFRESIZE|WFSELHIL|WFSELDRAWN))
-            shilightWindow(curwp);         /* Update selection hilight */
+        if(frameCur->windowCur->flag & (WFREDRAW|WFRESIZE|WFSELHIL|WFSELDRAWN))
+            shilightWindow(frameCur->windowCur);         /* Update selection hilight */
 
         /* check the horizontal scroll and cursor position */
-        updCursor(curwp) ;
-        return TRUE ;
+        updCursor(frameCur->windowCur) ;
+        return meTRUE ;
     }
-    if(n == 2)
+    
+    force = (n == 1) ;
+    
+#if MEOPT_MWFRAME
+    fc = frameCur ;
+    for(frameCur=frameList ; frameCur!=NULL ; frameCur=frameCur->next)
     {
-#if MEOSD
-        if(osdDisplayHd != NULL)
+        if(frameCur->flags & meFRAME_HIDDEN)
+            continue ;
+#else
+    /* else required to keep the auto-indent right */
+#endif
+
+    if(force)
+    {
+#if MEOPT_OSD
+        /* if screen is garbage, re-plot it all */
+        if (frameCur->menuDepth > 0)
+        {
+            /* Mark menu as changed */
+            frameCur->video.lineArray[0].flag = VFMENUL|VFCHNGD;
+            frameCur->video.lineArray[0].endp = frameCur->width;
+        }
+#endif
+        /* Mark message line as changed */
+        frameCur->video.lineArray[frameCur->depth].flag |= VFCHNGD ;
+        frameCur->video.lineArray[frameCur->depth].endp = frameCur->width;
+        /* Reset the poke flags */
+        frameCur->pokeColumnMin = frameCur->width;
+        frameCur->pokeColumnMax = 0;
+        frameCur->pokeRowMin = frameCur->depth;
+        frameCur->pokeRowMax = 0;
+        frameCur->pokeFlag = 0;
+    }
+    else
+    {
+#if MEOPT_OSD
+        if((osdDisplayHd != NULL)
+#if MEOPT_MWFRAME
+           && (frameCur == fc)
+#endif
+           )
             /* else we must store any osd dialogs */
             osdStoreAll() ;
 #endif
         /* if the screen has been poked then fix it */
-        if (poke_flag)                      /* Screen been poked ??           */
+        if (frameCur->pokeFlag)                      /* Screen been poked ??           */
             pokeUpdate();                   /* Yes - determine screen changes */
-        /* set n == 0 so (n != 0) means forced */
-        n = 0 ;
-    }
-    else
-    {
-        /* if screen is garbage, re-plot it all */
-        if (TTsrow > 0)
-        {
-            /* Mark menu as changed */
-            vvideo.video[0].flag = VFMENUL|VFCHNGD;
-            vvideo.video[0].endp = TTncol;
-        }
-        /* Mark message line as changed */
-        vvideo.video[TTnrow].flag |= VFCHNGD ;
-        vvideo.video[TTnrow].endp = TTncol;
-        /* Reset the poke flags */
-        poke_xmin = TTncol;
-        poke_xmax = 0;
-        poke_ymin = TTnrow;
-        poke_ymax = 0;
-        poke_flag = 0;
     }
     
     /* Does the title bar need updating? */
 #ifdef _WINDOW
+    if(force || (frameCur->bufferCur->name != frameCur->titleBufferName))
     {
-        static meUByte *lastBName=NULL ;
-
-        if(n || (curbp->b_bname != lastBName))
-        {
-            lastBName = curbp->b_bname ;
-            TTtitleText(curbp->b_bname) ;
-        }
+        frameCur->titleBufferName = frameCur->bufferCur->name ;
+        meFrameSetWindowTitle(frameCur,frameCur->bufferCur->name) ;
     }
 #endif
-#if MEOSD
+#if MEOPT_OSD
     /* Does the menu line need updating? if so do it! */
-    if((TTsrow > 0) && (vvideo.video[0].flag & VFCHNGD))
-        osdMainMenuUpdate(n) ;
+    if((frameCur->menuDepth > 0) && (frameCur->video.lineArray[0].flag & VFCHNGD))
+        osdMainMenuUpdate(force) ;
 #endif
     /* update any windows that need refreshing */
-    for (wp = wheadp; wp != NULL; wp = wp->w_wndp)
+    for (wp = frameCur->windowList; wp != NULL; wp = wp->next)
     {
-        if(n)
+        if(force)
         {
-            wp->l_bufp = wp->w_bufp ;
-            wp->w_flag |= WFUPGAR ;
+            wp->bufferLast = wp->buffer ;
+            wp->flag |= WFUPGAR ;
         }
-        else if(wp->l_bufp != wp->w_bufp)
+        else if(wp->bufferLast != wp->buffer)
         {
-            wp->l_bufp = wp->w_bufp ;
-            wp->w_flag |= WFMODE|WFREDRAW|WFMOVEL|WFSBOX ;
+            wp->bufferLast = wp->buffer ;
+            wp->flag |= WFMODE|WFREDRAW|WFMOVEL|WFSBOX ;
         }
         /* if top of window is the last line and there's more than
          * one, force refame and draw */
-        if((wp->topLineNo == wp->w_bufp->elineno) && wp->topLineNo)
-            wp->w_flag |= WFFORCE ;
+        if((wp->vertScroll == wp->buffer->lineCount) && wp->vertScroll)
+            wp->flag |= WFFORCE ;
 
         /* if the window has changed, service it */
-        if(wp->w_flag & (WFMOVEL|WFFORCE))
+        if(wp->flag & (WFMOVEL|WFFORCE))
             reframe(wp) ;	        /* check the framing */
 
-        if(wp->w_flag & (WFREDRAW|WFRESIZE|WFSELHIL|WFSELDRAWN))
+        if(wp->flag & (WFREDRAW|WFRESIZE|WFSELHIL|WFSELDRAWN))
             shilightWindow(wp);         /* Update selection hilight */
 
         /* check the horizontal scroll and cursor position */
-        if(wp == curwp)
+        if(wp == frameCur->windowCur)
             updCursor(wp) ;
 
-        if(wp->w_flag & ~(WFSELDRAWN|WFLOOKBK))
+        if(wp->flag & ~(WFSELDRAWN|WFLOOKBK))
         {
             /* if the window has changed, service it */
-            if(wp->w_flag & WFSBOX)
+#if MEOPT_SCROLL
+            if(wp->flag & WFSBOX)
                 fixWindowScrollBox(wp);     /* Fix the scroll bars */
-            if(wp->w_flag & ~(WFMODE|WFSBAR|WFLOOKBK))
+#endif
+            if(wp->flag & ~(WFMODE|WFSBAR|WFLOOKBK))
                 updateWindow(wp) ;          /* Update the window */
             updateModeLine(wp);	    /* Update mode line */
-            if(wp->w_flag & WFSBAR)
+#if MEOPT_SCROLL
+            if(wp->flag & WFSBAR)
                 updateScrollBar(wp);        /* Update scroll bar  */
-            wp->w_flag &= WFSELDRAWN ;
+#endif
+            wp->flag &= WFSELDRAWN ;
         }
-        wp->w_force = 0;
+        wp->recenter = 0;
     }
 
     /* If forced then sort out the message-line as well */
-    if(vvideo.video[TTnrow].flag & VFCHNGD)
+    if(frameCur->video.lineArray[frameCur->depth].flag & VFCHNGD)
     {
-        updateline(TTnrow,vvideo.video+TTnrow,NULL) ;
-        vvideo.video[TTnrow].flag &= ~VFCHNGD ;
+        updateline(frameCur->depth,frameCur->video.lineArray+frameCur->depth,NULL) ;
+        frameCur->video.lineArray[frameCur->depth].flag &= ~VFCHNGD ;
     }
-#if MEOSD
+#if MEOPT_OSD
     /* If we are in osd then update the osd menus */
-    if(osdDisplayHd != NULL)
-        osdRestoreAll(n) ;
+    if((osdDisplayHd != NULL)
+#if MEOPT_MWFRAME
+        && (frameCur == fc)
+#endif
+       )
+        osdRestoreAll(force) ;
 #endif
     /* update the cursor and flush the buffers */
     resetCursor() ;
 
     TTflush();
 
-    /* Now rest all the window line LNCHNG flags */
-    for (wp = wheadp; wp != NULL; wp = wp->w_wndp)
+#if MEOPT_MWFRAME
+    }
+    frameCur = fc ;
+#else
+    /* else required to keep the auto-indent right */
+#endif
+
+#if MEOPT_MWFRAME
+    for(fc=frameList ; fc!=NULL ; fc=fc->next)
     {
-        register LINE *flp, *blp ;
+        if(fc->flags & meFRAME_HIDDEN)
+            continue ;
+        wp = fc->windowList ;
+#else
+    wp = frameCur->windowList ;
+#endif
+    
+    /* Now rest all the window line meLINE_CHANGED flags */
+    do
+    {
+        register meLine *flp, *blp ;
         register int   ii, jj ;
         register meUByte flag ;
 
-        ii = (wp->line_no - wp->topLineNo) ;
-        jj = (wp->numTxtRows - ii) ;
-        blp = flp = wp->w_dotp ;
+        ii = (wp->dotLineNo - wp->vertScroll) ;
+        jj = (wp->textDepth - ii) ;
+        blp = flp = wp->dotLine ;
         while(--ii >= 0)
         {
-            blp = lback(blp) ;
-            if((flag=blp->l_flag) & LNCHNG)
-                blp->l_flag = (flag & ~LNCHNG) ;
+            blp = meLineGetPrev(blp) ;
+            if((flag=blp->flag) & meLINE_CHANGED)
+                blp->flag = (flag & ~meLINE_CHANGED) ;
         }
         while(--jj >= 0)
         {
-            if((flag=flp->l_flag) & LNCHNG)
-                flp->l_flag = (flag & ~LNCHNG) ;
-            flp = lforw(flp) ;
+            if((flag=flp->flag) & meLINE_CHANGED)
+                flp->flag = (flag & ~meLINE_CHANGED) ;
+            flp = meLineGetNext(flp) ;
         }
+    } while((wp = wp->next) != NULL) ;
+    
+#if MEOPT_MWFRAME
     }
-    return(TRUE);
+#else
+    /* else required to keep the auto-indent right */
+#endif
+    
+    return(meTRUE);
 }
 
 int
-update(int flag)    /* force=TRUE update past type ahead? */
+update(int flag)    /* force=meTRUE update past type ahead? */
 {
+#if MEOPT_CALLBACK
     register int index;
     meUInt arg ;
-
+#endif
+    
     if((alarmState & meALARM_PIPED) ||
-       (!(flag & 0x01) && ((kbdmode == PLAY) || clexec || TTahead())))
-        return TRUE ;
+       (!(flag & 0x01) && ((kbdmode == mePLAY) || clexec || TTahead())))
+        return meTRUE ;
 
     if(screenUpdateDisabledCount)
     {
         screenUpdateDisabledCount++ ;
-        return TRUE ;
+        return meTRUE ;
     }
 
+#if MEOPT_CALLBACK
     if((index = decode_key(ME_SPECIAL|SKEY_redraw,&arg)) >= 0)
         execFuncHidden(ME_SPECIAL|SKEY_redraw,index,0x80000002-sgarbf) ;
     else
+#endif
         screenUpdate(1,2-sgarbf) ;
     /* reset garbled status */
-    sgarbf = FALSE ;
+    sgarbf = meFALSE ;
 
-    return TRUE ;
+    return meTRUE ;
 }
 
 /*
@@ -2268,11 +2264,11 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
            meUByte *str)
 {
     meUByte  cc, *ss ;
-    meSCHEME *fssp;               /* Frame store scheme pointer */
+    meScheme *fssp;               /* Frame store scheme pointer */
     int len, schm, off ;
 
     /* Normalise to the screen rows */
-    if((row < 0) || (row > TTnrow))     /* Off the screen in Y ?? */
+    if((row < 0) || (row > frameCur->depth))     /* Off the screen in Y ?? */
         return ;                        /* Yes - quit */
 
     /* Normalise to the screen columns. Chop the string up if necessary
@@ -2292,58 +2288,94 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
         if((len += col) <= 0)
             return ;
         str -= col ;
+#if MEOPT_POKE
         if(flags & POKE_COLORS)
             scheme -= col ;
+#endif
         col = 0 ;
     }
-    else if(col >= TTncol)
+    else if(col >= frameCur->width)
         return ;
-    if((col+len) >= TTncol)
-        len = TTncol - col ;
+    if((col+len) >= frameCur->width)
+        len = frameCur->width - col ;
 
     /* Sort out the poke flags. Just keep the minimal and maximal extents
      * of the change. We will sort out what needs to be updated on the
      * next update() call. */
     if((flags & POKE_NOMARK) == 0)
     {
-        poke_flag |= 1;
-        if (row < poke_ymin)
-            poke_ymin = row;
-        if (row > poke_ymax)
-            poke_ymax = row;
-        if (col < poke_xmin)
-            poke_xmin = col;
-        if ((col+len) > poke_xmax)
-            poke_xmax = col+len;
+        frameCur->pokeFlag |= 1;
+        if (row < frameCur->pokeRowMin)
+            frameCur->pokeRowMin = row;
+        if (row > frameCur->pokeRowMax)
+            frameCur->pokeRowMax = row;
+        if (col < frameCur->pokeColumnMin)
+            frameCur->pokeColumnMin = col;
+        if ((col+len) > frameCur->pokeColumnMax)
+            frameCur->pokeColumnMax = col+len;
     }
 
     /* Write the text to the frame store. Note that the colour still
      * needs to be updated. */
-    memcpy(frameStore[row].text+col,str,len) ;      /* Write text in */
-    fssp = frameStore[row].scheme + col ;           /* Get the scheme pointer */
+    memcpy(frameCur->store[row].text+col,str,len) ;      /* Write text in */
+    fssp = frameCur->store[row].scheme + col ;           /* Get the scheme pointer */
     off  = (flags >> 4) & 0x07 ;
 
 #ifdef _WIN32
-#ifdef _WINCON
+#ifdef _ME_WINDOW
+#ifdef _ME_CONSOLE
     if (!(meSystemCfg & meSYSTEM_CONSOLE))
-#endif
+#endif /* _ME_CONSOLE */
         TTputs(row,col,len) ;
-#endif
+#endif /* _ME_WINDOW */
+#endif /* _WIN32 */
 
+#if MEOPT_POKE
     /* Write to the screen */
     if(flags & POKE_COLORS)
     {
-        /************************************************************************
-         *
-         * X-WINDOWS
-         *
-         ***********************************************************************/
-#ifdef _XTERM
-        if(!(meSystemCfg & meSYSTEM_CONSOLE))
+#ifdef _UNIX
+
+#ifdef _ME_CONSOLE
+#ifdef _ME_WINDOW
+        if(meSystemCfg & meSYSTEM_CONSOLE)
+#endif /* _ME_WINDOW */
         {
+#ifdef _TCAP
+            /****************************************************************
+             * TERMCAP                                                      *
+             ****************************************************************/
+            TCAPmove(row, col);	/* Go to correct place. */
+            while(len--)
+            {
+                schm = *scheme++ ;
+                if((schm == 0xff) && ((schm = *scheme++) == 1))
+                    schm = 0 ;
+                else
+                    schm = meSchemeCheck(schm)*meSCHEME_STYLES ;
+                schm += off ;
+                *fssp++ = schm ;
+                TCAPschemeSet(schm) ;
+                cc = *str++ ;
+                TCAPputc(cc) ;
+                
+            }
+            TCAPschemeReset() ;
+#endif /* _TCAP */
+        }
+#ifdef _ME_WINDOW
+        else
+#endif /* _ME_WINDOW */
+#endif /* _ME_CONSOLE */
+#ifdef _ME_WINDOW
+        {
+#ifdef _XTERM
+            /****************************************************************
+             * X-WINDOWS                                                    *
+             ****************************************************************/
             col = colToClient(col) ;
             row = rowToClient(row) ;
-
+            
             if (meSystemCfg & meSYSTEM_FONTFIX)
             {
                 meUByte cc ;
@@ -2358,14 +2390,14 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
                     schm += off ;
                     /* Update the frame store colour */
                     *fssp++ = schm ;
-                    XTERMschemeSet(schm) ;
+                    meFrameXTermSetScheme(frameCur,schm) ;
                     if((cc=*++str) & 0xe0)
-                        XTERMstringDraw(col,row,str,1);
+                        meFrameXTermDrawString(frameCur,col,row,str,1);
                     else
                     {
                         static char ss[1]={' '} ;
-                        XTERMstringDraw(col,row,ss,1);
-                        XTERMSpecialChar(col,row-mecm.ascent,cc) ;
+                        meFrameXTermDrawString(frameCur,col,row,ss,1);
+                        meFrameXTermDrawSpecialChar(frameCur,col,row-mecm.ascent,cc) ;
                     }
                     col += mecm.fwidth ;
                 }
@@ -2382,47 +2414,22 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
                     schm += off ;
                     /* Update the frame store colour */
                     *fssp++ = schm ;
-                    XTERMschemeSet(schm) ;
-                    XTERMstringDraw(col,row,str,1);
+                    meFrameXTermSetScheme(frameCur,schm) ;
+                    meFrameXTermDrawString(frameCur,col,row,str,1);
                     str++ ;
                     col += mecm.fwidth ;
                 }
             }
+#endif /* _XTERM */
         }
-        else
-#endif
-            /************************************************************************
-             *
-             * TERMCAP
-             *
-             ***********************************************************************/
-#ifdef _TCAP
-        {
-            TCAPmove(row, col);	/* Go to correct place. */
-            while(len--)
-            {
-                schm = *scheme++ ;
-                if((schm == 0xff) && ((schm = *scheme++) == 1))
-                    schm = 0 ;
-                else
-                    schm = meSchemeCheck(schm)*meSCHEME_STYLES ;
-                schm += off ;
-                *fssp++ = schm ;
-                TCAPschemeSet(schm) ;
-                cc = *str++ ;
-                TCAPputc(cc) ;
+#endif /* _ME_WINDOW */
 
-            }
-            TCAPschemeReset() ;
-        }
-
-#endif /* _TCAP */
-        /************************************************************************
-         *
-         * MS-DOS
-         *
-         ***********************************************************************/
+#endif /* _UNIX */
+        
 #ifdef _DOS
+        /********************************************************************
+         * MS-DOS                                                           *
+         ********************************************************************/
         {
             while(len--)
             {
@@ -2438,12 +2445,11 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
             }
         }
 #endif /* _DOS */
-        /************************************************************************
-         *
-         * MS-WINDOWS
-         *
-         ***********************************************************************/
+        
 #ifdef _WIN32
+        /********************************************************************
+         * MS-WINDOWS                                                       *
+         ********************************************************************/
         {
             while(len--)
             {
@@ -2455,19 +2461,22 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
                 schm += off ;
                 /* Update the frame store colour */
                 *fssp++ = schm ;
-#ifdef _WINCON
+#ifdef _ME_CONSOLE
+#ifdef _ME_WINDOW
                 if (meSystemCfg & meSYSTEM_CONSOLE)
+#endif /* _ME_WINDOW */
                 {
                     WORD att ;
-                    att = TTschemeSet(schm) ;
+                    att = (WORD) TTschemeSet(schm) ;
                     ConsoleDrawString(str++, att, col++, row, 1);
                 }
-#endif
+#endif /* _ME_CONSOLE */
             }
         }
 #endif /* _WIN32 */
     }
     else
+#endif
     {
         schm = *scheme ;
         if((schm == 0xff) && ((schm = *scheme++) == 1))
@@ -2476,63 +2485,20 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
             schm = meSchemeCheck(schm)*meSCHEME_STYLES ;
         schm += off ;
 
-        /************************************************************************
-         *
-         * X-WINDOWS
-         *
-         ***********************************************************************/
-#ifdef _XTERM
-        if(!(meSystemCfg & meSYSTEM_CONSOLE))
+#ifdef _UNIX
+    
+#ifdef _ME_CONSOLE
+#ifdef _ME_WINDOW
+        if(meSystemCfg & meSYSTEM_CONSOLE)
+#endif /* _ME_WINDOW */
         {
-            XTERMschemeSet(schm) ;
-            if (meSystemCfg & meSYSTEM_FONTFIX)
-            {
-                meUByte cc, *sfstp, *fstp ;
-                int ii, spFlag=0 ;
-
-                ii = len ;
-                sfstp = fstp = &(frameStore[row].text[col]) ;
-                row = rowToClient(row) ;
-                while (--len >= 0)
-                {
-                    *fssp++ = schm ;
-                    if(((cc=*fstp++) & 0xe0) == 0)
-                    {
-                        spFlag++ ;
-                        fstp[-1] = ' ' ;
-                    }
-                }
-                XTERMstringDraw(colToClient(col),row,sfstp,ii);
-                ii = 0 ;
-                while(--spFlag >= 0)
-                {
-                    while (((cc=str[ii]) & 0xe0) != 0)
-                        ii++ ;
-                    sfstp[ii] = cc ;
-                    XTERMSpecialChar(colToClient(col+ii),row-mecm.ascent,cc) ;
-                    ii++ ;
-                }
-            }
-            else
-            {
-                XTERMstringDraw(colToClient(col),rowToClient(row),str,len);
-                /* Update the frame store colour */
-                while (--len >= 0)
-                    *fssp++ = schm ;
-            }
-        }
-        else
-#endif
-            /************************************************************************
-             *
-             * TERMCAP
-             *
-             ***********************************************************************/
 #ifdef _TCAP
-        {
+            /****************************************************************
+             * TERMCAP                                                      *
+             ****************************************************************/
             TCAPmove(row, col);	/* Go to correct place. */
             TCAPschemeSet(schm) ;
-
+            
             while(len--)
             {
                 cc = *str++ ;
@@ -2546,15 +2512,63 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
                 TTshowCur() ;
             else
                 TThideCur() ;
-        }
-
 #endif /* _TCAP */
-        /************************************************************************
-         *
-         * MS-DOS
-         *
-         ***********************************************************************/
+        }
+#ifdef _ME_WINDOW
+        else
+#endif /* _ME_WINDOW */
+#endif /* _ME_CONSOLE */
+#ifdef _ME_WINDOW
+        {
+#ifdef _XTERM
+            /****************************************************************
+             * X-WINDOWS                                                    *
+             ****************************************************************/
+            meFrameXTermSetScheme(frameCur,schm) ;
+            if (meSystemCfg & meSYSTEM_FONTFIX)
+            {
+                meUByte cc, *sfstp, *fstp ;
+                int ii, spFlag=0 ;
+
+                ii = len ;
+                sfstp = fstp = &(frameCur->store[row].text[col]) ;
+                row = rowToClient(row) ;
+                while (--len >= 0)
+                {
+                    *fssp++ = schm ;
+                    if(((cc=*fstp++) & 0xe0) == 0)
+                    {
+                        spFlag++ ;
+                        fstp[-1] = ' ' ;
+                    }
+                }
+                meFrameXTermDrawString(frameCur,colToClient(col),row,sfstp,ii);
+                ii = 0 ;
+                while(--spFlag >= 0)
+                {
+                    while (((cc=str[ii]) & 0xe0) != 0)
+                        ii++ ;
+                    sfstp[ii] = cc ;
+                    meFrameXTermDrawSpecialChar(frameCur,colToClient(col+ii),row-mecm.ascent,cc) ;
+                    ii++ ;
+                }
+            }
+            else
+            {
+                meFrameXTermDrawString(frameCur,colToClient(col),rowToClient(row),str,len);
+                /* Update the frame store colour */
+                while (--len >= 0)
+                    *fssp++ = schm ;
+            }
+#endif /* _XTERM */
+        }
+#endif /* _ME_WINDOW */
+#endif /* _UNIX */
+        
 #ifdef _DOS
+        /********************************************************************
+         * MS-DOS                                                           *
+         ********************************************************************/
         {
             cc = TTschemeSet(schm) ;
             while(len--)
@@ -2565,31 +2579,34 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
             }
         }
 #endif /* _DOS */
-        /************************************************************************
-         *
-         * MS-WINDOWS
-         *
-         ***********************************************************************/
+        
 #ifdef _WIN32
+        /********************************************************************
+         * MS-WINDOWS                                                       *
+         ********************************************************************/
         {
-#ifdef _WINCON
+#ifdef _ME_CONSOLE
+#ifdef _ME_WINDOW
             if (meSystemCfg & meSYSTEM_CONSOLE)
+#endif /* _ME_WINDOW */
             {
                 WORD att ;
-                att = TTschemeSet(schm) ;
+                att = (WORD) TTschemeSet(schm) ;
                 ConsoleDrawString (str, att, col, row, len);
             }
-#endif
+#endif /* _ME_CONSOLE */
             /* Update the frame store colours */
             while (--len >= 0)
                 *fssp++ = schm ;
         }
 #endif /* _WIN32 */
+    
     }
     if((flags & POKE_NOFLUSH) == 0)
         TTflush() ;                         /* Force update of screen */
 }
 
+#if MEOPT_POKE
 /*
  * screenPoke.
  * The macro interface to the pokeScreen function. This accepts a
@@ -2602,19 +2619,20 @@ int
 screenPoke(int f, int n)
 {
     int row, col ;
-    meUByte fbuf[MAXBUF] ;
-    meUByte sbuf[MAXBUF] ;
+    meUByte fbuf[meBUF_SIZE_MAX] ;
+    meUByte sbuf[meBUF_SIZE_MAX] ;
 
-    if((meGetString((meUByte *)"row",0,0,fbuf,MAXBUF) != TRUE) ||
-       ((row = meAtoi(fbuf)),(meGetString((meUByte *)"col",0,0,fbuf,MAXBUF) != TRUE)) ||
-       ((col = meAtoi(fbuf)),(meGetString((meUByte *)"scheme",0,0,fbuf,MAXBUF) != TRUE)) ||
-       (meGetString((meUByte *)"string",0,0,sbuf,MAXBUF) != TRUE))
-        return FALSE ;
+    if((meGetString((meUByte *)"row",0,0,fbuf,meBUF_SIZE_MAX) != meTRUE) ||
+       ((row = meAtoi(fbuf)),(meGetString((meUByte *)"col",0,0,fbuf,meBUF_SIZE_MAX) != meTRUE)) ||
+       ((col = meAtoi(fbuf)),(meGetString((meUByte *)"scheme",0,0,fbuf,meBUF_SIZE_MAX) != meTRUE)) ||
+       (meGetString((meUByte *)"string",0,0,sbuf,meBUF_SIZE_MAX) != meTRUE))
+        return meFALSE ;
     if((n & POKE_COLORS) == 0)
         fbuf[0] = (meUByte) meAtoi(fbuf) ;
     pokeScreen(n,row,col,fbuf,sbuf) ;
-    return TRUE ;
+    return meTRUE ;
 }
+#endif
 
 /*
  * Write out a long integer, in the specified radix. Update the physical cursor
@@ -2659,7 +2677,7 @@ mlputi(long i, int r, meUByte *buf)
  * Write a message into the message line. Keep track of the physical cursor
  * position. A small class of printf like format items is handled. Assumes the
  * stack grows down; this assumption is made by the "++" in the argument scan
- * loop. Set the "message line" flag TRUE.
+ * loop. Set the "message line" flag meTRUE.
  */
 #ifdef _STDARG
 int
@@ -2675,28 +2693,41 @@ mlwrite(int flags, meUByte *fmt, int arg)
     register char *ap;
 #endif
     register meUByte c;
-    register VIDEO *vp1;
+    register meVideoLine *vp1;
     register int offset ;	/* offset into ???		*/
-    meUByte  mlw[MAXBUF];		/* what we want to be there	*/
+    meUByte  mlw[meBUF_SIZE_MAX];		/* what we want to be there	*/
     meUByte *mlwant;		/* what we want to be there	*/
     meUByte *s1 ;
 
-    if((alarmState & meALARM_PIPED) ||
-       (clexec && (flags & MWCLEXEC)))
+    if(alarmState & meALARM_PIPED)
         goto mlwrite_exit ;
+    if(clexec && (flags & MWCLEXEC))
+    {
+        meRegister *rr ;
+        
+        if(!(flags & MWABORT))
+            goto mlwrite_exit ;
+        
+        rr = meRegCurr ;
+        do {
+            if(rr->force)
+                goto mlwrite_exit ;
+            rr = rr->prev ;
+        } while(rr != meRegHead) ;
+    }
 
-    if(mlStatus & MLSTATUS_KEEP)
+    if(frameCur->mlStatus & MLSTATUS_KEEP)
     {
         meUByte *_ss, *_dd ;
-        _ss = mline->l_text ;
-        _dd = mlStore ;
+        _ss = frameCur->mlLine->text ;
+        _dd = frameCur->mlLineStore ;
         while((*_dd++ = *_ss++))
             ;
-        mlStoreCol = mlCol ;
-        mlStatus = (mlStatus & ~MLSTATUS_KEEP) | MLSTATUS_RESTORE ;
+        frameCur->mlColumnStore = frameCur->mlColumn ;
+        frameCur->mlStatus = (frameCur->mlStatus & ~MLSTATUS_KEEP) | MLSTATUS_RESTORE ;
     }
     else
-        mlStatus |= MLSTATUS_CLEAR ;
+        frameCur->mlStatus |= MLSTATUS_CLEAR ;
 
     if(flags & MWSPEC)
     {
@@ -2774,11 +2805,11 @@ mlwrite(int flags, meUByte *fmt, int arg)
 #endif
                     /* catch a string which is too long */
                     offset = meStrlen(s1) ;
-                    if(offset > TTncol)
+                    if(offset > frameCur->width)
                     {
                         mlwant = mlw ;
-                        s1 += offset - TTncol ;
-                        offset = TTncol ;
+                        s1 += offset - frameCur->width ;
+                        offset = frameCur->width ;
                     }
                     meStrcpy(mlwant,s1) ;
                     mlwant += offset ;
@@ -2797,7 +2828,7 @@ mlwrite(int flags, meUByte *fmt, int arg)
         offset = mlwant - mlw ;
         mlwant = mlw ;
     }
-    vp1 = vvideo.video + TTnrow ;
+    vp1 = frameCur->video.lineArray + frameCur->depth ;
     /* JDG End */
     /* SWP - changed the mlwrite when the string is to long for the ml line
      * so that it always displays the last part. This is for two reasons:
@@ -2806,27 +2837,27 @@ mlwrite(int flags, meUByte *fmt, int arg)
      * 2) The latter part is usually the more important, i.e. where the
      *    prompt is
      */
-    if(offset > TTncol)
+    if(offset > frameCur->width)
     {
-        mlwant += offset-TTncol ;
-        offset = TTncol ;
+        mlwant += offset-frameCur->width ;
+        offset = frameCur->width ;
         if(!(flags & MWUSEMLCOL))
-            mlCol = TTncol-1 ;
+            frameCur->mlColumn = frameCur->width-1 ;
     }
     else if(!(flags & MWUSEMLCOL))
-        mlCol = offset ;
-    s1 = mline->l_text ;
+        frameCur->mlColumn = offset ;
+    s1 = frameCur->mlLine->text ;
     while((*s1++ = *mlwant++))
         ;
-    mline->l_used=offset ;
+    frameCur->mlLine->length=offset ;
     /* JDG 02/03/97 - This line was removed, however when it is then the
      * bottom line is not reset properly.
      * SWP - I've commented it out again - this only alleviates another bug
      * which should be/should have been fixed.
      */
-    /* vp1->endp = TTncol ;*/
+    /* vp1->endp = frameCur->width ;*/
 
-    updateline(TTnrow,vp1,NULL);
+    updateline(frameCur->depth,vp1,NULL);
     mlResetCursor() ;
     TTflush();
 
@@ -2834,26 +2865,26 @@ mlwrite(int flags, meUByte *fmt, int arg)
         TTbell() ;
     if(flags & MWPAUSE)
     {
-        /* Change the value of mlStatus to MLSTATUS_KEEP cos we want to keep
+        /* Change the value of frameCur->mlStatus to MLSTATUS_KEEP cos we want to keep
          * the string for the length of the sleep
          */
-        meUByte oldMlStatus = mlStatus ;
-        mlStatus = MLSTATUS_KEEP ;
+        meUByte oldMlStatus = frameCur->mlStatus ;
+        frameCur->mlStatus = MLSTATUS_KEEP ;
         TTsleep(2000,1)  ;
-        mlStatus = oldMlStatus ;
+        frameCur->mlStatus = oldMlStatus ;
     }
     else if((flags & MWWAIT) || (clexec && (flags & MWCLWAIT)))
     {
-        /* Change the value of mlStatus to MLSTATUS_KEEP cos we want to keep
+        /* Change the value of frameCur->mlStatus to MLSTATUS_KEEP cos we want to keep
          * the string till we get a key
          */
-        meUByte scheme=(globScheme/meSCHEME_STYLES), oldMlStatus = mlStatus ;
-        pokeScreen(POKE_NOMARK+0x10,TTnrow,TTncol-9,&scheme,
+        meUByte scheme=(globScheme/meSCHEME_STYLES), oldMlStatus = frameCur->mlStatus ;
+        pokeScreen(POKE_NOMARK+0x10,frameCur->depth,frameCur->width-9,&scheme,
                    (meUByte *) "<ANY KEY>") ;
-        vp1->endp = TTncol ;
-        mlStatus = MLSTATUS_KEEP ;
+        vp1->endp = frameCur->width ;
+        frameCur->mlStatus = MLSTATUS_KEEP ;
         TTgetc() ;
-        mlStatus = oldMlStatus ;
+        frameCur->mlStatus = oldMlStatus ;
         mlerase(0) ;
     }
     if(!(flags & MWCURSOR))
@@ -2862,11 +2893,13 @@ mlwrite(int flags, meUByte *fmt, int arg)
 
 mlwrite_exit:
     if(!(flags & MWABORT))
-        return TRUE ;
+        return meTRUE ;
 
+#if MEOPT_DEBUGM
     if(macbug < -2)
         macbug = 1 ;
-    return ABORT ;
+#endif
+    return meABORT ;
 }
 
 
@@ -2881,21 +2914,21 @@ mlerase(int flag)
 {
     if(clexec && (flag & MWCLEXEC))
         return ;
-    if((mlStatus & MLSTATUS_RESTORE) && !(flag & MWERASE))
+    if((frameCur->mlStatus & MLSTATUS_RESTORE) && !(flag & MWERASE))
     {
-        mlCol = mlStoreCol ;
-        mlwrite(((mlStatus & MLSTATUS_POSML) ? MWSPEC|MWUSEMLCOL|MWCURSOR:MWSPEC),mlStore) ;
-        mlStatus = (mlStatus & ~MLSTATUS_RESTORE) | MLSTATUS_KEEP ;
+        frameCur->mlColumn = frameCur->mlColumnStore ;
+        mlwrite(((frameCur->mlStatus & MLSTATUS_POSML) ? MWSPEC|MWUSEMLCOL|MWCURSOR:MWSPEC),frameCur->mlLineStore) ;
+        frameCur->mlStatus = (frameCur->mlStatus & ~MLSTATUS_RESTORE) | MLSTATUS_KEEP ;
     }
-    else if(!(mlStatus & MLSTATUS_KEEP))
+    else if(!(frameCur->mlStatus & MLSTATUS_KEEP))
     {
         mlwrite(MWSPEC|(flag&MWCURSOR),(meUByte *)"") ;
-        mlStatus &= ~MLSTATUS_CLEAR ;
+        frameCur->mlStatus &= ~MLSTATUS_CLEAR ;
     }
 }
 
 
-#if COLOR
+#if MEOPT_COLOR
 /*
  * addColor
  * Add a new colour palett entry, or modify existing colour
@@ -2914,22 +2947,22 @@ mlerase(int flag)
 int
 addColor(int f, int n)
 {
-    meCOLOR index ;
+    meColor index ;
     meUByte r, g, b ;
-    meUByte buff[MAXBUF] ;
+    meUByte buff[meBUF_SIZE_MAX] ;
 
-    if((meGetString((meUByte *)"Index",0,0,buff,MAXBUF) == ABORT) ||
-       ((index = (meCOLOR) meAtoi(buff)) == meCOLOR_INVALID) ||
-       (meGetString((meUByte *)"Red",0,0,buff,MAXBUF) == ABORT) ||
+    if((meGetString((meUByte *)"Index",0,0,buff,meBUF_SIZE_MAX) == meABORT) ||
+       ((index = (meColor) meAtoi(buff)) == meCOLOR_INVALID) ||
+       (meGetString((meUByte *)"Red",0,0,buff,meBUF_SIZE_MAX) == meABORT) ||
        ((r = (meUByte) meAtoi(buff)),
-        (meGetString((meUByte *)"Green",0,0,buff,MAXBUF) == ABORT)) ||
+        (meGetString((meUByte *)"Green",0,0,buff,meBUF_SIZE_MAX) == meABORT)) ||
        ((g = (meUByte) meAtoi(buff)),
-        (meGetString((meUByte *)"Blue",0,0,buff,MAXBUF) == ABORT)))
-        return FALSE ;
+        (meGetString((meUByte *)"Blue",0,0,buff,meBUF_SIZE_MAX) == meABORT)))
+        return meFALSE ;
     b = (meUByte) meAtoi(buff) ;
 
     n = TTaddColor(index,r,g,b) ;
-    if(index == (meCOLOR) meStyleGetBColor(meSchemeGetStyle(globScheme)))
+    if(index == (meColor) meStyleGetBColor(meSchemeGetStyle(globScheme)))
         TTsetBgcol() ;
     return n ;
 }
@@ -2945,16 +2978,16 @@ addColorScheme(int f, int n)
     /* Brought out as add-font also uses the same prompts */
     static meUByte *schmPromptM[4] = {(meUByte *)"Normal",(meUByte *)"Current",(meUByte *)"Select",(meUByte *)"Cur-Sel" } ;
     static meUByte *schmPromptP[4] = {(meUByte *)" fcol",(meUByte *)" bcol",(meUByte *)" nfont",(meUByte *)"rfont" } ;
-    meSTYLE *hcolors ;
-    meSTYLE *dcolors ;
-    meCOLOR  scheme[4][4] ;
+    meStyle *hcolors ;
+    meStyle *dcolors ;
+    meColor  scheme[4][4] ;
     meUByte  fcol, bcol, font ;
     meUByte  prompt[20] ;
-    meUByte  buf[MAXBUF] ;
+    meUByte  buf[meBUF_SIZE_MAX] ;
     int index, ii, jj, col ;
 
     /* Get the hilight colour index */
-    if ((meGetString((meUByte *)"Color scheme index",0,0,buf,MAXBUF) != TRUE) ||
+    if ((meGetString((meUByte *)"Color scheme index",0,0,buf,meBUF_SIZE_MAX) != meTRUE) ||
         ((index = meAtoi(buf)) < 0))
         return mlwrite(MWABORT|MWPAUSE,(meUByte *)"Invalid scheme index number");
 
@@ -2968,18 +3001,18 @@ addColorScheme(int f, int n)
     if (index >= styleTableSize)
     {
         /* Allocate a new table */
-        if((styleTable = meRealloc(styleTable,(index+1)*meSCHEME_STYLES*sizeof(meSTYLE))) == NULL)
+        if((styleTable = meRealloc(styleTable,(index+1)*meSCHEME_STYLES*sizeof(meStyle))) == NULL)
             return mlwrite (MWABORT|MWPAUSE,(meUByte *)"Cannot allocate scheme table");
         for(ii=styleTableSize ; ii<=index ; ii++)
-            memcpy(styleTable+(ii*meSCHEME_STYLES),defScheme,meSCHEME_STYLES*sizeof(meSTYLE)) ;
+            memcpy(styleTable+(ii*meSCHEME_STYLES),defaultScheme,meSCHEME_STYLES*sizeof(meStyle)) ;
         styleTableSize = index+1 ;
     }
     hcolors = styleTable+(index*meSCHEME_STYLES) ;
 
     if (f)
     {
-        memcpy(hcolors,dcolors,meSCHEME_STYLES*sizeof(meSTYLE));
-        return TRUE ;
+        memcpy(hcolors,dcolors,meSCHEME_STYLES*sizeof(meStyle));
+        return meTRUE ;
     }
 
     /* Get the parameters from the user. */
@@ -2989,7 +3022,7 @@ addColorScheme(int f, int n)
         {
             meStrcpy(prompt,schmPromptM[ii]) ;
             meStrcat(prompt,schmPromptP[jj]) ;
-            if((meGetString(prompt,0,0,buf,MAXBUF) != TRUE) ||
+            if((meGetString(prompt,0,0,buf,meBUF_SIZE_MAX) != meTRUE) ||
                ((col=meAtoi(buf)) < 0) || (col >= noColors))
                 return mlwrite(MWABORT|MWPAUSE,(meUByte *)"Invalid scheme entry");
             scheme[ii][jj] = col;
@@ -3003,7 +3036,7 @@ addColorScheme(int f, int n)
         {
             meStrcpy(prompt,schmPromptM[ii]) ;
             meStrcat(prompt,schmPromptP[jj]) ;
-            if(meGetString(prompt,0,0,buf,MAXBUF) != TRUE)
+            if(meGetString(prompt,0,0,buf,meBUF_SIZE_MAX) != meTRUE)
                 break;
             scheme[ii][jj] = ((meUByte) meAtoi(buf)) & meFONT_MASK ;
         }
@@ -3039,62 +3072,62 @@ addColorScheme(int f, int n)
     }
     if(index == globScheme)
         TTsetBgcol() ;
-    return TRUE;
+    return meTRUE;
 }
 #endif
 
 
-/************************** VIRTUAL VIDEO INTERFACES **************************
+/************************** VIRTUAL meVideoLine INTERFACES **************************
  *
- * vvideoDetach
+ * meVideoDetach
  * Detach the window from the virtual video block. If the virtual video
  * block has no more windows attached then destruct the block itself.
  */
 
 void
-vvideoDetach (WINDOW *wp)
+meVideoDetach (meWindow *wp)
 {
-    VVIDEO *vvptr;
-    WINDOW *twp;
+    meVideo *vvptr;
+    meWindow *twp;
 
-    vvptr = wp->w_vvideo;               /* Get windows virtual video block */
+    vvptr = wp->video;               /* Get windows virtual video block */
     meAssert (vvptr != NULL);
 
     if ((twp = vvptr->window) == wp)    /* First window in the chain ?? */
     {
-        vvptr->window = wp->w_lvideo;   /* Detach from the head */
-        wp->w_vvideo = NULL;
+        vvptr->window = wp->videoNext;   /* Detach from the head */
+        wp->video = NULL;
     }
     else                                /* Not first in chain - chase block */
     {
         while (twp != NULL)
         {
-            if (twp->w_lvideo == wp)
+            if (twp->videoNext == wp)
             {
-                twp->w_lvideo = wp->w_lvideo;
-                wp->w_vvideo = NULL;
+                twp->videoNext = wp->videoNext;
+                wp->video = NULL;
                 break;
             }
             else
-                twp = twp->w_lvideo;
+                twp = twp->videoNext;
         }
     }
 
     meAssert (twp != NULL);
 
     /* Clean up the Virtual video frame if it is empty. Note
-     * that vvptr == vvideo is handled correctly and is not
+     * that vvptr == frameCur->video is handled correctly and is not
      * deleted. */
     if (vvptr->window == NULL)
     {
-        VVIDEO *vv;
+        meVideo *vv;
 
-        for (vv = &vvideo; vv != NULL; vv = vv->next)
+        for (vv = &frameCur->video; vv != NULL; vv = vv->next)
         {
             if (vv->next == vvptr)
             {
                 vv->next = vvptr->next;
-                meNullFree (vvptr->video);
+                meNullFree (vvptr->lineArray);
                 meFree (vvptr);
                 break;
             }
@@ -3103,69 +3136,44 @@ vvideoDetach (WINDOW *wp)
 }
 
 /*
- * vvideoAttach
+ * meVideoAttach
  * Attach a window to the virtual video block. If no virtual video block
  * is specified then construct a new block and link it into the existing
  * structure.
  */
 
 int
-vvideoAttach (VVIDEO *vvptr, WINDOW *wp)
+meVideoAttach (meVideo *vvptr, meWindow *wp)
 {
     /* Construct a new virtual video block if required */
     if (vvptr == NULL)
     {
-        VIDEO  *vs;                     /* New video structure */
+        meVideoLine  *vs;                     /* New video structure */
 
         /* Allocate a new video structure */
-        if (((vvptr = (VVIDEO *) meMalloc (sizeof (VVIDEO))) == NULL) ||
-            ((vs = (VIDEO *) meMalloc(TTmrow*sizeof(VIDEO))) == NULL))
+        if (((vvptr = (meVideo *) meMalloc (sizeof (meVideo))) == NULL) ||
+            ((vs = (meVideoLine *) meMalloc(frameCur->depthMax*sizeof(meVideoLine))) == NULL))
         {
             meNullFree (vvptr);
-            return (FALSE);
+            return (meFALSE);
         }
 
-        /* Reset the strucure and chain to the existing vvideo list */
-        memset (vs, 0, TTmrow * sizeof(VIDEO));
-        memset (vvptr, 0, sizeof (VVIDEO));
-        vvptr->video = vs;              /* Attach the video structure */
-        vvptr->next = vvideo.next;      /* Chain into vvideo list */
-        vvideo.next = vvptr;
+        /* Reset the strucure and chain to the existing frameCur->video list */
+        memset (vs, 0, frameCur->depthMax * sizeof(meVideoLine));
+        memset (vvptr, 0, sizeof (meVideo));
+        vvptr->lineArray = vs;                    /* Attach the video structure */
+        vvptr->next = frameCur->video.next;      /* Chain into frameCur->vvideo list */
+        frameCur->video.next = vvptr;
 
         /* Reset information in the Window block */
-        wp->w_lvideo = NULL;
+        wp->videoNext = NULL;
     }
 
-    /* Link the window to the vvideo block */
-    wp->w_vvideo = vvptr;
-    wp->w_lvideo = vvptr->window;
+    /* Link the window to the frameCur->video block */
+    wp->video = vvptr;
+    wp->videoNext = vvptr->window;
     vvptr->window = wp;
-    return (TRUE);
+    return (meTRUE);
 }
 
 
-/*
- * vvideoEnlarge
- * Enlarge the video frames attached to the virtual video structures.
- * Usually follows an enlargement of the screen. */
-int
-vvideoEnlarge (int rows)
-{
-    VVIDEO *vvptr;                      /* Pointer to the video blocks */
-    VIDEO  *vs;                         /* Video store line */
-
-    for (vvptr = &vvideo; vvptr != NULL; vvptr = vvptr->next)
-    {
-        /* Try and allocate new video frame */
-        if ((vs = (VIDEO *) meMalloc (rows * sizeof (VIDEO))) == NULL)
-            return (FALSE);
-
-        /* Allocation successful. Reset the contents to zero and swap
-           for the existing one */
-        memset (vs, 0, rows * sizeof (VIDEO));  /* Reset to zero */
-        meFree (vvptr->video);                  /* Dispose of old one */
-        vvptr->video = vs;                      /* Swap in new one */
-    }
-
-    return (TRUE);
-}

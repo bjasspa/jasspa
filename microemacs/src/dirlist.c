@@ -34,6 +34,8 @@
 #include "emain.h"
 #include "efunc.h"
 
+#if MEOPT_DIRLIST
+
 #include	<time.h>
 #if (defined _UNIX) || (defined _DOS) || (defined _WIN32)
 #include	<errno.h>
@@ -85,7 +87,7 @@ typedef struct DIRNODE {
 } DIRNODE;
 
 static DIRNODE  *dirlist;                /* Directory list root */
-static LINE     *curDirLine;             /* Current dir node */
+static meLine     *curDirLine;             /* Current dir node */
 
 
 /*
@@ -368,7 +370,7 @@ static DIRNODE *
 addLinkPath(DIRNODE *dnode, meUByte *pathname)
 {
     DIRNODE *dp ;
-    meUByte    lpp[FILEBUF], buff[FILEBUF], *ff ;
+    meUByte    lpp[meFILEBUF_SIZE_MAX], buff[meFILEBUF_SIZE_MAX], *ff ;
     
     if(dnode->mask & DIR_UNKNOWN)
         dnode->mask = (dnode->mask & ~DIR_UNKNOWN)|DIR_HIDDEN ;
@@ -403,7 +405,7 @@ evalNode(register DIRNODE *dnode, meUByte *pathname, int flags)
         if((dnode->child == NULL) &&
            ((!(dnode->mask & DIR_UNKNOWN) && !(flags & LDO_FORCE)) ||
              (addLinkPath(dnode,pathname) == NULL)))
-            return TRUE ;
+            return meTRUE ;
         dnode = dnode->child ;
     }
     if((dnode->mask & DIR_UNKNOWN) || (flags & LDO_FORCE))
@@ -491,7 +493,7 @@ evalNode(register DIRNODE *dnode, meUByte *pathname, int flags)
                 int flen ;
                 
                 if(TTbreakTest(0))
-                    return ctrlg(FALSE,1) ;
+                    return ctrlg(meFALSE,1) ;
                 /* Get the file and strip off any directory tail */
                 fn = files [ii];
                 flen = meStrlen(fn) - 1 ;
@@ -563,18 +565,18 @@ evalNode(register DIRNODE *dnode, meUByte *pathname, int flags)
         while(dtemp != NULL)
         {
             meStrcpy(ss,dtemp->dname) ;
-            if(evalNode(dtemp,pathname,flags) != TRUE)
+            if(evalNode(dtemp,pathname,flags) != meTRUE)
             {
                 dnode->child = dhead ;
                 *ss = '\0' ;
-                return ABORT ;
+                return meABORT ;
             }
             dtemp = dtemp->next ;
         }
         dnode->child = dhead ;
         *ss = '\0' ;
     }
-    return TRUE ;
+    return meTRUE ;
 }
 
 static void
@@ -672,10 +674,10 @@ findDirLine(long itemNo, meUByte *fname)
  * Draw the directory list into a pop-up buffer.
  */
 static void
-dirDrawDirectory(BUFFER *bp, DIRNODE *dnode, int iLen, meUByte *iStr, meUByte *fname)
+dirDrawDirectory(meBuffer *bp, DIRNODE *dnode, int iLen, meUByte *iStr, meUByte *fname)
 {
     DIRNODE *dn, *ndn ;
-    meUByte buf[MAXBUF], *fn ;              /* Working line buffer */
+    meUByte buf[meBUF_SIZE_MAX], *fn ;              /* Working line buffer */
     int len, flen ;                      /* Length buffer under construction */
     
     while(dnode != NULL)
@@ -723,7 +725,7 @@ dirDrawDirectory(BUFFER *bp, DIRNODE *dnode, int iLen, meUByte *iStr, meUByte *f
                 if(fname[flen] == '\0')
                 {
                     buf[0] = '*';
-                    curDirLine = lback(bp->b_dotp) ;
+                    curDirLine = meLineGetPrev(bp->dotLine) ;
                 }
                 else
                     fn = fname+flen ;
@@ -760,41 +762,41 @@ static meUByte dirBufName[]="*directory*" ;
 static void
 dirDrawDir(meUByte *fname, int n)
 {
-    BUFFER *bp;                         /* Buffer pointer */
-    WINDOW *wp;                         /* Window associated with buffer */
-    meUByte   iStr[MAXBUF];               /* Vertical bars buffer */
+    meBuffer *bp;                         /* Buffer pointer */
+    meWindow *wp;                         /* Window associated with buffer */
+    meUByte   iStr[meBUF_SIZE_MAX];               /* Vertical bars buffer */
     
     /* Find the buffer and vapour the old one */
     if((wp = wpopup(dirBufName,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR))) == NULL)
         return ;
-    bp = wp->w_bufp ;                   /* Point to the buffer */
+    bp = wp->buffer ;                   /* Point to the buffer */
     
     if(n & LDO_SELECT)
     {
-        if(fnamecmp(bp->b_fname,fname))
+        if(fnamecmp(bp->fileName,fname))
         {   /* Free off old file name */
-            if(bp->b_fname != NULL)
-                meFree(bp->b_fname) ;
-            bp->b_fname = meStrdup(fname) ;
+            if(bp->fileName != NULL)
+                meFree(bp->fileName) ;
+            bp->fileName = meStrdup(fname) ;
         }
     }
     curDirLine = NULL ;
-    dirDrawDirectory(bp,dirlist,0,iStr,bp->b_fname) ;
-    bp->b_dotp = lforw(bp->b_linep);
-    bp->b_doto = 0 ;
-    bp->line_no = 0 ;
+    dirDrawDirectory(bp,dirlist,0,iStr,bp->fileName) ;
+    bp->dotLine = meLineGetNext(bp->baseLine);
+    bp->dotOffset = 0 ;
+    bp->dotLineNo = 0 ;
     if(curDirLine != NULL)
     {
-        curDirLine = lforw(curDirLine) ;
-        while(bp->b_dotp != curDirLine)
+        curDirLine = meLineGetNext(curDirLine) ;
+        while(bp->dotLine != curDirLine)
         {
-            bp->b_dotp = lforw(bp->b_dotp) ;
-            (bp->line_no)++ ;
+            bp->dotLine = meLineGetNext(bp->dotLine) ;
+            (bp->dotLineNo)++ ;
         }
     }
-    meModeSet(bp->b_mode,MDVIEW) ;
-    meModeClear(bp->b_mode,MDATSV) ;
-    meModeClear(bp->b_mode,MDUNDO) ;
+    meModeSet(bp->mode,MDVIEW) ;
+    meModeClear(bp->mode,MDATSV) ;
+    meModeClear(bp->mode,MDUNDO) ;
     resetBufferWindows(bp) ;
 }
 
@@ -802,21 +804,21 @@ int
 directoryTree(int f, int n)
 {
     DIRNODE *dnode, *dn ;
-    meUByte buf[FILEBUF] ;
+    meUByte buf[meFILEBUF_SIZE_MAX] ;
     
     if(n & LDO_GETPATH)
     {
-        if(inputFileName((meUByte *)"List Directory ", buf, 1) != TRUE)
-            return ABORT ;
+        if(inputFileName((meUByte *)"List Directory ", buf, 1) != meTRUE)
+            return meABORT ;
         if((dnode = addPath(buf,0)) == NULL)
             return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s not a directory]",buf);
     }
     else
     {
-        if(meStrcmp(curbp->b_bname,dirBufName))
+        if(meStrcmp(frameCur->bufferCur->name,dirBufName))
             return mlwrite(MWABORT,(meUByte *)"[buffer is not *directory*]") ;
-        if((dnode = findDirLine(curwp->line_no,buf)) == NULL)
-            return ABORT ;
+        if((dnode = findDirLine(frameCur->windowCur->dotLineNo,buf)) == NULL)
+            return meABORT ;
     }
     dn = dnode ;
     while((dn->lname != NULL) && (dn->child != NULL))
@@ -842,5 +844,6 @@ directoryTree(int f, int n)
         setHiddenFlag(dnode,n) ;
     
     dirDrawDir(buf,n) ;
-    return TRUE ;
+    return meTRUE ;
 }
+#endif

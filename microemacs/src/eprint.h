@@ -44,10 +44,11 @@ extern "C" {
 #define mePD_WIN   0x02                   /* Windows autosave */
 
 /* Define the meaning for bits in /print/flags */ 
-#define PFLAG_ENBLHEADER         0x10   /* Enable the header */
-#define PFLAG_ENBLFOOTER         0x20   /* Enable the footer */
-#define PFLAG_ENBLLINENO         0x40   /* Enable line nos */
-#define PFLAG_ENBLTRUNCC         0x80   /* Enable truncated line '\' char */
+#define PFLAG_ENBLHEADER         0x010    /* Enable the header */
+#define PFLAG_ENBLFOOTER         0x020    /* Enable the footer */
+#define PFLAG_ENBLLINENO         0x040    /* Enable line nos */
+#define PFLAG_ENBLTRUNCC         0x080    /* Enable truncated line '\' char */
+#define PFLAG_SILENT             0x100    /* Print silently */
 
 /* Define the destinations */
 #define PDEST_BUFFER             0x00   /* To Buffer only */
@@ -99,7 +100,7 @@ typedef struct
     int colorNum;                       /* Number of printer colors */
     int schemeNum;                      /* Number of printer schemes */
     meUInt *color;                      /* Color table */
-    meSTYLE *scheme;                    /* Scheme table */
+    meStyle *scheme;                    /* Scheme table */
 } PRINTER;
 
 extern meUByte *printNames[];
