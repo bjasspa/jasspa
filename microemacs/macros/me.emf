@@ -205,6 +205,7 @@ add-file-hook "*icommand* *shell*"                            fhook-ipipe
 add-file-hook ".emf"                                          fhook-emf
 add-file-hook ".doc"                                          fhook-doc
 add-file-hook ".txt"                                          fhook-txt
+add-file-hook ".jst"                                          fhook-jst
 add-file-hook ".tex"                                          fhook-latex
 add-file-hook ".bib"                                          fhook-bibtex
 add-file-hook ".n .1 .2 .3 .4 .5 .6 .7 .8 .9 .so .tni .sm"    fhook-nroff
@@ -269,6 +270,7 @@ add-file-hook ".ex .exw .exu .e .ew .eu"                      fhook-euphor
 -1 add-file-hook "-!-[ \t]*msdos.*-!-"           fhook-dos    ; -!- msdos -!-
 -1 add-file-hook "-!-[ \t]*makefile.*-!-"        fhook-make   ; -!- makefile -!-
 -1 add-file-hook "-!-[ \t]*document.*-!-"        fhook-doc    ; -!- document -!-
+-1 add-file-hook "-!-[ \t]*jst*-!-"              fhook-jst    ; -!- jst -!-
 -1 add-file-hook "-!-[ \t]*fvwm.*-!-"            fhook-fvwm   ; -!- fvwm -!-
 -1 add-file-hook "-!-[ \t]*erf.*-!-"             fhook-erf    ; -!- erf -!-
 -1 add-file-hook "-!-[ \t]*fold:.*-!-"           fhook-fold   ; -!- fold:... -!-

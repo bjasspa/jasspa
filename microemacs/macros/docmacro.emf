@@ -46,7 +46,7 @@
 ;         >
 ;         > Author:       My Self
 ;         > Created:      11/11/97
-;         > Modified:     <011228.2341>
+;         > Modified:     <020118.2209>
 ;         > Location:     /xx/yy/zz.doc
 ; *
 ;         All lines commencing with '*' are assumed to be bullet lists. Bullet
@@ -94,25 +94,25 @@ set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
     ; we do not need it. This will only hurt branch tokens, as there
     ; are none below then there is no adverse effect.
     0 hilight  .hilight.doc 2 100                               $global-scheme
-    hilight .hilight.doc 0x20 "*\\}[ \t]+\\w"                   .scheme.no1
+    hilight .hilight.doc 0x20 "*\\}[ \t]+\\S "                  .scheme.no1
     hilight .hilight.doc 0x21 "\\w)"                            .scheme.no1
-    hilight .hilight.doc 1 "\\*[A-Za-z_]+\\*"                   .scheme.bold
-    hilight .hilight.doc 1 "<[A-Za-z_]+>"                       .scheme.italic
-    hilight .hilight.doc 1 "_[A-Za-z0-9]+_"                     .scheme.under
+    hilight .hilight.doc 1 "\\*\\S [^*\n]*\\*"                  .scheme.bold
+    hilight .hilight.doc 1 "~\\S [^~\n]*~"                      .scheme.italic
+    hilight .hilight.doc 1 "_\\S [^_\n]*_"                      .scheme.under
     hilight .hilight.doc 0 "^\\s *\\[\\w*\\]"                   .scheme.no1
     hilight .hilight.doc 0x22 "[0-9]+\\.[0-9.]*[ \t]+\\w"       .scheme.header
     hilight .hilight.doc 0x804 "\"" "\"" "\\"                   .scheme.string
-    hilight .hilight.doc 0x804 "`" "'" ""                       .scheme.no1
+    hilight .hilight.doc 0x804 "`" "'" ""                       .scheme.bold-italic
     hilight .hilight.doc 0    "'.'"                             .scheme.quote
     hilight .hilight.doc 0    "'\\\\.'"                         .scheme.quote
     hilight .hilight.doc 0x22 "^[ \t]*Appendix [[:alpha:]]"     .scheme.header
-    hilight .hilight.doc 0x22 "_\\W"                            .scheme.comment
+    hilight .hilight.doc 0    "^>\\."                           .scheme.comment
+    hilight .hilight.doc 0x02 "^>_"                             .scheme.comment
     hilight .hilight.doc 0x22 ">"                               .scheme.comment
-    hilight .hilight.doc 0x80 "^[ \t]+@" .hilight.doc1          .scheme.no2
+    hilight .hilight.doc 0x80 "^>@" .hilight.doc1               .scheme.no2
     ; @ block
     0 hilight .hilight.doc1 0                                   .scheme.no2
     hilight   .hilight.doc1 0x80 "^[ \t]*\n" .hilight.doc       $global-scheme
-    hilight   .hilight.doc1 0x80 "^\n"       .hilight.doc       $global-scheme
     
     ; Allow inserts into the documentation mode. You may add to the
     ; available inserts by adding to your mydoc.emf file
@@ -205,87 +205,8 @@ set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
     !endif
 !endif
 
-!if &not &exist .osd.doc-stat
-    set-variable .osd.doc-stat &pinc .osd.next 1
-!endif
--1 osd .osd.doc-stat
-osd .osd.doc-stat 0  "batcdH" 9 3 99 .scheme.osd-title "Current Mode Settings"
-osd .osd.doc-stat 3  "" 
-osd .osd.doc-stat 7  "" 
-osd .osd.doc-stat 11 "" 
-osd .osd.doc-stat 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
-
-define-macro doc-mode-state
-    osd .osd.doc-stat 4  "" &spr " Filling to column : %d " $fill-col 
-    osd .osd.doc-stat 5  "" &spr " Justification Mode: %s " $fill-mode
-    set-variable #l0 "Unknown mode, default to left:NAuto-detect All (L/R/C):OAuto-detect One for word-processor:BAuto-detect Both (R/C):LAuto-detect Left:RAuto-detect Right:CAuto-detect Center:nNone:bBoth justify (L/R):lLeft:rRight:cCenter:oOne for word-processor:"
-    set-variable #l0 &rig #l0 &add 1 &sin &cat ":" $fill-mode #l0
-    set-variable #l0 &lef #l0 &sub &sin ":" #l0 1
-    osd .osd.doc-stat 6  "" &spr "     %s " #l0
-    osd .osd.doc-stat 8  "" &spr " Ignore characters : %s " $fill-ignore
-    osd .osd.doc-stat 9  "" &spr " Bullet characters : %s " $fill-bullet
-    osd .osd.doc-stat 10 "" &spr " Bullet lookahead  : %d " $fill-bullet-len
-    .osd.doc-stat osd
-!emacro
-
-0 define-macro doc-set-justify
-    set-variable $fill-mode &mid "BBCLnR" @# 1
-    doc-mode-state
-!emacro
-
-define-macro fill-paragraph-center
-    set-variable #l1 $fill-mode
-    set-variable $fill-mode "c"
-    @# fill-paragraph
-    set-variable $fill-mode #l1
-!emacro
-
-define-macro fill-paragraph-left
-    set-variable #l1 $fill-mode
-    set-variable $fill-mode "l"
-    @# fill-paragraph @mna
-    set-variable $fill-mode #l1
-!emacro
-
-define-macro fill-paragraph-right
-    set-variable #l1 $fill-mode
-    set-variable $fill-mode "r"
-    @# fill-paragraph @mna
-    set-variable $fill-mode #l1
-!emacro
-
-define-macro fill-paragraph-both
-    set-variable #l1 $fill-mode
-    set-variable $fill-mode "b"
-    @# fill-paragraph @mna
-    set-variable $fill-mode #l1
-!emacro
-
-define-macro fill-paragraph-gutter
-    set-variable #l1 $fill-mode
-    set-variable $fill-mode "g"
-    @# fill-paragraph @mna
-    set-variable $fill-mode #l1
-!emacro
-
-; Default body of a bhook.
-define-macro doc-bhook-body
-    ; Save other context; restore local context
-    set-variable :ofill-mode $fill-mode
-    set-variable $fill-mode  :fill-mode
-    set-variable :ofill-col  $fill-col
-    set-variable $fill-col   :fill-col
-!emacro
-
-; Default body of a ehook
-define-macro doc-ehook-body
-    ; Restore existing context
-    set-variable :fill-mode $fill-mode
-    set-variable $fill-mode :ofill-mode
-    set-variable :fill-col $fill-col
-    set-variable $fill-col :ofill-col
-    ;ml-write "Restored old setting !! " $fill-col
-!emacro
+; load docutl.emf to get the doc support macros
+execute-file "docutl"
 
 ; Defualt body of a fhook
 define-macro doc-fhook-body
@@ -293,8 +214,7 @@ define-macro doc-fhook-body
     ; if arg is 0 this is a new file so add template
     @# buffer-initialize #l1 
     ; Set up the default constants
-    set-variable :fill-mode $fill-mode
-    set-variable :fill-col $fill-col
+    doc-buffer-context-init
     ; Over-ride any special document modes
     set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
     !force set-variable #l2 @2

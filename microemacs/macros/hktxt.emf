@@ -21,14 +21,14 @@ set-variable .fhook-txt.setup-mask "aefghijkmnopstuwx"
 
 ; Set up for documentation mode.
 define-macro bhook-txt
-    doc-bhook-body
+    doc-buffer-context
     !if &exist my-bhook-txt
         my-bhook-txt
     !endif
 !emacro
 
 define-macro ehook-txt
-    doc-ehook-body
+    doc-global-context
     !if &exist my-ehook-txt
         my-ehook-txt
     !endif
