@@ -240,11 +240,11 @@ osd .osd.ftagl 50  ""
 
 osd .osd.ftagr 0   ""
 osd .osd.ftagr 5   ""
-osd .osd.ftagr 10  "BHRxt" .scheme.osd-ebtt " \HFilter "          f osd-find-tag-find
+osd .osd.ftagr 10  "BHRxt" .scheme.osd-ebtt " \HFilter " f osd-find-tag-find
 osd .osd.ftagr 20  ""
-osd .osd.ftagr 30  "BHt" .scheme.osd-ebtt " \HGoto "          f osd-find-tag-goto
+osd .osd.ftagr 30  "BHt" .scheme.osd-ebtt " \HGoto   "   f osd-find-tag-goto
 osd .osd.ftagr 40  ""
-osd .osd.ftagr 50  "BHt"  .scheme.osd-ebtt " \HCancel "        f void
+osd .osd.ftagr 50  "BHt"  .scheme.osd-ebtt " \HCancel "  f void
 
 -1 osd .osd.ftag
 osd .osd.ftag 0  "batcdHR" 3 6 30 .scheme.osd-title "Find Tag" osd-find-tag-resize
