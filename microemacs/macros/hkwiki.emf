@@ -315,7 +315,7 @@ define-macro wiki-node-menu
     !if #l9
         set-position "\x81"
         -1 osd .osd.tmp
-        osd .osd.tmp 0 "sSd" .scheme.osd-child .w .d 0 -1 1
+        osd .osd.tmp 0 "sS" .scheme.osd-child .w .d 0 -1
         set-variable #l1 0
         beginning-of-buffer
         !force search-buffer "Em" "^\\*\\(\\**\\)[ \t]*\\(\\S [^:#\n]*\\)"
