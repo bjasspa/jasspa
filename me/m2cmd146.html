@@ -1,0 +1,64 @@
+<HTML>
+<HEAD><TITLE>yank(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+yank(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>yank - Paste (copy) kill buffer contents into buffer </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>yank</B> (<B>C-y</B>)&nbsp; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>When a non negative argument is supplied to <B>yank</B>, the command copies the contents of the kill buffer <I>n</I> times into the current buffer at the current cursor position. This does not clear the kill buffer, and therefore may be used to make multiple copies of a section of text. On windowing systems which support clip-boards, such as windows and X-terms, MicroEmacs will also cut to and paste from the global clip-board. 
+<P>If <I>yank</I> is IMMEDIATELY followed by a 
+<A HREF="m2cmd111.html">reyank(2)</A> then the <I>yanked</I> text is replaced by text of the next entry in the kill ring. (another <B>reyank</B> replaces the text with the previous reyank text and so on). 
+<P>If an -ve argument is given, <B>yank</B> removes the last 0-<I>n</I> items from the kill ring. 
+<P>Text is inserted into the kill buffer by one of the following commands:- 
+<UL><P>
+<A HREF="m2cmd035.html">backward-kill-word(2)</A>, 
+<A HREF="m2cmd022.html">copy-region(2)</A>, 
+<A HREF="m2cmd035.html">forward-kill-word(2)</A>, 
+<A HREF="m2cmd082.html">kill-line(2)</A>, 
+<A HREF="m2cmd080.html">kill-paragraph(2)</A>, 
+<A HREF="m2cmd081.html">kill-region(2)</A>, 
+<A HREF="m2cmd034.html">forward-delete-char(2)</A>, 
+<A HREF="m2cmd034.html">backward-delete-char(2)</A>. </UL>
+<P>All the above commands (except <B>copy-region</B>) cut text out of the buffer, the last 2 commands require the 
+<A HREF="m2mod007.html">letter(2m)</A> mode enabled to add the text to the kill buffer. If any of these commands are executed immediately after any other (including itself) or the 
+<A HREF="m4fil017.html">@cl(4)</A> variable is set to one of these command, the new kill text is appended to the last kill buffer text. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P>Windowing systems such as X-Windows and Microsoft Windows utilize a global windowing kill buffer allowing data to be moved between windowing applications (<I>cut buffer</I> and <I>clipboard</I>, respectively). Within these environments MicroEmacs '02 automatically interacts with the windowing systems kill buffer, the last MicroEmacs '02 kill buffer entry is immediately available for a <I>paste</I> operation into another application (regardless of how it was inserted into the kill buffer). Conversely, data placed in the windowing kill buffer is available to MicroEmacs '02, via <B>yank</B>, until a new item has been inserted into the kill buffer (the data may still be available via 
+<A HREF="m2cmd111.html">reyank(2)</A>). </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following example is a basic macro code implementation of the 
+<A HREF="m2cmd135.html">transpose-lines(2)</A> command, <UL>
+<PRE>beginning-of-line 
+kill-line 
+forward-line 
+yank 
+-1&nbsp;yank 
+backward-line 
+</PRE></UL>
+<P>Note that similar to <B>transpose-lines</B> it does not leave the moved line in the kill buffer, effectively tidying up after itself. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd159.html">yank-rectangle(2)</A>, 
+<A HREF="m2cmd022.html">copy-region(2)</A>, 
+<A HREF="m2cmd081.html">kill-region(2)</A>, 
+<A HREF="m2mod007.html">letter(2m)</A>, 
+<A HREF="m2cmd111.html">reyank(2)</A>, 
+<A HREF="m4fil020.html">@y(4)</A>, 
+<A HREF="m4fil017.html">@cc(4)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

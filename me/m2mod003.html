@@ -1,0 +1,37 @@
+<HTML>
+<HEAD><TITLE>crypt(2m)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+crypt(2m)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>crypt - Encrypted file mode </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>crypt Mode</B> 
+<P><B>Y</B> - mode line letter. </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>crypt</B> mode enables encrypted files to be loaded and saved for security purposes. The key can be set at any time using the command 
+<A HREF="m2cmd120.html">set-encryption-key(2)</A>. Warning, take care if setting this as a global mode, it can have side-effects. 
+<P>The encryption algorithm is a Beaufort Cipher with a variant key. This is reasonably difficult to decrypt. When you write out text, if <TT>crypt</TT> mode is active and there is no encryption key, MicroEmacs '02 will ask: 
+<UL><P><TT>Encryption String:</TT> </UL>
+<P>Type in a word or phrase of at least five and up to 128 characters for the encryption to use. If you look at the file which is then written out, all the printable characters have been scrambled. To read such a file later, use 
+<A HREF="m3mac030.html">find-cfile(3)</A> to load <I>ciphertext</I> files, you will be asked the encryption key before the file is read. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd006.html">buffer-mode(2)</A>, 
+<A HREF="m3mac030.html">find-cfile(3)</A>, 
+<A HREF="m2cmd005.html">global-mode(2)</A>, 
+<A HREF="m2cmd120.html">set-encryption-key(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

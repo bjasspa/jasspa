@@ -1,0 +1,114 @@
+<HTML>
+<HEAD><TITLE>c(9)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+c(9)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P>C, C++ - C and C++ programming language templates </UL>
+<H2><B>FILES </B></H2>
+<UL><P><B>hkc.emf</B> - C programming language hook definition 
+<BR><B>hkcpp.emf</B> - C++ programming language hook definition 
+<P><B>c.etf</B> - C programming language template file 
+<BR><B>h.etf</B> - C programming language header template file 
+<BR><B>cpp.etf</B> - C++ programming language template file 
+<BR><B>hpp.etf</B> - C++ programming language header template file </UL>
+<H2><B>EXTENSIONS </B></H2>
+<UL><P><B>.c</B>, <B>.h</B>, <B>.def</B> - ANSI C 
+<BR><B>.cpp</B>, <B>.cc</B>, <B>.hpp</B>, <B>.rc</B> <B>.C</B> <I>(UNIX only)</I> - C++ programming language 
+<BR><B>.l</B> - LEX 
+<BR><B>.y</B> - YACC 
+<BR><B>.i</B> - C (or C++) pre-processed file (i.e. output from pre-processor). 
+<BR><B>.rc</B> - Microsoft Developer resource file. </UL>
+<H2><B>MAGIC STRINGS </B></H2>
+<UL><P><B>-*- c -*-</B> 
+<BR><UL>Recognized by GNU and MicroEmacs. Denotes a 'C' programming type file, may be used in <B>.c</B>, <B>.def</B> and <B>.h</B> files. </UL>
+<P><B>-*- c++ -*-</B> 
+<BR><UL>Recognized by GNU and MicroEmacs. Denotes a C++ programming type file, may be used in <B>.c</B>, <B>.def</B> and <B>.h</B> files. </UL></UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The <B>C</B> and <B>C++</B> file type templates offer the most sophisticated editing features within the MicroEmacs '02 environment. 
+<P><B>General Editing</B> 
+<BR><UL>On creating a new file, a new header is automatically included into the file. 
+<A HREF="m2mod013.html">time(2m)</A> is by default enabled, allowing the modification time-stamp to be maintained in the header. </UL>
+<P><B>Hilighting</B> 
+<BR><UL>The hilighting features allow commands, variables, logical, preprocessor definitions, comments, strings and characters of the language to be differentiated and rendered in different colors. </UL>
+<P><B>Auto Layout</B> 
+<BR><UL>The C-Mode 
+<A HREF="m2mod002.html">cmode(2m)</A> performs automatic layout of the text, variables such as 
+<A HREF="m5var013.html">c-brace(5)</A> allow the brace position and text formation to be modified. </UL>
+<UL><P>
+<A HREF="m3mac025.html">restyle-region(3)</A> and 
+<A HREF="m3mac025.html">restyle-buffer(3)</A> are available to reformat (re-layout) selected sections of the buffer, or the whole buffer, respectively. </UL>
+<UL><P>Comments may be formatted using <TT>esc o</TT>, which reformats the comments according to the current fill paragraph. If a comment commences with <TT>/***...</TT> then the comment is automatically formatted to a box. If the comment commentces with <TT>/**</TT> then the comment is assumed to be a <I>Java</I> <I>Doc</I> comment. </UL>
+<P><B>Tags</B> 
+<BR><UL>A C-tags file may be generated within the editor using the <B>Tools</B> -&gt; <B>C Tools</B> -&gt; <B>Create Tag File</B>. 
+<A HREF="m2cmd057.html">find-tag(2)</A> takes the user to the file using the tag information. </UL>
+<UL><P>On invoking the tag generator then the user is presented with a dialog box which specifies the generation option of the tags file. The base directory of the tags file search and tagging options may be specified to locate all of the definitions within the code space. </UL>
+<UL><P>The <B>tags</B> file is extremely useful where the user is dealing with inherited source code spread over multiple directories. Generation of a recursive tag file with all searching options enabled allows labels to be located extremely rapidly (certainly faster than IDE environments). </UL>
+<P><B>Folding and Information Hiding</B> 
+<BR><UL>Generic folding is enabled within the C and C++ files. The folds occur about braces <B>{</B>...<B>}</B> located on the left-hand margin. 
+<A HREF="m3mac029.html">fold-all(3)</A> (un)folds all regions in the file, 
+<A HREF="m3mac029.html">fold-current(3)</A> (un)folds the current region. Note that folding does not operate on K&amp;R style code. </UL>
+<UL><P>The <B>Tools</B> -&gt; <B>C Tools</B> menu allows <TT>#define</TT>'s to be evaluated within the buffer. Where the state of a <TT>#if</TT> is established to be false (using the <TT>#define</TT> information) then the disabled region of code is grayed out indicating which regions of the code are active. </UL>
+<P><B>Working Environment</B> 
+<BR><UL>
+<A HREF="m3mac000.html">compile(3)</A> may be invoked to rebuild the source, the user is prompted to save any files. </UL>
+<UL><P>
+<A HREF="m2cmd105.html">rcs-file(2)</A> is automatically invoked if an RCS file is detected, the normal check-in/out operations may be performed through the editor. </UL>
+<P><B>Short Cuts</B> 
+<BR><UL>The short cut keys used within the buffer are:- </UL>
+<UL><P><B>C-c C-c</B> - Comment out the current line. 
+<BR><B>C-c C-d</B> - Uncomment the current line. 
+<BR><B>C-c C-e</B> - Comment to the end of the line with stars (*). 
+<BR><B>A-C-i</B> - Restyle the current region. 
+<BR><B>esc q</B> - Format a comment. 
+<BR><B>esc o</B> - Format a comment. 
+<BR><B>f2</B> - (un)fold the current region 
+<BR><B>f3</B> - (un)fold all regions </UL></UL>
+<H2><B>NOTES </B></H2>
+<UL><P>If the default language is C++, rather than 'C' the order of the file hooks should be over-ridden in the users local setup, using:- <UL>
+<PRE>add-file-hook&nbsp;&quot;.c&nbsp;&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-c 
+add-file-hook&nbsp;&quot;.cc&nbsp;.cpp&nbsp;.hpp&nbsp;.rc&nbsp;.h&nbsp;.def&nbsp;.l&nbsp;.y&nbsp;.i&quot;&nbsp;&nbsp;&nbsp;fhook-cpp 
+</PRE></UL>
+<P>This defaults all <B>.h</B> and <B>.def</B> files etc. to be C++ rather than C. 
+<P>The hilighting is typically extended using a file <B>myc.emf</B> (or <B>mycpp.emf</B>) i.e. to include the usual extended types of <B>int32</B> etc, <B>myc.emf</B> might be defined as:- <UL>
+<PRE>hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;uint8&quot;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;int8&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;uint16&quot;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;int16&quot;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;uint32&quot;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;int32&quot;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;float32&quot;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;float64&quot;&nbsp;&nbsp;.scheme.type 
+</PRE></UL>
+</UL><H2><B>BUGS </B></H2>
+<UL><P>The 'C' and 'C++' templates have been throughly used, there are no known issues with the templates. 
+<P>The <B>.rc</B> hilighting is a little bogus and should not really be mapped onto <B>.cpp</B>. Do not attept to re-style. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var013.html">c-brace(5)</A>, 
+<A HREF="m2mod002.html">cmode(2m)</A>, 
+<A HREF="m3mac000.html">compile(3)</A>, 
+<A HREF="m3fcl004.html">ctags(3f)</A>, 
+<A HREF="m2cmd057.html">find-tag(2)</A>, 
+<A HREF="m3mac029.html">fold-all(3)</A>, 
+<A HREF="m3mac029.html">fold-current(3)</A>, 
+<A HREF="m2cmd105.html">rcs-file(2)</A>, 
+<A HREF="m3mac025.html">restyle-buffer(3)</A>, 
+<A HREF="m3mac025.html">restyle-region(3)</A>, 
+<A HREF="m2mod013.html">time(2m)</A>. 
+<P>
+<A HREF="amicr030.html">Supported File Types</A> </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

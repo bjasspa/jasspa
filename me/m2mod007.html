@@ -1,0 +1,38 @@
+<HTML>
+<HEAD><TITLE>letter(2m)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+letter(2m)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>letter - Letter kill policy </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>letter Mode</B> 
+<P><B>l</B> - mode line letter. </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>By default individually deleted characters are not added to the kill buffer unless an argument is given to the command. This allows the user to delete characters while preserving the kill buffer, at the expense of not being able to 
+<A HREF="m2cmd146.html">yank(2)</A> the character back out. Enabling <B>letter</B> mode ensures that all deleted characters are added to the kill buffer. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P>This mode is implemented for backwards compatability only and the use of it is strongly discouraged as this may alter the behaviour of many on the supporting macros. If this feature is required it would be preferable to use a numeric argument with the delete or backspace key binding as follows: <UL>
+<PRE>1&nbsp;global-bind-key&nbsp;backward-delete-char&nbsp;&quot;backspace&quot; 
+</PRE></UL>
+<P>The use of the numeric argument of 1 has the same effect. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd006.html">buffer-mode(2)</A>, 
+<A HREF="m2cmd005.html">global-mode(2)</A>, 
+<A HREF="m2cmd146.html">yank(2)</A>, 
+<A HREF="m2mod008.html">line(2m)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

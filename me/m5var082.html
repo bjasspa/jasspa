@@ -1,0 +1,63 @@
+<HTML>
+<HEAD><TITLE>$buffer-backup(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+$buffer-backup(5)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>$buffer-backup - Buffer backup file name </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>$buffer-backup</B> <I>FileName</I> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>$buffer-backup</B> is automatically set to the file name the current buffer's file would be backed up to if required. If the current buffer has no file name the variable will be set to &quot;&quot;. 
+<P>The value depends on whether DOS compliant file names are being used (see 
+<A HREF="m5var047.html">$system(5)</A>), whether multiple backups are being kept (see 
+<A HREF="m5var074.html">$kept-versions(5)</A>) and the setting of the environment variables <B>$MEBACKUPPATH</B> and <B>$MEBACKUPSUB</B>. The variable does not take into consideration the current setting of the buffer's 
+<A HREF="m2mod001.html">backup(2m)</A> mode which determine whether a backup will be made. 
+<P>The environment variable <B>$MEBACKUPPATH</B> can be used to change the location of the backup files, it can also be used to prepend the backup filename with a string. <B>$MEBACKUPPATH</B> can specify an absolute path (e.g. &quot;<TT>c:/temp/mebackup/</TT>&quot;) or a relative path (e.g. &quot;<TT>mebackup/</TT>&quot; which will move all backup files into a sub-directory automatically in the files directory). 
+<P>The trailing '<TT>/</TT>' is important as the file name is simple appended, i.e. is creating a backup for &quot;c:/foo/bar.txt&quot; and $MEBACKUPPATH is set the &quot;backup&quot; the backup file name will be &quot;c:/foo/backupbar.txt&quot;. 
+<P>The environment variable <B>$MEBACKUPSUB</B> can be used to substitute strings within the backup filename for another. The format of the value is a list of <B>sed(1)</B> string substitutions, i.e. <UL>
+<PRE>$MEBACKUPSUB=&quot;s/from1/to1/&nbsp;s/from2/to2/&nbsp;s/fr...&quot; 
+</PRE></UL>
+<P>The 3 divide characters do not have to be '/'s, they can be any character as long as they are the same, e.g. &quot;sXfrom1Xto1X&quot;. When define MicroEmacs performs a simple search for string &quot;<TT>from1</TT>&quot; (i.e. no regex support) and replaces any match with the string &quot;<TT>to1</TT>&quot; etc. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following example compares the differences between the current version and the bucked up version using the 
+<A HREF="m3mac035.html">diff(3)</A> macro. The <B>diff-changes</B> macro is defined in <TT>tools.emf</TT>. <UL>
+<PRE>define-macro&nbsp;diff-changes 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;seq&nbsp;$buffer-fname&nbsp;&quot;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;[Current&nbsp;buffer&nbsp;has&nbsp;no&nbsp;file&nbsp;name]&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!abort 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;bmod&nbsp;&quot;edit&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;iseq&nbsp;@mc1&nbsp;&quot;Save&nbsp;buffer&nbsp;first&nbsp;[y/n]?&nbsp;&quot;&nbsp;&quot;nNyY&quot;&nbsp;&quot;y&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;save-buffer 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;get&nbsp;the&nbsp;real&nbsp;file&nbsp;name&nbsp;-&nbsp;this&nbsp;only&nbsp;has&nbsp;effect&nbsp;on&nbsp;unix,&nbsp;copes&nbsp;with&nbsp;symbolic&nbsp;links 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;&amp;stat&nbsp;&quot;a&quot;&nbsp;$buffer-fname 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;get&nbsp;the&nbsp;backup&nbsp;name 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l1&nbsp;$buffer-backup 
+&nbsp;&nbsp;&nbsp;&nbsp;diff&nbsp;#l1&nbsp;#l0 
+!emacro 
+</PRE></UL>
+</UL><H2><B>NOTES </B></H2>
+<UL><P>The variable <B>$buffer-backup</B> can not be set, any attempt to set it will result in an error. 
+<P>On Windows and DOS platforms if the $MEBACKUPPATH and $MEBACKUPSUB variables are used all remaining '<TT>:</TT>' characters are changed to '<TT>/</TT>'s as these are illegal in the middle of a filename. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2mod001.html">backup(2m)</A>, 
+<A HREF="m5var047.html">$system(5)</A>, 
+<A HREF="m5var074.html">$kept-versions(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

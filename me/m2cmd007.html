@@ -1,0 +1,83 @@
+<HTML>
+<HEAD><TITLE>add-next-line(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+add-next-line(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>add-next-line - Define the searching behavior of command output </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>add-next-line</B> &quot;<I>buffer-name</I>&quot; [ &quot;<I>string</I>&quot; ] </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>add-next-line</B> is used to set up the <I>next-line</I> functionality which is used by the 
+<A HREF="m2cmd058.html">get-next-line(2)</A> command. The <I>next-line</I> feature is aimed at giving the user easy access to file locations which are stored in another buffer. This buffer may typically be the output from the <B>grep(1)</B> command or a compiler (e.g. <B>cc(1)</B>) and needs to contain the file name and line number of the required location. 
+<P>As long as the format of the buffer is consistent and there is a maximum of one location per line, the <I>next-line</I> feature can be successfully configured. 
+<P>The first argument, &quot;<I>buffer-name</I>&quot;, gives the name the aforementioned buffer, this is &quot;<B>*grep*</B>&quot; for the 
+<A HREF="m3mac001.html">grep(3)</A> command etc. There is no limit on the number of next-line formats, nor on the number of <B>add-next-line</B> strings which are given. While there is no real need to initialize each new type, it is advised that the first <B>add-next-line</B> is called with a numerical argument of zero, e.g.: <UL>
+<PRE>0&nbsp;add-next-line&nbsp;&quot;*grep*&quot; 
+add-next-line&nbsp;&quot;*grep*&quot;&nbsp;&quot;.....&quot; 
+</PRE></UL>
+<P>This tells MicroEmacs to reinitialize the type by freeing off any strings currently stored, note that the &quot;<I>string</I>&quot; argument is not used in this case. Resetting the next-line type safe guards against duplicate strings being added to it, a common problem if MicroEmacs is reinitialized. 
+<P>Following is a typical output from grep: <UL>
+<PRE>foo.c:&nbsp;45:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&quot;hello&nbsp;world\n&quot;)&nbsp;; 
+foo.c:&nbsp;46:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&quot;hello&nbsp;again\n&quot;)&nbsp;; 
+</PRE></UL>
+<P>If we replace the file name with &quot;<TT>%f</TT>&quot; and the line number with &quot;<TT>%l</TT>&quot;, this becomes: <UL>
+<PRE>%f:&nbsp;%l:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&quot;hello&nbsp;world\n&quot;)&nbsp;; 
+</PRE></UL>
+<P>
+<A HREF="m2cmd058.html">get-next-line</A> works on a left to right basis, as soon as it has enough information from the line it does not need to continue. Therefore the previous example can be reduced to just &quot;<TT>%f: %l:</TT>&quot;. This is the string argument that should be given for the above example, i.e.: <UL>
+<PRE>add-next-line&nbsp;&quot;*grep*&quot;&nbsp;&quot;%f:&nbsp;%l:&quot; 
+</PRE></UL>
+<P>
+<A HREF="m2cmd058.html">get-next-line</A> takes the given string and replaces the &quot;<TT>%f</TT>&quot; with 
+<A HREF="m5var020.html">$file-template(5)</A> and the &quot;<TT>%l</TT>&quot; with the 
+<A HREF="m5var029.html">$line-template(5)</A> and then uses the resultant string as a regular expression search string to find the next location. Crudely these could be set to &quot;<TT>foo.c</TT>&quot; and &quot;<TT>45</TT>&quot; respectively to find the first example, but this would fail to find any other. As a result the templates are usually magic search strings which will match any file and line number. 
+<P>Similarly, following is an example output of the <B>gcc(1)</B> compiler: <UL>
+<PRE>basic.c:522:&nbsp;warning:&nbsp;`jj'&nbsp;might&nbsp;be&nbsp;used&nbsp;uninitialized&nbsp;in&nbsp;this&nbsp;command 
+display.c:833:&nbsp;warning:&nbsp;implicit&nbsp;declaration&nbsp;of&nbsp;function&nbsp;`ScreenPutChar' 
+</PRE></UL>
+<P>In this case the <B>add-next-line</B> given needs to be: <UL>
+<PRE>add-next-line&nbsp;&quot;*compile*&quot;&nbsp;&quot;%f:%l:&quot; 
+</PRE></UL>
+<P>If a -ve numerical argument is given to <B>add-next-line</B> the given 'next-line' is ignored, this can be useful when some warnings are to be ignored. For example a common warning from gcc is given when a variable might be used uninitialized, given as follows: <UL>
+<PRE>bind.c:578:&nbsp;warning:&nbsp;`ssc'&nbsp;might&nbsp;be&nbsp;used&nbsp;uninitialized&nbsp;in&nbsp;this&nbsp;function 
+</PRE></UL>
+<P>These warnings can be ignored using the following: <UL>
+<PRE>-1&nbsp;add-next-line&nbsp;&quot;*compile*&quot;&nbsp;... 
+&nbsp;&nbsp;&nbsp;&nbsp;...&nbsp;&quot;%f:%l:&nbsp;warning:&nbsp;`.*'&nbsp;might&nbsp;be&nbsp;used&nbsp;uninitialized&nbsp;in&nbsp;this&nbsp;function&quot; 
+</PRE></UL>
+<P>Some versions of <B>grep(1)</B> give the file name first and then the lines on the following lines. This is not a major problem as <B>get-next-line</B> remembers the last file name. The only problem occurs when skipping some parts of the list at which point the last file name parsed may not be the current file. Following is an example output of such a <B>grep</B> and the setup required: <UL>
+<PRE>File&nbsp;foo.c: 
+Line&nbsp;45:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&quot;hello&nbsp;world\n&quot;)&nbsp;; 
+Line&nbsp;46:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&quot;hello&nbsp;again\n&quot;)&nbsp;; 
+</PRE></UL>
+<P>The configuration to locate the lines is defined as: <UL>
+<PRE>0&nbsp;add-next-line&nbsp;&quot;*grep*&quot; 
+add-next-line&nbsp;&quot;*grep*&quot;&nbsp;&quot;File&nbsp;%f:&quot; 
+add-next-line&nbsp;&quot;*grep*&quot;&nbsp;&quot;Line&nbsp;%l:&quot; 
+</PRE></UL>
+</UL><H2><B>NOTES </B></H2>
+<UL><P>The reinitialize command format of this command changed in January 2001, the format changed from: <UL>
+<PRE>add-next-line&nbsp;&quot;*grep*&quot;&nbsp;&quot;&quot; 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var020.html">$file-template(5)</A>, 
+<A HREF="m5var029.html">$line-template(5)</A>, <B>cc(1)</B>, 
+<A HREF="m3mac000.html">compile(3)</A>, 
+<A HREF="m2cmd058.html">get-next-line(2)</A>, <B>grep(1)</B>, 
+<A HREF="m3mac001.html">grep(3)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

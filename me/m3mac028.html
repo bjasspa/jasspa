@@ -1,0 +1,118 @@
+<HTML>
+<HEAD><TITLE>vm(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+vm(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>vm - Email viewer 
+<BR>mail-check - Check for new email 
+<BR>stop-mail-check - Disable the check for new email 
+<BR>mail - Compose and send an email </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>vm</B> 
+<BR><B>mail-check</B> 
+<BR><B>stop-mail-check</B> 
+<BR><B>mail</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>vm</B> is a simple email manager, it is configured to send and receive emails using the 
+<A HREF="m3osd000.html">user-setup(3)</A> Mail dialog. 
+<P><B>mail-check</B> tests the size of this incoming mail box, a non-zero length indicates that new mail has arrived and <B>mail-check</B> informs the user by inserting a '<TT>M</TT>' in the mode-line (2nd character for the left) and ringing the system bell. <B>mail-check</B> uses 
+<A HREF="m2cmd024.html">create-callback(2)</A> to check for new mail every 10 minutes, this can be disabled by executing <B>stop-mail-check</B>. 
+<P>When <B>vm</B> is executed it checks for new mail, if found it first copies the new mail to a file called &quot;<TT>new_mail</TT>&quot; in the users mail directory. The incoming box is then emptied by truncating the file to zero length. The users main mail box is then loaded and the new mail (if any) is appended. The mail box is then processed after which 2 windows are created the bottom window listing all messages in the box and the top displaying the current message. 
+<P><B>vm</B> is capable of: <UL><P>
+<LI>Scrolling through the mail box displaying each message (<TT>up</TT>, <TT>p</TT>, <TT>down</TT>, <TT>n</TT>, <TT>return</TT>, <TT>space</TT>). 
+<LI>Check and get new mail messages (<TT>g</TT>). 
+<LI>Extract and cut embedded data files (<TT>x</TT>, <TT>C</TT>, <TT>c</TT>). 
+<LI>Reply to and forward mail messages (<TT>R</TT>, <TT>r</TT>, <TT>z</TT>). 
+<LI>Delete mail messages (<TT>d</TT>, <TT>u</TT>). 
+<LI>Archive messages to other mail boxes (<TT>A</TT>, <TT>a</TT>). 
+<LI>Save changes to the current mail box (<TT>S</TT>, <TT>s</TT>). 
+<LI>Delete the current mail box (<TT>D</TT>). 
+<LI>Visit another mail box (<TT>v</TT>). 
+<LI>Send a mail message (<TT>m</TT>). 
+<LI>Hide vm windows (<TT>delete</TT>). </UL><P>Use the vm help page (bound to &quot;<TT>esc h</TT>&quot;) for further information. 
+<P><B>vm</B> supports two types of embedded data, uuencode and mime encoding and uses 
+<A HREF="m2cmd077.html">ipipe-shell-command(2)</A> to extract the data, the commanding to use must be supplied by the user using the setup dialog, which can contain the following special tokens: 
+<P><TT>%i</TT> 
+<BR><UL>Temporary file name, if used, the embedded data is written to the this file first. </UL>
+<P><TT>%o</TT> 
+<BR><UL>User supplied output file name, if <TT>%i</TT> is not used, the embedded data is written to this file first. </UL>
+<P><TT>%b</TT> 
+<BR><UL>The output base name, i.e. <TT>%o</TT> without the path. 
+</UL><P>If no command line is supplied then the embedded data is written to the user supplied file name as a text file in the form found in the mail message. 
+<P><B>mail</B> can be used to compose and send an email, it can insert embedded data in a similar way to <B>vm</B>'s data extraction, the following special tokens can be used: 
+<P><TT>%i</TT> 
+<BR><UL>The user supplied data file to be embedded. </UL>
+<P><TT>%b</TT> 
+<BR><UL>The input base name, i.e. <TT>%i</TT> without the path. </UL>
+<P><TT>%o</TT> 
+<BR><UL>Temporary file name used to output the processed data file, this file is inserted into the mail message using 
+<A HREF="m2cmd073.html">insert-file(2)</A>. 
+</UL><P><B>mail</B> also uses <B>ipipe-shell-command</B> to send the mail message, the following special tokens can be used: 
+<P><TT>%f</TT> 
+<BR><UL>The from user name. </UL>
+<P><TT>%s</TT> 
+<BR><UL>The email subject. </UL>
+<P><TT>%t</TT> 
+<BR><UL>A comma separated list of 'To' recipients. </UL>
+<P><TT>%c</TT> 
+<BR><UL>A comma separated list of 'Cc' recipients. </UL>
+<P><TT>%o</TT> 
+<BR><UL>A file name of the mail message. 
+</UL><P>Any field not used in the command-line is left at the head of the mail message. </UL>
+<H2><B>EXAMPLE - UNIX </B></H2>
+<UL><P>The following command-line can be used on most UNIX systems to extract uuencoded data: <UL>
+<PRE>rm&nbsp;-f&nbsp;%o&nbsp;;&nbsp;uudecode&nbsp;%i&nbsp;;&nbsp;rm&nbsp;-f&nbsp;%i 
+</PRE></UL>
+<P>The following command-line can be used on most UNIX systems to extract mime encoded data: <UL>
+<PRE>rm&nbsp;-f&nbsp;/tmp/%b&nbsp;;&nbsp;metamail&nbsp;-B&nbsp;-d&nbsp;-q&nbsp;-w&nbsp;-x&nbsp;-z&nbsp;%i&nbsp;;&nbsp;mv&nbsp;-f&nbsp;/tmp/%b&nbsp;%o 
+</PRE></UL>
+<P>The following command-line can be used on most UNIX systems to uuencode a data file ready for it to be embedded, the original file is not changed: <UL>
+<PRE>uuencode&nbsp;%b&nbsp;&lt;&nbsp;%i&nbsp;&gt;&nbsp;%o 
+</PRE></UL>
+<P>The following command-line can be used on most UNIX systems to send an email: <UL>
+<PRE>/usr/lib/sendmail&nbsp;-oi&nbsp;-oem&nbsp;-odi&nbsp;-t&nbsp;&lt;&nbsp;%o 
+</PRE></UL>
+</UL><H2><B>EXAMPLE - WIN32 </B></H2>
+<UL><P>Typically the <B>cygnus(1)</B> utilities can be used for data insertion and extraction. These have the advantage of being very similar to the unix ones so only minor changes are required, i.e. try the following for data insertion and mime &amp; uuencode extraction respectively: <UL>
+<PRE>del&nbsp;%o&nbsp;^&nbsp;uudecode&nbsp;%i&nbsp;^&nbsp;del&nbsp;%i 
+del&nbsp;c:\tmp\%b&nbsp;^&nbsp;metamail&nbsp;-B&nbsp;-d&nbsp;-q&nbsp;-w&nbsp;-x&nbsp;-z&nbsp;%i&nbsp;^&nbsp;move&nbsp;c:\tmp\%b&nbsp;%o 
+uuencode&nbsp;%b&nbsp;&lt;&nbsp;%i&nbsp;&gt;&nbsp;%o 
+</PRE></UL>
+<P>This assumes that the shell you are using supports the '<TT>^</TT>' multiple commands on a single line feature, this is supported by <B>4dos(1)</B> and <B>4nt(1)</B>. If your shell does not support this feature a simple batch file command could be used instead. 
+<P><B>postie(1)</B> is a freely available pop3/smpt e-mail support program, available on the net, which can be used to provide a fully working <B>vm</B> on windows systems. As it is typically used in a dial-up connect environment, the <B>user-setup</B> 'Queue Outgoing Mail' option will be enabled while the 'Check Mail' and 'VM Gets Mail' will be disabled. This ensures that a connection is only made when the <B>vm</B> '<TT>g</TT>' command is used which sets all queued outgoing mail and gets any incoming mail. 
+<P>The following command-line can be used to get mail from your pop server using postie: <UL>
+<PRE>postie&nbsp;-host:pop-mail-addr&nbsp;-user:user-addr&nbsp;-pass:password&nbsp;-file:inbox 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;-sep:From&nbsp;root&nbsp;Mon&nbsp;Jan&nbsp;11&nbsp;20:02:02&nbsp;1999&quot;&nbsp;-raw&nbsp;-rm 
+</PRE></UL>
+<P>Where the <TT>inbox</TT> is the 'Incoming Mail Box' file specified in user-setup. The <TT>-sep</TT> option is used to partition each mail message from the previous message, this string is used as it is in a unix standard form so the resulting mail box could be understood by unix mail systems such as netscape etc. 
+<P>NOTE: The <B>-rm</B> option is used to remove the incoming mail messages from the server. It is strongly recommended that the system is thoroughly tested without this option first. 
+<P>The following command-line can be used to send mail to your smtp server using postie: <UL>
+<PRE>postie&nbsp;-host:smtp-mail-addr&nbsp;&quot;-from:user@mail-addr&quot;&nbsp;-use_mime:0 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;-to:%t&quot;&nbsp;&quot;-s:%s&quot;&nbsp;&quot;-cc:%c&quot;&nbsp;&quot;-file:%o&quot; 
+</PRE></UL>
+<P><B>blat(1)</B> is another freely available windows program which can be used to send mail with the following command-line: <UL>
+<PRE>blat&nbsp;%o&nbsp;-f&nbsp;%f&nbsp;-s&nbsp;\&quot;%s\&quot;&nbsp;-t&nbsp;\&quot;%t\&quot;&nbsp;-c&nbsp;\&quot;%c\&quot; 
+</PRE></UL>
+</UL><H2><B>NOTES </B></H2>
+<UL><P><B>vm</B> is a macro defined in <TT>vm.emf</TT>, <B>mail-check</B>, <B>stop-mail-check</B> and <B>mail</B> are macros defined in <TT>mail.emf</TT>. 
+<P><B>vm</B> has only been tested in a couple of environments, the author will not except any responsibility for any loss of data, i.e. use at your own peril. You have been warned! Back-up all data files and test <B>vm</B> THOROUGHLY before using it. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m3osd000.html">user-setup(3)</A>, 
+<A HREF="m2cmd077.html">ipipe-shell-command(2)</A>, 
+<A HREF="m2cmd024.html">create-callback(2)</A>, <B>sendmail(1)</B>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,177 @@
+<HTML>
+<HEAD><TITLE>Variables(4)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+Variables(4)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>Variables - Macro variables </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>#</B><I>tn</I> 
+<BR><B>$</B><I>variableName</I> 
+<BR><B>%</B><I>variableName</I> 
+<BR><B>.</B><I>variableName</I> 
+<BR><B>.</B><I>commandName</I><B>.</B><I>variableName</I> 
+<BR><B>:</B><I>variableName</I> 
+<BR><B>:</B><I>bufferName</I><B>:</B><I>variableName</I> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>Variables are part of MicroEmacs macro language and may be used wherever an argument is required. The variable space comprises:- 
+<UL><P><B>#</B> - Register Variable 
+<BR><B>$</B> - System Variable 
+<BR><B>%</B> - Global Variable 
+<BR><B>.</B> - Command Variable 
+<BR><B>:</B> - Buffer Variable </UL>
+<P>All variables hold string information, the interpretation of the string (numeric, string or boolean) is determined when the variable is used within the context of the command. There are five types of variable, <B>Register</B> <B>Variables</B> (prefixed with a hash <B>#</B>), <B>System Variables</B> (prefixed with a dollar <B>$</B>), <B>Global Variables</B> (prefixed with a percentage <B>%</B>), <B>Buffer Variables</B> (prefixed with a colon <B>:</B>) and <B>Command Variables</B> (prefixed with a period <B>.</B>). </UL>
+<H2>Register Variables </H2>
+<UL><P>Register Variables provide a set of 10 prefixed global (<B>#g0</B> .. <B>#g9</B>), parent (<B>#p0</B> .. <B>#p9</B>) and local (<B>#l0</B> .. <B>#l9</B>) register variables. The interpreted decode time of the register variables is significantly smaller than other variable types as no name space search is performed. 
+<P>Register variables are assigned using 
+<A HREF="m2cmd122.html">set-variable(2)</A>, their value may be queried with 
+<A HREF="m2cmd040.html">describe-variable(2)</A>, unlike Global Buffer or Command variables they cannot be deleted. 
+<P>Register variables are implemented like a stack, where the global registers are the top of the stack and every executing macro gets its own set of resister variables (<B>#l?</B>). The macro also has access to the global registers (<B>#g?</B>) and its calling, or parent macro (<B>#p?</B>). If the macro has no parent macro then the global registers are also the parent registers. Outside macros, i.e. using <B>set-variable</B> manually, the global parent and local registers are the same. 
+<P>Register variables are typically used for retaining short term state, computation steps etc. As with the User Variables, the global register variables are global and care must be taken with nested macro invocations to ensure that the register usage does not conflict. </UL>
+<H2>System Variables </H2>
+<UL><P>MicroEmacs defines many System variables which are used to configure many aspects of the editors environment. The functionality of each system variable has been documented, they can be set and described but cannot be unset. If the user attempts to set or describe a non-existent MicroEmacs system variable (e.g. <B>$PATH</B>) the system environment is used instead, allowing the user to query and alter the system environment. </UL>
+<H2>Global, Command and Buffer Variables </H2>
+<UL><P>The Global variables are denoted by an initial <B>%</B> character followed by the name of the variable <I>variableName</I>. The <I>variableName</I> may be any ASCII character string up to 127 characters in length, all characters of the name are significant. Shorter names are preferred as this speeds up execution. Global Variables exist in a global context which all macros have access to. 
+<P>Command variables exist within the scope of a command, they are denoted by the period (<B>.</B>) character. They can be accessed by one of two forms, either <B>.</B><I>variableName</I> or <B>.</B><I>commandName</I><B>.</B><I>variableName</I>. The first form, without the command name, assumes the scope to be the current command, as such may only be used to access internal variables. The second form qualifies the scope by specifying the command, this form is much more versatile and may be used to access any command variable from any other command, e.g. <UL>
+<PRE>define-macro&nbsp;foo 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;.foo&nbsp;&quot;Hello&nbsp;world&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;1000&nbsp;ml-write&nbsp;&amp;cat&nbsp;&quot;foo1:&nbsp;&quot;&nbsp;.foo 
+&nbsp;&nbsp;&nbsp;&nbsp;1000&nbsp;ml-write&nbsp;&amp;cat&nbsp;&quot;foo2:&nbsp;&quot;&nbsp;.foo.foo 
+!emacro 
+define-macro&nbsp;bar 
+&nbsp;&nbsp;&nbsp;&nbsp;foo 
+&nbsp;&nbsp;&nbsp;&nbsp;1000&nbsp;ml-write&nbsp;&amp;cat&nbsp;&quot;bar1:&nbsp;&quot;&nbsp;.foo 
+&nbsp;&nbsp;&nbsp;&nbsp;1000&nbsp;ml-write&nbsp;&amp;cat&nbsp;&quot;bar2:&nbsp;&quot;&nbsp;.foo.foo 
+!emacro 
+
+bar 
+</PRE></UL>
+<P>When <B>bar</B> is executed the following messages may be observed:- <UL>
+<PRE>foo1:&nbsp;Hello&nbsp;World 
+foo2:&nbsp;Hello&nbsp;World 
+bar1:&nbsp;ERROR 
+bar2:&nbsp;Hello&nbsp;World 
+</PRE></UL>
+<P>When a macro file or buffer is executed, they are executed within their own scope so local scope command variables (form 1) may be created and used in that scope. Any such variables created are automatically deleted at the end of execution. For example, the default color scheme generator macro file, <TT>schemed.emf</TT>, creates command variables for the created colors to aid readability:- <UL>
+<PRE>add-color&nbsp;&amp;set&nbsp;.green&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3&nbsp;0&nbsp;&nbsp;&nbsp;200&nbsp;0 
+a0dd-color&nbsp;&amp;set&nbsp;.lgreen&nbsp;&nbsp;&nbsp;11&nbsp;0&nbsp;&nbsp;&nbsp;255&nbsp;0 
+
+... 
+
+add-color-scheme&nbsp;.scheme.cardback&nbsp;&nbsp;&nbsp;.lgreen&nbsp;&nbsp;&nbsp;.green&nbsp;&nbsp;&nbsp;.lgreen&nbsp;... 
+</PRE></UL>
+<P>The variables only exist as a file or buffer is being executed, they are not accessible by another command once the command or buffer execution has finished. 
+<P>Buffer variables are similar to Command variable in function and behaviour except that their scope is of a buffer and are denoted by the colon (<B>:</B>) character. Access can be in one of two forms, either <B>:</B><I>variableName</I> where the scope is assumed to be the current buffer or <B>:</B><I>bufferName</I><B>:</B><I>variableName</I>, where the scope is explicitly given allowing access to any buffer variable, e.g. <UL>
+<PRE>find-buffer&nbsp;&quot;foo&quot; 
+set-variable&nbsp;:foo&nbsp;&quot;Hello&nbsp;world&quot; 
+find-buffer&nbsp;&quot;bar&quot; 
+set-variable&nbsp;:bar&nbsp;&quot;Hello&nbsp;world&quot; 
+1000&nbsp;ml-write&nbsp;&amp;cat&nbsp;&quot;:foo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;&nbsp;:foo 
+1000&nbsp;ml-write&nbsp;&amp;cat&nbsp;&quot;:foo:foo&nbsp;&quot;&nbsp;:foo:foo 
+1000&nbsp;ml-write&nbsp;&amp;cat&nbsp;&quot;:bar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;&nbsp;:bar 
+1000&nbsp;ml-write&nbsp;&amp;cat&nbsp;&quot;:bar:bar&nbsp;&quot;&nbsp;:bar:bar 
+</PRE></UL>
+<P>When the above is executed the following messages may be observed:- <UL>
+<PRE>:foo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ERROR 
+:foo:foo&nbsp;Hello&nbsp;World 
+:bar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Hello&nbsp;World 
+:bar:bar&nbsp;Hello&nbsp;World 
+</PRE></UL>
+<P>Global, Buffer and Command variables are automatically defined when they are used. A variable is assigned with 
+<A HREF="m2cmd122.html">set-variable(2)</A> and may be subsequently deleted with 
+<A HREF="m2cmd122.html">unset-variable(2)</A>. The current assignment of a variable may be queried from the command line using 
+<A HREF="m2cmd040.html">describe-variable(2)</A>. e.g. <UL>
+<PRE>define-macro&nbsp;foo 
+!emacro 
+set-variable&nbsp;%foo&nbsp;&quot;Some&nbsp;string&quot; 
+set-variable&nbsp;:bar&nbsp;&quot;Some&nbsp;string&quot; 
+set-variable&nbsp;.foo.bar&nbsp;&quot;Some&nbsp;string&quot; 
+
+... 
+
+ml-write&nbsp;&amp;spr&nbsp;&quot;%s&nbsp;%s&nbsp;%s&quot;&nbsp;%foo&nbsp;:bar&nbsp;.foo.bar 
+
+... 
+
+unset-variable&nbsp;:bar 
+unset-variable&nbsp;%foo 
+unset-variable&nbsp;.foo.bar 
+</PRE></UL>
+<P>An undefined variable returns the string <TT>ERROR</TT>, this known state is used to advantage with the 
+<A HREF="m2cmd069.html">hilighting</A> initialization, e.g. <UL>
+<PRE>!if&nbsp;&amp;sequal&nbsp;.hilight.c&nbsp;&quot;ERROR&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;.hilight.c&nbsp;&amp;pinc&nbsp;.hilight.next&nbsp;1 
+!endif 
+; 
+;&nbsp;Hi-light&nbsp;C&nbsp;Mode 
+; 
+0&nbsp;hilight&nbsp;.hilight.c&nbsp;&nbsp;2&nbsp;50&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$global-scheme 
+</PRE></UL>
+<P>In this case the variable <B>.hilight.c</B> is explicitly tested for definition, if it is undefined then it is assigned a new value. 
+<P>Conventionally, names are separated with a minus sign character (<B>-</B>) e.g. <TT>foo-bar</TT>. It is strongly advised that the name space is kept reasonably clean, since there are no restrictions on the number of macros that may be defined, problems will arise if different macros use the same variables in different contexts. Where possible, Command or Buffer Variables are preferable to Global Variables since they have no side effects on other macros or buffers. It is advised that all variable names associated with a particular macro set are prefixed with short identifier to make the variable name space unique. e.g. the <B>Metris</B> macro prefixes all variables with <B>:met-</B>; the <B>draw</B> macro uses <B>:dw-</B>, the <B>patience</B> macro <B>:pat-</B> etc. 
+<P>Macro writers should endeavor to use the minimal number of variables, obviously the more variables that exist in the system, the greater the lookup time to find a variable. Use Register Variables in preference to Command, Global or Buffer variables for intimidate computation steps, temporary state etc. 
+<P>Note that Buffer Variables are automatically deleted when the buffer is deleted. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following example is the macro to convert tabs to spaces, it is shown in two forms, with User Variables and with Register Variables, the register variable implementation is obviously preferable since no new variables have been defined. </UL>
+<H2>User Variable Implementation </H2>
+<UL><UL><PRE>; 
+;&nbsp;tabs-to-spaces. 
+;&nbsp;Convert&nbsp;all&nbsp;of&nbsp;the&nbsp;tabs&nbsp;to&nbsp;spaces. 
+define-macro&nbsp;tabs-to-spaces 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;%curline&nbsp;$window-line&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Remember&nbsp;line 
+&nbsp;&nbsp;&nbsp;&nbsp;beginning-of-buffer 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;search-forward&nbsp;&quot;\t&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!while&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3&nbsp;drop-history 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;%curcol&nbsp;$window-acol 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;backward-delete-char 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;sub&nbsp;%curcol&nbsp;$window-acol&nbsp;insert-space 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;search-forward&nbsp;&quot;\t&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!done 
+&nbsp;&nbsp;&nbsp;&nbsp;3&nbsp;drop-history 
+&nbsp;&nbsp;&nbsp;&nbsp;goto-line&nbsp;%curline 
+&nbsp;&nbsp;&nbsp;&nbsp;update-screen 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;Converted&nbsp;tabs!&quot; 
+!emacro 
+</PRE></UL>
+</UL><H2>Register Variable Implementation </H2>
+<UL><UL><PRE>; 
+;&nbsp;tabs-to-spaces. 
+;&nbsp;Convert&nbsp;all&nbsp;of&nbsp;the&nbsp;tabs&nbsp;to&nbsp;spaces. 
+define-macro&nbsp;tabs-to-spaces 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Remember&nbsp;line 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;$window-line 
+&nbsp;&nbsp;&nbsp;&nbsp;beginning-of-buffer 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;search-forward&nbsp;&quot;\t&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!while&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l1&nbsp;$window-acol 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;backward-delete-char 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;sub&nbsp;#l1&nbsp;$window-acol&nbsp;insert-space 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;search-forward&nbsp;&quot;\t&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!done 
+&nbsp;&nbsp;&nbsp;&nbsp;goto-line&nbsp;#l0 
+&nbsp;&nbsp;&nbsp;&nbsp;screen-update 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;[Converted&nbsp;tabs]&quot; 
+!emacro 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m4fil016.html">@wc(4)</A>, 
+<A HREF="m2cmd029.html">define-macro(2)</A>, 
+<A HREF="m2cmd040.html">describe-variable(2)</A>, 
+<A HREF="m2cmd122.html">set-variable(2)</A>, 
+<A HREF="m2cmd122.html">unset-variable(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

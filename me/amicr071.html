@@ -1,0 +1,30 @@
+<HTML>
+<HEAD><TITLE>FAQ(30) - Re-using a MicroEmacs session; how to ??</TITLE></HEAD>
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+FAQ(30) - Re-using a MicroEmacs session; how to ??</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>QUESTION (30) </B></H2>
+<UL><P>Re-using a MicroEmacs session; how to ?? </UL>
+<H2><B>ANSWER </B></H2>
+<UL><P>A MicroEmacs editing session may be re-used, such that the current editor is prompted to load a new file externally. This is typically invoked from a short-cut launch from a file manager i.e. <B>Explorer(1)</B>, <B>Tkdesk(1)</B> etc. 
+<P>In order to facilitate the re-use of the session, then 
+<A HREF="m1cmd000.html">me(1)</A> is invoked with the <B>-o</B> option, this locates the active editor session and passes the file load request. If an existing session does not exist then a new session is started. 
+<P>In order for this mechanism to operate, then the 
+<A HREF="m2nar005.html">Client-Server Interface</A> must be enabled from the 
+<A HREF="m3osd000.html">user-setup(3)</A> i.e. 
+<UL><P>[<B>Help</B> -&gt; <B>User Setup</B> -&gt; <B>Platform</B> -&gt; <B>Client Server</B> = <TT>Y</TT>] 
+</UL><P>
+<A HREF="amicr040.html">[FAQ Index]</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

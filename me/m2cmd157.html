@@ -1,0 +1,68 @@
+<HTML>
+<HEAD><TITLE>read-registry(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+read-registry(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>read-registry - Read in a registry definition file </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>read-registry</B> &quot;<I>root</I>&quot; &quot;<I>file</I>&quot; &quot;<I>mode</I>&quot; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>read-registry</B> loads a registry file 
+<A HREF="m8fil004.html">erf(8)</A> into the internal registry memory, where the information may be queried via the registry macro commands. The arguments are defined as follows:- 
+<P><I>root</I> 
+<BR><UL>The root node in the registry to into which the registry contents are attached. The root name is limited to 32 characters in length and is specified without a leading forward slash '<TT>/</TT>'. The node <I>root</I> is created at the root of the registry. </UL>
+<P><I>file</I> 
+<BR><UL>The name of the registry file 
+<A HREF="m8fil004.html">erf(8)</A> to load. This may be an absolute, relative or <TT>$MEPATH</TT> specified file; typically it is located on <TT>$MEPATH</TT>. </UL>
+<P><I>mode</I> 
+<BR><UL>The <I>mode</I> is string specifying the registry node loading and saving modes, each mode is represented by a character. Lower case characters add a mode, upper case characters delete a mode. The modes are defined as follows:- 
+<P><B>a</B> - Autosave 
+<BR><UL>Automatically saves the registry when it is deleted or unloaded from the registry. The user is not prompted for a save. </UL>
+<P><B>b</B> - Backup 
+<BR><UL>Automatically performs a backup of the registry file whenever a save operation is performed. </UL>
+<P><B>c</B> - Create 
+<BR><UL>If the registry file cannot be loaded then the <I>root</I> node is created and the invocation succeeds. If this mode is omitted then the call fails if the <I>file</I> cannot be found. </UL>
+<P><B>d</B> - Discard 
+<BR><UL>Marks the registry as discardable. This is typically used for registries that are not saved. </UL>
+<P><B>r</B> - Reload 
+<BR><UL>If the registry node already exists then it is deleted and reloaded, see also the merge flag (<B>m</B>). By default, when both the <B>r</B> and <B>m</B> flags are omitted and the registry node already exists the read operation is not performed and the existing node is used. </UL>
+<P><B>m</B> - Merge 
+<BR><UL>The registry file is merged with the contents of any existing registry node. (i.e. the existing registry tree nodes are not deleted if they already exist). See also the reload flag (<B>r</B>). </UL>
+<P><B>h</B> - Hidden 
+<BR><UL>The registry node is created in the <I>Hidden</I> state. (i.e. children will not be shown in 
+<A HREF="m2cmd025.html">list-registry(2)</A> output). </UL>
+<P><B>u</B> - Updated 
+<BR><UL>Marks the registry as modified. The modified bit is removed when the registry file is saved. If the modified bit is applied to a registry node the user will be prompted to save the registry when it is deleted (or it will be automatically saved when the <I>Autosave</I> mode is used). </UL></UL>
+<UL><P>Multiple modes may be applied. </UL></UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following example is a typical call made from a macro using a registry file where the user may edit the registry file. In this case this a reload of the registry is forced to ensure that the most up-to-date contents are retrieved. Note that the name of the registry file is actually retrieved from the <I>history</I> registry. <UL>
+<PRE>set-variable&nbsp;#l1&nbsp;&amp;reg&nbsp;&quot;/history&quot;&nbsp;&quot;address&quot;&nbsp;$MENAME 
+!if&nbsp;&amp;seq&nbsp;&amp;set&nbsp;#l0&nbsp;&amp;find&nbsp;#l1&nbsp;&quot;.ab&quot;&nbsp;&quot;ERROR&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;&amp;reg&nbsp;&quot;/&quot;&nbsp;&quot;history&quot;&nbsp;&quot;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;&amp;spr&nbsp;&quot;%s%s.ab&quot;&nbsp;&amp;lef&nbsp;#l0&nbsp;&amp;rsin&nbsp;&quot;/&quot;&nbsp;#l0&nbsp;#l1 
+!endif 
+read-registry&nbsp;&quot;AddressBook&quot;&nbsp;#l0&nbsp;&quot;rc&quot; 
+</PRE></UL>
+</UL><H2><B>BUGS </B></H2>
+<UL><P>At exit only registry nodes attached to the root are saved. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd008.html">save-registry(2)</A>, 
+<A HREF="m2cmd025.html">list-registry(2)</A>, 
+<A HREF="m2cmd154.html">mark-registry(2)</A>, 
+<A HREF="m8fil004.html">erf(8)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

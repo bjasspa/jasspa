@@ -1,0 +1,53 @@
+<HTML>
+<HEAD><TITLE>auto(2m)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+auto(2m)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>auto - Automatic source file line type detection </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>auto Mode</B> 
+<P><B>A</B> - mode line letter. </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>When this mode is enabled the line style of the source file, with respect to <TT>CR/LF/CTRL-Z</TT> characters, are automatically detected and the file (if saved) is written out in the same style as it was read in. This mode is designed to solve the problems of MS-DOS which utilize a '<B>\r\n</B>' with every new line and a <B>ctrl-Z</B> as a file terminator, conversely UNIX utilizes only '<B>\n</B>' as a line terminator. 
+<P><B>auto</B> mode therefore allows files to be edited across file system types without corrupting the line style of the native platform. 
+<P>At load time, if <B>auto</B> detects CR/LF style line feeds then it enables the buffer mode 
+<A HREF="m2mod024.html">crlf(2m)</A>, and if a CTRL-Z is found at the end of the file then mode 
+<A HREF="m2mod030.html">ctrlz(2m)</A> is enabled. Otherwise these modes are cleared. 
+<P>At write time, if <B>auto</B> mode is enabled then the file is written out is a style determined by modes <B>crlf</B> and <B>ctrlz</B>. For example, if crlf was enabled and ctrlz disabled then the file would be written out with new lines as '<B>\r\n</B>' and with no ending ctrl-z. 
+<P>If auto is not enabled then the file is written out in the style of the current platform, regardless of the current settings on modes <B>crlf</B> and <B>ctrlz</B>. </UL>
+<H2><B>SUMMARY </B></H2>
+<UL><P>The operation on the modes may be summarized as follows:- </UL>
+<H2>UNIX Systems </H2>
+<UL><UL><P>
+<LI><B>auto Enabled</B> UNIX and MS-DOS files may be edited normally, edits are saved in the format read by the system. 
+<LI><B>auto Disabled</B> UNIX files may be edited normally, files saved as UNIX files. MS-DOS files show a <TT>^M</TT> character at the end of each line (editing is not advised if the purity of the MS-DOS is to be maintained), any edits are written back as displayed on the screen. </UL></UL>
+<H2>MS-DOS Systems </H2>
+<UL><UL><P>
+<LI><B>auto Enabled</B> UNIX and MS-DOS files may be edited normally, edits are saved in the format read by the system. 
+<LI><B>auto Disabled</B> on reading all files are read and editing may be undertaken normally. On writing, '<B>\r</B>'s and a <B>ctrl-Z</B> are automatically added. The act of reading a UNIX file and re-writing it translates it to an MS-DOS file. </UL></UL>
+<H2><B>NOTES </B></H2>
+<UL><P>This mode MUST be enabled globally when the file is loaded for the file style to be correctly detected. 
+<P>It is <B>strongly advised</B> that auto mode is permanently enabled. 
+<P>Windows systems tend to use a '<B>\r\n</B>' style line feed but with no trailing ctrl-z. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd005.html">global-mode(2)</A>, 
+<A HREF="m2cmd006.html">buffer-mode(2)</A>, 
+<A HREF="m2mod024.html">crlf(2m)</A>, 
+<A HREF="m2mod030.html">ctrlz(2m)</A>, 
+<A HREF="m5var070.html">$buffer-fmod(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

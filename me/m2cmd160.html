@@ -1,0 +1,41 @@
+<HTML>
+<HEAD><TITLE>command-wait(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+command-wait(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>command-wait - Conditional wait command </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>command-wait</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>When a +ve argument <I>n</I> is given <B>command-wait</B> waits for <I>n</I> milliseconds before returning, this wait cannot be interrupted. If a -ve argument is given, <B>command-wait</B> waits for -<I>n</I> milliseconds but the command will return if the user interrupts with any input activity (i.e. presses a key). 
+<P>When no argument is given <B>command-wait</B> loops getting and processing events (user input, screen updates etc) until either the calling commands <B>.wait</B> command variable is undefined or set to false (<TT>0</TT>). This more complex use of the command is used when a main macro must wait and process input until an exit criteria has been met, the input is best processed by setting the 
+<A HREF="m5var005.html">$buffer-input(5)</A> variable to a second macro. The macro 
+<A HREF="m3mac044.html">gdiff(3)</A> uses this command in this way. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following macro code will display a message on the screen for a fixed 5 seconds: <UL>
+<PRE>16&nbsp;screen-poke&nbsp;10&nbsp;10&nbsp;0&nbsp;&quot;Hello&nbsp;World!&quot; 
+5000&nbsp;command-wait 
+</PRE></UL>
+<P>Similarly the following macro code will display a message for up to 5 seconds or till the user presses a key: <UL>
+<PRE>16&nbsp;screen-poke&nbsp;10&nbsp;10&nbsp;0&nbsp;&quot;Hello&nbsp;World!&quot; 
+-5000&nbsp;command-wait 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd145.html">ml-write(2)</A>, 
+<A HREF="m5var005.html">$buffer-input(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,258 @@
+<HTML>
+<HEAD><TITLE>describe-bindings(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+describe-bindings(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>describe-bindings - Show current command/key binding </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>describe-bindings</B> (<B>C-h&nbsp;b</B>)&nbsp; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>describe-bindings</B> pops up a window with a list of all the named commands, and the keys currently bound to them. Each entry is formatted as: 
+<UL><P><B>keyCode</B> <TT>...........</TT> <B>command</B> </UL>
+<P><B>describe-bindings</B> is buffer context sensitive and shows the bindings for the currently active buffer (i.e. the buffer that is active when the command is invoked). The resultant command list is divided into three sections as follows: 
+<P><B>Buffer Bindings</B> 
+<BR><UL>The bindings for the active buffer when <B>describe-bindings</B> was invoked. These are the buffer bindings set by 
+<A HREF="m2cmd084.html">buffer-bind-key(2)</A>. </UL>
+<P><B>Ml Bindings</B> 
+<BR><UL>The message line bindings as set by 
+<A HREF="m2cmd085.html">ml-bind-key(2)</A>. </UL>
+<P><B>Global Bindings</B> 
+<BR><UL>Global binding of keys as set by 
+<A HREF="m2cmd013.html">global-bind-key(2)</A>. </UL></UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following is an example of the displayed output from <B>describe-bindings</B>. This was invoked while editing buffer <B>m2fun038.2</B> which is the <B>Nroff</B> file for this manual page; the local bindings for the buffer are all Nroff related. <UL>
+<PRE>Buffer&nbsp;[m2cmd038.2]&nbsp;bindings: 
+
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-c&nbsp;C-s&quot;&nbsp;.....................&nbsp;nroff-size 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-c&nbsp;C-r&quot;&nbsp;.....................&nbsp;nroff-roman 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-c&nbsp;C-b&quot;&nbsp;.....................&nbsp;nroff-bold 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-c&nbsp;C-i&quot;&nbsp;.....................&nbsp;nroff-italic 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-c&nbsp;C-c&quot;&nbsp;.....................&nbsp;nroff-mono 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-c&nbsp;C-o&quot;&nbsp;.....................&nbsp;nroff-para 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;o&quot;&nbsp;.......................&nbsp;nroff-para 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;q&quot;&nbsp;.......................&nbsp;nroff-para 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-c&nbsp;b&quot;&nbsp;.......................&nbsp;nroff-bold-block 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-c&nbsp;i&quot;&nbsp;.......................&nbsp;nroff-italic-block 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-c&nbsp;C-h&quot;&nbsp;.....................&nbsp;nroff-swap-hilight 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-c&nbsp;&amp;&quot;&nbsp;.......................&nbsp;nroff-add-padding 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;&amp;&quot;&nbsp;.......................&nbsp;nroff-remove-padding 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-c&nbsp;C-p&quot;&nbsp;.....................&nbsp;nroff-prev 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-mouse-drop-1&quot;&nbsp;..............&nbsp;nroff-tag 
+
+Ml&nbsp;bindings: 
+
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;esc&quot;&nbsp;.....................&nbsp;tab 
+
+Global&nbsp;bindings: 
+
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-a&quot;&nbsp;.........................&nbsp;beginning-of-line 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-b&quot;&nbsp;.........................&nbsp;backward-char 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-c&quot;&nbsp;.........................&nbsp;4&nbsp;prefix 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-d&quot;&nbsp;.........................&nbsp;forward-delete-char 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-e&quot;&nbsp;.........................&nbsp;end-of-line 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-f&quot;&nbsp;.........................&nbsp;forward-char 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-g&quot;&nbsp;.........................&nbsp;abort-command 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-h&quot;&nbsp;.........................&nbsp;3&nbsp;prefix 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-i&quot;&nbsp;.........................&nbsp;insert-tab 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-k&quot;&nbsp;.........................&nbsp;kill-line 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-l&quot;&nbsp;.........................&nbsp;recenter 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-m&quot;&nbsp;.........................&nbsp;newline 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-n&quot;&nbsp;.........................&nbsp;forward-line 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-o&quot;&nbsp;.........................&nbsp;insert-newline 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-p&quot;&nbsp;.........................&nbsp;backward-line 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-q&quot;&nbsp;.........................&nbsp;quote-char 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-r&quot;&nbsp;.........................&nbsp;isearch-backward 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-s&quot;&nbsp;.........................&nbsp;isearch-forward 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-t&quot;&nbsp;.........................&nbsp;transpose-chars 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-u&quot;&nbsp;.........................&nbsp;universal-argument 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-v&quot;&nbsp;.........................&nbsp;scroll-down 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-w&quot;&nbsp;.........................&nbsp;kill-region 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&quot;&nbsp;.........................&nbsp;2&nbsp;prefix 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-y&quot;&nbsp;.........................&nbsp;yank 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-z&quot;&nbsp;.........................&nbsp;scroll-up 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-_&quot;&nbsp;.........................&nbsp;undo 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;A-e&quot;&nbsp;.........................&nbsp;file-browser 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;A-r&quot;&nbsp;.........................&nbsp;replace-all-string 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;C-c&quot;&nbsp;.....................&nbsp;count-words 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;C-f&quot;&nbsp;.....................&nbsp;goto-matching-fence 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;C-g&quot;&nbsp;.....................&nbsp;abort-command 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;C-i&quot;&nbsp;.....................&nbsp;goto-matching-fence 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;C-k&quot;&nbsp;.....................&nbsp;global-unbind-key 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;C-n&quot;&nbsp;.....................&nbsp;change-buffer-name 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;C-r&quot;&nbsp;.....................&nbsp;query-replace-string 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;C-v&quot;&nbsp;.....................&nbsp;scroll-next-window-down 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;C-w&quot;&nbsp;.....................&nbsp;kill-paragraph 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;C-z&quot;&nbsp;.....................&nbsp;scroll-next-window-up 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;space&quot;&nbsp;...................&nbsp;set-mark 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;!&quot;&nbsp;.......................&nbsp;pipe-shell-command 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;$&quot;&nbsp;.......................&nbsp;spell-word 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;.&quot;&nbsp;.......................&nbsp;set-mark 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;/&quot;&nbsp;.......................&nbsp;execute-file 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;&lt;&quot;&nbsp;.......................&nbsp;beginning-of-buffer 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;&gt;&quot;&nbsp;.......................&nbsp;end-of-buffer 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;?&quot;&nbsp;.......................&nbsp;help 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;@&quot;&nbsp;.......................&nbsp;pipe-shell-command 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;[&quot;&nbsp;.......................&nbsp;backward-paragraph 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;\\&quot;&nbsp;......................&nbsp;ipipe-shell-command 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;]&quot;&nbsp;.......................&nbsp;forward-paragraph 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;^&quot;&nbsp;.......................&nbsp;delete-indentation 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;b&quot;&nbsp;.......................&nbsp;backward-word 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;c&quot;&nbsp;.......................&nbsp;compile 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;d&quot;&nbsp;.......................&nbsp;forward-kill-word 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;e&quot;&nbsp;.......................&nbsp;set-encryption-key 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;f&quot;&nbsp;.......................&nbsp;forward-word 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;g&quot;&nbsp;.......................&nbsp;goto-line 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;i&quot;&nbsp;.......................&nbsp;tab 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;k&quot;&nbsp;.......................&nbsp;global-bind-key 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;l&quot;&nbsp;.......................&nbsp;lower-case-word 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;m&quot;&nbsp;.......................&nbsp;global-mode 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;n&quot;&nbsp;.......................&nbsp;forward-paragraph 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;o&quot;&nbsp;.......................&nbsp;fill-paragraph 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;p&quot;&nbsp;.......................&nbsp;backward-paragraph 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;q&quot;&nbsp;.......................&nbsp;fill-paragraph 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;r&quot;&nbsp;.......................&nbsp;replace-string 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;t&quot;&nbsp;.......................&nbsp;find-tag 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;u&quot;&nbsp;.......................&nbsp;upper-case-word 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;v&quot;&nbsp;.......................&nbsp;scroll-up 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;w&quot;&nbsp;.......................&nbsp;copy-region 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;x&quot;&nbsp;.......................&nbsp;execute-named-command 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;y&quot;&nbsp;.......................&nbsp;reyank 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;z&quot;&nbsp;.......................&nbsp;quick-exit 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;~&quot;&nbsp;.......................&nbsp;-30&nbsp;buffer-mode 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;A-r&quot;&nbsp;.....................&nbsp;query-replace-all-string 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;C-a&quot;&nbsp;.....................&nbsp;set-alpha-mark 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;C-b&quot;&nbsp;.....................&nbsp;list-buffers 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;C-c&quot;&nbsp;.....................&nbsp;save-buffers-exit-emacs 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;C-d&quot;&nbsp;.....................&nbsp;change-directory 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;C-e&quot;&nbsp;.....................&nbsp;execute-kbd-macro 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;C-f&quot;&nbsp;.....................&nbsp;find-file 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;C-g&quot;&nbsp;.....................&nbsp;abort-command 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;C-h&quot;&nbsp;.....................&nbsp;hunt-backward 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;C-i&quot;&nbsp;.....................&nbsp;insert-file 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;C-l&quot;&nbsp;.....................&nbsp;lower-case-region 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;C-o&quot;&nbsp;.....................&nbsp;delete-blank-lines 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;C-q&quot;&nbsp;.....................&nbsp;rcs-file 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;C-r&quot;&nbsp;.....................&nbsp;read-file 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;C-s&quot;&nbsp;.....................&nbsp;save-buffer 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;C-t&quot;&nbsp;.....................&nbsp;transpose-lines 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;C-u&quot;&nbsp;.....................&nbsp;upper-case-region 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;C-v&quot;&nbsp;.....................&nbsp;view-file 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;C-w&quot;&nbsp;.....................&nbsp;write-buffer 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;C-x&quot;&nbsp;.....................&nbsp;exchange-point-and-mark 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;C-y&quot;&nbsp;.....................&nbsp;insert-file-name 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;C-z&quot;&nbsp;.....................&nbsp;shrink-window-vertically 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;#&quot;&nbsp;.......................&nbsp;filter-buffer 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;(&quot;&nbsp;.......................&nbsp;start-kbd-macro 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;)&quot;&nbsp;.......................&nbsp;end-kbd-macro 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;/&quot;&nbsp;.......................&nbsp;isearch-forward 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;0&quot;&nbsp;.......................&nbsp;delete-window 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;1&quot;&nbsp;.......................&nbsp;delete-other-windows 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;2&quot;&nbsp;.......................&nbsp;split-window-vertically 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;3&quot;&nbsp;.......................&nbsp;next-window-find-buffer 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;4&quot;&nbsp;.......................&nbsp;next-window-find-file 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;5&quot;&nbsp;.......................&nbsp;split-window-horizontally 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;9&quot;&nbsp;.......................&nbsp;find-bfile 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;&lt;&quot;&nbsp;.......................&nbsp;scroll-left 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;=&quot;&nbsp;.......................&nbsp;buffer-info 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;&gt;&quot;&nbsp;.......................&nbsp;scroll-right 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;?&quot;&nbsp;.......................&nbsp;describe-key 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;@&quot;&nbsp;.......................&nbsp;pipe-shell-command 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;[&quot;&nbsp;.......................&nbsp;scroll-up 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;]&quot;&nbsp;.......................&nbsp;scroll-down 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;^&quot;&nbsp;.......................&nbsp;grow-window-vertically 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;`&quot;&nbsp;.......................&nbsp;get-next-line 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;a&quot;&nbsp;.......................&nbsp;goto-alpha-mark 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;b&quot;&nbsp;.......................&nbsp;find-buffer 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;c&quot;&nbsp;.......................&nbsp;shell 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;e&quot;&nbsp;.......................&nbsp;execute-kbd-macro 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;h&quot;&nbsp;.......................&nbsp;hunt-forward 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;k&quot;&nbsp;.......................&nbsp;delete-buffer 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;m&quot;&nbsp;.......................&nbsp;buffer-mode 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;n&quot;&nbsp;.......................&nbsp;change-file-name 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;o&quot;&nbsp;.......................&nbsp;next-window 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;p&quot;&nbsp;.......................&nbsp;previous-window 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;q&quot;&nbsp;.......................&nbsp;kbd-macro-query 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;r&quot;&nbsp;.......................&nbsp;search-backward 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;s&quot;&nbsp;.......................&nbsp;search-forward 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;u&quot;&nbsp;.......................&nbsp;undo 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;v&quot;&nbsp;.......................&nbsp;set-variable 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;w&quot;&nbsp;.......................&nbsp;resize-window-vertically 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;x&quot;&nbsp;.......................&nbsp;next-buffer 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;z&quot;&nbsp;.......................&nbsp;grow-window-vertically 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;{&quot;&nbsp;.......................&nbsp;shrink-window-horizontally 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-x&nbsp;}&quot;&nbsp;.......................&nbsp;grow-window-horizontally 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-h&nbsp;C-c&quot;&nbsp;.....................&nbsp;help-command 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-h&nbsp;C-i&quot;&nbsp;.....................&nbsp;help-item 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-h&nbsp;C-v&quot;&nbsp;.....................&nbsp;help-variable 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-h&nbsp;a&quot;&nbsp;.......................&nbsp;command-apropos 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-h&nbsp;b&quot;&nbsp;.......................&nbsp;describe-bindings 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-h&nbsp;c&quot;&nbsp;.......................&nbsp;list-commands 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-h&nbsp;d&quot;&nbsp;.......................&nbsp;describe-variable 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-h&nbsp;k&quot;&nbsp;.......................&nbsp;describe-key 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-h&nbsp;v&quot;&nbsp;.......................&nbsp;list-variables 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;backspace&quot;&nbsp;...................&nbsp;backward-delete-char 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;delete&quot;&nbsp;......................&nbsp;forward-delete-char 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;down&quot;&nbsp;........................&nbsp;forward-line 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;end&quot;&nbsp;.........................&nbsp;end-of-buffer 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&quot;&nbsp;.........................&nbsp;1&nbsp;prefix 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;f1&quot;&nbsp;..........................&nbsp;menu 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;home&quot;&nbsp;........................&nbsp;beginning-of-buffer 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;insert&quot;&nbsp;......................&nbsp;141&nbsp;buffer-mode 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;left&quot;&nbsp;........................&nbsp;backward-char 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;mouse-drop-1&quot;&nbsp;................&nbsp;mouse-drop-left 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;mouse-drop-2&quot;&nbsp;................&nbsp;yank 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;mouse-drop-3&quot;&nbsp;................&nbsp;menu 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;mouse-pick-1&quot;&nbsp;................&nbsp;mouse-pick-left 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;mouse-pick-2&quot;&nbsp;................&nbsp;void 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;mouse-pick-3&quot;&nbsp;................&nbsp;void 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;page-down&quot;&nbsp;...................&nbsp;scroll-down 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;page-up&quot;&nbsp;.....................&nbsp;scroll-up 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;redraw&quot;&nbsp;......................&nbsp;screen-update 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;return&quot;&nbsp;......................&nbsp;newline 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;right&quot;&nbsp;.......................&nbsp;forward-char 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;tab&quot;&nbsp;.........................&nbsp;tab 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;up&quot;&nbsp;..........................&nbsp;backward-line 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;S-backspace&quot;&nbsp;.................&nbsp;backward-delete-char 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;S-delete&quot;&nbsp;....................&nbsp;forward-delete-char 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;S-tab&quot;&nbsp;.......................&nbsp;backward-delete-tab 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-down&quot;&nbsp;......................&nbsp;5&nbsp;forward-line 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-left&quot;&nbsp;......................&nbsp;backward-word 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-mouse-drop-1&quot;&nbsp;..............&nbsp;mouse-control-drop-left 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-mouse-pick-1&quot;&nbsp;..............&nbsp;set-cursor-to-mouse 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-page-down&quot;&nbsp;.................&nbsp;scroll-next-window-down 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-page-up&quot;&nbsp;...................&nbsp;scroll-next-window-up 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-right&quot;&nbsp;.....................&nbsp;forward-word 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-up&quot;&nbsp;........................&nbsp;5&nbsp;backward-line 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;A-down&quot;&nbsp;......................&nbsp;1&nbsp;scroll-down 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;A-left&quot;&nbsp;......................&nbsp;1&nbsp;scroll-left 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;A-right&quot;&nbsp;.....................&nbsp;1&nbsp;scroll-right 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;A-up&quot;&nbsp;........................&nbsp;1&nbsp;scroll-up 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;backspace&quot;&nbsp;...............&nbsp;backward-kill-word 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;esc&nbsp;esc&quot;&nbsp;.....................&nbsp;expand-abbrev 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-c&nbsp;g&quot;&nbsp;.......................&nbsp;grep 
+</PRE></UL>
+<P>Note that both internal commands and macro commands are shown in the list. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd084.html">buffer-bind-key(2)</A>, 
+<A HREF="m2cmd009.html">command-apropos(2)</A>, 
+<A HREF="m2cmd039.html">describe-key(2)</A>, 
+<A HREF="m2cmd040.html">describe-variable(2)</A>, 
+<A HREF="m2cmd013.html">global-bind-key(2)</A>, 
+<A HREF="m2cmd062.html">list-commands(2)</A>, 
+<A HREF="m2cmd085.html">ml-bind-key(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

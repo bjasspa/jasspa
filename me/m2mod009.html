@@ -1,0 +1,81 @@
+<HTML>
+<HEAD><TITLE>magic(2m)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+magic(2m)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>magic - Regular expression search </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>magic Mode</B> 
+<P><B>M</B> - mode line letter. </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>magic</B> mode enables the regular expression search capability used in the search and the replace commands such as 
+<A HREF="m2cmd116.html">search-forward(2)</A> and 
+<A HREF="m2cmd102.html">query-replace-string(2)</A>. 
+<P>In the magic mode of MicroEmacs '02, certain characters gain special meanings when used in a search pattern. Collectively they are know as regular expressions, and a limited number of them are supported in MicroEmacs '02. They grant greater flexibility when using the search commands (note that they also affect 
+<A HREF="m2cmd078.html">isearch-forward(2)</A> commands). 
+<P>The symbols that have special meaning in magic mode are <TT>^</TT>, <TT>$</TT>, <TT>.</TT>, <TT>\|</TT>, <TT>*</TT>, <TT>[</TT> <TT>]</TT>, <TT>\(</TT> <TT>\)</TT>, <TT>\{</TT> <TT>\}</TT> and <TT>\</TT>. 
+<P>The characters <TT>^</TT> and <TT>$</TT> fix the search pattern to the beginning and end of line, respectively. The <TT>^</TT> character must appear at the beginning of the search string, and the <TT>$</TT> must appear at the end, otherwise they loose their meaning and are treated just like any other character. For example, in magic mode, searching for the pattern &quot;<TT>t$</TT>&quot; would put the cursor at the end of any line that ended with the letter '<TT>t</TT>'. Note that this is different than searching for &quot;<TT>t&lt;NL&gt;</TT>&quot;, that is, '<TT>t</TT>' followed by a newline character. The character <TT>$</TT> (and <TT>^</TT>, for that matter) matches a position, not a character, so the cursor remains at the end of the line. But a newline is a character that must be matched, just like any other character, which means that the cursor is placed just after it - on the beginning of the next line. 
+<P>The character '<TT>.</TT>' has a very simple meaning - it matches any single character, except the newline. Thus a search for &quot;<TT>bad.er</TT>&quot; could match &quot;<TT>badger</TT>&quot;, &quot;<TT>badder</TT>&quot; (slang), or up to the '<TT>r</TT>' of &quot;<TT>bad error</TT>&quot;. 
+<P>The character <TT>*</TT> is known as closure, and means that zero or more of the preceding character will match. If there is no character preceding, <TT>*</TT> has no special meaning, and since it will not match with a newline, <TT>*</TT> will have no special meaning if preceded by the beginning of line symbol <TT>^</TT> or the literal newline character <TT>&lt;NL&gt;</TT>. The notion of zero or more characters is important. If, for example, your cursor was on the line <UL>
+<PRE>This&nbsp;line&nbsp;is&nbsp;missing&nbsp;two&nbsp;vowels. 
+</PRE></UL>
+<P>and a search was made for &quot;<TT>a*</TT>&quot;, the cursor would not move, because it is guaranteed to match no letter '<TT>a</TT>', which satisfies the search conditions. If you wanted to search for one or more of the letter 'a', you would search for &quot;<TT>aa*</TT>&quot;, which would match the letter <TT>a</TT>, then zero or more of them, note that this pattern is better searched using &quot;<TT>a+</TT>&quot;. 
+<P>The character &quot;<TT>+</TT>&quot; is the same as &quot;<TT>*</TT>&quot; except that it searches for one or more occurrences of the preceding character. 
+<P>The character <TT>[</TT> indicates the beginning of a character class. It is similar to the <I>any</I> (<TT>.</TT>) character, but you get to choose which characters you want to match. The character class is ended with the character <TT>]</TT>. So, while a search for &quot;<TT>ba.e</TT>&quot; will match &quot;<TT>bane</TT>&quot;, &quot;<TT>bade</TT>&quot;, &quot;<TT>bale</TT>&quot;, &quot;<TT>bate</TT>&quot;, et cetera, you can limit it to matching &quot;<TT>babe</TT>&quot; and &quot;<TT>bake</TT>&quot; by searching for &quot;<TT>ba[bk]e</TT>&quot;. Only one of the characters inside the <TT>[</TT> and <TT>]</TT> will match a character. If in fact you want to match any character except those in the character class, you can put a <TT>^</TT> as the first character. It must be the first character of the class, or else it has no special meaning. So, a search for <TT>[^aeiou]</TT> will match any character except a vowel, but a search for <TT>[aeiou^]</TT> will match any vowel or a <TT>^</TT>. If you have a lot of characters in order that you want to put in the character class, you may use a dash (<TT>-</TT>) as a range character. So, <TT>[a-z]</TT> will match any letter (or any lower case letter if exact mode is on), and <TT>[0-9a-f]</TT> will match any digit or any letter '<TT>a</TT>' through '<TT>f</TT>', which happen to be the characters for hexadecimal numbers. If the dash is at the beginning or end of a character class, it is taken to be just a dash. 
+<P>The <TT>?</TT> character provides a simple zero or one occurrence test of the previous character e.g. &quot;<TT>ca?r</TT>&quot; matches &quot;<TT>cr</TT>&quot; and &quot;<TT>car</TT>&quot;, it will not match &quot;<TT>caar</TT>&quot;. 
+<P>Where a previous item has a range of repetitions then the <TT>\{N,M\}</TT> syntax may be used to denote the minimum and maximum iterations of the previous item. Where a set quantity of repetitions is required then the simpler syntax of <TT>\{N\}</TT> may be used. i.e. &quot;<TT>ca\{2\}r</TT>&quot; matches &quot;<TT>caar</TT>&quot;, &quot;<TT>ca\{2,3\}r</TT>&quot; matches &quot;<TT>caar</TT>&quot; and &quot;<TT>caaar</TT>&quot;. 
+<P>The escape character <TT>\</TT> is for those times when you want to be in magic mode, but also want to use a regular expression character to be just a character. It turns off the special meaning of the character. So a search for &quot;<TT>it\.</TT>&quot; will search for a line with &quot;<TT>it.</TT>&quot;, and not &quot;<TT>it</TT>&quot; followed by any other character. The escape character will also let you put <TT>^</TT>, <TT>-</TT>, or <TT>]</TT> inside a character class with no special side effects. 
+<P>In 
+<A HREF="m2cmd102.html">search-replace</A> strings the <TT>\(</TT> <TT>\)</TT> pair may be used to group characters for in the search string for recall in the replacement string. The <TT>\(</TT> <TT>\)</TT> bracket pair is recalled using <TT>\1</TT>-<TT>\9</TT> in the replace string, <TT>\1</TT> is the first pair, <TT>\1</TT> the second and so on. Hence to replace <TT>%dgdg%name%dhdh%</TT> with <TT>%dgdg%names%dhdh%</TT> then we could use the following search replace string <TT>\(%[a-z]+%\)\([a-z]*\)\(%[a-z]+%\)</TT> replacing with <TT>\1\2s\3</TT>. 
+<P><TT>\0</TT> in the replace string implies the whole string. 
+<P>A summary of magic mode special characters are defined as follows:- <UL>
+<P><B>^</B> 
+<BR><UL>Anchor search at beginning of line </UL>
+<P><B>$</B> 
+<BR><UL>Anchor search at end of line </UL>
+<P><B>.</B> 
+<BR><UL>Match any character except <TT>&lt;NL&gt;</TT> </UL>
+<P><B>*</B> 
+<BR><UL>Match zero or more occurrences of the preceding item. </UL>
+<P><B>\|</B> 
+<BR><UL>Match either/or i.e. <TT>car\|bike</TT> matches the work <TT>car</TT> and matches the word <TT>bike</TT>. </UL>
+<P><B>+</B> 
+<BR><UL>Match one or more occurrences of the preceding item. </UL>
+<P><B>?</B> 
+<BR><UL>Match zero or one occurrences of the preceeding item. </UL>
+<P><B>[]</B> 
+<BR><UL>Match a class of characters (<TT>[a-z]</TT> would be all alphabetics) </UL>
+<P><B>\</B> 
+<BR><UL>Take next literally </UL>
+<P><B>\{</B><I>N</I><B>,</B><I>M</I><B>\}</B> 
+<BR><UL>Match a minimum of <I>N</I> occurrences and maximum of <I>M</I> occurrences of the preceeding item. </UL>
+<P><B>\{</B><I>N</I><B>\}</B> 
+<BR><UL>Match a <I>N</I> occurrences of the preceeding item. </UL>
+<P><B>\(...\)</B> 
+<BR><UL>Delimit pattern to replicate in replace string. Max of 9 allowed. Called in replace string with <TT>\1</TT>,..,<TT>\9</TT>. 1 being 1st etc. <TT>\0</TT> or <TT>\&amp;</TT> in the replace string is the whole string. i.e. 
+<P>Search: <B>\(ab\)\(dc\)</B> 
+<BR>Replace: <B>\1\2 \1\2</B> 
+<BR>on &quot;<B>abdc</B>&quot; =&gt; &quot;<B>abdc abdc</B>&quot; </UL></UL></UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd006.html">buffer-mode(2)</A>, 
+<A HREF="m2cmd005.html">global-mode(2)</A>, 
+<A HREF="m2cmd102.html">query-replace-string(2)</A>, 
+<A HREF="m2cmd116.html">search-forward(2)</A>. 
+<BR>
+<A HREF="m2nar006.html">Regular Expressions</A> </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

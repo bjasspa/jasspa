@@ -1,0 +1,229 @@
+<HTML>
+<HEAD><TITLE>organizer(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+organizer(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>organizer - Calendar and address organizer </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>organizer</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>organizer</B> is a calendar and address organizer, enabling notes to be stored against the calendar days; addresses may be archived into an address book. 
+<P><B>organizer</B> uses the MicroEmacs '02 in-built registry to store information within a registry file called <I>&lt;username&gt;</I><TT>.eof</TT>. <B>organizer</B> may be entered directly from the command line, or via the menu (via <B>Tools</B>). 
+<P><B>organizer</B> is displayed within a single osd dialog box, tab selections at the top of the window enable the different forms of information to be displayed. Navigation is typically performed using the mouse, where the mouse is absent then the <TT>TAB</TT> key may be used to move between the fields. The information presented is defined as follows:- </UL>
+<H2>Month </H2>
+<UL><P>Shows the calendar month, starting with the current month, the current day is hi-lighted and any notes that have been entered are displayed in the <B>Notes</B> entry box at the bottom of the page. 
+<P>The default mode of operation is note entries for the current month, however specifying the <I>&lt;year&gt;</I> as the wild card '<B>*</B>' (star) enables annual events to be entered into the organizer. Annual events are automatically inserted into the calendar each year, typically used for birthdays etc. 
+<P>The entry controls to the dialog are defined as follows:- 
+<P><B>&lt;-</B> 
+<BR><UL>Advances to the previous month. </UL>
+<P><B>-&gt;</B> 
+<BR><UL>Advances to the next month. </UL>
+<P><I>&lt;Month&gt;</I> 
+<BR><UL>A pull down dialog enabling month selection. </UL>
+<P><I>&lt;year&gt;</I> 
+<BR><UL>A text entry field specifying the current year as a 4 digit number. A value of <B>*</B> is the wild card year for specifying annual events. </UL>
+<P><B>Notes</B> 
+<BR><UL>A free form text entry box allowing a note to be attached to the currently selected day. </UL>
+<P><B>Save</B> 
+<BR><UL>Saves the entry back to file. </UL>
+<P><B>Month To Buffer</B> 
+<BR><UL>Dumps a view of the month to the currently active buffer, any notes are also dumped to the buffer. </UL>
+<P><B>Exit</B> 
+<BR><UL>Exits the <B>organizer</B>. </UL></UL>
+<H2>Week </H2>
+<UL><P>Shows the calendar week in the current buffer, the days of the week are shown in a column ordering. Note that selection of the week is typically performed from the <B>Month</B> view, moving to the <B>Week</B> view (via the tab) selects the week appropriate to the previously selected day within the month view. 
+<P>The entry controls on the dialog are defined as follows:- 
+<P><B>&lt;-</B> 
+<BR><UL>Advances to the previous week. </UL>
+<P><B>-&gt;</B> 
+<BR><UL>Advances to the next week. </UL>
+<P><I>&lt;year&gt;</I> 
+<BR><UL>A text entry field specifying the current year as a 4 digit number. The value of <B>*</B> for viewing and setting annual events is not valid in this view. </UL>
+<P><B>Notes</B> 
+<BR><UL>A free form text entry box allowing a note to be attached to the currently selected day. </UL>
+<P><I>&lt;day&gt;</I> 
+<BR><UL>Selecting a date in the <I>day</I> column changes the view to the <B>Day</B> view. </UL>
+<P><B>Save</B> 
+<BR><UL>Saves the entry back to file. </UL>
+<P><B>Week To Buffer</B> 
+<BR><UL>Dumps a view of the week to the currently active buffer, any notes are also dumped to the buffer. </UL>
+<P><B>Exit</B> 
+<BR><UL>Exits the <B>organizer</B>. </UL>
+<P><B>Note:</B> The start day in the week view may be configured to commence on a day other than Sunday from the <B>Setup</B> tab. </UL>
+<H2>Day </H2>
+<UL><P>Shows an extended view of the notes attached to the current day, day selection is typically performed from the <B>Month</B> or <B>Week</B> views. The entry controls on the dialog are defined as follows:- 
+<P><B>&lt;-</B> 
+<BR><UL>Advances to the previous day. </UL>
+<P><B>-&gt;</B> 
+<BR><UL>Advances to the next day. </UL>
+<P><I>&lt;year&gt;</I> 
+<BR><UL>A text entry field specifying the current year as a 4 digit number. A value of <B>*</B> is the wild card year for specifying annual events. </UL>
+<P><I>&lt;month&gt;</I> 
+<BR><UL>A pull down dialog enabling month selection. </UL>
+<P><I>&lt;day&gt;</I> 
+<BR><UL>A text entry enabling the current day to be entered. </UL>
+<P><B>Notes</B> 
+<BR><UL>A free form text entry box allowing a note to be attached to the currently selected day. </UL>
+<P><B>Save</B> 
+<BR><UL>Saves the entry back to file. </UL>
+<P><B>Day To Buffer</B> 
+<BR><UL>Dumps a view of the day to the currently active buffer, any notes are printed in the buffer. </UL>
+<P><B>Exit</B> 
+<BR><UL>Exits the <B>organizer</B>. </UL></UL>
+<H2>Lists </H2>
+<UL><P>The lists pane provides support for multiple list generation and manipulation. Each list consists of zero or more ordered items each of which has a text field in which the user can enter information. 
+<P>Entry to the dialog is defined as follows:- 
+<P><B>List</B> 
+<BR><UL>Selects a list. </UL>
+<P><B>New</B> 
+<BR><UL>Creates a new list. </UL>
+<P><B>Lines Per Item</B> 
+<BR><UL>Sets the number of lines to use when displaying a list item. </UL>
+<P><B>New</B> 
+<BR><UL>Creates a new list item at the end of the current list. </UL>
+<P><B>Up</B> 
+<BR><UL>Moves the currently selected item (left click on the item number) up the list. </UL>
+<P><B>Down</B> 
+<BR><UL>Moves the currently selected item down the list. </UL>
+<P><B>Insert</B> 
+<BR><UL>Inserts a new list item before the currently selected item. </UL>
+<P><B>Delete</B> 
+<BR><UL>Deletes the currently selected item. </UL>
+<P><B>Save</B> 
+<BR><UL>Saves the entry back to file. </UL>
+<P><B>List To Buffer</B> 
+<BR><UL>Dumps a view of the list to the currently active buffer. </UL>
+<P><B>Exit</B> 
+<BR><UL>Exits the <B>organizer</B>. </UL></UL>
+<H2>Address </H2>
+<UL><P>The address pane provides entry to the address book, enabling personal and business details to be retained against a single name, tabbed selection of <B>Work</B> or <B>Home</B> selects the information that is displayed. A search engine is provide to locate names within the database, and provision is made to save some text against a name. Entries in the database are, by default, organized by record number, sorting may be explicitly performed from the <B>Sort</B> button. 
+<P>Entry to the dialog is defined as follows:- 
+<P><I>&lt;Record No&gt;</I> 
+<BR><UL>The identity number of the record, a value of <B>*</B> denotes that this is a new record that is being inserted. </UL>
+<P><B>&lt;&lt;</B> 
+<BR><UL>Moves to the start of the database. </UL>
+<P><B>&gt;&gt;</B> 
+<BR><UL>Moves to the end of the database, showing record <B>*</B>, a new entry may be entered. </UL>
+<P><B>&lt;</B> 
+<BR><UL>Moves to the previous record. </UL>
+<P><B>&gt;</B> 
+<BR><UL>Moves to the next record. </UL>
+<P><B>Name</B> 
+<BR><UL>The name of the individual, entered as <I>fore-name</I> and <I>surname</I>. </UL>
+<P><B>Nickname</B> 
+<BR><UL>A pseudo name assigned to an individual. </UL>
+<P><B>Partner</B> 
+<BR><UL>Shown in the <B>Home</B> view only. The <I>forename</I> and <I>surname</I> of any partner. </UL>
+<P><B>Chld</B> 
+<BR><UL>Shown in the <B>Home</B> view only in the <B>Extended Address Book Mode</B>. The names of any children (up to 3). </UL>
+<P><B>DOB</B> 
+<BR><UL>Date of Birth, shown in the <B>Home</B> view only in the <B>Extended Address</B> <B>Book Mode</B>. The dates of birth of the parents, any children in addition to an anniversary date. </UL>
+<P><B>Company</B> 
+<BR><UL>Shown in the <B>Work</B> view only. The name of the company. </UL>
+<P><B>Address</B> 
+<BR><UL>The address of the individual/company. </UL>
+<P><B>Tel</B>/<B>Fax</B>/<B>Mobile</B> 
+<BR><UL>Telecommunication information. </UL>
+<P><B>Email</B>/<B>WWW</B>/<B>FTP</B> 
+<BR><UL>Electronic communication information. </UL>
+<P><B>Notes</B> 
+<BR><UL>Notes associated with the individual. </UL>
+<P><B>Save</B> 
+<BR><UL>Saves the address information to file. </UL>
+<P><B>Dup</B> 
+<BR><UL>Duplicates the currently selected address entry, creating a new record card. Typically used to construct a similar entry for a different individual. </UL>
+<P><B>Delete</B> 
+<BR><UL>Deletes the currently selected entry. </UL>
+<P><B>Addr to Buffer</B> 
+<BR><UL>Dumps the currently selected address to the current buffer. </UL>
+<P><B>Exit</B> 
+<BR><UL>Exits the organizer. </UL>
+<P><B>Find</B> 
+<BR><UL><B>find</B> provides access to a search engine, enabling addresses to be located in the address book. 
+<P><B>Search For</B> 
+<BR><UL>The string to search for. </UL>
+<P><B>In Field</B> 
+<BR><UL>Pull-down menu allowing the selection of the field to be searched in. </UL>
+<P><B>Match</B> 
+<BR><UL>Selects how strict the search should be; typically <B>Any Part</B> is used as this is the least in-exact search. The default mode is configured in the <B>Setup</B> tab. </UL>
+<P><B>Case</B>/<B>magic</B> 
+<BR><UL>Selects the search criteria. The default mode is configured in the <B>Setup</B> tab. </UL>
+<P><B>First</B> 
+<BR><UL>Finds the first record that matches the search criteria </UL>
+<P><B>Next</B> 
+<BR><UL>Finds the next record that matches the search criteria, from the currently displayed record. </UL>
+<P><B>Reverse</B> 
+<BR><UL>Searches in reverse order. </UL>
+<P><B>Exit</B> 
+<BR><UL>Exits the search </UL></UL>
+<P><B>Sort</B> 
+<BR><UL><B>sort</B> provides a mechanism to re-sort the data base into a different order. The sort is performed on up to 3 different keys enabling conflicting primary sort fields to be resolved by the secondary sort criteria. The default sort order is <I>&lt;Record No&gt;</I>, <I>&lt;None&gt;</I>, <I>&lt;None&gt;</I>. 
+<P><B>Sort Keys</B> 
+<BR><UL>The <I>Primary</I>, <I>Secondary</I> and <I>Tertiary</I> sort fields are selected by a pull down menu. The fields to be used for sorting are selected from the list. </UL>
+<P><B>Sort</B> 
+<BR><UL>Performs the sort, based on the settings of the <I>Sort Keys</I>. </UL>
+<P><B>Exit</B> 
+<BR><UL>Exits the sort dialog. </UL></UL></UL>
+<H2>Setup </H2>
+<UL><P>The <B>setup</B> pane configures a number of general settings of the organizer. 
+<P><B>Current Organizer File</B> 
+<BR><UL>The full pathname of the organizer file. By default this is set to <I>&lt;userpath&gt;&lt;userName&gt;</I><B>.eof</B> and can be altered using 
+<A HREF="m3osd000.html">user-setup(3)</A>. </UL>
+<P><B>Change Name</B> 
+<BR><UL>Allows the displayed name of the month and the day to be modified. </UL>
+<P><B>First Day of the week</B> 
+<BR><UL>Selects the first day of the week, this sets the first day to be displayed in the <B>Week</B> view and the first column in the <B>Month</B> view. </UL>
+<P><B>Min New Year Days</B> 
+<BR><UL>The number of days that must appear in the first week of the New Year for the week to be considered week 1. Modifying the value of this field modifies the week number. </UL>
+<P>The <B>Calendar</B> section allows the wordy representation of the calendar date to be modified. Typically used to modify the names to the native language. 
+<P><B>Change Month Name</B> 
+<BR><UL>Select the existing month representation from the left-hand box and type in a new selection into the right-hand box. </UL>
+<P><B>Change Week Day Name</B> 
+<BR><UL>As <I>Change Month Name</I>, enables the day of the week representation to be modified. </UL>
+<P><B>First Day Of The Week</B> 
+<BR><UL>Selects the first day that appears in the <B>Week</B> view. </UL>
+<P><B>Minimum Days of New Year in first week</B> 
+<BR><UL>Specifies the number of days that must appear in the first week of the New Year for the week to be designated as week 1. This value allows the week number to be aligned with the calender weeks of standard diaries. The default value is 7 days; but may be reduced to 5 or 6 for typical alignment. </UL>
+<P>The <B>Address Book</B> section allows the operation of the address book to be modified. 
+<P><B>Use Extended Address Book</B> 
+<BR><UL>The extended address book allows additional information to be added to the personal address book. The extended information is limited to the amount of personal information attributed to an individual, including <I>Date of Birth</I> and <I>Child</I> information. </UL>
+<P><B>Import From File</B> 
+<BR><UL>The <B>Import</B> from file allows the address book to be imported from a file. The import data format is a single line per entry, comma <TT>,</TT> separated. The field order is defined as follows, the <B>*</B> entries indicate the <B>Extended</B> <B>Address</B> <B>Book</B> fields:- 
+<UL><P><I>Record No</I>, <I>First Name</I>, <I>Surname</I>, <I>Nick Name</I>, <I>Selected</I>, <I>Notes</I>, <I>Partner First Name</I>, <I>Partner Surname</I>, <I>Home Address</I>, <I>Home Telephone</I>, <I>Home Fax</I>, <I>Home Mobile</I>, <I>Home E-Mail</I>, <I>Home WWW Page</I>, <I>Home FTP Site</I>, <I>Work Company</I>, <I>Work Address</I>, <I>Work Telephone</I>, <I>Work Fax</I>, <I>Work Mobile</I>, <I>Work E-Mail</I>, <I>Work WWW Page</I>, <I>Work FTP Site</I>, <I>Date-Of-Birth*</I>, <I>Partner DOB*</I>, <I>Date-Of-Marriage*</I>, <I>Child1 Name*</I>, <I>Child1 DOB*</I>, <I>Child2 Name*</I>, <I>Child2 DOB*</I>, <I>Child3 Name*</I>, <I>Child3 DOB*</I>. </UL></UL>
+<P><B>Export To File</B> 
+<BR><UL>Exports the address book to a file, the address book is exported in the current sort order, with the fields defined as above. The exported address book may then be imported into a 3rd party package i.e. Microsoft Access, etc. </UL>
+<P>The <B>Default Address Find Settings</B> section defines the default search criteria used in the address book search function. 
+<P><B>Whole</B>/<B>Start</B>/<B>Any Part</B> 
+<BR><UL>Radio buttons determine how the search is performed on the string. <UL><UL><P>
+<LI><B>Whole</B> matches the whole string exactly. 
+<LI><B>Start</B> matches the first part of the string only (i.e. <TT>Ab*</TT>). 
+<LI><B>Any Part</B> finds entries that include the search string at any position within the data base search field. </UL></UL></UL>
+<P><B>Case Insensitive</B> 
+<BR><UL>Checked, matches the strings regardless of case. (default). </UL>
+<P><B>Magic Mode</B> 
+<BR><UL>Allows magic strings to be included in the search string. </UL></UL>
+<H2><B>NOTES </B></H2>
+<UL><P><B>organizer</B> is a macro that is implemented in <TT>organiz*.emf</TT> files. Organizer uses 
+<A HREF="m2cmd066.html">osd(2)</A> to create and manage the dialogs. 
+<P>The maximum size of a text note is 1024 characters. 
+<P>With an new address is created it is added to the end of the address list regardless of the current sort criteria. 
+<P><B>Organizer</B> replaces the original <B>Calendar</B> utility. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m3osd000.html">user-setup(3)</A>, 
+<A HREF="m2cmd066.html">osd(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

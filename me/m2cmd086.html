@@ -1,0 +1,86 @@
+<HTML>
+<HEAD><TITLE>list-variables(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+list-variables(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>list-variables - List defined variables </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>list-variables</B> (<B>C-h&nbsp;v</B>)&nbsp; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>list-variables</B> pops up a window with a list of all register, buffer, user and global variables with their current setting. The variables are shown for the current buffer from which the command was invoked 
+<P><B>list-variables</B> provides a good alternative to 
+<A HREF="m2cmd040.html">describe-variable(2)</A> where the value of multiple variables is to be interrogated. 
+<P>The output is displayed in four sections:- 
+<P><B>Register variables</B> 
+<BR><UL>The current settings of the global register variables ('<B>#</B>' prefix). </UL>
+<P><B>Buffer Variables</B> 
+<BR><UL>The current setting of the buffer variables ('<B>:</B>' prefix). This variables relate to the current buffer from which the command was invoked. </UL>
+<P><B>System Variables</B> 
+<BR><UL>The current settings of the system variables ('<B>$</B>' prefix). </UL>
+<P><B>Global Variables</B> 
+<BR><UL>The current setting of the global variables ('<B>%</B>' prefix). </UL></UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>An example output from <B>list-variables</B> is shown below:- <UL>
+<PRE>Register&nbsp;variables: 
+
+&nbsp;&nbsp;&nbsp;&nbsp;#g0&nbsp;...........................&nbsp;&quot;29&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;#g1&nbsp;...........................&nbsp;&quot;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;#g2&nbsp;...........................&nbsp;&quot;ERROR&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;: 
+&nbsp;&nbsp;&nbsp;&nbsp;: 
+&nbsp;&nbsp;&nbsp;&nbsp;#g8&nbsp;...........................&nbsp;&quot;ERROR&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;#g9&nbsp;...........................&nbsp;&quot;ERROR&quot; 
+
+Buffer&nbsp;[m2cmd086.2]&nbsp;variables: 
+
+
+System&nbsp;variables: 
+
+&nbsp;&nbsp;&nbsp;&nbsp;$auto-time&nbsp;....................&nbsp;&quot;300&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;$buffer-bhook&nbsp;.................&nbsp;&quot;bhook-nroff&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;$buffer-bname&nbsp;.................&nbsp;&quot;m2cmd086.2&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;$buffer-ehook&nbsp;.................&nbsp;&quot;ehook-nroff&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;$buffer-fhook&nbsp;.................&nbsp;&quot;fhook-nroff&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;$buffer-fmod&nbsp;..................&nbsp;&quot;040&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;$buffer-fname&nbsp;.................&nbsp;&quot;d:/emacs/doc/m2cmd086.2&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;$buffer-hilight&nbsp;...............&nbsp;&quot;3&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;: 
+&nbsp;&nbsp;&nbsp;&nbsp;: 
+&nbsp;&nbsp;&nbsp;&nbsp;$window-width&nbsp;.................&nbsp;&quot;80&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;$window-x-scroll&nbsp;..............&nbsp;&quot;0&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;$window-xcl-scroll&nbsp;............&nbsp;&quot;0&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;$window-y-scroll&nbsp;..............&nbsp;&quot;52&quot; 
+
+Global&nbsp;variables: 
+
+&nbsp;&nbsp;&nbsp;&nbsp;%black&nbsp;........................&nbsp;&quot;0&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;%blue&nbsp;.........................&nbsp;&quot;4&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;%compile-com&nbsp;..................&nbsp;&quot;nmake&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;%cyan&nbsp;.........................&nbsp;&quot;6&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;%green&nbsp;........................&nbsp;&quot;2&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;%grep-com&nbsp;.....................&nbsp;&quot;grep&nbsp;-n&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;: 
+&nbsp;&nbsp;&nbsp;&nbsp;: 
+&nbsp;&nbsp;&nbsp;&nbsp;%usr1mode&nbsp;.....................&nbsp;&quot;off&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;%white&nbsp;........................&nbsp;&quot;7&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;%yellow&nbsp;.......................&nbsp;&quot;3&quot; 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd040.html">describe-variable(2)</A>, 
+<A HREF="m2cmd062.html">list-commands(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

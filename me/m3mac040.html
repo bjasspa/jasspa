@@ -1,0 +1,114 @@
+<HTML>
+<HEAD><TITLE>find-zfile(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+find-zfile(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>find-zfile - Compressed file support 
+<BR>zfile-setup - Compressed file support setup </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>find-zfile</B> &quot;<I>file-name</I>&quot; 
+<BR><B>zfile-setup</B> &quot;<I>extension</I>&quot; &quot;<I>list-command</I>&quot; &quot;<I>cut-to</I>&quot; 
+<BR><UL>&quot;<I>column</I>&quot; &quot;<I>file-end</I>&quot; &quot;<I>extract-command</I>&quot; 
+<BR>&quot;<I>remove-command</I>&quot; </UL></UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>find-zfile</B> provides generic support for listing and extracting the contents of compressed files. <B>find-zfile</B> also supports the extraction of the internal files into another buffer. 
+<P><B>find-zfile</B> must be configured for each compression format using <B>zfile-setup</B>. It relies on command-line programs to generate content lists which are used to generate the main file listing, and subsequently, the ability to extract individual files for file extraction support. 
+<P>For basic content listing support the first 3 arguments must be given to zfile-setup. The first argument &quot;<I>extension</I>&quot; is used as the compressed file id string. The compressed file type is derived from the file extension, e.g. &quot;<TT>zip</TT>&quot; or &quot;<TT>Z</TT>&quot; for UNIX compressed files. The exact case of the extension is checked first, followed by the lower case and upper case string. 
+<P>The compressed file contents list is generated from executing the user supplied &quot;<I>list-command</I>&quot; and dumping the output into the list buffer. The command is run from the directory containing the compressed file and the following special tags may be used within the &quot;<I>list-command</I>&quot; which get substituted as follows:- 
+<P><B>%zb</B> 
+<BR><UL>The token is replaced with the compressed files base name, i.e. the file name without the path. </UL>
+<P><B>%zf</B> 
+<BR><UL>The token is replaced with the compressed files absolute file name, i.e. the file complete with the path. 
+</UL><P>The head of the list output is often unwanted verbose printout, this can be automatically be removed by the use of the &quot;<I>cut-to</I>&quot; argument. The argument, if supplied (not an empty string), must be a 
+<A HREF="m2nar006.html">regex</A> search string matching the start of the required list. If found, all text before it is removed. 
+<P>For single file extraction support the last 4 arguments must be specified by <B>zfile-setup</B>. The file to extract is selected either by selecting the file name using the left mouse button or by moving the cursor to the line containing the file name and pressing the &quot;<TT>return</TT>&quot; key. 
+<P><B>find-zfile</B> assumes that the file name starts at a fixed column number, specified with the &quot;<I>column</I>&quot; argument. The end of the file name is obtained by searching for the regular expression &quot;<I>file-end</I>&quot; string, the file name is assumed to end at the start of the search string match. 
+<P>The file is then extracted by executing the supplied &quot;<I>extract-command</I>&quot; and then loading the extracted file into a new buffer. The command is run from the system temporary directory (i.e. &quot;<TT>/tmp/</TT>&quot; on UNIX or <TT>$TEMP</TT> on Windows etc.). The following special tags may be used within the &quot;<I>extract-command</I>&quot; which get substituted as follows:- 
+<P><B>%zb</B> 
+<BR><UL>The token is replaced with the compressed files base name, i.e. the file name without the path. </UL>
+<P><B>%zf</B> 
+<BR><UL>The token is replaced with the compressed files absolute file name, i.e. the file name complete with the path. </UL>
+<P><B>%fb</B> 
+<BR><UL>The name of the file to be extracted. 
+</UL><P>The file is assumed to be extracted to the temp directory due to the way the command is run, this file is then loaded into a new buffer. The temporary file should then be removed using the supplied &quot;<I>remove-command</I>&quot; with is run from the temp directory, the &quot;<B>%fb</B>&quot; special tag may be used in the command. This argument may be given as an empty string, thereby disabling the removal. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>For zip file support the freely available <B>unzip(1)</B> command can be used, following is the list of arguments with suitable entries: <UL>
+<PRE>extension&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zip 
+list-command&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unzip&nbsp;-v&nbsp;%zb 
+cut-to&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^&nbsp;Length 
+column&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;58 
+file-end&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$ 
+extract-command&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unzip&nbsp;-o&nbsp;%zf&nbsp;%fb 
+remove-command&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rm&nbsp;%fb 
+</PRE></UL>
+<P>For the zip file &quot;<I>/usr/jasspa/memacros.zip</I>&quot;, after substitution the list command becomes &quot;<TT>unzip -v memacros.zip</TT>&quot; which will be executed in the &quot;<I>/usr/jasspa/</I>&quot; directory. This will produce the following form of output: <UL>
+<PRE>Archive:&nbsp;&nbsp;memacros.zip 
+&nbsp;Length&nbsp;&nbsp;Method&nbsp;&nbsp;&nbsp;Size&nbsp;&nbsp;Ratio&nbsp;&nbsp;&nbsp;Date&nbsp;&nbsp;&nbsp;&nbsp;Time&nbsp;&nbsp;&nbsp;CRC-32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name 
+&nbsp;------&nbsp;&nbsp;------&nbsp;&nbsp;&nbsp;----&nbsp;&nbsp;-----&nbsp;&nbsp;&nbsp;----&nbsp;&nbsp;&nbsp;&nbsp;----&nbsp;&nbsp;&nbsp;------&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---- 
+&nbsp;&nbsp;&nbsp;&nbsp;565&nbsp;&nbsp;Defl:N&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;258&nbsp;&nbsp;54%&nbsp;&nbsp;02-27-99&nbsp;&nbsp;22:56&nbsp;&nbsp;018a7f70&nbsp;&nbsp;&nbsp;american.emf 
+&nbsp;&nbsp;&nbsp;3409&nbsp;&nbsp;Defl:N&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;872&nbsp;&nbsp;74%&nbsp;&nbsp;02-28-99&nbsp;&nbsp;01:37&nbsp;&nbsp;6a6f9722&nbsp;&nbsp;&nbsp;americar.emf 
+&nbsp;&nbsp;&nbsp;4201&nbsp;&nbsp;Defl:N&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;772&nbsp;&nbsp;82%&nbsp;&nbsp;03-01-99&nbsp;&nbsp;12:58&nbsp;&nbsp;d4e3bc4a&nbsp;&nbsp;&nbsp;benchmrk.emf 
+&nbsp;&nbsp;&nbsp;&nbsp;565&nbsp;&nbsp;Defl:N&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;258&nbsp;&nbsp;54%&nbsp;&nbsp;02-27-99&nbsp;&nbsp;22:56&nbsp;&nbsp;dd394e24&nbsp;&nbsp;&nbsp;british.emf 
+&nbsp;&nbsp;&nbsp;3408&nbsp;&nbsp;Defl:N&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;872&nbsp;&nbsp;74%&nbsp;&nbsp;02-28-99&nbsp;&nbsp;01:37&nbsp;&nbsp;32f3eeca&nbsp;&nbsp;&nbsp;britishr.emf 
+&nbsp;&nbsp;&nbsp;7239&nbsp;&nbsp;Defl:N&nbsp;&nbsp;&nbsp;&nbsp;1923&nbsp;&nbsp;73%&nbsp;&nbsp;02-28-99&nbsp;&nbsp;15:13&nbsp;&nbsp;d408f0da&nbsp;&nbsp;&nbsp;calc.emf 
+&nbsp;&nbsp;&nbsp;7292&nbsp;&nbsp;Defl:N&nbsp;&nbsp;&nbsp;&nbsp;2072&nbsp;&nbsp;72%&nbsp;&nbsp;01-23-99&nbsp;&nbsp;12:49&nbsp;&nbsp;5979d6b2&nbsp;&nbsp;&nbsp;cbox.emf 
+&nbsp;&nbsp;&nbsp;7104&nbsp;&nbsp;Defl:N&nbsp;&nbsp;&nbsp;&nbsp;1402&nbsp;&nbsp;80%&nbsp;&nbsp;02-28-99&nbsp;&nbsp;15:13&nbsp;&nbsp;6faf4fc5&nbsp;&nbsp;&nbsp;cmacros.emf 
+&nbsp;&nbsp;&nbsp;5967&nbsp;&nbsp;Defl:N&nbsp;&nbsp;&nbsp;&nbsp;1239&nbsp;&nbsp;79%&nbsp;&nbsp;02-13-99&nbsp;&nbsp;16:38&nbsp;&nbsp;27601523&nbsp;&nbsp;&nbsp;ctags.emf 
+&nbsp;&nbsp;&nbsp;1097&nbsp;&nbsp;Defl:N&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;489&nbsp;&nbsp;55%&nbsp;&nbsp;02-16-99&nbsp;&nbsp;10:58&nbsp;&nbsp;53a55e36&nbsp;&nbsp;&nbsp;dos.emf 
+&nbsp;&nbsp;&nbsp;&nbsp;562&nbsp;&nbsp;Defl:N&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;310&nbsp;&nbsp;45%&nbsp;&nbsp;01-16-98&nbsp;&nbsp;07:54&nbsp;&nbsp;ec24f65e&nbsp;&nbsp;&nbsp;dos2unix.emf 
+. 
+. 
+. 
+</PRE></UL>
+<P>The top Archive line is not require, this is automatically removed by setting the &quot;<I>cut-to</I>&quot; to &quot;<TT>^ Length</TT>&quot; which matches the start of the next line. 
+<P>For file extract, consider the file &quot;<TT>ctags.emf</TT>&quot;, the first character '<TT>c</TT>' is at column 58 and the first character after the end of the file name is the end-of-line character ('<TT>\n</TT>') which is matched by the 
+<A HREF="m2nar006.html">regex</A> string &quot;$&quot;, hence the settings on &quot;<I>column</I>&quot; and &quot;<I>file-end</I>&quot;. When this and the zip file name are substituted into the extract-command, it becomes &quot;<TT>unzip -o /usr/jasspa/memacros.zip calc.emf</TT>&quot; and is run from the &quot;<I>/tmp.</I>&quot; directory. Note that the &quot;<TT>-o</TT>&quot; option disables any overwrite prompts, these are not required as tests and prompting have already been performed by <B>find-zfile</B>. The extracted file &quot;<I>/tmp/calc.emf</I>&quot; is then loaded into a new buffer. 
+<P>The temporary file is removed by executing the substituted remove-command which becomes &quot;<TT>rm calc.emf</TT>&quot; from the &quot;<TT>/tmp/</TT>&quot; directory. 
+<P>For gzipped tar files, extension &quot;<B>tgz</B>&quot; the following setup can be used on UNIX platforms: <UL>
+<PRE>extension&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tgz 
+list-command&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unzip&nbsp;-v&nbsp;%zb 
+cut-to 
+column&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;43 
+file-end&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$ 
+extract-command&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gunzip&nbsp;-c&nbsp;%zf&nbsp;|&nbsp;tar&nbsp;xof&nbsp;-&nbsp;%fb 
+remove-command&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rm&nbsp;%fb 
+</PRE></UL>
+<P>For the tgz file &quot;<I>/usr/jasspa/memacros.tgz</I>&quot;, this will produce the following listing: <UL>
+<PRE>tgz&nbsp;file:&nbsp;/usr/jasspa/memacros.tgz 
+
+
+rw-rw-r--&nbsp;211/200&nbsp;&nbsp;&nbsp;&nbsp;565&nbsp;Feb&nbsp;27&nbsp;22:56&nbsp;1999&nbsp;american.emf 
+rw-rw-r--&nbsp;211/200&nbsp;&nbsp;&nbsp;3409&nbsp;Feb&nbsp;28&nbsp;01:37&nbsp;1999&nbsp;americar.emf 
+rw-rw-r--&nbsp;211/200&nbsp;&nbsp;&nbsp;4201&nbsp;Mar&nbsp;&nbsp;1&nbsp;12:58&nbsp;1999&nbsp;benchmrk.emf 
+rw-rw-r--&nbsp;211/200&nbsp;&nbsp;&nbsp;&nbsp;565&nbsp;Feb&nbsp;27&nbsp;22:56&nbsp;1999&nbsp;british.emf 
+rw-rw-r--&nbsp;211/200&nbsp;&nbsp;&nbsp;3408&nbsp;Feb&nbsp;28&nbsp;01:37&nbsp;1999&nbsp;britishr.emf 
+rw-rw-r--&nbsp;211/200&nbsp;&nbsp;&nbsp;7239&nbsp;Feb&nbsp;28&nbsp;15:13&nbsp;1999&nbsp;calc.emf 
+rw-rw-r--&nbsp;211/200&nbsp;&nbsp;&nbsp;7292&nbsp;Jan&nbsp;23&nbsp;12:49&nbsp;1999&nbsp;cbox.emf 
+rw-rw-r--&nbsp;211/200&nbsp;&nbsp;&nbsp;7104&nbsp;Feb&nbsp;28&nbsp;15:13&nbsp;1999&nbsp;cmacros.emf 
+rw-rw-r--&nbsp;211/200&nbsp;&nbsp;&nbsp;5967&nbsp;Feb&nbsp;13&nbsp;16:38&nbsp;1999&nbsp;ctags.emf 
+rw-rw-r--&nbsp;211/200&nbsp;&nbsp;&nbsp;1097&nbsp;Feb&nbsp;16&nbsp;10:58&nbsp;1999&nbsp;dos.emf 
+rw-rw-r--&nbsp;211/200&nbsp;&nbsp;&nbsp;&nbsp;562&nbsp;Jan&nbsp;16&nbsp;07:54&nbsp;1998&nbsp;dos2unix.emf 
+. 
+. 
+. 
+</PRE></UL>
+</UL><H2><B>NOTES </B></H2>
+<UL><P><B>find-zfile</B> and <B>zfile-setup</B> are macros defined in <TT>zfile.emf</TT>. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd056.html">find-file(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

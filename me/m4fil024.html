@@ -1,0 +1,49 @@
+<HTML>
+<HEAD><TITLE>&find(4)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+&find(4)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>&amp;find - Find a file on the search path 
+<BR>&amp;which - Find a program on the path </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>&amp;find</B> <I>&lt;basename&gt;</I> <I>&lt;extension&gt;</I> 
+<BR><B>&amp;which</B> <I>&lt;progname&gt;</I> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>&amp;find</B> searches for a named file <I>&lt;basename&gt;&lt;extension&gt;</I> on the MicroEmacs '02 search path defined by the variable 
+<A HREF="m5var057.html">$search-path(5)</A> (initialized from the environment variable 
+<A HREF="m5var057.html">$MEPATH(5)</A>). Each path component defined in <B>$search-path</B> is prepended to the constructed file name and it's existence is tested. If the file exists, then the FULL path name of the file is returned to the caller, otherwise <TT>ERROR</TT>. 
+<P><I>&lt;basename&gt;</I> 
+<BR><UL>The base name of the file, excluding any extension. </UL>
+<P><I>&lt;extension&gt;</I> 
+<BR><UL>The extension of the file name, this must be specified with the extension delimiter, typically dot ('<TT>.</TT>'). A <TT>NULL</TT> string (e.g. '<TT>&quot;&quot;</TT>') may be specified if no extension is required. 
+</UL><P><B>&amp;which</B> searches for the given executable program <I>&lt;progname&gt;</I> on the system program search path defined the the environment variable <B>$PATH</B>. </UL>
+<H2><B>USAGE </B></H2>
+<UL><P><B>&amp;find</B> is typically used with 
+<A HREF="m2cmd073.html">insert-file(2)</A> and 
+<A HREF="m2cmd056.html">find-file(2)</A> within macro scripts, and is used to locate user specific files. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following example uses <B>&amp;find</B> to locate the uses 'C' template file. Given a <B>$search-path</B> setting of <TT>/usr/bob/emacs:/usr/local/microemacs</TT>:- <UL>
+<PRE>insert-file&nbsp;&amp;find&nbsp;&quot;c&quot;&nbsp;&quot;.etf&quot; 
+</PRE></UL>
+<P>Would insert the file <TT>/usr/bob/emacs/c.etf</TT> if it existed, else the file <TT>/usr/local/microemacs/c.etf</TT> if it exists. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="amicr026.html">Variable Functions</A>, 
+<A HREF="m2cmd056.html">find-file(2)</A>, 
+<A HREF="m5var057.html">$search-path(5)</A>, 
+<A HREF="m2cmd073.html">insert-file(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

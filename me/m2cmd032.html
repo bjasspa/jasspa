@@ -1,0 +1,60 @@
+<HTML>
+<HEAD><TITLE>directory-tree(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+directory-tree(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>directory-tree - Draw the file directory tree </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>directory-tree</B> [&quot;<I>directory</I>&quot;] </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>directory-tree</B> creates or manipulates a view of the file systems directory structure. The command is quite complex to use directly so is largely used but macros such as 
+<A HREF="m3mac027.html">file-browser(3)</A>. 
+<P>The argument <I>n</I> is a bit based flag which is used to control the command, where the bits have the following meaning:- 
+<P><B>0x01</B> 
+<BR><UL>If set, the focal directory of the command is set by the given &quot;<I>directory</I>&quot; argument. Otherwise the argument is not required and the command must be executed within the &quot;<I>*directory*</I>&quot; buffer; the current line sets the focal directory. </UL>
+<P><B>0x02</B> 
+<BR><UL>Specifies that the current line in resultant &quot;<I>*directory*</I>&quot; window should be set to the focal directory. If this bit is not set then the current line will be the last selected directory, or if none have been selected, the first line in the buffer. </UL>
+<P><B>0x04</B> 
+<BR><UL>Specifies that any evaluations required during the commands operation should be performed. Without this flag an open operation on a directory which has not previously been evaluated will not be perform an evaluation and the results will likely be incomplete. </UL>
+<P><B>0x08</B> 
+<BR><UL>Specifies that the current focal directory should be opened. This means that sub-directories within the current focal directory will also be drawn in the directory tree. </UL>
+<P><B>0x10</B> 
+<BR><UL>Specifies that the current focal directory should be closed. This means that sub-directories within the current focal directory will not be drawn in the directory tree. </UL>
+<P><B>0x20</B> 
+<BR><UL>Specifies that the current focal directory's open state should be toggled. This means that if the sub-directories are currently hidden they will now be drawn and vice-versa. </UL>
+<P><B>0x40</B> 
+<BR><UL>When specified any directory opened will be re-evaluated, ensuring the accuracy of the information. </UL>
+<P><B>0x80</B> 
+<BR><UL>Enables a recursive behavior, for example if this flag was specified with the open then not only will the focal directory be opened, but all of it's children, and their children etc. Note that if the Evaluation flag is not specified then only the already evaluated directories can be opened. 
+</UL><P>directory-tree creates a new buffer &quot;<I>*directory*</I>&quot; and draws the known directory tree. Every drawn directory is preceded by a character flag giving the user an indication of the directory state, where: 
+<P><B>?</B> 
+<BR><UL>Directory has not been evaluated. </UL>
+<P><B>-</B> 
+<BR><UL>Directory has been evaluated and is visible. </UL>
+<P><B>+</B> 
+<BR><UL>Directory has been evaluated but is currently hidden. 
+</UL><P>Directories which have been evaluated and found to have no children use the '-' 
+<A HREF="m5var022.html">$box-chars(5)</A> instead of a '-' character. 
+<P>On UNIX platforms, if a directory is a symbolic link to another directory, the link name is given after the directory name. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The best example of the use of directory-tree is 
+<A HREF="m3mac027.html">file-browser(3)</A> which can be found in hkdirlst.emf. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m3mac027.html">file-browser(3)</A>, 
+<A HREF="m5var022.html">$box-chars(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

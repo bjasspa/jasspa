@@ -1,0 +1,29 @@
+<HTML>
+<HEAD><TITLE>FAQ(29) - find-file start location; where is it ?</TITLE></HEAD>
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+FAQ(29) - find-file start location; where is it ?</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>QUESTION (29) </B></H2>
+<UL><P>find-file start location; where is it ? </UL>
+<H2><B>ANSWER </B></H2>
+<UL><P>The 
+<A HREF="m2cmd056.html">find-file(2)</A> start location is defined as follows:- <UL><P>
+<LI><TT>*scratch*</TT> is current buffer; the current working directory. 
+<LI><TT>file</TT> is current buffer; the directory location containing <I>file</I>. </UL><P>Running under Microsoft Windows or UNIX, using an icon launch, then it may become frustrating that the start location is always <TT>C:\Program</TT> <TT>Files\JASSPA\MicroEmacs</TT> (Microsoft windows) or <TT>/usr/local/bin</TT> (UNIX) this is simply resolved by starting the executable with the <B>-c</B> option, as defined by 
+<A HREF="m1cmd000.html">me(1)</A>. The <B>-c</B> option starts the editor with the last editing session, this is typically where a user will want to commence an editing session. 
+<P>If the <B>-c</B> approach is not acceptable, then it is worth defining the environment variable <TT>$HOME</TT> within the start up script, or in the users environment. Using <B>find-file</B> with tilde (<TT>~</TT>) implies that the directory start path is <TT>$HOME</TT>. 
+<P>
+<A HREF="amicr040.html">[FAQ Index]</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,63 @@
+<HTML>
+<HEAD><TITLE>$window-x-scroll(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+$window-x-scroll(5)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>$window-x-sroll - Current window X scroll 
+<BR>$window-xcl-sroll - Current window current line X scroll 
+<BR>$window-y-sroll - Current window Y scroll </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>$window-x-sroll</B> <I>integer</I> 
+<BR><B>$window-xcl-sroll</B> <I>integer</I> 
+<P>0 &lt;= <I>integer</I> &lt;= 65535 
+<P><B>$window-y-sroll</B> <I>integer</I> 
+<P>0 &lt;= <I>integer</I> &lt;= n </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>$window-x-sroll</B> defines the horizontal scroll position in the current window for all lines except the current line, <B>$window-xcl-sroll</B> defines the scroll position for the current line. The variables set how many characters are scrolled off the left hand edge of the current window, the variables are indirectly set by commands such as 
+<A HREF="m2cmd149.html">scroll-left(2)</A>, 
+<A HREF="m2cmd010.html">forward-char(2)</A> etc. 
+<P><B>$window-y-sroll</B> defines the vertical scroll position in the current window. It sets the number of lines are scroll up off the top of the current window, it is indirectly set by commands such as 
+<A HREF="m2cmd087.html">scroll-up(2)</A>, 
+<A HREF="m2cmd092.html">forward-line(2)</A> etc. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following example first stores the current window's buffer position and the window layout. The middle '<TT>...</TT>' section could be replaced with macro code performing any number of operations before the last section which restores the initial position: <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;$window-line 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l1&nbsp;$window-col 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l2&nbsp;$window-xcl-scroll 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l3&nbsp;$window-x-scroll 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l4&nbsp;$window-y-scroll 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;. 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;. 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;. 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$window-line&nbsp;#l0 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$window-col&nbsp;#l1 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$window-xcl-scroll&nbsp;#l2 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$window-x-scroll&nbsp;#l3 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$window-y-scroll&nbsp;#l4 
+</PRE></UL>
+</UL><H2><B>NOTES </B></H2>
+<UL><P>If these variables are set by the user or a macro the value is validated against the 
+<A HREF="m5var027.html">$scroll(5)</A> method and the current cursor position which may lead to the variable being reset if found to be invalid. For example, if the current line is 10 when the <B>$window-y-scroll</B> is set to 20 the variable will be reset to 0 as a value of 20 will mean the current line is not displayed in the current window. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd149.html">scroll-left(2)</A>, 
+<A HREF="m2cmd087.html">scroll-up(2)</A>, 
+<A HREF="m5var027.html">$scroll(5)</A>, 
+<A HREF="m5var048.html">$window-line(5)</A>, 
+<A HREF="m5var048.html">$window-col(5)</A>, 
+<A HREF="m5var048.html">$window-acol(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

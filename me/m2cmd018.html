@@ -1,0 +1,35 @@
+<HTML>
+<HEAD><TITLE>change-screen-depth(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+change-screen-depth(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>change-screen-depth&nbsp;-&nbsp;Change&nbsp;the&nbsp;number&nbsp;of&nbsp;lines&nbsp;of&nbsp;the&nbsp;screen 
+<BR>change-screen-width&nbsp;-&nbsp;Change&nbsp;the&nbsp;number&nbsp;of&nbsp;columns&nbsp;on&nbsp;the&nbsp;screen </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>change-screen-depth</B> 
+<BR><I>n</I> <B>change-screen-width</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>change-screen-depth</B> changes the size of the screen to <I>n</I> lines deep. It is assumed that the screen is <I>n</I> lines deep and MicroEmacs '02 draws <I>n</I> lines at the users peril. A change in depth causes all of the windows currently displayed on the screen to be re-sized, the vertical position of the windows is modified to match the new screen dimension, the horizontal position of the windows remains unaltered. If the window is down-sized and the currently displayed windows are not able to fit into the new screen space then all windows are deleted with the exception of the current window. 
+<P><B>change-screen-width</B> changes the size of the screen to <I>n</I> characters wide. It is assumed that the screen is <I>n</I> columns wide and MicroEmacs '02 draws <I>n</I> columns at the users peril. The windows are reorganized as <B>change-screen-depth</B> working horizontally rather than vertically. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P>Within windowing environments such as <B>X-Windows</B> and <B>Microsoft Windows</B> these commands cause the canvas window to be re-sized to accommodate the change in screen size. 
+<P>In MS-DOS environments the physical size of the screen is determined by the characteristics of the display adapter. <B>change-screen-depth</B> may be used to correct anomalies (usually on portables) in the displayable screen area and the graphics mode. e.g. the graphics mode utilizes 50 lines, and only 47 lines are viewable. In this case change the screen depth to 47 and MicroEmacs '02 will not utilize the remaining lines which are not viewable. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var037.html">$screen-depth(5)</A>, 
+<A HREF="m5var037.html">$screen-width(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,102 @@
+<HTML>
+<HEAD><TITLE>MacroArguments(4)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+MacroArguments(4)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>@?, @#, @0, @1, @2, @3, ... @p - Macro arguments </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>@?</B> - Boolean flagging if a numeric argument was supplied 
+<BR><B>@#</B> - The value of the numeric argument 
+<P><B>@0</B> - The name of the macro 
+<BR><B>@1</B> - The first argument of macro 
+<BR><B>@2</B> - The second argument of macro 
+<BR><B>@3</B> ... <B>@</B><I>n</I> 
+<P><B>@p</B> - The name of the calling (or parent) macro. </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>Macros may be passed arguments, allowing a macro to be used by other macros. The <B>@?</B> and <B>@#</B> are used to determine the numeric argument given to the command. The <B>@</B><I>n</I> variable (where <I>n</I> is an integer) used in the context of a macro allows the macro body to determine it's arguments. 
+<P>From a macro all commands are called in the following form <UL>
+<PRE>[num]&nbsp;&lt;macro-name&gt;&nbsp;&quot;arg1&quot;&nbsp;&quot;arg2&quot;&nbsp;.... 
+</PRE></UL>
+<P>When executed macros do not have to be given an argument, in this case <B>@?</B> will be <I>0</I> and <B>@#</B> will be <I>1</I> (the default argument). If an argument is given then <B>@?</B> will be <I>1</I> and <B>@#</B> will be set to the numeric argument given. 
+<P>The current macro command name <I>&lt;macro-name&gt;</I> can be obtain by using the <B>@0</B> variable, e.g. <UL>
+<PRE>define-macro&nbsp;Test-it 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;@0 
+!emacro 
+</PRE></UL>
+<P>When executed, writes the message &quot;<TT>Test-it</TT>&quot; which is the name of the macro. 
+<P>Arguments may be passed into macro commands in the same way as standard commands are given arguments. The macro being called can access these by the <B>@1</B> to <B>@n</B> variables, where <I>n</I> is a positive integer. Any variables given as arguments are evaluated so if the variable name is required then enclose it in quotes, e.g. <UL>
+<PRE>set-variable&nbsp;%test-var&nbsp;&quot;Hello&nbsp;World&quot; 
+
+efine-macro&nbsp;Test-it 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&amp;cat&nbsp;&amp;cat&nbsp;&amp;cat&nbsp;&amp;cat&nbsp;@0&nbsp;&quot;&nbsp;&quot;&nbsp;@1&nbsp;&quot;&nbsp;=&nbsp;&quot;&nbsp;&amp;ind&nbsp;@1 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;&nbsp;@1&nbsp;@2 
+!emacro 
+
+Test-it&nbsp;&quot;%test-var&quot;&nbsp;&quot;Goodbye&nbsp;World&quot; 
+</PRE></UL>
+<P>On execution the macro writes the message 
+<UL><P>&quot;<TT>Test-it %test-var = Hello World</TT>&quot; </UL>
+<P>and will set variable <TT>%test-var</TT> to &quot;<TT>Goodbye World</TT>&quot;. 
+<P>The <B>@p</B> variable can be used to obtain the name of the macro which is executing the current macro, i.e. the value of the parent's <B>@0</B> variable. If the macro was executed directly by the user then there is no parent macro and the value of <B>@p</B> is an empty string (&quot;&quot;). </UL>
+<H2><B>DIAGNOSTICS </B></H2>
+<UL><P>If an attempt is made to access an argument which has not been given then a error occurs. This error can be trapped using the 
+<A HREF="m4fil007.html">!force(4)</A> directive, enabling the macro to take appropriate action, see example. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>Consider the implementation of 
+<A HREF="m3mac006.html">replace-all-string(3)</A> macro defined in search.emf: <UL>
+<PRE>define-macro&nbsp;replace-all-string 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;set-variable&nbsp;#l0&nbsp;@3 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l1&nbsp;@ml05&nbsp;&quot;Replace&nbsp;all&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l2&nbsp;@ml05&nbsp;&amp;spr&nbsp;&quot;Replace&nbsp;[%s]&nbsp;with&quot;&nbsp;#l1 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;@ml00&nbsp;&quot;In&nbsp;files&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!else 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l1&nbsp;@1 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l2&nbsp;@2 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;. 
+&nbsp;&nbsp;&nbsp;&nbsp;. 
+&nbsp;&nbsp;&nbsp;&nbsp;. 
+!emacro 
+</PRE></UL>
+<P>In this example if the 3rd argument is not given then the macro gets all arguments from the user. 
+<P>The <B>@p</B> variable having a value of &quot;&quot; when a macro is called directly by the user can be useful when determining the amount of information to feed-back to the user. For example, executing the 
+<A HREF="m3mac005.html">clean</A> macro is an easy way to remove surplus white characters, so it is often used by other macros as well as by the user. When called directly <B>clean</B> refreshes the display and prints a message of completion, but when called by other macros this would cause an unwanted screen-update and message, so clean only does this when executed by the user. This is done as follows: <UL>
+<PRE>define-macro&nbsp;clean 
+&nbsp;&nbsp;&nbsp;&nbsp;; 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Prepare&nbsp;to&nbsp;clean&nbsp;up&nbsp;file. 
+&nbsp;&nbsp;&nbsp;&nbsp;. 
+&nbsp;&nbsp;&nbsp;&nbsp;. 
+&nbsp;&nbsp;&nbsp;&nbsp;. 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;seq&nbsp;@p&nbsp;&quot;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;screen-update 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;[Cleaned&nbsp;up&nbsp;buffer]&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+!emacro 
+</PRE></UL>
+</UL><H2><B>NOTES </B></H2>
+<UL><P>The parsing of arguments can be inefficient because of the way the arguments have to be parsed; to get the 4th argument the 1st, 2nd and 3rd arguments must be evaluated. This is because each argument is not guaranteed to be only one element, it could be an expression which needs to be evaluated. Consider the following invocation of our Test-it macro <UL>
+<PRE>Test-it&nbsp;&amp;cat&nbsp;&quot;%test&quot;&nbsp;&quot;-var&quot;&nbsp;&quot;Goodbye&nbsp;World&quot; 
+</PRE></UL>
+<P>The 2nd argument is not <I>&quot;%test&quot;</I> as this is part of the first argument, the 2nd argument is in fact the 4th element and the invocation will have the same effect except slower. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m4fil019.html">MacroNumericArguments</A>, 
+<A HREF="m2cmd029.html">define-macro(2)</A>, 
+<A HREF="m3mac006.html">replace-all-string(3)</A>, 
+<A HREF="m4fil007.html">!force(4)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,44 @@
+<HTML>
+<HEAD><TITLE>delete-dictionary(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+delete-dictionary(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>delete-dictionary - Remove a spelling dictionary from memory </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>delete-dictionary</B> [&quot;<I>dictionary</I>&quot;] </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>delete-dictionary</B> removes the given <I>dictionary</I> from memory, where <I>n</I> is a bitwise flag determining the removal mode, defined as follows:- 
+<P><B>0x01</B> 
+<BR><UL>Prompt the user before loosing any changes (except to the ignore dictionary). </UL>
+<P><B>0x02</B> 
+<BR><UL>Delete all the dictionaries other than the ignore dictionary. </UL>
+<P><B>0x04</B> 
+<BR><UL>Delete the ignore dictionary. 
+</UL><P>If the argument does not have bit 0x02 or 0x04 set, which specify the dictionaries to be deleted, the user is prompted for the &quot;<I>dictionary</I>&quot;. The default argument is 1. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P>The ignore dictionary is a temporary dictionary that exists in memory for duration of the MicroEmacs session; the dictionary holds words that have been ignored during any previous spell checks (see 
+<A HREF="m2cmd125.html">spell(2)</A>). All of the words that have been ignored may be discarded with:- <UL>
+<PRE>4&nbsp;delete-dictionary 
+</PRE></UL>
+<P>i.e. <B>esc 4 esc x&nbsp;delete-dictionary</B>. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m3osd002.html">spell-buffer(3)</A>, 
+<A HREF="m2cmd002.html">add-dictionary(2)</A>, 
+<A HREF="m2cmd112.html">save-dictionary(2)</A>, 
+<A HREF="m2cmd125.html">spell(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

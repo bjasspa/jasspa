@@ -1,0 +1,308 @@
+<HTML>
+<HEAD><TITLE>osd(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+osd(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>osd - Manage the On-Screen Display </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>osd</B> 
+<BR><I>-1</I> <B>osd</B> 
+<BR><I>-2</I> <B>osd</B> 
+<BR><I>n</I> <B>osd</B> 
+<BR><B>-1</B> <B>osd</B> <I>n</I> 
+<BR><B>osd</B> <B>-1</B> <I>flag</I> 
+<BR><B>osd</B> <I>n</I> <B>0</B> <I>flags</I> [&quot;<I>scheme</I>&quot;] [&quot;<I>x-pos</I>&quot; &quot;<I>y-pos</I>&quot;] [&quot;<I>min-width</I>&quot; &quot;<I>min-depth</I>&quot; &quot;<I>max-wid</I>&quot; &quot;<I>max-dep</I>&quot;] [&quot;<I>default</I>&quot;] [[&quot;<I>title-bar-scheme</I>&quot;] [&quot;<I>Text</I>&quot;]] [&quot;<I>resize-command</I>&quot;] [&quot;<I>control-command</I>&quot;] [&quot;<I>init-command</I>&quot;] 
+<BR><B>osd</B> <I>n</I> <I>i</I> <I>flags</I> [&quot;<I>tab-no</I>&quot;] [&quot;<I>item-scheme</I>&quot;] [&quot;<I>width</I>&quot;&nbsp;&quot;<I>depth</I>&quot;] [&quot;<I>text</I>&quot;] [&quot;<I>argument</I>&quot;&nbsp;&quot;<I>command</I>&quot;] </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The <B>osd</B> command manages the On-Screen Display, menu and dialogs. The command takes various forms as defined by the arguments. Each of the argument configurations is defined as follows:- </UL>
+<H2>Main Menu-Bar Status </H2>
+<UL><P><B>osd</B> <B>-1</B> <I>flag</I> 
+<P>This invocation determines the state of the top main menu bar. The state is set by the argument <I>flag</I> defined as:- <UL>
+<UL><P><TT>&nbsp;1</TT> - enable. 
+<BR><TT>&nbsp;0</TT> - disable. 
+<BR><TT>-1</TT> - disable and destroy. </UL></UL></UL>
+<H2>Dialog Creation and Redefinition </H2>
+<UL><P><B>osd</B> <I>n</I> <B>0</B> <I>flags</I> [&quot;<I>scheme</I>&quot;] [&quot;<I>x-pos</I>&quot; &quot;<I>y-pos</I>&quot;] [&quot;<I>min-width</I>&quot; &quot;<I>min-depth</I>&quot; &quot;<I>max-wid</I>&quot; &quot;<I>max-dep</I>&quot;] [&quot;<I>default</I>&quot;] [[&quot;<I>title-bar-scheme</I>&quot;] [&quot;<I>Text</I>&quot;]] [&quot;<I>resize-command</I>&quot;] [&quot;<I>control-command</I>&quot;] [&quot;<I>init-command</I>&quot;] 
+<P>This invocation creates or resets the base properties of dialog <I>n</I>. The <I>flags</I> argument determines the arguments and are defined as follows: <UL>
+<P><B>A</B> 
+<BR><UL>Defines dialog as an alpha type dialog, items are added according to their string text value. Alpha dialogs may not have separator or child items. </UL>
+<P><B>i</B> 
+<BR><UL>Used with the <B>A</B> flag, sets the alpha ordering to be case insensitive. </UL>
+<P><B>G</B> 
+<BR><UL>Create a Grid dialog. Every item in the dialog is given a single character boarder around it. If one of the dialogs items is also given a '<B>G</B>' flag, the boarder is drawn as a box around it, otherwise spaces are used. </UL>
+<P><B>N</B> 
+<BR><UL>Create a Note-Book (or tabs) dialog. The dialog can only contain one dialog inclusion item ('<B>I</B>') and Note-Book pages ('<B>P</B>'). Pages added before the Inclusion item (page item number is lass than the inclusion page item number) will be drawn at the top of the note-book, those added after will be drawn at the bottom. </UL>
+<P><B>b</B> 
+<BR><UL>Draw boarder, draws a boarder around the outside of the dialog. See also <I>flag</I> <B>t</B> (title) as flag effects the boarder. </UL>
+<P><B>a</B> 
+<BR><UL>Defines the absolute start-up position of the dialog in the arguments <I>x-pos</I> and <I>y-pos</I>, which are the column and row positions respectively of the dialog from the top left-hand corner of the display. The arguments must be specified. e.g. the main menu is defined with an absolute position of (0,0). If the dialog can not be fully drawn on the screen at the given position it will be moved to a position which shows the most. </UL>
+<P><B>o</B> 
+<BR><UL>Specifies an offset to the dialog position calculated by MicroEmacs in the arguments <I>x-pos</I> and <I>y-pos</I>, which are the column and row offsets. This flag is ignored when flag <B>a</B> is also specified. If the dialog can not be fully drawn on the screen at the new position it will be moved to a position which shows the most. </UL>
+<P><B>s</B> 
+<BR><UL>Sets the size of the dialog. <B>osd</B> automatically resizes a dialog to fit the contents, this flag should be considered as a size hint for <B>osd</B>, and is not guaranteed to be honored. If the dialog has a boarder (flag <B>b</B>) the size given should include the boarder size. </UL>
+<UL><P>The arguments, <I>min-width</I>, <I>min-depth</I>, <I>max-width</I> and <I>max-depth</I> must be specified, as 
+<P><B>+ve</B> 
+<BR><UL>The actual size of the dialog, minimum and maximum sizes. </UL>
+<P><B>0</B> 
+<BR><UL><I>min</I> value should be specified as desired window size, <I>max</I> may be 0 which specifies the screen size. </UL>
+<P><B>-ve</B> 
+<BR><UL><I>min</I> defines the maximum size. <I>max</I> is unlimited. </UL>
+<P>The following table shows possible combination of the sing parameters and their effect:- 
+<P><I>min</I>=0, <I>max</I>=0 
+<BR><UL>Default setting, makes dialog as small as possible, with a maximum size of the screen. </UL>
+<P><I>min</I>=0, <I>max</I>=50 
+<BR><UL>Make dialog as small as possible with a max of 50 characters. </UL>
+<P><I>min</I>=50, <I>max</I>=0 
+<BR><UL>Make dialog as small as possible, but make it at least 50 characters big and no larger than the screen. </UL>
+<P><I>min</I>=30, <I>max</I>=-1 
+<BR><UL>Make dialog at least 30 characters big with no upper limit, very useful for dialogs being used as scrolled children. </UL>
+<P><I>min</I>=-1, <I>max</I>=50 
+<BR><UL>Make dialog 50 characters big. </UL>
+<P><I>min</I>=-1, <I>max</I>=0 
+<BR><UL>Make dialog the same size as the screen. </UL>
+<P><I>min</I>=-1, <I>max</I>=-1 
+<BR><UL>Make dialog as big as possible (do not do this unless you have a large amount of memory to throw away). </UL></UL>
+<P><B>S</B> 
+<BR><UL>Sets the main dialog scheme, The default scheme when not specified is 
+<A HREF="m5var009.html">$osd-scheme(5)</A> See macro file <TT>fileopen.emf</TT> for an example. </UL>
+<P><B>d</B> 
+<BR><UL>Sets default item to select to &quot;<I>default</I>&quot;. This item is selected when the dialog is first opened, if this item is an automatically opened sub-menu then the child menu will also be opened. </UL>
+<P><B>t</B> 
+<BR><UL>Title bar is present - draws the title bar. The <I>text</I> argument is optional Also see flags <B>H</B>, <B>c</B> and <B>r</B>. </UL>
+<P><B>H</B> 
+<BR><UL>Defines the title bar color scheme if flag <B>t</B> is specified. If <I>t</I> is absent the option is ignored. </UL>
+<P><B>c</B> 
+<BR><UL>Centers the title bar text if specified. Option <B>t</B> must be specified, otherwise the option is ignored. </UL>
+<P><B>r</B> 
+<BR><UL>Right justifies the title bar text if specified. Option <B>t</B> must be specified, otherwise the option is ignored. </UL>
+<P><B>R</B> 
+<BR><UL>Defines the dialog as re-sizable. The <I>resize-command</I> argument must be specified and the command should resize the dialog to the sizes given in 
+<A HREF="m5var041.html">$result(5)</A> in the format &quot;<TT>wwwwdddd</TT>&quot;, where <TT>w</TT> is width and <TT>d</TT> the depth. If the <I>resize-command</I> is aborted then that resize operation is abandoned. </UL>
+<P><B>M</B> 
+<BR><UL>Identifies the dialog as the main menu dialog. </UL>
+<P><B>C</B> 
+<BR><UL>Binds a command to the dialog, which is automatically executed when the dialog is opened. When the dialog with a <B>C</B> attribute is opened, it is rendered on the screen and then a command, defined by <I>control-command</I> is invoked, when the command completes the dialog is closed. </UL>
+<UL><P>The command dialog is typically used to create status messages. e.g. a &quot;<TT>Busy - Please Wait</TT>&quot; dialog box, such a dialog may be implemented when saving the current buffer then create the simple dialog and sent the <I>control-command</I> to 
+<A HREF="m2cmd113.html">save-buffer(2)</A>. The dialog would be defined as:- <UL>
+<PRE>osd&nbsp;200&nbsp;0&nbsp;&quot;btcHC&quot;&nbsp;%osd-title-scheme&nbsp;&quot;Saving&nbsp;Buffer&quot;&nbsp;save-buffer 
+osd&nbsp;200&nbsp;1&nbsp;&quot;&quot; 
+osd&nbsp;200&nbsp;2&nbsp;&quot;&quot;&nbsp;&quot;Busy&nbsp;-&nbsp;Please&nbsp;Wait&quot; 
+osd&nbsp;200&nbsp;3&nbsp;&quot;&quot; 
+200&nbsp;osd 
+</PRE></UL>
+</UL><UL><P>If the dialog has buttons which need to become active then control can be returned to <B>osd</B> by calling <B>osd</B> with no arguments, e.g. in the above example the dialog can be made to stay on the screen until the user selects <TT>okay</TT> by: <UL>
+<PRE>define-macro&nbsp;test-osd 
+&nbsp;&nbsp;&nbsp;&nbsp;save-buffer 
+&nbsp;&nbsp;&nbsp;&nbsp;osd&nbsp;200&nbsp;2&nbsp;&quot;&quot;&nbsp;&quot;Save&nbsp;Complete&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;osd&nbsp;200&nbsp;4&nbsp;&quot;BcfH&quot;&nbsp;%osd-ebtt-scheme&nbsp;&quot;&nbsp;&nbsp;&amp;Okay&nbsp;&nbsp;&quot;&nbsp;f&nbsp;void 
+&nbsp;&nbsp;&nbsp;&nbsp;osd 
+!emacro 
+
+osd&nbsp;200&nbsp;0&nbsp;&quot;btcHC&quot;&nbsp;%osd-title-scheme&nbsp;&quot;Saving&nbsp;Buffer&quot;&nbsp;test-osd 
+osd&nbsp;200&nbsp;1&nbsp;&quot;&quot; 
+osd&nbsp;200&nbsp;2&nbsp;&quot;&quot;&nbsp;&quot;Busy&nbsp;-&nbsp;Please&nbsp;Wait&quot; 
+osd&nbsp;200&nbsp;3&nbsp;&quot;&quot; 
+osd&nbsp;200&nbsp;4&nbsp;&quot;BcfHS&quot;&nbsp;%osd-dbtt-scheme&nbsp;&quot;&nbsp;&nbsp;Okay&nbsp;&nbsp;&quot; 
+
+200&nbsp;osd 
+</PRE></UL>
+</UL><UL><P>The above mechanism is how 
+<A HREF="m3osd002.html">spell-buffer(3)</A> operates. </UL>
+<P><B>k</B> 
+<BR><UL>Disables hot-keys for the dialog. All text strings are copied literally. This is useful for dialogs like the tags child dialog as many tags have '<TT>&amp;</TT>'s in them. </UL>
+<P><B>B</B> 
+<BR><UL>Makes the mouse right Button have the same behaviour as the left, by default the right mouse button simply closes the dialog. This is useful for some dialogs which are opened using the right mouse button. </UL>
+<P><B>f</B> 
+<BR><UL>Automatically uses the first letter of an item's test as the hot key. Unlike the normal hot keys, the letter is not hi-lighted and when typed by the user the item is only selected, not executed. This flag also disables the normal hot-keys for the dialog, so all text strings are copied literally. </UL>
+<P><B>n</B> 
+<BR><UL>Disables '\n' characters in text fields leading to multi lines. By default a text item of &quot;Hello\nWorld&quot; will create an item 5 by 2 characters big. </UL>
+<P>If &quot;<I>init-command</I>&quot; is given then this function is always called just prior to the dialog being displayed so it can be used to configure the dialog. </UL></UL>
+<H2>Dialog Destruction </H2>
+<UL><P><B>-1</B> <B>osd</B> <I>n</I> 
+<P>This invocation destructs a dialog <I>n</I>. The dialog is only destroyed if it is not currently being displayed. </UL>
+<H2>Dialog Item Creation and Redefinition </H2>
+<UL><P><B>osd</B> <I>n</I> <I>i</I> <I>flags</I> [&quot;<I>tab-no</I>&quot;] [&quot;<I>item-scheme</I>&quot;] [&quot;<I>width</I>&quot;&nbsp;&quot;<I>depth</I>&quot;] [&quot;<I>text</I>&quot;] [&quot;<I>argument</I>&quot;&nbsp;&quot;<I>command</I>&quot;] 
+<P>This invocation type adds a new item <I>i</I> to a dialog <I>n</I>, the operation of the invocation is controlled by the <I>flags</I> as follows:- <UL>
+<P><B>D</B> 
+<BR><UL>Disable item <I>i</I>, the item is ignored and is not rendered in the dialog. </UL>
+<P><B>I</B> 
+<BR><UL>Include dialog &quot;<I>argument</I>&quot; into this dialog. If &quot;<I>command</I>&quot; is specified then it is called prior to the child being constructed and can be used to define the child. This is similar to the <B>M</B>s command. See also flag <B>b</B>. </UL>
+<P><B>P</B> 
+<BR><UL>Item is a Note-Book page, the item must have text and have an argument which is the osd dialog to be show when the page is activated. </UL>
+<P><B>M</B> 
+<BR><UL>Item is a sub-menu, The argument &quot;<I>argument</I>&quot; specifies the sub-menus osd dialog number. A &quot;<I>command</I>&quot; may also be specified which is executed first, this can actually re-define the item and set the dialog number, e.g. <UL>
+<PRE>;&nbsp;To&nbsp;start&nbsp;with&nbsp;the&nbsp;dialog&nbsp;number&nbsp;is&nbsp;unknown 
+osd&nbsp;1&nbsp;1&nbsp;&quot;M&quot;&nbsp;f&nbsp;submenu-setup 
+
+define-macro&nbsp;submenu-setup 
+&nbsp;&nbsp;&nbsp;&nbsp;osd&nbsp;200&nbsp;0&nbsp;.... 
+&nbsp;&nbsp;&nbsp;&nbsp;.... 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Now&nbsp;the&nbsp;sub-menu&nbsp;number&nbsp;is&nbsp;known&nbsp;redefine&nbsp;parent&nbsp;item, 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;note&nbsp;the&nbsp;setup&nbsp;&nbsp;command&nbsp;&nbsp;is&nbsp;not&nbsp;given&nbsp;as&nbsp;we&nbsp;have&nbsp;now&nbsp;set 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;it&nbsp;up! 
+&nbsp;&nbsp;&nbsp;&nbsp;osd&nbsp;1&nbsp;1&nbsp;&quot;M&quot;&nbsp;200 
+!emacro 
+</PRE></UL>
+</UL><UL><P>See also options <B>m</B>, <B>n</B>, <B>e</B>, <B>s</B>, <B>w</B> and <B>d</B>. </UL>
+<P><B>m</B> 
+<BR><UL>Sub-menu must be manually opened, using hot-key, the return key or the left mouse button. </UL>
+<P><B>n</B>, <B>e</B>, <B>s</B>, <B>w</B> 
+<BR><UL>Specify where a sub-menu is to be placed relative to the parent item. The letter indicates the direction as points on a compass, North, East, South and West, respectively. The default when omitted is East. </UL>
+<P><B>d</B> 
+<BR><UL>Display sub-menu type, i.e. &quot;<TT>..</TT>&quot; for auto opening and &quot;<TT> &gt;</TT>&quot; for a manual opening sub-menu. </UL>
+<P><B>-</B> 
+<BR><UL>Fill a non-defined chars with '<TT>-</TT>'s instead of '<TT> </TT>'s, used to draw the lines across menus, typically with no text given, e.g. <UL>
+<PRE>osd&nbsp;200&nbsp;5&nbsp;&quot;-&quot; 
+</PRE></UL>
+<P>But could also be specified as: <UL>
+<PRE>osd&nbsp;200&nbsp;5&nbsp;&quot;-c&quot;&nbsp;&quot;Lined&quot; 
+</PRE></UL>
+</UL><P><B>C</B> 
+<BR><UL>Item is a check-box. The setting of the check-box is evaluated when the dialog is first drawn, re-draw and whenever any item is executed. A &quot;<I>command</I>&quot; must be specified which must both return the current setting when the given argument (of 1) is given (!abort if false, !return if true) and change the value if the argument value is negated. The text string must also be specified, the first 6 characters are used in the drawing of the check box. The format can be shown as follows:- <UL>
+<PRE>String\State&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Off&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;On 
+&quot;123456&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;12356&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;12456&quot; 
+&quot;&nbsp;(-+)^&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;&nbsp;(-)&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;&nbsp;(+)&quot; 
+&quot;^[&nbsp;*]&nbsp;&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;[&nbsp;]&nbsp;&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;[*]&nbsp;&quot; 
+&quot;^^NY^^&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;N&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;Y&quot; 
+&quot;^^^^^^&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;&quot; 
+</PRE></UL>
+</UL><UL><P>Note that no character is rendered when a '<TT>^</TT>' character is used. See also <B>p</B> for prepending the check-box. </UL>
+<P><B>p</B> 
+<BR><UL>Prepend the check-box box. By default a check box is drawn as: <UL>
+<PRE>&quot;Check&nbsp;box12?56&quot; 
+</PRE></UL>
+<P>This option changes it to: <UL>
+<PRE>&quot;12?56Check&nbsp;box&quot; 
+</PRE></UL>
+</UL><P><B>x</B> 
+<BR><UL>When the item is executed do not exit the dialog. Often used with Check-boxes. </UL>
+<P><B>i</B> 
+<BR><UL>The command given is a command line string which is executed in a similar fashion to 
+<A HREF="m2cmd044.html">execute-line(2)</A>. Note that if an argument is required it is usually specified in the string, i.e. <UL>
+<PRE>osd&nbsp;&quot;i&quot;&nbsp;&quot;text&quot;&nbsp;5&nbsp;&quot;1000&nbsp;ml-write&nbsp;@#&quot; 
+</PRE></UL>
+<P>writes the argument (i.e. 5) for 1 second. <UL>
+<PRE>osd&nbsp;&quot;i&quot;&nbsp;&quot;text&quot;&nbsp;5&nbsp;&quot;my-command&quot; 
+</PRE></UL>
+<P>in this case <I>my-command</I> will not be given an argument, <UL>
+<PRE>osd&nbsp;&quot;i&quot;&nbsp;&quot;text&quot;&nbsp;5&nbsp;&quot;10&nbsp;my-command&quot; 
+</PRE></UL>
+<P>in this case <I>my-command</I> will be given an argument of 10, <UL>
+<PRE>osd&nbsp;&quot;i&quot;&nbsp;&quot;text&quot;&nbsp;5&nbsp;&quot;@#&nbsp;my-command&quot; 
+</PRE></UL>
+<P>in this case <I>my-command</I> will be given an argument of 5. </UL>
+<P><B>h</B> 
+<BR><UL>Horizontally add the next item, e.g. <UL>
+<PRE>osd&nbsp;&quot;h&quot;&nbsp;&quot;1st&nbsp;on&nbsp;line&nbsp;&quot; 
+osd&nbsp;&quot;&quot;&nbsp;&nbsp;&quot;2nd&nbsp;on&nbsp;line&quot; 
+</PRE></UL>
+</UL><UL><P>Will produce &quot;<TT>1st on line 2nd on line</TT>&quot;. If there is not enough room on a single dialog line to display all the horizontally added items then the line is split and as many lines as needed are used. </UL>
+<P><B>c</B> 
+<BR><UL>Center the text for the item in the middle of the dialog. </UL>
+<P><B>r</B> 
+<BR><UL>Right hand justify the text for the item. </UL>
+<P><B>t</B> 
+<BR><UL>Set the items tab order in the dialog. </UL>
+<P><B>b</B> 
+<BR><UL>Child inclusion is a scroll box type. By default a child inclusion simply draws the whole child dialog at the position. If this flag is specified then arguments &quot;<I>width</I>&quot; and &quot;<I>depth</I>&quot; must also be supplied and a window displaying &quot;<I>width</I>&quot; by &quot;<I>depth</I>&quot; of the child is created. The size of this item will be &quot;<I>width</I>&quot;+1+<I>ss</I> by &quot;<I>depth</I>&quot;+1+<I>ss</I> where <I>ss</I> is the scroll bar size which is 1 or 2 depending on the setting of 
+<A HREF="m5var055.html">$scroll-bar(5)</A>. It is up to the user to ensure that the child dialog being displayed is at least &quot;<I>width</I>&quot; by &quot;<I>depth</I>&quot; characters in size, if this is not true then the effect is undefined, (a crash dump is not out of the question). </UL>
+<P><B>f</B> 
+<BR><UL>Fix the item size to the given &quot;<I>size</I>&quot;, by default an item is expanded to the width of the dialog. </UL>
+<P><B>E</B> 
+<BR><UL>Item is an entry box type. Use a string of <TT>#</TT>'s to set the position and size of the entry text box. Similar to Check-boxes, the command given must both return and set the value depending on value of the argument given. The value must be returned in 
+<A HREF="m5var041.html">$result(5)</A> if the given argument (or 1 for '<TT>f</TT>') is given, and the value must be set (usually using 
+<A HREF="m4fil015.html">@ml(4)</A> or 
+<A HREF="m4fil015.html">@mc(4)</A>) if the argument is negated. The absolute value of the argument is maintained. <UL>
+<PRE>set-variable&nbsp;%entry-value&nbsp;&quot;Hello&nbsp;world&quot; 
+
+define-macro&nbsp;my-entry-set 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;equ&nbsp;@#&nbsp;-1 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;%entry-value&nbsp;@ml&nbsp;&quot;&quot;&nbsp;%entry-value 
+&nbsp;&nbsp;&nbsp;&nbsp;!else 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$result&nbsp;%entry-value 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+!emacro 
+
+osd&nbsp;200&nbsp;1&nbsp;&nbsp;&quot;S&quot;&nbsp;&quot;&nbsp;&amp;Enter&nbsp;text&quot;&nbsp;2 
+osd&nbsp;200&nbsp;2&nbsp;&nbsp;&quot;ExHf&quot;&nbsp;%osd-entry-scheme&nbsp;&quot;########&quot;&nbsp;1&nbsp;my-entry-set 
+</PRE></UL>
+</UL><P><B>B</B> 
+<BR><UL>Item is a Button type. Add the last 2 characters of 
+<A HREF="m5var051.html">$window-chars(5)</A> to the text string given, one on each side, i.e. if the last two chars are &quot;[]&quot; then: <UL>
+<PRE>osd&nbsp;&quot;B&quot;&nbsp;&quot;&nbsp;Okay&nbsp;&quot; 
+</PRE></UL>
+<P>will be drawn as &quot;<TT>[ Okay ]</TT>&quot;. See also flag <B>T</B>. </UL>
+<P><B>T</B> 
+<BR><UL>Item is a repeat type, this is typically used with buttons, altering their execution behavior. By default an item is only executed when the left mouse button is released while over the item. However when this flag is specified the item is executed as soon as the left mouse button is pressed and is repeatedly executed until the button is release or the mouse moves off the item. The delay between repeated executions is determined by the variables 
+<A HREF="m5var071.html">$delay-time(5)</A> and 
+<A HREF="m5var071.html">$repeat-time(5)</A>. </UL>
+<P><B>S</B> 
+<BR><UL>Item is a separator type. This is not often required as any item without anything to execute is automatically set to be a separator. Occasionally a mouse-insensitive item which can be executed is required, typically a text string with a hot key, e.g. <UL>
+<PRE>osd&nbsp;200&nbsp;1&nbsp;&nbsp;&quot;S&quot;&nbsp;&quot;&nbsp;&amp;Enter&nbsp;text&quot;&nbsp;2 
+osd&nbsp;200&nbsp;2&nbsp;&nbsp;&quot;ExHf&quot;&nbsp;%osd-entry-scheme&nbsp;&quot;########&quot;&nbsp;1&nbsp;my-entry-set 
+</PRE></UL>
+<P>will be drawn as &quot;<TT>[ Okay ]</TT>&quot; </UL>
+<UL><P>Item 1 will have a hot-key which executes item 2 (as no command is given), but it will not hi-light if the mouse is placed over it. </UL>
+<P><B>R</B> 
+<BR><UL>Redraw dialog. Forces a redraw of the dialog when the item is executed. This is not usually required as <B>osd</B> generally works out for itself whether a redraw is needed, however, sometimes it does not, most notably when the item sets a variable that is displayed by another item as an entry, e.g. <UL>
+<PRE>set-variable&nbsp;%entry-value&nbsp;&quot;Hello&nbsp;world&quot; 
+
+define-macro&nbsp;my-entry-set 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;equ&nbsp;@#&nbsp;-1 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;%entry-value&nbsp;@ml&nbsp;&quot;&quot;&nbsp;%entry-value 
+&nbsp;&nbsp;&nbsp;&nbsp;!else 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$result&nbsp;%entry-value 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+!emacro 
+
+osd&nbsp;200&nbsp;1&nbsp;&nbsp;&quot;S&quot;&nbsp;&quot;&nbsp;&amp;Enter&nbsp;text&quot;&nbsp;2 
+osd&nbsp;200&nbsp;2&nbsp;&nbsp;&quot;ExHf&quot;&nbsp;%osd-entry-scheme&nbsp;&quot;########&quot;&nbsp;1&nbsp;my-entry-set 
+osd&nbsp;200&nbsp;3&nbsp;&nbsp;&quot;BxHcfiR&quot;&nbsp;%osd-ebtt-scheme&nbsp;&nbsp;&quot;&nbsp;&amp;Reset&nbsp;&quot;&nbsp;f&nbsp;&quot;set-variable&nbsp;%entry-value\&quot;\&quot;&quot; 
+</PRE></UL>
+</UL><UL><P>If item 3 did not have flag <B>R</B> set when executed, <B>osd</B> would not realize that the change to value <TT>%entry-value</TT> affects the display and the button would not appear to operate. </UL>
+<P><B>H</B> 
+<BR><UL>Sets the item color scheme. Note that for scrolled child items this only sets the scroll-box color scheme, the dialog scheme is used for the rest of the boarder. </UL>
+<P><B>G</B> 
+<BR><UL>This flag is only applicable in grid dialogs (see flag <B>G</B> in dialog creation). The current item will be drawn with a box around it using 
+<A HREF="m5var022.html">$box-chars(5)</A>. </UL>
+<P><B>z</B> 
+<BR><UL>Sets the item size, arguments &quot;<I>width</I>&quot; and &quot;<I>depth</I>&quot; must be given. </UL>
+<P><B>N</B> 
+<BR><UL>This flag only has an effect on entry item types, it selects 'New-line' style text entry which allows the user to enter multiple line of text using the return key and to end the input using the tab key. </UL>
+<P>Note that for a non-sub-menu item type, if an argument is given with no command then it is assumed that the number given is the item number to be executed, see flag <B>S</B> for an example. </UL></UL>
+<H2>Dialog Exacution </H2>
+<UL><P><I>n</I> <B>osd</B> 
+<P>This invocation with a single positive numeric argument executes the <I>n</I>th dialog. </UL>
+<H2>Returning Command Control </H2>
+<UL><P><B>osd</B> 
+<P>An invocation of <B>osd</B> with no arguments returns control back to the <B>osd</B> from a <I>control-command</I>. Refer to the <B>C</B> flag in the create/reset dialog property for information and an example. </UL>
+<H2>Current Dialog Redraw </H2>
+<UL><P><I>-1</I> <B>osd</B> 
+<P>Calling osd with an argument of -1 forces the complete redrawing of current dialog and any sub-dialogs. This is very useful when the execution of one item may effect the appearance of another. </UL>
+<H2>Redraw All Active Dialogs </H2>
+<UL><P><I>-2</I> <B>osd</B> 
+<P>Calling osd with an argument of -2 forces the complete redrawing of all currently active osd dialogs. This is better than calling 
+<A HREF="m2cmd139.html">screen-update(2)</A> when only the osd dialogs need updating as it suffers less from flickering. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>Refer to <TT>osd.emf</TT>, <TT>userstp.emf</TT>, <TT>search.emf</TT>, <TT>spell.emf</TT> and <TT>organize.emf</TT> for examples of the OSD. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var009.html">$osd-scheme(5)</A>, 
+<A HREF="m5var041.html">$result(5)</A>, 
+<A HREF="m5var055.html">$scroll-bar(5)</A>. 
+<A HREF="m5var051.html">$window-chars(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

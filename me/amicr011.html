@@ -1,0 +1,77 @@
+<HTML>
+<HEAD><TITLE>Keyboard Binding Commands</TITLE></HEAD>
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+Keyboard Binding Commands</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>KEYBOARD BINDING COMMANDS </B></H2>
+<UL><P>Keyboard binding allows key strokes to be associated with commands and macros such that when a bound key stroke sequence is recognized its associated (or bound) command is invoked, thereby controlling the editor. A set of 
+<A HREF="m2cmd200.html">Default Bindings</A> exist for MicroEmacs '02 which may be altered using the binding commands. There are three types of key bindings: 
+<P><B>Global</B> 
+<BR><UL>Associates a key-stroke with a command for all buffers. Used to establish the standard keyboard controls i.e. cursor movement, search, replace etc. </UL>
+<P><B>Local</B> 
+<BR><UL>Associates a key-stroke with a command for a specified buffer only, i.e. a binding local to the buffer. Local bindings allow macro accelerators to be bound to keys without affecting other buffers containing different types of data. Local bindings are used extensively in the buffer hook commands. </UL>
+<P><B>Message Line</B> 
+<BR><UL>Associates a key binding for use on the command line only, allowing command completion to be diverted etc. 
+</UL><P>To bind a command to a key, the command and key names must be known, see 
+<A HREF="amicr031.html">Command Glossary</A> for a complete list of commands and 
+<A HREF="m2cmd203.html">Key Names</A> for a complete list of key names. 
+<P>The binding related commands are defined as follows: </UL>
+<H2>Commands </H2>
+<UL><P>
+<A HREF="m2cmd084.html">buffer-bind-key(2)</A> Create local key binding for current buffer 
+<BR>
+<A HREF="m2cmd084.html">buffer-unbind-key(2)</A> Remove local key binding for current buffer 
+<BR>
+<A HREF="m2cmd009.html">command-apropos(2)</A> (<B>C-h&nbsp;a</B>)&nbsp;List commands involving a concept 
+<BR>
+<A HREF="m2cmd038.html">describe-bindings(2)</A> (<B>C-h&nbsp;b</B>)&nbsp;Show current command/key binding 
+<BR>
+<A HREF="m2cmd039.html">describe-key(2)</A> (<B>C-x&nbsp;?</B>)&nbsp;Report keyboard key name and binding 
+<BR>
+<A HREF="m2cmd013.html">global-bind-key(2)</A> (<B>esc k</B>)&nbsp;Bind a key to a named command or macro 
+<BR>
+<A HREF="m2cmd013.html">global-unbind-key(2)</A> (<B>esc C-k</B>)&nbsp;Unbind a key from a named command or macro 
+<BR>
+<A HREF="m3mac045.html">iso-accents-expand(3)</A> Expand an ISO accent 
+<BR>
+<A HREF="m3mac045.html">iso-accents-mode(3)</A> ISO accent expansion short-cut mode 
+<BR>
+<A HREF="m2cmd085.html">ml-bind-key(2)</A> Create key binding for message line 
+<BR>
+<A HREF="m2cmd085.html">ml-unbind-key(2)</A> Remove key binding from message line 
+<BR>
+<A HREF="m2cmd004.html">osd-bind-key(2)</A> Create key binding for OSD dialog 
+<BR>
+<A HREF="m2cmd004.html">osd-unbind-key(2)</A> Remove key binding from OSD dialog 
+<BR>
+<A HREF="m2cmd134.html">set-char-mask(2)</A> Set character word mask 
+<BR>
+<A HREF="m2cmd133.html">translate-key(2)</A> Translate key </UL>
+<H2>Variables </H2>
+<H2>Alt Key </H2>
+<UL><P>The <B>Alt Key</B> has special binding priorities defined as follows:- <UL><P>
+<LI>Direct key binding (e.g. <B>A-b</B> executes 
+<A HREF="m3mac027.html">file-browser</A>) 
+<LI>Main menu hot key (e.g. <B>A-f</B> opens the File menu) 
+<LI>Meta key binding (e.g. <B>A-space</B> -&gt; <B>esc&nbsp;space</B> -&gt; 
+<A HREF="m2cmd121.html">set-mark</A>) </UL><P>If the <TT>ALT</TT> key is to be used strictly as the Emacs Meta key then the bindings for the menu should be over-ridden by <I>Direct Key Bindings</I> from the user configuration file i.e. to re-map the default MicroEmacs Alt key to equivalent <TT>esc</TT> keys then the following keys should be re-bound. <UL>
+<PRE>global-bind-key&nbsp;forward-word&nbsp;&quot;A-f&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Over-ride&nbsp;File&nbsp;menu&nbsp;binding 
+:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;For&nbsp;all&nbsp;of&nbsp;the&nbsp;other&nbsp;menu&nbsp;items. 
+: 
+global-bind-key&nbsp;backward-word&nbsp;&quot;A-b&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Over-ride&nbsp;the&nbsp;file&nbsp;browser. 
+global-bind-key&nbsp;replace-string&nbsp;&quot;A-r&quot;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Over-ride&nbsp;tools&nbsp;binding. 
+</PRE></UL>
+<P>This creates a higher priority binding which overrides the underlying default. The commands that are displaced would have to be re-bound to different keys if required. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2002/01/06</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

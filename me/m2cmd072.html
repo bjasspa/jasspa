@@ -1,0 +1,57 @@
+<HTML>
+<HEAD><TITLE>find-registry(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+find-registry(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>find-registry - Index search of a registry sub-tree. </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>find-registry</B> &quot;<I>root</I>&quot; &quot;<I>subkey</I>&quot; <I>index</I> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>find-registry</B> performs an indexed search of a registry sub-tree allowing the caller to determine the names of the children that exist as sub-nodes of the specified node. <I>root</I> and <I>sub-key</I> form the root whose children are to be determined, <I>subkey</I> may be specified as the null-string (<TT>&quot;&quot;</TT>) if an absolute registry path is specified. <I>index</I> is a value from <TT>0..n</TT> and identifies the index number of the child node. The name of the child node is returned in 
+<A HREF="m5var041.html">$result(5)</A> if one exists, otherwise an error status is returned. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following example comes from <TT>addrbook.emf</TT> and shows how <B>find-registry</B> is used to iterate through entries in the address book. Note that <B>find-registry</B> is used with 
+<A HREF="m4fil007.html">!force(4)</A> and the 
+<A HREF="m5var040.html">$status(5)</A> of the call is tested to determine if the invocation succeeded. <UL>
+<PRE>!force&nbsp;find-registry&nbsp;&quot;/AddressBook&quot;&nbsp;&quot;Names&quot;&nbsp;#l0 
+!if&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l1&nbsp;$result 
+&nbsp;&nbsp;&nbsp;&nbsp;76&nbsp;insert-string&nbsp;&quot;_&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;newline 
+&nbsp;&nbsp;&nbsp;&nbsp;insert-string&nbsp;&amp;spr&nbsp;&quot;Section:&nbsp;%s&quot;&nbsp;#l1 
+&nbsp;&nbsp;&nbsp;&nbsp;newline 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Iterate&nbsp;through&nbsp;all&nbsp;of&nbsp;the&nbsp;entries. 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l2&nbsp;0 
+
+&nbsp;&nbsp;&nbsp;&nbsp;!repeat 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;#l2&nbsp;ab-buffer 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l2&nbsp;&amp;add&nbsp;#l2&nbsp;1 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;!until&nbsp;&amp;not&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;&amp;add&nbsp;#l0&nbsp;1 
+&nbsp;&nbsp;&nbsp;&nbsp;!goto&nbsp;next 
+!endif 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd042.html">get-registry(2)</A>, 
+<A HREF="m2cmd025.html">list-registry(2)</A>, 
+<A HREF="m2cmd157.html">read-registry(2)</A>, 
+<A HREF="m2cmd042.html">set-registry(2)</A>, 
+<A HREF="m8fil004.html">erf(8)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

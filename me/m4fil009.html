@@ -1,0 +1,72 @@
+<HTML>
+<HEAD><TITLE>!goto(4)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+!goto(4)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>!goto - Unconditional labeled jump 
+<BR>!tgoto - Conditional labeled jump </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>!goto</B>&nbsp;<I>label</I> 
+<BR><UL>... 
+<BR></UL><B>*</B><I>label</I> 
+<P><B>!tgoto</B>&nbsp;<I>condition</I>&nbsp;<I>label</I> 
+<BR><UL>... 
+<BR></UL><B>*</B><I>label</I> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>Flow can be controlled within a MicroEmacs '02 macro using the <B>!goto</B> directive. It takes as an argument a <I>label</I>. A <I>label</I> consists of a line starting with an asterisk (<B>*</B>) and then an alphanumeric label. Only labels in the currently executing macro can be jumped to, trying to jump to a non-existing label terminates execution of a macro. <I>labels</I> may be located at any position within the macro (forwards or backwards from the <B>!goto</B>). 
+<P>A conditional jump may be implemented with a <B>!tgoto</B>, this takes an additional argument <I>condition</I>, which may be a literal numeric value, a variable or an evaluated expression (see 
+<A HREF="amicr026.html">Variable  Functions</A>). If the <I>condition</I> evaluates to TRUE (or non-zero) then the branch is taken and control continues from the <I>label</I>. 
+<P><B>!tgoto</B> is an ideal replacement for 
+<A HREF="m4fil011.html">!while(4)</A> and 
+<A HREF="m4fil012.html">!repeat(4)</A> where nested loops are required. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>For example, create a block of DATA statements for a BASIC program: <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;insert-string&nbsp;&quot;1000&nbsp;DATA&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;%linenum&nbsp;1000 
+*nxtin 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;screen-update&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;make&nbsp;sure&nbsp;we&nbsp;see&nbsp;the&nbsp;changes 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;%data&nbsp;@ml&quot;Next&nbsp;number:&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;equal&nbsp;%data&nbsp;0 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!goto&nbsp;finish 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;greater&nbsp;$curcol&nbsp;60 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;backward-delete-char 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;newline 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;%linenum&nbsp;&amp;add&nbsp;%linenum&nbsp;10 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;insert-string&nbsp;&amp;cat&nbsp;%linenum&nbsp;&quot;&nbsp;DATA&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;insert-string&nbsp;&amp;cat&nbsp;%data&nbsp;&quot;,&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!goto&nbsp;nxtin 
+*finish 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;backward-delete-char 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;newline 
+</PRE></UL>
+<P>Not that any of us are writing basic programs these days !! </UL>
+<H2><B>NOTES </B></H2>
+<UL><P><B>!goto</B> and <B>!tgoto</B> are expensive operations because a symbolic name lookup is performed in the macro file. For time critical macros then the 
+<A HREF="m4fil032.html">!jump(4)</A> and 
+<A HREF="m4fil032.html">!tjump(4)</A> directives should be used as these do not perform a symbolic name search. The <I>jump</I> equivalents are source sensitive since a line displacement rather than a <I>label</I> is used - this makes them a little dangerous to use. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="amicr026.html">Variable Functions</A>, 
+<A HREF="m4fil008.html">!if(4)</A>, 
+<A HREF="m4fil032.html">!jump(4)</A>, 
+<A HREF="m4fil012.html">!repeat(4)</A>, 
+<A HREF="m4fil010.html">!return(4)</A>, 
+<A HREF="m4fil032.html">!tjump(4)</A>, 
+<A HREF="m4fil011.html">!while(4)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,29 @@
+<HTML>
+<HEAD><TITLE>FAQ(25) - Time; mode line is showing the date in DD/MM/YY format how do I change ?</TITLE></HEAD>
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+FAQ(25) - Time; mode line is showing the date in DD/MM/YY format how do I change ?</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>QUESTION (25) </B></H2>
+<UL><P>Time; mode line is showing the date in DD/MM/YY format how do I change ? </UL>
+<H2><B>ANSWER </B></H2>
+<UL><P>From within your user setup, over-ride the default mode line setting with the modifications you require. i.e. to change the date format to MM/DD/YY use:- <UL>
+<PRE>set-variable&nbsp;$mode-line&nbsp;&quot;%s%r%u%k&nbsp;%b&nbsp;%l&nbsp;-&nbsp;%h:%m&nbsp;%M/%D/%Y&nbsp;(%e)&nbsp;-&nbsp;(%f)&nbsp;&quot; 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var031.html">$mode-line(5)</A>. 
+<P>
+<A HREF="amicr040.html">[FAQ Index]</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

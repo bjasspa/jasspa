@@ -1,0 +1,49 @@
+<HTML>
+<HEAD><TITLE>&cond(4)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+&cond(4)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>&amp;cond - Conditional expression operator </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>&amp;cond</B> <I>log</I> <I>expr1</I> <I>expr2</I> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The conditional expression <B>&amp;cond</B> provides an alternative way to write 
+<A HREF="m4fil008.html">!if-!else-!endif</A> constructs, e.g.:- <UL>
+<PRE>!if&nbsp;&amp;gre&nbsp;%a&nbsp;%b 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;%z&nbsp;%a 
+!else 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;%z&nbsp;%b 
+!endif 
+</PRE></UL>
+<P>may be replaced with a conditional expression, breaking down the components then 
+<UL><P><I>log</I> is <B>&amp;gre %a %b</B> 
+<BR><I>expr1</I> is <B>%a</B> 
+<BR><I>expr2</I> is <B>%b</B> </UL>
+<P>rewriting the expression we get: <UL>
+<PRE>set-variable&nbsp;%z&nbsp;&amp;cond&nbsp;&amp;gre&nbsp;%a&nbsp;%b&nbsp;%a&nbsp;%b 
+</PRE></UL>
+<P>This is far more concise, albeit a little less readable, but does improve the performance of macros as there is less information to interpret. 
+<P>The <B>&amp;cond</B> operator accepts three fields, ALL fields are evaluated although only one of the results <I>expr1</I> or <I>expr2</I> is used. The <I>log</I> field is a logical value, if it is non-zero (<TT>TRUE</TT>) then the result of the <I>expr1</I> evaluation is used, otherwise the result of <I>expr2</I> is used. 
+<P>It should be noted that the conditional expression may be used in any construct i.e. 
+<A HREF="m4fil001.html">&amp;add(4)</A>, 
+<A HREF="m4fil002.html">&amp;cat(4)</A>, etc. the <I>expr</I> arguments may be strings, numbers or booleans the resultant value of the <I>expr</I> arguments is simply returned to the calling expression. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="amicr026.html">Variable Functions</A>, 
+<A HREF="m4fil001.html">&amp;add(4)</A>, 
+<A HREF="m4fil003.html">&amp;great(4)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

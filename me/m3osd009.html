@@ -1,0 +1,81 @@
+<HTML>
+<HEAD><TITLE>describe-word(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+describe-word(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>describe-word - Display a dictionary definition of a word </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>describe-word</B> &quot;<I>word</I>&quot; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>describe-word</B> can be used to interface to an external dictionary to get a definition of a given word. The interface has two modes of interface, the first simply launches an external program which provides the definition in its own user interface, e.g. MS Bookshelf. The second interface launches an external program which prints out the definition to <TT>stdout</TT>, MicroEmacs can then pull out the definition and display it in <B>describe-word</B>'s own GUI. 
+<P>When executed <B>describe-word</B> will use the current word under the cursor as the initial <I>word</I> or will prompt the user if the cursor is not in a word. 
+<P>When <B>describe-word</B>'s dialog is used the information presented is defined as follows: 
+<P><B>Word</B> 
+<BR><UL>The word being defined, the entry can be edited and the new word will be automatically looked-up when the edit is completed. </UL>
+<P><B>Insert</B> 
+<BR><UL>The effect of this button is dependent on where describe-word was executed. If executed from the <B>Meaning</B> button within the 
+<A HREF="m3osd002.html">spell checker</A> the Word entry is changed to the current word. When executed outside the spell checker the definition of the current word is inserted into the current buffer. </UL>
+<P><B>Exit</B> 
+<BR><UL>Closes the dialog. </UL>
+<P>Main definition box 
+<BR><UL>Displays the definition of the current word. The user can select a new word to describe by clicking the left mouse button on any word within the current definition. </UL></UL>
+<H2><B>NOTES </B></H2>
+<UL><P><B>describe-word</B> is a macro implemented in <TT>word.emf</TT>. 
+<P>Due to the size and availability of dictionaries etc. MicroEmacs is released without describe-word set up, the user must setup it up. 
+<P><B>describe-word</B> must be setup for each required language as follows: 
+<P><B>1)</B> 
+<BR><UL>A command-line interface to a dictionary of the required language must be found. This could simply be a text file containing one word definition per line and using <B>grep(1)</B> as the command-line interface. In this example the text file could take the following form: <UL>
+<PRE>A&nbsp;()&nbsp;The&nbsp;first&nbsp;letter&nbsp;of&nbsp;the&nbsp;English... 
+Aam&nbsp;(n.)&nbsp;A&nbsp;Dutch&nbsp;and&nbsp;German&nbsp;measure&nbsp;of&nbsp;liquids... 
+Aardvark&nbsp;(n.)&nbsp;An&nbsp;edentate&nbsp;mammal... 
+. 
+. 
+</PRE></UL>
+<P>The <B>grep</B> command-line interface required to look-up the word &quot;<TT>aardvark</TT>&quot; would be: <UL>
+<PRE>grep&nbsp;-i&nbsp;&quot;^aardvark&nbsp;(&quot;&nbsp;words.txt 
+</PRE></UL>
+<P>The output produced from this will be the single line giving the required definition. A second common interface would be executing an external dictionary program typically using a command-line option to specify the word to define, e.g.: <UL>
+<PRE>mydict&nbsp;-d&nbsp;&quot;aardvark&quot; 
+</PRE></UL>
+</UL><P><B>2)</B> 
+<BR><UL>The MicroEmacs language name must be found, this can be done by first using 
+<A HREF="m3osd000.html">user-setup(3)</A> or 
+<A HREF="m3osd002.html">spell-buffer(3)</A> to ensure that the current language is set the the require one and then running <B>describe-word</B>. The command will probably fail, but before it does it will set the variable <TT>.describe-word.lang</TT>, use the command 
+<A HREF="m2cmd040.html">describe-variable(2)</A> to get the value of this variable, this value is the internal language name. For example, when the current language is <B>American</B> or <B>American (Ext)</B> the language name is <TT>american</TT>. </UL>
+<P><B>3)</B> 
+<BR><UL>To execute the command-line interface the variable <TT>.describe-word.</TT><I>&lt;language&gt;</I><TT>-command</TT> must be set to the command-line required to obtain a word definition with the string &quot;<TT>%s</TT>&quot; used in place of the word and &quot;<TT>%%</TT>&quot; using in place of a single &quot;<TT>%</TT>&quot;. For the first example in <B>(1)</B> above the following would be required: <UL>
+<PRE>set-variable&nbsp;.describe-word.american-command&nbsp;... 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...&nbsp;&quot;grep&nbsp;-i&nbsp;\&quot;^%s&nbsp;(\&quot;&nbsp;/tmp/words.txt&quot; 
+</PRE></UL>
+<P>For the second example: <UL>
+<PRE>set-variable&nbsp;.describe-word.american-command&nbsp;&quot;mydict&nbsp;-d&nbsp;\&quot;%s&nbsp;(\&quot;&quot; 
+</PRE></UL>
+</UL><P><B>4)</B> 
+<BR><UL>Only required for the second mode, for use with <B>describe-word</B>'s own GUI, the setting of another variable is required, the presence of this variable determines which mode is to be used. </UL>
+<UL><P>The variable <TT>.describe-word.</TT><I>&lt;language&gt;</I><TT>-search</TT> must be set to a 
+<A HREF="m2nar006.html">regex search pattern</A> which will match the required definition(s) in the command out put, the first group (&quot;<TT>\(...\)</TT>&quot;) must enclose the required definition, again &quot;<TT>%s</TT>&quot; can be used in place of the word and &quot;<TT>%%</TT>&quot; for a single &quot;<TT>%</TT>&quot;. <B>describe-word</B> simply uses 
+<A HREF="m3mac036.html">regex-forward(3)</A> repeatedly to find all definitions of the current word, it then uses the value of the variable 
+<A HREF="m4fil033.html">@s1(4)</A> to get the individual definitions. For example for the first example the following is required: <UL>
+<PRE>set-variable&nbsp;.describe-word.american-search&nbsp;&nbsp;&quot;^\(%s&nbsp;(.*\)\n&quot; 
+</PRE></UL>
+<P>Note that the word being defined should be kept in the definition if possible as the 
+<A HREF="m2cmd138.html">spell rules</A> are used to look-up base words when a derivitive of a word is not found, therefore the word being defined may not be clear (e.g. <I>deactivate</I> can be derived from <I>activate</I> but their meanings are very different). Also long text lines are automatically wrapped by the GUI. </UL>
+<P>The required variables should be added to the user setup file. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m3osd002.html">spell-buffer(3)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

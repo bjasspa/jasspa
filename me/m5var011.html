@@ -1,0 +1,37 @@
+<HTML>
+<HEAD><TITLE>$debug(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+$debug(5)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>$debug - Macro debugging flag </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>$debug</B> <I>debugLevel</I>; Default is <TT>0</TT> 
+<P>-2 &lt;= <I>debugLevel</I> &lt;= 2 </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>$debug</B> is a flag to trigger macro debugging. A setting of 1 or 2 enables debugging, 0 disables debugging (default). A <B>$debug</B> setting of 2 debugs all macro lines encountered, whereas a setting of 1 debugs only the lines executed, i.e. if a false <B>!if</B> was encountered the lines within the <B>!if</B> would not be printed. Problems arise with <B>!elif</B> and <B>!else</B> and a <I>debugLevel</I> setting of 1 as the <B>!elif</B> and <B>!else</B> lines are never printed. 
+<P>A -ve setting disables debugging and has no immediate effect. However as soon as the bell is rung the value is inverted (-1 to 1, -2 to 2) enabling debugging. This can be invaluable when tracing problems, for example the following macro code will loop infinitely:- <UL>
+<PRE>!repeat 
+&nbsp;&nbsp;&nbsp;&nbsp;beginning-of-line 
+&nbsp;&nbsp;&nbsp;&nbsp;backward-char 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;forward-line 
+!until&nbsp;&amp;not&nbsp;$status 
+</PRE></UL>
+<P>This is a fairly obvious bug, but if buried in a thousand lines of macro code it could be very difficult to spot and to find it during execution would be very tedious if not impossible. But by setting <B>$debug</B> to -1 the macro can be executed as normal and as soon as the macro is stuck the user can simply press &quot;<TT>C-g</TT>&quot; (<B>abort-command</B>) which rings the bell and starts macro debugging at the current execution point. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd045.html">execute-file(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,48 @@
+<HTML>
+<HEAD><TITLE>pipe-shell-command(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+pipe-shell-command(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>pipe-shell-command - Execute a single operating system command 
+<BR>$ME_PIPE_STDERR - Command line diversion to stderr symbol </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>pipe-shell-command</B> &quot;<I>command</I>&quot; [&quot;<I>buffer-name</I>&quot;] (<B>esc @</B>)&nbsp; 
+<P><I>[MS-DOS and Win32s Only]</I> 
+<BR><B>$ME_PIPE_STDERR</B> &quot;<I>string</I>&quot;; Default is undefined. </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>pipe-shell-command</B> executes one operating system command <I>command</I> and pipes the resulting output into a buffer with the name of <B>*command*</B>. 
+<P>The argument <I>n</I> can be used to change the default behavior of pipe-shell-command described above, <I>n</I> is a bit based flag where:- 
+<P><B>0x01</B> 
+<BR><UL>Enables the use of the default buffer name <B>*command*</B> (default). If this bit is clear the user must supply a buffer name. This enables another command to be started without effecting any other command buffer. </UL>
+<P><B>0x02</B> 
+<BR><UL>Hides the output buffer, default action pops up a window and displays the output buffer in the new window. </UL>
+<P><B>0x04</B> 
+<BR><UL>Disable the use of the command-line processor to launch the program (win32 versions only). By default the &quot;<B>command</B>&quot; is launched by executing the command: 
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;%COMSPEC%&nbsp;/c&nbsp;command 
+</PRE></UL>
+<UL><P>Where <TT>%COMSPEC%</TT> is typically command.com. If this bit is set, the &quot;<B>command</B>&quot; is launched directly. </UL>
+<P><B>0x08</B> 
+<BR><UL>Detach the launched process from MicroEmacs (win32 versions only). By default the command is launched as a child process of MicroEmacs with a new console. With this bit set the process is completely detached from MicroEmacs instead. </UL>
+<P><B>0x10</B> 
+<BR><UL>Disable the command name mangling (win32 versions only). By default any '<TT>/</TT>' characters found in the command name (the first argument only) are converted to '<TT>\</TT>' characters to make it Windows compliant. </UL></UL>
+<H2><B>NOTES </B></H2>
+<UL><P>On MS-DOS and <I>Win32s</I> the standard shell <B>command.com(1)</B> does not support the piping of <I>stderr</I> to a file. Other shells, such as <B>4Dos.com(1)</B>, do, using the command-line argument &quot;<TT>&gt;&amp;</TT>&quot;. If the environment variable &quot;<TT>ME_PIPE_STDERR</TT>&quot; is defined (the value is not used) then MicroEmacs assumes that the current shell supports piping of stderr. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd077.html">ipipe-shell-command(2)</A>, 
+<A HREF="m2cmd131.html">shell-command(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

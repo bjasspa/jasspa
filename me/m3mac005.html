@@ -1,0 +1,51 @@
+<HTML>
+<HEAD><TITLE>clean(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+clean(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>clean - Remove redundant white spaces from the current buffer </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>clean</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>clean</B> removes redundant white spaces from the current buffer, there are three types this command remove: 
+<P>1) 
+<BR><UL>Any space or tab character at the end of the line. All are removed until the last character is not a space or a tab, or the line is empty. Note that an empty line is not removed unless at the end of the buffer. </UL>
+<P>2) 
+<BR><UL>Space characters are removed when the next character is a tab, making the space redundant, e.g. the strings &quot;<TT>	Hello World</TT>&quot; and &quot;<TT> 	Hello World</TT>&quot; will look identical because the tab character ('<I>	</I>') will indent the text to the 8th column with or without the space so the space can be removed. </UL>
+<P>3) 
+<BR><UL>Superfluous empty lines at the end of the buffer are removed, leaving only one empty line. </UL>
+<P>4) 
+<BR><UL>If argument <I>n</I> is given (value is not used) multiple blank lines are reduced to a single blank line. </UL></UL>
+<H2><B>DIAGNOSTICS </B></H2>
+<UL><P><TT>[Command illegal in view mode]</TT> 
+<BR><UL>Caused by a redundant white space being found and the buffer being in view mode. Note that if clean completes while the buffer is in view mode then no superfluous white spaces where found. </UL></UL>
+<H2><B>NOTES </B></H2>
+<UL><P><B>clean</B> is a macro defined in <TT>format.emf</TT>. 
+<P>Most of this command's operation is performed by simple regex search and replace strings: 
+<P>a) 
+<BR><UL>Search for: &quot;[\t ]+$&quot; Replace with: &quot;\\0&quot; </UL>
+<P>b) 
+<BR><UL>Search for: &quot;[ ]+\t&quot; Replace with: &quot;\t&quot; </UL>
+<P>c) 
+<BR><UL>Search for: &quot;\n\n\n&quot; Replace with: &quot;\n\n&quot; </UL></UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd109.html">replace-string(2)</A>, 
+<A HREF="m2mod012.html">tab(2m)</A>, 
+<A HREF="m2cmd030.html">delete-blank-lines(2)</A>, 
+<A HREF="m3mac008.html">tabs-to-spaces(3)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

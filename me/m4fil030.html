@@ -1,0 +1,84 @@
+<HTML>
+<HEAD><TITLE>&sequal(4)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+&sequal(4)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>&amp;seq, &amp;iseq, &amp;sle, &amp;sgre, &amp;xseq, &amp;xiseq - String logical macro operators </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>&amp;sequal</B> <I>str1</I> <I>str2</I> 
+<BR><B>&amp;isequal</B> <I>str1</I> <I>str2</I> 
+<BR><B>&amp;sless</B> <I>str1</I> <I>str2</I> 
+<BR><B>&amp;sgreat</B> <I>str1</I> <I>str2</I> 
+<P><B>&amp;xsequal</B> <I>str1</I> <I>regex</I> 
+<BR><B>&amp;xisequal</B> <I>str1</I> <I>regex</I> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The string logical testing operators perform string comparison tests, returning a boolean value of <TT>TRUE</TT> (1) or <TT>FALSE</TT> (0). 
+<P>The functions may all be shortened to their three letter abbreviation (i.e. <B>&amp;sequal</B> may be expressed as <B>&amp;seq</B>). In all cases the first argument is completely evaluated before the second argument. String logical operators include:- 
+<P><B>&amp;sequal</B> <I>str1</I> <I>str2</I> 
+<BR><UL><TT>TRUE</TT> if the two strings <I>str1</I> and <I>str2</I> are the same. Abbreviated form of the function is <B>&amp;seq</B>. </UL>
+<P><B>&amp;sless</B> <I>str1</I> <I>str2</I> 
+<BR><UL><TT>TRUE</TT> if string <I>str1</I> alphabetically less than <I>str2</I>. Abbreviated form of the function is <B>&amp;sle</B>. </UL>
+<P><B>&amp;sgreat</B> <I>str1</I> <I>str2</I> 
+<BR><UL><TT>TRUE</TT> if string <I>str1</I> alphabetically larger than <I>str2</I>. Abbreviated form of the function is <B>&amp;sgr</B>. </UL>
+<P><B>&amp;isequal</B> <I>str1</I> <I>str2</I> 
+<BR><UL><TT>TRUE</TT> if the two strings <I>str1</I> and <I>str2</I> are the same ignoring letter case. Abbreviated form of the function is <B>&amp;ise</B>. </UL>
+<P><B>&amp;xsequal</B> <I>str1</I> <I>regex</I> 
+<BR><UL><TT>TRUE</TT> if the string <I>str1</I> matches the <I>regex</I> (case sensitive). Abbreviated form of the function is <B>&amp;xse</B>. See 
+<A HREF="m2nar006.html">Regular Expressions</A> for information on the <I>regex</I> format. </UL>
+<P><B>&amp;xisequal</B> <I>str1</I> <I>regex</I> 
+<BR><UL><TT>TRUE</TT> if the string <I>str1</I> matches the <I>regex</I> (case insensitive). Abbreviated form of the function is <B>&amp;xis</B>. See 
+<A HREF="m2nar006.html">Regular Expressions</A> for information on the <I>regex</I> format. </UL>
+<P>Evaluation of the string logical operators are left to right, the leftmost argument is fully evaluated before the next argument. The operator ordering is prefix notation (see 
+<A HREF="m4fil001.html">&amp;add(4)</A> for an example of prefix ordering). </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>Test for variable 
+<A HREF="m5var003.html">$buffer-bname(5)</A> is equal to <TT>*scratch*</TT>: <UL>
+<PRE>!if&nbsp;&amp;seq&nbsp;$buffer-bname&nbsp;&quot;*scratch*&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;... 
+</PRE></UL>
+<P>The following example tests a character is in the range <TT>a</TT>-<TT>z</TT>: <UL>
+<PRE>!if&nbsp;&amp;not&nbsp;&amp;and&nbsp;&amp;sle&nbsp;%c&nbsp;&quot;a&quot;&nbsp;&amp;sgr&nbsp;%c&nbsp;&quot;z&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;... 
+</PRE></UL>
+<P>The following example inserts the string &quot;<TT>c</TT>&quot; into the alphabetically order string list <B>%test-list</B>: <UL>
+<PRE>set-variable&nbsp;%test-list&nbsp;&quot;|a|b|d|e|&quot; 
+set-variable&nbsp;%test-insert&nbsp;&quot;c&quot; 
+
+set-variable&nbsp;#l0&nbsp;1 
+!while&nbsp;&amp;and&nbsp;&amp;not&nbsp;&amp;seq&nbsp;&amp;lget&nbsp;%test-list&nbsp;#l0&nbsp;&quot;&quot;&nbsp;... 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...&nbsp;&amp;sle&nbsp;&amp;lget&nbsp;%test-list&nbsp;#l0&nbsp;%test-insert 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;&amp;add&nbsp;#l0&nbsp;1 
+!done 
+set-variable&nbsp;%test-list&nbsp;&amp;lins&nbsp;%test-list&nbsp;#l0&nbsp;%test-insert 
+</PRE></UL>
+<P>The first test on the <B>!while &amp;and</B> conditional checks that the current item in the list is not an empty string (&quot;&quot;). If it is the end of the list has been reached. 
+<P>The following example tests the current buffers file name for a &quot;.c&quot; extension: <UL>
+<PRE>!if&nbsp;&amp;xse&nbsp;$buffer-fname&nbsp;&quot;.*\\.c&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;... 
+</PRE></UL>
+<P>Note the '<TT>\</TT>' character is needed to protect the second '<TT>.</TT>', i.e. so that it does not match any character and the second '<TT>\</TT>' is required as the string is first parsed by the macro interpreter which changes it to &quot;<TT>.*\.c</TT>&quot; which is then interpreted as a regex. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="amicr026.html">Variable Functions</A>, 
+<A HREF="m4fil031.html">&amp;sin(4)</A>, 
+<A HREF="m4fil002.html">&amp;slower(4)</A>, 
+<A HREF="m4fil000.html">&amp;rep(4)</A>, 
+<A HREF="m4fil001.html">&amp;add(4)</A>, 
+<A HREF="m4fil003.html">&amp;equal(4)</A>, 
+<A HREF="m4fil022.html">&amp;cond(4)</A>, 
+<A HREF="m2nar006.html">Regular Expressions</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,171 @@
+<HTML>
+<HEAD><TITLE>change-font(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+change-font(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>change-font - Change the screen font </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>[X-Windows]</I> 
+<BR><B>change-font</B> &quot;<I>fontName</I>&quot; 
+<P><I>[IBM-PC / MS-DOS]</I> 
+<BR><B>change-font</B> &quot;<I>mode-no</I>&quot; &quot;<I>spec</I>&quot; 
+<P><I>[Microsoft Windows]</I> 
+<BR><I>n</I> <B>change-font</B> &quot;<I>name</I>&quot; <I>charSet</I> <I>weight</I> <I>width</I> <I>height</I> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>change-font</B> is a platform specific command which allows the displayable font to be modified. The selection of font is determined by the monitor resolution and the capabilities of the graphics adapter. 
+<P>This command is available on all systems except termcap. While MS-DOS does not support the concept of different fonts, it does (or at least the graphics card does) support the concept of changing screen resolution, which has the effect of changing the font. Each platform takes different arguments and are considered independently, as follows: </UL>
+<H2>X-Windows </H2>
+<UL><P>The X-Windows UNIX environments accept a single argument which is a fully qualified font name. Simply give the font X name and the font will change if it is available. The window size changes to attempt to retain the same number of rows and columns so ensure that when changing to a larger font then there is enough room (or a way) to resize a window which is larger than the actual screen. 
+<P>The X font string describes the attributes of the font in terms of it's size name etc. as follows:- <FONT SIZE=-1>
+<P>-<I>foundry</I>-<I>family</I>-<I>weight</I>-<I>slant</I>-<I>width</I>--<I>pixels</I>-<I>point</I>-<I>hres</I>-<I>vres</I>-<I>space</I>-<I>av</I>-<I>set</I> </FONT>
+<P>Where 
+<P><I>foundry</I> 
+<BR><UL>The type of foundry that digitized and supplied the font. </UL>
+<P><I>family</I> 
+<BR><UL>Font Family. </UL>
+<P><I>weight</I> 
+<BR><UL>Modifies the appearance of the font, the <I>weight</I> is usually <B>medium</B> or <B>bold</B>. </UL>
+<P><I>slant</I> 
+<BR><UL>Determines the orientation of the font. <I>slant</I> is usually <B>r</B>oman (upright), <B>i</B>talic or <B>o</B>blique. </UL>
+<P><I>width</I> 
+<BR><UL>Describes the proportionate width of the font. Typical widths include <B>normal</B>, <B>condensed</B>, <B>narrow</B>, <B>double</B>. </UL>
+<P><I>pixels</I> 
+<BR><UL>Pixel size of the font </UL>
+<P><I>point</I> 
+<BR><UL>The resolution of the font in tenths of a <B>dpi</B> (i.e. dpi*10) </UL>
+<P><I>hres</I> 
+<BR><UL>Horizontal resolution of the font in dpi. </UL>
+<P><I>vres</I> 
+<BR><UL>Vertical resolution of the font in dpi. </UL>
+<P><I>space</I> 
+<BR><UL>The spacing of the font. Typical spacing values include <B>m</B>onospaced (i.e. fixed width), <B>p</B>roportional and <B>c</B>haracter cell. </UL>
+<P><I>av</I> 
+<BR><UL>Mean width of all font characters, measured in tenths of a pixel. </UL>
+<P><I>set</I> 
+<BR><UL>Character set - character set standards e.g. <B>iso8859-1</B>. </UL>
+<P>The default font used by MicroEmacs '02 is <UL>
+<PRE>-*-fixed-medium-r-normal--15-*-*-*-c-90-iso8859-1 
+</PRE></UL>
+<P>A good font to try is: <UL>
+<PRE>change-font&nbsp;&quot;-misc-fixed-medium-r-normal--13-*-*-*-c-80-iso8859-1&quot; 
+</PRE></UL>
+<P>The font may also be changed in your <B>.Xdefaults</B> file by inserting the line:- <UL>
+<PRE>MicroEmacs.font&nbsp;&quot;-misc-fixed-medium-r-normal--13-*-*-*-c-80-iso8859-1&quot; 
+</PRE></UL>
+</UL><H2>IBM-PC / MS-DOS </H2>
+<UL><P>MS-DOS may only change the screen resolution, the standard screen resolution is either 80 columns by 25 rows or 80 by 50. A more advanced graphics card can typically support up to 132 by 60, MicroEmacs in theory has no limit but it has only been tested up to this size. 
+<P>The main problem with MS-DOS machines is that there is no standard and this is no exception. The graphics mode needed to get a 132 by 60 screen (if available) varies from one card to the next so MicroEmacs '02 needs to know the graphic mode number your card uses to get your required screen resolution. 
+<P>MicroEmacs '02 can also attempt a little bit of magic to double the number of rows on the screen for a given screen resolution. This is how 50 lines are obtained from the standard 25 line mode 3. If the value of &quot;<I>spec</I>&quot; is non-zero then this is attempted, to the authors knowledge this will either work or not depending on the direction of the wind and no harm will befall the users equipment. However the author also quickly disclaims anything and everything, the user uses this at their own peril, like everything else. 
+<P>MicroEmacs '02 attempts to determine the new screen width and depth itself, in case this fails the commands 
+<A HREF="m2cmd018.html">change-screen-width(2)</A> and 
+<A HREF="m2cmd018.html">change-screen-depth(2)</A> may be used to correct the problem. 
+<P>Following are the standard MS-DOS text modes: <UL>
+<PRE>change-font&nbsp;&quot;2&quot;&nbsp;&quot;0&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Simple&nbsp;monochrome&nbsp;or&nbsp;EGA&nbsp;monitor,&nbsp;80&nbsp;by&nbsp;25. 
+change-font&nbsp;&quot;3&quot;&nbsp;&quot;0&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Simple&nbsp;EGA/VGA&nbsp;monitor,&nbsp;again&nbsp;80&nbsp;by&nbsp;25. 
+change-font&nbsp;&quot;3&quot;&nbsp;&quot;1&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Simple&nbsp;EGA/VGA&nbsp;monitor&nbsp;using&nbsp;spec,&nbsp;80&nbsp;by&nbsp;50. 
+</PRE></UL>
+<P>Most Trident cards support the following text mode: <UL>
+<PRE>change-font&nbsp;&quot;86&quot;&nbsp;&quot;0&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Sweet&nbsp;132&nbsp;by&nbsp;60 
+</PRE></UL>
+<P>A Diamond Stealth supports the following mode: <UL>
+<PRE>change-font&nbsp;&quot;85&quot;&nbsp;&quot;1&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Nice&nbsp;132&nbsp;by&nbsp;50 
+</PRE></UL>
+<P>Cirrus video cards (1MB) seem to support: <UL>
+<PRE>change-font&nbsp;&quot;84&quot;&nbsp;&quot;1&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;PT-526&nbsp;(132x50) 
+</PRE></UL>
+<P>Time to start digging out your graphics card manual! </UL>
+<H2>Microsoft Windows </H2>
+<UL><P>The Microsoft Windows environments utilize font files to drive the display. When <B>change-font</B> is invoked with no arguments, or a -ve argument then a font dialog is presented to the user to allow the font to be selected. The current font is not changed if a -ve argument is given, in both cases the variable 
+<A HREF="m5var041.html">$result(5)</A> is set the the user selected font. The format of the returned string is &quot;<TT>OWwwwwhhhhhFontName</TT>&quot;, where:- 
+<P><B>O</B> 
+<BR><UL>The type of character set (0 for OEM and 1 for ANSI). </UL>
+<P><B>W</B> 
+<BR><UL>The font weight (0 - 9). </UL>
+<P><B>wwww</B> 
+<BR><UL>The font width. </UL>
+<P><B>hhhh</B> 
+<BR><UL>The font height. </UL>
+<P><B>FontName</B> 
+<BR><UL>The font name. 
+</UL><P>If a +ve argument is specified with <B>change-font</B> then the arguments are explicitly entered, arguments are defined as follows:- 
+<P><I>font</I> 
+<BR><UL>The name of the font - maximum of 32 characters. Select Fixed mono fonts only. Proportional fonts may be specified but the cursor will not align with the characters on the screen. 
+<P>An empty name (&quot;&quot;) may be specified resulting in the selection of the default system OEM font. No other arguments are required when specified. 
+<P>Note that <B>Courier New</B> is not actually a fixed mono font as might be expected. </UL>
+<P><I>charSet</I> 
+<BR><UL>The type of character set required, this is an integer value of:- 
+<UL><P><TT>&nbsp;&nbsp;0</TT> - ANSI or Western (True Type etc) 
+<BR><TT>161</TT> - Greek 
+<BR><TT>162</TT> - Turkish 
+<BR><TT>204</TT> - Russian 
+<BR><TT>255</TT> - OEM (or bitmapped) </UL></UL>
+<P><I>weight</I> 
+<BR><UL>The weight of the font. The values are defined as:- 
+<UL><P><TT>0</TT>&nbsp;-&nbsp;Don't&nbsp;care&nbsp;(Automatically&nbsp;selected). 
+<BR><TT>1</TT>&nbsp;-&nbsp;Thin 
+<BR><TT>2</TT>&nbsp;-&nbsp;Extra&nbsp;Light 
+<BR><TT>3</TT>&nbsp;-&nbsp;Light 
+<BR><TT>4</TT>&nbsp;-&nbsp;Normal 
+<BR><TT>5</TT>&nbsp;-&nbsp;Medium 
+<BR><TT>6</TT>&nbsp;-&nbsp;Semi-Bold 
+<BR><TT>7</TT>&nbsp;-&nbsp;Bold 
+<BR><TT>8</TT>&nbsp;-&nbsp;Extra-Bold 
+<BR><TT>9</TT>&nbsp;-&nbsp;Heavy </UL></UL>
+<UL><P>Note that you may request a weight and it is not honored. Typically 4 and 7 are honored by most font definitions. 4 is typically used. </UL>
+<P><I>width</I> 
+<BR><UL>The width of the font. Specifies the average width, in logical units, of characters in the requested font. If this value is zero, the font mapper chooses a &quot;closest match&quot; value. The &quot;closest match&quot; value is determined by comparing the absolute values of the difference between the current device's aspect ratio and the digitized aspect ratio of available fonts. 
+<P>Note that if the width is specified as zero then the height should be specified and the width will be automatically selected. </UL>
+<P><I>height</I> 
+<BR><UL>The height of the font. Specifies the desired height, in logical units, of the requested font's character cell or character. (The character height value is the character cell height value minus the internal-leading value.) If this value is greater than zero, the font mapper matches it against available character cell height values; if this value is zero, the font mapper uses a default height value when it searches for a match; if this value is less than zero, the font mapper matches it against available character height values. </UL>
+<UL><P>Note: as with the weight the width and height may not be honored if the font cannot support the specified width/height in which case the closest matching height is automatically selected </UL></UL>
+<H2>Notes on the Standard Windows Configuration </H2>
+<UL><P>For releases prior to '99, the <B>Terminal</B> font is the standard MS-DOS font used for the MS-DOS window. This is an OEM fixed width character set which contains all of the conventional symbols found in the DOS shell. 
+<P>Releases of MicroEmacs post '99 may utilise any of the windows fonts, typically <TT>Courier New</TT> or <TT>Lucida Console</TT> are used, these provide the best screen rendering of characters. <TT>Lucida Console</TT> is slightly better with a smaller font size as this allows a '<TT>1</TT>' (one) and '<TT>l</TT>' (lower case L) to be distinguished. 
+<P>The <B>Terminal</B> fonts are the same as shown in the DOS window the last 2 arguments are the width x height, the terminal equivalents (Bit Mapped) are commented here. 
+<P><B>7x12</B> 
+<BR><UL>Regular weight seems to offer the best resolution for 14/15&quot; monitors. </UL>
+<P><B>6x8</B> 
+<BR><UL>Regular weight is more suitable for 17-21&quot; monitors which offer better resolutions. </UL>
+<P>The best options for the fonts are defined as follows:- <UL>
+<PRE>;Standard&nbsp;Terminal&nbsp;Fonts&nbsp;-&nbsp;standard&nbsp;weight 
+;change-font&nbsp;&quot;Terminal&quot;&nbsp;0&nbsp;4&nbsp;&nbsp;4&nbsp;&nbsp;6 
+change-font&nbsp;&quot;Terminal&quot;&nbsp;0&nbsp;4&nbsp;&nbsp;6&nbsp;&nbsp;8 
+;change-font&nbsp;&quot;Terminal&quot;&nbsp;0&nbsp;4&nbsp;&nbsp;8&nbsp;&nbsp;8 
+;change-font&nbsp;&quot;Terminal&quot;&nbsp;0&nbsp;4&nbsp;&nbsp;5&nbsp;12 
+;change-font&nbsp;&quot;Terminal&quot;&nbsp;0&nbsp;4&nbsp;&nbsp;7&nbsp;12 
+;change-font&nbsp;&quot;Terminal&quot;&nbsp;0&nbsp;4&nbsp;&nbsp;8&nbsp;12 
+;change-font&nbsp;&quot;Terminal&quot;&nbsp;0&nbsp;4&nbsp;12&nbsp;16 
+;change-font&nbsp;&quot;Terminal&quot;&nbsp;0&nbsp;4&nbsp;10&nbsp;18 
+
+;Standard&nbsp;Terminal&nbsp;Fonts&nbsp;-&nbsp;heavy&nbsp;weight 
+;change-font&nbsp;&quot;Terminal&quot;&nbsp;0&nbsp;7&nbsp;&nbsp;4&nbsp;&nbsp;6 
+;change-font&nbsp;&quot;Terminal&quot;&nbsp;0&nbsp;7&nbsp;&nbsp;6&nbsp;&nbsp;8 
+;change-font&nbsp;&quot;Terminal&quot;&nbsp;0&nbsp;7&nbsp;&nbsp;8&nbsp;&nbsp;8 
+;change-font&nbsp;&quot;Terminal&quot;&nbsp;0&nbsp;7&nbsp;&nbsp;5&nbsp;12 
+;change-font&nbsp;&quot;Terminal&quot;&nbsp;0&nbsp;7&nbsp;&nbsp;7&nbsp;12 
+;change-font&nbsp;&quot;Terminal&quot;&nbsp;0&nbsp;7&nbsp;&nbsp;8&nbsp;12 
+;change-font&nbsp;&quot;Terminal&quot;&nbsp;0&nbsp;7&nbsp;12&nbsp;16 
+;change-font&nbsp;&quot;Terminal&quot;&nbsp;0&nbsp;7&nbsp;10&nbsp;18 
+</PRE></UL>
+<P>The &quot;<B>Courier New</B>&quot; font is not actually a fixed mono font as might be expected. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd018.html">change-screen-width(2)</A>, 
+<A HREF="m2cmd018.html">change-screen-depth(2)</A>, 
+<A HREF="m5var041.html">$result(5)</A>, 
+<A HREF="m3osd000.html">user-setup(3)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,116 @@
+<HTML>
+<HEAD><TITLE>&atoi(4)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+&atoi(4)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>&amp;ato, &amp;gmod, &amp;bmo, &amp;ind, &amp;inw, &amp;exi - Miscellaneous functions </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>&amp;atoi</B> <I>char</I> 
+<BR><B>&amp;itoa</B> <I>num</I> 
+<P><B>&amp;gmode</B> <I>mode</I> 
+<BR><B>&amp;bmode</B> <I>mode</I> 
+<BR><B>&amp;nbmode</B> <I>buffer</I> <I>mode</I> 
+<BR><B>&amp;inword</B> <I>char</I> 
+<P><B>&amp;indirect</B> <I>str</I> 
+<P><B>&amp;exist</B> <I>str</I> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>These are a selection of miscellaneous functions providing tests and exchanging of information. 
+<P>The functions may all be abbreviated to their three letter abbreviation (i.e. <B>&amp;indirect</B> may be expressed as <B>&amp;ind</B>). In all cases the first argument is completely evaluated before the second argument. 
+<P><B>&amp;atoi</B> <I>char</I> 
+<BR><UL>Converts the given character <I>char</I> to it's ASCII number which is returned. (see <B>&amp;itoa</B>). Abbreviated command is <B>&amp;ato</B>. </UL>
+<P><B>&amp;itoa</B> <I>num</I> 
+<BR><UL>Converts an integer <I>num</I> to it's ASCII character representation which is returned to the caller. Abbreviated command is <B>&amp;ito</B>. </UL>
+<P><B>&amp;gmode</B> <I>mode</I> 
+<BR><UL>Returns <TT>1</TT> if the given mode <I>mode</I> is globally enabled. Allows macros to test the global mode state (see 
+<A HREF="amicr021.html">Operating Modes</A>). Abbreviated command is <B>&amp;gmo</B>. </UL>
+<P><B>&amp;bmode</B> <I>mode</I> 
+<BR><UL>Returns <TT>1</TT> if the mode <I>mode</I> is enabled in the current buffer. Allows macros to test the state of the buffer mode. Abbreviated command is <B>&amp;bmo</B>. </UL>
+<P><B>&amp;nbmode</B> <I>buffer</I> <I>mode</I> 
+<BR><UL>Returns <TT>1</TT> if the mode <I>mode</I> is enabled in buffer <I>buffer</I> . Allows macros to test the state of a buffer mode other than the current. Abbreviated command is <B>&amp;nbm</B>. </UL>
+<P><B>&amp;inword</B> <I>char</I> 
+<BR><UL><TT>TRUE</TT>. If the given character <I>char</I> is a 'word' character, see 
+<A HREF="m2cmd096.html">forward-word(2)</A> for a description of a 'word' character. Abbreviated command is <B>&amp;inw</B>. </UL>
+<P><B>&amp;indirect</B> <I>str</I> 
+<BR><UL>Evaluate <I>str</I> as a variable. The <I>str</I> argument is evaluated and takes the resulting string, and then uses it as a variable name. i.e. a variable may reference another variable which contains the data to be referenced. Abbreviated command is <B>&amp;ind</B>. </UL>
+<P><B>&amp;exist</B> <I>str</I> 
+<BR><UL>Tests for the existance of <I>str</I> which may be a variable or a command/macro name, returning <TT>TRUE</TT> if the variable or command does currently exist. Abbreviated command is <B>&amp;exi</B>. </UL></UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The <B>&amp;exi</B> function is etremely useful in initializing, for example: <UL>
+<PRE>!if&nbsp;&amp;not&nbsp;&amp;exi&nbsp;%my-init 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;%my-init&nbsp;is&nbsp;not&nbsp;yet&nbsp;defined&nbsp;so&nbsp;this&nbsp;is&nbsp;the&nbsp;first&nbsp;call 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;%my-init&nbsp;1 
+&nbsp;&nbsp;&nbsp;&nbsp;. 
+&nbsp;&nbsp;&nbsp;&nbsp;. 
+</PRE></UL>
+<P>Or in all the 
+<A HREF="m2cmd202.html">file hooks</A> a user defined extension is checked for and executed if defined: <UL>
+<PRE>define-macro&nbsp;fhook-c 
+&nbsp;&nbsp;&nbsp;&nbsp;. 
+&nbsp;&nbsp;&nbsp;&nbsp;. 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;execute&nbsp;user&nbsp;extensions&nbsp;if&nbsp;macro&nbsp;is&nbsp;defined 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;exi&nbsp;my-fhook-c 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;my-fhook-c 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+!emacro 
+</PRE></UL>
+<P>The <B>&amp;ind</B> function deserves more explanation. <B>&amp;ind</B> evaluates its string argument <I>str</I>, takes the resulting string and then uses it as a variable name. For example, given the following code sequence: <UL>
+<PRE>;&nbsp;set&nbsp;up&nbsp;reference&nbsp;table 
+
+set-variable&nbsp;&nbsp;%one	&quot;elephant&quot; 
+set-variable&nbsp;&nbsp;%two	&quot;giraffe&quot; 
+set-variable&nbsp;&nbsp;%three	&quot;donkey&quot; 
+
+set-variable&nbsp;&nbsp;%index&nbsp;&quot;%two&quot; 
+insert-string&nbsp;&amp;ind&nbsp;%index 
+</PRE></UL>
+<P>the string &quot;<TT>giraffe</TT>&quot; would have been inserted at the point in the current buffer. 
+<P>The <B>&amp;bmode</B> invocation allows a calling macro to determine the buffer mode state (see 
+<A HREF="amicr021.html">Operating Modes</A>). Consider the following example which is a macro to perform a case insensitive alphabetic sort using the 
+<A HREF="m2cmd124.html">sort-lines(2)</A> function. <B>sort-list</B> sorts according to the state of the 
+<A HREF="m2mod004.html">exact(2m)</A> mode, hence the macro has to determine the buffer state in order to be able to do the sort. <UL>
+<PRE>define-macro&nbsp;sort-lines-ignore-case 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;&amp;bmod&nbsp;exact 
+&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;buffer-mode&nbsp;&quot;exact&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;@? 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@#&nbsp;sort-lines 
+&nbsp;&nbsp;&nbsp;&nbsp;!else 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sort-lines 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;&amp;cond&nbsp;#l0&nbsp;1&nbsp;-1&nbsp;buffer-mode&nbsp;&quot;exact&quot; 
+!emacro 
+</PRE></UL>
+<P>The <B>&amp;inword</B> function is shown in the following example. In this case the mouse is positioned over a word. The <B>&amp;inword</B> function is used to determine if the cursor is on a valid word character, if so the cursor is placed at the start of the word. <UL>
+<PRE>define-macro&nbsp;mouse-control-drop-left 
+&nbsp;&nbsp;&nbsp;&nbsp;set-cursor-to-mouse 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;inword&nbsp;@wc 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;backward-word 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-mark 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;forward-word 
+&nbsp;&nbsp;&nbsp;&nbsp;!else 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;... 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;copy-region 
+&nbsp;&nbsp;&nbsp;&nbsp;set-cursor-to-mouse 
+!emacro 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="amicr021.html">Operating Modes</A>, 
+<A HREF="amicr026.html">Variable Functions</A>, 
+<A HREF="m4fil004.html">&amp;sprintf(4)</A>, 
+<A HREF="m4fil003.html">&amp;equal(4)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

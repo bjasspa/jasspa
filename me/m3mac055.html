@@ -1,0 +1,35 @@
+<HTML>
+<HEAD><TITLE>perldb(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+perldb(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>perldb - Perl Debugger </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>perldb</B> [ &quot;<I>script-name</I>&quot; ] &quot;<I>script-args</I>&quot; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>perldb</B> provides an editor interface to the Perl debugger, on running the command an interactive shell window is opened to the debugger command line interface. MicroEmacs then interprets the information from the debugger interface and opens files and hilights the current line as required. The current line is maintained while single stepping through the script. 
+<P>Buffers opened and referenced by the debugger have the key <TT>F9</TT> bound to setting a break point, this only works if the buffer contains the current execution point. 
+<P>If an argument <I>n</I> of 2 is given to <B>perldb</B> the command assumes that the current buffer is the script file to debug, the &quot;<TT>script-name</TT>&quot; argument is not prompted for. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P><B>perldb</B> is a macro defined in file <TT>hkipipe.emf</TT>. </UL>
+<H2><B>BUGS </B></H2>
+<UL><P>The '<B>R</B>' rerun command does not work correctly on Windows platforms, perldb is rerun in a newly created external dos command window instead of inside the MicroEmacs ipipe buffer. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m3mac046.html">gdb(3)</A>, 
+<A HREF="m2cmd077.html">ipipe-shell-command(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

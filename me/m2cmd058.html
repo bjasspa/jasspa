@@ -1,0 +1,36 @@
+<HTML>
+<HEAD><TITLE>get-next-line(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+get-next-line(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>get-next-line - Find the next command line </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>get-next-line</B> (<B>C-x&nbsp;`</B>)&nbsp; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>get-next-line</B> is typically used in conjunction with the 
+<A HREF="m3mac000.html">compile(3)</A> and 
+<A HREF="m3mac001.html">grep(3)</A> commands to enable the user to step through errors/locations one by one. The command looks for lines in the form defined by 
+<A HREF="m2cmd007.html">add-next-line(2)</A> in the order of definition. If a match is found the command attempts to find the next error or warning found from the current location (See 
+<A HREF="m3mac000.html">compile(3)</A>). If the buffer was not found then the next buffer set is searched for, and if found then the next expression from the cursor is automatically located. The command fails if none of the buffers exist, or the end of the buffer is reached. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var020.html">$file-template(5)</A>, 
+<A HREF="m5var029.html">$line-template(5)</A>. 
+<A HREF="m2cmd007.html">add-next-line(2)</A>, 
+<A HREF="m3mac000.html">compile(3)</A>, 
+<A HREF="m3mac001.html">grep(3)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

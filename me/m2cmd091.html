@@ -1,0 +1,35 @@
+<HTML>
+<HEAD><TITLE>next-buffer(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+next-buffer(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>next-buffer - Switch to the next buffer 
+<BR>find-buffer - Switch to the next buffer </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>next-buffer</B> (<B>C-x&nbsp;x</B>)&nbsp; 
+<BR><I>n</I> <B>find-buffer</B> &quot;<I>buffer-name</I>&quot; (<B>C-x&nbsp;b</B>)&nbsp; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>next-buffer</B> switches to the <I>n</I>th next buffer in the buffer list in the current window, the default <I>n</I> is <TT>1</TT>, if <I>n</I> is negative then the <TT>0-</TT><I>n</I>th previous buffer is selected. If <TT>0</TT> or a number greater than the number of buffers is specified then the command fails. 
+<P><B>find-buffer</B> switches to buffer &quot;<I>buffer-name</I>&quot; in the current window. If the buffer does not exist and a zero argument <I>n</I> is supplied then the command fails. If the buffer does not exist but no argument or a +ve argument <I>n</I> is specified then a new buffer is created, at which point the file-hook is evaluated. 
+<P>If a -ve argument <I>n</I> is given to <B>find-buffer</B> then the buffer will be hidden. Any window displaying &quot;<I>buffer-name</I>&quot; will find another buffer to display. This functionality is often used with the 
+<A HREF="m2mod022.html">hide(2m)</A> buffer mode. 
+<P>If the current buffer has an <I>$buffer-ehook</I> command set then this command is executed before the new buffer is switched in. If the new buffer has a $<I>buffer-bhook</I> command set then this command is automatically executed after the new buffer is switched in but before control returns to the user. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd126.html">next-window-find-buffer(2)</A>, 
+<A HREF="m2mod022.html">hide(2m)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

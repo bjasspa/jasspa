@@ -1,0 +1,43 @@
+<HTML>
+<HEAD><TITLE>$show-region(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+$show-region(5)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>$show-region - Enable the hilighting of regions </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>$show-region</B> <I>flag</I>; Default is <TT>1</TT> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>$show-region</B> enables or disables the current region hilighting, normally associated with mouse interaction in a buffer. Region hilighting occurs between the <I>mark</I> (see 
+<A HREF="m2cmd121.html">set-mark(2)</A>) and <I>point</I> (current cursor) positions within the current buffer. An argument <I>n</I> of 0 disables region hilighting, an argument of 1 enables region hilighting between the two positions. If it is set to 3 then region hilighting will be enabled and a defined region (created using 
+<A HREF="m2cmd022.html">copy-region(2)</A>or 
+<A HREF="m2cmd146.html">yank(2)</A>) will continue to be hilighted until the region is changed. 
+<P>A defined region can be redisplayed (if still valid) using the command 
+<A HREF="m2cmd132.html">show-region(2)</A>. The color of the region hilighting is defined by 
+<A HREF="m2cmd001.html">add-color-scheme(2)</A> and is determined by 
+<A HREF="m5var001.html">$buffer-scheme(5)</A>, 
+<A HREF="m5var024.html">$global-scheme(5)</A> or 
+<A HREF="m5var004.html">$buffer-hilight(5)</A>. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd132.html">show-region(2)</A>, 
+<A HREF="m5var004.html">$buffer-hilight(5)</A>, 
+<A HREF="m5var001.html">$buffer-scheme(5)</A>, 
+<A HREF="m5var024.html">$global-scheme(5)</A>, 
+<A HREF="m5var001.html">$buffer-scheme(5)</A>, 
+<A HREF="m2cmd001.html">add-color-scheme(2)</A>, 
+<A HREF="m2cmd121.html">set-mark(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,55 @@
+<HTML>
+<HEAD><TITLE>$scroll(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+$scroll(5)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>$scroll - Screen scroll control </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><TT>$scroll</TT> <I>scrollNum</I>; Default is <TT>1</TT> 
+<P>0 &lt;= <I>scrollNum</I> &lt;= n </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>$scroll</B> controls the horizontal and vertical scrolling method used to display long lines and buffers. The variable is split into two componants, the first nibble (<TT>0x0f</TT>) sets the horizontal scroll, and the second nibble (<TT>0xf0</TT>) sets the vertical. For the purpose of documentation these parts are kept separate, but when setting the variable a single combined value must be given. 
+<P>The horizontal settings are defined as follows: 
+<P><TT>0x00</TT> 
+<BR><UL>Scroll method 0 will only scroll the current line, this is the fastest method in execution time. </UL>
+<P><TT>0x01</TT> 
+<BR><UL>Scroll method 1 (the default) will scroll the whole page horizontally when the 
+<A HREF="m2cmd149.html">scroll-left(2)</A> and 
+<A HREF="m2cmd149.html">scroll-right(2)</A> commands are used. However, when the current line must be scrolled to display the cursor due to a 
+<A HREF="m2cmd010.html">forward-char(2)</A> type cursor movement, only the current line is scrolled and the rest are reset. </UL>
+<P><TT>0x02</TT> 
+<BR><UL>Scroll method 2 always scrolls the whole page horizontally, keeping the cursor in the current column range. If the cursor moves out of this range then all the page is scrolled to the new position. This is particularly useful when editing long lined tables. </UL>
+<P><TT>0x03</TT> 
+<BR><UL>Scroll method 3 fixes the scroll column using the <B>scroll-left</B> and <B>scroll-right</B> functions. If the current cursor position is not visible in the column range then only the current line is scrolled to the new position. 
+</UL><P>The vertical settings are defined as follows: 
+<P><TT>0x00</TT> 
+<BR><UL>Scroll method 0 (the default) will scroll the current line to the middle of the current window whenver it is moved off screen, this is the fastest method in execution time. </UL>
+<P><TT>0x10</TT> 
+<BR><UL>Scroll method 1 will scroll the current line to the the top of the window whenver the current line is moved off the screen using 
+<A HREF="m2cmd092.html">backward-line(2)</A> and to the bottom of the window when 
+<A HREF="m2cmd092.html">forward-line(2)</A> is used. This creates the effect of a smooth scroll. </UL></UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following example sets the scrolling method to be the default horizontally (<TT>0x01</TT>) and smooth method (<TT>0x10</TT>) vertically : <UL>
+<PRE>set-variable&nbsp;$scroll&nbsp;0x11 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd149.html">scroll-left(2)</A>, 
+<A HREF="m2cmd092.html">forward-line(2)</A>, 
+<A HREF="m5var081.html">$window-x-scroll(5)</A>, 
+<A HREF="m5var081.html">$window-y-scroll(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

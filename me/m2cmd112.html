@@ -1,0 +1,41 @@
+<HTML>
+<HEAD><TITLE>save-dictionary(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+save-dictionary(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>save-dictionary - Save changed spelling dictionaries </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>save-dictionary</B> [&quot;<I>dictionary</I>&quot;] </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>save-dictionary</B> may be used to save one, or all changed, dictionaries back to disk. By default <B>save-dictionary</B> prompts for a single dictionary, which is then saved. If the dictionary to be saved has been created within the session (rather than read from disk) the user is always prompted to save and enter a full dictionary file name (pathname) to save to. If the dictionary was not created then the user is only prompted to save if, <UL><P>
+<LI>a non-zero argument is supplied 
+<LI>and the users history registry node &quot;<I>/history/spell/autosave</I>&quot; does not exist or its value is zero. </UL><P>Otherwise the dictionary is automatically saved. 
+<P>The argument <I>n</I> may be used to control the effect of the command, <I>n</I> is a bit based flag defined as follows:- 
+<P><B>0x01</B> 
+<BR><UL>Enables prompting before saving, only used when saving all dictionaries. </UL>
+<P><B>0x02</B> 
+<BR><UL>Save all changed dictionaries. </UL></UL>
+<H2><B>NOTES </B></H2>
+<UL><P>This command is called to save all dictionary changes whenever MicroEmacs is exited. 
+<P>The dictionary auto-save registry value can be changed via the 
+<A HREF="m3osd000.html">user-setup(3)</A> dialog. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd002.html">add-dictionary(2)</A>, 
+<A HREF="m2cmd041.html">delete-dictionary(2)</A>, 
+<A HREF="m2cmd125.html">spell(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

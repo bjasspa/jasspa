@@ -1,0 +1,50 @@
+<HTML>
+<HEAD><TITLE>$window-col(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+$window-col(5)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>$window-col - Window cursor column (no expansion) 
+<BR>$window-line - Window cursor line (with narrows) 
+<BR>$window-acol - Window cursor actual column (expansion) 
+<BR>$window-aline - Window cursor actual line (ignore narrows) </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>$window-col</B> <I>integer</I> 
+<P>0 &lt;= <I>integer</I> &lt;= 65535 
+<P><B>$window-line</B> <I>integer</I> 
+<P>1 &lt;= <I>integer</I> &lt;= n 
+<P><B>$window-acol</B> <I>integer</I> 
+<P>0 &lt;= <I>integer</I> &lt;= n 
+<P><B>$window-aline</B> <I>integer</I> 
+<P>1 &lt;= <I>integer</I> &lt;= n </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>$window-col</B> is defined as the current position of the cursor in the current line in the current window. Column zero is the left hand edge. This differs from <B>$window-acol</B> in that tab and special characters only count for 1 character. <B>$window-col</B> is valid in the range 0 - <I>n</I>. 
+<P><B>$window-line</B> is defined as the current buffer line number the cursor is on in the current window. Line numbering starts from 1. <B>$window-line</B> is valid in the range 1 - <I>n</I>. 
+<P><B>$window-aline</B> is identical to <B>$window-line</B> except when the current buffer contains narrowed out sections before the current line. In this case <B>$window-line</B> will be set to the line number without counting the number of lines in the narrow, whereas <B>$window-aline</B> will return the current line number including all lines narrowed out before it. When this variable is set, the line required may lie in a narrowed out section in which case the narrow is automatically removed. See 
+<A HREF="m2cmd068.html">narrow-buffer(2)</A> for more information on narrowing. 
+<P><B>$window-acol</B> is defined as the current column of the cursor in the current window. Column zero is the left hand edge. This differs from <B>$window-col</B> in that tab and special characters may not count for 1 character. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P>Variable <B>$window-wcol</B> was renamed to <B>$window-acol</B> in June 2000. Variable <B>$window-wline</B> was also removed and a new variable <B>$window-y-scroll</B> introduced at this time. The following macro code can be used to calculate the value of the original <B>$window-wline</B> variable: <UL>
+<PRE>&amp;sub&nbsp;&amp;sub&nbsp;$window-line&nbsp;$window-y-scroll&nbsp;1 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var037.html">$screen-depth(5)</A>, 
+<A HREF="m5var052.html">$window-depth(5)</A>, 
+<A HREF="m5var052.html">$window-width(5)</A>, 
+<A HREF="m5var081.html">$window-y-scroll(5)</A>, 
+<A HREF="m2cmd068.html">narrow-buffer(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

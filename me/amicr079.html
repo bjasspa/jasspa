@@ -1,0 +1,29 @@
+<HTML>
+<HEAD><TITLE>FAQ(38) - Some keys on my foreign keyboard do not work properly, how do I get them working ??</TITLE></HEAD>
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+FAQ(38) - Some keys on my foreign keyboard do not work properly, how do I get them working ??</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>QUESTION (38) </B></H2>
+<UL><P>Some keys on my foreign keyboard do not work properly, how do I get them working ?? </UL>
+<H2><B>ANSWER </B></H2>
+<UL><P>The most common problem are with foreign keyboards where the &lt;AltGr&gt; key is used to generate some characters in a similar fashion to the &lt;Shift&gt; key. For example, on a Belgian keyboard the '9' key produces a '{' character when the &lt;AltGr&gt; key is also pressed. 
+<P>The quickest and best solution is to use the <B>Keyboard</B> setup on the Start-Up page of 
+<A HREF="m3osd000.html">user-setup(3)</A>. This however may not provide the solution as not all keyboards are currently supported. If you are using an unsupported keyboard please send configuration information back to JASSPA for inclusion in the next release. The keyboard configuration information is stored in the macro file <TT>keyboard.emf</TT>. 
+<P>If <B>user-setup</B> does not currently support your keyboard, or you wish to remap some keys, then the command 
+<A HREF="m2cmd133.html">translate-key(2)</A> should be used. <B>translate-key</B> remaps generated key stroke(s) into another key at a low level so the mapping is supported in all areas. If a macro and key binding were used instead, while they would work in the main text windows, they would not work in the message line. See help on <B>translate-key</B> for more information. 
+<P>Note that some &lt;AltGr&gt; keys can produce 2 keys, for example on a Belgian keyboard '&lt;AltGr&gt;-9' produces the key 'A-C-9' first, immediately followed by 'A-C-{'. This is an unfortunate side effect of windows, it is better to have two keys rather than none. But this does add confusion to the problem! Again, see <B>translate-key</B> for more information. 
+<P>
+<A HREF="amicr040.html">[FAQ Index]</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,69 @@
+<HTML>
+<HEAD><TITLE>$fill-mode(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+$fill-mode(5)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>$fill-mode - Paragraph mode; justification method </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>$fill-mode</B> <I>justification</I>; Default is <TT>N</TT> 
+<P><I>justification</I> <TT>b</TT> | <TT>c</TT> | <TT>l</TT> | <TT>n</TT> | <TT>o</TT> | <TT>r</TT> | <TT>B</TT> | <TT>C</TT> | <TT>L</TT> | <TT>N</TT> | <TT>R</TT> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>$fill-mode</B> defines the justification mode i.e. <I>left</I>/<I>right</I>/<I>both</I>/... The default value is none automatic (<B>N</B>). The modes available are:- 
+<P><B>b</B> Both 
+<BR><UL>Enables left and right margin justification. </UL>
+<P><B>c</B> Center 
+<BR><UL>Enables center justification. </UL>
+<P><B>l</B> Left 
+<BR><UL>Enables left justification. </UL>
+<P><B>n</B> None 
+<BR><UL>No filling is performed, adjacent lines are not merged into a single line. This subtly different from <I>left</I> justification which fills lines to the 
+<A HREF="m5var021.html">$fill-col(5)</A>. </UL>
+<P><B>o</B> One Line 
+<BR><UL>Enables the filling of the paragraph to a single line. Typically used to prepare a file for transfer to a word processing package. </UL>
+<P><B>r</B> Right 
+<BR><UL>Enables right justification. </UL>
+<P><B>B</B> Both (automatic) 
+<BR><UL>Automatically determines the mode, defaulting to left and right (both) justification. </UL>
+<P><B>C</B> Center (automatic) 
+<BR><UL>Automatically determines the mode, defaulting to center justification. </UL>
+<P><B>L</B> Left (automatic) 
+<BR><UL>Automatically determines the mode, defaulting to left justification. </UL>
+<P><B>N</B> None (automatic) 
+<BR><UL>Automatically determines the mode, defaults to <I>both</I> and not <I>none</I>. </UL>
+<P><B>R</B> Right (automatic) 
+<BR><UL>Automatically determines the mode, defaulting to right justification. </UL>
+<P>The lines are automatically justified only when the justification mode 
+<A HREF="m2mod006.html">justify(2m)</A> is enabled. Justification is performed between the left and right margins, defined as 0 and 
+<A HREF="m5var021.html">$fill-col(5)</A> respectively. </UL>
+<H2>Automatic Filling </H2>
+<UL><P>Automatic filling is performed when the mode <B>$fill-mode</B> is specified in upper case. The format of the line (and adjacent lines) is interrogated and an <I>informed</I> guess is made as to the expected formating which is then adopted. The criteria for automatic formatting is defined as follows:- 
+<P><I>center</I> 
+<BR><UL>If the left and right margins contain approximately the same amount of white space +/-1 character then the paragraph is centered. </UL>
+<P><I>right</I> 
+<BR><UL>If the text commences past half of the 
+<A HREF="m5var021.html">$fill-col(5)</A> (i.e. first half of the line comprises white space) AND the line extends to, or past, the <TT>$fill-col</TT> then the paragraph is assumed to be right justified. </UL>
+<P><I>none</I> 
+<BR><UL>If the text commences in column 0 and occupies less than half of the line then the paragraph is assumed to be not justified. (i.e. left justified, but consecutive lines of the paragraph are not filled) </UL>
+<P><I>default</I> 
+<BR><UL>If none of the above criteria are met then the default mode is adopted, as determined by the lower-case value of the <B>$fill-mode</B> value. </UL></UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var021.html">$fill-col(5)</A>, 
+<A HREF="m2cmd006.html">buffer-mode(2)</A>, 
+<A HREF="m2cmd052.html">fill-paragraph(2)</A>, 
+<A HREF="m2mod006.html">justify(2m)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,41 @@
+<HTML>
+<HEAD><TITLE>goto-line(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+goto-line(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>goto-line - Move the cursor to specified line </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>goto-line</B> (<B>esc g</B>)&nbsp; 
+<BR><B>goto-line</B> &quot;<I>num</I>&quot; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>goto-line</B> moves the cursor to the specified line in the buffer. The user is prompted for the new line number on the command line, which may be entered as a relative displacement ([<TT>+</TT>|<TT>-</TT>]<I>number</I>) from the current position, or as an absolute line number (<I>number</I>). If the number is preceded by <TT>+</TT> or <TT>-</TT> then this is treated as a relative displacement from the current line, otherwise it is an absolute line number. 
+<P>If a +ve argument <I>n</I> is supplied, <B>goto-line</B> moves to this line, e.g. to move the cursor to line 240: <UL>
+<PRE>240&nbsp;goto-line 
+</PRE></UL>
+<P>A special case of <B>goto-line</B> is operative if an argument of <TT>0</TT> is supplied, argument &quot;<I>num</I>&quot; must also be given as above except <B>goto-line</B> treats the line number or displacement as an absolute move, i.e. includes <I>narrowed out</I> sections when calculating the new position. If the new line lies within a narrowed out section (i.e. a section that has been hidden and is not visible on the screen) the narrow is automatically expanded. See 
+<A HREF="m2cmd068.html">narrow-buffer(2)</A> for more information on narrowing. 
+<P>Supplying a -ve argument to goto-line results in an error. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P>After successfully calling goto-line, variable 
+<A HREF="m5var048.html">$window-line(5)</A> is set to the required line number. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd059.html">goto-alpha-mark(2)</A>, 
+<A HREF="m2cmd061.html">goto-matching-fence(2)</A>, 
+<A HREF="m2cmd068.html">narrow-buffer(2)</A>, 
+<A HREF="m5var048.html">$window-line(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,45 @@
+<HTML>
+<HEAD><TITLE>tab(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+tab(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>tab - Handle the tab key </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>tab</B> (<B>tab</B>)&nbsp; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>tab</B> manages the <TT>tab</TT> key, typically inserts <I>n</I> tabs. The effect of the command is determined by: 
+<P><B>$buffer-indent</B> 
+<BR><UL>If 
+<A HREF="m5var075.html">$buffer-indent(5)</A>, is non-zero then the effect of tab is defined by the setting of bit <TT>0x1000</TT> of variable 
+<A HREF="m5var047.html">$system(5)</A>, typically it resets the current line indentation or inserts a tab. </UL>
+<P><B>cmode</B> 
+<BR><UL>If cmode is enabled then the effect of tab is defined by the setting of bit <TT>0x1000</TT> of variable 
+<A HREF="m5var047.html">$system(5)</A>, typically it resets the current line indentation or inserts a tab. </UL>
+<P><B>tab</B> 
+<BR><UL>If a tab is to be inserted and this mode is enabled then multiple spaces are used instead of tab characters, see 
+<A HREF="m2mod012.html">tab(2m)</A> mode. </UL></UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2mod002.html">cmode(2m)</A>, 
+<A HREF="m5var075.html">$buffer-indent(5)</A>, 
+<A HREF="m2mod012.html">tab(2m)</A>, 
+<A HREF="m2cmd037.html">backward-delete-tab(2)</A>, 
+<A HREF="m2cmd156.html">insert-tab(2)</A>, 
+<A HREF="m3mac054.html">normal-tab(3)</A>, 
+<A HREF="m5var042.html">$tabsize(5)</A>, 
+<A HREF="m5var043.html">$tabwidth(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

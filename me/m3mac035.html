@@ -1,0 +1,51 @@
+<HTML>
+<HEAD><TITLE>diff(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+diff(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>diff - Difference files or directories 
+<BR>diff-changes - Find the differences from a previous edit session 
+<BR>%diff-com - Diff command line </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>diff</B> &quot;<I>oldFile</I>&quot; &quot;<I>newFile</I>&quot; 
+<BR><B>diff-changes</B> 
+<BR><TT>%diff-com</TT> &quot;<I>string</I>&quot;; Default is &quot;<TT>diff</TT>&quot; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>diff</B> executes the <B>diff(1)</B> command with the command line set by the 
+<A HREF="m3mac035.html">%diff-com(5)</A> variable and the user supplied <I>oldFile</I> and <I>newFile</I>. The output of the command is piped into the <B>*diff*</B> buffer and is hilighted to show the changes (GNU diff only). 
+<P>Your version of <B>diff(1)</B> will determine whether it is possible to difference directories. 
+<P><B>diff-changes</B> is a simple macro that differences the current buffer and the last backup of the associated file. It is a quick way to determine what has been modified recently. This macro only works if a backup file exists. 
+<P><B>%diff-com</B> is the command line that is used to execute a <B>diff(1)</B> system command. 
+<P>For GNU diff then the following command line setting is recommended:- <UL>
+<PRE>diff&nbsp;--context&nbsp;--minimal&nbsp;--ignore-space-change&nbsp;\ 
+&nbsp;&nbsp;&nbsp;&nbsp;--report-identical-files&nbsp;--recursive 
+</PRE></UL>
+<P>which should be defined in your personal user configuration. This is the default for Linux. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P><B>diff</B> and <B>dif-changes</B> are macros defined in <TT>tools.emf</TT>. 
+<P><B>diff(1)</B> must be executable on the system before diff or diff-changes can function. 
+<P><B>diff(1)</B> is a standard utility on UNIX systems. For Windows 95/NT a version of GNU <B>diff</B> may be found at: 
+<UL><P><I>&lt;ftp.winsite.com/ftp/pub/pc/winnt/misc/gnudiff.zip&gt;</I> </UL>
+<P>For MS-DOS users, a DJGPP port of <B>diff</B> is also available on the net. A commercial version of <B>diff</B> is also available from MKS. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd020.html">compare-windows(2)</A>, 
+<A HREF="m3mac000.html">compile(3)</A>, 
+<A HREF="m3mac044.html">gdiff(3)</A>, 
+<A HREF="m3mac001.html">grep(3)</A>, 
+<A HREF="m5var025.html">%grep-com(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,86 @@
+<HTML>
+<HEAD><TITLE>nroff(9)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+nroff(9)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P>0-9, tni, so - UNIX t/nroff file. </UL>
+<H2><B>FILES </B></H2>
+<UL><P><B>hknroff.emf</B> - UNIX t/nroff file. 
+<BR><B>nroff.etf</B> - UNIX t/nroff template file 
+<BR><B>ntags.emf</B> - t/nroff tags generator macro definition. </UL>
+<H2><B>EXTENSIONS </B></H2>
+<UL><P><B>1</B>, <B>2</B>, <B>3</B>, <B>4</B>, <B>5</B>, <B>6</B>, <B>7</B>, <B>8</B>, <B>9</B> - UNIX t/nroff files. 
+<BR><B>tni</B>, <B>so</B> - UNIX t/nroff include files. 
+<BR><B>sm</B> - <I>[Special]</I> Superman t/nroff file. </UL>
+<H2><B>MAGIC STRINGS </B></H2>
+<UL><P><B>-*- nroff -*-</B> 
+<BR><UL>Recognized by GNU and MicroEmacs. Denotes a t/nroff type file, may be used in <B>.1</B>/<B>.9</B>, <B>.tni</B> and <B>.so</B> files. </UL></UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The <B>nroff</B> file type templates handle UNIX n/troff type files. 
+<P><B>General Editing</B> 
+<BR><UL>On creating a new file, a new header is automatically included into the file. 
+<A HREF="m2mod013.html">time(2m)</A> is by default enabled, allowing the modification time-stamp to be maintained in the header. </UL>
+<P><B>Hilighting</B> 
+<BR><UL>The hilighting features allow commands, variables, logical, preprocessor definitions, comments, strings and characters of the language to be differentiated and rendered in different colors. </UL>
+<P><B>Tags</B> 
+<BR><UL>A C-tags file may be generated within the editor using the <B>Tools</B> -&gt; <B>Nroff-Tools</B> -&gt; <B>Create Tag File</B>. 
+<A HREF="m2cmd057.html">find-tag(2)</A> takes the user to the file using the tag information. The tags are generated using the <B>.XI</B> keyword, this may not be standard for all nroff pages. </UL>
+<P><B>Folding and Information Hiding</B> 
+<BR><UL>Generic folding is enabled within the C and C++ files. The folds occur about sections <B>.S</B>[<B>HS</B>]...<B>.S</B>[<B>HS</B>] located on the left-hand margin. 
+<A HREF="m3mac029.html">fold-all(3)</A> (un)folds all regions in the file, 
+<A HREF="m3mac029.html">fold-current(3)</A> (un)folds the current region. Note that folding does not operate on K&amp;R style code. </UL>
+<P><B>Tools</B> 
+<BR><UL>The nroff buffer provides a facility to toggle the hilighting of the buffer on and off. If font change inserts are used (<B>\fB</B>, <B>\fR</B>, etc), then the enclosed <B>bold</B> and <I>italic</I> regions are hilighted, hiding the escape sequences. This allows the nroff text to be viewed in a more representative rendered format. </UL>
+<UL><P>The local buffer command <B>aman</B> invokes, the following command sequence (defined in <TT>hkman</TT>) to render a nroff <B>man</B> file into a buffer window;- <UL>
+<PRE>soelim&nbsp;&lt;file&gt;&nbsp;|&nbsp;tbl&nbsp;-TX&nbsp;|&nbsp;neqn&nbsp;|&nbsp;nroff&nbsp;-man&nbsp;|&nbsp;col&nbsp;-x 
+</PRE></UL>
+</UL><UL><P>The command <B>tex2nr</B> attempts to convert a 
+<A HREF="m9typ004.html">latex(9)</A> file into an nroff file. The <I>latex</I> escape sequences are converted into their nroff equivalents. The command is only made available when an Nroff file is loaded (as the command is defined in the <TT>hknroff.emf</TT> file). </UL>
+<P><B>Short Cuts</B> 
+<BR><UL>The short cut keys used within the buffer are:- </UL>
+<UL><P><B>C-c C-s</B> - Insert a font size escape character <B>\S0</B>. 
+<BR><B>C-c C-r</B> - Insert a roman font escape character <B>\fR</B>. 
+<BR><B>C-c C-b</B> - Insert a bold font escape character <B>\fB</B>. 
+<BR><B>C-c C-i</B> - Insert a italic font escape character <B>\fI</B>. 
+<BR><B>C-c C-c</B> - Insert a courier font escape character <B>\fC</B>. 
+<BR><B>C-c C-p</B> - Insert a previous font escape character <B>\fP</B>. 
+<BR><B>esc o</B>, <B>esc q</B> - 
+<A HREF="m2cmd052.html">fill-paragraph(2)</A> fills paragraph to next <TT>.XX</TT> command. 
+<BR><B>C-c b</B> - Bold region by inserting <B>\fB</B> .. <B>\fR</B>. 
+<BR><B>C-c c</B> - Courier region by inserting <B>\fC</B> .. <B>\fR</B>. 
+<BR><B>C-c c</B> - Italic region by inserting <B>\fI</B> .. <B>\fR</B>. 
+<BR><B>C-c C-h</B> - Toggle hilighting on/off. 
+<BR><B>C-c C-&amp;</B> - Adds nroff padding <B>\f&amp;</B> about words. 
+<BR><B>C-x C-&amp;</B> - Removes nroff padding <B>\f&amp;</B> about words. 
+<BR><B>esc h</B> - Nroff help. 
+<P><B>f2</B> - (un)fold the current region 
+<BR><B>f3</B> - (un)fold all regions </UL></UL>
+<H2><B>BUGS </B></H2>
+<UL><P>The nroff language template is heavily biased towards the <B>man</B> macros only and includes all of the extension macros used for generating the JASSPA hypertext documentation. 
+<P>The template in the current form has been used entirely by JASSPA in generating all of the documentation (<B>HTML</B>, <B>Winhelp</B>, <B>ehf</B>, <B>PostScript</B>) used by MicroEmacs '02. It does not include all of the troff/nroff keywords, or keywords for any of the standard macro packages. 
+<P>The JASSPA documentation preparation tools are proprietary and have not been made publicly available. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd052.html">fill-paragraph(2)</A>, 
+<A HREF="m2cmd057.html">find-tag(2)</A>, 
+<A HREF="m3mac029.html">fold-all(3)</A>, 
+<A HREF="m3mac029.html">fold-current(3)</A>, 
+<A HREF="m3fcl007.html">ntags(3f)</A>, 
+<A HREF="m2mod013.html">time(2m)</A>. 
+<P>
+<A HREF="amicr030.html">Supported File Types</A> </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

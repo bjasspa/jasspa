@@ -1,0 +1,46 @@
+<HTML>
+<HEAD><TITLE>file-attrib(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+file-attrib(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>file-attrib - Set the current buffers system file attributes </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>file-attrib</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>file-attrib</B> opens a dialog enabling the user to change the system properties of the current buffer's file. Top of the dialog give the current buffer name and its file name. The <TT>Save Changes</TT> button writes the current buffer out with any current edits and changes to its file attributes. The <TT>Ok</TT> button closes the file-attrib dialog, any changes made to the file attributes will be applied next time the buffer is written. 
+<P>The type allow the changing between UNIX, MS Windows and DOS text file formats. UNIX has a single new line character ('<TT>\n</TT>') where as Windows and Dos have a double new line character ('<TT>\r\n</TT>'). Also a Dos text file is terminated with a <TT>C-z</TT> (0x1A) character which the other two do not. These attribute are set in MicroEmacs by using buffer modes 
+<A HREF="m2mod024.html">crlf(2m)</A> and 
+<A HREF="m2mod030.html">ctrlz(2m)</A>. 
+<P>The central part of the dialog contains system dependent attributes which are defined as follows: 
+<P><B>UNIX Platforms</B> 
+<BR><UL>Allow the setting of user, group and global, read, write and execute permissions, see man pages on <B>chmod(1)</B> for more information. This is a front end to setting the variable 
+<A HREF="m5var070.html">$buffer-fmod(5)</A>. </UL>
+<P><B>Win32 Platforms</B> 
+<BR><UL>Allow the setting of MS Windows file attributes, i.e. read-only, hidden, archive etc. Note that the directory attribute is displayed but cannot be altered. This is a front end to setting the variable 
+<A HREF="m5var070.html">$buffer-fmod(5)</A>. </UL>
+<P><B>DOS Platform</B> 
+<BR><UL>Allow the setting of MS Dos file attributes, i.e. read-only, hidden, archive etc. Note that the directory attribute is displayed but cannot be altered. </UL></UL>
+<H2><B>NOTES </B></H2>
+<UL><P><B>file-attrib</B> is a macro implemented in <TT>fattrib.emf</TT>. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd056.html">find-file(2)</A>, 
+<A HREF="m2cmd143.html">write-buffer(2)</A>, 
+<A HREF="m2mod024.html">crlf(2m)</A>, 
+<A HREF="m2mod030.html">ctrlz(2m)</A>, 
+<A HREF="m5var070.html">$buffer-fmod(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

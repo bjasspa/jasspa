@@ -1,0 +1,68 @@
+<HTML>
+<HEAD><TITLE>%grep-com(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+%grep-com(5)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>%grep-com - Grep command line </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><TT>%grep-com</TT> &quot;<I>string</I>&quot;; Default is &quot;<TT>grep </TT>&quot; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>Sets the command line used to execute a <B>grep(1)</B> system command. The output of the 
+<A HREF="m3mac001.html">grep(3)</A> execution should include both file and line number information so that the command 
+<A HREF="m2cmd058.html">get-next-line(2)</A> can be used properly. This is not defined by default and the <B>grep</B> command will not execute until it is defined. 
+<P><B>grep(1)</B> is typically used with the <B>-n</B> option which produced line numbering information which drives the 
+<A HREF="m2cmd058.html">get-next-line(2)</A> command. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following example shows how the <B>grep</B> strings are defined. <UL>
+<PRE>set-variable&nbsp;%grep-com&nbsp;&quot;grep&nbsp;-n&nbsp;&quot; 
+0&nbsp;add-next-line&nbsp;&quot;*grep*&quot; 
+add-next-line&nbsp;&quot;*grep*&quot;&nbsp;&quot;%f:%l:&quot; 
+</PRE></UL>
+<P>This definition corresponds to a <B>grep</B> output such as:- <UL>
+<PRE>m5var000.5:13:Sets&nbsp;the&nbsp;&nbsp;number&nbsp;of&nbsp;seconds&nbsp;to&nbsp;wait 
+m5var000.5:14:temporary&nbsp;file&nbsp;to&nbsp;t&nbsp;seconds.&nbsp;A 
+m5var000.5:15:Note&nbsp;than&nbsp;the&nbsp;&nbsp;temporary 
+m5var000.5:17:saving&nbsp;a&nbsp;buffer.&nbsp;&nbsp;Backup&nbsp;&nbsp;files&nbsp;are 
+m5var000.5:24:On&nbsp;unlimited&nbsp;&nbsp;length&nbsp;&nbsp;file&nbsp;&nbsp;name&nbsp;&nbsp;systems 
+</PRE></UL>
+<P>where <B>grep</B> produces file and line number information for every match. 
+<P>Use 
+<A HREF="m2cmd007.html">add-next-line(2)</A> to define the line pattern produced by <B>grep</B>. Some versions of <B>grep</B> place the file name on a single line matches within the file occur on subsequent lines. In this case additional <I>add-next-line</I> patterns may be defined to cater for the <B>grep</B> output as follows: <UL>
+<PRE>set-variable&nbsp;%grep-com&nbsp;&quot;grep&nbsp;/n&nbsp;&quot; 
+0&nbsp;add-next-line&nbsp;&quot;*grep*&quot; 
+add-next-line&nbsp;&quot;*grep*&quot;&nbsp;&quot;File:&nbsp;%f:&quot; 
+add-next-line&nbsp;&quot;*grep*&quot;&nbsp;&quot;%l:&quot; 
+</PRE></UL>
+<P>This definition would be used with a <B>grep</B> output such as:- <UL>
+<PRE>File:m5var000.5: 
+13:Sets&nbsp;the&nbsp;&nbsp;number&nbsp;of&nbsp;seconds&nbsp;to&nbsp;wait 
+14:temporary&nbsp;file&nbsp;to&nbsp;t&nbsp;seconds.&nbsp;A 
+15:Note&nbsp;than&nbsp;the&nbsp;&nbsp;temporary 
+17:saving&nbsp;a&nbsp;buffer.&nbsp;&nbsp;Backup&nbsp;&nbsp;files&nbsp;are 
+24:On&nbsp;unlimited&nbsp;&nbsp;length&nbsp;&nbsp;file&nbsp;&nbsp;name&nbsp;&nbsp;systems 
+File:m5var001.5: 
+</PRE></UL>
+</UL><H2><B>NOTES </B></H2>
+<UL><P><B>grep(1)</B> is a standard utility on UNIX systems. For Windows 95/NT a version of GNU <B>grep</B> may be found at: 
+<UL><P><I>&lt;ftp.winsite.com/ftp/pub/pc/winnt/misc/gnugrep.zip&gt;</I> </UL>
+<P>For MS-DOS users, a DJGPP port of <B>grep</B> is also available on the net. A commercial version of <B>grep</B> is also available from MKS. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd007.html">add-next-line(2)</A>, <B>grep(1)</B>, 
+<A HREF="m3mac001.html">grep(3)</A>, 
+<A HREF="m2cmd007.html">add-next-line(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

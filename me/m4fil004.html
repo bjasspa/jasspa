@@ -1,0 +1,60 @@
+<HTML>
+<HEAD><TITLE>&sprintf(4)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+&sprintf(4)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>&amp;sprintf - Formatted string construction </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>&amp;sprintf</B> <I>format</I> <I>args</I> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The <B>&amp;sprintf</B> function (or <B>&amp;spr</B> in it's abbreviated form) provides a mechanism to generated a formatted string, similar to the 'C' programming language <B>sprintf(2)</B> function. 
+<P>The <B>&amp;sprintf</B> function is generally used where a number of different sources of information have to be converted and joined together to form a new string. It is possible to do this using 
+<A HREF="m4fil002.html">&amp;cat(4)</A>, but it does become complicated if the number of strings to be spliced together is greater than about 4, <B>sprintf</B> alleviates these problems and results in faster execution. Where only two, or three strings are to be concatenated <B>&amp;cat</B> provides better execution times. 
+<P>The <B>&amp;sprintf</B> function produces a string construct for the <I>format</I> and a caller determined number of arguments <I>args</I> (variable arguments). The <I>format</I> string may contain special '<B>%</B>' formatting commands to insert strings and numbers into the base <I>format</I> string. The format for the '<B>%</B>' commands is &quot;<B>%nc</B>&quot; where:- 
+<P><B>n</B> 
+<BR><UL>An optional numerical argument, the interpretation of the numeric value is determined by the following command (<B>c</B>). </UL>
+<P><B>c</B> 
+<BR><UL>The command determines the interpretation of the next argument <I>arg</I> which are specified as follows: 
+<P><B>d</B> (Decimal integer) 
+<BR><UL>Expects a single numeric argument <I>arg</I> which is inserted into the <I>format</I> string as decimal text string. If <I>n</I> is specified then the inserted text string is fixed to <I>n</I> character in length. </UL>
+<P><B>n</B> (Repeat String) 
+<BR><UL>Expects two arguments <I>arg</I>, the first is a numeric argument giving the number of times to insert the given string (the second argument). If <I>n</I> is specified then the string is inserted <I>n</I> * <I>numeric-argument</I> times. </UL>
+<P><B>s</B> (String) 
+<BR><UL>Expects a single argument <I>arg</I> which is a string to be inserted into the key. If <I>n</I> is given then it is inserted<I>n</I> times. </UL>
+<P><B>x</B> (Hexadecimal integer) 
+<BR><UL>Expects a single numeric argument <I>arg</I> which is inserted into the format string as hexadecimal text string. If <I>n</I> is given then the inserted text string will be fixed to <I>n</I> character in length. </UL>
+<P><B>%</B> 
+<BR><UL>Inserts a single '%', <I>n</I> has no effect. </UL>
+<P>The <B>&amp;sprintf</B> function may be nested (i.e. a string argument to <B>&amp;sprintf</B> may be the result of another <B>&amp;sprintf</B> invocation). Although this type of construct is not generally required !! </UL></UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following examples show how the command may be used:- <UL>
+<PRE>set-variable&nbsp;%result&nbsp;&amp;sprintf&nbsp;&quot;Foo&nbsp;[%s%s]&quot;&nbsp;&quot;a&quot;&nbsp;&quot;b&quot; 
+</PRE></UL>
+<P>generates &quot;<TT>Foo [ab]</TT>&quot; <UL>
+<PRE>set-variable&nbsp;%result&nbsp;&amp;sprintf&nbsp;&quot;Foo&nbsp;[%n%s]&quot;&nbsp;10&nbsp;&quot;a&quot;&nbsp;&quot;b&quot; 
+</PRE></UL>
+<P>generates &quot;<TT>Foo [aaaaaaaaaab]</TT>&quot;. <UL>
+<PRE>set-variable&nbsp;%result&nbsp;&amp;sprintf&nbsp;&quot;[%d]&nbsp;[%3d]&nbsp;[%x]&nbsp;[%3x]&quot;&nbsp;10&nbsp;11&nbsp;12&nbsp;13 
+</PRE></UL>
+<P>generates &quot;<TT>[10] [&nbsp;11] [c] [&nbsp;&nbsp;d]</TT>&quot; </UL>
+<H2><B>NOTES </B></H2>
+<UL><P>It is the callers responsibility to ensure that the correct number of arguments is supplied to match the requested formatting string. The results are undefined if an incorrect number of arguments are supplied. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="amicr026.html">Variable Functions</A>, 
+<A HREF="m4fil002.html">&amp;cat(4)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

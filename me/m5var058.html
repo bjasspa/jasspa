@@ -1,0 +1,47 @@
+<HTML>
+<HEAD><TITLE>$file-ignore(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+$file-ignore(5)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>$file-ignore - File extensions to ignore </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>$file-ignore</B> &quot;<I>string</I>&quot;; Default is &quot;&quot; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>$file-ignore</B> specifies a space separated list of file endings which the file completion is to ignore. This is used by any function which prompts the user for a file name, such as 
+<A HREF="m2cmd056.html">find-file(2)</A>. A file ending in this case is NOT the extension but the last <I>n</I> characters where <I>n</I> is the number of characters in the specified ignore file. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>To ignore all files which have the extension &quot;<TT>o</TT>&quot;, using: <UL>
+<PRE>set-variable&nbsp;$file-ignore&nbsp;&quot;o&quot; 
+</PRE></UL>
+<P>would not only ignore &quot;<TT>foo.o</TT>&quot;, but also &quot;<TT>foo.oo</TT>&quot;, &quot;<TT>foo.po</TT>&quot; and &quot;<TT>foo</TT>&quot; as well as any file that ends in an &quot;<TT>o</TT>&quot;. What is really required is <UL>
+<PRE>set-variable&nbsp;$file-ignore&nbsp;&quot;.o&quot; 
+</PRE></UL>
+<P>It is useful to ignore the &quot;<TT>./</TT>&quot; and &quot;<TT>../</TT>&quot; directories so that a directory containing one file will auto-complete to that one file. This is achieved by using: <UL>
+<PRE>set-variable&nbsp;$file-ignore&nbsp;&quot;./&quot; 
+</PRE></UL>
+<P>To ignore MicroEmacs '02 backup files (&quot;<TT>~</TT>&quot;), C object files (&quot;<TT>.o</TT>&quot;), &quot;<TT>./</TT>&quot; and &quot;<TT>../</TT>&quot; directories try using: <UL>
+<PRE>set-variable&nbsp;$file-ignore&nbsp;&quot;~&nbsp;.o&nbsp;./&quot; 
+</PRE></UL>
+</UL><H2><B>NOTES </B></H2>
+<UL><P>The file completion only completes further than the first non-unique point in the current list of possibles if and only if it can ignore all but one file, so if the current directory contains: <UL>
+<PRE>./&nbsp;../&nbsp;foo&nbsp;foo.c&nbsp;foo.c~&nbsp;foo.o 
+</PRE></UL>
+<P>using the above ignore list, completing with &quot;&quot; has no effect as &quot;<TT>foo</TT>&quot; and &quot;<TT>foo.c</TT>&quot; cannot be ignored; completing with &quot;<TT>foo.</TT>&quot; will however complete to &quot;<TT>foo.c</TT>&quot;. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd056.html">find-file(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

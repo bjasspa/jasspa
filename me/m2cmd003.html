@@ -1,0 +1,208 @@
+<HTML>
+<HEAD><TITLE>add-file-hook(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+add-file-hook(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>add-file-hook - Declare file name context dependent configuration </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>add-file-hook</B> &quot;<I>extensions</I>&quot; &quot;<I>fhook-name</I>&quot; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>add-file-hook</B> defines a macro binding between a file name or file type and a set of macros. This binding enables file type dependent screen highlighting and key bindings to be performed. For a higher level introduction refer to 
+<A HREF="m2cmd202.html">File Hooks</A>. 
+<P><B>add-file-hook</B> operates in two different modes to establish the type of file:- <UL><P>
+<LI>Content recognition, by examination of the contents of the file. 
+<LI>File extension recognition. </UL><P>Content recognition has the highest priority and is used in preference to the file extension. 
+<P><B>add-file-hook</B> is called multiple times to add new recognition rules. The rules are interrogated in last-in-first-out (LIFO) order, hence the extension added last has a greater precedence than those added first. This ordering allows default rules to be over-ridden. </UL>
+<H2>Initialization </H2>
+<UL><P><B>add-file-hook</B> must be initialized prior to the first call, using an invocation of the form:- <UL>
+<PRE>0&nbsp;add-file-hook 
+</PRE></UL>
+<P>with a numeric argument <I>n</I> of 0, and no arguments. This invocation resets the file hooks by deleting all of the installed hooks. </UL>
+<H2>File Extension Recognition </H2>
+<UL><P><B>add-file-hook</B> with no numerical argument <I>n</I> allows the extension of a file (or the base file name if there is no extension) to be used to determine which user defined setup macro is to be executed. The <I>extensions</I> argument is a space separated list of <I>file endings</I> (as opposed to true extensions) and is usually specified with the extension separator. For example, the extension &quot;<TT>.doc</TT>&quot; may indicate that the file is a document and therefore the 
+<A HREF="m2mod005.html">indent</A>, 
+<A HREF="m2mod017.html">wrap</A> and 
+<A HREF="m2mod006.html">justify</A> buffer modes are required. This may be performed automatically by defining a macro which adds these modes and adding a file hook to automatically execute this macro whenever a file &quot;<TT>*.doc</TT>&quot; is loaded. 
+<P>The command arguments are defined as follows:- 
+<P><I>extensions</I> 
+<BR><UL>A space separated list of file extensions, which are to be checked, this list includes the extension separator (typically dot ('<TT>.</TT>'). It should be noted that the extension search is actually a comparison of the tail of the string, as such files such as <I>makefile</I>, which do not have an extension, are specified literally. </UL>
+<P><I>fhook-name</I> 
+<BR><UL>The name of the file hook to execute. This is the name of the macro to execute that initializes the buffer. </UL>
+<P>As an example:- <UL>
+<PRE>define-macro&nbsp;fhook-doc 
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;buffer-mode&nbsp;&quot;indent&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;buffer-mode&nbsp;&quot;wrap&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;buffer-mode&nbsp;&quot;justify&quot; 
+!emacro 
+
+add-file-hook&nbsp;&quot;.doc&quot;&nbsp;&quot;fhook-doc&quot; 
+</PRE></UL>
+<P>It is quite possible that the same macro should be executed for a text file, i.e. &quot;<TT>*.txt</TT>&quot; this is achieved by a single <B>add-file-hook</B> as the space (' ') character is used as an extension separator, e.g. <UL>
+<PRE>add-file-hook&nbsp;&quot;.doc&nbsp;.txt&quot;&nbsp;&quot;fhook-doc&quot; 
+</PRE></UL>
+<P>There are three special file hooks, which are <B>fhook-binary</B>, <B>fhook-rbin</B> and <B>fhook-default</B>, these are not predefined, but if the user defines them then they are executed whenever a file is loaded in 
+<A HREF="m2mod018.html">binary</A> or 
+<A HREF="m2mod031.html">reduced binary</A> mode (see 
+<A HREF="m2cmd006.html">buffer-mode(2)</A>) or the extension does not match any of those defined. 
+<P>Considering the <TT>fhook-XXX</TT> prefix, the initial '<B>f</B>' character must be present as this is changed to a '<B>b</B>' and an '<B>e</B>' when looking for the enter (begin) buffer and exit buffer hooks. These hooks are executed whenever the user swaps to or from a buffer (including creating and deleting). So for the given example, if the tab size of 8 is required in a document (but 4 elsewhere) then this operation this is performed by defining the <TT>bhook-XXX</TT> and <TT>ehook-XXX</TT> macros, e.g.:- <UL>
+<PRE>define-macro&nbsp;bhook-doc 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$tabsize&nbsp;8 
+!emacro 
+
+define-macro&nbsp;ehook-doc 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$tabsize&nbsp;4 
+!emacro 
+</PRE></UL>
+<P>File hooks are often used to setup the desired <I>buffer modes</I>, <I>hilighting</I>, <I>local key bindings</I>, <I>abbreviation file</I>, etc. 
+<P>Buffer hooks are usually used to set and restore conflicting global variables. </UL>
+<H2>File Content Recognition </H2>
+<UL><P><B>add-file-hook</B> with a non-zero numerical argument <I>n</I> defines a macro binding between the content in a file and a set of macros. This binding enables file type dependent screen hi-lighting and key binding to be performed. For a full description of file hooks refer to 
+<A HREF="m2cmd202.html">File Hooks</A>, for file extension dependent hooking refer to 
+<A HREF="m2cmd003.html">add-file-hook(2)</A>. 
+<P>The content defined file hooks interrogate the contents of a file on loading and search for a <I>magic</I> string identifier embedded in the text which uniquely identifies the file type. 
+<P>The recognition process performs a search of the first <I>n</I> (numerical argument) non-blank lines of the file, searching for the regular expression specified by the <I>extensions</I> argument. The sign of the numerical argument <I>n</I> is interpreted as follows:- <UL><P>
+<LI><B>-ve</B> - Case insensitive search 
+<LI><B>+ve</B> - Case sensitive search </UL><P>The command arguments are defined as follows:- 
+<P><I>extensions</I> 
+<BR><UL>A regular expression string defining the text to be searched for. </UL>
+<P><I>fhook-name</I> 
+<BR><UL>The name of the file hook to execute. This is the name of the macro to execute that will initialize the buffer. </UL>
+<P>The search commences from the first non-blank line in the file, if the regular expression, defined by <I>extensions</I> is located then the file hook <I>fhook-name</I> is invoked. This is typically used to identify files which do not have file extensions i.e. UNIX shell script files. To identify a shell script file which commences with:- <UL>
+<PRE>#!/bin/sh 
+</PRE></UL>
+<P>The following file hook is used:- 
+<UL><P><B>1 add-file-hook</B> &quot;<B>#!/.*sh</B>&quot; &quot;<B>fhook-shell</B>&quot; </UL>
+<P>Note that &quot;<TT>.*sh</TT>&quot; also matches <TT>/bin/csh</TT>, <TT>/usr/local/bin/zsh</TT> etc, so care should be taken to ensure that the regular expression string is sufficiently well specified to recognize the file type. 
+<P>The second class of embedded text are explicit identifiers embedded into the text. The embedded strings take the form: 
+<UL><P><TT>-*-</TT> <I>mode</I> <TT>-*</TT> 
+<BR><TT>-*-</TT> <B>Mode:</B> <I>mode</I>; ... <TT>-*-</TT> 
+<BR><TT>-!-</TT> <I>mode</I> <TT>-!-</TT> </UL>
+<P>The <TT>-*-</TT> notation belongs to GNU Emacs, but MicroEmacs '02 recognizes the construct and extracts the string correctly. The <TT>-!-</TT> notation is MicroEmacs '02 specific and is provided so as not to cause conflict with GNU Emacs. MicroEmacs '02 searches for either construct on the first non-blank line of the file. 
+<P>The explicit strings are defined with a negative numerical argument <I>n</I>, which identifies them as <B>explicit</B> rather than <B>magic</B> text strings. The <I>string</I> should be defined in lower case and matches a case insensitive string take from the file. e.g. to define a file hook for a make file: <UL>
+<PRE>#_____________________________-!-Makefile-!-________________________________ 
+# 
+#&nbsp;Make&nbsp;file&nbsp;for&nbsp;MicroEmacs&nbsp;using&nbsp;the&nbsp;Microsoft&nbsp;MSCV&nbsp;2.0/4.0&nbsp;development&nbsp;kit. 
+# 
+#&nbsp;Author&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;Jon&nbsp;Green 
+#&nbsp;Created&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;020197.1002 
+#&nbsp;Last&nbsp;Edited&nbsp;:&nbsp;&lt;150297.1942&gt; 
+#&nbsp;File&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;makefile.w32 
+.... 
+</PRE></UL>
+<P>might be defined as: 
+<UL><P>-1 <B>add-file-hook</B> &quot;-!-[ \t]*makefile.*-!-&quot; fhook-make </UL></UL>
+<H2><B>NOTES </B></H2>
+<H2>Automatic Macro File Loading </H2>
+<UL><P><B>add-file-hook</B> performs an automatic load of a macro file if the <B>fhook</B> macro is not present in memory. The file name of the command file containing the macro is automatically derived from the <I>name</I> component of the <B>fhook</B> macro name. The <B>fhook-</B> part of the name is stripped off and prepended with <B>hk</B> and suffixed with <B>.emf</B>. Hence, macro <B>fhook-doc</B> would be searched for in file <TT>hkdoc.emf</TT> within the MicroEmacs '02 directory. The command file is automatically loaded and executed. 
+<P>In cases where the fhook macro is not located in an equivalent hook file, the file location of the macro may be explicitly defined for auto loading via a 
+<A HREF="m2cmd147.html">define-macro-file(2)</A> invocation. 
+<P>As an example, consider the C-mode file hook, used to load <TT>.c</TT> files. The loading of a C header file (<TT>.h</TT>) utilizes the same highlighting modes, but it's startup sequence is slightly different when handling new files. In this case the <B>fhook-cmode</B> for <TT>.c</TT> and <B>fhook-hmode</B> for <TT>.h</TT> files are located in the same hook file namely <TT>hkcmode.emf</TT>. <UL>
+<PRE>define-macro-file&nbsp;hkcmode&nbsp;fhook-hmode 
+
+add-file-hook&nbsp;&quot;.c&nbsp;.cc&nbsp;.cpp&nbsp;.def&nbsp;.l&nbsp;.y&nbsp;.i&nbsp;.ac&quot;&nbsp;&nbsp;&nbsp;&quot;fhook-cmode&quot; 
+add-file-hook&nbsp;&quot;.h&nbsp;.hpp&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;fhook-hmode&quot; 
+</PRE></UL>
+<P>In this case the 
+<A HREF="m2cmd147.html">define-macro-file</A> has been used to inform MicroEmacs '02 of the location of the <B>fhook-hmode</B> macro thereby overriding the automatic load of a file called <B>hkhmode.emf</B>. The <B>fhook-cmode</B> macro requires no such definition as it is located in a hook file that matches the mode name, <TT>hkcmode.emf</TT>. </UL>
+<H2>Extending a standard hook definition </H2>
+<UL><P>The standard file hook files <B>hk</B><I>XXX</I><B>.emf</B> should not be modified. The standard file hooks may be extended with local definitions by defining a file <B>my</B><I>XXX</I><B>.emf</B>, which is an extension to the hook file <B>hk</B><I>XXX</I><B>.emf</B>. This is automatically executed after <B>hk</B><I>XXX</I><B>.emf</B>. Refer to sections 
+<A HREF="m2nar000.html">Language Templates</A> and 
+<A HREF="m2cmd202.html">File Hooks</A> for details. </UL>
+<H2>File Extensions </H2>
+<UL><P>The file extensions are specified as a space separated list of file name endings. Back-up file endings such as tilde (<TT>~</TT>) are not classed as correct file endings and are skipped by the file hook search, hence a file ending &quot;<TT>.c~</TT>&quot; invokes the same hook function as a &quot;<TT>.c</TT>&quot; file. It is therefore not necessary to add the backup and auto-save endings to the file hook definition. 
+<P>The extension separator, usually dot (<TT>.</TT>), is typically added to the <I>extensions</I> list, they may be omitted with effect where a file always ends in the same set of characters. A notable example is &quot;<TT>makefile</TT>&quot; which includes no extension, as such, MicroEmacs '02 applies the same hook function to a file called <TT>Imakefile</TT> as the endings are the same. </UL>
+<H2>Binary Files </H2>
+<UL><P>It is sometimes useful to associate file types as binary files, so that they are immediately loaded in binary. In this case, both file extension and content recognition methods (i.e. of a magic string) are applicable. In both cases the file is bound to the well known hook <TT>fhook-binary</TT> which automatically loads the file in a binary mode. 
+<P>Note, that for the content recognition process for a binary hook, the load time is doubled as the file is initially loaded in the default text mode, the binary hook function forces a second load operation in binary. </UL>
+<H2><B>SUMMARY </B></H2>
+<UL><P><B>add-file-hook</B> is summarized as follows:- <UL><P>
+<LI>Binds one or more extensions to a macro called fhook-<I>xxxx</I>. 
+<LI>Extensions are typically specified with the dot (<TT>.</TT>) separator. 
+<LI>Multiple extensions are specified as a space separated list. 
+<LI>Binds a regular expression search string to a macro called fhook-<I>xxxx</I>. 
+<LI>The absolute value of the numerical argument determines the number of lines in the file over which the regular expression search is made. 
+<LI>The sign of the numerical argument determines if the regular expression search is case (in)sensitive. 
+<LI>When one of the files with a known file extension, or recognized content, is loaded macro <B>fhook-xxxx</B> is executed. 
+<LI><B>fhook-xxxx</B>, if undefined, is automatically searched for in file <B>hk</B><I>xxxx</I><B>.emf</B>. 
+<LI>When the buffer containing the known file is entered (i.e. gains focus), then entry macro <B>bhook-xxxx</B> is executed. 
+<LI>When the buffer containing the known file is exited (i.e. looses focus), then the exit macro <B>ehook-xxxx</B> is executed. </UL></UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The standard set of supported file types by MicroEmacs '02, at the time of writing, is defined as:- <UL>
+<PRE>;&nbsp;reset&nbsp;the&nbsp;file&nbsp;hook&nbsp;list 
+0&nbsp;add-file-hook 
+;&nbsp;Add&nbsp;file&nbsp;extension&nbsp;hooks. 
+;&nbsp;Files&nbsp;loaded&nbsp;in&nbsp;binary&nbsp;mode&nbsp;do&nbsp;not&nbsp;need&nbsp;hook&nbsp;as&nbsp;fixed 
+add-file-hook&nbsp;&quot;*help*&nbsp;*info*&nbsp;.ehf&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-ehf 
+add-file-hook&nbsp;&quot;*bindings*&nbsp;*commands*&nbsp;*variables*&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-lists 
+add-file-hook&nbsp;&quot;*buffers*&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-blist 
+add-file-hook&nbsp;&quot;/&nbsp;*directory*&nbsp;*files*&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-dir 
+add-file-hook&nbsp;&quot;*registry*&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-reg 
+add-file-hook&nbsp;&quot;*icommand*&nbsp;*shell*&nbsp;*gdb*&nbsp;*dbx*&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-ipipe 
+add-file-hook&nbsp;&quot;.emf&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-emf 
+add-file-hook&nbsp;&quot;.doc&nbsp;.txt&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-doc 
+add-file-hook&nbsp;&quot;.1&nbsp;.2&nbsp;.3&nbsp;.4&nbsp;.5&nbsp;.6&nbsp;.7&nbsp;.8&nbsp;.9&nbsp;.so&nbsp;.tni&nbsp;.sm&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-nroff 
+add-file-hook&nbsp;&quot;.c&nbsp;.h&nbsp;.def&nbsp;.l&nbsp;.y&nbsp;.i&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-c 
+add-file-hook&nbsp;&quot;.cc&nbsp;.cpp&nbsp;.hpp&nbsp;.rc&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-cpp 
+add-file-hook&nbsp;&quot;Makefile&nbsp;makefile&nbsp;.mak&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-make 
+add-file-hook&nbsp;&quot;Imakefile&nbsp;imakefile&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-imake 
+add-file-hook&nbsp;&quot;.sh&nbsp;.ksh&nbsp;.csh&nbsp;.login&nbsp;.cshrc&nbsp;.profile&nbsp;.tcshrc&quot;&nbsp;&nbsp;fhook-shell 
+add-file-hook&nbsp;&quot;.bat&nbsp;.btm&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-dos 
+add-file-hook&nbsp;&quot;.man&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-man 
+add-file-hook&nbsp;&quot;.dmn&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-dman 
+add-file-hook&nbsp;&quot;.ini&nbsp;.hpj&nbsp;.reg&nbsp;.rgy&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-ini 
+add-file-hook&nbsp;&quot;.htm&nbsp;.html&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-html 
+add-file-hook&nbsp;&quot;.htp&nbsp;.hts&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-hts 
+add-file-hook&nbsp;&quot;.tcl&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-tcl 
+add-file-hook&nbsp;&quot;.rul&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-rul 
+add-file-hook&nbsp;&quot;.awk&nbsp;.nawk&nbsp;.gawk&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-awk 
+add-file-hook&nbsp;&quot;.p&nbsp;.pas&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-pascal 
+add-file-hook&nbsp;&quot;.vhdl&nbsp;.vhd&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-vhdl 
+add-file-hook&nbsp;&quot;.fvwm&nbsp;.fvwm2rc&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-fvwm 
+add-file-hook&nbsp;&quot;.java&nbsp;.jav&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-java 
+add-file-hook&nbsp;&quot;.nsr&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-nsr 
+add-file-hook&nbsp;&quot;.erf&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-erf 
+;&nbsp;Add&nbsp;magic&nbsp;hooks 
+&nbsp;1&nbsp;add-file-hook&nbsp;&quot;^#!/.*sh&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-shell&nbsp;;&nbsp;UNIX&nbsp;shell&nbsp;files 
+&nbsp;1&nbsp;add-file-hook&nbsp;&quot;^#!/.*wish&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-tcl 
+&nbsp;1&nbsp;add-file-hook&nbsp;&quot;^#!/.*awk&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-awk 
+&nbsp;1&nbsp;add-file-hook&nbsp;&quot;^#VRML&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-vrml 
+-4&nbsp;add-file-hook&nbsp;&quot;&lt;html&gt;&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-html 
+-1&nbsp;add-file-hook&nbsp;&quot;-[*!]-[&nbsp;\t]*c.*-[*!]-&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;-*-&nbsp;C&nbsp;-*- 
+-1&nbsp;add-file-hook&nbsp;&quot;-[*!]-[&nbsp;\t]*c\\+\\+.*-[*!]-&quot;&nbsp;&nbsp;&nbsp;fhook-cpp&nbsp;&nbsp;&nbsp;;&nbsp;-*-&nbsp;C++&nbsp;-*- 
+-1&nbsp;add-file-hook&nbsp;&quot;-[*!]-[&nbsp;\t]nroff.*-[*!]-&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-nroff&nbsp;;&nbsp;-*-&nbsp;nroff&nbsp;-*- 
+-1&nbsp;add-file-hook&nbsp;&quot;-!-[&nbsp;\t]*shell.*-!-&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-shell&nbsp;;&nbsp;-!-&nbsp;shell&nbsp;-!- 
+-1&nbsp;add-file-hook&nbsp;&quot;-!-[&nbsp;\t]*msdos.*-!-&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-dos&nbsp;&nbsp;&nbsp;;&nbsp;-!-&nbsp;msdos&nbsp;-!- 
+-1&nbsp;add-file-hook&nbsp;&quot;-!-[&nbsp;\t]*makefile.*-!-&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-make&nbsp;&nbsp;;&nbsp;-!-&nbsp;makefile&nbsp;-!- 
+-1&nbsp;add-file-hook&nbsp;&quot;-!-[&nbsp;\t]*document.*-!-&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-doc&nbsp;&nbsp;&nbsp;;&nbsp;-!-&nbsp;document&nbsp;-!- 
+-1&nbsp;add-file-hook&nbsp;&quot;-!-[&nbsp;\t]*fvwm.*-!-&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-fvwm&nbsp;&nbsp;;&nbsp;-!-&nbsp;fvwm&nbsp;-!- 
+-1&nbsp;add-file-hook&nbsp;&quot;-!-[&nbsp;\t]*erf.*-!-&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-erf&nbsp;&nbsp;&nbsp;;&nbsp;-!-&nbsp;erf&nbsp;-!- 
+-1&nbsp;add-file-hook&nbsp;&quot;-!-[&nbsp;\t]*fold:.*-!-&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-fold&nbsp;&nbsp;;&nbsp;-!-&nbsp;fold:...&nbsp;-!- 
+</PRE></UL>
+</UL><H2><B>OBSCURE INFORMATION </B></H2>
+<UL><P>This section includes some low-level information which is so obscure it is not relevant to the typical user. </UL>
+<H2>Resolving Loading Order Problems </H2>
+<UL><P>There is a potential loading order problem involving auto-loading of file libraries and the setting up of <B>bhook</B> and <B>ehook</B>. E.g. if the main fhook function has been defined as a 
+<A HREF="m2cmd147.html">define-macro-file(2)</A>, but the bhook or ehooks have not the when a buffer is created as only the fhook is define, only the fhook is set, the rest remain disabled even though the execution of the macro file will define these extra hooks. 
+<P>To solve this problem simply define the bhook/ehooks as well. Note that automatically loaded hooks do not suffer from this problem as the macro file is executed before the hooks are assigned, thereby ensuring the all the hooks are defined. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd202.html">File Hooks</A>, 
+<A HREF="m2nar000.html">Language Templates</A>, 
+<A HREF="m5var002.html">$buffer-bhook(5)</A>, 
+<A HREF="m5var002.html">$buffer-ehook(5)</A>, 
+<A HREF="m5var002.html">$buffer-fhook(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

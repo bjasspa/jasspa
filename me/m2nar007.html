@@ -1,0 +1,95 @@
+<HTML>
+<HEAD><TITLE>Build(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+Build(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>BUILD </B></H2>
+<UL><P>MicroEmacs '02 may be compiled from the source files using the command shell build scripts <I>build</I> (UNIX Bourne Shell) or <I>build.bat</I> (DOS/Windows). A default compile sequence may be achieved with a simple: <UL>
+<PRE>build 
+</PRE></UL>
+<P>from the command line. The build script attempts to detect the host system and available compiler and build the editor. 
+<P>The build script recognizes the following options:- 
+<P><B>-C</B> 
+<BR><UL>Build clean. Delete all of the object files. </UL>
+<P><B>-d</B> 
+<BR><UL>Build a debugging version, the output is <TT>med</TT> (or <TT>med32</TT> for 32-bit Windows versions) </UL>
+<P><B>-g</B> 
+<BR><UL>UNIX only. Builds using GNU compiler and tools as opposed to native tools. </UL>
+<P><B>-h</B> 
+<BR><UL>Display a simple help page </UL>
+<P><B>-m</B> <I>makefile</I> 
+<BR><UL>Build using the specified makefile. over-riding the auto system detect. The supplied makefiles include:- <UL><UL><P>
+<LI><TT>aix43.mak</TT> IBM AIX 4.3 native 
+<LI><TT>cygwin.gmk</TT> Cygwin using GNU tools under Windows. 
+<LI><TT>dosdj1.mak</TT> Microsoft DOS build using djgpp version 1. 
+<LI><TT>dosdj2.mak</TT> Microsoft DOS build using djgpp version 2. 
+<LI><TT>freebsd.gmk</TT> Free BSD using GNU tools. 
+<LI><TT>hpux9.gmk</TT> HP-UX 9.x using GNU tools. 
+<LI><TT>hpux9.mak</TT> HP-UX 9.x native 
+<LI><TT>hpux10.gmk</TT> HP-UX 10.x using GNU tools. 
+<LI><TT>hpux10.mak</TT> HP-UX 10.x native 
+<LI><TT>hpux11.gmk</TT> HP-UX 11.x using GNU tools. 
+<LI><TT>hpux11.mak</TT> HP-UX 11.x native 
+<LI><TT>irix5.gmk</TT> Silicon Graphics IRIX 5.x using GNU tools 
+<LI><TT>irix5.mak</TT> Silicon Graphics IRIX 5.x native 
+<LI><TT>irix6.gmk</TT> Silicon Graphics IRIX 6.x using GNU tools 
+<LI><TT>irix6.mak</TT> Silicon Graphics IRIX 6.x native 
+<LI><TT>linux2.gmk</TT> Linux 2.x using GNU tools 
+<LI><TT>openstep.mak</TT> Openstep 4.2 on NeXTstep (BSD 4.3). 
+<LI><TT>sunos55.gmak</TT> Sun Solaris 5.5 using GNU tools 
+<LI><TT>sunos55.mak</TT> Sun Solaris 5.5 native 
+<LI><TT>sunos56.gmak</TT> Sun Solaris 5.6 using GNU tools 
+<LI><TT>sunos56.mak</TT> Sun Solaris 5.6 native 
+<LI><TT>sunosx86.gmk</TT> Sun Solarais 2.6 (Intel) using GNU tools. 
+<LI><TT>win32bc.mak</TT> Borland C, 32-bit Windows version. 
+<LI><TT>win32b55.mak</TT> Borland C 5.5, 32-bit Windows version (Free compiler). 
+<LI><TT>win32sv2.mak</TT> Microsoft Developer v2.x, Win32s (for Win 3.xx) 
+<LI><TT>win32sv4.mak</TT> Microsoft Developer v4.2, Win32s (for Win 3.xx) 
+<LI><TT>win32v2.mak</TT> Microsoft Developer v2.x, 32-bit Windows. 
+<LI><TT>win32v5.mak</TT> Microsoft Developer v5.x, 32-bit Windows. 
+<LI><TT>win32v6.mak</TT> Microsoft Developer v6.x, 32-bit Windows. </UL></UL></UL>
+<P><B>-n</B> 
+<BR><UL>Build a console version (i.e. no window support). Constructs the executable <TT>men32.exe</TT> on Windows, <TT>men</TT> on Linux. </UL>
+<P><B>-nu</B> 
+<BR><UL>Build a console version with URL support (Windows '95/'98/NT only), constructs the executable <TT>menu32.exe</TT>. </UL>
+<P><B>-p</B> <I>&lt;searchpath&gt;</I> 
+<BR><UL>Sets the default system search path to <I>&lt;searchpath&gt;</I>, the default is <TT>/usr/local/microemacs</TT>. Sets the default system search path to </UL>
+<P><B>-S</B> 
+<BR><UL>Build spotless. Deletes all of the object files and any backup files, tag files etc. </UL>
+<P><B>-u</B> 
+<BR><UL>Build a URL version (Windows '95/'98/NT only), constructs the executable <TT>meu32.exe</TT>. </UL></UL>
+<H2>Makefiles </H2>
+<UL><P>The supplied makefiles are provided in two forms:- <UL><P>
+<LI><B>.gmk</B> - GNU make, using gcc. 
+<LI><B>.mak</B> - Native make, consistent with the compiler and platform. </UL><P>The makefiles are supplied with the following targets:- <UL><P>
+<LI><B>all</B> - Default build. 
+<LI><B>clean</B> - Removes intermediate files. 
+<LI><B>spotless</B> - Removes intermediate files and any backup files. 
+<LI><B>med</B> - Builds a debugging version. 
+<LI><B>men</B> - Builds console version (Windows only). 
+<LI><B>men</B> - Builds a URL version (Windows only). 
+<LI><B>menu</B> - Builds console and URL version (Windows only). </UL></UL>
+<H2><B>NOTES </B></H2>
+<UL><P>Other UNIX ports should be fairly easy from the base set of ported platforms. If any new platform ports are performed by individuals then please submit the makefiles and any source changes back to JASSPA - see 
+<A HREF="amicr038.html">Contact Information</A>. </UL>
+<H2>Search Path </H2>
+<UL><P>The default search path is defined as &quot;<I>/usr/local/microemacs</I>&quot; for all UNIX type environments. Recently there has been a move to use the &quot;<I>/usr/share</I>&quot; directory. The search path may be re-defined through the macro definition &quot;<TT>_SEARCH_PATH</TT>&quot;. Change the C pre-processor to include the macro definition. For example, to use &quot;<I>/usr/share/jasspa</I>&quot; with multiple sub-directories for each of the components:- <UL>
+<PRE>-D_SEARCH_PATH=&quot;\&quot;/usr/share/jasspa/company:\ 
+/usr/share/jasspa/macros:\ 
+/usr/share/jasspa/spelling\&quot;&quot; 
+</PRE></UL>
+<P>Note due to the line length then the <I>backslash</I> (\) has been used to continue the lines. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2002/01/04</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

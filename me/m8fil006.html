@@ -1,0 +1,113 @@
+<HTML>
+<HEAD><TITLE>me32.ini(8)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+me32.ini(8)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>me32.ini - Microsoft Window's Initialization (ini) File </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>[Location]</B> 
+<BR><B>exe</B>=<I>&lt;executablePathname&gt;</I> 
+<P><B>[Defaults]</B> 
+<BR><B>mepath=</B><I>&lt;directoryPath&gt;</I> 
+<BR><B>userpath=</B><I>&lt;directoryPath&gt;</I> 
+<BR><B>fontfile=</B><I>&lt;fontFileName&gt;</I> 
+<P><B>[</B><I>&lt;userName&gt;</I><B>]</B> 
+<BR><I>&lt;environmentVariable&gt;</I><B>=</B><I>&lt;value&gt;</I> 
+<BR><I>&lt;environmentVariable&gt;</I><B>=</B><I>&lt;value&gt;</I> 
+<P><B>[</B><I>&lt;userName&gt;</I><B>]</B> 
+<BR><I>&lt;environmentVariable&gt;</I><B>=</B><I>&lt;value&gt;</I> 
+<BR><I>&lt;environmentVariable&gt;</I><B>=</B><I>&lt;value&gt;</I> 
+<P><B>;</B>&nbsp;<I>Comments&nbsp;commence&nbsp;with&nbsp;a&nbsp;semi-colon</I> </UL>
+<H2><B>PLATFORM </B></H2>
+<UL><P><B>Microsoft Windows environments only</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>me32.ini</B> is the Microsoft Windows configuration file, located in the windows directory (typically <B>C:\Windows</B>), the <B>me32.ini</B> file is primarily used to counteract the deficiencies of Windows shell environment (as compared with UNIX) with respect to the initialization of environment variables. 
+<P>The configuration file may be considered to be split into two sections, a <B>Defaults</B> section, which defines system settings and a <B>User</B> section which allows environment variables to be defined. </UL>
+<H2>User Section </H2>
+<UL><P>The <B>User Section</B> is executed prior to the <B>Defaults Section</B>. The <B>User Section</B> uses the user name which is defined as follows:- <UL><P>
+<LI>The environment variable 
+<A HREF="m5var076.html">$MENAME(5)</A>. 
+<LI>The <I>login&nbsp; name</I> under Windows '95 or NT if <B>$MENAME</B> is not set. If the <I>login&nbsp; name</I> is defined then environment variable <B>$MENAME</B> is set to this value. 
+<LI>The environment variable 
+<A HREF="m5var076.html">$LOGNAME(5)</A> if the <I>login&nbsp;name</I> cannot be located. 
+<LI><B>guest</B> if none of the above are defined. </UL><P>A section <B>[</B><I>userName</I><B>]</B> is looked up, and if located each of the entries <I>&lt;environmentVariable&gt;</I> <B>=</B> <I>&lt;value&gt;</I> is extracted and pushed into the execution environment. The <B>&lt;environmentVariable&gt;</B> is automatically promoted to upper case if specified as a lower case entry. The environment variables may be subsequently used within the <B>.emf</B> macro files to configure MicroEmacs '02 at start up. 
+<P>Any value may be inserted into the environment including the <TT>$MENAME</TT> environment variable which is used in the next section. </UL>
+<H2>Defaults Section </H2>
+<UL><P>The defaults section, labeled <B>[Defaults]</B> includes the following keys:- 
+<P><B>mepath</B> 
+<BR><UL>The directory (or folder) location of the MicroEmacs '02 default configuration files. </UL>
+<P><B>userpath</B> 
+<BR><UL>The directory (or folder) location of the user(s) directories. </UL>
+<UL><P>Given that the <B>userpath</B> is specified as <TT>c:\me98.5</TT> and the user is called <TT>foo</TT>, then the directory location <TT>c:\me98.5\foo</TT> is considered to be the user path. </UL>
+<UL><P>If the <B>userpath</B> is omitted then the <B>mepath</B> entry is used as the user path. </UL>
+<P>The <B>userpath</B> and <B>mepath</B> entries are concatenated together to form the environment variable 
+<A HREF="m5var057.html">$MEPATH(5)</A>, e.g. <I>userpath</I><B>\</B><I>logname</I><B>;</B><I>mepath</I>. If the entries are omitted the then environment variable <TT>$MEPATH</TT> is used as defined. The <B>mepath</B> and <B>userpath</B> are configured initialy by the <B>InstallShield</B> installation process. 
+<P><B>fontfile</B> 
+<BR><UL>The name of the font file used to render the text to the screen. The default font file is <B>dosapp.fon</B>, this is a fixed mono font as used in the MS-DOS windows. </UL></UL>
+<H2>Location Section </H2>
+<UL><P>The location section, labeled <B>[Location]</B>, identifies the location of MicroEmacs '02, and is typically used by other components to find and launch MicroEmacs. The section includes the following keys:- 
+<P><B>exe</B> 
+<BR><UL>The absolute pathname to the MicroEmacs '02 executable image. </UL></UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following is an example of the <B>me32.ini</B> file:- <UL>
+<PRE>;&nbsp;External&nbsp;locater&nbsp;for&nbsp;the&nbsp;executable 
+[Location] 
+exe=c:\Program&nbsp;Files\JASSPA\MicroEmacs\me32.exe 
+; 
+[Defaults] 
+;&nbsp;mepath 
+;&nbsp;The&nbsp;location&nbsp;of&nbsp;the&nbsp;MicroEmacs&nbsp;common&nbsp;files. 
+; 
+mepath=d:/me98.4/common 
+; 
+;&nbsp;userpath&nbsp;-&nbsp;The&nbsp;location&nbsp;of&nbsp;the&nbsp;users&nbsp;MicroEmacs&nbsp;directory. 
+;&nbsp;The&nbsp;$MENAME&nbsp;is&nbsp;appended&nbsp;as&nbsp;a&nbsp;directory&nbsp;to&nbsp;userpath 
+; 
+userpath=d:/me98.4/common 
+; 
+;&nbsp;fontfile&nbsp;-&nbsp;The&nbsp;name&nbsp;of&nbsp;the&nbsp;font&nbsp;file&nbsp;used&nbsp;as&nbsp;default. 
+fontfile=dosapp.fon 
+; 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+; 
+;&nbsp;Environment&nbsp;settings&nbsp;for&nbsp;a&nbsp;user. 
+;&nbsp;All&nbsp;settings&nbsp;are&nbsp;pushed&nbsp;into&nbsp;the&nbsp;environment. 
+; 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+; 
+[guest] 
+term=8x12 
+; 
+[jon] 
+MENAME=jon 
+FOO=bar 
+; 
+[jnaught] 
+MENAME=jon 
+FOO=bar 
+; 
+[bill] 
+.... 
+</PRE></UL>
+<P>Note that multiple users share the same <B>me32.ini</B> file, each user may include their own configuration settings which may be interrogated in the configuration files (e.g. <TT>$FOO</TT> is assigned the value <TT>bar</TT>, which may be extracted from the environment context). </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var076.html">$MENAME(5)</A>, 
+<A HREF="m5var057.html">$MEPATH(5)</A>, 
+<A HREF="m3osd000.html">user-setup(3)</A>, 
+<A HREF="m8fil003.html">emf(8)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,76 @@
+<HTML>
+<HEAD><TITLE>$time(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+$time(5)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>$time - The current system time </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>$time</B> &quot;<I>string</I>&quot; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>$time</B> is a constantly changing variable which is set to the current system time. The format of <B>$time</B> is &quot;<TT>YYYYCCCMMDDWhhmmssSSS</TT>&quot;, where:- 
+<P><B>YYYY</B> 
+<BR><UL>The current year (full 4 digits so should be millennium bug free). </UL>
+<P><B>CCC</B> 
+<BR><UL>Day of the year (0-366). </UL>
+<P><B>MM</B> 
+<BR><UL>The month of the year (1-12). </UL>
+<P><B>DD</B> 
+<BR><UL>The day of the month (1-31). </UL>
+<P><B>W</B> 
+<BR><UL>The day of the week (0-6 Sunday=0). </UL>
+<P><B>hh</B> 
+<BR><UL>The hour (0-23). </UL>
+<P><B>mm</B> 
+<BR><UL>The minute (0-59). </UL>
+<P><B>ss</B> 
+<BR><UL>The second (0-59). </UL>
+<P><B>SSS</B> 
+<BR><UL>The millisecond (0-999). 
+</UL><P><B>$time</B> can be set to an integer value which is a time offset in seconds, for example if the following was executed;- <UL>
+<PRE>set-variable&nbsp;$time&nbsp;&quot;3600&quot; 
+ml-write&nbsp;&amp;cat&nbsp;&quot;$time&nbsp;is&nbsp;&quot;&nbsp;$time 
+set-variable&nbsp;$time&nbsp;&quot;0&quot; 
+</PRE></UL>
+<P>The written time would one hour ahead of the system time. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following macro times the time taken to execute a user command:- <UL>
+<PRE>define-macro&nbsp;time 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;set-variable&nbsp;#l2&nbsp;@1 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l2&nbsp;@ml00&nbsp;&quot;Time&nbsp;command&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;$time 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;execute-line&nbsp;#l2 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l1&nbsp;$time 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l2&nbsp;&amp;add&nbsp;&amp;mid&nbsp;#l0&nbsp;16&nbsp;2&nbsp;&amp;mul&nbsp;60&nbsp;&amp;add&nbsp;&amp;mid&nbsp;#l0&nbsp;14&nbsp;2&nbsp;&amp;mul&nbsp;60&nbsp;&amp;mid&nbsp;#l0&nbsp;12&nbsp;2 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l3&nbsp;&amp;add&nbsp;&amp;mid&nbsp;#l1&nbsp;16&nbsp;2&nbsp;&amp;mul&nbsp;60&nbsp;&amp;add&nbsp;&amp;mid&nbsp;#l1&nbsp;14&nbsp;2&nbsp;&amp;mul&nbsp;60&nbsp;&amp;mid&nbsp;#l1&nbsp;12&nbsp;2 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;les&nbsp;&amp;set&nbsp;#l4&nbsp;&amp;sub&nbsp;&amp;rig&nbsp;#l1&nbsp;18&nbsp;&amp;rig&nbsp;#l0&nbsp;18&nbsp;0 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l2&nbsp;&amp;add&nbsp;#l2&nbsp;1 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l4&nbsp;&amp;add&nbsp;1000&nbsp;#l4 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&amp;spr&nbsp;&quot;Command&nbsp;took&nbsp;%d&nbsp;sec&nbsp;%d&nbsp;msec&quot;&nbsp;&amp;sub&nbsp;#l3&nbsp;#l2&nbsp;#l4 
+!emacro 
+</PRE></UL>
+<P>
+<A HREF="m3mac010.html">time(3)</A> is a macro defined in misc.emf. 
+<P>
+<A HREF="m3osd001.html">organizer(3)</A> uses <B>$time</B> to work out the current month. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m3mac010.html">time(3)</A>, 
+<A HREF="m3osd001.html">organizer(3)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

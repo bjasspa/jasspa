@@ -1,0 +1,61 @@
+<HTML>
+<HEAD><TITLE>etfinsrt(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+etfinsrt(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>etfinsrt - Insert template file into current buffer </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>etfinsrt</B> &quot;<I>template</I>&quot; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>etfinsrt</B> is generally called by file hooks when the new buffer has been created as opposed to loaded from a file (see 
+<A HREF="m5var002.html">$buffer-fhook(5)</A>). 
+<P><B>etfinsrt</B> uses 
+<A HREF="m4fil024.html">&amp;find(4)</A> to locate and insert the required &quot;<I>template</I>.etf&quot; file. If successful, <B>etfinsrt</B> then replaces the following strings in the template: 
+<P><TT>$ASCII_TIME$</TT> 
+<BR><UL>To the current time. Inserts the output of 
+<A HREF="m3mac019.html">ascii-time(3)</A>. </UL>
+<P><TT>$BUFFER_NAME$</TT> 
+<BR><UL>To the buffer name. The name is capitalized, '.'s are replaced with '_' and any trailing &quot;<I>&lt;##&gt;</I>&quot; digits (used to make the buffer name unique) are removed. </UL>
+<P><TT>$COMPANY_NAME$</TT> 
+<BR><UL>To the value of <B>%company-name</B>, or if not defined to the value used for <TT>$USER_NAME$</TT>. <B>%company-name</B> is usually set up in the company setup file defined in User setup. </UL>
+<P><TT>$USER_NAME$</TT> 
+<BR><UL>To the value of the registry entry &quot;<TT>/history/user-name</TT>&quot;, or if not defined to the value &quot;<TT>&lt;unknown&gt;</TT>&quot;. The user name is usually set up in the User setup dialog. </UL>
+<P><TT>$YEAR$</TT> 
+<BR><UL>To the current year (4 digit number). </UL></UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following is taken from hkmake.emf and inserts the &quot;<I>makefile.etf</I>&quot; template if the buffer has been created. <UL>
+<PRE>define-macro&nbsp;fhook-make 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;if&nbsp;arg&nbsp;is&nbsp;0&nbsp;this&nbsp;is&nbsp;a&nbsp;new&nbsp;file&nbsp;so&nbsp;add&nbsp;template 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;@# 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;etfinsrt&nbsp;&quot;makefile&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$buffer-hilight&nbsp;.hilight.make 
+&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;buffer-mode&nbsp;&quot;tab&quot;		;&nbsp;Normal&nbsp;tabs&nbsp;please&nbsp;!!! 
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;buffer-mode&nbsp;&quot;indent&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;buffer-mode&nbsp;&quot;time&quot; 
+!emacro 
+</PRE></UL>
+</UL><H2><B>NOTES </B></H2>
+<UL><P><B>etfinsrt</B> is a macro defined in <TT>etfinsrt.emf</TT>. 
+<P>
+<A HREF="m2mod009.html">magic(2m)</A> mode is always used to perform the the search/replace so the replace strings should be appropriate for <B>magic</B>. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var002.html">$buffer-fhook(5)</A>, 
+<A HREF="m4fil024.html">&amp;find(4)</A>, 
+<A HREF="m3mac019.html">ascii-time(3)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

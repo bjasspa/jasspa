@@ -1,0 +1,46 @@
+<HTML>
+<HEAD><TITLE>set-variable(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+set-variable(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>set-variable - Assign a new value to a variable 
+<BR>unset-variable - Delete a variable </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>set-variable</B> &quot;<I>variable</I>&quot; &quot;<I>value</I>&quot; (<B>C-x&nbsp;v</B>)&nbsp; 
+<BR><B>unset-variable</B> &quot;<I>variable</I>&quot; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>set-variable</B> sets the given register (<B>#</B> name), system (<B>$</B> name), global (<B>%</B> name), buffer (<B>:</B> name) or command (<B>.</B> name) variable to the given value, erasing its current value. The returned value of an undefined variable is the string &quot;<TT>ERROR</TT>&quot;, this maybe used to determine whether a variable has been set. 
+<P><B>unset-variable</B> unsets the given variable so that it no longer exists. The variable must be a global (<B>%</B>), buffer (<B>:</B>) or command (<B>.</B>) variable, system (<B>$</B>) variables cannot be unset. 
+<P>The <I>value</I> may be quoted or unquoted, if there are any white space characters, or characters open to other interpretation (e.g. <B>@wc</B>) in <I>value</I> then quotes should be used. 
+<P><I>value</I> may contain control characters which are delimited by a back slash (<B>\</B>) which include:- 
+<UL><P><TT>\n</TT>&nbsp;newline 
+<BR><TT>\t</TT>&nbsp;tab 
+<BR><TT>\\</TT>&nbsp;backslash </UL>
+<P>Confusion sometimes arises in macros with the back slash, as the back slashes are dereferenced when set. Commands such as 
+<A HREF="m2cmd109.html">replace-string(2)</A> where the command itself utilizes back slashes. In this case the number of back slashes should be doubled as the variable contents under go two stages of dereferencing. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd040.html">describe-variable(2)</A>, 
+<A HREF="m2cmd086.html">list-variables(2)</A>, 
+<A HREF="m4fil023.html">&amp;set(4)</A>. 
+<P>
+<A HREF="m4fil018.html">Variables</A> 
+<BR>
+<A HREF="amicr026.html">Introduction to Variable Functions</A> 
+<BR>
+<A HREF="m4fil018.html">Register Variables</A> </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

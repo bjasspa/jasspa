@@ -1,0 +1,64 @@
+<HTML>
+<HEAD><TITLE>$box-chars(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+$box-chars(5)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>$box-chars - Characters used to draw lines </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>$box-chars</B> &quot;<I>string</I>&quot;; Default is &quot;<TT>|+++++++++-</TT>&quot; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>$box-chars</B> is a fixed length string that defines the set of characters used to render lines to the screen. 
+<A HREF="m2cmd066.html">Osd(2)</A>, 
+<A HREF="m2cmd032.html">directory-tree(2)</A>, 
+<A HREF="m2cmd025.html">list-registry(2)</A> and many macros use these characters as a platform independent method of drawing lines. The characters have fixed indices defined as follows:- 
+<P>Index 0 
+<BR><UL>Line joining north to south (vertical line). </UL>
+<P>Index 1 
+<BR><UL>Line joining south to east. </UL>
+<P>Index 2 
+<BR><UL>Line joining south to west. </UL>
+<P>Index 3 
+<BR><UL>Line joining north to east. </UL>
+<P>Index 4 
+<BR><UL>Line joining north to west. </UL>
+<P>Index 5 
+<BR><UL>Line joining east to south to west. </UL>
+<P>Index 6 
+<BR><UL>Line joining north to east to south. </UL>
+<P>Index 7 
+<BR><UL>Line joining north to east to south to west. </UL>
+<P>Index 8 
+<BR><UL>Line joining north to south to west. </UL>
+<P>Index 9 
+<BR><UL>Line joining north to east to south. </UL>
+<P>Index 10 
+<BR><UL>Line joining east to west. </UL></UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The <B>$box-chars</B> is typically platform dependent, it's setting is determined by the characters available in character set of the hosting platform. MS-DOS and Microsoft Windows environments might use a string such as:- <UL>
+<PRE>&quot;\xB3\xDA\xBF\xC0\xD9\xC2\xC3\xC5\xB4\xC1\xC4&quot; 
+</PRE></UL>
+<P>X-Windows environments might use a string such as:- <UL>
+<PRE>&quot;\x19\x0D\x0C\x0E\x0B\x18\x15\x0F\x16\x17\x12&quot; 
+</PRE></UL>
+<P>Both utilize platform specific characters. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd066.html">Osd(2)</A>, 
+<A HREF="m2cmd032.html">directory-tree(2)</A>, 
+<A HREF="m2cmd025.html">list-registry(2)</A> 
+<A HREF="m5var051.html">$window-chars(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

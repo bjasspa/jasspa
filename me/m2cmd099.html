@@ -1,0 +1,44 @@
+<HTML>
+<HEAD><TITLE>screen-poke(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+screen-poke(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>screen-poke - Immediate write string to the screen </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>screen-poke</B> <I>row</I> <I>column</I> <I>colorScheme</I> &quot;<I>string</I>&quot; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>screen-poke</B> writes a <I>string</I> to the screen at position (<I>row</I>, <I>column</I>) using the given color scheme. The screen coordinates are defined with (0,0) at the top left of the screen. 
+<P><B>screen-poke</B> by-passes the conventional buffer update and writes directly to the screen buffer. The command has no effect on buffers already showing on the screen and is erased on the next screen update. The <I>string</I> is clipped to the screen area hence the caller need not continually check on the size of the client area. 
+<P>The numeric argument <I>n</I> is a bitwise flag which has the following meaning <TT>0x01</TT>&nbsp;Don't&nbsp;mark&nbsp;the&nbsp;poke&nbsp;area&nbsp;for&nbsp;update. 
+<BR><TT>0x02</TT>&nbsp;Don't&nbsp;flush&nbsp;poke&nbsp;to&nbsp;screen. 
+<BR><TT>0x04</TT>&nbsp;colorScheme&nbsp;is&nbsp;an&nbsp;array&nbsp;of&nbsp;values,&nbsp;one&nbsp;for&nbsp;each&nbsp;letter. 
+<BR><TT>0xf0</TT>&nbsp;colorScheme&nbsp;pair&nbsp;offset&nbsp;to&nbsp;use. 
+<P>If the <B>0x01</B> flag is absent then the parts of the screen over written by <B>screen-poke</B> are marked and refreshed on the next <B>screen-update</B> operation, thereby erasing the poked information. If the flag is present the poked information remains on the screen until a forced refresh is performed (i.e. <B>1&nbsp;screen-update</B>) or the window information under the poked screen data is modified. 
+<P>In macros using many consecutive screen-pokes (e.g. 
+<A HREF="m3mac015.html">Patience(3)</A> to display a pack of cards) most pokes use the 'No flush' flag to improve performance and look on some platforms. 
+<P>The use of <B>screen-poke</B> has largely been reduced to games such as 
+<A HREF="m3mac014.html">Metris(3)</A> since the introduction of 
+<A HREF="m2cmd066.html">osd(2)</A> to create dialogs. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P>Some platforms do not allow all character values to be poked, illegal characters are replaced with a '<TT>.</TT>'. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd066.html">osd(2)</A>, 
+<A HREF="m2cmd139.html">screen-update(2)</A>, 
+<A HREF="m3mac012.html">Mahjongg(3)</A>, 
+<A HREF="m3mac014.html">Metris(3)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,70 @@
+<HTML>
+<HEAD><TITLE>calc(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+calc(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>calc - Integer calculator </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>calc</B> &quot;<I>string</I>&quot; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>calc</B> can perform simple integer based calculations given by &quot;<I>string</I>&quot;, where the &quot;<I>string</I>&quot; takes the following form:- <UL>
+<PRE>&quot;[b]&lt;s&gt;&quot; 
+</PRE></UL>
+<P>Where '<I>b</I>' is an optional letter setting the required output base which can be one of the following: 
+<UL><P><TT>b&nbsp;&nbsp;&nbsp;</TT>&nbsp;-&nbsp;Binary 
+<BR><TT>o&nbsp;&nbsp;&nbsp;</TT>&nbsp;-&nbsp;Octal 
+<BR><TT>d&nbsp;&nbsp;&nbsp;</TT>&nbsp;-&nbsp;Decimal 
+<BR><TT>x&nbsp;&nbsp;&nbsp;</TT>&nbsp;-&nbsp;Hexadecimal 
+</UL><P>Default when omitted is '<I>d</I>' (decimal). &quot;<I>s</I>&quot; is the sum to be calculated, which should be bodmas in form. Following is a list of valid symbols. 
+<UL><P><TT>(..)</TT>&nbsp;-&nbsp;Parentheses&nbsp;(contents&nbsp;calculated&nbsp;first) 
+<BR><TT>!&nbsp;&nbsp;&nbsp;</TT>&nbsp;-&nbsp;Logical&nbsp;not 
+<BR><TT>&amp;&amp;&nbsp;&nbsp;</TT>&nbsp;-&nbsp;Logical&nbsp;and 
+<BR><TT>||&nbsp;&nbsp;</TT>&nbsp;-&nbsp;Logical&nbsp;or 
+<BR><TT>==&nbsp;&nbsp;</TT>&nbsp;-&nbsp;Logical&nbsp;equals 
+<BR><TT>!=&nbsp;&nbsp;</TT>&nbsp;-&nbsp;Logical&nbsp;not&nbsp;equals 
+<BR><TT>~&nbsp;&nbsp;&nbsp;</TT>&nbsp;-&nbsp;Bitwise&nbsp;not 
+<BR><TT>&amp;&nbsp;&nbsp;&nbsp;</TT>&nbsp;-&nbsp;Bitwise&nbsp;and 
+<BR><TT>|&nbsp;&nbsp;&nbsp;</TT>&nbsp;-&nbsp;Bitwise&nbsp;or 
+<BR><TT>^&nbsp;&nbsp;&nbsp;</TT>&nbsp;-&nbsp;Bitwise&nbsp;xor 
+<BR><TT>/&nbsp;&nbsp;&nbsp;</TT>&nbsp;-&nbsp;Divide 
+<BR><TT>*&nbsp;&nbsp;&nbsp;</TT>&nbsp;-&nbsp;Multiply 
+<BR><TT>%&nbsp;&nbsp;&nbsp;</TT>&nbsp;-&nbsp;Modulus 
+<BR><TT>+&nbsp;&nbsp;&nbsp;</TT>&nbsp;-&nbsp;Addition 
+<BR><TT>-&nbsp;&nbsp;&nbsp;</TT>&nbsp;-&nbsp;Subtraction 
+<BR><TT>0xNN</TT>&nbsp;-&nbsp;Hexadecimal&nbsp;number 
+<BR><TT>0NN&nbsp;</TT>&nbsp;-&nbsp;Octal&nbsp;number 
+<BR><TT>LR&nbsp;&nbsp;</TT>&nbsp;-&nbsp;Last&nbsp;calculation&nbsp;recall 
+</UL><P>Any MicroEmacs variables can be used in the calculation. The result of the calculation is stored in 
+<A HREF="m5var063.html">.calc.result(5)</A>. The argument <I>n</I> is a bitwise flag where: 
+<P><B>0x01</B> 
+<BR><UL>Print out the result on the message-line. </UL>
+<P><B>0x02</B> 
+<BR><UL>Use string comparisons for == and != comparisons. This has the advantage of being able to calc &quot;Foo&quot; == &quot;Bar&quot; etc. 
+</UL><P>When omitted the default argument is 1. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>To calculate the number of hours in a year: <UL>
+<PRE>calc&nbsp;&quot;365*24&quot; 
+</PRE></UL>
+<P>To then calculate the number of seconds in the year: <UL>
+<PRE>calc&nbsp;&quot;LR*60*60&quot; 
+</PRE></UL>
+</UL><H2><B>NOTES </B></H2>
+<UL><P><B>calc</B> is a macro defined in <TT>calc.emf</TT>. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var063.html">.calc.result(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

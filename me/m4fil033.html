@@ -1,0 +1,52 @@
+<HTML>
+<HEAD><TITLE>SearchGroups(4)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+SearchGroups(4)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>@s0, @s1, @s2, ... @s9 - Last search group values </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>@s0</B>&nbsp;-&nbsp;Last&nbsp;search's&nbsp;whole&nbsp;match&nbsp;string 
+<BR><B>@s1</B>&nbsp;-&nbsp;Last&nbsp;search's&nbsp;first&nbsp;group&nbsp;value 
+<BR><B>@s2</B>&nbsp;-&nbsp;Last&nbsp;search's&nbsp;second&nbsp;group&nbsp;value 
+<BR>... 
+<BR><B>@s9</B>&nbsp;-&nbsp;Last&nbsp;search's&nbsp;nineth&nbsp;group&nbsp;value </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The search group variables <B>@s</B><I>n</I> return the string matches of the last regular expression search i.e. 
+<A HREF="m2cmd116.html">search-forward(2)</A> (in 
+<A HREF="m2mod009.html">magic(2m)</A> mode) or 
+<A HREF="m3mac036.html">regex-forward(3)</A>. 
+<P><B>@s0</B> returns the whole of the matched string, <B>@s</B><I>n</I>, <I>n</I> = 1..9, returns the bracket matches corresponding to the group demarkation points indicated by <TT>\(</TT> and <TT>\)</TT> in the search regular expression. </UL>
+<H2><B>DIAGNOSTICS </B></H2>
+<UL><P>An error is generated if an attempt is made to access these variables and the last search failed or the last search did not have the specified group. 
+<P>The value returned for an unused group, e.g. @s2 for the regex string &quot;<TT>\(a\)\|\(b\)</TT>&quot; if &quot;<TT>a</TT>&quot; was matched, is an empty string (&quot;&quot;). </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following macro code gives a simple example of their potential use: <UL>
+<PRE>forward-search&nbsp;&quot;Token&nbsp;*{\\(Start\\|End\\)}&quot; 
+!if&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;[found&nbsp;\&quot;%s\&quot;]&quot;&nbsp;@s0 
+&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;&amp;seq&nbsp;@s1&nbsp;&quot;Start&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;. 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;. 
+</PRE></UL>
+</UL><H2><B>NOTES </B></H2>
+<UL><P>Remember that the regular expression escape character '\' has to be duplicated within a macro file as '\' is also the macro file escape sequence. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2mod009.html">magic(2m)</A>, 
+<A HREF="m2cmd116.html">search-forward(2)</A>, 
+<A HREF="m3mac036.html">regex-forward(3)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

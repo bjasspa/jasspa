@@ -1,0 +1,62 @@
+<HTML>
+<HEAD><TITLE>replace-all-pairs(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+replace-all-pairs(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>replace-all-pairs - Replace string pairs in a list of files </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>replace-all-pairs</B> &quot;<I>files</I>&quot; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>replace-all-pairs</B> uses the current buffer to extract &quot;<I>from</I>&quot; and &quot;<I>to</I>&quot; pairs and then replaces all occurrences of &quot;<I>from</I>&quot; to &quot;<I>to</I>&quot; in the given list of files without prompting the user. An optional third argument &quot;<I>grep</I>&quot; can be given which will be used as the grep string, if not given the &quot;<I>from</I>&quot; string is used. The format of the current buffer must be: <UL>
+<PRE>/from1/to1/ 
+Xfrom2Xto2X 
+?from3?to3? 
+/from4/to4/grep4/ 
+&nbsp;&nbsp;. 
+&nbsp;&nbsp;. 
+/fromN/toN/ 
+</PRE></UL>
+<P>For each pair the command finds all occurrences of &quot;<I>from</I>&quot; (or &quot;<I>grep</I>&quot; if specified) by calling the command 
+<A HREF="m3mac001.html">grep(3)</A> to search for string &quot;<I>from</I>&quot; in files &quot;<I>files</I>&quot;. Thus all relevant edited files must be saved or <B>grep</B> may return the wrong line numbers. This is achieved by a call to 
+<A HREF="m2cmd150.html">save-some-buffers(2)</A> between each replace pair, it is called with an argument of 0 to ensure that any changed buffers are automatically saved. 
+<P>Each occurrence of &quot;<I>from</I>&quot; is jumped to using 
+<A HREF="m2cmd058.html">get-next-line(2)</A> and the string is replaced by the call: <UL>
+<PRE>-1&nbsp;replace-string&nbsp;&quot;from&quot;&nbsp;&quot;to&quot; 
+</PRE></UL>
+<P>This replaces all occurrences of &quot;<I>from</I>&quot; to &quot;<I>to</I>&quot; on the current line only, hence the line numbers must be correct. This also means that the &quot;<I>from</I>&quot; search string must be correctly formatted for both grep and replace-string. 
+<P>The given argument <I>n</I> is a bit based flag which changes the default behavior described above. The bits have the following effect:- 
+<P><B>0x01</B> 
+<BR><UL>Prompt before saving any changed buffers FIRST time ONLY, enabled by default. If set then the user is also prompted to continue before any changes are made. If this bit is not set then the command executes without any user input. </UL></UL>
+<H2><B>NOTES </B></H2>
+<UL><P><B>replace-all-pairs</B> is a macro defined in <TT>search.emf</TT>. 
+<P>The <B>grep</B> command must be working before this command can function properly. 
+<P>It is not recommended to use a &quot;from&quot; or &quot;to&quot; string which uses more that one line as the results may be unpredictable. 
+<P>As the change is likely to be several pair strings with each changed buffer being saved between pairs 
+<A HREF="m2cmd136.html">undo(2)</A> cannot be used to undo the changes. Neither can the backups be relied on as a buffer may be saved more than once in this process, therefore it is strongly recommend that a backup of the files is made before commencing with this command. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m3mac006.html">replace-all-string(3)</A>, 
+<A HREF="m2cmd109.html">replace-string(2)</A>, 
+<A HREF="m2cmd150.html">save-some-buffers(2)</A>, 
+<A HREF="m3mac001.html">grep(3)</A>, 
+<A HREF="m2cmd058.html">get-next-line(2)</A>, 
+<A HREF="m2cmd136.html">undo(2)</A>, 
+<A HREF="m3mac007.html">query-replace-all-string(3)</A>, 
+<A HREF="m2cmd116.html">search-forward(2)</A>. 
+<BR>
+<A HREF="m2nar006.html">Regular Expressions</A> </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

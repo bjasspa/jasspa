@@ -1,0 +1,137 @@
+<HTML>
+<HEAD><TITLE>CommandVariables(4)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+CommandVariables(4)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>@clk,&nbsp;@cl&nbsp;-&nbsp;Last&nbsp;key&nbsp;or&nbsp;command&nbsp;name 
+<BR>@cck,&nbsp;@cc&nbsp;-&nbsp;Current&nbsp;key&nbsp;or&nbsp;command&nbsp;name 
+<BR>@cgk,&nbsp;@cg&nbsp;-&nbsp;Get&nbsp;a&nbsp;key&nbsp;or&nbsp;command&nbsp;name&nbsp;from&nbsp;the&nbsp;user 
+<BR>@cqk,&nbsp;@cq&nbsp;-&nbsp;Get&nbsp;a&nbsp;quoted&nbsp;key&nbsp;or&nbsp;command&nbsp;name&nbsp;from&nbsp;the&nbsp;user </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>@clk</B> 
+<BR><B>@cl</B> 
+<BR><B>@cck</B> 
+<BR><B>@cc</B> 
+<BR><B>@cgk</B> 
+<BR><B>@cg</B> 
+<BR><B>@cqk</B> 
+<BR><B>@cq</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The Command Variables allow macros to obtain MicroEmacs '02 input commands and keystrokes from the user. The general format of the command is:- 
+<UL><P><B>@c</B><I>i</I>[<B>k</B>] </UL>
+<P>Where, 
+<P><I>i</I> 
+<BR><UL>Determines the source of the input as follows:- 
+<P><B>l</B> 
+<BR><UL>The last input entered. </UL>
+<P><B>c</B> 
+<BR><UL>The current input entered. </UL>
+<P><B>q</B> 
+<BR><UL>Provides a low level character input mechanism, obtaining a single raw character input from the user. The input fetch does not interact with the message line and the user is NOT prompted for input (use 
+<A HREF="m2cmd145.html">ml-write(2)</A> to create your own message). <B>@cq</B> is very low level, it is generally preferable to use <B>@cg</B> which provides a more intelligent binding. </UL>
+<P><B>g</B> 
+<BR><UL>Like <B>@cq</B>, <B>@cg</B>[<B>k</B>] gets a single character input, however if the input is bound to a function then the function name is returned instead of the character e.g. if <TT>^F</TT> or <TT>&lt;left-arrow&gt;</TT> is depressed then <B>forward-char</B> is returned. This has distinct advantages over <B>@cq</B> as the binding becomes device independent and executes on all platforms. In addition, it honors the users bindings, however bizarre. </UL></UL>
+<P><B>k</B> 
+<BR><UL>When, omitted command input is returned to the caller (i.e. the name of the command, such as &quot;<TT>forward-char</TT>&quot;). When present, the raw keystroke is returned to the caller, i.e. &quot;<TT>^F</TT> (control-F). 
+</UL><P>The <B>@cl</B>, <B>@clk</B>, <B>@cc</B> and <B>@cck</B> variables can also be set, this feature can be used by macros to change the command history. While setting the current command is limited in use, setting the last command can be immensely useful, consider the following macro code:- <UL>
+<PRE>kill-line 
+forward-line 
+set-variable&nbsp;@cl&nbsp;kill-line 
+kill-line 
+</PRE></UL>
+<P>Without the setting of the <B>@cl</B> variable, the current kill buffer will contain only the last line. But the setting of <B>@cl</B> to kill-line fools MicroEmacs into thinking the last command was a kill command so the last kill line as appended to the current yank buffer, i.e. the kill buffer will have both lines in it. 
+<P>This feature can be used for any command whose effect depends on the previous command. Such commands include 
+<A HREF="m2cmd092.html">forward-line(2)</A>, 
+<A HREF="m2cmd081.html">kill-region(2)</A>, 
+<A HREF="m2cmd111.html">reyank(2)</A> and 
+<A HREF="m2cmd136.html">undo(2)</A>. This feature should not be abused as unexpected things may happen. </UL>
+<H2>Summary </H2>
+<UL><P><B>@cl</B> 
+<BR><UL>Get or set the last command. </UL>
+<P><B>@clk</B> 
+<BR><UL>Get or set the last key stroke. </UL>
+<P><B>@cc</B> 
+<BR><UL>Get or set the current command. </UL>
+<P><B>@cck</B> 
+<BR><UL>Get or set the current keystroke. </UL>
+<P><B>@cg</B> 
+<BR><UL>Get a command name from the user. </UL>
+<P><B>@cgk</B> 
+<BR><UL>Get a keystroke from the user. </UL>
+<P><B>@cq</B> 
+<BR><UL>Get a quoted command name from the user. </UL>
+<P><B>@cqk</B> 
+<BR><UL>Get a quoted keystroke from the user. </UL></UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following example shows how the <B>@cc</B> and <B>@cl</B> commands are used:- <UL>
+<PRE>define-macro&nbsp;current-last-command 
+&nbsp;&nbsp;&nbsp;&nbsp;insert-string&nbsp;&amp;spr&nbsp;&quot;Last&nbsp;key&nbsp;[%s]&nbsp;name&nbsp;[%s]\n&quot;&nbsp;@clk&nbsp;@cl 
+&nbsp;&nbsp;&nbsp;&nbsp;insert-string&nbsp;&amp;spr&nbsp;&quot;Current&nbsp;key&nbsp;[%s]&nbsp;name&nbsp;[%s]\n&quot;&nbsp;@cck&nbsp;@cc 
+!emacro 
+</PRE></UL>
+<P>Pressing the up key and then executing this macro using execute-named-command (esc x) will insert the lines:- <UL>
+<PRE>Last&nbsp;key&nbsp;[up]&nbsp;name&nbsp;[backward-line] 
+Current&nbsp;key&nbsp;[esc&nbsp;x]&nbsp;name&nbsp;[execute-named-command] 
+</PRE></UL>
+<P><B>@cg</B> like <B>@cq</B> gets a single character input, however if the keyboard input is bound to a function then the function name is returned instead of the character e.g. if <TT>^F</TT> or <TT>&lt;left-arrow&gt;</TT> is depressed then <B>forward-char</B> is returned. This has distinct advantages over <B>@cq</B> as the binding becomes device independent and executes on all platforms, additionally it honors the users bindings, however bizarre. 
+<P><B>@cq</B> provides a low level character input mechanism, obtaining a single raw character input from the user. This does not interact with the message line and the user is not prompted for input (use 
+<A HREF="m2cmd145.html">ml-write(2)</A> to create your own message). <B>@cq</B> is very low level, it is generally preferable to use <B>@cg</B> which provides a more intelligent binding. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following example is taken from <TT>draw.emf</TT> which uses <B>@cg</B> to obtain cursor movements from the user. Note how the input from <B>@cg</B> (stored in variable <B>%dw-comm</B>) is compared with the binding name rather than any keyboard characters. <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;!repeat 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;screen-update 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;set-variable&nbsp;#l0&nbsp;@cg 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;seq&nbsp;#l0&nbsp;&quot;abort-command&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;iseq&nbsp;@mc1&nbsp;&quot;Really&nbsp;quit&nbsp;[y/n]?&nbsp;&quot;&nbsp;&quot;nNyY&quot;&nbsp;&quot;y&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;find-buffer&nbsp;:dw-buf 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;delete-buffer&nbsp;&quot;*draw*&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;buffer-mode&nbsp;&quot;view&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!abort 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!elif&nbsp;&amp;seq&nbsp;#l0&nbsp;&quot;newline&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;. 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;. 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!elif&nbsp;&amp;seq&nbsp;#l0&nbsp;&quot;forward-line&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;draw-vert 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!elif&nbsp;&amp;seq&nbsp;#l0&nbsp;&quot;backward-line&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;draw-vert 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!elif&nbsp;&amp;seq&nbsp;#l0&nbsp;&quot;forward-char&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;draw-horz 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!elif&nbsp;&amp;seq&nbsp;#l0&nbsp;&quot;backward-char&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;draw-horz 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!elif&nbsp;&amp;seq&nbsp;#l0&nbsp;&quot;osd&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.osd.draw-help&nbsp;osd 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!elif&nbsp;&amp;set&nbsp;#l1&nbsp;&amp;sin&nbsp;#l0&nbsp;&quot;mdeu-=&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;les&nbsp;#l1&nbsp;5 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:dw-mode&nbsp;&amp;sub&nbsp;#l1&nbsp;1 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:dw-modes&nbsp;#l0 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;draw-setmode-line 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!elif&nbsp;&amp;sin&nbsp;#l0&nbsp;&quot;-=&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:dw-char&nbsp;#l0 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;draw-setmode-line 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!else 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;[Invalid&nbsp;command]&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;!until&nbsp;0 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m4fil016.html">@wc(4)</A>, 
+<A HREF="m4fil026.html">&amp;kbind(4)</A>, 
+<A HREF="m2cmd029.html">define-macro(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

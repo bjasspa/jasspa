@@ -1,0 +1,39 @@
+<HTML>
+<HEAD><TITLE>insert-string(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+insert-string(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>insert-string - Insert character string into current buffer </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>insert-string</B> &quot;<I>string</I>&quot; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>insert-string</B> inserts a string <I>n</I> times into the current buffer, moving the cursor position. 
+<P><B>insert-string</B> allows text to be built in a buffer without reading it from a file. Some special escape characters are interpreted in the <I>string</I>, as follows: 
+<UL><P><TT>\n</TT>&nbsp;-&nbsp;Enters&nbsp;a&nbsp;new&nbsp;line 
+<BR><TT>\t</TT>&nbsp;-&nbsp;A&nbsp;tab&nbsp;character 
+<BR><TT>\b</TT>&nbsp;-&nbsp;Backspace 
+<BR><TT>\f</TT>&nbsp;-&nbsp;Form-feed 
+<BR><TT>\\</TT>&nbsp;-&nbsp;Literal&nbsp;backslash&nbsp;character&nbsp;'<TT>\</TT>' 
+<BR><TT>\xXX</TT>&nbsp;-&nbsp;Hexadecimal&nbsp;value&nbsp;of&nbsp;character&nbsp;ASCII&nbsp;value </UL></UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd073.html">insert-file(2)</A>, 
+<A HREF="m2cmd097.html">insert-newline(2)</A>, 
+<A HREF="m2cmd075.html">insert-space(2)</A>, 
+<A HREF="m2cmd156.html">insert-tab(2)</A>, 
+<A HREF="m2cmd090.html">newline(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

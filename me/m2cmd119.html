@@ -1,0 +1,42 @@
+<HTML>
+<HEAD><TITLE>set-cursor-to-mouse(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+set-cursor-to-mouse(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>set-cursor-to-mouse - Move the cursor to the current mouse position </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>set-cursor-to-mouse</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>set-cursor-to-mouse</B> sets the current window and cursor position to the location of the mouse on it's last event (button press or release). This command may change the current window. If the line on which the mouse was located was the message line then the no action is taken, if the line was a window mode line the that window is made the current window but the cursor location within the window remains the same. This is usually used in user defined macros that control the functionality of the mouse. 
+<P>An argument <I>n</I> determines if the command is permitted to change windows, when omitted a window change is permitted on <B>set-cursor-to-mouse</B>. When specified, the mouse is not permitted to change windows and returns an error condition in 
+<A HREF="m5var038.html">$mouse-pos(5)</A> indicating that the mouse is not within the current window. 
+<P>Invocation of this command sets the variable 
+<A HREF="m5var038.html">$mouse-pos(5)</A> which determines where the mouse is within the window. Interrogation of the variable following the command may be used to determine if the mouse is located on one of the more specialized window or screen regions. 
+<P>When writing macros to cut and paste using the mouse, care should be taken to ensure that the window at the button release is the same is at the button press. If this is not undertaken, undesired effects could result. The use of 
+<A HREF="m2cmd110.html">set-position(2)</A> and 
+<A HREF="m2cmd110.html">goto-position(2)</A> are most usefully used with this command to restore existing window context. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var038.html">$mouse-pos(5)</A>, 
+<A HREF="m5var033.html">$mouse-x(5)</A>, 
+<A HREF="m5var033.html">$mouse-y(5)</A>, 
+<A HREF="m5var046.html">$window-mode-line(5)</A>, 
+<A HREF="m5var046.html">$window-scroll-bar(5)</A>, 
+<A HREF="m2cmd021.html">set-scroll-with-mouse(2)</A>, 
+<A HREF="m2cmd110.html">set-position(2)</A>, 
+<A HREF="m2cmd110.html">goto-position(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,72 @@
+<HTML>
+<HEAD><TITLE>Paragraph and Text Formatting Commands</TITLE></HEAD>
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+Paragraph and Text Formatting Commands</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>PARAGRAPH AND TEXT FORMATTING COMMANDS </B></H2>
+<UL><P>Commands that operate on paragraphs, and the layout of paragraphs: </UL>
+<H2>Paragraph </H2>
+<UL><P>Paragraphs are separated by blank lines. A single paragraph is defined as all of the text enclosed between two blank lines, with no intervening blank lines. 
+<P>
+<A HREF="m2cmd094.html">backward-paragraph(2)</A> (<B>esc p</B>)&nbsp;Move the cursor to the previous paragraph 
+<BR>
+<A HREF="m2cmd052.html">fill-paragraph(2)</A> (<B>esc o</B>)&nbsp;Format a paragraph 
+<BR>
+<A HREF="m2cmd094.html">forward-paragraph(2)</A> (<B>esc n</B>)&nbsp;Move the cursor to the next paragraph 
+<BR>
+<A HREF="m3mac026.html">ifill-paragraph(3)</A> (<B>esc q</B>)&nbsp;Format a paragraph 
+<BR>
+<A HREF="m2cmd080.html">kill-paragraph(2)</A> Delete a paragraph 
+<BR>
+<A HREF="m3mac003.html">paragraph-to-line(3)</A> Convert a paragraph to a single line 
+<BR>
+<A HREF="m2cmd142.html">wrap-word(2)</A> Wrap word onto next line </UL>
+<H2>Regions and Marks </H2>
+<UL><P>A region is the text located between the <B>point</B> (the current cursor position) and the <B>mark</B> defined by 
+<A HREF="m2cmd121.html">set-mark</A>. 
+<P>
+<A HREF="m2cmd022.html">copy-region(2)</A> (<B>esc w</B>)&nbsp;Copy a region of the buffer 
+<BR>
+<A HREF="m2cmd023.html">count-words(2)</A> (<B>esc C-c</B>)&nbsp;Count the number of words in a region 
+<BR>
+<A HREF="m2cmd043.html">exchange-point-and-mark(2)</A> (<B>C-x&nbsp;C-x</B>)&nbsp;Exchange the cursor and marked position 
+<BR>
+<A HREF="m2cmd059.html">goto-alpha-mark(2)</A> (<B>C-x&nbsp;a</B>)&nbsp;Move the cursor to a alpha marked location 
+<BR>
+<A HREF="m2cmd159.html">kill-rectangle(2)</A> (<B>esc C-w</B>)&nbsp;Delete a column of text 
+<BR>
+<A HREF="m2cmd081.html">kill-region(2)</A> (<B>C-w</B>)&nbsp;Delete all characters in the marked region 
+<BR>
+<A HREF="m2cmd118.html">set-alpha-mark(2)</A> (<B>C-x&nbsp;C-a</B>)&nbsp;Place an alphabetic marker in the buffer 
+<BR>
+<A HREF="m2cmd121.html">set-mark(2)</A> (<B>esc space</B>)&nbsp;Set starting point of region 
+<BR>
+<A HREF="m2cmd159.html">yank-rectangle(2)</A> (<B>esc C-y</B>)&nbsp;Insert a column of text </UL>
+<H2>Variables </H2>
+<UL><P>
+<A HREF="m5var053.html">$fill-bullet(5)</A> Paragraph filling bullet character set 
+<BR>
+<A HREF="m5var053.html">$fill-bullet-len(5)</A> Paragraph filling bullet search depth 
+<BR>
+<A HREF="m5var021.html">$fill-col(5)</A> Paragraph Mode; right fill column 
+<BR>
+<A HREF="m5var012.html">$fill-eos(5)</A> Paragraph filling; end of sentence fill characters 
+<BR>
+<A HREF="m5var012.html">$fill-eos-len(5)</A> Paragraph filling; end of sentence padding length 
+<BR>
+<A HREF="m5var054.html">$fill-ignore(5)</A> Ignore paragraph filling character(s) 
+<BR>
+<A HREF="m5var028.html">$fill-mode(5)</A> Paragraph mode; justification method </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2002/01/06</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

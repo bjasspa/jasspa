@@ -1,0 +1,39 @@
+<HTML>
+<HEAD><TITLE>auto-spell(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+auto-spell(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>auto-spell - Auto-spell support 
+<BR>auto-spell-buffer - Auto-spell whole buffer 
+<BR>auto-spell-reset - Auto-spell hilight reset </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>auto-spell</B> 
+<BR><B>auto-spell-buffer</B> 
+<BR><B>auto-spell-reset</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>auto-spell</B> enables and disables the auto spell checking of the current buffer. Auto spell detects word breaks as you type and checks the spelling of every completed word hilighting any erroneous words in the error color scheme (usually red). 
+<P>The argument <I>n</I> determines whether auto-spell is enabled or disabled, a +ve argument enables and a -ve argument disables. If no argument or <I>0</I> is supplied the auto-spell state is toggled. 
+<P><B>auto-spell-buffer</B> checks all words within the current buffer for spell, hilighting any unknown or miss-spelled words found. 
+<P><B>auto-spell-reset</B> resets the buffer hilighting scheme, removing any added erroneous words. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P><B>auto-spell</B> and <B>auto-spell-reset</B> are macros defined in <TT>spellaut.emf</TT>. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m3osd000.html">user-setup(3)</A>, 
+<A HREF="m3osd002.html">spell-buffer(3)</A>, 
+<A HREF="m2cmd125.html">spell(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,150 @@
+<HTML>
+<HEAD><TITLE>translate-key(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+translate-key(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>translate-key - Translate key </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>translate-key</B> [ &quot;<I>from</I>&quot; [&quot;<I>to</I>&quot;] ] </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>translate-key</B> may be used to convert any given input key sequence to another single key. <B>translate-key</B> operates at a very low level, before MicroEmacs attempts to evaluate keyboard bindings, so it may be used to solve a variety of keyboard problems such as special language characters and UNIX termcap key sequence bindings (see below). 
+<P>If a +ve numeric argument <I>n</I> is given it is used to set the time in milliseconds MicroEmacs waits for another key to be pressed before continuing, the default time use when no argument is supplied is 250ms. 
+<P>If a numeric argument <I>n</I> of -1 is specified then the &quot;<I>to</I>&quot; argument is not required and the &quot;<I>from</I>&quot; character sequence is removed from the translate key table. 
+<P>If a numeric argument <I>n</I> of 0 is specified then no arguments are required; the current translation table is dumped to buffer &quot;<I>*tcap-keys*</I>&quot;. Following is a sample output:- <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-h&quot;&nbsp;.........................&nbsp;&quot;backspace&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-[&quot;&nbsp;.........................&nbsp;&quot;esc&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-[&nbsp;[&nbsp;1&nbsp;~&quot;&nbsp;...................&nbsp;&quot;delete&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-[&nbsp;[&nbsp;1&nbsp;1&nbsp;~&quot;&nbsp;.................&nbsp;&quot;f1&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-[&nbsp;[&nbsp;1&nbsp;2&nbsp;~&quot;&nbsp;.................&nbsp;&quot;f2&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-[&nbsp;[&nbsp;1&nbsp;3&nbsp;~&quot;&nbsp;.................&nbsp;&quot;f3&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-[&nbsp;[&nbsp;1&nbsp;4&nbsp;~&quot;&nbsp;.................&nbsp;&quot;f4&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-[&nbsp;[&nbsp;B&quot;&nbsp;.....................&nbsp;&quot;down&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-[&nbsp;[&nbsp;4&nbsp;~&quot;&nbsp;...................&nbsp;&quot;end&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-[&nbsp;[&nbsp;2&nbsp;~&quot;&nbsp;...................&nbsp;&quot;insert&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-[&nbsp;[&nbsp;3&nbsp;~&quot;&nbsp;...................&nbsp;&quot;home&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-[&nbsp;[&nbsp;D&quot;&nbsp;.....................&nbsp;&quot;left&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-[&nbsp;[&nbsp;6&nbsp;~&quot;&nbsp;...................&nbsp;&quot;page-down&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-[&nbsp;[&nbsp;5&nbsp;~&quot;&nbsp;...................&nbsp;&quot;page-up&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-[&nbsp;[&nbsp;C&quot;&nbsp;.....................&nbsp;&quot;right&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-[&nbsp;[&nbsp;A&quot;&nbsp;.....................&nbsp;&quot;up&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-[&nbsp;[&nbsp;V&quot;&nbsp;.....................&nbsp;&quot;page-up&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-[&nbsp;[&nbsp;U&quot;&nbsp;.....................&nbsp;&quot;page-down&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-m&quot;&nbsp;.........................&nbsp;&quot;return&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-i&quot;&nbsp;.........................&nbsp;&quot;tab&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;\x7F&quot;&nbsp;........................&nbsp;&quot;backspace&quot; 
+</PRE></UL>
+</UL><H2>FOREIGN KEYBOARDS </H2>
+<UL><P>Foreign keyboards (non-US/UK) use a variety of key sequences, not recognized by MicroEmacs, to expand the keyboard character range to cope with accented characters. For example, on a German keyboard '<TT>AltGr-m</TT>' (recognized as '<TT>A-C-m</TT>') is used to insert a Greek mu (or micro sign). On a Belgian keyboard '<TT>AltGr-9</TT>' inserts a '{' character. 
+<P>Many foreign keyboards are already directly supported by MicroEmacs and the keyboard specifics of a country have been understood and resolved. In these cases the <B>Keyboard</B> configuration in 
+<A HREF="m3osd000.html">user-setup(3)</A> may be used for the country location. 
+<P>If MicroEmacs does not support your keyboard, <B>translate-key</B> may be used to fix any key input problems. For the aforementioned examples the following <B>translate-key</B> commands would be required: <UL>
+<PRE>;&nbsp;translate&nbsp;AltGr-m&nbsp;to&nbsp;a&nbsp;Greek&nbsp;mu&nbsp;(char&nbsp;0xb5) 
+translate-key&nbsp;&quot;A-C-m&quot;&nbsp;&quot;\xB5&quot; 
+;&nbsp;translate&nbsp;AltGr-9&nbsp;to&nbsp;a&nbsp;'{' 
+translate-key&nbsp;&quot;A-C-9&quot;&nbsp;&quot;{&quot; 
+</PRE></UL>
+<P>The problem is complicated further on Microsoft Window's platforms by the simultaneous generation of 2 keys for some Alt-Gr key combinations (this is a side effect of endeavoring to capture all key combinations in this environment). For the Belgian keyboard example, on Win32 platforms an '<TT>AltGr-9</TT>' generates an '<TT>A-C-9</TT>' key first followed immediately by an '<TT>A-C-{</TT>'. As both keys are generated in quick succession this is unexpected and confusing. 
+<P>When the key is first pressed on a poorly configured system the error &quot;<I>[Key not bound &quot;A-C-{&quot;]</I>&quot; is given even when using the command 
+<A HREF="m2cmd039.html">describe-key(2)</A> as the key described will be '<TT>A-C-9</TT>' and then the '<TT>A-C-{</TT>' key is generated and interpreted creating the error message. 
+<P>The variable 
+<A HREF="m5var077.html">$recent-keys(5)</A> can be used to diagnose this problem and to obtain the 2 keys generated; alternatively use the macro below: <UL>
+<PRE>define-macro&nbsp;report-2-keys 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;Press&nbsp;key&nbsp;1&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;@cgk 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;Press&nbsp;key&nbsp;2&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l1&nbsp;@cgk 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&amp;spr&nbsp;&quot;[The&nbsp;following&nbsp;keys&nbsp;where&nbsp;pressed:&nbsp;\&quot;%s\&quot;&nbsp;\&quot;%s\&quot;]&quot;&nbsp;#l0&nbsp;#l1 
+!emacro 
+</PRE></UL>
+<P>When executed the user is prompted for the first key; press the required key sequence (in this case '<TT>AltGr-9</TT>'), if you are not prompted for the second key and the result is immediately returned then the key you pressed has generated 2 keys, both of which will be given in the print out, i.e.: <UL>
+<PRE>&quot;[The&nbsp;following&nbsp;keys&nbsp;where&nbsp;pressed:&nbsp;&quot;A-C-9&quot;&nbsp;&quot;A-C-{&quot;]&quot; 
+</PRE></UL>
+<P>The translate-key required to fix this type of problem would be: <UL>
+<PRE>translate-key&nbsp;&quot;A-C-9&nbsp;A-C-{&quot;&nbsp;&quot;{&quot; 
+</PRE></UL>
+<P>If your keyboard is not directly supported by MicroEmacs, please submit the keyboard name and platform with a working translate-key configuration to 
+<A HREF="amicr038.html">JASSPA</A> as a <B>BUG</B>. </UL>
+<H2>UNIX TERMCAP </H2>
+<UL><P><B>translate-key</B> may also be used to interpret non-standard key sequences for UNIX termcap platforms to standard MicroEmacs keys. Non-standard keys, such as the cursor keys, have system dependent key sequences. The output from these keys usually take the form: 
+<UL><P><TT>^[[X</TT> or <TT>^[[DX</TT> or <TT>^[[DDX</TT> or <TT>^[[DDD</TT> </UL>
+<P>where <B>^[</B> is the escape key (27), <B>D</B> is a digit and <B>X</B> is any character. These keys may be bound to the standard keys, for example the typical output of the cursor keys may be translated as follows:- 
+<UL><P><TT>^[[A</TT> = <B>up</B>, <TT>^[[B</TT> = <B>down</B>, <TT>^[[C</TT> = <B>right</B> and <TT>^[[D</TT> = <B>left</B> </UL>
+<P>The &quot;<I>from</I>&quot; string is specified as this key sequence and the &quot;<I>to</I>&quot; string is simply the key it is to be bound to, see 
+<A HREF="m2cmd013.html">global-bind-key(2)</A> for a guide to the string format. For the above example the following set of translations are required:- <UL>
+<PRE>translate-key&nbsp;&quot;esc&nbsp;[&nbsp;A&quot;&nbsp;&quot;up&quot; 
+translate-key&nbsp;&quot;esc&nbsp;[&nbsp;B&quot;&nbsp;&quot;down&quot; 
+translate-key&nbsp;&quot;esc&nbsp;[&nbsp;C&quot;&nbsp;&quot;right&quot; 
+translate-key&nbsp;&quot;esc&nbsp;[&nbsp;D&quot;&nbsp;&quot;left&quot; 
+</PRE></UL>
+<P>Note that MicroEmacs interprets <TT>\e</TT> as an escape key. More obscure keys tend to be very platform specific, following are some examples: <UL>
+<PRE>translate-key&nbsp;&quot;esc&nbsp;[&nbsp;2&nbsp;~&quot;&nbsp;&quot;insert&quot; 
+translate-key&nbsp;&quot;esc&nbsp;[&nbsp;5&nbsp;~&quot;&nbsp;&quot;page-up&quot; 
+translate-key&nbsp;&quot;esc&nbsp;[&nbsp;5&nbsp;^&quot;&nbsp;&quot;C-page-up&quot; 
+</PRE></UL>
+</UL><H2><B>EXAMPLE </B></H2>
+<UL><P>Using the +ve numeric argument it is possible to reduce the delay and there by increase usability is some features. For instance, in the Mouse configuration of <B>user-setup</B> there is an option to 'Simulate 3 Buttons' which translates a rapid left and right button press into a middle button press. This is implemented using <B>translate-key</B> as follows: <UL>
+<PRE>10&nbsp;translate-key&nbsp;&quot;mouse-pick-1&nbsp;mouse-pick-3&quot;&nbsp;&quot;mouse-pick-2&quot; 
+10&nbsp;translate-key&nbsp;&quot;mouse-pick-3&nbsp;mouse-pick-1&quot;&nbsp;&quot;mouse-pick-2&quot; 
+10&nbsp;translate-key&nbsp;&quot;mouse-drop-1&nbsp;mouse-drop-3&quot;&nbsp;&quot;mouse-drop-2&quot; 
+10&nbsp;translate-key&nbsp;&quot;mouse-drop-3&nbsp;mouse-drop-1&quot;&nbsp;&quot;mouse-drop-2&quot; 
+</PRE></UL>
+<P>When a <TT>mouse-pick-1</TT> key is generated MicroEmacs must wait to see if a <TT>mouse-pick-3</TT> key is next and therefore translate both to a single <TT>mouse-pick-2</TT> key. This wait time is usually a quarter of a second but this makes the left button unusable for dragging regions etc as the delay is too long. By giving a argument of 10ms the delay is long enough for a simultaneous left and right button press but short enough for the left button to still be usable on its own. 
+<P>The +ve numeric argument can be very useful for delaying MicroEmacs as well, for example, the character string &quot;<TT>'e</TT>&quot; can be converted to e-accute using 
+<A HREF="m3mac045.html">iso-accents-expand(3)</A>. This could be performed automatically using translate-key as follows: <UL>
+<PRE>1000&nbsp;translate-key&nbsp;&quot;'&nbsp;e&quot;&nbsp;&quot;\xE9&quot; 
+</PRE></UL>
+<P>The larger 1 second delay give the user enough time to type the '<TT>e</TT>' after the '<TT>'</TT>' character. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P>The concept of standardized key-bindings is very important for cross platform use and maintenance. 
+<P>Refer to 
+<A HREF="m2cmd013.html">global-bind-key(2)</A> for a list of standard bindings. 
+<P>One of the easiest ways of obtaining a key sequence is to run <B>sh(1)</B> which does not attempt to interpret these keys so when a key is pressed (followed by <TT>&lt;RETURN&gt;</TT>) the following type of error message is usually generated:- <UL>
+<PRE>sh:&nbsp;^[[2~:&nbsp;&nbsp;not&nbsp;found. 
+</PRE></UL>
+<P>where <TT>^[[2~</TT> is the required key sequence. Another method of obtaining these key sequences is to start MicroEmacs '02, use 
+<A HREF="m2cmd011.html">start-kbd-macro(2)</A> to start a macro definition, press the required keys and then use 
+<A HREF="m2cmd011.html">end-kbd-macro(2)</A> followed by 
+<A HREF="m2cmd089.html">name-kbd-macro(2)</A> and 
+<A HREF="m2cmd074.html">insert-macro(2)</A> to display the keys pressed. 
+<P>The key sequences generated for these keys are dependent on the machine displaying MicroEmacs '02 as opposed to the machine running it. Often they are the same machine, but when they are not there is no easy method of determining the displaying machine and therefore correctly configuring MicroEmacs '02. 
+<P>A better way of obtaining this cross platform consistency is to create an XTerm app-defaults setup file with the correct VT100 key translations, e.g. the setup file could contain the following <UL>
+<PRE>*vt100.translations:&nbsp;#override&nbsp;\ 
+	Shift&lt;Key&gt;Tab:		string(&quot;\033[Z&quot;)&nbsp;\n\ 
+	&lt;Key&gt;BackSpace:		string(&quot;\177&quot;)&nbsp;\n\ 
+	&lt;Key&gt;Delete:		string(&quot;\033[1~&quot;)&nbsp;\n\ 
+	&lt;Key&gt;Insert:		string(&quot;\033[2~&quot;)&nbsp;\n\ 
+	&lt;Key&gt;Home:		string(&quot;\033[3~&quot;)&nbsp;\n\ 
+	&lt;Key&gt;End:		string(&quot;\033[4~&quot;)&nbsp;\n\ 
+	&lt;Key&gt;Prior:		string(&quot;\033[5~&quot;)&nbsp;\n\ 
+	&lt;Key&gt;Next:		string(&quot;\033[6~&quot;)&nbsp;\n\ 
+	Ctrl&lt;Key&gt;Up:		string(&quot;\033Oa&quot;)&nbsp;\n\ 
+	Ctrl&lt;Key&gt;Down:		string(&quot;\033Ob&quot;)&nbsp;\n\ 
+	Ctrl&lt;Key&gt;Right:		string(&quot;\033Oc&quot;)&nbsp;\n\ 
+	Ctrl&lt;Key&gt;Left:		string(&quot;\033Od&quot;)&nbsp;\n\ 
+	Shift&lt;Key&gt;Up:		string(&quot;\033[a&quot;)&nbsp;\n\ 
+	Shift&lt;Key&gt;Down:		string(&quot;\033[b&quot;)&nbsp;\n\ 
+	Shift&lt;Key&gt;Right:	string(&quot;\033[c&quot;)&nbsp;\n\ 
+	Shift&lt;Key&gt;Left:		string(&quot;\033[d&quot;)&nbsp;\n 
+</PRE></UL>
+<P>By using the environment variable <I>XUSERFILESEARCHPATH</I> to ensure that this configuration file is found instead of the system one (found in <TT>/usr/lib/X11/app-defaults</TT>), the key sequences will then be the same across all platforms. See manual page on <B>xterm(1)</B> for more information. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m3osd000.html">user-setup(3)</A>, 
+<A HREF="m2cmd039.html">describe-key(2)</A>, 
+<A HREF="m2cmd013.html">global-bind-key(2)</A>, 
+<A HREF="m2cmd011.html">start-kbd-macro(2)</A>, <B>xterm(1)</B>, <B>sh(1)</B>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

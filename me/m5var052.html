@@ -1,0 +1,44 @@
+<HTML>
+<HEAD><TITLE>$window-depth(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+$window-depth(5)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>$window-depth - Number of text lines in a window 
+<BR>$window-width - Number of character columns in a window </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>$window-depth</B> <I>integer</I> 
+<P>1 &lt;= <I>integer</I> &lt;= 
+<A HREF="m5var037.html">$screen-depth</A> 
+<P><B>$window-width</B> <I>integer</I> 
+<P>0 &lt;= <I>integer</I> &lt;= 
+<A HREF="m5var037.html">$screen-width</A> - 1 </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>$window-depth</B> returns the depth (height) of the current window, excluding the mode line, specified in text lines. (i.e. the number of lines of text in the window). The returned value is an integer in the range: 
+<UL><P><B>0</B> - ( 
+<A HREF="m5var037.html">$screen-depth</A> - <B>3</B> ) 
+</UL><P><B>$window-width</B> returns the width, in characters, of the current window. The returned value is an integer in the range: 
+<UL><P><B>0</B> - 
+<A HREF="m5var037.html">$screen-width</A>. </UL></UL>
+<H2><B>NOTES </B></H2>
+<UL><P>These variables can not be set, any attempt to set them results in an error. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var037.html">$screen-depth(5)</A>, 
+<A HREF="m5var037.html">$screen-width(5)</A>, 
+<A HREF="m5var046.html">$window-scroll-bar(5)</A>, 
+<A HREF="m5var046.html">$window-mode-line(5)</A>, </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

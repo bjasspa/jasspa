@@ -1,0 +1,36 @@
+<HTML>
+<HEAD><TITLE>delete-window(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+delete-window(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>delete-window - Delete the current window 
+<BR>delete-other-windows - Delete other windows </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>delete-window</B> (<B>C-x&nbsp;0</B>)&nbsp; 
+<BR><B>delete-other-windows</B> (<B>C-x&nbsp;1</B>)&nbsp; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>delete-window</B> attempts to delete the current window (remove window from the screen), retrieving the lines for use in the window adjacent to it. 
+<P>The window deletion policy is determined by the formation of the windows displayed on the screen. The bias is for the <I>previous</I> window (above) the current window to be merged when split vertically, and for the left window to be merged when split horizontally. 
+<P><B>delete-other-windows</B> deletes all of the other windows, the current window becomes the only window, using the entire available screen area. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd110.html">set-position(2)</A>, 
+<A HREF="m2cmd063.html">grow-window-vertically(2)</A>, 
+<A HREF="m2cmd063.html">resize-window-vertically(2)</A>, 
+<A HREF="m2cmd151.html">split-window-horizontally(2)</A>, 
+<A HREF="m2cmd128.html">split-window-vertically(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

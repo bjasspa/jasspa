@@ -1,0 +1,73 @@
+<HTML>
+<HEAD><TITLE>$rcs-file(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+$rcs-file(5)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>$rcs-file - RCS (and SCCS) file name 
+<BR>$rcs-ci-com - RCS (and SCCS) check in command 
+<BR>$rcs-cif-com - RCS (and SCCS) check in first command 
+<BR>$rcs-co-com - RCS (and SCCS) check out command 
+<BR>$rcs-cou-com - RCS (and SCCS) check out unlock command 
+<BR>$rcs-ue-com - RCS (and SCCS) unedit file command </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>$rcs-file</B> &quot;<I>string</I>&quot;; Default is &quot;&quot; 
+<BR><B>$rcs-ci-com</B> &quot;<I>string</I>&quot;; Default is &quot;&quot; 
+<BR><B>$rcs-cif-com</B> &quot;<I>string</I>&quot;; Default is &quot;&quot; 
+<BR><B>$rcs-co-com</B> &quot;<I>string</I>&quot;; Default is &quot;&quot; 
+<BR><B>$rcs-cou-com</B> &quot;<I>string</I>&quot;; Default is &quot;&quot; 
+<BR><B>$rcs-ue-com</B> &quot;<I>string</I>&quot;; Default is &quot;&quot; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>RCS (Revision Control System) and SCCS (Source Code Control System) are programmers source code history data-bases. RCS introduces a system in which only one programmer can edit a source file at any one time, enforcing some form of stability in the global environment. The fact that this interface was developed for the RCS system is irrelevant, and should be usable under any other control systems such as SCCS. 
+<P>When using RCS, finding a file (see 
+<A HREF="m2cmd056.html">find-file(2)</A>) checks for the existence of the actual file. If this is not found then it checks for the existence of an RCS <B>$rcs-file</B> variable, and if present then it constructs the RCS file name and checks for its existence. If this file does not exist then it really is a new file and an new buffer is created. If the file does exist then the file is checked out using the <B>$rcs-co-com</B> which executes to create a file with the original file name, ready for loading. 
+<P><B>$rcs-file</B> is the name of the file when it is fully check in, as opposed to when it is ready to be viewed or edited. In RCS, this is usually in the <TT>RCS</TT> directory with an appended &quot;<TT>,v</TT>&quot;, i.e. for the file <TT>foo.c</TT> in the <TT>/test</TT> directory, when fully checked in, the file will not be found at &quot;<TT>/test/foo.c</TT>&quot;, but at &quot;<TT>/test/RCS/foo.c,v</TT>&quot;. When testing for an RCS file, the file name is split into two parts, the path name and the file name, the path is always inserted at the start, and the file name can inserted in the rcs string by using the special &quot;<TT>%f</TT>&quot; token, thus if <B>$rcs-file</B> is set to &quot;<TT>RCS/%f,v</TT>&quot;, the RCS file name is constructed from &quot;<TT>/test/</TT>&quot; + &quot;<TT>RCS/</TT>&quot; + &quot;<TT>foo.c</TT>&quot; + &quot;<TT>,v</TT>&quot;. 
+<P>If the RCS file is found then the <B>$rcs-co-com</B> (RCS <B>C</B>heck <B>O</B>ut <B>COM</B>mand) which is a simple system command line with the exception for <TT>%f</TT> which is replaced by the file name, is executed. This is expected to create the file (with the correct file name) ready for viewing. 
+<P>Once a file is loaded, then the 
+<A HREF="m2cmd105.html">rcs-file(2)</A> command has one of two effects:- 
+<UL><P>If the file is in view mode then the <B>$rcs-cou-com</B> (RCS <B>C</B>heck <B>O</B>ut <B>U</B>nlock <B>COM</B>mand) is executed (system command line using the &quot;%f&quot; as the file name). If the RCS file does not exist then is simply toggles the view mode, allowing editing. </UL>
+<UL><P>If the file is not in view mode MicroEmacs attempts to check the file back into RCS using either <B>$rcs-ci-com</B> (if the RCS file already exists) or the the <B>$rcs-cif-com</B> (RCS <B>C</B>heck <B>I</B>n <B>F</B>irst <B>COM</B>mand). The &quot;<TT>%f</TT>&quot; is again used for the file name, the &quot;<TT>%m</TT>&quot; can also be used to get a comment from the user at check in time which will be inserted (without quotes) into the <B>$rcs-ci-com</B> command line. For example, one possible <B>$rcs-ci-com</B> setting is &quot;<TT>ci -m\&quot;%m\&quot; %f</TT>&quot; which uses the <B>ci(1)</B> program with the <B>-m</B> option to give a check in message. 
+</UL><P>If <B>rcs-file</B> is given a -ve argument instead of checking in or out the current buffer's file it executes the command specified by <B>$rcs-ue-com</B> to unedit or abort any changes made to the file. After the command has been executed the file is reloaded. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P>The RCS variables are by default undefined and must be explicitly enabled in the start-up files. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following are typical variable definitions for the RCS interface:- <UL>
+<PRE>set-variable&nbsp;$rcs-file&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;RCS/%f,v&quot; 
+set-variable&nbsp;$rcs-co-com&nbsp;&nbsp;&nbsp;&quot;co&nbsp;%f&quot; 
+set-variable&nbsp;$rcs-cou-com&nbsp;&nbsp;&quot;co&nbsp;-l&nbsp;%f&quot; 
+set-variable&nbsp;$rcs-ci-com&nbsp;&nbsp;&nbsp;&quot;ci&nbsp;-u&nbsp;-m\&quot;%m\&quot;&nbsp;%f&quot; 
+</PRE></UL>
+<P>Note that the <B>$rcs-cif-com</B> variable is usually left unassigned and <B>$rcs-ci-com</B> is used by default. 
+<P>The following are typical variable definitions for the SCCS interface:- <UL>
+<PRE>set-variable&nbsp;$rcs-file&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;SCCS/s.%f&quot; 
+set-variable&nbsp;$rcs-co-com&nbsp;&nbsp;&nbsp;&quot;sccs&nbsp;get&nbsp;%f&quot; 
+set-variable&nbsp;$rcs-cou-com&nbsp;&nbsp;&quot;sccs&nbsp;edit&nbsp;%f&quot; 
+set-variable&nbsp;$rcs-ci-com&nbsp;&nbsp;&nbsp;&quot;sccs&nbsp;delget&nbsp;-y\&quot;%m\&quot;&nbsp;%f&quot; 
+set-variable&nbsp;$rcs-ci-com&nbsp;&nbsp;&nbsp;&quot;sccs&nbsp;create&nbsp;%f&quot; 
+set-variable&nbsp;$rcs-ue-com&nbsp;&nbsp;&nbsp;&quot;sccs&nbsp;unedit&nbsp;%f&quot; 
+</PRE></UL>
+<P>The following variable definitions can be used for MicroSoft's Visual Source Safe:- <UL>
+<PRE>set-variable&nbsp;$rcs-file&nbsp;&nbsp;&nbsp;&nbsp;&quot;%f&quot; 
+set-variable&nbsp;$rcs-cou-com&nbsp;&quot;ss.exe&nbsp;checkout&nbsp;%f&quot; 
+set-variable&nbsp;$rcs-co-com&nbsp;&nbsp;&quot;ss.exe&nbsp;checkout&nbsp;%f&quot; 
+set-variable&nbsp;$rcs-ci-com&nbsp;&nbsp;&quot;ss.exe&nbsp;checkin&nbsp;%f&nbsp;\&quot;-c%m\&quot;&quot; 
+</PRE></UL>
+<P>The above definitions can check a file out for edit and commit changes back. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd056.html">find-file(2)</A>, 
+<A HREF="m2cmd105.html">rcs-file(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

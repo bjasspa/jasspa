@@ -1,0 +1,276 @@
+<HTML>
+<HEAD><TITLE>MicroEmacs '02 - Macro Language Glossary</TITLE></HEAD>
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+MicroEmacs '02 - Macro Language Glossary</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>MACRO LANGUAGE GLOSSARY </B></H2>
+<UL><P>The following is a list of all of the macro language commands available in <B>MicroEmacs '02</B>. </UL>
+<H2>Functions </H2>
+<UL><P>All functions are denoted by a <B>&amp;</B> prefix as follows:- 
+<P>
+<A HREF="m4fil001.html">&amp;abs(4)</A> Absolute value of a number 
+<BR>
+<A HREF="m4fil001.html">&amp;add(4)</A> Add two numbers 
+<BR>
+<A HREF="m4fil003.html">&amp;and(4)</A> Logical AND operator 
+<BR>
+<A HREF="m4fil005.html">&amp;atoi(4)</A> ASCII to integer conversion 
+<BR>
+<A HREF="m4fil021.html">&amp;band(4)</A> Bitwise AND operator 
+<BR>
+<A HREF="m4fil005.html">&amp;bmode(4)</A> Determine buffer mode 
+<BR>
+<A HREF="m4fil021.html">&amp;bnot(4)</A> Bitwise NOT operator 
+<BR>
+<A HREF="m4fil021.html">&amp;bor(4)</A> Bitwise OR operator 
+<BR>
+<A HREF="m4fil021.html">&amp;bxor(4)</A> Bitwise XOR operator 
+<BR>
+<A HREF="m4fil002.html">&amp;cat(4)</A> Concatenate two strings together 
+<BR>
+<A HREF="m4fil026.html">&amp;cbind(4)</A> Return the command a key is bound to 
+<BR>
+<A HREF="m4fil022.html">&amp;cond(4)</A> Conditional expression operator 
+<BR>
+<A HREF="m4fil001.html">&amp;dec(4)</A> Pre-decrement variable 
+<BR>
+<A HREF="m4fil001.html">&amp;divide(4)</A> Division of two numbers 
+<BR>
+<A HREF="m4fil003.html">&amp;equal(4)</A> Numerical equivalence operator 
+<BR>
+<A HREF="m4fil005.html">&amp;exist(4)</A> Test if a variable or command exists 
+<BR>
+<A HREF="m4fil024.html">&amp;find(4)</A> Find a file on the search path 
+<BR>
+<A HREF="m4fil005.html">&amp;gmode(4)</A> Determine global mode 
+<BR>
+<A HREF="m4fil003.html">&amp;great(4)</A> Numerical greater than operator 
+<BR>
+<A HREF="m4fil001.html">&amp;inc(4)</A> Pre-increment variable 
+<BR>
+<A HREF="m4fil005.html">&amp;indirect(4)</A> Evaluate a string as a variable 
+<BR>
+<A HREF="m4fil005.html">&amp;inword(4)</A> Test for a word character 
+<BR>
+<A HREF="m4fil000.html">&amp;irep(4)</A> Case insensitive replace string in string 
+<BR>
+<A HREF="m4fil030.html">&amp;isequal(4)</A> Case insensitive String equivalence operator 
+<BR>
+<A HREF="m4fil031.html">&amp;isin(4)</A> Case insensitive test for string in string 
+<BR>
+<A HREF="m4fil005.html">&amp;itoa(4)</A> Integer to ASCII conversion 
+<BR>
+<A HREF="m4fil026.html">&amp;kbind(4)</A> Return the key a command is bound to 
+<BR>
+<A HREF="m4fil029.html">&amp;ldel(4)</A> Delete list item 
+<BR>
+<A HREF="m4fil002.html">&amp;left(4)</A> Return the left most characters from a string 
+<BR>
+<A HREF="m4fil002.html">&amp;len(4)</A> Return the length of a string 
+<BR>
+<A HREF="m4fil003.html">&amp;less(4)</A> Numerical less than operator 
+<BR>
+<A HREF="m4fil029.html">&amp;lfind(4)</A> Find list item 
+<BR>
+<A HREF="m4fil029.html">&amp;lget(4)</A> Get list item 
+<BR>
+<A HREF="m4fil029.html">&amp;linsert(4)</A> Insert list item 
+<BR>
+<A HREF="m4fil029.html">&amp;lset(4)</A> Set list item 
+<BR>
+<A HREF="m4fil002.html">&amp;mid(4)</A> Return a portion (middle) of a string 
+<BR>
+<A HREF="m4fil001.html">&amp;mod(4)</A> Modulus of two numbers 
+<BR>
+<A HREF="m4fil001.html">&amp;multiply(4)</A> Multiply two numbers 
+<BR>
+<A HREF="m4fil026.html">&amp;nbind(4)</A> Return the numerial argument of a binding 
+<BR>
+<A HREF="m4fil005.html">&amp;nbmode(4)</A> Determine named buffer mode 
+<BR>
+<A HREF="m4fil001.html">&amp;negate(4)</A> Negation of two numbers 
+<BR>
+<A HREF="m4fil003.html">&amp;not(4)</A> Logical NOT operator 
+<BR>
+<A HREF="m4fil003.html">&amp;or(4)</A> Logical OR operator 
+<BR>
+<A HREF="m4fil001.html">&amp;pdec(4)</A> Post-decrement variable 
+<BR>
+<A HREF="m4fil001.html">&amp;pinc(4)</A> Post-increment variable 
+<BR>
+<A HREF="m4fil028.html">&amp;reg(4)</A> Retrieve a registry value (with default) 
+<BR>
+<A HREF="m4fil000.html">&amp;rep(4)</A> Replace string in string 
+<BR>
+<A HREF="m4fil002.html">&amp;right(4)</A> Return the right most characters from a string 
+<BR>
+<A HREF="m4fil031.html">&amp;risin(4)</A> Recursive case insensitive test for string in string 
+<BR>
+<A HREF="m4fil031.html">&amp;rsin(4)</A> Recursively test for string in string 
+<BR>
+<A HREF="m4fil030.html">&amp;sequal(4)</A> String equivalence operator 
+<BR>
+<A HREF="m4fil023.html">&amp;set(4)</A> In-line macro variable assignment 
+<BR>
+<A HREF="m4fil030.html">&amp;sgreat(4)</A> String greater than operator 
+<BR>
+<A HREF="m4fil031.html">&amp;sin(4)</A> Test for string in string 
+<BR>
+<A HREF="m4fil030.html">&amp;sless(4)</A> String less than operator 
+<BR>
+<A HREF="m4fil002.html">&amp;slower(4)</A> Return the string converted to lower case 
+<BR>
+<A HREF="m4fil004.html">&amp;sprintf(4)</A> Formatted string construction 
+<BR>
+<A HREF="m4fil027.html">&amp;stat(4)</A> Retrieve a file statistic 
+<BR>
+<A HREF="m4fil001.html">&amp;sub(4)</A> Subtract two numbers 
+<BR>
+<A HREF="m4fil002.html">&amp;supper(4)</A> Return the string converted to upper case 
+<BR>
+<A HREF="m4fil002.html">&amp;trboth(4)</A> Return string trimmed of white chars on both sides 
+<BR>
+<A HREF="m4fil002.html">&amp;trleft(4)</A> Return string trimmed of white chars on left side 
+<BR>
+<A HREF="m4fil002.html">&amp;trright(4)</A> Return string trimmed of white chars on right side 
+<BR>
+<A HREF="m4fil024.html">&amp;which(4)</A> Find a program on the path 
+<BR>
+<A HREF="m4fil000.html">&amp;xirep(4)</A> Regex case insensitive Replace string in string 
+<BR>
+<A HREF="m4fil030.html">&amp;xisequal(4)</A> Case insensitive regex String equivalence operator 
+<BR>
+<A HREF="m4fil000.html">&amp;xrep(4)</A> Regex replace string in string 
+<BR>
+<A HREF="m4fil030.html">&amp;xsequal(4)</A> Regex string equivalence operator </UL>
+<H2>Directives </H2>
+<UL><P>The macro directives are denoted by a <B>!</B> prefix as follows:- 
+<P>
+<A HREF="m4fil010.html">!abort(4)</A> Exit macro with a FALSE status 
+<BR>
+<A HREF="m4fil013.html">!bell(4)</A> Sound audio alarm 
+<BR>
+<A HREF="m4fil011.html">!continue(4)</A> Restart a conditional loop 
+<BR>
+<A HREF="m4fil011.html">!done(4)</A> End a conditional loop 
+<BR>
+<A HREF="m4fil006.html">!ehelp(4)</A> Terminate a help definition 
+<BR>
+<A HREF="m4fil008.html">!elif(4)</A> Conditional test statement, continuation 
+<BR>
+<A HREF="m4fil008.html">!else(4)</A> Conditional alternative statement 
+<BR>
+<A HREF="m4fil006.html">!emacro(4)</A> Terminate a macro definition 
+<BR>
+<A HREF="m4fil008.html">!endif(4)</A> Conditional test termination 
+<BR>
+<A HREF="m4fil007.html">!force(4)</A> Ignore command or macro status 
+<BR>
+<A HREF="m4fil009.html">!goto(4)</A> Unconditional labeled jump 
+<BR>
+<A HREF="m4fil008.html">!if(4)</A> Conditional test statement 
+<BR>
+<A HREF="m4fil032.html">!jump(4)</A> Unconditional jump 
+<BR>
+<A HREF="m4fil025.html">!nmacro(4)</A> Ignore command or macro status 
+<BR>
+<A HREF="m4fil012.html">!repeat(4)</A> Conditional loop (post testing) 
+<BR>
+<A HREF="m4fil010.html">!return(4)</A> Exit macro with a TRUE status 
+<BR>
+<A HREF="m4fil009.html">!tgoto(4)</A> Conditional labeled jump 
+<BR>
+<A HREF="m4fil032.html">!tjump(4)</A> Unconditional relative branch 
+<BR>
+<A HREF="m4fil012.html">!until(4)</A> Test a conditional loop 
+<BR>
+<A HREF="m4fil011.html">!while(4)</A> Conditional loop </UL>
+<H2>Variables </H2>
+<UL><P>The macro variables are denoted by a <B>%</B> for user variables; <B>#</B> for a register variable and <B>@</B> for an interactive variable as follows:- 
+<P>
+<A HREF="m4fil014.html">@0(4)</A> Macro arguments (macro name) 
+<BR>
+<A HREF="m4fil014.html">@1(4)</A> Macro arguments (first argument) 
+<BR>
+<A HREF="m4fil014.html">@2(4)</A> Macro arguments (second argument) 
+<BR>
+<A HREF="m4fil014.html">@?(4)</A> Macro arguments (numeric argument given) 
+<BR>
+<A HREF="m4fil017.html">@cc(4)</A> Current command name 
+<BR>
+<A HREF="m4fil017.html">@cck(4)</A> Current command key 
+<BR>
+<A HREF="m4fil017.html">@cg(4)</A> Get a command name from the user 
+<BR>
+<A HREF="m4fil017.html">@cgk(4)</A> Get a key from the user 
+<BR>
+<A HREF="m4fil017.html">@cl(4)</A> Last command name 
+<BR>
+<A HREF="m4fil017.html">@clk(4)</A> Last command key 
+<BR>
+<A HREF="m4fil017.html">@cq(4)</A> Get a quoted command name from the user 
+<BR>
+<A HREF="m4fil017.html">@cqk(4)</A> Get a quoted key from the user 
+<BR>
+<A HREF="m4fil034.html">@fs(4)</A> Frame store variable 
+<BR>
+<A HREF="m4fil014.html">@hash(4)</A> Macro arguments (numeric argument value) 
+<BR>
+<A HREF="m4fil015.html">@mc(4)</A> Message line character input request 
+<BR>
+<A HREF="m4fil015.html">@ml(4)</A> Message line input request 
+<BR>
+<A HREF="m4fil015.html">@mn(4)</A> Message line input as normal request 
+<BR>
+<A HREF="m4fil015.html">@mna(4)</A> All input from Message line as normal 
+<BR>
+<A HREF="m4fil015.html">@mx(4)</A> Message line input by executing command 
+<BR>
+<A HREF="m4fil015.html">@mxa(4)</A> All input from Message line by executing command 
+<BR>
+<A HREF="m4fil014.html">@p(4)</A> Macro arguments (calling macro name) 
+<BR>
+<A HREF="m4fil033.html">@s0(4)</A> Last search's whole match string 
+<BR>
+<A HREF="m4fil033.html">@s1(4)</A> Last search's first group value 
+<BR>
+<A HREF="m4fil033.html">@s2(4)</A> Last search's second group value 
+<BR>
+<A HREF="m4fil016.html">@wc(4)</A> Extract character from the current buffer 
+<BR>
+<A HREF="m4fil016.html">@wl(4)</A> Extract a line from the current buffer 
+<BR>
+<A HREF="m4fil020.html">@y(4)</A> Yank buffer variable 
+<BR>
+<A HREF="m4fil018.html">BufferVariables(4)</A> Buffer variables 
+<BR>
+<A HREF="m4fil018.html">CmdVariables(4)</A> Command variables 
+<BR>
+<A HREF="m4fil017.html">CommandVariables(4)</A> Last, current and get a command key/name 
+<BR>
+<A HREF="m4fil016.html">CurrentBufferVariables(4)</A> Extract information from the current buffer 
+<BR>
+<A HREF="m4fil014.html">MacroArguments(4)</A> Arguments to macros 
+<BR>
+<A HREF="m4fil019.html">MacroNumericArguments(4)</A> Numeric arguments to macros 
+<BR>
+<A HREF="m4fil015.html">MessageLineVaraibles(4)</A> Prompt the user for input on message line 
+<BR>
+<A HREF="m4fil018.html">RegisterVariables(4)</A> Register variables 
+<BR>
+<A HREF="m4fil033.html">SearchGroups(4)</A> Last search group values 
+<BR>
+<A HREF="m4fil018.html">Variables(4)</A> User defined macro variables </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2002/01/06</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

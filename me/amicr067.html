@@ -1,0 +1,55 @@
+<HTML>
+<HEAD><TITLE>FAQ(26) - C or C++ indentation and effects; how can I turn off ?</TITLE></HEAD>
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+FAQ(26) - C or C++ indentation and effects; how can I turn off ?</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>QUESTION (26) </B></H2>
+<UL><P>C or C++ indentation and effects; how can I turn off ? </UL>
+<H2><B>ANSWER </B></H2>
+<UL><P>The 
+<A HREF="m2mod002.html">cmode(2m)</A> is supposed to make editing 'C' easier, by forcing the user to follow a preset editing convection. The layout is pretty standard, following a 4 space indent, writing either K&amp;R or standard 'Pascal' type layout, with braces aligning vertically. 
+<P>The problem most new users have is the inability of the tab key to function, or more simply do not want to be 'forced' to write in a particular style (GNU writers will probably not like this either - conversely they will be using GNU emacs !!). However the constrained layout can be configured to create most styles and does help in a project situation, whereby most of the authored code roughly adheres to the same sort of layout conventions. For C++ users then edit &quot;<TT>hkcpp.emf</TT>&quot; rather than &quot;<TT>hkc.emf</TT>&quot;. </UL>
+<H2>To turn off all automatic 'C' layout </H2>
+<UL><P>To disable ALL automatic layout then edit &quot;hkc.emf&quot; and turn &quot;cmode&quot; off. It is probably quite useful to apply &quot;indent&quot;, this will return the cursor to the same indentation column whenever a new line is inserted. i.e. in &quot;fhook-c&quot; of hkc.emf:- <UL>
+<PRE>0&nbsp;buffer-mode&nbsp;&quot;cmode&quot; 
+1&nbsp;buffer-mode&nbsp;&quot;indent&quot; 
+</PRE></UL>
+<P>If you want proper tabs then you may also want to add:- <UL>
+<PRE>0&nbsp;buffer-mode&nbsp;&quot;tab&quot; 
+</PRE></UL>
+<P>This inserts the &lt;tab&gt; character into the text, rather than translating to spaces. Alternatively disable <B>tab</B> mode for all file type using 
+<A HREF="m3osd000.html">user-setup(3)</A> i.e. 
+<UL><P><B>Help</B> -&gt; <B>User Setup</B> -&gt; <B>General</B> -&gt; <B>Tab</B> </UL></UL>
+<H2>To re-enable the &lt;tab&gt; key </H2>
+<UL><P>To retain the 'C' layout aid, but re-enable the tab key operation then disable the <B>Tab To Indent</B> option in 
+<A HREF="m3osd000.html">user-setup(3)</A> i.e. 
+<UL><P><B>Help</B> -&gt; <B>User Setup</B> -&gt; <B>General</B> -&gt; <B>Tab To Indent</B> </UL>
+<P>This enables the use of the TAB key in all column positions with the exception of column 0. A &lt;tab&gt; in Column 0 will still enable the automatic line re-formatting. 
+<P>If you want real &lt;Tabs&gt; then disable the <B>tab</B> mode using 
+<A HREF="m3osd000.html">user-setup(3)</A> i.e. 
+<UL><P><B>Help</B> -&gt; <B>User Setup</B> -&gt; <B>General</B> -&gt; <B>Tab</B> </UL></UL>
+<H2>To change the 'C' Indentation Layout </H2>
+<UL><P>The 'C' layout indentation is controlled from the system variables:- 
+<UL><P>
+<A HREF="m5var014.html">$c-case(5)</A>, 
+<A HREF="m5var015.html">$c-contcomm(5)</A>, 
+<A HREF="m5var018.html">$c-continue(5)</A>, 
+<A HREF="m5var016.html">$c-margin(5)</A>, 
+<A HREF="m5var013.html">$c-brace(5)</A>, 
+<A HREF="m5var017.html">$c-statement(5)</A>. </UL>
+<P>These settings may be defined in your &lt;user&gt;.emf to change the default layout. Refer to the on-line documentation for details. 
+<P>
+<A HREF="amicr040.html">[FAQ Index]</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

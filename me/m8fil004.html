@@ -1,0 +1,76 @@
+<HTML>
+<HEAD><TITLE>erf(8)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+erf(8)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>erf - MicroEmacs registry file </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>; Comment to the end of the line</I> 
+<BR><I>&lt;command&gt;</I> ::= <B>&quot;</B><I>&lt;identifier&gt;</I><B>&quot;</B> [ <B>=</B> <B>&quot;</B><I>&lt;string&gt;</I><B>&quot;</B> ][ <B>{</B> <I>&lt;command&gt;</I> <B>}</B> ] * </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>MicroEmacs '02 registry files are ASCII text files, given the file extension <B>.erf</B>. The registry file is a simple syntax that allows an <I>identifier</I> to be associated with a <I>string</I>. The <I>identifiers</I> are unique and allow a <I>string</I> value to be found when a search for a <I>identifier</I> is made. The <I>string</I> component is optional. 
+<P>The syntax allows the <I>identifier</I>'s to be hierarchically nested, children of the <I>identifier</I> node are enclosed in a set of curly braces <B>{</B> ... <B>}</B>. The enclosure itself comprises a number of <I>identifiers</I>, which may have their own enclosures, and so on. 
+<P>The backslash character `<TT>\</TT>' is the escape character, the following sequences of escape character are recognized:- 
+<UL><P><TT>\\</TT> - Literal backslash 
+<BR><TT>\&quot;</TT> - Double quote (used within a quoted string) 
+<BR><TT>\n</TT> - New line character. 
+<BR><TT>\t</TT> - Tab character. 
+</UL><P>The semi-colon character `<TT>;</TT>' introduces a comment which exists to the end of the line. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following is an example of a registry file:- <UL>
+<PRE>;&nbsp;-!-&nbsp;erf&nbsp;-!- 
+;&nbsp;Comment&nbsp;on&nbsp;this&nbsp;line 
+&quot;dos&quot; 
+{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;file-ignore&quot;&nbsp;=&nbsp;&quot;~&nbsp;./&nbsp;.o&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;font&quot;&nbsp;=&nbsp;&quot;85&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;mail-dir&quot;&nbsp;=&nbsp;&quot;c:/mail/&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;mail-send&quot;&nbsp;=&nbsp;&quot;echo&nbsp;from&nbsp;\&quot;%f\&quot;&nbsp;file&nbsp;\&quot;%o\&quot;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;mail-src&quot;&nbsp;=&nbsp;&quot;c:/mail/jon&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;nested&quot;=&quot;value&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;foo&quot;=&quot;bar&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;} 
+} 
+</PRE></UL>
+<P>The history file <I>username.erf</I> is a good example of the use of the registry. This file retains historical session information in The history registry file is automatically written at the end of a editing session when the editor is closed down (or may be saved explicitly using 
+<A HREF="m2cmd144.html">save-history(2)</A>). 
+<P>Every user should have their own personal history file in their personal MicroEmacs directory. The history file is located from the MicroEmacs '02 search path defined by 
+<A HREF="m5var057.html">$MEPATH(5)</A>, and is named by the environment variable 
+<A HREF="m5var076.html">$LOGNAME(5)</A>. </UL>
+<H2><B>NOTES </B></H2>
+<UL><UL><P>
+<LI>The registry files are not currently written with a backup. 
+<LI>Special care should be taken when editing registry files when they are loaded into MicroEmacs. It is recommended that the registry file is not loaded as a registry item when editing the registry text file. </UL><P>To edit the history registry file within MicroEmacs then the following sequence of steps should be followed:- <UL><P>
+<LI>Save the current history 
+<A HREF="m2cmd144.html">save-history(2)</A>. 
+<LI>Load the history registry file <I>username</I>.erf. 
+<LI>Edit the file. 
+<LI>Save edits back to the file. 
+<LI>Re-install the history 
+<A HREF="m2cmd107.html">read-history(2)</A>. This flushes the current session history and restores it from the file. The new edits should now be in the registry. 
+<LI>Examine the loaded registry using 
+<A HREF="m2cmd025.html">list-registry(2)</A>. </UL></UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd025.html">list-registry(2)</A>, 
+<A HREF="m2cmd107.html">read-history(2)</A>, 
+<A HREF="m2cmd157.html">read-registry(2)</A>, 
+<A HREF="m2cmd144.html">save-history(2)</A>, 
+<A HREF="m2cmd144.html">save-history(2)</A>, 
+<A HREF="m5var057.html">$MEPATH(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

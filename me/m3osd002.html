@@ -1,0 +1,106 @@
+<HTML>
+<HEAD><TITLE>spell-buffer(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+spell-buffer(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>spell-buffer - Spell check the current buffer 
+<BR>spell-word - Spell check a single word 
+<BR>spell-edit-word - Edits a spell word entry 
+<BR>find-word - Find a using spelling dictionaries </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>spell-buffer</B> 
+<BR><I>n</I> <B>spell-word</B> [&quot;<I>word</I>&quot;] (<B>esc $</B>)&nbsp; 
+<BR><B>spell-edit-word</B> [&quot;<I>word</I>&quot;] 
+<BR><B>find-word</B> [&quot;<I>word</I>&quot;] </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>MicroEmacs '02 provides an integrated spell checker with the following features:- <UL><P>
+<LI>Different languages. 
+<LI>Dialog control of the speller. 
+<LI>Best guess capability. 
+<LI><I>Replace</I> and <I>Replace all</I>, <I>Ignore</I> and <I>Ignore All</I> 
+<LI>Undo capability. 
+<LI>Adding new words and endings to speller. 
+<LI>Auto correct of commonly occurring mistakes. 
+<LI>Word finder, allows words to be searched with wild cards. </UL><P><B>spell-buffer</B> spell checks the current buffer, from the current position, to the end of the buffer. On invocation, an 
+<A HREF="m2cmd066.html">osd(2)</A> dialog is opened and any corrections are made through this interface. If an error dialog opens instead the current language is not setup, please see the Language setting in 
+<A HREF="m3osd000.html">user-setup(3)</A> and 
+<A HREF="m2nar008.html">Locale Support</A>. 
+<P>The dialog provides the user with an interface from which a new spelling may be selected, in addition new words may be added to the spelling dictionary. The dialog entries are defined as follows:- 
+<P><B>Word</B> 
+<BR><UL>The <B>word</B> entry contains the erroneous word, this is presented in a text dialog box which may be manually edited to correct. If the word is manually corrected, then it is spell checked prior to insertion, and a new guess list is created. The user may elect to replace the word, take one of the suggestions or re-edit the misspelled word. </UL>
+<P><B>Meaning</B> 
+<BR><UL>The meaning button provides a convenient interface to 
+<A HREF="m3osd009.html">describe-word(3)</A> for looking up the meaning of the current word. The <B>Insert</B> button within the describe-word dialog will replace the current word in the spell-buffer. </UL>
+<P><B>Suggestions</B> 
+<BR><UL>The suggestions entry contains a list of suggestions as to the correct spelling of the word. The list is ranked in order of the best match, typically the misspelled word appears at (or near) the top of the list, unless the word is unknown or there are gross errors in the spelling. Selecting the word in the list with a single click of the mouse selects the word as the replacement, the actual replacement is performed by the <B>Replace</B> or <B>Replace All</B> buttons. Alternatively, double selecting a guess word replaces the word. </UL>
+<P><B>Language</B> 
+<BR><UL>The <B>language</B> entry allows the user to select the current spelling language. The new language is chosen from the dialog box. The language may be changed at any time during the spell operation and is effective immediately. The <B>Ext</B> languages are extended dictionaries that contain additional words, it is recommended that all spelling is performed with the extended dictionaries (where available). </UL>
+<P><B>Replace</B> 
+<BR><UL>The <B>replace</B> button is activated when a new word has been edited or selected as a candidate for replacement. Selecting <B>replace</B> modifies the erroneous word in the buffer with the newly selected word. </UL>
+<P><B>Replace All</B> 
+<BR><UL>The <B>Replace All</B> button is similar to the <B>Replace</B> button, except that it automatically replaces any subsequent occurrences of the erroneous word with the newly selected word. The replacement words are retained for the MicroEmacs edit session and are lost when the editor is closed. </UL>
+<P><B>Ignore</B> 
+<BR><UL>The <B>ignore</B> button requests that the speller ignore the erroneous word and continue to spell the buffer. </UL>
+<P><B>Ignore All</B> 
+<BR><UL>The <B>Ignore All</B> button is similar to the <B>Ingore</B> button, except that it automatically ignores the erroneous word thereafter. The ignore words are retained for the MicroEmacs edit session and are lost when the editor is closed. </UL>
+<P><B>Add</B> 
+<BR><UL><B>Add</B> adds the current erroneous word to the dictionary, thereafter the word is recognized as a valid word. <B>Add</B> should only be used for words which have no derivatives, it is generally better to add a new word through the <B>Edit</B> interface where a new <I>base</I> word may be specified with it's derivatives. </UL>
+<P><B>Edit</B> 
+<BR><UL>The <B>Edit</B> button executes <B>spell-edit-word</B> giving the current erroneous word. This allows new words and auto-corrections to be defined as well as existing words to be altered, see full description below. </UL>
+<P><B>Find</B> 
+<BR><UL>The <B>Find</B> button executes <B>find-word</B> giving the current word as a starting seed. This allows the user to search for the word using a simple search criteria, see full description below. </UL>
+<P><B>Undo Last</B> 
+<BR><UL>The <B>undo Last</B> button restores the user to the previous spelling so that it may be re-entered, any replacement text that was made is restored to it's original spelling. </UL>
+<P><B>Exit</B> 
+<BR><UL>Exits the speller and returns the user to the buffer. 
+</UL><P><B>spell-word</B> checks a single word which is either supplied by the user, or if an argument is given, the word under (or to the left of) the cursor position. If the word is correct, a simple message-line print-out is given, otherwise the main spell <B>osd</B> dialog is opened and the user may check the spelling within the context of the spell dialog as described above. 
+<P>The default key binding of &quot;<TT>esc $</TT>&quot; supplies an argument forcing <B>spell-word</B> to check the current buffer word. <B>spell-word</B> is often used to check the spelling of a word outside of the context of the editor (i.e. when working on paper, or when doing at that prize crossword !!). 
+<P><B>spell-edit-word</B> allows words in dictionaries to be altered as well as new words and auto-corrections to be defined. On invocation, an <B>osd</B> dialog is opened and changes are made through this interface, defined as follows:- 
+<P><B>Word</B> 
+<BR><UL>The <B>word</B> entry to be changed or added. If <B>spell-edit-word</B> was executed via spell-buffer <B>Edit</B> button, this will be set to the current word. </UL>
+<P><B>No word set</B> 
+<BR><UL>The word entry is empty, most of the functionallity will not be available until a word is entered. </UL>
+<P><B>New Word</B> 
+<BR><UL>To add a new word, the derivatives of the new word should be selected using the prefix and suffix options. Note that not all derivatives are listed, only one example derivative of each 
+<A HREF="m2cmd138.html">spell rule</A> is given. </UL>
+<UL><P><B>BE CAREFUL WITH THE CASE OF THE BASE WORD:</B> new words that are entered are case sensitive, as a general rule the <I>word</I> in the <B>Word</B> text box should be edited to it's base form and should be presented in lower case characters (unless it is a proper name, in which case it should be capitalized, or is an abbreviation or acronym when it might be upper case). </UL>
+<UL><P>When the appropriate derivatives of the new word have been selected, it may be added to the dictionary using the <B>Add</B> button. This adds the word to the users personal dictionary. Please note that if there are numerous standard words missing then check that an <I>extended</I> dictionary (designated by <B>Ext</B> in the language) is being used, the extended dictionaries more than double the repertoire of words available. </UL>
+<UL><P>Words added to the dictionary may be subsequently removed using the <B>Delete</B> button, typing the existing word in the <B>Word</B> entry and selecting <B>Delete</B> button removes the existing word. </UL>
+<P><B>Auto-Correct</B> 
+<BR><UL>Selection of the <B>Auto-Correct</B> button allows a replacement word to be entered in the <B>To</B> text entry. Selecting <B>Add</B> adds the automatic correction to the speller. Thereafter, whenever the erroneous word is encountered the replacement word is always used to replace it, without user intervention. </UL>
+<UL><P>Entering an exiting <I>auto-correct</I> word into the dialog and selecting <B>Delete</B> removes an existing auto-correct entry. </UL>
+<P><B>Exit</B> 
+<BR><UL>Exits the <B>Edit</B> dialog. 
+</UL><P><B>find-word</B> opens the word finder dialog. This allows the user to search for a word using a simple search criteria. (This is ideal for cheating at crosswords !!). The word to be searched for is entered into the <B>Word</B> <B>Mask</B> and may use wild cards <B>*</B> to represent any number of characters, <B>?</B> to represent an unknown character and <B>[</B>..<B>]</B> for a range of characters. 
+<P>For example, searching for <TT>t?e?e</TT> presents the list <I>theme</I>, <I>there</I> and <I>these</I>. Searching for <TT>t*n</TT> lists all of the words beginning with <TT>t</TT> and ending in <TT>n</TT>. See 
+<A HREF="m5var067.html">$find-words(5)</A> for a full discription of the format used by search engine. 
+<P>The words that match are returned in the scrolling dialog, and may be selected with the mouse (or cursor keys). The <B>Insert</B> button inserts the selected word into the current buffer or into the <B>Word</B> entry if executed from the <B>spell-buffer</B> dialog. Note that the list presented is limited to 200 words, selecting <B>next</B> gets the next 200 words, and so on. The <B>Exit</B> button exits the dialog. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P>The words added to the speller during a MicroEmacs session are saved when the editor is closed. The user is prompted to save the dictionary, if the dictionary is not saved then any words added are lost. 
+<P>All <I>ignore</I> words accumulated during a spell session are lost when the editor is closed. In order to retain <I>ignore</I> words, it is suggested that they are added to the personal dictionary rather than be ignored. 
+<P>The personal spelling dictionary is typically called <I>&lt;user&gt;</I><I>&lt;type&gt;</I>.edf, and is stored in the default user location. The dictionary names are specified in the 
+<A HREF="m3osd000.html">user-setup(3)</A> dialog. 
+<P><B>find-word</B> may claim to have found more words than are actually listed. The use of derivatives in the spell algorithm allows a single word to be present several times. <B>find-word</B> counts each occurrence but it is only listed once. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m3osd000.html">user-setup(3)</A>, 
+<A HREF="m2nar008.html">Locale Support</A>, 
+<A HREF="m2cmd066.html">osd(2)</A>, 
+<A HREF="m2cmd125.html">spell(2)</A>, 
+<A HREF="m3osd009.html">describe-word(3)</A>, 
+<A HREF="m5var067.html">$find-words(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

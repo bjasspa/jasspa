@@ -1,0 +1,83 @@
+<HTML>
+<HEAD><TITLE>scroll-left(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+scroll-left(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>scroll-left - Move the window left (scrolling) 
+<BR>scroll-right - Move the window right (scrolling) </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>scroll-left</B> (<B>C-x&nbsp;&lt;</B>)&nbsp; 
+<BR><I>n</I> <B>scroll-right</B> (<B>C-x&nbsp;&gt;</B>)&nbsp; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>scroll-left</B> moves the window in current buffer left by 1 screen width. If an argument <I>n</I> is supplied then the resolution of movement is specified in characters relative to the current displacement. Moving the window in the current buffer left by <I>n</I> characters (that is if the current left-hand margin of the screen is column 0, the left hand margin becomes column <I>n</I>). 
+<P><B>scroll-right</B> moves the window in current buffer right by 1 screen width. If an argument <I>n</I> is supplied then the resolution of movement is specified in characters relative to the current displacement. 
+<P>The ends of the lines of a scrolled screen are delimited with a dollar (<B>$</B>) character indicating that the text continues. When no scroll is in effect the left hand margin of the screen does not show the <B>$</B> symbol. i.e. The line <TT>This text is scrolled on this line</TT> with a current scroll offset of 2 in a 22 column window would appear as follows: <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;22 
+|&lt;-------------------&gt;| 
+
+|$s&nbsp;text&nbsp;is&nbsp;scrolled&nbsp;$| 
+</PRE></UL>
+<P>The amount of scroll (<I>n</I>) is effectively unlimited, it is possible to scroll all of the text in a buffer out of the window, when only <B>$</B>'s appear in the left margin, in the last highlighting color of the line (blank lines always remain blank and are not delimited with a <B>$</B>). Text on the current line is handled according to the value of 
+<A HREF="m5var027.html">$scroll(5)</A> as follows: 
+<P><B>$scroll 0</B> 
+<BR><UL>The current line ONLY is scrolled (about the current scroll position) to enable the current buffers cursor position to be viewed. To enable the user to determine where the current line is in relation to the scrolled lines then the first character of the current line is interpreted as follows:- 
+<P><B>All of user text appears</B> <UL>
+<PRE>|$f&nbsp;line&nbsp;of&nbsp;te$| 
+|At&nbsp;start&nbsp;of&nbsp;l$| 
+|$f&nbsp;line&nbsp;of&nbsp;te$| 
+</PRE></UL>
+<UL><P>Surrounding lines commence with &quot;$&quot; indicates at the start of the line. </UL>
+<P><B>$ in column 0</B> <UL>
+<PRE>|$f&nbsp;line&nbsp;of&nbsp;te$| 
+|$f&nbsp;line&nbsp;of&nbsp;te$| 
+|$f&nbsp;line&nbsp;of&nbsp;te$| 
+</PRE></UL>
+<UL><P>Text column is the same as the surrounding text i.e. the line and window scroll are the same. </UL>
+<P><B>&gt; Left of scroll position</B> <UL>
+<PRE>|$f&nbsp;line&nbsp;of&nbsp;te$| 
+|&gt;f&nbsp;line&nbsp;of&nbsp;te$| 
+|$f&nbsp;line&nbsp;of&nbsp;te$| 
+</PRE></UL>
+<UL><P>The current line is to the left of the scrolled position. 
+<A HREF="m2cmd010.html">forward-char</A> (i.e. interpret as <TT>--&gt;</TT> indicating the direction of travel) moves the cursor, and therefore the line, towards the natural scroll position (<B>$</B> in column). </UL>
+<P><B>&lt; Right of scroll position</B> <UL>
+<PRE>|$f&nbsp;line&nbsp;of&nbsp;te$| 
+|&lt;f&nbsp;line&nbsp;of&nbsp;te$| 
+|$f&nbsp;line&nbsp;of&nbsp;te$| 
+</PRE></UL>
+<UL><P>The current line is to the right of the scrolled position. 
+<A HREF="m2cmd010.html">backward-char</A> (i.e. interpret as <TT>&lt;--</TT> indicating the direction of travel) moves the cursor, and therefore the line, towards the natural scroll position (<B>$</B> in column). </UL></UL>
+<P><B>$scroll 1</B> 
+<BR><UL>The position of the cursor on the line determines the scrolled position. In this case all lines in the window are scrolled to ensure that the cursor is always visible. This mode is only useful when dealing with large blocks of text whose line lengths do not vary. </UL></UL>
+<H2><B>NOTES </B></H2>
+<UL><P>The scrolling is an attribute of the WINDOW and not the BUFFER. If the window is closed, or contents swapped to a different buffer then the scroll setting is reset for the next buffer. A return to the previous buffer does not restore the scroll setting. The only case where scrolling is inherited is when a window is split (see 
+<A HREF="m2cmd128.html">split-window-vertically(2)</A>). 
+<P>When binding <B>scroll-left</B> to the keyboard then it is important to note that when no argument is specified the resolution is <I>screen-width</I>'s. A key binding would operate on character multiples, hence the command should be bound with a numeric argument to perform the perform the keyboard action. e.g. <UL>
+<PRE>1&nbsp;global-bind-key&nbsp;scroll-left&nbsp;&nbsp;&quot;A-left&quot; 
+1&nbsp;global-bind-key&nbsp;scroll-right&nbsp;&quot;A-right&quot; 
+</PRE></UL>
+<P>To move 5 columns on a key stroke, for an accelerated scroll, then the binding may be re-written as:- <UL>
+<PRE>5&nbsp;global-bind-key&nbsp;scroll-left&nbsp;&nbsp;&quot;A-left&quot; 
+5&nbsp;global-bind-key&nbsp;scroll-right&nbsp;&quot;A-right&quot; 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var027.html">$scroll(5)</A>, 
+<A HREF="m2cmd087.html">scroll-up(2)</A>, 
+<A HREF="m2cmd087.html">scroll-down(2)</A>, 
+<A HREF="m5var081.html">$window-x-scroll(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

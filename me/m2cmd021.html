@@ -1,0 +1,49 @@
+<HTML>
+<HEAD><TITLE>set-scroll-with-mouse(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+set-scroll-with-mouse(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>set-scroll-with-mouse - Scroll the window with the mouse </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>set-scroll-with-mouse</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The <B>set-scroll-with-mouse</B> command controls the scrolling of a window by the mouse. This is a two stage process, the first stage locks the cursor to the mouse, the second stage scrolls the screen. 
+<P>The first stage (locking) is performed when the mouse is located on the scroll-box (typically when the left button is depressed i.e. <B>pick-mouse-1</B>). <B>set-scroll-with-mouse</B> is invoked with an argument <I>n</I>, this causes the mouse position to be recorded ready for a scroll. Depending on the scroll method, the blank lines present at the end of the buffer are scrolled off the screen. 
+<P>Subsequent calls to the <B>set-scroll-with-mouse</B> are made with no argument, the window is scrolled by the relative displacement of the mouse from it's locked position, motion is limited at the end of the scrolling region. Scrolling is proportional to the buffer length. The command is typically bound to <B>move-mouse-1</B> which results in an update whenever the mouse is moved by the user. 
+<P>When the button is released <B>drop-mouse-1</B> then the scrolling is stopped by unbinding <B>move-mouse-1</B>, thereby breaking the binding between the mouse moving and the scroll command. 
+<P>The scrolling utilizes fractional mouse positional information (i.e. units smaller than a character cell), if available, resulting in a smoother scrolling motion. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following example shows how the command is used. <UL>
+<PRE>0&nbsp;define-macro&nbsp;mouse-scroll-pick 
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;set-scroll-with-mouse&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Lock&nbsp;mouse&nbsp;position&nbsp;to&nbsp;scroller 
+&nbsp;&nbsp;&nbsp;&nbsp;global-bind-key&nbsp;set-scroll-with-mouse&nbsp;&quot;mouse-move-1&quot; 
+!emacro 
+
+0&nbsp;define-macro&nbsp;mouse-scroll-drop 
+&nbsp;&nbsp;&nbsp;&nbsp;global-unbind-key&nbsp;&quot;mouse-move-1&quot; 
+!emacro 
+
+global-bind-key&nbsp;mouse-scroll-pick&nbsp;&quot;mouse-pick-1&quot; 
+global-bind-key&nbsp;mouse-scroll-drop&nbsp;&quot;mouse-drop-1&quot; 
+</PRE></UL>
+<P>When the left button is 'picked', <B>mouse-scroll-pick</B> lock the cursor to the mouse and binds mouse movement to <B>set-scroll-with-mouse</B> so that whenever the mouse is moved the cursor will be repositioned appropriately. When the button is 'dropped', the mouse movement is unbound so that the cursor will no longer be locked to the mouse. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var038.html">$mouse-pos(5)</A>, 
+<A HREF="m5var055.html">$scroll-bar(5)</A>, 
+<A HREF="m2cmd119.html">set-cursor-to-mouse(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

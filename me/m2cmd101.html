@@ -1,0 +1,139 @@
+<HTML>
+<HEAD><TITLE>print-buffer(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+print-buffer(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>print-buffer - Print buffer, with formatting 
+<BR>print-region - Print region, with formatting </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>print-buffer</B> 
+<BR><I>n</I> <B>print-region</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>print-buffer</B> and <B>print-region</B> print the current buffer or region, respectively, using high-lighting where appropriate. The hilighting assigned to a buffer is defined by the variable 
+<A HREF="m5var004.html">$buffer-hilight(5)</A> the print scheme is defined with 
+<A HREF="m2cmd129.html">print-scheme(2)</A>, the 
+<A HREF="m3osd005.html">scheme-editor(3)</A> should be used to create printer schemes. 
+<P>The printing is typically configured using 
+<A HREF="m3osd012.html">print-setup(3)</A>, which can be found in the main menu under <B>File-&gt;Printer Setup</B>. 
+<P>The numerical argument <I>n</I> is generally used for macro development, it changes the default behaviour of these commands as follows: 
+<P><B>-2</B> 
+<BR><UL>Configures the printer and, on win32 platforms, opens a Windows printing dialog box enabling the user to configure the printer, font and page layout. The configuration is stored in the &quot;<TT>/print</TT>&quot; registry. </UL>
+<P><B>-1</B> 
+<BR><UL>Configures the printer, the configuration is stored in the &quot;<TT>/print</TT>&quot; registry. </UL>
+<P><B> </B> 
+<BR><UL>Configures the printer and, on win32 platforms, opens a Windows printing dialog box enabling the user to configure the printer, font and page layout. The required printing is then performed. </UL>
+<P><B> </B> 
+<BR><UL>Configures the printer and performs the required printing. </UL></UL>
+<H2>Printing Process </H2>
+<UL><P>When either of these commands are executed the macro file <TT>print.emf</TT> is executed to configure the printer (in a same vain as <TT>me.emf</TT> is executed to configure MicroEmacs for general usage). After the macro file has been executed the &quot;<TT>/print</TT>&quot; registry must contain the information required for printing. Following is a list of registry entries and their use: 
+<P><B>flags</B> (<I>integer</I>) 
+<BR><UL>The setup flags, defined as a bit mask as follows:- </UL>
+<UL><P><TT>0x0f</TT> - Destination of the printer output. 
+<BR><UL><TT>0x00</TT> - Buffer only. 
+<BR><TT>0x01</TT> - Internal queue. 
+<BR><TT>0x02</TT> - To file only. 
+<BR><TT>0x03</TT> - To file and command line. 
+<BR></UL><TT>0x01</TT> - Bit set, header enabled. 
+<BR><TT>0x20</TT> - Bit set, footer 
+<BR><TT>0x04</TT> - Bit set, enable line numbers. 
+<BR><TT>0x08</TT> - Bit set, Enable truncated line character (typically \). </UL>
+<P><B>paper-x</B> (<I>integer</I>) 
+<BR><UL>Paper page width in character cells. </UL>
+<P><B>paper-y</B> (<I>integer</I>) 
+<BR><UL>Paper page depth in character cells. </UL>
+<P><B>page-x</B> (<I>integer</I>) 
+<BR><UL>The logical page width in character cells. </UL>
+<P><B>page-y</B> (<I>integer</I>) 
+<BR><UL>The logical paper depth in character cells. </UL>
+<P><B>specifier-x</B> (<I>integer</I>) 
+<BR><UL>Windows only. </UL>
+<P><B>specifier-y</B> (<I>integer</I>) 
+<BR><UL>Windows only. </UL>
+<P><B>font-face</B> (<I>string</I>) 
+<BR><UL>The name of the font face (Windows only). </UL>
+<P><B>rows</B> (<I>integer</I>) 
+<BR><UL>Number rows per output page. </UL>
+<P><B>cols</B> (<I>integer</I>) 
+<BR><UL>Number of columns per output page. </UL>
+<P><B>mtop</B> (<I>integer</I>) 
+<BR><UL>The size of the top margin in character cells (i.e. where printing may commence). </UL>
+<P><B>mbottom</B> (<I>integer</I>) 
+<BR><UL>The size of the bottom margin in character cells (i.e. where printing stops). </UL>
+<P><B>mleft</B> (<I>integer</I>) 
+<BR><UL>The number of characters of space forming the left magin of the physical page. </UL>
+<P><B>mright</B> (<I>integer</I>) 
+<BR><UL>The number of characters of space forming the right magin of the physical page. </UL>
+<P><B>header</B> (<I>string</I>) 
+<BR><UL>The ASCII text string for the header line. </UL>
+<P><B>footer</B> (<I>string</I>) 
+<BR><UL>The ASCII text string for the footer line. </UL>
+<P><B>port</B> (<I>string</I>) 
+<BR><UL>Printer port identity. </UL>
+<P><B>buffer</B> (<I>string</I>) 
+<BR><UL>The name of the destination buffer. </UL>
+<P><B>file</B> (<I>string</I>) 
+<BR><UL>The name of the destination file. </UL>
+<P><B>strip</B> (<I>integer</I>) 
+<BR><UL>If <I>integer</I> value strip spaces from eol. </UL>
+<P><B>device</B> (<I>string</I>) 
+<BR><UL>The ASCII name of the device (i.e. <TT>/dev/lp</TT>). </UL>
+<P><B>eof</B> (<I>string</I>) 
+<BR><UL>The printer codes for the end of the file, may be the empty string if not reqired. </UL>
+<P><B>eol</B> (<I>string</I>) 
+<BR><UL>The printer codes for the end of line character. </UL>
+<P><B>eop</B> (<I>string</I>) 
+<BR><UL>The printer codes for the end of a page. </UL>
+<P><B>sof</B> (<I>string</I>) 
+<BR><UL>The printer codes for the start of a file, may be the empty string if not required. </UL>
+<P><B>sol</B> (<I>string</I>) 
+<BR><UL>The printer codes for the start of a line. </UL>
+<P><B>sop</B> (<I>string</I>) 
+<BR><UL>The printer codes for the start of a page. </UL>
+<P><B>scont</B> (<I>string</I>) 
+<BR><UL>The printer codes for a start of row continuation. </UL>
+<P><B>econt</B> (<I>string</I>) 
+<BR><UL>The printer codes for the end of row continuation. </UL>
+<P><B>hsep</B> (<I>string</I>) 
+<BR><UL>The horizonal logical page separator character. </UL>
+<P><B>vsep</B> (<I>string</I>) 
+<BR><UL>The vertical logical page separator character. </UL>
+<P><B>wsep</B> (<I>string</I>) 
+<BR><UL>The depth in character cells of the vertical logical page separator. </UL>
+<P><B>xsep</B> (<I>string</I>) 
+<BR><UL>The width in character cells of the logical horizontal separator. </UL>
+<P><B>bg-color</B> (<I>integer</I>) 
+<BR><UL>The background colour number. </UL>
+<P><B>command-line</B> (<I>string</I>) 
+<BR><UL>The command line to perform a print operation. </UL></UL>
+<H2>Printing Under Microsoft Windows Environments </H2>
+<UL><P>Printing under Microsoft Windows Environments automatically invokes a dialog box to assign and configure the printer page characteristics. The dialog box allows the printer to be selected, enables line numbering, headers and footers. 
+<P>The dialog allows the user to select the font size, by defining the number of characters that appear on a logical page, and the number of logical pages that appear on a physical page. Selecting the logical and physical page characteristics determine the size of the font. For dense pages with a small typeface then a point size of 6 is appropriate. For clarity, a larger typeface of 10 or 12 points is advised. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P>The last printer configuration selected by the user is held in the registry file &quot;<TT>print.erf</TT>&quot; which is loaded into the <I>/print-history</I> registry section. This feature is implemented in the macro file <TT>print.emf</TT>. </UL>
+<H2><B>BUGS </B></H2>
+<UL><P>Landscape printing under Microsoft Windows environments is temperamental. 
+<P>Font selection under Microsoft Windows environments does not always determine the most appropriate font size. 
+<P>The printer interface does not support native postscript generation. (In progress). </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m3osd012.html">print-setup(3)</A>, 
+<A HREF="m3osd005.html">scheme-editor(3)</A>, 
+<A HREF="m2cmd129.html">print-scheme(2)</A>, 
+<A HREF="m2cmd069.html">hilight(2)</A>, 
+<A HREF="m3fcl008.html">printall(3f)</A>, 
+<A HREF="m5var004.html">$buffer-hilight(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,39 @@
+<HTML>
+<HEAD><TITLE>compile(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+compile(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>compile - Start a compilation process </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>compile</B> &quot;<I>compile-command</I>&quot; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>compile</B> gets and executes the compile command using a pipe execution (incremental pipe on UNIX platforms), loading the output into a buffer called &quot;<B>*compile*</B>&quot;, with go to error parsing using the command 
+<A HREF="m2cmd058.html">get-next-line(2)</A>. The default compile execution is set by variable 
+<A HREF="m5var039.html">%compile-com(5)</A>, the error parsing is setup using the command 
+<A HREF="m2cmd007.html">add-next-line(2)</A>. 
+<P>Before the compile command is executed 
+<A HREF="m2cmd150.html">save-some-buffers(2)</A> is executed to allow the user to ensure that all relevant buffers are saved. If an argument is given to compile then it is passed on to this command, so if an argument of 0 is given, all buffers are automatically saved. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P><B>compile</B> is a macro defined in <TT>tools.emf</TT>. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd007.html">add-next-line(2)</A>, 
+<A HREF="m5var039.html">%compile-com(5)</A>, 
+<A HREF="m2cmd058.html">get-next-line(2)</A>, 
+<A HREF="m2cmd150.html">save-some-buffers(2)</A>, 
+<A HREF="m3mac001.html">grep(3)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,73 @@
+<HTML>
+<HEAD><TITLE>spell(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+spell(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>spell - Spell checker service provider </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>spell</B> [&quot;<I>word</I>&quot;] [&quot;<I>rules</I>&quot;] [&quot;<I>correction</I>&quot;] [&quot;<I>rule</I>&quot;] </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>spell</B> is a low level command which provides spell checking capabilities for MicroEmacs '02, it is not designed to be used directly. The action of <B>spell</B> depends on the argument given, which is a bitwise flag defined as follows:- 
+<P><B>0x001</B> 
+<BR><UL>If set then gets the input word from the user, i.e. &quot;<I>word</I>&quot; must be supplied. Otherwise the word input is taken from the current buffer. </UL>
+<P><B>0x002</B> 
+<BR><UL>If set then keeps getting words from the current buffer until either the end of the buffer is reached or an error is found. If the end of the buffer is reached then the command succeeds setting 
+<A HREF="m5var041.html">$result(5)</A> to the value &quot;<I>F</I>&quot;. This bit is ignored if bit 0x001 is set. <B>spell</B> sets the current show-region to enclose the problematical word and the command 
+<A HREF="m2cmd132.html">show-region(2)</A> can be used to move around the word. </UL>
+<P><B>0x004</B> 
+<BR><UL>Adds the given word to a dictionary determined by the state of bit 0x008. If the word is flagged as erroneous (see bit 0x010) then a &quot;<I>correction</I>&quot; word must be supplied, otherwise a list of &quot;<I>rules</I>&quot; which can be applied to the word must be given, this list can be empty. Note that if the word is not flagged as erroneous and it already exists in the dictionary, the word is not removed, instead a combined rule list is created. </UL>
+<P><B>0x008</B> 
+<BR><UL>When set flags that word additions (bit 0x004) and deletions (bit 0x200) should be made to the ignore dictionary. Otherwise word additions are made the last added dictionary and deletions are made to all main dictionaries. </UL>
+<P><B>0x010</B> 
+<BR><UL>When set flags that the given word is erroneous, used solely by word additions to create auto-corrections. </UL>
+<P><B>0x020</B> 
+<BR><UL>Returns a '<I>|</I>' separated guest guess list for the given word in <B>$result</B>. </UL>
+<P><B>0x040</B> 
+<BR><UL>If bit <B>0x100</B> is also set a complete list of valid words derivable from the given word are inserted into the current buffer. Otherwise spell returns 
+<A HREF="m5var041.html">$result(5)</A> set to the derivative word created when the given &quot;<I>rule</I>&quot; is applied to &quot;<I>word</I>&quot;. The rule applied is the first found of the given rule letter with a matching base ending (see 
+<A HREF="m2cmd138.html">add-spell-rule(2)</A>). The word need not exist as not tests for the legality of the resultant word is used, for example in American, executing 
+<PRE>65&nbsp;spell&nbsp;&quot;spelling&quot;&nbsp;&quot;V&quot; 
+</PRE></UL>
+<UL><P>returns &quot;<TT>spellingive</TT>&quot; in <B>$result</B>. Returns the empty string if no rule could be applied. </UL>
+<P><B>0x080</B> 
+<BR><UL>Used with bit 0x002 to enable double word checking. </UL>
+<P><B>0x100</B> 
+<BR><UL>Return information in <B>$result</B> about the given word, or the word which is used to derive the given word. The information consists of the spell status, the word as stored in the dictionary, and either the list of valid rules, or the correction word. See also bit <B>0x040</B>. </UL>
+<P><B>0x200</B> 
+<BR><UL>Delete the given word from a dictionary determined by bit 0x008 
+</UL><P>If none of the main functions are used (bits 0x004, 0x020, 0x040 &amp; 0x200) then the status flag is returned in the first column of <B>$result</B>. These are defined as follows:- 
+<P><B>A</B> 
+<BR><UL>Auto-replace. The word was found and flagged as erroneous. The correction word is given in <B>$result</B>, either next to the flag, or if bit 0x100 is set then after the '<I>&gt;</I>' character. </UL>
+<P><B>D</B> 
+<BR><UL>Double word. Indicates that the first problem found is a double occurrence of the same word one after the other. </UL>
+<P><B>E</B> 
+<BR><UL>Erroneous. The word was not found, so is Erroneous </UL>
+<P><B>N</B> 
+<BR><UL>Not a word. The current word found contains no alphabetic characters so is not deemed to be a word, e.g. 3.141593. </UL>
+<P><B>O</B> 
+<BR><UL>Okay. The word was found and is not an erroneous word. </UL></UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd002.html">add-dictionary(2)</A>, 
+<A HREF="m2cmd138.html">add-spell-rule(2)</A>, 
+<A HREF="m2cmd041.html">delete-dictionary(2)</A>, 
+<A HREF="m2cmd112.html">save-dictionary(2)</A>, 
+<A HREF="m2cmd132.html">show-region(2)</A>, 
+<A HREF="m3osd002.html">spell-buffer(3)</A>, 
+<A HREF="m3osd002.html">spell-word(3)</A>, 
+<A HREF="m2nar008.html">Locale Support</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,52 @@
+<HTML>
+<HEAD><TITLE>$fill-bullet(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+$fill-bullet(5)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>$fill-bullet - Paragraph filling bullet character set 
+<BR>$fill-bullet-len - Paragraph filling bullet search depth </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>$fill-bullet</B> &quot;<I>string</I>&quot;; Default is &quot;<TT>*)].-</TT>&quot; 
+<BR><B>$fill-bullet-len</B> <I>length</I>; Default is <TT>5</TT> 
+<P>0 &lt;= <I>length</I> &lt;= 
+<A HREF="m5var021.html">$fill-col</A> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>$fill-bullet</B> contains the set of characters which are classified as bullet markers for 
+<A HREF="m2cmd052.html">fill-paragraph(2)</A>. If these characters are encountered in the first <B>$fill-bullet-len</B> characters of the paragraph AND the character is followed by a <TT>SPACE</TT> or a <TT>tab</TT> character then the user is given the option to indent to the right of the bullet. 
+<P><B>$fill-bullet-len</B> determines the maximum depth into the paragraph (in characters) the filling routines should search for a bullet character. The default value is 15. Note that the paragraph starts at the first non-white space character. e.g. to detect &quot;<TT>xviii)&nbsp;</TT>&quot; as a bullet then the bullet length must be set to at least 6 to detect the bullet character &quot;<TT>)</TT>&quot;. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>Examples of filled bullet paragraphs are shown as follows, based on the default <B>$fill-bullet</B> character set. <UL>
+<PRE>a)&nbsp;This&nbsp;is&nbsp;an&nbsp;&nbsp;example&nbsp;of&nbsp;a&nbsp;&nbsp;fill-paragraph.&nbsp;&nbsp;The&nbsp;&nbsp;closing 
+&nbsp;&nbsp;&nbsp;bracket&nbsp;is&nbsp;classified&nbsp;as&nbsp;a&nbsp;bullet&nbsp;character&nbsp;and&nbsp;filling 
+&nbsp;&nbsp;&nbsp;optionally&nbsp;takes&nbsp;place&nbsp;to&nbsp;the&nbsp;right&nbsp;of&nbsp;the&nbsp;bullet. 
+
+a]&nbsp;Another&nbsp;paragraph 
+
+*&nbsp;&nbsp;A&nbsp;bullet&nbsp;paragraph 
+
+1.&nbsp;A&nbsp;numbered&nbsp;paragraph. 
+
+item&nbsp;-&nbsp;A&nbsp;dashed&nbsp;bullet. 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var021.html">$fill-col(5)</A>, 
+<A HREF="m5var054.html">$fill-ignore(5)</A>, 
+<A HREF="m5var028.html">$fill-mode(5)</A>, 
+<A HREF="m2cmd052.html">fill-paragraph(2)</A>, 
+<A HREF="m2mod006.html">justify(2m)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

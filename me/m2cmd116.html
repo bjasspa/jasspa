@@ -1,0 +1,49 @@
+<HTML>
+<HEAD><TITLE>search-forward(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+search-forward(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>search-forward - Search for a string in the forward direction 
+<BR>search-backward - Search for a string in the backward direction </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>search-forward</B> &quot;<I>string</I>&quot; (<B>C-x&nbsp;s</B>) 
+<BR><I>n</I> <B>search-backward</B> &quot;<I>string</I>&quot; (<B>C-x&nbsp;r</B>) </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>search-forward</B> searches for a string from the current cursor position to the end of the file. The string is typed on the bottom line of the screen, and terminated with the <TT>&lt;ESC&gt;</TT> key. Special characters can be typed in by preceding them with a <TT>^Q</TT>. A single <TT>^Q</TT> indicates a null string. On successive searches, hitting <TT>&lt;ESC&gt;</TT> alone causes the last search string to be reused. 
+<P>Searching is affected by 
+<A HREF="m2mod009.html">magic(2m)</A> mode, which allows regular expression pattern matching, and 
+<A HREF="m2mod004.html">exact(2m)</A> mode which makes the search case sensitive. 
+<P>The numeric argument <I>n</I> is interpreted as follows:- 
+<P><B>n &gt; 0</B> 
+<BR><UL>The <I>n</I>th occurrence of the <I>string</I> is located. </UL>
+<P><B>n &lt; 0</B> 
+<BR><UL>The first occurrence of the <I>string</I> is located in the next <I>n</I> lines. 
+</UL><P><B>search-backward</B> searches backwards in the file. In all other ways it is like <B>search-forward</B>. </UL>
+<H2><B>DIAGNOSTICS </B></H2>
+<UL><P>The command returns a status of <TT>FALSE</TT> if the <I>string</I> could not be located (or <I>n</I>th <I>string</I> where <I>n</I> occurrences are requested). If the <I>string</I> is found within the given search criteria the return status is <TT>TRUE</TT>. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd006.html">buffer-mode(2)</A>, 
+<A HREF="m2mod004.html">exact(2m)</A>, 
+<A HREF="m2cmd070.html">hunt-backward(2)</A>, 
+<A HREF="m2cmd070.html">hunt-forward(2)</A>, 
+<A HREF="m2cmd078.html">isearch-forward(2)</A>, 
+<A HREF="m2mod009.html">magic(2m)</A>, 
+<A HREF="m2cmd109.html">replace-string(2)</A>. 
+<BR>
+<A HREF="m2nar006.html">Regular Expressions</A> </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>
