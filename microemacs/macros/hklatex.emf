@@ -700,16 +700,6 @@ define-macro latex-popup
     .osd.latex-popup osd
 !emacro
 
-;; osd Tools ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-; Delete hook. This cleans up after the buffer has been closed.
-;
-0 define-macro dhook-latex
-    ; remove the list buffers
-    !force 0 delete-buffer &spr "*%s sectn-list*" $buffer-bname
-    !force 0 delete-buffer &spr "*%s label-list*" $buffer-bname
-!emacro
-;
 ; Buffer hook. Modify the fill mode to left only. This ensures that we
 ; always fill the line correctly irrespective of the mode of the caller.
 ; The likes of centre and justified are not warrented in a TeX buffer.
@@ -720,9 +710,6 @@ define-macro latex-popup
     set-variable $fill-mode  :fill-mode
     set-variable :ofill-col  $fill-col
     set-variable $fill-col   :fill-col
-    !if &exist my-bhook-latex
-        my-bhook-latex
-    !endif
 !emacro
 ;
 0 define-macro ehook-latex
@@ -731,9 +718,6 @@ define-macro latex-popup
     set-variable $fill-mode :ofill-mode
     set-variable :fill-col $fill-col
     set-variable $fill-col :ofill-col
-    !if &exist my-ehook-latex
-        my-ehook-latex
-    !endif
 !emacro
 
 ; Find the previous opening latex block.
