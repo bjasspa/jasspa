@@ -3,7 +3,7 @@
 .\" Copyright (c) 2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac064.3,v 1.1 2004-01-05 00:18:24 jon Exp $
+.Id $Id: m3mac064.3,v 1.2 2004-01-06 00:50:52 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH buffer-init 3
@@ -13,8 +13,10 @@
 .SH NAME
 .Me "|buffer-init"
 buffer-init \- Initialize a buffer language template.
+.br
 .Me "|buffer-init-hooks"
 buffer-init-hooks \- Initialize the buffer language template hooks.
+.br
 .Me "|buffer-init-fhook"
 buffer-init-fhook \- Initialize the buffer file hooks.
 .Me $a
@@ -43,7 +45,7 @@ and simply the setting up of
 .Hl "File Language Templates" languageTemplates 2 
 by automating common actions and integrating the configuration settings
 made via 
-.Ht user-setup 3 .
+.Ht buffer-setup 3 .
 .PP
 The hook file is declared from  \fCme.emf\fR or the user start up file binding
 a file extension or magic string association with the hook file. i.e.
@@ -158,6 +160,12 @@ the macro  \fBfhook-xxx\fR  (in our example  \fIfhook-foo\fR\|)  has ONLY been
 defined it has NOT been executed. This load  operation is performed  once only
 and is performed on demand.
 .PP
+The  \fBfhook-xxx\fR  macro  must  be  defined  BEFORE  any  of the  variables
+associated with the hook as all subsequent variables are command variables and
+are defined in the context of the macro definition. See 
+.Ht Variables 4 
+for more information on macro variables.
+.PP
 Once  all  of  the  user   information   has  been   loaded   then  the  macro
 \fBfhook-xxx\fR  is invoked,  this applies  hilighting,  buffer key  bindings,
 indentation etc. to the newly loaded buffer.
@@ -172,26 +180,180 @@ set-variable .fhook-c.setup-mask "abdefghikmnoptux>"
 .CE 
 .Me $ehf-scheme
 The variables use an ASCII  configuration  string that identifies the modes of
-operation that are required.
+operation that are required. Upper and lower case  alternatives are presented,
+an uppercase flag disables the mode, lower case enables. Where the flag is not
+specified then the mode is not changed.
 .TP
-\fCa\fR - Auto mode
+\fCa\fR \- Auto mode
 .\"
 Automatic 
 .Ht auto 2m
-mode for automatic source file line type detection.
+mode for automatic source file line type detection. Typically enabled for text
+files. 
 .TP
-\fCb\fR
-Abbreviation mode
+\fCb\fR \- Abbreviation mode
+.\"
+Configures the abbreviation mode using
+.Ht buffer-abbrev-file 2 
+for the buffer. 
 .TP
+\fCc\fR \- View / Author mode
+.\"
+Viewing
+.Ht view 2m
+mode for read only or authoring.
+.TP
+\fCd\fR \- Auto indentation operation.
+.\"
+Automatic indent is enabled. Where electric-c is required
+then the flag \fC>\fR should be used in conjunction with 
+the \fCd\fR flag, otherwise the indentation should be defined 
+in the template using 
+.Ht indent 2 .
+.IP
+Where 
+.Ht indent 2m
+mode is required then omit the \fCd\fR flag and use flag \fCi\fR instead.
+.TP
+\fCe\fR \- Exact or case sensitivity operation
+.\"
+Exact 
+.Ht exact 2m 
+case sensitive mode. \fCe\fR enable exact, \fCE\fR disable exact.
+.TP
+\fCf\fR \- Folding/Collapsing operation
+.\"
+Configures folding support, if enabled then the variables
+\fI.fhook-XXX.collapse-OPERATION\fR, should be defined to declare the folding
+points.
+.TP
+\fCg\fR \- Fence matching operation
+.\"
+Fence matching mode with 
+.Ht fence 2m .
+Note that fence matching is now typically  performed in the macro  environment
+using 
+.Ht display-matching-fence 3
+rather than the in-built  fence  matching.  This colorizes the fences that are
+matched. \fCg\fR enable fence matching, \fCG\fR disable fence matching.
+.TP
+\fCh\fR \- Hilighting
+.\"
+Support syntax hilighting, when defined then the hilighting scheme defined 
+by \fI.hilight.XXX\fR is attached to the buffer.
+.TP
+\fCi\fR \- Automatic indentation
+.\"
+Support indentation using
+.Ht indent 2m .
+Automatic indentation defined with the \fCd\fR and optionally the \fC>\fR flag
+where the in-built  electric-c is required.  \fCi\fR  enable  indent,  \fCJ\fR
+disable indent.
+.TP
+\fCj\fR \- Justify
+Support paragraph justification using
+.Ht justify 2m . 
+\fCj\fR enable justify, \fCJ\fR disable justify.
+.TP
+\fCk\fR \- Backup mode
+.\"
+Enable backups with
+.Ht backup 2m 
+mode. \fCk\fR enable backup, \fCK\fR disable backup.
+.TP
+\fCm\fR \- Magic mode
+.\"
+Regular expression 
+.Ht magic 2m
+mode. \fCm\fR enable magic, \fCM\fR disable magic.
+.TP
+\fCn\fR \- New buffer header
+.\"
+Enable the insertion of a buffer header from the 
+.Ht etf 8 
+template file.
+.TP
+\fCo\fR \- Tool menu
+.\"
+Enable the tool menu for the buffer.
+.TP
+\fCp\fR \- Help page
+.\"
+Produce a help page for the buffer describing the bindings.
+.TP
+\fCs\fR \- Auto spell
+.\"
+Enable automatic spelling for the buffer using
+.Ht auto-spell 3 .
+.TP
+\fCt\fR \- Tab mode
+.\"
+Allow insertion of literal tabs by enabling
+.Ht tab 2m 
+mode. \fCt\fR enable tab, \fCT\fR disable tab.
+.TP
+\fCu\fR \- Undo
+.\"
+Maintain an undo/redo history using
+.Ht undo 2m 
+mode. \fCu\fR enable undo, \fCU\fR disable undo.
+.TP
+\fCw\fR \- Wrap
+.\"
+Enable wrapping using
+.Ht wrap 2m 
+mode. \fCw\fR enable wrap, \fCW\fR disable wrap.
+.TP 
+\fCx\fR \- Time stamping
+.\"
+Enable time stamping as defined by 
+.Ht time 2m .
+.TP
+\fC>\fR \- Electric-c indentation.
+.\"
+A special internal flag indicating that indentation is
+to be performed using 
+.Ht cmode 2m .
+This option 
+should only be used when the \fCd\fR flag is also defined. 
+The flag should only be present in the \fI.setup-mask\fR\|. 
+.TP
+\fC1\fR \- Reformatting hilighting
+.\"
+A special internal flag indicating that hilighting is used
+for reformatting purposes, i.e. to make readable and hide control text.
+.TP 
+\fC#\fR \- Commenting
+Special flag used to indicate commenting is supported. The comment format
+should be defined with the \fI.fhook-XXX.comment\fR variable within the
+template.
 .LP
 \fB.fhook-xxx.setup\fR is the default set-up, this is normally defined to take
-settings from the registry and provides defaults when not defined.
+settings  from the  registry  and  provides  defaults  when not defined.  This
+is the only mask that is  allowed  to carry the  uppercase  flags. All  values
+defined in  \fB.fhook-xxx.setup\fR  are  explicitly  enabled  or disabled by
+default. 
+.PP
+\fB.fhook-xx.setup-mask\fR  defines the set of flags that are allowed  with the
+template. The configuration defined in  
+.Ht buffer-setup 3 
+is tested  against  the mask, if the mask  allows it then the mode is enabled.
+\fB.fhook-xxx.setup\fR  is  generally a subset of  \fB.fhook-xx.setup-mask\fR.
+.PP
+The flags that are defined by 
+.Ht buffer-setup 3 
+include   \fCa\fR,  \fCb\fR,  \fCc\fR,  \fCd\fR,  \fCe\fR,  \fCf\fR,  \fCg\fR,
+\fCh\fR,  \fCi\fR,  \fCj\fR,  \fCk\fR,  \fCm\fR,  \fCn\fR,  \fCo\fR,  \fCp\fR,
+\fCs\fR, \fCt\fR, \fCu\fR, \fCw\fR, and \fCx\fR.
+.SS Tags
+To do.
 .SH "SEE ALSO"
 .na
 .Ht add-file-hook 2 ,
 .Ht buffer-abbrev-file 2 ,
 .Ht $buffer-hilight 5 ,
 .Ht $buffer-indent 5 ,
+.Ht buffer-setup 3 ,
 .Ht eaf 8 ,
 .Ht etf 8 ,
 .Ht etfinsrt 3 ,
