@@ -387,7 +387,7 @@
     insert-string "include emulation modes for:\n"
     insert-string "\n"
     insert-string "    MicroEmacs v3.8, NEdit, Windows CUA and GNUEmacs.\n"
-    insert-strinf "\n"
+    insert-string "\n"
     insert-string "Press any key to Continue:\n"
     -1 recenter
     2 screen-update
