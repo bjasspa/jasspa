@@ -1,0 +1,99 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     Mon Jan 14 2002
+; Synopsis:    Common document macros. 
+; Authors:     Jon Green & Steven Phillips
+;
+; Notes:       broken out of docmacro.emf
+;
+!if &not &exist .osd.doc-stat
+    set-variable .osd.doc-stat &pinc .osd.next 1
+!endif
+-1 osd .osd.doc-stat
+osd .osd.doc-stat 0  "batcdH" 9 3 99 .scheme.osd-title "Current Mode Settings"
+osd .osd.doc-stat 3  "" 
+osd .osd.doc-stat 7  "" 
+osd .osd.doc-stat 11 "" 
+osd .osd.doc-stat 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
+
+define-macro doc-mode-state
+    osd .osd.doc-stat 4  "" &spr " Filling to column : %d " $fill-col 
+    osd .osd.doc-stat 5  "" &spr " Justification Mode: %s " $fill-mode
+    set-variable #l0 "Unknown mode, default to left:NAuto-detect All (L/R/C):OAuto-detect One for word-processor:BAuto-detect Both (R/C):LAuto-detect Left:RAuto-detect Right:CAuto-detect Center:nNone:bBoth justify (L/R):lLeft:rRight:cCenter:oOne for word-processor:"
+    set-variable #l0 &rig #l0 &add 1 &sin &cat ":" $fill-mode #l0
+    set-variable #l0 &lef #l0 &sub &sin ":" #l0 1
+    osd .osd.doc-stat 6  "" &spr "     %s " #l0
+    osd .osd.doc-stat 8  "" &spr " Ignore characters : %s " $fill-ignore
+    osd .osd.doc-stat 9  "" &spr " Bullet characters : %s " $fill-bullet
+    osd .osd.doc-stat 10 "" &spr " Bullet lookahead  : %d " $fill-bullet-len
+    .osd.doc-stat osd
+!emacro
+
+0 define-macro doc-set-justify
+    set-variable $fill-mode &mid "BBCLnR" @# 1
+    doc-mode-state
+!emacro
+
+define-macro fill-paragraph-center
+    set-variable #l1 $fill-mode
+    set-variable $fill-mode "c"
+    @# fill-paragraph
+    set-variable $fill-mode #l1
+!emacro
+
+define-macro fill-paragraph-left
+    set-variable #l1 $fill-mode
+    set-variable $fill-mode "l"
+    @# fill-paragraph @mna
+    set-variable $fill-mode #l1
+!emacro
+
+define-macro fill-paragraph-right
+    set-variable #l1 $fill-mode
+    set-variable $fill-mode "r"
+    @# fill-paragraph @mna
+    set-variable $fill-mode #l1
+!emacro
+
+define-macro fill-paragraph-both
+    set-variable #l1 $fill-mode
+    set-variable $fill-mode "b"
+    @# fill-paragraph @mna
+    set-variable $fill-mode #l1
+!emacro
+
+define-macro fill-paragraph-gutter
+    set-variable #l1 $fill-mode
+    set-variable $fill-mode "g"
+    @# fill-paragraph @mna
+    set-variable $fill-mode #l1
+!emacro
+
+; Swap to the buffer context, used in bhooks.
+define-macro doc-buffer-context-init
+    ; Set up the default constants
+    set-variable :fill-mode $fill-mode
+    set-variable :fill-col $fill-col
+!emacro
+
+; Swap to the buffer context, used in bhooks.
+define-macro doc-buffer-context
+    ; Save other context; restore local context
+    set-variable :ofill-mode $fill-mode
+    set-variable $fill-mode  :fill-mode
+    set-variable :ofill-col  $fill-col
+    set-variable $fill-col   :fill-col
+!emacro
+
+; Swap to the global context, used in ehooks.
+define-macro doc-global-context
+    ; Restore existing context
+    set-variable :fill-mode $fill-mode
+    set-variable $fill-mode :ofill-mode
+    set-variable :fill-col $fill-col
+    set-variable $fill-col :ofill-col
+!emacro
+
