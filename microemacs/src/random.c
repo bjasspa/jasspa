@@ -1187,7 +1187,7 @@ mlWrite(int f, int n)
 #if MEOPT_CFENCE
 
 /* List of fense id chars, close (or move backward) first then open */
-meUByte fenceString[] = "##/*><)(}{][" ; /* */
+meUByte fenceString[] = "##/*)(}{][" ; /* */
 
 meUByte
 gotoFrstNonWhite(void)
