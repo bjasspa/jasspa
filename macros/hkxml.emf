@@ -43,11 +43,11 @@ set-variable .fhook-xml.comment  "|<!--|-->|--|  -- | -- |f|"
     hilight .hilight.xml 0x80 "<[\\t ]*[-/.:a-zA-Z0-9_]+" .hilight.xmlT .scheme.keyword
     hilight .hilight.xml 0x80 "<\\?[\\t ]*[-/.:a-zA-Z0-9_]+" .hilight.xmlT .scheme.keyword
     hilight .hilight.xml 0x80 "<![\\t ]*[^-][-/.:a-zA-Z0-9_]+" .hilight.xmlT .scheme.keyword
-     hilight .hilight.xml 4 "<!--" "-->" ""             .scheme.comment
-     hilight .hilight.xml 0 "&\\w\\w;"                  .scheme.operator
-     hilight .hilight.xml 0 "&\\w\\w\\w;"               .scheme.operator
-     hilight .hilight.xml 0 "&\\w\\w\\w\\w;"            .scheme.operator
-     hilight .hilight.xml 0x804 "\"" "\"" "\\"          .scheme.string
+    hilight .hilight.xml 4 "<!--" "-->" ""              .scheme.comment
+    hilight .hilight.xml 0 "&\\w\\w;"                   .scheme.operator
+    hilight .hilight.xml 0 "&\\w\\w\\w;"                .scheme.operator
+    hilight .hilight.xml 0 "&\\w\\w\\w\\w;"             .scheme.operator
+    hilight .hilight.xml 0x804 "\"" "\"" "\\"           .scheme.string
     
     0 hilight .hilight.xmlT 0                           $global-scheme
     hilight .hilight.xmlT 4  "\"" "\"" "\\"             .scheme.string
@@ -57,11 +57,11 @@ set-variable .fhook-xml.comment  "|<!--|-->|--|  -- | -- |f|"
     
     !if &exist .hilight.javascript
         hilight .hilight.xml 0x80 "<script\\s +type=\"text/javascript[^>]*>" .hilight.javascript .scheme.prepro
-        hilight .hilight.javascript 0x80 "</script>" 0   .scheme.prepro
+        hilight .hilight.javascript 0x80 "</script>" 0  .scheme.prepro
     !endif
     !if &exist .hilight.vbscript
         hilight .hilight.xml 0x80 "<script\\s +type=\"text/vbscript[^>]*>" .hilight.vbscript .scheme.prepro
-        hilight .hilight.vbscript 0x80 "</script>" 0     .scheme.prepro
+        hilight .hilight.vbscript 0x80 "</script>" 0    .scheme.prepro
     !endif
 !endif
 
@@ -71,11 +71,19 @@ set-variable .fhook-xml.comment  "|<!--|-->|--|  -- | -- |f|"
     !if &exist .indent.javascript
         indent .hilight.xmlT t "<script\\s +type=\"text/javascript[^>]*>" .indent.javascript
         indent .hilight.xml  x "<script\\s +type=\"text/javascript[^>]*>" 2 .indent.javascript
+        indent .hilight.xmlT t "<script\\s +type=\"text/jscript[^>]*>"    .indent.javascript
+        indent .hilight.xml  x "<script\\s +type=\"text/jscript[^>]*>"    2 .indent.javascript
+        indent .hilight.xmlT t "<script\\s +language=\"?javascript[^>]*>" .indent.javascript
+        indent .hilight.xml  x "<script\\s +language=\"?javascript[^>]*>" 2 .indent.javascript
+        indent .hilight.xmlT t "<script\\s +language=\"?jscript[^>]*>"    .indent.javascript
+        indent .hilight.xml  x "<script\\s +language=\"?jscript[^>]*>"    2 .indent.javascript
         indent .indent.javascript w "</script>" -2 0
     !endif
     !if &exist .indent.vbscript
         indent .hilight.xmlT t "<script\\s +type=\"text/vbscript[^>]*>" .indent.vbscript
         indent .hilight.xml  x "<script\\s +type=\"text/vbscript[^>]*>" 2 .indent.vbscript
+        indent .hilight.xmlT t "<script\\s +language=\"?vbscript[^>]*>" .indent.vbscript
+        indent .hilight.xml  x "<script\\s +language=\"?vbscript[^>]*>" 2 .indent.vbscript
         indent .indent.vbscript w "</script>" -2 0
     !endif
     indent .hilight.xmlT t "</script>" 0
