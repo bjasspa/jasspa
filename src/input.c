@@ -1478,9 +1478,8 @@ input_expand:
             break ;
             
         case CK_KILEOL:    /* ^K : Kill to end of line */
-            if(ipos < ilen)
+            if((ii > 0) && (ipos < ilen))
             {
-                /* ZZZZ arg 0 */
                 if(frameCur->mlStatus & MLSTATUS_NINPUT)
                 {
                     ii = ilen ;
@@ -1488,8 +1487,9 @@ input_expand:
                         cdel(buf, ipos, &ilen);
                     /* kill \n as if we were at the end of the line or arg
                      * given (as per kill-line) */
-                    if(((ii == ilen) || ff) && (ipos < ilen) &&
-                       (buf[ipos] == meCHAR_NL)) 
+                    if((ii == ilen) ||
+                       (ff && (ipos < ilen) &&
+                        ((ipos == 0) || (buf[ipos-1] == meCHAR_NL))))
                         cdel(buf, ipos, &ilen);
                 }
                 else
@@ -1497,6 +1497,24 @@ input_expand:
                     buf[ipos] = '\0';
                     ilen = ipos;
                 }
+                changed=1 ;
+            }
+            else if((ii < 0) && ipos)
+            {
+                if(frameCur->mlStatus & MLSTATUS_NINPUT)
+                {
+                    ii = ipos-2 ;
+                    while((ii >= 0) && (buf[ii] != meCHAR_NL))
+                        ii-- ;
+                    ii++ ;
+                }
+                else
+                {
+                    ii = 0 ;
+                }
+                do
+                    cdel(buf,--ipos,&ilen);
+                while(ipos != ii) ;
                 changed=1 ;
             }
             break;
