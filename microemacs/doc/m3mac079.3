@@ -1,0 +1,53 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m3mac079.3,v 2.1 2005-03-20 23:43:30 jon Exp $
+.Im MicroEmacs command|file
+.so me.tni
+.TH browse 3
+.XI browse - "Browse a file or buffer in view mode"
+.SH NAME
+browse \- Browse a file or buffer in view mode
+.Me $a
+.SH SYNOPSIS
+.na
+.B browse
+.ad
+.SH DESCRIPTION
+.B browse
+is a simple  utility  that  assists  buffer  viewing by mapping the basic keys
+to navigation functions. 
+.B browse
+may be invoked on any buffer.
+.PP
+On invoking
+.B browse
+then the buffer is placed into a simple  viewing mode allowing the contents of
+the file to be viewed and the buffer  cannot be edited. The key bindings  that
+are recognized include:-
+.PP
+.RS
+.na
+.nf
+\fCSPACE\fR, \fCRETURN\fR \- Next page.
+\fCBACKSPACE\fR \- Previous page.
+\fCC-n\fR \- Scroll down .
+\fCC-p\fR \- Scroll up.
+\fCC-f\fR \- Scroll right.
+\fCC-b\fR \- Scroll left.
+\fCC-g\fR \- Quit browse mode.
+.fi
+.ad
+.RE
+.PP
+To quit browse mode then issue a \fBC-g\fR \fIabort\fR command.
+.SH NOTES
+.B browse
+is a macro implemented in \fCosdmisc.emf\fR.
+.SH "SEE ALSO"
+.na
+.Ht view-file 2 .
+.ad
+.FH

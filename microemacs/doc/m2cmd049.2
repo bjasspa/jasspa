@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd049.2,v 2.7 2005-03-20 15:59:25 jon Exp $
+.Id $Id: m2cmd049.2,v 2.8 2005-03-20 23:43:29 jon Exp $
 .Im MicroEmacs command
 .so me.tni
 .TH exit-emacs 2
@@ -15,9 +15,7 @@ exit-emacs \- Exit MicroEmacs
 .na
 .I n
 .B exit-emacs
-[
-.I exitCode
-]
+[\|\fIexitCode\fR\|]
 .ad
 .SH DESCRIPTION
 Exit \*(mS back to the operating  system. If no argument  \fIn\fR is given and
@@ -25,21 +23,21 @@ there are any  unwritten,  changed  buffers,  the editor  prompts  the user to
 discard changes. If an argument is specified then \*(mS exits immediately.
 .PP
 The numeric argument is defined as a bit-mask as follows:
-.IP "\fC1\fR"
+.IP "\fC0x01\fR"
 Prompting the user before saving any files, writes out all changed  buffers to
 the files they were read from. Saves all  changed  dictionaries,  killing  any
 running  commands  and exits the editor. 
-.IP "\fC2\fR"
+.IP "\fC0x02\fR"
 Writes  out all  changed  buffers to the files they were read from,  saves all
 changed  dictionaries, killing any running commands and exits the editor. 
 The behavior is modified by flags \fC8\fR and \fC16\fR.
-.IP "\fC4\fR"
+.IP "\fC0x04\fR"
 Define the exit code \fIexitCode\fR from \*(mS, the default when omitted is 0.
-.IP "\fC8\fR"
+.IP "\fC0x08\fR"
 Discard  changed  buffers  (except the  history and  registry)  and delete any
 backup files associated with the edited  buffer(s). This mode does not operate
 when bit \fC1\fR is set.
-.IP "\fC16\fR"
+.IP "\fC0x10\fR"
 Discard  changed  buffers  (except the history and registry) and create a auto
 save file(s) with the changes from unsaved buffers. This mode does not operate
 when bit \fC1\fR is set.
