@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20040214.1544>
+# Last Modified: <20040221.1602>
 #
 ##############################################################################
 
@@ -30,7 +30,7 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		\
 	hkada.emf	hkasmx86.emf	hkasn1.emf	hkasp.emf	\
 	hkawk.emf	\
 	hkbibtex.emf	hkbinary.emf	hkblist.emf	hkbnf.emf	\
-	hkc.emf		hkcobol.emf	hkcpp.emf	hkcygnus.emf	\
+	hkc.emf		hkcobol.emf	hkcpp.emf	hkcygwin.emf	\
 	hkdiff.emf	hkdirlst.emf	hkdirtre.emf	hkdoc.emf	\
 	hkdos.emf	\
 	hkeaf.emf	hkehf.emf	hkemf.emf	hkerf.emf	\
