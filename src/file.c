@@ -1173,6 +1173,7 @@ readDirectory(meUByte *fname, meBuffer *bp, meLine *blp)
         fnode = fnode->next ;
     }
     free(curHead) ;
+    meModeSet(bp->mode,MDDIR) ;
     meModeSet(bp->mode,MDVIEW) ;
     meModeClear(bp->mode,MDATSV) ;
     meModeClear(bp->mode,MDUNDO) ;
