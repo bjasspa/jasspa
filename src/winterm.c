@@ -3109,85 +3109,72 @@ do_keydown:
                  * will see them later as a different message type */
                 if (wParam & 0x80)
                 {
-                    switch ((lParam >> 16) & 0xff)
+                    wParam &= 0x7f;
+                    if ((ttmodif & ME_SHIFT) == 0)
                     {
-                    case 0x0c:          /* -/_ key. Scan code 0x0c */
-                        if (ttmodif & ME_SHIFT)
-                            return FALSE;
-                        cc = ttmodif | '-';
-                        break;
-                    case 0x0d:          /* +/= key. Scan code 0x0d */
-                        if (ttmodif & ME_SHIFT)
-                            cc = (ttmodif & ~ME_SHIFT) | '+';
-                        else
-                            cc = ttmodif | '=';
-                        break;
-                    case 0x1a:
-                        if (ttmodif & ME_SHIFT)
-                            cc = (ttmodif &= ~ME_SHIFT) | '{';
-                        else
-                            return FALSE;
-                        break;
-                    case 0x1b:
-                        if (ttmodif & ME_SHIFT)
-                            cc = (ttmodif &= ~ME_SHIFT) | '}';
-                        else
-                            return FALSE;
-                        break;
-                    case 0x27:
-                        if (ttmodif & ME_SHIFT)
-                            cc = (ttmodif & ~ME_SHIFT) | ':';
-                        else
-                            cc = ttmodif | ';';
-                        break;
-                    case 0x28:
-                        if (ttmodif & ME_SHIFT)
-                            cc = (ttmodif & ~ME_SHIFT) | '@';
-                        else
-                            cc = ttmodif | '\'';
-                        break;
-                    case 0x29:
-                        if (ttmodif & ME_SHIFT)
-                            cc = (ttmodif & ~ME_SHIFT) | 0xac;
-                        else
-                            cc = ttmodif | '`';
-                        break;
-                    case 0x2b:
-                        if (ttmodif & ME_SHIFT)
-                            cc = (ttmodif & ~ME_SHIFT) | '~';
-                        else
-                            return FALSE;
-                        break;
-                    case 0x33:
-                        if (ttmodif & ME_SHIFT)
-                            cc = (ttmodif & ~ME_SHIFT) | '<';
-                        else
-                            cc = ttmodif | ',';
-                        break;
-                    case 0x34:
-                        if (ttmodif & ME_SHIFT)
-                            cc = (ttmodif & ~ME_SHIFT) | '>';
-                        else
-                            cc = ttmodif | '.';
-                        break;
-                    case 0x35:
-                        if (ttmodif & ME_SHIFT)
-                            cc = (ttmodif & ~ME_SHIFT) | '?';
-                        else
-                            cc = ttmodif | '/';
-                        break;
-                    case 0x56:
-                        if (ttmodif & ME_SHIFT)
-                            cc = (ttmodif &= ~ME_SHIFT) | '|';
-                        else
-                            return FALSE;
-                        break;
-                    case 0x0f:          /* TAB scan key code */
-                        cc = SKEY_tab;
-                        goto return_spec;
-                    default:
-                        return FALSE;
+                        switch (wParam)
+                        {
+                            /* C-: */
+                        case 0x3a : cc = ttmodif | ';'; break;
+                            /* C-= */
+                        case 0x3b : cc = ttmodif | 0x3d; break;
+                            /* C-, */
+                        case 0x3c:
+                            /* C-= */
+                        case 0x3d:
+                            /* C-. */
+                        case 0x3e:
+                            /* C-? */
+                        case 0x3f:
+                            cc = ttmodif | (wParam & ~0x10);
+                            break;
+                            /* C-' */
+                        case 0x40: cc = ttmodif | 0x27; break;
+                            /* C-~ */
+                        case 0x5e: cc = ttmodif | 0x23; break;
+                            /* C-` */
+                        case 0x5f: cc = ttmodif | 0x5d; break;
+                            /* Other specials */
+                            /* cc = ttmodif | (wParam & 0x7f);*/
+                        default:
+                            return FALSE;;
+                        }
                     }
+                    else
+                    {
+                        /* Process the rest */
+                        switch (wParam)
+                        {
+                            /* C-+ */
+                        case 0x3b:
+                            cc = (~ME_SHIFT & ttmodif) | 0x2b; break;
+                            /* C-{ */
+                        case 0x5b:
+                            /* C-\ */
+                        case 0x5c:
+                            /* C-} */
+                        case 0x5d:
+                            /* C-~ */
+                        case 0x5e:
+                            cc = (~ME_SHIFT & ttmodif) | wParam | 0x20;
+                            break;
+                        case 0x40:
+                            cc = (~ME_SHIFT & ttmodif) | wParam;
+                            break;
+                            /* C-: */
+                        case 0x3a:
+                            /* C-> */
+                        case 0x3e:
+                            /* C-? */
+                        case 0x3f:
+                            /* C-< */
+                        case 0x3c:
+                            cc = (~ME_SHIFT & ttmodif) | wParam; break;
+                        default:
+                            return FALSE;
+                        }
+                    }
+                    /*                cc = ttmodif | (wParam & 0x7f);*/
                 }                    
                 else if (wParam == VK_TAB)
                 {
@@ -3347,7 +3334,7 @@ done_syschar:
              * wParam should be 0x1d which is C-m. */
             if ((lParam & 0xff0000) == (0x1c<<16))
             {
-                cc = SKEY_return;       /* Return */
+                cc = SKEY_return|ttmodif; /* Return */
                 goto return_spec;
             }
 #endif
