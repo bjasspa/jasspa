@@ -8,11 +8,11 @@
 ;
 define-macro fhook-perl
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "perl"
-    buffer-initialize-hooks
+    @# buffer-init "perl"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-perl.setup &reg "/history" "fhook/perl" "bdfghinopx"
 set-variable .fhook-perl.setup-mask "abdefghikmnoptux"
 set-variable .fhook-perl.tags "perltags"
@@ -313,7 +313,4 @@ set-variable .fhook-perl.item-list-r1 "Sub  \ecB\\1\ecA"
     set-variable .indent.phpscript .hilight.perl
 !endif
 
-ml-write "[Perl file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "myperl"
+buffer-init-fhook "perl"

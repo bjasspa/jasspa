@@ -14,7 +14,7 @@ define-macro fhook-txt
     @# doc-fhook-body "txt" "text"
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-txt.name "Text"
 set-variable .fhook-txt.setup &reg "/history" "fhook/txt" "gijopsw"
 set-variable .fhook-txt.setup-mask "aefghijkmnopstuwx"
@@ -36,9 +36,4 @@ define-macro ehook-txt
 
 ; load docmacro.emf passing the doc setup flags
 execute-file "docmacro" "txt"
-
-ml-write "[Txt file hook loaded - esc h for help]"
-
-; load in user extensions if found
-!force execute-file "mytxt"
 

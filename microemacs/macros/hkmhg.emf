@@ -10,11 +10,11 @@
 ;
 define-macro fhook-mhg
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "mhg"
-    buffer-initialize-hooks
+    @# buffer-init "mhg"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-mhg.name "MHEG"
 set-variable .fhook-mhg.setup &reg "/history" "fhook/mhg" "fghinopx"
 set-variable .fhook-mhg.setup-mask "aefghikmnoptux"
@@ -53,7 +53,4 @@ set-variable .fhook-mhg.collapse-mnext "-1"
     hilight   .hilight.mhg 1   "asynchstopped"  .scheme.prepro
 !endif
 
-ml-write "[MHEG file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "mymhg"
+buffer-init-fhook "mhg"

@@ -8,11 +8,12 @@
 ;
 define-macro fhook-dos
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "dos"
-    buffer-initialize-hooks
+    @# buffer-init "dos"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
+set-variable .fhook-dos.name "DOS Batch"
 set-variable .fhook-dos.setup &reg "/history" "fhook/dos" "ghiopx"
 set-variable .fhook-dos.setup-mask "aeghikmoptux"
 set-variable .fhook-dos.comment "|rem |||rem |||"
@@ -60,8 +61,5 @@ set-variable .fhook-dos.comment "|rem |||rem |||"
     hilight .hilight.dosvar 128 "\""   .hilight.dos $global-scheme
 !endif
 
-ml-write "[DOS batch file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "mydos"
+buffer-init-fhook "dos"
 

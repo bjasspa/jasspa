@@ -9,11 +9,11 @@
 ;
 define-macro fhook-jsp
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "jsp"
-    buffer-initialize-hooks
+    @# buffer-init "jsp"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-jsp.name "JSP"
 set-variable .fhook-jsp.setup &reg "/history" "fhook/jsp" "cdghinopsx"
 set-variable .fhook-jsp.setup-mask "acdeghikmnopstux"
@@ -50,7 +50,4 @@ set-variable .fhook-jsp.command-desc  "|"
     !endif
 !endif
 
-ml-write "[JSP file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "myjsp"
+buffer-init-fhook "jsp"

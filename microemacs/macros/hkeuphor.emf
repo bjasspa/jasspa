@@ -9,11 +9,11 @@
 ;
 define-macro fhook-euphor
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "euphor"
-    buffer-initialize-hooks
+    @# buffer-init "euphor"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-euphor.name "Euphoria"
 set-variable .fhook-euphor.setup &reg "/history" "fhook/euphor" "bdghinopx"
 set-variable .fhook-euphor.setup-mask "abdeghikmnoptux"
@@ -90,7 +90,4 @@ set-variable .fhook-euphor.item-list-r4 "Proc \ecB\\2\ecA"
     indent .hilight.euphor i "--"
 !endif
 
-ml-write "[MicroEmacs Euphoria file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "myeuphor"
+buffer-init-fhook "euphor"

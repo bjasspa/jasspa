@@ -23,8 +23,8 @@
 
 define-macro fhook-pls
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "pls"
-    buffer-initialize-hooks
+    @# buffer-init "pls"
+    buffer-init-hooks
     ;
     ; Set up the indentation. We use 3 spaces unless explicitly
     ; over-ridden.
@@ -57,8 +57,8 @@ define-macro fhook-pls
     !endif
 !emacro
 
-; buffer-initialize variables
-set-variable .fhook-pls.name "PLS"
+; buffer-init variables
+set-variable .fhook-pls.name "PL/SQL"
 set-variable .fhook-pls.setup &reg "/history" "fhook/pls" "bfhnopx"
 set-variable .fhook-pls.setup-mask "abefghikmtux"
 set-variable .fhook-pls.comment "|/*|*/|*| * | * |f|"
@@ -628,7 +628,4 @@ set-variable .fhook-pls.fold-mopen "1"
     !endif
 !emacro
 
-ml-write "[PL/SQL file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "mypls"
+buffer-init-fhook "pls"

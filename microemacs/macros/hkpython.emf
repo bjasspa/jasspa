@@ -9,11 +9,11 @@
 ;
 define-macro fhook-python
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "python"
-    buffer-initialize-hooks
+    @# buffer-init "python"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-python.setup &reg "/history" "fhook/python" "ghiopx"
 set-variable .fhook-python.setup-mask "aeghikmoptux"
 set-variable .fhook-python.comment "|#||#|# | #||"
@@ -105,7 +105,4 @@ set-variable .fhook-python.comment "|#||#|# | #||"
     hilight   .hilight.python 1 "\\.sort"           .scheme.operator
 !endif
 
-ml-write "[Python file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "mypython"
+buffer-init-fhook "python"

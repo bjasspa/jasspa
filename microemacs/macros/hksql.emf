@@ -9,11 +9,11 @@
 ;
 define-macro fhook-sql
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "sql"
-    buffer-initialize-hooks
+    @# buffer-init "sql"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-sql.name "SQL"
 set-variable .fhook-sql.setup &reg "/history" "fhook/sql" "ghix"
 set-variable .fhook-sql.setup-mask "aeghikmtux"
@@ -350,7 +350,4 @@ set-variable .fhook-sql.setup-mask "aeghikmtux"
     !endif
 !endif
 
-ml-write "[SQL file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "mysql"
+buffer-init-fhook "sql"

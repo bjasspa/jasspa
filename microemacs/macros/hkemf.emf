@@ -10,11 +10,12 @@ set-char-mask "2" "-$&#!%:@."
 
 define-macro fhook-emf
     set-variable $buffer-mask "luh12"
-    @# buffer-initialize "emf"
-    buffer-initialize-hooks
+    @# buffer-init "emf"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
+set-variable .fhook-emf.name "ME Macro"
 set-variable .fhook-emf.setup &reg "/history" "fhook/emf" "bdfghnopx"
 set-variable .fhook-emf.setup-mask "abdefghikmnoptux"
 set-variable .fhook-emf.tags "emftags"
@@ -111,7 +112,4 @@ define-macro emf-quote-command
     @# insert-string @cg
 !emacro
 
-ml-write "[ME Macro file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "myemf"
+buffer-init-fhook "emf"

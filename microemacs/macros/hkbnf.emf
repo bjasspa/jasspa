@@ -8,11 +8,11 @@
 ; Authors:     Jon Green
 ;
 define-macro fhook-bnf
-    @# buffer-initialize "bnf"
-    buffer-initialize-hooks
+    @# buffer-init "bnf"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-bnf.name "BNF"
 set-variable .fhook-bnf.setup &reg "/history" "fhook/bnf" "ghix"
 set-variable .fhook-bnf.setup-mask "aeghikmtux"
@@ -34,9 +34,6 @@ set-variable .fhook-bnf.setup-mask "aeghikmtux"
     hilight .hilight.bnf 2 "^//"                .scheme.comment
 !endif
 
-ml-write "[BNF file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "mybnf"
+buffer-init-fhook "bnf"
 
 

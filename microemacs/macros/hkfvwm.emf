@@ -8,11 +8,11 @@
 ;
 define-macro fhook-fvwm
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "fvwm"
-    buffer-initialize-hooks
+    @# buffer-init "fvwm"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-fvwm.name "FVWM"
 set-variable .fhook-fvwm.setup &reg "/history" "fhook/fvwm" "ghiopx"
 set-variable .fhook-fvwm.setup-mask "aeghikmoptux"
@@ -126,8 +126,5 @@ set-variable .fhook-fvwm.comment "|#||#|# | #||"
     hilight .hilight.fvwm 0x20 "windowfont"          .scheme.keyword
 !endif
 
-ml-write "[FVWM file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "myfvwm"
+buffer-init-fhook "fvwm"
 

@@ -11,12 +11,12 @@ define-macro fhook-f90
     ; Is this a f77 or other fortran file ??
     set-variable #l0 &con &isin ".f90" $buffer-bname "f90" "f"
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "f90" #l0
-    buffer-initialize-hooks
+    @# buffer-init "f90" #l0
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
-set-variable .fhook-f90.name "Fortran"
+; buffer-init variables
+set-variable .fhook-f90.name "Fortran 90"
 set-variable .fhook-f90.setup &reg "/history" "fhook/f90" "bghinopx"
 set-variable .fhook-f90.setup-mask "aebghikmnoptux"
 set-variable .fhook-f90.comment "|!||!|! | !||"
@@ -109,8 +109,5 @@ set-variable .fhook-f90.comment "|!||!|! | !||"
     hilight .hilight.f90 1 "type"           .scheme.type
 !endif
 
-ml-write "[Fortran file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "myf90"
+buffer-init-fhook "f90"
 

@@ -10,7 +10,7 @@ set-char-mask "2" "-$&#!%:@."
 
 define-macro fhook-ehf
     set-variable $buffer-mask "luh12"
-    @# buffer-initialize "ehf"
+    @# buffer-init "ehf"
     ; Hyperlink with the mouse.
     set-variable :mouse-word-select ehf-process-link
     !if &seq $buffer-bname "*help*"
@@ -20,10 +20,10 @@ define-macro fhook-ehf
         buffer-bind-create "bio" "tab"   "" ehf-forward-link
         buffer-bind-create "bio" "S-tab" "" ehf-backward-link
     !endif
-    buffer-initialize-hooks
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-ehf.name "ME Help"
 set-variable .fhook-ehf.setup &reg "/history" "fhook/ehf" "ghijmopwx"
 set-variable .fhook-ehf.setup-mask "aeghijkopstuwx1"
@@ -304,5 +304,4 @@ set-variable .fhook-ehf.command-desc  "|\HGoto Link|Move to \HPrevious Link|Move
     !abort
 !emacro
 
-; load in user extensions if found
-!force execute-file "myehf"
+buffer-init-fhook "ehf"

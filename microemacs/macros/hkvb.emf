@@ -9,11 +9,11 @@
 ;
 define-macro fhook-vb
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "vb"
-    buffer-initialize-hooks
+    @# buffer-init "vb"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-vb.name "Visual Basic"
 set-variable .fhook-vb.setup &reg "/history" "fhook/vb" "dghiopx"
 set-variable .fhook-vb.setup-mask "adeghikmoptux"
@@ -160,7 +160,4 @@ set-variable .fhook-vb.item-list-r3 "Prop \ecB\\2 \\3\ecA"
     set-variable .indent.vbscript .hilight.vb
 !endif
 
-ml-write "[VB file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "myvb"
+buffer-init-fhook "vb"

@@ -242,7 +242,7 @@ fspace(meUByte *buf, int *pos, int *len, int state)
         if(*pos >= *len)
             return;
         
-        if((c = buf[*pos]) != ' ' && c!= '\t' && c != DIR_CHAR)
+        if(((c = buf[*pos]) != ' ') && (c != '\t') && (c != '\n') && (c != DIR_CHAR))
             return;
         
         if(state == ERASE)
@@ -270,7 +270,7 @@ bspace(meUByte *buf, int *pos, int *len, int state)
         if(*pos == 0)
             return;
         
-        if((c = buf[*pos - 1]) != ' ' && c != '\t' && c != DIR_CHAR)
+        if(((c = buf[*pos - 1]) != ' ') && (c != '\t') && (c != '\n') && (c != DIR_CHAR))
             return;
         
         if(state == ERASE)
@@ -299,7 +299,7 @@ fword(meUByte *buf, int *pos, int *len, int state)
         if(*pos >= *len)
             return ;
         
-        if((c = buf[*pos]) == ' ' || c == '\t' || c == DIR_CHAR)
+        if((c = buf[*pos]) == ' ' || c == '\t' || c == '\n' || c == DIR_CHAR)
             return;
         
         if(state == ERASE)
@@ -326,7 +326,7 @@ bword(meUByte *buf, int *pos, int *len, int state)
         if(*pos == 0)
             return;
         
-        if((c = buf[*pos - 1]) == ' ' || c == '\t' || c == DIR_CHAR)
+        if((c = buf[*pos - 1]) == ' ' || c == '\t' || c == '\n' || c == DIR_CHAR)
             return;
         
         if(state == ERASE)
@@ -1109,7 +1109,11 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
         }
         switch(idx)
         {
-        case CK_GOBOL:          /* ^A : Move to start of buffer */
+        case CK_GOBOF:          /* Home : Move to start of buffer */
+            ipos = 0;
+            break;
+        
+        case CK_GOBOL:          /* ^A : Move to start of line */
             if(frameCur->mlStatus & MLSTATUS_NINPUT)
             {
                 while(ipos && (buf[ipos-1] != meCHAR_NL))
@@ -1134,7 +1138,11 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
             }
             break;
             
-        case CK_GOEOL:    /* ^E : Move to end of buffer */
+        case CK_GOEOF:    /* End : Move to end of buffer */
+            ipos = ilen ;
+            break;
+        
+        case CK_GOEOL:    /* ^E : Move to end of line */
             if(frameCur->mlStatus & MLSTATUS_NINPUT)
             {
                 while((ipos < ilen) && (buf[ipos] != meCHAR_NL))

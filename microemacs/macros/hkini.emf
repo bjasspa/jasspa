@@ -16,11 +16,11 @@
 ;
 define-macro fhook-ini
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "ini"
-    buffer-initialize-hooks
+    @# buffer-init "ini"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-ini.setup &reg "/history" "fhook/ini" "fghiopx"
 set-variable .fhook-ini.setup-mask "aefghikmoptux"
 set-variable .fhook-ini.comment "|;||;|; | ;||"
@@ -49,8 +49,5 @@ set-variable .fhook-ini.collapse-mnext "-1"
     hilight .hilight.ini 1     "CURRENT"       .scheme.variable
 !endif
 
-ml-write "[ini file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "myini"
+buffer-init-fhook "ini"
 

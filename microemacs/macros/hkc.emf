@@ -16,11 +16,11 @@ define-macro fhook-c
     ; Is it an include h file or a c file?
     set-variable #l0 &con &isin ".h" $buffer-bname "h" "c"
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "c" #l0
-    buffer-initialize-hooks
+    @# buffer-init "c" #l0
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-c.setup &reg "/history" "fhook/c" "bdfghnopx"
 set-variable .fhook-c.setup-mask "abdefghikmnoptux>"
 set-variable .fhook-c.tags "ctags"
@@ -159,8 +159,4 @@ define-macro c-to-cpp-convert
     fhook-cpp
 !emacro
 
-ml-write "[C file hook loaded - esc h for help]"
-
-; load in user extensions if found
-!force execute-file "myc"
-
+buffer-init-fhook "c"

@@ -11,12 +11,12 @@ set-char-mask "2" "-$&#!%:@."
 
 define-macro fhook-lists
     set-variable $buffer-mask "luh12"
-    @# buffer-initialize "lists"
+    @# buffer-init "lists"
     set-variable :mouse-word-select ehf-process-link
-    buffer-initialize-hooks
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-lists.name "ME List"
 set-variable .fhook-lists.setup &reg "/history" "fhook/lists" "ghop"
 set-variable .fhook-lists.setup-mask "aeghop"
@@ -83,5 +83,4 @@ define-macro-file hkehf ehf-process-link ehf-find-help
     !abort
 !emacro
 
-; load in user extensions if found
-!force execute-file "mylists"
+buffer-init-fhook "lists"

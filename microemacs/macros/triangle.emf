@@ -25,14 +25,8 @@
     set-variable :tri-suit &div &sub #g8 1 13
     set-variable :tri-type &mid :tri-card-lab &mul1 :tri-suit 5 5
     set-variable :tri-dig &mid "A23456789TJQK" :tri-num 1 1
-    ; If PC - then use graphic symbols !!
-    !if &band $system 0x100
-        set-variable :tri-sym &itoa &add :tri-suit 3
-        set-variable :tri-sym1 :tri-sym
-    !else
-        set-variable :tri-sym " "
-        set-variable :tri-sym1 &mid :tri-card-lab &mul :tri-suit 5 1
-    !endif
+    set-variable :tri-sym " "
+    set-variable :tri-sym1 &mid :tri-card-lab &mul :tri-suit 5 1
     set-variable :tri-suit &add :tri-suit 1
 !emacro
 
@@ -272,7 +266,9 @@
     ; Shuffle the pack.
     ;
     1 ml-write "Dealing cards ....."
-    find-buffer "*triangle*"                ; Select the buffer
+    !if &not &seq $buffer-bname "*triangle*"
+        find-buffer "*triangle*"
+    !endif
     -1 buffer-mode "view"
     ; Kill the buffer off
     beginning-of-buffer
@@ -626,19 +622,37 @@
 !emacro
 
 0 define-macro bhook-triangle
-    -1 show-cursor                          ; Turn off the cursor
-    !force osd -1 0                         ; Turn off the menu.
-    set-variable :tri-scroll $scroll-bar    ; Save the scroll bar state
-    set-variable $scroll-bar 0              ; Disable the scroll bars.
+    ; Turn off the cursor & menu
+    -1 show-cursor                                
+    !force osd -1 0
+    ; Disable the scroll bars and toolbar.
+    set-variable :scroll-bar $scroll-bar
+    set-variable $scroll-bar 0
+    !if .Triangle.toolbar
+        ; note - we cannot open/close the toolbar directly as this changes the window layout which must not be done in an bhook
+        -1 create-callback toolbar
+        !if .toolbar.open
+            1 create-callback toolbar-close
+        !endif
+    !endif
 !emacro
 
 0 define-macro ehook-triangle
-    1 show-cursor                           ; Turn on the cursor
-    set-variable $scroll-bar :tri-scroll    ; Turn the scroll bars back on
-    !force osd -1 1                         ; Turn on the menu.
+    ; Turn on the cursor & restore menu, scroll bars and toolbar
+    1 show-cursor
+    set-variable $scroll-bar :scroll-bar
+    !force osd -1 1
+    !if .Triangle.toolbar
+        ; note - we cannot open/close the toolbar directly as this changes the window layout which must not be done in an ehook
+        -1 create-callback toolbar-close
+        !if &not .toolbar.open
+            1 create-callback toolbar
+        !endif
+    !endif
 !emacro
 ;
 define-macro Triangle
+    set-variable .toolbar &cond &exi .toolbar .toolbar .toolbar.open
     set-variable $random 0        ; Set it so we get a new seed
     find-buffer "*triangle*"
     !if &seq $buffer-bhook ""

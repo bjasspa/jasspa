@@ -8,11 +8,11 @@
 ;
 define-macro fhook-vrml
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "vrml"
-    buffer-initialize-hooks
+    @# buffer-init "vrml"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-vrml.setup &reg "/history" "fhook/vrml" "dghinx"
 set-variable .fhook-vrml.setup-mask "adeghikmntux"
 
@@ -146,8 +146,5 @@ set-variable .fhook-vrml.setup-mask "adeghikmntux"
     indent .hilight.vrml i "#"
 !endif
 
-ml-write "[VRML file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "myvrml"
+buffer-init-fhook "vrml"
 

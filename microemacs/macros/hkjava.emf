@@ -8,11 +8,11 @@
 ;
 define-macro fhook-java
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "java"
-    buffer-initialize-hooks
+    @# buffer-init "java"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-java.setup &reg "/history" "fhook/java" "bdfghnopx"
 set-variable .fhook-java.setup-mask "abdefghikmnoptux>"
 set-variable .fhook-java.tags "javatags"
@@ -165,8 +165,5 @@ define-macro ehook-java
     set-variable .fhook-java.fill-ignore &rep .fhook-java.fill-ignore "@" ""
 !endif
 
-ml-write "[Java file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "myjava"
+buffer-init-fhook "java"
 

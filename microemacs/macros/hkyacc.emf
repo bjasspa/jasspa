@@ -9,11 +9,11 @@
 define-macro fhook-yacc
     set-variable $buffer-mask "luh1"
     ; Use c template for LEX & YACC
-    @# buffer-initialize "yacc" "c"
-    buffer-initialize-hooks
+    @# buffer-init "yacc" "c"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-yacc.name "Lex/Yacc"
 set-variable .fhook-yacc.setup &reg "/history" "fhook/yacc" "ghinopx"
 set-variable .fhook-yacc.setup-mask "aeghikmnoptux"
@@ -113,8 +113,4 @@ set-variable .fhook-yacc.comment "|/*|*/|*| * | * |f|"
     !endif
 !endif
 
-ml-write "[Lex/Yacc file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "myyacc"
-
+buffer-init-fhook "yacc"

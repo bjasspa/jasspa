@@ -10,11 +10,11 @@ set-char-mask "3" "-$."
 
 define-macro fhook-tcl
     set-variable $buffer-mask "luh13"
-    @# buffer-initialize "tcl"
-    buffer-initialize-hooks
+    @# buffer-init "tcl"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-tcl.name "Tcl/Tk"
 set-variable .fhook-tcl.setup &reg "/history" "fhook/tcl" "dfghnopx"
 set-variable .fhook-tcl.setup-mask "adefghikmnoptux"
@@ -246,8 +246,5 @@ set-variable .fhook-tcl.item-list-r1 "Proc \ecB\\1\ecA"
     indent .hilight.tcl i "#"  
 !endif
 
-ml-write "[Tk/Tcl file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "mytcl"
+buffer-init-fhook "tcl"
 

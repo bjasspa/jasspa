@@ -12,11 +12,11 @@
 ;
 define-macro fhook-idl
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "idl"
-    buffer-initialize-hooks
+    @# buffer-init "idl"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-idl.name "OMG IDL"
 set-variable .fhook-idl.setup &reg "/history" "fhook/idl" "dfghnopx"
 set-variable .fhook-idl.setup-mask "adefghikmnoptux>"
@@ -105,7 +105,4 @@ set-variable .fhook-idl.collapse-mnext "-1"
     hilight .hilight.idl    0 "FALSE"        .scheme.prepro
 !endif
 
-ml-write "[OMG IDL file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "myidl"
+buffer-init-fhook "idl"

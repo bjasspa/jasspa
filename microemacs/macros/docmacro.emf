@@ -46,7 +46,7 @@
 ;         >
 ;         > Author:       My Self
 ;         > Created:      11/11/97
-;         > Modified:     <030827.1053>
+;         > Modified:     <031121.0156>
 ;         > Location:     /xx/yy/zz.doc
 ; *
 ;         All lines commencing with '*' are assumed to be bullet lists. Bullet
@@ -212,7 +212,7 @@ execute-file "docutl"
 define-macro doc-fhook-body
     set-variable #l1 @1
     ; if arg is 0 this is a new file so add template
-    @# buffer-initialize #l1 
+    @# buffer-init #l1 
     ; Set up the default constants
     doc-buffer-context-init
     ; Over-ride any special document modes
@@ -258,7 +258,7 @@ define-macro doc-fhook-body
             beginning-of-buffer
         !endif
     !endif
-    buffer-initialize-hooks
+    buffer-init-hooks
 !emacro
 
 ; convert a doc/txt buffer to jst
@@ -319,3 +319,5 @@ set-variable &ind &spr ".fhook-%s.command-desc"  #l1 "|\HShow Current Settings|S
     set-variable &ind &spr ".fhook-%s.collapse-close" #l1 "^[ \t]*\\(Appendix[ \t]+[A-Z][0-9.]*\\|[0-9]\\.[0-9.]*\\)[ \t]+\\w"
     set-variable &ind &spr ".fhook-%s.collapse-mnext" #l1 "-1"
 !endif
+
+buffer-init-fhook #l1

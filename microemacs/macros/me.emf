@@ -54,7 +54,7 @@
 0 define-macro-file scheme scheme
 0 define-macro-file langutl spell-rules-init
 0 define-macro-file osd osd-main osd-dialog osd-xdialog osd-entry
-0 define-macro-file buffinit buffer-initialize buffer-bind-create
+0 define-macro-file buffinit buffer-init buffer-init-fhook buffer-bind-create
 0 define-macro-file utils ascii-time regex-forward regex-backward var-str-sub str-to-regex filemask-to-regex copy-registry create-file-path
 define-macro-file format clean sort-lines-ignore-case normal-tab tabs-to-spaces paragraph-to-line delete-indentation restyle-region restyle-buffer ifill-paragraph
 define-macro-file cvs cvs cvs-add cvs-checkout cvs-commit cvs-diff cvs-gdiff cvs-log cvs-remove cvs-resolve-conflicts cvs-state cvs-status cvs-tag cvs-update 
@@ -293,6 +293,7 @@ add-file-hook ".pls"                                          fhook-pls
 -1 add-file-hook "-!-[ \t]*document.*-!-"        fhook-doc    ; -!- document -!-
 -1 add-file-hook "-!-[ \t]*jst.*-!-"             fhook-jst    ; -!- jst -!-
 -1 add-file-hook "-!-[ \t]*fvwm.*-!-"            fhook-fvwm   ; -!- fvwm -!-
+-1 add-file-hook "-!-[ \t]*emf.*-!-"             fhook-emf    ; -!- emf -!-
 -1 add-file-hook "-!-[ \t]*erf.*-!-"             fhook-erf    ; -!- erf -!-
 -1 add-file-hook "-!-[ \t]*asn\\.1.*-!-"         fhook-asn1   ; -!- asn.1... -!-
 -1 add-file-hook "-!-[ \t]*asmx86.*-!-"          fhook-asmx86 ; -!- asmx86 -!-

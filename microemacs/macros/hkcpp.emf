@@ -16,11 +16,11 @@ define-macro fhook-cpp
     ; Is it an include h file or a c file?
     set-variable #l0 &con &isin ".h" $buffer-bname "hpp" "cpp"
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "cpp" #l0
-    buffer-initialize-hooks
+    @# buffer-init "cpp" #l0
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-cpp.name "C++"
 set-variable .fhook-cpp.setup &reg "/history" "fhook/cpp" "bdfghnopx"
 set-variable .fhook-cpp.setup-mask "abdefghikmnoptux>"
@@ -147,8 +147,4 @@ set-variable .fhook-cpp.item-list-r6 "Clss \ecB\\1\ecA"
 ; setup fuctions to auto-load from cmacros
 define-macro-file cmacros c-slashify c-deslashify c-hash-eval c-hash-set-define c-hash-unset-define c-hash-del
 
-ml-write "[C++ file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "mycpp"
-
+buffer-init-fhook "cpp"

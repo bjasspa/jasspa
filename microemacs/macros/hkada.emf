@@ -8,11 +8,11 @@
 ;
 define-macro fhook-ada
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "ada"
-    buffer-initialize-hooks
+    @# buffer-init "ada"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-ada.setup &reg "/history" "fhook/ada" "bghinopx"
 set-variable .fhook-ada.setup-mask "abeghikmnoptux"
 set-variable .fhook-ada.comment "|{|}|*|* | *|f|"
@@ -115,7 +115,4 @@ set-variable .fhook-ada.comment "|{|}|*|* | *|f|"
 	hilight .hilight.ada 0x1004 "'" "'" ""  .scheme.string
 !endif
 
-ml-write "[ada file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "myada"
+buffer-init-fhook "ada"

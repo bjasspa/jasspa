@@ -10,9 +10,10 @@ set-char-mask "3" "@"
 
 define-macro fhook-rul
     set-variable $buffer-mask "luh13"
-    @# buffer-initialize "rul"
-    buffer-initialize-hooks
+    @# buffer-init "rul"
+    buffer-init-hooks
 !emacro
+set-variable .fhook-rul.name "Install Shield Rul"
 set-variable .fhook-rul.setup &reg "/history" "fhook/rul" "bdfghnopx"
 set-variable .fhook-rul.setup-mask "abdefghikmnoptux"
 set-variable .fhook-rul.comment "|/*|*/|*| * | * |f|"
@@ -134,8 +135,5 @@ set-variable .fhook-rul.collapse-mnext "-1"
     indent .hilight.rul e "/\\*" "*/" ""
 !endif
 
-ml-write "[Install Shield Rul file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "myrul"
+buffer-init-fhook "rul"
 

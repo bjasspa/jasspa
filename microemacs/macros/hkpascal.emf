@@ -8,11 +8,11 @@
 ;
 define-macro fhook-pascal
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "pascal"
-    buffer-initialize-hooks
+    @# buffer-init "pascal"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-pascal.setup &reg "/history" "fhook/pascal" "bghinopx"
 set-variable .fhook-pascal.setup-mask "abeghikmnoptux"
 set-variable .fhook-pascal.comment "|{|}|*|* | *|f|"
@@ -99,7 +99,4 @@ set-variable .fhook-pascal.comment "|{|}|*|* | *|f|"
     hilight .hilight.pascal 1 "eoln"           .scheme.operator
 !endif
 
-ml-write "[Pascal file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "mypascal"
+buffer-init-fhook "pascal"

@@ -9,11 +9,11 @@
 ;
 define-macro fhook-m4
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "m4"
-    buffer-initialize-hooks
+    @# buffer-init "m4"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-m4.setup &reg "/history" "fhook/m4" "ghinox"
 set-variable .fhook-m4.setup-mask "aeghikmnotux"
 set-variable .fhook-m4.comment "|#||#|# | #||"
@@ -82,8 +82,5 @@ set-variable .fhook-m4.comment "|#||#|# | #||"
     hilight .hilight.m4    1 "__unix__"           .scheme.prepro
 !endif
 
-ml-write "[m4 file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "mym4"
+buffer-init-fhook "m4"
 

@@ -11,11 +11,11 @@ define-macro fhook-slang
     ; Is it an include h file or a c file?
     set-variable #l0 &con &isin ".h" $buffer-bname "h" "c"
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "slang" #l0
-    buffer-initialize-hooks
+    @# buffer-init "slang" #l0
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-slang.setup &reg "/history" "fhook/slang" "bdfghnopx"
 set-variable .fhook-slang.setup-mask "abdefghikmnoptux>"
 set-variable .fhook-slang.tags "ctags"
@@ -106,7 +106,4 @@ set-variable .fhook-slang.collapse-mnext "-1"
 ; setup fuctions to auto-load from cmacros
 define-macro-file cmacros c-slashify c-deslashify c-hash-eval c-hash-set-define c-hash-unset-define c-hash-del
 
-ml-write "[Slang file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "myslang"
+buffer-init-fhook "slang"

@@ -7,13 +7,13 @@
 ; Authors:     Steven Phillips
 ;
 define-macro fhook-man
-    @# buffer-initialize "man"
+    @# buffer-init "man"
     1 buffer-mode "view"
     set-variable :mouse-word-select man-process-link
-    buffer-initialize-hooks
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-man.name "UNIX Man page"
 set-variable .fhook-man.setup &reg "/history" "fhook/man" "Ughpo"
 set-variable .fhook-man.setup-mask "aeghmpo1" 
@@ -195,7 +195,4 @@ define-macro man
     fhook-man
 !emacro
 
-ml-write "[Man-page file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "myman"
+buffer-init-fhook "man"

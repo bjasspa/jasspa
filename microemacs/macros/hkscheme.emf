@@ -9,11 +9,11 @@
 ;
 define-macro fhook-scheme
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "scheme"
-    buffer-initialize-hooks
+    @# buffer-init "scheme"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-scheme.setup &reg "/history" "fhook/scheme" "ghiopx"
 set-variable .fhook-scheme.setup-mask "aeghikmoptux"
 set-variable .fhook-scheme.comment "|;||;|; | ;||"
@@ -255,7 +255,4 @@ set-variable .fhook-scheme.comment "|;||;|; | ;||"
     hilight   .hilight.scheme 1 ")"                              .scheme.operator
 !endif
 
-ml-write "[Scheme file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "myscheme"
+buffer-init-fhook "scheme"

@@ -69,7 +69,4 @@ define-macro fhook-diff
     !endif
 !emacro
 
-ml-write "[Diff file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "mydiff"
+buffer-init-fhook "diff"

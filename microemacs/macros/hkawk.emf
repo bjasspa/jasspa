@@ -8,11 +8,11 @@
 ;
 define-macro fhook-awk
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "awk"
-    buffer-initialize-hooks
+    @# buffer-init "awk"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-awk.setup &reg "/history" "fhook/awk" "ghiopx"
 set-variable .fhook-awk.setup-mask "aeghikmoptux"
 set-variable .fhook-awk.comment "|#||#|# | #||"
@@ -78,7 +78,4 @@ set-variable .fhook-awk.comment "|#||#|# | #||"
     hilight   .hilight.awk 1 "while"        .scheme.keyword
 !endif
 
-ml-write "[AWK file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "myawk"
+buffer-init-fhook "awk"

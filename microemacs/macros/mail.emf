@@ -12,10 +12,10 @@
     1 buffer-mode "wrap"
     1 buffer-mode "indent"
     1 buffer-mode "justify"
-    @# buffer-initialize "mail"
+    @# buffer-init "mail"
     ; Must explictily setup the auto-spell reset and abbrev as there is no fhook
     set-variable :auto-spell-reset "mail"
-    buffer-initialize-hooks
+    buffer-init-hooks
 !emacro
 
 set-variable .fhook-mail.setup &reg "/history" "fhook/mail" "bghijnopsw"

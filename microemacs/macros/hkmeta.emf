@@ -9,11 +9,11 @@
 ;
 define-macro fhook-meta
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "meta"
-    buffer-initialize-hooks
+    @# buffer-init "meta"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-meta.name "MetaPost/Font"
 set-variable .fhook-meta.setup &reg "/history" "fhook/meta" "ghiopx"
 set-variable .fhook-meta.setup-mask "aeghikmoptux"
@@ -173,7 +173,4 @@ set-variable .fhook-meta.comment "|%||%|% | %||"
     hilight   .hilight.meta 1 "atan2"             .scheme.keyword
 !endif
 
-ml-write "[MetaPost/Font file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "mymeta"
+buffer-init-fhook "meta"
