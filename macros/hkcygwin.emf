@@ -644,10 +644,7 @@ define-macro cygwin
         set-variable $buffer-hilight .hilight.cygwin
     !endif
     1 cygpipe-mode
-    ; execute user extensions if enabled
-    !if &exi my-fhook-cygwin
-        my-fhook-cygwin
-    !endif
+    buffer-init-hooks
 !emacro
 
 buffer-init-fhook "cygwin"

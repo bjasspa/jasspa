@@ -511,10 +511,7 @@ define-macro fhook-ipipe
     buffer-bind-create "b" "f2" "0" ipipe-mode
     buffer-bind-create "b" "f3" "1" ipipe-mode
     1 ipipe-mode
-    ; execute user extensions if enabled
-    !if &exi my-fhook-ipipe
-        my-fhook-ipipe
-    !endif
+    buffer-init-hooks
 !emacro
 
 

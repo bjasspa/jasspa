@@ -63,10 +63,7 @@ define-macro fhook-diff
             set-variable $buffer-hilight .hilight.diff
         !endif
     !endif
-    ; execute user extensions if defined
-    !if &exist my-fhook-diff
-        my-fhook-diff
-    !endif
+    buffer-init-hooks
 !emacro
 
 buffer-init-fhook "diff"
