@@ -1,0 +1,96 @@
+Subject:
+Fwd: Contribution
+From:
+JASSPA Support <support@jasspa.com>
+Date:
+Fri, 26 Mar 2004 00:09:34 +0000
+To:
+"jon@jasspa.com" <jon@jasspa.com>
+CC:
+sphillips@ptc.com
+X-UIDL:
+1080259866.2739_0.waterman.netkonect.net
+X-Mozilla-Status:
+0001
+X-Mozilla-Status2:
+00000000
+Return-Path:
+<support@jasspa.com>
+Received:
+from klingon.netkonect.net (klingon.netkonect.net [194.62.44.61]) by pop.netkonect.net (Postfix) with ESMTP id ED5F31BA446 for <jon@jasspa.com>; Fri, 26 Mar 2004 00:11:05 +0000 (GMT)
+Received:
+from tmailm1.svr.pol.co.uk (tmailm1.svr.pol.co.uk [195.92.193.20]) by klingon.netkonect.net (8.12.10/8.12.10) with ESMTP id i2Q0B5a1028256 for <jon@jasspa.com>; Fri, 26 Mar 2004 00:11:05 GMT
+Received:
+from modem-72.neilsborium.dialup.pol.co.uk ([62.136.73.200]) by tmailm1.svr.pol.co.uk with esmtp (Exim 4.14) id 1B6ewA-0005Q0-53; Fri, 26 Mar 2004 00:11:02 +0000
+Reply-To:
+JASSPA Support <support@jasspa.com>
+Organization:
+JASSPA
+X-Priority:
+3 (Normal)
+Message-ID:
+<351591897.20040326000934@jasspa.com>
+In-Reply-To:
+<BAY12-F41AHPsOgfArI00011d26@hotmail.com>
+References:
+<BAY12-F41AHPsOgfArI00011d26@hotmail.com>
+MIME-Version:
+1.0
+Content-Type:
+multipart/mixed; boundary="----------651421771D86714B"
+
+Bloody typical, just as we are about to release someone makes a submission! I
+think this is too late, what are your thoughts (I've not had chance to go
+through it).
+
+Steve
+-----Original message-----
+Subject: Contribution
+From: Alberto Hernandez <alberto_h_a@hotmail.com>
+Date: Thursday, March 25, 2004, 12:54:26 PM
+To: support@jasspa.com
+
+Hi,
+In the attached file there are two patches for jasspa microemacs wich adds
+support for spanish keyboard under Unix
+Both were generated with diff -Naur orig_src_directory modif_src_directory
+
+patch.0212 :    patch to jasspa microemacs from December 2002
+patch.040206 :  patch to jasspa microemacs Februray 2004 RC4
+
+These patches have only been tested under Linux ( 2.4.18 & 2.6.4 with
+xfree86 4.3.0.1-1 ) on my own computer so they may not work on other
+systems, although i think it would be trivial to make them work in any
+other Unix-like systems.
+
+They enable you to enter accented characters by pressing the
+corresponding accent key and after releasing it, pressing the
+letter ( so the keypresses ^ A would generate A^ ).
+Also adds suport for entering directly letters such as N~ or C,.
+
+The patch.040206 patch also fixes a strange behavior with the AltGr key
+wich didn't occur on the December 2002 version. When pressing the
+AlGr key, it's interpreted as C-c, so for entering for exmple an "@" you 
+must
+press AltGr and without releasing it  press twice the "@" key.
+
+The build script has also been patched adding one more commandline option
+( -e ) wich build mecw with support for spanish keyboard.
+
+The files hkmodula2.emf and modula2.etf are respectively the syntax
+definition and a template for the programming language Modula-2.
+These have only been tested with jasspa microemacs from December 2002.
+
+Thanks for making one fo the best editors i've ever seen and
+excuse my bad english ( I'm spanish )
+
+Regards
+
+Alberto Hernandez Arenaz
+
+_________________________________________________________________
+Reparaciones, servicios a domicilio, empresas, profesionales... Todo en la 
+gui'a telefo'nica de QDQ. http://qdq.msn.es/msn.cfm
+
+
+-- _______________________________________________________ Steven Phillips JASSPA Support
