@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -f
 # JASSPA MicroEmacs - www.jasspa.com
 # build - JASSPA MicroEmacs build shell script for unix platforms
 # Copyright (C) 2001-2004 JASSPA (www.jasspa.com)
@@ -89,6 +89,8 @@ if [ ".$MAKEFILE" = "." ] ; then
             fi
             sleep 5
         fi
+    elif [ $PLATFORM = "Darwin" ] ; then
+        MAKEBAS=darwin
     elif [ $PLATFORM = "FreeBSD" ] ; then
         MAKEBAS=freebsd
     elif [ $PLATFORM = "HP-UX" ] ; then
