@@ -9,9 +9,7 @@
 ;
 define-macro xml-forward-tag
     forward-char
-    set-variable #l9 &bmod "magic"
-    1 buffer-mode "magic"
-    !force search-forward "[<>]"
+    !force search-buffer "em" "[<>]"
     !if &not $status
         end-of-buffer
         !force backward-char
@@ -21,14 +19,11 @@ define-macro xml-forward-tag
             forward-char
         !endif
     !endif
-    &cond #l9 1 -1 buffer-mode "magic"
 !emacro
 
 define-macro xml-backward-tag
     backward-char
-    set-variable #l9 &bmod "magic"
-    1 buffer-mode "magic"
-    !force search-backward "[<>]"
+    !force search-buffer "bem" "[<>]"
     !if &not $status
         beginning-of-buffer
     !else
@@ -37,7 +32,6 @@ define-macro xml-backward-tag
             backward-char
         !endif
     !endif
-    &cond #l9 1 -1 buffer-mode "magic"
 !emacro
 
 ; xml-get-tag-info - returns info on the current tag in #p9, the variable
@@ -60,13 +54,13 @@ define-macro xml-backward-tag
 ;   0x08 - debug info printout
 ; xml-goto-matching-tag-f also uses
 ;   0x10 - move cursor to the end of the tag
-; Cursor must be at opening '<' and assumes magic mode is enabled.
+; Cursor must be at opening '<'.
 0 define-macro xml-get-tag-info
     set-variable #l0 $window-col
     set-variable #l1 $window-line
     !if &seq &mid @wl $window-col 4 "<!--"
         ; handle comments first as anything from the <!-- to the first --> is a comment that can throw the rest of this macro out
-        !force search-forward "-->"
+        !force search-buffer "eM" "-->"
         !if $status
             set-variable #p9 &spr "|1|%d|%d|%d|%d||" #l1 #l0 $window-line $window-col
             !if &band @# 8
@@ -83,7 +77,7 @@ define-macro xml-backward-tag
         !return
     !elif &seq &mid @wl $window-col 9 "<![CDATA["
         ; handle CDATA next as anything from the <![CDATA[ to the first ]]> is data that could throw the macro out
-        !force search-forward "]]>"
+        !force search-buffer "eM" "]]>"
         !if $status
             set-variable #p9 &spr "|2|%d|%d|%d|%d||" #l1 #l0 $window-line $window-col
             !if &band @# 8
@@ -102,10 +96,10 @@ define-macro xml-backward-tag
     forward-char
     !repeat
         set-variable #l2 1 
-        !force search-forward "[<>\"]"
+        !force search-buffer "em" "[<>\"]"
         !if &not $status
         !elif &seq &mid @wl &sub $window-col 1 1 "\""
-            !force search-forward "\""
+            !force search-buffer "eM" "\""
             set-variable #l2 &not $status  
         !endif
     !until #l2
@@ -149,7 +143,7 @@ define-macro xml-backward-tag
             set-variable #l9 3
             set-variable #l5 "DOCTYPE"
             !if &band @# 2
-                !force -1 search-forward "<!DOCTYPE\\s +\\w+\\s +\\w+\\s +\"[^\"]*\"\\s +\"[^\"]*\"\\w*>"
+                !force -1 search-buffer "em" "<!DOCTYPE\\s +\\w+\\s +\\w+\\s +\"[^\"]*\"\\s +\"[^\"]*\"\\w*>"
                 !if &not $status
                     set-variable #l9 -12
                 !endif
@@ -240,7 +234,7 @@ define-macro xml-backward-tag
     str-to-regex #l2
     set-variable #l2 &spr "<%s\\([ \t>].*\\)?" #l2
     !repeat
-        !force search-backward "<"
+        !force search-buffer "beM" "<"
         !if &not $status
             ml-write &spr "[failed to find opening <%s> for tag on line %d]" &lget #p9 6 &lget #p9 2
             !abort
@@ -270,7 +264,7 @@ define-macro xml-backward-tag
     set-variable $window-line &lget #p9 4
     set-variable $window-col &lget #p9 5
     !repeat
-        !force search-forward "<"
+        !force search-buffer "eM" "<"
         !if &not $status
             ml-write &spr "[failed to find closing </%s> for tag on line %d]" &lget #p9 6 &lget #p9 2
             !abort
@@ -306,7 +300,7 @@ define-macro xml-goto-matching-tag
     set-variable #l8 &bmod "magic"
     1 buffer-mode "magic"
     !if &not &seq @wc "<"
-        !force search-backward "[<>]"
+        !force search-buffer "bem" "[<>]"
         !if &not &seq @wc "<"
             &cond #l8 1 -1 buffer-mode "magic"
             goto-position "\x81"
@@ -343,7 +337,7 @@ define-macro xml-verify
     1 buffer-mode "magic"
     ml-write "[verifying xml ...]"
     !repeat
-        !force search-forward "<"
+        !force search-buffer "eM" "<"
         !if &not $status
             &cond #l8 1 -1 buffer-mode "magic"
             !force -1 show-region
@@ -458,7 +452,7 @@ define-macro xml-collapse-tag
         !if &seq #l3 "<"
             ; this is a <..> token, skip all if spelling buffer (@# != 0)
             !if @#
-                !force search-forward ">"
+                !force search-buffer "eM" ">"
                 set-variable .spell.check-word ""
             !endif
             !return
@@ -482,7 +476,7 @@ define-macro xml-collapse-tag
     ml-write "[Looking for opening tag ...]"
     2 backward-char
     !repeat
-        !force search-backward "<"
+        !force search-buffer "beM" "<"
         !if &set #l2 $status
             !force 3 xml-get-tag-info
             !if &not $status
@@ -512,12 +506,8 @@ define-macro xml-find-tag
     !if &not @#
         beginning-of-buffer
     !endif
-    set-variable #l8 &bmod "exact"
-    -1 buffer-mode "exact"
-    !force search-forward &cat "<" #l0
-    set-variable #l1 $status
-    &cond #l8 1 -1 buffer-mode "exact"
-    !if &not #l1
+    !force search-buffer "EM" &cat "<" #l0
+    !if &not $status
         !if &or &seq @p "" &seq &lef @p 6 "mouse-"
             ml-write "[Tag not found]"
         !endif
@@ -616,7 +606,7 @@ define-macro xml-insert-attrib
         !jump 3
     !elif &seq @wc "<"
         backward-char
-        search-backward "\\S "
+        search-buffer "bem" "\\S "
         forward-char
         !if &seq @wc " "
             forward-char
