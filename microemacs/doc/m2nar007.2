@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jun 17 22:26:42 1999
 .\"
-.Id $Id: m2nar007.2,v 2.13 2005-01-22 15:30:46 jon Exp $
+.Id $Id: m2nar007.2,v 2.14 2005-02-22 19:40:40 bill Exp $
 .Im MicroEmacs
 .so me.tni
 .TH "Build" 2
@@ -133,9 +133,6 @@ Set the build type, where \fItype\fR can be one of the following:
 is \fCmecw\fR (or \fCmecw32\fR on Windows).
 .BE 0
 .RE
-.IP \fB-u\fR
-Build a URL version (Windows '95/'98/NT only),  constructs the executable
-\fCmeu32.exe\fR.
 .SS Makefiles
 The supplied makefiles are provided in two forms:-
 .BS
@@ -151,13 +148,17 @@ The makefiles are supplied with the following targets:-
 .BU
 \fBspotless\fR \- Removes intermediate files and any backup files.
 .BU
+\fBme\fR \- Builds the default \*(mS executable.
+.BU
 \fBmed\fR \- Builds a debugging version.
 .BU
-\fBmen\fR \- Builds console version (Windows only).
+\fBmec\fR \- Builds a console only version.
 .BU
-\fBmen\fR \- Builds a URL version (Windows only).
+\fBmew\fR \- Builds a windows only version.
 .BU
-\fBmenu\fR \- Builds console and URL version (Windows only).
+\fBmecw\fR \- Builds a version which supports both console and windows.
+.BU
+\fBne\fR \- Builds NanoEmacs executable.
 .BE 0
 .SH "WINDOWS ENVIRONMENT"
 The Windows environment is a little more difficult than \s-1UNIX\s0 because it
