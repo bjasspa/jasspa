@@ -5,7 +5,7 @@
  *  Synopsis      : regex compiler and matcher.
  *  Created By    : Steven Phillips
  *  Created       : Wed Aug 11 11:35:51 1999
- *  Last Modified : <010123.1239>
+ *  Last Modified : <001009.2024>
  *
  *  Description
  *
