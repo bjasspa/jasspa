@@ -6,7 +6,7 @@
 .\"  Created By    : Steven Phillips
 .\"  Created       : Sat Aug 22 09:00:06 1998
 .\"
-.Id $Id: m3osd000.3,v 2.16 2005-01-16 19:40:40 jon Exp $
+.Id $Id: m3osd000.3,v 2.17 2005-02-10 01:32:38 bill Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH user-setup 3
@@ -317,7 +317,11 @@ characters. This indirectly sets bit
 variable.
 .IP "\fCEnable Toolbar\fR"
 Enables the Toolbar - configurable, managed windows giving easy access to many
-features and tools.
+features  and tools.  When  enabled  the  toolbar is opened and  displayed  at
+start-up,  when  disabled the toolbar is not displayed but it can be opened by
+simply executing the
+.Ht  toolbar 3
+command.
 .IP "\fCClient Server\fR"
 The  client/server  enables the file based external macro command driver to be
 enabled - see
@@ -397,6 +401,8 @@ dialog.
 .SS "Platform - UNIX Console Setup"
 Only  present on UNIX  platforms  when using the  termcap  interface,  all the
 Console platform settings are kept independent of the X interface settings.
+.IP "\fCDisplay Char Set\fR"
+See \fBPlatform UNIX Setup\fR above.
 .IP "\fCTermcap Color\fR"
 This option determines  whether Termcap based colors should be used. These are
 typically the standard eight colors and may not be supported on all terminals.
@@ -406,9 +412,9 @@ create a primitive hi-lighting. This indirectly sets bit 0x004 of the
 variable.
 .IP "\fCUse Fonts\fR"
 See \fBPlatform UNIX Setup\fR above.
-.IP "\fCDisplay Char Set\fR"
-See \fBPlatform UNIX Setup\fR above.
 .IP "\fCDraw White Spaces\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCEnable Toolbar\fR"
 See \fBPlatform UNIX Setup\fR above.
 .IP "\fCClient Server\fR"
 See \fBPlatform UNIX Setup\fR above.
@@ -419,6 +425,8 @@ See \fBPlatform UNIX Setup\fR above.
 .IP "\fCIgnore Files\fR"
 See \fBPlatform UNIX Setup\fR above.
 .IP "\fCCursor Blink Rate\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCFence Display\fR"
 See \fBPlatform UNIX Setup\fR above.
 .IP "\fCScroll Bars\fR"
 See \fBPlatform UNIX Setup\fR above.
@@ -452,8 +460,8 @@ the range -11 .. -14 generally produce reasonably sized fonts. The \fIhight\fR
 and  \fIwidth\fR  may be  specified  as +ve  values  and allow  explicit  font
 dimensions  to be  specified,  generally  used to achieve a precise  font size
 requirement.
-.IP "\fCUse Fonts\fR"
-See \fBPlatform UNIX Setup\fR above.
+.IP "\fCFonts\fR"
+See \fCUse Fonts\fR in \fBPlatform UNIX Setup\fR above.
 .IP "\fCDisplay Char Set\fR"
 See \fBPlatform UNIX Setup\fR above.
 .IP "\fCExtend Char Set\fR"
@@ -468,6 +476,8 @@ Used to enable/disable  the capture and  interpretation of the '\fCA-space\fR'
 key  sequence. If this key sequence is not captured by \*(mS it is passed back
 to Windows  which  opens the top left window  menu, allow  keyboard  access to
 Window commands like Maximize.
+.IP "\fCEnable Toolbar\fR"
+See \fBPlatform UNIX Setup\fR above.
 .IP "\fCClient Server\fR"
 See  \fBPlatform  UNIX Setup\fR  above. Note that on windows based systems the
 client/server is also used by
@@ -485,6 +495,8 @@ See \fBPlatform UNIX Setup\fR above.
 See \fBPlatform UNIX Setup\fR above.
 .IP "\fCCursor Blink Rate\fR"
 See \fBPlatform UNIX Setup\fR above.
+.IP "\fCFence Display\fR"
+See \fBPlatform UNIX Setup\fR above.
 .IP "\fCScroll Bars\fR"
 See \fBPlatform UNIX Setup\fR above.
 .IP "\fCHorizontal Scroll\fR"
@@ -501,6 +513,8 @@ Window interface settings.
 See \fBPlatform UNIX Setup\fR above.
 .IP "\fCDraw White Spaces\fR"
 See \fBPlatform UNIX Setup\fR above.
+.IP "\fCEnable Toolbar\fR"
+See \fBPlatform UNIX Setup\fR above.
 .IP "\fCClient Server\fR"
 See \fBPlatform Win32 Setup\fR above.
 .IP "\fCDOS File Names\fR"
@@ -510,6 +524,8 @@ See \fBPlatform UNIX Setup\fR above.
 .IP "\fCIgnore Files\fR"
 See \fBPlatform UNIX Setup\fR above.
 .IP "\fCCursor Blink Rate\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCFence Display\fR"
 See \fBPlatform UNIX Setup\fR above.
 .IP "\fCScroll Bars\fR"
 See \fBPlatform UNIX Setup\fR above.
@@ -528,11 +544,19 @@ doubled. This indirectly executes
 with the given font name.
 .IP "\fCDisplay Char Set\fR"
 See \fBPlatform UNIX Setup\fR above.
+.IP "\fCDouble Lines\fR"
+In some  graphic  modes  the  number of text  lines can be  doubled  via a dos
+terminal  call, this  option is worth  trying if more  visible  text lines are
+required.
 .IP "\fCDraw White Spaces\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCEnable Toolbar\fR"
 See \fBPlatform UNIX Setup\fR above.
 .IP "\fCIgnore Files\fR"
 See \fBPlatform UNIX Setup\fR above.
 .IP "\fCCursor Blink Rate\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCFence Display\fR"
 See \fBPlatform UNIX Setup\fR above.
 .IP "\fCScroll Bars\fR"
 See \fBPlatform UNIX Setup\fR above.
@@ -608,7 +632,7 @@ The function to be performed.  The functions  available  depend on the type of
 button being bound, the following is a list of functions  available for normal
 buttons:-
 .RS
-.IP "\fCNot bound\fR"
+.IP "\fC<not bound>\fR"
 The Button is not bound.
 .IP "\fCDrag region\fR"
 .Ht set-mark 2
@@ -659,15 +683,15 @@ Simply executes
 .Ht undo 2
 without  moving the cursor to the position of the mouse.  Subsequent  calls to
 this binding will undo multiple edits.
-.IP "\fCNo move yank\fR"
+.IP "\fCNo Move Yank\fR"
 Simply executes
 .Ht yank 2
 without moving the cursor to the position of the mouse.
-.IP "\fCReplace yank\fR"
+.IP "\fCReplace Yank\fR"
 Simplar to "\fCNo move yank\fR" except when the is a current region (typically
 defined  by  "\fCDrag  region\fR"  above), in which  case the  region is first
 deleted.
-.IP "\fCMove to yank\fR"
+.IP "\fCMove to Yank\fR"
 Moves the cursor to the current position of the mouse and executes
 .Ht yank 2 .
 .IP "\fCReyank\fR"
@@ -676,6 +700,9 @@ Executes
 without  moving the cursor.  Note, to enable  this  functionality  some sanity
 checks have had to be removed, as a result it should not be misused as seeming
 bizarre things can occur.
+.IP "\fCRectangle Yank\fR"
+Moves the cursor to the current position of the mouse and executes
+.Ht yank-rectangle 2 .
 .IP "\fCCollapse Current\fR"
 Toggles  the collapse  status of the  current  block, only  applicable  in buffers
 supporting
