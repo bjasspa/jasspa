@@ -128,6 +128,7 @@ scheme
 ; key bindings
 0x1 global-bind-key spell-word           "esc $"
 global-bind-key frame-handle             "C-x 5" 
+global-bind-key find-zfile               "C-x 7" 
 4 global-bind-key prefix                 "C-c"
 global-bind-key set-position             "C-c C-a"
 global-bind-key goto-position            "C-c a"
