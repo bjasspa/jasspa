@@ -1005,7 +1005,13 @@ replaces(int kind, int ff, int nn)
                 return meABORT ;
 #if MEOPT_EXTENDED
             /* check that this replace is legal */
-            i = slength + frameCur->windowCur->dotOffset ;
+#if MEOPT_MAGIC
+            if(srchLastMagic)
+                i = mereRegexGroupEnd(0) ;
+            else
+#endif
+                i = slength + frameCur->windowCur->dotOffset ;
+            i += frameCur->windowCur->dotOffset ;
             if(i > meLineGetLength(frameCur->windowCur->dotLine))
             {
                 meLine *lp ;
