@@ -143,18 +143,12 @@ define-macro bhook-java
         set-variable .fhook-java.ofill-ignore $fill-ignore
         set-variable $fill-ignore .fhook-java.fill-ignore
     !endif
-    !if &exist my-bhook-java
-        my-bhook-java
-    !endif
 !emacro
 
 ; End hook - leaving the buffer - restore the fill-ignore characters
 define-macro ehook-java
     !if &exi .fhook-java.fill-ignore
         set-variable $fill-ignore .fhook-java.ofill-ignore
-    !endif
-    !if &exist my-ehook-java
-        my-ehook-java
     !endif
 !emacro    
 

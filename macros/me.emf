@@ -200,7 +200,8 @@ set-variable .expand-iso-accents.on &reg "/history" "expaccent" "0"
 set-variable .expand-look-back.on &reg "/history" "explookbk" "1"
 set-variable .expand-word.on &reg "/history" "expword" "0"
 ;
-; File hooks - reset the file hook list first
+; File hooks - define default & reset the file hook list first
+define-macro-file hkdefault fhook-default
 0 add-file-hook
 ; Add file extension hooks. Files loaded in binary mode do not need hook as fixed
 add-file-hook "*help* *about* .ehf"                           fhook-ehf

@@ -183,16 +183,10 @@ set-variable .fhook-jst.item-list-r4 "Appx \ecB\\1\ecA"
 ; Set up for jst mode.
 0 define-macro bhook-jst
     doc-buffer-context
-    !if &exist my-bhook-jst
-        my-bhook-jst
-    !endif
 !emacro
 
 0 define-macro ehook-jst
     doc-global-context
-    !if &exist my-ehook-jst
-        my-ehook-jst
-    !endif
 !emacro
 
 

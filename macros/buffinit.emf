@@ -198,15 +198,39 @@ define-macro-file collapse collapse-current collapse-all
     !if &exist &cat "my-fhook-" #l0
         execute-named-command &cat "my-fhook-" #l0
     !endif
-    !if &exist &cat "my-bhook-" #l0
-        !if &seq $buffer-bhook ""
-            set-variable $buffer-bhook &cat "my-bhook-" #l0
-        !endif
+    !if &exist "my-fhook-always"
+        my-fhook-always
     !endif
+    set-variable #l1 $buffer-bhook
+    !if &exist &cat "my-bhook-" #l0
+        set-variable $buffer-bhook &cat "my-bhook-" #l0
+    !endif
+    !if &exist my-bhook-always
+        set-variable #l1 $buffer-bhook
+        set-variable $buffer-bhook my-bhook-always
+    !endif
+    !if &not &seq #l1 "ERROR"
+        set-variable $buffer-bhook buffer-init-bhook
+    !endif
+    set-variable #l1 $buffer-ehook
     !if &exist &cat "my-ehook-" #l0
-        !if &seq $buffer-ehook ""
-            set-variable $buffer-ehook &cat "my-ehook-" #l0
+        set-variable $buffer-ehook &cat "my-ehook-" #l0
+    !endif
+    !if &exist my-ehook-always
+        set-variable #l1 $buffer-ehook
+        set-variable $buffer-ehook my-ehook-always
+    !endif
+    !if &not &seq #l1 "ERROR"
+        set-variable $buffer-ehook buffer-init-ehook
+    !endif
+    !if &exist &cat "my-dhook-" #l0
+        !if &exist my-dhook-always
+            set-variable $buffer-dhook buffer-init-dhook
+        !else
+            set-variable $buffer-dhook &cat "my-dhook-" #l0
         !endif
+    !elif &exist my-dhook-always
+        set-variable $buffer-dhook my-dhook-always
     !endif
 !emacro
 
@@ -230,4 +254,38 @@ define-macro-file collapse collapse-current collapse-all
     ml-write &spr "[%s file hook loaded]" #l1
     ; load in user extensions if found
     !force execute-file &cat "my" #l9
+!emacro
+
+0 define-macro buffer-init-bhook
+    set-variable #l0 &rig $buffer-fhook 6
+    !if &exist &cat "bhook-" #l0
+        execute-named-command &cat "bhook-" #l0
+    !endif
+    !if &exist &cat "my-bhook-" #l0
+        execute-named-command &cat "my-bhook-" #l0
+    !endif
+    !if &exist "my-bhook-always"
+        my-bhook-always
+    !endif
+!emacro
+0 define-macro buffer-init-ehook
+    set-variable #l0 &rig $buffer-fhook 6
+    !if &exist &cat "ehook-" #l0
+        execute-named-command &cat "ehook-" #l0
+    !endif
+    !if &exist &cat "my-ehook-" #l0
+        execute-named-command &cat "my-ehook-" #l0
+    !endif
+    !if &exist "my-ehook-always"
+        my-ehook-always
+    !endif
+!emacro
+0 define-macro buffer-init-dhook
+    set-variable #l0 &rig $buffer-fhook 6
+    !if &exist &cat "my-dhook-" #l0
+        execute-named-command &cat "my-dhook-" #l0
+    !endif
+    !if &exist "my-dhook-always"
+        my-dhook-always
+    !endif
 !emacro
