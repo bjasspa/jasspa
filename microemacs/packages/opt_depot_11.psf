@@ -1,0 +1,98 @@
+#
+#  System        : MicroEmacs
+#  Module        : Package File.
+#  Object Name   : $RCSfile: opt_depot_11.psf,v $
+#  Revision      : $Revision: 1.1 $
+#  Date          : $Date: 2003-08-17 14:08:02 $
+#  Author        : $Author: jon $
+#  Created By    : <unknown>
+#  Created       : Sun Aug 17 12:58:23 2003
+#  Last Modified : <160495.1521>
+# 
+# Depot Product Specification File for HP-UX 11.x 
+# 
+vendor
+	tag jasspa
+	description "JASSPAs MicroEmacs text editor www.jasspa.com"
+	title "JASSPAs MicroEmacs"
+end
+product
+    tag jasspame
+    title "JASSPAs MicroEmacs"
+    description "JASSPAs MicroEmacs text editor www.jasspa.com"
+    revision 2002.12
+    #
+    architecture HP-UX_B.11.00_32/64
+    machine_type 9000/[78]*:*
+    os_name HP-UX
+    os_release ?.11.*
+    os_version *
+    copyright "Copyright (c) 1988-2003 JASSPA - www.jasspa.com"
+    #
+    fileset
+        tag bin
+        title "JASSPA MicroEmacs Executables"
+        revision 2002.12
+        #
+        postinstall jasspame.postinstall
+        postremove  jasspame.postremove
+        #
+        directory opt11/bin=/opt/jasspa/bin
+        file_permissions -u 222 -g bin -o bin
+        file *
+    end
+    fileset
+        tag macros
+        title "JASSPA MicroEmacs Macro Files"
+        revision 2002.12
+        #
+        directory opt11/macros=/opt/jasspa/macros
+        file_permissions -u 222 -g bin -o bin
+        file *
+    end                
+    fileset
+        tag src
+        title "JASSPA MicroEmacs Source Directory"
+        revision 2002.12
+        #
+        directory opt11/src=/opt/jasspa/src
+        file_permissions -u 222 -g bin -o bin
+        file *
+    end                
+    fileset
+        tag icons
+        title "JASSPA MicroEmacs Icons"
+        revision 2002.12
+        #
+        directory opt11/icons=/opt/jasspa/icons
+        file_permissions -u 222 -g bin -o bin
+        file *
+    end                
+    fileset
+        tag spelling
+        title "JASSPA MicroEmacs Spelling"
+        revision 2002.12
+        #
+        directory opt11/spelling=/opt/jasspa/spelling
+        file_permissions -u 222 -g bin -o bin
+        file *
+    end                
+    fileset
+        tag company
+        title "JASSPA MicroEmacs Company"
+        revision 2002.12
+        #
+        directory opt11/company=/opt/jasspa/company
+        file_permissions -u 222 -g bin -o bin
+        file *
+    end                
+    fileset
+        tag doc
+        title "JASSPA MicroEmacs Documentation"
+        revision 2002.12
+        #
+        directory opt11/doc=/opt/jasspa/doc
+        file_permissions -u 222 -g bin -o bin
+        file *
+    end                
+end    
