@@ -183,15 +183,9 @@ define-macro ftp-connect
             set-variable #l1 &cat #l0 ".erf"
             set-variable #l0 &rig #l0 &rsin "/" #l0
         !else
-            ; try to find it, if not add $MEPATH
+            ; try to find it, if not add to $user-path
             !if &seq &set #l1 &find #l0 ".erf" "ERROR"
-                set-variable #l1 &sin &cond &band $system 0x200 ";" ":" $search-path
-                !if #l1
-                    set-variable #l1 &lef $search-path &sub #l1 1
-                !else
-                    set-variable #l1 $search-path
-                !endif
-                set-variable #l1 &stat "a" &spr "%s/%s.erf" #l1 #l0
+                set-variable #l1 &stat "a" &spr "%s%s.erf" $user-path #l0
             !endif
         !endif
         set-variable #l3 &stat "r" #l1

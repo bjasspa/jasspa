@@ -588,14 +588,8 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
 !emacro
 
 0 define-macro schm-osd-save
-    ; create the file name using the search-path, put it in hte files directory
-    set-variable #l0 &sin &cond &band $system 0x200 ";" ":" $search-path
-    !if #l0
-        set-variable #l0 &lef $search-path &sub #l0 1
-    !else
-        set-variable #l0 $search-path
-    !endif
-    !force find-file &spr "%s/%s.emf" #l0 .schm-osd.fname @mna
+    ; create the file name using the $user-path
+    !force find-file &spr "%s%s.emf" $user-path .schm-osd.fname @mna
     !if &not $status
         !return
     !endif
@@ -650,13 +644,7 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
             kill-line
         !endif
         ; save changes locally
-        set-variable #l0 &sin &cond &band $system 0x200 ";" ":" $search-path
-        !if #l0
-            set-variable #l0 &lef $search-path &sub #l0 1
-        !else
-            set-variable #l0 $search-path
-        !endif
-        set-variable #l0 &stat "a" &spr "%s/%s.emf" #l0 #l1
+        set-variable #l0 &stat "a" &spr "%s%s.emf" $user-path #l1
         !if &seq #l0 $buffer-fname
             !force save-buffer #l0 @mna
         !else
