@@ -10,7 +10,7 @@
 *
 *	Author:			Mike Rendell of ROOT Computers Ltd.
 *
-*	Creation Date:		10/05/91 08:27		<000907.1420>
+*	Creation Date:		10/05/91 08:27		<010214.0916>
 *
 *	Modification date:	%G% : %U%
 *
@@ -351,8 +351,8 @@ findTag(int f, int n)
     else if((n & 0x02) || (inWord() == FALSE))
     {
 	/*---	Get user word. */
-        if(mlreply((uint8 *)"Enter Tag", MLNOSPACE, 0, tag,MAXBUF) != TRUE)
-            return ABORT ;
+        if((mlreply((uint8 *)"Enter Tag", MLNOSPACE, 0, tag,MAXBUF) != TRUE) || (tag[0] == '\0'))
+            return ctrlg(FALSE,1) ;
     }
     else
     {

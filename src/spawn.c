@@ -786,6 +786,8 @@ ipipeRead(meIPIPE *ipipe)
         }
         switch(cc)
         {
+        case 0:
+            break ;
         case 7:
             TTbell() ;
             break ;

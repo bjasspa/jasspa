@@ -1,0 +1,72 @@
+.\" -*- nroff -*-
+.Id $Id: m5var082.5,v 1.1 2001-02-16 21:41:40 jon Exp $
+.Im MicroEmacs variable|buffer|macrodevelop
+.so me.tni
+.TH $buffer-backup 5
+.XI $buffer-backup - "Buffer backup file name"
+.XI $MEBACKUPPATH - "Backup file location"
+.XI $MEBACKUPSUB - "Backup file name modifier"
+.SH NAME
+$buffer-backup \- Buffer backup file name
+.Me $a
+.SH SYNOPSIS
+.B $buffer-backup
+.I FileName
+.SH DESCRIPTION
+.B $buffer-backup
+is  automatically  set to the file name the  current  buffer's  file  would be
+backed up to if required. If the current  buffer has no file name the variable
+will be set to "".
+.PP
+The value depends on whether DOS compliant file names are being used (see
+.Ht $system 5 ),
+whether multiple backups are being kept (see
+.Ht $kept-versions 5 )
+and  the  setting  of  the  environment  variables   \fB$MEBACKUPPATH\fR   and
+\fB$MEBACKUPSUB\fR.  The variable does not take into consideration the current
+setting of the buffer's
+.Ht backup 2m
+mode which determine whether a backup will be made.
+.PP
+The  environment  variable  \fB$MEBACKUPPATH\fR  can be  used  to  change  the
+location  of the  backup  files,  it can also be used to  prepend  the  backup
+filename with a string. \fB$MEBACKUPPATH\fR can specify an absolute path (e.g.
+"\fCc:/temp/mebackup/\fR")  or a relative path (e.g.  "\fCmebackup/\fR"  which
+will move all backup  files into a  sub-directory  automatically  in the files
+directory).  The  trailing  '\fC/\fR' is  important as the file name is simple
+appended, i.e. is creating a backup for  "c:/foo/bar.txt" and $MEBACKUPPATH is
+set the "backup" the backup file name will be "c:/foo/backupbar.txt".
+.SH EXAMPLE
+The following  example  compares the  differences  between the current version
+and the bucked up version using the
+.Ht diff 5
+macro. The \fBdiff-changes\fR macro is defined in \fCtools.emf\fR.
+.Me $emf-scheme
+.CS
+define-macro diff-changes
+    !if &seq $buffer-fname ""
+        ml-write "[Current buffer has no file name]"
+        !abort
+    !endif
+    !if &bmod "edit"
+        !if &iseq @mc1 "Save buffer first [y/n]? " "nNyY" "y"
+            save-buffer
+        !endif
+    !endif
+    ; get the real file name - this only has effect on unix, copes with symbolic links
+    set-variable #l0 &stat "a" $buffer-fname
+    ; get the backup name
+    set-variable #l1 $buffer-backup
+    diff #l1 #l0
+!emacro
+.CE 0
+.Me $ehf-scheme
+.SH NOTES
+This variable can not be set, any attempt to set it will result in an error.
+.SH "SEE ALSO"
+.na
+.Ht backup 2m ,
+.Ht $system 5 ,
+.Ht $kept-versions 5 .
+.ad
+.FH
