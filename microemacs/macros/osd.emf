@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Jon Green
 ;  Created       : Sat Jul 26 10:23:04 1997
-;  Last Modified : <001025.1220>
+;  Last Modified : <001108.2130>
 ;
 ;  Description   : OSD - On Screen Display macros.
 ;                  Controls the set up of the menus and screen overlays.
@@ -241,7 +241,8 @@ osd 1  10  ""   "&New"                f osd-1-new      ; Create a new document
 osd 1  20  ""   "&Open       C-x C-f" f osd-file-open  ; Find a new file
 osd 1  30  "Md" "&Quick Open"        19
 osd 1  35  "Md" "&Favorites"         30 osd-favorites  ; Set up favorites
-osd 1  50  ""   "Find file  f10"      f file-browser   ; Search in file
+osd 1  50  ""   "Find file  f10"      f file-browser   ; file browser
+osd 1  55  ""   "FTP        S-f10"    f ftp            ; ftp browser
 osd 1  60  ""   "&Close      C-x k"   f osd-close
 osd 1  70  "-"
 osd 1  80  ""   "Att&ributes"         f file-attrib    ; Set file attributes

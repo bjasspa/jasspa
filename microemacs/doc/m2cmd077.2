@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m2cmd077.2,v 1.2 2000-10-21 17:09:45 jon Exp $
+.Id $Id: m2cmd077.2,v 1.3 2000-11-18 01:47:10 jon Exp $
 .Im MicroEmacs command|shell
 .ds C0 "(\fB\*e backslash\fR)\ \&
 .so me.tni
@@ -28,6 +28,7 @@ ipipe-write \- Write a string to an incremental pipe
 .B ipipe-write
 "\fIstring\fR"
 .br
+.I n
 .B ipipe-kill
 .ad
 .SH PLATFORM
@@ -70,6 +71,8 @@ bit set the process is completely detached from \*(mS instead.
 Disable  the  command  name  mangling  (win32  versions  only). By default any
 \&'\fC/\fR' characters found in the command name (the first argument only) are
 converted to '\fC\\\fR' characters to make it Windows compliant.
+.IP \fB0x20\fR
+Displays the new process window, by default this window is hidden.
 .PP
 Many other macro commands (see
 .Ht compile 3 ,
@@ -80,7 +83,19 @@ use this command.
 writes a string \fIstring\fR to an open ipipe, \fIn\fR times.
 .PP
 .B ipipe-kill
-terminates an open ipipe, typically bound to the \fC\*cc\ \*cc\fR key sequence.
+terminates  an  open  ipipe,  this is  automatically  called  when the ipipe
+buffer is deleted using
+.Ht delete-buffer 2
+or when \*(mS is exited.. The numeric  argument  \fIn\fR can be used to change
+the signal generated, where \fIn\fR can take the following values:
+.IP \fB1\fR
+Sends a Terminate process signal, literally a \fCSIGKILL\fR  signal on unix or
+a  \fCWM_CLOSE\fR  on windows  platforms.  This is the  default  signal and is
+typically bound to \fC\*cc \*ck\fR.
+.IP \fB2\fR
+Sends an  interrupt  signal,  writes a Ctrl-C to the  <stdin>  pipe on unix or
+sends  Ctrl-C  key events on windows  platforms.  This is  typically  bound to
+\fC\*cc \*cc\fR.
 .SH NOTES
 On \s-1UNIX\s0  platforms the TERM environment variable of the new process can
 be set by setting the user variable  \fB%ipipe-term\fR  to the required value,

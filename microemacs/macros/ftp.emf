@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Wed Jan 12 16:37:22 2000
-;  Last Modified : <001015.1752>
+;  Last Modified : <001108.2145>
 ;
 ;  Description
 ;
@@ -134,6 +134,8 @@
             !force 0 delete-registry "/url" @mna
             ; read the registry
             read-registry "url" #l1 "cb"
+            ; clear the current entry
+            set-variable .ftp.name ""
         !else
             ; new file does not exist, write it now to create it and change the
             ; current file to the new name
@@ -263,7 +265,6 @@
                 !endif
             !endif
             ftp-site-name-set #l0
-            ftp-data-entry-setup
         !else
             !if &and &equ @# -2 &seq .ftp.name ""
                 !if &seq #l0 ""
@@ -286,9 +287,9 @@
                     mark-registry &spr "/url/ftp/%s/%s" .ftp.name #l2 "!"
                 !endif
             !endif
-            mark-registry "/url" "u"
-            ftp-data-entry-setup
         !endif
+        mark-registry "/url" "u"
+        ftp-data-entry-setup
     !elif &equ @# 4
         set-variable $result &spr "%n" &len #l1 "*"
     !else

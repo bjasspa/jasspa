@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m2cmd101.2,v 1.2 2000-10-21 17:09:50 jon Exp $
+.Id $Id: m2cmd101.2,v 1.3 2000-11-18 01:47:11 jon Exp $
 .Im MicroEmacs command|print
 .so me.tni
 .TH print-buffer 2
@@ -58,41 +58,99 @@ executed to configure the printer (in a same vain as  \fCme.emf\fR is executed
 to configure  \*(mS for general usage). After the macro file has been executed
 the  "\fC/print\fR"   registry  must  contain  the  information  required  for
 printing. Following is a list of registry entries and their use:
-.IP \fBflags\fR
-.IP \fBpaper-x\fR
-.IP \fBpaper-y\fR
-.IP \fBpage-x\fR
-.IP \fBpage-y\fR
-.IP \fBspecifier-x\fR
-.IP \fBspecifier-y\fR
-.IP \fBfont-face\fR
-.IP \fBrows\fR
-.IP \fBcols\fR
-.IP \fBmtop\fR
-.IP \fBmbottom\fR
-.IP \fBmleft\fR
-.IP \fBmright\fR
-.IP \fBheader\fR
-.IP \fBfooter\fR
-.IP \fBport\fR
-.IP \fBbuffer\fR
-.IP \fBfile\fR
-.IP \fBstrip\fR
-.IP \fBdevice\fR
-.IP \fBeof\fR
-.IP \fBeol\fR
-.IP \fBeop\fR
-.IP \fBsof\fR
-.IP \fBsol\fR
-.IP \fBsop\fR
-.IP \fBscont\fR
-.IP \fBecont\fR
-.IP \fBhsep\fR
-.IP \fBvsep\fR
-.IP \fBwsep\fR
-.IP \fBxsep\fR
-.IP \fBbg-color\fR
-.IP \fBcommand-line\fR
+.IP "\fBflags\fR (\fIinteger\fR)"
+The setup flags, defined as a bit mask as follows:-
+.IP
+\fC0x0f\fR \- Destination of the printer output.
+.br
+.RS
+\fC0x00\fR \- Buffer only.
+.br
+\fC0x01\fR \- Internal queue.
+.br
+\fC0x02\fR \- To file only.
+.br
+\fC0x03\fR \- To file and command line.
+.br
+.RE
+\fC0x01\fR \- Bit set, header enabled.
+.br
+\fC0x20\fR \- Bit set, footer
+.br
+\fC0x04\fR \- Bit set, enable line numbers.
+.br
+\fC0x08\fR \- Bit set, Enable truncated line character (typically \\).
+.IP "\fBpaper-x\fR (\fIinteger\fR)"
+Paper page width in character cells.
+.IP "\fBpaper-y\fR (\fIinteger\fR)"
+Paper page depth in character cells.
+.IP "\fBpage-x\fR (\fIinteger\fR)"
+The logical page width in character cells.
+.IP "\fBpage-y\fR (\fIinteger\fR)"
+The logical paper depth in character cells.
+.IP "\fBspecifier-x\fR (\fIinteger\fR)"
+Windows only.
+.IP "\fBspecifier-y\fR (\fIinteger\fR)"
+Windows only.
+.IP "\fBfont-face\fR (\fIstring\fR)"
+The name of the font face (Windows only).
+.IP "\fBrows\fR (\fIinteger\fR)"
+Number rows per output page. 
+.IP "\fBcols\fR (\fIinteger\fR)"
+Number of columns per output page.
+.IP "\fBmtop\fR (\fIinteger\fR)"
+The  size of the top  margin  in  character  cells  (i.e.  where  printing  may
+commence).
+.IP "\fBmbottom\fR (\fIinteger\fR)"
+The size of the bottom margin in character cells (i.e. where printing stops).
+.IP "\fBmleft\fR (\fIinteger\fR)"
+The number of characters of space forming the left magin of the physical page.
+.IP "\fBmright\fR (\fIinteger\fR)"
+The number of characters of space forming the right magin of the physical page.
+.IP "\fBheader\fR (\fIstring\fR)"
+The ASCII text string for the header line.
+.IP "\fBfooter\fR (\fIstring\fR)"
+The ASCII text string for the footer line.
+.IP "\fBport\fR (\fIstring\fR)"
+Printer port identity.
+.IP "\fBbuffer\fR (\fIstring\fR)"
+The name of the destination buffer.
+.IP "\fBfile\fR (\fIstring\fR)"
+The name of the destination file.
+.IP "\fBstrip\fR (\fIinteger\fR)"
+If \fIinteger\fR value strip spaces from eol.
+.IP "\fBdevice\fR (\fIstring\fR)"
+The ASCII name of the device (i.e. \fC/dev/lp\fR).
+.IP "\fBeof\fR (\fIstring\fR)"
+The  printer  codes  for the end of the file, may be the  empty  string if not
+reqired.
+.IP "\fBeol\fR (\fIstring\fR)"
+The printer codes for the end of line character.
+.IP "\fBeop\fR (\fIstring\fR)"
+The printer codes for the end of a page.
+.IP "\fBsof\fR (\fIstring\fR)"
+The  printer  codes  for the  start of a file, may be the empty  string if not
+required.
+.IP "\fBsol\fR (\fIstring\fR)"
+The printer codes for the start of a line.
+.IP "\fBsop\fR (\fIstring\fR)"
+The printer codes for the start of a page.
+.IP "\fBscont\fR (\fIstring\fR)"
+The printer codes for a start of row continuation.
+.IP "\fBecont\fR (\fIstring\fR)"
+The printer codes for the end of row continuation.
+.IP "\fBhsep\fR (\fIstring\fR)"
+The horizonal logical page separator character.
+.IP "\fBvsep\fR (\fIstring\fR)"
+The vertical logical page separator character.
+.IP "\fBwsep\fR (\fIstring\fR)"
+The depth in character cells of the vertical logical page separator.
+.IP "\fBxsep\fR (\fIstring\fR)"
+The width in character cells of the logical horizontal separator.
+.IP "\fBbg-color\fR (\fIinteger\fR)"
+The background colour number.
+.IP "\fBcommand-line\fR (\fIstring\fR)"
+The command line to perform a print operation.
 .SS "Printing Under Microsoft Windows Environments"
 Printing under Microsoft Windows Environments  automatically  invokes a dialog
 box to assign and configure the printer page  characteristics.  The dialog box
