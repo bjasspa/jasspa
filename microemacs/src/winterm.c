@@ -1901,11 +1901,6 @@ WinKillToClipboard (void)
 void
 TTsetClipboard (void)
 {
-    /* fprintf(logfp,"In TTsetClipboard %x - %d\n",clipState,*/
-    /*            ((!(clipState & CLIP_OWNER) || (clipState & CLIP_STALE)) &&*/
-    /*             !(meSystemCfg & meSYSTEM_NOCLIPBRD) && (kbdmode != mePLAY))) ;*/
-    /* fflush(logfp) ;*/
-    
     /* We aquire the clipboard and flush it under the following conditions;
      * "We do NOT own it" or "Clipboard is stale". The clipboard becomes stale
      * when we own it but another application has aquired our clipboard data.
@@ -1924,8 +1919,6 @@ TTsetClipboard (void)
         CloseClipboard ();
         clipState |= CLIP_OWNER ;
         clipState &= ~CLIP_STALE ;
-        /* fprintf(logfp,"Set TTsetClipboard %x\n",clipState) ;*/
-        /* fflush(logfp) ;*/
     }
 }
 
@@ -1941,18 +1934,12 @@ TTgetClipboard(void)
     meUByte cc;                           /* Local character buffer */
     meUByte *dd, *tp;                     /* Pointers to the data areas */
 
-    /* fprintf(logfp,"In TTgetClipboard %x - %d\n",clipState,*/
-    /*            (!(clipState & CLIP_OWNER) && (kbdmode != mePLAY) && !(meSystemCfg & meSYSTEM_NOCLIPBRD))) ;*/
-    /* fflush(logfp) ;*/
-    
     /* Check the standard clipboard status, if owner or it has
      * been disabled then there's nothing to do */
     if((clipState & CLIP_OWNER) || (kbdmode == mePLAY) ||
        (meSystemCfg & meSYSTEM_NOCLIPBRD) || !OpenClipboard(baseHwnd))
         return ;
 
-    /* fprintf(logfp,"Cont TTgetClipboard %x\n",clipState) ;*/
-    /* fflush(logfp) ;*/
     /* Get the data from the clipboard */
     if ((hmem = GetClipboardData ((ttlogfont.lfCharSet == OEM_CHARSET) ? CF_OEMTEXT : CF_TEXT)) != NULL)
     {
@@ -6198,14 +6185,10 @@ do_window_resize:
         break;
 
     case WM_RENDERALLFORMATS:           /* Clipboard data requests */
-        /* fprintf(logfp,"Got WM_RENDERALLFORMATS message %x %x %x\n",clipState,GetClipboardOwner(),baseHwnd) ;*/
-        /* fflush(logfp) ;*/
         if(!OpenClipboard(baseHwnd))
             break ;
         EmptyClipboard();
     case WM_RENDERFORMAT:
-        /* fprintf(logfp,"Got WM_RENDERFORMAT message %x %x %x\n",clipState,GetClipboardOwner(),baseHwnd) ;*/
-        /* fflush(logfp) ;*/
         {
             HANDLE hmem;
             hmem = WinKillToClipboard ();
@@ -6217,8 +6200,6 @@ do_window_resize:
              * us to process optimally and not to continually report a
              * clipboard change whenever we change the yank data. */
             clipState |= CLIP_STALE;
-            /* fprintf(logfp,"Cont WM_RENDERFORMAT %x\n",clipState) ;*/
-            /* fflush(logfp) ;*/
         }
         if(message == WM_RENDERALLFORMATS)
             CloseClipboard();
@@ -6289,8 +6270,6 @@ do_window_resize:
         break;
         
     case WM_DESTROYCLIPBOARD: 
-        /* fprintf(logfp,"Got WM_DESTROYCLIPBOARD message %x %x %x\n",clipState,GetClipboardOwner(),baseHwnd) ;*/
-        /* fflush(logfp) ;*/
         if(clipState & CLIP_IGNORE_DC)
             clipState &= ~CLIP_IGNORE_DC ;
         else if(clipState & CLIP_OWNER)
