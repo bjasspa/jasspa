@@ -1075,17 +1075,33 @@ killLine(int f, int n)
 {
     meLine *nextp;
     meInt chunk;
-    int s, del ;
+    int s ;
     
     if(n == 0)
         return meTRUE ;
-    if((del=(n < 0)))
-        n = -n ;
-    
     if((s=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
         return s ;
-    if(frameCur->windowCur->dotLine == frameCur->bufferCur->baseLine)
-        chunk = 0 ;
+    
+    if(n < 0)
+    {
+        nextp = meLineGetPrev(frameCur->windowCur->dotLine);
+        if((chunk = frameCur->windowCur->dotOffset) == 0)
+        {
+            if(nextp == frameCur->bufferCur->baseLine)
+                meErrorBob() ;
+            n-- ;
+        }
+        frameCur->windowCur->dotOffset = 0 ;
+        while((++n < 0) && (nextp != frameCur->bufferCur->baseLine))
+        {
+            chunk += meLineGetLength(nextp)+1;
+            frameCur->windowCur->dotLine = nextp ;
+            frameCur->windowCur->dotLineNo-- ;            
+            nextp = meLineGetPrev(frameCur->windowCur->dotLine);
+        }
+    }
+    else if(frameCur->windowCur->dotLine == frameCur->bufferCur->baseLine)
+        return meErrorEob() ;
     else if(f == meFALSE)
     {
         chunk = meLineGetLength(frameCur->windowCur->dotLine)-frameCur->windowCur->dotOffset;
@@ -1094,18 +1110,19 @@ killLine(int f, int n)
     }
     else
     {
-        chunk = meLineGetLength(frameCur->windowCur->dotLine)-frameCur->windowCur->dotOffset+1;
+        if((chunk = frameCur->windowCur->dotOffset) == 0)
+            chunk = meLineGetLength(frameCur->windowCur->dotLine) + 1 ;
+        else if((chunk = meLineGetLength(frameCur->windowCur->dotLine) - chunk) == 0)
+            chunk = 1 ;
         nextp = meLineGetNext(frameCur->windowCur->dotLine);
-        while (--n)
+        while(--n && (nextp != frameCur->bufferCur->baseLine))
         {
-            if (nextp == frameCur->bufferCur->baseLine)
-                return (meFALSE);
             chunk += meLineGetLength(nextp)+1;
             nextp = meLineGetNext(nextp);
         }
     }
     
-    return(ldelete(chunk,(del) ? 2:3));
+    return ldelete(chunk,3) ;
 }
 
 
