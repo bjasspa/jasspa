@@ -3,11 +3,12 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd163.2,v 1.1 2002-10-16 22:30:10 jon Exp $
+.Id $Id: m2cmd163.2,v 1.2 2004-02-13 10:44:32 jon Exp $
 .Im MicroEmacs command|window|macrodevelop
+.ds C0 "(\fB\*(cX5\ o\fR)\ \&
 .so me.tni
 .TH next-frame 2
-.XI next-frame - "Change the focus to the next frame"
+.XI next-frame - "\*(C0Change the focus to the next frame"
 .SH NAME
 next-frame \- Change the focus to the next frame
 .Me $a
@@ -15,6 +16,7 @@ next-frame \- Change the focus to the next frame
 .na
 .I n
 .B next-frame
+\*(C0
 .ad
 .SH DESCRIPTION
 \fBnext-frame\fR  changes the focus to the next frame. The numerical  argument
@@ -31,4 +33,5 @@ either type of frame (equivalent to an argument of \fC3\fR).
 .Ht create-frame 2 ,
 .Ht delete-frame 2 .
 .ad
+.rm C0
 .FH
