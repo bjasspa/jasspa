@@ -44,7 +44,7 @@ LD            = $(CC)
 STRIP         =	strip
 INSTALL       =	install
 CDEBUG        = -W -g
-COPTIMISE     = -W -O3 -DNDEBUG=1
+COPTIMISE     = -W -O3 -DNDEBUG=1 -Wno-uninitialized
 CDEFS         = -D_IRIX6 -I.
 CONSOLE_DEFS  = -D_ME_CONSOLE
 WINDOW_DEFS   = -D_ME_WINDOW

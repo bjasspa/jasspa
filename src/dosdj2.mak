@@ -48,7 +48,7 @@ STRIP         =	strip
 COFF          = coff2exe
 INSTALL       =	copy
 CDEBUG        =	-g -Wall
-COPTIMISE     =	-O2 -DNDEBUG=1 -Wall
+COPTIMISE     =	-O2 -DNDEBUG=1 -Wall -Wno-uninitialized
 CDEFS         = -D_DOS -D__DJGPP2__ -I.
 CONSOLE_DEFS  = -D_ME_CONSOLE
 NANOEMACS_DEFS= -D_NANOEMACS
