@@ -40,6 +40,8 @@ set-variable .fhook-make.comment "|#||#|# | #|r|"
     hilight .hilight.make 1  "\\$\\*"          .scheme.keyword
     hilight .hilight.make 1  "\\$^"            .scheme.keyword
     hilight .hilight.make 1  "\\$<"            .scheme.keyword
+    ; Highlight the TODO markers in comments.
+    hilight .hilight.make 18 "#\\s +[Tt][Oo][Dd][Oo]" .scheme.error
 !endif
 
 buffer-init-fhook "make"
