@@ -640,7 +640,7 @@ waitForEvent(void)
     {
         if(TTahead() ||
 #ifdef _CLIPBRD
-           (clipState & CLIP_RECVED) ||
+           (clipState & CLIP_RECEIVED) ||
 #endif
            isTimerExpired(AUTOS_TIMER_ID) ||
 #if MEOPT_CALLBACK
@@ -2085,7 +2085,7 @@ special_bound:
                 XFree(buff) ;
             }
             /* Always flag that we got the event */
-            clipState |= CLIP_RECVED ;
+            clipState |= CLIP_RECEIVED ;
             break ;
         }
 
@@ -2109,7 +2109,7 @@ special_bound:
                 {
                     /* got all we're going to */
                     meClipSize = 0 ;
-                    clipState |= CLIP_RECVED ;
+                    clipState |= CLIP_RECEIVED ;
                 }
                 else
                 {
@@ -2117,7 +2117,7 @@ special_bound:
                     {
                         /* flag that we have the clipboard */
                         nitems = meClipSize ;
-                        clipState |= CLIP_RECVED ;
+                        clipState |= CLIP_RECEIVED ;
                     }
                     memcpy(meClipBuff,buff,nitems) ;
                     meClipSize -= nitems ;
@@ -3534,9 +3534,8 @@ meFrameSetWindowTitle(meFrame *frame, meUByte *str)
 void
 TTsetClipboard(void)
 {
-    clipState &= ~CLIP_TRY_SET ;
-    
-    if(!(meSystemCfg & (meSYSTEM_CONSOLE|meSYSTEM_NOCLIPBRD)) && !(clipState & CLIP_OWNER))
+    if(!(meSystemCfg & (meSYSTEM_CONSOLE|meSYSTEM_NOCLIPBRD)) &&
+       !(clipState & (CLIP_OWNER|CLIP_RECEIVING)) && (kbdmode != mePLAY))
     {
         XSetSelectionOwner(mecm.xdisplay,XA_PRIMARY,meFrameGetXWindow(frameCur),CurrentTime) ;
         if(XGetSelectionOwner(mecm.xdisplay,XA_PRIMARY) == meFrameGetXWindow(frameCur))
@@ -3547,15 +3546,15 @@ TTsetClipboard(void)
 void
 TTgetClipboard(void)
 {
-    clipState &= ~CLIP_TRY_GET ;
-
-    if(!(meSystemCfg & (meSYSTEM_CONSOLE|meSYSTEM_NOCLIPBRD)) && !(clipState & CLIP_OWNER))
+    if(!(meSystemCfg & (meSYSTEM_CONSOLE|meSYSTEM_NOCLIPBRD)) &&
+       !(clipState & CLIP_OWNER) && (kbdmode != mePLAY))
     {
-        /* Remove the 'Try to set selection' flag. This is really important if increment
+        /* Add the CLIP_RECEIVING flag. This is really important if increment
          * copy texts are being used. If they are and this flag is set after receiving
          * the initial size, the killSave then take ownership of the block and so we never
          * get the copy text. Take ownership at the end */
-        clipState &= ~(CLIP_TRY_SET|CLIP_RECVED) ;
+        clipState &= ~CLIP_RECEIVED ;
+        clipState |= CLIP_RECEIVING ;
         /* Request for the current Primary string owner to send a
          * SelectionNotify event to us giving the current string
          */
@@ -3564,9 +3563,9 @@ TTgetClipboard(void)
         /* Must do a flush to ensure the request has gone */
         XFlush(mecm.xdisplay) ;
         /* Wait for the returned value, alarmState bit will be set */
-        while(!TTahead() && !(clipState & CLIP_RECVED))
+        while(!TTahead() && !(clipState & CLIP_RECEIVED))
             waitForEvent() ;
-        clipState &= ~CLIP_RECVED ;
+        clipState &= ~(CLIP_RECEIVING|CLIP_RECEIVED) ;
         /* reset the increment clip size to zero (just incase there was an interuption) */
         meClipSize=0 ;
         TTsetClipboard() ;

@@ -1500,8 +1500,7 @@ getval(meUByte *tkn)   /* find the value of a token */
             meKillNode          *killp;
             
 #ifdef _CLIPBRD
-            if(clipState & CLIP_TRY_GET)
-                TTgetClipboard() ;
+            TTgetClipboard() ;
 #endif
             if(klhead == (meKill*) NULL)
                 return abortm ;

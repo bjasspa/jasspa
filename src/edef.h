@@ -230,11 +230,11 @@ extern  meUShort  breakc;               /* current abort-command char*/
  * Nasty. Try and ensure these don't happen.
  */
 
-#define CLIP_TRY_GET 0x01               /* We can try and get the clipbd*/
-#define CLIP_TRY_SET 0x02               /* We can try and set the clipbd*/
-#define CLIP_OWNER   0x04               /* We are the owners of clipbrd */
-#define CLIP_STALE   0x08               /* Clipboard is stale           */
-#define CLIP_RECVED  0x10               /* Clipboard has been obtained  */
+#define CLIP_OWNER      0x01            /* We are the owners of clipbrd */
+#define CLIP_STALE      0x02            /* Clipboard is stale           */
+#define CLIP_IGNORE_DC  0x04            /* Ignore the next DESTROYCLIP  */
+#define CLIP_RECEIVING  0x08            /* Currently receiving clipboard*/
+#define CLIP_RECEIVED   0x10            /* Clipboard has been obtained  */
 extern  meUByte   clipState;            /* clipboard status flag        */
 #endif
 extern  meUInt    cursorBlink;          /* cursor-blink blink time      */
