@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20040325.2153>
+# Last Modified: <20040326.2013>
 #
 ##############################################################################
 
@@ -37,7 +37,7 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		au3.eaf		\
 	hkdiff.emf	hkdirlst.emf	hkdirtre.emf	hkdoc.emf	\
 	hkdos.emf	\
 	hkehf.emf	hkemf.emf	hkerf.emf	hkeuphor.emf	\
-	hkf90.emf	hkfvwm.emf	\
+	hkf90.emf	filetype.emf	hkfvwm.emf	\
 	hkhtml.emf	\
 	hkidl.emf	hkimake.emf	hkinfo.emf	hkini.emf	\
 	hkipipe.emf	\
