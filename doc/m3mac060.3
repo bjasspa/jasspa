@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac060.3,v 1.4 2002-10-16 22:28:04 jon Exp $
+.Id $Id: m3mac060.3,v 1.5 2004-03-11 00:04:56 jon Exp $
 .Im MicroEmacs scuts
 .so me.tni
 .TH comment-line 3
@@ -108,11 +108,15 @@ Header line required.
 Fill header line with \fI<comment-pad>\fR strings.
 .IP \fCj\fR
 Enable Justify mode in *comment* buffer.
+.IP \fCr\fR
+A restyle  key binding is added to the buffer  "\fC\*eo\fR"  and  "\fC\*eq\fR"
+buffer key bindings are added and bound to 
+.Ht comment-restyle 3 . 
 .SH EXAMPLE
 The following \fBcomment\fR is the standard \fBC\fR setting:
 .Me $emf-scheme
 .CS
-set-variable .fhook-c.comment "|/*|*/|*| * | * |f|"
+set-variable .fhook-c.comment "|/*| */|*| * | * |f|"
 .CE
 .Me $ehf-scheme
 This can be used to create comments of the form:
@@ -141,6 +145,7 @@ form \fCf\fR to \fCbfFhH\fR, producing:
 .CE 0
 .SH "SEE ALSO"
 .na
+.Ht buffer-init 3 ,
 .Hl "File Hooks" fileHooks 2 .
 .ad
 .FH

@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac064.3,v 1.8 2004-01-18 23:34:47 jon Exp $
+.Id $Id: m3mac064.3,v 1.9 2004-03-11 00:04:56 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH buffer-init 3
@@ -421,8 +421,8 @@ template:-
 Help  information  is  automatically  added to the buffer to describe  the key
 bindings if help information is enabled.
 .PP
-The comment format is defined with the variable  \fB.fhook-XXX.comment\fR with
-an argument string in the form "\fB|\fR
+The    default    comment    format    is    defined    with   the    variable
+\fB.fhook-XXX.comment\fR with an argument string in the form "\fB|\fR
 .I "<comment-start>"
 .B |
 .I "<comment-end>"
@@ -435,7 +435,18 @@ an argument string in the form "\fB|\fR
 .B |
 .I "<comment-flags>"
 \fB|\fR".
-Where the fields are defined as follows:-
+Where a language supports multiple comment types, or styles, then additional
+comment styles may be specified with a comment definition of the form
+\fB.fhook-XXX.comment-N\fR where \fBN\fR is an integer from \fC1\fR to
+\fCn\fR. Each definition defines an different comment style. Additional
+comment definitions should be ordered such that the longest or most definitive
+comment definition appears before other comment definitions which have less
+definitive features. The comment matching searches each of the comment
+definitions in the order \fC1\fR to \fCn\fR to determine the comment style, as
+soon as a positive match is located then the comment is used without searching
+the remaining comments.
+.PP
+The fields of the comment definition are defined as follows:-
 .TP
 \fI<comment-start>\fR
 .\"
@@ -444,7 +455,9 @@ The format of the start of the comment or comment open syntax.
 \fI<comment-end>\fR
 .\"
 The format of the closing  comment, where the comment exists to the end of the
-line then the field is defined as empty.
+line  then the  field is  defined  as empty.  Leading  white  space  should be
+included  where this affects the horizontal  positioning of the comment, white
+leading space is ignored in any match i.e. "\fC\ */\fR" for C type comments.
 .TP
 \fI<comment-pad>\fR
 .\"
@@ -484,6 +497,11 @@ As \fBh\fR except the header line is right padded with
 \fI<comment-pad>\fR strings.
 .BP "j"
 Enable justification mode in the *comment* buffer and re-style.
+.BP "r"
+A restyle  key binding is added to the buffer  "\fC\*eo\fR"  and  "\fC\*eq\fR"
+buffer key bindings are added and bound to 
+.Ht comment-restyle 3 . 
+The \fBr\fR flag is only processed from the 
 .RE
 .PP
 Examples of the comments format are shown below.
@@ -493,7 +511,7 @@ Format: \fC/* ... */\fR
 .RS
 .Me $emf-scheme
 .CS 0
-set-variable .fhook-c.comment "|/*|*/|*| * | * |f|"
+set-variable .fhook-c.comment "|/*| */|*| * | * |f|"
 .CE 0
 .RE
 .Me $ehf-scheme
@@ -532,6 +550,20 @@ The comment output is defined as:-
 
 // Comment to end of line ///////////////////////////////////////
 .CE 0
+.RE
+.IP
+C++ supports both C and C++ comment styles, both styles may be defined
+in the language  template.  For C++ then \fC//\fR is assumed to be the default
+style.
+.LP
+.RS
+.ne 2
+.Me $emf-scheme
+.CS 0
+set-variable .fhook-cpp.comment   "|//||/|// | //||"
+set-variable .fhook-cpp.comment-1 "|/*| */|*| * | * |f|"
+.CE 0
+.Me $ehf-scheme
 .RE
 .BP "MicroEmacs macro language"
 Format: \fC; ... <EOL>\fR
