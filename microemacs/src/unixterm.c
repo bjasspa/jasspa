@@ -5,7 +5,7 @@
  *  Synopsis      : Unix X-Term and Termcap support routines
  *  Created By    : Steven Phillips
  *  Created       : 1993
- *  Last Modified : <010305.0848>
+ *  Last Modified : <010611.2147>
  *
  *  Description
  *    This implementation of unix support currently only supports Unix v5 (_USG),
@@ -1587,6 +1587,17 @@ XTERMsetFont (char *fontName)
     /* Load the basic font into the server */
     if((font=XLoadQueryFont(mecm.xdisplay,fontName)) == NULL)
         return FALSE ;
+    
+    /* Make sure that the font is legal and we do not get a divide by zero
+     * error through zero width characters. */
+    if ((font->ascent + font->descent == 0) ||
+        (font->max_bounds.width == 0))
+    {
+        XUnloadFont (mecm.xdisplay, font->fid);
+        return FALSE;
+    }
+    
+    /* Font is acceptable - continue to load. */
     mecm.ascent    = font->ascent ;
     mecm.descent   = font->descent ;
     mecm.fdepth    = mecm.ascent + font->descent ;
@@ -1744,12 +1755,9 @@ XTERMstart(void)
                                  WhitePixel(mecm.xdisplay,xscreen),BlackPixel(mecm.xdisplay,xscreen)) ;
 
     XSetWMNormalHints(mecm.xdisplay,mecm.xwindow,&sizeHints);
-    /* Map the window a.s.a.p. cos officially we can't draw to the window until we
-     * get an Expose event. As this is not checked for by mapping now there is
-     * less chance of this being a problem.
-     */
-    XMapWindow(mecm.xdisplay,mecm.xwindow) ;
-
+    
+    /* Set up the  protocol  defaults  required. We must do this before we map
+     * the window. */
     {
         static char* meAtomNames[7] = {
             "WM_DELETE_WINDOW",
@@ -1767,6 +1775,12 @@ XTERMstart(void)
     }
     XSetWMProtocols(mecm.xdisplay,mecm.xwindow,meAtoms,2) ;
 
+    /* Map the  window  a.s.a.p.  cos  officially  we can't draw to the window
+     * until we get an Expose event. As this is not checked for by mapping now
+     * there is less chance of this being a problem. */
+    XMapWindow(mecm.xdisplay,mecm.xwindow) ;
+
+    
     if(XrmGetResource(rdb,"MicroEmacs.name","MicroEmacs.Name",&retType,&retVal) &&
        !strcmp(retType,"String") &&
        ((ss = meStrdup(retVal.addr)) != NULL))
