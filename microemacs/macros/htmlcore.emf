@@ -279,10 +279,12 @@ set-variable #l2 &ind &spr ".hilight.%stag" #l0
         indent .indent.vbscript w "</script>" -t 0
     !endif
     indent #l2 t "</script>" 0
+    indent #l2 e "<!--" "-->" ""
     indent #l1 o "</script>" -t
     ; Define the indentation tokens
     indent #l1 e "<!--" "-->" ""
-    indent #l1 e "<!" ">" ""
+    indent #l1 n "-->" 0
+    indent #l1 e "<!DOCTYPE" ">" ""
     indent #l1 n "<" 1/2t
     indent #l1 n ">" -1/2t
     ;indent #l1 b "<" ">"
