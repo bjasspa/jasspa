@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd064.2,v 2.8 2005-01-15 18:29:43 jon Exp $
+.Id $Id: m2cmd064.2,v 2.9 2005-01-16 19:40:42 jon Exp $
 .Im MicroEmacs command|insert
 .ds C0 "(\fB\*(tA\fR)\ \&
 .so me.tni
@@ -28,11 +28,6 @@ is  non-zero  then  the  effect  of  tab  is  defined  by the  setting  of bit
 \fC0x1000\fR of variable
 .Ht $system 5 ,
 typically it resets the current line indentation or inserts a tab.
-.IP \fBcmode\fR
-If cmode is  enabled  then the effect of tab is defined by the  setting of bit
-\fC0x1000\fR of variable
-.Ht $system 5 ,
-typically it resets the current line indentation or inserts a tab.
 .IP \fBtab\fR
 If a tab is to be inserted  and this mode is enabled then multiple  spaces are
 used instead of tab characters, see
@@ -44,7 +39,7 @@ mode.
 .Ht $buffer-tab-width 5 ,
 .Ht $tab-width 5 ,
 .Ht backward-delete-tab 2 ,
-.Ht cmode 2m ,
+.Ht indent 2 ,
 .Ht insert-tab 2 ,
 .Ht normal-tab 3 ,
 .Ht tab 2m .

@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac064.3,v 1.9 2004-03-11 00:04:56 jon Exp $
+.Id $Id: m3mac064.3,v 1.10 2005-01-16 19:40:40 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH buffer-init 3
@@ -202,8 +202,9 @@ mode for read only or authoring.
 .TP
 \fCd\fR \- Auto indentation operation.
 .\"
-Automatic indent is enabled. Where \fIC-mode\fR is required (see
-.Ht cmode 2m )
+Automatic indent is enabled. Where  \fIC-mode\fR  automatic indent is required
+(see
+.Ht indent 2 )
 then the flag \fC>\fR should be used in conjunction with
 the \fCd\fR flag, otherwise the indentation should be defined
 in the template using
@@ -245,8 +246,8 @@ by \fI.hilight.XXX\fR is attached to the buffer.
 Support indentation using
 .Ht indent 2m .
 Automatic indentation defined with the \fCd\fR and optionally the \fC>\fR flag
-where the in-built  \fIC-mode\fR  (see 
-.Ht cmode 2m )
+where the in-built \fIC-mode\fR indent (see 
+.Ht indent 2 )
 is required. \fCi\fR enable indent, \fCJ\fR disable indent.
 .TP
 \fCj\fR \- Justify
@@ -311,8 +312,8 @@ Configure time stamping as defined by
 \fC>\fR \- Electric-c indentation.
 .\"
 A special internal flag indicating that indentation is
-to be performed using
-.Ht cmode 2m .
+to be performed using c-mode
+.Ht indent 2 .
 This option
 should only be used when the \fCd\fR flag is also defined.
 The flag should only be present in the \fI.setup-mask\fR\|.

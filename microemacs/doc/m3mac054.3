@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac054.3,v 2.4 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m3mac054.3,v 2.5 2005-01-16 19:40:40 jon Exp $
 .Im MicroEmacs command|insert
 .so me.tni
 .TH normal-tab 3
@@ -21,9 +21,7 @@ normal-tab \- Insert a normal tab
 insert  a tab  into the  current  buffer  by  temporarily  disabling  any auto
 indentation schemes. The macro first disables any indentation rules by setting
 .Ht $buffer-indent 5
-to 0 and disabling the
-.Ht cmode 2m ,
-the command
+to 0 the command
 .Ht tab 2
 is then called with the given argument \fIn\fR. This means that the buffer's
 .Ht tab 2m

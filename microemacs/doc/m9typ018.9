@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ018.9,v 2.6 2004-01-05 00:19:24 jon Exp $
+.Id $Id: m9typ018.9,v 2.7 2005-01-16 19:40:00 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH java 9
@@ -41,11 +41,9 @@ The  hilighting  features allow  commands,  variables,  logical,  preprocessor
 definitions,   comments,   strings  and  characters  of  the  language  to  be
 differentiated and rendered in different colors.
 .IP "\fBAuto Layout\fR"
-The electric C-Mode
-.Ht cmode 2m
-performs automatic layout of the text, variables such as
-.Ht c-brace 5
-allow the brace position and text formation to be modified.
+The C-Mode
+.Ht indent 2
+performs automatic layout of the text.
 .IP
 .Ht restyle-region 3
 and
@@ -124,8 +122,6 @@ The  hilighting  is  typically   extended  using  a  file   \fBmyjava.emf\fR
 .SH "SEE ALSO"
 .na
 .Ht c 9 ,
-.Ht c-brace 5 ,
-.Ht cmode 2m ,
 .Ht collapse-all 3 ,
 .Ht collapse-current 3 ,
 .Ht compile 3 ,
