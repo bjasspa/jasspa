@@ -1,0 +1,54 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1999-2005 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.\"  Created By    : Jon Green
+.\"  Created       : Sat Feb 6 14:22:09 1999
+.\"
+.Id $Id: m9typ043.9,v 1.1 2005-01-24 23:36:10 jon Exp $
+.Im MicroEmacs filetype
+.so me.tni
+.TH ada 9
+.XI ada - "Ada programming language"
+.XI adb - "Ada programming language"
+.XI ads - "Ada programming language"
+.SH SYNOPSIS
+Ada \- Ada programming language
+.SH FILES
+.na
+.B hkada.emf
+\- Ada programming language file hook definition
+.ad
+.SH EXTENSIONS
+.na
+\fB.ada\fR, \fB.adb\fR, \fB.ads\fR \- Ada programming language
+.ad
+.SH DESCRIPTION
+The \fBada\fR file type template provides simple highlighting of Ada files.
+.\".IP "\fBGeneral Editing\fR"
+.\"On creating a new file, a new header is automatically included into the file.
+.\".Ht time 2m
+.\"is by default enabled, allowing the modification time-stamp to be maintained in
+.\"the header.
+.IP  \fBHighlighting\fR
+The highlighting  features allow commands,  variables,  logical,  preprocessor
+definitions,   comments,   strings  and  characters  of  the  language  to  be
+differentiated and rendered in different colors.
+.IP "\fBShort Cuts\fR"
+The short cut keys used within the buffer are:-
+.IP
+\fB\*eh\fR \- Key binding help information.
+.br
+\fB\*cc \*cc\fR \- Comment out the current line.
+.br
+\fB\*cc \*cd\fR \- Uncomment the current line.
+.br
+\fB\*cc \*ce\fR \- Comment to the end of the line with hash (#).
+.br
+\fB\*cc \*co\fR \- Format a comment
+.SH "SEE ALSO"
+.na
+.Hl "Supported File Types" FileTypes -
+.ad
+.FH
