@@ -69,28 +69,24 @@
     </tr>
     <tr>
       <td><a href="release_05q1/jasspa-mepkg-hpux-pa-10.20-20050219.depot.gz">jasspa-mepkg-hpux-pa-10.20-20050219.depot.gz</a></td>
-
-      <td>
-          <b>Package:</b> HP HP-UX (pa-risc) 10.20 package.<br/>
-          <b>Install:</b> <i>/usr/sbin/swinstall -s `pwd`/jasspa-mepkg-hpux-pa-10.20-20050219.depot jasspa-me)</i>
-          <b>Remove:</b> <i>/usr/sbin/swremove jasspa-me</i>
-      </td>
+      <td>HP HP-UX (pa-risc) 10.20 package.</td>
       <td><center>1531864</center></td>
       <td><center>2005-02-19</center></td>
     </tr-->
     <tr>
       <td><a href="release_05q1/jasspa-mepkg-hpux-pa-11.00-20050219.depot.gz">jasspa-mepkg-hpux-pa-11.00-20050219.depot.gz</a></td>
-
-      <td><b>Package:</b> HP HP-UX (pa-risc) 11.00 package.<br/>
-          <b>Install:</b> <i>/usr/sbin/swinstall -s `pwd`/jasspa-mepkg-hpux-pa-11.00-20040301.depot jasspa-me</i><br/>
-          <b>Remove:</b> <i>/usr/sbin/swremove jasspa-me</i>
-      </td>
-
+      <td>HP HP-UX (pa-risc) 11.00 package.</td>
       <td><center>1321386</center></td>
       <td><center>2005-02-19</center></td>
     </tr>
   </table></center>
-
+  
+  <h3>Package Installation</h3>
+  <p>As <i>root</i> run the command <tt>/usr/sbin/swinstall -s `pwd`/jasspa-mepkg-hpux-pa-xx.xx-20050219.depot jasspa-me</tt></p>
+  
+  <h3>Package Removal</h3>
+  <p>As <i>root</i> run the command <tt>/usr/sbin/swremove jasspa-me</tt></p>
+  
   <HR color="#cccccc" noShade="1" SIZE="1"/>
 
   <!-- NanoEmacs - Package and Binary Downloads -->
@@ -131,6 +127,17 @@
     </tr>
   </table></center>
 
+  <h3>Installation</h3>
+  
+  <p>
+  <ul>
+    <li>Unpack using <tt>gunzip</tt></li>
+    <li>rename to <b>ne</b></li>
+    <li>Apply execute permissions <b>chmod a+rx ne</b></li>
+    <li>As <i>root</i> copy to the desired binary directory i.e. <tt>/usr/bin</tt>.</li>
+  </ul>
+  </p>
+     
   <HR color="#cccccc" noShade="1" SIZE="1"/>
 
   <h2><img src="images/miniicon.gif" width="16" height="16"/>
@@ -182,7 +189,80 @@
       <td><center>2005-02-19</center></td>
     </tr>
   </table></center>
-
+  
+  <h3>System Wide Component Installation</h3>
+  
+  <p>As <i>root</i>, unpack <i>metree</i> which creates a directory tree
+  called <tt>jasspa</tt> and install into a suitable directory, typically
+  <tt>/opt</tt> or <tt>/usr/local</tt> i.e.</p>
+  
+  <pre>
+  cd /opt
+  gtar zxvf /path-to-tarball/jasspa-metree-yyyymmdd.tar.gz
+  </pre>
+  
+  <p>The directory <tt>/opt/jasspa</tt> should now exist. Add downloaded
+  spelling dictionaries by unpacking into the <tt>/opt/jasspa/spell</tt>
+  subdirectory.</p>
+  
+  <p>Create a new directory in the <i>jasspa</i> tree to hold the binary.
+  Unpack the binary into the new directory.</p>
+  
+  <pre>
+  cd /opt/jasspa
+  mkdir bin
+  cd bin
+  gunzip -c /path-to-tarball/jasspa-me-hpux-pa-mm.nn-yyyymmdd.gz &gt; me
+  chmod a+rx me
+  </pre>
+  
+  <p>Change your path to include the executable (ideally edit
+  <tt>/etc/profile</tt> for system wide change) or locally by editing the
+  <tt>.profile</tt> or <tt>.cshrc</tt> files i.e.</p>
+  
+  <pre>
+  #
+  # Set up JASSPA Microemacs
+  #
+  if [ -d /opt/jasspa/bin ] ; then
+      PATH=$PATH:/opt/jasspa/bin
+  fi
+  export PATH
+  </pre>
+  
+  <p>Logout and back in, installation is complete and you may now execute your
+  favorite editor <b>me</b>.</p>
+  
+  <h3>Single User Component Installation</h3>
+  
+  <p>Unpack <i>metree</i> in your home directory, this generates a directory
+  tree called <tt>jasspa</tt>. Once unpacked then rename the directory to
+  <tt>.jasspa</tt>.</p>
+  
+  <pre>
+  cd ~
+  gtar zxvf /path-to-tarball/jasspa-metree-yyyymmdd.tar.gz
+  mv jasspa .jasspa
+  </pre>
+  
+  <p>Add downloaded spelling dictionaries by unpacking into the
+  <tt>~/.jasspa/spell</tt> subdirectory.</p>
+  
+  <p>Install the binary into your local binary directory - we assume
+  <tt>~/bin</tt> i.e.</p>
+  
+  <pre>
+  cd ~/bin
+  gunzip -c /path-to-tarball/jasspa-me-hpux-pa-mm.nn-yyyymmdd.gz &gt; me
+  chmod a+rx me
+  </pre>
+  
+  <p>Assuming that the binary directory is already on the users path then the
+  installation is complete.</p>
+  
+  <p>Now execute your favorite editor <b>me</b> and follow the instructions on
+  setting up your environment.</p>
+  
   <HR color="#cccccc" noShade="1" SIZE="1"/>
 
   <h1>NO WARRANTY</h1>
