@@ -1,0 +1,7 @@
+# -*- Makefile -*-
+# Include the other files.
+UNAME:sh =uname | tr '[A-Z]' '[a-z]'
+include $(SRCROOT)/etc/makeinc.dir
+include $(SRCROOT)/etc/makeinc.$(UNAME)
+MEVERS=20040201
+

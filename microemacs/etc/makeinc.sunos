@@ -1,0 +1,23 @@
+# -*- Makefile -*-
+# Make rules for SunOS
+# 
+# Remove unconditionally
+RM	= rm -f
+#
+# Directory stuff
+#
+MKDIR	= mkdir -p
+RMDIR 	= rm -rf 
+#
+# Archives - always full compression.
+# 
+GTAR	= gtar
+TAR	= tar
+ZIP	= zip -9 
+GZIP	= gzip -9 
+#
+# Install
+#
+INSTALL	= ginstall  
+DOS2UNIX= me -n "@dos2unix"
+UNIX2DOS= me -n "@unix2dos"

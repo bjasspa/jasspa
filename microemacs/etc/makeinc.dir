@@ -1,0 +1,15 @@
+# -*- Makefile -*-
+# Directory
+#
+RELDIR	=	$(SRCROOT)/release
+DOSRELDIR=	$(RELDIR)/dos
+UNXRELDI=	$(RELDIR)/unix
+WWWRELDIR=	$(RELDIR)/www
+SRCRELDIR=	$(RELDIR)/jasspa-me-$(MEVERS)/src
+#
+#
+#
+JASSPADIR=	$(RELDIR)/jasspa
+JASSPLDIR=	$(JASSPADIR)/spelling
+JASMACDIR=	$(JASSPADIR)/macros
+JASCOMDIR=	$(JASSPADIR)/company

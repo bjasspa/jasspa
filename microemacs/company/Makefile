@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20040205.2219>
+# Last Modified: <20040205.2239>
 #
 ##############################################################################
 
@@ -27,13 +27,13 @@ release: $(RELTXTS)
 # Release target files
 $(JASCOMDIR):
 	$(MKDIR) $@
-$(RELTXTS): $(TXTOBJS) $(JASSPLDIR)
+$(RELTXTS): $(TXTOBJS) $(JASCOMDIR)
 	$(INSTALL) $(@F) $(@D)
 #
 # Clean area.
 #
 clean:
-	$(RM) $(ZIPOBJS) $(TAROBJS)
+	echo "Done."
 #
 # Remove all working files.
 #
