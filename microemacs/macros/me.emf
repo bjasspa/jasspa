@@ -1,6 +1,6 @@
 ;  Startup file for MicroEmacs '99 JASSPA Distribution
 ;
-;  Last Modified :  <010204.2158>
+;  Last Modified :  <010213.1631>
 ;  Copyright (c) 1999 JASSPA
 ;
 ; If mename isn't set or registry file isn't found then set it to guest
@@ -31,11 +31,11 @@
 0 define-macro-file osd osd-main osd-dialog osd-xdialog osd-entry
 0 define-macro-file utils ascii-time regex-forward regex-backward var-str-sub str-to-regex filemask-to-regex copy-registry
 define-macro-file format clean sort-lines-ignore-case tabs-to-spaces paragraph-to-line delete-indentation restyle-region restyle-buffer ifill-paragraph
+define-macro-file cvs cvs cvs-state cvs-update cvs-commit cvs-log cvs-diff cvs-add cvs-remove cvs-resolve-conflicts
 define-macro-file abbrev expand-abbrev-handle spell-complete-word iso-accents-mode iso-accents-expand
 define-macro-file misc symbol check-line-length alarm time compare-windows-exact display-white-chars
 define-macro-file search replace-all-string query-replace-all-string replace-all-pairs line-scheme
 define-macro-file tools compile grep rgrep which diff diff-changes execute-tool uniq reread-file
-define-macro-file cvs cvs cvs-state cvs-update cvs-diff cvs-resolve-conflicts
 define-macro-file spell spell-word spell-buffer spell-edit-word find-word
 define-macro-file buffinit buffer-modes-init auto-spell-init fold-init
 define-macro-file games Metris Patience Triangle Mahjongg Match-It
@@ -135,6 +135,7 @@ global-bind-key ifill-paragraph          "esc q"
 global-bind-key delete-indentation       "esc ^"
 global-bind-key file-browser             "f10"
 global-bind-key ftp                      "S-f10"
+global-bind-key cvs                      "C-f10"
 global-bind-key display-white-chars      "f11"
 ml-bind-key     tab                      "esc esc"
 ; setup abbreviations

@@ -1,6 +1,6 @@
 ; C mode hook
 ;
-; Last Modified : <010119.1516>
+; Last Modified : <010214.1230>
 ;
 ; Notes:
 ;       There is a distinction between C++ and C because of problems with
@@ -228,12 +228,12 @@ define-macro fhook-cpp
     !if &sin "p" .fhook-cpp.setup
         .osd.cpp-help buffer-bind-key osd  "esc h"
     !endif
-    buffer-bind-key c-start-comment    "esc C-c"
     buffer-bind-unbound-key cpp-comment-line   "C-c C-c"
     buffer-bind-unbound-key cpp-uncomment-line "C-c C-d"
     buffer-bind-unbound-key cpp-comm-to-end    "C-c C-e"
-    buffer-bind-key c-insert-tab       "A-tab"
     buffer-bind-unbound-key restyle-region     "A-C-i"
+    buffer-bind-key c-start-comment    "esc C-c"
+    buffer-bind-key c-insert-tab       "A-tab"
     buffer-bind-key c-box              "esc q"
     buffer-bind-key c-box              "esc o"
     ; execute user extensions if enabled

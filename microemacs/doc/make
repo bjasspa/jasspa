@@ -7,7 +7,7 @@
 #
 # Author      : Jon Green
 # Created     : 22nd February 1997
-# Last Edited : <001009.2330>
+# Last Edited : <001206.0034>
 #
 # History     : JG  220297 Original  Constructed from emacssrc
 #
@@ -187,6 +187,7 @@ OSD3_000=	$(DOCDIR)m3osd000.3 $(DOCDIR)m3osd001.3 $(DOCDIR)m3osd002.3\
 		$(DOCDIR)m3osd003.3 $(DOCDIR)m3osd004.3 $(DOCDIR)m3osd005.3\
 		$(DOCDIR)m3osd006.3 $(DOCDIR)m3osd007.3 $(DOCDIR)m3osd008.3\
 		$(DOCDIR)m3osd009.3
+OSD3_010=	$(DOCDIR)m3osd010.3
 
 FCL3_000=	$(DOCDIR)m3fcl001.3 $(DOCDIR)m3fcl002.3 $(DOCDIR)m3fcl003.3\
 		$(DOCDIR)m3fcl004.3 $(DOCDIR)m3fcl005.3 $(DOCDIR)m3fcl006.3\
@@ -241,7 +242,7 @@ VAR5_070=	$(DOCDIR)m5var070.5 $(DOCDIR)m5var071.5 $(DOCDIR)m5var072.5\
 		$(DOCDIR)m5var073.5 $(DOCDIR)m5var074.5 $(DOCDIR)m5var075.5\
 		$(DOCDIR)m5var076.5 $(DOCDIR)m5var077.5 $(DOCDIR)m5var078.5\
 		$(DOCDIR)m5var079.5
-VAR5_080=	$(DOCDIR)m5var080.5 $(DOCDIR)m5var081.5
+VAR5_080=	$(DOCDIR)m5var080.5 $(DOCDIR)m5var081.5 $(DOCDIR)m5var082.5
 
 FIL8_000=	$(DOCDIR)m8fil000.8 $(DOCDIR)m8fil001.8 $(DOCDIR)m8fil002.8\
 		$(DOCDIR)m8fil003.8 $(DOCDIR)m8fil004.8 $(DOCDIR)m8fil005.8\
@@ -278,7 +279,7 @@ TEMPSMS	=	cmd2_000.sm	cmd2_010.sm	cmd2_020.sm	cmd2_030.sm \
 		mod2_000.sm	mod2_010.sm	mod2_020.sm	mod2_030.sm \
 		mac3_000.sm	mac3_010.sm	mac3_020.sm	mac3_030.sm \
 		mac3_040.sm	mac3_050.sm \
-		osd3_000.sm \
+		osd3_000.sm	osd3_010.sm \
 		fcl3_000.sm	fcl3_010.sm \
 		fil4_000.sm	fil4_010.sm	fil4_020.sm	fil4_030.sm \
 		var5_000.sm	var5_010.sm	var5_020.sm	var5_030.sm \
@@ -373,6 +374,8 @@ mac3_050.sm:	$(MAC3_050)
 
 osd3_000.sm:	$(OSD3_000)
 	$(SUPERMAN) -o $@ $(OSD3_000)
+osd3_010.sm:	$(OSD3_010)
+	$(SUPERMAN) -o $@ $(OSD3_010)
 
 fcl3_000.sm:	$(FCL_000)
 	$(SUPERMAN) -o $@ $(FCL3_000)

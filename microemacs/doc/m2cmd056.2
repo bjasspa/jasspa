@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m2cmd056.2,v 1.2 2000-10-21 17:09:40 jon Exp $
+.Id $Id: m2cmd056.2,v 1.3 2001-02-16 21:38:10 jon Exp $
 .Im MicroEmacs command|file
 .ds C0 "(\fB\*(cX\*cf\fR)\ \&
 .so me.tni
@@ -91,8 +91,10 @@ for information on HTTP proxy server support.
 .SS "FTP support"
 \*(mS  supports ftp file  loading, this is identical to http except the prefix
 \fCftp://\fR is used as opposed to  \fChttp://\fR.  The user name and password
-defaults to  \fIguest\fR  in the absence of these  fields.  Connection  is by
-default on port 21.
+defaults to  \fIguest\fR in the absence of both these fields. If the user name
+is supplied but not the password the password  will be prompted  for; this can
+be useful as the password  will not be stored or written to the history  file.
+Connection is by default on port 21.
 .CS
 find-file "ftp://<me>:<password>@members.xoom.com/jasspa/index.html"
 .CE
