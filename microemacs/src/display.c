@@ -56,7 +56,7 @@
 
 VVIDEO        vvideo;                   /* Head of the virtual video list */
 LINE          *mline;                   /* message line. */
-uint16 TTsrow = 0;              /* Terminal starting row */
+meUShort TTsrow = 0;                    /* Terminal starting row */
 
 /* Poke screen flags
  * Poke screen maintains the rectangular extents of the region of the
@@ -108,7 +108,7 @@ vtinit(void)
     if(((styleTable = malloc(2*meSCHEME_STYLES*sizeof(meSTYLE))) == NULL) ||
        ((vvideo.video = malloc((TTmrow)*sizeof(VIDEO))) == NULL) ||
        ((hilBlock = malloc((hilBlockS+2)*sizeof(HILBLOCK))) == NULL) ||
-       ((disLineBuff = malloc((disLineSize+32)*sizeof(uint8))) == NULL) ||
+       ((disLineBuff = malloc((disLineSize+32)*sizeof(meUByte))) == NULL) ||
        ((mline   = malloc(sizeof(LINE)+TTmcol)) == NULL) ||
        ((mlStore = malloc(TTmcol+1)) == NULL))
         meExit(1);
@@ -144,9 +144,9 @@ vtinit(void)
         meExit (1);
     for (flp = frameStore, ii = 0; ii < TTmrow; ii++, flp++)
     {
-        if ((flp->scheme = meMalloc(TTmcol*(sizeof(uint8)+sizeof(meSTYLE)))) == NULL)
+        if ((flp->scheme = meMalloc(TTmcol*(sizeof(meUByte)+sizeof(meSTYLE)))) == NULL)
             meExit (1);
-        flp->text = (uint8 *) (flp->scheme+TTmcol) ;
+        flp->text = (meUByte *) (flp->scheme+TTmcol) ;
         /* Fill with data */
         jj=TTmcol ;
         while(--jj >= 0)
@@ -172,7 +172,7 @@ convertUserScheme(int n, int defaultStyle)
 {
     if ((n < 0) || (n >= styleTableSize))
     {
-        mlwrite (MWABORT|MWPAUSE,(uint8 *)"[Invalid color-scheme index %d]", n);
+        mlwrite (MWABORT|MWPAUSE,(meUByte *)"[Invalid color-scheme index %d]", n);
         return defaultStyle ;
     }
     return (n*meSCHEME_STYLES) ;
@@ -184,7 +184,7 @@ convertUserScheme(int n, int defaultStyle)
 static void
 shilightWindow(WINDOW *wp)
 {
-    int32 lineNo;           /* Toprow line number */
+    meInt lineNo;           /* Toprow line number */
 
     /* Check to see if any selection hilighting is to be removed. */
     if(((selhilight.flags & SELHIL_ACTIVE) == 0) ||
@@ -249,7 +249,7 @@ remove_hilight:
         if(wp->w_flag & WFSELDRAWN)
         {
             VIDEO  *vptr;                     /* Pointer to the video block */
-            uint16  sline, eline ;            /* physical screen line to update */
+            meUShort  sline, eline ;          /* physical screen line to update */
 
             /* Determine the video line position and determine the video block that
              * is being used. */
@@ -259,7 +259,7 @@ remove_hilight:
 
             while (sline < eline)
             {
-                uint16 vflag;
+                meUShort vflag;
 
                 if ((vflag = vptr[sline].flag) & VFSHMSK)
                     vptr[sline].flag = (vflag & ~VFSHMSK)|VFCHNGD;
@@ -271,7 +271,7 @@ remove_hilight:
     else
     {
         VIDEO          *vptr;             /* Pointer to the video block */
-        uint16  sline, eline ;    /* physical screen line to update */
+        meUShort  sline, eline ;          /* physical screen line to update */
 
         /* Determine the video line position and determine the video block that
          * is being used. */
@@ -282,7 +282,7 @@ remove_hilight:
         /* Mark all of the video lines with the update. */
         while (sline < eline)
         {
-            uint16 vflag;
+            meUShort vflag;
 
             vflag = vptr[sline].flag;
 
@@ -345,9 +345,9 @@ showRegion(int f, int n)
     absn = (n < 0) ? -n:n ;
 
     if(((absn == 1) || (absn == 2)) && !(selhilight.flags & SELHIL_FIXED))
-        return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[No current region]") ;
+        return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[No current region]") ;
     if(((absn == 2) || (n == 4)) && (selhilight.bp != curbp))
-        return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[Current region not in this buffer]") ;
+        return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[Current region not in this buffer]") ;
     switch(n)
     {
     case -3:
@@ -364,7 +364,7 @@ showRegion(int f, int n)
         if((gotoLine(TRUE,selhilight.mlineno+1) == TRUE) &&
            (selhilight.mlineoff <= llength(curwp->w_dotp)))
         {
-            curwp->w_doto = (uint16) selhilight.mlineoff ;
+            curwp->w_doto = (meUShort) selhilight.mlineoff ;
             return TRUE ;
         }
         return FALSE ;
@@ -408,7 +408,7 @@ showRegion(int f, int n)
         if((gotoLine(TRUE,selhilight.dlineno+1) == TRUE) &&
            (selhilight.dlineoff <= llength(curwp->w_dotp)))
         {
-            curwp->w_doto = (uint16) selhilight.dlineoff ;
+            curwp->w_doto = (meUShort) selhilight.dlineoff ;
             return TRUE ;
         }
         return FALSE ;
@@ -463,7 +463,7 @@ windCurLineOffsetEval(WINDOW *wp)
 #endif
 #endif
     {
-        register uint8 cc, *ss, *off ;
+        register meUByte cc, *ss, *off ;
         register int pos, ii ;
 
         ss = wp->w_dotp->l_text ;
@@ -486,7 +486,7 @@ windCurLineOffsetEval(WINDOW *wp)
                 ii = 2 ;
             else
                 ii = 4 ;
-            *off++ = (uint8) ii ;
+            *off++ = (meUByte) ii ;
             pos += ii ;
         }
         *off = 0 ;
@@ -496,7 +496,7 @@ windCurLineOffsetEval(WINDOW *wp)
 void
 updCursor(register WINDOW *wp)
 {
-    register uint32 ii, jj ;
+    register meUInt ii, jj ;
     int leftMargin;                     /* Base left margin position (scrolled) */
 
     if(wp->w_flag & (WFREDRAW|WFRESIZE))
@@ -518,7 +518,7 @@ updCursor(register WINDOW *wp)
     }
     else
     {
-        register uint8 *off ;
+        register meUByte *off ;
 
         windCurLineOffsetEval(wp) ;
         jj = 0 ;
@@ -560,7 +560,7 @@ updCursor(register WINDOW *wp)
     mwCol = wp->firstCol + ii ;
     if(wp->w_scscroll != (int) jj)         /* Screen scroll correct ?? */
     {
-        wp->w_scscroll = (uint16) jj;      /* Scrolled line offset */
+        wp->w_scscroll = (meUShort) jj;    /* Scrolled line offset */
         wp->w_flag |= WFDOT ;
     }
     switch(scrollFlag & 0x0f)
@@ -585,7 +585,7 @@ updCursor(register WINDOW *wp)
         if(wp->w_sscroll != (int) jj)
         {
             /* Reset scroll column */
-            wp->w_sscroll = (uint16) jj ;  /* Set scroll column to base position */
+            wp->w_sscroll = (meUShort) jj ;/* Set scroll column to base position */
             wp->w_flag |= WFREDRAW;        /* Force a screen update */
         }
         break ;
@@ -603,10 +603,10 @@ static char drawno = 'A' ;
  * This function renders a non-hilighted text line.
  */
 int
-renderLine (uint8 *s1, int len, int wid)
+renderLine (meUByte *s1, int len, int wid)
 {
-    register uint8 cc;
-    register uint8 *s2 ;
+    register meUByte cc;
+    register meUByte *s2 ;
 
     s2 = disLineBuff + wid;
     while(len-- > 0)
@@ -661,14 +661,14 @@ renderLine (uint8 *s1, int len, int wid)
 static int
 updateline(register int row, register VIDEO *vp1, WINDOW *window)
 {
-    register uint8 *s1;         /* Text line pointer */
-    register uint16 flag ;      /* Video line flag */
+    register meUByte *s1;       /* Text line pointer */
+    register meUShort flag ;    /* Video line flag */
     HILBLOCK *blkp;             /* Style change list */
     meSCHEME *fssp;             /* Frame store - colour pointer */
-    uint8    *fstp;             /* Frame store - text pointer */
-    uint16 noColChng;           /* Number of colour changes */
-    uint16 scol;                /* Lines starting column */
-    uint16 ncol;                /* Lines number of columns */
+    meUByte    *fstp;           /* Frame store - text pointer */
+    meUShort noColChng;         /* Number of colour changes */
+    meUShort scol;              /* Lines starting column */
+    meUShort ncol;              /* Lines number of columns */
 
     /* Get column size/offset */
     s1 = vp1->line->l_text;
@@ -706,7 +706,7 @@ updateline(register int row, register VIDEO *vp1, WINDOW *window)
 #if HILIGHT
         else if(window->w_bufp->hiLight)
         {
-            uint8 tempIsWordMask;
+            meUByte tempIsWordMask;
 
             /* The highlighting relies on the correct setting of the
              * isWordMask to find word boundaries. Context save the existing
@@ -725,7 +725,7 @@ updateline(register int row, register VIDEO *vp1, WINDOW *window)
         else
 #endif
         {
-            uint16 lineLen;
+            meUShort lineLen;
 
 #if COLOR
             scheme = window->w_bufp->scheme;
@@ -754,7 +754,7 @@ hideLineJump:
                 }
                 else
                 {
-                    register uint16 wid, len ;
+                    register meUShort wid, len ;
 
                     /* Region hilight commences in this line */
                     if((flag & VFSHBEG) && (selhilight.soff > 0))
@@ -811,7 +811,7 @@ hideLineJump:
 
         s1 = disLineBuff ;
         {
-            register uint16 scroll ;
+            register meUShort scroll ;
 
             if (flag & VFCURRL)
                 scroll = window->w_scscroll ;   /* Current line scroll */
@@ -819,7 +819,7 @@ hideLineJump:
                 scroll = window->w_sscroll ;    /* Hard window scroll */
             if(scroll != 0)
             {
-                register uint16 ii ;
+                register meUShort ii ;
 
                 /* Line is scrolled. The effect we want is if any text at all
                  * is on the line we place a dollar at the start of the line
@@ -933,7 +933,7 @@ hideLineJump:
 
         if (meSystemCfg & meSYSTEM_FONTFIX)
         {
-            uint8 cc, *sfstp=fstp;
+            meUByte cc, *sfstp=fstp;
             int spFlag, ccol ;
             do {
                 scheme = blkp->scheme ;
@@ -1004,7 +1004,7 @@ hideLineJump:
 
             ii -= col ;
             cno = ii ;
-            s1 = (uint8 *) buff ;
+            s1 = (meUByte *) buff ;
             do
             {
                 *s1++ = ' ' ;           /* End fill with spaces */
@@ -1083,8 +1083,8 @@ hideLineJump:
 #ifdef _DOS
     {
         register meSCHEME scheme ;
-        register uint16 ii, len ;
-        register uint8  cc ;
+        register meUShort ii, len ;
+        register meUByte  cc ;
 
         ii = 0 ;
         do {
@@ -1135,7 +1135,7 @@ hideLineJump:
     if (meSystemCfg & meSYSTEM_CONSOLE)
     {
         register meSCHEME scheme ;
-        register uint16 ii, ccol ;
+        register meUShort ii, ccol ;
         register WORD  cc ;
         register int ll ;
 
@@ -1264,9 +1264,9 @@ updateWindow(WINDOW *wp)
     VIDEO   *vptr;                    /* Pointer to the video block */
     register LINE *lp ;               /* Line to update */
     register int   row, nrows ;       /* physical screen line to update */
-    register uint8 force ;
+    register meUByte force ;
 
-    force = (uint8) (wp->w_flag & (WFREDRAW|WFRESIZE)) ;
+    force = (meUByte) (wp->w_flag & (WFREDRAW|WFRESIZE)) ;
     /* Determine the video line position and determine the video block that
      * is being used. */
     row   = wp->firstRow ;
@@ -1308,7 +1308,7 @@ updateWindow(WINDOW *wp)
 #endif
     while(--nrows >= 0)
     {
-        register uint8 update=force|(vptr->flag & VFCHNGD) ;
+        register meUByte update=force|(vptr->flag & VFCHNGD) ;
 
         /*---	 and update the virtual line */
         if(lp == wp->w_dotp)
@@ -1356,7 +1356,7 @@ updateWindow(WINDOW *wp)
     {
         /* if we are at the end */
         meSCHEME scheme = vptr[-1].eolScheme ;
-        uint8 l_flag ;
+        meUByte l_flag ;
         /* store the b_linep l_flag and set to 0 as it may have a $line-scheme */
         l_flag=lp->l_flag ;
         lp->l_flag = 0 ;
@@ -1383,11 +1383,11 @@ updateWindow(WINDOW *wp)
 #endif
 }
 
-uint8
-assessModeLine(uint8 *ml)
+meUByte
+assessModeLine(meUByte *ml)
 {
-    uint8 flags=WFMODE|WFRESIZE ;
-    uint8 cc ;
+    meUByte flags=WFMODE|WFRESIZE ;
+    meUByte cc ;
 
     while((cc = *ml++) != '\0')
     {
@@ -1422,8 +1422,8 @@ updateModeLine(WINDOW *wp)
 {
     time_t          clock;		    /* Time in machine format. */
     struct tm	   *time_ptr;	            /* Pointer to time frame. */
-    register uint8 *ml, *cp, *ss ;
-    register uint8  cc, lchar ;
+    register meUByte *ml, *cp, *ss ;
+    register meUByte  cc, lchar ;
     register BUFFER *bp ;
     register int    ii ;	            /* loop index */
     register int    lineLen ;               /* Max length of the line */
@@ -1507,7 +1507,7 @@ updateModeLine(WINDOW *wp)
             case 'k':
                 if (kbdmode == RECORD)           /* if playing macro */
                 {
-                    ss = (uint8 *) "REC" ;
+                    ss = (meUByte *) "REC" ;
                     goto model_copys ;
                 }
                 break ;
@@ -1712,7 +1712,7 @@ updateScrollBar (WINDOW *wp)
     int row;                            /* Current row */
     int endrow;                         /* Terminating row */
     meSCHEME scheme;                    /* Region scheme */
-    uint8 *wbase;                       /* Base window character */
+    meUByte *wbase;                       /* Base window character */
     int  len;                           /* Length of bar */
     int  flipBox;                       /* Flip colours for the box */
 
@@ -1788,7 +1788,7 @@ updateScrollBar (WINDOW *wp)
             /* Update the frame store with the character and scheme
              * information - this is nearly the same for all platforms
              */
-            uint8    *fstp ;      /* Frame store text pointer */
+            meUByte    *fstp ;      /* Frame store text pointer */
             meSCHEME *fssp ;      /* Frame store scheme pointer */
 
             fstp = frameStore[row].text + col ;
@@ -1830,7 +1830,7 @@ updateScrollBar (WINDOW *wp)
 
                 if (meSystemCfg & meSYSTEM_FONTFIX)
                 {
-                    uint8 cc;
+                    meUByte cc;
                     fssp[0] = scheme;  /* Assign the colour */
                     if(!((cc = *wbase) & 0xe0))
                         cc = ' ' ;    /* Assign the text */
@@ -1876,7 +1876,7 @@ updateScrollBar (WINDOW *wp)
              *
              **************************************************************/
             {
-                uint8 cc;
+                meUByte cc;
 
                 TCAPmove(row, col);    /* Go to correct place. */
                 TCAPschemeSet(scheme) ;
@@ -1902,7 +1902,7 @@ updateScrollBar (WINDOW *wp)
              *
              **************************************************************/
             {
-                uint8 ss ;
+                meUByte ss ;
                 int cc ;
 
                 cc = TTschemeSet(scheme) ;
@@ -2120,7 +2120,7 @@ screenUpdate(int f, int n)
     /* Does the title bar need updating? */
 #ifdef _WINDOW
     {
-        static uint8 *lastBName=NULL ;
+        static meUByte *lastBName=NULL ;
 
         if(n || (curbp->b_bname != lastBName))
         {
@@ -2199,7 +2199,7 @@ screenUpdate(int f, int n)
     {
         register LINE *flp, *blp ;
         register int   ii, jj ;
-        register uint8 flag ;
+        register meUByte flag ;
 
         ii = (wp->line_no - wp->topLineNo) ;
         jj = (wp->numTxtRows - ii) ;
@@ -2224,7 +2224,7 @@ int
 update(int flag)    /* force=TRUE update past type ahead? */
 {
     register int index;
-    uint32 arg ;
+    meUInt arg ;
 
     if((alarmState & meALARM_PIPED) ||
        (!(flag & 0x01) && ((kbdmode == PLAY) || clexec || TTahead())))
@@ -2264,10 +2264,10 @@ update(int flag)    /* force=TRUE update past type ahead? */
  *                    then a fore & back color is given per poke char.
  */
 void
-pokeScreen(int flags, int row, int col, uint8 *scheme,
-           uint8 *str)
+pokeScreen(int flags, int row, int col, meUByte *scheme,
+           meUByte *str)
 {
-    uint8  cc, *ss ;
+    meUByte  cc, *ss ;
     meSCHEME *fssp;               /* Frame store scheme pointer */
     int len, schm, off ;
 
@@ -2346,7 +2346,7 @@ pokeScreen(int flags, int row, int col, uint8 *scheme,
 
             if (meSystemCfg & meSYSTEM_FONTFIX)
             {
-                uint8 cc ;
+                meUByte cc ;
                 str-- ;
                 while(len--)
                 {
@@ -2487,7 +2487,7 @@ pokeScreen(int flags, int row, int col, uint8 *scheme,
             XTERMschemeSet(schm) ;
             if (meSystemCfg & meSYSTEM_FONTFIX)
             {
-                uint8 cc, *sfstp, *fstp ;
+                meUByte cc, *sfstp, *fstp ;
                 int ii, spFlag=0 ;
 
                 ii = len ;
@@ -2602,16 +2602,16 @@ int
 screenPoke(int f, int n)
 {
     int row, col ;
-    uint8 fbuf[MAXBUF] ;
-    uint8 sbuf[MAXBUF] ;
+    meUByte fbuf[MAXBUF] ;
+    meUByte sbuf[MAXBUF] ;
 
-    if((meGetString((uint8 *)"row",0,0,fbuf,MAXBUF) != TRUE) ||
-       ((row = meAtoi(fbuf)),(meGetString((uint8 *)"col",0,0,fbuf,MAXBUF) != TRUE)) ||
-       ((col = meAtoi(fbuf)),(meGetString((uint8 *)"scheme",0,0,fbuf,MAXBUF) != TRUE)) ||
-       (meGetString((uint8 *)"string",0,0,sbuf,MAXBUF) != TRUE))
+    if((meGetString((meUByte *)"row",0,0,fbuf,MAXBUF) != TRUE) ||
+       ((row = meAtoi(fbuf)),(meGetString((meUByte *)"col",0,0,fbuf,MAXBUF) != TRUE)) ||
+       ((col = meAtoi(fbuf)),(meGetString((meUByte *)"scheme",0,0,fbuf,MAXBUF) != TRUE)) ||
+       (meGetString((meUByte *)"string",0,0,sbuf,MAXBUF) != TRUE))
         return FALSE ;
     if((n & POKE_COLORS) == 0)
-        fbuf[0] = (uint8) meAtoi(fbuf) ;
+        fbuf[0] = (meUByte) meAtoi(fbuf) ;
     pokeScreen(n,row,col,fbuf,sbuf) ;
     return TRUE ;
 }
@@ -2624,10 +2624,10 @@ screenPoke(int f, int n)
  * return the number of characters written.
  */
 static	int
-mlputi(long i, int r, uint8 *buf)
+mlputi(long i, int r, meUByte *buf)
 {
-    uint8	    temp_buf [22];		/* Temporary buffer */
-    register uint8 *temp = temp_buf;	/* Temporaty buffer pointer */
+    meUByte	    temp_buf [22];		/* Temporary buffer */
+    register meUByte *temp = temp_buf;	/* Temporaty buffer pointer */
     register int    count=0, neg=0 ;
 
     *temp++ = '\0' ;
@@ -2663,10 +2663,10 @@ mlputi(long i, int r, uint8 *buf)
  */
 #ifdef _STDARG
 int
-mlwrite(int flags, uint8 *fmt, ...)
+mlwrite(int flags, meUByte *fmt, ...)
 #else
 int
-mlwrite(int flags, uint8 *fmt, int arg)
+mlwrite(int flags, meUByte *fmt, int arg)
 #endif
 {
 #ifdef _STDARG
@@ -2674,12 +2674,12 @@ mlwrite(int flags, uint8 *fmt, int arg)
 #else
     register char *ap;
 #endif
-    register uint8 c;
+    register meUByte c;
     register VIDEO *vp1;
     register int offset ;	/* offset into ???		*/
-    uint8  mlw[MAXBUF];		/* what we want to be there	*/
-    uint8 *mlwant;		/* what we want to be there	*/
-    uint8 *s1 ;
+    meUByte  mlw[MAXBUF];		/* what we want to be there	*/
+    meUByte *mlwant;		/* what we want to be there	*/
+    meUByte *s1 ;
 
     if((alarmState & meALARM_PIPED) ||
        (clexec && (flags & MWCLEXEC)))
@@ -2687,7 +2687,7 @@ mlwrite(int flags, uint8 *fmt, int arg)
 
     if(mlStatus & MLSTATUS_KEEP)
     {
-        uint8 *_ss, *_dd ;
+        meUByte *_ss, *_dd ;
         _ss = mline->l_text ;
         _dd = mlStore ;
         while((*_dd++ = *_ss++))
@@ -2700,7 +2700,7 @@ mlwrite(int flags, uint8 *fmt, int arg)
 
     if(flags & MWSPEC)
     {
-        mlwant = (uint8 *) fmt ;
+        mlwant = (meUByte *) fmt ;
         offset = meStrlen(mlwant) ;
     }
     else
@@ -2724,7 +2724,7 @@ mlwrite(int flags, uint8 *fmt, int arg)
 #ifdef _STDARG
                     *mlwant++ = va_arg(ap, int) ;
 #else
-                    *mlwant++ = *(uint8 *)ap ;
+                    *mlwant++ = *(meUByte *)ap ;
                     ap += sizeof(int);
 #endif
                     break;
@@ -2767,10 +2767,10 @@ mlwrite(int flags, uint8 *fmt, int arg)
 
                 case 's':
 #ifdef _STDARG
-                    s1 = va_arg(ap, uint8 *) ;
+                    s1 = va_arg(ap, meUByte *) ;
 #else
-                    s1 = *(uint8 **)ap ;
-                    ap += sizeof(uint8 *);
+                    s1 = *(meUByte **)ap ;
+                    ap += sizeof(meUByte *);
 #endif
                     /* catch a string which is too long */
                     offset = meStrlen(s1) ;
@@ -2837,7 +2837,7 @@ mlwrite(int flags, uint8 *fmt, int arg)
         /* Change the value of mlStatus to MLSTATUS_KEEP cos we want to keep
          * the string for the length of the sleep
          */
-        uint8 oldMlStatus = mlStatus ;
+        meUByte oldMlStatus = mlStatus ;
         mlStatus = MLSTATUS_KEEP ;
         TTsleep(2000,1)  ;
         mlStatus = oldMlStatus ;
@@ -2847,9 +2847,9 @@ mlwrite(int flags, uint8 *fmt, int arg)
         /* Change the value of mlStatus to MLSTATUS_KEEP cos we want to keep
          * the string till we get a key
          */
-        uint8 scheme=(globScheme/meSCHEME_STYLES), oldMlStatus = mlStatus ;
+        meUByte scheme=(globScheme/meSCHEME_STYLES), oldMlStatus = mlStatus ;
         pokeScreen(POKE_NOMARK+0x10,TTnrow,TTncol-9,&scheme,
-                   (uint8 *) "<ANY KEY>") ;
+                   (meUByte *) "<ANY KEY>") ;
         vp1->endp = TTncol ;
         mlStatus = MLSTATUS_KEEP ;
         TTgetc() ;
@@ -2889,7 +2889,7 @@ mlerase(int flag)
     }
     else if(!(mlStatus & MLSTATUS_KEEP))
     {
-        mlwrite(MWSPEC|(flag&MWCURSOR),(uint8 *)"") ;
+        mlwrite(MWSPEC|(flag&MWCURSOR),(meUByte *)"") ;
         mlStatus &= ~MLSTATUS_CLEAR ;
     }
 }
@@ -2915,18 +2915,18 @@ int
 addColor(int f, int n)
 {
     meCOLOR index ;
-    uint8 r, g, b ;
-    uint8 buff[MAXBUF] ;
+    meUByte r, g, b ;
+    meUByte buff[MAXBUF] ;
 
-    if((meGetString((uint8 *)"Index",0,0,buff,MAXBUF) == ABORT) ||
+    if((meGetString((meUByte *)"Index",0,0,buff,MAXBUF) == ABORT) ||
        ((index = (meCOLOR) meAtoi(buff)) == meCOLOR_INVALID) ||
-       (meGetString((uint8 *)"Red",0,0,buff,MAXBUF) == ABORT) ||
-       ((r = (uint8) meAtoi(buff)),
-        (meGetString((uint8 *)"Green",0,0,buff,MAXBUF) == ABORT)) ||
-       ((g = (uint8) meAtoi(buff)),
-        (meGetString((uint8 *)"Blue",0,0,buff,MAXBUF) == ABORT)))
+       (meGetString((meUByte *)"Red",0,0,buff,MAXBUF) == ABORT) ||
+       ((r = (meUByte) meAtoi(buff)),
+        (meGetString((meUByte *)"Green",0,0,buff,MAXBUF) == ABORT)) ||
+       ((g = (meUByte) meAtoi(buff)),
+        (meGetString((meUByte *)"Blue",0,0,buff,MAXBUF) == ABORT)))
         return FALSE ;
-    b = (uint8) meAtoi(buff) ;
+    b = (meUByte) meAtoi(buff) ;
 
     n = TTaddColor(index,r,g,b) ;
     if(index == (meCOLOR) meStyleGetBColor(meSchemeGetStyle(globScheme)))
@@ -2943,24 +2943,24 @@ int
 addColorScheme(int f, int n)
 {
     /* Brought out as add-font also uses the same prompts */
-    static uint8 *schmPromptM[4] = {(uint8 *)"Normal",(uint8 *)"Current",(uint8 *)"Select",(uint8 *)"Cur-Sel" } ;
-    static uint8 *schmPromptP[4] = {(uint8 *)" fcol",(uint8 *)" bcol",(uint8 *)" nfont",(uint8 *)"rfont" } ;
+    static meUByte *schmPromptM[4] = {(meUByte *)"Normal",(meUByte *)"Current",(meUByte *)"Select",(meUByte *)"Cur-Sel" } ;
+    static meUByte *schmPromptP[4] = {(meUByte *)" fcol",(meUByte *)" bcol",(meUByte *)" nfont",(meUByte *)"rfont" } ;
     meSTYLE *hcolors ;
     meSTYLE *dcolors ;
     meCOLOR  scheme[4][4] ;
-    uint8  fcol, bcol, font ;
-    uint8  prompt[20] ;
-    uint8  buf[MAXBUF] ;
+    meUByte  fcol, bcol, font ;
+    meUByte  prompt[20] ;
+    meUByte  buf[MAXBUF] ;
     int index, ii, jj, col ;
 
     /* Get the hilight colour index */
-    if ((meGetString((uint8 *)"Color scheme index",0,0,buf,MAXBUF) != TRUE) ||
+    if ((meGetString((meUByte *)"Color scheme index",0,0,buf,MAXBUF) != TRUE) ||
         ((index = meAtoi(buf)) < 0))
-        return mlwrite(MWABORT|MWPAUSE,(uint8 *)"Invalid scheme index number");
+        return mlwrite(MWABORT|MWPAUSE,(meUByte *)"Invalid scheme index number");
 
     /* See if we are replicating a color and validate the existing index */
     if ((f) && ((n > styleTableSize) || (n < 0)))
-        return mlwrite (MWABORT|MWPAUSE,(uint8 *)"Cannot duplicate undefined scheme %d.", n);
+        return mlwrite (MWABORT|MWPAUSE,(meUByte *)"Cannot duplicate undefined scheme %d.", n);
     else
         dcolors = styleTable + (n*meSCHEME_STYLES);
 
@@ -2969,7 +2969,7 @@ addColorScheme(int f, int n)
     {
         /* Allocate a new table */
         if((styleTable = meRealloc(styleTable,(index+1)*meSCHEME_STYLES*sizeof(meSTYLE))) == NULL)
-            return mlwrite (MWABORT|MWPAUSE,(uint8 *)"Cannot allocate scheme table");
+            return mlwrite (MWABORT|MWPAUSE,(meUByte *)"Cannot allocate scheme table");
         for(ii=styleTableSize ; ii<=index ; ii++)
             memcpy(styleTable+(ii*meSCHEME_STYLES),defScheme,meSCHEME_STYLES*sizeof(meSTYLE)) ;
         styleTableSize = index+1 ;
@@ -2991,7 +2991,7 @@ addColorScheme(int f, int n)
             meStrcat(prompt,schmPromptP[jj]) ;
             if((meGetString(prompt,0,0,buf,MAXBUF) != TRUE) ||
                ((col=meAtoi(buf)) < 0) || (col >= noColors))
-                return mlwrite(MWABORT|MWPAUSE,(uint8 *)"Invalid scheme entry");
+                return mlwrite(MWABORT|MWPAUSE,(meUByte *)"Invalid scheme entry");
             scheme[ii][jj] = col;
         }
         scheme[ii][2] = 0 ;
@@ -3005,7 +3005,7 @@ addColorScheme(int f, int n)
             meStrcat(prompt,schmPromptP[jj]) ;
             if(meGetString(prompt,0,0,buf,MAXBUF) != TRUE)
                 break;
-            scheme[ii][jj] = ((uint8) meAtoi(buf)) & meFONT_MASK ;
+            scheme[ii][jj] = ((meUByte) meAtoi(buf)) & meFONT_MASK ;
         }
     }
     /* now copy the scheme into the table */

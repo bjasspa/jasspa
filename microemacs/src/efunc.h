@@ -60,7 +60,7 @@ extern int     cmdTableSize;            /* The current size of the command table
 extern meCMD  *__cmdTable[];            /* initial command table        */
 extern meCMD **cmdTable;                /* command table                */
 extern meCMD  *cmdHead;                 /* command alpha list head      */
-extern uint8   commandFlag[] ;          /* selection hilight cmd flags  */
+extern meUByte   commandFlag[] ;          /* selection hilight cmd flags  */
 
 #define comSelStart   0x01              /* Start hilighting - remove fix and make active */
 #define comSelStop    0x02              /* If active but not fixed then stop, make inactive */
@@ -91,7 +91,7 @@ extern uint8   commandFlag[] ;          /* selection hilight cmd flags  */
 
 #define DEFFUNC(s,t,f,r,v,n,h)  t,
 
-uint8 commandFlag[] = 
+meUByte commandFlag[] = 
 {
 #include        "efunc.def"
 };
@@ -104,7 +104,7 @@ uint8 commandFlag[] =
 
 #undef  DEFFUNC
 
-#define DEFFUNC(s,t,f,r,v,n,h)  meCMD v = {(meCMD *) n, (meCMD *) h, { (meVARIABLE *) 0, 0}, (uint8 *)s, r, (Fintii) f} ;
+#define DEFFUNC(s,t,f,r,v,n,h)  meCMD v = {(meCMD *) n, (meCMD *) h, { (meVARIABLE *) 0, 0}, (meUByte *)s, r, (Fintii) f} ;
 
 #include        "efunc.def"
 

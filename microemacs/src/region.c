@@ -129,7 +129,7 @@ copyRegion(int f, int n)
 {
     LINE   *linep;
     int     left, ii ;
-    uint8  *ss, *dd ;
+    meUByte  *ss, *dd ;
     REGION  region ;
     
     if((ii=getregion(&region)) != TRUE)
@@ -191,8 +191,8 @@ lowerRegion(int f, int n)
 {
     LINE *linep ;
     int   loffs ;
-    int32 lline ;
-    register uint8 c;
+    meInt lline ;
+    register meUByte c;
     register int   s;
     REGION  region;
     
@@ -293,8 +293,8 @@ upperRegion(int f, int n)
 int
 killRectangle(int f, int n)
 {
-    uint8 *kstr ;
-    int32 slno, elno, size ;
+    meUByte *kstr ;
+    meInt slno, elno, size ;
     int soff, eoff, coff, llen, dotPos ;
     
     if (curwp->w_markp == NULL)
@@ -330,7 +330,7 @@ killRectangle(int f, int n)
     thisflag = CFKILL;
     for(;;)
     {
-        uint8 *off, cc ;
+        meUByte *off, cc ;
         int lspc=0, ii, jj, kk, ll ;
         
         windCurLineOffsetEval(curwp) ;
@@ -439,7 +439,7 @@ killRectangle(int f, int n)
 static int
 yankRectangleKill(struct KLIST *pklist, int soff, int notLast)
 {
-    uint8 *off, *ss, *tt, *dd=NULL, cc ;
+    meUByte *off, *ss, *tt, *dd=NULL, cc ;
     int ii, jj, kk, lsspc, lespc, ldel, linsc, coff ;
     KILL *killp ;
     
@@ -531,7 +531,7 @@ yankRectangle(int f, int n)
 #endif
     /* make sure there is something to yank */
     if(klhead == NULL)
-        return mlwrite(MWABORT,(uint8 *)"[nothing to yank]");
+        return mlwrite(MWABORT,(meUByte *)"[nothing to yank]");
     /* Check we can change the buffer */
     if(bchange() != TRUE)
         return ABORT ;

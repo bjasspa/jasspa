@@ -41,13 +41,13 @@ enum
 
 #undef	DEFSKEY
 
-extern uint8 *specKeyNames[] ;
+extern meUByte *specKeyNames[] ;
 
 #ifdef	maindef
 
-#define	DEFSKEY(s,i,d,t) (uint8 *) s,
+#define	DEFSKEY(s,i,d,t) (meUByte *) s,
 
-uint8 *specKeyNames[]=
+meUByte *specKeyNames[]=
 {
 #include	"eskeys.def"
 };

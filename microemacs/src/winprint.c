@@ -1067,7 +1067,7 @@ WinPrintSetColor(HDC hDC, int colNo, int setBgCol)
     {
         COLORREF cReq;                      /* Color requested */
         COLORREF cAsg;                      /* Color assigned */
-        uint32   cc ;
+        meUInt   cc ;
         BYTE rr, gg, bb ;
         
         cc = printer.color[colNo] ;
@@ -1452,7 +1452,7 @@ quick_exit:
  * NOTE: This is not a thread at the moment !!
  */
 int
-WinPrint (uint8 *docName, LINE *ihead)
+WinPrint (meUByte *docName, LINE *ihead)
 {
     static char *args[2];
     DWORD threadId;

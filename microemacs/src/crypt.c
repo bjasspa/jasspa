@@ -40,14 +40,14 @@
 
 /* reset encryption key of given buffer */
 int
-setBufferCryptKey(BUFFER *bp, uint8 *key)
+setBufferCryptKey(BUFFER *bp, meUByte *key)
 {
-    uint8 keybuf[NPAT]; 	/* new encryption string */
+    meUByte keybuf[NPAT]; 	/* new encryption string */
 	
     if(key == NULL)
     {
 	/* get the string to use as an encrytion string */
-        if(meGetString((uint8 *)"Encryption String",MLNOHIST|MLHIDEVAL,0,keybuf,NPAT-1) != TRUE)
+        if(meGetString((meUByte *)"Encryption String",MLNOHIST|MLHIDEVAL,0,keybuf,NPAT-1) != TRUE)
             return FALSE ;
         key = keybuf ;
         mlerase(MWCLEXEC);		/* clear it off the bottom line */
@@ -191,11 +191,11 @@ mod95(register int val)
 /* bptr - buffer of characters to be encrypted */
 /* len	- number of characters in the buffer */
 int
-meCrypt(register uint8 *bptr, register uint32 len)
+meCrypt(register meUByte *bptr, register meUInt len)
 {
     register int cc;	/* current character being considered */
     
-    static int32 key = 0;	/* 29 bit encipherment key */
+    static meInt key = 0;	/* 29 bit encipherment key */
     static int salt = 0;	/* salt to spice up key with */
     
     if (!bptr)

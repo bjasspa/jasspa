@@ -46,13 +46,13 @@
 #if (defined _WIN32) || (defined _DOS)
 /* executable extension list, in reverse order of dos priority
  * included 4dos's btm files for completeness */
-uint8 *execExtensions[noExecExtensions] = {".btm", ".bat", ".exe", ".com"} ;
+meUByte *execExtensions[noExecExtensions] = {".btm", ".bat", ".exe", ".com"} ;
 #endif
 
 /* SpecialChars; This is an array of special characters, below 32 used for
  * rendering boxes, lines etc. The following table provides a conversion
  * between those characters */
-uint8 ttSpeChars [TTSPECCHARS] =
+meUByte ttSpeChars [TTSPECCHARS] =
 {
     ' ', /*  0/0x00 - Undefined */
     ' ', /*  1/0x01 - Undefined */
@@ -92,7 +92,7 @@ void
 TTdoBell(int n)
 {  
     register int index;
-    uint32 arg ;
+    meUInt arg ;
     
     if(macbug < -1)
         macbug = 1 ;
@@ -100,9 +100,9 @@ TTdoBell(int n)
         execFuncHidden(ME_SPECIAL|SKEY_bell,index,arg) ;
     else if((n == 0) || ((n == 1) && meModeTest(globMode,MDQUIET)))
     {
-        uint8 scheme=(globScheme/meSCHEME_STYLES) ;
+        meUByte scheme=(globScheme/meSCHEME_STYLES) ;
         pokeScreen(POKE_NOMARK+0x10,TTnrow,TTncol-6,&scheme,
-                   (uint8 *) "[BELL]") ;
+                   (meUByte *) "[BELL]") ;
         vvideo.video[TTnrow].endp = TTncol ;
         resetCursor() ;
         mlStatus |= MLSTATUS_CLEAR ;
@@ -120,14 +120,14 @@ TTbell(void)
         kbdmode = STOP ;
         if(meRegCurr->force < 2)
             /* a double !force says \CG is okay so don't complain */
-            mlwrite(0,(uint8 *)"Macro terminated by ringing the bell") ;
+            mlwrite(0,(meUByte *)"Macro terminated by ringing the bell") ;
     }
     TTinflush() ;
     TTdoBell(1) ;
 }
 
-uint8 meTimerState[NUM_TIMERS]={0} ;/* State of the timers, set or expired */
-int32 meTimerTime[NUM_TIMERS]={0} ; /* Absolute time of the timers */
+meUByte meTimerState[NUM_TIMERS]={0} ;/* State of the timers, set or expired */
+meInt meTimerTime[NUM_TIMERS]={0} ; /* Absolute time of the timers */
 
 #ifdef _MULTI_TIMER
 
@@ -279,7 +279,7 @@ timerCheck(long tim)
  * offset - offset from the current time to alarm.
  */
 void
-timerSet(int id, int32 tim, int32 offset)
+timerSet(int id, meInt tim, meInt offset)
 {
 #if (defined _CONST_TIMER) || (defined _SINGLE_TIMER)
     TIMERBLOCK *tbp;
@@ -478,13 +478,13 @@ handleTimerExpired(void)
 meTRANSKEY TTtransKey={0,250,0,ME_INVALID_KEY,NULL} ;
 
 /* Keyboard buffer */
-uint16 TTkeyBuf [KEYBUFSIZ]={0};
-uint8  TTnextKeyIdx = KEYBUFSIZ;
-uint8  TTlastKeyIdx = KEYBUFSIZ;
-uint8  TTnoKeys = 0;
-uint8  TTbreakFlag = 0;
-uint8  TTbreakCnt = TTBREAKCNT;
-uint8  TTallKeys = 0;           /* Report all keys */
+meUShort TTkeyBuf [KEYBUFSIZ]={0};
+meUByte  TTnextKeyIdx = KEYBUFSIZ;
+meUByte  TTlastKeyIdx = KEYBUFSIZ;
+meUByte  TTnoKeys = 0;
+meUByte  TTbreakFlag = 0;
+meUByte  TTbreakCnt = TTBREAKCNT;
+meUByte  TTallKeys = 0;           /* Report all keys */
 
 int TTcurr =  0;                 /* Windows current row. */
 int TTcurc =  0;                 /* Windows current column */
@@ -565,7 +565,7 @@ TTfreeTranslateKey(void)
 #endif
 
 void
-translateKeyAdd(meTRANSKEY *tcapKeys, int count,int time, uint16 *key, uint16 map)
+translateKeyAdd(meTRANSKEY *tcapKeys, int count,int time, meUShort *key, meUShort map)
 {
     if(--count < 0)
     {
@@ -574,7 +574,7 @@ translateKeyAdd(meTRANSKEY *tcapKeys, int count,int time, uint16 *key, uint16 ma
     }
     else
     {
-        uint16 cc=*key++ ;
+        meUShort cc=*key++ ;
         int ii ;
         
         for(ii=0 ; ii<tcapKeys->count ; ii++)
@@ -597,9 +597,9 @@ translateKeyAdd(meTRANSKEY *tcapKeys, int count,int time, uint16 *key, uint16 ma
 }
 
 int
-keyListToShorts(uint16 *sl, uint8 *kl)
+keyListToShorts(meUShort *sl, meUByte *kl)
 {
-    uint8 dd ;
+    meUByte dd ;
     int ii=0 ;
     
     for(;;)
@@ -616,24 +616,24 @@ keyListToShorts(uint16 *sl, uint8 *kl)
 }
 
 int
-charListToShorts(uint16 *sl, uint8 *cl)
+charListToShorts(meUShort *sl, meUByte *cl)
 {
-    uint8 cc ;
+    meUByte cc ;
     int ii=0 ;
     
     while((cc=*cl++) != 0)
-        sl[ii++] = (uint16) cc ;
+        sl[ii++] = (meUShort) cc ;
     return ii ;
 }
 
 static void
-translateKeyShow(meTRANSKEY *tcapKeys, BUFFER *bp, uint8 *key, int depth)
+translateKeyShow(meTRANSKEY *tcapKeys, BUFFER *bp, meUByte *key, int depth)
 {
     int ii, nd ;
     
     if(tcapKeys->map != ME_INVALID_KEY)
     {
-        uint8 buf[MAXBUF] ;
+        meUByte buf[MAXBUF] ;
         
         meStrcpy(buf,"    \"") ;
         ii = 5 ;
@@ -666,9 +666,9 @@ translateKeyShow(meTRANSKEY *tcapKeys, BUFFER *bp, uint8 *key, int depth)
 int
 translateKey(int f, int n)
 {
-    static uint8 tnkyPrompt[]="translate-tcap-key code" ;
-    uint16 c_from[20], c_to[20] ;
-    uint8 buf[128] ;
+    static meUByte tnkyPrompt[]="translate-tcap-key code" ;
+    meUShort c_from[20], c_to[20] ;
+    meUByte buf[128] ;
     int ii ;
     
     if(n == 0)
@@ -714,10 +714,10 @@ translateKey(int f, int n)
     return TRUE ;
 }
 
-uint16
+meUShort
 TTgetc(void)
 {
-    uint16 cc ;
+    meUShort cc ;
     
     do {
         if(!TTahead())
@@ -812,7 +812,7 @@ void
 doIdlePickEvent(void)
 {
     register int index;
-    uint32 arg;
+    meUInt arg;
 
     /* See if there is any binding on the idle event */
     if((index=decode_key(ME_SPECIAL|SKEY_idle_pick,&arg)) != -1)
@@ -836,7 +836,7 @@ static void
 doIdleDropEvent(void)
 {
     register int index;
-    uint32 arg;
+    meUInt arg;
 
     if(isTimerActive(IDLE_TIMER_ID))
         /* Kill off the timer */
@@ -854,7 +854,7 @@ doIdleDropEvent(void)
  * Add a new keyboard character to the keyboard buffer.
  */
 void
-addKeyToBuffer(uint16 cc)
+addKeyToBuffer(meUShort cc)
 {
     if(cc == breakc)
     {
@@ -896,12 +896,12 @@ char *
 meTParm(char *str, ...)
 #else
 char *
-meTParm(char *str, int32 arg)
+meTParm(char *str, meInt arg)
 #endif
 {
     static char *tbuff=NULL ;
-    static int32 tbuffLen=0 ;
-    int32 stack[10], ii, stackDep=0, len=0 ;
+    static meInt tbuffLen=0 ;
+    meInt stack[10], ii, stackDep=0, len=0 ;
     char cc, *ss ;
     
     for(;;)
@@ -934,7 +934,7 @@ meTParm(char *str, int32 arg)
             case '\'':
                 if((cc=*str++) != '\0')
                 {
-                    stack[stackDep++] = (int32) cc ;
+                    stack[stackDep++] = (meInt) cc ;
                     if(*str++ != '\'')
                         str-- ;
                 }
@@ -959,11 +959,11 @@ meTParm(char *str, int32 arg)
                     va_start(ap,str);
                     pno = *str++ - '0' ;
                     do {
-                        ii = va_arg(ap, int32) ;
+                        ii = va_arg(ap, meInt) ;
                     } while(--pno > 0) ;
                     va_end (ap);
 #else
-                    register int32 *ap;
+                    register meInt *ap;
                     ap = &arg;
                     ii = ap[*str++ - '1'] ;
 #endif
@@ -1110,10 +1110,10 @@ arg_print:
 #ifdef _STDARG
                     va_list ap;
                     va_start(ap,str);
-                    stack[0] = va_arg(ap, int32) ;
+                    stack[0] = va_arg(ap, meInt) ;
                     va_end (ap);
 #else
-                    stack[0] = ((int32 *)&arg)[0] ;
+                    stack[0] = ((meInt *)&arg)[0] ;
 #endif
                 }
                 else

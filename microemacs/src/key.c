@@ -43,7 +43,7 @@ count_key_table(void)
 
     for (ktp=keytab, ii=0 ; ktp->code != ME_INVALID_KEY ; ii++, ktp++)
         ;
-    keyTableSize = (uint16) ii ;
+    keyTableSize = (meUShort) ii ;
 }
 
 /*****************************************************************************
@@ -71,7 +71,7 @@ count_key_table(void)
  */
 
 int
-decode_key(register uint16 code, uint32 *arg)
+decode_key(register meUShort code, meUInt *arg)
 {
     register KEYTAB  *ktp;			/* Keyboard character array */
     register int      low;			/* Lowest index in table. */
@@ -133,7 +133,7 @@ try_again:
            ((status = osdMainMenuCheckKey(code & 0xff)) != 0))
         {
             /* Found - return index */
-            *arg = (uint32) (status+0x80000000) ;
+            *arg = (meUInt) (status+0x80000000) ;
             return CK_OSD ;
         }
 #endif
@@ -169,7 +169,7 @@ try_again:
 *****************************************************************************/
 
 int
-delete_key(register uint16 code)
+delete_key(register meUShort code)
 {
     register KEYTAB	*ktp;			/* Keyboard character array */
     register int	ii ;			/* Index counter */
@@ -219,7 +219,7 @@ delete_key(register uint16 code)
 *****************************************************************************/
 
 int
-insert_key (register uint16 code, uint16 index, uint32 arg)
+insert_key (register meUShort code, meUShort index, meUInt arg)
 /*  code - Code to add to key table. */
 /* index - Index for the code. */
 {

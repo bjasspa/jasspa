@@ -1191,9 +1191,9 @@ splitWindVert(int f, int n)
     register int    ntrd;
 
     if (curwp->numTxtRows < 3)
-        return mlwrite(MWABORT,(uint8 *)"Cannot split a %d line window",curwp->numTxtRows);
+        return mlwrite(MWABORT,(meUByte *)"Cannot split a %d line window",curwp->numTxtRows);
     if (numWindows == NWINDOWS)
-        return mlwrite(MWABORT,(uint8 *)"Cannot create more than %d windows",numWindows);
+        return mlwrite(MWABORT,(meUByte *)"Cannot create more than %d windows",numWindows);
     if(((wp = (WINDOW *) meMalloc(sizeof(WINDOW))) == NULL) || 
        ((lp=lalloc(TTmcol)) == NULL) || ((off=lalloc(TTmcol)) == NULL))
     {
@@ -1279,9 +1279,9 @@ splitWindHorz(int f, int n)
 
     /* Out minimum split value horizontally is 7 i.e. |$c$|$c$| */
     if (curwp->numTxtCols < ((gsbarmode & WMVWIDE) ? 8 : 7))
-        return mlwrite(MWABORT,(uint8 *)"Cannot split a %d column window", curwp->numTxtCols);
+        return mlwrite(MWABORT,(meUByte *)"Cannot split a %d column window", curwp->numTxtCols);
     if (numWindows == NWINDOWS)
-        return mlwrite(MWABORT,(uint8 *)"Cannot create more than %d windows",numWindows);
+        return mlwrite(MWABORT,(meUByte *)"Cannot create more than %d windows",numWindows);
     if(((wp = (WINDOW *) meMalloc(sizeof(WINDOW))) == NULL) ||
        ((lp=lalloc(TTmcol)) == NULL) || ((off=lalloc(TTmcol)) == NULL))
     {
@@ -1350,7 +1350,7 @@ growWindVert(int f, int n)
     {
         n = 0 - n;
         if (getAdjacentWindowList (twlist, WINDOW_PREV, curwp) == NULL)
-            return mlwrite(MWCLEXEC|MWABORT,(uint8 *)"Only one vertical window");
+            return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"Only one vertical window");
         getAdjacentWindowList (bwlist, WINDOW_NEXT, twlist[0]);
     }
     else
@@ -1372,7 +1372,7 @@ growWindVert(int f, int n)
     }
     for (ii = 0; (wp = twlp [ii]) != NULL; ii++)
         if (wp->numTxtRows <= jj)
-            return mlwrite(MWCLEXEC|MWABORT,(uint8 *)"Impossible change");
+            return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"Impossible change");
 
     /* Repostion the top line in the bottom windows */
     for (jj = 0; (wp = bwlist[jj]) != NULL; jj++)
@@ -1500,9 +1500,9 @@ growWindHorz(int f, int n)
 
     /* Handle any errors with a report */
 enlarge_imp:
-    return mlwrite(MWCLEXEC|MWABORT,(uint8 *)"Impossible change");
+    return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"Impossible change");
 one_window:
-    return mlwrite(MWCLEXEC|MWABORT,(uint8 *)"Only one horizontal window");
+    return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"Only one horizontal window");
 }
 
 /* Shrink the current window - resize by columns
@@ -1537,7 +1537,7 @@ resizeWndHorz(int f, int n)
  */
 
 WINDOW  *
-wpopup(uint8 *name, int flags)
+wpopup(meUByte *name, int flags)
 {
     WINDOW *wp=NULL;
     BUFFER *bp;
@@ -1597,10 +1597,10 @@ wpopup(uint8 *name, int flags)
 int
 popupWindow(int f, int n)
 {
-    uint8 bufn[MAXBUF], *nn ;
+    meUByte bufn[MAXBUF], *nn ;
     int s ;
 
-    if((s = getBufferName((uint8 *)"Popup buffer", 0, 2, bufn)) != TRUE)
+    if((s = getBufferName((meUByte *)"Popup buffer", 0, 2, bufn)) != TRUE)
         return s ;
     if(bufn[0] == '\0')
         nn = NULL ;
@@ -1772,7 +1772,7 @@ resizeAllWnd (int f, int n)
             col [wid] = ii + 1;         /* wp must be the next column */
         }
         else
-            return mlwrite(MWABORT,(uint8 *)"Cannot get into this state !!");
+            return mlwrite(MWABORT,(meUByte *)"Cannot get into this state !!");
 
         /* Increment the counters, move onto the next row and accumulate
          * the row and column maximums */
@@ -1869,9 +1869,9 @@ changeScreenDepth(int f, int n)
 {
     /* if the command defaults fail. */
     if (f == FALSE)                     /* No argument ?? */
-        return mlwrite(MWABORT,(uint8 *)"[Argument expected]");
+        return mlwrite(MWABORT,(meUByte *)"[Argument expected]");
     if ((n < 4) || (n > 400))           /* Argument in range ?? */
-        return mlwrite(MWABORT,(uint8 *)"[Screen depth %d out of range]", n);
+        return mlwrite(MWABORT,(meUByte *)"[Screen depth %d out of range]", n);
     if (n == TTnrow+1)
         return (TRUE);                  /* Already the right size */
     
@@ -1903,12 +1903,12 @@ depth_error:                            /* Safe exit point for failures */
             /* Allocate a new set of lines for the remainder of the space */
             for (flp += TTmrow, ii = TTmrow; ii < n; ii++, flp++)
             {
-                if ((flp->scheme = meMalloc(TTmcol*(sizeof(uint8)+sizeof(meSCHEME)))) == NULL)
+                if ((flp->scheme = meMalloc(TTmcol*(sizeof(meUByte)+sizeof(meSCHEME)))) == NULL)
                 {
                     n = ii;             /* Stop here */
                     break;              /* Quit */
                 }
-                flp->text = (uint8 *) (flp->scheme+TTmcol) ;
+                flp->text = (meUByte *) (flp->scheme+TTmcol) ;
                 /* Initialise the data to something valid */
                 jj = TTmcol ;
                 while(--jj >= 0)
@@ -1951,9 +1951,9 @@ changeScreenWidth(int f, int n)
 {
     /* if the command defaults, fail */
     if (f == FALSE)                     /* No argument ?? */
-        return mlwrite(MWABORT,(uint8 *)"Argument expected");
+        return mlwrite(MWABORT,(meUByte *)"Argument expected");
     if ((n < 8) || (n > 400))           /* In range ?? */
-        return mlwrite(MWABORT,(uint8 *)"Screen width %d out of range", n);
+        return mlwrite(MWABORT,(meUByte *)"Screen width %d out of range", n);
     if (n == TTncol)                    /* Already this size ?? */
         return TRUE;
     
@@ -1964,7 +1964,7 @@ changeScreenWidth(int f, int n)
         /* Must extend the length of mline, mlStore, and all window
          * mode lines */
         LINE *ml ;
-        uint8 *mls ;
+        meUByte *mls ;
 
         if(((ml = meMalloc(sizeof(LINE)+n)) == NULL) ||
            ((mls = meMalloc(n+1)) == NULL))
@@ -1981,16 +1981,16 @@ width_error:
              * grow where by we can recover if a malloc fails. */
             for (flp = frameStore, ii = 0; ii < TTmrow; ii++, flp++)
             {
-                if ((fl.scheme = meMalloc(n*(sizeof(uint8)+sizeof(meSTYLE)))) == NULL)
+                if ((fl.scheme = meMalloc(n*(sizeof(meUByte)+sizeof(meSTYLE)))) == NULL)
                     goto width_error;   /* Goto safe fail point */
-                fl.text = (uint8 *) (fl.scheme+n) ;
+                fl.text = (meUByte *) (fl.scheme+n) ;
                 
                 /* Data structures allocated. Copy accross the new screen
                  * information and pad endings with valid data. Strictly we
                  * do not need to do this for all platforms, however if it
                  * is safer if we make sure the data is valid. Resize is an
                  * infrequent operation and time is not critical here */
-                memcpy (fl.text, flp->text, sizeof(uint8) * TTmcol);
+                memcpy (fl.text, flp->text, sizeof(meUByte) * TTmcol);
                 memcpy (fl.scheme, flp->scheme, sizeof(meSCHEME) * TTmcol);
                 jj = n ;
                 while(--jj >= TTmcol)
@@ -2051,11 +2051,11 @@ int
 setPosition(int f, int n)		/* save ptr to current window */
 {
     register mePOS *pos ;
-    uint16 mark ;                       /* Position alpha mark name*/
+    meUShort mark ;                     /* Position alpha mark name*/
     int cc ;
     
-    if((cc = mlCharReply((uint8 *)"Set position: ",mlCR_QUIT_ON_USER,NULL,NULL)) == -2)
-        cc = mlCharReply((uint8 *)"Set position: ",mlCR_ALPHANUM_CHAR,NULL,NULL) ;
+    if((cc = mlCharReply((meUByte *)"Set position: ",mlCR_QUIT_ON_USER,NULL,NULL)) == -2)
+        cc = mlCharReply((meUByte *)"Set position: ",mlCR_ALPHANUM_CHAR,NULL,NULL) ;
     
     if(cc < 0)
         return ctrlg(FALSE,1) ;
@@ -2109,7 +2109,7 @@ setPosition(int f, int n)		/* save ptr to current window */
         pos->w_doto = curwp->w_doto ;
     if(n & mePOS_MLINEMRK)
     {
-        if(alphaMarkSet(curbp,(uint16) (pos->line_amark+1),curwp->w_markp,0,1) != TRUE)
+        if(alphaMarkSet(curbp,(meUShort) (pos->line_amark+1),curwp->w_markp,0,1) != TRUE)
         {
             pos->flags = 0 ;
             return ABORT ;
@@ -2147,8 +2147,8 @@ gotoPosition(int f, int n)		/* restore the saved screen */
         return TRUE ;
     }
     
-    if((cc = mlCharReply((uint8 *)"Goto position: ",mlCR_QUIT_ON_USER,NULL,NULL)) == -2)
-        cc = mlCharReply((uint8 *)"Goto position: ",mlCR_ALPHANUM_CHAR,NULL,NULL) ;
+    if((cc = mlCharReply((meUByte *)"Goto position: ",mlCR_QUIT_ON_USER,NULL,NULL)) == -2)
+        cc = mlCharReply((meUByte *)"Goto position: ",mlCR_ALPHANUM_CHAR,NULL,NULL) ;
     if(cc < 0)
         return ctrlg(FALSE,1) ;
     
@@ -2158,7 +2158,7 @@ gotoPosition(int f, int n)		/* restore the saved screen */
     
     if(pos == NULL)
     {
-        uint8    allpos[256]; 	/* record of the positions	*/
+        meUByte    allpos[256]; 	/* record of the positions	*/
         int      ii = 0;
         
         pos = mePosition ;
@@ -2167,14 +2167,14 @@ gotoPosition(int f, int n)		/* restore the saved screen */
             if(pos->name < 128)
             {
                 allpos[ii++] = ' ' ;
-                allpos[ii++] = (uint8) pos->name;
+                allpos[ii++] = (meUByte) pos->name;
             }
             pos = pos->next;
         }
         if(ii == 0)
-            return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[No positions set]");
+            return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[No positions set]");
         allpos[ii] = '\0';
-        return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[Valid positions:%s]", allpos);
+        return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[Valid positions:%s]", allpos);
     }
     
     if(f == FALSE)
@@ -2249,7 +2249,7 @@ gotoPosition(int f, int n)		/* restore the saved screen */
     /* restore the mark first */
     if(n & mePOS_MLINEMRK)
     {
-        if((ret = alphaMarkGet(curbp,(uint16) (pos->line_amark+1))) == TRUE)
+        if((ret = alphaMarkGet(curbp,(meUShort) (pos->line_amark+1))) == TRUE)
         {
             curwp->w_markp = curbp->b_dotp ;
             curwp->mlineno = curbp->line_no ;
@@ -2259,8 +2259,8 @@ gotoPosition(int f, int n)		/* restore the saved screen */
     else if(n & mePOS_MLINENO)
     {
         LINE *dotp=curwp->w_dotp ;
-        int32 line_no=curwp->line_no ;
-        uint16 doto=curwp->w_doto ;
+        meInt line_no=curwp->line_no ;
+        meUShort doto=curwp->w_doto ;
         
         if((ret = gotoLine(1,pos->mlineno+1)) == TRUE)
         {
@@ -2351,7 +2351,7 @@ gotoPosition(int f, int n)		/* restore the saved screen */
         updCursor(curwp) ;
     
     if(!ret)
-        return mlwrite(MWCLEXEC|MWABORT,(uint8 *)"[Failed to restore %sposition]",
+        return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Failed to restore %sposition]",
                        (n == 0) ? "":"part of ");
     return TRUE ;
 }

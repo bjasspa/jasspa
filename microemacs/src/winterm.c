@@ -184,15 +184,15 @@ typedef struct
     CharMetrics cell;                   /* Metrics of a character cell */
     int cellX;                          /* Number of cells in x */
     int cellY;                          /* Number of cells in y */
-    int16 screenCellNrow;               /* Screen cell number of rows */
-    int16 screenCellNcol;               /* Screen cell number of columns */
-    int16 *screenCellPosX;              /* Screen cell position in X */
-    int16 *screenCellPosY;              /* Screen cell position in Y */
-    int16 *charCellPosX;                /* Character cell position in X */
-    int16 *charCellPosY;                /* Character cell position in Y */
-    uint8 *charCellTmpX;                /* Temporary X position */
-    int16 *paintStartCol;               /* Screen paint start col */
-    int16 *paintEndCol;                 /* Screen paint end col */
+    meShort screenCellNrow;               /* Screen cell number of rows */
+    meShort screenCellNcol;               /* Screen cell number of columns */
+    meShort *screenCellPosX;              /* Screen cell position in X */
+    meShort *screenCellPosY;              /* Screen cell position in Y */
+    meShort *charCellPosX;                /* Character cell position in X */
+    meShort *charCellPosY;                /* Character cell position in Y */
+    meUByte *charCellTmpX;                /* Temporary X position */
+    meShort *paintStartCol;               /* Screen paint start col */
+    meShort *paintEndCol;                 /* Screen paint end col */
     int    paintAll;                    /* Screen paint all flag */
     INT   *cellSpacing;                 /* Spacing of cells */
     HFONT fontdef[meFONT_MAX];          /* Definition of the font. */
@@ -207,7 +207,7 @@ typedef struct s_DragAndDrop
 {
     struct s_DragAndDrop *next;         /* Next drag and drop event */
     POINT mousePos;                     /* Position of the mouse */
-    uint8 fname[1];                      /* Filename */
+    meUByte fname[1];                      /* Filename */
 };
 
 static struct s_DragAndDrop *dadHead = NULL;
@@ -238,9 +238,9 @@ static DWORD ConsoleMode, OldConsoleMode;	/* Current and old console modes */
 static SMALL_RECT consolePaintArea={0};		/* Update area for console */
 static CHAR_INFO *ciScreenBuffer = NULL;	/* Copy of screen buffer memory */
 static COORD ConsoleSize, OldConsoleSize ;
-uint32 *colTable=NULL ;				/* Currently allocated colour table */
+meUInt *colTable=NULL ;				/* Currently allocated colour table */
 #define consoleNumColors 16			/* Number of colours in console window */
-static uint8 consoleColors[consoleNumColors*3] =
+static meUByte consoleColors[consoleNumColors*3] =
 {
     0,0,0,    0,0,200, 0,200,0, 0,200,200, 200,0,0, 200,0,200, 200,200,0, 200,200,200,
     75,75,75, 0,0,255, 0,255,0, 0,255,255, 255,0,0, 255,0,255, 255,255,0, 255,255,255
@@ -257,12 +257,12 @@ WinKillToClipboard (void);
 /***************************************************************************/
 
 /* Standard EMACS terminal definitions */
-uint16 TTnrow = 0;              /* Number of rows */
-uint16 TTncol = 0;              /* Number of columns */
-uint16 TTmrow = 0;              /* Maximum number of rows */
-uint16 TTmcol = 0;              /* Maximum number of columns */
-uint16 TTmargin = 8;            /* Minimum size of margin. */
-uint16 TTscrsiz = 64;
+meUShort TTnrow = 0;                    /* Number of rows */
+meUShort TTncol = 0;                    /* Number of columns */
+meUShort TTmrow = 0;                    /* Maximum number of rows */
+meUShort TTmcol = 0;                    /* Maximum number of columns */
+meUShort TTmargin = 8;                  /* Minimum size of margin. */
+meUShort TTscrsiz = 64;
 
 /* Local variables holding context state */
 #define TIMER_INACTIVE      0           /* Inactive value for the mouse */
@@ -294,13 +294,13 @@ LOGFONT ttlogfont={0};                  /* Current logical font */
 static UINT mouseButs = 0;              /* State of the mouse buttons. */
 static int  mouseState =0;              /* State of the mouse. */
 /* bit button lookup - [0] = no keys, [1] = left, [2]=middle, [4] = right */
-static uint16 mouseKeys[8] = { 0, 1, 2, 0, 3, 0, 0, 0 } ;
+static meUShort mouseKeys[8] = { 0, 1, 2, 0, 3, 0, 0, 0 } ;
 
 #define mouseHide() ((mouseState & MOUSE_STATE_VISIBLE) ? (SetCursor(NULL),(mouseState &= ~MOUSE_STATE_VISIBLE)):0)
 #define mouseShow() ((mouseState & MOUSE_STATE_VISIBLE) ? 0:(SetCursor(meCursors[meCurCursor]),(mouseState |= MOUSE_STATE_VISIBLE)))
 
 /* Cursor definitions  */
-static uint8 meCurCursor=0 ;
+static meUByte meCurCursor=0 ;
 static HCURSOR meCursors[meCURSOR_COUNT]={NULL,NULL,NULL,NULL,NULL,NULL,NULL} ;
 static LPCTSTR meCursorName[meCURSOR_COUNT]=
 {
@@ -461,7 +461,7 @@ TTopenClientServer (void)
         meIPIPE *ipipe ;
         BUFFER *bp ;
         meMODE sglobMode ;
-        uint8 fname [MAXBUF];
+        meUByte fname [MAXBUF];
         int ii ;
 
         /* create the response file name */
@@ -528,7 +528,7 @@ TTopenClientServer (void)
         ipipe->bp = bp ;
         /* setup the response file and server buffer */
         {
-            uint8 buff[MAXBUF] ;
+            meUByte buff[MAXBUF] ;
 
             ii = sprintf((char *)buff,"%d\n",ttHwnd) ;
             WriteFile(clientHandle,buff,ii,&ii,NULL) ;
@@ -548,7 +548,7 @@ TTopenClientServer (void)
         ipipe->strCol = 0 ;
         ipipe->noRows = 0 ;
         ipipe->noCols = 0 ;
-        ipipe->curRow = (int16) bp->line_no ;
+        ipipe->curRow = (meShort) bp->line_no ;
         /* get a popup window for the command output */
         ipipeSetSize(curwp,bp) ;
     }
@@ -577,7 +577,7 @@ TTkillClientServer (void)
     if (serverHandle != INVALID_HANDLE_VALUE)
     {
         meIPIPE *ipipe ;
-        uint8 fname [MAXBUF];
+        meUByte fname [MAXBUF];
 
         /* get the ipipe node */
         ipipe = ipipes ;
@@ -631,7 +631,7 @@ TTconnectClientServer (void)
     if (connectHandle == INVALID_HANDLE_VALUE)
     {
         HANDLE hndl;
-        uint8 fname [MAXBUF];
+        meUByte fname [MAXBUF];
         DWORD ii ;
 
         /* Create the file name, if the file exists, or deleting it
@@ -658,7 +658,7 @@ TTconnectClientServer (void)
     return 1 ;
 }
 void
-TTsendClientServer(uint8 *line)
+TTsendClientServer(meUByte *line)
 {
     if (connectHandle != INVALID_HANDLE_VALUE)
     {
@@ -727,11 +727,11 @@ ConsolePaint (void)
 
 /* Draw string to console buffer */
 void
-ConsoleDrawString(uint8 *ss, WORD wAttribute, int x, int y, int len)
+ConsoleDrawString(meUByte *ss, WORD wAttribute, int x, int y, int len)
 {
     CHAR_INFO *pCI;     /* Pointer to current screen buffer location */
     BOOL bAny = FALSE;  /* Anything to refresh? */
-    uint8 cc ;
+    meUByte cc ;
     int r=x+len ;
 
     /* Get pointer to correct location in screen buffer */
@@ -849,7 +849,7 @@ meGetConsoleMessage(MSG *msg)
         msg->lParam = 0;
         /* SWP - 8/5/99 another odd one from bill, the cursor keys on win9? seem
          * to come through with an AsciiChar value of -32 or 224 instead of 0... Why? */
-        if ((kr->uChar.AsciiChar == 0) || (((uint8) kr->uChar.AsciiChar) == 224))
+        if ((kr->uChar.AsciiChar == 0) || (((meUByte) kr->uChar.AsciiChar) == 224))
         {
             /* WM_KEYDOWN of WM_KEYUP */
             if (kr->bKeyDown)
@@ -870,7 +870,7 @@ meGetConsoleMessage(MSG *msg)
         else if (kr->bKeyDown)
         {
             msg->message = WM_CHAR;
-            msg->wParam = (uint8) kr->uChar.AsciiChar;
+            msg->wParam = (meUByte) kr->uChar.AsciiChar;
         }
         else
             msg->message = 0;
@@ -1035,7 +1035,7 @@ meGetConsoleMessage(MSG *msg)
  * edge of the character, y is the top of the character. The background is
  * assumed to be filled. A foreground pen is expected to be selected. */
 static void
-WinSpecialChar (HDC hdc, CharMetrics *cm, int x, int y, uint8 cc, COLORREF fcol)
+WinSpecialChar (HDC hdc, CharMetrics *cm, int x, int y, meUByte cc, COLORREF fcol)
 {
     POINT points [3];                   /* Triangular points */
     int ii ;
@@ -1233,7 +1233,7 @@ WinDrawCursor(HDC hdc)
     int clientCol;                      /* Text region col start - client units */
     FRAMELINE *flp;                     /* Frame store line pointer */
     meSTYLE style;                      /* Current style */
-    uint8 cc ;                          /* Current char  */
+    meUByte cc ;                          /* Current char  */
 
     /* Set up the drawing borders. */
     rline.top    = eCellMetrics.screenCellPosY [TTcurr];
@@ -1403,7 +1403,7 @@ WinPaint (HWND hWnd)
     HPEN oldpen = NULL;                 /* fist pen */
 #define DEBUG_BG 0
 #if DEBUG_BG
-    static uint8 bgcol=0 ;
+    static meUByte bgcol=0 ;
     if(++bgcol >= noColors)
         bgcol=0 ;
 #endif
@@ -1469,8 +1469,8 @@ WinPaint (HWND hWnd)
     for (flp = frameStore + srow; srow <= erow; srow++, flp++)
     {
         meSCHEME *fschm;
-        uint8 *tbp, cc;
-        uint8 *ftext;
+        meUByte *tbp, cc;
+        meUByte *ftext;
         int   length;
         int   tcol, spFlag;
         
@@ -1508,17 +1508,17 @@ WinPaint (HWND hWnd)
 	    {
 		/* Set up the colour change */
                 meSTYLE style ;
-                uint8 ff ;
+                meUByte ff ;
                 
 		schm = *fschm ;
                 style = meSchemeGetStyle(schm) ;
-		ff = (uint8) meStyleGetFColor(style) ;
+		ff = (meUByte) meStyleGetFColor(style) ;
 		if (fcol != ff)
 		{
 		    fcol = ff ;
 		    SetTextColor (ps.hdc, eCellMetrics.pInfo.cPal[fcol].cpixel);
 		}
-		ff = (uint8) meStyleGetBColor(style) ;
+		ff = (meUByte) meStyleGetBColor(style) ;
 #if DEBUG_BG
                 ff = bgcol ;
 #endif
@@ -1528,7 +1528,7 @@ WinPaint (HWND hWnd)
 		    SetBkColor (ps.hdc, eCellMetrics.pInfo.cPal[bcol].cpixel);
 		}
 #if meFONT_MAX
-                ff = (uint8) meStyleGetFont(style) ;
+                ff = (meUByte) meStyleGetFont(style) ;
                 
                 /* If there is a modification on the font then apply it now.
                  * Note that the following looks a little cumbersome and
@@ -1660,10 +1660,10 @@ static HANDLE
 WinKillToClipboard (void)
 {
     HANDLE hmem;                        /* Windows global memory handle */
-    uint8 *bufp;                        /* Windows global memory pointer */
+    meUByte *bufp;                        /* Windows global memory pointer */
     KILL *killp;                        /* Pointer to the kill data */
-    uint8 cc;                           /* Local character pointer */
-    uint8 *dd;                          /* Pointer to the kill data */
+    meUByte cc;                           /* Local character pointer */
+    meUByte *dd;                          /* Pointer to the kill data */
     int killSize = 0;                   /* Number of bytes in kill buffer */
     int noEmpty ;
     
@@ -1748,9 +1748,9 @@ void
 TTgetClipboard(void)
 {
     HANDLE hmem;                        /* Windows clipboard memory handle */
-    uint8 *bufp;                        /* Clipboard data pointer */
-    uint8 cc;                           /* Local character buffer */
-    uint8 *dd, *tp;                     /* Pointers to the data areas */
+    meUByte *bufp;                        /* Clipboard data pointer */
+    meUByte cc;                           /* Local character buffer */
+    meUByte *dd, *tp;                     /* Pointers to the data areas */
 
     clipState &= ~CLIP_TRY_GET ;
 
@@ -1763,7 +1763,7 @@ TTgetClipboard(void)
     if ((hmem = GetClipboardData ((ttlogfont.lfCharSet == OEM_CHARSET) ? CF_OEMTEXT : CF_TEXT)) != NULL)
     {
         int len;
-        uint8 *tmpbuf;
+        meUByte *tmpbuf;
 
         bufp = GlobalLock (hmem);       /* Lock global buffer */
         len = strlen (bufp);            /* Get length of text */
@@ -1772,7 +1772,7 @@ TTgetClipboard(void)
          * a stripped down copy of the string excluding the
          * '\r' characters
          */
-        if ((tmpbuf = (uint8 *) meMalloc (len+1)) == NULL)
+        if ((tmpbuf = (meUByte *) meMalloc (len+1)) == NULL)
             goto do_unlock;             /* Failed memory allocation */
 
         tp = tmpbuf;                    /* Start of the temporary buffer */
@@ -1810,10 +1810,10 @@ do_unlock:
 
 
 void
-mkTempCommName(uint8 *filename, uint8 *basename)
+mkTempCommName(meUByte *filename, meUByte *basename)
 {
     HANDLE hdl ;
-    uint8 *ss ;
+    meUByte *ss ;
     int ii ;
 
     mkTempName(filename,basename,NULL) ;
@@ -1844,7 +1844,7 @@ childActiveThread(LPVOID lpParam)
 {
     meIPIPE *ipipe=(meIPIPE *) lpParam ;
     DWORD bytesRead ;
-    uint8 buff[4] ;
+    meUByte buff[4] ;
     
     do {
         /* wait for child process activity */
@@ -1921,7 +1921,7 @@ childActiveThread(LPVOID lpParam)
  * executed.
  */
 int
-WinLaunchProgram (uint8 *cmd, int flags, uint8 *inFile, uint8 *outFile,
+WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
 #ifdef _IPIPES
                   meIPIPE *ipipe,
 #endif
@@ -1929,19 +1929,19 @@ WinLaunchProgram (uint8 *cmd, int flags, uint8 *inFile, uint8 *outFile,
 {
     PROCESS_INFORMATION mePInfo ;
     STARTUPINFO meSuInfo ;
-    uint8  cmdLine[MAXBUF+102], *cp ;          /* Buffer for the command line */
-    uint8  dummyInFile[FILEBUF] ;              /* Dummy input file */
-    uint8  pipeOutFile[FILEBUF] ;              /* Pipe output file */
+    meUByte  cmdLine[MAXBUF+102], *cp ;          /* Buffer for the command line */
+    meUByte  dummyInFile[FILEBUF] ;              /* Dummy input file */
+    meUByte  pipeOutFile[FILEBUF] ;              /* Pipe output file */
     int    status ;
 #ifdef _WIN32s
-    uint8 *endOfComString = NULL;             /* End of the com string */
+    meUByte *endOfComString = NULL;             /* End of the com string */
     static int pipeStderr = 0;                 /* Remember the stderr state */
 #else
     HANDLE inHdl, outHdl, dumHdl ;
 #endif
 
 #if 1
-    static uint8 *compSpecName=NULL ;
+    static meUByte *compSpecName=NULL ;
     static int compSpecLen ;
 
     /* Get the comspec */
@@ -1959,7 +1959,7 @@ WinLaunchProgram (uint8 *cmd, int flags, uint8 *inFile, uint8 *outFile,
         compSpecLen = strlen(compSpecName) ;
     }
 #else
-    uint8 *compSpecName ;
+    meUByte *compSpecName ;
     if((compSpecName = meGetenv("COMSPEC")) == NULL)
     {
         /* If no COMSPEC setup the default */
@@ -1992,7 +1992,7 @@ WinLaunchProgram (uint8 *cmd, int flags, uint8 *inFile, uint8 *outFile,
     else
     {
         /* Create the command line */
-        uint8 c1, c2, *dd, *ss, *s2 ;
+        meUByte c1, c2, *dd, *ss, *s2 ;
         ss = cmd ;
         dd = dummyInFile ;
         c1 = *ss++ ;
@@ -2179,9 +2179,9 @@ WinLaunchProgram (uint8 *cmd, int flags, uint8 *inFile, uint8 *outFile,
     }
 #ifdef _WIN32s
     {
-        uint8 curDirectory[1024];
-        uint8 cmd [1024];
-        uint8 batname [1024];
+        meUByte curDirectory[1024];
+        meUByte cmd [1024];
+        meUByte batname [1024];
         FILE *fp;
 
         if (endOfComString == NULL)
@@ -2529,7 +2529,7 @@ WinTermResize (void)
             /* Set up the column cell LUT positions. Note allocate a single
              * array and split into two for re-use */
             eCellMetrics.screenCellPosX = realloc (eCellMetrics.screenCellPosX,
-                                                   sizeof (int16) * 2 * (ncol + 1));
+                                                   sizeof (meShort) * 2 * (ncol + 1));
             eCellMetrics.charCellPosX = &eCellMetrics.screenCellPosX [ncol+1];
             eCellMetrics.screenCellNcol = ncol;
             /* Construct the cell spacing. This is the  width of the characters. */
@@ -2544,7 +2544,7 @@ WinTermResize (void)
         {
             /* Set up the row cell LUT positions. Note allocate a single
              * array and split into 4 for re-use. */
-            eCellMetrics.screenCellPosY = realloc (eCellMetrics.screenCellPosY, sizeof (int16) * 4 * (nrow + 1));
+            eCellMetrics.screenCellPosY = realloc (eCellMetrics.screenCellPosY, sizeof (meShort) * 4 * (nrow + 1));
             eCellMetrics.charCellPosY   = &eCellMetrics.screenCellPosY [nrow+1];
             eCellMetrics.paintStartCol  = &eCellMetrics.charCellPosY [nrow+1];
             eCellMetrics.paintEndCol    = &eCellMetrics.paintStartCol [nrow+1];
@@ -2559,8 +2559,8 @@ WinTermResize (void)
             eCellMetrics.paintStartCol[ii] = ncol ;
             eCellMetrics.paintEndCol  [ii] = 0 ;
         }
-        eCellMetrics.screenCellPosY [0] = (int16) eCellMetrics.canvas.top;
-        eCellMetrics.screenCellPosY [nrow] = (int16) eCellMetrics.canvas.bottom;
+        eCellMetrics.screenCellPosY [0] = (meShort) eCellMetrics.canvas.top;
+        eCellMetrics.screenCellPosY [nrow] = (meShort) eCellMetrics.canvas.bottom;
 
         /* Initialise the column cell LUT tables. */
         for (ii = 0; ii <= ncol; ii++)
@@ -2569,8 +2569,8 @@ WinTermResize (void)
                       (eCellMetrics.screenCellPosX [ii] = colToClient (ii));
             eCellMetrics.cellSpacing [ii] = eCellMetrics.cell.sizeX;
         }
-        eCellMetrics.screenCellPosX [0] = (int16) eCellMetrics.canvas.left;
-        eCellMetrics.screenCellPosX [ncol] = (int16) eCellMetrics.canvas.right;
+        eCellMetrics.screenCellPosX [0] = (meShort) eCellMetrics.canvas.left;
+        eCellMetrics.screenCellPosX [ncol] = (meShort) eCellMetrics.canvas.right;
     }
 
     /* If this is the initial startup state then set the TT values */
@@ -2694,7 +2694,7 @@ TTinitMouse(void)
 {
     if(meMouseCfg & meMOUSE_ENBLE)
     {
-        uint8 cc ;
+        meUByte cc ;
         int b1, b2, b3 ;
 
         if(meMouseCfg & meMOUSE_SWAPBUTTONS)
@@ -2713,7 +2713,7 @@ TTinitMouse(void)
         if (!(meSystemCfg & meSYSTEM_CONSOLE))
 #endif
         {
-            cc = (uint8) ((meMouseCfg & meMOUSE_ICON) >> 16) ;
+            cc = (meUByte) ((meMouseCfg & meMOUSE_ICON) >> 16) ;
             if(cc >= meCURSOR_COUNT)
                 cc = 0 ;
             if(cc != meCurCursor)
@@ -2765,8 +2765,8 @@ WinMouse (UINT message, UINT wParam, LONG lParam)
          */
         if(wParam == mouseButs)
         {
-            uint32 arg;           /* Decode key argument */
-            uint16 cc ;
+            meUInt arg;           /* Decode key argument */
+            meUShort cc ;
 
             /* Mouse buttons are the same - handle as a move mouse */
 
@@ -2822,7 +2822,7 @@ WinMouse (UINT message, UINT wParam, LONG lParam)
             {
                 if(((mouseCode ^ mouseState) & ii) != 0)
                 {
-                    uint16 cc ;
+                    meUShort cc ;
                     if (mouseCode & ii)             /* Release ?? */
                         cc = SKEY_mouse_pick_1 ;    /* Get mouse pick key binding */
                     else
@@ -2854,7 +2854,7 @@ WinMouse (UINT message, UINT wParam, LONG lParam)
 #ifdef WM_MOUSEWHEEL
     case WM_MOUSEWHEEL:
         {
-            uint16 cc ;
+            meUShort cc ;
 
 /*            mlwrite(0,"%x %x %x",(int) message,wParam,(int) lParam) ;*/
             mousePosUpdate(lParam) ;
@@ -2883,7 +2883,7 @@ WinMouse (UINT message, UINT wParam, LONG lParam)
 int
 WinKeyboard (UINT message, UINT wParam, LONG lParam)
 {
-    uint16 cc;                  /* Local keyboard character */
+    meUShort cc;                  /* Local keyboard character */
 
 #ifdef _WIN_KEY_DEBUGGING
     {
@@ -3024,7 +3024,7 @@ done_syskeydown:
             cc = SKEY_scroll_lock ;
 test_do_keydown:
             {
-                uint32 arg;
+                meUInt arg;
                 if (decode_key((ME_SPECIAL|ttmodif|cc),&arg) != -1)  /* Key bound ?? */
                     goto do_keydown;
             }
@@ -3037,7 +3037,7 @@ test_do_keydown:
              * is not bound then we pretend that we have not processed it,
              * this will allow the default handler to process the key */
             {
-                uint32 arg;               /* Decode key argument */
+                meUInt arg;               /* Decode key argument */
 
                 cc = ME_SPECIAL | ttmodif | ((wParam == VK_LWIN) ? SKEY_start_left : SKEY_start_right);
                 if (decode_key(cc,&arg) != -1)  /* Key bound ?? */
@@ -3110,7 +3110,7 @@ do_keydown:
             /* found that C-1, C-2 etc come down this route */
             if((ttmodif & ME_CONTROL) && (wParam >= '0') && (wParam <= '9'))
             {
-                static uint8 shiftDigits[] = ")!\"#$%^&*(";
+                static meUByte shiftDigits[] = ")!\"#$%^&*(";
 
                 cc  = (ttmodif & (ME_CONTROL|ME_ALT)) | ((ttmodif & ME_SHIFT) ? shiftDigits [wParam - '0'] : wParam) ;
             }
@@ -3494,12 +3494,12 @@ return_spec:
  * in the palette table moves to the vacant position.
  */
 int
-TTaddColor(meCOLOR index, uint8 r, uint8 g, uint8 b)
+TTaddColor(meCOLOR index, meUByte r, meUByte g, meUByte b)
 {
 #ifdef _WINCON
     if (meSystemCfg & meSYSTEM_CONSOLE)
     {
-        uint8 *ss ;
+        meUByte *ss ;
         int            ii, jj, idif, jdif ;
 
         jdif = 256+256+256 ;
@@ -3516,8 +3516,8 @@ TTaddColor(meCOLOR index, uint8 r, uint8 g, uint8 b)
 
         if(noColors <= index)
         {
-            colTable = realloc(colTable, (index+1)*sizeof(uint32)) ;
-            memset(colTable+noColors,0,(index-noColors+1)*sizeof(uint32)) ;
+            colTable = realloc(colTable, (index+1)*sizeof(meUInt)) ;
+            memset(colTable+noColors,0,(index-noColors+1)*sizeof(meUInt)) ;
             noColors = index+1 ;
         }
         colTable[index] = jj ;
@@ -3698,7 +3698,7 @@ TTaddColor(meCOLOR index, uint8 r, uint8 g, uint8 b)
  * then default to the default OEM font.
  */
 static int
-TTchangeFont (uint8 *fontName, int fontType, int fontWeight,
+TTchangeFont (meUByte *fontName, int fontType, int fontWeight,
               int fontHeight, int fontWidth)
 {
     HDC   hDC;                          /* Device context */
@@ -3929,8 +3929,8 @@ defaultFont:
 int
 changeFont(int f, int n)
 {
-    uint8 fontName[FONTBUFSIZ] ;        /* Input font name buffer */
-    uint8 buff[FONTBUFSIZ] ;            /* Input buffer */
+    meUByte fontName[FONTBUFSIZ] ;        /* Input font name buffer */
+    meUByte buff[FONTBUFSIZ] ;            /* Input buffer */
     int  fontType;                      /* Type of font 0=ANSI,255=OEM etc */
     int  fontWeight;                    /* Weight of font (0-9) */
     int  fontHeight;                    /* Height of font */
@@ -3987,7 +3987,7 @@ TThideCur (void)
         {
             FRAMELINE *flp;                     /* Frame store line pointer */
             meSCHEME schm;                      /* Current colour */
-            uint8 cc ;                          /* Current cchar  */
+            meUByte cc ;                          /* Current cchar  */
             WORD dcol;
 
             flp  = frameStore + TTcurr ;
@@ -4049,7 +4049,7 @@ TTshowCur (void)
         {
             FRAMELINE *flp;                     /* Frame store line pointer */
             meSCHEME schm;                      /* Current colour */
-            uint8 cc ;                          /* Current cchar  */
+            meUByte cc ;                          /* Current cchar  */
             WORD dcol;
 
             flp  = frameStore + TTcurr ;
@@ -4265,8 +4265,8 @@ void
 TTwaitForChar(void)
 {
 #if MOUSE
-    uint16 mc ;
-    uint32 arg ;
+    meUShort mc ;
+    meUInt arg ;
     /* If no keys left then if theres currently no mouse timer and
      * theres a button press (No mouse-time key) then check for a
      * time-mouse-? key, if found add a timer start a mouse checking
@@ -4402,10 +4402,10 @@ TTapplyArea(void)
         int row ;
         for(row=ttRect.top; row < ttRect.bottom ; row++)
         {
-            if(eCellMetrics.paintStartCol[row] > (int16) ttRect.left)
-                eCellMetrics.paintStartCol[row] = (int16) ttRect.left ;
-            if(eCellMetrics.paintEndCol[row] < (int16) ttRect.right)
-                eCellMetrics.paintEndCol[row] = (int16) ttRect.right ;
+            if(eCellMetrics.paintStartCol[row] > (meShort) ttRect.left)
+                eCellMetrics.paintStartCol[row] = (meShort) ttRect.left ;
+            if(eCellMetrics.paintEndCol[row] < (meShort) ttRect.right)
+                eCellMetrics.paintEndCol[row] = (meShort) ttRect.right ;
         }
         ttRect.left   = eCellMetrics.screenCellPosX[ttRect.left] ;
         ttRect.right  = eCellMetrics.screenCellPosX[ttRect.right] ;
@@ -4633,8 +4633,8 @@ TTahead (void)
     /* If the mouse alarm has returned Check the mouse */
     if (isTimerExpired(MOUSE_TIMER_ID))
     {
-        uint16 mc;
-        uint32 arg;
+        meUShort mc;
+        meUInt arg;
 
         timerClearExpired (MOUSE_TIMER_ID);
         mc = ME_SPECIAL | ttmodif | (SKEY_mouse_time + mouseKeys[mouseState&MOUSE_STATE_BUTTONS]);
@@ -4655,7 +4655,7 @@ TTahead (void)
     if (isTimerExpired(IDLE_TIMER_ID))
     {
         register int index;
-        uint32 arg;           /* Decode key argument */
+        meUInt arg;           /* Decode key argument */
 
         if((index=decode_key(ME_SPECIAL|SKEY_idle_time,&arg)) != -1)
         {
@@ -4761,8 +4761,8 @@ TTaheadFlush (void)
     /* If the mouse alarm has returned Check the mouse */
     if (isTimerExpired(MOUSE_TIMER_ID))
     {
-        uint16 mc;
-        uint32 arg;
+        meUShort mc;
+        meUInt arg;
 
         timerClearExpired (MOUSE_TIMER_ID);
         mc = ME_SPECIAL | ttmodif | (SKEY_mouse_time + mouseKeys[mouseState&MOUSE_STATE_BUTTONS]);
@@ -4783,7 +4783,7 @@ TTaheadFlush (void)
     if (isTimerExpired(IDLE_TIMER_ID))
     {
         register int index;
-        uint32 arg;           /* Decode key argument */
+        meUInt arg;           /* Decode key argument */
 
         if((index=decode_key(ME_SPECIAL|SKEY_idle_time,&arg)) != -1)
         {
@@ -5544,7 +5544,7 @@ MainWndProc (HWND hWnd, UINT message, UINT wParam, LONG lParam)
         {
             POINT pt;                   /* Position in the window */
             WORD fcount;                /* Count of the number of files */
-            uint8 dfname [MAXBUF];       /* Dropped filename */
+            meUByte dfname [MAXBUF];       /* Dropped filename */
 
             /* Get the position of the mouse */
             DragQueryPoint ((HANDLE)(wParam), &pt);
@@ -5766,9 +5766,9 @@ unhandled_message:
  */
 
 void
-TTtitleText (uint8 *str)
+TTtitleText (meUByte *str)
 {
-    static uint8 buf [MAXBUF];           /* This must be static */
+    static meUByte buf [MAXBUF];           /* This must be static */
 
     if (str != NULL)
         meStrcpy (buf, str);

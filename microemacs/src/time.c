@@ -42,16 +42,16 @@
 
 #if	TIMSTMP
 
-uint8 time_stamp[TSTMPLEN] = "<%Y%M%D.%h%m>";	/* Time stamp string */
+meUByte time_stamp[TSTMPLEN] = "<%Y%M%D.%h%m>";	/* Time stamp string */
 
 #define TSNUMFIELD 6
-static uint8 TSFIELDS[]="YMDhms" ;
+static meUByte TSFIELDS[]="YMDhms" ;
 
 static void
-createTimeStampSrch(uint8 *buf, uint8 *pos)
+createTimeStampSrch(meUByte *buf, meUByte *pos)
 {
-    uint8 curPos=0 ;
-    uint8 cc, *ss, *tt ;
+    meUByte curPos=0 ;
+    meUByte cc, *ss, *tt ;
     int ii ;
     memset(pos,0,TSNUMFIELD) ;
     
@@ -88,8 +88,8 @@ set_timestamp(BUFFER *bp)
 {
     WINDOW *owp, win ;
     BUFFER *obp ;
-    uint8   pos[TSNUMFIELD];	/* pos of fields in search */
-    uint8   patt[1024];    	/* Search pattern */
+    meUByte   pos[TSNUMFIELD];	/* pos of fields in search */
+    meUByte   patt[1024];    	/* Search pattern */
     int     ii, jj ;
     
     /*---	Determine if time stamping is to be performed. */
@@ -98,7 +98,7 @@ set_timestamp(BUFFER *bp)
        (time_stamp[0] == '\0'))			/* No time stamp defined */
         return TRUE ;				/* No - exit */
     
-    mlwrite(MWCURSOR,(uint8 *)"[Time stamping File]");
+    mlwrite(MWCURSOR,(meUByte *)"[Time stamping File]");
     
     /*---	Save current position in buffer and go to the start of the buffer. */
     
@@ -121,7 +121,7 @@ set_timestamp(BUFFER *bp)
         int values[TSNUMFIELD] ;
         struct tm  *time_ptr;		/* Pointer to time frame. */
         time_t clock;			/* Time in machine format. */
-        uint16 soff ;
+        meUShort soff ;
 
         /* Found it, so fill in the slots */
         

@@ -59,11 +59,11 @@ typedef struct HILDATA {
     HILBLOCK *blkp;                     /* Block pointer */
     int noColChng;                      /* Number of colour changes */
     int srcPos;                         /* Source position */
-    uint16 srcOff;                      /* Offset in source to find */
+    meUShort srcOff;                    /* Offset in source to find */
     HilFunc hfunc;                      /* Callback function */
-    uint16 len;                         /* Transient length information */
-    uint16 flag;                        /* Video structure flag */
-    uint8 colno;                        /* Color number */
+    meUShort len;                       /* Transient length information */
+    meUShort flag;                      /* Video structure flag */
+    meUByte colno;                      /* Color number */
 } HILDATA;    
 
 #define meHIL_TEST_BACKREF 0x00
@@ -94,9 +94,9 @@ typedef struct HILDATA {
 
 #define meHIL_TEST_DEF_GROUP     10
 
-static uint8 *meHilTestNames[meHIL_TEST_NOCLASS]={
-    (uint8 *)"space",(uint8 *)"digit",(uint8 *)"xdigit",(uint8 *)"lower",(uint8 *)"upper",
-    (uint8 *)"alpha",(uint8 *)"alnum",(uint8 *)"sword",(uint8 *)"word",(uint8 *)"any", 
+static meUByte *meHilTestNames[meHIL_TEST_NOCLASS]={
+    (meUByte *)"space",(meUByte *)"digit",(meUByte *)"xdigit",(meUByte *)"lower",(meUByte *)"upper",
+    (meUByte *)"alpha",(meUByte *)"alnum",(meUByte *)"sword",(meUByte *)"word",(meUByte *)"any", 
 } ;
 
 #define meHIL_MODECASE   0x001
@@ -107,12 +107,12 @@ static uint8 *meHilTestNames[meHIL_TEST_NOCLASS]={
 #define meHIL_MODEMOVE   0x040
 #define meHIL_MODETOKEND 0x080
 
-static uint8 varTable[11] ;
+static meUByte varTable[11] ;
 
 void
 freeToken(HILNODEPTR root)
 {
-    uint8 ii, top ;
+    meUByte ii, top ;
     
     top = hilListSize(root) ;
     for(ii=0 ; ii<top ; ii++)
@@ -126,7 +126,7 @@ freeToken(HILNODEPTR root)
 }
 
 static HILNODEPTR
-createHilight(uint8 hilno, uint8 *noHils , HILNODEPTR **hTbl)
+createHilight(meUByte hilno, meUByte *noHils , HILNODEPTR **hTbl)
 {
     HILNODEPTR    root ;
     
@@ -163,18 +163,18 @@ createHilight(uint8 hilno, uint8 *noHils , HILNODEPTR **hTbl)
 static void
 ListToTable(HILNODEPTR root)
 {
-    uint8 pos, ii, size ;
-    uint8 cc ;
+    meUByte pos, ii, size ;
+    meUByte cc ;
     
     if(root->listSize < 8)
         return ;
     
-    root->table = (uint8 *) meMalloc(TableSize) ;
+    root->table = (meUByte *) meMalloc(TableSize) ;
     
     root->table[0] = root->ordSize ;
     pos  = root->ordSize ;
     size = hilListSize(root) ;
-    for(; (pos<size) && ((uint8)(root->list[pos]->token[0]) < TableLower) ; pos++)
+    for(; (pos<size) && ((meUByte)(root->list[pos]->token[0]) < TableLower) ; pos++)
         ;
     cc = TableLower ;
     for(ii=1 ; ii<TableSize ; ii++,cc++)
@@ -197,10 +197,10 @@ static void
 hilNodeOptimize(HILNODEPTR root, int flags) ;
 
 static HILNODEPTR
-addTokenNode(HILNODEPTR root, uint8 *token, int flags)
+addTokenNode(HILNODEPTR root, meUByte *token, int flags)
 {
     HILNODEPTR    node, nn ;
-    uint8 c1=1, ii, jj, top, spec ;
+    meUByte c1=1, ii, jj, top, spec ;
     int len ;
     
     /* Have we run out of room, is so try to optimize */
@@ -222,7 +222,7 @@ addTokenNode(HILNODEPTR root, uint8 *token, int flags)
     }
     for( ; ii<top ; ii++)
     {
-        uint8 c2, *s1, *s2 ;
+        meUByte c2, *s1, *s2 ;
         node = root->list[ii] ;
         s1 = token ;
         s2 = node->token ;
@@ -283,7 +283,7 @@ addTokenNode(HILNODEPTR root, uint8 *token, int flags)
     /* going to be added to this list, check that we have enough room */
     if(((top=hilListSize(root)) == 0xfe) && !(flags & ADDTOKEN_OPTIM))
     {
-        mlwrite(MWABORT|MWWAIT,(uint8 *)"Table full, cant add [%s]. Optimise!",token) ;
+        mlwrite(MWABORT|MWWAIT,(meUByte *)"Table full, cant add [%s]. Optimise!",token) ;
         return NULL ;
     }
     top++ ;
@@ -338,7 +338,7 @@ addTokenNode(HILNODEPTR root, uint8 *token, int flags)
         if(spec)
             ii = 0 ;
         else
-            ii = GetTableSlot((uint8)(*token)) + 1 ;
+            ii = GetTableSlot((meUByte)(*token)) + 1 ;
         for(; ii<TableSize ; ii++)
             (root->table[ii]) += jj ;
     }
@@ -349,7 +349,7 @@ static void
 hilNodeOptimize(HILNODEPTR root, int flags)
 {
     int ii, sz, no=0, cc=0, jj=0 ;
-    uint8 tok[2] ;
+    meUByte tok[2] ;
     
     ii = root->ordSize ;
     sz = ii+root->listSize ;
@@ -377,15 +377,15 @@ hilNodeOptimize(HILNODEPTR root, int flags)
 }
 
 
-static uint8 *
-meHiltItemCompile(uint8 *dest, uint8 **token,
-                  uint8 noGroups, uint8 changeCase)
+static meUByte *
+meHiltItemCompile(meUByte *dest, meUByte **token,
+                  meUByte noGroups, meUByte changeCase)
 {
-    uint8 cc, *ss=*token ;
+    meUByte cc, *ss=*token ;
     if((cc=*ss++) == '[')
     {
-        uint8 *s1, *dd ;
-        uint8 tt, ii=0 ;
+        meUByte *s1, *dd ;
+        meUByte tt, ii=0 ;
         
         *dest++ = 0xff ;
         tt = meHIL_TEST_VALID ;
@@ -410,7 +410,7 @@ meHiltItemCompile(uint8 *dest, uint8 **token,
                         if(ii == meHIL_TEST_NOCLASS)
                         {
                             /* this is an unknown char class return an error */
-                            mlwrite(MWABORT|MWWAIT,(uint8 *)"[Unknown hilight class %s]",ss+1);
+                            mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unknown hilight class %s]",ss+1);
                             *s1 = ':' ;
                             return NULL ;
                         }
@@ -430,12 +430,12 @@ meHiltItemCompile(uint8 *dest, uint8 **token,
             do {
                 if(cc == '\0')
                 {
-                    mlwrite(MWABORT|MWWAIT,(uint8 *)"[Open []");
+                    mlwrite(MWABORT|MWWAIT,(meUByte *)"[Open []");
                     return NULL ;
                 }
                 *dest++ = cc ;
             } while((cc=*ss++) != ']') ;
-            *dd = (uint8) (dest-dd-1) ;
+            *dd = (meUByte) (dest-dd-1) ;
         }
     }
     else if(cc == '\\')
@@ -460,12 +460,12 @@ meHiltItemCompile(uint8 *dest, uint8 **token,
             default:
                 if(!isDigit(cc))
                 {
-                    mlwrite(MWABORT|MWWAIT,(uint8 *)"[Unsupported \\SC char class]");
+                    mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unsupported \\SC char class]");
                     return NULL ;
                 }
                 if(((cc-='0') == 0) || (cc > noGroups))
                 {
-                    mlwrite(MWABORT|MWWAIT,(uint8 *)"[Back reference out of range]");
+                    mlwrite(MWABORT|MWWAIT,(meUByte *)"[Back reference out of range]");
                     return NULL ;
                 }
                 *dest++ = meHIL_TEST_VALID|meHIL_TEST_INVERT|meHIL_TEST_BACKREF ;
@@ -499,12 +499,12 @@ meHiltItemCompile(uint8 *dest, uint8 **token,
             default:
                 if(!isDigit(cc))
                 {
-                    mlwrite(MWABORT|MWWAIT,(uint8 *)"[Unsupported \\SC char class]");
+                    mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unsupported \\SC char class]");
                     return NULL ;
                 }
                 if(((cc-='0') == 0) || (cc > noGroups))
                 {
-                    mlwrite(MWABORT|MWWAIT,(uint8 *)"[Back reference out of range]");
+                    mlwrite(MWABORT|MWWAIT,(meUByte *)"[Back reference out of range]");
                     return NULL ;
                 }
                 *dest++ = meHIL_TEST_VALID|meHIL_TEST_BACKREF ;
@@ -524,7 +524,7 @@ meHiltItemCompile(uint8 *dest, uint8 **token,
             cc = *ss ;
             if(isXDigit(cc))
             {
-                register uint8 c1=*++ss ;
+                register meUByte c1=*++ss ;
                 
                 if(isXDigit(c1))
                 {
@@ -535,7 +535,7 @@ meHiltItemCompile(uint8 *dest, uint8 **token,
                     cc = hexToNum(cc) ;
                 if(cc == 0)
                 {
-                    mlwrite(MWABORT|MWWAIT,(uint8 *)"[Invalid \\x character]");
+                    mlwrite(MWABORT|MWWAIT,(meUByte *)"[Invalid \\x character]");
                     return NULL ;
                 }
                 if(changeCase)
@@ -552,14 +552,14 @@ meHiltItemCompile(uint8 *dest, uint8 **token,
         case '>':
         case 'b':
         case 'B':
-            mlwrite(MWABORT|MWWAIT,(uint8 *)"[Hilight does not support \\%c]",cc);
+            mlwrite(MWABORT|MWWAIT,(meUByte *)"[Hilight does not support \\%c]",cc);
             return NULL ;
         default:
             if(isDigit(cc))
             {
                 if(((cc-='0') == 0) || (cc > noGroups))
                 {
-                    mlwrite(MWABORT|MWWAIT,(uint8 *)"[Back reference out of range]");
+                    mlwrite(MWABORT|MWWAIT,(meUByte *)"[Back reference out of range]");
                     return NULL ;
                 }
                 *dest++ = 0xff ;
@@ -602,12 +602,12 @@ meHiltItemCompile(uint8 *dest, uint8 **token,
  * 
  * Returns a pointer to the start of the last item or NULL on failure.
  */
-static uint8 *
-meHiltStringCompile(uint8 *dest, uint8 *token, uint8 changeCase,
+static meUByte *
+meHiltStringCompile(meUByte *dest, meUByte *token, meUByte changeCase,
                     int *retValues)
 {
-    uint8 cc, *dd, *lastDest ;
-    uint8 nextGroupNo=0, group=0 ;
+    meUByte cc, *dd, *lastDest ;
+    meUByte nextGroupNo=0, group=0 ;
     int startOffset=0, endOffset=-1, len=0 ;
     
     while((cc=*token) != '\0')
@@ -619,22 +619,22 @@ meHiltStringCompile(uint8 *dest, uint8 *token, uint8 changeCase,
             case '(':
                 if(nextGroupNo >= 9)
                 {
-                    mlwrite(MWABORT|MWWAIT,(uint8 *)"[Too many groups]");
+                    mlwrite(MWABORT|MWWAIT,(meUByte *)"[Too many groups]");
                     return NULL ;
                 }
                 group = 1 ;
                 token += 2 ;
                 if((*token == '\0') || ((*token == '\\') && (token[1] == ')')))
                 {
-                    mlwrite(MWABORT|MWWAIT,(uint8 *)"[Bad group \\(.\\)]");
+                    mlwrite(MWABORT|MWWAIT,(meUByte *)"[Bad group \\(.\\)]");
                     return NULL ;
                 }
                 break ;
             case '|':
-                mlwrite(MWABORT|MWWAIT,(uint8 *)"[Hilight does not support \\|]");
+                mlwrite(MWABORT|MWWAIT,(meUByte *)"[Hilight does not support \\|]");
                 return NULL ;
             case ')':
-                mlwrite(MWABORT|MWWAIT,(uint8 *)"[Unmatched group \\)]");
+                mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unmatched group \\)]");
                 return NULL ;
             case '{':
                 startOffset = len ;
@@ -653,7 +653,7 @@ meHiltStringCompile(uint8 *dest, uint8 *token, uint8 changeCase,
         {
             if(*++token != '\0')
             {
-                mlwrite(MWABORT|MWWAIT,(uint8 *)"[End-of-line $ must be the last char]");
+                mlwrite(MWABORT|MWWAIT,(meUByte *)"[End-of-line $ must be the last char]");
                 return NULL ;
             }
             if(endOffset < 0)
@@ -669,7 +669,7 @@ meHiltStringCompile(uint8 *dest, uint8 *token, uint8 changeCase,
         {
             if((*token++ != '\\') || (*token++ != ')'))
             {
-                mlwrite(MWABORT|MWWAIT,(uint8 *)"[A group \\(.\\) must enclose a single char]");
+                mlwrite(MWABORT|MWWAIT,(meUByte *)"[A group \\(.\\) must enclose a single char]");
                 return NULL ;
             }
             if(dd <= dest+2)
@@ -709,7 +709,7 @@ meHiltStringCompile(uint8 *dest, uint8 *token, uint8 changeCase,
     /* can't have a zero length search string */
     if(len == 0)
     {
-        mlwrite(MWABORT|MWWAIT,(uint8 *)"[Invalid zero length token]");
+        mlwrite(MWABORT|MWWAIT,(meUByte *)"[Invalid zero length token]");
         return NULL ;
     }
     *dest = '\0' ;
@@ -724,9 +724,9 @@ meHiltStringCompile(uint8 *dest, uint8 *token, uint8 changeCase,
 }
 
 static HILNODEPTR
-meHiltTokenAddSearchString(HILNODEPTR root, HILNODEPTR node, uint8 *token, int flags)
+meHiltTokenAddSearchString(HILNODEPTR root, HILNODEPTR node, meUByte *token, int flags)
 {
-    uint8 buff[MAXBUF], *dd, *ss, *lastItem ;
+    meUByte buff[MAXBUF], *dd, *ss, *lastItem ;
     int retValues[4], l1, l2, len ;
     
     dd = buff ;
@@ -745,7 +745,7 @@ meHiltTokenAddSearchString(HILNODEPTR root, HILNODEPTR node, uint8 *token, int f
         }
         ss++ ;
     }
-    if((lastItem=meHiltStringCompile(dd,ss,(uint8) ((root->type & HFCASE) != 0),
+    if((lastItem=meHiltStringCompile(dd,ss,(meUByte) ((root->type & HFCASE) != 0),
                                      retValues)) == NULL)
         return NULL ;
     len = retValues[0] ;
@@ -757,7 +757,7 @@ meHiltTokenAddSearchString(HILNODEPTR root, HILNODEPTR node, uint8 *token, int f
     
     if(node == NULL)
     {
-        uint8  sttTst, endTst ;
+        meUByte  sttTst, endTst ;
         ss = buff ;
         /* if the token starts with "^[[:space:]]*\\{" then we can
          * optimize this to HLSTTLINE */
@@ -854,9 +854,9 @@ meHiltTokenAddSearchString(HILNODEPTR root, HILNODEPTR node, uint8 *token, int f
 }
 
 static HILNODEPTR
-meHiltTokenAddReplaceString(HILNODEPTR root, HILNODEPTR node, uint8 *token, int mainRepl)
+meHiltTokenAddReplaceString(HILNODEPTR root, HILNODEPTR node, meUByte *token, int mainRepl)
 {
-    uint8 buff[MAXBUF], *dd, *ss, cc ;
+    meUByte buff[MAXBUF], *dd, *ss, cc ;
     int len ;
     
     ss = token ;
@@ -904,18 +904,18 @@ int
 hilight(int f, int n)
 {
     HILNODEPTR root, node ;
-    uint8  buf[MAXBUF] ;
-    uint16 type ;
-    uint8  hilno ;
+    meUByte  buf[MAXBUF] ;
+    meUShort type ;
+    meUByte  hilno ;
     int ii ;
     
     if(n == 0)
     {
-        if((meGetString((uint8 *)"Enter hi-light number",0,0,buf,MAXBUF-1) != TRUE) ||
-           ((hilno = (uint8) meAtoi(buf)) == 0) || 
-           (meGetString((uint8 *)"Flags",0,0,buf,MAXBUF-1) != TRUE))
+        if((meGetString((meUByte *)"Enter hi-light number",0,0,buf,MAXBUF-1) != TRUE) ||
+           ((hilno = (meUByte) meAtoi(buf)) == 0) || 
+           (meGetString((meUByte *)"Flags",0,0,buf,MAXBUF-1) != TRUE))
             return ABORT ;
-        type = (uint16) meAtoi(buf) ;
+        type = (meUShort) meAtoi(buf) ;
         
         if((root = createHilight(hilno,&noHilights,&hilights)) == NULL)
             return FALSE ;
@@ -925,45 +925,45 @@ hilight(int f, int n)
         root->type = type ;
         if(type & HFLOOKB)
         {
-            if(meGetString((uint8 *)"lines",0,0,buf,MAXBUF) != TRUE)
+            if(meGetString((meUByte *)"lines",0,0,buf,MAXBUF) != TRUE)
                 return ABORT ;
-            root->ignore = (uint8) meAtoi(buf) ;
+            root->ignore = (meUByte) meAtoi(buf) ;
         }
-        if((ii=meGetString((uint8 *)"Scheme",0,0,buf,MAXBUF)) == ABORT)
+        if((ii=meGetString((meUByte *)"Scheme",0,0,buf,MAXBUF)) == ABORT)
             return ABORT ;
         if(ii == FALSE)
             ii = globScheme ;
         else if((ii=convertUserScheme(meAtoi(buf), -1)) < 0)
             return FALSE ;
         root->scheme = (meSCHEME) ii ;
-        if((ii=meGetString((uint8 *)"Trunc scheme",0,0,buf,MAXBUF)) == ABORT)
+        if((ii=meGetString((meUByte *)"Trunc scheme",0,0,buf,MAXBUF)) == ABORT)
             return ABORT ;
         if(ii == FALSE)
             ii = trncScheme ;
         else if((ii=convertUserScheme(meAtoi(buf), -1)) < 0)
             return FALSE ;
-        root->close = (uint8 *) ii ;
+        root->close = (meUByte *) ii ;
         hilights[hilno] = root ;
         return TRUE ;
     }
     n = (n < 0) ? ADDTOKEN_REMOVE:0 ;
     
-    if((meGetString((uint8 *)"Hi number",0,0,buf,MAXBUF-1) != TRUE) ||
-       ((hilno = (uint8) meAtoi(buf)) == 0) ||
+    if((meGetString((meUByte *)"Hi number",0,0,buf,MAXBUF-1) != TRUE) ||
+       ((hilno = (meUByte) meAtoi(buf)) == 0) ||
        (hilno >= noHilights) ||
        ((root  = hilights[hilno]) == NULL) ||
-       (meGetString((uint8 *)"Type",0,0,buf,MAXBUF-1) != TRUE))
+       (meGetString((meUByte *)"Type",0,0,buf,MAXBUF-1) != TRUE))
         return FALSE ;
-    type = (uint16) meAtoi(buf) ;
+    type = (meUShort) meAtoi(buf) ;
     if(type & HLCOLUMN)
     {
         int fmCol, toCol ;
         
-        if((meGetString((uint8 *)"From",0,0,buf,MAXBUF-1) != TRUE) ||
-           ((fmCol = (uint8) meAtoi(buf)) < 0) ||
+        if((meGetString((meUByte *)"From",0,0,buf,MAXBUF-1) != TRUE) ||
+           ((fmCol = (meUByte) meAtoi(buf)) < 0) ||
            (!(n & ADDTOKEN_REMOVE) &&
-            ((meGetString((uint8 *)"To",0,0,buf,MAXBUF-1) != TRUE) ||
-             ((toCol = (uint8) meAtoi(buf)) < fmCol))))
+            ((meGetString((meUByte *)"To",0,0,buf,MAXBUF-1) != TRUE) ||
+             ((toCol = (meUByte) meAtoi(buf)) < fmCol))))
             return FALSE ;
         while(((node = (HILNODEPTR) root->rclose) != NULL) && (((int) node->close) < fmCol))
             root = node ;
@@ -984,19 +984,19 @@ hilight(int f, int n)
         {
             memset(node,0,sizeof(HILNODE)) ;
             node->type = HLCOLUMN ;
-            node->close = (uint8 *) fmCol ;
+            node->close = (meUByte *) fmCol ;
             node->rclose = root->rclose ;
-            root->rclose = (uint8 *) node ;
+            root->rclose = (meUByte *) node ;
         }
-        node->rtoken = (uint8 *) toCol ;
+        node->rtoken = (meUByte *) toCol ;
         goto get_scheme ;
     }
     
-    if(meGetString((uint8 *)"Token",0,0,buf,MAXBUF-1) != TRUE)
+    if(meGetString((meUByte *)"Token",0,0,buf,MAXBUF-1) != TRUE)
         return FALSE ;
     
     /* add the token */
-    node = meHiltTokenAddSearchString(root,NULL,(uint8 *) buf,(type|n)) ;
+    node = meHiltTokenAddSearchString(root,NULL,(meUByte *) buf,(type|n)) ;
     if(n & ADDTOKEN_REMOVE)
         return TRUE ;
     if(node == NULL)
@@ -1006,30 +1006,30 @@ hilight(int f, int n)
     if(!(type & HLVALID))
     {
         if(((type & HLREPLACE) && 
-            ((meGetString((uint8 *)"Replace",0,0,buf,MAXBUF-1) != TRUE) ||
-             (meHiltTokenAddReplaceString(root,node,(uint8 *)buf,1) == NULL))) ||
+            ((meGetString((meUByte *)"Replace",0,0,buf,MAXBUF-1) != TRUE) ||
+             (meHiltTokenAddReplaceString(root,node,(meUByte *)buf,1) == NULL))) ||
            ((type & HLBRACKET) &&
-            ((meGetString((uint8 *)"Close",0,0,buf,MAXBUF-1) != TRUE) ||
-             (meHiltTokenAddSearchString(root,node,(uint8 *) buf,0) == NULL) ||
+            ((meGetString((meUByte *)"Close",0,0,buf,MAXBUF-1) != TRUE) ||
+             (meHiltTokenAddSearchString(root,node,(meUByte *) buf,0) == NULL) ||
              ((type & HLREPLACE) && 
-              ((meGetString((uint8 *)"Replace",0,0,buf,MAXBUF-1) != TRUE) ||
-               (meHiltTokenAddReplaceString(root,node,(uint8 *)buf,0) == NULL))) ||
-             (meGetString((uint8 *)"Ignore",0,0,buf,MAXBUF-1) != TRUE) ||
+              ((meGetString((meUByte *)"Replace",0,0,buf,MAXBUF-1) != TRUE) ||
+               (meHiltTokenAddReplaceString(root,node,(meUByte *)buf,0) == NULL))) ||
+             (meGetString((meUByte *)"Ignore",0,0,buf,MAXBUF-1) != TRUE) ||
              ((node->ignore = buf[0]) > 255))) ||
            ((type & HLCONTIN) &&
-            ((meGetString((uint8 *)"Continue",0,0,buf,MAXBUF-1) != TRUE) ||
-             ((node->close = (uint8 *) meStrdup(buf)) == NULL) ||
+            ((meGetString((meUByte *)"Continue",0,0,buf,MAXBUF-1) != TRUE) ||
+             ((node->close = (meUByte *) meStrdup(buf)) == NULL) ||
              ((type & HLREPLACE) && 
-              ((meGetString((uint8 *)"Replace",0,0,buf,MAXBUF-1) != TRUE) ||
-               ((node->rclose = (uint8 *) meStrdup(buf)) == NULL))))) ||
+              ((meGetString((meUByte *)"Replace",0,0,buf,MAXBUF-1) != TRUE) ||
+               ((node->rclose = (meUByte *) meStrdup(buf)) == NULL))))) ||
            ((type & HLBRANCH) &&
-            ((meGetString((uint8 *)"hilno",0,0,buf,MAXBUF-1) != TRUE) ||
-             ((node->ignore = (uint8) meAtoi(buf)) > 255))))
+            ((meGetString((meUByte *)"hilno",0,0,buf,MAXBUF-1) != TRUE) ||
+             ((node->ignore = (meUByte) meAtoi(buf)) > 255))))
             return FALSE;
 get_scheme:        
         /* Get the colour index. This uses the root hilight 
          * colour if not specified. */
-        ii = meGetString((uint8 *)"Scheme",0,0,buf,MAXBUF-1);
+        ii = meGetString((meUByte *)"Scheme",0,0,buf,MAXBUF-1);
         if (ii == ABORT)
             return (FALSE);
         
@@ -1048,7 +1048,7 @@ get_scheme:
 
 #define findTokenCharTest(ret,lastChar,srcText,tokTest,testStr)              \
 do {                                                                         \
-    uint8 *__ts, ftctcc ;                                                    \
+    meUByte *__ts, ftctcc ;                                                    \
     if((ftctcc=*srcText++) == '\0') ftctcc=meNLCHAR ;                        \
                                                                              \
     switch(tokTest & meHIL_TEST_MASK)                                        \
@@ -1063,7 +1063,7 @@ do {                                                                         \
 	break ;                                                              \
     case meHIL_TEST_CLASS:                                                   \
         {                                                                    \
-	    uint8 rc, nrc ;                                                  \
+	    meUByte rc, nrc ;                                                  \
                                                                              \
 	    __ts = testStr ;                                                 \
 	    for(ret=*testStr++ ; ret>0 ; ret--)                              \
@@ -1147,7 +1147,7 @@ do {                                                                         \
 } while(tokTest & meHIL_TEST_MATCH_MULTI)
 
 static int
-__findTokenSingleCharTest(uint8 cc, uint8 tokTest)
+__findTokenSingleCharTest(meUByte cc, meUByte tokTest)
 {
     int ret ;
     switch(tokTest & meHIL_TEST_MASK)
@@ -1195,14 +1195,14 @@ __findTokenSingleCharTest(uint8 cc, uint8 tokTest)
 ((tokTest == meHIL_TEST_INVALID) || __findTokenSingleCharTest(cc,tokTest))
 
 static HILNODEPTR
-findToken(HILNODEPTR root, uint8 *text, uint8 mode, 
-          uint8 lastChar, uint16 *len)
+findToken(HILNODEPTR root, meUByte *text, meUByte mode, 
+          meUByte lastChar, meUShort *len)
 {
     HILNODEPTR     nn, node ;
-    uint8  cc, *s1, *s2;
+    meUByte  cc, *s1, *s2;
     int status;
     int hi, low, mid ;
-    uint16 type ;
+    meUShort type ;
     
     if(*text == '\0')
     {
@@ -1240,7 +1240,7 @@ findToken(HILNODEPTR root, uint8 *text, uint8 mode,
                     ((mode & meHIL_MODETOKEWS) && (mode & meHIL_MODETOKEND) &&
                      findTokenSingleCharTest(' ',nn->tknSttTst))))
                 {
-                    uint8 rr, tt, lstc=1 ;
+                    meUByte rr, tt, lstc=1 ;
                     s2 = nn->token ;
                     tt = *s2++ ;
                     s2++ ;
@@ -1282,7 +1282,7 @@ findToken(HILNODEPTR root, uint8 *text, uint8 mode,
                 mid = (low + hi) >> 1;		/* Get mid value. */
                 s1 = text ;
                 nn = root->list[mid] ;
-                s2 = (uint8 *) nn->token ;
+                s2 = (meUByte *) nn->token ;
                 do {
                     cc = *s1++ ;
                     if((status=((int) toLower(cc)) - ((int) *s2++)) != 0)
@@ -1312,7 +1312,7 @@ findToken(HILNODEPTR root, uint8 *text, uint8 mode,
                 mid = (low + hi) >> 1;		/* Get mid value. */
                 s1 = text ;
                 nn = root->list[mid] ;
-                s2 = (uint8 *) nn->token ;
+                s2 = (meUByte *) nn->token ;
                 do {
                     if((status=((int) (cc=*s1++)) - ((int) *s2++)) != 0)
                         break ;
@@ -1364,7 +1364,7 @@ findToken(HILNODEPTR root, uint8 *text, uint8 mode,
         /* note that findTokenCharTest may not set lstc even if it does 
          * match as the ? & * may match 0 chars - so theres no last!
          * Therefore initialize to a sensible value */
-        uint8 dd, lstc=1 ;
+        meUByte dd, lstc=1 ;
         mid = 0 ;
         
         for( ; mid < hi ; mid++)
@@ -1517,7 +1517,7 @@ hilSchemeChange (HILNODEPTR node, HILDATA *hd)
 }
 
 static int
-hilCopyChar(register int dstPos, register uint8 cc, HILDATA *hd)
+hilCopyChar(register int dstPos, register meUByte cc, HILDATA *hd)
 {
     /* Change the selection hilight if required. */
     if ((hd->srcOff != 0xffff) && (hd->srcPos >= hd->srcOff))
@@ -1528,19 +1528,19 @@ hilCopyChar(register int dstPos, register uint8 cc, HILDATA *hd)
 }
 
 static int
-hilCopyReplaceString(int sDstPos, register uint8 *srcText,
+hilCopyReplaceString(int sDstPos, register meUByte *srcText,
                      int len, HILDATA *hd)
 {
     int dstPos = sDstPos ;
     int hoff, dstLen ;
-    uint8 cc ;
+    meUByte cc ;
     
     if((hd->srcOff != 0xffff) && (hd->srcPos+len >= hd->srcOff))
     {
         /* as the source len and destination len could be different, the best
          * we can do is set the hilight change position to be the ratio
          * between the two */
-        uint8 *ss=srcText ;
+        meUByte *ss=srcText ;
         dstLen = 0 ;
         while((cc = *ss++) != 0)
         {
@@ -1581,13 +1581,13 @@ hilCopyReplaceString(int sDstPos, register uint8 *srcText,
 }
 
 static int
-hilCopyString(register int dstPos, register uint8 *srcText,HILDATA *hd)
+hilCopyString(register int dstPos, register meUByte *srcText,HILDATA *hd)
 {
-    uint8 cc ;
+    meUByte cc ;
     /* Handle the selection hilighting if enabled. */
     if (hd->srcOff != 0xffff)
     {
-        uint16 srcPos;
+        meUShort srcPos;
         
         srcPos = hd->srcPos;
         while((cc = *srcText++) != '\0')
@@ -1607,15 +1607,15 @@ hilCopyString(register int dstPos, register uint8 *srcText,HILDATA *hd)
 }
 
 static int
-hilCopyLenString(register int dstPos, register uint8 *srcText,
+hilCopyLenString(register int dstPos, register meUByte *srcText,
                  register int len, HILDATA *hd)
 {
-    uint8 cc ;
+    meUByte cc ;
     
     /* Handle the selection hilighting if enabled. */
     if ((hd->srcOff != 0xffff) && ((hd->srcOff - hd->srcPos) < len))
     {
-        uint16 srcPos;
+        meUShort srcPos;
         
         srcPos = hd->srcPos;
         while (--len >= 0)
@@ -1676,13 +1676,13 @@ hilHandleCallback (int dstPos, struct HILDATA *hd)
     }
 }
 
-uint16 
+meUShort 
 hilightLine(VIDEO *vp1)
 {
-    uint8 *srcText=vp1->line->l_text ;
-    uint8  hilno = vp1->hilno, cc=meNLCHAR, mode ;
+    meUByte *srcText=vp1->line->l_text ;
+    meUByte  hilno = vp1->hilno, cc=meNLCHAR, mode ;
     HILNODEPTR node;
-    uint16 len ;
+    meUShort len ;
     register int srcWid=vp1->line->l_used, dstPos=0 ;
     HILDATA hd;
     
@@ -1807,7 +1807,7 @@ column_token:
                 hd.blkp->column = dstPos ;
             }
             if(node->type & HLREPLACE)
-                dstPos = hilCopyReplaceString(dstPos, (uint8 *) node->rtoken,len,&hd) ;
+                dstPos = hilCopyReplaceString(dstPos, (meUByte *) node->rtoken,len,&hd) ;
             else if(len)
                 dstPos = hilCopyLenString(dstPos,srcText+hd.srcPos,len,&hd) ;
             
@@ -1816,9 +1816,9 @@ column_token:
 BracketJump:
             if(node->type & HLBRACKET)
             {
-                uint8 ignore, tt=1, *c1, *c2, ss, *s1, *s2, solt ;
+                meUByte ignore, tt=1, *c1, *c2, ss, *s1, *s2, solt ;
                 
-                c1 = (uint8 *) node->close ;
+                c1 = (meUByte *) node->close ;
                 /* the SOL is a special close bracket code for '^' */
                 if((solt = ((c1[0] == 0xff) && (c1[1] == meHIL_TEST_SOL))))
                     c1 += 2 ;
@@ -1834,7 +1834,7 @@ BracketJump:
                         {
                             if((tt == 0xff) && ((tt = *c2++) != 0xff))
                             {
-                                uint8 ret, vv ;
+                                meUByte ret, vv ;
                                 
                                 vv = *c2++ ;
                                 findTokenCharTest(ret,ss,s2,tt,c2) ;
@@ -1894,7 +1894,7 @@ BracketJump:
                 if(node->clsEndOff)
                     len -= node->clsEndOff ;
                 if(node->type & HLREPLACE)
-                    dstPos = hilCopyReplaceString(dstPos,(uint8 *) node->rclose,
+                    dstPos = hilCopyReplaceString(dstPos,(meUByte *) node->rclose,
                                                   len,&hd) ;
                 else
                     dstPos = hilCopyLenString(dstPos,s1,len,&hd) ;
@@ -2015,7 +2015,7 @@ hilightLookBack(WINDOW *wp)
     VIDEO  *vptr ;
     BUFFER *bp ;
     register LINE *lp, *blp ;
-    uint8  hilno ;
+    meUByte  hilno ;
     HILNODEPTR root, bracket ;
     int ii, jj ;
     
@@ -2096,7 +2096,7 @@ hilightLookBack(WINDOW *wp)
 
 #define hilOffsetString(lastcc,off,dstPos,dstJmp,srcText)                    \
 {                                                                            \
-    uint8 __cc, *__ss=(srcText) ;                                            \
+    meUByte __cc, *__ss=(srcText) ;                                          \
     while((__cc = *__ss++) != '\0')                                          \
     {                                                                        \
         hilOffsetChar(off,dstPos,dstJmp,__cc)                                \
@@ -2106,8 +2106,8 @@ hilightLookBack(WINDOW *wp)
 
 #define hilOffsetLenString(lastcc,off,dstPos,dstJmp,srcText,len)             \
 {                                                                            \
-    uint16 __ll=len ;                                                        \
-    uint8 *__ss=(srcText) ;                                                  \
+    meUShort __ll=len ;                                                      \
+    meUByte *__ss=(srcText) ;                                                \
     while(__ll--)                                                            \
     {                                                                        \
         lastcc = *__ss++ ;                                                   \
@@ -2116,10 +2116,10 @@ hilightLookBack(WINDOW *wp)
 }
 
 static int
-hilOffsetReplaceString(register uint8 **offPtr, register int dstPos,
-                       int *dstJmp, register uint8 *srcText, int len)
+hilOffsetReplaceString(register meUByte **offPtr, register int dstPos,
+                       int *dstJmp, register meUByte *srcText, int len)
 {
-    uint8 *off=*offPtr, cc, lastcc='\0' ;
+    meUByte *off=*offPtr, cc, lastcc='\0' ;
     int            rlen=dstPos, ii, dd=*dstJmp ;
     
     while((cc = *srcText++) != '\0')
@@ -2159,11 +2159,11 @@ hilOffsetReplaceString(register uint8 **offPtr, register int dstPos,
 void
 hilightCurLineOffsetEval(WINDOW *wp)
 {
-    uint8 *srcText=wp->w_dotp->l_text ;
-    uint8 *off=wp->curLineOff->l_text ;
-    uint8  hilno=wp->w_bufp->hiLight, cc=meNLCHAR, mode ;
+    meUByte *srcText=wp->w_dotp->l_text ;
+    meUByte *off=wp->curLineOff->l_text ;
+    meUByte  hilno=wp->w_bufp->hiLight, cc=meNLCHAR, mode ;
     HILNODEPTR node, root ;
-    uint16 len ;
+    meUShort len ;
     register int srcWid=wp->w_dotp->l_used, srcPos=0, dstPos=0 ;
     int dstJmp=0 ;
     
@@ -2218,7 +2218,7 @@ column_token:
                     srcPos += node->tknSttOff ;
                     len -= node->tknSttOff ;
                 }
-                dstPos = hilOffsetReplaceString(&off,dstPos,&dstJmp,(uint8 *) node->rtoken,len) ;
+                dstPos = hilOffsetReplaceString(&off,dstPos,&dstJmp,(meUByte *) node->rtoken,len) ;
                 if(*off)
                     cc = *off ;
             }
@@ -2231,9 +2231,9 @@ column_token:
             /*BracketJump:*/
             if(node->type & HLBRACKET)
             {
-                uint8 ignore, tt=1, *c1, ss, *c2, *s1, *s2, solt ;
+                meUByte ignore, tt=1, *c1, ss, *c2, *s1, *s2, solt ;
                 
-                c1 = (uint8 *) node->close ;
+                c1 = (meUByte *) node->close ;
                 /* the SOL is a special close bracket code for '^' */
                 if((solt = ((c1[0] == 0xff) && (c1[1] == meHIL_TEST_SOL))))
                     c1 += 2 ;
@@ -2249,7 +2249,7 @@ column_token:
                         {
                             if((tt == 0xff) && ((tt = *c2++) != 0xff))
                             {
-                                uint8 ret, vv ;
+                                meUByte ret, vv ;
                                 
                                 vv = *c2++ ;
                                 findTokenCharTest(ret,ss,s2,tt,c2) ;
@@ -2304,7 +2304,7 @@ column_token:
                         srcPos += node->clsSttOff ;
                         len -= node->clsSttOff ;
                     }
-                    dstPos = hilOffsetReplaceString(&off,dstPos,&dstJmp,(uint8 *) node->rclose,len) ;
+                    dstPos = hilOffsetReplaceString(&off,dstPos,&dstJmp,(meUByte *) node->rclose,len) ;
 					if(*off)
 						cc = *off ;
                 }
@@ -2336,7 +2336,7 @@ column_token:
             {
                 if((node->type & HLREPLACE) && (node->type & HLREPTOEOL))
                 {
-                    dstPos = hilOffsetReplaceString(&off,dstPos,&dstJmp,(uint8 *) "",(srcWid-srcPos)) ;
+                    dstPos = hilOffsetReplaceString(&off,dstPos,&dstJmp,(meUByte *) "",(srcWid-srcPos)) ;
                     goto hiline_exit ;
                 }
                 if(!(node->type & HLBRINEOL) || (srcPos == srcWid))
@@ -2395,28 +2395,28 @@ hiline_exit:
 int
 indent(int f, int n)
 {
-    static uint8  typesChar[(noINDTYPES*2)+1]="bcefinosBCEFINOS" ;
-    static uint16 typesFlag[noINDTYPES]=
+    static meUByte  typesChar[(noINDTYPES*2)+1]="bcefinosBCEFINOS" ;
+    static meUShort typesFlag[noINDTYPES]=
     { INDBRACKETOPEN, INDCONTINUE, INDEXCLUSION, INDFIXED, INDIGNORE, INDNEXTONWARD, INDCURONWARD, INDSINGLE } ;
-    static uint16 typesType[noINDTYPES]=
+    static meUShort typesType[noINDTYPES]=
     { 0x00, 0x00, HLBRACKET, HLENDLINE|HLSTTLINE, HLENDLINE, 0x00, 0x00, 0x00 } ;
     HILNODEPTR    root, node ;
-    uint8         buf[MAXBUF] ;
-    uint8         indno ;
+    meUByte         buf[MAXBUF] ;
+    meUByte         indno ;
     int           itype ;
-    uint16        htype ;
+    meUShort        htype ;
     
     if(n == 0)
     {
-        if((meGetString((uint8 *)"Enter indent no",0,0,buf,MAXBUF-1) != TRUE) ||
-           ((indno = (uint8) meAtoi(buf)) == 0) || 
-           (meGetString((uint8 *)"Flags",0,0,buf,MAXBUF-1) != TRUE) ||
+        if((meGetString((meUByte *)"Enter indent no",0,0,buf,MAXBUF-1) != TRUE) ||
+           ((indno = (meUByte) meAtoi(buf)) == 0) || 
+           (meGetString((meUByte *)"Flags",0,0,buf,MAXBUF-1) != TRUE) ||
            ((itype = meAtoi(buf)),
-            (meGetString((uint8 *)"look back",0,0,buf,MAXBUF) != TRUE)))
-            return mlwrite(MWABORT|MWPAUSE,(uint8 *)"Invalid init-indent entry") ;
+            (meGetString((meUByte *)"look back",0,0,buf,MAXBUF) != TRUE)))
+            return mlwrite(MWABORT|MWPAUSE,(meUByte *)"Invalid init-indent entry") ;
         if((indents[indno] = createHilight(indno,&noIndents,&indents)) == NULL)
             return FALSE ;
-        indents[indno]->ignore = (uint8) meAtoi(buf) ;
+        indents[indno]->ignore = (meUByte) meAtoi(buf) ;
         indents[indno]->type   = itype ;
         
         return TRUE ;
@@ -2424,15 +2424,15 @@ indent(int f, int n)
     
     n = (n < 0) ? ADDTOKEN_REMOVE:0 ;
     
-    if((meGetString((uint8 *)"Ind no",0,0,buf,MAXBUF-1) != TRUE) ||
-       ((indno = (uint8) meAtoi(buf)) == 0) ||
+    if((meGetString((meUByte *)"Ind no",0,0,buf,MAXBUF-1) != TRUE) ||
+       ((indno = (meUByte) meAtoi(buf)) == 0) ||
        (indno >= noIndents) ||
        ((root  = indents[indno]) == NULL) ||
-       ((itype = mlCharReply((uint8 *)"Type: ",0,typesChar,NULL)) == -1) ||
-       (meGetString((uint8 *)"Token",0,0,buf,MAXBUF-1) != TRUE))
+       ((itype = mlCharReply((meUByte *)"Type: ",0,typesChar,NULL)) == -1) ||
+       (meGetString((meUByte *)"Token",0,0,buf,MAXBUF-1) != TRUE))
         return FALSE ;
     
-    itype = (int) (((uint8 *)meStrchr(typesChar,itype)) - typesChar) ;
+    itype = (int) (((meUByte *)meStrchr(typesChar,itype)) - typesChar) ;
     if(itype >= noINDTYPES)
     {
         itype -= noINDTYPES ;
@@ -2442,14 +2442,14 @@ indent(int f, int n)
         htype = typesType[itype] ;
     
     /* add the token */
-    node = meHiltTokenAddSearchString(root,NULL,(uint8 *) buf,(htype|n)) ;
+    node = meHiltTokenAddSearchString(root,NULL,(meUByte *) buf,(htype|n)) ;
     if(n & ADDTOKEN_REMOVE)
     {
         if(itype == 0)
         {
-            if(meGetString((uint8 *)"Close",0,0,buf,MAXBUF-1) != TRUE)
+            if(meGetString((meUByte *)"Close",0,0,buf,MAXBUF-1) != TRUE)
                 return FALSE ;
-            meHiltTokenAddSearchString(root,NULL,(uint8 *) buf,(htype|n)) ;
+            meHiltTokenAddSearchString(root,NULL,(meUByte *) buf,(htype|n)) ;
         }
         return TRUE ;
     }
@@ -2462,27 +2462,27 @@ indent(int f, int n)
         root->type |= HIGOTCONT ;
     else if(itype <= 2)
     {
-        if(meGetString((uint8 *)"Close",0,0,buf,MAXBUF-1) != TRUE)
+        if(meGetString((meUByte *)"Close",0,0,buf,MAXBUF-1) != TRUE)
             return FALSE ;
         if(itype == 0)
         {
-            if((node = meHiltTokenAddSearchString(root,NULL,(uint8 *) buf,(htype|n))) == NULL)
+            if((node = meHiltTokenAddSearchString(root,NULL,(meUByte *) buf,(htype|n))) == NULL)
                 return FALSE ;
             node->scheme = INDBRACKETCLOSE ;
         }
         else
         {
-            if((meHiltTokenAddSearchString(root,node,(uint8 *) buf,0) == NULL) ||
-               (meGetString((uint8 *)"Ignore",0,0,buf,MAXBUF-1) != TRUE))
+            if((meHiltTokenAddSearchString(root,node,(meUByte *) buf,0) == NULL) ||
+               (meGetString((meUByte *)"Ignore",0,0,buf,MAXBUF-1) != TRUE))
                 return FALSE;
             node->ignore = buf[0] ;
         }
     }
     if(typesFlag[itype] & INDGOTIND)
     {
-        if(meGetString((uint8 *)"Indent",0,0,buf,MAXBUF-1) != TRUE)
+        if(meGetString((meUByte *)"Indent",0,0,buf,MAXBUF-1) != TRUE)
             return FALSE ;
-        node->scheme |= ((int8) meAtoi(buf)) & 0x00ff ;
+        node->scheme |= ((meByte) meAtoi(buf)) & 0x00ff ;
     }
     return TRUE ;
 }
@@ -2493,8 +2493,8 @@ indentLine(void)
     HILBLOCK *blkp;
     HILNODEPTR *bhis ;
     VIDEO  vps[2] ;
-    uint16 noColChng, fnoz, ii ;
-    uint8 *ss ;
+    meUShort noColChng, fnoz, ii ;
+    meUByte *ss ;
     int ind, cind, coff ;
     
     vps[0].wind = curwp ;
@@ -2525,14 +2525,14 @@ indentLine(void)
     else
         fnoz = 0 ;
     if((fnoz & 0xff00) == INDFIXED)
-        ind = ((int8) (fnoz & 0x0ff)) ;
+        ind = ((meByte) (fnoz & 0x0ff)) ;
     else
     {
         int brace=0, jj, contFlag=0, aind, lind, nind ;
         
         if((fnoz & INDINDCURLINE) &&
            ((fnoz == blkp[0].scheme) || (cind >= blkp[0].column)))
-            aind = ((int8) (fnoz & 0x0ff)) ;
+            aind = ((meByte) (fnoz & 0x0ff)) ;
         else
             aind = 0 ;
         hilights = indents ;
@@ -2555,13 +2555,13 @@ indentLine(void)
             {
                 fnoz = (blkp[ii].scheme & 0xff00) ;
                 if(fnoz == INDNEXTONWARD)
-                    ind += ((int8) (blkp[ii].scheme & 0x0ff)) ;
+                    ind += ((meByte) (blkp[ii].scheme & 0x0ff)) ;
                 else if((fnoz == INDSINGLE) && 
                         ((ii == 0) || ((ii == 1) && ((ss-disLineBuff) >= blkp[0].column))))
-                    ind -= ((int8) (blkp[ii].scheme & 0x0ff)) ;
+                    ind -= ((meByte) (blkp[ii].scheme & 0x0ff)) ;
                 else if((fnoz == INDCURONWARD) && (ii != 0) &&
                         ((ii != 1) || ((ss-disLineBuff) < blkp[0].column)))
-                    ind += ((int8) (blkp[ii].scheme & 0x0ff)) ;
+                    ind += ((meByte) (blkp[ii].scheme & 0x0ff)) ;
                 else if(fnoz == INDBRACKETOPEN)
                 {
                     if(brace >= 0)
@@ -2574,7 +2574,7 @@ indentLine(void)
                 {
                     contFlag |= 0x03 ;
                     if(!(contFlag & 0x04))
-                        ind += ((int8) (blkp[ii].scheme & 0x0ff)) ;
+                        ind += ((meByte) (blkp[ii].scheme & 0x0ff)) ;
                 }
                 /*                printf("Colour change %d is to 0x%x at column %d, ind %d\n",ii,blkp[ii].scheme,blkp[ii].column,ind) ;*/
             }

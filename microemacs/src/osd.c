@@ -79,7 +79,7 @@
 #define MF_REPEAT   0x20000000          /* T - Button Repeat execution */
 #define MF_NHILIGHT 0x40000000          /* X - No hilighting when under mouse */
 
-static uint8 osdItemFlags[]="DdmM-CxieswnhctbrfEBpSRHIGPzNTu" ; 
+static meUByte osdItemFlags[]="DdmM-CxieswnhctbrfEBpSRHIGPzNTu" ; 
 
 /* Following are the internal flags worked out from the information given */
 #define MFI_NOTEXT  0x00000001          /* No text is given, just pad */
@@ -115,7 +115,7 @@ static uint8 osdItemFlags[]="DdmM-CxieswnhctbrfEBpSRHIGPzNTu" ;
 #define RF_DISABLE  0x40000000          /* This is a temporarily disabled */
 #define RF_NOPOP    0x80000000          /* Flag to stop the pop with a control */
 
-static uint8 osdMenuFlags[]="baAtdcrHsSRMCkNGnfioFB" ;
+static meUByte osdMenuFlags[]="baAtdcrHsSRMCkNGnfioFB" ;
 
 
 #define CF_HORZADD  0x0001              /* Add to the next menu line */
@@ -138,17 +138,17 @@ typedef struct osdITEM
 {
     struct osdITEM *next ;              /* Next menu item */
     struct osdITEM *prev ;              /* Previous menu item */
-    uint8 *strData ;                    /* String data */
-    int32  argc;                        /* Argument */
-    int32  flags;                       /* Item is enabled */
+    meUByte *strData ;                  /* String data */
+    meInt  argc;                        /* Argument */
+    meInt  flags;                       /* Item is enabled */
     meSCHEME scheme;                    /* Items scheme */
-    int16  item;                        /* Menu item */
-    int16  cmdIndex;                    /* Command index or string start index */
-    int16  tab;                         /* Tab order number */
-    int16  len;                         /* Rendered length of the menu */
-    int16  height;                      /* Rendered height of the menu */
-    uint8  iflags;                      /* internal flags */
-    uint8  key;                         /* The actual key */
+    meShort  item;                      /* Menu item */
+    meShort  cmdIndex;                  /* Command index or string start index */
+    meShort  tab;                       /* Tab order number */
+    meShort  len;                       /* Rendered length of the menu */
+    meShort  height;                    /* Rendered height of the menu */
+    meUByte  iflags;                    /* internal flags */
+    meUByte  key;                       /* The actual key */
 } osdITEM;
 
 typedef struct osdDIALOG
@@ -161,51 +161,51 @@ typedef struct osdDIALOG
 #endif
     osdITEM *itemHead;                  /* Head of list of items */
     osdITEM *itemTail;                  /* Tail of list of items */
-    uint8 *strData ;                    /* String data */
-    int flags;                          /* Identification of root item */
+    meUByte *strData ;                  /* String data */
+    int      flags;                     /* Identification of root item */
 #if LCLBIND
-    uint16 nobinds;                     /* no of osd binds */
+    meUShort nobinds;                   /* no of osd binds */
 #endif
     meSCHEME mScheme;                   /* Main dialog color scheme */
     meSCHEME tScheme;                   /* title bar color scheme */
-    int16 id ;                          /* Identity of root item */
-    int16 cmdIndex;                     /* Command index or string start index */
-    int16 cntIndex;                     /* Control index or string start index */
-    int16 rszIndex;                     /* Command to resize the dialog */
-    int16 defItem ;                     /* default item number */
-    int16 focalItem ;                   /* item to focus on next redraw - temporary */
-    int16 x;                            /* Absolute Position x of menu */
-    int16 y;                            /* Absolute Position y of menu */
-    int16 width[2];                     /* width of menu (min/max) */
-    int16 depth[2];                     /* depth of menu (min/max) */
+    meShort  id ;                       /* Identity of root item */
+    meShort  cmdIndex;                  /* Command index or string start index */
+    meShort  cntIndex;                  /* Control index or string start index */
+    meShort  rszIndex;                  /* Command to resize the dialog */
+    meShort  defItem ;                  /* default item number */
+    meShort  focalItem ;                /* item to focus on next redraw - temporary */
+    meShort  x;                         /* Absolute Position x of menu */
+    meShort  y;                         /* Absolute Position y of menu */
+    meShort  width[2];                  /* width of menu (min/max) */
+    meShort  depth[2];                  /* depth of menu (min/max) */
 } osdDIALOG;
 
 typedef struct {
-    int totLen ;
-    int curPos ;
-    int wndLen ;
+    int      totLen ;
+    int      curPos ;
+    int      wndLen ;
     
-    int sbarLen ;
-    int sbarMaxLen ;
-    int barTop ;
-    int barLen ;
-    int boxTop ;
-    int boxLen ;
+    int      sbarLen ;
+    int      sbarMaxLen ;
+    int      barTop ;
+    int      barLen ;
+    int      boxTop ;
+    int      boxLen ;
     
     /* note the positions could be negative due to osd scroll dialogs */
-    int16 xPos ;
-    int16 yPos ;
-    int16 flags ;
+    meShort  xPos ;
+    meShort  yPos ;
+    meShort  flags ;
     
-    uint8 data[2] ;
+    meUByte  data[2] ;
 } meSCROLLBAR ;
 
 typedef struct {
     struct osdDISPLAY *display ;
     meSCROLLBAR *vertSBar ;
     meSCROLLBAR *horzSBar ;
-    int16 wndWidth ;
-    int16 wndDepth ;
+    meShort  wndWidth ;
+    meShort  wndDepth ;
 } osdCHILD ;
 
 /*
@@ -218,13 +218,13 @@ typedef struct
 {
     osdITEM  *menu;                     /* Pointer into the menu */
     osdCHILD *child;                    /* Pointer to the child if present */
-    int16 mcflags;                      /* Flags associated with menu */
-    int16 x;                            /* Screen position of the item in x */
-    int16 y;                            /* Screen position of the item in y */
-    int16 width;                        /* The displayed length of the menu item */
-    int16 depth;                        /* The displayed height of the menu item */
-    int16 awidth;                       /* The actual length of the menu item */
-    int16 adepth;                       /* The actual height of the menu item */
+    meShort  mcflags;                   /* Flags associated with menu */
+    meShort  x;                         /* Screen position of the item in x */
+    meShort  y;                         /* Screen position of the item in y */
+    meShort  width;                     /* The displayed length of the menu item */
+    meShort  depth;                     /* The displayed height of the menu item */
+    meShort  awidth;                    /* The actual length of the menu item */
+    meShort  adepth;                    /* The actual height of the menu item */
 } osdCONTEXT;                           /* The context of the menu */
 
 /*
@@ -238,23 +238,23 @@ typedef struct osdDISPLAY
     struct osdDISPLAY *next;            /* Next menu level */
     struct osdDISPLAY *prev;            /* Prev menu level */
     osdDIALOG *dialog ;                 /* The dialog being displayed */
-    int flags ;                         /* Current flags */
-    int area ;                          /* The storage area allocated */
-    meSCHEME *storeSchm ;               /* snap shot stored colp */
-    uint8    *storeText ;               /* snap shot stored text */
-    meSCHEME *drawnSchm ;               /* snap shot drawn colp */
-    uint8    *drawnText ;               /* snap shot drawn text */
-    int16 nbpContext;                   /* Context number of the current notebook page */
-    int16 curContext;                   /* Current context */
-    int16 newContext;                   /* Current context */
-    int16 numContexts;                  /* Number of contexts */
-    int16 multi ;                       /* Multiple colums/rows */
-    int16 x;                            /* Position x of menu */
-    int16 y;                            /* Position y of menu */
-    int16 focalX[2];                    /* Focal Position min/max x of menu */
-    int16 focalY[2];                    /* Focal Position min/max y of menu */
-    int16 width ;                       /* Width of menu */
-    int16 depth ;                       /* Depth of menu */
+    int        flags ;                  /* Current flags */
+    int        area ;                   /* The storage area allocated */
+    meSCHEME  *storeSchm ;              /* snap shot stored colp */
+    meUByte   *storeText ;              /* snap shot stored text */
+    meSCHEME  *drawnSchm ;              /* snap shot drawn colp */
+    meUByte   *drawnText ;              /* snap shot drawn text */
+    meShort    nbpContext;              /* Context number of the current notebook page */
+    meShort    curContext;              /* Current context */
+    meShort    newContext;              /* Current context */
+    meShort    numContexts;             /* Number of contexts */
+    meShort    multi ;                  /* Multiple colums/rows */
+    meShort    x;                       /* Position x of menu */
+    meShort    y;                       /* Position y of menu */
+    meShort    focalX[2];               /* Focal Position min/max x of menu */
+    meShort    focalY[2];               /* Focal Position min/max y of menu */
+    meShort    width ;                  /* Width of menu */
+    meShort    depth ;                  /* Depth of menu */
     osdCONTEXT context [1];             /* Context of the menu */
 } osdDISPLAY;
 
@@ -489,7 +489,7 @@ displayDestruct (osdDISPLAY *md)
  * Find an item in the root list
  */
 static osdITEM *
-itemFind (osdDIALOG *rp, int item, uint8 *name)
+itemFind (osdDIALOG *rp, int item, meUByte *name)
 {
     osdITEM *mp;
     int status;
@@ -497,7 +497,7 @@ itemFind (osdDIALOG *rp, int item, uint8 *name)
     /* search for item in reverse order as 99% of times they're added in order */
     if (rp->flags & RF_ALPHA)
     {
-        register uint8 *ss ;
+        register meUByte *ss ;
     
         for (mp = rp->itemTail; mp != NULL; mp = mp->prev)
         {
@@ -538,7 +538,7 @@ static void
 itemAdd (osdDIALOG *rp, osdITEM *newmp)
 {
     osdITEM *mp;                           /* Menu pointer */
-    uint8 *ns ;
+    meUByte *ns ;
     int status;
     
     if (rp->flags & RF_ALPHA)
@@ -551,7 +551,7 @@ itemAdd (osdDIALOG *rp, osdITEM *newmp)
     /* Determine if this is a string sorted list or a numeric list */
     if (rp->flags & RF_ALPHA)
     {
-        register uint8 *ss ;
+        register meUByte *ss ;
     
         for (mp = rp->itemTail; mp != NULL; mp = mp->prev)
         {
@@ -614,11 +614,11 @@ itemAdd (osdDIALOG *rp, osdITEM *newmp)
 static int
 menuExecute (osdITEM *mp, int flags, int n)
 {
-    uint8 *p, *q;                        /* Local character pointers */
+    meUByte *p, *q;                        /* Local character pointers */
     int   cc, f, mpflags ;              /* Immediate character */
-    uint8 mlStatusStore ;
-    uint8 oldAllKeys ;
-    uint8 oldUseMlBinds ;
+    meUByte mlStatusStore ;
+    meUByte oldAllKeys ;
+    meUByte oldUseMlBinds ;
     
 	/* NOTE - we must cache the mp->flags as the item may not
 	 * exist after execution. */
@@ -748,8 +748,8 @@ menuRenderArea(int x, int y, int len, int dep)
 #ifdef _DOS
     {
         meSCHEME *schmp, scheme ;
-        uint8 *textp ;
-        uint8  cc ;
+        meUByte *textp ;
+        meUByte  cc ;
         int   ii, xx ;
     
         while(--dep >= 0)
@@ -773,7 +773,7 @@ menuRenderArea(int x, int y, int len, int dep)
     if (meSystemCfg & meSYSTEM_CONSOLE)
     {
         meSCHEME *schmp, scheme ;
-        uint8 *textp ;
+        meUByte *textp ;
         WORD  cc ;
         int   ii, xx ;
     
@@ -809,8 +809,8 @@ menuRenderArea(int x, int y, int len, int dep)
     {
         meSCHEME *schmp ;
         meSCHEME scheme ;
-        uint8  cc ;
-        uint8 *textp ;
+        meUByte  cc ;
+        meUByte *textp ;
         int   ii ;
         
         while(dep--)
@@ -859,11 +859,11 @@ osdDisplaySnapshotCreate(osdDISPLAY *md)
             return 1 ;
         meFree(md->storeSchm) ;
     }
-    if((md->storeSchm = meMalloc(area*2*(sizeof(uint8)+sizeof(uint16)))) == NULL)
+    if((md->storeSchm = meMalloc(area*2*(sizeof(meUByte)+sizeof(meUShort)))) == NULL)
         return 0 ;
     
     md->drawnSchm = (md->storeSchm+area) ;
-    md->storeText = (uint8 *) (md->drawnSchm+area) ;
+    md->storeText = (meUByte *) (md->drawnSchm+area) ;
     md->drawnText = (md->storeText+area) ;
     md->area = area ;
     return 1 ;
@@ -878,7 +878,7 @@ osdDisplaySnapshotStore(osdDISPLAY *md)
 {
     FRAMELINE *flp ;
     meSCHEME  *colp ;
-    uint8     *text ;
+    meUByte     *text ;
     int depth, width, xx, yy ;
     
     /* Copy the region from the frame store into the buffer */
@@ -905,7 +905,7 @@ osdDisplaySnapshotStore(osdDISPLAY *md)
     for ( ; --depth >= 0 ; flp++,text+=width,colp+=width)
     {
         memcpy (colp,flp->scheme+xx,width*sizeof(meSCHEME));
-        memcpy (text,flp->text+xx,width*sizeof(uint8));
+        memcpy (text,flp->text+xx,width*sizeof(meUByte));
     }
 }
 /*
@@ -917,7 +917,7 @@ osdDisplaySnapshotRestore(osdDISPLAY *md)
 {
     FRAMELINE *flp ;
     meSCHEME  *colp ;
-    uint8     *text ;
+    meUByte     *text ;
     int width, depth, xx, yy ;
     
     /* Restore the old area of the screen */
@@ -945,7 +945,7 @@ osdDisplaySnapshotRestore(osdDISPLAY *md)
     for(; --depth >= 0 ; flp++,text+=width,colp+=width)
     {
         memcpy (flp->scheme+xx,colp, width*sizeof(meSCHEME));
-        memcpy (flp->text+xx,text, width*sizeof(uint8));
+        memcpy (flp->text+xx,text, width*sizeof(meUByte));
     }
 }
 
@@ -954,7 +954,7 @@ osdDisplaySnapshotDraw(osdDISPLAY *md, int sx, int sy, int nx, int ny, int drawT
 {
     FRAMELINE *flp ;
     meSCHEME  *colp ;
-    uint8     *text ;
+    meUByte     *text ;
     int width, ii ;
     
     /* Draw the osd dialog to the screen */
@@ -994,7 +994,7 @@ osdDisplaySnapshotDraw(osdDISPLAY *md, int sx, int sy, int nx, int ny, int drawT
     for (ii=ny ; --ii >= 0 ; flp++,text+=width,colp+=width)
     {
         memcpy (flp->scheme+sx, colp, nx*sizeof(meSCHEME));
-        memcpy (flp->text+sx, text, nx*sizeof(uint8));
+        memcpy (flp->text+sx, text, nx*sizeof(meUByte));
     }
     if(drawToScreen)
         menuRenderArea(sx,sy,nx,ny) ;
@@ -1008,8 +1008,8 @@ osdDisplaySnapshotDraw(osdDISPLAY *md, int sx, int sy, int nx, int ny, int drawT
 static void
 menuSetItemLength (osdDIALOG *rp, osdITEM *mp)
 {
-    uint8 *p;                           /* Pinter to the text */
-    uint8 cc;                           /* Immediate character */
+    meUByte *p;                           /* Pinter to the text */
+    meUByte cc;                           /* Immediate character */
     int len, clen;                      /* Length of text */
     
     mp->key = '\0' ;
@@ -1112,7 +1112,7 @@ meScrollBarDrawFunc meScrollBarDrawMain ;
 static int
 fillScrollBar(register meSCROLLBAR *sb, int redraw)
 {
-    uint8  *txtp1, *txtp2, *wbase ;
+    meUByte  *txtp1, *txtp2, *wbase ;
     int boxTop, len ;
     int boxLen ;                    /* Length of the box */
     
@@ -1185,7 +1185,7 @@ fillScrollBar(register meSCROLLBAR *sb, int redraw)
     
     if(sb->flags & WMSCROL)
     {
-        uint8 cc ;
+        meUByte cc ;
         int ii, jj ;
         
         if((ii = boxTop) != 0)
@@ -1330,10 +1330,10 @@ initScrollBar(meSCROLLBAR *sb, int sbarLen, int flags)
 static void
 menuRenderChildScrollBar(meSCROLLBAR *sb, osdDISPLAY *md, osdCONTEXT *mcp)
 {
-    uint8  *txtp1, *txtp2 ;
-    uint16 *colp1, *colp2 ;
-    uint8  *sbt1,  *sbt2 ;
-    uint16  scheme, mscheme ;
+    meUByte  *txtp1, *txtp2 ;
+    meUShort *colp1, *colp2 ;
+    meUByte  *sbt1,  *sbt2 ;
+    meUShort  scheme, mscheme ;
     int     invOff1, invOff2 ;
     int     txtInc, ii ;
     
@@ -1415,7 +1415,7 @@ menuRenderChildMain(osdDISPLAY *md, osdCONTEXT *mcp, int flags)
     osdCHILD   *child ;
     osdITEM    *mp;                    /* Menu pointer */
     meSCHEME   *colp, *ccolp ;
-    uint8      *txtp, *ctxtp ;
+    meUByte      *txtp, *ctxtp ;
     int         width, depth ;
     int         mdw, cmdw ;
     
@@ -1440,8 +1440,8 @@ menuRenderChildMain(osdDISPLAY *md, osdCONTEXT *mcp, int flags)
         
     for( ; depth ; depth--,txtp+=mdw,colp+=mdw,ctxtp+=cmdw,ccolp+=cmdw)
     {
-        memcpy (colp, ccolp, width * sizeof (uint16));
-        memcpy (txtp, ctxtp, width * sizeof (uint8));
+        memcpy (colp, ccolp, width * sizeof (meUShort));
+        memcpy (txtp, ctxtp, width * sizeof (meUByte));
     }
     /* Draw the text region to screen if required - draw the mcp width and height
      * so the scroll bars are also rendered
@@ -1455,7 +1455,7 @@ menuRenderChildBoarder (osdDISPLAY *md, osdCONTEXT *mcp)
 {
     osdCHILD *child;
     meSCHEME *colp1, *colp2, scheme ;
-    uint8    *txtp1, *txtp2 ;
+    meUByte    *txtp1, *txtp2 ;
     int       width, depth, ii ;
     int       hw, mdw ;
     
@@ -1584,9 +1584,9 @@ menuRenderChildBoarder (osdDISPLAY *md, osdCONTEXT *mcp)
 }
 
 static int
-osdRenderEntryLine(uint8 *txtp, uint8 *ss, int len, int cpos, int ww)
+osdRenderEntryLine(meUByte *txtp, meUByte *ss, int len, int cpos, int ww)
 {
-    uint8  expbuf[MAXBUF+1], *s1 ;
+    meUByte  expbuf[MAXBUF+1], *s1 ;
     int start, col ;
     
     if(len == 0)
@@ -1627,10 +1627,10 @@ osdRenderEntryLine(uint8 *txtp, uint8 *ss, int len, int cpos, int ww)
 }
 
 static int
-osdRenderEntry(uint8 *txtp, uint8 *ss, int flags, int cpos, 
+osdRenderEntry(meUByte *txtp, meUByte *ss, int flags, int cpos, 
                int totWidth, int ww, int dd, int *crow)
 {
-    uint8 *s1, *s2 ;                        /* Current character */
+    meUByte *s1, *s2 ;                        /* Current character */
     int len, col, row, start ;
     
     if(flags & RF_NEWLINE)
@@ -1667,7 +1667,7 @@ osdRenderEntry(uint8 *txtp, uint8 *ss, int flags, int cpos,
     start -= row ;
     s1 = ss ;
     while(--start >= 0)
-        s1 = ((uint8 *)meStrchr(s1,meNLCHAR))+1 ;
+        s1 = ((meUByte *)meStrchr(s1,meNLCHAR))+1 ;
     dd -= row+1 ;
     while(--row >= 0)
     {
@@ -1702,9 +1702,9 @@ osdRenderEntry(uint8 *txtp, uint8 *ss, int flags, int cpos,
     return col ;
 }
 
-static int16
-menuRenderChildRefocus(int16 curPos, int16 childSize, int16 windSize,
-                       int16 focalMin, int16 focalMax)
+static meShort
+menuRenderChildRefocus(meShort curPos, meShort childSize, meShort windSize,
+                       meShort focalMin, meShort focalMax)
 {
     if(((focalMax+curPos) < 0) ||
        ((focalMin+curPos) >= windSize))
@@ -1811,12 +1811,12 @@ menuRenderItem (osdDISPLAY *md, int offset, int flags)
     {
         meSCHEME  scheme;             /* Colour information */
         meSCHEME *colp;               /* Colour pointer */
-        uint8    *txtp;               /* Text pointer */
-        uint8    *p;                  /* Local text pointer */
-        uint8     fill;               /* The fill char */
-        uint8     chkStr[6] ;         /* The checkbox string */
-        int16     maxx ;              /* Length of the string */
-        int16     curx ;
+        meUByte    *txtp;               /* Text pointer */
+        meUByte    *p;                  /* Local text pointer */
+        meUByte     fill;               /* The fill char */
+        meUByte     chkStr[6] ;         /* The checkbox string */
+        meShort     maxx ;              /* Length of the string */
+        meShort     curx ;
         
         /* Get the colour of the item */
         scheme = mp->scheme ;
@@ -1858,7 +1858,7 @@ menuRenderItem (osdDISPLAY *md, int offset, int flags)
         }
         /* Copy in the default colpair right across, only the hilight char need to be changed */
         {
-            uint16 *cp=colp ;
+            meUShort *cp=colp ;
             int ll, ii=mcp->depth ;
             while(--ii >= 0)
             {
@@ -1880,7 +1880,7 @@ menuRenderItem (osdDISPLAY *md, int offset, int flags)
         }
         if(mp->flags & MF_CHECK)
         {
-            uint8 *bs=(uint8 *) mp->strData ;
+            meUByte *bs=(meUByte *) mp->strData ;
             int len, ii ;
             
             for(ii=0,len=0 ; ii<6 ; ii++)
@@ -1892,7 +1892,7 @@ menuRenderItem (osdDISPLAY *md, int offset, int flags)
             }
             if(mp->flags & MF_PREPND)
             {
-                uint8 *ss=chkStr ;
+                meUByte *ss=chkStr ;
                 curx += len ;
                 while(--len >= 0)
                     *txtp++ = *ss++ ;
@@ -1925,10 +1925,10 @@ menuRenderItem (osdDISPLAY *md, int offset, int flags)
         }
         else if(!(mp->iflags & MFI_NOTEXT))
         {
-            int16 sttx = curx ;
-            int16 cury = mcp->adepth ;
-            uint8 cc;                        /* Current character */
-            p = (uint8 *) mp->strData ;
+            meShort sttx = curx ;
+            meShort cury = mcp->adepth ;
+            meUByte cc;                        /* Current character */
+            p = (meUByte *) mp->strData ;
             if(mp->flags & MF_CHECK)
                 p += 6 ;
             for(;;)
@@ -1970,7 +1970,7 @@ menuRenderItem (osdDISPLAY *md, int offset, int flags)
         
         if((mp->flags & MF_CHECK) && (chkStr[0] != '\0'))
         {
-            uint8 cc, *ss=chkStr ;
+            meUByte cc, *ss=chkStr ;
             while((cc = *ss++) != '\0')
                 *txtp++ = cc ;
         }
@@ -1995,12 +1995,12 @@ menuRenderItem (osdDISPLAY *md, int offset, int flags)
 }
 
 void
-osdDisp(uint8 *buf, uint8 *cont, int cpos)
+osdDisp(meUByte *buf, meUByte *cont, int cpos)
 {
     osdDISPLAY    *md=osdCurChild ;
     osdCONTEXT    *mcp;                    /* Menu context pointer */
     osdITEM       *mp;                     /* Menu pointer */
-    uint8         *txtp;                   /* Text pointer */
+    meUByte         *txtp;                   /* Text pointer */
     int            xx, yy, ww, dd ;
     int            col, row ;
     
@@ -2094,9 +2094,9 @@ static void
 menuRenderLine(osdDISPLAY *md, int x, int y, meSCHEME scheme,
                int drawBoarder, int len, int type)
 {
-    uint16 *colp ;
-    uint8  *txtp ;
-    uint8   cc ;
+    meUShort *colp ;
+    meUByte  *txtp ;
+    meUByte   cc ;
 
     colp = md->drawnSchm + (y*md->width) + x ;
     txtp = md->drawnText + (y*md->width) + x ;
@@ -2171,8 +2171,8 @@ menuRenderLine(osdDISPLAY *md, int x, int y, meSCHEME scheme,
 static void
 menuRenderItemGrid(osdDISPLAY *md, int x, int y, int width, int depth)
 {
-    uint8  *txtp, *tt ;
-    uint8   cc ;
+    meUByte  *txtp, *tt ;
+    meUByte   cc ;
     int ii ;
     
     txtp = md->drawnText + (y*md->width) + x ;
@@ -2229,8 +2229,8 @@ menuRenderItemGrid(osdDISPLAY *md, int x, int y, int width, int depth)
 static void
 menuRenderCorrectNoteBookPage(osdDISPLAY *md, osdCONTEXT *mcp)
 {
-    uint8  *tt ;
-    uint8   cc ;
+    meUByte  *tt ;
+    meUByte   cc ;
     int ii ;
     
     tt = md->drawnText + (mcp->y*md->width) + mcp->x ;
@@ -2288,7 +2288,7 @@ menuRender (osdDISPLAY *md)
     int colWidth;                       /* Width of the column */
     int drawBoarder ;                   /* Do we draw a boarder? */
     int drawGrid ;                      /* Do we draw in a grid? */
-    uint16 scheme;
+    meUShort scheme;
     osdCONTEXT *nbmcp=NULL;             /* Menu context pointer */
     
     scheme = md->dialog->mScheme ;
@@ -2465,7 +2465,7 @@ menuRender (osdDISPLAY *md)
         menuRenderCorrectNoteBookPage(md,nbmcp) ;
     if(md->flags & RF_TITLE)
     {
-        uint8 *ss ;
+        meUByte *ss ;
         
         /* If the dialog has a resize command then draw the bottom '*' */
         if(md->flags & RF_RESIZE)
@@ -2477,7 +2477,7 @@ menuRender (osdDISPLAY *md)
         menuRenderLine (md,1,0,scheme,1,colWidth,4) ;
         if((ss = md->dialog->strData) != NULL)
         {
-            uint8 *txtp ;
+            meUByte *txtp ;
             int   ll ;
             
             /* We know the color is correct so just splat in the text */
@@ -2541,7 +2541,7 @@ menuConfigure(osdDIALOG *rp, osdDISPLAY *md, int child)
 {
     osdCONTEXT *mcp;                    /* Menu context pointer */
     osdITEM *mp;                        /* Menu pointer */
-    int16 curItem=-1,newItem=-1;        /* Display's curContext & newContext item # */
+    meShort curItem=-1,newItem=-1;        /* Display's curContext & newContext item # */
     int minWidth, maxWidth;             /* The min/max allowed width */
     int minDepth, maxDepth;             /* The min/max allowed depth */
     int ii,jj;                          /* Local loop counter */
@@ -2552,7 +2552,7 @@ menuConfigure(osdDIALOG *rp, osdDISPLAY *md, int child)
             ii++;
     if(ii == 0)
     {
-        mlwrite(MWABORT|MWPAUSE,(uint8 *)"[No active items in osd dialog %d]", rp->id);
+        mlwrite(MWABORT|MWPAUSE,(meUByte *)"[No active items in osd dialog %d]", rp->id);
         return NULL;
     }
     if(md == NULL)
@@ -2675,7 +2675,7 @@ menuConfigure(osdDIALOG *rp, osdDISPLAY *md, int child)
     {
         osdCHILD   *child ;
         osdDISPLAY *cmd ;
-        int16 width, depth ;
+        meShort width, depth ;
         int mcflags = CF_ROWFRST;           /* The mcp row flags */
         
         /* Loop through setting the context menu pointers and flags */
@@ -2841,7 +2841,7 @@ menuConfigure(osdDIALOG *rp, osdDISPLAY *md, int child)
     /* setup the curContext & each contexts allowable horzadd's */
     {
         int curWidth = 0 ;                   /* width of current row */
-        int16 nbpContext = -1;                     /* Current Notebook page Menu context pointer */
+        meShort nbpContext = -1;                     /* Current Notebook page Menu context pointer */
         
         /* Loop through setting the context menu pointers and flags */
         for (ii=0 ; ii < md->numContexts ; ii++)
@@ -3121,11 +3121,11 @@ menuPosition(osdDISPLAY *md, int redraw)
         /* On a redraw check that at least something is showing */
         if ((md->x + md->width) <= 0)
             md->x = 1-md->width ;
-        else if (md->x >= (int16) TTncol)
+        else if (md->x >= (meShort) TTncol)
             md->x = TTncol - 1 ;
         if ((md->y + md->depth) <= 0)
             md->y = 1-md->depth ;
-        else if (md->y > (int16) TTnrow)
+        else if (md->y > (meShort) TTnrow)
             md->y = TTnrow ;
     }
     else
@@ -3330,7 +3330,7 @@ osdDisplayPush(int id, int flags)
     id &= 0x0ffff ;
     if ((rp = dialogFind (id)) == NULL)   /* Find the root of the menu */
     {
-        mlwrite(MWABORT|MWPAUSE,(uint8 *)"[Cannot find osd object identity %d]", id);
+        mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Cannot find osd object identity %d]", id);
         return NULL;
     }
     /* Execute the initialization command if present */
@@ -3416,7 +3416,7 @@ osdStoreAll(void)
 void
 osdRestoreAll(int garb)
 {
-    uint8 oldAllKeys=TTallKeys ;
+    meUByte oldAllKeys=TTallKeys ;
     osdDISPLAY *tmd ;                 /* Temporary display frame */
     
     if(!TTallKeys)
@@ -3682,8 +3682,8 @@ osdDisplayMove(osdDISPLAY *md, int dx, int dy)
 static void
 osdDisplayMouseMove(osdDISPLAY *md)
 {
-    uint8 oldAllKeys=TTallKeys ;
-    int16 mmx, mmy ;
+    meUByte oldAllKeys=TTallKeys ;
+    meShort mmx, mmy ;
     int cc ;
     
     /* Enable all mouse movements - important if we've come from meGetStringFromUser */
@@ -3759,8 +3759,8 @@ osdDisplayResize(int dx, int dy)
 static void
 osdDisplayMouseResize(void)
 {
-    uint8 oldAllKeys=TTallKeys ;
-    int16 mmx, mmy ;
+    meUByte oldAllKeys=TTallKeys ;
+    meShort mmx, mmy ;
     int cc ;
     
     /* Enable all mouse movements - important if we've come from meGetStringFromUser */
@@ -3815,7 +3815,7 @@ osdScrollBarDrawMain(meSCROLLBAR *sb)
 static void
 scrollScrollBarEvent(meSCROLLBAR *sb, int dd)
 {
-    uint8 oldAllKeys=TTallKeys ;
+    meUByte oldAllKeys=TTallKeys ;
     int newPos, cc ;
     
     /* Enable all mouse timed events */
@@ -3848,7 +3848,7 @@ scrollScrollBarEvent(meSCROLLBAR *sb, int dd)
 static void
 boxDragScrollBarEvent(meSCROLLBAR *sb)
 {
-    uint8 oldAllKeys=TTallKeys ;
+    meUByte oldAllKeys=TTallKeys ;
     long startPos;                      /* Starting line number (top row) */
     long startMouse;                    /* Starting mouse position */
     long mouseRatio;                    /* Ratio of mouse movement to lines */
@@ -4027,7 +4027,7 @@ handleScrollBarEvent(meSCROLLBAR *sb)
  * ignored.
  */
 static int
-osdDisplayGetMousePosition(osdDISPLAY *md, int16 xx, int16 yy, int leftPick)
+osdDisplayGetMousePosition(osdDISPLAY *md, meShort xx, meShort yy, int leftPick)
 {
     osdCONTEXT *mcp;
     int ii;
@@ -4558,7 +4558,7 @@ menuInteraction (int *retState)
 {
     int osdCursorState ;
     int cc, nit, ii, n, f ;
-    uint32 arg ;
+    meUInt arg ;
     int state ;
     osdITEM *mp ;
 #ifdef _UNIX
@@ -4729,7 +4729,7 @@ menuInteraction (int *retState)
             /*
              * Handle bounded keys
              */
-            ii = decode_key((uint16)(cc), &arg) ;
+            ii = decode_key((meUShort)(cc), &arg) ;
             if(arg)
             {
                 f = 1 ;
@@ -4875,7 +4875,7 @@ menuInteraction (int *retState)
                 nit = -1 ;
             if(nit < 0)
             {
-                mlwrite(MWABORT|MWPAUSE,(uint8 *)"[Nothing to execute for item]") ;
+                mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Nothing to execute for item]") ;
                 continue ;
             }
             osdNewChild->newContext = nit ;
@@ -4993,11 +4993,11 @@ menuInteraction (int *retState)
 int
 osd (int f, int n)
 {
-    uint8 oldAllKeys=TTallKeys ;
+    meUByte oldAllKeys=TTallKeys ;
     osdITEM    *mp;                     /* Pointer to the menu */
     osdDISPLAY *md, *pmd;               /* Pointer to the osdDisplayHd */
-    uint8 oldClexec;	                /* command line execution flag	*/
-    uint8 buf [MAXBUF];                 /* Reply buffer */
+    meUByte oldClexec;	                /* command line execution flag	*/
+    meUByte buf [MAXBUF];                 /* Reply buffer */
     int   noDis, ii ;                   /* Status of the invocation */
 
     /* If no arguments are defined then a menu is being
@@ -5005,15 +5005,15 @@ osd (int f, int n)
     if ((f == FALSE) || (n < 0))
     {
         osdDIALOG *rp;                  /* Pointer to container root */
-        uint8 txtbuf [MAXBUF];          /* Text string buffer */
-        uint8 cc, *dd, *bb, iflags ;
+        meUByte txtbuf [MAXBUF];          /* Text string buffer */
+        meUByte cc, *dd, *bb, iflags ;
         int   id, item, flags ;
         int   txtlen, cmdlen;           /* Command length */
         int   argc, namidx, scheme ;
-        int16 width, depth, tab ;
+        meShort width, depth, tab ;
         
         /* Get the menu identity */
-        if ((ii=meGetString((uint8 *)"Identity", 0, 0, buf, 16)) == FALSE)
+        if ((ii=meGetString((meUByte *)"Identity", 0, 0, buf, 16)) == FALSE)
         {
             pmd = osdCurMd ;
             if(n < 0)
@@ -5054,7 +5054,7 @@ osd (int f, int n)
              * 0x02         Define the menu line string.
              */
             
-            if (meGetString((uint8 *)"Flags", 0, 0, buf, 16) == ABORT)
+            if (meGetString((meUByte *)"Flags", 0, 0, buf, 16) == ABORT)
                 return ABORT ;
             flags = meAtoi(buf) ;
             if (flags == 0)
@@ -5084,7 +5084,7 @@ osd (int f, int n)
         }
                 
         if(id > 32767)
-            return mlwrite(MWABORT|MWPAUSE,(uint8 *)"Invalid identity [%s]", buf);
+            return mlwrite(MWABORT|MWPAUSE,(meUByte *)"Invalid identity [%s]", buf);
         
         
         if(n < 0)
@@ -5094,16 +5094,16 @@ osd (int f, int n)
         }
         
         /* Get the menu index */
-        if ((meGetString((uint8 *)"Item", 0, 0, buf, 16) == ABORT) ||
+        if ((meGetString((meUByte *)"Item", 0, 0, buf, 16) == ABORT) ||
             (((item = meAtoi(buf)) < 0) || (item > 32767)))
-            return mlwrite(MWABORT|MWPAUSE,(uint8 *)"Invalid item identity [%s]", buf);
+            return mlwrite(MWABORT|MWPAUSE,(meUByte *)"Invalid item identity [%s]", buf);
         
         /* Determine if this is a root item */
         if (item == 0)
         {
             if ((rp = dialogConstruct (id)) == NULL)
                 return ABORT ;
-            if (meGetString((uint8 *)"Flags", 0, 0, buf,MAXBUF) != TRUE)
+            if (meGetString((meUByte *)"Flags", 0, 0, buf,MAXBUF) != TRUE)
                 return ABORT ;
             
             /* turn the flag string into bits */
@@ -5121,7 +5121,7 @@ osd (int f, int n)
             /* If it has a main dialog scheme then get it */
             if(flags & RF_MSCHEME) 
             {
-                if (meGetString((uint8 *)"Scheme", 0, 0, buf, MAXBUF) != TRUE)
+                if (meGetString((meUByte *)"Scheme", 0, 0, buf, MAXBUF) != TRUE)
                     return ABORT ;
                 rp->mScheme = convertUserScheme(meAtoi(buf),osdScheme) ;
             }
@@ -5130,11 +5130,11 @@ osd (int f, int n)
             /* If its an absolute position menu, get the position */
             if(rp->flags & (RF_ABSPOS|RF_OFFSTPOS))
             {
-                if((meGetString((uint8 *)"X-pos", 0, 0, buf, 16) != TRUE) ||
-                   ((rp->x = (int16) meAtoi(buf)),
-                    (meGetString((uint8 *)"Y-pos", 0, 0, buf, 16) != TRUE)))
+                if((meGetString((meUByte *)"X-pos", 0, 0, buf, 16) != TRUE) ||
+                   ((rp->x = (meShort) meAtoi(buf)),
+                    (meGetString((meUByte *)"Y-pos", 0, 0, buf, 16) != TRUE)))
                     return ABORT ;
-                rp->y = (int16) meAtoi(buf) ;
+                rp->y = (meShort) meAtoi(buf) ;
             }
             /* If theres a size given, get it. Note the following values mean:
              * 
@@ -5147,64 +5147,64 @@ osd (int f, int n)
             {
                 for(; item<2 ; item++)
                 {
-                    if((meGetString((uint8 *)"Width", 0, 0, buf, 16) != TRUE) ||
-                       ((rp->width[item] = (int16) meAtoi(buf)),
-                        (meGetString((uint8 *)"Depth", 0, 0, buf, 16) != TRUE)))
+                    if((meGetString((meUByte *)"Width", 0, 0, buf, 16) != TRUE) ||
+                       ((rp->width[item] = (meShort) meAtoi(buf)),
+                        (meGetString((meUByte *)"Depth", 0, 0, buf, 16) != TRUE)))
                         return ABORT ;
-                    rp->depth[item] = (int16) meAtoi(buf) ;
+                    rp->depth[item] = (meShort) meAtoi(buf) ;
                 }
             }
             if(rp->flags & RF_DEFAULT)
             {
-                if(meGetString((uint8 *)"Default", 0, 0, buf, 16) != TRUE)
+                if(meGetString((meUByte *)"Default", 0, 0, buf, 16) != TRUE)
                     return ABORT ;
-                rp->defItem = (int16) meAtoi(buf) ;
+                rp->defItem = (meShort) meAtoi(buf) ;
             }
             if(rp->flags & RF_FOCALITM)
             {
-                if(meGetString((uint8 *)"Focus", 0, 0, buf, 16) != TRUE)
+                if(meGetString((meUByte *)"Focus", 0, 0, buf, 16) != TRUE)
                     return ABORT ;
-                rp->focalItem = (int16) meAtoi(buf) ;
+                rp->focalItem = (meShort) meAtoi(buf) ;
             }
             if(rp->flags & RF_TITLE)
             {
                 if(flags & RF_TSCHEME) 
                 {
-                    if (meGetString((uint8 *)"Scheme", 0, 0, buf, MAXBUF) != TRUE)
+                    if (meGetString((meUByte *)"Scheme", 0, 0, buf, MAXBUF) != TRUE)
                         return ABORT ;
                     rp->tScheme = convertUserScheme(meAtoi(buf),rp->mScheme) ;
                 }
                 else
                     rp->tScheme = rp->mScheme ;
-                if(meGetString((uint8 *)"Text", 0, 0, txtbuf, MAXBUF) == TRUE)
+                if(meGetString((meUByte *)"Text", 0, 0, txtbuf, MAXBUF) == TRUE)
                     rp->strData = meStrdup(txtbuf) ;
             }
             /* get the resize command if there is one */
             if(rp->flags & RF_RESIZE)
             {
-                if ((ii = meGetString((uint8 *)"Command", MLCOMMAND, 0, buf, MAXBUF)) != TRUE)
+                if ((ii = meGetString((meUByte *)"Command", MLCOMMAND, 0, buf, MAXBUF)) != TRUE)
                     return ABORT ;
                 if ((rp->rszIndex = decode_fncname(buf,0)) < 0)
-                    return mlwrite (MWABORT|MWPAUSE,(uint8 *)"Cannot find command [%s]", buf);
+                    return mlwrite (MWABORT|MWPAUSE,(meUByte *)"Cannot find command [%s]", buf);
             }
             /* get the resize command if there is one */
             if(rp->flags & RF_CONTROL)
             {
-                if ((ii = meGetString((uint8 *)"Control", MLCOMMAND, 0, buf, MAXBUF)) != TRUE)
+                if ((ii = meGetString((meUByte *)"Control", MLCOMMAND, 0, buf, MAXBUF)) != TRUE)
                     return ABORT ;
                 if ((rp->cntIndex = decode_fncname(buf,0)) < 0)
-                    return mlwrite (MWABORT|MWPAUSE,(uint8 *)"Cannot find command [%s]", buf);
+                    return mlwrite (MWABORT|MWPAUSE,(meUByte *)"Cannot find command [%s]", buf);
             }
             else
                 rp->cntIndex = -1 ;
             /* get the initialize command if there is one */
-            if ((ii = meGetString((uint8 *)"Command", MLCOMMAND, 0, buf, MAXBUF)) == ABORT)
+            if ((ii = meGetString((meUByte *)"Command", MLCOMMAND, 0, buf, MAXBUF)) == ABORT)
                 return ABORT ;
             rp->cmdIndex = -1 ;                     /* Assume no command */
             if (ii == TRUE)
             {
                 if ((rp->cmdIndex = decode_fncname(buf,0)) < 0)
-                    return mlwrite (MWABORT|MWPAUSE,(uint8 *)"Cannot find command [%s]", buf);
+                    return mlwrite (MWABORT|MWPAUSE,(meUByte *)"Cannot find command [%s]", buf);
             }
             /* is this the main menu? is so store the id */
             if(rp->flags & RF_MAINMN)
@@ -5215,11 +5215,11 @@ osd (int f, int n)
         }
         
         if ((rp = dialogFind (id)) == NULL)
-            return mlwrite(MWABORT|MWPAUSE,(uint8 *)"[Osd dialog %d undefined]", id);
+            return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Osd dialog %d undefined]", id);
         
             
         /* Get the enable flag */
-        if (meGetString((uint8 *)"Flags", 0, 0, buf,MAXBUF) != TRUE)
+        if (meGetString((meUByte *)"Flags", 0, 0, buf,MAXBUF) != TRUE)
             return ABORT ;
         /* turn the flag string into bits */
         bb = buf ;
@@ -5242,7 +5242,7 @@ osd (int f, int n)
                 flags |= MF_HORZADD|MF_GRID|MF_REDRAW|MF_NOEXIT ;
             }
             else
-                return mlwrite(MWABORT,(uint8 *)"[Illegal NoteBook item]") ;
+                return mlwrite(MWABORT,(meUByte *)"[Illegal NoteBook item]") ;
         }
         
         /* if this item has a sub-menu and no direction is set,
@@ -5253,7 +5253,7 @@ osd (int f, int n)
         if(flags & MF_CHILD)
         {
             if (rp->flags & RF_ALPHA)
-                return mlwrite(MWABORT,(uint8 *)"[Cannot have child item with an Alpha dialog]") ;
+                return mlwrite(MWABORT,(meUByte *)"[Cannot have child item with an Alpha dialog]") ;
             iflags |= MFI_NOTEXT ;
             if(flags & MF_SCRLBOX)
                 flags |= MF_SIZE ;
@@ -5262,9 +5262,9 @@ osd (int f, int n)
         
         if(flags & MF_TAB) 
         {
-            if(meGetString((uint8 *)"Tab", 0, 0, buf, 16) != TRUE)
+            if(meGetString((meUByte *)"Tab", 0, 0, buf, 16) != TRUE)
                 return ABORT ;
-            tab = (int16) meAtoi(buf) ;
+            tab = (meShort) meAtoi(buf) ;
         }
         else
             tab = -1 ;
@@ -5272,28 +5272,28 @@ osd (int f, int n)
         scheme = rp->mScheme ;
         if(flags & MF_SCHEME) 
         {
-            if (meGetString((uint8 *)"Scheme", 0, 0, buf, MAXBUF) != TRUE)
+            if (meGetString((meUByte *)"Scheme", 0, 0, buf, MAXBUF) != TRUE)
                 return ABORT ;
             scheme = convertUserScheme(meAtoi(buf),osdScheme) ;
         }
         if(flags & MF_SIZE) 
         {
-            if((meGetString((uint8 *)"Width", 0, 0, buf, 16) != TRUE) ||
-               ((width = (int16) meAtoi(buf)),
-                (meGetString((uint8 *)"Depth", 0, 0, buf, 16) != TRUE)))
+            if((meGetString((meUByte *)"Width", 0, 0, buf, 16) != TRUE) ||
+               ((width = (meShort) meAtoi(buf)),
+                (meGetString((meUByte *)"Depth", 0, 0, buf, 16) != TRUE)))
                 return ABORT ;
-            depth = (int16) meAtoi(buf) ;
+            depth = (meShort) meAtoi(buf) ;
         }
         if(!(flags & MF_CHILD))
         {
             flags &= ~MF_SCRLBOX ;
             /* Get the string field - not needed if deleting a non alpha item */
-            if ((ii = meGetString((uint8 *)"Text", 0, 0, txtbuf, MAXBUF)) == ABORT)
+            if ((ii = meGetString((meUByte *)"Text", 0, 0, txtbuf, MAXBUF)) == ABORT)
                 return ABORT ;
             else if (ii == FALSE)
             {
                 if (rp->flags & RF_ALPHA)
-                    return mlwrite(MWABORT,(uint8 *)"[Cannot have item with no text in an Alpha dialog]") ;
+                    return mlwrite(MWABORT,(meUByte *)"[Cannot have item with no text in an Alpha dialog]") ;
                 iflags |= MFI_NOTEXT ;
                 txtlen = 0 ;
             }
@@ -5303,7 +5303,7 @@ osd (int f, int n)
         /* Get the numeric argument. Check for 'f' which means false or
          * a value which means true. */
         argc = 1 ;
-        if ((ii = meGetString((uint8 *)"Argument", 0, 0, buf, 16)) == ABORT)
+        if ((ii = meGetString((meUByte *)"Argument", 0, 0, buf, 16)) == ABORT)
             return ABORT ;
         if (ii == TRUE)
         {
@@ -5317,7 +5317,7 @@ osd (int f, int n)
             flags |= MF_SEP ;
 
         /* Get the command */
-        if ((ii = meGetString((uint8 *)"Command", MLCOMMAND, 0, buf, MAXBUF)) == ABORT)
+        if ((ii = meGetString((meUByte *)"Command", MLCOMMAND, 0, buf, MAXBUF)) == ABORT)
             return ABORT ;
         namidx = -1;              /* Assume no sub-command */
         cmdlen = 0;                     /* Assume no command string */
@@ -5326,7 +5326,7 @@ osd (int f, int n)
             if (flags & MF_STR)
                 cmdlen = meStrlen (buf) + 1;
             else if ((namidx = decode_fncname(buf,0)) < 0)
-                return mlwrite(MWABORT|MWPAUSE,(uint8 *)"Cannot find command [%s]", buf);
+                return mlwrite(MWABORT|MWPAUSE,(meUByte *)"Cannot find command [%s]", buf);
         }
         
         if((txtlen+cmdlen) == 0)
@@ -5395,7 +5395,7 @@ osd (int f, int n)
             /* an entry box this small will blow ME up! fix it and bitch */
             mp->height = 1 ;
             mp->len = 3 ;
-            return mlwrite(MWABORT|MWPAUSE,(uint8 *)"[Entry size is too small]");
+            return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Entry size is too small]");
         }
 
         return TRUE ;
@@ -5534,27 +5534,27 @@ int
 osdBind(int f, int n)
 {
     osdDIALOG *rp;
-    uint8 buf[16];
+    meUByte buf[16];
     
     /* Get the menu root */
-    if(meGetString((uint8 *)"Identity", 0, 0, buf, 16) != TRUE)
+    if(meGetString((meUByte *)"Identity", 0, 0, buf, 16) != TRUE)
         return ABORT ;
     if((rp=dialogFind(meAtoi(buf))) == NULL)
-        return mlwrite(MWABORT|MWPAUSE,(uint8 *)"[Osd dialog %s undefined]",buf);
-    return bindkey((uint8 *)"Osd bind", f, n, &(rp->nobinds), &(rp->binds)) ;
+        return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Osd dialog %s undefined]",buf);
+    return bindkey((meUByte *)"Osd bind", f, n, &(rp->nobinds), &(rp->binds)) ;
 }
 int
 osdUnbind(int f, int n)
 {
     osdDIALOG *rp;
-    uint8 buf[16];
+    meUByte buf[16];
     
     /* Get the menu root */
-    if(meGetString((uint8 *)"Identity", 0, 0, buf, 16) != TRUE)
+    if(meGetString((meUByte *)"Identity", 0, 0, buf, 16) != TRUE)
         return ABORT ;
     if((rp=dialogFind(meAtoi(buf))) == NULL)
-        return mlwrite(MWABORT|MWPAUSE,(uint8 *)"[Osd dialog %s undefined]",buf);
-    return unbindkey((uint8 *)"Osd",0,&(rp->nobinds),&(rp->binds)) ;
+        return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Osd dialog %s undefined]",buf);
+    return unbindkey((meUByte *)"Osd",0,&(rp->nobinds),&(rp->binds)) ;
 }
 #endif
 

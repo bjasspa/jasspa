@@ -36,7 +36,7 @@
 #include "esearch.h"
 
 int
-getBufferName(uint8 *prompt, int opt, int defH, uint8 *buf)
+getBufferName(meUByte *prompt, int opt, int defH, meUByte *buf)
 {
     /* Only setup the history to a specific buffer if we're
      * told to and we're not running a macro
@@ -60,7 +60,7 @@ getBufferName(uint8 *prompt, int opt, int defH, uint8 *buf)
    Check the extent string for the filename extent. */
 				
 static int
-checkExtent (uint8 *filename, int len, uint8 *sptr, Fintssi cmpFunc)
+checkExtent (meUByte *filename, int len, meUByte *sptr, Fintssi cmpFunc)
 {
     int  extLen ;
     char cc ;
@@ -95,15 +95,15 @@ checkExtent (uint8 *filename, int len, uint8 *sptr, Fintssi cmpFunc)
  * returning the 'f' prefixed name.
  */
 
-static uint8 defaultHookName[] = "fhook-default" ;
-static uint8 binaryHookName[]  = "fhook-binary" ;
-static uint8 rbinHookName[]    = "fhook-rbin" ;
-static uint8 triedDefault=0 ;
-static uint8 triedBinary=0 ;
-static uint8 triedRbin=0 ;
+static meUByte defaultHookName[] = "fhook-default" ;
+static meUByte binaryHookName[]  = "fhook-binary" ;
+static meUByte rbinHookName[]    = "fhook-rbin" ;
+static meUByte triedDefault=0 ;
+static meUByte triedBinary=0 ;
+static meUByte triedRbin=0 ;
 
 static void
-assignHooks (BUFFER *bp, uint8 *hooknm)
+assignHooks (BUFFER *bp, meUByte *hooknm)
 {
     int fhook;                          /* File hook indentity */
 
@@ -117,12 +117,12 @@ assignHooks (BUFFER *bp, uint8 *hooknm)
        ((hooknm != rbinHookName) || !triedRbin) &&
        (meStrlen(hooknm) > 6))
     {
-	uint8 fn[FILEBUF], buff[MAXBUF] ;             /* Temporary buffer */
+	meUByte fn[FILEBUF], buff[MAXBUF] ;             /* Temporary buffer */
 
 	buff[0] = 'h' ;
 	buff[1] = 'k' ;
 	meStrcpy(buff+2,hooknm+6) ;
-	if(!fileLookup(buff,(uint8 *)".emf",meFL_CHECKDOT|meFL_USESRCHPATH,fn))
+	if(!fileLookup(buff,(meUByte *)".emf",meFL_CHECKDOT|meFL_USESRCHPATH,fn))
 	{
 	    if(hooknm == defaultHookName)
 		triedDefault++ ;
@@ -131,7 +131,7 @@ assignHooks (BUFFER *bp, uint8 *hooknm)
 	    else if(hooknm == rbinHookName)
 		triedRbin++ ;
 	    else
-		mlwrite(MWABORT|MWWAIT,(uint8 *)"Failed to find file [%s]",buff);
+		mlwrite(MWABORT|MWWAIT,(meUByte *)"Failed to find file [%s]",buff);
 	}
 	else
 	{
@@ -172,8 +172,8 @@ static void
 setBufferContext(BUFFER *bp)
 {
     register BUFFER *tbp ;
-    uint32 w_flag;
-    int32 topLineNo ;
+    meUInt w_flag;
+    meInt topLineNo ;
     int ii ;
     
 #if COLOR
@@ -199,7 +199,7 @@ setBufferContext(BUFFER *bp)
         !meModeTest(bp->b_mode,MDRBIN) && !meModeTest(bp->b_mode,MDDIR) &&
         ((ii = fileHookCount) > 0))
     {
-	uint8 *pp, cc ;
+	meUByte *pp, cc ;
 	LINE *lp ;
 	int nn ;
 	
@@ -238,7 +238,7 @@ setBufferContext(BUFFER *bp)
     }
     if(bp->fhook < 0)
     {
-	uint8 *hooknm ;
+	meUByte *hooknm ;
 	
 	/* Do file hooks */
 	if(meModeTest(bp->b_mode,MDBINRY))
@@ -247,7 +247,7 @@ setBufferContext(BUFFER *bp)
 	    hooknm = rbinHookName ;
 	else
 	{
-	    uint8 *sp ;
+	    meUByte *sp ;
 	    int    ll ;
 	    
 	    sp = bp->b_bname ;
@@ -265,7 +265,7 @@ setBufferContext(BUFFER *bp)
 		ll-- ;
             if(ll)
             {
-                uint8 cc = sp[ll-1] ;
+                meUByte cc = sp[ll-1] ;
                 if(cc == '~')
                 {
                     ll-- ;
@@ -420,7 +420,7 @@ swbuffer(WINDOW *wp, BUFFER *bp)        /* make buffer BP current */
 	{
             lineno = bp->line_no ;
             update(TRUE) ;
-            if((mlyesno((uint8 *)"File changed on disk, reload") == TRUE) &&
+            if((mlyesno((meUByte *)"File changed on disk, reload") == TRUE) &&
                (bclear(bp) == TRUE))
             {
                 /* achieve cheekily by calling itself as the bclear make it inactive,
@@ -434,7 +434,7 @@ swbuffer(WINDOW *wp, BUFFER *bp)        /* make buffer BP current */
 	    }
 	}
 	else
-	    mlwrite(MWCLEXEC,(uint8 *)"[Old buffer]");
+	    mlwrite(MWCLEXEC,(meUByte *)"[Old buffer]");
     }
     return TRUE ;
 }
@@ -450,9 +450,9 @@ findBuffer(int f, int n)
 {
     register BUFFER *bp;
     register int    s;
-    uint8           bufn[MAXBUF];
+    meUByte           bufn[MAXBUF];
 
-    if((s = getBufferName((uint8 *)"Find buffer",0,2,bufn)) != TRUE)
+    if((s = getBufferName((meUByte *)"Find buffer",0,2,bufn)) != TRUE)
 	return s ;
     if(n > 0)
 	f = BFND_CREAT ;
@@ -476,9 +476,9 @@ nextWndFindBuf(int f, int n)
 {
     register BUFFER *bp;
     register int    s;
-    uint8           bufn[MAXBUF];
+    meUByte           bufn[MAXBUF];
     
-    if((s = getBufferName((uint8 *)"Use buffer", 0, 2, bufn)) != TRUE)
+    if((s = getBufferName((meUByte *)"Use buffer", 0, 2, bufn)) != TRUE)
 	return(s);
     if(n)
 	n = BFND_CREAT ;
@@ -650,7 +650,7 @@ bclear(register BUFFER *bp)
 	meIPIPE *ipipe ;
 	
 	if(!(bp->intFlag & BIFBLOW) &&
-	   ((s=mlyesno((uint8 *)"Kill active process")) != TRUE))
+	   ((s=mlyesno((meUByte *)"Kill active process")) != TRUE))
 	    return s ;
 	
         /* while waiting for a Yes from the user, the process may
@@ -669,7 +669,7 @@ bclear(register BUFFER *bp)
 #endif        
     if(bufferNeedSaving(bp) && !(bp->intFlag & BIFBLOW))
     {   /* Something changed    */
-	uint8 prompt[MAXBUF+20] ;
+	meUByte prompt[MAXBUF+20] ;
 
 	if(bp->b_fname != NULL)
 	    meStrcpy(prompt,bp->b_fname) ;
@@ -788,7 +788,7 @@ void
 linkBuffer(BUFFER *bp)
 {    
     register BUFFER *sb, *lb;   /* buffer to insert after */
-    register uint8  *bname=bp->b_bname ;
+    register meUByte  *bname=bp->b_bname ;
     
     /* find the place in the list to insert this buffer */
     lb = NULL ;
@@ -868,7 +868,7 @@ zotbuf(register BUFFER *bp, int silent) /* kill the buffer pointed to by bp */
     meNullFree(bp->modeLineStr) ;
     if(!silent)
 	/* say it went ok       */
-	mlwrite(0,(uint8 *)"[buffer %s killed]", bp->b_bname);
+	mlwrite(0,(meUByte *)"[buffer %s killed]", bp->b_bname);
     meNullFree(bp->b_bname) ;
     meFree(bp);                             /* Release buffer block */
     return (TRUE);
@@ -887,16 +887,16 @@ delBuffer(int f, int n)
 {
     register BUFFER *bp;
     register int s;
-    uint8 bufn[MAXBUF];
+    meUByte bufn[MAXBUF];
 
-    if((s = getBufferName((uint8 *)"Delete buffer", MLNOSTORE,1,bufn)) != TRUE)
+    if((s = getBufferName((meUByte *)"Delete buffer", MLNOSTORE,1,bufn)) != TRUE)
 	return(s);
     
     if((bp=bfind(bufn, 0)) == NULL) 
 	/* Easy if unknown.     */
-	return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[%s: no such buffer]", bufn);
+	return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[%s: no such buffer]", bufn);
     if(bp->intFlag & BIFNODEL)
-	return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[%s cannot be deleted]", bufn);
+	return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[%s cannot be deleted]", bufn);
         
     if(!(n & 0x01))
 	bp->intFlag |= BIFBLOW ;
@@ -909,7 +909,7 @@ int
 delSomeBuffers(int f, int n)
 {
     BUFFER *bp, *nbp ;
-    uint8   prompt[MAXBUF] ;
+    meUByte   prompt[MAXBUF] ;
     int     s ;
     
     bp = bheadp ;
@@ -938,11 +938,11 @@ delSomeBuffers(int f, int n)
 int
 changeBufName(int f, int n)     /*      Rename the current buffer       */
 {
-    uint8 bufn[MAXBUF], *nn;     /* buffer to hold buffer name */
+    meUByte bufn[MAXBUF], *nn;     /* buffer to hold buffer name */
     register int s ;
     
     /* prompt for and get the new buffer name */
-    if((s = getBufferName((uint8 *)"New buffer name", 0, 0, bufn)) != TRUE)
+    if((s = getBufferName((meUByte *)"New buffer name", 0, 0, bufn)) != TRUE)
 	return s ;
 
     unlinkBuffer(curbp) ;
@@ -953,7 +953,7 @@ changeBufName(int f, int n)     /*      Rename the current buffer       */
 	{
 	    /* if the names the same */
 	    linkBuffer(curbp) ;
-	    return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[Already exists!]") ;
+	    return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[Already exists!]") ;
 	}
     }
     else
@@ -984,11 +984,11 @@ changeBufName(int f, int n)     /*      Rename the current buffer       */
  * else to the end of the buffer
  */
 int 
-addLine(register LINE *ilp, uint8 *text)
+addLine(register LINE *ilp, meUByte *text)
 {
     register LINE  *lp ;
     register int    ntext ;
-    register uint8 *ss ;
+    register meUByte *ss ;
     
     ntext = meStrlen(text);
     if ((lp=lalloc(ntext)) == NULL)
@@ -1017,12 +1017,12 @@ static void
 makelist(BUFFER *blistp, int verb)
 {
     register BUFFER *bp ;
-    register uint8   cc, *cp1, *cp2 ;
+    register meUByte   cc, *cp1, *cp2 ;
     register int     ii, ff ;
-    uint8 line[MAXBUF] ;
+    meUByte line[MAXBUF] ;
     
-    addLineToEob(blistp,(uint8 *)"AC    Size Buffer          File") ;
-    addLineToEob(blistp,(uint8 *)"--    ---- ------          ----") ;
+    addLineToEob(blistp,(meUByte *)"AC    Size Buffer          File") ;
+    addLineToEob(blistp,(meUByte *)"--    ---- ------          ----") ;
     bp = bheadp;                            /* For all buffers      */
     
     /* output the list of buffers */
@@ -1053,7 +1053,7 @@ makelist(BUFFER *blistp, int verb)
 	else
 	    *cp1++ = ' ';
 	if((bp == blistp) || meModeTest(bp->b_mode,MDNACT))
-	    cp2 = (uint8 *) "-" ;
+	    cp2 = (meUByte *) "-" ;
 	else
 	    cp2 = meItoa(bp->elineno+1);
 	ii = 8 - meStrlen(cp2) ;
@@ -1158,7 +1158,7 @@ listBuffers (int f, int n)
     register BUFFER    *bp ;
     
     if((wp=wpopup(BbuffersN,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR))) == NULL)
-	return mlwrite(MWABORT,(uint8 *)"[Failed to create list]") ;
+	return mlwrite(MWABORT,(meUByte *)"[Failed to create list]") ;
     bp = wp->w_bufp ;
     makelist(bp,f) ;
     
@@ -1209,7 +1209,7 @@ anyChangedBuffer(void)
 }
 
 BUFFER *
-createBuffer(register uint8 *bname)
+createBuffer(register meUByte *bname)
 {
     register BUFFER *bp;
     register LINE   *lp;
@@ -1270,13 +1270,13 @@ createBuffer(register uint8 *bname)
  * the settings for the flags in in buffer.
  */
 BUFFER *
-bfind(register uint8 *bname, int cflag)
+bfind(register meUByte *bname, int cflag)
 {
     BUFFER *bp;
     meMODE  sglobMode ;
-    uint8 intFlag=0 ;
-    uint8 *bnm ;
-    uint8 bn[MAXBUF] ;
+    meUByte intFlag=0 ;
+    meUByte *bnm ;
+    meUByte bn[MAXBUF] ;
     int ii ;
     
     if(cflag & BFND_MKNAM)
@@ -1347,10 +1347,10 @@ bfind(register uint8 *bname, int cflag)
 int
 adjustMode(BUFFER *bp, int nn)  /* change the editor mode status */
 {
-    register uint8 *mode ;
+    register meUByte *mode ;
     int   func ;
-    uint8 prompt[50];            /* string to prompt user with */
-    uint8 cbuf[NPAT];            /* buffer to recieve mode name into */
+    meUByte prompt[50];            /* string to prompt user with */
+    meUByte cbuf[NPAT];            /* buffer to recieve mode name into */
     
     if(nn >= 128)
     {
@@ -1403,7 +1403,7 @@ adjustMode(BUFFER *bp, int nn)  /* change the editor mode status */
 	nn -= 2 ;
     
     if(nn >= MDNUMMODES)
-	return mlwrite(MWABORT,(uint8 *)"[No such mode]");
+	return mlwrite(MWABORT,(meUByte *)"[No such mode]");
     
     switch(nn)
     {
@@ -1444,7 +1444,7 @@ adjustMode(BUFFER *bp, int nn)  /* change the editor mode status */
                 return nn ;
 	}
         if((func == 0) && !clexec)
-            mlwrite(0,(uint8 *)"[%s edit mode is now %s]",
+            mlwrite(0,(meUByte *)"[%s edit mode is now %s]",
                     (bp == NULL) ? "Global":"Buffer",
                     meModeTest(mode,MDEDIT) ? "on":"off");
 	return TRUE ;
@@ -1466,7 +1466,7 @@ adjustMode(BUFFER *bp, int nn)  /* change the editor mode status */
 	if(bp == NULL)
 	    goto invalid_global ;
 	if((nn == MDSAVE) && !bufferNeedSaving(bp))
-	    return mlwrite(0,(uint8 *)"[No changes made]") ;
+	    return mlwrite(0,(meUByte *)"[No changes made]") ;
 	break ;
 	
     case MDDIR:
@@ -1474,14 +1474,14 @@ adjustMode(BUFFER *bp, int nn)  /* change the editor mode status */
     case MDNRRW:
     case MDPIPE:
 invalid_global:
-	return mlwrite(MWABORT,(uint8 *)"[Cannot change this mode]");
+	return mlwrite(MWABORT,(meUByte *)"[Cannot change this mode]");
     }
     /* make the mode change */
     if(func == 0)
     {
         meModeToggle(mode,nn) ;
         if(!clexec)
-            mlwrite(0,(uint8 *)"[%s %s mode is now %s]",
+            mlwrite(0,(meUByte *)"[%s %s mode is now %s]",
                     (bp == NULL) ? "Global":"Buffer",modeName[nn],
                     meModeTest(mode,nn) ? "on":"off");
     }
@@ -1540,14 +1540,14 @@ namedBufferMode(int f, int n)   /* prompt and set an editor mode */
 {
     register BUFFER *bp;
     register int s;
-    uint8 bufn[MAXBUF];
+    meUByte bufn[MAXBUF];
     
-    if((s = getBufferName((uint8 *)"Buffer name", MLNOSTORE,1,bufn)) != TRUE)
+    if((s = getBufferName((meUByte *)"Buffer name", MLNOSTORE,1,bufn)) != TRUE)
 	return s ;
     
     if((bp=bfind(bufn, 0)) == NULL) 
 	/* Easy if unknown.     */
-	return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[No such buffer %s]", bufn);
+	return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[No such buffer %s]", bufn);
     return adjustMode(bp,(f) ? n:0) ;
 }
 

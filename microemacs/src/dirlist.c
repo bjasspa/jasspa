@@ -78,10 +78,10 @@ typedef struct DIRNODE {
     struct DIRNODE *lnext;              /* Pointer to link next */
     struct DIRNODE *lhead;              /* Pointer to link head */
     struct DIRNODE *child;              /* Pointer to the child (next level) */
-    int16  mask;                        /* Status mask */
-    uint8 *lname;                       /* Symbolic link name - not nice here
+    meShort  mask;                        /* Status mask */
+    meUByte *lname;                       /* Symbolic link name - not nice here
                                          * will fold into the dname soonest */
-    uint8  dname[1];                    /* Name of the directory */
+    meUByte  dname[1];                    /* Name of the directory */
 } DIRNODE;
 
 static DIRNODE  *dirlist;                /* Directory list root */
@@ -93,7 +93,7 @@ static LINE     *curDirLine;             /* Current dir node */
  * Construct a new node.
  */
 static DIRNODE *
-dirConstructNode (uint8 *name, int mask)
+dirConstructNode (meUByte *name, int mask)
 {
     DIRNODE *dnode;
 
@@ -206,7 +206,7 @@ dirDeleteNode(DIRNODE *dnode)
  * Find a node with name 'dname' in the node list.
  */
 static DIRNODE *
-dirFindNode (DIRNODE *root, uint8 *dname)
+dirFindNode (DIRNODE *root, meUByte *dname)
 {
     DIRNODE *dnode;                     /* Working node pointer */
     int status;                         /* Comparison status */
@@ -288,13 +288,13 @@ dirLinkNode (DIRNODE *root, DIRNODE *dnode)
  *       so function can be recursive.
  */
 static DIRNODE *
-addLinkPath(DIRNODE *dnode, uint8 *pathname) ;
+addLinkPath(DIRNODE *dnode, meUByte *pathname) ;
 
 static DIRNODE *
-addPath(uint8 *pathname, int mask)
+addPath(meUByte *pathname, int mask)
 {
     DIRNODE *dp, *ndp ;
-    uint8   *p, *q, cc ;
+    meUByte   *p, *q, cc ;
     
     /* Construct the root directory node if it does not already exist */
     if (dirlist == NULL)
@@ -302,7 +302,7 @@ addPath(uint8 *pathname, int mask)
 #if DEBUG
         fp = fopen ("me.out", "wb");
 #endif
-        dirlist = dirConstructNode ((uint8 *)"Desktop ", DIR_UNREAL|DIR_UNKNOWN);
+        dirlist = dirConstructNode ((meUByte *)"Desktop ", DIR_UNREAL|DIR_UNKNOWN);
     }
 
     dp = dirlist ;
@@ -327,7 +327,7 @@ addPath(uint8 *pathname, int mask)
 #ifdef _UNIX
             /* Check if its a symbolic link */
             {
-                uint8 lbuf [1024];
+                meUByte lbuf [1024];
                 int ii;
                 
                 /* readlink does not like an end '/' so remove it */
@@ -365,10 +365,10 @@ addPath(uint8 *pathname, int mask)
 }
 
 static DIRNODE *
-addLinkPath(DIRNODE *dnode, uint8 *pathname)
+addLinkPath(DIRNODE *dnode, meUByte *pathname)
 {
     DIRNODE *dp ;
-    uint8    lpp[FILEBUF], buff[FILEBUF], *ff ;
+    meUByte    lpp[FILEBUF], buff[FILEBUF], *ff ;
     
     if(dnode->mask & DIR_UNKNOWN)
         dnode->mask = (dnode->mask & ~DIR_UNKNOWN)|DIR_HIDDEN ;
@@ -393,7 +393,7 @@ addLinkPath(DIRNODE *dnode, uint8 *pathname)
 
 
 static int
-evalNode(register DIRNODE *dnode, uint8 *pathname, int flags)
+evalNode(register DIRNODE *dnode, meUByte *pathname, int flags)
 {
     int     ii;                             /* Local loop counter */
     int     len;                            /* Length of the pathname */
@@ -419,21 +419,21 @@ evalNode(register DIRNODE *dnode, uint8 *pathname, int flags)
 #if DEBUG
         fprintf(fp, "evalNode %s\n",pathname) ;
 #endif
-        mlwrite(0,(uint8 *)"[Evaluating %s]",pathname);
+        mlwrite(0,(meUByte *)"[Evaluating %s]",pathname);
         len = meStrlen(pathname) ;
         if(len == 0)
         {
 #ifdef _UNIX
             /* Under unix we just have to add the root '/' to the tree if its not
              * already there */
-            if((dn=dirFindNode(dnode,(uint8 *)"/")) == NULL)
-                dirLinkNode(dnode,dirConstructNode((uint8 *)"/",DIR_UNKNOWN));
+            if((dn=dirFindNode(dnode,(meUByte *)"/")) == NULL)
+                dirLinkNode(dnode,dirConstructNode((meUByte *)"/",DIR_UNKNOWN));
             else
                 dn->mask &= ~DIR_GONE ;
 #endif
 #ifdef _WIN32
             /* Under Windows get the list of drives and add to the directory list. */
-            uint8 drvname [] = "X:/";
+            meUByte drvname [] = "X:/";
             int   curDrive;
             
             /* Get the drives */
@@ -455,7 +455,7 @@ evalNode(register DIRNODE *dnode, uint8 *pathname, int flags)
 #endif
 #ifdef _DOS
             /* Same under dos */
-            uint8 drvname [] = "X:/";
+            meUByte drvname [] = "X:/";
             union REGS reg ;		/* cpu register for use of DOS calls */
     
             for (ii = 1; ii <= 26; ii++)    /* Drives are a-z (1-26) */
@@ -477,7 +477,7 @@ evalNode(register DIRNODE *dnode, uint8 *pathname, int flags)
         else
         {
             int     noFiles ;                   /* Number of files */
-            uint8 **files, *ss ;                /* File list */
+            meUByte **files, *ss ;                /* File list */
             
             ss = pathname+len ;
             getDirectoryList(pathname,&curDirList) ;
@@ -487,7 +487,7 @@ evalNode(register DIRNODE *dnode, uint8 *pathname, int flags)
             /* Build a profile of the current directory. */
             for(ii=0 ; ii<noFiles ; ii++)
             {
-                uint8 *fn;
+                meUByte *fn;
                 int flen ;
                 
                 if(TTbreakTest(0))
@@ -503,7 +503,7 @@ evalNode(register DIRNODE *dnode, uint8 *pathname, int flags)
                         if((dn = dirFindNode (dnode, fn)) == NULL)
                         {
 #ifdef _UNIX
-                            uint8 lbuf [1024];
+                            meUByte lbuf [1024];
                             int ii ;
 #endif
                             dn = dirConstructNode(fn, DIR_UNKNOWN) ;
@@ -554,7 +554,7 @@ evalNode(register DIRNODE *dnode, uint8 *pathname, int flags)
     if(flags & LDO_RECURSE)
     {   
         DIRNODE *dtemp, *dhead;
-        uint8 *ss ;
+        meUByte *ss ;
         len = meStrlen(pathname) ;
         ss = pathname+len ;
         
@@ -606,7 +606,7 @@ setHiddenFlag(DIRNODE *dnode, int flags)
 }
 
 static DIRNODE *
-meFindDirLine(DIRNODE *dnode, uint8 *fname, long *itemNo)
+meFindDirLine(DIRNODE *dnode, meUByte *fname, long *itemNo)
 {
     DIRNODE *dn, *ndn ;
     do
@@ -662,7 +662,7 @@ meFindDirLine(DIRNODE *dnode, uint8 *fname, long *itemNo)
  * Find the directory item for the line number
  */
 static DIRNODE *
-findDirLine(long itemNo, uint8 *fname)
+findDirLine(long itemNo, meUByte *fname)
 {
     return meFindDirLine(dirlist,fname,&itemNo) ;
 }
@@ -672,10 +672,10 @@ findDirLine(long itemNo, uint8 *fname)
  * Draw the directory list into a pop-up buffer.
  */
 static void
-dirDrawDirectory(BUFFER *bp, DIRNODE *dnode, int iLen, uint8 *iStr, uint8 *fname)
+dirDrawDirectory(BUFFER *bp, DIRNODE *dnode, int iLen, meUByte *iStr, meUByte *fname)
 {
     DIRNODE *dn, *ndn ;
-    uint8 buf[MAXBUF], *fn ;              /* Working line buffer */
+    meUByte buf[MAXBUF], *fn ;              /* Working line buffer */
     int len, flen ;                      /* Length buffer under construction */
     
     while(dnode != NULL)
@@ -752,17 +752,17 @@ dirDrawDirectory(BUFFER *bp, DIRNODE *dnode, int iLen, uint8 *iStr, uint8 *fname
     }
 }
 
-static uint8 dirBufName[]="*directory*" ;
+static meUByte dirBufName[]="*directory*" ;
 /*
  * dirDrawDir
  * Draw the directory list into a pop-up buffer.
  */
 static void
-dirDrawDir(uint8 *fname, int n)
+dirDrawDir(meUByte *fname, int n)
 {
     BUFFER *bp;                         /* Buffer pointer */
     WINDOW *wp;                         /* Window associated with buffer */
-    uint8   iStr[MAXBUF];               /* Vertical bars buffer */
+    meUByte   iStr[MAXBUF];               /* Vertical bars buffer */
     
     /* Find the buffer and vapour the old one */
     if((wp = wpopup(dirBufName,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR))) == NULL)
@@ -802,19 +802,19 @@ int
 directoryTree(int f, int n)
 {
     DIRNODE *dnode, *dn ;
-    uint8 buf[FILEBUF] ;
+    meUByte buf[FILEBUF] ;
     
     if(n & LDO_GETPATH)
     {
-        if(inputFileName((uint8 *)"List Directory ", buf, 1) != TRUE)
+        if(inputFileName((meUByte *)"List Directory ", buf, 1) != TRUE)
             return ABORT ;
         if((dnode = addPath(buf,0)) == NULL)
-            return mlwrite(MWABORT|MWPAUSE,(uint8 *)"[%s not a directory]",buf);
+            return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s not a directory]",buf);
     }
     else
     {
         if(meStrcmp(curbp->b_bname,dirBufName))
-            return mlwrite(MWABORT,(uint8 *)"[buffer is not *directory*]") ;
+            return mlwrite(MWABORT,(meUByte *)"[buffer is not *directory*]") ;
         if((dnode = findDirLine(curwp->line_no,buf)) == NULL)
             return ABORT ;
     }

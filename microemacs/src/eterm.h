@@ -68,10 +68,10 @@
 
 /* Standard key input definitions, found in termio.c */
 typedef struct meTRANSKEY {
-    int count ;
-    int time ;
-    uint16 key ;
-    uint16 map ;
+    int      count ;
+    int      time ;
+    meUShort key ;
+    meUShort map ;
     struct meTRANSKEY *child ;
 } meTRANSKEY ;
 
@@ -83,22 +83,22 @@ extern meTRANSKEY TTtransKey ;          /* A translated key             */
 extern int        TTcurr;               /* Windows current row.         */
 extern int        TTcurc;               /* Windows current column       */
 extern int        TTfocus;              /* Is window current focus ?    */
-extern uint16     TTkeyBuf[KEYBUFSIZ] ; /* Key beuffer/pending keys     */
-extern uint8 ttSpeChars [TTSPECCHARS];  /* Special characters           */
-extern uint8      TTnextKeyIdx ;        /* Circular buffer index        */
-extern uint8      TTlastKeyIdx ;        /* Key buffer - last index.     */
-extern uint8      TTnoKeys ;            /* Number of keys in buffer     */
-extern uint8      TTbreakFlag ;         /* Break outstanding on input   */
-extern uint8      TTbreakCnt ;          /* Number breaks outsanding     */
-extern uint8      TTallKeys;            /* Report all keys              */
+extern meUShort   TTkeyBuf[KEYBUFSIZ] ; /* Key beuffer/pending keys     */
+extern meUByte ttSpeChars [TTSPECCHARS];/* Special characters           */
+extern meUByte    TTnextKeyIdx ;        /* Circular buffer index        */
+extern meUByte    TTlastKeyIdx ;        /* Key buffer - last index.     */
+extern meUByte    TTnoKeys ;            /* Number of keys in buffer     */
+extern meUByte    TTbreakFlag ;         /* Break outstanding on input   */
+extern meUByte    TTbreakCnt ;          /* Number breaks outsanding     */
+extern meUByte    TTallKeys;            /* Report all keys              */
 
-extern uint16     TTgetc APRAM((void)) ;
+extern meUShort   TTgetc APRAM((void)) ;
 extern void       TThandleBlink APRAM((int initFlag)) ;
 extern void       TTmove APRAM((int r, int c)) ;
 #define TTinflush()   (TTahead(),TTlastKeyIdx=TTnextKeyIdx,TTnoKeys=0)
-extern void       addKeyToBuffer APRAM((uint16 cc)) ;
+extern void       addKeyToBuffer APRAM((meUShort cc)) ;
 extern void       doIdlePickEvent APRAM((void)) ;
-extern void       setAlarm APRAM((int32 absTime, int32 offTime)) ;
+extern void       setAlarm APRAM((meInt absTime, meInt offTime)) ;
 
 
 #ifdef _UNIX
@@ -162,7 +162,7 @@ extern void sigAlarm(SIGNAL_PROTOTYPE) ;
 #define	TIMER_MIN     10	/* Only one itimer available  */
 
 /* Additional UNIX externals */
-extern uint16 TTmrow, TTnrow, TTsrow, TTmcol, TTncol, TTmargin, TTscrsiz ;
+extern meUShort TTmrow, TTnrow, TTsrow, TTmcol, TTncol, TTmargin, TTscrsiz ;
 extern char  *CM, *CL ;
 
 #ifndef _CYGWIN
@@ -194,7 +194,7 @@ extern void TCAPshowCur(void) ;
 extern void TCAPhandleBlink(void) ;
 
 #if COLOR
-extern int  TCAPaddColor(meCOLOR index, uint8 r, uint8 g, uint8 b) ;
+extern int  TCAPaddColor(meCOLOR index, meUByte r, meUByte g, meUByte b) ;
 extern void TCAPschemeSet(meSCHEME scheme) ;
 extern void TCAPschemeReset(void) ;
 #endif
@@ -216,14 +216,14 @@ typedef struct
     int       ascent ;                  /* Font ascent */
     int       descent ;                 /* Font descent */
     int       underline ;               /* The underline position */
-    uint8    *fontName;                 /* The current Font name */
+    meUByte  *fontName;                 /* The current Font name */
     Font      fontId;                   /* Font X id */
     Font      fontTbl[meFONT_MAX];      /* table of font X ids for diff styles */
-    uint8    *fontPart[meFONT_MAX];     /* pointers to parts in fontname */
-    uint8     fontFlag[meFONT_MAX];     /* Font loaded ? */
-    uint8     fcol;                     /* Foreground color */
-    uint8     bcol;                     /* Background color */
-    uint8     font;                     /* Font style */
+    meUByte  *fontPart[meFONT_MAX];     /* pointers to parts in fontname */
+    meUByte   fontFlag[meFONT_MAX];     /* Font loaded ? */
+    meUByte   fcol;                     /* Foreground color */
+    meUByte   bcol;                     /* Background color */
+    meUByte   font;                     /* Font style */
 } meCellMetrics;                        /* The character cell metrics */
 
 extern meCellMetrics mecm ;
@@ -249,8 +249,8 @@ extern void XTERMmove(int r, int c) ;
 extern void XTERMclear(void) ;
 extern void XTERMhideCur(void) ;
 extern void XTERMshowCur(void) ;
-extern int  XTERMaddColor(meCOLOR index, uint8 r, uint8 g, uint8 b) ;
-extern void XTERMSpecialChar(int x, int y, uint8 cc) ;
+extern int  XTERMaddColor(meCOLOR index, meUByte r, meUByte g, meUByte b) ;
+extern void XTERMSpecialChar(int x, int y, meUByte cc) ;
 extern void XTERMPaint(int srow, int scol, int erow, int ecol) ;
 
 extern void TTsetBgcol(void) ;
@@ -266,7 +266,7 @@ extern int  TTstart(void) ;
 #define TTaddColor(i,r,g,b) ((meSystemCfg & meSYSTEM_CONSOLE) ? TCAPaddColor(i,r,g,b):XTERMaddColor(i,r,g,b))
 
 /* Some extra function, only available to xterms */
-extern void TTtitleText (uint8 *str) ;
+extern void TTtitleText (meUByte *str) ;
 extern void TTdepth(int y) ;
 extern void TTwidth(int x) ;
 
@@ -294,7 +294,7 @@ extern void TTsetClipboard(void);
 extern void TTopenClientServer(void) ;
 extern void TTkillClientServer(void) ;
 extern int  TTconnectClientServer(void) ;
-extern void TTsendClientServer(uint8 *) ;
+extern void TTsendClientServer(meUByte *) ;
 #endif
 
 #endif /* _UNIX */
@@ -313,16 +313,16 @@ extern void TTsendClientServer(uint8 *) ;
 /* executable extension list, in reverse order of dos priority - Must have the end NULL
  * included 4dos's btm files for completeness */
 #define noExecExtensions 4
-extern uint8 *execExtensions[noExecExtensions] ;
+extern meUByte *execExtensions[noExecExtensions] ;
 
 extern HWND ttHwnd ;                 /* This is the window handle */
 extern RECT ttRect ;                 /* Area of screen to update */
 extern int fdepth, fwidth ;
 extern int ascent ;
 
-extern uint16 TTmrow, TTnrow, TTsrow, TTmcol, TTncol, TTmargin, TTscrsiz ;
+extern meUShort TTmrow, TTnrow, TTsrow, TTmcol, TTncol, TTmargin, TTscrsiz ;
 
-extern uint32 *colTable ;
+extern meUInt *colTable ;
 
 extern int TTstart(void) ;
 extern int TTstartStage2(void);
@@ -331,7 +331,7 @@ extern int  TTopen(void) ;
 
 #ifdef _WINCON
 extern BOOL ConsolePaint(void) ;
-extern void ConsoleDrawString(uint8 *s, WORD wAttribute, int x, int y, int len) ;
+extern void ConsoleDrawString(meUByte *s, WORD wAttribute, int x, int y, int len) ;
 #define TTcolorSet(f,b) ((f) | ((b) << 4))
 #define TTschemeSet(scheme) \
 TTcolorSet(colTable[meStyleGetFColor(meSchemeGetStyle(scheme))], \
@@ -352,7 +352,7 @@ extern int TTend(void) ;
 #define TTflush()   UpdateWindow (ttHwnd)
 #endif
 
-extern void TTtitleText (uint8 *str) ;
+extern void TTtitleText (meUByte *str) ;
 
 extern void TTwaitForChar(void) ;
 extern void TThideCur(void) ;
@@ -372,7 +372,7 @@ extern void TTopenClientServer(void) ;
 extern void TTkillClientServer(void) ;
 extern int  TTcheckClientServer(void) ;
 extern int  TTconnectClientServer(void) ;
-extern void TTsendClientServer(uint8 *) ;
+extern void TTsendClientServer(meUByte *) ;
 #endif
 
 
@@ -384,7 +384,7 @@ extern int TTaheadFlush(void);
 #define TTdieTest()
 #define TTbreakTest(x) ((TTbreakCnt-- ==  0) ? (TTbreakCnt=TTBREAKCNT,((x==0)?TTahead():TTaheadFlush()),TTbreakFlag):(TTbreakFlag))
 
-extern int  TTaddColor(meCOLOR index, uint8 r, uint8 g, uint8 b);
+extern int  TTaddColor(meCOLOR index, meUByte r, meUByte g, meUByte b);
 extern void TTsetBgcol(void);
 extern void TTcolour (int fg, int bg);
 
@@ -410,7 +410,7 @@ do {                                                                         \
 
 extern void TTapplyArea (void) ;
 extern int  WinMouseMode (int buttonMask, int highlight, int cursorShape);
-extern int  WinLaunchProgram (uint8 *cmd, int flags, uint8 *inFile, uint8 *outFile,
+extern int  WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
 #ifdef _IPIPES
                               meIPIPE *ipipe,
 #endif
@@ -425,11 +425,11 @@ extern int  WinLaunchProgram (uint8 *cmd, int flags, uint8 *inFile, uint8 *outFi
 /* executable extension list, in reverse order of dos priority - Must have the end NULL
  * included 4dos's btm files for completeness */
 #define noExecExtensions 4
-extern uint8 *execExtensions[noExecExtensions] ;
+extern meUByte *execExtensions[noExecExtensions] ;
 
-extern uint16 TTmrow, TTmcol, TTnrow, TTsrow, TTncol, TTmargin, TTscrsiz ;
+extern meUShort TTmrow, TTmcol, TTnrow, TTsrow, TTncol, TTmargin, TTscrsiz ;
 
-extern uint8 *colTable ;
+extern meUByte *colTable ;
 
 extern int  TTstart(void) ;
 #define TTstartStage2()                 /* No stage 2 startup */
@@ -453,9 +453,9 @@ extern int TTahead(void) ;
 #define TTdieTest()
 #define TTbreakTest(x) ((TTbreakCnt-- ==  0) && (TTbreakCnt=TTBREAKCNT,TTahead(),TTbreakFlag))
 
-extern uint8 Cattr ;
+extern meUByte Cattr ;
 
-extern int TTaddColor(meCOLOR index, uint8 r, uint8 g, uint8 b);
+extern int TTaddColor(meCOLOR index, meUByte r, meUByte g, meUByte b);
 #define TTsetBgcol()
 #define TTcolorSet(f,b)     ((f) | ((b) << 4))
 #define TTschemeSet(scheme) \
@@ -505,8 +505,8 @@ enum
 typedef struct TIMERBLOCK
 {
     struct TIMERBLOCK *next;            /* Next block to be scheduled */
-    uint32 abstime;                     /* Absolute time */
-    uint8  id;                          /* Identity of timer */
+    meUInt   abstime;                   /* Absolute time */
+    meUByte  id;                        /* Identity of timer */
 } TIMERBLOCK;
 
 /*
@@ -520,8 +520,8 @@ typedef struct TIMERBLOCK
 
 #define timerClearExpired(id) (meTimerState[(id)] = meTimerState[(id)] & ~TIMER_EXPIRED)
 
-extern uint8       meTimerState[] ;/* State of the timers, set or expired */
-extern int32       meTimerTime[] ; /* Absolute time of the timers */
+extern meUByte     meTimerState[] ;/* State of the timers, set or expired */
+extern meInt       meTimerTime[] ; /* Absolute time of the timers */
 extern TIMERBLOCK *timers ;        /* Head of timer list             */
 
 /*
@@ -537,7 +537,7 @@ extern TIMERBLOCK *timers ;        /* Head of timer list             */
                 is not needed.
  * offset - offset from the current time to alarm.
  */
-extern void timerSet (int id, int32 tim, int32 offset) ;
+extern void timerSet (int id, meInt tim, meInt offset) ;
 extern int  _timerKill (int id) ;
 #define timerKill(id) (isTimerSet(id)?_timerKill(id):timerClearExpired(id))
 extern void handleTimerExpired(void) ;
@@ -547,7 +547,7 @@ extern void timerAlarm(int id) ;
 #endif
 
 #if (defined _CONST_TIMER) || (defined _SINGLE_TIMER)
-extern void timerCheck(int32 tim) ;
+extern void timerCheck(meInt tim) ;
 #endif
 
 /* flag used when idle-drop needs to be called */

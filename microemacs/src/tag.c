@@ -35,8 +35,8 @@
 #include "esearch.h"
 
 #define TAG_MIN_LINE 6
-static uint8 *tagLastFile=NULL ;
-static int32  tagLastPos=-1 ;
+static meUByte *tagLastFile=NULL ;
+static meInt  tagLastPos=-1 ;
 
 /* findTagInFile
  * 
@@ -48,12 +48,12 @@ static int32  tagLastPos=-1 ;
  *    2 - Found nothing
  */
 static int
-findTagInFile(uint8 *file, uint8 *baseName, uint8 *tagTemp,
-              int tagOption, uint8 *key, uint8 *patt)
+findTagInFile(meUByte *file, meUByte *baseName, meUByte *tagTemp,
+              int tagOption, meUByte *key, meUByte *patt)
 {
     FILE  *fp ;
-    uint8  function[MAXBUF] ;
-    int32  opos, pos, start, end, found=-1;
+    meUByte  function[MAXBUF] ;
+    meInt  opos, pos, start, end, found=-1;
     int    tmp ;
     
     if ((fp = fopen((char *)file, "rb")) == (FILE *) NULL)
@@ -119,15 +119,15 @@ findTagInFile(uint8 *file, uint8 *baseName, uint8 *tagTemp,
  */
 
 static int
-findTagSearch(uint8 *key, uint8 *file, uint8 *patt)
+findTagSearch(meUByte *key, meUByte *file, meUByte *patt)
 {
-    uint8 *tagFile, *tagTemp, *baseName, *tt ;
+    meUByte *tagFile, *tagTemp, *baseName, *tt ;
     int ii, tagOption;
     
     /* Get the tag environment variables */
-    if(((tagFile = getUsrVar((uint8 *)"tag-file")) == errorm) ||
-       ((tagTemp = getUsrVar((uint8 *)"tag-template")) == errorm))
-        return mlwrite(MWABORT,(uint8 *)"[tags not setup]");
+    if(((tagFile = getUsrVar((meUByte *)"tag-file")) == errorm) ||
+       ((tagTemp = getUsrVar((meUByte *)"tag-template")) == errorm))
+        return mlwrite(MWABORT,(meUByte *)"[tags not setup]");
     
     /* Process the "%tag-option" currently only the following options are supported:
      * 
@@ -135,7 +135,7 @@ findTagSearch(uint8 *key, uint8 *file, uint8 *patt)
      *   'c' == continue (multi-tag processing)
      */
     tagOption = 0 ;
-    if ((tt = getUsrVar((uint8 *)"tag-option")) != errorm)
+    if ((tt = getUsrVar((meUByte *)"tag-option")) != errorm)
     {
         /* 'c' automatically adds 'r' */
         if(meStrchr(tt,'c') != NULL)
@@ -179,13 +179,13 @@ findTagSearch(uint8 *key, uint8 *file, uint8 *patt)
             {
                 meStrcpy(baseName,tagFile) ;
                 /* no continue after fail to find it a tag file - return */
-                return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[Can't find tag [%s] in tag file : %s]",
+                return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[Can't find tag [%s] in tag file : %s]",
                                key, file);
             }
         }
         else if(!(tagOption & 1))
             /* if no recursion */
-            return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[no tag file : %s]",file);
+            return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[no tag file : %s]",file);
         
         /* continue search. Ascend the tree by geting the directory path
          * component of our current path position */
@@ -197,23 +197,23 @@ findTagSearch(uint8 *key, uint8 *file, uint8 *patt)
         baseName++ ;    /* New basename to try */
     }
     tagLastPos = -1 ;
-    return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[Failed to find tag : %s]",key);
+    return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[Failed to find tag : %s]",key);
 }
 
 static int
-findTagSearchNext(uint8 *key, uint8 *file, uint8 *patt)
+findTagSearchNext(meUByte *key, meUByte *file, meUByte *patt)
 {
     FILE *fp ;
-    uint8 function[MAXBUF], *baseName, *tagTemp ;
-    int32 pos ;
+    meUByte function[MAXBUF], *baseName, *tagTemp ;
+    meInt pos ;
     
     if((tagLastPos < 0) ||
-       ((tagTemp = getUsrVar((uint8 *)"tag-template")) == errorm))
-        return mlwrite(MWABORT,(uint8 *)"[No last tag]") ;
+       ((tagTemp = getUsrVar((meUByte *)"tag-template")) == errorm))
+        return mlwrite(MWABORT,(meUByte *)"[No last tag]") ;
     
     if (((fp = fopen((char *)tagLastFile, "rb")) == NULL) ||
         (fseek(fp, tagLastPos, SEEK_SET) != 0))
-        return mlwrite(MWABORT,(uint8 *)"[Failed to reload tag]") ;
+        return mlwrite(MWABORT,(meUByte *)"[Failed to reload tag]") ;
     
     fscanf(fp,(char *)tagTemp,key,file,patt) ;
     
@@ -229,17 +229,17 @@ findTagSearchNext(uint8 *key, uint8 *file, uint8 *patt)
     
     if (meStrcmp(key,function))
         /* no more found */
-        return mlwrite(MWABORT,(uint8 *)"[No more \"%s\" tags]",key) ;
+        return mlwrite(MWABORT,(meUByte *)"[No more \"%s\" tags]",key) ;
     tagLastPos = pos ;
     return TRUE ;
 }
 
 static	int
-findTagExec(int nn, uint8 tag[])
+findTagExec(int nn, meUByte tag[])
 {
-    uint8 file[FILEBUF];	/* File name */
-    uint8 fpatt[MAXBUF];	/* tag file pattern */
-    uint8 mpatt[MAXBUF];	/* magic pattern */
+    meUByte file[FILEBUF];	/* File name */
+    meUByte fpatt[MAXBUF];	/* tag file pattern */
+    meUByte mpatt[MAXBUF];	/* magic pattern */
     int   flags ;
     
     if(nn & 0x04)
@@ -253,11 +253,11 @@ findTagExec(int nn, uint8 tag[])
     if((nn & 0x01) && (wpopup(NULL,WPOP_MKCURR) == NULL))
         return FALSE ;
     if(findSwapFileList(file,(BFND_CREAT|BFND_MKNAM),0) != TRUE)
-        return mlwrite(MWABORT,(uint8 *)"[Can't find %s]", file);
+        return mlwrite(MWABORT,(meUByte *)"[Can't find %s]", file);
     
     /* now convert the tag file search pattern into a magic search string */
     {
-        uint8 cc, *ss, *dd, ee ;
+        meUByte cc, *ss, *dd, ee ;
         ss = fpatt ;
         
         /* if the first char is a '/' then search forwards, '?' for backwards */
@@ -321,7 +321,7 @@ findTagExec(int nn, uint8 tag[])
     }
     
     if(iscanner(mpatt,0,flags,NULL) != TRUE)
-        return mlwrite(MWABORT,(uint8 *)"[Can't find %s]",fpatt) ;
+        return mlwrite(MWABORT,(meUByte *)"[Can't find %s]",fpatt) ;
     
     return TRUE ;
 }
@@ -331,9 +331,9 @@ findTagExec(int nn, uint8 tag[])
 int
 findTag(int f, int n)
 {
-    uint8  tag [MAXBUF];
+    meUByte  tag [MAXBUF];
     LINE  *startp;
-    int16  starto, i;
+    meShort  starto, i;
     
     /* Determine if we are in a word. If not then get a word from the 
        user. */
@@ -343,7 +343,7 @@ findTag(int f, int n)
     else if((n & 0x02) || (inWord() == FALSE))
     {
 	/*---	Get user word. */
-        if((meGetString((uint8 *)"Enter Tag", MLNOSPACE, 0, tag,MAXBUF) != TRUE) || (tag[0] == '\0'))
+        if((meGetString((meUByte *)"Enter Tag", MLNOSPACE, 0, tag,MAXBUF) != TRUE) || (tag[0] == '\0'))
             return ctrlg(FALSE,1) ;
     }
     else

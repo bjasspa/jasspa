@@ -177,16 +177,16 @@ typedef struct {
  *         -1        if the regex apat failed to compile (error)
  *         -2        if the regex apat failed to compile (incomplete?)
  */
-extern int iscanner (uint8 *apat, int n, int flags, SCANNERPOS *sp);
+extern int iscanner (meUByte *apat, int n, int flags, SCANNERPOS *sp);
 
 /* search arrays and variables, defined in search.c, but exported
  * here so others can access them.
  */ 
-extern uint8  srchPat[] ;                    /* current search string          */
-extern uint8  srchRPat[] ;                   /* reverse current search string  */
+extern meUByte  srchPat[] ;                    /* current search string          */
+extern meUByte  srchRPat[] ;                   /* reverse current search string  */
 /* the following variables store info on the last match - for @s# support     */
 extern int    srchLastState;                 /* status of last search          */
-extern uint8 *srchLastMatch;                 /* pointer to the last match string */
+extern meUByte *srchLastMatch;                 /* pointer to the last match string */
 #if	MAGIC
 extern int    srchLastMagic;                 /* last search was a magic        */
 #endif

@@ -59,7 +59,7 @@ meUndoAddInsChar(void)
 {
     if(meModeTest(curbp->b_mode,MDUNDO))
     {
-        uint8 type=MEUNDO_SING|MEUNDO_MINS ;
+        meUByte type=MEUNDO_SING|MEUNDO_MINS ;
         UNDOND *nn ;
 
         if(curbp->undoContFlag == undoContFlag)
@@ -86,9 +86,9 @@ meUndoAddDelChar(void)
 {
     if(meModeTest(curbp->b_mode,MDUNDO))
     {
-        uint8 type=MEUNDO_SING|MEUNDO_MDEL ;
+        meUByte type=MEUNDO_SING|MEUNDO_MDEL ;
         UNDOND *nn ;
-        uint8   cc ;
+        meUByte   cc ;
 
         if((cc = curwp->w_dotp->l_text[curwp->w_doto]) == '\0')
         {
@@ -140,9 +140,9 @@ meUndoAddRepChar(void)
 {
     if(meModeTest(curbp->b_mode,MDUNDO))
     {
-        uint8 type=MEUNDO_SING|MEUNDO_MINS|MEUNDO_MDEL ;
+        meUByte type=MEUNDO_SING|MEUNDO_MINS|MEUNDO_MDEL ;
         UNDOND *nn ;
-        uint8   cc ;
+        meUByte   cc ;
 
         if(curbp->undoContFlag == undoContFlag)
             type |= MEUNDO_CONT ;
@@ -173,7 +173,7 @@ meUndoAddRepChar(void)
 }
 
 void
-meUndoAddInsChars(int32 numChars)
+meUndoAddInsChars(meInt numChars)
 {
     UNDOND *nn ;
 
@@ -186,7 +186,7 @@ meUndoAddInsChars(int32 numChars)
 }
 
 void
-meUndoAddDelChars(int32 numChars)
+meUndoAddDelChars(meInt numChars)
 {
     UNDOND *nn ;
 
@@ -197,7 +197,7 @@ meUndoAddDelChars(int32 numChars)
     {
         LINE   *ll = curwp->w_dotp ;
         int     len ;
-        uint8  *dd=nn->str, *ss=ll->l_text+curwp->w_doto ;
+        meUByte  *dd=nn->str, *ss=ll->l_text+curwp->w_doto ;
 
         nn->type |= MEUNDO_MDEL ;
         nn->count = 0;
@@ -229,7 +229,7 @@ meUndoAddDelChars(int32 numChars)
 }
 
 void
-meUndoAddReplaceBgn(LINE *elinep, uint16 elineo)
+meUndoAddReplaceBgn(LINE *elinep, meUShort elineo)
 {
     if(meModeTest(curbp->b_mode,MDUNDO))
     {
@@ -253,7 +253,7 @@ meUndoAddReplaceBgn(LINE *elinep, uint16 elineo)
         if((nn = meUndoCreateNode(sizeof(UNDOND)+len)) != NULL)
         {
             LINE  *ll = curwp->w_dotp ;
-            uint8 *dd=nn->str, *ss=ll->l_text+curwp->w_doto ;
+            meUByte *dd=nn->str, *ss=ll->l_text+curwp->w_doto ;
 
             nn->type |= MEUNDO_MDEL ;
             /* This should be zero because added on the end call. */
@@ -287,7 +287,7 @@ meUndoAddReplaceBgn(LINE *elinep, uint16 elineo)
 }
 
 void
-meUndoAddReplaceEnd(int32 numChars)
+meUndoAddReplaceEnd(meInt numChars)
 {
     if(meModeTest(curbp->b_mode,MDUNDO))
     {
@@ -297,7 +297,7 @@ meUndoAddReplaceEnd(int32 numChars)
 }
 
 void
-meUndoAddReplace(uint8 *dstr, int32 count)
+meUndoAddReplace(meUByte *dstr, meInt count)
 {
     if(meModeTest(curbp->b_mode,MDUNDO))
     {
@@ -314,7 +314,7 @@ meUndoAddReplace(uint8 *dstr, int32 count)
            (nn->doto == 0xffff) ||
            meStrcmp(nn->str,dstr))
         {
-            uint8 *dd ;
+            meUByte *dd ;
             if((nn = meUndoCreateNode(sizeof(UNDOND)+meStrlen(dstr))) == NULL)
                 return ;
             nn->type |= MEUNDO_MDEL|MEUNDO_MINS|MEUNDO_REPL|MEUNDO_REVS ;
@@ -347,7 +347,7 @@ meUndoAddReplace(uint8 *dstr, int32 count)
  * for the previous undo
  */
 void
-meUndoAddNarrow(int32 sln, uint16 name)
+meUndoAddNarrow(meInt sln, meUShort name)
 {
     UNDOND *nn ;
 
@@ -361,7 +361,7 @@ meUndoAddNarrow(int32 sln, uint16 name)
     }
 }
 void
-meUndoAddUnnarrow(int32 sln, int32 eln, uint16 name)
+meUndoAddUnnarrow(meInt sln, meInt eln, meUShort name)
 {
     UNDOND *nn ;
 
@@ -425,8 +425,8 @@ meUndo(int f, int n)
     else
     {
         static UNDOND *cun ;
-        static int32  ccount ;
-        static uint16 cdoto ;
+        static meInt  ccount ;
+        static meUShort cdoto ;
 
         if((lastflag != CFUNDO) && ((cun = curbp->fUndo) != NULL))
         {
@@ -518,7 +518,7 @@ meUndo(int f, int n)
                  * that we only ever re-allocate the line once. 
                  * Jon - 99/12/12.
                  */
-                uint8 *ss, cc ;
+                meUByte *ss, cc ;
                 ss = cun->str ;
                 /* Deal with a single character undo */
                 if(cun->type & MEUNDO_SING)

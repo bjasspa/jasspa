@@ -49,22 +49,22 @@
 
 static int  mouseState = 0;             /* State of the mouse. */
 /* bit button lookup - [0] = no keys, [1] = left, [2] = right, [4]=middle */
-static uint16 mouseKeys[8] = { 0, 1, 3, 0, 2, 0, 0, 0 } ;
+static meUShort mouseKeys[8] = { 0, 1, 3, 0, 2, 0, 0, 0 } ;
 
 #endif /* MOUSE */
 
-uint8  Cattr = 0x07 ;
-uint16 TTmargin	= 8  ;			/* size of minimim margin and	*/
-uint16 TTscrsiz	= 64 ;			/* scroll size for extended lines */
-uint16 TTmrow, TTmcol,TTnrow, TTncol ;
+meUByte  Cattr = 0x07 ;
+meUShort TTmargin = 8  ;		/* size of minimim margin and	*/
+meUShort TTscrsiz = 64 ;		/* scroll size for extended lines */
+meUShort TTmrow, TTmcol,TTnrow, TTncol ;
 
-static int16 dosOrgMode ;
-static int16 dosOrgDepth ;
-static int16 dosResMode=-1 ;
-static int16 dosResSpecial ;
+static meShort dosOrgMode ;
+static meShort dosOrgDepth ;
+static meShort dosResMode=-1 ;
+static meShort dosResSpecial ;
 
 #define ME_EXT_FLAG 0x80
-uint8 TTextkey_lut [256] =
+meUByte TTextkey_lut [256] =
 {
  0, SKEY_esc,  0,0xc0,  0,  0,  0,  0,  0,  0,
  0,  0,  0,  0,SKEY_backspace,SKEY_tab,0xf1,0xf7,0xe5,0xf2,
@@ -86,13 +86,13 @@ uint8 TTextkey_lut [256] =
 };	/* Extended Keyboard lookup table */
 
 
-uint16 TTmodif=0 ;
+meUShort TTmodif=0 ;
 
 /* Color code */
-uint8 *colTable=NULL ;
+meUByte *colTable=NULL ;
 
 #define dosNumColors 16
-static uint8 dosColors[dosNumColors*3] =
+static meUByte dosColors[dosNumColors*3] =
 {
     0,0,0,    0,0,200, 0,200,0, 0,200,200, 200,0,0, 200,0,200, 200,200,0, 200,200,200, 
     75,75,75, 0,0,255, 0,255,0, 0,255,255, 255,0,0, 255,0,255, 255,255,0, 255,255,255
@@ -102,9 +102,9 @@ static uint8 dosColors[dosNumColors*3] =
 void
 TTdump(BUFFER *bp)
 {
-    uint16 r1, r2, c1, c2 ;
-    uint8 buff[TTmrow*TTmcol*2], *ss ;
-    uint8 line[TTmcol] ;
+    meUShort r1, r2, c1, c2 ;
+    meUByte buff[TTmrow*TTmcol*2], *ss ;
+    meUByte line[TTmcol] ;
 
     ScreenRetrieve(buff) ;
     r1 = ScreenRows() ;
@@ -126,7 +126,7 @@ TTdump(BUFFER *bp)
 ** test file exists and return attributes
 */
 int
-meGetFileAttributes(uint8 *fn)
+meGetFileAttributes(meUByte *fn)
 {
     union REGS reg ;		/* cpu register for use of DOS calls */
 
@@ -140,7 +140,7 @@ meGetFileAttributes(uint8 *fn)
 }
 
 void
-_meChmod(uint8 *fn, uint16 attr)
+_meChmod(meUByte *fn, meUShort attr)
 {
     union REGS reg ;		/* cpu register for use of DOS calls */
 
@@ -159,8 +159,8 @@ void
 TTgetkeyc(void)
 {
     union REGS rg ;
-    uint16 ii ;
-    uint8  cc ;
+    meUShort ii ;
+    meUByte  cc ;
 
     /* call the dos to get a char */
     rg.h.ah = 7;		/* dos Direct Console Input call */
@@ -302,13 +302,13 @@ void
 TTwaitForChar(void)
 {
     union REGS rg ;
-    uint16 cc;                  /* Local character code */
+    meUShort cc;                  /* Local character code */
 
 #if MOUSE
     if(meMouseCfg & meMOUSE_ENBLE)
     {
-        uint16 mc ;
-        uint32 arg ;
+        meUShort mc ;
+        meUInt arg ;
         /* If mouse state flags that the mouse should be visible then we
          * must make it visible. We had to make it invisible to get the
          * screen-updates correct
@@ -351,7 +351,7 @@ TTwaitForChar(void)
 #if MOUSE
         if(meMouseCfg & meMOUSE_ENBLE)
         {
-            int16 row, col, but ;
+            meShort row, col, but ;
             
             /* Get new mouse status. It appears that the fractional bits of
              * the mouse change across reads. ONLY Compare the non-fractional
@@ -402,7 +402,7 @@ TTwaitForChar(void)
                 }
                 else
                 {
-                    uint32 arg;                 /* Decode key argument */
+                    meUInt arg;                 /* Decode key argument */
                     /* Check for a mouse-move key */
                     cc = (ME_SPECIAL+SKEY_mouse_move+mouseKeys[but]) | TTmodif ;
                     /* Are we after all movements or mouse-move bound ?? */
@@ -454,8 +454,8 @@ TThideCur(void)
     {
         FRAMELINE *flp;                     /* Frame store line pointer */
         meSCHEME schm;                      /* Current colour */
-        uint8 cc ;                          /* Current cchar  */
-        uint8 dcol;
+        meUByte cc ;                          /* Current cchar  */
+        meUByte dcol;
 
         flp  = frameStore + TTcurr ;
         cc   = flp->text[TTcurc] ;          /* Get char under cursor */
@@ -474,8 +474,8 @@ TTshowCur(void)
     {
         FRAMELINE *flp;                     /* Frame store line pointer */
         meSCHEME schm;                      /* Current colour */
-        uint8 cc ;                          /* Current cchar  */
-        uint8 dcol;
+        meUByte cc ;                          /* Current cchar  */
+        meUByte dcol;
 
         flp  = frameStore + TTcurr ;
         cc   = flp->text[TTcurc] ;          /* Get char under cursor */
@@ -702,9 +702,9 @@ changeFont(int f, int n)
 }
 
 int
-TTaddColor(meCOLOR index, uint8 r, uint8 g, uint8 b)
+TTaddColor(meCOLOR index, meUByte r, meUByte g, meUByte b)
 {
-    uint8 *ss ;
+    meUByte *ss ;
     int ii, jj, idif, jdif ;
 
     jdif = 256+256+256 ;
@@ -721,8 +721,8 @@ TTaddColor(meCOLOR index, uint8 r, uint8 g, uint8 b)
                  
     if(noColors <= index)
     {
-        colTable = realloc(colTable, (index+1)*sizeof(uint8)) ;
-        memset(colTable+noColors,0,(index-noColors+1)*sizeof(uint8)) ;
+        colTable = realloc(colTable, (index+1)*sizeof(meUByte)) ;
+        memset(colTable+noColors,0,(index-noColors+1)*sizeof(meUByte)) ;
         noColors = index+1 ;
     }
     colTable[index] = jj ;
@@ -774,7 +774,7 @@ TTahead(void)
     /* If an alarm hCheck the mouse */
     if(isTimerExpired(MOUSE_TIMER_ID))
     {
-        uint16 mc ;
+        meUShort mc ;
         union REGS rg ;
         
         /* printf("Clering mouse timer for repeat %1x %1x %d\n",TTallKeys,meTimerState[MOUSE_TIMER_ID],repeattime) ;*/
@@ -785,7 +785,7 @@ TTahead(void)
         mc = (mouseState & MOUSE_STATE_BUTTONS) ;
         if((rg.x.bx & MOUSE_STATE_BUTTONS) == mc)
         {
-            uint32 arg ;
+            meUInt arg ;
             mc = ME_SPECIAL | TTmodif | (SKEY_mouse_time+mouseKeys[mc]) ;
             /* mouse-move bound ?? */
             if((!TTallKeys && (decode_key(mc,&arg) != -1)) || (TTallKeys & 0x2))
@@ -803,7 +803,7 @@ TTahead(void)
 #endif
     if(isTimerExpired(IDLE_TIMER_ID))
     {
-        uint32 arg;           /* Decode key argument */
+        meUInt arg;           /* Decode key argument */
         int index;
         
         if((index=decode_key(ME_SPECIAL|SKEY_idle_time,&arg)) != -1)

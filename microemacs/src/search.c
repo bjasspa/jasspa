@@ -52,12 +52,12 @@
 
 /*---	Local variable definitions */
 
-static uint8 notFoundStr[] ="[Not Found]";
+static meUByte notFoundStr[] ="[Not Found]";
 static int  exactFlag = 1;              /* Use to cache EXACT mode state */
-uint8  srchPat [NPAT]="";                /* Search pattern array */
-uint8  srchRPat[NPAT]="";                /* Reversed pattern array */
+meUByte  srchPat [NPAT]="";                /* Search pattern array */
+meUByte  srchRPat[NPAT]="";                /* Reversed pattern array */
 int    srchLastState=FALSE;              /* status of last search */
-uint8 *srchLastMatch=NULL;               /* pointer to the last match string */
+meUByte *srchLastMatch=NULL;               /* pointer to the last match string */
 
 /*
  * boundry -- Return information depending on whether we may search no
@@ -78,7 +78,7 @@ int           srchLastMagic=FALSE;              /* last search was a magic      
 static int    reportErrors = TRUE;
 
 static int    mereNewlBufSz=0 ;
-static uint8 *mereNewlBuf=NULL ;
+static meUByte *mereNewlBuf=NULL ;
 
 #define mereNewlBufSzCheck(ll)                                               \
 do {                                                                         \
@@ -97,14 +97,14 @@ do {                                                                         \
 
 struct re_pattern_buffer mereBuffer={0} ;
 struct re_registers mereRegs={0} ;
-uint8        mereLastPat[NPAT]="";  /* last pattern array - reset by set-char-mask */
-static uint8 mereTranslate[256] ;
+meUByte        mereLastPat[NPAT]="";  /* last pattern array - reset by set-char-mask */
+static meUByte mereTranslate[256] ;
 int          mereNumRegs=0 ;
 static int   mereNumNewl=0 ;
 
 
 static int
-mere_compile_pattern(uint8 *apat)
+mere_compile_pattern(meUByte *apat)
 {
     const char *err ;
     char cc, *ss ;
@@ -156,7 +156,7 @@ static int
 mere_scanner(int direct, int beg_or_end, int *n, SCANNERPOS *sp)
 {
     register LINE *lp=curwp->w_dotp, *nlp ;
-    register int32 lnno=curwp->line_no, nlnno ;
+    register meInt lnno=curwp->line_no, nlnno ;
     register int   ii=curwp->w_doto, jj=llength(lp), kk, count=*n ;
     
     srchLastState = FALSE ;
@@ -456,13 +456,13 @@ mere_scanner(int direct, int beg_or_end, int *n, SCANNERPOS *sp)
 meRegex mereRegex={0} ;
 
 static int
-mere_compile_pattern(uint8 *apat)
+mere_compile_pattern(meUByte *apat)
 {
     int ii ;
     
     if(((ii=meRegexComp(&mereRegex,apat,
                         (exactFlag) ? meREGEX_ICASE:0)) != meREGEX_OKAY) && reportErrors)
-        mlwrite(MWABORT,(uint8 *)"[Regex Error: %s]",meRegexCompErrors[ii]) ;
+        mlwrite(MWABORT,(meUByte *)"[Regex Error: %s]",meRegexCompErrors[ii]) ;
     return ii ;
 }
 
@@ -470,7 +470,7 @@ static int
 mere_scanner(int direct, int beg_or_end, int *n, SCANNERPOS *sp)
 {
     register LINE *lp=curwp->w_dotp, *nlp ;
-    register int32 lnno=curwp->line_no, nlnno ;
+    register meInt lnno=curwp->line_no, nlnno ;
     register int   ii=curwp->w_doto, jj, kk, count=*n, flags ;
     
     srchLastState = FALSE ;
@@ -750,18 +750,18 @@ cEq (register int bc, register int pc)
  * scanner -- Search for a pattern in either direction.
  */
 static int 
-scanner(uint8 *patrn, int direct, int beg_or_end, int *count,
+scanner(meUByte *patrn, int direct, int beg_or_end, int *count,
         SCANNERPOS *sp)
 {
-    register uint8 cc, aa, bb ;	        /* character at current position */
-    register uint8 *patptr;	        /* pointer into pattern */
-    register uint8 *curptr;	        /* pointer into pattern */
+    register meUByte cc, aa, bb ;	        /* character at current position */
+    register meUByte *patptr;	        /* pointer into pattern */
+    register meUByte *curptr;	        /* pointer into pattern */
     register LINE *curline;		/* current line during scan */
     register int curoff;		/* position within current line */
-    register uint8 *matchptr;	        /* pointer into pattern */
+    register meUByte *matchptr;	        /* pointer into pattern */
     register LINE *matchline;		/* current line during matching */
     register int matchoff;		/* position in matching line */
-    register int32 curlnno, matchlnno ;
+    register meInt curlnno, matchlnno ;
     
     srchLastState = FALSE ;
     /* If we are going in reverse, then the 'end' is actually the beginning of
@@ -950,7 +950,7 @@ fail:			/* continue to search */
 }
 
 int
-expandchar(int c, uint8 *d, int flags)
+expandchar(int c, meUByte *d, int flags)
 {
     register int  doff=1 ;
 
@@ -981,10 +981,10 @@ expandchar(int c, uint8 *d, int flags)
 }
 
 int
-expandexp(int slen, uint8 *s, int dlen, int doff, uint8 *d, 
+expandexp(int slen, meUByte *s, int dlen, int doff, meUByte *d, 
           int cpos, int *opos, int flags)
 {
-    uint8 cc ;
+    meUByte cc ;
     int ii ;
     
     if(slen < 0)
@@ -1018,9 +1018,9 @@ expandexp(int slen, uint8 *s, int dlen, int doff, uint8 *d,
  * The source buffer may vary, but the result is always to srchRPat
  */
 static void
-rvstrcpy(register uint8 *str)
+rvstrcpy(register meUByte *str)
 {
-    register uint8 *rvstr ;
+    register meUByte *rvstr ;
     register int ii ;
     
     if((ii = meStrlen(str)) > NPAT-1)
@@ -1044,7 +1044,7 @@ rvstrcpy(register uint8 *str)
  *	string. 
  */
 static int
-readpattern(uint8 *prompt, int defnum)
+readpattern(meUByte *prompt, int defnum)
 {
     int	status;
 
@@ -1090,30 +1090,30 @@ replaces(int kind, int ff, int nn)
 
 /*---	Local variable defintions */
 	
-    static uint8 *dpat = NULL;
+    static meUByte *dpat = NULL;
     static int dpatlen = 0;
 
     register int i;		/* loop index */
     register int slength;	/* Length of search string */
     register int rlength;	/* length of replace string */
-    uint8        rpat[NPAT];	/* replacement pattern		*/
+    meUByte        rpat[NPAT];	/* replacement pattern		*/
     int	         numsub;	/* number of substitutions */
     int	         nummatch;	/* number of found matches */
     int	         status;	/* success flag on pattern inputs */
     int	         nlflag;	/* last char of search string a <NL>? */
     int	         nlrepl;	/* was a replace done on the last line? */
     int	         origoff;	/* and offset (for . query option) */
-    int32        origlno;       /* line no (for . query option) */
+    meInt        origlno;       /* line no (for . query option) */
     LINE	*lastline = 0;	/* position of last replace and */
     int	         lastoff;       /* offset (for 'u' query option) */
-    int32        lastlno;       /* line no (for 'u' query option) */
+    meInt        lastlno;       /* line no (for 'u' query option) */
     int	onemore =FALSE;		/* only do one more replace */
     int	ilength = 0;		/* Last insert length */
     int	state_mc;		/* State machine */
     
     int 	cc;		/* input char for query */
-    uint8	tmpc;		/* temporary character */
-    uint8	tpat[NPAT];	/* temporary to hold search pattern */
+    meUByte	tmpc;		/* temporary character */
+    meUByte	tpat[NPAT];	/* temporary to hold search pattern */
     
     /* Determine if we are  in the correct viewing  mode, and if the number
        of repetitions is correct. */
@@ -1145,7 +1145,7 @@ replaces(int kind, int ff, int nn)
         case SL_GETSEARCH:
             
             if ((status = readpattern
-                 ((kind == FALSE ? (uint8 *)"Replace":(uint8 *)"Query replace"), 
+                 ((kind == FALSE ? (meUByte *)"Replace":(meUByte *)"Query replace"), 
                   1+lastReplace)) != TRUE)
 		return (status);		/* Aborted out - Exit */
             
@@ -1253,8 +1253,8 @@ replaces(int kind, int ff, int nn)
 #if MEUNDO
             undoContFlag++ ;
 #endif
-            cc = mlCharReply(tpat,mlCR_LOWER_CASE|mlCR_UPDATE_ON_USER|mlCR_CURSOR_IN_MAIN,(uint8 *)"y nil!u.",
-                             (uint8 *)"(Y)es (N)o (I)nc (L)ast (!)Do rest (U)ndo (^G)Abort (.)Abort back ? ");
+            cc = mlCharReply(tpat,mlCR_LOWER_CASE|mlCR_UPDATE_ON_USER|mlCR_CURSOR_IN_MAIN,(meUByte *)"y nil!u.",
+                             (meUByte *)"(Y)es (N)o (I)nc (L)ast (!)Do rest (U)ndo (^G)Abort (.)Abort back ? ");
             
             switch (cc)			/* And respond appropriately. */
             {
@@ -1305,7 +1305,7 @@ replaces(int kind, int ff, int nn)
                 
 		WbackChar(curwp, ilength);
                 if (!ldelete(ilength,6))
-                    return mlwrite(MWABORT,(uint8 *)"[ERROR while deleting]");
+                    return mlwrite(MWABORT,(meUByte *)"[ERROR while deleting]");
                 
 		/* And put in the old one. */
                 
@@ -1317,7 +1317,7 @@ replaces(int kind, int ff, int nn)
                     /* Insertion error? */
                     
                     if (!status)
-                        return mlwrite(MWABORT,(uint8 *)"[Out of memory while inserting]");
+                        return mlwrite(MWABORT,(meUByte *)"[Out of memory while inserting]");
                 
                 }	/* End of 'for' */
 #if MEUNDO
@@ -1368,7 +1368,7 @@ replaces(int kind, int ff, int nn)
                 }
             }
             if(mldelete(slength,dpat) != 0)
-                return mlwrite(MWABORT,(uint8 *)"[ERROR while deleting]") ;
+                return mlwrite(MWABORT,(meUByte *)"[ERROR while deleting]") ;
             ilength = 0 ;
             
             /*
@@ -1434,7 +1434,7 @@ replaces(int kind, int ff, int nn)
                 /* Insertion error ? */
                 
                 if (!status) 
-                    return mlwrite(MWABORT,(uint8 *)"[Out of memory while inserting]"); 
+                    return mlwrite(MWABORT,(meUByte *)"[Out of memory while inserting]"); 
             }	/* End of 'for' */
 #if MEUNDO
             meUndoAddReplace(dpat,ilength) ;
@@ -1457,12 +1457,12 @@ replaces(int kind, int ff, int nn)
             break;
             
         default:
-            return mlwrite(MWABORT,(uint8 *)"[Bad state machine value %d]", state_mc);
+            return mlwrite(MWABORT,(meUByte *)"[Bad state machine value %d]", state_mc);
         }	/* End of 'switch' on state_mc */
     }   /* End of 'for' */
     
     /*---	And report the results. */
-    return mlwrite(((nn < 0) || (numsub == nn)) ? MWCLEXEC:(MWABORT|MWCLEXEC),(uint8 *)"%d substitutions", numsub);
+    return mlwrite(((nn < 0) || (numsub == nn)) ? MWCLEXEC:(MWABORT|MWCLEXEC),(meUByte *)"%d substitutions", numsub);
 }	/* End of 'replaces' */
 
 /*
@@ -1509,7 +1509,7 @@ searchForw(int f, int n)
      * response is TRUE (responses other than FALSE are
      * possible), search for the pattern.
      */
-    if ((status = readpattern((uint8 *)"Search", 1+lastReplace)) == TRUE)
+    if ((status = readpattern((meUByte *)"Search", 1+lastReplace)) == TRUE)
     {
         lastReplace = 0 ;
         do
@@ -1556,7 +1556,7 @@ searchBack(int f, int n)
      * response is TRUE (responses other than FALSE are
      * possible), search for the pattern.
      */
-    if ((status = readpattern((uint8 *)"Reverse search", 1+lastReplace)) == TRUE)
+    if ((status = readpattern((meUByte *)"Reverse search", 1+lastReplace)) == TRUE)
     {
         lastReplace = 0 ;
         do
@@ -1607,7 +1607,7 @@ huntForw(int f, int n)
      * into MAGIC mode until after we entered the pattern.
      */
     if(srchPat[0] == '\0')
-        return mlwrite(MWABORT,(uint8 *)"[No pattern set]");
+        return mlwrite(MWABORT,(meUByte *)"[No pattern set]");
     
 #if MAGIC
     /* if magic the recompile the search string */
@@ -1659,7 +1659,7 @@ huntBack(int f, int n)
      * into MAGIC mode until after we entered the pattern.
      */
     if(srchPat[0] == '\0')
-        return mlwrite(MWABORT,(uint8 *)"[No pattern set]");
+        return mlwrite(MWABORT,(meUByte *)"[No pattern set]");
     
 #if MAGIC
     if(srchLastMagic)
@@ -1691,7 +1691,7 @@ huntBack(int f, int n)
 
 
 int
-iscanner(uint8 *apat, int n, int flags, SCANNERPOS *sp)
+iscanner(meUByte *apat, int n, int flags, SCANNERPOS *sp)
 {
     int direct, magic;
     int beg_or_end;

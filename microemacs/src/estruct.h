@@ -118,10 +118,10 @@ typedef	int	(*Fintss)(const char *, const char *);
 typedef	int	(*Fintssi)(const char *, const char *,size_t);
 typedef int	(*Fintccci)(char *,char *,char *,int) ;
 
-/* meSTYLE contains color and font information coded into an int32 the
+/* meSTYLE contains color and font information coded into an meInt the
  * following #defines and macros are used to manipulate them.
  */
-typedef uint8   meCOLOR ;
+typedef meUByte   meCOLOR ;
 #define meCOLOR_FDEFAULT 0
 #define meCOLOR_BDEFAULT 1
 #define meCOLOR_INVALID  0xff
@@ -129,7 +129,7 @@ typedef uint8   meCOLOR ;
 #define meBColorCheck(x)   (((x)>=noColors)       ? meCOLOR_BDEFAULT : (x))
 
 
-typedef uint32  meSTYLE ;
+typedef meUInt  meSTYLE ;
 #define meSTYLE_NDEFAULT  0x00000100
 #define meSTYLE_RDEFAULT  0x00080001
 
@@ -162,11 +162,11 @@ typedef uint32  meSTYLE ;
 
 /* An meSCHEME is simply an index into the meSTYLE table.
  * Each scheme created by add-color-scheme consists of 8 meSTYLEs, as there
- * are upto 256 schemes there can be 8*256 styles hence its a uint16.
+ * are upto 256 schemes there can be 8*256 styles hence its a meUShort.
  * note that users enter the base scheme number, i.e. 0, 1, 2, ...
  * which is then multiplied by 8 and stored, i.e. 0, 8, 16, ...
  */
-typedef uint16 meSCHEME ;
+typedef meUShort meSCHEME ;
 #define meSCHEME_NORMAL   0              /* Normal style */
 #define meSCHEME_RNORMAL  1              /* Reverse normal style */
 #define meSCHEME_CURRENT  2              /* Current foreground colour */        
@@ -200,10 +200,10 @@ typedef struct LINE
 {
     struct LINE *l_fp;			/* Link to the next line        */
     struct LINE *l_bp;			/* Link to the previous line    */
-    uint16  l_size;                     /* Allocated size               */
-    uint16  l_used;                     /* Used size                    */
-    uint8   l_flag;		        /* Line is marked if true	*/
-    uint8   l_text[1];                  /* A bunch of characters.       */
+    meUShort  l_size;                   /* Allocated size               */
+    meUShort  l_used;                   /* Used size                    */
+    meUByte   l_flag;		        /* Line is marked if true	*/
+    meUByte   l_text[1];                /* A bunch of characters.       */
 } LINE ;
 
 #define LNSMASK   0x0f
@@ -380,44 +380,44 @@ typedef struct  WINDOW {
     struct  VVIDEO *w_vvideo;           /* Virtual video block          */
     struct  BUFFER *w_bufp;             /* Buffer displayed in window   */
     struct  BUFFER *l_bufp;             /* Last Buffer displayed        */
-    LINE   *w_dotp;		        /* Line containing "."          */
-    LINE   *w_markp;		        /* Line containing "mark"       */
-    LINE   *model ;                     /* window's mode-line buffer    */
-    LINE   *curLineOff ;                /* Current lines char offsets   */
-    int32   topLineNo ;                 /* windows top line number      */
-    int32   line_no;                    /* current line number          */
-    int32   mlineno;                    /* current mark line number     */
-    uint32  w_flag;                     /* Flags.                       */
-    uint16  w_doto;                     /* Byte offset for "."          */
-    uint16  w_marko;                    /* Byte offset for "mark"       */
-    uint16  w_force;                    /* If NZ, forcing row.          */
-    uint16  firstRow;                   /* Window starting row          */
-    uint16  firstCol;                   /* Window starting column       */
-    uint16  numCols;                    /* Window number text columns   */
-    uint16  numRows;                    /* Window number text rows      */
-    uint16  numTxtRows;                 /* # of rows of text in window  */
-    uint16  numTxtCols;                 /* Video number of columns      */
-    uint16  w_scscroll;                 /* cur horizontal scroll column */
-    uint16  w_sscroll;                  /* the horizontal scroll column */
-    uint16  w_margin;                   /* The margin for the window    */
-    uint16  w_scrsiz;                   /* The screen size              */
-    uint16  w_sbpos[WCVSBML+1];         /* Scroll bar positions         */
-    uint16  w_mode;                     /* Operating mode of window     */
+    LINE     *w_dotp;		        /* Line containing "."          */
+    LINE     *w_markp;		        /* Line containing "mark"       */
+    LINE     *model ;                   /* window's mode-line buffer    */
+    LINE     *curLineOff ;              /* Current lines char offsets   */
+    meInt     topLineNo ;               /* windows top line number      */
+    meInt     line_no;                  /* current line number          */
+    meInt     mlineno;                  /* current mark line number     */
+    meUInt    w_flag;                   /* Flags.                       */
+    meUShort  w_doto;                   /* Byte offset for "."          */
+    meUShort  w_marko;                  /* Byte offset for "mark"       */
+    meUShort  w_force;                  /* If NZ, forcing row.          */
+    meUShort  firstRow;                 /* Window starting row          */
+    meUShort  firstCol;                 /* Window starting column       */
+    meUShort  numCols;                  /* Window number text columns   */
+    meUShort  numRows;                  /* Window number text rows      */
+    meUShort  numTxtRows;               /* # of rows of text in window  */
+    meUShort  numTxtCols;               /* Video number of columns      */
+    meUShort  w_scscroll;               /* cur horizontal scroll column */
+    meUShort  w_sscroll;                /* the horizontal scroll column */
+    meUShort  w_margin;                 /* The margin for the window    */
+    meUShort  w_scrsiz;                 /* The screen size              */
+    meUShort  w_sbpos[WCVSBML+1];       /* Scroll bar positions         */
+    meUShort  w_mode;                   /* Operating mode of window     */
 } WINDOW ;
 
 /* meSTAT Contains the file node information */
 typedef struct {
-    int32   stmtime;			/* modification time of file	*/
+    meInt    stmtime;			/* modification time of file	*/
 #ifdef _UNIX
-    off_t   stsize ;                    /* File's Size                  */
-    uid_t   stuid ;                     /* File's User id               */
-    gid_t   stgid ;                     /* File's Group id              */
-    dev_t   stdev ;                     /* Files device ID no.          */
-    ino_t   stino ;                     /* Files Inode number           */
+    off_t    stsize ;                   /* File's Size                  */
+    uid_t    stuid ;                    /* File's User id               */
+    gid_t    stgid ;                    /* File's Group id              */
+    dev_t    stdev ;                    /* Files device ID no.          */
+    ino_t    stino ;                    /* Files Inode number           */
 #else
-    int32   stsize ;                    /* File's Size                  */
+    meInt    stsize ;                   /* File's Size                  */
 #endif
-    uint16  stmode;                     /* file mode flags              */
+    meUShort stmode ;                   /* file mode flags              */
 } meSTAT ;
 
 /*
@@ -428,16 +428,16 @@ typedef struct {
 typedef struct meABBREV {
     struct meABBREV *next ;     /* Pointer to the next abrev    */
     LINE   hlp ;                /* head line                    */
-    uint8  loaded ;     	/* modification time of file	*/
-    uint8  fname[1] ;           /* Users abrev file name        */
+    meUByte  loaded ;     	/* modification time of file	*/
+    meUByte  fname[1] ;           /* Users abrev file name        */
 } meABBREV ;
 
 /* structure to hold user variables and their definitions	*/
 typedef struct meVARIABLE
 {
     struct meVARIABLE *next ;   /* Next pointer, MUST BE FIRST as with meVARLIST */
-    uint8 *value ;		/* value (string) */
-    uint8  name[1] ;            /* name of user variable */
+    meUByte *value ;		/* value (string) */
+    meUByte  name[1] ;            /* name of user variable */
 } meVARIABLE;
 
 typedef struct meVARLIST
@@ -452,7 +452,7 @@ typedef struct meCMD {
     struct meCMD *anext ;		/* alphabetically next command */
     struct meCMD *hnext ;		/* next command in hash table */
     meVARLIST     varList ;             /* command variables list */
-    uint8        *name;		        /* name of function key */
+    meUByte        *name;		        /* name of function key */
     int           id ;                  /* command id number */
     Fintii        func;	 	        /* function name is bound to */
 } meCMD ;
@@ -461,11 +461,11 @@ typedef struct meMACRO {
     meCMD        *anext ;	       	/* alphabetically next command */
     meCMD        *hnext ;      		/* next command in hash table */
     meVARLIST     varList ;             /* command variables list */
-    uint8        *name ;		/* name of function key */
+    meUByte        *name ;		/* name of function key */
     int           id ;                  /* command id number */
-    uint8        *fname ;		/* file name for file-macros */
+    meUByte        *fname ;		/* file name for file-macros */
     LINE         *hlp ;		 	/* Head line of macro */
-    int32         callback ;		/* callback time for macro */
+    meInt         callback ;		/* callback time for macro */
 } meMACRO ;
 
 #define	MACHIDE  0x01			/* Hide the function		*/
@@ -480,8 +480,8 @@ typedef struct meMACRO {
 typedef	struct	meAMARK {
     struct meAMARK *next ;		/* pointer to next mark in list		     */
     LINE           *line ;		/* pointer to line associated with this mark */
-    uint16          offs ;		/* line offset                               */
-    uint16          name ;		/* mark name, (letter associated with it)    */
+    meUShort        offs ;		/* line offset                               */
+    meUShort        name ;		/* mark name, (letter associated with it)    */
 } meAMARK;
 
 /* A position, stores the current window, buffer, line etc which can
@@ -490,20 +490,20 @@ typedef	struct	mePOS {
     struct mePOS   *next ;              /* pointer to previous position (stack)	     */
     WINDOW         *window ;            /* Current window                            */
     struct BUFFER  *buffer ;            /* windows buffer                            */
-    int32           topLineNo ;         /* windows top line number                   */
-    int32           line_no ;           /* current line number                       */
-    int32           mlineno;            /* current mark line number                  */
-    uint16          winMinRow ;         /* Which window - store the co-ordinate      */
-    uint16          winMinCol ;         /* so we can restore to the best matching    */
-    uint16          winMaxRow ;         /* window on a goto - this greatly improves  */
-    uint16          winMaxCol ;         /* its use.                                  */
-    uint16          line_amark ;        /* Alpha mark to current line                */
-    uint16          w_scscroll ;        /* cur horizontal scroll column              */
-    uint16          w_sscroll ;         /* the horizontal scroll column              */
-    uint16          w_doto ;            /* Byte offset for "."                       */
-    uint16          w_marko ;           /* Byte offset for "mark"       */
-    uint16          flags ;             /* Whats stored bit mask                     */
-    uint16          name ;		/* position name, (letter associated with it)*/
+    meInt           topLineNo ;         /* windows top line number                   */
+    meInt           line_no ;           /* current line number                       */
+    meInt           mlineno;            /* current mark line number                  */
+    meUShort        winMinRow ;         /* Which window - store the co-ordinate      */
+    meUShort        winMinCol ;         /* so we can restore to the best matching    */
+    meUShort        winMaxRow ;         /* window on a goto - this greatly improves  */
+    meUShort        winMaxCol ;         /* its use.                                  */
+    meUShort        line_amark ;        /* Alpha mark to current line                */
+    meUShort        w_scscroll ;        /* cur horizontal scroll column              */
+    meUShort        w_sscroll ;         /* the horizontal scroll column              */
+    meUShort        w_doto ;            /* Byte offset for "."                       */
+    meUShort        w_marko ;           /* Byte offset for "mark"       */
+    meUShort        flags ;             /* Whats stored bit mask                     */
+    meUShort        name ;		/* position name, (letter associated with it)*/
 } mePOS;
 #define mePOS_WINDOW    0x001
 #define mePOS_WINXSCRL  0x002
@@ -526,9 +526,9 @@ typedef	struct	meNARROW {
     struct meNARROW *prev ;		/* pointer to previous narrow in list	     */
     LINE            *slp ;		/* pointer to narrow start line              */
     LINE            *elp ;		/* pointer to narrow end line                */
-    int32            noLines ;          /* Number of lines narrowed out              */
-    int32            sln ;              /* Narrows start line number                 */
-    uint16           name ;		/* amark name                                */
+    meInt            noLines ;          /* Number of lines narrowed out              */
+    meInt            sln ;              /* Narrows start line number                 */
+    meUShort         name ;		/* amark name                                */
 } meNARROW ;
 
 #endif
@@ -549,71 +549,71 @@ typedef struct  BUFFER {
 #if ABBREV
     meABBREV *abrevFile ;               /* Abreviation file		*/
 #endif
-    meAMARK *b_amark ;  		/* pointer to the mark list	*/
+    meAMARK  *b_amark ;  		/* pointer to the mark list	*/
 #if LCLBIND
     struct KEYTAB *bbinds ;		/* pointer to local bindings	*/
 #endif
 #if NARROW
     meNARROW *narrow ;		        /* pointer to narrow structures */
 #endif
-    meVARLIST varList ;               /* User local buffer variables  */
-    meSTAT  stats ;                     /* file stats - inc. mod time   */
-    LINE   *b_dotp;			/* Link to "." LINE structure   */
-    LINE   *b_markp;			/* The same as the above two,   */
-    LINE   *b_linep;			/* Link to the header LINE      */
-    uint8  *b_fname ;                   /* File name                    */
-    uint8  *b_bname ;                   /* Buffer name                  */
-    uint8  *modeLineStr ;               /* buffer mode-line format      */
+    meVARLIST varList ;                 /* User local buffer variables  */
+    meSTAT    stats ;                   /* file stats - inc. mod time   */
+    LINE     *b_dotp;			/* Link to "." LINE structure   */
+    LINE     *b_markp;			/* The same as the above two,   */
+    LINE     *b_linep;			/* Link to the header LINE      */
+    meUByte  *b_fname ;                 /* File name                    */
+    meUByte  *b_bname ;                 /* Buffer name                  */
+    meUByte  *modeLineStr ;             /* buffer mode-line format      */
 #if CRYPT
-    uint8  *b_key;		        /* current encrypted key	*/
+    meUByte  *b_key;		        /* current encrypted key	*/
 #endif
 #if MEUNDO
     struct  UNDOND *fUndo ;             /* First undo node              */
     struct  UNDOND *lUndo ;             /* Last undo node               */
-    uint32  undoContFlag ;              /* Was the last undo this com'd?*/ 
+    meUInt  undoContFlag ;              /* Was the last undo this com'd?*/ 
 #endif
-    int32   autotime;    		/* auto-save time for file	*/
-    int32   topLineNo ;			/* Windows top line number      */
-    int32   line_no;                    /* current line number          */
-    int32   mlineno;                    /* current mark line number     */
-    int32   elineno;                    /* end line number              */
-    int     fhook;                      /* file hook function           */
-    int     bhook;                      /* b buffer hook function       */
-    int     dhook;                      /* d buffer hook function       */
-    int     ehook;                      /* e buffer hook function       */
-    int     inputFunc;                  /* input handle function        */
+    meInt     autotime;    		/* auto-save time for file	*/
+    meInt     topLineNo ;		/* Windows top line number      */
+    meInt     line_no;                  /* current line number          */
+    meInt     mlineno;                  /* current mark line number     */
+    meInt     elineno;                  /* end line number              */
+    int       fhook;                    /* file hook function           */
+    int       bhook;                    /* b buffer hook function       */
+    int       dhook;                    /* d buffer hook function       */
+    int       ehook;                    /* e buffer hook function       */
+    int       inputFunc;                /* input handle function        */
 #ifdef _IPIPES
-    int     ipipeFunc;                  /* ipipe input handle function  */
+    int       ipipeFunc;                /* ipipe input handle function  */
 #endif
-    int     histNo;                     /* Buff switch hist no.         */
-    uint16  b_doto;                     /* Offset of "." in above LINE  */
-    uint16  b_marko;                    /* but for the "mark"           */
+    int       histNo;                   /* Buff switch hist no.         */
+    meUShort  b_doto;                   /* Offset of "." in above LINE  */
+    meUShort  b_marko;                  /* but for the "mark"           */
 #if LCLBIND
-    uint16  nobbinds;                   /* but for the "mark"           */
+    meUShort  nobbinds;                 /* but for the "mark"           */
 #endif
 #if COLOR
-    meSCHEME scheme;                    /* Current scheme index         */
-    meSCHEME lscheme[LNNOSCHM];         /* line scheme index            */
-    uint8    lschemeNext ;              /* Next line scheme index       */
+    meSCHEME  scheme;                   /* Current scheme index         */
+    meSCHEME  lscheme[LNNOSCHM];        /* line scheme index            */
+    meUByte   lschemeNext ;             /* Next line scheme index       */
 #endif
-    meMODE   b_mode;			/* editor mode of this buffer	*/
-    uint8    intFlag;			/* internal buffer flags	*/
-    uint8    b_nwnd;     		/* Count of windows on buffer   */
-    uint8    isWordMask ;               /* isWord lookup table bit mask */
-    uint8    modeLineFlags ;            /* buffer mode-line flags       */
+    meMODE    b_mode;			/* editor mode of this buffer	*/
+    meUByte   intFlag;			/* internal buffer flags	*/
+    meUByte   b_nwnd;     		/* Count of windows on buffer   */
+    meUByte   isWordMask ;              /* isWord lookup table bit mask */
+    meUByte   modeLineFlags ;           /* buffer mode-line flags       */
 #if HILIGHT
-    uint8    hiLight ;         	        /* hilight number               */
-    uint8    indent ;                   /* indent number                */
+    meUByte   hiLight ;         	/* hilight number               */
+    meUByte   indent ;                  /* indent number                */
 #endif
 } BUFFER ;
 
 
-#define	BIFBLOW    0x01		/* Buffer is to be blown away           */
-#define	BIFLOAD    0x02		/* Used on a reload to check tim        */
-#define	BIFLOCK    0x04		/* Used in ipipe to flag a lock         */
-#define	BIFNAME    0x08		/* The buffer name has a <?> extension  */
-#define	BIFFILE    0x10		/* The buffer is a file - used at creation only */
-#define	BIFNODEL   0x20		/* The buffer cannot be deleted         */
+#define	BIFBLOW    0x01		        /* Buffer is to be blown away           */
+#define	BIFLOAD    0x02 		/* Used on a reload to check tim        */
+#define	BIFLOCK    0x04 		/* Used in ipipe to flag a lock         */
+#define	BIFNAME    0x08 		/* The buffer name has a <?> extension  */
+#define	BIFFILE    0x10 		/* The buffer is a file - used at creation only */
+#define	BIFNODEL   0x20 		/* The buffer cannot be deleted         */
 
 
 /*
@@ -621,19 +621,19 @@ typedef struct  BUFFER {
  * characters, is kept in a region structure.  Used by the region commands.
  */
 typedef struct  {
-    int32   size;               /* Length in characters.        */
-    int32   line_no;            /* Origin LINE number.          */
-    LINE   *linep;		/* Origin LINE address.         */
-    uint16  offset;             /* Origin LINE offset.          */
+    meInt     size;                     /* Length in characters.        */
+    meInt     line_no;                  /* Origin LINE number.          */
+    LINE     *linep;                    /* Origin LINE address.         */
+    meUShort  offset;                   /* Origin LINE offset.          */
 } REGION ;
 
 
 /*	structure for the table of initial key bindings		*/
 
 typedef struct KEYTAB {
-    uint16 code ;               /* Key code                     */
-    uint16 index ;
-    uint32 arg ;
+    meUShort code ;                     /* Key code                     */
+    meUShort index ;
+    meUInt   arg ;
 } KEYTAB;
 
 
@@ -644,8 +644,8 @@ typedef struct KEYTAB {
 	was taken up by the keycode structure			*/
 
 typedef	struct	KILL {
-    struct KILL   *next;		/* link to next chunk, NULL if last */
-    uint8  data[1] ;            /* First byte of the data (nil trm) */
+    struct KILL *next;                  /* link to next chunk, NULL if last */
+    meUByte      data[1] ;              /* First byte of the data (nil trm) */
 } KILL;
 
 /*
@@ -689,11 +689,11 @@ typedef	struct	KILL {
  * create a new buffer for the soon-to-be-deleted text.
  */
 
-#define	NKILL	15		/* number of kills held in kill list	   */
+#define	NKILL	15		        /* number of kills held in kill list	   */
 
 typedef	struct	KLIST {
-    KILL         *kill ;	/* pointer to kill chunk		   */
-    struct KLIST *next ;	/* link to next list element, NULL if last */
+    KILL         *kill ;	        /* pointer to kill chunk		   */
+    struct KLIST *next ;	        /* link to next list element, NULL if last */
 } KLIST;
 
 
@@ -744,33 +744,33 @@ typedef	struct	KLIST {
 
 typedef struct HILNODE {
     struct HILNODE **list ;
-    uint8   *table ; 
-    uint8   *close ;
-    uint8   *rtoken ;
-    uint8   *rclose ;
-    uint16   type ; 
-    meSCHEME scheme ;
-    uint8    tknSttOff ; 
-    uint8    tknEndOff ; 
-    uint8    clsSttOff ; 
-    uint8    clsEndOff ; 
-    uint8    tknSttTst ; 
-    uint8    tknEndTst ; 
-    uint8    ordSize ; 
-    uint8    listSize ; 
-    uint8    ignore ;
-    uint8    token[1] ;
+    meUByte   *table ; 
+    meUByte   *close ;
+    meUByte   *rtoken ;
+    meUByte   *rclose ;
+    meUShort   type ; 
+    meSCHEME   scheme ;
+    meUByte    tknSttOff ; 
+    meUByte    tknEndOff ; 
+    meUByte    clsSttOff ; 
+    meUByte    clsEndOff ; 
+    meUByte    tknSttTst ; 
+    meUByte    tknEndTst ; 
+    meUByte    ordSize ; 
+    meUByte    listSize ; 
+    meUByte    ignore ;
+    meUByte    token[1] ;
 } HILNODE, *HILNODEPTR ;
 
-#define TableLower (uint8)(' ')
-#define TableUpper (uint8)('z')
+#define TableLower (meUByte)(' ')
+#define TableUpper (meUByte)('z')
 #define TableSize  ((TableUpper - TableLower) + 3)
-#define InTable(cc) (((uint8)(cc) >= TableLower) &&  \
-                     ((uint8)(cc) <= TableUpper))
+#define InTable(cc) (((meUByte)(cc) >= TableLower) &&  \
+                     ((meUByte)(cc) <= TableUpper))
 #define GetTableSlot(cc)                             \
-(((uint8)(cc) < TableLower) ? 0:                     \
- (((uint8)(cc) > TableUpper) ? TableSize-2:          \
-  ((uint8)(cc)-TableLower+1)))
+(((meUByte)(cc) < TableLower) ? 0:                     \
+ (((meUByte)(cc) > TableUpper) ? TableSize-2:          \
+  ((meUByte)(cc)-TableLower+1)))
 #define hilListSize(r) (r->ordSize + r->listSize)
 
 #endif
@@ -782,8 +782,8 @@ typedef struct HILNODE {
  * (front and back color + font) and the column on which the style ends.
  */
 typedef struct {
-    uint16   column;             /* change column */
-    meSCHEME scheme;             /* style index */
+    meUShort column;                    /* change column */
+    meSCHEME scheme;                    /* style index */
 } HILBLOCK;    
 
 /*
@@ -794,17 +794,17 @@ typedef struct {
  */
 
 typedef struct SELHILIGHT {
-    uint16 uFlags;                      /* Hilighting user flags     */
-    uint16 flags;                       /* Hilighting flags          */
+    meUShort uFlags;                    /* Hilighting user flags     */
+    meUShort flags;                     /* Hilighting flags          */
     struct BUFFER *bp;                  /* Selected hilight buffer   */
-    int32  dlineno;                     /* Dot line number           */
-    int32  mlineno;                     /* Mark line number          */
-    int32  dlineoff;                    /* Current line offset       */
-    int32  mlineoff;                    /* Current mark offset       */
-    int    sline;                       /* Start line                */
-    int    soff;                        /* Start offset              */
-    int    eline;                       /* End line number           */
-    int    eoff;                        /* End offset                */
+    meInt    dlineno;                   /* Dot line number           */
+    meInt    mlineno;                   /* Mark line number          */
+    meInt    dlineoff;                  /* Current line offset       */
+    meInt    mlineoff;                  /* Current mark offset       */
+    int      sline;                     /* Start line                */
+    int      soff;                      /* Start offset              */
+    int      eline;                     /* End line number           */
+    int      eoff;                      /* End offset                */
 } SELHILIGHT;
 
 #define SELHIL_ACTIVE    0x0001         /* Buffer has been edited    */
@@ -833,11 +833,11 @@ typedef struct  VIDEO
 {
     WINDOW    *wind ;
     LINE      *line ;
-    uint16     endp ;
-    uint16     flag ;                   /* Flags */
+    meUShort   endp ;
+    meUShort   flag ;                   /* Flags */
     meSCHEME   eolScheme ;              /* the EOL scheme */
 #if     HILIGHT
-    uint8      hilno ;                  /* hilight-no */
+    meUByte    hilno ;                  /* hilight-no */
     HILNODEPTR bracket ;
 #endif
 } VIDEO;
@@ -880,9 +880,9 @@ typedef struct VVIDEO
 
 typedef struct
 {
-    uint8    *text ;                  /* Text held on the line. */
-    meSCHEME *scheme ;                /* index to the Style (fore + back + font) of each cell */
-} FRAMELINE;                          /* Line of screen text */
+    meUByte  *text ;                    /* Text held on the line. */
+    meSCHEME *scheme ;                  /* index to the Style (fore + back + font) of each cell */
+} FRAMELINE;                            /* Line of screen text */
 
 
 #ifdef _IPIPES
@@ -907,17 +907,17 @@ typedef struct meIPIPE {
     HANDLE     threadContinue ;
     HANDLE     thread ;
     DWORD      threadId ;
-    uint8      nextChar ;
+    meUByte    nextChar ;
 #else
     int        rfd ;
     int        outWfd ;
 #endif
-    int16      noRows ;
-    int16      noCols ;
-    int16      strRow ;
-    int16      strCol ;
-    int16      curRow ;
-    int16      flag ;
+    meShort    noRows ;
+    meShort    noCols ;
+    meShort    strRow ;
+    meShort    strCol ;
+    meShort    curRow ;
+    meShort    flag ;
 } meIPIPE ;
 
 #endif
@@ -929,13 +929,13 @@ typedef int UNDOCOORD[2] ;
 typedef struct UNDOND {
     struct UNDOND *next ;
     union {
-        int32      dotp ;
+        meInt      dotp ;
         UNDOCOORD *pos ;
     } udata ;
-    int32 count ;
-    uint16 doto ;
-    uint8 type ;
-    uint8 str[1] ;
+    meInt    count ;
+    meUShort doto ;
+    meUByte  type ;
+    meUByte  str[1] ;
 } UNDOND ;
 
 #define MEUNDO_MDEL 0x01
@@ -956,11 +956,11 @@ typedef struct UNDOND {
 typedef struct meREGISTERS {
     struct meREGISTERS *prev ;
     meVARLIST *varList ;
-    uint8 *commandName ;
-    uint8 *execstr ;
-    int   f, n ;
-    int   force ;
-    uint8 reg[meNUMREG][MAXBUF] ;
+    meUByte *commandName ;
+    meUByte *execstr ;
+    int      f, n ;
+    int      force ;
+    meUByte  reg[meNUMREG][MAXBUF] ;
 } meREGISTERS ;
 
 
@@ -968,21 +968,21 @@ typedef struct meREGISTERS {
  * the same as meNAMESVAR as it is used for $file-names variable
  */
 typedef struct {
-    int     exact ;
-    int     size ;
-    uint8 **list ;
-    uint8  *mask ;
-    int     curr ;
-    uint8  *path ;
-    int     timeStamp ;
+    int       exact ;
+    int       size ;
+    meUByte **list ;
+    meUByte  *mask ;
+    int       curr ;
+    meUByte  *path ;
+    int       timeStamp ;
 }  meDIRLIST ;
 
 typedef struct {
-    int     exact ;
-    int     size ;
-    uint8 **list ;
-    uint8  *mask ;
-    int     curr ;
+    int       exact ;
+    int       size ;
+    meUByte **list ;
+    meUByte  *mask ;
+    int       curr ;
 } meNAMESVAR ; 
 
 #if REGSTRY
@@ -1000,36 +1000,36 @@ typedef struct {
  * 32-bit integer. The handle is the lookup from the macro 
  * interface.
  */
-#define REG_HANDLE(a,b,c,d) ((((uint32)(a))<<24)|(((uint32)(b))<<16)| \
-                             (((uint32)(c))<<8)|((uint32)(d)))
+#define REG_HANDLE(a,b,c,d) ((((meUInt)(a))<<24)|(((meUInt)(b))<<16)| \
+                             (((meUInt)(c))<<8)|((meUInt)(d)))
 
 /* Registry Open types - NOTE any changes to these must be reflected in
  * the variable meRegModeList defined in registry.c */
-#define REGMODE_INTERNAL   0x001         /* Internal registry - hidden */
-#define REGMODE_HIDDEN     0x002         /* Node is hidden */
-#define REGMODE_FROOT      0x004         /* File root */
-#define REGMODE_CHANGE     0x008         /* Tree has changed */
-#define REGMODE_BACKUP     0x010         /* Perform a backup of the file */
-#define REGMODE_AUTO       0x020         /* Automatic save */
-#define REGMODE_DISCARD    0x040         /* Discardable entry (memory only) */
-#define REGMODE_MERGE      0x080         /* Merge a loaded registry */
-#define REGMODE_RELOAD     0x100         /* Reload existing registry */
-#define REGMODE_CREATE     0x200         /* Create if does not exist */
-#define REGMODE_QUERY      0x400         /* Query the current node */
-#define REGMODE_GETMODE    0x800         /* Return modes set in $result */
-#define REGMODE_STORE_MASK 0x07f         /* Bits actually worth storing */
+#define REGMODE_INTERNAL   0x001        /* Internal registry - hidden */
+#define REGMODE_HIDDEN     0x002        /* Node is hidden */
+#define REGMODE_FROOT      0x004        /* File root */
+#define REGMODE_CHANGE     0x008        /* Tree has changed */
+#define REGMODE_BACKUP     0x010        /* Perform a backup of the file */
+#define REGMODE_AUTO       0x020        /* Automatic save */
+#define REGMODE_DISCARD    0x040        /* Discardable entry (memory only) */
+#define REGMODE_MERGE      0x080        /* Merge a loaded registry */
+#define REGMODE_RELOAD     0x100        /* Reload existing registry */
+#define REGMODE_CREATE     0x200        /* Create if does not exist */
+#define REGMODE_QUERY      0x400        /* Query the current node */
+#define REGMODE_GETMODE    0x800        /* Return modes set in $result */
+#define REGMODE_STORE_MASK 0x07f        /* Bits actually worth storing */
 /*
  * RNODE
  * Data structure to hold a hierarchy node
  */
 typedef struct RNODE
 {
-    uint8 *value;                       /* The value of the node */
+    meUByte      *value;                /* The value of the node */
     struct RNODE *prnt;                 /* Pointer to the parent */
     struct RNODE *chld;                 /* Pointer to the child node */
     struct RNODE *sblg;                 /* Pointer to the sibling node */
-    uint8 mode;                         /* Mode flag */
-    uint8 name[1];                      /* The name of the node */
+    meUByte       mode;                 /* Mode flag */
+    meUByte       name[1];              /* The name of the node */
 } RNODE;
 /*
  * REGHANDLE: Public anonymous typeless handle to the registry node.

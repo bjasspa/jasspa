@@ -277,7 +277,7 @@ forwDelWord(int f, int n)
 {
     register LINE   *dotp;
     register int    doto, delType ;
-    int32           size, lineno ;
+    meInt           size, lineno ;
     
     if(n == 0)
         return TRUE ;
@@ -317,8 +317,8 @@ forwDelWord(int f, int n)
 int
 backDelWord(int f, int n)
 {
-    uint8 delType ;
-    int32 size;
+    meUByte delType ;
+    meInt size;
     int moveForw=TRUE ;
     
     if(n == 0)
@@ -366,24 +366,24 @@ backDelWord(int f, int n)
 /*---   Local Type definitions */
 struct PosAnchor
 {
-    LINE *dotp;                         /* Line position */
-    long words;                         /* Number of words */
-    long offset;                        /* Sub-position in word */
-    long dotl;                          /* Line number */
-    unsigned short doto;                /* Line offset */
-    unsigned char flags;                /* 0 = in space; 1 = in word; 2 = valid */
+    LINE    *dotp;                      /* Line position */
+    long     words;                     /* Number of words */
+    long     offset;                    /* Sub-position in word */
+    meInt    dotl;                      /* Line number */
+    meUShort doto;                      /* Line offset */
+    meUByte  flags;                     /* 0 = in space; 1 = in word; 2 = valid */
 };
 
 typedef struct SAnchor
 {
     struct PosAnchor point;             /* Location of point */
     struct PosAnchor mark;              /* Location of mark */
-    LINE *startp;                       /* Starting Line */
-    unsigned short starto;              /* Starting Offset */
-    long startl;                        /* Starting Line number */
-    LINE *endp;                         /* Ending Line */
-    unsigned short endo;                /* Ending Line */
-    long endl;                          /* Ending Line number */
+    LINE    *startp;                    /* Starting Line */
+    meUShort starto;                    /* Starting Offset */
+    meInt    startl;                    /* Starting Line number */
+    LINE    *endp;                      /* Ending Line */
+    meUShort endo;                      /* Ending Line */
+    meInt    endl;                      /* Ending Line number */
 } Anchor;
 
 static Anchor anchor;                   /* Anchor position */
@@ -448,16 +448,16 @@ setAnchor(int f, int n)
         int ninword;
         int offset;
         int wordcnt;
-        uint8 cc;
-        uint16 ino;
+        meUByte cc;
+        meUShort ino;
         
         /* Make sure that we have all of the information that we require in
          * order to be able to compute the postion independent postions for
          * out marker information. */
         if (anchor.startp == NULL)
-            return mlwrite(MWABORT,(uint8 *)"No start position set");
+            return mlwrite(MWABORT,(meUByte *)"No start position set");
         if (anchor.endp == NULL)
-            return mlwrite(MWABORT,(uint8 *)"No end position set");
+            return mlwrite(MWABORT,(meUByte *)"No end position set");
         if (anchor.point.dotp == NULL)
             mm &= ~ANCHOR_POINT;        /* No point set */
         if (anchor.mark.dotp == NULL)
@@ -557,19 +557,19 @@ gotoAnchor (int f, int n)
     if (n & (ANCHOR_POINT|ANCHOR_MARK))
     {
         LINE *linp, *inp;               /* Last + current line pointer */
-        uint16 lino, ino;               /* Last + current line offset */
-        int32 linl, inl;                /* Last + current line length */
+        meUShort lino, ino;             /* Last + current line offset */
+        meInt linl, inl;                /* Last + current line length */
         int inword = ANCHFLG_INSPACE;   /* Word status flag */
         int offset = 0;                 /* Offset into the word */
         int wordcnt = 0;                /* Number of words encountered */
-        uint8 cc;                       /* Temporary working character */
+        meUByte cc;                     /* Temporary working character */
         int mm = n & 3;                 /* Required operation */ 
         
         /* Make sure that the start positions are defined */
         if (anchor.startp == NULL)
-            return mlwrite(MWABORT,(uint8 *)"No start position set");
+            return mlwrite(MWABORT,(meUByte *)"No start position set");
         if (anchor.endp == NULL)
-            return mlwrite(MWABORT,(uint8 *)"No end position set");
+            return mlwrite(MWABORT,(meUByte *)"No end position set");
         
         /* Save the line information */
         inp = lforw(anchor.startp);
@@ -712,8 +712,8 @@ gotoAnchor (int f, int n)
 int
 wrapWord(int f, int n)
 {
-    register uint16 cnt, off ;		/* size of word wrapped to next line */
-    register uint8 c, last=2 ;		/* charector temporary */
+    register meUShort cnt, off ;		/* size of word wrapped to next line */
+    register meUByte c, last=2 ;		/* charector temporary */
     
     if(bchange() != TRUE)               /* Check we can change the buffer */
         return ABORT ;
@@ -783,7 +783,7 @@ wrapWord(int f, int n)
  */
 
 static int
-removeTabs (uint8 *iptr, int logUndo)
+removeTabs (meUByte *iptr, int logUndo)
 {
     int	ilength;                        /* length of the leader. */
     int	ii;                             /* Local loop counter */
@@ -826,8 +826,8 @@ removeTabs (uint8 *iptr, int logUndo)
 static int
 countGaps(void)
 {
-    unsigned char last;	/* Last character read. */
-    unsigned char c;	/* Current character */
+    meUByte last;       /* Last character read. */
+    meUByte c;          /* Current character */
     int	count=0 ;	/* Number of gaps encountered */
 
     last = '\0';				/* Reset word */
@@ -847,10 +847,10 @@ static char gapDir = 0;                 /* Gap direction */
 static void
 getBestGap(void)
 {
-    unsigned char last;	/* Last character read. */
-    unsigned char c;	/* Current character */
+    meUByte last;       /* Last character read. */
+    meUByte c;          /* Current character */
     int	score=0, bestscore=0, currscore=0 ;	/* Number of gaps encountered */
-    unsigned short bestoff, curroff, off ;
+    meUShort bestoff, curroff, off ;
     
     last = 'z';				/* Reset word */
     off = curwp->w_doto ;
@@ -920,12 +920,12 @@ getBestGap(void)
 int
 justify(int leftMargin, int leftDoto)
 {
-    unsigned short  len, doto, ss ;
-    unsigned short  odoto;              /* Starting doto backup */
-    unsigned char   cc ;
-    char            jmode;              /* Justification mode */
-    int             undoMode;           /* Undo operation */
-    int             col ;               /* left indent with tab expansion */
+    meUShort  len, doto, ss ;
+    meUShort  odoto;              /* Starting doto backup */
+    meUByte   cc ;
+    char      jmode;              /* Justification mode */
+    int       undoMode;           /* Undo operation */
+    int       col ;               /* left indent with tab expansion */
     
     /* Save old context */
     odoto = curwp->w_doto;
@@ -1024,7 +1024,7 @@ justify(int leftMargin, int leftDoto)
         }
     }
     /* Both left and right margin justification. */
-    else if(len < (unsigned short) fillcol)
+    else if(len < (meUShort) fillcol)
     {
         int gaps ;			/* The number of gaps in the line */
         
@@ -1149,7 +1149,7 @@ lookahead(int autoDetect)
                      * current line is liable to spill onto the next line
                      * which is empty */
                     if ((jj == ii) ||       /* Next line indented to 'ii' */
-                        ((jj == jlen) && (llength(temp_dotp) <= (unsigned short) fillcol)))
+                        ((jj == jlen) && (llength(temp_dotp) <= (meUShort) fillcol)))
                     {
                         curwp->w_doto = ii; /* Assume position 'i' */
                         autoDetect = 1;     /* Disable prompt */
@@ -1169,15 +1169,15 @@ lookahead(int autoDetect)
                 temp_doto = curwp->w_doto;
                 curwp->w_doto = ii;
                 
-                if((status = mlCharReply((uint8 *)"Indent to <<<<<<<<<< (yn)? ",mlCR_QUIT_ON_USER|mlCR_LOWER_CASE,(uint8 *)"yn",NULL)) == -2)
+                if((status = mlCharReply((meUByte *)"Indent to <<<<<<<<<< (yn)? ",mlCR_QUIT_ON_USER|mlCR_LOWER_CASE,(meUByte *)"yn",NULL)) == -2)
                 {
-                    uint8 scheme=(curbp->scheme/meSCHEME_STYLES) ;
+                    meUByte scheme=(curbp->scheme/meSCHEME_STYLES) ;
             
                     /* Force an update of the screen to to ensure that the user
                      * can see the information in the correct location */
                     update (TRUE);
-                    pokeScreen(0x10,mwRow,mwCol,&scheme,(uint8 *)"<<<<<<<<<<") ;
-                    status = mlCharReply((uint8 *)"Indent to <<<<<<<<<< (yn)? ",mlCR_LOWER_CASE,(uint8 *)"yn",NULL) ;
+                    pokeScreen(0x10,mwRow,mwCol,&scheme,(meUByte *)"<<<<<<<<<<") ;
+                    status = mlCharReply((meUByte *)"Indent to <<<<<<<<<< (yn)? ",mlCR_LOWER_CASE,(meUByte *)"yn",NULL) ;
                     mlerase(0);
                 }
                 if(status == 'y')
@@ -1271,9 +1271,9 @@ fillPara(int f, int n)
 #define FILL_MARGIN  0x2000             /* Fill to margin (AUTO+LINE)   */
     
     LINE *eopline;		        /* ptr to line just past EOP	*/
-    int32 eoplno;		        /* line no of line just past EOP*/
-    uint8 ofillmode;                    /* Old justification mode       */
-    uint8 wbuf[NSTRING];	        /* buffer for current word	*/
+    meInt eoplno;		        /* line no of line just past EOP*/
+    meUByte ofillmode;                    /* Old justification mode       */
+    meUByte wbuf[NSTRING];	        /* buffer for current word	*/
     int c;			        /* current char durring scan	*/
     int clength;		        /* position on line during fill	*/
     int ccol;				/* position on line during fill	*/
@@ -1290,7 +1290,7 @@ fillPara(int f, int n)
 #endif
     
     if (fillcol == 0)                   /* Fill column set ??*/
-        return mlwrite(MWABORT,(uint8 *)"No fill column set");
+        return mlwrite(MWABORT,(meUByte *)"No fill column set");
     if ((c=bchange()) != TRUE)           /* Check we can change the buffer */
         return c ;
     
@@ -1442,7 +1442,7 @@ noIndent:
         curwp->w_doto = 0;
         meUndoAddReplaceBgn(eopline,0) ;
         undoNd = curbp->fUndo ;
-        curwp->w_doto = (uint16) ilength;
+        curwp->w_doto = (meUShort) ilength;
         paralen = 0 ;
 #endif
         /* Get the indentation column, this is the real left indentation position */

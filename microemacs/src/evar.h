@@ -80,11 +80,11 @@ enum	{
 
 /**	list of recognized environment variables	*/
 
-#define	DEFVAR(s,v)	(uint8 *) s,
+#define	DEFVAR(s,v)	(meUByte *) s,
 #define	DEFFUN(v,s,t)
 #define	DEFDER(v,s,t)
 
-uint8 *envars[] =
+meUByte *envars[] =
 {
 #include	"evar.def"
     0
@@ -98,10 +98,10 @@ uint8 *envars[] =
 /**	list of recognized user function names	*/
 
 #define	DEFVAR(s,v)	/* NULL */
-#define	DEFFUN(v,s,t)	(uint8 *) s,
+#define	DEFFUN(v,s,t)	(meUByte *) s,
 #define	DEFDER(v,s,t)
 
-uint8 *funcNames[] =
+meUByte *funcNames[] =
 {
 #include	"evar.def"
 };
@@ -116,7 +116,7 @@ uint8 *funcNames[] =
 #define	DEFFUN(v,s,t)	t,
 #define	DEFDER(v,s,t)
 
-uint8 funcTypes[] =
+meUByte funcTypes[] =
 {
 #include	"evar.def"
 };
@@ -129,9 +129,9 @@ uint8 funcTypes[] =
 
 #define	DEFVAR(s,v)	/* NULL */
 #define	DEFFUN(v,s,t)
-#define	DEFDER(v,s,t)	(uint8 *) s,
+#define	DEFDER(v,s,t)	(meUByte *) s,
 
-uint8 *derNames[] =
+meUByte *derNames[] =
 {
 #include	"evar.def"
 };

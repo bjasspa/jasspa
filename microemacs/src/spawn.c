@@ -82,15 +82,15 @@
 int	mlfirst = -1;		/* first command used by mlreplt() */
 
 #ifdef _UNIX
-static uint8 *
+static meUByte *
 getShellCmd(void)
 {
-    static uint8 *shellCmd=NULL ;
+    static meUByte *shellCmd=NULL ;
     if(shellCmd == NULL)
     {
-        uint8 *cp;
+        meUByte *cp;
         if(((cp = meGetenv("SHELL")) == NULL) || (*cp == '\0'))
-            cp = (uint8 *)"/bin/sh" ;
+            cp = (meUByte *)"/bin/sh" ;
         shellCmd = meStrdup(cp) ;
     }
     return shellCmd ;
@@ -109,7 +109,7 @@ getShellCmd(void)
  */
 #ifdef _UNIX
 void
-__mkTempName (uint8 *buf, uint8 *name)
+__mkTempName (meUByte *buf, meUByte *name)
 {
     /* Under UNIX use the process id in order to create the temporary file
      * for this session of me
@@ -126,21 +126,21 @@ __mkTempName (uint8 *buf, uint8 *name)
 #else
 
 void
-__mkTempName (uint8 *buf, uint8 *name, uint8 *ext)
+__mkTempName (meUByte *buf, meUByte *name, meUByte *ext)
 {
 #ifdef _CONVDIR_CHAR
 #define PIPEDIR_CHAR _CONVDIR_CHAR
 #else
 #define PIPEDIR_CHAR DIR_CHAR
 #endif
-    static uint8 *tmpDir=NULL ;
-    uint8 *pp ;
+    static meUByte *tmpDir=NULL ;
+    meUByte *pp ;
     int ii ;
 
     if(tmpDir == NULL)
     {
         /* Get location of the temporary directory from the environment $TEMP */
-        if ((pp = (uint8 *) meGetenv ("TEMP")) != NULL)
+        if ((pp = (meUByte *) meGetenv ("TEMP")) != NULL)
             tmpDir = malloc((ii=meStrlen(pp))+2) ;
         if(tmpDir != NULL)
         {
@@ -189,7 +189,7 @@ meShell(int f, int n)
 #ifdef _DOS
     register char *cp;
 #endif
-    uint8 path[FILEBUF] ;		/* pathfrom where to execute */
+    meUByte path[FILEBUF] ;		/* pathfrom where to execute */
     int  cd, ss ;
     
     getFilePath(curbp->b_fname,path) ;
@@ -216,10 +216,10 @@ meShell(int f, int n)
         case 0:
             /* we want the children to die on interrupt */
             execlp("xterm", "xterm", "-sl", "200", "-sb", NULL);
-            mlwrite(MWABORT,(uint8 *)"exec failed, %s", sys_errlist[errno]);
+            mlwrite(MWABORT,(meUByte *)"exec failed, %s", sys_errlist[errno]);
             meExit(127);
         case -1:
-            ss = mlwrite(MWABORT,(uint8 *)"exec failed, %s", sys_errlist[errno]);
+            ss = mlwrite(MWABORT,(meUByte *)"exec failed, %s", sys_errlist[errno]);
         default:
             ss = TRUE ;
         }
@@ -252,7 +252,7 @@ suspendEmacs(int f, int n)		/* suspend MicroEMACS and wait to wake up */
     ** SHELL environment variable is NOT "ksh" or "csh" and it hasnt got a "j"
     ** in it.
     */
-    if((f==FALSE) && (mlyesno((uint8 *)"Suspend") != TRUE))
+    if((f==FALSE) && (mlyesno((meUByte *)"Suspend") != TRUE))
         return FALSE ;
 
     TTclose();				/* stty to old settings */
@@ -269,9 +269,9 @@ suspendEmacs(int f, int n)		/* suspend MicroEMACS and wait to wake up */
 /* Note: the given string cmdstr must be large enough to strcat
  * " </dev/null" on the end */
 int
-doShellCommand(uint8 *cmdstr)
+doShellCommand(meUByte *cmdstr)
 {
-    uint8 path[FILEBUF] ;		/* pathfrom where to execute */
+    meUByte path[FILEBUF] ;		/* pathfrom where to execute */
     int  systemRet ;                    /* return value of last system  */
     int  cd, ss ;
 #ifdef _UNIX
@@ -325,10 +325,10 @@ doShellCommand(uint8 *cmdstr)
 int
 meShellCommand(int f, int n)
 {
-    uint8 cmdstr[MAXBUF+20];		/* string holding command to execute */
+    meUByte cmdstr[MAXBUF+20];		/* string holding command to execute */
 
     /* get the line wanted */
-    if((meGetString((uint8 *)"System", 0, 0, cmdstr, MAXBUF)) != TRUE)
+    if((meGetString((meUByte *)"System", 0, 0, cmdstr, MAXBUF)) != TRUE)
         return ABORT ;
     return doShellCommand(cmdstr) ;
 }
@@ -366,7 +366,7 @@ ipipeGetChildWindow(meIPIPE *ipipe)
 #endif
 
 static void
-ipipeWriteString(meIPIPE *ipipe, int n, uint8 *str)
+ipipeWriteString(meIPIPE *ipipe, int n, meUByte *str)
 {
     while(n--)
     {
@@ -461,7 +461,7 @@ ipipeKillBuf(meIPIPE *ipipe, int type)
             }
 #endif
             /* send a control-C signal */
-            ipipeWriteString(ipipe,1,(uint8 *) "\x03") ;
+            ipipeWriteString(ipipe,1,(meUByte *) "\x03") ;
             return ;
         }
 #ifdef _WIN32
@@ -566,7 +566,7 @@ ipipeRemove(meIPIPE *ipipe)
 #ifdef _WIN32
 
 static int
-readFromPipe(meIPIPE *ipipe, int nbytes, uint8 *buff)
+readFromPipe(meIPIPE *ipipe, int nbytes, meUByte *buff)
 {
     DWORD  bytesRead ;
 
@@ -620,7 +620,7 @@ readFromPipe(meIPIPE *ipipe, int nbytes, uint8 *buff)
 #include <netinet/in.h>
 
 static int
-readFromPipe(meIPIPE *ipipe, int nbytes, uint8 *buff)
+readFromPipe(meIPIPE *ipipe, int nbytes, meUByte *buff)
 {
     int ii ;
     if(ipipe->pid == 0)
@@ -694,9 +694,9 @@ ipipeRead(meIPIPE *ipipe)
     BUFFER *bp=ipipe->bp ;
     LINE   *lp_old ;
     int     len, curOff, maxOff, curRow, ii ;
-    uint32  noLines ;
-    uint8  *p1, cc, buff[1025] ;
-    uint8   rbuff[MAXBUF] ;
+    meUInt  noLines ;
+    meUByte  *p1, cc, buff[1025] ;
+    meUByte   rbuff[MAXBUF] ;
     int     curROff=0, curRRead=0 ;
 #if _UNIX
     int     na, nb ;
@@ -757,16 +757,16 @@ ipipeRead(meIPIPE *ipipe)
     {
         if(!getNextCharFromPipe(ipipe,cc,rbuff,curROff,curRRead))
         {
-            uint8 *ins ;
+            meUByte *ins ;
 
             if(ipipe->pid == -5)
-                ins = (uint8 *)"[TERMINATED]" ;
+                ins = (meUByte *)"[TERMINATED]" ;
             else if(ipipe->pid == -4)
-                ins = (uint8 *)"[EXIT]" ;
+                ins = (meUByte *)"[EXIT]" ;
             else if(ipipe->pid == -3)
-                ins = (uint8 *)"[KILLED]" ;
+                ins = (meUByte *)"[KILLED]" ;
             else if(ipipe->pid == -2)
-                ins = (uint8 *)"[CORE DUMP]" ;
+                ins = (meUByte *)"[CORE DUMP]" ;
             else
                 /* none left to read */
                 break ;
@@ -925,7 +925,7 @@ move_cursor_pos:
                                 while(curRow != nb)
                                 {
                                     curRow++ ;
-                                    addLineToEob(bp,(uint8 *)"") ;
+                                    addLineToEob(bp,(meUByte *)"") ;
                                 }
                             }
                             else
@@ -939,7 +939,7 @@ move_cursor_pos:
                             len = na ;
                             bp->b_dotp = lp_old ;
                             meStrcpy(buff,lp_old->l_text) ;
-                            bufferPosStore(lp_old,(uint16)len,bp->line_no) ;
+                            bufferPosStore(lp_old,(meUShort)len,bp->line_no) ;
                             na -= meStrlen(buff) ;
                             p1 = buff+len ;
                             if(na > 0)
@@ -1048,7 +1048,7 @@ cant_handle_this:
         default:
             if(curOff >= maxOff)
             {
-                uint8 bb[2] ;
+                meUByte bb[2] ;
                 bb[0] = p1[0] ;
                 bb[1] = p1[1] ;
                 p1[0] = '\\' ;
@@ -1065,7 +1065,7 @@ cant_handle_this:
             }
             if(ipipe->flag & IPIPE_OVERWRITE)
             {
-                uint8 *ss, *dd ;
+                meUByte *ss, *dd ;
                 int ll ;
 
                 ll = meStrlen(p1) ;
@@ -1142,13 +1142,13 @@ int
 ipipeWrite(int f, int n)
 {
     int      ss ;
-    uint8    buff[MAXBUF];	/* string to add */
+    meUByte    buff[MAXBUF];	/* string to add */
     meIPIPE *ipipe ;
 
     if(!meModeTest(curbp->b_mode,MDPIPE))
-        return mlwrite(MWABORT,(uint8 *)"[Not an ipipe-buffer]") ;
+        return mlwrite(MWABORT,(meUByte *)"[Not an ipipe-buffer]") ;
     /* ask for string to insert */
-    if((ss=meGetString((uint8 *)"String", 0, 0, buff, MAXBUF)) != TRUE)
+    if((ss=meGetString((meUByte *)"String", 0, 0, buff, MAXBUF)) != TRUE)
         return ss ;
     
     ipipe = ipipes ;
@@ -1178,7 +1178,7 @@ ipipeSetSize(WINDOW *wp, BUFFER *bp)
         if(ii > 0)
         {
             if((ipipe->curRow += ii) > bp->elineno)
-                ipipe->curRow = (int16) bp->elineno ;
+                ipipe->curRow = (meShort) bp->elineno ;
         }
         else if(ipipe->curRow >= ipipe->noRows)
             ipipe->curRow = ipipe->noRows-1 ;
@@ -1231,7 +1231,7 @@ ipipeSetSize(WINDOW *wp, BUFFER *bp)
  * pty, once we have aquired one then we look for the tty. Return the name of
  * the tty to the caller so that it may be opened. */
 static int
-allocatePty(uint8 *ptyName)
+allocatePty(meUByte *ptyName)
 {
     struct stat stb ;
     int    fd ;
@@ -1384,11 +1384,11 @@ childSetupTty(void)
 #endif
 
 int
-doIpipeCommand(uint8 *comStr, uint8 *path, uint8 *bufName, int flags)
+doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
 {
     meIPIPE    *ipipe ;
     BUFFER     *bp ;
-    uint8       line[MAXBUF] ;
+    meUByte       line[MAXBUF] ;
     int         cd ;
 #ifdef _UNIX
     int         fds[2], outFds[2], ptyFp ;
@@ -1484,7 +1484,7 @@ doIpipeCommand(uint8 *comStr, uint8 *path, uint8 *bufName, int flags)
         * CHILD CHILD CHILD CHILD CHILD CHILD CHILD CHILD CHILD CHILD     *
         ******************************************************************/
         char *args[4];		/* command line send to shell */
-        uint8 *ss ;
+        meUByte *ss ;
 
         /* Dissassociate the new process from the controlling terminal */
 #if ((defined(_BSD)) && (defined(TIOCNOTTY)))
@@ -1624,7 +1624,7 @@ doIpipeCommand(uint8 *comStr, uint8 *path, uint8 *bufName, int flags)
         childSetupTty() ;
 
         /* Set up the arguments for the pipe */
-        if((ss=getUsrVar((uint8 *)"ipipe-term")) != NULL)
+        if((ss=getUsrVar((meUByte *)"ipipe-term")) != NULL)
             mePutenv(meStrdup(ss)) ;
         ss = getShellCmd() ;
 
@@ -1689,7 +1689,7 @@ doIpipeCommand(uint8 *comStr, uint8 *path, uint8 *bufName, int flags)
     if((ipipe->bp = bp) == NULL)
     {
         ipipeRemove(ipipe) ;
-        return mlwrite(MWABORT,(uint8 *)"[Failed to create %s buffer]",bufName) ;
+        return mlwrite(MWABORT,(meUByte *)"[Failed to create %s buffer]",bufName) ;
     }
     /* setup the buffer */
     meStrcpy(line,"cd ") ;
@@ -1697,8 +1697,8 @@ doIpipeCommand(uint8 *comStr, uint8 *path, uint8 *bufName, int flags)
     addLineToEob(bp,line) ;			/* Add string */
     bp->b_fname = meStrdup(path) ;
     addLineToEob(bp,comStr) ;			/* Add string */
-    addLineToEob(bp,(uint8 *)"") ;		/* Add string */
-    addLineToEob(bp,(uint8 *)"") ;		/* Add string */
+    addLineToEob(bp,(meUByte *)"") ;		/* Add string */
+    addLineToEob(bp,(meUByte *)"") ;		/* Add string */
     bp->b_dotp = lback(bp->b_linep) ;
     bp->b_doto = 0 ;
     bp->line_no = bp->elineno-1 ;
@@ -1710,7 +1710,7 @@ doIpipeCommand(uint8 *comStr, uint8 *path, uint8 *bufName, int flags)
     ipipe->strCol = 0 ;
     ipipe->noRows = 0 ;
     ipipe->noCols = 0 ;
-    ipipe->curRow = (int16) bp->line_no ;
+    ipipe->curRow = (meShort) bp->line_no ;
     /* get a popup window for the command output */
     {
         WINDOW *wp ;
@@ -1738,9 +1738,9 @@ int
 ipipeCommand(int f, int n)
 {
     register int  ss ;			/* Fast variable */
-    uint8         lbuf[MAXBUF];		/* command line send to shell */
-    uint8         nbuf[MAXBUF], *bn ;	/* buffer name */
-    uint8         pbuf[FILEBUF] ;
+    meUByte         lbuf[MAXBUF];		/* command line send to shell */
+    meUByte         nbuf[MAXBUF], *bn ;	/* buffer name */
+    meUByte         pbuf[FILEBUF] ;
 
     if(!(meSystemCfg & meSYSTEM_IPIPES))
     {
@@ -1748,12 +1748,12 @@ ipipeCommand(int f, int n)
         return pipeCommand(f,n) ;
     }
     /*---	Get the command to pipe in */
-    if((ss=meGetString((uint8 *)"Ipipe", 0, 0, lbuf, MAXBUF)) != TRUE)
+    if((ss=meGetString((meUByte *)"Ipipe", 0, 0, lbuf, MAXBUF)) != TRUE)
         return ss ;
     if((n & 0x01) == 0)
     {
         /* prompt for and get the new buffer name */
-        if((ss = getBufferName((uint8 *)"Buffer", 0, 0, nbuf)) != TRUE)
+        if((ss = getBufferName((meUByte *)"Buffer", 0, 0, nbuf)) != TRUE)
             return ss ;
         bn = nbuf ;
     }
@@ -1784,18 +1784,18 @@ anyActiveIpipe(void)
  * Bound to ^X @
  */
 int
-doPipeCommand(uint8 *comStr, uint8 *path, uint8 *bufName, int flags)
+doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
 {
     register BUFFER *bp;	/* pointer to buffer to zot */
-    uint8 line[MAXBUF+256] ;    /* new com line with "> command" (+256 to allow for the >.... */
+    meUByte line[MAXBUF+256] ;    /* new com line with "> command" (+256 to allow for the >.... */
     int cd, ret ;
 #ifdef _DOS
-    static int8 pipeStderr=0 ;
-    uint8 cc, *ss, *dd ;
+    static meByte pipeStderr=0 ;
+    meUByte cc, *ss, *dd ;
     int gotPipe=0 ;
 #endif
 #ifndef _UNIX
-    uint8 filnam[MAXBUF] ;
+    meUByte filnam[MAXBUF] ;
 
     mkTempCommName (filnam,COMMAND_FILE) ;
 #endif
@@ -1857,7 +1857,7 @@ doPipeCommand(uint8 *comStr, uint8 *path, uint8 *bufName, int flags)
 #endif
 #ifdef _UNIX
     {
-        uint8 *ss ;
+        meUByte *ss ;
         int ll ;
 
         if((ss=meStrchr(comStr,'|')) == NULL)
@@ -1893,7 +1893,7 @@ doPipeCommand(uint8 *comStr, uint8 *path, uint8 *bufName, int flags)
     meStrcat(line,path) ;
     addLineToEob(bp,line) ;
     addLineToEob(bp,comStr) ;
-    addLineToEob(bp,(uint8 *)"") ;
+    addLineToEob(bp,(meUByte *)"") ;
 
     /* and read the stuff in */
 #ifdef _UNIX
@@ -1928,17 +1928,17 @@ int
 pipeCommand(int f, int n)
 {
     register int ss ;
-    uint8 line[MAXBUF];	        /* command line send to shell */
-    uint8 nbuf[MAXBUF], *bn ;	/* buffer name */
-    uint8 pbuf[MAXBUF] ;
+    meUByte line[MAXBUF];	        /* command line send to shell */
+    meUByte nbuf[MAXBUF], *bn ;	/* buffer name */
+    meUByte pbuf[MAXBUF] ;
 
     /* get the command to pipe in */
-    if((ss=meGetString((uint8 *)"Pipe", 0, 0, line, MAXBUF)) != TRUE)
+    if((ss=meGetString((meUByte *)"Pipe", 0, 0, line, MAXBUF)) != TRUE)
         return ss ;
     if((n & 0x01) == 0)
     {
         /* prompt for and get the new buffer name */
-        if((ss = getBufferName((uint8 *)"Buffer", 0, 0, nbuf)) != TRUE)
+        if((ss = getBufferName((meUByte *)"Buffer", 0, 0, nbuf)) != TRUE)
             return ss ;
         bn = nbuf ;
     }
@@ -1961,20 +1961,20 @@ meFilter(int f, int n)
 {
     register int     s;			/* return status from CLI */
     register BUFFER *bp;		/* pointer to buffer to zot */
-    uint8            line[MAXBUF];	/* command line send to shell */
-    uint8           *tmpnam ;		/* place to store real file name */
+    meUByte            line[MAXBUF];	/* command line send to shell */
+    meUByte           *tmpnam ;		/* place to store real file name */
 #ifdef _UNIX
     int	             exitstatus;	/* exit status of command */
 #endif
-    uint8 filnam1[MAXBUF];
-    uint8 filnam2[MAXBUF];
+    meUByte filnam1[MAXBUF];
+    meUByte filnam2[MAXBUF];
 
     /* Construct the filter names */
-    mkTempName (filnam1,(uint8 *)FILTER_IN_FILE,NULL);
-    mkTempName (filnam2,(uint8 *)FILTER_OUT_FILE,NULL);
+    mkTempName (filnam1,(meUByte *)FILTER_IN_FILE,NULL);
+    mkTempName (filnam2,(meUByte *)FILTER_OUT_FILE,NULL);
 
     /* get the filter name and its args */
-    if ((s=meGetString((uint8 *)"Filter", 0, 0, line, MAXBUF)) != TRUE)
+    if ((s=meGetString((meUByte *)"Filter", 0, 0, line, MAXBUF)) != TRUE)
         return(s);
 
     if((s=bchange()) != TRUE)               /* Check we can change the buffer */
@@ -1989,7 +1989,7 @@ meFilter(int f, int n)
     if (writeout(bp,0,filnam1) != TRUE)
     {
         bp->b_fname = tmpnam ;
-        return mlwrite(MWABORT,(uint8 *)"[Cannot write filter file]");
+        return mlwrite(MWABORT,(meUByte *)"[Cannot write filter file]");
     }
 
 #ifdef _DOS
@@ -2016,9 +2016,9 @@ meFilter(int f, int n)
     if((exitstatus = system((char *)line)) != 0)
     {
         if(errno)
-            mlwrite(MWCURSOR|MWWAIT,(uint8 *)"exit status %d ", exitstatus);
+            mlwrite(MWCURSOR|MWWAIT,(meUByte *)"exit status %d ", exitstatus);
         else
-            mlwrite(MWCURSOR|MWWAIT,(uint8 *)"exit status %d, errno %d ",
+            mlwrite(MWCURSOR|MWWAIT,(meUByte *)"exit status %d, errno %d ",
                     exitstatus, errno);
     }
     TTopen();
@@ -2041,7 +2041,7 @@ meFilter(int f, int n)
     meUnlink(filnam2);
 
     if(s != TRUE)
-        mlwrite(0,(uint8 *)"[Execution failed]");
+        mlwrite(0,(meUByte *)"[Execution failed]");
     else
         meModeSet(bp->b_mode,MDEDIT) ;		/* flag it as changed */
 
