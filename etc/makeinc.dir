@@ -1,19 +1,16 @@
-# -*- Makefile -*-
+# -!- Makefile -!-
 # Directory
 #
-RELDIR	=	$(SRCROOT)/release
-DOSRELDIR=	$(RELDIR)/dos
-UNXRELDI=	$(RELDIR)/unix
-DOCRELDIR=	$(RELDIR)/doc
-RTFRELDIR=	$(RELDIR)/rtf
-WWWRELDIR=	$(RELDIR)/www
+RELDIR	=	$(TOPDIR)/release
 #
-MERELDIR=	$(RELDIR)/me$(MEYY)$(MEMM)$(MEDD)
-SRCRELDIR=	$(MERELDIR)/src
+# Base directory names
+# 
+BINDIR		= bin
+LIBDIR		= lib
+INCDIR		= include
 #
-#
-#
-JASSPADIR=	$(RELDIR)/jasspa
-JASSPLDIR=	$(JASSPADIR)/spelling
-JASMACDIR=	$(JASSPADIR)/macros
-JASCOMDIR=	$(JASSPADIR)/company
+# Install directory names
+# 
+INSTINCDIR=	$(TOPDIR)/$(INCDIR)
+INSTBINDIR=	$(TOPDIR)/$(BINDIR)/$(TARGETDIR)
+INSTLIBDIR=	$(TOPDIR)/lib/$(TARGETDIR)

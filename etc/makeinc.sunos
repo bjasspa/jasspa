@@ -1,46 +1,25 @@
 # -*- Makefile -*-
 # Make rules for SunOS
 # 
-# Remove unconditionally + copy
-RM	= rm -f
-CP	= cp
+# Use standard definitions
+include $(TOPDIR)/etc/makeinc.std
 #
-# Directory stuff
-#
-MKDIR	= mkdir -p
-RMDIR 	= rm -rf 
-#
-# Archives - always full compression.
+# Host specific definitions
 # 
-GTAR	= gtar
-TAR	= tar
-ZIP	= zip -9 
-GZIP	= gzip -9 
+TARGETDIR   =   $(UNAME)
 #
-# Microemacs executable
+# Set up the compiler we determine the compiler
+# to use from the path of the compiler. If it
+# is "/usr/bin/cc" then this is the dummy one.
 #
-ME	= me
+_USECC	 =AaBb$(WHICHCC)
+__USECC  =$(_USECC:AaBb=gcc)
+___USECC =$(__USECC:AaBbno=gcc)
+____USECC=$(___USECC:AaBb/usr/ucb/cc=gcc)
+USECC    =$(____USECC:AaBb$(WHICHCC)=$(UNAME)-cc)
+include $(TOPDIR)/etc/makeinc.$(USECC)
 #
-# Install
+# Platform specific defines.
 #
-INSTALL_FIL	= ginstall -m 0666  
-INSTALL_DIR	= ginstall -m 0755 
-INSTALL_EXE	= ginstall -m 0777 
-DOS2UNIX= $(ME) -n "@dos2unix"
-UNIX2DOS= $(ME) -n "@unix2dos"
-#
-# Documentation tools
-#
-DOCBIN	=
-SUPERMAN=	$(DOCBIN)superman -b
-DROFF	=	$(DOCBIN)droff
-NR2RTF	=	$(DOCBIN)nr2rtf
-NRAR	=	$(DOCBIN)nrar
-NR2HTML	=	$(DOCBIN)nr2html
-NR2EHF	=	$(DOCBIN)nr2ehf
-NRORDER	=	$(DOCBIN)nrorder
-NRSEARCH=	$(DOCBIN)nrsearch
-HTS	=	$(DOCBIN)hts
-HTS2HTML=	$(DOCBIN)hts2html
-HC31	=	hc31
-
+CPP_PLATDEFS=   -D_SUNOS -D_UNIX
+INSTALL=	ginstall
