@@ -283,8 +283,8 @@ define-macro buffer-help
         buffer-help-add-item "" "" ""
         buffer-help-add-item "comment-start" "" "Start Comment"
         buffer-help-add-item "comment-line" "" "Comment Out Line"
-        buffer-help-add-item "uncomment-line" "" "&Delete Comment"
-        buffer-help-add-item "comment-to-end-of-line" "" "Comment to &End of Line"
+        buffer-help-add-item "uncomment-line" "" "Delete Comment"
+        buffer-help-add-item "comment-to-end-of-line" "" "Comment to End of Line"
         buffer-help-add-item "comment-restyle" "" "Restyle Current Comment"
     !endif
     !if &sin "f" #l0
@@ -295,10 +295,7 @@ define-macro buffer-help
     !if &sin "s" #l0
         buffer-help-add-item "" "" ""
         buffer-help-add-item "auto-spell" "0" "Enable/Disable Auto-Spell"
-        buffer-help-add-item "auto-spell-buffer" "" "Auto-Spell Buffer"
-        buffer-help-add-item "auto-spell-reset" "" "Reset Auto-Spell"
-        buffer-help-add-item "auto-spell-ignore" "1" "Auto-Spell Ignore current word"
-        buffer-help-add-item "auto-spell-ignore" "2" "Auto-Spell Add current word to personal dictionary"
+        buffer-help-add-item "auto-spell-menu" "" "Auto-Spell Context Menu"
     !endif
     !if &exi &ind &spr ".fhook-%s.item-list-s1" #l5
         buffer-help-add-item "" "" ""
@@ -428,7 +425,7 @@ define-macro buffer-help
     !if &sin "s" #l0
         buffer-tool-add-item "" "" "" #l8
         buffer-tool-add-item "auto-spell" "0" "Enable/Disable Auto-Spell" #l8
-        buffer-tool-add-item "auto-spell-menu" "" "Auto-Spell Menu" #l8
+        buffer-tool-add-item "auto-spell-menu" "" "Auto-Spell Context Menu" #l8
     !endif
     !if &set #l7 &exi &ind &spr ".fhook-%s.item-list-s1" #l5
         buffer-tool-add-item "" "" "" #l8
