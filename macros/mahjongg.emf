@@ -550,11 +550,11 @@
     delete-other-windows
     screen-update
     ; Work out origin of the x axis
-    set-variable :mjg-x0 &div $window-width 2
+    set-variable :mjg-x0 &div $frame-width 2
     set-variable :mjg-x0 &sub :mjg-x0 &div 76 2
     set-variable :mjg-x0 &cond &les :mjg-x0 0 0 :mjg-x0
     ; Work out the origin of the y-axis
-    set-variable :mjg-y0 &div $window-depth 2
+    set-variable :mjg-y0 &sub &div $frame-depth 2 1
     set-variable :mjg-y0 &sub :mjg-y0 &div 41 2
     set-variable :mjg-y0 &cond &les :mjg-y0 0 0 :mjg-y0
 
@@ -811,22 +811,39 @@
 ; Buffer hook - entry into the *mahjongg* buffer.
 ;
 0 define-macro bhook-mahjongg
-    -1 show-cursor                          ; Turn off the cursor
-    !force osd -1 0                         ; Turn off the menu.
-    set-variable :mah-scroll $scroll-bar    ; Save the scroll bar state
-    set-variable $scroll-bar 0              ; Disable the scroll bars.
+    ; Turn off the cursor, menu, scroll bars and toolbar.
+    -1 show-cursor
+    !force osd -1 0
+    set-variable :scroll-bar $scroll-bar
+    set-variable $scroll-bar 0
+    !if .Mahjongg.toolbar
+        ; note - we cannot open/close the toolbar directly as this changes the window layout which must not be done in an bhook
+        -1 create-callback toolbar
+        !if .toolbar.open
+            1 create-callback toolbar-close
+        !endif
+    !endif
 !emacro
 ;
 ; ehook-mahjongg
 ; Exit Mah Jongg buffer.
 ;
 0 define-macro ehook-mahjongg
-    1 show-cursor                           ; Turn on the cursor.
-    set-variable $scroll-bar :mah-scroll    ; Turn the scroll bars back on
-    !force osd -1 1                         ; Turn on the menu.
+    ; Turn on the cursor & restore menu, scroll bars and toolbar
+    1 show-cursor
+    set-variable $scroll-bar :scroll-bar
+    !force osd -1 1
+    !if .Mahjongg.toolbar
+        ; note - we cannot open/close the toolbar directly as this changes the window layout which must not be done in an ehook
+        -1 create-callback toolbar-close
+        !if &not .toolbar.open
+            1 create-callback toolbar
+        !endif
+    !endif
 !emacro
 
 define-macro Mahjongg
+    set-variable .toolbar &cond &exi .toolbar .toolbar .toolbar.open
     set-variable $random 0        ; Set it so we get a new seed
     find-buffer "*mahjongg*"
     !if &seq $buffer-bhook ""

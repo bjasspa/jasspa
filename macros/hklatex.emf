@@ -8,11 +8,11 @@
 ; Authors:     Detlef Groth, Steve Phillips & Jon Green
 ;
 define-macro fhook-latex
-    @# buffer-initialize "latex"
+    @# buffer-init "latex"
     ; Set up the default constants
     set-variable :fill-mode "L"
     set-variable :fill-col $fill-col
-    buffer-initialize-hooks
+    buffer-init-hooks
 !emacro
 
 set-variable .fhook-latex.name "LaTeX"
@@ -727,7 +727,4 @@ define-macro latex-popup
     !endif
 !emacro
 
-ml-write "[LaTeX file hook loaded]"
-
-; Load in user extensions if found
-!force execute-file "mylatex"
+buffer-init-fhook "latex"

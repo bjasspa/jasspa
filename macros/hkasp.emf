@@ -9,11 +9,11 @@
 ;
 define-macro fhook-asp
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "asp"
-    buffer-initialize-hooks
+    @# buffer-init "asp"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-asp.name "ASP"
 set-variable .fhook-asp.setup &reg "/history" "fhook/asp" "cdghinopsx"
 set-variable .fhook-asp.setup-mask "acdeghikmnopstux"
@@ -44,7 +44,4 @@ set-variable .fhook-asp.command-desc  "|"
     !endif
 !endif
 
-ml-write "[ASP file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "myasp"
+buffer-init-fhook "asp"

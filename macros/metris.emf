@@ -10,8 +10,19 @@ set-variable %met-hiscore "2379 by jk the invincible"
 set-variable %met-level   6
 
 0 define-macro bhook-metris
+    ; Turn off the cursor, menu, scroll bars and toolbar.
     -1 show-cursor
-    !force osd -1 0                         ; Turn off the menu.
+    !force osd -1 0
+    set-variable :scroll-bar $scroll-bar
+    set-variable $scroll-bar 0
+    !if .Metris.toolbar
+        ; note - we cannot open/close the toolbar directly as this changes the window layout which must not be done in an bhook
+        -1 create-callback toolbar
+        !if .toolbar.open
+            1 create-callback toolbar-close
+        !endif
+    !endif
+    ; restore metris
     !if &not &bmod "usr3"
         !return
     !endif
@@ -23,8 +34,17 @@ set-variable %met-level   6
 !emacro
 
 0 define-macro ehook-metris
+    ; Turn on the cursor & restore menu, scroll bars and toolbar
     1 show-cursor
-    !force osd -1 1                         ; Turn on the menu.
+    set-variable $scroll-bar :scroll-bar
+    !force osd -1 1
+    !if .Metris.toolbar
+        ; note - we cannot open/close the toolbar directly as this changes the window layout which must not be done in an ehook
+        -1 create-callback toolbar-close
+        !if &not .toolbar.open
+            1 create-callback toolbar
+        !endif
+    !endif
 !emacro
 
 0 define-macro met-print-hiscore
@@ -549,6 +569,7 @@ set-variable %met-level   6
 !emacro
 
 define-macro Metris
+    set-variable .toolbar &cond &exi .toolbar .toolbar .toolbar.open
     set-variable %met-level @ml20 "Starting Level" %met-level
     find-buffer "*metris*"
     end-of-buffer

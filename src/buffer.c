@@ -400,7 +400,11 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
     /* If this is an out-of-date reload find-file, the call to bclear will
      * have executed the ehook and dhook so do do this now. */
     if((wp == frameCur->windowCur) && !reload && (frameCur->bufferCur->ehook >= 0))
+    {
         execBufferFunc(frameCur->bufferCur,frameCur->bufferCur->ehook,0,1) ;
+        if(wp->buffer != tbp)
+            return mlwrite(MWABORT|MWWAIT,(meUByte *)"[Error: Buffer ehook has altered windows]") ;
+    }
 #endif
     tbp->histNo = ++bufHistNo ;
     if((--tbp->windowCount == 0) && !reload)

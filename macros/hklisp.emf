@@ -10,11 +10,11 @@ set-char-mask "2" "-$&#!%:@."
 
 define-macro fhook-lisp
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "lisp"
-    buffer-initialize-hooks
+    @# buffer-init "lisp"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-lisp.setup &reg "/history" "fhook/lisp" "dghiopx"
 set-variable .fhook-lisp.setup-mask "adeghikmoptux"
 set-variable .fhook-lisp.comment "|;||;|; | ;||"
@@ -43,7 +43,4 @@ set-variable .fhook-lisp.comment "|;||;|; | ;||"
     indent .hilight.lisp i ";"
 !endif
 
-ml-write "[Lisp file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "mylisp"
+buffer-init-fhook "lisp"

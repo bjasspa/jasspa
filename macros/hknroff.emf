@@ -10,11 +10,11 @@
 ;     This file contains some JASSPA extensions for their Nroff documentation.
 ;
 define-macro fhook-nroff
-    @# buffer-initialize "nroff"
-    buffer-initialize-hooks
+    @# buffer-init "nroff"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-nroff.setup &reg "/history" "fhook/nroff" "bfghijnopswx"
 set-variable .fhook-nroff.setup-mask "abefghijkmnopstuwx"
 set-variable .fhook-nroff.tags "ntags"
@@ -595,8 +595,5 @@ define-macro-file hkman aman
     !emacro
 !endif
 
-ml-write "[Nroff file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "mynroff"
+buffer-init-fhook "nroff"
 

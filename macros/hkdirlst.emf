@@ -86,16 +86,16 @@ define-macro fhook-dirlst
     !endif
     dirlst-sort-list
     beginning-of-buffer
-    @# buffer-initialize "dirlst"
+    @# buffer-init "dirlst"
     set-variable :tag-count 0
     set-variable :mouse-pick-1 dirlst-mouse-pick-1
     set-variable :mouse-drop-1 dirlst-mouse-drop-1
     set-variable :mouse-pick-3 dirlst-mouse-pick-3
     set-variable :mouse-drop-3 dirlst-mouse-drop-3
-    buffer-initialize-hooks
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-dirlst.name "Directory List"
 set-variable .fhook-dirlst.setup &reg "/history" "fhook/dirlst" "ghmop"
 set-variable .fhook-dirlst.setup-mask "aeghop"
@@ -1050,6 +1050,5 @@ osd .osd.dirlst 130 ""  "\HAuto-Refresh: on "   f dirlst-auto-refresh
     !endif
 !emacro
 
-; load in user extensions if found
-!force execute-file "mydirlst"
+buffer-init-fhook "dirlst"
 

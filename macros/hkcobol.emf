@@ -9,11 +9,12 @@
 ;
 define-macro fhook-cobol
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "cobol"
-    buffer-initialize-hooks
+    @# buffer-init "cobol"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
+set-variable .fhook-cobol.name "Cobol-85"
 set-variable .fhook-cobol.setup &reg "/history" "fhook/cobol" "bghinopx"
 set-variable .fhook-cobol.setup-mask "aebghikmnoptux"
 set-variable .fhook-cobol.comment "|*||*|* | *||"
@@ -224,8 +225,4 @@ set-variable .fhook-cobol.comment "|*||*|* | *||"
     hilight .hilight.cobol 1 "pic"                        .scheme.type
 !endif
 
-ml-write "[Cobol-85 file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "mycobol"
-
+buffer-init-fhook "cobol"

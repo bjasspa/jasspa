@@ -324,5 +324,4 @@ define-macro cygnus
     !endif
 !emacro
 
-; load in user extensions if found
-!force execute-file "mycygnus"
+buffer-init-fhook "cygnus"

@@ -1428,4 +1428,3 @@ extern int      putenv(const char *s);
 (selhilight.bp=sbp,selhilight.markLineNo=sln,selhilight.markOffset=slo,      \
  selhilight.dotLineNo=eln,selhilight.dotOffset=elo,                          \
  selhilight.flags = SELHIL_ACTIVE|SELHIL_FIXED|SELHIL_CHANGED)
-

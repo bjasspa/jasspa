@@ -8,15 +8,15 @@
 ;
 define-macro fhook-reg
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "reg"
+    @# buffer-init "reg"
     set-variable :mouse-pick-1 void
     set-variable :mouse-drop-1 reg-toggle-hidden
     set-variable :mouse-pick-3 void
     set-variable :mouse-drop-3 reg-set-node
-    buffer-initialize-hooks
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-reg.name "ME Registry"
 set-variable .fhook-reg.setup &reg "/history" "fhook/reg" "ghmop"
 set-variable .fhook-reg.setup-mask "aeghkop"
@@ -176,8 +176,5 @@ set-variable .fhook-reg.command-desc  "|\HToggle Tree Visibility|\HSet Value of 
     list-registry
 !emacro
 
-ml-write "[ME Registry file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "myreg"
+buffer-init-fhook "reg"
 

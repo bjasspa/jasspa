@@ -399,7 +399,7 @@ windowGotoAbsLine(meInt line)
         return rr ;
     }
     /* now move to the required line */
-    if(line >= frameCur->bufferCur->lineCount)
+    if(line > frameCur->bufferCur->lineCount)
     {
         frameCur->windowCur->dotLine = frameCur->bufferCur->baseLine ;
         frameCur->windowCur->dotLineNo = frameCur->bufferCur->lineCount ;

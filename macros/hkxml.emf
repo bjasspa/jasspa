@@ -18,11 +18,11 @@
 define-macro fhook-xml
     set-variable #l0 &mid $buffer-bname &rsin "." $buffer-bname 3
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "xml"
-    buffer-initialize-hooks
+    @# buffer-init "xml"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-xml.setup &reg "/history" "fhook/xml" "cdghiopsx"
 set-variable .fhook-xml.setup-mask "acdeghikmopstux"
 set-variable .fhook-xml.comment  "|<!--|-->|--|  -- | -- |f|"
@@ -81,10 +81,6 @@ set-variable .fhook-xml.comment  "|<!--|-->|--|  -- | -- |f|"
     indent .hilight.xml o "/>"    -2 
 !endif
 
-
-ml-write "[XML file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "myxml"
+buffer-init-fhook "xml"
 
 

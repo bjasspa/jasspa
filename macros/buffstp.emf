@@ -94,7 +94,7 @@
         set-variable #l2 @ml2 "" #l1
         !if &not &seq #l2 #l1
             !if &seq #l2 ""
-                !force delete-registry &cat "/history" #l0
+                !force delete-registry &cat "/history/" #l0
             !else
                 set-registry "/history" #l0 #l2
             !endif
@@ -133,59 +133,50 @@ define-macro buffer-setup
         set-variable #l9 &cat &sup &mid $buffer-fhook 6 1 &rig $buffer-fhook 7
     !endif
     -1 osd .osd.buffstp
-    osd .osd.buffstp 0 "batcdHs" 9 3 47 10 -1 -1 970 .scheme.osd-title &cat #l9 " Buffer Setup"
+    osd .osd.buffstp 0 "batcdHs" 9 3 48 10 -1 -1 970 .scheme.osd-title &cat #l9 " Buffer Setup"
     osd .osd.buffstp 5 ""
     set-variable #l0 1
     set-variable #l1 0
-    set-variable #l2 0
     set-variable #l3 0
     !repeat
-        set-variable #l5 &lget .labels #l0
-        !if &sin &lget .flags #l0 .mask
-            !if &not &seq #l5 ""
-                set-variable #l6 &sub 22 &add &len #l5 &cond &sin "\H" #l5 0 1
-                osd .osd.buffstp &mul #l0 10 "Sfh" &spr "%n%s: " #l6 " " #l5 &add 5 &mul #l0 10
-                set-variable #l2 1
-            !elif &gre &inc #l2 1 2
-                osd .osd.buffstp &mul #l0 10 ""
-                osd .osd.buffstp &add 1 &mul #l0 10 "fh" &spr "%n  " 21 " "
-                set-variable #l2 1
-            !endif
-            set-variable #l6 "Ctfx"
-            !if &set #l3 &seq &lget .labels &add #l0 1 ""
-                set-variable #l6 &cat #l6 "h"
-                osd .osd.buffstp &add 8 &mul #l0 10 "fh" "  "
-            !endif
-            !if &seq &set #l5 &lget .prefix #l0 ""
-                osd .osd.buffstp &add 5 &mul #l0 10 #l6 &mul #l0 10 "^^NY^^" #l0 buffer-setup-option
-            !else
-                osd .osd.buffstp &add 5 &mul #l0 10 #l6 &mul #l0 10 &spr " [ *]^%s" #l5 #l0 buffer-setup-option
-            !endif
-            set-variable #l1 1
-        !elif &not &seq #l5 ""
-            set-variable #l7 #l0
-            set-variable #l6 0
-            !if &seq &lget .labels &inc #l7 1 ""
-                !tjump &not &sin &lget .flags #l7 .mask -1
-                set-variable #l6 1
-            !endif
-            !if #l6
-                set-variable #l6 &sub 22 &add &len #l5 &cond &sin "\H" #l5 0 1
-                osd .osd.buffstp &mul #l0 10 "Sfh" &spr "%n%s: " #l6 " " #l5 &add 5 &mul #l0 10
-                set-variable #l2 0
-            !endif
-        !elif #l3
-            !if &not &seq &lget .labels &add #l0 1 ""
-                osd .osd.buffstp &add -2 &mul #l0 10 ""
-            !endif
+        set-variable #l4 &lget .blank #l0
+        !if &not &seq "" &set #l5 &lget .prefix #l0
+            set-variable #l2 &cat "      " #l5
+            osd .osd.buffstp &mul #l0 10 "fh" #l2
         !endif
-        !if &and #l1 &lget .blank #l0
-            osd .osd.buffstp &add 9 &mul #l0 10 ""
-            set-variable #l1 0
+        !if &sin &lget .flags #l0 .mask
+            set-variable #l7 &lget .labels #l0
+            set-variable #l6 "Cptfx"
+            !if &not &band #l4 6
+                osd .osd.buffstp &add 2 &mul #l0 10 "fh" "  "
+            !elif #l3
+                osd .osd.buffstp &add 2 &mul #l0 10 "fh" &spr "%n" &sub 8 #l3 " "
+                set-variable #l3 0
+            !else
+                !if &seq "" #l5
+                    osd .osd.buffstp &mul #l0 10 "fh" &spr "%n" &len #l2 " "
+                !endif
+                !if &band 4 &lget .blank &add #l0 1
+                    set-variable #l3 &sub &len #l7 &cond &sin "\H" #l7 1 0
+                    set-variable #l6 &cat #l6 "h"
+                !endif
+            !endif
+            osd .osd.buffstp &add 5 &mul #l0 10 #l6 &mul #l0 10 &spr "%s\} %s" .osd.checkbox-chars #l7 #l0 buffer-setup-option
+            set-variable #l1 1
+        !endif
+        !if &band #l1 #l4
+            !if #l3
+                osd .osd.buffstp &add 8 &mul #l0 10 ""
+                set-variable #l3 0
+            !endif
+            !if &band #l4 8
+                osd .osd.buffstp &add 9 &mul #l0 10 ""
+                set-variable #l1 0
+            !endif
         !endif
     !until &seq &lget .flags &inc #l0 1 ""
     !if &not &seq &lget &ind &spr ".%s.comment" $buffer-fhook 1 ""
-        osd .osd.buffstp 900 "Sfh" "      Fold Open\H/Close: " 910
+        osd .osd.buffstp 900 "Sfh" "   Fold Open\H/Close: " 910
         osd .osd.buffstp 910 "EtRxHfh" 910 .scheme.osd-entry "##########" 1 buffer-setup-fmark
         osd .osd.buffstp 915 "hf" "   "
         osd .osd.buffstp 920 "EtRxHf"  920 .scheme.osd-entry "##########" 2 buffer-setup-fmark
@@ -199,9 +190,9 @@ define-macro buffer-setup
     .osd.buffstp osd
 !emacro
 set-variable .buffer-setup.flags  "|p|o|c|n|g|h|d|s|f|b|e|m|a|k|i|j|t|x|u|w|"
-set-variable .buffer-setup.blank  "|0|0|0|1|0|0|0|0|1|1|0|0|0|0|0|0|0|0|0|1|"
-set-variable .buffer-setup.labels "|Create Help \HPage|Create T\Hools Menu|Use Author Mode|Insert \HNew Template|Fence Display|Setup \HHilighting|Setup Auto In\Hdent|Setup Auto Spe\Hll|Setup \HFolding|Add A\Hbbreviations|Search Modes||Buffer Modes||||||||x|"
-set-variable .buffer-setup.prefix "|||||||||||  \HExact|  \HMagic|   \HAuto| Bac\Hkup| \HIndent|\HJustify|    \HTab|   Time|   \HUndo|   \HWrap|"
+set-variable .buffer-setup.blank  "|0|0|0|9|0|0|0|0|9|9|2|5|2|4|4|4|4|4|4|13|"
+set-variable .buffer-setup.labels "|Create Help \HPage|Create T\Hools Menu|Use Author Mode|Insert \HNew Template|Fence Display|Setup \HHilighting|Setup Auto In\Hdent|Setup Auto Spe\Hll|Setup \HFolding|Add A\Hbbreviations|\HExact|\HMagic|\HAuto|Bac\Hkup|\HIndent|\HJustify|\HTab|Time|\HUndo|\HWrap|"
+set-variable .buffer-setup.prefix "|||||||||||Search Modes: ||Buffer Modes: ||||||||"
 set-variable .buffer-setup.modes  "|||||||||||exact|magic|auto|backup|indent|justify|tab|time|undo|wrap|"
 
 ; buffer-help-add-item <command-name> <narg> <desc>

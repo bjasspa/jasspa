@@ -13,15 +13,15 @@ define-macro fhook-html
         !jump 2
     !elif &or &seq #l0 "hts" &seq #l0 "htp"
         set-variable $buffer-mask "luh1"
-        @# buffer-initialize "html"
+        @# buffer-init "html"
          1 buffer-mode "usr1"
     !else
         html-process-buffer
     !endif
-    buffer-initialize-hooks
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-html.setup &reg "/history" "fhook/html" "cdghinopsx"
 set-variable .fhook-html.setup-mask "acdeghikmnopstux"
 set-variable .fhook-html.command-flag  "|h|h|h|h|h|h|thb|"
@@ -144,8 +144,5 @@ define-macro html-process-buffer
     html-process-buffer
 !emacro
 
-ml-write "[HTML file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "myhtml"
+buffer-init-fhook "html"
 

@@ -8,11 +8,11 @@
 ; Authors:     Steven Phillips
 ;
 define-macro fhook-eaf
-    @# buffer-initialize "eaf"
-    buffer-initialize-hooks
+    @# buffer-init "eaf"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-eaf.name "ME Abbreviation"
 set-variable .fhook-eaf.setup &reg "/history" "fhook/eaf" "hopx"
 set-variable .fhook-eaf.setup-mask "aehkmoptux"
@@ -26,8 +26,5 @@ set-variable .fhook-eaf.setup-mask "aehkmoptux"
     hilight .hilight.eaf 4 "\"" "\"" "\\"  .scheme.string
 !endif
 
-ml-write "[ME Abbreviation file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "myeaf"
+buffer-init-fhook "eaf"
 

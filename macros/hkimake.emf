@@ -8,11 +8,11 @@
 ;
 define-macro fhook-imake
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "imake"
-    buffer-initialize-hooks
+    @# buffer-init "imake"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-imake.name "Imakefile"
 set-variable .fhook-imake.setup &reg "/history" "fhook/imake" "ghinopTx"
 set-variable .fhook-imake.setup-mask "aeghikmnoptux"
@@ -42,7 +42,4 @@ set-variable .fhook-imake.comment "|/*|*/|*| * | * |f|"
     hilight .hilight.imake 1  "\\$<"            .scheme.keyword   
 !endif
 
-ml-write "[Imakefile file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "myimake"
+buffer-init-fhook "imake"

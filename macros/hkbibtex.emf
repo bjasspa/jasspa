@@ -7,11 +7,11 @@
 ; Authors:     Detlef Groth, Steve Phillips & Jon Green
 ;
 define-macro fhook-bibtex
-    @# buffer-initialize "bibtex"
-    buffer-initialize-hooks
+    @# buffer-init "bibtex"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-bibtex.name "BibTeX"
 set-variable .fhook-bibtex.setup &reg "/history" "fhook/bibtex" "fghinsx"
 set-variable .fhook-bibtex.setup-mask "aefghikmnstux"
@@ -55,8 +55,5 @@ set-variable .fhook-bibtex.collapse-mnext "-1"
     !emacro
 !endif
 
-ml-write "[BibTeX file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "mybibtex"
+buffer-init-fhook "bibtex"
 

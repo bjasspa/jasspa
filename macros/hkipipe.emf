@@ -742,5 +742,5 @@ define-macro perldb
 !emacro
 
 ; load in user extensions if found
-!force execute-file "myipipe"
+buffer-init-fhook "ipipe"
 

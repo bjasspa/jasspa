@@ -8,15 +8,15 @@
 ; Authors:     Steven Phillips
 ;
 define-macro fhook-dirtre
-    @# buffer-initialize "dirtre"
+    @# buffer-init "dirtre"
     set-variable :mouse-pick-1 void
     set-variable :mouse-drop-1 dirtre-mouse-drop-1
     set-variable :mouse-pick-3 void
     set-variable :mouse-drop-3 dirtre-mouse-drop-3
-    buffer-initialize-hooks
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-dirtre.name "Directory Tree"
 set-variable .fhook-dirtre.setup &reg "/history" "fhook/dirtre" "ghmop"
 set-variable .fhook-dirtre.setup-mask "aeghop"
@@ -148,6 +148,5 @@ set-variable .fhook-dirtre.command-desc  "|Swap Browser \HWindows|\HClose File B
     0xe6 dirtre-mouse-drop-1
 !emacro
 
-; load in user extensions if found
-!force execute-file "mydirtre"
+buffer-init-fhook "dirtre"
 

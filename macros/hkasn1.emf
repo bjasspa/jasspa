@@ -13,8 +13,8 @@
 ;     Notation One (ASN.1) (Extract from the Blue Book).
 ;
 define-macro fhook-asn1
-    @# buffer-initialize "asn1"
-    buffer-initialize-hooks
+    @# buffer-init "asn1"
+    buffer-init-hooks
 !emacro
 
 ; buffer-setup flags - note the indentation is not very good so don't enable by default
@@ -98,7 +98,4 @@ set-variable .fhook-asn1.comment "|--||=|-- | --||"
     indent  .hilight.asn1 o "}" -4
 !endif
 
-ml-write "[ANS.1 file hook loaded]"
-; load in user extensions if found
-!force execute-file "myasn1"
-
+buffer-init-fhook "asn1"

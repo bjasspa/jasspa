@@ -15,11 +15,11 @@
 ;
 define-macro fhook-vhdl
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "vhdl"
-    buffer-initialize-hooks
+    @# buffer-init "vhdl"
+    buffer-init-hooks
 !emacro    
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-vhdl.name "VHDL"
 set-variable .fhook-vhdl.setup &reg "/history" "fhook/vhdl" "ghinopx"
 set-variable .fhook-vhdl.setup-mask "aeghikmnoptux"
@@ -147,7 +147,4 @@ set-variable .fhook-vhdl.comment "|--||-|-- | --||"
     hilight   .hilight.vhdl 1 "unsigned"       .scheme.type
 !endif
 
-ml-write "[VHDL file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "myvhdl"
+buffer-init-fhook "vhdl"

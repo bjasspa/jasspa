@@ -368,6 +368,8 @@ define-macro toolbar
     set-variable .toolbar-redraw.bc 0x001
     set-variable .toolbar.open 1
     global-bind-key toolbar-redraw "redraw"
+    ; this odd line ensures the toolbar is redrawn if this is called via a callback.
+    set-variable $trunc-scheme $trunc-scheme
 !emacro
 set-variable .toolbar.conv "|4096|8192|16384|32768|"
 

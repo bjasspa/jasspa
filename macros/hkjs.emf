@@ -8,11 +8,11 @@
 ;
 define-macro fhook-js
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "js"
-    buffer-initialize-hooks
+    @# buffer-init "js"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-js.name "JavaScript"
 set-variable .fhook-js.setup &reg "/history" "fhook/js" "bdfghnopx"
 set-variable .fhook-js.setup-mask "abdefghikmnoptux>"
@@ -243,8 +243,5 @@ set-variable .fhook-js.item-list-r1 "Func \ecB\\1\ecA"
     set-variable .indent.javascript .hilight.js
 !endif
 
-ml-write "[js file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "myjs"
+buffer-init-fhook "js"
 

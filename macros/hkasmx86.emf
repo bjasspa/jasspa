@@ -9,8 +9,8 @@
 ;
 define-macro fhook-asmx86
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "asmx86"
-    buffer-initialize-hooks
+    @# buffer-init "asmx86"
+    buffer-init-hooks
 !emacro
 
 ; buffer-setup variables
@@ -213,7 +213,4 @@ set-variable .fhook-asmx86.collapse-mnext "-1"
     indent .hilight.asmx86 i ";"
 !endif
 
-ml-write "[Intel x86 Assembler file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "myasmx86"
+buffer-init-fhook "asmx86"

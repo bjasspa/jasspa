@@ -10,11 +10,11 @@
 ; Notes:       Could benifit with some tools.
 ;
 define-macro fhook-texi
-    @# buffer-initialize "texi"
-    buffer-initialize-hooks
+    @# buffer-init "texi"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-texi.name "Texinfo"
 set-variable .fhook-texi.setup &reg "/history" "fhook/texi" "bghiopx"
 set-variable .fhook-texi.setup-mask "abeghikmoptux"
@@ -29,8 +29,5 @@ set-variable .fhook-texi.comment "|@c |||@c |||"
     hilight .hilight.texi   4  "@" "\\}\\W" "" .scheme.keyword
 !endif
 
-ml-write "[texinfo file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "mytexi"
+buffer-init-fhook "texi"
 

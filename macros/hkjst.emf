@@ -11,7 +11,7 @@
 ;
 define-macro fhook-jst
     set-variable #l1 $result
-    @# buffer-initialize "jst"
+    @# buffer-init "jst"
     doc-buffer-context-init
     ; Over-ride any special document modes
     ; Search for additional modes in a:
@@ -43,10 +43,10 @@ define-macro fhook-jst
         ; Back to the start of the buffer
         beginning-of-buffer
     !endif
-    buffer-initialize-hooks
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-jst.setup &reg "/history" "fhook/jst" "fghijnopswx"
 set-variable .fhook-jst.setup-mask "aefghijkmnopstuwx"
 set-variable .fhook-jst.comment "|>||>|> | <||"
@@ -263,7 +263,4 @@ execute-file "docutl"
 
 define-macro-file jstutl jst-to-html jst-to-latex jst-to-rtf jst-to-text
 
-ml-write "[JASSPA Structured Text file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "myjst"
+buffer-init-fhook "jst"

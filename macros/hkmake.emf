@@ -8,11 +8,11 @@
 ;
 define-macro fhook-make
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "make" "makefile"
-    buffer-initialize-hooks
+    @# buffer-init "make" "makefile"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-make.name "Makefile"
 set-variable .fhook-make.setup &reg "/history" "fhook/make" "ghinopTx"
 set-variable .fhook-make.setup-mask "aeghikmnoptux"
@@ -42,8 +42,5 @@ set-variable .fhook-make.comment "|#||#|# | #||"
     hilight .hilight.make 1  "\\$<"            .scheme.keyword
 !endif
 
-ml-write "[Makefile file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "mymake"
+buffer-init-fhook "make"
 

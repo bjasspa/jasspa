@@ -25,11 +25,12 @@
 ;
 define-macro fhook-shell
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "shell"
-    buffer-initialize-hooks
+    @# buffer-init "shell"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
+set-variable .fhook-shell.name "UNIX Shell"
 set-variable .fhook-shell.setup &reg "/history" "fhook/shell" "ghiopx"
 set-variable .fhook-shell.setup-mask "aeghikmoptux"
 set-variable .fhook-shell.comment "|#||#|# | #||"
@@ -156,8 +157,5 @@ set-variable .fhook-shell.comment "|#||#|# | #||"
     hilight .hilight.shellV 0x80 "}"  .hilight.shell    .scheme.variable
 !endif
 
-ml-write "[UNIX shell file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "myshell"
+buffer-init-fhook "shell"
 

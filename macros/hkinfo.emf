@@ -8,14 +8,14 @@
 ; Authors:     Steven Phillips
 ;
 define-macro fhook-info
-    @# buffer-initialize "info"
+    @# buffer-init "info"
     set-variable :mouse-pick-1 info-mouse-pick-1
     set-variable :mouse-drop-1 info-mouse-drop-1
     set-variable :node ""
-    buffer-initialize-hooks
+    buffer-init-hooks
 !emacro    
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-info.name "GNU Info"
 set-variable .fhook-info.setup &reg "/history" "fhook/info" "EUmghop"
 set-variable .fhook-info.setup-mask "aghkop"
@@ -514,5 +514,4 @@ define-macro info
     info-on "dir"
 !emacro
 
-; load in user extensions if found
-!force execute-file "myinfo"
+buffer-init-fhook "info"

@@ -8,12 +8,12 @@
 ; Authors:     Steve Phillips
 ;
 define-macro fhook-blist
-    @# buffer-initialize "blist"
+    @# buffer-init "blist"
     set-variable :mouse-word-select "2 blist-command"
-    buffer-initialize-hooks
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-blist.name "Buffer List"
 set-variable .fhook-blist.setup &reg "/history" "fhook/blist" "gop"
 set-variable .fhook-blist.setup-mask "aegmop"
@@ -103,6 +103,5 @@ set-variable .fhook-blist.command-desc  "|Switch to Buffer & Only Window||Switch
     forward-line
 !emacro
 
-; load in user extensions if found
-!force execute-file "myblist"
+buffer-init-fhook "blist"
 

@@ -153,6 +153,11 @@ define-macro mouse-osd-multi
         !if &band #l2 1
             !force show-region
         !endif
+        !if &gre &add $mouse-y 20 $frame-depth
+            osd 27 0 "bBo" -1 -19
+        !else
+            osd 27 0 "bBo" -1 1
+        !endif
         27 osd
     !elif &equ #l0 1
         ; Message line

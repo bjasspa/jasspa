@@ -25,11 +25,11 @@ define-macro fhook-binary
         -1 buffer-mode "edit"
         beginning-of-buffer
     !endif
-    @# buffer-initialize "binary"
-    buffer-initialize-hooks
+    @# buffer-init "binary"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-binary.setup &reg "/history" "fhook/binary" "ghop"
 set-variable .fhook-binary.setup-mask "aeghkmopu"
 set-variable .fhook-binary.command-flag  "|thbio|th|thbo|thbo|"
@@ -105,7 +105,4 @@ define-macro binary-swap-section
     !endif
 !emacro
     
-ml-write "[Binary file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "mybinary"
+buffer-init-fhook "binary"

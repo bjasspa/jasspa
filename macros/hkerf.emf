@@ -8,11 +8,11 @@
 ;
 define-macro fhook-erf
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "erf"
-    buffer-initialize-hooks
+    @# buffer-init "erf"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-erf.name "ME Registry"
 set-variable .fhook-erf.setup &reg "/history" "fhook/erf" "dfghiopx"
 set-variable .fhook-erf.setup-mask "adefghikmoptux"
@@ -43,8 +43,5 @@ set-variable .fhook-erf.collapse-mnext "-1"
     indent .hilight.erf i ";"  
 !endif
 
-ml-write "[ME Registry file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "myerf"
+buffer-init-fhook "erf"
 
