@@ -528,3 +528,146 @@ Added -1 & -2 ml-write support for writing to stdout & stderr and inproved comma
 
 Todo
 ----------------------------
+
+List generated via macros CVS commit
+
+----------------------------
+date: 2004/12/21 19:29:09
+author: bill
+Added 2 more chars to $window-chars for indicating the default buffon - see recent osd.c & estruct.h commit
+
+Todo - check for examples to.
+----------------------------
+date: 2004/12/18 10:35:28
+author: bill
+Made auto-spell bindings global so its easy to enable in any buffer
+----------------------------
+date: 2004/12/10 23:42:16
+author: bill
+Added Enable/Disable Auto-Spell to the context menu.
+
+Doc context menu via auto-spell-menu, quick draft already there.
+----------------------------
+date: 2004/12/10 00:15:47
+author: bill
+Moved OSD based symbol and alarm out of misc into osdmisc
+
+Docs usually doc which emf file its defined
+----------------------------
+date: 2004/12/10 00:14:52
+author: bill
+Changed GNU emacs emulation file to meemacs
+
+Doc we have GNU Emacs emulation
+----------------------------
+date: 2004/12/09 23:24:18
+author: bill
+Fixed newuser $user-name.emf conflict issue with an exsiting macro (e.g. zaurus.emf) by testing for it and prefixing a digit.
+
+Worth a note in new user docs.
+----------------------------
+date: 2004/12/09 23:23:20
+author: bill
+Added esc C-\\ binding to restyle-buffer
+
+Doc default binding
+----------------------------
+date: 2004/11/26 22:39:35
+author: bill
+Moved search and new indent-setup commands out of search.emf & format.emf into a new osdmisc.emf as they cause problems with utils that don't run me.emf (e.g. ehftools.emf)
+
+Docs usually doc which emf file its defined
+----------------------------
+date: 2004/11/26 22:35:24
+author: bill
+Added support for Russian language
+
+Do we list supported languages in docs?
+----------------------------
+date: 2004/11/24 00:25:32
+author: bill
+Added basic support for Verilog language
+
+Add verilog (8) page. 
+----------------------------
+date: 2004/11/04 23:00:29
+author: bill
+Removed regex-forward and backward macros and moved uses of them over to search-buffer.
+Optimised hklatex to use this command instead of changing the magic mode.
+
+Remove macros from docs - need to doc str-to-regex
+----------------------------
+date: 2004/11/02 22:42:01
+author: bill
+Changed mouse rectangle back to using timed event also caught and ignored no change.
+
+Doc rectangle option in user-setup
+----------------------------
+date: 2004/10/29 07:36:45
+author: jon
+Added Samba config file hilighting rules.
+Added Apache config file hilighting rules.
+
+Add samba & apache (8) page. 
+----------------------------
+date: 2004/10/23 22:06:09
+author: bill
+Created new indent-setup command (accessed from the Format main menu) to setup the current buffer's indent and tab width
+
+Doc new command
+----------------------------
+date: 2004/10/23 21:16:34
+author: bill
+Changed $tabsize to $indent-width and implemented tab & indent width setting in buffer-setup and magic hook
+
+Doc buffer-setup changes
+----------------------------
+date: 2004/10/21 21:11:01
+author: bill
+Vastly improved wiki support.
+
+Add wiki (8) page. 
+----------------------------
+date: 2004/10/16 18:28:36
+author: jon
+Added Ruby programming language support
+
+Add ruby (8) page. 
+----------------------------
+date: 2004/09/15 22:28:22
+author: bill
+First stab at an xml verifier, added some other useful xml tools to a new xmlutil.emf file
+Improved the bindings to the html & xml forw/back tag commands
+
+Doc improvements to xml & sgml ? - verify tag movement etc.
+----------------------------
+date: 2004/08/23 18:35:39
+author: bill
+Added file selection in the cvs-state buffer allowing files to be loaded or cvs commands executed on a select of files.
+
+Lot of changes to CVS, cvs-state file list select and osd dialogs for starters.
+No lies in current docs but incomplete
+----------------------------
+date: 2004/08/23 16:21:21
+author: bill
+branches:  2.14.2;
+Changed f5 - 7 key bindings so reread is bound to f5, speilling is on f7 & item list is on f6 (more standard and reread is very useful for all files)
+Auto-spell had abould 6 key bindings on f5 & f6, changed this to one (C-f7) which opens a menu.
+Added a directory filter setting to the hkdirlst buffer-setup and changed CVS to use this as well.
+Added Quick CVS mode, cvs update and status hilighting and a new cvs-setup dialog to configure CVS.
+
+May need to check bindings in docs.
+----------------------------
+date: 2004/08/18 23:37:00
+author: bill
+Added modula-2 file hook to the makefile
+
+Add mod2 (8) page. 
+----------------------------
+date: 2004/06/30 23:58:15
+author: bill
+Added support for multiple templates in one etf file. First is added when file is created
+
+Doc this etf file format extension.
+----------------------------
+
