@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2mod025.2,v 2.6 2004-01-05 00:19:24 jon Exp $
+.Id $Id: m2mod025.2,v 2.7 2004-01-11 14:50:07 jon Exp $
 .Im MicroEmacs modes
 .so me.tni
 .TH narrow 2m
@@ -18,10 +18,13 @@ narrow \- Buffer contains a narrow
 This  mode  can  not  be set  and is  used  to  indicate  whether  the  buffer
 contains a narrow, created by the
 .Ht narrow-buffer 2
-command.
+command. The the  location of any narrow  region  lines  contained  within the
+buffer may be determined with 
+.Ht $line-flags 5 .
 .SH "SEE ALSO"
 .na
 .Hl "Operating Modes" Modes - ,
+.Ht $line-flags 5 ,
 .Ht narrow-buffer 2 .
 .ad
 .FH

@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Tue Feb 2 21:10:34 1999
 .\"
-.Id $Id: m3mac029.3,v 2.6 2004-01-05 00:19:24 jon Exp $
+.Id $Id: m3mac029.3,v 2.7 2004-01-11 14:50:07 jon Exp $
 .Im MicroEmacs command
 .ds C0 "(\fBf2\fR)\ \&
 .ds C1 "(\fBf3\fR)\ \&
@@ -60,28 +60,29 @@ text revealed.
 In order to utilize the  \fBcollapse-current/all\fR  commands within a buffer,
 the  \fIstart\fR  and  \fIend\fR  markers  have  to  be  initialized  for  the
 syntactical contents of the buffer. This is performed within the hook function
-for the buffer, using the  hook-name.  Buffer  specific  variables are defined
-within  the  context  of the  buffer  to  configure  that  start  and end fold
-handling.  The  buffer  specific  variables  are  defined  as  follows,  where
-\fIxxxx\fR is the file hook base name.
-.IP "\fIxxxx\fR\|\fB-collapse-open\fR"
+for the buffer, using the hook-name, the initialization is performed within 
+.Ht buffer-init 3 .
+Buffer  specific  variables  are  defined  within the context of the buffer to
+configure that start and end fold handling. The buffer specific  variables are
+defined as follows, where \fIXXX\fR is the file hook base name.
+.IP "\fB.fhook-\fR\|\fIXXX\fR\|\fB-collapse-open\fR"
 A regular expression search string used to locate the start of the string. For
 speed the search string should  include a regular  expression  start or end of
 line character whenever possible. i.e. in C the open is defined as "\fC^{\fR".
-.IP "\fIxxxx\fR\|\fB-collapse-close\fR"
+.IP "\fB.fhook-\fR\|\fIXXX\fR\|\fB-collapse-close\fR"
 A regular  expression  search string used to locate the end of the string. For
 speed the search string should include a regular  expression start or end line
 character whenever possible. i.e. in C the close is defined as "\fC^}\fR".
-.IP "\fIxxxx\fR\|\fB-collapse-mopen\fR"
+.IP "\fB.fhook-\fR\|\fIXXX\fR\|\fB-collapse-mopen\fR"
 An  integer  value  that  denotes  the number of lines to move in a forward or
 (\-ve)  backward  direction  from the  \fIstart\fR  line located by the search
 string to the  position  in the  buffer to be folded. If  default  value  when
 \fBmopen\fR is omitted is 0, starting the fold from the search string line.
-.IP "\fIxxxx\fR\|\fB-collapse-mclose\fR"
+.IP "\fB.fhook-\fR\|\fIXXX\fR\|\fB-collapse-mclose\fR"
 The relative  displacement from the close fold line to the fold position, this
 is a positive or negative  displacement  depending  on where the fold is to be
 positioned.
-.IP "\fIxxxx\fR\|\fB-collapse-mnext\fR"
+.IP "\fB.fhook-\fR\|\fIXXX\fR\|\fB-collapse-mnext\fR"
 Specifies the number  of lines to advance  before the next search is continued
 on the fold operation. This is only used by \fBcollapse-all\fR.
 .SH EXAMPLE
@@ -93,8 +94,11 @@ left-hand     margin.    The    collapse     variables    are    defined    in
 \fChkc\fR/\fChkcpp.emf\fR as follows:-
 .Me "$emf-scheme"
 .CS
-set-variable %c-collapse-open  "^{"
-set-variable %c-collapse-close "^}"
+set-variable .fhook-c.collapse-open  "^{"
+set-variable .fhook-c.collapse-close "^}"
+set-variable .fhook-c.collapse-mopen  "-1"
+set-variable .fhook-c.collapse-mclose "1"
+set-variable .fhook-c.collapse-mnext "-1"
 .CE
 .Me "$ehf-scheme"
 Given a 'C' function definition:-
@@ -108,17 +112,17 @@ myfunc (int a, int b)
 the folded version appears as follows:-
 .CS
 static void
-myfunc (int a, int b)
-}
+myfunc (int a, int b) ...
 .CE 0
 .SS "emf"
 MicroEmacs  macro files \fBemf\fR  support folding of macro  definitions,  the
 collapse variables are defined in \fChkemf.emf\fR as follows:-
 .Me "$emf-scheme"
 .CS
-set-variable %emf-collapse-open  "^0? ?define-macro"
-set-variable %emf-collapse-close "^!emacro"
-set-variable %emf-collapse-mopen "1"
+set-variable .fhook-emf.collapse-open  "^0? ?define-macro[ \\t]"
+set-variable .fhook-emf.collapse-close "^!emacro"
+set-variable .fhook-emf.collapse-mclose "1"
+set-variable .fhook-emf.collapse-mnext "-1"
 .CE
 .Me "$ehf-scheme"
 Given a macro definition:-
@@ -133,8 +137,7 @@ Given a macro definition:-
 the collapsed version of the macro is defined as:-
 .Me "$emf-scheme"
 .CS
-0 define-macro mymacro
-!emacro
+0 define-macro mymacro ...
 .CE 0
 .Me "$ehf-scheme"
 .SS nroff
@@ -142,10 +145,9 @@ the collapsed version of the macro is defined as:-
 and \fC.SS\fR sections, the hook variables are defined as follows:-
 .Me "$emf-scheme"
 .CS
-set-variable %nroff-collapse-open  "^\\.S[SH]"
-set-variable %nroff-collapse-close "^\\.S[SH]"
-set-variable %nroff-collapse-mopen "1"
-set-variable %nroff-collapse-mnext "-1"
+set-variable .fhook-nroff.collapse-open  "^\\.S[SH]"
+set-variable .fhook-nroff.collapse-close "^\\.S[SH]\\|\\'"
+set-variable .fhook-nroff.collapse-mnext "-1"
 .CE
 .Me "$ehf-scheme"
 Given an nroff block of text defined as:-
@@ -165,9 +167,10 @@ Then the collapsed version appears as:
 defined as:-
 .Me "$emf-scheme"
 .CS
-set-variable %tcl-collapse-open  "^proc "
-set-variable %tcl-collapse-close "^}"
-set-variable %tcl-collapse-mopen "1"
+set-variable .fhook-tcl.collapse-open  "^proc "
+set-variable .fhook-tcl.collapse-close "^}"
+set-variable .fhook-tcl.collapse-mclose "1"
+set-variable .fhook-tcl.collapse-mnext "-1"
 .CE
 .Me "$ehf-scheme"
 Given a tcl procedure definition:-
@@ -183,8 +186,7 @@ proc tixControl:InitWidgetRec {w} {
 .CE
 The collapsed version of the same section appears as:-
 .CS
-proc tixControl:InitWidgetRec {w} {
-}
+proc tixControl:InitWidgetRec {w} { ...
 .CE 0
 .SH NOTES
 .B collapse-current
@@ -202,9 +204,11 @@ The typical binding is \fCC-mouse-drop-1\fR.
 \fBcollapse\fR  is the new name for  \fBfold\fR  appearing in MicroEmacs  2004
 version. The existing commands of  \fBfold-current\fR  and \fBfold-all\fR have
 been replaced by \fBcollapse-current\fR and \fBcollapse-all\fR respectively.
+\fBcollapse\fR now uses the private command variables.
 .SH "SEE ALSO"
 .na
 .Hl "File Hooks" fileHooks 2 ,
+.Ht buffer-init 3 ,
 .Ht user-setup 3 ,
 .Ht narrow-buffer 2 .
 .ad
