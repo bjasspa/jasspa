@@ -12,7 +12,7 @@
 *
 *	Creation Date:		17/10/91
 *
-*	Modification date:	%G%		<001012.1740>
+*	Modification date:	%G%		<010203.1817>
 *
 *	Current rev:		%I%
 *
@@ -71,7 +71,8 @@ DEFFUNC ("change-file-name",		0x00, changeFileName,	CK_CHGFIL, __meFunc_CHGFIL, 
 DEFFUNC ("change-font",                 0x00, changeFont,       CK_CHGFONT, __meFunc_CHGFONT, &__meFunc_SCNSIZ, 0)
 DEFFUNC ("change-screen-depth",		0x00, changeScreenDepth,CK_SCNSIZ, __meFunc_SCNSIZ, &__meFunc_SCNWTH, 0)
 DEFFUNC ("change-screen-width",		0x00, changeScreenWidth,CK_SCNWTH, __meFunc_SCNWTH, &__meFunc_APROPS, 0)
-DEFFUNC ("command-apropos",		0x42, commandApropos,	CK_APROPS, __meFunc_APROPS, &__meFunc_CMPBUF, 0)
+DEFFUNC ("command-apropos",		0x42, commandApropos,	CK_APROPS, __meFunc_APROPS, &__meFunc_CMDWAIT, 0)
+DEFFUNC ("command-wait",		0x42, commandWait,	CK_CMDWAIT, __meFunc_CMDWAIT, &__meFunc_CMPBUF, 0)
 DEFFUNC ("compare-windows",		0x42, cmpBuffers,	CK_CMPBUF, __meFunc_CMPBUF, &__meFunc_FILECPY, 0)
 DEFFUNC ("copy-file",			0x04, copyFile,		CK_FILECPY, __meFunc_FILECPY, &__meFunc_CPYREG, 0)
 DEFFUNC ("copy-region",			0x39, copyRegion,	CK_CPYREG, __meFunc_CPYREG, &__meFunc_WRDCNT, 0)

@@ -10,7 +10,7 @@
 *
 *       Author:                 Danial Lawrence
 *
-*       Creation Date:          14/05/86 12:37          <001011.1802>
+*       Creation Date:          14/05/86 12:37          <010202.1024>
 *
 *       Modification date:      %G% : %U%
 *
@@ -319,7 +319,7 @@ setBufferContext(BUFFER *bp)
     storeWindBSet(bp,curwp) ;
     if(tbp != curbp)
     {
-        bp->b_nwnd-- ;
+        curbp->b_nwnd-- ;
 	curbp = curwp->w_bufp = tbp ;
         tbp->b_nwnd++ ;
         curwp->topLineNo = topLineNo ;

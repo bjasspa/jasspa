@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This file is invoked when a dos batch file is loaded.
 ;
-;   Last Modified : <991125.1029>
+;   Last Modified : <010205.1702>
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; buffer-setup flags
 set-variable #l0 &reg "/history" "fhook/dos" "hix"
@@ -15,6 +15,7 @@ set-variable #l1 "aehikmtux"
     
     0 hilight  .hilight.dos 1               $global-scheme
     hilight .hilight.dos 35  "rem"          .scheme.comment
+    hilight .hilight.dos 35  "@rem"         .scheme.comment
     hilight .hilight.dos 34  ":"            .scheme.prepro
     hilight .hilight.dos 0   "\\^"          .scheme.prepro
     hilight .hilight.dos 128 "%" .hilight.dosvar .scheme.variable

@@ -1,7 +1,7 @@
 /*
  *      SCCS:           %W%             %G%             %U%
  *
- *      Last Modified : <001002.1151>
+ *      Last Modified : <010203.2001>
  *
  *      EFUNC.H:        MicroEMACS function declarations and names
  *
@@ -188,7 +188,7 @@ meCMD  *cmdHash[cmdHashSize] =
     NULL,                 NULL,                 NULL,                 NULL,                 NULL,
     NULL,                 &__meFunc_MOVDWND,    NULL,                 NULL,                 NULL,
     &__meFunc_EXEMAC,     &__meFunc_LSTBUF,     NULL,                 NULL,                 &__meFunc_SPLLWRD,
-    NULL,                 NULL,                 NULL,                 &__meFunc_SYSTEM,     &__meFunc_NXTWND,
+    NULL,                 NULL,                 &__meFunc_CMDWAIT,    &__meFunc_SYSTEM,     &__meFunc_NXTWND,
     NULL,                 NULL,                 NULL,                 NULL,                 NULL,
     NULL,                 NULL,                 &__meFunc_QUOTE,      NULL,                 NULL,
     NULL,                 &__meFunc_QEXIT,      NULL,                 NULL,                 NULL,

@@ -5,7 +5,7 @@
  * Synopsis      : Win32 platform support
  * Created By    : Jon Green
  * Created       : 21/12/1996
- * Last Modified : <010115.1122>
+ * Last Modified : <010205.0931>
  *
  * Description
  *
@@ -2536,7 +2536,6 @@ WinTermResize (void)
                                                         sizeof (INT) * (ncol + 1));
             /* Construct the temporary rendering buffer */
             eCellMetrics.charCellTmpX = realloc (eCellMetrics.charCellTmpX, ncol+1);
-
         }
 
         /* Grow the existing rows */
@@ -2545,9 +2544,9 @@ WinTermResize (void)
             /* Set up the row cell LUT positions. Note allocate a single
              * array and split into 4 for re-use. */
             eCellMetrics.screenCellPosY = realloc (eCellMetrics.screenCellPosY, sizeof (int16) * 4 * (nrow + 1));
-            eCellMetrics.charCellPosY = &eCellMetrics.screenCellPosY [nrow+1];
-            eCellMetrics.paintStartCol = &eCellMetrics.charCellPosY [nrow+1];
-            eCellMetrics.paintEndCol = &eCellMetrics.paintStartCol [nrow+1];
+            eCellMetrics.charCellPosY   = &eCellMetrics.screenCellPosY [nrow+1];
+            eCellMetrics.paintStartCol  = &eCellMetrics.charCellPosY [nrow+1];
+            eCellMetrics.paintEndCol    = &eCellMetrics.paintStartCol [nrow+1];
             eCellMetrics.screenCellNrow = nrow;
         }
 
@@ -2555,7 +2554,9 @@ WinTermResize (void)
         for (ii = 0; ii <= nrow; ii++)
         {
             eCellMetrics.charCellPosY [ii] =
-                  (eCellMetrics.screenCellPosY [ii] = rowToClient (ii));
+                      (eCellMetrics.screenCellPosY [ii] = rowToClient (ii));
+            eCellMetrics.paintStartCol[ii] = ncol ;
+            eCellMetrics.paintEndCol  [ii] = 0 ;
         }
         eCellMetrics.screenCellPosY [0] = (int16) eCellMetrics.canvas.top;
         eCellMetrics.screenCellPosY [nrow] = (int16) eCellMetrics.canvas.bottom;
