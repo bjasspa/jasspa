@@ -2,16 +2,15 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Thu May 27 00:17:10 1999
-;  Last Modified : <000719.0012>
+;  Last Modified : <000719.1218>
 ;
-;  Description
-;      Basic implementation of the MS windows shift region definition style
+;  Description     Implementation of MS windows shift region definition style
 ;
 ;  Notes
 ;
 ;  History
 ;
-;  Copyright (c) 1999 JASSPA.
+;  Copyright (c) 1999-2000 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 0 define-macro msshift-pick
@@ -44,6 +43,8 @@
         -1 yank
         yank
         !return
+    !elif &seq "mouse-event" @cc
+        set-variable .mouse-event.msshift 3
     !elif &set #l0 &sin "mouse-pick-" @cck
         set-variable #l0 &spr "%s-drop-%s" &lef @cck &add #l0 4 &rig @cck &add #l0 10
         !if &seq "mouse-event" @cc

@@ -2,14 +2,15 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Jun 13 13:00:52 1998
-;  Last Modified : <000719.0012>
+;  Last Modified : <000719.1232>
 ;
-;  Description
+;  Description     Macros to implement typical Mouse functionality 
 ;
 ;  Notes
 ;
 ;  History
 ;
+;  Copyright (c) 1999-2000 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; mark-window
@@ -359,6 +360,11 @@
 0 define-macro mouse-no-move-yank
     goto-window
     goto-alpha-mark "T"
+    !if .mouse-event.msshift
+        -1 yank
+        kill-region
+        -1 yank
+    !endif
     yank @mna
     set-variable @cc yank
 !emacro
@@ -366,16 +372,22 @@
 0 define-macro mouse-no-move-replace-yank
     goto-window
     goto-alpha-mark "T"
-    0 show-region
-    set-variable #l0 &band $result 0xe
-    !force backward-char
-    !if $status
+    !if .mouse-event.msshift
+        -1 yank
+        kill-region
+        -1 yank
+    !else
         0 show-region
-        set-variable #l0 &add #l0 &band $result 0xe
-        forward-char
-        !if &equ #l0 20
-            kill-region
-            -2 yank
+        set-variable #l0 &band $result 0xe
+        !force backward-char
+        !if $status
+            0 show-region
+            set-variable #l0 &add #l0 &band $result 0xe
+            forward-char
+            !if &equ #l0 20
+                kill-region
+                -2 yank
+            !endif
         !endif
     !endif
     yank @mna
@@ -533,6 +545,10 @@
     !if &equ &band #l2 7 5
         3 show-region
     !endif
+    ; decrement the msshift
+    !if .msshift
+        set-variable .msshift &sub .msshift 1
+    !endif
     ; force the unbind of the last pick time or move - do this on pick and drop as a safety mechanism 
     !force global-unbind-key &spr .mask "time"
     !force global-unbind-key &spr .mask "move"
@@ -575,6 +591,7 @@
         !force show-region
     !endif
 !emacro
+set-variable .mouse-event.msshift 0
 
 0 define-macro mouse-wheel-event
     set-variable #l1 @cck
