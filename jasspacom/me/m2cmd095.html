@@ -1,8 +1,8 @@
 <HTML>
 <HEAD><TITLE>next-window(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
 <BODY>
-<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 next-window(2)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
@@ -19,19 +19,36 @@ next-window(2)</H1>
 <UL><P><I>n</I> <B>next-window</B> (<B>C-x&nbsp;o</B>)&nbsp; 
 <BR><I>n</I> <B>previous-window</B> (<B>C-x&nbsp;p</B>)&nbsp; </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P><B>next-window</B> makes the next window down the current window. A +ve argument <I>n</I>, makes the <I>n</I>th window from the top current, where 1 is the first window. A -ve argument <I>n</I> specifies the <I>nth</I> window from the bottom current. An argument <I>n</I> of 0, makes the next window down current, if this is the last window then the command fails. 
-<P><B>previous-window</B> makes the next window up the current window. A +ve argument <I>n</I>, this makes the <I>n</I>th window from the bottom the current window. A -ve argument <I>n</I> makes the <I>nth</I> window from the top current. An argument <I>n</I> of zero makes the previous window current, if this is the first window then the command fails. 
-<P>When no argument is supplied then the next (or previous) window becomes the current window. Wrapping occurs from bottom to top on <B>next-window</B>, and top to bottom on <B>previous-window</B>. </UL>
-<H2><B>NOTES </B></H2>
-<UL><P>The <I>n=0</I> argument is typically used to traverse the window list from top to bottom, where the <TT>FALSE</TT> status may be trapped and used as an indicator that end of the windows list has been reached. </UL>
+<UL><P><B>next-window</B> makes the next window down the current window, if the current window is the last one in the frame the first one is selected. The numeric argument <I>n</I> can be used to modify this default behaviour, it is a bitwise flag where the bits are defined as follows: 
+<P><B>0x01</B> 
+<BR><UL>If there is no 'next' window because this is the last then if this bit is set the search for the next window is allow to continue with the first window of the frame. As the default argument <I>n</I> is <TT>1</TT> this is the default behaviour. </UL>
+<P><B>0x02</B> 
+<BR><UL>When this bit is set windows whose 
+<A HREF="m5var084.html">$window-flags(5)</A> are set to be ignored by this command are not skipped. The setting of bit <TT>0x010</TT> of a windows <B>$window-flags</B> will make the default action of this command skip it which means the the command may not simply select the next window but the next window without this flag set. Setting this bit of the numeric argument will force the command to always select the next window. </UL>
+<P><B>0x04</B> 
+<BR><UL>When set the search for the next window starts at the first window instead of the current window, this can be used to find the first window in the current frame. 
+</UL><P><B>previous-window</B> makes the next window up the current window. The numeric argument <I>n</I> has the same effect on this command as for <B>next-window</B> except bit <B>0x04</B> starts the search at the last window of the frame. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following example visits every window in the current frame printing the buffer it displays with a second pause between each one: <UL>
+<PRE>;&nbsp;go&nbsp;to&nbsp;the&nbsp;first&nbsp;window 
+!force&nbsp;6&nbsp;next-window 
+!while&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;1000&nbsp;ml-write&nbsp;$buffer-bname 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;go&nbsp;to&nbsp;the&nbsp;next&nbsp;window&nbsp;-&nbsp;fail&nbsp;if&nbsp;this&nbsp;is&nbsp;the&nbsp;last 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;2&nbsp;next-window 
+!done 
+</PRE></UL>
+</UL><H2><B>NOTES </B></H2>
+<UL><P>Both commands fail if a suitable window cannot be for, see the example on how this can be used. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m2cmd126.html">next-window-find-buffer(2)</A>, 
 <A HREF="m2cmd127.html">next-window-find-file(2)</A>, 
 <A HREF="m2cmd110.html">set-position(2)</A>, 
-<A HREF="m2cmd110.html">goto-position(2)</A>. </UL>
+<A HREF="m2cmd110.html">goto-position(2)</A>, 
+<A HREF="m5var084.html">$window-flags(5)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2002</I>
-<BR><I>Last Modified: 2001/12/18</I>
-<BR><I>Generated On: 2002/01/06</I>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2002/10/16</I>
+<BR><I>Generated On: 2004/01/11</I>
 </BODY></HMTL>

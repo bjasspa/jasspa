@@ -1,8 +1,8 @@
 <HTML>
 <HEAD><TITLE>tcl(9)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
 <BODY>
-<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 tcl(9)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
@@ -21,7 +21,7 @@ tcl(9)</H1>
 <UL><P><B>.tcl</B>, <B>.tk</B> - TCL/TK file </UL>
 <H2><B>MAGIC STRINGS </B></H2>
 <UL><P><B>^#![ \t]*/.*wish</B> 
-<BR><UL>MicroEmacs '02 recognizes the magic string on the first line of the file used to locate the executable. The tcl files may be extension less and are still recognized. </UL></UL>
+<BR><UL>MicroEmacs '04 recognizes the magic string on the first line of the file used to locate the executable. The tcl files may be extension less and are still recognized. </UL></UL>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P>The <B>tcl</B> provides hilighting and automatic formatting features, in addition to a number of tools to handle the file type. 
 <P><B>General Editing</B> 
@@ -39,8 +39,8 @@ tcl(9)</H1>
 <A HREF="m2cmd057.html">find-tag(2)</A> takes the user to the file using the tag information. </UL>
 <P><B>Folding and Information Hiding</B> 
 <BR><UL>Generic folding is enabled within the C and C++ files. The folds occur about braces <B>{</B>...<B>}</B> located on the left-hand margin. 
-<A HREF="m3mac029.html">fold-all(3)</A> (un)folds all regions in the file, 
-<A HREF="m3mac029.html">fold-current(3)</A> (un)folds the current region. Note that folding does not operate on K&amp;R style code. </UL>
+<A HREF="m3mac029.html">collapse-all(3)</A> (un)folds all regions in the file, 
+<A HREF="m3mac029.html">collapse-current(3)</A> (un)folds the current region. Note that folding does not operate on K&amp;R style code. </UL>
 <P><B>Short Cuts</B> 
 <BR><UL>The short cut keys used within the buffer are:- </UL>
 <UL><P><B>C-c C-c</B> - Comment out the current line. 
@@ -51,10 +51,10 @@ tcl(9)</H1>
 <BR><B>f3</B> - (un)fold all regions </UL></UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
-<A HREF="m2cmd033.html">indent(2)</A>, 
+<A HREF="m3mac029.html">collapse-all(3)</A>, 
+<A HREF="m3mac029.html">collapse-current(3)</A>, 
 <A HREF="m2cmd057.html">find-tag(2)</A>, 
-<A HREF="m3mac029.html">fold-all(3)</A>, 
-<A HREF="m3mac029.html">fold-current(3)</A>, 
+<A HREF="m2cmd033.html">indent(2)</A>, 
 <A HREF="m3mac025.html">restyle-buffer(3)</A>, 
 <A HREF="m3mac025.html">restyle-region(3)</A>, 
 <A HREF="m3fcl009.html">tcltags(3f)</A>, 
@@ -62,7 +62,7 @@ tcl(9)</H1>
 <P>
 <A HREF="amicr030.html">Supported File Types</A> </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2002</I>
-<BR><I>Last Modified: 2001/12/18</I>
-<BR><I>Generated On: 2002/01/06</I>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2004/01/05</I>
+<BR><I>Generated On: 2004/01/11</I>
 </BODY></HMTL>

@@ -1,9 +1,9 @@
 <HTML>
-<HEAD><TITLE>fold-current(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<HEAD><TITLE>collapse-current(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
 <BODY>
-<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
-fold-current(3)</H1>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
+collapse-current(3)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
 <A HREF="amicr031.html">[Commands]</A>
@@ -13,34 +13,38 @@ fold-current(3)</H1>
 </FONT>
 <HR>
 <H2><B>NAME </B></H2>
-<UL><P>fold-current - (un)Fold a region in the current buffer 
-<BR>fold-all - (Un)Fold all regions in the current buffer </UL>
+<UL><P>collapse-current - (un)Fold a region in the current buffer 
+<BR>collapse-all - (Un)Fold all regions in the current buffer </UL>
 <H2><B>SYNOPSIS </B></H2>
-<UL><P><B>fold-current</B> 
-<BR><B>fold-all</B> </UL>
+<UL><P><B>collapse-current</B> 
+<BR><B>collapse-all</B> </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P>MicroEmacs '02 provides a generic, albeit course, folding mechanism which is applied to some of the well known file modes. The folding mechanism allows parts of the buffer to be scrolled up and hidden, leaving a residue hilighting marker within the buffer indicating a folded region. A folded buffer typically allows a summary of the buffer contents to be viewed within several windows, hiding the detail of the buffer. 
+<UL><P>MicroEmacs '04 provides a generic, albeit course, folding mechanism which is applied to some of the well known file modes. The folding mechanism allows parts of the buffer to be scrolled up and hidden, leaving a residue hilighting marker within the buffer indicating a folded region. A folded buffer typically allows a summary of the buffer contents to be viewed within several windows, hiding the detail of the buffer. 
 <P>The folding mechanism uses well defined <I>start</I> and <I>end</I> markers which form part of the syntax of the well known file mode. i.e. in 'C' this is the open and closed braces that appear on the left-hand margin (<TT>{</TT> .. <TT>}</TT>). The intention is that the natural syntax of the text is used to determine the fold positions, requiring no additional text formating or special text tags to be inserted by the user. 
-<P><B>fold-current</B> opens and closes a folded region within the buffer. If the current cursor position lies between a <I>start</I> and <I>end</I> marker then the region between the start and end is folded out and hidden from view, leaving a highlight marker in the buffer. If the fold already exists then, moving the cursor to the folded line and invoking <B>fold-current</B> removes the fold marker and reveals the text. 
-<P><B>fold-all</B> opens and closes all folded regions within the buffer, if the current state is unfolded then all of the <I>start</I>/<I>end</I> markers are located and their regions folded. Conversely, if the buffer is currently folded and <B>fold-all</B> is invoked, then all folds are removed and the associated text revealed. </UL>
+<P><B>collapse-current</B> opens and closes a folded region within the buffer. If the current cursor position lies between a <I>start</I> and <I>end</I> marker then the region between the start and end is folded out and hidden from view, leaving a highlight marker in the buffer. If the fold already exists then, moving the cursor to the folded line and invoking <B>collapse-current</B> removes the fold marker and reveals the text. 
+<P><B>collapse-all</B> opens and closes all folded regions within the buffer, if the current state is unfolded then all of the <I>start</I>/<I>end</I> markers are located and their regions folded. Conversely, if the buffer is currently folded and <B>collapse-all</B> is invoked, then all folds are removed and the associated text revealed. </UL>
 <H2><B>CONFIGURATION </B></H2>
-<UL><P>In order to utilize the <B>fold-current/all</B> commands within a buffer, the <I>start</I> and <I>end</I> markers have to be initialized for the syntactical contents of the buffer. This is performed within the hook function for the buffer, using the hook-name. Buffer specific variables are defined within the context of the buffer to configure that start and end fold handling. The buffer specific variables are defined as follows, where <I>xxxx</I> is the file hook base name. 
-<P><I>xxxx</I><B>-fold-open</B> 
+<UL><P>In order to utilize the <B>collapse-current/all</B> commands within a buffer, the <I>start</I> and <I>end</I> markers have to be initialized for the syntactical contents of the buffer. This is performed within the hook function for the buffer, using the hook-name, the initialization is performed within 
+<A HREF="m3mac064.html">buffer-init(3)</A>. Buffer specific variables are defined within the context of the buffer to configure that start and end fold handling. The buffer specific variables are defined as follows, where <I>XXX</I> is the file hook base name. 
+<P><B>.fhook-</B><I>XXX</I><B>-collapse-open</B> 
 <BR><UL>A regular expression search string used to locate the start of the string. For speed the search string should include a regular expression start or end of line character whenever possible. i.e. in C the open is defined as &quot;<TT>^{</TT>&quot;. </UL>
-<P><I>xxxx</I><B>-fold-close</B> 
+<P><B>.fhook-</B><I>XXX</I><B>-collapse-close</B> 
 <BR><UL>A regular expression search string used to locate the end of the string. For speed the search string should include a regular expression start or end line character whenever possible. i.e. in C the close is defined as &quot;<TT>^}</TT>&quot;. </UL>
-<P><I>xxxx</I><B>-fold-mopen</B> 
+<P><B>.fhook-</B><I>XXX</I><B>-collapse-mopen</B> 
 <BR><UL>An integer value that denotes the number of lines to move in a forward or (-ve) backward direction from the <I>start</I> line located by the search string to the position in the buffer to be folded. If default value when <B>mopen</B> is omitted is 0, starting the fold from the search string line. </UL>
-<P><I>xxxx</I><B>-fold-mclose</B> 
+<P><B>.fhook-</B><I>XXX</I><B>-collapse-mclose</B> 
 <BR><UL>The relative displacement from the close fold line to the fold position, this is a positive or negative displacement depending on where the fold is to be positioned. </UL>
-<P><I>xxxx</I><B>-fold-mnext</B> 
-<BR><UL>Specifies the number of lines to advance before the next search is continued on the fold operation. This is only used by <B>fold-all</B>. </UL></UL>
+<P><B>.fhook-</B><I>XXX</I><B>-collapse-mnext</B> 
+<BR><UL>Specifies the number of lines to advance before the next search is continued on the fold operation. This is only used by <B>collapse-all</B>. </UL></UL>
 <H2><B>EXAMPLE </B></H2>
-<UL><P>The following examples show how the fold variables are set up in each of the buffer modes. </UL>
+<UL><P>The following examples show how the collapse variables are set up in each of the buffer modes. </UL>
 <H2>C and C++ </H2>
-<UL><P><B>C</B> and <B>C++</B> fold on the open and close brace appearing in the left-hand margin. The fold variables are defined in <TT>hkc</TT>/<TT>hkcpp.emf</TT> as follows:- <UL>
-<PRE>set-variable&nbsp;%c-fold-open&nbsp;&nbsp;&quot;^{&quot; 
-set-variable&nbsp;%c-fold-close&nbsp;&quot;^}&quot; 
+<UL><P><B>C</B> and <B>C++</B> collapse on the open and close brace appearing in the left-hand margin. The collapse variables are defined in <TT>hkc</TT>/<TT>hkcpp.emf</TT> as follows:- <UL>
+<PRE>set-variable&nbsp;.fhook-c.collapse-open&nbsp;&nbsp;&quot;^{&quot; 
+set-variable&nbsp;.fhook-c.collapse-close&nbsp;&quot;^}&quot; 
+set-variable&nbsp;.fhook-c.collapse-mopen&nbsp;&nbsp;&quot;-1&quot; 
+set-variable&nbsp;.fhook-c.collapse-mclose&nbsp;&quot;1&quot; 
+set-variable&nbsp;.fhook-c.collapse-mnext&nbsp;&quot;-1&quot; 
 </PRE></UL>
 <P>Given a 'C' function definition:- <UL>
 <PRE>static&nbsp;void 
@@ -51,14 +55,14 @@ myfunc&nbsp;(int&nbsp;a,&nbsp;int&nbsp;b)
 </PRE></UL>
 <P>the folded version appears as follows:- <UL>
 <PRE>static&nbsp;void 
-myfunc&nbsp;(int&nbsp;a,&nbsp;int&nbsp;b) 
-} 
+myfunc&nbsp;(int&nbsp;a,&nbsp;int&nbsp;b)&nbsp;... 
 </PRE></UL>
 </UL><H2>emf </H2>
-<UL><P>MicroEmacs macro files <B>emf</B> support folding of macro definitions, the fold variables are defined in <TT>hkemf.emf</TT> as follows:- <UL>
-<PRE>set-variable&nbsp;%emf-fold-open&nbsp;&nbsp;&quot;^0?&nbsp;?define-macro&quot; 
-set-variable&nbsp;%emf-fold-close&nbsp;&quot;^!emacro&quot; 
-set-variable&nbsp;%emf-fold-mopen&nbsp;&quot;1&quot; 
+<UL><P>MicroEmacs macro files <B>emf</B> support folding of macro definitions, the collapse variables are defined in <TT>hkemf.emf</TT> as follows:- <UL>
+<PRE>set-variable&nbsp;.fhook-emf.collapse-open&nbsp;&nbsp;&quot;^0?&nbsp;?define-macro[&nbsp;\t]&quot; 
+set-variable&nbsp;.fhook-emf.collapse-close&nbsp;&quot;^!emacro&quot; 
+set-variable&nbsp;.fhook-emf.collapse-mclose&nbsp;&quot;1&quot; 
+set-variable&nbsp;.fhook-emf.collapse-mnext&nbsp;&quot;-1&quot; 
 </PRE></UL>
 <P>Given a macro definition:- <UL>
 <PRE>0&nbsp;define-macro&nbsp;mymacro 
@@ -66,16 +70,14 @@ set-variable&nbsp;%emf-fold-mopen&nbsp;&quot;1&quot;
 ;&nbsp;...&nbsp;and&nbsp;some&nbsp;more&nbsp;... 
 !emacro 
 </PRE></UL>
-<P>the folded version of the macro is defined as:- <UL>
-<PRE>0&nbsp;define-macro&nbsp;mymacro 
-!emacro 
+<P>the collapsed version of the macro is defined as:- <UL>
+<PRE>0&nbsp;define-macro&nbsp;mymacro&nbsp;... 
 </PRE></UL>
 </UL><H2>nroff </H2>
 <UL><P><B>nroff</B> is configured for manual pages only and folds between <TT>.SH</TT> and <TT>.SS</TT> sections, the hook variables are defined as follows:- <UL>
-<PRE>set-variable&nbsp;%nroff-fold-open&nbsp;&nbsp;&quot;^\.S[SH]&quot; 
-set-variable&nbsp;%nroff-fold-close&nbsp;&quot;^\.S[SH]&quot; 
-set-variable&nbsp;%nroff-fold-mopen&nbsp;&quot;1&quot; 
-set-variable&nbsp;%nroff-fold-mnext&nbsp;&quot;-1&quot; 
+<PRE>set-variable&nbsp;.fhook-nroff.collapse-open&nbsp;&nbsp;&quot;^\.S[SH]&quot; 
+set-variable&nbsp;.fhook-nroff.collapse-close&nbsp;&quot;^\.S[SH]\|\'&quot; 
+set-variable&nbsp;.fhook-nroff.collapse-mnext&nbsp;&quot;-1&quot; 
 </PRE></UL>
 <P>Given an nroff block of text defined as:- <UL>
 <PRE>.SH&nbsp;SYNOPSIS 
@@ -83,15 +85,16 @@ set-variable&nbsp;%nroff-fold-mnext&nbsp;&quot;-1&quot;
 .\&quot;&nbsp;Some&nbsp;more&nbsp;text 
 .SH&nbsp;DESCRIPTION 
 </PRE></UL>
-<P>Then the folded version appears as: <UL>
+<P>Then the collapsed version appears as: <UL>
 <PRE>.SH&nbsp;SYNOPSIS 
 .SH&nbsp;DESCRIPTION 
 </PRE></UL>
 </UL><H2>tcl/tk </H2>
-<UL><P><B>tcl/tk</B> is configured to fold procedures. The fold variables are defined as:- <UL>
-<PRE>set-variable&nbsp;%tcl-fold-open&nbsp;&nbsp;&quot;^proc&nbsp;&quot; 
-set-variable&nbsp;%tcl-fold-close&nbsp;&quot;^}&quot; 
-set-variable&nbsp;%tcl-fold-mopen&nbsp;&quot;1&quot; 
+<UL><P><B>tcl/tk</B> is configured to collapse procedures. The collapse variables are defined as:- <UL>
+<PRE>set-variable&nbsp;.fhook-tcl.collapse-open&nbsp;&nbsp;&quot;^proc&nbsp;&quot; 
+set-variable&nbsp;.fhook-tcl.collapse-close&nbsp;&quot;^}&quot; 
+set-variable&nbsp;.fhook-tcl.collapse-mclose&nbsp;&quot;1&quot; 
+set-variable&nbsp;.fhook-tcl.collapse-mnext&nbsp;&quot;-1&quot; 
 </PRE></UL>
 <P>Given a tcl procedure definition:- <UL>
 <PRE>proc&nbsp;tixControl:InitWidgetRec&nbsp;{w}&nbsp;{ 
@@ -103,22 +106,24 @@ set-variable&nbsp;%tcl-fold-mopen&nbsp;&quot;1&quot;
 &nbsp;&nbsp;&nbsp;&nbsp;set&nbsp;data(serial)	0 
 } 
 </PRE></UL>
-<P>The folded version of the same section appears as:- <UL>
-<PRE>proc&nbsp;tixControl:InitWidgetRec&nbsp;{w}&nbsp;{ 
-} 
+<P>The collapsed version of the same section appears as:- <UL>
+<PRE>proc&nbsp;tixControl:InitWidgetRec&nbsp;{w}&nbsp;{&nbsp;... 
 </PRE></UL>
 </UL><H2><B>NOTES </B></H2>
-<UL><P><B>fold-current</B> and <B>fold-all</B> are macros implemented in <TT>fold.emf</TT>. The folding is performed using the 
+<UL><P><B>collapse-current</B> and <B>collapse-all</B> are macros implemented in <TT>collapse.emf</TT>. The collapsing is performed using the 
 <A HREF="m2cmd068.html">narrow-buffer(2)</A> command. 
-<P><B>fold-current</B> may also be bound to the mouse using the 
+<P><B>collapse-current</B> may also be bound to the mouse using the 
 <A HREF="m3osd000.html">user-setup(3)</A>. The typical binding is <TT>C-mouse-drop-1</TT>. </UL>
+<H2><B>HISTORY </B></H2>
+<UL><P><B>collapse</B> is the new name for <B>fold</B> appearing in MicroEmacs 2004 version. The existing commands of <B>fold-current</B> and <B>fold-all</B> have been replaced by <B>collapse-current</B> and <B>collapse-all</B> respectively. <B>collapse</B> now uses the private command variables. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m2cmd202.html">File Hooks</A>, 
+<A HREF="m3mac064.html">buffer-init(3)</A>, 
 <A HREF="m3osd000.html">user-setup(3)</A>, 
 <A HREF="m2cmd068.html">narrow-buffer(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2002</I>
-<BR><I>Last Modified: 2001/12/18</I>
-<BR><I>Generated On: 2002/01/06</I>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2004/01/11</I>
+<BR><I>Generated On: 2004/01/11</I>
 </BODY></HMTL>

@@ -1,8 +1,8 @@
 <HTML>
 <HEAD><TITLE>yank(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
 <BODY>
-<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 yank(2)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
@@ -35,7 +35,7 @@ yank(2)</H1>
 <A HREF="m2mod007.html">letter(2m)</A> mode enabled to add the text to the kill buffer. If any of these commands are executed immediately after any other (including itself) or the 
 <A HREF="m4fil017.html">@cl(4)</A> variable is set to one of these command, the new kill text is appended to the last kill buffer text. </UL>
 <H2><B>NOTES </B></H2>
-<UL><P>Windowing systems such as X-Windows and Microsoft Windows utilize a global windowing kill buffer allowing data to be moved between windowing applications (<I>cut buffer</I> and <I>clipboard</I>, respectively). Within these environments MicroEmacs '02 automatically interacts with the windowing systems kill buffer, the last MicroEmacs '02 kill buffer entry is immediately available for a <I>paste</I> operation into another application (regardless of how it was inserted into the kill buffer). Conversely, data placed in the windowing kill buffer is available to MicroEmacs '02, via <B>yank</B>, until a new item has been inserted into the kill buffer (the data may still be available via 
+<UL><P>Windowing systems such as X-Windows and Microsoft Windows utilize a global windowing kill buffer allowing data to be moved between windowing applications (<I>cut buffer</I> and <I>clipboard</I>, respectively). Within these environments MicroEmacs '04 automatically interacts with the windowing systems kill buffer, the last MicroEmacs '04 kill buffer entry is immediately available for a <I>paste</I> operation into another application (regardless of how it was inserted into the kill buffer). Conversely, data placed in the windowing kill buffer is available to MicroEmacs '04, via <B>yank</B>, until a new item has been inserted into the kill buffer (the data may still be available via 
 <A HREF="m2cmd111.html">reyank(2)</A>). </UL>
 <H2><B>EXAMPLE </B></H2>
 <UL><P>The following example is a basic macro code implementation of the 
@@ -58,7 +58,7 @@ backward-line
 <A HREF="m4fil020.html">@y(4)</A>, 
 <A HREF="m4fil017.html">@cc(4)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2002</I>
-<BR><I>Last Modified: 2001/12/18</I>
-<BR><I>Generated On: 2002/01/06</I>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2002/01/11</I>
+<BR><I>Generated On: 2004/01/11</I>
 </BODY></HMTL>

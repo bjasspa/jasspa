@@ -1,8 +1,8 @@
 <HTML>
 <HEAD><TITLE>MessageLineVariables(4)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
 <BODY>
-<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 MessageLineVariables(4)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
@@ -36,17 +36,17 @@ MessageLineVariables(4)</H1>
 <P>The flag <B>h</B> specifies what type of data is to be entered, this specifies the history to be used and the semantics allowed, <B>h</B> can have the following values 
 <UL><P><TT>0</TT>&nbsp;For&nbsp;a&nbsp;general&nbsp;string&nbsp;input&nbsp;using&nbsp;the&nbsp;general&nbsp;history. 
 <BR><TT>1</TT>&nbsp;For&nbsp;an&nbsp;absolute&nbsp;file&nbsp;name,&nbsp;with&nbsp;completion&nbsp;and&nbsp;history. 
-<BR><TT>2</TT>&nbsp;For&nbsp;a&nbsp;MicroEmacs&nbsp;'02&nbsp;buffer&nbsp;name,&nbsp;with&nbsp;completion&nbsp;and&nbsp;history. 
-<BR><TT>3</TT>&nbsp;For&nbsp;a&nbsp;MicroEmacs&nbsp;'02&nbsp;command&nbsp;name,&nbsp;with&nbsp;completion&nbsp;and&nbsp;history. 
+<BR><TT>2</TT>&nbsp;For&nbsp;a&nbsp;MicroEmacs&nbsp;'04&nbsp;buffer&nbsp;name,&nbsp;with&nbsp;completion&nbsp;and&nbsp;history. 
+<BR><TT>3</TT>&nbsp;For&nbsp;a&nbsp;MicroEmacs&nbsp;'04&nbsp;command&nbsp;name,&nbsp;with&nbsp;completion&nbsp;and&nbsp;history. 
 <BR><TT>4</TT>&nbsp;For&nbsp;a&nbsp;file&nbsp;name,&nbsp;with&nbsp;completion&nbsp;and&nbsp;history. 
 <BR><TT>5</TT>&nbsp;For&nbsp;a&nbsp;search&nbsp;string,&nbsp;with&nbsp;history. 
-<BR><TT>6</TT>&nbsp;For&nbsp;a&nbsp;MicroEmacs&nbsp;'02&nbsp;mode&nbsp;name,&nbsp;with&nbsp;completion&nbsp;and&nbsp;history. 
-<BR><TT>7</TT>&nbsp;For&nbsp;a&nbsp;MicroEmacs&nbsp;'02&nbsp;variable&nbsp;name,&nbsp;with&nbsp;completion&nbsp;and&nbsp;history. 
+<BR><TT>6</TT>&nbsp;For&nbsp;a&nbsp;MicroEmacs&nbsp;'04&nbsp;mode&nbsp;name,&nbsp;with&nbsp;completion&nbsp;and&nbsp;history. 
+<BR><TT>7</TT>&nbsp;For&nbsp;a&nbsp;MicroEmacs&nbsp;'04&nbsp;variable&nbsp;name,&nbsp;with&nbsp;completion&nbsp;and&nbsp;history. 
 <BR><TT>8</TT>&nbsp;For&nbsp;a&nbsp;general&nbsp;string&nbsp;using&nbsp;no&nbsp;history. 
 <BR><TT>9</TT>&nbsp;For&nbsp;a&nbsp;user&nbsp;supplied&nbsp;completion&nbsp;list&nbsp;(<TT>com-list</TT>). 
 <BR><TT>a</TT>&nbsp;For&nbsp;a&nbsp;user&nbsp;supplied&nbsp;completion&nbsp;list&nbsp;(<TT>buffer-name</TT>). </UL>
-<P>A default value of 0 is used if no value is specified. At first glance type 1 and 4 appear to be the same. They differ only when a non absolute file name is entered, such as &quot;foobar&quot;. Type 1 will turn this into an absolute path, i.e. if the current directory is &quot;/tmp&quot; then it will return &quot;/tmp/foobar&quot;. Type 4 however will return just &quot;foobar&quot;, this is particularly useful with the 
-<A HREF="m4fil024.html">&amp;find(4)</A> directive to then find the file &quot;foobar&quot;. 
+<P>A default value of 0 is used if no value is specified. At first glance type 1 and 4 appear to be the same. They differ only when a non absolute file name is entered, such as &quot;foobar&quot;. Type 1 will turn this into an absolute path, i.e. if the current directory is &quot;<TT>/tmp</TT>&quot; then it will return &quot;<TT>/tmp/foobar</TT>&quot;. Type 4 however will return just &quot;foobar&quot;, this is particularly useful with the 
+<A HREF="m4fil024.html">&amp;find(4)</A> function to then find the file &quot;foobar&quot;. 
 <P>When a value of <TT>9</TT> is used the argument <I>com-list</I> must be given which specifies a list of completion values in the form of a MicroEmacs list (see help on 
 <A HREF="m4fil029.html">&amp;lget(4)</A> for further information on lists). The user may enter another value which is not in the list, which will be returned. 
 <P>Alternatively a completion list may be given in the form of a buffer using a value of <TT>a</TT>. The argument <I>buffer-name</I> must be given to specify the buffer name from which to extract the completion list; each line of the buffer is taken as a completion value. This option is particularly useful for large completion lists as there is no size restrictions. 
@@ -124,7 +124,7 @@ define-macro&nbsp;osd-delete-buffer
 <UL><P>
 <A HREF="m2cmd029.html">define-macro(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2002</I>
-<BR><I>Last Modified: 2001/12/18</I>
-<BR><I>Generated On: 2002/01/06</I>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2004/01/11</I>
+<BR><I>Generated On: 2004/01/11</I>
 </BODY></HMTL>

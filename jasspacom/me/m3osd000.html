@@ -1,8 +1,8 @@
 <HTML>
 <HEAD><TITLE>user-setup(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
 <BODY>
-<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 user-setup(3)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
@@ -45,8 +45,23 @@ user-setup(3)</H1>
 <BR><UL>Sets the company setup macro file name which is executed at start-up. A company macro file should contain all company wide standard settings such as <TT>%company-name</TT>, No <TT>.emf</TT> extension is supplied. See 
 <A HREF="m2nar002.html">Setting Up a Company Profile</A> for more information. </UL>
 <P><TT>Emulate</TT> 
-<BR><UL>Sets an emulation mode which changes the behaviour on MicroEmacs to emulate another editor/program; this is done by executing a macro file at start-up. An emulation macro file should contain the macro code required to simulate the environment of the other editor. MicroEmacs '02 is released with two emulation modes, MicroEmacs v3.8 which executes macro file <TT>meme3_8.emf</TT> (See 
+<BR><UL>Sets an emulation mode which changes the behaviour on MicroEmacs to emulate another editor/program; this is done by executing a macro file at start-up. An emulation macro file should contain the macro code required to simulate the environment of the other editor. MicroEmacs '04 is released with two emulation modes, MicroEmacs v3.8 which executes macro file <TT>meme3_8.emf</TT> (See 
 <A HREF="m2cmd201.html">Compatibility</A> for more information) and NEdit v5 which is at best a demonstration of what can be achieved, this executes macro file <TT>menedit.emf</TT>. </UL>
+<P><TT>MS Friendly Keys</TT> 
+<BR><UL>When enabled the following key bindings are created to ease frustration for MS users: 
+<P><TT>home</TT> 
+<BR><UL>Bound to beginning-of-line instead of beginning-of-buffer. </UL>
+<P><TT>end</TT> 
+<BR><UL>Bound to end-of-line instead of end-of-buffer. </UL>
+<P><TT>C-home</TT> 
+<BR><UL>Bound to beginning-of-buffer. </UL>
+<P><TT>C-end</TT> 
+<BR><UL>Bound to end-of-buffer. </UL>
+<P><TT>C-v</TT> 
+<BR><UL>Bound to yank (paste). </UL>
+<P><TT>esc-v</TT> 
+<BR><UL>Bound to reyank. </UL></UL>
+<UL><P>Note that the &quot;<TT>C-x</TT>&quot; and &quot;<TT>C-c</TT>&quot; keys are just to intrinsic to MicroEmacs to rebind (sorry). </UL>
 <P><TT>MS Shift Region</TT> 
 <BR><UL>Enables/disables cursor key manipulation with the shift key similar to the conventional Microsoft region selection. When enabled, pressing the shift key in conjunction with the cursor movement keys selects a region which is hilighted. Once the region is selected then the <TT>&lt;DELETE&gt;</TT> or <TT>&lt;BACKSPACE&gt;</TT> key erases the selected region. This also enables a similar behaviour with the Mouse <B>Drag region</B> driver, see below. </UL></UL>
 <H2>Locale Setup </H2>
@@ -115,6 +130,12 @@ user-setup(3)</H1>
 <BR><UL>If enabled the Alt key acts as a 
 <A HREF="m2cmd028.html">prefix 1</A> modifier key. By default '<TT>A-n</TT>' is not bound, with this bit set the key is inferred to '<TT>esc n</TT>' which is bound to <B>forward-paragraph</B>. Note that global, local and menu hot-key bindings override these. This indirectly sets bit 0x4000 of the 
 <A HREF="m5var047.html">$system(5)</A> variable. </UL>
+<P><TT>Abbrev Expansion</TT> 
+<BR><UL>Configures which expansion methods are enabled by default when the 
+<A HREF="m3mac047.html">expand-abbrev-handle(3)</A> is executed. <B>Accent</B> enables 
+<A HREF="m3mac045.html">expand-iso-accents(3)</A>, <B>Lookbk</B> enables 
+<A HREF="m3mac062.html">expand-look-back(3)</A> and <B>Dict'n</B> enables 
+<A HREF="m3mac048.html">expand-word(3)</A>. </UL>
 <P><TT>Tab To Indent</TT> 
 <BR><UL>Sets the 
 <A HREF="m2cmd064.html">tab(2)</A> behavior in a buffer which has 
@@ -147,12 +168,14 @@ user-setup(3)</H1>
 <P><TT>Draw White Spaces</TT> 
 <BR><UL>Enables the drawing of visible white spaces, i.e. space, tab and new-line characters. This indirectly sets bit <TT>0x80000</TT> of the 
 <A HREF="m5var047.html">$system(5)</A> variable. </UL>
+<P><TT>Enable Toolbar</TT> 
+<BR><UL>Enables the Toolbar - configurable, managed windows giving easy access to many features and tools. </UL>
 <P><TT>Client Server</TT> 
 <BR><UL>The client/server enables the file based external macro command driver to be enabled - see 
 <A HREF="m2nar005.html">Client-Server</A>. This by default is disabled, when enabled it is used by 
 <A HREF="m1cmd000.html">command-line</A> options <B>-m</B> and <B>-o</B>. </UL>
 <P><TT>DOS File Names</TT> 
-<BR><UL>DOS has a restricted 8.3 file naming system (i.e. &quot;<TT>BBBBBBBB.XXX</TT>&quot;), if this option is enabled the MicroEmacs '02 will adhere to this system for auto-save and backup file names whenever possible. See 
+<BR><UL>DOS has a restricted 8.3 file naming system (i.e. &quot;<TT>BBBBBBBB.XXX</TT>&quot;), if this option is enabled the MicroEmacs '04 will adhere to this system for auto-save and backup file names whenever possible. See 
 <A HREF="m5var000.html">$auto-time(5)</A> for more information on the naming convention used. This indirectly sets bit 0x400 of the 
 <A HREF="m5var047.html">$system(5)</A> variable. </UL>
 <P><TT># Backups</TT> 
@@ -299,7 +322,7 @@ user-setup(3)</H1>
 <P><TT>Color Scheme</TT> 
 <BR><UL>See <B>Platform UNIX Setup</B> above. </UL></UL>
 <H2>Mouse </H2>
-<UL><P>The mouse device creates keys in a similar way to regular keyboard keys and, like keyboard keysm they must be bound before they are used. MicroEmacs '02 does not have the mouse functionality hard coded into the editor, it provides a macro interface to the mouse for ultimate flexibility and a set of default functionality which can be bound to the mouse in a variety of ways. 
+<UL><P>The mouse device creates keys in a similar way to regular keyboard keys and, like keyboard keysm they must be bound before they are used. MicroEmacs '04 does not have the mouse functionality hard coded into the editor, it provides a macro interface to the mouse for ultimate flexibility and a set of default functionality which can be bound to the mouse in a variety of ways. 
 <P>All the mouse controlling macros are stored in <TT>mouse.emf</TT> and <TT>mouseosd.emf</TT> although some buffers have local functionality over-rides, such as 
 <A HREF="m3mac027.html">file-browser(3)</A>. The user can expand the range of mouse functionality but how this is achieved is beyond the scope of this documentation. 
 <P>The <B>user-setup</B> dialog allows the user to configure the mouse to use the default functionality, as follows:- 
@@ -363,10 +386,10 @@ user-setup(3)</H1>
 <A HREF="m2cmd111.html">reyank(2)</A> without moving the cursor. Note, to enable this functionality some sanity checks have had to be removed, as a result it should not be misused as seeming bizarre things can occur. </UL>
 <P><TT>Fold current</TT> 
 <BR><UL>Toggles the fold status of the current block, only applicable in buffers supporting 
-<A HREF="m3mac029.html">fold-current(3)</A>, such as c and emf files. </UL>
+<A HREF="m3mac029.html">collapse-current(3)</A>, such as c and emf files. </UL>
 <P><TT>Fold all</TT> 
 <BR><UL>Toggles the fold status of the whole buffer, opening or closing all found blocks. Only applicable in buffers supporting 
-<A HREF="m3mac029.html">fold-all(3)</A>, such as c and emf files. </UL>
+<A HREF="m3mac029.html">collapse-all(3)</A>, such as c and emf files. </UL>
 <P><TT>Main menu</TT> 
 <BR><UL>Simply opens the main menu from any where on the screen. </UL>
 <P><TT>Multi-Menu</TT> 
@@ -435,7 +458,7 @@ user-setup(3)</H1>
 <BR><UL>If enabled, when the tool is executed the command is launched and run concurrently, allowing the user to continue working in MicroEmacs during the tools execution. This option is not available for all versions on MicroEmacs and forces the output to be captured. Enabling this option will force the use of command 
 <A HREF="m2cmd077.html">ipipe-shell-command(2)</A> to launch the tool. </UL></UL>
 <H2>E-Mail </H2>
-<UL><P>MicroEmacs '02 provides a simple E-Mail manager, see 
+<UL><P>MicroEmacs '04 provides a simple E-Mail manager, see 
 <A HREF="m3mac028.html">vm(3)</A> for more information and example entries. It must be stressed that <B>vm</B> has only been tested in one environment, caution should be used as system differences may cause problems, such as loss of data, which the author does not except any responsibility for. 
 <P>The <B>E-Mail Setup</B> dialog configures a user to use part or all of the <B>vm</B> E-Mail manager, as follows:- </UL>
 <H2>Platform ALL Mail Setup </H2>
@@ -482,7 +505,7 @@ user-setup(3)</H1>
 <A HREF="m3osd010.html">buffer-setup(3)</A>, 
 <A HREF="m3osd005.html">scheme-editor(3)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2002</I>
-<BR><I>Last Modified: 2001/12/18</I>
-<BR><I>Generated On: 2002/01/06</I>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2004/01/06</I>
+<BR><I>Generated On: 2004/01/11</I>
 </BODY></HMTL>

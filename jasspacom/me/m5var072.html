@@ -1,8 +1,8 @@
 <HTML>
 <HEAD><TITLE>$idle-time(5)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
 <BODY>
-<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 $idle-time(5)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
@@ -41,11 +41,11 @@ define-macro&nbsp;screen-saver
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;%screen-saver&nbsp;&amp;sub&nbsp;%screen-saver&nbsp;1 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!return 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!endif 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;@#&nbsp;$screen-depth 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;@#&nbsp;$frame-depth 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!while&nbsp;&amp;dec&nbsp;@#&nbsp;1 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;screen-poke&nbsp;@#&nbsp;0&nbsp;$global-scheme&nbsp;&amp;spr&nbsp;&quot;%n&quot;&nbsp;$screen-width&nbsp;&quot;&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;screen-poke&nbsp;@#&nbsp;0&nbsp;$global-scheme&nbsp;&amp;spr&nbsp;&quot;%n&quot;&nbsp;$frame-width&nbsp;&quot;&nbsp;&quot; 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!done 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;screen-poke&nbsp;0&nbsp;0&nbsp;$global-scheme&nbsp;&amp;spr&nbsp;&quot;%n&quot;&nbsp;$screen-width&nbsp;&quot;&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;screen-poke&nbsp;0&nbsp;0&nbsp;$global-scheme&nbsp;&amp;spr&nbsp;&quot;%n&quot;&nbsp;$frame-width&nbsp;&quot;&nbsp;&quot; 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;show-cursor 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;must&nbsp;set&nbsp;this&nbsp;to&nbsp;stop&nbsp;recursion&nbsp;when&nbsp;waiting&nbsp;for&nbsp;a&nbsp;key! 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;%screen-saver&nbsp;0 
@@ -82,7 +82,7 @@ global-bind-key&nbsp;bored&nbsp;idle-pick
 <UL><P>
 <A HREF="m5var071.html">$delay-time(5)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2002</I>
-<BR><I>Last Modified: 2001/12/18</I>
-<BR><I>Generated On: 2002/01/06</I>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2002/10/16</I>
+<BR><I>Generated On: 2004/01/11</I>
 </BODY></HMTL>

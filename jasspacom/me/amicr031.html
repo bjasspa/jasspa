@@ -1,8 +1,8 @@
 <HTML>
-<HEAD><TITLE>MicroEmacs '02 - Command Glossary</TITLE></HEAD>
+<HEAD><TITLE>MicroEmacs '04 - Command Glossary</TITLE></HEAD>
 <BODY>
-<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
-MicroEmacs '02 - Command Glossary</H1>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
+MicroEmacs '04 - Command Glossary</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
 <A HREF="amicr031.html">[Commands]</A>
@@ -12,7 +12,7 @@ MicroEmacs '02 - Command Glossary</H1>
 </FONT>
 <HR>
 <H2><B>COMMAND GLOSSARY </B></H2>
-<UL><P>The following is a list of all of the commands (built-in and macro) provided by <B>MicroEmacs '02</B> [See 
+<UL><P>The following is a list of all of the commands (built-in and macro) provided by <B>MicroEmacs '04</B> [See 
 <A HREF="amicr032.html">split listing</A>]: 
 <P>
 <A HREF="m2cmd000.html">abort-command(2)</A> (<B>C-g</B>)&nbsp;Abort command 
@@ -47,6 +47,8 @@ MicroEmacs '02 - Command Glossary</H1>
 <BR>
 <A HREF="m3mac039.html">auto-spell-buffer(3)</A> Auto-spell whole buffer 
 <BR>
+<A HREF="m3mac039.html">auto-spell-ignore(3)</A> Auto-spell ignore current word 
+<BR>
 <A HREF="m3mac039.html">auto-spell-reset(3)</A> Auto-spell hilight reset 
 <BR>
 <A HREF="m2cmd010.html">backward-char(2)</A> (<B>C-b</B>)&nbsp;Move the cursor left 
@@ -75,6 +77,12 @@ MicroEmacs '02 - Command Glossary</H1>
 <BR>
 <A HREF="m2cmd014.html">buffer-info(2)</A> (<B>C-x&nbsp;=</B>)&nbsp;Status information on current buffer position 
 <BR>
+<A HREF="m3mac064.html">buffer-init(3)</A> Initialize a buffer language template 
+<BR>
+<A HREF="m3mac064.html">buffer-init-fhook(3)</A> Initialize the buffer file hooks 
+<BR>
+<A HREF="m3mac064.html">buffer-init-hooks(3)</A> Initialize the buffer language template hooks 
+<BR>
 <A HREF="m2cmd006.html">buffer-mode(2)</A> (<B>C-x&nbsp;m</B>)&nbsp;Change a local buffer mode 
 <BR>
 <A HREF="m3osd010.html">buffer-setup(3)</A> Configures the current buffer settings 
@@ -101,9 +109,17 @@ MicroEmacs '02 - Command Glossary</H1>
 <BR>
 <A HREF="m2cmd027.html">change-font(2)</A> Change the screen font 
 <BR>
+<A HREF="m2cmd018.html">change-frame-depth(2)</A> Change the number of lines on the current frame 
+<BR>
+<A HREF="m2cmd018.html">change-frame-width(2)</A> Change the number of columns on the current frame 
+<BR>
 <A HREF="m2cmd018.html">change-screen-depth(2)</A> Change the number of lines on the screen 
 <BR>
 <A HREF="m2cmd018.html">change-screen-width(2)</A> Change the number of columns on the screen 
+<BR>
+<A HREF="m2cmd063.html">change-window-depth(2)</A> Change the depth of the current window 
+<BR>
+<A HREF="m2cmd152.html">change-window-width(2)</A> Change the width of the current window 
 <BR>
 <A HREF="m3mac041.html">charset-change(3)</A> Convert buffer between two character sets 
 <BR>
@@ -114,6 +130,10 @@ MicroEmacs '02 - Command Glossary</H1>
 <A HREF="m3mac052.html">check-line-length(3)</A> Check the length of text lines are valid 
 <BR>
 <A HREF="m3mac005.html">clean(3)</A> Remove redundant white spaces from the current buffer 
+<BR>
+<A HREF="m3mac029.html">collapse-all(3)</A> (<B>f3</B>)&nbsp;(Un)Fold all regions in the current buffer 
+<BR>
+<A HREF="m3mac029.html">collapse-current(3)</A> (<B>f2</B>)&nbsp;(un)Fold a region in the current buffer 
 <BR>
 <A HREF="m2cmd009.html">command-apropos(2)</A> (<B>C-h&nbsp;a</B>)&nbsp;List commands involving a concept 
 <BR>
@@ -130,6 +150,8 @@ MicroEmacs '02 - Command Glossary</H1>
 <A HREF="m2cmd023.html">count-words(2)</A> (<B>esc C-c</B>)&nbsp;Count the number of words in a region 
 <BR>
 <A HREF="m2cmd024.html">create-callback(2)</A> Create a timer callback 
+<BR>
+<A HREF="m2cmd161.html">create-frame(2)</A> Create a new frame 
 <BR>
 <A HREF="m3mac057.html">cvs(3)</A> MicroEmacs CVS interface 
 <BR>
@@ -166,6 +188,8 @@ MicroEmacs '02 - Command Glossary</H1>
 <A HREF="m2cmd031.html">delete-buffer(2)</A> (<B>C-x&nbsp;k</B>)&nbsp;Delete a buffer 
 <BR>
 <A HREF="m2cmd041.html">delete-dictionary(2)</A> Remove a spelling dictionary from memory 
+<BR>
+<A HREF="m2cmd162.html">delete-frame(2)</A> Delete the current frame 
 <BR>
 <A HREF="m2cmd005.html">delete-global-mode(3)</A> Remove a global buffer mode 
 <BR>
@@ -231,6 +255,10 @@ MicroEmacs '02 - Command Glossary</H1>
 <BR>
 <A HREF="m3mac047.html">expand-abbrev-handle(3)</A> (<B>esc esc</B>)&nbsp;Expand an abbreviation handler 
 <BR>
+<A HREF="m3mac062.html">expand-look-back(3)</A> Complete a word by looking back for a similar word 
+<BR>
+<A HREF="m3mac048.html">expand-word(3)</A> Complete a word by invocation of the speller 
+<BR>
 <A HREF="m3osd008.html">file-attrib(3)</A> Set the current buffers system file attributes 
 <BR>
 <A HREF="m3mac027.html">file-browser(3)</A> (<B>f10</B>)&nbsp;Browse the file system 
@@ -260,10 +288,6 @@ MicroEmacs '02 - Command Glossary</H1>
 <A HREF="m3osd002.html">find-word(3)</A> Find a using spelling dictionaries 
 <BR>
 <A HREF="m3mac040.html">find-zfile(3)</A> Compressed file support 
-<BR>
-<A HREF="m3mac029.html">fold-all(3)</A> (<B>f3</B>)&nbsp;(Un)Fold all regions in the current buffer 
-<BR>
-<A HREF="m3mac029.html">fold-current(3)</A> (<B>f2</B>)&nbsp;(un)Fold a region in the current buffer 
 <BR>
 <A HREF="m2cmd010.html">forward-char(2)</A> (<B>C-f</B>)&nbsp;Move the cursor right 
 <BR>
@@ -309,7 +333,7 @@ MicroEmacs '02 - Command Glossary</H1>
 <BR>
 <A HREF="m2cmd152.html">grow-window-horizontally(2)</A> Enlarge current window horizontally (relative) 
 <BR>
-<A HREF="m2cmd063.html">grow-window-vertically(2)</A> (<B>C-x&nbsp;z</B>)&nbsp;Enlarge the current window (relative change) 
+<A HREF="m2cmd063.html">grow-window-vertically(2)</A> Enlarge the current window (relative change) 
 <BR>
 <A HREF="m2cmd065.html">help(2)</A> (<B>esc ?</B>)&nbsp;Help; high level introduction to help 
 <BR>
@@ -385,13 +409,13 @@ MicroEmacs '02 - Command Glossary</H1>
 <BR>
 <A HREF="m2cmd015.html">lower-case-word(2)</A> (<B>esc l</B>)&nbsp;Lowercase word (downcase) 
 <BR>
-<A HREF="m3mac012.html">Mahjongg(3)</A> MicroEmacs '02 version of the solitaire Mah Jongg game 
+<A HREF="m3mac012.html">Mahjongg(3)</A> MicroEmacs '04 version of the solitaire Mah Jongg game 
 <BR>
 <A HREF="m3osd006.html">MainMenu(3)</A> The top main menu 
 <BR>
-<A HREF="m3mac013.html">Match-It(3)</A> MicroEmacs '02 version of the Match-It game 
+<A HREF="m3mac013.html">Match-It(3)</A> MicroEmacs '04 version of the Match-It game 
 <BR>
-<A HREF="m3mac014.html">Metris(3)</A> MicroEmacs '02 version of the falling blocks game 
+<A HREF="m3mac014.html">Metris(3)</A> MicroEmacs '04 version of the falling blocks game 
 <BR>
 <A HREF="m3mac028.html">mail(3)</A> Compose and send an email 
 <BR>
@@ -421,6 +445,8 @@ MicroEmacs '02 - Command Glossary</H1>
 <BR>
 <A HREF="m2cmd091.html">next-buffer(2)</A> (<B>C-x&nbsp;x</B>)&nbsp;Switch to the next buffer 
 <BR>
+<A HREF="m2cmd163.html">next-frame(2)</A> Change the focus to the next frame 
+<BR>
 <A HREF="m2cmd095.html">next-window(2)</A> (<B>C-x&nbsp;o</B>)&nbsp;Move the cursor to the next window 
 <BR>
 <A HREF="m2cmd126.html">next-window-find-buffer(2)</A> [<B></B>] Split the current window and show new buffer 
@@ -445,7 +471,37 @@ MicroEmacs '02 - Command Glossary</H1>
 <BR>
 <A HREF="m3mac037.html">osd-xdialog(3)</A> OSD Extended dialog box 
 <BR>
-<A HREF="m3mac015.html">Patience(3)</A> MicroEmacs '02 version of Patience (or Solitaire) 
+<A HREF="m3mac015.html">Patience(3)</A> MicroEmacs '04 version of Patience (or Solitaire) 
+<BR>
+<A HREF="m3mac065.html">page-bfile(3)</A> Load a large binary file as binary data 
+<BR>
+<A HREF="m3mac065.html">page-file(3)</A> Load a large file in page mode 
+<BR>
+<A HREF="m3mac065.html">page-file-backward-line(3)</A> (<B>C-p</B>)&nbsp;Move backwards one line in paged buffer 
+<BR>
+<A HREF="m3mac065.html">page-file-beginning-of-buffer(3)</A> Move to the start of the paged file 
+<BR>
+<A HREF="m3mac065.html">page-file-end-of-buffer(3)</A> Move to the end of the paged file 
+<BR>
+<A HREF="m3mac065.html">page-file-forward-line(3)</A> (<B>C-n</B>)&nbsp;Move forwards one line in paged buffer 
+<BR>
+<A HREF="m3mac065.html">page-file-goto-byte(3)</A> Page to the buffer byte offset 
+<BR>
+<A HREF="m3mac065.html">page-file-goto-page(3)</A> Move to page 
+<BR>
+<A HREF="m3mac065.html">page-file-isearch-backward(3)</A> (<B>C-r</B>)&nbsp;Page search backwards incrementally (interactive) 
+<BR>
+<A HREF="m3mac065.html">page-file-isearch-forward(3)</A> (<B>C-s</B>)&nbsp;Page search forward incrementally (interactive) 
+<BR>
+<A HREF="m3mac065.html">page-file-save-buffer(3)</A> (<B>C-x&nbsp;C-s</B>)&nbsp;Save contents of a page mode buffer to file 
+<BR>
+<A HREF="m3mac065.html">page-file-scroll-down(3)</A> (<B>C-n</B>)&nbsp;Scroll paged buffer down 
+<BR>
+<A HREF="m3mac065.html">page-file-scroll-up(3)</A> (<B>C-p</B>)&nbsp;Scroll paged buffer up 
+<BR>
+<A HREF="m3mac065.html">page-file-search-backward(3)</A> (<B>C-x&nbsp;r</B>)&nbsp;Page search for a string in the backward direction 
+<BR>
+<A HREF="m3mac065.html">page-file-search-forward(3)</A> (<B>C-x&nbsp;s</B>)&nbsp;Page search for a string in the forward direction 
 <BR>
 <A HREF="m3mac003.html">paragraph-to-line(3)</A> Convert a paragraph to a single line 
 <BR>
@@ -465,7 +521,7 @@ MicroEmacs '02 - Command Glossary</H1>
 <BR>
 <A HREF="m2cmd129.html">print-scheme(2)</A> Create a new printer color and font scheme 
 <BR>
-<A HREF="m3osd012.html">print-setup(3)</A> Configure (*mS's printer interface 
+<A HREF="m3osd012.html">print-setup(3)</A> Configure MicroEmacs's printer interface 
 <BR>
 <A HREF="m3mac007.html">query-replace-all-string(3)</A> Query replace string in a list of files 
 <BR>
@@ -501,7 +557,7 @@ MicroEmacs '02 - Command Glossary</H1>
 <BR>
 <A HREF="m2cmd152.html">resize-window-horizontally(2)</A> Resize current window horizontally (absolute) 
 <BR>
-<A HREF="m2cmd063.html">resize-window-vertically(2)</A> (<B>C-x&nbsp;w</B>)&nbsp;Resize the current window (absolute change) 
+<A HREF="m2cmd063.html">resize-window-vertically(2)</A> Resize the current window (absolute change) 
 <BR>
 <A HREF="m3mac022.html">restore-dictionary(3)</A> Save dictionary user changes 
 <BR>
@@ -579,7 +635,7 @@ MicroEmacs '02 - Command Glossary</H1>
 <BR>
 <A HREF="m2cmd152.html">shrink-window-horizontally(2)</A> Shrink current window horizontally (relative) 
 <BR>
-<A HREF="m2cmd063.html">shrink-window-vertically(2)</A> (<B>C-x&nbsp;C-z</B>)&nbsp;Shrink the current window (relative change) 
+<A HREF="m2cmd063.html">shrink-window-vertically(2)</A> Shrink the current window (relative change) 
 <BR>
 <A HREF="m3mac024.html">shut-down(3)</A> Editor exit callback command 
 <BR>
@@ -592,8 +648,6 @@ MicroEmacs '02 - Command Glossary</H1>
 <A HREF="m3mac023.html">spell-add-word(3)</A> Add a word to the main dictionary 
 <BR>
 <A HREF="m3osd002.html">spell-buffer(3)</A> Spell check the current buffer 
-<BR>
-<A HREF="m3mac048.html">spell-complete-word(3)</A> Complete a word by invocation of the speller 
 <BR>
 <A HREF="m3osd002.html">spell-edit-word(3)</A> Edits a spell word entry 
 <BR>
@@ -609,11 +663,13 @@ MicroEmacs '02 - Command Glossary</H1>
 <BR>
 <A HREF="m3mac028.html">stop-mail-check(3)</A> Disable the check for new email 
 <BR>
+<A HREF="m3mac063.html">string-rectangle(3)</A> Add a string vertically 
+<BR>
 <A HREF="m2cmd130.html">suspend-emacs(2)</A> Suspend editor and place in background 
 <BR>
 <A HREF="m3osd003.html">symbol(3)</A> Insert an ASCII character 
 <BR>
-<A HREF="m3mac016.html">Triangle(3)</A> MicroEmacs '02 version of Triangle patience game 
+<A HREF="m3mac016.html">Triangle(3)</A> MicroEmacs '04 version of Triangle patience game 
 <BR>
 <A HREF="m2cmd064.html">tab(2)</A> (<B>tab</B>)&nbsp;Handle the tab key 
 <BR>
@@ -622,6 +678,12 @@ MicroEmacs '02 - Command Glossary</H1>
 <A HREF="m9typ026.html">tex2nr(3)</A> Convert a Latex file into nroff 
 <BR>
 <A HREF="m3mac010.html">time(3)</A> Command time evaluator 
+<BR>
+<A HREF="m3mac066.html">toolbar(3)</A> Open the tool bar 
+<BR>
+<A HREF="m3mac066.html">toolbar-close(3)</A> Close the tool bar 
+<BR>
+<A HREF="m3mac066.html">toolbar-refresh(3)</A> Update the tool bar 
 <BR>
 <A HREF="m2cmd133.html">translate-key(2)</A> Translate key 
 <BR>
@@ -663,7 +725,7 @@ MicroEmacs '02 - Command Glossary</H1>
 <BR>
 <A HREF="m3mac040.html">zfile-setup(3)</A> Compressed file support setup </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2002</I>
-<BR><I>Last Modified: 2002/01/06</I>
-<BR><I>Generated On: 2002/01/06</I>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2004/01/11</I>
+<BR><I>Generated On: 2004/01/11</I>
 </BODY></HMTL>

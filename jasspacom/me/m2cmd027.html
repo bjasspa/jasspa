@@ -1,8 +1,8 @@
 <HTML>
 <HEAD><TITLE>change-font(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
 <BODY>
-<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 change-font(2)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
@@ -53,7 +53,7 @@ change-font(2)</H1>
 <BR><UL>Mean width of all font characters, measured in tenths of a pixel. </UL>
 <P><I>set</I> 
 <BR><UL>Character set - character set standards e.g. <B>iso8859-1</B>. </UL>
-<P>The default font used by MicroEmacs '02 is <UL>
+<P>The default font used by MicroEmacs '04 is <UL>
 <PRE>-*-fixed-medium-r-normal--15-*-*-*-c-90-iso8859-1 
 </PRE></UL>
 <P>A good font to try is: <UL>
@@ -64,11 +64,11 @@ change-font(2)</H1>
 </PRE></UL>
 </UL><H2>IBM-PC / MS-DOS </H2>
 <UL><P>MS-DOS may only change the screen resolution, the standard screen resolution is either 80 columns by 25 rows or 80 by 50. A more advanced graphics card can typically support up to 132 by 60, MicroEmacs in theory has no limit but it has only been tested up to this size. 
-<P>The main problem with MS-DOS machines is that there is no standard and this is no exception. The graphics mode needed to get a 132 by 60 screen (if available) varies from one card to the next so MicroEmacs '02 needs to know the graphic mode number your card uses to get your required screen resolution. 
-<P>MicroEmacs '02 can also attempt a little bit of magic to double the number of rows on the screen for a given screen resolution. This is how 50 lines are obtained from the standard 25 line mode 3. If the value of &quot;<I>spec</I>&quot; is non-zero then this is attempted, to the authors knowledge this will either work or not depending on the direction of the wind and no harm will befall the users equipment. However the author also quickly disclaims anything and everything, the user uses this at their own peril, like everything else. 
-<P>MicroEmacs '02 attempts to determine the new screen width and depth itself, in case this fails the commands 
-<A HREF="m2cmd018.html">change-screen-width(2)</A> and 
-<A HREF="m2cmd018.html">change-screen-depth(2)</A> may be used to correct the problem. 
+<P>The main problem with MS-DOS machines is that there is no standard and this is no exception. The graphics mode needed to get a 132 by 60 screen (if available) varies from one card to the next so MicroEmacs '04 needs to know the graphic mode number your card uses to get your required screen resolution. 
+<P>MicroEmacs '04 can also attempt a little bit of magic to double the number of rows on the screen for a given screen resolution. This is how 50 lines are obtained from the standard 25 line mode 3. If the value of &quot;<I>spec</I>&quot; is non-zero then this is attempted, to the authors knowledge this will either work or not depending on the direction of the wind and no harm will befall the users equipment. However the author also quickly disclaims anything and everything, the user uses this at their own peril, like everything else. 
+<P>MicroEmacs '04 attempts to determine the new screen width and depth itself, in case this fails the commands 
+<A HREF="m2cmd018.html">change-frame-width(2)</A> and 
+<A HREF="m2cmd018.html">change-frame-depth(2)</A> may be used to correct the problem. 
 <P>Following are the standard MS-DOS text modes: <UL>
 <PRE>change-font&nbsp;&quot;2&quot;&nbsp;&quot;0&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Simple&nbsp;monochrome&nbsp;or&nbsp;EGA&nbsp;monitor,&nbsp;80&nbsp;by&nbsp;25. 
 change-font&nbsp;&quot;3&quot;&nbsp;&quot;0&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Simple&nbsp;EGA/VGA&nbsp;monitor,&nbsp;again&nbsp;80&nbsp;by&nbsp;25. 
@@ -160,12 +160,12 @@ change-font&nbsp;&quot;Terminal&quot;&nbsp;0&nbsp;4&nbsp;&nbsp;6&nbsp;&nbsp;8
 <P>The &quot;<B>Courier New</B>&quot; font is not actually a fixed mono font as might be expected. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
-<A HREF="m2cmd018.html">change-screen-width(2)</A>, 
-<A HREF="m2cmd018.html">change-screen-depth(2)</A>, 
+<A HREF="m2cmd018.html">change-frame-width(2)</A>, 
+<A HREF="m2cmd018.html">change-frame-depth(2)</A>, 
 <A HREF="m5var041.html">$result(5)</A>, 
 <A HREF="m3osd000.html">user-setup(3)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2002</I>
-<BR><I>Last Modified: 2001/12/18</I>
-<BR><I>Generated On: 2002/01/06</I>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2002/10/16</I>
+<BR><I>Generated On: 2004/01/11</I>
 </BODY></HMTL>

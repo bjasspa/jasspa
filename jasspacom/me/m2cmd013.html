@@ -1,8 +1,8 @@
 <HTML>
 <HEAD><TITLE>global-bind-key(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
 <BODY>
-<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 global-bind-key(2)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
@@ -34,7 +34,7 @@ global-bind-key(2)</H1>
 <A HREF="m2cmd039.html">describe-key(2)</A> to get the binding key string. 
 <P>The non-ASCII standard keys such as the cursor keys have 'standard' key names to make cross platform binding support easy. Some systems such as <I>termcap</I> do not have fixed key-bindings, for these key the users must use the command 
 <A HREF="m2cmd133.html">translate-key(2)</A> to convert the system key binding to the standard key binding. 
-<P>Permanent changes are done indirectly through the <TT>me.emf</TT> file. This is a file that MicroEmacs '02 reads and executes (see 
+<P>Permanent changes are done indirectly through the <TT>me.emf</TT> file. This is a file that MicroEmacs '04 reads and executes (see 
 <A HREF="m2cmd045.html">execute-file(2)</A>) during startup and hence results in the appearance of a permanent change in the key bindings. The syntax of commands in the <TT>me.emf</TT> file is described under the 
 <A HREF="m2cmd045.html">execute-file</A> command. Of principal concern here are the two commands <B>global-bind-key</B> and <B>global-unbind-key</B>. The primary difference between the way parameters are passed to these commands in the <TT>me.emf</TT> file is that the keys are not typed in directly (as in the <I>control-I</I> key when you want <TT>C-i</TT>) but by symbolic names. Every key has a unique name which can be easily obtained with the current binding by using the command 
 <A HREF="m2cmd039.html">describe-key(2)</A>. 
@@ -69,7 +69,7 @@ global-bind-key(2)</H1>
 <A HREF="m2cmd085.html">ml-unbind-key(2)</A>, 
 <A HREF="m2cmd133.html">translate-key(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2002</I>
-<BR><I>Last Modified: 2001/12/18</I>
-<BR><I>Generated On: 2002/01/06</I>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2002/01/11</I>
+<BR><I>Generated On: 2004/01/11</I>
 </BODY></HMTL>

@@ -1,8 +1,8 @@
 <HTML>
 <HEAD><TITLE>clean(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
 <BODY>
-<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 clean(3)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
@@ -21,7 +21,7 @@ clean(3)</H1>
 <P>1) 
 <BR><UL>Any space or tab character at the end of the line. All are removed until the last character is not a space or a tab, or the line is empty. Note that an empty line is not removed unless at the end of the buffer. </UL>
 <P>2) 
-<BR><UL>Space characters are removed when the next character is a tab, making the space redundant, e.g. the strings &quot;<TT>	Hello World</TT>&quot; and &quot;<TT> 	Hello World</TT>&quot; will look identical because the tab character ('<I>	</I>') will indent the text to the 8th column with or without the space so the space can be removed. </UL>
+<BR><UL>Space characters are removed when the next character is a tab, making the space redundant, e.g. the strings &quot;<TT>	Hello World</TT>&quot; and &quot;<TT> 	Hello World</TT>&quot; will look identical because the tab character ('<I>	</I>') indents the text to the 8th column with or without the space so the space can be removed. </UL>
 <P>3) 
 <BR><UL>Superfluous empty lines at the end of the buffer are removed, leaving only one empty line. </UL>
 <P>4) 
@@ -37,15 +37,21 @@ clean(3)</H1>
 <P>b) 
 <BR><UL>Search for: &quot;[ ]+\t&quot; Replace with: &quot;\t&quot; </UL>
 <P>c) 
-<BR><UL>Search for: &quot;\n\n\n&quot; Replace with: &quot;\n\n&quot; </UL></UL>
-<H2><B>SEE ALSO </B></H2>
+<BR><UL>Search for: &quot;\n\n\n&quot; Replace with: &quot;\n\n&quot; </UL>
+<P>It is useful to define a new command called <B>spotless</B> in the user macro file which cleans the file and removes blank lines. The new command is defined as follows:- <UL>
+<PRE>;&nbsp;spotless;&nbsp;Perform&nbsp;a&nbsp;clean&nbsp;and&nbsp;remove&nbsp;any&nbsp;multi-blank&nbsp;lines. 
+define-macro&nbsp;spotless 
+&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;clean 
+!emacro 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m2cmd109.html">replace-string(2)</A>, 
 <A HREF="m2mod012.html">tab(2m)</A>, 
 <A HREF="m2cmd030.html">delete-blank-lines(2)</A>, 
 <A HREF="m3mac008.html">tabs-to-spaces(3)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2002</I>
-<BR><I>Last Modified: 2001/12/18</I>
-<BR><I>Generated On: 2002/01/06</I>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2004/01/11</I>
+<BR><I>Generated On: 2004/01/11</I>
 </BODY></HMTL>
