@@ -1895,9 +1895,9 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
 
     /* and read the stuff in */
 #ifdef _UNIX
-    ret = ifile(bp,NULL,meRWFLAG_SILENT) ;
+    ret = meBufferInsertFile(bp,NULL,meRWFLAG_SILENT,0,0) ;
 #else
-    ret = ifile(bp,filnam,meRWFLAG_SILENT) ;
+    ret = meBufferInsertFile(bp,filnam,meRWFLAG_SILENT,0,0) ;
 #endif
     /* give it the path as a filename */
     bp->fileName = meStrdup(path) ;

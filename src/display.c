@@ -2259,6 +2259,26 @@ update(int flag)    /* force=meTRUE update past type ahead? */
  *                    back-ground color to be used for the whole poke. If set
  *                    then a fore & back color is given per poke char.
  */
+/* poking can draw onto of the cursor and erase it, this is often an unwanted
+ * side effect (particularly with the matching fence drawing). 
+ * Win32 Window and UNIX termcap do not suffer from this */
+#ifdef _DOS
+#define _ME_POKE_REDRAW_CURSOR
+#endif
+#if (defined _UNIX) && (defined _ME_WINDOW)
+#ifdef _ME_CONSOLE
+#define _ME_POKE_REDRAW_CURSOR !(meSystemCfg & meSYSTEM_CONSOLE) &&
+#else
+#define _ME_POKE_REDRAW_CURSOR
+#endif /* _ME_CONSOLE */
+#endif /* _UNIX */
+#if (defined _WIN32) && (defined _ME_CONSOLE)
+#ifdef _ME_WINDOW
+#define _ME_POKE_REDRAW_CURSOR  (meSystemCfg & meSYSTEM_CONSOLE) &&
+#else
+#define _ME_POKE_REDRAW_CURSOR
+#endif /* _ME_WINDOW */
+#endif /* _WIN32 */
 void
 pokeScreen(int flags, int row, int col, meUByte *scheme,
            meUByte *str)
@@ -2266,11 +2286,9 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
     meUByte  cc, *ss ;
     meScheme *fssp;               /* Frame store scheme pointer */
     int len, schm, off ;
-#ifdef _UNIX
-#ifdef _ME_WINDOW
+#ifdef _ME_POKE_REDRAW_CURSOR
     int drawCursor ;
-#endif /* _ME_WINDOW */
-#endif /* _UNIX */
+#endif
     
     /* Normalise to the screen rows */
     if((row < 0) || (row > frameCur->depth))     /* Off the screen in Y ?? */
@@ -2326,17 +2344,13 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
     fssp = frameCur->store[row].scheme + col ;           /* Get the scheme pointer */
     off  = (flags >> 4) & 0x07 ;
     
-#ifdef _UNIX
-#ifdef _ME_WINDOW
+#ifdef _ME_POKE_REDRAW_CURSOR
     /* Must redraw the cursor if we have zapped it */
     drawCursor = ((cursorState >= 0) && blinkState &&
-#ifdef _ME_CONSOLE
-                  !(meSystemCfg & meSYSTEM_CONSOLE) &&
-#endif /* _ME_CONSOLE */
+                  _ME_POKE_REDRAW_CURSOR
                   (row == frameCur->cursorRow) && 
                   (col <= frameCur->cursorColumn) && ((col+len) > frameCur->cursorColumn)) ;
-#endif /* _ME_WINDOW */
-#endif /* _UNIX */
+#endif /* _ME_POKE_REDRAW_CURSOR */
 
 #ifdef _WIN32
 #ifdef _ME_WINDOW
@@ -2620,12 +2634,10 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
     
     }
     
-#ifdef _UNIX
-#ifdef _ME_WINDOW
+#ifdef _ME_POKE_REDRAW_CURSOR
     if(drawCursor)
-        meFrameXTermShowCursor(frameCur) ;
-#endif /* _ME_WINDOW */
-#endif /* _UNIX */
+        TTshowCur() ;
+#endif
     
     if((flags & POKE_NOFLUSH) == 0)
         TTflush() ;                         /* Force update of screen */

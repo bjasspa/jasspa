@@ -202,7 +202,7 @@ DEFFUNC ("hunt-forward",		0x00, huntForw,		CK_HUNFOR, &__cmdArray[CK_HUNFOR+1], 
 #if MEOPT_CMDHASH || MEOPT_HILIGHT
 DEFFUNC ("indent",		        0x00, indent,		CK_INDENT, &__cmdArray[CK_INDENT+1], 0)
 #endif
-DEFFUNC ("insert-file",			0x39, insFile,		CK_INSFIL, &__cmdArray[CK_INSFIL+1], &__cmdArray[CK_NXTFRAME])
+DEFFUNC ("insert-file",			0x39, insertFile,	CK_INSFIL, &__cmdArray[CK_INSFIL+1], &__cmdArray[CK_NXTFRAME])
 DEFFUNC ("insert-file-name",            0x04, insFileName,    	CK_INSFLNM, &__cmdArray[CK_INSFLNM+1], 0)
 #if MEOPT_CMDHASH || MEOPT_EXTENDED
 DEFFUNC ("insert-macro",		0x04, insMacro,		CK_INSMAC, &__cmdArray[CK_INSMAC+1], &__cmdArray[CK_RCSCOCI])

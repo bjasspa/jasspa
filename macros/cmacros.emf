@@ -82,7 +82,8 @@ define-macro c-hash-unset-define
     !force unset-variable &ind #l0
 !emacro
 
-define-macro-file calc calc-buffer
+0 define-macro-file calc calc-buffer
+0 define-macro-file osd osd-narrow-markup
 ; #l0 %cd-hide, #l1 %cd-depth, #l2 %cd-neg, #l3 %cd-def, #l4 %cd-varname, #l5 %cd-temp
 define-macro c-hash-eval
     !if &bmod "narrow"
@@ -92,22 +93,18 @@ define-macro c-hash-eval
     set-variable #l0 0
     !repeat
         !if #l0
-            !if &equ #l0 1
-                set-variable #l0 &add #l0 1
-                set-mark
-            !endif
             set-variable $line-scheme .scheme.hide
             !if &seq &lef @wl 3 "#if"
-                set-variable #l0 &add #l0 2
+                set-variable #l0 &add #l0 1
             !elif &seq &lef @wl 6 "#endif"
-                set-variable #l0 &sub #l0 2
+                set-variable #l0 &sub #l0 1
             !elif &seq &lef @wl 5 "#else"
-                !if &equ #l0 2
+                !if &equ #l0 1
                     set-variable #l0 0
                 !endif
             !endif
             !if &and @? &not #l0
-                4 narrow-buffer
+                0x34 narrow-buffer .scheme.hide osd-narrow-markup
             !endif
         !else
             !if &seq &lef @wl 3 "#if"
@@ -152,9 +149,11 @@ define-macro c-hash-eval
                 2 calc-buffer
                 -1 find-buffer $buffer-bname
                 set-variable #l0 &cond .calc.result 0 1
+                set-mark
             !elif &seq &lef @wl 5 "#else"
                 set-variable $line-scheme .scheme.hide
                 set-variable #l0 1
+                set-mark
             !elif &seq &lef @wl 6 "#endif"
                 set-variable $line-scheme .scheme.hide
             !elif &seq &lef @wl 7 "#define"
@@ -190,7 +189,7 @@ define-macro c-hash-eval
         !force forward-line
     !until &not $status
     beginning-of-buffer
-    -1 show-region
+    !force -1 show-region
 !emacro
 
 define-macro c-hash-del

@@ -182,14 +182,15 @@ meUByte isWordMask=CHRMSK_DEFWORDMSK;
 
 
 static int       ffremain ;
-       meUByte    *ffbuf=NULL ;
-static meUByte    *ffcur ;
-static meUByte     ffcrypt=0 ;
-static meUByte     ffauto=0 ;
-static meUByte     ffautoRet=0 ;
-static meUByte     ffnewFile ;
+       meUByte  *ffbuf=NULL ;
+static meUByte  *ffcur ;
+static meUByte   ffcrypt=0 ;
+static meUByte   ffauto=0 ;
+static meUByte   ffautoRet=0 ;
+static meUByte   ffnewFile ;
 static int       ffbinary=0 ;
 static int       ffread ;
+static int       ffoffset ;
 
 #define meBINARY_BPL   16   /* bytes per line */
 #define meRBIN_BPL    256   /* bytes per line */
@@ -1570,7 +1571,7 @@ ffgetline(meLine **line)
                 }
                 text[newl+(meBINARY_BPL*3)+14] = cc ;
             }
-            cpos = (ffread - ffremain - 1) & ~((meInt) (meBINARY_BPL-1)) ;
+            cpos = (ffoffset + ffread - ffremain - 1) & ~((meInt) (meBINARY_BPL-1)) ;
             newl=8 ;
             while(--newl >= 0)
             {
@@ -1739,7 +1740,8 @@ ffReadFileClose(meUByte *fname, meUInt flags)
 }
 
 int
-ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp)
+ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp, 
+           meInt offset, meInt length)
 {
     meLine *lp0, *lp1, *lp2 ;
     int   ss, nline ;
@@ -1751,6 +1753,36 @@ ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp)
     if(ffReadFileOpen(fname,flags,bp) <= 0)
         return meABORT ;
     
+    ffoffset = 0 ;
+    if(length > 0)
+    {
+        /* partial reading only supported by the insert-file command on regular files */
+        if(offset < 0)
+        {
+#ifdef _WIN32
+            GetFileSize(ffrp,&offset) ;
+            offset -= length ;
+#else
+            fseek(ffrp,0,SEEK_END) ;
+            offset = ftell(ffrp) - length ;
+#endif
+            if(offset < 0)
+                offset = 0 ;
+        }
+        ffoffset = offset ;
+        if(ffbinary)
+        {
+            offset &= ffbinary-1 ;
+            ffoffset -= offset ;
+            length += offset ;
+        }
+#ifdef _WIN32
+        SetFilePointer(ffrp,ffoffset,NULL,FILE_BEGIN) ;
+#else
+        fseek(ffrp,ffoffset,SEEK_SET) ;
+#endif
+    }
+    
     nline = 0;
     lp2 = hlp ;	        /* line after  insert */
     lp0 = lp2->prev ;	/* line before insert */
@@ -1761,6 +1793,8 @@ ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp)
         lp1->prev = lp0;
         lp0 = lp1 ;
         nline++ ;
+        if((length > 0) && ((ffread-ffremain) >= length))
+            break ;
         if(TTbreakTest(1))
         {
             ss = ctrlg(meFALSE,1) ;
@@ -1794,6 +1828,8 @@ ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp)
                 meModeClear(bp->mode,MDCTRLZ) ;
         }
     }
+    if(length > 0)
+        sprintf(resultStr,"|%d|%d|",ffoffset,ffoffset+ffread-ffremain) ;
     return ss ;
 }
 
@@ -1985,7 +2021,11 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
             {
                 /* if backing up as well the file is already effectively deleted */
                 if(meUnlink(fname))
+                {
+                    int ii = GetLastError() ;
+                    printf("Error %d\n",ii) ;
                     return meABORT ;
+                }
             }
         }
         if(!(flags & meRWFLAG_WRITE))
@@ -2022,7 +2062,7 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
             if((ffwp=CreateFile(fname,GENERIC_WRITE,FILE_SHARE_READ,NULL,create,
                                ((bp == NULL) ? meUmask:bp->stats.stmode),
                                NULL)) == INVALID_HANDLE_VALUE)
-                return mlwrite(MWABORT,(meUByte *)"Cannot open file [%s] for writing",fname);
+                return mlwrite(MWABORT,(meUByte *)"[Cannot open file \"%s\" for writing - %d]",fname,GetLastError());
             if(flags & meRWFLAG_OPENEND)
                 SetFilePointer(ffwp,0,NULL,FILE_END) ;
         }
@@ -2251,12 +2291,27 @@ int
 ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags)
 {
     int rr=meTRUE ;
+    if((dfname != NULL) && (dFlags & meRWFLAG_DELETE))
+    {
+        /* simply move the file if the source is to be deleted and they are
+         * regular files, the WriteOpen will handle backups etc */
+        if(ffWriteFileOpen(dfname,meRWFLAG_DELETE|(dFlags & meRWFLAG_BACKUP),NULL) <= 0)
+            return meABORT ;
+        if(!meRename(sfname,dfname))
+        {
+            dFlags &= ~meRWFLAG_DELETE ;
+            dfname = NULL ;
+        }
+    }
     if(dfname != NULL)
     {
         if(ffReadFileOpen(sfname,meRWFLAG_READ,NULL) <= 0)
             return meABORT ;
         if(ffWriteFileOpen(dfname,meRWFLAG_WRITE|(dFlags & meRWFLAG_BACKUP),NULL) <= 0)
+        {
+            ffReadFileClose(sfname,meRWFLAG_READ) ;
             return meABORT ;
+        }
         for(;;)
         {
             if((rr=ffgetBuf()) <= 0)

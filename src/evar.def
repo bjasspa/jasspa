@@ -193,11 +193,14 @@ DEFVAR ("variable-names",      EVVNAMES)        /* variable names access variabl
 #endif
 DEFVAR ("version",             EVVERSION)       /* ME version - the date code */
 DEFVAR ("window-acol",         EVABSCOL)        /* Absolute current column pos of cursor */
+#if MEOPT_EXTENDED
 DEFVAR ("window-aline",        EVABSLINE)       /* The Absolute current line # in file */
+#endif
 DEFVAR ("window-chars",        EVWINCHRS)       /* Window character set */
 DEFVAR ("window-col",          EVCURCOL)        /* current column pos of cursor */
 #if MEOPT_EXTENDED
 DEFVAR ("window-depth",        EVWDEPTH)        /* Current window depth */
+DEFVAR ("window-eline",        EVEOBLINE)       /* The EOB line # in buffer */
 DEFVAR ("window-flags",        EVWFLAGS)        /* current window flags */
 DEFVAR ("window-id",           EVWID)           /* current window id */
 #endif

@@ -449,7 +449,7 @@ osd .osd.orga-f 660 "f" " "
         osd .osd.org-m &add #l0 1 "" #l1 #l0 org-addr-find-field
     !done
     osd .osd.orga-f 70  ""
-    .osd.orga-f osd
+    !force .osd.orga-f osd
 !emacro
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

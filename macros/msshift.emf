@@ -29,6 +29,11 @@
         -1 yank
         kill-region
         !return
+    !elif &lfi "|kill-rectangle|" @cc
+        set-variable .status "1"
+        -1 yank
+        execute-named-command @cc
+        !return
     !elif &seq "copy-region" @cc
         set-variable .status "1"
         !return

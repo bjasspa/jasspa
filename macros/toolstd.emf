@@ -41,7 +41,6 @@
                 !endif
             !endif
             buffer-mode "crlf"
-            !endif
         !endif
         ; 1 buffer-mode "edit"
         buffer-info-create
