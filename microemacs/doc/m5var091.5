@@ -1,0 +1,54 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 2004-2005 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m5var091.5,v 1.1 2005-01-15 17:54:35 jon Exp $
+.Im MicroEmacs variable|buffer|indent
+.so me.tni
+.TH $indent-width 5
+.XI $indent-width - "Global indentation width in characters"
+.XI $buffer-indent-width - "Buffer indentation width in characters"
+.SH NAME
+.na
+.Me "|$indent-width"
+$indent-width \- Global indentation width in characters
+.Me "|$buffer-indent-width"
+$buffer-indent-width \- Buffer indentation width in characters
+.Me $a
+.ad
+.SH SYNOPSIS
+\fB$indent-width\fR
+.br
+\fB$buffer-indent-width\fR
+.SH DESCRIPTION
+.B $indent-width
+defines the default  indentation width assumed by the editor, this defines the
+number of characters the 
+.Ht indent 2 
+command  should  use for  indenting  text.  Once the value is set then all new
+buffers that are subsequently created assume an indent value of 
+.BR $indent-width .
+The default value when omitted is 4 characters.
+.PP
+.B $buffer-indent-width
+specifies the indent to use in a buffer, the value of 
+.B $indent-width
+is used as a default when the buffer is created. Modification of the 
+.B $buffer-indent-width
+value  causes  the  buffer  indentation  width to be  modified.  The  value is
+typically set by the  \fBfhook-xxx\fR  macro when  initializing a buffer using
+the 
+.Hl "Language Templates" languageTemplates 2 .
+.SH NOTES
+.B $buffer-indent-width
+and 
+.B $indent-width
+were introduced into \*(mS in November 2004.
+.SH "SEE ALSO"
+.na
+.Ht indent 2 .
+.br
+.Hl "Language Templates" languageTemplates 2 .
+.ad
+.FH
