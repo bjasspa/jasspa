@@ -288,7 +288,7 @@ lineMakeSpace(int n)
 
         if(lp_old->flag & meLINE_ANCHOR)
             /* update the position of any anchors - important for narrows */
-            meLineResetAnchors(meLINEANCHOR_ALWAYS|meLINEANCHOR_RETAIN,frameCur->bufferCur,
+            meLineResetAnchors(meLINEANCHOR_IF_LESS|meLINEANCHOR_RETAIN,frameCur->bufferCur,
                                lp_old,lp_new,0,0) ;
         cp1 = lp_new->text ;	/* Return pointer */
         doto = 0 ;
@@ -673,6 +673,10 @@ bufferInsertText(meUByte *str)
             *ss = meCHAR_NL ;
             if(status <= 0)
                 break ;
+            if(!tlen && (frameCur->windowCur->dotLine->flag & meLINE_ANCHOR))
+                /* Update the position of any anchors at the start of the line, these are left behind */
+                meLineResetAnchors(meLINEANCHOR_IF_LESS|meLINEANCHOR_RETAIN,frameCur->bufferCur,
+                                   frameCur->windowCur->dotLine,meLineGetNext(line),0,0) ;
             tlen += len+1 ;
             lineCount++ ;
         }
@@ -1359,7 +1363,10 @@ ldelete(meInt nn, int kflag)
         meInt len, lineNo ;
         
         plp = frameCur->windowCur->dotLine ;
-        if(frameCur->windowCur->dotOffset == 0)
+        /* if at the start of the line and this is a narrow markup line then kill
+         * the narrow at the start of the line as well - note the line flag test is not fully conclusive */ 
+        if((frameCur->windowCur->dotOffset == 0) &&
+           ((meLineGetFlag(plp) & (meLINE_ANCHOR_NARROW|meLINE_MARKUP|meLINE_PROTECT)) == (meLINE_ANCHOR_NARROW|meLINE_MARKUP|meLINE_PROTECT)))
         {
             slp = plp = meLineGetPrev(plp) ;
             lineNo = frameCur->windowCur->dotLineNo ;

@@ -654,8 +654,8 @@ typedef struct meNarrow {
 
 /* the following is encoded in the narrow name */
 #define meNARROW_TYPE_OUT       0x00100000
-#define meNARROW_TYPE_TO_TOP    0x00200000
-#define meNARROW_TYPE_TO_BOTTOM 0x00300000
+#define meNARROW_TYPE_TO_BOTTOM 0x00200000
+#define meNARROW_TYPE_TO_TOP    0x00300000
 #define meNARROW_TYPE_MASK      0x00f00000
 #define meNARROW_NUMBER_MASK    0x000fffff
 #define meNarrowNameGetMarkupArg(name) (((name) & meNARROW_TYPE_MASK) >> 20)

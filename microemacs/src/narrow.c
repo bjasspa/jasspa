@@ -98,7 +98,7 @@ meBufferCreateNarrow(meBuffer *bp, meLine *slp, meLine *elp, meInt sln, meInt el
             markupCmd = 0 ;
     }
     nrrw->markupCmd = markupCmd ;
-    if(meAnchorSet(bp,name,elp,0,1) <= 0)
+    if(meAnchorSet(bp,name,elp,(meUShort) (((name & meNARROW_TYPE_MASK) == meNARROW_TYPE_TO_BOTTOM) ? 1:0),1) <= 0)
     {
         meFree(nrrw) ;
         return NULL ;
@@ -315,9 +315,8 @@ meBufferRemoveNarrow(meBuffer *bp, register meNarrow *nrrw, int useDot, meUByte 
                                meLineGetNext(meLineGetPrev(nrrw->markupLine)),0,0) ;
         meFree(nrrw->markupLine) ;
     }
-    lp = bp->dotLine ;
-    if((nrrw->markupLine == NULL) && nrrw->scheme && 
-       ((lp->flag & meLINE_SCHEME_MASK) == (nrrw->scheme << meLINE_SCHEME_SHIFT)))
+    else if(nrrw->scheme && 
+            (((lp = bp->dotLine)->flag & meLINE_SCHEME_MASK) == (nrrw->scheme << meLINE_SCHEME_SHIFT)))
     {
         /* the narrow had a scheme, remove it */
         lp->flag &= ~meLINE_SCHEME_MASK ;
@@ -328,7 +327,7 @@ meBufferRemoveNarrow(meBuffer *bp, register meNarrow *nrrw, int useDot, meUByte 
             meAnchor *aa=bp->anchorList;
             while(aa != NULL)
             {
-                if((meAnchorGetLine(aa) != lp) || (meAnchorGetType(aa) != meANCHOR_NARROW))
+                if((meAnchorGetLine(aa) == lp) && (meAnchorGetType(aa) == meANCHOR_NARROW))
                 {
                     /* found the narrow anchor, now find the narrow */
                     nn = bp->narrow ;
@@ -540,6 +539,10 @@ narrowBuffer(int f, int n)
     }
     if(n == 3)
     {
+        /* meNARROW_TYPE_TO_TOP must be greater than meNARROW_TYPE_TO_BOTTOM
+         * to ensure the top narrow is first in the list en therefore
+         * expanded first if all lines in between a delete. This ensures the
+         * top stays at the top */
         n = meNARROW_TYPE_TO_TOP ;
         if(elp != frameCur->bufferCur->baseLine)
         {
