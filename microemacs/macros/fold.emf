@@ -60,7 +60,7 @@
     end-of-line
     set-variable #l0 1
     !repeat
-        !force search-forward &spr "^[ \t]*\\(\\(%s\\)\\|%s\\)" #l9 #l8
+        !force search-buffer "m" &spr "^[ \t]*\\(\\(%s\\)\\|%s\\)" #l9 #l8
         !if &not $status
             set-variable $window-line #l1
             ml-write &spr "[Missing close for fold on line %d]" $window-aline
@@ -126,11 +126,9 @@ define-macro fold-close
     0 fold-init
     ; init didn't abort - setup
     set-position "\x89"
-    set-variable #l0 &bmod "magic"
-    1 buffer-mode "magic"
     end-of-line
     set-variable #l2 $window-line
-    !force search-backward &cat "^[ \t]*" &lget :fold 4
+    !force search-buffer "bm" &cat "^[ \t]*" &lget :fold 4
     !if $status
         set-mark
         !force fold-find-close
@@ -139,13 +137,11 @@ define-macro fold-close
             !if &gre $window-line #l2
                 0x54 narrow-buffer .scheme.fold-close fold-markup
                 backward-line
-                &cond #l0 1 -1 buffer-mode "magic"
                 !return
             !endif
         !endif
     !endif
     goto-position "\x89"
-    &cond #l0 1 -1 buffer-mode "magic"
     ml-write "[Current line is not within a fold]"
 !emacro
 ;CLOSE
@@ -313,9 +309,7 @@ define-macro fold-remove
     !if &not &set #l3 $window-col
         set-variable #l1 &sub #l1 1
     !endif
-    set-variable #l0 &bmod "magic"
-    1 buffer-mode "magic"
-    !force &sub #l1 $window-line search-backward &cat "^[ \t]*" &lget :fold 4
+    !force &sub #l1 $window-line search-buffer "bm" &cat "^[ \t]*" &lget :fold 4
     !while $status
         set-variable $line-flags &bor $line-flags 0x40
         set-variable $line-scheme .scheme.fold-open
@@ -328,9 +322,8 @@ define-macro fold-remove
             0x54 narrow-buffer .scheme.fold-close fold-markup
             backward-line
         !endif
-        !force &sub #l1 $window-line search-backward &cat "^[ \t]*" &lget :fold 4
+        !force &sub #l1 $window-line search-buffer "bm" &cat "^[ \t]*" &lget :fold 4
     !done
-    &cond #l0 1 -1 buffer-mode "magic"
     !if &or &not #l2 #l3 
         0x500 goto-position "\x89"
         exchange-point-and-mark
@@ -372,13 +365,10 @@ define-macro fold-remove
     !endif
     ; init didn't abort - if given an argument of 0 then only setup if a fold exists in the 1st 200 lines
     set-position "\x89"
-    set-variable #l0 &bmod "magic"
-    1 buffer-mode "magic"
     !if &not #l9
-        !force -200 search-forward &cat "^[ \t]*" &lget :fold 4
+        !force -200 search-buffer "m" &cat "^[ \t]*" &lget :fold 4
         !if &not $status
             goto-position "\x89"
-            &cond #l0 1 -1 buffer-mode "magic"
             unset-variable :fold
             !abort
         !endif
@@ -387,7 +377,7 @@ define-macro fold-remove
         1 narrow-buffer
     !endif
     end-of-buffer
-    !force search-backward &cat "^[ \t]*" &lget :fold 4
+    !force search-buffer "bm" &cat "^[ \t]*" &lget :fold 4
     !while $status
         set-variable $line-flags &bor $line-flags 0x40
         set-variable $line-scheme .scheme.fold-open
@@ -400,17 +390,16 @@ define-macro fold-remove
             0x54 narrow-buffer .scheme.fold-close fold-markup
             backward-line
         !endif
-        !force search-backward &cat "^[ \t]*" &lget :fold 4
+        !force search-buffer "bm" &cat "^[ \t]*" &lget :fold 4
     !done
     goto-position "\x89"
     end-of-line
-    !force -1 search-backward &cat "^[ \t]*" &lget :fold 4
+    !force -1 search-buffer "bm" &cat "^[ \t]*" &lget :fold 4
     !if $status
         fold-close
     !else
         goto-position "\x89"
     !endif
-    &cond #l0 1 -1 buffer-mode "magic"
     buffer-bind-create "bo" "f2"       "" fold-open
     buffer-bind-create "bo" "esc f2"   "" fold-close
     buffer-bind-create "bo" "C-f2"     "" fold-create

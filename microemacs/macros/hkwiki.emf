@@ -131,7 +131,7 @@ define-macro wiki-forward-node
     !if #l9
         end-of-line
         !while &gre &pdec @# 1 0
-            !force search-buffer "m" "^\\*+[ \t]*\\S "
+            !force search-buffer "Em" "^\\*+[ \t]*\\S "
             !if &not $status
                 ml-write "[Error: no more nodes]"
                 !abort
@@ -149,7 +149,7 @@ define-macro wiki-backward-node
         end-of-line
         !while &gre &pdec @# 1 0
             backward-char
-            !force search-buffer "bm" "^\\*+[ \t]*\\S "
+            !force search-buffer "bEm" "^\\*+[ \t]*\\S "
             !if &not $status
                 ml-write "[Error: no more nodes]"
                 !abort
@@ -171,7 +171,7 @@ define-macro wiki-goto-node
         str-to-regex #l0
         set-position "\x81"
         beginning-of-buffer
-        !force search-buffer "m" &spr "^\\*+[ \t]*%s[ \t]*$" #l0
+        !force search-buffer "Em" &spr "^\\*+[ \t]*%s[ \t]*$" #l0
         !if $status
             beginning-of-line
             set-variable .last #l1
@@ -190,7 +190,7 @@ define-macro wiki-forward-link
     !if #l9
         !while &gre &pdec @# 1 0
             forward-char
-            !force search-buffer "m" ":#?\\w[^:]*:"
+            !force search-buffer "Em" ":#?\\w[^:]*:"
             !if &not $status
                 backward-char
                 ml-write "[Error: no more links]"
@@ -204,7 +204,7 @@ define-macro wiki-forward-link
 define-macro wiki-backward-link
     wiki-edit-key @p @? @#
     !if #l9
-        !force @# search-buffer "bm" ":#?\\w[^:]*:"
+        !force @# search-buffer "bEm" ":#?\\w[^:]*:"
         !if &not $status
             -1 show-region
             ml-write "[Error: no more links]"
@@ -220,7 +220,7 @@ define-macro wiki-goto-link
         set-variable #l0 $window-line
         set-variable #l1 $window-col
         forward-char
-        !force -2 search-buffer "bm" ":\\(\\w[^#:]*\\)?\\(#\\w[^:]*\\)?:"
+        !force -2 search-buffer "bEm" ":\\(\\w[^#:]*\\)?\\(#\\w[^:]*\\)?:"
         !if $status
             2 show-region
             !if &gre #l0 $window-line
@@ -245,7 +245,7 @@ define-macro wiki-goto-link
                     set-variable #l4 &rig #l3 1
                     str-to-regex #l4
                     set-variable #l4 &xrep #l4 "[ \n\t]+" "[ \t]+"
-                    !force search-buffer "m" &spr "^*+[ \t]*%s[ \t]*\\([:#].*\\)?$" #l4
+                    !force search-buffer "Em" &spr "^*+[ \t]*%s[ \t]*\\([:#].*\\)?$" #l4
                     !if &not $status
                         wiki-add-to-last
                         ml-write &spr "[Error: failed to find link \"%s\"]" &rig #l3 1
@@ -318,11 +318,11 @@ define-macro wiki-node-menu
         osd .osd.tmp 0 "sS" .scheme.osd-child .w .d 0 -1
         set-variable #l1 1
         beginning-of-buffer
-        !force search-buffer "m" "^\\*\\(\\**\\)[ \t]*\\(\\S [^:#\n]*\\)"
+        !force search-buffer "Em" "^\\*\\(\\**\\)[ \t]*\\(\\S [^:#\n]*\\)"
         !while $status
             set-variable #l2 &spr "%n%s" &len @s1 "  " &trb @s2
             osd .osd.tmp &inc #l1 1 "" #l2 #l1 wiki-node-menu-sel
-            !force search-buffer "m" "^\\*\\(\\**\\)[ \t]*\\(\\S [^:#\n]*\\)"
+            !force search-buffer "Em" "^\\*\\(\\**\\)[ \t]*\\(\\S [^:#\n]*\\)"
         !done
         goto-position "\x81"
         .osd.wikim osd
@@ -336,7 +336,7 @@ set-variable .wiki-node-menu.d 25
     beginning-of-buffer
     set-variable #l4 #l3
     str-to-regex #l4
-    !force search-buffer "m" &spr "^*+[ \t]*%s[ \t]*\\([:#].*\\)?$" #l4
+    !force search-buffer "Em" &spr "^*+[ \t]*%s[ \t]*\\([:#].*\\)?$" #l4
     !if &not $status
         ml-write &spr "[Error: failed to find link \"%s\"]" #l3
         !abort

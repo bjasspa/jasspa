@@ -60,11 +60,9 @@ define-macro describe-word-find
     set-variable #l1 &spr &ind &spr ".describe-word.%s-command" .spell.language #l0 #l0 #l0 #l0 #l0
     2 pipe-shell-command #l1 "*describe-word*" @mna
     find-buffer "*describe-word*"
-    -1 buffer-mode "exact"
-    1 buffer-mode "magic"
     set-variable #l1 &spr &ind &spr ".describe-word.%s-search" .spell.language #l0 #l0 #l0 #l0 #l0
     set-variable .describe-word.descn 0
-    !force search-forward #l1
+    !force search-buffer "Em" #l1
     !while $status
         set-variable #l2 &rep &rep @s1 "\n" " " "\t" " "
         set-variable #l3 ""
@@ -77,7 +75,7 @@ define-macro describe-word-find
         set-variable #l3 &spr "%s%s\n" #l3 #l2
         osd .osd.wordc &inc .describe-word.descn 1 "xu" #l3 f describe-word-pick
         set-variable &ind &cat ".describe-word.desc" .describe-word.descn #l3
-        !force search-forward #l1
+        !force search-buffer "Em" #l1
     !done
 !emacro
 

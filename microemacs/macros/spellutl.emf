@@ -107,7 +107,7 @@ define-macro spell-conv-aff-chars
         !if &not $status
             !force execute-string "\CE#\CA"
         !endif
-        !force execute-string "\"\CS>\CB\"\CD_\"\"_ \"\CS#\CB\"\CO;\CD\CB\CB\E-1\CXR[^\\\\]-\N\CF\CF\E \CR\"\"\CF\CW\CS,\CB\"_\"\CD"
+        !force execute-string "\"\CS>\CB\"\CD_\"\"_ \"\CS#\CB\"\CO\CF;\CD\CB\CB\E-1\CXR[^\\\\]-\N\CF\CF\E \CR\"\"\CF\CW\CS,\CB\"_\"\CD"
         !force execute-string "\CA\E-1\Er[ \T]\N\N"
         !force execute-string "\CA\E-1\Er_\N \N\CA 2 add-spell-rule \"\" \E \CE\CX\CL \CD\CA\CN"
     !done

@@ -12,7 +12,7 @@
 ;
 !if &les @# 1
     ; if executed with an argument of 0 or less, return the list
-    set-variable %language-names "|Default|American|British|Deutsch|Espanol|Finnish|Francais|Italiano|Polish|Portugues|"
+    set-variable %language-names "|Default|American|British|Deutsch|Espanol|Finnish|Francais|Italiano|Polish|Portugues|Russian|"
     !return
 !endif
 
@@ -63,5 +63,9 @@ set-variable #l0 &reg "/history" "language" ""
     set-char-mask "a" "ÀàÂâÁáÃãÇçÈèÊêÉéÌìÍíÒòÔôÓóÕõÙùÚúÜüAaCcEeIiOoUu"
     set-variable .set-char-mask.rm-chars "ÀàÂâÁáÃãÇçÈèÊêÉéÌìÍíÒòÔôÓóÕõÙùÚúÜü"
     set-variable .spell.language "ptpt"
+!elif &seq #l0 "Russian"
+    set-char-mask "a" "°Ğ±Ñ²Ò³Ó´ÔµÕ¶Ö·×¸Ø¹ÙºÚ»Û¼Ü½İ¾Ş¿ßÀàÁáÂâÃãÄäÅåÆæÇçÈèÉéÊêËëÌìÍíÎîÏï¡ñ"
+    set-variable .set-char-mask.rm-chars "°Ğ±Ñ²Ò³Ó´ÔµÕ¶Ö·×¸Ø¹ÙºÚ»Û¼Ü½İ¾Ş¿ßÀàÁáÂâÃãÄäÅåÆæÇçÈèÉéÊêËëÌìÍíÎîÏï¡ñ"
+    ;set-variable .spell.language "ruru"
 !endif
 
