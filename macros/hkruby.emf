@@ -56,7 +56,8 @@ set-variable .fhook-ruby.item-list-r3 "Def \ecB\\1\ecA"
     hilight .hilight.ruby    0 "%x(\\{[^)]*\\})"         .scheme.variable
     hilight .hilight.ruby    0 "%x\\(.\\)\\{\\S1*\\}\\1" .scheme.variable
     ; Regular Expression.
-    hilight .hilight.ruby    0 "/\\{[^/]*\\}/[io]?"      .scheme.variable
+    hilight .hilight.ruby    0 "/\\{[^/]*\\}/"           .scheme.variable
+    hilight .hilight.ruby    0 "/\\{[^/]*\\}/[io]"       .scheme.variable
     hilight .hilight.ruby    0 "%r{\\{[^}]*\\}}"         .scheme.variable
     hilight .hilight.ruby    0 "%r(\\{[^)]*\\})"         .scheme.variable
     hilight .hilight.ruby    0 "%r\\(.\\)\\{\\S1*\\}\\1" .scheme.variable
