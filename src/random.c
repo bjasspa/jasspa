@@ -2336,6 +2336,52 @@ use_contcomm:
             frameCur->windowCur->dotOffset = curOff ;
         }
     }
+    /* This case is a little strange. The comment restyle for C++ comments
+     * aligns comments on-top other in a column when placed at the end of a
+     * statement line. i.e.
+     * 
+     * >    statement;                   // blah blah blah blah
+     * >                                 // more blah blah blah
+     * 
+     * We want to preserve the alignment of the C++ comment if we find them
+     * stacked like this. If this lines start position exactly matches the
+     * previous line then we say that the comment position is correct. If the
+     * comment is in a different column then we assume it is supposed to be
+     * aligned with the statement. i.e
+     * 
+     * >    statement;                   // blah blah blah blah
+     * >                                 // more blah blah blah
+     * >    // Statement aligned comment.
+     * 
+     * So restyling the above should not change the position of the comments.
+     */
+    else if ((cc == '/') && 
+             (meLineGetChar(frameCur->windowCur->dotLine,
+                            frameCur->windowCur->dotOffset+1) == '/'))
+    {
+        /* We are in a C++ comment, check the previous line to see if this
+         * comments is aligned with the previous line, if it is then we must
+         * keep the same alignment. */
+        frameCur->windowCur->dotLine = meLineGetPrev(frameCur->windowCur->dotLine) ;
+        frameCur->windowCur->dotOffset = 0 ;
+        if (setccol (curInd))            /* Move to position on prev line */
+        {
+            /* Checkout the character. */
+            if ((meLineGetChar(frameCur->windowCur->dotLine,
+                               frameCur->windowCur->dotOffset+0) == '/') &&
+                (meLineGetChar(frameCur->windowCur->dotLine,
+                               frameCur->windowCur->dotOffset+1) == '/'))
+            {
+                /* Matched our position with the current position, use this as
+                 * the indent. */
+                addInd = curInd - getCoffset(onBrace,inComment);
+                if (addInd < 0)
+                    addInd = 0;         /* Correct bad return ! */
+            }
+        }
+        frameCur->windowCur->dotLine = oldlp ;
+        frameCur->windowCur->dotOffset = curOff ;
+    }
     else if(cc == '{')
     {
         addInd += braceIndent ;
