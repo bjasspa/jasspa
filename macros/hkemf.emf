@@ -74,7 +74,7 @@ set-variable .fhook-emf.item-list-r1 "Macr \ecB\\1\ecA"
     indent .hilight.emf n "!whi" t
     indent .hilight.emf o "!don" -t
     indent .hilight.emf n "!rep" t
-    indent .hilight.emf o "!until" -t
+    indent .hilight.emf o "!unt" -t
     indent .hilight.emf o "!ema" -t
     indent .hilight.emf e "\"" "\"" "\\"
     indent .hilight.emf i ";"
