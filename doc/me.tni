@@ -7,6 +7,8 @@
 .\"
 .ds mE "MicroEmacs '05
 .ds mS "MicroEmacs
+.ds nE "NanoEmacs '05
+.ds nS "NanoEmacs
 .ds cX "C-x\ \&
 .ds cH "C-h\ \&
 .ds e  "esc \&
