@@ -4724,14 +4724,37 @@ menuInteraction (int *retState)
             yy = md->y + md->context[md->curContext].y ;
             while (md != osdCurMd)
             {
+                osdITEM *mp;
                 md = md->prev ;
-                xx += md->x + md->context[md->curContext].x ;
-                yy += md->y + md->context[md->curContext].y ;
-                if(md->context[md->curContext].menu->flags & MF_SCRLBOX)
+                mp = md->context[md->curContext].menu;
+                
+                /* If this is a scroll box then correct the cursor position.
+                 * The scroll box x,y child positions can go out side of the
+                 * window if the currently selected item is scrolled up or
+                 * down. The currently selected item is where the cursor is
+                 * placed, correct the cursor position so that it is kept
+                 * within the display window. */
+                if (mp->flags & MF_SCRLBOX)
                 {
+                    /* Correct horizontal */
+                    if (xx < 0)
+                        xx = 0;
+                    else if (xx >= mp->len)
+                        xx = mp->len-1;
+                    
+                    /* Correct vertical */
+                    if (yy < 0)
+                        yy = 0;
+                    else if (yy >= mp->height)
+                        yy = mp->height-1;
+                    
+                    /* Special correction for scroll box to account for the borders */
                     xx++ ;
                     yy++ ;
                 }
+                
+                xx += md->x + md->context[md->curContext].x ;
+                yy += md->y + md->context[md->curContext].y ;
             }
             TTmove(yy,xx) ;
         }
