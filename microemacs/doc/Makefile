@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20040206.1338>
+# Last Modified: <20040206.1535>
 #
 ##############################################################################
 
@@ -280,7 +280,8 @@ RELZIPS=	$(MEHTMZIP:%=$(WWWRELDIR)/%)
 RELTARS=	$(MEHTMLTGZ:%=$(WWWRELDIR)/%)
 RELTXTS=	$(TXTS:%=$(RELWWWDOCDIR)/%) $(TXTS:%=$(MERELDIR)/%) \
 		$(TXTS:%=$(SRCRELDIR)/%)
-RELEASE=	$(RELRTFS) $(RELZIPS) $(RELTARS) $(RELTXTS)
+RELEHF=		$(JASMACDIR)/me.ehf
+RELEASE=	$(RELRTFS) $(RELZIPS) $(RELTARS) $(RELTXTS) $(RELEHF)
 
 release: 	$(RELEASE)
 
@@ -298,6 +299,10 @@ $(RELTARS):	$(MEHTMLTGZ)
 		$(INSTALL_FIL) $(@F) $(@D)
 # Txts
 $(RELTXTS):	$(TXTS)
+		$(MKDIR) $(@D)
+		$(INSTALL_FIL) $(@F) $(@D)
+# Ehf
+$(RELEHF):	me.ehf
 		$(MKDIR) $(@D)
 		$(INSTALL_FIL) $(@F) $(@D)
 #
