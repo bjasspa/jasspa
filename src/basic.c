@@ -534,9 +534,8 @@ windowBackwardParagraph(int f, int n)
         }
         while (suc <= 0);
         
-        /* and then forward until we are in a word */
-        while (suc && !inPWord())
-            suc = meWindowForwardChar(frameCur->windowCur, 1);
+        /* and then leave the cursor at the start of the line. */
+        frameCur->windowCur->dotOffset = 0;        
     }
     frameCur->windowCur->updateFlags |= WFMOVEL ;	/* force screen update */
     return meTRUE ;
@@ -593,13 +592,9 @@ windowForwardParagraph(int f, int n)
                 }
             }	/* End of 'for' */
         } while (suc <= 0);
-		
-	/*---	Then backward until we are in a word */
-
-        do
-            suc = meWindowBackwardChar(frameCur->windowCur, 1);
-        while (suc && !inPWord());
-        frameCur->windowCur->dotOffset = meLineGetLength(frameCur->windowCur->dotLine);	/* and to the EOL */
+        
+        /* Leave the cursor at the start of the line. */
+        frameCur->windowCur->dotOffset = 0;
     }
     return(meTRUE);
 }

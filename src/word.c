@@ -956,9 +956,8 @@ fillPara(int f, int n)
         return windowForwardParagraph(meFALSE, n) ;
     }
     
-    /* Record if justify mode is enabled. Record in our local context
-     * Also knock off indent if disabled. We do not want to be prompting
-     * the user. */
+    /* Record if justify mode is enabled. Record in our local context Also
+     * knock off indent if disabled. We do not want to be prompting the user. */
     if(meModeTest(frameCur->bufferCur->mode,MDJUST)) /* Justify enabled ?? */
         fillState |= FILL_JUSTIFY;       /* Yes - Set justification state */
     else
@@ -971,9 +970,27 @@ fillPara(int f, int n)
     
     /* If fill paragraph is called with no arguments then we must retain the
      * position of dot so that we can preserve the users position after we
-     * have filled the paragraph, but only if we are not at the top of the paragraph. */
+     * have filled the paragraph, but only if we are not at the top of the
+     * paragraph. */
     if(f == 0)
     {
+        /* See if this is a paragraph separator line. If it is not a
+         * separator then the paragraph position must be restored. */
+        f = 1;                          /* Anchor will be set */
+        if ((icol = meLineGetLength (frameCur->windowCur->dotLine)) != 0)
+        {
+            for (ccol = 0; ccol < icol; ccol++)
+            {
+                /* Check that this is not a paragraph sepearator line */
+                c = meLineGetChar (frameCur->windowCur->dotLine, ccol);
+                if ((c != meCHAR_TAB) && (c != ' '))	           
+                {
+                    f = 2;              /* Char exists on line, restore pos */
+                    break;
+                }
+            }
+        }
+        
         meAnchorSet(frameCur->bufferCur,meANCHOR_FILL_DOT,
                     frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset,1) ;
         ilength = frameCur->windowCur->dotLineNo ;
@@ -995,15 +1012,15 @@ fillPara(int f, int n)
 	/* record the pointer to the line just past the EOP 
          * and then back top the beginning of the paragraph.
          * doto is at the beginning of the first word */
-        eopline = meLineGetNext(frameCur->windowCur->dotLine);
-        eoplno = frameCur->windowCur->dotLineNo + 1 ;
+        eopline = frameCur->windowCur->dotLine ;
+        eoplno = frameCur->windowCur->dotLineNo ;
 	windowBackwardParagraph(meFALSE, 1);
         
-        if(f == 0)
-            f = ((ilength > frameCur->windowCur->dotLineNo) ||
-                 ((ilength == frameCur->windowCur->dotLineNo) &&
-                  (icol > frameCur->windowCur->dotOffset))) ? 2:1 ;
-            
+        /* Advance to the first character in the paragraph. */
+        while(!inPWord())
+            if(meWindowForwardChar(frameCur->windowCur, 1) <= 0)
+                break;
+        
         /* Skip non-formatting paragraphs */
         if ((fillignore != NULL) &&
             (meStrchr (fillignore, meLineGetChar (frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset)) != NULL))
@@ -1250,46 +1267,82 @@ noIndent:
     return meTRUE ;
 }
 
-/* delete n paragraphs starting with the current one */
+/* Delete n paragraphs starting with the current one. -ve will kill 'n'
+ * paragraphs in the backward direction. */
 int	
 killPara(int f, int n)
 {
     int ss ;
+    int sep_line = 1;                   /* Paragraph separator line */
     
+    /* A zero kill then do not kill anything. */
     if(n == 0)
         return meTRUE ;
-    if((f=(n < 0)))
-        n = -n ;
     
-    if((windowForwardParagraph(meFALSE, 1) <= 0) ||
-       (windowBackwardParagraph(meFALSE, 1) <= 0) )
-        return meFALSE ;
-    frameCur->windowCur->dotOffset = 0 ;
-    /* set the mark here */
+    /* Check we can change the buffer */
+    if(bufferSetEdit() <= 0)
+        return meABORT ;
+    
+    /* Set the mark at the current position. */
     frameCur->windowCur->markLine = frameCur->windowCur->dotLine ;
     frameCur->windowCur->markLineNo = frameCur->windowCur->dotLineNo ;
     frameCur->windowCur->markOffset = frameCur->windowCur->dotOffset ;
     
-    if(bufferSetEdit() <= 0)               /* Check we can change the buffer */
-        return meABORT ;
+    /* See if this is a paragraph separator line. If it is then the kill is
+     * performed differently. */
+    if ((ss = meLineGetLength (frameCur->windowCur->dotLine)) != 0)
+    {
+        int ii;
         
+        for (ii = 0; ii < ss; ii++)
+        {
+            char cc;
+            
+            /* Check that this is not a paragraph sepearator line */
+            cc = meLineGetChar (frameCur->windowCur->dotLine, ii);
+            if ((cc != meCHAR_TAB) && (cc != ' '))	           
+            {
+                /* Character exists on the line. */
+                sep_line = 0;
+                break;
+            }
+        }
+    }
+               
+    /* Move to the appropriate paragraph position and delete the region. */
     ss = windowForwardParagraph(meTRUE,n) ;
     
-    frameCur->windowCur->dotLineNo++ ;
-    frameCur->windowCur->dotLine = meLineGetNext(frameCur->windowCur->dotLine);
-    frameCur->windowCur->dotOffset = 0 ;
+    /* If we commenced on a separator line then we do not need to protect the 
+     * paragraph separator. */
+    if (sep_line == 0)
+    {
+        /* Did not start on a separator line, protect the paragraph space. */
+        if (n < 0)
+        {
+            /* If killing backwards advance to the first character of the line in
+             * the paragraph so that we do not delete the paragraph space. */
+            while(!inPWord())
+                if(meWindowForwardChar(frameCur->windowCur, 1) <= 0)
+                    break;
+            frameCur->windowCur->dotOffset = 0;        /* Beginning of line */
+        }
+        else
+        {
+            /* If killing forwards goto the previous character so that we do not
+             * destroy the line separating the paragraph. */
+            meWindowBackwardChar(frameCur->windowCur, 1);
+        }
+    }
     
-    /* and delete it */
-    if(killRegion(meTRUE,(f) ? -1:1) <= 0)
+    /* Kill the region containing the paragraphs */
+    if(killRegion(meTRUE,1) <= 0)
         return meFALSE ;
+    
     return ss ;
 }
 
-
-/*	countWords:	count the # of words in the marked region,
-			along with average word sizes, # of chars, etc,
-			and report on them.			*/
-
+/* Count the # of words in the marked region, along with average word sizes,
+ * # of chars, etc, and report on them. */
 int	
 countWords(int f, int n)
 {
