@@ -57,10 +57,10 @@ define-macro fhook-dirlst
         replace-string "^ d.*" "\\0/"
         goto-line 3
         ; try to find the column where the file names start - use the time hh:mm
-        !force search-buffer "em" "[0-9][0-9]:[0-9][0-9] *"
+        !force search-buffer "em" "[0-9 ][0-9]:[0-9][0-9] +"
         !if &not $status
             ; failed, try to match the date
-            !force search-buffer "em" "\\(Jan\\|Feb\\|Mar\\|Apr\\|May\\|Jun\\|Jul\\|\\Aug\\|Sep\\|Oct\\|Nov\\|Dec\\) *[0-9]* *[0-9]* *"
+            !force search-buffer "em" "\\(Jan\\|Feb\\|Mar\\|Apr\\|May\\|Jun\\|Jul\\|\\Aug\\|Sep\\|Oct\\|Nov\\|Dec\\) +[0-9]+ +[0-9]+ +"
         !endif
         !if $status
             set-variable :fmpf $window-col
@@ -143,8 +143,8 @@ set-variable .fhook-dirlst.cvs-enable &sin "c" .fhook-dirlst.setup
     hilight .hilight.dirlst 0x112 " -"                    $global-scheme
     hilight .hilight.dirlst 0x112 "*d"                    .scheme.dir-select
     hilight .hilight.dirlst 0x112 "*-"                    .scheme.select
-    hilight .hilight.dirlst 0x012 "[0-9][0-9]:[0-9][0-9] \\{\"" .scheme.file
-    hilight .hilight.dirlst 0x012 "[0-9][0-9]:[0-9][0-9] \\{"   .scheme.file
+    hilight .hilight.dirlst 0x012 "[0-9 ][0-9]:[0-9][0-9] \\{\"" .scheme.file
+    hilight .hilight.dirlst 0x012 "[0-9 ][0-9]:[0-9][0-9] \\{"   .scheme.file
     hilight .hilight.dirlst 0x012 "[JFMASOND][aepuco][nbrylgptvc] [0-9 ][0-9]  [0-9][0-9][0-9][0-9] \\{" .scheme.file
     hilight .hilight.dirlst 0x012 " \\{-> "               .scheme.dir-slink
 !endif

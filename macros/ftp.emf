@@ -16,10 +16,13 @@ define-macro ftp
         ; if this is a toolbar window move to the next normal window
         !force next-window
     !endif
+    set-variable #l0 $buffer-bname
     @# ftp-create-layout
     popup-window "*ftp-files*"
     !if &seq $buffer-fname ""
         screen-update
+        ftp-connect
+    !elif &seq #l0 "*ftp-files*"
         ftp-connect
     !endif
 !emacro
