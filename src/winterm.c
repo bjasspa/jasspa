@@ -203,6 +203,7 @@ HANDLE *serverHandle = INVALID_HANDLE_VALUE;
 HANDLE *connectHandle= INVALID_HANDLE_VALUE;
 int ttServerSize = 0;
 int ttServerToRead = 0;
+meUByte ttServerCheck = 0;
 #endif
 
 LONG APIENTRY
@@ -499,7 +500,7 @@ gettimeofday (struct meTimeval *tp, struct meTimezone *tz)
  **************************************************************************/
 #if MEOPT_CLIENTSERVER
 void
-TTopenClientServer (void)
+TTopenClientServer(void)
 {
     /* If the server has not been created then create it now */
     if (serverHandle == INVALID_HANDLE_VALUE)
@@ -612,6 +613,7 @@ TTcheckClientServer(void)
         return 0;
     ttServerToRead += ii - ttServerSize ;
     ttServerSize = ii;
+    ttServerCheck = 0 ;
     return 1 ;
 }
 
@@ -4300,7 +4302,7 @@ meGetMessage(MSG *msg, int mode)
 #if MEOPT_CLIENTSERVER
                 if(ipipe->pid == 0)
                 {
-                    if(TTcheckClientServer())
+                    if(ttServerCheck && TTcheckClientServer())
                     {
                         ipipeRead(ipipe) ;
                         jj = 1 ;
@@ -6396,7 +6398,13 @@ do_window_resize:
          * client area */
         setCursorLastLParam = -1 ;
         goto unhandled_message ;
-    
+        
+#if MEOPT_CLIENTSERVER
+    case WM_USER:
+        ttServerCheck = 1 ;
+        break ;
+#endif
+        
     default:
 unhandled_message:
         /* fprintf(logfp,"Unhandled message %x %x %x\n",message, wParam, lParam) ;*/
