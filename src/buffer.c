@@ -217,7 +217,7 @@ assignHooks (meBuffer *bp, meUByte *hooknm)
  * GNU Emacs. There are so many files in Linux with these attributes
  * we may as well use them.
  */
-static void
+void
 setBufferContext(meBuffer *bp)
 {
     int ii ;
@@ -657,14 +657,12 @@ replacebuffer(meBuffer *oldbuf)
             }
 	}
     }
-    /*
-    ** if didnt find a buffer, create a new *scratch* 
-    */
+    /* if didnt find a buffer, create a new *scratch* */
     if(best == NULL)
 	best = next ;
     if(best == NULL)
 	best = bfind(BmainN,BFND_CREAT) ;
-	
+    
     return best ;
 }
 
@@ -694,8 +692,15 @@ HideBuffer(meBuffer *bp, int forceAll)
                         /* find a replacement buffer */
                         /* if its the same then can't replace so return */
                         if((bp1 = replacebuffer(bp)) == bp)
-                            /* this is true if only *scratch* is left */
+                        {
+                            /* this is true if only *scratch* is left, ensure
+                             * the buffer hooks are correctly setup and
+                             * executed */
+#if MEOPT_FILEHOOK
+                            setBufferContext(bp) ;
+#endif
                             return meFALSE ;
+                        }
                         
                         if(swbuffer(wp, bp1) <= 0)
                             return meFALSE ;

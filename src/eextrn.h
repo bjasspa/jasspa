@@ -123,6 +123,7 @@ extern	int	nextWndFindBuf(int f, int n);
 #endif
 extern	int	findBuffer(int f, int n);
 extern	int	nextBuffer(int f, int n);
+extern  void    setBufferContext(meBuffer *bp) ;
 extern	int	swbuffer(meWindow *wp, meBuffer *bp);
 extern	int	bufferDelete(int f, int n);
 extern	int	deleteSomeBuffers(int f, int n);

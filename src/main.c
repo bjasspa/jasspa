@@ -1580,12 +1580,15 @@ missing_arg:
     /* run me.emf unless an @... arg was given in which case run that */
     startup(file) ;
 
-    /* initalize *scratch* colors and modes to global defaults */
+    /* initalize *scratch* colors & modes to global defaults & check for a hook */
     if((mainbp=bfind(BmainN,0)) != NULL)
     {
         meModeCopy(mainbp->mode,globMode) ;
 #if MEOPT_COLOR
         mainbp->scheme = globScheme;
+#endif
+#if MEOPT_FILEHOOK
+        setBufferContext(mainbp) ;
 #endif
         /* make *scratch*'s history number very low so any other
          * buffer is preferable */
