@@ -27,17 +27,17 @@ set-variable .fhook-latex.command-kbind "|esc o|esc q|esc p|esc n|C-c l|C-c C-l|
 set-variable .fhook-latex.command-desc  "|||||&Goto Reference Label|&Return to Reference|List &Labels||&Insert Token|Com&pile Buffer|&View Buffer|T&oggle hilighting|"
 
 ; setup item-list
-set-variable .fhook-latex.item-list-s1 "\\\\chapter{\\([^}]*\\)}"
+set-variable .fhook-latex.item-list-s1 "^[ \t]*\\\\chapter{\\([^}]*\\)}"
 set-variable .fhook-latex.item-list-r1 "Chpt \ecB\\1\ecA"
-set-variable .fhook-latex.item-list-s2 "\\\\part{\\([^}]*\\)}"
+set-variable .fhook-latex.item-list-s2 "^[ \t]*\\\\part{\\([^}]*\\)}"
 set-variable .fhook-latex.item-list-r2 "Part \ecB\\1\ecA"
-set-variable .fhook-latex.item-list-s3 "\\\\section{\\([^}]*\\)}"
+set-variable .fhook-latex.item-list-s3 "^[ \t]*\\\\section{\\([^}]*\\)}"
 set-variable .fhook-latex.item-list-r3 "Sct  \ecB\\1\ecA"
-set-variable .fhook-latex.item-list-s4 "\\\\subsection{\\([^}]*\\)}"
+set-variable .fhook-latex.item-list-s4 "^[ \t]*\\\\subsection{\\([^}]*\\)}"
 set-variable .fhook-latex.item-list-r4 "SSct \ecB\\1\ecA"
-set-variable .fhook-latex.item-list-s5 "\\\\subsubsection{\\([^}]*\\)}"
+set-variable .fhook-latex.item-list-s5 "^[ \t]*\\\\subsubsection{\\([^}]*\\)}"
 set-variable .fhook-latex.item-list-r5 "SSSc \ecB\\1\ecA"
-set-variable .fhook-latex.item-list-s6 "\\\\markboth{\\([^}]*\\)}"
+set-variable .fhook-latex.item-list-s6 "^[ \t]*\\\\markboth{\\([^}]*\\)}"
 set-variable .fhook-latex.item-list-r6 "Mark \ecB\\1\ecA"
 
 set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|section\\|chap\\|subsec\\|label\\|begin\\|paragraph\\|subparagraph\\|end\\)\\)"
