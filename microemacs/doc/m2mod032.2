@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2mod032.2,v 1.5 2004-01-06 00:50:52 jon Exp $
+.Id $Id: m2mod032.2,v 1.6 2005-01-01 15:02:12 bill Exp $
 .Im MicroEmacs modes
 .so me.tni
 .TH fence 2m
@@ -18,35 +18,39 @@ fence \- Auto fence matching mode
 .B fence
 mode can be used to enable or disable  the  automatic  displaying  of and open
 fence when the corresponding  closing fence is typed. When the mode is enabled
-and the closing fence is typed the cursor is temporarily  move to the position
-of the opening fence. The duration of the move can be controlled by the
-.Ht $fmatchdelay 5
+and the closing fence (\'\fC)\fR'  '\fC]\fR' or '\fC}\fR') is typed the cursor
+is temporarily  move to the position of the opening fence. The duration of the
+move can be controlled by the
+.Ht $pause-time 5
 variable; any user input interrupts the display.
 .PP
-If
-.Ht cmode 2m
-is also enabled the search algorithm used is '\fIC\fR' aware and if a matching
-fence is not found then the bell is rung as a warning. If  \fBcmode\fR  is not
-enable any closing fence which cannot be matched is ignored.
+If the buffer is configured to use a \fIC\fR style auto
+.Ht indent 2 ,
+the search  algorithm  used is '\fIC\fR'  aware and if a matching fence is not
+found then the bell is rung as a warning.  Otherwise  any closing  fence which
+cannot be matched is ignored.
+.PP
+The cursor can be moved to the matching fence using the
+.Ht goto-matching-fence 2
+command. 
 .SH NOTES
-The following characters are considered closing fences:
+The following are considered closing fences:
 .CS
-}  )  ]
+}  )  ] > */ #endif
 .CE
 These are match with the following opening fences respectively:
 .CS
-{  (  [
+{  (  [ < /* #if
 .CE
-In \*(mE then the use of fence mode has been depreciated. Matching fence
-hilighting has been implemented as a macro and is invoked as part of the
-buffer set up operation of
-.Ht buffer-init 3 .
+In \*(mS the use of fence mode has been depreciated. Matching fence hilighting
+has been  implemented  as a macro and configured via the Platform page of
+.Ht user-setup 3 .
 .SH "SEE ALSO"
 .na
 .Hl "Operating Modes" Modes - ,
-.Ht $fmatchdelay 5 ,
-.Ht buffer-init 3 ,
-.Ht cmode 2m ,
-.Ht goto-matching-fence 2 .
+.Ht $pause-time 5 ,
+.Ht user-setup 3 ,
+.Ht goto-matching-fence 2 ,
+.Ht indent 2 .
 .ad
 .FH
