@@ -37,8 +37,10 @@
 
 #ifdef _WIN32
 #define ffpInvalidVal INVALID_HANDLE_VALUE
+#define meFileGetError()   GetLastError()
 #else
 #define ffpInvalidVal NULL
+#define meFileGetError()   (errno)
 #endif
 
 /*
@@ -188,6 +190,7 @@ static int       ffread ;
 static int       ffoffset ;
 static meUByte   ffbuf[meFIOBUFSIZ+1] ;
 static meUByte  *ffcur ;
+static meUByte   ffwerror ;
 static meUByte   ffauto=0 ;
 static meUByte   ffautoRet=0 ;
 static meUByte   ffnewFile ;
@@ -216,9 +219,11 @@ typedef void (*meATEXIT)(void) ;
 #define meSOCKET SOCKET
 #define meBadSocket          INVALID_SOCKET
 #define meSocketIsBad(ss)    ((ss) == meBadSocket)
-
+#define meSocketGetError()   WSAGetLastError()
 #define meCloseSocket(ss)    (closesocket(ss),ss=meBadSocket)
+
 #else
+
 #include <sys/time.h>
 #include <ctype.h>
 #include <sys/socket.h>
@@ -229,6 +234,7 @@ typedef void (*meATEXIT)(void) ;
 #define meSOCKET int
 #define meBadSocket -1
 #define meSocketIsBad(ss)    ((ss) < 0)
+#define meSocketGetError()   (errno)
 #define meCloseSocket(ss)    (close(ss),ss=meBadSocket)
 #endif
 
@@ -1661,15 +1667,7 @@ ffReadFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
     ffremain = 0 ;
     ffread = 0 ;
     
-    if(fname == NULL)
-    {
-#ifdef _WIN32
-        ffrp = GetStdHandle(STD_INPUT_HANDLE) ;
-#else
-        ffrp = stdin ;
-#endif
-    }
-    else
+    if(fname != NULL)
     {
         if(isUrlLink(fname))
         {
@@ -1851,7 +1849,6 @@ ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
 static int
 ffputBuf(void)
 {
-    int written ;
 #if MEOPT_CRYPT
     if(ffcrypt)
         meCrypt(ffbuf,ffremain) ;
@@ -1859,22 +1856,32 @@ ffputBuf(void)
 #if MEOPT_SOCKET
     if(ffwp == ffpInvalidVal)
     {
-        if(((written = (int) send(ffsock,(char *) ffbuf,ffremain,0)) == ffremain) &&
-           (ffurlBp != NULL) && (ffurlFlags & ffURL_SHOW_PROGRESS))
+        if(((int) send(ffsock,(char *) ffbuf,ffremain,0)) != ffremain)
+        {
+            ffwerror = 1 ;
+            return mlwrite(MWABORT,(meUByte *)"[Send failed - %d]",meSocketGetError()) ;
+        }
+        else if((ffurlBp != NULL) && (ffurlFlags & ffURL_SHOW_PROGRESS))
             ffurlConsoleAddText((meUByte *)"#",(meLineGetLength(ffurlBp->dotLine) >= frameCur->width - 2) ? 0x02:0x03) ;
     }
     else
 #endif
 #ifdef _WIN32
     {
-        if(WriteFile(ffwp,ffbuf,ffremain,&written,NULL) == 0)
-            written = -1 ;
+        int written ;
+        if((WriteFile(ffwp,ffbuf,ffremain,&written,NULL) == 0) || (written != ffremain))
+        {
+            ffwerror = 1 ;
+            return mlwrite(MWABORT,(meUByte *)"[Write failed - %d]",meFileGetError());
+        }
     }
 #else
-        written = (int) fwrite(ffbuf,1,ffremain,ffwp) ;
+        if(((int) fwrite(ffbuf,1,ffremain,ffwp)) != ffremain)
+        {
+            ffwerror = 1 ;
+            return mlwrite(MWABORT,(meUByte *)"[Write failed - %d]",meFileGetError());
+        }
 #endif
-    if(written != ffremain)
-        return mlwrite(MWABORT,(meUByte *)"Write I/O error");
     ffremain = 0 ;
     return 0 ;
 }
@@ -1885,6 +1892,7 @@ ffputBuf(void)
 int
 ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
 {
+    ffwerror = 0 ;
     if(bp != NULL)
     {
 #if MEOPT_CRYPT
@@ -2187,7 +2195,10 @@ ffWriteFileWrite(register int len, register meUByte *buff, int eolFlag)
                     break ;
                 if(!isXDigit(cc) || (--len < 0) ||
                    ((dd = *buff++),!isXDigit(dd)))
+                {
+                    ffwerror = 1 ;
                     return mlwrite(MWABORT|MWPAUSE,(meUByte *)"Binary format error");
+                }
                 cc = (hexToNum(cc)<<4) | hexToNum(dd) ;
                 if(ffputc(cc))
                     return meABORT ;
@@ -2200,7 +2211,10 @@ ffWriteFileWrite(register int len, register meUByte *buff, int eolFlag)
                 cc = *buff++ ;
                 if(!isXDigit(cc) || (--len < 0) ||
                    ((dd = *buff++),!isXDigit(dd)))
+                {
+                    ffwerror = 1 ;
                     return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[rbin format error]");
+                }
                 cc = (hexToNum(cc)<<4) | hexToNum(dd) ;
                 if(ffputc(cc))
                     return meABORT ;
@@ -2232,21 +2246,30 @@ ffWriteFileClose(meUByte *fname, meUInt flags, meBuffer *bp)
     int ret ;
     
     /* add a ^Z at the end of the file if needed */
-    if((ffauto && ffputc(26)) || ffputBuf())
-        ret = meABORT ;
+    ret = meABORT ;
+    if(!ffwerror)
+    {
+        if(ffauto)
+            ffputc(26) ;
+        if(ffputBuf() >= 0)
+            ret = meTRUE ;
+    }
+              
 #if MEOPT_SOCKET
-    else if(ffwp == ffpInvalidVal)
-        ret = ffUrlFileClose(fname,flags) ;
+    if(ffwp == ffpInvalidVal)
+    {
+        if(ffUrlFileClose(fname,flags) <= 0)
+            ret = meABORT ;
+    }
+    else
 #endif
 #ifdef _WIN32
-    else if((ffwp != GetStdHandle(STD_OUTPUT_HANDLE)) && (CloseHandle(ffwp) == 0))
-        ret = mlwrite(MWABORT|MWPAUSE,(meUByte *)"Error closing file");
+    if((ffwp != GetStdHandle(STD_OUTPUT_HANDLE)) && (CloseHandle(ffwp) == 0) && !ffwerror)
+        ret = mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Error closing file - %d]",meFileGetError());
 #else
-    else if((ffwp != stdout) && (fclose(ffwp) != 0))
-        ret = mlwrite(MWABORT|MWPAUSE,(meUByte *)"Error closing file");
+    if((ffwp != stdout) && (fclose(ffwp) != 0) && !ffwerror)
+        ret = mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Error closing file - %d]",meFileGetError());
 #endif
-    else
-        ret = meTRUE ;
 #ifdef _UNIX
     meSigRelease() ;
 #endif
@@ -2262,10 +2285,8 @@ ffWriteFileClose(meUByte *fname, meUInt flags, meBuffer *bp)
 int
 ffWriteFile(meUByte *fname, meUInt flags, meBuffer *bp)
 {
-    register int   ss ;
-    
     flags |= meRWFLAG_WRITE ;
-    if((ss=ffWriteFileOpen(fname,flags,bp)) == meTRUE)
+    if(ffWriteFileOpen(fname,flags,bp) > 0)
     {
         register meLine *lp ;
         long noLines ;
@@ -2282,14 +2303,13 @@ ffWriteFile(meUByte *fname, meUInt flags, meBuffer *bp)
             else
 #endif
             {
-                if((ss=ffWriteFileWrite(meLineGetLength(lp),meLineGetText(lp),
-                                        !(lp->flag & meLINE_NOEOL))) <= 0)
+                if(ffWriteFileWrite(meLineGetLength(lp),meLineGetText(lp),
+                                    !(lp->flag & meLINE_NOEOL)) <= 0)
                     break ;
             }
             lp = meLineGetNext(lp) ;
         }
-        ffWriteFileClose(fname,flags,bp) ;
-        if(ss > 0)
+        if(ffWriteFileClose(fname,flags,bp) > 0)
         {
             if(ffnewFile)
                 mlwrite(MWCLEXEC,(meUByte *)"[New file %s, Wrote %d lines]",fname,noLines);
@@ -2332,15 +2352,12 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags)
                 break ;
             if(ffremain < 0)
                 break ;
-            if(ffputBuf() != 0)
-            {
-                rr = meABORT ;
+           if(ffputBuf() < 0)
                 break ;
-        }
         }
         ffReadFileClose(sfname,meRWFLAG_READ) ;
         ffremain = 0 ;
-        ffWriteFileClose(dfname,meRWFLAG_WRITE,NULL) ;
+        rr = ffWriteFileClose(dfname,meRWFLAG_WRITE,NULL) ;
     }
     if((rr > 0) && (dFlags & (meRWFLAG_DELETE|meRWFLAG_MKDIR)))
     {

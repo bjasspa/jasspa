@@ -758,7 +758,7 @@ meDictionarySave(meDictionary *dict, int n)
             dict->fname = meStrdup(fname) ;
         }
     }
-    if((ii=ffWriteFileOpen(dict->fname,meRWFLAG_WRITE,NULL)) > 0)
+    if(ffWriteFileOpen(dict->fname,meRWFLAG_WRITE,NULL) > 0)
     {    
         meUByte header[8] ;
                   
@@ -767,10 +767,9 @@ meDictionarySave(meDictionary *dict, int n)
         meEntrySetAddr(header+2,dict->noWords) ;
         meEntrySetAddr(header+5,dict->tableSize) ;
         
-        if((ii=ffWriteFileWrite(8,header,0)) > 0)
-           ii = ffWriteFileWrite(dict->dUsed,(meUByte *) dict->table,0) ;
-        ffWriteFileClose(dict->fname,meRWFLAG_WRITE,NULL) ;
-        if(ii > 0)
+        if(ffWriteFileWrite(8,header,0) > 0)
+            ffWriteFileWrite(dict->dUsed,(meUByte *) dict->table,0) ;
+        if(ffWriteFileClose(dict->fname,meRWFLAG_WRITE,NULL) > 0)
         {
             dict->flags &= ~DTCHNGD ;
             return meTRUE ;
