@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m2cmd007.2,v 1.2 2000-10-21 17:09:30 jon Exp $
+.Id $Id: m2cmd007.2,v 1.3 2001-01-15 23:48:19 jon Exp $
 .Im MicroEmacs command|shell
 .so me.tni
 .TH add-next-line 2
@@ -9,8 +9,9 @@ add-next-line \- Define the searching behavior of command output
 .Me $a
 .SH SYNOPSIS
 .na
+.I n
 .B add-next-line
-"\fIbuffer-name\fR" "\fIstring\fR"
+"\fIbuffer-name\fR" [ "\fIstring\fR" ]
 .ad
 .SH DESCRIPTION
 .B add-next-line
@@ -36,16 +37,17 @@ buffer, this is "\fB*grep*\fR" for the
 command etc. There is no limit on the number of next-line  formats, nor on the
 number of \fBadd-next-line\fR  strings which are given. While there is no real
 need  to   initialize   each  new  type,  it  is   advised   that  the   first
-\fBadd-next-line\fR is called with an empty string, e.g.:
+\fBadd-next-line\fR is called with a numerical argument of zero, e.g.:
 .Me $emf-scheme
 .CS
-add-next-line "*grep*" ""
+0 add-next-line "*grep*"
 add-next-line "*grep*" "....."
 .CE
 .Me $ehf-scheme
-This tells \*(mE to reinitialize the type by freeing off any strings currently
-stored. This safe guards against duplicate strings being added due to it being
-set up more than once.
+This tells \*(mS to reinitialize the type by freeing off any strings currently
+stored,  note  that  the  "\fIstring\fR"  argument  is not used in this  case.
+Resetting the next-line type safe guards against duplicate strings being added
+to it, a common problem if \*(mS is reinitialized.
 .PP
 Following is a typical output from grep:
 .CS
@@ -91,6 +93,20 @@ In this case the \fBadd-next-line\fR given needs to be:
 add-next-line "*compile*" "%f:%l:"
 .CE
 .Me $ehf-scheme
+If a  -ve  numerical  argument  is  given  to  \fBadd-next-line\fR  the  given
+\&'next-line'  is ignored,  this can be useful  when some  warnings  are to be
+ignored. For example a common  warning from gcc is given when a variable might
+be used uninitialized, given as follows:
+.CS
+bind.c:578: warning: `ssc' might be used uninitialized in this function
+.CE
+These warnings can be ignored using the following:
+.Me $emf-scheme
+.CS
+-1 add-next-line "*compile*" ...
+    ... "%f:%l: warning: `.*' might be used uninitialized in this function"
+.CE
+.Me $ehf-scheme
 Some  versions  of
 .Hr grep  1
 give the file name first and then the lines on the  following  lines.  This is
@@ -106,11 +122,18 @@ Line 46:      printf("hello again\\n") ;
 The configuration to locate the lines is defined as:
 .Me $emf-scheme
 .CS
-add-next-line "*grep*" ""
+0 add-next-line "*grep*"
 add-next-line "*grep*" "File %f:"
 add-next-line "*grep*" "Line %l:"
 .CE 0
 .Me $ehf-scheme
+.SH NOTES
+The  reinitialize  command format of this command changed in January 2001, the
+format changed from:
+.Me $emf-scheme
+.CS
+add-next-line "*grep*" ""
+.CE 0
 .SH "SEE ALSO"
 .na
 .Ht $file-template 5 ,

@@ -5,7 +5,7 @@
  * Synopsis      : Win32 platform support
  * Created By    : Jon Green
  * Created       : 21/12/1996
- * Last Modified : <001016.1433>
+ * Last Modified : <010115.1122>
  *
  * Description
  *
@@ -2271,8 +2271,10 @@ WinLaunchProgram (uint8 *cmd, int flags, uint8 *inFile, uint8 *outFile,
         }
     }
     else
+    {
+        mlwrite(0,"[Failed to run \"%s\"]",cp) ;
         status = FALSE ;
-
+    }
     /* Close the file handles */
     if(meSuInfo.hStdInput != INVALID_HANDLE_VALUE)
         CloseHandle(meSuInfo.hStdInput);

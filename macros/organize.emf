@@ -232,6 +232,9 @@
         !while &not &equ &inc #l4 1 .org.month
             set-variable #l5 &add #l5 &lget .org.dinm #l4 
         !done
+        !if &and #l0 &gre .org.month 2
+            set-variable #l5 &add #l5 1
+        !endif
         !if &or &les #l5 #l7 &gre #l5 &add #l7 7
             set-variable .org.day 0
         !endif

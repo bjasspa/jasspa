@@ -8,7 +8,7 @@
 set-variable %ipipe-term "TERM=vt100"
 ;
 ; Compile stuff
-add-next-line "*compile*" ""
+0 add-next-line "*compile*"
 add-next-line "*compile*" "%f:%l:"
 ;
 ; Diff stuff; LINUX uses GNU diff so set this up for all LINUX

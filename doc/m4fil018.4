@@ -1,12 +1,12 @@
 .\" -*- nroff -*-
-.Id $Id: m4fil018.4,v 1.2 2000-10-21 17:10:39 jon Exp $
+.Id $Id: m4fil018.4,v 1.3 2001-01-15 23:48:20 jon Exp $
 .Im MicroEmacs macro;variable
 .so me.tni
 .TH "Variables" 4
 .XI "Variables" - "User defined macro variables"
 .XI "RegisterVariables" - "Register variables"
-.XI "BufferVariables" - "Buffer variables"
 .XI "CmdVariables" - "Command variables"
+.XI "BufferVariables" - "Buffer variables"
 .Me "!24 #g0..#g9 - Global register variables"
 .Me "!24 #p0..#p9 - Parent register variables"
 .Me "!24 #l0..#l9 - Local register variables"
@@ -18,9 +18,10 @@ Variables \- Macro variables
 \fB#\fR\fItn\fR
 \fB$\fR\fIvariableName\fR
 \fB%\fR\fIvariableName\fR
-\fB:\fR\fIvariableName\fR
 \fB.\fR\fIvariableName\fR
 \fB.\fR\fIcommandName\fR\fB.\fR\fIvariableName\fR
+\fB:\fR\fIvariableName\fR
+\fB:\fR\fIbufferName\fR\fB:\fR\fIvariableName\fR
 .fi
 .ad
 .SH DESCRIPTION
@@ -33,9 +34,9 @@ argument is required. The variable space comprises:-
 .br
 \fB%\fR \- Global Variable
 .br
-\fB:\fR \- Buffer Variable
-.br
 \fB.\fR \- Command Variable
+.br
+\fB:\fR \- Buffer Variable
 .br
 .LP
 All  variables  hold  string  information,  the  interpretation  of the string
@@ -77,14 +78,12 @@ been  documented,  they can be set and  described  but cannot be unset. If the
 user  attempts  to  set or  describe  a  non-existent  \*(mS  system  variable
 (e.g.  \fB$PATH\fR) the system  environment is used instead, allowing the user
 to query and alter the system environment.  
-.SS "Global Buffer and Command Variables"
-The  Global  and Buffer  variables  are  denoted by the  \fB%\fR  and  \fB:\fR
-characters    respectively,   followed   by   the   name   of   the   variable
-\fIvariableName\fR.  The  \fIvariableName\fR may be any ASCII character string
-up to 127  characters in length, all  characters of the name are  significant.
-Shorter names are preferred as this speeds up execution. Global Variables exist
-in a global context which all macros have access to. Buffer Variables exist in
-a local context to a buffer and are not visible outside of the buffer.
+.SS "Global, Command and Buffer Variables"
+The Global variables are denoted by an initial \fB%\fR  character  followed by
+the name of the variable \fIvariableName\fR. The \fIvariableName\fR may be any
+ASCII  character  string up to 127 characters in length, all characters of the
+name are significant. Shorter names are preferred as this speeds up execution.
+Global Variables exist in a global context which all macros have access to.
 .PP
 Command variables exist within the scope of a command, they are denoted by the
 period  (\fB.\fR)  character. They can be accessed by one of two forms, either
@@ -137,6 +136,31 @@ The variables  only exist as a file or buffer is being  executed, they are not
 accessible  by  another  command  once the  command  or buffer  execution  has
 finished.
 .PP
+Buffer  variables  are similar to Command  variable in function and  behaviour
+except that their scope is of a buffer and are denoted by the colon  (\fB:\fR)
+character. Access can be in one of two forms, either \fB:\fR\fIvariableName\fR
+where   the   scope   is    assumed    to   be   the    current    buffer   or
+\fB:\fR\fIbufferName\fR\fB:\fR\fIvariableName\fR,    where    the   scope   is
+explicitly given allowing access to any buffer variable, e.g.
+.Me $emf-scheme
+.CS
+find-buffer "foo"
+set-variable :foo "Hello world"
+find-buffer "bar"
+set-variable :bar "Hello world"
+1000 ml-write &cat ":foo     " :foo
+1000 ml-write &cat ":foo:foo " :foo:foo
+1000 ml-write &cat ":bar     " :bar
+1000 ml-write &cat ":bar:bar " :bar:bar
+.CE
+.Me $ehf-scheme
+When the above is executed the following messages may be observed:-
+.CS
+:foo     ERROR
+:foo:foo Hello World
+:bar     Hello World
+:bar:bar Hello World
+.CE
 Global, Buffer and Command  variables are automatically  defined when they are
 used. A variable is assigned with
 .Ht set-variable 2

@@ -7,7 +7,7 @@
 ;
 ; Compile stuff
 ;
-add-next-line "*compile*" ""
+0 add-next-line "*compile*"
 add-next-line "*compile*" "cc: \"\\.\\./%f\", line %l"
 add-next-line "*compile*" "cpp: \"\\.\\./%f\", line %l"
 add-next-line "*compile*" "cc: \"%f\", line %l"

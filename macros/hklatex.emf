@@ -50,7 +50,7 @@ set-variable #l1 "efhijmnopstuwx"
     set-variable %latex-compile &cond &seq %latex-compile "ERROR" "latex --c-style-errors --halt-on-error " %latex-compile
     
     ; Add hooks for the latex compiler errors
-    add-next-line "*latex-compile*" ""
+    0 add-next-line "*latex-compile*"
     add-next-line "*latex-compile*" "%f:%l:"
 !else
     set-variable %latex-compile &cond &seq %latex-compile "ERROR" "latex -interaction=nonstopmode" %latex-compile

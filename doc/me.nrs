@@ -29,18 +29,18 @@
 .\"
 .\"***************************************************************************
 .\"
-.Id $Id: me.nrs,v 1.2 2000-10-21 17:11:13 jon Exp $
+.Id $Id: me.nrs,v 1.3 2001-01-15 23:48:22 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
-.TH me - - - "MicroEmacs '00"
+.TH me - - - "MicroEmacs '01"
 .XI me - -
 .XI home - -
 .XI MicroEmacs - -
 .\" Next section (until .Ss) is for the osd-help contents page
 .Me "!   Contents"
 .Me "| home"
-.Me "MicroEmacs '00"
+.Me "MicroEmacs '01"
 .Me "|"
 .Me " "
 .Me "| osd-help(3)"
@@ -115,7 +115,7 @@
 .Me "    Registry"
 .Me "| Command Line Filters"
 .Me "    Command Line Filters"
-.Me "| MicroEmacs '00 - Games"
+.Me "| MicroEmacs '01 - Games"
 .Me "    Games"
 .Me "|"
 .Me " "
@@ -147,7 +147,7 @@
 .Me "    Compatibility"
 .Me "| Interfacing(2)"
 .Me "    Interfacing to external components"
-.Me "| MicroEmacs '00 - Supported File Types"
+.Me "| MicroEmacs '01 - Supported File Types"
 .Me "    Supported File Types"
 .Me "| Client-Server(2)"
 .Me "    Client-Server Interface"
@@ -1103,7 +1103,7 @@ current author.
 .PP
 The following notices apply after 1988.
 .IP
-.B "Copyright (C) 1988 - 2000, JASSPA"
+.B "Copyright (C) 1988 - 2001, JASSPA"
 .br
 \*(mE can be copied and distributed  freely for any  non-commercial  purposes.
 Commercial   users  may  use  \*(mE  inhouse.   Shareware   distributors   may
