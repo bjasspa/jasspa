@@ -21,7 +21,7 @@
 #  Module        : Package File.
 #  Created By    : Jon Green
 #  Created       : Sun Aug 17 12:58:23 2003
-#  Last Modified : <040214.1448>
+#  Last Modified : <040214.1733>
 #  Description   : Produces RedHat RPM package for JASSPA MicroEmacs
 
 %define name            jasspa-me
@@ -73,6 +73,6 @@ rm -rf %{buildroot}
 %defattr(-,root,root)
 %{_bindir}/me
 %{_datadir}/jasspa
-# %dir /usr/share/doc/microemacs-jasspa
-# %doc /usr/share/doc/microemacs-jasspa/readme.txt
+# %dir /usr/share/doc/jasspa
+# %doc /usr/share/doc/jasspa/readme.txt
 %changelog
