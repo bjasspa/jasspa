@@ -121,7 +121,7 @@ set-variable .fhook-reg.command-desc  "|\HToggle Tree Visibility|\HSet Value of 
     set-variable #l3 $window-y-scroll
     ; get the complete node name into $result
     &sub #l2 1 mark-registry "" "?"
-    delete-registry $result
+    delete-registry $result @mna
     list-registry
     set-variable $window-line #l2
     set-variable $window-y-scroll #l3
