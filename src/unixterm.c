@@ -578,7 +578,7 @@ static void
 TCAPgetWinSize(void)
 {
 #ifdef TIOCGWINSZ
-    /* BSD-style.  */
+    /* BSD-style and laterly SunOS.  */
     struct winsize size;
     
     if((ioctl(meStdin,TIOCGWINSZ,&size) == -1) ||
@@ -596,7 +596,7 @@ TCAPgetWinSize(void)
 #endif
     {
         int  ii ;
-
+        
         /* Get the number of columns on the screen */
         if((ii=tgetnum(tcaptab[TCAPcols].capKey)) != -1)
             TTnewWid = ii ;
@@ -614,6 +614,7 @@ TCAPgetWinSize(void)
 	    return ;
 	}
     }
+    
     /* If there is a new line glitch and we have automargins then it is
      * dangerous for us to use the last line as we cause a scroll that we
      * cannot easily correct. If this is the case then reduce the number of
@@ -632,7 +633,7 @@ sigSize(SIGNAL_PROTOTYPE)
     signal (SIGWINCH, sigSize) ;
 #endif
     TCAPgetWinSize() ;
-
+    
     if((TTnewWid != frameCur->width) || (TTnewHig != frameCur->depth+1))
         alarmState |= meALARM_WINSIZE ;
 }
@@ -1388,7 +1389,7 @@ meXEventHandler(void)
             ss = event.xkey.state ;
             XLookupString(&event.xkey,keyStr,20,&keySym,NULL);
             /* Map Mod2 which is ALT-GR onto A-C */
-#if (defined _SUNOS_X86)
+#if (defined _SUNOS)
             /* SunOS mapped to modifier key 2 */
             if (ss & 0x10)
                 ss = (ss & ~0x10) | 0xc;
@@ -3177,8 +3178,8 @@ TTahead(void)
         
         if(alarmState & meALARM_WINSIZE)
         {
-            frameChangeWidth(meTRUE,frameCur->width-TTnewWid); /* Change width */
-            frameChangeDepth(meTRUE,frameCur->depth+1-TTnewHig); /* Change depth */
+            frameChangeWidth(meTRUE,TTnewWid-frameCur->width); /* Change width */
+            frameChangeDepth(meTRUE,TTnewHig-(frameCur->depth+1)); /* Change depth */
 	    alarmState &= ~meALARM_WINSIZE ;
         }
         if(TTnoKeys)
