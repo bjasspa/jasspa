@@ -49,7 +49,7 @@
 #include <sgtty.h>                      /* For stty/gtty functions */
 #endif /* _BSD */
 
-#ifdef _SUNOS_X86
+#ifdef _SUNOS
 #include <stropts.h>
 #endif
 
@@ -1190,7 +1190,7 @@ ipipeSetSize(meWindow *wp, meBuffer *bp)
 
             size.ws_col = ipipe->noCols ;
             size.ws_row = ipipe->noRows ;
-            size.ws_xpixel = size.ws_xpixel = 0 ;
+            size.ws_xpixel = size.ws_ypixel = 0 ;
 #ifdef TIOCSWINSZ
             ioctl(ipipe->outWfd,TIOCSWINSZ,&size) ;
 #else
@@ -1223,10 +1223,10 @@ ipipeSetSize(meWindow *wp, meBuffer *bp)
 static int
 allocatePty(meUByte *ptyName)
 {
-    struct stat stb ;
     int    fd ;
 #ifdef _IRIX
     {
+        struct stat stb ;
 /*        struct sigaction ocstat, cstat;*/
         char * name;
 /*        sigemptyset(&cstat.sa_mask);*/
@@ -1245,6 +1245,19 @@ allocatePty(meUByte *ptyName)
         }
     }
 #else
+#ifdef _SUNOS
+    {
+        /* Sun use their own proporiety PTY system. Refer to the AnswerBook
+         * documentation for "Pseudo-TTY Drivers" - ptm(7) and pts(7) */
+        fd = open("/dev/ptmx", O_RDWR); /* open master */
+        grantpt(fd);                    /* change permission of slave */
+        unlockpt(fd);                   /* unlock slave */
+        meStrcpy (ptyName,ptsname(fd)); /* Slave name */        
+        return fd;
+    }
+#else
+    
+    struct stat stb ;
     register int c, ii ;
 
     /* Some systems name their pseudoterminals so that there are gaps in
@@ -1328,7 +1341,8 @@ allocatePty(meUByte *ptyName)
             }
         }
     }
-#endif
+#endif /* _SUNOS */
+#endif /* _IRIX */
     return -1;
 }
 
@@ -1417,7 +1431,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
     if((ptyFp=allocatePty(line)) >= 0)
     {
         fds[0] = outFds[1] = ptyFp ;
-#if ((defined _LINUX) || (defined _FREEBSD) || (defined _SUNOS_X86) || (defined _BSD))
+#if ((defined _LINUX) || (defined _FREEBSD) || (defined _SUNOS) || (defined _BSD))
         /* On the BSD systems we open the tty prior to the fork. If this is a
          * later POSIX platform then we will expect O_NOCTTY to exist and we
          * open the tty with O_NOCTTY. Do not let this terminal become our
@@ -1566,7 +1580,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
 #endif /* _BSD_SIGNALS */
 #endif /* _POSIX_SIGNALS  */
 
-#if !((defined _LINUX) || (defined _FREEBSD) || (defined _SUNOS_X86) || (defined _BSD))
+#if !((defined _LINUX) || (defined _FREEBSD) || (defined _SUNOS) || (defined _BSD))
         /* Some systems the tty is opened late as here */
         if(ptyFp >= 0)
         {
@@ -1576,15 +1590,15 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
             fds[1] = outFds[0] = open((const char *)line,O_RDWR,0) ;
 #endif /* O_NOCTTY */
         }
-#endif /* !_LINUX/_FREEBSD/_SUNOS_X86/_BSD */
+#endif /* !_LINUX/_FREEBSD/_SUNOS/_BSD */
 
         /* On solaris (this is POSIX I believe) then push the line emulation
          * modes */
-#if (defined(_SUNOS_X86))
+#if (defined(_SUNOS))
         if(ptyFp >= 0)
         {
-#if 0
             /* Push the hardware emulation mode */
+#if 1
             /* JON: This push does work, however it does cause us to loose
              * terminal control with respect to the SIGWINCH calls hence we do
              * not recieve an indication when the window has been re-sized.
@@ -1594,7 +1608,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
             /* Push the line discipline module */
             ioctl (fds[1], I_PUSH, "ldterm");
         }
-#endif /* _SUNOS_X86 */
+#endif /* _SUNOS */
 
         /* Close the existing stdin/out/err */
         close (0);
