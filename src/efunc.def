@@ -328,6 +328,7 @@ DEFFUNC ("scroll-next-window-up",	0x42, windowScrollNextUp,CK_SCLPRV, &__cmdArra
 DEFFUNC ("scroll-right",           	0x48, windowScrollRight,CK_MOVRWND, &__cmdArray[CK_MOVRWND+1], 0)
 DEFFUNC ("scroll-up",			0x48, windowScrollUp,	CK_MOVUWND, &__cmdArray[CK_MOVUWND+1], &__cmdArray[CK_GOLIN])
 DEFFUNC ("search-backward",		0x00, searchBack,	CK_BAKSRCH, &__cmdArray[CK_BAKSRCH+1], &__cmdArray[CK_UBNDKEY])
+DEFFUNC ("search-buffer",		0x00, searchBuffer,	CK_SRCHBUF, &__cmdArray[CK_SRCHBUF+1], 0)
 DEFFUNC ("search-forward",		0x00, searchForw,	CK_FORSRCH, &__cmdArray[CK_FORSRCH+1], 0)
 DEFFUNC	("set-alpha-mark",		0x42, setAlphaMark,	CK_SETAMRK, &__cmdArray[CK_SETAMRK+1], 0)
 #if MEOPT_CMDHASH || MEOPT_EXTENDED

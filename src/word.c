@@ -281,8 +281,8 @@ forwDelWord(int f, int n)
     
     if(n == 0)
         return meTRUE ;
-    if((f=(n < 0)))
-        n = -n ;
+    if(n < 0)
+        return backDelWord(f,-n) ;
     
     if(bufferSetEdit() <= 0)               /* Check we can change the buffer */
         return meABORT ;
@@ -323,12 +323,12 @@ backDelWord(int f, int n)
     
     if(n == 0)
         return meTRUE ;
-    if((f=(n < 0)))
-        n = -n ;
+    if(n < 0)
+        return forwDelWord(f,-n) ;
     
     if(bufferSetEdit() <= 0)               /* Check we can change the buffer */
         return meABORT ;
-    if (meWindowBackwardChar(frameCur->windowCur, 1) == meFALSE)
+    if(meWindowBackwardChar(frameCur->windowCur, 1) == meFALSE)
         return (meFALSE);
     size = 0;
     while (n--)

@@ -42,7 +42,7 @@
 
 #if MEOPT_REGISTRY
 
-static meUByte histVerId[] = "6" ;      /* History version */
+static meUByte histVerId[] = "7" ;      /* History version */
 meUByte *defHistFile=NULL ;
 
 /* Constants */

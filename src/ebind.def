@@ -40,7 +40,7 @@
 	DEFBIND (('G'-'@'),		0, CK_ABTCMD)
 	DEFBIND (('H'-'@'),		0x80000000+3, CK_PREFIX)
 	DEFBIND (('I'-'@'),		0, CK_INSTAB)
-	DEFBIND (('K'-'@'),		0, CK_KILEOL)
+	DEFBIND (('K'-'@'),		0x80000000+1, CK_KILEOL)
 	DEFBIND (('L'-'@'),		0, CK_RECENT)
 	DEFBIND (('M'-'@'),		0, CK_NEWLIN)
 	DEFBIND (('N'-'@'),		0, CK_FORLIN)

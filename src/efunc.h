@@ -203,7 +203,7 @@ meCommand  *cmdHash[cmdHashSize] =
     &__cmdArray[CK_REDHIST],    &__cmdArray[CK_ADDRULE],    NULL,                       NULL,                       &__cmdArray[CK_CTOMOUSE],
     &__cmdArray[CK_SPWCLI],     NULL,                       NULL,                       NULL,                       &__cmdArray[CK_DIRTREE],
     &__cmdArray[CK_PREFIX],     NULL,                       NULL,                       NULL,                       NULL,
-    NULL,                       &__cmdArray[CK_SCLNXT],     NULL,                       NULL,                       NULL,
+    NULL,                       &__cmdArray[CK_SCLNXT],     NULL,                       NULL,                       &__cmdArray[CK_SRCHBUF],
     NULL,                       &__cmdArray[CK_SHOWSEL],    NULL,                       NULL,                       NULL,
     &__cmdArray[CK_HUNBAK],     &__cmdArray[CK_SWPMRK],     NULL,                       NULL,                       NULL,
     NULL,                       &__cmdArray[CK_IPIPKLL],    &__cmdArray[CK_CMPBUF],     NULL,                       &__cmdArray[CK_PPPWND],

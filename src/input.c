@@ -1452,15 +1452,16 @@ input_expand:
         case CK_KILEOL:    /* ^K : Kill to end of line */
             if(ipos < ilen)
             {
+                /* ZZZZ arg 0 */
                 if(frameCur->mlStatus & MLSTATUS_NINPUT)
                 {
                     ii = ilen ;
                     while((ipos < ilen) && (buf[ipos] != meCHAR_NL))
                         cdel(buf, ipos, &ilen);
-                    if((ii==ilen) ||
-                       (!meModeTest(globMode,MDLINE) &&         /* if line kill mode    */
-                        (ipos < ilen) &&                        /* some chars left      */
-                        (!ipos || (buf[ipos-1] == meCHAR_NL))))  /* whole line           */
+                    /* kill \n as if we were at the end of the line or arg
+                     * given (as per kill-line) */
+                    if(((ii == ilen) || ff) && (ipos < ilen) &&
+                       (buf[ipos] == meCHAR_NL)) 
                         cdel(buf, ipos, &ilen);
                 }
                 else

@@ -366,10 +366,6 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                     case CK_FORLIN:
                         thisflag = meCFCPCN;
                         break ;
-                    case CK_DELBAK:
-                    case CK_DELFOR:
-                        if(!meModeTest(frameCur->bufferCur->mode,MDLETTR))
-                            break ;
                     case CK_DELWBAK:
                     case CK_CPYREG:
                     case CK_DELFWRD:
