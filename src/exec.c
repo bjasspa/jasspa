@@ -870,7 +870,6 @@ loop_round2:
                 {
 loop_round:
                     /* and get the keystroke */
-                    dd ;
                     cc = meGetKeyFromUser(FALSE,0,meGETKEY_SILENT|meGETKEY_SINGLE) ;
                     switch(cc)
                     {

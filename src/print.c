@@ -256,7 +256,7 @@ printGetParams (void)
 #endif
     mlwrite (0,(uint8 *)"[Configuring printer ...]");
 	
-    if(dofile("print",0,1) != TRUE)
+    if(dofile((uint8 *)"print",0,1) != TRUE)
         return ABORT ;
     
     /* Get the registry directory & the name of the driver out of the registry */

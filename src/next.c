@@ -186,7 +186,7 @@ getNextLine(int f,int n)
                     uint8 fname[FILEBUF], *value ;
                     meVARIABLE *var ;
                     
-                    ii = strlen(nextFile) ;
+                    ii = meStrlen(nextFile) ;
                     if((nextFile[0] != '*') || (nextFile[ii-1] != '*'))
                     {
                         if(bp->b_fname != NULL)
@@ -212,7 +212,7 @@ getNextLine(int f,int n)
                 else if((nextFile = getUsrLclCmdVar((uint8 *)"next-file",&(bp->varList))) == errorm)
                     return mlwrite(MWABORT,(uint8 *)"[No File name]") ;
                 else
-                    ii = strlen(nextFile) ;
+                    ii = meStrlen(nextFile) ;
                 if(wpopup(NULL,WPOP_MKCURR) == NULL)
                     return FALSE ;
                 if((nextFile[0] == '*') && (nextFile[ii-1] == '*'))

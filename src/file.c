@@ -349,7 +349,7 @@ set_dirs(void)
     {
         homedir = meStrdup(s1) ;
         fileNameConvertDirChar(homedir) ;
-        ll = strlen(homedir) - 1 ;
+        ll = meStrlen(homedir) - 1 ;
         if(homedir[ll] == DIR_CHAR)
             homedir[ll] = '\0' ;
     }
