@@ -15,8 +15,8 @@ define-macro fhook-asp
 
 ; buffer-init variables
 set-variable .fhook-asp.name "ASP"
-set-variable .fhook-asp.setup &reg "/history/fhook/asp" "cdghinopsx"
-set-variable .fhook-asp.setup-mask "acdeghikmnopstux"
+set-variable .fhook-asp.setup &reg "/history/fhook/asp" "cdfghinopsx"
+set-variable .fhook-asp.setup-mask "acdefghikmnopstux"
 set-variable .fhook-asp.command-flag  "|"
 set-variable .fhook-asp.command-name  "|"
 set-variable .fhook-asp.command-nbind "|"
@@ -33,6 +33,9 @@ set-variable .fhook-asp.indent-width 2
     hilight .hilight.asptag 4 "=\\{\"[^\"\n<]*<%" "%>[^\"]*\"" ""  .scheme.string
     !if &exist .hilight.vbscript
         hilight .hilight.asp      0x80 "<%" .hilight.vbscript .scheme.prepro
+        hilight .hilight.asp      0xa0 "End If$" .hilight.vbscript .scheme.keyword
+        hilight .hilight.asp      0xa0 "End Function$" .hilight.vbscript .scheme.keyword
+        hilight .hilight.asp      0xa0 "End Sub$" .hilight.vbscript .scheme.keyword
         hilight .hilight.asptag   0x80 "<%" .hilight.vbscript .scheme.prepro
         hilight .hilight.vbscript 0x80 "%>" 0 .scheme.prepro
     !endif
@@ -41,6 +44,9 @@ set-variable .fhook-asp.indent-width 2
     !if &exist .indent.vbscript
         indent .hilight.asptag t "<%" .indent.vbscript
         indent .hilight.asptag t "%>" .hilight.asp
+        indent .hilight.asptag t "[\t ]*End If$" .hilight.asp
+        indent .hilight.asptag t "[\t ]*End Function$" .hilight.asp
+        indent .hilight.asptag t "[\t ]*End Sub$" .hilight.asp
         
         indent .hilight.asp x "^<%" 0 .indent.vbscript
         indent .hilight.asp x ".<%" t .indent.vbscript

@@ -26,7 +26,8 @@ set-variable .fhook-phps.comment "|//||/|// | //|r|"
 ; Setup collapse
 set-variable .fhook-phps.collapse-open  "^function[ \t]"
 set-variable .fhook-phps.collapse-close "^}"
-set-variable .fhook-phps.collapse-mopen "1"
+set-variable .fhook-phps.collapse-mclose "1"
+set-variable .fhook-phps.collapse-mnext "-1"
 
 ; setup item-list
 set-variable .fhook-phps.item-list-s1 "^[ \t]*function[ \t]+\\(\\w[1-9A-Za-z_']*\\)"
