@@ -430,7 +430,19 @@ meSetupPathsAndUser(char *progname)
         mlwrite(MWCURSOR|MWABORT|MWWAIT,(meUByte *)"Failed to get cwd\n") ;
     
     /* setup the $progname make it an absolute path. */
-    if(executableLookup((meUByte *) progname,evalResult))
+    if((ii = executableLookup((meUByte *) progname,evalResult)) == 0)
+    {
+        /* Some shells, specifically zsh, will execute from the current
+         * directory and pass through the argv[0] parameter with no pathname
+         * component. Attempt to fix this condition. Note that we cannot add
+         * this to executableLookup() since we may not search the current
+         * directory unless it is specifically on the $PATH hence the
+         * additional test here. */
+        if (meStrrchr(progname,DIR_CHAR) == NULL)
+            ii = fileLookup((meUByte *)progname,NULL,
+                            meFL_CHECKDOT|meFL_EXEC,evalResult);
+    }
+    if (ii != 0)
         meProgName = meStrdup(evalResult) ;
     else
     {
@@ -441,7 +453,6 @@ meSetupPathsAndUser(char *progname)
         meProgName = (meUByte *)progname ;
 #endif
     }
-    
     if((meUserName == NULL) &&
        ((ss = meGetenv ("MENAME")) != NULL) && (ss[0] != '\0'))
         meUserName = meStrdup(ss) ;
@@ -544,14 +555,7 @@ meSetupPathsAndUser(char *progname)
             buff[ii] = '\0' ;
             ll = mePathAddSearchPath(ll,evalResult,buff,&gotUserPath) ;
         }
-        else if (curdir != NULL)
-        {
-            /* We get here if there is no executable path this occurs when the
-             * user is running a local copy of ME. Use the CWD instead as this
-             * is where the executable is. We need this when running straight
-             * off CDROM */
-            ll = mePathAddSearchPath(ll,evalResult,curdir,&gotUserPath) ;
-        }
+        
         if(!gotUserPath && (homedir != NULL))
         {
             /* We have not found a user path so set ~/ as the user-path
