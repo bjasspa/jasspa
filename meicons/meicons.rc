@@ -1,0 +1,191 @@
+/*********************************-*- cmode -*-*****************************
+ *
+ *			Copyright 1997 Jon Green.
+ *			    All Rights Reserved
+ *
+ *
+ *  System        : MicroEmacs
+ *  Module        : MicroEmacs ICON File.
+ *  Object Name   : $RCSfile: meicons.rc,v $
+ *  Revision      : $Revision: 1.1 $
+ *  Date          : $Date: 2001-05-29 14:32:27 $
+ *  Author        : $Author: jon $
+ *  Created       : 22nd February 1997
+ *  Last Modified : <110898.1940>
+ *
+ *  Description	  : This is a simple file used as a respository for
+ *                  MicroEMACS Icons. It does nothing.
+ * 
+ *  Notes         : Icons were created in Microsoft Developer environment
+ *                  Version 2.0. Icons have generally be created using the 
+ *                  "empty.ico" file as a template. Text added as:-
+ * 
+ *                     32x32 : Times New Roman. 12pt Bold
+ *                     16x16 : Terminal          6pt Regular
+ * 
+ *                  The 'c', 'h' and 'e' icons (which are a bit better than
+ *                  most of the others) were created in Misrosft Word Art
+ *                  using School Book font and imported into MS paint, shrunk
+ *                  and finally imported into the deveoper environment to
+ *                  create the icon. Not recommended.
+ * 
+ *  History
+ *
+ *  $Log: not supported by cvs2svn $
+ *
+ ****************************************************************************/
+//
+//Microsoft Visual C++ generated resource script.
+//
+#include "meicons.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/*****************************************************************************
+ *****************************************************************************
+ * 
+ * !!!!! DO NOT UNDER ANY CIRCUMSTANCES CHANGE THE ORDER OF THE ICONS !!!!!
+ * !!!!!           OR REMOVE ANY OF THE EXISTING ICONS                !!!!!
+ * 
+ * Add new icons at the end, by moving to the next icon number. Under Windows
+ * the icons seem be registered by their location number in the executable.
+ * (that is supposition on my part - I am not a Window's expert). So you can
+ * have up to 999 icons in here before we introduce a new digit. (It took me
+ * 4 days to get the final "Me" icon - and that is not very good - so if you
+ * get to 999 I will be amazed (amaze me !)
+ *
+ *****************************************************************************
+ *****************************************************************************/
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icons
+//
+// Main Icons
+// File specific icons
+IDI_ICON_001 ICON PRELOAD DISCARDABLE "me32.ico"      // 069 Original Icon
+IDI_ICON_002 ICON DISCARDABLE         "me32.ico"      // 000 Original Icon
+IDI_ICON_003 ICON DISCARDABLE         "c.ico"         // 001 C language
+IDI_ICON_004 ICON DISCARDABLE         "cpp.ico"       // 002 C++ language
+IDI_ICON_005 ICON DISCARDABLE         "h.ico"         // 003 H file
+IDI_ICON_006 ICON DISCARDABLE         "def.ico"       // 004 DEF file
+IDI_ICON_007 ICON DISCARDABLE         "emc.ico"       // 005 EMC file
+IDI_ICON_008 ICON DISCARDABLE         "empty.ico"     // 006 Blank Triangular frame
+IDI_ICON_009 ICON DISCARDABLE         "e_grey.ico"    // 007 'e' Grey 
+IDI_ICON_010 ICON DISCARDABLE         "e_magent.ico"  // 008 'e' Magenta 
+IDI_ICON_011 ICON DISCARDABLE         "e_blue.ico"    // 009 'e' Blue 
+IDI_ICON_012 ICON DISCARDABLE         "e_black.ico"   // 010 'e' Black 
+IDI_ICON_013 ICON DISCARDABLE         "e_cyan.ico"    // 011 'e' Cyan 
+IDI_ICON_014 ICON DISCARDABLE         "e_green.ico"   // 012 'e' Green 
+IDI_ICON_015 ICON DISCARDABLE         "e_red.ico"     // 013 'e' Red 
+IDI_ICON_016 ICON DISCARDABLE         "e_yellow.ico"  // 014 'e' Yellow 
+//
+IDI_ICON_017 ICON DISCARDABLE         "ehf.ico"       // 015 EHF (Emacs Help file)
+IDI_ICON_018 ICON DISCARDABLE         "make.ico"      // 016 Makefile file
+IDI_ICON_019 ICON DISCARDABLE         "doc.ico"       // 017 doc file
+IDI_ICON_020 ICON DISCARDABLE         "txt.ico"       // 018 txt Text file
+IDI_ICON_021 ICON DISCARDABLE         "nroff0.ico"    // 019 Nroff extension 0
+IDI_ICON_022 ICON DISCARDABLE         "nroff1.ico"    // 020 Nroff extension 1
+IDI_ICON_023 ICON DISCARDABLE         "nroff2.ico"    // 021 Nroff extension 2
+IDI_ICON_024 ICON DISCARDABLE         "nroff3.ico"    // 022 Nroff extension 3
+IDI_ICON_025 ICON DISCARDABLE         "nroff4.ico"    // 023 Nroff extension 4
+IDI_ICON_026 ICON DISCARDABLE         "nroff5.ico"    // 024 Nroff extension 5
+IDI_ICON_027 ICON DISCARDABLE         "nroff6.ico"    // 025 Nroff extension 6
+IDI_ICON_028 ICON DISCARDABLE         "nroff7.ico"    // 026 Nroff extension 7
+IDI_ICON_029 ICON DISCARDABLE         "nroff8.ico"    // 027 Nroff extension 8
+IDI_ICON_030 ICON DISCARDABLE         "nroff9.ico"    // 028 Nroff extension 9
+IDI_ICON_031 ICON DISCARDABLE         "nroffso.ico"   // 029 Nroff extension .so
+IDI_ICON_032 ICON DISCARDABLE         "nrofftni.ico"  // 030 Nroff extension .tni
+IDI_ICON_033 ICON DISCARDABLE         "nroffnrs.ico"  // 031 Nroff extension .nrs
+IDI_ICON_034 ICON DISCARDABLE         "man.ico"       // 032 man UNIX manual file 
+//
+IDI_ICON_035 ICON DISCARDABLE         "erblue.ico"    // 033 'e' Rev Blue 
+IDI_ICON_036 ICON DISCARDABLE         "erblue2.ico"   // 034 'e' Rev Dark Blue 
+IDI_ICON_037 ICON DISCARDABLE         "erbrown.ico"   // 035 'e' Rev Brown 
+IDI_ICON_038 ICON DISCARDABLE         "ercyan.ico"    // 036 'e' Rev Cyan 
+IDI_ICON_039 ICON DISCARDABLE         "ergreen.ico"   // 037 'e' Rev Green 
+IDI_ICON_040 ICON DISCARDABLE         "ergreen2.ico"  // 038 'e' Rev Dark Green 
+IDI_ICON_041 ICON DISCARDABLE         "eraqua.ico"    // 039 'e' Rev Aqua Green 
+IDI_ICON_042 ICON DISCARDABLE         "erblack.ico"   // 040 'e' Rev Black 
+IDI_ICON_043 ICON DISCARDABLE         "ergrey.ico"    // 041 'e' Rev Frame colour 
+IDI_ICON_044 ICON DISCARDABLE         "ermagent.ico"  // 042 'e' Rev Magenta 
+IDI_ICON_045 ICON DISCARDABLE         "erred.ico"     // 043 'e' Rev Red 
+IDI_ICON_046 ICON DISCARDABLE         "eryellow.ico"  // 044 'e' Rev Yellow 
+IDI_ICON_047 ICON DISCARDABLE         "abr.ico"       // 045 ABR abreviation file
+IDI_ICON_048 ICON DISCARDABLE         "dic.ico"       // 046 DIC dictionary file
+IDI_ICON_049 ICON DISCARDABLE         "hash.ico"      // 047 Hash (backup) file
+IDI_ICON_050 ICON DISCARDABLE         "twiddle.ico"   // 048 Twiddle (backup) file
+IDI_ICON_051 ICON DISCARDABLE         "y.ico"         // 049 'y' (yacc) file
+IDI_ICON_052 ICON DISCARDABLE         "l.ico"         // 050 'l' (lex) file
+IDI_ICON_053 ICON DISCARDABLE         "p.ico"         // 051 'p' (pascal ??) file
+IDI_ICON_054 ICON DISCARDABLE         "etf.ico"       // 052 ETF template file 
+IDI_ICON_055 ICON DISCARDABLE         "eaf.ico"       // 053 EAF abbreviation file 
+IDI_ICON_056 ICON DISCARDABLE         "edf.ico"       // 054 EDF dictionary file 
+IDI_ICON_057 ICON DISCARDABLE         "esf.ico"       // 055 ESF session file 
+IDI_ICON_058 ICON DISCARDABLE         "emf.ico"       // 056 EMF macro file 
+IDI_ICON_059 ICON DISCARDABLE         "awk.ico"       // 057 AWK file 
+IDI_ICON_060 ICON DISCARDABLE         "i.ico"         // 058 i file 
+IDI_ICON_061 ICON DISCARDABLE         "rc.ico"        // 059 Microsoft RC file 
+IDI_ICON_062 ICON DISCARDABLE         "rul.ico"       // 060 Install Shield Rule file 
+IDI_ICON_063 ICON DISCARDABLE         "log.ico"       // 061 Logging file 
+IDI_ICON_064 ICON DISCARDABLE         "err.ico"       // 062 Error file 
+IDI_ICON_065 ICON DISCARDABLE         "lbn.ico"       // 063 Nroff Hypertext library file 
+IDI_ICON_066 ICON DISCARDABLE         "lib.ico"       // 064 Library file 
+IDI_ICON_067 ICON DISCARDABLE         "htm.ico"       // 065 HTML file 
+IDI_ICON_068 ICON DISCARDABLE         "htp.ico"       // 066 Hypertext pre-processed file 
+IDI_ICON_069 ICON DISCARDABLE         "hts.ico"       // 067 Hypertext super file 
+IDI_ICON_070 ICON DISCARDABLE         "sm.ico"        // 068 Superman file 
+IDI_ICON_071 ICON DISCARDABLE         "pso.ico"       // 069 Post script ordering file 
+IDI_ICON_072 ICON DISCARDABLE         "asm.ico"       // 070 Assembler File.
+IDI_ICON_073 ICON DISCARDABLE         "erf.ico"       // 071 erf file.
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+    "winicons.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
