@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20040819.1127>
+# Last Modified: <20050220.2126>
 #
 ##############################################################################
 
@@ -67,6 +67,7 @@ clean:
 	cd pixmaps;	$(MAKE) $@
 	cd memsdev;	$(MAKE) $@
 	cd msdev6;	$(MAKE) $@
+	cd packages;	$(MAKE)	$@
 	$(RMDIR) $(RELDIR)
 
 spotless: clean
@@ -80,6 +81,7 @@ spotless: clean
 	cd memsdev;	$(MAKE) $@
 	cd msdev6;	$(MAKE) $@
 	cd etc;		$(MAKE)	$@
+	cd packages;	$(MAKE)	$@
 	$(RM) *~
 #
 # Local Rules
