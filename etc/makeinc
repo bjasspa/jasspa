@@ -8,11 +8,11 @@ MEDD=06
 MEVERS=20$(MEYY)$(MEMM)$(MEDD)
 #
 # Determine make version
-#
-_DUMMY=	AaBbCc	
-_BASE_MAKE=	$(_DUMMY)$(MAKE)
-__BASE_MAKE=	$(_BASE_MAKE:$(_DUMMY)gmake=gmake)
-MAKE_TYPE=	$(__BASE_MAKE:$(_DUMMY)%=make)
+# gmake defines MAKE_VERSION use this to determine the make tool
+_FOOBAR=	AaBbCc
+_BASE_MAKE=	$(_FOOBAR)$(MAKE_VERSION)$(FOOBAR)
+__BASE_MAKE=	$(_BASE_MAKE:$(_FOOBAR)$(FOOBAR)=make)
+MAKE_TYPE=	$(__BASE_MAKE:$(_FOOBAR)$(MAKE_VERSION)$(FOOBAR)=gmake)
 #
 # Include the other files.
 #
