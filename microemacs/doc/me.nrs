@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.16 2004-01-17 22:27:29 jon Exp $
+.Id $Id: me.nrs,v 2.17 2004-01-18 15:35:30 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -1883,8 +1883,6 @@ information:-
 Also visit our web site's on the Internet:-
 .IP
 \fChttp://www.jasspa.com\fR
-.br
-\fChttp://www.geocities.com/jasspa\fR
 .PP
 This page carries the latest information and patches on the distribution.
 .SS "E-Mail Reflector"
