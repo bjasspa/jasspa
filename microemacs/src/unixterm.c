@@ -544,6 +544,14 @@ meSetupPathsAndUser(char *progname)
             buff[ii] = '\0' ;
             ll = mePathAddSearchPath(ll,evalResult,buff,&gotUserPath) ;
         }
+        else if (curdir != NULL)
+        {
+            /* We get here if there is no executable path this occurs when the
+             * user is running a local copy of ME. Use the CWD instead as this
+             * is where the executable is. We need this when running straight
+             * off CDROM */
+            ll = mePathAddSearchPath(ll,evalResult,curdir,&gotUserPath) ;
+        }
         if(!gotUserPath && (homedir != NULL))
         {
             /* We have not found a user path so set ~/ as the user-path
