@@ -4486,7 +4486,7 @@ osdDisplayFindClosest(int dir, osdDISPLAY *md, int posOffset[2],
                 meAssert(yy >= 0) ;
                 if(((yy > 0) || (dir & (osdMOVE_LEFT|osdMOVE_RIGHT))) &&
                    ((posBest[1] < 0) || (yy < posBest[1]) ||
-                    (yy == posBest[1]) && (xx < posBest[0])))
+                    ((yy == posBest[1]) && (xx < posBest[0]))))
                 {
                     posBest[0] = xx ;
                     posBest[1] = yy ;
