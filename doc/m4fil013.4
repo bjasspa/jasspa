@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil013.4,v 2.7 2005-01-15 16:58:54 jon Exp $
+.Id $Id: m4fil013.4,v 2.8 2005-01-23 15:28:54 jon Exp $
 .Im MicroEmacs macro;directive|miscellaneousOperators
 .so me.tni
 .TH !bell 4
@@ -41,7 +41,7 @@ toggling the \fBquiet\fR mode.
 ;
 ; Mail checker
 define-macro mail-check
-    !if &seq &set %vm-mail-src &reg "/history" &cat $platform "/mail-src" "" ""
+    !if &seq &set %vm-mail-src &reg &spr "/history/%s/mail-src"  $platform ""
         ml-write "[Incoming mail file not setup! Use Help/User setup]"
         !abort
     !endif

@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jul 16 23:13:14 1998
 .\"
-.Id $Id: m2cmd157.2,v 2.6 2004-02-01 22:49:56 jon Exp $
+.Id $Id: m2cmd157.2,v 2.7 2005-01-23 15:28:55 jon Exp $
 .Im MicroEmacs command|registry
 .so me.tni
 .TH read-registry 2
@@ -70,7 +70,9 @@ See also the reload flag (\fBr\fR).
 The registry  node is created in the  \fIHidden\fR  state. (i.e. children will
 not be shown in
 .Ht list-registry 2
-output).
+output). Refer to 
+.Ht mark-registry 2 
+for hiding modes.
 .IP "\fBu\fR \- Updated"
 Marks the registry as modified.  The modified bit is removed when the registry
 file is saved. If the  modified  bit is  applied  to a registry  node the user
@@ -87,9 +89,9 @@ retrieved.  Note that the name of the registry file is actually  retrieved from
 the \fIhistory\fR registry.
 .Me $emf-scheme
 .CS
-set-variable #l1 &reg "/history" "address" $user-name
+set-variable #l1 &reg "/history/address" $user-name
 !if &seq &set #l0 &find #l1 ".ab" "ERROR"
-    set-variable #l0 &reg "/" "history" ""
+    set-variable #l0 &reg "/history" ""
     set-variable #l0 &spr "%s%s.ab" &lef #l0 &rsin "/" #l0 #l1
 !endif
 read-registry "AddressBook" #l0 "rc"
@@ -99,9 +101,14 @@ read-registry "AddressBook" #l0 "rc"
 At exit only registry nodes attached to the root are saved.
 .SH "SEE ALSO"
 .na
-.Ht save-registry 2 ,
+.Ht copy-registry 3 ,
+.Ht delete-registry 2 ,
+.Ht find-registry 2 ,
 .Ht list-registry 2 ,
 .Ht mark-registry 2 ,
+.Ht save-registry 2 ,
+.Ht set-registry 2 ,
+.Ht &reg 4 ,
 .Ht $search-path 5 ,
 .Ht erf 8 .
 .ad

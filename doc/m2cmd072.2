@@ -1,12 +1,12 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jul 16 23:13:14 1998
 .\"
-.Id $Id: m2cmd072.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd072.2,v 2.6 2005-01-23 15:28:55 jon Exp $
 .Im MicroEmacs command|registry
 .so me.tni
 .TH find-registry 2
@@ -17,16 +17,14 @@ find-registry \- Index search of a registry sub-tree.
 .na
 .B find-registry
 "\fIroot\fR"
-"\fIsubkey\fR"
 \fIindex\fR
 .ad
 .SH DESCRIPTION
 .B find-registry
 performs  an  indexed  search of a registry  sub-tree  allowing  the caller to
-determine  the names of the children  that exist as sub-nodes of the  specified
-node.  \fIroot\fR  and  \fIsub-key\fR  form the root whose  children are to be
-determined,  \fIsubkey\fR may be specified as the null-string (\fC""\fR) if an
-absolute registry path is specified.  \fIindex\fR is a value from  \fC0..n\fR and identifies the index
+determine  the names of the children  that exist as sub-nodes of the specified
+node.  \fIroot\fR  defines  position in the hierarchy whose children are to be
+determined.  \fIindex\fR is a value from  \fC0..n\fR and  identifies the index
 number of the child node. The name of the child node is returned in
 .Ht $result 5
 if one exists, otherwise an error status is returned.
@@ -40,7 +38,7 @@ and the
 of the call is tested to determine if the invocation succeeded.
 .Me $emf-scheme
 .CS
-!force find-registry "/AddressBook" "Names" #l0
+!force find-registry "/AddressBook/Names" #l0
 !if $status
     set-variable #l1 $result
     76 insert-string "_"
@@ -63,10 +61,13 @@ of the call is tested to determine if the invocation succeeded.
 .Me $ehf-scheme
 .SH "SEE ALSO"
 .na
-.Ht get-registry 2 ,
+.Ht copy-registry 3 ,
+.Ht delete-registry 2 ,
 .Ht list-registry 2 ,
+.Ht mark-registry 2 ,
 .Ht read-registry 2 ,
 .Ht set-registry 2 ,
+.Ht &reg 4 ,
 .Ht erf 8 .
 .ad
 .FH
