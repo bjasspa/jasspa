@@ -2349,6 +2349,19 @@ use_contcomm:
 	    addInd += braceIndent ;
 	    onBrace = 1 ;
     }
+    else if (cc == ':')
+    {
+         /* C++ ':' starting the next line. Indent the current line
+          * temporarily. Found in statements such as:-
+          * 
+          * @ AnalogClock::AnalogClock( QWidget *parent, const char *name )
+          *       : QWidget( parent, name )
+          *   {
+          *       ...
+          *   }
+          */
+         addInd += continueIndent ;
+     }
     if(ind)
     {
         ind = getCoffset(onBrace,inComment) ;
