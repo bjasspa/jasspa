@@ -308,13 +308,15 @@ MicroEmacs '04 - Global Glossary</H1>
 <BR>
 <A HREF="m3mac057.html">%cvs-com(5)</A> CVS Command line 
 <BR>
-<A HREF="m3mac033.html">%cygnus-bin-path(5)</A> Cygwin BASH directory 
+<A HREF="m3mac033.html">%cygwin-hilight(5)</A> Cygwin shell hilight enable flag 
 <BR>
-<A HREF="m3mac033.html">%cygnus-hilight(5)</A> Cygwin shell hilight enable flag 
+<A HREF="m3mac033.html">%cygwin-path(5)</A> Cygwin root directory 
 <BR>
-<A HREF="m3mac033.html">%cygnus-prompt(5)</A> Cygwin shell prompt 
+<A HREF="m3mac033.html">%cygwin-prompt(5)</A> Cygwin shell prompt 
 <BR>
 <A HREF="m3mac035.html">%diff-com(5)</A> Diff command line 
+<BR>
+<A HREF="m3mac075.html">%find-com(5)</A> Find command line 
 <BR>
 <A HREF="m5var049.html">%ftp-flags(5)</A> Configure the FTP console 
 <BR>
@@ -327,6 +329,8 @@ MicroEmacs '04 - Global Glossary</H1>
 <A HREF="m5var079.html">%http-proxy-addr(5)</A> Set HTTP proxy server address 
 <BR>
 <A HREF="m5var079.html">%http-proxy-port(5)</A> Set HTTP proxy server port 
+<BR>
+<A HREF="m3mac031.html">%man-com(5)</A> Man Command line 
 <BR>
 <A HREF="m5var044.html">%tag-file(5)</A> Tag file name 
 <BR>
@@ -756,7 +760,7 @@ MicroEmacs '04 - Global Glossary</H1>
 <BR>
 <A HREF="m2cmd024.html">create-callback(2)</A> Create a timer callback 
 <BR>
-<A HREF="m2cmd161.html">create-frame(2)</A> Create a new frame 
+<A HREF="m2cmd161.html">create-frame(2)</A> (<B>C-x&nbsp;5&nbsp;1</B>, <B>C-x&nbsp;5&nbsp;2</B>)&nbsp;Create a new frame 
 <BR>
 <A HREF="m2mod024.html">crlf(2m)</A> File's line feed style 
 <BR>
@@ -794,7 +798,7 @@ MicroEmacs '04 - Global Glossary</H1>
 <BR>
 <A HREF="m3mac057.html">cvs-update(3)</A> MicroEmacs CVS interface - update directory files 
 <BR>
-<A HREF="m3mac033.html">cygnus(3)</A> Open a Cygwin BASH window 
+<A HREF="m3mac033.html">cygwin(3)</A> Open a Cygwin BASH window 
 <BR>
 <A HREF="m3mac046.html">dbx(3)</A> UNIX Debugger 
 <BR>
@@ -814,7 +818,7 @@ MicroEmacs '04 - Global Glossary</H1>
 <BR>
 <A HREF="m2cmd041.html">delete-dictionary(2)</A> Remove a spelling dictionary from memory 
 <BR>
-<A HREF="m2cmd162.html">delete-frame(2)</A> Delete the current frame 
+<A HREF="m2cmd162.html">delete-frame(2)</A> (<B>C-x&nbsp;5&nbsp;0</B>)&nbsp;Delete the current frame 
 <BR>
 <A HREF="m2cmd005.html">delete-global-mode(3)</A> Remove a global buffer mode 
 <BR>
@@ -942,9 +946,13 @@ MicroEmacs '04 - Global Glossary</H1>
 <BR>
 <A HREF="m2cmd202.html">fileHooks(2)</A> File Hooks 
 <BR>
+<A HREF="m3fcl012.html">filetype(3f)</A> Determine file type UNIX, DOS or Windows 
+<BR>
 <A HREF="m2cmd052.html">fill-paragraph(2)</A> (<B>esc o</B>)&nbsp;Format a paragraph 
 <BR>
 <A HREF="m2cmd053.html">filter-buffer(2)</A> (<B>C-x&nbsp;#</B>)&nbsp;Filter the current buffer through an O/S command 
+<BR>
+<A HREF="m3mac075.html">find(3)</A> Execute find command 
 <BR>
 <A HREF="m3mac030.html">find-bfile(3)</A> (<B>C-x&nbsp;9</B>)&nbsp;Load a file as binary data 
 <BR>
@@ -1234,13 +1242,17 @@ MicroEmacs '04 - Global Glossary</H1>
 <BR>
 <A HREF="m2cmd068.html">narrow-buffer(2)</A> Hide buffer lines 
 <BR>
+<A HREF="m3mac074.html">narrow-search-backward(3)</A> (<B>C-c r</B>)&nbsp;Search for a string in the backward direction 
+<BR>
+<A HREF="m3mac074.html">narrow-search-forward(3)</A> (<B>C-c s</B>)&nbsp;Search for a string in the forward direction 
+<BR>
 <A HREF="m9typ015.html">nawk(9)</A> New AWK File 
 <BR>
 <A HREF="m2cmd090.html">newline(2)</A> (<B>return</B>)&nbsp;Insert a new line 
 <BR>
 <A HREF="m2cmd091.html">next-buffer(2)</A> (<B>C-x&nbsp;x</B>)&nbsp;Switch to the next buffer 
 <BR>
-<A HREF="m2cmd163.html">next-frame(2)</A> Change the focus to the next frame 
+<A HREF="m2cmd163.html">next-frame(2)</A> (<B>C-x&nbsp;5&nbsp;o</B>)&nbsp;Change the focus to the next frame 
 <BR>
 <A HREF="m2cmd095.html">next-window(2)</A> (<B>C-x&nbsp;o</B>)&nbsp;Move the cursor to the next window 
 <BR>
@@ -1514,7 +1526,7 @@ MicroEmacs '04 - Global Glossary</H1>
 <BR>
 <A HREF="m3osd002.html">spell-word(3)</A> (<B>esc $</B>)&nbsp;Spell check a single word 
 <BR>
-<A HREF="m2cmd151.html">split-window-horizontally(2)</A> (<B>C-x&nbsp;5</B>)&nbsp;Split current window into two (horizontally) 
+<A HREF="m2cmd151.html">split-window-horizontally(2)</A> (<B>C-x&nbsp;3</B>)&nbsp;Split current window into two (horizontally) 
 <BR>
 <A HREF="m2cmd128.html">split-window-vertically(2)</A> (<B>C-x&nbsp;2</B>)&nbsp;Split the current window into two 
 <BR>
@@ -1645,6 +1657,6 @@ MicroEmacs '04 - Global Glossary</H1>
 <A HREF="m9typ017.html">zsh(9)</A> Z-Shell file </UL>
 <HR>
 <P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2004/02/04</I>
-<BR><I>Generated On: 2004/02/06</I>
+<BR><I>Last Modified: 2004/03/26</I>
+<BR><I>Generated On: 2004/03/26</I>
 </BODY></HMTL>

@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>RegularExpressions(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 RegularExpressions(2)</H1>
@@ -17,9 +17,7 @@ RegularExpressions(2)</H1>
 <A HREF="m2mod009.html">magic(2m)</A> mode is enabled. </UL>
 <H2>Overview </H2>
 <UL><P>A &quot;<I>regular expression</I>&quot; (or &quot;<I>regex</I>&quot;, or &quot;<I>pattern</I>&quot;) is a text string that describes some (mathematical) set of strings. A regex <B>R</B> &quot;<I>matches</I>&quot; a string <B>S</B> if <B>S</B> is in the set of strings described by <B>R</B>. 
-<P>MicroEmacs '04 includes the GNU <B>reg</B>ular <B>exp</B>ression pattern matcher library, <B>regex</B> which provides a powerful search engine, using the search engine you can: <UL><P>
-<LI>see if a string matches a specified pattern as a whole, and 
-<LI>search within a string for a substring matching a specified pattern. </UL><P>Some regular expressions match only one string, i.e., the set they describe has only one member. For example, the regular expression '<TT>foo</TT>' matches the string '<TT>foo</TT>' and no others. Other regular expressions match more than one string, i.e., the set they describe has more than one member. For example, the regular expression '<TT>f*</TT>' matches the set of strings made up of any number (including zero) of '<TT>f</TT>'s. As you can see, some characters in regular expressions match themselves (such as '<TT>f</TT>') and some don't (such as '<TT>*</TT>'); the ones that do not match themselves instead let you specify patterns that describe many different strings. </UL>
+<P>Some regular expressions match only one string, i.e., the set they describe has only one member. For example, the regular expression '<TT>foo</TT>' matches the string '<TT>foo</TT>' and no others. Other regular expressions match more than one string, i.e., the set they describe has more than one member. For example, the regular expression '<TT>f*</TT>' matches the set of strings made up of any number (including zero) of '<TT>f</TT>'s. As you can see, some characters in regular expressions match themselves (such as '<TT>f</TT>') and some don't (such as '<TT>*</TT>'); the ones that do not match themselves instead let you specify patterns that describe many different strings. </UL>
 <H2>Syntax of Regular Expressions </H2>
 <UL><P>Regular expressions have a syntax in which a few characters are special constructs and the rest are &quot;<I>ordinary</I>&quot;. An ordinary character is a simple regular expression which matches that same character and nothing else. The special characters are '<TT>$</TT>', '<TT>^</TT>', '<TT>.</TT>', '<TT>*</TT>', '<TT>+</TT>', '<TT>?</TT>', '<TT>[</TT>', '<TT>]</TT>' and '<TT>\</TT>'. Any other character appearing in a regular expression is ordinary, unless a '<TT>\</TT>' precedes it. 
 <P>For example, '<TT>f</TT>' is not a special character, so it is ordinary, and therefore '<TT>f</TT>' is a regular expression that matches the string '<TT>f</TT>' and no other string. (It does <B>not</B> match the string '<TT>ff</TT>'.) Likewise, '<TT>o</TT>' is a regular expression that matches only '<TT>o</TT>'. (When case distinctions are being ignored, these regexs also match '<TT>F</TT>' and '<TT>O</TT>', but we consider this a generalization of &quot;<I>the same string</I>&quot;, rather than an exception.) 
@@ -149,6 +147,6 @@ RegularExpressions(2)</H1>
 <A HREF="m2cmd109.html">replace-string(2)</A>. </UL>
 <HR>
 <P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2004/02/06</I>
+<BR><I>Last Modified: 2004/02/24</I>
+<BR><I>Generated On: 2004/03/26</I>
 </BODY></HMTL>

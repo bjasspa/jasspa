@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>buffer-init(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 buffer-init(3)</H1>
@@ -210,11 +210,12 @@ set-variable&nbsp;.fhook-XXX.setup-mask&nbsp;&quot;abdefghikmnoptux&gt;&quot;
 <BR><TT>C-c C-e</TT> <B>comment-to-end-of-line</B> - comment to end of line. 
 <BR><TT>C-c C-r</TT> <B>comment-restyle</B> - format/re-style comment. </UL>
 <P>Help information is automatically added to the buffer to describe the key bindings if help information is enabled. 
-<P>The comment format is defined with the variable <B>.fhook-XXX.comment</B> with an argument string in the form &quot;<B>|</B> <I>&lt;comment-start&gt;</I> <B>|</B> <I>&lt;comment-end&gt;</I> <B>|</B> <I>&lt;comment-pad&gt;</I> <B>|</B> <I>&lt;mid-box-left&gt;</I> <B>|</B> <I>&lt;mid-box-right&gt;</I> <B>|</B> <I>&lt;comment-flags&gt;</I> <B>|</B>&quot;. Where the fields are defined as follows:- 
+<P>The default comment format is defined with the variable <B>.fhook-XXX.comment</B> with an argument string in the form &quot;<B>|</B> <I>&lt;comment-start&gt;</I> <B>|</B> <I>&lt;comment-end&gt;</I> <B>|</B> <I>&lt;comment-pad&gt;</I> <B>|</B> <I>&lt;mid-box-left&gt;</I> <B>|</B> <I>&lt;mid-box-right&gt;</I> <B>|</B> <I>&lt;comment-flags&gt;</I> <B>|</B>&quot;. Where a language supports multiple comment types, or styles, then additional comment styles may be specified with a comment definition of the form <B>.fhook-XXX.comment-N</B> where <B>N</B> is an integer from <TT>1</TT> to <TT>n</TT>. Each definition defines an different comment style. Additional comment definitions should be ordered such that the longest or most definitive comment definition appears before other comment definitions which have less definitive features. The comment matching searches each of the comment definitions in the order <TT>1</TT> to <TT>n</TT> to determine the comment style, as soon as a positive match is located then the comment is used without searching the remaining comments. 
+<P>The fields of the comment definition are defined as follows:- 
 <P><I>&lt;comment-start&gt;</I> 
 <BR><UL>The format of the start of the comment or comment open syntax. </UL>
 <P><I>&lt;comment-end&gt;</I> 
-<BR><UL>The format of the closing comment, where the comment exists to the end of the line then the field is defined as empty. </UL>
+<BR><UL>The format of the closing comment, where the comment exists to the end of the line then the field is defined as empty. Leading white space should be included where this affects the horizontal positioning of the comment, white leading space is ignored in any match i.e. &quot;<TT>&nbsp;*/</TT>&quot; for C type comments. </UL>
 <P><I>&lt;comment-pad&gt;</I> 
 <BR><UL>The character to use to pad a comment between the <I>&lt;comment-start&gt;</I> and <I>&lt;comment-end&gt;</I> characters when creating a line or a box formation. </UL>
 <P><I>&lt;mid-box-left&gt;</I> 
@@ -235,10 +236,13 @@ set-variable&nbsp;.fhook-XXX.setup-mask&nbsp;&quot;abdefghikmnoptux&gt;&quot;
 <BR><UL>As <B>h</B> except the header line is right padded with <I>&lt;comment-pad&gt;</I> strings. </UL>
 <P><B>j </B>
 <BR><UL>Enable justification mode in the *comment* buffer and re-style. </UL>
+<P><B>r </B>
+<BR><UL>A restyle key binding is added to the buffer &quot;<TT>esc o</TT>&quot; and &quot;<TT>esc q</TT>&quot; buffer key bindings are added and bound to 
+<A HREF="m3mac060.html">comment-restyle(3)</A>. The <B>r</B> flag is only processed from the </UL>
 </UL><P>Examples of the comments format are shown below. 
 <P><B>'C' Programming language </B>
 <BR><UL>Format: <TT>/* ... */</TT> </UL><UL><UL>
-<PRE>set-variable&nbsp;.fhook-c.comment&nbsp;&quot;|/*|*/|*|&nbsp;*&nbsp;|&nbsp;*&nbsp;|f|&quot; 
+<PRE>set-variable&nbsp;.fhook-c.comment&nbsp;&quot;|/*|&nbsp;*/|*|&nbsp;*&nbsp;|&nbsp;*&nbsp;|f|&quot; 
 </PRE></UL>
 </UL><UL><P>The comment output is defined as:- </UL><UL><UL>
 <PRE>/*************************************************************** 
@@ -257,6 +261,10 @@ set-variable&nbsp;.fhook-XXX.setup-mask&nbsp;&quot;abdefghikmnoptux&gt;&quot;
 ///////////////////////////////////////////////////////////////// 
 
 //&nbsp;Comment&nbsp;to&nbsp;end&nbsp;of&nbsp;line&nbsp;/////////////////////////////////////// 
+</PRE></UL>
+</UL><UL><P>C++ supports both C and C++ comment styles, both styles may be defined in the language template. For C++ then <TT>//</TT> is assumed to be the default style. </UL><UL><UL>
+<PRE>set-variable&nbsp;.fhook-cpp.comment&nbsp;&nbsp;&nbsp;&quot;|//||/|//&nbsp;|&nbsp;//||&quot; 
+set-variable&nbsp;.fhook-cpp.comment-1&nbsp;&quot;|/*|&nbsp;*/|*|&nbsp;*&nbsp;|&nbsp;*&nbsp;|f|&quot; 
 </PRE></UL>
 </UL><P><B>MicroEmacs macro language </B>
 <BR><UL>Format: <TT>; ... &lt;EOL&gt;</TT> </UL><UL><UL>
@@ -524,6 +532,6 @@ of&nbsp;the&nbsp;fold
 <A HREF="m2nar000.html">File Language Templates</A>. </UL>
 <HR>
 <P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2004/01/18</I>
-<BR><I>Generated On: 2004/02/06</I>
+<BR><I>Last Modified: 2004/03/11</I>
+<BR><I>Generated On: 2004/03/26</I>
 </BODY></HMTL>

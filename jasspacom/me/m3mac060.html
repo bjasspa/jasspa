@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>comment-line(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 comment-line(3)</H1>
@@ -56,10 +56,13 @@ comment-line(3)</H1>
 <P><TT>H</TT> 
 <BR><UL>Fill header line with <I>&lt;comment-pad&gt;</I> strings. </UL>
 <P><TT>j</TT> 
-<BR><UL>Enable Justify mode in *comment* buffer. </UL></UL>
+<BR><UL>Enable Justify mode in *comment* buffer. </UL>
+<P><TT>r</TT> 
+<BR><UL>A restyle key binding is added to the buffer &quot;<TT>esc o</TT>&quot; and &quot;<TT>esc q</TT>&quot; buffer key bindings are added and bound to 
+<A HREF="m3mac060.html">comment-restyle(3)</A>. </UL></UL>
 <H2><B>EXAMPLE </B></H2>
 <UL><P>The following <B>comment</B> is the standard <B>C</B> setting: <UL>
-<PRE>set-variable&nbsp;.fhook-c.comment&nbsp;&quot;|/*|*/|*|&nbsp;*&nbsp;|&nbsp;*&nbsp;|f|&quot; 
+<PRE>set-variable&nbsp;.fhook-c.comment&nbsp;&quot;|/*|&nbsp;*/|*|&nbsp;*&nbsp;|&nbsp;*&nbsp;|f|&quot; 
 </PRE></UL>
 <P>This can be used to create comments of the form: <UL>
 <PRE>/*&nbsp;comment-line&nbsp;comments&nbsp;out&nbsp;the&nbsp;current&nbsp;and&nbsp;next&nbsp;n-1&nbsp;lines&nbsp;(default 
@@ -84,9 +87,10 @@ comment-line(3)</H1>
 </PRE></UL>
 </UL><H2><B>SEE ALSO </B></H2>
 <UL><P>
+<A HREF="m3mac064.html">buffer-init(3)</A>, 
 <A HREF="m2cmd202.html">File Hooks</A>. </UL>
 <HR>
 <P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/10/16</I>
-<BR><I>Generated On: 2004/02/06</I>
+<BR><I>Last Modified: 2004/03/11</I>
+<BR><I>Generated On: 2004/03/26</I>
 </BODY></HMTL>

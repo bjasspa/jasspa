@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>man(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 man(3)</H1>
@@ -13,15 +13,18 @@ man(3)</H1>
 </FONT>
 <HR>
 <H2><B>NAME </B></H2>
-<UL><P>man - UNIX manual page viewer. man-clean - Clean UNIX manual page. </UL>
+<UL><P>man - UNIX manual page viewer. 
+<BR>man-clean - Clean UNIX manual page. 
+<BR>%man-com - Man Command line </UL>
 <H2><B>SYNOPSIS </B></H2>
 <UL><P><B>man</B> 
-<BR><B>man-clean</B> </UL>
+<BR><B>man-clean</B> 
+<BR><B>%man-com</B> </UL>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P><B>man</B> provides a mechanism to display a UNIX manual page within the MicroEmacs window. On invoking <B>man</B> the user is prompted for the name of the manual page to display:- <UL>
 <PRE>Man&nbsp;on&nbsp;? 
 </PRE></UL>
-<P>The name of the manual page (and any options) are entered on the command line. The macro invokes the UNIX utility <B>man(1)</B> to generate the page and displays the results in a window. 
+<P>The name of the manual page (and any options) are entered on the command line. The macro invokes the UNIX utility <B>man(1)</B> to generate the page and displays the results in a window. The man page executable may be defined with the variable <B>%man-com</B> this is defined as <TT>man</TT> by default. 
 <P>Another manual page can be selected by either moving the cursor to the link and pressing return or double clicking on it with the left mouse button. MicroEmacs will then attempt to load and display the selected manual page. 
 <P><B>man-clean</B> removes any man-page formatting codes from the current buffer reducing a manual page to plain text. The formatting codes are used to create the bold and underline fonts. This allows the page to be treated as a normal buffer, i.e. string searches and other similar command will work as expected. </UL>
 <H2><B>NOTES </B></H2>
@@ -29,13 +32,15 @@ man(3)</H1>
 <P><B>man</B> is only made available within UNIX environments, the UNIX start up file <TT>unixterm.emf</TT> links in the macro. If the <B>man</B> utility is required on other platforms then the following definition is required in a start-up file. <UL>
 <PRE>define-macro-file&nbsp;hkman&nbsp;man 
 </PRE></UL>
-</UL><H2><B>SEE ALSO </B></H2>
-<UL><P>
+<P>On Microsoft Windows environments, if the <B>cygwin</B> directory is located then <B>man</B> is enabled and uses the <B>cygwin</B> <B>man(1)</B> utility and manual pages. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P><B>man(1)</B>, 
 <A HREF="m9typ022.html">man(9)</A>, 
+<A HREF="m3mac033.html">cygwin(3)</A>, 
 <A HREF="m3osd000.html">user-setup(3)</A>, 
 <A HREF="m3osd002.html">spell-buffer(3)</A>. </UL>
 <HR>
 <P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2004/01/11</I>
-<BR><I>Generated On: 2004/02/06</I>
+<BR><I>Last Modified: 2004/02/22</I>
+<BR><I>Generated On: 2004/03/26</I>
 </BODY></HMTL>
