@@ -4,13 +4,18 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <040307.1405>
+>  Last Modified : <040308.1914>
 >
 
-   [040210] BS/0401-4 - Minor - TBD
+    [040210] BS/0401-4 - Minor - TBD
 
         ME can't load files within a directory with '[..]' in its name - win32
         
+    [040303] SP/0401-4 - Major - Target 0401-5
+     
+        Change find-zfile file name location to use a regex and insert markers
+        into the line to aid support of hilight and selection.
+
 ___________________________________________________________________________
 
 0401-4 Release Fixes
@@ -22,15 +27,22 @@ ___________________________________________________________________________
 
 > FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED 
 
+     [040303] SP/0401-4 - Major - Target 0401-5
+     
+        Change  CVS  support so only one tool can be run at a time and all use
+        ipipe copying the output into the cvs-console when appropriate.
+
+        Fixed SP/0401-5 04/03/05: Source & macro change.
+        
     [040210] BS/0401-4 - Minor - Not this release.
 
         There are  differences  between  the output  buffer used when  running
         'cvs'  and  using  the  'cvs-*'   commands,  e.g.   *cvs-console*   or
         *cvs-commit* buffer. Should these differences be engineered out? 
 
-        Fixed SP/0401-5 04/02/23 Code and macro change.
-
-    [040216] JG/0401-4 - Enhancement - Target TBD
+        Fixed SP/0401-5 04/03/05: Source & macro change.
+        
+     [040216] JG/0401-4 - Enhancement - Target TBD
 
         Cygwin shell under  windows does not echo the command line. The cygwin
         behavior  has changed and BASH no longer echos the command  line. This
@@ -41,26 +53,46 @@ ___________________________________________________________________________
 
         Fixed JG/0401-5 04/02/26 Code and macro change.
 
-    [040220] SP/0401-4 - Minor - TBD
+     [040224] SP/0401-4 - Major - Target 0401-5
+    
+        Fix reference to GNU regex in docs.
+
+        Fixed JG/0401-5 04/02/24: Doc change.
+
+     [040220] DG/0401-4 - Major - TBD
+
+        The item list generation  macro does not correctly  handle the case of
+        the file, this  should be  determined  by the type of file, not by the
+        users current setting of exact mode.
+
+        Fixed SP/0401-5 04/02/24: Macro change.
+
+     [040220] SP/0401-4 - Minor - TBD
 
         Add new buffer tab list toolbar tool for rapid access to buffers via a
         top or bottom toolbar.
 
-        Fixed SP/0401-5 04/02/23 Code and macro change.
-    
-    [040220] SP/0401-4 - Minor - TBD
+        Fixed SP/0401-5 04/02/24: Macro change.
+
+     [040220] SP/0401-4 - Minor - TBD
 
         Add <> buttons to toolbar mode lines to scroll left and right
 
-        Fixed SP/0401-5 04/02/23 Code and macro change.
+        Fixed SP/0401-5 04/02/24: Macro change.
 
-    [040220] SP/0401-4 - Minor - TBD
-
-        Add new 'narrow out unhilighted lines feature
-
-        Fixed SP/0401-5 04/02/24 Code and macro change.
+     [040222] Salman/0401-4 - Major - Target 0401-5
     
-    [040220] BS/0401-4 - Major - Target 0401-5
+        Using the replace-all-strings command crashes ME.
+        
+        Fixed SP/0401-5 04/02/24: Source change.
+
+     [040220] SP/0401-4 - Minor - TBD
+
+        Add new 'narrow out unhilighted lines' feature
+
+        Fixed SP/0401-5 04/02/23: Macro change.
+
+     [040220] BS/0401-4 - Major - Target 0401-5
     
         Found the mouse  position not set correctly for the mouse wheel events
         as position is absolute.
@@ -72,20 +104,20 @@ ___________________________________________________________________________
         as it leaves  the cursor in the  toolbar.  Added new  mouse-wup-scroll
         commands that should be used instead.
 
-    [040220] JG/0401-4 - Major - Target 0401-5
+     [040220] JG/0401-4 - Major - Target 0401-5
     
         Calender day is off by one when going backwards to before 2004.
 
         Fixed SP/0401-5 04/02/23: Macro change.
 
-    [040212] SP/0401-4 - Major - Target TBD
+     [040212] SP/0401-4 - Major - Target TBD
         
         Executing 'me' (user-setup -> Current) breaks  auto-spell until a main
         spell command (spell-word or spell-buffer) is executed.
 
         Fixed SP/0401-5 04/02/23: Macro change.
 
-    [040210] BS/0401-4 - Major - Target 0401-5
+     [040210] BS/0401-4 - Major - Target 0401-5
 
         There are  several  differences  between  running  'cvs' and using the
         'cvs-*'  commands  that can lead to  unexpected  and unwanted  results
@@ -94,27 +126,6 @@ ___________________________________________________________________________
         of selected  files).
         
         Fixed SP/0401-5 04/02/23: Macro change.
-
-    [040206] JG/0401-4 - Minor - Target TBD
-
-        CVS  directory  listing  looses  files  sometimes.  Deleted  files and
-        sometimes new files fail to show in CVS directory  listing.  Unsure if
-        it is CVS problem or ME problem. (sunos).
-
-        Fixed JG/0401-5 04/02/29 Loosing signal lock synchronization.
-        Fixed SP/0401-5 04/02/23 Code and macro change.
-
-    [040206] JG/0401-4 - Minor - Target TBD
-
-        CVS fails to show sometimes. Typically when done FTP (sunos).
-
-        Fixed JG/0401-5 04/02/29 Loosing signal lock synchronization.
-
-    [040206] SP/0401-4 - Enhancement - Target TBD
-
-        Add new narrow-search-forward and narrow-search-backward commands.
-
-        Fixed SP/0401-5 04/02/23 Code and macro change.
 
     [040206] SP/0401-4 - Enhancement - Target TBD
 
@@ -288,6 +299,20 @@ ___________________________________________________________________________
         ME does not work on a HP-UX console. Probably because termcap database
         is not being used and built in definitions are being used to over-ride
         termcap. Need to revisit this.
+
+    [040206] JG/0401-4 - Minor - Target TBD
+
+        CVS fails to show sometimes. Typically when done FTP (sunos).
+
+    [040206] JG/0401-4 - Minor - Target TBD
+
+        CVS  directory  listing  looses  files  sometimes.  Deleted  files and
+        sometimes new files fail to show in CVS directory  listing.  Unsure if
+        it is CVS problem or ME problem. (sunos).
+
+    [040206] SP/0401-4 - Enhancement - Target TBD
+
+        Add new narrow-search-forward and narrow-search-backward commands.
 
     [040206] JG/0401-4 - Enhancement - Target TBD
 
