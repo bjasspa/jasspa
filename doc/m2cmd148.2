@@ -1,15 +1,15 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd148.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd148.2,v 2.6 2005-01-16 19:07:53 jon Exp $
 .Im MicroEmacs command|help
 .so me.tni
 .TH about 2
 .XI about - "Information About MicroEmacs"
 .SH NAME
-about \- Information About \*(mE 
+about \- Information About \*(mE
 .Me $a
 .SH SYNOPSIS
 .na
@@ -20,7 +20,7 @@ about \- Information About \*(mE
 displays  information about the current \*(mE editing session and includes the
 following information:-
 .BS
-Version number and date information for \*(mE.
+Version number and date (YYYY/MM/DD) information for \*(mE.
 .BU
 Global status  information  including the number of active  buffers and global
 mode status information.
@@ -30,29 +30,28 @@ Current buffer status information; buffer modes and buffer size information.
 .SH EXAMPLE
 The following is an example output from \fBabout\fR.
 .CS
-MicroEmacs '98 - Date 1/1/98
+MicroEmacs 05 - Date 2005/01/01 - sunos
 
 Global Status:
-  # buffers : 21
-
-  Modes on  : auto backup crlf exact magic quiet tab undo
-  Modes off : binary cmode crypt ctrlz del dir edit hide indent
-              justify letter line lock nact narrow over pipe rbin
-              save time usr1 usr2 usr3 usr4 usr5 usr6 usr7 usr8
+  # buffers : 42
+  Modes on  : auto autosv backup exact magic quiet tab undo usr3
+  Modes off : binary crlf crypt ctrlz del dir edit fence hide
+              indent justify lock nact narrow over pipe rbin
+              save time usr1 usr2 usr4 usr5 usr6 usr7 usr8
               view wrap
 
 Current Buffer Status:
-  Buffer    : m2cmd148.2
-  File name : c:/emacsdoc/m2cmd148.2
+  Buffer    : todo.log
+  File name : /home/jon/merep/me/todo.log
+  Lines     : Total    685, Current    353
+  Characters: Total  23282, Current  12582
+  Modes on  : auto autosv backup exact indent justify magic
+              quiet tab time undo usr3 wrap
+  Modes off : binary crlf crypt ctrlz del dir edit fence hide
+              lock nact narrow over pipe rbin save usr1 usr2 usr4
+              usr5 usr6 usr7 usr8 view
 
-  Lines     : Total     34, Current     27
-  Characters: Total    759, Current    683
-
-  Modes on  : auto backup edit exact indent justify magic quiet
-              tab time undo wrap
-  Modes off : binary cmode crlf crypt ctrlz del dir hide letter
-              line lock nact narrow over pipe save rbin usr1 usr2
-              usr3 usr4 usr5 usr6 usr7 usr8 view
+Copyright (C) 1988-2005 JASSPA (www.jasspa.com)
 .CE 0
 .SH "SEE ALSO"
 .na
