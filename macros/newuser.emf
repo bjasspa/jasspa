@@ -424,7 +424,7 @@ define-macro newuser
             !force 0x080 file-op #l0 .newuser.emf
             !if $status
                 insert-string " [done]\n"
-                set-registry "/history" "setup-file" .newuser.user
+                set-registry "/history" "setup-file" .newuser.mename
                 !goto done-makeemf
             !endif
         !endif
@@ -447,7 +447,7 @@ define-macro newuser
             insert-string ";"
             0 save-buffer
             !force 0 delete-buffer #l0
-            set-registry "/history" "setup-file" .newuser.user
+            set-registry "/history" "setup-file" .newuser.mename
             insert-string " [done]\n"
         !else
             insert-string " [failed]\n"
