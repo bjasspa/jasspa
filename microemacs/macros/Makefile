@@ -5,8 +5,7 @@
 #
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
-# Authors:       Jon Green
-# Last Modified: <20040326.2013>
+# Authors:       Jon Green & Steven Phillips
 #
 ##############################################################################
 
@@ -45,7 +44,7 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		au3.eaf		\
 	hklatex.emf	hklhtml.emf	hklisp.emf	hklists.emf	\
 	hklua.emf	\
 	hkm4.emf	hkmake.emf	hkman.emf	hkmeta.emf	\
-	hkmhg.emf	\
+	hkmhg.emf	hkmod2.emf	\
 	hknroff.emf	\
 	hkpascal.emf	hkperl.emf	hkphp.emf	hkphps.emf	\
 	hkpls.emf	hkpseudo.emf	hkpsf.emf	hkpython.emf	\
@@ -100,7 +99,7 @@ ETFS=	asmx86.etf	asn1.etf	\
 	idl.etf		imake.etf	\
 	java.etf	js.etf		jst.etf		\
 	latex.etf	\
-	makefile.etf	mhg.etf		\
+	makefile.etf	mhg.etf		mod2.etf	\
 	newcomp.etf	newuser.etf	nroff.etf	\
 	pascal.etf	perl.etf	pls.etf		psf.etf		\
 	rul.etf		\
