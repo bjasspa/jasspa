@@ -316,6 +316,7 @@
     ml-write "Dealing cards ....."
     find-buffer "*patience*"                ; Select the buffer
     !force forward-line                    ; Not sure ???
+    -1 buffer-mode "indent"
     -1 buffer-mode "view"
     ; Kill the buffer off
     beginning-of-buffer
@@ -727,7 +728,7 @@ define-macro Patience
     set-variable .toolbar &cond &exi .toolbar .toolbar .toolbar.open
     set-variable $random 0        ; Set it so we get a new seed
     find-buffer "*patience*"
-    !if &seq $buffer-bhook ""
+    !if &not &seq $buffer-bhook "bhook-patience"
         set-variable :pat-pack "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         set-variable :pat-time 0
         set-variable :pat-col 10 ;1

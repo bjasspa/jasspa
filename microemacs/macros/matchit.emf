@@ -1179,7 +1179,7 @@ define-macro Match-It
     ; Set it so we get a new seed
     set-variable $random 0
     find-buffer "*match-it*"
-    !if &seq $buffer-bhook ""
+    !if &not &seq $buffer-bhook "bhook-match-it"
         ;
         ; Set up the tiles
         ;

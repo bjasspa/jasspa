@@ -428,7 +428,7 @@
     find-buffer "*mahjongg*"               ; Select the buffer
     !force forward-line                    ; Not sure ???
     -1 buffer-mode "view"
-
+    -1 buffer-mode "indent"
     ; Kill the buffer off
     beginning-of-buffer
     delete-other-windows
@@ -439,8 +439,7 @@
     beginning-of-buffer
     set-variable #g1 1
     !repeat
-        set-variable #g0 &cat "  " &pinc #g1 1
-        insert-string &sprint "%s %s" &right #g0 &sub &len #g0 3 $random
+        insert-string &spr "%3d %9d" &pinc #g1 1 $random
         newline
     !until &gre #g1 144
     ; Sort the lines using the random column
@@ -846,7 +845,7 @@ define-macro Mahjongg
     set-variable .toolbar &cond &exi .toolbar .toolbar .toolbar.open
     set-variable $random 0        ; Set it so we get a new seed
     find-buffer "*mahjongg*"
-    !if &seq $buffer-bhook ""
+    !if &not &seq $buffer-bhook "bhook-mahjongg"
         ;
         ; Set up the tiles
         ;
