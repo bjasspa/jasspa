@@ -1598,13 +1598,8 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
         if(ptyFp >= 0)
         {
             /* Push the hardware emulation mode */
-#if 1
-            /* JON: This push does work, however it does cause us to loose
-             * terminal control with respect to the SIGWINCH calls hence we do
-             * not recieve an indication when the window has been re-sized.
-             * So we omit this, but have left the code for reference. */
             ioctl (fds[1], I_PUSH, "ptem");
-#endif
+            
             /* Push the line discipline module */
             ioctl (fds[1], I_PUSH, "ldterm");
         }
