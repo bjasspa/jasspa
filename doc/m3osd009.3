@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3osd009.3,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m3osd009.3,v 2.6 2005-01-23 15:34:38 jon Exp $
 .Im MicroEmacs command|spell|osd
 .so me.tni
 .TH describe-word 3
@@ -126,7 +126,7 @@ which will match the required  definition(s) in the command out put, the first
 group   ("\fC\\(...\\)\fR")   must  enclose  the  required  definition,  again
 "\fC%s\fR"  can be used in  place  of the  word  and  "\fC%%\fR"  for a single
 "\fC%\fR". \fBdescribe-word\fR simply uses
-.Ht regex-forward 3
+.Ht search-buffer 2
 repeatedly to find all definitions of the current word, it then uses the value
 of the variable
 .Ht @s1 4
