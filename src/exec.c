@@ -3,7 +3,7 @@
  * JASSPA MicroEmacs - www.jasspa.com
  * exec.c - Command execution.
  *
- * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ * Copyright (C) 1988-2004 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -100,7 +100,6 @@ biChopFindString(register meUByte *ss, register int len, register meUByte **tbl,
 meUByte *
 token(meUByte *src, meUByte *tok)
 {
-    register int quotef ;
     register meUByte cc, *ss, *dd, *tokEnd ;
     meUShort key ;
     
@@ -111,185 +110,178 @@ token(meUByte *src, meUByte *tok)
     
     /*---       First scan past any whitespace in the source string */
     
-    while(((cc = *ss) == ' ') || (cc == '\t'))
-        ss++ ;
+    while(((cc = *ss++) == ' ') || (cc == '\t'))
+        ;
     
     /*---       Scan through the source string */
-    
-    for(quotef=0 ; ; cc=*++ss)
+    if(cc == '"')
     {
-        switch(cc)
+        *dd++ = '"' ;
+        while((cc=*ss++) != '"')
         {
-        case '"':
-            if(quotef)
+            if(cc == '\0') 
             {
-                /* Null Terminate the token and exit */
-                ss++;
-                *dd = 0;
-                return ss ;
-            }
-            quotef = 1 ;
-            *dd++ = '"' ;
-            break ;
-        case '\t':
-        case ' ':
-        case ';':
-            if(quotef)
-            {
-                *dd++ = cc;
+                ss-- ;
                 break ;
             }
-            /* no break - this is the end of the token */
-        case '\0':
-            /* Null Terminate the token and exit */
-            *dd = 0;
-            return ss ;
-            
-        case '\\':
-            /* Process special characters */
-            switch ((cc = *++ss))
+            else if(cc == '\\')
             {
-            case '\0':
-                /* this probably should be an error */
-                *dd = 0;
-                return ss ;
-                
-            case 'B':
-                /* backspace key - replace with backspace */
-                key = ME_SPECIAL|SKEY_backspace ;
-                goto quote_spec_key ;
-            case 'C':
-                /* Control key - \C? */
-                *dd++ = *++ss - '@'; 
-                break;
-            case 'D':
-                /* Delete key - replace with delete */
-                key = ME_SPECIAL|SKEY_delete ;
-                goto quote_spec_key ;
-            case 'E':
-                /* Escape key - replace with esc */
-                key = ME_SPECIAL|SKEY_esc ;
-                goto quote_spec_key ;
-            case 'H':
-                /* OSD hotkey */
-                *dd++ = meCHAR_LEADER ;
-                *dd++ = meCHAR_TRAIL_HOTKEY ;  
-                break;
-            case 'I':
-                /* backward-delete-tab - replace with S-tab */
-                key = ME_SPECIAL|ME_SHIFT|SKEY_tab ;
-                goto quote_spec_key ;
-            case 'L':
-                /* Exec-line special - replace with x-line key */
-                key = ME_SPECIAL|SKEY_x_line ;
-                goto quote_spec_key ;
-            case 'N':
-                /* Return key - replace with return */
-                key = ME_SPECIAL|SKEY_return ;
-                goto quote_spec_key ;
-            case 'P':
-                /* Go to set position, defined by \p - replace with \CXAP */
-                *dd++ = 'X' - '@';
-                *dd++ = 'A' ;
-                *dd++ = meANCHOR_EXSTRPOS ;
-                break;
-            case 'T':
-                /* Tab key - replace with tab */
-                key = ME_SPECIAL|SKEY_tab ;
-                goto quote_spec_key ;
-            case 'X':
-                /* Exec-command special - replace with x-command key */
-                key = ME_SPECIAL|SKEY_x_command ;
-quote_spec_key:
-                *dd++ = meCHAR_LEADER ;
-                *dd++ = meCHAR_TRAIL_SPECIAL ;
-                *dd++ = key >> 8 ;
-                *dd++ = key & 0xff ;
-                break;
-            case 'a':   *dd++ = 0x07; break;
-            case 'b':   *dd++ = 0x08; break;
-            case 'd':   *dd++ = 0x7f; break;
-            case 'e':   *dd++ = 0x1b; break;
-            case 'f':   *dd++ = 0x0c; break;
-            case 'i':
-                *dd++ = meCHAR_LEADER ;
-                *dd++ = meCHAR_TRAIL_SPECIAL ;  
-                *dd++ = '@';
-                *dd++ = 'I' - '@';
-                break;
-            case 'n':   *dd++ = 0x0a; break;
-            case 'p':
-                *dd++ = 'X' - '@';
-                *dd++ = 'A' - '@';
-                *dd++ = meANCHOR_EXSTRPOS ;
-                break;
-            case 'r':   *dd++ = 0x0d; break;
-            case 's':   
-                *dd++ = meCHAR_LEADER ;
-                *dd++ = meCHAR_TRAIL_SPECIAL ;  
-                break;
-            case 't':   *dd++ = 0x09; break;
-            case 'v':   *dd++ = 0x0b; break;
-            case 'x':
-                cc = ss[1] ;
-                if(isXDigit(cc))
+                /* Process special characters */
+                switch ((cc = *ss++))
                 {
-                    register meUByte c1 ;
-                    c1 = (++ss)[1] ;
-                    if(isXDigit(c1))
+                case '\0':
+                    /* this probably should be an error */
+                    *dd = 0;
+                    ss-- ;
+                    return ss ;
+                    
+                case 'B':
+                    /* backspace key - replace with backspace */
+                    key = ME_SPECIAL|SKEY_backspace ;
+                    goto quote_spec_key1 ;
+                case 'C':
+                    /* Control key - \C? */
+                    *dd++ = *ss++ - '@'; 
+                    break;
+                case 'D':
+                    /* Delete key - replace with delete */
+                    key = ME_SPECIAL|SKEY_delete ;
+                    goto quote_spec_key1 ;
+                case 'E':
+                    /* Escape key - replace with esc */
+                    key = ME_SPECIAL|SKEY_esc ;
+                    goto quote_spec_key1 ;
+                case 'H':
+                    /* OSD hotkey */
+                    *dd++ = meCHAR_LEADER ;
+                    *dd++ = meCHAR_TRAIL_HOTKEY ;  
+                    break;
+                case 'I':
+                    /* backward-delete-tab - replace with S-tab */
+                    key = ME_SPECIAL|ME_SHIFT|SKEY_tab ;
+                    goto quote_spec_key1 ;
+                case 'L':
+                    /* Exec-line special - replace with x-line key */
+                    key = ME_SPECIAL|SKEY_x_line ;
+                    goto quote_spec_key1 ;
+                case 'N':
+                    /* Return key - replace with return */
+                    key = ME_SPECIAL|SKEY_return ;
+                    goto quote_spec_key1 ;
+                case 'P':
+                    /* Go to set position, defined by \p - replace with \CXAP */
+                    *dd++ = 'X' - '@';
+                    *dd++ = 'A' ;
+                    *dd++ = meANCHOR_EXSTRPOS ;
+                    break;
+                case 'T':
+                    /* Tab key - replace with tab */
+                    key = ME_SPECIAL|SKEY_tab ;
+                    goto quote_spec_key1 ;
+                case 'X':
+                    /* Exec-command special - replace with x-command key */
+                    key = ME_SPECIAL|SKEY_x_command ;
+quote_spec_key1:
+                    *dd++ = meCHAR_LEADER ;
+                    *dd++ = meCHAR_TRAIL_SPECIAL ;
+                    *dd++ = key >> 8 ;
+                    *dd++ = key & 0xff ;
+                    break;
+                case 'a':   *dd++ = 0x07; break;
+                case 'b':   *dd++ = 0x08; break;
+                case 'd':   *dd++ = 0x7f; break;
+                case 'e':   *dd++ = 0x1b; break;
+                case 'f':   *dd++ = 0x0c; break;
+                case 'i':
+                    *dd++ = meCHAR_LEADER ;
+                    *dd++ = meCHAR_TRAIL_SPECIAL ;  
+                    *dd++ = '@';
+                    *dd++ = 'I' - '@';
+                    break;
+                case 'n':   *dd++ = 0x0a; break;
+                case 'p':
+                    *dd++ = 'X' - '@';
+                    *dd++ = 'A' - '@';
+                    *dd++ = meANCHOR_EXSTRPOS ;
+                    break;
+                case 'r':   *dd++ = 0x0d; break;
+                case 's':   
+                    *dd++ = meCHAR_LEADER ;
+                    *dd++ = meCHAR_TRAIL_SPECIAL ;  
+                    break;
+                case 't':   *dd++ = 0x09; break;
+                case 'v':   *dd++ = 0x0b; break;
+                case 'x':
+                    cc = *ss ;
+                    if(isXDigit(cc))
                     {
-                        cc = (hexToNum(cc) << 4) | hexToNum(c1) ;
-                        ss++ ;
+                        register meUByte c1 ;
+                        c1 = *++ss ;
+                        if(isXDigit(c1))
+                        {
+                            cc = (hexToNum(cc) << 4) | hexToNum(c1) ;
+                            ss++ ;
+                        }
+                        else
+                            cc = hexToNum(cc) ;
+                        if(cc == 0)
+                        {
+                            *dd++ = meCHAR_LEADER ;
+                            *dd++ = 0x01 ;
+                        }
+                        else if(cc == meCHAR_LEADER)
+                        {
+                            *dd++ = meCHAR_LEADER ;
+                            *dd++ = meCHAR_TRAIL_LEADER ;
+                        }
+                        else
+                            *dd++ = cc ;
                     }
-                    else
-                        cc = hexToNum(cc) ;
-                    if(cc == 0)
-                    {
-                        *dd++ = meCHAR_LEADER ;
-                        *dd++ = 0x01 ;
-                    }
-                    else if(cc == meCHAR_LEADER)
-                    {
-                        *dd++ = meCHAR_LEADER ;
-                        *dd++ = meCHAR_TRAIL_LEADER ;
-                    }
-                    else
-                        *dd++ = cc ;
+                    break;
+                case '{':
+                    /* OSD start hilight */
+                    *dd++ = meCHAR_LEADER ;
+                    *dd++ = meCHAR_TRAIL_HILSTART ;  
+                    break;
+                case '}':
+                    /* OSD stop hilight */
+                    *dd++ = meCHAR_LEADER ;
+                    *dd++ = meCHAR_TRAIL_HILSTOP ;  
+                    break;
+                    
+                default:
+                    *dd++ = cc;
                 }
-                break;
-            case '{':
-                /* OSD start hilight */
-                *dd++ = meCHAR_LEADER ;
-                *dd++ = meCHAR_TRAIL_HILSTART ;  
-                break;
-            case '}':
-                /* OSD stop hilight */
-                *dd++ = meCHAR_LEADER ;
-                *dd++ = meCHAR_TRAIL_HILSTOP ;  
-                break;
-                
-            default:
-                *dd++ = cc;
             }
-            break ;
-            
-        case 255:
-            *dd++ = meCHAR_LEADER ;
-            *dd++ = meCHAR_TRAIL_LEADER ;
-            break ;
-        
-        default:
-            /* record the character */
-            *dd++ = cc;
-        }
-        if((size_t) dd > (size_t) tokEnd)
-        {
-            /* reset dd into safe area and keep going cos we must
-			 * finish parsing this token */
-            dd = tokEnd ;
+            else if(cc == meCHAR_LEADER)
+            {
+                *dd++ = meCHAR_LEADER ;
+                *dd++ = meCHAR_TRAIL_LEADER ;
+            }
+            else
+                *dd++ = cc;
+            if((size_t) dd > (size_t) tokEnd)
+                /* reset dd into safe area and keep going cos we must
+                 * finish parsing this token */
+                dd = tokEnd ;
         }
     }
-    
+    else if((cc == '\0') || (cc == ';'))
+        ss-- ;
+    else
+    {
+        do
+        {
+            *dd++ = cc;
+            if((cc=*ss++) == '\0')
+            {
+                ss-- ;
+                break ;
+            }
+        } while((cc != ' ') && (cc != '\t')) ;
+    }
+    *dd = 0 ;
+    return ss ;
 }
 
 /* meGetString
@@ -342,12 +334,19 @@ meGetString(meUByte *prompt, int option, int defnum, meUByte *buffer, int size)
                     size-- ;
                 }
             }
-            for(; ((--size) > 0) && ((cc = *res++) != '\0') ; )
+            if(option & MLFFZERO)
             {
-                if((cc == meCHAR_LEADER) && !(option & MLFFZERO) &&
-                   ((cc = *res++) != meCHAR_TRAIL_LEADER))
-                    break ;
-                *ss++ = cc ;
+                while((--size > 0) && ((cc = *res++) != '\0'))
+                    *ss++ = cc ;
+            }
+            else
+            {
+                for(; ((--size) > 0) && ((cc = *res++) != '\0') ; )
+                {
+                    if((cc == meCHAR_LEADER) && ((cc = *res++) != meCHAR_TRAIL_LEADER))
+                        break ;
+                    *ss++ = cc ;
+                }
             }
             *ss = '\0' ;
             return meTRUE ;
@@ -397,7 +396,7 @@ fnctest(void)
         {
             count++;
             mlwrite(MWWAIT,"cmdHash Error: [%s] should be in position %d", 
-                   getCommandName(ii),key) ;
+                    getCommandName(ii),key) ;
         }
     }
     
@@ -409,7 +408,7 @@ fnctest(void)
         {
             count++;
             mlwrite(MWWAIT,"cmdHead Error: [%s] should be before [%s]", 
-                   cmd->anext->name,cmd->name) ;
+                    cmd->anext->name,cmd->name) ;
         }
         cmd = cmd->anext ;
     }
@@ -514,11 +513,11 @@ domstore(meUByte *cline)
 static int
 docmd(meUByte *cline, register meUByte *tkn)
 {
-    register int  f ;           /* default argument flag */
-    register int  n ;           /* numeric repeat value */
-    register meUByte cc ;         /* Character */
-    register int  status ;      /* return status of function */
-    register int  nmacro ;      /* run as it not a macro? */
+    int  f ;           /* default argument flag */
+    int  n ;           /* numeric repeat value */
+    meUByte cc ;         /* Character */
+    int  status ;      /* return status of function */
+    int  nmacro ;      /* run as it not a macro? */
     
     cc = *cline ;
     /* eat leading spaces */
@@ -538,9 +537,123 @@ try_again:
     execstr = token(execstr, tkn);
     if((status=getMacroTypeS(tkn)) == TKDIR)
     {
-        register int dirType ;
-        /* look the derivative up in the name table */
-        if((status = biChopFindString(tkn+1,3,derNames,NDERIV)) < 0)
+        int dirType ;
+        
+        /* SWP 2003-12-22 Used to use the biChopFindString to look the
+         * derivative up in a name table, but after profiling found this to be
+         * the second biggest consumer of cpu and the function was 3rd (token
+         * was the worst at 42%, the call to look-up the derivative was second
+         * taking over 9% and docmd took 7%).
+         * 
+         * By changing this to an optimised set of if statements embedded in
+         * docmd the time usage in my tests dropped from 4.52 sec to 2.73, i.e.
+         * 40% time saving.
+         * 
+         * So yes this does look horrid but its fast!
+         */
+        status = -1 ;
+        
+        cc = tkn[1] ;
+        if(cc > 'e')
+        {
+            if(cc < 'r')
+            {
+                if(cc < 'i')
+                {
+                    if(cc == 'f')
+                    {
+                        if((tkn[2] == 'o') && (tkn[3] == 'r'))
+                            status = DRFORCE ;
+                    }
+                    else if(cc == 'g')
+                    {
+                        if((tkn[2] == 'o') && (tkn[3] == 't'))
+                            status = DRGOTO ;
+                    }
+                }
+                else if(cc == 'i')
+                {
+                    if((tkn[2] == 'f') && (tkn[3] == '\0'))
+                        status = DRIF ;
+                }
+                else if(cc == 'j')
+                {
+                    if((tkn[2] == 'u') && (tkn[3] == 'm'))
+                        status = DRJUMP ;
+                }
+                else if(cc == 'n')
+                {
+                    if((tkn[2] == 'm') && (tkn[3] == 'a'))
+                        status = DRNMACRO ;
+                }
+            }
+            else if(cc == 'r')
+            {
+                if(tkn[2] == 'e')
+                {
+                    if(tkn[3] == 'p')
+                        status = DRREPEAT ;
+                    else if(tkn[3] == 't')
+                        status = DRRETURN ;
+                }
+            }
+            else if(cc > 't')
+            {
+                if(cc == 'u')
+                {
+                    if((tkn[2] == 'n') && (tkn[3] == 't'))
+                        status = DRUNTIL ;
+                }
+                else if(cc == 'w')
+                {
+                    if((tkn[2] == 'h') && (tkn[3] == 'i'))
+                        status = DRWHILE ;
+                }
+            }
+            else if(cc == 't')
+            {
+                if((tkn[2] == 'g') && (tkn[3] == 'o'))
+                    status = DRTGOTO ;
+                if((tkn[2] == 'j') && (tkn[3] == 'u'))
+                    status = DRTJUMP ;
+#if KEY_TEST
+                else if((tkn[2] == 'e') && (tkn[3] == 's'))
+                    status = DRTEST ;
+#endif
+            }
+        }
+        else if(cc == 'e')
+        {
+            cc = tkn[2] ;
+            if(cc > 'l')
+            {
+                if((cc == 'n') && (tkn[3] == 'd'))
+                    status = DRENDIF ;
+                else if((cc == 'm') && (tkn[3] == 'a'))
+                    status = DREMACRO ;
+            }
+            else if(cc == 'l')
+            {
+                if(tkn[3] == 'i')
+                    status = DRELIF ;
+                else if(tkn[3] == 's')
+                    status = DRELSE ;
+            }
+        }
+        else if(cc > 'b')
+        {
+            if((tkn[2] == 'o') && (tkn[3] == 'n'))
+                status = (cc == 'c') ? DRCONTIN:DRDONE ;
+        }
+        else if(cc == 'b')
+        {
+            if((tkn[2] == 'e') && (tkn[3] == 'l'))
+                status = DRBELL ;
+        }
+        else if((cc == 'a') && (tkn[2] == 'b') && (tkn[3] == 'o'))
+            status = DRABORT ;
+        
+        if(status < 0)
             return mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unknown directive %s]",tkn);
         
         dirType = dirTypes[status] ;
@@ -1103,7 +1216,7 @@ void
 execFuncHidden(int keyCode, int index, meUInt arg)
 {
     meUByte tf, lf, cs;
-    int tc, ti, lc, li, ii ;
+    int tc, ti, lc, li, ii, sv ;
     int f, n ;
     
     cs = cmdstatus ;
@@ -1113,6 +1226,8 @@ execFuncHidden(int keyCode, int index, meUInt arg)
     tc = thisCommand ;
     ti = thisIndex ;
     tf = thisflag ;
+    if((sv=(alarmState & meALARM_VARIABLE)))
+        alarmState &= ~meALARM_VARIABLE ;
     lastCommand = tc ;
     lastIndex = ti ;
     thisCommand = keyCode ;
@@ -1136,6 +1251,8 @@ execFuncHidden(int keyCode, int index, meUInt arg)
     }
     if(index >= 0)
         execFunc(index,f,n);
+    if(sv)
+        alarmState |= meALARM_VARIABLE ;
     thisflag = tf;
     thisIndex = ti ;
     thisCommand = tc ;
@@ -1354,7 +1471,7 @@ execFile(int f, int n)  /* execute a series of commands in a file */
     int status;
     
     if ((status=meGetString((meUByte *)"Execute File",MLFILECASE, 0, filename, 
-                        meBUF_SIZE_MAX)) <= 0)
+                            meBUF_SIZE_MAX)) <= 0)
         return status ;
     
     /* otherwise, execute it */

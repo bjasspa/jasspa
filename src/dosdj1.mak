@@ -3,7 +3,7 @@
 # JASSPA MicroEmacs - www.jasspa.com
 # dosdj1.mak - Make file for Dos using djgpp v1.0
 #
-# Copyright (C) 2001-2002 JASSPA (www.jasspa.com)
+# Copyright (C) 2001-2004 JASSPA (www.jasspa.com)
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free

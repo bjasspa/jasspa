@@ -4,7 +4,7 @@
  * print.c - Buffer printing routines.
  *
  * Copyright (C) 1996-2001 Jon Green & Steven Phillips    
- * Copyright (C) 2002 JASSPA (www.jasspa.com)
+ * Copyright (C) 2002-2004 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -1329,18 +1329,17 @@ printAddLine (meBuffer *bp, meLine *lp)
 static int
 printSection (meWindow *wp, long sLineNo, long numLines, meLine *sLine, meLine *eLine, int nn)
 {
-    time_t clock;                       /* Time in machine format. */
+    time_t clock;                         /* Time in machine format. */
     meBuffer *bp;                         /* Composition buffer */
-    meWindow *dwp;                        /* Destination window */
     meBuffer *dbp = NULL;                 /* Destination buffer */
-    FILE *fp = NULL;                    /* Output file stream */
+    FILE *fp = NULL;                      /* Output file stream */
     meLine *lp, *nlp;                     /* Local line pointers */
     meLine *clp;                          /* Composed page list */
     meLine *ihead = NULL;                 /* Internal destination header */
     meLine *itail = NULL;                 /* Internal destination trailer */
     int status = meTRUE;                  /* Return status */
-    meUByte fname [meBUF_SIZE_MAX];               /* File name buffer */
-    int ii;                             /* Local loop counter. */
+    meUByte fname [meBUF_SIZE_MAX];       /* File name buffer */
+    int ii;                               /* Local loop counter. */
 
 #if MEOPT_HILIGHT
     meVideoLine          vps[2];
@@ -1376,7 +1375,7 @@ printSection (meWindow *wp, long sLineNo, long numLines, meLine *sLine, meLine *
             return mlwrite(MWABORT,(meUByte *)"[Cannot print \"%s\" buffer]",printer.param[mePS_BUFFER].p) ;
         if(((dbp=bfind(printer.param[mePS_BUFFER].p,BFND_CREAT|BFND_CLEAR)) == meFALSE) ||
            (((printer.param [mePI_FLAGS].l & PFLAG_SILENT) == 0) &&
-            ((dwp = meWindowPopup(dbp->name,WPOP_USESTR,NULL)) == NULL)))
+            (meWindowPopup(dbp->name,WPOP_USESTR,NULL)) == NULL))
             return mlwrite(MWABORT,(meUByte *)"[Failed to create print buffer]") ;
         break;
     case PDEST_COMLINE:

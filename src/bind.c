@@ -3,7 +3,7 @@
  * JASSPA MicroEmacs - www.jasspa.com
  * bind.c - Binding functions.
  *
- * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ * Copyright (C) 1988-2004 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -1059,21 +1059,14 @@ descBindings (int f, int n)
     
 #if MEOPT_LOCALBIND
     {
-        meUByte buf[meBUF_SIZE_MAX] ;
-        
-        sprintf((char *)buf,"Buffer [%s] bindings:", frameCur->bufferCur->name);
-        addLineToEob(bp,buf);
-        addLineToEob(bp,(meUByte *)"") ;
+        addLineToEob(bp,(meUByte *)"Buffer bindings:\n");
         
         ii  = frameCur->bufferCur->bindCount ;
         ktp = frameCur->bufferCur->bindList ;
         while(ii--)
             showBinding(bp,ktp++) ;
-        addLineToEob(bp,(meUByte *)"") ;
         
-        sprintf((char *)buf,"Ml bindings:") ;
-        addLineToEob(bp,buf);
-        addLineToEob(bp,(meUByte *)"") ;
+        addLineToEob(bp,(meUByte *)"\nMl bindings:\n") ;
         
         ii  = mlNoBinds ;
         ktp = mlBinds ;
@@ -1083,8 +1076,7 @@ descBindings (int f, int n)
     }
 #endif    
     
-    addLineToEob(bp,(meUByte *)"Global bindings:");
-    addLineToEob(bp,(meUByte *)"") ;
+    addLineToEob(bp,(meUByte *)"Global bindings:\n");
     
     ii  = keyTableSize ;
     ktp = keytab ;

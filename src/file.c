@@ -3,7 +3,7 @@
  * JASSPA MicroEmacs - www.jasspa.com
  * file.c - File handling.
  *
- * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ * Copyright (C) 1988-2004 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -766,6 +766,7 @@ meTestExecutable(meUByte *fileName)
 #endif
 
 #if MEOPT_DIRLIST
+#define meFINDFILESINGLE_GFS_OPT 1
 #define FILENODE_ATTRIBLEN 4
 
 typedef struct FILENODE {
@@ -856,7 +857,6 @@ getDirectoryInfo(meUByte *fname)
     FILENODE *curFile ;
     FILENODE *cfh=NULL ;
     int noFiles=0;                        /* No files count */
-    int ii;                               /* Local loop counter */
     
 #ifdef _UNIX
     DIR    *dirp ;
@@ -882,11 +882,10 @@ getDirectoryInfo(meUByte *fname)
                ((curHead = (FILENODE *) meRealloc(curHead,sizeof(FILENODE)*(noFiles+16))) == NULL))
                 return NULL ;
             curFile = &(curHead[noFiles++]) ;
-            if((ff = meStrdup(dp->d_name)) == NULL)
+            if((ff = meStrdup((meUByte *) dp->d_name)) == NULL)
                 return NULL ;
             curFile->lname = NULL ;
             curFile->fname = ff ;
-            meStrcpy(ff,dp->d_name) ;
             meStrcpy(fn,dp->d_name) ;
             stat((char *)bfname,&sbuf) ;
             if(sbuf.st_uid != meUid)
@@ -992,21 +991,20 @@ getDirectoryInfo(meUByte *fname)
             curFile->mtime.dwLowDateTime  = fd.ftLastWriteTime.dwLowDateTime ;
             curFile->mtime.dwHighDateTime = fd.ftLastWriteTime.dwHighDateTime ;
             /* construct attribute string */
+            meStrncpy(curFile->attrib,"-rwx",4) ;
             if(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
             {
-                meStrncpy(curFile->attrib,"drwx",4) ;
                 /* On network drives the size is sometimes invalid. Clear
                  * it just to make sure that this is not the case */
+                curFile->attrib[0] = 'd' ;
                 curFile->size = 0;
             }
             else
             {
-                curFile->attrib[0] = '-' ;
-                curFile->attrib[1] = 'r' ;
-                curFile->attrib[2] = (fd.dwFileAttributes & FILE_ATTRIBUTE_READONLY) ? '-' : 'w' ;
-                curFile->attrib[3] = '-' ;
-                if(meTestExecutable(ff))
-                    curFile->attrib[3] = 'x' ;
+                if(fd.dwFileAttributes & FILE_ATTRIBUTE_READONLY)
+                    curFile->attrib[2] =  '-' ;
+                if(!meTestExecutable(ff))
+                    curFile->attrib[3] = '-' ;
             }
         } while (FindNextFile(fh, &fd));
         FindClose(fh);
@@ -1014,7 +1012,7 @@ getDirectoryInfo(meUByte *fname)
 #endif
     curFile = curHead ;
     /* Build a profile of the current directory. */
-    for(ii=0 ; ii<noFiles ; ii++)
+    while(--noFiles >= 0)
     {
         cfh = addFileNode(cfh,curFile) ;
         curFile++ ;
@@ -1023,7 +1021,7 @@ getDirectoryInfo(meUByte *fname)
 }
 
 static int
-readDirectory(meBuffer *bp, meUByte *fname)
+readDirectory(meUByte *fname, meBuffer *bp, meLine *blp)
 {
     FILENODE *fnode, *fn ;
 #ifdef _UNIX
@@ -1039,8 +1037,9 @@ readDirectory(meBuffer *bp, meUByte *fname)
 
     if((fnode=getDirectoryInfo(fname)) == NULL)
         return meABORT ;
-    sprintf ((char *)buf, "Directory listing of: %s", fname);
-    addLineToEob(bp,buf);
+    meStrcpy(buf,"Directory listing of: ") ;
+    meStrcat(buf,fname) ;
+    bp->lineCount += addLine(blp,buf) ;
     fn = fnode ;
     while(fn != NULL)
     {
@@ -1055,12 +1054,11 @@ readDirectory(meBuffer *bp, meUByte *fname)
     buf[1] = ' ' ;
     len = 2 ;
     if (totSize > 9999999)
-        len += sprintf ((char *)buf+len, "%7ldK ", totSize/1024);
+        len += sprintf((char *)buf+len, "%7ldK ",totSize/1024) ;
     else
-        len += sprintf ((char *)buf+len, "%7ld  ", totSize);
-    sprintf((char *)buf+len, "used in %d files and %d dirs",files,dirs) ;
-    addLineToEob(bp,buf);
-    addLineToEob(bp,(meUByte *)"");                   /* Blank line */
+        len += sprintf((char *)buf+len, "%7ld  ",totSize) ;
+    sprintf((char *)buf+len,"used in %d files and %d dirs\n",files,dirs) ;
+    bp->lineCount += addLine(blp,buf) ;
     while(fnode != NULL)
     {
         len = 0;                /* Reset to the start of the line */
@@ -1113,7 +1111,7 @@ readDirectory(meBuffer *bp, meUByte *fname)
         else
             buf[len] = '\0' ;
             
-        addLineToEob(bp,buf);
+        bp->lineCount += addLine(blp,buf) ;
         free(fnode->fname) ;
         fnode = fnode->next ;
     }
@@ -1124,6 +1122,8 @@ readDirectory(meBuffer *bp, meUByte *fname)
     return meTRUE ;
 }
 
+#else
+#define meFINDFILESINGLE_GFS_OPT 3
 #endif
 
 /*
@@ -1201,7 +1201,7 @@ readin(register meBuffer *bp, meUByte *fname)
             if(ft == meFILETYPE_DIRECTORY)
             {
 #if MEOPT_DIRLIST
-                if(readDirectory(bp,fn) <= 0)
+                if(readDirectory(fn,bp,bp->baseLine) <= 0)
                     goto error_end ;
                 ss = meTRUE ;
                 goto newfile_end;
@@ -1284,10 +1284,8 @@ readin(register meBuffer *bp, meUByte *fname)
                  (!meStatTestWrite(bp->stats))))
                 meModeSet(bp->mode,MDVIEW) ;
         }
-        if(meModeTest(bp->mode,MDVIEW))
-            mlwrite(MWCURSOR|MWCLEXEC,(meUByte *)"[Reading %s (readonly)]", fn);
-        else
-            mlwrite(MWCURSOR|MWCLEXEC,(meUByte *)"[Reading %s]", fn);
+        mlwrite(MWCURSOR|MWCLEXEC,(meUByte *)"[Reading %s%s]",fn,
+                meModeTest(bp->mode,MDVIEW) ? " (readonly)" : "");
     }
     ss = ffReadFile(fn,0,bp,bp->baseLine,0,0) ;
     
@@ -1343,7 +1341,16 @@ meBufferInsertFile(meBuffer *bp, meUByte *fname, meUInt flags,
     
     nline = bp->lineCount ;
     lp = bp->dotLine ;
-    ss = ffReadFile(fname,flags|meRWFLAG_INSERT,bp,lp,offset,length) ;
+#if MEOPT_DIRLIST
+    if(flags & meRWFLAG_MKDIR)
+    {
+        /* slight miss-use of this flag to inform this function that a dir
+         * listing is to be inserted */
+        ss = readDirectory(fname,bp,lp) ;
+    }
+    else
+#endif
+        ss = ffReadFile(fname,flags|meRWFLAG_INSERT,bp,lp,offset,length) ;
     nline = bp->lineCount-nline ;
     /* restore the mode */
     meModeCopy(bp->mode,md) ;
@@ -1393,16 +1400,24 @@ meBufferInsertFile(meBuffer *bp, meUByte *fname, meUInt flags,
 int
 insertFile(int f, int n)
 {
-    register int s;
     meUByte fname[meBUF_SIZE_MAX] ;
     meInt offset, length ;
+    int s, flags=0 ;
 
     if((s=inputFileName((meUByte *)"Insert file",fname,1)) <= 0)
         return s ;
     /* Allow existing or url files if not doing a partial insert */
-    if(((s=getFileStats(fname,3,NULL,NULL)) != meFILETYPE_REGULAR) &&
-       ((n < 0) || ((s != meFILETYPE_HTTP) && (s != meFILETYPE_FTP))))
+    if(((s=getFileStats(fname,meFINDFILESINGLE_GFS_OPT,NULL,NULL)) != meFILETYPE_REGULAR) &&
+       ((n < 0) || ((s != meFILETYPE_HTTP) && (s != meFILETYPE_FTP)
+#if MEOPT_DIRLIST
+                    && (s != meFILETYPE_DIRECTORY)
+#endif
+                    )))
         return meABORT ;
+#if MEOPT_DIRLIST
+    if(s == meFILETYPE_DIRECTORY)
+        flags |= meRWFLAG_MKDIR ;
+#endif
     if((s=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
         return s ;
     /* set mark to previous line so it doesnt get moved down */
@@ -1430,7 +1445,7 @@ insertFile(int f, int n)
         length = 0 ;
     
     for(; n>0 ; n--)
-        if((s = meBufferInsertFile(frameCur->bufferCur,fname,0,offset,length)) <= 0)
+        if((s = meBufferInsertFile(frameCur->bufferCur,fname,flags,offset,length)) <= 0)
             break ;
     
     /* move the mark down 1 line into the correct place */
@@ -1480,23 +1495,16 @@ makename(meUByte *bname, meUByte *fname)
 static int
 findFileSingle(meUByte *fname, int bflag, meInt lineno)
 {
-#ifdef _UNIX
-    meStat  stats ;
-#endif
     meBuffer *bp ;
     int   gft ;
 #if MEOPT_SOCKET
     int fnlen ;
 #endif
-#if MEOPT_DIRLIST
-#define FINDFILESINGLE_GFS_OPT 1
-#else
-#define FINDFILESINGLE_GFS_OPT 3
-#endif    
 #ifdef _UNIX
-    gft = getFileStats(fname,FINDFILESINGLE_GFS_OPT,&stats,NULL) ;
+    meStat  stats ;
+    gft = getFileStats(fname,meFINDFILESINGLE_GFS_OPT,&stats,NULL) ;
 #else
-    gft = getFileStats(fname,FINDFILESINGLE_GFS_OPT,NULL,NULL) ;
+    gft = getFileStats(fname,meFINDFILESINGLE_GFS_OPT,NULL,NULL) ;
 #endif
     if((gft == meFILETYPE_NASTY) ||
 #if (MEOPT_DIRLIST == 0)
@@ -1560,14 +1568,10 @@ findFileSingle(meUByte *fname, int bflag, meInt lineno)
             meModeClear(bp->mode,MDRBIN) ;
         }
         bp->dotLineNo = lineno ;
-        bp->histNo = bufHistNo ;
     }
-    else
-    {
-        if(!meModeTest(bp->mode,MDNACT))
-            bp->intFlag |= BIFLOAD ;
-        bp->histNo = bufHistNo ;
-    }
+    else if(!meModeTest(bp->mode,MDNACT))
+        bp->intFlag |= BIFLOAD ;
+    bp->histNo = bufHistNo ;
     return 1 ;
 }
 
@@ -1619,9 +1623,7 @@ findFileList(meUByte *fname, int bflag, meInt lineno)
     bufHistNo++ ;
     fileNameCorrect(fname,fileName,&baseName) ;
               
-    if(isUrlLink(fileName))
-        nofiles += findFileSingle(fileName,bflag,lineno) ;
-    else if(fileNameWild(baseName) && meTestRead(fileName))
+    if(!isUrlLink(fileName) && fileNameWild(baseName) && meTestRead(fileName))
     {
         /* if the base name has a wild card letter (i.e. *, ? '[')
          * and a file with that exact name does not exist then load
@@ -1646,9 +1648,7 @@ findFileList(meUByte *fname, int bflag, meInt lineno)
         }
     }
     else
-    {
         nofiles += findFileSingle(fileName,bflag,lineno) ;
-    }
     return nofiles ;
 }
 
@@ -1919,7 +1919,6 @@ fileOp(int f, int n)
             prompt[0] = 'C' ;
             prompt[2] = 'p' ;
             prompt[3] = 'y' ;
-            dFlags = 0 ;
         }
         prompt[9] = '\0' ;
         if (inputFileName(prompt, sfname,1) <= 0)
@@ -2164,14 +2163,12 @@ resetBufferNames(meBuffer *bp, meUByte *fname)
     if(fnamecmp(bp->fileName,fname))
     {
         meUByte buf[meBUF_SIZE_MAX], *bb ;
-        meNullFree(bp->fileName) ;
-        bp->fileName = meStrdup(fname) ;
+        meStrrep(&bp->fileName,fname) ;
         unlinkBuffer(bp) ;
         bp->intFlag = (bp->intFlag & ~BIFNAME) | makename(buf, fname) ;
-        if((bb = meMalloc(meStrlen(buf)+1)) != NULL)
+        if((bb = meStrdup(buf)) != NULL)
         {
             meFree(bp->name) ;
-            meStrcpy(bb,buf) ;
             bp->name = bb ;
         }
         linkBuffer(bp) ;
@@ -2955,9 +2952,9 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
     dirList->list = fls ;
     if(noFiles > 1)
 #ifdef _INSENSE_CASE
-        sortStrings(noFiles,fls,0,stridif) ;
+        sortStrings(noFiles,fls,0,meStridif) ;
 #else
-        sortStrings(noFiles,fls,0,strcmp) ;
+        sortStrings(noFiles,fls,0,(meIFuncSS) strcmp) ;
 #endif
 }
 

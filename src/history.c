@@ -4,7 +4,7 @@
  * history.c - histroy saving and re-loading routines.
  *
  * Copyright (C) 1995-2001 Steven Phillips
- * Copyright (C) 2002 JASSPA (www.jasspa.com)
+ * Copyright (C) 2002-2004 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -99,8 +99,7 @@ readHistory(int f, int n)
     if((f == meTRUE) && (n != 0))
     {
         /* Store the default history file name */
-        meNullFree(defHistFile) ;
-        defHistFile = meStrdup(regRoot->value) ;
+        meStrrep(&defHistFile,regRoot->value) ;
     }
     if ((regRoot = regFind(regRoot,(meUByte *)"history")) != NULL)
     {

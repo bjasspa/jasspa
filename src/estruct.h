@@ -4,7 +4,7 @@
  * estruct.h - Structures and their defines.
  *
  * Originally written by Dave G. Conroy for MicroEmacs
- * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ * Copyright (C) 1988-2004 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -38,6 +38,7 @@
 #define meSBUF_SIZE_MAX       128               /* # of bytes, string buffers   */
 #define meBUF_SIZE_MAX        1024              /* size of various inputs       */
 #define meTOKENBUF_SIZE_MAX   meBUF_SIZE_MAX+4  /* meBUF_SIZE_MAX + an overrun safe area*/
+#define meMLDISP_SIZE_MAX     meBUF_SIZE_MAX+20 /* meBUF_SIZE_MAX + completion label*/
 #define meTIME_STAMP_SIZE_MAX 40                /* Max len of a time stamp str. */
 
 #define meCHAR_BELL           0x07              /* the bell character           */
@@ -98,14 +99,9 @@
 #endif
 
 /* Standard function prototypes used in various static tables */
-typedef int (*meIFuncV)(void);
-typedef int (*meIFuncC)(char);
-typedef int (*meIFuncI)(int);
 typedef int (*meIFuncII)(int,int);
-typedef int (*meIFuncS)(char *);
-typedef int (*meIFuncSS)(const char *, const char *);
-typedef int (*meIFuncSSI)(const char *, const char *,size_t);
-typedef int (*meIFuncCCCI)(char *,char *,char *,int) ;
+typedef int (*meIFuncSS)(const meUByte *, const meUByte *);
+typedef int (*meIFuncSSI)(const meUByte *, const meUByte *, size_t);
 
 /* meStyle contains color and font information coded into an meInt the
  * following #defines and macros are used to manipulate them.

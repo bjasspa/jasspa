@@ -3,7 +3,7 @@
 # JASSPA MicroEmacs - www.jasspa.com
 # makefile - Make file for UNIX or Cygwin to build the src packages.
 #
-# Copyright (C) 2001-2002 JASSPA (www.jasspa.com)
+# Copyright (C) 2001-2004 JASSPA (www.jasspa.com)
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -27,20 +27,22 @@
 #       The executable produced does not currently work, for some reason ME
 #       does not receive any keyboard input and must be killed.
 #
-#	Run "make -f release.gmk release"  builds the release files  
+#	Run "make -f release.gmk release"  builds the release files
 #	Run "make -f release.gmk clean"    to clean source directory
 #	Run "make -f release.gmk spotless" to clean source directory even more
 #
 ##############################################################################
 #
-RM	= /usr/bin/rm -f
-TAR	= /usr/bin/tar
-ZIP	= /usr/bin/zip
-FIND	= /usr/bin/find
-GREP	= /usr/bin/grep
-UNIQ	= /usr/bin/uniq
-INSTALL	= /usr/bin/install
+RM	= rm -f
+TAR	= tar
+ZIP	= zip
+FIND	= find
+GREP	= grep
+UNIQ	= uniq
+INSTALL	= ginstall
 INSTDIR	= ../release
+DOS2UNIX= me -n "@dos2unix"
+UNIX2DOS= me -n "@unix2dos"
 
 OBJS	= mesrc.zip	mesrc.tar.gz	meicons.tar.gz
 
@@ -49,12 +51,12 @@ all:	$(OBJS)
 mesrc.zip: .ziplist
 	cat .ziplist | zip -q -9 mesrc.zip '-@'
 mesrc.tar.gz: .ziplist
-	tar cf - -T .ziplist | gzip -9 -c > $@
+	gtar cf - -T .ziplist | gzip -9 -c > $@
 meicons.tar.gz: me.xpm mini-me.xpm me.l.pm me.m.pm me.t.pm
 	$(RM) .xpmlist
 	$(FIND) . -type f -name "*.xpm" -print > .xpmlist
 	$(FIND) . -type f -name "*.pm" -print >> .xpmlist
-	tar cf - -T .xpmlist | gzip -9 -c > $@
+	gtar cf - -T .xpmlist | gzip -9 -c > $@
 	$(RM) .xpmlist
 
 release: $(OBJS)
@@ -64,15 +66,16 @@ release: $(OBJS)
 .ziplist:
 	$(RM) $@.tmp $@
 	$(RM)  $(OBJS)
-	dos2unix -U *.def *.[ch] *.mak *.txt *.gmk build COPYING *.xpm
-	unix2dos -D build.bat *.rc
+	$(DOS2UNIX) *.def *.[ch] *.mak *.txt *.gmk build COPYING *.xpm
+	$(UNIX2DOS) build.bat *.rc
+	$(RM) *~
 	$(FIND) . -depth -type f -print | $(GREP) -v -i ".*/*\.lst" | $(GREP) -v -i ".*/cvs.*" | $(GREP) -v -i ".*\.o.*" | $(GREP) -v -i "\.ziplist" | $(GREP) -v -i ".*/release\.gmk"  > $@.tmp
 	sort $@.tmp | $(GREP) -v -i ".*\.tar\.gz" | $(GREP) -v -i ".*/\.cvsignore" | $(GREP) -v -i ".*\.zip" | $(GREP) -v -i ".*\.exe" | $(UNIQ) > $@
 	$(RM) $@.tmp
 
 clean:
 	$(RM) .ziplist.tmp
-	$(RM) .ziplist 
+	$(RM) .ziplist
 	$(RM) .xpmlist
 	$(RM) $(OBJS)
 	$(RM) *~

@@ -3,7 +3,7 @@
  * JASSPA MicroEmacs - www.jasspa.com
  * word.c - Word processing routines.
  *
- * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ * Copyright (C) 1988-2004 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -908,7 +908,6 @@ fillPara(int f, int n)
     int fdoto;                          /* The left doto for 1st line   */
 
 #if MEOPT_UNDO
-    meUndoNode *undoNd ;
     int paralen ;
 #endif
     
@@ -1087,7 +1086,6 @@ noIndent:
 #if MEOPT_UNDO
         frameCur->windowCur->dotOffset = 0;
         meUndoAddReplaceBgn(eopline,0) ;
-        undoNd = frameCur->bufferCur->undoHead ;
         frameCur->windowCur->dotOffset = (meUShort) ilength;
         paralen = 0 ;
 #endif

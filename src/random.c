@@ -3,7 +3,7 @@
  * JASSPA MicroEmacs - www.jasspa.com
  * random.c - Random Routines.
  *
- * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ * Copyright (C) 1988-2004 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -45,7 +45,7 @@
 void *
 meMalloc(size_t s)
 {
-    register void *r ;
+    void *r ;
     if((r = malloc(s)) == NULL)
         mlwrite(MWCURSOR|MWABORT|MWWAIT,(meUByte *)"Warning! Malloc failure") ;
     return r ;
@@ -55,23 +55,44 @@ void *
 meRealloc(void *r, size_t s)
 {
     if((r = realloc(r,s)) == NULL)
-        mlwrite(MWCURSOR|MWABORT|MWWAIT,(meUByte *)"Warning! Realloc failure") ;
+        mlwrite(MWCURSOR|MWABORT|MWWAIT,(meUByte *)"Warning! Malloc failure") ;
     return r ;
+}
+
+void *
+meStrdup(const meUByte *s)
+{
+    void *r ;
+    if((r = strdup((const char *) s)) == NULL)
+        mlwrite(MWCURSOR|MWABORT|MWWAIT,(meUByte *)"Warning! Malloc failure") ;
+    return r ;
+}
+
+void
+meStrrep(meUByte **d, const meUByte *s)
+{
+    if(*d != NULL)
+        free(*d) ;
+    if((*d = (meUByte *) strdup((const char *) s)) == NULL)
+        mlwrite(MWCURSOR|MWABORT|MWWAIT,(meUByte *)"Warning! Malloc failure") ;
 }
 
 /* case insensitive str compare
  * done by simply turning all letters to lower case
  */
 int
-strnicmp(const char *str1, const char *str2, size_t n)
+meStrnicmp(const meUByte *str1, const meUByte *str2, size_t nn)
 {
-    register char cc, dd ;
-    for(; n>0 ; n--)
+    meUByte cc, dd ;
+    int ii ;
+    nn++ ;
+    while(--nn > 0)
     {
         cc = *str1++ ;
         dd = *str2++ ;
-        if((cc != dd) && (((char) toggleCase(cc)) != dd))
-            return 1 ;
+        if((cc != dd) &&
+           ((ii=((int) toLower(cc)) - ((int) toLower(dd))) != 0))
+            return ii ;
         if(cc == 0)
             break ;
     }
@@ -82,16 +103,16 @@ strnicmp(const char *str1, const char *str2, size_t n)
  * done by simply turning all letters to lower case
  */
 int
-stricmp(const char *str1, const char *str2)
+meStricmp(const meUByte *str1, const meUByte *str2)
 {
-    register char  cc, dd ;
+    meUByte cc, dd ;
     int ii ;
     
     do {
         cc = *str1++ ;
         dd = *str2++ ;
         if((cc != dd) &&
-           ((ii=((char) toLower(cc)) - ((char) toLower(dd))) != 0))
+           ((ii=((int) toLower(cc)) - ((int) toLower(dd))) != 0))
             return ii ;
     } while(cc != 0) ;
     return 0 ;
@@ -103,17 +124,16 @@ stricmp(const char *str1, const char *str2)
  * the case sensitive result.
  */
 int
-stridif(const char *str1, const char *str2)
+meStridif(const meUByte *str1, const meUByte *str2)
 {
-    register char cc, dd ;
-    register int  rr=0, ss, tt ;
+    int cc, dd, rr=0, ss, tt ;
     
     do {
         cc = *str1++ ;
         dd = *str2++ ;
         if((ss = cc - dd) != 0)
         {
-            if((tt = ((char) toLower(cc)) - ((char) toLower(dd))) != 0)
+            if((tt = ((int) toLower(cc)) - ((int) toLower(dd))) != 0)
                 return tt ;
             if(!rr)
                 rr = ss ;
@@ -140,7 +160,7 @@ sortStrings(int noStr, meUByte **strs, int offset, meIFuncSS cmpFunc)
         {
             chng=0 ;
             for(i=0 ; i<noStr-1 ; i++)
-                if(cmpFunc((const char *) strs[i]+offset,(const char *) strs[i+1]+offset) < 0)
+                if(cmpFunc(strs[i]+offset,strs[i+1]+offset) < 0)
                 {
                     tmp = strs[i] ;
                     strs[i] = strs[i+1] ;
@@ -155,7 +175,7 @@ sortStrings(int noStr, meUByte **strs, int offset, meIFuncSS cmpFunc)
         {
             chng=0 ;
             for(i=0 ; i<noStr-1 ; i++)
-                if(cmpFunc((const char *) strs[i]+offset,(const char *) strs[i+1]+offset) > 0)
+                if(cmpFunc(strs[i]+offset,strs[i+1]+offset) > 0)
                 {
                     tmp = strs[i] ;
                     strs[i] = strs[i+1] ;
@@ -177,7 +197,7 @@ sortStringsCmp(const void *v1, const void *v2)
 {
     int ii ;
     
-    ii = sortStringsCmpFunc(*((const char **) v1)+sortStringsOffset,*((const char **) v2)+sortStringsOffset) ;
+    ii = sortStringsCmpFunc(*((const meUByte **) v1)+sortStringsOffset,*((const meUByte **) v2)+sortStringsOffset) ;
     if(sortStringsBackward)
         ii = 0-ii ;
     return ii ;
@@ -255,9 +275,9 @@ sortLines(int f, int n)
     frameCur->windowCur->dotLineNo = sln+noL ;
     
     if(meModeTest(frameCur->bufferCur->mode,MDEXACT))
-        cmpFunc = strcmp ;
+        cmpFunc = (meIFuncSS) strcmp ;
     else
-        cmpFunc = stridif ;
+        cmpFunc = meStridif ;
     if(f != 0)
     {
         for(ii=0,jj=0 ; ii<noL ; ii++)
@@ -1001,39 +1021,6 @@ meNewline(int f, int n)
 }
 
 /*
- * Delete backwards. This is quite easy too, because it's all done with other
- * functions. Just move the cursor back, and delete forwards. Like delete
- * forward, this actually does a kill if presented with an argument. Bound to
- * both "RUBOUT" and "C-H".
- */
-int
-backDelChar(int f, int n)
-{
-    register int    s;
-    int keep ;
-    
-    if(n == 0)
-        return meTRUE ;
-    if (n < 0)
-        return (forwDelChar(f, -n));
-    if((s=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
-        return s ;
-    
-    /* Always make ldelete save the deleted stuff in a kill buffer
-     * unless only one character and not in letter kill mode. */
-    if((f != meFALSE) || meModeTest(frameCur->bufferCur->mode,MDLETTR))
-        keep = 3 ;                      /* Save in kill */
-    else
-        keep = 2 ;
-    
-    if((s = meWindowBackwardChar(frameCur->windowCur, n)) > 0)
-        s = ldelete(n,keep);
-    
-    return s ;
-}
-
-
-/*
  * Delete blank lines around dot. What this command does depends if dot is
  * sitting on a blank line. If dot is sitting on a blank line, this command
  * deletes all the blank lines above and below the current line. If it is
@@ -1042,7 +1029,7 @@ backDelChar(int f, int n)
  * ignored.
  */
 int
-deblank(int f, int n)
+windowDeleteBlankLines(int f, int n)
 {
     register meLine   *lp1;
     register meLine   *lp2;
@@ -1078,14 +1065,17 @@ deblank(int f, int n)
 int
 forwDelChar(int f, int n)
 {
-    register int    s;
-    int keep ;
+    int s, keep ;
     
     if(n == 0)
         return meTRUE ;
-    if (n < 0)
-        return (backDelChar(f, -n));
-    if((s=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
+    if(n < 0)
+    {
+        n = -n ;
+        if((s = meWindowBackwardChar(frameCur->windowCur, n)) <= 0)
+            return s ;
+    }   
+    if((s = bufferSetEdit()) <= 0)             /* Check we can change the buffer */
         return s ;
     
     if((f != meFALSE) || meModeTest(frameCur->bufferCur->mode,MDLETTR))
@@ -1093,11 +1083,18 @@ forwDelChar(int f, int n)
     else
         keep = 2 ;
     
-    /*
-     * Always make ldelete save the deleted stuff in a kill buffer
-     * unless only one character and in letter kill mode.
-     */
-    return (ldelete((meInt)n, keep));
+    /* Always make ldelete save the deleted stuff in a kill buffer
+     * unless only one character and not in letter kill mode. */
+    return ldelete(n,keep) ;
+}
+
+/*
+ * Delete backwards. Normally bound to "C-H".
+ */
+int
+backDelChar(int f, int n)
+{
+    return forwDelChar(f,-n) ;
 }
 
 

@@ -3,7 +3,7 @@
  * JASSPA MicroEmacs - www.jasspa.com
  * eextrn.h - External function definitions.
  *
- * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ * Copyright (C) 1988-2004 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -124,8 +124,8 @@ extern	int	nextWndFindBuf(int f, int n);
 extern	int	findBuffer(int f, int n);
 extern	int	nextBuffer(int f, int n);
 extern	int	swbuffer(meWindow *wp, meBuffer *bp);
-extern	int	delBuffer(int f, int n);
-extern	int	delSomeBuffers(int f, int n);
+extern	int	bufferDelete(int f, int n);
+extern	int	deleteSomeBuffers(int f, int n);
 extern  meBuffer *replacebuffer(meBuffer *oldbuf) ;
 extern	int	HideBuffer(meBuffer *bp, int forceAll) ;
 extern  void    linkBuffer(meBuffer *bp) ;
@@ -704,9 +704,11 @@ extern  int     WinPrint(meUByte *name, meLine *phead);
 /* random.c externals */
 extern  void   *meMalloc(size_t s) ;
 extern  void   *meRealloc(void *, size_t s) ;
-extern  int     stricmp(const char *str1, const char *str2) ;
-extern  int     strnicmp(const char *str1, const char *str2, size_t) ;
-extern  int     stridif(const char *str1, const char *str2) ;
+extern  void   *meStrdup(const meUByte *s) ;
+extern  void    meStrrep(meUByte **d, const meUByte *s) ;
+extern  int     meStricmp(const meUByte *str1, const meUByte *str2) ;
+extern  int     meStrnicmp(const meUByte *str1, const meUByte *str2, size_t nn) ;
+extern  int     meStridif(const meUByte *str1, const meUByte *str2) ;
 extern  void    sortStrings(int noStr, meUByte **strs, int offset, meIFuncSS cmpFunc) ;
 extern  int     sortLines(int f, int n) ;
 extern	int	bufferInfo(int f, int n);
@@ -724,7 +726,7 @@ extern	int	meTab(int f, int n);
 extern	int	meBacktab(int f, int n);
 extern	int	meLineSetIndent(int curInd, int newInd, int undo);
 extern	int	meNewline(int f, int n);
-extern	int	deblank(int f, int n);
+extern	int	windowDeleteBlankLines(int f, int n);
 extern	int	forwDelChar(int f, int n);
 extern	int	backDelChar(int f, int n);
 extern	int	killLine(int f, int n);
@@ -1307,10 +1309,6 @@ extern int      putenv(const char *s);
 #define meStrcat(s1,s2)     strcat((char *)(s1),(const char *)(s2))
 #define meStrcpy(s1,s2)     strcpy((char *)(s1),(const char *)(s2))
 #define meStrncpy(s1,s2,n)  strncpy((char *)(s1),(const char *)(s2),(n))
-#define meStridif(s1,s2)    stridif((const char *)(s1),(const char *)(s2))
-#define meStricmp(s1,s2)    stricmp((const char *)(s1),(const char *)(s2))
-#define meStrnicmp(s1,s2,n) strnicmp((const char *)(s1),(const char *)(s2),(n))
-#define meStrdup(s1)        ((void *) strdup((const char *)(s1)))
 #define meStrstr(s1,s2)     ((void *) strstr((const char *)(s1),(const char *)(s2)))
 #define meStrchr(s1,c1)     ((void *) strchr((const char *)(s1),(c1)))
 #define meStrrchr(s1,c1)    ((void *) strrchr((const char *)(s1),(c1)))

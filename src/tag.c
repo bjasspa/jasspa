@@ -3,7 +3,7 @@
  * JASSPA MicroEmacs - www.jasspa.com
  * tag.c - Find tag positions.
  *
- * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ * Copyright (C) 1988-2004 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -96,7 +96,7 @@ findTagInFile(meUByte *file, meUByte *baseName, meUByte *tagTemp,
                 end = opos ;
             }
             else if (tmp > 0)
-                /* foward */
+                /* forward */
                 start = ftell(fp) - 1 ;
             else if((end=opos) == 0)
                 break ;
@@ -333,13 +333,10 @@ findTagExec(int nn, meUByte tag[])
 int
 findTag(int f, int n)
 {
-    meUByte  tag [meBUF_SIZE_MAX];
-    meLine  *startp;
-    meShort  starto, i;
+    meUByte  tag[meBUF_SIZE_MAX], *ss ;
+    int      offs, len ;
     
-    /* Determine if we are in a word. If not then get a word from the 
-       user. */
-    
+    /* Determine if we are in a word. If not then get a word from the user. */
     if(n & 0x04)
         ;
     else if((n & 0x02) || (inWord() == meFALSE))
@@ -350,41 +347,21 @@ findTag(int f, int n)
     }
     else
     {
-	/*---	Save the current cursor postion. */
+        ss = frameCur->windowCur->dotLine->text ;
+        offs = frameCur->windowCur->dotOffset ;
         
-        startp = frameCur->windowCur->dotLine;		
-        starto = frameCur->windowCur->dotOffset;
+	/* Go to the start of the word. */
+        while((--offs >= 0) && isWord(ss[offs]))
+            ;
+        offs++ ;
         
-	/*---	Go to the start of the word. */
-
-        while(meWindowBackwardChar(frameCur->windowCur,1) != meFALSE)	/* Back up */
-            if(inWord() == meFALSE)
-            {
-                meWindowForwardChar(frameCur->windowCur, 1);		/* Back into the word */
-                break ;
-            }
-        
-	/*---	Get the word required. */
-        
-        i = 0;
-        while (inWord() != meFALSE)
-        {
-            tag[i++] = meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset);
-            if (i >= meBUF_SIZE_MAX-1)
-            {
-                i = 0;	/* Too big !! */
-                break;	/* Break out */
-            }
-            meWindowForwardChar(frameCur->windowCur, 1);
-        }
-        tag[i] = 0;			/* End of string */
-        
-	/*---	Restore old cursor position, find tag type and find the string */
-        
-        frameCur->windowCur->dotLine = startp;
-        frameCur->windowCur->dotOffset = starto;
-
-    }	/* End of 'if' */
+	/* Get the word required. */
+        len = 0;
+        do
+            tag[len++] = ss[offs++] ;
+        while((len < meBUF_SIZE_MAX-1) && isWord(ss[offs]) != meFALSE) ;
+        tag[len] = 0 ;
+    }
     
     /*---	Call the tag find. */
 

@@ -4,7 +4,7 @@
  * dirlist.c - System directory tree display routines.
  *
  * Copyright (c) 1996-2001 Jon Green & Steven Phillips
- * Copyright (C) 2002 JASSPA (www.jasspa.com)
+ * Copyright (C) 2002-2004 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -777,11 +777,7 @@ dirDrawDir(meUByte *fname, int n)
     if(n & LDO_SELECT)
     {
         if(fnamecmp(bp->fileName,fname))
-        {   /* Free off old file name */
-            if(bp->fileName != NULL)
-                meFree(bp->fileName) ;
-            bp->fileName = meStrdup(fname) ;
-        }
+            meStrrep(&bp->fileName,fname) ;
     }
     curDirLine = NULL ;
     dirDrawDirectory(bp,dirlist,0,iStr,bp->fileName) ;
