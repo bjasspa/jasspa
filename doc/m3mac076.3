@@ -1,0 +1,69 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m3mac076.3,v 1.1 2005-02-13 19:31:53 jon Exp $
+.Im MicroEmacs command|region|file
+.so me.tni
+.TH write-region 3
+.XI write-region - "Write contents of region to named (new) file"
+.SH NAME
+write-region \- Write contents of region to named (new) file
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B write-region
+"\fIfile-name\fR"
+.ad
+.SH DESCRIPTION
+.B write-region
+is used to write the contents of a selected region of a buffer to a \s-1NEW\s0
+file i.e. where the region exists between \fIpoint\fB and \fImark\fR.
+.PP
+.B write-buffer
+writes the contents of the current  region to the named file  \fIfile-name\fR.
+The action of the write also changes the file name associated with the current
+buffer to the new file name.
+.PP
+On writing the region, if
+.Ht time 2m
+mode is enabled then the
+.Hl "time stamp string" $timestamp 5
+is  searched  for  in the  file  and  modified  if  located,  to  reflect  the
+modification date and time.
+.PP
+If the region contains a
+.Ht narrow 2m
+it will automatically  be removed  before  saving so that the whole  region is
+saved and restored when saving is complete.
+.PP
+The  argument  \fIn\fR  may  be  used  to  change  the  default  behavior  of
+write-region described above, \fIn\fR is a bit based flag where:-
+.IP \fB0x01\fR
+Enables  validity  checks  (default).  These include a check that the proposed
+file does not already exist, if so  confirmation  of writing is requested from
+the user.  Also  \*(mE  checks  all  other  current  buffers  for one with the
+proposed file name, if found, again  confirmation  is requested.  Without this
+flag the command will always succeed wherever possible.
+.IP \fB0x02\fR
+Disables the expansion of any narrows (see
+.Ht narrow-buffer 2 )
+before saving the buffer.
+.SH NOTES
+.Ht undo 2
+information may be discarded when the file is written.
+.PP
+\fBwrite-region\fR  is a macro defined in \fCmisc.emf\fR,  this macro was used
+as an example for
+.Hl "Writing MicroEmacs Macros" macroWriting 4 .
+.SH "SEE ALSO"
+.na
+.Ht append-buffer 2 ,
+.Ht save-buffer 2 ,
+.Ht write-buffer 2 .
+.br
+.Hl "Writing MicroEmacs Macros" macroWriting 4 .
+.ad
+.FH
