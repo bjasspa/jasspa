@@ -394,7 +394,7 @@ osd .osd.ftag 60  "" " "
         beginning-of-buffer
         !repeat 
             ; Protect folded lines.
-            !if &not &equ $line-scheme .scheme.fold
+            !if &not &or &equ $line-scheme .scheme.fold &equ $line-scheme .scheme.fold-open
                 set-variable $line-scheme -1
             !endif
             !force forward-line
@@ -416,7 +416,7 @@ osd .osd.ftag 60  "" " "
                 set-variable #l0 $status
                 !if #l0 
                     ; Protect folded lines.
-                    !if &not &equ $line-scheme .scheme.fold
+                    !if &not &or &equ $line-scheme .scheme.fold &equ $line-scheme .scheme.fold-open
                         set-variable $line-scheme #l8
                     !endif
                     set-variable #l2 &add #l2 1
@@ -432,7 +432,7 @@ osd .osd.ftag 60  "" " "
                 set-variable #l0 $status
                 !if #l0 
                     ; Protect folded lines.
-                    !if &not &equ $line-scheme .scheme.fold
+                    !if &not &or &equ $line-scheme .scheme.fold &equ $line-scheme .scheme.fold-open
                         set-variable $line-scheme #l8
                     !endif
                     set-variable #l2 &add #l2 1
@@ -445,7 +445,7 @@ osd .osd.ftag 60  "" " "
             @# osd-search-search
             !if .osd-search-search.status
                 ; Protect folded lines.
-                !if &not &equ $line-scheme .scheme.fold
+                !if &not &or &equ $line-scheme .scheme.fold &equ $line-scheme .scheme.fold-open
                     set-variable $line-scheme #l8
                 !endif
             !endif
@@ -646,7 +646,7 @@ define-macro line-scheme
             !force !force 5 osd-search-hilight
             set-variable .osd-search.search #l0
             set-variable .osd-search.scheme #l1
-        !elif &not &equ $line-scheme .scheme.fold
+        !elif &not &or &equ $line-scheme .scheme.fold &equ $line-scheme .scheme.fold-open
             ; just do current line - Protect folded lines.
             set-variable #l8 &lget .osd-search.hilschms @#
             set-variable #l8 &cond &equ #l8 $global-scheme -1 #l8
@@ -665,7 +665,7 @@ define-macro delete-hilight-lines
     beginning-of-buffer
     !repeat 
         ; Protect folded lines.
-        !if &or &equ $line-scheme -1 &equ $line-scheme .scheme.fold
+        !if &or &equ $line-scheme -1 &or &equ $line-scheme .scheme.fold &equ $line-scheme .scheme.fold-open
             !force forward-line
             !if &not $status 
                 goto-position "\x81"

@@ -97,17 +97,7 @@
 
 ; convert a string to a regex compliant search string
 0 define-macro str-to-regex
-    set-variable #l9 @1
-    set-variable #l2 0
-    !while &not &seq "" &set #l3 &mid #l9 #l2 1
-        !if &sin #l3 "\\[*+.?$"
-            set-variable #l9 &spr "%s\\%s" &lef #l9 #l2 &rig #l9 #l2
-            set-variable #l2 &add #l2 2
-        !else
-            set-variable #l2 &add #l2 1
-        !endif
-    !done
-    set-variable @1 #l9
+    set-variable @1 &xrep @1 "[\\\\[*+.?^$]" "\\\\\\0"
 !emacro
 
 ; convert a string to a regex compliant search string

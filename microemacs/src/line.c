@@ -51,30 +51,25 @@
 #endif
 #endif
 
+#include <assert.h>
+
 static meKillNode **currkill=NULL ;	/* current kill buffer */
 static meKill *reyankLastYank=NULL;
 
-void
-lunmarkBuffer(meBuffer *bp, meLine *lp, meLine *nlp)
-{
-    /*
-     * The line "lp" is marked by an alphabetic mark. Look through
-     * the linked list of marks for the one that references this
-     * line and update to the new line
-     */
-    register meAMark* p=bp->amarkList;
-
-    while(p != NULL)
-    {
-        if(p->line == lp)
-            p->line = nlp ;
-        p = p->next;
-    }
-    /* also swap the flag */
-    nlp->flag |= meLINE_AMARK ;
-    lp->flag &= ~meLINE_AMARK ;
-}
-
+#define meLineShrink(lp,newlen)                                              \
+do {                                                                         \
+    int len = (newlen) ;                                                     \
+    int unused = meLineGetMaxLength(lp) - len ;                              \
+    if(unused > 0xff)                                                        \
+    {                                                                        \
+        unused = meLineMallocSize(len+meLINE_BLOCK_SIZE) ;                   \
+        (lp) = realloc(lp,unused) ;                                          \
+        (lp)->unused = unused - len - meLINE_SIZE ;                          \
+    }                                                                        \
+    else                                                                     \
+        (lp)->unused = unused ;                                              \
+    (lp)->length = len ;                                                     \
+} while(0)
 
 /****************************************************************************
  * This routine allocates a block of memory large enough to hold a meLine
@@ -84,22 +79,67 @@ lunmarkBuffer(meBuffer *bp, meLine *lp, meLine *nlp)
  ******************************************************************************/
 
 meLine *
-lalloc(register int used)
+meLineMalloc(int length, int editLine)
 {
-    register meLine   *lp;
-    register int    size;
+    register meLine *lp ;
+    register size_t ss ;
+    
+    if(!editLine)
+        ss = meLineMallocSize(length) ;
+    else
+        ss = meLineMallocSize(length+meLINE_BLOCK_SIZE) ;
+    if((lp = malloc(ss)) != NULL)
+    {
+        lp->length = length ;
+        lp->unused = ss - length - meLINE_SIZE ;
+        lp->text[length] = '\0' ;
+        lp->flag = (editLine) ? meLINE_CHANGED:0 ;
+    }
+    else
+        mlwrite(MWCURSOR|MWABORT|MWWAIT,(meUByte *)"Warning! Malloc failure") ;
+    return lp ;
+}
 
-    size = (used+meLINE_BLOCK_SIZE-1) & ~(meLINE_BLOCK_SIZE-1);
-    if (size == 0)                          /* Assume that an empty */
-        size = meLINE_BLOCK_SIZE;           /* line is for type-in. */
-    if ((lp = (meLine *) meMalloc(sizeof(meLine)+size)) == NULL)
-        return (NULL);
-    lp->size = size;
-    lp->length = used;
-    lp->text[used] = '\0' ;
-    lp->flag = meLINE_CHANGED ;		    /* line is not marked.	*/
-
-    return (lp);
+void
+meLineResetAnchors(meInt flags, meBuffer *bp, meLine *lp, meLine *nlp,
+                   meUShort offset, meInt adjust)
+{
+    /*
+     * The line "lp" is marked by an alphabetic mark. Look through
+     * the linked list of marks for the one that references this
+     * line and update to the new line
+     */
+    register meAnchor *p=bp->anchorList;
+    
+    /* remove the AMARK flag */
+    lp->flag &= ~meLINE_ANCHOR ;
+    
+    while(p != NULL)
+    {
+        if(p->line == lp)
+        {
+            if(((flags & (meLINEANCHOR_IF_LESS|meLINEANCHOR_IF_GREATER)) == 0) ||
+               ((flags & meLINEANCHOR_IF_GREATER) && (p->offs > offset)) ||
+               ((flags & meLINEANCHOR_IF_LESS) && (p->offs <= offset)))
+            {
+                p->line = nlp ;
+                nlp->flag |= meAnchorGetLineFlag(p) ;
+                if(flags & meLINEANCHOR_FIXED)
+                    p->offs = (meUShort) adjust ;
+                else if(flags & meLINEANCHOR_RELATIVE)
+                    p->offs = (meUShort) (((meInt) p->offs) + adjust) ;
+            }
+            else if((flags & meLINEANCHOR_COMPRESS) && (p->offs > (offset + adjust)))
+            {
+                p->line = nlp ;
+                nlp->flag |= meAnchorGetLineFlag(p) ;
+                p->offs = (meUShort) (offset + adjust) ;
+            }
+            else
+                lp->flag |= meAnchorGetLineFlag(p) ;
+        }
+        p = p->next;
+    }
 }
 
 /*
@@ -110,7 +150,7 @@ lalloc(register int used)
  * mode line needs to be updated (the "*" has to be set).
  */
 int
-bchange(void)
+bufferSetEdit(void)
 {
     if(meModeTest(frameCur->bufferCur->mode,MDVIEW))
         return rdonly() ;
@@ -118,7 +158,7 @@ bchange(void)
     {
         if((frameCur->bufferCur->name[0] != '*') &&
            (bufferOutOfDate(frameCur->bufferCur)) &&
-           (mlyesno((meUByte *)"File changed on disk, really edit") != meTRUE))
+           (mlyesno((meUByte *)"File changed on disk, really edit") <= 0))
             return ctrlg(meTRUE,1) ;
         meModeSet(frameCur->bufferCur->mode,MDEDIT);
         frameAddModeToWindows(WFMODE) ;
@@ -128,7 +168,7 @@ bchange(void)
             meUndoNode        *uu ;
 
             uu = meUndoCreateNode(sizeof(meUndoNode)) ;
-            uu->type |= meUNDO_FRST ;
+            uu->type |= meUNDO_SPECIAL|meUNDO_SET_EDIT ;
             /* Add and narrows, must get the right order */
         }
 #endif
@@ -151,7 +191,7 @@ bchange(void)
 }
 
 void
-lchange(register int flag)
+lineSetChanged(register int flag)
 {
     frameCur->windowCur->dotLine->flag |= meLINE_CHANGED ;
 
@@ -183,7 +223,7 @@ lchange(register int flag)
  * is well, and NULL on errors.
  */
 meUByte *
-lmakespace(int n)
+lineMakeSpace(int n)
 {
     meUByte  *cp1;
     meWindow *wp;
@@ -202,47 +242,50 @@ lmakespace(int n)
     {
         /*---	Allocate a new line */
 
-        if ((lp_new=lalloc(n)) == NULL)    /* Allocate new line    */
-            return (NULL);
+        if ((lp_new=meLineMalloc(n,1)) == NULL)    /* Allocate new line    */
+            return NULL ;
 
         /*---	Link in with the previous line */
-
-#if MEOPT_UNDO
-        meUndoAddInsChar() ;
-#endif
         frameCur->bufferCur->lineCount++ ;
         lp_new->next = lp_old;
         lp_new->prev = lp_old->prev;
         lp_new->flag = lp_old->flag|meLINE_CHANGED ;
+#if MEOPT_EXTENDED
         /* only the new line should have any $line-scheme */
         lp_old->flag &= ~meLINE_SCHEME_MASK ;
+#endif
         lp_old->prev->next = lp_new;
         lp_old->prev = lp_new;
 
-        /* keep alpha marks on the top line - important for narrows */
-        if(lp_old->flag & meLINE_AMARK)
-            lunmarkBuffer(frameCur->bufferCur,lp_old,lp_new) ;
+        if(lp_old->flag & meLINE_ANCHOR)
+            /* update the position of any anchors - important for narrows */
+            meLineResetAnchors(meLINEANCHOR_ALWAYS|meLINEANCHOR_RETAIN,frameCur->bufferCur,
+                               lp_old,lp_new,0,0) ;
         cp1 = lp_new->text ;	/* Return pointer */
         doto = 0 ;
+#if MEOPT_UNDO
+        meUndoAddInsChar() ;
+#endif
     }
     else
     {
         doto = frameCur->windowCur->dotOffset;           /* Save for later.      */
-        if (newl > lp_old->size)      /* Hard: reallocate     */
+        if (n > (int) lp_old->unused)                    /* Hard: reallocate     */
         {
             meUByte *cp2 ;
-            meUShort ii ;
+            meInt ii ;
 
             /*---	Allocate new line of correct length */
 
-            if ((lp_new = lalloc (newl)) == NULL)
-                return (NULL);
+            if ((lp_new = meLineMalloc(newl,1)) == NULL)
+                return NULL ;
 
             /*---	Copy line */
 
             cp1 = &lp_old->text[0];
             cp2 = &lp_new->text[0];
-            for (ii=doto ; ii>0 ; ii--)
+            ii = (meInt) doto ;
+            while(--ii >= 0)
                 *cp2++ = *cp1++ ;
             cp2 += n;
             while((*cp2++ = *cp1++))
@@ -256,8 +299,14 @@ lmakespace(int n)
             lp_new->flag = lp_old->flag|meLINE_CHANGED ;
             lp_old->prev->next = lp_new;
             lp_old->next->prev = lp_new;
-            if(lp_old->flag & meLINE_AMARK)
-                lunmarkBuffer(frameCur->bufferCur,lp_old,lp_new);
+            if(lp_old->flag & meLINE_ANCHOR)
+            {
+                /* update the position of any anchors - important for narrows */
+                meLineResetAnchors(meLINEANCHOR_IF_GREATER|meLINEANCHOR_RELATIVE,frameCur->bufferCur,
+                                   lp_old,lp_new,doto,n);
+                meLineResetAnchors(meLINEANCHOR_ALWAYS|meLINEANCHOR_RETAIN,frameCur->bufferCur,
+                                   lp_old,lp_new,0,0) ;
+            }
             meFree(lp_old);
             cp1 = lp_new->text + doto ;		/* Save position */
         }
@@ -267,6 +316,7 @@ lmakespace(int n)
             meUShort ii ;
 
             lp_new = lp_old;                      /* Pretend new line     */
+            lp_new->unused -= n ;
             lp_new->length = newl ;
             lp_new->flag |= meLINE_CHANGED ;
             cp2 = lp_old->text + lp_old->length ;
@@ -276,6 +326,10 @@ lmakespace(int n)
                 *cp2-- = *cp1-- ;
             while(ii--) ;
             cp1++ ;
+            if(lp_old->flag & meLINE_ANCHOR)
+                /* update the position of any anchors - important for narrows */
+                meLineResetAnchors(meLINEANCHOR_IF_GREATER|meLINEANCHOR_RELATIVE,frameCur->bufferCur,
+                                   lp_old,lp_new,doto,n);
         }
     }
 
@@ -288,7 +342,7 @@ lmakespace(int n)
             if (wp->dotLine == lp_old)
             {
                 wp->dotLine = lp_new;
-                if((wp == frameCur->windowCur) || (wp->dotOffset > doto))
+                if(wp->dotOffset >= doto)
                     wp->dotOffset += n;
             }
             if (wp->markLine == lp_old)
@@ -314,69 +368,36 @@ lmakespace(int n)
  * well, and meFALSE on errors.
  */
 int
-linsert(int n, int c)
+lineInsertChar(int n, int c)
 {
     meUByte *cp;
 
-    lchange(WFMOVEC|WFMAIN);		/* Declare editied buffer */
-    if ((cp = lmakespace(n))==NULL)     /* Make space for the characters */
-        return (meFALSE);		        /* Error !!! */
+    lineSetChanged(WFMOVEC|WFMAIN);		/* Declare editied buffer */
+    if ((cp = lineMakeSpace(n))==NULL)  /* Make space for the characters */
+        return meFALSE ;	        /* Error !!! */
     while (n-- > 0)                     /* Copy in the characters */
         *cp++ = c;
-    return (meTRUE);
+    return meTRUE ;
 }
 
 /*---	As insrt char, insert string */
 int
-lsinsert(register int n, register meUByte *cp)
+lineInsertString(register int n, register meUByte *cp)
 {
     meUByte *lp ;
 
-    if(n == 0)
-    {
-        for( ; cp[n] != 0 ; n++)
-            ;
-        if(n == 0)
-            return meTRUE ;
-    }
-    lchange(WFMAIN) ;
-    if ((lp = lmakespace(n))==NULL)	/* Make space for the characters */
-        return (meFALSE);		/* Error !!! */
+    /* if n == 0 the length if the string is unknown calc the length */
+    if((n == 0) &&
+       ((n = meStrlen(cp)) == 0))
+        return meTRUE ;
+    
+    lineSetChanged(WFMAIN) ;
+    
+    if ((lp = lineMakeSpace(n))==NULL)	/* Make space for the characters */
+        return meFALSE ;		/* Error !!! */
     while(n-- > 0)			/* Copy in the characters */
         *lp++ = *cp++;
     return meTRUE ;
-}
-
-int
-insSpace(int f, int n)	/* insert spaces forward into text */
-{
-    register int s ;
-    
-    if(n <= 0)
-        return meTRUE ;
-    if((s=bchange()) != meTRUE)               /* Check we can change the buffer */
-        return s ;
-    s = linsert(n, ' ');
-#if MEOPT_UNDO
-    meUndoAddInsChars(n) ;
-#endif
-    return s ;
-}
-
-int
-insTab(int f, int n)	/* insert spaces forward into text */
-{
-    register int s ;
-
-    if(n <= 0)
-        return meTRUE ;
-    if((s=bchange()) != meTRUE)               /* Check we can change the buffer */
-        return s ;
-    s = linsert(n, '\t');
-#if MEOPT_UNDO
-    meUndoAddInsChars(n) ;
-#endif
-    return s ;
 }
 
 /*
@@ -388,24 +409,28 @@ insTab(int f, int n)	/* insert spaces forward into text */
  * split forces more updating.
  */
 int
-lnewline(void)
+lineInsertNewline(int ignoreProtect)
 {
-    register meLine   *lp1;
-    register meLine   *lp2;
-    register meUShort  doto, llen ;
-    register meWindow *wp;
-    register meInt   lineno ;
-
-    lchange(WFMOVEL|WFMAIN|WFSBOX);
-    lp1  = frameCur->windowCur->dotLine;                   /* Get the address and  */
-    doto = frameCur->windowCur->dotOffset;                   /* offset of "."        */
+    meLine   *lp1;
+    meLine   *lp2;
+    meUShort  doto, llen ;
+    meWindow *wp;
+    meInt   lineno ;
+    
+    lp1 = frameCur->windowCur->dotLine ;
+    doto = frameCur->windowCur->dotOffset;
+#if MEOPT_EXTENDED
+    if(!ignoreProtect && doto && (meLineGetFlag(lp1) & meLINE_PROTECT))
+        return mlwrite(MWABORT,(meUByte *)"[Protected Line!]") ;
+#endif
+    lineSetChanged(WFMOVEL|WFMAIN|WFSBOX);
     llen = meLineGetLength(lp1)-doto ;
     if((doto == 0) || (llen > doto+32))
     {
         /* the length of the rest of the line is greater than doto+32
          * so use the current line for the next line and create a new this line
          */
-        if ((lp2=lalloc(doto)) == NULL) /* New second line      */
+        if ((lp2=meLineMalloc(doto,1)) == NULL) /* New second line      */
             return meFALSE ;
         lp2->prev = lp1->prev;
         lp1->prev->next = lp2;
@@ -415,27 +440,36 @@ lnewline(void)
         {
             /* Shuffle text around  */
             register meUByte *cp1, *cp2 ;
+            int ii ;
             
-            llen = doto ;
+            ii = doto ;
             cp1 = lp1->text ;
             cp2 = lp2->text ;
-            while(llen--)
+            while(ii--)
                 *cp2++ = *cp1++ ;
             cp2 = lp1->text ;
             while((*cp2++ = *cp1++))
                 ;
             *cp2 = '\0' ;
-            lp1->length -= doto ;
+            meLineShrink(lp1,llen) ;
+            /* sort out the line flags: anchors, schemes etc */ 
+            if(lp1->flag & meLINE_ANCHOR)
+            {
+                /* update the position of any anchors */
+                /* move ones before split over to the first line (lp2) */
+                meLineResetAnchors(meLINEANCHOR_IF_LESS|meLINEANCHOR_RETAIN,frameCur->bufferCur,
+                                   lp1,lp2,doto,0) ;
+                /* adjust offset of remaining ones on the second line (lp1) */
+                if(lp1->flag & meLINE_ANCHOR)
+                    meLineResetAnchors(meLINEANCHOR_IF_GREATER|meLINEANCHOR_RELATIVE,frameCur->bufferCur,
+                                       lp1,lp1,doto,0-((meInt)doto)) ;
+            }
+#if MEOPT_EXTENDED
+            /* share most of the line flags */ 
+            lp2->flag |= lp1->flag & (meLINE_MARKUP|meLINE_SCHEME_MASK) ;
+#endif
         }
-        /* keep alpha marks on the top line - important for narrows */
-        if(lp1->flag & meLINE_AMARK)
-            lunmarkBuffer(frameCur->bufferCur,lp1,lp2) ;
-        /* also true for any $line-schemes */
-        if(lp1->flag & meLINE_SCHEME_MASK)
-        {
-            lp2->flag |= lp1->flag & meLINE_SCHEME_MASK ;
-            lp1->flag &= ~meLINE_SCHEME_MASK ;
-        }
+        /* with no offset all anchors schemes etc stay on the second line */
         lineno = frameCur->windowCur->dotLineNo ;
         meFrameLoopBegin() ;
         wp = loopFrame->windowList ;
@@ -478,18 +512,30 @@ lnewline(void)
     {
         register meUByte *cp1, *cp2, *cp3 ;
         
-        if ((lp2=lalloc(llen)) == NULL) /* New second line      */
+        if ((lp2=meLineMalloc(llen,1)) == NULL) /* New second line      */
             return meFALSE ;
         cp2 = cp1 = lp1->text+doto ;                /* Shuffle text around  */
         cp3 = lp2->text ;
         while((*cp3++=*cp2++))
             ;
         *cp1 = '\0' ;
-        lp1->length = doto ;
+        meLineShrink(lp1,doto) ;
         lp2->next = lp1->next;
         lp1->next->prev = lp2;
         lp2->prev = lp1 ;
         lp1->next = lp2 ;
+        
+        if(lp1->flag & meLINE_ANCHOR)
+            /* move to the second line anchors with an offset greater than the split offset */
+            meLineResetAnchors(meLINEANCHOR_IF_GREATER|meLINEANCHOR_RELATIVE,frameCur->bufferCur,
+                               lp1,lp2,doto,0-((meInt)doto)) ;
+        /* share most of the line flags */ 
+#if MEOPT_EXTENDED
+        lp2->flag |= lp1->flag & (meLINE_NOEOL|meLINE_MARKUP|meLINE_SCHEME_MASK) ;
+#else
+        lp2->flag |= lp1->flag & meLINE_NOEOL ;
+#endif
+        lp1->flag &= ~meLINE_NOEOL ;
         
         lineno = frameCur->windowCur->dotLineNo ;
         meFrameLoopBegin() ;
@@ -531,6 +577,194 @@ lnewline(void)
     return meTRUE ;
 }
 
+#if MEOPT_EXTENDED
+static int
+bufferIsTextInsertLegal(meUByte *str)
+{
+    char *ss ;
+    
+    if((str[0] != '\0') &&
+       (meLineGetFlag(frameCur->windowCur->dotLine) & meLINE_PROTECT) &&
+       ((ss=meStrchr(str,meNLCHAR)) != NULL) &&
+       (frameCur->windowCur->dotOffset || (ss[strlen(ss)-1] != meNLCHAR)))
+        return mlwrite(MWABORT,(meUByte *)"[Protected Line!]") ;
+    return meTRUE ;
+}
+#endif
+
+/* insert the given text string into the current buffer at dot
+ * Note - this function avoids any meLINE_PROTECT issues, it assumes that
+ * the legality of the action is already checked */
+int
+bufferInsertText(meUByte *str)
+{
+    meUByte *ss=str, cc ;
+    meInt status, lineCount=0, lineNo, len, tlen=0 ;
+    meLine *line ;
+    
+    if(str[0] == '\0')
+        return 0 ;
+    
+    /* ZZZZ - handle a cut length of 0xfff0 */
+    for(;;)
+    {
+        while(((cc=*ss++) != '\0') && (cc != meNLCHAR))
+            ;
+        ss-- ;
+        len = (((size_t) ss) - ((size_t) str)) ;
+        if(cc == '\0')
+        {
+            if(len && (lineInsertString(len,str) > 0))
+                tlen += len ;
+            break ;
+        }
+        if(frameCur->windowCur->dotOffset)
+        {
+            assert(lineCount == 0) ;
+            if(len && (lineInsertString(len,str) <= 0))
+                break ;
+            tlen += len ;
+            if(lineInsertNewline(meTRUE) <= 0)
+                break ;
+            tlen++ ;
+        }
+        else
+        {
+            if(lineCount == 0)
+            {
+                line = meLineGetPrev(frameCur->windowCur->dotLine) ;
+                lineNo = frameCur->windowCur->dotLineNo ;
+            }
+            *ss = '\0' ;
+            status = addLine(frameCur->windowCur->dotLine,str) ;
+            *ss = meNLCHAR ;
+            if(status <= 0)
+                break ;
+            tlen += len+1 ;
+            lineCount++ ;
+        }
+        str = ++ss ;
+    }
+    if(lineCount > 0)
+    {
+        meWindow *wp;
+        
+        frameCur->bufferCur->lineCount += lineCount ;
+        meFrameLoopBegin() ;
+        wp = loopFrame->windowList ;
+        while(wp != NULL)
+        {
+            if(wp->buffer == frameCur->bufferCur)
+            {
+                if(wp->vertScroll > lineNo)
+                    wp->vertScroll += lineCount ;
+                if(wp->dotLineNo >= lineNo)
+                    wp->dotLineNo += lineCount ;
+                if(wp->markLineNo >= lineNo)
+                {
+                    if((wp->markLineNo == lineNo) && (wp->markOffset == 0))
+                        /* the mark gets left behind */
+                        wp->markLine = meLineGetNext(line) ;
+                    else
+                        wp->markLineNo += lineCount ;
+                }
+                wp->updateFlags |= WFMOVEL|WFMAIN|WFSBOX ;
+            }
+            wp = wp->next;
+        }
+        meFrameLoopEnd() ;
+    }
+    return tlen ;
+}
+
+int
+bufferInsertSpace(int f, int n)	/* insert spaces forward into text */
+{
+    register int s ;
+    
+    if(n <= 0)
+        return meTRUE ;
+    if((s=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
+        return s ;
+    s = lineInsertChar(n, ' ');
+#if MEOPT_UNDO
+    if(s > 0)
+        meUndoAddInsChars(n) ;
+#endif
+    return s ;
+}
+
+int
+bufferInsertTab(int f, int n)	/* insert tabs forward into text */
+{
+    register int s ;
+
+    if(n <= 0)
+        return meTRUE ;
+    if((s=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
+        return s ;
+    s = lineInsertChar(n, '\t');
+#if MEOPT_UNDO
+    if(s > 0)
+        meUndoAddInsChars(n) ;
+#endif
+    return s ;
+}
+
+/* ask for and insert a string into the current buffer at the current point */
+int
+bufferInsertString(int f, int n)
+{
+    meUByte tstring[meBUF_SIZE_MAX];    /* string to add */
+    register int status;		/* status return code */
+    register int count=0;		/* char insert count */
+    
+    /* ask for string to insert */
+    if((status=meGetString((meUByte *)"String", 0, 0,tstring, meBUF_SIZE_MAX)) <= 0)
+        return status ;
+#if MEOPT_EXTENDED
+    if((status=bufferIsTextInsertLegal(tstring)) <= 0)
+        return status ;
+#endif
+    if((status=bufferSetEdit()) <= 0)   /* Check we can change the buffer */
+        return status ;
+    
+    /* insert it */
+    for(; n>0 ; n--)
+        count += bufferInsertText(tstring) ;
+
+#if MEOPT_UNDO
+    meUndoAddInsChars(count) ;
+#endif
+    return meTRUE ;
+}
+
+
+/*
+ * Open up some blank space. The basic plan is to insert a bunch of newlines,
+ * and then back up over them. Everything is done by the subcommand
+ * procerssors. They even handle the looping. Normally this is bound to "C-O".
+ */
+int
+bufferInsertNewline(int f, int n)
+{
+    register int    i;
+    register int    s;
+    
+    if (n <= 0)
+        return meTRUE ;
+    if((s=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
+        return s ;
+    i = n;                                  /* Insert newlines.     */
+    do 
+        s = lineInsertNewline(meFALSE) ;
+    while((s > 0) && --i);
+#if MEOPT_UNDO
+    meUndoAddInsChars(n-i) ;
+#endif
+    return (s);
+}
+
 /*
  * Save the current kill context. This involves making a new klist element and
  * putting it at the head of the klists (ie make khead point at it).
@@ -547,7 +781,7 @@ lnewline(void)
  * element.
  */
 int
-ksave(void)
+killSave(void)
 {
     meShort count=0 ;
     meKill *thiskl, *lastkl ;/* pointer to last klist element */
@@ -616,7 +850,7 @@ ksave(void)
  * the block otherwise.
  */
 meUByte *
-kaddblock(meInt count)
+killAddNode(meInt count)
 {
     meKillNode *nbl ;
 
@@ -640,8 +874,22 @@ kaddblock(meInt count)
  * b. The mark line wasn't being undated properly
  * c. Needs to return the number of chars not deleted so that the undo can
  *    be corrected
- *  nn      - # of chars to delete
- *  kstring - put killed text into kill string
+ * 
+ *   noChrs   - # of chars to delete
+ *   kstring  - put killed text into kill string
+ * 
+ * Notes: 
+ *   This function does not check that the deletion is legal (not PROTECTED), nor 
+ *   does it handle narrows, this is assumed to be done already (see ldelete).
+ * 
+ *   Line Flags - Given a start line & offset (slp,soff) and end point
+ *        (elp,eoff), the resultant joined line's flags will be derived as
+ *        follows:
+ * 
+ *     ANCHOR  - true if any line contains an anchor.
+ *     NOEOL   - derived from elp
+ *     MARKUP  - derived from slp if soff > 0, elp otherwise
+ *     SCHEME  - derived from slp if soff > 0, elp otherwise
  */
 int
 mldelete(meInt noChrs, meUByte *kstring)
@@ -682,7 +930,10 @@ mldelete(meInt noChrs, meUByte *kstring)
         s2 = s1+nn ;
         while((*s1++ = *s2++) != '\0')
             ;
-        slp->length -= (meUShort) nn ;
+        meLineShrink(slp,slp->length-nn) ;
+        if(slp->flag & meLINE_ANCHOR)
+            meLineResetAnchors(meLINEANCHOR_IF_GREATER|meLINEANCHOR_COMPRESS|meLINEANCHOR_RELATIVE,
+                               frameCur->bufferCur,slp,slp,(meUShort) (soff+nn),-nn);
         slp->flag |= meLINE_CHANGED ;
         
         /* Last thing to do is update the windows */
@@ -770,7 +1021,7 @@ mldelete(meInt noChrs, meUByte *kstring)
             s2 = s1+eoff ;
             while((*s1++ = *s2++) != '\0')
                 ;
-            elp->length -= (meUShort) eoff ;
+            meLineShrink(elp,elp->length-eoff) ;
         }
         fslp = slp ;
         felp = elp ;
@@ -793,7 +1044,7 @@ mldelete(meInt noChrs, meUByte *kstring)
         if(newl > 0x0fff0)
             /* this deletion will leave the joined line too long, abort */
             return noChrs ;
-        if(slp->size >= newl)
+        if(meLineGetMaxLength(slp) >= newl)
         {
             /* here we have got to test for one special case, if the elp is
              * the buffer baseLine then eoff must be 0, we can't remove this
@@ -803,7 +1054,6 @@ mldelete(meInt noChrs, meUByte *kstring)
             if(elp == frameCur->bufferCur->baseLine)
             {
                 slp->text[soff] = '\0' ;
-                slp->length = (meUShort) soff ;
                 felp = elp ;
                 /* increment the no-lines cause we're only pretending we've
                  * removed the last line
@@ -814,16 +1064,23 @@ mldelete(meInt noChrs, meUByte *kstring)
             {
                 meUByte *s1, *s2 ;
             
-                slp->length = newl ;
                 s1 = slp->text+soff ;
                 s2 = elp->text+eoff ;
                 while((*s1++ = *s2++) != '\0')
                     ;
                 felp = meLineGetNext(elp) ;
             }
+            meLineShrink(slp,newl) ;
+            if(slp->flag & meLINE_ANCHOR)
+                meLineResetAnchors(meLINEANCHOR_IF_GREATER|meLINEANCHOR_FIXED,frameCur->bufferCur,
+                                   slp,slp,(meUShort) soff,soff) ;
+            if(elp->flag & meLINE_ANCHOR)
+                meLineResetAnchors(meLINEANCHOR_IF_GREATER|meLINEANCHOR_RELATIVE,frameCur->bufferCur,
+                                   elp,slp,(meUShort) eoff,soff-eoff);
+            slp->flag = (slp->flag & ~meLINE_NOEOL) | (elp->flag & meLINE_NOEOL) ;
             fslp = meLineGetNext(slp) ;
         }
-        else if(elp->size >= newl)
+        else if(meLineGetMaxLength(elp) >= newl)
         {
             meUByte *s1, *s2 ;
             
@@ -842,12 +1099,25 @@ mldelete(meInt noChrs, meUByte *kstring)
                 while((*s1++ = *s2++) != '\0')
                     ;
             }
-            elp->length = (meUShort) newl ;
+            meLineShrink(elp,newl) ;
             s1 = elp->text ;
             s2 = slp->text ;
             ii = soff ;
             while(ii--)
                 *s1++ = *s2++ ;
+            if(elp->flag & meLINE_ANCHOR)
+            {
+                meLineResetAnchors(meLINEANCHOR_IF_LESS|meLINEANCHOR_FIXED,frameCur->bufferCur,
+                                   elp,elp,(meUShort) eoff,eoff);
+                meLineResetAnchors(meLINEANCHOR_ALWAYS|meLINEANCHOR_RELATIVE,frameCur->bufferCur,
+                                   elp,elp,(meUShort) 0,soff-eoff);
+            }
+            if(slp->flag & meLINE_ANCHOR)
+                meLineResetAnchors(meLINEANCHOR_IF_LESS|meLINEANCHOR_RETAIN,frameCur->bufferCur,
+                                   slp,elp,(meUShort) soff,0) ;
+#if MEOPT_EXTENDED
+            elp->flag = (elp->flag & ~(meLINE_MARKUP|meLINE_SCHEME_MASK)) | (slp->flag & (meLINE_MARKUP|meLINE_SCHEME_MASK)) ;
+#endif
             fslp = slp ;
             felp = elp ;
             slp = elp ;
@@ -856,7 +1126,7 @@ mldelete(meInt noChrs, meUByte *kstring)
         {
             meUByte *s1, *s2 ;
             fslp = slp ;
-            if((slp=lalloc(newl)) == NULL)
+            if((slp=meLineMalloc(newl,1)) == NULL)
                 return noChrs ;
             s1 = slp->text ;
             s2 = fslp->text ;
@@ -870,6 +1140,15 @@ mldelete(meInt noChrs, meUByte *kstring)
             elp->next->prev = slp ;
             slp->prev = elp ;
             elp->next = slp ;
+            if(fslp->flag & meLINE_ANCHOR)
+                meLineResetAnchors(meLINEANCHOR_IF_LESS|meLINEANCHOR_RETAIN,frameCur->bufferCur,
+                                   fslp,slp,(meUShort) soff,0) ;
+            if(elp->flag & meLINE_ANCHOR)
+                meLineResetAnchors(meLINEANCHOR_IF_GREATER|meLINEANCHOR_RELATIVE,frameCur->bufferCur,
+                                   elp,slp,(meUShort) eoff,soff-eoff);
+#if MEOPT_EXTENDED
+            slp->flag |= (fslp->flag & (meLINE_MARKUP|meLINE_SCHEME_MASK)) | (elp->flag & meLINE_NOEOL) ;
+#endif
             felp = slp ;
         }
     }
@@ -886,16 +1165,9 @@ mldelete(meInt noChrs, meUByte *kstring)
         
         while(fslp != NULL)
         {
-            if(fslp->flag & meLINE_AMARK)
-            {
-                lunmarkBuffer(frameCur->bufferCur,fslp,slp);
-                /* bit of a fudge, give the $line-scheme of a line which also has an alpha
-                 * mark than any other, often used with narrows etc */
-                if(fslp->flag & meLINE_SCHEME_MASK)
-                    slp->flag &= ~meLINE_SCHEME_MASK ;
-            }
-            if((fslp->flag & meLINE_SCHEME_MASK) && !(slp->flag & meLINE_SCHEME_MASK))
-                slp->flag |= fslp->flag & meLINE_SCHEME_MASK ;
+            if(fslp->flag & meLINE_ANCHOR)
+                meLineResetAnchors(meLINEANCHOR_ALWAYS|meLINEANCHOR_FIXED,frameCur->bufferCur,
+                                   fslp,slp,(meUShort) 0,soff);
             felp = meLineGetNext(fslp) ;
             meFree(fslp) ;
             fslp = felp ;
@@ -964,14 +1236,15 @@ mldelete(meInt noChrs, meUByte *kstring)
  * deleted, and meFALSE if they were not (because dot ran into the end of the
  * buffer. The "kflag" is meTRUE if the text should be put in the kill buffer.
  */
-/* n     -  # of chars to delete */
+/* nn    -  # of chars to delete */
 /* kflag -  put killed text in kill buffer flag */
 int
 ldelete(meInt nn, int kflag)
 {
     meLine *ll ;
     meUByte *kstring ;
-    long ret ;
+    meLineFlag lflag=0 ;
+    meInt ret ;
     
     /* A quick test to make failure handling easier */
     ll = frameCur->windowCur->dotLine ;
@@ -979,21 +1252,35 @@ ldelete(meInt nn, int kflag)
         return meFALSE ;
     
     /* Must get the # chars we can delete */
-    ret = nn + frameCur->windowCur->dotOffset - meLineGetLength(ll) ;
-    while(ret > 0)
+    if((ret = nn + frameCur->windowCur->dotOffset - meLineGetLength(ll)) > 0)
     {
-        ll = meLineGetNext(ll) ;
-        if(ll == frameCur->bufferCur->baseLine)
+        do
         {
-            /* The last but ones line can only be removed if the current 
-             * offset is 0
-             */
-            if(frameCur->windowCur->dotOffset == 0)
-                ret -- ;
-            break ;
-        }
-        ret -= meLineGetLength(ll)+1 ;
+            lflag |= meLineGetFlag(ll) ;
+            ll = meLineGetNext(ll) ;
+            if(ll == frameCur->bufferCur->baseLine)
+            {
+                /* The last but ones line can only be removed if the current 
+                 * offset is 0
+                 */
+                if(frameCur->windowCur->dotOffset == 0)
+                    ret-- ;
+                break ;
+            }
+            ret -= meLineGetLength(ll)+1 ;
+        } while(ret > 0) ;
     }
+#if MEOPT_EXTENDED
+    if((frameCur->windowCur->dotLine != ll) &&
+       ((frameCur->windowCur->dotOffset && 
+         (frameCur->windowCur->dotLine->flag & meLINE_PROTECT)) ||
+        ((ll->flag & meLINE_PROTECT) &&
+         (frameCur->windowCur->dotOffset || (meLineGetLength(ll) != -ret)))))
+    {
+        mlwrite(MWABORT,(meUByte *)"[Protected Line!]") ;
+        return meFALSE ;
+    }
+#endif
     if(ret > 0)
     {
         nn -= ret ;
@@ -1031,11 +1318,67 @@ ldelete(meInt nn, int kflag)
     }        
     else
         ret = meTRUE ;
+#if MEOPT_NARROW
+    if(lflag & meLINE_ANCHOR_NARROW)
+    {
+        /* the kill probably includes one or more narrows, find them, expand then and
+         * add them to the size of the kill */
+        meLine *slp, *clp, *plp, *nlp, *elp=NULL ;
+        meInt len, lineNo ;
+        
+        plp = frameCur->windowCur->dotLine ;
+        if(frameCur->windowCur->dotOffset == 0)
+        {
+            slp = plp = meLineGetPrev(plp) ;
+            lineNo = frameCur->windowCur->dotLineNo ;
+        }
+        else
+            slp = NULL ;
+        nlp = meLineGetNext(plp) ;
+        while((clp = nlp) != ll)
+        {
+            if(elp == clp)
+                /* reached the end of the narrowed out section */
+                elp = NULL ;
+            nlp = meLineGetNext(clp) ;
+            len = meLineGetLength(clp) ;
+            if((meLineGetFlag(clp) & meLINE_ANCHOR_NARROW) &&
+               (meLineRemoveNarrow(frameCur->bufferCur,clp) == meTRUE))
+            {
+                if(meLineGetPrev(nlp) == clp)
+                    /* the current line was not  a narrow markup line */
+                    nlp = clp ;
+                else if(elp == NULL)
+                    /* the current line was a narrow markup line that was
+                     * counted as part of the original kill, subtract the
+                     * length of this from the kill */
+                    nn -= len + 1 ;
+                if(elp == NULL)
+                    elp = nlp ;
+                nlp = meLineGetNext(plp) ;
+            }
+            else
+            {
+                if(elp != NULL)
+                    /* currently trundling down a narrowed out section add
+                     * length to kill size */
+                    nn += len + 1 ;
+                plp = clp ;
+            }
+        }
+        if(slp != NULL)
+        {
+            frameCur->windowCur->dotLine = meLineGetNext(slp) ;
+            frameCur->windowCur->dotLineNo = lineNo ;
+            frameCur->windowCur->dotOffset = 0 ;
+        }
+    }
+#endif
     if(kflag & 1)
     {   /* Kill?                */
         if((lastflag != meCFKILL) && (thisflag != meCFKILL))
-            ksave();
-        if((kstring = kaddblock(nn)) == NULL)
+            killSave();
+        if((kstring = killAddNode(nn)) == NULL)
             return meFALSE ;
         thisflag = meCFKILL;
     }
@@ -1064,50 +1407,56 @@ ldelete(meInt nn, int kflag)
 int
 yankfrom(struct meKill *pklist)
 {
-    int ii, cutLen ;
     int len=0 ;
-    meUByte *ss, *dd, *tt, cc ;		/* pointer into string to insert */
     meKillNode *killp ;
 
+#if MEOPT_EXTENDED
+    meLineFlag lflag ;
+    meUShort doto ;
+    meLine *lp ;
+    
+    lp = frameCur->windowCur->dotLine ;
+    doto = frameCur->windowCur->dotOffset ;
+    lflag = meLineGetFlag(lp) ;
+    if(lflag & meLINE_PROTECT)
+    {
+        killp = pklist->kill;
+        while(killp != NULL)
+        {
+            if(meStrchr(killp->data,meNLCHAR) != NULL)
+                break ;
+            killp = killp->next;
+        }
+        if(killp != NULL)
+        {
+            meKillNode *kk ;
+            if(doto)
+                return mlwrite(MWABORT,(meUByte *)"[Protected Line!]") ;
+            kk = killp ;
+            while((kk=kk->next)  != NULL)
+                if(kk->data[0] != '\0')
+                    killp = kk ;
+            if(killp->data[meStrlen(killp->data)-1] != meNLCHAR)
+                return mlwrite(MWABORT,(meUByte *)"[Protected Line!]") ;
+        }
+    }
+    lp->flag &= ~(meLINE_MARKUP|meLINE_PROTECT|meLINE_SCHEME_MASK) ;
+    lp = meLineGetPrev(lp) ;
+#endif
     /* if pasting to the end of a very long line, the combined length could
      * be too lone (> 0xfff0), try to cope with this. */
-    cutLen = 0xfff0 - meLineGetLength(frameCur->windowCur->dotLine) ;
     killp = pklist->kill;
     while (killp != NULL)
     {
-        ii = 0 ;
-        tt = ss = killp->data ;
-        for(;;)
-        {
-            if(((cc = *ss++) == '\0') || (cc == meNLCHAR) || (ii >= cutLen))
-            {
-                if(ii)
-                {
-                    meAssert(meLineGetChar(frameCur->windowCur->dotLine,meLineGetLength(frameCur->windowCur->dotLine)) == '\0') ;
-                    len += ii ;
-                    if((dd = lmakespace(ii))==NULL)	/* Make space for the characters */
-                        return -1 ;		/* Error !!! */
-                    meAssert(meLineGetChar(frameCur->windowCur->dotLine,meLineGetLength(frameCur->windowCur->dotLine)) == '\0') ;
-                    lchange(WFMAIN) ;	        /* Declare editied buffer */
-                    for( ; ii ; ii--)
-                        *dd++ = *tt++ ;
-                }
-                if(cc == '\0')
-                    break ;
-                    meAssert(meLineGetChar(frameCur->windowCur->dotLine,meLineGetLength(frameCur->windowCur->dotLine)) == '\0') ;
-                if(lnewline() != meTRUE)
-                    return -1 ;
-                    meAssert(meLineGetChar(frameCur->windowCur->dotLine,meLineGetLength(frameCur->windowCur->dotLine)) == '\0') ;
-                if(cc == meNLCHAR)
-                    tt++ ;
-                cutLen = 0xfff0 ;
-                len++ ;
-            }
-            else
-                ii++ ;
-        }
+        len += bufferInsertText(killp->data) ;
         killp = killp->next;
     }
+#if MEOPT_EXTENDED
+    if(doto)
+        (meLineGetNext(lp))->flag |= lflag ;
+    else
+        frameCur->windowCur->dotLine->flag |= lflag ;
+#endif
     return len ;
 }
 
@@ -1161,7 +1510,7 @@ yank(int f, int n)
     if(klhead == NULL)
         return mlwrite(MWABORT,(meUByte *)"[nothing to yank]");
     /* Check we can change the buffer */
-    if((ret=bchange()) != meTRUE)
+    if((ret=bufferSetEdit()) <= 0)
         return ret ;
 
     /* place the mark on the current line */
@@ -1174,12 +1523,12 @@ yank(int f, int n)
             break;
         len += ret ;
     }
-
-    if(ret >= 0)
-    {
 #if MEOPT_UNDO
+    if(len > 0)
         meUndoAddInsChars(len) ;
 #endif
+    if(ret >= 0)
+    {
         /* remember that this was a yank command */
         thisflag = meCFYANK ;
         return meTRUE ;
@@ -1218,11 +1567,11 @@ reyank(int f, int n)
     /*
      * Delete the current region.
      */
-    if((ret = getregion(&region)) != meTRUE)
+    if((ret = getregion(&region)) <= 0)
         return(ret);
 
     frameCur->windowCur->dotLine  = region.line;
-    frameCur->windowCur->dotOffset  = region.offset;
+    frameCur->windowCur->dotOffset = region.offset;
     frameCur->windowCur->dotLineNo = region.lineNo;
     ldelete(region.size,6);
 
@@ -1253,7 +1602,8 @@ reyank(int f, int n)
         len += ret ;
     }
 #if MEOPT_UNDO
-    meUndoAddReplaceEnd(len) ;
+    if(len > 0)
+        meUndoAddReplaceEnd(len) ;
 #endif
     /* Remember that this is a reyank command for next time. */
     thisflag = meCFRYANK;
@@ -1262,7 +1612,7 @@ reyank(int f, int n)
 }
 
 void
-freeLineLoop(meLine *lp, int flag)
+meLineLoopFree(meLine *lp, int flag)
 {
     meLine *clp, *nlp ;
     clp = meLineGetNext(lp) ;

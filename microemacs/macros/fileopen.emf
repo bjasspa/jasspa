@@ -123,7 +123,7 @@ define-macro osd-fo-filelist
 define-macro osd-fo-masksel
     set-variable .osd-get-file.ft @#
     set-variable #l0 &lget .osd-get-file.file-type @#
-    osd .osd.fofm 6 "xMscfH" .scheme.osd-entry &spr "%s%n" &lef #l0 .osd.fo-width &sub .osd.fo-width &len #l0 " " .osd.foft
+    osd .osd.fofm 6 "xMscfHt" 6 .scheme.osd-entry &spr "%s%n" &lef #l0 .osd.fo-width &sub .osd.fo-width &len #l0 " " .osd.foft
     set-variable .osd.fo-mask &lget .osd-get-file.file-mask @#
     set-variable .osd.fo-file .osd.fo-mask
     0 osd-fo-filelist
@@ -155,7 +155,7 @@ define-macro osd-fo-dirlist
         osd .osd.fodc 1 "" " "
     !endif
     !if &band $system 0x200
-        osd .osd.fodm 6 "xMscfH" .scheme.osd-entry &spr "%s%n" &lef .osd.fo-path 2 &sub .osd.fo-width 2 " " .osd.fodv
+        osd .osd.fodm 6 "xMscfHt" 6 .scheme.osd-entry &spr "%s%n" &lef .osd.fo-path 2 &sub .osd.fo-width 2 " " .osd.fodv
     !endif
 !emacro
 
@@ -247,27 +247,27 @@ define-macro osd-fo-okay
         osd .osd.fofc 0 "AsSf" .scheme.osd-child .osd.fo-width .osd.fo-depth -1 -1
         osd .osd.fodc 0 "AsSf" .scheme.osd-child .osd.fo-width .osd.fo-depth -1 -1
     !endif
-    osd .osd.fofm 3 "ExHfc" .scheme.osd-entry #l2 1 osd-fo-fileset
-    osd .osd.fofm 4 "IbHt" 1 .scheme.osd-sbar .osd.fo-width .osd.fo-depth .osd.fofc
-    osd .osd.fodm 3 "ExHfc" .scheme.osd-entry #l2 1 osd-fo-dirset
-    osd .osd.fodm 4 "IbH" .scheme.osd-sbar .osd.fo-width .osd.fo-depth .osd.fodc
+    osd .osd.fofm 3 "ExHtfc" 3 .scheme.osd-entry #l2 1 osd-fo-fileset
+    osd .osd.fofm 4 "IbHt" 4 .scheme.osd-sbar .osd.fo-width .osd.fo-depth .osd.fofc
+    osd .osd.fodm 3 "ExHtfc" 3 .scheme.osd-entry #l2 1 osd-fo-dirset
+    osd .osd.fodm 4 "IbHt" 4 .scheme.osd-sbar .osd.fo-width .osd.fo-depth .osd.fodc
     !if &band $system 0x200
-        osd .osd.fodm 6 "xMscfH" .scheme.osd-entry &spr "%s%n" &lef .osd.fo-path 2 &sub .osd.fo-width 2 " " .osd.fodv
+        osd .osd.fodm 6 "xMscfHt" 6 .scheme.osd-entry &spr "%s%n" &lef .osd.fo-path 2 &sub .osd.fo-width 2 " " .osd.fodv
     !endif
     set-variable #l3 &lget .osd-get-file.file-type .osd-get-file.ft
-    osd .osd.fofm 6 "xMscfH" .scheme.osd-entry &spr "%s%n" &lef #l3 .osd.fo-width &sub .osd.fo-width &len #l3 " " .osd.foft
+    osd .osd.fofm 6 "xMscfHt" 6 .scheme.osd-entry &spr "%s%n" &lef #l3 .osd.fo-width &sub .osd.fo-width &len #l3 " " .osd.foft
 !emacro
 
 osd .osd.fofm 0 ""
 osd .osd.fofm 1 "S" " &File Name:" 3
-osd .osd.fofm 3 "ExHfc" .scheme.osd-entry "####################" 1 osd-fo-fileset
-osd .osd.fofm 4 "IbHt" 1 .scheme.osd-sbar .osd.fo-width .osd.fo-depth .osd.fofc
+osd .osd.fofm 3 "ExHtfc" 3 .scheme.osd-entry "####################" 1 osd-fo-fileset
+osd .osd.fofm 4 "IbHt" 4 .scheme.osd-sbar .osd.fo-width .osd.fo-depth .osd.fofc
 osd .osd.fofm 5 "S" " File &Type:" 6
 
 osd .osd.fodm 0 ""
 osd .osd.fodm 1 "S" " &Directories:" 3
-osd .osd.fodm 3 "ExHfc" .scheme.osd-entry "####################" 1 osd-fo-dirset
-osd .osd.fodm 4 "IbH" .scheme.osd-sbar .osd.fo-width .osd.fo-depth .osd.fodc
+osd .osd.fodm 3 "ExHtfc" 3 .scheme.osd-entry "####################" 1 osd-fo-dirset
+osd .osd.fodm 4 "IbHt" 4 .scheme.osd-sbar .osd.fo-width .osd.fo-depth .osd.fodc
 !if &band $system 0x200
     osd .osd.fodm 5 "S" " Dri&ve:" 6
 !endif
@@ -285,11 +285,11 @@ osd .osd.fobm 100  "Cpxt" 100 "^[ *] &Show backups" 1 osd-fo-options
 
 osd .osd.fom 0  "batcHR" 3 6 .scheme.osd-title "" osd-fo-resize
 osd .osd.fom 1  ""
-osd .osd.fom 2  "Iht" 1 .osd.fofm
+osd .osd.fom 2  "Iht" 2 .osd.fofm
 osd .osd.fom 3  "h" " "
-osd .osd.fom 4  "Ih" .osd.fodm
+osd .osd.fom 4  "Iht" 4 .osd.fodm
 osd .osd.fom 5  "h" " "
-osd .osd.fom 6  "It" 2 .osd.fobm
+osd .osd.fom 6  "It" 6 .osd.fobm
 
 0 define-macro osd-get-file
     osd .osd.fom 0  "batcHR" 3 6 .scheme.osd-title .osd-get-file.title osd-fo-resize
@@ -314,7 +314,7 @@ osd .osd.fom 6  "It" 2 .osd.fobm
     osd .osd.foft 0 "bs" -1 0 22 0 
     set-variable #l0 0
     !while &not &seq &set #l1 &lget .file-type &inc #l0 1 ""
-        osd .osd.foft #l0 "x" #l1 #l0 "osd-fo-masksel"
+        osd .osd.foft #l0 "" #l1 #l0 "osd-fo-masksel"
     !done
     .osd-get-file.ft osd-fo-masksel
     set-variable .status 0

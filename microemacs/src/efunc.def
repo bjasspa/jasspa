@@ -207,10 +207,10 @@ DEFFUNC ("insert-file-name",            0x04, insFileName,    	CK_INSFLNM, &__cm
 #if MEOPT_CMDHASH || MEOPT_EXTENDED
 DEFFUNC ("insert-macro",		0x04, insMacro,		CK_INSMAC, &__cmdArray[CK_INSMAC+1], &__cmdArray[CK_RCSCOCI])
 #endif
-DEFFUNC ("insert-newline",		0x04, insLine,		CK_OPNLIN, &__cmdArray[CK_OPNLIN+1], 0)
-DEFFUNC ("insert-space",		0x04, insSpace,		CK_INSSPC, &__cmdArray[CK_INSSPC+1], 0)
-DEFFUNC ("insert-string",		0x04, insString,	CK_INSSTR, &__cmdArray[CK_INSSTR+1], 0)
-DEFFUNC ("insert-tab",			0x04, insTab,		CK_INSTAB, &__cmdArray[CK_INSTAB+1], &__cmdArray[CK_NXTBUF])
+DEFFUNC ("insert-newline",		0x04, bufferInsertNewline, CK_OPNLIN, &__cmdArray[CK_OPNLIN+1], 0)
+DEFFUNC ("insert-space",		0x04, bufferInsertSpace,   CK_INSSPC, &__cmdArray[CK_INSSPC+1], 0)
+DEFFUNC ("insert-string",		0x04, bufferInsertString,  CK_INSSTR, &__cmdArray[CK_INSSTR+1], 0)
+DEFFUNC ("insert-tab",			0x04, bufferInsertTab,	CK_INSTAB, &__cmdArray[CK_INSTAB+1], &__cmdArray[CK_NXTBUF])
 #if MEOPT_CMDHASH || MEOPT_IPIPES
 DEFFUNC ("ipipe-kill",			0x42, ipipeKill,	CK_IPIPKLL, &__cmdArray[CK_IPIPKLL+1], 0)
 DEFFUNC ("ipipe-shell-command",		0x42, ipipeCommand,	CK_IPIPCMD, &__cmdArray[CK_IPIPCMD+1], &__cmdArray[CK_LSTVAR])

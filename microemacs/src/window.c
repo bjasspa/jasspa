@@ -1371,7 +1371,7 @@ windowSplitDepth(int f, int n)
     if (frameCur->windowCount == meWINDOW_MAX)
         return mlwrite(MWABORT,(meUByte *)"Cannot create more than %d windows",frameCur->windowCount);
     if(((wp = (meWindow *) meMalloc(sizeof(meWindow))) == NULL) || 
-       ((lp=lalloc(frameCur->widthMax)) == NULL) || ((off=lalloc(frameCur->widthMax)) == NULL))
+       ((lp=meLineMalloc(frameCur->widthMax,0)) == NULL) || ((off=meLineMalloc(frameCur->widthMax,0)) == NULL))
     {
         meNullFree(wp) ;                /* Destruct created window */
         return meFALSE ;                /* Fail */
@@ -1471,7 +1471,7 @@ windowSplitWidth(int f, int n)
     if (frameCur->windowCount == meWINDOW_MAX)
         return mlwrite(MWABORT,(meUByte *)"Cannot create more than %d windows",frameCur->windowCount);
     if(((wp = (meWindow *) meMalloc(sizeof(meWindow))) == NULL) ||
-       ((lp=lalloc(frameCur->widthMax)) == NULL) || ((off=lalloc(frameCur->widthMax)) == NULL))
+       ((lp=meLineMalloc(frameCur->widthMax,0)) == NULL) || ((off=meLineMalloc(frameCur->widthMax,0)) == NULL))
     {
         meNullFree (wp);                /* Destruct window */
         return (meFALSE);                 /* and Fail */
@@ -1544,7 +1544,7 @@ windowChangeDepth(int f, int n)
     {
         meUByte buff[meSBUF_SIZE_MAX] ;
         
-        if (meGetString((meUByte *)"New depth", 0, 0, buff, meSBUF_SIZE_MAX) != meTRUE) 
+        if (meGetString((meUByte *)"New depth", 0, 0, buff, meSBUF_SIZE_MAX) <= 0) 
             return meFALSE ;
         
         /* turn the value into a change delta */
@@ -1651,7 +1651,7 @@ windowChangeWidth(int f, int n)
     {
         meUByte buff[meSBUF_SIZE_MAX] ;
         
-        if (meGetString((meUByte *)"New width", 0, 0, buff, meSBUF_SIZE_MAX) != meTRUE) 
+        if (meGetString((meUByte *)"New width", 0, 0, buff, meSBUF_SIZE_MAX) <= 0) 
             return meFALSE ;
         
         /* turn the value into a change delta */
@@ -1811,7 +1811,7 @@ meWindowPopup(meUByte *name, int flags, meBuffer **bufferReplaced)
 #else
         if(frameCur->windowList->next == NULL)
         {
-            if(windowSplitDepth(meFALSE, 0) != meTRUE)
+            if(windowSplitDepth(meFALSE, 0) <= 0)
                 return NULL ;
             /* splitting a window so there is no replacement */
             bufferReplaced = NULL ;
@@ -1844,7 +1844,7 @@ windowPopup(int f, int n)
         meFrameTermMakeCur(frameCur) ;
         return meTRUE ;
     }
-    if((s = getBufferName((meUByte *)"Popup buffer", 0, 2, bufn)) != meTRUE)
+    if((s = getBufferName((meUByte *)"Popup buffer", 0, 2, bufn)) <= 0)
         return s ;
     if(bufn[0] == '\0')
         nn = NULL ;
@@ -1871,7 +1871,7 @@ windowScrollNextUp(int f, int n)
     meWindow *wp=frameCur->windowCur ;
     int ret ;
     
-    if((ret=windowGotoNext(meFALSE, 1)) == meTRUE)
+    if((ret=windowGotoNext(meFALSE, 1)) > 0)
         ret = windowScrollUp(f, n);
     meWindowMakeCurrent(wp) ;
     
@@ -1884,7 +1884,7 @@ windowScrollNextDown(int f, int n)
 {
     meWindow *wp=frameCur->windowCur ;
     int ret ;
-    if((ret=windowGotoNext(meFALSE, 1)) == meTRUE)
+    if((ret=windowGotoNext(meFALSE, 1)) > 0)
         ret = windowScrollDown(f, n);
     meWindowMakeCurrent(wp) ;
     
@@ -2566,7 +2566,7 @@ int
 positionSet(int f, int n)		/* save ptr to current window */
 {
     register mePosition *pos ;
-    meUShort mark ;                     /* Position alpha mark name*/
+    meInt anchor ;                      /* Position anchor name*/
     int cc ;
     
     if((cc = mlCharReply((meUByte *)"Set position: ",mlCR_QUIT_ON_USER,NULL,NULL)) == -2)
@@ -2576,11 +2576,11 @@ positionSet(int f, int n)		/* save ptr to current window */
         return ctrlg(meFALSE,1) ;
     
     pos = position ;
-    mark = meAM_FRSTPOS ;
+    anchor = 0 ;
     while((pos != NULL) && (cc != (int) pos->name))
     {
         pos = pos->next ;
-        mark += 2 ;
+        anchor++ ;
     }
     if(pos == NULL)
     {
@@ -2590,7 +2590,7 @@ positionSet(int f, int n)		/* save ptr to current window */
         pos->next = position ;
         position = pos ;
         pos->name = cc ;
-        pos->line_amark = mark ;
+        pos->anchor = anchor ;
     }
     if(f == meFALSE)
         n = mePOS_DEFAULT ;
@@ -2612,7 +2612,8 @@ positionSet(int f, int n)		/* save ptr to current window */
         pos->buffer = frameCur->bufferCur ;
     if(n & mePOS_LINEMRK)
     {
-        if(alphaMarkSet(frameCur->bufferCur,pos->line_amark,frameCur->windowCur->dotLine,0,1) != meTRUE)
+        if(meAnchorSet(frameCur->bufferCur,meANCHOR_POSITION_DOT|pos->anchor,
+                       frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset,1) <= 0)
         {
             pos->flags = 0 ;
             return meABORT ;
@@ -2624,7 +2625,8 @@ positionSet(int f, int n)		/* save ptr to current window */
         pos->dotOffset = frameCur->windowCur->dotOffset ;
     if(n & mePOS_MLINEMRK)
     {
-        if(alphaMarkSet(frameCur->bufferCur,(meUShort) (pos->line_amark+1),frameCur->windowCur->markLine,0,1) != meTRUE)
+        if(meAnchorSet(frameCur->bufferCur,meANCHOR_POSITION_MARK|pos->anchor,
+                       frameCur->windowCur->markLine,frameCur->windowCur->markOffset,1) <= 0)
         {
             pos->flags = 0 ;
             return meABORT ;
@@ -2768,11 +2770,11 @@ positionGoto(int f, int n)		/* restore the saved screen */
     /* restore the mark first */
     if(n & mePOS_MLINEMRK)
     {
-        if((ret = alphaMarkGet(frameCur->bufferCur,(meUShort) (pos->line_amark+1))) == meTRUE)
+        if((ret = meAnchorGet(frameCur->bufferCur,meANCHOR_POSITION_MARK|pos->anchor)) > 0)
         {
             frameCur->windowCur->markLine = frameCur->bufferCur->dotLine ;
             frameCur->windowCur->markLineNo = frameCur->bufferCur->dotLineNo ;
-            frameCur->windowCur->markOffset = 0 ;
+            frameCur->windowCur->markOffset = frameCur->bufferCur->dotOffset ;
         }
     }
     else if(n & mePOS_MLINENO)
@@ -2781,7 +2783,7 @@ positionGoto(int f, int n)		/* restore the saved screen */
         meInt dotLineNo=frameCur->windowCur->dotLineNo ;
         meUShort doto=frameCur->windowCur->dotOffset ;
         
-        if((ret = windowGotoLine(1,pos->markLineNo+1)) == meTRUE)
+        if((ret = windowGotoLine(1,pos->markLineNo+1)) > 0)
         {
             frameCur->windowCur->markLine = frameCur->windowCur->dotLine ;
             frameCur->windowCur->markLineNo = frameCur->windowCur->dotLineNo ;
@@ -2806,18 +2808,18 @@ positionGoto(int f, int n)		/* restore the saved screen */
     
     if(n & mePOS_LINEMRK)
     {
-        if((ret = alphaMarkGet(frameCur->bufferCur,pos->line_amark)) == meTRUE)
+        if((ret = meAnchorGet(frameCur->bufferCur,meANCHOR_POSITION_DOT|pos->anchor)) > 0)
         {
             frameCur->windowCur->dotLine = frameCur->bufferCur->dotLine ;
             frameCur->windowCur->dotLineNo = frameCur->bufferCur->dotLineNo ;
-            frameCur->windowCur->dotOffset = 0 ;
+            frameCur->windowCur->dotOffset = frameCur->bufferCur->dotOffset ;
             frameCur->windowCur->updateFlags |= WFMOVEL ;
         }
         else
             /* don't restore the offset or scrolls */
             n &= (mePOS_WINDOW|mePOS_BUFFER) ;
     }
-    else if((n & mePOS_LINENO) && ((ret = windowGotoLine(1,pos->dotLineNo+1)) != meTRUE))
+    else if((n & mePOS_LINENO) && ((ret = windowGotoLine(1,pos->dotLineNo+1)) <= 0))
         /* don't restore the offset or scrolls */
         n &= (mePOS_WINDOW|mePOS_BUFFER) ;
     

@@ -578,7 +578,7 @@ static void
 TCAPgetWinSize(void)
 {
 #ifdef TIOCGWINSZ
-    /* BSD-style and laterly SunOS.  */
+    /* BSD-style and lately SunOS.  */
     struct winsize size;
     
     if((ioctl(meStdin,TIOCGWINSZ,&size) == -1) ||
@@ -596,7 +596,7 @@ TCAPgetWinSize(void)
 #endif
     {
         int  ii ;
-        
+
         /* Get the number of columns on the screen */
         if((ii=tgetnum(tcaptab[TCAPcols].capKey)) != -1)
             TTnewWid = ii ;
@@ -633,7 +633,7 @@ sigSize(SIGNAL_PROTOTYPE)
     signal (SIGWINCH, sigSize) ;
 #endif
     TCAPgetWinSize() ;
-    
+
     if((TTnewWid != frameCur->width) || (TTnewHig != frameCur->depth+1))
         alarmState |= meALARM_WINSIZE ;
 }
@@ -1061,7 +1061,7 @@ meFrameGainFocus(meFrame *frame)
 #if MEOPT_MWFRAME
         if(frameCur != frame)
             frameFocus = frame ;
-#endif        
+#endif
         if((cursorState >= 0) && blinkState)
         {
             if(cursorBlink)
@@ -1083,7 +1083,7 @@ meFrameKillFocus(meFrame *frame)
 #if MEOPT_MWFRAME
         if(frameFocus == frame)
             frameFocus = NULL ;
-#endif        
+#endif
         if(cursorState >= 0)
         {
             /* because the cursor is a part of the solid cursor we must
@@ -1554,9 +1554,9 @@ meXEventHandler(void)
                 {
                     nitems = ((long *) buff)[0] ;
                     XFree(buff) ;
-                    /* always ksave, don't want to glue 'em together */
-                    ksave();
-                    if((dd = kaddblock(nitems)) != NULL)
+                    /* always killSave, don't want to glue 'em together */
+                    killSave();
+                    if((dd = killAddNode(nitems)) != NULL)
                     {
                         dd[0] = '\0' ;
                         thisflag = meCFKILL ;
@@ -1576,9 +1576,9 @@ meXEventHandler(void)
                        meStrncmp(klhead->kill->data,buff,nitems) ||
                        (klhead->kill->data[nitems] != '\0'))
                     {
-                        /* always ksave, don't want to glue 'em together */
-                        ksave();
-                        if((dd = kaddblock(nitems)) != NULL)
+                        /* always killSave, don't want to glue 'em together */
+                        killSave();
+                        if((dd = killAddNode(nitems)) != NULL)
                         {
                             meStrncpy(dd,buff,nitems) ;
                             dd[nitems] = '\0' ;
@@ -1641,7 +1641,7 @@ meXEventHandler(void)
             if(((Atom) event.xclient.data.l[0]) == meAtoms[meATOM_WM_DELETE_WINDOW])
             {
 #if MEOPT_MWFRAME
-                if(meFrameDelete(frame,6) != meTRUE)
+                if(meFrameDelete(frame,6) <= 0)
 #endif
                 {
                     /* Use the normal command to save buffers and exit
@@ -2946,7 +2946,7 @@ TTgetClipboard(void)
     {
         /* Remove the 'Try to set selection' flag. This is really important if increment
          * copy texts are being used. If they are and this flag is set after receiving
-         * the initial size, the ksave then take ownership of the block and so we never
+         * the initial size, the killSave then take ownership of the block and so we never
          * get the copy text. Take ownership at the end */
         clipState &= ~(CLIP_TRY_SET|CLIP_RECVED) ;
         /* Request for the current Primary string owner to send a
@@ -3183,9 +3183,9 @@ TTahead(void)
         
         if(alarmState & meALARM_WINSIZE)
         {
-            frameChangeWidth(meTRUE,TTnewWid-frameCur->width); /* Change width */
+            frameChangeWidth(meTRUE,TTnewWid-frameCur->width);     /* Change width */
             frameChangeDepth(meTRUE,TTnewHig-(frameCur->depth+1)); /* Change depth */
-	    alarmState &= ~meALARM_WINSIZE ;
+            alarmState &= ~meALARM_WINSIZE ;
         }
         if(TTnoKeys)
             return TTnoKeys ;
@@ -3299,7 +3299,7 @@ TTopenClientServer (void)
             bp->dotLine = meLineGetPrev(bp->baseLine) ;
             bp->dotOffset = 0 ;
             bp->dotLineNo = bp->lineCount-1 ;
-            alphaMarkSet(bp,'I',bp->dotLine,bp->dotOffset,1) ;
+            meAnchorSet(bp,'I',bp->dotLine,bp->dotOffset,1) ;
         }
         /* Set up the window dimensions - default to having auto wrap */
         ipipe->flag = 0 ;

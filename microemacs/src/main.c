@@ -57,6 +57,7 @@
 #include <sys/wait.h>
 #endif
 #endif
+#include <assert.h>
 
 static char meHelpPage[]=
 "usage     : me [options] [files]\n\n"
@@ -149,8 +150,8 @@ meInit(meUByte *bname)
 #endif
         
     if(((bp = bfind(bname,BFND_CREAT)) == NULL) ||
-       (meFrameInitWindow(frameCur,bp) != meTRUE))
-        meExit(1);
+       (meFrameInitWindow(frameCur,bp) <= 0))
+        meExit(1);    
 }
 
 /*
@@ -173,7 +174,7 @@ insertChar(register int c, register int n)
             if((meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset) != TAB) ||
                (at_tab_pos(getccol()+index+1) == 0))
             {
-                lchange(WFMAIN);
+                lineSetChanged(WFMAIN);
 #if MEOPT_UNDO
                 meUndoAddRepChar() ;
 #endif
@@ -194,18 +195,18 @@ insertChar(register int c, register int n)
 #if MEOPT_UNDO
         if(n == 1)
         {
-            meUndoAddInsChar() ;
-            if(linsert(1,c) != meTRUE)
+            if(lineInsertChar(1,c) <= 0)
                 return meFALSE ;
+            meUndoAddInsChar() ;
         }
         else
         {
-            if(linsert(n, c) != meTRUE)
+            if(lineInsertChar(n, c) <= 0)
                 return meFALSE ;
             meUndoAddInsChars(n) ;
         }
 #else
-        if(linsert(n, c) != meTRUE)
+        if(lineInsertChar(n, c) <= 0)
             return meFALSE ;
 #endif
     }
@@ -287,12 +288,12 @@ execute(register int c, register int f, register int n)
     if((ii=frameCur->bufferCur->inputFunc) >= 0)
     {
         meUByte *ss ;
-        if(((cmdstatus = (execFunc(ii,f,n) == meTRUE))) ||
+        if(((cmdstatus = (execFunc(ii,f,n) > 0))) ||
            ((ss=getUsrLclCmdVar((meUByte *)"status",&(cmdTable[ii]->varList))) == errorm) || meAtoi(ss))
             return cmdstatus ;
     }
     if(index >= 0)
-        return (cmdstatus = (execFunc(index,f,n) == meTRUE)) ;
+        return (cmdstatus = (execFunc(index,f,n) > 0)) ;
     if(selhilight.flags)
     {
         selhilight.bp = NULL;
@@ -324,7 +325,7 @@ execute(register int c, register int f, register int n)
     }
     thisflag = 0;          /* For the future.      */
 
-    if(bchange() != meTRUE)               /* Check we can change the buffer */
+    if(bufferSetEdit() <= 0)               /* Check we can change the buffer */
         return (cmdstatus = meFALSE) ;
 
 #if MEOPT_WORDPRO
@@ -340,7 +341,7 @@ execute(register int c, register int f, register int n)
 #endif
     
     /* insert the required number of chars */
-    if(insertChar(c,n) != meTRUE)
+    if(insertChar(c,n) <= 0)
         return (cmdstatus = meFALSE) ;
 
 #if MEOPT_CFENCE
@@ -373,7 +374,7 @@ execute(register int c, register int f, register int n)
                     ii = (tabsize-1) - ((ii-1)%tabsize) ;
                 else
                     ii = commentMargin - ii ;
-                linsert(ii,' ') ;
+                lineInsertChar(ii,' ') ;
 #if MEOPT_UNDO
                 meUndoAddInsChars(ii) ;
 #endif
@@ -541,7 +542,7 @@ exitEmacs(int f, int n)
         }
     }
 
-    if(s == meTRUE)
+    if(s > 0)
     {
         meBuffer *bp, *nbp ;
 
@@ -690,7 +691,7 @@ exitEmacs(int f, int n)
                 mac = getMacro(ii) ;
                 meFree(mac->name) ;
                 meNullFree(mac->fname) ;
-                freeLineLoop(mac->hlp,1) ;
+                meLineLoopFree(mac->hlp,1) ;
                 cuv = mac->varList.head ;
                 while(cuv != NULL)
                 {
@@ -795,7 +796,7 @@ exitEmacs(int f, int n)
             {
                 abrev = aheadp ;
                 aheadp = abrev->next ;
-                freeLineLoop(&(abrev->hlp),0) ;
+                meLineLoopFree(&(abrev->hlp),0) ;
                 meFree(abrev) ;
             }
             meFree(styleTable) ;
@@ -816,7 +817,7 @@ exitEmacs(int f, int n)
 int
 saveExitEmacs(int f, int n)
 {
-    if((saveSomeBuffers(f,(n & 0x01)) == meTRUE)
+    if((saveSomeBuffers(f,(n & 0x01)) > 0)
 #if MEOPT_SPELL
        && (dictionarySave(f,2|(n & 0x01)) != meFALSE)
 #endif
@@ -1216,7 +1217,21 @@ mesetup(int argc, char *argv[])
     int     userClientServer=0 ;
 #endif
     startTime = time(NULL) ;
-
+    
+    /* asserts to check that the defines are consistent */
+    /* due to packing sizeof(meLine) can waste precious bytes, avoid this
+     * by calculating the real size ourselves, but if thy are wrong things
+     * will go badling so these asserts check the values are correct */ 
+    assert(&(((meLine *) NULL)->text[1]) == ((meUByte *) meLINE_SIZE)) ;
+    assert(sizeof(meLine) == meLineMallocSize(0)) ;
+#if MEOPT_NARROW
+    /* more info is required to undo a narrow than can be held in the main
+     * structure so an alternative definition is used, but elements within it
+     * must remain the same */
+    assert(&(((meUndoNode *) NULL)->next) == &(((meUndoNarrow *) NULL)->next)) ;
+    assert(&(((meUndoNode *) NULL)->count) == &(((meUndoNarrow *) NULL)->count)) ;
+    assert(&(((meUndoNode *) NULL)->type) == &(((meUndoNarrow *) NULL)->type)) ;
+#endif
 #ifdef _UNIX
     /* Get the usr id and group id for mode-line and file permissions */
     meXUmask = umask(0);
@@ -1445,7 +1460,7 @@ missing_arg:
                     if((tt = strchr(ss,'=')) != NULL)
                     {
                         *tt++ = '\0' ;
-                        if(setVar((meUByte *)ss,(meUByte *)tt,meRegCurr) != meTRUE)  /* set a variable */
+                        if(setVar((meUByte *)ss,(meUByte *)tt,meRegCurr) <= 0)  /* set a variable */
                         {
                             sprintf((char *)evalResult,"%s Error: Unable to set variable [%s]\n",argv[0],ss) ;
                             mePrintHelpMessage(evalResult) ;
@@ -1738,7 +1753,7 @@ missing_arg:
                 meUByte prompt[meFILEBUF_SIZE_MAX+16] ;
                 meStrcpy(prompt,"Reload file ") ;
                 meStrcat(prompt,bp->fileName) ;
-                if(mlyesno(prompt) != meTRUE)
+                if(mlyesno(prompt) <= 0)
                 {
                     bp = NULL ;
                     noFiles = 0 ;

@@ -26,11 +26,10 @@ set-variable .fhook-nroff.command-kbind "|esc q|esc o|C-c &|C-x &||C-c C-b|C-c C
 set-variable .fhook-nroff.command-desc  "|&Fill paragraph||&Add Padding|Remove &Padding||Change to &Bold|Change to &Italic|Change to &Mono (Courier)|Change to &Normal (Roman)||R&egion to Bold|Region to Mono|Re&gion to Italic||T&oggle hilighting|Convert Tex to Nroff|"
 set-variable %usr1mode "off"
 
-; setup nroff file folding and spell word adjuster
-set-variable .fhook-nroff.fold-open  "^\.S[SH]"
-set-variable .fhook-nroff.fold-close "^\.S[SH]"
-set-variable .fhook-nroff.fold-mopen "1"
-set-variable .fhook-nroff.fold-mnext "-1"
+; setup nroff collapsing
+set-variable .fhook-nroff.collapse-open  "^\\.S[SH]"
+set-variable .fhook-nroff.collapse-close "^\\.S[SH]\\|\\'"
+set-variable .fhook-nroff.collapse-mnext "-1"
 
 ; setup item-list
 set-variable .fhook-nroff.item-list-s1 "^\\.\\(S[SH]\\)[ \t]+\"?\\([^\"\n]*\\)"

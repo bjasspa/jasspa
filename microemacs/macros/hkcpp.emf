@@ -32,9 +32,12 @@ set-variable .fhook-cpp.command-nbind "|||||||1||||"
 set-variable .fhook-cpp.command-kbind "|||||||||esc q|esc o|"
 set-variable .fhook-cpp.command-desc  "|Slashify region|Deslashify region||&Set #define|&Unset #define|Evaluate &#'s|Evaluate #'s use &Narrow|&Remove # evaluation|||"
 
-; Set up the folds for C++
-set-variable .fhook-cpp.fold-open  "^{"
-set-variable .fhook-cpp.fold-close "^}"
+; Set up the collaspe for C++
+set-variable .fhook-cpp.collapse-open  "^{"
+set-variable .fhook-cpp.collapse-close "^}"
+set-variable .fhook-cpp.collapse-mopen  "-1"
+set-variable .fhook-cpp.collapse-mclose "1"
+set-variable .fhook-cpp.collapse-mnext "-1"
 
 ; setup item-list
 set-variable .fhook-cpp.item-list-s1 "^\\(static[ \t]+\\|extern[ \t]+\\)?\\(const[ \t]+\\)?\\(union[ \t]+\\)?\\(struct[ \t]+\\)?\\(\\w+[\\* \\t]+\\)?\\(\\w+\\(::~?\\w+\\)?\\)[ \t]*("

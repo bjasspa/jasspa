@@ -144,7 +144,7 @@
                 set-variable .toolbar.tool-flag &lins .toolbar.tool-flag &add #l1 1 #l3
                 set-variable .toolbar.tool-cmd  &lins .toolbar.tool-cmd  &add #l1 1 &lget .toolbar.tool-cmds #l0
                 set-variable .toolbar.flag &lset .toolbar.flag #l2 &add &lget .toolbar.flag #l2 1 
-                !if &seq &lget .toolbar.tool-cmd #l1 "toolbar-default"
+                !if &seq &rig &lget .toolbar.tool-cmd #l1 2 "toolbar-default"
                     ; remove the dummy tool
                     -7 toolbar-setup-cmd
                 !endif
@@ -162,7 +162,7 @@
         toolbar-close
         toolbar
         5 next-window
-        161 set-position "\x82"
+        0x21 set-position "\x82"
     !endif
 !emacro
 

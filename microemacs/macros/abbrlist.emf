@@ -75,7 +75,7 @@ define-macro eaf-list-execute
                 !if $status
                     set-mark
                     set-variable $window-line &add #l2 1
-                    copy-region
+                    0 copy-region
                     find-buffer #l9
                     -1 buffer-mode "view"
                     set-variable $window-line &add #l2 1
@@ -182,7 +182,7 @@ define-macro eaf-list-execute
     beginning-of-buffer
     set-mark
     end-of-buffer
-    copy-region
+    0 copy-region
     -1 find-buffer #l0
     find-buffer @1
     yank

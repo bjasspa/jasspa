@@ -15,6 +15,6 @@
  "\Lcomment-restyle\N" "  Restyle Comment"
  "" ""
  "" "</FOLD><FOLD+> \ecCFolding\ecA"
- "\Lfold-current\N" "  Open/Close Current Fold"
- "\Lfold-all\N" "  Open/Close All Folds"
+ "\Lcollapse-current\N" "  Open/Close Current Macro"
+ "\Lcollapse-all\N" "  Open/Close All Macros"
  "" "</FOLD>"

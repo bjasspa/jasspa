@@ -524,8 +524,8 @@ meHiltItemCompile(meUByte *dest, meUByte **token,
             cc = *ss ;
             if(isXDigit(cc))
             {
-                register meUByte c1=*++ss ;
-                
+                register meUByte c1 ;
+                c1 = *++ss ;
                 if(isXDigit(c1))
                 {
                     cc = (hexToNum(cc) << 4) | hexToNum(c1) ;
@@ -911,9 +911,9 @@ hilight(int f, int n)
     
     if(n == 0)
     {
-        if((meGetString((meUByte *)"Enter hi-light number",0,0,buf,meBUF_SIZE_MAX-1) != meTRUE) ||
+        if((meGetString((meUByte *)"Enter hi-light number",0,0,buf,meBUF_SIZE_MAX-1) <= 0) ||
            ((hilno = (meUByte) meAtoi(buf)) == 0) || 
-           (meGetString((meUByte *)"Flags",0,0,buf,meBUF_SIZE_MAX-1) != meTRUE))
+           (meGetString((meUByte *)"Flags",0,0,buf,meBUF_SIZE_MAX-1) <= 0))
             return meABORT ;
         type = (meUShort) meAtoi(buf) ;
         
@@ -925,7 +925,7 @@ hilight(int f, int n)
         root->type = type ;
         if(type & HFLOOKB)
         {
-            if(meGetString((meUByte *)"lines",0,0,buf,meBUF_SIZE_MAX) != meTRUE)
+            if(meGetString((meUByte *)"lines",0,0,buf,meBUF_SIZE_MAX) <= 0)
                 return meABORT ;
             root->ignore = (meUByte) meAtoi(buf) ;
         }
@@ -948,21 +948,21 @@ hilight(int f, int n)
     }
     n = (n < 0) ? ADDTOKEN_REMOVE:0 ;
     
-    if((meGetString((meUByte *)"Hi number",0,0,buf,meBUF_SIZE_MAX-1) != meTRUE) ||
+    if((meGetString((meUByte *)"Hi number",0,0,buf,meBUF_SIZE_MAX-1) <= 0) ||
        ((hilno = (meUByte) meAtoi(buf)) == 0) ||
        (hilno >= noHilights) ||
        ((root  = hilights[hilno]) == NULL) ||
-       (meGetString((meUByte *)"Type",0,0,buf,meBUF_SIZE_MAX-1) != meTRUE))
+       (meGetString((meUByte *)"Type",0,0,buf,meBUF_SIZE_MAX-1) <= 0))
         return meFALSE ;
     type = (meUShort) meAtoi(buf) ;
     if(type & HLCOLUMN)
     {
         int fmCol, toCol ;
         
-        if((meGetString((meUByte *)"From",0,0,buf,meBUF_SIZE_MAX-1) != meTRUE) ||
+        if((meGetString((meUByte *)"From",0,0,buf,meBUF_SIZE_MAX-1) <= 0) ||
            ((fmCol = (meUByte) meAtoi(buf)) < 0) ||
            (!(n & ADDTOKEN_REMOVE) &&
-            ((meGetString((meUByte *)"To",0,0,buf,meBUF_SIZE_MAX-1) != meTRUE) ||
+            ((meGetString((meUByte *)"To",0,0,buf,meBUF_SIZE_MAX-1) <= 0) ||
              ((toCol = (meUByte) meAtoi(buf)) < fmCol))))
             return meFALSE ;
         while(((node = (meHilight *) root->rclose) != NULL) && (((int) node->close) < fmCol))
@@ -992,7 +992,7 @@ hilight(int f, int n)
         goto get_scheme ;
     }
     
-    if(meGetString((meUByte *)"Token",0,0,buf,meBUF_SIZE_MAX-1) != meTRUE)
+    if(meGetString((meUByte *)"Token",0,0,buf,meBUF_SIZE_MAX-1) <= 0)
         return meFALSE ;
     
     /* add the token */
@@ -1006,37 +1006,37 @@ hilight(int f, int n)
     if(!(type & HLVALID))
     {
         if(((type & HLREPLACE) && 
-            ((meGetString((meUByte *)"Replace",0,0,buf,meBUF_SIZE_MAX-1) != meTRUE) ||
+            ((meGetString((meUByte *)"Replace",0,0,buf,meBUF_SIZE_MAX-1) <= 0) ||
              (meHiltTokenAddReplaceString(root,node,(meUByte *)buf,1) == NULL))) ||
            ((type & HLBRACKET) &&
-            ((meGetString((meUByte *)"Close",0,0,buf,meBUF_SIZE_MAX-1) != meTRUE) ||
+            ((meGetString((meUByte *)"Close",0,0,buf,meBUF_SIZE_MAX-1) <= 0) ||
              (meHiltTokenAddSearchString(root,node,(meUByte *) buf,0) == NULL) ||
              ((type & HLREPLACE) && 
-              ((meGetString((meUByte *)"Replace",0,0,buf,meBUF_SIZE_MAX-1) != meTRUE) ||
+              ((meGetString((meUByte *)"Replace",0,0,buf,meBUF_SIZE_MAX-1) <= 0) ||
                (meHiltTokenAddReplaceString(root,node,(meUByte *)buf,0) == NULL))) ||
-             (meGetString((meUByte *)"Ignore",0,0,buf,meBUF_SIZE_MAX-1) != meTRUE) ||
+             (meGetString((meUByte *)"Ignore",0,0,buf,meBUF_SIZE_MAX-1) <= 0) ||
              ((node->ignore = buf[0]) > 255))) ||
            ((type & HLCONTIN) &&
-            ((meGetString((meUByte *)"Continue",0,0,buf,meBUF_SIZE_MAX-1) != meTRUE) ||
+            ((meGetString((meUByte *)"Continue",0,0,buf,meBUF_SIZE_MAX-1) <= 0) ||
              ((node->close = (meUByte *) meStrdup(buf)) == NULL) ||
              ((type & HLREPLACE) && 
-              ((meGetString((meUByte *)"Replace",0,0,buf,meBUF_SIZE_MAX-1) != meTRUE) ||
+              ((meGetString((meUByte *)"Replace",0,0,buf,meBUF_SIZE_MAX-1) <= 0) ||
                ((node->rclose = (meUByte *) meStrdup(buf)) == NULL))))) ||
            ((type & HLBRANCH) &&
-            ((meGetString((meUByte *)"hilno",0,0,buf,meBUF_SIZE_MAX-1) != meTRUE) ||
+            ((meGetString((meUByte *)"hilno",0,0,buf,meBUF_SIZE_MAX-1) <= 0) ||
              ((node->ignore = (meUByte) meAtoi(buf)) > 255))))
             return meFALSE;
 get_scheme:        
         /* Get the colour index. This uses the root hilight 
          * colour if not specified. */
         ii = meGetString((meUByte *)"Scheme",0,0,buf,meBUF_SIZE_MAX-1);
-        if (ii == meABORT)
-            return (meFALSE);
+        if (ii < 0)
+            return meFALSE ;
         
-        if (ii == meTRUE) 
+        if (ii > 0) 
         {
             if ((ii=convertUserScheme(meAtoi(buf),-1)) < 0)
-                return (meFALSE);
+                return meFALSE ;
             node->scheme = ii ;
         }
         else
@@ -2407,11 +2407,11 @@ indent(int f, int n)
     
     if(n == 0)
     {
-        if((meGetString((meUByte *)"Enter indent no",0,0,buf,meBUF_SIZE_MAX-1) != meTRUE) ||
+        if((meGetString((meUByte *)"Enter indent no",0,0,buf,meBUF_SIZE_MAX-1) <= 0) ||
            ((indno = (meUByte) meAtoi(buf)) == 0) || 
-           (meGetString((meUByte *)"Flags",0,0,buf,meBUF_SIZE_MAX-1) != meTRUE) ||
+           (meGetString((meUByte *)"Flags",0,0,buf,meBUF_SIZE_MAX-1) <= 0) ||
            ((itype = meAtoi(buf)),
-            (meGetString((meUByte *)"look back",0,0,buf,meBUF_SIZE_MAX) != meTRUE)))
+            (meGetString((meUByte *)"look back",0,0,buf,meBUF_SIZE_MAX) <= 0)))
             return mlwrite(MWABORT|MWPAUSE,(meUByte *)"Invalid init-indent entry") ;
         if((indents[indno] = createHilight(indno,&noIndents,&indents)) == NULL)
             return meFALSE ;
@@ -2423,12 +2423,12 @@ indent(int f, int n)
     
     n = (n < 0) ? ADDTOKEN_REMOVE:0 ;
     
-    if((meGetString((meUByte *)"Ind no",0,0,buf,meBUF_SIZE_MAX-1) != meTRUE) ||
+    if((meGetString((meUByte *)"Ind no",0,0,buf,meBUF_SIZE_MAX-1) <= 0) ||
        ((indno = (meUByte) meAtoi(buf)) == 0) ||
        (indno >= noIndents) ||
        ((root  = indents[indno]) == NULL) ||
        ((itype = mlCharReply((meUByte *)"Type: ",0,typesChar,NULL)) == -1) ||
-       (meGetString((meUByte *)"Token",0,0,buf,meBUF_SIZE_MAX-1) != meTRUE))
+       (meGetString((meUByte *)"Token",0,0,buf,meBUF_SIZE_MAX-1) <= 0))
         return meFALSE ;
     
     itype = (int) (((meUByte *)meStrchr(typesChar,itype)) - typesChar) ;
@@ -2446,7 +2446,7 @@ indent(int f, int n)
     {
         if(itype == 0)
         {
-            if(meGetString((meUByte *)"Close",0,0,buf,meBUF_SIZE_MAX-1) != meTRUE)
+            if(meGetString((meUByte *)"Close",0,0,buf,meBUF_SIZE_MAX-1) <= 0)
                 return meFALSE ;
             meHiltTokenAddSearchString(root,NULL,(meUByte *) buf,(htype|n)) ;
         }
@@ -2461,7 +2461,7 @@ indent(int f, int n)
         root->type |= HIGOTCONT ;
     else if(itype <= 2)
     {
-        if(meGetString((meUByte *)"Close",0,0,buf,meBUF_SIZE_MAX-1) != meTRUE)
+        if(meGetString((meUByte *)"Close",0,0,buf,meBUF_SIZE_MAX-1) <= 0)
             return meFALSE ;
         if(itype == 0)
         {
@@ -2472,14 +2472,14 @@ indent(int f, int n)
         else
         {
             if((meHiltTokenAddSearchString(root,node,(meUByte *) buf,0) == NULL) ||
-               (meGetString((meUByte *)"Ignore",0,0,buf,meBUF_SIZE_MAX-1) != meTRUE))
+               (meGetString((meUByte *)"Ignore",0,0,buf,meBUF_SIZE_MAX-1) <= 0))
                 return meFALSE;
             node->ignore = buf[0] ;
         }
     }
     if(typesFlag[itype] & INDGOTIND)
     {
-        if(meGetString((meUByte *)"Indent",0,0,buf,meBUF_SIZE_MAX-1) != meTRUE)
+        if(meGetString((meUByte *)"Indent",0,0,buf,meBUF_SIZE_MAX-1) <= 0)
             return meFALSE ;
         node->scheme |= ((meByte) meAtoi(buf)) & 0x00ff ;
     }
@@ -2621,7 +2621,7 @@ indentLine(void)
     if(cind != ind)
     {
         register int rr ;
-        if((rr=bchange()) != meTRUE)               /* Check we can change the buffer */
+        if((rr=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
             return rr ;
         frameCur->windowCur->dotOffset = 0 ;
         ss = frameCur->windowCur->dotLine->text ;
@@ -2635,15 +2635,14 @@ indentLine(void)
         {
             rr = ind / tabwidth ;
             ind -= rr * tabwidth ;
-            linsert(rr,'\t') ;
+            lineInsertChar(rr,'\t') ;
         }
-        linsert(ind,' ') ;
+        lineInsertChar(ind,' ') ;
 #if MEOPT_UNDO
         if(meModeTest(frameCur->bufferCur->mode,MDUNDO))
         {
-            meUndoAddReplaceEnd(ind+rr) ;
             frameCur->bufferCur->undoHead->doto = ind+rr ;
-            frameCur->bufferCur->undoHead->type |= meUNDO_REVS ;
+            meUndoAddReplaceEnd(ind+rr) ;
         }
 #endif
     }

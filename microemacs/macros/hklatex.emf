@@ -43,11 +43,10 @@ set-variable .fhook-latex.item-list-r6 "Mark \ecB\\1\ecA"
 set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|section\\|chap\\|subsec\\|label\\|begin\\|paragraph\\|subparagraph\\|end\\)\\)"
 
 !if &sin "f" .fhook-latex.setup
-    ; Set up the folding tokens for LaTeX
-    set-variable .fhook-latex.fold-open  "\\\\chapter\\|\\\\section\\|\\\\subsection"
-    set-variable .fhook-latex.fold-close "\\\\chapter\\|\\\\section\\|\\\\subsection\\|\\\\end{document}"
-    set-variable .fhook-latex.fold-mopen "1"
-    set-variable .fhook-latex.fold-mnext "-1"
+    ; Set up collapse for LaTeX
+    set-variable .fhook-latex.collapse-open  "\\\\chapter\\|\\\\section\\|\\\\subsection"
+    set-variable .fhook-latex.collapse-close "\\\\chapter\\|\\\\section\\|\\\\subsection\\|\\\\end{document}"
+    set-variable .fhook-latex.collapse-mnext "-1"
 !endif
 
 !if &seq $platform "win32"

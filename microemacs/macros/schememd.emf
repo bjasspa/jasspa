@@ -86,6 +86,7 @@ add-color-scheme .scheme.dir-uknown .col0 .col5 .col0 .col13 .col0 .col5 .col0 .
 ; Line Schemes
 add-color-scheme .scheme.hide .col15 .col26 .col25 .col8 .col15 .col26 .col25 .col8 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.fold .col1 .col23 .col1 .col19 .col1 .col23 .col1 .col19 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.fold-open .col5 .col23 .col5 .col19 .col5 .col23 .col5 .col19 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.trace .col20 .col9 .col21 .col9 .col20 .col9 .col21 .col9 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.hlwhite .col1 .col15 .col1 .col15 .col1 .col25 .col1 .col25 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.hlblack .col8 .col1 .col8 .col1 .col8 .col9 .col8 .col9 0 8 0 8 0 8 0 8

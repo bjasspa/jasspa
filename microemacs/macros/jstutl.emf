@@ -72,6 +72,10 @@
         !force 1 replace-string "\bLN\bLI\btTC\btTR\bTTR\bTTC\bLN\\s *\\s *\\s *\bLN\bLI\btTC\btTR\btTB" "\bLN\bLI\btTC\btTR\btTB"
         set-variable $window-line #l0
         !force #l3 replace-string "\n?\bLN" "\n\n"
+        forward-line
+        set-mark
+        set-variable $window-line &sub #l0 2
+        4 narrow-buffer
         !force 1 replace-string "^>table:?[ \t]*\\(\\S +\\)?[ \t]*\\(\\S +\\)?[ \t]*$" "\n\bLI\bTTB\bTTR\bTTC\n"
     !done
 !emacro
@@ -1161,7 +1165,16 @@ define-macro jst-to-rtf
     beginning-of-buffer
     replace-string "\bBD" "{\\\\f2\\\\'b7}\\\\tab "
     beginning-of-buffer
-    replace-string "\bB[AaRrN]\\(.\\)\\([^\b]*\\)\bB)" "\\2\\1\\\\tab "
+    !force 1 replace-string "\\\\li\\([0-9]+\\)\\(.*\\)\bB[AaRrN]\\(.\\)\\([^\b]*\\)\bB)" "\\2\\4\\3\\\\tab "
+    !while $status
+        set-variable #l3 &add @s1 360
+        -2 show-region
+        insert-string &spr "\\li%d\\fi-%d\\tx%d" #l3 #l3 #l3
+        beginning-of-line
+        forward-line
+        !force 1 replace-string "\\\\par" "\\\\par\\\\pard"
+        !force 1 replace-string "\\\\li\\([0-9]+\\)\\(.*\\)\bB[AaRrN]\\(.\\)\\([^\b]*\\)\bB)" "\\2\\4\\3\\\\tab "
+    !done
     beginning-of-buffer
     replace-string "\bHT\\(\\([^\b]\\|\b[^hH]\\)*\\)\bhT\\(\\([^\b]\\|\b[^hH]\\)*\\)\bht" "{\\\\bkmkstart \\1}\\3{\\\\bkmkend \\1}"
     beginning-of-buffer

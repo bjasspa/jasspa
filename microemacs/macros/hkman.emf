@@ -23,9 +23,6 @@ set-variable .fhook-man.command-nbind "||||||"
 set-variable .fhook-man.command-kbind "|C-left|C-right|return|||"
 set-variable .fhook-man.command-desc  "|||&Goto Link||&Clean Man-page|"
 
-set-variable .fhook-man.item-list-s1 "^\\([-A-Z][-A-Z\CH ]+\\)"
-set-variable .fhook-man.item-list-r1 "Sec \ecB\\1\ecA"
-
 !if &and &sin "h" .fhook-man.setup &band .hilight.flags 0x02 
     !if &not &exist .hilight.man "ERROR"
         set-variable .hilight.man &pinc .hilight.next 1

@@ -88,7 +88,7 @@ mlCharReply(meUByte *prompt, int mask, meUByte *validList, meUByte *helpStr)
                 if(cc == 'a')
                     execstr = ss ;
                 meStrcpy(resultStr,prompt) ;
-                if(lineExec (0, 1, buff) != meTRUE)
+                if(lineExec (0, 1, buff) <= 0)
                     return -1 ;
                 cc = resultStr[0] ;
             }
@@ -550,7 +550,7 @@ getprefixchar(int f, int n, int ctlc, int flag)
     if(!(flag & meGETKEY_SILENT))
     {
         buf[meGetStringFromChar((meUShort) ctlc,buf)] = '\0' ;
-        if(f==meTRUE)
+        if(f == meTRUE)
             mlwrite(MWCURSOR,(meUByte *)"Arg %d: %s", n, buf);
         else
             mlwrite(MWCURSOR,(meUByte *)"%s", buf);
@@ -611,8 +611,36 @@ meGetKeyFromUser(int f, int n, int flag)
     return cc ;
 }
 
+
 static meIFuncSSI curCmpIFunc ;
 static meIFuncSS  curCmpFunc ;
+
+#if MEOPT_EXTENDED
+static int
+isFileIgnored(meUByte *fileName)
+{
+    meUByte *fi, cc ;
+    int len, fil ;
+    
+    if((fi = fileIgnore) != NULL)
+    {
+        len = meStrlen(fileName) ;
+        for(;;)
+        {
+            fil=1 ;
+            while(((cc=fi[fil]) != ' ') && (cc != '\0'))
+                fil++ ;
+            if((fil <= len) &&
+               !curCmpIFunc((char *)fileName+len-fil,(char *)fi,fil))
+                return meTRUE ;
+            fi += fil ;
+            if(*fi++ == '\0')
+                break ;
+        }
+    }
+    return meFALSE ;
+}
+#endif
 
 static int
 getFirstLastPos(int noStr,meUByte **strs, meUByte *str, int option,
@@ -654,8 +682,8 @@ getFirstLastPos(int noStr,meUByte **strs, meUByte *str, int option,
          * just one. Can remove fileIngore type files which are 
          * usually . .. and backup files (*~) etc.
          */
-        register int ff, ll, ii=1, len, fil ;
-        register meUByte *ss, *fi, cc ;
+        register int ff, ll, ii=1 ;
+        register meUByte *ss ;
         ff = *fstPos ;
         ll = *lstPos ;
         
@@ -665,29 +693,12 @@ getFirstLastPos(int noStr,meUByte **strs, meUByte *str, int option,
                 ss = strs[ll] ;
             else
                 ss = strs[ff] ;
-            len = meStrlen(ss) ;
-            fi = fileIgnore ;
-            for(;;)
-            {
-                fil=1 ;
-                while(((cc=fi[fil]) != ' ') && (cc != '\0'))
-                    fil++ ;
-                if((fil <= len) &&
-                   !curCmpIFunc((char *)ss+len-fil,(char *)fi,fil))
-                {
-                    if(ii)
-                        ll-- ;
-                    else
-                        ff++ ;
-                    break ;
-                }
-                fi += fil ;
-                if(*fi++ == '\0')
-                {
-                    ii-- ;
-                    break ;
-                }
-            }
+            if(!isFileIgnored(ss))
+                ii-- ;
+            else if(ii)
+                ll-- ;
+            else
+                ff++ ;
         }
         if(ff == ll)
             *fstPos = *lstPos = ff ;
@@ -1234,7 +1245,7 @@ input_expand:
             {
                 meBuffer **br ;
                 meUByte line[150] ;
-                int len, lwidth ;
+                int jj, last, len, lwidth ;
                 
                 for(ii=fstPos ; ii<=lstPos ; ii++)
                     if(strList[ii][ilen-compOff] == cc)
@@ -1265,27 +1276,45 @@ input_expand:
                 if (lwidth > 75)
                     lwidth = 75 ;
                 frameCur->windowCur->markOffset = lwidth ;
-                for(ii=fstPos ; ii<=lstPos ; ii++)
-                {
-                    meUByte flag ;
-                    
-                    if(((len= meStrlen(strList[ii])) < lwidth) && (ii<lstPos) &&
-                       (((int) meStrlen(strList[ii+1])) < lwidth-1))
+                jj = (option & MLFILE) ? 1:0 ;
+                last = -1 ;
+                do {
+                    for(ii=fstPos ; ii<=lstPos ; ii++)
                     {
-                        meStrcpy(line,strList[ii++]) ;
-                        memset(line+len,' ',lwidth-len) ;
-                        meStrcpy(line+lwidth,strList[ii]) ;
-                        flag = meLINE_NOEOL ;
+#if MEOPT_EXTENDED
+                        if(!jj || !isFileIgnored(strList[ii]))
+#endif
+                        {
+                            if(last >= 0)
+                            {
+                                if(((len=meStrlen(strList[last])) < lwidth) && 
+                                   ((int) meStrlen(strList[ii]) < lwidth))
+                                {
+                                    meStrcpy(line,strList[last]) ;
+                                    memset(line+len,' ',lwidth-len) ;
+                                    meStrcpy(line+lwidth,strList[ii]) ;
+                                    addLineToEob(frameCur->bufferCur,line) ;
+                                    frameCur->bufferCur->baseLine->prev->flag |= meLINE_NOEOL ;
+                                    last = -1 ;
+                                }
+                                else
+                                {
+                                    addLineToEob(frameCur->bufferCur,strList[last]) ;
+                                    last = ii ;
+                                }
+                            }
+                            else if((int) meStrlen(strList[ii]) < lwidth)
+                            {
+                                line[0] = '\0' ;
+                                last = ii ;
+                            }
+                            else
+                                addLineToEob(frameCur->bufferCur,strList[ii]) ;
+                        }
                     }
-                    else
-                    {
-                        meStrncpy(line,strList[ii],148) ;
-                        line[149] = '\0' ;
-                        flag = 0 ;
-                    }
-                    addLineToEob(frameCur->bufferCur,line) ;
-                    frameCur->bufferCur->baseLine->prev->flag |= flag ;
-                }
+                    if(last >= 0)
+                        addLineToEob(frameCur->bufferCur,strList[last]) ;
+                } while((frameCur->bufferCur->lineCount == 0) && (--jj >= 0)) ; 
                 windowGotoBob(meFALSE,meFALSE) ;
                 update(meTRUE) ;
             }

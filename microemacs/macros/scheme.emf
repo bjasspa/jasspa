@@ -24,7 +24,7 @@
     ; defined.
     ; Define the last color as a default color of white, the next macro
     ; to define a new color will trash this one !!
-    add-color-scheme &set .scheme.next 72 0 1 0 1 1 0 1 0
+    add-color-scheme &set .scheme.next 73 0 1 0 1 1 0 1 0
     set-variable .hilight.next 1
 !endif
 ; Hilight flags: 0x01=Reformating enabled, 0x2=hilighting enabled, 0x4=function name hilighting, 0x8=constants hilighting
@@ -49,66 +49,67 @@ set-variable .scheme.dir-uknown 14
 ; Special line hilighting schemes
 ; .scheme.hide -- Hidden color
 set-variable .scheme.hide       15
-; .scheme.fold - Closed Fold scheme
+; .scheme.fold - Open & closed fold scheme
 set-variable .scheme.fold       16
+set-variable .scheme.fold-open  17
 ; .scheme.trace -- Trace color.
-set-variable .scheme.trace      17
+set-variable .scheme.trace      18
 ; hilight line scheme
-set-variable .scheme.hlwhite    18
-set-variable .scheme.hlblack    19
-set-variable .scheme.hlred      20
-set-variable .scheme.hlgreen    21
-set-variable .scheme.hlyellow   22
-set-variable .scheme.hlblue     23
-set-variable .scheme.hlmagenta  24
-set-variable .scheme.hlcyan     25
+set-variable .scheme.hlwhite    19
+set-variable .scheme.hlblack    20
+set-variable .scheme.hlred      21
+set-variable .scheme.hlgreen    22
+set-variable .scheme.hlyellow   23
+set-variable .scheme.hlblue     24
+set-variable .scheme.hlmagenta  25
+set-variable .scheme.hlcyan     26
 ; Schemes colors for silly games - card games, mahjongg, matchit, metris.
-set-variable .scheme.cardback   26
-set-variable .scheme.cardfore   27
-set-variable .scheme.mjg1       28
-set-variable .scheme.mjg2       29
-set-variable .scheme.mi1        30
-set-variable .scheme.mi2        31
-set-variable .scheme.mi3        32
-set-variable .scheme.met-back   33
-set-variable .scheme.met-fore1  34
-set-variable .scheme.met-fore2  35
+set-variable .scheme.cardback   27
+set-variable .scheme.cardfore   28
+set-variable .scheme.mjg1       29
+set-variable .scheme.mjg2       30
+set-variable .scheme.mi1        31
+set-variable .scheme.mi2        32
+set-variable .scheme.mi3        33
+set-variable .scheme.met-back   34
+set-variable .scheme.met-fore1  35
+set-variable .scheme.met-fore2  36
 ;
 ; Programing Language Hilighting
 ; ==============================
 ;
 ; .scheme.prepro -- Preprocessor color
-set-variable .scheme.prepro     36
+set-variable .scheme.prepro     37
 ;
 ; .scheme.function -- Function definition color
-set-variable .scheme.function   37
+set-variable .scheme.function   38
 ;
 ; .scheme.comment -- Comment color
-set-variable .scheme.comment    38
+set-variable .scheme.comment    39
 ;
 ; .scheme.string -- Quoted string color
-set-variable .scheme.string     39
+set-variable .scheme.string     40
 ;
 ; .scheme.quote -- Quoted character
-set-variable .scheme.quote      40
+set-variable .scheme.quote      41
 ;
 ; .scheme.error -- Error hilighting color
-set-variable .scheme.error      41
+set-variable .scheme.error      42
 ;
 ; .scheme.keyword -- Primary keyword color
 ; Main keywords of a language. Typically if..then..else etc. may be bold etc.
-set-variable .scheme.keyword    42
+set-variable .scheme.keyword    43
 ;
 ; .scheme.type -- Language type colors. Colors of the main type definitions.
-set-variable .scheme.type       43
+set-variable .scheme.type       44
 ;
 ; .scheme.operator -- Operator color. Used in languages  for keyword operators i.e. and/not/xor etc.
-set-variable .scheme.operator   44
+set-variable .scheme.operator   45
 ;
 ; .scheme.variable -- Built-in Variable color
-set-variable .scheme.variable   45
+set-variable .scheme.variable   46
 ; .scheme.variable -- Constants color, e.g. numbers
-set-variable .scheme.constant   46
+set-variable .scheme.constant   47
 ;
 ; Miscellaneous screens
 ; =====================
@@ -118,26 +119,26 @@ set-variable .scheme.constant   46
 ; This is the number 1 prmary color and should be legible.
 ; Typically the keyword col, but no bold or other font
 ; effects are applied.
-set-variable .scheme.no1        47
+set-variable .scheme.no1        48
 ;
 ; .scheme.no2 -- Secondary color 2
-set-variable .scheme.no2        48
+set-variable .scheme.no2        49
 ;
-set-variable .scheme.dmf        49
+set-variable .scheme.dmf        50
 
 ; FileBrower color schemes
 ; .scheme.dir -- This is the color to display directory components.
-set-variable .scheme.dir        50
+set-variable .scheme.dir        51
 ; .scheme.dir-tree -- This is the color used to display the dir tree lines
-set-variable .scheme.dir-tree   51
+set-variable .scheme.dir-tree   52
 ; .scheme.dir-slink -- This is the color of the symbolic links.
-set-variable .scheme.dir-slink  52
+set-variable .scheme.dir-slink  53
 ; .scheme.dir-select -- This is the directory selection color
-set-variable .scheme.dir-select 53
+set-variable .scheme.dir-select 54
 ; .scheme.file -- This is the color of file names
-set-variable .scheme.file       54
+set-variable .scheme.file       55
 ; .scheme.select -- This is the file selection color
-set-variable .scheme.select     55
+set-variable .scheme.select     56
 ;
 ; Formatted Text Orientated Buffers
 ; =================================
@@ -145,41 +146,41 @@ set-variable .scheme.select     55
 ; is supposed to be rendered in a bold or italic etc.
 ;
 ; .scheme.header -- Heading scheme
-set-variable .scheme.header     56
+set-variable .scheme.header     57
 ; .scheme.link -- Scheme used for hyperlinks i.e. HTML and Help
-set-variable .scheme.link       57
+set-variable .scheme.link       58
 ; .scheme.bold -- Bold scheme
-set-variable .scheme.bold       58
+set-variable .scheme.bold       59
 ; .scheme.italic -- Italic scheme
-set-variable .scheme.italic     59
+set-variable .scheme.italic     60
 ; .scheme.under -- Underline scheme
-set-variable .scheme.under      60
+set-variable .scheme.under      61
 ; .scheme.bold -- Bold italic scheme
-set-variable .scheme.bold-italic 61
+set-variable .scheme.bold-italic 62
 ; .scheme.bold -- Bold italic scheme
-set-variable .scheme.bold-under  62
+set-variable .scheme.bold-under  63
 ; .scheme.bold -- Bold italic scheme
-set-variable .scheme.italic-under 63
+set-variable .scheme.italic-under 64
 ; .scheme.bold -- Bold italic scheme
-set-variable .scheme.bold-italic-under 64
+set-variable .scheme.bold-italic-under 65
 ;
 ; Gdiff line schemes
 ; ==================
 ;
 ; .scheme.gdfchange -- For ! lines
-set-variable .scheme.gdfchange  65
+set-variable .scheme.gdfchange  66
 ; .scheme.gdfadd -- For + lines
-set-variable .scheme.gdfadd     66
+set-variable .scheme.gdfadd     67
 ; .scheme.gdfpad -- For padded lines
-set-variable .scheme.gdfpad     67
+set-variable .scheme.gdfpad     68
 ; .scheme.gdfsel -- For selected ! or + lines
-set-variable .scheme.gdfsel     68
+set-variable .scheme.gdfsel     69
 ; .scheme.gdfselpad -- For selected padded lines
-set-variable .scheme.gdfselpad  69
+set-variable .scheme.gdfselpad  70
 ; .scheme.gdfrej -- For rejected ! or + lines
-set-variable .scheme.gdfrej     70
+set-variable .scheme.gdfrej     71
 ; .scheme.gdfrejpad -- For rejected padded lines
-set-variable .scheme.gdfrejpad  71
+set-variable .scheme.gdfrejpad  72
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;>>> NOTICE: Add your last color above this line and then go back and   <<<;
 ;>>>         change the .scheme.next variable to your "lastColorNumber+1".   <<<;

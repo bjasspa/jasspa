@@ -17,10 +17,10 @@ set-variable .fhook-rul.setup &reg "/history" "fhook/rul" "bdfghnopx"
 set-variable .fhook-rul.setup-mask "abdefghikmnoptux"
 set-variable .fhook-rul.comment "|/*|*/|*| * | * |f|"
 
-; setup rul folding support
-set-variable .fhook-rul.fold-open  "^function"
-set-variable .fhook-rul.fold-close "^end"
-set-variable .fhook-rul.fold-mopen "1"
+set-variable .fhook-rul.collapse-open  "^function"
+set-variable .fhook-rul.collapse-close "^end"
+set-variable .fhook-rul.collapse-mclose "1"
+set-variable .fhook-rul.collapse-mnext "-1"
 
 
 !if &not &exist .hilight.rul

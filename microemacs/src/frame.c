@@ -29,9 +29,8 @@
  *     displayed, in windowing versions the new frame can be in a new window.
  */
 
-#define	__FRAMEC				/* Define filename */
+#define	__FRAMEC
 
-/*---	Include files */
 #include "emain.h"
 
 /*
@@ -92,7 +91,7 @@ meFrameChangeWidth(meFrame *frame, int ww)
         meLine *ml ;
         meUByte *mls ;
 
-        if(((ml = meMalloc(sizeof(meLine)+ww)) == NULL) ||
+        if(((ml = meLineMalloc(ww,0)) == NULL) ||
            ((mls = meMalloc(ww+1)) == NULL))
             return meFALSE ;
             
@@ -123,7 +122,7 @@ meFrameChangeWidth(meFrame *frame, int ww)
             flp->scheme = fl.scheme;
         }
         /* Fix up the window structures */
-        memcpy(ml,loopFrame->mlLine,sizeof(meLine)+loopFrame->mlLine->length) ;
+        memcpy(ml,loopFrame->mlLine,meLINE_SIZE+loopFrame->mlLine->length) ;
         if(loopFrame->mlStatus & MLSTATUS_KEEP)
         {
             meStrcpy(mls,loopFrame->mlLine->text);
@@ -136,15 +135,14 @@ meFrameChangeWidth(meFrame *frame, int ww)
         free(loopFrame->mlLine) ;
         free(loopFrame->mlLineStore) ;
         loopFrame->video.lineArray[loopFrame->depth].line = (loopFrame->mlLine = ml) ;
-        ml->size = ww;
         loopFrame->mlLineStore = mls ;
         
         wp = loopFrame->windowList ;
         while(wp != NULL)
         {
-            if((ml = lalloc(ww)) == NULL)
+            if((ml = meLineMalloc(ww,0)) == NULL)
                 return meFALSE ;
-            memcpy(ml,wp->modeLine,sizeof(meLine)+wp->modeLine->length) ;
+            memcpy(ml,wp->modeLine,meLINE_SIZE+wp->modeLine->length) ;
             free(wp->modeLine) ;
             wp->modeLine = ml ;
             wp = wp->next ;
@@ -274,7 +272,7 @@ frameChangeWidth(int f, int n)
     {
         meUByte buff[meSBUF_SIZE_MAX] ;
         
-        if (meGetString((meUByte *)"New width", 0, 0, buff, meSBUF_SIZE_MAX) != meTRUE) 
+        if (meGetString((meUByte *)"New width", 0, 0, buff, meSBUF_SIZE_MAX) <= 0) 
             return meFALSE ;
         n = meAtoi(buff) ;
     }
@@ -287,7 +285,7 @@ frameChangeWidth(int f, int n)
     if (n == frameCur->width)                    /* Already this size ?? */
         return meTRUE;
     
-    if(meFrameChangeWidth(frameCur,n) != meTRUE)
+    if(meFrameChangeWidth(frameCur,n) <= 0)
         return meFALSE ;
 
 #ifdef _WINDOW
@@ -308,7 +306,7 @@ frameChangeDepth(int f, int n)
     {
         meUByte buff[meSBUF_SIZE_MAX] ;
         
-        if (meGetString((meUByte *)"New width", 0, 0, buff, meSBUF_SIZE_MAX) != meTRUE) 
+        if (meGetString((meUByte *)"New width", 0, 0, buff, meSBUF_SIZE_MAX) <= 0) 
             return meFALSE ;
         n = meAtoi(buff) ;
     }
@@ -320,7 +318,7 @@ frameChangeDepth(int f, int n)
     if (n == frameCur->depth+1)
         return meTRUE;                    /* Already the right size */
     
-    if(meFrameChangeDepth(frameCur,n) != meTRUE)
+    if(meFrameChangeDepth(frameCur,n) <= 0)
         return meFALSE ;
     
 #ifdef _WINDOW
@@ -336,7 +334,7 @@ frameChangeDepth(int f, int n)
 meFrame *
 meFrameInit(meFrame *sibling)
 {
-    meFrame *frame, *ff ;
+    meFrame *frame ;
     meFrameLine *flp;                     /* Frame store line pointer */
     int ii, jj ;                        /* Local loop counters */
     
@@ -360,20 +358,22 @@ meFrameInit(meFrame *sibling)
     {
         frame->mainId = 0 ;
 #if MEOPT_FRAME
-        ff = frameList ;
-        while(ff != NULL)
         {
-            if(ff->mainId == frame->mainId)
+            meFrame *ff = frameList ;
+            while(ff != NULL)
             {
-                if(frame->mainId == 255)
+                if(ff->mainId == frame->mainId)
                 {
-                    free(frame) ;
-                    return NULL ;
+                    if(frame->mainId == 255)
+                    {
+                        free(frame) ;
+                        return NULL ;
+                    }
+                    frame->mainId++ ;
+                    ff = frameList ;
                 }
-                frame->mainId++ ;
-                ff = frameList ;
+                ff = ff->next ;
             }
-            ff = ff->next ;
         }
 #endif
         frame->width = TTwidthDefault ;
@@ -381,11 +381,11 @@ meFrameInit(meFrame *sibling)
         frame->widthMax = TTwidthDefault ;
         frame->depthMax = TTdepthDefault ;
     }
-    if(meFrameTermInit(frame,sibling) != meTRUE)
+    if(meFrameTermInit(frame,sibling) <= 0)
         return NULL ;
     
     if(((frame->video.lineArray = calloc(frame->depthMax,sizeof(meVideoLine))) == NULL) ||
-       ((frame->mlLine = calloc(1,sizeof(meLine)+frame->widthMax)) == NULL) ||
+       ((frame->mlLine = meLineMalloc(frame->widthMax,0)) == NULL) ||
        ((frame->mlLineStore = malloc(frame->widthMax+1)) == NULL))
         return NULL ;
 
@@ -399,9 +399,8 @@ meFrameInit(meFrame *sibling)
     frame->video.next = NULL;                 /* No next block */
     frame->video.window = NULL;               /* No windows attached */
 
-    /* Set up the size of the line */
-    frame->mlLine->size = frame->width;      /* Set the length of the line */
-    frame->mlLineStore [0] = '\0';             /* Reset the length of the store */
+    memset(frame->mlLine->text,'\0',frame->widthMax) ;
+    frame->mlLineStore[0] = '\0';
 
     /* Frame Store storage
      * The frame store hold's 'n' lines of video information.
@@ -441,8 +440,8 @@ meFrameInitWindow(meFrame *frame, meBuffer *buffer)
     meLine   *lp, *off;
     
     if(((wp = (meWindow *) meMalloc(sizeof(meWindow))) == NULL) ||
-       ((lp =lalloc(frame->widthMax)) == NULL) ||
-       ((off=lalloc(frame->widthMax)) == NULL))
+       ((lp =meLineMalloc(frame->widthMax,0)) == NULL) ||
+       ((off=meLineMalloc(frame->widthMax,0)) == NULL))
         return meFALSE ;
     
     frame->bufferCur   = buffer ;              /* Make this current    */
@@ -613,7 +612,7 @@ frameCreate(int f, int n)
     /* these functions cannot use meMalloc as they are used to init ME,
      * so if they fail we must warn of the malloc failure */
     if(((frame = meFrameInit(sf)) == NULL) ||
-       (meFrameInitWindow(frame,frameCur->bufferCur) != meTRUE))
+       (meFrameInitWindow(frame,frameCur->bufferCur) <= 0))
         return mlwrite(MWCURSOR|MWABORT|MWWAIT,(meUByte *)"[Failed to create new frame]") ;
 #if MEOPT_MWFRAME
     if((n & 0x01) == 0)

@@ -23,10 +23,11 @@ set-variable .fhook-java.command-nbind "|||"
 set-variable .fhook-java.command-kbind "|esc q|esc o|"
 set-variable .fhook-java.command-desc  "|||"
 
-; Set up the folding of functions
-set-variable .fhook-java.fold-open  "^[a-zA-Z].*{$"
-set-variable .fhook-java.fold-mopen "1"
-set-variable .fhook-java.fold-close "^}"
+; Set up the collapse of functions
+set-variable .fhook-java.collapse-open   "^[a-zA-Z].*{$"
+set-variable .fhook-java.collapse-close  "^}"
+set-variable .fhook-java.collapse-mclose "1"
+set-variable .fhook-java.collapse-mnext  "-1"
 
 ; setup item-list
 set-variable .fhook-java.item-list-s1 "^[ \t]*\\([a-zA-Z0-9_ \t]*[ \t]\\)?\\([a-zA-Z0-9_]+\\)[ \t]*([a-zA-Z0-9_,\t]*)[ \t]*{"

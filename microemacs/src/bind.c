@@ -352,7 +352,7 @@ setCharMask(int f, int n)
     meUByte mask1, mask2 ;
     
     meStrcpy(tnkyPrompt+14,"flags") ;
-    if(meGetString(tnkyPrompt,0,0,buf1,20) != meTRUE)
+    if(meGetString(tnkyPrompt,0,0,buf1,20) <= 0)
         return meFALSE ;
     /* setup the masks */
     flags = 0 ;
@@ -443,7 +443,7 @@ setCharMask(int f, int n)
         if(flags & 0x1A003)
             return mlwrite(MWABORT,(meUByte *)"[Cannot set flags u, l, A, L or U]");
         meStrcpy(tnkyPrompt+14,"chars") ;
-        if(meGetString(tnkyPrompt,MLFFZERO,0,buf1,meBUF_SIZE_MAX) != meTRUE)
+        if(meGetString(tnkyPrompt,MLFFZERO,0,buf1,meBUF_SIZE_MAX) <= 0)
             return meFALSE ;
         if(flags & 0x4000)
         {
@@ -591,7 +591,7 @@ bindkey(meUByte *prom, int f, int n, meUShort *lclNoBinds, meBind **lclBinds)
     
     /*---	Get the function name to bind it to */
     
-    if(meGetString(prom, MLCOMMAND, 0, buf, meBUF_SIZE_MAX) != meTRUE)
+    if(meGetString(prom, MLCOMMAND, 0, buf, meBUF_SIZE_MAX) <= 0)
         return meFALSE ;
     if((namidx = decode_fncname(buf,0)) < 0)
         return meFALSE ;
@@ -698,7 +698,7 @@ bindkey(meUByte *prom, int f, int n, meUShort *lclNoBinds, meBind **lclBinds)
         /*---	Otherwise we  need to  add it  to the  end, if  we run  out of
            binding room, bitch */
         
-        if(insert_key(cc, (meUShort) namidx, arg) != meTRUE)
+        if(insert_key(cc, (meUShort) namidx, arg) <= 0)
             return mlwrite(MWABORT,(meUByte *)"Binding table FULL!");
     }
     return(meTRUE);
@@ -736,7 +736,7 @@ unbindkey(meUByte *prom, int n, meUShort *lclNoBinds, meBind **lclBinds)
     if(n < 0)
     {
         sprintf((char *)outseq,"Remove all %s binds",prom);
-        if(mlyesno(outseq) != meTRUE)
+        if(mlyesno(outseq) <= 0)
             return ctrlg(meFALSE,1) ;
         
 #if MEOPT_LOCALBIND
@@ -827,7 +827,7 @@ unbindkey(meUByte *prom, int n, meUShort *lclNoBinds, meBind **lclBinds)
     else
 #endif
     {
-        if((rr = delete_key(cc)) == meTRUE)
+        if((rr = delete_key(cc)) > 0)
         {
             if(n == 0)
             {
@@ -994,7 +994,7 @@ commandApropos(int f, int n)	/* Apropos (List functions that match a substring) 
     int	  status;		/* status return */
 
     if ((status = meGetString((meUByte *)"Apropos string", MLCOMMAND, 0, 
-                          mstring+2, meSBUF_SIZE_MAX-4)) != meTRUE)
+                          mstring+2, meSBUF_SIZE_MAX-4)) <= 0)
         return status ;
     mstring[0] = '.' ;
     mstring[1] = '*' ;

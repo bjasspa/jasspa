@@ -47,7 +47,7 @@ setBufferCryptKey(meBuffer *bp, meUByte *key)
     if(key == NULL)
     {
 	/* get the string to use as an encrytion string */
-        if(meGetString((meUByte *)"Encryption String",MLNOHIST|MLHIDEVAL,0,keybuf,mePATBUF_SIZE_MAX-1) != meTRUE)
+        if(meGetString((meUByte *)"Encryption String",MLNOHIST|MLHIDEVAL,0,keybuf,mePATBUF_SIZE_MAX-1) <= 0)
             return meFALSE ;
         key = keybuf ;
         mlerase(MWCLEXEC);		/* clear it off the bottom line */

@@ -314,7 +314,7 @@ meShellCommand(int f, int n)
     meUByte cmdstr[meBUF_SIZE_MAX+20];		/* string holding command to execute */
 
     /* get the line wanted */
-    if((meGetString((meUByte *)"System", 0, 0, cmdstr, meBUF_SIZE_MAX)) != meTRUE)
+    if((meGetString((meUByte *)"System", 0, 0, cmdstr, meBUF_SIZE_MAX)) <= 0)
         return meABORT ;
     return doShellCommand(cmdstr) ;
 }
@@ -655,8 +655,9 @@ do {                                                                         \
         noLines-- ;                                                          \
         lp_new->next = lp_old->next ;                                        \
         lp_old->next->prev = lp_new ;                                        \
-        if(lp_old->flag & meLINE_AMARK)                                      \
-            lunmarkBuffer(bp,lp_old,lp_new);                                 \
+        if(lp_old->flag & meLINE_ANCHOR)                                     \
+            meLineResetAnchors(meLINEANCHOR_ALWAYS|meLINEANCHOR_RETAIN,bp,   \
+                               lp_old,lp_new,0,0);                           \
         meFree(lp_old);                                                      \
     }                                                                        \
     else                                                                     \
@@ -705,7 +706,7 @@ ipipeRead(meIPipe *ipipe)
     }
 #endif
 #endif
-    alphaMarkGet(bp,'I') ;
+    meAnchorGet(bp,'I') ;
     if(meModeTest(bp->mode,MDLOCK))
     {
         /* Work out which windows are locked to the current cursor position */
@@ -1120,10 +1121,10 @@ cant_handle_this:
     meSigRelease() ;
 #endif
     
-    alphaMarkSet(bp,'I',bp->dotLine,bp->dotOffset,1) ;
+    meAnchorSet(bp,'I',bp->dotLine,bp->dotOffset,1) ;
     if(bp->ipipeFunc >= 0)
         /* If the process has ended the argument will be 0, else 1 */
-        execBufferFunc(bp,bp->ipipeFunc,(meEBF_ARG_GIVEN|meEBF_HIDDEN),(ii >= 0)) ;
+        execBufferFunc(bp,bp->ipipeFunc,(meEBF_ARG_GIVEN|meEBF_USE_B_DOT|meEBF_HIDDEN),(ii >= 0)) ;
     update(meFALSE) ;
 }
 
@@ -1138,7 +1139,7 @@ ipipeWrite(int f, int n)
     if(!meModeTest(frameCur->bufferCur->mode,MDPIPE))
         return mlwrite(MWABORT,(meUByte *)"[Not an ipipe-buffer]") ;
     /* ask for string to insert */
-    if((ss=meGetString((meUByte *)"String", 0, 0, buff, meBUF_SIZE_MAX)) != meTRUE)
+    if((ss=meGetString((meUByte *)"String", 0, 0, buff, meBUF_SIZE_MAX)) <= 0)
         return ss ;
     
     ipipe = ipipes ;
@@ -1223,40 +1224,38 @@ ipipeSetSize(meWindow *wp, meBuffer *bp)
 static int
 allocatePty(meUByte *ptyName)
 {
-    int    fd ;
 #ifdef _IRIX
+    int    fd ;
+    struct stat stb ;
+    /* struct sigaction ocstat, cstat;*/
+    char * name;
+    /* sigemptyset(&cstat.sa_mask);*/
+    /* cstat.sa_handler = SIG_DFL;*/
+    /* cstat.sa_flags = 0;*/
+    /* sigaction(SIGCLD, &cstat, &ocstat);*/
+    name = _getpty(&fd,O_RDWR,0600,0);
+    /* sigaction(SIGCLD, &ocstat, (struct sigaction *)0);*/
+    if(name == NULL)
+        return -1 ;
+    if((fd >=  0) && (fstat (fd, &stb) >= 0))
     {
-        struct stat stb ;
-/*        struct sigaction ocstat, cstat;*/
-        char * name;
-/*        sigemptyset(&cstat.sa_mask);*/
-/*        cstat.sa_handler = SIG_DFL;*/
-/*        cstat.sa_flags = 0;*/
-/*        sigaction(SIGCLD, &cstat, &ocstat);*/
-        name = _getpty(&fd,O_RDWR,0600,0);
-/*        sigaction(SIGCLD, &ocstat, (struct sigaction *)0);*/
-        if(name == NULL)
-            return -1 ;
-        if((fd >=  0) && (fstat (fd, &stb) >= 0))
-        {
-            /* Return the name of the tty and the file descriptor of the pty */
-            meStrcpy (ptyName, name);
-            return fd ;
-        }
+        /* Return the name of the tty and the file descriptor of the pty */
+        meStrcpy (ptyName, name);
+        return fd ;
     }
+    return -1 ;
 #else
 #ifdef _SUNOS
-    {
-        /* Sun use their own proporiety PTY system. Refer to the AnswerBook
-         * documentation for "Pseudo-TTY Drivers" - ptm(7) and pts(7) */
-        fd = open("/dev/ptmx", O_RDWR); /* open master */
-        grantpt(fd);                    /* change permission of slave */
-        unlockpt(fd);                   /* unlock slave */
-        meStrcpy (ptyName,ptsname(fd)); /* Slave name */        
-        return fd;
-    }
+    int    fd ;
+    /* Sun use their own proporiety PTY system. Refer to the AnswerBook
+     * documentation for "Pseudo-TTY Drivers" - ptm(7) and pts(7) */
+    fd = open("/dev/ptmx", O_RDWR); /* open master */
+    grantpt(fd);                    /* change permission of slave */
+    unlockpt(fd);                   /* unlock slave */
+    meStrcpy (ptyName,ptsname(fd)); /* Slave name */        
+    return fd;
 #else
-    
+    int    fd ;
     struct stat stb ;
     register int c, ii ;
 
@@ -1341,9 +1340,9 @@ allocatePty(meUByte *ptyName)
             }
         }
     }
+    return -1;
 #endif /* _SUNOS */
 #endif /* _IRIX */
-    return -1;
 }
 
 
@@ -1405,7 +1404,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
     if(((bp=bfind(bufName,0)) != NULL) && meModeTest(bp->mode,MDPIPE))
     {
         sprintf((char *)line,"%s already active, kill",bufName) ;
-        if(mlyesno(line) != meTRUE)
+        if(mlyesno(line) <= 0)
             return meFALSE ;
     }
     if((ipipe = meMalloc(sizeof(meIPipe))) == NULL)
@@ -1414,7 +1413,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
 
 #ifdef _WIN32
     /* Launch the ipipe */
-    if((rr=WinLaunchProgram(comStr,(LAUNCH_IPIPE|flags), NULL, NULL, ipipe, NULL)) != meTRUE)
+    if((rr=WinLaunchProgram(comStr,(LAUNCH_IPIPE|flags), NULL, NULL, ipipe, NULL)) <= 0)
     {
         if(cd)
             meChdir(curdir) ;
@@ -1594,7 +1593,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
 
         /* On solaris (this is POSIX I believe) then push the line emulation
          * modes */
-#if (defined(_SUNOS))
+#ifdef _SUNOS
         if(ptyFp >= 0)
         {
             /* Push the hardware emulation mode */
@@ -1701,7 +1700,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
     bp->dotLine = meLineGetPrev(bp->baseLine) ;
     bp->dotOffset = 0 ;
     bp->dotLineNo = bp->lineCount-1 ;
-    alphaMarkSet(bp,'I',bp->dotLine,bp->dotOffset,1) ;
+    meAnchorSet(bp,'I',bp->dotLine,bp->dotOffset,1) ;
 
     /* Set up the window dimensions - default to having auto wrap */
     ipipe->flag = 0 ;
@@ -1721,7 +1720,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
             ipipeSetSize(wp,bp) ;
             if(bp->ipipeFunc >= 0)
                 /* Give argument of 1 to indicate process has not exited */
-                execBufferFunc(bp,bp->ipipeFunc,(meEBF_ARG_GIVEN|meEBF_HIDDEN),1) ;
+                execBufferFunc(bp,bp->ipipeFunc,(meEBF_ARG_GIVEN|meEBF_USE_B_DOT|meEBF_HIDDEN),1) ;
         }
     }
     /* reset again incase there was a delay in the meWindowPopup call */
@@ -1747,12 +1746,12 @@ ipipeCommand(int f, int n)
         return pipeCommand(f,n) ;
     }
     /*---	Get the command to pipe in */
-    if((ss=meGetString((meUByte *)"Ipipe", 0, 0, lbuf, meBUF_SIZE_MAX)) != meTRUE)
+    if((ss=meGetString((meUByte *)"Ipipe", 0, 0, lbuf, meBUF_SIZE_MAX)) <= 0)
         return ss ;
     if((n & 0x01) == 0)
     {
         /* prompt for and get the new buffer name */
-        if((ss = getBufferName((meUByte *)"Buffer", 0, 0, nbuf)) != meTRUE)
+        if((ss = getBufferName((meUByte *)"Buffer", 0, 0, nbuf)) <= 0)
             return ss ;
         bn = nbuf ;
     }
@@ -1936,12 +1935,12 @@ pipeCommand(int f, int n)
     meUByte pbuf[meBUF_SIZE_MAX] ;
 
     /* get the command to pipe in */
-    if((ss=meGetString((meUByte *)"Pipe", 0, 0, line, meBUF_SIZE_MAX)) != meTRUE)
+    if((ss=meGetString((meUByte *)"Pipe", 0, 0, line, meBUF_SIZE_MAX)) <= 0)
         return ss ;
     if((n & 0x01) == 0)
     {
         /* prompt for and get the new buffer name */
-        if((ss = getBufferName((meUByte *)"Buffer", 0, 0, nbuf)) != meTRUE)
+        if((ss = getBufferName((meUByte *)"Buffer", 0, 0, nbuf)) <= 0)
             return ss ;
         bn = nbuf ;
     }
@@ -1978,10 +1977,10 @@ meFilter(int f, int n)
     mkTempName (filnam2,(meUByte *)FILTER_OUT_FILE,NULL);
 
     /* get the filter name and its args */
-    if ((s=meGetString((meUByte *)"Filter", 0, 0, line, meBUF_SIZE_MAX)) != meTRUE)
-        return(s);
+    if ((s=meGetString((meUByte *)"Filter", 0, 0, line, meBUF_SIZE_MAX)) <= 0)
+        return s ;
 
-    if((s=bchange()) != meTRUE)               /* Check we can change the buffer */
+    if((s=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
         return s ;
 
     /* setup the proper file names */
@@ -1990,7 +1989,7 @@ meFilter(int f, int n)
     bp->fileName = NULL ;	/* set it to NULL         */
 
     /* write it out, checking for errors */
-    if(writeOut(bp,meRWFLAG_SILENT,filnam1) != meTRUE)
+    if(writeOut(bp,meRWFLAG_SILENT,filnam1) <= 0)
     {
         bp->fileName = tmpnam ;
         return mlwrite(MWABORT,(meUByte *)"[Cannot write filter file]");
@@ -2035,11 +2034,11 @@ meFilter(int f, int n)
 #endif
 
     /* on failure, escape gracefully */
-    if(s == meTRUE)
+    if(s > 0)
     {
         bp->fileName = filnam2 ;
-        if((bclear(bp) != meTRUE) ||
-           ((frameCur->bufferCur->intFlag |= BIFFILE),(swbuffer(frameCur->windowCur,frameCur->bufferCur) != meTRUE)))
+        if((bclear(bp) <= 0) ||
+           ((frameCur->bufferCur->intFlag |= BIFFILE),(swbuffer(frameCur->windowCur,frameCur->bufferCur) <= 0)))
             s = meFALSE ;
     }
     /* reset file name */
@@ -2048,7 +2047,7 @@ meFilter(int f, int n)
     meUnlink(filnam1);
     meUnlink(filnam2);
 
-    if(s != meTRUE)
+    if(s <= 0)
         mlwrite(0,(meUByte *)"[Execution failed]");
     else
         meModeSet(bp->mode,MDEDIT) ;		/* flag it as changed */
@@ -2071,7 +2070,7 @@ suspendEmacs(int f, int n)		/* suspend MicroEMACS and wait to wake up */
     ** SHELL environment variable is NOT "ksh" or "csh" and it hasnt got a "j"
     ** in it.
     */
-    if((n & 0x01) && (mlyesno((meUByte *)"Suspend") != meTRUE))
+    if((n & 0x01) && (mlyesno((meUByte *)"Suspend") <= 0))
         return meFALSE ;
 
     TTclose();				/* stty to old settings */

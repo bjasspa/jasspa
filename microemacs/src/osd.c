@@ -1950,7 +1950,7 @@ menuRenderItem (osdDISPLAY *md, int offset, int flags)
         /* Render the string */
         if(mp->flags & MF_ENTRY)
         {
-            if(menuExecute (mp,0,1) == meTRUE)
+            if(menuExecute(mp,0,1) > 0)
             {
                 osdRenderEntry(txtp,resultStr,md->flags,0,
                                (int) md->width,mcp->awidth,mcp->adepth,NULL) ;
@@ -2475,7 +2475,7 @@ menuRender (osdDISPLAY *md)
                     /* Evaluate the State */
                     if (mp->flags & MF_CHECK)
                     {
-                        if (menuExecute (mp,md->flags,1) == meTRUE)
+                        if (menuExecute(mp,md->flags,1) > 0)
                             mcp[itemNo].mcflags |= CF_SET;   /* State is set */
                         else
                             mcp[itemNo].mcflags &= ~CF_SET;   /* State is not set */
@@ -3542,7 +3542,7 @@ osdDisplayEvaluate (void)
         {
             /* Get the status of the state */
             oldState = mcp->mcflags;          /* Save the old flags */
-            if (menuExecute (mcp->menu,osdCurChild->flags, 1) == meTRUE)
+            if(menuExecute (mcp->menu,osdCurChild->flags, 1) > 0)
                 mcp->mcflags |= CF_SET;       /* State is set */
             else
                 mcp->mcflags &= ~CF_SET;      /* State is not set */
@@ -3771,7 +3771,7 @@ osdDisplayResize(int dx, int dy)
     sprintf((char *)resultStr,"%4d%4d",dx,dy) ;
     
     /* Can the macro resize okay */
-    if(execFunc((int) md->dialog->rszIndex,0,1) != meTRUE)
+    if(execFunc((int) md->dialog->rszIndex,0,1) <= 0)
         return ;
     
     /* restore the screen underneath */
@@ -4712,7 +4712,7 @@ menuInteraction (int *retState)
                 TTallKeys = 0 ;
                 ii = execFunc(thisIndex,f,n) ;
                 TTallKeys = 1 ;
-                if(ii != meTRUE)
+                if(ii <= 0)
                     break;
                 continue ;
             }
@@ -5054,7 +5054,7 @@ menuInteraction (int *retState)
             osdNewMd = nem ;
             osdNewChild = nec ;
             state &= MOUSE_MENU ;
-            if(menuExecute(mp,osdCurChild->flags,-1) != meTRUE)
+            if(menuExecute(mp,osdCurChild->flags,-1) <= 0)
                 /* The function called failed - quit */
                 break ;
             if(osdNewChild == NULL)
@@ -5158,7 +5158,7 @@ osd (int f, int n)
                 goto do_control_inter ;
             }
         }
-        if ((ii != meTRUE) || (buf[0] == 'E'))
+        if ((ii <= 0) || (buf[0] == 'E'))
             /* The 'E' test is to catch the string "ERROR", returned when the user
              * gives an undefined variable, e.g. %undefined. This is a common occurance */
             return meABORT ;
@@ -5224,7 +5224,7 @@ osd (int f, int n)
         {
             if ((rp = dialogConstruct (id)) == NULL)
                 return meABORT ;
-            if (meGetString((meUByte *)"Flags", 0, 0, buf,meBUF_SIZE_MAX) != meTRUE)
+            if (meGetString((meUByte *)"Flags", 0, 0, buf,meBUF_SIZE_MAX) <= 0)
                 return meABORT ;
             
             /* turn the flag string into bits */
@@ -5242,7 +5242,7 @@ osd (int f, int n)
             /* If it has a main dialog scheme then get it */
             if(flags & RF_MSCHEME) 
             {
-                if (meGetString((meUByte *)"Scheme", 0, 0, buf, meBUF_SIZE_MAX) != meTRUE)
+                if (meGetString((meUByte *)"Scheme", 0, 0, buf, meBUF_SIZE_MAX) <= 0)
                     return meABORT ;
                 rp->mScheme = convertUserScheme(meAtoi(buf),osdScheme) ;
             }
@@ -5251,9 +5251,9 @@ osd (int f, int n)
             /* If its an absolute position menu, get the position */
             if(rp->flags & (RF_ABSPOS|RF_OFFSTPOS))
             {
-                if((meGetString((meUByte *)"X-pos", 0, 0, buf, 16) != meTRUE) ||
+                if((meGetString((meUByte *)"X-pos", 0, 0, buf, 16) <= 0) ||
                    ((rp->x = (meShort) meAtoi(buf)),
-                    (meGetString((meUByte *)"Y-pos", 0, 0, buf, 16) != meTRUE)))
+                    (meGetString((meUByte *)"Y-pos", 0, 0, buf, 16) <= 0)))
                     return meABORT ;
                 rp->y = (meShort) meAtoi(buf) ;
             }
@@ -5268,22 +5268,22 @@ osd (int f, int n)
             {
                 for(; item<2 ; item++)
                 {
-                    if((meGetString((meUByte *)"Width", 0, 0, buf, 16) != meTRUE) ||
+                    if((meGetString((meUByte *)"Width", 0, 0, buf, 16) <= 0) ||
                        ((rp->width[item] = (meShort) meAtoi(buf)),
-                        (meGetString((meUByte *)"Depth", 0, 0, buf, 16) != meTRUE)))
+                        (meGetString((meUByte *)"Depth", 0, 0, buf, 16) <= 0)))
                         return meABORT ;
                     rp->depth[item] = (meShort) meAtoi(buf) ;
                 }
             }
             if(rp->flags & RF_DEFAULT)
             {
-                if(meGetString((meUByte *)"Default", 0, 0, buf, 16) != meTRUE)
+                if(meGetString((meUByte *)"Default", 0, 0, buf, 16) <= 0)
                     return meABORT ;
                 rp->defItem = (meShort) meAtoi(buf) ;
             }
             if(rp->flags & RF_FOCALITM)
             {
-                if(meGetString((meUByte *)"Focus", 0, 0, buf, 16) != meTRUE)
+                if(meGetString((meUByte *)"Focus", 0, 0, buf, 16) <= 0)
                     return meABORT ;
                 rp->focalItem = (meShort) meAtoi(buf) ;
             }
@@ -5291,41 +5291,39 @@ osd (int f, int n)
             {
                 if(flags & RF_TSCHEME) 
                 {
-                    if (meGetString((meUByte *)"Scheme", 0, 0, buf, meBUF_SIZE_MAX) != meTRUE)
+                    if (meGetString((meUByte *)"Scheme", 0, 0, buf, meBUF_SIZE_MAX) <= 0)
                         return meABORT ;
                     rp->tScheme = convertUserScheme(meAtoi(buf),rp->mScheme) ;
                 }
                 else
                     rp->tScheme = rp->mScheme ;
-                if(meGetString((meUByte *)"Text", 0, 0, txtbuf, meBUF_SIZE_MAX) == meTRUE)
+                if(meGetString((meUByte *)"Text", 0, 0, txtbuf, meBUF_SIZE_MAX) > 0)
                     rp->strData = meStrdup(txtbuf) ;
             }
             /* get the resize command if there is one */
             if(rp->flags & RF_RESIZE)
             {
-                if ((ii = meGetString((meUByte *)"Command", MLCOMMAND, 0, buf, meBUF_SIZE_MAX)) != meTRUE)
+                if(((ii = meGetString((meUByte *)"Command", MLCOMMAND, 0, buf, meBUF_SIZE_MAX)) <= 0) ||
+                   ((rp->rszIndex = decode_fncname(buf,0)) < 0))
                     return meABORT ;
-                if ((rp->rszIndex = decode_fncname(buf,0)) < 0)
-                    return mlwrite (MWABORT|MWPAUSE,(meUByte *)"Cannot find command [%s]", buf);
             }
             /* get the resize command if there is one */
             if(rp->flags & RF_CONTROL)
             {
-                if ((ii = meGetString((meUByte *)"Control", MLCOMMAND, 0, buf, meBUF_SIZE_MAX)) != meTRUE)
+                if(((ii = meGetString((meUByte *)"Control", MLCOMMAND, 0, buf, meBUF_SIZE_MAX)) <= 0) ||
+                   ((rp->cntIndex = decode_fncname(buf,0)) < 0))
                     return meABORT ;
-                if ((rp->cntIndex = decode_fncname(buf,0)) < 0)
-                    return mlwrite (MWABORT|MWPAUSE,(meUByte *)"Cannot find command [%s]", buf);
             }
             else
                 rp->cntIndex = -1 ;
             /* get the initialize command if there is one */
-            if ((ii = meGetString((meUByte *)"Command", MLCOMMAND, 0, buf, meBUF_SIZE_MAX)) == meABORT)
+            if ((ii = meGetString((meUByte *)"Command", MLCOMMAND, 0, buf, meBUF_SIZE_MAX)) < 0)
                 return meABORT ;
             rp->cmdIndex = -1 ;                     /* Assume no command */
-            if (ii == meTRUE)
+            if (ii > 0)
             {
                 if ((rp->cmdIndex = decode_fncname(buf,0)) < 0)
-                    return mlwrite (MWABORT|MWPAUSE,(meUByte *)"Cannot find command [%s]", buf);
+                    return meABORT ;
             }
             /* is this the main menu? is so store the id */
             if(rp->flags & RF_MAINMN)
@@ -5340,7 +5338,7 @@ osd (int f, int n)
         
             
         /* Get the enable flag */
-        if (meGetString((meUByte *)"Flags", 0, 0, buf,meBUF_SIZE_MAX) != meTRUE)
+        if (meGetString((meUByte *)"Flags", 0, 0, buf,meBUF_SIZE_MAX) <= 0)
             return meABORT ;
         /* turn the flag string into bits */
         bb = buf ;
@@ -5378,7 +5376,7 @@ osd (int f, int n)
         
         if(flags & MF_TAB) 
         {
-            if(meGetString((meUByte *)"Tab", 0, 0, buf, 16) != meTRUE)
+            if(meGetString((meUByte *)"Tab", 0, 0, buf, 16) <= 0)
                 return meABORT ;
             tab = (meShort) meAtoi(buf) ;
         }
@@ -5388,15 +5386,15 @@ osd (int f, int n)
         scheme = rp->mScheme ;
         if(flags & MF_SCHEME) 
         {
-            if (meGetString((meUByte *)"Scheme", 0, 0, buf, meBUF_SIZE_MAX) != meTRUE)
+            if (meGetString((meUByte *)"Scheme", 0, 0, buf, meBUF_SIZE_MAX) <= 0)
                 return meABORT ;
             scheme = convertUserScheme(meAtoi(buf),osdScheme) ;
         }
         if(flags & MF_SIZE) 
         {
-            if((meGetString((meUByte *)"Width", 0, 0, buf, 16) != meTRUE) ||
+            if((meGetString((meUByte *)"Width", 0, 0, buf, 16) <= 0) ||
                ((width = (meShort) meAtoi(buf)),
-                (meGetString((meUByte *)"Depth", 0, 0, buf, 16) != meTRUE)))
+                (meGetString((meUByte *)"Depth", 0, 0, buf, 16) <= 0)))
                 return meABORT ;
             depth = (meShort) meAtoi(buf) ;
         }
@@ -5419,9 +5417,9 @@ osd (int f, int n)
         /* Get the numeric argument. Check for 'f' which means false or
          * a value which means true. */
         argc = 1 ;
-        if ((ii = meGetString((meUByte *)"Argument", 0, 0, buf, 16)) == meABORT)
+        if ((ii = meGetString((meUByte *)"Argument", 0, 0, buf, 16)) < 0)
             return meABORT ;
-        if (ii == meTRUE)
+        if (ii > 0)
         {
             if(toLower(buf[0]) != 'f')
             {
@@ -5433,16 +5431,16 @@ osd (int f, int n)
             flags |= MF_SEP ;
 
         /* Get the command */
-        if ((ii = meGetString((meUByte *)"Command", MLCOMMAND, 0, buf, meBUF_SIZE_MAX)) == meABORT)
+        if((ii = meGetString((meUByte *)"Command", MLCOMMAND, 0, buf, meBUF_SIZE_MAX)) < 0)
             return meABORT ;
         namidx = -1;              /* Assume no sub-command */
         cmdlen = 0;                     /* Assume no command string */
-        if (ii == meTRUE)
+        if(ii > 0)
         {
             if (flags & MF_STR)
                 cmdlen = meStrlen (buf) + 1;
             else if ((namidx = decode_fncname(buf,0)) < 0)
-                return mlwrite(MWABORT|MWPAUSE,(meUByte *)"Cannot find command [%s]", buf);
+                return meABORT ;
         }
         
         if((txtlen+cmdlen) == 0)
@@ -5653,7 +5651,7 @@ osdBindKey(int f, int n)
     meUByte buf[16];
     
     /* Get the menu root */
-    if(meGetString((meUByte *)"Identity", 0, 0, buf, 16) != meTRUE)
+    if(meGetString((meUByte *)"Identity", 0, 0, buf, 16) <= 0)
         return meABORT ;
     if((rp=dialogFind(meAtoi(buf))) == NULL)
         return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Osd dialog %s undefined]",buf);
@@ -5666,7 +5664,7 @@ osdUnbindKey(int f, int n)
     meUByte buf[16];
     
     /* Get the menu root */
-    if(meGetString((meUByte *)"Identity", 0, 0, buf, 16) != meTRUE)
+    if(meGetString((meUByte *)"Identity", 0, 0, buf, 16) <= 0)
         return meABORT ;
     if((rp=dialogFind(meAtoi(buf))) == NULL)
         return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Osd dialog %s undefined]",buf);

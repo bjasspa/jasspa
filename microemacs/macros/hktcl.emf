@@ -21,10 +21,10 @@ set-variable .fhook-tcl.setup-mask "adefghikmnoptux"
 set-variable .fhook-tcl.tags "tcltags"
 set-variable .fhook-tcl.comment "|#||#|# | #||"
 
-; setup tcl folding support
-set-variable .fhook-tcl.fold-open  "^proc "
-set-variable .fhook-tcl.fold-close "^}"
-set-variable .fhook-tcl.fold-mopen "1"
+set-variable .fhook-tcl.collapse-open  "^proc "
+set-variable .fhook-tcl.collapse-close "^}"
+set-variable .fhook-tcl.collapse-mclose "1"
+set-variable .fhook-tcl.collapse-mnext "-1"
 
 ; setup item-list
 set-variable .fhook-tcl.item-list-s1 "^\\s *proc\\s +\\(\\w[1-9A-Za-z_']*\\)\\s *{"

@@ -46,9 +46,15 @@ meUndoCreateNode(size_t size)
         nn->doto  = frameCur->windowCur->dotOffset ;
         nn->str[0] = '\0' ;
         if(frameCur->bufferCur->undoContFlag == undoContFlag)
-            nn->type |= meUNDO_CONT ;
+            nn->type |= meUNDO_CONTINUE ;
         else
             frameCur->bufferCur->undoContFlag = undoContFlag ;
+    }
+    else
+    {
+        /* ditch all undos to get more memory back and make ME more stable */
+        meUndoRemove(frameCur->bufferCur) ;
+        meModeClear(frameCur->bufferCur->mode,MDUNDO) ;
     }
     return nn ;
 }
@@ -59,15 +65,15 @@ meUndoAddInsChar(void)
 {
     if(meModeTest(frameCur->bufferCur->mode,MDUNDO))
     {
-        meUByte type=meUNDO_SING|meUNDO_MINS ;
+        meUByte type=meUNDO_SINGLE|meUNDO_INSERT ;
         meUndoNode *nn ;
 
         if(frameCur->bufferCur->undoContFlag == undoContFlag)
-            type |= meUNDO_CONT ;
+            type |= meUNDO_CONTINUE ;
 
         if(((nn = frameCur->bufferCur->undoHead) != NULL) && (nn->type == type) &&
            (nn->udata.dotp == frameCur->windowCur->dotLineNo) &&
-           (nn->doto == frameCur->windowCur->dotOffset-1))
+           (nn->doto+1 == frameCur->windowCur->dotOffset))
         {
             nn->doto++ ;
             nn->count++ ;
@@ -75,7 +81,7 @@ meUndoAddInsChar(void)
         }
         else if((nn = meUndoCreateNode(sizeof(meUndoNode))) != NULL)
         {
-            nn->type |= meUNDO_SING|meUNDO_MINS ;
+            nn->type |= meUNDO_SINGLE|meUNDO_INSERT ;
             nn->count = 1 ;
         }
     }
@@ -86,7 +92,7 @@ meUndoAddDelChar(void)
 {
     if(meModeTest(frameCur->bufferCur->mode,MDUNDO))
     {
-        meUByte type=meUNDO_SING|meUNDO_MDEL ;
+        meUByte type=meUNDO_SINGLE|meUNDO_DELETE ;
         meUndoNode *nn ;
         meUByte   cc ;
 
@@ -100,17 +106,20 @@ meUndoAddDelChar(void)
             cc = meNLCHAR ;
         }
         if(frameCur->bufferCur->undoContFlag == undoContFlag)
-            type |= meUNDO_CONT ;
+            type |= meUNDO_CONTINUE ;
 
         nn = frameCur->bufferCur->undoHead ;
-        if((nn != NULL) && ((nn->type & ~meUNDO_REVS) == type) &&
+        if((nn != NULL) && ((nn->type & ~meUNDO_FORWARD) == type) &&
            (nn->udata.dotp == frameCur->windowCur->dotLineNo))
         {
-            if(!(nn->type & meUNDO_REVS) && (nn->doto == frameCur->windowCur->dotOffset))
+            if(!(nn->type & meUNDO_FORWARD) && (nn->doto == frameCur->windowCur->dotOffset))
                 ;
-            else if(((nn->doto-nn->count) == frameCur->windowCur->dotOffset) &&
-                    (((nn->type & meUNDO_REVS) != 0) || (nn->count == 1)))
-                nn->type |= meUNDO_REVS ;
+            else if(((nn->doto-1) == frameCur->windowCur->dotOffset) &&
+                    (((nn->type & meUNDO_FORWARD) != 0) || (nn->count == 1)))
+            {
+                nn->doto-- ;
+                nn->type |= meUNDO_FORWARD ;
+            }
             else
                 goto meUndoAddDelCharNew ;
             if(!(nn->count & 0x0f) &&
@@ -126,7 +135,7 @@ meUndoAddDelChar(void)
 meUndoAddDelCharNew:
             if((nn = meUndoCreateNode(sizeof(meUndoNode)+18)) != NULL)
             {
-                nn->type |= meUNDO_MDEL|meUNDO_SING ;
+                nn->type |= meUNDO_DELETE|meUNDO_SINGLE ;
                 nn->count = 1 ;
                 nn->str[0] = cc ;
                 nn->str[1] = '\0' ;
@@ -140,35 +149,35 @@ meUndoAddRepChar(void)
 {
     if(meModeTest(frameCur->bufferCur->mode,MDUNDO))
     {
-        meUByte type=meUNDO_SING|meUNDO_MINS|meUNDO_MDEL ;
+        meUByte type=meUNDO_SINGLE|meUNDO_INSERT|meUNDO_DELETE|meUNDO_FORWARD ;
         meUndoNode *nn ;
         meUByte   cc ;
 
         if(frameCur->bufferCur->undoContFlag == undoContFlag)
-            type |= meUNDO_CONT ;
+            type |= meUNDO_CONTINUE ;
         if((cc = frameCur->windowCur->dotLine->text[frameCur->windowCur->dotOffset]) == '\0')
             cc = meNLCHAR ;
         nn = frameCur->bufferCur->undoHead ;
         if((nn != NULL) && (nn->type == type) &&
            (nn->udata.dotp == frameCur->windowCur->dotLineNo) &&
-           (nn->doto == frameCur->windowCur->dotOffset-1))
+           (nn->doto == frameCur->windowCur->dotOffset))
         {
             if(!(nn->count & 0x0f) &&
                ((nn = meRealloc(nn,sizeof(meUndoNode)+nn->count+18)) == NULL))
                 return ;
             frameCur->bufferCur->undoHead = nn ;
-            nn->doto++ ;
             nn->str[nn->count++] = cc ;
             nn->str[nn->count]   = '\0' ;
             frameCur->bufferCur->undoContFlag = undoContFlag ;
         }
         else if((nn = meUndoCreateNode(sizeof(meUndoNode)+18)) != NULL)
         {
-            nn->type |= meUNDO_MDEL|meUNDO_SING|meUNDO_MINS ;
+            nn->type |= meUNDO_DELETE|meUNDO_SINGLE|meUNDO_INSERT ;
             nn->count = 1 ;
             nn->str[0] = cc ;
             nn->str[1] = '\0' ;
         }
+        nn->doto++ ;
     }
 }
 
@@ -180,7 +189,7 @@ meUndoAddInsChars(meInt numChars)
     if(meModeTest(frameCur->bufferCur->mode,MDUNDO) &&
        ((nn = meUndoCreateNode(sizeof(meUndoNode))) != NULL))
     {
-        nn->type |= meUNDO_MINS|meUNDO_REVS ;
+        nn->type |= meUNDO_INSERT ;
         nn->count = numChars ;
     }
 }
@@ -199,7 +208,7 @@ meUndoAddDelChars(meInt numChars)
         int     len ;
         meUByte  *dd=nn->str, *ss=ll->text+frameCur->windowCur->dotOffset ;
 
-        nn->type |= meUNDO_MDEL ;
+        nn->type |= meUNDO_DELETE ;
         nn->count = 0;
         if((len = meLineGetLength(ll) - frameCur->windowCur->dotOffset) < numChars)
         {
@@ -255,7 +264,7 @@ meUndoAddReplaceBgn(meLine *elinep, meUShort elineo)
             meLine  *ll = frameCur->windowCur->dotLine ;
             meUByte *dd=nn->str, *ss=ll->text+frameCur->windowCur->dotOffset ;
 
-            nn->type |= meUNDO_MDEL ;
+            nn->type |= meUNDO_DELETE ;
             /* This should be zero because added on the end call. */
             nn->count = 0;
             if(elinep == frameCur->windowCur->dotLine)
@@ -291,8 +300,10 @@ meUndoAddReplaceEnd(meInt numChars)
 {
     if(meModeTest(frameCur->bufferCur->mode,MDUNDO))
     {
+        frameCur->bufferCur->undoHead->udata.dotp = frameCur->windowCur->dotLineNo ;
+        frameCur->bufferCur->undoHead->doto  = frameCur->windowCur->dotOffset ;
         frameCur->bufferCur->undoHead->count = numChars ;
-        frameCur->bufferCur->undoHead->type |= meUNDO_MINS ;
+        frameCur->bufferCur->undoHead->type |= meUNDO_INSERT ;
     }
 }
 
@@ -308,16 +319,14 @@ meUndoAddReplace(meUByte *dstr, meInt count)
         contFlag = (frameCur->bufferCur->undoContFlag == undoContFlag) ;
 
         nn = frameCur->bufferCur->undoHead ;
-        if((nn == NULL) ||
-           !(nn->type & meUNDO_REPL) ||
-           (nn->count != count) ||
-           (nn->doto == 0xffff) ||
+        if((nn == NULL) || !meUndoIsReplace(nn) ||
+           (nn->count != count) || (nn->doto == 0xffff) ||
            meStrcmp(nn->str,dstr))
         {
             meUByte *dd ;
             if((nn = meUndoCreateNode(sizeof(meUndoNode)+meStrlen(dstr))) == NULL)
                 return ;
-            nn->type |= meUNDO_MDEL|meUNDO_MINS|meUNDO_REPL|meUNDO_REVS ;
+            nn->type |= meUNDO_DELETE|meUNDO_INSERT|meUNDO_REPLACE ;
             nn->udata.pos = NULL ;
             nn->doto = 0 ;
             nn->count = count ;
@@ -347,31 +356,44 @@ meUndoAddReplace(meUByte *dstr, meInt count)
  * for the previous undo
  */
 void
-meUndoAddNarrow(meInt sln, meUShort name)
+meUndoAddNarrow(meInt sln, meInt name,
+                meInt markupCmd, meLine *firstLine)
 {
-    meUndoNode *nn ;
-
+    meUndoNarrow *nn ;
+    int ll ;
+    
+    ll = (markupCmd >= 0) ? meLineGetLength(firstLine):0 ;
     if((frameCur->bufferCur->undoHead != NULL) &&
-       ((nn = meUndoCreateNode(sizeof(meUndoNode))) != NULL))
+       ((nn = (meUndoNarrow *) meUndoCreateNode(sizeof(meUndoNarrow)+ll)) != NULL))
     {
-        nn->type |= meUNDO_NRRW ;
-        nn->udata.dotp = sln ;
-        nn->doto = name ;
-        nn->count = -1 ;
+        nn->type |= meUNDO_SPECIAL|meUNDO_NARROW|meUNDO_NARROW_ADD ;
+        nn->dotp = sln ;
+        nn->count = 0 ;
+        nn->name = name ;
+        nn->markupCmd = markupCmd ;
+        if(markupCmd >= 0)
+            meStrcpy(nn->str,meLineGetText(firstLine)) ;
     }
 }
 void
-meUndoAddUnnarrow(meInt sln, meInt eln, meUShort name)
+meUndoAddUnnarrow(meInt sln, meInt eln, meInt name, meScheme scheme, 
+                  meInt markupCmd, meLine *markupLine)
 {
-    meUndoNode *nn ;
-
+    meUndoNarrow *nn ;
+    int ll ;
+    
+    ll = (markupCmd >= 0) ? meLineGetLength(markupLine):0 ;
     if((frameCur->bufferCur->undoHead != NULL) &&
-       ((nn = meUndoCreateNode(sizeof(meUndoNode))) != NULL))
+       ((nn = (meUndoNarrow*) meUndoCreateNode(sizeof(meUndoNarrow)+ll)) != NULL))
     {
-        nn->type |= meUNDO_NRRW ;
-        nn->udata.dotp = sln ;
-        nn->doto = name ;
+        nn->type |= meUNDO_SPECIAL|meUNDO_NARROW ;
+        nn->dotp = sln ;
         nn->count = eln ;
+        nn->name = name ;
+        nn->scheme = scheme ;
+        nn->markupCmd = markupCmd ;
+        if(markupCmd >= 0)
+            meStrcpy(nn->str,meLineGetText(markupLine)) ;
     }
 }
 #endif
@@ -384,7 +406,7 @@ meUndoRemove(meBuffer *bp)
     while((nn=bp->undoHead) != NULL)
     {
         bp->undoHead = nn->next ;
-        if(nn->type & meUNDO_REPL)
+        if(meUndoIsReplace(nn))
             free(nn->udata.pos) ;
         free(nn) ;
     }
@@ -399,20 +421,37 @@ meUndo(int f, int n)
         if(n == -4)
         {
             meUndoNode *nn ;
+            FILE *undoFp=NULL ;
+            if(undoFp == NULL)
+                undoFp = fopen("undo.log","w+") ;
+            fprintf(undoFp,"[Undo stack for %s]\n",frameCur->bufferCur->name) ;
             nn=frameCur->bufferCur->undoHead ;
             while(nn != NULL)
             {
-                printf("Undo %x %x %ld (%ld,%d) [%s]\n",nn->type,(int) nn->next,nn->count,
-                       nn->udata.dotp,nn->doto,nn->str) ;
-                if(nn->type & meUNDO_REPL)
+#if MEOPT_NARROW
+                if(meUndoIsNarrow(nn))
                 {
-                    int ii ;
-                    for(ii=0 ; ii<nn->doto ; ii++)
-                        printf("(%d,%d) ",nn->udata.pos[ii][0],nn->udata.pos[ii][1]) ;
-                    printf("\n") ;
+                    meUndoNarrow *nun = (meUndoNarrow *) nn ;
+                    fprintf(undoFp,"Undo 0x%02x %x Nrrw %x %ld %ld %d [%s]\n",nun->type,(int) nun->next,
+                            nun->name,nun->count,nun->dotp,nun->markupCmd,nun->str) ;
+                }
+#endif
+                else
+                {
+                    fprintf(undoFp,"Undo 0x%02x %x %ld (%ld,%d) [%s]\n",nn->type,(int) nn->next,nn->count,
+                            nn->udata.dotp,nn->doto,nn->str) ;
+                    if(meUndoIsReplace(nn))
+                    {
+                        int ii ;
+                        for(ii=0 ; ii<nn->doto ; ii++)
+                            fprintf(undoFp,"(%d,%d) ",nn->udata.pos[ii][0],nn->udata.pos[ii][1]) ;
+                        fprintf(undoFp,"\n") ;
+                    }
                 }
                 nn = nn->next ;
             }
+            fprintf(undoFp,"---------------\n") ;
+            fflush(undoFp) ;
         }
         else
 #endif
@@ -438,38 +477,42 @@ meUndo(int f, int n)
             int count, cont ;
             if((cun == NULL) || ((n <= 0) && !meModeTest(frameCur->bufferCur->mode,MDEDIT)))
                 break ;
-            if(bchange() != meTRUE)               /* Check we can change the buffer */
+            if(bufferSetEdit() <= 0)               /* Check we can change the buffer */
                 return meABORT ;
             cont=0 ;
 #if MEOPT_NARROW
-            if(cun->type & meUNDO_NRRW)
+            if(meUndoIsNarrow(cun))
             {
-                if(ccount < 0)
+                meUndoNarrow *nun = (meUndoNarrow *) cun ;
+                meInt name ;
+                name = nun->name ;
+                windowGotoLine(meTRUE,nun->dotp+1) ;
+                if(nun->type & meUNDO_NARROW_ADD)
                 {
                     meNarrow *nrrw ;
                     nrrw = frameCur->bufferCur->narrow ;
-                    while(nrrw->name != cdoto)
+                    while(nrrw->name != name)
                         nrrw = nrrw->next ;
-                    windowGotoLine(meTRUE,cun->udata.dotp+1) ;
                     frameCur->bufferCur->dotLine = frameCur->windowCur->dotLine ;
                     frameCur->bufferCur->dotLineNo = frameCur->windowCur->dotLineNo ;
                     frameCur->bufferCur->dotOffset = 0 ;
-                    removeNarrow(frameCur->bufferCur,nrrw,1) ;
+                    meBufferRemoveNarrow(frameCur->bufferCur,nrrw,1,
+                                         (nun->markupCmd >= 0) ? nun->str:NULL) ;
                 }
                 else
                 {
                     meLine *slp ;
-                    windowGotoLine(meTRUE,cun->udata.dotp+1) ;
                     slp = frameCur->windowCur->dotLine ;
                     windowGotoLine(meTRUE,ccount+1) ;
-                    createNarrow(frameCur->bufferCur,slp,frameCur->windowCur->dotLine,cun->udata.dotp,ccount,cdoto) ;
+                    meBufferCreateNarrow(frameCur->bufferCur,slp,frameCur->windowCur->dotLine,
+                                         nun->dotp,ccount,name,nun->scheme,nun->markupCmd,nun->str) ;
                 }
-                if(cun->type & meUNDO_CONT)
+                if(cun->type & meUNDO_CONTINUE)
                     cont=1 ;
                 goto meUndoNext ;
             }
 #endif
-            if(cun->type & meUNDO_REPL)
+            if(cun->type & meUNDO_REPLACE)
             {
                 windowGotoLine(meTRUE,cun->udata.pos[cdoto-1][0]+1) ;
                 count = cun->udata.pos[cdoto-1][1] ;
@@ -482,11 +525,11 @@ meUndo(int f, int n)
             }
             else
             {
-                if(cun->type & meUNDO_CONT)
+                if(cun->type & meUNDO_CONTINUE)
                     cont = 1 ;
-                if(cun->type & meUNDO_FRST)
+                if(meUndoIsSetEdit(cun))
                 {
-                    if(!(cun->type & meUNDO_MDEL))
+                    if(!(cun->type & meUNDO_UNSET_EDIT))
                     {
                         autowriteremove(frameCur->bufferCur) ;
                         meModeClear(frameCur->bufferCur->mode,MDEDIT) ;
@@ -497,18 +540,23 @@ meUndo(int f, int n)
                 windowGotoLine(meTRUE,cun->udata.dotp+1) ;
                 frameCur->windowCur->dotOffset = cdoto ;
             }
-            if(cun->type & meUNDO_SING)
+            if(cun->type & meUNDO_SINGLE)
             {
                 ccount-- ;
                 count = 1 ;
             }
             else
                 count = ccount ;
-            if(cun->type & meUNDO_REVS)
-                meWindowBackwardChar(frameCur->windowCur,ccount) ;
-            if(cun->type & meUNDO_MINS)
-                ldelete(count,2) ;
-            if(cun->type & meUNDO_MDEL)
+            if(cun->type & meUNDO_INSERT)
+            {
+                meWindowBackwardChar(frameCur->windowCur,count) ;
+                if((count == 1))
+                    meUndoAddDelChar() ;
+                else
+                    meUndoAddDelChars(count) ;
+                mldelete(count,NULL) ;
+            }
+            if(cun->type & meUNDO_DELETE)
             {
                 /* When dealing with long lines this loop becomes infinitly
                  * long because of the number of times that the line is
@@ -521,49 +569,31 @@ meUndo(int f, int n)
                 meUByte *ss, cc ;
                 ss = cun->str ;
                 /* Deal with a single character undo */
-                if(cun->type & meUNDO_SING)
+                if(cun->type & meUNDO_SINGLE)
                 {
-                    meUndoAddInsChar() ;
                     ss += ccount ;
                     if((cc = *ss++) == meNLCHAR)
-                        lnewline();
+                        lineInsertNewline(meTRUE);
                     else if (cc != '\0')
-                        linsert(1, cc);
+                        lineInsertChar(1, cc);
+                    meUndoAddInsChar() ;
                 }
                 else
                 {
                     /* Deal with a multiple character undo. */
-                    count = 0;
-                    while (*ss != '\0')
-                    {
-                        int ii;
-                        
-                        /* Find string length */
-                        for (ii = 0; (((cc = ss[ii]) != '\0') && (cc != meNLCHAR)); ii++)
-                            /* NULL */;
-                        /* Insert the string if there is one */
-                        if (ii != 0)
-                            lsinsert (ii, ss);
-                        /* Insert the new line if there is one */
-                        if (ss[ii] == meNLCHAR)
-                        {
-                            lnewline();
-                            ii++;
-                        }
-                        /* Advance */
-                        ss += ii;
-                        count += ii;
-                    }
-                    if(count)
+                    count = bufferInsertText(ss) ;
+                    if(count > 0)
                         meUndoAddInsChars(count) ;
                 }
             }
-            if((cun->type & meUNDO_SING) && (ccount > 0))
+            if((cun->type & meUNDO_SINGLE) && (ccount > 0))
             {
-                if(cun->type & meUNDO_MINS)
+                if(cun->type & meUNDO_FORWARD)
+                    cdoto++ ;
+                else if(cun->type & meUNDO_INSERT)
                     cdoto-- ;
             }
-            else if(cun->type & meUNDO_REPL)
+            else if(cun->type & meUNDO_REPLACE)
             {
                 cdoto-- ;
                 if(!cdoto)

@@ -646,8 +646,8 @@ do {                                                                         \
         cc = *ss ;                                                           \
         if(isXDigit(cc))                                                     \
         {                                                                    \
-            register unsigned char c1=*++ss ;                                \
-            \
+            register unsigned char c1 ;                                      \
+            c1 = *++ss ;                                                     \
             if(isXDigit(c1))                                                 \
             {                                                                \
                 cc = (hexToNum(cc) << 4) | hexToNum(c1) ;                    \

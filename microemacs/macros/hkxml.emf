@@ -75,7 +75,8 @@ set-variable .fhook-xml.comment  "|<!--|-->|--|  -- | -- |f|"
     0 indent .hilight.xml 1 20 
     indent .hilight.xml e "\"" "\"" "\\"
     indent .hilight.xml b "<!--" "-->"
-    indent .hilight.xml n "<[^/!?]" 2 
+    indent .hilight.xml b "<\\?" "\\?>"
+    indent .hilight.xml n "<[^/!]" 2 
     indent .hilight.xml o "</"    -2 
     indent .hilight.xml o "/>"    -2 
 !endif

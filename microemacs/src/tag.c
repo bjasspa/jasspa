@@ -246,15 +246,15 @@ findTagExec(int nn, meUByte tag[])
     
     if(nn & 0x04)
     {
-        if(findTagSearchNext(tag, file, fpatt) != meTRUE)
+        if(findTagSearchNext(tag, file, fpatt) <= 0)
             return meFALSE ;
     }
-    else if(findTagSearch(tag, file, fpatt) != meTRUE)
+    else if(findTagSearch(tag, file, fpatt) <= 0)
         return meFALSE ;
     
     if((nn & 0x01) && (meWindowPopup(NULL,WPOP_MKCURR,NULL) == NULL))
         return meFALSE ;
-    if(findSwapFileList(file,(BFND_CREAT|BFND_MKNAM),0) != meTRUE)
+    if(findSwapFileList(file,(BFND_CREAT|BFND_MKNAM),0) <= 0)
         return mlwrite(MWABORT,(meUByte *)"[Can't find %s]", file);
     
     /* now convert the tag file search pattern into a magic search string */
@@ -322,7 +322,7 @@ findTagExec(int nn, meUByte tag[])
             *dd = '\0' ;
     }
     
-    if(iscanner(mpatt,0,flags,NULL) != meTRUE)
+    if(iscanner(mpatt,0,flags,NULL) <= 0)
         return mlwrite(MWABORT,(meUByte *)"[Can't find %s]",fpatt) ;
     
     return meTRUE ;
@@ -345,7 +345,7 @@ findTag(int f, int n)
     else if((n & 0x02) || (inWord() == meFALSE))
     {
 	/*---	Get user word. */
-        if((meGetString((meUByte *)"Enter Tag", MLNOSPACE, 0, tag,meBUF_SIZE_MAX) != meTRUE) || (tag[0] == '\0'))
+        if((meGetString((meUByte *)"Enter Tag", MLNOSPACE, 0, tag,meBUF_SIZE_MAX) <= 0) || (tag[0] == '\0'))
             return ctrlg(meFALSE,1) ;
     }
     else

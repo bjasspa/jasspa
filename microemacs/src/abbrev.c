@@ -57,12 +57,12 @@ setAbbrev(int f, int n, meAbbrev **abrevPtr)
         if((abrev=*abrevPtr) != NULL)
         {
             abrev->loaded = 0 ;
-            freeLineLoop(&(abrev->hlp),0) ;
+            meLineLoopFree(&(abrev->hlp),0) ;
         }
         return meTRUE ;
     }
         
-    if((status=meGetString((meUByte *)"Abbrev file",MLFILECASE,0,buf,meBUF_SIZE_MAX)) != meTRUE)
+    if((status=meGetString((meUByte *)"Abbrev file",MLFILECASE,0,buf,meBUF_SIZE_MAX)) <= 0)
         return status ;
     
     if(buf[0] == '\0')
@@ -95,12 +95,12 @@ setAbbrev(int f, int n, meAbbrev **abrevPtr)
 int
 bufferAbbrev(int f, int n)
 {
-    return setAbbrev(f,n,&(frameCur->bufferCur->abrevFile)) ;
+    return setAbbrev(f,n,&(frameCur->bufferCur->abbrevFile)) ;
 }
 int
 globalAbbrev(int f, int n)
 {
-    return setAbbrev(f,n,&globalAbrev) ;
+    return setAbbrev(f,n,&globalAbbrevFile) ;
 }
 
 
@@ -144,18 +144,20 @@ expandAbbrev(int f, int n)
     register int len, ii ;
     meUByte buf[meBUF_SIZE_MAX] ;
     
-    if(bchange() != meTRUE)               /* Check we can change the buffer */
+    if(bufferSetEdit() <= 0)               /* Check we can change the buffer */
         return meABORT ;
     ii = frameCur->windowCur->dotOffset ;
-    if(((frameCur->bufferCur->abrevFile != NULL) || (globalAbrev != NULL)) &&
+    if(((frameCur->bufferCur->abbrevFile != NULL) || (globalAbbrevFile != NULL)) &&
        (--ii >= 0) && isWord(frameCur->windowCur->dotLine->text[ii]))
     {
         len = 1 ;
         while((--ii >= 0) && isWord(frameCur->windowCur->dotLine->text[ii]))
             len++ ;
         strncpy((char *) buf,(char *) &(frameCur->windowCur->dotLine->text[++ii]),len) ;
-        if(((frameCur->bufferCur->abrevFile != NULL) && ((ii=doExpandAbbrev(buf,len,frameCur->bufferCur->abrevFile)) != meFALSE)) ||
-           ((globalAbrev != NULL)      && ((ii=doExpandAbbrev(buf,len,globalAbrev)) != meFALSE)))
+        if(((frameCur->bufferCur->abbrevFile != NULL) && 
+            ((ii=doExpandAbbrev(buf,len,frameCur->bufferCur->abbrevFile)) != meFALSE)) ||
+           ((globalAbbrevFile != NULL) && 
+            ((ii=doExpandAbbrev(buf,len,globalAbbrevFile)) != meFALSE)))
             return ii ;
     }
     /* We used to insert a space if the expansion was not defined

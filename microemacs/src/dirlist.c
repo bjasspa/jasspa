@@ -568,7 +568,7 @@ evalNode(register DIRNODE *dnode, meUByte *pathname, int flags)
         while(dtemp != NULL)
         {
             meStrcpy(ss,dtemp->dname) ;
-            if(evalNode(dtemp,pathname,flags) != meTRUE)
+            if(evalNode(dtemp,pathname,flags) <= 0)
             {
                 dnode->child = dhead ;
                 *ss = '\0' ;
@@ -811,7 +811,7 @@ directoryTree(int f, int n)
     
     if(n & LDO_GETPATH)
     {
-        if(inputFileName((meUByte *)"List Directory ", buf, 1) != meTRUE)
+        if(inputFileName((meUByte *)"List Directory ", buf, 1) <= 0)
             return meABORT ;
         if((dnode = addPath(buf,0)) == NULL)
             return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s not a directory]",buf);

@@ -8,7 +8,8 @@
 ; Authors:     Steven Phillips
 ;
 define-macro-file spellaut auto-spell auto-spell-ignore auto-spell-buffer auto-spell-reset
-define-macro-file fold fold-current fold-all
+define-macro-file collapse collapse-current collapse-all
+0 define-macro-file fold fold-setup
 
 0 define-macro buffer-initialize-modes
     set-variable #l1 &ind &spr ".%s.setup" $buffer-fhook
@@ -156,8 +157,11 @@ define-macro-file fold fold-current fold-all
         buffer-bind-create "b" "C-c C-r" "" comment-restyle
     !endif
     !if &sin "f" #l0
-        buffer-bind-create "b" "f2" "" fold-current 
-        buffer-bind-create "b" "f3" "" fold-all 
+        !force 0 fold-setup
+        !if &not $status
+            buffer-bind-create "b" "f2" "" collapse-current 
+            buffer-bind-create "b" "f3" "" collapse-all 
+        !endif
     !endif
     !if &sin "s" #l0
         !if &not &seq %language "Default"

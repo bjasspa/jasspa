@@ -187,7 +187,7 @@
 
 0 define-macro mouse-pick-type1
     ; set the cursor position to the mouse position
-    161 set-position "\x82"
+    0x21 set-position "\x82"
     set-mark
     set-variable $delay-time $repeat-time
     set-variable .mouse-drop-t1.sl $window-line
@@ -320,7 +320,7 @@
 0 define-macro mouse-drop-set-region
     ; goto the original window
     1 goto-position "\x82"
-    161 set-position "\x82"
+    0x21 set-position "\x82"
     set-variable $delay-time 500
     set-variable $scroll .mouse-event.scroll
     set-variable .mouse-drop-t1.type @#
@@ -429,7 +429,7 @@
     !force &sub #l1 .mouse-event.y scroll-up
     !force &sub #l0 .mouse-event.x scroll-left
     ; store the new position
-    161 set-position "\x82"
+    0x21 set-position "\x82"
     set-variable .mouse-event.x #l0
     set-variable .mouse-event.y #l1
 !emacro
@@ -455,7 +455,7 @@
         ; goto the original position
         goto-position "\x82"
         !force #l1 scroll-up
-        161 set-position "\x82"
+        0x21 set-position "\x82"
     !endif
 !emacro
 
@@ -600,7 +600,7 @@
     !force set-variable .toolbar.disable 0
     !if &set #l0 &sin "-pick" #l1
         ; must store the original window and cursor position
-        161 set-position "\x82"
+        0x21 set-position "\x82"
         set-cursor-to-mouse
         ; work out the mouse mask
         set-variable .mode $mouse-pos

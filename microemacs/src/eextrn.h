@@ -51,7 +51,7 @@ extern	int	windowBackwardChar(int f, int n);
 extern	int	windowForwardChar(int f, int n);
 extern	meUByte meWindowGetChar(meWindow *wp) ;
 extern	int	windowGotoLine(int f, int n);
-#if MEOPT_NARROW
+#if MEOPT_EXTENDED || MEOPT_NARROW
 extern	int	windowGotoAbsLine(meInt line) ;
 #else
 #define windowGotoAbsLine(l) windowGotoLine(1,l)
@@ -60,7 +60,7 @@ extern	int	windowGotoBob(int f, int n);
 extern	int	windowGotoEob(int f, int n);
 extern	int	windowForwardLine(int f, int n);
 extern	int	windowBackwardLine(int f, int n);
-#if	MEOPT_WORDPRO
+#if MEOPT_WORDPRO
 extern	int	windowBackwardParagraph(int f, int n);
 extern	int	windowForwardParagraph(int f, int n);
 #else
@@ -265,7 +265,8 @@ extern	int	execFunc(int index, int f, int n) ;
 extern  void    execFuncHidden(int keyCode, int index, meUInt arg) ;
 #define meEBF_ARG_GIVEN   0x01
 #define meEBF_HIDDEN      0x02
-extern  void    execBufferFunc(meBuffer *bp, int index, int flags, int n) ;
+#define meEBF_USE_B_DOT   0x04
+extern  int     execBufferFunc(meBuffer *bp, int index, int flags, int n) ;
 extern  int     lineExec(int f, int n, meUByte *cmdstr);
 /* Note  tok (the destination token string) must be meTOKENBUF_SIZE_MAX in size, 
  * returning a string no bigger than meBUF_SIZE_MAX with the \0 */
@@ -529,25 +530,35 @@ extern  int     delete_key(register meUShort code) ;
 extern  int	insert_key(register meUShort code, meUShort index, meUInt arg) ;
 
 /* line.c externals */
-extern	meLine    *lalloc(int used);
-extern	int	bchange(void);
-extern	void	lchange(int flag);
-extern	int	insSpace(int f, int n);
-extern	int	insTab(int f, int n);
-extern  void	lunmarkBuffer(meBuffer *bp, meLine *lp, meLine *nlp);
-extern  meUByte  *lmakespace(int n);
-extern	int	linsert(int n, int c);
-extern	int	lsinsert(int n, meUByte *cp);
-extern	int	lnewline(void);
+extern  meLine *meLineMalloc(int length, int editLine) ;
+#define meLINEANCHOR_ALWAYS     0x00
+#define meLINEANCHOR_IF_LESS    0x01
+#define meLINEANCHOR_IF_GREATER 0x02
+#define meLINEANCHOR_RETAIN     0x00
+#define meLINEANCHOR_FIXED      0x10
+#define meLINEANCHOR_RELATIVE   0x20
+#define meLINEANCHOR_COMPRESS   0x40
+extern  void	meLineResetAnchors(meInt flags, meBuffer *bp, meLine *lp,
+                                   meLine *nlp, meUShort offset, meInt adjust) ;
+extern	int	bufferSetEdit(void);
+extern	void	lineSetChanged(int flag);
+extern  meUByte *lineMakeSpace(int n);
+extern	int	lineInsertChar(int n, int c);
+extern	int	lineInsertString(int n, meUByte *cp);
+extern	int	lineInsertNewline(int ignoreProtect);
+extern	int     bufferInsertText(meUByte *str) ;
+extern	int	bufferInsertSpace(int f, int n);
+extern	int	bufferInsertTab(int f, int n);
+extern	int	bufferInsertString(int f, int n);
+extern	int	bufferInsertNewline(int f, int n);
 extern	int	mldelete(meInt n, meUByte *kstring);
 extern	int	ldelete(meInt n, int kflag);
-extern	int	ldelnewline(void);
-extern	int	ksave(void);
-extern	meUByte  *kaddblock(meInt count);
+extern	int	killSave(void);
+extern	meUByte *killAddNode(meInt count);
 extern	int	yankfrom(struct meKill *pklist);
 extern	int	yank(int f, int n);
 extern	int	reyank(int f, int n);
-extern  void    freeLineLoop(meLine *lp, int flag) ;
+extern  void    meLineLoopFree(meLine *lp, int flag) ;
 
 /* macro.c externals */
 extern	int	macroDefine(int f, int n);
@@ -616,11 +627,14 @@ extern  void    _meAssert(char *file, int line);
 
 /* narrow.c externals */
 #if MEOPT_NARROW
-extern void createNarrow(meBuffer *bp, meLine *slp, meLine *elp, meInt sln, meInt eln, meUShort name) ;
-extern void delSingleNarrow(meBuffer *bp, int useDot) ;
-extern void removeNarrow(meBuffer *bp, register meNarrow *nrrw, int useDot) ;
-extern void unnarrowBuffer(meBuffer *bp) ;
-extern void redoNarrowInfo(meBuffer *bp) ;
+extern meNarrow *
+meBufferCreateNarrow(meBuffer *bp, meLine *slp, meLine *elp, meInt sln, meInt eln,
+                     meInt name, meScheme scheme, meInt markupCmd, meUByte *markupLine) ;
+extern void
+meBufferRemoveNarrow(meBuffer *bp, register meNarrow *nrrw, int useDot, meUByte *firstLine) ;
+extern void meBufferExpandNarrowAll(meBuffer *bp) ;
+extern void meBufferCollapseNarrowAll(meBuffer *bp) ;
+extern int  meLineRemoveNarrow(meBuffer *bp, meLine *lp) ;
 extern int  narrowBuffer(int f, int n) ;
 #else
 #define narrowBuffer notAvailable
@@ -706,7 +720,6 @@ extern	int	quoteKeyToChar(meUShort c) ;
 extern	int	quote(int f, int n);
 extern	int	meTab(int f, int n);
 extern	int	meBacktab(int f, int n);
-extern	int	insLine(int f, int n);
 extern	int	meLineSetIndent(int curInd, int newInd, int undo);
 extern	int	meNewline(int f, int n);
 extern	int	deblank(int f, int n);
@@ -717,7 +730,7 @@ extern	int	mlClear(int f, int n);
 extern	int	mlWrite(int f, int n);
 extern  void    makestrlow(meUByte *str);
 #if MEOPT_CFENCE
-extern  meUByte   gotoFrstNonWhite(void) ;
+extern  meUByte gotoFrstNonWhite(void) ;
 extern  int     doCindent(int *inComment) ;
 extern	int	cinsert(void);
 extern	int	gotoFence(int f, int n);
@@ -727,16 +740,11 @@ extern	int	gotoFence(int f, int n);
 #if MEOPT_WORDPRO
 extern  int	winsert(void) ;
 #endif
-extern	int	insString(int f, int n);
 
-#define meAM_EXSTRPOS 0x00fe
-#define meAM_ABSLINE  0x0100
-#define meAM_EXECBUFF 0x0101
-#define meAM_FRSTNRRW 0x0102
-#define meAM_FRSTPOS  0x4080
-extern  int     alphaMarkGet(meBuffer *bp, meUShort name) ;
-extern  int     alphaMarkSet(meBuffer *bp, meUShort name, meLine *lp,
-                                    meUShort off, int silent) ;
+extern  int     meAnchorSet(meBuffer *bp, meInt name,
+                            meLine *lp, meUShort off, int silent) ;
+extern  int     meAnchorGet(meBuffer *bp, meInt name) ;
+extern  int     meAnchorDelete(meBuffer *bp, meInt name) ;
 extern	int	setAlphaMark(int f, int n);
 extern	int	gotoAlphaMark(int f, int n);
 extern  int     insFileName(int f, int n) ;
@@ -958,8 +966,10 @@ extern	void	meUndoAddReplaceBgn(meLine *elinep, meUShort elineo);
 extern	void	meUndoAddReplaceEnd(meInt numChars);
 extern	void    meUndoAddReplace(meUByte *dstr, meInt count) ;
 #if MEOPT_NARROW
-extern  void    meUndoAddUnnarrow(meInt sln, meInt eln, meUShort name) ;
-extern  void    meUndoAddNarrow(meInt sln, meUShort name) ;
+extern  void    meUndoAddUnnarrow(meInt sln, meInt eln, meInt name, meScheme scheme,
+                                  meInt markupCmd, meLine *markupLine) ;
+extern  void    meUndoAddNarrow(meInt sln, meInt name,
+                                meInt markupCmd, meLine *firstLine) ;
 #endif
 extern	void	meUndoRemove(meBuffer *bp) ;
 extern	int	meUndo(int f, int n);
@@ -1287,7 +1297,7 @@ extern int      putenv(const char *s);
 #else
 #define meGetenv(s1)        ((void *) getenv((const char *)(s1)))
 #endif
-#define mePutenv(s1)        (putenv((const char *)(s1)))
+#define mePutenv(s1)        (putenv((char *)(s1)))
 #define meStrlen(s1)        strlen((const char *)(s1))
 #define meStrcmp(s1,s2)     strcmp((const char *)(s1),(const char *)(s2))
 #define meStrncmp(s1,s2,n)  strncmp((const char *)(s1),(const char *)(s2),(n))

@@ -26,10 +26,11 @@ set-variable .fhook-perl.comment "|#||#|# | #||"
     set-variable .fhook-perl.command-desc  "|&Debug Current Script|See tool menu to debug current script|"
 !endif
 
-; Folding variables
-set-variable .fhook-perl.fold-open  "^sub"
-set-variable .fhook-perl.fold-close "^}"
-set-variable .fhook-perl.fold-mopen "1"
+; Setup collapse
+set-variable .fhook-perl.collapse-open  "^sub"
+set-variable .fhook-perl.collapse-close "^}"
+set-variable .fhook-perl.collapse-mclose "1"
+set-variable .fhook-perl.collapse-mnext "-1"
 
 ; setup item-list
 set-variable .fhook-perl.item-list-s1 "^[ \t]*sub[ \t]+\\(\\w[1-9A-Za-z_']*\\)"

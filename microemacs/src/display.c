@@ -264,7 +264,7 @@ showRegion(int f, int n)
     
     case -2:
         frameCur->windowCur->updateFlags |= WFMOVEL ;
-        if((windowGotoLine(meTRUE,selhilight.markLineNo+1) == meTRUE) &&
+        if((windowGotoLine(meTRUE,selhilight.markLineNo+1) > 0) &&
            (selhilight.markOffset <= meLineGetLength(frameCur->windowCur->dotLine)))
         {
             frameCur->windowCur->dotOffset = (meUShort) selhilight.markOffset ;
@@ -308,7 +308,7 @@ showRegion(int f, int n)
    
     case 2:
         frameCur->windowCur->updateFlags |= WFMOVEL ;
-        if((windowGotoLine(meTRUE,selhilight.dotLineNo+1) == meTRUE) &&
+        if((windowGotoLine(meTRUE,selhilight.dotLineNo+1) > 0) &&
            (selhilight.dotOffset <= meLineGetLength(frameCur->windowCur->dotLine)))
         {
             frameCur->windowCur->dotOffset = (meUShort) selhilight.dotOffset ;
@@ -351,10 +351,10 @@ windCurLineOffsetEval(meWindow *wp)
     if((wp->dotCharOffset->next == wp->dotLine) &&
        !(wp->dotLine->flag & meLINE_CHANGED))
         return ;
-    if(wp->dotCharOffset->size < wp->dotLine->size)
+    if(wp->dotLine->length > meLineGetMaxLength(wp->dotCharOffset))
     {
         meFree(wp->dotCharOffset) ;
-        wp->dotCharOffset = lalloc(wp->dotLine->size) ;
+        wp->dotCharOffset = meLineMalloc(wp->dotLine->length,0) ;
     }
     /* store dotp as the last line done */
     wp->dotCharOffset->next = wp->dotLine ;
@@ -591,9 +591,9 @@ updateline(register int row, register meVideoLine *vp1, meWindow *window)
     {
         meScheme scheme;
 #if MEOPT_HILIGHT
-        if(vp1->line->flag & meLINE_SCHEME_MASK)
+        if(meLineIsSchemeSet(vp1->line))
         {
-            scheme = window->buffer->lscheme[vp1->line->flag & meLINE_SCHEME_MASK] ;
+            scheme = window->buffer->lscheme[meLineGetSchemeIndex(vp1->line)] ;
             /* We have to assume this line is an exception and the hilno & bracket
              * for the next line should be what this line would have been */
             if(window->buffer->hilight &&
@@ -1179,13 +1179,12 @@ static void
 updateWindow(meWindow *wp)
 {
     meBuffer *bp = wp->buffer ;
-    meVideoLine   *vptr;                /* Pointer to the video block */
-    register meLine *lp ;               /* Line to update */
-    register int   row, nrows ;         /* physical screen line to update */
+    meVideoLine   *vptr;                  /* Pointer to the video block */
+    register meLine *lp ;                 /* Line to update */
+    register int   row, nrows ;           /* physical screen line to update */
     register meUByte force ;
-
-    force = (meUByte) (wp->updateFlags & (WFREDRAW|WFRESIZE)) ;
     
+    force = (meUByte) (wp->updateFlags & (WFREDRAW|WFRESIZE)) ;
     /* Determine the video line position and determine the video block that
      * is being used. */
     row   = wp->frameRow ;
@@ -1277,9 +1276,9 @@ updateWindow(meWindow *wp)
     {
         /* if we are at the end */
         meScheme scheme = vptr[-1].eolScheme ;
-        meUByte flag ;
+        meLineFlag flag ;
         /* store the baseLine flag and set to 0 as it may have a $line-scheme */
-        flag=lp->flag ;
+        flag = lp->flag ;
         lp->flag = 0 ;
         for( ; (--nrows >= 0) ; row++,vptr++)
         {
@@ -1557,9 +1556,9 @@ reframe(meWindow *wp)
 
 #if MEOPT_IPIPES
     if(meModeTest(wp->buffer->mode,MDLOCK) &&
-       (wp->dotLine->flag & meLINE_AMARK))
+       (wp->dotLine->flag & meLINE_ANCHOR_AMARK))
     {
-        meAMark *ap=wp->buffer->amarkList ;
+        meAnchor *ap=wp->buffer->anchorList ;
 
         /* Are we at the input line? */
         while((ap != NULL) && (ap->name != 'I'))
@@ -2183,9 +2182,9 @@ screenUpdate(int f, int n)
     /* Now rest all the window line meLINE_CHANGED flags */
     do
     {
-        register meLine *flp, *blp ;
-        register int   ii, jj ;
-        register meUByte flag ;
+        meLine *flp, *blp ;
+        meLineFlag flag ;
+        int ii, jj ;
 
         ii = (wp->dotLineNo - wp->vertScroll) ;
         jj = (wp->textDepth - ii) ;
@@ -2623,10 +2622,10 @@ screenPoke(int f, int n)
     meUByte fbuf[meBUF_SIZE_MAX] ;
     meUByte sbuf[meBUF_SIZE_MAX] ;
 
-    if((meGetString((meUByte *)"row",0,0,fbuf,meBUF_SIZE_MAX) != meTRUE) ||
-       ((row = meAtoi(fbuf)),(meGetString((meUByte *)"col",0,0,fbuf,meBUF_SIZE_MAX) != meTRUE)) ||
-       ((col = meAtoi(fbuf)),(meGetString((meUByte *)"scheme",0,0,fbuf,meBUF_SIZE_MAX) != meTRUE)) ||
-       (meGetString((meUByte *)"string",0,0,sbuf,meBUF_SIZE_MAX) != meTRUE))
+    if((meGetString((meUByte *)"row",0,0,fbuf,meBUF_SIZE_MAX) <= 0) ||
+       ((row = meAtoi(fbuf)),(meGetString((meUByte *)"col",0,0,fbuf,meBUF_SIZE_MAX) <= 0)) ||
+       ((col = meAtoi(fbuf)),(meGetString((meUByte *)"scheme",0,0,fbuf,meBUF_SIZE_MAX) <= 0)) ||
+       (meGetString((meUByte *)"string",0,0,sbuf,meBUF_SIZE_MAX) <= 0))
         return meFALSE ;
     if((n & POKE_COLORS) == 0)
         fbuf[0] = (meUByte) meAtoi(fbuf) ;
@@ -2988,7 +2987,7 @@ addColorScheme(int f, int n)
     int index, ii, jj, col ;
 
     /* Get the hilight colour index */
-    if ((meGetString((meUByte *)"Color scheme index",0,0,buf,meBUF_SIZE_MAX) != meTRUE) ||
+    if ((meGetString((meUByte *)"Color scheme index",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
         ((index = meAtoi(buf)) < 0))
         return mlwrite(MWABORT|MWPAUSE,(meUByte *)"Invalid scheme index number");
 
@@ -3023,7 +3022,7 @@ addColorScheme(int f, int n)
         {
             meStrcpy(prompt,schmPromptM[ii]) ;
             meStrcat(prompt,schmPromptP[jj]) ;
-            if((meGetString(prompt,0,0,buf,meBUF_SIZE_MAX) != meTRUE) ||
+            if((meGetString(prompt,0,0,buf,meBUF_SIZE_MAX) <= 0) ||
                ((col=meAtoi(buf)) < 0) || (col >= noColors))
                 return mlwrite(MWABORT|MWPAUSE,(meUByte *)"Invalid scheme entry");
             scheme[ii][jj] = col;
@@ -3037,7 +3036,7 @@ addColorScheme(int f, int n)
         {
             meStrcpy(prompt,schmPromptM[ii]) ;
             meStrcat(prompt,schmPromptP[jj]) ;
-            if(meGetString(prompt,0,0,buf,meBUF_SIZE_MAX) != meTRUE)
+            if(meGetString(prompt,0,0,buf,meBUF_SIZE_MAX) <= 0)
                 break;
             scheme[ii][jj] = ((meUByte) meAtoi(buf)) & meFONT_MASK ;
         }

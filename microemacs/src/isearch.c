@@ -67,7 +67,7 @@ isearchGotoEnd(meUByte *patrn, int flags, int histNo, meShort *histLen, SCANNERP
             meWindowForwardChar(frameCur->windowCur, 1) ;
         cc = patrn[histLen[histNo]] ;
         patrn[histLen[histNo]] = '\0' ;
-        if(iscanner(patrn, 0,flags,histPos+histNo+1) != meTRUE)
+        if(iscanner(patrn, 0,flags,histPos+histNo+1) <= 0)
         {
             patrn[histLen[histNo]] = cc ;
             frameCur->windowCur->dotLine  = tmpline;       /* Reset the position */
@@ -107,7 +107,7 @@ isearchGotoStart(meUByte *patrn, int flags, int histNo, meShort *histLen, SCANNE
             meWindowForwardChar(frameCur->windowCur, 1) ;
         cc = patrn[histLen[histNo]] ;
         patrn[histLen[histNo]] = '\0' ;
-        if(iscanner(patrn,0,(flags ^ (ISCANNER_BACKW|ISCANNER_PTBEG)),histPos+histNo+1) != meTRUE)
+        if(iscanner(patrn,0,(flags ^ (ISCANNER_BACKW|ISCANNER_PTBEG)),histPos+histNo+1) <= 0)
         {
             patrn[histLen[histNo]] = cc ;
             frameCur->windowCur->dotLine  = tmpline;       /* Reset the position */
@@ -152,7 +152,7 @@ scanmore(meUByte *patrn, int flags, int histNo, meShort *histLen, SCANNERPOS *hi
     }
     sts = iscanner(patrn, 0,flags,histPos+histNo+1) ;
     
-    if(sts != meTRUE)
+    if(sts <= 0)
     {
         memcpy(histPos+histNo+1,histPos+histNo,sizeof(SCANNERPOS)) ;
         if(sts < 0)
@@ -294,7 +294,7 @@ get_another_key:
 #endif
     case CK_YANK:     /* C-y - yank the contents of the kill buffer */
         mlfirst = c ;
-        if ((status = meGetString(isHeadStr, MLSEARCH|MLISEARCH, 0, srchPat, mePATBUF_SIZE_MAX)) != meTRUE)
+        if ((status = meGetString(isHeadStr, MLSEARCH|MLISEARCH, 0, srchPat, mePATBUF_SIZE_MAX)) <= 0)
         {
             restoreUseMlBinds() ;
             return status ;
@@ -391,8 +391,8 @@ find_next:
             }
             else
                 c = meTRUE ;
-            if((c == meTRUE) &&
-               (c=scanmore(srchPat,flags,histNo,histLen,histPos)) != meTRUE) /* Start the search again    */
+            if((c > 0) &&
+               ((c=scanmore(srchPat,flags,histNo,histLen,histPos)) != meTRUE)) /* Start the search again    */
             {
                 if(TTbreakFlag)
                 {

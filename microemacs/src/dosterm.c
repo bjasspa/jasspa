@@ -690,10 +690,10 @@ changeFont(int f, int n)
     char buf[meSBUF_SIZE_MAX] ;
     int  mode ;
 
-    if(meGetString("Res mode",0,0,buf,meSBUF_SIZE_MAX) != meTRUE)
+    if(meGetString("Res mode",0,0,buf,meSBUF_SIZE_MAX) <= 0)
         return meFALSE ;
     mode = meAtoi(buf) ;
-    if(meGetString("Res special",0,0,buf,meSBUF_SIZE_MAX) != meTRUE)
+    if(meGetString("Res special",0,0,buf,meSBUF_SIZE_MAX) <= 0)
         return meFALSE ;
     dosResMode = mode ;
     dosResSpecial = meAtoi(buf) ;
