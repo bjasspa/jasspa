@@ -19,159 +19,413 @@ define-macro newuser
     2 screen-update
     !return
 !emacro
-
-0 define-macro newuser-wizard
-    next-window-find-buffer "*newuser*"
-    insert-string "\n"
-    insert-string "                Welcome to MicroEmacs '04\n"
-    insert-string "                -------------------------\n"
-    insert-string "\n"
-    insert-string "We will now guide you  quickly  through the setup of  MicroEmacs.\n"
-    insert-string "This process is very quick, we will ask you a number of questions\n"
-    insert-string "in order to set up your environment,  during this process we will\n"
-    insert-string "create  your  local  user  directory  and  install  some  of your\n"
-    insert-string "preferences.  You can  change  the  configuration  later user the\n"
-    insert-string "command esc-x  user-setup which is also available in the menu bar\n"
-    insert-string "under Help. \n"
-    insert-string "\n"
-    insert-string "If you are an experienced user then you can quit now. \n"
-    insert-string "\n"
-    insert-string "Would you like to continue ?"
+;
+; Check for environment variables.
+; defined as ERROR if not defined, returned in $result.
+;
+; @param @1 Macro name, without $
+0 define-macro newuser-env
+    insert-string &spr "Checking for environment variable $%s" @1
     -1 recenter
     2 screen-update
-    set-variable #l0 @mc1 "Continue (y/n) ?" "yn"
-    !if &seq #l0 "n"
-        newuser-wizard-exit
-        !return
-    !endif
-    insert-string " [y]\n"
-    ;
-    ; Test if the user has a logon
-    !if &and &not &seq %mename ERROR &not &seq $login-name %mename
-        insert-string &spr "WARNING: $MENAME=\"%s\" detected, using this as user name.\n" %mename
-        set-variable .newuser.user $login-name
-    !elif &not &seq $login-name ERROR 
-        set-variable .newuser.user $login-name
+    set-variable #l1  &ind &cat "$" @1
+    insert-string &spr " [done]\n$%s=" @1 
+    !if &seq &ind #l1 ERROR
+        insert-string "Not defined."
     !else
-        set-variable .newuser.user ""
+        insert-string &ind #l1
     !endif
-
-    set-variable #l3 $login-home
-    !if &seq #l3 "ERROR"
-        set-variable #l3 ""
-    !endif
-
-    insert-string &spr "Login Name: \"%s\"\n" .newuser.user
-    insert-string &spr "Home Dir  : \"%s\"\n" #l3
+    insert-string "\n"
     -1 recenter
     2 screen-update
-    !if &seq .newuser.user "ERROR"
-        insert-string "ERROR: You do not seem to have a login name !\n"
-        insert-string "ERROR: Create a proper logon or use the environment variable $MENAME to set name.\n"
-        1 newuser-wizard-exit
+    set-variable $result #l1
+!emacro
+;
+; Check the meuserpath. We check to see if the directory exists.
+; We return the result in $result.
+;
+0 define-macro newuser-check-meuserpath
+    ; Check to see if it is defined.
+    insert-string "Checking $MEUSERPATH ...."
+    !if &seq .newuser.env-meuserpath "ERROR"
+        insert-string "[not set]\n"
+        set-variable $result "ERROR"
         !return
     !endif
-    !if &seq $login-home "ERROR"
-        insert-string "ERROR: You do not seem to have a home directory name !"
-        insert-string "I guess I should use something but I will do that later\n"
-        1 newuser-wizard-exit
-        !return
-    !endif
-    ; Set up a new directory.
-    set-variable .newuser.homedir &spr "%s/%s" $login-home ".jasspa"
-    insert-string &spr "Checking for existance of directory \"%s\" [" .newuser.homedir
+    insert-string "\n"
+    ;
+*check-meuserpath-again
+    insert-string &spr "-- \"%s\"\n" .newuser.env-meuserpath 
     -1 recenter
     2 screen-update
-    set-variable #l0 &stat "t" .newuser.homedir
+    
+    ; Check that the directory exists.
+    set-variable #l0 &stat "t" .newuser.env-meuserpath
+    !if &seq #l0 "D"
+        set-variable .newuser.found-home-dir .newuser.env-meuserpath
+        set-variable $result .newuser.found-home-dir
+        insert-string "Using this as your home directory.\n"
+        !return
+    !elif &seq #l0 "X"
+        insert-string "The directory specified by $MEUSERPATH\n"
+        insert-string &spr "-- \"%s\"\n" .newuser.env-meuserpath
+        insert-string "does not exist. You have to fix this problem\n"
+        insert-string "by creating the directory or deleting the environment\n"
+        insert-string "variable. Ideally stut down, fix the problem and then\n"
+        insert-string "restart MicroEmacs again. You may:-\n"
+    !else
+        insert-string "The directory specified by $MEUSERPATH\n"
+        insert-string &spr "-- \"%s\"\n" .newuser.env-meuserpath
+        insert-string "exists and is not a directory. You have to fix\n"
+        insert-string "this problem by creating the directory or deleting\n"
+        insert-string "the environment variable. Ideally stut down, fix the\n"
+        insert-string "problem and then restart MicroEmacs again. You may:-\n"
+    !endif
+    insert-string "\n"
+    
+    insert-string "  a - abort setup and stay in MicroEmacs\n"
+    insert-string "  c - Contine, do not use this directory.\n"
+    insert-string "  e - Exit setup and try later.\n"
+    insert-string "  f - Problem fixed - try again.\n"
+    -1 recenter
+    2 screen-update
+    
+    set-variable #l0 @mc1 "Select [c]ontinue, [e]xit, [f]ixed, [a]bort ?" "acef"
+    insert-string &spr " [%s]\n" #l0
+    !if &seq #l0 "e"
+        quick-exit
+        !return
+    !elif &seq #l0 "c"
+        set-variable $result "ERROR"
+        !return
+    !elif &seq #l0 "a"
+        set-variable $result "ABORT"
+        !return
+    !endif
+    ; Go round again.
+    insert-string "Checking $MEUSERPATH ....\n"
+    !goto check-meuserpath-again
+!emacro        
+;
+; Check the meuserpath. We check to see if the directory exists.
+; We return the result in $result.
+;
+0 define-macro newuser-check-login-home
+    ; Check to see if it is defined.
+    insert-string "Checking system home directory ..."
+    !if &seq .newuser.login-home ERROR
+        insert-string "[not set]\n"
+        set-variable $result "ERROR"
+        !return
+    !endif
+    insert-string "\n"
+    ;
+*check-login-home-again
+    insert-string "Checking system home directory ....\n"
+    insert-string &spr "-- \"%s\"\n" .newuser.login-home
+    -1 recenter
+    2 screen-update
+    
+    ; Check that the directory exists.
+    set-variable #l0 &stat "t" .newuser.login-home
+    !if &seq #l0 "D"
+        !goto check-login-home-subdir
+    !elif &seq #l0 "X"
+        insert-string "The home directory specified by your system\n"
+        insert-string &spr "-- \"%s\"\n" .newuser.login-home
+        insert-string "does not exist. Check with the system adminstrator\n"
+        insert-string "before continuing, you may have permissions to create\n"
+        insert-string "this directory.Ideally stut down, fix the problem and\n"
+        insert-string "then restart MicroEmacs again.\n"
+    !else
+        insert-string "The home directory specified by your system\n"
+        insert-string &spr "-- \"%s\"\n" .newuser.login-home
+        insert-string "exists and is not a directory. You have to fix\n"
+        insert-string "this problem, see your system adminstrator.\n"
+        insert-string "Ideally stut down, fix the problem and then\n"
+        insert-string "restart MicroEmacs again.\n"
+    !endif
+    insert-string "\n"
+    insert-string "You could fix this problem by specifying an alternative\n"
+    insert-string "directory in the environment variable $MEUSERPATH\n"
+    insert-string "\n"
+    
+    insert-string "  a - abort setup and stay in MicroEmacs\n"
+    insert-string "  e - Exit setup and try later.\n"
+    insert-string "  f - Problem fixed - try again.\n"
+    -1 recenter
+    2 screen-update
+    
+    set-variable #l0 @mc1 "Select [a]bort, [e]xit, [c]ontinue ?" "aec"
+    insert-string &spr " [%s]\n" #l0
+    !if &seq #l0 "e"
+        quick-exit
+        !return
+    !elif &seq #l0 "a"
+        set-variable $result "ABORT"
+        !return
+    !endif
+    ; Go round again.
+    !goto check-meuserpath-again
+    
+    ; Attempt to create a new sub-directory in this directory.
+*check-login-home-subdir
+    ; Set up a new directory.in "<homedir>/.jasspa"
+    set-variable #l9 &spr "%s/%s" .newuser.login-home ".jasspa"
+    insert-string &spr "Checking for existance of directory \"%s\" [" #l9
+    -1 recenter
+    2 screen-update
+    set-variable #l0 &stat "t" #l9
     !if &seq #l0 "X"
-        insert-string "fail]\n"
-        insert-string &spr "Permission to create the directory\"%s\" ?" .newuser.homedir
-        -1 recenter
-        2 screen-update
-        set-variable #l0 @mc1 "Create directory (y/n) ?" "yn"
-        insert-string &spr " [%s]\n" #l0
-        !if &seq #l0 "n"
-            newuser-wizard-exit
-            !return
-        !endif
-
         ; Create the new directory.
-        !force 0x100 file-op .newuser.homedir
+        !force 0x100 file-op #l9
         !if &not $status
-            insert-string &spr "ERROR: Cannot create directory \"%s\"" #l0
-            insert-string &spr "ERROR: Resolve problem and re-start \"%s\"" #l0
-            0 newuser-wizard-exit
+            insert-string "ERROR: Cannot create the directory\n"
+            insert-string &spr "ERROR: \"%s\"" #l9
+            insert-string &spr "ERROR: Resolve problem and re-start" 
+            set-variable $result "ABORT"
             !return
         !else
-            insert-string &spr "ok ... \"%s\" created.\n" .newuser.homedir
+            insert-string &spr "-- Directory \"%s\" created.\n" #l9
         !endif
     !elif &seq #l0 "D"
         insert-string "exists]\n"
     !elif &seq #l0 "N"
         insert-string "access]\n"
-        insert-string &spr "ERROR; No access to create directory \"%s\"" #l0
+        insert-string "ERROR; No access to create directory\n"
+        insert-string &spr "ERROR: \"%s\"\n" #l9
         insert-string &spr "ERROR: Resolve problem and re-start \"%s\"" #l0
-        0 newuser-wizard-exit
+        set-variable $result "ABORT"
         !return
     !elif
         insert-string "file]\n"
-        insert-string &spr "ERROR: Require directory called \"%s\" something else exists." #l0
-        insert-string &spr "ERROR: Resolve problem and re-start \"%s\"" #l0
-        0 newuser-wizard-exit
+        insert-string "ERROR: Required directory\n"
+        insert-string &spr "ERROR: \"%s\"" #l9
+        insert-string "exists, but is not a directory. Aborting.\n"
+        set-variable $result "ABORT"
         !return
     !endif
+    
+    set-variable .newuser.found-home-dir #l9
+    set-variable $result #l9
+    insert-string "Checking system home directory ... [done]\n"
+    insert-string &spr "-- \"%s\"\n" .newuser.found-home-dir
+    insert-string "Using this as your home directory.\n"
+    -1 recenter
+    2 screen-update
+!emacro        
+
+0 define-macro newuser-check-exec-home
+    ; Check to see if it is defined.
+    insert-string "Checking system exec directory ..."
+    !if &not &or &seq $platform "dos" &seq $platform "win32"
+        insert-string "[FAILED]\n"
+        insert-string "-- HELP ME !!\n"
+        insert-string "Non-Windows platform and no home directory has been located.\n"
+        insert-string "Not sure what to do now - not sure why you are here ?\n"
+        insert-string "Suggest setting $MEUSERPATH to over-ride system settings\n"
+        insert-string "to the directory - Aborting.\n"
+        set-variable $result "ABORT"
+        !return
+    !endif
+    ; 
+    ; Get the root of the current executable directory.
+    ; 
+    set-variable #l9 &lef $progname &rsin "/" $progname
+    set-variable #l0 &stat "t" #l9
+    !if &not &seq #l0 "D"
+        insert-string "[FAILED]\n"
+        insert-string "-- HELP ME !!\n"
+        insert-string "Cannot find directory location of program:-\n"
+        insert-string &spr "$progname=\"%s\"\n" $progname
+        insert-string &spr "path=\"%s\"\n" #l9
+        insert-string "Expecting \"path\" to exist as a directory.\n"
+        insert-string "Not sure what to do now - not sure why you are here ?\n"
+        insert-string "Suggest setting $MEUSERPATH to over-ride system settings\n"
+        insert-string "to the directory - Aborting.\n"
+        set-variable $result "ABORT"
+        !return
+    !endif
+    insert-string "[done]\n"
+    insert-string &spr "-- progname \"%s\"\n" $progname
+    insert-string &spr "-- Path \"%s\"\n" #l9
+    -1 recenter
+    2 screen-update
     ;
-    ; Save the registry.
+    ; Make a new directory in the exec directory for the user.
+    ; Note we use the mename-dir which is the name of the 
+    ; directory to create.
     ;
+    ; Set up a new directory.in "<execdir>/<username-dir>"
+    set-variable #l9 &cat #l9 .newuser.mename-dir
+    insert-string "Checking for existance of directory\n"
+    insert-string &spr "-- \"%s\" [" #l9
+    -1 recenter
+    2 screen-update
+    set-variable #l0 &stat "t" #l9
+    !if &seq #l0 "X"
+        ; Create the new directory.
+        !force 0x100 file-op #l9
+        !if &not $status
+            insert-string "ERROR]\n"
+            insert-string "ERROR: Cannot create the directory\n"
+            insert-string &spr "ERROR: \"%s\"\n" #l9
+            insert-string &spr "ERROR: Resolve problem and re-start" 
+            set-variable $result "ABORT"
+            !return
+        !else
+            insert-string &spr "-- Directory \"%s\" created.\n" #l9
+        !endif
+    !elif &seq #l0 "D"
+        insert-string "exists]\n"
+    !elif &seq #l0 "N"
+        insert-string "access]\n"
+        insert-string "ERROR; No access to create directory\n"
+        insert-string &spr "ERROR: \"%s\"\n" #l9
+        insert-string &spr "ERROR: Resolve problem and re-start \"%s\"" #l0
+        set-variable $result "ABORT"
+        !return
+    !elif
+        insert-string "file]\n"
+        insert-string "ERROR: Required directory\n"
+        insert-string &spr "ERROR: \"%s\"\n" #l9
+        insert-string "exists, but is not a directory. Aborting.\n"
+        set-variable $result "ABORT"
+        !return
+    !endif
+    ; All done ok
+    set-variable .newuser.found-home-dir #l9
+    set-variable $result #l9
+    insert-string "Checking system exec directory ... [done]\n"
+    insert-string &spr "-- \"%s\"\n" .newuser.found-home-dir
+    insert-string "Using this as your home directory.\n"
+    -1 recenter
+    2 screen-update
+!emacro        
+
+;
+; Make a directory for the default user.
+;
+0 define-macro newuser-makedefault  
+    !if &seq .newuser.makedefault "ERROR"
+        insert-string &spr "Making \"default.emf\" [skip]\n" 
+        !return
+    !endif
+    insert-string &spr "Looking for user file \"default.emf\" [" 
+    -1 recenter
+    2 screen-update
+    !if &not &seq &set #l0 &find default ".emf" "ERROR"
+        insert-string "[found]\n"
+        insert-string "WARNING: Found an existing default.emf\n" #l9
+        set-variable .newuser.default-emf #l0
+    !else
+        insert-string "[not found]\n"
+        
+        set-variable #l9 &spr "%s/%s.%s" .newuser.found-home-dir .newuser.mename "emf"
+        insert-string &spr "Creating file \"%s\"" #l9
+        -1 recenter
+        2 screen-update
+        ; Try to create a new file. 
+        !force 1 find-file #l9
+        !if $status
+            set-variable #l0 $buffer-bname
+            beginning-of-buffer
+            set-mark
+            end-of-buffer
+            kill-region
+            ;
+            insert-string "; -!- emf -!-\n"
+            insert-string "; This is part of the JASSPA MicroEmacs macro files\n"
+            insert-string "; Copyright (C) 1999-2004 JASSPA (www.jasspa.com)\n"
+            insert-string "; See the file me.emf for copying and conditions.\n"
+            insert-string ";\n"
+            insert-string "; Add your private macros and definitions to this file.\n"
+            insert-string "; This is usually called \"user.emf\".\n"
+            insert-string ";"
+            insert-string &spr "set-variable $MENAME \"%s\"\n" .newuser.mename
+            0 save-buffer
+            !force 0 delete-buffer #l0
+            insert-string " [done]\n"
+            set-variable .newuser.default-emf #l9
+        !else
+            insert-string " [failed]\n"
+            insert-string "Could not write file  \"%s\"\n" #l9
+        !endif
+    !endif
+    -1 recenter
+    2 screen-update
+!emacro
+
+;
+; Create the file user.erf
+;
+0 define-macro newuser-makeerf
+    insert-string "Setting up the registry file\n"
     ; Get the user name
-    insert-string "Enter your name (i.e. \"Dan Dare\") ? "
     -1 recenter
     2 screen-update
     set-variable #l1 &reg "/history" "user-name" "Dan Dare"
-    set-variable .newuser.fullname @ml1 "Full name" #l1 
-    insert-string &spr "[%s]\n" .newuser.fullname
+    !if &not &seq #l1 "Dan Dare"
+        insert-string &spr "User name found [%s]\n" #l1
+    !else
+        insert-string "Enter your name (i.e. \"Dan Dare\") ? "
+        -1 recenter
+        2 screen-update
+        set-variable .newuser.fullname @ml1 "Full name" #l1 
+        insert-string &spr "[%s]\n" .newuser.fullname
+    !endif
     -1 recenter
     2 screen-update
-    
-    set-variable .newuser.registry &spr "%s/%s.%s" .newuser.homedir .newuser.user "erf"
-    set-variable #l0 &stat "t" .newuser.registry
+    ;
+    set-variable .newuser.erf &spr "%s/%s.%s" .newuser.found-home-dir .newuser.mename "erf"
+    insert-string "Registry File:\n"
+    insert-string &spr "-- \"%s\"\n" .newuser.erf
+    insert-string "Creating registry file ["
+    -1 recenter
+    2 screen-update
+    ;
+    set-variable #l0 &stat "t" .newuser.erf
     !if &seq #l0 "X"
-        insert-string &spr "Saving a new registry \"%s\" [" .newuser.registry
+        insert-string &spr "Saving registry \"%s\" [" .newuser.erf
         ;        delete-registry "/history"
         ;        !force read-history "guest"
-        !force set-registry "" "history" .newuser.registry
+        !force set-registry "" "history" .newuser.erf
         set-registry "/history" "user-name" .newuser.fullname
-        !force save-history .newuser.registry
+        !force save-history .newuser.erf
         !if &not $status
             insert-string "problem]\n"
         !else
             insert-string "done]\n"
         !endif
-    !elif &seq #l0 "f"
-        insert-string "exists]\n"
+    !elif &seq #l0 "R"
+        insert-string "found not changed]\n"
     !else
-        insert-string "ERROR]\n"
-        insert-string &spr "ERROR: Registry file \"%s\" should be deleted and re-created." #l0
+        insert-string &spr "ERROR - %s]\n" #l0
+        insert-string &spr "ERROR: Registry file \"%s\" should be deleted and re-created.\n" #l0
     !endif
-    ;
-    ; Create the file user.emf
-    ;
-    insert-string &spr "Looking for user file \"%s.emf\" " .newuser.user
+!emacro
+
+;
+; Create the file user.emf
+;
+0 define-macro newuser-makeemf
+    insert-string &spr "Looking for user file \"%s.emf\" " .newuser.mename
     -1 recenter
     2 screen-update
-    !if &not &seq &set #l0 &find .newuser.user ".emf" "ERROR"
-        insert-string "[found]\n"
+    !if &not &seq &set #l0 &find .newuser.mename ".emf" "ERROR"
+        insert-string "[found not changed]\n"
+        set-variable .newuser.emf #l0
     !else
         insert-string "[not found]\n"
         
-        set-variable .newuser.emf &spr "%s/%s.%s" .newuser.homedir .newuser.user "emf"
+        set-variable .newuser.emf &spr "%s/%s.%s" .newuser.found-home-dir .newuser.mename "emf"
         insert-string &spr "Creating file \"%s\"" .newuser.emf
         !if &not &seq &set #l0 &find "newuser" ".etf" "ERROR"
             !force 0x080 file-op #l0 .newuser.emf
             !if $status
                 insert-string " [done]\n"
                 set-registry "/history" "setup-file" .newuser.user
-                !goto done-user
+                !goto done-makeemf
             !endif
         !endif
         ; Try to create a new file. 
@@ -199,17 +453,19 @@ define-macro newuser
             insert-string " [failed]\n"
         !endif
     !endif
-*done-user
+*done-makeemf
     -1 recenter
     2 screen-update
-    ;
-    ; Create the company file.
-    ;
+!emacro
+;
+; Create the company file.
+0 define-macro newuser-makecompany
     set-variable .newuser.company &reg "/history" "company" "company"
     
     insert-string &spr "Looking for company file \"%s.emf\" " .newuser.company
     !if &not &seq &set #l0 &find .newuser.company ".emf" "ERROR"
         insert-string "[found]\n"
+        set-variable .newuser.company-emf #l0
     !else
         insert-string "[not found]\n"
         
@@ -229,7 +485,6 @@ define-macro newuser
             !goto end-company
             !return
         !endif
-        
         ; 
         insert-string "Enter existing or new name for the company file (8 chars)"
         -1 recenter
@@ -252,7 +507,7 @@ define-macro newuser
             -1 recenter
             2 screen-update
             set-variable .newuser.company-name @ml1 "Company name" "Acme Building Inc."
-            set-variable .newuser.company-emf &spr "%s/%s.%s" .newuser.homedir .newuser.company "emf"
+            set-variable .newuser.company-emf &spr "%s/%s.%s" .newuser.found-home-dir .newuser.company "emf"
             insert-string &spr "Formal company name [%s]\n" .newuser.company-name
             insert-string &spr "Creating file \"%s\"" .newuser.company-emf
             -1 recenter
@@ -274,8 +529,8 @@ define-macro newuser
                 insert-string ";\n"
                 insert-string "; Add your company macros and definitions to this file.\n"
                 insert-string "; This is usually called \"company.emf\"."
-                insert-string ";"
-                insert-string &spr "set-variable %company-name \"\"" .newuser.company-name
+                insert-string ";\n"
+                insert-string &spr "set-variable %%company-name \"%s\"" .newuser.company-name
                 0 save-buffer
                 !force 0 delete-buffer #l0
                 insert-string " [done]\n"
@@ -287,6 +542,163 @@ define-macro newuser
 *end-company
     -1 recenter
     2 screen-update
+!emacro
+
+0 define-macro newuser-wizard
+    ; Find the buffer and empty it
+    next-window-find-buffer "*newuser*"
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    kill-region
+    ; Welcome banner.
+    insert-string "\n"
+    insert-string "                Welcome to MicroEmacs '04\n"
+    insert-string "                -------------------------\n"
+    insert-string "\n"
+    insert-string "We will now guide you  quickly  through the setup of  MicroEmacs.\n"
+    insert-string "This process is very quick, we will ask you a number of questions\n"
+    insert-string "in order to set up your environment,  during this process we will\n"
+    insert-string "create  your  local  user  directory  and  install  some  of your\n"
+    insert-string "preferences.  You can  change  the  configuration  later user the\n"
+    insert-string "command esc-x  user-setup which is also available in the menu bar\n"
+    insert-string "under Help. \n"
+    insert-string "\n"
+    insert-string "If you are an experienced user then you can quit now. \n"
+    insert-string "\n"
+    insert-string "Would you like to continue ?"
+    -1 recenter
+    2 screen-update
+    set-variable #l0 @mc1 "Continue (y/n) ?" "yn"
+    !if &seq #l0 "n"
+        newuser-wizard-exit
+        !return
+    !endif
+    insert-string " [y]\n"
+    ;
+    ; Get the environment variables.
+    ; 
+    insert-string "Analyzing environment ....\n"
+    newuser-env "MEINSTALLPATH"
+    set-variable .newuser.env-meinstallpath $result
+    newuser-env "MENAME"
+    set-variable .newuser.env-mename $result
+    newuser-env "MEPATH"
+    set-variable .newuser.env-mepath $result
+    newuser-env "MEUSERPATH"
+    set-variable .newuser.env-meuserpath $result
+    ; Check the variables for consistency 
+    !if &not &seq .newuser.env-mepath "ERROR"
+        !if &not &seq .newuser.env-meinstallpath "ERROR"
+            insert-string "WARNING: $MEPATH hides definition of $MEINSTALLPATH\n"
+        !elif &not &seq .newuser.env-meuserpath "ERROR"
+            insert-string "WARNING: $MEPATH hides definition of $MEUSERPATH\n"
+        !else 
+            insert-string "WARNING: $MEPATH is defined\n"
+        !endif
+        insert-string "-- Suggest removal of $MEPATH and use $MEINSTALLPATH\n"
+    !endif        
+    ; Get $login-name
+    insert-string "Checking for system variable $login-name [done]\n" 
+    set-variable .newuser.login-name &cat $login-name "ERROR"
+    !if &not &seq .newuser.login-name "ERROR"
+        set-variable .newuser.login-name $login-name
+    !endif
+    insert-string "$login-name="  
+    !if &seq .newuser.login-name "ERROR"
+        insert-string "Not defined."
+    !else
+        insert-string .newuser.login-name
+    !endif
+    insert-string "\n"
+    ; Get $login-home
+    insert-string "Checking for system variable $login-home [done]\n" 
+    set-variable .newuser.login-home &cat $login-home "ERROR"
+    !if &not &seq .newuser.login-home "ERROR"
+        set-variable .newuser.login-home $login-home
+    !endif
+    insert-string "$login-home="  
+    !if &seq .newuser.login-home "ERROR"
+        insert-string "Not defined."
+    !else
+        insert-string .newuser.login-home
+    !endif
+    insert-string "\n"
+    ; Get the original - pre-guest $MENAME
+    insert-string "Checking for system variable %mename [done]\n" 
+    set-variable .newuser.mename %mename
+    insert-string "%mename="
+    !if &seq .newuser.mename "ERROR"
+        !if &seq $MENAME "guest"
+            set-variable .newuser.mename "ERROR"
+        !else
+            ; Special case of when run inside of ME.
+            set-variable .newuser.mename $MENAME
+        !endif
+    !endif
+    insert-string .newuser.mename
+    insert-string "\n"
+    ;
+    ; Sort out the user name first. There are only 2 cases becase
+    ; me.emf assigns the $MENAME depending on what it is. We use
+    ; the %mename as saved before it was destroyed.
+    ;
+    ; Case: %mename == "ERROR" - Use defuault as no name defined.
+    ; case: %mename != ERROR   - use this as the name.
+    !if &seq .newuser.mename ERROR
+        set-variable .newuser.mename "noname"
+        set-variable .newuser.mename-dir "default"
+        set-variable .newuser.makedefault
+        insert-string &spr "\nYour user name has not been detected using \"%s\"\n\n" .newuser.mename
+    !else
+        set-variable .newuser.mename-dir .newuser.mename
+        insert-string &spr "\nYour user name has been identified as  \"%s\"\n\n" .newuser.mename
+    !endif
+    ;
+    ; Sort out the thorny issue of the home directory.
+    newuser-check-meuserpath
+    !if &seq $result ABORT
+        1 newuser-wizard-exit
+    !elif &seq $result ERROR
+        ; Check for login-home location
+        newuser-check-login-home    
+        !if &seq $result ABORT
+            1 newuser-wizard-exit
+        !elif &seq $result ERROR
+            newuser-check-exec-home    
+            !if &seq $result ABORT
+                1 newuser-wizard-exit
+            !endif    
+        !endif
+    !endif
+    ; Check for errors
+    ; User paths and the names have been created
+    !if &or &seq .newuser.found-home-dir ERROR &seq .newuser.mename ERROR
+        insert-string "\n"
+        insert-string "Could not determine home directory or user name. Aborting.\n"
+        insert-string &spr "home=\"%s\"\n" .newuser.found-home-dir
+        insert-string &spr "user=\"%s\"\n" .newuser.mename
+        1 newuser-wizard-exit
+    !else
+        insert-string "\n"
+        insert-string "Setting up environment with:\n"
+        insert-string &spr "home=\"%s\"\n" .newuser.found-home-dir
+        insert-string &spr "user=\"%s\"\n" .newuser.mename
+    !endif
+    insert-string "\n"
+    -1 recenter
+    2 screen-update
+    ; Make a default file
+    newuser-makedefault  
+    ; Make the user.erf
+    newuser-makeerf    
+    ; Make the user.emf
+    newuser-makeemf    
+    ; Make the company.emf
+    newuser-makecompany
+    
+    -1 recenter
+    2 screen-update
     
     ; Finished.
     insert-string "\n"
@@ -294,11 +706,21 @@ define-macro newuser
     insert-string "created.  The .emf files are  MicroEmacs  macro files and you may\n"
     insert-string "need to edit them in the future.\n"
     insert-string "\n"
+    !if &not &seq .newuser.default-emf "ERROR"
+        insert-string "Default macro file:\n"
+        insert-string &spr "\"%s\"\n" .newuser.default-emf
+    !endif
     !if &not &seq .newuser.emf "ERROR"
-        insert-string &spr "User macro file:    \"%s\"\n" .newuser.emf
+        insert-string "User macro file:\n"
+        insert-string &spr "\"%s\"\n" .newuser.emf
     !endif
     !if &not &seq .newuser.company-emf "ERROR"
-        insert-string &spr "Company macro file: \"%s\"\n" .newuser.company-emf
+        insert-string "Company macro file:\n"
+        insert-string &spr "\"%s\"\n" .newuser.company-emf
+    !endif
+    !if &not &seq .newuser.erf "ERROR"
+        insert-string "Registry file:\n"
+        insert-string &spr "\"%s\"\n" .newuser.erf
     !endif
     insert-string "\n"
     insert-string "MicroEmacs will now save your setting and exit. The next time you\n"
@@ -306,10 +728,16 @@ define-macro newuser
     insert-string "\"esc user-setup\"  from the  command  line  to  configure   other\n"
     insert-string "preferences.\n"
     insert-string "\n"
+    insert-string "For MicroEmacs 3.8 or Nedit users then use \"Emulate\" in user-setup\n"
+    insert-string "\n"
     -1 recenter
     2 screen-update
     
     set-variable #l0 @mc1 "Exit now (y) ?" "y"
-    save-history .newuser.registry
+    !force save-history .newuser.erf
     quick-exit
 !emacro
+
+; For testing - simply execute the buffer.
+; set-variable $MEUSERPATH "c:/me/jon"
+; newuser
