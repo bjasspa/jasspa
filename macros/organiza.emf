@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Jul 26 14:36:36 1997
-;  Last Modified : <001110.2235>
+;  Last Modified : <010217.2059>
 ;
 ;  Description   : cal calendar macro
 ;
@@ -367,9 +367,9 @@ osd .osd.orga-o 660 "f" " "
         !if .org.addr-ffld
             !if &not &seq &set #l4 &reg "/org" &spr "addr/%d/%s" .org.addr #l2 "" ""
                 !if &band .org.aflag 0x10
-                    set-variable #l4 &xse #l4 #l0
-                !else
                     set-variable #l4 &xis #l4 #l0
+                !else
+                    set-variable #l4 &xse #l4 #l0
                 !endif
                 !if #l4
                     osd .osd.orga-f 70 "" &cat "    Found in Record " .org.addr
@@ -382,9 +382,9 @@ osd .osd.orga-o 660 "f" " "
             !while &not &seq &set #l4 &lget .org.addr-reg &inc #l2 1 ""
                 !if &not &seq &set #l4 &reg "/org" &spr "addr/%d/%s" .org.addr #l4 "" ""
                     !if &band .org.aflag 0x10
-                        set-variable #l4 &xse #l4 #l0
-                    !else
                         set-variable #l4 &xis #l4 #l0
+                    !else
+                        set-variable #l4 &xse #l4 #l0
                     !endif
                     !if #l4
                         osd .osd.orga-f 70 "" &cat "    Found in Record " .org.addr
