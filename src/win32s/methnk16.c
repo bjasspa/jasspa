@@ -1,47 +1,40 @@
-/* -*- c -*- ****************************************************************
+/* -*- c -*-
  *
- *  			Copyright 1999-1999 Samsung (SERI) Ltd.
- *			      All Rights Reserved
+ * JASSPA MicroEmacs - www.jasspa.com
+ * methnk16.c - Windows 16-bit thunking code.
  *
- *  System        : 
- *  Module        : 
+ * Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
  *
- *  File Name     : 
- *  Revision      : 1.0
- *  Author        : Jon Green
- *  Created       : Sun Jan 3 15:09:43 1999
- *  Last Modified : <040199.2213>
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  Description	  :
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
  *
- *  Notes         : We have to make an explicit call to  change directory on the 
- *                  16-bit side as it would appear that the 16 and 32-bit sides 
- *                  have a different concept of the current working directory.
- *                  This is a bloody mess really - I personally blame Microsoft.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     Sun Jan 3 15:09:43 1999
+ * Synopsis:    16-bit thunking code - code for 16-bit side of thunk.
+ * Authors:     Jon Green
+ * Description:
+ *     We have to make an explicit call to  change directory on the 16-bit
+ *     side as it would appear that the 16 and 32-bit sides have a different
+ *     concept of the current working directory. This is a bloody mess really
+ *     - I personally blame Microsoft.
  *
- *  History
- *	
- ****************************************************************************
- *
- * Copyright (c) 1999 Samsung (SERI) Ltd.
- * 
- * All Rights Reserved.
- * 
- * This  document  may  not, in  whole  or in  part, be  copied,  photocopied,
- * reproduced,  translated,  or  reduced to any  electronic  medium or machine
- * readable form without prior written consent from Samsung (SERI) Ltd.
- *
- * Samsung Electronic Research Institute, AV/Labs, UK. 
- * Tel: +44-1784-428600
- *
- ****************************************************************************/
+ *     Requires linking with TOOLHELP.LIB, for ModuleFindHandle().
+ */
 
-/* Code for 16-bit side of thunk.                              */
-/* Requires linking with TOOLHELP.LIB, for ModuleFindHandle(). */
-
-#ifndef APIENTRY 
+#ifndef APIENTRY
 #define APIENTRY
-#endif 
+#endif
 
 #define SYNCHSPAWN     1                /* Our command number */
 #define W32SUT_16      1                /* Needed for w32sut.h in 16-bit code */
@@ -57,7 +50,7 @@
 #include "w32sut.h"
 /*#include "methunk.h"*/
 
-UT16CBPROC glpfnUT16CallBack; 
+UT16CBPROC glpfnUT16CallBack;
 
 /**************************************************************************
 * Function: LRESULT CALLBACK LibMain(HANDLE, WORD, WORD, LPSTR)           *
@@ -76,13 +69,12 @@ LibMain (HANDLE hLibInst, WORD wDataSeg, WORD cbHeapSize, LPSTR lpszCmdLine)
 *                                                                         *
 * Purpose: Universal Thunk initialization procedure                       *
 **************************************************************************/
-DWORD FAR PASCAL 
+DWORD FAR PASCAL
 UTInit (UT16CBPROC lpfnUT16CallBack, LPVOID lpBuf )
-{ 
+{
    glpfnUT16CallBack = lpfnUT16CallBack;
    return(1);   /* Return Success */
 } /* UTInit() */
-
 
 /**************************************************************************
 * Function: DWORD FAR PASCAL UTProc(LPVOID, DWORD)                        *
@@ -91,7 +83,7 @@ UTInit (UT16CBPROC lpfnUT16CallBack, LPVOID lpBuf )
 **************************************************************************/
 DWORD FAR PASCAL
 UTProc (LPVOID lpBuf, DWORD dwFunc)
-{ 
+{
    switch (dwFunc)
    {
       case SYNCHSPAWN:
@@ -99,17 +91,17 @@ UTProc (LPVOID lpBuf, DWORD dwFunc)
           UINT hInst;
           LPCSTR lpszCmdLine;
           UINT nCmdShow;
-          
+
           /* Retrieve the command line arguments stored in buffer */
           lpszCmdLine = (LPSTR) ((LPDWORD)lpBuf)[0];
           nCmdShow = (UINT) ((LPDWORD)lpBuf)[1];
-          
+
           /* Start the application with WinExec(). Note that there is a massive bug
            * with WIN32s in that the environment is not inherited by the command shell.
            * hence all work with win32s is done through a BAT file. To add to our wows
            * CreateProcess() in the win32 environment cannot determine when the spawned
              process has finished. Hence this 16-bit thunk. */
-          
+
           hInst = WinExec (lpszCmdLine, nCmdShow);
           if( hInst < 32 )
              return 0;                  /* Error - cannot spawn process */
@@ -118,14 +110,14 @@ UTProc (LPVOID lpBuf, DWORD dwFunc)
               TASKENTRY te;
               int found = 0;
               te.dwSize = sizeof (TASKENTRY);
-              
+
               /* Iterate until the process has finished */
               while (found == 0)
               {
                   found = 1;
                   /* Give processing resouce back to windows */
                   Yield ();
-                  
+
                   /* See if we can find the process. If not then we have finished */
                   if (TaskFirst (&te) == FALSE)
                       break;
@@ -155,6 +147,6 @@ UTProc (LPVOID lpBuf, DWORD dwFunc)
 **************************************************************************/
 int FAR PASCAL
 WEP (int bSystemExit)
-{ 
+{
     return (1);
 } /* WEP() */
