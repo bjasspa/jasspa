@@ -1,12 +1,12 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Steven Phillips
 .\"  Created       : Sat Aug 22 09:00:06 1998
 .\"
-.Id $Id: m3osd010.3,v 2.5 2004-01-05 00:19:24 jon Exp $
+.Id $Id: m3osd010.3,v 2.6 2004-01-11 14:50:08 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH buffer-setup 3
@@ -153,9 +153,12 @@ mode.
 .SH NOTES
 \fBbuffer-setup\fR is a macro using
 .Ht osd 2 ,
-defined in \fCbuffstp.emf\fR.
+defined in  \fCbuffstp.emf\fR.  This macro configures the user settings of the
+\fChkXXX.emf\fR files via
+.Ht buffer-init 2 . 
 .SH "SEE ALSO"
 .na
+.Ht buffer-init 2 ,
 .Ht buffer-help 3 ,
 .Ht user-setup 3 .
 .Hl "File Hooks" fileHooks 2 .
