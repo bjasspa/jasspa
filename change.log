@@ -4,9 +4,25 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <040326.2112>
+>  Last Modified : <040819.1107>
 >
 
+    [040814] Linux manual page formatting fixes.
+
+Minor Patch - July 2004
+
+    [040728] Released patches.
+
+    [040728] Corrected Linux kernel 2.6 pty allocation.
+    
+    [040630] Linux manual page formatting fixes. 
+    
+    [040518] Comment  definition  corrections  for C, C++  and  java,  notable
+             doxygen comment formation omitted.
+
+    [040518] Corrected block comment  formatting, adding an extra space at the
+             end of the comment.
+    
 7th Release - March 2004
 
     [040326] Release wrapped - public release tag is "20040301" for executable
