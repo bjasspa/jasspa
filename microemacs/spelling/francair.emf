@@ -1,0 +1,629 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : $Author: jon $
+;  Created By    : Steven Phillips
+;  Created       : Wed May 13 15:17:09 1998
+;  Last Modified : <280299.0137>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;      Rules must be given in standard Latin font
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+0 define-macro spell-rules-init
+!emacro
+
+set-variable .spell.rules "ABCDLNPQRSTX"
+
+; reset the spell rules
+0 add-spell-rule
+
+; Now add the french spell rules
+; prefixes
+; flag *R:
+-2 add-spell-rule "R" "[^aàâeèéêiîoôuh]" "" "re" ; re: refaire, remanier, relecture
+-2 add-spell-rule "R" "[aàâeèéêiîoôuh]" "" "ré" ; ré: réévaluer, réinviter
+
+; flag *D: dé: défaire, dégrossir
+-2 add-spell-rule "D" "" "" "dé" ;
+
+; flag *N: élision d'une négation
+-2 add-spell-rule "N" "[aàâeèéêiîoôuh]" "" "n'" ; je n'aime pas, il n'y a pas
+
+; flag *T: élision d'un pronom complément d'objet direct
+;          verbes transitifs seulement
+-2 add-spell-rule "T" "[aàâeèéêiîoôuh]" "" "l'" ; je l'aime
+-2 add-spell-rule "T" "[aàâeèéêiîoôuh]" "" "m'" ; je m'adore
+-2 add-spell-rule "T" "[aàâeèéêiîoôuh]" "" "t'" ; je t'idolatre
+
+; flag *P: verbes essentiellement pronominaux
+;          ou emploi pronominal
+-2 add-spell-rule "P" "[aàâeèéêiîoôuh]" "" "m'" ; je m'absente
+-2 add-spell-rule "P" "[aàâeèéêiîoôuh]" "" "t'" ; tu t'évanouis
+-2 add-spell-rule "P" "[aàâeèéêiîoôuh]" "" "s'" ; elle s'hypertrophie
+
+; flag *L: élision d'articles
+-2 add-spell-rule "L" "[aàâeèéêiîoôuh]" "" "d'" ; d'idée
+-2 add-spell-rule "L" "[aàâeèéêiîoôuh]" "" "l'" ; l'amour
+
+; flag *Q: élision de prépositions,
+;          adjectifs indéfinis, conjonctions, etc.
+-2 add-spell-rule "Q" "[aàâeèéêiîoôuh]" "" "qu'" ; qu'une
+-2 add-spell-rule "Q" "[aàâeèéêiîoôuh]" "" "quoiqu'" ; quoiqu'il, quoiqu'elle (autres applications?)
+-2 add-spell-rule "Q" "[aàâeèéêiîoôuh]" "" "quelqu'" ; quelqu' (valide?)
+-2 add-spell-rule "Q" "[aàâeèéêiîoôuh]" "" "puisqu'" ; puisqu' (valide?)
+
+; suffixes
+;
+; Les conjugaisons suivantes du Bescherelle ne sont pas utilisées
+; (elles ne représentent qu'un seul verbe):
+; 1 2 3 4 5 20 21 30 34 40 41 43 46 48 51
+;
+; Verbes du premier groupe (6 7 8 9 10 11 12 13 14 15 16 17 18)
+;			   (. . . .  .  .  C  .  .  .  .  .  x)
+; Certaines terminaisons n'existent pas:
+;   -[eé]ber
+;   -e[bcgt]rer
+;   -eder
+;   -éver
+; flag *A: règle générale
+ 2 add-spell-rule "A" "[^cg]er" "er" "a" ;
+ 2 add-spell-rule "A" "[^cg]er" "er" "ai" ;
+ 2 add-spell-rule "A" "[^cg]er" "er" "aient" ;
+ 2 add-spell-rule "A" "[^cg]er" "er" "ais" ;
+ 2 add-spell-rule "A" "[^cg]er" "er" "ait" ;
+ 2 add-spell-rule "A" "[^cg]er" "er" "ant" ;
+ 2 add-spell-rule "A" "[^cg]er" "er" "as" ;
+ 2 add-spell-rule "A" "[^cg]er" "er" "asse" ;
+ 2 add-spell-rule "A" "[^cg]er" "er" "assent" ;
+ 2 add-spell-rule "A" "[^cg]er" "er" "asses" ;
+ 2 add-spell-rule "A" "[^cg]er" "er" "assiez" ;
+ 2 add-spell-rule "A" "[^cg]er" "er" "assions" ;
+ 2 add-spell-rule "A" "[^cdghlmnprstuvy]er" "er" "e" ;
+ 2 add-spell-rule "A" "[^cdghlmnprstuvy]er" "er" "ent" ;
+ 2 add-spell-rule "A" "[^cdlmnprstvy]er" "er" "era" ;
+ 2 add-spell-rule "A" "[^cdlmnprstvy]er" "er" "erai" ;
+ 2 add-spell-rule "A" "[^cdlmnprstvy]er" "er" "eraient" ;
+ 2 add-spell-rule "A" "[^cdlmnprstvy]er" "er" "erais" ;
+ 2 add-spell-rule "A" "[^cdlmnprstvy]er" "er" "erait" ;
+ 2 add-spell-rule "A" "[^cdlmnprstvy]er" "er" "eras" ;
+ 2 add-spell-rule "A" "[^cdlmnprstvy]er" "er" "erez" ;
+ 2 add-spell-rule "A" "[^cdlmnprstvy]er" "er" "eriez" ;
+ 2 add-spell-rule "A" "[^cdlmnprstvy]er" "er" "erions" ;
+ 2 add-spell-rule "A" "[^cdlmnprstvy]er" "er" "erons" ;
+ 2 add-spell-rule "A" "[^cdlmnprstvy]er" "er" "eront" ;
+ 2 add-spell-rule "A" "[^cdghlmnprstuvy]er" "er" "es" ;
+ 2 add-spell-rule "A" "er" "er" "ez" ;
+ 2 add-spell-rule "A" "er" "er" "iez" ;
+ 2 add-spell-rule "A" "er" "er" "ions" ;
+ 2 add-spell-rule "A" "[^cg]er" "er" "ons" ;
+ 2 add-spell-rule "A" "[^cg]er" "er" "âmes" ;
+ 2 add-spell-rule "A" "[^cg]er" "er" "ât" ;
+ 2 add-spell-rule "A" "[^cg]er" "er" "âtes" ;
+ 2 add-spell-rule "A" "er" "er" "èrent" ;
+ 2 add-spell-rule "A" "er" "er" "é" ;
+ 2 add-spell-rule "A" "er" "er" "ée" ;
+ 2 add-spell-rule "A" "er" "er" "ées" ;
+ 2 add-spell-rule "A" "er" "er" "és" ;
+; -CER, cédille devant 'ao' (7)
+ 2 add-spell-rule "A" "cer" "cer" "ça" ;
+ 2 add-spell-rule "A" "cer" "cer" "çai" ;
+ 2 add-spell-rule "A" "cer" "cer" "çaient" ;
+ 2 add-spell-rule "A" "cer" "cer" "çais" ;
+ 2 add-spell-rule "A" "cer" "cer" "çait" ;
+ 2 add-spell-rule "A" "cer" "cer" "çant" ;
+ 2 add-spell-rule "A" "cer" "cer" "ças" ;
+ 2 add-spell-rule "A" "cer" "cer" "çasse" ;
+ 2 add-spell-rule "A" "cer" "cer" "çassent" ;
+ 2 add-spell-rule "A" "cer" "cer" "çasses" ;
+ 2 add-spell-rule "A" "cer" "cer" "çassiez" ;
+ 2 add-spell-rule "A" "cer" "cer" "çassions" ;
+ 2 add-spell-rule "A" "cer" "cer" "çons" ;
+ 2 add-spell-rule "A" "cer" "cer" "çâmes" ;
+ 2 add-spell-rule "A" "cer" "cer" "çât" ;
+ 2 add-spell-rule "A" "cer" "cer" "çâtes" ;
+; -GER, 'e' devant 'ao' (8)
+ 2 add-spell-rule "A" "ger" "ger" "gea" ;
+ 2 add-spell-rule "A" "ger" "ger" "geai" ;
+ 2 add-spell-rule "A" "ger" "ger" "geaient" ;
+ 2 add-spell-rule "A" "ger" "ger" "geais" ;
+ 2 add-spell-rule "A" "ger" "ger" "geait" ;
+ 2 add-spell-rule "A" "ger" "ger" "geant" ;
+ 2 add-spell-rule "A" "ger" "ger" "geas" ;
+ 2 add-spell-rule "A" "ger" "ger" "geasse" ;
+ 2 add-spell-rule "A" "ger" "ger" "geassent" ;
+ 2 add-spell-rule "A" "ger" "ger" "geasses" ;
+ 2 add-spell-rule "A" "ger" "ger" "geassiez" ;
+ 2 add-spell-rule "A" "ger" "ger" "geassions" ;
+ 2 add-spell-rule "A" "ger" "ger" "geons" ;
+ 2 add-spell-rule "A" "ger" "ger" "geâmes" ;
+ 2 add-spell-rule "A" "ger" "ger" "geât" ;
+ 2 add-spell-rule "A" "ger" "ger" "geâtes" ;
+; -éGER: assiéger (14)
+ 2 add-spell-rule "A" "[^é]ger" "ger" "ge" ;
+ 2 add-spell-rule "A" "[^é]ger" "ger" "gent" ;
+ 2 add-spell-rule "A" "[^é]ger" "ger" "ges" ;
+ 2 add-spell-rule "A" "éger" "éger" "ège" ;
+ 2 add-spell-rule "A" "éger" "éger" "ègent" ;
+ 2 add-spell-rule "A" "éger" "éger" "èges" ;
+; -AYER (16)
+ 2 add-spell-rule "A" "ayer" "er" "e" ;
+ 2 add-spell-rule "A" "ayer" "er" "ent" ;
+ 2 add-spell-rule "A" "ayer" "er" "era" ;
+ 2 add-spell-rule "A" "ayer" "er" "erai" ;
+ 2 add-spell-rule "A" "ayer" "er" "eraient" ;
+ 2 add-spell-rule "A" "ayer" "er" "erais" ;
+ 2 add-spell-rule "A" "ayer" "er" "erait" ;
+ 2 add-spell-rule "A" "ayer" "er" "eras" ;
+ 2 add-spell-rule "A" "ayer" "er" "erez" ;
+ 2 add-spell-rule "A" "ayer" "er" "eriez" ;
+ 2 add-spell-rule "A" "ayer" "er" "erions" ;
+ 2 add-spell-rule "A" "ayer" "er" "erons" ;
+ 2 add-spell-rule "A" "ayer" "er" "eront" ;
+ 2 add-spell-rule "A" "ayer" "er" "es" ;
+; Forme alternative de (16) et -OYER, -UYER (17)
+ 2 add-spell-rule "A" "[aou]yer" "yer" "ie" ;
+ 2 add-spell-rule "A" "[aou]yer" "yer" "ient" ;
+ 2 add-spell-rule "A" "[aou]yer" "yer" "iera" ;
+ 2 add-spell-rule "A" "[aou]yer" "yer" "ierai" ;
+ 2 add-spell-rule "A" "[aou]yer" "yer" "ieraient" ;
+ 2 add-spell-rule "A" "[aou]yer" "yer" "ierais" ;
+ 2 add-spell-rule "A" "[aou]yer" "yer" "ierait" ;
+ 2 add-spell-rule "A" "[aou]yer" "yer" "ieras" ;
+ 2 add-spell-rule "A" "[aou]yer" "yer" "ierez" ;
+ 2 add-spell-rule "A" "[aou]yer" "yer" "ieriez" ;
+ 2 add-spell-rule "A" "[aou]yer" "yer" "ierions" ;
+ 2 add-spell-rule "A" "[aou]yer" "yer" "ierons" ;
+ 2 add-spell-rule "A" "[aou]yer" "yer" "ieront" ;
+ 2 add-spell-rule "A" "[aou]yer" "yer" "ies" ;
+; -EYER: règle générale
+ 2 add-spell-rule "A" "eyer" "er" "e" ;
+ 2 add-spell-rule "A" "eyer" "er" "ent" ;
+ 2 add-spell-rule "A" "eyer" "er" "era" ;
+ 2 add-spell-rule "A" "eyer" "er" "erai" ;
+ 2 add-spell-rule "A" "eyer" "er" "eraient" ;
+ 2 add-spell-rule "A" "eyer" "er" "erais" ;
+ 2 add-spell-rule "A" "eyer" "er" "erait" ;
+ 2 add-spell-rule "A" "eyer" "er" "eras" ;
+ 2 add-spell-rule "A" "eyer" "er" "erez" ;
+ 2 add-spell-rule "A" "eyer" "er" "eriez" ;
+ 2 add-spell-rule "A" "eyer" "er" "erions" ;
+ 2 add-spell-rule "A" "eyer" "er" "erons" ;
+ 2 add-spell-rule "A" "eyer" "er" "eront" ;
+ 2 add-spell-rule "A" "eyer" "er" "es" ;
+; -<consonne>ER sans 'e' avant: règle générale
+ 2 add-spell-rule "A" "[^eé][cdmpstv]er" "er" "e" ;
+ 2 add-spell-rule "A" "[^eé][cdmpstv]er" "er" "ent" ;
+ 2 add-spell-rule "A" "[^eé][cdmpstv]er" "er" "era" ;
+ 2 add-spell-rule "A" "[^eé][cdmpstv]er" "er" "erai" ;
+ 2 add-spell-rule "A" "[^eé][cdmpstv]er" "er" "eraient" ;
+ 2 add-spell-rule "A" "[^eé][cdmpstv]er" "er" "erais" ;
+ 2 add-spell-rule "A" "[^eé][cdmpstv]er" "er" "erait" ;
+ 2 add-spell-rule "A" "[^eé][cdmpstv]er" "er" "eras" ;
+ 2 add-spell-rule "A" "[^eé][cdmpstv]er" "er" "erez" ;
+ 2 add-spell-rule "A" "[^eé][cdmpstv]er" "er" "eriez" ;
+ 2 add-spell-rule "A" "[^eé][cdmpstv]er" "er" "erions" ;
+ 2 add-spell-rule "A" "[^eé][cdmpstv]er" "er" "erons" ;
+ 2 add-spell-rule "A" "[^eé][cdmpstv]er" "er" "eront" ;
+ 2 add-spell-rule "A" "[^eé][cdmpstv]er" "er" "es" ;
+ 2 add-spell-rule "A" "[^eég][ln]er" "er" "e" ;
+ 2 add-spell-rule "A" "[^eég][ln]er" "er" "ent" ;
+ 2 add-spell-rule "A" "[^eég][ln]er" "er" "era" ;
+ 2 add-spell-rule "A" "[^eég][ln]er" "er" "erai" ;
+ 2 add-spell-rule "A" "[^eég][ln]er" "er" "eraient" ;
+ 2 add-spell-rule "A" "[^eég][ln]er" "er" "erais" ;
+ 2 add-spell-rule "A" "[^eég][ln]er" "er" "erait" ;
+ 2 add-spell-rule "A" "[^eég][ln]er" "er" "eras" ;
+ 2 add-spell-rule "A" "[^eég][ln]er" "er" "erez" ;
+ 2 add-spell-rule "A" "[^eég][ln]er" "er" "eriez" ;
+ 2 add-spell-rule "A" "[^eég][ln]er" "er" "erions" ;
+ 2 add-spell-rule "A" "[^eég][ln]er" "er" "erons" ;
+ 2 add-spell-rule "A" "[^eég][ln]er" "er" "eront" ;
+ 2 add-spell-rule "A" "[^eég][ln]er" "er" "es" ;
+ 2 add-spell-rule "A" "[^é]g[ln]er" "er" "e" ;
+ 2 add-spell-rule "A" "[^é]g[ln]er" "er" "ent" ;
+ 2 add-spell-rule "A" "g[ln]er" "er" "era" ;
+ 2 add-spell-rule "A" "g[ln]er" "er" "erai" ;
+ 2 add-spell-rule "A" "g[ln]er" "er" "eraient" ;
+ 2 add-spell-rule "A" "g[ln]er" "er" "erais" ;
+ 2 add-spell-rule "A" "g[ln]er" "er" "erait" ;
+ 2 add-spell-rule "A" "g[ln]er" "er" "eras" ;
+ 2 add-spell-rule "A" "g[ln]er" "er" "erez" ;
+ 2 add-spell-rule "A" "g[ln]er" "er" "eriez" ;
+ 2 add-spell-rule "A" "g[ln]er" "er" "erions" ;
+ 2 add-spell-rule "A" "g[ln]er" "er" "erons" ;
+ 2 add-spell-rule "A" "g[ln]er" "er" "eront" ;
+ 2 add-spell-rule "A" "[^é]g[ln]er" "er" "es" ;
+ 2 add-spell-rule "A" "[^eébcgtv]rer" "er" "e" ;
+ 2 add-spell-rule "A" "[^eébcgtv]rer" "er" "ent" ;
+ 2 add-spell-rule "A" "[^eébcgtv]rer" "er" "era" ;
+ 2 add-spell-rule "A" "[^eébcgtv]rer" "er" "erai" ;
+ 2 add-spell-rule "A" "[^eébcgtv]rer" "er" "eraient" ;
+ 2 add-spell-rule "A" "[^eébcgtv]rer" "er" "erais" ;
+ 2 add-spell-rule "A" "[^eébcgtv]rer" "er" "erait" ;
+ 2 add-spell-rule "A" "[^eébcgtv]rer" "er" "eras" ;
+ 2 add-spell-rule "A" "[^eébcgtv]rer" "er" "erez" ;
+ 2 add-spell-rule "A" "[^eébcgtv]rer" "er" "eriez" ;
+ 2 add-spell-rule "A" "[^eébcgtv]rer" "er" "erions" ;
+ 2 add-spell-rule "A" "[^eébcgtv]rer" "er" "erons" ;
+ 2 add-spell-rule "A" "[^eébcgtv]rer" "er" "eront" ;
+ 2 add-spell-rule "A" "[^eébcgtv]rer" "er" "es" ;
+ 2 add-spell-rule "A" "[^eé][bcgtv]rer" "er" "e" ;
+ 2 add-spell-rule "A" "[^eé][bcgtv]rer" "er" "ent" ;
+ 2 add-spell-rule "A" "[^e][bcgtv]rer" "er" "era" ;
+ 2 add-spell-rule "A" "[^e][bcgtv]rer" "er" "erai" ;
+ 2 add-spell-rule "A" "[^e][bcgtv]rer" "er" "eraient" ;
+ 2 add-spell-rule "A" "[^e][bcgtv]rer" "er" "erais" ;
+ 2 add-spell-rule "A" "[^e][bcgtv]rer" "er" "erait" ;
+ 2 add-spell-rule "A" "[^e][bcgtv]rer" "er" "eras" ;
+ 2 add-spell-rule "A" "[^e][bcgtv]rer" "er" "erez" ;
+ 2 add-spell-rule "A" "[^e][bcgtv]rer" "er" "eriez" ;
+ 2 add-spell-rule "A" "[^e][bcgtv]rer" "er" "erions" ;
+ 2 add-spell-rule "A" "[^e][bcgtv]rer" "er" "erons" ;
+ 2 add-spell-rule "A" "[^e][bcgtv]rer" "er" "eront" ;
+ 2 add-spell-rule "A" "[^eé][bcgtv]rer" "er" "es" ;
+ 2 add-spell-rule "A" "[^c]her" "er" "e" ;
+ 2 add-spell-rule "A" "[^c]her" "er" "ent" ;
+ 2 add-spell-rule "A" "[^c]her" "er" "es" ;
+ 2 add-spell-rule "A" "[^é]cher" "er" "e" ;
+ 2 add-spell-rule "A" "[^é]cher" "er" "ent" ;
+ 2 add-spell-rule "A" "[^é]cher" "er" "es" ;
+ 2 add-spell-rule "A" "[^gq]uer" "er" "e" ;
+ 2 add-spell-rule "A" "[^gq]uer" "er" "ent" ;
+ 2 add-spell-rule "A" "[^gq]uer" "er" "es" ;
+ 2 add-spell-rule "A" "[^é][gq]uer" "er" "e" ;
+ 2 add-spell-rule "A" "[^é][gq]uer" "er" "ent" ;
+ 2 add-spell-rule "A" "[^é][gq]uer" "er" "es" ;
+; -ELER, -ETER qui doublent la consonne (11)
+ 2 add-spell-rule "A" "eler" "er" "le" ;
+ 2 add-spell-rule "A" "eler" "er" "lent" ;
+ 2 add-spell-rule "A" "eler" "er" "lera" ;
+ 2 add-spell-rule "A" "eler" "er" "lerai" ;
+ 2 add-spell-rule "A" "eler" "er" "leraient" ;
+ 2 add-spell-rule "A" "eler" "er" "lerais" ;
+ 2 add-spell-rule "A" "eler" "er" "lerait" ;
+ 2 add-spell-rule "A" "eler" "er" "leras" ;
+ 2 add-spell-rule "A" "eler" "er" "lerez" ;
+ 2 add-spell-rule "A" "eler" "er" "leriez" ;
+ 2 add-spell-rule "A" "eler" "er" "lerions" ;
+ 2 add-spell-rule "A" "eler" "er" "lerons" ;
+ 2 add-spell-rule "A" "eler" "er" "leront" ;
+ 2 add-spell-rule "A" "eler" "er" "les" ;
+ 2 add-spell-rule "A" "eter" "er" "te" ;
+ 2 add-spell-rule "A" "eter" "er" "tent" ;
+ 2 add-spell-rule "A" "eter" "er" "tera" ;
+ 2 add-spell-rule "A" "eter" "er" "terai" ;
+ 2 add-spell-rule "A" "eter" "er" "teraient" ;
+ 2 add-spell-rule "A" "eter" "er" "terais" ;
+ 2 add-spell-rule "A" "eter" "er" "terait" ;
+ 2 add-spell-rule "A" "eter" "er" "teras" ;
+ 2 add-spell-rule "A" "eter" "er" "terez" ;
+ 2 add-spell-rule "A" "eter" "er" "teriez" ;
+ 2 add-spell-rule "A" "eter" "er" "terions" ;
+ 2 add-spell-rule "A" "eter" "er" "terons" ;
+ 2 add-spell-rule "A" "eter" "er" "teront" ;
+ 2 add-spell-rule "A" "eter" "er" "tes" ;
+; -E.ER (9): e.e* -> è.e*
+ 2 add-spell-rule "A" "ecer" "ecer" "èce" ;
+ 2 add-spell-rule "A" "ecer" "ecer" "ècent" ;
+ 2 add-spell-rule "A" "ecer" "ecer" "ècera" ;
+ 2 add-spell-rule "A" "ecer" "ecer" "ècerai" ;
+ 2 add-spell-rule "A" "ecer" "ecer" "èceraient" ;
+ 2 add-spell-rule "A" "ecer" "ecer" "ècerais" ;
+ 2 add-spell-rule "A" "ecer" "ecer" "ècerait" ;
+ 2 add-spell-rule "A" "ecer" "ecer" "èceras" ;
+ 2 add-spell-rule "A" "ecer" "ecer" "ècerez" ;
+ 2 add-spell-rule "A" "ecer" "ecer" "èceriez" ;
+ 2 add-spell-rule "A" "ecer" "ecer" "ècerions" ;
+ 2 add-spell-rule "A" "ecer" "ecer" "ècerons" ;
+ 2 add-spell-rule "A" "ecer" "ecer" "èceront" ;
+ 2 add-spell-rule "A" "ecer" "ecer" "èces" ;
+ 2 add-spell-rule "A" "emer" "emer" "ème" ;
+ 2 add-spell-rule "A" "emer" "emer" "èment" ;
+ 2 add-spell-rule "A" "emer" "emer" "èmera" ;
+ 2 add-spell-rule "A" "emer" "emer" "èmerai" ;
+ 2 add-spell-rule "A" "emer" "emer" "èmeraient" ;
+ 2 add-spell-rule "A" "emer" "emer" "èmerais" ;
+ 2 add-spell-rule "A" "emer" "emer" "èmerait" ;
+ 2 add-spell-rule "A" "emer" "emer" "èmeras" ;
+ 2 add-spell-rule "A" "emer" "emer" "èmerez" ;
+ 2 add-spell-rule "A" "emer" "emer" "èmeriez" ;
+ 2 add-spell-rule "A" "emer" "emer" "èmerions" ;
+ 2 add-spell-rule "A" "emer" "emer" "èmerons" ;
+ 2 add-spell-rule "A" "emer" "emer" "èmeront" ;
+ 2 add-spell-rule "A" "emer" "emer" "èmes" ;
+ 2 add-spell-rule "A" "ener" "ener" "ène" ;
+ 2 add-spell-rule "A" "ener" "ener" "ènent" ;
+ 2 add-spell-rule "A" "ener" "ener" "ènera" ;
+ 2 add-spell-rule "A" "ener" "ener" "ènerai" ;
+ 2 add-spell-rule "A" "ener" "ener" "èneraient" ;
+ 2 add-spell-rule "A" "ener" "ener" "ènerais" ;
+ 2 add-spell-rule "A" "ener" "ener" "ènerait" ;
+ 2 add-spell-rule "A" "ener" "ener" "èneras" ;
+ 2 add-spell-rule "A" "ener" "ener" "ènerez" ;
+ 2 add-spell-rule "A" "ener" "ener" "èneriez" ;
+ 2 add-spell-rule "A" "ener" "ener" "ènerions" ;
+ 2 add-spell-rule "A" "ener" "ener" "ènerons" ;
+ 2 add-spell-rule "A" "ener" "ener" "èneront" ;
+ 2 add-spell-rule "A" "ener" "ener" "ènes" ;
+ 2 add-spell-rule "A" "eper" "eper" "èpe" ;
+ 2 add-spell-rule "A" "eper" "eper" "èpent" ;
+ 2 add-spell-rule "A" "eper" "eper" "èpera" ;
+ 2 add-spell-rule "A" "eper" "eper" "èperai" ;
+ 2 add-spell-rule "A" "eper" "eper" "èperaient" ;
+ 2 add-spell-rule "A" "eper" "eper" "èperais" ;
+ 2 add-spell-rule "A" "eper" "eper" "èperait" ;
+ 2 add-spell-rule "A" "eper" "eper" "èperas" ;
+ 2 add-spell-rule "A" "eper" "eper" "èperez" ;
+ 2 add-spell-rule "A" "eper" "eper" "èperiez" ;
+ 2 add-spell-rule "A" "eper" "eper" "èperions" ;
+ 2 add-spell-rule "A" "eper" "eper" "èperons" ;
+ 2 add-spell-rule "A" "eper" "eper" "èperont" ;
+ 2 add-spell-rule "A" "eper" "eper" "èpes" ;
+ 2 add-spell-rule "A" "erer" "erer" "ère" ;
+ 2 add-spell-rule "A" "erer" "erer" "èrent" ;
+ 2 add-spell-rule "A" "erer" "erer" "èrera" ;
+ 2 add-spell-rule "A" "erer" "erer" "èrerai" ;
+ 2 add-spell-rule "A" "erer" "erer" "èreraient" ;
+ 2 add-spell-rule "A" "erer" "erer" "èrerais" ;
+ 2 add-spell-rule "A" "erer" "erer" "èrerait" ;
+ 2 add-spell-rule "A" "erer" "erer" "èreras" ;
+ 2 add-spell-rule "A" "erer" "erer" "èrerez" ;
+ 2 add-spell-rule "A" "erer" "erer" "èreriez" ;
+ 2 add-spell-rule "A" "erer" "erer" "èrerions" ;
+ 2 add-spell-rule "A" "erer" "erer" "èrerons" ;
+ 2 add-spell-rule "A" "erer" "erer" "èreront" ;
+ 2 add-spell-rule "A" "erer" "erer" "ères" ;
+ 2 add-spell-rule "A" "eser" "eser" "èse" ;
+ 2 add-spell-rule "A" "eser" "eser" "èsent" ;
+ 2 add-spell-rule "A" "eser" "eser" "èsera" ;
+ 2 add-spell-rule "A" "eser" "eser" "èserai" ;
+ 2 add-spell-rule "A" "eser" "eser" "èseraient" ;
+ 2 add-spell-rule "A" "eser" "eser" "èserais" ;
+ 2 add-spell-rule "A" "eser" "eser" "èserait" ;
+ 2 add-spell-rule "A" "eser" "eser" "èseras" ;
+ 2 add-spell-rule "A" "eser" "eser" "èserez" ;
+ 2 add-spell-rule "A" "eser" "eser" "èseriez" ;
+ 2 add-spell-rule "A" "eser" "eser" "èserions" ;
+ 2 add-spell-rule "A" "eser" "eser" "èserons" ;
+ 2 add-spell-rule "A" "eser" "eser" "èseront" ;
+ 2 add-spell-rule "A" "eser" "eser" "èses" ;
+ 2 add-spell-rule "A" "ever" "ever" "ève" ;
+ 2 add-spell-rule "A" "ever" "ever" "èvent" ;
+ 2 add-spell-rule "A" "ever" "ever" "èvera" ;
+ 2 add-spell-rule "A" "ever" "ever" "èverai" ;
+ 2 add-spell-rule "A" "ever" "ever" "èveraient" ;
+ 2 add-spell-rule "A" "ever" "ever" "èverais" ;
+ 2 add-spell-rule "A" "ever" "ever" "èverait" ;
+ 2 add-spell-rule "A" "ever" "ever" "èveras" ;
+ 2 add-spell-rule "A" "ever" "ever" "èverez" ;
+ 2 add-spell-rule "A" "ever" "ever" "èveriez" ;
+ 2 add-spell-rule "A" "ever" "ever" "èverions" ;
+ 2 add-spell-rule "A" "ever" "ever" "èverons" ;
+ 2 add-spell-rule "A" "ever" "ever" "èveront" ;
+ 2 add-spell-rule "A" "ever" "ever" "èves" ;
+ 2 add-spell-rule "A" "evrer" "evrer" "èvre" ;
+ 2 add-spell-rule "A" "evrer" "evrer" "èvrent" ;
+ 2 add-spell-rule "A" "evrer" "evrer" "èvrera" ;
+ 2 add-spell-rule "A" "evrer" "evrer" "èvrerai" ;
+ 2 add-spell-rule "A" "evrer" "evrer" "èvreraient" ;
+ 2 add-spell-rule "A" "evrer" "evrer" "èvrerais" ;
+ 2 add-spell-rule "A" "evrer" "evrer" "èvrerait" ;
+ 2 add-spell-rule "A" "evrer" "evrer" "èvreras" ;
+ 2 add-spell-rule "A" "evrer" "evrer" "èvrerez" ;
+ 2 add-spell-rule "A" "evrer" "evrer" "èvreriez" ;
+ 2 add-spell-rule "A" "evrer" "evrer" "èvrerions" ;
+ 2 add-spell-rule "A" "evrer" "evrer" "èvrerons" ;
+ 2 add-spell-rule "A" "evrer" "evrer" "èvreront" ;
+ 2 add-spell-rule "A" "evrer" "evrer" "èvres" ;
+; -é.ER (10): é.e* -> è.e*
+ 2 add-spell-rule "A" "é[cdlmnprsty]er" "er" "era" ;
+ 2 add-spell-rule "A" "é[cdlmnprsty]er" "er" "erai" ;
+ 2 add-spell-rule "A" "é[cdlmnprsty]er" "er" "eraient" ;
+ 2 add-spell-rule "A" "é[cdlmnprsty]er" "er" "erais" ;
+ 2 add-spell-rule "A" "é[cdlmnprsty]er" "er" "erait" ;
+ 2 add-spell-rule "A" "é[cdlmnprsty]er" "er" "eras" ;
+ 2 add-spell-rule "A" "é[cdlmnprsty]er" "er" "erez" ;
+ 2 add-spell-rule "A" "é[cdlmnprsty]er" "er" "eriez" ;
+ 2 add-spell-rule "A" "é[cdlmnprsty]er" "er" "erions" ;
+ 2 add-spell-rule "A" "é[cdlmnprsty]er" "er" "erons" ;
+ 2 add-spell-rule "A" "é[cdlmnprsty]er" "er" "eront" ;
+ 2 add-spell-rule "A" "ébrer" "ébrer" "èbre" ;
+ 2 add-spell-rule "A" "ébrer" "ébrer" "èbrent" ;
+ 2 add-spell-rule "A" "ébrer" "ébrer" "èbres" ;
+ 2 add-spell-rule "A" "écer" "écer" "èce" ;
+ 2 add-spell-rule "A" "écer" "écer" "ècent" ;
+ 2 add-spell-rule "A" "écer" "écer" "èces" ;
+ 2 add-spell-rule "A" "écher" "écher" "èche" ;
+ 2 add-spell-rule "A" "écher" "écher" "èchent" ;
+ 2 add-spell-rule "A" "écher" "écher" "èches" ;
+ 2 add-spell-rule "A" "écrer" "écrer" "ècre" ;
+ 2 add-spell-rule "A" "écrer" "écrer" "ècrent" ;
+ 2 add-spell-rule "A" "écrer" "écrer" "ècres" ;
+ 2 add-spell-rule "A" "éder" "éder" "ède" ;
+ 2 add-spell-rule "A" "éder" "éder" "èdent" ;
+ 2 add-spell-rule "A" "éder" "éder" "èdes" ;
+ 2 add-spell-rule "A" "égler" "égler" "ègle" ;
+ 2 add-spell-rule "A" "égler" "égler" "èglent" ;
+ 2 add-spell-rule "A" "égler" "égler" "ègles" ;
+ 2 add-spell-rule "A" "égner" "égner" "ègne" ;
+ 2 add-spell-rule "A" "égner" "égner" "ègnent" ;
+ 2 add-spell-rule "A" "égner" "égner" "ègnes" ;
+ 2 add-spell-rule "A" "égrer" "égrer" "ègre" ;
+ 2 add-spell-rule "A" "égrer" "égrer" "ègrent" ;
+ 2 add-spell-rule "A" "égrer" "égrer" "ègres" ;
+ 2 add-spell-rule "A" "éguer" "éguer" "ègue" ;
+ 2 add-spell-rule "A" "éguer" "éguer" "èguent" ;
+ 2 add-spell-rule "A" "éguer" "éguer" "ègues" ;
+ 2 add-spell-rule "A" "éler" "éler" "èle" ;
+ 2 add-spell-rule "A" "éler" "éler" "èlent" ;
+ 2 add-spell-rule "A" "éler" "éler" "èles" ;
+ 2 add-spell-rule "A" "émer" "émer" "ème" ;
+ 2 add-spell-rule "A" "émer" "émer" "èment" ;
+ 2 add-spell-rule "A" "émer" "émer" "èmes" ;
+ 2 add-spell-rule "A" "éner" "éner" "ène" ;
+ 2 add-spell-rule "A" "éner" "éner" "ènent" ;
+ 2 add-spell-rule "A" "éner" "éner" "ènes" ;
+ 2 add-spell-rule "A" "éper" "éper" "èpe" ;
+ 2 add-spell-rule "A" "éper" "éper" "èpent" ;
+ 2 add-spell-rule "A" "éper" "éper" "èpes" ;
+ 2 add-spell-rule "A" "équer" "équer" "èque" ;
+ 2 add-spell-rule "A" "équer" "équer" "èquent" ;
+ 2 add-spell-rule "A" "équer" "équer" "èques" ;
+ 2 add-spell-rule "A" "érer" "érer" "ère" ;
+ 2 add-spell-rule "A" "érer" "érer" "èrent" ;
+ 2 add-spell-rule "A" "érer" "érer" "ères" ;
+ 2 add-spell-rule "A" "éser" "éser" "èse" ;
+ 2 add-spell-rule "A" "éser" "éser" "èsent" ;
+ 2 add-spell-rule "A" "éser" "éser" "èses" ;
+ 2 add-spell-rule "A" "éter" "éter" "ète" ;
+ 2 add-spell-rule "A" "éter" "éter" "ètent" ;
+ 2 add-spell-rule "A" "éter" "éter" "ètes" ;
+ 2 add-spell-rule "A" "étrer" "étrer" "ètre" ;
+ 2 add-spell-rule "A" "étrer" "étrer" "ètrent" ;
+ 2 add-spell-rule "A" "étrer" "étrer" "ètres" ;
+ 2 add-spell-rule "A" "évrer" "évrer" "èvre" ;
+ 2 add-spell-rule "A" "évrer" "évrer" "èvrent" ;
+ 2 add-spell-rule "A" "évrer" "évrer" "èvres" ;
+ 2 add-spell-rule "A" "éyer" "éyer" "èye" ;
+ 2 add-spell-rule "A" "éyer" "éyer" "èyent" ;
+ 2 add-spell-rule "A" "éyer" "éyer" "èyes" ;
+
+; flag *C: -ELER, -ETER qui changent le 'e' en 'è'
+ 2 add-spell-rule "C" "e[lt]er" "er" "a" ;
+ 2 add-spell-rule "C" "e[lt]er" "er" "ai" ;
+ 2 add-spell-rule "C" "e[lt]er" "er" "aient" ;
+ 2 add-spell-rule "C" "e[lt]er" "er" "ais" ;
+ 2 add-spell-rule "C" "e[lt]er" "er" "ait" ;
+ 2 add-spell-rule "C" "e[lt]er" "er" "ant" ;
+ 2 add-spell-rule "C" "e[lt]er" "er" "as" ;
+ 2 add-spell-rule "C" "e[lt]er" "er" "asse" ;
+ 2 add-spell-rule "C" "e[lt]er" "er" "assent" ;
+ 2 add-spell-rule "C" "e[lt]er" "er" "asses" ;
+ 2 add-spell-rule "C" "e[lt]er" "er" "assiez" ;
+ 2 add-spell-rule "C" "e[lt]er" "er" "assions" ;
+ 2 add-spell-rule "C" "e[lt]er" "er" "ez" ;
+ 2 add-spell-rule "C" "e[lt]er" "er" "iez" ;
+ 2 add-spell-rule "C" "e[lt]er" "er" "ions" ;
+ 2 add-spell-rule "C" "e[lt]er" "er" "ons" ;
+ 2 add-spell-rule "C" "e[lt]er" "er" "âmes" ;
+ 2 add-spell-rule "C" "e[lt]er" "er" "ât" ;
+ 2 add-spell-rule "C" "e[lt]er" "er" "âtes" ;
+ 2 add-spell-rule "C" "e[lt]er" "er" "èrent" ;
+ 2 add-spell-rule "C" "e[lt]er" "er" "é" ;
+ 2 add-spell-rule "C" "e[lt]er" "er" "ée" ;
+ 2 add-spell-rule "C" "e[lt]er" "er" "ées" ;
+ 2 add-spell-rule "C" "e[lt]er" "er" "és" ;
+ 2 add-spell-rule "C" "eler" "eler" "èle" ;
+ 2 add-spell-rule "C" "eler" "eler" "èlent" ;
+ 2 add-spell-rule "C" "eler" "eler" "èlera" ;
+ 2 add-spell-rule "C" "eler" "eler" "èlerai" ;
+ 2 add-spell-rule "C" "eler" "eler" "èleraient" ;
+ 2 add-spell-rule "C" "eler" "eler" "èlerais" ;
+ 2 add-spell-rule "C" "eler" "eler" "èlerait" ;
+ 2 add-spell-rule "C" "eler" "eler" "èleras" ;
+ 2 add-spell-rule "C" "eler" "eler" "èlerez" ;
+ 2 add-spell-rule "C" "eler" "eler" "èleriez" ;
+ 2 add-spell-rule "C" "eler" "eler" "èlerions" ;
+ 2 add-spell-rule "C" "eler" "eler" "èlerons" ;
+ 2 add-spell-rule "C" "eler" "eler" "èleront" ;
+ 2 add-spell-rule "C" "eler" "eler" "èles" ;
+ 2 add-spell-rule "C" "eter" "eter" "ète" ;
+ 2 add-spell-rule "C" "eter" "eter" "ètent" ;
+ 2 add-spell-rule "C" "eter" "eter" "ètera" ;
+ 2 add-spell-rule "C" "eter" "eter" "èterai" ;
+ 2 add-spell-rule "C" "eter" "eter" "èteraient" ;
+ 2 add-spell-rule "C" "eter" "eter" "èterais" ;
+ 2 add-spell-rule "C" "eter" "eter" "èterait" ;
+ 2 add-spell-rule "C" "eter" "eter" "èteras" ;
+ 2 add-spell-rule "C" "eter" "eter" "èterez" ;
+ 2 add-spell-rule "C" "eter" "eter" "èteriez" ;
+ 2 add-spell-rule "C" "eter" "eter" "èterions" ;
+ 2 add-spell-rule "C" "eter" "eter" "èterons" ;
+ 2 add-spell-rule "C" "eter" "eter" "èteront" ;
+ 2 add-spell-rule "C" "eter" "eter" "ètes" ;
+
+; flag *B: Verbes du deuxieme groupe
+ 2 add-spell-rule "B" "ir" "ir" "is" ;
+ 2 add-spell-rule "B" "ir" "ir" "it" ;
+ 2 add-spell-rule "B" "ir" "ir" "issons" ;
+ 2 add-spell-rule "B" "ir" "ir" "issez" ;
+ 2 add-spell-rule "B" "ir" "ir" "issent" ;
+ 2 add-spell-rule "B" "ir" "ir" "issais" ;
+ 2 add-spell-rule "B" "ir" "ir" "issait" ;
+ 2 add-spell-rule "B" "ir" "ir" "issions" ;
+ 2 add-spell-rule "B" "ir" "ir" "issiez" ;
+ 2 add-spell-rule "B" "ir" "ir" "issaient" ;
+ 2 add-spell-rule "B" "ir" "ir" "îmes" ;
+ 2 add-spell-rule "B" "ir" "ir" "îtes" ;
+ 2 add-spell-rule "B" "ir" "ir" "irent" ;
+ 2 add-spell-rule "B" "ir" "ir" "irai" ;
+ 2 add-spell-rule "B" "ir" "ir" "iras" ;
+ 2 add-spell-rule "B" "ir" "ir" "ira" ;
+ 2 add-spell-rule "B" "ir" "ir" "irons" ;
+ 2 add-spell-rule "B" "ir" "ir" "irez" ;
+ 2 add-spell-rule "B" "ir" "ir" "iront" ;
+ 2 add-spell-rule "B" "ir" "ir" "isse" ;
+ 2 add-spell-rule "B" "ir" "ir" "isses" ;
+ 2 add-spell-rule "B" "ir" "ir" "ît" ;
+ 2 add-spell-rule "B" "ir" "ir" "irais" ;
+ 2 add-spell-rule "B" "ir" "ir" "irait" ;
+ 2 add-spell-rule "B" "ir" "ir" "irions" ;
+ 2 add-spell-rule "B" "ir" "ir" "iriez" ;
+ 2 add-spell-rule "B" "ir" "ir" "iraient" ;
+ 2 add-spell-rule "B" "ir" "ir" "issant" ;
+ 2 add-spell-rule "B" "ir" "ir" "i" ;
+ 2 add-spell-rule "B" "ir" "ir" "ie" ;
+ 2 add-spell-rule "B" "ir" "ir" "ies" ;
+
+; flag *S: Pluriel sans féminin (favorise la règle X)
+ 2 add-spell-rule "S" "[^esxz]" "" "s" ; règle générale du pluriel
+
+; flag *X: Feminin + pluriel (adjectifs)
+ 2 add-spell-rule "X" "[^eflnrstuxz]" "" "e" ; règle générale du féminin
+ 2 add-spell-rule "X" "[^eflnrstuxz]" "" "es" ; règle générale du féminin pluriel
+ 2 add-spell-rule "X" "[^eflnrstuxz]" "" "s" ; règle générale du pluriel
+ 2 add-spell-rule "X" "[ef]" "" "s" ; aimable > aimables, abusif > abusifs
+ 2 add-spell-rule "X" "f" "f" "ve" ; abusif > abusive, neuf > neuve
+ 2 add-spell-rule "X" "f" "f" "ves" ; abusif > abusives
+ 2 add-spell-rule "X" "al" "" "e" ; spatial > spatiale
+ 2 add-spell-rule "X" "al" "" "es" ; spatial > spatiales
+ 2 add-spell-rule "X" "al" "l" "ux" ; spatial > spatiaux
+ 2 add-spell-rule "X" "[eu]l" "" "le" ; accidentel > accidentelle, nul > nulle
+ 2 add-spell-rule "X" "[eu]l" "" "les" ; accidentel > accidentelles, nul > nulles
+ 2 add-spell-rule "X" "[eiou]l" "" "s" ; accidentel > accidentels, civil > civils,
+				      ; pareil > pareils, espagnol > espagnols,
+				      ; nul > nuls
+ 2 add-spell-rule "X" "[^e]il" "" "e" ; civil > civile
+ 2 add-spell-rule "X" "[^e]il" "" "es" ; civil > civiles
+ 2 add-spell-rule "X" "eil" "" "le" ; pareil > pareille
+ 2 add-spell-rule "X" "eil" "" "le" ; pareil > pareilles
+ 2 add-spell-rule "X" "ol" "" "e" ; espagnol > espagnole
+ 2 add-spell-rule "X" "ol" "" "es" ; espagnol > espagnoles
+ 2 add-spell-rule "X" "[aiu]n" "" "e" ; alezan > alezane, vain > vaine, un > une
+				     ; Note: paysan > paysanne(s)
+ 2 add-spell-rule "X" "[aiu]n" "" "es" ; alezan > alezanes, vain > vaines, un > unes
+ 2 add-spell-rule "X" "[aiu]n" "" "s" ; alezan > alezans, vain > vains, un > uns
+ 2 add-spell-rule "X" "[eo]n" "" "ne" ; ancien, citoyen, bon > bonne
+ 2 add-spell-rule "X" "[eo]n" "" "nes" ; anciennes, citoyennes, bonnes
+ 2 add-spell-rule "X" "[eo]n" "" "s" ; anciens, citoyens, bons
+ 2 add-spell-rule "X" "[^e][rt]" "" "e" ; clair > claire, élégant > élégante
+ 2 add-spell-rule "X" "[^e][rt]" "" "es" ; clair > claires, élégant > élégantes
+ 2 add-spell-rule "X" "[^e][rt]" "" "s" ; clair > clairs, élégant > élégants
+ 2 add-spell-rule "X" "er" "er" "ère" ; premier > première
+ 2 add-spell-rule "X" "er" "er" "ères" ; premier > premières
+ 2 add-spell-rule "X" "e[rt]" "" "s" ; premier > premiers, muet > muets
+ 2 add-spell-rule "X" "et" "" "te" ; muet > muette (exceptions)
+ 2 add-spell-rule "X" "et" "" "tes" ; muet > muettes (exceptions)
+ 2 add-spell-rule "X" "eau" "eau" "elle" ; beau > belle, puceau > pucelle
+ 2 add-spell-rule "X" "eau" "eau" "elles" ; beau > belles, puceau > pucelles
+				         ; Il n'y a pas de féminin pour -[^e]au
+ 2 add-spell-rule "X" "[ae]u" "" "x" ; feu > feux (sauf bleu, pneu, landau, sarrau)
+ 2 add-spell-rule "X" "[^ae]u" "" "s" ; par opp. à -eu, -au, sauf bijou caillou...
+ 2 add-spell-rule "X" "x" "x" "se" ; nerveux > nerveuse (exceptions)
+ 2 add-spell-rule "X" "x" "x" "ses" ; nerveux > nerveuses (exceptions)
+

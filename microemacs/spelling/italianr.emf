@@ -1,0 +1,356 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : $Author: jon $
+;  Created By    : Steven Phillips
+;  Created       : Thu May 27 09:17:09 1999
+;  Last Modified : <991213.2234>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;      Rules must be given in standard Latin font
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+0 define-macro spell-rules-init
+!emacro
+
+set-variable .spell.rules "RBSAEIUFVONM"
+
+; reset the spell rules
+0 add-spell-rule
+
+; Now add the italiano spell rules
+; prefixes
+;
+; flag *R:
+-2 add-spell-rule "R" "." "" "ri"  ; vedere -> rivedere
+                                   ; vendere -> rivendere
+                                   ; usare -> riusare
+                                   ; dire -> ridire
+                                   ; partire -> ripartire
+
+; flag *B:
+-2 add-spell-rule "B" "." "" "pre" ; vedere -> prevedere
+                                   ; venire -> prevenire
+                                   ; scrivere -> prescrivere
+                                   ; dire -> predire
+
+; suffixes
+;
+; flag *S:
+ 2 add-spell-rule "S" "r" "" "essa" ;
+ 2 add-spell-rule "S" "e" "" "ssa" ;
+
+; flag *A:        # I Coniugazione
+        ; present
+ 2 add-spell-rule "A" "are" "are" "o" ;
+ 2 add-spell-rule "A" "are" "are" "i" ;
+ 2 add-spell-rule "A" "are" "are" "a" ;
+ 2 add-spell-rule "A" "are" "are" "iamo" ;
+ 2 add-spell-rule "A" "are" "are" "ate" ;
+ 2 add-spell-rule "A" "are" "are" "ano" ;
+
+        ; imperfetto
+ 2 add-spell-rule "A" "are" "are" "avo" ;
+ 2 add-spell-rule "A" "are" "are" "avi" ;
+ 2 add-spell-rule "A" "are" "are" "ava" ;
+ 2 add-spell-rule "A" "are" "are" "avamo" ;
+ 2 add-spell-rule "A" "are" "are" "avate" ;
+ 2 add-spell-rule "A" "are" "are" "avano" ;
+
+        ; passato remoto
+ 2 add-spell-rule "A" "are" "are" "ai" ;
+ 2 add-spell-rule "A" "are" "are" "asti" ;
+ 2 add-spell-rule "A" "are" "are" "ò" ;
+ 2 add-spell-rule "A" "are" "are" "ammo" ;
+ 2 add-spell-rule "A" "are" "are" "aste" ;
+ 2 add-spell-rule "A" "are" "are" "arono" ;
+
+        ; futuro semplice
+ 2 add-spell-rule "A" "are" "are" "erò" ;
+ 2 add-spell-rule "A" "are" "are" "erai" ;
+ 2 add-spell-rule "A" "are" "are" "erà" ;
+ 2 add-spell-rule "A" "are" "are" "eremo" ;
+ 2 add-spell-rule "A" "are" "are" "erete" ;
+ 2 add-spell-rule "A" "are" "are" "eranno" ;
+
+        ; participio
+ 2 add-spell-rule "A" "are" "are" "ante" ;
+ 2 add-spell-rule "A" "are" "are" "ato" ;
+        
+        ; gerundio
+ 2 add-spell-rule "A" "are" "are" "ando" ;
+
+        ; Congiuntivo presente
+ 2 add-spell-rule "A" "are" "are" "i" ;
+ 2 add-spell-rule "A" "are" "are" "iamo" ;
+ 2 add-spell-rule "A" "are" "are" "iate" ;
+ 2 add-spell-rule "A" "are" "are" "ino" ;
+
+        ; Congiuntivo imperfetto
+ 2 add-spell-rule "A" "are" "are" "assi" ;
+ 2 add-spell-rule "A" "are" "are" "asse" ;
+ 2 add-spell-rule "A" "are" "are" "assimo" ;
+ 2 add-spell-rule "A" "are" "are" "aste" ;
+ 2 add-spell-rule "A" "are" "are" "assero" ;
+
+        ; Condizionale
+ 2 add-spell-rule "A" "are" "are" "erei" ;
+ 2 add-spell-rule "A" "are" "are" "eresti" ;
+ 2 add-spell-rule "A" "are" "are" "erebbe" ;
+ 2 add-spell-rule "A" "are" "are" "eremmo" ;
+ 2 add-spell-rule "A" "are" "are" "ereste" ;
+ 2 add-spell-rule "A" "are" "are" "erebbero" ;
+
+; flag *E:        # II Coniugazione
+        ; present
+ 2 add-spell-rule "E" "ere" "ere" "o" ;
+ 2 add-spell-rule "E" "ere" "ere" "i" ;
+ 2 add-spell-rule "E" "ere" "ere" "e" ;
+ 2 add-spell-rule "E" "ere" "ere" "iamo" ;
+ 2 add-spell-rule "E" "ere" "ere" "ete" ;
+ 2 add-spell-rule "E" "ere" "ere" "ono" ;
+
+        ; imperfetto
+ 2 add-spell-rule "E" "ere" "ere" "evo" ;
+ 2 add-spell-rule "E" "ere" "ere" "evi" ;
+ 2 add-spell-rule "E" "ere" "ere" "eva" ;
+ 2 add-spell-rule "E" "ere" "ere" "evamo" ;
+ 2 add-spell-rule "E" "ere" "ere" "evate" ;
+ 2 add-spell-rule "E" "ere" "ere" "evano" ;
+
+        ; passato remoto
+ 2 add-spell-rule "E" "ere" "ere" "etti" ; temette
+ 2 add-spell-rule "E" "ere" "ere" "ei" ;
+ 2 add-spell-rule "E" "ere" "ere" "esti" ;
+ 2 add-spell-rule "E" "ere" "ere" "é" ; teme'
+ 2 add-spell-rule "E" "ere" "ere" "ette" ;
+ 2 add-spell-rule "E" "ere" "ere" "emmo" ;
+ 2 add-spell-rule "E" "ere" "ere" "este" ;
+ 2 add-spell-rule "E" "ere" "ere" "ettero" ;
+ 2 add-spell-rule "E" "ere" "ere" "erono" ; temerono
+
+        ; futuro semplice
+ 2 add-spell-rule "E" "ere" "ere" "erò" ;
+ 2 add-spell-rule "E" "ere" "ere" "erai" ;
+ 2 add-spell-rule "E" "ere" "ere" "erà" ;
+ 2 add-spell-rule "E" "ere" "ere" "eremo" ;
+ 2 add-spell-rule "E" "ere" "ere" "erete" ;
+ 2 add-spell-rule "E" "ere" "ere" "eranno" ;
+
+        ; participio
+ 2 add-spell-rule "E" "ere" "ere" "ente" ;
+ 2 add-spell-rule "E" "ere" "ere" "uto" ;
+        
+        ; gerundio
+ 2 add-spell-rule "E" "ere" "ere" "endo" ;
+
+        ; Congiuntivo presente
+ 2 add-spell-rule "E" "ere" "ere" "a" ;
+ 2 add-spell-rule "E" "ere" "ere" "i" ;
+ 2 add-spell-rule "E" "ere" "ere" "iamo" ;
+ 2 add-spell-rule "E" "ere" "ere" "iate" ;
+ 2 add-spell-rule "E" "ere" "ere" "ano" ;
+
+        ; Congiuntivo imperfetto
+ 2 add-spell-rule "E" "ere" "ere" "essi" ;
+ 2 add-spell-rule "E" "ere" "ere" "esse" ;
+ 2 add-spell-rule "E" "ere" "ere" "essimo" ;
+ 2 add-spell-rule "E" "ere" "ere" "este" ;
+ 2 add-spell-rule "E" "ere" "ere" "essero" ;
+
+        ; Condizionale
+ 2 add-spell-rule "E" "ere" "ere" "erei" ;
+ 2 add-spell-rule "E" "ere" "ere" "eresti" ;
+ 2 add-spell-rule "E" "ere" "ere" "erebbe" ;
+ 2 add-spell-rule "E" "ere" "ere" "eremmo" ;
+ 2 add-spell-rule "E" "ere" "ere" "ereste" ;
+ 2 add-spell-rule "E" "ere" "ere" "erebbero" ;
+
+; flag *I:        # III Coniugazione
+        ; present
+ 2 add-spell-rule "I" "ire" "ire" "o" ;
+ 2 add-spell-rule "I" "ire" "ire" "i" ;
+ 2 add-spell-rule "I" "ire" "ire" "e" ;
+ 2 add-spell-rule "I" "ire" "ire" "iamo" ;
+ 2 add-spell-rule "I" "ire" "ire" "ite" ;
+ 2 add-spell-rule "I" "ire" "ire" "ono" ;
+
+        ; imperfetto
+ 2 add-spell-rule "I" "ire" "ire" "ivo" ;
+ 2 add-spell-rule "I" "ire" "ire" "ivi" ;
+ 2 add-spell-rule "I" "ire" "ire" "iva" ;
+ 2 add-spell-rule "I" "ire" "ire" "ivamo" ;
+ 2 add-spell-rule "I" "ire" "ire" "ivate" ;
+ 2 add-spell-rule "I" "ire" "ire" "ivano" ;
+
+        ; passato remoto
+ 2 add-spell-rule "I" "ire" "ire" "ii" ;
+ 2 add-spell-rule "I" "ire" "ire" "isti" ;
+ 2 add-spell-rule "I" "ire" "ire" "ì" ;
+ 2 add-spell-rule "I" "ire" "ire" "immo" ;
+ 2 add-spell-rule "I" "ire" "ire" "iste" ;
+ 2 add-spell-rule "I" "ire" "ire" "irono" ;
+
+        ; futuro semplice
+ 2 add-spell-rule "I" "ire" "ire" "irò" ;
+ 2 add-spell-rule "I" "ire" "ire" "irai" ;
+ 2 add-spell-rule "I" "ire" "ire" "irà" ;
+ 2 add-spell-rule "I" "ire" "ire" "iremo" ;
+ 2 add-spell-rule "I" "ire" "ire" "irete" ;
+ 2 add-spell-rule "I" "ire" "ire" "iranno" ;
+
+        ; participio
+ 2 add-spell-rule "I" "ire" "ire" "ente" ;
+ 2 add-spell-rule "I" "ire" "ire" "ito" ;
+        
+        ; gerundio
+ 2 add-spell-rule "I" "ire" "ire" "endo" ;
+
+        ; Congiuntivo presente
+ 2 add-spell-rule "I" "ire" "ire" "a" ;
+ 2 add-spell-rule "I" "ire" "ire" "iamo" ;
+ 2 add-spell-rule "I" "ire" "ire" "iate" ;
+ 2 add-spell-rule "I" "ire" "ire" "ano" ;
+
+        ; Congiuntivo imperfetto
+ 2 add-spell-rule "I" "ire" "ire" "issi" ;
+ 2 add-spell-rule "I" "ire" "ire" "isse" ;
+ 2 add-spell-rule "I" "ire" "ire" "issimo" ;
+ 2 add-spell-rule "I" "ire" "ire" "iste" ;
+ 2 add-spell-rule "I" "ire" "ire" "issero" ;
+
+        ; Condizionale
+ 2 add-spell-rule "I" "ire" "ire" "irei" ;
+ 2 add-spell-rule "I" "ire" "ire" "iresti" ;
+ 2 add-spell-rule "I" "ire" "ire" "irebbe" ;
+ 2 add-spell-rule "I" "ire" "ire" "iremmo" ;
+ 2 add-spell-rule "I" "ire" "ire" "ireste" ;
+ 2 add-spell-rule "I" "ire" "ire" "irebbero" ;
+
+; flag *U:        # III Coniugazione (Variazione) es. obbedire --> obedisco
+        ; present
+ 2 add-spell-rule "U" "ire" "ire" "isco" ;
+ 2 add-spell-rule "U" "ire" "ire" "isci" ;
+ 2 add-spell-rule "U" "ire" "ire" "isce" ;
+ 2 add-spell-rule "U" "ire" "ire" "iamo" ;
+ 2 add-spell-rule "U" "ire" "ire" "ite" ;
+ 2 add-spell-rule "U" "ire" "ire" "iscono" ;
+
+        ; imperfetto
+ 2 add-spell-rule "U" "ire" "ire" "ivo" ;
+ 2 add-spell-rule "U" "ire" "ire" "ivi" ;
+ 2 add-spell-rule "U" "ire" "ire" "iva" ;
+ 2 add-spell-rule "U" "ire" "ire" "ivamo" ;
+ 2 add-spell-rule "U" "ire" "ire" "ivate" ;
+ 2 add-spell-rule "U" "ire" "ire" "ivano" ;
+
+        ; passato remoto
+ 2 add-spell-rule "U" "ire" "ire" "ii" ;
+ 2 add-spell-rule "U" "ire" "ire" "isti" ;
+ 2 add-spell-rule "U" "ire" "ire" "ì" ;
+ 2 add-spell-rule "U" "ire" "ire" "immo" ;
+ 2 add-spell-rule "U" "ire" "ire" "iste" ;
+ 2 add-spell-rule "U" "ire" "ire" "irono" ;
+
+        ; futuro semplice
+ 2 add-spell-rule "U" "ire" "ire" "irò" ;
+ 2 add-spell-rule "U" "ire" "ire" "irai" ;
+ 2 add-spell-rule "U" "ire" "ire" "irà" ;
+ 2 add-spell-rule "U" "ire" "ire" "iremo" ;
+ 2 add-spell-rule "U" "ire" "ire" "irete" ;
+ 2 add-spell-rule "U" "ire" "ire" "iranno" ;
+
+        ; participio
+ 2 add-spell-rule "U" "ire" "ire" "ente" ;
+ 2 add-spell-rule "U" "ire" "ire" "ito" ;
+        
+        ; gerundio
+ 2 add-spell-rule "U" "ire" "ire" "endo" ;
+
+        ; Congiuntivo presente
+ 2 add-spell-rule "U" "ire" "ire" "isca" ;
+ 2 add-spell-rule "U" "ire" "ire" "iamo" ;
+ 2 add-spell-rule "U" "ire" "ire" "iate" ;
+ 2 add-spell-rule "U" "ire" "ire" "iscano" ;
+
+        ; Congiuntivo imperfetto
+ 2 add-spell-rule "U" "ire" "ire" "issi" ;
+ 2 add-spell-rule "U" "ire" "ire" "isse" ;
+ 2 add-spell-rule "U" "ire" "ire" "issimo" ;
+ 2 add-spell-rule "U" "ire" "ire" "iste" ;
+ 2 add-spell-rule "U" "ire" "ire" "issero" ;
+
+        ; Condizionale
+ 2 add-spell-rule "U" "ire" "ire" "irei" ;
+ 2 add-spell-rule "U" "ire" "ire" "iresti" ;
+ 2 add-spell-rule "U" "ire" "ire" "irebbe" ;
+ 2 add-spell-rule "U" "ire" "ire" "iremmo" ;
+ 2 add-spell-rule "U" "ire" "ire" "ireste" ;
+ 2 add-spell-rule "U" "ire" "ire" "irebbero" ;
+
+; Riflessivo
+; flag *F:
+        ; infinito presente
+ 2 add-spell-rule "F" "re" "e" "si" ; lavare -> lavarsi
+ 2 add-spell-rule "F" "re" "e" "mi" ; lavare -> lavarmi
+ 2 add-spell-rule "F" "re" "e" "ti" ; lavare -> lavarti
+ 2 add-spell-rule "F" "re" "e" "ci" ; lavare -> lavarci
+        ; participio presente
+ 2 add-spell-rule "F" "re" "re" "ntesi" ; lavare -> lavantesi
+ 2 add-spell-rule "F" "re" "re" "ntisi" ; lavare -> lavantisi
+        ; participio passato
+ 2 add-spell-rule "F" "re" "re" "tosi" ; lavare -> lavatosi
+ 2 add-spell-rule "F" "re" "re" "tomi" ; lavare -> lavatomi
+ 2 add-spell-rule "F" "re" "re" "toti" ; lavare -> lavatoti
+ 2 add-spell-rule "F" "re" "re" "tici" ; lavare -> lavatici
+ 2 add-spell-rule "F" "re" "re" "tivi" ; lavare -> lavativi
+ 2 add-spell-rule "F" "re" "re" "tisi" ; lavare -> lavatisi
+        ; gerundio presente
+ 2 add-spell-rule "F" "re" "re" "ndosi" ; lavare -> lavandosi
+ 2 add-spell-rule "F" "re" "re" "ndomi" ; lavare -> lavandomi
+ 2 add-spell-rule "F" "re" "re" "ndoti" ; lavare -> lavandoti
+ 2 add-spell-rule "F" "re" "re" "ndoci" ; lavare -> lavandoci
+ 2 add-spell-rule "F" "re" "re" "ndovi" ; lavare -> lavandovi
+
+; Avverbibi derivati +mente
+; La forma grammaticale da cui nasce e' lággettivo, cui si aggiunge
+; il suffisso +mente
+; flag *V:
+ 2 add-spell-rule "V" "o" "o" "amente" ; pazzo -> pazzamente
+ 2 add-spell-rule "V" "a" "" "mente" ; pazza -> pazzamente
+; se le ultime due lettere sono delle "re" o "le" si ha lápocope
+; della vocale finale: amorevole -> amorevolmente
+ 2 add-spell-rule "V" "re" "e" "mente" ;
+ 2 add-spell-rule "V" "le" "e" "mente" ;
+; else aggiunge mente o aggiunge +issimamente
+ 2 add-spell-rule "V" "e" "" "mente" ;
+ 2 add-spell-rule "V" "e" "e" "issimamente" ;
+
+
+; Superlativo assoluto in +issimo
+; indica il grado massimo di intensita' di una qualita' o di un
+; concetto, senza cistituire paragoni con altre grandezze.
+; si esprome con il suffisso +issimo, aggiunto allággettivo di grado
+; positivo: nuovo -> nuovissim[aeio]
+;           brillante -> brillantissim[aeio]
+; flag *O:
+ 2 add-spell-rule "O" "o" "o" "issimo" ; romantico
+ 2 add-spell-rule "O" "o" "o" "issimi" ; romantico
+ 2 add-spell-rule "O" "o" "o" "issime" ; romantico
+ 2 add-spell-rule "O" "o" "o" "issima" ; romantico
+ 2 add-spell-rule "O" "e" "e" "issimo" ; giovane
+ 2 add-spell-rule "O" "e" "e" "issima" ; giovane
+ 2 add-spell-rule "O" "e" "e" "issime" ; giovane
+ 2 add-spell-rule "O" "e" "e" "issimi" ; giovane
+
+; Superlativo assoluto in +errimo
+; flag *N:
+ 2 add-spell-rule "N" "re" "e" "errimo" ; acre -> acerrimo, salubre -> saluberrimo
+; Superlativo assoluto in +entissimo
+; flag *M:
+ 2 add-spell-rule "M" "co" "o" "entissimo" ;
+ 2 add-spell-rule "M" "lo" "o" "entissimo" ;

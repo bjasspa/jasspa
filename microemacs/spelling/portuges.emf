@@ -1,0 +1,48 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : $Author: jon $
+;  Created By    : Steven Phillips
+;  Created       : Thu May 7 17:11:58 1998
+;  Last Modified : <020699.1643>
+;
+;  Description   : Portuguese language support
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 1998 - 1999 JASSPA.
+;
+;  The following copyright apply to the rules and dictionary
+;
+;      Copyright (C) 1995,96,97,98  Jose Joao de Almeida <jj@di.uminho.pt> 
+;      e Ulisses Pinto
+;        Dep. Informatica, Universidade do Minho
+;          Portugal
+;     
+;         This program is free software; you can redistribute it and/or modify
+;         it under the terms of the GNU General Public License as published by
+;         the Free Software Foundation; either version 2 of the License, or
+;         (at your option) any later version.
+;     
+;         This program is distributed in the hope that it will be useful,
+;         but WITHOUT ANY WARRANTY; without even the implied warranty of
+;         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;         GNU General Public License for more details.
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; Add the standard dictionary
+add-dictionary "portuges"
+
+; expand the normal letter range to include the accent letters,
+; make sure they're disablyable, pokable, dont make them printable,
+; that the printer setup's job.
+set-char-mask "dpa" "ÀàÂâÁáÃãAaÇçCcÈèÊêÉéEeÌìÍíIiÒòÔôÓóÕõOoÙùÚúÜüUu"
+
+0 define-macro language-tidy
+    -1 set-char-mask "a" "ÀàÂâÁáÃãÇçÈèÊêÉéÌìÍíÒòÔôÓóÕõÙùÚúÜü"
+!emacro
+
+0 define-macro-file portuger spell-rules-init
+

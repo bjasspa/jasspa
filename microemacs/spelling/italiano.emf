@@ -1,0 +1,50 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : $Author: jon $
+;  Created By    : Steven Phillips
+;  Created       : Mon Dec 13 1999
+;  Last Modified : <991213.2227>
+;
+;  Description   : Italian language support
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 1998 - 1999 JASSPA.
+;
+;  The following copyright apply to the rules and dictionary
+;
+;	Affix table for Italian
+;
+; This table is a first cut at a description of the common affixes found
+; in the Italian language.  It is definitely not final.  This is the
+; equivalent of a pre-alpha version.  The dictionary is not complete
+; either.
+;
+; Use at your own risk.  In principle, not many wrong spellings will be
+; accepted, but since it is so preliminary, ispell will complain about
+; many, many words. We state here the rule: the resulting word follows
+; the accenting rules. 
+;
+; This is V1.0 of the release. It is released under the GNU General
+; Public License. Copies of that license are available from Free
+; Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+; To use both upper- and lower-case affix flags, you must
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; Add the standard dictionary
+add-dictionary "italiano"
+
+; expand the normal letter range to include the accent letters,
+; make sure they're disablyable, pokable, dont make them printable,
+; that the printer setup's job.
+set-char-mask "dpa" "¿‡¡·Aa»Ë…ÈEeÃÏÕÌIi“Ú”ÛOoŸ˘⁄˙Uu"
+
+0 define-macro language-tidy
+    -1 set-char-mask "a" "¿‡¡·»Ë…ÈÃÏÕÌ“Ú”ÛŸ˘⁄˙"
+!emacro
+
+0 define-macro-file italianr spell-rules-init
+
