@@ -154,8 +154,6 @@ ml-bind-key     tab                      "esc esc"
     global-bind-key beginning-of-buffer  "C-home"
     global-bind-key end-of-line          "end"
     global-bind-key end-of-buffer        "C-end"
-    global-bind-key yank                 "C-v"
-    global-bind-key reyank               "esc v"
 !endif
 ; execute msshift if using MS Shift style region definition
 !if &reg "/history" "msshift" "0"
@@ -219,8 +217,9 @@ add-file-hook ".asp"                                          fhook-asp
 add-file-hook ".java .jav"                                    fhook-java
 add-file-hook ".jsp"                                          fhook-jsp
 add-file-hook ".js"                                           fhook-js
-add-file-hook ".pl .pm .phps .inc"                            fhook-perl
-add-file-hook ".php .php3 .php4 .phtml"                       fhook-php
+add-file-hook ".pl .pm"                                       fhook-perl
+add-file-hook ".php .inc .php3 .php4 .phtml"                  fhook-php
+add-file-hook ".phps"                                         fhook-phps
 add-file-hook ".cmd .bat .btm"                                fhook-dos
 add-file-hook ".tcl .tk"                                      fhook-tcl
 add-file-hook ".rul"                                          fhook-rul

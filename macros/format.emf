@@ -299,7 +299,7 @@ define-macro ifill-paragraph
     !if &or &bmod "cmode" $buffer-indent
         !while &les $window-line #l0
             beginning-of-line
-            tab
+            tab @mna
             forward-line
         !done
         beginning-of-line

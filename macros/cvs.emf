@@ -11,6 +11,9 @@
     0 exec-file "hkdirlst"
 !endif
 
+!if &not &exi %cvs-com
+    set-variable %cvs-com "cvs "
+!endif
 !if &not &exi .osd.cvsosd
     set-variable .osd.cvsosd &pinc .osd.next 1
     define-macro cvs
@@ -189,7 +192,7 @@ define-macro cvs-log-list
     !if &sin " " #l3
         set-variable #l3 &spr "\"%s\"" #l3
     !endif
-    set-variable #l2 &cat "cvs log " #l3
+    set-variable #l2 &spr "%s log %s" %cvs-com #l3
     4 pipe-shell-command #l2 "*cvs-log-list-tmp*"
     cvs-log-list-gen
 !emacro
@@ -347,7 +350,7 @@ define-macro cvs-resolve-conflicts
 0 define-macro cvs-exec-gdiff
     set-variable #l0 @1
     set-variable #l1 .find-file.file1
-    set-variable #l8 "cvs -n update -p"
+    set-variable #l8 &cat %cvs-com " -n update -p"
     set-variable #l2 &sub &sin "O" .cvs-osd.options 1
     set-variable #l2 &mid .cvs-osd.values #l2 1
     !if &gre #l2 4
@@ -446,7 +449,7 @@ define-macro cvs-resolve-conflicts
     !if #l0
         !if &seq &stat "t" &cat #l3 #l1 "D"
             find-buffer "*cvs-temp*"
-            !force !force !force 6 pipe-shell-command &cat "cvs -nq update " #l4 "*cvs-temp*"
+            !force !force !force 6 pipe-shell-command &spr "%s -nq update %s" %cvs-com #l4 "*cvs-temp*"
             !force find-buffer "*cvs-temp*"
             beginning-of-buffer
             !while &not &seq @wc ""
@@ -845,7 +848,7 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
             !endif
         !endif
     !until &seq &mid .options &inc #l0 1 1 ""
-    set-variable #l8 &spr "cvs %s%s%s" &lget .cmds #l9 #l8 #l7
+    set-variable #l8 &spr "%s %s%s%s" %cvs-com &lget .cmds #l9 #l8 #l7
     ; get the output buffer name
     set-variable #l2 0
     !if &and &band @# 256 &sin "*" &lget .flags #l9
@@ -1114,7 +1117,7 @@ define-macro cvs-annotate
     ; make sure that the main window is only displayed once
     -1 find-buffer #l1
     0x10 goto-position "\x83"
-    6 pipe-shell-command "cvs -nq update -l" "*cvs-temp*"
+    6 pipe-shell-command &cat %cvs-com " -nq update -l" "*cvs-temp*"
     -1 buffer-mode "view"
     !if .cvs.filter
         2 goto-line
