@@ -1,0 +1,627 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : Jon Green
+;  Created       : Tue Sep 17 21:17:43 2002
+;  Last Modified : <021002.2236>
+;
+;  Description   : PL/SQL mode
+;
+;  Notes         : The natural indent is 3.
+;
+; To Install
+; ----------
+; Add the following to you <user.emf> to install the appropriate hooks for
+; PL/SQL. Install this file into the MicroEmacs macros directory. The
+; hooks could be added to me.emf
+;
+;  add-file-hook ".pls" fhook-pls
+;  -1 add-file-hook "-[*!]-[ \t]*pl/?sq?l?.*-[*!]-" fhook-pls  ; -*- pl/sql -*- or -*- pls -*-
+;
+; If you want .sql files to be PL/SQL by default then add a new
+; file hook at the end of your <user.emf> that re-defines the
+; hook binding i.e.
+;
+;  add-file-hook ".sql" fhook-pls
+;
+; This will cause 'pls' to be invoked rather than the default 'sql' file.
+;
+;  History
+;
+;  Copyright (c) 2002 Jasspa - www.jasspa.com
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro fhook-pls
+    set-variable $buffer-mask "luh1"
+    @# buffer-initialize "pls"
+    buffer-initialize-hooks
+    ;
+    ; Set up the indentation. We use 3 spaces unless explicitly
+    ; over-ridden.
+    set-variable :tabsize  3
+    set-variable :tabwidth $tabwidth
+    ; Search for additional modes in a -!- pl/sql -!-
+    ;
+    ; -!- pls; tabsize:<digit>; -!-
+    ;
+    ;
+    beginning-of-buffer
+    !force -20 regex-forward &spr "-[*!]-"
+    !if $status
+        ; Search for tabsize: <var>;
+        !force -1 regex-forward "tabsize[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;]"
+        !if $status
+            set-variable :tabsize @s1
+            beginning-of-line
+        !endif
+        ; Search for tabwidth: <var>;
+        !force -1 regex-forward "tabwidth[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;]"
+        !if $status
+            set-variable :tabwidth @s1
+            beginning-of-line
+        !endif
+        ; Add any others in here.
+
+        ; Back to the start of the buffer
+        beginning-of-buffer
+    !endif
+!emacro
+
+;
+; Buffer hook. Modify the fill mode to left only. This ensures that we
+; always fill the line correctly irrespective of the mode of the caller.
+; The likes of centre and justified are not warrented in a TeX buffer.
+;
+0 define-macro bhook-pls
+    ; Save the other context. Restore local context
+    set-variable :otabwidth $tabwidth
+    set-variable $tabwidth  :tabwidth
+    set-variable :otabsize  $tabsize
+    set-variable $tabsize   :tabsize
+!emacro
+;
+0 define-macro ehook-pls
+    ; Restore existing context
+    set-variable :tabwidth $tabwidth
+    set-variable $tabwidth :otabwidth
+    set-variable :tabsize $tabsize
+    set-variable $tabsize :otabsize
+!emacro
+
+; buffer-initialize variables
+set-variable .fhook-pls.name "PLS"
+set-variable .fhook-pls.setup &reg "/history" "fhook/pls" "ghix"
+set-variable .fhook-pls.setup-mask "aeghikmtux"
+set-variable .fhook-pls.comment "|/*|*/|*| * | * |f|"
+
+!if &and &sin "h" .fhook-pls.setup &band .hilight.flags 0x02
+    !if &not &exist .hilight.pls
+        set-variable .hilight.pls &pinc .hilight.next 1
+    !endif
+    0 hilight .hilight.pls 3 50                $global-scheme
+    hilight .hilight.pls 4 "<[[:alpha:]]" ">" "" .scheme.keyword
+    hilight .hilight.pls 4 "'" "'" ""          .scheme.string
+    ;
+    ; Comments
+    ;
+    hilight .hilight.pls 20 "/\\*" "*/" ""     .scheme.comment
+    hilight .hilight.pls 2 "--"                .scheme.comment
+    hilight .hilight.pls 0x22 "rem"            .scheme.comment
+    ;
+    ; Goto label
+    hilight .hilight.pls 20 "<<" ">>"          .scheme.link
+    ;
+    ; Operators
+    ;
+    hilight .hilight.pls 1 "and"               .scheme.operator
+    hilight .hilight.pls 1 "between"           .scheme.operator
+    hilight .hilight.pls 1 "delete"            .scheme.operator
+    hilight .hilight.pls 1 "false"             .scheme.operator
+    hilight .hilight.pls 1 "in"                .scheme.operator
+    hilight .hilight.pls 1 "index"             .scheme.operator
+    hilight .hilight.pls 1 "insert"            .scheme.operator
+    hilight .hilight.pls 1 "like"              .scheme.operator
+    hilight .hilight.pls 1 "not"               .scheme.operator
+    hilight .hilight.pls 1 "null"              .scheme.operator
+    hilight .hilight.pls 1 "or"                .scheme.operator
+    hilight .hilight.pls 1 "select"            .scheme.operator
+    hilight .hilight.pls 1 "true"              .scheme.operator
+    hilight .hilight.pls 1 "update"            .scheme.operator
+    ;
+    ; Keywords
+    ;
+    hilight .hilight.pls 1 "all"               .scheme.keyword
+    hilight .hilight.pls 1 "alter"             .scheme.keyword
+    hilight .hilight.pls 1 "any"               .scheme.keyword
+    hilight .hilight.pls 1 "array"             .scheme.keyword
+    hilight .hilight.pls 1 "as"                .scheme.keyword
+    hilight .hilight.pls 1 "asc"               .scheme.keyword
+    hilight .hilight.pls 1 "at"                .scheme.keyword
+    hilight .hilight.pls 1 "authid"            .scheme.keyword
+    hilight .hilight.pls 1 "avg"               .scheme.keyword
+    hilight .hilight.pls 1 "begin"             .scheme.keyword
+    hilight .hilight.pls 1 "binary_integer"    .scheme.keyword
+    hilight .hilight.pls 1 "body"              .scheme.keyword
+    hilight .hilight.pls 1 "bulk"              .scheme.keyword
+    hilight .hilight.pls 1 "by"                .scheme.keyword
+    hilight .hilight.pls 1 "case"              .scheme.keyword
+    hilight .hilight.pls 1 "char_base"         .scheme.keyword
+    hilight .hilight.pls 1 "check"             .scheme.keyword
+    hilight .hilight.pls 1 "close"             .scheme.keyword
+    hilight .hilight.pls 1 "cluster"           .scheme.keyword
+    hilight .hilight.pls 1 "coalesce"          .scheme.keyword
+    hilight .hilight.pls 1 "collect"           .scheme.keyword
+    hilight .hilight.pls 1 "comment"           .scheme.keyword
+    hilight .hilight.pls 1 "commit"            .scheme.keyword
+    hilight .hilight.pls 1 "compress"          .scheme.keyword
+    hilight .hilight.pls 1 "connect"           .scheme.keyword
+    hilight .hilight.pls 1 "constant"          .scheme.keyword
+    hilight .hilight.pls 1 "create"            .scheme.keyword
+    hilight .hilight.pls 1 "current"           .scheme.keyword
+    hilight .hilight.pls 1 "currval"           .scheme.keyword
+    hilight .hilight.pls 1 "declare"           .scheme.keyword
+    hilight .hilight.pls 1 "default"           .scheme.keyword
+    hilight .hilight.pls 1 "desc"              .scheme.keyword
+    hilight .hilight.pls 1 "distinct"          .scheme.keyword
+    hilight .hilight.pls 1 "do"                .scheme.keyword
+    hilight .hilight.pls 1 "drop"              .scheme.keyword
+    hilight .hilight.pls 1 "else"              .scheme.keyword
+    hilight .hilight.pls 1 "elsif"             .scheme.keyword
+    hilight .hilight.pls 1 "end"               .scheme.keyword
+    hilight .hilight.pls 1 "exception"         .scheme.keyword
+    hilight .hilight.pls 1 "exclusive"         .scheme.keyword
+    hilight .hilight.pls 1 "execute"           .scheme.keyword
+    hilight .hilight.pls 1 "exists"            .scheme.keyword
+    hilight .hilight.pls 1 "exit"              .scheme.keyword
+    hilight .hilight.pls 1 "extends"           .scheme.keyword
+    hilight .hilight.pls 1 "extract"           .scheme.keyword
+    hilight .hilight.pls 1 "fetch"             .scheme.keyword
+    hilight .hilight.pls 1 "for"               .scheme.keyword
+    hilight .hilight.pls 1 "forall"            .scheme.keyword
+    hilight .hilight.pls 1 "from"              .scheme.keyword
+    hilight .hilight.pls 1 "function"          .scheme.keyword
+    hilight .hilight.pls 1 "goto"              .scheme.keyword
+    hilight .hilight.pls 1 "group"             .scheme.keyword
+    hilight .hilight.pls 1 "having"            .scheme.keyword
+    hilight .hilight.pls 1 "heap"              .scheme.keyword
+    hilight .hilight.pls 1 "hour"              .scheme.keyword
+    hilight .hilight.pls 1 "if"                .scheme.keyword
+    hilight .hilight.pls 1 "immediate"         .scheme.keyword
+    hilight .hilight.pls 1 "indicator"         .scheme.keyword
+    hilight .hilight.pls 1 "interface"         .scheme.keyword
+    hilight .hilight.pls 1 "intersect"         .scheme.keyword
+    hilight .hilight.pls 1 "into"              .scheme.keyword
+    hilight .hilight.pls 1 "is"                .scheme.keyword
+    hilight .hilight.pls 1 "isolation"         .scheme.keyword
+    hilight .hilight.pls 1 "java"              .scheme.keyword
+    hilight .hilight.pls 1 "level"             .scheme.keyword
+    hilight .hilight.pls 1 "limited"           .scheme.keyword
+    hilight .hilight.pls 1 "lock"              .scheme.keyword
+    hilight .hilight.pls 1 "loop"              .scheme.keyword
+    hilight .hilight.pls 1 "max"               .scheme.keyword
+    hilight .hilight.pls 1 "min"               .scheme.keyword
+    hilight .hilight.pls 1 "minus"             .scheme.keyword
+    hilight .hilight.pls 1 "minute"            .scheme.keyword
+    hilight .hilight.pls 1 "mlslabel"          .scheme.keyword
+    hilight .hilight.pls 1 "mode"              .scheme.keyword
+    hilight .hilight.pls 1 "new"               .scheme.keyword
+    hilight .hilight.pls 1 "nextval"           .scheme.keyword
+    hilight .hilight.pls 1 "nocopy"            .scheme.keyword
+    hilight .hilight.pls 1 "nowait"            .scheme.keyword
+    hilight .hilight.pls 1 "nullif"            .scheme.keyword
+    hilight .hilight.pls 1 "number_base"       .scheme.keyword
+    hilight .hilight.pls 1 "ocirowid"          .scheme.keyword
+    hilight .hilight.pls 1 "of"                .scheme.keyword
+    hilight .hilight.pls 1 "on"                .scheme.keyword
+    hilight .hilight.pls 1 "opaque"            .scheme.keyword
+    hilight .hilight.pls 1 "open"              .scheme.keyword
+    hilight .hilight.pls 1 "operator"          .scheme.keyword
+    hilight .hilight.pls 1 "option"            .scheme.keyword
+    hilight .hilight.pls 1 "order"             .scheme.keyword
+    hilight .hilight.pls 1 "organization"      .scheme.keyword
+    hilight .hilight.pls 1 "others"            .scheme.keyword
+    hilight .hilight.pls 1 "out"               .scheme.keyword
+    hilight .hilight.pls 1 "package"           .scheme.keyword
+    hilight .hilight.pls 1 "partition"         .scheme.keyword
+    hilight .hilight.pls 1 "pctfree"           .scheme.keyword
+    hilight .hilight.pls 1 "pragma"            .scheme.keyword
+    hilight .hilight.pls 1 "prior"             .scheme.keyword
+    hilight .hilight.pls 1 "private"           .scheme.keyword
+    hilight .hilight.pls 1 "procedure"         .scheme.keyword
+    hilight .hilight.pls 1 "public"            .scheme.keyword
+    hilight .hilight.pls 1 "raise"             .scheme.keyword
+    hilight .hilight.pls 1 "range"             .scheme.keyword
+    hilight .hilight.pls 1 "read"              .scheme.keyword
+    hilight .hilight.pls 1 "release"           .scheme.keyword
+    hilight .hilight.pls 1 "return"            .scheme.keyword
+    hilight .hilight.pls 1 "reverse"           .scheme.keyword
+    hilight .hilight.pls 1 "rollback"          .scheme.keyword
+    hilight .hilight.pls 1 "row"               .scheme.keyword
+    hilight .hilight.pls 1 "rownum"            .scheme.keyword
+    hilight .hilight.pls 1 "rowtype"           .scheme.keyword
+    hilight .hilight.pls 1 "savepoint"         .scheme.keyword
+    hilight .hilight.pls 1 "separate"          .scheme.keyword
+    hilight .hilight.pls 1 "set"               .scheme.keyword
+    hilight .hilight.pls 1 "share"             .scheme.keyword
+    hilight .hilight.pls 1 "space"             .scheme.keyword
+    hilight .hilight.pls 1 "sql"               .scheme.keyword
+    hilight .hilight.pls 1 "sql%\\w+"          .scheme.keyword
+    hilight .hilight.pls 1 "start"             .scheme.keyword
+    hilight .hilight.pls 1 "stddev"            .scheme.keyword
+    hilight .hilight.pls 1 "subtype"           .scheme.keyword
+    hilight .hilight.pls 1 "successful"        .scheme.keyword
+    hilight .hilight.pls 1 "sum"               .scheme.keyword
+    hilight .hilight.pls 1 "synonym"           .scheme.keyword
+    hilight .hilight.pls 1 "sysdate"           .scheme.keyword
+    hilight .hilight.pls 1 "then"              .scheme.keyword
+    hilight .hilight.pls 1 "timezone_abbr"     .scheme.keyword
+    hilight .hilight.pls 1 "timezone_hour"     .scheme.keyword
+    hilight .hilight.pls 1 "timezone_minute"   .scheme.keyword
+    hilight .hilight.pls 1 "timezone_region"   .scheme.keyword
+    hilight .hilight.pls 1 "to"                .scheme.keyword
+    hilight .hilight.pls 1 "trigger"           .scheme.keyword
+    hilight .hilight.pls 1 "type"              .scheme.keyword
+    hilight .hilight.pls 1 "ui"                .scheme.keyword
+    hilight .hilight.pls 1 "when"              .scheme.keyword
+    hilight .hilight.pls 1 "whenever"          .scheme.keyword
+    hilight .hilight.pls 1 "where"             .scheme.keyword
+    hilight .hilight.pls 1 "with"              .scheme.keyword
+    hilight .hilight.pls 1 "without"           .scheme.keyword
+    hilight .hilight.pls 1 "work"              .scheme.keyword
+    hilight .hilight.pls 1 "write"             .scheme.keyword
+    ;
+    ; Types
+    ;
+    hilight .hilight.pls 1 "bfile"             .scheme.type
+    hilight .hilight.pls 1 "binary_integer"    .scheme.type
+    hilight .hilight.pls 1 "blob"              .scheme.type
+    hilight .hilight.pls 1 "boolean"           .scheme.type
+    hilight .hilight.pls 1 "char"              .scheme.type
+    hilight .hilight.pls 1 "character"         .scheme.type
+    hilight .hilight.pls 1 "clob"              .scheme.type
+    hilight .hilight.pls 1 "cursor"            .scheme.type
+    hilight .hilight.pls 1 "date"              .scheme.type
+    hilight .hilight.pls 1 "day"               .scheme.type
+    hilight .hilight.pls 1 "dec"               .scheme.type
+    hilight .hilight.pls 1 "decimal"           .scheme.type
+    hilight .hilight.pls 1 "double"            .scheme.type
+    hilight .hilight.pls 1 "float"             .scheme.type
+    hilight .hilight.pls 1 "int"               .scheme.type
+    hilight .hilight.pls 1 "integer"           .scheme.type
+    hilight .hilight.pls 1 "interval"          .scheme.type
+    hilight .hilight.pls 1 "lob"               .scheme.type
+    hilight .hilight.pls 1 "local"             .scheme.type
+    hilight .hilight.pls 1 "long"              .scheme.type
+    hilight .hilight.pls 1 "month"             .scheme.type
+    hilight .hilight.pls 1 "natural"           .scheme.type
+    hilight .hilight.pls 1 "naturaln"          .scheme.type
+    hilight .hilight.pls 1 "nchar"             .scheme.type
+    hilight .hilight.pls 1 "nclob"             .scheme.type
+    hilight .hilight.pls 1 "number"            .scheme.type
+    hilight .hilight.pls 1 "numeric"           .scheme.type
+    hilight .hilight.pls 1 "nvarchar2"         .scheme.type
+    hilight .hilight.pls 1 "object_type"       .scheme.type
+    hilight .hilight.pls 1 "pls_integer"       .scheme.type
+    hilight .hilight.pls 1 "positive"          .scheme.type
+    hilight .hilight.pls 1 "positiven"         .scheme.type
+    hilight .hilight.pls 1 "precision"         .scheme.type
+    hilight .hilight.pls 1 "raw"               .scheme.type
+    hilight .hilight.pls 1 "real"              .scheme.type
+    hilight .hilight.pls 1 "record"            .scheme.type
+    hilight .hilight.pls 1 "reference"         .scheme.type
+    hilight .hilight.pls 1 "rowid"             .scheme.type
+    hilight .hilight.pls 1 "second"            .scheme.type
+    hilight .hilight.pls 1 "signtype"          .scheme.type
+    hilight .hilight.pls 1 "smallint"          .scheme.type
+    hilight .hilight.pls 1 "string"            .scheme.type
+    hilight .hilight.pls 1 "table"             .scheme.type
+    hilight .hilight.pls 1 "time"              .scheme.type
+    hilight .hilight.pls 1 "timestamp"         .scheme.type
+    hilight .hilight.pls 1 "types"             .scheme.type
+    hilight .hilight.pls 1 "urowid"            .scheme.type
+    hilight .hilight.pls 1 "varchar"           .scheme.type
+    hilight .hilight.pls 1 "varchar2"          .scheme.type
+    hilight .hilight.pls 1 "varray"            .scheme.type
+    hilight .hilight.pls 1 "year"              .scheme.type
+    hilight .hilight.pls 1 "zone"              .scheme.type
+    ;
+    ; Build in functions
+    ;
+    hilight .hilight.pls 1 "abs"               .scheme.variable
+    hilight .hilight.pls 1 "acos"              .scheme.variable
+    hilight .hilight.pls 1 "add_months"        .scheme.variable
+    hilight .hilight.pls 1 "ascii"             .scheme.variable
+    hilight .hilight.pls 1 "asin"              .scheme.variable
+    hilight .hilight.pls 1 "atan"              .scheme.variable
+    hilight .hilight.pls 1 "atan2"             .scheme.variable
+    hilight .hilight.pls 1 "bfilename"         .scheme.variable
+    hilight .hilight.pls 1 "bitand"            .scheme.variable
+    hilight .hilight.pls 1 "ceil"              .scheme.variable
+    hilight .hilight.pls 1 "chartorowid"       .scheme.variable
+    hilight .hilight.pls 1 "chr"               .scheme.variable
+    hilight .hilight.pls 1 "concat"            .scheme.variable
+    hilight .hilight.pls 1 "convert"           .scheme.variable
+    hilight .hilight.pls 1 "cos"               .scheme.variable
+    hilight .hilight.pls 1 "cosh"              .scheme.variable
+    hilight .hilight.pls 1 "current_date"      .scheme.variable
+    hilight .hilight.pls 1 "current_timestamp" .scheme.variable
+    hilight .hilight.pls 1 "dbtimezone"        .scheme.variable
+    hilight .hilight.pls 1 "decode"            .scheme.variable
+    hilight .hilight.pls 1 "deref"             .scheme.variable
+    hilight .hilight.pls 1 "dump"              .scheme.variable
+    hilight .hilight.pls 1 "empty_blob"        .scheme.variable
+    hilight .hilight.pls 1 "empty_clob"        .scheme.variable
+    hilight .hilight.pls 1 "exp"               .scheme.variable
+    hilight .hilight.pls 1 "extract"           .scheme.variable
+    hilight .hilight.pls 1 "floor"             .scheme.variable
+    hilight .hilight.pls 1 "from_tz"           .scheme.variable
+    hilight .hilight.pls 1 "greatest"          .scheme.variable
+    hilight .hilight.pls 1 "hextoraw"          .scheme.variable
+    hilight .hilight.pls 1 "initcap"           .scheme.variable
+    hilight .hilight.pls 1 "instr"             .scheme.variable
+    hilight .hilight.pls 1 "instrb"            .scheme.variable
+    hilight .hilight.pls 1 "last_day"          .scheme.variable
+    hilight .hilight.pls 1 "least"             .scheme.variable
+    hilight .hilight.pls 1 "length"            .scheme.variable
+    hilight .hilight.pls 1 "lengthb"           .scheme.variable
+    hilight .hilight.pls 1 "ln"                .scheme.variable
+    hilight .hilight.pls 1 "localtimestamp"    .scheme.variable
+    hilight .hilight.pls 1 "log"               .scheme.variable
+    hilight .hilight.pls 1 "lower"             .scheme.variable
+    hilight .hilight.pls 1 "lpad"              .scheme.variable
+    hilight .hilight.pls 1 "ltrim"             .scheme.variable
+    hilight .hilight.pls 1 "mod"               .scheme.variable
+    hilight .hilight.pls 1 "months_between"    .scheme.variable
+    hilight .hilight.pls 1 "new_time"          .scheme.variable
+    hilight .hilight.pls 1 "next_day"          .scheme.variable
+    hilight .hilight.pls 1 "nls_charset_decl_len".scheme.variable
+    hilight .hilight.pls 1 "nls_charset_id"    .scheme.variable
+    hilight .hilight.pls 1 "nls_charset_name"  .scheme.variable
+    hilight .hilight.pls 1 "nls_initcap"       .scheme.variable
+    hilight .hilight.pls 1 "nls_lower"         .scheme.variable
+    hilight .hilight.pls 1 "nls_upper"         .scheme.variable
+    hilight .hilight.pls 1 "nlssort"           .scheme.variable
+    hilight .hilight.pls 1 "numtodsinterval"   .scheme.variable
+    hilight .hilight.pls 1 "numtoyminterval"   .scheme.variable
+    hilight .hilight.pls 1 "nvl"               .scheme.variable
+    hilight .hilight.pls 1 "power"             .scheme.variable
+    hilight .hilight.pls 1 "rawtohex"          .scheme.variable
+    hilight .hilight.pls 1 "ref"               .scheme.variable
+    hilight .hilight.pls 1 "replace"           .scheme.variable
+    hilight .hilight.pls 1 "round"             .scheme.variable
+    hilight .hilight.pls 1 "rowidtochar"       .scheme.variable
+    hilight .hilight.pls 1 "rpad"              .scheme.variable
+    hilight .hilight.pls 1 "rtrim"             .scheme.variable
+    hilight .hilight.pls 1 "sessiontimezone"   .scheme.variable
+    hilight .hilight.pls 1 "sign"              .scheme.variable
+    hilight .hilight.pls 1 "sin"               .scheme.variable
+    hilight .hilight.pls 1 "sinh"              .scheme.variable
+    hilight .hilight.pls 1 "soundex"           .scheme.variable
+    hilight .hilight.pls 1 "sqlcode"           .scheme.variable
+    hilight .hilight.pls 1 "sqlerrm"           .scheme.variable
+    hilight .hilight.pls 1 "sqrt"              .scheme.variable
+    hilight .hilight.pls 1 "substr"            .scheme.variable
+    hilight .hilight.pls 1 "substrb"           .scheme.variable
+    hilight .hilight.pls 1 "sys_context"       .scheme.variable
+    hilight .hilight.pls 1 "sys_guid"          .scheme.variable
+    hilight .hilight.pls 1 "sysdate"           .scheme.variable
+    hilight .hilight.pls 1 "systimestamp"      .scheme.variable
+    hilight .hilight.pls 1 "tan"               .scheme.variable
+    hilight .hilight.pls 1 "tanh"              .scheme.variable
+    hilight .hilight.pls 1 "to_blob"           .scheme.variable
+    hilight .hilight.pls 1 "to_char"           .scheme.variable
+    hilight .hilight.pls 1 "to_clob"           .scheme.variable
+    hilight .hilight.pls 1 "to_date"           .scheme.variable
+    hilight .hilight.pls 1 "to_dsinterval"     .scheme.variable
+    hilight .hilight.pls 1 "to_multi_byte"     .scheme.variable
+    hilight .hilight.pls 1 "to_nclob"          .scheme.variable
+    hilight .hilight.pls 1 "to_number"         .scheme.variable
+    hilight .hilight.pls 1 "to_single_byte"    .scheme.variable
+    hilight .hilight.pls 1 "to_timestamp"      .scheme.variable
+    hilight .hilight.pls 1 "to_timestamp_ltz"  .scheme.variable
+    hilight .hilight.pls 1 "to_timestamp_tz"   .scheme.variable
+    hilight .hilight.pls 1 "to_yminterval"     .scheme.variable
+    hilight .hilight.pls 1 "translate"         .scheme.variable
+    hilight .hilight.pls 1 "trim"              .scheme.variable
+    hilight .hilight.pls 1 "trunc"             .scheme.variable
+    hilight .hilight.pls 1 "tz_offset"         .scheme.variable
+    hilight .hilight.pls 1 "uid"               .scheme.variable
+    hilight .hilight.pls 1 "upper"             .scheme.variable
+    hilight .hilight.pls 1 "user"              .scheme.variable
+    hilight .hilight.pls 1 "userenv"           .scheme.variable
+    hilight .hilight.pls 1 "value"             .scheme.variable
+    hilight .hilight.pls 1 "values"            .scheme.variable
+    hilight .hilight.pls 1 "vsize"             .scheme.variable
+    ;
+    ; Extras taken from mysql that are not in language spec.
+    ;
+    ;EXTRA;    hilight .hilight.pls 1 "absolute"          .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "action"            .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "actor"             .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "add"               .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "after"             .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "alias"             .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "allocate"          .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "are"               .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "assertion"         .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "async"             .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "attributes"        .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "authorization"     .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "before"            .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "bit"               .scheme.variable
+    ;EXTRA;    hilight .hilight.pls 1 "bit_length"        .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "both"              .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "breadth"           .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "cascade"           .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "cascaded"          .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "cast"              .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "catalog"           .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "char_length"       .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "character_length"  .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "class"             .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "collate"           .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "collation"         .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "column"            .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "completion"        .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "connection"        .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "constraint"        .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "constraints"       .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "constructor"       .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "continue"          .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "corresponding"     .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "count"             .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "cross"             .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "current_date"      .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "current_path"      .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "current_time"      .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "current_timestamp" .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "current_user"      .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "cycle"             .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "data"              .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "deallocate"        .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "deferrable"        .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "deferred"          .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "depth"             .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "describe"          .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "descriptor"        .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "designator"        .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "destroy"           .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "destructor"        .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "diagnostics"       .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "dictionary"        .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "disconnect"        .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "domain"            .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "each"              .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "element"           .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "end-exec"          .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "equals"            .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "escape"            .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "except"            .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "exec"              .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "external"          .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "factor"            .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "first"             .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "foreign"           .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "found"             .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "full"              .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "general"           .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "get"               .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "global"            .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "go"                .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "grant"             .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "identity"          .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "ignore"            .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "instead"           .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "join"              .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "key"               .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "language"          .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "last"              .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "leading"           .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "left"              .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "less"              .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "limit"             .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "list"              .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "match"             .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "modif"             .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "module"            .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "move"              .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "multiset"          .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "names"             .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "national"          .scheme.variable
+    ;EXTRA;    hilight .hilight.pls 1 "new_table"         .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "next"              .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "no"                .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "none"              .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "octet_length"      .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "off"               .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "oid"               .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "old"               .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "old_table"         .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "only"              .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "operation"         .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "operators"         .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "outer"             .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "output"            .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "overlaps"          .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "pad"               .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "parameters"        .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "partial"           .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "path"              .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "pendant"           .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "pls"               .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "plscode"           .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "plserror"          .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "plsexception"      .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "plsstate"          .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "plswarning"        .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "position"          .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "postfix"           .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "prefix"            .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "preorder"          .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "prepare"           .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "preserve"          .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "primary"           .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "privileges"        .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "protected"         .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "recursive"         .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "references"        .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "referencing"       .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "relative"          .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "representation"    .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "restrict"          .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "revoke"            .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "right"             .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "role"              .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "routine"           .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "rows"              .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "schema"            .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "scroll"            .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "search"            .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "section"           .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "sensitive"         .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "sequence"          .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "session"           .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "session_user"      .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "similar"           .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "size"              .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "some"              .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "specific"          .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "state"             .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "structure"         .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "substring"         .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "symbol"            .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "system_user"       .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "template"          .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "temporary"         .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "term"              .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "test"              .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "than"              .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "there"             .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "trailing"          .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "transaction"       .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "translation"       .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "under"             .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "union"             .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "unique"            .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "unknown"           .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "usage"             .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "using"             .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "variable"          .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "variant"           .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "varying"           .scheme.variable
+    ;EXTRA;    hilight .hilight.pls 1 "view"              .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "virtual"           .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "visible"           .scheme.keyword
+    ;EXTRA;    hilight .hilight.pls 1 "wait"              .scheme.keyword
+    !if &band .hilight.flags 0x08
+        ; hilight constants, e.g. numbers
+        hilight .hilight.pls 1 "[[:digit:]]+"  .scheme.constant
+        hilight .hilight.pls 1 "-[[:digit:]]+" .scheme.constant
+        hilight .hilight.pls 1 "[[:digit:]]+\\.[[:digit:]]+" .scheme.constant
+        hilight .hilight.c 1 "-[[:digit:]]+\\.[[:digit:]]+"  .scheme.constant
+    !endif
+!endif
+
+ml-write "[PL/SQL file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "mypls"
