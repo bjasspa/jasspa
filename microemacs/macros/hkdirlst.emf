@@ -331,18 +331,22 @@ set-variable .file-browser-close.bn "\CH*directory*\CH*files*\CH*ftp-files*\CH*f
     !if &seq "" &set #l0 &lef $buffer-fname &rsin "/" $buffer-fname
         set-variable #l0 &stat "a" "."
     !endif
-    !if .toolbar.open
-        !force toolbar-make-tool-visible "*directory*"
-    !endif
-    !force 0 popup-window "*directory*"
-    !if $status
-        !force 0 popup-window "*files*"
-        !if &not $status
+    !if @#
+        !if .toolbar.open
+            !force toolbar-make-tool-visible "*directory*"
+        !endif
+        !force 0 popup-window "*directory*"
+        !if $status
+            !force 0 popup-window "*files*"
+            !if &not $status
+                file-browser-twin
+            !endif
+        !else
+            !force 0 popup-window "*files*"
             file-browser-twin
         !endif
     !else
         !force 0 popup-window "*files*"
-        file-browser-twin
     !endif
     find-buffer "*files*"
     !if &not &and &seq #l0 $buffer-fname &seq .fhook-dirlst.file-process :file-process
@@ -362,22 +366,24 @@ set-variable .file-browser-close.bn "\CH*directory*\CH*files*\CH*ftp-files*\CH*f
     !if &not &band $window-flags 0x1000
         set-variable $window-flags .fhook-dirlst.browser-lock
     !endif
-    0 popup-window "*directory*"
-    !if &not &seq #l0 $buffer-fname
-        !force 0x0f directory-tree #l0
-    !endif
-    ; if part of a toolbar don't mess with the window-flags and don't leave it current, but make sure the buffer is hidden
-    !if &band $window-flags 0x1000
-        1 buffer-mode "hide"
-        0 popup-window "*files*"
-    !else
-        set-variable $window-flags &bor 1 .fhook-dirlst.browser-lock
+    !if @#
+        0 popup-window "*directory*"
+        !if &not &seq #l0 $buffer-fname
+            !force 0x0f directory-tree #l0
+        !endif
+        ; if part of a toolbar don't mess with the window-flags and don't leave it current, but make sure the buffer is hidden
+        !if &band $window-flags 0x1000
+            1 buffer-mode "hide"
+            0 popup-window "*files*"
+        !else
+            set-variable $window-flags &bor 1 .fhook-dirlst.browser-lock
+        !endif
     !endif
 !emacro
 
 define-macro file-browser
     set-variable .fhook-dirlst.file-process ""
-    file-browser-init
+    @# file-browser-init
     ml-write "MicroEmacs file-browser <delete> to exit"
 !emacro
 
@@ -396,6 +402,19 @@ define-macro file-browser-swap-buffers
 
 0 define-macro dirlst-get-current-filename
     !if &or &les $window-line 5 &les &len @wl :fmpf
+        !if &equ $window-line 4
+            !force 1 dirlst-get-sort-col
+            !abort
+        !elif &gre $window-line 1
+        !elif &gre :fmpl 1
+        !elif &les $window-col 22
+        !elif &seq @wc "\n"
+        !else
+            set-variable #l0 $window-col
+            set-variable #l1 &add #l0 &sin "/" &rig @wl #l0
+            set-variable @1 &mid @wl 22 &sub #l1 22
+            !return
+        !endif
         ml-write "Invalid line!"
         !abort
     !endif

@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd119.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd119.2,v 2.6 2004-03-23 20:50:56 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH set-cursor-to-mouse 2
@@ -26,18 +26,22 @@ made the current window but the cursor  location within the window remains the
 same.  This  is  usually  used  in  user  defined   macros  that  control  the
 functionality of the mouse.
 .PP
-An argument \fIn\fR  determines if the command is permitted to change windows,
-when omitted a window change is permitted on  \fBset-cursor-to-mouse\fR.  When
-specified,  the mouse is not permitted to change  windows and returns an error
-condition in 
-.Ht $mouse-pos 5 
-indicating that the mouse is not within the current window.
-.PP
 Invocation of this command sets the variable
 .Ht $mouse-pos 5
 which  determines  where the mouse is within the window.  Interrogation of the
 variable  following  the  command  may be used to  determine  if the  mouse is
 located on one of the more specialized window or screen regions.
+.PP
+An argument \fIn\fR  determines if the command is permitted to change windows
+and cursor position, where the bits are defined as follows:
+.IP \fB0x01\fR
+Permit  changing of the current  window, if not permitted and the mouse is not
+in the current window \fBset-cursor-to-mouse\fR returns an error condition in 
+.Ht $mouse-pos 5 .
+.IP \fB0x02\fR
+Permit changing of the cursor position.
+.PP
+The default  argument  when  omitted is \fI3\fR, allowing the changing of both.
 .PP
 When writing  macros to cut and paste using the mouse, care should be taken to
 ensure  that the  window at the  button  release  is the same is at the button

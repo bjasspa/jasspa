@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20040317.2022>
+# Last Modified: <20040323.2047>
 #
 ##############################################################################
 
@@ -16,7 +16,8 @@ include $(TOPDIR)/etc/makeinc
 # Basic macros to release
 #
 # EMFS:sh=ls *.emf
-EMFS=	abbrev.emf	abbrlist.emf	aix.emf		\
+EMFS=	abbrev.emf	abbrlist.emf	aix.emf		au3.eaf		\
+	au3.etf		\
 	benchmrk.emf	bookmark.emf	buffinit.emf	buffstp.emf	\
 	calc.emf	charset.emf	charsutl.emf	cmacros.emf	\
 	collapse.emf	comment.emf	crosswd.emf	ctags.emf	\
@@ -29,9 +30,10 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		\
 	ftp.emf		\
 	games.emf	gdiff.emf	gentags.emf	\
 	hkada.emf	hkasmx86.emf	hkasn1.emf	hkasp.emf	\
-	hkawk.emf	\
+	hkau3.emf	hkawk.emf	\
 	hkbibtex.emf	hkbinary.emf	hkblist.emf	hkbnf.emf	\
-	hkc.emf		hkcobol.emf	hkcpp.emf	hkcygwin.emf	\
+	hkc.emf		hkcobol.emf	hkcpp.emf	hkcss.emf	\
+	hkcygwin.emf	\
 	hkdiff.emf	hkdirlst.emf	hkdirtre.emf	hkdoc.emf	\
 	hkdos.emf	\
 	hkeaf.emf	hkehf.emf	hkemf.emf	hkerf.emf	\

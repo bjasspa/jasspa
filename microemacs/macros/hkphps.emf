@@ -439,6 +439,8 @@ set-variable .fhook-phps.item-list-r1 "Func \ecB\\1\ecA"
     indent .hilight.phps b "/\\*" "\\*/"
     indent .hilight.phps i "//"
     indent .hilight.phps i "#"
+    indent .hilight.phps s "case[ \t]+\\w+[ \t]*:" -4
+    indent .hilight.phps s "default[ \t]*:" -4
     ; let html based files use the phps indent for any php scripts
     set-variable .indent.phpscript .hilight.phps
 !endif

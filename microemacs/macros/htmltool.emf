@@ -346,7 +346,7 @@
                             set-variable #l5 &band #l5 0xffe
                         !elif &iseq #l3 "DIV>"
                             html-add-newline
-                        !elif &iseq #l3 "DEBUG>"
+                        !elif &iseq #l3 "MEDEBUG>"
                             set-variable $debug 1
                         !endif
                     !elif &iseq &lef #l3 1 "S"

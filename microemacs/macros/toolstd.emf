@@ -311,7 +311,8 @@
             set-variable $window-col .buffer-tab-list-create.col1
             goto-position "\x82"
             delete-buffer #l1 @mna
-            set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x080
+            ; successful - flag that the current buffer has changed to get the tools updated
+            set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x08
             !return
         !endif
     !endif

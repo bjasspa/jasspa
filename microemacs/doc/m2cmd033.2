@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Jul 25 00:00:27 1998
 .\"
-.Id $Id: m2cmd033.2,v 2.6 2004-02-04 22:54:22 jon Exp $
+.Id $Id: m2cmd033.2,v 2.7 2004-03-23 20:50:56 jon Exp $
 .Im MicroEmacs command|indent|scuts
 .so me.tni
 .TH indent 2
@@ -27,19 +27,18 @@ indent \- Manage the auto-indentation methods
 "\|\fIind-no\fR\|"
 "\|\fItype\fR\|"
 "\|\fItoken\fR\|"
-[ "\|\fIclose\fR\|"
-[ "\|\fIignore\fR\|" ]]
+[ "\|\fIclose\fR\|" "\|\fIignore\fR\|" ]
 [ "\|\fIindent\fR\|" ]
 .br
 .B indent
 "\|\fIind-no\fR\|"
-\fBt\fR
+"\fBt\fR"
 "\|\fItoken\fR\|"
 "\|\fIindent-scheme\fR\|"
 .br
 .B indent
 "\|\fIind-no\fR\|"
-\fBx\fR | \fBw\fR
+"\fBx\fR" | "\fBw\fR"
 "\|\fItoken\fR\|"
 "\|\fIindent\fR\|"
 "\|\fIindent-scheme\fR\|"
@@ -76,18 +75,19 @@ Sets the indent bit flags where:-
 Indent  method is case  insensitive.  Note that  \fBindent\fR  tokens  must be
 specified in lower case.
 .IP \fC0x02\fR
-Defines a \fBfast look-back\fR  indentation scheme that is associated with the
-current  indentation  scheme. The fast  look-back  scheme locates the start of
-indentation tokens in the buffer. The \fIindent-scheme\fR argument is required
-when  the flag bit is set and  identifies  the  handle  of the fast  look-back
-indentation scheme that is used to locate the indentation style of the current
-block.
+Defines a \fBfast  look-back\fR  indentation  scheme to be used in conjunction
+with the  current  indentation  scheme. The fast  look-back  scheme is used to
+identify a change in the  current  buffer's  indent  scheme, for  example  the
+starting  of  embedded  script in html. The  \fIindent-scheme\fR  argument  is
+required  when  this  flag bit is set and  identifies  the  handle  of the fast
+look-back  indentation  scheme to be used.
 .IP
-This flag is only  defined  where the buffer is  required to support  multiple
-complex  indentation  schemes.  When defined the  \fIlook-back\fR  argument is
-typically  set to look  back a long  way i.e. 500  lines,  the fast  look-back
-\fIindent-scheme\fR   should   contain   few  tokens  to  ensure  that  system
-performance is maintained.
+This feature is only used when indent is required to support  multiple complex
+indentation  schemes within a single file, for example  indentation of scripts
+within html, asp or php pages etc. When defined the given  \fIindent-scheme\fR
+must also be defined using \fBindent\fR, the scheme's \fIlook-back\fR argument
+is  typically  set to look  back a long way to  ensure  correctness,  i.e. 500
+lines, but it should therefore contain few tokens to maintain performance.
 .LP
 .I look-back
 specifies the maximum  number of lines, prior to the current line,  considered
@@ -96,8 +96,10 @@ number of lines  between the line to be indented  and the  previous  non-blank
 line then the current indentation is lost.
 .PP
 If \fIlook-back\fR is set to 0 then the indentation is effectively disabled as
-the current  indentation can never be found. The value may be specified in the
-range 0-255, a value of 10 is typically sufficient.
+the  current  indentation  can  never be found.  The  maximum  value  has been
+increase as of January 2004 from 255 to an integer (large  number), a value of
+10 is  typically  sufficient  for a normal  indent  scheme  and 500 for a fast
+look-back scheme.
 .SS "Indentation Rule Creation"
 .na
 .B indent
@@ -107,6 +109,7 @@ range 0-255, a value of 10 is typically sufficient.
 [ "\|\fIclose\fR\|"
 [ "\|\fIignore\fR\|" ]]
 [ "\|\fIindent\fR\|" ]
+[ "\|\fIindent-scheme\fR\|" ]
 .ad
 .PP
 With the default argument of \fC1\fR,  \fBindent\fR creates a new rule for the
@@ -343,17 +346,17 @@ producing
 .TP
 \fBType\fR (\fI\|type\|\fR =  '\fCt\fR' or '\fCT\fR')
 .\"
-Used in conjunction with the \fBfast look-back\fR indentation scheme to define
-the look back  indentation  start token(s). The fast look-back token typically
-shadows the \fCx\fR  type and  identifies  the  indentation  scheme. The token
-itself does not change the  indentation, it simply  identifies the indentation
-scheme.  The  '\fCx\fR'  or  '\fCw\fR'  types are used to  perform  the actual
-indentation of the line if required.
+Used in a \fBfast look-back\fR  indentation scheme (see bit \fC0x02\fR of
+\fB0 indent\fR  above) to define the scheme change tokens. The fast look-back token
+typically shadows the \fCx\fR and \fCw\fR types and identifies the indentation
+scheme. The token itself does not change the indentation, it simply identifies
+the  indentation  scheme. The '\fCx\fR' or '\fCw\fR' types are used to perform
+the actual indentation of the line if required.
 .IP
 If the  \fIindent-scheme\fR  is defined as zero (\fC0\fR) then the indentation
 scheme is set to the same value as the
-.Ht hilight 2
-scheme handle.
+.Ht $buffer-indent 5
+variable.
 .IP
 The following example is taken from the XML language  definition . A fast-look
 back  scheme  is  used  (\fChilight.xmlT\fR)  to  search  for the  alternative
@@ -399,21 +402,22 @@ Change the indentation scheme from the current scheme to the new
 If the
 .I indent-scheme
 is specified as zero  (\fC0\fR) then the indentation scheme is set to the same
-handle value as the current
-.Ht hilight 2
-scheme.
-.I ind-no
-specifies  the indent  value, when the  \fItype\fR is \fCx\fR then the current
-line is indented, a \fItype\fR of \fCw\fR indents the next line.
+handle value as the
+.Ht $buffer-indent 5
+variable.
+.I indent
+specifies  the indent  value, when the  \fItype\fR is \fCw\fR then the current
+line onwards is indented (similar to \fCo\fR), a \fItype\fR of \fCx\fR indents
+the next line onwards (similar to \fCn\fR).
 .IP
-Refer the the \fItype\fR\|=\fCx\fR for an example of indentation switching.
+Refer the the \fItype\fR\|=\fCt\fR for an example of indentation switching.
 .SH EXAMPLE
 Examples  of  indentation  method  creations  can  be  found  in  macro  files
 \fChkemf.emf\fR,  \fChktcl.emf\fR and  \fChkvrml.emf\fR. The following example
 is taken from \fChkemf.emf\fR:-
 .Me $emf-scheme
 .CS
-!if &sequal .hilight.emf "ERROR"
+!if &not &exist .hilight.emf
     set-variable .hilight.emf &pinc .hilight.next 1
 !endif
 
@@ -433,7 +437,11 @@ indent .hilight.emf o "!ema" -4
 indent .hilight.emf e "\\"" "\\"" "\\\\"
 indent .hilight.emf i ";"
 indent .hilight.emf f "*" 0
-.CE 0
+.CE
+.PP
+Note that a \fB.hilight\fR command variable is typically used as a buffer with
+indentation  rules will almost certainly have hilighting and the same variable
+is used to define the hilighting scheme.
 .Me $ehf-scheme
 .SH "SEE ALSO"
 .na

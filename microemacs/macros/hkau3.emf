@@ -1,0 +1,427 @@
+; -!- emf -!-
+; Copyright (C) 2003-2004 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Synopsis:    Autoit V 3 
+; Authors:     Dr. Detlef Groth;
+;
+set-char-mask "3" "_$@."
+
+define-macro fhook-au3
+    set-variable $buffer-mask "luh13"
+    @# buffer-init "au3"
+    !if &not @# 
+        etfinsrt "au3" 
+    !endif 
+    ; Assign the hilighting 
+    set-variable $buffer-hilight .hilight.au3
+    ; Assign the buffer indentation 
+    set-variable $buffer-indent .hilight.au3
+    buffer-abbrev-file "au3" 
+    buffer-init-hooks
+!emacro
+
+; buffer-init variables
+set-variable .fhook-au3.name "AutoIt3"
+set-variable .fhook-au3.setup &reg "/history" "fhook/au3" "bdfghnopx"
+set-variable .fhook-au3.setup-mask "abdefghikmnoptux>"
+set-variable .fhook-au3.comment "|;||;|; | ;|r|"
+set-variable .fhook-au3.exact -1
+
+; Set up the folding of functions
+set-variable .fhook-au3.collapse-open   "^[ \t]*Func[ \t]+"
+set-variable .fhook-au3.collapse-close  "^EndFunc"
+set-variable .fhook-au3.collapse-mclose "1"
+set-variable .fhook-au3.collapse-mnext  "-1"
+
+; setup item-list
+set-variable .fhook-au3.item-list-s1 "^[ \t]*Func[ \t]+\\([a-zA-Z0-9_]+\\)"
+set-variable .fhook-au3.item-list-r1 "Func \ecB\\1\ecA"
+
+!if &not &exist .hilight.au3
+    set-variable .hilight.au3 &pinc .hilight.next 1
+!endif
+!if &and &sin "h" .fhook-au3.setup &band .hilight.flags 0x02 
+    ; High-light js Mode
+    0 hilight .hilight.au3 3 50 $global-scheme
+    hilight .hilight.au3 0  ";.*" .scheme.comment
+    hilight .hilight.au3 4  "\\$" "\\}\\W" "" .scheme.variable
+  
+    hilight .hilight.au3 4 "\"" "\"" "\\" .scheme.string
+    hilight .hilight.au3 0x804 "\\W\\{'" "'" "\\" .scheme.quote
+    hilight .hilight.au3 1 "and" .scheme.keyword
+    hilight .hilight.au3 1 "byref" .scheme.keyword
+    hilight .hilight.au3 1 "case" .scheme.keyword
+    hilight .hilight.au3 1 "continueloop" .scheme.keyword
+    hilight .hilight.au3 1 "dim" .scheme.keyword
+    hilight .hilight.au3 1 "do" .scheme.keyword
+    hilight .hilight.au3 1 "else" .scheme.keyword
+    hilight .hilight.au3 1 "elseif" .scheme.keyword
+    hilight .hilight.au3 1 "endfunc" .scheme.keyword
+    hilight .hilight.au3 1 "endif" .scheme.keyword
+    hilight .hilight.au3 1 "endselect" .scheme.keyword
+    hilight .hilight.au3 1 "exit" .scheme.keyword
+    hilight .hilight.au3 1 "exitloop" .scheme.keyword
+    hilight .hilight.au3 1 "for" .scheme.keyword
+    hilight .hilight.au3 1 "func" .scheme.keyword
+    hilight .hilight.au3 1 "global" .scheme.keyword
+    hilight .hilight.au3 1 "if" .scheme.keyword
+    hilight .hilight.au3 1 "local" .scheme.keyword
+    hilight .hilight.au3 1 "next" .scheme.keyword
+    hilight .hilight.au3 1 "not" .scheme.keyword
+    hilight .hilight.au3 1 "or" .scheme.keyword
+    hilight .hilight.au3 1 "return" .scheme.keyword
+    hilight .hilight.au3 1 "select" .scheme.keyword
+    hilight .hilight.au3 1 "step" .scheme.keyword
+    hilight .hilight.au3 1 "then" .scheme.keyword
+    hilight .hilight.au3 1 "to" .scheme.keyword
+    hilight .hilight.au3 1 "until" .scheme.keyword
+    hilight .hilight.au3 1 "wend" .scheme.keyword
+    hilight .hilight.au3 1 "while" .scheme.keyword
+    hilight .hilight.au3 1 "exit" .scheme.keyword
+    hilight .hilight.au3 1 "@appdatacommondir" .scheme.type
+    hilight .hilight.au3 1 "@appdatadir" .scheme.type
+    hilight .hilight.au3 1 "@autoitversion" .scheme.type
+    hilight .hilight.au3 1 "@commonfilesdir" .scheme.type
+    hilight .hilight.au3 1 "@compiled" .scheme.type
+    hilight .hilight.au3 1 "@computername" .scheme.type
+    hilight .hilight.au3 1 "@comspec" .scheme.type
+    hilight .hilight.au3 1 "@cr" .scheme.type
+    hilight .hilight.au3 1 "@crlf" .scheme.type
+    hilight .hilight.au3 1 "@desktopcommondir" .scheme.type
+    hilight .hilight.au3 1 "@desktopdir" .scheme.type
+    hilight .hilight.au3 1 "@desktopheight" .scheme.type
+    hilight .hilight.au3 1 "@desktopwidth" .scheme.type
+    hilight .hilight.au3 1 "@documentscommondir" .scheme.type
+    hilight .hilight.au3 1 "@error" .scheme.type
+    hilight .hilight.au3 1 "@favoritescommondir" .scheme.type
+    hilight .hilight.au3 1 "@favoritesdir" .scheme.type
+    hilight .hilight.au3 1 "@homedrive" .scheme.type
+    hilight .hilight.au3 1 "@homepath" .scheme.type
+    hilight .hilight.au3 1 "@homeshare" .scheme.type
+    hilight .hilight.au3 1 "@hour" .scheme.type
+    hilight .hilight.au3 1 "@ipaddress1" .scheme.type
+    hilight .hilight.au3 1 "@ipaddress2" .scheme.type
+    hilight .hilight.au3 1 "@ipaddress3" .scheme.type
+    hilight .hilight.au3 1 "@ipaddress4" .scheme.type
+    hilight .hilight.au3 1 "@lf" .scheme.type
+    hilight .hilight.au3 1 "@logondnsdomain" .scheme.type
+    hilight .hilight.au3 1 "@logondomain" .scheme.type
+    hilight .hilight.au3 1 "@logonserver" .scheme.type
+    hilight .hilight.au3 1 "@mday" .scheme.type
+    hilight .hilight.au3 1 "@min" .scheme.type
+    hilight .hilight.au3 1 "@mon" .scheme.type
+    hilight .hilight.au3 1 "@mydocumentsdir" .scheme.type
+    hilight .hilight.au3 1 "@osbuild" .scheme.type
+    hilight .hilight.au3 1 "@oslang" .scheme.type
+    hilight .hilight.au3 1 "@osservicepack" .scheme.type
+    hilight .hilight.au3 1 "@ostype" .scheme.type
+    hilight .hilight.au3 1 "@osversion" .scheme.type
+    hilight .hilight.au3 1 "@programfilesdir" .scheme.type
+    hilight .hilight.au3 1 "@programscommondir" .scheme.type
+    hilight .hilight.au3 1 "@programsdir" .scheme.type
+    hilight .hilight.au3 1 "@scriptdir" .scheme.type
+    hilight .hilight.au3 1 "@scriptfullpath" .scheme.type
+    hilight .hilight.au3 1 "@scriptname" .scheme.type
+    hilight .hilight.au3 1 "@sec" .scheme.type
+    hilight .hilight.au3 1 "@startmenucommondir" .scheme.type
+    hilight .hilight.au3 1 "@startmenudir" .scheme.type
+    hilight .hilight.au3 1 "@startupcommondir" .scheme.type
+    hilight .hilight.au3 1 "@startupdir" .scheme.type
+    hilight .hilight.au3 1 "@sw_hide" .scheme.type
+    hilight .hilight.au3 1 "@sw_maximize" .scheme.type
+    hilight .hilight.au3 1 "@sw_minimize" .scheme.type
+    hilight .hilight.au3 1 "@sw_restore" .scheme.type
+    hilight .hilight.au3 1 "@sw_show" .scheme.type
+    hilight .hilight.au3 1 "@systemdir" .scheme.type
+    hilight .hilight.au3 1 "@tab" .scheme.type
+    hilight .hilight.au3 1 "@tempdir" .scheme.type
+    hilight .hilight.au3 1 "@userprofiledir" .scheme.type
+    hilight .hilight.au3 1 "@username" .scheme.type
+    hilight .hilight.au3 1 "@wday" .scheme.type
+    hilight .hilight.au3 1 "@windowsdir" .scheme.type
+    hilight .hilight.au3 1 "@workingdir" .scheme.type
+    hilight .hilight.au3 1 "@yday" .scheme.type
+    hilight .hilight.au3 1 "@year@appdatacommondir" .scheme.type
+    hilight .hilight.au3 1 "@appdatadir" .scheme.type
+    hilight .hilight.au3 1 "@autoitversion" .scheme.type
+    hilight .hilight.au3 1 "@commonfilesdir" .scheme.type
+    hilight .hilight.au3 1 "@compiled" .scheme.type
+    hilight .hilight.au3 1 "@computername" .scheme.type
+    hilight .hilight.au3 1 "@comspec" .scheme.type
+    hilight .hilight.au3 1 "@cr" .scheme.type
+    hilight .hilight.au3 1 "@crlf" .scheme.type
+    hilight .hilight.au3 1 "@desktopcommondir" .scheme.type
+    hilight .hilight.au3 1 "@desktopdir" .scheme.type
+    hilight .hilight.au3 1 "@desktopheight" .scheme.type
+    hilight .hilight.au3 1 "@desktopwidth" .scheme.type
+    hilight .hilight.au3 1 "@documentscommondir" .scheme.type
+    hilight .hilight.au3 1 "@error" .scheme.type
+    hilight .hilight.au3 1 "@favoritescommondir" .scheme.type
+    hilight .hilight.au3 1 "@favoritesdir" .scheme.type
+    hilight .hilight.au3 1 "@homedrive" .scheme.type
+    hilight .hilight.au3 1 "@homepath" .scheme.type
+    hilight .hilight.au3 1 "@homeshare" .scheme.type
+    hilight .hilight.au3 1 "@hour" .scheme.type
+    hilight .hilight.au3 1 "@ipaddress1" .scheme.type
+    hilight .hilight.au3 1 "@ipaddress2" .scheme.type
+    hilight .hilight.au3 1 "@ipaddress3" .scheme.type
+    hilight .hilight.au3 1 "@ipaddress4" .scheme.type
+    hilight .hilight.au3 1 "@lf" .scheme.type
+    hilight .hilight.au3 1 "@logondnsdomain" .scheme.type
+    hilight .hilight.au3 1 "@logondomain" .scheme.type
+    hilight .hilight.au3 1 "@logonserver" .scheme.type
+    hilight .hilight.au3 1 "@mday" .scheme.type
+    hilight .hilight.au3 1 "@min" .scheme.type
+    hilight .hilight.au3 1 "@mon" .scheme.type
+    hilight .hilight.au3 1 "@mydocumentsdir" .scheme.type
+    hilight .hilight.au3 1 "@osbuild" .scheme.type
+    hilight .hilight.au3 1 "@oslang" .scheme.type
+    hilight .hilight.au3 1 "@osservicepack" .scheme.type
+    hilight .hilight.au3 1 "@ostype" .scheme.type
+    hilight .hilight.au3 1 "@osversion" .scheme.type
+    hilight .hilight.au3 1 "@programfilesdir" .scheme.type
+    hilight .hilight.au3 1 "@programscommondir" .scheme.type
+    hilight .hilight.au3 1 "@programsdir" .scheme.type
+    hilight .hilight.au3 1 "@scriptdir" .scheme.type
+    hilight .hilight.au3 1 "@scriptfullpath" .scheme.type
+    hilight .hilight.au3 1 "@scriptname" .scheme.type
+    hilight .hilight.au3 1 "@sec" .scheme.type
+    hilight .hilight.au3 1 "@startmenucommondir" .scheme.type
+    hilight .hilight.au3 1 "@startmenudir" .scheme.type
+    hilight .hilight.au3 1 "@startupcommondir" .scheme.type
+    hilight .hilight.au3 1 "@startupdir" .scheme.type
+    hilight .hilight.au3 1 "@sw_hide" .scheme.type
+    hilight .hilight.au3 1 "@sw_maximize" .scheme.type
+    hilight .hilight.au3 1 "@sw_minimize" .scheme.type
+    hilight .hilight.au3 1 "@sw_restore" .scheme.type
+    hilight .hilight.au3 1 "@sw_show" .scheme.type
+    hilight .hilight.au3 1 "@systemdir" .scheme.type
+    hilight .hilight.au3 1 "@tab" .scheme.type
+    hilight .hilight.au3 1 "@tempdir" .scheme.type
+    hilight .hilight.au3 1 "@userprofiledir" .scheme.type
+    hilight .hilight.au3 1 "@username" .scheme.type
+    hilight .hilight.au3 1 "@wday" .scheme.type
+    hilight .hilight.au3 1 "@windowsdir" .scheme.type
+    hilight .hilight.au3 1 "@workingdir" .scheme.type
+    hilight .hilight.au3 1 "@yday" .scheme.type
+    hilight .hilight.au3 1 "@year" .scheme.type
+    hilight .hilight.au3 1 "abs" .scheme.keyword
+    hilight .hilight.au3 1 "acos" .scheme.keyword
+    hilight .hilight.au3 1 "adlibdisable" .scheme.keyword
+    hilight .hilight.au3 1 "adlibenable" .scheme.keyword
+    hilight .hilight.au3 1 "asc" .scheme.keyword
+    hilight .hilight.au3 1 "asin" .scheme.keyword
+    hilight .hilight.au3 1 "atan" .scheme.keyword
+    hilight .hilight.au3 1 "autoitsetoption" .scheme.keyword
+    hilight .hilight.au3 1 "autoitwingettitle" .scheme.keyword
+    hilight .hilight.au3 1 "autoitwinsettitle" .scheme.keyword
+    hilight .hilight.au3 1 "bitand" .scheme.keyword
+    hilight .hilight.au3 1 "bitnot" .scheme.keyword
+    hilight .hilight.au3 1 "bitor" .scheme.keyword
+    hilight .hilight.au3 1 "bitshift" .scheme.keyword
+    hilight .hilight.au3 1 "bitxor" .scheme.keyword
+    hilight .hilight.au3 1 "blockinput" .scheme.keyword
+    hilight .hilight.au3 1 "break" .scheme.keyword
+    hilight .hilight.au3 1 "call" .scheme.keyword
+    hilight .hilight.au3 1 "cdtray" .scheme.keyword
+    hilight .hilight.au3 1 "chr" .scheme.keyword
+    hilight .hilight.au3 1 "clipget" .scheme.keyword
+    hilight .hilight.au3 1 "clipput" .scheme.keyword
+    hilight .hilight.au3 1 "controlclick" .scheme.keyword
+    hilight .hilight.au3 1 "controlcommand" .scheme.keyword
+    hilight .hilight.au3 1 "controldisable" .scheme.keyword
+    hilight .hilight.au3 1 "controlenable" .scheme.keyword
+    hilight .hilight.au3 1 "controlfocus" .scheme.keyword
+    hilight .hilight.au3 1 "controlgetfocus" .scheme.keyword
+    hilight .hilight.au3 1 "controlgetpos" .scheme.keyword
+    hilight .hilight.au3 1 "controlgettext" .scheme.keyword
+    hilight .hilight.au3 1 "controlhide" .scheme.keyword
+    hilight .hilight.au3 1 "controlmove" .scheme.keyword
+    hilight .hilight.au3 1 "controlsend" .scheme.keyword
+    hilight .hilight.au3 1 "controlsettext" .scheme.keyword
+    hilight .hilight.au3 1 "controlshow" .scheme.keyword
+    hilight .hilight.au3 1 "cos" .scheme.keyword
+    hilight .hilight.au3 1 "dec" .scheme.keyword
+    hilight .hilight.au3 1 "dircopy" .scheme.keyword
+    hilight .hilight.au3 1 "dircreate" .scheme.keyword
+    hilight .hilight.au3 1 "dirmove" .scheme.keyword
+    hilight .hilight.au3 1 "dirremove" .scheme.keyword
+    hilight .hilight.au3 1 "drivegetdrive" .scheme.keyword
+    hilight .hilight.au3 1 "drivegetfilesystem" .scheme.keyword
+    hilight .hilight.au3 1 "drivegetlabel" .scheme.keyword
+    hilight .hilight.au3 1 "drivegetserial" .scheme.keyword
+    hilight .hilight.au3 1 "drivegettype" .scheme.keyword
+    hilight .hilight.au3 1 "drivesetlabel" .scheme.keyword
+    hilight .hilight.au3 1 "drivespacefree" .scheme.keyword
+    hilight .hilight.au3 1 "drivespacetotal" .scheme.keyword
+    hilight .hilight.au3 1 "drivestatus" .scheme.keyword
+    hilight .hilight.au3 1 "envget" .scheme.keyword
+    hilight .hilight.au3 1 "envset" .scheme.keyword
+    hilight .hilight.au3 1 "envupdate" .scheme.keyword
+    hilight .hilight.au3 1 "eval" .scheme.keyword
+    hilight .hilight.au3 1 "exp" .scheme.keyword
+    hilight .hilight.au3 1 "filechangedir" .scheme.keyword
+    hilight .hilight.au3 1 "fileclose" .scheme.keyword
+    hilight .hilight.au3 1 "filecopy" .scheme.keyword
+    hilight .hilight.au3 1 "filecreateshortcut" .scheme.keyword
+    hilight .hilight.au3 1 "filedelete" .scheme.keyword
+    hilight .hilight.au3 1 "fileexists" .scheme.keyword
+    hilight .hilight.au3 1 "filefindfirstfile" .scheme.keyword
+    hilight .hilight.au3 1 "filefindnextfile" .scheme.keyword
+    hilight .hilight.au3 1 "filegetattrib" .scheme.keyword
+    hilight .hilight.au3 1 "filegetlongname" .scheme.keyword
+    hilight .hilight.au3 1 "filegetshortname" .scheme.keyword
+    hilight .hilight.au3 1 "filegetsize" .scheme.keyword
+    hilight .hilight.au3 1 "filegettime" .scheme.keyword
+    hilight .hilight.au3 1 "filegetversion" .scheme.keyword
+    hilight .hilight.au3 1 "fileinstall" .scheme.keyword
+    hilight .hilight.au3 1 "filemove" .scheme.keyword
+    hilight .hilight.au3 1 "fileopen" .scheme.keyword
+    hilight .hilight.au3 1 "fileopendialog" .scheme.keyword
+    hilight .hilight.au3 1 "fileread" .scheme.keyword
+    hilight .hilight.au3 1 "filereadline" .scheme.keyword
+    hilight .hilight.au3 1 "filerecycle" .scheme.keyword
+    hilight .hilight.au3 1 "filesavedialog" .scheme.keyword
+    hilight .hilight.au3 1 "fileselectfolder" .scheme.keyword
+    hilight .hilight.au3 1 "filesetattrib" .scheme.keyword
+    hilight .hilight.au3 1 "filesettime" .scheme.keyword
+    hilight .hilight.au3 1 "filewrite" .scheme.keyword
+    hilight .hilight.au3 1 "filewriteline" .scheme.keyword
+    hilight .hilight.au3 1 "hex" .scheme.keyword
+    hilight .hilight.au3 1 "hotkeyset" .scheme.keyword
+    hilight .hilight.au3 1 "inidelete" .scheme.keyword
+    hilight .hilight.au3 1 "iniread" .scheme.keyword
+    hilight .hilight.au3 1 "iniwrite" .scheme.keyword
+    hilight .hilight.au3 1 "inputbox" .scheme.keyword
+    hilight .hilight.au3 1 "int" .scheme.keyword
+    hilight .hilight.au3 1 "isadmin" .scheme.keyword
+    hilight .hilight.au3 1 "isarray" .scheme.keyword
+    hilight .hilight.au3 1 "isdeclared" .scheme.keyword
+    hilight .hilight.au3 1 "isfloat" .scheme.keyword
+    hilight .hilight.au3 1 "isint" .scheme.keyword
+    hilight .hilight.au3 1 "isnumber" .scheme.keyword
+    hilight .hilight.au3 1 "isstring" .scheme.keyword
+    hilight .hilight.au3 1 "log" .scheme.keyword
+    hilight .hilight.au3 1 "memgetstats" .scheme.keyword
+    hilight .hilight.au3 1 "mod" .scheme.keyword
+    hilight .hilight.au3 1 "mouseclick" .scheme.keyword
+    hilight .hilight.au3 1 "mouseclickdrag" .scheme.keyword
+    hilight .hilight.au3 1 "mousedown" .scheme.keyword
+    hilight .hilight.au3 1 "mousegetcursor" .scheme.keyword
+    hilight .hilight.au3 1 "mousegetpos" .scheme.keyword
+    hilight .hilight.au3 1 "mousemove" .scheme.keyword
+    hilight .hilight.au3 1 "mouseup" .scheme.keyword
+    hilight .hilight.au3 1 "msgbox" .scheme.keyword
+    hilight .hilight.au3 1 "number" .scheme.keyword
+    hilight .hilight.au3 1 "pixelgetcolor" .scheme.keyword
+    hilight .hilight.au3 1 "pixelsearch" .scheme.keyword
+    hilight .hilight.au3 1 "processclose" .scheme.keyword
+    hilight .hilight.au3 1 "processexists" .scheme.keyword
+    hilight .hilight.au3 1 "processwait" .scheme.keyword
+    hilight .hilight.au3 1 "processwaitclose" .scheme.keyword
+    hilight .hilight.au3 1 "progressoff" .scheme.keyword
+    hilight .hilight.au3 1 "progresson" .scheme.keyword
+    hilight .hilight.au3 1 "progressset" .scheme.keyword
+    hilight .hilight.au3 1 "random" .scheme.keyword
+    hilight .hilight.au3 1 "regdelete" .scheme.keyword
+    hilight .hilight.au3 1 "regread" .scheme.keyword
+    hilight .hilight.au3 1 "regwrite" .scheme.keyword
+    hilight .hilight.au3 1 "round" .scheme.keyword
+    hilight .hilight.au3 1 "run" .scheme.keyword
+    hilight .hilight.au3 1 "runasset" .scheme.keyword
+    hilight .hilight.au3 1 "runwait" .scheme.keyword
+    hilight .hilight.au3 1 "send" .scheme.keyword
+    hilight .hilight.au3 1 "seterror" .scheme.keyword
+    hilight .hilight.au3 1 "shutdown" .scheme.keyword
+    hilight .hilight.au3 1 "sin" .scheme.keyword
+    hilight .hilight.au3 1 "sleep" .scheme.keyword
+    hilight .hilight.au3 1 "soundplay" .scheme.keyword
+    hilight .hilight.au3 1 "soundsetwavevolume" .scheme.keyword
+    hilight .hilight.au3 1 "splashimageon" .scheme.keyword
+    hilight .hilight.au3 1 "splashoff" .scheme.keyword
+    hilight .hilight.au3 1 "splashtexton" .scheme.keyword
+    hilight .hilight.au3 1 "sqrt" .scheme.keyword
+    hilight .hilight.au3 1 "statusbargettext" .scheme.keyword
+    hilight .hilight.au3 1 "string" .scheme.keyword
+    hilight .hilight.au3 1 "stringaddcr" .scheme.keyword
+    hilight .hilight.au3 1 "stringformat" .scheme.keyword
+    hilight .hilight.au3 1 "stringinstr" .scheme.keyword
+    hilight .hilight.au3 1 "stringisalnum" .scheme.keyword
+    hilight .hilight.au3 1 "stringisalpha" .scheme.keyword
+    hilight .hilight.au3 1 "stringisascii" .scheme.keyword
+    hilight .hilight.au3 1 "stringisdigit" .scheme.keyword
+    hilight .hilight.au3 1 "stringisfloat" .scheme.keyword
+    hilight .hilight.au3 1 "stringisint" .scheme.keyword
+    hilight .hilight.au3 1 "stringislower" .scheme.keyword
+    hilight .hilight.au3 1 "stringisspace" .scheme.keyword
+    hilight .hilight.au3 1 "stringisupper" .scheme.keyword
+    hilight .hilight.au3 1 "stringisxdigit" .scheme.keyword
+    hilight .hilight.au3 1 "stringleft" .scheme.keyword
+    hilight .hilight.au3 1 "stringlen" .scheme.keyword
+    hilight .hilight.au3 1 "stringlower" .scheme.keyword
+    hilight .hilight.au3 1 "stringmid" .scheme.keyword
+    hilight .hilight.au3 1 "stringreplace" .scheme.keyword
+    hilight .hilight.au3 1 "stringright" .scheme.keyword
+    hilight .hilight.au3 1 "stringsplit" .scheme.keyword
+    hilight .hilight.au3 1 "stringstripcr" .scheme.keyword
+    hilight .hilight.au3 1 "stringstripws" .scheme.keyword
+    hilight .hilight.au3 1 "stringtrimleft" .scheme.keyword
+    hilight .hilight.au3 1 "stringtrimright" .scheme.keyword
+    hilight .hilight.au3 1 "stringupper" .scheme.keyword
+    hilight .hilight.au3 1 "tan" .scheme.keyword
+    hilight .hilight.au3 1 "timerstart" .scheme.keyword
+    hilight .hilight.au3 1 "timerstop" .scheme.keyword
+    hilight .hilight.au3 1 "tooltip" .scheme.keyword
+    hilight .hilight.au3 1 "traytip" .scheme.keyword
+    hilight .hilight.au3 1 "ubound" .scheme.keyword
+    hilight .hilight.au3 1 "urldownloadtofile" .scheme.keyword
+    hilight .hilight.au3 1 "winactivate" .scheme.keyword
+    hilight .hilight.au3 1 "winactive" .scheme.keyword
+    hilight .hilight.au3 1 "winclose" .scheme.keyword
+    hilight .hilight.au3 1 "winexists" .scheme.keyword
+    hilight .hilight.au3 1 "wingetcaretpos" .scheme.keyword
+    hilight .hilight.au3 1 "wingetclasslist" .scheme.keyword
+    hilight .hilight.au3 1 "wingetclientsize" .scheme.keyword
+    hilight .hilight.au3 1 "wingethandle" .scheme.keyword
+    hilight .hilight.au3 1 "wingetpos" .scheme.keyword
+    hilight .hilight.au3 1 "wingetstate" .scheme.keyword
+    hilight .hilight.au3 1 "wingettext" .scheme.keyword
+    hilight .hilight.au3 1 "wingettitle" .scheme.keyword
+    hilight .hilight.au3 1 "winkill" .scheme.keyword
+    hilight .hilight.au3 1 "winmenuselectitem" .scheme.keyword
+    hilight .hilight.au3 1 "winminimizeall" .scheme.keyword
+    hilight .hilight.au3 1 "winminimizeallundo" .scheme.keyword
+    hilight .hilight.au3 1 "winmove" .scheme.keyword
+    hilight .hilight.au3 1 "winsetontop" .scheme.keyword
+    hilight .hilight.au3 1 "winsetstate" .scheme.keyword
+    hilight .hilight.au3 1 "winsettitle" .scheme.keyword
+    hilight .hilight.au3 1 "winwait" .scheme.keyword
+    hilight .hilight.au3 1 "winwaitactive" .scheme.keyword
+    hilight .hilight.au3 1 "winwaitclose" .scheme.keyword
+    hilight .hilight.au3 1 "winwaitnotactive" .scheme.keyword
+!endif
+!if &sin "d" .fhook-au3.setup
+    ; create a simple indentation rule for AutoIt
+    0 indent .hilight.au3 1 20
+    indent .hilight.au3 N "func"  4
+    indent .hilight.au3 O "endfunc" -4
+    indent .hilight.au3 N "while"  4
+    indent .hilight.au3 O "wend" -4
+    indent .hilight.au3 N "do"  4
+    indent .hilight.au3 O "until" -4
+    indent .hilight.au3 N "for"  4
+    indent .hilight.au3 O "next" -4
+    indent .hilight.au3 N "if"  4
+    indent .hilight.au3 n "[\t ]then[\t ]+[^\t ;\n]" -4
+    indent .hilight.au3 S "elseif"  -4
+    indent .hilight.au3 S "else"  -4
+    indent .hilight.au3 O "endif"  -4
+    indent .hilight.au3 N "select"  4
+    indent .hilight.au3 O "endselect"  -4
+    indent .hilight.au3 i ";"
+    ;    indent .hilight.au3 i "Then ExitLoop" this does not work
+!endif
+
+buffer-init-fhook "au3"
+

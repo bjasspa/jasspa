@@ -1,0 +1,6 @@
+If "If \p Then\r\rEndIf\r\P"
+Se "Select\rCase \p\rCase\rEndSelect\r\P"
+Fo "For $i = \p To . Step 1\r\rNext\r\P"
+Wh "While \p\r\rWEnd\r\P"
+Do "Do\r\rUntil "
+Fu "Func \p\r\rEndFunc\r\P"

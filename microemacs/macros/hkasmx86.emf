@@ -21,7 +21,7 @@ set-variable .fhook-asmx86.comment "|;||;|; | ;|r|"
 
 ; setup item-list
 set-variable .fhook-asmx86.item-list-s1 "^[ \t]*proc*[ \t]+\\(\\w+\\)"
-set-variable .fhook.asmx86.item-list-r1 "Proc \ecB\\1\ecA"
+set-variable .fhook-asmx86.item-list-r1 "Proc \ecB\\1\ecA"
 
 ; setup.asmx86 collapse support
 set-variable .fhook-asmx86.collapse-open  "^proc "
