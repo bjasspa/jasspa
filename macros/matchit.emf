@@ -1,0 +1,1323 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+; Author:           Steven Phillips
+; Created:          05th June 1997
+; Last Modified:    <990824.1400>
+;
+; History:
+;
+;   97/06/05 JG Initial Version
+;
+; Notes:
+;   This version of Mah Jongg was inspired by the X-Windows version of the
+;   same game.
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+0 define-macro mi-get-bit-square
+;    set-variable $debug 1
+    !if &seq &mid :mi-tiles @# 1 "\xfe"
+        set-variable #g1 0
+    !else
+        set-variable #g1 0x10
+    !endif
+    !if &not &seq &mid :mi-tiles &sub @# 1 1 "\xfe"
+        set-variable #g1 &add #g1 0x08
+    !endif
+    !if &not &seq &mid :mi-tiles &add @# 1 1 "\xfe"
+        set-variable #g1 &add #g1 0x20
+    !endif
+    !if &gre @# 35
+        !if &not &seq &mid :mi-tiles &sub @# 19 1 "\xfe"
+            set-variable #g1 &add #g1 0x01
+        !endif
+        !if &not &seq &mid :mi-tiles &sub @# 18 1 "\xfe"
+            set-variable #g1 &add #g1 0x02
+        !endif
+        !if &not &seq &mid :mi-tiles &sub @# 17 1 "\xfe"
+            set-variable #g1 &add #g1 0x04
+        !endif
+    !endif
+    !if &les @# 108
+        !if &not &seq &mid :mi-tiles &add @# 17 1 "\xfe"
+            set-variable #g1 &add #g1 0x40
+        !endif
+        !if &not &seq &mid :mi-tiles &add @# 18 1 "\xfe"
+            set-variable #g1 &add #g1 0x80
+        !endif
+        !if &not &seq &mid :mi-tiles &add @# 19 1 "\xfe"
+            set-variable #g1 &add #g1 0x100
+        !endif
+    !endif
+!emacro    
+
+0 define-macro mi-get-corner-char
+    !if &band #g2 0x01
+        !if &or &band #g2 0x10 &equ &band #g2 0x0a 0x0a
+            3 screen-poke #g8 #g9 .scheme.mi2 &mid $box-chars 7 1
+        !elif &band #g2 0x02
+            3 screen-poke #g8 #g9 .scheme.mi2 &mid $box-chars 9 1
+        !elif &band #g2 0x08
+            3 screen-poke #g8 #g9 .scheme.mi2 &mid $box-chars 8 1
+        !else
+            3 screen-poke #g8 #g9 .scheme.mi2 &mid $box-chars 4 1
+        !endif
+    !elif &band #g2 0x02
+        !if &band #g2 0x08
+            3 screen-poke #g8 #g9 .scheme.mi2 &mid $box-chars 7 1
+        !elif &band #g2 0x10
+            3 screen-poke #g8 #g9 .scheme.mi2 &mid $box-chars 6 1
+        !else
+            3 screen-poke #g8 #g9 .scheme.mi2 &mid $box-chars 3 1
+        !endif
+    !elif &band #g2 0x08
+        !if &band #g2 0x10
+            3 screen-poke #g8 #g9 .scheme.mi2 &mid $box-chars 5 1
+        !else
+            3 screen-poke #g8 #g9 .scheme.mi2 &mid $box-chars 2 1
+        !endif
+    !elif &band #g2 0x10
+        3 screen-poke #g8 #g9 .scheme.mi2 &mid $box-chars 1 1
+    !else
+        3 screen-poke #g8 #g9 .scheme.mi1 " "
+    !endif
+!emacro
+
+0 define-macro mi-draw-tile
+    ; Get the number of the tile and convert into
+    ; a tile position.
+    set-variable #g0 &mid :mi-tiles @# 1
+    @# mi-get-bit-square
+
+    ; Get the column and row. #g9 = col X; #g8 = row Y
+    set-variable #g9 &add &mul 5 &mod @# 18 :mi-x0   ; The row.
+    set-variable #g8 &add &mul 5 &div @# 18 :mi-y0   ; The column
+    
+    !if &band #g1 0x10
+        set-variable #g5 .scheme.mi2
+        set-variable #g7 $box-chars
+    !else
+        set-variable #g5 .scheme.mi1
+        set-variable #g7 "           "
+    !endif
+    ; do the corners and edges
+    ; Fill in the centre with data
+    set-variable #g2 #g1
+    mi-get-corner-char
+    !if &not &equ &band #g1 0x12 0x02
+        3 screen-poke #g8 &add #g9 1 #g5 &spr "%4s" &rig #g7 10
+    !endif
+    set-variable #g9 &add #g9 5
+    set-variable #g2 &div #g1 2
+    mi-get-corner-char
+    !if &not &equ &band #g1 0x30 0x20
+        3 screen-poke &inc #g8 1 #g9 #g5 &lef #g7 1
+        3 screen-poke &inc #g8 1 #g9 #g5 &lef #g7 1
+        3 screen-poke &inc #g8 1 #g9 #g5 &lef #g7 1
+        3 screen-poke &inc #g8 1 #g9 #g5 &lef #g7 1
+        set-variable #g8 &add #g8 1
+    !else
+        set-variable #g8 &add #g8 5
+    !endif
+    set-variable #g2 &div #g1 16
+    mi-get-corner-char
+    !if &not &equ &band #g1 0x90 0x80
+        3 screen-poke #g8 &sub #g9 4 #g5 &spr "%4s" &rig #g7 10
+    !endif
+    set-variable #g9 &sub #g9 5
+    set-variable #g2 &div #g1 8
+    mi-get-corner-char
+    !if &not &equ &band #g1 0x18 0x08
+        3 screen-poke &dec #g8 1 #g9 #g5 &lef #g7 1
+        3 screen-poke &dec #g8 1 #g9 #g5 &lef #g7 1
+        3 screen-poke &dec #g8 1 #g9 #g5 &lef #g7 1
+        3 screen-poke &dec #g8 1 #g9 #g5 &lef #g7 1
+    !else
+        set-variable #g8 &sub #g8 4
+    !endif
+    set-variable #g9 &add #g9 1
+ 
+    !if &band #g1 0x10
+        set-variable #g0 &sub &atoi #g0 1
+        set-variable #g0 &mul #g0 4       ; Get tile index
+        71 screen-poke      #g8   #g9 &mid :mi-tile-c0 #g0 4 &mid :mi-tile-r0 #g0 4
+        71 screen-poke &add #g8 1 #g9 &mid :mi-tile-c1 #g0 4 &mid :mi-tile-r1 #g0 4
+        71 screen-poke &add #g8 2 #g9 &mid :mi-tile-c2 #g0 4 &mid :mi-tile-r2 #g0 4
+        69 screen-poke &add #g8 3 #g9 &mid :mi-tile-c3 #g0 4 &mid :mi-tile-r3 #g0 4
+    !else
+        3 screen-poke      #g8   #g9 #g5 "    "
+        3 screen-poke &add #g8 1 #g9 #g5 "    "
+        3 screen-poke &add #g8 2 #g9 #g5 "    "
+        1 screen-poke &add #g8 3 #g9 #g5 "    "
+    !endif
+!emacro
+;
+; mi-deal - Deal the tiles
+;
+0 define-macro mi-deal
+    !if &not :mi-lives
+        ml-write "Game Over!!"
+        !abort
+    !endif
+    set-variable :mi-status 0
+    ;
+    ; Shuffle the pack.
+    ;
+    ml-write "Shuffling Tiles..."
+    find-buffer "*match-it*"               ; Select the buffer
+    !force forward-line                    ; Not sure ???
+    -1 buffer-mode "view"
+    ; Kill the buffer off
+    beginning-of-buffer
+    delete-other-windows
+    set-mark
+    end-of-buffer
+    kill-region
+    -1 yank
+    ; Shuffle by generating random key and then sorting.
+    beginning-of-buffer
+    set-variable #g1 32
+    !repeat
+        insert-string &sprint "%s%s\n" &itoa #g1 $random
+    !until &equ &inc #g1 1 74
+    ; Add the extra pair of winds and 2 dragons
+    set-variable #g1 68
+    !repeat
+        insert-string &sprint "%s%s\n" &itoa #g1 $random
+    !until &equ &inc #g1 1 74
+    ; Sort the lines using the random column
+    beginning-of-buffer
+    set-mark
+    48 forward-line
+    1 sort-lines
+    ; Collect the shuffled data from the buffer.
+    beginning-of-buffer
+    set-variable #g9 ""              ; #g9 will be the shuffled pack
+    !repeat
+        set-variable #g9 &cat #g9 &itoa &sub &atoi @wc 31
+        forward-line
+    !until &equ $window-line 49
+    !force 0 find-buffer "*mi"
+    !if &not $status
+        !force 1 find-file &find "matchit" ".edf"
+        !if &not $status
+            2000 ml-write "[Failed to find Match-It data file matchit.edf]"
+            !abort
+        !endif
+        change-buffer-name "*mi"
+    !endif
+    beginning-of-buffer
+    &mod $random 129 forward-line
+    set-variable #g7 @wl
+    ml-write "Allocating Tiles..."
+    -1 find-buffer $buffer-bname
+    ; Fill the table with data
+    set-variable #g8 &spr "%19s" "\xfe"
+    set-variable #g0 96
+    set-variable #g1 6
+    !while &pdec #g1 1
+        !repeat
+            set-variable #g0 &sub #g0 1
+            set-variable #g8 &cat #g8 &mid #g9 &sub &atoi &mid #g7 #g0 1 32 1
+        !until &not &mod #g0 16
+        set-variable #g8 &cat #g8 "\xfe\xfe"
+    !done
+    set-variable #g8 &spr "%s%17s" #g8 "\xfe"
+
+    set-variable :mi-sel-tile-id 254   ; No tile selected
+    set-variable :mi-tiles #g8         ; Allocate the tiles.
+    set-variable :mi-again #g8         ; Remember the tiles.
+    set-variable :mi-togo 96           ; Number of tiles to go.
+    set-variable :mi-right-help 0
+    set-variable :mi-internal 15
+    set-variable :mi-pedigree 1
+    set-variable :mi-game-help 19
+    set-variable :mi-time &sub 400 &mul &pinc :mi-level 1 20
+    !if &les :mi-time 200
+        set-variable :mi-time 200
+    !endif
+    !if &and &not &mod :mi-level 3 &les :mi-helps 9
+        set-variable :mi-helps &add :mi-helps 1
+    !endif
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    kill-region
+    -1 yank
+    -1 buffer-mode "edit"
+     1 buffer-mode "view"
+    buffer-bind-key mi-draw    "redraw"
+    1 buffer-bind-key mi-draw  "C-l"
+    set-variable :mi-status 1
+    1000 create-callback mi-reduce-time
+!emacro
+
+0 define-macro mi-level-end
+    -1 create-callback mi-reduce-time
+    !if &not :mi-togo
+        set-variable #g0 1
+        #g0 screen-poke &add :mi-y0 3 &add :mi-x0 35 .scheme.mi3 &spr "%s   Well Done!   %s" &lef $box-chars 1 &lef $box-chars 1
+    !else
+        set-variable #g0 33
+        !if &equ @# 1
+            #g0 screen-poke &add :mi-y0 3 &add :mi-x0 35 .scheme.mi3 &spr "%s   Times up!    %s" &lef $box-chars 1 &lef $box-chars 1
+        !else
+            #g0 screen-poke &add :mi-y0 3 &add :mi-x0 35 .scheme.mi3 &spr "%s  Check-mated!  %s" &lef $box-chars 1 &lef $box-chars 1
+        !endif
+        set-variable :mi-lives &sub :mi-lives 1
+    !endif
+    #g0 screen-poke &add :mi-y0 2 &add :mi-x0 35 .scheme.mi3 &spr "%s%16s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+    #g0 screen-poke &add :mi-y0 5 &add :mi-x0 35 .scheme.mi3 &spr "%s%16s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+    !if &not :mi-lives
+        #g0 screen-poke &add :mi-y0 4 &add :mi-x0 35 .scheme.mi3 &spr "%s * Game Over! * %s" &lef $box-chars 1 &lef $box-chars 1
+    !else
+        #g0 screen-poke &add :mi-y0 4 &add :mi-x0 35 .scheme.mi3 &spr "%s * Click Here * %s" &lef $box-chars 1 &lef $box-chars 1
+    !endif
+    set-variable :mi-status 2
+!emacro
+
+0 define-macro mi-end-game
+    set-variable #g1 :mi-score
+    set-variable #g2 :mi-level
+    !force 0 find-buffer "*mi"
+    !if &not $status
+        !force 1 find-file &find "matchit" ".edf"
+        !if &not $status
+            2000 ml-write "[Failed to find Match-It data file matchit.edf]"
+            !abort
+        !endif
+        change-buffer-name "*mi"
+    !endif
+    130 goto-line
+    set-variable #g0 1
+    !repeat
+        !if &gre #g1 &lef @wl 7
+            !force set-variable #g3 @ml10 "Please Enter your name" $MENAME
+            insert-string &spr "%7d%5d%s\n" #g1 #g2 #g3
+            !force 140 goto-line
+            !if $status
+                set-mark
+                end-of-buffer
+                kill-region
+                -1 yank
+            !endif
+            0 write-buffer $buffer-fname
+            change-buffer-name "*mi"
+            !jump 4
+        !endif
+        !force forward-line
+    !until &equ &inc #g0 1 10
+    -1 find-buffer $buffer-bname
+    mi-main-menu
+    !if &les #g0 11
+        ml-write &spr "You are position %d with %d" #g0 #g1
+    !endif
+!emacro
+
+0 define-macro mi-level-end2
+    !if &not :mi-lives
+        mi-end-game
+        !return
+    !endif
+    set-variable #g0 :mi-y0
+    !repeat
+        35 screen-poke #g0 :mi-x0 .scheme.mi1 &spr "%90s" " "
+    !until &gre &inc #g0 1 &add :mi-y0 35
+    !if :mi-togo
+        33 screen-poke &add :mi-y0 6 &add :mi-x0 40 .scheme.mi1 &spr "%d Lives left!" :mi-lives
+    !else
+        !if &equ :mi-internal 15
+            set-variable #g0 400
+        !else
+            set-variable #g0 0
+            !if &band :mi-internal 1
+                set-variable #g0 &add #g0 10
+            !endif
+            !if &band :mi-internal 2
+                set-variable #g0 &add #g0 10
+            !endif
+            !if &band :mi-internal 4
+                set-variable #g0 &add #g0 20
+            !endif
+            !if &band :mi-internal 8
+                set-variable #g0 &add #g0 20
+            !endif
+        !endif
+        set-variable #g2 &cond :mi-pedigree 50 0
+        set-variable #g1 &add &add &add &add &add &mul :mi-lives 10 &mul :mi-level 2 &mul :mi-helps 2 :mi-time #g0 #g2
+        set-variable :mi-score &add :mi-score #g1
+        33 screen-poke &add :mi-y0 6  &add :mi-x0 35 .scheme.mi1 "Bonuses"
+        33 screen-poke &add :mi-y0 7  &add :mi-x0 35 .scheme.mi1 &spr "Lives     : %4d" &mul :mi-lives 10
+        33 screen-poke &add :mi-y0 8  &add :mi-x0 35 .scheme.mi1 &spr "Level     : %4d" &mul :mi-level 2
+        33 screen-poke &add :mi-y0 9  &add :mi-x0 35 .scheme.mi1 &spr "Helps     : %4d" &mul :mi-helps 2
+        33 screen-poke &add :mi-y0 10 &add :mi-x0 35 .scheme.mi1 &spr "Time left : %4d"      :mi-time
+        33 screen-poke &add :mi-y0 11 &add :mi-x0 35 .scheme.mi1 &spr "Internal  : %4d"      #g0
+        33 screen-poke &add :mi-y0 12 &add :mi-x0 35 .scheme.mi1 &spr "Pedigree  : %4d"      #g2
+        33 screen-poke &add :mi-y0 13 &add :mi-x0 35 .scheme.mi1 &spr "----------------"
+        33 screen-poke &add :mi-y0 14 &add :mi-x0 35 .scheme.mi1 &spr "Total     : %4d"      #g1
+    !endif
+    33 screen-poke &add :mi-y0 16 &add :mi-x0 30 .scheme.mi1 "Press left mouse button to continue"
+    set-variable :mi-status 3
+!emacro
+
+0 define-macro mi-reduce-time
+    33 screen-poke 1 &add :mi-x0 41 .scheme.mi1 &sprint "%3d" &dec :mi-time 1
+    !if :mi-time
+        1000 create-callback mi-reduce-time
+        !return
+    !endif
+    1 mi-level-end
+!emacro
+; mi-draw-score
+; Display the score
+0 define-macro mi-draw-score
+    35 screen-poke 0 &add :mi-x0 51 .scheme.mi1 &cond &band :mi-internal 8 "*" " "
+    35 screen-poke 1 &add :mi-x0 50 .scheme.mi1 &cond &band :mi-internal 2 "*" " "
+    35 screen-poke 1 &add :mi-x0 52 .scheme.mi1 &cond &band :mi-internal 1 "*" " "
+    35 screen-poke 2 &add :mi-x0 51 .scheme.mi1 &cond &band :mi-internal 4 "*" " "
+    35 screen-poke 1 &add :mi-x0 54 .scheme.mi1 &cond :mi-pedigree "P" " "
+    33 screen-poke 1 &add :mi-x0 27 .scheme.mi1 &sprint "%d" :mi-score
+!emacro
+; mi-draw-menu - draw all the menu buttons and labels
+0 define-macro mi-draw-menu
+    ; Draw the frame for the score
+    35 screen-poke 1 &add :mi-x0  0 .scheme.mi1 &cat "Lives: " :mi-lives
+    35 screen-poke 1 &add :mi-x0 10 .scheme.mi1 &cat "Level: " :mi-level
+    35 screen-poke 1 &add :mi-x0 20 .scheme.mi1 "Score:"
+    35 screen-poke 1 &add :mi-x0 35 .scheme.mi1 &spr "Time: %3d" :mi-time
+    35 screen-poke 1 &add :mi-x0 51 .scheme.mi1 "I"
+    ; Draw frames for the menu options.
+    !if :mi-helps
+        35 screen-poke 0 &add :mi-x0 60 .scheme.mi1 &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+        35 screen-poke 1 &add :mi-x0 60 .scheme.mi1 &sprint "%sHelp%s %d" &lef $box-chars 1 &lef $box-chars 1 :mi-helps
+        35 screen-poke 2 &add :mi-x0 60 .scheme.mi1 &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+    !else
+        35 screen-poke 0 &add :mi-x0 60 .scheme.mi1 "      "
+        35 screen-poke 1 &add :mi-x0 60 .scheme.mi1 " Help  0"
+        35 screen-poke 2 &add :mi-x0 60 .scheme.mi1 "      "
+    !endif
+    35 screen-poke 0 &add :mi-x0 70 .scheme.mi1 &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+    35 screen-poke 1 &add :mi-x0 70 .scheme.mi1 &sprint "%sQuit%s" &lef $box-chars 1 &lef $box-chars 1
+    35 screen-poke 2 &add :mi-x0 70 .scheme.mi1 &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+
+    35 screen-poke 0 &add :mi-x0 80 .scheme.mi1 &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+    35 screen-poke 1 &add :mi-x0 80 .scheme.mi1 &sprint "%sBoss%s" &lef $box-chars 1 &lef $box-chars 1
+    35 screen-poke 2 &add :mi-x0 80 .scheme.mi1 &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+
+    mi-draw-score
+!emacro
+;
+; mi-draw
+; Draw all of the mahjong tiles.
+;
+0 define-macro mi-draw
+    !if &not @#
+        !return
+    !endif
+    delete-other-windows
+    screen-update
+    mi-draw-menu
+    !if &or &equ :mi-status 1 &equ :mi-status 2
+        set-variable #g4 19
+        !repeat
+            &pinc #g4 1 mi-draw-tile
+        !until &gre #g4 125
+        !if &not &equ :mi-sel-tile-id 254
+            :mi-sel-tile-id mi-hilight-tile 1
+        !endif
+        !if &equ :mi-status 2
+            !if :mi-togo
+                set-variable #g0 33
+            !else
+                set-variable #g0 1
+            !endif
+            #g0 screen-poke &add :mi-y0 2 &add :mi-x0 35 .scheme.mi3 &spr "%s%16s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+            #g0 screen-poke &add :mi-y0 3 &add :mi-x0 35 .scheme.mi3 &spr "%s   Sheet-Over   %s" &lef $box-chars 1 &lef $box-chars 1
+            #g0 screen-poke &add :mi-y0 4 &add :mi-x0 35 .scheme.mi3 &spr "%s * Click Here * %s" &lef $box-chars 1 &lef $box-chars 1
+            #g0 screen-poke &add :mi-y0 5 &add :mi-x0 35 .scheme.mi3 &spr "%s%16s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+        !endif
+    !elif &equ :mi-status 3
+        33 screen-poke &add :mi-y0 15 &add :mi-x0 30 .scheme.mi1 "Press left mouse button to continue"
+    !endif
+!emacro
+;
+; mi-new-game - Start a new game of Match-It
+;
+0 define-macro mi-new-game
+    set-variable :mi-score 0           ; Current score
+    set-variable :mi-level 0           ; Current level or sheet
+    set-variable :mi-lives 3           ; Current no. lives
+    set-variable :mi-helps 3           ; Current no. helps
+    mi-deal
+!emacro
+;
+; mi-quit - Quit the game
+0 define-macro mi-quit
+    !force delete-buffer "*match-it*"
+!emacro
+;
+; mi-help - Help information
+;
+0 define-macro mi-help
+    !force help-command "Match-It"
+    !if $status
+        delete-window
+    !endif
+!emacro
+
+; Test if the path from the source position in #g7 is clear
+; The path taken is #g3 moves vertically then #g2 horizontally 
+; uses #g9 #g8
+0 define-macro mi-path-clear-vh
+    set-variable #g8 #g7
+    ; first arg is vertical move
+    set-variable #g9 #g3
+    !if &gre #g9 0
+        set-variable #g8 &add #g8 18
+        !if &dec #g9 1
+            !if &not &seq &mid :mi-tiles #g8 1 "\xfe"
+                !abort
+            !endif
+            !jump -5
+        !endif
+    !elif &les #g9 0
+        set-variable #g8 &sub #g8 18
+        !if &inc #g9 1
+            !if &not &seq &mid :mi-tiles #g8 1 "\xfe"
+                !abort
+            !endif
+            !jump -5
+        !endif
+    !endif
+    ; second arg is horizontal move
+    set-variable #g9 #g2
+    !if &gre #g9 0
+        !while &pdec #g9 1
+            !if &not &seq &mid :mi-tiles &pinc #g8 1 1 "\xfe"
+                !abort
+            !endif
+        !done
+    !elif &les #g9 0
+        !while &pinc #g9 1
+            !if &not &seq &mid :mi-tiles &pdec #g8 1 1 "\xfe"
+                !abort
+            !endif
+        !done
+    !endif
+!emacro
+    
+; Test if the path from the source position in #g7 is clear
+; The path taken is #g2 moves horizontally then #g3 vertically 
+; uses #g9 #g8
+0 define-macro mi-path-clear-hv
+    set-variable #g8 #g7
+    ; first arg is horizontal move
+    set-variable #g9 #g2
+    !if &gre #g9 0
+        set-variable #g8 &add #g8 1
+        !if &dec #g9 1
+            !if &not &seq &mid :mi-tiles #g8 1 "\xfe"
+                !abort
+            !endif
+            !jump -5
+        !endif
+    !elif &les #g9 0
+        set-variable #g8 &sub #g8 1
+        !if &inc #g9 1
+            !if &not &seq &mid :mi-tiles #g8 1 "\xfe"
+                !abort
+            !endif
+            !jump -5
+        !endif
+    !endif
+    ; second arg is horizontal move
+    set-variable #g9 #g3
+    !if &gre #g9 0
+        !while &pdec #g9 1
+            !if &not &seq &mid :mi-tiles &pinc #g8 18 1 "\xfe"
+                !abort
+            !endif
+        !done
+    !elif &les #g9 0
+        !while &pinc #g9 1
+            !if &not &seq &mid :mi-tiles &pdec #g8 18 1 "\xfe"
+                !abort
+            !endif
+        !done
+    !endif
+!emacro
+
+; draw a path indicator tile where:
+;   #g8 is the column, #g9 is the row and
+;   if #g0 is true then it draws it else it removes it  
+0 define-macro mi-draw-path-tile
+    !if #g0
+        35 screen-poke      #g8   #g9 .scheme.mi2 " ## "
+        35 screen-poke &add #g8 1 #g9 .scheme.mi2 "####"
+        35 screen-poke &add #g8 2 #g9 .scheme.mi2 "####"
+        35 screen-poke &add #g8 3 #g9 .scheme.mi2 " ## "
+    !else
+        3  screen-poke      #g8   #g9 .scheme.mi1 "    "
+        3  screen-poke &add #g8 1 #g9 .scheme.mi1 "    "
+        3  screen-poke &add #g8 2 #g9 .scheme.mi1 "    "
+        3  screen-poke &add #g8 3 #g9 .scheme.mi1 "    "
+    !endif
+    ; ml-write will do the flush as well
+    20 ml-write ""
+!emacro
+; draw a horizontal path of size #g1 where
+;   #g8 is the column, #g9 is the start row and
+;   if #g0 is true then it draws it else it removes it  
+0 define-macro mi-draw-path-h
+    !if &gre #g1 0
+        mi-draw-path-tile
+        set-variable #g9 &add #g9 5
+        !if &dec #g1 1
+            !jump -3
+        !endif
+    !elif &les #g1 0
+        mi-draw-path-tile
+        set-variable #g9 &sub #g9 5
+        !if &inc #g1 1
+            !jump -3
+        !endif
+    !endif
+!emacro
+; draw a vertical path of size #g1 where
+;   #g8 is the start column, #g9 is the row and
+;   if #g0 is true then it draws it else it removes it  
+0 define-macro mi-draw-path-v
+    !if &gre #g1 0
+        mi-draw-path-tile
+        set-variable #g8 &add #g8 5
+        !if &dec #g1 1
+            !jump -3
+        !endif
+    !elif &les #g1 0
+        mi-draw-path-tile
+        set-variable #g8 &sub #g8 5
+        !if &inc #g1 1
+            !jump -3
+        !endif
+    !endif
+!emacro
+; #g4 = from pos, #g5 = to pos, #g6 = path (cannot change #g4 #g5 or #g6)
+; format of #g6 = "iinnhh1vv1hh2vv2", i = internal, n = # moves, v = vert moves, h = horzontal moves
+; if n == 0 then the rest is not needed
+0 define-macro mi-draw-path
+    !if &mid #g6 2 2
+        ; Get the column and row. #g9 = col X; #g8 = row Y
+        set-variable #g9 &add 1 &add &mul 5 &mod #g4 18 :mi-x0   ; The row.
+        set-variable #g8 &add 1 &add &mul 5 &div #g4 18 :mi-y0   ; The column
+
+        set-variable #g0 @#
+        set-variable #g1 &mid #g6 4 3
+        !if #g1
+            !if &les #g1 0
+                set-variable #g9 &sub #g9 5
+                set-variable #g1 &add #g1 1
+            !else
+                set-variable #g9 &add #g9 5
+                set-variable #g1 &sub #g1 1
+            !endif
+            mi-draw-path-h
+            set-variable #g1 &mid #g6 7 3
+            mi-draw-path-v
+        !else
+            set-variable #g1 &mid #g6 7 3
+            !if &les #g1 0
+                set-variable #g8 &sub #g8 5
+                set-variable #g1 &add #g1 1
+            !else
+                set-variable #g8 &add #g8 5
+                set-variable #g1 &sub #g1 1
+            !endif
+            mi-draw-path-v
+        !endif
+        set-variable #g1 &mid #g6 10 3
+        mi-draw-path-h
+        set-variable #g1 &mid #g6 13 3
+        mi-draw-path-v
+    !endif
+!emacro
+; test that a valid path can be made from the source #g4, to the destination #g5
+; aborts if a path can not be made. If it can then the path is stored in #g6
+; the path is compatiable to mi-draw-path
+; uses #g9 #g8 #g7 #g6 #g3 #g2 #g1 #g0 - leaves #g4 #g5 unchanged
+0 define-macro mi-test-path
+    ; test simple cases first
+    !if &equ #g4 &add #g5 1
+        set-variable #g6 &spr "%2d0 " :mi-internal
+        !return
+    !endif
+    !if &equ #g4 &sub #g5 1
+        set-variable #g6 &spr "%2d0 " :mi-internal
+        !return
+    !endif
+    !if &equ #g4 &add #g5 18
+        set-variable #g6 &spr "%2d0 " :mi-internal
+        !return
+    !endif
+    !if &equ #g4 &sub #g5 18
+        set-variable #g6 &spr "%2d0 " :mi-internal
+        !return
+    !endif
+    set-variable #g0 &sub &mod #g5 18 &mod #g4 18
+    set-variable #g1 &sub &div #g5 18 &div #g4 18
+    set-variable #g6 "-1"
+    ; lets try horizontal first
+    set-variable #g2 #g0
+    set-variable #g3 #g1
+    !if #g3
+        ; lets try going east
+        set-variable #g7 &add #g4 1
+        !while &and &mod #g7 18 &seq &mid :mi-tiles #g7 1 "\xfe"
+            set-variable #g2 &sub #g2 1
+            !force mi-path-clear-vh
+            !if $status
+                !if &equ &mod #g7 18 17
+                    set-variable :mi-new-int &band :mi-internal 14
+                !else
+                    set-variable :mi-new-int :mi-internal
+                !endif
+                set-variable #g7 &sub &add &abs #g0 &abs #g1 1
+                !if &les #g2 0
+                    set-variable #g7 &sub #g7 &mul #g2 2
+                !endif
+                !if &or &gre :mi-new-int &lef #g6 2 &and &equ :mi-new-int &lef #g6 2 &les #g7 &mid #g6 2 2
+                    set-variable #g6 &spr "%2d%2d%3d%3d%3d0  " :mi-new-int #g7 &sub #g0 #g2 #g1 #g2
+                !endif
+                !jump 4
+            !endif
+            set-variable #g7 &add #g7 1
+        !done
+        ; lets try going west
+        set-variable #g2 #g0
+        set-variable #g7 &sub #g4 1
+        !while &and &les &mod #g7 18 18 &seq &mid :mi-tiles #g7 1 "\xfe"
+            set-variable #g2 &add #g2 1
+            !force mi-path-clear-vh
+            !if $status
+                !if &mod #g7 18
+                    set-variable :mi-new-int :mi-internal
+                !else
+                    set-variable :mi-new-int &band :mi-internal 13
+                !endif
+                set-variable #g7 &sub &add &abs #g0 &abs #g1 1
+                !if &gre #g2 0
+                    set-variable #g7 &add #g7 &mul #g2 2
+                !endif
+                !if &or &gre :mi-new-int &lef #g6 2 &and &equ :mi-new-int &lef #g6 2 &les #g7 &mid #g6 2 2
+                    set-variable #g6 &spr "%2d%2d%3d%3d%3d0  " :mi-new-int #g7 &sub #g0 #g2 #g1 #g2
+                !endif
+                !jump 4
+            !endif
+            set-variable #g7 &sub #g7 1
+        !done
+    !else
+        set-variable #g7 #g4
+        !force mi-path-clear-hv
+        !if $status
+            set-variable #g6 &spr "%2d%2d%3d0  0  0  " :mi-internal &abs #g0 #g0
+            !return
+        !endif
+    !endif
+    ; lets try vertical first
+    set-variable #g2 #g0
+    !if #g2
+        ; lets try going south
+        set-variable #g7 &add #g4 18
+        !while &and &les #g7 144 &seq &mid :mi-tiles #g7 1 "\xfe"
+            set-variable #g3 &sub #g3 1
+            !force mi-path-clear-hv
+            !if $status
+                !if &gre #g7 126
+                    set-variable :mi-new-int &band :mi-internal 11
+                !else
+                    set-variable :mi-new-int :mi-internal
+                !endif
+                set-variable #g7 &sub &add &abs #g0 &abs #g1 1
+                !if &les #g3 0
+                    set-variable #g7 &sub #g7 &mul #g3 2
+                !endif
+                !if &or &gre :mi-new-int &lef #g6 2 &and &equ :mi-new-int &lef #g6 2 &les #g7 &mid #g6 2 2
+                    set-variable #g6 &spr "%2d%2d0  %3d%3d%d" :mi-new-int #g7 &sub #g1 #g3 #g0 #g3
+                !endif
+                !jump 4
+            !endif
+            set-variable #g7 &add #g7 18
+        !done
+        ; lets try going North
+        set-variable #g3 #g1
+        set-variable #g7 &sub #g4 18
+        !while &and &gre #g7 0 &seq &mid :mi-tiles #g7 1 "\xfe"
+            set-variable #g3 &add #g3 1
+            !force mi-path-clear-hv
+            !if $status
+                !if &les #g7 18
+                    set-variable :mi-new-int &band :mi-internal 7
+                !else
+                    set-variable :mi-new-int :mi-internal
+                !endif
+                set-variable #g7 &sub &add &abs #g0 &abs #g1 1
+                !if &gre #g3 0
+                    set-variable #g7 &add #g7 &mul #g3 2
+                !endif
+                !if &or &gre :mi-new-int &lef #g6 2 &and &equ :mi-new-int &lef #g6 2 &les #g7 &mid #g6 2 2
+                    set-variable #g6 &spr "%2d%2d0  %3d%3d%d" :mi-new-int #g7 &sub #g1 #g3 #g0 #g3
+                !endif
+                !jump 4
+            !endif
+            set-variable #g7 &sub #g7 18
+        !done
+    !else
+        set-variable #g7 #g4
+        !force mi-path-clear-vh
+        !if $status
+            set-variable #g6 &spr "%2d%2d0  %3d0  0  " :mi-internal &abs #g1 #g1
+            !return
+        !endif
+    !endif
+    !if &gre &lef #g6 2 -1
+        !return
+    !endif
+    !abort
+!emacro
+
+; #g4 is the source tile, go round looking for a pair and test it for
+; being able to remove.
+0 define-macro mi-find-removable-pair-from
+    !while &les #g5 126
+        !if &not &seq &set #g3 &mid :mi-tiles #g5 1 "\xfe"
+            !if &equ @# &set #g3 &sub &atoi #g3 1 
+                !force mi-test-path
+                !if $status
+                    !return
+                !endif
+            !elif &les @# 8
+                !if &equ &div @# 4 &div #g3 4
+                    !force mi-test-path
+                    !if $status
+                        !return
+                    !endif
+                !endif
+            !endif
+        !endif
+        set-variable #g5 &add #g5 1
+    !done
+    !abort
+!emacro
+; #g4 is the from source tile, go round looking for a pair and test it for
+; being able to remove.
+0 define-macro mi-find-removable-from
+    !while &les #g4 125
+        ml-write &cat "Looking " &mid "|/-\\" &mod #g4 4 1
+        !if &not &seq &mid :mi-tiles #g4 1 "\xfe"
+            set-variable #g2 &sub &atoi &mid :mi-tiles #g4 1 1
+            set-variable #g5 &add #g4 1
+            !force #g2 mi-find-removable-pair-from
+            !if $status
+                !return
+            !endif
+        !endif
+        set-variable #g4 &add #g4 1
+    !done
+    !abort
+!emacro
+
+0 define-macro mi-game-help
+    !if &not &equ :mi-status 1
+        !abort
+    !endif
+    !if &not :mi-helps
+        ml-write "No more helps!!"
+        !abort
+    !endif
+    mi-uselect
+    set-variable #g4 :mi-game-help
+    !force mi-find-removable-from
+    !if &not $status
+        set-variable #g4 19
+        !force mi-find-removable-from
+        !if &not $status
+            2 mi-level-end
+            !abort
+        !endif
+    !endif
+    set-variable :mi-helps &sub :mi-helps 1
+    set-variable :mi-game-help #g4
+    ; draw the path, then remove it and the tiles
+    set-variable :mi-internal &lef #g6 2
+    !if &not &seq &mid :mi-tiles #g4 1 &mid :mi-tiles #g5 1
+        set-variable :mi-pedigree 0
+    !endif
+    1 mi-draw-path
+    0 mi-draw-path
+    set-variable :mi-sel-tile-id 254
+    set-variable :mi-tiles &spr "%s%s%s" &lef :mi-tiles #g4 "\xfe" &rig :mi-tiles &add #g4 1
+    set-variable :mi-tiles &spr "%s%s%s" &lef :mi-tiles #g5 "\xfe" &rig :mi-tiles &add #g5 1
+    #g5 mi-draw-tile
+    #g4 mi-draw-tile
+    mi-draw-menu
+    ml-write "I found one!"
+    !if &not &dec :mi-togo 2
+        0 mi-level-end
+    !endif
+!emacro
+
+
+; hilight the centre of a tile where the argument is the tile position
+; and if the first arg is true then its hilighted else its de-hilighted
+; uses #g9 #g8 #g7 #g0 
+0 define-macro mi-hilight-tile
+    set-variable #g0 &mid :mi-tiles @# 1
+
+    ; Get the column and row. #g9 = col X; #g8 = row Y
+    set-variable #g9 &add &add &mul 5 &mod @# 18 :mi-x0 1
+    set-variable #g8 &add &add &mul 5 &div @# 18 :mi-y0 1
+    !if @1
+        set-variable #g7 101
+    !else
+        set-variable #g7 69
+    !endif
+    set-variable #g0 &sub &atoi #g0 1
+    set-variable #g0 &mul #g0 4       ; Get tile index
+    #g7 screen-poke      #g8   #g9 &mid :mi-tile-c0 #g0 4 &mid :mi-tile-r0 #g0 4
+    #g7 screen-poke &add #g8 1 #g9 &mid :mi-tile-c1 #g0 4 &mid :mi-tile-r1 #g0 4
+    #g7 screen-poke &add #g8 2 #g9 &mid :mi-tile-c2 #g0 4 &mid :mi-tile-r2 #g0 4
+    #g7 screen-poke &add #g8 3 #g9 &mid :mi-tile-c3 #g0 4 &mid :mi-tile-r3 #g0 4
+!emacro
+
+0 define-macro mi-new-pos
+    ; Check if we are unselecting the position
+    !if &equ :mi-sel-tile-id #g5
+        !return
+    !endif
+    
+    set-variable #g3 &atoi &mid :mi-tiles #g5 1
+    !if &equ #g3 254
+        !return
+    !endif
+
+    ; Hilight tile so the user knows
+    #g5 mi-hilight-tile 1
+    ; Try selecting the tile.
+    !if &equ :mi-sel-tile-id 254
+        set-variable :mi-sel-tile-id #g5    ; Record the tile identity
+        !return
+    !endif
+    set-variable #g4 :mi-sel-tile-id
+    set-variable #g2 &atoi &mid :mi-tiles #g4 1
+    ; Test if the tiles are from the same set
+    !if &not &equ #g2 #g3
+        !if &gre #g2 8
+            ; de-hilight and return
+            100 ml-write "Not a pair!"
+            #g5 mi-hilight-tile 0
+            !return
+        !elif &not &equ &div &sub #g2 1 4 &div &sub #g3 1 4
+            ; de-hilight and return
+            100 ml-write "Not a pair!"
+            #g5 mi-hilight-tile 0
+            !return
+        !endif
+    !endif
+    !force mi-test-path
+    !if $status
+        ; draw the path, then remove it and the tiles
+        set-variable :mi-internal &lef #g6 2
+        !if &not &seq &mid :mi-tiles #g4 1 &mid :mi-tiles #g5 1
+            set-variable :mi-pedigree 0
+        !endif
+        set-variable :mi-score &add :mi-score 2
+        1 mi-draw-path
+        0 mi-draw-path
+        set-variable :mi-sel-tile-id 254
+        set-variable :mi-tiles &spr "%s%s%s" &lef :mi-tiles #g4 "\xfe" &rig :mi-tiles &add #g4 1
+        set-variable :mi-tiles &spr "%s%s%s" &lef :mi-tiles #g5 "\xfe" &rig :mi-tiles &add #g5 1
+        #g5 mi-draw-tile
+        #g4 mi-draw-tile
+        mi-draw-score
+        !if &not &dec :mi-togo 2
+            0 mi-level-end
+        !endif
+    !else
+        set-variable :mi-score &sub :mi-score 4
+        mi-draw-score
+        100 ml-write "No path! minus 4"
+        #g5 mi-hilight-tile 0
+    !endif
+!emacro
+; mi-mouse
+; Turn the mouse position and click into a selection action.
+0 define-macro mi-plmouse
+    !if &equ :mi-status 1
+        set-variable #g0 &sub $mouse-x :mi-x0
+        ; See if we're in the top score area
+        !if &les $mouse-y :mi-y0
+            !return
+        !endif
+        set-variable #g1 &sub $mouse-y :mi-y0
+        ; Check X min/X max
+        !if &or &not &mod #g0 5 &or &les #g0 5 &gre #g0 85
+            !return         ; Not on a tile.
+        !endif
+        ; Check Y min/Y max
+        !if &or &not &mod #g1 5 &or &les #g1 5 &gre #g1 35
+            !return         ; Not on a tile
+        !endif
+        ; Turn the mouse position into a tile address.
+        set-variable #g5 &add &mul &div #g1 5 18 &div #g0 5
+        mi-new-pos
+    !elif &equ :mi-status 2
+        !if &and &and &gre $mouse-x &add :mi-x0 35 &les $mouse-x &add :mi-x0 53 &and &gre $mouse-y 4 &les $mouse-y 9
+            mi-level-end2
+        !endif
+    !elif &equ :mi-status 3
+        mi-deal
+    !endif
+!emacro
+0 define-macro mi-dlmouse
+    !if &equ :mi-status 4
+        !if &or &les $mouse-x 71 &gre $mouse-x 74
+            !return
+        !endif
+        !if &equ $mouse-y 16
+            mi-new-game
+        !elif &equ $mouse-y 21
+            mi-quit
+        !elif &equ $mouse-y 26
+            mi-help
+        !endif
+    !else
+        !if &equ $mouse-y 1
+            set-variable #g0 &sub $mouse-x :mi-x0
+            set-variable #g1 &mod #g0 10
+            !if &or &les #g1 1 &gre #g1 5
+                !return
+            !endif
+            set-variable #g1 &div #g0 10
+            !if &equ #g1 6
+                mi-game-help
+            !elif &equ #g1 7
+                mi-quit
+            !elif &equ #g1 8
+                -1 find-buffer $buffer-bname
+            !endif
+        !endif
+    !endif
+!emacro
+
+0 define-macro mi-show-tiles
+    set-variable #g1 &sub @# 1
+    set-variable #g2 @1
+    set-variable #g4 18
+    !repeat
+        set-variable #g3 &mid :mi-tiles #g4 1
+        !if &not &seq #g4 "\xfe"
+            set-variable #g3 &sub &atoi #g3 1
+            !if &equ #g1 #g3
+                #g4 mi-hilight-tile #g2
+            !elif &les #g1 8
+                !if &equ &div #g1 4 &div #g3 4
+                    #g4 mi-hilight-tile #g2
+                !endif
+            !endif
+        !endif
+        set-variable #g4 &add #g4 1
+    !until &gre #g4 125
+!emacro
+
+0 define-macro mi-prmouse
+    !if &not &equ :mi-status 1
+        !abort
+    !endif
+    !if &equ :mi-sel-tile-id 254
+        set-variable #g0 &sub $mouse-x :mi-x0
+        set-variable #g1 &sub $mouse-y :mi-y0
+        !if &and &gre #g0 0 &gre #g1 0 
+            set-variable #g1 &atoi &mid :mi-tiles &add &mul &div #g1 5 18 &div #g0 5 1
+            !if &not &equ #g1 254
+                set-variable :mi-right-help #g1
+                set-variable :mi-score &sub :mi-score 4
+                mi-draw-score
+                #g1 mi-show-tiles 1
+            !endif
+        !endif
+    !else
+        mi-uselect
+    !endif
+!emacro
+
+0 define-macro mi-drmouse
+    !if &not &equ :mi-status 1
+        !abort
+    !endif
+    !if :mi-right-help
+        :mi-right-help mi-show-tiles 0
+        set-variable :mi-right-help 0
+    !endif
+!emacro
+
+; mi-uselect
+; Unselect the currently selected tile.
+0 define-macro mi-uselect
+    !if &not &equ :mi-status 1
+        !abort
+    !endif
+    !if &not &equ  :mi-sel-tile-id 254
+        set-variable #g9 :mi-sel-tile-id    ; Remember the selected tile
+        set-variable :mi-sel-tile-id 254   ; Unselect the current tile
+        #g9 mi-hilight-tile 0               ; Unselect the tile.
+    !endif
+!emacro
+;
+; mi-idle-hook
+; Use the idle to continue the count down timer
+;
+0 define-macro mi-idle-hook
+    buffer-unbind-key "idle-pick"
+    !if &equ :mi-status 1
+        500 create-callback mi-reduce-time
+    !endif
+!emacro
+;
+; bhook-match-it
+; Buffer hook - entry into the *match-it* buffer.
+; Bind the idle key to initiate a re-draw.
+;
+0 define-macro bhook-match-it
+    -1 show-cursor                          ; Turn off the cursor
+    !force osd -1 0                         ; Turn off the menu.
+    set-variable :mi-scroll $scroll-bar     ; Save the scroll bar state
+    set-variable $scroll-bar 0              ; Disable the scroll bars.
+    buffer-bind-key mi-idle-hook "idle-pick"
+!emacro
+;
+; ehook-match-it
+; Exit Mah Jongg buffer.
+;
+0 define-macro ehook-match-it
+    1 show-cursor                           ; Turn on the cursor.
+    set-variable $scroll-bar :mi-scroll     ; Turn the scroll bars back on
+    !force osd -1 1                         ; Turn on the menu.
+    !if &equ :mi-status 1
+        -1 create-callback mi-reduce-time
+    !endif
+!emacro
+
+0 define-macro mi-main-draw
+    !if &not @#
+        !return
+    !endif
+    1 screen-update
+    35 screen-poke  5 40 .scheme.mi1 "Match-It II"
+    35 screen-poke  6 40 .scheme.mi1 "==========="
+    35 screen-poke 15 70 .scheme.mi1 &sprint "%s%4s%s"  &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+    35 screen-poke 16 70 .scheme.mi1 &sprint "%sNew %s" &lef $box-chars 1 &lef $box-chars 1
+    35 screen-poke 17 70 .scheme.mi1 &sprint "%s%4s%s"  &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+
+    35 screen-poke 20 70 .scheme.mi1 &sprint "%s%4s%s"  &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+    35 screen-poke 21 70 .scheme.mi1 &sprint "%sQuit%s" &lef $box-chars 1 &lef $box-chars 1
+    35 screen-poke 22 70 .scheme.mi1 &sprint "%s%4s%s"  &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+
+    35 screen-poke 25 70 .scheme.mi1 &sprint "%s%4s%s"  &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+    35 screen-poke 26 70 .scheme.mi1 &sprint "%sHelp%s" &lef $box-chars 1 &lef $box-chars 1
+    35 screen-poke 27 70 .scheme.mi1 &sprint "%s%4s%s"  &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+
+    35 screen-poke 17 10 .scheme.mi1 "Pos Name                       Level   Score"
+    set-variable #g1 0
+    !repeat
+        35 screen-poke &add 18 #g1 10 .scheme.mi1 &mid :mi-hitable &mul #g1 44 44
+    !until &equ &pinc #g1 1 10
+    ; do this last with a flush!
+    33 screen-poke 15 20 .scheme.mi1 "Top Table"
+!emacro
+
+define-macro mi-main-menu
+    -1 create-callback mi-reduce-time
+    delete-other-windows
+    set-variable :mi-status 4
+    !force 0 find-buffer "*mi"
+    !if &not $status
+        !force 1 find-file &find "matchit" ".edf"
+        !if &not $status
+            2000 ml-write "[Failed to find Match-It data file matchit.edf]"
+            !abort
+        !endif
+        change-buffer-name "*mi"
+    !endif
+    set-variable #g1 1
+    set-variable #g2 ""
+    !repeat
+        !force &add 129 #g1 goto-line
+        !if &and $status &gre &len @wl 11
+            set-variable #g5 &add 0 &lef @wl 7
+            set-variable #g4 &add 0 &mid @wl 7 5
+            set-variable #g3 &rig @wl 12
+        !else
+            set-variable #g3 "Steven Phillips"
+            set-variable #g4 "1"
+            set-variable #g5 "0"
+        !endif
+        set-variable #g2 &spr "%s%3d %s %n %5d %7d" #g2 #g1 #g3 &sub 25 &len #g3 "." #g4 #g5
+    !until &equ &pinc #g1 1 10
+    -1 find-buffer $buffer-bname
+    find-buffer "*match-it*"
+    set-variable :mi-hitable #g2
+    1 mi-main-draw
+!emacro
+
+define-macro Match-It
+    ; Set it so we get a new seed
+    set-variable $random 0
+    find-buffer "*match-it*"
+    !if &seq $buffer-bhook ""
+        ;
+        ; Set up the tiles
+        ;
+        set-variable #g0 &itoa .scheme.mi1
+        set-variable #g1 &itoa .scheme.mi2
+        set-variable #g2 &itoa .scheme.mi3
+        ; +----+----+----+----+
+        ; | ** | ** | ** | ** |
+        ; |SUM |WIN |AUT |SPR | 2 off each = 4
+        ; | MER| TER| UMN| ING|
+        ; | ** | ** | ** | ** |
+        ; +----+----+----+----+
+        set-variable :mi-tile-r0 " **  **  **  ** "
+        set-variable :mi-tile-r1 "SUM WIN AUT SPR "
+        set-variable :mi-tile-r2 " MER TER UMN ING"
+        set-variable :mi-tile-r3 " **  **  **  ** "
+        set-variable :mi-tile-c0 &spr "%16s" #g1
+        set-variable :mi-tile-c1 &spr "%16s" #g0
+        set-variable :mi-tile-c2 &spr "%16s" #g0
+        set-variable :mi-tile-c3 &spr "%16s" #g1
+        ; +----+----+----+----+
+        ; |P  @|O  @|B  @|C  @|
+        ; | L  | R  | B  | H  | 2 off each = 4
+        ; |  U |  C |  O |  R |
+        ; |@  M|@  H|@  O|@  Y|
+        ; +----+----+----+----+
+        set-variable :mi-tile-r0 &cat :mi-tile-r0 "P  @O  @B  @C  @"
+        set-variable :mi-tile-r1 &cat :mi-tile-r1 " L   R   A   H  "
+        set-variable :mi-tile-r2 &cat :mi-tile-r2 "  U   C   M   R "
+        set-variable :mi-tile-r3 &cat :mi-tile-r3 "@  M@  H@  B@  Y"
+        set-variable :mi-tile-c0 &cat :mi-tile-c0 &spr "%2s%2s%2s%2s%2s%2s%2s%2s" #g0 #g1 #g0 #g1 #g0 #g1 #g0 #g1
+        set-variable :mi-tile-c1 &cat :mi-tile-c1 &spr "%16s" #g0
+        set-variable :mi-tile-c2 &cat :mi-tile-c2 &spr "%16s" #g0
+        set-variable :mi-tile-c3 &cat :mi-tile-c3 &spr "%2s%2s%2s%2s%2s%2s%2s%2s" #g1 #g0 #g1 #g0 #g1 #g0 #g1 #g0
+        ; +----+----+----+----+----+----+----+----+----+
+        ; |   9| oo8|oo 7|   6|   5|   4|   3|   2| o 1|
+        ; |ooo | oo |  o | oo |o o |o o |o   | o  |oOo | 2 off each = 36
+        ; |ooo | oo | oo | oo | o  |    | o  |    |oOo |
+        ; |ooo | oo | oo | oo |o o |o o |  o | o  | o  |
+        ; +----+----+----+----+----+----+----+----+----+
+        set-variable :mi-tile-r0 &cat :mi-tile-r0 "   9 oo8oo 7   6   5   4   3   2 o 1"
+        set-variable :mi-tile-r1 &cat :mi-tile-r1 "ooo  oo   o  oo o o o o o    o  oOo "
+        set-variable :mi-tile-r2 &cat :mi-tile-r2 "ooo  oo  oo  oo  o       o      oOo "
+        set-variable :mi-tile-r3 &cat :mi-tile-r3 "ooo  oo  oo  oo o o o o   o  o   o  "
+        set-variable :mi-tile-c0 &cat :mi-tile-c0 &spr "%4s%3s%s%2s%23s%s%2s" #g2 #g1 #g2 #g0 #g2 #g0 #g2
+        set-variable :mi-tile-c1 &cat :mi-tile-c1 &spr "%s%s%2s%4s%8s%2s%2s%2s%10s%s%s%2s" #g1 #g2 #g0 #g1 #g0 #g0 #g1 #g0 #g1 #g0 #g2 #g0
+        set-variable :mi-tile-c2 &cat :mi-tile-c2 &spr "%s%s%2s%4s%8s%16s%s%s%2s" #g1 #g2 #g0 #g1 #g2 #g2 #g0 #g2 #g0
+        set-variable :mi-tile-c3 &cat :mi-tile-c3 &spr "%s%s%2s%4s%8s%2s%2s%2s%14s" #g1 #g2 #g0 #g1 #g2 #g1 #g0 #g1 #g0
+        ; +----+----+----+----+----+----+----+----+----+
+        ; |   9|\  /|   7|   6| 5  |   4|   3|   2|   1|
+        ; |!!! |!88!| !  |! ! |! ! |! ! |    | !  | \o |
+        ; |!!! |!88!|!!! |! ! | !  |    | !  |    | /@@|  2 off each = 36
+        ; |!!! |/  \|!!! |! ! |! ! |! ! |! ! | !  |  /\|
+        ; +----+----+----+----+----+----+----+----+----+
+        set-variable :mi-tile-r0 &cat :mi-tile-r0 "   9\\  /   7   6   5   4   3   2   1"
+        set-variable :mi-tile-r1 &cat :mi-tile-r1 "!!! !88! !  ! ! ! ! ! !      !   \\o "
+        set-variable :mi-tile-r2 &cat :mi-tile-r2 "!!! !88!!!! ! !  !       !       /@@"
+        set-variable :mi-tile-r3 &cat :mi-tile-r3 "!!! /  \\!!! ! ! ! ! ! ! ! !  !    /\\"
+        set-variable :mi-tile-c0 &cat :mi-tile-c0 &spr "%4s%2s%2s%28s" #g2 #g0 #g1 #g2
+        set-variable :mi-tile-c1 &cat :mi-tile-c1 &spr "%s%s%3s%2s%s%4s%2s%4s%2s%2s%2s%4s%4s%4s" #g0 #g2 #g1 #g2 #g0 #g2 #g1 #g0 #g1 #g0 #g1 #g0 #g1 #g0
+        set-variable :mi-tile-c2 &cat :mi-tile-c2 &spr "%s%s%2s%s%2s%s%s%s%2s%2s%2s%4s%16s" #g0 #g2 #g1 #g0 #g2 #g1 #g0 #g1 #g0 #g1 #g0 #g2 #g0
+        set-variable :mi-tile-c3 &cat :mi-tile-c3 &spr "%s%s%4s%3s%s%2s%2s%2s%2s%2s%2s%14s" #g0 #g2 #g1 #g0 #g1 #g0 #g1 #g0 #g1 #g0 #g1 #g0
+        ; +----+----+----+----+----+----+----+----+----+
+        ; | # 9|   8|   7| o 6|/~5 |   4| ~3 |  2 |   1|
+        ; |/@\ |~|~ |~~  |--- | #~ |CD  |~~  | ~  |~~~ |  2 off each = 36
+        ; | #  | ~  | #  | %  | ## | @  | #  |~~~ | $  |
+        ; |/ } |##  |/ } |oOo |<#> |<#\ |/ } | #  |/#D |
+        ; +----+----+----+----+----+----+----+----+----+
+        set-variable :mi-tile-r0 &cat :mi-tile-r0 " # 9   8   7 o 6/~5    4 ~3   2    1"
+        set-variable :mi-tile-r1 &cat :mi-tile-r1 "/@\\ ~|~ ~~  ---  #~ CD  ~~   ~  ~~~ "
+        set-variable :mi-tile-r2 &cat :mi-tile-r2 " #   ~   #   %   ##  @   #  ~~~  $  "
+        set-variable :mi-tile-r3 &cat :mi-tile-r3 "/ } ##  / } oOo <#> <#\\ / }  #  /#D "
+        set-variable :mi-tile-c0 &cat :mi-tile-c0 &spr "%2s%10s%2s%2s%2s%6s%2s%10s" #g1 #g0 #g1 #g0 #g1 #g0 #g1 #g0
+        set-variable :mi-tile-c1 &cat :mi-tile-c1 &spr "%36s" #g1
+        set-variable :mi-tile-c2 &cat :mi-tile-c2 &spr "%36s" #g1
+        set-variable :mi-tile-c3 &cat :mi-tile-c3 &spr "%36s" #g1
+        ; +----+----+----+
+        ; |+--+|   C|   F|
+        ; || B||o|o |/#\ |
+        ; ||  || |  |### | 2 off each = 12
+        ; |+--+| |  |### |
+        ; +----+----+----+
+        set-variable :mi-tile-r0 &cat :mi-tile-r0 &sprint "%s%2s%s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1 "   C   F"
+        set-variable :mi-tile-r1 &cat :mi-tile-r1 &sprint "%s B%s%s"  &lef $box-chars 1 &lef $box-chars 1 "o|o /#\\ "
+        set-variable :mi-tile-r2 &cat :mi-tile-r2 &sprint "%s  %s%s"  &lef $box-chars 1 &lef $box-chars 1 " |  ### "
+        set-variable :mi-tile-r3 &cat :mi-tile-r3 &sprint "%s%2s%s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1 " |  ### "
+        set-variable :mi-tile-c0 &cat :mi-tile-c0 &spr "%4s%8s" #g1 #g0
+        set-variable :mi-tile-c1 &cat :mi-tile-c1 &spr "%2s%1s%9s" #g1 #g0 #g1
+        set-variable :mi-tile-c2 &cat :mi-tile-c2 &spr "%12s" #g1
+        set-variable :mi-tile-c3 &cat :mi-tile-c3 &spr "%12s" #g1
+        ; +----+----+----+----+
+        ; |   N|   E|   S|   W|
+        ; || | ||-- ||-- || | |
+        ; ||\| ||-  |+-+ ||^| | 4 off each = 16
+        ; || | ||-- |--| |/ \ |
+        ; +----+----+----+----+
+        set-variable :mi-tile-r0 &cat :mi-tile-r0 "   N   E   S   W"
+        ; North
+        set-variable :mi-tile-r1 &sprint "%s%s%s%s " :mi-tile-r1 &mid $box-chars 1 1 &mid $box-chars 2 1 &mid $box-chars 5 1
+        set-variable :mi-tile-r2 &sprint "%s%3s "    :mi-tile-r2 &lef $box-chars 1
+        set-variable :mi-tile-r3 &sprint "%s%s%s%s " :mi-tile-r3 &mid $box-chars 9 1 &mid $box-chars 3 1 &mid $box-chars 4 1
+        ; East
+        set-variable :mi-tile-r1 &sprint "%s%s%2s "  :mi-tile-r1 &mid $box-chars 1 1 &rig $box-chars 10
+        set-variable :mi-tile-r2 &sprint "%s%s%s  "  :mi-tile-r2 &mid $box-chars 6 1 &rig $box-chars 10
+        set-variable :mi-tile-r3 &sprint "%s%s%2s "  :mi-tile-r3 &mid $box-chars 3 1 &rig $box-chars 10
+        ; South
+        set-variable :mi-tile-r1 &sprint "%s%s%s%s " :mi-tile-r1 &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+        set-variable :mi-tile-r2 &sprint "%s%s%s%s " :mi-tile-r2 &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 2 1
+        set-variable :mi-tile-r3 &sprint "%s%s%s%s " :mi-tile-r3 &mid $box-chars 3 1 &rig $box-chars 10  &mid $box-chars 4 1
+        ; West
+        set-variable :mi-tile-r1 &sprint "%s%s %s "  :mi-tile-r1 &lef $box-chars 1   &lef $box-chars 1
+        set-variable :mi-tile-r2 &sprint "%s%3s "    :mi-tile-r2 &lef $box-chars 1
+        set-variable :mi-tile-r3 &sprint "%s%s%s%s " :mi-tile-r3 &mid $box-chars 3 1 &mid $box-chars 9 1 &mid $box-chars 4 1
+        set-variable :mi-tile-c0 &cat :mi-tile-c0 &spr "%16s" #g0
+        set-variable :mi-tile-c1 &cat :mi-tile-c1 &spr "%16s" #g1
+        set-variable :mi-tile-c2 &cat :mi-tile-c2 &spr "%16s" #g1
+        set-variable :mi-tile-c3 &cat :mi-tile-c3 &spr "%16s" #g1
+        set-variable :mi-x0 0
+        set-variable :mi-y0 3
+        set-variable :mi-status 4
+        set-variable $buffer-scheme .scheme.mi1
+        ; Set up the bindings
+        buffer-bind-key mi-main-draw "redraw"
+      1 buffer-bind-key mi-main-draw "C-l"
+        buffer-bind-key mi-quit "q"
+        buffer-bind-key mi-help "esc h"
+        ; Mouse bindings
+        buffer-bind-key mi-plmouse "mouse-pick-1"
+        buffer-bind-key mi-dlmouse "mouse-drop-1"
+        buffer-bind-key mi-prmouse "mouse-pick-2"
+        buffer-bind-key mi-prmouse "mouse-drop-2"
+        buffer-bind-key mi-prmouse "mouse-pick-3"
+        buffer-bind-key mi-drmouse "mouse-drop-3"
+        set-variable $buffer-bhook bhook-match-it
+        set-variable $buffer-ehook ehook-match-it
+        bhook-match-it
+    !endif
+    ; Set the screen size
+    !if &les $screen-depth 45
+        45 change-screen-depth
+    !endif
+    !if &les $screen-width 90
+        90 change-screen-width
+    !endif
+    !if &equ :mi-status 4
+        mi-main-menu
+    !endif
+;    mi-new-game
+!emacro

@@ -1,0 +1,192 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Sun Jan 10 20:57:03 1999
+;  Last Modified : <000719.0013>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 1999 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+0 define-macro zfile-loadfile
+    !if &les :zfcol 0
+        ml-write &spr "[find-zfile error: Registry entry \"/history/%s/%s-file-col\" not setup]" $platform :zftype
+        !abort
+    !endif
+    !if &seq "" &set #l0 &reg "/history" &spr "%s/%s-file-end" $platform :zftype ""
+        ml-write &spr "[find-zfile error: Registry entry \"/history/%s/%s-file-end\" not setup]" $platform :zftype
+        !abort
+    !endif
+    !if &seq "" &set #l9 &reg "/history" &spr "%s/%s-extract" $platform :zftype ""
+        ml-write &spr "[find-zfile error: Registry entry \"/history/%s/%s-extract\" not setup]" $platform :zftype
+        !abort
+    !endif
+    set-variable #l7 &reg "/history" &spr "%s/%s-remove" $platform :zftype ""
+    set-variable $window-acol :zfcol
+    !force regex-forward #l0
+    !force -2 show-region
+    set-mark
+    set-variable $window-acol :zfcol
+    copy-region
+    set-variable #l2 @y
+    -1 yank
+    !if &seq #l2 ""
+        ml-write "[find-zfile error: Invalid line]"
+        !abort
+    !endif
+    set-variable #l4 $buffer-fname
+    ; get a tmp file name and use the path of it as our scratch area
+    ; use &stat to get '/'s in a windows and dos system
+    set-variable #l0 &stat "a" $temp-name
+    set-variable #l0 &lef #l0 &ris "/" #l0
+    ; create the output file name and check if it exists
+    set-variable #l3 &cat #l0 #l2
+    !if &seq &set #l5 &stat "t" #l3 "R"
+        !if &iseq @mc1 &spr "Over-write file %s (y/n) ? " #l3 "yYnN" "n"
+            !return
+        !endif
+    !elif &not &seq #l5 "X"
+        ml-write &spr "[find-zfile error: Cannot output to file \"%s\"]" #l3
+        !abort
+    !endif
+    ; create a temporary buffer, set the filename to the path and kick off extract
+    find-buffer "*zfile log*"
+    set-variable $buffer-fname #l0
+    var-str-sub #l9 "%zb" &rig #l4 &rsin "/" #l4
+    !if &band $system 0x400
+        var-str-sub #l4 "/" "\\"
+    !endif
+    var-str-sub #l9 "%zf" #l4
+    var-str-sub #l9 "%fb" #l2
+    0 pipe-shell-command #l9 "*zfile log*" @mna
+    find-file #l3 @mna
+    set-variable $buffer-fname ""
+    set-variable #l5 $buffer-bname
+    find-buffer "*zfile log*"
+    !if &not &seq #l7 ""
+        var-str-sub #l7 "%fb" #l2
+        shell-command #l7
+    !endif
+    set-variable $buffer-fname ""
+    -1 find-buffer "*zfile log*"
+!emacro
+
+0 define-macro zfile-mouse-pick-1
+    !if &les :zfcol 0
+        ml-write &spr "[find-zfile error: Registry entry \"/history/%s/%s-file-col\" not setup]" $platform :zftype
+        set-variable :zmpl -1
+    !elif &les $window-acol :zfcol
+        set-variable :zmpl -1
+    !else
+        set-variable :zmpl $window-line
+        !if &seq "" &set #l0 &reg "/history" &spr "%s/%s-file-end" $platform :zftype ""
+            ml-write &spr "[find-zfile error: Registry entry \"/history/%s/%s-file-end\" not setup]" $platform :zftype
+            !abort
+        !endif
+        regex-forward #l0
+        -2 show-region
+        -3 show-region
+        set-variable $window-acol :zfcol
+        3 show-region
+    !endif
+    set-cursor-to-mouse
+    show-region
+!emacro
+0 define-macro zfile-mouse-drop-1
+    !if &les :zmpl 0
+    !elif &not &les $window-acol :zfcol
+        zfile-loadfile
+    !endif
+!emacro
+
+define-macro find-zfile
+    !force set-variable #l0 @1
+    !if &not $status
+        set-variable #l0 @ml01 "Find zfile"
+    !endif
+    ; get the extension
+    set-variable #l8 &rig #l0 &rsin "." #l0
+    !if &seq "" &set #l9 &reg "/history" &spr "%s/%s-list" $platform #l8 ""
+        ; try lower case
+        set-variable #l8 &slo #l8
+        !if &seq "" &set #l9 &reg "/history" &spr "%s/%s-list" $platform #l8 ""
+            ; try upper case
+            set-variable #l8 &sup #l8
+            !if &seq "" &set #l9 &reg "/history" &spr "%s/%s-list" $platform #l8 ""
+                ml-write &spr "[find-zfile error: Unknown file type \"%s\", run zfile-setup]" #l8
+                !abort
+            !endif
+        !endif
+    !endif
+    ; get the absolute file name
+    set-variable #l0 &stat "a" #l0
+    ; see if this has already been loaded
+    set-variable #l2 $buffer-bname
+    set-variable $buffer-names "[*].*"
+    !while &not &seq &set #l3 $buffer-names ""
+        find-buffer #l3
+        !if &seq $buffer-fname #l0
+            !return
+        !endif
+    !done
+    ; create a unique buffer name
+    set-variable #l2 &rig #l0 &rsin "/" #l0
+    set-variable #l3  #l2
+    set-variable #l4 0
+    set-variable $buffer-names &cat "[*]" #l3
+    !if &not &seq $buffer-names ""
+        set-variable #l3 &spr "%s<%d>" #l2 &inc #l4 1
+        !jump -3
+    !endif
+    set-variable #l3 &cat "*" #l3
+    ; pop-up buffer and set the file name so the execution only needs the base name
+    find-buffer #l3
+    set-variable $buffer-fname #l0
+    ; execute the list command into the buffer
+    var-str-sub #l9 "%zb" #l2
+    var-str-sub #l9 "%zf" #l0
+    0 pipe-shell-command #l9 #l3 @mna
+    set-variable $buffer-fname #l0
+    -1 buffer-mode "view"
+    set-mark
+    2 forward-line
+    !if &seq "" &set #l1 &reg "/history" &spr "%s/%s-cut-to" $platform #l8 ""
+    !else
+        !force regex-forward #l1
+        !if $status
+            -2 show-region
+        !endif
+    !endif
+    !force kill-region "y"
+    -1 yank
+    insert-string &spr "%s file: %s\n\n" #l8 #l0
+    beginning-of-buffer
+    -1 buffer-mode "edit"
+    1 buffer-mode "view"
+    buffer-bind-key zfile-loadfile "return"
+    set-variable :zftype #l8
+    set-variable :zfcol &reg "/history" &spr "%s/%s-file-col" $platform #l8 "-1"
+    set-variable :mouse-pick-1 zfile-mouse-pick-1
+    set-variable :mouse-drop-1 zfile-mouse-drop-1
+!emacro
+
+define-macro zfile-setup
+    set-variable #l0 @ml "zfile extension"
+    set-variable #l1 @ml2 "zfile list command (%zb=zbase %zf=zfile)" &reg "/history" &spr "%s/%s-list" $platform #l0 ""
+    set-registry "/history" &spr "%s/%s-list" $platform #l0 #l1
+    set-variable #l1 @ml2 "zfile cut to search string" &reg "/history" &spr "%s/%s-cut-to" $platform #l0 ""
+    set-registry "/history" &spr "%s/%s-cut-to" $platform #l0 #l1
+    set-variable #l1 @ml2 "zfile list file column" &reg "/history" &spr "%s/%s-file-col" $platform #l0 ""
+    set-registry "/history" &spr "%s/%s-file-col" $platform #l0 #l1
+    set-variable #l1 @ml2 "zfile file end search string" &reg "/history" &spr "%s/%s-file-end" $platform #l0 ""
+    set-registry "/history" &spr "%s/%s-file-end" $platform #l0 #l1
+    set-variable #l1 @ml2 "zfile extract command (%zb=zbase %zf=zfile %fb=fbase)" &reg "/history" &spr "%s/%s-extract" $platform #l0 ""
+    set-registry "/history" &spr "%s/%s-extract" $platform #l0 #l1
+    set-variable #l1 @ml2 "zfile remove extract command (%fb=fbase)" &reg "/history" &spr "%s/%s-remove" $platform #l0 ""
+    set-registry "/history" &spr "%s/%s-remove" $platform #l0 #l1
+!emacro

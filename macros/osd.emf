@@ -1,0 +1,545 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Jon Green
+;  Created       : Sat Jul 26 10:23:04 1997
+;  Last Modified : <000719.0012>
+;
+;  Description   : OSD - On Screen Display macros.
+;                  Controls the set up of the menus and screen overlays.
+;
+;  Notes         : Menus derrived from the original menu macro definitions
+;                  as defined by Steve Phillips. Macros subsequently displaced
+;                  by the built in function 'osd'. 'osd' encompasses all of
+;                  the menu handling macro requirements. The intention of the
+;                  osd functions is to simplify the menu management. In
+;                  addition provides better handling of the mouse which was
+;                  difficult in the macro environment (but not impossible !).
+;
+;  History       : 2nd March 1997 - Steve Phillips menu definitions.
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+; NOTE:- The numbering of menus is crucial, osd uses 0 for the top-level-menu
+;        Then 1-9 for the subsequent submenus. It then uses an undefied number
+;        of menus. It sets .osd.next to the next available menu number.
+;        Anyone intending to use osd should defined menu number .osd.next and then
+;        increment the value of .osd.next
+;
+; define some external macros which are used first.
+define-macro-file search   osd-find-tag osd-sar osd-goto-line
+define-macro-file hiline   line-scheme line-scheme-all line-scheme-search
+define-macro-file favorite osd-favorites
+define-macro-file insdate  osd-insert-date
+define-macro-file osdhelp  osd-help
+define-macro-file crosswd  cross-word
+;
+; define a main menu initialisation macro - main use of this is to insert the
+; find tag if a tags file exists & call specific file type open and close
+; commands to customize the main menu. The name of the commands must be
+; osd-ohook-XXXX and osd-chook-XXXX where XXXX is the hook label
+0 define-macro osd-main
+    ; preserve the visibility state of the current region
+    0 show-region
+    set-variable #l2 $result
+    !if &equ &band #l2 7 5
+        3 show-region
+    !endif
+    ; disable the buffer specific tools menu
+    !if &exi &ind .chook
+        execute-named-command .chook
+    !endif
+    !if &exi &set #l0 &cat "osd-ohook-" &rig $buffer-fhook 6
+        set-variable .chook &cat "osd-chook-" &rig $buffer-fhook 6
+        execute-named-command #l0
+    !endif
+    set-variable #l1 &cat &lef $buffer-fname &rsin "/" $buffer-fname "tags"
+    !if &seq #l1 .osd.tag-last
+        osd 1 40 ""  "Find &Tag" f "osd-find-tag"
+    !elif &gre &stat "s" #l1 0
+        osd 1 40 ""  "Find &Tag" f "osd-find-tag"
+    !else
+        osd 1 40 "D"
+    !endif
+    !if &xse @cl "osd-[ru][en]do" 
+        osd 2 20  ""  "&Redo" f osd-redo
+    !else
+        osd 2 20  ""  "Redo"
+    !endif
+    !if &seq &kbi "esc h" "ERROR"
+        osd 9 10 "D"
+    !else
+        osd 9 10 "i" "Curr Buffer &Help  esc h" f "execute-string \"\\Eh\""
+    !endif
+    !if &band #l2 1
+        show-region
+    !endif
+!emacro
+;
+; MENU #1 - File sub-menu
+;
+; Handle the 'New' command. Create text documents called "newXX.txt"
+; which will hold the new document. We assume it is a text file.
+;
+0 define-macro osd-1-new
+    set-variable #l0 1
+    !repeat
+        !force 0 find-buffer &spr "new%d.txt" #l0
+        !if &not $status
+            find-buffer  &spr "new%d.txt" #l0
+            !return
+        !endif
+        set-variable #l0 &add #l0 1
+    !until 0
+!emacro
+
+;
+; Handle the Buffer menu. Construct a new list of buffer from the
+; buffer list. This is menu 20
+;
+0 define-macro osd-1-buffer
+    set-variable #l0 1               ; First menu number
+    -1 osd @#
+    osd @# 0 b
+    set-variable $buffer-names ".*"
+    !while &not &seq &set #l3 $buffer-names ""
+        !if &not &nbmod #l3 "hide"
+            osd @# &inc #l0 1 "" #l3 0 "osd-1-buffer-select"
+        !endif
+    !done
+!emacro
+;
+; Helper macro for the above. Caller when the menu is selected.
+;
+0 define-macro osd-1-buffer-select
+    ; Select the buffer. The name of the buffer is in $result
+    0 find-buffer $result
+!emacro
+
+;
+; Handle the File menu. Construct a new list of files from the
+; buffer list. This is menu 20 also as they are regenerated
+;
+0 define-macro osd-1-file
+    set-variable #l2 &cat &reg "/history" "file-type" "\b" "All files\b"
+    !if &not &set #l1 &lfi #l2 $result
+        !abort
+    !endif
+    set-variable #l2 &lget &cat &reg "/history" "file-mask" "\b" "*\b" #l1
+    set-variable #l4 1
+    set-variable #l5 0
+    -1 osd @#
+    osd @# 0 "bA"
+*loopp
+    !if &seq #l2 ""
+        !if #l4
+            osd @# 1 ""  "None found"
+        !endif
+        !return
+    !endif
+    !if &not &set #l0 &sin "," #l2
+        set-variable #l1 #l2
+        set-variable #l2 ""
+    !else
+        set-variable #l1 &lef #l2 &sub #l0 1
+        set-variable #l2 &rig #l2 #l0
+    !endif
+    filemask-to-regex #l1
+    set-variable $file-names #l1
+    !while &not &seq &set #l3 $file-names ""
+        osd @# 1 ""  #l3 0 "osd-1-file-select"
+        set-variable #l4 "0"
+    !done
+    !goto loopp
+!emacro
+;
+; Helper macro for the above. Caller when the menu is selected.
+;
+0 define-macro osd-1-file-select
+    ; Select the buffer. The name of the buffer is in $result
+    0 find-file $result
+!emacro
+0 define-macro osd-save
+    !if &seq &lef $buffer-bname 1 "*"
+        osd-save-as
+    !elif &seq $buffer-fname ""
+        osd-save-as
+    !else
+        !nma save-buffer
+    !endif
+!emacro
+0 define-macro osd-save-as
+    set-variable .osd-get-file.title "Save Buffer As"
+    set-variable .osd-get-file.flags 0
+    set-variable .osd-get-file.ft 1
+    osd-get-file
+    set-variable #l0 .osd-get-file.result
+    !if &not &stat "w" #l0
+        2 osd-dialog "Save Buffer As" "  Invalid file name  " 10 6 " &OK "
+        !abort
+    !elif &sequ &stat "t" #l0 "R"
+        2 osd-xdialog "Save Buffer As" "  Over-write existing file?  " 1 10 6 "&Yes" "&No"
+        !if &equ $result 2
+            !abort
+        !endif
+    !endif
+    0 write-buffer #l0
+!emacro
+0 define-macro osd-save-all
+    set-variable #l2 $buffer-bname
+    set-variable $buffer-names "[^*].*"
+    !while &not &seq &set #l0 $buffer-names ""
+        !if &nbmod #l0 "edit"
+*try-again
+            find-buffer #l0
+            set-variable #l1 &spr "  Save changes to buffer \"%s\"  \n\n  File: %s  " #l0 $buffer-fname
+            find-buffer #l2
+            2 osd-xdialog "Save All" #l1 1 10 6 "&Yes" "&No" "&Cancel"
+            !if &equ $result 3
+                !abort
+            !elif &equ $result 1
+                find-buffer #l0
+                !force osd-save
+                !if &not $status
+                    !goto try-again
+                !endif
+                find-buffer #l2
+            !endif
+        !endif
+    !done
+    ; can't do registry and dictionaries in macro code
+    2 save-registry @mna
+    2 save-dictionary @mna
+    2 osd-xdialog "Save All" "  Save default history  " 1 10 8 "&Yes" "&No" "&Cancel"
+    !if &equ $result 3
+        !abort
+    !elif &equ $result 1
+        0 save-history
+    !endif
+!emacro
+0 define-macro osd-close
+    !if &bmod "edit"
+        set-variable #l0 &spr "Buffer \"%s\" has been changed" $buffer-bname
+        2 osd-xdialog "Buffer Close" #l0 1 10 6 "&Save First" "&Loose Changes" "&Cancel"
+        !if &equ $result 3
+            !abort
+        !elif &equ $result 1
+            osd-save
+        !endif
+    !endif
+    !if &bmod "pipe"
+        set-variable #l0 &spr "Buffer \"%s\" has active process" $buffer-bname
+        2 osd-xdialog "Buffer Close" #l0 1 10 6 "&Kill" "&Cancel"
+        !if &equ $result 2
+            !abort
+        !endif
+    !endif
+    0 delete-buffer $buffer-bname @mna
+!emacro
+
+osd 1  0   "b"
+osd 1  10  ""   "&New"                f osd-1-new      ; Create a new document
+osd 1  20  ""   "&Open       C-x C-f" f osd-file-open  ; Find a new file
+osd 1  30  "Md" "&Quick Open"        19
+osd 1  35  "Md" "&Favorites"         30 osd-favorites  ; Set up favorites
+osd 1  50  ""   "Find file f10"       f file-browser   ; Search in file
+osd 1  60  ""   "&Close     C-x k"    f osd-close
+osd 1  70  "-"
+osd 1  80  ""   "Att&ributes"         f file-attrib    ; Set file attributes
+osd 1  90  ""   "&Save      C-x C-s"  f osd-save       ; Save the buffer
+osd 1  100 ""   "Save &As   C-x C-w"  f osd-save-as    ; Save new file
+osd 1  110 ""   "Save A&ll"           f osd-save-all
+osd 1  120 "-"
+osd 1  130 ""   "Printer Set&up"      f print-setup    ; Setup printer
+osd 1  140 ""   "&Print"              f print-buffer   ; Print
+osd 1  150 "-"
+osd 1  160 "Md" "&Buffer"            20 osd-1-buffer   ; Set up the buffers
+osd 1  170 "-"
+osd 1  180 ""   "E&xit"               f save-buffers-exit-emacs
+
+; MENU #19 - Quick-open
+; if the file-type is found in the registry then add entry to menu 1 
+set-variable #l0 &cat &reg "/history" "file-type" "\b" "All files\b"
+-1 osd 19
+osd 19 0 "b"
+set-variable #l1 0
+!while &not &seq &set #l2 &lget #l0 &inc #l1 1 ""
+    osd 19 #l1 "M" #l2 20 "osd-1-file"
+!done
+;
+; MENU #2 - EDIT sub-menu
+;
+0 define-macro osd-undo
+    !if &seq @cl "osd-undo" 
+        set-variable .osd.undo &add .osd.undo 1
+        set-variable @cl undo
+    !else
+        set-variable .osd.undo 1
+        set-variable @cl @cl
+    !endif
+    @# undo
+    set-variable @cc osd-undo
+!emacro
+0 define-macro osd-redo
+    !if &seq @cl "osd-redo"
+        set-variable @cl undo
+    !else
+        set-variable .osd.undo &sub 0 .osd.undo
+    !endif
+    undo
+    !if &inc .osd.undo 1
+        set-variable @cc osd-redo
+    !endif
+!emacro
+osd 2  0   "b"
+osd 2  10  ""  "&Undo       C-x u"         1 osd-undo      ; Undo the last command
+osd 2  20  ""  "Redo"                                      ; Re-do the last osd-undo
+osd 2  25  ""  "Undo &All"                 0 osd-undo      ; Undo all changes to last save
+osd 2  30  "-"
+osd 2  40  ""  "&Set mark   esc space"     f set-mark      ; Set buffer mark
+osd 2  50  ""  "Cu&t        C-w"           f kill-region   ; Kill off the region
+osd 2  60  ""  "&Copy       esc w"         f copy-region   ; Copy the region
+osd 2  70  ""  "&Paste      C-y"           f yank          ; Paste text
+osd 2  80  "-"
+osd 2  90  ""  "Narrow &Out"               4 narrow-buffer
+osd 2  100 ""  "&Narrow To"                3 narrow-buffer
+osd 2  110 ""  "Remove S&ingle Narrow"     2 narrow-buffer
+osd 2  120 ""  "Remove A&ll Narrows"       1 narrow-buffer
+;
+; MENU #3 - SEARCH sub-menu
+;
+osd 3  0  "b"
+osd 3  10 ""  "&Search         C-s"      1 osd-sar
+osd 3  20 ""  "&Replace        esc C-r"  2 osd-sar
+osd 3  30 "-"
+osd 3  35 ""  "&Hilight Search"          f line-scheme-search
+osd 3  40 ""  "Goto &Line      esc g"    f osd-goto-line
+osd 3  50 ""  "Goto &Fence     esc C-i"  f goto-matching-fence
+osd 3  60 ""  "Set &Bookmark   C-x C-a"  f set-alpha-mark
+osd 3  70 ""  "&Goto Bookmark  C-x a"    f goto-alpha-mark
+;
+; MENU #4 - INSERT sub-menu
+;
+osd 4  0   "b"
+osd 4  10  ""   "&Symbol"               f symbol
+osd 4  20  "Md" "&Date \\& Time"       31 osd-insert-date
+osd 4  30  "-"
+osd 4  40  ""   "&File       C-x C-i"   f insert-file
+osd 4  50  ""   "File &Name  C-x C-y"   f insert-file-name
+osd 4  60  "-"
+osd 4  70  ""   "Macro..."              f insert-macro
+;
+; MENU #5 - FORMAT sub-menu
+;
+osd 5  0   "b"
+osd 5  10  ""  "Restyle &Buffer"                  f restyle-buffer
+osd 5  20  ""  "Restyle &Region"                  f restyle-region
+osd 5  23  ""  "&Clean Buffer"                    f clean
+osd 5  25  ""  "C&hange Buffer Char Set"          f charset-change
+osd 5  30  "-"
+osd 5  40  ""  "I&Q Fill Paragraph"               f ifill-paragraph
+osd 5  50  ""  "&Fill Paragraph         esc q"    f fill-paragraph
+osd 5  60  ""  "Fill &All Paragraphs"         65536 fill-paragraph
+osd 5  70  ""  "Paragraph to Line"                f paragraph-to-line
+osd 5  80  ""  "All Paragraphs to Lines"      65536 paragraph-to-line
+osd 5  90  "-"
+osd 5  100 ""  "&Sort Lines"                      f sort-lines
+osd 5  110 ""  "&Ignore Case Sort Lines"          f sort-lines-ignore-case
+osd 5  140 "-"
+osd 5  150 ""  "Capitali&ze Word        esc c"    f capitalize-word
+osd 5  160 ""  "&Lower Case Word        esc l"    f lower-case-word
+osd 5  170 ""  "L&ower Case Region      C-x C-l"  f lower-case-region
+osd 5  180 ""  "&Upper Case Word        esc u"    f upper-case-word
+osd 5  190 ""  "U&pper Case Region      C-x C-u"  f upper-case-region
+;
+; MENU #6 - EXECUTE sub-menu
+;
+osd 6  0   "b"
+osd 6  10  ""  "Execute &Command    esc x"        f execute-named-command
+osd 6  20  "i" "Execute &Buffer"                  f "execute-buffer $buffer-bname"
+osd 6  30  ""  "Execute &File       esc /"        f execute-file
+osd 6  40  "-"
+osd 6  50  ""  "&Start Kbd Macro    C-x ("        f start-kbd-macro
+osd 6  60  ""  "&Query Kbd Macro    C-x q"        f kbd-macro-query
+osd 6  70  ""  "&End Kbd Macro      C-x )"        f end-kbd-macro
+osd 6  80  ""  "Execute &Kbd Macro  C-x e"        f execute-kbd-macro
+osd 6  90  ""  "&Name Kbd Macro"                  f name-kbd-macro
+osd 6  100 "-"
+osd 6  110 ""  "&Ipipe command      esc \\\\"     f ipipe-shell-command
+osd 6  120 ""  "S&hell              C-x c"        f shell
+;
+; MENU #7 - TOOLS sub-menu
+; Start at item 10 so buffer specific tool menus can be inserted
+osd 7  0   "b"
+osd 7  10  ""  "Count &Words   esc C-c"           f count-words
+osd 7  20  ""  "&Spell Word    esc $"             1 spell-word
+osd 7  30  ""  "Spell &Buffer"                    f spell-buffer
+osd 7  35  ""  "Word Complete"                    f spell-complete-word
+osd 7  40  "-"
+osd 7  50  ""  "Com&pare Windows"                 f compare-windows
+osd 7  60  ""  "&Compile"                         f compile
+osd 7  70  ""  "&Grep"                            f grep
+osd 7  75  ""  "G&raphical Diff"                  1 gdiff
+osd 7  80  ""  "&Diff"                            f diff
+osd 7  90  ""  "Di&ff Changes"                    f diff-changes
+osd 7  100 "-"
+osd 7  110 ""  "&Organizer"                       f organizer
+osd 7  120 "i" "&Mail"                            f "mail"
+osd 7  130 "i" "&View Mail"                       f "vm"
+osd 7  140 "-"
+osd 7  300 "Md" "More..."                         22
+;
+; MENU #8 - WINDOW sub-menu
+;
+osd 8  0   "b"
+osd 8  10  ""  "&Split Window V   C-x 2"          f split-window-vertically
+osd 8  20  ""  "&Grow Window V    C-x z"          f grow-window-vertically
+osd 8  30  ""  "S&hrink Window V  C-x C-z"        f shrink-window-vertically
+osd 8  40  ""  "Spl&it Window H   C-x 3"          f split-window-horizontally
+osd 8  50  ""  "G&row Window H    C-x }"          f grow-window-horizontally
+osd 8  60  ""  "Shr&ink Window H  C-x {"          f shrink-window-horizontally
+osd 8  70  "-"
+osd 8  80  ""  "&One Window       C-x 1"          f delete-other-windows
+osd 8  90  ""  "&Delete Window    C-x 0"          f delete-window
+osd 8  100 "-"
+osd 8  110 ""  "&Previous Window  C-x C-p"        f previous-window
+osd 8  120 ""  "&Next Window      C-x C-o"        f next-window
+;
+; MENU #9 - HELP sub-window
+;
+osd 9  0   "b"
+osd 9  20  ""  "General Help      esc &?"         f osd-help
+osd 9  30  ""  "Help on C&ommand   C-h C-c"       f help-command
+osd 9  40  ""  "Help on V&ariable  C-h C-v"       f help-variable
+osd 9  50  "-"
+osd 9  60  ""  "Describe &Bindings C-h b"         f describe-bindings
+osd 9  70  ""  "Describe &Key      C-h k"         f describe-key
+osd 9  80  ""  "De&scribe Variable C-h d"         f describe-variable
+osd 9  85  ""  "Describe &Word     C-h w"         f describe-word
+osd 9  90  "-"
+osd 9  100 ""  "List Bu&ffers      C-x C-b"       f list-buffers
+osd 9  110 ""  "List &Commands     C-h c"         f list-commands
+osd 9  115 ""  "List &Registry"                   f list-registry
+osd 9  120 ""  "List &Variables    C-h v"         f list-variables
+osd 9  130 ""  "Command &Apropos   C-h a"         f command-apropos
+osd 9  140 "-"
+osd 9  150 ""   "&User Setup"                     f user-setup
+osd 9  160 ""   "Scheme &Editor"                  f scheme-editor
+osd 9  170 "Mdw" "&Games"                         21
+osd 9  180 "i" "&Product Support"                 f "help-item \"Contact\""
+osd 9  190 ""  "About &MicroEmacs"                f about
+;
+; MENU #21 - GAMES sub-menu
+;
+osd 21 0   b
+osd 21 10  ""  "&Cross-Word" f cross-word
+osd 21 20  ""  "&Mahjongg"   f Mahjongg
+osd 21 30  ""  "Match-&It"   f Match-It
+osd 21 40  ""  "M&etris"     f Metris
+osd 21 50  ""  "&Patience"   f Patience
+osd 21 60  ""  "&Triangle"   f Triangle
+;
+; MENU #22 - MORE TOOLS sub-menu
+;
+osd 22 0   b
+osd 22 10  ""  "&Alarm"      f alarm
+osd 22 20  ""  "Calc&ulate"  f calc
+osd 22 30  ""  "Line &Draw"  f draw
+;
+; Setup the users tools
+set-variable #l0 0
+!repeat
+    !if &not &seq "" &set #l1 &reg "/history" &spr "%s/tool/%d/name" $platform #l0 ""
+        osd 7 &add 200 #l0 "" &spr "&%d %s" #l0 #l1 #l0 execute-tool
+        osd 7 290 "-"
+    !endif
+!until &equ &inc #l0 1 10
+; n osd-xdialog "title" "prompt" default "But1" "but2" ...
+; 
+0 define-macro osd-xdialog
+    -1 osd .osd.tmp
+    osd .osd.tmp 0 ""
+    osd .osd.tmp 1 ""
+    set-variable #l0 @2
+    var-str-sub #l0 "\\" "\\\\"
+    var-str-sub #l0 "&" "\\&"
+    osd .osd.tmp 2 "c" #l0
+    osd .osd.tmp 3 ""
+    set-variable #l0 1
+    set-variable #l2 1
+    set-variable #l4 2
+    !if &band @# 2
+        set-variable #l6 &spr "a\" %d %d" @4 @5
+        set-variable #l5 5
+    !else
+        set-variable #l6 "\""
+        set-variable #l5 3
+    !endif
+    !while #l2
+        !force set-variable #l1 &ind &cat "@" &add #l0 #l5
+        !if &not $status
+            set-variable #l2 0
+        !else
+            set-variable #l4 &add #l4 &add &len #l1 &cond &sin "&" #l1 3 4
+            set-variable #l3 &cat "set-variable $result " #l0
+            osd .osd.tmp &mul #l0 10 "BcfhHi" .scheme.osd-ebtt #l1 f #l3
+            set-variable #l0 &add #l0 1
+        !endif
+    !done
+    set-variable #l0 @1
+    set-variable #l6 &spr "%s %d 0 0 0 " #l6 #l4
+    !if &set #l1 @3
+        set-variable #l6 &spr "d%s %d" #l6 &mul #l1 10
+    !endif
+    execute-line &spr "osd %d 0 \"bstcH%s %d \"%s\"" .osd.tmp #l6 .scheme.osd-title #l0
+    !force !force .osd.tmp osd
+    !if &not $status
+        !if &band @# 1
+            !abort
+        !endif
+        set-variable $result -1
+    !endif
+!emacro
+
+; 2 osd-xdialog "Test" "Is this working" 2 10 2 "Yes" "No"
+
+; n osd-dialog "title" "prompt" "But1"
+; 
+0 define-macro osd-dialog
+    @# osd-xdialog @1 @2 1 @3 @4 @5
+!emacro
+
+; simple osd value entry
+;
+; osd-entry "title" "prompt" "variable" ["entry-size" ["type"]]
+0 define-macro osd-entry
+    set-variable .value @3
+    !force set-variable #l0 @4
+    !if &not $status
+        set-variable #l0 30
+    !endif
+    set-variable #l1 ""
+    !force set-variable #l1 @5
+    set-variable .type &cat "@ml2" #l1
+    -1 osd .osd.tmp
+    osd .osd.tmp 0 "btcH" .scheme.osd-title @1
+    osd .osd.tmp 1 ""
+    osd .osd.tmp 2 "fh" "  "
+    osd .osd.tmp 3 "Sfh" @2 4
+    osd .osd.tmp 4 "ExHRfhz" .scheme.osd-entry #l0 1 "" f osd-entry-value
+    osd .osd.tmp 5 "f" "  "
+    osd .osd.tmp 6 ""
+    osd .osd.tmp 7 "BcfHh" .scheme.osd-ebtt " &Okay "   f void
+    osd .osd.tmp 8 "BcfH"  .scheme.osd-ebtt " &Cancel " 0 void
+    .osd.tmp osd
+    set-variable @3 .value
+!emacro
+0 define-macro osd-entry-value
+    !if &les @# 0
+        set-variable .osd-entry.value &ind .osd-entry.type "" .osd-entry.value
+    !else
+        set-variable $result .osd-entry.value
+    !endif
+!emacro
+
+; load in user extensions if found
+!force execute-file "myosd"

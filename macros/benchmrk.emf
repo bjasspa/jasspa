@@ -1,0 +1,190 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Jon Green
+;  Created       : Mon Feb 22 19:31:58 1999
+;  Last Modified : <000719.0012>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 1999 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro 00000
+!emacro
+
+; load up the environment
+execute-file "me"
+execute-file "vm"
+execute-file "user"
+
+define-macro zzzzz
+!emacro
+
+!if &seq %0000000000 "ERROR"
+    set-variable %0000000000 ""
+    set-variable %zzzzzzzzzz ""
+    set-variable :0000000000 ""
+    set-variable :zzzzzzzzzz ""
+    set-variable .00000.00000 ""
+    set-variable .00000.zzzzz ""
+    set-variable .zzzzz.00000 ""
+    set-variable .zzzzz.zzzzz ""
+    set-variable #l0 200
+    !while &dec #l0 1
+        set-variable &ind &cat "%a" $random ""
+        set-variable &ind &cat ":a" $random ""
+        set-variable &ind &cat ".00000.a" $random ""
+        set-variable &ind &cat ".zzzzz.a" $random ""
+    !done
+!endif
+
+; Register get & set:
+define-macro vartest1g
+    set-variable #l2 ""
+    set-variable #l0 10000
+    !while &dec #l0 1
+        set-variable #l1 #l2
+    !done
+!emacro
+define-macro vartest1s
+    set-variable #l2 ""
+    set-variable #l0 10000
+    !while &dec #l0 1
+        set-variable #l1 ""
+    !done
+!emacro
+; First user-variable:
+define-macro vartest2g
+    set-variable #l0 10000
+    !while &dec #l0 1
+        set-variable #l1 %0000000000
+    !done
+!emacro
+define-macro vartest2s
+    set-variable #l0 10000
+    !while &dec #l0 1
+        set-variable %0000000000 ""
+    !done
+!emacro
+; Last user-variable
+define-macro vartest3g
+    set-variable #l0 10000
+    !while &dec #l0 1
+        set-variable #l1 %zzzzzzzzzz
+    !done
+!emacro
+define-macro vartest3s
+    set-variable #l0 10000
+    !while &dec #l0 1
+        set-variable %zzzzzzzzzz ""
+    !done
+!emacro
+; First command first variable:
+define-macro vartest4g
+    set-variable #l0 10000
+    !while &dec #l0 1
+        set-variable #l1 .00000.00000
+    !done
+!emacro
+define-macro vartest4s
+    set-variable #l0 10000
+    !while &dec #l0 1
+        set-variable .00000.00000 ""
+    !done
+!emacro
+; First command last variable:
+define-macro vartest5g
+    set-variable #l0 10000
+    !while &dec #l0 1
+        set-variable #l1 .00000.zzzzz
+    !done
+!emacro
+define-macro vartest5s
+    set-variable #l0 10000
+    !while &dec #l0 1
+        set-variable .00000.zzzzz ""
+    !done
+!emacro
+; Last command first variable:
+define-macro vartest6g
+    set-variable #l0 10000
+    !while &dec #l0 1
+        set-variable #l1 .zzzzz.00000
+    !done
+!emacro
+define-macro vartest6s
+    set-variable #l0 10000
+    !while &dec #l0 1
+        set-variable .zzzzz.00000 ""
+    !done
+!emacro
+; Last command last variable:
+define-macro vartest7g
+    set-variable #l0 10000
+    !while &dec #l0 1
+        set-variable #l1 .zzzzz.zzzzz
+    !done
+!emacro
+define-macro vartest7s
+    set-variable #l0 10000
+    !while &dec #l0 1
+        set-variable .zzzzz.zzzzz ""
+    !done
+!emacro
+; First local variable
+define-macro vartest8g
+    set-variable #l0 10000
+    !while &dec #l0 1
+        set-variable #l1 :0000000000
+    !done
+!emacro
+define-macro vartest8s
+    set-variable #l0 10000
+    !while &dec #l0 1
+        set-variable :0000000000 ""
+    !done
+!emacro
+; Last local variable
+define-macro vartest9g
+    set-variable #l0 10000
+    !while &dec #l0 1
+        set-variable #l1 :zzzzzzzzzz
+    !done
+!emacro
+define-macro vartest9s
+    set-variable #l0 10000
+    !while &dec #l0 1
+        set-variable :zzzzzzzzzz ""
+    !done
+!emacro
+    
+; Control macro
+define-macro start-up
+    insert-string "       Get(sec) Set(sec)\n"
+    set-variable #l0 1
+    !repeat
+        set-variable #l1 5
+        set-variable #l2 9999999
+        set-variable #l3 9999999
+        !while &dec #l1 1
+            time &spr "vartest%dg" #l0
+            set-variable #l2 &cond &les #l2 .time.msec #l2 .time.msec
+            time &spr "vartest%ds" #l0
+            set-variable #l3 &cond &les #l3 .time.msec #l3 .time.msec
+        !done
+        insert-string &spr "Test%d:  %5d    %5d\n" #l0 #l2 #l3
+    !until &equ 10 &inc #l0 1
+    quick-exit
+!emacro
+
+define-macro disptest
+    set-variable #l0 100
+    !while &dec #l0 1
+        1 screen-update
+    !done
+!emacro
+

@@ -1,0 +1,176 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Sat Feb 13 14:11:21 1999
+;  Last Modified : <000719.0012>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 1999 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+!if &not &exi .osd.charset
+    set-variable .osd.charset &pinc .osd.next 1
+!endif
+
+0 define-macro charset-change-buffer
+    set-variable #l0 $window-line
+    set-variable #l1 &cond &bmod magic 1 -1
+    set-variable #l8 &cond &bmod edit 1 -1
+    set-variable #l9 &cond &bmod view 1 -1
+    set-variable #l2 @1
+    set-variable #l3 @2
+    set-variable #l4 &spr "[%s]" #l2
+    -1 buffer-mode "view"
+    1 buffer-mode "magic"
+    beginning-of-buffer
+    !repeat
+        !force search-forward #l4
+        !if $status
+            backward-char
+            set-variable #l5 &mid #l3 &sub &sin @wc #l2 1 1
+            forward-delete-char
+            insert-string #l5
+        !endif
+    !until &not $status
+    !force goto-line #l0
+    ; restore modes
+    #l1 buffer-mode "magic"
+    #l8 buffer-mode "edit"
+    #l9 buffer-mode "view"
+    screen-update
+!emacro
+
+0 define-macro charset-change-variable
+    set-variable #l0 @1
+    set-variable #l1 -1
+    set-variable #l2 @2
+    set-variable #l3 @3
+    !while &not &seq &set #l4 &mid #l0 &inc #l1 1 1 "" 
+        !if &set #l5 &sin #l4 #l2
+            set-variable #l5 &mid #l3 &sub #l5 1 1
+            set-variable #l0 &cat &cat &lef #l0 #l1 #l5 &rig #l0 &add #l1 1
+        !endif
+    !done
+    set-variable @1 #l0
+!emacro
+
+define-macro charset-iso-to-user
+    0 set-char-mask "L"
+    !if &not &seq &set #l0 $result ""
+        0 set-char-mask "U"
+        set-variable #l1 $result
+        charset-change-buffer #l0 #l1
+    !endif
+    ml-write "[buffer converted to current user character set]"
+!emacro
+
+define-macro charset-user-to-iso
+    0 set-char-mask "U"
+    !if &not &seq &set #l0 $result ""
+        0 set-char-mask "L"
+        set-variable #l1 $result
+        charset-change-buffer #l0 #l1
+    !endif
+    ml-write "[buffer converted to ISO-8859 character set]"
+!emacro
+
+0 define-macro charset-change-exec
+    set-variable #l0 @1
+    set-variable #l1 @2
+    !if &seq #l0 #l1
+        ml-write "[Nothing to do!]"
+        !return
+    !endif
+    set-variable #l2 &reg "/history" &cat %platform "/char-set" ""
+    ; converter the <from> to iso
+    !if &not &seq #l0 ""
+        set-registry "/history" &cat %platform "/char-set" #l0
+        !force !force exec-file "charset"
+        !if &not $status
+            !goto abort
+        !endif
+        !force !force charset-user-to-iso
+        !if &not $status 
+            !goto abort
+        !endif
+    !endif
+    ; convert iso to the <to>
+    !if &not &seq #l1 ""
+        set-registry "/history" &cat %platform "/char-set" #l1
+        !force !force exec-file "charset"
+        !if &not $status
+            !goto abort
+        !endif
+        !force !force charset-iso-to-user
+        !if &not $status 
+            !goto abort
+        !endif
+    !endif
+    ; is the charset different from when we start? if so change back
+    !if &not &seq #l2 &reg "/history" &cat %platform "/char-set" ""
+        set-registry "/history" &cat %platform "/char-set" #l2
+        !force !force exec-file "charset"
+    !endif
+    ml-write &spr "[buffer converted from \"%s\" to \"%s\" character set]" #l0 #l1
+    !return
+*abort
+    !if &not &seq #l2 &reg "/history" &cat %platform "/char-set" ""
+        set-registry "/history" &cat %platform "/char-set" #l2
+        !force !force exec-file "charset"
+    !endif
+    ml-write "[Command Aborted!]"
+    !bell
+    !abort
+!emacro
+
+0 define-macro charset-change-set
+    set-variable #l0 &lget %charset-value &band @# 0xffff
+    set-variable #l1 &lget %charset-names &band @# 0xffff
+    !if &band @# 0x10000
+        set-variable .charset-change.to #l0
+        osd .osd.charset 60  "RMtxmsfHzi" 2 .scheme.osd-entry 23 1 #l1 .osd.tmp "charset-change-setup 0x10000"
+    !else
+        set-variable .charset-change.from #l0
+        osd .osd.charset 30  "RMtxmsfHzi" 1 .scheme.osd-entry 23 1 #l1 .osd.tmp "charset-change-setup 0x0"
+    !endif
+!emacro
+
+0 define-macro charset-change-setup
+    set-variable #l9 @1
+    -1 osd .osd.tmp
+    osd .osd.tmp 0 "bs" 25 0 0 0
+    set-variable #l0 0
+    !while &not &seq "" &set #l1 &lget %charset-names &inc #l0 1
+        osd .osd.tmp #l0 "" #l1 &bor #l9 #l0 charset-change-set
+    !done
+!emacro
+
+define-macro charset-change
+    .osd.charset osd
+    charset-change-exec .from .to
+!emacro
+
+-1 osd .osd.charset
+osd .osd.charset 00  "batcdHs" 3 6 43 0 -1 -1 630 .scheme.osd-title "Character Set Change"
+osd .osd.charset 10  ""
+osd .osd.charset 20  "Sfh" "  Change &From : " 30
+osd .osd.charset 40  ""
+osd .osd.charset 50  "Sfh" "           &To : " 60
+osd .osd.charset 600 ""
+osd .osd.charset 610 ""
+osd .osd.charset 620 "BthcfH" 10 .scheme.osd-ebtt " &Convert " f void
+osd .osd.charset 630 "BtcfH"  11 .scheme.osd-ebtt " E&xit  "   0 void
+
+; Get a list of display char sets
+0 exec-file "charset"
+set-variable #l0 &lfind %charset-value &reg "/history" &cat %platform "/char-set" &lget %charset-value 1
+#l0 charset-change-set
+&bor 0x10000 #l0 charset-change-set
+
+
+

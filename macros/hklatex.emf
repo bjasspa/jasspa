@@ -1,0 +1,864 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steve Philip
+;  Created       : Jan 26 21:56:01 1998
+;  Last Modified : <000719.0012>
+;
+;  Description    MicroEmacs LaTeX file hook
+;
+;  Notes
+;
+;  History
+;  
+;  Jan 2000 Jon Green
+;
+;      Tidied up whilst documenting. 
+;      Fixed a number of problems with the hilighting
+;      Fixed paragraph filling problems.
+;
+;  June 1999  Detlef Groth & Steve Philips
+;
+;      Pseudo hilighting. 
+;      Section searching 
+;
+;  Jan 1998   Steve Philips 
+; 
+;      Original.
+;
+;  Copyright (c) 1998-2000 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+!if &not &exist .osd.latex-help
+    ; set up the osd tool menu & help dialog
+    set-variable .osd.latex-help  &pinc .osd.next 1
+    set-variable .osd.latex-tool  &pinc .osd.next 1
+    set-variable .osd.latex-popup &pinc .osd.next 1
+    set-variable .osd.latex-popgk &pinc .osd.next 1
+    set-variable .osd.latex-pophd &pinc .osd.next 1
+    set-variable .osd.latex-popsb &pinc .osd.next 1
+    set-variable .osd.latex-poprf &pinc .osd.next 1
+    set-variable .osd.latex-popft &pinc .osd.next 1
+    set-variable .osd.latex-popev &pinc .osd.next 1
+!endif
+
+!if &seq $platform "win32"
+    ; Win32, lets assume that everybody is using MikTex, and why not !!
+    set-variable %latex-view    &cond &seq %latex-view    "ERROR" "yap"  %latex-view
+    set-variable %latex-compile &cond &seq %latex-compile "ERROR" "latex --c-style-errors --halt-on-error " %latex-compile
+    
+    ; Add hooks for the latex compiler errors
+    add-next-line "*latex-compile*" ""
+    add-next-line "*latex-compile*" "%f:%l:"
+!else
+    set-variable %latex-compile &cond &seq %latex-compile "ERROR" "latex -interaction=nonstopmode" %latex-compile
+    set-variable %latex-view    &cond &seq %latex-view    "ERROR" "xdvi"  %latex-view
+!endif
+
+; hilight-latex-common <hilightScheme> <schemeIdentifier>
+; 
+; Take all of the common objects that are used in the various hilighting
+; schemes and apply them to the current hilighting format.
+;
+0 define-macro hilight-latex-common
+    !if &band .hilight.flags 0x02
+        ; Get the arguments into the local registers for speed.
+        set-variable #l1 @1
+        set-variable #l2 @2
+        ; Comments
+        hilight #l1 2 "^%"                .scheme.comment
+        ;symbols
+        hilight #l1 64 "\\$\\\\bullet\\$" "·"                      #l2
+        hilight #l1 64 "\\\\_" "_"                                 #l2
+        hilight #l1 64 "\\\\>" "    ‘"                             #l2
+        hilight #l1 64 "\\\\\\\\" "\f"                             #l2
+        hilight #l1 64 "\\$\\\\vert\\$" "|"                        #l2
+        hilight #l1 64 "\\$\\\\beta\\$" "ß*"                       #l2
+        hilight #l1 64 "\\$\\\\alpha\\$" "a*"                      #l2
+        hilight #l1 64 "\\$\\\\mu\\$" "µ"                          #l2
+        hilight #l1 64 "\\$\\\\geqq\\$" "|>=|"                     #l2
+        hilight #l1 64 "\\$\\\\leqq\\$" "|<=|"                     #l2
+        hilight #l1 64 "\\$\\^{\\\\rm TM}\\$" "™"                  #l2
+        hilight #l1 64 "\\$\\^{\\\\copyright}\\$" "©"              #l2
+        hilight #l1 64 "\\$\\^{\\\\circledR}\\$"  "®"              #l2
+        hilight #l1 64 "\\$\\^{\\\\circ}\\$" "°"                   #l2            
+        hilight #l1 64 "\\\\_" "_"                                 #l2
+        hilight #l1 64 "\\\\ " " "                                 #l2
+        hilight #l1 64 "\\\\textbackslash" "\\"                    #l2
+        hilight #l1 64 "\\\\textbar" "|"                           #l2
+        hilight #l1 64 "\\\\textless" "<"                          #l2
+        hilight #l1 64 "\\\\textgreater" ">"                       #l2
+        hilight #l1 64 "\\\\textasciicircum" "^"                   #l2
+        hilight #l1 64 "\\\\textasciitilde" "~"                    #l2
+        
+        ; Umlauts only examples, use gsar.exe for umlauts
+        ; tranlations during compiling
+        hilight #l1 64 "\"a" "ä"                                   #l2
+        hilight #l1 64 "\"o" "ö"                                   #l2
+        hilight #l1 64 "\\\\`a" "à"                                #l2
+        hilight #l1 64 "\\\\`e" "è"                                #l2
+        hilight #l1 64 "\\\\'e" "é"                                #l2
+        ; Double quotes 
+        hilight #l1 64 "``" "`"                                    #l2
+        hilight #l1 64 "''" "'"                                    #l2
+        ; Quotes
+        hilight #l1 64 "\\\\glqq " "„"                             #l2
+        hilight #l1 64 "\\\\grqq" "\""                             #l2
+        ; specials
+        hilight #l1 64 "\\\\BibTeX\\}\\W" "BibTeX"                .scheme.bold
+        hilight #l1 64 "\\\\LaTeX\\}\\W"  "LaTeX"                 .scheme.bold
+        hilight #l1 64 "\\\\teTeX\\}\\W"  "teTeX"                 .scheme.bold
+        hilight #l1 64 "\\\\LaTeXe\\}\\W" "LaTeXe"                .scheme.bold
+        hilight #l1 64 "\\\\Linux\\}\\W"  "Linux"                 .scheme.bold
+        hilight #l1 64 "\\\\TeX\\}\\W"    "TeX"                   .scheme.bold
+        hilight #l1 64 "\\\\MF\\}\\W"     "MF"                    .scheme.bold
+        hilight #l1 64 "\\\\AmSLaTeX\\}\\W" "AmSLaTeX"            .scheme.bold
+        
+;        hilight #l1 64 "\\\\TeX\\}[^\\]" "TeX"                     .scheme.bold
+        hilight #l1 64 "\\\\dvipdfm\\\\" "dvipdfm"                 .scheme.bold
+        ; character quoting
+        hilight #l1 64 "\\$\\(.\\)\\$" "\\1"                       #l2
+        hilight #l1 64 "\\\\\\$" "$"                               #l2
+        hilight #l1 64 "\\\\{" "{"                                 #l2
+        hilight #l1 64 "\\\\}" "}"                                 #l2
+        hilight #l1 64 "\\\\%" "%"                                 #l2
+        hilight #l1 64 "\\\\#" "#"                                 #l2
+        hilight #l1 64 "\\\\&" "&"                                 #l2
+        hilight #l1 64 "\\\\char`\\\\\\(.\\)" "\\1"                #l2
+        ;references
+        hilight #l1 0x44 "\\\\label{" "*" "}" "*" ""               .scheme.link 
+        hilight #l1 0x44 "\\\\cite{" "[" "}" "]" ""                .scheme.italic 
+        hilight #l1 0x44 "\\\\ref{" "|" "}" "|" ""                 .scheme.link 
+        hilight #l1 0x44 "\\\\pageref{" "|" "}" "|‘" ""            .scheme.link 
+        hilight #l1 0x44 "\\\\link{" "" "}{[^}]*}" "" ""           .scheme.link
+        hilight #l1 0x44 "\\\\dest{" "" "}" "" ""                  .scheme.link
+        hilight #l1 0x44 "\\\\emph{" "" "}" "" ""                  .scheme.bold
+        ; Other Text modifiers
+        hilight #l1 0x44 "\\\\textrm{" "" "}" "" ""                #l2
+        hilight #l1 0x44 "\\\\textsf{" "" "}" "" ""                #l2
+        ; For literal text surround in verticals - some people 
+        ; use this. Uncomment to enable.
+        ; hilight #l1 0x44 "|" "" "|" "" ""               .scheme.string
+        hilight #l1 64 "\\\\\\\\$" ""                              #l2
+    !endif
+!emacro
+    
+!if &band .hilight.flags 0x02
+    !if &not &exist .hilight.latex
+        set-variable .hilight.latex &pinc .hilight.next 1
+        set-variable .hilight.latexs &pinc .hilight.next 1
+        set-variable .hilight.latexb &pinc .hilight.next 1
+        set-variable .hilight.latext &pinc .hilight.next 1
+        set-variable .hilight.latexh &pinc .hilight.next 1
+        set-variable .hilight.latexi &pinc .hilight.next 1
+        set-variable .hilight.latexm &pinc .hilight.next 1
+        set-variable .hilight.latexbi &pinc .hilight.next 1
+        set-variable .hilight.latexbt &pinc .hilight.next 1
+        set-variable .hilight.latexib &pinc .hilight.next 1
+        set-variable .hilight.latexit &pinc .hilight.next 1
+        set-variable .hilight.latextb &pinc .hilight.next 1
+        set-variable .hilight.latexti &pinc .hilight.next 1
+    !endif
+    
+    0 hilight .hilight.latex 0                                     $global-scheme
+    hilight .hilight.latex 2 "^%"                                  .scheme.comment
+    hilight .hilight.latex 2 "[^\\\\]\\{%"                         .scheme.comment
+    hilight .hilight.latex 4 "\\\\" "\\}\\W" ""                    .scheme.keyword
+    hilight .hilight.latex 0 "\\\\section{[^}]*}"                  .scheme.header
+    hilight .hilight.latex 0 "\\\\subsection{[^}]*}"               .scheme.header
+    hilight .hilight.latex 0 "\\\\ref{[^}]*}"                      .scheme.link
+    hilight .hilight.latex 0 "\\\\link{[^}]*}{[^}]*}"              .scheme.link
+    hilight .hilight.latex 0 "\\\\dest{[^}]*}"                     .scheme.link
+    ; Font control
+    hilight .hilight.latex 0 "\\\\tt\\W"                           .scheme.operator
+    hilight .hilight.latex 0 "\\\\it\\W"                           .scheme.operator
+    hilight .hilight.latex 0 "\\\\bf\\W"                           .scheme.operator
+    hilight .hilight.latex 0 "\\\\textbf\\W"                       .scheme.operator
+    hilight .hilight.latex 0 "\\\\textit\\W"                       .scheme.operator
+    hilight .hilight.latex 0 "\\\\texttt\\W"                       .scheme.operator
+    hilight .hilight.latex 0 "\\\\textcolor"                       .scheme.operator
+    
+    ;; simulation hilighting
+    set-variable #l0 &rig $box-chars 10
+    0 hilight .hilight.latexs 0                                    $global-scheme ; Was 2 10
+    ; Common hilighting components
+    hilight-latex-common                          .hilight.latexs  $global-scheme
+    ;comments
+    hilight .hilight.latexs 2 "[^\\\\]\\{%"                        .scheme.comment
+    hilight .hilight.latexs 4 "\\\\" "\\}\\W" ""                   .scheme.keyword
+    ;headers
+    hilight .hilight.latexs 0x44 "\\\\chapter{" "*" "}" "" "3"            .scheme.header
+    hilight .hilight.latexs 0x44 "\\\\chapter\\*{" "*" "}" "" "3"         .scheme.header
+    hilight .hilight.latexs 0x44 "\\\\section{" "**" "}" "" ""            .scheme.header  
+    hilight .hilight.latexs 0x44 "\\\\section\\*{" "**" "}" "" ""         .scheme.header  
+    hilight .hilight.latexs 0x44 "\\\\subsection{" "***" "}" "" ""        .scheme.header 
+    hilight .hilight.latexs 0x44 "\\\\subsection\\*{" "***" "}" "" ""     .scheme.header 
+    hilight .hilight.latexs 0x44 "\\\\subsubsection{" "****" "}" "" ""    .scheme.header
+    hilight .hilight.latexs 0x44 "\\\\subsubsection\\*{" "****" "}" "" "" .scheme.header
+    hilight .hilight.latexs 0x44 "\\\\paragraph{" "*****" "}" "" ""       .scheme.header
+    hilight .hilight.latexs 0x44 "\\\\subparagraph{" "******" "}" "" ""   .scheme.header 
+    ;
+    ; hide index tokens completely
+    ;
+    ; link start
+    hilight .hilight.latexs 0xc0 "\\\\index{" ""  .hilight.latexh  $global-scheme
+    ;Lines
+    hilight .hilight.latexs 64 "\\\\newpage" &spr "%n<<Page Break>>%n" 32 #l0 32 #l0 .scheme.italic
+    hilight .hilight.latexs 64 "\\\\hline" &spr "%n" 78 #l0        .scheme.italic
+    ; Begin and End
+    hilight .hilight.latexs 0x44 "\\\\begin{" "|" "}" "ˆ" ""       .scheme.italic
+    hilight .hilight.latexs 0x44 "\\\\end{" "ˆ" "}" "|" ""         .scheme.italic
+    hilight .hilight.latexs 0x44 "\\\\begin{center}" "|cˆ" "\\\\end{center}" "ˆc|" "" .scheme.italic 
+    hilight .hilight.latexs 0x44 "\\\\begin{verbatim}" "|verbatimˆ" "\\\\end{verbatim}" "ˆverbatim|" "" .scheme.string
+    ; Divisionhelp
+    hilight .hilight.latexs 64 "\\\\-" ""                          .scheme.italic 
+    hilight .hilight.latexs 64 "\\\\item" "    *"                  .scheme.italic 
+    hilight .hilight.latexs 64 "\\\\itemitem" "        *"          .scheme.italic 
+    ; Environment
+    hilight .hilight.latexs 64 "\\&" "    &"                       .scheme.italic 
+    hilight .hilight.latexs 64 "\\\\linewidth" "ˆlw|"              .scheme.italic 
+    hilight .hilight.latexs 64 "\\\\pdfimage width" "PNG*"         .scheme.italic 
+    ; textformat
+    hilight .hilight.latexs 0xc0 "\\\\textbf{" "" .hilight.latexb  .scheme.bold
+    hilight .hilight.latexs 0xc0 "\\\\textit{" "" .hilight.latexi  .scheme.italic 
+    hilight .hilight.latexs 0xc0 "\\\\texttt{" "" .hilight.latext  .scheme.string 
+    hilight .hilight.latexs 0xc0 "{\\\\ttfamily" "" .hilight.latext  .scheme.string 
+    hilight .hilight.latexs 0xc0 "{\\\\bf *" ""   .hilight.latexb  .scheme.bold
+    hilight .hilight.latexs 0xc0 "{\\\\it *" ""   .hilight.latexi  .scheme.italic
+    hilight .hilight.latexs 0xc0 "{\\\\tt *" ""   .hilight.latext  .scheme.string
+;    hilight .hilight.latexs 0xc0 "\\$" ""         .hilight.latexm  .scheme.string
+    ;
+    ; hilight scheme for bold
+    ;
+    0 hilight  .hilight.latexb 2 50                                .scheme.bold
+    hilight-latex-common                          .hilight.latexb  .scheme.bold
+    hilight .hilight.latexb 0xc0 "}" ""           .hilight.latexs  .scheme.bold
+    hilight .hilight.latexb 0xc0 "{\\\\bf *" ""   .hilight.latexb  .scheme.error
+    hilight .hilight.latexb 0xc0 "{\\\\it *" ""   .hilight.latexbi .scheme.italic
+    hilight .hilight.latexb 0xc0 "{\\\\tt *" ""   .hilight.latexbt .scheme.string
+    hilight .hilight.latexs 0xc0 "\\\\textbf{" "" .hilight.latexb  .scheme.error
+    hilight .hilight.latexs 0xc0 "\\\\textit{" "" .hilight.latexbi .scheme.italic 
+    hilight .hilight.latexs 0xc0 "\\\\texttt{" "" .hilight.latexbt .scheme.string 
+    ;
+    ; hilight scheme for italic
+    ;
+    0 hilight  .hilight.latexi 2 50                                .scheme.italic
+    hilight-latex-common                          .hilight.latexi  .scheme.italic
+    hilight .hilight.latexi 0xc0 "}" ""           .hilight.latexs  .scheme.italic
+    hilight .hilight.latexi 0xc0 "{\\\\bf *" ""   .hilight.latexib .scheme.bold
+    hilight .hilight.latexi 0xc0 "{\\\\it *" ""   .hilight.latexi  .scheme.error
+    hilight .hilight.latexi 0xc0 "{\\\\tt *" ""   .hilight.latexit .scheme.string
+    hilight .hilight.latexi 0xc0 "{\\\\tt *" ""   .hilight.latexit .scheme.string
+    hilight .hilight.latexs 0xc0 "\\\\textbf{" "" .hilight.latexib .scheme.bold
+    hilight .hilight.latexs 0xc0 "\\\\textit{" "" .hilight.latexi  .scheme.error 
+    hilight .hilight.latexs 0xc0 "\\\\texttt{" "" .hilight.latexit .scheme.string 
+    ;
+    ; hilight scheme for fixed-font
+    ;
+    0 hilight  .hilight.latext 2 50                                .scheme.string
+    hilight-latex-common                          .hilight.latext  .scheme.string
+    hilight .hilight.latext 0xc0 "}" ""           .hilight.latexs  .scheme.string
+    hilight .hilight.latext 0xc0 "{\\\\bf *" ""   .hilight.latextb .scheme.bold
+    hilight .hilight.latext 0xc0 "{\\\\it *" ""   .hilight.latexti .scheme.italic
+    hilight .hilight.latext 0xc0 "{\\\\tt *" ""   .hilight.latext  .scheme.error
+    hilight .hilight.latexs 0xc0 "\\\\textbf{" "" .hilight.latextb .scheme.bold
+    hilight .hilight.latexs 0xc0 "\\\\textit{" "" .hilight.latexti .scheme.italic
+    hilight .hilight.latexs 0xc0 "\\\\texttt{" "" .hilight.latext  .scheme.error 
+    ;
+    ; hilight scheme for italic bold
+    ;
+    0 hilight  .hilight.latexib 2 50                               .scheme.bold
+    hilight-latex-common                          .hilight.latexib .scheme.bold
+    hilight .hilight.latexib 0xc0 "}" ""          .hilight.latexi  .scheme.italic
+    ;
+    ; hilight scheme for italic fixed-font
+    ;
+    0 hilight  .hilight.latexit 2 50                               .scheme.bold
+    hilight-latex-common                          .hilight.latexit .scheme.bold
+    hilight .hilight.latexit 0xc0 "}" ""          .hilight.latexi  .scheme.italic
+    ;
+    ; hilight scheme for bold italic
+    ;
+    0 hilight  .hilight.latexbi 2 50                               .scheme.italic
+    hilight-latex-common                          .hilight.latexit .scheme.italic
+    hilight .hilight.latexbi 0xc0 "}" ""          .hilight.latexb  .scheme.bold
+    ;
+    ; hilight scheme for bold fixed-font
+    ;
+    0 hilight  .hilight.latexbt 2 50                               .scheme.string
+    hilight-latex-common                          .hilight.latexbt .scheme.string
+    hilight .hilight.latexbt 0xc0 "}" ""          .hilight.latexb  .scheme.bold
+    ;
+    ; hilight scheme for fixed-font bold
+    ;
+    0 hilight  .hilight.latextb 2 50                               .scheme.bold
+    hilight-latex-common                          .hilight.latextb .scheme.bold
+    hilight .hilight.latextb 0xc0 "}" ""          .hilight.latext  .scheme.string
+    ;
+    ; hilight scheme for fixed-font italic 
+    ;
+    0 hilight  .hilight.latexti 2 50                               .scheme.italic
+    hilight-latex-common                          .hilight.latexti .scheme.italic
+    hilight .hilight.latexti 0xc0 "}" ""          .hilight.latext  .scheme.string
+    ;
+    ; hilight scheme for maths
+    ;
+    0 hilight  .hilight.latexm 2 50                                .scheme.string
+    hilight-latex-common                          .hilight.latexm  .scheme.string
+    hilight .hilight.latexm 0xc0 "\\$" ""         .hilight.latexs  .scheme.string
+    ;
+    ; hilight scheme to hide all text to the next }
+    ;
+    0 hilight  .hilight.latexh 2 50                                $global-scheme
+    hilight .hilight.latexh 0xc0 "}" ""           .hilight.latexs  $global-scheme
+    hilight .hilight.latexh 0x40 "." ""           $global-scheme
+
+    0 define-macro latex-swap-hilight
+        !if &equal $buffer-hilight .hilight.latex
+            set-variable $buffer-hilight .hilight.latexs
+            1 buffer-mode "view"
+        !else
+            set-variable $buffer-hilight .hilight.latex
+            -1 buffer-mode "view"
+        !endif
+    !emacro
+!endif
+;
+; TeX language specific macros.
+;
+; latex-comment-line; comment line i.e. xxx -> %xxx
+define-macro latex-comment-line
+    !while &gre &pdec @# 1 0
+        beginning-of-line
+        insert-string "%%"
+        beginning-of-line
+        forward-line
+    !done
+!emacro
+; latex-uncomment-line; uncoment line i.e. %xxx -> xxx
+define-macro latex-uncomment-line
+    beginning-of-line
+    !while &gre &pdec @# 1 0
+        !force -1 search-forward "%"
+        !if $status
+            !if &or &not $window-col &not &seq "\\" &mid @wl &sub $window-col 1 1
+                backward-delete-char
+                !if &seq @wc "%"
+                    forward-delete-char
+                !endif
+            !endif
+        !endif
+        forward-line
+        beginning-of-line
+    !done
+!emacro
+; latex-forward-paragraph; Advance to the start of the next paragraph
+; This is a little bit different from the latex-para as we ignore
+; comments.
+0 define-macro latex-forward-paragraph
+    ; Iterate for the number of times requested. 
+    !while &gre &pdec @# 1 0
+        forward-line
+        ; Find the end of the paragraph
+        !force regex-forward "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|section\\|chap\\|subsec\\|label\\|begin\\|paragraph\\|subparagraph\\|end\\)\\)"
+;        !force regex-forward "\\(^$\\|^[ \t]*$\\|^\\\\newpag\\|^\\\\section\\|^\\\\chap\\|^\\\\subsec\\|^\\\\label\\|^\\\\begin\\|^\\\\paragraph\\|^\\\\subparagraph\\|^\\\\end\\)"
+        !if &not $status
+            end-of-buffer
+            !return
+        !endif
+        beginning-of-line
+    !done
+!emacro
+; latex-backward-paragraph; Advance to the start of the previous paragraph
+; This is a little bit different from the latex-para as we ignore
+; comments.
+0 define-macro latex-backward-paragraph
+    ; Iterate for the number of times requested. 
+    !while &gre &pdec @# 1 0
+        backward-line
+        ; Find the start of the paragraph
+        !force regex-backward "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|section\\|chap\\|subsec\\|label\\|begin\\|paragraph\\|subparagraph\\|end\\)\\)"
+;        !force regex-backward "\\(^$\\|^[ \t]*$\\|^\\\\newpag\\|^\\\\section\\|^\\\\chap\\|^\\\\subsec\\|^\\\\label\\|^\\\\begin\\|^\\\\paragraph\\|^\\\\subparagraph\\|^\\\\end\\)"
+        !if &not $status
+            beginning-of-buffer
+            !return
+        !endif
+        beginning-of-line
+    !done
+!emacro
+; latex-para; Format the paragraph. We do this by inserting blank lines around
+; our selected paragraph and then performing a fill operation on it. The blank
+; lines are then removed leaving the formated paragraph.
+;
+; Note. If no arguments are supplied then the current position is retained
+; in the paragraph. This position is saved as 'mark'.
+0 define-macro latex-para
+    ; Save mark at point.
+    !if &not @?
+        set-mark
+    !endif
+    beginning-of-line
+    !while &gre &pdec @# 1 0
+        ; Find the end of the paragraph
+;        !force regex-forward "\\([^\n\\\\]%\\|^%\\|^$\\|^[ \t]*$\\|^\\\\newpag\\|^\\\\section\\|^\\\\chap\\|^\\\\subsec\\|^\\\\label\\|^\\\\begin\\|^\\\\paragraph\\|^\\\\subparagraph\\|^\\\\end\\)"
+        !force regex-forward "\\([^\n\\\\]%\\|^$\\|^%\\|^[ \t]*$\\|^\\\\newpag\\|^\\\\section\\|^\\\\chap\\|^\\\\subsec\\|^\\\\label\\|^\\\\begin\\|^\\\\para\\|^\\\\subpar\\|^\\\\end\\)"
+        !if &not $status
+            !abort
+            end-of-buffer
+            ; Force an ending !!
+            set-variable @# 1
+        !endif
+        beginning-of-line
+        insert-newline
+        ; Jump back line.
+        backward-line
+        ; Find the start of the paragraph
+        !force regex-backward "\\([^\n\\\\]%\\|^%\\|^$\\|^[ \t]*$\\|^\\\\newpag\\|^\\\\section\\|^\\\\chap\\|^\\\\subsec\\|^\\\\label\\|^\\\\begin\\|^\\\\para\\|^\\\\subpar\\|^\\\\end\\)"
+        !if $status
+            end-of-line
+        !else
+            beginning-of-buffer
+        !endif
+        insert-newline
+        -1 fill-paragraph
+        regex-backward "^$"
+        forward-delete-char
+        regex-forward "^$"
+        beginning-of-line
+        forward-delete-char
+    !done
+    ; If no argument specified then restore the cursor position
+    !if &not @?
+        exchange-point-and-mark
+    !endif
+!emacro
+
+define-macro latex-compile
+    !if &bmod "edit"
+        !if &iseq @mc1 "Save buffer first (y/n) :" "nNyY" "y"
+            save-buffer
+        !endif
+    !endif
+    set-variable #l0 @ml20 "latex-compile" &spr "%s %s" %latex-compile &rig $buffer-fname &rsin "/" $buffer-fname
+    0 ipipe-shell-command #l0 "*latex-compile*"
+!emacro
+
+define-macro latex-view
+    set-variable #l0 &rig $buffer-fname &rsin "/" $buffer-fname
+    set-variable #l0 &lef #l0 &sub &rsin "." #l0 1
+    set-variable #l0 @ml20 "latex-view" &spr "%s %s" %latex-view #l0
+    0 ipipe-shell-command #l0 "*latex-view*"
+!emacro
+
+0 define-macro latex-list-create
+    !if &not @#
+        !force 0 delete-buffer #p1
+    !endif
+    !force 0 popup-window #p1
+    !if &not $status
+        ml-write &spr "Generating content list for %s ... " #p0
+        popup-window #p1
+        -1 buffer-mode "undo"
+        find-buffer #p0
+        beginning-of-buffer
+        !force regex-forward .search
+        !while $status
+            set-variable #l0 $window-col
+            set-variable #l1 $window-line
+            -2 show-region
+            set-variable #l2 &mid @wl $window-col &sub #l0 $window-col
+            set-variable $window-col &sub #l0 1
+            !force goto-matching-fence
+            !if &and $status &equ #l1 $window-line
+                set-variable #l0 &mid @wl #l0 &sub $window-col #l0
+                set-alpha-mark "t"
+                find-buffer #p1
+                !if &seq &lef #l2 6 "\\label"
+                    insert-string "Label:      "
+                !elif &seq &lef #l2 5 "\\chap"
+                    insert-string "Chapter:    "
+                !elif &seq &lef #l2 5 "\\sect"
+                    insert-string "Section:     "
+                !elif &seq &lef #l2 8 "\\subsect"
+                    insert-string "SSection:     "
+                !else
+                    insert-string "SSSection:     "
+                !endif
+                insert-string #l0
+                insert-newline
+                find-buffer #p0
+                goto-alpha-mark "t"
+            !endif
+            !force regex-forward .search
+        !done
+        set-variable #l0 &cond &seq $buffer-fname "" $buffer-bname $buffer-fname
+        find-buffer #p1
+        beginning-of-buffer
+        insert-string &spr "Content Listing: %s\n\n" #l0
+        -1 buffer-mode "edit"
+        1 buffer-mode "view"
+        buffer-bind-unbound-key latex-goto-buffer "f7"
+        buffer-bind-unbound-key latex-goto-buffer "f8"
+        buffer-bind-key latex-goto-section "return"
+        set-variable :mouse-word-select "latex-goto-section"
+        ml-write &spr "Generating content list for %s ... Done" #p0
+    !endif
+!emacro
+
+define-macro latex-list-section
+    set-variable #l0 $buffer-bname
+    set-variable #l1 &spr "*%s sectn-list*" #l0
+    set-variable .latex-list-create.search "\\\\\\(\\(sub\\)*section\\|chapter\\)\\*?{\\(\\\\centerline{\\)?"
+    !force !force @# latex-list-create
+    !if &not $status
+        !force 0 delete-buffer #l1
+        popup-window #l0
+    !endif
+!emacro
+
+define-macro latex-list-label
+    set-variable #l0 $buffer-bname
+    set-variable #l1 &spr "*%s label-list*" #l0
+    set-variable .latex-list-create.search "\\\\label\\*?{\\(\\\\centerline{\\)?"
+    !force !force @# latex-list-create
+    !if &not $status
+        !force 0 delete-buffer #l1
+        popup-window #l0
+    !endif
+!emacro
+
+0 define-macro latex-goto-buffer
+    popup-window &mid $buffer-bname 1 &sub &len $buffer-bname 13
+!emacro
+
+define-macro latex-goto-section
+    set-variable #l0 &mid $buffer-bname 1 &sub &len $buffer-bname 13
+    set-variable #l2 @wl
+    set-variable #l1 &lef #l2 4
+    !if &seq #l1 "Chap"
+        set-variable #l1 "chapter"
+        set-variable #l2 &rig #l2 12
+    !elif &seq #l1 "Sect"
+        set-variable #l1 "section"
+        set-variable #l2 &rig #l2 13
+    !elif &seq #l1 "SSec"
+        set-variable #l1 "subsection"
+        set-variable #l2 &rig #l2 14
+    !elif &seq #l1 "SSSe"
+        set-variable #l1 "\\(sub\\)+subsection"
+        set-variable #l2 &rig #l2 15
+    !elif &seq #l1 "Labe"
+        set-variable #l1 "label"
+        set-variable #l2 &rig #l2 12
+    !else
+        ml-write "[Invalid line!]"
+        !abort
+    !endif
+    str-to-regex #l2
+    popup-window #l0
+    beginning-of-buffer
+    !force regex-forward &spr "\\\\%s\\*?{\\(\\\\centerline{\\)?%s}" #l1 #l2
+    !if &not $status
+        ml-write &spr "[Failed to find section \"%s\"]" #l2
+        !abort
+    !endif
+    beginning-of-line
+!emacro
+
+0 define-macro latex-ref-goto-label
+    set-alpha-mark "R"
+    ; end of link must be found within 2 lines
+    end-of-line
+    !force -2 regex-backward "\\\\ref\\({[^\n}]*}\\)"
+    !if &not $status
+        goto-alpha-mark "R"
+        ml-write "[Failed to find \\ref{...}]"
+        !abort
+    !endif
+    set-alpha-mark "R"
+    set-variable #l0 @s1
+    beginning-of-buffer
+    !force regex-forward &cat "\\\\label" #l0
+    !if &not $status
+        goto-alpha-mark "R"
+        ml-write &spr "[Failed to find \\label%s]" #l0
+        !abort
+    !endif
+    beginning-of-line
+!emacro
+
+define-macro latex-ref-go-back
+    goto-alpha-mark "R"
+!emacro
+
+; latex-spell-word; modify the spelling rules so that the speller does
+; not complain about TeX commands.
+0 define-macro latex-spell-word
+    ; simply skip any word starting with a \
+    -2 show-region
+    !force backward-char
+    !if &seq @wc "\\"
+        2 show-region
+        set-variable .spell.check-word ""
+        !return
+    !elif &seq @wc "-"
+        !force backward-char
+        !if &seq @wc "\\"
+            !force backward-char
+            !if &inw @wc
+                forward-char
+                backward-word
+                regex-forward "\\(\\w*\\)\\\\-\\(\\w*\\)"
+                set-variable .spell.check-word &cat @s1 @s2
+                !return
+            !endif
+        !endif
+    !endif
+    2 show-region
+    !if &seq @wc "\\"
+        !force forward-char
+        !if &seq @wc "-"
+            !force forward-char
+            !if &inw @wc
+                -2 show-region
+                regex-forward "\\(\\w*\\)\\\\-\\(\\w*\\)"
+                set-variable .spell.check-word &cat @s1 @s2
+                !return
+            !endif
+        !endif
+    !endif
+    2 show-region
+    !abort
+!emacro
+
+;; latex popup ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; ------------- greek  letters --------------------------------;
+0 define-macro latex-popup-greek
+    insert-string &lget "|$\\alpha$|$\\beta$|$\\gamma$|$\\delta$|$\\epsilon$|$\\mu$|$\\zeta$" @#
+!emacro
+;------------------------ headers ------------------------------------;
+0 define-macro latex-popup-header
+    execute-string &lget "|\\chapter{\p}\P|\\section{\p}\P|\\subsection{\p}\P|\\subsubsection{\p}\P|\\paragraph{\p}\P|\\subparagraph{\p}\P|" @#
+!emacro
+;------------------------ symbols ------------------------------------;
+0 define-macro latex-popup-symbol
+    insert-string &lget "|$\^{\\rm TM}$|$^{\\copyright$}|$^{\\circledR}$|\\glqq|\\grqq|" @#
+!emacro
+;------------------------ cross-reference ------------------------------------;
+0 define-macro latex-popup-reference
+    execute-string &lget "|\\ref{\p}\P|\\pageref{\p}\P|\\label{\p}\P|\\cite{\p}\P|" @#
+!emacro
+ ;------------------------ format  ------------------------------------;
+0 define-macro latex-popup-format
+    execute-string &lget "|\\textbf{\p}\P|\\textit{\p}\P|\\Large{\p}\P|\\large{\p}\P|\\small{\p}\P|\\footnotesize{\p}\P|\\scriptsize{\p}\P|" @#
+!emacro
+ ;------------------------ environment  ------------------------------------;
+0 define-macro latex-popup-environment
+    execute-string &lget "|\\begin{enumerate}\N \\item \p\N\f\\item \N\\end{enumerate}\P|\\begin{itemize}\N \\item \p\N\f\\item \N\\end{itemize}\P|" @#
+!emacro
+;---------------------- higher and lower numbers --------------------------;
+0 define-macro latex-make-format
+    kill-region
+    execute-string &lget "|$^|$_|\\textit{|\\textbf{|" @#
+    yank
+    -1 yank
+    execute-string &lget "|$|$|}|}|" @#
+!emacro
+
+;------------ latex-popup ------------------------------------------------
+osd .osd.latex-popgk 0   "b"
+osd .osd.latex-popgk 1   "" "&alpha"           1 latex-popup-greek 
+osd .osd.latex-popgk 2   "" "&beta"            2 latex-popup-greek
+osd .osd.latex-popgk 3   "" "&gamma"           3 latex-popup-greek
+osd .osd.latex-popgk 4   "" "&delta"           4 latex-popup-greek
+osd .osd.latex-popgk 5   "" "&epsilon"         5 latex-popup-greek 
+osd .osd.latex-popgk 6   "" "&my"              6 latex-popup-greek
+
+osd .osd.latex-pophd 0   "b"
+osd .osd.latex-pophd 1   "" "&1 chapter"       1 latex-popup-header
+osd .osd.latex-pophd 2   "" "&2 section"       2 latex-popup-header
+osd .osd.latex-pophd 3   "" "&3 subsection"    3 latex-popup-header
+osd .osd.latex-pophd 4   "" "&4 subsubsection" 4 latex-popup-header
+osd .osd.latex-pophd 5   "" "&5 paragraph"     5 latex-popup-header
+osd .osd.latex-pophd 6   "" "&6 subparagraph"  6 latex-popup-header
+
+osd .osd.latex-popsb 0   "b"
+osd .osd.latex-popsb 1   "" "&1 TM"            1 latex-popup-symbol
+osd .osd.latex-popsb 2   "" "&2 ©"             2 latex-popup-symbol
+osd .osd.latex-popsb 3   "" "&3 ®"             3 latex-popup-symbol
+osd .osd.latex-popsb 4   "-" 
+osd .osd.latex-popsb 5   "" "&4 quotes „"      4 latex-popup-symbol
+osd .osd.latex-popsb 6   "" "&5 quotes \""     5 latex-popup-symbol
+
+osd .osd.latex-poprf 0   "b"
+osd .osd.latex-poprf 1   "" "&ref"             1 latex-popup-reference
+osd .osd.latex-poprf 2   "" "&pageref"         2 latex-popup-reference
+osd .osd.latex-poprf 3   "" "&label"           3 latex-popup-reference
+osd .osd.latex-poprf 4   "" "&cite"            4 latex-popup-reference
+
+osd .osd.latex-popft 0   "b"
+osd .osd.latex-popft 1   "" "&textbf"          1 latex-popup-format
+osd .osd.latex-popft 2   "" "text&it"          2 latex-popup-format
+osd .osd.latex-popft 3   "-" 
+osd .osd.latex-popft 4  "" "&Large"            3 latex-popup-format
+osd .osd.latex-popft 5   "" "l&arge"           4 latex-popup-format
+osd .osd.latex-popft 6   "" "&small"           5 latex-popup-format
+osd .osd.latex-popft 7   "" "&footnotesize"    6 latex-popup-format
+osd .osd.latex-popft 8   "" "s&criptsize"      7 latex-popup-format
+osd .osd.latex-popft 9   "-"             
+osd .osd.latex-popft 10   "" "&high number"    1 latex-make-format
+osd .osd.latex-popft 20   "" "lo&w number"     2 latex-make-format
+osd .osd.latex-popft 29   "-"     
+osd .osd.latex-popft 30   "" "&make italic"    3 latex-make-format
+osd .osd.latex-popft 40   "" "make &bold"      4 latex-make-format
+
+osd .osd.latex-popev 0   "b"
+osd .osd.latex-popev 1   ""  "&enumerate"      1 latex-popup-environment
+osd .osd.latex-popev 2   ""  "&itemize"        2 latex-popup-environment
+
+osd .osd.latex-popup 0   "b"
+osd .osd.latex-popup 1   "Mde"  "&Header"        .osd.latex-pophd
+osd .osd.latex-popup 2   "Mde"  "&References"    .osd.latex-poprf
+osd .osd.latex-popup 3   "Mde"  "&Format"        .osd.latex-popft
+osd .osd.latex-popup 4   "Mde"  "&Environment"   .osd.latex-popev
+osd .osd.latex-popup 5   "Mde"  "&Greek"         .osd.latex-popgk
+osd .osd.latex-popup 6   "Mde"  "&Symbols"       .osd.latex-popsb
+
+define-macro latex-popup 
+    !if @#
+        ; redefine the position to be next to the cursor if this has
+        ; been invoked with an argument. 
+        osd .osd.latex-popup  0 "ba" &add $cursor-x 1 &sub $cursor-y 1
+    !else
+        osd .osd.latex-popup  0 "b"
+    !endif
+    .osd.latex-popup osd
+!emacro 
+
+;; osd Tools ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+osd .osd.latex-tool 0  "b"
+osd .osd.latex-tool 1  ""   "LaTeX Tool &Help   esc h"   .osd.latex-help osd
+osd .osd.latex-tool 2  ""   "&Goto Ref Label    C-c r"   f latex-ref-goto-label
+osd .osd.latex-tool 3  ""   "&Return to Ref     C-c C-r" f latex-ref-go-back
+osd .osd.latex-tool 4  ""   "List &Sections     f7"      f latex-list-section
+osd .osd.latex-tool 5  ""   "List &Labels       f8"      f latex-list-label
+osd .osd.latex-tool 6  "-"
+osd .osd.latex-tool 7  "Md" "&Insert Token      C-6"     .osd.latex-popup
+osd .osd.latex-tool 8  ""   "Com&pile Buffer"            f latex-compile
+osd .osd.latex-tool 9  ""   "&View Buffer"               f latex-view
+osd .osd.latex-tool 10 "-"
+osd .osd.latex-tool 11 ""   "&Comment Line      C-c C-c" f latex-comment-line
+osd .osd.latex-tool 12 ""   "&Uncomment Line    C-c C-d" f 
+osd .osd.latex-tool 13 "-"
+osd .osd.latex-tool 14 ""   "Toggle hilighting C-c C-h"  f latex-swap-hilight
+osd .osd.latex-tool 15 "i"  "Create &Tags File"          f "exec-me \"\\\"@textags\\\"\""
+; Add hook to load the OSD latex tools menu.
+0 define-macro osd-ohook-latex
+    osd 7 1 "Md" "LaTeX &Tools" .osd.latex-tool
+    osd 7 2 "-"
+    osd 4 15 "Md" "&LaTex Token" .osd.latex-popup
+!emacro
+; Add hook to remove the OSD latex tools menu.
+0 define-macro osd-chook-latex
+    osd 7 1  "D"
+    osd 7 2  "D"
+    osd 4 15 "D"
+!emacro
+
+osd .osd.latex-help 0  "batcdH" 9 3 99 .scheme.osd-title "LaTeX Mode Help" 
+osd .osd.latex-help 3  "" 
+osd .osd.latex-help 4  ""  "    esc h   - View this help page"
+osd .osd.latex-help 5  "" 
+osd .osd.latex-help 6  ""  "    C-c r   - Find current reference's label"
+osd .osd.latex-help 7  ""  "    C-c C-r - Return back to current reference"
+osd .osd.latex-help 8  "" 
+osd .osd.latex-help 9  ""  "    f7      - Goto section (Given 0 arg to rebuild  "
+osd .osd.latex-help 10 ""  "              completion list)"
+osd .osd.latex-help 11 ""  "    f8      - Goto label (Given 0 arg to rebuild  "
+osd .osd.latex-help 12 ""  "              completion list)"
+osd .osd.latex-help 13 "" 
+osd .osd.latex-help 14 ""  "    C-6     - Insert LaTeX token"
+osd .osd.latex-help 15 "" 
+osd .osd.latex-help 16 ""  "    C-c C-c - Comment out current line"
+osd .osd.latex-help 17 ""  "    C-c C-d - Uncomment current line"
+osd .osd.latex-help 18 "" 
+osd .osd.latex-help 19 ""  "    C-c C-h - Toggle simulated hilighting"
+osd .osd.latex-help 98 "" 
+osd .osd.latex-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
+;
+; Delete hook. This cleans up after the buffer has been closed.
+;
+0 define-macro dhook-latex
+    ; remove the list buffers
+    !force 0 delete-buffer &spr "*%s sectn-list*" $buffer-bname
+    !force 0 delete-buffer &spr "*%s label-list*" $buffer-bname
+!emacro
+;
+; Buffer hook. Modify the fill mode to left only. This ensures that we
+; always fill the line correctly irrespective of the mode of the caller.
+; The likes of centre and justified are not warrented in a TeX buffer.
+; 
+0 define-macro bhook-latex
+    ; Save the other context. Restore local context
+    set-variable :ofill-mode $fill-mode
+    set-variable $fill-mode  :fill-mode
+    set-variable :ofill-col  $fill-col
+    set-variable $fill-col   :fill-col
+!emacro
+;
+0 define-macro ehook-latex
+    ; Restore existing context
+    set-variable :fill-mode $fill-mode
+    set-variable $fill-mode :ofill-mode
+    set-variable :fill-col $fill-col
+    set-variable $fill-col :ofill-col
+!emacro
+
+define-macro fhook-latex
+    ; if arg is 0 this is a new file so add template 
+    !if &not @#
+        etfinsrt "latex"
+    !endif
+    1 buffer-mode "time"
+    1 buffer-mode "indent"
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.latex
+        buffer-bind-unbound-key latex-swap-hilight "C-c C-h"
+    !endif
+    
+    ; Rebind the paragraph movement keys. 
+    buffer-bind-key latex-para               "esc o"
+    buffer-bind-key latex-para               "esc q"
+    buffer-bind-key latex-backward-paragraph "esc p"
+    buffer-bind-key latex-forward-paragraph  "esc n"
+    
+    buffer-bind-unbound-key latex-popup       "C-6"
+    ; Latex pop-up on C-right-mouse
+    0 buffer-bind-unbound-key latex-popup "C-mouse-pick-3"
+    buffer-bind-unbound-key latex-list-section   "f7"
+    buffer-bind-unbound-key latex-list-label     "f8"
+    buffer-bind-unbound-key latex-comment-line   "C-c C-c"
+    buffer-bind-unbound-key latex-uncomment-line "C-c C-d"
+    .osd.latex-help buffer-bind-key osd  "esc h"
+    ; setup latex folds
+    buffer-bind-unbound-key fold-current "f2"
+    buffer-bind-unbound-key fold-all     "f3"
+    auto-spell-init
+    ; execute user extensions if enabled
+    !if &exist my-fhook-latex
+        my-fhook-latex
+    !endif
+    ; Set up the default constants
+    set-variable :fill-mode "L"
+    set-variable :fill-col $fill-col
+!emacro
+
+; Set up the folding tokens for LaTeX
+set-variable .fhook-latex.fold-open  "\\\\chapter\\|\\\\section\\|\\\\subsection"
+set-variable .fhook-latex.fold-close "\\\\chapter\\|\\\\section\\|\\\\subsection\\|\\\\end{document}"
+set-variable .fhook-latex.fold-mopen "1"
+set-variable .fhook-latex.fold-mnext "-1"
+
+ml-write "[LaTeX file hook loaded]"
+
+; Load in user extensions if found
+!force execute-file "mylatex"

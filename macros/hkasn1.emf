@@ -1,0 +1,117 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Jon Green
+;  Created       : Thu Sep 10 12:41:38 1998
+;  Last Modified : <000719.0012>
+;
+;  Description
+;            Hilighting for ISO 7498 ASN.1. 
+;  Notes
+;            The hilight tokens in this document were derived from the 
+;            ITU-T Recommendation X.208 - Specification of Abstract Syntax
+;            Notation One (ASN.1) (Extract from the Blue Book).
+;  History
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  Copyright (c) 1998 Jasspa.
+;  This template exists in the public domain.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+!if &not &exist .hilight.asn1
+    set-variable .hilight.asn1  &pinc .hilight.next 1
+    set-variable .hilight.asn1C &pinc .hilight.next 1
+!endif
+!if &band .hilight.flags 0x02
+    ;
+    ; Hilight ASN.1 Mode
+    ; 
+    0 hilight  .hilight.asn1  0                   $global-scheme
+    hilight .hilight.asn1  0x80 "--" .hilight.asn1C .scheme.comment
+    hilight .hilight.asn1  1 "::="             .scheme.operator
+    hilight .hilight.asn1  1 "ABSENT"          .scheme.keyword
+    hilight .hilight.asn1  1 "ANY"             .scheme.keyword
+    hilight .hilight.asn1  1 "APPLICATION"     .scheme.keyword
+    hilight .hilight.asn1  1 "BEGIN"           .scheme.keyword
+    hilight .hilight.asn1  1 "BIT"             .scheme.keyword
+    hilight .hilight.asn1  1 "BOOLEAN"         .scheme.type
+    hilight .hilight.asn1  1 "BY"              .scheme.keyword
+    hilight .hilight.asn1  1 "CHOICE"          .scheme.keyword
+    hilight .hilight.asn1  1 "COMPONENT"       .scheme.keyword
+    hilight .hilight.asn1  1 "COMPONENTS"      .scheme.keyword
+    hilight .hilight.asn1  1 "DEFAULT"         .scheme.keyword
+    hilight .hilight.asn1  1 "DEFINED"         .scheme.keyword
+    hilight .hilight.asn1  1 "DEFINITIONS"     .scheme.keyword
+    hilight .hilight.asn1  1 "END"             .scheme.keyword
+    hilight .hilight.asn1  1 "ENUMERATED"      .scheme.keyword
+    hilight .hilight.asn1  1 "EXPLICIT"        .scheme.keyword
+    hilight .hilight.asn1  1 "EXPORTS"         .scheme.keyword
+    hilight .hilight.asn1  1 "EXTERNAL"        .scheme.keyword
+    hilight .hilight.asn1  1 "FALSE"           .scheme.type
+    hilight .hilight.asn1  1 "FROM"            .scheme.keyword
+    hilight .hilight.asn1  1 "IDENTIFIER"      .scheme.type
+    hilight .hilight.asn1  1 "IMPLICIT"        .scheme.keyword
+    hilight .hilight.asn1  1 "IMPORTS"         .scheme.keyword
+    hilight .hilight.asn1  1 "INCLUDES"        .scheme.keyword
+    hilight .hilight.asn1  1 "INTEGER"         .scheme.type
+    hilight .hilight.asn1  1 "MAX"             .scheme.keyword
+    hilight .hilight.asn1  1 "MIN"             .scheme.keyword
+    hilight .hilight.asn1  1 "MINUS-INFINITY"  .scheme.keyword
+    hilight .hilight.asn1  1 "NULL"            .scheme.type
+    hilight .hilight.asn1  1 "OBJECT"          .scheme.type
+    hilight .hilight.asn1  1 "OCTET"           .scheme.type 
+    hilight .hilight.asn1  1 "OF"              .scheme.keyword
+    hilight .hilight.asn1  1 "OPTIONAL"        .scheme.keyword
+    hilight .hilight.asn1  1 "PLUS-INFINITY"   .scheme.keyword
+    hilight .hilight.asn1  1 "PRESENT"         .scheme.keyword
+    hilight .hilight.asn1  1 "PRIVATE"         .scheme.keyword
+    hilight .hilight.asn1  1 "REAL"            .scheme.type
+    hilight .hilight.asn1  1 "SEQUENCE"        .scheme.keyword
+    hilight .hilight.asn1  1 "SET"             .scheme.keyword
+    hilight .hilight.asn1  1 "SIZE"            .scheme.keyword
+    hilight .hilight.asn1  1 "STRING"          .scheme.type
+    hilight .hilight.asn1  1 "TAGS"            .scheme.keyword
+    hilight .hilight.asn1  1 "TRUE"            .scheme.type
+    hilight .hilight.asn1  1 "UNIVERSAL"       .scheme.keyword
+    hilight .hilight.asn1  1 "WITH"            .scheme.keyword
+    ;
+    hilight .hilight.asn1  1 "OBJECT-TYPE"     .scheme.keyword
+    hilight .hilight.asn1  1 "SYNTAX"          .scheme.keyword
+    hilight .hilight.asn1  1 "ACCESS"          .scheme.keyword
+    hilight .hilight.asn1  1 "INDEX"           .scheme.keyword
+    hilight .hilight.asn1  1 "STATUS"          .scheme.keyword
+    hilight .hilight.asn1  1 "DESCRIPTION"     .scheme.keyword
+    ;
+    0 hilight  .hilight.asn1C 0                    .scheme.comment
+    hilight .hilight.asn1C 0x80 "--"   .hilight.asn1 .scheme.comment
+    hilight .hilight.asn1C 0x80 "\n"   .hilight.asn1 .scheme.comment
+!endif
+;
+0 indent   .hilight.asn1 0 50
+indent  .hilight.asn1 N "BEGIN" 4
+indent  .hilight.asn1 O "END" -4
+indent  .hilight.asn1 n "{" 4
+indent  .hilight.asn1 o "}" -4
+;
+define-macro fhook-asn1
+    ; if arg is 0 this is a new file so add template 
+    !if &not @#
+        etfinsrt "asn1"
+    !endif
+    1 buffer-mode "time"
+    buffer-abbrev-file "asn1"
+    ; Set up the hilight mode
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.asn1
+    !endif
+    ; This does not work very well so we do not enable it.
+    ; This is becuse of the syntax of the language on a ::=
+    ;    set-variable $buffer-indent  .hilight.asn1
+    ; execute user extensions if enabled
+    !if &exist my-fhook-asn1
+        my-fhook-asn1
+    !endif
+!emacro
+;
+ml-write "[ANS.1 file hook loaded]"
+; load in user extensions if found
+!force execute-file "myasn1"
+

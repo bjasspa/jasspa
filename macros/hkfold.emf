@@ -1,0 +1,291 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Sat Jun 6 14:43:33 1998
+;  Last Modified : <000719.0012>
+;
+;  Description
+;
+;  Notes
+;  Use:-
+;    f2   - open fold
+;    S-f2 - close fold
+;    f3   - create fold around a region
+;    S-f3 - delete fold
+;
+;  History
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro hkfold-section
+    set-variable #l0 0
+    set-variable #l1 $window-line
+    !force &sub $window-line @# search-forward :fold-basesrch
+    !while $status
+        !if   &seq :fold-open &mid @wl $window-col &len :fold-open
+            !if &not &pinc #l0 1
+                beginning-of-line
+                set-variable $line-scheme .scheme.fold
+                forward-line
+                set-mark
+                set-variable #l2 $window-line
+            !endif
+        !elif &seq :fold-close &mid @wl $window-col &len :fold-close
+            !if &not &dec #l0 1
+                !if &not &seq #l2 $window-line
+                    set-variable $line-scheme .scheme.fold
+                    set-variable @# &sub @# &sub $window-line #l2
+                    4 narrow-buffer
+                !endif
+            !elif &les #l0 0
+                ml-write "[Fold error: Close found without open]"
+                !abort
+            !endif
+        !endif
+        !force &sub $window-line @# search-forward :fold-basesrch
+    !done
+    !if &gre #l0 0
+        ml-write "[Fold error: Open found without close]"
+        !abort
+    !endif
+    set-variable $window-line #l1
+!emacro
+
+define-macro hkfold-find-start
+    set-variable #l0 0
+    search-backward :fold-basesrch
+    !while $status
+        -2 show-region
+        !if &seq :fold-open &mid @wl $window-col &len :fold-open
+            2 show-region
+            !if &not &pdec #l0 1
+                beginning-of-line
+                !return
+            !endif
+        !elif &seq :fold-close &mid @wl $window-col &len :fold-close
+            2 show-region
+            set-variable #l0 &add #l0 1
+        !else
+            2 show-region
+        !endif
+        search-backward :fold-basesrch
+    !done
+!emacro
+define-macro hkfold-find-end
+    set-variable #l0 0
+    search-forward :fold-basesrch
+    !while $status
+        !if &seq :fold-open &mid @wl $window-col &len :fold-open
+            set-variable #l0 &add #l0 1
+        !elif &seq :fold-close &mid @wl $window-col &len :fold-close
+            !if &not &pdec #l0 1
+                beginning-of-line
+                !return
+            !endif
+        !endif
+        search-forward :fold-basesrch
+    !done
+!emacro
+
+define-macro hkfold-open
+    beginning-of-line
+    forward-line
+    !force -3 search-backward &cat :fold-basesrch :fold-opensrch
+    !if &not $status
+        ml-write "[Fold error: Not on fold]" 
+        !abort
+    !endif
+    set-variable #l0 $window-line
+    !force -2 search-forward &cat :fold-basesrch :fold-closesrch
+    !if &not $status
+        ml-write "[Fold error: Not on fold]" 
+        !abort
+    !endif
+    !force 2 narrow-buffer
+    !if &not $status
+        ; may be an empty fold
+        ml-write "[Empty Fold]" 
+        !return
+    !endif
+    set-variable $line-scheme -1
+    set-variable #l1 $window-line
+    goto-line #l0
+    set-variable $line-scheme -1
+    forward-line
+    #l1 hkfold-section
+!emacro
+
+define-macro hkfold-close
+    set-variable #l1 $window-line
+    ; see if theres a start or end on this line
+    beginning-of-line
+    !force -1 search-forward :fold-basesrch
+    !if $status
+        !if &seq :fold-open &mid @wl $window-col &len :fold-open
+            end-of-line
+        !elif &seq :fold-close &mid @wl $window-col &len :fold-close
+            beginning-of-line
+        !endif
+    !endif
+    !force hkfold-find-start
+    !if &not $status
+        set-variable $window-line #l1
+        ml-write "[Fold error: Not in a fold]"
+        !abort
+    !endif
+    forward-line
+    set-variable #l0 $window-line
+    set-mark
+    hkfold-find-end
+    !if &not $status
+        set-variable $window-line #l1
+        ml-write "[Fold error: Not in a fold]"
+        !abort
+    !endif
+    !if &equ #l0 $window-line
+        exchange-point-and-mark
+        2 backward-line
+        !force hkfold-close
+        !if &not $status
+            set-variable $window-line #l1
+            !abort
+        !endif
+    !else
+        4 narrow-buffer
+        set-variable $line-scheme .scheme.fold
+        backward-line
+        set-variable $line-scheme .scheme.fold
+        forward-line
+    !endif
+!emacro
+
+define-macro hkfold-kill
+    set-variable #l1 $window-line
+    ; see if theres a start or end on this line
+    beginning-of-line
+    !force -1 search-forward :fold-basesrch
+    !if $status
+        !if &seq :fold-open &mid @wl $window-col &len :fold-open
+            end-of-line
+        !elif &seq :fold-close &mid @wl $window-col &len :fold-close
+            beginning-of-line
+        !endif
+    !endif
+    !force hkfold-find-start
+    !if &not $status
+        set-variable $window-line #l1
+        ml-write "[Fold error: Not in a fold]"
+        !abort
+    !endif
+    set-mark
+    forward-line
+    set-variable #l0 $window-line
+    hkfold-find-end
+    !if &not $status
+        set-variable $window-line #l1
+        ml-write "[Fold error: Not in a fold]"
+        !abort
+    !endif
+    !if &equ #l0 $window-line
+        !force 2 narrow-buffer
+    !endif
+    forward-line
+    kill-region
+!emacro
+
+define-macro hkfold-create
+    set-variable #l0 $window-line
+    exchange-point-and-mark
+    !if &gre $window-line #l0 
+        exchange-point-and-mark
+    !endif
+    beginning-of-line
+    insert-string &spr "%s%s\n" :fold-base :fold-open
+    exchange-point-and-mark
+    insert-string &spr "%s%s\n" :fold-base :fold-close
+    backward-line
+    4 narrow-buffer
+!emacro
+
+define-macro fhook-fold
+    search-forward "fold:"
+    beginning-of-line
+    !force -1 search-forward "base="
+    !if &not $status
+        ml-write "[Fold error: Base string not set]"
+        !abort
+    !endif
+    set-variable :fold-base &lget &rig @wl $window-col 1
+    beginning-of-line
+    !force -1 search-forward "basesrch="
+    !if $status
+        set-variable :fold-basesrch &lget &rig @wl $window-col 1
+    !else
+        set-variable :fold-basesrch :fold-basesrch
+    !endif
+    beginning-of-line
+    !force -1 search-forward "open="
+    !if &not $status
+        ml-write "[Fold error: Open string not set]"
+        !abort
+    !endif
+    set-variable :fold-open &lget &rig @wl $window-col 1
+    beginning-of-line
+    !force -1 search-forward "opensrch="
+    !if $status
+        set-variable :fold-opensrch &lget &rig @wl $window-col 1
+    !else
+        set-variable :fold-opensrch :fold-open
+    !endif
+    beginning-of-line
+    !force -1 search-forward "close="
+    !if &not $status
+        ml-write "[Fold error: Close string not set]"
+        !abort
+    !endif
+    set-variable :fold-close &lget &rig @wl $window-col 1
+    beginning-of-line
+    !force -1 search-forward "closesrch="
+    !if $status
+        set-variable :fold-closesrch &lget &rig @wl $window-col 1
+    !else
+        set-variable :fold-closesrch :fold-close
+    !endif
+    beginning-of-line
+    !force -1 search-forward "hook="
+    !if $status
+        set-variable #l1 &lget &rig @wl $window-col 1
+    !else
+        set-variable #l1 ""
+    !endif
+    buffer-bind-unbound-key hkfold-open   "f2"
+    buffer-bind-unbound-key hkfold-close  "S-f2"
+    buffer-bind-unbound-key hkfold-create "f3"
+    buffer-bind-unbound-key hkfold-kill   "S-f3"
+    end-of-buffer
+    set-variable #l0 $window-line
+    beginning-of-buffer
+    #l0 hkfold-section
+    !if &not &seq #l1 ""
+        set-variable $buffer-fhook #l1
+        !if &not &seq $buffer-fhook #l1
+            !force execute-file &cat "hk" &rig #l1 6
+            set-variable $buffer-fhook #l1
+            !if &not &seq $buffer-fhook #l1
+                ml-write &spr "[Fold error: Failed to set hook to %s]" #l1
+                !abort
+            !endif
+        !endif
+        1 execute-named-command #l1
+    !endif
+    ; execute user extensions if enabled
+    !if &exi my-fhook-fold
+        my-fhook-fold
+    !endif
+!emacro
+
+ml-write "[Folding editor hook loaded]"
+
+; load in user extensions if found
+!force execute-file "myfold"
+

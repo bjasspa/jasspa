@@ -1,0 +1,201 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; *registry* hook - This file is invoked when MicroEmacs's registry is displayed
+;
+; Last Modified : <000523.0007>
+; Copyright (c) 1999 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+!if &not &exist .hilight.reg
+    set-variable .hilight.reg  &pinc .hilight.next 1
+    set-variable .osd.reg-help &pinc .osd.next 1
+!endif
+
+!if &band .hilight.flags 0x02
+    0 hilight  .hilight.reg  0                    $global-scheme
+    hilight .hilight.reg  0x101 "*"            .scheme.select
+    hilight .hilight.reg  0x001 "+"            .scheme.dir-closed
+    hilight .hilight.reg  0x001 "-"            .scheme.dir-open
+    hilight .hilight.reg  0x001 "!"            .scheme.dir-open
+    hilight .hilight.reg  0x000 "="            .scheme.keyword
+    hilight .hilight.reg  0x004 "\"" "\"" "\\" .scheme.string
+    ; Color the directory lines if requested.
+    !if &not &seq &lef $box-chars 1 "|"
+        hilight .hilight.reg 0x001 &lef $box-chars  1   .scheme.dir-tree
+        hilight .hilight.reg 0x001 &rig $box-chars 10   .scheme.dir-tree
+        hilight .hilight.reg 0x001 &mid $box-chars  3 1 .scheme.dir-tree
+        hilight .hilight.reg 0x001 &mid $box-chars  6 1 .scheme.dir-tree
+    !endif
+    hilight .hilight.reg  0x002 "->"  .scheme.dirslink
+!endif
+
+0 define-macro reg-toggle-hidden
+    beginning-of-line
+    !force -1 search-forward "[+-] "
+    !if $status
+        2 backward-char
+        !if &seq @wc "-"
+            set-variable #l0 "h"
+        !elif &seq @wc "+"
+            set-variable #l0 "H"
+        !else
+            beginning-of-line
+            !return
+        !endif
+        set-variable #l2 $window-line
+        set-variable #l3 $window-y-scroll
+        &sub #l2 1 mark-registry "" #l0
+        list-registry
+        set-variable $window-line #l2
+        set-variable $window-y-scroll #l3
+    !endif
+!emacro
+
+0 define-macro reg-set-node
+    beginning-of-line
+    !if &les &len @wl 4
+        ml-write "[Invalid line]"
+        !abort
+    !endif
+    set-variable #l2 $window-line
+    set-variable #l3 $window-y-scroll
+    ; get the complete node name into $result
+    &sub #l2 1 mark-registry "" "?"
+    set-variable #l1 $result
+    mark-registry #l1 "g"
+    !if &sin "!" $result
+        set-variable #l0 @ml &spr "Set %s to" &rig #l1 &rsin "/" #l1
+    !else
+        set-variable #l0 @ml1 &spr "Set %s to" &rig #l1 &rsin "/" #l1 &reg #l1 "" ""
+    !endif
+    set-registry #l1 "" #l0
+    list-registry
+    set-variable $window-line #l2
+    set-variable $window-y-scroll #l3
+!emacro
+
+0 define-macro reg-add-node
+    beginning-of-line
+    !if &and &gre $buffer-line 1 &les &len @wl 4
+        ml-write "[Invalid line]"
+        !abort
+    !endif
+    set-variable #l2 $window-line
+    set-variable #l3 $window-y-scroll
+    ; get the complete node name into $result
+    &sub #l2 1 mark-registry "" "?"
+    set-variable #l1 $result
+    set-variable #l4 @ml &spr "Name of new node to add to %s" &rig #l1 &rsin "/" #l1
+    set-variable #l0 @ml &spr "Set %s to" #l4
+    set-registry #l1 #l4 #l0
+    list-registry
+    set-variable $window-line #l2
+    set-variable $window-y-scroll #l3
+!emacro
+
+0 define-macro reg-del-node
+    beginning-of-line
+    !if &les &len @wl 4
+        ml-write "[Invalid line]"
+        !abort
+    !endif
+    set-variable #l2 $window-line
+    set-variable #l3 $window-y-scroll
+    ; get the complete node name into $result
+    &sub #l2 1 mark-registry "" "?"
+    delete-registry $result
+    list-registry
+    set-variable $window-line #l2
+    set-variable $window-y-scroll #l3
+!emacro
+
+0 define-macro reg-copy-node
+    beginning-of-line
+    !if &les &len @wl 4
+        ml-write "[Invalid line]"
+        !abort
+    !endif
+    set-variable #l2 $window-line
+    ; get the complete node name into $result
+    &sub #l2 1 mark-registry "" "?"
+    set-variable #l1 $result
+    set-variable #l4 @ml2 &spr "Copy node %s to" #l1 &lef #l1 &rsin "/" #l1
+    !force mark-registry #l4 "?"
+    !if $status
+        set-variable #l4 &spr "%s/%s" $result &rig #l1 &rsin "/" #l1
+        !force mark-registry #l4 "?"
+        !if $status
+            ml-write &spr "[Registry node %s already exists]"  $result
+            !abort
+        !endif
+    !endif
+    copy-registry #l1 #l4    
+    list-registry
+!emacro
+
+0 define-macro reg-move-node
+    beginning-of-line
+    !if &les &len @wl 4
+        ml-write "[Invalid line]"
+        !abort
+    !endif
+    set-variable #l2 $window-line
+    ; get the complete node name into $result
+    &sub #l2 1 mark-registry "" "?"
+    set-variable #l1 $result
+    set-variable #l4 @ml2 &spr "Move node %s to" &rig #l1 &rsin "/" #l1 &lef #l1 &rsin "/" #l1
+    !force mark-registry #l4 "?"
+    !if $status
+        set-variable #l4 &spr "%s/%s" $result &rig #l1 &rsin "/" #l1
+        !force mark-registry #l4 "?"
+        !if $status
+            ml-write &spr "[Registry node %s already exists]"  $result
+            !abort
+        !endif
+    !endif
+    copy-registry #l1 #l4    
+    delete-registry #l1
+    list-registry
+!emacro
+
+osd .osd.reg-help 0  "batcdH" 9 3 99 .scheme.osd-title "Register Mode Help"
+osd .osd.reg-help 3  "" 
+osd .osd.reg-help 4  ""  "  esc h     - View this help page"
+osd .osd.reg-help 5  "" 
+osd .osd.reg-help 7  ""  "  space     - Toggle tree visibility state"
+osd .osd.reg-help 8  ""  "  return    - Set the value of the current node "
+osd .osd.reg-help 9  ""  "  c         - Copy a node"
+osd .osd.reg-help 10 ""  "  i, insert - Add a new node"
+osd .osd.reg-help 11 ""  "  d, delete - Delete a node"
+osd .osd.reg-help 12 ""  "  m         - Move a node"
+osd .osd.reg-help 13 "" 
+osd .osd.reg-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
+
+define-macro fhook-reg
+    1 buffer-mode "magic"
+    set-variable $buffer-mask "luh1"
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.reg
+    !endif
+    set-variable :mouse-pick-1 void
+    set-variable :mouse-drop-1 reg-toggle-hidden
+    buffer-bind-key reg-toggle-hidden "space"
+    set-variable :mouse-pick-3 void
+    set-variable :mouse-drop-3 reg-set-node
+    buffer-bind-key reg-set-node  "return"
+    buffer-bind-key reg-copy-node "c"
+    buffer-bind-key reg-del-node  "delete"
+    buffer-bind-key reg-del-node  "d"
+    buffer-bind-key reg-add-node  "insert"
+    buffer-bind-key reg-add-node  "i"
+    buffer-bind-key reg-move-node "m"
+    .osd.reg-help buffer-bind-key osd "esc h"
+    ; execute user extensions if enabled
+    !if &exist my-fhook-reg
+        my-fhook-reg
+    !endif
+!emacro
+
+ml-write "[Registry file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "myreg"
+

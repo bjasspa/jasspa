@@ -1,0 +1,361 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Thu Dec 24 12:35:09 1998
+;  Last Modified : <000719.0012>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 1998 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+!if &seq .osd.org "ERROR"
+    ; create a dummy macro for variables
+    0 define-macro org
+    !emacro
+    set-variable .osd.org    &pinc .osd.next 1
+    set-variable .osd.org-n  &pinc .osd.next 1
+    set-variable .osd.org-m  &pinc .osd.next 1
+    ; must keep the page osd numbers numerically together
+    set-variable .osd.orgm   &pinc .osd.next 1
+    set-variable .osd.orgw   &pinc .osd.next 1
+    set-variable .osd.orgd   &pinc .osd.next 1
+    set-variable .osd.orgl   &pinc .osd.next 1
+    set-variable .osd.orga   &pinc .osd.next 1
+    set-variable .osd.orgt   &pinc .osd.next 1
+    set-variable .osd.orgm-c &pinc .osd.next 1
+    set-variable .osd.orgw-c &pinc .osd.next 1
+    set-variable .osd.orgl-p &pinc .osd.next 1
+    set-variable .osd.orgl-c &pinc .osd.next 1
+    set-variable .org.months "|January|February|March|April|May|June|July|August|September|October|November|December|"
+    set-variable .org.days   "|Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|"
+    set-variable .org.dinm   "|31|28|31|30|31|30|31|31|30|31|30|31|"
+    ; Try and find the organizer file
+    set-variable #l1 &reg "/history" "organizer" $MENAME
+    !if &seq &set .org.dfile &find #l1 ".eof" "ERROR"
+        set-variable #l0 &reg "/" "history" ""
+        set-variable .org.dfile &spr "%s%s.eof" &lef #l0 &rsin "/" #l0 #l1
+    !endif
+!endif
+
+; set #p9 to flag if given year is a leap year
+0 define-macro org-leap-year
+    !if &mod @# 4
+        set-variable #p9 0
+    !elif &mod @# 100
+        set-variable #p9 1
+    !elif &mod @# 400
+        set-variable #p9 0
+    !else
+        set-variable #p9 1
+    !endif
+!emacro
+
+; alters the current year by the given numeric argument
+; if year is '*' nothing is done, copes with AD<->BC & leap years
+0 define-macro org-inc-year
+    !if &seq .org.year "*"
+        !return
+    !endif
+    set-variable .org.year &add .org.year @#
+    !if &not .org.year
+        set-variable .org.year &cond &les @# 0 -1 1
+    !endif
+    !if &equ .org.month 2
+        !if &gre .org.day 28
+            org-leap-year
+            set-variable .org.day &add 28 #l9
+        !endif
+    !endif
+!emacro
+
+; org-set-week @1 @2
+; sets the current week number using the 2 args passed in
+; @1 - the day of the year (0-365)
+; @2 - the week day number (0-6)
+0 define-macro org-set-week
+    ; correct the week day no to the user offset
+    set-variable #l0 &sub @2 &lef .org.set 1
+    !if &les #l0 0
+        set-variable #l0 &add #l0 7
+    !endif
+    ; get the day of the year for the 1st day of the required week
+    set-variable #l1 &sub @1 #l0
+    ; work out how many days of the new year the week of the 1st of jan has
+    set-variable #l2 &mod #l1 7
+    !if &les #l2 0
+        set-variable #l2 &add #l2 7
+    !endif
+    ; Enough days ? set #l2 to the day no for the first day of first week
+    !if &not &les #l2 &mid .org.set 1 1
+        set-variable #l2 &sub #l2 7
+    !endif
+    ; now its simple to calc the week no
+    set-variable .org.week &add 1 &div &sub #l1 #l2 7
+!emacro
+
+; org-cal-info - really grotty macro to work out required info
+; 2 different modes - if .org.week is set to +ve then gets info required
+; for the week view, otherwise the info required for the month/day view.
+; Month mode sets .org.info to "nnoOd"
+; Week  mode sets .org.info to "nnmm"
+; where nn = days in month, o = 1st's week day, O = 1st's week day with user offset,
+; d = cur days day no, mm = weeks month day
+; Month mode also sets the %cal-week
+; does not currently cope with 2/9/1752 oddity
+0 define-macro org-cal-info
+    set-variable #l2 $time
+    !if &seq .org.year "*"
+        !if &not .org.week
+            set-variable #l5 0
+            set-variable #l4 0
+            !while &not &equ &inc #l4 1 .org.month
+                set-variable #l5 &add #l5 &lget .org.dinm #l4 
+            !done
+            ; set #l3 to the start weekday offset
+            set-variable #l3 &mod #l5 7
+            set-variable #l6 &mod &add #l5 &lef .org.set 1 7
+            set-variable .org.week &add 1 &div &add #l5 6 7
+            !if .org.day
+                set-variable #l5 &add #l5 &sub .org.day 1
+            !endif
+            set-variable #l7 &mod #l5 7
+            ; set #l4 to the number of days in the month
+            set-variable #l4 &lget .org.dinm .org.month
+            !if &equ .org.month 2
+                set-variable #l4 &add #l4 1
+            !endif
+            set-variable .org.info &spr "%2d%1d%1d%1d" #l4 #l3 #l6 #l7
+            !return
+        !endif
+        set-variable .org.year &lef #l2 4
+    !endif
+    ; Correct the 'day of the week' to the user setting - note we dont bother getting it back in range 0-6
+    set-variable #l8 &mid #l2 11 1
+    ; is the current year a leap year?
+    .org.year org-leap-year
+    set-variable #l0 #l9
+    ; calculate the number of days from today to the first of the current year
+    set-variable #l3 &sub 0 &mid #l2 4 3
+    set-variable #l4 &lef #l2 4
+    !if &les .org.year #l4
+        !while &les .org.year #l4
+            #l4 org-leap-year
+            set-variable #l3 &sub #l3 &add #l9 365
+            !if &not &dec #l4 1
+                set-variable #l4 &sub #l4 1
+            !endif
+        !done
+        set-variable #l3 &sub #l3 #l0
+    !elif &gre .org.year #l4
+        !while &gre .org.year #l4
+            #l4 org-leap-year
+            set-variable #l3 &add #l3 &add #l9 365
+            set-variable #l4 &add #l4 1
+        !done
+    !endif
+    ; are we using the .org.week or the .org.month?
+    !if &not .org.week
+        ; calc the 1st day of the month in the year 
+        set-variable #l5 0
+        set-variable #l4 0
+        !while &not &equ &inc #l4 1 .org.month
+            set-variable #l5 &add #l5 &lget .org.dinm #l4 
+        !done
+        !if &and #l0 &gre .org.month 2
+            set-variable #l5 &add #l5 1
+        !endif
+        ; calc the current day no of the year and the current day of the week
+        set-variable #l6 #l5
+        !if .org.day
+            set-variable #l6 &add #l6 &sub .org.day 1
+        !endif
+        set-variable #l7 &mod &add #l3 &add #l6 #l8 7
+        !if &les #l7 0
+            set-variable #l7 &add #l7 7
+        !endif
+        ; call function to calc the week no
+        !if .org.day
+            org-set-week #l6 #l7
+        !else
+            ; ensure we stay in the same month
+            set-variable #l6 &add #l6 6
+            set-variable #l1 &mod &add #l7 6 7
+            org-set-week #l6 #l1
+        !endif
+        ; calulate the number of days from today to the 1st of current month
+        set-variable #l5 &add #l3 #l5
+        ; set #l3 to the start weekday offset
+        set-variable #l3 &mod &add #l5 #l8 7
+        !if &les #l3 0
+            set-variable #l3 &add #l3 7
+        !endif
+        ; set #l6 to the same as #l3 except allowing for the user set week offset 
+        set-variable #l6 &sub #l3 &lef .org.set 1
+        !if &les #l6 0
+            set-variable #l6 &add #l6 7
+        !endif
+        ; set #l4 to the number of days in the month
+        set-variable #l4 &lget .org.dinm .org.month
+        !if &and #l0 &equ .org.month 2
+            set-variable #l4 &add #l4 1
+        !endif
+        set-variable .org.info &spr "%2d%1d%1d%1d" #l4 #l3 #l6 #l7
+        !return
+    !endif
+    ; cal the day of the week the 1st of jan is - allow for user setting
+    set-variable #l1 &mod &add #l3 &sub #l8 &lef .org.set 1 7
+    !if &les #l1 0
+        set-variable #l1 &add #l1 7
+    !endif
+    ; How many days has this week got in it
+    set-variable #l1 &sub 7 #l1
+    ; Enough days ? set #l1 to the day no for the first day of first week
+    !if &not &les #l1 &mid .org.set 1 1
+        set-variable #l1 &sub #l1 7
+    !endif
+    ; calc the year day no for the first day of the current week - check and fix if week-no too big
+    set-variable #l7 &add #l1 &mul &sub .org.week 1 7
+    set-variable #l1 &sub &add #l0 364 &sub 7 &mid .org.set 1 1 
+    !while &gre #l7 #l1
+        set-variable .org.week &sub .org.week 1
+        set-variable #l7 &sub #l7 7
+    !done
+    ; if the day is set see if it is in the current week, if so base the current week around it
+    !if .org.day
+        set-variable #l5 .org.day
+        set-variable #l4 0
+        !while &not &equ &inc #l4 1 .org.month
+            set-variable #l5 &add #l5 &lget .org.dinm #l4 
+        !done
+        !if &or &les #l5 #l7 &gre #l5 &add #l7 7
+            set-variable .org.day 0
+        !endif
+    !endif
+    !if .org.day
+        set-variable #l5 &sub #l5 .org.day
+        ; calulate the day of the month the 1st day of the week is
+        set-variable #l7 &add 1 &sub #l7 #l5 
+    !else
+        ; calc the current month and the 1st day of the month in the year 
+        set-variable .org.month 0
+        set-variable #l4 0
+        !repeat
+            set-variable #l5 #l4
+            set-variable .org.month &add .org.month 1
+            set-variable #l4 &add #l4 &lget .org.dinm .org.month
+            !if &and #l0 &equ .org.month 2
+                set-variable #l4 &add #l4 1
+            !endif
+        !until &les #l7 #l4
+        ; calulate the day of the month the 1st day of the week is
+        set-variable #l7 &add 1 &sub #l7 #l5 
+    !endif
+    ; set #l4 to the number of days in the first day's month
+    !if &gre #l7 0
+        set-variable #l6 .org.month
+    !elif &equ .org.month 1
+        set-variable #l6 12
+    !else
+        set-variable #l6 &sub .org.month 1
+    !endif
+    set-variable #l4 &lget .org.dinm #l6
+    !if &and #l0 &equ #l6 2
+        set-variable #l4 &add #l4 1
+    !endif
+    set-variable .org.info &spr "%2d%2d" #l4 #l7
+!emacro
+
+0 define-macro org-indent
+    set-variable #l0 &add @1 1
+    set-variable #l1 $window-line
+    goto-line #l0
+    !while &sub #l1 $window-line
+        @# insert-space
+        beginning-of-line
+        forward-line
+    !done
+!emacro
+
+0 define-macro org-key-bind
+    !if &set #l0 &lfind &ind &cat ".org.bind-k" .org.page @cck
+        execute-line &spr "!nma %s" &lget &ind &cat ".org.bind-c" .org.page #l0
+        !if &lget &ind &cat ".org.bind-r" .org.page #l0
+            -1 osd
+        !endif
+    !endif
+!emacro
+
+0 define-macro-file organizm org-month-init
+0 define-macro-file organizw org-week-init
+0 define-macro-file organizd org-day-init
+0 define-macro-file organizl org-list-init
+0 define-macro-file organiza org-addr-init
+0 define-macro-file organizt org-setup-init
+
+osd .osd.orgm 0 "s" 64 35 -1 -1 org-month-init
+osd .osd.orgw 0 "s" 64 35 -1 -1 org-week-init
+osd .osd.orgd 0 "s" 64 35 -1 -1 org-day-init
+osd .osd.orgl 0 "s" 64 35 -1 -1 org-list-init
+osd .osd.orga 0 "s" 64 35 -1 -1 org-addr-init
+osd .osd.orgt 0 "s" 64 35 -1 -1 org-setup-init
+
+osd .osd.org-n 0 "Ns" 66 39 -1 -1
+osd .osd.org-n 1 "Ptf" 1 "Month"   .osd.orgm
+osd .osd.org-n 2 "Ptf" 2 "Week"    .osd.orgw
+osd .osd.org-n 3 "Ptf" 3 "Day"     .osd.orgd
+osd .osd.org-n 4 "Ptf" 4 "Lists"   .osd.orgl
+osd .osd.org-n 5 "Ptf" 5 "Address" .osd.orga
+osd .osd.org-n 6 "Ptf" 6 "Setup"   .osd.orgt
+osd .osd.org-n 100 "It" 7          .osd.orgm
+
+osd .osd.org 00 "batcdHs" 6 3 68 41 -1 -1 630 .scheme.osd-title "Organizer"
+osd .osd.org 10 "It" 1 .osd.org-n
+
+osd-bind-key .osd.org org-key-bind "C-left"
+osd-bind-key .osd.org org-key-bind "C-right"
+osd-bind-key .osd.org org-key-bind "C-up"
+osd-bind-key .osd.org org-key-bind "C-down"
+
+0 define-macro org-init
+    !if &not &seq &reg "/" "org" "" @1
+        !if &not &seq &reg "/" "org" "" ""
+            delete-registry "/org" @mna
+        !endif
+    !endif
+    read-registry "org" @1 "cb"
+    set-variable .org.months &reg "/org" "set/months" .org.months
+    set-variable .org.days &reg "/org" "set/days" .org.days
+    set-variable .org.set &spr "%1d%1d" &reg "/org" "set/1dofw" "0" &reg "/org" "set/1wofy" "7"
+    set-variable .org.aflag &reg "/org" "set/aflag" "0x34"
+    set-variable .org.naddr &reg "/org" "addr/naddr" "1"
+    set-variable .org.addr ""
+!emacro
+
+0 define-macro organizer-save
+    save-registry "/org" ""
+!emacro
+
+0 define-macro organizer-init
+    !if &seq &reg "/" "org" "" ""
+        org-init .org.dfile
+    !endif
+!emacro
+
+define-macro organizer
+    !if &seq &reg "/" "org" "" ""
+        org-init .org.dfile
+    !endif
+    osd .osd.org-n 100 "It" 6 &add .osd.orgm &reg "/org" "set/initpage" "0"
+    set-variable #l2 $time
+    set-variable .org.year  &lef #l2 4
+    set-variable .org.month &trb &mid #l2 7 2 
+    set-variable .org.day   &trb &mid #l2 9 2
+    org-set-week &mid #l2 4 3 &mid #l2 11 1
+    .osd.org osd
+!emacro
+

@@ -1,0 +1,43 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Tue Feb 16 09:37:57 1999
+;  Last Modified : <000719.0012>
+;
+;  Description   : Sets up the chatacter translations for the different 
+;                  char sets. The internal default is ISO-8859 (1-...).
+;                  All spelling dictionaries (to date anyway) are encoded 
+;                  with this character format and rules are required to 
+;                  translate characters into and out of this set.
+;
+;  History
+;
+;  Copyright (c) 1999 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+!if &les @# 1
+    ; if executed with an argument of 0 or less, return the list
+    set-variable %charset-names  "|ISO-8859|ISO-8859 with box chars|Windows ANSI|Windows OEM|Windows GREEK|Windows TURKISH|Windows RUSSIAN|PC Code Page 437|PC Code Page 850|Cyrillic koi8-r|"
+    set-variable %charset-value  "||ISO-box|Win-ANSI|Win-OEM|Win-GREEK|Win-TURK|Win-RUS|PC-437|PC-850|koi8-r|"
+    set-variable %charset-types  "|||0|255|161|162|204||||"
+    !return
+!endif
+; get the users display char set
+set-variable #l0 &reg "/history" &cat %platform "/char-set" ""
+set-variable #l1 1
+set-variable .change-font.type 0
+!if &seq #l0 ""
+    set-char-mask "M" ""
+!elif &seq #l0 "ISO-box"
+    set-char-mask "M" ""
+    set-char-mask "dp" "\CY\CM\CL\CN\CK\CX\CU\CO\CV\CW\CR\CP\CQ\C^\C_"
+    set-char-mask "p"  "\CI\CJ"
+    set-variable $box-chars "\CY\CM\CL\CN\CK\CX\CU\CO\CV\CW\CR"
+    set-variable $window-chars "=-#*%=^   v*==^^      vv**|<   >*||<<      >>** x*  >\\."
+    set-variable $system &band $system &bnot 0x10000
+    set-variable #l1 0
+!elif &seq #l0 "Win-ANSI"
+    set-char-mask "M" ""
+!elif &seq #l0 "Win-OEM"
+    set-char-mask "M" "£œª¦«®¬ª®©°§±ñ²ı³ü´îµæ¶õ·ú¸ı¹û»¯¼¬½«¾ó¿¨À·ÁÂŠÃ²ÄÆ’Ç€ÈÔÉÊÒËÑÌŞÍÖÎ×ÏØĞÑÑ¥ÒãÓàÔâÕåÖ™×ØÙëÚéÛêÜšİìŞçßÿà…á âƒä„å†æ‘ç‡èŠé‚êˆë‰ìí¡îŒï‹ñ¤ò•ó¢ô“õäö”÷öø›ù—ú£û–üıìşèÿ˜"
+    set-variable $box-chars "³Ú¿ÀÙÂÃÅ´ÁÄ"
+    set-variable $window-chars "=-#*%=\C^± ±\C_==\C^\C^±±  ±±\C_\C_

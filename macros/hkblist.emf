@@ -1,0 +1,142 @@
+;
+; Author        : Steve Phillips
+; Created       : 1st March 1997
+; Last Modified : <000512.1845>
+;
+; Description   : list-buffers macro interface.
+;
+!if &not &exist .osd.blist-help
+    set-variable .osd.blist-help &pinc .osd.next 1
+!endif
+
+osd .osd.blist-help 0  "batcdH" 9 3 99 .scheme.osd-title "Buffer List Help"
+osd .osd.blist-help 3  "" 
+osd .osd.blist-help 4  "" " esc h - View this help page"
+osd .osd.blist-help 5  "" 
+osd .osd.blist-help 6  "" " return"
+osd .osd.blist-help 7  "" " 1     - Switch to the buffer and make it"
+osd .osd.blist-help 8  "" "         the only window"
+osd .osd.blist-help 9  "" " 2     - Switch current window to the buffer "
+osd .osd.blist-help 10 "" " D,d   - Toggle a buffer to be deleted flag"
+osd .osd.blist-help 11 "" "         ('D' in first column), see x"
+osd .osd.blist-help 12 "" " E,e   - Toggle buffers edited status"
+osd .osd.blist-help 13 "" " S,s   - Toggle a buffer to be saved flag"
+osd .osd.blist-help 14 "" "         ('S' in second column), see x"
+osd .osd.blist-help 15 "" " U,u   - Update buffer list"
+osd .osd.blist-help 16 "" " V,v   - Toggle buffers view mode"
+osd .osd.blist-help 17 "" " X,x   - Execute all the 'D' and 'S' flags"
+osd .osd.blist-help 18 "" "         currently set ('S' first)"
+osd .osd.blist-help 19 ""
+osd .osd.blist-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
+
+0 define-macro blist-command
+    !if &not &seq $buffer-bname "*buffers*"
+        !abort
+    !endif
+    !if &equ @# 5
+        ; print some help
+        .osd.blist-help osd
+        !return
+    !endif
+    !if &equ @# 8
+        ; 'x' - execute the save & delete flags
+        ; loop through first time to do all the saves
+        ; loop through second time deleting all nact buffers
+        ; loop through third time deleting all the rest
+        ; *buffers* list buffer at this point
+        set-variable $buffer-names ".*"
+        !while &not &seq &set #l0 $buffer-names ""
+            !if &and &not &seq #l0 "*buffers*" &nbmod #l0 "save"
+                find-buffer #l0
+                save-buffer @mna
+            !endif
+        !done
+        set-variable $buffer-names ".*"
+        !while &not &seq &set #l0 $buffer-names ""
+            !if &and &nbmod #l0 "nact" &nbmod #l0 "del"
+                delete-buffer #l0 @mna
+            !endif
+        !done
+        set-variable $buffer-names ".*"
+        !while &not &seq &set #l0 $buffer-names ""
+            !if &and &not &seq #l0 "*buffers*" &nbmod #l0 "del"
+                delete-buffer #l0 @mna
+            !endif
+        !done
+        find-buffer "*buffers*"
+        !if &bmo "del"
+            delete-buffer "*buffers*"
+        !else
+            list-buffers
+        !endif
+        !return
+    !endif
+    !if &or &les &len @wl 12 &les $window-line 3
+        ml-write "[Invalid buffer list line]"
+        !abort
+    !endif
+    ; set #l0 to the name of the buffer
+    set-variable #l0 &mid @wl 10 &add 1 &sin &mid @wl 10 1 &rig @wl 11
+    !if &equ @# 1
+        ; '1' - make buffer current and only window
+        0 find-buffer &mid #l0 1 &sub &len #l0 2
+        delete-other-windows
+        !return
+    !elif &equ @# 2
+        ; '2' - make buffer current
+        0 find-buffer &mid #l0 1 &sub &len #l0 2
+        !return
+    !elif &equ @# 3
+        ; 'd' - toggle buffer view mode
+        0 named-buffer-mode &mid #l0 1 &sub &len #l0 2 "del"
+    !elif &equ @# 4
+        ; 'e' - toggle buffer view mode
+        0 named-buffer-mode &mid #l0 1 &sub &len #l0 2 "edit"
+    !elif &equ @# 6
+        ; 's' - toggle buffer save flag
+        0 named-buffer-mode &mid #l0 1 &sub &len #l0 2 "save"
+    !elif &equ @# 7
+        ; 'v' - toggle buffer view mode
+        0 named-buffer-mode &mid #l0 1 &sub &len #l0 2 "view"
+    !else
+        ; invalid command
+        ml-write "[Invalid command]"
+        !abort
+    !endif
+    set-variable #l3 &sub $window-line $window-y-scroll
+    list-buffers
+    search-forward #l0
+    beginning-of-line
+    set-variable $window-y-scroll &sub $window-line #l3
+    forward-line
+!emacro
+
+define-macro fhook-blist
+    -1 buffer-mode "magic"
+    1 buffer-bind-key blist-command "return"
+    1 buffer-bind-key blist-command "1"
+    2 buffer-bind-key blist-command "space"
+    2 buffer-bind-key blist-command "2"
+    3 buffer-bind-key blist-command "D"
+    3 buffer-bind-key blist-command "d"
+    4 buffer-bind-key blist-command "E"
+    4 buffer-bind-key blist-command "e"
+    5 buffer-bind-key blist-command "esc h"
+    6 buffer-bind-key blist-command "S"
+    6 buffer-bind-key blist-command "s"
+    7 buffer-bind-key blist-command "V"
+    7 buffer-bind-key blist-command "v"
+    8 buffer-bind-key blist-command "X"
+    8 buffer-bind-key blist-command "x"
+    buffer-bind-key list-buffers "U"
+    buffer-bind-key list-buffers "u"
+    set-variable :mouse-word-select "2 blist-command"
+    ; execute user extensions if enabled
+    !if &exist my-fhook-blist
+        my-fhook-blist
+    !endif
+!emacro
+
+; load in user extensions if found
+!force execute-file "myblist"
+

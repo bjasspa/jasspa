@@ -1,0 +1,68 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This file is invoked when a dos batch file is loaded.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;       dos dos file hook
+;
+;   Last Modified : <991125.1029>
+;
+!if &band .hilight.flags 0x02
+    !if &not &exist .hilight.dos "ERROR"
+        set-variable .hilight.dos    &pinc .hilight.next 1
+        set-variable .hilight.dosvar &pinc .hilight.next 1
+    !endif
+    
+    0 hilight  .hilight.dos 1               $global-scheme
+    hilight .hilight.dos 35  "rem"          .scheme.comment
+    hilight .hilight.dos 34  ":"            .scheme.prepro
+    hilight .hilight.dos 0   "\\^"          .scheme.prepro
+    hilight .hilight.dos 128 "%" .hilight.dosvar .scheme.variable
+    hilight .hilight.dos 1   "path"         .scheme.keyword
+    hilight .hilight.dos 0   "%%"           $global-scheme
+    hilight .hilight.dos 1   "call"         .scheme.keyword
+    hilight .hilight.dos 1   "device"       .scheme.keyword
+    hilight .hilight.dos 1   "echo"         .scheme.keyword
+    hilight .hilight.dos 1   "exist"        .scheme.keyword
+    hilight .hilight.dos 1   "goto"         .scheme.keyword
+    hilight .hilight.dos 1   "if"           .scheme.keyword
+    hilight .hilight.dos 1   "iff"          .scheme.keyword
+    hilight .hilight.dos 1   "else"         .scheme.keyword
+    hilight .hilight.dos 1   "elseiff"      .scheme.keyword
+    hilight .hilight.dos 1   "endiff"       .scheme.keyword
+    hilight .hilight.dos 1   "errorlevel"   .scheme.keyword
+    hilight .hilight.dos 1   "lh"           .scheme.keyword
+    hilight .hilight.dos 1   "loadhigh"     .scheme.keyword
+    hilight .hilight.dos 1   "not"          .scheme.keyword
+    hilight .hilight.dos 1   "set"          .scheme.keyword
+    hilight .hilight.dos 1   "then"         .scheme.keyword
+    
+    0 hilight .hilight.dosvar 1             .scheme.variable
+    hilight .hilight.dosvar 128 "%"    .hilight.dos .scheme.variable
+    hilight .hilight.dosvar 128 "\\s " .hilight.dos $global-scheme
+    hilight .hilight.dosvar 128 "\\["  .hilight.dos $global-scheme
+    hilight .hilight.dosvar 128 "]"    .hilight.dos $global-scheme
+    hilight .hilight.dosvar 128 ","    .hilight.dos $global-scheme
+    hilight .hilight.dosvar 128 "+"    .hilight.dos $global-scheme
+    hilight .hilight.dosvar 128 "\\."  .hilight.dos $global-scheme
+    hilight .hilight.dosvar 128 "\\\\" .hilight.dos $global-scheme
+    hilight .hilight.dosvar 128 "\""   .hilight.dos $global-scheme
+!endif
+
+define-macro fhook-dos
+    set-variable $buffer-mask "luh1"
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.dos
+    !endif
+    1 buffer-mode "time"
+    1 buffer-mode "indent"
+    ; execute user extensions if enabled
+    !if &exist my-fhook-dos
+        my-fhook-dos
+    !endif
+!emacro
+
+ml-write "[DOS batch file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "mydos"
+

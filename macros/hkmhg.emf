@@ -1,0 +1,75 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Jon Green
+;  Created       : Sat Mar 20 19:18:31 1999
+;  Last Modified : <000719.0012>
+;
+;  Description   : MHEG-5
+;
+;  Notes         : Configured for UK-DTTV broadcast MHEG-5 only.
+;
+;  History
+;
+;  Copyright (c) 1999 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+!if &band .hilight.flags 0x02
+    ;
+    ; Hi-light M-HEG Mode
+    ;
+    !if &not &exist .hilight.mhg
+        set-variable .hilight.mhg &pinc .hilight.next 1
+    !endif
+    0 hilight .hilight.mhg 1                    $global-scheme
+    hilight   .hilight.mhg 2   "//"             .scheme.comment
+    hilight   .hilight.mhg 4   "\"" "\"" "\\"   .scheme.string
+    hilight   .hilight.mhg 4   "'" "'"   "\\"   .scheme.string
+    ; Generic main keyword introduction
+    hilight   .hilight.mhg 4   "{:" "\\}\\W" "" .scheme.keyword
+    ; Variable values
+    hilight   .hilight.mhg 1   "true"           .scheme.variable
+    hilight   .hilight.mhg 1   "false"          .scheme.variable
+    hilight   .hilight.mhg 1   "start"          .scheme.variable
+    hilight   .hilight.mhg 1   "end"            .scheme.variable
+    hilight   .hilight.mhg 1   "centre"         .scheme.variable
+    ; Events
+    hilight   .hilight.mhg 1   "isrunning"      .scheme.prepro
+    hilight   .hilight.mhg 1   "timerevent"     .scheme.prepro
+    hilight   .hilight.mhg 1   "timerfired"     .scheme.prepro
+    hilight   .hilight.mhg 1   "userinput"      .scheme.prepro
+    hilight   .hilight.mhg 1   "testevent"      .scheme.prepro
+    hilight   .hilight.mhg 1   "justified"      .scheme.prepro
+    hilight   .hilight.mhg 1   "asynchstopped"  .scheme.prepro
+!endif
+
+define-macro fhook-mhg
+    ; Insert the header.
+    !if &not @#
+        !force etfinsrt "mhg"
+    !endif
+
+    1 buffer-mode "time"
+    1 buffer-mode "indent"
+    set-variable $buffer-mask "luh1"
+
+    ; Set up the hilight mode
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.mhg
+    !endif
+    ; Set up the folds
+    buffer-bind-unbound-key fold-current "f2"
+    buffer-bind-unbound-key fold-all     "f3"
+    ; execute user extensions if enabled
+    !if &exist my-fhook-mhg
+        my-fhook-mhg
+    !endif
+!emacro
+
+; Set up the folds for 'mheg'
+set-variable .fhook-mhg.fold-open  "^{"
+set-variable .fhook-mhg.fold-close "^}"
+set-variable .fhook-mhg.fold-mopen "1"
+
+ml-write "[MHEG file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "mymhg"

@@ -1,0 +1,125 @@
+;       Binary file hook
+;
+;   Last Modified : <991125.1028>
+;
+!if &not &exist .hilight.bin
+    set-variable .hilight.bin &pinc .hilight.next 1
+    set-variable .osd.binary-tool &pinc .osd.next 1
+!endif
+
+!if &band .hilight.flags 0x02
+    0 hilight  .hilight.bin 0            $global-scheme
+    hilight .hilight.bin 0x400  0  9  .scheme.no2
+    hilight .hilight.bin 0x400 58 78  .scheme.no1
+!endif
+
+define-macro binary-move-backward
+    set-variable #l5 @ml "Move backward by"
+    calc #l5
+    set-variable #l5 .calc.result
+    !if &gre $window-col 57
+        !if &gre $window-col 62
+            set-variable #l5 &sub #l5 &sub $window-col 62
+        !endif
+        set-variable $window-col 62
+    !else
+        !if &gre $window-col 10
+            set-variable #l5 &sub #l5 &div &sub $window-col 10 3
+        !endif
+        set-variable $window-col 10
+    !endif
+    &div &add #l5 15 16 backward-line
+    set-variable #l5 &sub 15 &mod &add #l5 15 16
+    !if &gre $window-col 57
+        #l5 forward-char
+    !else
+        &mul #l5 3 forward-char
+    !endif
+!emacro       
+
+define-macro binary-move-forward
+    set-variable #l5 @ml "Move forward by"
+    calc #l5
+    set-variable #l5 .calc.result
+    !if &gre $window-col 57
+        !if &gre $window-col 62
+            set-variable #l5 &add #l5 &sub $window-col 62
+        !endif
+        set-variable $window-col 62
+    !else
+        !if &gre $window-col 10
+            set-variable #l5 &add #l5 &div &sub $window-col 10 3
+        !endif
+        set-variable $window-col 10
+    !endif
+    &div #l5 16 forward-line
+    set-variable #l5 &mod #l5 16
+    !if &gre $window-col 57
+        #l5 forward-char
+    !else
+        &mul #l5 3 forward-char
+    !endif
+!emacro       
+
+define-macro binary-swap-section
+    !if &gre $window-col 9
+        !if &les $window-col 62
+            set-variable $window-col &add 62 &div &sub $window-col 10 3
+        !else
+            set-variable $window-col &add 10 &mul &sub $window-col 62 3
+        !endif
+    !endif
+!emacro
+    
+osd .osd.binary-tool 0 "b"
+osd .osd.binary-tool 1 "" "&Swap section   tab"    f binary-swap-section
+osd .osd.binary-tool 2 "-"
+osd .osd.binary-tool 3 "" "Move &backward  A-up"   f binary-move-backward
+osd .osd.binary-tool 4 "" "Move &forward   A-down" f binary-move-forward
+; Add hook to load the OSD binary tools menu.
+0 define-macro osd-ohook-binary
+    osd 7 1 "Md" "Binary &Tools" .osd.binary-tool
+    osd 7 2 "-"
+!emacro
+; Add hook to remove the OSD binary tools menu.
+0 define-macro osd-chook-binary
+    osd 7 1  "D"
+    osd 7 2  "D"
+!emacro
+
+define-macro fhook-binary
+    !if &not &bmod "binary"
+        !if &seq $buffer-fname ""
+            ml-write "[Buffer has no file name]"
+            !abort
+        !endif
+        !if &bmod "edit"
+            ml-write "[Buffer has been changed]"
+            !abort
+        !endif
+        beginning-of-buffer
+        set-mark
+        end-of-buffer
+        kill-region
+        -1 yank
+        1 buffer-mode "binary"
+        insert-file $buffer-fname
+        -1 buffer-mode "edit"
+        beginning-of-buffer
+    !endif
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.bin
+    !endif
+    buffer-bind-key binary-swap-section   "tab"
+    buffer-bind-key binary-move-backward  "A-up"
+    buffer-bind-key binary-move-forward   "A-down"
+    ; execute user extensions if enabled
+    !if &exist my-fhook-binary
+        my-fhook-binary
+    !endif
+!emacro
+
+ml-write "[Binary file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "mybinary"

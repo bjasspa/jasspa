@@ -1,0 +1,57 @@
+COPYRIGHT MicroEmacs '00
+
+    JASSPA Distribution - www.jasspa.com
+
+    The following  copyrights  apply from the original  source code of version
+    3.8. No  explicit  copyrights  were found with the  original  distribution
+    apart from the following found in the main source code,
+
+        (C)opyright 1987 by Daniel M. Lawrence
+        MicroEMACS can be copied and distributed freely for any non-commercial
+        purposes.  Commercial  users  may use  MicroEMACS  inhouse.  Shareware
+        distributors  may  redistribute   MicroEMACS  for  media  costs  only.
+        MicroEMACS can only be incorporated into commercial software or resold
+        with the permission of the current author.
+
+    The following notices apply after 1988.
+
+        Copyright (C) 1988 - 2000, JASSPA
+        MicroEmacs  '00  can  be  copied  and   distributed   freely  for  any
+        non-commercial  purposes.  Commercial  users  may use  MicroEmacs  '00
+        inhouse.  Shareware  distributors may redistribute  MicroEmacs '00 for
+        media  costs  only.  MicroEmacs  '99 can  only  be  incorporated  into
+        commercial  software  or resold  with the  permission  of the  current
+        author.
+
+
+Spelling Dictionary Copyrights
+
+    The spelling  dictionaries  are converted from ispell  dictionaries,  each
+    spelling  dictionary has it's own copyright which is reproduced within the
+    appropriate language spelling macro file.
+
+
+NO WARRANTY
+
+
+    THIS  PROGRAM IS  LICENSED  FREE OF CHARGE,  THERE IS NO WARRANTY  FOR THE
+    PROGRAM, TO THE EXTENT  PERMITTED BY APPLICABLE LAW. EXCEPT WHEN OTHERWISE
+    STATED IN WRITING THE COPYRIGHT  HOLDERS AND/OR OTHER PARTIES  PROVIDE THE
+    PROGRAM "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED,
+    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED  WARRANTIES OF  MERCHANTABILITY
+    AND FITNESS FOR A  PARTICULAR  PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY
+    AND  PERFORMANCE  OF THE  PROGRAM IS WITH YOU.  SHOULD THE  PROGRAM  PROVE
+    DEFECTIVE,  YOU  ASSUME  THE COST OF ALL  NECESSARY  SERVICING,  REPAIR OR
+    CORRECTION.
+
+    IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL
+    ANY   COPYRIGHT   HOLDER,  OR  ANY  OTHER  PARTY  WHO  MAY  MODIFY  AND/OR
+    REDISTRIBUTE THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES,
+    INCLUDING  ANY  GENERAL,  SPECIAL,  INCIDENTAL  OR  CONSEQUENTIAL  DAMAGES
+    ARISING OUT OF THE USE OR INABILITY TO USE THE PROGRAM  (INCLUDING BUT NOT
+    LIMITED  TO  LOSS OF DATA OR DATA  BEING  RENDERED  INACCURATE  OR  LOSSES
+    SUSTAINED  BY YOU OR THIRD  PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE
+    WITH ANY  OTHER  PROGRAMS),  EVEN IF SUCH  HOLDER OR OTHER  PARTY HAS BEEN
+    ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+    THIS NOTICE MUST BE CARRIED IN ALL COPIES OF THE DISTRIBUTION

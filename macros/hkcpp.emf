@@ -1,0 +1,240 @@
+; C mode hook
+;
+; Last Modified : <000623.2120>
+;
+; Notes:
+;       There is a distinction between C++ and C because of problems with
+;       hilighting. ".cpp", ".cc" and ".hpp" are assumed to be C++ files.
+;       Also recognise magic-string for C++ as:- "-!- cmode; c++ -!-" in
+;       the first line.
+;
+!if &not &exist .hilight.cpp
+    set-variable .hilight.cpp &pinc .hilight.next 1
+    ; set up the osd tool menu & help dialog
+    set-variable .osd.cpp-help &pinc .osd.next 1
+    set-variable .osd.cpp-tool &pinc .osd.next 1
+!endif
+!if &band .hilight.flags 0x02
+    ;
+    ; High-light C++ Mode
+    ;
+    0 hilight .hilight.cpp  2 50             $global-scheme
+    hilight .hilight.cpp 0x3a "#" "\\"       .scheme.prepro
+    hilight .hilight.cpp   18 "//"           .scheme.comment
+    hilight .hilight.cpp   20 "/\\*" "*/" "" .scheme.comment
+    hilight .hilight.cpp    4 "\"" "\"" "\\" .scheme.string
+    hilight .hilight.cpp    0 "'.'"          .scheme.quote
+    hilight .hilight.cpp    0 "'\\\\.'"      .scheme.quote
+    hilight .hilight.cpp    0 "'\\\\'"       .scheme.error
+    hilight .hilight.cpp    0 "'\\\\''"      .scheme.quote
+    !if &band .hilight.flags 0x04
+        hilight .hilight.cpp    0 "^[[:alpha:]][0-9a-zA-Z_:]*\\}\\s (" .scheme.function
+        hilight .hilight.cpp    0 "^[[:alpha:]][0-9a-zA-Z_:]*\\}(" .scheme.function
+    !endif
+    hilight .hilight.cpp    0 "^\\w+\\}:"    .scheme.link
+    ; keywords
+    hilight .hilight.cpp    1 "asm"          .scheme.keyword
+    hilight .hilight.cpp    1 "break"        .scheme.keyword
+    hilight .hilight.cpp    1 "case"         .scheme.keyword
+    hilight .hilight.cpp    1 "catch"        .scheme.keyword
+    hilight .hilight.cpp    1 "continue"     .scheme.keyword
+    hilight .hilight.cpp    1 "default"      .scheme.keyword
+    hilight .hilight.cpp    1 "delete"       .scheme.keyword
+    hilight .hilight.cpp    1 "do"           .scheme.keyword
+    hilight .hilight.cpp    1 "else"         .scheme.keyword
+    hilight .hilight.cpp    1 "for"          .scheme.keyword
+    hilight .hilight.cpp    1 "goto"         .scheme.keyword
+    hilight .hilight.cpp    1 "if"           .scheme.keyword
+    hilight .hilight.cpp    1 "new"          .scheme.keyword
+    hilight .hilight.cpp    1 "operator"     .scheme.keyword
+    hilight .hilight.cpp    1 "private"      .scheme.keyword
+    hilight .hilight.cpp    1 "protected"    .scheme.keyword
+    hilight .hilight.cpp    1 "public"       .scheme.keyword
+    hilight .hilight.cpp    1 "return"       .scheme.keyword
+    hilight .hilight.cpp    1 "sizeof"       .scheme.keyword
+    hilight .hilight.cpp    1 "switch"       .scheme.keyword
+    hilight .hilight.cpp    1 "this"         .scheme.keyword
+    hilight .hilight.cpp    1 "throw"        .scheme.keyword
+    hilight .hilight.cpp    1 "try"          .scheme.keyword
+    hilight .hilight.cpp    1 "while"        .scheme.keyword
+    ; types
+    hilight .hilight.cpp    1 "auto"         .scheme.type
+    hilight .hilight.cpp    1 "bool"         .scheme.type
+    hilight .hilight.cpp    1 "char"         .scheme.type
+    hilight .hilight.cpp    1 "class"        .scheme.type
+    hilight .hilight.cpp    1 "complex"      .scheme.type
+    hilight .hilight.cpp    1 "const"        .scheme.type
+    hilight .hilight.cpp    1 "double"       .scheme.type
+    hilight .hilight.cpp    1 "enum"         .scheme.type
+    hilight .hilight.cpp    1 "extern"       .scheme.type
+    hilight .hilight.cpp    1 "float"        .scheme.type
+    hilight .hilight.cpp    1 "friend"       .scheme.type
+    hilight .hilight.cpp    1 "inline"       .scheme.type
+    hilight .hilight.cpp    1 "int"          .scheme.type
+    hilight .hilight.cpp    1 "long"         .scheme.type
+    hilight .hilight.cpp    1 "register"     .scheme.type
+    hilight .hilight.cpp    1 "short"        .scheme.type
+    hilight .hilight.cpp    1 "signed"       .scheme.type
+    hilight .hilight.cpp    1 "size_t"       .scheme.type
+    hilight .hilight.cpp    1 "static"       .scheme.type
+    hilight .hilight.cpp    1 "struct"       .scheme.type
+    hilight .hilight.cpp    1 "template"     .scheme.type
+    hilight .hilight.cpp    1 "typedef"      .scheme.type
+    hilight .hilight.cpp    1 "union"        .scheme.type
+    hilight .hilight.cpp    1 "unsigned"     .scheme.type
+    hilight .hilight.cpp    1 "virtual"      .scheme.type
+    hilight .hilight.cpp    1 "void"         .scheme.type
+    hilight .hilight.cpp    1 "volatile"     .scheme.type
+    ; Add some system types
+    hilight .hilight.cpp    1 "FILE"         .scheme.type
+    ; Pre-processor directives
+    hilight .hilight.cpp    0 "__DATE__"     .scheme.prepro
+    hilight .hilight.cpp    0 "__FILE__"     .scheme.prepro
+    hilight .hilight.cpp    0 "__LINE__"     .scheme.prepro
+    hilight .hilight.cpp    0 "__STDC__"     .scheme.prepro
+    hilight .hilight.cpp    0 "__TIME__"     .scheme.prepro
+    !if &band .hilight.flags 0x08
+        ; hilight constants, e.g. numbers
+        hilight .hilight.cpp 1 "[[:digit:]]+"       .scheme.constant
+        hilight .hilight.cpp 1 "-[[:digit:]]+"      .scheme.constant
+        hilight .hilight.cpp 1 "0[xX][[:xdigit:]]+" .scheme.constant
+        hilight .hilight.cpp 1 "[[:digit:]]+\\.[[:digit:]]+"  .scheme.constant
+        hilight .hilight.cpp 1 "-[[:digit:]]+\\.[[:digit:]]+" .scheme.constant
+    !endif
+!endif
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Bunch of C macros we may need.
+;
+; comment line ie xxx -> //xxx
+;
+define-macro cpp-comment-line
+    !while &gre &pdec @# 1 0
+        beginning-of-line
+        insert-string "//"
+        beginning-of-line
+        forward-line
+    !done
+!emacro
+;
+; uncoment line ie //xxx -> xxx
+;
+define-macro cpp-uncomment-line
+    beginning-of-line
+    !while &gre &pdec @# 1 0
+        search-forward "//"
+        backward-delete-char
+        backward-delete-char
+        beginning-of-line
+        forward-line
+    !done
+!emacro
+;
+; fill from the current column to fill-col with '*'
+;
+define-macro cpp-comm-to-end
+    &sub $fill-col $window-acol insert-string "*"
+!emacro
+;
+; setup fuctions to auto-load from cmacros & cbox
+;
+define-macro-file cmacros c-insert-tab c-slashify c-deslashify c-start-comment c-hash-eval c-hash-set-define c-hash-unset-define c-hash-del
+define-macro-file cbox c-box
+;
+; Set up the variables for 'C++'
+set-variable $c-contcomm " * "
+
+osd .osd.cpp-tool 0  b 
+osd .osd.cpp-tool 1  "" "C++ tool &help   esc h"    .osd.cpp-help "osd"
+osd .osd.cpp-tool 2  ""  "&Insert tab      A-tab"   f "c-insert-tab"
+osd .osd.cpp-tool 3  ""  "&Restyle region  A-C-i"   f "restyle-region"
+osd .osd.cpp-tool 4  "-"
+osd .osd.cpp-tool 5  ""  "&Comment line    C-c C-c" f "cpp-comment-line"
+osd .osd.cpp-tool 6  ""  "&Delete comment  C-c C-d" f "cpp-uncomment-line"
+osd .osd.cpp-tool 7  ""  "Start co&mment   esc C-c" f "c-start-comment"
+osd .osd.cpp-tool 8  ""  "Comment to &end  C-c C-e" f "cpp-comm-to-end"
+osd .osd.cpp-tool 9  ""  "Restyle c&omment esc o"   f "c-box"
+osd .osd.cpp-tool 10 "-"
+osd .osd.cpp-tool 11 ""  "Slashify region"          f c-slashify
+osd .osd.cpp-tool 12 ""  "Deslashify region"        f c-deslashify
+osd .osd.cpp-tool 13 "-"
+osd .osd.cpp-tool 14 ""  "&Set #define"             f c-hash-set-define
+osd .osd.cpp-tool 15 ""  "&Unset #define"           f c-hash-unset-define
+osd .osd.cpp-tool 16 ""  "Evaluate &#'s"            f c-hash-eval
+osd .osd.cpp-tool 17 ""  "Evaluate #'s use &Narrow" 1 c-hash-eval
+osd .osd.cpp-tool 18 ""  "Re&move # evaluation"     f c-hash-del
+osd .osd.cpp-tool 19 "-"
+osd .osd.cpp-tool 20 "i" "Create &tags file"        f "generate-tags-file ctags"
+; Add hook to load the OSD C-tools menu.
+0 define-macro osd-ohook-cpp
+    osd 7 1 "Md" "C++ &Tools" .osd.cpp-tool
+    osd 7 2 "-"
+!emacro
+; Add hook to remove the OSD C-tools menu.
+0 define-macro osd-chook-cpp
+    osd 7 1  "D"
+    osd 7 2  "D"
+!emacro
+
+osd .osd.cpp-help 0  "batcdH" 9 3 99 .scheme.osd-title "C++ Mode Help"
+osd .osd.cpp-help 3  "" 
+osd .osd.cpp-help 4  ""  "    esc h   - View this help page"
+osd .osd.cpp-help 5  "" 
+osd .osd.cpp-help 6  ""  "    esc C-c - Start comment"
+osd .osd.cpp-help 8  ""  "    C-c C-d - Remove current or next comment "
+osd .osd.cpp-help 9  ""  "    C-c C-e - Comment to end of line"
+osd .osd.cpp-help 10 "" 
+osd .osd.cpp-help 11 ""  "    A-i     - Insert as tab (obeys tab mode)"
+osd .osd.cpp-help 12 ""  "    A-C-i   - Restyle region"
+osd .osd.cpp-help 13 "" 
+osd .osd.cpp-help 14 ""  "    esc o"
+osd .osd.cpp-help 15 ""  "    esc q   - Reformat current comment"
+osd .osd.cpp-help 16 "" 
+osd .osd.cpp-help 17 ""  " Abbreviation file is set to c.abr "
+osd .osd.cpp-help 18 "" 
+osd .osd.cpp-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
+
+define-macro fhook-cpp
+    ; if arg is 0 this is a new file so add template 
+    !if &not @#
+        ; Is it an include h file or a c file?
+        !if &seq &mid $buffer-bname &rsin "." $buffer-bname 1 "h"
+            etfinsrt "hpp"
+        !else
+            etfinsrt "cpp"
+        !endif
+    !endif
+    1 buffer-mode "time"
+    1 buffer-mode "cmode"
+    buffer-abbrev-file "c"
+    set-variable $buffer-mask "luh1"
+    ; Set up the hilight mode
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.cpp
+    !endif
+    ; Bind macros
+    .osd.cpp-help buffer-bind-key osd  "esc h"
+    buffer-bind-key c-start-comment    "esc C-c"
+    buffer-bind-unbound-key cpp-comment-line   "C-c C-c"
+    buffer-bind-unbound-key cpp-uncomment-line "C-c C-d"
+    buffer-bind-unbound-key cpp-comm-to-end    "C-c C-e"
+    buffer-bind-key c-insert-tab       "A-tab"
+    buffer-bind-unbound-key restyle-region     "A-C-i"
+    buffer-bind-key c-box              "esc q"
+    buffer-bind-key c-box              "esc o"
+    ; Set up the folds for 'C' and C++
+    buffer-bind-unbound-key fold-current "f2"
+    buffer-bind-unbound-key fold-all     "f3"
+    ; execute user extensions if enabled
+    !if &exist my-fhook-cpp
+        my-fhook-cpp
+    !endif
+!emacro
+
+set-variable .fhook-cpp.fold-open  "^{"
+set-variable .fhook-cpp.fold-close "^}"
+
+ml-write "[C++ file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "mycpp"
+

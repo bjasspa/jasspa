@@ -1,0 +1,54 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Jon Green
+;  Created       : Sat Feb 6 13:05:23 1999
+;  Last Modified : <000719.0012>
+;
+;  Description   : Simple hilighting of a BNF file.
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 1999 JASSPA
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+!if &band .hilight.flags 0x02
+    !if &not &exist .hilight.bnf
+        set-variable .hilight.bnf &pinc .hilight.next 1
+    !endif
+    0 hilight .hilight.bnf 2 50                 $global-scheme
+    hilight .hilight.bnf 4 "<[[:alpha:]]" ">" "" .scheme.variable
+    hilight .hilight.bnf 1 "::="                .scheme.keyword
+    hilight .hilight.bnf 1 "\\["                .scheme.keyword
+    hilight .hilight.bnf 1 "]"                  .scheme.keyword
+    hilight .hilight.bnf 1 "{"                  .scheme.keyword
+    hilight .hilight.bnf 1 "}"                  .scheme.keyword
+    hilight .hilight.bnf 1 "|"                  .scheme.keyword
+    hilight .hilight.bnf 2 "!!"                 .scheme.comment
+    hilight .hilight.bnf 2 "^#"                 .scheme.comment
+    hilight .hilight.bnf 2 "^//"                .scheme.comment
+!endif
+
+define-macro fhook-bnf
+    ; if arg is 0 this is a new file so add template
+;    !if &not @#
+;        etfinsrt "bnf"
+;    !endif
+    1 buffer-mode "time"
+    1 buffer-mode "indent"
+;    buffer-abbrev-file "bnf"
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.bnf
+    !endif
+    ; execute user extensions if enabled
+    !if &exi my-fhook-bnf
+        my-fhook-bnf
+    !endif
+!emacro
+
+ml-write "[BNF file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "mybnf"
+
+

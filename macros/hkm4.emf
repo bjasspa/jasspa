@@ -1,0 +1,99 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Jon Green
+;  Created       : Thu Jun 24 19:31:50 1999
+;  Last Modified : <000719.0012>
+;
+;  Description   : M4 file - crude hilighting only.
+;
+;  Copyright (c) 1999 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+set-char-mask "2" "-."
+
+!if &band .hilight.flags 0x02
+    !if &not &exist .hilight.m4
+        set-variable .hilight.m4 &pinc .hilight.next 1
+    !endif
+    ;
+    ; Hi-light m4 Mode
+    0 hilight .hilight.m4  0                     $global-scheme
+    ; Variables
+    hilight .hilight.m4    0 "\\$[0-9\\*#@]"        .scheme.variable
+    ; comments, strings and quotes
+    ;hilight .hilight.m4    4  "``" "''" "\\"     .scheme.string ; This is not good
+    ;hilight .hilight.m4    4  "`" "'" "\\"       .scheme.string ; This is not good
+    hilight .hilight.m4    0 "^[space]*#[any]*"   .scheme.comment
+    hilight .hilight.m4    0 "[^$']*#[any]*"      .scheme.comment
+    ; keywords
+    hilight .hilight.m4    1 "builtin"            .scheme.keyword
+    hilight .hilight.m4    1 "changecom"          .scheme.keyword
+    hilight .hilight.m4    1 "changequote"        .scheme.keyword
+    hilight .hilight.m4    1 "changeword"         .scheme.keyword
+    hilight .hilight.m4    1 "debugfile"          .scheme.keyword
+    hilight .hilight.m4    1 "define"             .scheme.keyword
+    hilight .hilight.m4    1 "defn"               .scheme.keyword
+    hilight .hilight.m4    1 "divert"             .scheme.keyword
+    hilight .hilight.m4    1 "dnl"                .scheme.keyword
+    hilight .hilight.m4    1 "dumpdef"            .scheme.keyword
+    hilight .hilight.m4    1 "esyscmd"            .scheme.keyword
+    hilight .hilight.m4    1 "ifdef"              .scheme.keyword
+    hilight .hilight.m4    1 "ifelse"             .scheme.keyword
+    hilight .hilight.m4    1 "include"            .scheme.keyword
+    hilight .hilight.m4    1 "indir"              .scheme.keyword
+    hilight .hilight.m4    1 "m4wrap"             .scheme.keyword
+    hilight .hilight.m4    1 "popdef"             .scheme.keyword
+    hilight .hilight.m4    1 "pushdef"            .scheme.keyword
+    hilight .hilight.m4    1 "shift"              .scheme.keyword
+    hilight .hilight.m4    1 "sinclude"           .scheme.keyword
+    hilight .hilight.m4    1 "syscmd"             .scheme.keyword
+    hilight .hilight.m4    1 "undefine"           .scheme.keyword
+    hilight .hilight.m4    1 "undefine"           .scheme.keyword
+    hilight .hilight.m4    1 "undivert"           .scheme.keyword
+    ;
+    hilight .hilight.m4    1 "format"             .scheme.keyword
+    hilight .hilight.m4    1 "index"              .scheme.keyword
+    hilight .hilight.m4    1 "len"                .scheme.keyword
+    hilight .hilight.m4    1 "maketemp"           .scheme.keyword
+    hilight .hilight.m4    1 "patsubst"           .scheme.keyword
+    hilight .hilight.m4    1 "regexp"             .scheme.keyword
+    hilight .hilight.m4    1 "substr"             .scheme.keyword
+    hilight .hilight.m4    1 "translit"           .scheme.keyword
+    ; Trace - make them stand out.
+    hilight .hilight.m4    1 "traceoff"           .scheme.error
+    hilight .hilight.m4    1 "traceon"            .scheme.error
+    ; Operators
+    hilight .hilight.m4    1 "EQUAL"              .scheme.operator
+    hilight .hilight.m4    1 "NOT-EQUAL"          .scheme.operator
+    hilight .hilight.m4    1 "decr"               .scheme.operator
+    hilight .hilight.m4    1 "divnum"             .scheme.operator
+    hilight .hilight.m4    1 "incr"               .scheme.operator
+    hilight .hilight.m4    1 "sysval"             .scheme.operator
+    ; Preprocessor
+    hilight .hilight.m4    1 "__file__"           .scheme.prepro
+    hilight .hilight.m4    1 "__line__"           .scheme.prepro
+    hilight .hilight.m4    1 "__unix__"           .scheme.prepro
+!endif
+;
+define-macro fhook-m4
+    ; if arg is 0 this is a new file so add template 
+    !if &not @#
+        etfinsrt "m4"
+    !endif
+    1 buffer-mode "time"
+    1 buffer-mode "indent"
+    set-variable $buffer-mask "luh1"
+    ; Set up the hilight mode
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.m4
+    !endif
+    ; execute user extensions if enabled
+    !if &exist my-fhook-m4
+        my-fhook-m4
+    !endif
+!emacro
+
+ml-write "[m4 file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "mym4"
+

@@ -1,0 +1,168 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Jon Green
+;  Created       : Fri Oct 22 16:44:08 1999
+;  Last Modified : <000719.0012>
+;
+;  Description   : OMG IDL Syntax hilighting.
+;
+;  Notes         : This is based on the C++ template to perform
+;                  hilighting of OMG's IDL. Restyle and folding
+;                  are enabled.
+;
+;  History
+;
+;  Copyright (c) 1999 JASSPA
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+!if &band .hilight.flags 0x02
+    !if &not &exist .hilight.idl
+        set-variable .hilight.idl &pinc .hilight.next 1
+    !endif
+    ;
+    ; High-light IDL Mode
+    ;
+    0 hilight .hilight.idl  3 50             $global-scheme
+    hilight .hilight.idl 0x3a "#" "\\"       .scheme.prepro
+    hilight .hilight.idl   18 "//"           .scheme.comment
+    hilight .hilight.idl   20 "/\\*" "*/" "" .scheme.comment
+    hilight .hilight.idl    4 "\"" "\"" "\\" .scheme.string
+    hilight .hilight.idl    4 "<" ">" ""     .scheme.keyword
+    hilight .hilight.idl    0 "'.'"          .scheme.quote
+    hilight .hilight.idl    0 "'\\\\.'"      .scheme.quote
+    hilight .hilight.idl    0 "'\\\\'"       .scheme.error
+    hilight .hilight.idl    0 "'\\\\''"      .scheme.quote
+    !if &band .hilight.flags 0x04
+        hilight .hilight.idl    0 "^[[:alpha:]][0-9a-zA-Z_:]*\\}\\s (" .scheme.function
+        hilight .hilight.idl    0 "^[[:alpha:]][0-9a-zA-Z_:]*\\}(" .scheme.function
+    !endif
+    hilight .hilight.idl    0 "^\\w+\\}:"    .scheme.link
+    ; keywords
+    hilight .hilight.idl    1 "attribute"    .scheme.keyword
+    hilight .hilight.idl    1 "case"         .scheme.keyword
+    hilight .hilight.idl    1 "context"      .scheme.keyword
+    hilight .hilight.idl    1 "default"      .scheme.keyword
+    hilight .hilight.idl    1 "else"         .scheme.keyword
+    hilight .hilight.idl    1 "exception"    .scheme.keyword
+    hilight .hilight.idl    1 "fixed"        .scheme.keyword
+    hilight .hilight.idl    1 "goto"         .scheme.keyword
+    hilight .hilight.idl    1 "if"           .scheme.keyword
+    hilight .hilight.idl    1 "in"           .scheme.keyword
+    hilight .hilight.idl    1 "inout"        .scheme.keyword
+    hilight .hilight.idl    1 "interface"    .scheme.keyword
+    hilight .hilight.idl    1 "module"       .scheme.keyword
+    hilight .hilight.idl    1 "oneway"       .scheme.keyword
+    hilight .hilight.idl    1 "operator"     .scheme.keyword
+    hilight .hilight.idl    1 "out"          .scheme.keyword
+    hilight .hilight.idl    1 "raises"       .scheme.keyword
+    hilight .hilight.idl    1 "readonly"     .scheme.keyword
+    hilight .hilight.idl    1 "sequence"     .scheme.keyword
+    hilight .hilight.idl    1 "string"       .scheme.keyword
+    hilight .hilight.idl    1 "switch"       .scheme.keyword
+    hilight .hilight.idl    1 "union"        .scheme.keyword
+    hilight .hilight.idl    1 "wstring"      .scheme.keyword
+    ; types
+    hilight .hilight.idl    1 "any"          .scheme.type
+    hilight .hilight.idl    1 "boolean"      .scheme.type
+    hilight .hilight.idl    1 "char"         .scheme.type
+    hilight .hilight.idl    1 "complex"      .scheme.type
+    hilight .hilight.idl    1 "const"        .scheme.type
+    hilight .hilight.idl    1 "double"       .scheme.type
+    hilight .hilight.idl    1 "enum"         .scheme.type
+    hilight .hilight.idl    1 "float"        .scheme.type
+    hilight .hilight.idl    1 "long"         .scheme.type
+    hilight .hilight.idl    1 "object"       .scheme.type
+    hilight .hilight.idl    1 "octet"        .scheme.type
+    hilight .hilight.idl    1 "short"        .scheme.type
+    hilight .hilight.idl    1 "signed"       .scheme.type
+    hilight .hilight.idl    1 "struct"       .scheme.type
+    hilight .hilight.idl    1 "template"     .scheme.type
+    hilight .hilight.idl    1 "typedef"      .scheme.type
+    hilight .hilight.idl    1 "union"        .scheme.type
+    hilight .hilight.idl    1 "unsigned"     .scheme.type
+    hilight .hilight.idl    1 "void"         .scheme.type
+    hilight .hilight.idl    1 "wchar"        .scheme.type
+    ; Pre-processor directives
+    hilight .hilight.idl    0 "TRUE"         .scheme.prepro
+    hilight .hilight.idl    0 "FALSE"        .scheme.prepro
+!endif
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Bunch of idl macros we may need.
+;
+; comment line ie xxx -> //xxx
+;
+define-macro idl-comment-line
+    !while &gre &pdec @# 1 0
+        beginning-of-line
+        insert-string "//"
+        beginning-of-line
+        forward-line
+    !done
+!emacro
+;
+; uncoment line ie //xxx -> xxx
+;
+define-macro idl-uncomment-line
+    beginning-of-line
+    !while &gre &pdec @# 1 0
+        search-forward "//"
+        backward-delete-char
+        backward-delete-char
+        beginning-of-line
+        forward-line
+    !done
+!emacro
+;
+; fill from the current column to fill-col with '*'
+;
+define-macro idl-comm-to-end
+    &sub $fill-col $window-acol insert-string "*"
+!emacro
+;
+; setup fuctions to auto-load from cmacros & cbox
+;
+define-macro-file cmacros c-insert-tab c-slashify c-deslashify c-start-comment c-hash-eval c-hash-set-define c-hash-unset-define c-hash-del
+define-macro-file cbox c-box
+;
+; Set up the variables for 'idl'
+set-variable $c-contcomm " * "
+
+define-macro fhook-idl
+    ; if arg is 0 this is a new file so add template
+    !if &not @#
+        etfinsrt "idl"
+    !endif
+    1 buffer-mode "time"
+    1 buffer-mode "cmode"
+    buffer-abbrev-file "idl"
+    set-variable $buffer-mask "luh1"
+    ; Set up the hilight mode
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.idl
+    !endif
+    ; Bind macros
+    .osd.idl-help buffer-bind-key osd  "esc h"
+    buffer-bind-unbound-key c-start-comment    "esc C-c"
+    buffer-bind-unbound-key idl-comment-line   "C-c C-c"
+    buffer-bind-unbound-key idl-uncomment-line "C-c C-d"
+    buffer-bind-unbound-key idl-comm-to-end    "C-c C-e"
+    buffer-bind-key c-insert-tab       "A-tab"
+    buffer-bind-unbound-key restyle-region     "A-C-i"
+    buffer-bind-key c-box              "esc q"
+    buffer-bind-key c-box              "esc o"
+    ; Set up the folds for 'C' and C++
+    buffer-bind-unbound-key fold-current "f2"
+    buffer-bind-unbound-key fold-all     "f3"
+    ; execute user extensions if enabled
+    !if &exist my-fhook-idl
+        my-fhook-idl
+    !endif
+!emacro
+
+set-variable .fhook-idl.fold-open  "^{"
+set-variable .fhook-idl.fold-close "^}"
+
+ml-write "[OMG IDL file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "myidl"

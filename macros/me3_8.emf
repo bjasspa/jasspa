@@ -1,0 +1,286 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Sat Aug 1 10:12:48 1998
+;  Last Modified : <000719.0012>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 1998 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+define-macro unmark-buffer
+    -1 buffer-mode "edit"
+!emacro
+; Add a buffer mode
+define-macro add-mode
+    ; Has the require mode been given as an argument, if so add it
+    !force 1 buffer-mode @1
+    !if &not $status
+        ; No - use 1 buffer-mode to add a mode
+        !nma 1 buffer-mode
+    !endif
+!emacro
+define-macro delete-mode
+    !force -1 buffer-mode @1
+    !if &not $status
+        !nma -1 buffer-mode
+    !endif
+!emacro
+define-macro add-global-mode 
+    !force 1 global-mode @1
+    !if &not $status
+        !nma 1 global-mode
+    !endif
+!emacro
+define-macro delete-global-mode
+    !force -1 global-mode @1
+    !if &not $status
+        !nma -1 global-mode
+    !endif
+!emacro
+define-macro apropos
+    !force command-apropos @1
+    !if &not $status
+        !nma command-apropos
+    !endif
+!emacro
+define-macro backward-character
+    @# backward-char
+!emacro
+define-macro forward-character
+    @# forward-char
+!emacro
+define-macro next-line
+    @# forward-line
+!emacro
+define-macro next-page
+    scroll-down
+!emacro
+define-macro next-paragraph
+    @# forward-paragraph
+!emacro
+define-macro next-word
+    @# forward-word
+!emacro
+define-macro beginning-of-file
+    beginning-of-buffer
+!emacro
+define-macro end-of-file
+    end-of-buffer
+!emacro
+define-macro begin-macro
+    start-kbd-macro
+!emacro
+define-macro end-macro
+    end-kbd-macro
+!emacro
+define-macro bind-to-key
+    !force global-bind-key @1 @2
+    !if &not $status
+        !nma global-bind-key
+    !endif
+!emacro
+define-macro unbind-key
+    !force global-unbind-key @1
+    !if &not $status
+        !nma global-unbind-key
+    !endif
+!emacro
+define-macro buffer-position
+    buffer-info
+!emacro
+define-macro case-region-lower
+    lower-case-region
+!emacro
+define-macro case-region-upper
+    upper-case-region
+!emacro
+define-macro case-word-capitalize
+    @# case-word-capitalize
+!emacro
+define-macro case-word-lower
+    @# lower-case-word
+!emacro
+define-macro case-word-upper
+    @# upper-case-word
+!emacro
+define-macro clear-message-line
+    ml-clear
+!emacro
+define-macro delete-next-character
+    @# forward-delete-char
+!emacro
+define-macro delete-next-word
+    @# forward-kill-word
+!emacro
+define-macro delete-previous-character
+    @# backward-delete-char
+!emacro
+define-macro delete-previous-word
+    @# backward-kill-word
+!emacro
+define-macro execute-command-line
+    !force @# execute-line @1
+    !if &not $status
+        !nma @# execute-line
+    !endif
+!emacro
+define-macro execute-macro
+    @# execute-kbd-macro
+!emacro
+define-macro file-name-insert
+    @# insert-file-name
+!emacro
+define-macro file-name-insert
+    @# insert-file-name
+!emacro
+define-macro grow-window
+    @# grow-window-horizontally
+!emacro
+define-macro shrink-window
+    @# shrink-window-vertically
+!emacro
+define-macro split-current-window
+    @# split-window-vertically
+!emacro
+define-macro handle-tab
+    @# tab
+!emacro
+define-macro i-shell
+    shell
+!emacro
+define-macro incremental-search
+    !force set-variable #l0 @1
+    !if $status
+        isearch-forward #l0
+    !else
+        !nma isearch-forward
+    !endif
+!emacro
+define-macro reverse-incremental-search
+    !force set-variable #l0 @1
+    !if $status
+        isearch-backward #l0
+    !else
+        !nma isearch-backward
+    !endif
+!emacro
+define-macro search-reverse
+    !force set-variable #l0 @1
+    !if $status
+        @# search-backward #l0
+    !else
+        !nma @# search-backward
+    !endif
+!emacro
+define-macro kill-to-end-of-line
+    @# kill-line
+!emacro
+define-macro move-window-down
+    scroll-down
+!emacro
+define-macro move-window-up
+    scroll-up
+!emacro
+define-macro name-buffer
+    !force @# change-buffer-name @1
+    !if &not $status
+        !nma @# change-buffer-name
+    !endif
+!emacro
+define-macro open-line
+    @# insert-newline
+!emacro
+define-macro reverse-incremental-search
+    !force set-variable #l0 @1
+    !if $status
+        pipe-shell-command #l0
+    !else
+        !nma pipe-shell-command
+    !endif
+!emacro
+define-macro previous-line
+    @# backward-line
+!emacro
+define-macro previous-page
+    scroll-up
+!emacro
+define-macro previous-paragraph
+    @# backward-paragraph
+!emacro
+define-macro previous-word
+    @# backward-word
+!emacro
+define-macro previous-word
+    @# backward-word
+!emacro
+define-macro quote-character
+    !force set-variable #l0 @1
+    !if $status
+        @# quote-char @1
+    !else
+        !nma @# quote-char
+    !endif
+!emacro
+define-macro redraw-display
+    recenter
+!emacro
+define-macro restore-window
+    goto-window
+!emacro
+define-macro save-window
+    set-window
+!emacro
+define-macro save-file
+    @# save-buffer
+!emacro
+define-macro scroll-next-down
+    !if @?
+        @# scroll-next-window-down
+    !else
+        scroll-next-window-down
+    !endif
+!emacro
+define-macro scroll-next-up
+    !if @?
+        @# scroll-next-window-up
+    !else
+        scroll-next-window-up
+    !endif
+!emacro
+define-macro select-buffer
+    !force @# find-buffer @1
+    !if &not $status
+        !nma @# find-buffer
+    !endif
+!emacro
+define-macro set
+    !force set-variable @1 @2
+    !if &not $status
+        !nma set-variable
+    !endif
+!emacro
+define-macro top-bottom-switch
+    !if &equ $window-line 1
+        end-of-buffer
+    !else
+        beginning-of-buffer
+    !endif
+!emacro
+define-macro transpose-characters
+    transpose-chars
+!emacro
+define-macro update-screen
+    1 screen-update
+!emacro
+define-macro write-message
+    !force ml-write @1
+    !if &not $status
+        !nma ml-write
+    !endif
+!emacro
+

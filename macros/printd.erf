@@ -1,0 +1,49 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : Steven Phillips
+;  Last Modified : <000529.1419>
+;
+;  Description   : Plain text printer driver (default).
+;
+;  Notes
+; 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+"internal" = "0"
+; Separator characters
+"scont" = ">"                 ;; Print start continuation character
+"econt" = "\\"                ;; Print continuation character.
+"xsep" = "-+-"                ;; Horizontal/vertical separator intersection.
+"hsep" = "-"                  ;; Horizontal separator sting - one character.
+"vsep" = " | "                ;; Vertical separator string
+"wsep" = "3"                  ;; The vertical separator width is 3 characters
+
+; Strip blanks from the end of the line.
+"strip" = "1"
+
+"eol" = "\n"
+"eop" = ""
+"sop" = ""
+"eof" = ""
+"sof" = ""
+  
+"layout"
+{
+ "Default"
+ {
+  "Default"
+  {
+   "paper-x" = "80"
+   "paper-y" = "66"
+  }
+  " 80x66"
+  {
+   "paper-x" = "80"
+   "paper-y" = "66"
+  }
+  "160x134"
+  {
+   "paper-x" = "160"
+   "paper-y" = "134"
+  }
+ }
+}

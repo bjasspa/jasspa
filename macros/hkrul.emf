@@ -1,0 +1,192 @@
+;       Install Shield rul file hook
+;
+;   Last Modified : <000607.2015>
+;
+set-char-mask "3" "@"
+
+!if &not &exist .hilight.rul
+    set-variable .hilight.rul &pinc .hilight.next 1
+!endif
+
+!if &band .hilight.flags 0x02
+    0 hilight .hilight.rul 3 20            $global-scheme
+    hilight .hilight.rul 0x1a "#" "\\"     .scheme.prepro
+    hilight .hilight.rul 2  "//"           .scheme.comment
+    hilight .hilight.rul 20 "/\\*" "*/" "" .scheme.comment
+    hilight .hilight.rul 4 "\"" "\"" "\\"  .scheme.string
+    hilight .hilight.rul 0 "'.'"           .scheme.string
+    hilight .hilight.rul 0 "'\\\\.'"       .scheme.quote
+    hilight .hilight.rul 0 "'\\\\'"        .scheme.error
+    hilight .hilight.rul 0 "'\\\\''"       .scheme.quote
+    hilight .hilight.rul 4 "@" "\\}\\W" "" .scheme.variable
+    ;
+    hilight .hilight.rul 1 "abort"        .scheme.keyword
+    hilight .hilight.rul 1 "begin"        .scheme.keyword
+    hilight .hilight.rul 1 "case"         .scheme.keyword
+    hilight .hilight.rul 1 "declare"      .scheme.keyword
+    hilight .hilight.rul 1 "default"      .scheme.keyword
+    hilight .hilight.rul 1 "downto"       .scheme.keyword
+    hilight .hilight.rul 1 "else"         .scheme.keyword
+    hilight .hilight.rul 1 "elseif"       .scheme.keyword
+    hilight .hilight.rul 1 "end"          .scheme.keyword
+    hilight .hilight.rul 1 "endif"        .scheme.keyword
+    hilight .hilight.rul 1 "endswitch"    .scheme.keyword
+    hilight .hilight.rul 1 "endwhile"     .scheme.keyword
+    hilight .hilight.rul 1 "exit"         .scheme.keyword
+    hilight .hilight.rul 1 "for"          .scheme.keyword
+    hilight .hilight.rul 1 "function"     .scheme.keyword
+    hilight .hilight.rul 1 "goto"         .scheme.keyword
+    hilight .hilight.rul 1 "if"           .scheme.keyword
+    hilight .hilight.rul 1 "program"      .scheme.keyword
+    hilight .hilight.rul 1 "prototype"    .scheme.keyword
+    hilight .hilight.rul 1 "repeat"       .scheme.keyword
+    hilight .hilight.rul 1 "return"       .scheme.keyword
+    hilight .hilight.rul 1 "step"         .scheme.keyword
+    hilight .hilight.rul 1 "switch"       .scheme.keyword
+    hilight .hilight.rul 1 "then"         .scheme.keyword
+    hilight .hilight.rul 1 "to"           .scheme.keyword
+    hilight .hilight.rul 1 "typedef"      .scheme.keyword
+    hilight .hilight.rul 1 "until"        .scheme.keyword
+    hilight .hilight.rul 1 "while"        .scheme.keyword
+    
+    hilight .hilight.rul 1 "after"        .scheme.operator
+    hilight .hilight.rul 1 "append"       .scheme.operator
+    hilight .hilight.rul 1 "before"       .scheme.operator
+    hilight .hilight.rul 1 "back"         .scheme.operator
+    hilight .hilight.rul 1 "cancel"       .scheme.operator
+    hilight .hilight.rul 1 "command"      .scheme.operator
+    hilight .hilight.rul 1 "continue"     .scheme.operator
+    hilight .hilight.rul 1 "disable"      .scheme.operator
+    hilight .hilight.rul 1 "dlg_err"      .scheme.operator
+    hilight .hilight.rul 1 "enable"       .scheme.operator
+    hilight .hilight.rul 1 "exclusive"    .scheme.operator
+    hilight .hilight.rul 1 "exist"        .scheme.operator
+    hilight .hilight.rul 1 "failifexists" .scheme.operator
+    hilight .hilight.rul 1 "false"        .scheme.operator
+    hilight .hilight.rul 1 "no"           .scheme.operator
+    hilight .hilight.rul 1 "nonexclusive" .scheme.operator
+    hilight .hilight.rul 1 "noset"        .scheme.operator
+    hilight .hilight.rul 1 "notexists"    .scheme.operator
+    hilight .hilight.rul 1 "notreset"     .scheme.operator
+    hilight .hilight.rul 1 "null"         .scheme.operator
+    hilight .hilight.rul 1 "off"          .scheme.operator
+    hilight .hilight.rul 1 "ok"           .scheme.operator
+    hilight .hilight.rul 1 "on"           .scheme.operator
+    hilight .hilight.rul 1 "partial"      .scheme.operator
+    hilight .hilight.rul 1 "replace"      .scheme.operator
+    hilight .hilight.rul 1 "replace_item" .scheme.operator
+    hilight .hilight.rul 1 "reset"        .scheme.operator
+    hilight .hilight.rul 1 "set"          .scheme.operator
+    hilight .hilight.rul 1 "true"         .scheme.operator
+    hilight .hilight.rul 1 "yes"          .scheme.operator
+    ;
+    hilight .hilight.rul 1 "bool"         .scheme.type
+    hilight .hilight.rul 1 "char"         .scheme.type
+    hilight .hilight.rul 1 "hwnd"         .scheme.type
+    hilight .hilight.rul 1 "int"          .scheme.type
+    hilight .hilight.rul 1 "list"         .scheme.type
+    hilight .hilight.rul 1 "long"         .scheme.type
+    hilight .hilight.rul 1 "number"       .scheme.type
+    hilight .hilight.rul 1 "short"        .scheme.type
+    hilight .hilight.rul 1 "string"       .scheme.type
+!endif
+
+; Initialise the indentation
+0 indent  .hilight.rul 1 30
+indent .hilight.rul N "then"       4
+indent .hilight.rul S "else"      -4
+indent .hilight.rul O "elseif"    -4
+indent .hilight.rul O "end"       -4
+indent .hilight.rul O "endif"     -4
+indent .hilight.rul N "begin"      4
+indent .hilight.rul N "repeat"     4
+indent .hilight.rul O "until"     -4
+indent .hilight.rul N "for"        4
+indent .hilight.rul O "endfor"    -4
+indent .hilight.rul N "while"      4
+indent .hilight.rul O "endwhile"  -4
+indent .hilight.rul N "switch"     4
+indent .hilight.rul S "case"      -4
+indent .hilight.rul S "default"   -4
+indent .hilight.rul O "endswitch" -4
+indent .hilight.rul b "(" ")"
+indent .hilight.rul i "//"
+indent .hilight.rul e "\"" "\"" "\\"
+indent .hilight.rul e "/\\*" "*/" ""
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Bunch of macros we may need.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+; comment line ie xxx -> /*xxx*/
+define-macro rul-comment-line
+    !while &gre &pdec @# 1 0
+        beginning-of-line
+        insert-string "/*"
+        end-of-line
+        insert-string "*/"
+        beginning-of-line
+        forward-line
+    !done
+!emacro
+;
+; uncoment line ie /*xxx*/ -> xxx
+define-macro rul-uncomment-line
+    ; The next line store magic state and enables magic
+    &set #l0 &bmod "magic" buffer-mode "magic"
+    !while &gre &pdec @# 1 0
+        search-forward "*/"
+        search-backward "/\\*"
+        forward-delete-char
+        forward-delete-char
+        search-forward "*/"
+        backward-delete-char
+        backward-delete-char
+        beginning-of-line
+        forward-line
+    !done
+    ; restore magic mode
+    #l0 buffer-mode "magic"
+!emacro
+;
+; fill from the current column to fill-col with '*' and a trailing '/'
+define-macro rul-comm-to-end
+    &sub &sub $fill-col $window-acol 2 insert-string "*"
+    insert-string "*/"
+!emacro
+
+define-macro fhook-rul
+    !if &not @#
+        etfinsrt "rul"
+    !endif
+    set-variable $buffer-mask "luh13"
+    1 buffer-mode "time"
+    1 buffer-mode "indent"
+    buffer-abbrev-file "rul"
+    set-variable $buffer-mask "luh1"
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.rul
+    !endif
+    set-variable $buffer-indent  .hilight.rul
+    buffer-bind-unbound-key rul-comment-line   "C-c C-c"
+    buffer-bind-unbound-key rul-uncomment-line "C-c C-d"
+    buffer-bind-unbound-key rul-comm-to-end    "C-c C-e"
+    ; setup folds
+    buffer-bind-unbound-key fold-current "f2"
+    buffer-bind-unbound-key fold-all     "f3"
+    ; execute user extensions if enabled
+    !if &exist my-fhook-rul
+        my-fhook-rul
+    !endif
+!emacro
+
+; setup rul folding support
+set-variable .fhook-rul.fold-open  "^function"
+set-variable .fhook-rul.fold-close "^end"
+set-variable .fhook-rul.fold-mopen "1"
+
+ml-write "[Install Shield Rul file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "myrul"
+

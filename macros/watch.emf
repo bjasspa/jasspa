@@ -1,0 +1,87 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Tue May 9 07:21:38 2000
+;  Last Modified : <000719.0013>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 2000 Logica.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+0 define-macro watch-callback
+    set-variable #l0 $window-mode-line
+    set-variable #l1 $window-scroll-bar
+    set-variable #l9 0
+    !repeat
+        !if &exi :watch
+            set-variable #l2 &stat d $buffer-fname
+            !if &gre #l2 :watch
+                ml-write &spr "[Watch rereading %s]" $buffer-bname
+                !force !force reread-file
+                set-variable :watch #l2
+                set-variable #l9 1
+            !endif
+        !endif
+        next-window
+    !until &and &equ #l0 $window-mode-line #l1 $window-scroll-bar
+    ml-clear
+    !if #l9
+        screen-update
+    !endif
+    .watch.time create-callback watch-callback
+!emacro
+
+define-macro watch
+    !if @#
+        !if &les @# 0
+            !jump 2
+        !elif &and &not @? &exi :watch
+            !if &exi :watch
+                unset-variable :watch
+                !if &not &dec .count 1
+                    -1 create-callback watch-callback
+                !endif
+            !endif
+        !elif &not &exi :watch
+            set-variable #l0 &stat d $buffer-fname
+            !if &equ #l0 -1
+                ml-write "[Invalid buffer for watch]"
+                !bell
+                !abort
+            !endif
+            set-variable :watch #l0
+            !if &not &pinc .count 1
+                .time create-callback watch-callback
+            !endif
+        !endif
+        ml-write &spr "[Watch %sabled]" &cond &exi :watch "en" "dis"
+    !else
+        set-variable #l0 @ml1 "Watch time (s)" &div .time 1000
+        set-variable .time &mul 1000 &cond &les #l0 1 1 #l0
+    !endif
+!emacro
+
+define-macro watch-reset
+    -1 create-callback watch-callback
+    set-variable .watch.count 0
+    set-variable #l1 $buffer-bname
+    set-variable $buffer-names ".*"
+    !while &not &seq &set #l0 $buffer-names ""
+        !if &not &nbmod #l0 "nact"
+            find-buffer #l0
+            !force unset-variable :watch
+        !endif
+    !done
+    find-buffer #l1
+!emacro
+
+!if &not &exi .watch.time
+    set-variable .watch.time 10000
+    set-variable .watch.count 0
+!endif
+

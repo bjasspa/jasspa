@@ -1,0 +1,320 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;   Title:      c-box
+;
+;   Synopsis:   Justify comments.
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;   Filename:       cbox.emf
+;
+;   Author:         Jon Green & Steven Phillips
+;
+;   Creation Date:      13/05/92
+;
+;   Modification date:  <000607.2015>
+;
+;   Current rev:        20.1
+;
+;   Compilation Flags:
+;
+;   Contents Description:   Justify 'C' comments detects the comment type
+;               /**  - implies a c-box.
+;               /*-  - Implies a lined comment
+;               /*   - A regular comment.
+;               /*\n - A comment block with line of '*'.
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+0 define-macro c-box-remove
+    beginning-of-buffer
+    replace-string "/\\*+[\t ]*" ""
+    beginning-of-buffer
+    replace-string "[\t ]*\\*/[\t ]*\n" ""
+    beginning-of-buffer
+    replace-string "^[\t ]*\\*+" ""
+    beginning-of-buffer
+    replace-string "^[\t ]+" ""
+    beginning-of-buffer
+    replace-string "\\*[\t ]*$" ""
+    beginning-of-buffer
+    replace-string "\\*+/[ \t]*" ""
+    beginning-of-buffer
+    replace-string "[\t ]+$" ""
+    beginning-of-buffer
+    !while &seq @wl ""
+        kill-line
+    !done
+   !force 30000 ifill-paragraph
+;    !force 30000 fill-paragraph
+    end-of-buffer
+    !while &seq @wl ""
+        backward-delete-char
+    !done
+!emacro
+;
+;---    Mode 0: Box node.
+;
+0 define-macro c-box-method-b
+    ;---    Set up the current column settings.
+    set-variable $fill-col &sub $fill-col 4
+    c-box-remove
+    ;---    Put c-box around the code
+    set-variable #l6 $window-line
+    beginning-of-buffer
+    !repeat
+        end-of-line
+        &sub $fill-col $window-acol insert-space
+        forward-line
+    !until &gre $window-line #l6
+    beginning-of-buffer
+    replace-string "^" "* "
+    beginning-of-buffer
+    insert-string "/"
+    &add 4 &sub $fill-col $window-acol insert-string "*"
+    insert-newline
+    end-of-buffer
+    &add 3 &sub $fill-col $window-acol insert-string "*"
+    insert-string "/"
+    beginning-of-buffer
+    forward-line
+    replace-string "\n" " *\n"
+!emacro
+;
+;---    Mode 0: Java Doc mode.
+;
+0 define-macro c-box-method-j
+    ;---    Set up the current column settings.
+    set-variable $fill-col &sub $fill-col 4
+    c-box-remove
+    beginning-of-buffer
+    replace-string "^" " * "
+    beginning-of-buffer
+    insert-string "/**\n"
+    end-of-buffer
+    insert-string " */"
+!emacro
+;
+; Single line comment
+;
+; e.g. /* sdgksdhsdkfg */
+0 define-macro c-box-method-s
+    beginning-of-buffer
+    insert-string "/* "
+    end-of-buffer
+    backward-char
+    insert-string " */"
+!emacro
+;
+; insert string type - string to insert past in as first arg
+; i.e. if string is " * ", then creates comments like
+; /*
+;  * Hello world
+;  */
+0 define-macro c-box-method-i
+    beginning-of-buffer
+    replace-string "^" @1
+    end-of-buffer
+    !if &band #p9 2
+        !if &seq &lef @1 1 " "
+            insert-space
+        !endif
+    !else
+        backward-char
+        insert-space
+    !endif
+    insert-string "*/"
+    beginning-of-buffer
+    !if &band #p9 1
+        insert-string "/*\n"
+    !else
+        insert-string "/* "
+        forward-kill-word
+        -1 yank
+    !endif
+!emacro
+
+0 define-macro c-box-failed
+    ; Kill off the old temporary buffer
+    !force 0 delete-buffer #p0
+    ; Select original buffer and goto line
+    find-buffer #p1
+    goto-line  #p2
+    ; restore magic mode and fill column
+    &cond #p3 1 -1 buffer-mode "magic"
+    set-variable $fill-col #p4
+    set-variable $fill-mode #p8
+    !abort
+!emacro
+
+0 define-macro c-box
+    ; Store some values that we are going to change or need:
+    ; #l0 - the name of the temporary buffer
+    ; #l1 - the current buffer
+    ; #l2 - the current line number
+    ; #l3 - the current magic mode state
+    ; #l4 - the initial fill-col
+    ; #l5 - the comment indent column
+    ; #l8 - the initial justify fill-mode
+    ;
+    ; #l6 - used to store comment type
+    ; #l7 - used to store insert string if type i
+    ; #l9 - bit flags on \n
+    set-variable #l0 "*c-box-tmp*"
+    set-variable #l1 $buffer-bname
+    set-variable #l2 $window-line
+    set-variable #l3 &bmod "magic"
+    set-variable #l4 $fill-col
+    set-variable #l8 $fill-mode
+    ;
+    ; First lets validate the data we need
+    ;---    Search for the start of the comment.
+    ;
+    1 buffer-mode "magic"
+    !force search-backward "/\\*"
+    !if &not $status
+        ; Search failed. Error & Quit.
+        ml-write "Cannot find a '/*'"
+        c-box-failed
+    !endif
+    ; mark current position and store the column
+    set-mark
+    set-alpha-mark "t"
+    set-variable #l5 $window-acol
+    ; if the comment starts with /** then assume its a box type else auto
+    2 forward-char
+    !if &seq @wc "*"
+        1 forward-char
+        ; Java Doc or bounding box.
+        set-variable #l6 &cond &seq @wc "*" "b" "j"
+        1 backward-char
+    !else
+        set-variable #l6 "a"
+    !endif
+    ;
+    ;---    Search for the end of the comment.
+    ;
+    !force search-forward "\\*/"
+    !if &not $status
+        ml-write "Cannot find a '*/'"
+        c-box-failed
+    !endif
+    !if &less $window-line #l2
+        ml-write "Did not invoke inside a comment !!"
+        c-box-failed
+    !endif
+    ;
+    ; If argument given, confirm fill-col & type with user 
+    !if @?
+        !force set-variable $fill-col @ml10 "Fill column" $fill-col
+        !if &not $status
+            c-box-failed
+        !endif
+        !force set-variable #l6 @mc1 "Comment style [abjs012]? " "abjs012"
+        !if &not $status
+            c-box-failed
+        !endif
+    !endif
+    set-variable $fill-col &sub $fill-col &add #l5 3
+    set-variable $fill-mode "l"
+    ; Save the current fill modes 
+    set-variable .fill-ignore $fill-ignore  
+    set-variable .fill-bullet $fill-bullet 
+    ;
+    ; Copy text into temporary buffer and remove any old comment stuff
+    ;
+    copy-region
+    set-alpha-mark "T"
+    !force 0 delete-buffer #l0
+    find-buffer #l0
+    ; On a buffer change the fill modes may have been modified
+    ; by a e-hook pair. Save the current fill settings and 
+    ; restore our original settings.
+    set-variable .ofill-ignore $fill-ignore
+    set-variable .ofill-bullet $fill-bullet
+    set-variable $fill-ignore .fill-ignore 
+    set-variable $fill-bullet .fill-bullet 
+    
+    1 buffer-mode "magic"
+    1 buffer-mode "justify"
+    yank
+    -1 yank
+    ; determine if \n's are needed after the /* and before the */
+    end-of-buffer
+    backward-char
+    set-variable #l9 $window-line
+    backward-word
+    set-variable #l9 &cond &equ $window-line #l9 0 2
+    beginning-of-buffer
+    forward-word
+    !if &gre $window-line 1
+        set-variable #l9 &bor #l9 1
+    !endif
+    ; remove any existing comments
+    c-box-remove
+    ;
+    ; Now add back the comment structure
+    ;
+    ; 3 main types
+    ; 1) a box
+    ; 2) a single line
+    ; 3) a string like " * " added at the start of each line
+    ; 
+    !if &seq #l6 "b"
+        c-box-method-b
+    !elif &seq #l6 "j"
+        c-box-method-j
+    !else
+        end-of-buffer
+        !if &or &seq #l6 "s" &and &seq #l6 "a" &equ $window-line 2
+            c-box-method-s
+        !else
+            !if &seq #l6 "0"
+                set-variable #l7 "   "
+            !elif &seq #l6 "1"
+                set-variable #l7 " * "
+            !elif &seq #l6 "2"
+                set-variable #l7 "** "
+            !else
+                set-variable #l7 $c-contcomm
+            !endif
+            c-box-method-i #l7
+        !endif
+    !endif
+    ;
+    ;---    Add the start column to all of the lines.
+    beginning-of-buffer
+    replace-string "^" &spr "%n" #l5 " "
+    ;
+    ;---    Copy the new comment
+    end-of-line
+    search-backward "/\\*"
+    set-mark
+    search-forward "\\*/"
+    copy-region
+    
+    ; Prior to deleting the buffer, restore the original fill mode
+    ; settings. When we return to the previous buffer the 
+    set-variable $fill-ignore .ofill-ignore 
+    set-variable $fill-bullet .ofill-bullet 
+    
+    ; Kill off the temporary buffer
+    !force 0 delete-buffer #l0
+    ;
+    ;---    Clean out old buffer
+    find-buffer #l1
+    goto-alpha-mark "t"
+    set-mark
+    goto-alpha-mark "T"
+    kill-region
+    -1 yank
+    yank
+    -1 yank
+    ; restore settings
+    &cond #l3 1 -1 buffer-mode "magic"
+    set-variable $fill-col #l4
+    set-variable $fill-mode #l8
+    ml-write "[End of comment]"
+!emacro
+
+

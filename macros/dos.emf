@@ -1,0 +1,39 @@
+;       Setup file for ibm pcs
+;
+;   Last Modified : <990824.1052>
+;
+0 define-macro exec-me
+    pipe-shell-command &spr "%s %s" $progname @1
+!emacro
+; Setup the screen resolution
+define-macro reset-25
+    change-font "3" "0"
+!emacro
+define-macro reset-50
+    change-font "3" "1"
+!emacro
+define-macro reset-def
+    !if &seq $TERM "E80x50"
+        reset-50
+    !elif &seq $TERM "E80x25"
+        reset-25
+    !else    
+        change-font &reg "/history" &cat %platform "/font" "3" &reg "/history" &cat $platform "/font-dbl" "1"
+    !endif
+!emacro
+global-bind-key reset-25  "C-c 2"
+global-bind-key reset-50  "C-c 5"
+global-bind-key reset-def "C-c 9"
+reset-def
+; setup the next-error stuff including grep and compiling
+set-variable $line-template "[0-9]+"
+set-variable $file-template "[a-zA-Z:]*[0-9a-zA-Z\\\\/_.]+"
+set-variable %grep-com "grep /n"
+add-next-line "*grep*" ""
+add-next-line "*grep*" "%f: %l:"
+; These definitions are for djgpp gcc compiler
+add-next-line "*compile*" ""
+add-next-line "*compile*" "%f(%l): Error"
+add-next-line "*compile*" "%f(%l): Warn"
+add-next-line "*compile*" "%f:%l:"
+

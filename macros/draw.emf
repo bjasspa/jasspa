@@ -1,0 +1,251 @@
+;       Box drawer : draws boxes around text for tables etc.
+;
+;   Last Modified : <000607.2015>
+;
+!if &seq .hilight.draw "ERROR"
+    set-variable .hilight.draw &pinc .hilight.next 1
+    set-variable .osd.draw-help &pinc .osd.next 1
+!endif
+
+0 hilight  .hilight.draw 0         $global-scheme
+hilight .hilight.draw 0 "|"  .scheme.no1
+hilight .hilight.draw 0 "-"  .scheme.no1
+hilight .hilight.draw 0 "+"  .scheme.no1
+hilight .hilight.draw 0 "="  .scheme.no2
+
+0 define-macro draw-setmode-line
+    set-variable $buffer-mode-line &spr "-%%u DRAWING - Mode (%s) with (%%%s) - %%c %%l %%b" :dw-modes :dw-char
+!emacro
+
+0 define-macro draw-restore
+    set-variable #l0 $window-line
+    set-variable #l1 $window-acol
+    find-buffer :dw-buf
+    goto-line #l0
+    !if &not $status
+        set-variable #l0 " "
+    !else
+        !force set-variable $window-acol #l1
+        !if &and &equ $window-acol #l1 &not &sin @wc "\t\n"
+            set-variable #l0 @wc
+        !else
+            set-variable #l0 " "
+        !endif
+    !endif
+    find-buffer "*draw*"
+    forward-delete-char
+    insert-string #l0
+    backward-char
+!emacro
+
+0 define-macro draw-curvert
+    !if &equ :dw-mode 1
+        !if &sin @wc "+|"
+        !elif &sin @wc "-="
+            forward-delete-char
+            insert-string "+"
+            backward-char
+        !else
+            !if &not &seq @wc "\n"
+                forward-delete-char
+            !endif
+            insert-string "|"
+            backward-char
+        !endif
+    !elif &equ :dw-mode 2
+        !if &seq @wc "+"
+            forward-delete-char
+            insert-string :dw-char
+            backward-char
+        !else
+            !if &not &seq @wc "\n"
+                forward-delete-char
+            !endif
+            insert-space
+            backward-char
+        !endif
+    !elif &equ :dw-mode 3
+        !if &sin @wc "+|-= "
+            draw-restore
+        !endif
+    !endif
+!emacro
+
+0 define-macro draw-curhorz
+    !if &equ :dw-mode 1
+        !if &sin @wc &cat "+" :dw-char
+        !elif &seq @wc "|"
+            forward-delete-char
+            insert-string "+"
+            backward-char
+        !else
+            !if &not &seq @wc "\n"
+                forward-delete-char
+            !endif
+            insert-string :dw-char
+            backward-char
+        !endif
+    !elif &equ :dw-mode 2
+        !if &seq @wc "+"
+            forward-delete-char
+            insert-string "|"
+            backward-char
+        !else
+            !if &not &seq @wc "\n"
+                forward-delete-char
+            !endif
+            insert-space
+            backward-char
+        !endif
+    !elif &equ :dw-mode 3
+        !if &sin @wc "+|-= "
+            draw-restore
+        !endif
+    !endif
+!emacro
+
+0 define-macro draw-gotocol
+    !force set-variable $window-acol @#
+    !if $status
+    !if &or &equ $window-acol @# &not &seq @wc "\t"
+            !return
+        !endif
+        forward-char
+        set-variable #l0 $window-acol
+        backward-delete-char
+        &sub #l0 $window-acol insert-space
+        !force set-variable $window-acol @#
+    !else
+        end-of-line
+        &sub @# $window-acol insert-space
+    !endif
+!emacro
+
+0 define-macro draw-vert
+    -1 buffer-mode "view"
+    draw-curvert
+    set-variable #l0 $window-acol
+    !force @# forward-line
+    !if $status
+        #l0 draw-gotocol
+        !if &equ :dw-mode 1
+            draw-curvert
+        !endif
+    !endif
+    1 buffer-mode "view"
+!emacro
+
+0 define-macro draw-horz
+    -1 buffer-mode "view"
+    draw-curhorz
+    set-variable #l0 &add $window-acol @#
+    !if &gre #l0 -1
+        #l0 draw-gotocol
+        !if &equ :dw-mode 1
+            draw-curhorz
+        !endif
+    !endif
+    1 buffer-mode "view"
+!emacro
+
+osd .osd.draw-help 0  "batcdH" 9 3 99 .scheme.osd-title "Draw Mode Help"
+osd .osd.draw-help 3  "" 
+osd .osd.draw-help 4  ""  " esc h   - View this help page"
+osd .osd.draw-help 5  ""  " C-g     - Abort draw - discard drawing"
+osd .osd.draw-help 6  ""  " return  - Exit drawing, insert drawing"
+osd .osd.draw-help 7  ""  " d       - Enter draw mode (initial mode)"
+osd .osd.draw-help 8  ""  " e       - Enter erase mode"
+osd .osd.draw-help 9  ""  " m       - Enter move mode"
+osd .osd.draw-help 10 ""  " u       - Enter undo mode"
+osd .osd.draw-help 11 ""  " -       - Draw horizontal lines using '-' "
+osd .osd.draw-help 12 ""  " =       - Draw horizontal lines using '='"
+osd .osd.draw-help 13 ""
+osd .osd.draw-help 14 ""  " Use normal cursor keys to 'draw' in the"
+osd .osd.draw-help 15 ""  " current mode."
+osd .osd.draw-help 16 ""
+osd .osd.draw-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
+
+define-macro draw
+    !force 0 find-buffer  "*draw*"
+    !if $status
+        !return
+    !endif
+    set-variable #l0 $window-line
+    set-variable #l1 $window-acol
+    set-variable #l2 $buffer-bname
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    copy-region
+    goto-line #l0
+    #l1 forward-char
+    1 buffer-mode "view"
+    find-buffer "*draw*"
+    yank
+    -1 yank
+    set-variable $buffer-hilight .hilight.draw
+    set-variable :dw-buf #l2
+    set-variable :dw-mode  1
+    set-variable :dw-modes "d"
+    set-variable :dw-char  "-"
+    draw-setmode-line
+    -1 buffer-mode "edit"
+    1 buffer-mode "view"
+    set-variable $window-line #l0
+    set-variable $window-acol #l1
+    .osd.draw-help buffer-bind-key osd "esc h"
+    ml-write "[esc h - for Draw mode help]"
+    !repeat
+        0 screen-update
+        !force set-variable #l0 @cg
+        !if &seq #l0 "abort-command"
+            !if &iseq @mc1 "Really quit [y/n]? " "nNyY" "y"
+                find-buffer :dw-buf
+                0 delete-buffer "*draw*"
+                -1 buffer-mode "view"
+                !abort
+            !endif
+        !elif &seq #l0 "newline"
+            set-variable #l0 $window-acol
+            set-variable #l1 $window-line
+            beginning-of-buffer
+            set-mark
+            end-of-buffer
+            copy-region
+            find-buffer :dw-buf
+            0 delete-buffer "*draw*"
+            -1 buffer-mode "view"
+            beginning-of-buffer
+            yank
+            -1 yank
+            set-mark
+            end-of-buffer
+            kill-region
+            goto-line #l0
+            #l1 forward-char
+            !return
+        !elif &seq #l0 "forward-line"
+            1 draw-vert
+        !elif &seq #l0 "backward-line"
+            -1 draw-vert
+        !elif &seq #l0 "forward-char"
+            1 draw-horz
+        !elif &seq #l0 "backward-char"
+            -1 draw-horz
+        !elif &seq #l0 "osd"
+            !force .osd.draw-help osd
+        !elif &set #l1 &sin #l0 "mdeu-="
+            !if &les #l1 5
+                set-variable :dw-mode &sub #l1 1
+                set-variable :dw-modes #l0
+                draw-setmode-line
+            !elif &sin #l0 "-="
+                set-variable :dw-char #l0
+                draw-setmode-line
+            !endif
+        !else
+            ml-write "[Invalid command]"
+        !endif
+    !until 0
+!emacro
+

@@ -1,0 +1,252 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; C hook - This file is invoked when a C file is loaded.
+;
+; Last Modified : <000623.1417>
+; Copyright (c) 1999 JASSPA.
+;
+; Notes:
+;       There is a distinction between C++ and C because of problems with
+;       hilighting. ".cpp", ".cc" and ".hpp" are assumed to be C++ files.
+;       Also recognise magic-string for C++ as:- "-!- cmode; c++ -!-" in
+;       the first line.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+!if &not &exi .hilight.c
+    set-variable .hilight.c &pinc .hilight.next 1
+    ; set up the osd tool menu & help dialog
+    set-variable .osd.c-help &pinc .osd.next 1
+    set-variable .osd.c-tool &pinc .osd.next 1
+!endif
+!if &band .hilight.flags 0x02
+    ;
+    ; Hi-light C Mode
+    ;
+    0 hilight .hilight.c  2 50
+    ; comments, strings and quotes
+    hilight .hilight.c 0x3a "#" "\\"       .scheme.prepro
+    hilight .hilight.c   20 "/\\*" "*/" ""   .scheme.comment
+    ; the following is strictly C++ commenting - but people don't seem to know the difference
+    hilight .hilight.c   18 "//"           .scheme.comment
+    hilight .hilight.c    4 "\"" "\"" "\\" .scheme.string
+    hilight .hilight.c    0 "'.'"      .scheme.quote
+    hilight .hilight.c    0 "'\\\\.'"  .scheme.quote
+    hilight .hilight.c    0 "'\\\\'"       .scheme.error
+    hilight .hilight.c    0 "'\\\\''"      .scheme.quote
+    ; Function names and goto labels
+    !if &band .hilight.flags 0x04
+        hilight .hilight.c    0 "^\\w+\\}\\s (" .scheme.function
+        hilight .hilight.c    0 "^\\w+\\}(" .scheme.function
+    !endif
+    hilight .hilight.c    0 "^\\w+\\}:" .scheme.link
+    ; keywords
+    hilight .hilight.c    1 "break"        .scheme.keyword
+    hilight .hilight.c    1 "case"         .scheme.keyword
+    hilight .hilight.c    1 "continue"     .scheme.keyword
+    hilight .hilight.c    1 "default"      .scheme.keyword
+    hilight .hilight.c    1 "do"           .scheme.keyword
+    hilight .hilight.c    1 "else"         .scheme.keyword
+    hilight .hilight.c    1 "for"          .scheme.keyword
+    hilight .hilight.c    1 "goto"         .scheme.keyword
+    hilight .hilight.c    1 "if"           .scheme.keyword
+    hilight .hilight.c    1 "return"       .scheme.keyword
+    hilight .hilight.c    1 "switch"       .scheme.keyword
+    hilight .hilight.c    1 "while"        .scheme.keyword
+    ; tokens
+    hilight .hilight.c    1 "auto"         .scheme.type
+    hilight .hilight.c    1 "char"         .scheme.type
+    hilight .hilight.c    1 "const"        .scheme.type
+    hilight .hilight.c    1 "double"       .scheme.type
+    hilight .hilight.c    1 "enum"         .scheme.type
+    hilight .hilight.c    1 "extern"       .scheme.type
+    hilight .hilight.c    1 "float"        .scheme.type
+    hilight .hilight.c    1 "int"          .scheme.type
+    hilight .hilight.c    1 "long"         .scheme.type
+    hilight .hilight.c    1 "register"     .scheme.type
+    hilight .hilight.c    1 "short"        .scheme.type
+    hilight .hilight.c    1 "signed"       .scheme.type
+    hilight .hilight.c    1 "size_t"       .scheme.type
+    hilight .hilight.c    1 "sizeof"       .scheme.keyword
+    hilight .hilight.c    1 "static"       .scheme.type
+    hilight .hilight.c    1 "struct"       .scheme.type
+    hilight .hilight.c    1 "typedef"      .scheme.type
+    hilight .hilight.c    1 "union"        .scheme.type
+    hilight .hilight.c    1 "unsigned"     .scheme.type
+    hilight .hilight.c    1 "void"         .scheme.type
+    hilight .hilight.c    1 "volatile"     .scheme.type
+    ; Add some system types
+    hilight .hilight.c    1 "FILE"         .scheme.type
+    ; Pre-processor directives
+    hilight .hilight.c    0 "__DATE__"     .scheme.prepro
+    hilight .hilight.c    0 "__FILE__"     .scheme.prepro
+    hilight .hilight.c    0 "__LINE__"     .scheme.prepro
+    hilight .hilight.c    0 "__STDC__"     .scheme.prepro
+    hilight .hilight.c    0 "__TIME__"     .scheme.prepro
+    ; Add YACC tokens - do not appear in typical 'C' space.
+    hilight .hilight.c 0x22 "%token"       .scheme.prepro
+    hilight .hilight.c 0x22 "%union"       .scheme.prepro
+    hilight .hilight.c 0x22 "%type"        .scheme.prepro
+    hilight .hilight.c 0x22 "%start"       .scheme.prepro
+    hilight .hilight.c 0x22 "%%"           .scheme.prepro
+    hilight .hilight.c 0x22 "%{"           .scheme.prepro
+    hilight .hilight.c 0x22 "%}"           .scheme.prepro
+    ; Add LEX tokens - do not appeat in typical 'C' space.
+    hilight .hilight.c 0x22 "%a"           .scheme.prepro
+    hilight .hilight.c 0x22 "%p"           .scheme.prepro
+    hilight .hilight.c 0x22 "%e"           .scheme.prepro
+    hilight .hilight.c 0x22 "%n"           .scheme.prepro
+    hilight .hilight.c 0x22 "%o"           .scheme.prepro
+    !if &band .hilight.flags 0x08
+        ; hilight constants, e.g. numbers
+        hilight .hilight.c 1 "[[:digit:]]+"       .scheme.constant
+        hilight .hilight.c 1 "-[[:digit:]]+"      .scheme.constant
+        hilight .hilight.c 1 "0[xX][[:xdigit:]]+" .scheme.constant
+        hilight .hilight.c 1 "[[:digit:]]+\\.[[:digit:]]+"  .scheme.constant
+        hilight .hilight.c 1 "-[[:digit:]]+\\.[[:digit:]]+" .scheme.constant
+        hilight .hilight.c 1 "[[:digit:]]+\\.[[:digit:]]+f"  .scheme.constant
+        hilight .hilight.c 1 "-[[:digit:]]+\\.[[:digit:]]+f" .scheme.constant
+    !endif
+!endif
+;
+;
+; c to cpp file converter
+define-macro-file hkcpp fhook-cpp
+define-macro c-to-cpp-convert
+    beginning-of-buffer
+    1 buffer-mode "magic"
+    !force -1 search-forward "-[*!]- [Cc] -[*!]-"
+    !if $status
+        4 backward-char
+        insert-string "++"
+    !else
+        !force -1 search-forward "-[*!]- [Cc]++ -[*!]-"
+        !if &not $status
+            !force -1 search-forward "/\\*"
+            !if $status
+                insert-string " -*- C++ -*- "
+            !else
+                insert-string "/* -*- C++ -*- */\n"
+            !endif
+        !endif
+    !endif
+    set-variable $buffer-fhook "fhook-cpp"
+    fhook-cpp
+!emacro
+;
+; setup useful C fuctions to auto-load cmacros
+;
+define-macro-file cmacros c-comment-line c-uncomment-line c-comm-to-end c-insert-tab c-slashify c-deslashify c-start-comment c-hash-eval c-hash-set-define c-hash-unset-define c-hash-del
+define-macro-file cbox c-box
+;
+; Set up the variables for 'C'
+set-variable $c-contcomm " * "
+
+osd .osd.c-tool 0  "b"
+osd .osd.c-tool 1  ""  "C tool &help     esc h"   .osd.c-help osd
+osd .osd.c-tool 2  ""  "Convert to C&++"          f c-to-cpp-convert
+osd .osd.c-tool 3  ""  "&Insert tab"              f c-insert-tab
+osd .osd.c-tool 4  ""  "&Restyle region  A-C-i"   f restyle-region
+osd .osd.c-tool 5  "-"
+osd .osd.c-tool 6  ""  "&Comment line    C-c C-c" f c-comment-line
+osd .osd.c-tool 7  ""  "&Delete comment  C-c C-d" f c-uncomment-line
+osd .osd.c-tool 8  ""  "Start co&mment   esc C-c" f c-start-comment
+osd .osd.c-tool 9  ""  "Comment to &end  C-c C-e" f c-comm-to-end
+osd .osd.c-tool 10 ""  "Restyle c&omment esc o"   f c-box
+osd .osd.c-tool 11 "-"
+osd .osd.c-tool 12 ""  "Slashify region"          f c-slashify
+osd .osd.c-tool 13 ""  "Deslashify region"        f c-deslashify
+osd .osd.c-tool 14 "-"
+osd .osd.c-tool 15 ""  "&Set #define"             f c-hash-set-define
+osd .osd.c-tool 16 ""  "&Unset #define"           f c-hash-unset-define
+osd .osd.c-tool 17 ""  "Evaluate &#'s"            f c-hash-eval
+osd .osd.c-tool 18 ""  "Evaluate #'s use &Narrow" 1 c-hash-eval
+osd .osd.c-tool 19 ""  "Re&move # evaluation"     f c-hash-del
+osd .osd.c-tool 20 "-"
+osd .osd.c-tool 21 "i" "Create &tags file"        f "generate-tags-file ctags"
+; Add hook to load the OSD C-tools menu.
+0 define-macro osd-ohook-c
+    osd 7 1 "Md" "C &Tools" .osd.c-tool
+    osd 7 2 "-"
+!emacro
+; Add hook to remove the OSD C-tools menu.
+0 define-macro osd-chook-c
+    osd 7 1  "D"
+    osd 7 2  "D"
+!emacro
+
+osd .osd.c-help 0  "batcdH" 9 3 99 .scheme.osd-title "C Mode Help"
+osd .osd.c-help 3  "" 
+osd .osd.c-help 4  ""  "    esc h   - View this help page"
+osd .osd.c-help 5  "" 
+osd .osd.c-help 6  ""  "    esc C-c - Start comment"
+osd .osd.c-help 7  ""  "    C-c C-c - Comment out current line"
+osd .osd.c-help 8  ""  "    C-c C-d - Remove current or next comment "
+osd .osd.c-help 9  ""  "    C-c C-e - Comment to end of line"
+osd .osd.c-help 10 "" 
+osd .osd.c-help 11 ""  "    A-i     - Insert as tab (obeys tab mode)"
+osd .osd.c-help 12 ""  "    A-C-i   - Restyle region"
+osd .osd.c-help 13 "" 
+osd .osd.c-help 14 ""  "    esc o"
+osd .osd.c-help 15 ""  "    esc q   - Reformat current comment"
+osd .osd.c-help 16 "" 
+osd .osd.c-help 17 ""  " Abbreviation file is set to c.abr "
+osd .osd.c-help 18 "" 
+osd .osd.c-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
+
+define-macro fhook-c
+    set-variable #l1 &mid $buffer-bname &rsin "." $buffer-bname 1
+    ; if arg is 0 this is a new file so add template 
+    !if &not @#
+        ; Is it an include h file or a c file?
+        !if &seq #l1 "h"
+            etfinsrt "h"
+        !else
+            ; Allow LEX & YACC to default in here.
+            etfinsrt "c"
+        !endif
+    !endif
+    1 buffer-mode "time"
+    buffer-abbrev-file "c"
+    set-variable $buffer-mask "luh1"
+    ; Set up the hilight mode
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.c
+    !endif
+    ; Bind macros
+    .osd.c-help buffer-bind-key osd  "esc h"
+    buffer-bind-unbound-key c-comment-line   "C-c C-c"
+    buffer-bind-unbound-key c-uncomment-line "C-c C-d"
+    buffer-bind-unbound-key c-comm-to-end    "C-c C-e"
+    buffer-bind-unbound-key restyle-region   "A-C-i"
+    buffer-bind-key c-start-comment  "esc C-c"
+    buffer-bind-key c-insert-tab     "A-tab"
+    buffer-bind-key c-box            "esc q"
+    buffer-bind-key c-box            "esc o"
+    
+    !if &seq #l1 "y"
+        ; YACC rules - add YACC specific in here.
+        1 buffer-mode "indent"
+        ; Not useful to add an indent scheme.
+    !elif &seq #l1 "l"
+        ; LEX Rules - add LEX specific in here.
+        1 buffer-mode "indent"
+        ; Not useful to add an indent scheme.
+    !else
+        1 buffer-mode "cmode"
+        ; Set up the folds for 'C' and C++
+        buffer-bind-unbound-key fold-current "f2"
+        buffer-bind-unbound-key fold-all     "f3"
+    !endif
+    ; execute user extensions if defined
+    !if &exist my-fhook-c
+        my-fhook-c
+    !endif
+!emacro
+
+; Set up the folds for 'C' and C++
+set-variable .fhook-c.fold-open  "^{"
+set-variable .fhook-c.fold-close "^}"
+
+ml-write "[C file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "myc"
+

@@ -1,0 +1,270 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Thu May 7 20:59:12 1998
+;  Last Modified : <000719.0012>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro spell-add-word
+    !if @?
+        ; add the spell extended chars
+        set-variable $buffer-mask &cat $buffer-mask "s"
+        !force backward-char
+        !while &pdec @# 1
+            !force forward-word
+            !if &not $status
+                var-str-sub $buffer-mask "s" ""
+                !abort
+            !endif
+            !force backward-word
+            set-variable #l0 $window-col
+            forward-word
+            set-variable #l1 &mid @wl #l0 &sub $window-col #l0
+            !if &seq @wc ">"
+                forward-char
+                set-variable #l2 &rig @wl $window-col
+                end-of-line
+                0x15 spell #l1 #l2
+            !else
+                !if &seq @wc "/"
+                    forward-char
+                    set-variable #l2 &trb &rig @wl $window-col
+                    end-of-line
+                !else
+                    set-variable #l2 ""
+                !endif
+                0x05 spell #l1 #l2
+            !endif
+        !done
+        var-str-sub $buffer-mask "s" ""
+    !else
+        !nma 0x05 spell
+    !endif
+!emacro
+
+define-macro spell-conv-aff-chars
+    beginning-of-buffer
+    replace-string "`[Aa]"  "à"
+    beginning-of-buffer
+    replace-string "\\^[Aa]"  "â"
+    beginning-of-buffer
+    replace-string "'[Aa]"  "á"
+    beginning-of-buffer
+    replace-string "\"[Aa]"  "ä"
+    beginning-of-buffer
+    replace-string "`[Ee]"  "è"
+    beginning-of-buffer
+    replace-string "\\^[Ee]"  "ê"
+    beginning-of-buffer
+    replace-string "'[Ee]"  "é"
+    beginning-of-buffer
+    replace-string "\"[Ee]" "ë"
+    beginning-of-buffer
+    replace-string "'[Ii]"  "í"
+    beginning-of-buffer
+    replace-string "\\^[Ii]"  "î"
+    beginning-of-buffer
+    replace-string "\"[Ii]" "ï"
+    beginning-of-buffer
+    replace-string "'[Nn]"  "ñ"
+    beginning-of-buffer
+    replace-string "`[Oo]"  "ò"
+    beginning-of-buffer
+    replace-string "\\^[Oo]"  "ô"
+    beginning-of-buffer
+    replace-string "'[Oo]"  "ó"
+    beginning-of-buffer
+    replace-string "\"[Oo]"  "ö"
+    beginning-of-buffer
+    replace-string "`[Uu]"  "ù"
+    beginning-of-buffer
+    replace-string "\\^[Uu]"  "û"
+    beginning-of-buffer
+    replace-string "'[Uu]"  "ú"
+    beginning-of-buffer
+    replace-string "\"[Uu]" "ü"
+    beginning-of-buffer
+!emacro
+!if 0
+    ; some aff files use a" instead of "a ...
+    define-macro spell-conv-aff-chars
+        beginning-of-buffer
+        replace-string "[Aa]\"" "ä"
+        beginning-of-buffer
+        replace-string "[Oo]\"" "ö"
+        beginning-of-buffer
+        replace-string "[Uu]\"" "ü"
+        beginning-of-buffer
+    !emacro
+!endif
+0 define-macro spell-conv-aff-line
+    !while &pdec @# 1
+        execute-string "\CS>\CA"
+        !force execute-string "\E-1\CXS#\N\CA"
+        !if &not $status
+            !force execute-string "\CE#\CA"
+        !endif
+        !force execute-string "\"\CS>\CB\"\CD_\"\"_ \"\CS#\CB\"\CO;\CD\CB\CB\E-1\CXR[^\\\\]-\N\CF\CF\E \CR\"\"\CF\CW\CS,\CB\"_\"\CD"
+        !force execute-string "\CA\E-1\Er[ \T]\N\N"
+        !force execute-string "\CA\E-1\Er_\N \N\CA 2 add-spell-rule \"\" \E \CE\CX\CL \CD\CA\CN"
+    !done
+!emacro
+
+
+define-macro spell-conv-aff-buffer
+    spell-conv-aff-chars
+    400000 spell-conv-aff-line
+!emacro
+
+define-macro spell-conv-buffer-chars
+    beginning-of-buffer
+    replace-string "`A"  "À"
+    beginning-of-buffer
+    replace-string "\\^A"  "Â"
+    beginning-of-buffer
+    replace-string "'A"  "Á"
+    beginning-of-buffer
+    replace-string "\"A"  "Ä"
+    beginning-of-buffer
+    replace-string "`E"  "È"
+    beginning-of-buffer
+    replace-string "\\^E"  "Ê"
+    beginning-of-buffer
+    replace-string "'E"  "É"
+    beginning-of-buffer
+    replace-string "\"E" "Ë"
+    beginning-of-buffer
+    replace-string "'I"  "Í"
+    beginning-of-buffer
+    replace-string "\\^I"  "Î"
+    beginning-of-buffer
+    replace-string "\"I" "Ï"
+    beginning-of-buffer
+    replace-string "'N"  "Ñ"
+    beginning-of-buffer
+    replace-string "~N"  "Ñ"
+    beginning-of-buffer
+    replace-string "`O"  "Ò"
+    beginning-of-buffer
+    replace-string "'O"  "Ô"
+    beginning-of-buffer
+    replace-string "'O"  "Ó"
+    beginning-of-buffer
+    replace-string "\"O" "Ö"
+    beginning-of-buffer
+    replace-string "`U"  "Ù"
+    beginning-of-buffer
+    replace-string "\\^U"  "Û"
+    beginning-of-buffer
+    replace-string "'U"  "Ú"
+    beginning-of-buffer
+    replace-string "\"U" "Ü"
+    beginning-of-buffer
+    replace-string "`a"  "à"
+    beginning-of-buffer
+    replace-string "\\^a"  "â"
+    beginning-of-buffer
+    replace-string "'a"  "á"
+    beginning-of-buffer
+    replace-string "\"a" "ä"
+    beginning-of-buffer
+    replace-string "`e"  "è"
+    beginning-of-buffer
+    replace-string "\\^e"  "ê"
+    beginning-of-buffer
+    replace-string "'e"  "é"
+    beginning-of-buffer
+    replace-string "\"e" "ë"
+    beginning-of-buffer
+    replace-string "'i"  "í"
+    beginning-of-buffer
+    replace-string "\\^i"  "î"
+    beginning-of-buffer
+    replace-string "\"i" "ï"
+    beginning-of-buffer
+    replace-string "'n"  "ñ"
+    beginning-of-buffer
+    replace-string "~n"  "ñ"
+    beginning-of-buffer
+    replace-string "`o"  "ò"
+    beginning-of-buffer
+    replace-string "\\^o"  "ô"
+    beginning-of-buffer
+    replace-string "'o"  "ó"
+    beginning-of-buffer
+    replace-string "\"o" "ö"
+    beginning-of-buffer
+    replace-string "`u"  "ù"
+    beginning-of-buffer
+    replace-string "\\^u"  "û"
+    beginning-of-buffer
+    replace-string "'u"  "ú"
+    beginning-of-buffer
+    replace-string "\"u" "ü"
+    beginning-of-buffer
+!emacro
+!if 0
+    ; some aff files use a" instead of "a ...
+    define-macro spell-conv-buffer-chars
+        beginning-of-buffer
+        replace-string "A\"" "Ä"
+        beginning-of-buffer
+        replace-string "a\"" "ä"
+        beginning-of-buffer
+        replace-string "O\"" "Ö"
+        beginning-of-buffer
+        replace-string "o\"" "ö"
+        beginning-of-buffer
+        replace-string "U\"" "Ü"
+        beginning-of-buffer
+        replace-string "u\"" "ü"
+        beginning-of-buffer
+    !emacro
+!endif
+
+define-macro spell-conv-word-buffer
+    spell-conv-buffer-chars
+    1000000 spell-add-word
+!emacro
+
+define-macro edit-dictionary
+    set-variable #l0 @ml04 "Dictionary to edit"
+    set-variable #l1 &spr "*%s*" &rig #l0 &rsin "/" #l0
+    !force 0 find-buffer #l1
+    !if $status
+        !return
+    !endif
+    find-buffer #l1
+    -1 add-dictionary #l0
+    beginning-of-buffer
+    buffer-bind-key restore-dictionary "C-c C-c"
+    ml-write "Use C-c C-c to restore the dictionary"
+!emacro
+
+define-macro restore-dictionary
+    beginning-of-buffer
+    !if &seq &lef @wl 12 "Dictionary: "
+        set-variable #l3 &rig @wl 12
+    !else
+        2 ml-write "Dictionary ID string lost, Aborting!"
+        !abort
+    !endif
+    !force 0 delete-dictionary #l3
+    0 add-dictionary #l3
+    end-of-buffer
+    set-variable #l0 $window-line
+    beginning-of-buffer
+    forward-line
+    !force #l0 spell-add-word
+    beginning-of-buffer
+    ml-write "All Done!!"
+!emacro
+
+

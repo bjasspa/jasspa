@@ -1,0 +1,66 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; bibtex hook - This file is invoked when a BibTeX file is loaded.
+;
+; Last Modified : <991125.1028>
+; Copyright (c) 1999 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+!if &band .hilight.flags 0x02
+    !if &not &exist .hilight.bibtex
+        set-variable .hilight.bibtex  &pinc .hilight.next 1
+        set-variable .hilight.bibtexs &pinc .hilight.next 1
+    !endif
+    ; normal token hilighting    
+    0 hilight .hilight.bibtex 0                       $global-scheme
+    hilight .hilight.bibtex 0 "^\\s-*\\{@\\w*\\}{"    .scheme.bold
+    hilight .hilight.bibtex 0 "^\\s-*\\{\\w*\\s-*\\}={*" .scheme.italic
+    hilight .hilight.bibtex 0 "^\\s-*\\{\\w*\\s-*\\}=\\s-{*" .scheme.italic
+    
+    ; bibtex simulation hilighting 
+    0 hilight .hilight.bibtexs 0                               $global-scheme
+    hilight .hilight.bibtexs 0x44 "\\\\bibitem{" "" "}" "" ""  .scheme.bold
+    hilight .hilight.bibtexs 0x44 "{\\\\em " "" "}" "" ""      .scheme.italic
+    ;hilight .hilight.bibtexs 64 "\\\\newblock " ""       ; any idea ??
+    ;hilight .hilight.bibtexs 0x44 "year = " "Y: " "," ""  .scheme.bold
+    ;hilight .hilight.bibtexs 0x44 "@ARTICLE{" "*" "," "*" "" .scheme.hlred
+    
+    0 define-macro bibtex-swap-hilight
+        !if &equal $buffer-hilight .hilight.bibtex
+            set-variable $buffer-hilight .hilight.bibtexs
+            1 buffer-mode "view"
+        !else
+            set-variable $buffer-hilight .hilight.bibtex
+            -1 buffer-mode "view"
+        !endif
+    !emacro
+!endif
+
+define-macro fhook-bibtex
+    ; if arg is 0 this is a new file so add template 
+    !if &not @#
+        etfinsrt "bibtex"
+    !endif
+    1 buffer-mode "time"
+    1 buffer-mode "indent"
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.bibtex
+        buffer-bind-key bibtex-swap-hilight   "C-c C-h"
+    !endif
+    ; setup latex folds
+    buffer-bind-unbound-key fold-current "f2"
+    buffer-bind-unbound-key fold-all     "f3"
+    auto-spell-init
+    ; execute user extensions if enabled
+    !if &exist my-fhook-bibtex
+        my-fhook-bibtex
+    !endif
+!emacro
+set-variable .fhook-bibtex.fold-open  "^@"
+set-variable .fhook-bibtex.fold-close "^@"
+set-variable .fhook-bibtex.fold-mopen "1"
+set-variable .fhook-bibtex.fold-mnext "-1" 
+
+ml-write "[BibTeX file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "mybibtex"
+

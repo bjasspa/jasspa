@@ -1,0 +1,165 @@
+;
+;       UNIX shell hook
+;
+;       Author        : Jon Green
+;       Created       : 2nd November 1996
+;
+;   Last Modified : <000707.1631>
+;
+;       Comment       : This shell file has given me grief. It is difficult
+;                       to know how much to hilight. At the moment it appears
+;                       too colored - however this really does depend on the
+;                       content of the file.
+;
+;                       I have knocked the hilighting off the shell commands
+;                       to make the file a little less busy. This seems to be
+;                       a little better.
+;
+;                       Maybe somebody else will come up with a more subtle
+;                       scheme ??
+;
+;       Note          : There is a heavy bias towards Bourne and Korn shells.
+;                       I am not a csh shell user so I have probably missed
+;                       alot of csh features.
+;
+!if &band .hilight.flags 0x02
+    !if &not &exist .hilight.shell
+        set-variable .hilight.shell  &pinc .hilight.next 1
+        set-variable .hilight.shellS &pinc .hilight.next 1
+        set-variable .hilight.shellV &pinc .hilight.next 1
+    !endif
+    
+    ; Make file highlighting
+    0 hilight .hilight.shell 0                     $global-scheme
+    ; Strings and things
+    hilight .hilight.shell 0x804 "'" "'" ""        .scheme.quote
+    hilight .hilight.shell 0x880 "\"" .hilight.shellS .scheme.string
+    ; Comments. Note "#!" is the very first line
+    hilight .hilight.shell 2     "\\s \\{#"        .scheme.comment
+    hilight .hilight.shell 2     "^#!"             .scheme.header
+    ; Variables.
+    hilight .hilight.shell 4     "\\$" "\\}\\W" "" .scheme.variable
+    hilight .hilight.shell 0x80  "\\${" .hilight.shellV .scheme.variable
+    hilight .hilight.shell 4     "\\$(" ")" ""     .scheme.variable
+    hilight .hilight.shell 0     "\\$\\?"          .scheme.variable
+    hilight .hilight.shell 0     "\\$#"            .scheme.variable
+    hilight .hilight.shell 0     "\\$\\$"          .scheme.variable
+    hilight .hilight.shell 0     "\\$!"            .scheme.variable
+    hilight .hilight.shell 0     "\\$\\*"          .scheme.variable
+    ; Separators 
+    hilight .hilight.shell 1     "&"               .scheme.operator
+    hilight .hilight.shell 1     ">"               .scheme.operator
+    hilight .hilight.shell 1     "<"               .scheme.operator
+    hilight .hilight.shell 0     "|"               .scheme.operator
+    hilight .hilight.shell 0     "&&"              .scheme.operator
+    hilight .hilight.shell 0     "||"              .scheme.operator
+    hilight .hilight.shell 0     ">>"              .scheme.operator
+    hilight .hilight.shell 0     "<<"              .scheme.operator
+    hilight .hilight.shell 0     "!="              .scheme.operator
+    hilight .hilight.shell 0     "=="              .scheme.operator
+    ; O/S commands
+    hilight .hilight.shell 1     "bg"              .scheme.keyword
+    hilight .hilight.shell 1     "cd"              .scheme.keyword
+    hilight .hilight.shell 1     "cp"              .scheme.keyword
+    hilight .hilight.shell 1     "chmod"           .scheme.keyword
+    hilight .hilight.shell 1     "ci"              .scheme.keyword
+    hilight .hilight.shell 1     "co"              .scheme.keyword
+    hilight .hilight.shell 1     "echo"            .scheme.keyword
+    hilight .hilight.shell 1     "eval"            .scheme.keyword
+    hilight .hilight.shell 1     "exec"            .scheme.keyword
+    hilight .hilight.shell 1     "expr"            .scheme.keyword
+    hilight .hilight.shell 1     "fg"              .scheme.keyword
+    hilight .hilight.shell 1     "jobs"            .scheme.keyword
+    hilight .hilight.shell 1     "kill"            .scheme.keyword
+    hilight .hilight.shell 1     "mkdir"           .scheme.keyword
+    hilight .hilight.shell 1     "mv"              .scheme.keyword
+    hilight .hilight.shell 1     "newgrp"          .scheme.keyword
+    hilight .hilight.shell 1     "pwd"             .scheme.keyword
+    hilight .hilight.shell 1     "rm"              .scheme.keyword
+    hilight .hilight.shell 1     "rmdir"           .scheme.keyword
+    hilight .hilight.shell 1     "stop"            .scheme.keyword
+    hilight .hilight.shell 1     "suspend"         .scheme.keyword
+    hilight .hilight.shell 1     "test"            .scheme.keyword
+    hilight .hilight.shell 1     "time"            .scheme.keyword
+    hilight .hilight.shell 1     "umask"           .scheme.keyword
+    hilight .hilight.shell 1     "unset"           .scheme.keyword
+    hilight .hilight.shell 1     "wait"            .scheme.keyword
+    ; Shell commands
+    hilight .hilight.shell 1     "alias"           .scheme.keyword
+    hilight .hilight.shell 1     "break"           .scheme.keyword
+    hilight .hilight.shell 1     "breaksw"         .scheme.keyword
+    hilight .hilight.shell 1     "case"            .scheme.keyword
+    hilight .hilight.shell 1     "continue"        .scheme.keyword
+    hilight .hilight.shell 1     "dirs"            .scheme.keyword
+    hilight .hilight.shell 1     "do"              .scheme.keyword
+    hilight .hilight.shell 1     "done"            .scheme.keyword
+    hilight .hilight.shell 1     "elif"            .scheme.keyword
+    hilight .hilight.shell 1     "else"            .scheme.keyword
+    hilight .hilight.shell 1     "end"             .scheme.keyword
+    hilight .hilight.shell 1     "endif"           .scheme.keyword
+    hilight .hilight.shell 1     "endsw"           .scheme.keyword
+    hilight .hilight.shell 1     "esac"            .scheme.keyword
+    hilight .hilight.shell 1     "exit"            .scheme.keyword
+    hilight .hilight.shell 1     "export"          .scheme.keyword
+    hilight .hilight.shell 1     "fi"              .scheme.keyword
+    hilight .hilight.shell 1     "for"             .scheme.keyword
+    hilight .hilight.shell 1     "foreach"         .scheme.keyword
+    hilight .hilight.shell 1     "glob"            .scheme.keyword
+    hilight .hilight.shell 1     "goto"            .scheme.keyword
+    hilight .hilight.shell 1     "hash"            .scheme.keyword
+    hilight .hilight.shell 1     "hashstat"        .scheme.keyword
+    hilight .hilight.shell 1     "history"         .scheme.keyword
+    hilight .hilight.shell 1     "if"              .scheme.keyword
+    hilight .hilight.shell 1     "in"              .scheme.keyword
+    hilight .hilight.shell 1     "limit"           .scheme.keyword
+    hilight .hilight.shell 1     "onintr"          .scheme.keyword
+    hilight .hilight.shell 1     "popd"            .scheme.keyword
+    hilight .hilight.shell 1     "pushd"           .scheme.keyword
+    hilight .hilight.shell 1     "read"            .scheme.keyword
+    hilight .hilight.shell 1     "rehash"          .scheme.keyword
+    hilight .hilight.shell 1     "set"             .scheme.keyword
+    hilight .hilight.shell 1     "setenv"          .scheme.keyword
+    hilight .hilight.shell 1     "shift"           .scheme.keyword
+    hilight .hilight.shell 1     "source"          .scheme.keyword
+    hilight .hilight.shell 1     "switch"          .scheme.keyword
+    hilight .hilight.shell 1     "then"            .scheme.keyword
+    hilight .hilight.shell 1     "trap"            .scheme.keyword
+    hilight .hilight.shell 1     "ulimit"          .scheme.keyword
+    hilight .hilight.shell 1     "unhash"          .scheme.keyword
+    hilight .hilight.shell 1     "until"           .scheme.keyword
+    hilight .hilight.shell 1     "while"           .scheme.keyword
+    ; String hilighting
+    0 hilight .hilight.shellS 0                    .scheme.string
+    hilight .hilight.shellS 4    "\\$" "\\}\\W" "" .scheme.variable
+    hilight .hilight.shellS 4    "\\${" "}" ""     .scheme.variable
+    hilight .hilight.shellS 4    "\\$(" ")" ""     .scheme.variable
+    hilight .hilight.shellS 0x80 "\"" .hilight.shell .scheme.string
+    ; Shell variable hilighting
+    0 hilight  .hilight.shellV 0                   .scheme.variable
+    hilight .hilight.shellV 0    ":-"              $global-scheme
+    hilight .hilight.shellV 0    ":="              $global-scheme
+    hilight .hilight.shellV 0    ":\\?"            $global-scheme
+    hilight .hilight.shellV 4    "\"" "\"" ""      .scheme.string
+    hilight .hilight.shellV 4    "\\${" "}" ""     .scheme.variable
+    hilight .hilight.shellV 0x80 "}"  .hilight.shell    .scheme.variable
+!endif
+
+define-macro fhook-shell
+    set-variable $buffer-mask "luh1"
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.shell
+    !endif
+    1 buffer-mode "indent"
+    1 buffer-mode "time"
+    ; execute user extensions if enabled
+    !if &exist my-fhook-shell
+        my-fhook-shell
+    !endif
+!emacro
+; Done
+
+ml-write "[UNIX shell file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "myshell"
+

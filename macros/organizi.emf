@@ -1,0 +1,471 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Fri Jan 1 13:49:17 1999
+;  Last Modified : <000719.0012>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 1999 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+!if &seq .osd-get-file.cmd "ERROR"
+    execute-file fileopen
+!endif
+!if &seq .osd.org-aimp "ERROR"
+    set-variable .osd.org-aimp &pinc .osd.next 1
+    set-variable .osd.org-aimpc &pinc .osd.next 1
+    set-variable .osd.org-aieo &pinc .osd.next 1
+!endif
+
+!if &seq .org.addr-reg "ERROR"
+    execute-file "organiza"
+!endif
+
+0 define-macro org-imp-first-record
+    set-variable #p9 0
+    set-variable #p8 "\b"
+    !while 1
+        set-variable #p9 &add #p9 1
+        set-mark
+        !if &seq @wc #g2
+            !repeat 
+                forward-char
+                search-forward &cat "\\" #g2
+            !until &not &seq @wc #g2
+        !else
+            search-forward &spr "[%s%s]" #g1 #g0
+            backward-char
+        !endif
+        !if .org.aimp-header
+            copy-region
+            set-variable #l3 @y
+            -1 yank
+            !if &seq &lef #l3 1 #g2
+                set-variable #l3 &mid #l3 1 &sub &len #l3 2
+                set-variable #l4 &spr "%s%s" #g2 #g2
+                var-str-sub #l3 #l4 #g2
+            !endif
+            !if &seq #l3 ""
+                set-variable #l3 #p9
+            !endif
+        !else
+            set-variable #l3 #p9
+        !endif
+        set-variable #p8 &spr "%s%s\b" #p8 #l3
+        !if &seq @wc #g0
+            !return
+        !endif
+        forward-char
+    !done
+!emacro
+
+0 define-macro org-imp-get-record
+    set-variable #p9 0
+    !while 1
+        set-variable #p9 &add #p9 1
+        set-mark
+        !if &seq @wc #g2
+            !repeat 
+                forward-char
+                search-forward &cat "\\" #g2
+            !until &not &seq @wc #g2
+        !else
+            search-forward &spr "[%s%s]" #g1 #g0
+            backward-char
+        !endif
+        !if &set #l1 &lget .org.imp-field-map #p9
+            copy-region
+            set-variable #l3 @y
+            -1 yank
+            !if &not &seq #l3 ""
+                !if &seq &lef #l3 1 #g2
+                    set-variable #l3 &mid #l3 1 &sub &len #l3 2
+                    set-variable #l4 &spr "%s%s" #g2 #g2
+                    var-str-sub #l3 #l4 #g2
+                !endif
+                set-variable #l4 &cat "tmp/" &lget .org.addr-reg #l1
+                set-variable #l5 &reg "/org" #l4 ""
+                !if &not &seq #l5 ""
+                    set-variable #l6 &lget .org.imp-field-app #p9
+                    var-str-sub #l6 "\\n" "\n"
+                    set-variable #l5 &cat #l5 #l6
+                !endif
+                set-variable #l6 &lget .org.imp-field-pre #p9
+                var-str-sub #l6 "\\n" "\n"
+                set-variable #l5 &cat &cat #l5 #l6 #l3
+                set-registry "/org" #l4 #l5
+            !endif
+        !endif
+        !if &seq @wc #g0
+            forward-char
+            !return
+        !endif
+        forward-char
+    !done
+!emacro
+
+0 define-macro org-imp-record
+    !force org-imp-get-record
+    !if &not $status
+        !abort
+    !endif
+    !if &seq &set #l0 &reg "/org" "tmp/recno" "" ""
+        set-variable #l0 .org.naddr
+    !else
+        delete-registry "/org/tmp/recno"
+    !endif
+    !if &not &les #l0 .org.naddr
+        set-variable .org.naddr &add #l0 1
+        set-registry "/org" "addr/naddr" .org.naddr
+    !endif
+    !force find-registry "/org" &spr "addr/%d" #l0 0
+    !if $status
+        delete-registry &spr "/org/addr/%d" #l0
+    !endif
+    copy-registry "/org/tmp" &spr "/org/addr/%d" #l0
+    delete-registry "/org/tmp"
+    mark-registry "/org" "u"
+!emacro
+
+0 define-macro org-aimp-crt-field
+    set-variable #l0 &lef &lget .org.imp-field-nms @# 15
+    !if &gre &set #l1 &lget .org.imp-field-map @# 0
+        set-variable #l1 &lget .org.addr-lbl #l1
+    !else
+        set-variable #l1 "<None>"
+    !endif
+    set-variable #l0 &spr "%s%n  %s%n  " #l0 &sub 15 &len #l0 " " #l1 &sub 20 &len #l1 " "
+    set-variable #l1 &lef &lget .org.imp-field-app @# 6
+    set-variable #l2 &lget .org.imp-field-pre @#
+    set-variable #l0 &spr "%s%s%n  %s" #l0 #l1 &sub 6 &len #l1 " " #l2
+    osd .osd.org-aimpc @# "Rx" #l0 @# org-aimp-select-field
+!emacro
+
+0 define-macro org-aimp-select-field
+    set-variable .org.aimp-field @#
+    set-variable #l0 &lef &lget .org.imp-field-nms @# 15 
+    osd .osd.org-aimp 50  "Hfhz" .scheme.osd-entry 15 1 #l0
+    !if &gre &set #l0 &lget .org.imp-field-map @# 0
+        osd .osd.org-aimp 70  "MtmxsfHzh" 3 .scheme.osd-entry 20 1 &lget .org.addr-lbl #l0 .osd.org-m
+    !else
+        osd .osd.org-aimp 70  "MtmxsfHzh" 3 .scheme.osd-entry 20 1 "<None>" .osd.org-m
+    !endif
+!emacro
+
+0 define-macro org-aimp-set-field
+    set-variable .org.imp-field-map &lset .org.imp-field-map .org.aimp-field @#
+    !if &gre @# 0
+        set-variable #l1 &lget .org.addr-lbl @#
+    !else
+        set-variable #l1 "<None>"
+    !endif
+    osd .osd.org-aimp 70  "MtmxsfHzh" 3 .scheme.osd-entry 20 1 #l1 .osd.org-m
+    .org.aimp-field org-aimp-crt-field
+!emacro
+
+0 define-macro org-aimp-set-entry
+    set-variable #l0 &lget "|.org.imp-field-app|.org.imp-field-pre|" &abs @#
+    set-variable #l1 &lget &ind #l0 .org.aimp-field
+    !if &les @# 0
+        set-variable #l2 @ml2 "" #l1
+        !if &not &seq #l2 #l1
+            set-variable &ind #l0 &lset &ind #l0 .org.aimp-field #l2
+            .org.aimp-field org-aimp-crt-field
+        !endif
+    !else
+        set-variable $result #l1
+    !endif
+!emacro
+
+0 define-macro org-aimp-store
+    set-registry "/org" "set/aimp-names" .org.imp-field-nms
+    set-registry "/org" "set/aimp-map" .org.imp-field-map
+    set-registry "/org" "set/aimp-append" .org.imp-field-app
+    set-registry "/org" "set/aimp-prepend" .org.imp-field-pre
+    mark-registry "/org" "u"
+!emacro
+
+0 define-macro org-aimp-import
+    set-variable #l0 0
+    !repeat
+        ml-write &spr "[Importing record %d]" &inc #l0 1
+        !force org-imp-record
+    !until &not $status
+    ml-write &spr "[Done, %d records imported]" #l0
+!emacro
+
+0 define-macro org-aie-options-set
+    set-variable #l0 &abs @#
+    set-variable #l1 &spr ".org.%s-%s" .org.aie-type &lget "|endrec|endfld|delimit|addrfld|header|" #l0
+    !if &gre #l0 4
+        !if &les @# 0
+            set-variable &ind #l1 &bxor &ind #l1 1
+        !elif &not &ind #l1
+            !abort
+        !endif
+    !else
+        !if &les @# 0
+            set-variable &ind #l1 @ml2 "" &ind #l1
+        !else
+            set-variable $result &ind #l1
+        !endif
+    !endif
+!emacro
+
+0 define-macro org-aie-store
+    set-registry "/org" &spr "set/%s-header" .org.aie-type &ind &spr ".org.%s-header" .org.aie-type
+    set-registry "/org" &spr "set/%s-endrec" .org.aie-type &ind &spr ".org.%s-endrec" .org.aie-type
+    set-registry "/org" &spr "set/%s-endfld" .org.aie-type &ind &spr ".org.%s-endfld" .org.aie-type
+    set-registry "/org" &spr "set/%s-delimit" .org.aie-type &ind &spr ".org.%s-delimit" .org.aie-type
+    !if &seq .org.aie-type "aexp" 
+        set-registry "/org" &spr "set/%s-addrfld" .org.aie-type &ind &spr ".org.%s-addrfld" .org.aie-type
+    !endif
+    mark-registry "/org" "u"
+!emacro
+
+osd .osd.org-aieo 00  "batcdHs" 3 6 36 0 -1 -1 160 .scheme.osd-title "Options"
+osd .osd.org-aieo 10  ""
+osd .osd.org-aieo 30 "Cfx" "^^NY^^" 5 org-aie-options-set
+osd .osd.org-aieo 40  ""
+osd .osd.org-aieo 50  "Shf" "   Record Delimiter Char  " 30
+osd .osd.org-aieo 60  "ExfH" .scheme.osd-entry "####" 1 org-aie-options-set
+osd .osd.org-aieo 70  "Shf" "    Field Delimiter Char  " 50
+osd .osd.org-aieo 80  "ExfH" .scheme.osd-entry "####" 2 org-aie-options-set
+osd .osd.org-aieo 90  "Shf" "        Field Quote Char  " 70
+osd .osd.org-aieo 100 "ExfH" .scheme.osd-entry "####" 3 org-aie-options-set
+osd .osd.org-aieo 110 ""
+osd .osd.org-aieo 140  ""
+osd .osd.org-aieo 150 "BhcfxH" .scheme.osd-ebtt " &Store " f org-aie-store
+osd .osd.org-aieo 160 "BcfH"   .scheme.osd-ebtt "  &Ok  "  1 void
+
+0 define-macro org-aie-options
+    !if &equ @# 1
+        osd .osd.org-aieo 00  "batcdHs" 3 6 36 0 -1 -1 150 .scheme.osd-title "Import Options"
+        osd .osd.org-aieo 20  "Shf" "  Import File has Header  " 100
+        osd .osd.org-aieo 120 "D"
+        osd .osd.org-aieo 130 "D"
+        osd .osd.org-aieo 135 "D"
+        set-variable .org.aie-type "aimp" 
+    !else
+        osd .osd.org-aieo 00  "batcdHs" 3 6 36 0 -1 -1 150 .scheme.osd-title "Export Options"
+        osd .osd.org-aieo 20  "Shf" "    Export Record Header  " 100
+        osd .osd.org-aieo 120 "Shf" "     Export Addresses to  " 130
+        osd .osd.org-aieo 130 "ExfHh" .scheme.osd-entry "####" 4 org-aie-options-set
+        osd .osd.org-aieo 135 "f" " fields    "
+        set-variable .org.aie-type "aexp" 
+    !endif
+    .osd.org-aieo osd
+!emacro
+
+0 define-macro org-aie-setdelimit
+    set-variable #l0 @1
+    set-variable #g0 &ind &spr ".org.%s-endrec" #l0
+    set-variable #g1 &ind &spr ".org.%s-endfld" #l0
+    set-variable #g2 &ind &spr ".org.%s-delimit" #l0
+    var-str-sub #g0 "\\n" "\n"
+    var-str-sub #g1 "\\n" "\n"
+    var-str-sub #g2 "\\n" "\n"
+    var-str-sub #g0 "\\t" "\t"
+    var-str-sub #g1 "\\t" "\t"
+    var-str-sub #g2 "\\t" "\t"
+!emacro
+
+osd .osd.org-aimp  0  "batcHds" 9 3 62 26 -1 -1 630 .scheme.osd-title "Import Address Database"
+osd .osd.org-aimp  5  "hf" " "
+osd .osd.org-aimp 10  "ItbHf" 1 .scheme.osd-sbar 54 20 .osd.org-aimpc
+osd .osd.org-aimp 20  ""
+osd .osd.org-aimp 30  "fh" "  Import Field     "
+osd .osd.org-aimp 33  "Sfh" "Map To Field          " 70
+osd .osd.org-aimp 36  "Sfh"  "Append  " 90
+osd .osd.org-aimp 37  "Sf"  "Prepend" 90
+osd .osd.org-aimp 40  "fh" "  "
+osd .osd.org-aimp 50  "Hfh" .scheme.osd-entry "               "
+osd .osd.org-aimp 60  "fh" "  "
+osd .osd.org-aimp 70  "MtmxsfHzh" 3 .scheme.osd-entry 20 1 "" .osd.org-m
+osd .osd.org-aimp 80  "fh" "  "
+osd .osd.org-aimp 90  "EtxHfh" 4 .scheme.osd-entry "######" 1 org-aimp-set-entry
+osd .osd.org-aimp 100 "fh" "  "
+osd .osd.org-aimp 110 "EtxHf" 5 .scheme.osd-entry "#######" 2 org-aimp-set-entry
+osd .osd.org-aimp 600 ""
+osd .osd.org-aimp 630 "BhcfxH" .scheme.osd-ebtt " &Store Settings "   f org-aimp-store
+osd .osd.org-aimp 640 "BhcfH"  .scheme.osd-ebtt " &Import  " f org-aimp-import
+osd .osd.org-aimp 650 "BhcfH"  .scheme.osd-ebtt " E&xit  "   f void
+
+0 define-macro org-address-import
+    set-variable .org.aimp-header   &reg "/org" "set/aimp-header" "1"
+    set-variable .org.aimp-endrec   &reg "/org" "set/aimp-endrec" "\\n"
+    set-variable .org.aimp-endfld &reg "/org" "set/aimp-endfld" ","
+    set-variable .org.aimp-delimit  &reg "/org" "set/aimp-delimit" "\""
+    osd .osd.fobm 55  "BcftHx"  55 .scheme.osd-ebtt " &Options  " 1 org-aie-options
+    set-variable .osd-get-file.title "Select Import File"
+    set-variable .osd-get-file.file-type "|Text file|All files|"
+    set-variable .osd-get-file.file-mask "|*.txt|*|"
+    set-variable .osd-get-file.flags 0
+    set-variable .osd-get-file.ft 1
+    !force osd-get-file
+    set-variable #l0 $status
+    osd .osd.fobm 55  "D"
+    !if &not #l0
+        !return
+    !endif
+    set-variable #l0 .osd-get-file.result
+    set-variable #l7 $buffer-bname
+    org-aie-setdelimit "aimp"
+    !force 0 delete-buffer "*org-import-tmp*"
+    find-buffer "*org-import-tmp*"
+    !force insert-file #l0
+    !if &equ $window-line 1
+        delete-buffer "*org-import-tmp*"
+        find-buffer #l7
+        ml-write "[Failed to load import file]"
+        !abort
+    !endif
+    beginning-of-buffer
+    !force org-imp-first-record
+    !if &or &not $status &not #l9
+        delete-buffer "*org-import-tmp*"
+        find-buffer #l7
+        ml-write "[Failed to import first record]"
+        !abort
+    !endif
+    !if .org.aimp-header
+        forward-char
+    !else
+        beginning-of-buffer
+    !endif
+    set-variable .org.imp-field-nms #l8
+    !if &seq #l8 &reg "/org" "set/aimp-names" ""
+        set-variable .org.imp-field-map &reg "/org" "set/aimp-map" ""
+        set-variable .org.imp-field-app &reg "/org" "set/aimp-append" ""
+        set-variable .org.imp-field-pre &reg "/org" "set/aimp-prepend" ""
+    !else
+        set-variable .org.imp-field-map &spr "%n" &add #l9 1 "\b"
+        set-variable .org.imp-field-app &spr "%n" &add #l9 1 "\b"
+        set-variable .org.imp-field-pre &spr "%n" &add #l9 1 "\b"
+    !endif
+    ; create the setup dialog
+    -1 osd .osd.org-aimpc
+    osd .osd.org-aimpc 0 "sSk" .scheme.osd-child 54 20 -1 -1
+    set-variable #l0 0
+    !while &les &inc #l0 1 #l9
+        #l0 org-aimp-crt-field
+    !done
+    ; create the fields menu
+    osd .osd.org-m 0 "b"
+    set-variable #l0 0
+    !while &not &seq &set #l1 &lget .org.addr-lbl &inc #l0 1 ""
+        osd .osd.org-m #l0 "" #l1 #l0 org-aimp-set-field
+    !done
+    osd .osd.org-m #l0 "" "<None>" -1 org-aimp-set-field
+    1 org-aimp-select-field
+    !force !force .osd.org-aimp osd
+    delete-buffer "*org-import-tmp*"
+    find-buffer #l7
+!emacro
+
+0 define-macro org-aexp-options-set
+    !if &les @# 0
+        set-variable .org.aexp-select &bxor .org.aexp-select 1
+    !elif &not .org.aexp-select
+        !abort
+    !endif
+!emacro
+
+0 define-macro org-address-export
+    set-variable .org.aexp-header  &reg "/org" "set/aexp-header" "1"
+    set-variable .org.aexp-endrec  &reg "/org" "set/aexp-endrec" "\\n"
+    set-variable .org.aexp-endfld  &reg "/org" "set/aexp-endfld" ","
+    set-variable .org.aexp-delimit &reg "/org" "set/aexp-delimit" "\""
+    set-variable .org.aexp-addrfld &reg "/org" "set/aexp-addrfld" "1"
+    set-variable .org.aexp-select  0
+    osd .osd.fobm 55  "BcftHx"  55 .scheme.osd-ebtt " &Options  " 2 org-aie-options
+    osd .osd.fobm 110 ""
+    osd .osd.fobm 120 "Cpxt" 120 "^[ *] &Only Selected" 6 org-aexp-options-set
+    set-variable .osd-get-file.title "Select Export File"
+    set-variable .osd-get-file.file-type "|Text file|All files|"
+    set-variable .osd-get-file.file-mask "|*.txt|*|"
+    set-variable .osd-get-file.flags 0
+    set-variable .osd-get-file.ft 1
+    !force osd-get-file
+    set-variable #l0 $status
+    osd .osd.fobm 55  "D"
+    osd .osd.fobm 110 "D"
+    osd .osd.fobm 120 "D"
+    !if &not #l0
+        !return
+    !endif
+    set-variable #l0 .osd-get-file.result
+    ml-write &spr "[Exporting database to \"%s\"]" #l0
+    set-variable #l9 $buffer-bname
+    org-aie-setdelimit "aexp"
+    !force 0 delete-buffer "*org-export-tmp*"
+    find-buffer "*org-export-tmp*"
+    !if .org.aexp-header
+        set-variable #l3 0
+        !while &not &seq &set #l4 &lget .org.addr-lbl &inc #l3 1 ""
+            !if &and &gre .org.aexp-addrfld 1 &seq &rig #l4 5 "Address"
+                set-variable #l5 1
+                !repeat
+                    insert-string &spr "%s%s%s%d%s" #g1 #g2 #l4 #l5 #g2
+                !until &equ &pinc #l5 1 .org.aexp-addrfld
+            !else
+                !if &gre #l3 1
+                    insert-string #g1
+                !endif
+                insert-string &spr "%s%s%s" #g2 #l4 #g2
+            !endif
+        !done
+        insert-string #g0
+    !endif
+    set-variable #l1 .org.addr
+    set-variable #l7 .org.iaddr
+    set-variable #l2 0
+    set-variable .org.addr "0"
+    set-variable .org.iaddr &cond &gre .org.iaddr -1 0 -1
+    !repeat
+        org-addr-inc-recno
+        !if &not &seq .org.addr "*"
+            !if &or &not .org.aexp-select &seq "*" &reg "/org" &spr "addr/%d/slct" .org.addr "" 
+                set-variable #l2 &add #l2 1
+                set-variable #l3 0
+                !while &not &seq &set #l4 &lget .org.addr-reg &inc #l3 1 ""
+                    !if &equ #l3 1
+                        insert-string &spr "%s%d%s" #g2 .org.addr #g2
+                    !else
+                        set-variable #l5 &reg "/org" &spr "addr/%d/%s" .org.addr #l4 ""
+                        !if &seq #g2 ""
+                            var-str-sub #l5 #g1 .org.aexp-seperator
+                        !else
+                            var-str-sub #l5 #g2 &cat #g2 #g2
+                        !endif
+                        !if &and &gre .org.aexp-addrfld 1 &seq &rig #l4 5 "addr"
+                            set-variable #l6 &spr "%s%s%s" #g2 #g1 #g2
+                            .org.aexp-addrfld var-str-sub #l5 "\n" #l6
+                            set-variable #l5 &spr "%s%n" #l5 &sub .org.aexp-addrfld &add .var-str-sub.count 1 #l6
+                        !endif
+                        var-str-sub #l5 #g0 .org.aexp-endrec
+                        insert-string &spr "%s%s%s%s" #g1 #g2 #l5 #g2
+                    !endif
+                !done
+                insert-string #g0
+            !endif
+        !endif
+    !until &seq .org.addr "*"
+    set-variable .org.addr #l1
+    set-variable .org.iaddr #l7
+    !force write-buffer #l0 @mna
+    !if &not $status
+        delete-buffer $buffer-bname
+        find-buffer #l9
+        !abort
+    !endif
+    delete-buffer $buffer-bname
+    find-buffer #l9
+    ml-write &spr "[Exported %d records to \"%s\"]" #l2 #l0
+!emacro
+

@@ -1,0 +1,17 @@
+;       file for hps
+;
+;   Last Modified : <990824.1053>
+;
+; Load up common unix stuff (colors, templates, grep, RCS, mail)
+!force exec-file "unixterm"
+;
+; Compile stuff
+;
+add-next-line "*compile*" ""
+add-next-line "*compile*" "cc: \"\\.\\./%f\", line %l"
+add-next-line "*compile*" "cpp: \"\\.\\./%f\", line %l"
+add-next-line "*compile*" "cc: \"%f\", line %l"
+add-next-line "*compile*" "cpp: \"%f\", line %l"
+add-next-line "*compile*" "%f:%l:"
+
+

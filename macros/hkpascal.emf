@@ -1,0 +1,108 @@
+; Pascal mode hook
+;
+; Last Modified : <991125.1029>
+;
+; Notes:
+;
+; Copyright (c) 1998-99 JASSPA.
+!if &band .hilight.flags 0x02
+    ; High-light Pascal Mode
+    !if &not &exist .hilight.pascal
+        set-variable .hilight.pascal &pinc .hilight.next 1
+    !endif
+    0 hilight  .hilight.pascal 3 50            $global-scheme
+    hilight .hilight.pascal 4 "{" "}" ""       .scheme.comment
+    hilight .hilight.pascal 0x1004 "'" "'" ""  .scheme.string
+    
+    hilight .hilight.pascal 1 "asm"            .scheme.keyword
+    hilight .hilight.pascal 1 "begin"          .scheme.keyword
+    hilight .hilight.pascal 1 "case"           .scheme.keyword
+    hilight .hilight.pascal 1 "const"          .scheme.keyword
+    hilight .hilight.pascal 1 "constructor"    .scheme.keyword
+    hilight .hilight.pascal 1 "destructor"     .scheme.keyword
+    hilight .hilight.pascal 1 "do"             .scheme.keyword
+    hilight .hilight.pascal 1 "downto"         .scheme.keyword
+    hilight .hilight.pascal 1 "else"           .scheme.keyword
+    hilight .hilight.pascal 1 "end"            .scheme.keyword
+    hilight .hilight.pascal 1 "file"           .scheme.keyword
+    hilight .hilight.pascal 1 "for"            .scheme.keyword
+    hilight .hilight.pascal 1 "function"       .scheme.keyword
+    hilight .hilight.pascal 1 "goto"           .scheme.keyword
+    hilight .hilight.pascal 1 "if"             .scheme.keyword
+    hilight .hilight.pascal 1 "implementation" .scheme.keyword
+    hilight .hilight.pascal 1 "in"             .scheme.keyword
+    hilight .hilight.pascal 1 "inline"         .scheme.keyword
+    hilight .hilight.pascal 1 "interface"      .scheme.keyword
+    hilight .hilight.pascal 1 "label"          .scheme.keyword
+    hilight .hilight.pascal 1 "nil"            .scheme.keyword
+    hilight .hilight.pascal 1 "object"         .scheme.keyword
+    hilight .hilight.pascal 1 "of"             .scheme.keyword
+    hilight .hilight.pascal 1 "procedure"      .scheme.keyword
+    hilight .hilight.pascal 1 "program"        .scheme.keyword
+    hilight .hilight.pascal 1 "repeat"         .scheme.keyword
+    hilight .hilight.pascal 1 "set"            .scheme.keyword
+    hilight .hilight.pascal 1 "then"           .scheme.keyword
+    hilight .hilight.pascal 1 "to"             .scheme.keyword
+    hilight .hilight.pascal 1 "type"           .scheme.keyword
+    hilight .hilight.pascal 1 "unit"           .scheme.keyword
+    hilight .hilight.pascal 1 "until"          .scheme.keyword
+    hilight .hilight.pascal 1 "uses"           .scheme.keyword
+    hilight .hilight.pascal 1 "var"            .scheme.keyword
+    hilight .hilight.pascal 1 "while"          .scheme.keyword
+    hilight .hilight.pascal 1 "with"           .scheme.keyword
+    
+    hilight .hilight.pascal 1 "array"          .scheme.type
+    hilight .hilight.pascal 1 "boolean"        .scheme.type
+    hilight .hilight.pascal 1 "byte"           .scheme.type
+    hilight .hilight.pascal 1 "char"           .scheme.type
+    hilight .hilight.pascal 1 "comp"           .scheme.type
+    hilight .hilight.pascal 1 "double"         .scheme.type
+    hilight .hilight.pascal 1 "extended"       .scheme.type
+    hilight .hilight.pascal 1 "integer"        .scheme.type
+    hilight .hilight.pascal 1 "longint"        .scheme.type
+    hilight .hilight.pascal 1 "packed"         .scheme.type
+    hilight .hilight.pascal 1 "real"           .scheme.type
+    hilight .hilight.pascal 1 "record"         .scheme.type
+    hilight .hilight.pascal 1 "shortint"       .scheme.type
+    hilight .hilight.pascal 1 "single"         .scheme.type
+    hilight .hilight.pascal 1 "string"         .scheme.type
+    hilight .hilight.pascal 1 "text"           .scheme.type
+    hilight .hilight.pascal 1 "word"           .scheme.type
+    
+    hilight .hilight.pascal 1 "and"            .scheme.operator
+    hilight .hilight.pascal 1 "div"            .scheme.operator
+    hilight .hilight.pascal 1 "mod"            .scheme.operator
+    hilight .hilight.pascal 1 "not"            .scheme.operator
+    hilight .hilight.pascal 1 "or"             .scheme.operator
+    hilight .hilight.pascal 1 "shl"            .scheme.operator
+    hilight .hilight.pascal 1 "shr"            .scheme.operator
+    hilight .hilight.pascal 1 "xor"            .scheme.operator
+    
+    hilight .hilight.pascal 1 "false"          .scheme.operator
+    hilight .hilight.pascal 1 "true"           .scheme.operator
+    
+    hilight .hilight.pascal 1 "eof"            .scheme.operator
+    hilight .hilight.pascal 1 "eoln"           .scheme.operator
+!endif
+
+define-macro fhook-pascal
+    ; if arg is 0 this is a new file so add template
+    !if &not @#
+        etfinsrt "pascal"
+    !endif
+    1 buffer-mode "time"
+    1 buffer-mode "indent"
+    buffer-abbrev-file "pascal"
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.pascal
+    !endif
+    ; execute user extensions if enabled
+    !if &exist my-fhook-pascal
+        my-fhook-pascal
+    !endif
+!emacro
+
+ml-write "[Pascal file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "mypascal"

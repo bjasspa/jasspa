@@ -1,0 +1,415 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Fri Jul 23 10:05:30 1999
+;  Last Modified : <000719.0012>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 1999 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+!if &seq .osd-get-file.cmd "ERROR"
+    execute-file fileopen
+!endif
+!if &seq .osd.mmrg-opt "ERROR"
+    ; create a dummy macro for variables
+    0 define-macro mmrg
+    !emacro
+    set-variable .osd.mmrg-opt &pinc .osd.next 1
+    set-variable .osd.mmrg-ppfld &pinc .osd.next 1
+    set-variable .osd.mmrg-popup &pinc .osd.next 1
+!endif
+
+0 define-macro mmrg-get-first-record
+    set-variable .mmrg.nfld 0
+    set-variable .mmrg.fldn "\b"
+    !while 1
+        set-variable .mmrg.nfld &add .mmrg.nfld 1
+        set-mark
+        !if &seq @wc #g2
+            !repeat 
+                forward-char
+                search-forward &cat "\\" #g2
+            !until &not &seq @wc #g2
+        !else
+            search-forward &spr "[%s%s]" #g1 #g0
+            backward-char
+        !endif
+        !if .mmrg.header
+            copy-region
+            set-variable #l3 @y
+            -1 yank
+            !if &seq &lef #l3 1 #g2
+                set-variable #l3 &mid #l3 1 &sub &len #l3 2
+                set-variable #l4 &spr "%s%s" #g2 #g2
+                var-str-sub #l3 #l4 #g2
+            !endif
+            !if &seq #l3 ""
+                set-variable #l3 .mmrg.nfld
+            !endif
+        !else
+            set-variable #l3 .mmrg.nfld
+        !endif
+        set-variable .mmrg.fldn &spr "%s%s\b" .mmrg.fldn #l3
+        !if &seq @wc #g0
+            !return
+        !endif
+        forward-char
+    !done
+!emacro
+
+0 define-macro mmrg-get-record
+    set-variable #l0 0
+    !while 1
+        set-variable #l0 &add #l0 1
+        set-mark
+        !if &seq @wc #g2
+            !repeat 
+                forward-char
+                search-forward &cat "\\" #g2
+            !until &not &seq @wc #g2
+        !else
+            search-forward &spr "[%s%s]" #g1 #g0
+            backward-char
+        !endif
+        copy-region
+        set-variable #l3 @y
+        -1 yank
+        !if &seq &lef #l3 1 #g2
+            set-variable #l3 &mid #l3 1 &sub &len #l3 2
+            set-variable #l4 &spr "%s%s" #g2 #g2
+            var-str-sub #l3 #l4 #g2
+        !endif
+        set-variable &ind &cat ".mmrg." #l0 #l3
+        !if &seq @wc #g0
+            forward-char
+            !return
+        !endif
+        forward-char
+    !done
+!emacro
+
+0 define-macro mmrg-options-set
+    set-variable #l0 &abs @#
+    set-variable #l1 &spr ".mmrg.%s" &lget "|endrec|endfld|delimit|header|" #l0
+    !if &gre #l0 3
+        !if &les @# 0
+            set-variable &ind #l1 &bxor &ind #l1 1
+        !elif &not &ind #l1
+            !abort
+        !endif
+    !else
+        !if &les @# 0
+            set-variable &ind #l1 @ml2 "" &ind #l1
+        !else
+            set-variable $result &ind #l1
+        !endif
+    !endif
+!emacro
+
+0 define-macro mmrg-insert-data
+    !if &les @# 0
+        execute-string &lget "|{{If: {{}}{{}}}}|{{If: {{}}{{}}{{}}}}|{{Next-Record}}|{{Repeat-Doc}}|" &abs @#
+    !else
+        insert-string &spr "{{Field: %s}}" &lget .mmrg.fldn @#
+    !endif
+!emacro
+
+osd .osd.mmrg-opt 00  "batcdHs" 3 6 36 0 -1 -1 150 .scheme.osd-title "Mail Merge Options"
+osd .osd.mmrg-opt 10  ""
+osd .osd.mmrg-opt 20  "Shf" "  Data File has Header  " 100
+osd .osd.mmrg-opt 30  "Cfx" "^^NY^^" 4 mmrg-options-set
+osd .osd.mmrg-opt 40  ""
+osd .osd.mmrg-opt 50  "Shf" "   Record Delimiter Char  " 30
+osd .osd.mmrg-opt 60  "ExfH" .scheme.osd-entry "####" 1 mmrg-options-set
+osd .osd.mmrg-opt 70  "Shf" "    Field Delimiter Char  " 50
+osd .osd.mmrg-opt 80  "ExfH" .scheme.osd-entry "####" 2 mmrg-options-set
+osd .osd.mmrg-opt 90  "Shf" "        Field Quote Char  " 70
+osd .osd.mmrg-opt 100 "ExfH" .scheme.osd-entry "####" 3 mmrg-options-set
+osd .osd.mmrg-opt 110 ""
+osd .osd.mmrg-opt 140 ""
+osd .osd.mmrg-opt 160 "BcfH"   .scheme.osd-ebtt "  &Ok  "  1 void
+
+osd .osd.mmrg-popup 0   "b"
+osd .osd.mmrg-popup 1   "Mde" "Insert &Field"       .osd.mmrg-ppfld
+osd .osd.mmrg-popup 2   ""    "&If Statement"       -1 mmrg-insert-data
+osd .osd.mmrg-popup 3   ""    "&If Else Statement"  -2 mmrg-insert-data
+osd .osd.mmrg-popup 4   ""    "&Next Record"        -3 mmrg-insert-data
+osd .osd.mmrg-popup 5   ""    "&Repeat Doc"         -4 mmrg-insert-data
+
+define-macro mail-merge-popup 
+    ; redefine the position to be next to the cursor 
+    osd .osd.mmrg-popup  0 "ba" &add $cursor-x 1 &sub $cursor-y 1
+    .osd.mmrg-popup osd
+!emacro 
+
+0 define-macro mmrg-setdelimit
+    set-variable #g0 .mmrg.endrec
+    set-variable #g1 .mmrg.endfld
+    set-variable #g2 .mmrg.delimit
+    var-str-sub #g0 "\\n" "\n"
+    var-str-sub #g1 "\\n" "\n"
+    var-str-sub #g2 "\\n" "\n"
+    var-str-sub #g0 "\\t" "\t"
+    var-str-sub #g1 "\\t" "\t"
+    var-str-sub #g2 "\\t" "\t"
+!emacro
+
+0 define-macro mmrg-get-info
+    beginning-of-buffer
+    !if &not &seq &lef @wl 14 "{{Mail-Merge: "
+        !abort
+    !endif
+    set-variable .mmrg.header  &lget &rig @wl 14 1
+    set-variable .mmrg.endrec  &lget &rig @wl 14 2
+    set-variable .mmrg.endfld  &lget &rig @wl 14 3
+    set-variable .mmrg.delimit &lget &rig @wl 14 4
+    set-variable .mmrg.dbfile  &lget &rig @wl 14 5
+!emacro
+
+0 define-macro mmrg-get-dbfile
+    set-variable #l7 $buffer-bname
+    mmrg-setdelimit
+    !force 0 delete-buffer "*mail-merge-tmp*"
+    find-buffer "*mail-merge-tmp*"
+    !force insert-file .mmrg.dbfile
+    !if &equ $window-line 1
+        delete-buffer "*mail-merge-tmp*"
+        find-buffer #l7
+        ml-write "[Failed to load mail merge file]"
+        !abort
+    !endif
+    beginning-of-buffer
+    !force mmrg-get-first-record
+    !if &or &not $status &not .mmrg.nfld
+        delete-buffer "*mail-merge-tmp*"
+        find-buffer #l7
+        ml-write "[Failed to import first record]"
+        !abort
+    !endif
+    !if .mmrg.header
+        forward-char
+    !else
+        beginning-of-buffer
+    !endif
+    find-buffer #l7
+!emacro
+
+define-macro-file calc calc-buffer
+
+0 define-macro mail-merge-find-end
+    set-variable #l0 1
+    !repeat
+        !force regex-forward "\\({{\\|}}\\)"
+        !if &not $status
+            !abort
+        !endif
+        set-variable #l0 &add #l0 &cond &seq @s0 "{{" 1 -1
+    !until &not #l0
+    backward-delete-char
+    backward-delete-char
+!emacro
+
+0 define-macro mail-merge-buffer
+    !force regex-forward "{{\\(Field: \\|If: {{\\|Next-Record}}\\|Repeat-Doc}}\\)"
+    !while $status
+        set-variable #l0 &lef @s1 1
+        &len @s0 backward-delete-char
+        -1 yank
+        !if &seq #l0 "F"
+            ; Field
+            set-mark
+            search-forward "}}"
+            backward-delete-char
+            backward-delete-char
+            kill-region
+            set-variable #l0 @y
+            -1 yank
+            set-variable #l1 &lfind .mmrg.fldn #l0
+            !if @#
+                insert-string "\""
+            !endif
+            insert-string &ind &cat ".mmrg." #l1
+            !if @#
+                insert-string "\""
+            !endif
+        !elif &seq #l0 "I"
+            ; If
+            set-mark
+            !force mail-merge-find-end
+            !if &not $status
+                ml-write "[Bad if statement]"
+                !abort
+            !endif
+            kill-region
+            set-variable #l0 $buffer-bname
+            find-buffer &cat #l0 ".*"
+            yank
+            -1 yank
+            beginning-of-buffer
+            !force mail-merge-buffer
+            !if &not $status
+                !force 0 delete-buffer $buffer-bname
+                find-buffer #l0
+                ml-write "[Bad if statement]"
+                !abort
+            !endif
+            !force 2 calc-buffer
+            !if &not $status
+                !force 0 delete-buffer $buffer-bname
+                find-buffer #l0
+                ml-write "[Bad if statement]"
+                !abort
+            !endif
+            !force 0 delete-buffer $buffer-bname
+            find-buffer #l0
+            forward-delete-char
+            forward-delete-char
+            set-mark
+            set-alpha-mark "t"
+            !force mail-merge-find-end
+            !if &not $status
+                ml-write "[Bad if statement]"
+                !abort
+            !endif
+            !if .calc.result
+                !if &seq @wc "{"
+                    forward-delete-char
+                    forward-delete-char
+                    set-mark
+                    !force mail-merge-find-end
+                    !if &not $status
+                        ml-write "[Bad if statement]"
+                        !abort
+                    !endif
+                    kill-region
+                    -1 yank
+                !endif
+            !else
+                kill-region
+                -1 yank
+                !if &seq @wc "{"
+                    forward-delete-char
+                    forward-delete-char
+                    !force mail-merge-find-end
+                    !if &not $status
+                        ml-write "[Bad if statement]"
+                        !abort
+                    !endif
+                !endif
+            !endif
+            !if &not &seq @wc "}"
+                ml-write "[Bad if statement]"
+                !abort
+            !endif
+            forward-delete-char
+            forward-delete-char
+            goto-alpha-mark "t"
+        !elif &seq #l0 "N"
+            ; Next Record
+            find-buffer "*mail-merge-tmp*"
+            !force mmrg-get-record
+            !if &not $status
+                !force 0 delete-buffer "*mail-merge-tmp*"
+                find-buffer "*mail-merge*"
+                set-mark
+                end-of-buffer
+                kill-region
+                -2 yank
+                !return
+            !endif
+            find-buffer "*mail-merge*"
+        !elif &seq #l0 "R"
+            ; Repeat Doc
+            yank
+            exchange-point-and-mark
+        !else
+            ml-write "[Something has gone wrong - ABORT]"
+            !abort
+        !endif
+        !force regex-forward "{{\\(Field: \\|If: {{\\|Next-Record}}\\|Repeat-Doc}}\\)"
+    !done
+!emacro
+
+define-macro mail-merge-exec
+    !force mmrg-get-info
+    !if &not $status
+        ml-write "[This is not a mail merge buffer]"
+        !abort
+    !endif
+    mmrg-setdelimit
+    !force mmrg-get-dbfile
+    !if &not $status
+        !abort
+    !endif
+    beginning-of-buffer
+    search-forward "}}"
+    set-mark
+    end-of-buffer
+    copy-region
+    find-buffer "*mail-merge-tmp*"
+    mmrg-get-record
+    !force 0 delete-buffer "*mail-merge*"
+    find-buffer "*mail-merge*"
+    yank
+    beginning-of-buffer
+    !force 0 mail-merge-buffer
+    set-variable #l0 $status
+    !force 0 delete-buffer "*mail-merge-tmp*"
+    !return #l0
+!emacro
+
+define-macro mail-merge
+    !force mmrg-get-info
+    !if &not $status
+        osd-xdialog "Mail Merge" "Mail merge the current buffer?" 1 "  &Yes  " "  &No  "
+        !if &equ $result 2
+            !abort
+        !endif
+        set-variable .mmrg.header  "1"
+        set-variable .mmrg.endrec  "\\n"
+        set-variable .mmrg.endfld  ","
+        set-variable .mmrg.delimit "\""
+    !endif
+    osd .osd.fobm 55  "BcftHx"  55 .scheme.osd-ebtt " &Options  " .osd.mmrg-opt osd
+    set-variable .osd-get-file.title "Select Merge Data File"
+    set-variable .osd-get-file.file-type "|Text file|All files|"
+    set-variable .osd-get-file.file-mask "|*.txt|*|"
+    set-variable .osd-get-file.flags 0
+    set-variable .osd-get-file.ft 1
+    !force osd-get-file
+    set-variable #l0 $status
+    osd .osd.fobm 55  "D"
+    !if &not #l0
+        !return
+    !endif
+    set-variable .mmrg.dbfile .osd-get-file.result
+    mmrg-setdelimit
+    !force mmrg-get-dbfile
+    !if &not $status
+        !abort
+    !endif
+    delete-buffer "*mail-merge-tmp*"
+    beginning-of-buffer
+    !if &seq &lef @wl 14 "{{Mail-Merge: "
+        set-mark
+        search-forward "}}"
+        kill-region
+        -1 yank
+    !endif
+    -1 osd .osd.mmrg-ppfld
+    osd .osd.mmrg-ppfld 0   "b"
+    set-variable #l0 0
+    !while &not &seq "" &set #l1 &lget .mmrg.fldn &inc #l0 1
+        osd .osd.mmrg-ppfld #l0 "" #l1 #l0 mmrg-insert-data
+    !done
+    insert-string &spr "{{Mail-Merge: \b%s\b%s\b%s\b%s\b%s\b}}" .mmrg.header .mmrg.endrec .mmrg.endfld .mmrg.delimit .mmrg.dbfile
+    buffer-bind-key mail-merge-popup "C-6" 
+    buffer-bind-key mail-merge-exec "C-c C-c" 
+!emacro
+

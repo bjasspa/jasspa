@@ -1,0 +1,319 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips & Jon Green
+;  Created       : Sat Jul 18 14:58:08 1998
+;  Last Modified : <000719.0013>
+;
+;  Description   : Compile, grep and macro to wrap the diff utility.
+;
+;  Notes         : There may be a bit too much color in the diff!
+;
+;  History
+;
+;  Copyright (c) 1998 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+!if &seqal .hilight.diff "ERROR"
+    set-variable .hilight.diff  &pinc .hilight.next 1
+    set-variable .hilight.gdiff &pinc .hilight.next 1
+    ; Once only. Add the default diff command line.
+    !if &seq %diff-com "ERROR"
+        ; Assume GNU diff utility - probably the best under all platforms !!.
+        ;set-variable %diff-com "diff -c -w"
+        ; Standard diff utility 
+        set-variable %diff-com "diff"
+    !endif
+    !if &band $system 0x080
+        set-variable %tool-null-file "/dev/null"
+    !else
+        set-variable %tool-null-file &spr "\"%s\"" &find "null" ""
+    !endif
+!endif
+
+add-file-hook "*compile* *grep* *diff*" fhook-ipipe
+
+; Gnu diff utility, uses --context
+0 hilight .hilight.gdiff 0                $global-scheme
+hilight .hilight.gdiff 0x102 "!"          .scheme.no1
+hilight .hilight.gdiff 0x102 "+"          .scheme.no1
+hilight .hilight.gdiff 0x102 "-"          .scheme.no1
+hilight .hilight.gdiff 0x102 "*\\*\\*\\*" .scheme.no2
+hilight .hilight.gdiff 0x102 "*\\*\\* "   .scheme.no2
+hilight .hilight.gdiff 0x102 "----"       .scheme.prepro
+hilight .hilight.gdiff 0x102 "--- "       .scheme.prepro
+; Regular diff utility. May be a bit too colored !!
+0 hilight .hilight.diff 0                 $global-scheme
+hilight .hilight.diff 0x102 "<"           .scheme.no2
+hilight .hilight.diff 0x102 ">"           .scheme.no1
+hilight .hilight.diff 0x102 "-"           .scheme.prepro
+hilight .hilight.diff 0x102 "[[:digit:]]" .scheme.no1
+
+0 define-macro mouse-get-next-line
+    set-cursor-to-mouse
+    !force backward-line
+    get-next-line
+!emacro
+
+define-macro compile
+    !force set-variable %compile-tmp @1
+    !if $status
+        set-variable %compile-com %compile-tmp
+        unset-variable %compile-tmp
+    !else
+        !if &seq %compile-com "ERROR"
+            set-variable %compile-com "make "
+        !endif
+        set-variable %compile-com @ml20 "compile" %compile-com
+    !endif
+    @# save-some-buffers @mna
+    0 ipipe-shell-command %compile-com "*compile*" @mna
+!emacro
+define-macro grep
+    !if &seq %grep-com "ERROR"
+        set-variable %grep-com "grep"
+    !endif
+    !force set-variable #l0 @1
+    !if &not $status
+        set-variable #l0 @ml00 %grep-com
+    !endif
+    !if @?
+        0 pipe-shell-command &spr "%s %s %s" %grep-com #l0 %tool-null-file "*grep*" @mna
+    !else
+        0 ipipe-shell-command &spr "%s %s %s" %grep-com #l0 %tool-null-file "*grep*" @mna
+    !endif
+!emacro
+define-macro rgrep
+    !if &seq %grep-com "ERROR"
+        set-variable %grep-com "grep"
+    !endif
+    !force set-variable #l2 @3
+    !if &not $status
+        set-variable #l0 @ml00 "RGrep for"
+        set-variable #l1 @ml01 "RGrep from directory"
+        set-variable #l2 @ml00 "RGrep file mask"
+    !else
+        set-variable #l0 @1
+        set-variable #l1 @2
+    !endif
+    !if &seq $platform "win32"
+        set-variable #l3 &find "null" ""
+        !if @?
+            4 pipe-shell-command &spr "find \"%s\" -name \"%s\" -exec %s \"%s\" {} %s ;" #l1 #l2 %grep-com #l0 %tool-null-file "*grep*" @mna
+        !else
+            4 ipipe-shell-command &spr "find \"%s\" -name \"%s\" -exec %s \"%s\" {} %s ;" #l1 #l2 %grep-com #l0 %tool-null-file "*grep*" @mna
+        !endif
+    !else
+        !if @?
+            0 pipe-shell-command &spr "find \"%s\" -name \"%s\" -exec %s \"%s\" {} %s \\;" #l1 #l2 %grep-com #l0 %tool-null-file "*grep*" @mna
+        !else
+            0 ipipe-shell-command &spr "find \"%s\" -name \"%s\" -exec %s \"%s\" {} %s \\;" #l1 #l2 %grep-com #l0 %tool-null-file "*grep*" @mna
+        !endif
+    !endif
+!emacro
+define-macro which
+    !force set-variable #l0 @1
+    !if &not $status
+        set-variable #l0 @ml04 "Program name"
+    !endif
+    set-variable .result &which #l0
+    !if &seq .result "ERROR"
+        ml-write "[Program not found]"
+        !abort
+    !endif
+    ml-write .result
+!emacro
+
+define-macro diff
+    !force set-variable #l1 @2
+    !if $status
+        set-variable #l0 @1
+    !else
+        set-variable #l0 @ml04 "Old File"
+        set-variable #l1 @ml04 "New File"
+    !endif
+    4 ipipe-shell-command &spr "%s \"%s\" \"%s\"" %diff-com #l0 #l1 "*diff*"
+    popup-window  "*diff*"
+    !if &sin " --context" %diff-com
+        set-variable $buffer-hilight .hilight.gdiff
+    !elif &sin " -c" %diff-com
+        set-variable $buffer-hilight .hilight.gdiff
+    !else
+        set-variable $buffer-hilight .hilight.diff
+    !endif
+!emacro
+
+define-macro diff-changes
+    !if &seq $buffer-fname ""
+        ml-write "[Current buffer has no file name]"
+        !abort
+    !endif
+    !if &bmod "edit"
+        !if &iseq @mc1 "Save buffer first [y/n]? " "nNyY" "y"
+            save-buffer
+        !endif
+    !endif
+    ; get the real file name - this only has effect on unix, copes with symbolic links
+    set-variable #l0 &stat "a" $buffer-fname
+    !if &band $system 0x400
+        !if &not &set #l1 &rsin "." #l0
+            set-variable #l1 &cat #l0 ".~~~"
+        !elif &gre &set #l1 &sub &len #l0 #l1 2
+            set-variable #l1 &cat &lef #l0 &sub &len #l0 1 "~"
+        !else
+            set-variable #l1 &spr "%s%n" #l0 &sub 3 #l1 "~"
+        !endif
+    !else
+        !if $kept-versions
+            set-variable #l1 &cat #l0 ".~0~"
+        !else
+            set-variable #l1 &cat #l0 "~"
+        !endif
+        ; if unix and hiding backups then prepend a '.'
+        !if &and &band $system 0x080 &band $system 0x100000
+            set-variable #l2 &rsin "/" #l1
+            set-variable #l1 &spr "%s.%s" &lef #l1 #l2 &rig #l1 #l2
+        !endif
+    !endif
+    diff #l1 #l0
+!emacro
+define-macro execute-tool
+    !if @?
+        set-variable #l9 @#
+    !else
+        !force set-variable #l9 @1
+        !if &not $status
+            set-variable #l9 @ml "Tool name"
+        !endif
+    !endif
+    !if &seq "" &set #l1 &reg "/history" &spr "%s/tool/%s/command" $platform #l9 ""
+        ml-write "[No command-line set]"
+        !abort
+    !endif
+    !if &seq $buffer-fname ""
+        !if &or &or &or &or &sin "%ff" #l1 &sin "%fp" #l1 &sin "%fn" #l1 &sin "%fb" #l1 &sin "%fe" #l1
+            ml-write "[Cannot run command it this buffer - no file name]"
+            !abort
+        !endif
+        set-variable #l4 $buffer-bname
+        set-variable #l5 $buffer-bname
+        set-variable #l6 ""
+    !else
+        set-variable #l2 $buffer-fname
+        !if &seq "" &set #l4 &rig #l2 &rsin "/" #l2
+            ; cope with a directory name
+            set-variable #l3 &lef #l2 &rsin "/" &lef #l2 &sub &len #l2 1
+            set-variable #l4 &rig #l2 &len #l3
+        !else
+            set-variable #l3 &lef #l2 &rsin "/" #l2
+        !endif
+        !if &set #l5 &rsin "." #l4
+            set-variable #l6 &rig #l4 &sub #l5 1
+            set-variable #l5 &lef #l4 &sub #l5 1
+        !else
+            ; cope with no extension
+            set-variable #l5 #l4
+            set-variable #l6 ""
+        !endif
+        !if &band $system 0x400
+            var-str-sub #l2 "/" "\\"
+            var-str-sub #l3 "/" "\\"
+        !endif
+        var-str-sub #l1 "%ff" #l2
+        var-str-sub #l1 "%fp" #l3
+        var-str-sub #l1 "%fn" #l4
+        var-str-sub #l1 "%fb" #l5
+        var-str-sub #l1 "%fe" #l6
+    !endif
+    set-variable #l0 &reg "/history" &spr "%s/tool/%s/flag" $platform #l9 0x1a
+    !if &and &bmod "edit" &band #l0 0x01
+        !if &band #l0 0x02
+            !if &iseq @mc1 "Save buffer first [y/n]? " "nNyY" "y"
+                save-buffer @mna
+            !endif
+        !else
+            save-buffer @mna
+        !endif
+    !endif
+    !if &band #l0 0x04
+        &cond &band #l0 0x08 1 0 save-some-buffers @mna
+    !endif
+    !if &seq "" &set #l2 &reg "/history" &spr "%s/tool/%s/bname" $platform #l9 ""
+        set-variable #l3 1
+    !else
+        set-variable #l3 0
+        var-str-sub #l2 "%fn" #l4
+        var-str-sub #l2 "%fb" #l5
+        var-str-sub #l2 "%fe" #l6
+    !endif
+    !if &band #l0 0x20
+        set-variable #l3 &bor #l3 2
+    !endif
+    !if &band #l0 0x40
+        #l3 ipipe-shell-command #l1 #l2
+    !elif &band #l0 0x10
+        #l3 pipe-shell-command #l1 #l2
+    !else
+        shell-command #l1
+    !endif
+!emacro
+
+; uniq - As per the unix command, removes duplicated lines in a 
+; sorted region. Operates about point and mark. 
+; Jon. Added 99/12/11; missing from our toolset. 
+define-macro uniq
+    set-variable #l0 $window-line
+    set-alpha-mark "t"
+    exchange-point-and-mark
+    !if &gre $window-line #l0
+        set-variable #l0 $window-line
+        set-alpha-mark "t"
+        exchange-point-and-mark
+    !endif
+    beginning-of-line
+    set-variable #l1 @wl
+    !force forward-line 
+    ; Check for end of buffer.
+    !if &not $status
+        goto-alpha-mark "t"
+        !return 
+    !endif
+    ; Check the remaining lines.
+    !while &less $window-line #l0
+        !if &seq #l1 @wl
+            kill-line
+            set-variable #l0 &sub #l0 1
+        !else
+            set-variable #l1 @wl
+            !force forward-line 
+            !if &not $status
+                goto-alpha-mark "t"
+                !return 
+            !endif
+        !endif
+    !done
+    goto-alpha-mark "t"
+!emacro
+
+; reread-file - reloads the current buffer's file into the current buffer
+define-macro reread-file
+    !if &seq $buffer-fname ""
+        ml-write "[Invalid buffer]"
+        !bell
+        !abort
+    !endif
+    set-variable #l7 $window-line
+    set-variable #l8 $window-col
+    set-variable #l9 &sub $window-line $window-y-scroll
+    end-of-buffer
+    !if &equ #l7 $window-line
+        set-variable #l7 0
+    !endif
+    read-file $buffer-fname @mna
+    !if #l7
+        !force #l7 goto-line
+        set-variable $window-col #l8
+    !else
+        end-of-buffer
+    !endif
+    set-variable $window-y-scroll &sub $window-line #l9
+!emacro
+

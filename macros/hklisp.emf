@@ -1,0 +1,78 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This file is invoked when an microemacs macro file is loaded.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;       MicroEmacs emc file hook
+;
+;   Last Modified : <991125.1029>
+;
+set-char-mask "2" "-$&#!%:@."
+
+!if &not &exist .hilight.lisp
+    set-variable .hilight.lisp &pinc .hilight.next 1
+!endif
+
+!if &band .hilight.flags 0x02
+    0 hilight .hilight.lisp 2 50                     $global-scheme
+    hilight .hilight.lisp 0x804  "\"" "\"" "\\"      .scheme.string
+    hilight .hilight.lisp 20 "#|" "|#" ""            .scheme.comment
+    hilight .hilight.lisp 2  ";"                     .scheme.comment
+    hilight .hilight.lisp 1  "^\\s *(\\{defvar"      .scheme.variable
+    hilight .hilight.lisp 1  "^\\s *(\\{defconst"    .scheme.variable
+    hilight .hilight.lisp 1  "^\\s *(\\{defun"       .scheme.keyword
+!endif
+
+0 indent  .hilight.lisp 0 10
+indent .hilight.lisp n "(" 2
+indent .hilight.lisp o ")" -2
+indent .hilight.lisp i ";"
+indent .hilight.lisp e "\"" "\"" "\\"
+indent .hilight.lisp e "#|" "|#" ""
+indent .hilight.lisp i ";"
+
+define-macro lisp-comment-line
+    !while &gre &pdec @# 1 0
+        beginning-of-line
+        insert-string ";"
+        beginning-of-line
+        forward-line
+    !done
+!emacro
+;
+; uncoment line ie ;xxx -> xxx
+define-macro lisp-uncomment-line
+    beginning-of-line
+    !while &gre &pdec @# 1 0
+        !force -1 search-forward ";"
+        !if $status
+            backward-delete-char
+        !endif
+        forward-line
+        beginning-of-line
+    !done
+!emacro
+
+define-macro fhook-lisp
+    ; if arg is 0 this is a new file so add template 
+    !if &not @#
+        etfinsrt "lisp"
+    !endif
+    set-variable $buffer-mask "luh1"
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.lisp
+    !endif
+    set-variable $buffer-indent .hilight.lisp
+    1 buffer-mode "time"
+    1 buffer-mode "indent"
+    buffer-bind-unbound-key lisp-comment-line "C-c C-c"
+    buffer-bind-unbound-key lisp-uncomment-line "C-c C-d"
+    ; execute user extensions if enabled
+    !if &exist my-fhook-lisp
+        my-fhook-lisp
+    !endif
+!emacro
+
+ml-write "[Lisp file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "mylisp"

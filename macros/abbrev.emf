@@ -1,0 +1,117 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Wed Jul 7 13:22:00 1999
+;  Last Modified : <000719.0012>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 1999 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro expand-abbrev-handle
+    ; Try abbrev files
+    !force expand-abbrev
+    !if $status
+        !return
+    !endif        
+    ; Try iso accents
+    !if &or :iso-accents .iso-accents-mode.on
+        !force iso-accents-expand
+        !if $status
+            ; Quit - we found an expansion.
+            !return
+        !endif
+    !endif
+    !if &not &seq "ERROR" :expand-abbrev
+        ; if buffer has a specific abbrev expander use that
+        execute-named-command :expand-abbrev
+    !elif &exi &set #l0 &cat &rig $buffer-fhook 6 "-expand-abbrev"
+        ; if buffer has an fhook specific abbrev expander use that
+        execute-named-command #l0
+    !elif .spell-complete-word.on
+        ; else if enabled, use spell-complete-word
+        spell-complete-word
+    !endif
+!emacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; iso-accents-expand routines
+
+define-macro iso-accents-expand
+    !if &not &set #l0 &lfind "|+-|12|14|34|ae|AE|`a|^a|'a|\"a|~a|.a|co|`e|^e|'e|\"e|`i|^i|'i|\"i|~n|oe|`o|^o|'o|\"o|~o|/o|rg|sz|tm|`u|^u|'u|\"u|\"y|'y|`A|^A|'A|\"A|~A|.A|`E|^E|'E|\"E|`I|^I|'I|\"I|~N|OE|`O|^O|'O|\"O|~O|/O|`U|^U|'U|\"U|\"Y|'Y|^!|^?|" &mid @wl &sub $window-col 2 2
+        !abort
+    !endif
+    backward-delete-char
+    backward-delete-char
+    set-variable #l0 &lget "|±|½|¼|¾|æ|Æ|à|â|á|ä|ã|å|©|è|ê|é|ë|ì|î|í|ï|ñ|œ|ò|ô|ó|ö|õ|ø|®|ß|™|ù|û|ú|ü|ÿ|ý|À|Â|Á|Ä|Ã|Å|È|Ê|É|Ë|Ì|Î|Í|Ï|Ñ|Œ|Ò|Ô|Ó|Ö|Õ|Ø|Ù|Û|Ú|Ü|Ÿ|Ý|¡|¿|" #l0
+    0 set-char-mask "L"
+    !if &set #l1 &sin #l0 $result
+        0 set-char-mask "U"
+        set-variable #l0 &mid $result #l1 1
+    !endif
+    insert-string #l0
+!emacro
+
+define-macro iso-accents-mode
+    !if &not @?
+        set-variable .on &bxor .on 1
+        ml-write &spr "[Global iso-accents-mode is now %s]" &cond .on "on" "off"
+    !else
+        set-variable :iso-accents &bxor :iso-accents 1
+        ml-write &spr "[Buffer iso-accents-mode is now %s]" &cond :iso-accents "on" "off"
+    !endif
+!emacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; spell-complete-word routines
+
+define-macro spell-complete-word
+    backward-char
+    !if &inw @wc
+        ; Invoke the rules to setup spell
+        spell-rules-init
+        forward-char
+        set-variable #l0 $buffer-bname
+        set-variable #l1 $window-line
+        set-variable #l2 $window-y-scroll
+        set-variable #l3 $window-col
+        backward-word
+        set-variable #l8 $window-col
+        set-variable #l9 &sub #l3 #l8
+        set-variable #l4 &mid @wl $window-col #l9
+        !force 0 delete-buffer "*spell-complete*"
+        find-buffer "*spell-complete*"
+        set-variable $find-words &cat #l4 ".*"
+        !while &not &seq "" &set #l5 $find-words
+            insert-string #l5
+            insert-newline
+        !done
+        !force backward-delete-char
+        find-buffer #l0
+        set-variable $window-line #l1
+        set-variable $window-y-scroll #l2
+        set-variable $window-col #l8
+        -3 show-region
+        set-variable $window-col #l3
+        3 show-region
+        0 screen-update
+        !force !force set-variable #l5 @ml6a "spell-complete-word" #l4 "*spell-complete*"
+        !if &not $status
+            0 delete-buffer "*spell-complete*"
+            !abort
+        !endif
+        #l9 backward-delete-char
+        -1 yank
+        insert-string #l5
+    !else
+        forward-char
+        ml-write "[Invalid cursor position]"
+        !abort
+    !endif
+!emacro
+

@@ -1,0 +1,785 @@
+;
+;       Document hook for ASCII text documentation
+;
+;       Author          : Jon Green
+;       Created         : 19th February 1997
+;
+;       Last Modified   : <000512.1845>
+;
+;       Comment         :
+!if &not &exist .osd.dir-help
+    set-variable .osd.dir-help &pinc .osd.next 1
+    set-variable .osd.file-menu &pinc .osd.next 1
+    set-variable .find-file.flags 1
+!endif
+
+!if &band .hilight.flags 0x01
+    !if &not &exist .hilight.dir
+        set-variable .hilight.dir  &pinc .hilight.next 1
+        set-variable .hilight.dir2 &pinc .hilight.next 1
+        set-variable .hilight.file &pinc .hilight.next 1
+    !endif
+    0 hilight .hilight.file 0                           $global-scheme
+    hilight .hilight.file 0x002 " Attr"                 .scheme.header
+    hilight .hilight.file 0x112 " d"                    .scheme.dir
+    hilight .hilight.file 0x112 " -"                    $global-scheme
+    hilight .hilight.file 0x112 "*d"                    .scheme.dir-select
+    hilight .hilight.file 0x112 "*-"                    .scheme.select
+    hilight .hilight.file 0x012 "[0-9][0-9]:[0-9][0-9] \\{\"" .scheme.file
+    hilight .hilight.file 0x012 "[0-9][0-9]:[0-9][0-9] \\{"   .scheme.file
+    hilight .hilight.file 0x012 "[JFMASOND][aepuco][nbrylgptvc] [0-9 ][0-9]  [0-9][0-9][0-9][0-9] \\{" .scheme.file
+    hilight .hilight.file 0x012 " \\{-> "               .scheme.dir-slink
+    
+    0 hilight .hilight.dir 0 $global-scheme
+    !if &seq &lef $box-chars 1 "|"
+        hilight .hilight.dir  0x081 "+" .hilight.dir2   $global-scheme
+        
+        0 hilight  .hilight.dir2 0                      $global-scheme
+        hilight .hilight.dir2 0x081 "+" .hilight.dir    .scheme.dir-closed
+        hilight .hilight.dir2 0x081 "?" .hilight.dir    .scheme.dir-uknown
+        hilight .hilight.dir2 0x080 "." .hilight.dir    $global-scheme
+    !else
+        hilight .hilight.dir  0x001 "+"   .scheme.dir-closed
+        hilight .hilight.dir  0x001 "-"   .scheme.dir-open
+        hilight .hilight.dir  0x001 "?"   .scheme.dir-uknown
+        ; Color the directory lines if not default.
+        hilight .hilight.dir  0x001 &lef $box-chars   1 .scheme.dir-tree
+        hilight .hilight.dir  0x001 &rig $box-chars  10 .scheme.dir-tree
+        hilight .hilight.dir  0x001 &mid $box-chars 3 1 .scheme.dir-tree
+        hilight .hilight.dir  0x001 &mid $box-chars 6 1 .scheme.dir-tree
+    !endif
+    hilight .hilight.dir 0x101 "*"       .scheme.dir-select
+    hilight .hilight.dir 0x002 " \\{-> " .scheme.dir-slink
+!endif
+;
+; file-browser - a macro to invoke the file browser.
+;
+; Creates 2 windows side by side.
+;
+0 define-macro file-browser-close
+    set-window
+    !force 0 popup-window "*ftp-console*"
+    !if $status
+        next-window
+        !if &seq $buffer-bname "*files*"
+            next-window
+            !if &seq &lef $buffer-fname 6 "ftp://"
+                delete-other-windows
+                -1 find-buffer $buffer-bname
+                -1 find-buffer "*ftp-console*"
+                -1 find-buffer "*files*"
+            !endif                
+        !endif                
+    !endif
+    !force 0 popup-window "*directory*"
+    !if $status
+        -1 find-buffer $buffer-bname
+        next-window
+        !if &seq $buffer-bname "*files*"
+            previous-window
+            delete-window
+        !else
+            previous-window
+        !endif
+    !endif
+    !force -1 find-buffer "*files*"
+    goto-window
+!emacro
+;
+; file-browser-twin
+; Construct the twin views for file-browser.
+;
+0 define-macro file-browser-twin
+    set-variable #l1 $window-mode-line
+    !force 0 next-window                    ; Do not wrap to top window 
+    !if $status
+        !if &not &equ #l1 $window-mode-line  ; No next window. Try previous.
+            previous-window
+            !jump 3
+         !endif
+    !else
+        !force 0 previous-window
+        !if $status
+            !if &not &equ #l1 $window-mode-line
+                next-window
+                !jump 5
+            !endif
+            find-buffer "*directory*"
+            next-window
+        !else
+            ; Split the window into 1/3rds. 1/3rd for the *directory* window
+            ; 2/3 for the *files* window. Make sure we do not fail.
+            ; Note that we resize the *directory* window (left) and not the 
+            ; *files* window since the resize consumes space from the right
+            ; i.e. we eat into the *files* window rather than the next
+            ; adjacent horizontal window.
+            set-variable #l1 $window-width           ; Get current window width
+            !force split-window-horizontally
+            !if $status
+                !force &div #l1 3 resize-window-horizontally
+                next-window
+            !endif                
+        !endif
+    !endif
+!emacro
+
+define-macro file-browser
+    ; Close down file-browser if it is showing and the *directory* and *files*
+    ; windows are side by side.
+    set-window                      ; Save the window position
+    !force 1 next-window            ; Goto the top window.
+    set-variable #l0 TRUE            ; Assume a true status
+    !repeat
+        !if &seq $buffer-bname "*directory*"
+            ; Save the window size information and goto the next window.
+            set-variable #l0 $window-mode-line
+            set-variable #l1 $window-depth
+            !force 0 next-window
+            !if &not $status
+                !goto done-search
+            !endif
+            ; If it is the *files* window and the start positions
+            ; and window height are the same then close down file-browser
+            !if &and &and &seq $buffer-bname "*files*" &equ $window-mode-line #l0 &equ $window-depth #l1
+                file-browser-close
+                !return
+            !endif
+        !else
+            ; Advance to the next window for the search
+            !force 0 next-window
+            set-variable #l0 $status
+        !endif
+    !until &not #l0
+*done-search
+    goto-window                     ; Restore window position
+    ; file-browser is not showing. Bring up Explorer.
+    !force 0 popup-window "*directory*"
+    !if $status
+        set-variable #l0 $buffer-fname
+        !force 0 popup-window "*files*"
+        !if &not $status
+            file-browser-twin
+        !endif
+    !else
+        !force 0 popup-window "*files*"
+        !force 0 find-buffer "*directory*"
+        !if &not $status
+            set-variable #l0 &lef $buffer-fname &rsin "/" $buffer-fname
+            find-buffer "*directory*"
+            0x0f directory-tree #l0
+        !endif
+        set-variable #l0 $buffer-fname
+        file-browser-twin
+    !endif
+    find-buffer "*files*"
+    read-file #l0
+    change-buffer-name "*files*"
+    buffer-bind-key file-browser-close "delete"
+    buffer-bind-key dir-swap-buffers "tab"
+    popup-window "*directory*"
+    ml-write "MicroEmacs file-browser <delete> to exit"
+!emacro
+
+0 define-macro files-find-file
+    !if &or &les $window-line 5 &les &len @wl :fmpf
+        ml-write "Invalid line!"
+        !abort
+    !endif
+    set-variable #l0 &rig @wl :fmpf
+    !if &sin " -> " #l0
+        set-variable #l0 &lef #l0 &sub &sin " -> " #l0 1
+    !endif
+    set-variable #l0 &cat $buffer-fname #l0
+    !if &seq &lef #l0 6 "ftp://"
+        ; it is unknown whether an ftp file is a directory until loaded 
+        find-file #l0
+        set-variable #l0 $buffer-fname
+        !if &seq &rig #l0 &rsin "/" #l0 ""
+            buffer-bind-key file-browser-close "delete"
+        !else
+            file-browser-close
+            find-file #l0
+        !endif
+    !elif &seq &rig #l0 &rsin "/" #l0 ""
+        read-file #l0
+        change-buffer-name "*files*"
+        buffer-bind-key file-browser-close "delete"
+        buffer-bind-key dir-swap-buffers "tab"
+        !force 0 popup-window "*directory*"
+        !if $status
+            0x6f directory-tree #l0
+            buffer-bind-key file-browser-close "delete"
+            popup-window "*files*"
+        !endif
+    !else
+        file-browser-close
+        find-file #l0
+    !endif
+!emacro
+
+0 define-macro files-mouse-drag-1
+    set-variable #l1 $window-line
+    !if &les #l1 :fmpl
+        beginning-of-line
+        -3 show-region
+        set-variable $window-line :fmpl
+        forward-line
+        3 show-region
+    !else
+        beginning-of-line
+        forward-line
+        -3 show-region
+        set-variable $window-line :fmpl
+        3 show-region
+    !endif
+    set-cursor-to-mouse
+    show-region
+!emacro
+
+0 define-macro files-sort-list-section
+    set-variable #l0 @1
+    set-variable #l1 @2
+    set-variable #l2 @3
+    !if #l2
+        set-variable #l1 &sub -1 #l1
+    !endif
+    !if #l0
+        &cond #l2 &sub -1 #l0 #l0 sort-lines
+        set-variable #l3 $window-line
+        exchange-point-and-mark
+        !while &les $window-line #l3
+            set-mark
+            set-variable #l4 &mid @wl #l0 1
+            !repeat
+                goto-line &add $window-line 1
+            !until &or &equ $window-line #l3 &not &seq #l4 &mid @wl #l0 1
+           #l1 sort-lines
+        !done
+    !else
+        #l1 sort-lines
+    !endif
+!emacro
+0 define-macro files-sort-list
+    set-variable #l0 @1
+    set-variable #l1 @2
+    set-variable #l2 @3
+    set-variable #l3 &sub $window-line $window-y-scroll
+    set-alpha-mark "T"
+    -1 buffer-mode "view"
+    goto-line 5
+    set-mark
+    !force regex-forward "^[ *][^d]"
+    !if &not $status
+        end-of-buffer
+    !endif
+    files-sort-list-section #l0 #l1 #l2
+    set-mark
+    end-of-buffer
+    files-sort-list-section #l0 #l1 #l2
+    -1 buffer-mode "edit"
+    1 buffer-mode "view"
+    goto-alpha-mark "T"
+    set-variable $window-y-scroll &sub $window-line #l3
+!emacro
+0 define-macro files-get-sort-col
+    set-variable #l0 0
+    forward-char
+    backward-word
+    !if &les $window-line 4
+        !abort
+    !elif &seq &mid @wl $window-col 4 "Name"
+        set-variable #l9 0
+    !elif &seq &mid @wl $window-col 4 "Size"
+        set-variable #l9 1
+        set-variable #l0 &add $window-col 4
+        3 backward-char
+        !if &seq &lef $buffer-fname 6 "ftp://"
+            backward-char
+        !endif
+    !elif &seq &mid @wl $window-col 8 "Modified"
+        !if &seq &lef $buffer-fname 6 "ftp://"
+            !abort
+        !endif
+        set-variable #l9 2
+        8 backward-char
+    !else
+        !abort
+    !endif
+    set-variable #l1 $window-col
+    !if @#
+        set-variable #l2 &con &exi :fmpo :fmpo "|0|0|"
+        !if &equ #l9 &lget #l2 1
+            set-variable #l2 &lset #l2 2 &bxor &lget #l2 2 1
+        !else
+            set-variable #l2 &spr "|%d|0|" #l9
+        !endif
+        set-variable :fmpo #l2
+        files-sort-list #l0 #l1 &lget #l2 2
+    !endif
+!emacro
+
+0 define-macro files-tag-list
+    set-variable .find-file.flags &band .find-file.flags 0x01
+    set-variable #l0 $window-line
+    set-variable $window-line 5
+    set-variable #l1 0
+    !while &not &seq @wc ""
+        !if &seq @wc "*"
+            !if &and &not @# &seq &mid @wl 1 1 "d"
+                osd-dialog @1 "  Operation not supported  \n      on directories  " "Cancel"
+                !abort
+            !endif
+            set-variable #l2 &rig @wl :fmpf
+            !if &sin " -> " #l2
+                set-variable #l2 &lef #l2 &sub &sin " -> " #l2 1
+            !endif
+            set-variable &ind &cat ".find-file.file" &inc #l1 1 #l2
+        !endif
+        forward-line
+    !done
+    set-variable .find-file.file-dir $buffer-fname
+    set-variable .find-file.file-count #l1
+    set-variable $window-line #l0
+!emacro
+
+0 define-macro files-tag-toggle
+    !if &or &les $window-line 5 &les &len @wl :fmpf
+        ml-write "Invalid line!"
+        !abort
+    !endif
+    beginning-of-line
+    -1 buffer-mode "view"
+    !if &seq @wc " "
+        insert-string "*" "y"
+        set-variable :tag-count &add :tag-count 1
+    !else
+        insert-string " " "y"
+        set-variable :tag-count &sub :tag-count 1
+    !endif
+    forward-delete-char
+    1 buffer-mode "view"
+    -1 buffer-mode "edit"
+    beginning-of-line
+    forward-line
+    set-variable .find-file.flags &band .find-file.flags 0x01
+!emacro
+
+0 define-macro files-tag-cut
+    0 files-tag-list "Cut Files"
+    set-variable .find-file.flags &bor 6 &band .find-file.flags 0x01
+!emacro
+0 define-macro files-tag-copy
+    0 files-tag-list "Copy Files"
+    set-variable .find-file.flags &bor 2 &band .find-file.flags 0x01
+!emacro
+
+0 define-macro files-tag-remove
+    set-variable #l0 $window-line
+    set-variable $window-line 5
+    -1 buffer-mode "view"
+    beginning-of-line
+    !while &not &seq @wc ""
+        !if &not &seq @wc " "
+            insert-string " "
+            forward-delete-char
+            beginning-of-line
+        !endif
+        forward-line
+    !done
+    set-variable :tag-count 0
+    -1 buffer-mode "edit"
+     1 buffer-mode "view"
+    set-variable $window-line #l0
+    set-variable .find-file.flags &band .find-file.flags 0x01
+!emacro
+
+0 define-macro files-tag-execute
+    !force set-variable #l1 @1
+    !if &not $status
+        set-variable #l1 @ml "Command to execute"
+    !endif
+    files-tag-list
+    set-variable #l0 0
+    !while &les &pinc #l0 1 .find-file.file-count
+        set-variable #l2 #l1
+        set-variable #l3 0
+*next-arg
+        set-variable #l4 &sin "%" &rig #l2 #l3
+        !if #l4
+            set-variable #l4 &add #l3 #l4
+            set-variable #l5 &mid #l2 #l4 1
+            !if &seq #l5 "p"
+                set-variable #l5 .find-file.file-dir
+            !elif &seq #l5 "f"
+                set-variable #l5 &ind &cat ".find-file.file" #l0
+            !endif
+            set-variable #l5 &cat &lef #l2 &sub #l4 1 #l5
+            set-variable #l3 &len #l5
+            set-variable #l2 &cat #l5 &rig #l2 &add #l4 1
+            !goto next-arg
+        !endif
+        ml-write &spr "Executing [%s]" #l2
+        shell-command #l2
+    !done
+    !if &band .find-file.flags 1
+        files-refresh
+    !endif
+    ml-write "All done!"
+!emacro
+
+0 define-macro files-tag-delete
+    0 files-tag-list "Delete Files"
+    osd-xdialog "Delete Files" &spr "  Delete %d files?  " .find-file.file-count 2 "&Yes" "&No"
+    !if &equ $result 2
+        !abort
+    !endif
+    set-variable #l0 0
+    !while &les &pinc #l0 1 .find-file.file-count
+        4 copy-file &cat .find-file.file-dir &ind &cat ".find-file.file" #l0 @mna
+    !done
+    !if &band .find-file.flags 1
+        files-refresh
+    !else
+        files-tag-remove
+    !endif
+!emacro
+
+0 define-macro files-tag-paste
+    !if &seq .find-file.file-dir $buffer-fname
+        !abort
+    !endif
+    !if &band .find-file.flags 4
+        set-variable #l0 "Cut"
+        set-variable #l1 9
+    !else
+        set-variable #l0 "Copy"
+        set-variable #l1 1
+    !endif
+    osd-xdialog "Paste Files" &spr "  %s %d files?  " #l0 .find-file.file-count 2 "&Yes" "&No"
+    !if &equ $result 2
+        !abort
+    !endif
+    set-variable #l0 0
+    !while &les &pinc #l0 1 .find-file.file-count
+        set-variable #l2 &ind &cat ".find-file.file" #l0
+        #l1 copy-file &spr "file:%s%s" .find-file.file-dir #l2 &spr "file:%s%s" $buffer-fname #l2 @mna
+    !done
+    !if &band .find-file.flags 1
+        files-refresh
+    !endif
+!emacro
+
+0 define-macro files-refresh
+    set-variable #l0 $buffer-bname
+    read-file $buffer-fname
+    change-buffer-name #l0
+!emacro
+0 define-macro files-auto-refresh
+    set-variable .find-file.flags &bxor .find-file.flags 0x01
+    osd .osd.file-menu 100 ""  &cat "&Auto-Refresh: " &cond &band .find-file.flags 1 "On " "Off" f files-auto-refresh
+!emacro
+
+osd .osd.file-menu 0   b
+osd .osd.file-menu 40  "-"
+osd .osd.file-menu 60  "-"
+osd .osd.file-menu 90  ""  "&Refresh"           f files-refresh
+osd .osd.file-menu 100 ""  "&Auto-Refresh: on " f files-auto-refresh
+
+0 define-macro files-mouse-drop-3
+    !if :tag-count
+        osd .osd.file-menu 10 ""  "Cu&t"          f files-tag-cut
+        osd .osd.file-menu 20 ""  "&Copy"         f files-tag-copy
+        osd .osd.file-menu 30 ""  "&Delete"       f files-tag-delete
+        osd .osd.file-menu 70 ""  "E&xecute"      f files-tag-execute
+        osd .osd.file-menu 80 ""  "De&select All" f files-tag-remove
+    !else
+        osd .osd.file-menu 10 ""  "Cut"
+        osd .osd.file-menu 20 ""  "Copy"
+        osd .osd.file-menu 30 ""  "Delete"
+        osd .osd.file-menu 70 ""  "Execute"
+        osd .osd.file-menu 80 ""  "Deselect All"
+    !endif
+    !if &band .find-file.flags 2
+        osd .osd.file-menu 50 ""  "&Paste"       f files-tag-paste
+    !else
+        osd .osd.file-menu 50 ""  "Paste"
+    !endif
+    .osd.file-menu osd
+!emacro
+
+0 define-macro files-mouse-pick-1
+    !if &les $window-line 4
+        !return
+    !elif &equ $window-line 4
+        !force 0 files-get-sort-col
+        !if &not $status
+            set-cursor-to-mouse
+            !return
+        !endif
+        -3 show-region
+        forward-word
+        3 show-region
+    !else
+        set-variable :fmpl $window-line
+        !if &set :fmpt &les $window-col :fmpf
+            beginning-of-line
+            -3 show-region
+            forward-line
+            3 show-region
+            set-variable $delay-time $repeat-time
+            global-bind-key files-mouse-drag-1 &spr .mouse-event.mask "time"
+        !else
+            set-variable $window-col :fmpf
+            -3 show-region
+            end-of-line
+            3 show-region
+        !endif
+    !endif
+    set-cursor-to-mouse
+    show-region
+!emacro
+0 define-macro files-mouse-drop-1
+    !if &les $window-line 4
+        !return
+    !elif &equ $window-line 4
+        !force 1 files-get-sort-col
+        set-cursor-to-mouse
+    !elif &les $window-col :fmpf
+        !if :fmpt
+            set-variable $delay-time 500
+            set-variable #l1 $window-line
+            !if &gre #l1 :fmpl
+                set-variable $window-line :fmpl
+                set-variable :fmpl #l1
+                set-variable #l1 $window-line
+            !endif
+            !repeat
+                files-tag-toggle
+            !until &gre $window-line :fmpl
+            set-cursor-to-mouse
+        !endif
+    !elif &and &not :fmpt &equ :fmpl $window-line
+        files-find-file
+    !endif
+!emacro
+
+0 define-macro dir-pick-right-mouse
+    set-cursor-to-mouse
+    4 next-directory
+!emacro
+;
+; dir-select-directory
+; Note that we assume that we are in the *directory* window - no checks are
+; performed since the macro is only bound to the *directory* buffer.
+;
+0 define-macro dir-select-directory
+    ; Save the *directory* line number and window position for re-frame
+    ; Render the new *directory* list and re-frame.
+    set-variable #l2 $window-line    ; Save the line number
+    set-variable #l3 $window-y-scroll
+    @# directory-tree
+    set-variable $window-line #l2
+    set-variable $window-y-scroll #l3
+    !if &not &band @# 2              ; Making the directory current ??
+        !return                      ; No - do not update the *files* window
+    !endif
+    ; Render the *files* information.
+    set-variable #l0 $buffer-fname
+    set-window
+    !force 0 popup-window "*files*"
+    !if $status
+        !if &not &seq $buffer-fname #l0
+            read-file #l0
+            change-buffer-name "*files*"
+            buffer-bind-key file-browser-close "delete"
+            buffer-bind-key dir-swap-buffers "tab"
+        !endif
+        goto-window
+    !endif
+!emacro
+
+define-macro dir-swap-buffers
+    !if &seq $buffer-bname "*directory*"
+        !force 0 popup-window "*files*"
+    !else
+        !force 0 popup-window "*directory*"
+    !endif
+!emacro
+
+0 define-macro dir-mouse-drop-1
+    ; For the directory position use registers as follows:-
+    ;   #l0 - The current cursor position.
+    ;   #l1 - The selection box position.
+    set-cursor-to-mouse
+    set-variable #l0 $window-col
+    beginning-of-line
+    !force -1 search-forward &cat &cat "[-?+" &rig $box-chars 10 "] "
+    !if &not $status
+        set-variable $window-col #l0
+        !return
+    !endif
+    set-variable #l1 $window-col
+    set-variable $window-col #l0
+    ; Save the *directory* line number and window position for re-frame
+    set-variable #l2 $window-line
+    set-variable #l3 $window-y-scroll
+    ; if '+', '-' or '?' tag position.
+    !if &equ &sub #l1 2 #l0
+        &cond @? @# 0x66 directory-tree
+    !elif &les #l0 #l1
+        ; hit char between the name and '+'/'-'
+        !return
+    !else
+        ; hit the name, just select it
+        0x02 directory-tree
+    !endif
+    ; Reframe the *directory* window:
+    ; Done by going to the old line number and reframing the window
+    set-variable $window-line #l2
+    set-variable $window-y-scroll #l3
+    ; Set up the echo in the *files* directory.
+    buffer-bind-key file-browser-close "delete"
+    set-variable #l0 $buffer-fname
+    set-window
+    !force 0 popup-window "*files*"
+    !if $status
+        !if &not &seq $buffer-fname #l0
+            read-file #l0
+            change-buffer-name "*files*"
+            buffer-bind-key dir-swap-buffers "tab"
+            buffer-bind-key file-browser-close "delete"
+        !endif
+        goto-window
+    !endif
+    screen-update
+!emacro
+
+0 define-macro dir-mouse-drop-3
+    0xe6 dir-mouse-drop-1
+!emacro
+
+osd .osd.dir-help 0  "batcdH" 9 3 99 .scheme.osd-title "Directory list help"
+osd .osd.dir-help 1  "" 
+osd .osd.dir-help 4  ""  " esc h  - View this help page"
+osd .osd.dir-help 5  "" 
+osd .osd.dir-help 6  ""  " return - Load file"
+osd .osd.dir-help 7  ""  " space  - Toggle file tag"
+osd .osd.dir-help 8  ""  " delete - Remove all tags"
+osd .osd.dir-help 9  ""  " X,x    - Execute command on tagged files use "
+osd .osd.dir-help 10 ""  "          %p for path, %f for file & %% for %"
+osd .osd.dir-help 11 "" 
+osd .osd.dir-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
+
+define-macro fhook-dir
+    !if &seq $buffer-bname "*directory*"
+        !if &band .hilight.flags 0x01
+            set-variable $buffer-hilight .hilight.dir
+        !endif
+        0x4e buffer-bind-key directory-tree "o"
+        0x4e buffer-bind-key directory-tree "O"
+        0x66 buffer-bind-key dir-select-directory "return"
+        0x02 buffer-bind-key dir-select-directory "space"
+        0xe6 buffer-bind-key dir-select-directory "C-return"
+        0xe6 buffer-bind-key dir-select-directory "C-j"
+        buffer-bind-key file-browser-close "delete"
+        buffer-bind-key dir-swap-buffers "tab"
+        set-variable :mouse-pick-1 void
+        set-variable :mouse-drop-1 dir-mouse-drop-1
+        set-variable :mouse-pick-3 void
+        set-variable :mouse-drop-3 dir-mouse-drop-3
+    !else
+        -1 buffer-mode "view"
+        1 buffer-mode "magic"
+        !if &seq &lef $buffer-fname 6 "ftp://"
+            set-variable .find-file.fcwd $buffer-fname
+            forward-line
+            !if &iseq &lef @wl 5 "total" 
+                forward-line
+                insert-newline
+            !else
+                2 insert-newline
+            !endif
+            ; sort-lines so dir's come first
+            set-mark
+            end-of-buffer
+            sort-lines
+            goto-line 4
+            !force search-forward "^d"
+            !if $status
+                beginning-of-line
+                set-mark
+                !force search-forward "^[^d]"
+                !if &not $status
+                    end-of-buffer
+                !endif
+                beginning-of-line
+                kill-region
+                goto-line 4
+                yank
+                -1 yank
+                goto-line 4
+            !endif
+            replace-string "^" " "
+            beginning-of-buffer
+            replace-string "^ d.*" "\\0/"
+            goto-line 3
+            ; try to find the column where the file names start - use the time hh:mm
+            !force regex-forward "[0-9][0-9]:[0-9][0-9] *"
+            !if &not $status
+                ; failed, try to match the date
+                !force regex-forward "\\(Jan\\|Feb\\|Mar\\|Apr\\|May\\|Jun\\|Jul\\|\\Aug\\|Sep\\|Oct\\|Nov\\|Dec\\) *[0-9]* *[0-9]* *"
+            !endif
+            !if $status
+                set-variable :fmpf $window-col
+            !else
+                set-variable :fmpf 56
+            !endif
+            ; if this is not the root directory and there's no ../ then add one
+            !if &gre &rsin "/" &rig $buffer-fname 6 &sin "/" &rig $buffer-fname 6
+                goto-line 4
+                !force regex-forward " \\.\\./$"
+                !if &not $status
+                    insert-string &spr " d---------%n-            - ../\n" &sub :fmpf 26 " "
+                !endif
+            !endif
+            goto-line 4
+            insert-string &spr " Attr%nSize     Modified Name\n" &sub :fmpf 23 " "
+            backward-word
+            ; set this here to get a descending Name order
+            set-variable :fmpo "|-1|0|"
+            !force 1 files-get-sort-col
+        !else
+            set-variable .find-file.lcwd $buffer-fname
+            3 forward-line
+            set-variable :fmpf 32
+            insert-string " Attr    Size          Modified Name\n"
+        !endif
+        -1 buffer-mode "edit"
+         1 buffer-mode "view"
+        beginning-of-buffer
+        !if &band .hilight.flags 0x01
+            set-variable $buffer-hilight .hilight.file
+        !endif
+        .osd.dir-help buffer-bind-key osd "esc h"
+        buffer-bind-key files-find-file   "return"
+        buffer-bind-key files-tag-toggle  "space"
+        buffer-bind-key files-tag-remove  "d"
+        buffer-bind-key files-tag-remove  "D"
+        buffer-bind-key files-tag-execute "x"
+        buffer-bind-key files-tag-execute "X"
+        set-variable :tag-count 0
+        set-variable :mouse-pick-1 files-mouse-pick-1
+        set-variable :mouse-drop-1 files-mouse-drop-1
+        set-variable :mouse-pick-3 void
+        set-variable :mouse-drop-3 files-mouse-drop-3
+        ;set-variable :mouse-drag-left files-mouse-drag-left
+    !endif
+    ; execute user extensions if enabled
+    !if &exist my-fhook-dir
+        my-fhook-dir
+    !endif
+!emacro
+
+; load in user extensions if found
+!force execute-file "mydir"
+

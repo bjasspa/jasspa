@@ -1,0 +1,246 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Wed Jan 21 17:45:14 1998
+;  Last Modified : <000719.0012>
+;
+;  Description   : calc - Simple message line integer calculator
+;
+;  Notes         : This is used by hkbinary to calc the move forward amount
+;                  It is also used by c-hash-eval to evaluate a #if value
+;                  A question hangs over whether this is the best implementation,
+;                  who cares? It works (I think).
+;
+;  History
+;
+;  Copyright (c) 1998 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+0 define-macro calc-order-command
+    end-of-buffer
+    !force search-backward @1
+    !while $status
+        !if $window-col
+            set-variable #l3 @wc
+            forward-delete-char
+            insert-newline
+            backward-line
+            insert-string #l3
+            insert-newline
+            forward-line
+        !endif
+        !force search-backward @1
+    !done
+!emacro
+
+0 define-macro calc-order-unary
+    beginning-of-buffer
+    !force search-forward @1
+    !while $status
+        backward-char
+        !if $window-col
+            ; this is 0~ remove the 0
+            backward-delete-char
+            forward-char
+            insert-newline
+        !else
+            ; The dummy 0 has been split by a bracket,
+            ; it must be next as its the highest priority
+            forward-line
+            !if &not &seq @wl "0"
+                ml-write "Unary operator gone wrong!!"
+                !abort
+            !endif
+            kill-line
+        !endif
+        !force search-forward @1
+    !done
+!emacro
+
+0 define-macro calc-order-brackets
+    beginning-of-buffer
+    !force search-forward "("
+    !while $status
+        set-mark
+        backward-char
+        !force goto-matching-fence
+        !if &not $status
+            ml-write "[Mis-matched brackets]"
+            !abort
+        !endif
+        kill-region
+        !force 0 delete-buffer &cat $buffer-bname "*"
+        find-buffer &cat $buffer-bname "*"
+        1 buffer-mode "hide"
+        1 buffer-mode "magic"
+        yank
+        -1 yank
+        @# calc-do-calc
+        find-buffer &lef $buffer-bname &sub &len $buffer-bname 1
+        backward-delete-char
+        forward-delete-char
+        insert-string #l3
+        !force search-forward "("
+    !done
+!emacro
+
+0 define-macro calc-do-calc
+    ; Resolve the contents of any brackets first
+    @# calc-order-brackets
+    ; Now start from the lowest order (sub) upwards
+    calc-order-command "\xa0"
+    calc-order-command "\xa1"
+    calc-order-command "\xa2"
+    calc-order-command "\xa3"
+    calc-order-command "\xa4"
+    calc-order-command "&"
+    calc-order-command "|"
+    calc-order-command "[-+]"
+    calc-order-command "[%/*]"
+    ; Now sort out the unary operators
+    calc-order-unary "!"
+    calc-order-unary "~"
+    ; Now replace all the commands with emacs commands
+    beginning-of-buffer
+    replace-string "&" "&ban"
+    beginning-of-buffer
+    replace-string "|" "&bor"
+    beginning-of-buffer
+    replace-string "\xa4" "&bxo"
+    beginning-of-buffer
+    !if &band @# 2
+        replace-string "\xa3" "&not &seq"
+        beginning-of-buffer
+        replace-string "\xa2" "&seq"
+    !else
+        replace-string "\xa3" "&not &equ"
+        beginning-of-buffer
+        replace-string "\xa2" "&equ"
+    !endif
+    beginning-of-buffer
+    replace-string "\xa1" "&or"
+    beginning-of-buffer
+    replace-string "\xa0" "&and"
+    beginning-of-buffer
+    replace-string "!" "&not"
+    beginning-of-buffer
+    replace-string "~" "&bno"
+    beginning-of-buffer
+    replace-string "/" "&div"
+    beginning-of-buffer
+    replace-string "%" "&mod"
+    beginning-of-buffer
+    replace-string "*" "&mul"
+    beginning-of-buffer
+    replace-string "+" "&add"
+    beginning-of-buffer
+    replace-string "-" "&sub"
+    ; substitute the memory recall
+    beginning-of-buffer
+    replace-string "^LR$" .calc.result
+    ; change back the -ve numbers & % user variables
+    beginning-of-buffer
+    replace-string "^\\xa9" "-"
+    beginning-of-buffer
+    replace-string "^\\xaa" "%"
+    ; go to the end and glue all the lines together
+    end-of-buffer
+    backward-line
+    !force 65535 delete-indentation
+    ; insert the assignment and execute the buffer
+    insert-string "set-variable #p3 "
+    execute-line @wl
+!emacro
+
+0 define-macro calc-buffer
+    beginning-of-buffer
+    set-variable #l2 @wl
+    !if &seq @wc "x"
+        set-variable #l5 16
+        forward-delete-char
+    !elif &seq @wc "d"
+        set-variable #l5 10
+        forward-delete-char
+    !elif &seq @wc "o"
+        set-variable #l5 8
+        forward-delete-char
+    !elif &seq @wc "b"
+        set-variable #l5 2
+        forward-delete-char
+    !else
+        set-variable #l5 10
+    !endif    
+    ; first of all remove all white spaces
+    beginning-of-buffer
+    replace-string "[ \t]" ""
+    ; Now make any unary operator look like a binary (for ease with brackets)
+    beginning-of-buffer
+    replace-string "!" "0!"
+    beginning-of-buffer
+    replace-string "~" "0~"
+    ; Now change any -ve numbers '-' to \xa9 so we don't get confused
+    beginning-of-buffer
+    replace-string "^-" "\xa9"
+    beginning-of-buffer
+    replace-string "\\([(=~!^|&%*/+-]\\)-" "\\1\xa9"
+    ; Now change any %var user variable % to \xaa so we don't get confused with mod
+    beginning-of-buffer
+    replace-string "^%" "\xaa"
+    beginning-of-buffer
+    replace-string "\\([(=~!^|&%*/+-]\\)%" "\\1\xaa"
+    ; Now change any multi-letter & '^' commands to a single usable letter
+    beginning-of-buffer
+    replace-string "&&" "\xa0"
+    beginning-of-buffer
+    replace-string "||" "\xa1"
+    beginning-of-buffer
+    replace-string "==" "\xa2"
+    beginning-of-buffer
+    replace-string "0!=" "\xa3"
+    beginning-of-buffer
+    replace-string "\\^" "\xa4"
+    ; Now sort out all the bodmas stuff
+    ; brackets first
+    @# calc-do-calc
+    ; adding zero seems pointless but it solve a bug of calc'ing "0x10" without the
+    ; + 0 the answer is left as 0x10 as its never numerically calculate
+    set-variable #l3 &add #l3 0
+    !if &not &equ #l5 10
+        !if #l3
+            set-variable #l4 ""
+            !while #l3
+                set-variable #l4 &cat &mid "0123456789abcdef" &mod #l3 #l5 1 #l4
+                set-variable #l3 &div #l3 #l5
+            !done
+            set-variable #l3 #l4
+        !else
+            set-variable #l3 "0"
+        !endif
+        !if &equ #l5 16
+            set-variable #l3 &cat "0x" #l3
+        !elif &equ #l5 8
+            set-variable #l3 &cat "00" #l3
+        !endif
+        !if &seq "-" &lef %calcResult 1
+            set-variable #l3 &cat "-" #l3
+        !endif
+    !endif
+    set-variable .calc.result #l3
+    !if &band @# 1
+        ml-write &cat #l2 &cat " = " #l3
+    !endif
+!emacro
+
+define-macro calc
+    !force set-variable #l0 @1
+    !if &not $status
+        set-variable #l0 @ml "Enter sum"
+    !endif
+    !force 0 delete-buffer "*calc*"
+    find-buffer "*calc*"
+    1 buffer-mode "hide"
+    1 buffer-mode "magic"
+    insert-string #l0
+    @# calc-buffer
+    -1 find-buffer $buffer-bname
+!emacro

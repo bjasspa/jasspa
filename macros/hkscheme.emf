@@ -1,0 +1,41 @@
+;       Scheme and (probably!) Lisp File Hook
+;
+;       Created by Pedro Gomes 99-06-15
+;
+;   Last Modified : <991125.1029>
+;
+!if &band .hilight.flags 0x02
+    !if &not &exist .hilight.scheme
+        set-variable .hilight.scheme &pinc .hilight.next 1
+    !endif
+    
+    0 hilight    .hilight.scheme 0               $global-scheme
+    hilight   .hilight.scheme 2 ";"              .scheme.comment
+    hilight   .hilight.scheme 4 "\"" "\"" "\\"   .scheme.string
+    hilight   .hilight.scheme 0 "'.'"            .scheme.quote
+    hilight   .hilight.scheme 0 "'\\\\.'"        .scheme.quote
+    ;
+    hilight   .hilight.scheme 1 "ahangle"        .scheme.variable
+    ;
+    hilight   .hilight.scheme 1 "atan2"          .scheme.keyword
+    hilight   .hilight.scheme 1 "("              .scheme.operator
+    hilight   .hilight.scheme 1 ")"              .scheme.keyword
+!endif
+
+define-macro fhook-scheme
+    1 buffer-mode "time"
+    1 buffer-mode "indent"
+    set-variable $buffer-mask "luh1"
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.scheme
+    !endif
+    ; execute user extensions if enabled
+    !if &exist my-fhook-scheme
+        my-fhook-scheme
+    !endif
+!emacro
+
+ml-write "[Scheme file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "myscheme"

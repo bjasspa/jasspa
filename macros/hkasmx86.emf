@@ -1,0 +1,247 @@
+;       ASSEMBLER X86 mode hook
+;
+;       Pedro Gomes
+;       Created on 99/03/28
+;   Last Modified : <991125.1028>
+;
+!if &not &exist .hilight.asmx86
+    set-variable .hilight.asmx86 &pinc .hilight.next 1
+    ; set up the osd tool menu & help dialog
+    set-variable .osd.asmx86-help &pinc .osd.next 1
+    set-variable .osd.asmx86-tool &pinc .osd.next 1
+!endif
+!if &band .hilight.flags 0x02
+    ;
+    ; Highlight Assembler Mode
+    ;
+    0 hilight .hilight.asmx86 0                $global-scheme
+    hilight   .hilight.asmx86 0 "^\\s *\\{#.*" .scheme.comment
+    hilight   .hilight.asmx86 0 "\\\\."        $global-scheme
+    hilight   .hilight.asmx86 4 "\"" "\"" "\\" .scheme.string
+    !if &band .hilight.flags 0x04
+        hilight   .hilight.asmx86 0 "^\\s *\\{proc\\s +\w+" .scheme.function
+    !endif
+    ; Operators
+    hilight   .hilight.asmx86 1 "\\.code"      .scheme.operator
+    hilight   .hilight.asmx86 1 "\\.data"      .scheme.operator
+    hilight   .hilight.asmx86 1 "\\.model"     .scheme.operator
+    hilight   .hilight.asmx86 1 "\\.stack"     .scheme.operator
+    hilight   .hilight.asmx86 1 "add"          .scheme.operator
+    hilight   .hilight.asmx86 1 "ah"           .scheme.operator
+    hilight   .hilight.asmx86 1 "al"           .scheme.operator
+    hilight   .hilight.asmx86 1 "and"          .scheme.operator
+    hilight   .hilight.asmx86 1 "ax"           .scheme.operator
+    hilight   .hilight.asmx86 1 "bh"           .scheme.operator
+    hilight   .hilight.asmx86 1 "bl"           .scheme.operator
+    hilight   .hilight.asmx86 1 "bp"           .scheme.operator
+    hilight   .hilight.asmx86 1 "bx"           .scheme.operator
+    hilight   .hilight.asmx86 1 "call"         .scheme.operator
+    hilight   .hilight.asmx86 1 "casemap"      .scheme.operator
+    hilight   .hilight.asmx86 1 "ch"           .scheme.operator
+    hilight   .hilight.asmx86 1 "cl"           .scheme.operator
+    hilight   .hilight.asmx86 1 "cmp"          .scheme.operator
+    hilight   .hilight.asmx86 1 "codeseg"      .scheme.operator
+    hilight   .hilight.asmx86 1 "compact"      .scheme.operator
+    hilight   .hilight.asmx86 1 "cs"           .scheme.operator
+    hilight   .hilight.asmx86 1 "cx"           .scheme.operator
+    hilight   .hilight.asmx86 1 "dataseg"      .scheme.operator
+    hilight   .hilight.asmx86 1 "dec"          .scheme.operator
+    hilight   .hilight.asmx86 1 "dh"           .scheme.operator
+    hilight   .hilight.asmx86 1 "div"          .scheme.operator
+    hilight   .hilight.asmx86 1 "dl"           .scheme.operator
+    hilight   .hilight.asmx86 1 "ds"           .scheme.operator
+    hilight   .hilight.asmx86 1 "dx"           .scheme.operator
+    hilight   .hilight.asmx86 1 "eax"          .scheme.operator
+    hilight   .hilight.asmx86 1 "ebp"          .scheme.operator
+    hilight   .hilight.asmx86 1 "ebx"          .scheme.operator
+    hilight   .hilight.asmx86 1 "ecx"          .scheme.operator
+    hilight   .hilight.asmx86 1 "eip"          .scheme.operator
+    hilight   .hilight.asmx86 1 "enter"        .scheme.operator
+    hilight   .hilight.asmx86 1 "es"           .scheme.operator
+    hilight   .hilight.asmx86 1 "esp"          .scheme.operator
+    hilight   .hilight.asmx86 1 "flat"         .scheme.operator
+    hilight   .hilight.asmx86 1 "fs"           .scheme.operator
+    hilight   .hilight.asmx86 1 "gs"           .scheme.operator
+    hilight   .hilight.asmx86 1 "ideal"        .scheme.operator
+    hilight   .hilight.asmx86 1 "idiv"         .scheme.operator
+    hilight   .hilight.asmx86 1 "imul"         .scheme.operator
+    hilight   .hilight.asmx86 1 "inc"          .scheme.operator
+    hilight   .hilight.asmx86 1 "include"      .scheme.operator
+    hilight   .hilight.asmx86 1 "includelib"   .scheme.operator
+    hilight   .hilight.asmx86 1 "ip"           .scheme.operator
+    hilight   .hilight.asmx86 1 "je"           .scheme.operator
+    hilight   .hilight.asmx86 1 "jg"           .scheme.operator
+    hilight   .hilight.asmx86 1 "jge"          .scheme.operator
+    hilight   .hilight.asmx86 1 "jl"           .scheme.operator
+    hilight   .hilight.asmx86 1 "jle"          .scheme.operator
+    hilight   .hilight.asmx86 1 "jmp"          .scheme.operator
+    hilight   .hilight.asmx86 1 "jne"          .scheme.operator
+    hilight   .hilight.asmx86 1 "jng"          .scheme.operator
+    hilight   .hilight.asmx86 1 "jnge"         .scheme.operator
+    hilight   .hilight.asmx86 1 "jnl"          .scheme.operator
+    hilight   .hilight.asmx86 1 "jnle"         .scheme.operator
+    hilight   .hilight.asmx86 1 "jnz"          .scheme.operator
+    hilight   .hilight.asmx86 1 "jz"           .scheme.operator
+    hilight   .hilight.asmx86 1 "large"        .scheme.operator
+    hilight   .hilight.asmx86 1 "leave"        .scheme.operator
+    hilight   .hilight.asmx86 1 "locals"       .scheme.operator
+    hilight   .hilight.asmx86 1 "model"        .scheme.operator
+    hilight   .hilight.asmx86 1 "mov"          .scheme.operator
+    hilight   .hilight.asmx86 1 "movsz"        .scheme.operator
+    hilight   .hilight.asmx86 1 "movzx"        .scheme.operator
+    hilight   .hilight.asmx86 1 "mul"          .scheme.operator
+    hilight   .hilight.asmx86 1 "neg"          .scheme.operator
+    hilight   .hilight.asmx86 1 "not"          .scheme.operator
+    hilight   .hilight.asmx86 1 "option"       .scheme.operator
+    hilight   .hilight.asmx86 1 "option"       .scheme.operator
+    hilight   .hilight.asmx86 1 "or"           .scheme.operator
+    hilight   .hilight.asmx86 1 "pop"          .scheme.operator
+    hilight   .hilight.asmx86 1 "proto"        .scheme.operator
+    hilight   .hilight.asmx86 1 "push"         .scheme.operator
+    hilight   .hilight.asmx86 1 "ret"          .scheme.operator
+    hilight   .hilight.asmx86 1 "retf"         .scheme.operator
+    hilight   .hilight.asmx86 1 "retn"         .scheme.operator
+    hilight   .hilight.asmx86 1 "return"       .scheme.operator
+    hilight   .hilight.asmx86 1 "shl"          .scheme.operator
+    hilight   .hilight.asmx86 1 "shr"          .scheme.operator
+    hilight   .hilight.asmx86 1 "sp"           .scheme.operator
+    hilight   .hilight.asmx86 1 "ss"           .scheme.operator
+    hilight   .hilight.asmx86 1 "stack"        .scheme.operator
+    hilight   .hilight.asmx86 1 "sub"          .scheme.operator
+    hilight   .hilight.asmx86 1 "test"         .scheme.operator
+    hilight   .hilight.asmx86 1 "tiny"         .scheme.operator
+    hilight   .hilight.asmx86 1 "xor"          .scheme.operator
+    ; Keywords
+    hilight   .hilight.asmx86 1 "\\.else"      .scheme.keyword
+    hilight   .hilight.asmx86 1 "\\.endif"     .scheme.keyword
+    hilight   .hilight.asmx86 1 "\\.if"        .scheme.keyword
+    hilight   .hilight.asmx86 1 "addr"         .scheme.keyword
+    hilight   .hilight.asmx86 1 "align"        .scheme.keyword
+    hilight   .hilight.asmx86 1 "assume"       .scheme.keyword
+    hilight   .hilight.asmx86 1 "byte"         .scheme.keyword
+    hilight   .hilight.asmx86 1 "db"           .scheme.keyword
+    hilight   .hilight.asmx86 1 "dd"           .scheme.keyword
+    hilight   .hilight.asmx86 1 "dup"          .scheme.keyword
+    hilight   .hilight.asmx86 1 "dw"           .scheme.keyword
+    hilight   .hilight.asmx86 1 "dword"        .scheme.keyword
+    hilight   .hilight.asmx86 1 "end"          .scheme.keyword
+    hilight   .hilight.asmx86 1 "endm"         .scheme.keyword
+    hilight   .hilight.asmx86 1 "endp"         .scheme.keyword
+    hilight   .hilight.asmx86 1 "ends"         .scheme.keyword
+    hilight   .hilight.asmx86 1 "equ"          .scheme.keyword
+    hilight   .hilight.asmx86 1 "extern"       .scheme.keyword
+    hilight   .hilight.asmx86 1 "far"          .scheme.keyword
+    hilight   .hilight.asmx86 1 "group"        .scheme.keyword
+    hilight   .hilight.asmx86 1 "invoke"       .scheme.keyword
+    hilight   .hilight.asmx86 1 "ja"           .scheme.keyword
+    hilight   .hilight.asmx86 1 "jae"          .scheme.keyword
+    hilight   .hilight.asmx86 1 "jb"           .scheme.keyword
+    hilight   .hilight.asmx86 1 "jbe"          .scheme.keyword
+    hilight   .hilight.asmx86 1 "jna"          .scheme.keyword
+    hilight   .hilight.asmx86 1 "jnae"         .scheme.keyword
+    hilight   .hilight.asmx86 1 "jnb"          .scheme.keyword
+    hilight   .hilight.asmx86 1 "jnbe"         .scheme.keyword
+    hilight   .hilight.asmx86 1 "label"        .scheme.keyword
+    hilight   .hilight.asmx86 1 "macro"        .scheme.keyword
+    hilight   .hilight.asmx86 1 "near"         .scheme.keyword
+    hilight   .hilight.asmx86 1 "nothing"      .scheme.keyword
+    hilight   .hilight.asmx86 1 "offset"       .scheme.keyword
+    hilight   .hilight.asmx86 1 "proc"         .scheme.keyword
+    hilight   .hilight.asmx86 1 "ptr"          .scheme.keyword
+    hilight   .hilight.asmx86 1 "public"       .scheme.keyword
+    hilight   .hilight.asmx86 1 "seg"          .scheme.keyword
+    hilight   .hilight.asmx86 1 "segment"      .scheme.keyword
+    hilight   .hilight.asmx86 1 "short"        .scheme.keyword
+    hilight   .hilight.asmx86 1 "use16"        .scheme.keyword
+    hilight   .hilight.asmx86 1 "use32"        .scheme.keyword
+    hilight   .hilight.asmx86 1 "word"         .scheme.keyword
+!endif
+
+0 indent  .hilight.asmx86 0 10
+indent .hilight.asmx86 n "{"  4
+indent .hilight.asmx86 o "}" -4
+indent .hilight.asmx86 e "\"" "\"" "\\"
+indent .hilight.asmx86 b "\\[" "]"
+indent .hilight.asmx86 b "(" ")"
+indent .hilight.asmx86 c "\\\\\\s " 10
+indent .hilight.asmx86 i ";"
+
+; coment line ie xxx -> ;#xxx
+define-macro asmx86-comment-line
+    !while &gre &pdec @# 1 0
+        beginning-of-line
+        insert-string ";"
+        beginning-of-line
+        forward-line
+    !done
+!emacro
+;
+; uncoment line ie ;xxx -> xxx
+define-macro asmx86-uncomment-line
+    beginning-of-line
+    !while &gre &pdec @# 1 0
+        !force -1 search-forward ";"
+        !if $status
+            backward-delete-char
+        !endif
+        forward-line
+        beginning-of-line
+    !done
+!emacro
+
+osd .osd.asmx86-tool 0  "b"
+osd .osd.asmx86-tool 1  ""  "Assembler x86  tool &help esc h"   .osd.asmx86-help osd
+osd .osd.asmx86-tool 6  ""  "&Comment line     C-c C-c" asm-comment-line
+osd .osd.asmx86-tool 7  ""  "&Uncomment line   C-c C-d" asm-uncomment-line
+;osd .osd.asmx86-tool 11 "-"
+; Add hook to load the OSD asmx86 tools menu.
+0 define-macro osd-ohook-asmx86
+    osd 7 1 "Md" "Assembler &Tools" .osd.asmx86-tool
+    osd 7 2 "-"
+!emacro
+; Add hook to remove the OSD asmx86 tools menu.
+0 define-macro osd-chook-asmx86
+    osd 7 1  "D"
+    osd 7 2  "D"
+!emacro
+
+osd .osd.asmx86-help 0  "batcdH" 9 3 99 .scheme.osd-title "x86 Assembler Mode Help"
+osd .osd.asmx86-help 3  ""
+osd .osd.asmx86-help 4  ""  "    esc h   - View this help page"
+osd .osd.asmx86-help 5  ""
+osd .osd.asmx86-help 7  ""  "    C-c C-c - Comment out current line"
+osd .osd.asmx86-help 8  ""  "    C-c C-d - Uncomment current line"
+osd .osd.asmx86-help 9  ""
+osd .osd.asmx86-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void
+
+define-macro fhook-asmx86
+    ; if arg is 0 this is a new file so add template
+    !if &not @#
+        etfinsrt "asmx86"
+    !endif
+    1 buffer-mode "time"
+    set-variable $buffer-mask "luh13"
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.asmx86
+    !endif
+    set-variable $buffer-indent  .hilight.asmx86
+    buffer-bind-unbound-key asmx86-comment-line   "C-c C-c"
+    buffer-bind-unbound-key asmx86-uncomment-line "C-c C-d"
+    ; setup.asmx86-x86 folds
+    ; buffer-bind-key fold-current "f2"
+    ; buffer-bind-key fold-all     "f3"
+    ; execute user extensions if enabled
+    !if &exist my-fhook-asmx86
+        my-fhook-asmx86
+    !endif
+!emacro
+
+; setup.asmx86 folding support
+;set-variable .fhook.asmx86.fold-open  "^proc "
+;set-variable .fhook.asmx86.fold-close "^}"
+;set-variable .fhook.asmx86.fold-mopen "1"
+
+ml-write "[Intel x86 Assembler file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "myasmx86"

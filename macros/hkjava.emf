@@ -1,0 +1,203 @@
+;       Java mode hook
+;
+;   Last Modified : <000623.2119>
+;
+!if &not &exist .hilight.java
+    set-variable .hilight.java &pinc .hilight.next 1
+    ; set up the osd tool menu & help dialog
+    set-variable .osd.java-help &pinc .osd.next 1
+    set-variable .osd.java-tool &pinc .osd.next 1
+!endif
+!if &band .hilight.flags 0x02
+    ;
+    ; High-light Java Mode
+    ;
+    0 hilight    .hilight.java 2 50             $global-scheme
+    hilight   .hilight.java 2  "//"            .scheme.comment
+    hilight   .hilight.java 20 "/\\*" "*/" ""  .scheme.comment
+    hilight   .hilight.java 4 "\"" "\"" "\\"   .scheme.string
+    hilight   .hilight.java 0 "'.'"            .scheme.quote
+    hilight   .hilight.java 0 "'\\\\.'"        .scheme.quote
+    hilight   .hilight.java 0 "'\\\\'"         .scheme.error
+    hilight   .hilight.java 0 "'\\\\''"        .scheme.quote
+    ;
+    hilight   .hilight.java 0x12 "import"      .scheme.prepro
+    hilight   .hilight.java 0x12 "package"     .scheme.prepro
+    ;
+    hilight   .hilight.java 1 "break"        .scheme.keyword
+    hilight   .hilight.java 1 "case"         .scheme.keyword
+    hilight   .hilight.java 1 "catch"        .scheme.keyword
+    hilight   .hilight.java 1 "continue"     .scheme.keyword
+    hilight   .hilight.java 1 "default"      .scheme.keyword
+    hilight   .hilight.java 1 "do"           .scheme.keyword
+    hilight   .hilight.java 1 "else"         .scheme.keyword
+    hilight   .hilight.java 1 "for"          .scheme.keyword
+    hilight   .hilight.java 1 "goto"         .scheme.keyword
+    hilight   .hilight.java 1 "if"           .scheme.keyword
+    hilight   .hilight.java 1 "return"       .scheme.keyword
+    hilight   .hilight.java 1 "super"        .scheme.keyword
+    hilight   .hilight.java 1 "switch"       .scheme.keyword
+    hilight   .hilight.java 1 "throw"        .scheme.keyword
+    hilight   .hilight.java 1 "try"          .scheme.keyword
+    hilight   .hilight.java 1 "while"        .scheme.keyword
+    ;
+    hilight   .hilight.java 1 "asm"          .scheme.type
+    hilight   .hilight.java 1 "char"         .scheme.type
+    hilight   .hilight.java 1 "const"        .scheme.type
+    hilight   .hilight.java 1 "double"       .scheme.type
+    hilight   .hilight.java 1 "enum"         .scheme.type
+    hilight   .hilight.java 1 "extends"      .scheme.type
+    hilight   .hilight.java 1 "extern"       .scheme.type
+    hilight   .hilight.java 1 "float"        .scheme.type
+    hilight   .hilight.java 1 "final"        .scheme.type
+    hilight   .hilight.java 1 "int"          .scheme.type
+    hilight   .hilight.java 1 "long"         .scheme.type
+    hilight   .hilight.java 1 "register"     .scheme.type
+    hilight   .hilight.java 1 "short"        .scheme.type
+    hilight   .hilight.java 1 "signed"       .scheme.type
+    hilight   .hilight.java 1 "size_t"       .scheme.type
+    hilight   .hilight.java 1 "static"       .scheme.type
+    hilight   .hilight.java 1 "struct"       .scheme.type
+    hilight   .hilight.java 1 "synchronized" .scheme.type
+    hilight   .hilight.java 1 "throws"       .scheme.type
+    hilight   .hilight.java 1 "typedef"      .scheme.type
+    hilight   .hilight.java 1 "unsigned"     .scheme.type
+    hilight   .hilight.java 1 "void"         .scheme.type
+    hilight   .hilight.java 1 "volatile"     .scheme.type
+    ; Add some system types
+    hilight   .hilight.java 1 "FILE"         .scheme.type
+    ; Pre-processor directives
+    hilight   .hilight.java 0 "__DATE__"     .scheme.prepro
+    hilight   .hilight.java 0 "__FILE__"     .scheme.prepro
+    hilight   .hilight.java 0 "__LINE__"     .scheme.prepro
+    hilight   .hilight.java 0 "__STDC__"     .scheme.prepro
+    hilight   .hilight.java 0 "__TIME__"     .scheme.prepro
+    
+    hilight   .hilight.java 1 "Character"    .scheme.prepro
+    hilight   .hilight.java 1 "Color"        .scheme.prepro
+    hilight   .hilight.java 1 "Integer"      .scheme.prepro
+    hilight   .hilight.java 1 "Object"       .scheme.prepro
+    hilight   .hilight.java 1 "String"       .scheme.prepro
+    
+    hilight   .hilight.java 1 "delete"       .scheme.keyword
+    hilight   .hilight.java 1 "new"          .scheme.keyword
+    
+    hilight   .hilight.java 1 "this"         .scheme.variable
+    hilight   .hilight.java 1 "null"         .scheme.variable
+    
+    hilight   .hilight.java 1 "auto"         .scheme.type
+    hilight   .hilight.java 1 "class"        .scheme.type
+    hilight   .hilight.java 1 "friend"       .scheme.type
+    hilight   .hilight.java 1 "inline"       .scheme.type
+    hilight   .hilight.java 1 "operator"     .scheme.type
+    hilight   .hilight.java 1 "private"      .scheme.type
+    hilight   .hilight.java 1 "protected"    .scheme.type
+    hilight   .hilight.java 1 "public"       .scheme.type
+    hilight   .hilight.java 1 "virtual"      .scheme.type
+!endif
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Bunch of Java macros we may need.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; use C's commenting commands
+define-macro-file cmacros c-comment-line c-uncomment-line c-comm-to-end c-insert-tab c-slashify c-deslashify c-start-comment c-hash-eval c-hash-set-define c-hash-unset-define c-hash-del
+define-macro-file cbox c-box
+;
+; Set up the variables for java - use 'C'
+;
+set-variable $c-contcomm " * "
+
+osd .osd.java-tool 0  "b"
+osd .osd.java-tool 1  ""  "Java tool &help esc h"     .osd.java-help osd
+osd .osd.java-tool 2  ""  "&Restyle region   A-C-i"   f restyle-region
+osd .osd.java-tool 5  "-"
+osd .osd.java-tool 6  ""  "&Comment line     C-c C-c" f c-comment-line
+osd .osd.java-tool 7  ""  "&Uncomment line   C-c C-d" f c-uncomment-line
+osd .osd.java-tool 8  ""  "Start co&mment   esc C-c"  f c-start-comment
+osd .osd.java-tool 9  ""  "Comment to &end  C-c C-e"  f c-comm-to-end
+osd .osd.java-tool 10 ""  "Restyle c&omment esc o"    f c-box
+osd .osd.java-tool 11 "-"
+osd .osd.java-tool 18 "i" "Create &tags file"         f "generate-tags-file javatags"
+; Add hook to load the OSD C-tools menu.
+0 define-macro osd-ohook-java
+    osd 7 1 "Md" "Java &Tools" .osd.java-tool
+    osd 7 2 "-"
+!emacro
+; Add hook to remove the OSD C-tools menu.
+0 define-macro osd-chook-java
+    osd 7 1  "D"
+    osd 7 2  "D"
+!emacro
+
+osd .osd.java-help 0  "batcdH" 9 3 99 .scheme.osd-title "Java Mode Help"
+osd .osd.java-help 3  "" 
+osd .osd.java-help 4  ""  "    esc h   - View this help page"
+osd .osd.java-help 5  "" 
+osd .osd.java-help 6  ""  "    esc C-c - Start comment"
+osd .osd.java-help 7  ""  "    C-c C-c - Comment out current line"
+osd .osd.java-help 8  ""  "    C-c C-d - Remove current or next comment "
+osd .osd.java-help 9  ""  "    C-c C-e - Comment to end of line"
+osd .osd.java-help 10 "" 
+osd .osd.java-help 11 ""  "    A-i     - Insert as tab (obeys tab mode)"
+osd .osd.java-help 12 ""  "    A-C-i   - Restyle region"
+osd .osd.java-help 13 "" 
+osd .osd.java-help 14 ""  "    esc o"
+osd .osd.java-help 15 ""  "    esc q   - Reformat current comment"
+osd .osd.java-help 16 "" 
+osd .osd.java-help 17 ""  " Abbreviation file is set to c.abr "
+osd .osd.java-help 18 "" 
+osd .osd.java-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
+
+; Begin hook - entering the buffer - save the current fill-ignore characters
+define-macro bhook-java
+    !if &exi .fhook-java.fill-ignore
+        set-variable .fhook-java.ofill-ignore $fill-ignore
+        set-variable $fill-ignore .fhook-java.fill-ignore
+    !endif
+!emacro
+
+; End hook - leaving the buffer - restore the fill-ignore characters
+define-macro ehook-java
+    !if &exi .fhook-java.fill-ignore
+        set-variable $fill-ignore .fhook-java.ofill-ignore
+    !endif
+!emacro    
+
+define-macro fhook-java
+    ; if arg is 0 this is a new file so add template 
+    !if &not @#
+        etfinsrt "java"
+    !endif
+    1 buffer-mode "time"
+    1 buffer-mode "cmode"
+    buffer-abbrev-file "c"
+    set-variable $buffer-mask "luh1"
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.java
+    !endif
+    buffer-bind-key c-start-comment  "esc C-c"
+    buffer-bind-unbound-key c-comment-line   "C-c C-c"
+    buffer-bind-unbound-key c-uncomment-line "C-c C-d"
+    buffer-bind-unbound-key c-comm-to-end    "C-c C-e"
+    buffer-bind-key c-insert-tab     "A-tab"
+    buffer-bind-unbound-key restyle-region   "A-C-i"
+    buffer-bind-key c-box            "esc q"
+    buffer-bind-key c-box            "esc o"
+    ; execute user extensions if enabled
+    !if &exist my-fhook-java
+        my-fhook-java
+    !endif
+!emacro
+
+; Fix up the $fill-mode so that we wrap java
+; doc parameters. Do this by removing the "@"
+; from the $fill-ignore variable.
+!if &sin "@" $fill-ignore
+    set-variable .fhook-java.fill-ignore $fill-ignore
+    var-str-sub .fhook-java.fill-ignore "@" ""
+!endif
+
+ml-write "[Java file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "myjava"
+

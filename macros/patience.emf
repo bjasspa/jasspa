@@ -1,0 +1,816 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Jon Green
+;  Created       : 24th November 1995
+;  Last Modified : <000719.0012>
+;
+;  Description   : Patience playing card patience game
+;
+;  Notes
+;
+;  History:
+;   97/04/30 JG Moved to local buffer variables.
+;
+;  Copyright (c) 1998 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+; void pat-decode-char (char card)
+; Decode the character
+;
+0 define-macro pat-decode-char
+    set-variable :pat-char @1
+    set-variable :pat-num &add &atoi :pat-char 1
+    set-variable #g8 &sin :pat-char :pat-pack
+    ; Determine if black or red
+    !if &gre #g8 26
+        set-variable :pat-fcol 1
+    !else
+        set-variable :pat-fcol 33
+    !endif
+    set-variable :pat-num &mod &sub #g8 1 13
+    set-variable :pat-suit &div &sub #g8 1 13
+    set-variable :pat-type &mid :pat-card-lab &mul1 :pat-suit 5 5
+    set-variable :pat-dig &mid "A23456789TJQK" :pat-num 1 1
+    ; If PC - then use graphic symbols !!
+    !if &band $system 0x100
+        set-variable :pat-sym &itoa &add :pat-suit 3
+        set-variable :pat-sym1 :pat-sym
+    !else
+        set-variable :pat-sym " "
+        set-variable :pat-sym1 &mid :pat-card-lab &mul :pat-suit 5 1
+    !endif
+    set-variable :pat-suit &add :pat-suit 1
+!emacro
+;
+; Check for a legal move to a column
+;
+0 define-macro pat-legal-col-move
+    set-variable #g8 &sub &sin @1 :pat-pack 1
+    set-variable #g9 &sub &sin @2 :pat-pack 1
+;    1000 ml-write &sprint "Legal test %s => %s ?" @1 @2
+    ;
+    ; Make sure we have ((red & black) | (black & red))
+    ;
+    !if &not &or &and &les #g8 26 &gre #g9 25 &and &les #g9 26 &gre #g8 25
+        !abort
+    !endif
+    ;
+    ; Make sure that the value is one less than each other.
+    ;
+    set-variable #g8 &mod #g8 13      ; Convert to value 0-12
+    set-variable #g9 &mod #g9 13      ; Convert to value 0-12
+    !if &equ &add #g8 1 #g9
+;    ml-write &sprint "Validated Legal move %s => %s" @1 @2
+        !return
+    !endif
+    !abort
+!emacro
+;
+; Draw a card
+;
+0 define-macro pat-draw-card
+    set-variable :pat-char @1
+    set-variable :pat-draw-card-t2 #g2
+    set-variable :pat-draw-card-t3 #g3
+    set-variable :pat-draw-card-t4 #g4
+    set-variable #g2 &add 1 @2
+    set-variable #g3 @3
+    set-variable #g4 @4
+    !if &equ &len :pat-char 0
+        1 screen-poke #g2 #g3 .scheme.cardback :pat-card-top
+        !if #g4
+            set-variable #g2 &add #g2 1
+            1 screen-poke #g2 #g3 .scheme.cardback :pat-card-hld1
+            set-variable #g2 &add #g2 1
+            1 screen-poke #g2 #g3 .scheme.cardback :pat-card-hld2
+            set-variable #g2 &add #g2 1
+            1 screen-poke #g2 #g3 .scheme.cardback :pat-card-hld3
+            set-variable #g2 &add #g2 1
+            1 screen-poke #g2 #g3 .scheme.cardback :pat-card-hld2
+            set-variable #g2 &add #g2 1
+            1 screen-poke #g2 #g3 .scheme.cardback :pat-card-hld1
+            set-variable #g2 &add #g2 1
+            1 screen-poke #g2 #g3 .scheme.cardback :pat-card-bot
+       !endif
+    !elif &seq :pat-char "%"
+        1 screen-poke #g2 #g3 .scheme.cardback :pat-card-none
+        set-variable #g2 &add #g2 1
+        !if &less #g2 &sub $screen-depth 2
+            !jump -3
+        !endif
+    !elif &seq :pat-char "#"
+        97 screen-poke #g2 #g3 .scheme.cardfore :pat-card-top
+        set-variable #g2 &add #g2 1
+        !if #g4
+            97 screen-poke #g2 #g3 .scheme.cardfore :pat-card-bak1
+            set-variable #g2 &add #g2 1
+            97 screen-poke #g2 #g3 .scheme.cardfore :pat-card-bak2
+            set-variable #g2 &add #g2 1
+            97 screen-poke #g2 #g3 .scheme.cardfore :pat-card-bak1
+            set-variable #g2 &add #g2 1
+            97 screen-poke #g2 #g3 .scheme.cardfore :pat-card-bak2
+            set-variable #g2 &add #g2 1
+            97 screen-poke #g2 #g3 .scheme.cardfore :pat-card-bak1
+            set-variable #g2 &add #g2 1
+            97 screen-poke #g2 #g3 .scheme.cardfore :pat-card-bot
+        !endif
+    !else
+        pat-decode-char :pat-char
+        :pat-fcol screen-poke #g2 #g3 .scheme.cardfore :pat-card-top
+        set-variable #g2 &add #g2 1
+        :pat-fcol screen-poke #g2 #g3 .scheme.cardfore :pat-card-clr
+        :pat-fcol screen-poke #g2 &add 1 #g3 .scheme.cardfore &sprint "%s%s%s" :pat-dig :pat-sym :pat-type
+        set-variable #g2 &add #g2 1
+        !if #g4
+            !if &sin :pat-dig "JQK"
+                :pat-fcol screen-poke #g2 #g3 .scheme.cardfore :pat-card-clr
+                :pat-fcol screen-poke #g2 &add 1 #g3 .scheme.cardfore :pat-sym1
+                65 screen-poke #g2 &add 2 #g3 .scheme.cardfore &sprint "X+X+X"
+                set-variable #g2 &add #g2 1
+                :pat-fcol screen-poke #g2 #g3 .scheme.cardfore :pat-card-clr
+                65 screen-poke #g2 &add 2 #g3 .scheme.cardfore &sprint "+X+X+"
+                set-variable #g2 &add #g2 1
+                :pat-fcol screen-poke #g2 #g3 .scheme.cardfore :pat-card-clr
+                :pat-fcol screen-poke #g2 &add 1 #g3 .scheme.cardfore &sprint "      %s" :pat-sym1
+                65 screen-poke #g2 &add 2 #g3 .scheme.cardfore &sprint "X+X+X"
+            !else
+                :pat-fcol screen-poke #g2 #g3 .scheme.cardfore :pat-card-clr
+                :pat-fcol screen-poke #g2 &add 1 #g3 .scheme.cardfore :pat-sym1
+                set-variable #g2 &add #g2 1
+                :pat-fcol screen-poke #g2 #g3 .scheme.cardfore :pat-card-clr
+                set-variable #g2 &add #g2 1
+                :pat-fcol screen-poke #g2 #g3 .scheme.cardfore :pat-card-clr
+                :pat-fcol screen-poke #g2 &add 1 #g3 .scheme.cardfore &sprint "      %s" :pat-sym1
+            !endif
+            set-variable #g2 &add #g2 1
+            :pat-fcol screen-poke #g2 #g3 .scheme.cardfore :pat-card-clr
+            :pat-fcol screen-poke #g2 &add 1 #g3 .scheme.cardfore &sprint "%s%s%s" :pat-dig :pat-sym :pat-type
+            set-variable #g2 &add #g2 1
+            :pat-fcol screen-poke #g2 #g3 .scheme.cardfore :pat-card-bot
+            set-variable #g2 &add #g2 1
+        !endif
+    !endif
+    set-variable #g2 :pat-draw-card-t2
+    set-variable #g3 :pat-draw-card-t3
+    set-variable #g4 :pat-draw-card-t4
+!emacro
+;
+; Draw the column on the screen
+;
+0 define-macro pat-draw-col
+    ; Get column cards
+    set-variable :pat-colup &ind &sprint ":pat-col%dup" @1
+    set-variable :pat-coldn &ind &sprint ":pat-col%ddn" @1
+    ; Calculate column position
+    set-variable :pat-col &add 1 &mul :pat-card-width &sub @1 1
+    set-variable :pat-row :pat-rowdnmin
+    ; Remember where we are on the row.
+    set-variable &ind &sprint ":pat-col%dmin" @1 :pat-col
+    set-variable &ind &sprint ":pat-col%dmax" @1 &add :pat-col 10
+    set-variable &ind &sprint ":pat-row%dmin" @1 :pat-row
+    set-variable #g2 &sprint ":pat-row%dmax" @1
+    set-variable &ind #g2 &add :pat-row :pat-card-hight
+    ; Draw the downward facing cards
+    set-variable #g0 :pat-coldn
+    !while &gre &len #g0 0
+        set-variable #g0 &rig #g0 1
+        set-variable #g1 &not &or &gre #g0 0 &gre &len :pat-colup 0
+        pat-draw-card "#" :pat-row :pat-col #g1
+        set-variable :pat-row &add :pat-row 1
+    !done
+    ; Draw the upward facing cards
+    set-variable #g0 :pat-colup
+    !while &gre &len #g0 0
+        set-variable :pat-char &rig #g0 &sub &len #g0 1
+        set-variable #g0 &lef #g0 &sub &len #g0 1
+        set-variable #g1 &not &len #g0
+        pat-draw-card :pat-char :pat-row :pat-col #g1
+        set-variable :pat-row &add :pat-row 2
+    !done
+    ; Draw a blank card
+    !if &and &equ &len :pat-colup 0 &equ &len :pat-coldn 0
+        pat-draw-card "" :pat-row :pat-col 1
+        set-variable :pat-row &add :pat-row 1
+    !endif
+    ; Clear to end of screen
+    !if &not &len :pat-colup
+        set-variable :pat-row &add :pat-row &sub :pat-card-hight 1
+    !else
+        set-variable :pat-row &add :pat-row &sub :pat-card-hight 2
+    !endif
+    set-variable &ind #g2 :pat-row
+    pat-draw-card "%" :pat-row :pat-col 1
+!emacro
+;
+; Draw the home on the screen
+;
+0 define-macro pat-draw-home
+    set-variable :pat-row 0
+    set-variable :pat-col &add 1 &mul 3 :pat-card-width
+    ; Record the card positions
+    set-variable :pat-colhomemin :pat-col
+    set-variable :pat-colhomemax &add :pat-col &mul 4 :pat-card-width
+    ; Draw in the top right. A home location exists for each card.
+    set-variable #g9 1
+    !repeat
+        ; Draw the cards
+        set-variable :pat-colup &ind &sprint ":pat-hom%d" #g9
+        !if &gre &len :pat-colup 0
+            set-variable :pat-char &lef :pat-colup 1
+        !else
+            set-variable :pat-char ""
+        !endif
+        set-variable #g9 &add #g9 1
+        pat-draw-card :pat-char :pat-row :pat-col 1
+        set-variable :pat-col &add :pat-col :pat-card-width
+    !until &gre #g9 4
+!emacro
+;
+; Draw the dealer on the screen
+;
+0 define-macro pat-draw-dealer
+    set-variable :pat-col 1
+    set-variable :pat-row 0
+    set-variable :pat-coldealdnmin :pat-col
+    set-variable :pat-coldealdnmax &add :pat-col :pat-card-width
+    ; Draw frames for the menu options.
+    65 screen-poke &add :pat-row  1 &add :pat-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+    65 screen-poke &add :pat-row  2 &add :pat-x0 72 .scheme.cardback &sprint "%sDeal%s" &lef $box-chars 1 &lef $box-chars 1
+    65 screen-poke &add :pat-row  3 &add :pat-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+
+    65 screen-poke &add :pat-row  4 &add :pat-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+    65 screen-poke &add :pat-row  5 &add :pat-x0 72 .scheme.cardback &sprint "%sQuit%s" &lef $box-chars 1 &lef $box-chars 1
+    65 screen-poke &add :pat-row  6 &add :pat-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+
+    65 screen-poke &add :pat-row  7 &add :pat-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+    65 screen-poke &add :pat-row  8 &add :pat-x0 72 .scheme.cardback &sprint "%sHelp%s" &lef $box-chars 1 &lef $box-chars 1
+    65 screen-poke &add :pat-row  9 &add :pat-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+    ;
+    ; Draw the down facing deck.
+    !if &len :pat-dealdn
+        pat-draw-card "#" :pat-row :pat-col 1
+    !else
+        pat-draw-card "" :pat-row :pat-col 1
+    !endif
+    ;
+    ; Draw upfacing deck show the last 3 cards drawn, spread horizontally.
+    ; Note that we always draw a card even if it is the empty one.
+    ;
+    set-variable :pat-char ""
+    set-variable :pat-col &add :pat-col :pat-card-width
+    set-variable :pat-coldealupmin :pat-col
+    set-variable :pat-coldealupmax &add :pat-col &sub 10 3
+    ;
+    ; Clear previous position
+    ;
+    set-variable #g1 &add :pat-card-hight 1
+    !repeat
+        set-variable #g1 &sub #g1 1
+        1 screen-poke #g1 :pat-col .scheme.cardback "                "
+    !until &equ 0 #g1
+    ;
+    ; Draw the next set of cards
+    ;
+    set-variable #g0 &len :pat-dealup
+    !if &gre #g0 3
+        set-variable #g0 3
+    !endif
+    !repeat
+        !if &gre #g0 0
+            set-variable :pat-char &mid :pat-dealup &sub #g0 1 1
+        !endif
+        pat-draw-card :pat-char :pat-row :pat-col 1
+        set-variable #g0 &sub #g0 1
+        set-variable :pat-col &add :pat-col 3
+        set-variable :pat-coldealupmax &add :pat-coldealupmax 3
+    !until &not &gre #g0 0
+;    ml-write &sprint "Pack top = %s" :pat-dealup
+!emacro
+
+0 define-macro pat-draw-labels
+    set-variable :pat-col &div :pat-card-width 2
+    set-variable :pat-row :pat-rowdnmin
+    set-variable #g9 7
+    ; Draw column labels
+    !repeat
+        1 screen-poke :pat-row &add :pat-col &mul &sub #g9 1 :pat-card-width .scheme.cardback #g9
+        set-variable #g9 &sub #g9 1
+    !until &equ #g9 0
+    ; Draw home labels
+    set-variable :pat-row 0
+    set-variable :pat-col &add 5 &mul 3 :pat-card-width
+    set-variable #g9 0
+    !repeat
+        1 screen-poke :pat-row :pat-col .scheme.cardback &mid :pat-label-home #g9 1
+        set-variable :pat-col &add :pat-col :pat-card-width
+        set-variable #g9 &add #g9 1
+    !until &equ #g9 4
+!emacro
+
+0 define-macro pat-draw
+    !if &not @#
+        !return
+    !endif
+    delete-other-windows
+    screen-update
+    set-variable #g9 1
+    !repeat
+        pat-draw-col #g9
+        set-variable #g9 &add #g9 1
+    !until &equ #g9 8
+    pat-draw-dealer
+    pat-draw-home
+    pat-draw-labels
+!emacro
+
+0 define-macro pat-deal
+    ;
+    ; Shuffle the pack.
+    ;
+    ml-write "Dealing cards ....."
+    find-buffer "*patience*"                ; Select the buffer
+    !force forward-line                    ; Not sure ???
+    -1 buffer-mode "view"
+    ; Kill the buffer off
+    beginning-of-buffer
+    delete-other-windows
+    set-mark
+    end-of-buffer
+    kill-region
+    -1 yank
+    ; Shuffle by generating random key and then sorting.
+    beginning-of-buffer
+    set-variable #g1 :pat-pack
+    !repeat
+        insert-string &lef #g1 1
+        insert-string $random
+        set-variable #g1 &rig #g1 1
+        newline
+    !until &equ &len #g1 0
+    ; Sort the lines using the random column
+    beginning-of-buffer
+    set-mark
+    52 forward-line
+    1 sort-lines
+    beginning-of-buffer
+    set-variable #g9 ""              ; #g9 will be the shuffled pack
+    !repeat
+        set-variable #g1 @wl         ; Read line from buffer
+        forward-line
+;       ml-write &sprint "Line = [%s]" #g1
+        set-variable #g9 &cat #g9 &lef #g1 1
+    !until &equ &len #g9 52
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    kill-region
+    -1 yank
+    -1 buffer-mode "edit"
+     1 buffer-mode "view"
+    ;
+    ; Deal the cards to the columns
+    ;
+    set-variable :pat-dealdn #g9
+    set-variable :pat-dealup ""
+    set-variable :pat-hom1 ""
+    set-variable :pat-hom2 ""
+    set-variable :pat-hom3 ""
+    set-variable :pat-hom4 ""
+
+    set-variable #g1 1
+
+    !repeat
+        set-variable #g5 &sprint ":pat-col%ddn" #g1
+        ; Deal down facing cards
+        set-variable #g0 &sub #g1 1
+        set-variable &ind #g5 &lef :pat-dealdn #g0
+        set-variable :pat-dealdn &right :pat-dealdn #g0
+        ; Deal up facing card
+        set-variable &ind &sprint ":pat-col%dup" #g1 &lef :pat-dealdn 1
+        set-variable :pat-dealdn &right :pat-dealdn 1
+        set-variable #g1 &add #g1 1
+    !until &gre #g1 7
+    ; redraw key call will automatically draw the screen
+    ; because of the above find-buffer
+!emacro
+
+0 define-macro pat-turn
+    set-variable #g0 :pat-dealdn
+    set-variable #g1 :pat-dealup
+    !if &equ &len #g0 0
+        !if &equ &len #g1 0
+            !return
+        !endif
+        ; Turn pack
+        set-variable #g0 #g1
+        set-variable #g1 ""
+    !endif
+    set-variable #g3 3
+    !repeat
+;        ml-write &sprint "Pack Down = %s" #g0
+;        ml-write &sprint "Pack Up = %s" #g1
+        set-variable #g1 &cat &mid #g0 &sub &len #g0 1 1 #g1
+        set-variable #g0 &lef #g0 &sub &len #g0 1
+;        ml-write &sprint "Post Pack Down = %s" #g0
+;        ml-write &sprint "Post Pack Up = %s" #g1
+        set-variable #g3 &sub #g3 1
+    !until &or &equ &len #g0 0 &equ #g3 0
+    set-variable :pat-dealdn #g0
+    set-variable :pat-dealup #g1
+    pat-draw-dealer
+!emacro
+
+0 define-macro pat-move-home
+    set-variable :pat-char @1
+    pat-decode-char :pat-char
+    set-variable #g1 &sprint ":pat-hom%d" :pat-suit
+    !if &equ 0 &len &ind #g1                 ; Empty pile ??
+        !if &equ 0 :pat-num                 ; Moving card an ace ??
+            set-variable &ind #g1 :pat-char  ; Move card.
+            !return
+        !else
+            ml-write &sprint "Error: Must move Ace to home position [Card = %s. Num = %d]" :pat-char :pat-num
+        !endif
+    !else
+        !if &equ &sub &atoi :pat-char 1 &atoi &lef &ind #g1 1
+            set-variable &ind #g1 &cat :pat-char &ind #g1 ; Move card.
+            !return
+        !else
+            ml-write &sprint "Error: Invalid move to home position [Card = %s. Num = %d]" :pat-char :pat-num
+        !endif
+    !endif
+    !abort
+!emacro
+
+0 define-macro pat-move-col
+    set-variable :pat-pmc-in @1
+    set-variable :pat-pmc-col @2
+    set-variable :pat-char &rig :pat-pmc-in &sub &len :pat-pmc-in 1
+;    1000 ml-write &sprint "pat-move-col %s[%s] %s" @1 :pat-char @2
+    pat-decode-char :pat-char
+    ;
+    ; Determine the destination column
+    ;
+    set-variable #g0 &sprint ":pat-col%ddn" :pat-pmc-col
+    set-variable #g1 &sprint ":pat-col%dup" :pat-pmc-col
+    set-variable #g2 &ind #g1
+    !if &equ :pat-num 12            ; King ??
+        !if &and &equ &len &ind #g1 0 &equ &len &ind #g0 0
+            set-variable &ind #g1 :pat-pmc-in
+            !return
+        !else
+            ml-write "Error: Column must be empty"
+        !endif
+    !elif &equ 0 &len &ind #g1               ; Empty pile ??
+        ml-write "Error: No card on pile"
+    !else
+        ; Dealer to end of pile.
+        set-variable #g0 &lef #g2 1
+        !force pat-legal-col-move :pat-char #g0
+        !if $status
+;            ml-write "Adding card to column"
+            set-variable &ind #g1 &cat :pat-pmc-in #g2
+            !return
+;        !else
+;            1000 ml-write &sprint "Error: Illegal move %s to %s" :pat-char #g2
+        !endif
+    !endif
+    ml-write "Failed"
+    !abort
+!emacro
+
+0 define-macro pat-move
+    !if &seq :pat-outchr ""
+        ml-write &sprint "Move %s To ?" :pat-inchr
+    !else
+;        ml-write &sprint "Move %s To %s" :pat-inchr :pat-outchr
+        ;
+        ; Deal a card
+        ;
+        !if &and &seq :pat-inchr "8" &seq :pat-outchr "8"
+            pat-turn
+        ;
+        ; Move dealer to position ??
+        ;
+        !elif &sin :pat-inchr "9"
+            !if &equ &len :pat-dealup 0     ; No cards on upfacing stack ??
+                ml-write "Error: No cards available at dealer."
+                set-variable :pat-inchr ""
+                set-variable :pat-outchr ""
+                !return
+            !endif
+            set-variable :pat-char &lef :pat-dealup 1
+            ; Move the dealer to home.
+            !if &sin :pat-outchr "cdhs09"
+                pat-move-home :pat-char
+                !if $status
+                    set-variable :pat-dealup &rig :pat-dealup 1
+                    pat-draw-dealer
+                    pat-draw-home
+                    set-variable :pat-inchr ""
+                    set-variable :pat-outchr ""
+                    !return
+                !endif
+            !elif &sin :pat-outchr "1234567"
+            ; Move dealer to column
+                !force pat-move-col :pat-char :pat-outchr
+                !if $status
+                    set-variable :pat-dealup &rig :pat-dealup 1
+                    pat-draw-dealer
+                    pat-draw-col :pat-outchr
+                    set-variable :pat-inchr ""
+                    set-variable :pat-outchr ""
+                    !return
+                !endif
+            !else
+                ml-write "Error: Invalid move"
+            !endif
+        ;
+        ; Move the home to the columns
+        ;
+        !elif &sin :pat-inchr "cdhs"
+        ;
+        ; Move a column to the next column
+        ;
+        !elif &sin :pat-inchr "1234567"
+            ; Determine destination card
+            set-variable #g4 &sprint ":pat-col%ddn" :pat-inchr
+            set-variable #g5 &sprint ":pat-col%dup" :pat-inchr
+            set-variable #g6 &ind #g4
+            set-variable #g7 &ind #g5
+            ; No upward card
+            !if &equ &len #g7 0
+                ; Turn card on column
+                !if &sequ :pat-inchr :pat-outchr
+                    !if &and &equ 0 &len #g7 &not &equ 0 &len #g6
+                        !if &equ 1 &len #g6
+                            set-variable &ind #g5 #g6
+                            set-variable &ind #g4 ""
+                        !else
+                            set-variable &ind #g5 &lef #g6 1
+                            set-variable &ind #g4 &rig #g6 1
+                        !endif
+                        pat-draw-col :pat-inchr
+                    !endif
+                !endif
+            !else
+                !if &seq :pat-inchr :pat-outchr
+                    set-variable :pat-outchr "c"
+                !endif
+                !if &equ 1 &len #g7
+                    set-variable #g8 #g7
+                !else
+                    set-variable #g8 &lef #g7 1 ; &rig #g7 2
+                !endif
+                ; Move the column to home.
+                !if &sin :pat-outchr "cdhs0"
+                    !force pat-move-home #g8
+                    !if $status
+                        !if &equ 1 &len #g7
+                            set-variable &ind #g5 ""
+                        !else
+                            set-variable &ind #g5 &rig #g7 1
+                        !endif
+                        pat-draw-home
+                        pat-draw-col :pat-inchr
+                    !endif
+                !else &sin :pat-outchr "1234567"
+                    ; Try moving a column to column. We have to test up the
+                    ; stack to match destintion column.
+                    set-variable #g4 1
+                    !while &not &gre #g4 &len &ind #g5
+                        set-variable #g7 &lef &ind #g5 #g4
+; 1000 ml-write &sprint "Legal test on %s <=> %s" #g7 :pat-outchr
+                        !force pat-move-col #g7 :pat-outchr
+                        !if $status
+                            set-variable &ind #g5 &rig &ind #g5 #g4
+                            pat-draw-col :pat-outchr
+                            pat-draw-col :pat-inchr
+                            set-variable :pat-inchr ""
+                            set-variable :pat-outchr ""
+                            !return
+;                        !else
+;                            ml-write &sprint "Failed Legal test on %s <=> %s" #g7 :pat-outchr
+                        !endif
+                        set-variable #g4 &add #g4 1
+                    !done
+                !endif
+            !endif
+        !endif
+        set-variable :pat-inchr ""
+        set-variable :pat-outchr ""
+    !endif
+;    pat-draw
+!emacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+; Pick up the keyboard input
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+; pat-help - Help information
+;
+0 define-macro pat-help
+    !force help-command "Patience"
+    !if $status
+        delete-window
+    !endif
+!emacro
+
+0 define-macro pat-mouse-where
+    set-variable #g0 $mouse-x
+    set-variable #g1 $mouse-y
+    ; Check the dealer down pile
+    !if &and &not &gre #g1 :pat-rowdealdnmax &gre #g1 :pat-rowdealdnmin
+        ;
+        ; Off dealer stack
+        ;
+        !if &and &les #g0 :pat-coldealdnmax &gre #g0 :pat-coldealdnmin
+            set-variable :pat-mouse-chr "8"
+            !return
+        !endif
+        ;
+        ; Off dealer upturned stack
+        ;
+        !if &and &les #g0 :pat-coldealupmax &gre #g0 :pat-coldealupmin
+            set-variable :pat-mouse-chr "9"
+            !return
+        !endif
+        ;
+        ; Off home bases
+        ;
+        !if &and &les #g0 :pat-colhomemax &gre #g0 :pat-colhomemin
+            set-variable :pat-mouse-chr "0"
+            !return
+        !endif
+    !elif &gre #g1 :pat-rowdnmin
+        ;
+        ; calc which column or inbetween
+        ;
+        !if &mod #g0 :pat-card-width
+            set-variable :pat-mouse-chr &add 1 &div #g0 :pat-card-width
+            !if &les :pat-mouse-chr 8
+                !return
+            !endif
+        !endif
+    !endif
+    set-variable :pat-mouse-chr "#"
+!emacro
+
+0 define-macro pat-mouse-pick-left
+    pat-mouse-where
+    set-variable :pat-inchr :pat-mouse-chr
+!emacro
+
+0 define-macro pat-mouse-drop-left
+    ; Check the menu options. Note that we check on the drop since
+    ; since this does not conflict with the regular mouse pick/drop
+    ; functions.
+    set-variable #g0 $mouse-x
+    set-variable #g1 $mouse-y
+    !if &and &gre #g0 72 &les #g0 77
+        ; In the menu area.
+        !if &equ #g1 2       ; Deal new game.
+            pat-deal
+        !elif &equ #g1 5     ; Quit game
+            pat-quit
+        !elif &equ #g1 8     ; Help on patience.
+            pat-help
+        !endif
+        !return             ; Nothing else doing - quit now.
+    !endif
+    ; Do regular drop
+    pat-mouse-where
+    set-variable :pat-outchr :pat-mouse-chr
+    pat-move
+!emacro
+
+0 define-macro pat-quit
+    !force delete-buffer "*patience*"
+!emacro
+0 define-macro pat-key
+    !if &seq :pat-inchr ""
+        set-variable :pat-inchr &mid "0123456789cdsh" @# 1
+    !else
+        set-variable :pat-outchr &mid "0123456789cdsh" @# 1
+    !endif
+    pat-move
+!emacro
+
+0 define-macro pat-key-tab
+    set-variable :pat-inchr "8"
+    set-variable :pat-outchr "8"
+    pat-move
+!emacro
+;
+; bhook-patience
+; Buffer hook - entry into the *patience* buffer.
+;
+0 define-macro bhook-patience
+    -1 show-cursor                          ; Turn off the cursor
+    !force osd -1 0                         ; Turn off the menu.
+    set-variable :pat-scroll $scroll-bar    ; Save the scroll bar state
+    set-variable $scroll-bar 0              ; Disable the scroll bars.
+!emacro
+;
+; ehook-patience
+; Exit patience buffer.
+;
+0 define-macro ehook-patience
+    1 show-cursor                           ; Turn on the cursor
+    set-variable $scroll-bar :pat-scroll    ; Turn the scroll bars back on
+    !force osd -1 1                         ; Turn on the menu.
+!emacro
+
+define-macro Patience
+    set-variable $random 0        ; Set it so we get a new seed
+    find-buffer "*patience*"
+    !if &seq $buffer-bhook ""
+        set-variable :pat-pack "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        set-variable :pat-time 0
+        set-variable :pat-col 10 ;1
+        set-variable :pat-row 19 ;9
+        set-variable :pat-card-hight 7
+        set-variable :pat-card-width 10
+        set-variable :pat-card-hwidth &sub :pat-card-width 3
+        set-variable :pat-rowdealdnmin 0
+        set-variable :pat-rowdealdnmax :pat-card-hight
+        set-variable :pat-rowdnmin 9
+        ; 7 columns. Record the up/down state
+        ; Leftmost = 1; Rightmost = 7
+        set-variable :pat-col1up ""
+        set-variable :pat-col1dn ""
+        set-variable :pat-col2up ""
+        set-variable :pat-col2dn ""
+        set-variable :pat-col3up ""
+        set-variable :pat-col3dn ""
+        set-variable :pat-col4up ""
+        set-variable :pat-col4dn ""
+        set-variable :pat-col5up ""
+        set-variable :pat-col5dn ""
+        set-variable :pat-col6up ""
+        set-variable :pat-col6dn ""
+        set-variable :pat-col7up ""
+        set-variable :pat-col7dn ""
+        ; Define the dealer pile
+        set-variable :pat-dealup ""
+        set-variable :pat-dealdn ""
+        ; Define the home bases.
+        set-variable :pat-hom1   ""
+        set-variable :pat-hom2   ""
+        set-variable :pat-hom3   ""
+        set-variable :pat-hom4   ""
+        set-variable :pat-colup  :pat-col1up
+        set-variable :pat-coldn  :pat-col1dn
+        set-variable :pat-char   ""
+        set-variable :pat-type   ""
+        ; Define input variables
+        set-variable :pat-outchr ""
+        set-variable :pat-inchr ""
+        ; Define the card patterns
+        set-variable :pat-card-top  &sprint "%s%7s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+        set-variable :pat-card-bot  &sprint "%s%7s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+        set-variable :pat-card-clr  &sprint "%s%7s%s" &lef $box-chars 1 " " &lef $box-chars 1
+        set-variable :pat-card-hld1 &sprint "%s X   X %s" &lef $box-chars 1 &lef $box-chars 1
+        set-variable :pat-card-hld2 &sprint "%s  X X  %s" &lef $box-chars 1 &lef $box-chars 1
+        set-variable :pat-card-hld3 &sprint "%s   X   %s" &lef $box-chars 1 &lef $box-chars 1
+        set-variable :pat-card-bak1 &sprint "%s+X+X+X+%s" &lef $box-chars 1 &lef $box-chars 1
+        set-variable :pat-card-bak2 &sprint "%sX+X+X+X%s" &lef $box-chars 1 &lef $box-chars 1
+        set-variable :pat-card-none "         "
+        set-variable :pat-card-lab  "HeartDimndClub Spade"
+        set-variable :pat-label-home "hdcs"
+        set-variable $buffer-scheme .scheme.cardback
+        
+        buffer-bind-key pat-mouse-pick-left "mouse-pick-1"
+        buffer-bind-key pat-mouse-drop-left "mouse-drop-1"
+        buffer-bind-key void "mouse-pick-2"
+        buffer-bind-key void "mouse-drop-2"
+        buffer-bind-key void "mouse-pick-3"
+        buffer-bind-key void "mouse-drop-3"
+        
+        buffer-bind-key pat-deal "C-c C-c"
+        0  buffer-bind-key pat-key "return"
+        1  buffer-bind-key pat-key "1"           ; Column 1 - row stack
+        2  buffer-bind-key pat-key "2"           ; Column 2 - row stack
+        3  buffer-bind-key pat-key "3"           ; Column 3 - row stack
+        4  buffer-bind-key pat-key "4"           ; Column 4 - row stack
+        5  buffer-bind-key pat-key "5"           ; Column 5 - row stack
+        6  buffer-bind-key pat-key "6"           ; Column 6 - row stack
+        7  buffer-bind-key pat-key "7"           ; Column 7 - row stack
+        9  buffer-bind-key pat-key "space"       ; From dealer pile.
+        10 buffer-bind-key pat-key "c"           ; Clubs    - suit stack
+        11 buffer-bind-key pat-key "d"           ; Diamonds - suit stack
+        12 buffer-bind-key pat-key "s"           ; Spades   - suit stack
+        13 buffer-bind-key pat-key "h"           ; Hearts   - suit stack
+        buffer-bind-key pat-key-tab "tab"        ; Deal next card.
+        buffer-bind-key pat-help "esc h"         ; Help key
+        buffer-bind-key pat-quit "q"             ; quit game
+        buffer-bind-key pat-draw "redraw"        ; Redraw screen
+        1 buffer-bind-key pat-draw "C-l"         ; Redraw screen
+        set-variable $buffer-bhook bhook-patience
+        set-variable $buffer-ehook ehook-patience
+        bhook-patience
+    !endif
+    pat-deal                        ; Deal
+!emacro
