@@ -5,7 +5,7 @@
 .\"
 .\" Created By: Jon Green
 .\"
-.Id $Id: m1cmd000.1,v 2.12 2005-03-06 08:48:56 jon Exp $
+.Id $Id: m1cmd000.1,v 2.13 2005-03-19 17:47:49 jon Exp $
 .Im MicroEmacs function
 .so me.tni
 .TH me 1
@@ -35,6 +35,7 @@ me - \*(mE text editor
 [\|\fB\-o\fR\|]
 [\|\fB\-0\fR\|\fIfile\fR\|]
 [\|\fB\-p\fR\ [\|\fB\-P\fR\|]\ \|]
+[\|\fB\-R\fR\|]
 [\|\fB\-r\fR\|]
 [\|\fB\-s\fR\|\fIstring\fR\|]
 [\|\fB\-u\fR\|\fIusername\fR\|]
@@ -199,6 +200,10 @@ enable debug on \fIstderr\fR.
 Used with the \fB\-p\fR option and is used for debugging the pipe mode,
 .Ht ml-write 2
 messages are displayed on \fIstderr\fR.
+.IP \fB\-R\fR
+Reverse the default video color scheme. The default  foreground  color becomes
+the background color and vice versa. This only affects the built in scheme and
+not any schemes defined in any start-up file.
 .IP \fB\-r\fR
 Read-only, all buffers will be in view mode
 .IP \fB\-s\fR\|\fIstring\fR
