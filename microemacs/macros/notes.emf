@@ -1,19 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2000-2004 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Author        : $Author: bill $
-;  Created By    : Steven Phillips
-;  Created       : Tue Jan 4 16:30:00 2005
-;  Last Modified : <050119.2110>
+; Created:     Tue Jan 4 2005
+; Synopsis:    Hierarchical notes file
+; Authors:     Steven Phillips
 ;
-;  Description
-;
-;  Notes
-;
-;  History
-;
-;  Copyright (c) 2005 PTC.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 !if &not &exist .osd.notes-tmn
     set-variable .osd.notes-tmn &pinc .osd.next 1
 !endif

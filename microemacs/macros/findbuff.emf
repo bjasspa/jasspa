@@ -14,13 +14,13 @@
 0 define-macro osd-find-buffer
     !if &equ @# .osd.find-buffer
         ; called as a sub menu
-        osd .osd.find-buffer 0 "bo" 0 -3
+        osd .osd.find-buffer 0 "boI" 0 -3 4
         !return
     !endif
     !if &band @# 1
-        osd .osd.find-buffer 0 "ba" &add $cursor-x 1 &sub $cursor-y 3
+        osd .osd.find-buffer 0 "baI" &add $cursor-x 1 &sub $cursor-y 3 4
     !else
-        osd .osd.find-buffer 0 "bo" 0 -3
+        osd .osd.find-buffer 0 "boI" 0 -3 4
     !endif
     .osd.find-buffer osd
 !emacro

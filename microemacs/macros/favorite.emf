@@ -137,7 +137,7 @@
 0 define-macro osd-favorites-set
     favorites-load
     -1 osd @#
-    osd @# 0 "bo" 0 -3
+    osd @# 0 "boI" 0 -3 10
     !if &or &seq &lef $buffer-bname 1 "*" &seq $buffer-fname ""
         osd @# 1 "S" "Add"
     !else
