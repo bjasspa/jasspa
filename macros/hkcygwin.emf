@@ -476,7 +476,7 @@ define-macro cygpipe-break
     !elif &seq "quote-char" #l3
         ml-write "Quote: "
         set-variable #l1 @cqk
-    !elif &and &seq "mouse-event" #l3 &sin "yank" &reg "history/mouse" #l2 ""
+    !elif &and &seq "mouse-event" #l3 &sin "yank" &reg &cat "/history/mouse/" #l2 ""
         set-variable #l1 @y
     !elif &seq #l3 "ERROR"
         ml-write &spr "[Key not bound \"%s\"]" #l2

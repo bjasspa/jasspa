@@ -20,7 +20,7 @@
 
 set-char-mask "k" ""
 ; get the users keyboard
-set-variable #l0 &reg "/history" "keyboard" ""
+set-variable #l0 &reg "/history/keyboard" ""
 !if &seq #l0 ""
 !elif &seq #l0 "Default"
 !elif &seq #l0 "American"

@@ -21,7 +21,7 @@
 ; Authors:     Steven Phillips & Jon Green
 ;
 ; Is this macro release compatible with the binary?
-!if &les $version "20050101"
+!if &les $version "20050110"
     5000 ml-write "[Warning: The MicroEmacs executable is not compatible with this macro release]"
 !endif
 ; If <$user-name>.erf registry file isn't found then this is a new user
@@ -108,18 +108,18 @@ define-macro-file vm
 !emacro
 ;
 set-variable %platform &cat $platform &cond &band $system 0x01 "c" ""
-set-variable $system &bor &band $system &bnot 0x30f000 &band 0x30f000 &reg "/history" "system" 0x007000
-set-variable $system &bor &band $system &bnot 0x0e0414 &band 0x0e0414 &reg "/history" &cat %platform "/system" 0x040010
-set-variable $mouse &reg "/history" &cat %platform "/mouse" $mouse
-set-variable $scroll &reg "/history" &cat %platform "/scroll" $scroll
-set-variable $show-modes &reg "/history" "show-modes" $show-modes
-set-variable $cursor-blink &reg "/history" &cat %platform "/blink" $cursor-blink
+set-variable $system &bor &band $system &bnot 0x30f000 &band 0x30f000 &reg "/history/system" 0x007000
+set-variable $system &bor &band $system &bnot 0x0e0414 &band 0x0e0414 &reg &spr "/history/%s/system" %platform 0x040010
+set-variable $mouse &reg &spr "/history/%s/mouse" %platform $mouse
+set-variable $scroll &reg &spr "/history/%s/scroll" %platform $scroll
+set-variable $show-modes &reg "/history/show-modes" $show-modes
+set-variable $cursor-blink &reg &spr "/history/%s/blink" %platform $cursor-blink
 ; setup the display char set, keyboard and language
 !force exec-file "charset"
 !force exec-file "keyboard"
 !force exec-file "language"
 ; setup the displaying of fences
-set-variable #l0 &reg "/history" &cat %platform "/fence" "1"
+set-variable #l0 &reg &spr "/history/%s/fence" %platform "1"
 &cond &equ #l0 1 1 -1 global-mode "fence"
 !if &gre #l0 1
     set-variable .display-matching-fence.dmf &lget "|0|37|45|61|" #l0
@@ -164,41 +164,41 @@ global-bind-key display-white-chars      "f11"
 global-bind-key expand-abbrev-handle     "esc esc"
 ml-bind-key     tab                      "esc esc"
 ; if using MS friendly key bindings create them now
-!if &reg "/history" "mskeys" "0"
+!if &reg "/history/mskeys" "0"
     global-bind-key beginning-of-line    "home"
     global-bind-key beginning-of-buffer  "C-home"
     global-bind-key end-of-line          "end"
     global-bind-key end-of-buffer        "C-end"
 !endif
 ; execute msshift if using MS Shift style region definition
-!if &reg "/history" "msshift" "0"
+!if &reg "/history/msshift" "0"
     !force exec-file "msshift"
 !endif
 ;
 ; Setup modes
-&cond &reg "/history" "auto"   "1" 1 -1 global-mode "auto"
-&cond &reg "/history" "backup" "1" 1 -1 global-mode "backup"
-&cond &reg "/history" "exact"  "1" 1 -1 global-mode "exact"
-&cond &reg "/history" "magic"  "1" 1 -1 global-mode "magic"
-&cond &reg "/history" "quiet"  "1" 1 -1 global-mode "quiet"
-&cond &reg "/history" "tab"    "1" 1 -1 global-mode "tab"
-&cond &reg "/history" "undo"   "1" 1 -1 global-mode "undo"
-&cond &gre &set #l0 &reg "/history" "autosv" "300" "0" 1 -1 global-mode "autosv"
+&cond &reg "/history/auto"   "1" 1 -1 global-mode "auto"
+&cond &reg "/history/backup" "1" 1 -1 global-mode "backup"
+&cond &reg "/history/exact"  "1" 1 -1 global-mode "exact"
+&cond &reg "/history/magic"  "1" 1 -1 global-mode "magic"
+&cond &reg "/history/quiet"  "1" 1 -1 global-mode "quiet"
+&cond &reg "/history/tab"    "1" 1 -1 global-mode "tab"
+&cond &reg "/history/undo"   "1" 1 -1 global-mode "undo"
+&cond &gre &set #l0 &reg "/history/autosv" "300" "0" 1 -1 global-mode "autosv"
 !if &gre #l0 "0"
     set-variable $auto-time #l0
 !endif
 ; Setup variables
-set-variable $kept-versions &reg "/history" &cat %platform "/kept-vers" "0"
+set-variable $kept-versions &reg &spr "/history/%s/kept-vers" %platform "0"
 set-variable $mode-line     "%s%r%u%k %b %l - %h:%m %Y/%M/%D (%e) - (%f) "
-set-variable $file-ignore   &reg "/history" &cat %platform "/file-ignore" ""
-set-variable $scroll-bar    &reg "/history" &cat %platform "/scroll-bar" "0"
+set-variable $file-ignore   &reg &spr "/history/%s/file-ignore" %platform ""
+set-variable $scroll-bar    &reg &spr "/history/%s/scroll-bar" %platform "0"
 set-variable %tag-file      "tags"
 set-variable %tag-template  "%[^\t]\t%[^\t]\t%[^\n]\n"
 set-variable .osd.tmp 40
 set-variable .osd.next &cond &exi .osd.next .osd.next &add .osd.tmp 1
-set-variable .expand-iso-accents.on &reg "/history" "expaccent" "0"
-set-variable .expand-look-back.on &reg "/history" "explookbk" "1"
-set-variable .expand-word.on &reg "/history" "expword" "0"
+set-variable .expand-iso-accents.on &reg "/history/expaccent" "0"
+set-variable .expand-look-back.on &reg "/history/explookbk" "1"
+set-variable .expand-word.on &reg "/history/expword" "0"
 ;
 ; File hooks - define default & reset the file hook list first
 define-macro-file hkdefault fhook-default
@@ -315,10 +315,10 @@ add-file-hook ".rb"                                           fhook-ruby
 -1 add-file-hook "-!-[ \t]*asmx86.*-!-"          fhook-asmx86 ; -!- asmx86 -!-
 -1 add-file-hook "-!-[ \t]*text.*-!-"            fhook-txt    ; -!- text -!-
 -1 add-file-hook "-!-[ \t]*msvb.*-!-"            fhook-vb     ; -!- msvb -!-
-!if &set #l0 &reg "/history" &cat %platform "/frame-width" "0"
+!if &set #l0 &reg &spr "/history/%s/frame-width" %platform "0"
     change-frame-width #l0
 !endif
-!if &set #l0 &reg "/history" &cat %platform "/frame-depth" "0"
+!if &set #l0 &reg &spr "/history/%s/frame-depth" %platform "0"
     change-frame-depth #l0
 !endif
 ; Initialize the top menu line
@@ -341,32 +341,32 @@ osd 0  75  "fh" " "
 osd 0  80  "Mdfsh" "\HWindow  "  8
 osd 0  85  "fh" " "
 osd 0  90  "Mdfsr" "\HHelp "     9
-osd -1 &cond &reg "/history" "main-menu" "1" "1" "-1"
+osd -1 &cond &reg "/history/main-menu" "1" "1" "-1"
 ; Load in the mouse handling routines if required
 !if &band $mouse 0x10
     !force exec-file "mouse"
 !endif
 ; setup the toolbar
-!if &reg "/history" &cat %platform "/toolbar" "0"
+!if &reg &spr "/history/%s/toolbar" %platform "0"
     toolbar
 !endif
 ; load in the platform specific stuff if found
 !force exec-file $platform
 ; execute any emulation file, e.g. Emacs etc
-!if &not &seq &set #l0 &reg "/history" "emulate" "" ""
+!if &not &seq &set #l0 &reg "/history/emulate" "" ""
     set-variable %emulate #l0
     !force execute-file &cat "me" #l0
 !endif
 ; load ftp/http registry file
-!if &not &seq &set #l0 &reg "/history" "url-file" "" ""
+!if &not &seq &set #l0 &reg "/history/url-file" "" ""
     read-registry "/url" #l0 "y" 
 !endif
 ; execute company setup
-!if &not &seq &set #l0 &reg "/history" "company" "" ""
+!if &not &seq &set #l0 &reg "/history/company" "" ""
     !force exec-file #l0
 !endif
 ; excute own setup
-!if &not &seq &set #l0 &reg "/history" "setup-file" "" ""
+!if &not &seq &set #l0 &reg "/history/setup-file" "" ""
     !force exec-file #l0
 !endif
 ; Setup the Client Server
@@ -382,7 +382,7 @@ osd -1 &cond &reg "/history" "main-menu" "1" "1" "-1"
 !endif
 ; chaeck-mail setup - delay the first check by a minute to allow for
 ; initial setup to complete
-!if &reg "/history" &cat $platform "/mail-check" "0"
+!if &reg &spr "/history/%s/mail-check" $platform "0"
     60000 create-callback mail-check
 !endif
 

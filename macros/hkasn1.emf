@@ -18,7 +18,7 @@ define-macro fhook-asn1
 !emacro
 
 ; buffer-setup flags - note the indentation is not very good so don't enable by default
-set-variable .fhook-asn1.setup &reg "/history" "fhook/asn1" "bghinopx"
+set-variable .fhook-asn1.setup &reg "/history/fhook/asn1" "bghinopx"
 set-variable .fhook-asn1.setup-mask "aebdghikmnoptux"
 set-variable .fhook-asn1.comment "|--||=|-- | --|r|"
 

@@ -17,7 +17,7 @@ define-macro fhook-psf
 !emacro
 
 ; buffer-setup flags
-set-variable .fhook-psf.setup &reg "/history" "fhook/psf" "bdghinopx"
+set-variable .fhook-psf.setup &reg "/history/fhook/psf" "bdghinopx"
 set-variable .fhook-psf.setup-mask "aebdghikmnoptux"
 set-variable .fhook-psf.comment "|#||#|# | #||"
 ; Hilighting

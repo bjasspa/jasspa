@@ -78,7 +78,7 @@
         !done
     !endif
     ; Change the user name $USER_NAME$.
-    set-variable #l1 &reg "/history" "user-name" "<unknown>"
+    set-variable #l1 &reg "/history/user-name" "<unknown>"
     set-variable $window-line #l8
     !force #l7 replace-string "\\$USER_NAME\\$" #l1
     ; Change to the company name $COMPANY_NAME$.

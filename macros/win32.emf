@@ -33,11 +33,11 @@
     ; using a console interface
 !else
     ; using our own window
-    set-variable #l0 &reg "/history" &cat $platform "/font" ""
+    set-variable #l0 &reg &spr "/history/%s/font" $platform ""
     set-variable #l1 .change-font.type
-    set-variable #l2 &reg "/history" &cat $platform "/font-weight" "0"
-    set-variable #l3 &reg "/history" &cat $platform "/font-width" "0"
-    set-variable #l4 &reg "/history" &cat $platform "/font-depth" "0"
+    set-variable #l2 &reg &spr "/history/%s/font-weight" $platform "0"
+    set-variable #l3 &reg &spr "/history/%s/font-width" $platform "0"
+    set-variable #l4 &reg &spr "/history/%s/font-depth" $platform "0"
     1 change-font #l0 #l1 #l2 #l3 #l4
 !endif
 0 define-macro exec-me

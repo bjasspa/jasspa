@@ -21,7 +21,7 @@ define-macro fhook-ini
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-ini.setup &reg "/history" "fhook/ini" "fghiopx"
+set-variable .fhook-ini.setup &reg "/history/fhook/ini" "fghiopx"
 set-variable .fhook-ini.setup-mask "aefghikmoptux"
 set-variable .fhook-ini.comment "|;||;|; | ;|r|"
 

@@ -663,9 +663,9 @@ hilight .hilight.vmhl 0x40 "." ""                 $global-scheme
         set-variable #p0 ""
         !return
     !endif
-    set-variable #l4 &reg "/history" "mail/archive/field" "\b\b"
-    set-variable #l5 &reg "/history" "mail/archive/match" "\b\b"
-    set-variable #l6 &reg "/history" "mail/archive/box"   "\b\b"
+    set-variable #l4 &reg "/history/mail/archive/field" "\b\b"
+    set-variable #l5 &reg "/history/mail/archive/match" "\b\b"
+    set-variable #l6 &reg "/history/mail/archive/box"   "\b\b"
     set-variable #l0 0
     !while &not &seq &set #l1 &lget #l5 &inc #l0 1 ""
         set-variable #l2 &cat "%vm-" &lget #l4 #l0
@@ -1273,7 +1273,7 @@ define-macro-file htmltool html-to-ehf
             set-variable #l9 "uuencode"
         !endif
     !endif
-    set-variable #l9 &reg "/history/" &spr "%s/mail-%s" $platform #l9 ""
+    set-variable #l9 &reg &spr "/history/%s/mail-%s" $platform #l9 ""
     !if &sin "%i" #l9
         set-variable #l4 $temp-name
     !else
@@ -1356,17 +1356,17 @@ define-macro-file htmltool html-to-ehf
 !emacro
 
 define-macro vm
-    !if &seq &set %vm-mail-dir &reg "/history" &cat $platform "/mail-dir" "" ""
+    !if &seq &set %vm-mail-dir &reg &spr "/history/%s/mail-dir" $platform "" ""
         ml-write "[Mail directory not setup! Use Help/User setup]"
         !bell
         !abort
     !endif
-    !if &seq &set %vm-mail-src &reg "/history" &cat $platform "/mail-src" "" ""
+    !if &seq &set %vm-mail-src &reg &spr "/history/%s/mail-src" $platform "" ""
         ml-write "[Incoming mail file not setup! Use Help/User setup]"
         !bell
         !abort
     !endif
-    !if &seq &set %vm-mail-box &reg "/history" "mail/box" "" ""
+    !if &seq &set %vm-mail-box &reg "/history/mail/box" "" ""
         ml-write "[Main mail box not setup! Use Help/User setup]"
         !bell
         !abort
@@ -1377,7 +1377,7 @@ define-macro vm
         !bell
         !abort
     !endif
-    !if &reg "/history" &cat $platform "/mail-vmget" "1"
+    !if &reg &spr "/history/%s/mail-vmget" $platform "1"
         end-of-buffer
         !force 0 mail-check
         !if $status

@@ -21,23 +21,24 @@
     !if &lget "|1|1|1|1|1|1|0|0|1|" &abs @#
         set-variable #l2 &spr "%s/%s" $platform #l2
     !endif
+    set-variable #l2 &cat "/print-history/" #l2
     !if &les @# 0
-        set-variable #l0 &reg "/print-history" #l2 #l0
+        set-variable #l0 &reg #l2 #l0
         set-variable #l0 @ml2 "" #l0
-        set-registry "/print-history" #l2 #l0
-        set-registry "/print" "setup" 0
+        set-registry #l2 #l0
+        set-registry "/print/setup" 0
         mark-registry "/print-history" "u"
         set-variable .print-setup-display-page-size.recalc 1
     !else
-        set-variable $result &reg "/print-history" #l2 #l0
+        set-variable $result &reg #l2 #l0
     !endif
 !emacro
 0 define-macro print-setup-set-flag
-    set-variable #l0 &reg "/print-history" &cat $platform "/flags" 0
+    set-variable #l0 &reg &spr "/print-history/%s/flags" $platform 0
     !if &les @# 0
         set-variable #l0 &bxor #l0 &abs @#
-        set-registry "/print-history" &cat $platform "/flags" #l0
-        set-registry "/print" "setup" 0
+        set-registry &spr "/print-history/%s/flags" $platform #l0
+        set-registry "/print/setup" 0
         mark-registry "/print-history" "u"
         set-variable .print-setup-display-page-size.recalc 1
     !elif &not &band #l0 @#
@@ -47,7 +48,7 @@
 
 0 define-macro print-setup-set-driver
     !if @?
-        set-variable #l0 &reg "/print-history" &cat $platform "/driver" ""
+        set-variable #l0 &reg &spr "/print-history/%s/driver" $platform ""
         set-variable #l1 &lget .print-setup.driver-files @#
         !if &seq #l0 #l1
             !return
@@ -56,19 +57,19 @@
             osd-dialog "Print Setup" &spr "Error: Failed to find print driver \"%s.erf\"" #l1 "  \HOK  "
             !return
         !endif
-        set-registry "/print-history" &cat $platform "/driver" #l1
-        set-registry "/print" "setup" 0
+        set-registry &spr "/print-history/%s/driver" $platform #l1
+        set-registry "/print/setup" 0
         mark-registry "/print-history" "u"
         ; must load this driver in to /print for the layout info - delete the old print driver first
         !force read-registry "print" #l2 "r"
-        set-registry "/" "print" #l1
+        set-registry "/print" #l1
         ; Now reset the registry
-        set-variable .print-setup.inter &reg "/print" "internal" "0"
+        set-variable .print-setup.inter &reg "/print/internal" "0"
         print-setup-set-dest
         1 print-setup-set-page-size
     !else
-        set-variable @# &lfind .print-setup.driver-files &reg "/print-history" &cat $platform "/driver" &lget .print-setup.driver-files 1
-        set-variable .print-setup.inter &reg "/print" "internal" "0"
+        set-variable @# &lfind .print-setup.driver-files &reg &spr "/print-history/%s/driver" $platform &lget .print-setup.driver-files 1
+        set-variable .print-setup.inter &reg "/print/internal" "0"
     !endif
     set-variable #l1 &lget .print-setup.driver-names @#
     osd .osd.prtstp-prt 30 "MdtxmsfHz" .scheme.osd-entry 23 1 #l1 .osd.tmp print-setup-setup-driver
@@ -98,14 +99,14 @@
 
 0 define-macro print-setup-set-dest
     !if @?
-        !if &equ &reg "/print-history" &cat $platform "/dest" "0" @#
+        !if &equ &reg &spr "/print-history/%s/dest" $platform "0" @#
             !return
         !endif
-        set-registry "/print-history" &cat $platform "/dest" @#
-        set-registry "/print" "setup" 0
+        set-registry &spr "/print-history/%s/dest" $platform @#
+        set-registry "/print/setup" 0
         mark-registry "/print-history" "u"
     !else
-        set-variable @# &reg "/print-history" &cat $platform "/dest" "0"
+        set-variable @# &reg &spr "/print-history/%s/dest" $platform "0"
         !if .print-setup.inter
             !if &equ @# 3
                 0 print-setup-set-dest
@@ -132,17 +133,17 @@
 
 0 define-macro print-setup-set-scheme
     !if @?
-        set-variable #l0 &reg "/print-history" &cat $platform "/scheme" ""
+        set-variable #l0 &reg &spr "/print-history/%s/scheme" $platform ""
         set-variable #l1 &lget .print-setup.scheme-files @#
         !if &seq #l0 #l1
             !return
         !endif
-        set-registry "/print-history" &cat $platform "/scheme" #l1
-        set-registry "/print" "setup" 0
+        set-registry &spr "/print-history/%s/scheme" $platform #l1
+        set-registry "/print/setup" 0
         mark-registry "/print-history" "u"
         set-variable #l1 &lget .print-setup.scheme-names @#
     !else
-        set-variable #l1 &lget .print-setup.scheme-names &lfind .print-setup.scheme-files &reg "/print-history" &cat $platform "/scheme" &lget .print-setup.scheme-files 1
+        set-variable #l1 &lget .print-setup.scheme-names &lfind .print-setup.scheme-files &reg &spr "/print-history/%s/scheme" $platform &lget .print-setup.scheme-files 1
     !endif
     osd .osd.prtstp-prt 60 "MdtxmsfhHz" .scheme.osd-entry 23 1 #l1 .osd.tmp print-setup-setup-scheme
 !emacro
@@ -158,18 +159,18 @@
 0 define-macro print-setup-setup-page
     !force -2 print-buffer
     !if $status
-        set-registry "/print-history" &cat $platform "/rows" &reg "/print" "rows" ""
-        set-registry "/print-history" &cat $platform "/cols" &reg "/print" "cols" ""
-        set-registry "/print-history" &cat $platform "/flags" &reg "/print" "flags" ""
-        set-registry "/print-history" &cat $platform "/page-x" &reg "/print" "page-x" ""
-        set-registry "/print-history" &cat $platform "/page-y" &reg "/print" "page-y" ""
-        set-registry "/print-history" &cat $platform "/specifier-x" &reg "/print" "specifier-x" ""
-        set-registry "/print-history" &cat $platform "/specifier-y" &reg "/print" "specifier-y" ""
+        set-registry &spr "/print-history/%s/rows" $platform &reg "/print/rows" ""
+        set-registry &spr "/print-history/%s/cols" $platform &reg "/print/cols" ""
+        set-registry &spr "/print-history/%s/flags" $platform &reg "/print/flags" ""
+        set-registry &spr "/print-history/%s/page-x" $platform &reg "/print/page-x" ""
+        set-registry &spr "/print-history/%s/page-y" $platform &reg "/print/page-y" ""
+        set-registry &spr "/print-history/%s/specifier-x" $platform &reg "/print/specifier-x" ""
+        set-registry &spr "/print-history/%s/specifier-y" $platform &reg "/print/specifier-y" ""
         ; Windows specific ones
-        set-registry "/print-history" &cat $platform "/win-default" &reg "/print" "win-default" ""
-        set-registry "/print-history" &cat $platform "/win-device" &reg "/print" "win-device" ""
-        set-registry "/print-history" &cat $platform "/win-driver" &reg "/print" "win-driver" ""
-        set-registry "/print-history" &cat $platform "/win-port" &reg "/print" "win-port" ""
+        set-registry &spr "/print-history/%s/win-default" $platform &reg "/print/win-default" ""
+        set-registry &spr "/print-history/%s/win-device" $platform &reg "/print/win-device" ""
+        set-registry &spr "/print-history/%s/win-driver" $platform &reg "/print/win-driver" ""
+        set-registry &spr "/print-history/%s/win-port" $platform &reg "/print/win-port" ""
         mark-registry "/print-history" "u"
         !force delete-registry "/print/paper-x"
         !force delete-registry "/print/paper-y"
@@ -181,12 +182,12 @@
     !if @?
         find-registry "/print/layout" &sub &abs @# 1
         set-variable #l1 $result
-        set-registry "/print-history" &cat $platform "/page-size" #l1
-        set-registry "/print" "setup" 0
+        set-registry &spr "/print-history/%s/page-size" $platform #l1
+        set-registry "/print/setup" 0
         mark-registry "/print-history" "u"
         1 print-setup-set-char-size
     !else
-        set-variable #l1 &reg "/print-history" &cat $platform "/page-size" ""
+        set-variable #l1 &reg &spr "/print-history/%s/page-size" $platform ""
     !endif
     !if .print-setup.inter
         osd .osd.prtstp-pag 30 "sfHz" .scheme.osd-entry 23 1 #l1
@@ -213,18 +214,18 @@
 
 0 define-macro print-setup-set-char-size
     !if @?
-        find-registry &cat "/print/layout/" &reg "/print-history" &cat $platform "/page-size" "" &sub &abs @# 1
+        find-registry &cat "/print/layout/" &reg &spr "/print-history/%s/page-size" $platform "" &sub &abs @# 1
         set-variable #l1 $result
-        set-registry "/print-history" &cat $platform "/char-size" #l1
+        set-registry &spr "/print-history/%s/char-size" $platform #l1
         !if &not .print-setup.inter
             !force delete-registry &spr "/print-history/%s/page-x" $platform
             !force delete-registry &spr "/print-history/%s/page-y" $platform
         !endif
         mark-registry "/print-history" "u"
-        set-registry "/print" "setup" 0
+        set-registry "/print/setup" 0
         set-variable .print-setup-display-page-size.recalc 1
     !else
-        set-variable #l1 &reg "/print-history" &cat $platform "/char-size" ""
+        set-variable #l1 &reg &spr "/print-history/%s/char-size" $platform ""
     !endif
     !if &not .print-setup.inter
         osd .osd.prtstp-pag 60 "MdtxmsfHzR" .scheme.osd-entry 23 1 #l1 .osd.tmp print-setup-setup-char-size
@@ -233,7 +234,7 @@
 0 define-macro print-setup-setup-char-size
     -1 osd .osd.tmp
     osd .osd.tmp 0 "bs" 22 0 0 0
-    set-variable #l2 &cat "/print/layout/" &reg "/print-history" &cat $platform "/page-size" ""
+    set-variable #l2 &cat "/print/layout/" &reg &spr "/print-history/%s/page-size" $platform ""
     set-variable #l0 0
     !repeat
         !force find-registry #l2 &pinc #l0 1
@@ -251,9 +252,9 @@
 0 define-macro print-setup-display-page-size
     !if .recalc
         -1 print-buffer
-        set-variable .value &lset .value 1 &spr "%dx%d %dx%d" &reg "/print-history" &spr "%s/cols" $platform 1 &reg "/print-history" &spr "%s/rows" $platform 1 &reg "/print" "page-x" "0" &reg "/print" "page-y" "0"
+        set-variable .value &lset .value 1 &spr "%dx%d %dx%d" &reg &spr "/print-history/%s/cols" $platform 1 &reg &spr "/print-history/%s/rows" $platform 1 &reg "/print/page-x" "0" &reg "/print/page-y" "0"
         !if .print-setup.inter
-            set-variable .value &lset .value 2 &spr "%dx%d" &reg "/print" "paper-x" "0" &reg "/print" "paper-y" "0"
+            set-variable .value &lset .value 2 &spr "%dx%d" &reg "/print/paper-x" "0" &reg "/print/paper-y" "0"
             !force delete-registry "/print/paper-x"
             !force delete-registry "/print/paper-y"
         !else
@@ -273,7 +274,7 @@ osd .osd.prtstp-prt  10 ""
 osd .osd.prtstp-prt  20 "Sfh" "  \HDriver:        " 30
 osd .osd.prtstp-prt  40 ""
 osd .osd.prtstp-prt  50 "Shf" "  Print \HScheme:  " 60
-osd .osd.prtstp-prt  70 "BtHcfix" .scheme.osd-ebtt " \HEdit "  f "scheme-editor &reg \"/print-history\" &cat $platform \"/scheme\" \"printd\""
+osd .osd.prtstp-prt  70 "BtHcfix" .scheme.osd-ebtt " \HEdit "  f &spr "scheme-editor &reg \"/print-history/%s/scheme\" \"printd\"" $platform
 osd .osd.prtstp-prt  80 ""
 osd .osd.prtstp-prt  90 "Shf" "  D\Hestination:   " 100
 osd .osd.prtstp-prt 110 ""
@@ -340,19 +341,19 @@ osd .osd.prtstp 120 "BtHcf"  .scheme.osd-ebtt " E\Hxit "  1 void
 
 define-macro print-setup
     !force exec-file "print"
-    !if &not &reg "/" "print/setup" "0"
+    !if &not &reg "/print/setup" "0"
         ; attempt to fix the print registry
         0 ml-write
-        set-registry "/" "print-history" "print"
+        set-registry "/print-history" "print"
         mark-registry "/print-history" "fau"
-        set-registry "/print-history" &cat $platform "/driver" "printd"
-        set-registry "/print-history" &cat $platform "/scheme" "printd"
-        set-registry "/print-history" &cat $platform "/page-size" "Default"
-        set-registry "/print-history" &cat $platform "/char-size" "Default"
+        set-registry &spr "/print-history/%s/driver" $platform "printd"
+        set-registry &spr "/print-history/%s/scheme" $platform "printd"
+        set-registry &spr "/print-history/%s/page-size" $platform "Default"
+        set-registry &spr "/print-history/%s/char-size" $platform "Default"
         !force exec-file "print"
     !endif
     ; make print.erf a user reg file
-    set-registry "/" "print-history" &cat $user-path "myprint.erf"
+    set-registry "/print-history" &cat $user-path "myprint.erf"
     print-setup-set-driver
     print-setup-set-scheme
     print-setup-set-dest

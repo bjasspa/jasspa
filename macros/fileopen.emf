@@ -307,8 +307,8 @@ osd .osd.fom 6  "It" .osd.fobm
     !endif
     osd-fo-dirlist
     !if &seq .file-type ""
-        set-variable .file-type &cat "\bAll files" &reg "/history" "file-type" "\b"
-        set-variable .file-mask &cat "\b*" &reg "/history" "file-mask" "\b"
+        set-variable .file-type &cat "\bAll files" &reg "/history/file-type" "\b"
+        set-variable .file-mask &cat "\b*" &reg "/history/file-mask" "\b"
     !endif
     -1 osd .osd.foft
     osd .osd.foft 0 "bs" -1 0 22 0 

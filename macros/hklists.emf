@@ -18,7 +18,7 @@ define-macro fhook-lists
 
 ; buffer-init variables
 set-variable .fhook-lists.name "ME List"
-set-variable .fhook-lists.setup &reg "/history" "fhook/lists" "ghop"
+set-variable .fhook-lists.setup &reg "/history/fhook/lists" "ghop"
 set-variable .fhook-lists.setup-mask "aeghop"
 set-variable .fhook-lists.command-flag  "|thbio|"
 set-variable .fhook-lists.command-name  "|lists-find-link|"

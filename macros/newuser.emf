@@ -48,11 +48,11 @@
         insert-string &spr "ERROR: Registry file \"%s\" already exists.\nIt should be deleted and re-created.\n" #l1
         !abort
     !endif
-    !force set-registry "" "history" #l1
-    set-registry "/history" "user-name" .newuser.fullname
-    set-registry "/history" "setup-file" .newuser.setup-file
+    !force set-registry "/history" #l1
+    set-registry "/history/user-name" .newuser.fullname
+    set-registry "/history/setup-file" .newuser.setup-file
     !if &exi .newuser.company
-        set-registry "/history" "company" .newuser.company
+        set-registry "/history/company" .newuser.company
     !endif
     !force save-history #l1
     !if &not $status
@@ -310,7 +310,7 @@
     !done
     insert-string &spr "User setup file: %s.emf\n\n" .newuser.setup-file 
     
-    set-variable #l1 &reg "/history" "company" "company"
+    set-variable #l1 &reg "/history/company" "company"
     insert-string &spr "Looking for company file \"%s.emf\" ... " #l1
     !if &seq &find #l1 ".emf" "ERROR"
         insert-string "[NOT FOUND]\n"
@@ -331,7 +331,7 @@
             2 screen-update
             set-variable .newuser.company @ml1 "Company file" #l1
             insert-string &spr "[%s]\n" .newuser.company
-            set-registry "/history" "company" .newuser.company
+            set-registry "/history/company" .newuser.company
             !if &seq &find .newuser.company ".emf" "ERROR"
                 ; Create a basic company file.
                 insert-string "Enter formal company name as will appear in copyright statements.\n"

@@ -19,7 +19,7 @@ define-macro fhook-phps
 
 ; buffer-init variables
 set-variable .fhook-phps.name "PHP Script"
-set-variable .fhook-phps.setup &reg "/history" "fhook/phps" "bdfghinopx"
+set-variable .fhook-phps.setup &reg "/history/fhook/phps" "bdfghinopx"
 set-variable .fhook-phps.setup-mask "abdefghikmnoptux"
 set-variable .fhook-phps.comment "|//||/|// | //|r|"
 

@@ -152,7 +152,7 @@ define-macro execute-tool
             set-variable #l9 @ml "Tool name"
         !endif
     !endif
-    !if &seq "" &set #l1 &reg "/history" &spr "%s/tool/%s/command" $platform #l9 ""
+    !if &seq "" &set #l1 &reg &spr "/history/%s/tool/%s/command" $platform #l9 ""
         ml-write "[No command-line set]"
         !abort
     !endif
@@ -191,7 +191,7 @@ define-macro execute-tool
         set-variable #l1 &rep #l1 "%fb" #l5
         set-variable #l1 &rep #l1 "%fe" #l6
     !endif
-    set-variable #l0 &reg "/history" &spr "%s/tool/%s/flag" $platform #l9 0x1a
+    set-variable #l0 &reg &spr "/history/%s/tool/%s/flag" $platform #l9 0x1a
     !if &and &bmod "edit" &band #l0 0x01
         !if &band #l0 0x02
             !if &iseq @mc1 "Save buffer first [y/n]? " "nNyY" "y"
@@ -204,7 +204,7 @@ define-macro execute-tool
     !if &band #l0 0x04
         &cond &band #l0 0x08 1 0 save-some-buffers @mna
     !endif
-    !if &seq "" &set #l2 &reg "/history" &spr "%s/tool/%s/bname" $platform #l9 ""
+    !if &seq "" &set #l2 &reg &spr "/history/%s/tool/%s/bname" $platform #l9 ""
         set-variable #l3 1
     !else
         set-variable #l3 0

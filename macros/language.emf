@@ -28,7 +28,7 @@
 !endif
 
 ; set up MicroEmacs for the users language
-set-variable #l0 &reg "/history" "language" ""
+set-variable #l0 &reg "/history/language" ""
 !if &seq #l0 ""
 !elif &seq #l0 "Default"
 !elif &seq #l0 "American"

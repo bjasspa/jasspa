@@ -12,7 +12,7 @@
     exec-file osd
 !endif
 0 define-macro-file osdmisc osd-line-scheme
-!if &reg "/history" "find-buffer" "0"
+!if &reg "/history/find-buffer" "0"
     !if &not &exi .osd.find-buffer
         set-variable .osd.find-buffer &pinc .osd.next 1
         0 define-macro-file findbuff osd-find-buffer
@@ -20,8 +20,8 @@
 !endif
 ;
 0 define-macro store-frame-size
-    set-registry "/history" &cat %platform "/frame-width" $frame-width 
-    set-registry "/history" &cat %platform "/frame-depth" $frame-depth 
+    set-registry &spr "/history/%s/frame-width" %platform $frame-width 
+    set-registry &spr "/history/%s/frame-depth" %platform $frame-depth 
 !emacro
 ; MENU #23 - MODE LINE pop-up menu
 ; The mode line pop-up menu is invoked when the mouse is right clicked
@@ -142,7 +142,7 @@ define-macro context-menu
     goto-position "\x82"
     osd 27 70 "M" "Sort \HLines"      28
     osd 27 90 "M" "H\Hilight Line"    .osd.tmp osd-line-scheme
-    !if &reg "/history" "find-buffer" "0"
+    !if &reg "/history/find-buffer" "0"
         osd 27 150 "M" "\HBuffer"      .osd.find-buffer osd-find-buffer
     !else    
         osd 27 150 "M" "\HBuffer"      20 osd-1-buffer   ; Set up the buffers

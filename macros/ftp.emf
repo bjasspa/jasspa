@@ -27,7 +27,7 @@ define-macro ftp
 !if &not &exi .osd.ftp
     set-variable .osd.ftp &pinc .osd.next 1
     set-variable .ftp.name ""
-    set-variable %ftp-flags &reg  "/" "url/ftp-flags" "csp"
+    set-variable %ftp-flags &reg "/url/ftp-flags" "csp"
 !endif
 
 define-macro ftp-connect
@@ -160,7 +160,7 @@ define-macro ftp-connect
 
 0 define-macro ftp-regfile-entry
     !if &les @# 0
-        set-variable #l2 &reg "/history" "url-file" ""
+        set-variable #l2 &reg "/history/url-file" ""
         set-variable #l0 @ml2 "" #l2
         !if &seq #l0 #l2
             !return
@@ -168,7 +168,7 @@ define-macro ftp-connect
         !if &seq #l0 ""
             ; user has removed the file name
             delete-registry "/history/url-file"
-            set-registry "/" "url" ""
+            set-registry "/url" ""
             mark-registry "/url" "F"
             !return
         !endif
@@ -218,7 +218,7 @@ define-macro ftp-connect
         !else
             ; new file does not exist, write it now to create it and change the
             ; current file to the new name
-            set-registry "/" "url" #l1
+            set-registry "/url" #l1
             mark-registry "/url" "fyb"
             !force save-registry "/url" #l1 @mna
         !endif
@@ -226,11 +226,11 @@ define-macro ftp-connect
         !if &seq &find #l0 ".erf" #l1
             set-variable #l1 #l0
         !endif
-        set-registry "/history" "url-file" #l1
+        set-registry "/history/url-file" #l1
         ; force an osd update
         -1 osd
     !else
-        set-variable $result &reg "/history" "url-file" ""
+        set-variable $result &reg "/history/url-file" ""
     !endif
 !emacro
 
@@ -238,7 +238,7 @@ define-macro ftp-connect
     set-variable #l0 &sin "s" %ftp-flags
     !if &les @# 0
         set-variable %ftp-flags &cond #l0 "cp" "csp"
-        set-registry "/url" "ftp-flags" %ftp-flags
+        set-registry "/url/ftp-flags" %ftp-flags
         mark-registry "/url" "u"
         previous-window
         ftp-create-layout
@@ -254,12 +254,12 @@ define-macro ftp-connect
     !if &not &seq #l0 ""
         !force find-registry "/url/ftp" 0
         !if &not $status
-            set-registry "/" "url/ftp" ""
+            set-registry "/url/ftp" ""
         !endif
         !force find-registry &cat "/url/ftp" #l0 0
         !if &not $status
-            set-registry "/url/ftp" #l0 ""
-            set-registry "/url/ftp" &cat #l0 "/path" "/"
+            set-registry &cat "/url/ftp" #l0 ""
+            set-registry &spr "/url/ftp/%s/path" #l0 "/"
             mark-registry "/url" "u"
         !endif
     !endif
@@ -268,7 +268,7 @@ define-macro ftp-connect
 0 define-macro ftp-data-entry-setup
     ; if we have just changed the name or host,
     ; should the user/pass/path be enabled/disabled
-    !if &seq &reg "/url/ftp" &cat .ftp.name "/host" "" ""
+    !if &seq &reg &spr "/url/ftp/%s/host" .ftp.name "" ""
         osd .osd.ftp 100 "Shf" "  User Name"
         osd .osd.ftp 101 "Sf" "        Password"
         osd .osd.ftp 110 "SExHhf" .scheme.osd-entry "#############"
@@ -313,7 +313,7 @@ define-macro ftp-connect
     !elif &equ #l3 4
         set-variable #l1 "************"
     !else
-        set-variable #l1 &reg "/url/ftp" &spr "%s/%s" .ftp.name #l2 ""
+        set-variable #l1 &reg &spr "/url/ftp/%s/%s" .ftp.name #l2 ""
     !endif
     !if &les @# 0
         !if &equ #l3 4
@@ -363,7 +363,7 @@ define-macro ftp-connect
             !if &seq #l0 ""
                 delete-registry "/url" &spr "ftp/%s/%s" .ftp.name #l2
             !else
-                set-registry "/url" &spr "ftp/%s/%s" .ftp.name #l2 #l0
+                set-registry &spr "/url/ftp/%s/%s" .ftp.name #l2 #l0
                 !if &equ @# -4
                     mark-registry &spr "/url/ftp/%s/%s" .ftp.name #l2 "!"
                 !endif
@@ -380,7 +380,7 @@ define-macro ftp-connect
     !if &seq .ftp.name ""
         !abort
     !endif
-    set-variable #l0 &reg "/url/ftp" &cat .ftp.name "/path" "/"
+    set-variable #l0 &reg &spr "/url/ftp/%s/path" .ftp.name "/"
     find-file &spr "ftp://%s%s" .ftp.name #l0 @mna
     !if &not &seq $buffer-bname "*ftp-files*"
         set-variable #l1 $buffer-bname

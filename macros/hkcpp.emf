@@ -22,7 +22,7 @@ define-macro fhook-cpp
 
 ; buffer-init variables
 set-variable .fhook-cpp.name "C++"
-set-variable .fhook-cpp.setup &reg "/history" "fhook/cpp" "bdfghnopx"
+set-variable .fhook-cpp.setup &reg "/history/fhook/cpp" "bdfghnopx"
 set-variable .fhook-cpp.setup-mask "abdefghikmnoptux"
 set-variable .fhook-cpp.tags "ctags"
 

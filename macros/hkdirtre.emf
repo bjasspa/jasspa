@@ -18,7 +18,7 @@ define-macro fhook-dirtre
 
 ; buffer-init variables
 set-variable .fhook-dirtre.name "Directory Tree"
-set-variable .fhook-dirtre.setup &reg "/history" "fhook/dirtre" "ghmop"
+set-variable .fhook-dirtre.setup &reg "/history/fhook/dirtre" "ghmop"
 set-variable .fhook-dirtre.setup-mask "aeghop"
 set-variable .fhook-dirtre.command-flag  "|thbio|thbio|th|thbio|thbio|bio|thbio|thbio|bio|"
 set-variable .fhook-dirtre.command-name  "|file-browser-swap-buffers|file-browser-close||dirtre-select-directory|directory-tree|directory-tree|dirtre-select-directory|dirtre-select-directory|dirtre-select-directory|"

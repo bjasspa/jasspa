@@ -80,10 +80,10 @@ define-macro charset-user-to-iso
         ml-write "[Nothing to do!]"
         !return
     !endif
-    set-variable #l2 &reg "/history" &cat %platform "/char-set" ""
+    set-variable #l2 &reg &spr "/history/%s/char-set" %platform ""
     ; converter the <from> to iso
     !if &not &seq #l0 ""
-        set-registry "/history" &cat %platform "/char-set" #l0
+        set-registry &spr "/history/%s/char-set" %platform #l0
         !force !force exec-file "charset"
         !if &not $status
             !goto abort
@@ -95,7 +95,7 @@ define-macro charset-user-to-iso
     !endif
     ; convert iso to the <to>
     !if &not &seq #l1 ""
-        set-registry "/history" &cat %platform "/char-set" #l1
+        set-registry &spr "/history/%s/char-set" %platform #l1
         !force !force exec-file "charset"
         !if &not $status
             !goto abort
@@ -106,8 +106,8 @@ define-macro charset-user-to-iso
         !endif
     !endif
     ; is the charset different from when we start? if so change back
-    !if &not &seq #l2 &reg "/history" &cat %platform "/char-set" ""
-        set-registry "/history" &cat %platform "/char-set" #l2
+    !if &not &seq #l2 &reg &spr "/history/%s/char-set" %platform ""
+        set-registry &spr "/history/%s/char-set" %platform #l2
         !force !force exec-file "charset"
     !endif
     ; must also reset the language
@@ -115,8 +115,8 @@ define-macro charset-user-to-iso
     ml-write &spr "[buffer converted from \"%s\" to \"%s\" character set]" #l0 #l1
     !return
 *abort
-    !if &not &seq #l2 &reg "/history" &cat %platform "/char-set" ""
-        set-registry "/history" &cat %platform "/char-set" #l2
+    !if &not &seq #l2 &reg &spr "/history/%s/char-set" %platform ""
+        set-registry &spr "/history/%s/char-set" %platform #l2
         !force !force exec-file "charset"
     !endif
     ml-write "[Command Aborted!]"
@@ -164,7 +164,7 @@ osd .osd.charset 630 "BtcfH"  .scheme.osd-ebtt " E\Hxit  "   0 void
 
 ; Get a list of display char sets
 0 exec-file "charset"
-set-variable #l0 &lfind %charset-value &reg "/history" &cat %platform "/char-set" &lget %charset-value 1
+set-variable #l0 &lfind %charset-value &reg &spr "/history/%s/char-set" %platform &lget %charset-value 1
 #l0 charset-change-set
 &bor 0x10000 #l0 charset-change-set
 

@@ -22,7 +22,7 @@ define-macro reset-def
     !elif &seq $TERM "E80x25"
         reset-25
     !else    
-        change-font &reg "/history" &cat %platform "/font" "3" &reg "/history" &cat $platform "/font-dbl" "1"
+        change-font &reg &spr "/history/%s/font" %platform "3" &reg &spr "/history/%s/font-dbl" $platform "1"
     !endif
 !emacro
 global-bind-key reset-25  "C-c 2"

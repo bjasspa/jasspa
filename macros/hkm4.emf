@@ -14,7 +14,7 @@ define-macro fhook-m4
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-m4.setup &reg "/history" "fhook/m4" "ghinox"
+set-variable .fhook-m4.setup &reg "/history/fhook/m4" "ghinox"
 set-variable .fhook-m4.setup-mask "aeghikmnotux"
 set-variable .fhook-m4.comment "|#||#|# | #|r|"
 

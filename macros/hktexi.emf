@@ -16,7 +16,7 @@ define-macro fhook-texi
 
 ; buffer-init variables
 set-variable .fhook-texi.name "Texinfo"
-set-variable .fhook-texi.setup &reg "/history" "fhook/texi" "bghiopx"
+set-variable .fhook-texi.setup &reg "/history/fhook/texi" "bghiopx"
 set-variable .fhook-texi.setup-mask "abeghikmoptux"
 set-variable .fhook-texi.comment "|@c |||@c |||"
 

@@ -13,7 +13,7 @@ define-macro fhook-ada
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-ada.setup &reg "/history" "fhook/ada" "bghinopx"
+set-variable .fhook-ada.setup &reg "/history/fhook/ada" "bghinopx"
 set-variable .fhook-ada.setup-mask "abeghikmnoptux"
 set-variable .fhook-ada.comment "|{|}|*|* | *|fr|"
 set-variable .fhook-ada.exact -1

@@ -15,7 +15,7 @@ define-macro fhook-meta
 
 ; buffer-init variables
 set-variable .fhook-meta.name "MetaPost/Font"
-set-variable .fhook-meta.setup &reg "/history" "fhook/meta" "ghiopx"
+set-variable .fhook-meta.setup &reg "/history/fhook/meta" "ghiopx"
 set-variable .fhook-meta.setup-mask "aeghikmoptux"
 set-variable .fhook-meta.comment "|%||%|% | %||"
 

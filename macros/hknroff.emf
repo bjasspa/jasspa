@@ -15,7 +15,7 @@ define-macro fhook-nroff
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-nroff.setup &reg "/history" "fhook/nroff" "bfghijnopswx"
+set-variable .fhook-nroff.setup &reg "/history/fhook/nroff" "bfghijnopswx"
 set-variable .fhook-nroff.setup-mask "abefghijkmnopstuwx"
 set-variable .fhook-nroff.tags "ntags"
 set-variable .fhook-nroff.comment "|.\\\"||*|.\\\" | \"\\||"

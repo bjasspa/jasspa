@@ -14,7 +14,7 @@ define-macro fhook-dos
 
 ; buffer-init variables
 set-variable .fhook-dos.name "DOS Batch"
-set-variable .fhook-dos.setup &reg "/history" "fhook/dos" "ghiopx"
+set-variable .fhook-dos.setup &reg "/history/fhook/dos" "ghiopx"
 set-variable .fhook-dos.setup-mask "aeghikmoptux"
 set-variable .fhook-dos.comment "|rem |||rem ||r|"
 set-variable .fhook-dos.exact -1

@@ -15,7 +15,7 @@ define-macro fhook-cobol
 
 ; buffer-init variables
 set-variable .fhook-cobol.name "Cobol-85"
-set-variable .fhook-cobol.setup &reg "/history" "fhook/cobol" "bghinopx"
+set-variable .fhook-cobol.setup &reg "/history/fhook/cobol" "bghinopx"
 set-variable .fhook-cobol.setup-mask "aebghikmnoptux"
 set-variable .fhook-cobol.comment "|*||*|* | *|r|"
 set-variable .fhook-cobol.exact -1

@@ -2637,7 +2637,7 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
     case UFREGISTRY:
         {
             meRegNode *reg;
-            meUByte *p = arg3;
+            meUByte *p = arg2;
             /*
              * Read a value from the registry.
              * 
@@ -2647,8 +2647,7 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
              * 
              * If the node cannot be found then return the result.
              */
-            if (((reg = regFind (NULL, arg1)) != NULL) &&
-                ((reg = regFind (reg,  arg2)) != NULL))
+            if((reg = regFind (NULL, arg1)) != NULL)
                 p = regGetString (reg, p) ;
             /* Set up the result string */
             if (p == NULL)

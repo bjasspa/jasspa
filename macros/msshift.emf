@@ -48,7 +48,7 @@
     !elif &set #l0 &sin "mouse-pick-" @cck
         set-variable #l0 &spr "%s-drop-%s" &lef @cck &add #l0 4 &rig @cck &add #l0 10
         !if &seq "mouse-event" @cc
-            set-variable #l1 &sin "yank" &reg "history/mouse" #l0 ""
+            set-variable #l1 &sin "yank" &reg &cat "/history/mouse/" #l0 ""
         !else &not &set #l1 &sin "yank" @cc
             set-variable #l1 &sin "yank" &cbind #l0
         !endif

@@ -51,11 +51,11 @@ set-variable %emulate-value "||emacs|cua|me3_8|nedit|"
     osd-dialog "User Setup" "  The User Path cannot be change by user-setup\n\n  See help page for $user-path for information  \n        on how to change your user path" "  \HOK  "
 !emacro
 0 define-macro user-set-entry
-    set-variable #l2 &lget "|user-name|company|emulate|setup-file|organizer|spell/default|mail/sig|mail/fcc|mail/box|autosv|" &abs @#
+    set-variable #l2 &cat "/history/" &lget "|user-name|company|emulate|setup-file|organizer|spell/default|mail/sig|mail/fcc|mail/box|autosv|" &abs @#
     set-variable #l0 &lget "|-1||||-1|-1||||300|" &abs @#
     set-variable #l0 &cond &equ #l0 -1 $user-name #l0
     !if &les @# 0
-        set-variable #l0 &reg "/history" #l2 #l0
+        set-variable #l0 &reg #l2 #l0
         set-variable #l0 @ml2 "" #l0
         !if &lget "|0|1|1|1|1|1|0|0|0|" &abs @#
             ; me file name entered remove the .e?f extension, if found must force an osd update
@@ -64,53 +64,53 @@ set-variable %emulate-value "||emacs|cua|me3_8|nedit|"
                 -1 osd
             !endif
         !endif
-        set-registry "/history" #l2 #l0
+        set-registry #l2 #l0
     !else
-        set-variable $result &reg "/history" #l2 #l0
+        set-variable $result &reg #l2 #l0
     !endif
 !emacro
 
 0 define-macro user-set-pfentry
-    set-variable #l2 &cat $platform &lget "|/mail-send|/mail-insert1|/mail-insert2|/mail-base64|/mail-uuencode|/mail-check|/mail-get|" &abs @#
+    set-variable #l2 &spr "/history/%s/%s" $platform &lget "|mail-send|mail-insert1|mail-insert2|mail-base64|mail-uuencode|mail-check|mail-get|" &abs @#
     !if &les @# 0
-        set-variable #l0 &reg "/history" #l2 ""
+        set-variable #l0 &reg #l2 ""
         set-variable #l0 @ml2 "" #l0
-        set-registry "/history" #l2 #l0
+        set-registry #l2 #l0
     !else
-        set-variable $result &reg "/history" #l2 ""
+        set-variable $result &reg #l2 ""
     !endif
 !emacro
     
 0 define-macro user-set-pfcheckbox
-    set-variable #l2 &cat $platform &lget "|/mail-queue|/mail-vmget|/mouse2to3|" &abs @#
+    set-variable #l2 &spr "/history/%s/%s" $platform &lget "|mail-queue|mail-vmget|mouse2to3|" &abs @#
     set-variable #l0 &lget "|0|1|" &abs @#
-    set-variable #l0 &reg "/history" #l2 #l0
+    set-variable #l0 &reg #l2 #l0
     !if &les @# 0
         set-variable #l0 &bxor #l0 1
-        set-registry "/history" #l2 #l0
+        set-registry #l2 #l0
     !elif &not #l0
         !abort
     !endif
 !emacro
 
 0 define-macro user-set-cpfentry
-    set-variable #l2 &cat %platform &lget "|/font|/font-width|/font-depth|/font-weight|/file-ignore|/kept-vers|" &abs @#
+    set-variable #l2 &spr "/history/%s/%s" %platform &lget "|font|font-width|font-depth|font-weight|file-ignore|kept-vers|" &abs @#
     !if &les @# 0
-        set-variable #l0 &reg "/history" #l2 ""
+        set-variable #l0 &reg #l2 ""
         set-variable #l0 @ml2 "" #l0
-        set-registry "/history" #l2 #l0
+        set-registry #l2 #l0
     !else
-        set-variable $result &reg "/history" #l2 ""
+        set-variable $result &reg #l2 ""
     !endif
 !emacro
     
 0 define-macro user-set-cpfcheckbox
-    set-variable #l2 &cat %platform &lget "|/font-dbl|/ext-char-set|/toolbar|" &abs @#
+    set-variable #l2 &spr "/history/%s/%s" %platform &lget "|font-dbl|ext-char-set|toolbar|" &abs @#
     set-variable #l0 &lget "|0|0|0|" &abs @#
-    set-variable #l0 &reg "/history" #l2 #l0
+    set-variable #l0 &reg #l2 #l0
     !if &les @# 0
         set-variable #l0 &bxor #l0 1
-        set-registry "/history" #l2 #l0
+        set-registry #l2 #l0
     !elif &not #l0
         !abort
     !endif
@@ -118,12 +118,12 @@ set-variable %emulate-value "||emacs|cua|me3_8|nedit|"
 
 0 define-macro user-set-system
     !if &band 0x30f000 &abs @#
-        set-variable #l2 "system"
+        set-variable #l2 "/history/system"
     !else
-        set-variable #l2 &cat %platform "/system"
+        set-variable #l2 &spr "/history/%s/system" %platform
     !endif
     set-variable #l1 $system 
-    set-variable #l0 &reg "/history" #l2 #l1
+    set-variable #l0 &reg #l2 #l1
     !if &les @# 0
         set-variable @# &abs @#
         set-variable #l0 &bxor #l0 @#
@@ -132,7 +132,7 @@ set-variable %emulate-value "||emacs|cua|me3_8|nedit|"
             set-variable #l0 &bxor #l0 @#
         !endif
         set-variable $system #l1
-        set-registry "/history" #l2 #l0
+        set-registry #l2 #l0
         !if &equ &abs @# 0x400
             user-setup-backups
         !endif
@@ -142,12 +142,12 @@ set-variable %emulate-value "||emacs|cua|me3_8|nedit|"
 !emacro
 
 0 define-macro user-set-checkbox
-    set-variable #l2 &lget "|main-menu|spell/autosave|html-author|exact|magic|auto|backup|quiet|tab|undo|spell/autospell|msshift|edituser|expaccent|explookbk|expword|find-buffer|mskeys|" &abs @#
+    set-variable #l2 &cat "/history/" &lget "|main-menu|spell/autosave|html-author|exact|magic|auto|backup|quiet|tab|undo|spell/autospell|msshift|edituser|expaccent|explookbk|expword|find-buffer|mskeys|" &abs @#
     set-variable #l0 &lget "|1|0|1|1|1|1|1|1|1|1|0|0|1|0|1|0|0|0|" &abs @#
-    set-variable #l0 &reg "/history" #l2 #l0
+    set-variable #l0 &reg #l2 #l0
     !if &les @# 0
         set-variable #l0 &bxor #l0 1
-        set-registry "/history" #l2 #l0
+        set-registry #l2 #l0
     !elif &not #l0
         !abort
     !endif
@@ -158,7 +158,7 @@ set-variable %emulate-value "||emacs|cua|me3_8|nedit|"
         !return
     !endif
     save-history &spr "%s%s.erf" $user-path $user-name
-    !if &not &seq &set #l0 &reg "/history" "company" "" ""
+    !if &not &seq &set #l0 &reg "/history/company" "" ""
         ; Must use &find first for the company as this could be anywhere
         !if &seq &find #l0 ".emf" "ERROR"
             !force 0 find-file &spr "file:%s%s.emf" $user-path #l0
@@ -184,10 +184,10 @@ set-variable %emulate-value "||emacs|cua|me3_8|nedit|"
             !endif
         !endif
     !endif
-    !if &not &seq &set #l0 &reg "/history" "setup-file" "" ""
+    !if &not &seq &set #l0 &reg "/history/setup-file" "" ""
         set-variable #l0 &spr "%s%s.emf" $user-path #l0
         !if &sequ &stat "t" #l0 "R"
-            !if &reg "/history" "edituser" "1"
+            !if &reg "/history/edituser" "1"
                 !force 0 find-file &cat "file:" #l0
             !endif
         !else
@@ -226,21 +226,21 @@ set-variable %emulate-value "||emacs|cua|me3_8|nedit|"
 !emacro
 
 0 define-macro user-set-pffile
-    set-variable #l2 &cat $platform &lget "|/mail-src|/mail-dir|" &abs @#
+    set-variable #l2 &spr "/history/%s/%s" $platform &lget "|mail-src|mail-dir|" &abs @#
     !if &les @# 0
-        set-variable #l0 &reg "/history" #l2 ""
+        set-variable #l0 &reg #l2 ""
         set-variable #l0 @ml21 "" #l0
         !if &equ @# -2
             ; the mail-dir must have a trailing '/'
             !if &not &seq &rig #l0 &sub &len #l0 1 "/"
                 set-variable #l0 &cat #l0 "/"
-                set-registry "/history/" #l2 #l0
+                set-registry #l2 #l0
                 -1 osd
             !endif
         !endif
-        set-registry "/history/" #l2 #l0
+        set-registry #l2 #l0
     !else
-        set-variable $result &reg "/history/" #l2 ""
+        set-variable $result &reg #l2 ""
     !endif
 !emacro
 
@@ -252,8 +252,8 @@ set-variable %emulate-value "||emacs|cua|me3_8|nedit|"
         set-variable #l0 &mid $result 4 7
         set-variable %user-field &trr #l0
         osd .osd.user-sub 50 "xMdsHfh" .scheme.osd-entry #l0 .osd.user-mailf
-        set-variable %user-match &lget &reg "/history" &cat #g0 "match" "\b" @#
-        set-variable %user-box   &lget &reg "/history" &cat #g0 "box"   "\b" @#
+        set-variable %user-match &lget &reg &cat #g0 "match" "\b" @#
+        set-variable %user-box   &lget &reg &cat #g0 "box"   "\b" @#
     !else
         set-variable %user-field "subject"
         set-variable %user-match ""
@@ -287,9 +287,9 @@ set-variable %emulate-value "||emacs|cua|me3_8|nedit|"
     -1 osd .osd.user-subc
     osd .osd.user-subc 0 "sS" .scheme.osd-child 53 5 -1 -1 user-maila-create
     set-variable #l3 0
-    set-variable #l4 &reg "/history" &cat #g0 "field" "\b"
-    set-variable #l5 &reg "/history" &cat #g0 "match" "\b"
-    set-variable #l6 &reg "/history" &cat #g0 "box"   "\b"
+    set-variable #l4 &reg &cat #g0 "field" "\b"
+    set-variable #l5 &reg &cat #g0 "match" "\b"
+    set-variable #l6 &reg &cat #g0 "box"   "\b"
     !if &gre &len #l4 1
         !while &not &seq &set #l0 &lget #l4 &inc #l3 1 "" 
             set-variable #l1 &lget #l5 #l3
@@ -303,9 +303,9 @@ set-variable %emulate-value "||emacs|cua|me3_8|nedit|"
 !emacro
 
 0 define-macro user-maila-com
-    set-variable #l4 &reg "/history" &cat #g0 "field" "\b"
-    set-variable #l5 &reg "/history" &cat #g0 "match" "\b"
-    set-variable #l6 &reg "/history" &cat #g0 "box"   "\b"
+    set-variable #l4 &reg &cat #g0 "field" "\b"
+    set-variable #l5 &reg &cat #g0 "match" "\b"
+    set-variable #l6 &reg &cat #g0 "box"   "\b"
     !if   &equ @# 3
         ; delete the entry
         !if &not %user-numb
@@ -336,9 +336,9 @@ set-variable %emulate-value "||emacs|cua|me3_8|nedit|"
             set-variable #l6 &lse #l6 -1 %user-box
         !endif
     !endif
-    set-registry "/history/" &cat #g0 "field" #l4
-    set-registry "/history/" &cat #g0 "match" #l5
-    set-registry "/history/" &cat #g0 "box"   #l6
+    set-registry &cat #g0 "field" #l4
+    set-registry &cat #g0 "match" #l5
+    set-registry &cat #g0 "box"   #l6
     user-maila-create
 !emacro
 
@@ -346,10 +346,10 @@ set-variable %emulate-value "||emacs|cua|me3_8|nedit|"
     -1 osd .osd.user-sub
     !if @#
         osd .osd.user-sub 0 "batcHIs" 9 3 56 0 -1 -1 640 .scheme.osd-title "E-Mail Auto-Archive Setup"
-        set-variable #g0 "mail/archive/"
+        set-variable #g0 "/history/mail/archive/"
     !else
         osd .osd.user-sub 0 "batcHIs" 9 3 56 0 -1 -1 640 .scheme.osd-title "E-Mail Pre-filter Setup"
-        set-variable #g0 "mail/filter/"
+        set-variable #g0 "/history/mail/filter/"
     !endif
     osd .osd.user-sub 10 ""
     osd .osd.user-sub 20  "IbH" .scheme.osd-sbar 53 5 .osd.user-subc
@@ -445,11 +445,11 @@ set-variable .user-mouse-set-button.bnames "|\HLeft|\HMiddle|\HRight|Wheel \HUp|
 0 define-macro user-setup-mouse-bind-set
     !if &gre %user-mouse-but 3
         set-variable #l0 &spr "%s%s%smouse-w%s" %user-mouse-A %user-mouse-C %user-mouse-S &cond &equ 4 %user-mouse-but "up" "down"
-        set-registry "/history/" &cat "mouse/" #l0 &lget %user-mouse-wheel @#
+        set-registry &cat "/history/mouse/" #l0 &lget %user-mouse-wheel @#
     !else
         set-variable #l0 &spr "%s%s%smouse-%%s-%s" %user-mouse-A %user-mouse-C %user-mouse-S %user-mouse-but
-        set-registry "/history/" &cat "mouse/" &spr #l0 "pick" &lget %user-mouse-bpick @#
-        set-registry "/history/" &cat "mouse/" &spr #l0 "drop" &lget %user-mouse-bdrop @#
+        set-registry &cat "/history/mouse/" &spr #l0 "pick" &lget %user-mouse-bpick @#
+        set-registry &cat "/history/mouse/" &spr #l0 "drop" &lget %user-mouse-bdrop @#
     !endif
 !emacro
 
@@ -463,20 +463,20 @@ set-variable .user-mouse-set-button.bnames "|\HLeft|\HMiddle|\HRight|Wheel \HUp|
             osd .osd.user-sub #l0 "" #l1 #l0 user-setup-mouse-bind-set
         !done
     !elif &gre %user-mouse-but 3
-        set-variable #l0 &spr "mouse/%s%s%smouse-w%s" %user-mouse-A %user-mouse-C %user-mouse-S &cond &equ 4 %user-mouse-but "up" "down"
-        set-variable $result &lget %user-mouse-wname &lfind %user-mouse-wheel &reg "history" #l0 ""
+        set-variable #l0 &spr "/history/mouse/%s%s%smouse-w%s" %user-mouse-A %user-mouse-C %user-mouse-S &cond &equ 4 %user-mouse-but "up" "down"
+        set-variable $result &lget %user-mouse-wname &lfind %user-mouse-wheel &reg #l0 ""
     !else
-        set-variable #l0 &spr "mouse/%s%s%smouse-drop-%s" %user-mouse-A %user-mouse-C %user-mouse-S %user-mouse-but
-        set-variable $result &lget %user-mouse-bname &lfind %user-mouse-bdrop &reg "history" #l0 ""
+        set-variable #l0 &spr "/history/mouse/%s%s%smouse-drop-%s" %user-mouse-A %user-mouse-C %user-mouse-S %user-mouse-but
+        set-variable $result &lget %user-mouse-bname &lfind %user-mouse-bdrop &reg #l0 ""
     !endif
 !emacro
 
 0 define-macro user-mouse-set-auto
-    set-variable #l2 &spr "mouse/%s%s%smouse-auto-%s" %user-mouse-A %user-mouse-C %user-mouse-S %user-mouse-but
-    set-variable #l0 &reg "/history" #l2 "0"
+    set-variable #l2 &spr "/history/mouse/%s%s%smouse-auto-%s" %user-mouse-A %user-mouse-C %user-mouse-S %user-mouse-but
+    set-variable #l0 &reg #l2 "0"
     !if &les @# 0
         set-variable #l0 &bxor #l0 1
-        set-registry "/history/" #l2 #l0
+        set-registry #l2 #l0
     !elif &not #l0
         !abort
     !endif
@@ -484,7 +484,7 @@ set-variable .user-mouse-set-button.bnames "|\HLeft|\HMiddle|\HRight|Wheel \HUp|
 
 0 define-macro user-set-mouse
     set-variable #l1 $mouse
-    set-variable #l0 &reg "/history" &cat $platform "/mouse" #l1
+    set-variable #l0 &reg &spr "/history/%s/mouse" $platform #l1
     !if &les @# 0
         set-variable @# &abs @#
         set-variable #l0 &bxor #l0 @#
@@ -493,7 +493,7 @@ set-variable .user-mouse-set-button.bnames "|\HLeft|\HMiddle|\HRight|Wheel \HUp|
             set-variable #l0 &bxor #l0 @#
         !endif
         set-variable $mouse #l1
-        set-registry "/history" &cat $platform "/mouse" #l0
+        set-registry &spr "/history/%s/mouse" $platform #l0
         !if &equ &abs @# 0x400
             user-setup-backups
         !endif
@@ -503,11 +503,11 @@ set-variable .user-mouse-set-button.bnames "|\HLeft|\HMiddle|\HRight|Wheel \HUp|
 !emacro
 
 0 define-macro user-set-mouse-nob
-    set-variable #l0 &reg "/history" &cat $platform "/mouse" $mouse
+    set-variable #l0 &reg &spr "/history/%s/mouse" $platform $mouse
     set-variable #l1 &band #l0 0x00f
     !if &les @# 0
         set-variable #l0 &bor &band #l0 &bnot 0x00f @ml2 "" #l1
-        set-registry "/history" &cat $platform "/mouse" #l0
+        set-registry &spr "/history/%s/mouse" $platform #l0
     !else
         set-variable $result #l1
     !endif
@@ -529,13 +529,13 @@ set-variable .user-mouse-set-button.bnames "|\HLeft|\HMiddle|\HRight|Wheel \HUp|
 
 0 define-macro user-mouse-defaults
     !force delete-registry "/history/mouse"
-    set-registry "history" "mouse/mouse-auto-1" "1"
-    set-registry "history" "mouse/mouse-pick-1" "mouse-pick-type1"
-    set-registry "history" "mouse/mouse-drop-1" "mouse-drop-type1"
-    set-registry "history" "mouse/mouse-pick-2" ""
-    set-registry "history" "mouse/mouse-drop-2" "mouse-move-yank"
-    set-registry "history" "mouse/mouse-pick-3" ""
-    set-registry "history" "mouse/mouse-drop-3" "mouse-osd-multi"
+    set-registry "/history/mouse/mouse-auto-1" "1"
+    set-registry "/history/mouse/mouse-pick-1" "mouse-pick-type1"
+    set-registry "/history/mouse/mouse-drop-1" "mouse-drop-type1"
+    set-registry "/history/mouse/mouse-pick-2" ""
+    set-registry "/history/mouse/mouse-drop-2" "mouse-move-yank"
+    set-registry "/history/mouse/mouse-pick-3" ""
+    set-registry "/history/mouse/mouse-drop-3" "mouse-osd-multi"
 !emacro
 
 -1 osd .osd.user-mouse
@@ -574,7 +574,7 @@ osd .osd.user-mouse 610 "BctfHxR" .scheme.osd-ebtt " \HDefaults " f user-mouse-d
 0 define-macro user-tool-init
     set-variable #l0 0
     !repeat
-        set-variable #l1 &reg "/history" &spr "%s/tool/%d/name" $platform #l0 ""
+        set-variable #l1 &reg &spr "/history/%s/tool/%d/name" $platform #l0 ""
         set-variable #l2 &spr "\H%d %s%n" #l0 #l1 &sub 19 &len #l1 " "
         !if &band #l0 0x01
             osd .osd.user-tool &add 100 &mul #l0 10 "Rfxc"  #l2 #l0 user-tool-setup
@@ -588,7 +588,7 @@ set-variable .user-tool-init.cur 0
 0 define-macro user-tool-setup
     set-variable .user-tool-init.cur @#
     osd .osd.user-tool 210 "c" &spr "Command %d Setup" @#
-    set-variable #l0 &reg "/history" &spr "%s/tool/%d/flag" $platform @# 0x1a
+    set-variable #l0 &reg &spr "/history/%s/tool/%d/flag" $platform @# 0x1a
     !if &band #l0 0x10
         osd .osd.user-tool 320 "Sfh" "           B\Huffer: " 320
         osd .osd.user-tool 330 "EtxHfh" .scheme.osd-entry "##################" 3 user-tool-set-entry
@@ -603,19 +603,19 @@ set-variable .user-tool-init.cur 0
 !emacro
 
 0 define-macro user-tool-set-entry
-    set-variable #l2 &spr "%s/tool/%d/%s" $platform .user-tool-init.cur &lget "|name|command|bname|" &abs @#
+    set-variable #l2 &spr "/history/%s/tool/%d/%s" $platform .user-tool-init.cur &lget "|name|command|bname|" &abs @#
     !if &les @# 0
-        set-variable #l0 &reg "/history" #l2 ""
+        set-variable #l0 &reg #l2 ""
         set-variable #l0 @ml2 "" #l0
-        set-registry "/history" #l2 #l0
+        set-registry #l2 #l0
     !else
-        set-variable $result &reg "/history" #l2 ""
+        set-variable $result &reg #l2 ""
     !endif
 !emacro
 
 0 define-macro user-tool-set-flag
-    set-variable #l2 &spr "%s/tool/%d/flag" $platform .user-tool-init.cur
-    set-variable #l0 &reg "/history" #l2 0x1a
+    set-variable #l2 &spr "/history/%s/tool/%d/flag" $platform .user-tool-init.cur
+    set-variable #l0 &reg #l2 0x1a
     !if &les @# 0
         !if &band &set #l1 &abs @# 0x10
             !if &band #l0 0x40
@@ -626,7 +626,7 @@ set-variable .user-tool-init.cur 0
         !if &band #l0 0x40
             set-variable #l0 &bor #l0 0x10
         !endif
-        set-registry "/history" #l2 #l0
+        set-registry #l2 #l0
         !if &band #l1 0x50
             .user-tool-init.cur user-tool-setup
         !endif
@@ -667,8 +667,8 @@ osd .osd.user-tool 430 "Ctpfx" &cat .osd.checkbox-chars "\} Promp\Ht Before Savi
     set-variable %user-fnumbo @#
     set-variable %user-fnumb @#
     !if @#
-        set-variable %user-ftype &lget &reg "/history" "file-type" "\b" @#
-        set-variable %user-fmask &lget &reg "/history" "file-mask" "\b" @#
+        set-variable %user-ftype &lget &reg "/history/file-type" "\b" @#
+        set-variable %user-fmask &lget &reg "/history/file-mask" "\b" @#
     !else
         set-variable %user-ftype ""
         set-variable %user-fmask ""
@@ -680,8 +680,8 @@ osd .osd.user-tool 430 "Ctpfx" &cat .osd.checkbox-chars "\} Promp\Ht Before Savi
     -1 osd .osd.user-ftypec
     osd .osd.user-ftypec 0 "sS" .scheme.osd-child 51 10 -1 -1
     set-variable #l3 0
-    set-variable #l4 &reg "/history" "file-type" "\b"
-    set-variable #l5 &reg "/history" "file-mask" "\b"
+    set-variable #l4 &reg "/history/file-type" "\b"
+    set-variable #l5 &reg "/history/file-mask" "\b"
     !if &gre &len #l4 1
         !while &not &seq &set #l0 &lget #l4 &inc #l3 1 "" 
             set-variable #l1 &lget #l5 #l3
@@ -711,8 +711,8 @@ osd .osd.user-tool 430 "Ctpfx" &cat .osd.checkbox-chars "\} Promp\Ht Before Savi
 !emacro
 
 0 define-macro user-filetype-com
-    set-variable #l4 &reg "/history" "file-type" "\b"
-    set-variable #l5 &reg "/history" "file-mask" "\b"
+    set-variable #l4 &reg "/history/file-type" "\b"
+    set-variable #l5 &reg "/history/file-mask" "\b"
     !if   &equ @# 3
         ; delete the entry
         !if &not %user-fnumb
@@ -750,8 +750,8 @@ osd .osd.user-tool 430 "Ctpfx" &cat .osd.checkbox-chars "\} Promp\Ht Before Savi
             set-variable #l5 &lse #l5 -1 %user-fmask
         !endif
     !endif
-    set-registry "/history/" "file-type" #l4
-    set-registry "/history/" "file-mask" #l5
+    set-registry "/history/file-type" #l4
+    set-registry "/history/file-mask" #l5
     user-filetype-create
 !emacro
 
@@ -785,22 +785,22 @@ osd .osd.user-ftype 630 "BtcfxH"  .scheme.osd-ebtt " \HDelete " 3 user-filetype-
     0 define-macro user-set-winfont
         !force -1 change-font
         !if $status
-            set-registry "/history" &cat %platform "/font" &rig $result 13
-            set-registry "/history" &cat %platform "/font-weight" &add 0 &lef $result 1
-            set-registry "/history" &cat %platform "/font-width"  &add 0 &mid $result 1 4
-            set-registry "/history" &cat %platform "/font-depth"  &add 0 &mid $result 5 4
+            set-registry &spr "/history/%s/font" %platform &rig $result 13
+            set-registry &spr "/history/%s/font-weight" %platform &add 0 &lef $result 1
+            set-registry &spr "/history/%s/font-width" %platform &add 0 &mid $result 1 4
+            set-registry &spr "/history/%s/font-depth" %platform &add 0 &mid $result 5 4
             set-variable #l0 &lfind %charset-types &add 0 &mid $result 9 4
             !if &not #l0
                 set-variable #l0 &lfind %charset-types 0
             !endif
-            set-registry "/history" &cat %platform "/ext-char-set" &not &equ #l0 255
-            set-registry "/history" &cat %platform "/char-set" &lget %charset-value #l0
+            set-registry &spr "/history/%s/ext-char-set" %platform &not &equ #l0 255
+            set-registry &spr "/history/%s/char-set" %platform &lget %charset-value #l0
         !endif
     !emacro
 !endif
 
 0 define-macro user-setup-charset-set
-    set-registry "/history" &cat %platform "/char-set" &lget %charset-value @#
+    set-registry &spr "/history/%s/char-set" %platform &lget %charset-value @#
 !emacro
 
 0 define-macro user-setup-charset
@@ -812,14 +812,14 @@ osd .osd.user-ftype 630 "BtcfxH"  .scheme.osd-ebtt " \HDelete " 3 user-filetype-
             osd .osd.user-sub #l0 "" #l1 #l0 user-setup-charset-set
         !done
     !else
-        set-variable $result &lget %charset-names &lfind %charset-value &reg "/history" &cat %platform "/char-set" &lget %charset-value 1
+        set-variable $result &lget %charset-names &lfind %charset-value &reg &spr "/history/%s/char-set" %platform &lget %charset-value 1
     !endif
 !emacro
 
 0 define-macro user-setup-hscroll-set
-    set-variable #l0 &cat %platform "/scroll"
-    set-variable #l1 &reg "/history" #l0 "1"
-    set-registry "/history" #l0 &add &band #l1 0xf0 &sub @# 1
+    set-variable #l0 &spr "/history/%s/scroll" %platform
+    set-variable #l1 &reg #l0 "1"
+    set-registry #l0 &add &band #l1 0xf0 &sub @# 1
 !emacro
 
 0 define-macro user-setup-hscroll
@@ -831,14 +831,14 @@ osd .osd.user-ftype 630 "BtcfxH"  .scheme.osd-ebtt " \HDelete " 3 user-filetype-
             osd .osd.user-sub #l0 "" #l1 #l0 user-setup-hscroll-set
         !done
     !else
-        set-variable $result &lget %hscroll-names &add &band &reg "/history" &cat %platform "/scroll" "1" 0x0f 1
+        set-variable $result &lget %hscroll-names &add &band &reg &spr "/history/%s/scroll" %platform "1" 0x0f 1
     !endif
 !emacro
 
 0 define-macro user-setup-vscroll-set
-    set-variable #l0 &cat %platform "/scroll"
-    set-variable #l1 &reg "/history" #l0 "1"
-    set-registry "/history" #l0 &add &band #l1 0x0f &mul &sub @# 1 16
+    set-variable #l0 &spr "/history/%s/scroll" %platform
+    set-variable #l1 &reg #l0 "1"
+    set-registry #l0 &add &band #l1 0x0f &mul &sub @# 1 16
 !emacro
 
 0 define-macro user-setup-vscroll
@@ -850,12 +850,12 @@ osd .osd.user-ftype 630 "BtcfxH"  .scheme.osd-ebtt " \HDelete " 3 user-filetype-
             osd .osd.user-sub #l0 "" #l1 #l0 user-setup-vscroll-set
         !done
     !else
-        set-variable $result &lget %vscroll-names &add &div &reg "/history" &cat %platform "/scroll" "1" 16 1
+        set-variable $result &lget %vscroll-names &add &div &reg &spr "/history/%s/scroll" %platform "1" 16 1
     !endif
 !emacro
 
 0 define-macro user-setup-scrollb-set
-    set-registry "/history" &cat %platform "/scroll-bar" &lget %scrollb-value @#
+    set-registry &spr "/history/%s/scroll-bar" %platform &lget %scrollb-value @#
 !emacro
 
 0 define-macro user-setup-scrollb
@@ -867,7 +867,7 @@ osd .osd.user-ftype 630 "BtcfxH"  .scheme.osd-ebtt " \HDelete " 3 user-filetype-
             osd .osd.user-sub #l0 "" #l1 #l0 user-setup-scrollb-set
         !done
     !else
-        set-variable $result &lget %scrollb-names &lfind %scrollb-value &reg "/history" &cat %platform "/scroll-bar" "0"
+        set-variable $result &lget %scrollb-names &lfind %scrollb-value &reg &spr "/history/%s/scroll-bar" %platform "0"
     !endif
 !emacro
 
@@ -877,15 +877,15 @@ osd .osd.user-ftype 630 "BtcfxH"  .scheme.osd-ebtt " \HDelete " 3 user-filetype-
         osd .osd.user-sub 0 "bs" 32 0 0 0
         set-variable #l0 0
         !while &not &seq "" &set #l1 &lget %fence-names &inc #l0 1
-            osd .osd.user-sub #l0 "i" #l1 &sub #l0 1 "set-registry \"/history\" &cat %platform \"/fence\" @#"
+            osd .osd.user-sub #l0 "i" #l1 &sub #l0 1 &spr "set-registry \"/history/%s/fence\" @#" %platform
         !done
     !else
-        set-variable $result &lget %fence-names &add &reg "/history" &cat %platform "/fence" "1" 1
+        set-variable $result &lget %fence-names &add &reg &spr "/history/%s/fence" %platform "1" 1
     !endif
 !emacro
 
 0 define-macro user-setup-color-set
-    set-registry "/history" &cat %platform "/scheme" &lget .scheme.scheme-files @#
+    set-registry &spr "/history/%s/scheme" %platform &lget .scheme.scheme-files @#
 !emacro
 
 0 define-macro user-setup-color
@@ -897,12 +897,12 @@ osd .osd.user-ftype 630 "BtcfxH"  .scheme.osd-ebtt " \HDelete " 3 user-filetype-
             osd .osd.user-sub #l0 "" #l1 #l0 user-setup-color-set
         !done
     !else
-        set-variable $result &lget .scheme.scheme-names &lfind .scheme.scheme-files &reg "/history" &cat %platform "/scheme" &lget .scheme.scheme-files 1
+        set-variable $result &lget .scheme.scheme-names &lfind .scheme.scheme-files &reg &spr "/history/%s/scheme" %platform &lget .scheme.scheme-files 1
     !endif
 !emacro
 
 0 define-macro user-setup-backups
-    !if &band 0x400 &reg "/history" &cat %platform "/system" $system
+    !if &band 0x400 &reg &spr "/history/%s/system" %platform $system
         osd .osd.user-plat 540 "f" " "
         osd .osd.user-plat 550 "D"
     !else
@@ -912,8 +912,8 @@ osd .osd.user-ftype 630 "BtcfxH"  .scheme.osd-ebtt " \HDelete " 3 user-filetype-
 !emacro
 
 0 define-macro user-set-cursorblink
-    set-variable #l2 &cat %platform "/blink"
-    set-variable #l0 &reg "/history" #l2 "0"
+    set-variable #l2 &spr "/history/%s/blink" %platform
+    set-variable #l0 &reg #l2 "0"
     !if &equ &abs @# 2
         set-variable #l1 &div #l0 0x10000
         !if &not #l1
@@ -932,7 +932,7 @@ osd .osd.user-ftype 630 "BtcfxH"  .scheme.osd-ebtt " \HDelete " 3 user-filetype-
             !else
                 set-variable #l0 0
             !endif
-            set-registry "/history" #l2 #l0
+            set-registry #l2 #l0
         !endif
         -1 osd
     !else
@@ -1033,12 +1033,12 @@ osd .osd.user-plat 821 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 820
 
 ; The show modes menu ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 0 define-macro osd-user-show-mode
-    set-variable #l0 &reg "/history" "show-modes" $show-modes
+    set-variable #l0 &reg "/history/show-modes" $show-modes
     !if &les @# 0
         set-variable @# &abs @#
         set-variable #l1 &mid #l0 &sub @# 1 1
         set-variable #l0 &cat &cat &lef #l0 &sub @# 1 &bxor #l1 1 &rig #l0 @#
-        set-registry "/history" "show-modes" #l0
+        set-registry "/history/show-modes" #l0
     !elif &not &mid #l0 &sub @# 1 1
         osd .osd.user-modes @# "Cx" &cat "^^^^^^" $result @# osd-user-show-mode
         !abort
@@ -1055,9 +1055,9 @@ set-variable $mode-names ".*"
 
 ; The General menu ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 0 define-macro user-setup-tab-indent-set
-    set-variable #l0 &reg "/history" "system" $system
+    set-variable #l0 &reg "/history/system" $system
     set-variable #l0 &band #l0 &bnot 0x201000 
-    set-registry "/history" "system" &bor #l0 &lget "|0x1000|0x200000|0|" @#
+    set-registry "/history/system" &bor #l0 &lget "|0x1000|0x200000|0|" @#
 !emacro
 
 0 define-macro user-setup-tab-indent
@@ -1068,7 +1068,7 @@ set-variable $mode-names ".*"
         osd .osd.user-sub 2 "" "\HFirst Column Only" 2 user-setup-tab-indent-set
         osd .osd.user-sub 3 "" "\HNever Indent"      3 user-setup-tab-indent-set
     !else
-        set-variable #l0 &reg "/history" "system" $system 
+        set-variable #l0 &reg "/history/system" $system 
         !if &band #l0 0x1000
             set-variable $result "Always Indent"
         !elif &band #l0 0x200000
@@ -1135,7 +1135,7 @@ osd .osd.user-gener 390 "MdtxmfH" .scheme.osd-ebtt " Sho\Hw Modes " .osd.user-mo
     !if &seq #l1 ""
         !force delete-registry "/history/emulate"
     !else
-        set-registry "/history" "emulate" #l1
+        set-registry "/history/emulate" #l1
     !endif
 !emacro
 
@@ -1148,7 +1148,7 @@ osd .osd.user-gener 390 "MdtxmfH" .scheme.osd-ebtt " Sho\Hw Modes " .osd.user-mo
             osd .osd.user-sub #l0 "" #l1 #l0 user-setup-emulate-set
         !done
     !else
-        set-variable $result &lget %emulate-names &lfind %emulate-value &reg "/history" "emulate" ""
+        set-variable $result &lget %emulate-names &lfind %emulate-value &reg "/history/emulate" ""
     !endif
 !emacro
 
@@ -1158,10 +1158,10 @@ osd .osd.user-gener 390 "MdtxmfH" .scheme.osd-ebtt " Sho\Hw Modes " .osd.user-mo
         osd .osd.user-sub 0 "Abs" 16 0 0 0
         set-variable #l0 0
         !while &not &seq "" &set #l1 &lget %keyboard-names &inc #l0 1
-            osd .osd.user-sub 1 "i" #l1 #l0 "set-registry \"/history\" \"/keyboard\" &lget %keyboard-names @#"
+            osd .osd.user-sub 1 "i" #l1 #l0 "set-registry \"/history/keyboard\" &lget %keyboard-names @#"
         !done
     !else
-        set-variable $result &reg "/history" "keyboard"  &lget %keyboard-names 1
+        set-variable $result &reg "/history/keyboard"  &lget %keyboard-names 1
     !endif
 !emacro
 
@@ -1171,10 +1171,10 @@ osd .osd.user-gener 390 "MdtxmfH" .scheme.osd-ebtt " Sho\Hw Modes " .osd.user-mo
         osd .osd.user-sub 0 "Abs" 16 0 0 0
         set-variable #l0 0
         !while &not &seq "" &set #l1 &lget %language-names &inc #l0 1
-            osd .osd.user-sub 1 "i" #l1 #l0 "set-registry \"/history\" \"/language\" &lget %language-names @#"
+            osd .osd.user-sub 1 "i" #l1 #l0 "set-registry \"/history/language\" &lget %language-names @#"
         !done
     !else
-        set-variable $result &reg "/history" "language"  &lget %language-names 1
+        set-variable $result &reg "/history/language"  &lget %language-names 1
     !endif
 !emacro
 

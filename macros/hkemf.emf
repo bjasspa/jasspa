@@ -16,7 +16,7 @@ define-macro fhook-emf
 
 ; buffer-init variables
 set-variable .fhook-emf.name "ME Macro"
-set-variable .fhook-emf.setup &reg "/history" "fhook/emf" "bdfghnopx"
+set-variable .fhook-emf.setup &reg "/history/fhook/emf" "bdfghnopx"
 set-variable .fhook-emf.setup-mask "abdefghikmnoptux"
 set-variable .fhook-emf.tags "emftags"
 set-variable .fhook-emf.comment "|;||;|; | ;|r|"

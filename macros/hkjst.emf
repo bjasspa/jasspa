@@ -47,7 +47,7 @@ define-macro fhook-jst
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-jst.setup &reg "/history" "fhook/jst" "fghijnopswx"
+set-variable .fhook-jst.setup &reg "/history/fhook/jst" "fghijnopswx"
 set-variable .fhook-jst.setup-mask "aefghijkmnopstuwx"
 set-variable .fhook-jst.comment "|>||>|> | <||"
 set-variable .fhook-jst.insert-emphasis 1

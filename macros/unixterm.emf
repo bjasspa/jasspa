@@ -22,7 +22,7 @@ add-file-hook ".C" fhook-cpp
     0xa0000 global-bind-key osd "esc ="
     global-bind-key context-menu "esc +"
 !else
-    !if &not &seq &set #l0 &reg "/history" &cat $platform "/font" "" ""
+    !if &not &seq &set #l0 &reg &spr "/history/%s/font" $platform "" ""
         change-font #l0
     !endif
 !endif

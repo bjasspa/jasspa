@@ -82,8 +82,8 @@
                     set-variable #l4 &spr "%s%s" #g2 #g2
                     set-variable #l3 &rep #l3 #l4 #g2
                 !endif
-                set-variable #l4 &cat "tmp/" &lget .org.addr-reg #l1
-                set-variable #l5 &reg "/org" #l4 ""
+                set-variable #l4 &cat "/org/tmp/" &lget .org.addr-reg #l1
+                set-variable #l5 &reg #l4 ""
                 !if &not &seq #l5 ""
                     set-variable #l6 &lget .org.imp-field-app #p9
                     set-variable #l6 &rep #l6 "\\n" "\n"
@@ -92,7 +92,7 @@
                 set-variable #l6 &lget .org.imp-field-pre #p9
                 set-variable #l6 &rep #l6 "\\n" "\n"
                 set-variable #l5 &cat &cat #l5 #l6 #l3
-                set-registry "/org" #l4 #l5
+                set-registry #l4 #l5
             !endif
         !endif
         !if &seq @wc #g0
@@ -108,14 +108,14 @@
     !if &not $status
         !abort
     !endif
-    !if &seq &set #l0 &reg "/org" "tmp/recno" "" ""
+    !if &seq &set #l0 &reg "/org/tmp/recno" "" ""
         set-variable #l0 .org.naddr
     !else
         delete-registry "/org/tmp/recno"
     !endif
     !if &not &les #l0 .org.naddr
         set-variable .org.naddr &add #l0 1
-        set-registry "/org" "addr/naddr" .org.naddr
+        set-registry "/org/addr/naddr" .org.naddr
     !endif
     !force find-registry &spr "/org/addr/%d" #l0 0
     !if $status
@@ -177,10 +177,10 @@
 !emacro
 
 0 define-macro org-aimp-store
-    set-registry "/org" "set/aimp-names" .org.imp-field-nms
-    set-registry "/org" "set/aimp-map" .org.imp-field-map
-    set-registry "/org" "set/aimp-append" .org.imp-field-app
-    set-registry "/org" "set/aimp-prepend" .org.imp-field-pre
+    set-registry "/org/set/aimp-names" .org.imp-field-nms
+    set-registry "/org/set/aimp-map" .org.imp-field-map
+    set-registry "/org/set/aimp-append" .org.imp-field-app
+    set-registry "/org/set/aimp-prepend" .org.imp-field-pre
     mark-registry "/org" "u"
 !emacro
 
@@ -212,12 +212,12 @@
 !emacro
 
 0 define-macro org-aie-store
-    set-registry "/org" &spr "set/%s-header" .org.aie-type &ind &spr ".org.%s-header" .org.aie-type
-    set-registry "/org" &spr "set/%s-endrec" .org.aie-type &ind &spr ".org.%s-endrec" .org.aie-type
-    set-registry "/org" &spr "set/%s-endfld" .org.aie-type &ind &spr ".org.%s-endfld" .org.aie-type
-    set-registry "/org" &spr "set/%s-delimit" .org.aie-type &ind &spr ".org.%s-delimit" .org.aie-type
+    set-registry &spr "/org/set/%s-header" .org.aie-type &ind &spr ".org.%s-header" .org.aie-type
+    set-registry &spr "/org/set/%s-endrec" .org.aie-type &ind &spr ".org.%s-endrec" .org.aie-type
+    set-registry &spr "/org/set/%s-endfld" .org.aie-type &ind &spr ".org.%s-endfld" .org.aie-type
+    set-registry &spr "/org/set/%s-delimit" .org.aie-type &ind &spr ".org.%s-delimit" .org.aie-type
     !if &seq .org.aie-type "aexp" 
-        set-registry "/org" &spr "set/%s-addrfld" .org.aie-type &ind &spr ".org.%s-addrfld" .org.aie-type
+        set-registry &spr "/org/set/%s-addrfld" .org.aie-type &ind &spr ".org.%s-addrfld" .org.aie-type
     !endif
     mark-registry "/org" "u"
 !emacro
@@ -285,10 +285,10 @@ osd .osd.org-aimp 640 "BhcfH"  .scheme.osd-ebtt " \HImport  " f org-aimp-import
 osd .osd.org-aimp 650 "BhcfH"  .scheme.osd-ebtt " E\Hxit  "   f void
 
 0 define-macro org-address-import
-    set-variable .org.aimp-header   &reg "/org" "set/aimp-header" "1"
-    set-variable .org.aimp-endrec   &reg "/org" "set/aimp-endrec" "\\n"
-    set-variable .org.aimp-endfld &reg "/org" "set/aimp-endfld" ","
-    set-variable .org.aimp-delimit  &reg "/org" "set/aimp-delimit" "\""
+    set-variable .org.aimp-header   &reg "/org/set/aimp-header" "1"
+    set-variable .org.aimp-endrec   &reg "/org/set/aimp-endrec" "\\n"
+    set-variable .org.aimp-endfld &reg "/org/set/aimp-endfld" ","
+    set-variable .org.aimp-delimit  &reg "/org/set/aimp-delimit" "\""
     osd .osd.fobm 55 "BcftHx" .scheme.osd-ebtt " \HOptions  " 1 org-aie-options
     set-variable .osd-get-file.title "Select Import File"
     set-variable .osd-get-file.file-type "|Text file|All files|"
@@ -327,10 +327,10 @@ osd .osd.org-aimp 650 "BhcfH"  .scheme.osd-ebtt " E\Hxit  "   f void
         beginning-of-buffer
     !endif
     set-variable .org.imp-field-nms #l8
-    !if &seq #l8 &reg "/org" "set/aimp-names" ""
-        set-variable .org.imp-field-map &reg "/org" "set/aimp-map" ""
-        set-variable .org.imp-field-app &reg "/org" "set/aimp-append" ""
-        set-variable .org.imp-field-pre &reg "/org" "set/aimp-prepend" ""
+    !if &seq #l8 &reg "/org/set/aimp-names" ""
+        set-variable .org.imp-field-map &reg "/org/set/aimp-map" ""
+        set-variable .org.imp-field-app &reg "/org/set/aimp-append" ""
+        set-variable .org.imp-field-pre &reg "/org/set/aimp-prepend" ""
     !else
         set-variable .org.imp-field-map &spr "%n" &add #l9 1 "\b"
         set-variable .org.imp-field-app &spr "%n" &add #l9 1 "\b"
@@ -365,11 +365,11 @@ osd .osd.org-aimp 650 "BhcfH"  .scheme.osd-ebtt " E\Hxit  "   f void
 !emacro
 
 0 define-macro org-address-export
-    set-variable .org.aexp-header  &reg "/org" "set/aexp-header" "1"
-    set-variable .org.aexp-endrec  &reg "/org" "set/aexp-endrec" "\\n"
-    set-variable .org.aexp-endfld  &reg "/org" "set/aexp-endfld" ","
-    set-variable .org.aexp-delimit &reg "/org" "set/aexp-delimit" "\""
-    set-variable .org.aexp-addrfld &reg "/org" "set/aexp-addrfld" "1"
+    set-variable .org.aexp-header  &reg "/org/set/aexp-header" "1"
+    set-variable .org.aexp-endrec  &reg "/org/set/aexp-endrec" "\\n"
+    set-variable .org.aexp-endfld  &reg "/org/set/aexp-endfld" ","
+    set-variable .org.aexp-delimit &reg "/org/set/aexp-delimit" "\""
+    set-variable .org.aexp-addrfld &reg "/org/set/aexp-addrfld" "1"
     set-variable .org.aexp-select  0
     osd .osd.fobm 55 "BcftHx" .scheme.osd-ebtt " \HOptions  " 2 org-aie-options
     osd .osd.fobm 110 ""
@@ -418,14 +418,14 @@ osd .osd.org-aimp 650 "BhcfH"  .scheme.osd-ebtt " E\Hxit  "   f void
     !repeat
         org-addr-inc-recno
         !if &not &seq .org.addr "*"
-            !if &or &not .org.aexp-select &seq "*" &reg "/org" &spr "addr/%d/slct" .org.addr "" 
+            !if &or &not .org.aexp-select &seq "*" &reg &spr "/org/addr/%d/slct" .org.addr "" 
                 set-variable #l2 &add #l2 1
                 set-variable #l3 0
                 !while &not &seq &set #l4 &lget .org.addr-reg &inc #l3 1 ""
                     !if &equ #l3 1
                         insert-string &spr "%s%d%s" #g2 .org.addr #g2
                     !else
-                        set-variable #l5 &reg "/org" &spr "addr/%d/%s" .org.addr #l4 ""
+                        set-variable #l5 &reg &spr "/org/addr/%d/%s" .org.addr #l4 ""
                         !if &seq #g2 ""
                             set-variable #l5 &rep #l5 #g1 .org.aexp-seperator
                         !else

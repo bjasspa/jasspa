@@ -15,7 +15,7 @@ define-macro fhook-lua
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-lua.setup &reg "/history" "fhook/lua" "bdfghinopx"
+set-variable .fhook-lua.setup &reg "/history/fhook/lua" "bdfghinopx"
 set-variable .fhook-lua.setup-mask "abdefghikmnoptux"
 set-variable .fhook-lua.tags "luatags"
 set-variable .fhook-lua.comment "|--|--|--| -- | -- |f|"

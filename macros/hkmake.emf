@@ -14,7 +14,7 @@ define-macro fhook-make
 
 ; buffer-init variables
 set-variable .fhook-make.name "Makefile"
-set-variable .fhook-make.setup &reg "/history" "fhook/make" "ghinopTx"
+set-variable .fhook-make.setup &reg "/history/fhook/make" "ghinopTx"
 set-variable .fhook-make.setup-mask "aeghikmnoptux"
 set-variable .fhook-make.comment "|#||#|# | #|r|"
 
@@ -45,4 +45,3 @@ set-variable .fhook-make.comment "|#||#|# | #|r|"
 !endif
 
 buffer-init-fhook "make"
-

@@ -272,7 +272,7 @@ DEFFUN (UFPDEC,     "pde", FUN_DYNAMIC|FUN_SETVAR|FUN_GETVAR)     /* post decrem
 DEFFUN (UFPINC,     "pin", FUN_DYNAMIC|FUN_SETVAR|FUN_GETVAR)     /* post increment variable and set */
 #endif
 #if MEOPT_REGISTRY
-DEFFUN (UFREGISTRY, "reg", FUN_TRINAMIC)    /* Retreive a registry value */
+DEFFUN (UFREGISTRY, "reg", FUN_DYNAMIC)     /* Retreive a registry value */
 #endif
 #if MEOPT_EXTENDED
 DEFFUN (UFREP,      "rep", FUN_TRINAMIC)    /* replace str in str */

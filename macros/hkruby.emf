@@ -13,7 +13,7 @@ define-macro fhook-ruby
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-ruby.setup &reg "/history" "fhook/ruby" "bdfghinopx"
+set-variable .fhook-ruby.setup &reg "/history/fhook/ruby" "bdfghinopx"
 set-variable .fhook-ruby.setup-mask "abdefghikmnoptux"
 set-variable .fhook-ruby.comment "|#||#|# | #|r|"
 

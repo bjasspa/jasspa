@@ -127,11 +127,11 @@ define-macro-file osdhelp osd-help
 ; buffer list. This is menu 20 also as they are regenerated
 ;
 0 define-macro osd-1-file
-    set-variable #l2 &cat &reg "/history" "file-type" "\b" "All files\b"
+    set-variable #l2 &cat &reg "/history/file-type" "\b" "All files\b"
     !if &not &set #l1 &lfi #l2 $result
         !abort
     !endif
-    set-variable #l2 &lget &cat &reg "/history" "file-mask" "\b" "*\b" #l1
+    set-variable #l2 &lget &cat &reg "/history/file-mask" "\b" "*\b" #l1
     set-variable #l4 1
     set-variable #l5 0
     -1 osd @#
@@ -260,7 +260,7 @@ osd 1  120 "-"
 osd 1  130 ""  "Printer Set\Hup"      f print-setup    ; Setup printer
 osd 1  140 ""  "\HPrint"              f print-buffer   ; Print
 osd 1  150 "-"
-!if &reg "/history" "find-buffer" "0"
+!if &reg "/history/find-buffer" "0"
     !if &not &exi .osd.find-buffer
         set-variable .osd.find-buffer &pinc .osd.next 1
         0 define-macro-file findbuff osd-find-buffer
@@ -274,7 +274,7 @@ osd 1  180 ""   "E\Hxit"               f save-buffers-exit-emacs
 
 ; MENU #19 - Quick-open
 ; if the file-type is found in the registry then add entry to menu 1 
-set-variable #l0 &cat &reg "/history" "file-type" "\b" "All files\b"
+set-variable #l0 &cat &reg "/history/file-type" "\b" "All files\b"
 -1 osd 19
 osd 19 0 "b"
 set-variable #l1 0
@@ -497,7 +497,7 @@ osd 22 30  ""  "Line \HDraw"  f draw
 ; Setup the users tools
 set-variable #l0 0
 !repeat
-    !if &not &seq "" &set #l1 &reg "/history" &spr "%s/tool/%d/name" $platform #l0 ""
+    !if &not &seq "" &set #l1 &reg &spr "/history/%s/tool/%d/name" $platform #l0 ""
         osd 7 &add 200 #l0 "" &spr "\H%d %s" #l0 #l1 #l0 execute-tool
         osd 7 290 "-"
     !endif
