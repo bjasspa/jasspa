@@ -1,0 +1,779 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : $Author: bill $
+;  Created By    : Steven Phillips
+;  Created       : Tue Jan 4 16:30:00 2005
+;  Last Modified : <050119.2110>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 2005 PTC.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+!if &not &exist .osd.notes-tmn
+    set-variable .osd.notes-tmn &pinc .osd.next 1
+!endif
+
+!if &band .hilight.flags 0x01
+    !if &not &exist .hilight.enft
+        set-variable .hilight.enft  &pinc .hilight.next 1
+    !endif
+    set-variable #l0 &mid $box-chars 3 1
+    set-variable #l1 &mid $box-chars 6 1
+    0 hilight  .hilight.enft  0                  $global-scheme
+    hilight .hilight.enft  0x101 "*"             .scheme.select
+    hilight .hilight.enft  0x101 "*\\{+"         .scheme.dir-closed
+    hilight .hilight.enft  0x001 &cat #l0 "\\{+" .scheme.dir-closed
+    hilight .hilight.enft  0x001 &cat #l1 "\\{+" .scheme.dir-closed
+    hilight .hilight.enft  0x101 "*\\{-"         .scheme.dir-open
+    hilight .hilight.enft  0x001 &cat #l0 "\\{-" .scheme.dir-open
+    hilight .hilight.enft  0x001 &cat #l1 "\\{-" .scheme.dir-open
+    hilight .hilight.enft  0x44 " \"[[:xdigit:]]+\" = \"" " " "\"$" "" "" $global-scheme
+!endif
+
+0 define-macro mark-registry-tree
+    set-variable #l0 @1
+    set-variable #l1 @2
+    mark-registry #l0 #l1
+    set-variable #l3 0
+    !repeat
+        !force find-registry #l0 &pinc #l3 1
+        !if $status
+            set-variable #l2 &spr "%s/%s" #l0 $result
+            mark-registry-tree #l2 #l1
+        !endif
+    !until &not $status
+!emacro
+
+0 define-macro notes-get-frame
+    !if .notes.frame-id
+        set-variable #l0 $frame-id
+        !if &equ .notes.frame-id $frame-id
+            !goto get-windows
+        !endif
+        3 next-frame
+        !tjump &sub #l0 $frame-id -4
+        unset-variable .notes.frame-id
+    !endif
+    !if &not @#
+        !abort
+    !endif
+    1 create-frame
+    set-variable .notes.frame-id $frame-id
+*get-windows
+    6 next-window
+    set-variable #l0 $window-id
+    set-variable #l1 &sub $window-mode-line $window-depth
+    !force 2 next-window
+    !if &and $status &equ #l1 &sub $window-mode-line $window-depth
+        !force 2 next-window
+        !if &not $status
+            6 next-window
+            !return
+        !endif
+    !endif
+    !if &not @#
+        !abort
+    !endif
+    !repeat
+        set-variable #l3 1 
+        6 next-window
+        !force 2 next-window
+        !if &not $status
+            set-variable #l2 $window-width
+            1 split-window-horizontally
+            !force change-window-width &div #l2 3
+            next-window
+        !elif &sub #l1 &sub $window-mode-line $window-depth
+            delete-window
+            set-variable #l3 0 
+        !endif
+    !until #l3
+    6 next-window
+    2 next-window
+    !force 2 next-window
+    !if $status
+        delete-window
+        !jump -5
+    !endif
+    6 next-window
+!emacro
+
+                
+0 define-macro notes-tree-update
+    !force narrow-buffer
+    beginning-of-buffer
+    forward-line
+    4 save-registry :notes-root
+    set-mark
+    search-buffer "me" "^\b\benf\b\bdivider\b\b"
+    beginning-of-line
+    -1 kill-region
+!emacro
+
+0 define-macro notes-tree-update-window
+    !if &not &seq $buffer-bname &cat "*" .notes.current
+        ml-write "[notes-tree-update-window called with wrong buffer current]"
+        !abort
+    !endif
+    !if &xseq @wl "[^\"]*\\( \"[0-9a-f]+\" = \"\\).*\""
+        set-variable #l2 @s1
+    !else
+        set-variable #l2 ""
+    !endif
+    set-variable #l1 $window-line
+    find-buffer .notes.current
+    set-variable #l0 :notes-root
+    find-buffer "*notes-tree-update*"
+    2 list-registry &cat #l0 "000050" "*notes-tree-update*"
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    copy-region
+    !force 0 delete-buffer "*notes-tree-update*"
+    find-buffer &cat "*" .notes.current
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    -1 kill-region
+    yank
+    -1 yank
+    !if &not &seq #l2 ""
+        beginning-of-buffer
+        !force search-buffer "Me" #l2
+        !if $status
+            beginning-of-line
+            !return
+        !endif
+    !endif
+    !force set-variable $window-line #l1
+!emacro
+
+0 define-macro notes-swap-window
+    set-variable #l0 $window-id
+    next-window
+    !if &equ #l0 $window-id
+        notes-create-display
+    !endif
+!emacro
+
+0 define-macro notes-tree-set-cur
+    !if &seq @wl ""
+        ml-write "[Error: Invalid line!]"
+        !abort
+    !endif
+    set-variable #l0 $window-line
+    find-buffer .notes.current
+    set-variable :notes-cur #l0
+    notes-create-display
+!emacro
+
+0 define-macro notes-tree-enter
+    beginning-of-line
+    !force -1 search-buffer "me" "[+-] "
+    !if $status
+        !if &seq @s0 "+ "
+            set-variable #l0 "H"
+        !else
+            set-variable #l0 "h"
+        !endif
+        set-variable #l2 $window-line
+        set-variable #l3 $buffer-bname
+        find-buffer .notes.current
+        #l2 mark-registry :notes-root #l0
+        find-buffer #l3
+    !endif
+    notes-tree-set-cur
+!emacro
+
+0 define-macro notes-reorder-node
+    set-variable #l1 @1
+    set-variable #l5 -1
+    !repeat
+        !force find-registry #l1 &inc #l5 1
+    !until &not $status
+    ; reset all the order numbers of children to make room for new one
+    !while &pdec #l5 1
+        find-registry #l1 #l5
+        set-variable #l6 $result
+        2 set-registry &spr "%s/%s" #l1 #l6 &spr "%s/%04x5%s" #l1 #l5 &rig #l6 5
+    !done
+!emacro
+
+0 define-macro notes-tree-insert
+    !if &seq @wl ""
+        ml-write "[Error: Invalid line!]"
+        !abort
+    !endif
+    set-variable #l0 $window-line
+    set-variable #l1 ""
+    2 osd-entry "New Note" "Note \HName: " #l1 $cursor-x &add $cursor-y 1 20
+    !if &seq &trb #l1 ""
+        ml-write "[Error: Invalid name]"
+        !abort
+    !endif
+    find-buffer .notes.current
+    set-variable #l2 &reg &cat :notes-root "id-next" "1"
+    #l0 mark-registry :notes-root "?"
+    set-variable #l4 $result
+    ; make sure its not collapsed
+    mark-registry #l4 "H"
+    ; create the note
+    !force narrow-buffer
+    end-of-buffer
+    backward-line
+    insert-string &spr "\b\benf\b\bdivider\b\b%s\n" #l2
+    set-registry &spr "%s/00004%s" #l4 #l2 #l1
+    ; reset all the order numbers of children to make room for new one
+    notes-reorder-node #l4
+    set-registry &cat :notes-root "id-next" &add 1 #l2
+    notes-tree-update
+    set-variable :notes-cur &add #l0 1
+    notes-create-display
+    notes-swap-window
+!emacro
+
+0 define-macro notes-delete-node
+    set-variable #l0 @1
+    !repeat
+        !force find-registry #l0 0
+        !if $status
+            set-variable #l1 &spr "%s/%s" #l0 $result
+            notes-delete-node #l1
+        !endif
+    !until &not $status
+    delete-registry #l0
+    beginning-of-buffer
+    set-variable #l5 &rig #l0 &add 5 &rsin "/" #l0
+    !force search-buffer "me" &spr "^\b\benf\b\bdivider\b\b%s$" #l5
+    !if &not $status
+        ml-write &spr "[Error: Failed to find note for node \"%s\"]" #l5
+        !abort
+    !endif
+    beginning-of-line
+    set-mark
+    forward-line
+    !force search-buffer "me" "^\b\benf\b\bdivider\b\b"
+    beginning-of-line
+    -1 kill-region
+!emacro
+
+0 define-macro notes-tree-delete
+    !if &or &seq @wl "" &equ $window-line 1
+        ml-write "[Error: Invalid line!]"
+        !abort
+    !elif &not &xseq @wl "[^\"]* \"[0-9a-f]*\" = \"\\(.*\\)\""
+        ml-write "[Error: Strange line!]"
+        !abort
+    !endif
+    set-variable #l1 @s1
+    set-variable #l0 $window-line
+    2 osd-xdialog "Delete Note" &spr "  Delete note \"%s\"?  " #l1 2 $cursor-x &add $cursor-y 1 " \HYes " " \HNo "
+    !if &equ $result 2
+        !abort
+    !endif
+    find-buffer .notes.current
+    #l0 mark-registry :notes-root "?"
+    set-variable #l4 $result
+    !force narrow-buffer
+    notes-delete-node #l4
+    set-variable #l4 &lef #l4 &sub &rsin "/" #l4 1
+    notes-reorder-node #l4
+    notes-tree-update
+    set-variable #l4 &rig #l4 &add &rsin "/" #l4 5
+    0 notes-create-display #l4
+!emacro
+
+0 define-macro notes-tree-cut
+    !if &or &seq @wl "" &equ $window-line 1
+        ml-write "[Error: Invalid line!]"
+        !abort
+    !endif
+    set-variable #l0 $window-line
+    set-position "\x81"
+    find-buffer .notes.current
+    #l0 mark-registry :notes-root "?"
+    set-variable :notes-cut $result
+    goto-position "\x81"
+!emacro
+
+0 define-macro notes-tree-paste
+    !if &seq @wl ""
+        ml-write "[Error: Invalid line!]"
+        !abort
+    !endif
+    set-variable #l0 $window-line
+    set-position "\x81"
+    find-buffer .notes.current
+    !if &not &exi :notes-cut
+        goto-position "\x81"
+        ml-write "[Error: Note to cut has not been set!]"
+        !abort
+    !elif &seq "" &reg :notes-cut ""
+        goto-position "\x81"
+        ml-write "[Error: Note to cut no longer exists!]"
+        !abort
+    !endif
+    #l0 mark-registry :notes-root "?"
+    set-variable #l1 $result
+    set-variable #l2 &rig :notes-cut &add &rsin "/" :notes-cut 5
+    mark-registry #l1 "H"
+    2 set-registry :notes-cut &spr "%s/00004%s" #l1 #l2
+    notes-reorder-node &lef :notes-cut &sub &rsin "/" :notes-cut 1
+    notes-reorder-node #l1
+    notes-tree-update
+    unset-variable :notes-cut
+    0 notes-create-display #l2
+!emacro
+
+0 define-macro notes-tree-move
+    beginning-of-line
+    -1 search-buffer "Me" "\""
+    !if &not $status
+        ml-write "[Error: Invalid line!]"
+        !abort
+    !endif
+    set-variable #l0 $window-col
+    set-variable #l1 $window-line
+    set-variable #l2 &mid @wl #l0 4
+    set-variable #l3 &abs @#
+    set-variable @# &cond &gre @# 0 1 -1
+    !while #l3
+        @# forward-line
+        beginning-of-line
+        !force -1 search-buffer "Me" "\""
+        !if &les $window-col #l0
+            set-variable $window-line #l1
+            ml-write "[Error: Invalid line!]"
+            !abort
+        !elif &equ $window-col #l0
+            set-variable #l3 &sub #l3 1
+        !endif
+    !done
+    set-variable #l4 $window-line
+    set-variable #l5 &mid @wl #l0 4
+    find-buffer .notes.current
+    #l1 mark-registry :notes-root "?"
+    set-variable #l3 $result
+    #l4 mark-registry :notes-root "?"
+    set-variable #l6 $result
+    set-variable #l7 &rig #l3 &add 5 &rsin "/" #l3
+    2 set-registry #l3 &spr "%s%d%s" #l5 &add 5 @# #l7
+    2 set-registry #l6 &spr "%s%d%s" #l5 &sub 5 @# &rig #l6 &add 5 &rsin "/" #l6
+    notes-reorder-node &lef #l3 &sub &rsin "/" #l3 1
+    notes-tree-update
+    set-variable :notes-cur #l4
+    0 notes-create-display #l7
+!emacro
+
+0 define-macro notes-tree-tidy
+    find-buffer .notes.current
+    :notes-cur mark-registry :notes-root "?"
+    set-variable #l1 $result
+    set-variable #l3 &cat :notes-root "000050"
+    mark-registry-tree #l3 "h"
+    set-variable #l2 #l1
+    !while &not &seq #l2 #l3
+        set-variable #l2 &lef #l2 &sub &rsin "/" #l2 1
+        mark-registry #l2 "H"
+    !done
+    set-variable #l2 &rig #l1 &add &rsin "/" #l1 5
+    0 notes-create-display #l2
+!emacs
+
+0 define-macro notes-tree-rename
+    !if &seq @wl ""
+        ml-write "[Error: Invalid line!]"
+        !abort
+    !endif
+    set-variable #l0 $window-line
+    set-position "\x81"
+    find-buffer .notes.current
+    set-variable #l2 :notes-root
+    goto-position "\x81"
+    #l0 mark-registry #l2 "?"
+    set-variable #l3 $result
+    set-variable #l1 &reg #l3 ""
+    2 osd-entry "Rename Note" "Note \HName: " #l1 $cursor-x &add $cursor-y 1 50
+    !if &seq &trb #l1 ""
+        ml-write "[Error: Invalid name]"
+        !abort
+    !endif
+    set-registry #l3 #l1
+    find-buffer .notes.current
+    notes-tree-update
+    set-variable :notes-cur #l0
+    notes-create-display
+!emacs
+
+0 define-macro notes-tree-isearch-move
+    set-variable #l9 :notes-root
+    next-window
+    beginning-of-line
+    !if &not &xseq @wl "[^\"]*\\([^\" ]\\) \"\\([0-9a-f]+\\)\" = \"\\(.*\\)\""
+        ml-write "[Error: Strange line!]"
+        !abort
+    !endif
+    !if @#
+        -1 buffer-mode "view"
+        ; moving forward, if the current node is closed, open
+        !if &seq @s1 "+"
+            set-variable #l3 $window-line
+            #l3 mark-registry #l9 "?"
+            set-variable #l4 $result
+            #l3 mark-registry #l9 "H"
+            notes-tree-update-window
+        !endif
+        forward-line
+        !if &not &xseq @wl "[^\"]*\\([^\" ]\\) \"\\([0-9a-f]+\\)\" = \"\\(.*\\)\""
+            ; no more nodes
+            backward-line
+            1 buffer-mode "view"
+            next-window
+            !abort
+        !endif
+        backward-line
+        set-variable @wc " "
+        forward-line
+    !elif &equ $window-line 1
+        next-window
+        !abort
+    !else
+        -1 buffer-mode "view"
+        set-variable @wc " "
+        !repeat
+            backward-line
+            !if &not &xseq @wl "[^\"]*\\([^\" ]\\) \"\\([0-9a-f]+\\)\" = \"\\(.*\\)\""
+                ml-write "[Error: Strange line!]"
+                !abort
+            !elif &set #l0 &seq @s1 "+"
+                set-variable #l3 $window-line
+                #l3 mark-registry #l9 "?"
+                set-variable #l4 $result
+                #l3 mark-registry #l9 "H"
+                forward-line
+                notes-tree-update-window
+            !endif
+        !until &not #l0
+    !endif
+    set-variable #l0 &rig @s2 5
+    set-variable #l2 @s3
+    set-variable @wc "*"
+    -1 buffer-mode "edit"
+    1 buffer-mode "view"
+    set-variable #l3 $window-line
+    next-window
+    set-variable :notes-cur #l3 
+    !force narrow-buffer
+    beginning-of-buffer
+    !force search-buffer "me" &spr "^\b\benf\b\bdivider\b\b%s$" #l0
+    !if &not $status
+        ml-write &spr "[Error: Failed to find note for node \"%s\"]" #l0
+        !abort
+    !endif
+    beginning-of-line
+    forward-line
+    set-mark
+    set-variable #l6 $window-line
+    !force search-buffer "me" "^\b\benf\b\bdivider\b\b"
+    beginning-of-line
+    !if &equ #l6 $window-line
+        insert-newline
+    !endif
+    3 narrow-buffer
+    beginning-of-buffer
+    !if &bmod "undo"
+        -1 buffer-mode "undo"
+        1 buffer-mode "undo"
+    !endif
+    set-variable #l1 &reg &cat :notes-root "000050" "<unknown>"
+    set-variable $buffer-mode-line &rep $mode-line "%b" &spr "*%s: %s*" #l1 #l2
+!emacro
+
+0 define-macro notes-tree-isearch
+    set-variable #l0 @#
+    set-variable #l8 $window-id
+    set-variable #l9 &sub $window-eline 1
+    next-window
+    !if &not &seq $buffer-bname .notes.current
+        ml-write "[Error: Window layout not correct]"
+    !endif
+    next-window
+    !if &not &equ #l8 $window-id
+        ml-write "[Error: Window layout not correct]"
+    !endif
+    next-window
+    !repeat
+        !if &band #l0 2
+            !if &band #l0 1
+                !force search-backward #l1
+                !if &not $status
+                    !goto backward-note
+*beg-of-buff
+                    beginning-of-buffer
+                    execute-line &spr "isearch-backward %s @mna" &xrep #l1 "\\(.\\)" " \"\\1\"" 
+                !else
+                    2 show-region
+                    execute-line &spr "0 isearch-backward %s @mna" &xrep #l1 "\\(.\\)" " \"\\1\"" 
+                !endif
+            !else
+                set-variable #l2 &xrep #l1 "\\(.\\)" " \"\\1\"" 
+                !force search-forward #l1
+                !if &not $status
+                    !goto forward-note
+*end-of-buff
+                    end-of-buffer
+                    execute-line &spr "isearch-forward %s @mna" &xrep #l1 "\\(.\\)" " \"\\1\""
+                !else
+                    -2 show-region
+                    execute-line &spr "0 isearch-forward %s @mna" &xrep #l1 "\\(.\\)" " \"\\1\""
+                !endif
+            !endif
+        !elif &band #l0 1
+            0 isearch-backward @mna
+        !else
+            0 isearch-forward @mna
+        !endif
+        ; did the user break out of isearch via executing another command?
+        !if &not &xseq @cc "notes-tree-isearch.*"
+            !return
+        !endif
+        set-variable #l1 @h4 0
+        !if $window-col
+            !return
+        !elif &equ $window-line 1
+            set-variable #l0 3
+*backward-note
+            !force 0 notes-tree-isearch-move
+            !tgoto &not $status beg-of-buff
+            end-of-buffer
+        !elif &equ $window-line $window-eline
+            set-variable #l0 2
+*forward-note
+            !force 1 notes-tree-isearch-move
+            !tgoto &not $status end-of-buff
+            beginning-of-buffer
+        !else
+            !return
+        !endif
+    !until 0
+!emacs
+
+define-macro notes-tree-isearch-forward
+    0 notes-tree-isearch
+!emacro
+define-macro notes-tree-isearch-backward
+    1 notes-tree-isearch
+!emacro
+
+0 define-macro notes-tree-save
+    set-position "\x81"
+    find-buffer .notes.current
+    save-buffer @nma
+    goto-position "\x81"
+!emacs
+
+0 define-macro notes-tree-mouse-select
+    !if &xseq @wl "\\([^\"\n]*\\). \".*"
+        !if &equ &len @s1 $window-col
+            notes-tree-enter
+        !else
+            notes-tree-set-cur
+        !endif
+    !endif
+!emacro
+
+0 define-macro notes-create-display
+    notes-get-frame
+    find-buffer .notes.current
+    set-variable #l0 :notes-root
+    set-variable #l1 &reg &cat #l0 "000050" "<unknown>"
+    !if @#
+        set-variable #l2 :notes-cur
+        #l2 mark-registry #l0 "?"
+        set-variable #l4 $result
+        set-variable #l5 &rig #l4 &add 5 &rsin "/" #l4
+    !else
+        set-variable #l5 @1
+    !endif
+    set-variable #l3 &cat "*" .notes.current
+    find-buffer #l3
+    2 list-registry &cat #l0 "000050" #l3
+    !if @#
+        set-variable $window-line #l2
+    !else
+        beginning-of-buffer
+        !force search-buffer "me" &spr " \"[0-9a-f]\\{5\\}%s\" = \"" #l5
+        beginning-of-line
+        set-variable #l2 $window-line
+        find-buffer .notes.current
+        set-variable :notes-cur #l2
+        find-buffer #l3
+        #l2 mark-registry #l0 "?"
+        set-variable #l4 $result
+    !endif
+    -1 buffer-mode "view"
+    set-variable @wc "*"
+    -1 buffer-mode "edit"
+    1 buffer-mode "view"
+    1 buffer-mode "hide"
+    set-variable $buffer-mode-line &spr "%s %s %s" &mid $window-chars 27 1 #l1 &mid $window-chars 31 1
+    set-variable $buffer-hilight .hilight.enft
+    set-variable :mouse-pick-1 void
+    set-variable :mouse-drop-1 notes-tree-mouse-select
+    set-variable :mouse-pick-3 void
+    set-variable :mouse-drop-3 notes-tree-context-menu
+    buffer-bind-key notes-close "C-x k"
+    buffer-bind-key notes-find-buffer "C-x b"
+    buffer-bind-key notes-swap-window "tab"
+    buffer-bind-key notes-swap-window "C-tab"
+    buffer-bind-key notes-tree-set-cur "space"
+    buffer-bind-key notes-tree-enter "return"
+    buffer-bind-key notes-tree-insert "insert"
+    buffer-bind-key notes-tree-delete "delete"
+    buffer-bind-key notes-tree-save "C-x C-s"
+    buffer-bind-key notes-tree-isearch-forward "s"
+    buffer-bind-key notes-tree-isearch-backward "r"
+    buffer-bind-key notes-tree-tidy "t"
+    buffer-bind-key notes-tree-cut "x"
+    buffer-bind-key notes-tree-paste "v"
+    buffer-bind-key notes-tree-rename "n"
+    1 buffer-bind-key notes-tree-move "d"
+    -1 buffer-bind-key notes-tree-move "u"
+    next-window
+    find-buffer .notes.current
+    !force narrow-buffer
+    beginning-of-buffer
+    !force search-buffer "me" &spr "^\b\benf\b\bdivider\b\b%s$" #l5
+    !if &not $status
+        ml-write &spr "[Error: Failed to find note for node \"%s\"]" #l5
+        !abort
+    !endif
+    beginning-of-line
+    forward-line
+    set-mark
+    set-variable #l6 $window-line
+    !force search-buffer "me" "^\b\benf\b\bdivider\b\b"
+    beginning-of-line
+    !if &equ #l6 $window-line
+        insert-newline
+    !endif
+    3 narrow-buffer
+    beginning-of-buffer
+    !if &bmod "undo"
+        -1 buffer-mode "undo"
+        1 buffer-mode "undo"
+    !endif
+    set-variable $buffer-mode-line &rep $mode-line "%b" &spr "*%s: %s*" #l1 &reg #l4 "" 
+    buffer-bind-key notes-close "C-x k"
+    buffer-bind-key notes-find-buffer "C-x b"
+    buffer-bind-key notes-swap-window "C-tab"
+    previous-window
+!emacro
+
+define-macro notes-close
+    !if &equ $frame-id .notes.frame-id
+        set-variable #l0 $frame-id
+        2 next-frame
+        !if &equ #l0 $frame-id
+            1 next-frame
+        !endif
+    !endif
+!emacro
+
+0 define-macro notes-find-buffer
+    @# find-buffer @mna
+    set-variable #l0 $buffer-bname
+    notes-close
+    find-buffer #l0
+!emacro
+
+define-macro notes-file
+    !force set-variable #l0 @1
+    !if &not $status
+        set-variable #l0 @ml01 "notes-file"
+    !endif
+    set-position "\x82"
+    @# find-file #l0 @mna
+    !if &not &exi :notes-root
+        set-variable :notes-root &spr "/enf/%d/" &inc .notes.file-id 1
+        beginning-of-buffer
+        !if &not &seq &lef @wl 7 "-!- enf"
+            ml-write &spr "[Error: file \"%s\" does not appear to be an enf file]" #l0
+            !abort
+        !endif
+        end-of-buffer
+        backward-line
+        !if &not &seq @wl "\b\benf\b\bdivider\b\bEND"
+            ml-write &spr "[Format Error: End divider missing]"
+            !abort
+        !endif
+        beginning-of-buffer
+        forward-line
+        set-mark
+        !force search-buffer "me" "^\b\benf\b\bdivider\b\b"
+        !if &not &seq @wl "\b\benf\b\bdivider\b\b0"
+            ml-write "[Format Error: Initial divider missing]"
+            !abort
+        !endif
+        beginning-of-line
+        3 narrow-buffer
+        4 read-registry :notes-root ""
+        narrow-buffer
+        1 buffer-mode "hide"
+        set-variable :notes-cur &reg &cat :notes-root "node-cur" "1"
+        ;mark-registry "/enf" "!"
+    !elif &les :notes-cur 1
+        ml-write "[Error: variable :notes-cur not set]"
+    !endif
+    set-variable .notes.current $buffer-bname
+    goto-position "\x82"
+    notes-create-display
+!emacro
+
+-1 osd .osd.notes-tmn
+osd .osd.notes-tmn 0   b
+osd .osd.notes-tmn  40 ""  "Tidy Tree        t"      f notes-tree-tidy
+osd .osd.notes-tmn  50 ""  "Rename Note      n"      f notes-tree-rename
+osd .osd.notes-tmn  60 ""  "Delete Note      delete" f notes-tree-delete
+osd .osd.notes-tmn  70 ""  "Cut Note         x"      f notes-tree-cut
+osd .osd.notes-tmn  80 ""  "Paste Note       v"      f notes-tree-paste
+osd .osd.notes-tmn  90 ""  "Move Note Up     u"     -1 notes-tree-move
+osd .osd.notes-tmn 100 ""  "Move Note Down   d"      1 notes-tree-move
+osd .osd.notes-tmn 110 ""  "Insert New Note  insert" f notes-tree-insert
+osd .osd.notes-tmn 120 "-"
+osd .osd.notes-tmn 130 ""  "Search forward   s"      f notes-tree-isearch-forward
+osd .osd.notes-tmn 140 ""  "Search backward  r"      f notes-tree-isearch-backward
+osd .osd.notes-tmn 150 "-"
+osd .osd.notes-tmn 160 ""  "\HOpen Notes File"     f notes-file
+osd .osd.notes-tmn 170 ""  "\HSave Notes File"     f notes-tree-save
+osd .osd.notes-tmn 180 ""  "\HHide Notes"          f notes-close
+
+0 define-macro notes-tree-context-menu
+    set-variable $window-line &ind &spr ":%s:notes-cur" .notes.current
+    2 screen-update
+    .osd.notes-tmn osd
+!emacro
+
+define-macro notes
+    !force 0 notes-get-frame
+    !if &not $status
+        @# notes-file
+    !else
+        !force 0 find-buffer .current
+        !if &and $status &exi :notes-cur
+            notes-create-display
+        !else
+            notes-close
+            @# notes-file
+        !endif
+    !endif
+!emacro
+    
+!if &not &exi .notes.file-id
+    set-variable .notes.file-id 0
+!endif

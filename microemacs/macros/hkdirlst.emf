@@ -261,12 +261,11 @@ set-variable .file-browser-close.bn "\CH*directory*\CH*files*\CH*ftp-files*\CH*f
     -1 buffer-mode "edit"
     1 buffer-mode "view"
 !emacro
-!if &not &exi .fhook-dirlst.filter-mask
-    set-variable #l0 &rep $file-ignore "./ " ""
-    set-variable #l0 &rep #l0 " ./" ""
-    str-to-regex #l0
-    set-variable .fhook-dirlst.filter-mask &cat "\\./\\|.*" &rep #l0 " " "\\|.*"
-!endif
+
+set-variable #l0 &rep &trb $file-ignore "./ " ""
+set-variable #l0 &rep #l0 " ./" ""
+str-to-regex #l0
+set-variable .fhook-dirlst.filter-mask &cat "\\./\\|.*" &rep #l0 " " "\\|.*"
 
 0 define-macro file-browser-set-filter
     set-variable .fhook-dirlst.mode &lset .fhook-dirlst.mode 2 @#
