@@ -153,7 +153,7 @@ define-macro comment-end
     !endif
     set-variable #l1 #l8
     str-to-regex #l1
-    set-variable #l1 &spr "^\\(%s\\)\\{3,\\}$" #l1
+    set-variable #l1 &spr "^\\(%s\\)\\{4,\\}$" #l1
     !while &not &seq @wc ""
         !if &xse @wl #l1
             end-of-line
@@ -303,7 +303,7 @@ define-macro comment-end
     set-variable :column #l0
     set-variable :buffer-name #l1
     set-variable :fill-col $fill-col
-    set-variable $fill-col &sub $fill-col &sub #l0 &len &lget #l9 4
+    set-variable $fill-col &sub $fill-col &add #l0 &len &lget #l9 4
     set-variable #l2 &lget #l9 4
     set-variable #l1 &trb #l2
     set-variable #l2 &rig #l2 &len #l8
@@ -332,7 +332,7 @@ define-macro comment-end
     set-variable #l3 &lget #l9 6
     set-variable #l2 &lget #l9 3
     str-to-regex #l2
-    set-variable #l0 &spr "^%s%s%s\\(\\(%s\\)*\\)$" #l2 #l2 #l2 #l2
+    set-variable #l0 &spr "^%s%s%s%s\\(\\(%s\\)*\\)$" #l2 #l2 #l2 #l2 #l2
     ; check for a header line
     beginning-of-buffer
     !force -1 search-forward #l0
@@ -348,10 +348,14 @@ define-macro comment-end
     !elif &seq @wl ""
         ; got an empty header line
         forward-delete-char
+        var-str-sub #l3 "H" ""        
         set-variable #l3 &cat #l3 "h"
+    !else
+        var-str-sub #l3 "h" ""        
     !endif
     ; check for a footer line
     !if #l4
+        var-str-sub #l3 "F" ""        
         set-variable #l3 &cat #l3 "f"
     !else
         end-of-buffer
@@ -366,6 +370,8 @@ define-macro comment-end
             -1 yank
             set-variable #l3 &cat #l3 "Ff"
             set-variable #l1 &sub #l1 1
+        !else
+            var-str-sub #l3 "f" ""        
         !endif
     !endif
     ; find any dividing lines
