@@ -52,6 +52,7 @@ set-variable .fhook-xml.exact -1
     hilight .hilight.xml 0x80 "<[\\t ]*[-/.:a-zA-Z0-9_]+" .hilight.xmlT .scheme.keyword
     hilight .hilight.xml 0x80 "<\\?[\\t ]*[-/.:a-zA-Z0-9_]+" .hilight.xmlT .scheme.keyword
     hilight .hilight.xml 0x80 "<![\\t ]*[^-][-/.:a-zA-Z0-9_]+" .hilight.xmlT .scheme.keyword
+    hilight .hilight.xml 4 "<!\\[CDATA\\[" "]]>" ""     .scheme.variable
     hilight .hilight.xml 4 "<!--" "-->" ""              .scheme.comment
     hilight .hilight.xml 0 "&\\w\\w;"                   .scheme.operator
     hilight .hilight.xml 0 "&\\w\\w\\w;"                .scheme.operator
