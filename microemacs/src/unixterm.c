@@ -3087,6 +3087,7 @@ meFrameXTermFree(meFrame *frame, meFrame *sibling)
 void
 meFrameXTermMakeCur(meFrame *frame)
 {
+    XRaiseWindow(mecm.xdisplay, meFrameGetXWindow(frame)) ;
 }
 
 /* Heres the xterm equivalent, note that its done in two stages */
