@@ -85,6 +85,11 @@ set-variable .fhook-jst.command-desc  "|&Show Current Settings|Spell Check Buffe
     hilight .hilight.jst 0x20 "[0-9]+[]).]\\}[ \t]+\\S "        .scheme.no1
     hilight .hilight.jst 0x20 "[a-z][]).]\\}[ \t]+\\S "         .scheme.no1
     hilight .hilight.jst 0x20 "[A-Z][]).]\\}[ \t]+\\S "         .scheme.no1
+    hilight .hilight.jst 0x20 "[IVXLC]+[]).]\\}[ \t]+\\S "      .scheme.no1
+    hilight .hilight.jst 0x20 "[ivxlc]+[]).]\\}[ \t]+\\S "      .scheme.no1
+    hilight .hilight.jst 0x22 "^===+$"                          .scheme.header
+    hilight .hilight.jst 0x22 "^---+$"                          .scheme.header
+    hilight .hilight.jst 0x22 "^___+$"                          .scheme.under
     hilight .hilight.jst 1 "\\*\\S [^*\n]*\\*"                  .scheme.bold
     hilight .hilight.jst 1 "~\\S [^~\n]*~"                      .scheme.italic
     hilight .hilight.jst 1 "_\\S [^_\n]*_"                      .scheme.under
