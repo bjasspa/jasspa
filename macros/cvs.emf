@@ -13,7 +13,7 @@
 
 define-macro cvs
 !emacro
-set-variable .cvs.filter  1
+set-variable .cvs.filter &cond &exi .cvs.filter .cvs.filter 1
 set-variable .cvs.console-hilight "|||||||"
 set-variable .cvs.message ""
 

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Jun 13 10:25:33 1998
-;  Last Modified : <010216.1155>
+;  Last Modified : <010513.2318>
 ;
 ;  Description
 ;
@@ -257,14 +257,18 @@ define-macro ehf-process-all
     beginning-of-buffer
     !force replace-string "esc backslash" "esc \\\\"
     ml-write "[Fixing http: links]" 
-    beginning-of-buffer
     ; Move the http and email address curior hilighting start string (\ecG) out
     ; of the way so cut and paste gets the right thing
+    beginning-of-buffer
     !force replace-string " \ecGhttp:" "\ecG http:"
-    !force replace-string " \ecDEmail:\ecA\ecGjasspa" "\ecG Email:jasspa"
+    beginning-of-buffer
+    !force replace-string " \ecDEmail:\ecA\ecGsupport" "\ecG Email:support"
+    beginning-of-buffer
     !force replace-string " \ecGjasspa-subscribe@" "\ecG jasspa-subscribe@"
+    beginning-of-buffer
     !force replace-string " \ecGjasspa-unsubscribe@" "\ecG jasspa-unsubscribe@"
     ; find and fix all split underlines
+    beginning-of-buffer
     !force search-forward "\ecB[^\e]*\n"
     !while $status
         2 backward-char

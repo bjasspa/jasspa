@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Jul 18 14:55:16 1998
-;  Last Modified : <001017.1347>
+;  Last Modified : <010513.1900>
 ;
 ;  Description   : Macros used for searching and replacing 
 ;
@@ -664,6 +664,30 @@ define-macro line-scheme
         osd-search-hilight
     !endif
 !emacro
+
+; Macro to delete all hilighted lines.
+define-macro delete-hilight-lines
+    set-position "\x81"
+    ; remove all line hilighting
+    beginning-of-buffer
+    !repeat 
+        ; Protect folded lines.
+        !if &or &equ $line-scheme -1 &equ $line-scheme .scheme.fold
+            !force forward-line
+            !if &not $status 
+                goto-position "\x81"
+                !return
+            !endif
+        !else
+            set-variable $line-scheme -1
+            set-mark
+            forward-line
+            kill-region
+            -1 yank
+        !endif
+    !until 0
+!emacro
+
 0 define-macro osd-line-scheme
     -1 osd @#
     osd @# 0 "b"
