@@ -1,7 +1,7 @@
 /*
  *	SCCS:		%W%		%G%		%U%
  *
- *	Last Modified :	<000814.1029>
+ *	Last Modified :	<001002.1052>
  *
  *	EDEF:		Global variable definitions for
  *			MicroEMACS 3.2
@@ -414,7 +414,6 @@ meSTYLE *styleTable = NULL;             /* Highlighting colour table    */
 meABREV *globalAbrev = NULL;            /* Global Abreviation file	*/
 #endif
 mePOS *mePosition=NULL ;                /* Position stack head          */
-uint16  mePositionMark=meAM_FRSTPOS ;   /* Position next alpha mark name*/
 meCOLOR noColors=0 ;                    /* No defined colours           */
 int styleTableSize = 2;                 /* Size of the style table      */
 HILBLOCK *hilBlock;                     /* Hilighting style change      */

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Jun 13 13:00:52 1998
-;  Last Modified : <000806.2353>
+;  Last Modified : <001002.1231>
 ;
 ;  Description     Macros to implement typical Mouse functionality 
 ;
@@ -182,8 +182,7 @@
 
 0 define-macro mouse-pick-type1
     ; set the cursor position to the mouse position
-    0 pop-position
-    161 push-position
+    161 set-position "\x82"
     set-mark
     set-variable $delay-time $repeat-time
     set-variable .mouse-drop-t1.sl $window-line
@@ -236,16 +235,13 @@
         !jump 2
     !elif &seq .drop @cck
         set-cursor-to-mouse
-        ; goto the original window - must dup the position
-        -1 push-position
-        1 pop-position
+        ; goto the original window
+        1 goto-position "\x82"
         !if &equ .type 1
             !if &exi :mouse-word-select
                 !if &seq .drop @cck
                     set-variable $buffer-input .input
                     -1 create-callback mouse-drop-t1
-                    ; position nolonger needed
-                    0 pop-position
                     execute-line :mouse-word-select
                 !endif
                 !return
@@ -280,8 +276,6 @@
     !endif
     set-variable $buffer-input .input
     -1 create-callback mouse-drop-t1
-    ; position nolonger needed
-    0 pop-position
     !if &and &equ #l0 $window-line &equ #l1 $window-col
         !if &seq @cck "callback"
             !return
@@ -316,10 +310,9 @@
 !emacro
 
 0 define-macro mouse-drop-set-region
-    ; goto the original window - must dup the position for the mouse-event & callback
-    1 pop-position
-    161 push-position
-    -1 push-position
+    ; goto the original window
+    1 goto-position "\x82"
+    161 set-position "\x82"
     set-variable $delay-time 500
     set-variable $scroll .mouse-event.scroll
     set-variable .mouse-drop-t1.type @#
@@ -369,9 +362,8 @@
 !emacro
 
 0 define-macro mouse-no-move-yank
-    ; goto the original position - must dup the position
-    -1 push-position
-    pop-position
+    ; goto the original position
+    goto-position "\x82"
     !if .mouse-event.msshift
         -1 yank
         kill-region
@@ -382,9 +374,8 @@
 !emacro
 
 0 define-macro mouse-no-move-replace-yank
-    ; goto the original position - must dup the position
-    -1 push-position
-    pop-position
+    ; goto the original position
+    goto-position "\x82"
     !if .mouse-event.msshift
         -1 yank
         kill-region
@@ -408,18 +399,16 @@
 !emacro
 
 0 define-macro mouse-reyank
-    ; goto the original position - must dup the position
-    -1 push-position
-    pop-position
+    ; goto the original position
+    goto-position "\x82"
     set-variable @cl @cl
     reyank @mna
     set-variable @cc reyank
 !emacro
 
 0 define-macro mouse-undo
-    ; goto the original position - must dup the position
-    -1 push-position
-    pop-position
+    ; goto the original position
+    goto-position "\x82"
     set-variable @cc @cl
     undo @mna
     set-variable @cc undo
@@ -427,13 +416,13 @@
 
 0 define-macro mouse-pan-window
     ; goto the original position
-    pop-position
+    goto-position "\x82"
     set-variable #l0 $mouse-x
     set-variable #l1 $mouse-y
     !force &sub #l1 .mouse-event.y scroll-up
     !force &sub #l0 .mouse-event.x scroll-left
     ; store the new position
-    161 push-position
+    161 set-position "\x82"
     set-variable .mouse-event.x #l0
     set-variable .mouse-event.y #l1
 !emacro
@@ -447,9 +436,8 @@
 !emacro
 
 0 define-macro mouse-pan-drop
-    ; goto the original position - must dup the position
-    -1 push-position
-    pop-position
+    ; goto the original position
+    set-position "\x82"
     set-variable $mouse .mouse-event.mouse
     set-variable $scroll .mouse-event.scroll
     unset-variable %pan-system
@@ -459,9 +447,9 @@
 0 define-macro mouse-mspan-window
     !if &set #l1 &sub .y $mouse-y
         ; goto the original position
-        pop-position
+        goto-position "\x82"
         !force #l1 scroll-up
-        161 push-position
+        161 set-position "\x82"
     !endif
 !emacro
 
@@ -475,9 +463,8 @@
 !emacro
 
 0 define-macro mouse-mspan-drop
-    ; goto the original position - must dup the position
-    -1 push-position
-    pop-position
+    ; goto the original position
+    goto-position "\x82"
     set-variable $mouse .mouse-event.mouse
     set-variable $scroll .mouse-event.scroll
     unset-variable %pan-system
@@ -571,9 +558,8 @@
     !force global-unbind-key &spr .mask "time"
     !force global-unbind-key &spr .mask "move"
     !if   &set #l0 &sin "-pick" #l1
-        ; must store the original window and cursor position, this
-        ; must stay on the position stack until the end of the drop 
-        161 push-position
+        ; must store the original window and cursor position
+        161 set-position "\x82"
         set-cursor-to-mouse
         ; work out the mouse mask
         set-variable .mode $mouse-pos
@@ -594,7 +580,7 @@
             !if &sin "-pick" #l1
                 mouse-auto-pick-event
             !else
-                1 pop-position
+                1 goto-position "\x82"
             !endif
             !return
         !endif
@@ -607,13 +593,8 @@
         0 show-region
         set-variable #l2 $result
     !else
-        -1 push-position
-        pop-position
+        goto-position "\x82"
         set-variable #l3 1
-    !endif
-    !if &sin "-drop" #l1
-        ; remove the original position from the stack
-        0 pop-position
     !endif
     ; was the region showing, if so make sure it is
     !if &band #l2 1

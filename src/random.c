@@ -10,7 +10,7 @@
  *
  *	Author:			Danial Lawrence.
  *
- *	Creation Date:		07/05/91 08:19		<000723.1902>
+ *	Creation Date:		07/05/91 08:19		<001002.1236>
  *
  *	Modification date:	%G% : %U%
  *
@@ -2558,24 +2558,22 @@ gotoAlphaMark(void)
     if(alphaMarkGet(curbp,(uint16) cc) != TRUE)
     {
         meAMARK *p = curbp->b_amark;
-        uint8    allmarks[54];		/* record of the marks	*/
+        uint8    allmarks[256]; 	/* record of the marks	*/
         int      ii = 0;
-        
-        if(p == NULL)
-            return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[No marks in buffer]");
         
         while(p != NULL)
         {
             if(p->name < 128)
             {
-                allmarks[ii++] = (uint8) p->name;
                 allmarks[ii++] = ' ' ;
+                allmarks[ii++] = (uint8) p->name;
             }
             p = p->next;
         }
+        if(ii == 0)
+            return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[No marks in buffer]");
         allmarks[ii] = '\0';
-        
-        return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[Marks in buffer: %s]", allmarks);
+        return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[Marks in buffer:%s]", allmarks);
     }
     
     /* do the buisness */

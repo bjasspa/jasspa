@@ -5,7 +5,7 @@
  *  Synopsis      : Narrow out regions of a buffer
  *  Created By    : On-Screen Display routines
  *  Created       : 26/07/97
- *  Last Modified : <000723.1909>
+ *  Last Modified : <001003.1646>
  *
  *  Description
  *     This file contains the on screen display routines that
@@ -171,7 +171,8 @@ typedef struct osdDIALOG
 #if LCLBIND
     struct KEYTAB *binds ;		/* pointer to osd bindings */
 #endif
-    osdITEM *sibling;                   /* Siblings of root */
+    osdITEM *itemHead;                  /* Head of list of items */
+    osdITEM *itemTail;                  /* Tail of list of items */
     uint8 *strData ;                    /* String data */
     int flags;                          /* Identification of root item */
 #if LCLBIND
@@ -365,12 +366,13 @@ dialogDestruct (int id)
         osdITEM *mp;                       /* Pointer to the menu item */
         
         /* Destruct the siblings associated with the root */
-        while ((mp = rp->sibling) != NULL)
+        while ((mp = rp->itemHead) != NULL)
         {
-            rp->sibling = mp->next;     /* Continue linkage */
+            rp->itemHead = mp->next;     /* Continue linkage */
             meNullFree (mp->strData);   /* Destruct the str data */
             meFree (mp);                /* Destruct the node */
         }
+        rp->itemTail = NULL;
         /* Destruct the malloced area of the root */
         if(rp->strData != NULL)
         {
@@ -495,26 +497,38 @@ itemFind (osdDIALOG *rp, int item, uint8 *name)
     osdITEM *mp;
     int status;
     
-    for (mp = rp->sibling; mp != NULL; mp = mp->next)
+    /* search for item in reverse order as 99% of times they're added in order */
+    if (rp->flags & RF_ALPHA)
     {
-        /* Compare the node identities */
-        if (rp->flags & RF_ALPHA)
+        register uint8 *ss ;
+    
+        for (mp = rp->itemTail; mp != NULL; mp = mp->prev)
         {
-            uint8 *ss=mp->strData ;
+            /* Compare the item string data */
+            ss = mp->strData ;
             if(mp->flags & MF_CHECK)
                 ss += 6 ;
             if (rp->flags & RF_INSENSE)
-                status = meStridif (name,ss);
+                status = meStridif (ss,name);
             else
-                status = meStrcmp (name,ss);
+                status = meStrcmp (ss,name);
+            /* Evaluate presence of node */
+            if (status == 0)
+                return mp;
+            else if (status < 0)
+                break;
         }
-        else
-            status = item - mp->item;
-        /* Evaluate presence of node */
-        if (status == 0)
-            return mp;
-        else if (status < 0)
-            break;
+    }
+    else
+    {
+        for (mp = rp->itemTail; mp != NULL; mp = mp->prev)
+        {
+            /* Compare the node identities */
+            if((status = (mp->item - item)) == 0)
+                return mp;
+            else if (status < 0)
+                break;
+        }
     }
     return NULL;
 }
@@ -526,7 +540,6 @@ itemFind (osdDIALOG *rp, int item, uint8 *name)
 static void
 itemAdd (osdDIALOG *rp, osdITEM *newmp)
 {
-    osdITEM *lmp;                          /* Last menu pointer */
     osdITEM *mp;                           /* Menu pointer */
     uint8 *ns ;
     int status;
@@ -537,47 +550,63 @@ itemAdd (osdDIALOG *rp, osdITEM *newmp)
         if(newmp->flags & MF_CHECK)
             ns += 6 ;
     }
+    /* search for item in reverse order as 99% of times they're added in order */
     /* Determine if this is a string sorted list or a numeric list */
-    for (lmp = NULL, mp = rp->sibling; mp != NULL; mp = mp->next)
+    if (rp->flags & RF_ALPHA)
     {
-        /* Get the difference status */
-        if (rp->flags & RF_ALPHA)
+        register uint8 *ss ;
+    
+        for (mp = rp->itemTail; mp != NULL; mp = mp->prev)
         {
-            uint8 *ss=mp->strData ;
+            /* Compare the item string data */
+            ss = mp->strData ;
             if(mp->flags & MF_CHECK)
                 ss += 6 ;
             if (rp->flags & RF_INSENSE)
                 status = meStridif (ss,ns);
             else
                 status = meStrcmp (ss,ns);
+            if (status <= 0)
+                break;
         }
-        else
-            status = mp->item - newmp->item;
-        
-        if (status > 0)
-            break;
-        lmp = mp;
     }
-    
-    /* Add the new item to the list */
-    if (lmp == NULL)
-        rp->sibling = newmp;
     else
-        lmp->next = newmp;
-    if(mp != NULL)
-        mp->prev = newmp ;
-    newmp->next = mp ;
-    newmp->prev = lmp ;
+    {
+        for (mp = rp->itemTail; mp != NULL; mp = mp->prev)
+        {
+            /* Compare the node identities */
+            if((mp->item - newmp->item) <= 0)
+                break;
+        }
+    }
+    /* Add the new item to the list */
+    if(mp == NULL)
+    {
+        newmp->prev = NULL ;
+        newmp->next = rp->itemHead ;
+        rp->itemHead = newmp;
+    }
+    else
+    {
+        newmp->prev = mp ;
+        newmp->next = mp->next ;
+        mp->next = newmp;
+    }
+    if(newmp->next == NULL)
+        rp->itemTail = newmp;
+    else
+        newmp->next->prev = newmp ;
+    
     if (rp->flags & RF_ALPHA)
     {
         /* if its an alpha dialog then replace the item number with the
          * sequential next and update the following */
-        status = (lmp == NULL) ? 0:lmp->item;
-        while(newmp != NULL)
+        status = (newmp->prev == NULL) ? 0:newmp->prev->item ;
+        do
         {
             newmp->item = ++status ;
             newmp = newmp->next ;
-        }
+        } while(newmp != NULL) ;
     }
 }
 
@@ -2528,7 +2557,7 @@ menuConfigure(osdDIALOG *rp, osdDISPLAY *md, int child)
     int ii,jj;                          /* Local loop counter */
     
     /* Get the length of the dialog & Determine if there is any work to perform */
-    for (ii=0, mp = rp->sibling; mp != NULL; mp = mp->next)
+    for (ii=0, mp = rp->itemHead; mp != NULL; mp = mp->next)
         if (!(mp->flags & MF_DISABLE))
             ii++;
     if(ii == 0)
@@ -2660,7 +2689,7 @@ menuConfigure(osdDIALOG *rp, osdDISPLAY *md, int child)
         int mcflags = CF_ROWFRST;           /* The mcp row flags */
         
         /* Loop through setting the context menu pointers and flags */
-        for (mcp = md->context, mp = rp->sibling; mp != NULL; mp = mp->next)
+        for (mcp = md->context, mp = rp->itemHead; mp != NULL; mp = mp->next)
         {
             int flags ;
             /* Skip un-rendered entries */

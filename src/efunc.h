@@ -1,7 +1,7 @@
 /*
  *      SCCS:           %W%             %G%             %U%
  *
- *      Last Modified : <000723.2003>
+ *      Last Modified : <001002.1151>
  *
  *      EFUNC.H:        MicroEMACS function declarations and names
  *
@@ -128,7 +128,7 @@ meCMD  *cmdHash[cmdHashSize] =
     &__meFunc_BAKCHR,     NULL,                 NULL,                 &__meFunc_YANK,       NULL,
     &__meFunc_BUFPOS,     NULL,                 NULL,                 &__meFunc_ONLYWND,    &__meFunc_REDFILE,
     &__meFunc_PRTBUF,     &__meFunc_SWNDH,      &__meFunc_CRTCLBK,    &__meFunc_APPBUF,     NULL,
-    NULL,                 &__meFunc_IPIPWRT,    NULL,                 NULL,                 &__meFunc_SETMRK,
+    NULL,                 &__meFunc_IPIPWRT,    NULL,                 &__meFunc_GOTOPOS,    &__meFunc_SETMRK,
     NULL,                 &__meFunc_SAVBUF,     &__meFunc_ABTCMD,     NULL,                 NULL,
     &__meFunc_FNDTAG,     NULL,                 NULL,                 NULL,                 NULL,
     NULL,                 &__meFunc_DELBLK,     NULL,                 NULL,                 NULL,
@@ -156,7 +156,7 @@ meCMD  *cmdHash[cmdHashSize] =
     &__meFunc_FORLIN,     NULL,                 NULL,                 &__meFunc_HILIGHT,    &__meFunc_SORTLNS,
     NULL,                 NULL,                 NULL,                 &__meFunc_KILRECT,    NULL,
     &__meFunc_KILREG,     NULL,                 NULL,                 NULL,                 NULL,
-    NULL,                 NULL,                 NULL,                 NULL,                 NULL,
+    NULL,                 NULL,                 &__meFunc_SETPOS,     NULL,                 NULL,
     &__meFunc_DEFHELP,    NULL,                 NULL,                 NULL,                 &__meFunc_FLHOOK,
     NULL,                 NULL,                 NULL,                 NULL,                 NULL,
     &__meFunc_PRTCOL,     &__meFunc_UNSET,      &__meFunc_SCLPRV,     NULL,                 NULL,
@@ -182,7 +182,7 @@ meCMD  *cmdHash[cmdHashSize] =
     &__meFunc_HUNBAK,     &__meFunc_SWPMRK,     NULL,                 NULL,                 NULL,
     NULL,                 &__meFunc_IPIPKLL,    &__meFunc_CMPBUF,     NULL,                 &__meFunc_PPPWND,
     &__meFunc_GOAMRK,     &__meFunc_ADDDICT,    NULL,                 NULL,                 &__meFunc_HUNFOR,
-    NULL,                 NULL,                 NULL,                 &__meFunc_PUSHPOS,    &__meFunc_DELREGY,
+    NULL,                 NULL,                 NULL,                 NULL,                 &__meFunc_DELREGY,
     NULL,                 NULL,                 NULL,                 NULL,                 NULL,
     NULL,                 NULL,                 &__meFunc_GOEOF,      NULL,                 NULL,
     NULL,                 NULL,                 NULL,                 NULL,                 NULL,
@@ -212,7 +212,7 @@ meCMD  *cmdHash[cmdHashSize] =
     &__meFunc_APROPS,     NULL,                 NULL,                 &__meFunc_SETAMRK,    NULL,
     &__meFunc_EXIT,       &__meFunc_STCHRMK,    NULL,                 &__meFunc_DESCKEY,    NULL,
     &__meFunc_IPIPCMD,    NULL,                 &__meFunc_FISRCH,     &__meFunc_RESIZE,     &__meFunc_SFNDFIL,
-    &__meFunc_POPPOS,     &__meFunc_INSFIL,     NULL,                 NULL,                 NULL,
+    NULL,                 &__meFunc_INSFIL,     NULL,                 NULL,                 NULL,
     NULL
 } ;
 

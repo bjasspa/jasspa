@@ -5,7 +5,7 @@
  *  Synopsis      : Token based hilighting routines
  *  Created By    : Steven Phillips
  *  Created       : 21/12/94
- *  Last Modified : <000723.1900>
+ *  Last Modified : <001004.0828>
  *
  *  Description
  *
@@ -457,20 +457,33 @@ meHiltItemCompile(uint8 *dest, uint8 **token,
         {
         case 'S':
             *dest++ = 0xff ;
-            switch(*ss++)
+            cc = *ss++ ;
+            switch(cc)
             {
             case 'w':
                 *dest++ = meHIL_TEST_VALID|meHIL_TEST_INVERT|meHIL_TEST_WORD ;
+                *dest++ = meHIL_TEST_DEF_GROUP ;
                 break ;
             case ' ':
             case '-':
                 *dest++ = meHIL_TEST_VALID|meHIL_TEST_INVERT|meHIL_TEST_SPACE ;
+                *dest++ = meHIL_TEST_DEF_GROUP ;
                 break ;
             default:
-                mlwrite(MWABORT|MWWAIT,(uint8 *)"[Unsupported \\SC char class]");
-                return NULL ;
+                if(!isDigit(cc))
+                {
+                    mlwrite(MWABORT|MWWAIT,(uint8 *)"[Unsupported \\SC char class]");
+                    return NULL ;
+                }
+                if(((cc-='0') == 0) || (cc > noGroups))
+                {
+                    mlwrite(MWABORT|MWWAIT,(uint8 *)"[Back reference out of range]");
+                    return NULL ;
+                }
+                *dest++ = meHIL_TEST_VALID|meHIL_TEST_INVERT|meHIL_TEST_BACKREF ;
+                *dest++ = meHIL_TEST_DEF_GROUP ;
+                *dest++ = cc ;
             }
-            *dest++ = meHIL_TEST_DEF_GROUP ;
             break ;
         case 'W':
             *dest++ = 0xff ;
@@ -485,7 +498,8 @@ meHiltItemCompile(uint8 *dest, uint8 **token,
         case 'r':   *dest++ = 0x0d; break;
         case 's':
             *dest++ = 0xff ;
-            switch(*ss++)
+            cc = *ss++ ;
+            switch(cc)
             {
             case 'w':
                 *dest++ = meHIL_TEST_VALID|meHIL_TEST_WORD ;
@@ -495,8 +509,19 @@ meHiltItemCompile(uint8 *dest, uint8 **token,
                 *dest++ = meHIL_TEST_VALID|meHIL_TEST_SPACE ;
                 break ;
             default:
-                mlwrite(MWABORT|MWWAIT,(uint8 *)"[Unsupported \\sC char class]");
-                return NULL ;
+                if(!isDigit(cc))
+                {
+                    mlwrite(MWABORT|MWWAIT,(uint8 *)"[Unsupported \\SC char class]");
+                    return NULL ;
+                }
+                if(((cc-='0') == 0) || (cc > noGroups))
+                {
+                    mlwrite(MWABORT|MWWAIT,(uint8 *)"[Back reference out of range]");
+                    return NULL ;
+                }
+                *dest++ = meHIL_TEST_VALID|meHIL_TEST_BACKREF ;
+                *dest++ = meHIL_TEST_DEF_GROUP ;
+                *dest++ = cc ;
             }
             *dest++ = meHIL_TEST_DEF_GROUP ;
             break ;

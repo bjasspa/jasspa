@@ -2,7 +2,7 @@
  * 
  *	SCCS:		%W%		%G%		%U%
  *
- *	Last Modified :	<000731.1030>
+ *	Last Modified :	<001002.1044>
  *
  *	ESTRUCT:	Structure and preprocesser defined for
  *			MicroEMACS 3.7
@@ -489,7 +489,7 @@ typedef	struct	meAMARK {
 /* A position, stores the current window, buffer, line etc which can
  * be restore later, used by push-position and pop-position */
 typedef	struct	mePOS {
-    struct mePOS   *prev ;              /* pointer to previous position (stack)	     */
+    struct mePOS   *next ;              /* pointer to previous position (stack)	     */
     WINDOW         *window ;            /* Current window                            */
     struct BUFFER  *buffer ;            /* windows buffer                            */
     int32           topLineNo ;         /* windows top line number                   */
@@ -499,6 +499,7 @@ typedef	struct	mePOS {
     uint16          w_sscroll;          /* the horizontal scroll column              */
     uint16          w_doto;             /* Byte offset for "."                       */
     uint16          flags;              /* Whats stored bit mask                     */
+    uint16          name ;		/* position name, (letter associated with it)*/
 } mePOS;
 #define mePOS_WINDOW    0x01
 #define mePOS_WINXSCRL  0x02

@@ -1,6 +1,6 @@
 ;  Startup file for MicroEmacs '99 JASSPA Distribution
 ;
-;  Last Modified :  <000919.1014>
+;  Last Modified :  <001002.2300>
 ;  Copyright (c) 1999 JASSPA
 ;
 ; If mename isn't set or registry file isn't found then set it to guest
@@ -205,7 +205,7 @@ add-file-hook ".x86"                                          fhook-asmx86
 add-file-hook ".py"                                           fhook-python
 add-file-hook ".scm .sch"                                     fhook-scheme
 add-file-hook ".mp .mf"                                       fhook-meta
-add-file-hook ".pl"                                           fhook-perl
+add-file-hook ".pl .pm"                                       fhook-perl
 add-file-hook ".m4"                                           fhook-m4
 add-file-hook ".texi"                                         fhook-texi
 add-file-hook ".idl"                                          fhook-idl
