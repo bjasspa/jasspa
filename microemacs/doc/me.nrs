@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.17 2004-01-18 15:35:30 jon Exp $
+.Id $Id: me.nrs,v 2.18 2004-01-23 00:01:10 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -3069,9 +3069,78 @@ X-Window fixes - Thanks Jeremy Cowgar.
 .BU
 Macro execution speed-ups - Thanks Mike Hopkirk for analysis.
 .BU
-string-rectangle command added - Suggested by Salman.
+.Ht string-rectangle 3
+command added - Suggested by Salman.
 .BU
 SGML language template.
+.BU 
+Fixed comment re-styling for single start of line comments (REM in MS-DOS)
+.BU
+Fixed rendering anomalies of menus and pop-ups on Windows XP ClearType when anti-aliasing is enabled.
+.BU
+Shrink line crash on SunOS and IRIX fixed.
+.BU
+PHP template added.
+.BU 
+Hilighting fix for toolbar Dir Files list with symbolic links.
+.BU
+create-frame canvas size fix on creating internal frame.
+.BU 
+.Ht restyle-buffer 3
+fix when \fCTAB\fR mode defined - thanks to Pedro Gomes.
+.BU
+.Ht open-line 3 
+added for correct binding of \fBC-o\fR.
+.BU
+Latex  item-list  and  template  updated - thanks  to  Dr.  Detlef  Groth  for
+diagnosing problems.
+.BU
+Perl and TCL abbreviation files  - thanks to  Dr. Detlef Groth.
+.BU
+Added \fB*compile*\fR hilighting and \fCENTER\fR selects error file and line -
+prompted by Salman Khilji.
+.BU
+Added 
+.Ht copy-rectangle 3
+and 
+.Ht yank-rectangle-overwrite 3
+commands.
+.BU
+.Ht collapse-current 3
+line  format  now  includes  the end token so that  indent  operates
+correctly following a fold.
+.BU
+.Ht fold-exit-all 3
+fixed.
+.BU 
+Fixed
+.Ht c-hash-eval 3
+region hilighting problem.
+.BU
+Updated templates for Python and AsmX86 - thanks to Pedro Gomes.
+.BU
+Updated the Lau HTML processing tags - thanks to Jeremy Cowgar.
+.BU
+.Ht narrow-buffer 2
+numeric argument and command line options extended for mark-up lines.
+.BU
+spawn.c compilation warnings removed.
+.BU
+Added support for OSF1, thanks to Dr. Detlef Groth.
+.BU
+Added support for OpenBSD.
+.BU
+Added support for Zaurus, thanks to Pierre Gaston
+.BU
+Fixes for  Non-US  keyboards  under X, thanks to Pierre  Gaston and Dr. Detlef
+Groth
+.BU
+New key bindings for 
+.Ht create-frame 2 .
+.BU
+.Ht ml-bind-key 2
+ supports  new binding for  next/previous  file,  history  search uses \fBup\fR/\fBdown\fR
+\fBC-p\fR/\fBC-n\fR, prompted by Gabriel Tabares-Barreiro..
 .BE 0
 .SS "Work In Progress or Planned"
 Development  of  \*(mE  is an  on-going  process,  follows  is a list  of work
