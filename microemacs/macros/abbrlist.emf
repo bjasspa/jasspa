@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Fri Aug 10 10:28:53 2001
-;  Last Modified : <020718.2241>
+;  Last Modified : <020721.1612>
 ;  Description   : Create a list of abbreviations
 ;
 ;  Notes
@@ -194,7 +194,7 @@ define-macro eaf-list-execute
     beginning-of-buffer
     set-variable $line-scheme .scheme.header
     set-variable $buffer-hilight .hilight.abbrev-item
-    set-variable :mouse-pick-1 void
+    set-variable :mouse-pick-1 mouse-void
     set-variable :mouse-drop-1 eaf-list-execute
     set-variable :eaf-list #l0
     -1 buffer-mode "edit"

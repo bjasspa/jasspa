@@ -480,6 +480,15 @@
     !endif
 !emacro
 
+0 define-macro mouse-void
+    0 show-region
+    set-variable #l2 $result
+    goto-position "\x82"
+    !if &band #l2 1
+        !force show-region
+    !endif
+!emacro
+
 0 define-macro mouse-auto-pick-event
     set-variable #l0 &band .mouse-event.mode 15
     !if &equ #l0 1
