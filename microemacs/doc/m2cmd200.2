@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd200.2,v 2.7 2004-12-10 00:57:33 bill Exp $
+.Id $Id: m2cmd200.2,v 2.8 2005-01-15 16:48:37 jon Exp $
 .Im MicroEmacs bindings
 .so me.tni
 .TH Bindings 2
@@ -247,6 +247,10 @@ Scroll the current window up one line.
 .Hl "pipe-shell-command" pipe-shell-command 2
 Pipe a shell command to a buffer.
 .br
+\fC\*e%\fP
+.Hl query-replace-string query-replace-string 3
+Search and replace a string - with query.
+.br
 \fC\*e$\fP
 .Hl "spell-word" spell-word 3
 Spell a word.
@@ -468,16 +472,27 @@ Delete other windows.
 Split the current window into two.
 .br
 \fC\*(cX3\fP
-.Hl "next-window-find-buffer" next-window-find-buffer 2
-Find a buffer into the next window, split if necessary.
-.br
-\fC\*(cX4\fP
-.Hl "next-window-find-file" next-window-find-file 2
-Load a file into the next window, split if necessary.
-.br
-\fC\*(cX5\fP
 .Hl "split-window-horizontally" split-window-horizontally 2
-Split the current window horizontally into two.
+Split current window horizontally into two.
+.br
+.\"\fC\*(cX5\fP
+.\".Hl "next-window-find-file" next-window-find-file 2
+.\"Load a file into the next window, split if necessary.
+.\"\fC\*(cX3\fP
+.\".Hl "next-window-find-buffer" next-window-find-buffer 2
+.\"Find a buffer into the next window, split if necessary.
+.br
+\fC\*(cX5-1\fP
+.Hl "create-frame" create-frame 2
+Create a new internal frame.
+.br
+\fC\*(cX5-2\fP
+.Hl "create-frame" create-frame 2
+Create a new external frame.
+.br
+\fC\*(cX8\fP
+.Hl "find-cfile" find-cfile 3
+Find and load an encrypted file for editing.
 .br
 \fC\*(cX9\fP
 .Hl "find-bfile" find-bfile 3
