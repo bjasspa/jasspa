@@ -4,7 +4,7 @@
 >
 >  Created By    : Jon Green
 >  Created       : Sun Aug 10 13:06:00 2003
->  Last Modified : <030810.1314>
+>  Last Modified : <030814.1544>
 >
 
 NanoEmacs
@@ -30,7 +30,9 @@ NanoEmacs
     neirix6       - UNIX, Silicon Graphics IRIX 6, console only.
     nelinux24     - LINUX, Kernel 2.4.x, console only.
     nesunos56     - UNIX, Sun Solaris 2.6 (SPARC), console only.
+    nesunos58     - UNIX, Sun Solaris 8 (SPARC), console only.
     nesunos59     - UNIX, Sun Solaris 9 (SPARC), console only.
+    nesunx86_58   - UNIX, Sun Solaris 8 (i386), console only.
 
     Microsoft Windows
 
