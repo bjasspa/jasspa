@@ -21,7 +21,7 @@ define-macro fhook-perl
 set-variable .fhook-perl.setup &reg "/history" "fhook/perl" "bdfhinopx"
 set-variable .fhook-perl.setup-mask "abdefhikmnoptux"
 set-variable .fhook-perl.tags "perltags"
-set-variable .fhook-perl.comment "|#||#|"
+set-variable .fhook-perl.comment "|#||#|# ||"
 
 !if &exist perldb
     set-variable .fhook-perl.command-flag  "|t|h|"
@@ -51,35 +51,35 @@ set-variable .fhook-perl.fold-mopen "1"
     hilight .hilight.perl 0 "\\\\'"                $global-scheme 
     hilight .hilight.perl 0 "\\\\`"                $global-scheme 
     hilight .hilight.perl 0x804 "\\W\\{'" "'" "\\"       .scheme.string
-    hilight .hilight.perl 0x80 "[^\\\\]\\{\"" .hilight.perlS ..scheme.string
+    hilight .hilight.perl 0x80 "[^\\\\]\\{\"" .hilight.perlS .scheme.string
     ; Replace strings 
-    hilight .hilight.perl 0 "=~\\{[ \t]*\\{s\\(.\\)\\S1*\\1\\S1*\\1" ..scheme.string
-    hilight .hilight.perl 0 "!~\\{[ \t]*\\{s\\(.\\)\\S1*\\1\\S1*\\1" ..scheme.string
-    hilight .hilight.perl 0x80 "=~\\{[ \t]*\\{s/"  .hilight.perlR ..scheme.string
-    hilight .hilight.perl 0x80 "!~\\{[ \t]*\\{s/"  .hilight.perlR ..scheme.string
-    hilight .hilight.perl 0x80 "\\W\\{s/"          .hilight.perlR ..scheme.string
+    hilight .hilight.perl 0 "=~\\{[ \t]*\\{s\\(.\\)\\S1*\\1\\S1*\\1" .scheme.string
+    hilight .hilight.perl 0 "!~\\{[ \t]*\\{s\\(.\\)\\S1*\\1\\S1*\\1" .scheme.string
+    hilight .hilight.perl 0x80 "=~\\{[ \t]*\\{s/"  .hilight.perlR .scheme.string
+    hilight .hilight.perl 0x80 "!~\\{[ \t]*\\{s/"  .hilight.perlR .scheme.string
+    hilight .hilight.perl 0x80 "\\W\\{s/"          .hilight.perlR .scheme.string
     ; Translate strings
-    hilight .hilight.perl 0 "=~\\{[ \t]*\\{tr\\(.\\)\\S1*\\1\\S1*\\1" ..scheme.string
-    hilight .hilight.perl 0 "!~\\{[ \t]*\\{tr\\(.\\)\\S1*\\1\\S1*\\1" ..scheme.string
-    hilight .hilight.perl 0x80 "=~\\{[ \t]*\\{tr/"  .hilight.perlR ..scheme.string
-    hilight .hilight.perl 0x80 "!~\\{[ \t]*\\{tr/"  .hilight.perlR ..scheme.string
-    hilight .hilight.perl 0x80 "\\W\\{tr/"          .hilight.perlR ..scheme.string
-    hilight .hilight.perl 0 "=~\\{[ \t]*\\{y\\(.\\)\\S1*\\1\\S1*\\1" ..scheme.string
-    hilight .hilight.perl 0 "!~\\{[ \t]*\\{y\\(.\\)\\S1*\\1\\S1*\\1" ..scheme.string
-    hilight .hilight.perl 0x80 "=~\\{[ \t]*\\{y/"   .hilight.perlR ..scheme.string
-    hilight .hilight.perl 0x80 "!~\\{[ \t]*\\{y/"   .hilight.perlR ..scheme.string
-    hilight .hilight.perl 0x80 "\\W\\{y/"           .hilight.perlR ..scheme.string
+    hilight .hilight.perl 0 "=~\\{[ \t]*\\{tr\\(.\\)\\S1*\\1\\S1*\\1" .scheme.string
+    hilight .hilight.perl 0 "!~\\{[ \t]*\\{tr\\(.\\)\\S1*\\1\\S1*\\1" .scheme.string
+    hilight .hilight.perl 0x80 "=~\\{[ \t]*\\{tr/"  .hilight.perlR .scheme.string
+    hilight .hilight.perl 0x80 "!~\\{[ \t]*\\{tr/"  .hilight.perlR .scheme.string
+    hilight .hilight.perl 0x80 "\\W\\{tr/"          .hilight.perlR .scheme.string
+    hilight .hilight.perl 0 "=~\\{[ \t]*\\{y\\(.\\)\\S1*\\1\\S1*\\1" .scheme.string
+    hilight .hilight.perl 0 "!~\\{[ \t]*\\{y\\(.\\)\\S1*\\1\\S1*\\1" .scheme.string
+    hilight .hilight.perl 0x80 "=~\\{[ \t]*\\{y/"   .hilight.perlR .scheme.string
+    hilight .hilight.perl 0x80 "!~\\{[ \t]*\\{y/"   .hilight.perlR .scheme.string
+    hilight .hilight.perl 0x80 "\\W\\{y/"           .hilight.perlR .scheme.string
     ; Search strings 
-    hilight .hilight.perl 0 "=~\\{[ \t]*\\([^st]\\)\\S1*\\1" ..scheme.string
-    hilight .hilight.perl 0 "!~\\{[ \t]*\\([^st]\\)\\S1*\\1" ..scheme.string
-    hilight .hilight.perl 0x80 "=~\\{[ \t]*/" .hilight.perlX ..scheme.string
-    hilight .hilight.perl 0x80 "!~\\{[ \t]*/" .hilight.perlX ..scheme.string
-    hilight .hilight.perl 0x80 "\\W\\{/"      .hilight.perlX ..scheme.string
-    hilight .hilight.perl 0 "=~\\{[ \t]*m\\([^st]\\)\\S1*\\1" ..scheme.string
-    hilight .hilight.perl 0 "!~\\{[ \t]*m\\([^st]\\)\\S1*\\1" ..scheme.string
-    hilight .hilight.perl 0x80 "=~\\{[ \t]*m/" .hilight.perlX ..scheme.string
-    hilight .hilight.perl 0x80 "!~\\{[ \t]*m/" .hilight.perlX ..scheme.string
-    hilight .hilight.perl 0x80 "\\W\\{m/"      .hilight.perlX ..scheme.string
+    hilight .hilight.perl 0 "=~\\{[ \t]*\\([^st]\\)\\S1*\\1" .scheme.string
+    hilight .hilight.perl 0 "!~\\{[ \t]*\\([^st]\\)\\S1*\\1" .scheme.string
+    hilight .hilight.perl 0x80 "=~\\{[ \t]*/" .hilight.perlX .scheme.string
+    hilight .hilight.perl 0x80 "!~\\{[ \t]*/" .hilight.perlX .scheme.string
+    hilight .hilight.perl 0x80 "\\W\\{/"      .hilight.perlX .scheme.string
+    hilight .hilight.perl 0 "=~\\{[ \t]*m\\([^st]\\)\\S1*\\1" .scheme.string
+    hilight .hilight.perl 0 "!~\\{[ \t]*m\\([^st]\\)\\S1*\\1" .scheme.string
+    hilight .hilight.perl 0x80 "=~\\{[ \t]*m/" .hilight.perlX .scheme.string
+    hilight .hilight.perl 0x80 "!~\\{[ \t]*m/" .hilight.perlX .scheme.string
+    hilight .hilight.perl 0x80 "\\W\\{m/"      .hilight.perlX .scheme.string
     ; file piping tokens
     hilight .hilight.perl 4    "EOF;" "EOF" ""     .scheme.string
     hilight .hilight.perl 4    "\"EOF\";" "EOF" "" .scheme.string
@@ -94,7 +94,7 @@ set-variable .fhook-perl.fold-mopen "1"
     hilight .hilight.perl 2    "^package"          .scheme.prepro
     ; Function names
     !if &band .hilight.flags 0x04
-        hilight .hilight.perl 0 "^\\s *\\{sub\\s +\\w[1-9A-Za-z_']*" ..scheme.function
+        hilight .hilight.perl 0 "^\\s *\\{sub\\s +\\w[1-9A-Za-z_']*" .scheme.function
     !endif
     ; Labels
     hilight .hilight.perl 0    "^__...__"          .scheme.link

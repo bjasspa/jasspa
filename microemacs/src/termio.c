@@ -5,7 +5,7 @@
  *  Synopsis      : Generic terminal support routines
  *  Created By    : Steven Phillips
  *  Created       : 1993
- *  Last Modified : <010305.0759>
+ *  Last Modified : <010315.0845>
  *
  *  Description
  *     Many generic routines to support timers, key input and some output.
@@ -747,18 +747,33 @@ TTgetc(void)
                     if(tt->child[ii].key == cc)
                     {
                         tt = tt->child+ii ;
-                        if(tt->map == ME_DELETE_KEY)
+                        if(tt->map != ME_INVALID_KEY)
                         {
-                            TTnextKeyIdx = nextKeyIdx ;
+                            int nn, jj ;
                             TTnoKeys -= keyNo ;
-                            keyNo = 0 ;
-                        }
-                        else if(tt->map != ME_INVALID_KEY)
-                        {
-                            TTnextKeyIdx = nextKeyIdx + 1 ;
-                            TTnoKeys -= keyNo-1 ;
-                            TTkeyBuf[nextKeyIdx] = tt->map ;
-                            keyNo = 1 ;
+                            nn = TTnoKeys ;
+                            ii = TTnextKeyIdx ;
+                            jj = nextKeyIdx ;
+                            if(tt->map == ME_DELETE_KEY)
+                                keyNo = 0 ;
+                            else
+                            {
+                                if(!ii)
+                                    ii = KEYBUFSIZ ;
+                                TTkeyBuf[--ii] = tt->map ;
+                                TTnoKeys++ ;
+                                keyNo = 1 ;
+                            }
+                            nextKeyIdx = ii ;
+                            while(--nn >= 0)
+                            {
+                                if(!ii)
+                                    ii = KEYBUFSIZ ;
+                                if(!jj)
+                                    jj = KEYBUFSIZ ;
+                                TTkeyBuf[--ii] = TTkeyBuf[--jj] ;
+                            }
+                            TTlastKeyIdx = ii ;
                         }
                         ii = 0 ;
                         break ;

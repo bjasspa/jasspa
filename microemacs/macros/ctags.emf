@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : 1998
-;  Last Modified : <010208.1319>
+;  Last Modified : <010315.1320>
 ;
 ;  Description   : Command-line macro for creating a C tags file
 ;
@@ -254,6 +254,14 @@ set-char-mask "1" ":~"
             !elif &seq @s0 ","
                 search-forward ";"
             !elif &seq @s0 ";"
+                ; A function prototype
+                !if &sin "p" %tag-option
+                    set-alpha-mark "T"
+                    goto-alpha-mark "t"
+                    backward-word
+                    ctags-add-tag
+                    goto-alpha-mark "T"
+                !endif
             !elif &not &seq @s0 "{"
                 ; word char, this could be a K&R style function
                 ; quick sanity check by seeing if a '{' comes before a '('

@@ -10,7 +10,7 @@
 *
 *	Author:			Jon Green
 *
-*	Creation Date:		03/05/91 17:19		<010305.1601>
+*	Creation Date:		03/05/91 17:19		<010310.0107>
 *
 *	Modification date:	%G% : %U%
 *
@@ -430,7 +430,7 @@ addModesLists(BUFFER *bp, register uint8 *buf, meMODE mode)
     addLineToEob(bp,(uint8 *)"") ;
 }
 
-uint8 meCopyright[]="Copyright (C) 1988 - " meCENTURY meYEAR ", JASSPA (jasspa@geocities.com)" ;
+uint8 meCopyright[]="Copyright (C) 1988 - " meCENTURY meYEAR ", JASSPA (support@jasspa.com)" ;
 int
 meAbout(int f, int n)
 {

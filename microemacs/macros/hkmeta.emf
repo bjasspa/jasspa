@@ -2,9 +2,6 @@
 ;   MetaPost and compatible MetaFont hook
 ;
 ;   Created by Pedro Gomes 99-06-08
-;
-;   Last Modified : <010308.2143>
-;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro fhook-meta
@@ -20,7 +17,7 @@ define-macro fhook-meta
 set-variable .fhook-meta.name "MetaPost/Font"
 set-variable .fhook-meta.setup &reg "/history" "fhook/meta" "hiopx"
 set-variable .fhook-meta.setup-mask "aehikmoptux"
-set-variable .fhook-meta.comment "|%||%|"
+set-variable .fhook-meta.comment "|%||%|% ||"
 
 !if &and &sin "h" .fhook-meta.setup &band .hilight.flags 0x02
     !if &not &exist .hilight.meta
@@ -173,7 +170,6 @@ set-variable .fhook-meta.comment "|%||%|"
     hilight   .hilight.meta 1 "mlog"              .scheme.operator
     hilight   .hilight.meta 1 "mod"               .scheme.operator
     hilight   .hilight.meta 1 "normaldeviate"     .scheme.operator
-
     hilight   .hilight.meta 1 "atan2"             .scheme.keyword
 !endif
 

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Thu Nov 23 21:19:31 2000
-;  Last Modified : <010302.0839>
+;  Last Modified : <010316.1333>
 ;
 ;  Description
 ;
@@ -238,6 +238,9 @@ define-macro buffer-help
         buffer-help-add-item "buffer-help" "" "View This Help Page"
         buffer-help-add-item "" "" ""
     !endif
+    !if &sin "d" #l0
+        buffer-help-add-item "normal-tab" "" "Insert a Normal Tab"
+    !endif
     set-variable #l7 0
     !while &not &seq "" &set #l5 &lget #l1 &inc #l7 1
         !if &sin "h" #l5
@@ -246,6 +249,7 @@ define-macro buffer-help
     !done
     !if &not &seq &lget &ind &spr ".%s.comment" $buffer-fhook 1 ""
         buffer-help-add-item "" "" ""
+        buffer-help-add-item "comment-start" "" "Start Comment"
         buffer-help-add-item "comment-line" "" "Comment Out Line"
         buffer-help-add-item "uncomment-line" "" "&Delete Comment"
         buffer-help-add-item "comment-to-end-of-line" "" "Comment to &End of Line"
@@ -322,6 +326,8 @@ define-macro buffer-help
         set-variable #l8 23
     !elif &not &seq &lget #l5 1 ""
         set-variable #l8 22
+    !elif &sin "d" #l0
+        set-variable #l8 19
     !elif &sin "p" #l0
         set-variable #l8 14
     !else
@@ -341,6 +347,9 @@ define-macro buffer-help
     !if &sin "p" #l0
         buffer-tool-add-item "buffer-help" "" "View &Help Page" #l8
     !endif
+    !if &sin "d" #l0
+        buffer-tool-add-item "normal-tab" "" "Insert a Normal Tab" #l8
+    !endif
     set-variable #l7 0
     !while &not &seq "" &set #l6 &lget #l1 &inc #l7 1
         !if &sin "t" #l6
@@ -349,6 +358,7 @@ define-macro buffer-help
     !done
     !if &not &seq &lget #l5 1 ""
         buffer-tool-add-item "" "" "" #l8
+        buffer-tool-add-item "comment-start" "" "Start Comment" #l8
         buffer-tool-add-item "comment-line" "" "Comment Out Line" #l8
         buffer-tool-add-item "uncomment-line" "" "&Delete Comment" #l8
         buffer-tool-add-item "comment-to-end-of-line" "" "Comment to &End of Line" #l8

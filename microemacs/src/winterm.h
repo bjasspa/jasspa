@@ -11,7 +11,7 @@
  *  Revision      : 1.0
  *  Author        : Jon Green
  *  Created       : Mon May 24 14:12:57 1999
- *  Last Modified : <000220.1429>
+ *  Last Modified : <010310.0106>
  *
  *  Description	  : Export shared definitions of the windows specific
  *                  environment with the different windows specific source
@@ -31,7 +31,7 @@
  * reproduced,  translated,  or  reduced to any  electronic  medium or machine
  * readable form without prior written consent from Jasspa.
  * 
- * Mailto: jasspa@geocities.com
+ * EMail: support@jasspa.com
  *
  ****************************************************************************/
 

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips & Jon Green
 ;  Created       : Sat Jul 18 15:11:54 1998
-;  Last Modified : <010227.1530>
+;  Last Modified : <010314.2045>
 ;
 ;  Description   : Contains buffer formating commands, namely:
 ;                  clean sort-lines-ignore-case tabs-to-spaces restyle-region
@@ -73,9 +73,11 @@ define-macro normal-tab
     set-variable #l1 $buffer-indent
     -1 buffer-mode "cmode"
     set-variable $buffer-indent 0
-    tab
+    !force !force @# tab
+    set-variable #l2 $status
     set-variable $buffer-indent #l1
     &cond #l0 1 -1 buffer-mode "cmode"
+    !return #l2
 !emacro
 ;
 ; tabs-to-spaces - Convert all of the tabs to spaces.

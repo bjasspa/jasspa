@@ -87,3 +87,85 @@ define-macro comment-to-end-of-line
     insert-string #l2
 !emacro
 
+
+define-macro comment-start
+    set-variable #l0 &ind &spr ".%s.comment"  $buffer-fhook
+    !if &seq  &lget #l0 1 ""
+        ml-write "[Comments not setup for this buffer]"
+        !abort
+    !endif
+    ; check we can edit the buffer
+    1 buffer-mode "edit" @mna
+    set-variable #l1 $window-acol
+    set-variable #l2 $buffer-bname
+    find-buffer "*comment*"
+    1 buffer-mode "indent"
+    1 buffer-mode "wrap"
+    set-variable :comment #l0
+    set-variable :column #l1
+    set-variable :buffer-name #l2
+    set-variable :fill-col $fill-col
+    set-variable $fill-col &sub $fill-col &sub #l1 &len &lget #l0 4
+    !if &les $fill-col 20
+        set-variable $fill-col 20
+    !endif
+    buffer-bind-create "b" "C-c C-c" "" comment-end 
+!emacro
+
+define-macro comment-end
+    clean
+    beginning-of-buffer
+    set-variable #l0 &lget :comment 4
+    insert-string &lget :comment 1
+    !if &sin "h" &lget :comment 5
+        !if &sin "H" &lget :comment 5
+            !if &len &set #l1 &lget :comment 3
+                set-variable #l2 &add $fill-col &sub &len #l0 &len &lget :comment 1
+                &div #l2 &len #l1 insert-string #l1
+            !endif
+        !endif
+        insert-newline
+    !else
+        insert-string &rig #l0 &len &lget :comment 1
+        beginning-of-line
+        forward-line
+    !endif
+    !while &not &seq @wc ""
+        :column insert-space
+        insert-string #l0
+        beginning-of-line
+        forward-line
+    !done
+    !if &sin "f" &lget :comment 5
+        :column insert-space
+        !if &sin "F" &lget :comment 5
+            insert-string &trr #l0
+            !if &not &len &set #l1 &lget :comment 3
+                set-variable #l1 " "
+            !endif
+            set-variable #l2 &add $fill-col &sub &len #l0 &len &trr #l0
+            set-variable #l2 &sub #l2 &len &trl &lget :comment 2
+            &div #l2 &len #l1 insert-string #l1
+        !else
+            insert-string &lef #l0 &sub &len #l0 &len &trl #l0
+        !endif
+        insert-string &trl &lget :comment 2
+    !elif &not $seq "" &lget :comment 2
+        backward-line
+        end-of-line
+        insert-string &rig #l0 &len &lget :comment 1
+        insert-string &lget :comment 2
+    !endif
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    :column insert-space
+    copy-region
+    set-variable #l0 :buffer-name
+    set-variable $fill-col :fill-col
+    0 delete-buffer $buffer-bname
+    find-buffer #l0
+    yank
+    -1 yank
+!emacro
+
