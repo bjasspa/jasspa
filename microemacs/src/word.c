@@ -1249,8 +1249,9 @@ noIndent:
     return meTRUE ;
 }
 
+/* delete n paragraphs starting with the current one */
 int	
-killPara(int f, int n)	/* delete n paragraphs starting with the current one */
+killPara(int f, int n)
 {
     int ss ;
     
