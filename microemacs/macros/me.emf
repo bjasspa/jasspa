@@ -250,6 +250,8 @@ add-file-hook ".xml .xsl .xul"                                fhook-xml
 add-file-hook ".ex .exw .exu .e .ew .eu"                      fhook-euphor
 add-file-hook ".pls"                                          fhook-pls
 add-file-hook ".lua"                                          fhook-lua
+add-file-hook ".psf"                                          fhook-psf
+add-file-hook ".spec"                                         fhook-spec 
 ; Add magic hooks
  1 add-file-hook "^#![ \t]*/.*sh"                fhook-shell  ; UNIX shell files
  1 add-file-hook "^#![ \t]*/.*perl"              fhook-perl   ; UNIX perl script
