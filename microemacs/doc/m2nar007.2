@@ -1,12 +1,12 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1999-2004 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1999-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jun 17 22:26:42 1999
 .\"
-.Id $Id: m2nar007.2,v 2.10 2004-01-18 14:17:15 jon Exp $
+.Id $Id: m2nar007.2,v 2.11 2005-01-16 17:58:24 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .TH "Build" 2
@@ -46,6 +46,8 @@ supplied makefiles include:-
 .BU
 \fCcygwin.gmk\fR Cygwin using GNU tools under Windows.
 .BU
+\fCdarwin.gmk\fR Apple Darwin (console only).
+.BU
 \fCdosdj1.mak\fR Microsoft DOS build using djgpp version 1.
 .BU
 \fCdosdj2.mak\fR Microsoft DOS build using djgpp version 2.
@@ -72,7 +74,13 @@ supplied makefiles include:-
 .BU
 \fCirix6.mak\fR Silicon Graphics IRIX 6.x native
 .BU
-\fClinux2.gmk\fR Linux 2.x using GNU tools
+\fClinux2.gmk\fR Linux 2.2/4 kernels using GNU tools
+.BU
+\fClinux26.gmk\fR Linux 2.6 kernels using GNU tools
+.BU
+\fCmingw.gmk\fR minGW http://www.MinGW.org using GNU tools.
+.BU
+\fCosf1.gmk\fR OSF1 using GNU tools.
 .BU
 \fCopenbsd.gmk\fR OpenBSD using GNU tools.
 .BU
@@ -101,6 +109,8 @@ supplied makefiles include:-
 \fCwin32v5.mak\fR Microsoft Developer v5.x, 32-bit Windows.
 .BU
 \fCwin32v6.mak\fR Microsoft Developer v6.x, 32-bit Windows.
+.BU
+\fCzaurus.gmk\fR Zauras palm using GNU tools.
 .BE 0
 .RE
 .IP \fB\-ne\fR
