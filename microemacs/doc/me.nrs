@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.32 2005-02-18 20:36:34 jon Exp $
+.Id $Id: me.nrs,v 2.33 2005-02-19 10:54:42 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -2058,6 +2058,11 @@ common editor across all working platforms has been achieved!
 .\"
 .B "8th Release - March 2005"
 .BS
+[050218]  Corrected  \s-1UNIX\s0  
+.Hl client-server Client-Server 2
+socket file check -- bad test on  existence  of  connection  file, using wrong
+variable with wrong test sense.
+.BU
 [050218] Added site delete button to \fBftp-connect\fR dialog.
 .BU
 [050218] Fixed  abbreviation  and exec-string  "\fC\\\\p\fR" and "\fC\\\\P\fR"
