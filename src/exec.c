@@ -10,7 +10,7 @@
  *
  *       Author:                 Danial Lawrence
  *
- *       Creation Date:          14/05/86 12:37          <010521.1013>
+ *       Creation Date:          14/05/86 12:37          <010720.0752>
  *
  *       Modification date:      %G% : %U%
  *
@@ -624,7 +624,8 @@ cpy_str:
             while((cc == ' ') || (cc == '\t'))
                 cc = *++ss ;
         }
-        if((cc == 'd') && !meStrncmp(ss, getCommandName(CK_DEFMAC),12))
+        if((cc == 'd') && !meStrncmp(ss, getCommandName(CK_DEFMAC),12) &&
+           (((cc=ss[12]) == ' ') || (cc == '\t') || (cc == ';') || (cc == '\0')))
             execlevel++ ;
     }
     return addLine(lpStore,cline) ;

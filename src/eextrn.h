@@ -1,7 +1,7 @@
 /****************************************************************************
  * External function definitions
  *
- * Last Modified:       <010710.2349>
+ * Last Modified:       <010802.1939>
  * 
  ****************************************************************************
  * 
@@ -121,7 +121,7 @@ extern  int     addLine APRAM((register LINE *ilp, uint8 *text)) ;
 #define addLineToEob(bp,text) (bp->elineno += addLine(bp->b_linep,text))
 extern	int	listBuffers APRAM((int f, int n));
 extern  int     bufferNeedSaving APRAM((BUFFER *bp)) ;
-extern	int	anycb APRAM((void));
+extern	int	anyChangedBuffer APRAM((void));
 extern  BUFFER *createBuffer APRAM((register uint8 *bname)) ;
 #define BFND_CREAT  0x01
 #define BFND_MKNAM  0x02
@@ -730,6 +730,7 @@ extern REGHANDLE regSet APRAM((REGHANDLE root, uint8 *subkey, uint8 *value));
 extern REGHANDLE vregFind APRAM((REGHANDLE root, uint8 *fmt, ...));
 extern int  regDelete APRAM((REGHANDLE root));
 extern int  regSave APRAM((REGHANDLE root, uint8 *fname));
+extern int  anyChangedRegistry APRAM((void));
 #define regGetName(reg)       (reg->name)
 #define regGetValue(reg)      (reg->value)
 #define regGetValueLen(reg)   (reg->len)
@@ -804,6 +805,7 @@ extern	void    ipipeRemove APRAM((meIPIPE *ipipe)) ;
 extern  void    ipipeCheck APRAM((void)) ;
 #endif
 extern	int	ipipeKill APRAM((int f, int n)) ;
+extern  int     anyActiveIpipe APRAM((void)) ;
 #else
 #define ipipeWriteString voidFunc
 #define ipipeCommand  pipeCommand
@@ -838,6 +840,7 @@ extern	int	addSpellRule APRAM((int f, int n));
 extern	int	deleteDict APRAM((int f, int n));
 extern	int	saveDict APRAM((int f, int n));
 extern	int	spellWord APRAM((int f, int n));
+extern  int     anyChangedDictionary APRAM((void)) ;
 #else
 #define addDict notAvailable
 #define addSpellRule notAvailable

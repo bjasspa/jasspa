@@ -10,7 +10,7 @@
  *
  *	Author:			Danial Lawrence
  *
- *	Creation Date:		10/05/91 08:27		<010319.2119>
+ *	Creation Date:		10/05/91 08:27		<010806.0908>
  *
  *	Modification date:	%G% : %U%
  *
@@ -300,7 +300,10 @@ forwDelWord(int f, int n)
     if(n == 0)
         return TRUE ;
     if (n < 0)
-        return FALSE ;
+        /* f must be true */
+        n = -n ;
+    else
+        f = 0 ;
     if(bchange() != TRUE)               /* Check we can change the buffer */
         return ABORT ;
     dotp   = curwp->w_dotp;
@@ -323,7 +326,7 @@ forwDelWord(int f, int n)
      curwp->w_dotp = dotp;
      curwp->w_doto = doto;
      curwp->line_no = lineno ;
-     return (ldelete(size,3));
+     return (ldelete(size,(f) ? 2:3));
 }
 
 /*
@@ -341,7 +344,10 @@ backDelWord(int f, int n)
     if(n == 0)
         return TRUE ;
     if (n < 0)
-        return FALSE ;
+        /* f must be true */
+        n = -n ;
+    else
+        f = 0 ;
     if(bchange() != TRUE)               /* Check we can change the buffer */
         return ABORT ;
     if (WbackChar(curwp, 1) == FALSE)
@@ -362,7 +368,7 @@ backDelWord(int f, int n)
     }
     if (moveForw && (WforwChar(curwp, 1) == FALSE))
         return (FALSE);
-    return (ldelete(size,3));
+    return (ldelete(size,(f) ? 2:3));
 }
 
 #if WORDPRO

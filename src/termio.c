@@ -5,7 +5,7 @@
  *  Synopsis      : Generic terminal support routines
  *  Created By    : Steven Phillips
  *  Created       : 1993
- *  Last Modified : <010315.0845>
+ *  Last Modified : <010730.2036>
  *
  *  Description
  *     Many generic routines to support timers, key input and some output.
@@ -536,7 +536,7 @@ TTmove(int row, int col)
 }
 
 
-#ifdef FREE_ALL_MEMORY
+#ifdef _ME_FREE_ALL_MEMORY
 
 static void
 TTfreeTranslateKeyChild(meTRANSKEY *tcapKeys)

@@ -10,7 +10,7 @@
 *
 *	Author:			Jon Green
 *
-*	Creation Date:		03/05/91 17:19		<010605.0942>
+*	Creation Date:		03/05/91 17:19		<010806.2042>
 *
 *	Modification date:	%G% : %U%
 *
@@ -493,20 +493,46 @@ meAbout(int f, int n)
 int
 exitEmacs(int f, int n)
 {
-    register int    s;
+    int s = TRUE;
 
-    s = 0 ;
-    if((f != FALSE) ||                         /* Argument forces it.  */
-       (((anycb() == FALSE) ||                 /* All buffers clean.   */
-         ((s=mlyesno((uint8 *)"Modified buffers exist. Leave anyway")) == TRUE))
+    /* Argument forces it.  */
+    if(f == FALSE)
+    {
+        char buff[128] ;
+        
+        if(anyChangedBuffer())
+            strcpy(buff,"Modified buffer") ;
+        else
+            buff[0] = '\0' ;
+#if SPELL
+        if(anyChangedDictionary())
+        {
+            strcat(buff,(buff[0] == '\0') ? "Modified":",") ;
+            strcat(buff," dictionary") ;
+        }
+#endif
+#if REGSTRY
+        if(anyChangedRegistry())
+        {
+            strcat(buff,(buff[0] == '\0') ? "Modified":",") ;
+            strcat(buff," registry") ;
+        }
+#endif
 #ifdef _IPIPES
-        && ((ipipes == NULL) ||
-#ifdef _CLIENTSERVER
-            ((ipipes->pid == 0) && (ipipes->next == NULL)) ||
+        if(anyActiveIpipe())
+        {
+            strcat(buff,(buff[0] == '\0') ? "A":" and a") ;
+            strcat(buff,"ctive process") ;
+        }
 #endif
-            ((s=mlyesno((uint8 *)"Active processes. Leave anyway")) == TRUE))
-#endif
-       ))
+        if(buff[0] != '\0')
+        {
+            strcat(buff," exists, leave anyway") ;
+            s = mlyesno((uint8 *)buff) ;
+        }
+    }
+    
+    if(s == TRUE)
     {
         BUFFER *bp, *nbp ;
         int func ;
@@ -552,9 +578,10 @@ exitEmacs(int f, int n)
 #endif
             TCAPputc('\n');
 #endif
-#ifdef FREE_ALL_MEMORY
+#ifdef _ME_FREE_ALL_MEMORY
         {
             /* free of everything we can */
+            extern void freeToken(HILNODEPTR root) ;
             extern void printFreeMemory(void) ;
             extern void osdFreeMemory(void) ;
             extern void regFreeMemory(void) ;
@@ -565,7 +592,6 @@ exitEmacs(int f, int n)
             extern uint8 *defHistFile ;
             extern uint32 *colTable ;
             FRAMELINE    *flp;                   /* Frame store line pointer */
-            meREGISTERS  *reg ;
             WINDOW       *wp ;
             meMACRO      *mac ;
             meVARIABLE   *nuv, *cuv ;
@@ -778,7 +804,7 @@ exitEmacs(int f, int n)
     }
     mlerase(MWCLEXEC);
 
-    return (s);
+    return s ;
 }
 
 
@@ -791,10 +817,10 @@ saveExitEmacs(int f, int n)
 {
     if((saveSomeBuffers(f,(n & 0x01)) == TRUE)
 #if SPELL
-       && (saveDict(f,2|(n & 0x01)) == TRUE)
+       && (saveDict(f,2|(n & 0x01)) != FALSE)
 #endif
 #if REGSTRY
-       && (saveRegistry(f,2|(n & 0x01)) == TRUE)
+       && (saveRegistry(f,2|(n & 0x01)) != FALSE)
 #endif
        )
         return exitEmacs(f, n) ;            /* conditionally quit   */
@@ -1305,7 +1331,7 @@ mesetup(int argc, char *argv[])
         if(executableLookup((uint8 *)argv[0],evalResult))
             progName = meStrdup(evalResult) ;
         else
-#ifdef FREE_ALL_MEMORY
+#ifdef _ME_FREE_ALL_MEMORY
             /* stops problems on exit */
             progName = meStrdup(argv[0]) ;
 #else
@@ -1697,7 +1723,7 @@ missing_arg:
         noFiles = HistNoFilesLoaded ;
     else
         HistNoFilesLoaded = 0 ;
-
+    
     if(noFiles > 0)
     {
         if((curbp == mainbp) && ((bp = replacebuffer(NULL)) != mainbp) &&
@@ -1733,7 +1759,6 @@ missing_arg:
             }
         }
     }
-
 #ifdef _UNIX
     /*
      * Catch nasty signals when running under UNIX unless the -x

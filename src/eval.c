@@ -10,7 +10,7 @@
  *
  *  Author:         Danial Lawrence
  *
- *  Creation Date:      14/05/86 12:37      <010520.2256>
+ *  Creation Date:      14/05/86 12:37      <010804.2301>
  *
  *  Modification date:  %G% : %U%
  *
@@ -54,6 +54,7 @@
 #include "efunc.h"
 #include "eskeys.h"
 #include "esearch.h"
+#include "evers.h"
 
 #if (defined _UNIX) || (defined _DOS) || (defined _WIN32)
 #include <sys/types.h>
@@ -1100,7 +1101,7 @@ found_ulcvar:
             }
         default:
             /* default includes EVCBUFBACKUP EVMOUSEX EVMOUSEY EVSTATUS EVMACHINE 
-             * EVSYSRET EVUSEX, EVWMDLINE or system dependant vars
+             * EVSYSRET EVUSEX, EVVERSION, EVWMDLINE or system dependant vars
              * where this isn't the system (e.g. use-x) which cant be set
              */
             return FALSE ;
@@ -1180,6 +1181,8 @@ handle_namesvar:
                 return ss ;
         }
         return emptym ;
+    case EVVERSION:
+        return meVERSION_CODE ;
     case EVTEMPNAME:
         mkTempName (evalResult, NULL,NULL);
         return evalResult ;

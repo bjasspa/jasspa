@@ -5,7 +5,7 @@
  *  Synopsis      : Spell checking routines
  *  Created By    : Steven Phillips
  *  Created       : 21/12/94
- *  Last Modified : <010305.0749>
+ *  Last Modified : <010802.1940>
  *
  *  Description
  *
@@ -703,6 +703,12 @@ addSpellRule(int f, int n)
     return TRUE ;
 }
 
+/* Note the return value for this is:
+ * ABORT - there was a major failure (i.e. couldn't open the file)
+ * FALSE - user quit
+ * TRUE  - succeded
+ * this is used by the exit function which ignore the major failures
+ */
 static int
 saveDictionary(meDICTIONARY *dict, int n)
 {
@@ -722,7 +728,10 @@ saveDictionary(meDICTIONARY *dict, int n)
         meStrcpy(prompt,"Save dictionary ") ;
         meStrcat(prompt,dict->fname) ;
         if((ret = mlyesno(prompt)) == ABORT)
-            return ctrlg(FALSE,1) ;
+        {
+            ctrlg(FALSE,1) ;
+            return FALSE ;
+        }
         if(ret == FALSE)
             return TRUE ;
         if(dict->flags & DTCREATE)
@@ -733,7 +742,7 @@ saveDictionary(meDICTIONARY *dict, int n)
             {
                 ss = dict->fname ;
                 if(inputFileName((uint8 *)"Save to directory",fname,1) != TRUE)
-                    return ABORT ;
+                    return FALSE ;
                 pp = fname + meStrlen(fname) ;
                 if(pp[-1] != DIR_CHAR)
                     *pp++ = DIR_CHAR ;
@@ -775,6 +784,12 @@ saveDictionary(meDICTIONARY *dict, int n)
     return mlwrite(MWABORT|MWPAUSE,(uint8 *)"[Failed to write dictionary %s]",dict->fname) ;
 }
 
+/* Note the return value for this is:
+ * ABORT - there was a major failure (i.e. couldn't open the file)
+ * FALSE - user quit
+ * TRUE  - succeded
+ * this is used by the exit function which ignore the major failures
+ */
 int
 saveDict(int f, int n)
 {
@@ -785,8 +800,8 @@ saveDict(int f, int n)
         dict = dictHead ;
         while(dict != NULL)
         {
-            if(saveDictionary(dict,n) != TRUE)
-                return ABORT ;
+            if((f=saveDictionary(dict,n)) != TRUE)
+                return f ;
             dict = dict->next ;
         }
     }
@@ -794,11 +809,27 @@ saveDict(int f, int n)
     {
         /* when saving a single disable the prompt */
         if(((dict = findDictionary(0)) == NULL) ||
-           (saveDictionary(dict,0) != TRUE))
-            return FALSE ;
+           ((f=saveDictionary(dict,0)) != TRUE))
+            return f ;
     }
 
     return TRUE ;
+}
+
+/* returns true if any dictionary needs saving */
+int
+anyChangedDictionary(void)
+{
+    meDICTIONARY *dict ;
+        
+    dict = dictHead ;
+    while(dict != NULL)
+    {
+        if(dict->flags & DTCHNGD)
+            return TRUE ;
+        dict = dict->next ;
+    }
+    return FALSE ;
 }
 
 static void

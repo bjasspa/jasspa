@@ -6,7 +6,7 @@
  *  Object Name   : emain.h
  *  Author        : Steve Philips
  *  Created       : Thu Nov 27 19:17:17 1997
- *  Last Modified : <010711.1319>
+ *  Last Modified : <010802.1225>
  *
  *  Description 
  *       Encapsulate all of the platform definitions into a sigle file
@@ -38,6 +38,13 @@
  ****************************************************************************/
 #ifndef __EMAIN_H__
 #define __EMAIN_H__
+
+/* the following 2 defines are used for debugging and memory leak checking,
+ * _ME_FULL_DEBUG      - Enables Windows debugging
+ * _ME_FREE_ALL_MEMORY - Frees all memory before exiting
+ */
+/*#define _ME_FULL_DEBUG*/
+/*#define _ME_FREE_ALL_MEMORY*/
 
 /* These next 2 defines are platform specific, but as all supported 
  * platforms use these and all future ones should I've put them here
@@ -336,6 +343,13 @@
 #include <stdio.h>                      /* Always need this              */
 #include <stdlib.h>                     /* Usually need this             */
 #include <errno.h>                      /* Need errno and sys_errlist    */
+
+#ifdef _ME_FULL_DEBUG
+#ifdef _WIN32
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+#endif
+#endif
 
 /**************************************************************************
 * USG[UNIX] : Include definitions. Assumed (near) POSIX compliance        *

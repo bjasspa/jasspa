@@ -1,7 +1,7 @@
 /*
  *      SCCS:           %W%             %G%             %U%
  *
- *      Last Modified : <010305.0749>
+ *      Last Modified : <010806.0848>
  *
  *      EDEF:           Global variable definitions for
  *                      MicroEMACS 3.2

@@ -2,10 +2,10 @@
  *
  *  System        : MicroEmacs Jasspa Distribution
  *  Module        : osd.c
- *  Synopsis      : Narrow out regions of a buffer
- *  Created By    : On-Screen Display routines
+ *  Synopsis      : On-Screen Display routines
+ *  Created By    : Jon Green & Steven Phillips
  *  Created       : 26/07/97
- *  Last Modified : <010605.0915>
+ *  Last Modified : <010804.1012>
  *
  *  Description
  *     This file contains the on screen display routines that
@@ -433,11 +433,24 @@ dialogConstruct (int id)
     return rp;                          /* Return the new node */
 }
 
+static void displayDestruct (osdDISPLAY *md) ;
+
+static void
+displayDestructChild(osdCHILD *child)
+{
+    if(child->vertSBar != NULL)
+        free(child->vertSBar) ;
+    if(child->horzSBar != NULL)
+        free(child->horzSBar) ;
+    if(child->display != NULL)
+        displayDestruct(child->display) ;
+    free(child) ;
+}
+
 static void
 displayDestruct (osdDISPLAY *md)
 {
     osdDISPLAY *tmd ;
-    osdCHILD   *child ;
     int ii ;
     
     /* if this is the current display, set osdCurMd to the previous */
@@ -471,18 +484,9 @@ displayDestruct (osdDISPLAY *md)
     }
     
     for (ii=0 ; ii < md->numContexts ; ii++)
-    {
-        if((child=md->context[ii].child) != NULL)
-        {
-            if(child->vertSBar != NULL)
-                free(child->vertSBar) ;
-            if(child->horzSBar != NULL)
-                free(child->horzSBar) ;
-            if(child->display != NULL)
-                displayDestruct(child->display) ;
-            free(child) ;
-        }
-    }
+        if(md->context[ii].child != NULL)
+            displayDestructChild(md->context[ii].child) ;
+    
     meFree(md->storeSchm) ;
     meFree(md) ;
 }
@@ -633,18 +637,11 @@ menuExecute (osdITEM *mp, int flags, int n)
             return ABORT ;
         if(osdCurChild->context[osdCurChild->nbpContext].menu->argc != mp->argc)
         {
-            osdCHILD   *child ;
-            if((child=osdCurChild->context[osdCurChild->nbpContext].child) != NULL)
+            if(osdCurChild->context[osdCurChild->nbpContext].child != NULL)
             {
-                if(child->vertSBar != NULL)
-                    free(child->vertSBar) ;
-                if(child->horzSBar != NULL)
-                    free(child->horzSBar) ;
-                if(child->display != NULL)
-                    displayDestruct(child->display) ;
-                free(child) ;
+                displayDestructChild(osdCurChild->context[osdCurChild->nbpContext].child) ;
+                osdCurChild->context[osdCurChild->nbpContext].child = NULL ;
             }
-            osdCurChild->context[osdCurChild->nbpContext].child = NULL ;
             osdCurChild->context[osdCurChild->nbpContext].menu->argc = mp->argc ;
         }
         return TRUE ;
@@ -2760,15 +2757,9 @@ menuConfigure(osdDIALOG *rp, osdDISPLAY *md, int child)
                     depth = cmd->depth ;
                 }
             }
-            else if((child=mcp->child) != NULL)
+            else if(mcp->child != NULL)
             {
-                if(child->horzSBar != NULL)
-                    free(child->horzSBar) ;
-                if(child->vertSBar != NULL)
-                    free(child->vertSBar) ;
-                if(child->display != NULL)
-                    displayDestruct(child->display) ;
-                free(child) ;
+                displayDestructChild(mcp->child) ;
                 mcp->child = NULL ;
             }
 
@@ -2973,7 +2964,6 @@ menuConfigure(osdDIALOG *rp, osdDISPLAY *md, int child)
             /* we haven't got enough room for this row, don't render it! */
             if((--md->multi) < 0)
                 return NULL ;
-            md->numContexts = jj ;
             md->width-- ;
         }
         else
@@ -2986,7 +2976,6 @@ menuConfigure(osdDIALOG *rp, osdDISPLAY *md, int child)
             /* Back fill the positions in the table */
             for ( ; jj < ii ; jj++)
                 mcp[jj].width = subWidth;    /* Assign the colum width */
-            md->numContexts = ii ;   /* Number of items to render */
             
             /* If not multi-column assign the new depth */
             if (md->multi == 0)
@@ -3001,6 +2990,12 @@ menuConfigure(osdDIALOG *rp, osdDISPLAY *md, int child)
             }
             md->width += subWidth ;              /* Assign the new width */
         }
+        /* any items that we have prepared but can't be rendered must be freed */
+        for(ii=jj ; ii<md->numContexts ; ii++)
+            if(md->context[ii].child != NULL)
+                displayDestructChild(md->context[ii].child) ;
+        
+        md->numContexts = jj ;   /* Number of items to render */
     }
     /* Finish up, assign border widths and terminate list */
     if(md->flags & RF_BOARDER)
@@ -4803,6 +4798,8 @@ menuInteraction (int *retState)
                 break ;
             case CK_DELFOR:                 /* Del - Delete */
             case CK_ABTCMD:                 /* ^G  - Abort */
+            case CK_QUIT:                   /* C-x C-c or A-f4 - quit */
+            case CK_EXIT:                   /* exit */
                 state = QUIT_MENU;
                 break;
             case CK_NEWLIN:                 /* ^M  - Return */
@@ -5568,7 +5565,7 @@ osdUnbind(int f, int n)
 }
 #endif
 
-#ifdef FREE_ALL_MEMORY
+#ifdef _ME_FREE_ALL_MEMORY
 void osdFreeMemory(void)
 {
     osdDIALOG *rp;                           /* Pointer to item */

@@ -1774,6 +1774,18 @@ ipipeCommand(int f, int n)
     return doIpipeCommand(lbuf,pbuf,bn,(n & LAUNCH_USER_FLAGS)) ;
 }
 
+int
+anyActiveIpipe(void)
+{
+    if((ipipes == NULL) ||
+#ifdef _CLIENTSERVER
+       ((ipipes->pid == 0) && (ipipes->next == NULL))
+#endif
+       )
+        return FALSE ;
+    return TRUE ;
+}
+
 #endif
 
 
