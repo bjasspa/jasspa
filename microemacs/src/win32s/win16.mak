@@ -1,17 +1,32 @@
-#____________________________________________________________________________
+# -!- makefile -!-
 #
-# Make file for MicroEmacs using the Microsoft MSCV 1.5 development kit.
+# JASSPA MicroEmacs - www.jasspa.com
+# win16.mak - Make file for Windows using Microsoft MSVC 1.5 development kit.
 #
-# Author      : Jon Green
-# Created     :  020197.1002
-# Last Edited : <040199.2240>
+# Copyright (C) 1997-2002 JASSPA (www.jasspa.com)
 #
-# History     : JG  020197 Original  Constructed from MS envoronment and
-#				     UNIX makefile.
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation; either version 2 of the License, or (at your option)
+# any later version.
 #
-# Details     : THIS IS BUILT WITH MSVC 1.5 THE 16-BIT DOS COMPILER. 
-#               THIS BUILDS THE WIN32s 16-BIT THUNKING CODE THAT WAITS
-#               FOR A COMMAND TO EXECUTE.
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+# more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+##############################################################################
+#
+# Created:     2nd January 1997
+# Synopsis:    Make for MicroEmacs using Microsoft MSCV 1.5 development kit.
+# Notes:
+#              THIS IS BUILT WITH MSVC 1.5 THE 16-BIT DOS COMPILER.
+#              THIS BUILDS THE WIN32s 16-BIT THUNKING CODE THAT WAITS
+#              FOR A COMMAND TO EXECUTE.
 #
 #               Build from the command line using nmake.
 #
@@ -19,8 +34,8 @@
 #		nmake clean        - cleans emacs directory
 #		nmake spotless     - cleans some more !!
 #		nmake install	   - builds and copies to c:\emacs.
-#____________________________________________________________________________
 #
+##############################################################################
 #
 #
 # TOOLS Environment - change to location of your tools.
