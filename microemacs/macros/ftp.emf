@@ -153,6 +153,9 @@ define-macro ftp-connect
     !if &sin "s" %ftp-flags
         set-variable %ftp-flags &rep %ftp-flags "s" ""
     !endif
+    find-buffer "*ftp-console*"
+    set-variable :mouse-pick-1 "toolbar-mouse-region-pick"
+    set-variable :mouse-drop-1 "toolbar-mouse-region-drop"
 !emacro
 
 0 define-macro ftp-regfile-entry

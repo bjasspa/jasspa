@@ -1711,6 +1711,12 @@ define-macro cvs
     @# file-browser-init
 !emacro
 
+0 define-macro cvs-console-tool
+    find-buffer "*cvs-console*"
+    set-variable :mouse-pick-1 "toolbar-mouse-region-pick"
+    set-variable :mouse-drop-1 "toolbar-mouse-region-drop"
+!emacro
+
 0 define-macro cvs-setup-entry
     set-variable #l2 &lget "|root|rsh|com|" &abs @#
     set-variable #l2 &cat &cond &gre &abs @# 1 &cat $platform "/cvs/" "cvs/" #l2
