@@ -1,12 +1,12 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1999-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1999-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Jon Green
 .\"  Created       : Thu May 27 15:30:14 1999
 .\"
-.Id $Id: faq.2,v 2.9 2004-01-17 22:31:46 jon Exp $
+.Id $Id: faq.2,v 2.10 2005-01-15 18:29:43 jon Exp $
 .Im MicroEmacs faq
 .so me.tni
 .TH "FAQs" 0f
@@ -1155,11 +1155,8 @@ see \fBtranslate-key\fR for more information.
 .SH "QUESTION (\*(Qn)"
 \*(Qu
 .SH ANSWER
-There are two variables that change the width of the tab
-.Ht $tabwidth 5
-and
-.Ht $tabsize 5
-they control the size of a displayed tab character  (number of spaces) and the
+.Ht $tab-width 5
+controls the size of the displayed tab character  (number of spaces) and the
 simulated tab character size, where the user entered tab character is replaced
 by a number of space characters. The latter is only used when
 .Ht tab 2m
@@ -1175,29 +1172,18 @@ You will then be prompted for the remaining  arguments. \fC<TAB>\fR is the compl
 so:-
 .CS
 esc x set-v<TAB>
-$tabw<TAB>
+$tab-width<TAB>
 2
 .CE
 If this is the  setting  that you always  want to use then it is easier if you
 put this in your <user.emf> as:-
 .Me $emf-scheme
 .CS
-set-variable $tabwidth 2
+set-variable $tab-width 2
 .CE
 .Me $ehf-scheme
-then  whenever  you start a new  session  you will  always have the  $tabwidth
+then  whenever  you start a new  session  you will  always have the  $tab-width
 defined as you want it.
-.PP
-We would  recommend that
-.Ht $tabwidth 5
-is not modified because it turns the all tab's to 2 so when you read it into  something like Microsoft  notepad
-the  indentation  is  not  as you  like  it  because  it  displays  tabs  as 8
-characters.
-.PP
-Instead,  set the  \fB$tabsize\fR to 2, and run with
-.Ht tab 2m
-enabled  (this is the default).  This turns  \fC<TAB>\fR's to spaces,  hence the layout is retained.  This
-makes the file slightly larger, but the presentation is maintained.
 .PP
 If you are reading in a file with TAB's  embedded  then you can convert all of
 the <TAB>'s to spaces using
@@ -1205,16 +1191,6 @@ the <TAB>'s to spaces using
 .CS
 esc x tabs-to-spaces
 .CE
-If these TAB's are 8 characters, and they should be displayed as 2, then prior
-to conversion change the tabwidth, convert and then restore.
-.BS
-Change the $tabwidth to 2
-.BU
-tabs-to-spaces
-.BU
-Restore the $tabwidth to 8
-.BE 0
-.PP
 .Hl "[FAQ Index]" faq - .
 .\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 .rm Qu

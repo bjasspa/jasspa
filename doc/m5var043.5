@@ -1,32 +1,64 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var043.5,v 2.5 2002-01-11 21:58:43 jon Exp $
+.Id $Id: m5var043.5,v 2.6 2005-01-15 18:29:42 jon Exp $
 .Im MicroEmacs variable|insert
 .so me.tni
-.TH $tabwidth 5
-.XI $tabwidth - "Tab character interval"
+.TH $buffer-tab-width 5
+.XI $buffer-tab-width - "Buffer tab character interval"
 .SH NAME
-$tabwidth \- Tab character interval
+$buffer-tab-width \- Buffer tab character interval
 .Me $a
 .SH SYNOPSIS
-\fB$tabwidth\fR \fCinteger\fR; Default is \fC8\fR
+\fB$buffer-tab-width\fR \fCinteger\fR; Default is 
+.Ht $tab-width 5 .
 .sp
 \-0 < \fIinteger\fR <= \fIn\fR
 .SH DESCRIPTION
-.B $tabwidth
-defines the interval of a tab character.
+.B $buffer-tab-width
+defines the width of a tab  character  in terms of  displayable  spaces, a tab
+character  is  typically  8 spaces. A tab  character  appearing in a buffer is
+rendered  with up to  \fB$buffer-tab-width\fR  spaces  to take it to the  next
+column boundary of modulo \fB$buffer-tab-width\fR.
 .PP
-The tab interval is set to the  given numeric argument. As always, the numeric
-argument precedes the command. Hence to get  tabs every 4 spaces you would set
-the \fB$tabwidth\fR to 4.
+Modification of the variable value causes the displayed tab width to change to
+the new value. The macro 
+.Ht tabs-to-spaces 3 
+may be used to convert all tabs to spaces.
+.PP
+When a buffer is created (file loading or creation)  then the default value is
+taken from the 
+.Ht $tab-width 5 
+variable.
+.SH NOTES
+The indentation of a buffer is controlled by the 
+.Ht $buffer-indent-width 5 
+and not the \fB$buffer-tab-width\fP when automatic
+.Ht indent 2 
+is enabled.
+.PP
+The   November   2004  version  of  \*(mS   removed  the  existing   variables
+\fB$tabwidth\fR   and  \fB$tabsize\fR   which  were  ambiguous.  The  existing
+variable  scope was global which caused  problems  when moving to buffers with
+different tab width properties. The variables have been replaced with 
+.Ht $tab-width 5
+and 
+.BR $buffer-tab-width .
+The  indentation  which was  previously  controlled  by the tab width has been
+replaced with 
+.Ht $indent-width 5 
+and 
+.Ht $buffer-indent-width 5 .
 .SH "SEE ALSO"
 .na
-.Ht buffer-mode 2 
+.Ht $buffer-indent-width 5 ,
+.Ht $indent-width 5 ,
+.Ht $tab-width 5 ,
+.Ht buffer-mode 2 ,
+.Ht indent 2 ,
 .Ht tab 2m ,
-.Ht $tabsize 5 .
 .Ht tabs-to-spaces 3 .
 .ad
 .FH

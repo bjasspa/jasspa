@@ -1,23 +1,25 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var042.5,v 2.5 2002-01-11 21:58:43 jon Exp $
+.Id $Id: m5var042.5,v 2.6 2005-01-15 18:29:43 jon Exp $
 .Im MicroEmacs variable|insert
 .so me.tni
-.TH $tabsize 5
-.XI $tabsize - "Tab character width"
+.TH $tab-width 5
+.XI $tab-width - "Global displayable tab character width"
 .SH NAME
-$tabsize \- Tab character width
+$tab-width \- Global tab character width
 .Me $a
 .SH SYNOPSIS
-\fB$tabsize\fR \fIinteger\fR; Default is \fC4\fR
+\fB$tab-width\fR \fIinteger\fR; Default is \fC8\fR
 .sp
 \-0 < \fIinteger\fR <= \fIn\fR
 .SH DESCRIPTION
-.B $tabsize
-defines the width of a tab character.
+.B $tab-width
+defines the default width of a tab character  specified in spaces. The default
+value is used when new files are loaded and created and seeds the variable
+.Ht $buffer-tab-width 5 .
 .PP
 Setting  tabs to arbitrary  widths is possible in  \*(mE  but you must be
 aware  of a subtle  difference  that it makes to your  file and  hence to your
@@ -36,11 +38,27 @@ appropriate column. In this case, to remove the spacing you have to delete the
 appropriate number of spaces inserted by \*me to get you to the right column.
 .PP
 The operating mode of the tab expansion is controlled by the 
-.Ht tab 2m  mode.
+.Ht tab 2m  
+mode.
+.SH NOTES
+The   November   2004  version  of  \*(mS   removed  the  existing   variables
+\fB$tabwidth\fR   and  \fB$tabsize\fR   which  were  ambiguous.  The  existing
+variable  scope was global which caused  problems  when moving to buffers with
+different tab width properties. The variables have been replaced with 
+.B $tab-width 
+and 
+.Ht $buffer-tab-width 5 . 
+The  indentation  which was  previously  controlled  by the tab width has been
+replaced with 
+.Ht $indent-width 5 
+and 
+.Ht $buffer-indent-width 5 .
 .SH "SEE ALSO"
 .na
-.Ht buffer-mode 2 
+.Ht buffer-mode 2 ,
 .Ht tab 2m ,
-.Ht $tabwidth 5 .
+.Ht $buffer-indent-width 5 ,
+.Ht $buffer-tab-width 5 ,
+.Ht $indent-width 5 .
 .ad
 .FH
