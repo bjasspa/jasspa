@@ -1,51 +1,47 @@
-/*****************************************************************************
-*
-*	Title:		%M%
-*
-*	Synopsis:	Emacs Main.
-*
-******************************************************************************
-*
-*	Filename:		%P%
-*
-*	Author:			Jon Green
-*
-*	Creation Date:		03/05/91 17:19		<011114.0939>
-*
-*	Modification date:	%G% : %U%
-*
-*	Current rev:		%I%
-*
-*	Special Comments:
-*
-*	Contents Description:
-*
-*	MicroEMACS 3.8
-*			written by Dave G. Conroy.
-*			greatly modified by Daniel M. Lawrence
-*
-*	(C)opyright 1987 by Daniel M. Lawrence
-*	MicroEMACS 3.8 can be copied and distributed freely for any
-*	non-commercial purposes. MicroEMACS 3.8 can only be incorporated
-*	into commercial software with the permission of the current author.
-*
-*****************************************************************************
-*
-* Modifications to the original file by Jasspa.
-*
-* Copyright (C) 1988 - 1999, JASSPA
-* The MicroEmacs Jasspa distribution can be copied and distributed freely for
-* any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
-* incorporated into commercial software with the expressed permission of
-* JASSPA.
-*
-****************************************************************************/
-
-/*---	Include defintions */
+/* -*- c -*-
+ *
+ * JASSPA MicroEmacs - www.jasspa.com
+ * main.c - Main entry point.
+ *
+ * Originally written by Dave G. Conroy for MicroEmacs
+ * Copyright (C) 1987 by Daniel M. Lawrence
+ * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     Unknown
+ * Synopsis:    Main entry point.
+ * Authors:     Dave G. Conroy, Steve Wilhite, George Jones, Daniel M. Lawrence,
+ *          Jon Green & Steven Phillips
+ * 
+ * Original MicroEMACS 3.8 Copyright notice:
+ * 
+ *	MicroEMACS 3.8
+ *			written by Dave G. Conroy.
+ *			greatly modified by Daniel M. Lawrence
+ *
+ *	(C)opyright 1987 by Daniel M. Lawrence
+ *	MicroEMACS 3.8 can be copied and distributed freely for any
+ *	non-commercial purposes. MicroEMACS 3.8 can only be incorporated
+ *	into commercial software with the permission of the current author.
+ *
+ */
 
 #define	__MAINC			/* Define program name */
 
-/*---	Include files */
 #define	INC_MODE_DEF
 
 #include "emain.h"
@@ -431,7 +427,7 @@ addModesLists(BUFFER *bp, register uint8 *buf, meMODE mode)
     addLineToEob(bp,(uint8 *)"") ;
 }
 
-uint8 meCopyright[]="Copyright (C) 1988 - " meCENTURY meYEAR ", JASSPA (support@jasspa.com)" ;
+uint8 meCopyright[]="Copyright (C) 1988-" meCENTURY meYEAR " JASSPA (www.jasspa.com)" ;
 int
 meAbout(int f, int n)
 {
@@ -601,7 +597,7 @@ exitEmacs(int f, int n)
             meVARIABLE   *nuv, *cuv ;
             KLIST        *thiskl ;
             KILL         *next, *kill ;
-            meABREV      *abrev ;
+            meABBREV     *abrev ;
             VVIDEO       *vvptr;
             int           ii, jj ;
 
@@ -1629,15 +1625,19 @@ missing_arg:
     if((mainbp=bfind(BmainN,0)) != NULL)
     {
         meModeCopy(mainbp->b_mode,globMode) ;
+#if COLOR
         mainbp->scheme = globScheme;
+#endif
         /* make *scratch*'s history number very low so any other
          * buffer is preferable */
         mainbp->histNo = -1 ;
     }
+#if COLOR
 #ifdef _CLIENTSERVER
     /* also initialize the client server color scheme */
     if((ipipes != NULL) && (ipipes->pid == 0))
         ipipes->bp->scheme = globScheme;
+#endif
 #endif
     
     {
@@ -1698,8 +1698,10 @@ missing_arg:
                     {
                         if(bp->histNo == bufHistNo)
                         {
+#if CRYPT
                             if(cryptStr != NULL)
                                 setBufferCryptKey(bp,cryptStr) ;
+#endif
                             if(searchStr != NULL)
                             {
                                 BUFFER *cbp ;

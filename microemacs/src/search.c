@@ -1,107 +1,37 @@
-/*****************************************************************************
+/* -*- c -*-
  *
- *	Title:		search.c
+ * JASSPA MicroEmacs - www.jasspa.com
+ * search.c - Search routines.
  *
- *	Synopsis:	Search routines.
+ * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
  *
- ******************************************************************************
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *	Filename:		search.c
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
  *
- *	Author:			Unknown
- *
- *	Creation Date:		07/05/85 08:19		
- *
- *	Modification date:	<011031.1645>
- *
- *	Current rev:		10.1
- *
- *	Special Comments:	
- *
- *	Contents Description:	
- *
- * The functions in this file implement commands that search in the forward
- * and backward directions.  There are no special characters in the search
- * strings.  Probably should have a regular expression search, or something
- * like that.
- *
- * Aug. 1986 John M. Gamble:
- *	Made forward and reverse search use the same scan routine.
- *
- *	Added a limited number of regular expressions - 'any',
- *	'character class', 'closure', 'beginning of line', and
- *	'end of line'.
- *
- *	Replacement metacharacters will have to wait for a re-write of
- *	the replaces function, and a new variation of ldelete().
- *
- *	For those curious as to my references, i made use of
- *	Kernighan & Plauger's "Software Tools."
- *	I deliberately did not look at any published grep or editor
- *	source (aside from this one) for inspiration.  I did make use of
- *	Allen Hollub's bitmap routines as published in Doctor Dobb's Journal,
- *	June, 1985 and modified them for the limited needs of character class
- *	matching.  Any inefficiences, bugs, stupid coding examples, etc.,
- *	are therefore my own responsibility.
- *
- * July 90. Jon Green (No references cos couldn't find fore-mentioned book !)
- *
- *	Corrected bug on 
- *	an 'undo' of a search replace function. Now insert the correct 
- *	text back into the source file, not the MAGIC pattern !!!. Required
- *	new ldelete() function, called mldelete. (see line.c).
- *
- *	Fixed bug on magic wild card '.' when used in conjunction with '*'.
- *	ie '.*'. The code always used to go to the LAST occurence of the 
- *	pattern on a foward search. This is not what is required. We want to go
- *	to the first occurence of the pattern. Tricky one that, have to
- *	look for the next literal in the MC string which we can search on.
- *	This is what we use to delimit on.
- *
- *	Added the repeat pattern, that is allow text to be imported from
- *	the search function into the replace function. ie consider the
- *	following :-
- *
- *	Old Text buffer : a += 1;
- *	                  a <<= 3;
- *
- *	Require :         a = a + 1;
- *	                  a = a << 3;
- *
- *	Can now do operation with search and replace as :=
- *
- *	Search : ^{.*} {.*}=
- *	Replace: $0 = $0 $1
- *
- *	Easy !! It always pissed me off that I couldn't do that. Wonder
- *	how many people will use it ?
- *
- * July 91	Jon Green
- *
- *	Added incrental replace facility on search and replace. Allows the same
- *	search pattern while varying the replace pattern.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     07/05/85
+ * Synopsis:    Search routines.
+ * Authors:     Unknown, John M. Gamble, Jon Green & Steven Phillips
+ * Description:	
+ *     The functions in this file implement commands that search in the forward
+ *     and backward directions.  There are no special characters in the search
+ *     strings.  Probably should have a regular expression search, or something
+ *     like that.
  * 
- * June 99      Steven Phillips
- * 
- *  Moved over to GNU regex at last.
- *
- * August 99    Steven Phillips
- * 
- *  Had problems with GPL license, implemented new GNU compliant regex and
- *  moved over to this.
- *
- *****************************************************************************
- * 
- * Modifications to the original file by Jasspa. 
- *
- * Copyright (C) 1988 - 1999, JASSPA 
- *
- * The MicroEmacs Jasspa distribution can be copied and distributed freely for
- * any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
- * incorporated into commercial software with the expressed permission of
- * JASSPA.
- *  
- ****************************************************************************/
+ * Notes:
+ *     The search engine now uses the regex routines defined in regex.c.
+ */
 
 /*---	Include defintions */
 

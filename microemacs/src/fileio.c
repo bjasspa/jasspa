@@ -1,24 +1,28 @@
-/*
- *	SCCS:		%W%		%G%		%U%
+/* -*- c -*-
  *
- *	Last Modified :	<011015.1209>
- * 
- *****************************************************************************
- * 
- * Modifications to the original file by Jasspa. 
- * 
- * Copyright (C) 1988 - 1999, JASSPA 
- * The MicroEmacs Jasspa distribution can be copied and distributed freely for
- * any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
- * incorporated into commercial software with the expressed permission of
- * JASSPA.
- * 
- ****************************************************************************/
-
+ * JASSPA MicroEmacs - www.jasspa.com
+ * fileio.c - File reading and writing routines.
+ *
+ * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 /*
- * The routines in this file read and write ASCII files from the disk. All of
- * the knowledge about files are here. A better message writing scheme should
- * be used.
+ * Created:     Unknown
+ * Synopsis:    File reading and writing routines.
+ * Authors:     Unknown, Steven Phillips
  */
 
 #define	__FILEIOC			/* Define program name */

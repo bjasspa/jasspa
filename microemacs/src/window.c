@@ -1,44 +1,34 @@
-/*****************************************************************************
-*
-*       Title:          %M%
-*
-*       Synopsis:       Window handling routines.
-*
-******************************************************************************
-*
-*       Filename:               %P%
-*
-*       Author:                 Danial Lawrence
-*
-*       Creation Date:          10/05/91 08:27          <011027.0005>
-*
-*       Modification date:      %G% : %U%
-*
-*       Current rev:            %I%
-*
-*       Special Comments:
-*
-*       Contents Description:   Window management. Some of the functions are
-*                               internal, and some are attached to keys that
-*                               the user actually types.
-*
-*****************************************************************************
-* 
-* Modifications to the original file by Jasspa. 
-* 
-* Copyright (C) 1988 - 1999, JASSPA 
-* The MicroEmacs Jasspa distribution can be copied and distributed freely for
-* any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
-* incorporated into commercial software with the expressed permission of
-* JASSPA.
-* 
-****************************************************************************/
-
-/*---   Include defintions */
+/* -*- c -*-
+ *
+ * JASSPA MicroEmacs - www.jasspa.com
+ * window.c - Window handling routines.
+ *
+ * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     Unknown
+ * Synopsis:    Window handling routines.
+ * Authors:     Unknown, Jon Green & Steven Phillips
+ * Description:
+ *     Window management. Some of the functions are internal, and some are
+ *     attached to keys that the user actually types.
+ */
 
 #define __WINDOWC                       /* Define filename */
-
-/*---   Include files */
 
 #include "emain.h"
 #include "efunc.h"
@@ -51,13 +41,7 @@
 #define WINDOW_RIGHT  2                 /* Right window list */
 #define WINDOW_LEFT   3                 /* Left window list */
 
-/*---   External references */
-
 extern LINE   *mline ;                  /* Mode line */
-
-/*---   Local type definitions */
-
-/*---   Local variable definitions */
 
 /* Window Tree Traversal Functions
  * ===============================

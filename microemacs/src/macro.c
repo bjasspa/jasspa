@@ -1,35 +1,29 @@
-/* -*- c -*- ****************************************************************
+/* -*- c -*-
  *
- *			Copyright 2000 JASSPA.
- *			 All Rights Reserved
+ * JASSPA MicroEmacs - www.jasspa.com
+ * macro.c - Macro Handling routines.
  *
- *  System       : MicroEmacs Jasspa Distribution
- *  Module       : Macro Handling
- *  Object Name  : macro.c
- *  Created      : 1995
- *  Author       : Steve Philips
- *  Last Modified: <010822.1507> 
+ * Copyright (C) 1995-2002 JASSPA (www.jasspa.com)
  *
- *  Description	
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  Notes
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
  *
- *  History
- *	  Took the Start, End and Exec KbdMacro routines out of whereever they
- *    were and created this file. Greatly enhanced the macro support by
- *    adding all the other functionality including the Query, Naming,
- *    insertion etc.
- *
- ****************************************************************************
- *   
- * Copyright (C) 1995 - 1999, JASSPA 
- * 
- * The MicroEmacs Jasspa distribution can be copied and distributed freely for
- * any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
- * incorporated into commercial software with the expressed permission of
- * JASSPA.
- * 
- ****************************************************************************/
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     1995
+ * Synopsis:    Macro Handling routines.
+ * Authors:     Steve Philips
+ */
 
 #include "emain.h"
 #include "efunc.h"

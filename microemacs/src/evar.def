@@ -1,19 +1,37 @@
+/* -*- c -*-
+ *
+ * JASSPA MicroEmacs - www.jasspa.com
+ * evar.def - Variable, function and derivative definitions.
+ *
+ * Copyright (C) JASSPA 1991-2002
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 /*
- * Define the string name / internal variable name binding
- *
- * Last Modified:         <011119.0859>
- * 
- ****************************************************************************
- *
- * Modifications to the original file by Jasspa. 
- * 
- * Copyright (C) 1988 - 1998, JASSPA 
- * The MicroEmacs Jasspa distribution can be copied and distributed freely for
- * any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
- * incorporated into commercial software with the expressed permission of
- * JASSPA.
- * 
- ****************************************************************************/
+ * Created:     1991
+ * Synopsis:    Variable, function and derivative definitions.
+ * Authors:     Jon Green & Steven Phillips
+ * Description:
+ *     Included by evar.h to create ordered lists of all system variables,
+ *     macro functions and derivatives.
+ * Notes:
+ *     The list was originally part of evar.h.
+ *     The lists MUST be alphabetically order as a binary chop look-up
+ *     algorithm is used and the message line auto-complete relies on this.
+ */
+
 DEFVAR ("auto-time",           EVAUTOTIME)      /* auto save buffer time */
 DEFVAR ("box-chars",           EVBOXCHRS)       /* Box character set */
 DEFVAR ("buffer-backup",       EVCBUFBACKUP)    /* current buffer backup name */
@@ -76,7 +94,9 @@ DEFVAR ("global-scheme",       EVGLOBSCHM)      /* Global colour  */
 DEFVAR ("home",                EVHOMEDIR)       /* Home directory */
 DEFVAR ("idle-time",           EVIDLETIME)      /* idle-time time period (msec)*/
 DEFVAR ("kept-versions",       EVKEPTVERS)      /* Number of backup files */
+#if COLOR
 DEFVAR ("line-scheme",         EVLINESCHM)      /* Current line color scheme */
+#endif
 #if FLNEXT
 DEFVAR ("line-template",       EVLINETEMP)      /* file next line template   */
 #endif
@@ -206,10 +226,12 @@ DEFFUN (UFTRIMB,    "trb", FUN_MONAMIC)     /* Trim whitespace both */
 DEFFUN (UFTRIML,    "trl", FUN_MONAMIC)     /* Trim whitespace left */
 DEFFUN (UFTRIMR,    "trr", FUN_MONAMIC)     /* Trim whitespace right */
 DEFFUN (UFWHICH,    "whi", FUN_MONAMIC)     /* Does a which on a given program name */
+#if MAGIC
 DEFFUN (UFXIREP,    "xir", FUN_TRINAMIC)    /* regexp case insensitive replace str in str */
 DEFFUN (UFXISEQ,    "xis", FUN_DYNAMIC)     /* regexp case insensitive string logical equality check */
 DEFFUN (UFXREP,     "xre", FUN_TRINAMIC)    /* regexp replace str in str */
 DEFFUN (UFXSEQ,     "xse", FUN_DYNAMIC)     /* regexp string logical equality check */
+#endif
 
 DEFDER (DRABORT,    "abo", DRFLAG_SWITCH|DRFLAG_ARG|DRFLAG_NARG|DRFLAG_OPTARG)
 DEFDER (DRBELL,     "bel", DRFLAG_SWITCH|DRFLAG_ARG|DRFLAG_NARG|DRFLAG_OPTARG)

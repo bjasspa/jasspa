@@ -1,53 +1,33 @@
-/* -*- c -*- ****************************************************************
+/* -*- c -*-
  *
- *			Copyright 2000 JASSPA.
- *			 All Rights Reserved
+ * JASSPA MicroEmacs - www.jasspa.com
+ * etermcap.def - UNIX Termcap definitions.
  *
- *  System        : JASSPA's MicroEmacs
- *  Module        : UNIX Termcap
+ * Copyright (C) JASSPA 2000-2002
  *
- *  Object Name   : etermcap.h
- *  Created By    : Jon Green
- *  Create Date   : Mon Mar 6 21:19:27 2000
- *  Last Modified : <20000822.2108>
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  Description   : Define all of the TERMCAP codes that we use in the 
- *                  system in the following table. We retreive the codes
- *                  during initialisation. This table enables us to read
- *                  them all in. 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
  *
- *  Notes
- *
- *  History
- *
- ****************************************************************************
- *
- * Copyright (c) 2000 JASSPA.
- *
- * All Rights Reserved.
- *
- * This software is provided 'as-is', without any express or implied warranty.
- * In no event will the  authors be held liable for any damages  arising  from
- * the use of this software.
- *
- * This software was generated as part of the MicroEmacs JASSPA  distribution,
- * (http://www.jasspa.com) but is excluded from those licensing restrictions.
- *
- * Permission  is  granted  to anyone to use this  software  for any  purpose,
- * including  commercial  applications,  and to alter it and  redistribute  it
- * freely, subject to the following restrictions:
- *
- *  1. The origin of this software must not be misrepresented; you must not
- *     claim that you wrote the original software. If you use this software
- *     in a product, an acknowledgment in the product documentation would be
- *     appreciated but is not required.
- *  2. Altered source versions must be plainly marked as such, and must not be
- *     misrepresented as being the original software.
- *  3. This notice may not be removed or altered from any source distribution.
- *
- * Jon Green         jon@jasspa.com
- *
- ****************************************************************************/
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     Mon Mar 6 2000
+ * Synopsis:    UNIX Termcap definitions.
+ * Authors:     Jon Green
+ * Description:
+ *     Included by unixterm.c to define all of the TERMCAP codes that we
+ *     use in the system in the following table. We retreive the codes
+ *     during initialisation. This table enables us to read them all in. 
+ */
 
 /* auto_left_margin/am/am/Terminal has automatic margins */
 TCAP_BOOLN(TCAPam, 'a','m','\0')

@@ -1,28 +1,32 @@
-/****************************************************************************
+/* -*- c -*-
  *
- *  			Copyright 1997 Jasspa
+ * JASSPA MicroEmacs - www.jasspa.com
+ * eskeys.h - Extended key definitions.
  *
- *  System        : MicroEmacs Jasspa Distribution
- *  Object Name   : eskeys.h
- *  Created       : Thu Sep 18 15:28:45 1997
- *  Last Modified : <000718.2344>
+ * Copyright (C) 1997-2002 JASSPA (www.jasspa.com)
  *
- *  Description	
- *      Extended key definitions.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  Notes
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
  *
- *  History
- *	
- ****************************************************************************
- *
- * Copyright (C) 1997-1999, JASSPA 
- * The MicroEmacs Jasspa distribution can be copied and distributed freely for
- * any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
- * incorporated into commercial software with the expressed permission of
- * JASSPA.
- *  
- ****************************************************************************/
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     Thu Sep 18 1997
+ * Synopsis:    Extended key definitions.
+ * Authors:     Steven Phillips & Jon Green
+ * Description:
+ *     Includes eskeys.def to create an ordered list of extended (special)
+ *     key names.
+ */
 
 #ifndef __ESKEYS_H__
 #define __ESKEYS_H__

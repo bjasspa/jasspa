@@ -1,7 +1,7 @@
 # -!- makefile -!-
 #
 # JASSPA MicroEmacs - www.jasspa.com
-# irix5.gmk - Make file for SGI Irix v5
+# linux2.gmk - Make file for Linux - Slackware V2.2.6
 #
 # Copyright (C) 2001-2002 JASSPA (www.jasspa.com)
 #
@@ -22,46 +22,55 @@
 ##############################################################################
 #
 # Created:     Sat Jan 24 1998
-# Synopsis:    Make file for SGI Irix v5
+# Synopsis:    Make file for Linux - Slackware V2.2.6
 # Notes:
-#	Run "make -f irix5.mak"      for optimised build produces ./me
-#	Run "make -f irix5.mak med"  for debug build produces     ./med
+#	Run "make -f linux2.mak"      for optimised build produces ./me
+#	Run "make -f linux2.mak med"  for debug build produces     ./med
 #
-#	Run "make -f irix5.mak clean"      to clean source directory
-#	Run "make -f irix5.mak spotless"   to clean source directory even more
+#	Run "make -f linux2.mak clean"      to clean source directory
+#	Run "make -f linux2.mak spotless"   to clean source directory even more
 #
 ##############################################################################
 #
 # Installation Directory
 INSTDIR	      = /usr/local/bin
-INSTPROGFLAGS = -s -o -u root -g root -m 0775 -f $(INSTDIR)
+INSTPROGFLAGS = -s -o root -g root -m 0775
 #
 # Local Definitions
 RM            = rm -f
 CC            = gcc
 LD            = $(CC)
 STRIP         =	strip
-CDEBUG        = -Wall -g
-COPTIMISE     = -Wall -O3 -DNDEBUG=1
-CDEFS         = -D_IRIX5 -I.
-LIBS          = -ltermcap
+CDEBUG        =	-g  -Wall
+COPTIMISE     =	-O3 -DNDEBUG=1 -Wall
+CDEFS         = -D_LINUX -I.
 LDFLAGS       = 
 INSTALL       =	install
-XLIBS         = -lX11
+XLIBS         = -L/usr/X11R6/lib -lX11
 # definition for the console only build
 CCONSOLE      = -D_NO_XTERM
+#
+# figure out if termcap is avaiable or if ncurses should be tried
+# to accomplish this try to compile test.c and see if it can link
+# termcap
+test = $(shell echo "main() { printf(\"HW\n\"); }" > _t.c ; $(LD) $(LDFLAGS) -o /dev/null -ltermcap _t.c 2>&1 ; rm _t.c)
+ifneq "$(strip $(test))" ""
+LIBS          = -lncurses
+else
+LIBS          = -ltermcap
+endif
 #
 # Rules
 .SUFFIXES: .c .o .on .od
 
-.c.o:	
+.c.o:
 	$(CC) $(COPTIMISE) $(CDEFS) $(MAKECDEFS) -c $<
 
 .c.on:
 	$(CC) $(COPTIMISE) $(CDEFS) $(CCONSOLE) $(MAKECDEFS) -o $@ -c $<
 
-.c.od:	
-	$(CC) $(CDEBUG) $(CDEFS) $(MAKECDEFS) -o *.od -c $<
+.c.od:
+	$(CC) $(CDEBUG) $(CDEFS) $(MAKECDEFS) -o $@ -c $<
 #
 # Source files
 STDHDR	= ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h \
@@ -73,11 +82,11 @@ STDSRC	= abbrev.c basic.c bind.c buffer.c crypt.c dirlist.c display.c \
 	  print.c random.c regex.c region.c registry.c search.c spawn.c \
 	  spell.c tag.c termio.c time.c undo.c window.c word.c
 
-PLTHDR  = 
+PLTHDR  =
 PLTSRC  = unixterm.c
 #
 # Object files
-STDOBJ	= $(STDSRC:.c=.o)	
+STDOBJ	= $(STDSRC:.c=.o)
 PLTOBJ  = $(PLTSRC:.c=.o)
 OBJ	= $(STDOBJ) $(PLTOBJ)
 
@@ -85,7 +94,7 @@ NSTDOBJ	= $(STDSRC:.c=.on)
 NPLTOBJ = $(PLTSRC:.c=.on)
 NOBJ	= $(NSTDOBJ) $(NPLTOBJ)
 
-DSTDOBJ	= $(STDSRC:.c=.od)	
+DSTDOBJ	= $(STDSRC:.c=.od)
 DPLTOBJ = $(PLTSRC:.c=.od)
 DOBJ	= $(DSTDOBJ) $(DPLTOBJ)
 #
@@ -97,7 +106,7 @@ install: me
 	@echo "install done"
 
 clean:
-	$(RM) me men med *.o *.on *.od core
+	$(RM) me men med *.o *.od core
 
 spotless: clean
 	$(RM) tags *~
@@ -124,5 +133,4 @@ $(NPLTOBJ): $(STDHDR) $(PLTHDR)
 
 $(DSTDOBJ): $(STDHDR)
 $(DPLTOBJ): $(STDHDR) $(PLTHDR)
-
 

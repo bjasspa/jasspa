@@ -1,19 +1,34 @@
-/****************************************************************************
+/* -*- c -*-
  *
- *                      Copyright 1997-2001 Jasspa
+ * JASSPA MicroEmacs - www.jasspa.com
+ * emain.h - Encapsulate all platform definitions.
  *
- *  System        : MicroEmacs Jasspa Distribution
- *  Object Name   : emain.h
- *  Author        : Steve Philips
- *  Created       : Thu Nov 27 19:17:17 1997
- *  Last Modified : <011220.1239>
+ * Copyright (C) 1997-2002 JASSPA (www.jasspa.com)
  *
- *  Description 
- *       Encapsulate all of the platform definitions into a sigle file
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  Notes
- *       Macro definitions defined within this file obey the
- *       following rules:-
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     Thu Nov 27 1997
+ * Synopsis:    Encapsulate all platform definitions.
+ * Authors:     Steve Phillips & Jon Green
+ * Description:
+ *      Encapsulate all of the platform definitions into a sigle file.
+ *
+ * Notes:
+ *      Macro definitions defined within this file obey the
+ *      following rules:-
  * 
  *       _XXXX - Underscore names are tested using
  *               "#if (defined _XXXX)", and are disabled by
@@ -23,19 +38,8 @@
  *       XXXX  - Non-underscore names are tested using 
  *               "#if XXXXX". A zero disables the option.
  *               Non-zero (typically 1) enables the option.
- *
- *  History
- *      
- ****************************************************************************
- *
- * Copyright (C) 1997 - 2001, JASSPA 
- * 
- * The MicroEmacs Jasspa distribution can be copied and distributed freely for
- * any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
- * incorporated into commercial software with the expressed permission of
- * JASSPA.
- *  
- ****************************************************************************/
+ */
+
 #ifndef __EMAIN_H__
 #define __EMAIN_H__
 
@@ -66,7 +70,7 @@
 #define CFENCE  1       /* fench matching in CMODE                      */
 #define CRYPT   1       /* file encryption enabled?                     */
 #define MAGIC   1       /* include regular expression matching?         */
-#define ABREV   1       /* Abreviated files                             */
+#define ABBREV  1       /* Abbreviated files                            */
 #define FLNEXT  1       /* include the file next buffer stuff           */
 #define DORCS   1       /* do rcs check ins and outs                    */
 #define MOUSE   1       /* do mouse pointer stuff                       */
@@ -255,8 +259,6 @@
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 /* Under cygwin sys_errlist is defined slightly differently - redefine   */
 #define sys_errlist _sys_errlist        /* sys_errlist specially defined */
-/* Set up the search path */
-#define _SEARCH_PATH   "/usr/share/jasspa/macros:/usr/share/jasspa/spelling"
 #endif /* _CYGWIN */
 
 /**************************************************************************

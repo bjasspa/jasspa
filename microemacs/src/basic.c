@@ -1,60 +1,42 @@
-/*****************************************************************************
-*
-*	Title:		%M%
-*
-*	Synopsis:	Basic Routines.
-*
-******************************************************************************
-*
-*	Filename:		%P%
-*
-*	Author:			Danial Lawrence
-*
-*	Creation Date:		14/05/91 12:37		<010305.0749>
-*
-*	Modification date:	%G% : %U%
-*
-*	Current rev:		%I%
-*
-*	Special Comments:	
-*
-*	Contents Description:	
-*
-* The routines in this file move the cursor around on the screen. They
-* compute a new value for the cursor, then adjust ".". The display code
-* always updates the cursor location, so only moves between lines, or
-* functions that adjust the top line in the window and invalidate the
-* framing, are hard.
-*
-*****************************************************************************
-* 
-* (C)opyright 1987 by Daniel M. Lawrence
-* MicroEMACS 3.8 can be copied and distributed freely for any
-* non-commercial purposes. MicroEMACS 3.8 can only be incorporated
-* into commercial software with the permission of the current author.
-* 
-* Modifications to the original file by Jasspa. 
-* 
-* Copyright (C) 1988 - 1999, JASSPA 
-* The MicroEmacs Jasspa distribution can be copied and distributed freely for
-* any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
-* incorporated into commercial software with the expressed permission of
-* JASSPA.
-* 
-****************************************************************************/
-
-/*---	Include defintions */
+/* -*- c -*-
+ *
+ * JASSPA MicroEmacs - www.jasspa.com
+ * basic.c - Basic Movement Routines.
+ *
+ * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     Unknown
+ * Synopsis:    Basic Movement Routines.
+ * Authors:     Unknown, Jon Green & Steven Phillips
+ * Description:
+ *     The routines in this file move the cursor around on the screen. They
+ *     compute a new value for the cursor, then adjust ".". The display code
+ *     always updates the cursor location, so only moves between lines, or
+ *     functions that adjust the top line in the window and invalidate the
+ *     framing, are hard.
+ */
 
 #define	__BASICC			/* Define program */ 
-
-/*---	Include files */
 
 #include "emain.h"
 
 /*
- * Move the cursor to the
- * beginning of the current line.
- * Trivial.
+ * Move the cursor to the beginning of the current line. Trivial.
  */
 int
 gotobol(int f, int n)
@@ -240,7 +222,6 @@ forwLine(int f, int n)
  * alternate. Figure out the new line and call "movedot" to perform the
  * motion. No errors are possible. Bound to "C-P".
  */
-
 int
 backLine(int f, int n)
 {
@@ -288,8 +269,8 @@ backLine(int f, int n)
     return TRUE ;
 }
 
-/* move to a particular line. argument (n) must be a positive
- * integer for this to actually do anything
+/* move to a particular line. argument (n) must be a positive integer for this
+ * to actually do anything
  */
 int	
 gotoLine(int f, int n)
@@ -428,7 +409,6 @@ gotoAbsLine(int32 line)
  * considered to be hard motion; it really isn't if the original value of dot
  * is the same as the new value of dot. Normally bound to "M-<".
  */
-/* ARGSUSED */
 int
 gotobob(int f, int n)
 {
@@ -444,7 +424,6 @@ gotobob(int f, int n)
  * (ZJ). The standard screen code does most of the hard parts of update.
  * Bound to "M->".
  */
-/* ARGSUSED */
 int
 gotoeob(int f, int n)
 {
@@ -457,12 +436,12 @@ gotoeob(int f, int n)
 
 #if	WORDPRO
 
+/* go back to the beginning of the current paragraph here we look for a
+ * <NL><NL> or <NL><TAB> or <NL><SPACE> combination to delimit the beginning
+ * of a paragraph
+ */
 int
 backPara(int f, int n)
-/* go back to the beginning of the current paragraph
-   here we look for a <NL><NL> or <NL><TAB> or <NL><SPACE>
-   combination to delimit the beginning of a paragraph
-*/
 {
     register int suc;   	/* success of last backChar */
     int	         i;		/* Local counter. */
@@ -516,12 +495,12 @@ backPara(int f, int n)
     return TRUE ;
 }
 
+/* go forword to the end of the current paragraph here we look for a <NL><NL>
+ * or <NL><TAB> or <NL><SPACE> combination to delimit the beginning of a
+ * paragraph
+ */
 int
 forwPara(int f, int n)	
-/* go forword to the end of the current paragraph
-   here we look for a <NL><NL> or <NL><TAB> or <NL><SPACE>
-   combination to delimit the beginning of a paragraph	
-*/
 {
     register int suc=TRUE;   	/* success of last backChar */
     int	         i;		/* Local counter. */

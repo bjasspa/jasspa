@@ -1,45 +1,34 @@
-/* -*- C -*- ****************************************************************
+/* -*- c -*-
  *
- *  System        : MicroEmacs Jasspa Distribution
- *  Module        : spell.c
- *  Synopsis      : Spell checking routines
- *  Created By    : Steven Phillips
- *  Created       : 21/12/94
- *  Last Modified : <010802.1940>
+ * JASSPA MicroEmacs - www.jasspa.com
+ * spell.c - Spell checking routines.
  *
- *  Description
+ * Copyright (C) 1994-2001 Steven Phillips
+ * Copyright (C) 2002 JASSPA (www.jasspa.com)
  *
- *  Notes
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     21/12/94
+ * Synopsis:    Spell checking routines.
+ * Authors:     Steven Phillips
+ * Notes:
  *      The external input/output mostly complies with ispell, there are a 
  *      few extenstions such as the disabling of hypens and auto-replacement
  *      words. The internals, including dictionaries, are completely different.
- * 
- ****************************************************************************
- * 
- * Copyright (c) 1994-2000 Steven Phillips    
- *    
- * This software is provided 'as-is', without any express or implied warranty.
- * In no event will the  authors be held liable for any damages  arising  from
- * the use of this software.
- *     
- * This software was generated as part of the MicroEmacs JASSPA  distribution,
- * (http://www.jasspa.com) but is excluded from those licensing restrictions.
- *
- * Permission  is  granted  to anyone to use this  software  for any  purpose,
- * including  commercial  applications,  and to alter it and  redistribute  it
- * freely, subject to the following restrictions:
- *
- *  1. The origin of this software must not be misrepresented; you must not
- *     claim that you wrote the original software. If you use this software
- *     in a product, an acknowledgment in the product documentation would be
- *     appreciated but is not required.
- *  2. Altered source versions must be plainly marked as such, and must not be
- *     misrepresented as being the original software.
- *  3. This notice may not be removed or altered from any source distribution.
- *
- * Steven Phillips         bill@jasspa.com
- *
- ****************************************************************************/
+ */
 
 #define __SPELLC                        /* Define filename */
 

@@ -1,53 +1,35 @@
-/*****************************************************************************
-*
-*	Title:		%M%
-*
-*	Synopsis:	File handling.
-*
-******************************************************************************
-*
-*	Filename:		%P%
-*
-*	Author:			Danial Lawrence
-*
-*	Creation Date:		14/05/86 12:37		<011209.1334>
-*
-*	Modification date:	%G% : %U%
-*
-*	Current rev:		%I%
-*
-*	Special Comments:
-*
-*	Contents Description:
-*
-*	The routines in this file handle the reading, writing
-*	and lookup of disk files.  All of details about the
-*	reading and writing of the disk are in "fileio.c".
-*
-* Jon Green	13-07-90
-* Added Document Mode. Search for .doc or .txt extension for WRAP and
-* indent to automatically be enabled.
-*
-* Jon Green	17-05-91
-* Added suffix modes so that the suffix defintions may be defined in the
-* start up file.
-*****************************************************************************
-* 
-* Modifications to the original file by Jasspa. 
-* 
-* Copyright (C) 1988 - 1999, JASSPA 
-* The MicroEmacs Jasspa distribution can be copied and distributed freely for
-* any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
-* incorporated into commercial software with the expressed permission of
-* JASSPA.
-* 
-****************************************************************************/
-
-/*--- Include defintions */
+/* -*- c -*-
+ *
+ * JASSPA MicroEmacs - www.jasspa.com
+ * file.c - File handling.
+ *
+ * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     Unknown
+ * Synopsis:    File handling.
+ * Authors:     Unknown, Jon Green & Steven Phillips
+ * Description:
+ *     The routines in this file handle the reading, writing
+ *     and lookup of disk files.  All of details about the
+ *     reading and writing of the disk are in "fileio.c".
+ */
 
 #define __FILEC 1                  /* Define the filename */
-
-/*--- Include files */
 
 #include "emain.h"
 #include "efunc.h"

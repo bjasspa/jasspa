@@ -1,33 +1,29 @@
+/* -*- c -*-
+ *
+ * JASSPA MicroEmacs - www.jasspa.com
+ * input.c - Various input routines.
+ *
+ * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 /*
- *	SCCS:		%W%		%G%		%U%
- *
- *	Last Modified :	<011025.2328>
- *
- *	INPUT:	Various input routines for MicroEMACS 3.7
- *		written by Daniel Lawrence
- *		5/9/86
- *
- *	BUG:	meGetString() responds to backChar as back word. Backspace 
- *		does not delete previous character. Fix 05/11/90 JDG. 
- *
- *	BUG	mldisp() Core dumps if the search/replace string exceeds 
- *		50 characters. The 'space' variable has to be set up to
- *		PROMSIZ - 1 to allow for the '\0'. Hence changed variable
- *		to be -1 to stop it core dumping.
- *		Fix 16/07/91 JDG. - It's taken me 6 months to find this
- *		bastard since SDB on core gave me a differnt address !!!
- *
- **************************************************************************
- * 
- * Modifications to the original file by Jasspa. 
- * 
- * Copyright (C) 1988 - 1999, JASSPA 
- * The MicroEmacs Jasspa distribution can be copied and distributed freely for
- * any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
- * incorporated into commercial software with the expressed permission of
- * JASSPA.
- * 
- ****************************************************************************/
+ * Created:     5/9/86
+ * Synopsis:    Various input routines.
+ * Authors:     Daniel Lawrence, Jon Green & Steven Phillips
+ */
 
 #define	__INPUTC			/* Define the name of the file */
 

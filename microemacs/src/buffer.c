@@ -1,57 +1,39 @@
-/* -!- c -!- *****************************************************************
-*
-*       Title:          %M%
-*
-*       Synopsis:       Buffer operations
-*
-******************************************************************************
-*
-*       Filename:               %P%
-*
-*       Author:                 Danial Lawrence
-*
-*       Creation Date:          14/05/86 12:37          <010823.1059>
-*
-*       Modification date:      %G% : %U%
-*
-*       Current rev:            %I%
-*
-*       Special Comments:       
-*
-*       Contents Description:   
-*
-* Buffer management.
-* Some of the functions are internal, and some are actually attached to user
-* keys. Like everyone else, they set hints for the display system.
-*
-*****************************************************************************
-* 
-* (C)opyright 1987 by Daniel M. Lawrence
-* MicroEMACS 3.8 can be copied and distributed freely for any
-* non-commercial purposes. MicroEMACS 3.8 can only be incorporated
-* into commercial software with the permission of the current author.
-* 
-* Modifications to the original file by Jasspa. 
-* 
-* Copyright (C) 1988 - 1999, JASSPA 
-* The MicroEmacs Jasspa distribution can be copied and distributed freely for
-* any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
-* incorporated into commercial software with the expressed permission of
-* JASSPA.
-* 
-****************************************************************************/
-
-/*---   Include defintions */
+/* -*- c -*-
+ *
+ * JASSPA MicroEmacs - www.jasspa.com
+ * buffer.c - Buffer operations.
+ *
+ * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     Unknown
+ * Synopsis:    Buffer operations.
+ * Authors:     Unknown, Jon Green & Steven Phillips
+ * Description:
+ *     Buffer management.
+ *     Some of the functions are internal, and some are actually attached to user
+ *     keys. Like everyone else, they set hints for the display system.
+ */
 
 #define __BUFFERC                       /* Define filename */
-
-/*---   Include files */
 
 #include "emain.h"
 #include "efunc.h"
 #include "esearch.h"
-
-/*---   Local variable definitions */
 
 int
 getBufferName(uint8 *prompt, int opt, int defH, uint8 *buf)
@@ -194,8 +176,10 @@ setBufferContext(BUFFER *bp)
     int32 topLineNo ;
     int ii ;
     
+#if COLOR
     /* First setup the global scheme - this can be missed by buffers loaded with -c */
     bp->scheme = globScheme;
+#endif
     /* must do this to do the hook properly */
     if((tbp = curbp) != bp)
     {

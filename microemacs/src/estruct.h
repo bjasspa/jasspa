@@ -1,35 +1,33 @@
-/**-*- c -*-*************************************************************
- * 
- *	SCCS:		%W%		%G%		%U%
+/* -*- c -*-
  *
- *	Last Modified :	<011029.1149>
+ * JASSPA MicroEmacs - www.jasspa.com
+ * estruct.h - Structures and their defines.
  *
- *	ESTRUCT:	Structure and preprocesser defined for
- *			MicroEMACS 3.7
+ * Originally written by Dave G. Conroy for MicroEmacs
+ * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
  *
- *			written by Dave G. Conroy
- *			modified by Steve Wilhite, George Jones
- *			greatly modified by Daniel Lawrence
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- * Jon Green	13-07-90
- * Added Document Mode. Search for .doc or .txt extension for WRAP and 
- * indent to automatically be enabled.
- * Jon Green	17-05-91
- * Added suffix modes so that the suffix defintions may be defined in the 
- * start up file.
- * 
- ************************************************************************
- * 
- * Modifications to the original file by Jasspa. 
- * 
- * Copyright (C) 1988 - 1999, JASSPA 
- * The MicroEmacs Jasspa distribution can be copied and distributed freely for
- * any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
- * incorporated into commercial software with the expressed permission of
- * JASSPA.
- * 
- ****************************************************************************/
-/*	internal constants	*/
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     For MicroEMACS 3.7
+ * Synopsis:    Structures and their defines.
+ * Authors:     Dave G. Conroy, Steve Wilhite, George Jones, Daniel Lawrence,
+ *          Jon Green, Steven Phillips.
+ */
+
+/* internal constants */
 
 #define NBINDS	 384			/* max # of globally bound keys */
 #define NBUFN    16                     /* # of bytes, buffer name      */
@@ -423,16 +421,16 @@ typedef struct {
 } meSTAT ;
 
 /*
- * meABREV
+ * meABBREV
  * 
  * structure to store info on an abbreviation file
  */
-typedef struct meABREV {
-    struct meABREV *next ;      /* Pointer to the next abrev    */
+typedef struct meABBREV {
+    struct meABBREV *next ;     /* Pointer to the next abrev    */
     LINE   hlp ;                /* head line                    */
     uint8  loaded ;     	/* modification time of file	*/
     uint8  fname[1] ;           /* Users abrev file name        */
-} meABREV ;
+} meABBREV ;
 
 /* structure to hold user variables and their definitions	*/
 typedef struct meVARIABLE
@@ -548,8 +546,8 @@ typedef	struct	meNARROW {
  */
 typedef struct  BUFFER {
     struct  BUFFER *b_bufp ;            /* Link to next struct BUFFER	*/
-#if ABREV
-    meABREV *abrevFile ;                /* Abreviation file		*/
+#if ABBREV
+    meABBREV *abrevFile ;               /* Abreviation file		*/
 #endif
     meAMARK *b_amark ;  		/* pointer to the mark list	*/
 #if LCLBIND
@@ -593,17 +591,19 @@ typedef struct  BUFFER {
 #if LCLBIND
     uint16  nobbinds;                   /* but for the "mark"           */
 #endif
+#if COLOR
     meSCHEME scheme;                    /* Current scheme index         */
     meSCHEME lscheme[LNNOSCHM];         /* line scheme index            */
     uint8    lschemeNext ;              /* Next line scheme index       */
-    meMODE  b_mode;			/* editor mode of this buffer	*/
-    uint8   intFlag;			/* internal buffer flags	*/
-    uint8   b_nwnd;     		/* Count of windows on buffer   */
-    uint8   isWordMask ;                /* isWord lookup table bit mask */
-    uint8   modeLineFlags ;             /* buffer mode-line flags       */
+#endif
+    meMODE   b_mode;			/* editor mode of this buffer	*/
+    uint8    intFlag;			/* internal buffer flags	*/
+    uint8    b_nwnd;     		/* Count of windows on buffer   */
+    uint8    isWordMask ;               /* isWord lookup table bit mask */
+    uint8    modeLineFlags ;            /* buffer mode-line flags       */
 #if HILIGHT
-    uint8   hiLight ;          	        /* hilight number               */
-    uint8   indent ;                    /* indent number                */
+    uint8    hiLight ;         	        /* hilight number               */
+    uint8    indent ;                   /* indent number                */
 #endif
 } BUFFER ;
 

@@ -1,33 +1,35 @@
-/* -*- C -*- ****************************************************************
+/* -*- c -*-
  *
- *  			Copyright 1993-1998 Jasspa.
+ * JASSPA MicroEmacs - www.jasspa.com
+ * ebind.def - keys to commands binding definitions.
  *
- *  System        : MicroEmacs Jasspa Distribution
- *  Object Name   : ebind.def
- *  Date          : 12th June 1993
- *  Created By    : Steve Philips
- *  Last Modified : <010902.1153>
+ * Copyright (C) JASSPA 1993-2002
  *
- *  Description	
- *        Define the bindings to the keys
- *  Notes
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  History
- *	
- ****************************************************************************
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
  *
- * Copyright (C) 1993 - 1998, JASSPA 
- * The MicroEmacs Jasspa distribution can be copied and distributed freely for
- * any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
- * incoportated into commercial software with the expressed permission of
- * JASSPA.
- * 
- ****************************************************************************/
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 /*
- * Command Table.
- * This table is must be in order, left to right across the
- * characters of the command. This expains the funny location of the
- * control-X commands.
+ * Created:     12th June 1993
+ * Synopsis:    keys to commands binding definitions.
+ * Authors:     Daniel Lawrence, Jon Green & Steven Phillips
+ * Description:
+ *     Included by ebind.h to create an ordered list of initial
+ *     key binding definitions.
+ *
+ * Notes:
+ *     The list MUST be in order as a binary chop algorithm is used
+ *     to find a binding.
  */
 
 	DEFBIND (('A'-'@'),		0, CK_GOBOL)

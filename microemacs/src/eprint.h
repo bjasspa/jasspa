@@ -1,29 +1,31 @@
-/* -*- C -*- ****************************************************************
+/* -*- c -*-
  *
- *  			Copyright 1999 Jasspa
+ * JASSPA MicroEmacs - www.jasspa.com
+ * eprint.h - Printer definitions.
  *
- *  System        : MicroEmacs Jasspa Distribution
- *  Object Name   : eprint.h
- *  Created By    : Jon Green
- *  Created       : Mon Mar 9 23:54:24 1998
- *  Last Modified : <000718.2343>
+ * Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
  *
- *  Description	
- *       Printer definitions
- *  Notes
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  History
- *	
- ****************************************************************************
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
  *
- * Copyright (C) 1998 - 1999, JASSPA 
- *
- * The MicroEmacs Jasspa distribution can be copied and distributed freely for
- * any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
- * incorporated into commercial software with the expressed permission of
- * JASSPA.
- *  
- ****************************************************************************/
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     Mon Mar 9 1998
+ * Synopsis:    Printer definitions.
+ * Authors:     Jon Green
+ * Description:
+ *      Includes eprint.def to create a list of used printer registry values.
+ */
 
 #ifndef __EPRINT_H
 #define __EPRINT_H

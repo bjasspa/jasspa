@@ -1,21 +1,34 @@
-# -!- makefile -!- ###########################################################
+# -!- makefile -!-
 #
-#			MicroEmacs Jasspa Distribution 1998.
+# JASSPA MicroEmacs - www.jasspa.com
+# hpux11.mak - Make file for HP Hpux v10
 #
-#  System        : MicroEmacs
-#  Description	 : Make file for HP Hpux v10
-#  Created       : Sat Jan 24 00:01:40 1998
+# Copyright (C) 2001-2002 JASSPA (www.jasspa.com)
 #
-#  Last Modified : <010711.1319>
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation; either version 2 of the License, or (at your option)
+# any later version.
 #
-#  Notes
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+# more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+##############################################################################
+#
+# Created:     Sat Jan 24 1998
+# Synopsis:    Make file for HP Hpux v10
+# Notes:
 #	Run "make -f hpux10.mak"      for optimised build produces ./me
 #	Run "make -f hpux10.mak med"  for debug build produces     ./med
 #
 #	Run "make -f hpux10.mak clean"      to clean source directory
 #	Run "make -f hpux10.mak spotless"   to clean source directory even more
-#
-#  History
 #
 ##############################################################################
 #

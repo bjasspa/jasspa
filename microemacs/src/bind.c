@@ -1,50 +1,34 @@
-/*****************************************************************************
-*
-*	Title:		%M%
-*
-*	Synopsis:	Binding functions.
-*
-******************************************************************************
-*
-*	Filename:		%P%
-*
-*	Author:			Daniel Lawrence
-*
-*	Creation Date:		11/02/86 12:37		<010718.1250>
-*
-*	Modification date:	%G% : %U%
-*
-*	Current rev:		%I%
-*
-*	Special Comments:	
-*
-*	Contents Description:	
-*
-*	This file is for functions having to do with key bindings,
-*	descriptions, help commands and startup file.
-*
-*****************************************************************************
-* 
-* (C)opyright 1987 by Daniel M. Lawrence
-* MicroEMACS 3.8 can be copied and distributed freely for any
-* non-commercial purposes. MicroEMACS 3.8 can only be incorporated
-* into commercial software with the permission of the current author.
-* 
-* Modifications to the original file by Jasspa. 
-* 
-* Copyright (C) 1988 - 1999, JASSPA 
-* The MicroEmacs Jasspa distribution can be copied and distributed freely for
-* any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
-* incorporated into commercial software with the expressed permission of
-* JASSPA.
-* 
-****************************************************************************/
-
-/*---	Include defintions */
+/* -*- c -*-
+ *
+ * JASSPA MicroEmacs - www.jasspa.com
+ * bind.c - Binding functions.
+ *
+ * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     11-feb-86
+ * Synopsis:    Binding functions.
+ * Authors:     Daniel Lawrence, Jon Green & Steven Phillips
+ * Description:
+ *     This file is for functions having to do with key bindings,
+ *     descriptions, help commands and startup file.
+ */
 
 #define	__BINDC				/* Define file name */
-
-/*---	Include files */
 
 #include "emain.h"
 #ifdef _UNIX

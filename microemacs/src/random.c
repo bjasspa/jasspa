@@ -1,57 +1,31 @@
-/*****************************************************************************
+/* -*- c -*-
  *
- *	Title:		%M%
+ * JASSPA MicroEmacs - www.jasspa.com
+ * random.c - Random Routines.
  *
- *	Synopsis:	Random Routines.
+ * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
  *
- ******************************************************************************
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *	Filename:		%P%
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
  *
- *	Author:			Danial Lawrence.
- *
- *	Creation Date:		07/05/91 08:19		<011115.0002>
- *
- *	Modification date:	%G% : %U%
- *
- *	Current rev:		%I%
- *
- *	Special Comments:	
- *
- *	Contents Description:	
- *
- * 	This file contains the command processing functions for a number of
- *	random commands. There is no functional grouping here, for sure.
- *
- *	Jon Green	05/12/90
- *	Added "backtab". If we handle pseudo tab positions forward with spaces
- *	then we must do the same backwards to delete them. 
- *
- *	Jon Green	17/05/91
- *	Fixed fence match bug.
- *
- *	Steven Phillips	93-99
- *	Rewritten all the C-indentation and fence match code. Added sortlines,
- *  cmpWindows, createCallback and mouse support routines.
- *
- ******************************************************************************
- * 
- * Modifications to the original file by Jasspa. 
- * 
- * Copyright (C) 1988 - 1999, JASSPA 
- *
- * The MicroEmacs Jasspa distribution can be copied and distributed freely for
- * any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
- * incorporated into commercial software with the expressed permission of
- * JASSPA.
- *  
- ****************************************************************************/
-
-/*---	Include defintions */
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     Unknown
+ * Synopsis:    Random Routines.
+ * Authors:     Unknown, Jon Green & Steven Phillips
+ */
 
 #define	__RANDOMC		/* Define filename */
-
-/*---	Include files */
 
 #include "emain.h"
 #include "eskeys.h"

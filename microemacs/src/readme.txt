@@ -8,7 +8,7 @@ Installation(1)                   microemacs                    Installation(1)
 
 INSTALLATION 
      This page describes introductory  notes for the  installation and setup of
-     MicroEmacs '01. 
+     MicroEmacs '02. 
 
   Quick Install 
      The quickest way  to install MicroEmacs  without reading the  rest of this
@@ -52,7 +52,7 @@ INSTALLATION
           jasspame.exe - '95/'98/NT Self Extracting Install Shield Installation
 
      Executable Source Code 
-          The source code release for MicroEmacs '01 contains makefiles (*.mak)
+          The source code release for MicroEmacs '02 contains makefiles (*.mak)
           for all supported  platforms. Microsoft  '95/'98/NT makefiles contain
           options at the top of the  makefile to enable/disable console and URL
           support. 
@@ -121,7 +121,7 @@ INSTALLATION
      Simply create a directory, down-load the files required (see list for each
      platform below) and extract  into this directory. From  a shell or command
      prompt, change to  the directory,  making it the  current one  (i.e. cd to
-     it), and run the  executable. MicroEmacs '01 should  open with the on-line
+     it), and run the  executable. MicroEmacs '02 should  open with the on-line
      help page visible. 
 
      On Windows based systems this can also be achieved by creating a short-cut
@@ -132,7 +132,7 @@ INSTALLATION
      executable to  somewhere in  your  PATH and  set the  environment variable
      MEPATH to point to this directory. 
 
-     MicroEmacs  '01  will  function  normally  in  this  environment,  but  in
+     MicroEmacs  '02  will  function  normally  in  this  environment,  but  in
      multi-user  environments  and  for  up-dating  purposes,  it  is  strongly
      recommended that a proper installation is used, see below. 
 
@@ -235,7 +235,7 @@ INSTALLATION
                directory structure  similar to  MS-DOS. Install  the helper DLL
                methnk16.dll  in   the  C:\WINDOWS\SHELL   directory.  Create  a
                me32.ini(8) file  in the  C:\WINDOWS  directory to  identify the
-               location of the MicroEmacs '01 components, this much the same as
+               location of the MicroEmacs '02 components, this much the same as
                the '95/'98  file,  change  the  directory  paths  to  suite the
                install base. 
 
@@ -314,7 +314,7 @@ INSTALLATION
                (in this case  icon number 23),  or may be  some other icon. The
                open  action  in  the   example  uses  the   -o  option  of  the
                client-server, which loads the  file into the current MicroEmacs
-               '01 session, alternatively the  -c option may  be used to retain
+               '02 session, alternatively the  -c option may  be used to retain
                the previous  context, or  no option  if a  new session  with no
                other files loaded is started. 
 
@@ -488,7 +488,7 @@ SEE ALSO
 
 COMPANY PROFILES 
      This section describes how  a company profile  should be incorporated into
-     MicroEmacs  '01.  A  company  profile  defines  a  set  of  extensions  to
+     MicroEmacs  '02.  A  company  profile  defines  a  set  of  extensions  to
      MicroEmacs which  encapsulate settings  which are  used on  a company wide
      basis. This  type  of configuration  is  typically used  with  a networked
      (shared) installation. The company profile would typically include:- 
@@ -500,7 +500,7 @@ COMPANY PROFILES
 
   Location Of The Company Information 
      It is suggested that  all of the company  extensions applied to MicroEmacs
-     '01 are  performed  in a  separate  directory location  which  shadows the
+     '02 are  performed  in a  separate  directory location  which  shadows the
      MicroEmacs standard macro file directory.  This enables the original files
      to be sourced if a  user does not want to  include the company files. This
      method  also  allows  MicroEmacs  to  be  updated  in  the  future, whilst
@@ -589,20 +589,20 @@ SEE ALSO
 
 USER PROFILES 
      This section  describes how  a  user profile  should be  incorporated into
-     MicroEmacs '01. A user  profile defines a set  of extensions to MicroEmacs
+     MicroEmacs '02. A user  profile defines a set  of extensions to MicroEmacs
      which encapsulates settings which are used by an individual user. 
 
      The user profile allows:- 
 
        *  Saving of the last session (history), allowing the next invocation of
-          MicroEmacs '01 to restore your previous session. 
+          MicroEmacs '02 to restore your previous session. 
        *  Personalized spelling dictionaries. 
-       *  Redefinition of MicroEmacs '01, allowing the editor to be tailored to
+       *  Redefinition of MicroEmacs '02, allowing the editor to be tailored to
           an  individual's  requirements.  Including  the  re-binding  of keys,
           modification of the screen colors. Definition of personal macros etc.
 
   Identification 
-     In order to identify a user  MicroEmacs '01 uses information in the system
+     In order to identify a user  MicroEmacs '02 uses information in the system
      to determine the name of  the user, and in  turn the configuration to use.
      On all  systems the  value  of the  environment variable  $MENAME(5) takes
      priority over any other means of  user identification. If this variable is

@@ -1,44 +1,38 @@
-/*****************************************************************************
-*
-*	Title:		%M%
-*
-*	Synopsis:	EMACS Command name/function binding table.
-*
-******************************************************************************
-*
-*	Filename:		%P%
-*
-*	Author:			Jon Green
-*
-*	Creation Date:		17/10/91
-*
-*	Modification date:	%G%		<010902.1153>
-*
-*	Current rev:		%I%
-*
-*	Special Comments:	
-*
-*	Contents Description:	
-*
-*	This file list all the C code functions used by MicroEMACS
-*	and the names to use to bind keys to them. To add functions,
-*	declare it here in both the extern function list and the name
-*	binding table.
-*
-******************************************************************************
-*
-* Copyright (C) 1991 - 1998, JASSPA 
-* The MicroEmacs Jasspa distribution can be copied and distributed freely for
-* any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
-* incoportated into commercial software with the expressed permission of
-* JASSPA.
-* 
-****************************************************************************/
-
-/*
- * DEFFUNC - This is a macro with the following fields :-
+/* -*- c -*-
  *
- *	DEFFUNC (<string-name>, <show-region-flag>, <function-name>, <reference-name>, <cmd-variable>, <cmd-next-var>, <cmd-hash-next-var>)
+ * JASSPA MicroEmacs - www.jasspa.com
+ * efunc.def - Command name defintions.
+ *
+ * Copyright (C) JASSPA 1991-2002
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     17/10/91
+ * Synopsis:    Command name defintions.
+ * Authors:     Jon Green & Steven Phillips
+ * Description:
+ *     Included by efunc.h to create a list of built in MicroEmacs commands.
+ * 
+ * Notes:
+ *     The list was originally a part of efunc.h.
+ *     The entries have the following fields :-
+ *
+ *       DEFFUNC (<string-name>, <show-region-flag>, <function-name>, <reference-name>, <cmd-variable>, <cmd-next-var>, <cmd-hash-next-var>)
+ * 
+ *     The generated list of commands MUST be alphabetically ordered.
  */
 
 DEFFUNC ("abort-command",		0x42, ctrlg,		CK_ABTCMD, __meFunc_ABTCMD, &__meFunc_ABOUT, 0)
@@ -58,8 +52,8 @@ DEFFUNC ("backward-line",		0xc8, backLine,		CK_BAKLIN, __meFunc_BAKLIN, &__meFun
 DEFFUNC ("backward-paragraph",		0xc8, backPara,		CK_GOBOP, __meFunc_GOBOP, &__meFunc_BAKWRD, 0)
 DEFFUNC ("backward-word",		0xc8, backWord,		CK_BAKWRD, __meFunc_BAKWRD, &__meFunc_GOBOF, 0)
 DEFFUNC ("beginning-of-buffer",		0xc8, gotobob,		CK_GOBOF, __meFunc_GOBOF, &__meFunc_GOBOL, 0)
-DEFFUNC ("beginning-of-line",		0xc8, gotobol,		CK_GOBOL, __meFunc_GOBOL, &__meFunc_BUFABREV, 0)
-DEFFUNC	("buffer-abbrev-file",		0x00, bufferAbbrev,	CK_BUFABREV, __meFunc_BUFABREV, &__meFunc_LCLBIND, 0)
+DEFFUNC ("beginning-of-line",		0xc8, gotobol,		CK_GOBOL, __meFunc_GOBOL, &__meFunc_BUFABBREV, 0)
+DEFFUNC	("buffer-abbrev-file",		0x00, bufferAbbrev,	CK_BUFABBREV, __meFunc_BUFABBREV, &__meFunc_LCLBIND, 0)
 DEFFUNC ("buffer-bind-key",		0x00, bufferBind,	CK_LCLBIND, __meFunc_LCLBIND, &__meFunc_BUFPOS, &__meFunc_MLUNBD)
 DEFFUNC ("buffer-info",			0x00, bufferInfo,	CK_BUFPOS, __meFunc_BUFPOS, &__meFunc_BUFMOD, 0)
 DEFFUNC ("buffer-mode",			0x00, bufferMode,	CK_BUFMOD, __meFunc_BUFMOD, &__meFunc_LCLUNBD, 0)
@@ -101,8 +95,8 @@ DEFFUNC ("execute-kbd-macro",		0x00, execKbdMacro,	CK_EXEMAC, __meFunc_EXEMAC, &
 DEFFUNC ("execute-line",		0x00, execLine,		CK_EXECMD, __meFunc_EXECMD, &__meFunc_EXENCMD, 0)
 DEFFUNC ("execute-named-command",       0x00, execCommand,       CK_EXENCMD, __meFunc_EXENCMD, &__meFunc_EXESTR, 0)
 DEFFUNC ("execute-string",              0x00, execString,  	CK_EXESTR, __meFunc_EXESTR, &__meFunc_EXIT, &__meFunc_TRNCHR)
-DEFFUNC ("exit-emacs",			0x00, exitEmacs,	CK_EXIT, __meFunc_EXIT, &__meFunc_EXABREV, 0)
-DEFFUNC	("expand-abbrev",		0x04, expandAbbrev,	CK_EXABREV, __meFunc_EXABREV, &__meFunc_FILEOP, 0)
+DEFFUNC ("exit-emacs",			0x00, exitEmacs,	CK_EXIT, __meFunc_EXIT, &__meFunc_EXABBREV, 0)
+DEFFUNC	("expand-abbrev",		0x04, expandAbbrev,	CK_EXABBREV, __meFunc_EXABBREV, &__meFunc_FILEOP, 0)
 DEFFUNC ("file-op",			0x04, fileOp,		CK_FILEOP, __meFunc_FILEOP, &__meFunc_FILPAR, 0)
 DEFFUNC ("fill-paragraph",		0x04, fillPara,		CK_FILPAR, __meFunc_FILPAR, &__meFunc_FILTBUF, 0)
 DEFFUNC ("filter-buffer",		0x04, meFilter,		CK_FILTBUF, __meFunc_FILTBUF, &__meFunc_USEBUF, 0)
@@ -117,8 +111,8 @@ DEFFUNC ("forward-line",		0xc8, forwLine,		CK_FORLIN, __meFunc_FORLIN, &__meFunc
 DEFFUNC ("forward-paragraph",		0xc8, forwPara,		CK_GOEOP, __meFunc_GOEOP, &__meFunc_FORWRD, &__meFunc_WRDCNT)
 DEFFUNC ("forward-word",		0xc8, forwWord,		CK_FORWRD, __meFunc_FORWRD, &__meFunc_FLNEXT, 0)
 DEFFUNC ("get-next-line",	        0x42, getNextLine,	CK_FLNEXT, __meFunc_FLNEXT, &__meFunc_GETREGY, 0)
-DEFFUNC ("get-registry",		0x42, getRegistry,	CK_GETREGY, __meFunc_GETREGY, &__meFunc_GLOBABREV, 0)
-DEFFUNC	("global-abbrev-file",		0x00, globalAbbrev,	CK_GLOBABREV, __meFunc_GLOBABREV, &__meFunc_BINDKEY, 0)
+DEFFUNC ("get-registry",		0x42, getRegistry,	CK_GETREGY, __meFunc_GETREGY, &__meFunc_GLOBABBREV, 0)
+DEFFUNC	("global-abbrev-file",		0x00, globalAbbrev,	CK_GLOBABBREV, __meFunc_GLOBABBREV, &__meFunc_BINDKEY, 0)
 DEFFUNC ("global-bind-key",		0x00, globalBind,	CK_BINDKEY, __meFunc_BINDKEY, &__meFunc_GLOBMOD, 0)
 DEFFUNC ("global-mode",			0x00, globalMode,	CK_GLOBMOD, __meFunc_GLOBMOD, &__meFunc_UBNDKEY, 0)
 DEFFUNC ("global-unbind-key",		0x00, globalUnbind,	CK_UBNDKEY, __meFunc_UBNDKEY, &__meFunc_GOAMRK, 0)
@@ -173,7 +167,7 @@ DEFFUNC ("next-window",			0x42, nextWindow,	CK_NXTWND, __meFunc_NXTWND, &__meFun
 DEFFUNC ("next-window-find-buffer",	0x42, nextWndFindBuf,	CK_SFNDBUF, __meFunc_SFNDBUF, &__meFunc_SFNDFIL, 0)
 DEFFUNC ("next-window-find-file",	0x42, nextWndFindFile,	CK_SFNDFIL, __meFunc_SFNDFIL, &__meFunc_OSD, 0)
 DEFFUNC ("osd",                         0x00, osd,              CK_OSD, __meFunc_OSD, &__meFunc_OSDBIND, 0)
-DEFFUNC ("osd-bind-key",		0x00, osdBind,		CK_OSDBIND, __meFunc_OSDBIND, &__meFunc_OSDUNBD, &__meFunc_GLOBABREV)
+DEFFUNC ("osd-bind-key",		0x00, osdBind,		CK_OSDBIND, __meFunc_OSDBIND, &__meFunc_OSDUNBD, &__meFunc_GLOBABBREV)
 DEFFUNC ("osd-unbind-key",		0x00, osdUnbind,	CK_OSDUNBD, __meFunc_OSDUNBD, &__meFunc_PIPCMD, 0)
 DEFFUNC ("pipe-shell-command",		0x42, pipeCommand,	CK_PIPCMD, __meFunc_PIPCMD, &__meFunc_PPPWND, 0)
 DEFFUNC ("popup-window",		0x42, popupWindow,	CK_PPPWND, __meFunc_PPPWND, &__meFunc_PREFIX, 0)
