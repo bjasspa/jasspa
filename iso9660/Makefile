@@ -7,29 +7,18 @@
 #  System        :
 #  Module        :
 #  Object Name   : $RCSfile: Makefile,v $
-#  Revision      : $Revision: 1.4 $
-#  Date          : $Date: 2003-08-18 19:09:12 $
+#  Revision      : $Revision: 1.5 $
+#  Date          : $Date: 2004-03-27 16:34:35 $
 #  Author        : $Author: jon $
 #  Created By    : Jon Green
 #  Created       : Sun Aug 10 11:57:07 2003
-#  Last Modified : <030818.2008>
+#  Last Modified : <040327.1612>
 #
 #  Description
 #
 #  Notes
 #
 #  History
-#
-#  $Log: not supported by cvs2svn $
-#  Revision 1.3  2003/08/17 22:59:50  jon
-#  Added HP-UX package information
-#
-#  Revision 1.2  2003/08/14 17:09:31  jon
-#  Version 1.1 of CDROM
-#
-#  Revision 1.1  2003/08/10 22:49:11  jon
-#  CD ISO9660 Image build directory
-#
 #
 ##############################################################################
 #
@@ -46,18 +35,18 @@
 #
 # Define the image source locations
 #
-SPLDIR=/home/jon/www.jasspa.com/spelling
-RELDIR=/home/jon/www.jasspa.com/release_021205
-EXPDIR=/home/jon/www.jasspa.com/experimental
-MISDIR=/home/jon/www.jasspa.com/misc
-SUBDIR=/home/jon/www.jasspa.com/subs
+BASEDIR=/home/jon/jasspacom
+SPLDIR=$(BASEDIR)/spelling
+RELDIR=$(BASEDIR)/release_040301
+MISDIR=$(BASEDIR)/misc
+SUBDIR=$(BASEDIR)/subs
 
-FLABEL="jasspa0308f11"
-ELABEL="jasspa0308e11"
-FDISK=jasspafull.iso
-EDISK=jasspaexec.iso
-FZIP =jasspafull.zip
-EZIP =jasspaexec.zip
+FLABEL="jasspa0403f11"
+ELABEL="jasspa0403e11"
+FDISK=jasspa-mecd-full-20040301.iso
+EDISK=jasspa-mecd-exec-20040301.iso
+FZIP =jasspa-mecd-full-20040301.zip
+EZIP =jasspa-mecd-exec-20040301.zip
 FDIR = fcd
 EDIR = ecd
 
@@ -71,7 +60,6 @@ FDIRS=	$(FDIR) \
 	$(FDIR)/macros \
 	$(FDIR)/me \
 	$(FDIR)/archive \
-	$(FDIR)/experimental \
 	$(FDIR)/submissions \
 	$(FDIR)/cdlabels \
 	$(FDIR)/icons
@@ -85,8 +73,10 @@ EDIRS=	$(EDIR) \
 # Basic tools
 #
 RM	= rm -f
+UNIX2DOS=	/opt/jon/bin/unix2dos
+UNIX2MAC=	/opt/jon/bin/unix2mac
 
-MKISOFS=	mkisofs -r -J -hfs
+MKISOFS=	mkisofs -r -J -hfs -allow-multidot -allow-lowercase -hide-joliet-trans-tbl -l
 FULLMKISOFSFLAGS=-graft-points						\
 		-hide readme.hfs -hide readme.joliet		\
 		-hide-joliet readme.hfs -hide-joliet readme.unix	\
@@ -209,55 +199,64 @@ spotless: clean
 # 
 $(FDIR) $(EDIR):
 	mkdir -p $@
-	cp $(RELDIR)/faq.txt $@/faq.unix
-	unix2dos $(RELDIR)/faq.txt $@/faq.joliet
-	unix2mac $(RELDIR)/faq.txt $@/faq.hfs
-	cp $(RELDIR)/license.txt $@/license.unix
-	unix2dos $(RELDIR)/license.txt $@/license.joliet
-	unix2mac $(RELDIR)/license.txt $@/license.hfs
-	cp $(RELDIR)/COPYING $@/copying.unix
-	unix2dos $(RELDIR)/COPYING $@/copying.joliet
-	unix2mac $(RELDIR)/COPYING $@/copying.hfs
-	cp $(RELDIR)/build.txt $@/build.unix
-	unix2dos $(RELDIR)/build.txt $@/build.joliet
-	unix2mac $(RELDIR)/build.txt $@/build.hfs
-	cp $(RELDIR)/readme.txt $@/readme.unix
-	unix2dos $(RELDIR)/readme.txt $@/readme.joliet
-	unix2mac $(RELDIR)/readme.txt $@/readme.hfs
+	cp $(RELDIR)/doc/faq.txt $@/faq.unix
+	$(UNIX2DOS) $(RELDIR)/doc/faq.txt $@/faq.joliet
+	$(UNIX2MAC) $(RELDIR)/doc/faq.txt $@/faq.hfs
+	cp $(RELDIR)/doc/license.txt $@/license.unix
+	$(UNIX2DOS) $(RELDIR)/doc/license.txt $@/license.joliet
+	$(UNIX2MAC) $(RELDIR)/doc/license.txt $@/license.hfs
+	cp $(RELDIR)/doc/COPYING $@/copying.unix
+	$(UNIX2DOS) $(RELDIR)/doc/COPYING $@/copying.joliet
+	$(UNIX2MAC) $(RELDIR)/doc/COPYING $@/copying.hfs
+	cp $(RELDIR)/doc/build.txt $@/build.unix
+	$(UNIX2DOS) $(RELDIR)/doc/build.txt $@/build.joliet
+	$(UNIX2MAC) $(RELDIR)/doc/build.txt $@/build.hfs
+	cp $(RELDIR)/doc/readme.txt $@/readme.unix
+	$(UNIX2DOS) $(RELDIR)/doc/readme.txt $@/readme.joliet
+	$(UNIX2MAC) $(RELDIR)/doc/readme.txt $@/readme.hfs
 	cp cdrom.txt $@/cdrom.unix
-	unix2dos cdrom.txt $@/cdrom.joliet
-	unix2mac cdrom.txt $@/cdrom.hfs
+	$(UNIX2DOS) cdrom.txt $@/cdrom.joliet
+	$(UNIX2MAC) cdrom.txt $@/cdrom.hfs
 #
 # Nano Emacs excecutable directory.
 # 
 $(FDIR)/ne $(EDIR)/ne:	ne.txt
 	mkdir -p $@
-	gunzip -c $(RELDIR)/nelinux24.gz > $@/nelinux24
+	gunzip -c $(RELDIR)/jasspa-ne-linux-i386-2.4-20040301.gz > $@/nelinux24
 	chmod a+rx $@/nelinux24
-	gunzip -c $(RELDIR)/nesunos56.gz > $@/nesunos56
-	chmod a+rx $@/nesunos56
-	unzip -o $(RELDIR)/nesunos58.zip -d $@
-	chmod a+rx $@/nesunos58
-	unzip -o $(RELDIR)/nesunos59.zip -d $@
-	chmod a+rx $@/nesunos59
-	unzip -o $(RELDIR)/nesunx86_58.zip -d $@
-	chmod a+rx $@/nesunx86_58
-	gunzip -c $(RELDIR)/neirix6.gz > $@/neirix6
+	gunzip -c $(RELDIR)/jasspa-ne-sun-i386-58-20040301.gz > $@/nesun86_58
+	chmod a+rx $@/nesun86_58
+	gunzip -c $(RELDIR)/jasspa-ne-sun-i386-59-20040301.gz > $@/nesun86_59
+	chmod a+rx $@/nesun86_59
+	gunzip -c $(RELDIR)/jasspa-ne-sun-sparc-56-20040301.gz> $@/nesunos_56
+	chmod a+rx $@/nesunos_56
+	gunzip -c $(RELDIR)/jasspa-ne-sun-sparc-58-20040301.gz> $@/nesunos_58
+	chmod a+rx $@/nesunos_58
+	gunzip -c $(RELDIR)/jasspa-ne-sun-sparc-59-20040301.gz> $@/nesunos_59
+	chmod a+rx $@/nesunos_59
+	gunzip -c $(RELDIR)/jasspa-ne-sgi-irix-6-20040301.gz > $@/neirix6
 	chmod a+rx $@/neirix6
-	gunzip -c $(RELDIR)/nehpux10.gz > $@/nehpux10
+	gunzip -c $(RELDIR)/jasspa-ne-hpux-pa-10.20-20040301.gz > $@/nehpux10
 	chmod a+rx $@/nehpux10
-	gunzip -c $(RELDIR)/nehpux11.gz > $@/nehpux11
+	gunzip -c $(RELDIR)/jasspa-ne-hpux-pa-11.00-20040301.gz > $@/nehpux11
 	chmod a+rx $@/nehpux11
-	gunzip -c $(RELDIR)/neaix4.gz > $@/neaix4
+	gunzip -c $(RELDIR)/jasspa-ne-ibm-aix-4-20040301.gz > $@/neaix4
 	chmod a+rx $@/neaix4
-	gunzip -c $(RELDIR)/necygwin.exe.gz > $@/necygwin.exe
+	gunzip -c $(RELDIR)/jasspa-ne-openbsd-i386-3.4-20040301.gz > $@/openbsd34
+	chmod a+rx $@/openbsd34
+	gunzip -c $(RELDIR)/jasspa-ne-cygwin-20040301.exe.gz > $@/necygwin.exe
 	chmod a+rx $@/necygwin.exe
-	unzip -o $(RELDIR)/newin32.zip -d $@
-	unzip -o $(RELDIR)/necwin32.zip -d $@
+	gunzip -c $(RELDIR)/jasspa-ne-apple-darwin-6.6-20040301.gz > $@/nedarwin
+	chmod a+rx $@/nedarwin
+	cp $(RELDIR)/jasspa-ne-ms-win32-20040301.exe $@/ne32.exe
+	unzip -o $(RELDIR)/jasspa-ne-msdos-djgpp1-20040301.zip -d $@
+	mv $@/ne.exe $@/nedos.exe
+	cp $(RELDIR)/jasspa-ne-msdos-djgpp2-20040301.exe $@/nedosdj2.exe
+	cp $(RELDIR)/jasspa-new-ms-win32-20040301.exe $@/new32.exe				
 	cp $(RELDIR)/ne.emf $@
 	cp ne.txt $@/readme.unix
-	unix2dos ne.txt $@/readme.joliet
-	unix2mac ne.txt $@/readme.hfs
+	$(UNIX2DOS) ne.txt $@/readme.joliet
+	$(UNIX2MAC) ne.txt $@/readme.hfs
 #
 # Spelling dictionaries.
 # 
@@ -273,86 +272,102 @@ $(FDIR)/archive/spelling: spell.txt
 	cp $(SPLDIR)/ls_plpl.tar.gz $(SPLDIR)/ls_plpl.zip $@
 	cp $(SPLDIR)/ls_ptpt.tar.gz $(SPLDIR)/ls_ptpt.zip $@
 	cp spell.txt $@/readme.unix
-	unix2dos spell.txt $@/readme.joliet
-	unix2mac spell.txt $@/readme.hfs
+	$(UNIX2DOS) spell.txt $@/readme.joliet
+	$(UNIX2MAC) spell.txt $@/readme.hfs
 #
 # Documentation directories.
 #
 $(FDIR)/doc: doc.txt
 	mkdir -p $@
-	(cd $@; gunzip -c $(RELDIR)/mehtml.tar.gz | tar xvf -)
-	unzip -o $(RELDIR)/mewinhlp.zip -d $@
-	cp me2002.chm $@
-	cp me2002.pdf $@
+	unzip -o $(RELDIR)/jasspa-mehtm-20040301.zip -d $@
+	unzip -o $(RELDIR)/jasspa-mewinhlp-20040301.zip -d $@
 	cp $(MISDIR)/docmode.txt $@
 	cp doc.txt $@/readme.unix
-	unix2dos doc.txt $@/readme.joliet
-	unix2mac doc.txt $@/readme.hfs
+	$(UNIX2DOS) doc.txt $@/readme.joliet
+	$(UNIX2MAC) doc.txt $@/readme.hfs
 #
 # Packages.
 # 
 $(FDIR)/packages:
-	mkdir -p $@/cygwin
-	cp $(RELDIR)/jasspa-20021216-src.tar.bz2 $@/cygwin
-	unix2dos $(RELDIR)/jasspa-20021216.README $@/cygwin/readme.txt
-	cp $(RELDIR)/jasspa-20021216.tar.bz2 $@/cygwin
 	mkdir -p $@/windows
-	cp $(RELDIR)/jasspame.exe $@/windows
-	mkdir -p $@/sun
-	unzip -o $(RELDIR)/sun-sparc-9-studio7-jasspame-20021216.zip -d  $@/sun
-	mv $@/sun/jasspame-20021216 $@/sun/jasspa-sparc-sol9.pkg
-	unzip -o $(RELDIR)/sun-sparc-8-jasspame-20021216.zip -d  $@/sun
-	mv $@/sun/jasspame-20021216 $@/sun/jasspa-sparc-sol8.pkg
-	unzip -o $(RELDIR)/sun-i386-8-jasspame-20021216.zip -d  $@/sun
-	mv $@/sun/jasspame-20021216 $@/sun/jasspa-i386-sol8.pkg
+	unzip -o $(RELDIR)/jasspa-mepkg-ms-win32-2004030.zip -d $@/windows
+	mkdir -p $@/sunos/sparc9
+	unzip -o $(RELDIR)/jasspa-mepkg-sun-sparc-59-20040301.zip -d $@/sunos/sparc9
+	mkdir -p $@/sunos/sparc8
+	unzip -o $(RELDIR)/jasspa-mepkg-sun-sparc-58-20040301.zip -d $@/sunos/sparc8
+	mkdir -p $@/sunos/sparc6
+	unzip -o $(RELDIR)/jasspa-mepkg-sun-sparc-58-20040301.zip -d $@/sunos/sparc6
+	mkdir -p $@/sunos/intel8
+	unzip -o $(RELDIR)/jasspa-mepkg-sun-i386-58-20040301.zip -d $@/sunos/intel8
+	mkdir -p $@/sunos/intel9
+	unzip -o $(RELDIR)/jasspa-mepkg-sun-i386-59-20040301.zip -d $@/sunos/intel9
 	mkdir -p $@/hpux
-	gunzip -c $(RELDIR)/jasspame-loc-0212-10.20.depot.gz > $@/hpux/jasspame-loc-0212-10.20.depot
-	gunzip -c $(RELDIR)/jasspame-loc-0212-11.00.depot.gz > $@/hpux/jasspame-loc-0212-11.00.depot
-	gunzip -c $(RELDIR)/jasspame-opt-0212-11.00.depot.gz > $@/hpux/jasspame-opt-0212-11.00.depot
+	gunzip -c $(RELDIR)/jasspa-mepkg-hpux-pa-10.20-20040301.depot.gz > $@/hpux/jasspa-mepkg-hpux-pa-10.20-20040301.depot
+	gunzip -c $(RELDIR)/jasspa-mepkg-hpux-pa-11.00-20040301.depot.gz > $@/hpux/jasspa-mepkg-hpux-pa-11.00-20040301.depot
 	mkdir -p $@/linux
-	cp microemacs-jasspa-2002_12-1.i386.rpm $@/linux
+	cp $(RELDIR)/jasspa-me-20040301-1.src.rpm $@/linux
+	cp $(RELDIR)/jasspa-me-20040301-1.i386.rpm $@/linux
 	cp package.txt $@/readme.unix
-	unix2dos package.txt $@/readme.joliet
-	unix2mac package.txt $@/readme.hfs
+	$(UNIX2DOS) package.txt $@/readme.joliet
+	$(UNIX2MAC) package.txt $@/readme.hfs
 #
 # Source directory
 #
 $(FDIR)/src:
 	mkdir -p $@
-	(cd $@; gunzip -c $(RELDIR)/mesrc.tar.gz | tar xvf -)
+	(cd $@; gunzip -c $(RELDIR)/jasspa-mesrc-20040301.tar.gz | tar xvf -)
 #
 # Macros directory.
 #
 $(FDIR)/macros:
 	mkdir -p $@
-	(cd $@; gunzip -c $(RELDIR)/memacros.tar.gz | tar xvf -)
+	(cd $@; gunzip -c $(RELDIR)/jasspa-memacros-20040301.tar.gz | tar xvf -)
 #
 # Executable direcotory.
 # 
 $(FDIR)/me $(EDIR)/me:
-	mkdir -p $@
-	(cd $@; gunzip -c $(RELDIR)/memacros.tar.gz | tar xvf -)
-	gunzip -c $(RELDIR)/me.ehf.gz > $@/me.ehf
-	gunzip -c $(RELDIR)/melinux24.gz > $@/melinux24
+	- rm -rf $@
+	mkdir $@
+	(cd $@; gunzip -c $(RELDIR)/jasspa-metree-20040301.tar.gz | tar xvf -)
+	mv $@/jasspa/* $@	
+	rmdir $@/jasspa
+	gunzip -c $(RELDIR)/jasspa-me-linux-i386-2.4-20040301.gz > $@/melinux24
 	chmod a+rx $@/melinux24
-	gunzip -c $(RELDIR)/mesunos56.gz > $@/mesunos56
+	gunzip -c $(RELDIR)/jasspa-me-sun-sparc-56-20040301.gz > $@/mesunos56
 	chmod a+rx $@/mesunos56
-	unzip -o $(RELDIR)/mesunos59.zip -d $@
-	chmod a+rx $@/mesunos59
-	unzip -o $(RELDIR)/mesunos58.zip -d $@
+	gunzip -c $(RELDIR)/jasspa-me-sun-sparc-58-20040301.gz > $@/mesunos58
 	chmod a+rx $@/mesunos58
-	unzip -o $(RELDIR)/mesunx86_58.zip -d $@
-	chmod a+rx $@/mesunx86_58
-	gunzip -c $(RELDIR)/meirix6.gz > $@/meirix6
+	gunzip -c $(RELDIR)/jasspa-me-sun-sparc-59-20040301.gz > $@/mesunos59
+	chmod a+rx $@/mesunos59
+	gunzip -o $(RELDIR)/jasspa-me-sun-i386-58-20040301.gz > $@/mesun86_58
+	chmod a+rx $@/mesun86_58
+	gunzip -o $(RELDIR)/jasspa-me-sun-i386-59-20040301.gz > $@/mesun86_59
+	chmod a+rx $@/mesun86_59
+	gunzip -c $(RELDIR)/jasspa-me-sgi-irix-6-20040301.gz > $@/meirix6
 	chmod a+rx $@/meirix6
-	gunzip -c $(RELDIR)/mehpux10.gz > $@/mehpux10
+	gunzip -c $(RELDIR)/jasspa-me-hpux-pa-10.20-20040301.gz > $@/mehpux10
 	chmod a+rx $@/mehpux10
-	gunzip -c $(RELDIR)/mehpux11.gz > $@/mehpux11
+	gunzip -c $(RELDIR)/jasspa-me-hpux-pa-11.00-20040301.gz > $@/mehpux11
 	chmod a+rx $@/mehpux11
-	gunzip -c $(RELDIR)/meaix4.gz > $@/meaix4
+	gunzip -c $(RELDIR)/jasspa-me-ibm-aix-4-20040301.gz > $@/meaix4
 	chmod a+rx $@/meaix4
-	unzip -o $(RELDIR)/mewin32.zip -d $@
-	unzip -o $(RELDIR)/mecwin32.zip -d $@
+	gunzip -c $(RELDIR)/jasspa-me-openbsd-i386-3.4-20040301.gz > $@/openbsd34
+	chmod a+rx $@/openbsd34
+	gunzip -c $(RELDIR)/jasspa-me-cygwin-20040301.exe.gz > $@/mecygwin.exe
+	chmod a+rx $@/mecygwin.exe
+	gunzip -c $(RELDIR)/jasspa-mec-cygwin-20040301.exe.gz > $@/meccygwin.exe
+	chmod a+rx $@/meccygwin.exe
+	gunzip -c $(RELDIR)/jasspa-mec-apple-darwin-6.6-20040301.gz > $@/mecdarwin
+	chmod a+rx $@/mecdarwin
+	unzip -o $(RELDIR)/jasspa-me-ms-win32-20040301.zip -d $@
+	unzip -o $(RELDIR)/jasspa-me-ms-win32s-20040301.zip -d $@
+	unzip -o $(RELDIR)/jasspa-meu-ms-win32-20040301.zip -d $@
+	unzip -o $(RELDIR)/jasspa-meucw-ms-win32-20040301.zip -d $@
+	cp $(RELDIR)/meicons.exe $@
+	unzip -o $(RELDIR)/jasspa-me-msdos-djgpp1-20040301.zip -d $@
+	mv $@/me.exe $@/medos.exe
+	unzip -o $(RELDIR)/jasspa-me-msdos-djgpp2-20040301.zip -d $@
+	mv $@/me.exe $@/medosdj2.exe
 #
 # Executable directory.
 # 
@@ -382,46 +397,60 @@ $(FDIR)/bin:
 #
 $(FDIR)/archive:
 	mkdir -p $@
-	mkdir -p $@/src
-	cp $(RELDIR)/mesrc.tar.gz $@/src
-	cp $(RELDIR)/mesrc.zip $@/src
+	cp $(RELDIR)/jasspa-mesrc-20040301.tar.gz $@
+	cp $(RELDIR)/jasspa-mesrc-20040301.zip $@
+	cp $(RELDIR)/jasspa-metree-20040301.tar.gz $@
+	cp $(RELDIR)/jasspa-metree-20040301.zip $@
 	mkdir -p $@/bin
-	cp $(RELDIR)/mesunos56.gz $@/bin
-	cp $(RELDIR)/mesunos58.zip $@/bin
-	cp $(RELDIR)/mesunx86_58.zip $@/bin
-	cp $(RELDIR)/mesunos59.zip $@/bin
-	cp $(RELDIR)/meuwin32.zip $@/bin
-	cp $(RELDIR)/mewin32.zip $@/bin
-	cp $(RELDIR)/neaix4.gz $@/bin
-	cp $(RELDIR)/necwin32.zip $@/bin
-	cp $(RELDIR)/necygwin.exe.gz $@/bin
-	cp $(RELDIR)/meaix4.gz $@/bin
-	cp $(RELDIR)/nehpux10.gz $@/bin
-	cp $(RELDIR)/mecwin32.zip $@/bin
-	cp $(RELDIR)/nehpux11.gz $@/bin
-	cp $(RELDIR)/neirix6.gz $@/bin
-	cp $(RELDIR)/mehpux10.gz $@/bin
-	cp $(RELDIR)/nelinux24.gz $@/bin
-	cp $(RELDIR)/mehpux11.gz $@/bin
-	cp $(RELDIR)/nesunos56.gz $@/bin
-	cp $(RELDIR)/nesunos58.zip $@/bin
-	cp $(RELDIR)/nesunx86_58.zip $@/bin
-	cp $(RELDIR)/nesunos59.zip $@/bin
-	cp $(RELDIR)/newin32.zip $@/bin
-	cp $(RELDIR)/meirix6.gz $@/bin
-	cp $(RELDIR)/melinux24.gz $@/bin
+	cp $(RELDIR)/jasspa-me-cygwin-20040301.exe.gz $@/bin
+	cp $(RELDIR)/jasspa-me-hpux-pa-10.20-20040301.gz $@/bin
+	cp $(RELDIR)/jasspa-me-hpux-pa-11.00-20040301.gz $@/bin
+	cp $(RELDIR)/jasspa-me-ibm-aix-4-20040301.gz $@/bin
+	cp $(RELDIR)/jasspa-me-linux-i386-2.4-20040301.gz $@/bin
+	cp $(RELDIR)/jasspa-me-ms-win32-20040301.zip $@/bin
+	cp $(RELDIR)/jasspa-me-ms-win32s-20040301.zip $@/bin
+	cp $(RELDIR)/jasspa-me-msdos-djgpp1-20040301.zip $@/bin
+	cp $(RELDIR)/jasspa-me-msdos-djgpp2-20040301.zip $@/bin
+	cp $(RELDIR)/jasspa-me-openbsd-i386-3.4-20040301.gz $@/bin
+	cp $(RELDIR)/jasspa-me-sgi-irix-6-20040301.gz $@/bin
+	cp $(RELDIR)/jasspa-me-sun-i386-58-20040301.gz $@/bin
+	cp $(RELDIR)/jasspa-me-sun-i386-59-20040301.gz $@/bin
+	cp $(RELDIR)/jasspa-me-sun-sparc-56-20040301.gz $@/bin
+	cp $(RELDIR)/jasspa-me-sun-sparc-58-20040301.gz $@/bin
+	cp $(RELDIR)/jasspa-me-sun-sparc-59-20040301.gz $@/bin
+	cp $(RELDIR)/jasspa-mec-apple-darwin-6.6-20040301.gz $@/bin
+	cp $(RELDIR)/jasspa-mec-cygwin-20040301.exe.gz $@/bin
+	cp $(RELDIR)/jasspa-meu-ms-win32-20040301.zip $@/bin
+	cp $(RELDIR)/jasspa-meucw-ms-win32-20040301.zip $@/bin
+	cp $(RELDIR)/jasspa-ne-apple-darwin-6.6-20040301.gz $@/bin
+	cp $(RELDIR)/jasspa-ne-cygwin-20040301.exe.gz $@/bin
+	cp $(RELDIR)/jasspa-ne-hpux-pa-10.20-20040301.gz $@/bin
+	cp $(RELDIR)/jasspa-ne-hpux-pa-11.00-20040301.gz $@/bin
+	cp $(RELDIR)/jasspa-ne-ibm-aix-4-20040301.gz $@/bin
+	cp $(RELDIR)/jasspa-ne-linux-i386-2.4-20040301.gz $@/bin
+	cp $(RELDIR)/jasspa-ne-ms-win32-20040301.exe $@/bin
+	cp $(RELDIR)/jasspa-ne-msdos-djgpp1-20040301.zip $@/bin
+	cp $(RELDIR)/jasspa-ne-msdos-djgpp2-20040301.exe $@/bin
+	cp $(RELDIR)/jasspa-ne-msdos-djgpp2-20040301.zip $@/bin
+	cp $(RELDIR)/jasspa-ne-openbsd-i386-3.4-20040301.gz $@/bin
+	cp $(RELDIR)/jasspa-ne-sgi-irix-6-20040301.gz $@/bin
+	cp $(RELDIR)/jasspa-ne-sun-i386-58-20040301.gz $@/bin
+	cp $(RELDIR)/jasspa-ne-sun-i386-59-20040301.gz $@/bin
+	cp $(RELDIR)/jasspa-ne-sun-sparc-56-20040301.gz $@/bin
+	cp $(RELDIR)/jasspa-ne-sun-sparc-58-20040301.gz $@/bin
+	cp $(RELDIR)/jasspa-ne-sun-sparc-59-20040301.gz $@/bin
+	cp $(RELDIR)/jasspa-new-ms-win32-20040301.exe $@/bin
 	mkdir -p $@/macros
-	cp $(RELDIR)/me.ehf.gz $@/macros
-	cp $(RELDIR)/meehf.zip $@/macros
-	cp $(RELDIR)/memacros.tar.gz $@/macros
-	cp $(RELDIR)/memacros.zip $@/macros
+	cp $(RELDIR)/jasspa-memacros-20040301.tar.gz $@/macros
+	cp $(RELDIR)/jasspa-memacros-20040301.zip $@/macros
 	mkdir -p $@/doc
-	cp $(RELDIR)/mehtm.zip $@/doc
-	cp $(RELDIR)/mehtml.tar.gz $@/doc
-	cp $(RELDIR)/mewinhlp.zip $@/doc
+	cp $(RELDIR)/jasspa-mehtml-20040301.tar.gz $@/doc
+	cp $(RELDIR)/jasspa-mehtm-20040301.zip $@/doc
+	cp $(RELDIR)/jasspa-mewinhlp-20040301.zip $@/doc
 	mkdir -p $@/icons
 	cp $(RELDIR)/meicons.tar.gz $@/icons
-	cp $(RELDIR)/../release_020105/meicons.zip $@/icons
+	cp $(RELDIR)/meicons.exe $@/icons
+	cp $(RELDIR)/meicons.zip $@/icons
 	cp $(RELDIR)/readme.jasspa_gnome $@/icons
 	cp $(RELDIR)/jasspa_gnome.tar.zip $@/icons
 	cp $(RELDIR)/meicons-extra.tar.gz $@/icons
@@ -432,23 +461,8 @@ $(FDIR)/archive:
 # 
 $(EDIR)/archive:
 	mkdir -p $@
-	cp $(RELDIR)/mesrc.tar.gz $@
-	cp $(RELDIR)/memacros.tar.gz $@
-	cp $(RELDIR)/me.ehf.gz $@
-	cp $(RELDIR)/meicons.tar.gz $@
-#
-# Any experimental.
-# 
-$(FDIR)/experimental:
-	mkdir -p $@/bin
-	cp $(EXPDIR)/medevbin_sparc_sol9.zip $@/bin
-	cp $(EXPDIR)/medevbin_linux_24.tgz   $@/bin
-	cp $(EXPDIR)/medevbin_win32.zip      $@/bin
-	cp $(EXPDIR)/medevbin_hpux11.tar.gz  $@/bin
-	mkdir -p $@/src
-	cp $(EXPDIR)/medevsrc.tar.gz         $@/src
-	mkdir -p $@/macros
-	cp $(EXPDIR)/medevmac.tar.gz         $@/macros
+	cp $(RELDIR)/jasspa-mesrc-20040301.tar.gz $@
+	cp $(RELDIR)/jasspa-metree-20040301.tar.gz $@
 #
 # User submissions.
 #
@@ -460,10 +474,10 @@ $(FDIR)/submissions:
 #
 $(FDIR)/cdlabels $(EDIR)/cdlabels:
 	mkdir -p $@
-	cp a4_neto_0308.pdf $@
-	cp a4_pressit_0308.pdf $@
-	cp letter_neto_0308.pdf $@
-	cp letter_pressit_0308.pdf $@
+	cp a4_neto.pdf $@
+	cp a4_pressit.pdf $@
+	cp letter_neto.pdf $@
+	cp letter_pressit.pdf $@
 	cp cdback.png $@
 	cp cdfull.png $@
 	cp cdexec.png $@
@@ -473,7 +487,7 @@ $(FDIR)/cdlabels $(EDIR)/cdlabels:
 #
 $(FDIR)/icons:
 	mkdir -p $@/windows
-	unzip -o $(RELDIR)/../release_020105/meicons.zip  -d $@/windows
+	unzip -o $(RELDIR)/meicons.zip  -d $@/windows
 	rm -rf $@/png
 	(cd $@; gunzip -c $(RELDIR)/meicons-extra.tar.gz | tar xvf -)
 	mv $@/icons $@/png
@@ -484,12 +498,12 @@ $(FDIR)/icons:
 	cp $(RELDIR)/../images/logo.bmp $@
 	cp $(RELDIR)/../images/logo.png $@
 
-jasspafull.iso: $(FDIRS)
+jasspa-mecd-full-20040301.iso: $(FDIRS)
 	cd $(FDIR); $(MKISOFS) -o ../$@ -V $(FLABEL) $(FULLMKISOFSFLAGS) ./
-jasspaexec.iso: $(EDIRS)
+jasspa-mecd-exec-20040301.iso: $(EDIRS)
 	cd $(EDIR); $(MKISOFS) -o ../$@ -V $(ELABEL) $(EXECMKISOFSFLAGS) ./
 
-jasspafull.zip:	jasspafull.iso
-	zip -9 $@ jasspafull.iso
-jasspaexec.zip: jasspaexec.iso
-	zip -9 $@ jasspaexec.iso
+jasspa-mecd-full-20040301.zip:	jasspa-mecd-full-20040301.iso
+	zip -9 $@ jasspa-mecd-full-20040301.iso
+jasspa-mecd-exec-20040301.zip: jasspa-mecd-exec-20040301.iso
+	zip -9 $@ jasspa-mecd-exec-20040301.iso

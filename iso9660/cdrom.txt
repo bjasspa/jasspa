@@ -24,7 +24,7 @@ CD-ROM
     
 HP-UX
 
-    On HP-UX  then the CD-ROM  should be mounted  with  RockRidge
+    On  HP-UX  then the  CD-ROM  may be  mounted  with  RockRidge
     extensions,  a straight  forward  mount that results in names
     "NAME;1"  etc. means that it has not been mounted  correctly.
     The following notes should get the CD-ROM mounted:-
@@ -111,13 +111,7 @@ Full Disk Contents
     cdlabels    - The CD Labels for the disk.
 
     doc     - Browsable documentation formats
-              (HTML, PDF, Windows CHM, Windows Help).
-
-    experimental - The latest  pre-release  source code, provided
-                   in source form. This is not a formal  release,
-                   but is  provided  for those early  adopters to
-                   trial.  Limited   pre-build   executables  are
-                   provided.
+              (HTML, Windows Help).
 
     macros - A browsable macros directory.
 
@@ -159,6 +153,10 @@ Exec Disk Contents
              installation.
 
 Revision History
+
+    Version 1.3 - 27th March 2004
+    
+        7th Release. MicroEmacs '04 (March)
 
     Version 1.2 - 17th August 2003
     
