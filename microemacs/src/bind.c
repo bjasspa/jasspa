@@ -10,7 +10,7 @@
 *
 *	Author:			Daniel Lawrence
 *
-*	Creation Date:		11/02/86 12:37		<000222.0852>
+*	Creation Date:		11/02/86 12:37		<010219.2220>
 *
 *	Modification date:	%G% : %U%
 *
@@ -114,10 +114,9 @@ getskey(uint8 **tp)
 }
 
 /* get a command key sequence from the keyboard	*/
+/* flag	- meGETKEY flags */
 uint16
-getckey(int mflag, int silent)
-/* mflag	going for a meta sequence? */
-/* silent;      print any thing */
+getckey(int flag)
 {
     register uint16 cc ;	/* character fetched */
     
@@ -132,7 +131,7 @@ getckey(int mflag, int silent)
         tp = tok ;
         cc = getskey(&tp) ;
         
-        if(!mflag)
+        if(!(flag & meGETKEY_SINGLE))
         {
             int ii=ME_PREFIX_NUM+1 ;
             
@@ -156,11 +155,9 @@ getckey(int mflag, int silent)
             }
         }
     }
-    /* or the normal way */
-    else if (mflag)
-        cc = tgetc();
     else
-        cc = getkeycmd(FALSE, 0, silent);
+        /* or the normal way */
+        cc = getkeycmd(FALSE,0,flag) ;
     return cc ;
 }
 
@@ -262,7 +259,7 @@ descKey(int f, int n)	/* describe the command for a certain key */
     mlwrite(MWCURSOR,dskyPrompt);
     
     /* get the command sequence to describe */
-    cc = getckey(FALSE,1);	/* get a silent command sequence */
+    cc = getckey(meGETKEY_SILENT);	/* get a silent command sequence */
     
     /* change it to something we can print as well */
     cmdstr(cc, outseq);
@@ -594,6 +591,8 @@ bindkey(uint8 *prom, int f, int n, uint16 *lclNoBinds, KEYTAB **lclBinds)
             return mlwrite(MWABORT,(uint8 *)"[Prefix number is out of range]") ;
         ssc = prefixc[n] ;
     }
+    else if((ss=(kfunc==(Fintii) ctrlg)))
+        ssc = breakc ;
     else if((ss=(kfunc==(Fintii) uniArgument)))
         ssc = reptc ;
 
@@ -602,7 +601,7 @@ bindkey(uint8 *prom, int f, int n, uint16 *lclNoBinds, KEYTAB **lclBinds)
         return mlwrite(MWABORT,(uint8 *)"Can not locally bind [%s]",buf) ;
 #endif              
     mlwrite(MWCURSOR|MWCLEXEC,(uint8 *)"%s [%s] to: ",prom,buf) ;
-    cc = getckey(ss,1) ;
+    cc = getckey((ss) ? meGETKEY_SILENT|meGETKEY_SINGLE:meGETKEY_SILENT) ;
     
     /*---   Change it to something we can print as well */
     
@@ -629,8 +628,10 @@ bindkey(uint8 *prom, int f, int n, uint16 *lclNoBinds, KEYTAB **lclBinds)
 	/*---	Reset the appropriate global prefix variable */
         if(kfunc == (Fintii) prefixFunc)
             prefixc[n] = cc ;
+        else if(kfunc ==(Fintii) ctrlg)
+            breakc = cc ;
         else
-            reptc = cc;
+            reptc = cc ;
     }
     
     /*---	Search the table to see if it exists */
@@ -670,7 +671,7 @@ bindkey(uint8 *prom, int f, int n, uint16 *lclNoBinds, KEYTAB **lclBinds)
     else
 #endif
     {
-        for (ktp = &keytab[0]; ktp->code != 0; ktp++)
+        for (ktp = &keytab[0]; ktp->code != ME_INVALID_KEY; ktp++)
             if (ktp->code == cc)
             {
                 ktp->index = (uint16) namidx;
@@ -716,6 +717,60 @@ unbindkey(uint8 *prom, int n, uint16 *lclNoBinds, KEYTAB **lclBinds)
     uint8 outseq[40];	/* output buffer for keystroke sequence */
     int  rr ;
     
+    if(n < 0)
+    {
+        sprintf((char *)outseq,"Remove all %s binds",prom);
+        if(mlyesno(outseq) != TRUE)
+            return ctrlg(FALSE,1) ;
+        
+#if LCLBIND
+        if(lclNoBinds != NULL)
+        {
+            if(meNullFree(*lclBinds))
+            {
+                *lclBinds = NULL ;
+                *lclNoBinds = 0 ;
+            }
+        }
+        else
+#endif
+        {
+            keyTableSize = 0 ;
+            keytab[0].code = ME_INVALID_KEY ;
+            
+            /* remove all the prefixes */
+            rr = ME_PREFIX_NUM+1;
+            while(--rr > 0)
+                prefixc[rr] = ME_INVALID_KEY ;
+            breakc = ME_INVALID_KEY ;
+            reptc = ME_INVALID_KEY ;
+#if LCLBIND
+            {
+                BUFFER *bp ;
+                
+                /* loop through removing all buffer bindings */
+                bp = bheadp ;
+                while(bp != NULL)
+                {
+                    if(meNullFree(bp->bbinds))
+                    {
+                        bp->bbinds = NULL ;
+                        bp->nobbinds = 0 ;
+                    }
+                    bp = bp->b_bufp ;
+                }
+                /* remove all ml bindings */
+                if(meNullFree(mlBinds))
+                {
+                    mlBinds = NULL ;
+                    mlNoBinds = 0 ;
+                }
+            }
+#endif
+        }
+        return TRUE ;
+    }
+        
     /*---	Prompt the user to type in a key to unbind */
     
     /* if interactive then print prompt */
@@ -723,7 +778,8 @@ unbindkey(uint8 *prom, int n, uint16 *lclNoBinds, KEYTAB **lclBinds)
     
     /*---	Get the command sequence to unbind */
     
-    cc = getckey(n,1);		/* get a command sequence */
+    /* get a command sequence */
+    cc = getckey((n==0) ? meGETKEY_SILENT|meGETKEY_SINGLE:meGETKEY_SILENT);
     
     /* If interactive then there is no really need to print the string because
      * you will probably not see it !! The TTputc() is dangerous and squirts
@@ -754,46 +810,51 @@ unbindkey(uint8 *prom, int n, uint16 *lclNoBinds, KEYTAB **lclBinds)
     else
 #endif
     {
-        if(((rr = delete_key(cc)) == TRUE) && n) 
+        if((rr = delete_key(cc)) == TRUE)
         {
-            register uint16 mask=ME_PREFIX_NUM+1;
-        
-            while(--mask > 0)
-                if(cc == prefixc[mask])
-                    break ;
-            if(mask)
+            if(n == 0)
             {
-                int ii= (int) keyTableSize ;
+                register uint16 mask=ME_PREFIX_NUM+1;
                 
-                prefixc[mask] = ME_INVALID_KEY ;
-                mask <<= ME_PREFIX_BIT ;
-                while(--ii>=0)
-                    if((keytab[ii].code & ME_PREFIX_MASK) == mask)
-                        delete_key(keytab[ii].code) ;
-#if LCLBIND
+                while(--mask > 0)
+                    if(cc == prefixc[mask])
+                        break ;
+                if(mask)
                 {
-                    register int ss ;
-                    BUFFER *bp ;
+                    int ii= (int) keyTableSize ;
                     
-                    /* loop through all buffer bindings using prefix */
-                    bp = bheadp ;
-                    while(bp != NULL)
+                    prefixc[mask] = ME_INVALID_KEY ;
+                    mask <<= ME_PREFIX_BIT ;
+                    while(--ii>=0)
+                        if((keytab[ii].code & ME_PREFIX_MASK) == mask)
+                            delete_key(keytab[ii].code) ;
+#if LCLBIND
                     {
-                        ss = bp->nobbinds ;
+                        register int ss ;
+                        BUFFER *bp ;
+                        
+                        /* loop through all buffer bindings using prefix */
+                        bp = bheadp ;
+                        while(bp != NULL)
+                        {
+                            ss = bp->nobbinds ;
+                            while(--ss >= 0)
+                                if((bp->bbinds[ss].code & ME_PREFIX_MASK) == mask)
+                                    bp->bbinds[ss].code = ME_INVALID_KEY ;
+                            bp = bp->b_bufp ;
+                        }
+                        /* loop through all ml bindings using prefix */
+                        ss = mlNoBinds ;
                         while(--ss >= 0)
-                            if((bp->bbinds[ss].code & ME_PREFIX_MASK) == mask)
-                                bp->bbinds[ss].code = ME_INVALID_KEY ;
-                        bp = bp->b_bufp ;
+                            if((mlBinds[ss].code & ME_PREFIX_MASK) == mask)
+                                mlBinds[ss].code = ME_INVALID_KEY ;
                     }
-                    /* loop through all ml bindings using prefix */
-                    ss = mlNoBinds ;
-                    while(--ss >= 0)
-                        if((mlBinds[ss].code & ME_PREFIX_MASK) == mask)
-                            mlBinds[ss].code = ME_INVALID_KEY ;
-                }
 #endif
+                }
             }
-            else if (reptc == cc)
+            if (breakc == cc)
+                breakc = ME_INVALID_KEY ;
+            if (reptc == cc)
                 reptc = ME_INVALID_KEY ;
         }
     }
@@ -805,19 +866,19 @@ unbindkey(uint8 *prom, int n, uint16 *lclNoBinds, KEYTAB **lclBinds)
 int
 globalUnbind(int f, int n)
 {
-    return unbindkey((uint8 *)"Global",n==0, NULL, NULL) ;
+    return unbindkey((uint8 *)"Global",n, NULL, NULL) ;
 }
 
 #if LCLBIND
 int
 bufferUnbind(int f, int n)
 {
-    return unbindkey((uint8 *)"Local",0, &(curbp->nobbinds), &(curbp->bbinds)) ;
+    return unbindkey((uint8 *)"Local",n, &(curbp->nobbinds), &(curbp->bbinds)) ;
 }
 int
 mlUnbind(int f, int n)
 {
-    return unbindkey((uint8 *)"ML",0, &mlNoBinds, &mlBinds) ;
+    return unbindkey((uint8 *)"ML",n, &mlNoBinds, &mlBinds) ;
 }
 #endif
 

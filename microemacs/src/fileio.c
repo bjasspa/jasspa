@@ -1,7 +1,7 @@
 /*
  *	SCCS:		%W%		%G%		%U%
  *
- *	Last Modified :	<010214.2301>
+ *	Last Modified :	<010224.0132>
  * 
  *****************************************************************************
  * 
@@ -227,6 +227,7 @@ typedef void (*meATEXIT)(void) ;
 static meSOCKET ffccsk=meBadSocket ;
 static meSOCKET ffsock=meBadSocket ;
 static uint8 *ffsockAddr=NULL ;
+static REGHANDLE ffpasswdReg=NULL ;
 
 /* Define the URL file types */
 #define meURLTYPE_FILE 0
@@ -550,8 +551,14 @@ ftpLogin(uint8 *user, uint8 *pass)
     if(ii == ftpPOS_INTERMED)
         ii = ftpCommand(0,"PASS %s", pass) ;
     if(ii != ftpPOS_COMPLETE)
-        return mlwrite(MWABORT|MWPAUSE,(uint8 *)"[Failed to login]") ;
-        
+    {
+        if(ffpasswdReg != NULL)
+        {
+            regDelete(ffpasswdReg) ;
+            ffpasswdReg = NULL ;
+        }
+        return mlwrite(MWABORT,(uint8 *)"[Failed to login]") ;
+    }
     return TRUE ;
 }
 
@@ -626,6 +633,7 @@ ffurlGetInfo(int type, uint8 **host, uint8 **port, uint8 **user, uint8 **pass)
         if((reg = regFind (root,(uint8 *)"pass")) != NULL)
             *pass = regGetValue(reg) ;
     }
+    ffpasswdReg = NULL ;
     if(*user != NULL)
     {
         if(*pass == NULL)
@@ -633,10 +641,10 @@ ffurlGetInfo(int type, uint8 **host, uint8 **port, uint8 **user, uint8 **pass)
             uint8 buff[NPAT] ;
             
             if((mlreply((uint8 *)"Password", MLNOHIST, 0, buff, NPAT-1) != TRUE) ||
-               ((reg = regSet(root,(uint8 *)"pass",buff)) == NULL))
+               ((ffpasswdReg = regSet(root,(uint8 *)"pass",buff)) == NULL))
                 return FALSE ;
-            reg->mode |= REGMODE_INTERNAL ;
-            *pass = regGetValue(reg) ;
+            ffpasswdReg->mode |= REGMODE_INTERNAL ;
+            *pass = regGetValue(ffpasswdReg) ;
         }
         else if(((reg = regFind(root,(uint8 *)"pass")) == NULL) || meStrcmp(regGetValue(reg),*pass))
             regSet(root,(uint8 *)"pass",*pass) ;
@@ -1635,7 +1643,7 @@ ffReadFileOpen(uint8 *fname, uint32 flags, BUFFER *bp)
 #endif
         {
 #ifdef _WIN32
-            if((ffrp=CreateFile(fname,GENERIC_READ,FILE_SHARE_READ|FILE_SHARE_WRITE,NULL,OPEN_EXISTING,
+            if((ffrp=CreateFile(strWfn1(fname),GENERIC_READ,FILE_SHARE_READ|FILE_SHARE_WRITE,NULL,OPEN_EXISTING,
                                FILE_ATTRIBUTE_NORMAL,NULL)) == INVALID_HANDLE_VALUE)
 #else
             if ((ffrp=fopen((char *)fname, "rb")) == NULL)
@@ -1976,7 +1984,7 @@ ffWriteFileOpen(uint8 *fname, uint32 flags, BUFFER *bp)
             /* Windows must open the file with the correct permissions to support the
              * compress attribute
              */
-            if((ffwp=CreateFile(fname,GENERIC_WRITE,FILE_SHARE_READ,NULL,create,
+            if((ffwp=CreateFile(strWfn1(fname),GENERIC_WRITE,FILE_SHARE_READ,NULL,create,
                                ((bp == NULL) ? meUmask:bp->stats.stmode),
                                NULL)) == INVALID_HANDLE_VALUE)
                 return mlwrite(MWABORT,(uint8 *)"Cannot open file [%s] for writing",fname);
@@ -2204,3 +2212,47 @@ ffCopyFile(uint8 *sfname, uint8 *dfname, uint32 dFlags)
     }
     return rr ;
 }
+
+#ifdef _WIN32
+char *
+strWfn1 (uint8 *s)
+{
+    static char d[FILEBUF];
+    char *p = d;
+    char cc;
+    
+    if (s == NULL)
+        return NULL;
+    
+    while ((cc = (char )(*s++)) != 0)
+    {
+        if (cc == '/')
+            cc = '\\';
+        *p++ = cc;
+    }
+    *p = cc;
+    return d;
+}
+
+char *
+strWfn2 (uint8 *s)
+{
+    static char d[FILEBUF];
+    char *p = d;
+    char cc;
+    
+    if (s == NULL)
+        return NULL;
+    
+    while ((cc = (char )(*s++)) != 0)
+    {
+        if (cc == '/')
+            cc = '\\';
+        *p++ = cc;
+    }
+    *p = cc;
+    return d;
+}
+#endif
+
+

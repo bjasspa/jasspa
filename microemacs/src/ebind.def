@@ -6,7 +6,7 @@
  *  Object Name   : ebind.def
  *  Date          : 12th June 1993
  *  Created By    : Steve Philips
- *  Last Modified : <000718.2341>
+ *  Last Modified : <010219.2048>
  *
  *  Description	
  *        Define the bindings to the keys
@@ -111,7 +111,6 @@
 #if	CFENCE
 	DEFBIND (ME_PREFIX1|('F'-'@'),	0, CK_GOFNC)
 #endif
-	DEFBIND (ME_PREFIX1|('G'-'@'),	0, CK_ABTCMD)
 #if	CFENCE
 	DEFBIND (ME_PREFIX1|('I'-'@'),	0, CK_GOFNC)
 #endif
@@ -174,7 +173,6 @@
 	DEFBIND (ME_PREFIX2|('D'-'@'),	0, CK_CHGDIR)
 	DEFBIND (ME_PREFIX2|('E'-'@'),	0, CK_EXEMAC)
 	DEFBIND (ME_PREFIX2|('F'-'@'),	0, CK_FNDFIL)
-	DEFBIND (ME_PREFIX2|('G'-'@'),	0, CK_ABTCMD)
 	DEFBIND (ME_PREFIX2|('H'-'@'),	0, CK_HUNBAK)
 	DEFBIND (ME_PREFIX2|('I'-'@'),	0, CK_INSFIL)
 	DEFBIND (ME_PREFIX2|('L'-'@'),	0, CK_RCASLOW)

@@ -1,7 +1,7 @@
 /****************************************************************************
  * External function definitions
  *
- * Last Modified:       <010203.1817>
+ * Last Modified:       <010224.0125>
  * 
  ****************************************************************************
  * 
@@ -67,7 +67,7 @@ extern	void	bufferPosUpdate APRAM((BUFFER *bp, uint32 noLines, uint16 newOff)) ;
 #if !(defined __BINDC) || (defined _ANSI_C)		/* BIND.C Externals */
 extern  uint32  cmdHashFunc APRAM((register uint8 *cmdName)) ;
 extern  uint16  getskey APRAM((uint8 **tp)) ;
-extern  uint16  getckey APRAM((int mflag, int silent)) ;
+extern  uint16  getckey APRAM((int flag)) ;
 extern	int	descKey APRAM((int f,int n));
 extern  int     cmdchar APRAM((uint16 cc, uint8 *d)) ;
 extern	void	cmdstr APRAM((uint16 cc, uint8 *seq));
@@ -362,8 +362,10 @@ extern	int     mlCharReply APRAM((uint8 *prompt, int mask, uint8 *validList, uin
 extern	int	mlyesno APRAM((uint8 *prompt));
 extern	void	mlDisp APRAM((uint8 *prompt, uint8 *buf, uint8 *cont, int cpos)) ;
 extern	int	getexecCommand APRAM((void));
-extern	uint16  tgetc APRAM((void));
-extern	uint16  getkeycmd APRAM((int f, int n, int silent));
+#define meGETKEY_SILENT     0x01
+#define meGETKEY_SINGLE     0x02
+#define meGETKEY_COMMAND    0x04
+extern	uint16  getkeycmd APRAM((int f, int n, int flag));
 extern  int     createBuffList APRAM((uint8 ***listPtr, int noHidden)) ;
 extern  int     createCommList APRAM((uint8 ***listPtr, int noHidden)) ;
 extern  int     createVarList  APRAM((uint8 ***listPtr)) ;
@@ -1008,24 +1010,27 @@ extern void gettimeofday (struct meTimeval *tp, struct meTimezone *tz);
  * Why the hell we need these functions and the ANSI 'C' functions are not
  * valid is beyond belief - typical bloody Microsoft !!
  */
+extern char *strWfn1 (uint8 *s);
+extern char *strWfn2 (uint8 *s);
+
 extern int chdir(const char *name) ;
 extern int _getdrive(void) ;
 #define meChdir(dir)        chdir(dir)
-#define meRename(src,dst)   (MoveFile(src,dst)==FALSE)
-#define meUnlink(fn)        (DeleteFile(fn)==FALSE)
+#define meRename(src,dst)   (MoveFile(strWfn1(src),strWfn2(dst))==FALSE)
+#define meUnlink(fn)        (DeleteFile(strWfn1(fn))==FALSE)
 /* Doesn't exist if function returns -1 */
-#define meTestExist(fn)     (((int) GetFileAttributes(fn)) < 0)
+#define meTestExist(fn)     (((int) GetFileAttributes(strWfn1(fn))) < 0)
 /* Can't read if doesn't exist or its a directory */
-#define meTestRead(fn)      (GetFileAttributes(fn) & FILE_ATTRIBUTE_DIRECTORY)
+#define meTestRead(fn)      (GetFileAttributes(strWfn1(fn)) & FILE_ATTRIBUTE_DIRECTORY)
 /* Can't write if exists and its readonly or a directory */
-#define meTestWrite(fn)     ((((int) GetFileAttributes(fn)) & 0xffff8011) > 0)
+#define meTestWrite(fn)     ((((int) GetFileAttributes(strWfn1(fn))) & 0xffff8011) > 0)
 /* File is a directory */
-#define meTestDir(fn)       ((GetFileAttributes(fn) & (0xf0000000|FILE_ATTRIBUTE_DIRECTORY)) != FILE_ATTRIBUTE_DIRECTORY)
+#define meTestDir(fn)       ((GetFileAttributes(strWfn1(fn)) & (0xf0000000|FILE_ATTRIBUTE_DIRECTORY)) != FILE_ATTRIBUTE_DIRECTORY)
 extern int meTestExecutable(uint8 *fileName) ;
 #define meStatTestRead(st)  (((st).stmode & FILE_ATTRIBUTE_DIRECTORY) == 0)
 #define meStatTestWrite(st) (((st).stmode & (FILE_ATTRIBUTE_DIRECTORY|FILE_ATTRIBUTE_READONLY)) == 0)
 #define meStatTestSystem(st) (((st).stmode & FILE_ATTRIBUTE_SYSTEM) == 0)
-#define meChmod(fn,mode)    (SetFileAttributes(fn,mode))
+#define meChmod(fn,mode)    (SetFileAttributes(strWfn1(fn),mode))
 extern void WinShutdown (void);
 #define meExit(status)      (WinShutdown(), ExitProcess(status))
 #endif

@@ -10,7 +10,7 @@
  *
  *  Author:         Danial Lawrence
  *
- *  Creation Date:      14/05/86 12:37      <010203.1728>
+ *  Creation Date:      14/05/86 12:37      <010227.1054>
  *
  *  Modification date:  %G% : %U%
  *
@@ -490,7 +490,7 @@ found_ulcvar:
                 clexec = TRUE;      /* get the argument */
                 saves = execstr ;
                 execstr = vvalue ;
-                ii = getckey(0,1) ;
+                ii = getckey(meGETKEY_SILENT) ;
                 execstr = saves ;
                 clexec = savcle;        /* restore execution mode */
                 if(nn[1] == 'c')
@@ -813,7 +813,8 @@ found_ulcvar:
             caseIndent = (int16) meAtoi (vvalue);
             break;
         case EVCCONTCOMM:
-            meNullFree(commentCont) ;
+            if(commentCont != commentContOrg)
+                meFree(commentCont) ;
             commentCont = meStrdup(vvalue) ;
             break ;
         case EVCCONTINUE:
@@ -1584,9 +1585,9 @@ getval(uint8 *tkn)   /* find the value of a token */
             {
                 if(tkn[2] == 'q')
                 {
-                    int cc ;
-                    key = tgetc() ;
                     /* intercative single char read which will be quoted */
+                    int cc ;
+                    key = getkeycmd(FALSE,0,meGETKEY_SILENT|meGETKEY_SINGLE) ;
                     if((cc=quoteKeyToChar(key)) > 0)
                     {
                         if(tkn[3] == 'k')
@@ -1995,16 +1996,21 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
         mlwrite(MWABORT|MWWAIT,(uint8 *)"[Unknown function &%s]",fname);
         return abortm ;
     }
-    if(fnum == UFKBIND)
+    if((fnum == UFCBIND) || (fnum == UFNBIND))
     {
         uint32 arg ;
         uint16 ii ;
         int jj ;
         
-        ii = getckey(0,1) ;
+        ii = getckey(meGETKEY_SILENT) ;
         if((jj = decode_key(ii,&arg)) < 0)
             return errorm ;
-        meStrcpy(evalResult,getCommandName(jj)) ;
+        if(fnum == UFCBIND)
+            meStrcpy(evalResult,getCommandName(jj)) ;
+        else if(arg == 0)
+            evalResult[0] = '\0' ;
+        else
+            return meItoa((int) (arg + 0x80000000)) ;
         return evalResult ;
     }
     /* retrieve the arguments */
@@ -2073,7 +2079,46 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
              * Doesn't matter which cause &exist doesn't work on these, return NO
              */
             return meLtoa(0) ;
-    }
+        }
+    case UFKBIND:
+        {
+            uint32 narg ;
+            int ii, idx ;
+            uint16 code=ME_INVALID_KEY ;
+            
+            if((idx = decode_fncname(arg2,0)) < 0)
+                return abortm ;
+            if(arg1[0] == '\0')
+                narg = 0 ;
+            else
+                narg = (uint32) (0x80000000+meAtoi(arg1)) ;
+#if LCLBIND
+            for(ii=0 ; ii<curbp->nobbinds ; ii++)
+            {
+                if((curbp->bbinds[ii].index == idx) &&
+                   (curbp->bbinds[ii].arg == narg))
+                {
+                    code = curbp->bbinds[ii].code ;
+                    break ;
+                }
+            }
+            if(code == ME_INVALID_KEY)
+#endif
+            {
+                for(ii=0 ; ii<keyTableSize ; ii++)
+                    if((keytab[ii].index == idx) &&
+                       (keytab[ii].arg == narg))
+                    {
+                        code = keytab[ii].code ;
+                        break ;
+                    }
+            }
+            if(code != ME_INVALID_KEY)
+                cmdstr(code,evalResult) ;
+            else
+                evalResult[0] = '\0' ;
+            return evalResult ;
+        }
     case UFABS:        return meItoa(abs(meAtoi(arg1)));
     case UFADD:        return meItoa(meAtoi(arg1) + meAtoi(arg2));
     case UFSUB:        return meItoa(meAtoi(arg1) - meAtoi(arg2));

@@ -1,7 +1,7 @@
 /*
  *	SCCS:		%W%		%G%		%U%
  *
- *	Last Modified :	<000723.1931>
+ *	Last Modified :	<010219.2044>
  *
  *	INPUT:	Various input routines for MicroEMACS 3.7
  *		written by Daniel Lawrence
@@ -76,9 +76,9 @@ mlCharReply(uint8 *prompt, int mask, uint8 *validList, uint8 *helpStr)
                     inpType = 2 ;
                 }
             }
-            cc = tgetc() ;
+            cc = getkeycmd(FALSE,0,meGETKEY_SILENT|meGETKEY_SINGLE) ;
             mlStatus &= ~(MLSTATUS_KEEP|MLSTATUS_RESTORE|MLSTATUS_POSML) ;
-            if(cc == 0x07)
+            if(cc == breakc)
                 return -1 ;
         }
         else
@@ -444,8 +444,7 @@ mlDisp(uint8 *prompt, uint8 *buf, uint8 *cont, int cpos)
 /*    tgetc:    Get a key from the terminal driver, resolve any keyboard
  *              macro action
  */
-
-uint16
+static uint16
 tgetc(void)
 {
     uint16 cc ;    /* fetched character */
@@ -453,8 +452,6 @@ tgetc(void)
     /* if we are playing a keyboard macro back, */
     if (kbdmode == PLAY)
     {
-        if(TTbreakTest(0))
-            ctrlg(FALSE,1) ;
 kbd_rep:
         /* if there is some left... */
         if(kbdoff < kbdlen)
@@ -473,7 +470,7 @@ kbd_rep:
                 }
                 else if(cc == 0x01)
                     cc = 0 ;
-            }                    
+            }
             return cc ;
         }
         /* at the end of last repitition? */
@@ -487,7 +484,6 @@ kbd_rep:
 #if MEUNDO
         undoContFlag++ ;
 #endif
-        
         /* force a screen update after all is done */
         update(FALSE);
     }
@@ -545,12 +541,12 @@ kbd_rep:
 
 
 static int
-getprefixchar(int f, int n, int ctlc, int silent)
+getprefixchar(int f, int n, int ctlc, int flag)
 {
     uint8 buf[20] ;
     int c ;
 
-    if(!silent)
+    if(!(flag & meGETKEY_SILENT))
     {
         buf[cmdchar((uint16) ctlc,buf)] = '\0' ;
         if(f==TRUE)
@@ -568,14 +564,26 @@ getprefixchar(int f, int n, int ctlc, int silent)
         prefix keys
  */
 uint16
-getkeycmd(int f, int n, int silent)
+getkeycmd(int f, int n, int flag)
 {
     uint16 cc ;        /* fetched keystroke */
     int ii ;
     
-    silent |= (kbdmode == PLAY) ;
-
-    if(f && !silent)
+    if(kbdmode == PLAY)
+    {
+        if(TTbreakTest(0))
+        {
+            ctrlg(FALSE,1) ;
+#if MEUNDO
+            undoContFlag++ ;
+#endif
+            /* force a screen update */
+            update(0);
+        }
+        else
+            flag |= meGETKEY_SILENT ;
+    }
+    if(f && !(flag & meGETKEY_SILENT))
         mlwrite(MWCURSOR,(uint8 *)"Arg %d:",n);
 
     /* get initial character */
@@ -585,17 +593,20 @@ getkeycmd(int f, int n, int silent)
     if (kbdmode == KBD_IDLE)            /* In the idle state */
         kbdmode = STOP;                 /* Restore old state */
 
-    /* process prefixes */
-    ii = ME_PREFIX_NUM+1 ;
-    while(--ii > 0)
-        if(cc == prefixc[ii])
-        {
-            cc = ((ii << ME_PREFIX_BIT) | getprefixchar(f,n,cc,silent)) ;
-            break ;
-        }
-
+    if(!(flag & meGETKEY_SINGLE))
+    {
+        /* process prefixes */
+        ii = ME_PREFIX_NUM+1 ;
+        while(--ii > 0)
+            if(cc == prefixc[ii])
+            {
+                cc = ((ii << ME_PREFIX_BIT) | getprefixchar(f,n,cc,flag)) ;
+                break ;
+            }
+        if(flag & meGETKEY_COMMAND)
+            thiskey = cc ;
+    }
     /* return the key */
-    thiskey = cc ;
     return cc ;
 }
 
@@ -1046,7 +1057,7 @@ mlgetstring(uint8 *prompt, int option, int defnum, uint8 *buf, int nbuf)
             mlfirst = -1;
         }
         else
-            cc = getkeycmd (FALSE, 0, 1);
+            cc = getkeycmd(FALSE,0,meGETKEY_SILENT) ;
         
         idx = decode_key((uint16) cc,&arg) ;
         if(arg)

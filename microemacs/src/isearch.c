@@ -1,5 +1,5 @@
 /*
- * Last Modified : <000703.0846>
+ * Last Modified : <010219.2045>
  * 
  * The functions in this file implement commands that perform incremental
  * searches in the forward and backward directions.  This "ISearch" command
@@ -276,7 +276,8 @@ isearch(int flags)
      */
 
 get_another_key:
-    c = getkeycmd (FALSE, 0, 1);        /* Get the first character   */
+    /* Get the first character   */
+    c = getkeycmd (FALSE, 0, meGETKEY_SILENT|meGETKEY_COMMAND);
     switch(decode_key((uint16) c,&arg))
     {
     case CK_NEWLIN:                     /* ^M : New line. do other search */
@@ -408,7 +409,7 @@ find_next:
             break ;                             /* Go continue with the srch */
 
         case CK_QUOTE:                          /* ^Q - quote next character */
-            if((c = quoteKeyToChar(tgetc())) < 0)
+            if((c = quoteKeyToChar(getkeycmd(FALSE,0,meGETKEY_SILENT|meGETKEY_SINGLE))) < 0)
             {
                 TTbell() ;
                 break ;
@@ -584,7 +585,7 @@ isAddChar:
         update(FALSE) ;
         mlisDisp(srchPat,status) ;
 input_cont:
-        c = getkeycmd(FALSE, 0, 1) ;
+        c = getkeycmd(FALSE, 0, meGETKEY_SILENT|meGETKEY_COMMAND) ;
     }
     
 good_finish:
