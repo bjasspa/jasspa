@@ -9,64 +9,129 @@
 ;
 ; Usage:
 ;      etfinsrt "<etf-name>"
+;      n insert-templete "<template-name>"
 ;
 ; The <etf-name> is typically the fhook label, i.e. emf or c etc, the template
-; file <etf-name>.etf is found and inserted.
-;
-0 define-macro etfinsrt
+; file <etf-name>.etf is found and inserted. insert-template uses the $buffer-fhook
+; name. etfinsrt always inserts the first template in the etf file, whereas
+; insert-template inserts the n'th template or prompts the user if n is not given.
+0 define-macro etfinsrt-i
     ; Insert the template file
+    set-variable #l8 $window-line
     !force insert-file &find @1 ".etf"
     !if &not $status
         ; Warn and return if the template file was not located.
         ml-write &spr "[Could not find template file %s.etf]" @1
         !return
     !endif
+    set-variable #l7 &sub #l8 $window-line
     ; Remember current magic mode then add it if not set
     set-variable #l0 &bmod magic
     1 buffer-mode "magic"
+    ; handle a template file containing multiple templates
+    set-variable $window-line #l8
+    !if &xseq @wl "\\$TEMPLATES\\(\\$.+\\$\\)"
+        set-variable #l1 @s1
+        !if @?
+            !if &seq &set #l2 &lget #l1 @# ""
+                set-variable #l2 &lget #l1 1
+            !endif
+        !else
+            !if &seq &set #l2 &ind &spr ".fhook-%s.template" &rig $buffer-fhook 6 "ERROR"
+                set-variable #l2 &lget #l1 1
+            !endif
+            !force !force set-variable #l2 @ml19 "Use Template:" #l2 #l1
+            !if &not $status
+                set-variable #l2 &lget #l1 1
+            !elif &not &lfind #l1 #l2
+                set-variable #l2 &lget #l1 1
+            !else
+                set-variable &ind &spr ".fhook-%s.template" &rig $buffer-fhook 6 #l2
+            !endif
+        !endif
+        set-mark
+        forward-line
+        -1 kill-region
+        set-variable #l7 &add #l7 1
+        !force #l7 search-forward "^\\$TEMPLATE_START\\$\\(.*\\)\\$"
+        !while $status
+            set-variable #l1 &seq @s1 #l2
+            beginning-of-line
+            set-mark
+            forward-line
+            -1 kill-region
+            set-variable #l7 &add #l7 1
+            !force #l7 search-forward "^\\$TEMPLATE_END\\$\\(.*\\)\\$"
+            !if &not $status
+                ml-write "[Error - missing $TEMPLATE_END$]"
+                !abort
+            !endif
+            beginning-of-line
+            !if #l1
+                set-mark
+            !endif
+            forward-line
+            set-variable #l7 &add #l7 $window-line
+            -1 kill-region
+            set-variable #l7 &sub #l7 $window-line
+            !force #l7 search-forward "^\\$TEMPLATE_START\\$\\(.*\\)\\$"
+        !done
+    !endif
     ; Change the user name $USER_NAME$.
-    beginning-of-buffer
     set-variable #l1 &reg "/history" "user-name" "<unknown>"
-    !force replace-string "\\$USER_NAME\\$" #l1
+    set-variable $window-line #l8
+    !force #l7 replace-string "\\$USER_NAME\\$" #l1
     ; Change to the company name $COMPANY_NAME$.
     !if &not &seq %company-name "ERROR"
         set-variable #l1 %company-name
     !endif
-    beginning-of-buffer
-    !force replace-string "\\$COMPANY_NAME\\$" #l1
+    set-variable $window-line #l8
+    !force #l7 replace-string "\\$COMPANY_NAME\\$" #l1
     ; Change the year $YEAR$
-    beginning-of-buffer
-    !force replace-string "\\$YEAR\\$" &lef $time 4
-    ; Change the create date $ASCII_TIME$.
-    beginning-of-buffer
-    ; Get ascii time in #l9
+    set-variable $window-line #l8
+    !force #l7 replace-string "\\$YEAR\\$" &lef $time 4
+    ; Change the create date $ASCII_TIME$. - Get ascii time in #l9
     ascii-time
-    !force replace-string "\\$ASCII_TIME\\$" #l9
-
-    ; Change the buffer name. Modify to upper case. Change all
-    ; '.'s to '_'. Insert 2x '_' at the start of the name.
-*again
-    end-of-buffer
-    !force search-backward "\\$BUFFER_NAME\\$"
+    set-variable $window-line #l8
+    !force #l7 replace-string "\\$ASCII_TIME\\$" #l9
+    ; Change the file name variables, use the $buffer-bname, must remove the trailing <#> if present.
+    set-variable #l1 &xrep $buffer-bname "<[0-9]+>$" ""
+    set-variable $window-line #l8
+    !force #l7 replace-string "\\$FILE_NAME\\$" #l1
+    set-variable #l2 &xrep #l1 "\\.[^.]*$" ""
+    set-variable $window-line #l8
+    !force #l7 replace-string "\\$FILE_BASENAME\\$" #l2
+    ; For C header files a define with the file name in upper-case and '.'s -> '_'
+    ; is used to stop double inclusion
+    set-variable #l2 &sup &rep #l1 "." "_"
+    set-variable $window-line #l8
+    !force #l7 replace-string "\\$FILE_NAME_UD\\$" #l2
+    ; And for backward compatibility
+    set-variable $window-line #l8
+    !force #l7 replace-string "\\$BUFFER_NAME\\$" #l2
+    ; set the cursor position
+    set-variable $window-line #l8
+    !force #l7 search-forward "\\$CURSOR\\$" ""
     !if $status
         set-mark
-        -1 replace-string "\\$BUFFER_NAME\\$" $buffer-bname
-        exchange-point-and-mark
-        -1 replace-string "\\." "_"
-        backward-word
-        upper-case-word
-        backward-word
-        ; Get rid of any buffer numbering
-        -1 replace-string "<[0-9]+>" ""
-        !goto again
-    !endif
-    ; set the cursor position
-    beginning-of-buffer
-    !force 1 replace-string "\\$CURSOR\\$" ""
-    !if &not $status
-        end-of-buffer
+        8 backward-char
+        -1 kill-region
+    !else
+        set-variable $window-line &sub #l8 #l7
     !endif
     ; Reset magic mode if we added it, flag buffer as unedited and goto end
     &cond #l0 1 -1 buffer-mode "magic"
     -1 buffer-mode "edit"
+!emacro
+
+0 define-macro etfinsrt
+    1 etfinsrt-i @1
+!emacro
+
+define-macro insert-template
+    !if @?
+        @# etfinsrt-i &rig $buffer-fhook 6
+    !else
+        etfinsrt-i &rig $buffer-fhook 6
+    !endif
 !emacro
