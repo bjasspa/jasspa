@@ -4995,7 +4995,14 @@ menuInteraction (int *retState)
                     state = meOSD_QUIT_MENU ;
                 else
                 {
-                    osdNewMd = osdNewChild = osdCurMd->prev ; 
+                    osdNewChild = osdNewMd = osdCurMd->prev ;
+                    for(;;)
+                    {
+                        osdNewChild->newContext = osdNewChild->curContext ;
+                        if(osdNewChild == osdCurChild)
+                            break ;
+                        osdNewChild = osdNewChild->context[osdNewChild->newContext].child->display ;
+                    }
                     nit = 1 ;
                 }
                 break;
