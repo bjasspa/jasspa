@@ -2541,7 +2541,7 @@ gotoAlphaMark(int f, int n)
     if(alphaMarkGet(frameCur->bufferCur,(meUShort) cc) != meTRUE)
     {
         meAMark *p = frameCur->bufferCur->amarkList;
-        meUByte    allmarks[256]; 	/* record of the marks	*/
+        meUByte  allmarks[256]; 	/* record of the marks	*/
         int      ii = 0;
         
         while(p != NULL)

@@ -2688,10 +2688,10 @@ positionGoto(int f, int n)		/* restore the saved screen */
             {
                 /* calculate how close this window matches the original -
                  * calculate the amount this window covers of the old window */
-                ww = (pos->winMaxRow < (wp->frameRow + wp->width - 1)) ? pos->winMaxRow : (wp->frameRow + wp->width - 1) ;
-                ww = ww - ((pos->winMinRow > wp->frameRow) ? pos->winMinRow : wp->frameRow) ;
-                dd = (pos->winMaxCol < (wp->frameColumn + wp->width - 1)) ? pos->winMaxCol : (wp->frameColumn + wp->width - 1) ;
-                dd = ww - ((pos->winMinCol > wp->frameColumn) ? pos->winMinCol : wp->frameColumn) ;
+                ww = (pos->winMaxCol < (wp->frameColumn + wp->width - 1)) ? pos->winMaxCol : (wp->frameColumn + wp->width - 1) ;
+                ww = ww - ((pos->winMinCol > wp->frameColumn) ? pos->winMinCol : wp->frameColumn) ;
+                dd = (pos->winMaxRow < (wp->frameRow + wp->depth - 1)) ? pos->winMaxRow : (wp->frameRow + wp->depth - 1) ;
+                dd = ww - ((pos->winMinRow > wp->frameRow) ? pos->winMinRow : wp->frameRow) ;
                 off = ww * dd ;
                 if((ww < 0) && (dd < 0))
                     off = -off ;
@@ -2832,6 +2832,8 @@ positionGoto(int f, int n)		/* restore the saved screen */
             sflg = 1 ;
         }
     }
+    if(frameCur->windowCur->updateFlags & (WFMOVEL|WFFORCE))
+        reframe(frameCur->windowCur) ;	        /* check the framing */
     if(sflg)
         updCursor(frameCur->windowCur) ;
     

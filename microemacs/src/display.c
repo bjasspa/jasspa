@@ -38,6 +38,7 @@
 #ifdef _STDARG
 #include <stdarg.h>		/* Variable Arguments */
 #endif
+#include <assert.h>
 
 #if (defined _UNIX) || (defined _DOS) || (defined _WIN32)
 #include <sys/types.h>
@@ -461,6 +462,7 @@ updCursor(register meWindow *wp)
     }
 
     frameCur->mainRow = wp->frameRow + (wp->dotLineNo - wp->vertScroll) ;
+    assert(frameCur->mainRow >= 0) ;
     frameCur->mainColumn = wp->frameColumn + ii ;
     if(wp->horzScroll != (int) jj)         /* Screen scroll correct ?? */
     {

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Fri Aug 10 10:28:53 2001
-;  Last Modified : <020625.1305>
+;  Last Modified : <020713.1701>
 ;  Description   : Create a list of abbreviations
 ;
 ;  Notes
@@ -10,7 +10,7 @@
 ;  Copyright (c) 2001 Jasspa
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-!if &band .hilight.flags 0x01 
+!if &band .hilight.flags 0x01
     !if &not &exist .hilight.abbrev-item
         set-variable .hilight.abbrev-item &pinc .hilight.next 1
     !endif
@@ -26,20 +26,7 @@
     hilight .hilight.abbrev-item 0x44 "\ecF" "" "\ecA" "" "" .scheme.string
 !endif
 
-0 define-macro abbrev-list-add
-    !force set-variable #l0 @3
-    !if $status
-        find-buffer #p0
-        end-of-buffer
-        !if &seq &set #l1 @2 ""
-            insert-string &spr "%s" #l0
-        !else
-            insert-string &spr "%s:EXSTR:%s" #l0 #l1
-        !endif
-    !endif
-!emacro
-
-0 define-macro abbrev-list-fold-find-close
+0 define-macro eaf-list-fold-find-close
     set-variable #l1 $window-aline
     set-variable #l0 1
     !repeat
@@ -57,14 +44,76 @@
     !until 0
 !emacro
 
-0 define-macro abbrev-list-create
+define-macro eaf-list-execute
+    !if &xseq &rig @wl $window-col "\\(</FOLD>\\)*<FOLD[+-]>.*"
+        set-variable #l0 &add 4 &add $window-col &sin "<FOLD" &rig @wl $window-col
+        set-variable #l1 &con &seq &mid @wl #l0 1 "-" "+" "-"
+        -1 buffer-mode "view"
+        set-variable #l2 $window-line
+        set-variable #l9 $buffer-bname
+        !force 0 find-buffer :eaf-list
+        !if $status
+            set-variable $window-line #l2
+            set-variable $window-col #l0
+            forward-delete-char
+            insert-string #l1
+            !if &seq #l1 "+"
+                set-variable $window-line &add #l2 1
+                set-mark
+                !force eaf-list-fold-find-close
+                !if $status
+                    set-variable #l3 $window-line
+                    4 narrow-buffer
+                    find-buffer #l9
+                    set-variable $window-line &add #l2 1
+                    set-mark
+                    set-variable $window-line #l3
+                    -1 kill-region
+                !endif
+            !else
+                set-variable $window-line &add #l2 1
+                !force 2 narrow-buffer
+                !if $status
+                    set-mark
+                    set-variable $window-line &add #l2 1
+                    copy-region
+                    find-buffer #l9
+                    -1 buffer-mode "view"
+                    set-variable $window-line &add #l2 1
+                    yank
+                    -1 yank
+                !endif
+            !endif
+            find-buffer #l9
+            set-variable $window-line #l2
+        !endif
+        set-variable $window-col #l0
+        forward-delete-char
+        insert-string #l1
+        -1 buffer-mode "edit"
+        1 buffer-mode "view"
+        goto-position "\x82"
+    !elif &not &set #l0 &sin ":EXSTR:" @wl
+        goto-position "\x82"
+    !elif &seq &trb &lef @wl &add $window-col 1 ""
+        goto-position "\x82"
+    !elif &seq &trb &mid @wl $window-col &sub &sub #l0 1 $window-col ""
+        goto-position "\x82"
+    !else
+        set-variable #l0 &rig @wl &add #l0 6
+        goto-position "\x82"
+        execute-line &spr "execute-string \"%s\"" #l0
+    !endif
+!emacro
+
+0 define-macro eaf-list-create
     set-position "\x86"
     set-variable #l9 &rig $buffer-fhook 6
     !if &seq #l9 ""
         set-variable #l9 "default"
     !endif
-    set-variable #l0 &cat "*abbrev-list*" #l9
-    find-buffer "*abbrev-list*" 
+    set-variable #l0 &cat "*eaf-list*" &cat @3 #l9
+    find-buffer @1
     -1 buffer-mode "undo"
     -1 buffer-mode "view"
     beginning-of-buffer
@@ -81,15 +130,15 @@
         1 buffer-mode "hide"
         1 buffer-mode "magic"
         -1 buffer-mode "undo"
-        set-variable #l8 &ind &spr ".fhook-%s.name" #l9
-        !if &seq #l8 "ERROR"
-            set-variable #l8 &cat &sup &lef #l9 1 &rig #l9 1
+        set-variable #l7 &ind &spr ".fhook-%s.name" #l9
+        !if &seq #l7 "ERROR"
+            set-variable #l7 &cat &sup &lef #l9 1 &rig #l9 1
         !endif
-        insert-string &spr "%s Tools\n" #l8
-        set-variable #l1 "*abbrev-list-tmp*"
+        insert-string &spr "%s %s\n" #l7 @2
+        set-variable #l1 "*eaf-list-tmp*"
         !force 0 delete-buffer #l1
         find-buffer #l1
-        !force insert-file &find #l9 ".eaf"
+        !force insert-file &find &cat @3 #l9 ".eaf"
         set-variable #l2 1
         beginning-of-buffer
         !while &not &seq @wc ""
@@ -119,7 +168,7 @@
             forward-line
             beginning-of-line
             set-mark
-            !force abbrev-list-fold-find-close
+            !force eaf-list-fold-find-close
             !if $status
                 4 narrow-buffer
             !endif
@@ -133,7 +182,7 @@
     end-of-buffer
     copy-region
     -1 find-buffer #l0
-    find-buffer "*abbrev-list*" 
+    find-buffer @1
     yank
     -1 yank
     !force forward-delete-char
@@ -141,11 +190,19 @@
     set-variable $line-scheme .scheme.header
     set-variable $buffer-hilight .hilight.abbrev-item
     set-variable :mouse-pick-1 void
-    set-variable :mouse-drop-1 abbrev-list-execute
-    set-variable :abbrev-list #l0
+    set-variable :mouse-drop-1 eaf-list-execute
+    set-variable :eaf-list #l0
     -1 buffer-mode "edit"
     1 buffer-mode "view"
     goto-position "\x86"
+!emacro
+
+0 define-macro abbrev-list-create
+    eaf-list-create "*abbrev-list*" "Abbrevs" ""
+!emacro
+
+0 define-macro tool-list-create
+    eaf-list-create "*tool-list*" "Tools" "hk"
 !emacro
 
 define-macro abbrev-list
@@ -163,65 +220,4 @@ define-macro abbrev-list
     goto-position "\x81"
     popup-window "*abbrev-list*"
     goto-position "\x81"
-!emacro
-
-define-macro abbrev-list-execute
-    !if &xseq &rig @wl $window-col "\\(</FOLD>\\)*<FOLD[+-]>.*"
-        set-variable #l0 &add 4 &add $window-col &sin "<FOLD" &rig @wl $window-col
-        set-variable #l1 &con &seq &mid @wl #l0 1 "-" "+" "-"
-        -1 buffer-mode "view"
-        set-variable #l2 $window-line
-        !force 0 find-buffer :abbrev-list
-        !if $status
-            set-variable $window-line #l2
-            set-variable $window-col #l0
-            forward-delete-char
-            insert-string #l1
-            !if &seq #l1 "+"
-                set-variable $window-line &add #l2 1
-                set-mark
-                !force abbrev-list-fold-find-close
-                !if $status
-                    set-variable #l3 $window-line
-                    4 narrow-buffer
-                    find-buffer "*abbrev-list*" 
-                    set-variable $window-line &add #l2 1
-                    set-mark
-                    set-variable $window-line #l3
-                    -1 kill-region
-                !endif
-            !else
-                set-variable $window-line &add #l2 1
-                !force 2 narrow-buffer
-                !if $status
-                    set-mark
-                    set-variable $window-line &add #l2 1
-                    copy-region
-                    find-buffer "*abbrev-list*" 
-                    -1 buffer-mode "view"
-                    set-variable $window-line &add #l2 1
-                    yank
-                    -1 yank
-                !endif
-            !endif
-            find-buffer "*abbrev-list*" 
-            set-variable $window-line #l2
-        !endif
-        set-variable $window-col #l0
-        forward-delete-char
-        insert-string #l1
-        -1 buffer-mode "edit"
-        1 buffer-mode "view"
-        goto-position "\x82"
-    !elif &not &set #l0 &sin ":EXSTR:" @wl
-        goto-position "\x82"
-    !elif &seq &trb &lef @wl &add $window-col 1 ""
-        goto-position "\x82"
-    !elif &seq &trb &mid @wl $window-col &sub &sub #l0 1 $window-col ""
-        goto-position "\x82"
-    !else
-        set-variable #l0 &rig @wl &add #l0 6
-        goto-position "\x82"
-        execute-line &spr "execute-string \"%s\"" #l0
-    !endif
 !emacro

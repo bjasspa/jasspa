@@ -263,7 +263,9 @@
 !emacro
 
 0 define-macro toolbar-dir-list-create
-    !if &seq "" &set #l0 &lef $buffer-fname &rsin "/" $buffer-fname
+    !if &lfind "|http:/|ftp://|" &lef $buffer-fname 6
+        set-variable #l0 &stat "a" "."
+    !elif &seq "" &set #l0 &lef $buffer-fname &rsin "/" $buffer-fname
         set-variable #l0 &stat "a" "."
     !endif
     set-position "\x86"
@@ -275,7 +277,9 @@
 !emacro
 
 0 define-macro toolbar-file-list-create
-    !if &seq "" &set #l0 &lef $buffer-fname &rsin "/" $buffer-fname
+    !if &lfind "|http:/|ftp://|" &lef $buffer-fname 6
+        set-variable #l0 &stat "a" "."
+    !elif &seq "" &set #l0 &lef $buffer-fname &rsin "/" $buffer-fname
         set-variable #l0 &stat "a" "."
     !endif
     set-position "\x86"

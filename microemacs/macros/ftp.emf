@@ -17,6 +17,11 @@ define-macro ftp
         !force next-window
     !endif
     ftp-create-layout
+    popup-window "*ftp-files*"
+    !if &seq $buffer-fname ""
+        screen-update
+        ftp-connect
+    !endif
 !emacro
 
 !if &not &exi .osd.ftp
@@ -87,7 +92,6 @@ define-macro ftp-connect
                 delete-other-windows
                 2 split-window-vertically
                 change-window-depth 15
-                set-variable $window-flags 6
                 find-buffer "*ftp-console*"
                 buffer-bind-create "bio" "delete" "" file-browser-close
                 3 previous-window

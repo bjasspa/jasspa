@@ -237,6 +237,7 @@ extern  int     mlwrite(int flags, meUByte *fmt, ...) ;
 #define meRSTRCMP_ENDBUFF    0x04
 #define meRSTRCMP_MATCHWHOLE 0x08
 #define meRSTRCMP_WHOLE      (meRSTRCMP_BEGBUFF|meRSTRCMP_ENDBUFF|meRSTRCMP_MATCHWHOLE)
+#define meRSTRCMP_USEMAIN    0x10
 extern  int     regexStrCmp(meUByte *str, meUByte *reg, int flags) ;
 extern	meUByte *gtfun(meUByte *fname);
 extern  meUByte *getUsrLclCmdVar(meUByte *vname, register meVarList *varList) ;
@@ -727,10 +728,11 @@ extern  int	winsert(void) ;
 #endif
 extern	int	insString(int f, int n);
 
+#define meAM_EXSTRPOS 0x00fe
 #define meAM_ABSLINE  0x0100
 #define meAM_EXECBUFF 0x0101
 #define meAM_FRSTNRRW 0x0102
-#define meAM_FRSTPOS  0x4000
+#define meAM_FRSTPOS  0x4080
 extern  int     alphaMarkGet(meBuffer *bp, meUShort name) ;
 extern  int     alphaMarkSet(meBuffer *bp, meUShort name, meLine *lp,
                                     meUShort off, int silent) ;
