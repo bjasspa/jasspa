@@ -52,13 +52,16 @@ set-variable .spell.rules "AIUVNXHYGJDTRZSPM"
 0 add-spell-rule
 
 ; Add some special word rules to make life easier
+; These are for 1st, 2nd 3rd etc. & hex numbres
 add-spell-rule "*" "\\([0-9]*[02-9]\\)?1\\(st\\|ST\\)"
 add-spell-rule "*" "\\([0-9]*[02-9]\\)?2\\(nd\\|ND\\)"
 add-spell-rule "*" "\\([0-9]*[02-9]\\)?3\\(rd\\|RD\\)"
 add-spell-rule "*" "[0-9]*1[0-9]\\(th\\|TH\\)"
 add-spell-rule "*" "[0-9]*[04-9]\\(th\\|TH\\)"
 add-spell-rule "*" "0[xX][[:xdigit:]]+"
-add-spell-rule "*" "-?\\([0-9]*.\\)?[0-9]+\\(Kg\\|Kb\\|Gb\\|Tb\\|Mb\\|mm\\|cm\\|m\\|Km\\|ft\\|inch\\|mph\\|lb\\|am\\|pm\\)"
+; Spell rules for unit definitions.
+; These are for 50Mb, 10Kg, -45.56cm 12ft 10.00am 16.00pm etc.
+add-spell-rule "*" "-?\\([0-9]*.\\)?[0-9]+\\(k\\|Kg\\|Kb\\|Gb\\|Tb\\|Mb\\|mm\\|cm\\|m\\|Km\\|ft\\|in\\|inch\\|mph\\|lb\\|am\\|pm\\|bps\\|kbps\\)"
 
 ; Add the american prefix spell rules
 ; flag *A:
