@@ -1,0 +1,33 @@
+Title:  previous-buffer
+Ref:    sub20
+Author: Jon Green
+Date:   2001-08-23
+
+As of the July 2001  release  then  previous  buffer may be  evaluated
+using:-
+
+    -1 next-buffer
+
+Hence a key  binding  in the July 2001  release  should be  defined as
+follows.  Assuming  that "f6" allows you to move  between the previous
+and next buffers, the binding may be defined as follows:-
+
+        -1 global-bind-key next-buffer "S-f6"  ; previous-buffer
+        global-bind-key next-buffer "f6"       ; next-buffer
+
+If you  require a command  called  "previous-buffer"  then  define the
+macro as follows:-
+
+    define-macro previous-buffer
+        &neg @# next-buffer
+    !emacro
+
+The @# processing propagates the numeric argument so
+
+    2 previous-buffer
+
+goes back 2 buffers,
+
+    -2 previous-buffer
+
+goes forward 2 buffers !!
