@@ -1550,7 +1550,11 @@ missing_arg:
         }
         /* send a 'make-current command to server */
         TTsendClientServer((meUByte *) "C:ME:2 popup-window\n") ;
-        meExit(0) ;
+#ifdef _WIN32
+        /* send a WM_USR message to the main window to wake ME up */ 
+        SendMessage(baseHwnd,WM_USER,1,0) ;
+#endif
+              meExit(0) ;
     }
     else if(userClientServer && clientMessage)
     {
