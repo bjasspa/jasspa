@@ -3,11 +3,12 @@
 .\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd162.2,v 1.2 2004-01-17 22:27:28 jon Exp $
+.Id $Id: m2cmd162.2,v 1.3 2004-02-13 10:44:32 jon Exp $
 .Im MicroEmacs command|window|macrodevelop
+.ds C0 "(\fB\*(cX5\ 0\fR)\ \&
 .so me.tni
 .TH delete-frame 2
-.XI delete-frame - "Delete the current frame"
+.XI delete-frame - "\*(C0Delete the current frame"
 .SH NAME
 delete-frame \- Delete the current frame
 .Me $a
@@ -15,6 +16,7 @@ delete-frame \- Delete the current frame
 .na
 .I n
 .B delete-frame
+\*(C0
 .ad
 .SH DESCRIPTION
 \fBdelete-frame\fR  deletes the current  frame and the next is  displayed.  If
@@ -25,4 +27,5 @@ there is no next frame then the command fails.
 .Ht next-frame 2 .
 .Ht $frame-id 5 .
 .ad
+.rm C0
 .FH
