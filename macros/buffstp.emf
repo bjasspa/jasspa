@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Thu Nov 23 21:19:31 2000
-;  Last Modified : <010316.1333>
+;  Last Modified : <010520.1622>
 ;
 ;  Description
 ;
@@ -362,6 +362,7 @@ define-macro buffer-help
         buffer-tool-add-item "comment-line" "" "Comment Out Line" #l8
         buffer-tool-add-item "uncomment-line" "" "&Delete Comment" #l8
         buffer-tool-add-item "comment-to-end-of-line" "" "Comment to &End of Line" #l8
+        buffer-tool-add-item "comment-restyle" "" "Restyle Comment" #l8
     !endif
     !if &sin "f" #l0
         buffer-tool-add-item "" "" "" #l8

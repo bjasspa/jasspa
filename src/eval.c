@@ -10,7 +10,7 @@
  *
  *  Author:         Danial Lawrence
  *
- *  Creation Date:      14/05/86 12:37      <010305.0801>
+ *  Creation Date:      14/05/86 12:37      <010520.2256>
  *
  *  Modification date:  %G% : %U%
  *
@@ -1503,12 +1503,14 @@ getval(uint8 *tkn)   /* find the value of a token */
             uint8 *ss ;
             
             if((index = meAtoi(tkn+1)) == 0)
-                ss = curFuncName ;
-            else
-                ss = getMacroArg(index) ;
-            if(ss != NULL)
-                return ss ;
-            return abortm ;
+            {
+                ss = meRegCurr->commandName ;
+                if(ss == NULL)
+                    return "" ;
+            }
+            else if((ss = getMacroArg(index)) == NULL)
+                return abortm ;
+            return ss ;
         }
         else if((tkn[1] == 's') && isDigit(tkn[2]))
         {
@@ -1847,6 +1849,13 @@ getval(uint8 *tkn)   /* find the value of a token */
             else
                 return abortm ;
                     
+        }
+        else if(tkn[1] == 'p')
+        {
+            /* parent command name */
+            if(meRegCurr->prev->commandName == NULL)
+                return "" ;
+            return meRegCurr->prev->commandName ;
         }
         else if((tkn[1] == 'f') && (tkn[2] == 's'))
         {

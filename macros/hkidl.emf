@@ -28,11 +28,11 @@ set-variable .fhook-idl.name "OMG IDL"
 set-variable .fhook-idl.setup &reg "/history" "fhook/idl" "dfhnopx"
 set-variable .fhook-idl.setup-mask "adefhikmnoptux>"
 set-variable .fhook-idl.comment "|//||*|// | //||"
-set-variable .fhook-idl.command-flag  "|thbo|bo|"
-set-variable .fhook-idl.command-name  "|c-box|c-box|"
+set-variable .fhook-idl.command-flag  "|bo|bo|"
+set-variable .fhook-idl.command-name  "|comment-restyle|comment-restyle|"
 set-variable .fhook-idl.command-nbind "|||"
 set-variable .fhook-idl.command-kbind "|esc q|esc o|"
-set-variable .fhook-idl.command-desc  "|Restyle c&omment||"
+set-variable .fhook-idl.command-desc  "|||"
 
 set-variable .fhook-idl.fold-open  "^{"
 set-variable .fhook-idl.fold-close "^}"
@@ -108,9 +108,6 @@ set-variable .fhook-idl.fold-close "^}"
     hilight .hilight.idl    0 "TRUE"         .scheme.prepro
     hilight .hilight.idl    0 "FALSE"        .scheme.prepro
 !endif
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; setup fuctions to auto-load from cbox
-define-macro-file cbox c-box
 
 ml-write "[OMG IDL file hook loaded]"
 

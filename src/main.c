@@ -10,7 +10,7 @@
 *
 *	Author:			Jon Green
 *
-*	Creation Date:		03/05/91 17:19		<010310.0107>
+*	Creation Date:		03/05/91 17:19		<010520.2300>
 *
 *	Modification date:	%G% : %U%
 *
@@ -1288,6 +1288,7 @@ mesetup(int argc, char *argv[])
      * accessing #p? gets #g? and not a core-dump
      */
     meRegHead->prev = meRegHead ;
+    meRegHead->commandName = NULL ;
     meRegHead->execstr = NULL ;
     meRegHead->varList = NULL ;
     meRegHead->force = 0 ;
@@ -1842,8 +1843,8 @@ commandWait(int f, int n)
     int execlevelSv ;
     uint8 *ss ;
     
-    if((curFuncName != errorm) &&
-       ((f=decode_fncname(curFuncName,1)) >= 0))
+    if((meRegCurr->commandName != NULL) &&
+       ((f=decode_fncname(meRegCurr->commandName,1)) >= 0))
         varList = &(cmdTable[f]->varList) ;
     
     clexecSv = clexec;

@@ -145,6 +145,7 @@ define-macro-file fold fold-current fold-all
         buffer-bind-create "b" "C-c C-c" "" comment-line
         buffer-bind-create "b" "C-c C-d" "" uncomment-line
         buffer-bind-create "b" "C-c C-e" "" comment-to-end-of-line
+        buffer-bind-create "b" "C-c C-r" "" comment-restyle
     !endif
     !if &sin "f" #l0
         buffer-bind-create "b" "f2" "" fold-current 
