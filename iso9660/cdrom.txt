@@ -1,50 +1,50 @@
-> -!- document; fill-mode:both; fill-column:65; -!-
->  Copyright 2003 Jasspa.
+> -!- document; fill-mode:both; fill-column:78; -!-
+>  Copyright 2003-2004 Jasspa.
 
 THE JASSPA CDROM
-Version 1.2 - 17th August 2003
+Version 1.3 - 27th March 2004
 
 Introduction
 
-    The JASSPA  CD-ROM is a collection  of all of the software on
-    www.jasspa.com  bundled onto a single CD-ROM. The  motivation
-    for doing this was to be able to move  between  machines  and
-    still be able to run JASSPA's MicroEmacs without having to do
-    a complete installation.
+    The JASSPA CD-ROM is a collection of all of the software on www.jasspa.com
+    bundled onto a single CD-ROM. The motivation for doing this was to be able
+    to move  between  machines  and still be able to run  JASSPA's  MicroEmacs
+    without having to do a complete installation.
 
 CD-ROM
 
-    The CD-ROM's have been prepared as a hybrid ISO9660 image for
-    any system,  supporting  Microsoft  Joliet,  UNIX High Sierra
-    with Rock Ridge extensions and Apple HFS file systems.
+    The CD-ROM's have been prepared as a hybrid  ISO9660 image for any system,
+    supporting  Microsoft  Joliet, UNIX High Sierra with Rock Ridge extensions
+    and Apple HFS file systems.
 
-    Any   duplication  of  the  CDs  may  result  in  a  loss  of
-    information   without  the  appropriate   master  disk  image
-    (jasspa-me-*.iso).
-    
-    jasspa-mecd-full-20040301.iso 
-        
-        All material on www.jasspa.com including packages.
-        
-    jasspa-mecd-exec-20040301.iso 
-        
-        Minimal live + source. CD-ROM conforms to ISO9660
-        
+    Any duplication of the CDs may result in a loss of information without the
+    appropriate master disk image (jasspa-me-*.iso).
+
+    jasspa-mecd-full-20040301.iso
+
+        - All material on www.jasspa.com including packages.
+
+    jasspa-mecd-exec-20040301.iso
+
+        - Minimal live + source. CD-ROM conforms to ISO9660
+
     jasspa-mecd-lexe-20040301.iso
-    
-        Exactly the same content as "exec" expect the CD-ROM does
-        not  conform  fully to ISO9660  and allows  long names in
-        lower case. May be used on HP-UX without  performing  the
-        Rockridge  mount,  also  safe for  almost  all  operating
-        systems  except  MS-DOS as the 8.3 naming  convention  is
-        broken.
-    
+
+        - Exactly  the same  content  as "exec"  expect  the  CD-ROM  does not
+          conform fully to ISO9660 and allows  untranslated names. May be used
+          on HP-UX  without  performing  the  Rockridge  mount,  also safe for
+          almost  all  operating  systems  except  MS-DOS  as the  8.3  naming
+          convention is broken.
+
 HP-UX
 
-    On  HP-UX  then the  CD-ROM  may be  mounted  with  RockRidge
-    extensions,  a straight  forward  mount that results in names
-    "NAME;1"  etc. means that it has not been mounted  correctly.
-    The following notes should get the CD-ROM mounted:-
+    On HP-UX  then the  CD-ROM may be mounted  with  RockRidge  extensions,  a
+    straight  forward  mount that results in names "NAME;1" etc. means that it
+    has not been  mounted  correctly.  Note  that  this  does not apply to the
+    "lexe" image as this may be mounted directly.
+
+    The  following  notes should get the "full" or "exec" CD-ROM  mounted with
+    RockRidge extensions:-
 
     Make a directory to mount the CD-ROM
 
@@ -58,11 +58,11 @@ HP-UX
 
         % mount -r /dev/dsk/c1t2d0 /cdrom
 
-    Does  it  looks   like  squid  ?  Then  need  to  mount  with
-    RockRidge support. See the HPUX-FAQ. Quick notes:-
+    Does it looks like squid ? Then need to mount with RockRidge  support. See
+    the HPUX-FAQ. Quick notes:-
 
-    Loopback   must  be   enabled.  As  root,   create  the  file
-    "/etc/pfs_fstab" as follows:-
+    Loopback  must be enabled. As root,  create the file  "/etc/pfs_fstab"  as
+    follows:-
 
         #
         # Create a mount point for the CDROM
@@ -87,91 +87,84 @@ HP-UX
 
 CD Labels
 
-    Labels for the CD-ROM are included in the CD-ROM  image, burn
-    the CD-ROM and then print the labels from the CD-ROM.
+    Labels for the CD-ROM are  included  in the CD-ROM  image, burn the CD-ROM
+    and then print the labels from the CD-ROM.
 
-    The source labels  generated  with  SureThing  CD/DVD Labeler
-    http://www.surething.com/ST/
+    The   source   labels    generated    with   SureThing    CD/DVD   Labeler
+    http://www.surething.com/ST/  Labels  have been  rendered to Adobe PDF for
+    ease of printing. The label image is also supplied as a .png file allowing
+    other packages to be used to compose the label.
 
 To Burn the Disks
 
     Microsoft Windows
 
-        - Roxio "Easy  CD-Creator"  or similar,  double click the
-          jasspafull.iso  file and the application  should create
-          the CD-ROM from the image supplied.
+        - Roxio "Easy CD-Creator" or similar, double click the  jasspafull.iso
+          file and the  application  should  create the CD-ROM  from the image
+          supplied.
 
     UNIX
 
         - Use "cdrecord" to burn the image i.e.
 
-            % cdrecord jasspafull.iso
+            % cdrecord jasspa-mecd-full-20040301.iso
 
-          This     command     line     assumes     that     your
-          /etc/default/cdrecord  file has been  setup. An example
-          file is something like:-
+          This command line assumes that your "/etc/default/cdrecord" file has
+          been setup. An example file is something like:-
 
             CDR_DEVICE=1,1,0
             CDR_SPEED=8
 
-          DO  NOT  COPY  THESE  LINES  LITERALLY!  Refer  to  the
-          cdrecord  manual page for information on installing and
-          setting up the utility - it is worth the effort.
+          DO NOT COPY THESE LINES LITERALLY! Refer to the cdrecord manual page
+          for  information  on  installing  and setting up the utility - it is
+          worth the effort.
 
 Full Disk Contents
 
     The full disk contents are as follows:-
 
-    archive - All of the ZIP and tarball archives from www.jasspa.com
-              (source, macros, spelling, executables)
+    archive   - All  of the  ZIP  and  tarball  archives  from  www.jasspa.com
+                (source, macros, spelling, executables)
 
-    cdlabels    - The CD Labels for the disk.
+    cdlabels  - The CD Labels for the disk.
 
-    doc     - Browsable documentation formats
-              (HTML, Windows Help).
+    doc       - Browsable documentation formats (HTML, Windows Help).
 
-    me     - A live version of JASSPA's  MicroEmacs, includes all
-             of the  executables  and macros  that allow the full
-             version of  JASSPA's  MicroEmacs  to be run from the
-             CD-ROM without installation.
+    me        - A live  version of JASSPA's  MicroEmacs,  includes  all of the
+                executables and macros that allow the full version of JASSPA's
+                MicroEmacs to be run from the CD-ROM without installation.
 
     me/macros - A browsable macros directory.
 
-    ne     - A live  version of  JASSPA's  NanoEmacs  that allows
-             nanoEmacs   to  be  run  from  the  CD-ROM   without
-             installation.
+    ne        - A live version of JASSPA's  NanoEmacs that allows nanoEmacs to
+                be run from the CD-ROM without installation.
 
-    packages - Contains JASSPA MicroEmacs in package or installer
-               format for various platforms.
+    packages  - Contains JASSPA  MicroEmacs in package or installer format for
+                various platforms.
 
-    src    - A browasble source directory.
+    src       - A browasble source directory.
 
-    subs   - Directory  containing  submissions and contributions
-             from users.
+    subs      - Directory containing submissions and contributions from users.
 
 Exec Disk Contents
 
-    The   executable   disk   is  a  small   disk   with  a  live
-    version of MicroEmacs and NanoEmacs, with source.
+    The executable  disk is a small disk with a live version of MicroEmacs and
+    NanoEmacs, with source.
 
     The executable disk contents include:-
 
-    archive -  Limited  number of  archives  (source  and  macros
-               only).
+    archive   - Limited number of archives (source and macros only).
 
-    cdlabels - The CD Labels for the disk.
+    cdlabels  - The CD Labels for the disk.
 
-    me     - A live version of JASSPA's  MicroEmacs, includes all
-             of the  executables  and macros  that allow the full
-             version of  JASSPA's  MicroEmacs  to be run from the
-             CD-ROM without installation.
+    me        - A live  version of JASSPA's  MicroEmacs,  includes  all of the
+                executables and macros that allow the full version of JASSPA's
+                MicroEmacs to be run from the CD-ROM without installation.
 
-    ne     - A live  version of  JASSPA's  NanoEmacs  that allows
-             nanoEmacs   to  be  run  from  the  CD-ROM   without
-             installation.
+    ne        - A live version of JASSPA's  NanoEmacs that allows nanoEmacs to
+                be run from the CD-ROM without installation.
 
-    subs   - Directory  containing  submissions and contributions
-             from users.
+    subs      - Directory containing submissions and contributions from users.
 
 Revision History
 
