@@ -88,6 +88,7 @@ enum
 #undef DEFMODE
 
 meMode globMode = {
+    /* Byte [0] default mask */
 #ifndef _NANOEMACS
     MDATSV_MASK|MDBACK_MASK|
 #endif
@@ -99,21 +100,30 @@ meMode globMode = {
 #endif /* _DOS */
     MDAUTO_MASK,
     
+    /* Byte [1] default mask */
     MDEXACT_MASK|MDFENCE_MASK,
     
-    MDMAGIC_MASK,
+    /* Byte [2] default mask */
+    MDMAGIC_MASK|MDQUIET_MASK,
     
-    MDQUIET_MASK|MDTAB_MASK|MDUNDO_MASK,
+    /* Byte [3] default mask */
+    MDTAB_MASK|MDUNDO_MASK,
     
+    /* Byte [4] default mask */
     0
 } ;
 
 meMode modeLineDraw = { 
+    /* Byte [0] */
     MDAUTO_MASK|MDATSV_MASK|MDBACK_MASK|MDBINRY_MASK|MDCRYPT_MASK,
+    /* Byte [1] */
     MDDIR_MASK|MDEXACT_MASK|MDINDEN_MASK|MDJUST_MASK,
-    MDMAGIC_MASK|MDNRRW_MASK|MDOVER_MASK,
-    MDRBIN_MASK|MDTAB_MASK|MDTIME_MASK|MDUNDO_MASK|MDUSR1_MASK|MDUSR2_MASK,
-    MDUSR3_MASK|MDUSR4_MASK|MDUSR5_MASK|MDUSR6_MASK|MDUSR7_MASK|MDUSR8_MASK|MDVIEW_MASK|MDWRAP_MASK
+    /* Byte [2] */
+    MDMAGIC_MASK|MDNRRW_MASK|MDOVER_MASK|MDRBIN_MASK,
+    /* Byte [3] */
+    MDTAB_MASK|MDTIME_MASK|MDUNDO_MASK|MDUSR1_MASK|MDUSR2_MASK|MDUSR3_MASK|MDUSR4_MASK|MDUSR5_MASK,
+    /* Byte [4] */
+    MDUSR6_MASK|MDUSR7_MASK|MDUSR8_MASK|MDVIEW_MASK|MDWRAP_MASK
 } ;
 
 #endif /* INC_MODE_DEF */
