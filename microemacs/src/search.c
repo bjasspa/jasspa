@@ -1446,7 +1446,7 @@ searchBuffer(int f, int n)
     {
         flags = 0 ;
         if(meStrchr(flagsStr,'b'))
-            flags |= ISCANNER_BACKW ;
+            flags |= ISCANNER_BACKW|ISCANNER_PTBEG ;
         if(meStrchr(flagsStr,'e') ||
            ((meStrchr(flagsStr,'E') == NULL) &&
             meModeTest(frameCur->bufferCur->mode,MDEXACT)))
