@@ -735,6 +735,35 @@ define-macro delete-hilight-lines
     !until 0
 !emacro
 
+0 define-macro hilight-line-narrow
+    set-position "\x81"
+    ; remove all line hilighting
+    beginning-of-buffer
+    set-variable #l0 1
+    !repeat 
+        !if &or &les $line-scheme .scheme.hlwhite &gre $line-scheme .scheme.hlcyan
+        !else
+            !if &les #l0 $window-line
+                set-variable #l1 $window-line
+                set-variable $window-line #l0
+                set-mark
+                set-variable $window-line #l1
+                0x24 narrow-buffer "..."
+            !endif
+            set-variable #l0 &add $window-line 1
+        !endif
+        !force forward-line
+    !until &not $status
+    !if &les #l0 $window-line
+        set-variable #l1 $window-line
+        set-variable $window-line #l0
+        set-mark
+        set-variable $window-line #l1
+        0x24 narrow-buffer "..."
+    !endif
+    goto-position "\x81"
+!emacro
+
 0 define-macro osd-line-scheme
     -1 osd @#
     osd @# 0 "b"
@@ -744,6 +773,7 @@ define-macro delete-hilight-lines
     !done
     osd @# &inc #l0 1 "" "Remove \HAll" f line-scheme
     osd @# &inc #l0 1 "" "\HSearch"     3 osd-search
+    osd @# &inc #l0 1 "" "\HNarrow To"  f hilight-line-narrow
 !emacro
 
 ; Dialogue for goto line.
