@@ -355,12 +355,16 @@ set-variable .spell.check-wordo ""
         osd .osd.spell-chkr 10 "BcfHt" .scheme.osd-ebtt " \HReplace     " 1 spell-check-replace
         osd .osd.spell-chkr 20 "BcfHt" .scheme.osd-ebtt " Re\Hplace All " 2 spell-check-replace
     !endif
+    osd .osd.spell-chkr 40 "BHcft"  .scheme.osd-ebtt " \HIgnore      " 1 spell-check-ignore
     -1 osd .osd.spell-guess
     osd .osd.spell-guess 0 "sS" .scheme.osd-child 22 9 -1 -1
     osd .osd.spell-guess 1 ""
     !if &not &seq .spell.check-word ""
         !if &seq &lef $result 1 "O"
             osd .osd.spell-chkl 15 "" "Word correct"
+            !if &seq .spell.check-word .spell.check-wordo
+                osd .osd.spell-chkr 40 "BHcft"  .scheme.osd-ebtt " Cont\Hinue    " 1 spell-check-ignore
+            !endif
         !else
             osd .osd.spell-chkl 15 "" "Creating list"
             screen-update
@@ -594,7 +598,7 @@ set-variable .spell.check-wordo ""
             1 show-region
             ; Alter some of the buttons to cope with the double word
             osd .osd.spell-chkl 15 "" "Double word"
-            osd .osd.spell-chkr 10 "BHSc"   .scheme.osd-dbtt " \HReplace     "
+            osd .osd.spell-chkr 10 "BHcfS"  .scheme.osd-dbtt " Replace     "
             osd .osd.spell-chkr 20 "BHcft"  .scheme.osd-ebtt " \HDelete 2nd  " 4 spell-check-replace
             osd .osd.spell-chkr 40 "BHcft"  .scheme.osd-ebtt " \HIgnore      " 4 spell-check-ignore
             osd .osd.spell-chkr 50 "BHcfti" .scheme.osd-ebtt " Disable \HChk " f "set-variable #g4 2"
@@ -607,7 +611,7 @@ set-variable .spell.check-wordo ""
             !force osd
             set-variable #l0 $status
             ; must restore some of the buttons
-            osd .osd.spell-chkr 20 "BHcS"   .scheme.osd-dbtt " Replace All "
+            osd .osd.spell-chkr 20 "BHcfS"  .scheme.osd-dbtt " Replace All "
             osd .osd.spell-chkr 40 "BHcft"  .scheme.osd-ebtt " \HIgnore      " 1 spell-check-ignore
             osd .osd.spell-chkr 50 "BHcft"  .scheme.osd-ebtt " I\Hgnore All  " 2 spell-check-ignore
             osd .osd.spell-chkr 60 "BHcfit" .scheme.osd-ebtt " \HAdd         " f "5 spell .spell.check-word \"\""
