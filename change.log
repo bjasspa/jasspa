@@ -4,10 +4,19 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <040208.2015>
+>  Last Modified : <040214.1538>
 >
 
 7th Release - February 2004
+
+    [040214] Added .spec template for RedHat RPM package file specification.
+
+    [040214] Added .psf template for HP-UX depot product file specification.
+
+    [040214] Recognize  -* makefile -*- and -* sh -*-
+
+    [040213] Corrected  UNIX  ishell  operation  when  "su" to  another  user.
+             Locking up or generally behaving badly (termio not initialized). 
 
     [040208] Corrected  UNIX jasspa tree search when  executable is in CWD and
              there is no executable path.
