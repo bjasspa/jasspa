@@ -57,6 +57,18 @@
  "mouse-pick-2"
  "mouse-pick-3"
 }
+"openbsd" {
+ "ext-char-set" = "1"
+ "file-ignore" = "~ ./"
+ "scheme" = "schemebc"
+ "scroll-bar" = "0x1be"
+}
+"osf1" {
+ "ext-char-set" = "1"
+ "file-ignore" = "~ ./"
+ "scheme" = "schemebc"
+ "scroll-bar" = "0x1be"
+}
 "sunos" {
  "ext-char-set" = "1"
  "file-ignore" = "~ ./"
@@ -75,5 +87,11 @@
  "blink" = "13107800"
  "char-set" = "Win-OEM"
  "file-ignore" = "~ ./"
+ "scroll-bar" = "0x1be"
+}
+"zaurus" {
+ "ext-char-set" = "1"
+ "file-ignore" = "~ ./"
+ "scheme" = "schemebc"
  "scroll-bar" = "0x1be"
 }

@@ -349,14 +349,8 @@ define-macro print-setup
         set-registry "/print-history" &cat $platform "/char-size" "Default"
         !force exec-file "print"
     !endif
-    ; make print.erf a user local reg file
-    set-variable #l0 &sin &cond &band $system 0x200 ";" ":" $search-path
-    !if #l0
-        set-variable #l0 &lef $search-path &sub #l0 1
-    !else
-        set-variable #l0 $search-path
-    !endif
-    set-registry "/" "print-history" &spr "%s/myprint.erf" #l0
+    ; make print.erf a user reg file
+    set-registry "/" "print-history" &cat $user-path "myprint.erf"
     print-setup-set-driver
     print-setup-set-scheme
     print-setup-set-dest

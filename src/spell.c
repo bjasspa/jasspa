@@ -726,8 +726,16 @@ meDictionarySave(meDictionary *dict, int n)
         if(dict->flags & DTCREATE)
         {
             meUByte fname[meBUF_SIZE_MAX], *pp, *ss ;
-            /* if the ctreated dictionary does not have a complete path then get one */
-            if(meStrrchr(dict->fname,DIR_CHAR) == NULL)
+            /* if the ctreated dictionary does not have a complete path then
+             * either use $user-path or get one */
+            if(meStrrchr(dict->fname,DIR_CHAR) != NULL)
+                meStrcpy(fname,dict->fname) ;
+            else if(meUserPath != NULL)
+            {
+                meStrcpy(fname,meUserPath) ;
+                meStrcat(fname,dict->fname) ;
+            }
+            else
             {
                 ss = dict->fname ;
                 if(inputFileName((meUByte *)"Save to directory",fname,1) <= 0)
@@ -737,8 +745,6 @@ meDictionarySave(meDictionary *dict, int n)
                     *pp++ = DIR_CHAR ;
                 meStrcpy(pp,ss) ;
             }
-            else
-                meStrcpy(fname,dict->fname) ;
             
             if(((ii=meStrlen(fname)) < 4) ||
 #ifdef _INSENSE_CASE

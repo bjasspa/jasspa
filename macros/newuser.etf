@@ -31,7 +31,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; 'C' is the default language for .h files if you would like the default
-; to be C++ then uncommet the following lines. If you also want .c files 
+; to be C++ then uncomment the following lines. If you also want .c files 
 ; to be C++ then add a .c extension to the string.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;add-file-hook ".h .def"  fhook-cpp 
