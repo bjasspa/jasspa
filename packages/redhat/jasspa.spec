@@ -21,11 +21,11 @@
 #  Module        : Package File.
 #  Created By    : Jon Green
 #  Created       : Sun Aug 17 12:58:23 2003
-#  Last Modified : <040317.2129>
+#  Last Modified : <040726.1833>
 #  Description   : Produces RedHat RPM package for JASSPA MicroEmacs
 
 %define name            jasspa-me
-%define yymmdd_version  040301
+%define yymmdd_version  040701
 %define version 20%{yymmdd_version}
 
 %define release 1
