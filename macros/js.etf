@@ -9,11 +9,14 @@
      Created       : $ASCII_TIME$
 
      Last Modified : <030310.0724>
-     ID            : $Id$
-     Source        : $Source$
+     ID            : $Id: js.etf,v 2.3 2004/03/10 20:38:17 jon Exp $
+     Source        : $Source: /export/cvs/cvsroot/me/macros/js.etf,v $
      Description	
      Notes
-     $Log$
+     $Log: js.etf,v $
+     Revision 2.3  2004/03/10 20:38:17  jon
+     update from Steve 2004-03-10
+
 */
 var ns4 = document.layers;
 var ie4 = document.all;
