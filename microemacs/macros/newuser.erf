@@ -15,6 +15,12 @@
  "scheme" = "schemetb"
  "system" = "30869"
 }
+"darwin" {
+ "ext-char-set" = "1"
+ "file-ignore" = "~ ./"
+ "scheme" = "schemebc"
+ "scroll-bar" = "0x1be"
+}
 "dos" {
  "blink" = "13107800"
  "char-set" = "PC-437"
@@ -49,6 +55,8 @@
  "scroll-bar" = "0x1be"
 }
 "mouse" {
+ "C-mouse-drop-1" = "mouse-osd-multi"
+ "C-mouse-pick-1"
  "mouse-auto-1" = "1"
  "mouse-drop-1" = "mouse-drop-type1"
  "mouse-drop-2" = "mouse-move-yank"
