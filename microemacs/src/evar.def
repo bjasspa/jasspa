@@ -132,6 +132,8 @@ DEFVAR ("line-scheme",         EVLINESCHM)      /* Current line color scheme */
 #if MEOPT_FILENEXT
 DEFVAR ("line-template",       EVLINETEMP)      /* file next line template   */
 #endif
+DEFVAR ("login-home",          EVLOGHOME)       /* User login home directory */
+DEFVAR ("login-name",          EVLOGNAME)       /* User login name */
 #if MEOPT_COLOR
 DEFVAR ("ml-scheme",           EVMLSCHM)        /* Message line color scheme */
 #endif

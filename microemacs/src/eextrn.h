@@ -291,7 +291,7 @@ extern  int fnamecmp(meUByte *f1, meUByte *f2) ;
 #define meFILETYPE_HTTP       4
 #define meFILETYPE_FTP        5
 extern  int getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname) ;
-extern  void set_dirs(void) ;
+extern  void set_dirs(meUByte *argv) ;
 #define meFL_CHECKDOT    0x01
 #define meFL_USESRCHPATH 0x02
 #define meFL_USEPATH     0x04
@@ -622,7 +622,7 @@ extern	int     commandWait(int f, int n) ;
 
 #ifndef NDEBUG
 extern  void    _meAssert(char *file, int line);
-#define meAssert(x) while(!(x)){_meAssert(__FILE__,__LINE__);break;}
+#define meAssert(x) do{if(!(x)){_meAssert(__FILE__,__LINE__);}}while(0)
 #else
 #define meAssert(x) /* Nothing (x) */
 #endif

@@ -308,6 +308,10 @@ extern meUByte    BhelpN[];
 #if MEOPT_EXTENDED
 extern meUByte   *fileIgnore ;
 #endif
+
+extern meUByte  *loginName ;
+extern meUByte  *loginHome ;
+
 #if MEOPT_FILENEXT
 extern meUByte   *flNextFileTemp ;
 extern meUByte   *flNextLineTemp ;
@@ -752,6 +756,9 @@ meUByte   BserverN[] = "*server*" ;
 #if MEOPT_EXTENDED
 meUByte  *fileIgnore=NULL ;
 #endif
+
+meUByte  *loginName=NULL ;
+meUByte  *loginHome=NULL ;
 
 #if MEOPT_FILENEXT
 meUByte  *flNextFileTemp=NULL ;
