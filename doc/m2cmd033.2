@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Jul 25 00:00:27 1998
 .\"
-.Id $Id: m2cmd033.2,v 2.7 2004-03-23 20:50:56 jon Exp $
+.Id $Id: m2cmd033.2,v 2.8 2004-03-24 00:21:22 jon Exp $
 .Im MicroEmacs command|indent|scuts
 .so me.tni
 .TH indent 2
@@ -437,12 +437,12 @@ indent .hilight.emf o "!ema" -4
 indent .hilight.emf e "\\"" "\\"" "\\\\"
 indent .hilight.emf i ";"
 indent .hilight.emf f "*" 0
-.CE
+.CE 0
+.Me $ehf-scheme
 .PP
 Note that a \fB.hilight\fR command variable is typically used as a buffer with
 indentation  rules will almost certainly have hilighting and the same variable
 is used to define the hilighting scheme.
-.Me $ehf-scheme
 .SH "SEE ALSO"
 .na
 .Hl "File Language Templates" languageTemplates 2 ,
