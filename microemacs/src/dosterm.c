@@ -130,7 +130,15 @@ meSetupPathsAndUser(char *progname)
     /* get the users home directory, user path and search path */
     if(((ss = meGetenv("HOME")) == NULL) || (ss[0] == '\0'))
         ss = "c:/" ;
-    homedir = meStrdup(ss) ;
+    ll = meStrlen(ss) ;
+    homedir = meMalloc(ll+2) ;
+    meStrcpy(homedir,ss) ;
+    fileNameConvertDirChar(homedir) ;
+    if(homedir[ll-1] != DIR_CHAR)
+    {
+        homedir[ll++] = DIR_CHAR ;
+        homedir[ll] = '\0' ;
+    }
 
     if(((ss = meGetenv ("MEUSERPATH")) != NULL) && (ss[0] != '\0'))
         meUserPath = meStrdup(ss) ;
@@ -171,7 +179,7 @@ meSetupPathsAndUser(char *progname)
         if(homedir != NULL)
         {
             meStrcpy(buff,homedir) ;
-            meStrcat(buff,"/jasspa") ;
+            meStrcat(buff,"jasspa") ;
             if(((ll = mePathAddSearchPath(ll,evalResult,buff,&gotUserPath)) > 0) && !gotUserPath)
                 /* as this is the user's area, use this directory unless we find
                  * a .../<$user-name>/ directory */
@@ -225,7 +233,16 @@ meSetupPathsAndUser(char *progname)
         }
     }
     if(meUserPath != NULL)
+    {
         fileNameConvertDirChar(meUserPath) ;
+        ll = meStrlen(meUserPath) ;
+        if(meUserPath[ll-1] != DIR_CHAR)
+        {
+            meUserPath = meRealloc(meUserPath,ll+2) ;
+            meUserPath[ll++] = DIR_CHAR ;
+            meUserPath[ll] = '\0' ;
+        }
+    }
 }
 
 void
