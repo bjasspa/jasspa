@@ -268,7 +268,6 @@ define-macro ftp-connect
         !force find-registry &cat "/url/ftp/" #l0 0
         !if &not $status
             set-registry &cat "/url/ftp/" #l0 ""
-            set-registry &spr "/url/ftp/%s/path" #l0 "/"
             mark-registry "/url" "u"
         !endif
         osd .osd.ftp 75  "BtxcfH" .scheme.osd-ebtt " \HDelete " f ftp-site-delete
@@ -290,10 +289,10 @@ define-macro ftp-connect
     !else
         osd .osd.ftp 100 "Shf" "  \HUser Name" 110
         osd .osd.ftp 101 "Sf" "          \HPassword" 130
-        osd .osd.ftp 110 "EtxHhf" .scheme.osd-entry "###############" 3 ftp-data-entry
-        osd .osd.ftp 130 "EtxHfR" .scheme.osd-entry "###############" 4 ftp-data-entry
+        osd .osd.ftp 110 "EtxHhf" .scheme.osd-entry "###############" 2 ftp-data-entry
+        osd .osd.ftp 130 "ExHfR"  .scheme.osd-entry "###############" 3 ftp-data-entry
         osd .osd.ftp 140 "Sf" "  \HInitial Host Path" 150
-        osd .osd.ftp 150 "EtxHf"  .scheme.osd-entry "##################################" 5 ftp-data-entry
+        osd .osd.ftp 150 "EtxHf"  .scheme.osd-entry "##################################" 4 ftp-data-entry
     !endif
 !emacro
 
@@ -318,15 +317,92 @@ define-macro ftp-connect
     ftp-data-entry-setup
 !emacro
 
+0 define-macro ftp-host-entry
+    set-variable #l0 &reg &spr "/url/ftp/%s/host" .ftp.name ""
+    !if &not &seq "" &set #l4 &reg &spr "/url/ftp/%s/port" .ftp.name ""
+        set-variable #l0 &spr "%s:%s" #l0 #l4
+    !endif
+    !if &les @# 0
+        set-variable #l1 @ml2 "" #l0
+        !if &seq #l1 #l0
+            !return
+        !endif
+        !if &seq &lef #l1 6 "ftp://"
+            set-variable #l1 &rig #l1 6
+        !endif
+        set-variable #l8 17
+        set-variable #l7 "\b\b\b\b\b\b"
+        !if &set #l9 &sin "@" #l1
+            set-variable #l8 &bor #l8 2
+            set-variable #l2 &lef #l1 &sub #l9 1
+            set-variable #l1 &rig #l1 #l9
+            !if &set #l9 &sin ":" #l2
+                set-variable #l8 &bor #l8 4
+                set-variable #l7 &lset #l7 3 &rig #l2 #l9
+                set-variable #l2 &lef #l2 &sub #l9 1
+            !endif
+            set-variable #l7 &lset #l7 2 #l2
+        !endif
+        !if &set #l9 &sin "/" #l1
+            set-variable #l2 &rig #l1 &sub #l9 1
+            set-variable #l1 &lef #l1 &sub #l9 1
+            !if &not &seq #l2 "/"
+                !if &seq &lef #l2 3 "/~/"
+                    set-variable #l2 &rig #l2 1
+                !endif
+                set-variable #l8 &bor #l8 8
+                set-variable #l7 &lset #l7 4 #l2
+            !endif
+        !endif
+        !if &set #l9 &sin ":" #l1
+            set-variable #l7 &lset #l7 5 &rig #l1 #l9
+            set-variable #l1 &lef #l1 &sub #l9 1
+        !endif
+        !if &seq #l1 ""
+            !return
+        !endif
+        !if &seq .ftp.name ""
+            !if &and &band #l8 2 &not &seq #l2 ""
+                set-variable #l0 &spr "%s(%s)" #l1 &lget #l7 2
+            !else
+                set-variable #l0 #l1
+            !endif
+            ftp-site-name-set #l0
+        !endif
+        set-variable #l7 &lset #l7 1 #l1
+        set-variable #l0 1
+        set-variable #l9 1
+        !repeat
+            !if &band #l8 #l9
+                set-variable #l1 &lget #l7 #l0
+                set-variable #l2 &spr "/url/ftp/%s/%s" .ftp.name &lget "|host|user|pass|path|port|" #l0
+                !if &seq #l1 ""
+                    !force delete-registry #l2
+                !else
+                    !force set-registry #l2 #l1
+                    !if &equ #l0 3
+                        !force mark-registry #l2 "!"
+                    !endif
+                !endif
+            !endif
+            set-variable #l9 &mul #l9 2
+        !until &equ &pinc #l0 1 5
+        mark-registry "/url" "u"
+        ftp-data-entry-setup
+        -1 osd
+    !else
+        set-variable $result #l0
+    !endif
+!emacro
 0 define-macro ftp-data-entry
-    set-variable #l2 &lget "|name|host|user|pass|path|" &set #l3 &abs @#
+    set-variable #l2 &spr "/url/ftp/%s/%s" .ftp.name &lget "|name|user|pass|path|" &set #l3 &abs @#
     !if &equ #l3 1
         set-variable #l1 .ftp.name
     !else
-        set-variable #l1 &reg &spr "/url/ftp/%s/%s" .ftp.name #l2 ""
+        set-variable #l1 &reg #l2 ""
     !endif
     !if &les @# 0
-        !if &equ #l3 4
+        !if &equ #l3 3
             set-variable #l0 @mla "" ""
         !else
             set-variable #l0 @ml2 "" #l1
@@ -356,39 +432,24 @@ define-macro ftp-connect
                 !endif
             !endif
             ftp-site-name-set #l0
+        !elif &seq #l0 ""
+            delete-registry #l2
         !else
-            !if &equ @# -2
-                !if &seq &lef #l0 6 "ftp://"
-                    set-variable #l0 &rig #l0 6
-                !endif
-                !if &set #l1 &sin "/" #l0
-                    set-variable #l0 &lef #l0 &sub #l1 1
-                !endif
-                !if &seq #l0 ""
-                    !return
-                !endif
-                !if &seq .ftp.name ""
-                    ftp-site-name-set #l0
-                    -1 osd
+            !if &equ @# -4
+                !if &seq &lef #l0 1 "/"
+                !elif &seq &lef #l0 2 "~/"
+                !else
+                    set-variable #l0 &cat "~/" #l0
                 !endif
             !endif
-            !if &equ @# -5
-                !if &not &seq &lef #l0 1 "/"
-                    set-variable #l0 &cat "/" #l0
-                !endif
-            !endif
-            !if &seq #l0 ""
-                delete-registry &spr "/url/ftp/%s/%s" .ftp.name #l2
-            !else
-                set-registry &spr "/url/ftp/%s/%s" .ftp.name #l2 #l0
-                !if &equ @# -4
-                    mark-registry &spr "/url/ftp/%s/%s" .ftp.name #l2 "!"
-                !endif
+            set-registry #l2 #l0
+            !if &equ @# -3
+                mark-registry #l2 "!"
             !endif
         !endif
         mark-registry "/url" "u"
         ftp-data-entry-setup
-    !elif &or &sub #l3 4 &seq #l1 ""
+    !elif &or &sub #l3 3 &seq #l1 ""
         set-variable $result #l1
     !else
         set-variable $result "************"
@@ -399,7 +460,10 @@ define-macro ftp-connect
     !if &seq .ftp.name ""
         !abort
     !endif
-    set-variable #l0 &reg &spr "/url/ftp/%s/path" .ftp.name "/"
+    set-variable #l0 &reg &spr "/url/ftp/%s/path" .ftp.name ""
+    !if &not &seq &lef #l0 1 "/"
+        set-variable #l0 &cat "/~/" #l0
+    !endif
     find-file &spr "ftp://%s%s" .ftp.name #l0 @mna
     !if &not &seq $buffer-bname "*ftp-files*"
         set-variable #l1 $buffer-bname
@@ -430,7 +494,7 @@ osd .osd.ftp 60  "EtxHfhR" .scheme.osd-entry "#####################" 1 ftp-data-
 osd .osd.ftp 70  "MdmxstfHihR" .scheme.osd-ebtt &mid $window-chars 10 1 .osd.tmp ftp-host-setup
 osd .osd.ftp 80  "Sf" "  \HHost Address" 90
 osd .osd.ftp 85  "hf" "  "
-osd .osd.ftp 90  "EtxHfR"  .scheme.osd-entry "##################################" 2 ftp-data-entry
+osd .osd.ftp 90  "EtxHfR"  .scheme.osd-entry "##################################" 2 ftp-host-entry
 osd .osd.ftp 105 "hf" "  "
 osd .osd.ftp 120 "hf" "    "
 osd .osd.ftp 145 "hf" "  "
