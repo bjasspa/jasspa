@@ -29,8 +29,8 @@
 0 define-macro osd-insert-date
     organizer-init
     set-variable #l0 $time
-    -1 osd 31
-    osd 31 0 "b"
+    -1 osd @#
+    osd @# 0 "b"
     set-variable #l1 0
     !while &not &seq &set #l2 &lget .formats &inc #l1 1 ""
         ;        012345678901234567890123456789
@@ -48,7 +48,7 @@
         set-variable #l2 &rep #l2 "#K" &spr "%02d" &mid #l0 14 2
         set-variable #l2 &rep #l2 "#L" &spr "%02d" &mid #l0 16 2
         set-variable #l2 &rep #l2 "##" "#"
-        osd 31 #l1 "" &spr "\H%s %s" &itoa &add #l1 64 #l2 f osd-insert-date-exec
+        osd @# #l1 "" &spr "\H%s %s" &itoa &add #l1 64 #l2 f osd-insert-date-exec
     !done
 !emacro
 
