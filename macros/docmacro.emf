@@ -46,7 +46,7 @@
 ;         >
 ;         > Author:       My Self
 ;         > Created:      11/11/97
-;         > Modified:     <020118.2209>
+;         > Modified:     <020301.2325>
 ;         > Location:     /xx/yy/zz.doc
 ; *
 ;         All lines commencing with '*' are assumed to be bullet lists. Bullet
@@ -94,25 +94,25 @@ set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
     ; we do not need it. This will only hurt branch tokens, as there
     ; are none below then there is no adverse effect.
     0 hilight  .hilight.doc 2 100                               $global-scheme
-    hilight .hilight.doc 0x20 "*\\}[ \t]+\\S "                  .scheme.no1
+    hilight .hilight.doc 0x20 "*\\}[ \t]+\\w"                   .scheme.no1
     hilight .hilight.doc 0x21 "\\w)"                            .scheme.no1
-    hilight .hilight.doc 1 "\\*\\S [^*\n]*\\*"                  .scheme.bold
-    hilight .hilight.doc 1 "~\\S [^~\n]*~"                      .scheme.italic
-    hilight .hilight.doc 1 "_\\S [^_\n]*_"                      .scheme.under
+    hilight .hilight.doc 1 "\\*[A-Za-z_]+\\*"                   .scheme.bold
+    hilight .hilight.doc 1 "<[A-Za-z_]+>"                       .scheme.italic
+    hilight .hilight.doc 1 "_[A-Za-z0-9]+_"                     .scheme.under
     hilight .hilight.doc 0 "^\\s *\\[\\w*\\]"                   .scheme.no1
     hilight .hilight.doc 0x22 "[0-9]+\\.[0-9.]*[ \t]+\\w"       .scheme.header
     hilight .hilight.doc 0x804 "\"" "\"" "\\"                   .scheme.string
-    hilight .hilight.doc 0x804 "`" "'" ""                       .scheme.bold-italic
+    hilight .hilight.doc 0x804 "`" "'" ""                       .scheme.no1
     hilight .hilight.doc 0    "'.'"                             .scheme.quote
     hilight .hilight.doc 0    "'\\\\.'"                         .scheme.quote
     hilight .hilight.doc 0x22 "^[ \t]*Appendix [[:alpha:]]"     .scheme.header
-    hilight .hilight.doc 0    "^>\\."                           .scheme.comment
-    hilight .hilight.doc 0x02 "^>_"                             .scheme.comment
+    hilight .hilight.doc 0x22 "_\\W"                            .scheme.comment
     hilight .hilight.doc 0x22 ">"                               .scheme.comment
-    hilight .hilight.doc 0x80 "^>@" .hilight.doc1               .scheme.no2
+    hilight .hilight.doc 0x80 "^[ \t]+@" .hilight.doc1          .scheme.no2
     ; @ block
     0 hilight .hilight.doc1 0                                   .scheme.no2
     hilight   .hilight.doc1 0x80 "^[ \t]*\n" .hilight.doc       $global-scheme
+    hilight   .hilight.doc1 0x80 "^\n"       .hilight.doc       $global-scheme
     
     ; Allow inserts into the documentation mode. You may add to the
     ; available inserts by adding to your mydoc.emf file
@@ -261,11 +261,58 @@ define-macro doc-fhook-body
     buffer-initialize-hooks
 !emacro
 
-set-variable &ind &spr ".fhook-%s.command-flag"  #l1 "|thb|hb|thb|th|h|h|thb|thb|thb|thb|thb|h|h|th|h|h|thb|thb|thb|thb|thb|thb|"
-set-variable &ind &spr ".fhook-%s.command-name"  #l1 "|doc-mode-state|spell-buffer|paragraph-to-line||||fill-paragraph-both|fill-paragraph-center|fill-paragraph-left|fill-paragraph-gutter|fill-paragraph-right|fill-paragraph|ifill-paragraph||||doc-set-justify|doc-set-justify|doc-set-justify|doc-set-justify|doc-set-justify|doc-set-justify|"
-set-variable &ind &spr ".fhook-%s.command-nbind" #l1 "|||||||||||||||||0|1|2|3|4|5|"
-set-variable &ind &spr ".fhook-%s.command-kbind" #l1 "|C-c C-h|C-c C-s|C-c o||||C-c C-b|C-c C-c|C-c C-l|C-c C-g|C-c C-r||||||C-c a|C-c b|C-c c|C-c l|C-c n|C-c r|"
-set-variable &ind &spr ".fhook-%s.command-desc"  #l1 "|&Show Current Settings|Spell Check Buffer|Fill Paragraph for WP Export||To format current paragraph:||Justify Both Margins|Justify Center|Justify Left|Justify Gutter (on left margin)|Justify Right|Format Paragraph in Current Mode|Intelligently Format Paragraph||To change justification mode:||Change to auto justification [DEFAULT]|Change to both justification|Change to center justification|Change to left justification|Change to none justification|Change to right justification|"
+; convert a doc/txt buffer to jst
+define-macro-file hkjst fhook-jst
+define-macro doc-to-jst
+    beginning-of-buffer
+    set-variable #l8 &bmod "exact"
+    set-variable #l9 &bmod "magic"
+    1 buffer-mode "magic"
+    -1 buffer-mode "exact"
+    !force -1 search-forward "-!-[ \t]*\\(document\\|text\\).*-!-"
+    !if $status
+        set-variable #l0 &rep @s0 @s1 "jst"
+        set-variable #l0 &rep @wl @s0 #l0
+        beginning-of-line
+        set-mark
+        end-of-line
+        kill-region
+        -1 yank
+        insert-string #l0
+    !else
+        insert-string "> -!- jst -!-\n"
+    !endif
+    ; convert old docmode to jst
+    ; italic <...> -> ~...~
+    beginning-of-buffer
+    replace-string "<\\(\\S [^>\n]*\\)>" "~\\1~"
+    ; change and >doc> to >end> and protect the starting >mode>
+    beginning-of-buffer
+    replace-string "^>doc>" "\b>end>"
+    beginning-of-buffer
+    replace-string "^>c\\+\\+>" "\b>cpp>"
+    beginning-of-buffer
+    replace-string "^>\\(\\w+\\)>" "\b>\\1>"
+    ; literal paragraphs starting with >, @ or _ all change to >@
+    beginning-of-buffer
+    replace-string "^\\([ \t]*\n\\) \\([ \t]*\\)[>@_]" "\\1\b>@\\2"
+    beginning-of-buffer
+    replace-string "^\\([ \t]*\n\\)[>@_]  " "\\1\b>@ "
+    beginning-of-buffer
+    replace-string "^\\([ \t]*\n\\)\\([ \t]*\\)[>@_]" "\\1>@\\2"
+    beginning-of-buffer
+    replace-string "^\b>" ">"
+    beginning-of-buffer
+    &cond #l8 1 -1 buffer-mode "exact"
+    &cond #l9 1 -1 buffer-mode "magic"
+    fhook-jst
+!emacro
+
+set-variable &ind &spr ".fhook-%s.command-flag"  #l1 "|thb|hb|th|thb|th|h|h|thb|thb|thb|thb|thb|h|h|th|h|h|thb|thb|thb|thb|thb|thb|"
+set-variable &ind &spr ".fhook-%s.command-name"  #l1 "|doc-mode-state|spell-buffer|doc-to-jst|paragraph-to-line||||fill-paragraph-both|fill-paragraph-center|fill-paragraph-left|fill-paragraph-gutter|fill-paragraph-right|fill-paragraph|ifill-paragraph||||doc-set-justify|doc-set-justify|doc-set-justify|doc-set-justify|doc-set-justify|doc-set-justify|"
+set-variable &ind &spr ".fhook-%s.command-nbind" #l1 "||||||||||||||||||0|1|2|3|4|5|"
+set-variable &ind &spr ".fhook-%s.command-kbind" #l1 "|C-c C-h|C-c C-s||C-c o||||C-c C-b|C-c C-c|C-c C-l|C-c C-g|C-c C-r||||||C-c a|C-c b|C-c c|C-c l|C-c n|C-c r|"
+set-variable &ind &spr ".fhook-%s.command-desc"  #l1 "|&Show Current Settings|Spell Check Buffer|Convert to JST|Fill Paragraph for WP Export||To format current paragraph:||Justify Both Margins|Justify Center|Justify Left|Justify Gutter (on left margin)|Justify Right|Format Paragraph in Current Mode|Intelligently Format Paragraph||To change justification mode:||Change to auto justification [DEFAULT]|Change to both justification|Change to center justification|Change to left justification|Change to none justification|Change to right justification|"
 !if &sin "f" #l0
     ; Define the folding definitions.
     set-variable &ind &spr ".fhook-%s.fold-open" #l1  "^[ \t]*\\(Appendix[ \t]+[A-Z][0-9.]*\\|[0-9]\\.[0-9.]*\\)[ \t]+\\w"

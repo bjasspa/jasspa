@@ -31,6 +31,16 @@ set-variable .fhook-html.command-nbind "|||||||||"
 set-variable .fhook-html.command-kbind "|||||||C-c C-h|C-c C-i|"
 set-variable .fhook-html.command-desc  "|Html Browser Mode||&Goto Link||Html Author Mode||Process Current Buffer|Toggle Indent To VB Mode|"
 
+; setup item-list
+set-variable .fhook-html.item-list-s1 "<[hH]1>\\(<[^>]*>[ \t\n]*\\)*\\([^<]+\\)"
+set-variable .fhook-html.item-list-r1 "H1    \ecB\\2\ecA"
+set-variable .fhook-html.item-list-s2 "<[hH]2>\\(<[^>]*>[ \t\n]*\\)*\\([^<]+\\)"
+set-variable .fhook-html.item-list-r2 "H2    \ecB\\2\ecA"
+set-variable .fhook-html.item-list-s3 "<[hH]3>\\(<[^>]*>[ \t\n]*\\)*\\([^<]+\\)"
+set-variable .fhook-html.item-list-r3 "H3    \ecB\\2\ecA"
+set-variable .fhook-html.item-list-s4 "<[hH][4-9]>\\(<[^>]*>[ \t\n]*\\)*\\([^<]+\\)"
+set-variable .fhook-html.item-list-r4 "H4+   \ecB\\2\ecA"
+
 !if &and &sin "h" .fhook-html.setup &band .hilight.flags 0x02 
     !if &not &exist .hilight.html
         set-variable .hilight.html   &pinc .hilight.next 1
@@ -139,6 +149,9 @@ define-macro-file htmltool html-to-ehf
                 set-variable #l8 ""
             !endif
             !if &not &seq #l0 ""
+                !if &and &seq &lef #l0 1 "/" &set #l2 &sin "/" &rig $buffer-fname 7
+                    set-variable #l0 &cat &lef $buffer-fname &add 6 #l2 #l0
+                !endif
                 !force find-file #l0
                 !if &not $status
                     ml-write &spr "[Failed to find link \"%s\"]" #l0

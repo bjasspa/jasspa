@@ -605,7 +605,7 @@ osd .osd.sar  10 "It" 1 .osd.sar-nb
     ; work out a window-line to recenter on for good visibility
     set-variable #l0 &sub $window-mode-line &div $window-depth 2
     set-variable #l1 &div $window-depth 3
-    !if &gre #l0 &div $screen-depth 2
+    !if &gre #l0 &div $frame-depth 2
         ; place in bottom third of window
         set-variable .osd-search.recenter &sub $window-depth #l1
         set-variable #l0 &sub &sub &sub $window-mode-line #l1 #l1 15
@@ -616,8 +616,8 @@ osd .osd.sar  10 "It" 1 .osd.sar-nb
         ; place in top third of window
         set-variable .osd-search.recenter #l1
         set-variable #l0 &sub $window-mode-line #l1
-        !if &gre &add #l0 15 $screen-depth
-            set-variable #l0 &sub $screen-depth 15
+        !if &gre &add #l0 15 $frame-depth
+            set-variable #l0 &sub $frame-depth 15
         !endif
     !endif
     osd .osd.sar 0 "batcdHs" 6 #l0 53 15 -1 -1 10 .scheme.osd-title "Search and Replace"

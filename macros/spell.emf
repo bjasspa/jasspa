@@ -783,7 +783,7 @@ define-macro spell-buffer
     -1 show-cursor
     ; work out a window-line to recenter on for good visibility
     set-variable #l0 &sub $window-mode-line &div $window-depth 2
-    set-variable #l0 &mul $window-depth &cond &gre #l0 &div $screen-depth 2 1 2
+    set-variable #l0 &mul $window-depth &cond &gre #l0 &div $frame-depth 2 1 2
     set-variable .spell.recenter &sub $window-depth &div #l0 3
     !force !force .osd.spell-check osd
     !force -1 show-region

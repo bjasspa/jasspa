@@ -21,7 +21,7 @@
 ; Authors:     Steven Phillips & Jon Green
 ;
 ; Is this macro release compatible with the binary?
-!if &les $version "20011110"
+!if &les $version "20020412"
     5000 ml-write "[Warning: The MicroEmacs executable is not compatible with this macro release]"
 !endif
 ; If mename isn't set or registry file isn't found then set it to guest
@@ -59,8 +59,8 @@
 define-macro-file format clean sort-lines-ignore-case normal-tab tabs-to-spaces paragraph-to-line delete-indentation restyle-region restyle-buffer ifill-paragraph
 define-macro-file cvs cvs cvs-state cvs-update cvs-commit cvs-log cvs-diff cvs-gdiff cvs-add cvs-remove cvs-resolve-conflicts
 define-macro-file tools compile grep rgrep which diff diff-changes execute-tool uniq reread-file find-bfile find-cfile
+define-macro-file abbrev expand-abbrev-handle expand-iso-accents expand-look-back expand-word iso-accents-mode
 define-macro-file comment comment-line uncomment-line comment-to-end-of-line comment-start comment-restyle
-define-macro-file abbrev expand-abbrev-handle spell-complete-word iso-accents-mode iso-accents-expand
 define-macro-file misc symbol check-line-length alarm time compare-windows-exact display-white-chars
 define-macro-file search replace-all-string query-replace-all-string replace-all-pairs line-scheme
 define-macro-file hkdirlst file-browser file-browser-close file-browser-swap-buffers
@@ -72,11 +72,13 @@ define-macro-file itemlist item-list item-list-close occur
 define-macro-file mail mail mail-check stop-mail-check
 define-macro-file fileopen osd-file-open osd-get-file
 define-macro-file hkinfo info info-on info-goto-link
+define-macro-file toolbar toolbar toolbar-close
 define-macro-file zfile find-zfile zfile-setup
 define-macro-file gentags generate-tags-file
 define-macro-file dmf display-matching-fence
 define-macro-file schemosd scheme-editor
 define-macro-file printstp print-setup
+define-macro-file abbrlist abbrev-list
 define-macro-file fattrib file-attrib
 define-macro-file organize organizer
 define-macro-file userstp user-setup
@@ -165,10 +167,8 @@ global-bind-key file-browser             "f10"
 global-bind-key ftp                      "S-f10"
 global-bind-key cvs                      "C-f10"
 global-bind-key display-white-chars      "f11"
-ml-bind-key     tab                      "esc esc"
-; setup abbreviations
 global-bind-key expand-abbrev-handle     "esc esc"
-set-variable .spell-complete-word.on 0
+ml-bind-key     tab                      "esc esc"
 ;
 ; Setup modes
 &cond &reg "/history" "auto"   "1" 1 -1 global-mode "auto"
@@ -191,6 +191,9 @@ set-variable %tag-file      "tags"
 set-variable %tag-template  "%[^\t]\t%[^\t]\t%[^\n]\n"
 set-variable .osd.tmp 40
 set-variable .osd.next &cond &exi .osd.next .osd.next &add .osd.tmp 1
+set-variable .expand-iso-accents.on &reg "/history" "expaccent" "0"
+set-variable .expand-look-back.on &reg "/history" "explookbk" "0"
+set-variable .expand-word.on &reg "/history" "expword" "0"
 ;
 ; File hooks - reset the file hook list first
 0 add-file-hook

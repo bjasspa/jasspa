@@ -74,8 +74,13 @@ set-variable .fhook-dirtre.command-desc  "|Swap Browser &Windows|&Close File Bro
     1 set-position "\x81"
     !force 0 popup-window "*files*"
     !if $status
-        !if &not &seq $buffer-fname #l0
+        !if &not &and &seq #l0 $buffer-fname &seq .fhook-dirlst.file-process :file-process
             read-file #l0
+            !if &not &seq .fhook-dirlst.file-process :file-process
+                ; old buffer with the wrong processing - refresh
+                !force 0 delete-buffer $buffer-bname
+                find-file #l0
+            !endif
             change-buffer-name "*files*"
             buffer-bind-create "bio" "delete" "" file-browser-close
             buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
@@ -123,8 +128,13 @@ set-variable .fhook-dirtre.command-desc  "|Swap Browser &Windows|&Close File Bro
         1 set-position "\x81"
         !force 0 popup-window "*files*"
         !if $status
-            !if &not &seq $buffer-fname #l0
+            !if &not &and &seq #l0 $buffer-fname &seq .fhook-dirlst.file-process :file-process
                 read-file #l0
+                !if &not &seq .fhook-dirlst.file-process :file-process
+                    ; old buffer with the wrong processing - refresh
+                    !force 0 delete-buffer $buffer-bname
+                    find-file #l0
+                !endif
                 change-buffer-name "*files*"
                 buffer-bind-create "bio" "delete" "" file-browser-close
                 buffer-bind-create "bio" "tab" "" file-browser-swap-buffers

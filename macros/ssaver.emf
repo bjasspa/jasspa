@@ -26,11 +26,11 @@ define-macro screen-saver
                 set-variable %screen-saver &sub %screen-saver 1
                 !return
             !endif
-            set-variable @# $screen-depth
+            set-variable @# $frame-depth
             !while &dec @# 1
-                2 screen-poke @# 0 $global-scheme &spr "%n" $screen-width " "
+                2 screen-poke @# 0 $global-scheme &spr "%n" $frame-width " "
             !done
-            0 screen-poke 0 0 $global-scheme &spr "%n" $screen-width " "
+            0 screen-poke 0 0 $global-scheme &spr "%n" $frame-width " "
             -1 show-cursor
             ; must set this to stop recursion when waiting for a key!
             set-variable %screen-saver 0

@@ -79,8 +79,9 @@ define-macro fhook-dirlst
         insert-string " Attr    Size          Modified Name\n"
     !endif
     !if &exi .fhook-dirlst.file-process
-        execute-line .fhook-dirlst.file-process
+        !force !force execute-line .fhook-dirlst.file-process
     !endif
+    set-variable :file-process .fhook-dirlst.file-process
     dirlst-sort-list
     beginning-of-buffer
     @# buffer-initialize "dirlst"
@@ -105,6 +106,8 @@ set-variable .fhook-dirlst.command-desc  "|Swap Browser &Windows|&Close File Bro
 set-variable .fhook-dirlst.col-name "|Name|Attr|    Size|        Modified|"
 set-variable .fhook-dirlst.col-flag "|0|4|2|1|"
 set-variable .fhook-dirlst.sort     "|1|0|"
+set-variable .fhook-dirlst.browser-lock 0
+set-variable .fhook-dirlst.file-process ""
 
 !if &not &exist .osd.dirlst
     set-variable .osd.dirlst &pinc .osd.next 1
@@ -134,38 +137,89 @@ set-variable .fhook-dirlst.sort     "|1|0|"
 0 define-macro file-browser-close
     1 set-position "\x81"
     set-variable .fhook-dirlst.file-process ""
+    osd .osd.dirlst  11 "D"
     !force 0 popup-window "*ftp-console*"
     !if $status
-        next-window
-        !if &seq $buffer-bname "*files*"
-            next-window
-            !if &or &seq &lef $buffer-fname 6 "ftp://" &seq $buffer-bname "*ftp*"
-                delete-other-windows
-                -1 find-buffer $buffer-bname
-                -1 find-buffer "*ftp-console*"
-                -1 find-buffer "*files*"
-            !endif                
-        !endif                
+        delete-other-windows
+        set-variable $window-flags 0
     !endif
     !force 0 popup-window "*cvs-console*"
     !if $status
         delete-other-windows
-        -1 find-buffer "*cvs-console*"
-        osd .osd.dirlst  11 "D"
+        set-variable $window-flags 0
     !endif
     !force 0 popup-window "*directory*"
     !if $status
-        next-window
+        !force 2 next-window
         !if &seq $buffer-bname "*files*"
-            previous-window
+            set-variable $window-flags 0
+            2 previous-window
             delete-window
-        !else
-            previous-window
         !endif
-        -1 find-buffer "*directory*"
     !endif
-    !force -1 find-buffer "*files*"
+    ; loop through all windows to 
+    6 next-window
+    !repeat
+        !if &lfin .bn $buffer-bname
+            set-variable $window-flags 0
+        !endif
+        !force 2 next-window
+    !until &not $status
+    set-variable #l0 0
+    !while &not &seq "" &set #l1 &lget .bn &inc #l0 1
+        !force -1 find-buffer #l1
+    !done
     goto-position "\x81"
+!emacro
+set-variable .file-browser-close.bn "\CH*files*\CH*directory*\CH*ftp-console*\CH*ftp*\CH*cvs-console*\CH"
+
+0 define-macro file-browser-lock
+    set-variable .fhook-dirlst.browser-lock &cond .fhook-dirlst.browser-lock 0 63
+    1 set-position "\x81"
+    !force 0 popup-window "*directory*"
+    !if $status
+        set-variable $window-flags .fhook-dirlst.browser-lock
+    !endif
+    !force 0 popup-window "*files*"
+    !if $status
+        set-variable $window-flags .fhook-dirlst.browser-lock
+    !endif
+    goto-position "\x81"
+!emacro
+
+0 define-macro file-browser-filter
+    -1 buffer-mode "view"
+    1 buffer-mode "magic"
+    &cond &band $system 0x100 -1 1 buffer-mode "exact"
+    set-variable $window-line 2
+    end-of-line
+    insert-string " (Filtered)"
+    set-variable #l0 &spr "^.\\{%d,%d\\}\\(%s\\)$" :fmpf :fmpf .file-browser.filter
+    set-variable $window-line 5
+    !force search-forward #l0
+    !while $status
+        beginning-of-line
+        set-mark
+        forward-line
+        -1 kill-region
+        !force search-forward #l0
+    !done
+    -1 buffer-mode "edit"
+    1 buffer-mode "view"
+!emacro
+!if &not &exi .file-browser.filter
+    set-variable #l0 &rep $file-ignore "./ " ""
+    str-to-regex #l0
+    set-variable .file-browser.filter &cat "\\./\\|.*" &rep #l0 " " "\\|.*"
+!endif
+
+0 define-macro file-browser-set-filter
+    !if &seq .fhook-dirlst.file-process ""
+        set-variable .fhook-dirlst.file-process "file-browser-filter"
+    !else &seq .fhook-dirlst.file-process "file-browser-filter"
+        set-variable .fhook-dirlst.file-process ""
+    !endif
+    dirlst-refresh
 !emacro
 ;
 ; file-browser-twin
@@ -206,7 +260,9 @@ set-variable .fhook-dirlst.sort     "|1|0|"
 !emacro
 
 0 define-macro file-browser-init
-    set-variable #l0 &lef $buffer-fname &rsin "/" $buffer-fname
+    !if &seq "" &set #l0 &lef $buffer-fname &rsin "/" $buffer-fname
+        set-variable #l0 &stat "a" "."
+    !endif
     !force 0 popup-window "*directory*"
     !if $status
         !force 0 popup-window "*files*"
@@ -218,15 +274,24 @@ set-variable .fhook-dirlst.sort     "|1|0|"
         file-browser-twin
     !endif
     find-buffer "*files*"
-    read-file #l0
-    change-buffer-name "*files*"
+    !if &not &and &seq #l0 $buffer-fname &seq .fhook-dirlst.file-process :file-process
+        read-file #l0
+        !if &not &seq .fhook-dirlst.file-process :file-process
+            ; old buffer with the wrong processing - refresh
+            !force 0 delete-buffer $buffer-bname
+            find-file #l0
+        !endif
+        change-buffer-name "*files*"
+    !endif
     buffer-bind-create "bio" "delete" "" file-browser-close
     buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
-    previous-window
+    set-variable $window-flags .fhook-dirlst.browser-lock
+    2 previous-window
     find-buffer "*directory*"
     !if &not &seq #l0 $buffer-fname
         0x0f directory-tree #l0
     !endif
+    set-variable $window-flags .fhook-dirlst.browser-lock
 !emacro
 
 define-macro file-browser
@@ -257,29 +322,70 @@ define-macro file-browser-swap-buffers
         ; it is unknown whether an ftp file is a directory until loaded 
         find-file #l0
         set-variable #l0 $buffer-fname
-        !if &seq &rig #l0 &rsin "/" #l0 ""
-            buffer-bind-create "bio" "delete" "" file-browser-close
-            buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
-        !else
-            file-browser-close
-            find-file #l0
+        !if &not &seq &rig #l0 &rsin "/" #l0 ""
+            !goto open-file
         !endif
+        buffer-bind-create "bio" "delete" "" file-browser-close
+        buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
     !elif &seq &rig #l0 &rsin "/" #l0 ""
         read-file #l0
+        !if &not &seq .fhook-dirlst.file-process :file-process
+            ; old buffer with the wrong processing - refresh
+            !force 0 delete-buffer $buffer-bname
+            find-file #l0
+        !endif
         !force change-buffer-name "*files*"
         !if $status
             buffer-bind-create "bio" "delete" "" file-browser-close
             buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
+            set-variable $window-flags .fhook-dirlst.browser-lock
             !force 0 popup-window "*directory*"
             !if $status
                 0x6f directory-tree #l0
+                set-variable $window-flags .fhook-dirlst.browser-lock
                 popup-window "*files*"
             !endif
         !endif
     !else
-        file-browser-close
         ; pre-pend a file:/ to ensure we get the local file, not an ftp:/ file
-        find-file &cat "file:" #l0
+        set-variable #l0 &cat "file:" #l0
+*open-file
+        1 set-position "\x81"
+        ; if the browser is lock and there are other windows open this file in another window
+        set-variable #l1 1
+        !if .fhook-dirlst.browser-lock
+            ; loop through all windows to find a suitable one 
+            6 next-window
+            !repeat
+                !if &not &band $window-flags 4
+                    set-variable #l1 2
+                    !jump 5
+                !endif
+                !force 2 next-window
+            !until &not $status
+            set-variable #l1 7
+            goto-position "\x81"
+        !endif
+        !if &band #l1 1
+            file-browser-close
+        !endif
+        !if &band #l1 2
+            set-variable #l2 $window-mode-line
+            popup-window "*file-browser-temp*"
+            0 delete-buffer "*file-browser-temp*"
+            !if &and &band #l1 4 &les $window-mode-line #l2
+                next-window
+            !endif
+        !endif
+        find-file #l0
+        set-variable #l3 $buffer-bname
+        !if &band #l1 4
+            1 set-position "\x81"
+            previous-window
+            find-buffer #l3
+            file-browser-init
+            goto-position "\x81"
+        !endif
     !endif
 !emacro
 
@@ -652,6 +758,7 @@ define-macro file-browser-swap-buffers
     !if &seq #l0 "*files*"
         buffer-bind-create "bio" "delete" "" file-browser-close
         buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
+        set-variable $window-flags .fhook-dirlst.browser-lock
     !endif
 !emacro
 0 define-macro dirlst-auto-refresh
@@ -683,9 +790,18 @@ osd .osd.dirlst 130 ""  "&Auto-Refresh: on "   f dirlst-auto-refresh
         osd .osd.dirlst 100 ""  "Deselect All"
     !endif
     !if &seq $buffer-bname "*files*"
-        osd .osd.dirlst 140 ""  "Close &Browser" f file-browser-close
+        osd .osd.dirlst 140 "" &cond .fhook-dirlst.browser-lock "Un&lock Browser" "&Lock Browser" f file-browser-lock
+        osd .osd.dirlst 150 ""  "Close &Browser" f file-browser-close
     !else
-        osd .osd.dirlst 140 ""  "Close &Buffer"  f osd-close
+        osd .osd.dirlst 140 "D"
+        osd .osd.dirlst 150 ""  "Close &Buffer"  f osd-close
+    !endif
+    !if &seq .fhook-dirlst.file-process ""
+        osd .osd.dirlst 145 "" "Enable Filter" f file-browser-set-filter
+    !elif &seq .fhook-dirlst.file-process "file-browser-filter"
+        osd .osd.dirlst 145 "" "Disable Filter" f file-browser-set-filter
+    !else
+        osd .osd.dirlst 145 "D"
     !endif
     !if &equ :tag-count 1
         osd .osd.dirlst 50 ""  "&Rename"       f dirlst-tag-rename

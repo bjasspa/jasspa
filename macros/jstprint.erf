@@ -1,0 +1,53 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : Steven Phillips
+;  Last Modified : <020130.2236>
+;
+;  Description   : Plain text printer driver (default).
+;
+;  Notes
+; 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+"setup" = "1"
+"internal" = "0"
+"flags" = "256"
+"paper-x" = "1024"
+"paper-y" = "50"
+"page-x" = "1024"
+"page-y" = "50"
+"rows" = "1"
+"cols" = "1"
+"mtop" = "0"
+"mbottom" = "0"
+"mleft" = "0"
+"mright" = "0"
+"buffer" = "*jst-tmp3*"
+
+; Strip blanks from the end of the line.
+"strip" = "1"
+
+"econt" = ""
+"scont" = ""
+"xsep" = ""
+"hsep" = ""
+"vsep" = ""
+"wsep" = ""
+"eol" = "\n"
+"eop" = ""
+"sop" = ""
+"eof" = ""
+"sof" = ""
+  
+"scheme-order" = "biu"
+"start"
+{
+ "b" = "\bFB"
+ "i" = "\bFI"
+ "u" = "\bFU"
+}
+"end"
+{
+ "b" = "\bfB"
+ "i" = "\bfI"
+ "u" = "\bfU"
+}

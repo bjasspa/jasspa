@@ -34,7 +34,7 @@ define-macro display-matching-fence
     !if &not @#
         !return
     !endif
-    set-variable #l8 &cond &band @# 2 "\x85" "\x84"
+    set-variable #l8 &cond &band @# 2 "\x87" "\x88"
     set-variable #l7 &cond &seq @cck "idle-pick" 0 -1
     set-variable #l6 &sin @cl "})]"
     set-position #l8

@@ -1,11 +1,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
-;  Author        : Jon Green & Steven Phillips
-;  Last Modified : <000529.1426>
-;
-;  Description   : HP Laserjet 4v printer driver.
-;
-;  Notes
+;  Author:      Jon Green, Steven Phillips & Thomas Hundt
+;  Synopsis:    HP Laserjet printer driver.
+;  Notes:
+;      25-Apr-02 thundt - added Letter size paper with new intermediate
+;      font size, tested on LJ5M
 ; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 "internal" = "0"
@@ -72,5 +71,49 @@
    "sof" = "\eE\e&l0L\e&l0E\e&a0L\e&l1O"
   }
  }
+
+ "Letter Portrait"  ; thundt tested on LaserJet 5M
+ {
+  " 80x66"
+  {
+   "paper-x" = "80"
+   "paper-y" = "66"
+   "sof" = "\eE\e&l0L\e&l1E\e&a0L"
+  }
+  "161x128"
+  {
+   "paper-x" = "161"
+   "paper-y" = "128"
+   "sof" = "\eE\e&l0L\e&l1E\e&a0L\e(s0P\e(s20H\e&l4C" ; new
+  }
+  "184x128"
+  {
+   "paper-x" = "184"
+   "paper-y" = "128"
+   "sof" = "\eE\e&l0L\e&l1E\e&a0L\e(s0P\e(s24H\e(s6V\e&l4C"
+  }
+ } ; Letter Portrait
+ 
+ "Letter Landscape"  ; thundt tested on LaserJet 5M
+ {
+  "108x51"
+  {
+   "paper-x" = "108"
+   "paper-y" = "51"
+   "sof" = "\eE\e&l0L\e&l0E\e&a0L\e&l1O"
+  }
+  "213x93"
+  {
+   "paper-x" = "213"
+   "paper-y" = "93"
+   "sof" = "\eE\e&l0L\e&l0E\e&a0L\e&l1O\e(s0P\e(s20H\e&l4C" ; new
+  }
+  "245x93"
+  {
+   "paper-x" = "245"
+   "paper-y" = "93"
+   "sof" = "\eE\e&l0L\e&l0E\e&a0L\e&l1O\e(s0P\e(s24H\e(s6V\e&l4C"
+  }
+ } ; Letter Landscape
 }
 

@@ -1301,11 +1301,11 @@ define-macro Match-It
         bhook-match-it
     !endif
     ; Set the screen size
-    !if &les $screen-depth 45
-        45 change-screen-depth
+    !if &les $frame-depth 45
+        45 change-frame-depth
     !endif
-    !if &les $screen-width 90
-        90 change-screen-width
+    !if &les $frame-width 90
+        90 change-frame-width
     !endif
     !if &equ :mi-status 4
         mi-main-menu

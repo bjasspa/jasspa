@@ -19,8 +19,15 @@ define-macro expand-abbrev-handle
         !return
     !endif        
     ; Try iso accents
-    !if &or :iso-accents .iso-accents-mode.on
-        !force iso-accents-expand
+    !if &or :iso-accents .expand-iso-accents.on
+        !force expand-iso-accents
+        !if $status
+            ; Quit - we found an expansion.
+            !return
+        !endif
+    !endif
+    !if .expand-look-back.on
+        !force expand-look-back
         !if $status
             ; Quit - we found an expansion.
             !return
@@ -32,16 +39,16 @@ define-macro expand-abbrev-handle
     !elif &exi &set #l0 &cat &rig $buffer-fhook 6 "-expand-abbrev"
         ; if buffer has an fhook specific abbrev expander use that
         execute-named-command #l0
-    !elif .spell-complete-word.on
-        ; else if enabled, use spell-complete-word
-        spell-complete-word
+    !elif .expand-word.on
+        ; else if enabled, use expand-word
+        expand-word
     !endif
 !emacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; iso-accents-expand routines
+; expand-iso-accents routines
 
-define-macro iso-accents-expand
+define-macro expand-iso-accents
     !if &not &set #l0 &lfind "|+-|12|14|34|ae|AE|`a|^a|'a|\"a|~a|.a|co|`e|^e|'e|\"e|`i|^i|'i|\"i|~n|oe|`o|^o|'o|\"o|~o|/o|rg|sz|tm|`u|^u|'u|\"u|\"y|'y|`A|^A|'A|\"A|~A|.A|`E|^E|'E|\"E|`I|^I|'I|\"I|~N|OE|`O|^O|'O|\"O|~O|/O|`U|^U|'U|\"U|\"Y|'Y|^!|^?|" &mid @wl &sub $window-col 2 2
         !abort
     !endif
@@ -58,8 +65,8 @@ define-macro iso-accents-expand
 
 define-macro iso-accents-mode
     !if &not @?
-        set-variable .on &bxor .on 1
-        ml-write &spr "[Global iso-accents-mode is now %s]" &cond .on "on" "off"
+        set-variable .expand-iso-accents.on &bxor .expand-iso-accents.on 1
+        ml-write &spr "[Global iso-accents-mode is now %s]" &cond .expand-iso-accents.on "on" "off"
     !else
         set-variable :iso-accents &bxor :iso-accents 1
         ml-write &spr "[Buffer iso-accents-mode is now %s]" &cond :iso-accents "on" "off"
@@ -67,9 +74,38 @@ define-macro iso-accents-mode
 !emacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; spell-complete-word routines
+; expand-look-back routine
 
-define-macro spell-complete-word
+define-macro expand-look-back
+    set-position "\x81"
+    backward-char
+    !if &inw @wc
+        forward-char
+        set-variable #l1 $window-col
+        backward-word
+        set-variable #l2 &sub #l1 $window-col
+        set-variable #l1 &mid @wl $window-col #l2
+        str-to-regex #l1
+        set-variable #l1 &spr "\\<%s\\w*" #l1
+        set-variable #l0 &cond &bmod "magic" 1 -1
+        1 buffer-mode "magic"
+        !force -100 search-backward #l1
+        !if $status
+            #l0 buffer-mode "magic"
+            goto-position "\x81"
+            insert-string &rig @s0 #l2
+            !return
+        !endif
+        #l0 buffer-mode "magic"
+    !endif
+    goto-position "\x81"
+    !abort
+!emacro
+set-variable .expand-look-back.on 1
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; expand-word routines
+
+define-macro expand-word
     backward-char
     !if &inw @wc
         ; Invoke the rules to setup spell
@@ -83,8 +119,8 @@ define-macro spell-complete-word
         set-variable #l8 $window-col
         set-variable #l9 &sub #l3 #l8
         set-variable #l4 &mid @wl $window-col #l9
-        !force 0 delete-buffer "*spell-complete*"
-        find-buffer "*spell-complete*"
+        !force 0 delete-buffer "*expand-word*"
+        find-buffer "*expand-word*"
         set-variable $find-words &cat #l4 ".*"
         !while &not &seq "" &set #l5 $find-words
             insert-string #l5
@@ -99,9 +135,9 @@ define-macro spell-complete-word
         set-variable $window-col #l3
         3 show-region
         2 screen-update
-        !force !force set-variable #l5 @ml6a "spell-complete-word" #l4 "*spell-complete*"
+        !force !force set-variable #l5 @ml6a "expand-word" #l4 "*expand-word*"
         !if &not $status
-            0 delete-buffer "*spell-complete*"
+            0 delete-buffer "*expand-word*"
             !abort
         !endif
         #l9 backward-delete-char

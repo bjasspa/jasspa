@@ -7,7 +7,7 @@
 ; Synopsis:    JST export macros
 ; Authors:     Steven Phillips
 ;
-define-macro jst-prepare-header
+0 define-macro jst-prepare-header
     -1 buffer-mode "exact"
     beginning-of-buffer
     search-forward "^[^>]"
@@ -31,7 +31,306 @@ define-macro jst-prepare-header
     !endif        
 !emacro
 
-define-macro jst-insert-bullet-string
+0 define-macro jst-prepare-images
+    beginning-of-buffer
+    replace-string "^>[ \t]*image\\(-left\\)?:[ \t]*\\(.+\\)$" "\bTIL\\2\btI"
+    beginning-of-buffer
+    replace-string "^>[ \t]*image-center:[ \t]*\\(.+\\)$" "\bTIC\\1\btI"
+    beginning-of-buffer
+    replace-string "^>[ \t]*image-right:[ \t]*\\(.+\\)$" "\bTIR\\1\btI"
+!emacro
+
+0 define-macro jst-prepare-tables
+    beginning-of-buffer
+    replace-string "^>[ \t]*table:?[ \t]*$" "\n\bLI\bTTB\bTTR\bTTC\n"
+    beginning-of-buffer
+    replace-string "^>[ \t]*/[ \t]*table:?[ \t]*$" "\n\bLI\btTC\btTR\btTB\n"
+    beginning-of-buffer
+    replace-string "^>[ \t]*tr:?[ \t]*$" "\n\bLI\btTC\btTR\bTTR\bTTC\n"
+    beginning-of-buffer
+    replace-string "<<tr>>" "\n\n\bLI\btTC\btTR\bTTR\bTTC\n\n"
+    beginning-of-buffer
+    replace-string "^>[ \t]*tc:?[ \t]*$" "\n\bLI\btTC\bTTC\n"
+    beginning-of-buffer
+    replace-string "<<tc>>" "\n\n\bLI\btTC\bTTC\n\n"
+!emacro
+
+0 define-macro jst-prepare-toc-content
+    set-variable #l9 0
+    set-variable #l8 1
+    set-variable #l0 $window-line
+    beginning-of-buffer
+    !force search-forward "\bS\\([0-9]\\)\\(\bHT\\([^\b]*\\)\bhT\\)?\\(.*\\)\bs\\1"
+    !while $status
+        set-variable #l1 $window-line
+        set-variable #l2 @s1
+        set-variable #l3 @s4
+        !if &seq @s2 ""
+            3 backward-char
+            set-variable #l4 &spr "JST_TOC_%d" &inc #l9 1
+            insert-string "\bht"
+            search-backward "\bS"
+            3 forward-char
+            insert-string &spr "\bHT%s\bhT" #l4
+        !else
+            set-variable #l3 &rep #l3 "\bht" ""
+            set-variable #l4 @s3
+        !endif
+        set-variable $window-line #l0
+        !if &les #l2 #l8
+            backward-line
+            end-of-line
+            insert-string &spr "%n" &sub #l8 #l2 "\blT"
+            forward-line
+            beginning-of-line
+        !endif
+        insert-string &spr "%n\bHL#%s\bhL%s\bhl\n" &sub #l2 #l8 "\bLT" #l4 #l3
+        set-variable #l0 $window-line
+        set-variable #l8 #l2
+        set-variable $window-line #l1
+        !if &gre #l1 #l0
+            forward-line
+        !endif
+        end-of-line
+        !force search-forward "\bS\\([0-9]\\)\\(\bHT\\([^\b]*\\)\bhT\\)?\\(.*\\)\bs\\1"
+    !done
+    set-variable $window-line #l0
+    !if &gre #l8 1
+        backward-line
+        end-of-line
+        insert-string &spr "%n" &sub #l8 1 "\blT"
+    !endif
+!emacro
+
+0 define-macro jst-prepare-toc
+    beginning-of-buffer
+    !force search-forward "^>[ \t]*toc\\(:\\(.*\\)\\|[ \t]*\\)$"
+    !while $status
+        set-variable #l0 &trb @s2
+        beginning-of-line
+        set-mark
+        end-of-line
+        kill-region
+        -1 yank
+        set-variable #l1 $window-line
+        jst-prepare-toc-content
+        !if &gre $window-line #l1
+            insert-string "\bpF\bst"
+            set-variable $window-line #l1
+            insert-string &spr "\bST%s\bsT\n\n\bPF" &cond &seq #l0 "" "Contents" #l0
+        !endif
+        !force search-forward "^>[ \t]*toc\\(:\\(.*\\)\\|[ \t]*\\)$"
+    !done
+!emacro
+
+0 define-macro jst-prepare-inserts
+    set-variable #l9 $buffer-bname
+    !if .fhook-jst.insert-emphasis
+        read-registry "print" &find "jstprint" ".erf" "r"
+        execute-file "printf"
+    !endif
+    beginning-of-buffer
+    !force search-forward "^>\\([a-zA-Z]+\\)>"
+    !while $status
+        !if &seq &set #l0 @s1 "end"
+            ; skip an end and this could be the end to a literal text block
+            !force search-forward "^>\\([a-zA-Z]+\\)>"
+            !continue
+        !endif
+        set-variable #l1 $window-line
+        set-variable #l2 $window-col
+        #l2 backward-delete-char
+        -1 yank
+        !if &not &seq &trb @wl ""
+            #l2 insert-space
+        !endif
+        !force search-forward "^>end>"
+        !if &not $status
+            ml-write &spr "[Error: missing end to >%s> insert]" #l0
+            !abort
+        !endif
+        set-variable #l2 $window-col
+        #l2 backward-delete-char
+        -1 yank
+        !if &not &seq &trb @wl ""
+            insert-newline
+            #l2 insert-space
+            beginning-of-line
+            backward-line
+        !endif
+        !if .fhook-jst.insert-emphasis
+            !if &exi &cat "fhook-" #l0
+                set-mark
+                set-variable $window-line #l1
+                kill-region
+                !force 0 delete-buffer "*jst-tmp2*"
+                find-buffer "*jst-tmp2*"
+                yank
+                execute-named-command &cat "fhook-" #l0
+                print-buffer
+                !force 0 delete-buffer "*jst-tmp2*"
+                !force 0 find-buffer "*jst-tmp3*"
+                !if $status
+                    -1 yank
+                    1 clean
+                    beginning-of-buffer
+                    set-mark
+                    end-of-buffer
+                    copy-region
+                    !force 0 delete-buffer "*jst-tmp3*"
+                !endif
+                find-buffer #l9
+                set-variable $window-line #l1
+                yank
+                -1 yank
+            !endif
+        !endif
+        set-mark
+        !force search-backward "\\S "
+        forward-char
+        insert-string "\bpM"
+        set-variable $window-line #l1
+        !force search-forward "\\S "
+        backward-char
+        insert-string "\bPM"
+        set-variable $window-line #l1
+        4 narrow-buffer
+        !force search-forward "^>\\([a-zA-Z]+\\)>"
+    !done
+!emacro
+
+0 define-macro jst-prepare-fixed-paragraphs
+    beginning-of-buffer
+    !force search-forward "^\n>[.!@]+\\(>\\)?"
+    !while $status
+        set-variable #l0 @s0
+        set-variable #l4 @s1
+        set-variable #l1 $window-line
+        set-variable #l2 $window-col
+        set-variable #l3 &cond &sin "@" #l0 "M" "F"
+        !force search-forward "\\S "
+        backward-char
+        insert-string &cat "\bP" #l3
+        !if &seq #l4 ""
+            forward-paragraph
+        !else
+            !force search-forward "^>end>"
+            !if &not $status
+                ml-write &spr "[Error: missing end to %s insert]" &rig #l0 1
+                !abort
+            !endif
+            5 backward-delete-char
+            -1 yank
+            backward-char
+        !endif
+        insert-string &cat "\bp" #l3
+        !if &not &sin "." #l0
+            beginning-of-line
+            forward-line
+            set-mark
+            set-variable $window-line #l1
+            #l2 forward-delete-char
+            -1 yank
+            !if &sin @wc " \t"
+                #l2 insert-space
+            !endif
+            4 narrow-buffer
+        !endif
+        !force search-forward "^\n>[.!@]+\\(>\\)?"
+    !done
+!emacro
+
+0 define-macro jst-prepare-hide-fixed-paragraphs
+    beginning-of-buffer
+    !force search-forward "^\n>[.!@]+\\(>\\)?"
+    !while $status
+        set-variable #l2 $window-col
+        #l2 backward-delete-char
+        -1 yank
+        !if &sin @wc " \t"
+            #l2 insert-space
+        !endif
+        beginning-of-line
+        set-mark
+        search-forward "\bp"
+        forward-paragraph
+        beginning-of-line
+        forward-line
+        4 narrow-buffer
+        !force search-forward "^\n>[.!@]+\\(>\\)?"
+    !done
+!emacro
+
+0 define-macro jst-prepare-lcr-paragraphs
+    beginning-of-buffer
+    !force search-forward "^\n[ \t]*\\(\\S .*\\)$"
+    !while $status
+        set-variable #l0 &len @s1
+        ; is the line is short enough to be left, centred or right
+        !if &les #l0 &div $fill-col 2
+            ; check the position of the text in the line, is it to the left, right or centred?
+            !if &equ $window-acol $fill-col
+                beginning-of-line
+                insert-string ">."
+                search-forward "[ \t]*"
+                insert-string "\bPR"
+                search-forward "^$\\|\\'"
+                backward-char
+                insert-string "\bpR"
+            !elif &equ $window-col #l0
+                ; check this is not a comment or fixed paragraph
+                !if &not &or &seq &lef @wl 1 ">" &sin "\bP" @wl
+                    ; only bother with left if the next line has text
+                    forward-line
+                    ; checkthere is a letter in there, this could be a title underline
+                    !if &xse @wl ".*\\w.*"
+                        backward-line
+                        beginning-of-line
+                        insert-string ">."
+                        insert-string "\bPL"
+                        search-forward "^$\\|\\'"
+                        backward-char
+                        insert-string "\bpL"
+                    !endif
+                !endif
+            !elif &equ &sub $window-acol &div #l0 2 &div &add $fill-col 1 2
+                beginning-of-line
+                insert-string ">."
+                search-forward "[ \t]*"
+                insert-string "\bPC"
+                search-forward "^$\\|\\'"
+                backward-char
+                insert-string "\bpC"
+            !endif 
+        !endif
+        !force search-forward "^\n[ \t]*\\(\\S .*\\)$"
+    !done
+!emacro
+
+0 define-macro jst-prepare-quote-tags
+    beginning-of-buffer
+    !force search-forward "<<\\(.\\)>>"
+    !while $status
+        set-variable #l0 @s1
+        5 backward-delete-char
+        -1 yank
+        insert-string &spr "\bQ%02x" &atoi #l0
+        !force search-forward "<<\\(.\\)>>"
+    !done
+!emacro
+
+0 define-macro jst-prepare-quotes
+    beginning-of-buffer
+    !force search-forward "\bQ\\(..\\)"
+    !while $status
+        4 backward-delete-char
+        -1 yank
+        insert-string &itoa &cat "0x" @s1
+        !force search-forward "\bQ\\(..\\)"
+    !done
+!emacro
+
+0 define-macro jst-insert-bullet-string
     set-variable #l0 &add @1 1
     set-variable @1 #l0
     set-variable #l1 @2
@@ -55,7 +354,19 @@ define-macro jst-insert-bullet-string
     !endif
 !emacro
 
-define-macro jst-prepare-section
+0 define-macro jst-prepare-items
+    beginning-of-buffer
+    replace-string "^\n\\([ \t]*\\)\\[\\(\\S [^]\n]*\\)][ \t]+\\(\\S \\)" "\n\\1\bBI\\2\bbI\\3"
+    beginning-of-buffer
+    !force search-forward "\bbI"
+    !while $status
+        forward-paragraph
+        insert-string "\bbi"
+        !force search-forward "\bbI"
+    !done
+!emacro
+
+0 define-macro jst-prepare-bullets
     ; Identify bullet lists
     ; indent tolerance
     set-variable #l9 &div $tabsize 2
@@ -96,7 +407,8 @@ define-macro jst-prepare-section
         set-variable #l2 0
         !repeat
             forward-line
-            !if &not &seq @wl ""
+            !if &seq @wl ""
+            !elif &not &seq &lef @wl 3 "\bLI"
                 beginning-of-line
                 !force -1 search-forward #l3
                 !if $status
@@ -142,7 +454,9 @@ define-macro jst-prepare-section
         end-of-line
         !force &sub $window-line #p1 search-forward "^\n[ \t]*\\(\\*\\|[0-9]+[]).]\\|[a-zA-Z][]).]\\|[ivxlc]+[]).]\\)[ \t]+\\S "
     !done
-    
+!emacro
+
+0 define-macro jst-prepare-section
     ; find the indent of the first non-blank line (possibly a header) and use
     ; this as a base line 
     set-variable $window-line #p0
@@ -154,45 +468,12 @@ define-macro jst-prepare-section
         set-variable #l3 0
     !endif
     
-    set-variable $window-line #p0
-    !if #p2
-        search-forward "^[ \t]*"
-        $window-col backward-delete-char
-        -1 yank
-        search-forward "^[0-9.]*"
-        set-variable #l2 @s0
-        !if &seq &rig #l2 &sub &len #l2 2 ".0"
-            backward-delete-char
-            backward-delete-char
-            set-variable #l2 &lef #l2 &sub &len #l2 2
-            !if &seq #l2 "0"
-                ; === header line 
-                backward-delete-char
-                forward-delete-char
-            !elif &seq #l2 "0.0"
-                ; --- header line 
-                backward-delete-char
-                backward-delete-char
-                backward-delete-char
-                forward-delete-char
-            !endif
-        !endif
-        beginning-of-line
-        !if &gre &len #l2 &len &rep #l2 "." ""
-            insert-string "\bS3"
-            end-of-line
-            insert-string "\bs3"
-        !else
-            insert-string "\bS2"
-            end-of-line
-            insert-string "\bs2"
-        !endif
-        forward-line
-    !endif
     set-variable #l2 0
     set-variable #l4 #l3
+    set-variable $window-line #p0
     !while &les $window-line #p1
-        !if &not &seq @wl ""
+        !if &seq @wl ""
+        !elif &not &seq &lef @wl 3 "\bLI"
             beginning-of-line
             search-forward "^[ \t]*"
             set-variable #l5 $window-acol
@@ -213,21 +494,10 @@ define-macro jst-prepare-section
                 set-variable $window-line #l6
                 set-variable #l2 &sub #l2 1
             !endif
-            forward-line
-            !if &seq @wl ""
-                ; a one line paragraph
-                backward-line
-                beginning-of-line
-                search-forward "^\\(\bLT\\)*"
-                insert-string "\bLP"
-                end-of-line
-                insert-string "\blP"
-            !else
+            beginning-of-line
+            !if &set #l7 &sin "\bP" @wl
                 ; a no-format paragraph
-                backward-line
-                beginning-of-line
-                search-forward "^\\(\b..\\)*"
-                insert-string "\bLC"
+                set-variable #l7 &mid @wl &add #l7 1 1
                 !repeat
                     search-forward "^[ \t]*"
                     !if &gre $window-acol #l5
@@ -235,13 +505,23 @@ define-macro jst-prepare-section
                     !endif
                     $window-col backward-delete-char
                     -1 yank
+                    !force -1 search-forward "\bP."
+                    insert-string &cat "\bN" #l7
+                    end-of-line
+                    !force -1 search-backward "\bp."
+                    set-variable #l8 $status
+                    insert-string &cat "\bn" #l7
+                    beginning-of-line
                     forward-line
-                !until &seq @wl ""
-                search-backward "\\S "
-                forward-char
-                insert-string "\blC"
+                !until #l8
+                backward-line
+            !else
+                ; a normal paragraph down to one line
+                search-forward "^\\(\bLT\\)*"
+                insert-string "\bPP"
+                end-of-line
+                insert-string "\bpP"
             !endif
-            forward-line
         !endif
         forward-line
     !done
@@ -262,55 +542,160 @@ define-macro jst-prepare-doc
     jst-prepare-header
     ; must use exact
     1 buffer-mode "exact"
-    ; Find any dividing lines
+    ; handle code inserts
+    jst-prepare-inserts
+    ; handle unformated paragraphs
+    jst-prepare-fixed-paragraphs
+    ; handle centered and right justified paragraphs
+    jst-prepare-lcr-paragraphs
+    ; handle tags
+    jst-prepare-quote-tags
+    ; change the <<ftype>> tag to the output extension
+    beginning-of-buffer
+    replace-string "<<ftype>>" &rig $buffer-fname &rsin "." $buffer-fname
+    ; Find any dividing lines and page breaks - could get confused with underline
     beginning-of-buffer
     replace-string "^\n___+\n\n?" "\n\bLL\n\n"
     beginning-of-buffer
     replace-string "^\n---+\n\n?" "\n\bLL\n\n"
-    ; replace any === & --- header lines with 0.0 & 0.0.0 sections
     beginning-of-buffer
-    replace-string "^\\(.*\\S .*\\)\n===+\n\n?" "0.0 \\1\n\n"
-    beginning-of-buffer
-    replace-string "^\\(.*\\S .*\\)\n---+\n\n?" "0.0.0 \\1\n\n"
+    replace-string "^\n\x0c\n\n?" "\n\bLP\n\n"
+    ; Note that the searching for bold and other section should reflect the hilight
     ; change bold *....* to easily found labels
     beginning-of-buffer
-    replace-string "\\([^*]\\)\\*\\([^ \t*]\\([^*\n]\\|\\*\\*\\)*\\)\\*" "\\1\bFB\\2\bfB"
-    ; change italic ~....~ to easily found labels
+    replace-string "\\*\\(\\S [^*\n]*\\)\\*" "\bFB\\1\bfB"
     beginning-of-buffer
-    replace-string "\\([^~]\\)~\\([^ \t~]\\([^~\n]\\|~~\\)*\\)~" "\\1\bFI\\2\bfI"
+    replace-string "<<fb>>" "\bFB"
+    beginning-of-buffer
+    replace-string "<</fb>>" "\bfB"
+    beginning-of-buffer
+    replace-string "^>[ \t]*fb:?[ \t]*$" "\n\bLI\bFB\n"
+    beginning-of-buffer
+    replace-string "^>[ \t]*/[ \t]*fb:?[ \t]*$" "\n\bLI\bfB\n"
+    ; change italic ~....~ & <<fi>>....<</fi>> to easily found labels
+    beginning-of-buffer
+    replace-string "~\\(\\S [^~\n]*\\)~" "\bFI\\1\bfI"
+    beginning-of-buffer
+    replace-string "<<fi>>" "\bFI"
+    beginning-of-buffer
+    replace-string "<</fi>>" "\bfI"
+    beginning-of-buffer
+    replace-string "^>[ \t]*fi:?[ \t]*$" "\n\bLI\bFI\n"
+    beginning-of-buffer
+    replace-string "^>[ \t]*/[ \t]*fi:?[ \t]*$" "\n\bLI\bfI\n"
     ; change underline _...._ to easily found labels
     beginning-of-buffer
-    replace-string "\\([^_]\\)_\\([^ \t_]\\([^_\n]\\|__\\)*\\)_" "\\1\bFU\\2\bfU"
+    replace-string "_\\(\\S [^_\n]*\\)_" "\bFU\\1\bfU"
+    beginning-of-buffer
+    replace-string "<<fu>>" "\bFU"
+    beginning-of-buffer
+    replace-string "<</fu>>" "\bfU"
+    beginning-of-buffer
+    replace-string "^>[ \t]*fu:?[ \t]*$" "\n\bLI\bFUM\n"
+    beginning-of-buffer
+    replace-string "^>[ \t]*/[ \t]*fu:?[ \t]*$" "\n\bLI\bfU\n"
+    ; change courier @....@ to easily found labels
+    beginning-of-buffer
+    replace-string "@\\(\\S [^@\n]*\\)@" "\bFM\\1\bfM"
+    beginning-of-buffer
+    replace-string "<<fm>>" "\bFM"
+    beginning-of-buffer
+    replace-string "<</fm>>" "\bfM"
+    beginning-of-buffer
+    replace-string "^>[ \t]*fm:?[ \t]*$" "\n\bLI\bFM\n"
+    beginning-of-buffer
+    replace-string "^>[ \t]*/[ \t]*fm:?[ \t]*$" "\n\bLI\bfM\n"
     ; change hilight `....' to easily found labels
     beginning-of-buffer
-    replace-string "\\([^`]\\)`\\(\\([^']\\|''\\)*\\)'" "\\1\bFH\\2\bfH"
+    replace-string "`\\([^']*\\)'" "\bFH\\1\bfH"
+    beginning-of-buffer
+    replace-string "<<fh>>" "\bFH"
+    beginning-of-buffer
+    replace-string "<</fh>>" "\bfH"
+    beginning-of-buffer
+    replace-string "^>[ \t]*fh:?[ \t]*$" "\n\bLI\bFH\n"
+    beginning-of-buffer
+    replace-string "^>[ \t]*/[ \t]*fh:?[ \t]*$" "\n\bLI\bfH\n"
+    ; sort out targets and links
+    beginning-of-buffer
+    replace-string "<<hname:[ \t]*\\(\\([^>]\\|>[^>]\\)*\\)>>" "\bHT\\1\bhT"
+    beginning-of-buffer
+    replace-string "<</hname>>" "\bht"
+    beginning-of-buffer
+    replace-string "<<href:[ \t]*\\(\\([^>]\\|>[^>]\\)*\\)>>" "\bHL\\1\bhL"
+    beginning-of-buffer
+    replace-string "<</href>>" "\bhl"
+    ; handle any tables
+    jst-prepare-tables    
+    ; now narrow out any remaining unformated paragraphs
+    jst-prepare-hide-fixed-paragraphs
+    ; replace any === & --- header lines with section ids
+    beginning-of-buffer
+    replace-string "^\\([ \t]*\\)\\(\\S .*\\)\n===+$" "\\1\bS2\\2\bs2"
+    beginning-of-buffer
+    replace-string "^\\([ \t]*\\)\\(\\S .*\\)\n---+$" "\\1\bS3\\2\bs3"
+    ; replace any #.0 & #.#* header lines with section ids
+    beginning-of-buffer
+    replace-string "^\\([ \t]*\\)\\([0-9]+\\)\\.0\\([ \t]+\\S .*\\)$" "\\1\bS2\\2\\3\bs2"
+    beginning-of-buffer
+    replace-string "^\\([ \t]*\\)\\([0-9]+\\.[0-9]+\\)\\([ \t]+\\S .*\\)$" "\\1\bS3\\2\\3\bs3"
+    beginning-of-buffer
+    replace-string "^\\([ \t]*\\)\\([0-9]+\\.[0-9.]+[ \t]+\\S .*\\)$" "\\1\bS4\\2\bs4"
+    ; replace any 'Appendix #' header lines with section ids
+    beginning-of-buffer
+    replace-string "^\\([ \t]*\\)\\(Appendix [[:alpha:]].*\\)$" "\\1\bS2\\2\bs2"
+    ; identify items before reducing paragraphs to 1 line or split [...] make become items
+    jst-prepare-items
     ; format all paragraphs to a single line
     beginning-of-buffer
     65536 paragraph-to-line
-    ; remove any 'don't format paragraph tokens
-    beginning-of-buffer
-    replace-string "^>\\." "  "
-    beginning-of-buffer
-    replace-string "^>_" "  "
-    beginning-of-buffer
-    replace-string "^>@" "  "
+    ; handle any images
+    jst-prepare-images    
+    ; Generate any required tocs 
+    jst-prepare-toc
     ; remove any comment lines
     beginning-of-buffer
     replace-string "^>.*\n" ""
-    ; loop through each section trying to normalize the indentation
+    
+    ; loop through each section sorting out any bullets
     beginning-of-buffer
-    ; delete-blank-lines - doesn't work!
+    set-variable #l0 1
+    !repeat
+        end-of-line
+        !force search-forward "\bS"
+        !if $status
+            beginning-of-line
+        !else
+            end-of-buffer
+        !endif
+        set-variable #l1 $window-line
+        jst-prepare-bullets
+        set-variable #l0 #l1
+        set-variable $window-line #l0
+    !until &seq @wc ""
+    
+    ; remove any remaining tags including padding tags
+    beginning-of-buffer
+    replace-string "<<.*>>" ""
+    ; remove the narrowed out inerts and paragraphs
+    !force 1 narrow-buffer
+    ; restore any quotes
+    jst-prepare-quotes
+    ; remove any blank lines at the top of the buffer
+    beginning-of-buffer
+    ; delete-blank-lines - doesn't work at the top of a buffer!
     set-mark
     search-forward "\\S "
     beginning-of-line
     kill-region
     -1 yank
+    ; loop through each section trying to normalize the indentation
     ; is the first line a section or normal line
     set-variable #l0 1
-    set-variable #l2 &xse @wl "^[ \t]*[0-9]+\\.[0-9.]*[ \t]+\\S .*"
+    set-variable #l2 &sin "\bS" @wl
     !repeat
         end-of-line
-        !force search-forward "^\n[ \t]*[0-9]+\\.[0-9.]*[ \t]+\\S "
+        !force search-forward "\bS"
         !if $status
             beginning-of-line
         !else
@@ -321,68 +706,48 @@ define-macro jst-prepare-doc
         set-variable #l0 #l1
         set-variable $window-line #l0
     !until &seq @wc ""
+    beginning-of-buffer
+    replace-string "\n?\n?\bLI\\(.*\\)\n\n?" "\\1"
 !emacro
 
-define-macro jst-to-text
-    set-position "\x83"
-    set-variable #l0 @ml01 "Export to txt file"
-    set-variable #l1 $buffer-bname
-    beginning-of-buffer
-    set-mark
-    end-of-buffer
-    copy-region
-    !force 0 delete-buffer "*jst-tmp*"
-    find-buffer "*jst-tmp*"
-    yank
-    -1 yank
-    jst-prepare-header
-    ; must use exact
-    1 buffer-mode "exact"
-    ; Find any dividing lines
-    beginning-of-buffer
-    replace-string "^\n___+\n\n?" &spr "\n%n\n\n" $fill-col "_"
-    beginning-of-buffer
-    replace-string "^\n---+\n\n?" &spr "\n%n\n\n" $fill-col "_"
-    ; remove bold *....* labels
-    beginning-of-buffer
-    replace-string "\\([^*]\\)\\*\\([^ \t*]\\([^*\n]\\|\\*\\*\\)*\\)\\*" "\\1\\2"
-    ; remove italic ~....~ labels
-    beginning-of-buffer
-    replace-string "\\([^~]\\)~\\([^ \t~]\\([^~\n]\\|~~\\)*\\)~" "\\1\\2"
-    ; remove underline _...._ labels
-    beginning-of-buffer
-    replace-string "\\([^_]\\)_\\([^ \t_]\\([^_\n]\\|__\\)*\\)_" "\\1\\2"
-    ; remove hilight `....' labels
-    beginning-of-buffer
-    replace-string "\\([^`]\\)`\\(\\([^']\\|''\\)*\\)'" "\\1\\2"
-    ; remove any 'don't format paragraph tokens
-    beginning-of-buffer
-    replace-string "^>\\." "  "
-    beginning-of-buffer
-    replace-string "^>_" "  "
-    beginning-of-buffer
-    replace-string "^>@" "  "
-    ; remove any comment lines
-    beginning-of-buffer
-    replace-string "^>.*\n" ""
-    !if &exi :title
-        beginning-of-buffer
-        insert-string &spr "%n%s\n" &div &sub $fill-col &len :title 2 " " :title
+define-macro jst-export-get-filename
+    set-variable #l0 @2
+    !if &band @# 2
+        set-variable #l1 &stat "a" &cat &lef $buffer-fname &rsin "/" $buffer-fname "."
+    !else
+        set-variable #l1 @ml01 &spr "Export to %s file" #l0
     !endif
-    !force !force write-buffer #l0 @mna
-    set-variable #l3 $status
-    0 delete-buffer $buffer-bname
-    goto-position "\x83"
-    !if &not #l3
+    !if &seq &rig #l1 &rsin "/" #l1 ""
+        ; directory given
+        !if &seq $buffer-fname ""
+            set-variable #l2 $buffer-bname
+        !else
+            set-variable #l2 &rig $buffer-fname &rsin "/" $buffer-fname
+        !endif
+        !if &set #l3 &risin ".jst" #l2
+            set-variable #l2 &lef #l2 &sub #l3 1
+        !endif
+        set-variable #l1 &spr "%s%s.%s" #l1 #l2 #l0
+    !endif
+    !if &not &stat "w" #l1
+        ml-write &spr "[Invalid file name \"%s\"]" #l1
         !abort
+    !elif &band @# 1
+        !if &seq &stat "t" #l1 "R"
+            !if &iseq @mc1 &spr "Over-write file %s (y/n) ? " #l1 "yYnN" "n"
+                !abort
+            !endif
+        !endif
     !endif
-    ml-write &spr "[Export to %s complete]" #l0
+    set-variable @1 #l1 
+    ml-write &spr "[Exporting to %s]" #l1
 !emacro
 
 define-macro jst-to-html
     set-position "\x83"
-    set-variable #l0 @ml01 "Export to htm file"
+    @# jst-export-get-filename #l0 "htm"
     set-variable #l1 $buffer-bname
+    set-variable #l2 $fill-col
     beginning-of-buffer
     set-mark
     end-of-buffer
@@ -391,6 +756,8 @@ define-macro jst-to-html
     find-buffer "*jst-tmp*"
     yank
     -1 yank
+    set-variable $buffer-fname #l0
+    set-variable $fill-col #l2
     jst-prepare-doc
     beginning-of-buffer
     replace-string "&" "&amp;"
@@ -398,8 +765,50 @@ define-macro jst-to-html
     replace-string "<" "&lt;"
     beginning-of-buffer
     replace-string ">" "&gt;"
+    ; in TOC we have a reduce indent followed by NL, i.e. </DIR><BR>,
+    ; this will lead to a blank line so lose the NL
+    beginning-of-buffer
+    !force search-forward "\bST"
+    !while $status
+        set-variable #l3 $window-line
+        search-forward "\bst"
+        set-variable #l4 $window-line
+        set-variable $window-line &add #l3 1
+        &sub #l3 #l4 replace-string "\blT\bnF$" "\blT"
+        !force search-forward "\bST"
+    !done
     beginning-of-buffer
     replace-string "\bLL" "<HR>"
+    beginning-of-buffer
+    ; HTML does not support a concept of page breaks
+    replace-string "\bLP" ""
+    ; sort out images as they are surrounded by \bPP...\bpP
+    beginning-of-buffer
+    replace-string "\btI\bpP\n\bPP\bTI" "\">\n\bPP\bTI"
+    beginning-of-buffer
+    replace-string "\btI\bpP" "\"><BR clear=all>"
+    beginning-of-buffer
+    replace-string "\bPP\bTIL" "<IMG ALIGN=LEFT SRC=\""
+    beginning-of-buffer
+    replace-string "\bPP\bTIC\\(.*\\)<BR" "<CENTER><IMG SRC=\"\\1</CENTER><BR"
+    beginning-of-buffer
+    replace-string "\bPP\bTIC\\(.*\\)$" "<CENTER><IMG SRC=\"\\1</CENTER>"
+    beginning-of-buffer
+    replace-string "\bPP\bTIR" "<IMG ALIGN=RIGHT SRC=\""
+    ; Now sort out tables
+    beginning-of-buffer
+    replace-string "\bTTB" "<CENTER><TABLE BORDER=\"1\">\n"
+    beginning-of-buffer
+    replace-string "\btTB" "</TABLE></CENTER>"
+    beginning-of-buffer
+    replace-string "\bTTR" "<TR>\n"
+    beginning-of-buffer
+    replace-string "\btTR" "</TR>\n"
+    beginning-of-buffer
+    replace-string "\bTTC" "<TD>"
+    beginning-of-buffer
+    replace-string "\btTC" "</TD>\n"
+    ; sort out the font changes
     beginning-of-buffer
     replace-string "\bFB" "<B>"
     beginning-of-buffer
@@ -417,17 +826,41 @@ define-macro jst-to-html
     beginning-of-buffer
     replace-string "\bfH" "</I></B>"
     beginning-of-buffer
+    replace-string "\bFM" "<FONT FACE=\"Courier New\">"
+    beginning-of-buffer
+    replace-string "\bfM" "</FONT>"
+    beginning-of-buffer
     replace-string "\bLT" "<DIR>"
     beginning-of-buffer
     replace-string "\blT" "</DIR>"
     beginning-of-buffer
-    replace-string "\bLP" "<P>"
+    replace-string "\bPM" "<PRE>"
     beginning-of-buffer
-    replace-string "\blP" "</P>"
+    replace-string "\bpM" "</PRE>"
     beginning-of-buffer
-    replace-string "\bLC" "<PRE>"
+    replace-string "\bNM" ""
     beginning-of-buffer
-    replace-string "\blC" "</PRE>"
+    replace-string "\bnM" ""
+    beginning-of-buffer
+    replace-string "\bP[PFL]" "<P>"
+    beginning-of-buffer
+    replace-string "\bPC" "<P ALIGN=\"center\">"
+    beginning-of-buffer
+    replace-string "\bPR" "<P ALIGN=\"right\">"
+    beginning-of-buffer
+    replace-string "\bpP" "</P>"
+    beginning-of-buffer
+    replace-string "\bn[FLCR]\bp[FLCR]" "</P>"
+    beginning-of-buffer
+    replace-string "\bN[FLCR]" ""
+    beginning-of-buffer
+    replace-string "\bn[FLCR]" "<br>"
+    beginning-of-buffer
+    replace-string "\bBI" ""
+    beginning-of-buffer
+    replace-string "\bbI" "<BR><UL>"
+    beginning-of-buffer
+    replace-string "\bbi" "</UL>"
     beginning-of-buffer
     replace-string "\bBE\bBD" "<UL>\bBD"
     beginning-of-buffer
@@ -477,13 +910,31 @@ define-macro jst-to-html
     beginning-of-buffer
     replace-string "\bbN" "</LI>"
     beginning-of-buffer
-    replace-string "\bS2" "<H2><P>"
+    replace-string "\bHT" "<A NAME=\""
     beginning-of-buffer
-    replace-string "\bs2" "</P></H2>"
+    replace-string "\bhT" "\">"
+    beginning-of-buffer
+    replace-string "\bht" "</A>"
+    beginning-of-buffer
+    replace-string "\bHL\\(file:\\)?" "<A HREF=\""
+    beginning-of-buffer
+    replace-string "\bhL" "\">"
+    beginning-of-buffer
+    replace-string "\bhl" "</A>"
+    beginning-of-buffer
+    replace-string "\bS[2T]" "<H2><P>"
+    beginning-of-buffer
+    replace-string "\bs[2T]" "</P></H2>"
+    beginning-of-buffer
+    replace-string "\bst" ""
     beginning-of-buffer
     replace-string "\bS3" "<H3><P>"
     beginning-of-buffer
     replace-string "\bs3" "</P></H3>"
+    beginning-of-buffer
+    replace-string "\bS4" "<H4><P>"
+    beginning-of-buffer
+    replace-string "\bs4" "</P></H4>"
     beginning-of-buffer
     insert-string "<HTML>\n<HEAD>\n"
     !if &exi :title
@@ -500,7 +951,7 @@ define-macro jst-to-html
     !endif
     end-of-buffer
     insert-string "</BODY>\n</HTML>"
-    !force !force write-buffer #l0 @mna
+    !force !force 0 write-buffer #l0 @mna
     set-variable #l3 $status
     0 delete-buffer $buffer-bname
     goto-position "\x83"
@@ -512,8 +963,9 @@ define-macro jst-to-html
 
 define-macro jst-to-rtf
     set-position "\x83"
-    set-variable #l0 @ml01 "Export to rtf file"
+    @# jst-export-get-filename #l0 "rtf"
     set-variable #l1 $buffer-bname
+    set-variable #l2 $fill-col
     beginning-of-buffer
     set-mark
     end-of-buffer
@@ -522,6 +974,8 @@ define-macro jst-to-rtf
     find-buffer "*jst-tmp*"
     yank
     -1 yank
+    set-variable $buffer-fname #l0
+    set-variable $fill-col #l2
     jst-prepare-doc
     beginning-of-buffer
     replace-string "\\\\" "\\\\\\\\"
@@ -529,6 +983,23 @@ define-macro jst-to-rtf
     replace-string "{" "\\\\{"
     beginning-of-buffer
     replace-string "}" "\\\\}"
+    ; sort out images as they are surrounded by \bPP...\bpP
+    ; combined left justified images only
+    beginning-of-buffer
+    replace-string "\btI\bpP\n\bPP\bTIL" "\btI\bpP\bPP\bTIL"
+    beginning-of-buffer
+    replace-string "\bPP\bTIL\\([^\b]*\\)\btI\bpP" "{\\\\field{\\\\fldinst {INCLUDEPICTURE \\\\\\\\d \\\\\\\\z \"\\1\"}}}"
+    beginning-of-buffer
+    replace-string "\bPP\bTIC\\([^\b]*\\)\btI\bpP" "\bPC{\\\\field{\\\\fldinst {INCLUDEPICTURE  \\\\\\\\d  \\\\\\\\z \"\\1\"}}}\bpC"
+    beginning-of-buffer
+    replace-string "\bPP\bTIR\\([^\b]*\\)\btI\bpP" "\bPR{\\\\field{\\\\fldinst {INCLUDEPICTURE  \\\\\\\\d  \\\\\\\\z \"\\1\"}}}\bpR"
+    ; turn items into simple new line and indent commands
+    beginning-of-buffer
+    replace-string "\bBI" ""
+    beginning-of-buffer
+    replace-string "\bbI" "\n\bLT"
+    beginning-of-buffer
+    replace-string "\bbi" "\blT"
     set-variable #l2 0
     beginning-of-buffer
     !while &not &seq @wc ""
@@ -548,6 +1019,9 @@ define-macro jst-to-rtf
     beginning-of-buffer
     replace-string "^.*\bLL.*" "\\\\pard {\\\\shp{\\\\shpleft0\\\\shptop240\\\\shpright9360\\\\shpbottom241\\\\shpbypara}}"
     beginning-of-buffer
+    ; Page breaks are on their own line, remove it and the next
+    replace-string "^.*\bLP.*\n\\(.*\\)?\\(\n\\\\par\\)?" "\\\\pard\\\\page"
+    beginning-of-buffer
     replace-string "\bFB" "{\\\\b "
     beginning-of-buffer
     replace-string "\bfB" "}"
@@ -564,13 +1038,27 @@ define-macro jst-to-rtf
     beginning-of-buffer
     replace-string "\bfH" "}"
     beginning-of-buffer
-    replace-string "\bLP" ""
+    replace-string "\bFM" "{\\\\f1 "
     beginning-of-buffer
-    replace-string "\blP" ""
+    replace-string "\bfM" "}"
     beginning-of-buffer
-    replace-string "\bLC" "{\\\\f1 "
+    replace-string "\bPM" "{\\\\f1 "
     beginning-of-buffer
-    replace-string "\blC" "}"
+    replace-string "\bpM" "}"
+    beginning-of-buffer
+    replace-string " ?\bPC" "\\\\qc "
+    beginning-of-buffer
+    replace-string " ?\bPR" "\\\\qr "
+    beginning-of-buffer
+    replace-string "\bP[PFL]" ""
+    beginning-of-buffer
+    replace-string "\bp[CR]\\(.*\n\\\\par\\)" "\\1\\\\ql"
+    beginning-of-buffer
+    replace-string "\bp[PFL]" ""
+    beginning-of-buffer
+    replace-string "\bN[MFLCR]" ""
+    beginning-of-buffer
+    replace-string "\bn[MFLCR]" ""
     beginning-of-buffer
     replace-string "\bBE" ""
     beginning-of-buffer
@@ -582,17 +1070,33 @@ define-macro jst-to-rtf
     beginning-of-buffer
     replace-string "\bB[AaRrN]\\(.\\)\\([^\b]*\\)\bB)" "\\2\\1\\\\tab "
     beginning-of-buffer
-    replace-string "\bS2" "{\\\\fs36\\\\b "
+    replace-string "\bHT\\(\\([^\b]\\|\b[^hH]\\)*\\)\bhT\\(\\([^\b]\\|\b[^hH]\\)*\\)\bht" "{\\\\bkmkstart \\1}\\3{\\\\bkmkend \\1}"
     beginning-of-buffer
-    replace-string "\bs2" "}"
+    replace-string "\bHL\\(file:\\)?\\([^#\b]*\\)#" "{\\\\field{\\\\fldinst {HYPERLINK \"\\2\" \\\\\\\\l \""
+    beginning-of-buffer
+    replace-string "\bHL\\(file:\\)?" "{\\\\field{\\\\fldinst {HYPERLINK \""
+    beginning-of-buffer
+    replace-string "\bhL" "\"}}{\\\\fldrslt {\\\\ul\\\\cf2 "
+    beginning-of-buffer
+    replace-string "\bhl" "}}}"
+    beginning-of-buffer
+    replace-string "\bS[2T]" "{\\\\fs36\\\\b "
+    beginning-of-buffer
+    replace-string "\bs[2T]" "}"
+    beginning-of-buffer
+    replace-string "\bst" ""
     beginning-of-buffer
     replace-string "\bS3" "{\\\\fs28\\\\b "
     beginning-of-buffer
     replace-string "\bs3" "}"
     beginning-of-buffer
+    replace-string "\bS4" "{\\\\b "
+    beginning-of-buffer
+    replace-string "\bs4" "}"
+    beginning-of-buffer
     insert-string "{\\rtf1\\ansi\\ansicpg1252\\deff0\\deftab360\\viewscale100\n"
     insert-string "{\\fonttbl{\\f0\\froman Times New Roman;}{\\f1\\fmodern Courier New;}{\\f2\\froman\\fcharset2 Symbol;}}\n"
-    insert-string "{\\colortbl\\red0\\green0\\blue0;}\n{\\info"
+    insert-string "{\\colortbl;\\red0\\green0\\blue0;\\red0\\green0\\blue255;}\n{\\info"
     !if &exi :title
         insert-string &spr "{\\title %s}" :title
     !else
@@ -603,12 +1107,12 @@ define-macro jst-to-rtf
     !endif
     insert-string "}\n"
     !if &exi :title
-        insert-string &spr "\\f0\\fs48 %s\n\\par" :title
+        insert-string &spr "\\qc\\f0\\fs48 %s\n\\par\\ql" :title
     !endif
     insert-string "\\f0\\fs20 "
     end-of-buffer
     insert-string "}"
-    !force !force write-buffer #l0 @mna
+    !force !force 0 write-buffer #l0 @mna
     set-variable #l3 $status
     0 delete-buffer $buffer-bname
     goto-position "\x83"
@@ -618,4 +1122,414 @@ define-macro jst-to-rtf
     ml-write &spr "[Export to %s complete]" #l0
 !emacro
 
+define-macro jst-to-latex
+    set-position "\x83"
+    @# jst-export-get-filename #l0 "tex"
+    set-variable #l1 $buffer-bname
+    set-variable #l2 $fill-col
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    copy-region
+    !force 0 delete-buffer "*jst-tmp*"
+    find-buffer "*jst-tmp*"
+    yank
+    -1 yank
+    set-variable $buffer-fname #l0
+    set-variable $fill-col #l2
+    jst-prepare-doc
+    beginning-of-buffer
+    replace-string "\\\\" "\\\\textbackslash"
+    beginning-of-buffer
+    replace-string "{" "\\\\{"
+    beginning-of-buffer
+    replace-string "}" "\\\\}"
+    beginning-of-buffer
+    replace-string "%" "\\\\%"
+    beginning-of-buffer
+    replace-string "\bLL" "\\\\hline"
+    beginning-of-buffer
+    replace-string "\bLP" "\\\\newpage"
+    ; sort out images as they are surrounded by \bPP...\bpP
+    beginning-of-buffer
+    replace-string "\btI\bpP\n\bPP\bTI" "\">\n\bPP\bTI"
+    beginning-of-buffer
+    replace-string "\btI\bpP" "\"><BR clear=all>"
+    beginning-of-buffer
+    replace-string "\bPP\bTIL" "<IMG ALIGN=LEFT SRC=\""
+    beginning-of-buffer
+    replace-string "\bPP\bTIC\\(.*\\)<BR" "<CENTER><IMG SRC=\"\\1</CENTER><BR"
+    beginning-of-buffer
+    replace-string "\bPP\bTIC\\(.*\\)$" "<CENTER><IMG SRC=\"\\1</CENTER>"
+    beginning-of-buffer
+    replace-string "\bPP\bTIR" "<IMG ALIGN=RIGHT SRC=\""
+    beginning-of-buffer
+    replace-string "\bFB" "{\\\\bf "
+    beginning-of-buffer
+    replace-string "\bfB" "}"
+    beginning-of-buffer
+    replace-string "\bFI" "{\\\\it "
+    beginning-of-buffer
+    replace-string "\bfI" "}"
+    beginning-of-buffer
+    replace-string "\bFU" "{\\\\ul "
+    beginning-of-buffer
+    replace-string "\bfU" "}"
+    beginning-of-buffer
+    replace-string "\bFH" "{\\\\bf {\\\\it "
+    beginning-of-buffer
+    replace-string "\bfH" "}}"
+    beginning-of-buffer
+    replace-string "\bFM" "{\\\\tt "
+    beginning-of-buffer
+    replace-string "\bfM" "}"
+    beginning-of-buffer
+    replace-string "\bLT" "<DIR>"
+    beginning-of-buffer
+    replace-string "\blT" "</DIR>"
+    beginning-of-buffer
+    replace-string "\bPM" "<PRE>"
+    beginning-of-buffer
+    replace-string "\bpM" "</PRE>"
+    beginning-of-buffer
+    replace-string "\bNM" ""
+    beginning-of-buffer
+    replace-string "\bnM" ""
+    beginning-of-buffer
+    replace-string "\bPP" ""
+    beginning-of-buffer
+    replace-string "\bpP" ""
+    beginning-of-buffer
+    replace-string "\bPF" "\\\\begin{verbatim}\n"
+    beginning-of-buffer
+    replace-string "\bpF" "\n\\\\end{verbatim}"
+    beginning-of-buffer
+    replace-string "\bPL" ""
+    beginning-of-buffer
+    replace-string "\bpL" ""
+    beginning-of-buffer
+    replace-string "\bPC" "\\\\begin{center}\n"
+    beginning-of-buffer
+    replace-string "\bnC\bpC" "\n\\\\end{center}"
+    beginning-of-buffer
+    replace-string "\bPR" "\\\\begin{right}\n"
+    beginning-of-buffer
+    replace-string "\bnR\bpR" "\n\\\\end{right}"
+    beginning-of-buffer
+    replace-string "\bN[FLCR]" ""
+    beginning-of-buffer
+    replace-string "\bnF" ""
+    beginning-of-buffer
+    replace-string "\bn[LCR]" "\\\\\\\\"
+    beginning-of-buffer
+    replace-string "\bBI" "\\\\item["
+    beginning-of-buffer
+    replace-string "\bbI" "]"
+    beginning-of-buffer
+    replace-string "\bbi" ""
+    beginning-of-buffer
+    replace-string "\bBE\bBD" "\\\\begin{itemize}\n\bBD"
+    beginning-of-buffer
+    replace-string "\bbD\bbE" "\n\\\\end{itemize}"
+    beginning-of-buffer
+    replace-string "\bBD" "\\\\item "
+    beginning-of-buffer
+    replace-string "\bbD" ""
+    beginning-of-buffer
+    replace-string "\bBE\bBA" "<OL TYPE=\"A\">\bBA"
+    beginning-of-buffer
+    replace-string "\bbA\bbE" "\bbA</OL>"
+    beginning-of-buffer
+    replace-string "\bBA[^\b]*\bB)" "<LI>"
+    beginning-of-buffer
+    replace-string "\bbA" "</LI>"
+    beginning-of-buffer
+    replace-string "\bBE\bBa" "<OL TYPE=\"a\">\bBa"
+    beginning-of-buffer
+    replace-string "\bba\bbE" "\bba</OL>"
+    beginning-of-buffer
+    replace-string "\bBa[^\b]*\bB)" "<LI>"
+    beginning-of-buffer
+    replace-string "\bba" "</LI>"
+    beginning-of-buffer
+    replace-string "\bBE\bBR" "<OL TYPE=\"I\">\bBR"
+    beginning-of-buffer
+    replace-string "\bbR\bbE" "\bbR</OL>"
+    beginning-of-buffer
+    replace-string "\bBR[^\b]*\bB)" "<LI>"
+    beginning-of-buffer
+    replace-string "\bbR" "</LI>"
+    beginning-of-buffer
+    replace-string "\bBE\bBr" "<OL TYPE=\"i\">\bBr"
+    beginning-of-buffer
+    replace-string "\bbr\bbE" "\bbr</OL>"
+    beginning-of-buffer
+    replace-string "\bBr[^\b]*\bB)" "<LI>"
+    beginning-of-buffer
+    replace-string "\bbr" "</LI>"
+    beginning-of-buffer
+    replace-string "\bBE\bBN" "\\\\begin{enumerate}\n\bBN"
+    beginning-of-buffer
+    replace-string "\bbN\bbE" "\n\\\\end{enumerate}"
+    beginning-of-buffer
+    replace-string "\bBN[^\b]*\bB)" "\\\\item "
+    beginning-of-buffer
+    replace-string "\bbN" ""
+    ; LaTeX does not support hyper-links - remove
+    beginning-of-buffer
+    replace-string "\bHT[^\b]*\bhT" ""
+    beginning-of-buffer
+    replace-string "\bht" ""
+    beginning-of-buffer
+    replace-string "\bHL[^\b]*\bhL" ""
+    beginning-of-buffer
+    replace-string "\bhl" ""
+    beginning-of-buffer
+    replace-string "\bS[2T]" "\\\\section{"
+    beginning-of-buffer
+    replace-string "\bs[2T]" "}"
+    beginning-of-buffer
+    replace-string "\bst" ""
+    beginning-of-buffer
+    replace-string "\bS3" "\\\\subsection{"
+    beginning-of-buffer
+    replace-string "\bs3" "}"
+    beginning-of-buffer
+    replace-string "\bS4" "\\\\subsubsection{"
+    beginning-of-buffer
+    replace-string "\bs4" "}"
+    beginning-of-buffer
+    insert-string "% Generator - MicroEmacs JST\n"
+    insert-string "% tex header\n"
+    !if &exi :title
+        insert-string &spr "\\title{%s}\n" :title
+    !else
+        insert-string &spr "\\title{%s}\n" #l1
+    !endif
+    !if &exi :author
+        insert-string &spr "\\author{%s}\n" :author
+    !endif
+    !if &exi :title
+        insert-string &spr "\\part{%s}\n" :title
+    !endif
+    !force !force 0 write-buffer #l0 @mna
+    set-variable #l3 $status
+    0 delete-buffer $buffer-bname
+    goto-position "\x83"
+    !if &not #l3
+        !abort
+    !endif
+    ml-write &spr "[Export to %s complete]" #l0
+!emacro
 
+define-macro jst-to-text
+    set-position "\x83"
+    @# jst-export-get-filename #l0 "txt"
+    set-variable #l1 $buffer-bname
+    set-variable #l2 $fill-col
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    copy-region
+    !force 0 delete-buffer "*jst-tmp*"
+    find-buffer "*jst-tmp*"
+    yank
+    -1 yank
+    set-variable $buffer-fname #l0
+    set-variable $fill-col #l2
+    jst-prepare-doc
+    set-variable $fill-col 78
+    set-variable $fill-mode "b"
+    1 buffer-mode "justify"
+    ; strip out hyperlinks and images
+    beginning-of-buffer
+    replace-string "\bHT\\(\\([^\b]\\|\b[^hH]\\)*\\)\bhT\\(\\([^\b]\\|\b[^hH]\\)*\\)\bht" "\\3"
+    beginning-of-buffer
+    replace-string "\bHL\\(\\([^\b]\\|\b[^hH]\\)*\\)\bhL\\(\\([^\b]\\|\b[^hH]\\)*\\)\bhl" "\\3"
+    beginning-of-buffer
+    replace-string "\bTI\\([^\b]*\\)\btI" ""
+    ; turn items into simple new line and indent commands
+    beginning-of-buffer
+    replace-string "\bBI" ""
+    beginning-of-buffer
+    replace-string "\bbI" "\n\bLT"
+    beginning-of-buffer
+    replace-string "\bbi" "\blT"
+    ; Sort out the section headers, always indent the text in a section
+    set-variable #l2 0
+    beginning-of-buffer
+    !force 1 replace-string "\bS\\([234T]\\)\\(.*\\)\bs[234T]" "\\2"
+    !while $status
+        set-variable #l3 @s1
+        set-variable #l4 &len @s2
+        set-variable #l5 $window-line
+        beginning-of-line
+        !force -1 replace-string "\bPP" ""
+        !force -1 replace-string "\bpP" ""
+        !if #l2
+            search-backward "\bp"
+            end-of-line
+            insert-string "\blT"
+            set-variable $window-line #l5
+            set-variable #l2 0
+        !endif
+        end-of-line
+        !if &seq #l3 "2"
+            insert-newline
+            #l4 insert-string "="
+        !elif &seq #l3 "T"
+            insert-newline
+            #l4 insert-string "="
+        !elif &seq #l3 "3"
+            insert-newline
+            #l4 insert-string "-"
+        !endif
+        ; check the text is indented
+        !force search-forward "\bP"
+        !if &and $status &not &sin "\bS" @wl
+            !if &not &sin "\bL" @wl
+                beginning-of-line
+                insert-string "\bLT"
+                set-variable #l2 1
+            !endif
+        !endif
+        !force 1 replace-string "\bS\\([234T]\\)\\(.*\\)\bs[234T]" "\\2"
+    !done
+    beginning-of-buffer
+    replace-string "\bs[2T]" ""
+    beginning-of-buffer
+    replace-string "\bst" ""
+    beginning-of-buffer
+    replace-string "\bS3" ""
+    beginning-of-buffer
+    replace-string "\bs3" ""
+    beginning-of-buffer
+    replace-string "\bS4" ""
+    beginning-of-buffer
+    replace-string "\bs4" ""
+    set-variable #l2 0
+    beginning-of-buffer
+    !while &not &seq @wc ""
+        set-variable #l3 &len @wl
+        -1 replace-string  "\bLT" ""
+        beginning-of-line
+        set-variable #l4 &len @wl
+        set-variable #l2 &add #l2 &div &sub #l3 #l4 3
+        -1 replace-string  "\blT" ""
+        beginning-of-line
+        set-variable #l4 &sub #l2 &div &sub #l4 &len @wl 3
+        &mul #l2 4 insert-space
+        beginning-of-line
+        forward-line
+        set-variable #l2 #l4
+    !done
+    ; sort out the bullets
+    beginning-of-buffer
+    replace-string "\bBE" ""
+    beginning-of-buffer
+    replace-string "\bbE" ""
+    ; Handle simple * bullets
+    beginning-of-buffer
+    set-variable #l4 "y"
+    !force 1 replace-string "\bBD" "  * "
+    !while $status
+        beginning-of-line
+        !force -1 replace-string "\bPP" ""
+        !force -1 replace-string "\bpP" ""
+        beginning-of-line
+        !if &set #l3 &sin "\bbD" @wl
+            !force -1 replace-string "\bbD" ""
+            beginning-of-line
+        !endif
+        1 fill-paragraph #l4
+        !if #l3
+            set-variable #l4 "y"
+            !force 1 replace-string "\bBD" "  * "
+        !else
+            search-forward "\bP"
+            beginning-of-line
+            insert-string "    "
+            set-variable #l4 "n"
+        !endif
+    !done
+    beginning-of-buffer
+    set-variable #l4 "y"
+    !force 1 replace-string "\bB[AaRrN]\\(.\\)\\([^\b]*\\)\bB)" "\\2\\1"
+    !while $status
+        !if &seq #l4 "y"
+            set-variable #l6 &add &len @s1 &len @s2
+            !if &les #l6 4
+                set-variable #l5 4
+            !else
+                set-variable #l5 &add #l6 1
+            !endif
+            &sub #l5 #l6 insert-space
+        !else
+            #l5 insert-space
+        !endif
+        beginning-of-line
+        !force -1 replace-string "\bPP" ""
+        !force -1 replace-string "\bpP" ""
+        beginning-of-line
+        !if &set #l3 &sin "\bb" @wl
+            !force -1 replace-string "\bb[NAaRr]" ""
+            beginning-of-line
+        !endif
+        1 fill-paragraph #l4
+        !if #l3
+            set-variable #l4 "y"
+            !force 1 replace-string "\bB[AaRrN]\\(.\\)\\([^\b]*\\)\bB)" "\\2\\1"
+        !else
+            search-forward "\bP"
+            beginning-of-line
+            set-variable #l4 "n"
+        !endif
+    !done
+    beginning-of-buffer
+    replace-string "^.*\bLL.*" &spr "%n" $fill-col "_"
+    beginning-of-buffer
+    ; Page breaks are on their own line, remove it and the next
+    replace-string "^.*\bLP.*\n" "\x0c"
+    ; no font support
+    beginning-of-buffer
+    replace-string "\b[Ff][BIUHM]" ""
+    beginning-of-buffer
+    replace-string "\b[Nn][MFLCR]" ""
+    beginning-of-buffer
+    replace-string "\bp[PMFLCR]" ""
+    beginning-of-buffer
+    !force 1 replace-string "\bPP" ""
+    !while $status
+        1 fill-paragraph "n"
+        !force 1 replace-string "\bPP" ""
+    !done
+    beginning-of-buffer
+    set-variable $fill-mode "c"
+    !force 1 replace-string "\bPC" ""
+    !while $status
+        1 fill-paragraph "n"
+        !force 1 replace-string "\bPC" ""
+    !done
+    beginning-of-buffer
+    set-variable $fill-mode "r"
+    !force 1 replace-string "\bPR" ""
+    !while $status
+        1 fill-paragraph "n"
+        !force 1 replace-string "\bPR" ""
+    !done
+    beginning-of-buffer
+    replace-string "\bP[PMFLCR]" ""
+    beginning-of-buffer
+    !if &exi :title
+        insert-string &spr "%n%s\n" &div &sub $fill-col &len :title 2 " " :title
+        insert-string &spr "%n%n\n\n" &div &sub $fill-col &len :title 2 " " &len :title "="
+    !endif
+    !force !force 0 write-buffer #l0 @mna
+    set-variable #l3 $status
+    0 delete-buffer $buffer-bname
+    goto-position "\x83"
+    !if &not #l3
+        !abort
+    !endif
+    ml-write &spr "[Export to %s complete]" #l0
+!emacro
