@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac064.3,v 1.10 2005-01-16 19:40:40 jon Exp $
+.Id $Id: m3mac064.3,v 1.11 2005-01-23 11:20:44 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH buffer-init 3
@@ -135,7 +135,7 @@ second argument is the \fIetf\fR template name (see
 The  command  initializes  the  buffer,  using the  \fI.fhook-XXX\fR  variable
 information defined in the file.
 .PP
-.B buffer-init-fhooks
+.B buffer-init-hooks
 is invoked from the buffer file hook
 .Hl fhook fileHooks 2
 typically following the
@@ -144,11 +144,21 @@ call  this  macro   invokes   any  user   defined   file  hooks  of  the  form
 \fBmy-fhook-XXX\fR. User defined \fBmy-bhook-XXX\fR and \fBmy-ehook-XXX\fR are
 configured into the buffer space ready for execution.
 .PP
+.B buffer-init-hooks 
+must be placed in all \fBfhook-XXX\fR  macros to correctly initialize the file
+hooks. If this is not added then the "\fCmy-*hook-always\fR" macros may not be
+called correctly for buffers where the \fBfhook-XXX\fR has not been configured
+correctly.
+.PP
 .B buffer-init-fhook
 is  placed at the end of the hook file  definition  and  retrieves  additional
 configuration  information  from the  registry and the user  settings, it will
 also locate and load any user additions to the template by loading the file
 \fCmyXXX.emf\fR.
+.PP
+A set of global default file hooks may be defined of the form
+\fBmy-fhook-always\fR,    \fBmy-bhook-always\fR,   \fBmy-ehook-always\fR   and
+\fBmy-dhook-always\fR. These file hooks are global and invoked after the
 .SS "Execution Sequence"
 It is important to understand the execution sequence of the buffer hook files.
 On identifying a new file hook then the  \fChkXXX.emf\fR  file is fetched from
@@ -166,14 +176,32 @@ are defined in the context of the macro definition. See
 for more information on macro variables.
 .PP
 \fBfhook-XXX\fR   is  invoked  to  apply  hilighting,   buffer  key  bindings,
-indentation etc. to the newly loaded buffer.
+indentation etc. to a new buffer which has just been created.
+.PP
+\fBehook-XXX\fR is invoked when a buffer is swapped out. This may be used to
+save global variables that have been modified in the context of the buffer.
+.PP
+\fBbhook-XXX\fR  is invoked  when a buffer is swapped  in. This may be used to
+restore variables that are specific to a buffer to global variables.
+.PP
+\fBdhook-XXX\fR  is invoked  before a buffer is  deleted.  This may be used to
+clean up a buffer before it is destroyed.
+.PP
+.B "Extended file hooks"
+.br
+The buffer  hooks  \fC[fbed]hook-XXX\fR  may be  extended  by user  specific
+configuration in the form  \fCmy-[fbed]hook-any\fR,  these are invoked after
+the  primary  hook as been  invoked  and operate on all buffers  rather than a
+specific buffer type. The  \fImy-*hook-always\fR  mechanism is provided by the
+\fIbuffer-init\fR  macros  of  \fCbuffinit.emf\fR  rather  than  from the base
+command set of \*(mS.
 .SS "Configuration Masks"
 Buffer   initialization  is  controlled  by  the  settings  of  the  variables
 \fB.fhook-XXX.setup\fR and \fBfhook-XXX.setup-mask\fR:-
 .Me $emf-scheme
 .CS
 set-variable .fhook-XXX.setup &reg "/history" "fhook/XXX" "bdfghnopx"
-set-variable .fhook-XXX.setup-mask "abdefghikmnoptux>"
+set-variable .fhook-XXX.setup-mask "abdefghikmnoptux"
 .CE
 .Me $ehf-scheme
 The variables use an ASCII  configuration  string that identifies the modes of
@@ -202,12 +230,7 @@ mode for read only or authoring.
 .TP
 \fCd\fR \- Auto indentation operation.
 .\"
-Automatic indent is enabled. Where  \fIC-mode\fR  automatic indent is required
-(see
-.Ht indent 2 )
-then the flag \fC>\fR should be used in conjunction with
-the \fCd\fR flag, otherwise the indentation should be defined
-in the template using
+Automatic indent is enabled using
 .Ht indent 2 .
 .IP
 Where
@@ -245,10 +268,10 @@ by \fI.hilight.XXX\fR is attached to the buffer.
 .\"
 Support indentation using
 .Ht indent 2m .
-Automatic indentation defined with the \fCd\fR and optionally the \fC>\fR flag
-where the in-built \fIC-mode\fR indent (see 
+Automatic indentation (see
 .Ht indent 2 )
-is required. \fCi\fR enable indent, \fCJ\fR disable indent.
+is defined with the \fCd\fR flag.
+\fCi\fR enables indent, \fCI\fR disables indent.
 .TP
 \fCj\fR \- Justify
 Configure paragraph justification using
@@ -309,15 +332,6 @@ mode. \fCw\fR enable wrap, \fCW\fR disable wrap.
 Configure time stamping as defined by
 .Ht time 2m .
 .TP
-\fC>\fR \- Electric-c indentation.
-.\"
-A special internal flag indicating that indentation is
-to be performed using c-mode
-.Ht indent 2 .
-This option
-should only be used when the \fCd\fR flag is also defined.
-The flag should only be present in the \fI.setup-mask\fR\|.
-.TP
 \fC1\fR \- Reformatting hilighting
 .\"
 A special internal flag indicating that hilighting is used
@@ -368,8 +382,8 @@ template,  this is added to the menu. The tags  generation  is declared in the
 template by assigning the variable  \fB.fhook-XXX.tags\fR  with a command line
 to run tags utility. The command line string  should  commence  with a \fC!\fR
 character to tell \*(mS to execute an external command, for example to use the
-GNU 
-.Hr ctags 2 
+GNU
+.Hr ctags 2
 utility is defined as:-
 .Me $emf-scheme
 .CS
@@ -388,7 +402,7 @@ Some language templates include a macro \fItags\fR  facility to generate a tags 
 .Ht ntags 3f
 \- \fCntags.emf\fR).
 \fB.fhook-XXX.tags\fR  may be  defined  to use an internal macro  based  tags  generator
-rather than an external command. Without the '\fC!\fR' character the 
+rather than an external command. Without the '\fC!\fR' character the
 command line is assumed to be an \*(mS macro based and runs the command
 .CS
 me @<.tags-var-value> -v%tag-options=<options>
@@ -500,9 +514,9 @@ As \fBh\fR except the header line is right padded with
 Enable justification mode in the *comment* buffer and re-style.
 .BP "r"
 A restyle  key binding is added to the buffer  "\fC\*eo\fR"  and  "\fC\*eq\fR"
-buffer key bindings are added and bound to 
-.Ht comment-restyle 3 . 
-The \fBr\fR flag is only processed from the 
+buffer key bindings are added and bound to
+.Ht comment-restyle 3 .
+The \fBr\fR flag is only processed from the
 .RE
 .PP
 Examples of the comments format are shown below.
@@ -639,8 +653,8 @@ rem Comment to end of line
 Local buffer  commands and key bindings for  over-riding key definitions  used
 within the buffer are defined with the
 .C fhook-XXX.command-*
-variables.  These are defined as \*(mS list variables 
-(see 
+variables.  These are defined as \*(mS list variables
+(see
 .Ht &lfind 4 ,
 .Ht &lget 4 ,
 etc. for the full syntax  definition)  and define a list of keys, commands and
@@ -665,7 +679,7 @@ variable  should  contain a  readable  name for the  command to display in the
 menu. An optional hot key for selection in any
 .Hl osd osd 2
 is  specified by prefixing  the  character in the string with  \fC\\H\fR.
-.TP 
+.TP
 \fCh\fR \- Help Screen
 .\"
 Show the command in the help screen. The
@@ -752,10 +766,10 @@ define-macro XXX-comp
 The key bindings sometimes need to be protected where they have been redefined
 to perform  some other  operation  for example when  emulation  modes are used
 (i.e. \fBnedit\fR, \fBme3.8\fR). The buffer initialisation uses the command
-.B buffer-bind-create 
+.B buffer-bind-create
 and the variables
 .B .buffer-bind-create.map-from
-and 
+and
 .B .buffer-bind-create.map-to
 which  define  replacement  keys for  bindings. As an example the  \fBnedit\fR
 emulation  mode uses key binding  \fCC-c C-c\fR and provides a buffer  binding
@@ -775,9 +789,9 @@ within   the   buffer   indicating   a   folded   region.   A  folded   buffer
 typically  allows a summary of the buffer contents to be viewed within several
 windows, hiding the detail of the buffer.
 .PP
-Note: 
+Note:
 .B collapse
-was called 
+was called
 .B fold
 in earlier  releases  but the name was changed when real fold editing  support
 was added, see \fCfold.emf\fR for more information.
@@ -938,10 +952,10 @@ The collapsed version of the same section appears as:-
 proc tixControl:InitWidgetRec {w} { ... }
 .CE 0
 .RE
-Where folding is required using 
-.Ht fold-open 3 
+Where folding is required using
+.Ht fold-open 3
 then the  collapse  methods  above are not  enacted  when  folding is enabled.
-Folding may be enabled as defined by the 
+Folding may be enabled as defined by the
 .Hl "File Hooks" fileHooks 2 ,
 alternatively  the  folding  may be  explicitly  defined  using  the  variable
 \fI.fhook-XXX.fold\fR. The \fI.fhook-XXX.fold\fR  variable argument is defined
@@ -975,14 +989,14 @@ The comment termination string.
 The regular expression to find an open fold.
 .TP
 \fI<regex-find-close>\fR
-.\" 
+.\"
 The regular expression to find a close string.
 .LP
 As an  example,  a  language  may  have  the  following  syntax  for  defining
 folds:-
 .CS
 /* {{{ This is an example fold. */
-This is 
+This is
 the body
 of the fold
 /* }}} */
@@ -1049,6 +1063,18 @@ defined in the previous Hilighting section.
 !endif
 .CE 0
 .Me "$ehf-scheme"
+.SH HISTORY
+The January 2005 version of \*(mS introduced the following changes:
+.BS
+The \fCmy-*hook-always\fR  introduced allowing global file hooks to manipulate
+operate on any buffer.
+.BU
+The Electric-C indentation previously flagged as \fC>\fR was removed, as was
+.Hr cmode 2m .
+Indentation configuration for C mode is now performed by the
+.Ht indent 2
+command.
+.BE 0
 .SH "SEE ALSO"
 .na
 .Ht $buffer-hilight 5 ,
