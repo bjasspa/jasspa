@@ -711,9 +711,6 @@ insMacro(int f, int n)
     }
     nol += addLine(slp,(meUByte *)"!emacro") ;
     frameCur->bufferCur->lineCount += nol ;
-#if MEOPT_UNDO
-    meUndoAddInsChars(len) ;
-#endif
     meFrameLoopBegin() ;
     for (wp=loopFrame->windowList; wp!=NULL; wp=wp->next)
     {
@@ -727,6 +724,9 @@ insMacro(int f, int n)
         }
     }
     meFrameLoopEnd() ;
+#if MEOPT_UNDO
+    meUndoAddInsChars(len) ;
+#endif
     return meTRUE ;
 }
 #endif
