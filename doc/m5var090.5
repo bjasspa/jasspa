@@ -1,0 +1,263 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m5var090.5,v 2.1 2004-02-01 22:49:56 jon Exp $
+.Im MicroEmacs variable|file
+.so me.tni
+.TH $MEINSTALLPATH 5
+.XI $MEINSTALLPATH - "\*(mS system macros search path"
+.XI $MEPATH - "\*(mS search path"
+.XI $MEUSERPATH - "\*(mS user directory"
+.SH NAME
+.Me "|$MEINSTALLPATH"
+$MEINSTALLPATH \- \*(mS system macros search path
+.br
+.Me "|$MEPATH"
+$MEPATH \- \*(mS search path
+.br
+.Me "|$MEUSERPATH"
+$MEUSERPATH \- \*(mS user directory
+.Me $a
+.SH SYNOPSIS
+.sp
+.I "[Microsoft Windows/MS-DOS]"
+.br
+.B $MEINSTALLPATH
+\fI<path1>\fR\|\fB;\fR\|\fI<path2>\fR\fB;\fR....\fB;\fR\|\fI<pathn>\fR
+.br
+.B $MEPATH=
+\fI<path1>\fR\|\fB;\fR\|\fI<path2>\fR\fB;\fR....\fB;\fR\|\fI<pathn>\fR
+.br
+.B $MEUSERPATH
+\fI<path>\fR
+.sp
+.I "[UNIX]"
+.br
+.B $MEINSTALLPATH
+\fI<path1>\fR\|\fB:\fR\|\fI<path2>\fR\fB:\fR....\fB:\fR\|\fI<pathn>\fR
+.br
+.B $MEPATH=
+\fI<path1>\fR\|\fB:\fR\|\fI<path2>\fR\fB:\fR....\fB:\fR\|\fI<pathn>\fR
+.br
+.B $MEUSERPATH
+\fI<path>\fR
+.SH DESCRIPTION
+These  environment  variables  control the run-time search paths for \*(mS and
+affect the operation of 
+.Ht $search-path 5 
+and 
+.Ht $user-path 5 ,
+the macro search path and user macro directory respectively.
+.PP
+.B $MEINSTALLPATH
+is an environment  variable that overrides any internally  defined search path
+for \*(mS system macros and defines the root  directory(s)  of the  MicroEmacs
+system macros. The presence of the environment variable affects 
+.Ht $search-path 5 .
+.PP
+The environment variable 
+.B $MEINSTALLPATH 
+is ignored if 
+.B $MEPATH 
+is defined. The search path is always included after any 
+user path defined by 
+.Ht $user-name 5 .
+.PP
+.B $MEUSERPATH
+is an  environment  variable  that defines the users  private  directory  
+where user configuration files such as
+.Hl $user-name $user-name 5 \fB.emf\fR,
+.Hl $user-name $user-name 5 \fB.erf\fR
+and personal spelling  dictionaries are stored. This is an absolute  directory
+path. The environment variable sets the \*(mS variable
+.Ht $user-name 5 .
+.PP
+.B $MEPATH
+is an environment variable that may be used to define the absolute search path
+for \*(mS macro files and affects the setting of
+.BR $search-path .
+The path should include the system macros  location(s)  and should include the
+user directory location
+.Ht $user-path 5
+as the first path when the environment variable
+.Ht $MEUSERPATH 5
+is not defined. If  \fB$MEUSERPATH\fR  is defined  then this path name appears
+before the \fB$MEPATH\fR variable to define the user directory location.
+.B $MEPATH
+is not  searching,  so  \s-1ALL\s0  all  directories  to be  searched  must be
+included in the path specification.
+.PP
+.Ht $MEUSERPATH 5
+is the preferred method used to defined the user directory.
+.SS "Search Paths"
+\*(mS needs to know the installation  directory location(s) of its macro files
+when it executes,  this  includes  both user defined and system  macros. \*(mS
+performs a searching operation of well-known  directory locations where it may
+expect to find these macros at start up, the  locations  that it has found are
+saved in macro variables 
+.Ht $user-path 5 
+and 
+.Ht $search-path 5 
+and  are  used  to  subsequently  locate  files  thereafter.  The  environment
+variables  defined  here allow that default search process to be modified  
+by the user or system administrator. 
+.PP
+Directories  are  specified  as  \fIsearching\fR  if  a  search  operation  is
+performed. The following sub-directories of a base directory are 
+searched for the existence of subdirectories:
+.IP
+.I .
+\- root directory.
+.br
+.Hl $user-name $user-name 5 
+\- private user directory.
+.br
+.I company 
+\- company files.
+.br
+.I macros
+\- JASSPA standard macros.
+.br
+.I spelling
+\- spelling dictionaries.
+.LP
+\*(mS   performs  a  searching   operation  on  some   directories  to  locate
+information.  Generally,  if the  directory  exists then it is included in the
+search path, otherwise it is excluded. Any  subdirectories  that are found are
+added in the order presented above. The 
+.Hl $search-path $search-path 5
+is \s-1ONLY\s0 evaluated at start-up therefore directories created after \*(mS
+is running are not detected until the editor is closed down and re-started. 
+.SS UNIX
+The defined search paths for \s-1UNIX\s0 are defined as follows:-
+.PP
+Default install directories:-
+.IP
+.I /opt/jasspa
+\- searching (SunOS, HP-UX, AIX and IRIX only)
+.br
+.I /usr/share/jasspa
+\- searching
+.br
+.I /usr/local/share/jasspa
+\- searching (BSD systems only)
+.br
+.I /usr/local/jasspa
+\- searching
+.LP
+The  default  user  location is defined as follows.
+.IP
+\fI$(passwd-home)/.jasspa\fR \- searching
+.PP
+\*(mS searches for user defined configuration files in this directory and will
+write new user  configuration  files to this  directory.  The behaviour of the
+search may be over-ridden by setting some environment variables. 
+.TP 
+\fC$MEUSERPATH\fR  \- not searching
+.\"
+Specified as a single pathname and redefines the  \fI$user-path\fR  where user
+macros are placed, this overrides the  \fI$(passwd-home)/.jasspa\fR  directory
+location.
+.TP
+\fC$MEINSTALLPATH\fR \- searching
+.\"
+Specified as multiple  pathname  components and overrides the default  install
+directory location (i.e. \fC/usr/local/jasspa\fR, etc. Typically used when the
+system  macro  directory  has been  install  in another  location  that is not
+included in the default  search path. This does not affect the user  directory
+location.
+.TP
+\fC$MEPATH\fR \- not searching
+.\"
+Overrides the \fI$(passwd-home)/.jasspa\fR and default search paths (including
+\fC$MEINSTALLPATH\fR),  \*(mS will use this  directory as the search path. The
+user directory is assumed to be the \s-1FIRST\s0  directory path in the string
+unless the  \fC$MEUSERPATH\fR  environment variable is defined which specifies
+the user path.
+.SS "Microsoft Windows"
+he defined search paths for \s-1WINDOWS\s0 are defined as follows:-
+.IP
+Default search locations:-
+.IP
+\fIExecutable directory location\fR  \- searching
+.LP
+The default user  location is defined as follows.   \*(mS  searches  for user
+defined  configuration  files  in this  directory  and  will  write  new  user
+configuration files to this directory. 
+.IP
+\fI$APPDATA\\jasspa\fR \- not searching
+.LP
+If  the  system  does  not  define  a  user  application  data  location  
+(\fBWin95\fR and \fBWin32s\fR) then a directory 
+.Hl $user-name $user-name 5
+or the executable location is used.
+.PP
+The  behaviour may be  over-ridden  by setting the environment
+variables as follows: 
+.TP 
+\fC$MEUSERPATH\fR  \- not searching
+.\"
+Specified as a single  pathname and redefines the users home  directory,  this
+overrides the \fI$APPDATA\\jasspa\fR directory location.
+.TP
+\fC$MEINSTALLPATH\fR \- searching
+.\"
+Specified as multiple  pathname  components and overrides the default  install
+directory  location.  Typically used when the macro directory has been install
+in another  location that is not in the same directory as the executable. This
+does not affect the user directory location.
+.TP
+\fC$MEPATH\fR \- not searching
+.\"
+Overrides  the  \fI$APPDATA\\jasspa\fR  and  default  search  paths.
+\*(mS will use the \s-1FIRST\s0  directory path as the 
+.Hl $user-path $user-path 5 
+unless \fC$MEUSERPATH\fR  is defined. 
+.SS "MS-DOS"
+\s-1MS-DOS\s0 does not include a concept of a user name or user directory.
+.IP
+Default search locations:-
+.IP
+\fIExecutable directory location\fR  \- searching
+.LP
+If a sub-directory exists at the executable location with name
+.Hl $user-name $user-name 5 
+then this is used as 
+.Hl $user-path $user-path 5 ,
+otherwise the execution directory location is used.
+.PP
+The behaviour may be over-ridden using the environment variables. 
+.TP 
+\fC$MEUSERPATH\fR  \- not searching
+.\"
+Specified as a single  pathname and redefines the 
+.Hl $user-path $user-path 5 
+overriding the \fIexecutable\fR directory location.
+.TP
+\fC$MEINSTALLPATH\fR \- searching
+.\"
+Specified as multiple pathname components and overrides the default executable
+directory location. Typically used when the macro directory has been installed
+at a different  location that is not in the same directory as the  executable.
+This does not affect the user directory location.
+.TP
+\fC$MEPATH\fR \- not searching
+.\"
+Overrides the \fIExecutable...\fR and default search paths (including
+\fC$MEINSTALLPATH\fR). 
+\*(mS will use  \s-1FIRST\s0  directory path as the 
+.Hl $user-path $user-path 5 
+unless \fC$MEUSERPATH\fR  is defined. 
+.SH "SEE ALSO"
+.na
+.Ht me 1 ,
+.Ht $home 5 ,
+.Ht $progname 5
+.Ht $search-path 5 ,
+.Ht $user-name 5 ,
+.Ht emf 8 ,
+.Ht erf 8 .
+.ad
+.FH

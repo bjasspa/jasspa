@@ -1,0 +1,59 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m5var088.5,v 2.1 2004-02-01 22:49:56 jon Exp $
+.Im MicroEmacs variable|file
+.so me.tni
+.TH $user-name 5
+.XI $user-name - "\*(mS user name"
+.SH NAME
+$user\-name \- \*(mS user name
+.SH SYNOPSIS
+\fB$user\-name\fR
+.SH DESCRIPTION
+\fB$user-name\fR  is the  name  of the  \*(mS  user.  The  name  is  used  for
+identifying user configuration files such as \fI$user\-name\fR\|\fB.emf\fR and
+\fI$user\-name\fR\|\fB.erf\fR, the start-up
+.Hl user UserProfiles 2
+macro file and
+.Ht erf 8
+registry file that contains saved user preferences.
+.PP
+The \fB$user\-name\fR is determined as follows, in order of precedence:
+.BS
+The
+.Ht me 1
+command line option \fB-u\fR \fIusername\fR.
+.BU
+The environment variable
+.Ht MENAME 5
+(alternatively via \fC$LOGNAME\fR on Microsoft Windows platforms \s-1ONLY\s0).
+.BU
+The name determined from the system. On \s-1UNIX\s0 then the
+\fC/etc/passwd\fR entry is used, on MicroSoft Windows then the
+login name is used.
+.BU
+When no other name is located then  \fCuser\fR  is used (MS-DOS and  Microsoft
+Windows environments running without a login mechanism).
+.BE
+For most  conventional  \fIlogin\fR  systems  then the  correct  login name is
+retrieved  and it is not  necessary  to  over-ride  the name, unless a special
+configuration of \*(mS is being used.
+.SH NOTES
+The user should not attempt to write to \fB$user\-name\fR, the variable should
+be controlled through the aforementioned techniques.
+.PP
+\fB$user-name\fR was first introduced into \*(mS in the 2004 release.
+.SH "SEE ALSO"
+.na
+.Ht me 1 ,
+.Ht $home 5 ,
+.Ht $search-path 5 ,
+.Ht $user-path 5 ,
+.Ht $MENAME 5 ,
+.Ht emf 8 ,
+.Ht erf 8 .
+.ad
+.FH

@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m8fil003.8,v 2.5 2002-01-11 21:58:43 jon Exp $
+.Id $Id: m8fil003.8,v 2.6 2004-02-01 22:49:56 jon Exp $
 .Im MicroEmacs files
 .so me.tni
 .TH emf 8
@@ -45,16 +45,18 @@ Mouse interaction macros.
 OSD Menu configuration file.
 .SH FILES
 The default  start-up  file  \fBme.emf\fR  is located in the \*(mE  \fIhome\fR
-directory.
+directory
+.Ht $user-path 5 .
 .PP
 User's may create their own start-up and files in their local \*(mE directory.
-The users start-up file is called  \fI$LOGNAME\|\fB.emf\fR, and may be used to
-execute other macro files defined by the user.
+The users start-up file is called  
+.Hl $user-name $user-name 5 \fB.emf\fR,
+and may be used to execute other macro files defined by the user.
 .SH "SEE ALSO"
 .na
 .Hl "File Hooks" fileHooks 2 ,
 .Ht emftags 3f ,
-.Ht $MEPATH 5 ,
+.Ht $user-path 5 ,
 .Ht execute-file 2 .
 .ad
 .FH

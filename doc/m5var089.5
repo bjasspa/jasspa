@@ -1,0 +1,88 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m5var089.5,v 2.1 2004-02-01 22:49:56 jon Exp $
+.Im MicroEmacs variable|file
+.so me.tni
+.TH $user-path 5
+.XI $user-path - "\*(mS user directory"
+.SH NAME
+$user\-path \- \*(mS user directory
+.SH SYNOPSIS
+\fB$user\-path\fR
+.SH DESCRIPTION
+\fB$user\-path\fR  is  the  name  of  the  \*(mS  user  directory  where  user
+configuration      files      such      as
+.Hl $user-name $user-name 5 \fB.emf\fR,
+.Hl $user-name $user-name 5 \fB.erf\fR
+and personal spelling  dictionaries are stored. This is an absolute  directory
+path and is always terminated with a directory separator character \'\fC/\fR'.
+.PP
+The  value of the  variable  is  determined  when the  editor  is  started  as
+follows:
+.BS
+The environment variable
+.Ht $MEUSERPATH 5
+is defined,  the  \fB$user\-path\fR  is set to this value. If the  environment
+\fB$MEUSERPATH\fR  is  defined  without  a  trailing  \'\fC/\fR'  then  it  is
+automatically added.
+.BU
+The environment variable
+.Ht $MEPATH 5
+is defined  and
+.Ht $MEUSERPATH 5
+is undefined. The first directory in the \fB$MEPATH\fR variable is used as the
+\fB$user\-path\fR  directory. The use of \fB$MEPATH\fR is discouraged as it is
+less specific than  \fB$MEUSERPATH\fR  and my potentially not be what the user
+intended. This variable is retained for backwards  compatibility  with earlier
+releases of \*(mS.
+.BU
+The  directory is  determined  from the system:
+.br
+\fBUNIX\fR: the home directory from \fC/etc/passwd\fR entry is used and
+appended with \fC.jasspa\fR i.e. \fC$HOME/.jasspa\fR, if the sub-directory
+.Hl $user-name $user-name 5
+is    detected    in    this    directory    then    it   is   used    instead
+(\fC$HOME/.jasspa/$user\-name\fR).
+.br
+\fBMicrosoft  Windows\fR: the user application data directory is obtained from
+the system and appended with \fCjasspa\fR i.e.  \fC$APPDATA/jasspa\fR.  If the
+sub-directory
+.Hl $user-name $user-name 5
+is    detected    in    this    directory    then    it   is   used    instead
+(\fC$APPDATA/jasspa/$user\-name\fR).
+.br
+\fBMS-DOS\fR  and  older  versions  of  \fBMicrosoft\fR   \fBWindows\fR
+without \fIInternet\fR \fIExplorer\fR \fI4.0\fR then a sub-directory
+.Hl $user-name $user-name 5
+of the  program
+directory
+.Ht $progname 5
+is used.
+.BE
+For most  conventional  \fIlogin\fR  systems  then the  correct  user  path is
+retrieved and it is not necessary to over-ride the pathname,  unless a special
+configuration  of \*(mS is  being  used.  Where  the user  directory  is to be
+manually specified then
+.Ht $MEUSERPATH 5
+is the preferred method.
+.SH NOTES
+The user should not attempt to write to \fB$user\-path\fR, the variable should
+be controlled through the aforementioned techniques.
+.SH "SEE ALSO"
+.na
+.Ht me 1 ,
+.Ht $home 5 ,
+.Ht $progname 5
+.Ht $search-path 5 ,
+.Ht $user-name 5 ,
+.Ht $MEINSTALLPATH 5 ,
+.Ht $MENAME 5 ,
+.Ht $MEPATH 5 ,
+.Ht $MEUSERPATH 5 ,
+.Ht emf 8 ,
+.Ht erf 8 .
+.ad
+.FH

@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var026.5,v 2.5 2002-01-11 21:58:43 jon Exp $
+.Id $Id: m5var026.5,v 2.6 2004-02-01 22:49:56 jon Exp $
 .Im MicroEmacs variable|file
 .so me.tni
 .TH $home 5
@@ -15,14 +15,31 @@ $home \- Users `home' directory location
 .B $home
 \fIdirectory\fR
 .SH DESCRIPTION
-The file naming  convention  utilizes tilde  ('\fC~\fR') to identify the users
-home directory (\fC$HOME\fR). When entering a file name:
+.B $home
+contains the pathname of the users home directory. The file naming  convention
+utilizes tilde ('\fC~\fR') to identify the users home directory (\fC$HOME\fR).
+When entering a file name:
 .CS
 ~/xxx    -> $home/xxx
 ~yyy/xxx -> $home/../yyy/xxx
-.CE    
+.CE
 On  most  systems  this  is  automatically  set  to the  environment  variable
-"\s-1HOME\s0"  if it is defined or may be defined  explicitly  in the start-up
-file. '\fC~\fR' may be used in the \fCme.emf\fR files but must be specified as
-\'\fC~\fR'. It may be picked up in command files as \fB$home\fR.
+"\s-1HOME\s0" if it is defined. On systems (i.e. Microsoft  Windows or MS-DOS)
+where there may be no home  defined then the system user  directory is used by
+default. The value may be  explicitly  redefined  by the user in the  start-up
+file to be a different location. If \fB$home\fR is re-defined then ensure that
+a trailing directory separator is included at the end of the pathname. 
+.PP 
+\'\fC~\fR' may be used in pathname definitions in the 
+macro files, files but must be specified as  \'\fC~\fR', it is perhaps  better
+to use \fB$home\fR.
+.SH "SEE ALSO"
+.na
+.Ht $user-path 5 ,
+.Ht $user-name 5 ,
+.Ht $progname 5 ,
+.Ht $MENAME 5 ,
+.Ht $MEINSTALLPATH 5 ,
+.Hl "Variable Functions" Functions - .
+.ad
 .FH

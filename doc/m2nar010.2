@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Aug 20 22:34:10 1998
 .\"
-.Id $Id: m2nar010.2,v 2.1 2004-01-29 22:02:09 jon Exp $
+.Id $Id: m2nar010.2,v 2.2 2004-02-01 22:49:56 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .TH SearchPaths 1
@@ -98,26 +98,6 @@ if a name does not exists then \fI$MENAME\fR, otherwise \fIdefault\fR.
 .PP
 The  behaviour of the search may be  over-ridden  by setting some  environment
 variables. 
-.TP 
-\fC$MEUSERPATH\fR  \- not searching
-.\"
-Specified as a single  pathname and redefines the users home  directory,  this
-overrides the \fI\\My Documents...\fR directory location.
-.TP
-\fC$MEINSTALLPATH\fR \- searching
-.\"
-Specified as multiple  pathname  components and overrides the default  install
-directory  location.  Typically used when the macro directory has been install
-in another  location that is not in the same directory as the executable. This
-does not affect the user directory location.
-.TP
-\fC$MEPATH\fR \- not searching
-.\"
-Overrides the \fI\\My Documents...\fR and default search paths (including
-\fC$MEINSTALLPATH\fR), \*(mS will use this directory as the search path. The
-user directory is assumed to be the FIRST directory path in the string unless
-the \fC$MEUSERPATH\fR environment variable is defined which specifies the user
-directory.
 .SS "MS-DOS"
 \s-1MS-DOS\s0 has not concept of user directory or user name.
 .IP

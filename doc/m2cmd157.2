@@ -1,12 +1,12 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jul 16 23:13:14 1998
 .\"
-.Id $Id: m2cmd157.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd157.2,v 2.6 2004-02-01 22:49:56 jon Exp $
 .Im MicroEmacs command|registry
 .so me.tni
 .TH read-registry 2
@@ -35,8 +35,10 @@ the registry.
 .IP \fIfile\fR
 The name of the registry file
 .Ht erf 8
-to load. This may be an absolute,  relative or \fC$MEPATH\fR  specified  file;
-typically it is located on \fC$MEPATH\fR.
+to load. This may be an absolute,  relative or a
+.Ht $search-path 5 
+specified  file; typically it is located on 
+.Hl $search-path $search-path 5 .
 .IP \fImode\fR
 The  \fImode\fR  is string  specifying  the  registry  node loading and saving
 modes, each mode is  represented by a character.  Lower case  characters add a
@@ -85,7 +87,7 @@ retrieved.  Note that the name of the registry file is actually  retrieved from
 the \fIhistory\fR registry.
 .Me $emf-scheme
 .CS
-set-variable #l1 &reg "/history" "address" $MENAME
+set-variable #l1 &reg "/history" "address" $user-name
 !if &seq &set #l0 &find #l1 ".ab" "ERROR"
     set-variable #l0 &reg "/" "history" ""
     set-variable #l0 &spr "%s%s.ab" &lef #l0 &rsin "/" #l0 #l1
@@ -100,6 +102,7 @@ At exit only registry nodes attached to the root are saved.
 .Ht save-registry 2 ,
 .Ht list-registry 2 ,
 .Ht mark-registry 2 ,
+.Ht $search-path 5 ,
 .Ht erf 8 .
 .ad
 .FH

@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m8fil001.8,v 2.5 2002-01-11 21:58:43 jon Exp $
+.Id $Id: m8fil001.8,v 2.6 2004-02-01 22:49:56 jon Exp $
 .Im MicroEmacs files
 .so me.tni
 .TH etf 8
@@ -97,12 +97,13 @@ The default template files are located in the \*(mE \fIhome\fR directory.
 .PP
 User's may  specify  their own  template  files by  shadowing  the  \fIhome\fR
 directory file with their own file located in a personal \*(mE directory. See
-.Ht $MEPATH 5 .
+.Ht $user-path 5 .
 .SH "SEE ALSO"
 .na
 .Hl "File Hooks" fileHooks 2 .
 .br
 .Ht etfinsrt 3 ,
-.Ht &find 4 .
+.Ht &find 4 ,
+.Ht $user-path 5 .
 .ad
 .FH

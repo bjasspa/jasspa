@@ -1,11 +1,11 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1988-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1988-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\" Created By: Jon Green
 .\"
-.Id $Id: m1cmd000.1,v 2.7 2002-01-11 21:58:41 jon Exp $
+.Id $Id: m1cmd000.1,v 2.8 2004-02-01 22:49:56 jon Exp $
 .Im MicroEmacs function
 .so me.tni
 .TH me 1
@@ -20,21 +20,25 @@ me - \*(mE text editor
 .sp
 .B me
 [\|\fB@\fR\|\fIstartupFile\fR\|]
-[\|\fB\-b\fR\|]
+[\|\fB\-b\fR\ \|\fIfile\fR\|]
 [\|\fB\-c\fR\|]
 [\|\fB\-d\fR\|]
 [\|\fB\-h\fR\|]
 [\|\fB\-i\fR\|]
+[\|\fB\-k\fR[\|\fIkey\fR\|]\ \|\fIfile\fR\|]
 [\|\fB\-l\fR\|\fIlineNo\fR\|]
 [\|\fB\-m\fR\|\fIcommand\fR\|]
 [\|\fB\-n\fR\|]
+[\|\fB\-o\fR\|]
 [\|\fB\-0\fR\|\fIfile\fR\|]
 [\|\fB\-p\fR\|]
 [\|\fB\-r\fR\|]
 [\|\fB\-s\fR\|\fIstring\fR\|]
 [\|\fB\-u\fR\|\fIusername\fR\|]
 [\|\fB\-v\fR\|\fIvariable=string\fR\|]
+[\|\fB\-V\fR\|]
 [\|\fB\-x\fR\|]
+[\|\fB\-y\fR\ \|\fIfile\fR\|]
 \fIfiles...\fR
 .ad
 .SH DESCRIPTION
@@ -176,14 +180,19 @@ starts  \fB\*(mE\fR,  loads file  \fCbar\fR  and  initiates  a search for
 \fIfoo\fR.  The cursor is left at the end of the string if located,  otherwise
 at the top of the buffer.
 .IP \fB\-u\fR\|\fIusername\fR
-Set the current user name to \fIusername\fR before \*(mS is initialized. This
-is done by setting the environment variable
-.Ht MENAME 5
-to the given value.
+Set the current user name
+.Ht $user-name 5 
+to \fIusername\fR before \*(mS is initialized. 
 .IP \fB\-v\fR\|\fIvariable=string\fR
 Assign the  \*(mE  \fIvariable\fR  with  \fIstring\fR.  The assignment is
 performed before the buffers are loaded. Typically used to change the start-up
 characteristics of the startup file(s).
+.IP \fB\-V\fR
+Print the name and version of \*(mS. i.e.
+.IP
+\fCorac% me -V\fR
+.br
+\fCMicroEmacs 04 - Date 04/02/01 - sunos\fR
 .IP \fB\-x\fR
 \s-1UNIX\s0  environments. Disable the capture of signals. \fB\*(mE\fR by
 default  captures  an handles  all illicit  signal  interrupts.  The option is
@@ -199,16 +208,18 @@ The following environment variables are used by \fB\*(mE\fR.
 \s-1UNIX\s0 environments running X-Windows only. The identity of the X-Windows
 server. Typically set to \fBunix:0.0\fR, refer to the X-Windows  documentation
 for details of this environment variable.
-.IP "\fBMENAME\fR and \fBLOGNAME\fR"
-The identity of the user, \fB$MENAME\fR takes precedence over  \fB$LOGNAME\fR.
-\fB$LOGNAME\fR variable is generally defined within \s-1UNIX\s0 as part of the
-login script. The variables are used to determine which start-up configuration
-to use in the initialization of \fB\*(mE\fR (\fI$MENAME\fR.erf).
+.IP "\fBMENAME\fR"
+.Ht $MENAME 5 
+is used to override the identity of the user
+.Ht $user-name 5 .
+The variable may be used to determine which start-up  configuration  to use in
+the initialization of \fB\*(mE\fR (\fI$user-name\fR.erf). This is ignored if 
+the \fB-u\fR option is specified on the command line.
 .IP
 Non-\s-1UNIX\s0  platforms  usually need to explicitly  set the  \fB$MENAME\fR
 environment  variable to identify the aforementioned  files. for \s-1MS-DOS\s0
-and Microsoft  Windows this is typically  performed in the  \fCAUTOEXEC.BAT\fR
-file.
+and early  versions of  Microsoft  Windows this is typically  performed in the
+\fCAUTOEXEC.BAT\fR file.
 .IP \fBPATH\fR
 The \fB$PATH\fR  environment  variable is used on most operating  systems as a
 search path for executable files. This \fB$PATH\fR  environment  variable must
@@ -247,33 +258,39 @@ Initiates an 80 column by 25 line screen.
 A user defined string to set an explicit  graphics card mode. The operation is
 dependent upon the support offered by the graphics adapter.
 .RE
+.IP \fBMEUSERPATH\fR
+.Ht $MEINSTALLPATH 5 
+is an environment  variable that overrides any internally  defined search path
+for \*(mS system macros and defines the root  directory(s)  of the  MicroEmacs
+system macros. The presence of the environment variable affects 
+.Ht $search-path 5 .
+.TP \fB$MEUSERPATH\fR
+.Ht $MEUSERPATH 5
+is an  environment  variable  that defines the users  private  directory  
+where user configuration files such as
+.Hl $user-name $user-name 5 \fB.emf\fR,
+.Hl $user-name $user-name 5 \fB.erf\fR
+and personal spelling  dictionaries are stored. This is an absolute  directory
+path. The environment variable sets the \*(mS variable
+.Ht $user-name 5 .
 .IP \fBMEPATH\fR
-\*(mE uses the environment variable  \fC$MEPATH\fR as the directory(s) used to
-search for the macro files (see
-.Ht emf 8 ).
-Within  the  \s-1UNIX\s0  \fC$MEPATH\fR  is a  semi-colon  separated  list  of
-directories  which are used to search for the \*(mE  macro  files. The path is
-searched from left to right. The environment  variable is typically defined in
-the in the \fC.login\fR, \fC.cshrc\fR or \fC.profile\fR file i.e.
-.RS
+.Ht $MEPATH 5
+is an environment variable that may be used to define the absolute search path
+for \*(mS macro files and affects the setting of
+.BR $search-path .
+The path should include the system macros  location(s)  and should include the
+user directory location
+.Ht $user-path 5
+as the first path when the environment variable
+.Ht $MEUSERPATH 5
+is not defined. If  \fB$MEUSERPATH\fR  is defined  then this path name appears
+before the \fB$MEPATH\fR variable to define the user directory location.
+.B $MEPATH
+is not  searching,  so  \s-1ALL\s0  all  directories  to be  searched  must be
+included in the path specification.
 .IP
-export MEPATH /usr/name/me/macros:/usr/local/microemacs
-.RE
-.IP
-The default when omitted is \fC/usr/local/microemacs\fR.
-.IP
-Within  \s-1MS-DOS\s0 or Microsoft  Windows  environments it is defined in the
-\fCAUTOEXEC.BAT\fR file. e.g.
-.RS
-.IP
-set MEPATH=c:\\me\\username;\\me\\macros
-.RE
-.IP
-There is no default  location in these  environments.  For  Microsoft  Windows
-environments refer to 
-.Ht me32.ini 8
-for a method of setting up the  \fC$MEPATH\fR  from the windows  configuration
-file.
+.Ht $MEUSERPATH 5
+is the preferred method used to defined the user directory.
 .IP \fBINFOPATH\fR
 \*(mE uses the environment  variable  \fC$INFOPATH\fR as the directory(s) used
 to search for GNU \fBInfo\fR files. Within the \s-1UNIX\s0  \fC$INFOPATH\fR is
@@ -355,8 +372,13 @@ for a method of  setting up the  environment  variables  without  editing  the
 \fCAUTOEXEC.BAT\fR configuration file.
 .SH "SEE ALSO"
 .na
+.Ht $MEINSTALLPATH 5 ,
+.Ht $MENAME 5 ,
+.Ht $MEPATH 5 ,
+.Ht $MEUSERPATH 5 ,
 .Ht emf 8 ,
 .Ht erf 8 ,
+.Ht $home 5 ,
 .Hr emacs 1 " [GNU],"
 .Hr more 1 ,
 .Hr vi 1 .

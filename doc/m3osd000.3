@@ -6,7 +6,7 @@
 .\"  Created By    : Steven Phillips
 .\"  Created       : Sat Aug 22 09:00:06 1998
 .\"
-.Id $Id: m3osd000.3,v 2.11 2004-01-06 00:50:52 jon Exp $
+.Id $Id: m3osd000.3,v 2.12 2004-02-01 22:49:56 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH user-setup 3
@@ -55,17 +55,15 @@ base name (no  extension)  which need not be the current user. The rest of the
 \fBuser-setup\fR  entries are then initialized to the settings defined for the
 given user (or standard defaults if not defined).
 .IP "\fCDefault User\fR"
-Creates a small macro file, "\fCdefault.emf\fR",  setting
-.Ht $MENAME 5
-to the current  setting of \fBLog Name\fR. This may be executed at start-up to
-determine the current user. See
-.Ht $MENAME 5
-for more information.
+The name or  profile  of the  current  user, the value is defined by the \*(mS
+variable
+.Ht $user-name 5 .
+This field may not be altered.
 .IP "\fCSetup Path\fR"
-Sets the location of the user files, the files are searched for and created in
-this directory.
-.Ht $MEPATH 5
-should be defined to include this path.
+The  location  of the user  defined  macro  files, the value is defined by the
+\*(mS variable
+.Ht $user-path 5 .
+This field may not be altered.
 .IP "\fCSetup File\fR"
 Sets the personal  user setup macro file name which is executed at start-up. A
 user macro file should  contain all  personal  settings  such as preferred  key
@@ -284,7 +282,7 @@ Sets the X font name to be used. This indirectly executes
 .Ht change-font 2
 with the given font name. e.g.
 .IP
-\fC"-misc-fixed-bold-r-normal--13-*-*-*-c-70-iso8859-1"\fR
+\fC"-*-fixed-medium-r-normal--15-*-*-*-c-90-*"\fR
 .IP "\fCDisplay Char Set\fR"
 Selects the display character set being used by the system to render the \*(mS
 window,  dependent  on the  \fBFont\fR  being used. The setting of this option
@@ -360,7 +358,8 @@ Sets the  preferred  method of displaying a matching  fence, a fence is one of
 the following brackets:
 .CS
 {...}   (...)   [...]
-.CE
+.CE 0
+.IP
 Jumping to the  opening  fence only  occurs  when the closing  brace is typed,
 whereas the drawing of matching  fences  occurs  whenever  the cursor is on an
 open fence or one  character  past the close fence. When this option is set to
@@ -903,6 +902,8 @@ defined in \fCuserstp.emf\fR.
 .Hl "Company Profiles" companyProfiles 2 ,
 .Hl "Installation" Installation 1 ,
 .Ht buffer-setup 3 ,
-.Ht scheme-editor 3 .
+.Ht scheme-editor 3 ,
+.Ht $user-name 5 ,
+.Ht $user-path 5 .
 .ad
 .FH
