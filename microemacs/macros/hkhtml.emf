@@ -146,4 +146,3 @@ define-macro html-process-buffer
 !emacro
 
 buffer-init-fhook "html"
-
