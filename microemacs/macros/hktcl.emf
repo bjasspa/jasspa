@@ -1,17 +1,38 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;       TCL mode hook
 ;
-;   Last Modified : <010228.0948>
+;   Last Modified : <010302.1322>
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/tcl" "dfhnopx"
-set-variable #l1 "adefhikmnoptux"
 set-char-mask "3" "-$."
+
+define-macro fhook-tcl
+    ; if arg is 0 this is a new file so add template 
+    !if &not @#
+        etfinsrt "tcl"
+    !endif
+    set-variable $buffer-mask "luh13"
+    buffer-initialize
+    !if &exist my-fhook-tcl
+        my-fhook-tcl
+    !endif
+!emacro
+
+; buffer-initialize variables
+set-variable .fhook-tcl.name "Tcl/Tk"
+set-variable .fhook-tcl.setup &reg "/history" "fhook/tcl" "dfhnopx"
+set-variable .fhook-tcl.setup-mask "adefhikmnoptux"
+set-variable .fhook-tcl.tags "tcltags"
+set-variable .fhook-tcl.comment "|#||#|"
+
+; setup tcl folding support
+set-variable .fhook-tcl.fold-open  "^proc "
+set-variable .fhook-tcl.fold-close "^}"
+set-variable .fhook-tcl.fold-mopen "1"
 
 !if &not &exist .hilight.tcl
     set-variable .hilight.tcl &pinc .hilight.next 1
 !endif
-!if &and &sin "h" #l0 &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-tcl.setup &band .hilight.flags 0x02 
     ; High-light Tcl Mode
     0 hilight    .hilight.tcl 0                    $global-scheme
     hilight   .hilight.tcl 0 "^\\s *\\{#.*"        .scheme.comment
@@ -213,7 +234,7 @@ set-char-mask "3" "-$."
         hilight .hilight.tcl 1 "0[xX][[:xdigit:]]+" .scheme.constant
     !endif
 !endif
-!if &sin "d" #l0
+!if &sin "d" .fhook-tcl.setup
     0 indent  .hilight.tcl 0 10
     indent .hilight.tcl n "{"  4
     indent .hilight.tcl o "}" -4
@@ -223,28 +244,6 @@ set-char-mask "3" "-$."
     indent .hilight.tcl c "\\\\\\s " 10
     indent .hilight.tcl i "#"  
 !endif
-
-define-macro fhook-tcl
-    ; if arg is 0 this is a new file so add template 
-    !if &not @#
-        etfinsrt "tcl"
-    !endif
-    set-variable $buffer-mask "luh13"
-    buffer-initialize
-    !if &exist my-fhook-tcl
-        my-fhook-tcl
-    !endif
-!emacro
-set-variable .fhook-tcl.name "Tcl/Tk"
-set-variable .fhook-tcl.setup #l0
-set-variable .fhook-tcl.setup-mask #l1
-set-variable .fhook-tcl.tags "tcltags"
-set-variable .fhook-tcl.comment "|#||#|"
-
-; setup tcl folding support
-set-variable .fhook-tcl.fold-open  "^proc "
-set-variable .fhook-tcl.fold-close "^}"
-set-variable .fhook-tcl.fold-mopen "1"
 
 ml-write "[Tk/Tcl file hook loaded]"
 

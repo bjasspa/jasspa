@@ -3,7 +3,7 @@
 ;  Author        : $Author: jon $
 ;  Created By    : Steven Phillips
 ;  Created       : Tue Jan 23 14:09:08 2001
-;  Last Modified : <010228.1415>
+;  Last Modified : <010301.2209>
 ;
 ;  Description
 ;
@@ -14,7 +14,7 @@
 ;  Copyright (c) 2001 Parametric Technology Corporation.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-0 exec-file "hkdir"
+0 exec-file "hkdirlst"
 
 define-macro cvs
 !emacro
@@ -24,13 +24,13 @@ set-variable .cvs.message ""
 
 !if &band .hilight.flags 0x02
     ; fix the *files* buffer hilighting for cvs additions
-    hilight .hilight.file 0x012 "[0-9][0-9]:[0-9][0-9] [0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9] [0-9][0-9]:[0-9][0-9] \\{" .scheme.file
-    hilight .hilight.file 0x112 "*[?AMCR]" .scheme.select
-    hilight .hilight.file 0x112 " \\?"     .scheme.keyword
-    hilight .hilight.file 0x112 " A"       .scheme.type
-    hilight .hilight.file 0x112 " M"       .scheme.operator
-    hilight .hilight.file 0x112 " C"       .scheme.error
-    hilight .hilight.file 0x112 " R"       .scheme.error
+    hilight .hilight.dirlst 0x012 "[0-9][0-9]:[0-9][0-9] [0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9] [0-9][0-9]:[0-9][0-9] \\{" .scheme.file
+    hilight .hilight.dirlst 0x112 "*[?AMCR]" .scheme.select
+    hilight .hilight.dirlst 0x112 " \\?"     .scheme.keyword
+    hilight .hilight.dirlst 0x112 " A"       .scheme.type
+    hilight .hilight.dirlst 0x112 " M"       .scheme.operator
+    hilight .hilight.dirlst 0x112 " C"       .scheme.error
+    hilight .hilight.dirlst 0x112 " R"       .scheme.error
     !if &not &exist .hilight.cvs
         set-variable .hilight.cvs &pinc .hilight.next 1
     !endif
@@ -253,10 +253,10 @@ define-macro cvs-resolve-conflicts
 !emacro
 
 0 define-macro cvs-dir-conv
-    !if &not &sin "Revis'n" .fhook-dir.col-name
-        set-variable #l0 &lef .fhook-dir.col-name 1
-        set-variable .fhook-dir.col-name &spr "%sRevis'n%sRepository Date %s" .fhook-dir.col-name #l0 #l0
-        set-variable .fhook-dir.col-flag &spr "%s1%1%s" .fhook-dir.col-flag #l0 #l0
+    !if &not &sin "Revis'n" .fhook-dirlst.col-name
+        set-variable #l0 &lef .fhook-dirlst.col-name 1
+        set-variable .fhook-dirlst.col-name &spr "%sRevis'n%sRepository Date %s" .fhook-dirlst.col-name #l0 #l0
+        set-variable .fhook-dirlst.col-flag &spr "%s1%1%s" .fhook-dirlst.col-flag #l0 #l0
     !endif
     !if &seq &lef $buffer-fname 6 "ftp://"
         ; ftp directories not supported
@@ -422,7 +422,7 @@ define-macro cvs-resolve-conflicts
             goto-position "\x82"
         !else
             ; load the file in
-            files-tag-list
+            dirlst-tag-list
             find-file .find-file.file1
             !if &equ @# 101
                 cvs-diff
@@ -448,7 +448,7 @@ define-macro cvs-resolve-conflicts
     !endif
     set-variable #l5 $mouse
     set-variable $mouse &bor 0x50000 &band 0xffff #l5
-    files-tag-list
+    dirlst-tag-list
     set-variable #l0 0
     set-variable #l1 #l2
     set-variable #l3 &len #l2
@@ -481,9 +481,9 @@ define-macro cvs-resolve-conflicts
     !if &lfind "|1|2|6|" @#
         ; if update, commit or add then refresh or drop tags
         !if &band .find-file.flags 1
-            files-refresh
+            dirlst-refresh
         !else
-            files-tag-remove
+            dirlst-tag-remove
         !endif
     !endif
 !emacro
@@ -521,13 +521,13 @@ define-macro cvs-resolve-conflicts
 !emacro
 
 define-macro cvs
-    osd .osd.file-menu  11 "Md" "C&VS" .osd.tmp osd-cvs-file-menu
-    set-variable .fhook-dir.file-process "cvs-dir-conv"
+    osd .osd.dirlst  11 "Md" "C&VS" .osd.tmp osd-cvs-file-menu
+    set-variable .fhook-dirlst.file-process "cvs-dir-conv"
     delete-other-windows
     2 split-window-vertically
     15 resize-window-vertically
     find-buffer "*cvs-console*"
-    buffer-bind-key file-browser-close "delete"
+    buffer-bind-create "bio" "delete" "" file-browser-close
     previous-window
     file-browser-init
 !emacro

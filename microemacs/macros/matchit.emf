@@ -2,7 +2,7 @@
 ;
 ; Author:           Steven Phillips
 ; Created:          05th June 1997
-; Last Modified:    <010109.1449>
+; Last Modified:    <010301.1844>
 ;
 ; History:
 ;
@@ -1297,7 +1297,7 @@ define-macro Match-It
         buffer-bind-key mi-main-draw "redraw"
       1 buffer-bind-key mi-main-draw "C-l"
         buffer-bind-key mi-quit "q"
-        buffer-bind-key mi-help "esc h"
+        buffer-bind-create "bo" "esc h" "" mi-help
         ; Mouse bindings
         buffer-bind-key mi-plmouse "mouse-pick-1"
         buffer-bind-key mi-dlmouse "mouse-drop-1"

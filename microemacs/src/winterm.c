@@ -5,7 +5,7 @@
  * Synopsis      : Win32 platform support
  * Created By    : Jon Green
  * Created       : 21/12/1996
- * Last Modified : <010224.0127>
+ * Last Modified : <010302.2351>
  *
  * Description
  *
@@ -3265,9 +3265,16 @@ done_syschar:
 #if 0
             cc = ((lParam & 0x01000000) ? SKEY_kp_enter : SKEY_return) ;
 #else
-            cc = SKEY_return;
+            /* Look at the scan code to determine if this is a C-m or a
+             * <return>. The scan code for 'M' is 0x32; the scan code for
+             * <RETURN> is 0x1c. If this is a C-m then simply drop through,
+             * wParam should be 0x1d which is C-m. */
+            if ((lParam & 0xff0000) == (0x1c<<16))
+            {
+                cc = SKEY_return;       /* Return */
+                goto return_spec;
+            }
 #endif
-            goto return_spec;
         }
 
         cc = wParam;

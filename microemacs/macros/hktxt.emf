@@ -1,29 +1,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
 ;  Created By    : Jon Green
 ;  Created       : Mon Mar 20 22:46:08 2000
-;  Last Modified : <010227.1936>
-;
 ;  Description   : text file hook
 ;
 ;  Comment       : See docmacro.emf for documentation
 ;
-;  Copyright (c) 2000 JASSPA.
+;  Copyright (c) 2000-2001 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/txt" "ijopsw"
-set-variable #l1 "aefhijkmnopstuwx"
-
-;
-; Set up for documentation mode.
-;
-define-macro bhook-txt
-    doc-bhook-body
-!emacro
-
-define-macro ehook-txt
-    doc-ehook-body
-!emacro
 
 define-macro fhook-txt
     ; use the document fhook in docmacro
@@ -34,9 +17,20 @@ define-macro fhook-txt
         my-fhook-txt
     !endif
 !emacro
-set-variable .fhook-txt.setup #l0
-set-variable .fhook-txt.setup-mask #l1
+
+; buffer-initialize variables
 set-variable .fhook-txt.name "Text"
+set-variable .fhook-txt.setup &reg "/history" "fhook/txt" "ijopsw"
+set-variable .fhook-txt.setup-mask "aefhijkmnopstuwx"
+
+; Set up for documentation mode.
+define-macro bhook-txt
+    doc-bhook-body
+!emacro
+
+define-macro ehook-txt
+    doc-ehook-body
+!emacro
 
 ; load docmacro.emf passing the doc setup flags
 execute-file "docmacro" "txt"

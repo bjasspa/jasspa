@@ -1,15 +1,39 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; ehf hook - This file is invoked when a MicroEmacs on-line help is loaded.
 ;
-; Last Modified : <010228.1415>
-; Copyright (c) 1999 - 2000 JASSPA.
+; Copyright (c) 1999-2001 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/ehf" "hijmwx"
-set-variable #l1 "aehijkstuwx"
 set-char-mask "2" "-$&#!%:@."
 
-!if &and &sin "h" #l0 &band .hilight.flags 0x01
+define-macro fhook-ehf
+    set-variable $buffer-mask "luh12"
+    buffer-initialize
+    ; Hyperlink with the mouse.
+    set-variable :mouse-word-select ehf-process-link
+    !if &seq $buffer-bname "*help*"
+        ; Hyperlink with the <RETURN> key
+        buffer-bind-create "bio" "return" "0" ehf-process-link
+        ; Move between links with the <TAB> key
+        buffer-bind-create "bio" "tab"   "" ehf-forward-link
+        buffer-bind-create "bio" "S-tab" "" ehf-backward-link
+    !endif
+    ; execute user extensions if enabled
+    !if &exist my-fhook-ehf
+        my-fhook-ehf
+    !endif
+!emacro
+
+; buffer-initialize variables
+set-variable .fhook-ehf.name "ME Help"
+set-variable .fhook-ehf.setup &reg "/history" "fhook/ehf" "hijmwx"
+set-variable .fhook-ehf.setup-mask "aehijkstuwx1"
+set-variable .fhook-ehf.command-flag  "|th|th|th|"
+set-variable .fhook-ehf.command-name  "|ehf-process-link|ehf-backward-link|ehf-forward-link|"
+set-variable .fhook-ehf.command-nbind "|0|||"
+set-variable .fhook-ehf.command-kbind "||||"
+set-variable .fhook-ehf.command-desc  "|&Goto Link|Move to &Previous Link|Move to &Next Link|"
+
+!if &and &sin "h" .fhook-ehf.setup &band .hilight.flags 0x01
     !if &not &exist .hilight.ehf
         set-variable .hilight.ehf  &pinc .hilight.next 1
         set-variable .hilight.ehfB &pinc .hilight.next 1
@@ -279,33 +303,6 @@ set-char-mask "2" "-$&#!%:@."
     !endif
     !abort
 !emacro
-
-define-macro fhook-ehf
-    set-variable $buffer-mask "luh12"
-    ; ZZZZ 0x01
-    buffer-initialize
-    ; Hyperlink with the mouse.
-    set-variable :mouse-word-select ehf-process-link
-    !if &seq $buffer-bname "*help*"
-        ; Hyperlink with the <RETURN> key
-        buffer-bind-create "bio" "return" "0" ehf-process-link
-        ; Move between links with the <TAB> key
-        buffer-bind-create "bio" "tab"   "" ehf-forward-link
-        buffer-bind-create "bio" "S-tab" "" ehf-backward-link
-    !endif
-    ; execute user extensions if enabled
-    !if &exist my-fhook-ehf
-        my-fhook-ehf
-    !endif
-!emacro
-set-variable .fhook-ehf.name "ME Help"
-set-variable .fhook-ehf.setup #l0
-set-variable .fhook-ehf.setup-mask #l1
-set-variable .fhook-ehf.command-flag  "|th|th|th|"
-set-variable .fhook-ehf.command-name  "|ehf-process-link|ehf-backward-link|ehf-forward-link|"
-set-variable .fhook-ehf.command-nbind "|0|||"
-set-variable .fhook-ehf.command-kbind "||||"
-set-variable .fhook-ehf.command-desc  "|&Goto Link|Move to &Previous Link|Move to &Next Link|"
 
 ; load in user extensions if found
 !force execute-file "myehf"

@@ -1,19 +1,29 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;       VRML mode hook
+;  VRML mode hook
 ;
-;   Last Modified : <010228.1023>
+;  Copyright (c) 1998-2001 JASSPA
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/vrml" "dhinx"
-set-variable #l1 "adehikmntux"
+
+define-macro fhook-vrml
+    set-variable $buffer-mask "luh1"
+    buffer-initialize
+    ; execute user extensions if enabled
+    !if &exist my-fhook-vrml
+        my-fhook-vrml
+    !endif
+!emacro
+
+; buffer-initialize variables
+set-variable .fhook-vrml.setup &reg "/history" "fhook/vrml" "dhinx"
+set-variable .fhook-vrml.setup-mask "adehikmntux"
 
 !if &not &exist .hilight.vrml
     set-variable .hilight.vrml &pinc .hilight.next 1
 !endif
-!if &and &sin "h" #l0 &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-vrml.setup &band .hilight.flags 0x02 
     ; High-light VRML Mode
     0 hilight .hilight.vrml 0                              $global-scheme
-    hilight   .hilight.vrml 2  "#"                         .scheme.comment
+    hilight   .hilight.vrml 2 "#"                          .scheme.comment
     hilight   .hilight.vrml 4 "\"" "\"" "\\"               .scheme.string
     ;
     hilight   .hilight.vrml 1 "center"                     .scheme.keyword
@@ -127,7 +137,7 @@ set-variable #l1 "adehikmntux"
     hilight   .hilight.vrml 1 "parameter"                  .scheme.keyword
     hilight   .hilight.vrml 1 "ProximitySensor"            .scheme.keyword
 !endif
-!if &sin "d" #l0
+!if &sin "d" .fhook-vrml.setup
     0 indent  .hilight.vrml 0 20
     indent .hilight.vrml n "{"  2
     indent .hilight.vrml o "}" -2
@@ -136,16 +146,6 @@ set-variable #l1 "adehikmntux"
     indent .hilight.vrml e "\"" "\"" "\\"
     indent .hilight.vrml i "#"
 !endif
-define-macro fhook-vrml
-    set-variable $buffer-mask "luh1"
-    buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-vrml
-        my-fhook-vrml
-    !endif
-!emacro
-set-variable .fhook-vrml.setup #l0
-set-variable .fhook-vrml.setup-mask #l1
 
 ml-write "[VRML file hook loaded]"
 

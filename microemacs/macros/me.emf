@@ -1,7 +1,6 @@
 ;  Startup file for MicroEmacs '99 JASSPA Distribution
 ;
-;  Last Modified :  <010228.0943>
-;  Copyright (c) 1999 JASSPA
+;  Copyright (c) 1999-2001 JASSPA
 ;
 ; If mename isn't set or registry file isn't found then set it to guest
 !if &seq $MENAME "ERROR"
@@ -37,6 +36,7 @@ define-macro-file abbrev expand-abbrev-handle spell-complete-word iso-accents-mo
 define-macro-file misc symbol check-line-length alarm time compare-windows-exact display-white-chars
 define-macro-file search replace-all-string query-replace-all-string replace-all-pairs line-scheme
 define-macro-file tools compile grep rgrep which diff diff-changes execute-tool uniq reread-file
+define-macro-file hkdirlst file-browser file-browser-close file-browser-swap-buffers
 define-macro-file comment comment-line uncomment-line comment-to-end-of-line
 define-macro-file spell spell-word spell-buffer spell-edit-word find-word
 define-macro-file games Metris Patience Triangle Mahjongg Match-It
@@ -49,9 +49,7 @@ define-macro-file gentags generate-tags-file
 define-macro-file schemosd scheme-editor
 define-macro-file printstp print-setup
 define-macro-file fattrib file-attrib
-define-macro-file hkdir file-browser
 define-macro-file organize organizer
-define-macro-file hkhtml fhook-hts
 define-macro-file user user-setup
 define-macro-file etfinsrt
 define-macro-file gdiff
@@ -153,14 +151,14 @@ set-variable %tag-template  "%[^\t]\t%[^\t]\t%[^\n]\n"
 set-variable .osd.tmp 40
 set-variable .osd.next &cond &exi .osd.next .osd.next &add .osd.tmp 1
 ;
-; File hooks
-; reset the file hook list
+; File hooks - reset the file hook list first
 0 add-file-hook
 ; Add file extension hooks. Files loaded in binary mode do not need hook as fixed
 add-file-hook "*help* *about* .ehf"                           fhook-ehf
 add-file-hook "*bindings* *commands* *variables*"             fhook-lists
 add-file-hook "*buffers*"                                     fhook-blist
-add-file-hook "/ *directory* *files*"                         fhook-dir
+add-file-hook "/ *files*"                                     fhook-dirlst
+add-file-hook "*directory*"                                   fhook-dirtre
 add-file-hook "*registry*"                                    fhook-reg
 add-file-hook "*icommand* *shell*"                            fhook-ipipe
 add-file-hook ".emf"                                          fhook-emf
@@ -176,8 +174,7 @@ add-file-hook "Makefile makefile .mak .mk .gmk"               fhook-make
 add-file-hook "Imakefile imakefile"                           fhook-imake
 add-file-hook ".sh .ksh .csh .login .cshrc .profile .tcshrc"  fhook-shell
 add-file-hook ".ini .hpj .reg .rgy"                           fhook-ini
-add-file-hook ".htm .html .asp"                               fhook-html  
-add-file-hook ".htp .hts"                                     fhook-hts
+add-file-hook ".htm .html .asp .htp .hts"                     fhook-html  
 add-file-hook ".bas .cls"                                     fhook-vb
 add-file-hook ".cmd .bat .btm"                                fhook-dos
 add-file-hook ".tcl .tk"                                      fhook-tcl
@@ -234,8 +231,9 @@ add-file-hook ".diff .dif *diff*"                             fhook-diff
 -1 add-file-hook "-!-[ \t]*fold:.*-!-"           fhook-fold   ; -!- fold:... -!-
 -1 add-file-hook "-!-[ \t]*asn\\.1.*-!-"         fhook-asn1   ; -!- asn.1... -!-
 -1 add-file-hook "-!-[ \t]*asmx86.*-!-"          fhook-asmx86 ; -!- asmx86 -!-
--1 add-file-hook "-!-[ \t]*pseudo.*-!-"          fhook-pseudo ; -!- pseudo -!-
+;-1 add-file-hook "-!-[ \t]*pseudo.*-!-"          fhook-pseudo ; -!- pseudo -!-
 -1 add-file-hook "-!-[ \t]*text.*-!-"            fhook-txt    ; -!- text -!-
+-1 add-file-hook "-!-[ \t]*msvb.*-!-"            fhook-vb     ; -!- msvb -!-
 ; Initialize the top menu line
 osd 0  0  "asM" 0 0 -1 0 0 0 osd-main
 osd 0  5   "fh" " "

@@ -4,7 +4,7 @@
 ;       Author        : Jon Green
 ;       Created       : 2nd November 1996
 ;
-;   Last Modified : <010228.1021>
+;   Last Modified : <010302.0806>
 ;
 ;       Comment       : This shell file has given me grief. It is difficult
 ;                       to know how much to hilight. At the moment it appears
@@ -23,11 +23,22 @@
 ;                       alot of csh features.
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/shell" "hix"
-set-variable #l1 "aehikmtux"
 
-!if &and &sin "h" #l0 &band .hilight.flags 0x02 
+define-macro fhook-shell
+    set-variable $buffer-mask "luh1"
+    buffer-initialize
+    ; execute user extensions if enabled
+    !if &exist my-fhook-shell
+        my-fhook-shell
+    !endif
+!emacro
+
+; buffer-initialize variables
+set-variable .fhook-shell.setup &reg "/history" "fhook/shell" "hiopx"
+set-variable .fhook-shell.setup-mask "aehikmoptux"
+set-variable .fhook-shell.comment "|#||#|"
+
+!if &and &sin "h" .fhook-shell.setup &band .hilight.flags 0x02 
     !if &not &exist .hilight.shell
         set-variable .hilight.shell  &pinc .hilight.next 1
         set-variable .hilight.shellS &pinc .hilight.next 1
@@ -148,17 +159,6 @@ set-variable #l1 "aehikmtux"
     hilight .hilight.shellV 4    "\\${" "}" ""     .scheme.variable
     hilight .hilight.shellV 0x80 "}"  .hilight.shell    .scheme.variable
 !endif
-
-define-macro fhook-shell
-    set-variable $buffer-mask "luh1"
-    buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-shell
-        my-fhook-shell
-    !endif
-!emacro
-set-variable .fhook-shell.setup #l0
-set-variable .fhook-shell.setup-mask #l1
 
 ml-write "[UNIX shell file hook loaded]"
 

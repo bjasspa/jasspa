@@ -3,11 +3,32 @@
 ;
 ;       Pedro Gomes
 ;       Created on 99/03/28
-;   Last Modified : <010228.1005>
+;   Last Modified : <010301.2251>
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/asmx86" "dfhnopx"
-set-variable #l1 "adefhikmnoptux"
+
+define-macro fhook-asmx86
+    ; if arg is 0 this is a new file so add template
+    !if &not @#
+        etfinsrt "asmx86"
+    !endif
+    set-variable $buffer-mask "luh1"
+    buffer-initialize
+    ; execute user extensions if enabled
+    !if &exist my-fhook-asmx86
+        my-fhook-asmx86
+    !endif
+!emacro
+
+; buffer-setup variables
+set-variable .fhook-asmx86.name "x86 Assembler"
+set-variable .fhook-asmx86.setup &reg "/history" "fhook/asmx86" "dfhnopx"
+set-variable .fhook-asmx86.setup-mask "adefhikmnoptux"
+set-variable .fhook-asmx86.comment "|;||;|"
+
+; setup.asmx86 folding support
+set-variable .fhook.asmx86.fold-open  "^proc "
+set-variable .fhook.asmx86.fold-close "^}"
+set-variable .fhook.asmx86.fold-mopen "1"
 
 !if &not &exist .hilight.asmx86
     set-variable .hilight.asmx86 &pinc .hilight.next 1
@@ -18,7 +39,7 @@ set-variable #l1 "adefhikmnoptux"
 !if &not &exist .hilight.asmx86
     set-variable .hilight.asmx86 &pinc .hilight.next 1
 !endif
-!if &and &sin "h" #l0 &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-asmx86.setup &band .hilight.flags 0x02 
     ; Highlight Assembler Mode
     0 hilight .hilight.asmx86 0                $global-scheme
     hilight   .hilight.asmx86 0 "^\\s *\\{#.*" .scheme.comment
@@ -163,7 +184,7 @@ set-variable #l1 "adefhikmnoptux"
     hilight   .hilight.asmx86 1 "word"         .scheme.keyword
 !endif
 
-!if &sin "d" #l0
+!if &sin "d" .fhook-asmx86.setup
     0 indent  .hilight.asmx86 0 10
     indent .hilight.asmx86 n "{"  4
     indent .hilight.asmx86 o "}" -4
@@ -173,28 +194,6 @@ set-variable #l1 "adefhikmnoptux"
     indent .hilight.asmx86 c "\\\\\\s " 10
     indent .hilight.asmx86 i ";"
 !endif
-
-define-macro fhook-asmx86
-    ; if arg is 0 this is a new file so add template
-    !if &not @#
-        etfinsrt "asmx86"
-    !endif
-    set-variable $buffer-mask "luh1"
-    buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-asmx86
-        my-fhook-asmx86
-    !endif
-!emacro
-set-variable .fhook-asmx86.name "x86 Assembler"
-set-variable .fhook-asmx86.setup #l0
-set-variable .fhook-asmx86.setup-mask #l1
-set-variable .fhook-asmx86.comment "|;||;|"
-
-; setup.asmx86 folding support
-set-variable .fhook.asmx86.fold-open  "^proc "
-set-variable .fhook.asmx86.fold-close "^}"
-set-variable .fhook.asmx86.fold-mopen "1"
 
 ml-write "[Intel x86 Assembler file hook loaded]"
 

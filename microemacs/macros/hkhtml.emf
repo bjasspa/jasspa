@@ -1,31 +1,43 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
 ;  Created By    : Steven Phillips
 ;  Created       : Mon Sep 21 18:10:34 1998
-;  Last Modified : <010228.1023>
+;  Description   : HTML Hook File
 ;
-;  Description : Visual Basic Hook File
-;
-;  Notes
-;
-;  History
-;
-;  Copyright (c) 1998-99 JASSPA
+;  Copyright (c) 1998-2001 JASSPA
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/html" "cdhiopsx"
-set-variable #l1 "acdehikmopstux"
 
-!if &not &exist .hilight.html
-    set-variable .hilight.html   &pinc .hilight.next 1
-    set-variable .hilight.htmlT  &pinc .hilight.next 1
-    set-variable .hilight.htmlN  &pinc .hilight.next 1
-    set-variable .hilight.htmlNL &pinc .hilight.next 1
-    set-variable .osd.html-help  &pinc .osd.next 1
-    set-variable .osd.html-tool  &pinc .osd.next 1
-!endif
+define-macro fhook-html
+    set-variable #l0 &mid $buffer-bname &rsin "." $buffer-bname 3
+    !if &sin "c" .fhook-html.setup
+        !jump 2
+    !elif &or &seq #l0 "hts" &seq #l0 "htp"
+        set-variable $buffer-mask "luh1"
+        buffer-initialize
+         1 buffer-mode "usr1"
+    !else
+        html-process-buffer
+    !endif
+    ; execute user extensions if enabled
+    !if &exi my-fhook-html
+        my-fhook-html
+    !endif
+!emacro
 
-!if &and &sin "h" #l0 &band .hilight.flags 0x02 
+; buffer-initialize variables
+set-variable .fhook-html.setup &reg "/history" "fhook/html" "cdhiopsx"
+set-variable .fhook-html.setup-mask "acdehikmopstux"
+set-variable .fhook-html.comment  "|<!|>|-|"
+set-variable .fhook-html.command-flag  "|th|h|th|h|th|h|thb|thb|"
+set-variable .fhook-html.command-name  "|||html-process-link||||html-show-buffer|html-toggle-mode|"
+set-variable .fhook-html.command-nbind "|||||||||"
+set-variable .fhook-html.command-kbind "|||||||C-c C-h|C-c C-i|"
+set-variable .fhook-html.command-desc  "|Html Browser Mode||&Goto Link||Html Author Mode||Process Current Buffer|Toggle Indent To VB Mode|"
+
+!if &and &sin "h" .fhook-html.setup &band .hilight.flags 0x02 
+    !if &not &exist .hilight.html
+        set-variable .hilight.html   &pinc .hilight.next 1
+        set-variable .hilight.htmlT  &pinc .hilight.next 1
+    !endif
     0 hilight .hilight.html 3 200                      $global-scheme
     hilight .hilight.html 0x80 "<" .hilight.htmlT      .scheme.keyword
     hilight .hilight.html 4 "</" ">" ""                .scheme.keyword
@@ -43,11 +55,11 @@ set-variable #l1 "acdehikmopstux"
     
     !force exec-file "hkvb"
     !if $status
-        hilight .hilight.html 0x80 "<%" .hilight.vb    .scheme.prepro
+        hilight .hilight.html  0x80 "<%" .hilight.vb   .scheme.prepro
         hilight .hilight.htmlT 0x80 "<%" .hilight.vb   .scheme.prepro
-        hilight .hilight.vb   0x90 "%>" 0              .scheme.prepro
-        hilight .hilight.html 0x80 "<script\\s +language=VBScript[^>]*>" .hilight.vb .scheme.prepro
-        hilight .hilight.vb   0x80 "</script>" 0       .scheme.prepro
+        hilight .hilight.vb    0x90 "%>" 0             .scheme.prepro
+        hilight .hilight.html  0x80 "<script\\s +language=VBScript[^>]*>" .hilight.vb .scheme.prepro
+        hilight .hilight.vb    0x80 "</script>" 0      .scheme.prepro
         ;    indent .hilight.vb b "<" ">"
     !endif
     !force exec-file "hkjava"
@@ -58,7 +70,11 @@ set-variable #l1 "acdehikmopstux"
         hilight .hilight.java 0x80 "</SCRIPT>" 0       .scheme.prepro
     !endif
 !endif
-!if &and &sin "h" #l0 &band .hilight.flags 0x01 
+!if &and &sin "h" .fhook-html.setup &band .hilight.flags 0x01 
+    !if &not &exist .hilight.htmlN
+        set-variable .hilight.htmlN  &pinc .hilight.next 1
+        set-variable .hilight.htmlNL &pinc .hilight.next 1
+    !endif
     0 hilight .hilight.htmlN 0                          $global-scheme
     hilight .hilight.htmlN 0x44 "\ecA" "" "\\}\e" "" "" $global-scheme
     hilight .hilight.htmlN 0x44 "\ecB" "" "\\}\e" "" "" .scheme.under    ; underline
@@ -75,7 +91,10 @@ set-variable #l1 "acdehikmopstux"
     hilight .hilight.htmlNL 0x40 "." ""                 $global-scheme
 !endif
 
-!if &sin "d" #l0
+!if &sin "d" .fhook-html.setup
+    !if &not &exist .hilight.html
+        set-variable .hilight.html   &pinc .hilight.next 1
+    !endif
     ; Define the indentation tokens 
     0 indent .hilight.html 1 20 
     indent .hilight.html e "\"" "\"" "\\"
@@ -153,14 +172,13 @@ define-macro html-process-buffer
     1 buffer-mode "magic"
     replace-string "http:/\\([^/]\\)" &cat #l0 "\\1"
     beginning-of-buffer
-    ; ZZZZ
     !if &and &sin "h" .fhook-html.setup &band .hilight.flags 0x01 
         set-variable $buffer-hilight .hilight.htmlN
     !endif
     -1 buffer-mode "edit"
     1 buffer-mode "view"
     set-variable :mouse-word-select html-process-link
-    0 buffer-bind-key html-process-link "return"
+    buffer-bind-create "bio" "return" "" html-process-link
     ml-write "Done!"
 !emacro
 
@@ -208,6 +226,9 @@ define-macro html-process-buffer
 !emacro
 
 0 define-macro html-toggle-mode
+    !if &not $buffer-indent
+        !return
+    !endif
     !if &bmod "usr1"
         set-variable :auto-spell &cond &seq $buffer-input "auto-spell-input" 1 -1
     !endif
@@ -229,89 +250,6 @@ define-macro html-process-buffer
         !if &sin "s" .fhook-html.setup
             :auto-spell auto-spell
         !endif
-    !endif
-!emacro
-
-!if &sin "o" #l0 
-    osd .osd.html-tool 0  "b"
-    osd .osd.html-tool 1  ""  "HTML tool &help  esc h"   .osd.html-help osd
-    osd .osd.html-tool 3  "-"
-    osd .osd.html-tool 4  "c" "Author"
-    osd .osd.html-tool 5  ""  "&Process buffer  C-c C-h" f html-show-buffer
-    osd .osd.html-tool 6  "-"
-    osd .osd.html-tool 7  "c" "Browser"
-    osd .osd.html-tool 8  ""  "&Goto link       return"  f html-process-link
-    ; Add hook to load the OSD html tools menu.
-    0 define-macro osd-ohook-html
-        osd 7 1 "Md" "HTML &Tools" .osd.html-tool
-        osd 7 2 "-"
-    !emacro
-    ; Add hook to remove the OSD html tools menu.
-    0 define-macro osd-chook-html
-        osd 7 1  "D"
-        osd 7 2  "D"
-    !emacro
-!endif
-!if &sin "p" #l0
-    osd .osd.html-help 0  "batcdH" 9 3 99 .scheme.osd-title "Html help"
-    osd .osd.html-help 3  ""
-    osd .osd.html-help 4  ""  "    esc h   - View this help page"
-    osd .osd.html-help 5  ""  "    C-c C-a - Toggle between html author & browser"
-    osd .osd.html-help 6  ""
-    osd .osd.html-help 7  "c" "Html Author help"
-    osd .osd.html-help 8  ""
-    osd .osd.html-help 9  ""  "    C-c C-h - Process current buffer to a temporary "
-    osd .osd.html-help 10 ""
-    osd .osd.html-help 11 "c" "Html Browser help"
-    osd .osd.html-help 12 "" 
-    osd .osd.html-help 13 ""  "    return  - Go to current link (can also be done"
-    osd .osd.html-help 14 ""  "              by double clicking left mouse button)"
-    osd .osd.html-help 15 ""
-    osd .osd.html-help 16 ""  " Use Help/User setup to alter the default Author/"
-    osd .osd.html-help 17 ""  " browser setting"
-    osd .osd.html-help 21 ""
-    osd .osd.html-help 99 "Bcf" "  &OK  " f void 
-!endif
-
-define-macro fhook-html
-    ; ZZZZZ
-    buffer-modes-init .fhook-html.setup
-    !if &sin "c" .fhook-html.setup
-        set-variable $buffer-mask "luh1"
-        !if &and &sin "h" .fhook-html.setup &band .hilight.flags 0x02
-            set-variable $buffer-hilight .hilight.html
-        !endif
-        auto-spell-init .fhook-html.setup
-        set-variable :auto-spell &cond &seq $buffer-input "auto-spell-input" 1 -1
-        buffer-bind-unbound-key html-show-buffer "C-c C-h"
-        ; comment the next line to switch indentation off
-        1 html-toggle-mode
-    !else
-        html-process-buffer
-    !endif
-    !if &sin "p" .fhook-html.setup 
-        .osd.html-help buffer-bind-key osd "esc h"
-    !endif
-    ; execute user extensions if enabled
-    !if &exi my-fhook-html
-        my-fhook-html
-    !endif
-!emacro
-
-set-variable .fhook-html.setup #l0
-set-variable .fhook-html.setup-mask #l1
-
-define-macro fhook-hts
-    set-variable $buffer-mask "luh1"
-    ; ZZZZZ
-    buffer-modes-init .fhook-html.setup
-    !if &and &sin "h" .fhook-html.setup &band .hilight.flags 0x02
-        set-variable $buffer-hilight .hilight.html
-    !endif
-    set-variable $buffer-fhook fhook-html
-    ; execute user extensions if enabled
-    !if &exist my-fhook-hts
-        my-fhook-hts
     !endif
 !emacro
 

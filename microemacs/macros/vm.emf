@@ -1,6 +1,6 @@
 ;       View Mail : Mail handling system
 ;
-;   Last Modified : <000725.1005>
+;   Last Modified : <010301.1844>
 ;
 !if &seq .hilight.mail "ERROR"
     execute-file "mail"
@@ -372,7 +372,7 @@ hilight .hilight.vmhl 0x40 "." ""                 $global-scheme
     find-buffer &cat %vm-curbuf "-list"
     -1 buffer-mode "edit"
      1 buffer-mode "view"
-    .osd.vm-help buffer-bind-key osd "esc h"
+    buffer-bind-create "bo" "esc h" .osd.vm-help osd
     set-variable $buffer-input vm-list-input
     set-variable $buffer-hilight .hilight.vm
     set-variable :mouse-word-select vm-list-mouse
@@ -548,7 +548,7 @@ hilight .hilight.vmhl 0x40 "." ""                 $global-scheme
     -1 buffer-mode "edit"
     set-variable $buffer-hilight .hilight.mail
     1 buffer-mode "view"
-    .osd.vm-help buffer-bind-key osd "esc h"
+    buffer-bind-create "bo" "esc h" .osd.vm-help osd
     set-variable $buffer-input vm-input
     next-window
 !emacro

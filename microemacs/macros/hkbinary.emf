@@ -1,13 +1,46 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;  Binary file hook
 ;
-;  Last Modified : <010228.1410>
+; Copyright (c) 1997-2001 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/binary" "hop"
-set-variable #l1 "aehkmopu"
 
-!if &and &sin "h" #l0 &band .hilight.flags 0x02 
+define-macro fhook-binary
+    !if &not &bmod "binary"
+        !if &seq $buffer-fname ""
+            ml-write "[Buffer has no file name]"
+            !abort
+        !endif
+        !if &bmod "edit"
+            ml-write "[Buffer has been changed]"
+            !abort
+        !endif
+        beginning-of-buffer
+        set-mark
+        end-of-buffer
+        kill-region
+        -1 yank
+        1 buffer-mode "binary"
+        insert-file $buffer-fname
+        -1 buffer-mode "edit"
+        beginning-of-buffer
+    !endif
+    buffer-initialize
+    ; execute user extensions if enabled
+    !if &exist my-fhook-binary
+        my-fhook-binary
+    !endif
+!emacro
+
+; buffer-initialize variables
+set-variable .fhook-binary.setup &reg "/history" "fhook/binary" "hop"
+set-variable .fhook-binary.setup-mask "aehkmopu"
+set-variable .fhook-binary.command-flag  "|thbio|th|thbo|thbo|"
+set-variable .fhook-binary.command-name  "|binary-swap-section||binary-move-backward|binary-move-forward|"
+set-variable .fhook-binary.command-nbind "|||||"
+set-variable .fhook-binary.command-kbind "|tab||A-up|A-down|"
+set-variable .fhook-binary.command-desc  "|&Swap section||Move &backward|Move &forward|"
+
+!if &and &sin "h" .fhook-binary.setup &band .hilight.flags 0x02 
     !if &not &exist .hilight.binary
         set-variable .hilight.binary &pinc .hilight.next 1
     !endif
@@ -74,40 +107,6 @@ define-macro binary-swap-section
     !endif
 !emacro
     
-define-macro fhook-binary
-    !if &not &bmod "binary"
-        !if &seq $buffer-fname ""
-            ml-write "[Buffer has no file name]"
-            !abort
-        !endif
-        !if &bmod "edit"
-            ml-write "[Buffer has been changed]"
-            !abort
-        !endif
-        beginning-of-buffer
-        set-mark
-        end-of-buffer
-        kill-region
-        -1 yank
-        1 buffer-mode "binary"
-        insert-file $buffer-fname
-        -1 buffer-mode "edit"
-        beginning-of-buffer
-    !endif
-    buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-binary
-        my-fhook-binary
-    !endif
-!emacro
-set-variable .fhook-binary.setup #l0
-set-variable .fhook-binary.setup-mask #l1
-set-variable .fhook-binary.command-flag  "|thbio|th|thbo|thbo|"
-set-variable .fhook-binary.command-name  "|binary-swap-section||binary-move-backward|binary-move-forward|"
-set-variable .fhook-binary.command-nbind "|||||"
-set-variable .fhook-binary.command-kbind "|tab||A-up|A-down|"
-set-variable .fhook-binary.command-desc  "|&Swap section||Move &backward|Move &forward|"
-
 ml-write "[Binary file hook loaded]"
 
 ; load in user extensions if found

@@ -1,18 +1,25 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
 ;  Created By    : Jon Green
 ;  Created       : Thu Jun 24 19:31:50 1999
-;  Last Modified : <010228.1023>
-;
 ;  Description   : M4 file - crude hilighting only.
 ;
-;  Copyright (c) 1999 JASSPA.
+;  Copyright (c) 1999-2001 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/m4" "hinx"
-set-variable #l1 "aehikmntux"
 
-!if &and &sin "h" #l0 &band .hilight.flags 0x02 
+define-macro fhook-m4
+    set-variable $buffer-mask "luh1"
+    buffer-initialize
+    ; execute user extensions if enabled
+    !if &exist my-fhook-m4
+        my-fhook-m4
+    !endif
+!emacro
+
+; buffer-initialize variables
+set-variable .fhook-m4.setup &reg "/history" "fhook/m4" "hinx"
+set-variable .fhook-m4.setup-mask "aehikmntux"
+
+!if &and &sin "h" .fhook-m4.setup &band .hilight.flags 0x02 
     !if &not &exist .hilight.m4
         set-variable .hilight.m4 &pinc .hilight.next 1
     !endif
@@ -75,21 +82,6 @@ set-variable #l1 "aehikmntux"
     hilight .hilight.m4    1 "__line__"           .scheme.prepro
     hilight .hilight.m4    1 "__unix__"           .scheme.prepro
 !endif
-;
-define-macro fhook-m4
-    ; if arg is 0 this is a new file so add template 
-    !if &not @#
-        etfinsrt "m4"
-    !endif
-    set-variable $buffer-mask "luh1"
-    buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-m4
-        my-fhook-m4
-    !endif
-!emacro
-set-variable .fhook-m4.setup #l0
-set-variable .fhook-m4.setup-mask #l1
 
 ml-write "[m4 file hook loaded]"
 

@@ -1,26 +1,35 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  Created By   : Dave Yip & Steven Phillips
+;  Created      : Mon Sep 21 18:10:34 1998
+;  Description  : Visual Basic Hook File
 ;
-;  Created By    : Dave Yip & Steven Phillips
-;  Created       : Mon Sep 21 18:10:34 1998
-;  Last Modified : <010228.1023>
-;
-;  Description : Visual Basic Hook File
-;
-;  Copyright (c) 2000 JASSPA
+;  Copyright (c) 1998-2001 JASSPA
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/vb" "dhix"
-set-variable #l1 "adehikmtux"
+
+define-macro fhook-vb
+    set-variable $buffer-mask "luh1"
+    buffer-initialize
+    ; execute user extensions if enabled
+    !if &exist my-fhook-vb
+        my-fhook-vb
+    !endif
+!emacro
+
+; buffer-initialize variables
+set-variable .fhook-vb.name "Visual Basic"
+set-variable .fhook-vb.setup &reg "/history" "fhook/vb" "dhiopx"
+set-variable .fhook-vb.setup-mask "adehikmoptux"
+set-variable .fhook-vb.comment "|'||'"
 
 !if &not &exist .hilight.vb
     set-variable .hilight.vb &pinc .hilight.next 1
 !endif
-!if &and &sin "h" #l0 &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-vb.setup &band .hilight.flags 0x02 
     ; Comments, strings & goto labels
     0 hilight .hilight.vb 3 100          $global-scheme
     hilight .hilight.vb 4 "\"" "\"" ""   .scheme.string
     hilight .hilight.vb 2 "^#"           .scheme.prepro
-    hilight .hilight.vb 18 "'"           .scheme.comment
+    hilight .hilight.vb 2 "'"            .scheme.comment
     hilight .hilight.vb 0 "^\\w+:"       .scheme.link
     hilight .hilight.vb 1 "GoTo \\w+"    .scheme.link
     
@@ -93,7 +102,7 @@ set-variable #l1 "adehikmtux"
         hilight .hilight.vb 1 "End\\s +Property" .scheme.function
     !endif
 !endif
-!if &sin "d" #l0
+!if &sin "d" .fhook-vb.setup
     ; Define the indentation tokens
     0 indent .hilight.vb 1 20
     indent .hilight.vb i "'"
@@ -132,19 +141,6 @@ set-variable #l1 "adehikmtux"
     indent .hilight.vb I "Open" 2
     ;indent .hilight.vb c "\_" 2
 !endif
-
--1 add-file-hook "-!-[ \t]*msvb.*-!-"           fhook-vb  ; -!- msvb -!-
-
-define-macro fhook-vb
-    set-variable $buffer-mask "luh1"
-    buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-vb
-        my-fhook-vb
-    !endif
-!emacro
-set-variable .fhook-vb.setup #l0
-set-variable .fhook-vb.setup-mask #l1
 
 ml-write "[VB file hook loaded]"
 

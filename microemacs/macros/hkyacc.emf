@@ -1,15 +1,30 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; LEX/YACC hook - This file is invoked when a lex or yacc file is loaded.
 ;
-; Last Modified : <010228.1003>
-; Copyright (c) 1999 JASSPA.
-;
+; Copyright (c) 1999-2001 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/yacc" "hinopx"
-set-variable #l1 "aehikmnoptux"
 
-!if &and &sin "h" #l0 &band .hilight.flags 0x02 
+define-macro fhook-yacc
+    ; if arg is 0 this is a new file so add template 
+    !if &not @#
+        ; Use c template for LEX & YACC
+        etfinsrt "c"
+    !endif
+    set-variable $buffer-mask "luh1"
+    buffer-initialize
+    ; execute user extensions if defined
+    !if &exist my-fhook-yacc
+        my-fhook-yacc
+    !endif
+!emacro
+
+; buffer-initialize variables
+set-variable .fhook-yacc.name "Lex/Yacc"
+set-variable .fhook-yacc.setup &reg "/history" "fhook/yacc" "hinopx"
+set-variable .fhook-yacc.setup-mask "aehikmnoptux"
+set-variable .fhook-yacc.comment "|/*|*/|*|"
+
+!if &and &sin "h" .fhook-yacc.setup &band .hilight.flags 0x02 
     ; Hi-light LEX/YACC Mode
     !if &not &exi .hilight.yacc
         set-variable .hilight.yacc &pinc .hilight.next 1
@@ -102,28 +117,6 @@ set-variable #l1 "aehikmnoptux"
         hilight .hilight.yacc 1 "-[[:digit:]]+\\.[[:digit:]]+f" .scheme.constant
     !endif
 !endif
-;
-define-macro fhook-yacc
-    ; if arg is 0 this is a new file so add template 
-    !if &not @#
-        ; Use c template for LEX & YACC
-        etfinsrt "c"
-    !endif
-    set-variable $buffer-mask "luh1"
-    buffer-initialize
-    ; execute user extensions if defined
-    !if &exist my-fhook-yacc
-        my-fhook-yacc
-    !endif
-!emacro
-set-variable .fhook-yacc.setup #l0
-set-variable .fhook-yacc.setup-mask #l1
-set-variable .fhook-yacc.comment "|/*|*/|*|"
-set-variable .fhook-yacc.command-flag  "|"
-set-variable .fhook-yacc.command-name  "|"
-set-variable .fhook-yacc.command-nbind "|"
-set-variable .fhook-yacc.command-kbind "|"
-set-variable .fhook-yacc.command-desc  "|"
 
 ml-write "[Lex/Yacc file hook loaded]"
 

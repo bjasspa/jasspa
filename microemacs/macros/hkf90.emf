@@ -1,26 +1,41 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
 ;  Created By    : Jon Green
 ;  Created       : Fri Feb 5 20:40:45 1999
-;  Last Modified : <010228.1013>
-;
 ;  Description   : Fortran 90 hook
 ;
 ;  Notes         : Starting template for Fortran 77/90
 ;
-;  History
-;
-;  Copyright (c) 1999 JASSPA
+;  Copyright (c) 1999-2001 JASSPA
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/f90" "bhinx"
-set-variable #l1 "aebhikmntux"
 
-!if &and &sin "h" #l0 &band .hilight.flags 0x02 
+define-macro fhook-f90
+    ; if arg is 0 this is a new file so add template
+    !if &not @#
+        ; Is this a f77 or other fortran file ??
+        !if &seq &mid $buffer-bname &rsin "." $buffer-bname 3 "f90"
+            etfinsrt "f90"
+        !else
+            etfinsrt "f"
+        !endif
+    !endif
+    set-variable $buffer-mask "luh1"
+    buffer-initialize
+    ; execute user extensions if enabled
+    !if &exist my-fhook-f90
+        my-fhook-f90
+    !endif
+!emacro
+
+; buffer-initialize variables
+set-variable .fhook-f90.name "Fortran"
+set-variable .fhook-f90.setup &reg "/history" "fhook/f90" "bhinopx"
+set-variable .fhook-f90.setup-mask "aebhikmnoptux"
+set-variable .fhook-f90.comment "|!||!|"
+
+!if &and &sin "h" .fhook-f90.setup &band .hilight.flags 0x02 
     !if &not &exist .hilight.f90
         set-variable .hilight.f90 &pinc .hilight.next 1
     !endif
-    
     ; High-light Fortran 90
     0 hilight  .hilight.f90 1 50               $global-scheme
     hilight .hilight.f90 4 "'" "'" ""       .scheme.string
@@ -104,28 +119,6 @@ set-variable #l1 "aebhikmntux"
     hilight .hilight.f90 1 "tiny"           .scheme.type
     hilight .hilight.f90 1 "type"           .scheme.type
 !endif
-
-define-macro fhook-f90
-    ; if arg is 0 this is a new file so add template
-    !if &not @#
-        ; Is this a f77 or other fortran file ??
-        !if &seq &mid $buffer-bname &rsin "." $buffer-bname 3 "f90"
-            etfinsrt "f90"
-        !else
-            etfinsrt "f"
-        !endif
-    !endif
-    set-variable $buffer-mask "luh1"
-    buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-f90
-        my-fhook-f90
-    !endif
-!emacro
-set-variable .fhook-f90.name "Fortran"
-set-variable .fhook-f90.setup #l0
-set-variable .fhook-f90.setup-mask #l1
-set-variable .fhook-f90.comment "|!||!|"
 
 ml-write "[Fortran file hook loaded]"
 

@@ -5,25 +5,10 @@
 ;       Author          : Jon Green
 ;       Created         : 19th February 1997
 ;
-;       Last Modified   : <010227.1552>
-;
 ;       Comment         : See docmacro.emf for documentation
 ;
 ; Copyright (c) 2000 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/doc" "fhijnopswx"
-set-variable #l1 "aefhijkmnopstuwx"
-
-; Set up for documentation mode.
-;
-define-macro bhook-doc
-    doc-bhook-body
-!emacro
-
-define-macro ehook-doc
-    doc-ehook-body
-!emacro
 
 define-macro fhook-doc
     ; use the document fhook in docmacro
@@ -34,9 +19,20 @@ define-macro fhook-doc
         my-fhook-doc
     !endif
 !emacro
-set-variable .fhook-doc.setup #l0
-set-variable .fhook-doc.setup-mask #l1
+
+; buffer-initialize variables
+set-variable .fhook-doc.setup &reg "/history" "fhook/doc" "fhijnopswx"
+set-variable .fhook-doc.setup-mask "aefhijkmnopstuwx"
 set-variable .fhook-doc.name "Document"
+
+; Set up for documentation mode.
+define-macro bhook-doc
+    doc-bhook-body
+!emacro
+
+define-macro ehook-doc
+    doc-ehook-body
+!emacro
 
 ; load docmacro.emf passing the doc setup flags
 execute-file "docmacro" "doc"

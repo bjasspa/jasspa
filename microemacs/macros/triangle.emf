@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips & Jon Green
 ;  Created       : Sat Jul 18 15:11:54 1998
-;  Last Modified : <000719.0013>
+;  Last Modified : <010301.1844>
 ;
 ;  Description   : Triangle playing card patience game
 ;
@@ -722,7 +722,9 @@ define-macro Triangle
         buffer-bind-key void "mouse-pick-3"
         buffer-bind-key void "mouse-drop-3"
         
-        buffer-bind-key tri-deal "C-c C-c"
+        buffer-bind-create "bo" "esc h" "" tri-help
+        buffer-bind-create "bo" "C-c C-c" "" tri-deal
+        buffer-bind-key tri-help "backspace"
         0 buffer-bind-key tri-key "return"  ; Home
         1 buffer-bind-key tri-key "1"       ; Column 1
         2 buffer-bind-key tri-key "2"       ; Column 2
@@ -732,7 +734,6 @@ define-macro Triangle
         6 buffer-bind-key tri-key "6"
         7 buffer-bind-key tri-key "7"
         buffer-bind-key tri-quit  "q"
-        buffer-bind-key tri-help  "esc h"   ; Help key
         1 buffer-bind-key tri-draw "C-l"  ; Redraw the screen
         buffer-bind-key tri-draw "redraw"
         set-variable $buffer-bhook bhook-triangle

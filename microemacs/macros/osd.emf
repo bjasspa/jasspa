@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Jon Green
 ;  Created       : Sat Jul 26 10:23:04 1997
-;  Last Modified : <010227.1525>
+;  Last Modified : <010301.1849>
 ;
 ;  Description   : OSD - On Screen Display macros.
 ;                  Controls the set up of the menus and screen overlays.
@@ -570,7 +570,7 @@ set-variable #l0 0
 !emacro
 
 ; execute any emulation osd file, e.g. Emacs, Vi etc
-!if &not &exi %emulate
+!if &exi %emulate
     !force execute-file &cat "osd" %emulate
 !endif
 ; load in user extensions if found

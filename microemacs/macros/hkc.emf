@@ -1,20 +1,49 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; C hook - This file is invoked when a C file is loaded.
 ;
-; Last Modified : <010228.0947>
-; Copyright (c) 1999 JASSPA.
-;
 ; Notes:
 ;       There is a distinction between C++ and C because of problems with
 ;       hilighting. ".cpp", ".cc" and ".hpp" are assumed to be C++ files.
 ;       Also recognise magic-string for C++ as:- "-!- cmode; c++ -!-" in
 ;       the first line.
+;
+; Copyright (c) 1997-2001 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/c" "bdfhnopx"
-set-variable #l1 "abdefhikmnoptux>"
 
-!if &and &sin "h" #l0 &band .hilight.flags 0x02 
+define-macro fhook-c
+    ; if arg is 0 this is a new file so add template 
+    !if &not @#
+        ; Is it an include h file or a c file?
+        !if &iseq &mid $buffer-bname &rsin "." $buffer-bname 1 "h"
+            etfinsrt "h"
+        !else
+            etfinsrt "c"
+        !endif
+    !endif
+    set-variable $buffer-mask "luh1"
+    buffer-initialize
+    ; execute user extensions if defined
+    !if &exist my-fhook-c
+        my-fhook-c
+    !endif
+!emacro
+
+; buffer-initialize variables
+set-variable .fhook-c.setup &reg "/history" "fhook/c" "bdfhnopx"
+set-variable .fhook-c.setup-mask "abdefhikmnoptux>"
+set-variable .fhook-c.tags "ctags"
+set-variable .fhook-c.comment "|/*|*/|*|"
+set-variable .fhook-c.command-flag  "|t|t|thb|thbo|thbo|bo|th|th|th|t|t|t|t|t|t|"
+set-variable .fhook-c.command-name  "|c-to-cpp-convert||normal-tab|c-start-comment|c-box|c-box||c-slashify|c-deslashify||c-hash-set-define|c-hash-unset-define|c-hash-eval|c-hash-eval|c-hash-del|"
+set-variable .fhook-c.command-nbind "||||||||||||||1||"
+set-variable .fhook-c.command-kbind "|||A-tab|esc C-c|esc q|esc o||||||||||"
+set-variable .fhook-c.command-desc  "|Convert to C&++||&Insert tab|Start co&mment|Restyle c&omment|||Slashify region|Deslashify region||&Set #define|&Unset #define|Evaluate &#'s|Evaluate #'s use &Narrow|&Remove # evaluation|"
+
+; Set up the folds for C
+set-variable .fhook-c.fold-open  "^{"
+set-variable .fhook-c.fold-close "^}"
+
+!if &and &sin "h" .fhook-c.setup &band .hilight.flags 0x02 
     ; Hi-light C Mode
     !if &not &exi .hilight.c
         set-variable .hilight.c &pinc .hilight.next 1
@@ -91,9 +120,13 @@ set-variable #l1 "abdefhikmnoptux>"
     !endif
 !endif
 ;
+; setup useful C fuctions to auto-load cmacros
+define-macro-file cmacros c-slashify c-deslashify c-start-comment c-hash-eval c-hash-set-define c-hash-unset-define c-hash-del
+define-macro-file cbox c-box
+define-macro-file hkcpp fhook-cpp
+;
 ;
 ; c to cpp file converter
-define-macro-file hkcpp fhook-cpp
 define-macro c-to-cpp-convert
     beginning-of-buffer
     1 buffer-mode "magic"
@@ -115,42 +148,6 @@ define-macro c-to-cpp-convert
     set-variable $buffer-fhook "fhook-cpp"
     fhook-cpp
 !emacro
-;
-; setup useful C fuctions to auto-load cmacros
-;
-define-macro-file cmacros c-slashify c-deslashify c-start-comment c-hash-eval c-hash-set-define c-hash-unset-define c-hash-del
-define-macro-file cbox c-box
-
-define-macro fhook-c
-    ; if arg is 0 this is a new file so add template 
-    !if &not @#
-        ; Is it an include h file or a c file?
-        !if &iseq &mid $buffer-bname &rsin "." $buffer-bname 1 "h"
-            etfinsrt "h"
-        !else
-            etfinsrt "c"
-        !endif
-    !endif
-    set-variable $buffer-mask "luh1"
-    buffer-initialize
-    ; execute user extensions if defined
-    !if &exist my-fhook-c
-        my-fhook-c
-    !endif
-!emacro
-set-variable .fhook-c.setup #l0
-set-variable .fhook-c.setup-mask #l1
-set-variable .fhook-c.tags "ctags"
-set-variable .fhook-c.comment "|/*|*/|*|"
-set-variable .fhook-c.command-flag  "|t|t|thb|thbo|thbo|bo|th|th|th|t|t|t|t|t|t|"
-set-variable .fhook-c.command-name  "|c-to-cpp-convert||normal-tab|c-start-comment|c-box|c-box||c-slashify|c-deslashify||c-hash-set-define|c-hash-unset-define|c-hash-eval|c-hash-eval|c-hash-del|"
-set-variable .fhook-c.command-nbind "||||||||||||||1||"
-set-variable .fhook-c.command-kbind "|||A-tab|esc C-c|esc q|esc o||||||||||"
-set-variable .fhook-c.command-desc  "|Convert to C&++||&Insert tab|Start co&mment|Restyle c&omment|||Slashify region|Deslashify region||&Set #define|&Unset #define|Evaluate &#'s|Evaluate #'s use &Narrow|&Remove # evaluation|"
-
-; Set up the folds for 'C' and C++
-set-variable .fhook-c.fold-open  "^{"
-set-variable .fhook-c.fold-close "^}"
 
 ml-write "[C file hook loaded]"
 

@@ -1,3 +1,9 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  Interactive Pipe hook
+;
+;  Copyright (c) 1998-2001 JASSPA
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 !if &band .hilight.flags 0x02
     !if &not &exist .hilight.gdb
         set-variable .hilight.gdb &pinc .hilight.next 1
@@ -379,9 +385,9 @@
         ; process has ended, clear-up
         set-variable $buffer-input ""
         set-variable $buffer-ipipe ""
-        buffer-unbind-key "f2"
-        buffer-unbind-key "f3"
-        buffer-unbind-key "f4"
+        !force buffer-unbind-key &kbin "0" ipipe-mode
+        !force buffer-unbind-key &kbin "1" ipipe-mode
+        !force buffer-unbind-key &kbin "2" ipipe-mode
     !endif
     !if &bmo "usr4"
         0 screen-update
@@ -404,14 +410,13 @@
 define-macro fhook-ipipe
     set-variable $buffer-mask "luh1"
     set-variable $buffer-fhook "fhook-ipipe"
-    ; ZZZZZ
-    buffer-bind-key ipipe-kill "C-c C-k"
-    2 buffer-bind-key ipipe-kill "C-c C-c"
-    buffer-bind-key ipipe-rerun "C-return"
-    buffer-bind-key ipipe-rerun "C-j"
+    buffer-bind-create "b" "C-c C-k" ""   ipipe-kill
+    buffer-bind-create "b" "C-c C-c" "2"  ipipe-kill
+    buffer-bind-create "bo" "C-return" "" ipipe-rerun
+    buffer-bind-create "bo" "C-j" ""      ipipe-rerun
     !if &seq $buffer-bname "*shell*"
         set-variable $buffer-ipipe ipipe-input
-        2 buffer-bind-key ipipe-mode "f4"
+        buffer-bind-create "b" "f4" "2"   ipipe-mode
     !elif &seq $buffer-bname "*gdb*"
         set-variable $buffer-dhook debug-reset-line
         set-variable $buffer-ipipe gdb-input
@@ -449,8 +454,8 @@ define-macro fhook-ipipe
     !endif
     -1 buffer-mode "wrap"
     1 buffer-mode "magic"
-    0 buffer-bind-key ipipe-mode "f2"
-    1 buffer-bind-key ipipe-mode "f3"
+    buffer-bind-create "b" "f2" "0" ipipe-mode
+    buffer-bind-create "b" "f3" "1" ipipe-mode
     1 ipipe-mode
     ; execute user extensions if enabled
     !if &exi my-fhook-ipipe

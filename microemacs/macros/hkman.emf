@@ -1,13 +1,33 @@
-;       man pages hook (does grotty string replaces)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  UNIX Man pages hook (does grotty string replaces)
 ;
-;   Last Modified : <010228.1023>
-;
+;  Copyright (c) 1997-2001 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-!if &band .hilight.flags 0x01
+define-macro fhook-man
+    buffer-initialize
+    1 buffer-mode "view"
+    set-variable :mouse-word-select man-process-link
+    ; execute user extensions if enabled
+    !if &exist my-fhook-man
+        my-fhook-man
+    !endif
+!emacro
+
+; buffer-initialize variables
+set-variable .fhook-man.name "UNIX Man page"
+set-variable .fhook-man.setup &reg "/history" "fhook/man" "Uhpo"
+set-variable .fhook-man.setup-mask "aehmpo1" 
+set-variable .fhook-man.command-flag  "|bo|bo|thbio|th|th|"
+set-variable .fhook-man.command-name  "|man-backward-word|man-forward-word|man-process-link||man-clean|"
+set-variable .fhook-man.command-nbind "||||||"
+set-variable .fhook-man.command-kbind "|C-left|C-right|return|||"
+set-variable .fhook-man.command-desc  "|||&Goto Link||&Clean Man-page|"
+
+!if &and &sin "h" .fhook-man.setup &band .hilight.flags 0x02 
     !if &not &exist .hilight.man "ERROR"
         set-variable .hilight.man &pinc .hilight.next 1
     !endif
-    
     0 hilight  .hilight.man 0                                $global-scheme
     ; ignore
     hilight .hilight.man 64 ".\CH" ""                        $global-scheme
@@ -133,6 +153,7 @@ define-macro man-clean
     beginning-of-buffer
     replace-string ".\CH" ""
     beginning-of-buffer
+    -1 buffer-mode "edit"
 !emacro
 
 define-macro man
@@ -162,22 +183,8 @@ define-macro man
     beginning-of-line
     kill-region
     -1 yank
+    set-variable $buffer-fhook "fhook-man"
     fhook-man
-!emacro
-
-define-macro fhook-man
-    ; ZZZZZ 0x01
-    !if &band .hilight.flags 0x01
-        set-variable $buffer-hilight .hilight.man
-    !endif
-    buffer-bind-key man-backward-word "C-left"
-    buffer-bind-key man-forward-word "C-right"
-    set-variable :mouse-word-select man-process-link
-    1 buffer-mode "view"
-    ; execute user extensions if enabled
-    !if &exist my-fhook-man
-        my-fhook-man
-    !endif
 !emacro
 
 ml-write "[Man-page file hook loaded]"

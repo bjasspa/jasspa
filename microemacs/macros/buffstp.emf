@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Thu Nov 23 21:19:31 2000
-;  Last Modified : <010228.1208>
+;  Last Modified : <010302.0839>
 ;
 ;  Description
 ;
@@ -31,6 +31,8 @@
 ;         x time mode
 ;         > Special internal flag indicating that indentation is
 ;           to be done by using cmode buffer mode (only add to .setup-mask).
+;         1 Special internal flag indicating that hilighting is used
+;           for reformatting, i.e. make readable 
 ;
 ;    In .setup, a 'A' means disable auto indent, a enables it.
 ;    In .setup-mask a lower case letter must be used.
@@ -51,6 +53,7 @@
 ;         b binding
 ;         o override any existing binding
 ;         i ignore emulation key mappings
+;         H Only create binding if Hilighting is enabled
 ;
 ;  Copyright (c) 2000 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -216,7 +219,11 @@ define-macro buffer-help
     set-variable #l3 &ind &spr ".%s.command-name"  $buffer-fhook
     set-variable #l4 &ind &spr ".%s.command-desc"  $buffer-fhook
     !if &not &sin "p" #l0
-        ml-write "[Help page disabled]"
+        !if &sin "p" &ind &spr ".%s.setup-mask" $buffer-fhook
+            ml-write "[Help page disabled]"
+        !else
+            ml-write "[Help page not available for this buffer]"
+        !endif
         !abort
     !endif
     set-variable #l9 &ind &spr ".%s.name" $buffer-fhook
@@ -271,7 +278,11 @@ define-macro buffer-help
     set-variable #l2 @2
     set-variable #l3 @3
     !if &seq "" #l1
-        osd .osd.tmp &inc #p9 1 "-"
+        !if &seq "" #l3
+            osd .osd.tmp &inc #p9 1 "-"
+        !else
+            osd .osd.tmp &inc #p9 1 "c-" &spr " %s "#l3
+        !endif
     !else
         !if &seq "" #l3
             set-variable #l3 #l1

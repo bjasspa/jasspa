@@ -1,6 +1,5 @@
-; C mode hook
-;
-; Last Modified : <010228.0955>
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; C++ mode hook
 ;
 ; Notes:
 ;       There is a distinction between C++ and C because of problems with
@@ -8,20 +7,48 @@
 ;       Also recognise magic-string for C++ as:- "-!- cmode; c++ -!-" in
 ;       the first line.
 ;
-; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/cpp" "bdfhnopx"
-set-variable #l1 "abdefhikmnoptux>"
+; Copyright (c) 1997-2001 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-!if &not &exist .hilight.cpp
-    set-variable .hilight.cpp &pinc .hilight.next 1
-    ; set up the osd tool menu & help dialog
-    set-variable .osd.cpp-help &pinc .osd.next 1
-    set-variable .osd.cpp-tool &pinc .osd.next 1
-!endif
-!if &and &sin "h" #l0 &band .hilight.flags 0x02 
-    ;
+define-macro fhook-cpp
+    ; if arg is 0 this is a new file so add template 
+    !if &not @#
+        ; Is it an include h file or a c file?
+        !if &seq &mid $buffer-bname &rsin "." $buffer-bname 1 "h"
+            etfinsrt "hpp"
+        !else
+            etfinsrt "cpp"
+        !endif
+    !endif
+    set-variable $buffer-mask "luh1"
+    buffer-initialize
+    ; execute user extensions if enabled
+    !if &exist my-fhook-cpp
+        my-fhook-cpp
+    !endif
+!emacro
+
+; buffer-initialize variables
+set-variable .fhook-cpp.name "C++"
+set-variable .fhook-cpp.setup &reg "/history" "fhook/cpp" "bdfhnopx"
+set-variable .fhook-cpp.setup-mask "abdefhikmnoptux>"
+set-variable .fhook-cpp.tags "ctags"
+set-variable .fhook-cpp.comment "|//||/|"
+set-variable .fhook-cpp.command-flag  "|thb|thbo|thbo|bo|th|th|th|t|t|t|t|t|t|"
+set-variable .fhook-cpp.command-name  "|normal-tab|c-start-comment|c-box|c-box||c-slashify|c-deslashify||c-hash-set-define|c-hash-unset-define|c-hash-eval|c-hash-eval|c-hash-del|"
+set-variable .fhook-cpp.command-nbind "||||||||||||1||"
+set-variable .fhook-cpp.command-kbind "|A-tab|esc C-c|esc q|esc o||||||||||"
+set-variable .fhook-cpp.command-desc  "|&Insert tab|Start co&mment|Restyle c&omment|||Slashify region|Deslashify region||&Set #define|&Unset #define|Evaluate &#'s|Evaluate #'s use &Narrow|&Remove # evaluation|"
+
+; Set up the folds for C++
+set-variable .fhook-cpp.fold-open  "^{"
+set-variable .fhook-cpp.fold-close "^}"
+
+!if &and &sin "h" .fhook-cpp.setup &band .hilight.flags 0x02 
     ; High-light C++ Mode
-    ;
+    !if &not &exist .hilight.cpp
+        set-variable .hilight.cpp &pinc .hilight.next 1
+    !endif
     0 hilight .hilight.cpp  2 50             $global-scheme
     hilight .hilight.cpp 0x3a "#" "\\"       .scheme.prepro
     hilight .hilight.cpp   18 "//"           .scheme.comment
@@ -110,37 +137,6 @@ set-variable #l1 "abdefhikmnoptux>"
 ; setup fuctions to auto-load from cmacros & cbox
 define-macro-file cmacros c-slashify c-deslashify c-start-comment c-hash-eval c-hash-set-define c-hash-unset-define c-hash-del
 define-macro-file cbox c-box
-
-define-macro fhook-cpp
-    ; if arg is 0 this is a new file so add template 
-    !if &not @#
-        ; Is it an include h file or a c file?
-        !if &seq &mid $buffer-bname &rsin "." $buffer-bname 1 "h"
-            etfinsrt "hpp"
-        !else
-            etfinsrt "cpp"
-        !endif
-    !endif
-    set-variable $buffer-mask "luh1"
-    buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-cpp
-        my-fhook-cpp
-    !endif
-!emacro
-set-variable .fhook-cpp.name "C++"
-set-variable .fhook-cpp.setup #l0
-set-variable .fhook-cpp.setup-mask #l1
-set-variable .fhook-cpp.tags "ctags"
-set-variable .fhook-cpp.comment "|//||/|"
-set-variable .fhook-cpp.command-flag  "|thb|thbo|thbo|bo|th|th|th|t|t|t|t|t|t|"
-set-variable .fhook-cpp.command-name  "|normal-tab|c-start-comment|c-box|c-box||c-slashify|c-deslashify||c-hash-set-define|c-hash-unset-define|c-hash-eval|c-hash-eval|c-hash-del|"
-set-variable .fhook-cpp.command-nbind "||||||||||||1||"
-set-variable .fhook-cpp.command-kbind "|A-tab|esc C-c|esc q|esc o||||||||||"
-set-variable .fhook-cpp.command-desc  "|&Insert tab|Start co&mment|Restyle c&omment|||Slashify region|Deslashify region||&Set #define|&Unset #define|Evaluate &#'s|Evaluate #'s use &Narrow|&Remove # evaluation|"
-
-set-variable .fhook-cpp.fold-open  "^{"
-set-variable .fhook-cpp.fold-close "^}"
 
 ml-write "[C++ file hook loaded]"
 

@@ -1,23 +1,33 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
-;  Created By    : Stephen Pillips
+;  Created By    : Steven Pillips
 ;  Created       : Wed Mar 12 20:29:38 1997
-;  Last Modified : <010228.1023>
-;
 ;  Description   : Lists hook
 ;
-;  Notes
-;
-;  History        :
-;
-;  000315 Jon Added keyboard short-cut to help page.
-;
-;  Copyright (c) 1997-2000 Jasspa
+;  Copyright (c) 1997-2001 Jasspa
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 set-char-mask "2" "-$&#!%:@."
 
-!if &band .hilight.flags 0x02
+define-macro fhook-lists
+    set-variable $buffer-mask "luh12"
+    buffer-initialize
+    set-variable :mouse-word-select ehf-process-link
+    ; execute user extensions if enabled
+    !if &exist my-fhook-lists
+        my-fhook-lists
+    !endif
+!emacro
+
+; buffer-initialize variables
+set-variable .fhook-lists.name "ME List"
+set-variable .fhook-lists.setup &reg "/history" "fhook/lists" "hop"
+set-variable .fhook-lists.setup-mask "aehop"
+set-variable .fhook-lists.command-flag  "|thbio|"
+set-variable .fhook-lists.command-name  "|lists-find-link|"
+set-variable .fhook-lists.command-nbind "||"
+set-variable .fhook-lists.command-kbind "|return|"
+set-variable .fhook-lists.command-desc  "|&Get Help on Item|"
+
+!if &and &sin "h" .fhook-lists.setup &band .hilight.flags 0x02 
     !if &not &exist .hilight.lists
         set-variable .hilight.lists &pinc .hilight.next 1
     !endif
@@ -72,25 +82,6 @@ define-macro-file hkehf ehf-process-link ehf-find-help
     exchange-point-and-mark
     ml-write "Error! Not in a link"
     !abort
-!emacro
-
-define-macro fhook-lists
-    ; ZZZZ
-    1 buffer-mode "justify"
-    1 buffer-mode "indent"
-    1 buffer-mode "wrap"
-    1 buffer-mode "time"
-    set-variable $buffer-mask "luh12"
-    !if &band .hilight.flags 0x02
-        set-variable $buffer-hilight .hilight.lists
-    !endif
-    set-variable :mouse-word-select ehf-process-link
-    buffer-bind-key ehf-process-link "esc h"
-    buffer-bind-key lists-find-link "return"
-    ; execute user extensions if enabled
-    !if &exist my-fhook-lists
-        my-fhook-lists
-    !endif
 !emacro
 
 ; load in user extensions if found

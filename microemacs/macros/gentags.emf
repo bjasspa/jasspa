@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Tue Sep 19 10:10:01 2000
-;  Last Modified : <010228.1005>
+;  Last Modified : <010302.0917>
 ;
 ;  Description   : Generic tags generator
 ;
@@ -97,10 +97,10 @@ define-macro generate-tags-file
         set-variable .path &stat "a" &cat .path #l2
     !endif
     !if &band @# 1
-        ; if an argument of 1 is given then open the gui
-        .osd.gtf osd
-    !else
+        ; if bit 1 is set then just do it
         generate-tags-file-exec
+    !else
+        .osd.gtf osd
     !endif
 !emacro
 set-variable .generate-tags-file.flags %tag-option

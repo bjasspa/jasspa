@@ -1,38 +1,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; This file is invoked when a lisp file is loaded.
+;  This file is invoked when a lisp file is loaded.
 ;
-;   Last Modified : <010228.0958>
+;  Copyright (c) 1999-2001 JASSPA
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; buffer-setup flags
-; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/lisp" "dhiopx"
-set-variable #l1 "adehikmoptux"
-
 set-char-mask "2" "-$&#!%:@."
-
-!if &not &exist .hilight.lisp
-    set-variable .hilight.lisp &pinc .hilight.next 1
-!endif
-
-!if &and &sin "h" #l0 &band .hilight.flags 0x02 
-    0 hilight .hilight.lisp 2 50                     $global-scheme
-    hilight .hilight.lisp 0x804  "\"" "\"" "\\"      .scheme.string
-    hilight .hilight.lisp 20 "#|" "|#" ""            .scheme.comment
-    hilight .hilight.lisp 2  ";"                     .scheme.comment
-    hilight .hilight.lisp 1  "^\\s *(\\{defvar"      .scheme.variable
-    hilight .hilight.lisp 1  "^\\s *(\\{defconst"    .scheme.variable
-    hilight .hilight.lisp 1  "^\\s *(\\{defun"       .scheme.keyword
-!endif
-
-!if &sin "d" #l0
-    0 indent  .hilight.lisp 0 10
-    indent .hilight.lisp n "(" 2
-    indent .hilight.lisp o ")" -2
-    indent .hilight.lisp i ";"
-    indent .hilight.lisp e "\"" "\"" "\\"
-    indent .hilight.lisp e "#|" "|#" ""
-    indent .hilight.lisp i ";"
-!endif
 
 define-macro fhook-lisp
     ; if arg is 0 this is a new file so add template 
@@ -46,9 +17,35 @@ define-macro fhook-lisp
         my-fhook-lisp
     !endif
 !emacro
-set-variable .fhook-lisp.setup #l0
-set-variable .fhook-lisp.setup-mask #l1
+
+; buffer-initialize variables
+set-variable .fhook-lisp.setup &reg "/history" "fhook/lisp" "dhiopx"
+set-variable .fhook-lisp.setup-mask "adehikmoptux"
 set-variable .fhook-lisp.comment "|;||;|"
+
+!if &not &exist .hilight.lisp
+    set-variable .hilight.lisp &pinc .hilight.next 1
+!endif
+
+!if &and &sin "h" .fhook-lisp.setup &band .hilight.flags 0x02 
+    0 hilight .hilight.lisp 2 50                     $global-scheme
+    hilight .hilight.lisp 0x804  "\"" "\"" "\\"      .scheme.string
+    hilight .hilight.lisp 20 "#|" "|#" ""            .scheme.comment
+    hilight .hilight.lisp 2  ";"                     .scheme.comment
+    hilight .hilight.lisp 1  "^\\s *(\\{defvar"      .scheme.variable
+    hilight .hilight.lisp 1  "^\\s *(\\{defconst"    .scheme.variable
+    hilight .hilight.lisp 1  "^\\s *(\\{defun"       .scheme.keyword
+!endif
+
+!if &sin "d" .fhook-lisp.setup
+    0 indent  .hilight.lisp 0 10
+    indent .hilight.lisp n "(" 2
+    indent .hilight.lisp o ")" -2
+    indent .hilight.lisp i ";"
+    indent .hilight.lisp e "\"" "\"" "\\"
+    indent .hilight.lisp e "#|" "|#" ""
+    indent .hilight.lisp i ";"
+!endif
 
 ml-write "[Lisp file hook loaded]"
 

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Wed Jan 12 16:37:22 2000
-;  Last Modified : <010219.1556>
+;  Last Modified : <010301.1811>
 ;
 ;  Description
 ;
@@ -30,7 +30,7 @@
         2 split-window-vertically
         15 resize-window-vertically
         find-buffer "*ftp-console*"
-        buffer-bind-key file-browser-close "delete"
+        buffer-bind-create "bio" "delete" "" file-browser-close
         previous-window
     !endif
     !if &seq &lef $buffer-fname 6 "ftp://"
@@ -66,7 +66,7 @@
         !force 0 delete-buffer "*files*"
         find-file &cat "file:" #l0 
         change-buffer-name "*files*"
-        buffer-bind-key file-browser-close "delete"
+        buffer-bind-create "bio" "delete" "" file-browser-close
     !endif
     2 split-window-horizontally
     !if &seq #l1 ""
@@ -74,7 +74,7 @@
     !else
         find-file #l1 
     !endif
-    buffer-bind-key file-browser-close "delete"
+    buffer-bind-create "bio" "delete" "" file-browser-close
 !emacro
 
 0 define-macro ftp-regfile-entry
@@ -307,7 +307,7 @@
     !endif
     set-variable #l0 &reg "/url/ftp" &cat .ftp.name "/path" "/"
     find-file &spr "ftp://%s%s" .ftp.name #l0 @mna
-    buffer-bind-key file-browser-close "delete"
+    buffer-bind-create "bio" "delete" "" file-browser-close
 !emacro
 
 -1 osd .osd.ftp
