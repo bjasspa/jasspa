@@ -10,7 +10,7 @@
  *
  *	Author:			Danial Lawrence
  *
- *	Creation Date:		10/05/91 08:27		<010125.0814>
+ *	Creation Date:		10/05/91 08:27		<010319.2119>
  *
  *	Modification date:	%G% : %U%
  *
@@ -1019,11 +1019,25 @@ justify(int leftMargin, int leftDoto)
          * right justification we insert "fillcol-linelen" spaces.
          * For centre justification we insert "fillcol-linelen/2"
          * spaces. */
-        len = fillcol - len ;
-	if(jmode == 'c')                /* Centre ?? */
-            leftMargin = (len + leftMargin) >> 1 ;
+        if(len > fillcol)
+        {
+            /* line is already too long - this can happen when filling
+             * a paragraph to the right and the first line is not the
+             * longest - pull back minimum to stay within the fillcol */
+            len -= fillcol ;
+            if(leftMargin < len)
+                leftMargin = 0 ;
+            else
+                leftMargin -= len ;
+        }
         else
-            leftMargin += len ;
+        {
+            len = fillcol - len ;
+            if(jmode == 'c')                /* Centre ?? */
+                leftMargin = (len + leftMargin) >> 1 ;
+            else
+                leftMargin += len ;
+        }
     }
     /* Both left and right margin justification. */
     else if(len < (unsigned short) fillcol)
