@@ -1135,7 +1135,6 @@ ffUrlFileClose(meUByte *fname, meUInt rwflag)
 meUByte *
 createBackupNameStrcpySub(meUByte *dd, meUByte *ss, int subCount, meUByte **subFrom, meUByte **subTo)
 {
-    dd += meStrlen(dd) ;
     if(subCount != 0)
     {
         meUByte cc ;
@@ -1249,8 +1248,8 @@ createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag)
         s = getFileBaseName(fn) ;
         meStrcpy(tmp,s) ;
         s = tmp ;
-        while((s=meStrchr(s,DIR_CHAR)) != NULL)  /* got a '/', -> '.' */
-            *s++ = '.' ;
+        while((s=meStrchr(s,DIR_CHAR)) != NULL)  /* got a '/', -> '_' */
+            *s++ = '_' ;
         mkTempName(filename,tmp,NULL) ;
     }
     else
@@ -1279,9 +1278,9 @@ createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag)
             createBackupNameStrcpySub(t,s,backupSubCount,backupSubFrom,backupSubTo) ;
         }
 #ifdef _DRV_CHAR
-        /* ensure the path has no ':' in it - breaks every thing, change to a / */
+        /* ensure the path has no ':' in it - breaks every thing, change to a '_' */
         while((t=meStrchr(t,_DRV_CHAR)) != NULL)
-            *t++ = DIR_CHAR ;
+            *t++ = '_' ;
 #endif
         if(flag & meBACKUP_CREATE_PATH)
         {
@@ -1397,8 +1396,10 @@ ffgetBuf(void)
 #ifdef _WIN32
     {
         if(ReadFile(ffrp,ffbuf,meFIOBUFSIZ,&ffremain,NULL) == 0)
-            return mlwrite(MWABORT,"File read error %d",GetLastError());
-        
+        {
+            if((ffrp != GetStdHandle(STD_INPUT_HANDLE)) || (GetLastError() != ERROR_BROKEN_PIPE))
+                return mlwrite(MWABORT,"[File read error %d]",GetLastError());
+        }
         if(ffremain <= 0)
         {
             ffremain = -1 ;
@@ -1411,7 +1412,7 @@ ffgetBuf(void)
         if(ffremain <= 0)
         {
             if(ferror(ffrp))
-                return mlwrite(MWABORT,(meUByte *)"File read error %d",errno);
+                return mlwrite(MWABORT,(meUByte *)"[File read error %d]",errno);
             ffremain = -1 ;
             return meTRUE ;
         }
