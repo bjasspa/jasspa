@@ -1756,7 +1756,7 @@ ipipeCommand(int f, int n)
         bn = BicommandN ;
 
     getFilePath(curbp->b_fname,pbuf) ;
-    return doIpipeCommand(lbuf,pbuf,bn,(n & 0x1f)) ;
+    return doIpipeCommand(lbuf,pbuf,bn,(n & LAUNCH_USER_FLAGS)) ;
 }
 
 #endif
@@ -1930,7 +1930,7 @@ pipeCommand(int f, int n)
 
     getFilePath(curbp->b_fname,pbuf) ;
 
-    return doPipeCommand(line,pbuf,bn,(n & 0x1f)) ;
+    return doPipeCommand(line,pbuf,bn,(n & LAUNCH_USER_FLAGS)) ;
 }
 
 /*
