@@ -65,29 +65,8 @@ set-variable $mode-names ".*"
 ; Menu #25 - SCROLL BAR pop-up menu
 ; Enable the scroll bar modes to be toggled on and off, and changes the
 ; sizes of the scroll columns.
-;
 0 define-macro osd-25-scroll-bars
-    ; If the argument is true then change the scroll bar mode.
-    !if &equ @# 0
-        !if @?
-            set-variable $scroll-bar &bxor $scroll-bar 0x100
-;            !if &not &band $scroll-bar 0x10
-;                set-variable $scroll-bar &bor $scroll-bar 0x10
-;            !else
-;                set-variable $scroll-bar &band $scroll-bar &bnot 0x10
-;            !endif
-        !endif
-        !if &not &band $scroll-bar 0x10
-            !abort
-        !endif
-    !else
-        !if @?
-            set-variable $scroll-bar &bxor $scroll-bar 0x01
-        !endif
-        !if &not &band $scroll-bar 0x01
-            !abort
-        !endif
-    !endif
+    set-variable $scroll-bar &bxor $scroll-bar @#
 !emacro
 
 0 define-macro osd-find-help
@@ -97,8 +76,8 @@ set-variable $mode-names ".*"
     !endif
 !emacro
 osd 25 0 "bB"
-osd 25 1 "" "\HEnabled"  0 osd-25-scroll-bars
-osd 25 2 "" "\HWide"     1 osd-25-scroll-bars
+osd 25 1 "" "Toggle \HEnable"  0x100 osd-25-scroll-bars
+osd 25 2 "" "Toggle \HWidth"   0x001 osd-25-scroll-bars
 ;
 ; MENU 27 - EDIT POPUP - Generic popup sub-menu
 ;

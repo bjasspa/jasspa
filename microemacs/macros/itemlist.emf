@@ -151,25 +151,6 @@ define-macro item-list-create
     !endif
     set-variable #l1 $buffer-bname
     set-variable #l3 $buffer-mask
-    find-buffer #l6
-    -1 buffer-mode "undo"
-    -1 buffer-mode "view"
-    1 buffer-mode "magic"
-    beginning-of-buffer
-    set-mark
-    end-of-buffer
-    -1 kill-region
-    insert-string "Type Item     <Order by Position>"
-    ; to simple click the function
-    buffer-bind-create "bio" "return" "" item-list-find
-    buffer-bind-create "bio" "delete" "" item-list-close
-    buffer-bind-create "b"   "esc f7" "" item-list-close
-    set-variable :mouse-pick-1 item-list-mouse-pick
-    set-variable :mouse-drop-1 item-list-mouse-drop
-    set-variable $buffer-hilight .hilight.list-item
-    set-variable :next-file &spr "*%s*" #l1
-    set-variable $buffer-mask #l3
-    find-buffer #l1
     !force set-variable #l5 @3
     !if &set @# $status
         set-variable #l0 @2
@@ -186,8 +167,30 @@ define-macro item-list-create
         set-variable #l0 &ind &spr ".fhook-%s.item-list-s1" #l8
         set-variable #l5 &ind &spr ".fhook-%s.item-list-r1" #l8
     !endif
-    set-variable #l2 &bmod "magic"
+    set-variable #l9 &cond &les &ind &spr ".fhook-%s.exact" #l8 0 -1 1
+    find-buffer #l6
+    -1 buffer-mode "undo"
+    -1 buffer-mode "view"
     1 buffer-mode "magic"
+    #l9 buffer-mode "exact"
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    -1 kill-region
+    insert-string "Type Item     <Order by Position>"
+    ; to simple click the function
+    buffer-bind-create "bio" "return" "" item-list-find
+    buffer-bind-create "bio" "delete" "" item-list-close
+    buffer-bind-create "b"   "esc f7" "" item-list-close
+    set-variable :mouse-pick-1 item-list-mouse-pick
+    set-variable :mouse-drop-1 item-list-mouse-drop
+    set-variable $buffer-hilight .hilight.list-item
+    set-variable :next-file &spr "*%s*" #l1
+    set-variable $buffer-mask #l3
+    find-buffer #l1
+    set-variable #l2 &spr "|%d|%d|" &bmod "exact" &bmod "magic"
+    1 buffer-mode "magic"
+    #l9 buffer-mode "exact"
     set-variable #l9 1
     set-variable #l4 1
     !repeat
@@ -231,7 +234,8 @@ define-macro item-list-create
     backward-delete-char
     item-list-order
     goto-position "\x86"
-    &cond #l2 1 -1 buffer-mode "magic"
+    &cond &lget #l2 1 1 -1 buffer-mode "exact"
+    &cond &lget #l2 2 1 -1 buffer-mode "magic"
 !emacro
 
 define-macro item-list-close

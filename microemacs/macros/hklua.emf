@@ -19,6 +19,7 @@ set-variable .fhook-lua.setup &reg "/history" "fhook/lua" "bdfghinopx"
 set-variable .fhook-lua.setup-mask "abdefghikmnoptux"
 set-variable .fhook-lua.tags "luatags"
 set-variable .fhook-lua.comment "|--|--|--| -- | -- |f|"
+set-variable .fhook-lua.exact -1
 
 ; setup item-list
 set-variable .fhook-lua.item-list-s1 "^[ \t]*function[ \t]+\\(\\w+\\)"

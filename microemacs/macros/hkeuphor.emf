@@ -18,6 +18,7 @@ set-variable .fhook-euphor.name "Euphoria"
 set-variable .fhook-euphor.setup &reg "/history" "fhook/euphor" "bdghinopx"
 set-variable .fhook-euphor.setup-mask "abdeghikmnoptux"
 set-variable .fhook-euphor.comment "|--||--|-- | --||"
+set-variable .fhook-euphor.exact -1
 
 ; setup item-list
 set-variable .fhook-euphor.item-list-s1 "^\\(global[ \t]+\\)?function[ \t]+\\(\\w+\\)"

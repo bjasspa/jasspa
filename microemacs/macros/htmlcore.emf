@@ -17,6 +17,7 @@ set-variable &ind &cat #l9 ".command-name"  &cat &ind &cat #l9 ".command-name"  
 set-variable &ind &cat #l9 ".command-nbind" &cat &ind &cat #l9 ".command-nbind" "|||||||||||"
 set-variable &ind &cat #l9 ".command-kbind" &cat &ind &cat #l9 ".command-kbind" "A-C-right|A-C-left|esc i||||||||"
 set-variable &ind &cat #l9 ".command-desc"  &cat &ind &cat #l9 ".command-desc"  "Forward Tag|Backward Tag|Goto Matching Tag|Find Tag|Collapse/Uncollapse Tag||Preview in Netscape|            (configure using html-config-netscape)|Preview in IExplorer|            (configure using html-config-iexplorer)|"
+set-variable &ind &cat #l9 ".exact" -1
 
 ;html-create-table
 ;html-insert-color

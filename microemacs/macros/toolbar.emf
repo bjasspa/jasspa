@@ -55,10 +55,14 @@
 0 define-macro toolbar-redraw-mode
     set-variable :tool-width $window-width
     set-variable #l9 &lget .toolbar.tool-flag @#
-    set-variable #l0 &sub $window-width &add 3 &band $scroll-bar 0x01
     set-variable #l1 &lget .toolbar.tool-name @#
-    set-variable #l2 &cond &band #l9 0x200 &mid $window-chars 27 1 &mid $box-chars 3 1
-    set-variable #l3 &cond &band #l9 0x200 &mid $window-chars 31 1 &mid $box-chars 4 1
+    !if &les $window-width 8
+        set-variable #l0 &sub $window-width 2
+    !else
+        set-variable #l0 &sub $window-width &cond &band #l9 0x200 5 4
+        set-variable #l2 &cond &band #l9 0x200 &mid $window-chars 27 1 &mid $box-chars 3 1
+        set-variable #l3 &cond &band #l9 0x200 &mid $window-chars 31 1 ""
+    !endif
     !if &band 0x10000 #l9
         !if &seq .toolbar-redraw.bt ""
             set-variable #l8 "Default"
@@ -80,7 +84,11 @@
             !endif        
         !endif        
     !endif        
-    set-variable $buffer-mode-line &spr "%s %s%n%s" #l2 &lef #l1 #l0 &sub #l0 &len #l1 " " #l3
+    !if &les $window-width 8
+        set-variable $buffer-mode-line &spr "%s%n%s%s" &lef #l1 #l0 &sub #l0 &len #l1 " " &mid $window-chars 27 1 &mid $window-chars 31 1
+    !else
+        set-variable $buffer-mode-line &spr "%s %s%n%s%s%s" #l2 &lef #l1 #l0 &sub #l0 &len #l1 " " #l3 &mid $window-chars 27 1 &mid $window-chars 31 1
+    !endif
 !emacro
 
 0 define-macro toolbar-redraw-tools
@@ -102,7 +110,9 @@
             !repeat
                 !if &equ $window-id #l3
                     set-variable #l7 @#
-                    find-buffer &lget .toolbar.tool-buff #l1
+                    !if &not &seq $buffer-bname &lget .toolbar.tool-buff #l1
+                        find-buffer &lget .toolbar.tool-buff #l1
+                    !endif
                     !if &not &exi :tool-width
                         ; this buffer has not been used by the toolbar before,
                         ; install dummy mouse handler to avoid modifying problems
@@ -226,9 +236,12 @@
 
 0 define-macro toolbar-mode-line
     !if &set #l1 &lfind .toolbar.tool-buff $buffer-bname
-        !if &band &lget .toolbar.tool-flag #l1 0x200
-            set-variable #l0 @fs $mouse-y $mouse-x
-            !if &seq #l0 &mid $window-chars 27 1
+        set-variable #l0 @fs $mouse-y $mouse-x
+        !if &seq #l0 &mid $window-chars 27 1
+            !if &seq @fs $mouse-y &add $mouse-x 1 &mid $window-chars 31 1
+                !force &div $window-width 2 scroll-left
+                !return
+            !elif &band &lget .toolbar.tool-flag #l1 0x200
                 !if &not &band &lget .toolbar.tool-flag &set #l2 #l1 0x800
                     !if &band &lget .toolbar.tool-flag &inc #l2 1 0x800
                         !jump -1
@@ -236,7 +249,12 @@
                 !endif
                 set-variable #l2 &sub #l2 1
                 !goto page-tool
-            !elif &seq #l0 &mid $window-chars 31 1
+            !endif
+        !elif &seq #l0 &mid $window-chars 31 1
+            !if &seq @fs $mouse-y &sub $mouse-x 1 &mid $window-chars 27 1
+                !force &div $window-width 2 scroll-right
+                !return
+            !elif &band &lget .toolbar.tool-flag #l1 0x200
                 set-variable #l2 &add #l1 1
                 !if &not &band &lget .toolbar.tool-flag #l2 0x800
                     !if &band &lget .toolbar.tool-flag &dec #l2 1 0x800
