@@ -38,6 +38,8 @@ define-macro osd-search
     set-variable .osd-search.hilschms &spr "|%d|%d|%d|%d|%d|%d|%d|%d|%d|" $global-scheme .scheme.hlwhite .scheme.hlblack .scheme.hlred .scheme.hlgreen .scheme.hlyellow .scheme.hlblue .scheme.hlmagenta .scheme.hlcyan
     ; indent-setup
     set-variable .osd.indstp &pinc .osd.next 1
+    ; browse
+    set-variable .osd.browse-help &pinc .osd.next 1
 !endif
 ;
 ; symbol
@@ -931,3 +933,58 @@ define-macro alarm
     #l1 create-callback #l0
 !emacro
 set-variable .alarm.no 0
+
+; Browse
+osd .osd.browse-help 0  "batcDH" 9 3 99 .scheme.osd-title "Browse Mode Help"
+osd .osd.browse-help 3  "" 
+osd .osd.browse-help 4  ""  " esc h     - View this help page"
+osd .osd.browse-help 5  ""  " C-g       - Exit browse mode"
+osd .osd.browse-help 6  ""  " return    - Page down"
+osd .osd.browse-help 7  ""  " space     - Page down"
+osd .osd.browse-help 8  ""  " backspace - Page up"
+osd .osd.browse-help 8  ""  " /         - Search forward"
+osd .osd.browse-help 13 ""
+osd .osd.browse-help 14 ""  " Normal cursor movement and searching"
+osd .osd.browse-help 15 ""  " key bindings can be used."
+osd .osd.browse-help 16 ""
+osd .osd.browse-help 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void 
+
+define-macro browse
+    set-variable #l8 $scroll
+    set-variable $scroll 3
+    !repeat
+        2 screen-update
+        ml-write "** BROWSE MODE, C-g to quit. RETURN/SPACE - down, BACKSPACE - up, / - search **"
+        !force !force set-variable #l0 @cgk
+        set-variable #l1 &cbin #l0
+        set-variable #l2 &nbin #l0
+        set-variable #l3 &cond &seq #l2 "" "1" #l2
+        !if &sin #l1 "|abort-command|browse|"
+            ml-write "Quit browsing mode"
+            set-variable $scroll #l8
+            !return
+        !elif &seq #l0 "space"
+            !force !force scroll-down
+        !elif &seq #l0 "/"
+            !force !force isearch-forward @mna
+        !elif &seq #l1 "newline"
+            !force !force scroll-down
+        !elif &seq #l1 "backward-delete-char"
+            !force !force scroll-up
+        !elif &seq #l1 "backward-line"
+            !force !force &mul #l3 4 scroll-up
+        !elif &seq #l1 "forward-line"
+            !force !force &mul #l3 4 scroll-down
+        !elif &seq #l1 "backward-char"
+            !force !force  &mul #l3 4 scroll-left
+        !elif &seq #l1 "forward-char"
+            !force !force  &mul #l3 4 scroll-right
+        !elif &sin #l1 "|beginning-of-buffer|end-of-buffer|beginning-of-line|end-of-line|scroll-left|scroll-right|scroll-up|scroll-down|"
+            !force !force execute-line &spr "%s %s @mna" #l2 #l1
+        !elif &sin #l1 "|goto-line|isearch-forward|isearch-backward|search-forward|search-backward|reread-file|"
+            !force !force execute-line &spr "%s %s @mna" #l2 #l1
+        !elif &seq #l0 "esc h"
+            !force !force .osd.browse-help osd
+        !endif
+    !until 0
+!emacro

@@ -62,11 +62,11 @@ define-macro-file narrow narrow-search-forward narrow-search-backward
 define-macro-file toolbar toolbar toolbar-close toolbar-mode-line
 define-macro-file buffstp buffer-setup buffer-help buffer-tool
 define-macro-file itemlist item-list item-list-close occur
+define-macro-file osdmisc symbol indent-setup alarm browse
 define-macro-file mail mail mail-check stop-mail-check
 define-macro-file fileopen osd-file-open osd-get-file
 define-macro-file spellaut auto-spell auto-spell-menu
 define-macro-file hkinfo info info-on info-goto-link
-define-macro-file osdmisc symbol indent-setup alarm
 define-macro-file pagefile page-file page-bfile
 define-macro-file zfile find-zfile zfile-setup
 define-macro-file gentags generate-tags-file
@@ -152,6 +152,7 @@ global-bind-key ifill-paragraph          "esc q"
 global-bind-key delete-indentation       "esc ^"
 0xa0000 global-bind-key osd              "f1"
 global-bind-key context-menu             "S-f1"
+global-bind-key browse                   "f3"
 global-bind-key reread-file              "f5"
 global-bind-key item-list                "f6"
 2 global-bind-key occur                  "S-f6"
@@ -289,7 +290,6 @@ add-file-hook ".r"                                            fhook-r
  1 add-file-hook "^#VRML"                        fhook-vrml   ; VRML or wrl files
  1 add-file-hook "^#Inventor"                    fhook-vrml   ; Use the VRML hook for iv files
 -2 add-file-hook "This is Info file"             fhook-info   ; GNU info file
-;-4 add-file-hook "<html>"                        fhook-html   ; HTML files
 -1 add-file-hook "<?xml"                         fhook-xml    ; <?xml version="1.0" standalone="no"?>
 -1 add-file-hook "-[*!]-[ \t]*c.*-[*!]-"         fhook-c      ; -*- C -*-
 -1 add-file-hook "-[*!]-[ \t]*c\\+\\+.*-[*!]-"   fhook-cpp    ; -*- C++ -*-
