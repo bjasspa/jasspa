@@ -10,7 +10,7 @@
  *
  *  Author:         Danial Lawrence
  *
- *  Creation Date:      14/05/86 12:37      <010804.2301>
+ *  Creation Date:      14/05/86 12:37      <010820.2221>
  *
  *  Modification date:  %G% : %U%
  *
@@ -321,12 +321,61 @@ meItoa(int i)
 }
 
 
+meVARIABLE *
+SetUsrLclCmdVar(uint8 *vname, uint8 *vvalue, register meVARLIST *varList)
+{
+    /* set a user variable */
+    register meVARIABLE *vptr, *vp ;
+    register int ii, jj ;
+    
+    vptr = (meVARIABLE *) varList ;
+    ii = varList->count ;
+    /* scan the list looking for the user var name */
+    while(ii)
+    {
+        uint8 *s1, *s2, cc ;
+        
+        jj = (ii>>1)+1 ;
+        vp = vptr ;
+        while(--jj >= 0)
+            vp = vp->next ;
+        
+        s1 = vp->name ;
+        s2 = vname ;
+        for( ; ((cc=*s1++) == *s2) ; s2++)
+            if(cc == 0)
+            {
+                /* found it, replace value */
+                meNullFree(vp->value);
+                vp->value = meStrdup(vvalue) ;
+                return vp ;
+            }
+        if(cc > *s2)
+            ii = ii>>1 ;
+        else
+        {
+            ii -= (ii>>1) + 1 ;
+            vptr = vp ;
+        }
+    }
+    
+    /* Not found so create a new one */
+    if((vp = (meVARIABLE *) meMalloc(sizeof(meVARIABLE)+meStrlen(vname))) != NULL)
+    {
+        meStrcpy(vp->name,vname) ;
+        vp->next = vptr->next ;
+        vptr->next = vp ;
+        varList->count++ ;
+        vp->value = meStrdup(vvalue) ;
+    }
+    return vp ;
+}
+
 int
 setVar(uint8 *vname, uint8 *vvalue, meREGISTERS *regs)
 {
-    meVARLIST     *varList ;            /* Pointer to the root */
-    register int   status ;         /* status return */
-    uint8         *nn ;
+    register int status ;         /* status return */
+    uint8 *nn ;
     
     /* check the legality and find the var */
     nn = vname+1 ;
@@ -346,12 +395,13 @@ setVar(uint8 *vname, uint8 *vvalue, meREGISTERS *regs)
             break ;
         }
     case TKVAR:
-        varList = &usrVarList ;
-        goto setUsrLclCmdVar ;
+        if(SetUsrLclCmdVar(nn,vvalue,&usrVarList) == NULL)
+            return FALSE ;
+        break ;
     case TKLVR:
         {
-            uint8 *ss ;
             BUFFER *bp ;
+            uint8 *ss ;
             if((ss=meStrrchr(nn,':')) != NULL)
             {
                 *ss = '\0' ;
@@ -364,11 +414,13 @@ setVar(uint8 *vname, uint8 *vvalue, meREGISTERS *regs)
             }
             else
                 bp = curbp ;
-            varList = &(bp->varList) ;
-            goto setUsrLclCmdVar ;
+            if(SetUsrLclCmdVar(nn,vvalue,&(bp->varList)) == NULL)
+                return FALSE ;
+            break ;
         }
     case TKCVR:
         {
+            meVARLIST *varList ;
             uint8 *ss ;
             if((ss=meStrrchr(nn,'.')) != NULL)
             {
@@ -385,52 +437,8 @@ setVar(uint8 *vname, uint8 *vvalue, meREGISTERS *regs)
             }
             else if((varList = regs->varList) == NULL)
                 return mlwrite(MWABORT,(uint8 *)"[No such variable]");
-        }
-setUsrLclCmdVar:
-        {
-            /* set a user variable */
-            register meVARIABLE *vptr, *vp ;
-            register int ii, jj ;
-            
-            vptr = (meVARIABLE *) varList ;
-            ii = varList->count ;
-            /* scan the list looking for the user var name */
-            while(ii)
-            {
-                uint8 *s1, *s2, cc ;
-                
-                jj = (ii>>1)+1 ;
-                vp = vptr ;
-                while(--jj >= 0)
-                    vp = vp->next ;
-                
-                s1 = vp->name ;
-                s2 = nn ;
-                for( ; ((cc=*s1++) == *s2) ; s2++)
-                    if(cc == 0)
-                    {
-                        /* found it, replace value */
-                        meNullFree(vp->value);
-                        goto found_ulcvar ;
-                    }
-                if(cc > *s2)
-                    ii = ii>>1 ;
-                else
-                {
-                    ii -= (ii>>1) + 1 ;
-                    vptr = vp ;
-                }
-            }
-            
-            /* Not found so create a new one */
-            if((vp = (meVARIABLE *) meMalloc(sizeof(meVARIABLE)+meStrlen(nn))) == NULL)
+            if(SetUsrLclCmdVar(nn,vvalue,varList) == NULL)
                 return FALSE ;
-            meStrcpy(vp->name,nn) ;
-            vp->next = vptr->next ;
-            vptr->next = vp ;
-            varList->count++ ;
-found_ulcvar:
-            vp->value = meStrdup(vvalue) ;
             break ;
         }
     
@@ -2779,6 +2787,13 @@ get_flag:
                 break ;
             case 't':
                 /* File type - use look up table, see first comment */
+                if((ftype == meFILETYPE_DIRECTORY) &&
+#ifdef _UNIX
+                   (stats.stmtime == -1))
+#else
+                   meTestDir(arg2))
+#endif
+                    ftype = meFILETYPE_NOTEXIST ;
                 evalResult[0] = typeRet[ftype] ;
                 evalResult[1] = '\0' ;
                 return evalResult ;

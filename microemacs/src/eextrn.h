@@ -1,7 +1,7 @@
 /****************************************************************************
  * External function definitions
  *
- * Last Modified:       <010802.1939>
+ * Last Modified:       <010820.2223>
  * 
  ****************************************************************************
  * 
@@ -210,6 +210,8 @@ extern	uint8  *gtfun APRAM((uint8 *fname));
 extern  uint8  *getUsrLclCmdVar APRAM((uint8 *vname, register meVARLIST *varList)) ;
 #define getUsrVar(vname) getUsrLclCmdVar(vname,&usrVarList)
 extern	int	descVariable APRAM((int f, int n));
+extern	meVARIABLE *SetUsrLclCmdVar APRAM((uint8 *vname, uint8 *vvalue,
+                                           register meVARLIST *varList)) ;
 extern	int	setVar APRAM((uint8 *vname, uint8 *vvalue, meREGISTERS *regs)) ;
 extern	int	setVariable APRAM((int f, int n));
 extern	int	unsetVariable APRAM((int f, int n));
@@ -754,6 +756,7 @@ extern int  anyChangedRegistry APRAM((void));
 #if !(defined __SEARCHC) || (defined _ANSI_C)		/* SEARCH.C Externals */
 #define meEXPAND_BACKSLASH 0x01
 #define meEXPAND_FFZERO    0x02
+#define meEXPAND_PRINTABLE 0x04
 extern  int     expandchar APRAM((int c, uint8 *d, int flags)) ;
 extern  int     expandexp APRAM((int slen, uint8 *s, int dlen, int doff,
                                  uint8 *d, int cpos, int *opos, int flags)) ;

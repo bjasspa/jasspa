@@ -10,7 +10,7 @@
 *
 *	Author:			Danial Lawrence
 *
-*	Creation Date:		14/05/86 12:37		<010305.1128>
+*	Creation Date:		14/05/86 12:37		<010819.0047>
 *
 *	Modification date:	%G% : %U%
 *
@@ -106,13 +106,13 @@ getFileStats(uint8 *file, int flag, meSTAT *stats, uint8 *lname)
 #endif
     }
     if(isHttpLink(file))
-    {
         return meFILETYPE_HTTP ;
-    }
     if(isFtpLink(file))
-    {
         return meFILETYPE_FTP ;
-    }
+    if(isUrlFile(file))
+        /* skip the file: */
+        file += 5 ;
+
 #ifdef _DOS
     {
         union REGS reg ;                /* cpu register for use of DOS calls */

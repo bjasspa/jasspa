@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Detlef Groth & Steven Phillips
 ;  Created       : Sat Aug 4 16:50:33 2001
-;  Last Modified : <010810.1019>
+;  Last Modified : <010820.1516>
 ;  Description   : Generic macros for creating a list of items defined
 ;                  in current buffer
 ;
@@ -68,14 +68,23 @@ define-macro item-list
         set-variable #l5 &ind &spr ".%s.item-list-r1" $buffer-fhook
     !endif
     set-variable #l1 $buffer-bname
+    !if &seq $buffer-fname ""
+        set-variable #l4 &spr "*%s*" $buffer-bname
+    !else
+        set-variable #l4 $buffer-fname
+    !endif
     set-variable #l2 &bmod "magic"
     set-variable #l3 $buffer-mask
     1 buffer-mode "magic"
     delete-other-windows
     !force 0 delete-buffer "*item-list*"
     find-buffer "*item-list*"
-    split-window-horizontally
-    25 shrink-window-horizontally
+    !if &equ @# 2
+        split-window-vertically
+    !else
+        split-window-horizontally
+        25 shrink-window-horizontally
+    !endif
     ; to simple click the function
     buffer-bind-create "bio" "return" "" item-list-find
     buffer-bind-create "bio" "delete" "" item-list-close
@@ -83,7 +92,7 @@ define-macro item-list
     set-variable :mouse-pick-1 item-list-mouse-pick
     set-variable :mouse-drop-1 item-list-mouse-drop
     set-variable $buffer-hilight .hilight.list-item
-    set-variable :buffer-bname #l1
+    set-variable :next-file #l4
     set-variable $buffer-mask #l3
     -1 buffer-mode "undo"
     1 buffer-mode "magic"
@@ -217,9 +226,13 @@ define-macro item-list-find
     !endif
     beginning-of-line
     search-forward "^ *\\([0-9]+\\)"
-    set-variable #l0 :buffer-bname
     set-variable #l1 @s1
-    next-window-find-buffer #l0
+    set-variable #l0 &len :next-file
+    !if &and &seq &lef :next-file 1 "*" &seq &rig :next-file &sub #l0 1 "*" 
+        next-window-find-buffer &mid :next-file 1 &sub #l0 2 @mna
+    !else
+        next-window-find-file :next-file @mna
+    !endif
     #l1 goto-line
     recenter
 !emacro
@@ -235,15 +248,19 @@ define-macro item-list-close
 define-macro occur
     !force set-variable #l1 @1
     !if &not $status
-        set-variable #l1 @ml05 "Occur Regex"
+        set-variable #l1 @ml05 "Occur"
     !endif
+    !if &not &bmod "magic"
+        str-to-regex #l1
+    !endif
+    set-variable #l6 &cond &equ @# 2 28 15
     ; find out how many regex groups are being used
     set-variable #l2 #l1
     var-str-sub #l2 "\\(" "X"
     set-variable #l4 &sub &len #l1 &len #l2
     set-variable #l2 &spr "\\(%s\\)" #l1
     !if &not &seq &lef #l1 1 "^"
-        set-variable #l2 &cat "\\(.\\{0,15\\}\\)" #l2
+        set-variable #l2 &spr "\\(.\\{0,%d\\}\\)%s" #l6 #l2
         set-variable #l3 &spr "Occur \\1\ecB\\2\ecA"
         set-variable #l4 &add #l4 1
     !else
@@ -251,10 +268,14 @@ define-macro occur
     !endif
     set-variable #l5 &rig #l1 &sub &len #l1 1
     !if &not &seq #l5 "$"
-        set-variable #l2 &cat #l2 "\\(.\\{0,15\\}\\)"
+        set-variable #l2 &spr "%s\\(.\\{0,%d\\}\\)" #l2 #l6
         set-variable #l3 &spr "%s\\%d" #l3 &add #l4 2
     !endif
     ; force the order back to position
     set-variable .item-list.order 1
-    item-list #l2 #l3
+    @# item-list #l2 #l3
 !emacro
+
+0 add-next-line "*item-list*"
+add-next-line "*item-list*" "^ *%l "
+

@@ -10,7 +10,7 @@
 *
 *       Author:                 Danial Lawrence
 *
-*       Creation Date:          14/05/86 12:37          <010802.1946>
+*       Creation Date:          14/05/86 12:37          <010820.2224>
 *
 *       Modification date:      %G% : %U%
 *
@@ -738,10 +738,6 @@ bclear(register BUFFER *bp)
     bp->fhook = bp->dhook = bp->bhook = bp->ehook = -1 ;
 #if MEUNDO
     meUndoRemove(bp) ;
-#endif
-#if FLNEXT
-    meNullFree(bp->nextFile) ;
-    bp->nextFile = NULL ;
 #endif
     /* Clean out the local buffer variables */
     if (bp->varList.head != NULL)

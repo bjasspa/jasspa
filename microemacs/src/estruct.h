@@ -2,7 +2,7 @@
  * 
  *	SCCS:		%W%		%G%		%U%
  *
- *	Last Modified :	<010810.1438>
+ *	Last Modified :	<010820.2222>
  *
  *	ESTRUCT:	Structure and preprocesser defined for
  *			MicroEMACS 3.7
@@ -561,9 +561,6 @@ typedef struct  BUFFER {
     uint8  *b_fname ;                   /* File name                    */
     uint8  *b_bname ;                   /* Buffer name                  */
     uint8  *modeLineStr ;               /* buffer mode-line format      */
-#if FLNEXT
-    uint8  *nextFile ;                  /* Next's current File name     */
-#endif
 #if CRYPT
     uint8  *b_key;		        /* current encrypted key	*/
 #endif
