@@ -2100,6 +2100,7 @@ osdDisp(meUByte *buf, meUByte *cont, int cpos)
         menuRenderItem(md,md->curContext,osdRENDITEM_DRAW|osdRENDITEM_REFOCUS) ;
     }
     TTmove(osdRow,osdCol) ;
+    TTflush();
 }                
                 
 /*
