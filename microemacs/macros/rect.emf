@@ -1,0 +1,125 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2004 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     Mon Jan 12 2004
+; Synopsis:    Rectangle macros
+; Authors:     Steven Phillips & Jon Green
+;
+; string-rectangle; With a region selected across multiple lines then the user
+; is prompted for a string. The string is inserted at the same horizonatal
+; position on all lines. 
+define-macro string-rectangle
+     0 show-region
+     !if &equ &band $result 5 5
+         !if &not &band $result 2
+             3 show-region
+         !endif
+         set-position "\x81"
+         -2 show-region
+         set-variable #l1 $window-line
+         set-variable #l3 $window-col
+         2 show-region
+         set-variable #l2 $window-line
+         set-variable #l4 $window-col
+         ; If the lines are equal then quit now.
+         !if &equ #l1 #l2
+             ; Failed - Reactivate the region that is active.
+             goto-position "\x81"
+             !force 4 show-region
+             !abort
+         !endif
+         ; Compute the top line.
+         !if &gre #l1 #l2
+             ; Swap lines
+             set-variable #l0 #l2
+             set-variable #l2 #l1
+             set-variable #l1 #l0
+
+             ; Swap columns
+             set-variable #l0 #l4
+             set-variable #l4 #l3
+             set-variable #l3 #l0
+         !else
+             -2 show-region
+         !endif
+         ; Get the string to insert
+         !force set-variable #l6 @ml "String ? "
+         !if &not $status
+             ; Failed - Reactivate the region that is active.
+             goto-position "\x81"
+             !force 4 show-region
+             !abort
+         !endif
+         ; Fill all of the lines in the region from the first column. 
+         !repeat
+             ; Move to the column
+             beginning-of-line
+             !while &les $window-col #l3
+                 !if &not &seq @wc "\n"
+                     forward-char
+                 !else
+                     insert-string " "
+                 !endif
+             !done
+             ; Insert the string
+             insert-string #l6
+             !force forward-line
+             set-variable #l1 &add #l1 1
+         !until &gre #l1 #l2
+         ; Knock off all of the region stuff and resume first position. 
+         !force -3 show-region
+         !force  3 show-region
+         !force -1 show-region
+         goto-position "\x81"
+         !return
+     !endif
+     !abort
+!emacro
+
+define-macro copy-rectangle
+    set-alpha-mark "\x81" 
+    set-variable #l9 $window-col
+    set-variable #l0 &bmod "view" 
+    set-variable #l1 &bmod "edit" 
+    set-variable #l2 &bmod "undo" 
+    -1 buffer-mode view 
+    1 buffer-mode undo 
+    kill-rectangle 
+    ; undo the kill and restore the buffer state 
+    undo 
+    &cond #l2 1 -1 buffer-mode "undo" 
+    &cond #l1 1 -1 buffer-mode "edit" 
+    &cond #l0 1 -1 buffer-mode "view" 
+    goto-alpha-mark "\x81" 
+    set-variable $window-col #l9
+    ; flag the command to be a copy-region type command 
+    set-variable @cl copy-region 
+!emacro 
+        
+; yank-rectangle-overwrite; replaces a column of text with the current kill buffer.
+; To use place the cursor at the top left of column and call this command. The width
+; of the column to be replaced is determined by the width of the kill buffer text being
+; inserted.
+define-macro yank-rectangle-overwrite
+    yank-rectangle
+    set-variable #l0 $window-line
+    set-variable #l1 $window-acol
+    exchange-point-and-mark
+    set-variable #l2 &add #l1 &sub #l1 $window-acol
+    set-variable $window-acol #l1
+    set-mark
+    set-variable $window-line #l0
+    !force set-variable $window-acol #l2
+    !if &gre $window-acol #l2
+        ; previous char is a multi-char display char (i.e. a tab)
+        backward-char
+    !endif
+    !if &les $window-acol #l2
+        ; last line not long enough (or multi display char), pad with spaces
+        &sub #l2 $window-acol insert-space
+    !endif
+    kill-rectangle
+    -1 yank
+!emacro

@@ -1386,7 +1386,7 @@ windowSplitDepth(int f, int n)
     off->next = NULL ;
     wp->dotCharOffset = off ;
 #if MEOPT_EXTENDED
-    wp->id = nextWindowId++ ;
+    wp->id = ++nextWindowId ;
 #endif
     frameCur->windowCount++;                       /* One more window displayed */
     frameCur->bufferCur->windowCount++;            /* Displayed once more.  */
@@ -1494,7 +1494,7 @@ windowSplitWidth(int f, int n)
     off->next = NULL ;
     wp->dotCharOffset = off ;              /* Attach current line offset buffer */
 #if MEOPT_EXTENDED
-    wp->id = nextWindowId++ ;
+    wp->id = ++nextWindowId ;
 #endif
     frameCur->windowCount++;               /* One more window displayed */
     frameCur->bufferCur->windowCount++;    /* Displayed once more.  */

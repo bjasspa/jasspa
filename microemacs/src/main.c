@@ -918,7 +918,10 @@ sigchild(SIGNAL_PROTOTYPE)
                (meWaitpid(ipipe->pid,&status,WNOHANG) == ipipe->pid))
             {
                 if(WIFEXITED(status))
+                {
                     ipipe->pid = -4 ;
+                    ipipe->exitCode = WEXITSTATUS(status) ;
+                }
                 else if(WIFSIGNALED(status))
                     ipipe->pid = -3 ;
 #ifdef WCOREDUMP

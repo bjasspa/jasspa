@@ -83,7 +83,6 @@ define-macro c-hash-unset-define
 !emacro
 
 0 define-macro-file calc calc-buffer
-0 define-macro-file osd osd-narrow-markup
 ; #l0 %cd-hide, #l1 %cd-depth, #l2 %cd-neg, #l3 %cd-def, #l4 %cd-varname, #l5 %cd-temp
 define-macro c-hash-eval
     !if &bmod "narrow"
@@ -104,7 +103,8 @@ define-macro c-hash-eval
                 !endif
             !endif
             !if &and @? &not #l0
-                0x34 narrow-buffer .scheme.hide osd-narrow-markup
+                exchange-point-and-mark
+                0x34 narrow-buffer .scheme.hide &cat &lef @wl 60 " ..."
             !endif
         !else
             !if &seq &lef @wl 3 "#if"

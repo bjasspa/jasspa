@@ -57,14 +57,15 @@
 0 define-macro-file buffinit buffer-init buffer-init-fhook buffer-bind-create
 0 define-macro-file utils ascii-time regex-forward regex-backward var-str-sub str-to-regex filemask-to-regex copy-registry create-file-path
 define-macro-file format clean sort-lines-ignore-case normal-tab tabs-to-spaces paragraph-to-line delete-indentation restyle-region restyle-buffer ifill-paragraph
-define-macro-file cvs cvs cvs-add cvs-checkout cvs-commit cvs-diff cvs-gdiff cvs-log cvs-remove cvs-resolve-conflicts cvs-state cvs-status cvs-tag cvs-update 
+define-macro-file cvs cvs cvs-add cvs-annotate cvs-checkout cvs-commit cvs-diff cvs-gdiff cvs-log cvs-remove cvs-resolve-conflicts cvs-state cvs-status cvs-tag cvs-update 
+define-macro-file misc save-all open-line symbol check-line-length alarm time compare-windows-exact display-white-chars
 define-macro-file tools compile grep rgrep which diff diff-changes execute-tool uniq reread-file find-bfile find-cfile
-define-macro-file misc symbol check-line-length alarm time compare-windows-exact display-white-chars string-rectangle
 define-macro-file abbrev expand-abbrev-handle expand-iso-accents expand-look-back expand-word iso-accents-mode
 define-macro-file comment comment-line uncomment-line comment-to-end-of-line comment-start comment-restyle
 define-macro-file search replace-all-string query-replace-all-string replace-all-pairs line-scheme
 define-macro-file hkdirlst file-browser file-browser-close file-browser-swap-buffers
 define-macro-file charsutl charset-change charset-iso-to-user charset-user-to-iso
+define-macro-file rect string-rectangle copy-rectangle yank-rectangle-overwrite
 define-macro-file spell spell-word spell-buffer spell-edit-word find-word
 define-macro-file games Metris Patience Triangle Mahjongg Match-It
 define-macro-file toolbar toolbar toolbar-close toolbar-mode-line
@@ -109,18 +110,6 @@ define-macro-file vm
     !endif
     !abort
 !emacro
-; save-all - saves any changes to any buffer, registry or dictionary
-define-macro save-all
-    @# save-some-buffers @mna
-    &bor 2 @# save-registry @mna
-    &bor 2 @# save-dictionary @mna
-    !if &not @?
-        set-variable #l0 @mc1 "Save default history [y/n]? " "nNyY"
-        !if &iseq #l0 "y"
-            0 save-history
-        !endif
-    !endif
-!emacro
 ;
 set-variable %platform &cat $platform &cond &band $system 0x01 "c" ""
 set-variable $system &bor &band $system &bnot 0x30f000 &band 0x30f000 &reg "/history" "system" 0x007000
@@ -150,6 +139,7 @@ global-bind-key set-position             "C-c C-a"
 global-bind-key goto-position            "C-c a"
 global-bind-key grep                     "C-c g"
 global-bind-key describe-word            "C-h w"
+global-bind-key open-line                "C-o"
 global-bind-key replace-all-string       "A-C-r"
 global-bind-key query-replace-all-string "esc A-C-r"
 4 global-bind-key find-tag               "esc C-t"
@@ -202,7 +192,7 @@ set-variable %tag-template  "%[^\t]\t%[^\t]\t%[^\n]\n"
 set-variable .osd.tmp 40
 set-variable .osd.next &cond &exi .osd.next .osd.next &add .osd.tmp 1
 set-variable .expand-iso-accents.on &reg "/history" "expaccent" "0"
-set-variable .expand-look-back.on &reg "/history" "explookbk" "0"
+set-variable .expand-look-back.on &reg "/history" "explookbk" "1"
 set-variable .expand-word.on &reg "/history" "expword" "0"
 ;
 ; File hooks - reset the file hook list first
@@ -265,7 +255,7 @@ add-file-hook ".texi"                                         fhook-texi
 add-file-hook ".idl"                                          fhook-idl
 add-file-hook ".info dir"                                     fhook-info
 add-file-hook ".diff .dif *diff*"                             fhook-diff
-add-file-hook ".xml"                                          fhook-xml
+add-file-hook ".xml .xsl .xul"                                fhook-xml
 add-file-hook ".ex .exw .exu .e .ew .eu"                      fhook-euphor
 add-file-hook ".pls"                                          fhook-pls
 add-file-hook ".lua"                                          fhook-lua
@@ -275,6 +265,7 @@ add-file-hook ".lua"                                          fhook-lua
  1 add-file-hook "^#![ \t]*/.*wish"              fhook-tcl    ; tcl, tk & tix files
  1 add-file-hook "^#![ \t]*/.*awk"               fhook-awk    ; awk scripts
  1 add-file-hook "^#![ \t]*/.*env[ \t]+python"   fhook-python ; Python file
+ 4 add-file-hook "^[ \t]*exec[ \t]*tclsh"        fhook-tcl    ; TCL shell script
  1 add-file-hook "^#VRML"                        fhook-vrml   ; VRML or wrl files
  1 add-file-hook "^#Inventor"                    fhook-vrml   ; Use the VRML hook for iv files
 -2 add-file-hook "This is Info file"             fhook-info   ; GNU info file
