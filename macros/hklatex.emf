@@ -549,16 +549,15 @@ define-macro latex-ref-go-back
         set-variable .spell.check-word ""
         !return
     !elif &seq @wc "-"
-        !force backward-char
-        !if &seq @wc "\\"
-            !force backward-char
-            !if &inw @wc
-                forward-char
+        !if &xse &mid @wl &sub $window-col 2 3 "\\w\\\\-"
+            forward-char
+            !while &xse &lef @wl $window-col ".*\\w+\\(\\\\-\\|[-.']\\)"
+                backward-char
                 backward-word
-                regex-forward "\\(\\w*\\)\\\\-\\(\\w*\\)"
-                set-variable .spell.check-word &cat @s1 @s2
-                !return
-            !endif
+            !done
+            regex-forward "\\w+\\(\\(\\\\-\\|[-.']\\)\\w+\\)+"
+            set-variable .spell.check-word &rep @s0 "\\-" ""
+            !return
         !endif
     !endif
     2 show-region
