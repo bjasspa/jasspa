@@ -1,20 +1,49 @@
-> -!- jst; fill-mode:both; fill-column:78 -!-
 >
 >  Copyright 1998-2004 JASSPA (www.jasspa.com).
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <040210.2108>
+>  Last Modified : <040211.2103>
 >
+___________________________________________________________________________
 
-    [040210] BS/0401-4 - Major? - Target ?
+0401-4 Release Fixes
+___________________________________________________________________________
 
-        There are  several  differences  between  running  'cvs' and using the
-        'cvs-*'  commands  that can lead to  unexpected  and unwanted  results
-        (e.g. use C-f10, select a couple of files and then execute cvs-commit,
-        this will commit  changes to all files as it does not respect the list
-        of selected  files). Also the use of a  *cvs-console*  or *cvs-commit*
-        buffer. Should these differences be engineered out?    
+    [040129] JG/0401-1 - Major - Target 0401-5
+    
+        From  Organizer  -> Address,  do "Find" and search  "First" for a name
+        that does not exist - Organiser locks up.
+
+    [040206] Th/0401-4 - Minor - Target 0401-5
+
+        Document the create/delete/next-frame keys.
+
+    [040206] JG/0401-4 - Enhancement - Target 0401-5
+
+        Support to recognize GNU tags for makefile "-*- Makefile -*-" and UNIX
+        shell files "-*- sh -*-".
+        
+        Change already sent to SP
+
+    [040203] Gabriel/0401-3 - Font selection under XP
+
+        I have downloaded unix fonts from
+        
+            http://www.tomasek.cz/semtel/download/fonts.zip
+            
+        and I can't  get  them to work in ME. I can get  them to work on other
+        programs (such as notepad) but not on ME.
+
+        I have got 6x13 from somewhere else working, but that is too small for
+        1280x960 (shame, it's my favourite programming font).
+
+        I can  choose  the fonts from the list, but I cannot use them (it goes
+        back to some other default font).
+        
+        Same problem under RC4.
+
+> FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED 
 
     [040210] DG/0401-4 - Major - Target 0401-5
     
@@ -22,18 +51,13 @@
 
         Fixed 0401-5 04/02/10: Source change.
 
-    [040210] SP/0401-4 - Enhancement - Target TBD
-    
-        Add support for deleting  directories to file-op and to  file-browser.
-        This would also be used by upload's clean process. 
-
-    [040206] SP/0401-4 - Critical - Target 0401-5
+    [040206] JG/0401-4 - Critical - Target 0401-5
 
         On unix the $progname may not be fully  expanded (has just "me") which
         may  lead  to a  ctags  generation  error  and  an  alternate  fix  to
         $search-path.
-        
-        Fixed 0401-5 04/02/10: Source change.
+
+        Fixed JG/0401-5 04/02/10: Source change.
 
     [040206] SP/0401-4 - Major - Target 0401-5
 
@@ -41,11 +65,7 @@
         results  in a bad dir  listing.  The list of files is correct  but the
         stats are all wrong (found on sunos 5.8).
 
-        Fixed 0401-5 04/02/10: Source change.
-
-    [040206] Th/0401-4 - Minor - Target 0401-5
-
-        Document the create/delete/next-frame keys.
+        Fixed SP/0401-5 04/02/10: Source change.
 
     [040206] JG/0401-4 - Critical - Target 0401-5
 
@@ -53,14 +73,14 @@
         applications.  Data selected in Mozilla  copies into GNU Emacs OK, but
         not into ME.
         
-        Fixed 0401-5 04/02/09: Build Solaris 8 image.
+        Fixed JG/0401-5 04/02/09: Build Solaris 8 image.
 
     [040206] JG/0401-4 - Minor - Target 0401-5
 
         -n command line option to a console build causes a option  failure and
         the executable does not run.
 
-        Fixed 0401-5 04/02/08: Source change.
+        Fixed JG-SP/0401-5 04/02/08: Source change.
 
     [040206] SP/0401-4 - Major - Target 0401-5
 
@@ -78,13 +98,45 @@
         fix is to make  the  'Directory  listing  of:'  line  the  same,  i.e.
         "ftp://test/dir1/"
 
-        Fixed 0401-5 04/02/10: Source change.
+        Fixed SP/0401-5 04/02/10: Source change.
+
+___________________________________________________________________________
+
+Subsequent Release
+___________________________________________________________________________
+
+    [040211] SP/0401-4 - Enhancement - Target TBD
+    
+        Would like a system bit flag which when set stops ME from just exiting
+        on C-x C-c. I  typically  have on main ME session and I do not want to
+        exit this session, but due to miss types this often happens.
+        
+        Jon: Just re-bind the key to "void" or some smarter macro ??
+
+    [040211] SP/0401-4 - Enhancement - Target TBD
+    
+        evaluation  of ~fred/ on UNIX  should use the passwd file first to get
+        the correct home directory of fred.
+
+    [040210] BS/0401-4 - Minor - Not this release.
+
+        There are  several  differences  between  running  'cvs' and using the
+        'cvs-*'  commands  that can lead to  unexpected  and unwanted  results
+        (e.g. use C-f10, select a couple of files and then execute cvs-commit,
+        this will commit  changes to all files as it does not respect the list
+        of selected  files). Also the use of a  *cvs-console*  or *cvs-commit*
+        buffer. Should these differences be engineered out?    
+        
+    [040210] SP/0401-4 - Enhancement - Target TBD
+    
+        Add support for deleting  directories to file-op and to  file-browser.
+        This would also be used by upload's clean process. 
 
     [040206] SP/0401-4 - Minor - Target TBD
     
-        ME  does  not  work  on a  HP-UX  console  .Probably  because  termcap
-        database is not being used and built in definitions are being used to 
-        over-ride termcap. Need to revisit this.
+        ME does not work on a HP-UX console. Probably because termcap database
+        is not being used and built in definitions are being used to over-ride
+        termcap. Need to revisit this.
 
     [040206] JG/0401-4 - Minor - Target TBD
 
@@ -108,11 +160,6 @@
     [040206] JG/0401-4 - Enhancement - Target TBD
 
         CVS has option not to open the dir-tree window, pain in butt.
-
-    [040206] JG/0401-4 - Enhancement - Target TBD
-
-        Support to recognize GNU tags for makefile "-*- Makefile -*-" and UNIX
-        shell files "-*- sh -*-".
 
     [040206] JG/0401-4 - Enhancement - Target TBD
 
