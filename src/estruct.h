@@ -231,7 +231,7 @@ typedef struct meLine
  */
 
 /*
- * meWindow structure flag values.
+ * meWindow structure updateFlag values.
  * Define states to the display drivers to update the screen. 
  */
 #define WFFORCE       0x0001            /* Window needs forced reframe  */
@@ -259,6 +259,16 @@ typedef struct meLine
 
 /* A garbage update of the screen adds following modes */
 #define WFUPGAR       (WFMODE|WFRESIZE|WFSBAR)
+
+/*
+ * meWindow structure flags values.
+ */
+#define meWINDOW_LOCK_WIDTH  0x0001     /* Lock the width of the window */
+#define meWINDOW_LOCK_DEPTH  0x0002     /* Lock the depth of the window */
+#define meWINDOW_LOCK_BUFFER 0x0004     /* Lock the buffer shown        */
+#define meWINDOW_NO_CMP      0x0008     /* Exclude from compare-windows */
+#define meWINDOW_NO_NEXT     0x0010     /* Exclude from next/prev-window*/
+#define meWINDOW_NO_DELETE   0x0020     /* Exclude from del-other-window*/
 
 /*
  * meWindow structure vertScrollBarMode values.
@@ -373,10 +383,10 @@ typedef struct  meWindow {
     meInt              vertScroll;              /* windows top line number      */
     meInt              dotLineNo;               /* current line number          */
     meInt              markLineNo;              /* current mark line number     */
-    meUInt             flag;                    /* Flags.                       */
+    meUInt             updateFlags;             /* Window update flags.         */
     meUShort           dotOffset;               /* Byte offset for "."          */
     meUShort           markOffset;              /* Byte offset for "mark"       */
-    meUShort           recenter;                /* If NZ, forcing row.          */
+    meUShort           windowRecenter;                /* If NZ, forcing row.          */
     meUShort           frameRow;                /* Window starting row          */
     meUShort           frameColumn;             /* Window starting column       */
     meUShort           width;                   /* Window number text columns   */
@@ -386,8 +396,12 @@ typedef struct  meWindow {
     meUShort           horzScroll;              /* cur horizontal scroll column */
     meUShort           horzScrollRest;          /* the horizontal scroll column */
     meUShort           marginWidth;             /* The margin for the window    */
+#if MEOPT_EXTENDED
+    meUShort           flags;                   /* $window-flags                */
+#endif
 #if MEOPT_SCROLL
-    meUShort           vertScrollBarPos[WCVSBML+1]; /* Vert Scroll bar positions*/
+    meUShort           vertScrollBarPos[WCVSBML-WCVSBSPLIT+1];
+                                                /* Vert Scroll bar positions*/
     meUShort           vertScrollBarMode;       /* Operating mode of window     */
 #endif
 } meWindow ;

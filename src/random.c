@@ -289,7 +289,7 @@ sortLines(int f, int n)
     frameCur->windowCur->dotLineNo = sln+noL ;
     
     meFree(list) ;
-    frameCur->windowCur->flag |= WFMOVEL|WFMAIN ;
+    frameCur->windowCur->updateFlags |= WFMOVEL|WFMAIN ;
     
     return meTRUE ;
 }
@@ -546,7 +546,7 @@ transLines(int f, int n)
     register meLine   *ln1, *ln2 ;
     register int    i, len ;
     
-    if((n<0) && (backLine(meTRUE, 1) != meTRUE))
+    if((n<0) && (windowBackwardLine(meTRUE, 1) != meTRUE))
         return meFALSE ;
     if((i=bchange()) != meTRUE)               /* Check we can change the buffer */
         return i ;
@@ -569,12 +569,12 @@ transLines(int f, int n)
         meLineGetPrev(ln1) = ln2 ;
         meLineGetNext(ln2) = ln1 ;
         frameCur->windowCur->dotLineNo++ ;
-        if((n<0) && (backLine(meTRUE, 2) != meTRUE))  
+        if((n<0) && (windowBackwardLine(meTRUE, 2) != meTRUE))  
             /* move back over one swapped aswell */
             return meFALSE ;
     }
     if(n<0) 
-        forwLine(meTRUE, 1) ;
+        windowForwardLine(meTRUE, 1) ;
     update(meFALSE) ;
     return (meTRUE);
 }
@@ -1016,7 +1016,7 @@ backDelChar(int f, int n)
     else
         keep = 2 ;
     
-    if((s = WbackChar(frameCur->windowCur, n)) == meTRUE)
+    if((s = meWindowBackwardChar(frameCur->windowCur, n)) == meTRUE)
         /*
          * Always make ldelete save the deleted stuff in a kill buffer
          * unless only one character and in letter kill mode.
@@ -1523,7 +1523,7 @@ findQuoteFence(meUByte qtype, meUByte forwFlag)
     /* scan until we find it, or reach the end of file */
     for(;;)
     {
-        /* backChar & forwChar goes 1 character past the end of the
+        /* windowBackwardChar & windowForwardChar goes 1 character past the end of the
          * line, therfore want to omit this character in the search.
          * Check for end of line, and go back another character if true.
          */
@@ -1866,7 +1866,7 @@ gotoFence(int f, int n)
         }
         if((ret = findfence(ch,forwFlag)) == meTRUE)
         {
-            frameCur->windowCur->flag |= WFMOVEL;
+            frameCur->windowCur->updateFlags |= WFMOVEL;
             /* if 2nd bit not set then we want to stay here so simply
              * return at theis point
              */
@@ -1877,10 +1877,10 @@ gotoFence(int f, int n)
              */
             update(meFALSE);
             TTsleep(matchlen,1) ;
-            frameCur->windowCur->flag |= WFMOVEL;
+            frameCur->windowCur->updateFlags |= WFMOVEL;
             if(frameCur->windowCur->vertScroll != oldtln)
                 /* the redraw has changed the top line - must do a major update */
-                frameCur->windowCur->flag |= (WFREDRAW|WFSBOX) ;
+                frameCur->windowCur->updateFlags |= (WFREDRAW|WFSBOX) ;
         }
         /* restore the current position */
         frameCur->windowCur->dotLine  = oldlp;
@@ -2563,7 +2563,7 @@ gotoAlphaMark(int f, int n)
     frameCur->windowCur->dotLine = frameCur->bufferCur->dotLine ;
     frameCur->windowCur->dotOffset = frameCur->bufferCur->dotOffset ;
     frameCur->windowCur->dotLineNo = frameCur->bufferCur->dotLineNo ;
-    frameCur->windowCur->flag |= WFMOVEL ;
+    frameCur->windowCur->updateFlags |= WFMOVEL ;
     
     return meTRUE ;
 }
@@ -2612,22 +2612,38 @@ insFileName(int f, int n)
 int
 cmpBuffers(int f, int n)
 {
-    register meWindow *wp ;
+    register meWindow *swp, *wp ;
     register meUByte cc;
+    
+    swp = NULL ;
+    wp = frameCur->windowList ;
+    do {
+        if((wp->flags & meWINDOW_NO_CMP) == 0)
+        {
+            if(swp != NULL)
+                break ;
+            swp = wp ;
+        }        
+    } while((wp = wp->next) != NULL) ;
+    if(wp == NULL)
+        return mlwrite(MWABORT,(meUByte *)"[Not enough windows to compare]") ;
+    
     if (n == 0)
     {
         /* Exact match - white space is matched. */
         for(;;)
         {
-            wp = frameCur->windowList ;
-            cc = getCurChar(wp) ;
+            wp = swp ;
+            cc = meWindowGetChar(wp) ;
             while((wp = wp->next) != NULL)
-                if(getCurChar(wp) != cc)
+                if(((wp->flags & meWINDOW_NO_CMP) == 0) &&
+                   (meWindowGetChar(wp) != cc))
                     return meFALSE ;
-            wp = frameCur->windowList ;
-            cc = WforwChar(wp,1) ;
+            wp = swp ;
+            cc = meWindowForwardChar(wp,1) ;
             while((wp = wp->next) != NULL)
-                if(WforwChar(wp,1) != cc)
+                if(((wp->flags & meWINDOW_NO_CMP) == 0) &&
+                   (meWindowForwardChar(wp,1) != cc))
                     return meFALSE ;
             if(cc == meFALSE)
                 break ;
@@ -2642,15 +2658,16 @@ cmpBuffers(int f, int n)
             meUByte winData;
             meUByte tmpc;
             
-            wp = frameCur->windowList ;
-            cc = getCurChar(wp);
+            wp = swp ;
+            cc = meWindowGetChar(wp);
             if (isSpace (cc))
                 cc = ' ';
             
             /* Check the current character */
             while((wp = wp->next) != NULL)
             {
-                if((tmpc = getCurChar(wp)) != cc)
+                if(((wp->flags & meWINDOW_NO_CMP) == 0) &&
+                   ((tmpc = meWindowGetChar(wp)) != cc))
                 {
                     if (!isSpace(tmpc) && (tmpc != ' '))
                         return meFALSE ;
@@ -2660,34 +2677,37 @@ cmpBuffers(int f, int n)
             /* Back to the start of the buffers. Advance to the next character
              * in the buffer. if the current character is a space then advance
              * to the next non-white character in the buffer. */
-            wp = frameCur->windowList ;
-            if (((moreData = WforwChar(wp,1)) == meTRUE) && (cc == ' '))
+            wp = swp ;
+            if (((moreData = meWindowForwardChar(wp,1)) == meTRUE) && (cc == ' '))
             {
                 do
                 {
-                    tmpc = getCurChar(wp);
+                    tmpc = meWindowGetChar(wp);
                     if (!isSpace (tmpc) && (tmpc != ' '))
                         break;
                 }
-                while ((moreData = WforwChar(wp,1)) == meTRUE);
+                while ((moreData = meWindowForwardChar(wp,1)) == meTRUE);
             }
             
             /* Advance the rest of the windows. */
             while((wp = wp->next) != NULL)
             {
-                if (((winData = WforwChar(wp,1)) == meTRUE) && (cc == ' '))
+                if((wp->flags & meWINDOW_NO_CMP) == 0)
                 {
-                    do
+                    if(((winData = meWindowForwardChar(wp,1)) == meTRUE) && (cc == ' '))
                     {
-                        tmpc = getCurChar(wp);
-                        if (!isSpace (tmpc) && (tmpc != ' '))
-                            break;
+                        do
+                        {
+                            tmpc = meWindowGetChar(wp);
+                            if (!isSpace (tmpc) && (tmpc != ' '))
+                                break;
+                        }
+                        while ((winData = meWindowForwardChar(wp,1)) == meTRUE);
                     }
-                    while ((winData = WforwChar(wp,1)) == meTRUE);
-                }
                 
-                if(winData != moreData)
-                    return meFALSE ;
+                    if(winData != moreData)
+                        return meFALSE ;
+                }
             }
             if(moreData == meFALSE)
                 break ;
@@ -2862,7 +2882,7 @@ setCursorToMouse(int f, int n)
             mouse_pos = MIERROR;        /* Set bad status */
             return (meTRUE);
         }
-        makeCurWind(wp) ;               /* No - make it so */
+        meWindowMakeCurrent(wp) ;               /* No - make it so */
     }
     
     /* Handle the divider */
@@ -2939,9 +2959,9 @@ setCursorToMouse(int f, int n)
      * Check the line first as WFMOVEL does the column as well
      */
     if(wp->dotLine != odotp)
-        wp->flag |= WFMOVEL ;               /* Moved from line to line */
+        wp->updateFlags |= WFMOVEL ;               /* Moved from line to line */
     else if(wp->dotOffset != odoto)
-        wp->flag |= WFMOVEC ;               /* Moved from col to col   */
+        wp->updateFlags |= WFMOVEC ;               /* Moved from col to col   */
     
     /* Determine if we are in the selection region. If so then set
      * $mouse_pos to reflect the fact that we are in a region. */

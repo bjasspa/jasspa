@@ -44,37 +44,36 @@ extern	int	expandAbbrev APRAM((int f, int n));
  * basic.c
  */
 #if	!(defined __BASICC) || (defined _ANSI_C)		/* basic.c externals */
-extern	int	gotobol APRAM((int f, int n));
-extern	int	gotoeol APRAM((int f, int n));
-extern	int	eobError APRAM((void)) ;
-extern	int	bobError APRAM((void)) ;
-extern	int	WbackChar APRAM((register meWindow *wp, register int n)) ;
-extern	int	WforwChar APRAM((register meWindow *wp, register int n)) ;
-extern	int	backChar APRAM((int f, int n));
-extern	int	forwChar APRAM((int f, int n));
-extern	meUByte   getCurChar APRAM((meWindow *wp)) ;
-extern	int	gotoLine APRAM((int f, int n));
+extern	int	windowGotoBol APRAM((int f, int n));
+extern	int	windowGotoEol APRAM((int f, int n));
+extern	int	meErrorEob APRAM((void)) ;
+extern	int	meErrorBob APRAM((void)) ;
+extern	int	meWindowBackwardChar APRAM((register meWindow *wp, register int n)) ;
+extern	int	meWindowForwardChar APRAM((register meWindow *wp, register int n)) ;
+extern	int	windowBackwardChar APRAM((int f, int n));
+extern	int	windowForwardChar APRAM((int f, int n));
+extern	meUByte meWindowGetChar APRAM((meWindow *wp)) ;
+extern	int	windowGotoLine APRAM((int f, int n));
 #if MEOPT_NARROW
-extern	int	gotoAbsLine APRAM((meInt line)) ;
+extern	int	windowGotoAbsLine APRAM((meInt line)) ;
 #else
-#define gotoAbsLine(l) gotoLine(1,l)
+#define windowGotoAbsLine(l) windowGotoLine(1,l)
 #endif
-extern	int	topbot APRAM((int f, int n));
-extern	int	gotobob APRAM((int f, int n));
-extern	int	gotoeob APRAM((int f, int n));
-extern	int	forwLine APRAM((int f, int n));
-extern	int	backLine APRAM((int f, int n));
+extern	int	windowGotoBob APRAM((int f, int n));
+extern	int	windowGotoEob APRAM((int f, int n));
+extern	int	windowForwardLine APRAM((int f, int n));
+extern	int	windowBackwardLine APRAM((int f, int n));
 #if	MEOPT_WORDPRO
-extern	int	backPara APRAM((int f, int n));
-extern	int	forwPara APRAM((int f, int n));
+extern	int	windowBackwardParagraph APRAM((int f, int n));
+extern	int	windowForwardParagraph APRAM((int f, int n));
 #else
-#define backPara notAvailable
-#define forwPara notAvailable
+#define windowBackwardParagraph notAvailable
+#define windowForwardParagraph notAvailable
 #endif
-extern	int	setMark APRAM((int f, int n));
-extern	int	swapmark APRAM((int f, int n));
-extern	void	bufferPosStore APRAM((meLine *lp, meUShort lo, meInt ln)) ;
-extern	void	bufferPosUpdate APRAM((meBuffer *bp, meUInt noLines, meUShort newOff)) ;
+extern	int	windowSetMark APRAM((int f, int n));
+extern	int	windowSwapDotAndMark APRAM((int f, int n));
+extern	void	meBufferStoreLocation APRAM((meLine *lp, meUShort lo, meInt ln)) ;
+extern	void	meBufferUpdateLocation APRAM((meBuffer *bp, meUInt noLines, meUShort newOff)) ;
 #endif
 /*
  * bind.c
@@ -90,16 +89,16 @@ extern	int	bindkey APRAM((meUByte *prom, int f, int n, meUShort *lclNoBinds,
                                meBind **lclBinds)) ;
 extern	int	unbindkey APRAM((meUByte *prom, int n, meUShort *lclNoBinds,
                                  meBind **lclBinds)) ;
-extern	int	globalBind APRAM((int f, int n));
-extern	int	globalUnbind APRAM((int f, int n));
+extern	int	globalBindKey APRAM((int f, int n));
+extern	int	globalUnbindKey APRAM((int f, int n));
 #if MEOPT_LOCALBIND
-extern	int	bufferBind APRAM((int f, int n));
-extern	int	bufferUnbind APRAM((int f, int n));
+extern	int	bufferBindKey APRAM((int f, int n));
+extern	int	bufferUnbindKey APRAM((int f, int n));
 extern	int	mlBind APRAM((int f, int n));
 extern	int	mlUnbind APRAM((int f, int n));
 #else
-#define bufferBind notAvailable
-#define bufferUnbind notAvailable
+#define bufferBindKey notAvailable
+#define bufferUnbindKey notAvailable
 #define mlBind notAvailable
 #define mlUnbind notAvailable
 #endif
@@ -722,16 +721,16 @@ extern int      osdMainMenuCheckKey APRAM((int cc)) ;
 extern int      osd APRAM((int f, int n));
 extern void     osdMainMenuUpdate APRAM((int force)) ;
 #if MEOPT_LOCALBIND
-extern	int	osdBind APRAM((int f, int n));
-extern	int	osdUnbind APRAM((int f, int n));
+extern	int	osdBindKey APRAM((int f, int n));
+extern	int	osdUnbindKey APRAM((int f, int n));
 #else
-#define osdBind notAvailable
-#define osdUnbind notAvailable
+#define osdBindKey notAvailable
+#define osdUnbindKey notAvailable
 #endif
 #else
 #define osd notAvailable
-#define osdBind notAvailable
-#define osdUnbind notAvailable
+#define osdBindKey notAvailable
+#define osdUnbindKey notAvailable
 #endif
 #endif
 /*
@@ -997,17 +996,17 @@ extern	int	suspendEmacs APRAM((int f, int n));
  */
 #if !(defined __SPELLC) || (defined _ANSI_C)			/* spell.c externals */
 #if MEOPT_SPELL
-extern	int	addDict APRAM((int f, int n));
-extern	int	addSpellRule APRAM((int f, int n));
-extern	int	deleteDict APRAM((int f, int n));
-extern	int	saveDict APRAM((int f, int n));
+extern	int	dictionaryAdd APRAM((int f, int n));
+extern	int	spellRuleAdd APRAM((int f, int n));
+extern	int	dictionaryDelete APRAM((int f, int n));
+extern	int	dictionarySave APRAM((int f, int n));
 extern	int	spellWord APRAM((int f, int n));
 extern  int     anyChangedDictionary APRAM((void)) ;
 #else
-#define addDict notAvailable
-#define addSpellRule notAvailable
-#define deleteDict notAvailable
-#define saveDict notAvailable
+#define dictionaryAdd notAvailable
+#define spellRuleAdd notAvailable
+#define dictionaryDelete notAvailable
+#define dictionarySave notAvailable
 #define spellWord notAvailable
 #endif
 extern	void	findWordsInit APRAM((meUByte *mask));
@@ -1070,49 +1069,49 @@ extern	int	meUndo               APRAM((int f, int n));
  * window.c
  */
 #if !(defined __WINDOWC) || (defined _ANSI_C)		/* window.c externals */
-extern  void    makeCurWind APRAM((meWindow *wp)) ;
-extern  void    addModeToWindows APRAM((int mode)) ;
-extern  void    addModeToBufferWindows APRAM((meBuffer *bp, int mode)) ;
-extern  void    fixWindowTextSize APRAM((meWindow *wp));
-extern  void    fixWindowScrollBars APRAM((meWindow *wp));
-extern  void    fixWindowScrollBox APRAM((meWindow *wp));
-extern  int     menuWindow  APRAM((int n));
-extern	int	recenter APRAM((int f, int n));
-extern	int	nextWindow APRAM((int f, int n));
-extern	int	prevwind APRAM((int f, int n));
-extern	int	scrollDown APRAM((int f, int n));
-extern  int     scrollLeft APRAM((int f, int n));
-extern  int     scrollRight APRAM((int f, int n));
-extern	int	scrollUp APRAM((int f, int n));
-extern	int	onlywind APRAM((int f, int n));
-extern	int	delwind APRAM((int f, int n));
-extern	int	growWindVert APRAM((int f, int n));
-extern	int	resizeWndVert APRAM((int f, int n));
-extern	int	shrinkWindVert APRAM((int f, int n));
-extern	int	splitWindVert APRAM((int f, int n));
-extern  int     resizeAllWnd APRAM((int f, int n));
+extern  void    meWindowMakeCurrent APRAM((meWindow *wp)) ;
+extern  void    frameAddModeToWindows APRAM((int mode)) ;
+extern  void    meBufferAddModeToWindows APRAM((meBuffer *bp, int mode)) ;
+extern  void    meWindowFixTextSize APRAM((meWindow *wp));
+extern  void    meWindowFixScrollBars APRAM((meWindow *wp));
+extern  void    meWindowFixScrollBox APRAM((meWindow *wp));
+extern  int     frameSetupMenuLine  APRAM((int n));
+extern	int	windowRecenter APRAM((int f, int n));
+extern	int	windowGotoNext APRAM((int f, int n));
+extern	int	windowGotoPrevious APRAM((int f, int n));
+extern	int	windowScrollDown APRAM((int f, int n));
+extern  int     windowScrollLeft APRAM((int f, int n));
+extern  int     windowScrollRight APRAM((int f, int n));
+extern	int	windowScrollUp APRAM((int f, int n));
+extern	int	windowDeleteOthers APRAM((int f, int n));
+extern	int	windowDelete APRAM((int f, int n));
+extern	int	windowGrowDepth APRAM((int f, int n));
+extern	int	windowResizeDepth APRAM((int f, int n));
+extern	int	windowShrinkDepth APRAM((int f, int n));
+extern	int	windowSplitDepth APRAM((int f, int n));
+extern  int     frameResizeWindows APRAM((int f, int n));
 #if MEOPT_HSPLIT
-extern	int	growWindHorz APRAM((int f, int n));
-extern	int	resizeWndHorz APRAM((int f, int n));
-extern	int	shrinkWindHorz APRAM((int f, int n));
-extern	int	splitWindHorz APRAM((int f, int n));
+extern	int	windowGrowWidth APRAM((int f, int n));
+extern	int	windowResizeWidth APRAM((int f, int n));
+extern	int	windowShrinkWidth APRAM((int f, int n));
+extern	int	windowSplitWidth APRAM((int f, int n));
 #else
-#define growWindHorz notAvailable
-#define resizeWndHorz notAvailable
-#define shrinkWindHorz notAvailable
-#define splitWindHorz notAvailable
+#define windowGrowWidth notAvailable
+#define windowResizeWidth notAvailable
+#define windowShrinkWidth notAvailable
+#define windowSplitWidth notAvailable
 #endif
 #if MEOPT_POSITION
-extern	int	setPosition APRAM((int f, int n));
-extern	int	gotoPosition APRAM((int f, int n));
+extern	int	positionSet APRAM((int f, int n));
+extern	int	positionGoto APRAM((int f, int n));
 #else
-#define setPosition notAvailable
-#define gotoPosition notAvailable
+#define positionSet notAvailable
+#define positionGoto notAvailable
 #endif
 #if MEOPT_MOUSE
-extern  int     setScrollWithMouse APRAM((int f, int n));
+extern  int     windowSetScrollWithMouse APRAM((int f, int n));
 #else
-#define setScrollWithMouse notAvailable
+#define windowSetScrollWithMouse notAvailable
 #endif
 /* uses the bfind flags for finding buffer "name"
  * if not null. Also if WPOP_MKCURR set then 
@@ -1121,16 +1120,14 @@ extern  int     setScrollWithMouse APRAM((int f, int n));
 #define WPOP_MKCURR 0x100
 #define WPOP_USESTR 0x200
 #define WPOP_EXIST  0x400
-extern	meWindow *wpopup APRAM((meUByte *name, int flags));
-extern	int	popupWindow APRAM((int f, int n));
-extern	int	savewnd APRAM((int f, int n));
-extern	int	restwnd APRAM((int f, int n));
+extern	meWindow *meWindowPopup APRAM((meUByte *name, int flags, meBuffer **bufferReplaced));
+extern	int	windowPopup APRAM((int f, int n));
 #if MEOPT_EXTENDED
-extern	int	scrollNextUp APRAM((int f, int n));
-extern	int	scrollNextDown APRAM((int f, int n));
+extern	int	windowScrollNextUp APRAM((int f, int n));
+extern	int	windowScrollNextDown APRAM((int f, int n));
 #else
-#define scrollNextUp notAvailable
-#define scrollNextDown notAvailable
+#define windowScrollNextUp notAvailable
+#define windowScrollNextDown notAvailable
 #endif
 #endif
 /*

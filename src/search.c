@@ -695,7 +695,7 @@ mere_scanner(int direct, int beg_or_end, int *n, SCANNERPOS *sp)
         sp->endoffset = kk ;
     }
     setShowRegion(frameCur->bufferCur,lnno,ii,nlnno,kk) ;
-    frameCur->windowCur->flag |= WFMOVEL|WFSELHIL ;
+    frameCur->windowCur->updateFlags |= WFMOVEL|WFSELHIL ;
     /* change the start and end position */
     mereRegexGroupEnd(0) -= mereRegex.group[0].start ;
     mereRegexGroupStart(0) = 0 ;
@@ -928,7 +928,7 @@ scanner(meUByte *patrn, int direct, int beg_or_end, int *count,
                 frameCur->windowCur->dotLineNo = curlnno ;
             }
              /* Flag that we have moved and got a region to hilight.*/
-            frameCur->windowCur->flag |= WFMOVEL|WFSELHIL ;
+            frameCur->windowCur->updateFlags |= WFMOVEL|WFSELHIL ;
             srchLastMatch = srchPat ;
             srchLastState = meTRUE ;
             return meTRUE;
@@ -1267,7 +1267,7 @@ replaces(int kind, int ff, int nn)
 		break;
                 
             case 'n':			/* no, onword */
-		WforwChar(frameCur->windowCur, 1);
+		meWindowForwardChar(frameCur->windowCur, 1);
 		state_mc = SL_NEXTREPLACE;
 		break;
                 
@@ -1298,12 +1298,12 @@ replaces(int kind, int ff, int nn)
                 frameCur->windowCur->dotLine  = lastline ; 
                 frameCur->windowCur->dotOffset  = lastoff ;
                 frameCur->windowCur->dotLineNo = lastlno ;
-                frameCur->windowCur->flag |= WFMOVEL ;
+                frameCur->windowCur->updateFlags |= WFMOVEL ;
 		lastline = NULL;
                 
 		/* Delete the new string. */
                 
-		WbackChar(frameCur->windowCur, ilength);
+		meWindowBackwardChar(frameCur->windowCur, ilength);
                 if (!ldelete(ilength,6))
                     return mlwrite(MWABORT,(meUByte *)"[ERROR while deleting]");
                 
@@ -1328,7 +1328,7 @@ replaces(int kind, int ff, int nn)
 		--numsub;
                 lastoff = frameCur->windowCur->dotOffset ;
                 lastlno = frameCur->windowCur->dotLineNo ;
-                WbackChar(frameCur->windowCur, slength);
+                meWindowBackwardChar(frameCur->windowCur, slength);
                 /* must research for this instance to setup the auto-repeat sections
                  * correctly */
                 --nummatch;	/* decrement # of matches */
@@ -1337,7 +1337,7 @@ replaces(int kind, int ff, int nn)
 		
             case '.':	/* abort! and return */
                 /* restore old position */
-                gotoLine(meTRUE,origlno+1) ;
+                windowGotoLine(meTRUE,origlno+1) ;
                 frameCur->windowCur->dotOffset  = origoff ;
                 state_mc = SL_EXIT;		/* Exit state machine */
 		break;
@@ -1450,7 +1450,7 @@ replaces(int kind, int ff, int nn)
             state_mc = SL_NEXTREPLACE;	/* Do next replacement */
             if (slength == 0)
             {
-                WforwChar(frameCur->windowCur, 1);
+                meWindowForwardChar(frameCur->windowCur, 1);
                 if ((ff > 0) && (frameCur->windowCur->dotOffset == 0) && (--ff == 0))
                     state_mc = SL_EXIT;
             }

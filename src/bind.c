@@ -706,14 +706,14 @@ bindkey(meUByte *prom, int f, int n, meUShort *lclNoBinds, meBind **lclBinds)
 
 
 int
-globalBind(int f, int n)
+globalBindKey(int f, int n)
 {
     return bindkey((meUByte *)"global bind", f, n, NULL, NULL) ;
 }
 
 #if MEOPT_LOCALBIND
 int
-bufferBind(int f, int n)
+bufferBindKey(int f, int n)
 {
     return bindkey((meUByte *)"local bind", f, n, &(frameCur->bufferCur->bindCount), &(frameCur->bufferCur->bindList)) ;
 }
@@ -881,14 +881,14 @@ unbindkey(meUByte *prom, int n, meUShort *lclNoBinds, meBind **lclBinds)
 }
 
 int
-globalUnbind(int f, int n)
+globalUnbindKey(int f, int n)
 {
     return unbindkey((meUByte *)"Global",n, NULL, NULL) ;
 }
 
 #if MEOPT_LOCALBIND
 int
-bufferUnbind(int f, int n)
+bufferUnbindKey(int f, int n)
 {
     return unbindkey((meUByte *)"Local",n, &(frameCur->bufferCur->bindCount), &(frameCur->bufferCur->bindList)) ;
 }
@@ -917,7 +917,7 @@ buildlist(int type, int n, meUByte *mstring)
     char      op_char;		/* Output character */
     
     /* and get a buffer for it */
-    if((wp = wpopup(BcommandsN,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR))) == NULL)
+    if((wp = meWindowPopup(BcommandsN,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR),NULL)) == NULL)
         return mlwrite(MWABORT,(meUByte *)"[Failed to create list]") ;
     bp = wp->buffer ;
     
@@ -1043,7 +1043,7 @@ descBindings (int f, int n)
     int     ii ;
     meBind *ktp;
     
-    if((wp = wpopup(BbindingsN,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR))) == NULL)
+    if((wp = meWindowPopup(BbindingsN,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR),NULL)) == NULL)
         return meFALSE ;
     bp = wp->buffer ;
     

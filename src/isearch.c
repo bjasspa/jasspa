@@ -64,7 +64,7 @@ isearchGotoEnd(meUByte *patrn, int flags, int histNo, meShort *histLen, SCANNERP
         tmpoff  = frameCur->windowCur->dotOffset ;       /* incase its not found      */
         tmplno  = frameCur->windowCur->dotLineNo ;
         if(flags & ISCANNER_BACKW)
-            WforwChar(frameCur->windowCur, 1) ;
+            meWindowForwardChar(frameCur->windowCur, 1) ;
         cc = patrn[histLen[histNo]] ;
         patrn[histLen[histNo]] = '\0' ;
         if(iscanner(patrn, 0,flags,histPos+histNo+1) != meTRUE)
@@ -104,7 +104,7 @@ isearchGotoStart(meUByte *patrn, int flags, int histNo, meShort *histLen, SCANNE
         tmpoff  = frameCur->windowCur->dotOffset ;       /* incase its not found      */
         tmplno  = frameCur->windowCur->dotLineNo ;
         if(!(flags & ISCANNER_BACKW))
-            WforwChar(frameCur->windowCur, 1) ;
+            meWindowForwardChar(frameCur->windowCur, 1) ;
         cc = patrn[histLen[histNo]] ;
         patrn[histLen[histNo]] = '\0' ;
         if(iscanner(patrn,0,(flags ^ (ISCANNER_BACKW|ISCANNER_PTBEG)),histPos+histNo+1) != meTRUE)
@@ -148,7 +148,7 @@ scanmore(meUByte *patrn, int flags, int histNo, meShort *histLen, SCANNERPOS *hi
     {
         isearchGotoStart(patrn,flags,histNo,histLen,histPos) ;
         if(flags & ISCANNER_BACKW)      /* reverse search? */
-            WforwChar(frameCur->windowCur, 1) ;
+            meWindowForwardChar(frameCur->windowCur, 1) ;
     }
     sts = iscanner(patrn, 0,flags,histPos+histNo+1) ;
     
@@ -342,7 +342,7 @@ get_another_key:
                 frameCur->windowCur->dotLine  = histPos[0].endline ;
                 frameCur->windowCur->dotOffset  = histPos[0].endoffset ;
                 frameCur->windowCur->dotLineNo = histPos[0].endline_no ;
-                frameCur->windowCur->flag |= WFMOVEL;       /* Say that we've moved      */
+                frameCur->windowCur->updateFlags |= WFMOVEL;       /* Say that we've moved      */
             }
             goto bad_finish ;                   /* Finish processing */
 
@@ -375,9 +375,9 @@ find_next:
             if(!status)                         /* if already lost goto start*/
             {
                 if(flags & ISCANNER_BACKW)      /* if backward               */
-                    c = gotoeob(0,1) ;          /* and move to the bottom    */
+                    c = windowGotoEob(0,1) ;          /* and move to the bottom    */
                 else
-                    c = gotobob(0,1) ;          /* and move to the top       */
+                    c = windowGotoBob(0,1) ;          /* and move to the top       */
             }
             else if((histPos[histNo].startoff == histPos[histNo].endoffset) &&
                     (histPos[histNo].startline_no == histPos[histNo].endline_no))
@@ -385,9 +385,9 @@ find_next:
                 /* the search string has matched a zero length string, e.g. "^"
                  * so move the cursor position one character */ 
                 if(flags & ISCANNER_BACKW)      /* if backward               */
-                    c = WbackChar(frameCur->windowCur,1) ;
+                    c = meWindowBackwardChar(frameCur->windowCur,1) ;
                 else
-                    c = WforwChar(frameCur->windowCur,1) ;
+                    c = meWindowForwardChar(frameCur->windowCur,1) ;
             }
             else
                 c = meTRUE ;
@@ -441,7 +441,7 @@ find_next:
                        ((c == '[') || (c == '.') || (c == '+') || (c == '*') || (c == '^') || (c == '$') || (c == '?') || (c == '\\')))
                         srchPat[cpos++] = '\\' ;
                     srchPat[cpos++] = c ;
-                    if(WforwChar(frameCur->windowCur, 1) == meFALSE)
+                    if(meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
                         break ;
                 }
                 srchPat[cpos] = 0;                      /* null terminate the buffer */
@@ -518,7 +518,7 @@ find_next:
                 frameCur->windowCur->dotLineNo = histPos[histNo].endline_no ;
             }
             srchPat[cpos] = 0 ;
-            frameCur->windowCur->flag |= WFMOVEL;           /* Say that we've moved      */
+            frameCur->windowCur->updateFlags |= WFMOVEL;           /* Say that we've moved      */
 is_redraw:
 #if MEOPT_IPIPES
             /* due to the dynamic nature of an active ipipe buffer, things have to
@@ -538,7 +538,7 @@ is_redraw:
             setShowRegion(frameCur->bufferCur,
                           histPos[histNo].startline_no,histPos[histNo].startoff,
                           histPos[histNo].endline_no,histPos[histNo].endoffset) ;
-            addModeToBufferWindows(frameCur->bufferCur, WFSELHIL);
+            meBufferAddModeToWindows(frameCur->bufferCur, WFSELHIL);
             break ;
             
         default:                                /* All other chars           */

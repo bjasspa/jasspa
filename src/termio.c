@@ -712,7 +712,7 @@ translateKey(int f, int n)
         meWindow *wp ;
         meBuffer *bp ;
     
-        if((wp = wpopup(BtranskeyN,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR))) == NULL)
+        if((wp = meWindowPopup(BtranskeyN,BFND_CREAT|BFND_CLEAR|WPOP_USESTR,NULL)) == NULL)
             return meFALSE ;
         bp = wp->buffer ;
         

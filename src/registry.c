@@ -1064,7 +1064,7 @@ listRegistry (int f, int n)
     int len;                            /* Length of the string */
 
     /* Find the buffer and vapour the old one */
-    if((wp = wpopup(BregistryN,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR))) == NULL)
+    if((wp = meWindowPopup(BregistryN,BFND_CREAT|BFND_CLEAR|WPOP_USESTR,NULL)) == NULL)
         return meFALSE;
     bp = wp->buffer ;                   /* Point to the buffer */
 

@@ -148,10 +148,10 @@ expandAbbrev(int f, int n)
         return meABORT ;
     ii = frameCur->windowCur->dotOffset ;
     if(((frameCur->bufferCur->abrevFile != NULL) || (globalAbrev != NULL)) &&
-       (--ii >= 0) && (!isSpace(frameCur->windowCur->dotLine->text[ii])))
+       (--ii >= 0) && isWord(frameCur->windowCur->dotLine->text[ii]))
     {
         len = 1 ;
-        while((--ii >= 0) && !isSpace(frameCur->windowCur->dotLine->text[ii]))
+        while((--ii >= 0) && isWord(frameCur->windowCur->dotLine->text[ii]))
             len++ ;
         strncpy((char *) buf,(char *) &(frameCur->windowCur->dotLine->text[++ii]),len) ;
         if(((frameCur->bufferCur->abrevFile != NULL) && ((ii=doExpandAbbrev(buf,len,frameCur->bufferCur->abrevFile)) != meFALSE)) ||

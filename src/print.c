@@ -1373,7 +1373,7 @@ printSection (meWindow *wp, long sLineNo, long numLines, meLine *sLine, meLine *
     case PDEST_BUFFER:
         if(((dbp=bfind(printer.param [mePS_BUFFER].p,BFND_CREAT|BFND_CLEAR)) == meFALSE) ||
            (((printer.param [mePI_FLAGS].l & PFLAG_SILENT) == 0) &&
-            ((dwp = wpopup (dbp->name,WPOP_USESTR)) == NULL)))
+            ((dwp = meWindowPopup(dbp->name,WPOP_USESTR,NULL)) == NULL)))
             return mlwrite(MWABORT,(meUByte *)"[Failed to create print buffer]") ;
         break;
     case PDEST_COMLINE:

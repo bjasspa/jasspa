@@ -450,7 +450,7 @@ meUndo(int f, int n)
                     nrrw = frameCur->bufferCur->narrow ;
                     while(nrrw->name != cdoto)
                         nrrw = nrrw->next ;
-                    gotoLine(meTRUE,cun->udata.dotp+1) ;
+                    windowGotoLine(meTRUE,cun->udata.dotp+1) ;
                     frameCur->bufferCur->dotLine = frameCur->windowCur->dotLine ;
                     frameCur->bufferCur->dotLineNo = frameCur->windowCur->dotLineNo ;
                     frameCur->bufferCur->dotOffset = 0 ;
@@ -459,9 +459,9 @@ meUndo(int f, int n)
                 else
                 {
                     meLine *slp ;
-                    gotoLine(meTRUE,cun->udata.dotp+1) ;
+                    windowGotoLine(meTRUE,cun->udata.dotp+1) ;
                     slp = frameCur->windowCur->dotLine ;
-                    gotoLine(meTRUE,ccount+1) ;
+                    windowGotoLine(meTRUE,ccount+1) ;
                     createNarrow(frameCur->bufferCur,slp,frameCur->windowCur->dotLine,cun->udata.dotp,ccount,cdoto) ;
                 }
                 if(cun->type & meUNDO_CONT)
@@ -471,7 +471,7 @@ meUndo(int f, int n)
 #endif
             if(cun->type & meUNDO_REPL)
             {
-                gotoLine(meTRUE,cun->udata.pos[cdoto-1][0]+1) ;
+                windowGotoLine(meTRUE,cun->udata.pos[cdoto-1][0]+1) ;
                 count = cun->udata.pos[cdoto-1][1] ;
                 if(count < 0)
                 {
@@ -490,11 +490,11 @@ meUndo(int f, int n)
                     {
                         autowriteremove(frameCur->bufferCur) ;
                         meModeClear(frameCur->bufferCur->mode,MDEDIT) ;
-                        frameCur->windowCur->flag |= WFMODE ;
+                        frameCur->windowCur->updateFlags |= WFMODE ;
                     }
                     goto meUndoNext ;
                 }
-                gotoLine(meTRUE,cun->udata.dotp+1) ;
+                windowGotoLine(meTRUE,cun->udata.dotp+1) ;
                 frameCur->windowCur->dotOffset = cdoto ;
             }
             if(cun->type & meUNDO_SING)
@@ -505,7 +505,7 @@ meUndo(int f, int n)
             else
                 count = ccount ;
             if(cun->type & meUNDO_REVS)
-                WbackChar(frameCur->windowCur,ccount) ;
+                meWindowBackwardChar(frameCur->windowCur,ccount) ;
             if(cun->type & meUNDO_MINS)
                 ldelete(count,2) ;
             if(cun->type & meUNDO_MDEL)

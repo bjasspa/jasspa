@@ -596,14 +596,14 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                 meFree(modeLineStr) ;
             modeLineStr = meStrdup(vvalue) ;
             modeLineFlags = assessModeLine(vvalue) ;
-            addModeToWindows(WFMODE) ;
+            frameAddModeToWindows(WFMODE) ;
             break ;
 #if MEOPT_EXTENDED
         case EVBMDLINE:
             meNullFree(frameCur->bufferCur->modeLineStr) ;
             frameCur->bufferCur->modeLineStr = meStrdup(vvalue) ;
             frameCur->bufferCur->modeLineFlags = assessModeLine(vvalue) ;
-            addModeToWindows(WFMODE) ;
+            frameAddModeToWindows(WFMODE) ;
             break ;
 #endif
         case EVSYSTEM:
@@ -674,12 +674,12 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             srand(time(NULL)) ;
             break ;
 #endif
-        case EVPAGELEN:
+        case EVFRMDPTH:
             return frameChangeDepth(meTRUE, meAtoi(vvalue));
         case EVABSCOL:
             return setcwcol(meAtoi(vvalue));
         case EVABSLINE:
-            return gotoAbsLine(meAtoi(vvalue));
+            return windowGotoAbsLine(meAtoi(vvalue));
         case EVCURCOL:
             if((status=meAtoi(vvalue)) < 0)
             {
@@ -694,7 +694,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             frameCur->windowCur->dotOffset = status ;
             return meTRUE ;
         case EVCURLINE:
-            return gotoLine(meTRUE, meAtoi(vvalue));
+            return windowGotoLine(meTRUE, meAtoi(vvalue));
         case EVWINCHRS:
             {
                 meUByte cc ;
@@ -718,13 +718,16 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             }
             break;
 #if MEOPT_EXTENDED
+        case EVWFLAGS:
+            frameCur->windowCur->flags = (meUShort) meAtoi(vvalue) ;
+            break;
         case EVWXSCROLL:
             if((status=meAtoi(vvalue)) < 0)
                 status = 0 ;
             if(frameCur->windowCur->horzScrollRest != status)
             {
                 frameCur->windowCur->horzScrollRest = status ;
-                frameCur->windowCur->flag |= WFREDRAW ;        /* Force a screen update */
+                frameCur->windowCur->updateFlags |= WFREDRAW ;        /* Force a screen update */
                 updCursor(frameCur->windowCur) ;
             }
             return meTRUE ;
@@ -736,7 +739,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             if(frameCur->windowCur->horzScroll != status)
             {
                 frameCur->windowCur->horzScroll = status ;
-                frameCur->windowCur->flag |= WFREDRAW ;        /* Force a screen update */
+                frameCur->windowCur->updateFlags |= WFREDRAW ;        /* Force a screen update */
                 updCursor(frameCur->windowCur) ;
             }
             return meTRUE ;
@@ -748,12 +751,12 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             if(frameCur->windowCur->vertScroll != status)
             {
                 frameCur->windowCur->vertScroll = status ;
-                frameCur->windowCur->flag |= WFMAIN|WFSBOX|WFLOOKBK ;
+                frameCur->windowCur->updateFlags |= WFMAIN|WFSBOX|WFLOOKBK ;
                 reframe(frameCur->windowCur) ;
             }
             return meTRUE ;
 #endif
-        case EVCURWIDTH:
+        case EVFRMWDTH:
             return frameChangeWidth(meTRUE, meAtoi(vvalue));
         case EVCBUFNAME:
             unlinkBuffer(frameCur->bufferCur) ;
@@ -765,7 +768,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             }
             meFree(frameCur->bufferCur->name) ;
             frameCur->bufferCur->name = meStrdup(vvalue);
-            addModeToWindows(WFMODE) ;
+            frameAddModeToWindows(WFMODE) ;
             linkBuffer(frameCur->bufferCur) ;
             break;
         case EVBUFFMOD:
@@ -777,7 +780,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
         case EVCFNAME:
             meNullFree(frameCur->bufferCur->fileName) ;
             frameCur->bufferCur->fileName = meStrdup(vvalue);
-            addModeToWindows(WFMODE) ;
+            frameAddModeToWindows(WFMODE) ;
             break;
 #if MEOPT_DEBUGM
         case EVDEBUG:
@@ -795,7 +798,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             break;
         case EVTABWIDTH:
             tabwidth = (meUShort) meAtoi(vvalue);
-            addModeToWindows(WFRESIZE) ;
+            frameAddModeToWindows(WFRESIZE) ;
             break;
         case EVSRCHPATH:
             meNullFree(searchPath) ;
@@ -850,7 +853,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                     else
                         meModeSet(modeLineDraw,nn) ;
                 }
-                addModeToWindows(WFMODE) ;
+                frameAddModeToWindows(WFMODE) ;
                 break ;
             }
         case EVSHWRGN:
@@ -873,7 +876,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             break ;
         case EVMDLNSCHM:
             mdLnScheme = convertUserScheme(meAtoi(vvalue),mdLnScheme);
-            addModeToWindows(WFMODE) ;
+            frameAddModeToWindows(WFMODE) ;
             break ;
         case EVGLOBSCHM:
             globScheme = convertUserScheme(meAtoi(vvalue),globScheme);
@@ -887,11 +890,11 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             break ;
         case EVBUFSCHM:
             frameCur->bufferCur->scheme = convertUserScheme(meAtoi(vvalue),frameCur->bufferCur->scheme);
-            addModeToBufferWindows(frameCur->bufferCur,WFRESIZE) ;
+            meBufferAddModeToWindows(frameCur->bufferCur,WFRESIZE) ;
             break ;
         case EVSBARSCHM:
             sbarScheme = convertUserScheme(meAtoi(vvalue),sbarScheme);
-            addModeToWindows(WFRESIZE|WFSBAR) ;
+            frameAddModeToWindows(WFRESIZE|WFSBAR) ;
             break;
 #if MEOPT_OSD
         case EVOSDSCHM:
@@ -901,7 +904,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
 #endif
         case EVSBAR:    
             gsbarmode = meAtoi(vvalue) & WMUSER;
-            resizeAllWnd (meTRUE, 0);         /* Force window update */
+            frameResizeWindows (meTRUE, 0);         /* Force window update */
             break;
 #if MEOPT_IPIPES
         case EVBUFIPIPE:
@@ -956,7 +959,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             if(((frameCur->bufferCur->hilight = (meUByte) meAtoi(vvalue)) >= noHilights) ||
                (hilights[frameCur->bufferCur->hilight] == NULL))
                 frameCur->bufferCur->hilight = 0 ;
-            addModeToBufferWindows(frameCur->bufferCur,WFRESIZE) ;
+            meBufferAddModeToWindows(frameCur->bufferCur,WFRESIZE) ;
             break ;
         case EVBUFIND:
             if(((frameCur->bufferCur->indent = (meUByte) meAtoi(vvalue)) >= noIndents) ||
@@ -1275,9 +1278,9 @@ handle_namesvar:
         }
     case EVRANDOM:      return (meItoa(rand()));
 #endif
-    case EVPAGELEN:     return (meItoa(frameCur->depth + 1));
+    case EVFRMDPTH:     return (meItoa(frameCur->depth + 1));
     case EVABSCOL:      return (meItoa(getcwcol()));
-    case EVABSLINE:     return (meItoa(gotoAbsLine(-1)+1));
+    case EVABSLINE:     return (meItoa(windowGotoAbsLine(-1)+1));
     case EVCURCOL:      return (meItoa(frameCur->windowCur->dotOffset));
     case EVCURLINE:     return (meItoa(frameCur->windowCur->dotLineNo+1));
     case EVWINCHRS:     return windowChars;
@@ -1291,10 +1294,11 @@ handle_namesvar:
     case EVWYSCROLL:    return (meItoa(frameCur->windowCur->vertScroll));
     case EVWMDLINE:     return (meItoa(frameCur->windowCur->frameRow+frameCur->windowCur->textDepth));
     case EVWSBAR:       return (meItoa(frameCur->windowCur->frameColumn+frameCur->windowCur->textWidth));
+    case EVWFLAGS:      return (meItoa(frameCur->windowCur->flags));
     case EVWDEPTH:      return (meItoa(frameCur->windowCur->textDepth));
     case EVWWIDTH:      return (meItoa(frameCur->windowCur->textWidth));
 #endif
-    case EVCURWIDTH:    return (meItoa(frameCur->width));
+    case EVFRMWDTH:    return (meItoa(frameCur->width));
     case EVCBUFBACKUP:
         if((frameCur->bufferCur->fileName == NULL) || createBackupName(evalResult,frameCur->bufferCur->fileName,'~',0))
             return (meUByte *) "" ;
@@ -1522,7 +1526,7 @@ getval(meUByte *tkn)   /* find the value of a token */
             else
             {
                 /* Current Buffer character fetch */
-                evalResult[0] = getCurChar(frameCur->windowCur) ;
+                evalResult[0] = meWindowGetChar(frameCur->windowCur) ;
                 evalResult[1] = '\0';
             }
         }
@@ -3284,7 +3288,7 @@ listVariables (int f, int n)
     meUByte   buf[meBUF_SIZE_MAX] ;
     int     ii ;
     
-    if((wp = wpopup(BvariablesN,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR))) == NULL)
+    if((wp = meWindowPopup(BvariablesN,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR),NULL)) == NULL)
         return meFALSE ;
     bp = wp->buffer ;
     

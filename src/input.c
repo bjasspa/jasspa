@@ -788,9 +788,10 @@ meUByte oldUseMlBinds ;
 #endif
 meUByte **mlgsStrList ;
 int    mlgsStrListSize ;
-static meWindow  *mlgsOldCwp=NULL ;
-static meUByte *mlgsStoreBuf=NULL ;
-static meInt    mlgsSingWind=0 ;
+static meWindow *mlgsOldCwp=NULL ;
+static meBuffer *mlgsOldWBp=NULL ;
+static meUByte  *mlgsStoreBuf=NULL ;
+static meInt     mlgsSingWind=0 ;
 #if MEOPT_EXTENDED
 static int      mlgsCursorState=0 ;
 #endif
@@ -817,22 +818,16 @@ mlfreeList(int option, int noStrs, meUByte **strList)
     if(mlgsOldCwp != NULL)
     {
         meBuffer *bp=frameCur->bufferCur ;
-        if(mlgsSingWind)
+        if(mlgsOldWBp == NULL)
         {
-            delwind(meFALSE,meFALSE) ;
+            /* was no replacement so the window was split */
+            windowDelete(meFALSE,1) ;
             frameCur->windowCur->vertScroll = mlgsSingWind-1 ;
         }
         else
         {
-            meBuffer *rbp=NULL, *tbp=bheadp ;
-            while(tbp != NULL)
-            {
-                if((tbp != bp) && ((rbp == NULL) || (rbp->histNo < tbp->histNo)))
-                    rbp = tbp ;
-                tbp = tbp->next ;
-            }
-            swbuffer(frameCur->windowCur,rbp) ;
-            makeCurWind(mlgsOldCwp) ;
+            swbuffer(frameCur->windowCur,mlgsOldWBp) ;
+            meWindowMakeCurrent(mlgsOldCwp) ;
         }
         zotbuf(bp,1) ;
         mlgsOldCwp = NULL ;
@@ -863,13 +858,13 @@ mlHandleMouse(meUByte *inpBuf, int inpBufSz, int compOff)
                     if (mouse_Y < (meShort) frameCur->windowCur->vertScrollBarPos[ii])
                         break;
                 if(ii == (WCVSBUP-WCVSBSPLIT))
-                    scrollUp(1,1) ;
+                    windowScrollUp(1,1) ;
                 else if(ii == (WCVSBUSHAFT-WCVSBSPLIT))
-                    scrollUp(0,1) ;
+                    windowScrollUp(0,1) ;
                 else if(ii == (WCVSBDOWN-WCVSBSPLIT))
-                    scrollDown(1,1) ;
+                    windowScrollDown(1,1) ;
                 else if(ii == (WCVSBDSHAFT-WCVSBSPLIT))
-                    scrollDown(0,1) ;
+                    windowScrollDown(0,1) ;
                 update(meTRUE) ;
             }
         }
@@ -901,7 +896,7 @@ mlHandleMouse(meUByte *inpBuf, int inpBufSz, int compOff)
                 frameCur->windowCur->dotOffset = ii ;
                 frameCur->windowCur->dotLineNo = lineNo ;
                 setShowRegion(frameCur->bufferCur,lineNo,ii,lineNo,jj) ;
-                frameCur->windowCur->flag |= WFMOVEL|WFSELHIL ;
+                frameCur->windowCur->updateFlags |= WFMOVEL|WFSELHIL ;
                 if(inpBuf != NULL)
                 {
                     if((jj -= ii) >= (inpBufSz-compOff))
@@ -1232,26 +1227,30 @@ input_expand:
                 contstr = compSole ;
             else
             {
+                meBuffer **br ;
                 meUByte line[150] ;
                 int len, lwidth ;
                 
                 for(ii=fstPos ; ii<=lstPos ; ii++)
                     if(strList[ii][ilen-compOff] == cc)
                         goto input_addexpand ;
+                /* if a new window is created to display the completion list
+                 * then store the information we need to delete it once we
+                 * have finished with it */
                 if(mlgsOldCwp == NULL)
                 {
-                    if(frameCur->windowList->next == NULL)
-                        mlgsSingWind = frameCur->windowCur->vertScroll+1 ;
-                    else
-                        mlgsSingWind = 0 ;
+                    mlgsSingWind = frameCur->windowCur->vertScroll+1 ;
                     mlgsOldCwp = frameCur->windowCur ;
+                    br = &mlgsOldWBp ;
                 }
-                
-                if(wpopup(BcompleteN,BFND_CREAT|BFND_CLEAR|WPOP_MKCURR) == NULL)
+                else
+                    br = NULL ;
+                if(meWindowPopup(BcompleteN,BFND_CREAT|BFND_CLEAR|WPOP_MKCURR,br) == NULL)
                 {
                     contstr = compFailComp ;
                     break ;
                 }
+                
                 /* remove any completion list selection hilighting */
                 if(selhilight.bp == frameCur->bufferCur)
                     selhilight.flags &= ~SELHIL_ACTIVE ;
@@ -1282,7 +1281,7 @@ input_expand:
                     addLineToEob(frameCur->bufferCur,line) ;
                     frameCur->bufferCur->baseLine->prev->flag |= flag ;
                 }
-                gotobob(meFALSE,meFALSE) ;
+                windowGotoBob(meFALSE,meFALSE) ;
                 update(meTRUE) ;
             }
             break ;
@@ -1290,7 +1289,7 @@ input_expand:
         case CK_MOVUWND:
             if(mlgsOldCwp != NULL)
             {
-                scrollUp(ff,ii) ;
+                windowScrollUp(ff,ii) ;
                 update(meTRUE) ;
             }
             break ;
@@ -1298,7 +1297,7 @@ input_expand:
         case CK_MOVDWND:
             if(mlgsOldCwp != NULL)
             {
-                scrollDown(ff,ii) ;
+                windowScrollDown(ff,ii) ;
                 update(meTRUE) ;
             }
             break ;

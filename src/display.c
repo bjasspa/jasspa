@@ -93,7 +93,7 @@ shilightWindow(meWindow *wp)
        (wp->buffer != selhilight.bp))
         goto remove_hilight;
 
-    if((wp->flag & (WFSELHIL|WFREDRAW)) == 0)
+    if((wp->updateFlags & (WFSELHIL|WFREDRAW)) == 0)
         return ;
 
     /* Hilight selection has been modified. Work out the start and
@@ -148,7 +148,7 @@ shilightWindow(meWindow *wp)
         (lineNo+wp->textDepth-1 < selhilight.sline))
     {
 remove_hilight:
-        if(wp->flag & WFSELDRAWN)
+        if(wp->updateFlags & WFSELDRAWN)
         {
             meVideoLine  *vptr;               /* Pointer to the video block */
             meUShort  sline, eline ;          /* physical screen line to update */
@@ -167,7 +167,7 @@ remove_hilight:
                     vptr[sline].flag = (vflag & ~VFSHMSK)|VFCHNGD;
                 sline++;
             }
-            wp->flag = (wp->flag & ~WFSELDRAWN) | WFMAIN ;
+            wp->updateFlags = (wp->updateFlags & ~WFSELDRAWN) | WFMAIN ;
         }
     }
     else
@@ -211,7 +211,7 @@ remove_hilight:
             sline++;                        /* Next video line */
             lineNo++;                       /* Next line number */
         }
-        wp->flag |= (WFSELDRAWN|WFMAIN) ;
+        wp->updateFlags |= (WFSELDRAWN|WFMAIN) ;
     }
 }
 
@@ -263,8 +263,8 @@ showRegion(int f, int n)
         break ;
     
     case -2:
-        frameCur->windowCur->flag |= WFMOVEL ;
-        if((gotoLine(meTRUE,selhilight.markLineNo+1) == meTRUE) &&
+        frameCur->windowCur->updateFlags |= WFMOVEL ;
+        if((windowGotoLine(meTRUE,selhilight.markLineNo+1) == meTRUE) &&
            (selhilight.markOffset <= meLineGetLength(frameCur->windowCur->dotLine)))
         {
             frameCur->windowCur->dotOffset = (meUShort) selhilight.markOffset ;
@@ -307,8 +307,8 @@ showRegion(int f, int n)
         break ;
    
     case 2:
-        frameCur->windowCur->flag |= WFMOVEL ;
-        if((gotoLine(meTRUE,selhilight.dotLineNo+1) == meTRUE) &&
+        frameCur->windowCur->updateFlags |= WFMOVEL ;
+        if((windowGotoLine(meTRUE,selhilight.dotLineNo+1) == meTRUE) &&
            (selhilight.dotOffset <= meLineGetLength(frameCur->windowCur->dotLine)))
         {
             frameCur->windowCur->dotOffset = (meUShort) selhilight.dotOffset ;
@@ -340,7 +340,7 @@ showRegion(int f, int n)
    default:
         return meABORT ;
     }
-    addModeToBufferWindows(selhilight.bp, WFSELHIL);
+    meBufferAddModeToWindows(selhilight.bp, WFSELHIL);
     return meTRUE ;
 }
 #endif
@@ -403,7 +403,7 @@ updCursor(register meWindow *wp)
     register meUInt ii, jj ;
     int leftMargin;                     /* Base left margin position (scrolled) */
 
-    if(wp->flag & (WFREDRAW|WFRESIZE))
+    if(wp->updateFlags & (WFREDRAW|WFRESIZE))
         /* reset the dotCharOffset to force a recalc when needed */
         wp->dotCharOffset->next = NULL ;
 
@@ -465,7 +465,7 @@ updCursor(register meWindow *wp)
     if(wp->horzScroll != (int) jj)         /* Screen scroll correct ?? */
     {
         wp->horzScroll = (meUShort) jj;    /* Scrolled line offset */
-        wp->flag |= WFDOT ;
+        wp->updateFlags |= WFDOT ;
     }
     switch(scrollFlag & 0x0f)
     {
@@ -474,7 +474,7 @@ updCursor(register meWindow *wp)
         {
             /* Reset scroll column */
             wp->horzScrollRest = 0 ;            /* Set scroll column to base position */
-            wp->flag |= WFREDRAW;        /* Force a screen update */
+            wp->updateFlags |= WFREDRAW;        /* Force a screen update */
         }
         break ;
     case 1:
@@ -482,7 +482,7 @@ updCursor(register meWindow *wp)
         {
             /* Reset scroll column */
             wp->horzScrollRest = 0 ;            /* Set scroll column to base position */
-            wp->flag |= WFREDRAW;        /* Force a screen update */
+            wp->updateFlags |= WFREDRAW;        /* Force a screen update */
         }
         break ;
     case 2:
@@ -490,7 +490,7 @@ updCursor(register meWindow *wp)
         {
             /* Reset scroll column */
             wp->horzScrollRest = (meUShort) jj ;/* Set scroll column to base position */
-            wp->flag |= WFREDRAW;        /* Force a screen update */
+            wp->updateFlags |= WFREDRAW;        /* Force a screen update */
         }
         break ;
         /* case 3 leaves the scroll alone */
@@ -1184,7 +1184,7 @@ updateWindow(meWindow *wp)
     register int   row, nrows ;           /* physical screen line to update */
     register meUByte force ;
 
-    force = (meUByte) (wp->flag & (WFREDRAW|WFRESIZE)) ;
+    force = (meUByte) (wp->updateFlags & (WFREDRAW|WFRESIZE)) ;
     /* Determine the video line position and determine the video block that
      * is being used. */
     row   = wp->frameRow ;
@@ -1207,13 +1207,13 @@ updateWindow(meWindow *wp)
         {
             vptr->hilno   = bp->hilight ;
             vptr->bracket = NULL ;
-            wp->flag |= WFLOOKBK ;
+            wp->updateFlags |= WFLOOKBK ;
         }
-        if((wp->flag & WFLOOKBK) && !TTahead())
+        if((wp->updateFlags & WFLOOKBK) && !TTahead())
         {
             if(hilights[bp->hilight]->ignore)
                 hilightLookBack(wp) ;
-            wp->flag &= ~WFLOOKBK ;
+            wp->updateFlags &= ~WFLOOKBK ;
         }
     }
 #endif
@@ -1234,7 +1234,7 @@ updateWindow(meWindow *wp)
         if(lp == wp->dotLine)
         {
             if(((vptr->flag & VFTPMSK) != (VFMAINL|VFCURRL)) ||
-               (wp->flag & WFDOT))
+               (wp->updateFlags & WFDOT))
                 update = 1 ;
             vptr->flag = (vptr->flag & ~VFTPMSK) | VFMAINL | VFCURRL ;
         }
@@ -1355,13 +1355,13 @@ updateModeLine(meWindow *wp)
 #if MEOPT_EXTENDED
     if((ml = bp->modeLineStr) != NULL)
     {
-        if((wp->flag & bp->modeLineFlags) == 0)
+        if((wp->updateFlags & bp->modeLineFlags) == 0)
             return ;
     }
     else
 #endif
     {
-        if((wp->flag & modeLineFlags) == 0)
+        if((wp->updateFlags & modeLineFlags) == 0)
             return ;
         ml = modeLineStr ;
     }
@@ -1530,7 +1530,7 @@ model_copys:
         ii = wp->frameRow + wp->textDepth ;
         vptr = wp->video->lineArray + ii ;     /* Video block */
 
-        if(wp->flag & WFRESIZE)
+        if(wp->updateFlags & WFRESIZE)
             vptr->endp = wp->textWidth ;
         if(frameCur->windowCur == wp)
             vptr->flag = VFMODEL|VFCURRL ;
@@ -1552,7 +1552,7 @@ reframe(meWindow *wp)
     /* See if the selection hilighting is enabled for the buffer */
     if ((selhilight.flags & SELHIL_ACTIVE) &&
         (selhilight.bp == wp->buffer))
-        wp->flag |= WFSELHIL;
+        wp->updateFlags |= WFSELHIL;
 
 #if MEOPT_IPIPES
     if(meModeTest(wp->buffer->mode,MDLOCK) &&
@@ -1579,25 +1579,25 @@ reframe(meWindow *wp)
                 ii = wp->textDepth-1 ;
             if((ii = wp->dotLineNo-ii) < 0)
                 ii = 0 ;
-            if((wp->flag & WFFORCE) || (ii != wp->vertScroll))
+            if((wp->updateFlags & WFFORCE) || (ii != wp->vertScroll))
             {
                 wp->vertScroll = ii ;
                 /* Force the scroll box to be updated if present. */
-                wp->flag |= WFSBOX ;
+                wp->updateFlags |= WFSBOX ;
             }
             return ;
         }
     }
 #endif
     /* if not a requested reframe, check for a needed one */
-    if(!(wp->flag & WFFORCE))
+    if(!(wp->updateFlags & WFFORCE))
     {
         ii = wp->dotLineNo - wp->vertScroll ;
         if((ii >= 0) && (ii < wp->textDepth))
             return ;
     }
     /* reaching here, we need a window refresh */
-    ii = wp->recenter ;
+    ii = wp->windowRecenter ;
 
     /* how far back to reframe? */
     if(ii > 0)
@@ -1622,7 +1622,7 @@ reframe(meWindow *wp)
         else
             wp->vertScroll = ii ;
         /* Force the scroll box and lookBack to be updated if present. */
-        wp->flag |= WFSBOX|WFLOOKBK ;
+        wp->updateFlags |= WFSBOX|WFLOOKBK ;
     }
 }
 
@@ -1698,7 +1698,7 @@ updateScrollBar (meWindow *wp)
         flipBox >>= 1;
 
         /* See if there is anything to do. */
-        if ((wp->flag & (WFSBSPLIT << ii)) == 0)
+        if ((wp->updateFlags & (WFSBSPLIT << ii)) == 0)
         {
             row = endrow ;
             continue ;
@@ -1937,7 +1937,7 @@ pokeUpdate (void)
         if ((jj=wp->frameRow+wp->depth-1) <= frameCur->pokeRowMax)
         {
             ii = jj - ii - 1 ;
-            wp->flag |= WFMODE ;
+            wp->updateFlags |= WFMODE ;
         }
         else
             ii = frameCur->pokeRowMax - ii;        /* End at poke max */
@@ -1956,7 +1956,7 @@ pokeUpdate (void)
         while (ii-- > 0);               /* Until exhaused line count  */
 
         /* flag the window as needing attension */
-        wp->flag |= WFMAIN ;
+        wp->updateFlags |= WFMAIN ;
 
 #if MEOPT_SCROLL
         /* Fix up the vertical scroll bar if we have invaded it's space,
@@ -1965,7 +1965,7 @@ pokeUpdate (void)
          * necessary to mark the scroll bar itself as changed */
         if ((frameCur->pokeColumnMax >= (wp->frameColumn + wp->textWidth)) &&
             (wp->vertScrollBarMode & WMVBAR))
-            wp->flag |= WFSBAR;
+            wp->updateFlags |= WFSBAR;
 #endif /* MEOPT_SCROLL */
     }
 
@@ -2013,18 +2013,18 @@ screenUpdate(int f, int n)
         if(frameCur->windowCur->bufferLast != frameCur->windowCur->buffer)
         {
             frameCur->windowCur->bufferLast = frameCur->windowCur->buffer ;
-            frameCur->windowCur->flag |= WFMODE|WFREDRAW|WFMOVEL|WFSBOX ;
+            frameCur->windowCur->updateFlags |= WFMODE|WFREDRAW|WFMOVEL|WFSBOX ;
         }
         /* if top of window is the last line and there's more than
          * one, force refame and draw */
         if((frameCur->windowCur->vertScroll == frameCur->windowCur->buffer->lineCount) && frameCur->windowCur->vertScroll)
-            frameCur->windowCur->flag |= WFFORCE ;
+            frameCur->windowCur->updateFlags |= WFFORCE ;
 
         /* if the window has changed, service it */
-        if(frameCur->windowCur->flag & (WFMOVEL|WFFORCE))
+        if(frameCur->windowCur->updateFlags & (WFMOVEL|WFFORCE))
             reframe(frameCur->windowCur) ;	        /* check the framing */
 
-        if(frameCur->windowCur->flag & (WFREDRAW|WFRESIZE|WFSELHIL|WFSELDRAWN))
+        if(frameCur->windowCur->updateFlags & (WFREDRAW|WFRESIZE|WFSELHIL|WFSELDRAWN))
             shilightWindow(frameCur->windowCur);         /* Update selection hilight */
 
         /* check the horizontal scroll and cursor position */
@@ -2100,46 +2100,46 @@ screenUpdate(int f, int n)
         if(force)
         {
             wp->bufferLast = wp->buffer ;
-            wp->flag |= WFUPGAR ;
+            wp->updateFlags |= WFUPGAR ;
         }
         else if(wp->bufferLast != wp->buffer)
         {
             wp->bufferLast = wp->buffer ;
-            wp->flag |= WFMODE|WFREDRAW|WFMOVEL|WFSBOX ;
+            wp->updateFlags |= WFMODE|WFREDRAW|WFMOVEL|WFSBOX ;
         }
         /* if top of window is the last line and there's more than
          * one, force refame and draw */
         if((wp->vertScroll == wp->buffer->lineCount) && wp->vertScroll)
-            wp->flag |= WFFORCE ;
+            wp->updateFlags |= WFFORCE ;
 
         /* if the window has changed, service it */
-        if(wp->flag & (WFMOVEL|WFFORCE))
+        if(wp->updateFlags & (WFMOVEL|WFFORCE))
             reframe(wp) ;	        /* check the framing */
 
-        if(wp->flag & (WFREDRAW|WFRESIZE|WFSELHIL|WFSELDRAWN))
+        if(wp->updateFlags & (WFREDRAW|WFRESIZE|WFSELHIL|WFSELDRAWN))
             shilightWindow(wp);         /* Update selection hilight */
 
         /* check the horizontal scroll and cursor position */
         if(wp == frameCur->windowCur)
             updCursor(wp) ;
 
-        if(wp->flag & ~(WFSELDRAWN|WFLOOKBK))
+        if(wp->updateFlags & ~(WFSELDRAWN|WFLOOKBK))
         {
             /* if the window has changed, service it */
 #if MEOPT_SCROLL
-            if(wp->flag & WFSBOX)
-                fixWindowScrollBox(wp);     /* Fix the scroll bars */
+            if(wp->updateFlags & WFSBOX)
+                meWindowFixScrollBox(wp);     /* Fix the scroll bars */
 #endif
-            if(wp->flag & ~(WFMODE|WFSBAR|WFLOOKBK))
+            if(wp->updateFlags & ~(WFMODE|WFSBAR|WFLOOKBK))
                 updateWindow(wp) ;          /* Update the window */
             updateModeLine(wp);	    /* Update mode line */
 #if MEOPT_SCROLL
-            if(wp->flag & WFSBAR)
+            if(wp->updateFlags & WFSBAR)
                 updateScrollBar(wp);        /* Update scroll bar  */
 #endif
-            wp->flag &= WFSELDRAWN ;
+            wp->updateFlags &= WFSELDRAWN ;
         }
-        wp->recenter = 0;
+        wp->windowRecenter = 0;
     }
 
     /* If forced then sort out the message-line as well */

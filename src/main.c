@@ -451,7 +451,7 @@ meAbout(int f, int n)
     meUByte   buf[meBUF_SIZE_MAX] ;
     int     ii ;
 
-    if((wp = wpopup(BaboutN,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR))) == NULL)
+    if((wp = meWindowPopup(BaboutN,BFND_CREAT|BFND_CLEAR|WPOP_USESTR,NULL)) == NULL)
         return meFALSE ;
     bp = wp->buffer ;
 
@@ -818,7 +818,7 @@ saveExitEmacs(int f, int n)
 {
     if((saveSomeBuffers(f,(n & 0x01)) == meTRUE)
 #if MEOPT_SPELL
-       && (saveDict(f,2|(n & 0x01)) != meFALSE)
+       && (dictionarySave(f,2|(n & 0x01)) != meFALSE)
 #endif
 #if MEOPT_REGISTRY
        && (saveRegistry(f,2|(n & 0x01)) != meFALSE)
@@ -852,7 +852,7 @@ ctrlg(int f, int n)
     if(kbdmode == meRECORD)
     {
         kbdmode = meSTOP ;
-        addModeToWindows(WFMODE) ;  /* update ALL mode lines */
+        frameAddModeToWindows(WFMODE) ;  /* update ALL mode lines */
     }
     if(n)
         mlwrite(MWABORT,(meUByte *)"[Aborted]");
@@ -1565,7 +1565,7 @@ missing_arg:
     {
         extern void TTdump(meBuffer *) ;
         TTdump(frameCur->bufferCur) ;
-        gotobob(meFALSE,1) ;
+        windowGotoBob(meFALSE,1) ;
         carg++ ;
     }
 #endif
@@ -1741,9 +1741,9 @@ missing_arg:
         {
             if(!HistNoFilesLoaded && !isUrlLink(bp->fileName))
             {
-                splitWindVert(meTRUE,2) ;
+                windowSplitDepth(meTRUE,2) ;
                 swbuffer(frameCur->windowCur,replacebuffer(NULL)) ;
-                prevwind(meFALSE,1) ;
+                windowGotoPrevious(meFALSE,1) ;
             }
         }
     }

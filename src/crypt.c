@@ -64,7 +64,7 @@ setBufferCryptKey(meBuffer *bp, meUByte *key)
         meCrypt(NULL, 0);
         meCrypt(bp->cryptKey, meStrlen(key));
     }
-    addModeToBufferWindows(bp,WFMODE) ;
+    meBufferAddModeToWindows(bp,WFMODE) ;
     return meTRUE ;
 }
 

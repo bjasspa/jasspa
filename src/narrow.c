@@ -123,7 +123,7 @@ createNarrow(meBuffer *bp, meLine *slp, meLine *elp, meInt sln, meInt eln, meUSh
                     wp->markLineNo = sln ;
                 }
             }
-            wp->flag |= WFMAIN|WFMOVEL|WFSBOX ;
+            wp->updateFlags |= WFMAIN|WFMOVEL|WFSBOX ;
         }
     }
     meFrameLoopEnd() ;
@@ -184,7 +184,7 @@ singleUnnarrow(meBuffer *bp, register meNarrow *nrrw, int useDot)
             }
             if(wp->markLineNo >= bp->dotLineNo)
                 wp->markLineNo += nrrw->noLines ;
-            wp->flag |= WFMAIN|WFMOVEL|WFSBOX ;
+            wp->updateFlags |= WFMAIN|WFMOVEL|WFSBOX ;
         }
     }
     meFrameLoopEnd() ;
@@ -283,7 +283,7 @@ redoNarrowInfo(meBuffer *bp)
                 }
                 if(wp->markLineNo >= bp->dotLineNo)
                     wp->markLineNo -= nrrw->noLines ;
-                wp->flag |= WFMAIN|WFMOVEL ;
+                wp->updateFlags |= WFMAIN|WFMOVEL ;
             }
         }
         meFrameLoopEnd() ;
