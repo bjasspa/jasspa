@@ -109,10 +109,18 @@
                 !endif
             !endif
             set-variable #l2 #l3
-            !if &xse #l3 "[ \t]*cdd?\\([ \t].*\\)?"
-                set-variable #l4 &trb &rig #l3 &sin "d" #l3
-                goto-position "\x83"
-                set-variable #l4 &stat "a" &cat $buffer-fname #l4
+            !if &xise #l3 "[ \t]*cdd?[ \t]*\\S .*"
+                set-variable #l4 &trb &xirep #l3 "[ \t]*cdd?\\(.*\\)" "\\1"
+                !if &xise #l4 "[a-z]:\\([^\\/].*\\)?"
+                    !if &not &exi &ind &cat ":dir-" &slo &lef #l4 1
+                        set-variable &ind &cat ":dir-" &slo &lef #l4 1 &stat "a" &lef #l4 2
+                    !endif
+                    set-variable #l4 &stat "a" &cat &ind &cat ":dir-" &slo &lef #l4 1 &rig #l4 2
+                    goto-position "\x83"
+                !else
+                    goto-position "\x83"
+                    set-variable #l4 &stat "a" &cat $buffer-fname #l4
+                !endif
                 !if &seq &stat "t" #l4 "D"
                     set-variable #l5 $buffer-fname
                     set-variable $buffer-fname #l4
