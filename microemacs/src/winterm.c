@@ -1457,7 +1457,14 @@ WinPaint (HWND hWnd)
         erow = TTnrow;
 
     scol = clientToCol (ps.rcPaint.left);
-    ecol = clientToCol (ps.rcPaint.right + eCellMetrics.cell.sizeX - 1);
+    
+    /* As we  draw  in  character  space  then  make  sure we are  within  the
+     * character  canvas, the only  special case is the left hand edge when we
+     * are running with an offset. */
+    if (ps.rcPaint.right > eCellMetrics.offsetX)
+        ecol = clientToCol (ps.rcPaint.right + eCellMetrics.cell.sizeX - 1);
+    else
+        ecol = 1;                       /* Render 1st column */
     if (ecol > TTncol)
         ecol = TTncol;
     
