@@ -1,0 +1,1134 @@
+#l0	misc.emf	/^    0 define-macro #l0$/
+00000	benchmrk.emf	/^define-macro 00000$/
+Mahjongg	games.emf	/^define-macro Mahjongg$/
+Match-It	games.emf	/^define-macro Match-It$/
+Metris	games.emf	/^define-macro Metris$/
+Patience	games.emf	/^define-macro Patience$/
+Triangle	games.emf	/^define-macro Triangle$/
+add-global-mode	me3_8.emf	/^define-macro add-global-mode $/
+add-mode	me3_8.emf	/^define-macro add-mode$/
+alarm	misc.emf	/^define-macro alarm$/
+aman	hkman.emf	/^define-macro aman$/
+apropos	me3_8.emf	/^define-macro apropos$/
+ascii-time	utils.emf	/^0 define-macro ascii-time$/
+auto-spell	spellaut.emf	/^define-macro auto-spell$/
+auto-spell-buffer	spellaut.emf	/^define-macro auto-spell-buffer$/
+auto-spell-input	spellaut.emf	/^0 define-macro auto-spell-input$/
+auto-spell-reset	spellaut.emf	/^define-macro auto-spell-reset$/
+auto-spell-test	spellaut.emf	/^0 define-macro auto-spell-test$/
+backward-character	me3_8.emf	/^define-macro backward-character$/
+begin-macro	me3_8.emf	/^define-macro begin-macro$/
+beginning-of-file	me3_8.emf	/^define-macro beginning-of-file$/
+bhook-doc	hkdoc.emf	/^define-macro bhook-doc$/
+bhook-java	hkjava.emf	/^define-macro bhook-java$/
+bhook-latex	hklatex.emf	/^0 define-macro bhook-latex$/
+bhook-mahjongg	mahjongg.emf	/^0 define-macro bhook-mahjongg$/
+bhook-match-it	matchit.emf	/^0 define-macro bhook-match-it$/
+bhook-metris	metris.emf	/^0 define-macro bhook-metris$/
+bhook-nroff	hknroff.emf	/^    0 define-macro bhook-nroff$/
+bhook-patience	patience.emf	/^0 define-macro bhook-patience$/
+bhook-triangle	triangle.emf	/^0 define-macro bhook-triangle$/
+bhook-txt	hktxt.emf	/^define-macro bhook-txt$/
+bibtex-swap-hilight	hkbibtex.emf	/^    0 define-macro bibtex-swap-hilight$/
+binary-move-backward	hkbinary.emf	/^define-macro binary-move-backward$/
+binary-move-forward	hkbinary.emf	/^define-macro binary-move-forward$/
+binary-swap-section	hkbinary.emf	/^define-macro binary-swap-section$/
+bind-to-key	me3_8.emf	/^define-macro bind-to-key$/
+blist-command	hkblist.emf	/^0 define-macro blist-command$/
+buffer-bind-create	buffinit.emf	/^0 define-macro buffer-bind-create$/
+buffer-help	buffstp.emf	/^define-macro buffer-help$/
+buffer-help-add-item	buffstp.emf	/^0 define-macro buffer-help-add-item$/
+buffer-initialize	buffinit.emf	/^0 define-macro buffer-initialize$/
+buffer-initialize-hooks	buffinit.emf	/^0 define-macro buffer-initialize-hooks$/
+buffer-initialize-modes	buffinit.emf	/^0 define-macro buffer-initialize-modes$/
+buffer-position	me3_8.emf	/^define-macro buffer-position$/
+buffer-setup	buffstp.emf	/^define-macro buffer-setup$/
+buffer-setup-option	buffstp.emf	/^0 define-macro buffer-setup-option$/
+buffer-setup-save	buffstp.emf	/^0 define-macro buffer-setup-save$/
+buffer-tool	buffstp.emf	/^0 define-macro buffer-tool$/
+buffer-tool-add-item	buffstp.emf	/^0 define-macro buffer-tool-add-item$/
+c-deslashify	cmacros.emf	/^define-macro c-deslashify$/
+c-hash-del	cmacros.emf	/^define-macro c-hash-del$/
+c-hash-eval	cmacros.emf	/^define-macro c-hash-eval$/
+c-hash-set-define	cmacros.emf	/^define-macro c-hash-set-define$/
+c-hash-unset-define	cmacros.emf	/^define-macro c-hash-unset-define$/
+c-insert-tab	cmacros.emf	/^define-macro c-insert-tab$/
+c-slashify	cmacros.emf	/^define-macro c-slashify$/
+c-to-cpp-convert	hkc.emf	/^define-macro c-to-cpp-convert$/
+calc	calc.emf	/^define-macro calc$/
+calc-buffer	calc.emf	/^0 define-macro calc-buffer$/
+calc-do-calc	calc.emf	/^0 define-macro calc-do-calc$/
+calc-order-brackets	calc.emf	/^0 define-macro calc-order-brackets$/
+calc-order-command	calc.emf	/^0 define-macro calc-order-command$/
+calc-order-unary	calc.emf	/^0 define-macro calc-order-unary$/
+case-region-lower	me3_8.emf	/^define-macro case-region-lower$/
+case-region-upper	me3_8.emf	/^define-macro case-region-upper$/
+case-word-capitalize	me3_8.emf	/^define-macro case-word-capitalize$/
+case-word-lower	me3_8.emf	/^define-macro case-word-lower$/
+case-word-upper	me3_8.emf	/^define-macro case-word-upper$/
+charset-change	charsutl.emf	/^define-macro charset-change$/
+charset-change-buffer	charsutl.emf	/^0 define-macro charset-change-buffer$/
+charset-change-exec	charsutl.emf	/^0 define-macro charset-change-exec$/
+charset-change-set	charsutl.emf	/^0 define-macro charset-change-set$/
+charset-change-setup	charsutl.emf	/^0 define-macro charset-change-setup$/
+charset-change-variable	charsutl.emf	/^0 define-macro charset-change-variable$/
+charset-iso-to-user	charsutl.emf	/^define-macro charset-iso-to-user$/
+charset-user-to-iso	charsutl.emf	/^define-macro charset-user-to-iso$/
+check-line-length	misc.emf	/^define-macro check-line-length$/
+clean	format.emf	/^define-macro clean$/
+clear-message-line	me3_8.emf	/^define-macro clear-message-line$/
+comment-end	comment.emf	/^define-macro comment-end$/
+comment-line	comment.emf	/^define-macro comment-line$/
+comment-restyle	comment.emf	/^define-macro comment-restyle$/
+comment-restyle-get-e	comment.emf	/^0 define-macro comment-restyle-get-e$/
+comment-restyle-get-s	comment.emf	/^0 define-macro comment-restyle-get-s$/
+comment-restyle-i	comment.emf	/^0 define-macro comment-restyle-i$/
+comment-start	comment.emf	/^define-macro comment-start$/
+comment-to-end-of-line	comment.emf	/^define-macro comment-to-end-of-line$/
+compare-windows-exact	misc.emf	/^define-macro compare-windows-exact$/
+compile	tools.emf	/^define-macro compile$/
+copy-registry	utils.emf	/^0 define-macro copy-registry$/
+create-file-path	utils.emf	/^0 define-macro create-file-path$/
+cross-word	crosswd.emf	/^define-macro cross-word$/
+crosswd	crosswd.emf	/^0 define-macro crosswd$/
+crosswd-compute	crosswd.emf	/^0 define-macro crosswd-compute$/
+crosswd-create-word-list	crosswd.emf	/^define-macro crosswd-create-word-list$/
+crosswd-crossref-add	crosswd.emf	/^0 define-macro crosswd-crossref-add$/
+crosswd-crossref-compile	crosswd.emf	/^0 define-macro crosswd-crossref-compile$/
+crosswd-crossref-compile2	crosswd.emf	/^0 define-macro crosswd-crossref-compile2$/
+crosswd-crossref-init	crosswd.emf	/^0 define-macro crosswd-crossref-init$/
+crosswd-crossref-list	crosswd.emf	/^0 define-macro crosswd-crossref-list$/
+crosswd-crossref-reduce	crosswd.emf	/^0 define-macro crosswd-crossref-reduce$/
+crosswd-nocrossref-word-dump	crosswd.emf	/^0 define-macro crosswd-nocrossref-word-dump$/
+crosswd-set-anagram	crosswd.emf	/^0 define-macro crosswd-set-anagram$/
+crosswd-set-crossref	crosswd.emf	/^0 define-macro crosswd-set-crossref$/
+crosswd-set-letter	crosswd.emf	/^0 define-macro crosswd-set-letter$/
+crosswd-set-noletter	crosswd.emf	/^0 define-macro crosswd-set-noletter$/
+crosswd-set-noword	crosswd.emf	/^0 define-macro crosswd-set-noword$/
+crosswd-setup-crossref	crosswd.emf	/^0 define-macro crosswd-setup-crossref$/
+crosswd-setup-letter	crosswd.emf	/^0 define-macro crosswd-setup-letter$/
+ctags	ctags.emf	/^define-macro ctags$/
+ctags-add-file	ctags.emf	/^0 define-macro ctags-add-file$/
+ctags-add-struct-tag-list	ctags.emf	/^0 define-macro ctags-add-struct-tag-list$/
+ctags-add-tag	ctags.emf	/^0 define-macro ctags-add-tag$/
+ctags-add-tag-list	ctags.emf	/^0 define-macro ctags-add-tag-list$/
+ctags-move-to-next	ctags.emf	/^0 define-macro ctags-move-to-next$/
+ctags-parse-tags	ctags.emf	/^0 define-macro ctags-parse-tags$/
+ctags-process-buffers	ctags.emf	/^define-macro ctags-process-buffers$/
+cvs	cvs.emf	/^define-macro cvs$/
+cvs-add	cvs.emf	/^define-macro cvs-add$/
+cvs-checkout	cvs.emf	/^define-macro cvs-checkout$/
+cvs-command-init	cvs.emf	/^0 define-macro cvs-command-init$/
+cvs-commit	cvs.emf	/^define-macro cvs-commit$/
+cvs-commit-get-log	cvs.emf	/^0 define-macro cvs-commit-get-log$/
+cvs-diff	cvs.emf	/^define-macro cvs-diff$/
+cvs-dir-conv	cvs.emf	/^0 define-macro cvs-dir-conv$/
+cvs-exec-file-menu-cmd	cvs.emf	/^0 define-macro cvs-exec-file-menu-cmd$/
+cvs-gdiff	cvs.emf	/^define-macro cvs-gdiff$/
+cvs-get-entries-info	cvs.emf	/^0 define-macro cvs-get-entries-info$/
+cvs-get-status-info	cvs.emf	/^0 define-macro cvs-get-status-info$/
+cvs-log	cvs.emf	/^define-macro cvs-log$/
+cvs-remove	cvs.emf	/^define-macro cvs-remove$/
+cvs-resolve-conflicts	cvs.emf	/^define-macro cvs-resolve-conflicts$/
+cvs-resolve-ver	cvs.emf	/^0 define-macro cvs-resolve-ver$/
+cvs-resolve-ver2	cvs.emf	/^0 define-macro cvs-resolve-ver2$/
+cvs-state	cvs.emf	/^define-macro cvs-state$/
+cvs-update	cvs.emf	/^define-macro cvs-update$/
+cygnus	hkcygnus.emf	/^define-macro cygnus$/
+cygpipe-break	hkcygnus.emf	/^define-macro cygpipe-break$/
+cygpipe-clear	hkcygnus.emf	/^0 define-macro cygpipe-clear$/
+cygpipe-input	hkcygnus.emf	/^0 define-macro cygpipe-input$/
+cygpipe-kill	hkcygnus.emf	/^0 define-macro cygpipe-kill$/
+cygpipe-minoutput	hkcygnus.emf	/^0 define-macro cygpipe-minoutput$/
+cygpipe-mode	hkcygnus.emf	/^0 define-macro cygpipe-mode$/
+cygpipe-output	hkcygnus.emf	/^0 define-macro cygpipe-output$/
+cygpipe-rerun	hkcygnus.emf	/^0 define-macro cygpipe-rerun$/
+dbx	hkipipe.emf	/^define-macro dbx$/
+dbx-add-breakpoint	hkipipe.emf	/^0 define-macro dbx-add-breakpoint$/
+dbx-input	hkipipe.emf	/^0 define-macro dbx-input$/
+debug-reset-line	hkipipe.emf	/^0 define-macro debug-reset-line$/
+delete-global-mode	me3_8.emf	/^define-macro delete-global-mode$/
+delete-hilight-lines	search.emf	/^define-macro delete-hilight-lines$/
+delete-indentation	format.emf	/^define-macro delete-indentation$/
+delete-mode	me3_8.emf	/^define-macro delete-mode$/
+delete-next-character	me3_8.emf	/^define-macro delete-next-character$/
+delete-next-word	me3_8.emf	/^define-macro delete-next-word$/
+delete-previous-character	me3_8.emf	/^define-macro delete-previous-character$/
+delete-previous-word	me3_8.emf	/^define-macro delete-previous-word$/
+describe-word	word.emf	/^define-macro describe-word$/
+describe-word-com	word.emf	/^define-macro describe-word-com$/
+describe-word-find	word.emf	/^define-macro describe-word-find$/
+describe-word-pick	word.emf	/^0 define-macro describe-word-pick$/
+dhook-latex	hklatex.emf	/^0 define-macro dhook-latex$/
+diff	tools.emf	/^define-macro diff$/
+diff-changes	tools.emf	/^define-macro diff-changes$/
+dirlst-auto-refresh	hkdirlst.emf	/^0 define-macro dirlst-auto-refresh$/
+dirlst-find-file	hkdirlst.emf	/^0 define-macro dirlst-find-file$/
+dirlst-get-sort-col	hkdirlst.emf	/^0 define-macro dirlst-get-sort-col$/
+dirlst-mouse-drag-1	hkdirlst.emf	/^0 define-macro dirlst-mouse-drag-1$/
+dirlst-mouse-drop-1	hkdirlst.emf	/^0 define-macro dirlst-mouse-drop-1$/
+dirlst-mouse-drop-3	hkdirlst.emf	/^0 define-macro dirlst-mouse-drop-3$/
+dirlst-mouse-pick-1	hkdirlst.emf	/^0 define-macro dirlst-mouse-pick-1$/
+dirlst-new-folder	hkdirlst.emf	/^0 define-macro dirlst-new-folder$/
+dirlst-pos	hkdirlst.emf	/^0 define-macro dirlst-pos$/
+dirlst-refresh	hkdirlst.emf	/^0 define-macro dirlst-refresh$/
+dirlst-sort-list	hkdirlst.emf	/^0 define-macro dirlst-sort-list$/
+dirlst-sort-list-section	hkdirlst.emf	/^0 define-macro dirlst-sort-list-section$/
+dirlst-tag-copy	hkdirlst.emf	/^0 define-macro dirlst-tag-copy$/
+dirlst-tag-cut	hkdirlst.emf	/^0 define-macro dirlst-tag-cut$/
+dirlst-tag-delete	hkdirlst.emf	/^0 define-macro dirlst-tag-delete$/
+dirlst-tag-execute	hkdirlst.emf	/^0 define-macro dirlst-tag-execute$/
+dirlst-tag-list	hkdirlst.emf	/^0 define-macro dirlst-tag-list$/
+dirlst-tag-open	hkdirlst.emf	/^0 define-macro dirlst-tag-open$/
+dirlst-tag-paste	hkdirlst.emf	/^0 define-macro dirlst-tag-paste$/
+dirlst-tag-paste-prompt	hkdirlst.emf	/^0 define-macro dirlst-tag-paste-prompt$/
+dirlst-tag-remove	hkdirlst.emf	/^0 define-macro dirlst-tag-remove$/
+dirlst-tag-rename	hkdirlst.emf	/^0 define-macro dirlst-tag-rename$/
+dirlst-tag-toggle	hkdirlst.emf	/^0 define-macro dirlst-tag-toggle$/
+dirtre-mouse-drop-1	hkdirtre.emf	/^0 define-macro dirtre-mouse-drop-1$/
+dirtre-mouse-drop-3	hkdirtre.emf	/^0 define-macro dirtre-mouse-drop-3$/
+dirtre-select-directory	hkdirtre.emf	/^0 define-macro dirtre-select-directory$/
+display-matching-fence	dmf.emf	/^define-macro display-matching-fence$/
+display-white-chars	misc.emf	/^define-macro display-white-chars$/
+disptest	benchmrk.emf	/^define-macro disptest$/
+doc-bhook-body	docmacro.emf	/^define-macro doc-bhook-body$/
+doc-ehook-body	docmacro.emf	/^define-macro doc-ehook-body$/
+doc-fhook-body	docmacro.emf	/^define-macro doc-fhook-body$/
+doc-mode-state	docmacro.emf	/^define-macro doc-mode-state$/
+doc-set-justify	docmacro.emf	/^0 define-macro doc-set-justify$/
+draw	draw.emf	/^define-macro draw$/
+draw-curhorz	draw.emf	/^0 define-macro draw-curhorz$/
+draw-curvert	draw.emf	/^0 define-macro draw-curvert$/
+draw-gotocol	draw.emf	/^0 define-macro draw-gotocol$/
+draw-horz	draw.emf	/^0 define-macro draw-horz$/
+draw-restore	draw.emf	/^0 define-macro draw-restore$/
+draw-setmode-line	draw.emf	/^0 define-macro draw-setmode-line$/
+draw-vert	draw.emf	/^0 define-macro draw-vert$/
+edit-dictionary	spellutl.emf	/^define-macro edit-dictionary$/
+ehf-backward-link	hkehf.emf	/^0 define-macro ehf-backward-link$/
+ehf-doc-test	hkjasspa.emf	/^define-macro ehf-doc-test$/
+ehf-find-help	hkehf.emf	/^0 define-macro ehf-find-help$/
+ehf-forward-link	hkehf.emf	/^0 define-macro ehf-forward-link$/
+ehf-process-all	ehftools.emf	/^define-macro ehf-process-all$/
+ehf-process-buffer	ehftools.emf	/^define-macro ehf-process-buffer$/
+ehf-process-link	hkehf.emf	/^0 define-macro ehf-process-link$/
+ehf-spell-word	hkehf.emf	/^0 define-macro ehf-spell-word$/
+ehook-doc	hkdoc.emf	/^define-macro ehook-doc$/
+ehook-java	hkjava.emf	/^define-macro ehook-java$/
+ehook-latex	hklatex.emf	/^0 define-macro ehook-latex$/
+ehook-mahjongg	mahjongg.emf	/^0 define-macro ehook-mahjongg$/
+ehook-match-it	matchit.emf	/^0 define-macro ehook-match-it$/
+ehook-metris	metris.emf	/^0 define-macro ehook-metris$/
+ehook-nroff	hknroff.emf	/^    0 define-macro ehook-nroff$/
+ehook-patience	patience.emf	/^0 define-macro ehook-patience$/
+ehook-triangle	triangle.emf	/^0 define-macro ehook-triangle$/
+ehook-txt	hktxt.emf	/^define-macro ehook-txt$/
+emf-expand-abbrev	hkemf.emf	/^0 define-macro emf-expand-abbrev$/
+emf-quote-command	hkemf.emf	/^define-macro emf-quote-command$/
+emftags	emftags.emf	/^define-macro emftags$/
+emftags-add-file	emftags.emf	/^define-macro emftags-add-file$/
+emftags-add-tag	emftags.emf	/^define-macro emftags-add-tag$/
+emftags-parse-tags	emftags.emf	/^define-macro emftags-parse-tags$/
+emftags-process-buffers	emftags.emf	/^define-macro emftags-process-buffers$/
+end-macro	me3_8.emf	/^define-macro end-macro$/
+end-of-file	me3_8.emf	/^define-macro end-of-file$/
+etfinsrt	etfinsrt.emf	/^0 define-macro etfinsrt$/
+exec-file	me.emf	/^0 define-macro exec-file$/
+exec-me	dos.emf	/^0 define-macro exec-me$/
+execute-command-line	me3_8.emf	/^define-macro execute-command-line$/
+execute-macro	me3_8.emf	/^define-macro execute-macro$/
+execute-tool	tools.emf	/^define-macro execute-tool$/
+expand-abbrev-handle	abbrev.emf	/^define-macro expand-abbrev-handle$/
+fahtzee	fahtzee.emf	/^define-macro fahtzee$/
+fahtzee-abort	fahtzee.emf	/^0 define-macro fahtzee-abort$/
+fahtzee-dice-info	fahtzee.emf	/^0 define-macro fahtzee-dice-info$/
+fahtzee-dice-shake	fahtzee.emf	/^0 define-macro fahtzee-dice-shake$/
+fahtzee-dice-turn	fahtzee.emf	/^0 define-macro fahtzee-dice-turn$/
+fahtzee-entry	fahtzee.emf	/^0 define-macro fahtzee-entry$/
+fahtzee-hold	fahtzee.emf	/^0 define-macro fahtzee-hold$/
+fahtzee-new	fahtzee.emf	/^0 define-macro fahtzee-new$/
+fahtzee-set-dice	fahtzee.emf	/^0 define-macro fahtzee-set-dice$/
+fahtzee-set-player	fahtzee.emf	/^0 define-macro fahtzee-set-player$/
+fahtzee-set-player-name	fahtzee.emf	/^0 define-macro fahtzee-set-player-name$/
+fahtzee-set-player1	fahtzee.emf	/^0 define-macro fahtzee-set-player1$/
+fahtzee-set-player2	fahtzee.emf	/^0 define-macro fahtzee-set-player2$/
+fahtzee-set-player3	fahtzee.emf	/^0 define-macro fahtzee-set-player3$/
+fahtzee-set-player4	fahtzee.emf	/^0 define-macro fahtzee-set-player4$/
+fahtzee-setup	fahtzee.emf	/^0 define-macro fahtzee-setup$/
+fahtzee-throw	fahtzee.emf	/^0 define-macro fahtzee-throw$/
+fahtzee-undo	fahtzee.emf	/^0 define-macro fahtzee-undo$/
+fattr-attr	fattrib.emf	/^0 define-macro fattr-attr$/
+fattr-type	fattrib.emf	/^0 define-macro fattr-type$/
+fhook-asmx86	hkasmx86.emf	/^define-macro fhook-asmx86$/
+fhook-asn1	hkasn1.emf	/^define-macro fhook-asn1$/
+fhook-awk	hkawk.emf	/^define-macro fhook-awk$/
+fhook-bibtex	hkbibtex.emf	/^define-macro fhook-bibtex$/
+fhook-binary	hkbinary.emf	/^define-macro fhook-binary$/
+fhook-blist	hkblist.emf	/^define-macro fhook-blist$/
+fhook-bnf	hkbnf.emf	/^define-macro fhook-bnf$/
+fhook-c	hkc.emf	/^define-macro fhook-c$/
+fhook-cobol	hkcobol.emf	/^define-macro fhook-cobol$/
+fhook-cpp	hkcpp.emf	/^define-macro fhook-cpp$/
+fhook-cygnus	hkcygnus.emf	/^0 define-macro fhook-cygnus$/
+fhook-diff	hkdiff.emf	/^define-macro fhook-diff$/
+fhook-dirlst	hkdirlst.emf	/^define-macro fhook-dirlst$/
+fhook-dirtre	hkdirtre.emf	/^define-macro fhook-dirtre$/
+fhook-doc	hkdoc.emf	/^define-macro fhook-doc$/
+fhook-dos	hkdos.emf	/^define-macro fhook-dos$/
+fhook-ehf	hkehf.emf	/^define-macro fhook-ehf$/
+fhook-emf	hkemf.emf	/^define-macro fhook-emf$/
+fhook-erf	hkerf.emf	/^define-macro fhook-erf$/
+fhook-euphor	hkeuphor.emf	/^define-macro fhook-euphor$/
+fhook-f90	hkf90.emf	/^define-macro fhook-f90$/
+fhook-fold	hkfold.emf	/^define-macro fhook-fold$/
+fhook-fvwm	hkfvwm.emf	/^define-macro fhook-fvwm$/
+fhook-html	hkhtml.emf	/^define-macro fhook-html$/
+fhook-idl	hkidl.emf	/^define-macro fhook-idl$/
+fhook-imake	hkimake.emf	/^define-macro fhook-imake$/
+fhook-info	hkinfo.emf	/^define-macro fhook-info$/
+fhook-ini	hkini.emf	/^define-macro fhook-ini$/
+fhook-ipipe	hkipipe.emf	/^define-macro fhook-ipipe$/
+fhook-jasspa	hkjasspa.emf	/^define-macro fhook-jasspa$/
+fhook-java	hkjava.emf	/^define-macro fhook-java$/
+fhook-latex	hklatex.emf	/^define-macro fhook-latex$/
+fhook-lisp	hklisp.emf	/^define-macro fhook-lisp$/
+fhook-lists	hklists.emf	/^define-macro fhook-lists$/
+fhook-m4	hkm4.emf	/^define-macro fhook-m4$/
+fhook-mail	mail.emf	/^0 define-macro fhook-mail$/
+fhook-make	hkmake.emf	/^define-macro fhook-make$/
+fhook-man	hkman.emf	/^define-macro fhook-man$/
+fhook-meta	hkmeta.emf	/^define-macro fhook-meta$/
+fhook-mhg	hkmhg.emf	/^define-macro fhook-mhg$/
+fhook-nroff	hknroff.emf	/^define-macro fhook-nroff$/
+fhook-pascal	hkpascal.emf	/^define-macro fhook-pascal$/
+fhook-perl	hkperl.emf	/^define-macro fhook-perl$/
+fhook-python	hkpython.emf	/^define-macro fhook-python$/
+fhook-reg	hkreg.emf	/^define-macro fhook-reg$/
+fhook-rul	hkrul.emf	/^define-macro fhook-rul$/
+fhook-scheme	hkscheme.emf	/^define-macro fhook-scheme$/
+fhook-shell	hkshell.emf	/^define-macro fhook-shell$/
+fhook-slang	hkslang.emf	/^define-macro fhook-slang$/
+fhook-sql	hksql.emf	/^define-macro fhook-sql$/
+fhook-tcl	hktcl.emf	/^define-macro fhook-tcl$/
+fhook-texi	hktexi.emf	/^define-macro fhook-texi$/
+fhook-txt	hktxt.emf	/^define-macro fhook-txt$/
+fhook-vb	hkvb.emf	/^define-macro fhook-vb$/
+fhook-vhdl	hkvhdl.emf	/^define-macro fhook-vhdl$/
+fhook-vrml	hkvrml.emf	/^define-macro fhook-vrml$/
+fhook-xml	hkxml.emf	/^define-macro fhook-xml$/
+fhook-yacc	hkyacc.emf	/^define-macro fhook-yacc$/
+file-attrib	fattrib.emf	/^define-macro file-attrib$/
+file-browser	hkdirlst.emf	/^define-macro file-browser$/
+file-browser-close	hkdirlst.emf	/^0 define-macro file-browser-close$/
+file-browser-init	hkdirlst.emf	/^0 define-macro file-browser-init$/
+file-browser-swap-buffers	hkdirlst.emf	/^define-macro file-browser-swap-buffers$/
+file-browser-twin	hkdirlst.emf	/^0 define-macro file-browser-twin$/
+file-name-insert	me3_8.emf	/^define-macro file-name-insert$/
+filemask-to-regex	utils.emf	/^0 define-macro filemask-to-regex$/
+fill-paragraph-both	docmacro.emf	/^define-macro fill-paragraph-both$/
+fill-paragraph-center	docmacro.emf	/^define-macro fill-paragraph-center$/
+fill-paragraph-gutter	docmacro.emf	/^define-macro fill-paragraph-gutter$/
+fill-paragraph-left	docmacro.emf	/^define-macro fill-paragraph-left$/
+fill-paragraph-right	docmacro.emf	/^define-macro fill-paragraph-right$/
+find-bfile	tools.emf	/^define-macro find-bfile$/
+find-cfile	tools.emf	/^define-macro find-cfile$/
+find-print	list.emf	/^define-macro find-print$/
+find-word	spell.emf	/^define-macro find-word$/
+find-word-resize	spell.emf	/^0 define-macro find-word-resize$/
+find-word-set	spell.emf	/^0 define-macro find-word-set$/
+find-word-set-list	spell.emf	/^0 define-macro find-word-set-list$/
+find-word-setr	spell.emf	/^0 define-macro find-word-setr$/
+find-zfile	zfile.emf	/^define-macro find-zfile$/
+fold-all	fold.emf	/^define-macro fold-all$/
+fold-close-all	fold.emf	/^0 define-macro fold-close-all$/
+fold-current	fold.emf	/^define-macro fold-current$/
+fold-get-vars	fold.emf	/^0 define-macro fold-get-vars$/
+fold-open-all	fold.emf	/^0 define-macro fold-open-all$/
+forward-character	me3_8.emf	/^define-macro forward-character$/
+forward-paragraph-start	menedit.emf	/^define-macro forward-paragraph-start$/
+forward-word-start	menedit.emf	/^define-macro forward-word-start$/
+ftp	ftp.emf	/^define-macro ftp$/
+ftp-connect	ftp.emf	/^0 define-macro ftp-connect$/
+ftp-console-checkbox	ftp.emf	/^0 define-macro ftp-console-checkbox$/
+ftp-create-layout	ftp.emf	/^0 define-macro ftp-create-layout$/
+ftp-data-entry	ftp.emf	/^0 define-macro ftp-data-entry$/
+ftp-data-entry-setup	ftp.emf	/^0 define-macro ftp-data-entry-setup$/
+ftp-host-set	ftp.emf	/^0 define-macro ftp-host-set$/
+ftp-host-setup	ftp.emf	/^0 define-macro ftp-host-setup$/
+ftp-regfile-entry	ftp.emf	/^0 define-macro ftp-regfile-entry$/
+ftp-site-name-set	ftp.emf	/^0 define-macro ftp-site-name-set$/
+gdb	hkipipe.emf	/^define-macro gdb$/
+gdb-add-breakpoint	hkipipe.emf	/^0 define-macro gdb-add-breakpoint$/
+gdb-input	hkipipe.emf	/^0 define-macro gdb-input$/
+gdiff	gdiff.emf	/^define-macro gdiff$/
+gdiff-create-comb	gdiff.emf	/^0 define-macro gdiff-create-comb$/
+gdiff-create-comb1	gdiff.emf	/^0 define-macro gdiff-create-comb1$/
+gdiff-exit	gdiff.emf	/^0 define-macro gdiff-exit$/
+gdiff-global-select	gdiff.emf	/^0 define-macro gdiff-global-select$/
+gdiff-input	gdiff.emf	/^0 define-macro gdiff-input$/
+gdiff-line-select	gdiff.emf	/^0 define-macro gdiff-line-select$/
+gdiff-menu-sel	gdiff.emf	/^0 define-macro gdiff-menu-sel$/
+gdiff-menu-select	gdiff.emf	/^0 define-macro gdiff-menu-select$/
+gdiff-mouse-drop-1	gdiff.emf	/^0 define-macro gdiff-mouse-drop-1$/
+gdiff-mouse-pick-1	gdiff.emf	/^0 define-macro gdiff-mouse-pick-1$/
+gdiff-next	gdiff.emf	/^0 define-macro gdiff-next$/
+gdiff-next-unassigned	gdiff.emf	/^0 define-macro gdiff-next-unassigned$/
+gdiff-region-select	gdiff.emf	/^0 define-macro gdiff-region-select$/
+gdiff-save	gdiff.emf	/^0 define-macro gdiff-save$/
+gdiff-save-as	gdiff.emf	/^0 define-macro gdiff-save-as$/
+gdiff-select	gdiff.emf	/^0 define-macro gdiff-select$/
+gdiff-top	gdiff.emf	/^0 define-macro gdiff-top$/
+generate-tags-file	gentags.emf	/^define-macro generate-tags-file$/
+generate-tags-file-entry	gentags.emf	/^0 define-macro generate-tags-file-entry$/
+generate-tags-file-exec	gentags.emf	/^0 define-macro generate-tags-file-exec$/
+generate-tags-file-flags	gentags.emf	/^0 define-macro generate-tags-file-flags$/
+grep	tools.emf	/^define-macro grep$/
+grow-window	me3_8.emf	/^define-macro grow-window$/
+handle-tab	me3_8.emf	/^define-macro handle-tab$/
+hilight-latex-common	hklatex.emf	/^    0 define-macro hilight-latex-common$/
+hilight-nroff-common	hknroff.emf	/^    0 define-macro hilight-nroff-common$/
+hkfold-close	hkfold.emf	/^define-macro hkfold-close$/
+hkfold-create	hkfold.emf	/^define-macro hkfold-create$/
+hkfold-find-end	hkfold.emf	/^define-macro hkfold-find-end$/
+hkfold-find-start	hkfold.emf	/^define-macro hkfold-find-start$/
+hkfold-kill	hkfold.emf	/^define-macro hkfold-kill$/
+hkfold-open	hkfold.emf	/^define-macro hkfold-open$/
+hkfold-section	hkfold.emf	/^define-macro hkfold-section$/
+html-add-newline	htmltool.emf	/^0 define-macro html-add-newline$/
+html-end-ahref	htmltool.emf	/^0 define-macro html-end-ahref$/
+html-process-buffer	hkhtml.emf	/^define-macro html-process-buffer$/
+html-process-link	hkhtml.emf	/^0 define-macro html-process-link$/
+html-show-buffer	hkhtml.emf	/^0 define-macro html-show-buffer$/
+html-spell-word	hkhtml.emf	/^0 define-macro html-spell-word$/
+html-to-ehf	htmltool.emf	/^0 define-macro html-to-ehf$/
+html-toggle-mode	hkhtml.emf	/^0 define-macro html-toggle-mode$/
+i-shell	me3_8.emf	/^define-macro i-shell$/
+ifill-para1	format.emf	/^0 define-macro ifill-para1$/
+ifill-para2	format.emf	/^0 define-macro ifill-para2$/
+ifill-paragraph	format.emf	/^define-macro ifill-paragraph$/
+incremental-search	me3_8.emf	/^define-macro incremental-search$/
+info	hkinfo.emf	/^define-macro info$/
+info-follow-goto	hkinfo.emf	/^0 define-macro info-follow-goto$/
+info-follow-line	hkinfo.emf	/^0 define-macro info-follow-line$/
+info-goto-link	hkinfo.emf	/^define-macro info-goto-link$/
+info-jump-last	hkinfo.emf	/^0 define-macro info-jump-last$/
+info-jump-link	hkinfo.emf	/^0 define-macro info-jump-link$/
+info-load-file	hkinfo.emf	/^0 define-macro info-load-file$/
+info-load-indirect-file	hkinfo.emf	/^0 define-macro info-load-indirect-file$/
+info-mouse-drop-1	hkinfo.emf	/^0 define-macro info-mouse-drop-1$/
+info-mouse-pick-1	hkinfo.emf	/^0 define-macro info-mouse-pick-1$/
+info-node-menu	hkinfo.emf	/^0 define-macro info-node-menu$/
+info-on	hkinfo.emf	/^define-macro info-on$/
+ipipe-input	hkipipe.emf	/^0 define-macro ipipe-input$/
+ipipe-minoutput	hkipipe.emf	/^0 define-macro ipipe-minoutput$/
+ipipe-mode	hkipipe.emf	/^0 define-macro ipipe-mode$/
+ipipe-output	hkipipe.emf	/^0 define-macro ipipe-output $/
+ipipe-rerun	hkipipe.emf	/^0 define-macro ipipe-rerun$/
+ipipe-write-prompt	hkipipe.emf	/^0 define-macro ipipe-write-prompt$/
+ishell	hkipipe.emf	/^define-macro ishell$/
+iso-accents-expand	abbrev.emf	/^define-macro iso-accents-expand$/
+iso-accents-mode	abbrev.emf	/^define-macro iso-accents-mode$/
+item-list	itemlist.emf	/^define-macro item-list$/
+item-list-close	itemlist.emf	/^define-macro item-list-close$/
+item-list-find	itemlist.emf	/^define-macro item-list-find$/
+item-list-mouse-drop	itemlist.emf	/^0 define-macro item-list-mouse-drop$/
+item-list-mouse-pick	itemlist.emf	/^0 define-macro item-list-mouse-pick$/
+item-list-mouse-timeout	itemlist.emf	/^0 define-macro item-list-mouse-timeout$/
+item-list-order	itemlist.emf	/^0 define-macro item-list-order$/
+item-list-set-order	itemlist.emf	/^0 define-macro item-list-set-order$/
+jasspa-bug-add-new	hkjasspa.emf	/^define-macro jasspa-bug-add-new$/
+jasspa-bug-fixed	hkjasspa.emf	/^define-macro jasspa-bug-fixed$/
+javatags	javatags.emf	/^define-macro javatags$/
+javatags-add-file	javatags.emf	/^0 define-macro javatags-add-file$/
+javatags-add-struct-tag-list	javatags.emf	/^0 define-macro javatags-add-struct-tag-list$/
+javatags-add-tag	javatags.emf	/^0 define-macro javatags-add-tag$/
+javatags-add-tag-list	javatags.emf	/^0 define-macro javatags-add-tag-list$/
+javatags-move-to-next	javatags.emf	/^0 define-macro javatags-move-to-next$/
+javatags-parse-tags	javatags.emf	/^0 define-macro javatags-parse-tags$/
+javatags-process-buffers	javatags.emf	/^define-macro javatags-process-buffers$/
+kill-to-end-of-line	me3_8.emf	/^define-macro kill-to-end-of-line$/
+latex-backward-paragraph	hklatex.emf	/^0 define-macro latex-backward-paragraph$/
+latex-compile	hklatex.emf	/^define-macro latex-compile$/
+latex-forward-paragraph	hklatex.emf	/^0 define-macro latex-forward-paragraph$/
+latex-goto-buffer	hklatex.emf	/^0 define-macro latex-goto-buffer$/
+latex-goto-section	hklatex.emf	/^define-macro latex-goto-section$/
+latex-list-label	hklatex.emf	/^define-macro latex-list-label$/
+latex-make-format	hklatex.emf	/^0 define-macro latex-make-format$/
+latex-para	hklatex.emf	/^0 define-macro latex-para$/
+latex-popup	hklatex.emf	/^define-macro latex-popup $/
+latex-popup-environment	hklatex.emf	/^0 define-macro latex-popup-environment$/
+latex-popup-format	hklatex.emf	/^0 define-macro latex-popup-format$/
+latex-popup-greek	hklatex.emf	/^0 define-macro latex-popup-greek$/
+latex-popup-header	hklatex.emf	/^0 define-macro latex-popup-header$/
+latex-popup-reference	hklatex.emf	/^0 define-macro latex-popup-reference$/
+latex-popup-symbol	hklatex.emf	/^0 define-macro latex-popup-symbol$/
+latex-ref-go-back	hklatex.emf	/^define-macro latex-ref-go-back$/
+latex-ref-goto-label	hklatex.emf	/^0 define-macro latex-ref-goto-label$/
+latex-spell-word	hklatex.emf	/^0 define-macro latex-spell-word$/
+latex-swap-hilight	hklatex.emf	/^    0 define-macro latex-swap-hilight$/
+latex-view	hklatex.emf	/^define-macro latex-view$/
+line-scheme	search.emf	/^define-macro line-scheme$/
+list	list.emf	/^0 define-macro list$/
+list-create	list.emf	/^define-macro list-create$/
+list-del	list.emf	/^define-macro list-del$/
+list-find	list.emf	/^define-macro list-find$/
+list-get	list.emf	/^define-macro list-get$/
+list-ins	list.emf	/^define-macro list-ins$/
+list-ins-var	list.emf	/^0 define-macro list-ins-var$/
+list-remove	list.emf	/^define-macro list-remove$/
+list-set	list.emf	/^define-macro list-set$/
+lists-find-link	hklists.emf	/^0 define-macro lists-find-link$/
+mail	mail.emf	/^define-macro mail$/
+mail-check	mail.emf	/^define-macro mail-check$/
+mail-data-insert	mail.emf	/^0 define-macro mail-data-insert$/
+mail-expand-abbrev	mail.emf	/^0 define-macro mail-expand-abbrev$/
+mail-get-address-list	mail.emf	/^0 define-macro mail-get-address-list$/
+mail-merge	mailmerg.emf	/^define-macro mail-merge$/
+mail-merge-buffer	mailmerg.emf	/^0 define-macro mail-merge-buffer$/
+mail-merge-exec	mailmerg.emf	/^define-macro mail-merge-exec$/
+mail-merge-find-end	mailmerg.emf	/^0 define-macro mail-merge-find-end$/
+mail-merge-popup	mailmerg.emf	/^define-macro mail-merge-popup $/
+mail-send	mail.emf	/^define-macro mail-send$/
+mail-send-msg	mail.emf	/^0 define-macro mail-send-msg$/
+mail-send-queue	mail.emf	/^define-macro mail-send-queue$/
+man	hkman.emf	/^define-macro man$/
+man-backward-word	hkman.emf	/^0 define-macro man-backward-word$/
+man-clean	hkman.emf	/^define-macro man-clean$/
+man-forward-word	hkman.emf	/^0 define-macro man-forward-word$/
+man-process-link	hkman.emf	/^0 define-macro man-process-link$/
+met-delcur	metris.emf	/^0 define-macro met-delcur$/
+met-down	metris.emf	/^0 define-macro met-down$/
+met-drop	metris.emf	/^0 define-macro met-drop$/
+met-drwcur	metris.emf	/^0 define-macro met-drwcur$/
+met-drwdown	metris.emf	/^0 define-macro met-drwdown$/
+met-drwnext	metris.emf	/^0 define-macro met-drwnext$/
+met-help	metris.emf	/^0 define-macro met-help$/
+met-left	metris.emf	/^0 define-macro met-left$/
+met-new-piece	metris.emf	/^0 define-macro met-new-piece$/
+met-pause	metris.emf	/^0 define-macro met-pause$/
+met-print-hiscore	metris.emf	/^0 define-macro met-print-hiscore$/
+met-print-level	metris.emf	/^0 define-macro met-print-level$/
+met-print-score	metris.emf	/^0 define-macro met-print-score$/
+met-print-time	metris.emf	/^0 define-macro met-print-time$/
+met-quit	metris.emf	/^0 define-macro met-quit$/
+met-redraw	metris.emf	/^0 define-macro met-redraw$/
+met-right	metris.emf	/^0 define-macro met-right$/
+met-rot	metris.emf	/^0 define-macro met-rot$/
+met-select-piece	metris.emf	/^0 define-macro met-select-piece$/
+mi-deal	matchit.emf	/^0 define-macro mi-deal$/
+mi-dlmouse	matchit.emf	/^0 define-macro mi-dlmouse$/
+mi-draw	matchit.emf	/^0 define-macro mi-draw$/
+mi-draw-menu	matchit.emf	/^0 define-macro mi-draw-menu$/
+mi-draw-path	matchit.emf	/^0 define-macro mi-draw-path$/
+mi-draw-path-h	matchit.emf	/^0 define-macro mi-draw-path-h$/
+mi-draw-path-tile	matchit.emf	/^0 define-macro mi-draw-path-tile$/
+mi-draw-path-v	matchit.emf	/^0 define-macro mi-draw-path-v$/
+mi-draw-score	matchit.emf	/^0 define-macro mi-draw-score$/
+mi-draw-tile	matchit.emf	/^0 define-macro mi-draw-tile$/
+mi-drmouse	matchit.emf	/^0 define-macro mi-drmouse$/
+mi-end-game	matchit.emf	/^0 define-macro mi-end-game$/
+mi-find-removable-from	matchit.emf	/^0 define-macro mi-find-removable-from$/
+mi-find-removable-pair-from	matchit.emf	/^0 define-macro mi-find-removable-pair-from$/
+mi-game-help	matchit.emf	/^0 define-macro mi-game-help$/
+mi-get-bit-square	matchit.emf	/^0 define-macro mi-get-bit-square$/
+mi-get-corner-char	matchit.emf	/^0 define-macro mi-get-corner-char$/
+mi-help	matchit.emf	/^0 define-macro mi-help$/
+mi-hilight-tile	matchit.emf	/^0 define-macro mi-hilight-tile$/
+mi-idle-hook	matchit.emf	/^0 define-macro mi-idle-hook$/
+mi-level-end	matchit.emf	/^0 define-macro mi-level-end$/
+mi-level-end2	matchit.emf	/^0 define-macro mi-level-end2$/
+mi-main-draw	matchit.emf	/^0 define-macro mi-main-draw$/
+mi-main-menu	matchit.emf	/^define-macro mi-main-menu$/
+mi-new-game	matchit.emf	/^0 define-macro mi-new-game$/
+mi-new-pos	matchit.emf	/^0 define-macro mi-new-pos$/
+mi-path-clear-hv	matchit.emf	/^0 define-macro mi-path-clear-hv$/
+mi-path-clear-vh	matchit.emf	/^0 define-macro mi-path-clear-vh$/
+mi-plmouse	matchit.emf	/^0 define-macro mi-plmouse$/
+mi-prmouse	matchit.emf	/^0 define-macro mi-prmouse$/
+mi-quit	matchit.emf	/^0 define-macro mi-quit$/
+mi-reduce-time	matchit.emf	/^0 define-macro mi-reduce-time$/
+mi-show-tiles	matchit.emf	/^0 define-macro mi-show-tiles$/
+mi-test-path	matchit.emf	/^0 define-macro mi-test-path$/
+mi-uselect	matchit.emf	/^0 define-macro mi-uselect$/
+mjg-adjacent	mahjongg.emf	/^0 define-macro mjg-adjacent$/
+mjg-again	mahjongg.emf	/^0 define-macro mjg-again$/
+mjg-deal	mahjongg.emf	/^0 define-macro mjg-deal$/
+mjg-draw	mahjongg.emf	/^0 define-macro mjg-draw$/
+mjg-draw-tile	mahjongg.emf	/^0 define-macro mjg-draw-tile$/
+mjg-fill	mahjongg.emf	/^0 define-macro mjg-fill$/
+mjg-help	mahjongg.emf	/^0 define-macro mjg-help$/
+mjg-min-redraw	mahjongg.emf	/^0 define-macro mjg-min-redraw$/
+mjg-mouse	mahjongg.emf	/^0 define-macro mjg-mouse$/
+mjg-quit	mahjongg.emf	/^0 define-macro mjg-quit$/
+mjg-score-draw	mahjongg.emf	/^0 define-macro mjg-score-draw$/
+mjg-test	mahjongg.emf	/^0 define-macro mjg-test$/
+mjg-uselect	mahjongg.emf	/^0 define-macro mjg-uselect$/
+mmrg	mailmerg.emf	/^    0 define-macro mmrg$/
+mmrg-get-dbfile	mailmerg.emf	/^0 define-macro mmrg-get-dbfile$/
+mmrg-get-first-record	mailmerg.emf	/^0 define-macro mmrg-get-first-record$/
+mmrg-get-info	mailmerg.emf	/^0 define-macro mmrg-get-info$/
+mmrg-get-record	mailmerg.emf	/^0 define-macro mmrg-get-record$/
+mmrg-insert-data	mailmerg.emf	/^0 define-macro mmrg-insert-data$/
+mmrg-options-set	mailmerg.emf	/^0 define-macro mmrg-options-set$/
+mmrg-setdelimit	mailmerg.emf	/^0 define-macro mmrg-setdelimit$/
+mouse-auto-pick-event	mouse.emf	/^0 define-macro mouse-auto-pick-event$/
+mouse-drop-set-pos	mouse.emf	/^0 define-macro mouse-drop-set-pos$/
+mouse-drop-set-region	mouse.emf	/^0 define-macro mouse-drop-set-region$/
+mouse-drop-t1	mouse.emf	/^0 define-macro mouse-drop-t1$/
+mouse-drop-type1	mouse.emf	/^0 define-macro mouse-drop-type1$/
+mouse-drop-type2	mouse.emf	/^0 define-macro mouse-drop-type2$/
+mouse-emacs-help	mouse.emf	/^0 define-macro mouse-emacs-help$/
+mouse-event	mouse.emf	/^0 define-macro mouse-event$/
+mouse-get-next-line	tools.emf	/^0 define-macro mouse-get-next-line$/
+mouse-grow-window	mouse.emf	/^0 define-macro mouse-grow-window$/
+mouse-keepcl	mouse.emf	/^0 define-macro mouse-keepcl$/
+mouse-mark-window	mouse.emf	/^0 define-macro mouse-mark-window$/
+mouse-move-yank	mouse.emf	/^0 define-macro mouse-move-yank$/
+mouse-mspan-drop	mouse.emf	/^0 define-macro mouse-mspan-drop$/
+mouse-mspan-pick	mouse.emf	/^0 define-macro mouse-mspan-pick$/
+mouse-mspan-window	mouse.emf	/^0 define-macro mouse-mspan-window$/
+mouse-no-move-replace-yank	mouse.emf	/^0 define-macro mouse-no-move-replace-yank$/
+mouse-no-move-yank	mouse.emf	/^0 define-macro mouse-no-move-yank$/
+mouse-osd	mouseosd.emf	/^define-macro mouse-osd$/
+mouse-osd-multi	mouseosd.emf	/^define-macro mouse-osd-multi$/
+mouse-pan-drop	mouse.emf	/^0 define-macro mouse-pan-drop$/
+mouse-pan-pick	mouse.emf	/^0 define-macro mouse-pan-pick$/
+mouse-pan-window	mouse.emf	/^0 define-macro mouse-pan-window$/
+mouse-pick-type1	mouse.emf	/^0 define-macro mouse-pick-type1$/
+mouse-reyank	mouse.emf	/^0 define-macro mouse-reyank$/
+mouse-undo	mouse.emf	/^0 define-macro mouse-undo$/
+mouse-wheel-event	mouse.emf	/^0 define-macro mouse-wheel-event$/
+move-window-down	me3_8.emf	/^define-macro move-window-down$/
+move-window-up	me3_8.emf	/^define-macro move-window-up$/
+msshift	msshift.emf	/^0 define-macro msshift$/
+msshift-input	msshift.emf	/^0 define-macro msshift-input$/
+msshift-move	msshift.emf	/^0 define-macro msshift-move$/
+msshift-pick	msshift.emf	/^0 define-macro msshift-pick$/
+name-buffer	me3_8.emf	/^define-macro name-buffer$/
+next-line	me3_8.emf	/^define-macro next-line$/
+next-page	me3_8.emf	/^define-macro next-page$/
+next-paragraph	me3_8.emf	/^define-macro next-paragraph$/
+next-word	me3_8.emf	/^define-macro next-word$/
+normal-tab	format.emf	/^define-macro normal-tab$/
+nroff-add-padding	hknroff.emf	/^0 define-macro nroff-add-padding$/
+nroff-bold	hknroff.emf	/^0 define-macro nroff-bold$/
+nroff-bold-region	hknroff.emf	/^0 define-macro nroff-bold-region$/
+nroff-italic	hknroff.emf	/^0 define-macro nroff-italic$/
+nroff-italic-region	hknroff.emf	/^0 define-macro nroff-italic-region$/
+nroff-mono	hknroff.emf	/^0 define-macro nroff-mono$/
+nroff-mono-region	hknroff.emf	/^0 define-macro nroff-mono-region$/
+nroff-para	hknroff.emf	/^0 define-macro nroff-para$/
+nroff-prev	hknroff.emf	/^0 define-macro nroff-prev$/
+nroff-remove-padding	hknroff.emf	/^0 define-macro nroff-remove-padding$/
+nroff-roman	hknroff.emf	/^0 define-macro nroff-roman$/
+nroff-size	hknroff.emf	/^0 define-macro nroff-size$/
+nroff-spell-word	hknroff.emf	/^0 define-macro nroff-spell-word$/
+nroff-swap-hilight	hknroff.emf	/^    0 define-macro nroff-swap-hilight$/
+ntags	ntags.emf	/^define-macro ntags$/
+ntags-add-file	ntags.emf	/^define-macro ntags-add-file$/
+ntags-parse-tags	ntags.emf	/^define-macro ntags-parse-tags$/
+ntags-process-buffers	ntags.emf	/^define-macro ntags-process-buffers$/
+occur	itemlist.emf	/^define-macro occur$/
+open-line	me3_8.emf	/^define-macro open-line$/
+org	organize.emf	/^    0 define-macro org$/
+org-addr-buffer	organiza.emf	/^0 define-macro org-addr-buffer$/
+org-addr-crt-index	organiza.emf	/^0 define-macro org-addr-crt-index$/
+org-addr-dec-recno	organiza.emf	/^0 define-macro org-addr-dec-recno$/
+org-addr-del	organiza.emf	/^0 define-macro org-addr-del$/
+org-addr-dup	organiza.emf	/^0 define-macro org-addr-dup$/
+org-addr-find	organiza.emf	/^0 define-macro org-addr-find$/
+org-addr-find-check	organiza.emf	/^0 define-macro org-addr-find-check$/
+org-addr-find-exec	organiza.emf	/^0 define-macro org-addr-find-exec$/
+org-addr-find-field	organiza.emf	/^0 define-macro org-addr-find-field$/
+org-addr-find-rec	organiza.emf	/^0 define-macro org-addr-find-rec$/
+org-addr-find-set	organiza.emf	/^0 define-macro org-addr-find-set$/
+org-addr-inc-recno	organiza.emf	/^0 define-macro org-addr-inc-recno$/
+org-addr-init	organiza.emf	/^0 define-macro org-addr-init$/
+org-addr-set-check	organiza.emf	/^0 define-macro org-addr-set-check$/
+org-addr-set-entry	organiza.emf	/^0 define-macro org-addr-set-entry$/
+org-addr-set-recno	organiza.emf	/^0 define-macro org-addr-set-recno$/
+org-addr-sort	organiza.emf	/^0 define-macro org-addr-sort$/
+org-addr-sort-field	organiza.emf	/^0 define-macro org-addr-sort-field$/
+org-addr-sort-field-set	organiza.emf	/^0 define-macro org-addr-sort-field-set$/
+org-address-export	organizi.emf	/^0 define-macro org-address-export$/
+org-address-import	organizi.emf	/^0 define-macro org-address-import$/
+org-aexp-options-set	organizi.emf	/^0 define-macro org-aexp-options-set$/
+org-aie-options	organizi.emf	/^0 define-macro org-aie-options$/
+org-aie-options-set	organizi.emf	/^0 define-macro org-aie-options-set$/
+org-aie-setdelimit	organizi.emf	/^0 define-macro org-aie-setdelimit$/
+org-aie-store	organizi.emf	/^0 define-macro org-aie-store$/
+org-aimp-crt-field	organizi.emf	/^0 define-macro org-aimp-crt-field$/
+org-aimp-import	organizi.emf	/^0 define-macro org-aimp-import$/
+org-aimp-select-field	organizi.emf	/^0 define-macro org-aimp-select-field$/
+org-aimp-set-entry	organizi.emf	/^0 define-macro org-aimp-set-entry$/
+org-aimp-set-field	organizi.emf	/^0 define-macro org-aimp-set-field$/
+org-aimp-store	organizi.emf	/^0 define-macro org-aimp-store$/
+org-cal-info	organize.emf	/^0 define-macro org-cal-info$/
+org-day-buffer	organizd.emf	/^0 define-macro org-day-buffer$/
+org-day-change-day	organizd.emf	/^0 define-macro org-day-change-day$/
+org-day-change-month	organizd.emf	/^0 define-macro org-day-change-month$/
+org-day-change-year	organizd.emf	/^0 define-macro org-day-change-year$/
+org-day-inc-day	organizd.emf	/^0 define-macro org-day-inc-day$/
+org-day-inc-year	organizd.emf	/^0 define-macro org-day-inc-year$/
+org-day-init	organizd.emf	/^0 define-macro org-day-init$/
+org-day-set-notes	organizd.emf	/^0 define-macro org-day-set-notes$/
+org-imp-first-record	organizi.emf	/^0 define-macro org-imp-first-record$/
+org-imp-get-record	organizi.emf	/^0 define-macro org-imp-get-record$/
+org-imp-record	organizi.emf	/^0 define-macro org-imp-record$/
+org-inc-year	organize.emf	/^0 define-macro org-inc-year$/
+org-indent	organize.emf	/^0 define-macro org-indent$/
+org-init	organize.emf	/^0 define-macro org-init$/
+org-key-bind	organize.emf	/^0 define-macro org-key-bind$/
+org-leap-year	organize.emf	/^0 define-macro org-leap-year$/
+org-list-buffer	organizl.emf	/^0 define-macro org-list-buffer$/
+org-list-del	organizl.emf	/^0 define-macro org-list-del$/
+org-list-entry	organizl.emf	/^0 define-macro org-list-entry$/
+org-list-init	organizl.emf	/^0 define-macro org-list-init$/
+org-list-item	organizl.emf	/^0 define-macro org-list-item$/
+org-list-item-button	organizl.emf	/^0 define-macro org-list-item-button$/
+org-list-new	organizl.emf	/^0 define-macro org-list-new$/
+org-list-nolines	organizl.emf	/^0 define-macro org-list-nolines$/
+org-list-set-list	organizl.emf	/^0 define-macro org-list-set-list$/
+org-list-setup	organizl.emf	/^0 define-macro org-list-setup$/
+org-month-buffer	organizm.emf	/^0 define-macro org-month-buffer$/
+org-month-change-day	organizm.emf	/^0 define-macro org-month-change-day$/
+org-month-change-month	organizm.emf	/^0 define-macro org-month-change-month$/
+org-month-change-year	organizm.emf	/^0 define-macro org-month-change-year$/
+org-month-inc-month	organizm.emf	/^0 define-macro org-month-inc-month$/
+org-month-inc-year	organizm.emf	/^0 define-macro org-month-inc-year$/
+org-month-init	organizm.emf	/^0 define-macro org-month-init$/
+org-month-init-day	organizm.emf	/^0 define-macro org-month-init-day$/
+org-month-set-notes	organizm.emf	/^0 define-macro org-month-set-notes$/
+org-set-week	organize.emf	/^0 define-macro org-set-week$/
+org-setup-1dofw	organizt.emf	/^0 define-macro org-setup-1dofw$/
+org-setup-1dofwc	organizt.emf	/^0 define-macro org-setup-1dofwc$/
+org-setup-1wofy	organizt.emf	/^0 define-macro org-setup-1wofy$/
+org-setup-aflag-check	organizt.emf	/^0 define-macro org-setup-aflag-check$/
+org-setup-day	organizt.emf	/^0 define-macro org-setup-day$/
+org-setup-dayc	organizt.emf	/^0 define-macro org-setup-dayc$/
+org-setup-daye	organizt.emf	/^0 define-macro org-setup-daye$/
+org-setup-file	organizt.emf	/^0 define-macro org-setup-file$/
+org-setup-init	organizt.emf	/^0 define-macro org-setup-init$/
+org-setup-month	organizt.emf	/^0 define-macro org-setup-month$/
+org-setup-monthc	organizt.emf	/^0 define-macro org-setup-monthc$/
+org-setup-monthe	organizt.emf	/^0 define-macro org-setup-monthe$/
+org-setup-page	organizt.emf	/^0 define-macro org-setup-page$/
+org-setup-pagec	organizt.emf	/^0 define-macro org-setup-pagec$/
+org-week-buffer	organizw.emf	/^0 define-macro org-week-buffer$/
+org-week-change-week	organizw.emf	/^0 define-macro org-week-change-week$/
+org-week-change-year	organizw.emf	/^0 define-macro org-week-change-year$/
+org-week-inc-week	organizw.emf	/^0 define-macro org-week-inc-week$/
+org-week-inc-year	organizw.emf	/^0 define-macro org-week-inc-year$/
+org-week-init	organizw.emf	/^0 define-macro org-week-init$/
+org-week-set-notes	organizw.emf	/^0 define-macro org-week-set-notes$/
+org-week-view-day	organizw.emf	/^0 define-macro org-week-view-day$/
+organizer	organize.emf	/^define-macro organizer$/
+organizer-init	organize.emf	/^0 define-macro organizer-init$/
+organizer-save	organize.emf	/^0 define-macro organizer-save$/
+osd-1-buffer	osd.emf	/^0 define-macro osd-1-buffer$/
+osd-1-buffer-select	osd.emf	/^0 define-macro osd-1-buffer-select$/
+osd-1-file	osd.emf	/^0 define-macro osd-1-file$/
+osd-1-file-select	osd.emf	/^0 define-macro osd-1-file-select$/
+osd-24-buffer-mode	mouseosd.emf	/^0 define-macro osd-24-buffer-mode$/
+osd-25-scroll-bars	mouseosd.emf	/^0 define-macro osd-25-scroll-bars$/
+osd-close	osd.emf	/^0 define-macro osd-close$/
+osd-cvs-file-menu	cvs.emf	/^0 define-macro osd-cvs-file-menu$/
+osd-cvs-file-menu-cmd	cvs.emf	/^0 define-macro osd-cvs-file-menu-cmd$/
+osd-dialog	osd.emf	/^0 define-macro osd-dialog$/
+osd-entry	osd.emf	/^0 define-macro osd-entry$/
+osd-entry-value	osd.emf	/^0 define-macro osd-entry-value$/
+osd-favorites	favorite.emf	/^0 define-macro osd-favorites$/
+osd-favorites-add	favorite.emf	/^0 define-macro osd-favorites-add$/
+osd-favorites-edit	favorite.emf	/^0 define-macro osd-favorites-edit$/
+osd-favorites-sel	favorite.emf	/^0 define-macro osd-favorites-sel$/
+osd-favorites-set	favorite.emf	/^0 define-macro osd-favorites-set$/
+osd-file-open	fileopen.emf	/^define-macro osd-file-open$/
+osd-file-open-cmd	fileopen.emf	/^0 define-macro osd-file-open-cmd$/
+osd-find-help	mouseosd.emf	/^0 define-macro osd-find-help$/
+osd-find-tag	search.emf	/^0 define-macro osd-find-tag$/
+osd-find-tag-find	search.emf	/^0 define-macro osd-find-tag-find$/
+osd-find-tag-goto	search.emf	/^0 define-macro osd-find-tag-goto$/
+osd-find-tag-parse	search.emf	/^0 define-macro osd-find-tag-parse$/
+osd-find-tag-resize	search.emf	/^0 define-macro osd-find-tag-resize$/
+osd-find-tag-set	search.emf	/^0 define-macro osd-find-tag-set$/
+osd-fo-dirlist	fileopen.emf	/^define-macro osd-fo-dirlist$/
+osd-fo-dirselect	fileopen.emf	/^define-macro osd-fo-dirselect$/
+osd-fo-dirset	fileopen.emf	/^0 define-macro osd-fo-dirset$/
+osd-fo-filelist	fileopen.emf	/^define-macro osd-fo-filelist$/
+osd-fo-fileselect	fileopen.emf	/^define-macro osd-fo-fileselect$/
+osd-fo-fileset	fileopen.emf	/^0 define-macro osd-fo-fileset$/
+osd-fo-filetype	fileopen.emf	/^define-macro osd-fo-filetype$/
+osd-fo-masksel	fileopen.emf	/^define-macro osd-fo-masksel$/
+osd-fo-okay	fileopen.emf	/^define-macro osd-fo-okay$/
+osd-fo-options	fileopen.emf	/^0 define-macro osd-fo-options$/
+osd-fo-resize	fileopen.emf	/^0 define-macro osd-fo-resize$/
+osd-get-file	fileopen.emf	/^0 define-macro osd-get-file$/
+osd-goto-line	search.emf	/^0 define-macro osd-goto-line$/
+osd-goto-set	search.emf	/^0 define-macro osd-goto-set$/
+osd-help	osdhelp.emf	/^define-macro osd-help$/
+osd-help-cont-list-crt	osdhelp.emf	/^0 define-macro osd-help-cont-list-crt$/
+osd-help-content-goto	osdhelp.emf	/^0 define-macro osd-help-content-goto$/
+osd-help-create-list	osdhelp.emf	/^0 define-macro osd-help-create-list$/
+osd-help-create-slist	osdhelp.emf	/^0 define-macro osd-help-create-slist$/
+osd-help-create-slist-setup	osdhelp.emf	/^0 define-macro osd-help-create-slist-setup$/
+osd-help-get-scope	osdhelp.emf	/^0 define-macro osd-help-get-scope$/
+osd-help-goto	osdhelp.emf	/^0 define-macro osd-help-goto$/
+osd-help-index-list-crt	osdhelp.emf	/^0 define-macro osd-help-index-list-crt$/
+osd-help-resize	osdhelp.emf	/^0 define-macro osd-help-resize$/
+osd-help-search-entry	osdhelp.emf	/^0 define-macro osd-help-search-entry$/
+osd-help-search-flag	osdhelp.emf	/^0 define-macro osd-help-search-flag$/
+osd-help-search-list-crt	osdhelp.emf	/^0 define-macro osd-help-search-list-crt$/
+osd-help-search-scope	osdhelp.emf	/^0 define-macro osd-help-search-scope$/
+osd-help-set-size	osdhelp.emf	/^0 define-macro osd-help-set-size$/
+osd-insert-date	insdate.emf	/^0 define-macro osd-insert-date$/
+osd-insert-date-exec	insdate.emf	/^0 define-macro osd-insert-date-exec$/
+osd-line-scheme	search.emf	/^0 define-macro osd-line-scheme$/
+osd-mail-addr-abbrev	mail.emf	/^0 define-macro osd-mail-addr-abbrev$/
+osd-mail-addr-insert	mail.emf	/^0 define-macro osd-mail-addr-insert$/
+osd-mail-addr-parse	mail.emf	/^0 define-macro osd-mail-addr-parse$/
+osd-mail-addr-resize	mail.emf	/^0 define-macro osd-mail-addr-resize$/
+osd-mail-addr-set	mail.emf	/^0 define-macro osd-mail-addr-set$/
+osd-main	osd.emf	/^0 define-macro osd-main$/
+osd-mouse-yank	mouseosd.emf	/^0 define-macro osd-mouse-yank$/
+osd-new-buffer	osd.emf	/^0 define-macro osd-new-buffer$/
+osd-redo	osd.emf	/^0 define-macro osd-redo$/
+osd-save	osd.emf	/^0 define-macro osd-save$/
+osd-save-all	osd.emf	/^0 define-macro osd-save-all$/
+osd-save-as	osd.emf	/^0 define-macro osd-save-as$/
+osd-search	search.emf	/^define-macro osd-search$/
+osd-search-cexact	search.emf	/^0 define-macro osd-search-cexact$/
+osd-search-cmagic	search.emf	/^0 define-macro osd-search-cmagic$/
+osd-search-hilight	search.emf	/^0 define-macro osd-search-hilight$/
+osd-search-replace	search.emf	/^0 define-macro osd-search-replace$/
+osd-search-search	search.emf	/^0 define-macro osd-search-search$/
+osd-search-set	search.emf	/^0 define-macro osd-search-set$/
+osd-search-set-hilight	search.emf	/^0 define-macro osd-search-set-hilight$/
+osd-search-set-state	search.emf	/^0 define-macro osd-search-set-state$/
+osd-search-setup-hilight	search.emf	/^0 define-macro osd-search-setup-hilight$/
+osd-undo	osd.emf	/^0 define-macro osd-undo$/
+osd-user-show-mode	userstp.emf	/^0 define-macro osd-user-show-mode$/
+osd-xdialog	osd.emf	/^0 define-macro osd-xdialog$/
+paragraph-to-line	format.emf	/^define-macro paragraph-to-line$/
+pat-deal	patience.emf	/^0 define-macro pat-deal$/
+pat-decode-char	patience.emf	/^0 define-macro pat-decode-char$/
+pat-draw	patience.emf	/^0 define-macro pat-draw$/
+pat-draw-card	patience.emf	/^0 define-macro pat-draw-card$/
+pat-draw-col	patience.emf	/^0 define-macro pat-draw-col$/
+pat-draw-dealer	patience.emf	/^0 define-macro pat-draw-dealer$/
+pat-draw-home	patience.emf	/^0 define-macro pat-draw-home$/
+pat-draw-labels	patience.emf	/^0 define-macro pat-draw-labels$/
+pat-help	patience.emf	/^0 define-macro pat-help$/
+pat-key	patience.emf	/^0 define-macro pat-key$/
+pat-key-tab	patience.emf	/^0 define-macro pat-key-tab$/
+pat-legal-col-move	patience.emf	/^0 define-macro pat-legal-col-move$/
+pat-mouse-drop-left	patience.emf	/^0 define-macro pat-mouse-drop-left$/
+pat-mouse-pick-left	patience.emf	/^0 define-macro pat-mouse-pick-left$/
+pat-mouse-where	patience.emf	/^0 define-macro pat-mouse-where$/
+pat-move	patience.emf	/^0 define-macro pat-move$/
+pat-move-col	patience.emf	/^0 define-macro pat-move-col$/
+pat-move-home	patience.emf	/^0 define-macro pat-move-home$/
+pat-quit	patience.emf	/^0 define-macro pat-quit$/
+pat-turn	patience.emf	/^0 define-macro pat-turn$/
+perldb	hkipipe.emf	/^define-macro perldb$/
+perldb-add-breakpoint	hkipipe.emf	/^0 define-macro perldb-add-breakpoint$/
+perldb-input	hkipipe.emf	/^0 define-macro perldb-input$/
+perltags	perltags.emf	/^define-macro perltags$/
+perltags-add-file	perltags.emf	/^define-macro perltags-add-file$/
+perltags-parse-tags	perltags.emf	/^define-macro perltags-parse-tags$/
+perltags-process-buffers	perltags.emf	/^define-macro perltags-process-buffers$/
+previous-line	me3_8.emf	/^define-macro previous-line$/
+previous-page	me3_8.emf	/^define-macro previous-page$/
+previous-paragraph	me3_8.emf	/^define-macro previous-paragraph$/
+previous-word	me3_8.emf	/^define-macro previous-word$/
+print-all-buffers	printall.emf	/^define-macro print-all-buffers$/
+print-setup	printstp.emf	/^define-macro print-setup$/
+print-setup-display-page-size	printstp.emf	/^0 define-macro print-setup-display-page-size$/
+print-setup-set-char-size	printstp.emf	/^0 define-macro print-setup-set-char-size$/
+print-setup-set-dest	printstp.emf	/^0 define-macro print-setup-set-dest$/
+print-setup-set-driver	printstp.emf	/^0 define-macro print-setup-set-driver$/
+print-setup-set-entry	printstp.emf	/^0 define-macro print-setup-set-entry$/
+print-setup-set-flag	printstp.emf	/^0 define-macro print-setup-set-flag$/
+print-setup-set-page-size	printstp.emf	/^0 define-macro print-setup-set-page-size$/
+print-setup-set-scheme	printstp.emf	/^0 define-macro print-setup-set-scheme$/
+print-setup-setup-char-size	printstp.emf	/^0 define-macro print-setup-setup-char-size$/
+print-setup-setup-dest	printstp.emf	/^0 define-macro print-setup-setup-dest$/
+print-setup-setup-driver	printstp.emf	/^0 define-macro print-setup-setup-driver$/
+print-setup-setup-page	printstp.emf	/^0 define-macro print-setup-setup-page$/
+print-setup-setup-page-size	printstp.emf	/^0 define-macro print-setup-setup-page-size$/
+print-setup-setup-scheme	printstp.emf	/^0 define-macro print-setup-setup-scheme$/
+query-replace-all-string	search.emf	/^define-macro query-replace-all-string$/
+quote-character	me3_8.emf	/^define-macro quote-character$/
+redraw-display	me3_8.emf	/^define-macro redraw-display$/
+reg-copy-node	hkreg.emf	/^0 define-macro reg-copy-node$/
+reg-delete-node	hkreg.emf	/^0 define-macro reg-delete-node$/
+reg-insert-node	hkreg.emf	/^0 define-macro reg-insert-node$/
+reg-move-node	hkreg.emf	/^0 define-macro reg-move-node$/
+reg-set-node	hkreg.emf	/^0 define-macro reg-set-node$/
+reg-toggle-hidden	hkreg.emf	/^0 define-macro reg-toggle-hidden$/
+regex-backward	utils.emf	/^0 define-macro regex-backward$/
+regex-forward	utils.emf	/^0 define-macro regex-forward$/
+replace-all-pairs	search.emf	/^define-macro replace-all-pairs$/
+replace-all-string	search.emf	/^define-macro replace-all-string$/
+reread-file	tools.emf	/^define-macro reread-file$/
+reset-25	dos.emf	/^define-macro reset-25$/
+reset-50	dos.emf	/^define-macro reset-50$/
+reset-def	dos.emf	/^define-macro reset-def$/
+restore-dictionary	spellutl.emf	/^define-macro restore-dictionary$/
+restore-window	me3_8.emf	/^define-macro restore-window$/
+restyle-buffer	format.emf	/^define-macro restyle-buffer$/
+restyle-region	format.emf	/^define-macro restyle-region$/
+restyle-region-int	format.emf	/^0 define-macro restyle-region-int$/
+reverse-incremental-search	me3_8.emf	/^define-macro reverse-incremental-search$/
+rgrep	tools.emf	/^define-macro rgrep$/
+save-all	me.emf	/^define-macro save-all$/
+save-file	me3_8.emf	/^define-macro save-file$/
+save-window	me3_8.emf	/^define-macro save-window$/
+scheme	scheme.emf	/^0 define-macro scheme$/
+scheme-editor	schemosd.emf	/^define-macro scheme-editor$/
+schm-osd	schemosd.emf	/^    0 define-macro schm-osd$/
+schm-osd-cmp-schm	schemosd.emf	/^0 define-macro schm-osd-cmp-schm$/
+schm-osd-color-add	schemosd.emf	/^0 define-macro schm-osd-color-add$/
+schm-osd-color-change	schemosd.emf	/^0 define-macro schm-osd-color-change$/
+schm-osd-color-init	schemosd.emf	/^0 define-macro schm-osd-color-init$/
+schm-osd-current	schemosd.emf	/^0 define-macro schm-osd-current$/
+schm-osd-get-color	schemosd.emf	/^0 define-macro schm-osd-get-color$/
+schm-osd-inc-colcomp	schemosd.emf	/^0 define-macro schm-osd-inc-colcomp$/
+schm-osd-init	schemosd.emf	/^0 define-macro schm-osd-init$/
+schm-osd-init-print-scheme	schemosd.emf	/^0 define-macro schm-osd-init-print-scheme$/
+schm-osd-init-screen-scheme	schemosd.emf	/^0 define-macro schm-osd-init-screen-scheme$/
+schm-osd-install	schemosd.emf	/^0 define-macro schm-osd-install$/
+schm-osd-load-fname	schemosd.emf	/^0 define-macro schm-osd-load-fname$/
+schm-osd-save	schemosd.emf	/^0 define-macro schm-osd-save$/
+schm-osd-scheme-init	schemosd.emf	/^0 define-macro schm-osd-scheme-init$/
+schm-osd-set-colcomp	schemosd.emf	/^0 define-macro schm-osd-set-colcomp$/
+schm-osd-set-color	schemosd.emf	/^0 define-macro schm-osd-set-color$/
+schm-osd-set-color-no	schemosd.emf	/^0 define-macro schm-osd-set-color-no$/
+schm-osd-set-cursor	schemosd.emf	/^0 define-macro schm-osd-set-cursor$/
+schm-osd-set-desc	schemosd.emf	/^0 define-macro schm-osd-set-desc$/
+schm-osd-set-flags	schemosd.emf	/^0 define-macro schm-osd-set-flags$/
+schm-osd-set-fname	schemosd.emf	/^0 define-macro schm-osd-set-fname$/
+schm-osd-set-scheme-section	schemosd.emf	/^0 define-macro schm-osd-set-scheme-section$/
+schm-osd-set-scheme-var	schemosd.emf	/^0 define-macro schm-osd-set-scheme-var$/
+schm-osd-set-schm-colcomp	schemosd.emf	/^0 define-macro schm-osd-set-schm-colcomp$/
+schm-osd-set-schm-fntcomp	schemosd.emf	/^0 define-macro schm-osd-set-schm-fntcomp$/
+schm-osd-set-to-text	schemosd.emf	/^0 define-macro schm-osd-set-to-text$/
+schm-osd-set-type	schemosd.emf	/^0 define-macro schm-osd-set-type$/
+schm-osd-setup-flags	schemosd.emf	/^0 define-macro schm-osd-setup-flags$/
+schm-osd-setup-type	schemosd.emf	/^0 define-macro schm-osd-setup-type$/
+schm-osd-show-schm-comp	schemosd.emf	/^0 define-macro schm-osd-show-schm-comp$/
+schm-osd-store	schemosd.emf	/^0 define-macro schm-osd-store$/
+schm-osd-store-print-scheme	schemosd.emf	/^0 define-macro schm-osd-store-print-scheme$/
+schm-osd-store-screen-scheme	schemosd.emf	/^0 define-macro schm-osd-store-screen-scheme$/
+screen-saver	ssaver.emf	/^define-macro screen-saver$/
+scroll-next-down	me3_8.emf	/^define-macro scroll-next-down$/
+scroll-next-up	me3_8.emf	/^define-macro scroll-next-up$/
+search-get-region-text	search.emf	/^0 define-macro search-get-region-text$/
+search-reverse	me3_8.emf	/^define-macro search-reverse$/
+select-all	menedit.emf	/^define-macro select-all$/
+select-buffer	me3_8.emf	/^define-macro select-buffer$/
+server-input	meserver.emf	/^0 define-macro server-input$/
+set	me3_8.emf	/^define-macro set$/
+shrink-window	me3_8.emf	/^define-macro shrink-window$/
+sort-lines-ignore-case	format.emf	/^define-macro sort-lines-ignore-case$/
+spell-add-word	spellutl.emf	/^define-macro spell-add-word$/
+spell-buffer	spell.emf	/^define-macro spell-buffer$/
+spell-check-com	spell.emf	/^0 define-macro spell-check-com$/
+spell-check-control	spell.emf	/^0 define-macro spell-check-control$/
+spell-check-ignore	spell.emf	/^0 define-macro spell-check-ignore$/
+spell-check-insertflag	spell.emf	/^0 define-macro spell-check-insertflag$/
+spell-check-replace	spell.emf	/^0 define-macro spell-check-replace$/
+spell-check-set-gscore	spell.emf	/^0 define-macro spell-check-set-gscore$/
+spell-check-set-guess	spell.emf	/^0 define-macro spell-check-set-guess$/
+spell-check-set-word	spell.emf	/^0 define-macro spell-check-set-word$/
+spell-check-set-wordr	spell.emf	/^0 define-macro spell-check-set-wordr$/
+spell-check-undo	spell.emf	/^0 define-macro spell-check-undo$/
+spell-complete-word	abbrev.emf	/^define-macro spell-complete-word$/
+spell-conv-aff-buffer	spellutl.emf	/^define-macro spell-conv-aff-buffer$/
+spell-conv-aff-chars	spellutl.emf	/^define-macro spell-conv-aff-chars$/
+spell-conv-aff-line	spellutl.emf	/^0 define-macro spell-conv-aff-line$/
+spell-conv-buffer-chars	spellutl.emf	/^define-macro spell-conv-buffer-chars$/
+spell-conv-word-buffer	spellutl.emf	/^define-macro spell-conv-word-buffer$/
+spell-edit-word	spell.emf	/^define-macro spell-edit-word$/
+spell-edit-word-add	spell.emf	/^0 define-macro spell-edit-word-add$/
+spell-edit-word-auto	spell.emf	/^0 define-macro spell-edit-word-auto$/
+spell-edit-word-set	spell.emf	/^0 define-macro spell-edit-word-set$/
+spell-edit-word-setbutt	spell.emf	/^0 define-macro spell-edit-word-setbutt$/
+spell-edit-word-setder	spell.emf	/^0 define-macro spell-edit-word-setder$/
+spell-edit-word-setword	spell.emf	/^0 define-macro spell-edit-word-setword$/
+spell-edit-worda-set	spell.emf	/^0 define-macro spell-edit-worda-set$/
+spell-rules-init	langutl.emf	/^0 define-macro spell-rules-init$/
+spell-set-language	spell.emf	/^0 define-macro spell-set-language$/
+spell-word	spell.emf	/^define-macro spell-word$/
+split-current-window	me3_8.emf	/^define-macro split-current-window$/
+start-up	benchmrk.emf	/^define-macro start-up$/
+stop-mail-check	mail.emf	/^define-macro stop-mail-check$/
+str-to-regex	utils.emf	/^0 define-macro str-to-regex$/
+symbol	misc.emf	/^define-macro symbol$/
+symbol-insert	misc.emf	/^0 define-macro symbol-insert$/
+tabs-to-spaces	format.emf	/^define-macro tabs-to-spaces$/
+tcltags	tcltags.emf	/^define-macro tcltags$/
+tcltags-add-file	tcltags.emf	/^define-macro tcltags-add-file$/
+tcltags-parse-tags	tcltags.emf	/^define-macro tcltags-parse-tags$/
+tcltags-process-buffers	tcltags.emf	/^define-macro tcltags-process-buffers$/
+test-testcur	metris.emf	/^0 define-macro test-testcur$/
+tex2nr	hknroff.emf	/^define-macro tex2nr$/
+textags	textags.emf	/^define-macro textags$/
+textags-add-file	textags.emf	/^define-macro textags-add-file$/
+textags-parse-tags	textags.emf	/^define-macro textags-parse-tags$/
+textags-process-buffers	textags.emf	/^define-macro textags-process-buffers$/
+time	misc.emf	/^define-macro time$/
+top-bottom-switch	me3_8.emf	/^define-macro top-bottom-switch$/
+transpose-characters	me3_8.emf	/^define-macro transpose-characters$/
+tri-deal	triangle.emf	/^0 define-macro tri-deal$/
+tri-decode-char	triangle.emf	/^0 define-macro tri-decode-char$/
+tri-draw	triangle.emf	/^0 define-macro tri-draw$/
+tri-draw-card	triangle.emf	/^0 define-macro tri-draw-card$/
+tri-draw-col	triangle.emf	/^0 define-macro tri-draw-col$/
+tri-draw-home	triangle.emf	/^0 define-macro tri-draw-home$/
+tri-draw-labels	triangle.emf	/^0 define-macro tri-draw-labels$/
+tri-help	triangle.emf	/^0 define-macro tri-help$/
+tri-key	triangle.emf	/^0 define-macro tri-key$/
+tri-key-cr	triangle.emf	/^0 define-macro tri-key-cr$/
+tri-legal-col-move	triangle.emf	/^0 define-macro tri-legal-col-move$/
+tri-mouse-drop-left	triangle.emf	/^0 define-macro tri-mouse-drop-left$/
+tri-mouse-pick-left	triangle.emf	/^0 define-macro tri-mouse-pick-left$/
+tri-mouse-where	triangle.emf	/^0 define-macro tri-mouse-where$/
+tri-move	triangle.emf	/^0 define-macro tri-move$/
+tri-move-col	triangle.emf	/^0 define-macro tri-move-col$/
+tri-move-home	triangle.emf	/^0 define-macro tri-move-home$/
+tri-move-king	triangle.emf	/^0 define-macro tri-move-king$/
+tri-quit	triangle.emf	/^0 define-macro tri-quit$/
+unbind-key	me3_8.emf	/^define-macro unbind-key$/
+uncomment-line	comment.emf	/^define-macro uncomment-line$/
+uniq	tools.emf	/^define-macro uniq$/
+unmark-buffer	me3_8.emf	/^define-macro unmark-buffer$/
+update-screen	me3_8.emf	/^define-macro update-screen$/
+user-filetype-com	userstp.emf	/^0 define-macro user-filetype-com$/
+user-filetype-create	userstp.emf	/^0 define-macro user-filetype-create$/
+user-filetype-init	userstp.emf	/^0 define-macro user-filetype-init$/
+user-filetype-set	userstp.emf	/^0 define-macro user-filetype-set$/
+user-filetype-set-fields	userstp.emf	/^0 define-macro user-filetype-set-fields$/
+user-mail-filter	userstp.emf	/^0 define-macro user-mail-filter$/
+user-maila-com	userstp.emf	/^0 define-macro user-maila-com$/
+user-maila-create	userstp.emf	/^0 define-macro user-maila-create$/
+user-maila-set	userstp.emf	/^0 define-macro user-maila-set$/
+user-mailf-set-field	userstp.emf	/^0 define-macro user-mailf-set-field$/
+user-mailf-set-fields	userstp.emf	/^0 define-macro user-mailf-set-fields$/
+user-mouse-defaults	userstp.emf	/^0 define-macro user-mouse-defaults$/
+user-mouse-set-auto	userstp.emf	/^0 define-macro user-mouse-set-auto$/
+user-mouse-set-binding	userstp.emf	/^0 define-macro user-mouse-set-binding$/
+user-mouse-set-button	userstp.emf	/^0 define-macro user-mouse-set-button$/
+user-mouse-set-checkbox	userstp.emf	/^0 define-macro user-mouse-set-checkbox$/
+user-set-checkbox	userstp.emf	/^0 define-macro user-set-checkbox$/
+user-set-cpfcheckbox	userstp.emf	/^0 define-macro user-set-cpfcheckbox$/
+user-set-cpfentry	userstp.emf	/^0 define-macro user-set-cpfentry$/
+user-set-current	userstp.emf	/^0 define-macro user-set-current$/
+user-set-cursorblink	userstp.emf	/^0 define-macro user-set-cursorblink$/
+user-set-default	userstp.emf	/^0 define-macro user-set-default$/
+user-set-entry	userstp.emf	/^0 define-macro user-set-entry$/
+user-set-logname	userstp.emf	/^0 define-macro user-set-logname$/
+user-set-mouse	userstp.emf	/^0 define-macro user-set-mouse$/
+user-set-mouse-nob	userstp.emf	/^0 define-macro user-set-mouse-nob$/
+user-set-path	userstp.emf	/^0 define-macro user-set-path$/
+user-set-pfcheckbox	userstp.emf	/^0 define-macro user-set-pfcheckbox$/
+user-set-pfentry	userstp.emf	/^0 define-macro user-set-pfentry$/
+user-set-pffile	userstp.emf	/^0 define-macro user-set-pffile$/
+user-set-save	userstp.emf	/^0 define-macro user-set-save$/
+user-set-system	userstp.emf	/^0 define-macro user-set-system$/
+user-set-tab-indent	userstp.emf	/^0 define-macro user-set-tab-indent$/
+user-set-winfont	userstp.emf	/^    0 define-macro user-set-winfont$/
+user-setup	userstp.emf	/^define-macro user-setup$/
+user-setup-backups	userstp.emf	/^0 define-macro user-setup-backups$/
+user-setup-charset	userstp.emf	/^0 define-macro user-setup-charset$/
+user-setup-charsetc	userstp.emf	/^0 define-macro user-setup-charsetc$/
+user-setup-color	userstp.emf	/^0 define-macro user-setup-color$/
+user-setup-colorc	userstp.emf	/^0 define-macro user-setup-colorc$/
+user-setup-emulate	userstp.emf	/^0 define-macro user-setup-emulate$/
+user-setup-emulatec	userstp.emf	/^0 define-macro user-setup-emulatec$/
+user-setup-fence	userstp.emf	/^0 define-macro user-setup-fence$/
+user-setup-fencec	userstp.emf	/^0 define-macro user-setup-fencec$/
+user-setup-hscroll	userstp.emf	/^0 define-macro user-setup-hscroll$/
+user-setup-hscrollc	userstp.emf	/^0 define-macro user-setup-hscrollc$/
+user-setup-init	userstp.emf	/^0 define-macro user-setup-init$/
+user-setup-keyb	userstp.emf	/^0 define-macro user-setup-keyb$/
+user-setup-lang	userstp.emf	/^0 define-macro user-setup-lang$/
+user-setup-scrollb	userstp.emf	/^0 define-macro user-setup-scrollb$/
+user-setup-scrollbc	userstp.emf	/^0 define-macro user-setup-scrollbc$/
+user-setup-tab-indent	userstp.emf	/^0 define-macro user-setup-tab-indent$/
+user-setup-vscroll	userstp.emf	/^0 define-macro user-setup-vscroll$/
+user-setup-vscrollc	userstp.emf	/^0 define-macro user-setup-vscrollc$/
+user-tool-init	userstp.emf	/^0 define-macro user-tool-init$/
+user-tool-set-entry	userstp.emf	/^0 define-macro user-tool-set-entry$/
+user-tool-set-flag	userstp.emf	/^0 define-macro user-tool-set-flag$/
+user-tool-setup	userstp.emf	/^0 define-macro user-tool-setup$/
+var-str-sub	utils.emf	/^0 define-macro var-str-sub$/
+vartest1g	benchmrk.emf	/^define-macro vartest1g$/
+vartest1s	benchmrk.emf	/^define-macro vartest1s$/
+vartest2g	benchmrk.emf	/^define-macro vartest2g$/
+vartest2s	benchmrk.emf	/^define-macro vartest2s$/
+vartest3g	benchmrk.emf	/^define-macro vartest3g$/
+vartest3s	benchmrk.emf	/^define-macro vartest3s$/
+vartest4g	benchmrk.emf	/^define-macro vartest4g$/
+vartest4s	benchmrk.emf	/^define-macro vartest4s$/
+vartest5g	benchmrk.emf	/^define-macro vartest5g$/
+vartest5s	benchmrk.emf	/^define-macro vartest5s$/
+vartest6g	benchmrk.emf	/^define-macro vartest6g$/
+vartest6s	benchmrk.emf	/^define-macro vartest6s$/
+vartest7g	benchmrk.emf	/^define-macro vartest7g$/
+vartest7s	benchmrk.emf	/^define-macro vartest7s$/
+vartest8g	benchmrk.emf	/^define-macro vartest8g$/
+vartest8s	benchmrk.emf	/^define-macro vartest8s$/
+vartest9g	benchmrk.emf	/^define-macro vartest9g$/
+vartest9s	benchmrk.emf	/^define-macro vartest9s$/
+vm	vm.emf	/^define-macro vm$/
+vm-Archive-box	vm.emf	/^0 define-macro vm-Archive-box$/
+vm-Reply	vm.emf	/^0 define-macro vm-Reply$/
+vm-Save-box	vm.emf	/^0 define-macro vm-Save-box$/
+vm-add-flag	vm.emf	/^0 define-macro vm-add-flag$/
+vm-archive-box	vm.emf	/^0 define-macro vm-archive-box$/
+vm-convert-quoted-printable-text	vm.emf	/^0 define-macro vm-convert-quoted-printable-text$/
+vm-cut-all-data	vm.emf	/^0 define-macro vm-cut-all-data$/
+vm-del-windows	vm.emf	/^0 define-macro vm-del-windows$/
+vm-delete-box	vm.emf	/^0 define-macro vm-delete-box$/
+vm-delete-mail	vm.emf	/^0 define-macro vm-delete-mail$/
+vm-expand-html	vm.emf	/^0 define-macro vm-expand-html$/
+vm-extract-data	vm.emf	/^0 define-macro vm-extract-data$/
+vm-fix-box	vm.emf	/^0 define-macro vm-fix-box$/
+vm-format-mess	vm.emf	/^0 define-macro vm-format-mess$/
+vm-forward	vm.emf	/^0 define-macro vm-forward$/
+vm-get-from-sub	vm.emf	/^0 define-macro vm-get-from-sub$/
+vm-get-mail	vm.emf	/^0 define-macro vm-get-mail$/
+vm-get-mail-info	vm.emf	/^0 define-macro vm-get-mail-info$/
+vm-get-who	vm.emf	/^0 define-macro vm-get-who$/
+vm-goto-list	vm.emf	/^0 define-macro vm-goto-list$/
+vm-init-mail-section	vm.emf	/^0 define-macro vm-init-mail-section$/
+vm-input	vm.emf	/^0 define-macro vm-input$/
+vm-list-input	vm.emf	/^0 define-macro vm-list-input$/
+vm-list-mouse	vm.emf	/^0 define-macro vm-list-mouse$/
+vm-moveto	vm.emf	/^0 define-macro vm-moveto$/
+vm-moveto-curend	vm.emf	/^0 define-macro vm-moveto-curend$/
+vm-moveto-next	vm.emf	/^0 define-macro vm-moveto-next$/
+vm-moveto-prev	vm.emf	/^0 define-macro vm-moveto-prev$/
+vm-ready-box	vm.emf	/^0 define-macro vm-ready-box$/
+vm-remove-vm-info	vm.emf	/^0 define-macro vm-remove-vm-info$/
+vm-reply	vm.emf	/^0 define-macro vm-reply$/
+vm-save-box	vm.emf	/^0 define-macro vm-save-box$/
+vm-setup	vm.emf	/^0 define-macro vm-setup$/
+vm-setup-list	vm.emf	/^0 define-macro vm-setup-list$/
+vm-show-current	vm.emf	/^0 define-macro vm-show-current$/
+vm-show-next	vm.emf	/^0 define-macro vm-show-next$/
+vm-show-prev	vm.emf	/^0 define-macro vm-show-prev$/
+vm-test-archive	vm.emf	/^0 define-macro vm-test-archive$/
+vm-tsave-box	vm.emf	/^0 define-macro vm-tsave-box$/
+vm-undo-mail	vm.emf	/^0 define-macro vm-undo-mail$/
+vm-visit-box	vm.emf	/^0 define-macro vm-visit-box$/
+watch	watch.emf	/^define-macro watch$/
+watch-callback	watch.emf	/^0 define-macro watch-callback$/
+watch-reset	watch.emf	/^define-macro watch-reset$/
+which	tools.emf	/^define-macro which$/
+write-message	me3_8.emf	/^define-macro write-message$/
+zfile-loadfile	zfile.emf	/^0 define-macro zfile-loadfile$/
+zfile-mouse-drop-1	zfile.emf	/^0 define-macro zfile-mouse-drop-1$/
+zfile-mouse-pick-1	zfile.emf	/^0 define-macro zfile-mouse-pick-1$/
+zfile-setup	zfile.emf	/^define-macro zfile-setup$/
+zzzzz	benchmrk.emf	/^define-macro zzzzz$/
