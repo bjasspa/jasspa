@@ -5,6 +5,16 @@
  "scheme" = "schemebc"
  "scroll-bar" = "0x1be"
 }
+"cygwin" {
+ "ext-char-set" = "1"
+ "file-ignore" = "~ ./"
+ "scheme" = "schemebc"
+ "scroll-bar" = "0x1be"
+}
+"cygwinc" {
+ "scheme" = "schemetb"
+ "system" = "30869"
+}
 "dos" {
  "blink" = "13107800"
  "char-set" = "PC-437"
