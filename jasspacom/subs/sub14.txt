@@ -1,0 +1,179 @@
+Title:  Improved buffer popup: ordered by file extension
+Ref:    sub14
+Author: Dr. Detlef Groth
+Date:   2001-08-08
+
+Sometimes I have dozens of files open and with the ordinary buffer-menu, there
+are difficult to get. java-files are laying between makefiles,  perl-files are
+laying between emf-files so I want to order them.
+
+The following code still has one problem, It can not find these *-files ....
+again this problem with the number of backslashes I tried from one to eight
+each number of backslashes but these star-files remains hidden ...
+
+try it with C-mouse-pick-1.
+
+==== dg-buffer.emf start =================================================
+
+define-macro dg-buffer-osd
+    set-variable .osd.dgroth-buffer &pinc .osd.next 1 ; buffer-main
+    set-variable .osd.dgroth-buffer-java &pinc .osd.next 1 ; buffer-java-osd
+    set-variable .osd.dgroth-buffer-perl &pinc .osd.next 1 ; buffer-perl-osd
+    set-variable .osd.dgroth-buffer-emf &pinc .osd.next 1 ; buffer-emf-osd
+    set-variable .osd.dgroth-buffer-shell &pinc .osd.next 1 ; buffer-shellfiles-osd
+    set-variable .osd.dgroth-buffer-starfiles &pinc .osd.next 1 ; buffer-files with *
+    set-variable .osd.dgroth-buffer-elsefiles &pinc .osd.next 1 ; all other files 
+    osd .osd.dgroth-buffer 0   "b"
+    osd .osd.dgroth-buffer 2   "i"     "for the confused one !"
+    osd .osd.dgroth-buffer 10   "Mde"  "&java-files"      .osd.dgroth-buffer-java
+    osd .osd.dgroth-buffer 20   "Mde"  "&perl-files"      .osd.dgroth-buffer-perl
+    osd .osd.dgroth-buffer 30   "Mde"  "&emf-files"      .osd.dgroth-buffer-emf
+    osd .osd.dgroth-buffer 40   "Mde"  "&shell-files"      .osd.dgroth-buffer-shell
+    osd .osd.dgroth-buffer 45   "-" 
+    osd .osd.dgroth-buffer 50   "Mde"  "&*-files"      .osd.dgroth-buffer-starfiles
+    osd .osd.dgroth-buffer 60   "Mde"  "&other-files"      .osd.dgroth-buffer-elsefiles
+    osd .osd.dgroth-buffer-java 0   "b"
+    osd .osd.dgroth-buffer-perl 0   "b"
+    osd .osd.dgroth-buffer-emf 0   "b"
+    osd .osd.dgroth-buffer-shell 0   "b"
+    osd .osd.dgroth-buffer-starfiles 0   "b"
+    osd .osd.dgroth-buffer-elsefiles 0   "b"
+    set-variable :perl-file 1
+    set-variable :java-file 1
+    set-variable :emf-file 1
+    set-variable :shell-file 1
+    set-variable :star-file 1
+    set-variable :else-file 1
+    set-variable $buffer-names ".*" 
+    !while &not &seq &set #l0 $buffer-names "" 
+        !if &isin ".pl" #l0
+            set-variable  :perl-file &inc :perl-file 1
+            osd .osd.dgroth-buffer-perl :perl-file    "i"   #l0             f &cat "find-buffer " #l0
+        !elif &isin ".java" #l0
+            set-variable  :java-file &inc :java-file 1
+            osd .osd.dgroth-buffer-java :java-file    "i"   #l0             f &cat "find-buffer " #l0
+        !elif &isin ".emf" #l0
+            set-variable  :emf-file &inc :emf-file 1
+            osd .osd.dgroth-buffer-emf :emf-file    "i"   #l0 
+        !elif &isin ".sh" #l0
+            set-variable  :shell-file &inc :shell-file 1
+            osd .osd.dgroth-buffer-shell :shell-file    "i"   #l0             f &cat "find-buffer " #l0
+        !elif &isin "\\\\*.+\\\\*" #l0 ; this does not work !!
+            set-variable  :star-file &inc :star-file 1
+            osd .osd.dgroth-buffer-starfiles :star-file    "i"   #l0             f &cat "find-buffer " #l0
+        !else
+            set-variable  :else-file &inc :else-file 1
+            osd .osd.dgroth-buffer-elsefiles :else-file    "i"   #l0             f &cat "find-buffer " #l0
+        !endif
+    !done 
+     .osd.dgroth-buffer osd 0 "ba" &add $cursor-x 1 &sub $cursor-y 1
+!emacro
+global-bind-key "dg-buffer-osd" "C-mouse-pick-1"
+
+==== dg-buffer.emf end =================================================
+
+
+------------------------------------------------------------------------------
+
+Title:  Reworked buffer popup: ordered by file extension.
+Author: Steve Phillips
+Date:   2001-08-08
+
+Attached is a re-worked  version of the above, there is still a small  problem
+which the automatic opening of the sub-menus when you use the mouse to execute
+the command.
+
+It would be good if it used the Quick  Open file type list - users  could then
+use user-setup to define there own list of buffer/file types.
+
+
+==== dg-buffer1.emf start =================================================
+
+!if &not &exi .osd.dgroth-buffer
+    set-variable .osd.dgroth-buffer &pinc .osd.next 1 ; buffer-main
+    set-variable .osd.dgroth-buffer-java &pinc .osd.next 1 ; buffer-java-osd
+    set-variable .osd.dgroth-buffer-perl &pinc .osd.next 1 ; buffer-perl-osd
+    set-variable .osd.dgroth-buffer-emf &pinc .osd.next 1 ; buffer-emf-osd
+    set-variable .osd.dgroth-buffer-shell &pinc .osd.next 1 ; buffer-shellfiles-osd
+    set-variable .osd.dgroth-buffer-starfiles &pinc .osd.next 1 ; buffer-files with *
+    set-variable .osd.dgroth-buffer-elsefiles &pinc .osd.next 1 ; all other files 
+!endif
+
+osd .osd.dgroth-buffer 0   "b"
+osd .osd.dgroth-buffer 2   "i"     "for the confused one !"
+osd .osd.dgroth-buffer 10   "Mde"  "&java-files"      ..osd.dgroth-buffer-java
+osd .osd.dgroth-buffer 20   "Mde"  "&perl-files"      ..osd.dgroth-buffer-perl
+osd .osd.dgroth-buffer 30   "Mde"  "&emf-files"      ..osd.dgroth-buffer-emf
+osd .osd.dgroth-buffer 40   "Mde"  "&shell-files"      ..osd.dgroth-buffer-shell
+osd .osd.dgroth-buffer 45   "-" 
+osd .osd.dgroth-buffer 50   "Mde"  "&*-files"      ..osd.dgroth-buffer-starfiles
+osd .osd.dgroth-buffer 60   "Mde"  "&other-files"      ..osd.dgroth-buffer-elsefiles
+
+0 define-macro dg-buffer-osd-goto
+    find-buffer $result
+!emacro
+define-macro dg-buffer-osd
+    -1 osd .osd.dgroth-buffer-java
+    osd .osd.dgroth-buffer-java 0   "b"
+    -1 osd .osd.dgroth-buffer-perl
+    osd .osd.dgroth-buffer-perl 0   "b"
+    -1 osd .osd.dgroth-buffer-emf
+    osd .osd.dgroth-buffer-emf 0   "b"
+    -1 osd .osd.dgroth-buffer-shell
+    osd .osd.dgroth-buffer-shell 0   "b"
+    -1 osd .osd.dgroth-buffer-starfiles
+    osd .osd.dgroth-buffer-starfiles 0   "b"
+    -1 osd .osd.dgroth-buffer-elsefiles
+    osd .osd.dgroth-buffer-elsefiles 0   "b"
+    set-variable :perl-file 1
+    set-variable :java-file 1
+    set-variable :emf-file 1
+    set-variable :shell-file 1
+    set-variable :star-file 1
+    set-variable :else-file 1
+    set-variable $buffer-names ".*" 
+    !while &not &seq &set #l0 $buffer-names "" 
+        !if &isin ".pl" #l0
+            set-variable  :perl-file &inc :perl-file 1
+            osd .osd.dgroth-buffer-perl :perl-file    ""   #l0 f dg-buffer-osd-goto
+        !elif &isin ".java" #l0
+            set-variable  :java-file &inc :java-file 1
+            osd .osd.dgroth-buffer-java :java-file    ""   #l0 f dg-buffer-osd-goto
+        !elif &isin ".emf" #l0
+            set-variable  :emf-file &inc :emf-file 1
+            osd .osd.dgroth-buffer-emf :emf-file      ""   #l0 f dg-buffer-osd-goto 
+        !elif &isin ".sh" #l0
+            set-variable  :shell-file &inc :shell-file 1
+            osd .osd.dgroth-buffer-shell :shell-file    ""   #l0 f dg-buffer-osd-goto
+        !elif &seq &lef #l0 1 "*" 
+            set-variable  :star-file &inc :star-file 1
+            osd .osd.dgroth-buffer-starfiles :star-file ""   #l0 f dg-buffer-osd-goto
+        !else
+            set-variable  :else-file &inc :else-file 1
+            osd .osd.dgroth-buffer-elsefiles :else-file ""   #l0 f dg-buffer-osd-goto
+        !endif
+    !done 
+    !if &equ :perl-file 1
+        osd .osd.dgroth-buffer-perl 1  "" "None found"
+    !endif
+    !if &equ :java-file 1
+        osd .osd.dgroth-buffer-java 1  "" "None found"
+    !endif
+    !if &equ :emf-file 1
+        osd .osd.dgroth-buffer-emf 1  "" "None found"
+    !endif
+    !if &equ :shell-file 1
+        osd .osd.dgroth-buffer-shell 1  "" "None found"
+    !endif
+    !if &equ :star-file 1
+        osd .osd.dgroth-buffer-starfiles 1  "" "None found"
+    !endif
+    !if &equ :else-file 1
+        osd .osd.dgroth-buffer-elsefiles 1  "" "None found"
+    !endif
+     .osd.dgroth-buffer osd 0 "ba" &add $cursor-x 1 &sub $cursor-y 1
+!emacro
+global-bind-key "dg-buffer-osd" "C-mouse-pick-1"
+
+==== dg-buffer1.emf end =================================================
+

@@ -1,0 +1,52 @@
+Title:  Auto-completion macro
+Ref:    sub7
+Author: Detlef Groth
+Date:   2000-04-26
+
+If you are writing a document or a program, typically you are writing the same
+words again and again. Often if you are a programmer  you have to remember the
+name  of a  certain  function  you  just  were  creating.  In my case  most of
+compiler-error-messages come from misspelled function or variable names.
+
+To minimise  such trouble you can use the following  autocomplete-word  macro.
+Start  writing the word the first two, three, four or five letters and execute
+the macro and it will search  backward for these letters,  replacing them with
+the first  matching word found. These  letters  should  match the beginning of
+the  word exactly.
+
+This is  especially  useful  if you see the other  word  still on the  screen.
+Normally you would type the function or macro-name: what-for-a-wonderful-macro
+again, or you try to copy and past it, very  borrowing. I simply write "what-"
+and press "C-1" and the name is  completed:  what-for-a-wonderful-macro.  This
+macro can be also found at: www.microemacs.de/macros.htm
+
+==== autocomplete_word.emf start =============================================
+
+define-macro autocomplete-word
+    ; remember position
+    set-alpha-mark "t"
+    set-mark
+    backward-word
+    exchange-point-and-mark
+    copy-region
+    ; copy clip to variable
+    set-variable #l0 @y
+    ; how many letters ?
+    set-variable #l1 &len #l0
+    ; empty clipboard
+    -1 yank
+    backward-word
+    ; search clip and extract rest of the word
+    search-backward #l0
+    #l1 forward-char
+    set-mark
+    forward-word
+    exchange-point-and-mark
+    copy-region
+    goto-alpha-mark "t"
+    yank
+    -1 yank
+!emacro
+global-bind-key "autocomplete-word" "C-1"
+
+==== autocomplete_word.emf end ===============================================

@@ -1,0 +1,34 @@
+Title:  save-region; Save the selected text region to a file
+Ref:    sub17
+Author: Jon Green
+Date:   2001-08-12
+
+The macro  'save-region'  saves the  currently  selected  region (that
+exists  between  Point and Mark) to file. The user is prompted for the
+filename.
+
+Add the following macro fragment to your start-up <user>.emf
+
+==== save-region start =================================================
+
+define-macro save-region
+    ; Copy the text and create a new buffer for the text
+    copy-region
+    !force 0 delete-buffer  "*save-region*"
+    find-buffer "*save-region*"
+    yank
+    ; Fix the undo history and write the buffer to 
+    ; a file. Pretend we are not a macro so that 
+    ; the user is prompted correctly at the file 
+    ; interaction. Finally clean up and delete
+    ; the buffer. Note that the buffer name changes
+    ; if the file is written so use the macro variable
+    ; to get the correct buffer name.
+    -2 yank
+    !force !nma write-buffer @ml01 "Filename "
+    !force 0 delete-buffer $buffer-bname
+!emacro
+
+==== save-region end =================================================
+
+This includes some optimisations by Steve Phillips.

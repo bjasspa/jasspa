@@ -1,0 +1,39 @@
+Title:  In-buffer highlight changing
+Ref:    sub2
+Author: Detlef Groth
+Date:   2000-03-08
+
+Recently I observed  an even  better  possibility  to have one  hilight-scheme
+inside an other. The following will let you have latex-hilighting inside html,
+html-hiligthing inside latex, cpp inside html, emf inside Email and so on ....
+
+==== hilight_change.emf start ================================================
+
+define-macro hilight-javascript-inside-html
+    ; this macro has to be inside myhtml.emf
+    execute-file "hkjava"
+    hilight .hilight.html 0x80 "<Script language=\"JavaScript\">" .hilight.java $global-scheme
+    hilight .hilight.java 0x80 "</Script>" .hilight.html $global-scheme
+    screen-update
+!emacro
+
+define-macro hilight-latex-inside-html ; macro in myhtml.emf
+    ; using the <pre> tags for input of code
+    execute-file "hklatex"
+    hilight .hilight.html 0x80 "<pre>" .hilight.latex $global-scheme
+    execute-file "hklatex"
+    hilight .hilight.latex 0x80 "</pre>" .hilight.html $global-scheme
+    screen-update
+!emacro
+
+define-macro hilight-html-inside-latex ; macro in mylatex.emf
+    ; using the \verbatim-environment for input of code
+    execute-file "hkhtml"
+    hilight .hilight.latex 0x80 "\\begin{verbatim}" .hilight.html $global-scheme
+    execute-file "hklatex"
+    hilight .hilight.html 0x80 "\\end{verbatim}" .hilight.latex $global-scheme
+    screen-update
+!emacro
+
+==== hilight_change.emf end ==================================================
+

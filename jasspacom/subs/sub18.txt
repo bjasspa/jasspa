@@ -1,0 +1,160 @@
+Title:  Perldoc handling functions
+Ref:    sub18
+Author: Dr. Detlef Groth
+Date:   2001-08-13
+
+In order to  simplify  the use of  perldoc a simple  mode for  handling  it is
+provided  below. The output of  multiple  perldocs is  collected  into a *pod*
+buffer and displayed.
+
+In  order  to  load  the  macro  then  add the  following  definition  to your
+<user.emf> as follows:-
+
+    define-macro-file perldoc
+
+The perldoc package is then invoked as follows:-
+
+    esc-x perldoc
+
+==== perldoc.emf start =================================================
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : Detlef Groth
+;  Created By    : Detlef Groth
+;  Created       : Thu Aug 9 15:27:43 2001
+;  Last Modified : <010813.2114>
+;
+;  Description   : Graps the output from perldoc in a special
+;                  *pod* buffer providing <f7>/<C-S-mouse-pick-1>
+;                  for a toc-popup on perldoc queries
+;
+;  Notes         : perldoc must be in the path in order to get this
+;                  working, rerquires *pod* for some hilighting
+;
+;                  Add the following to your user.emf
+;
+;                  define-macro-file perldoc
+;
+;  History       : 09 August 2001 first release
+;
+;  Copyright (c) 2001 Detlef Groth
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; provides some simple hilighting
+!if &seq .hilight.mode "ERROR"
+    set-variable .hilight.pod &pinc .hilight.next 1
+!endif
+;
+; Define the hilighting
+;
+0 hilight .hilight.pod 1                      $global-scheme
+hilight .hilight.pod 2 "#"                    .scheme.comment
+hilight .hilight.pod 4 "\"" "\"" "\\"         .scheme.string
+hilight .hilight.pod 0 "'.+'"                 .scheme.quote
+
+hilight .hilight.pod 1 "^NAME"                .scheme.header
+hilight .hilight.pod 1 "^SYNOPSIS"            .scheme.header
+hilight .hilight.pod 1 "^ABSTRACT"            .scheme.header
+hilight .hilight.pod 1 "^DESCRIPTION"         .scheme.header
+hilight .hilight.pod 1 "^SEE ALSO"            .scheme.header
+hilight .hilight.pod 1 "^BUGS"                .scheme.header
+hilight .hilight.pod 1 "[a-zA-Z]+::[a-zA-Z]+" .scheme.link
+
+; DO NOT NEED
+;
+; Add a new file hook for the *pod* buffer.
+; add-file-hook "*pod*"               fhook-pod
+;
+;define-macro fhook-pod
+;    set-variable $buffer-hilight .hilight.pod
+;    1 buffer-mode "view"
+; !emacro
+;
+; DO NOT NEED
+
+;
+; Perl document Macros
+;
+define-macro perldoc
+    ; if perldoc is in the path
+    ; graps its output and collects it in the
+    ; buffer *pod*
+    set-variable .perldoc-command @ml "perldoc"
+    pipe-shell-command &cat "perldoc " .perldoc-command
+    perldoc-execute .perldoc-command
+!emacro
+
+define-macro perldoc-on-package
+    ; shows info on a marked package or symbol
+    set-variable #l0 @y
+    pipe-shell-command &cat "perldoc " #l0
+    perldoc-execute #l0
+!emacro
+
+define-macro perldoc-on-function
+    ; shows info on a marked function
+    set-variable #l0 @y
+    pipe-shell-command &cat "perldoc -f " #l0
+    perldoc-execute #l0
+!emacro
+
+0 define-macro perldoc-execute
+    !if &sequal $buffer-fhook "fhook-perl"
+        next-window-find-buffer "*command*"
+    !else
+        find-buffer "*command*"
+    !endif
+    ; waiting for perldoc finishing
+    1000 ml-write "waiting for perldoc ...."
+    1000 ml-write "waiting for perldoc ....."
+    1000 ml-write "waiting for perldoc ......"
+    1000 ml-write "waiting for perldoc ......."
+    beginning-of-buffer
+    search-forward "perldoc"
+    forward-line
+    set-mark
+    end-of-buffer
+    exchange-point-and-mark
+    copy-region
+
+    ; Find the buffer and explicitly set the hilighting.
+    find-buffer "*pod*"
+    set-variable $buffer-hilight .hilight.pod
+
+    ; now buid the menu
+
+    -38 buffer-mode "view"
+    end-of-buffer
+    perldoc-osd-add-menuitem .osd.perldoc @1
+    insert-newline
+    set-alpha-mark "p"
+    yank
+    -1 yank
+    goto-alpha-mark "p"
+    38 buffer-mode "view"
+!emacro
+
+0 define-macro perldoc-osd-add-menuitem
+    ; builds the menu on the fly
+    !if &not &exi :lokal
+        ; the start with a new menu
+        set-variable :lokal @1
+        set-variable :lokal &pinc .osd.next 1
+        buffer-bind-key perldoc-show-osd "C-S-mouse-pick-1"
+        buffer-bind-key perldoc-show-osd "f7"
+        osd :lokal 0   "b"
+    !endif
+    ; write menuitem and allow to get line-number later
+    osd :lokal  &pinc .osd.next 1 ""  &cat &cat &cat &cat "|" @2 "|" $window-line "|" f  perldoc-osd-goto-line
+!emacro
+0 define-macro perldoc-show-osd
+    ; shows the osd near the curser
+    :lokal osd 0 "ba" &add $cursor-x 1 &sub $cursor-y 1
+!emacro
+0 define-macro perldoc-osd-goto-line
+    ; fetch the line number and goto
+    goto-line &lget $result 2
+!emacro
+
+==== perldoc.emf end =================================================

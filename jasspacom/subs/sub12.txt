@@ -1,0 +1,58 @@
+Title:  In-buffer highlight changing (revisited)
+Ref:    sub12
+Author: Dr. Detlef Groth
+Date:   2001-02-16
+
+me2000 was coming with an improved  hilighting  feature for hilighting schemes
+inside other  hilighting  schemes.  Remember my proposal to hilight  java-code
+inside html, emf-code inside textfiles and so on. Jon has further improved the
+story as I observed in the new docmacro.emf.  However two important  scripting
+languages were missing.
+
+If you need you can put the  following  lines inside  mydoc.emf and if editing
+and reading the file  myuniqueperldocumentation.txt par example you can switch
+to  perl-hiligthing  simply by typing `>pl>' at the beginning of the line were
+the perl-source-code starts. like:
+
+>pl>
+print "hello me" ;
+>doc>
+
+A unique feature of ME I think.
+
+==== mydoc.emf start =========================================================
+
+!if &and &sin "h" #l0 &band .hilight.flags 0x02
+    ; Allow Perl Code inserts
+    ; Force the ".pl" scheme to be loaded into the context of the document
+    ; scheme. We delimit the .emf scheme with a pair of markers ">pl>" and
+    ; ">doc>"
+    ;
+    ; Force the hilighting mode to load if not already loaded.
+    !if &not &exi .hilight.perl
+        !force execute-file "hkperl"
+    !endif
+    ; If the hilighting mode is loaded then modify it.
+    !if &and &sin "h" .fhook-perl.setup &band .hilight.flags 0x02
+        hilight .hilight.doc  0x80 "^>pl>"  .hilight.perl .scheme.hide
+        hilight .hilight.perl 0x80 "^>doc>" .hilight.doc .scheme.hide
+    !endif
+
+    ; Allow Tcl Code inserts
+    ; Force the ".tcl" scheme to be loaded into the context of the document
+    ; scheme. We delimit the .emf scheme with a pair of markers ">tcl>" and
+    ; ">doc>"
+    ;
+    ; Force the hilighting mode to load if not already loaded.
+    !if &not &exi .hilight.tcl
+        !force execute-file "hktcl"
+    !endif
+    ; If the hilighting mode is loaded then modify it.
+    !if &and &sin "h" .fhook-tcl.setup &band .hilight.flags 0x02
+        hilight .hilight.doc 0x80 "^>tcl>" .hilight.tcl .scheme.hide
+        hilight .hilight.tcl 0x80 "^>doc>" .hilight.doc .scheme.hide
+    !endif
+!endif
+
+==== mydoc.emf end ===========================================================
+
