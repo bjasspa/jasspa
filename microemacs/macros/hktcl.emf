@@ -1,11 +1,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;       TCL mode hook
 ;
-;   Last Modified : <000719.1923>
+;   Last Modified : <010119.1520>
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/tcl" "afhnopx"
-set-variable #l1 "aefhimnoptux"
+set-variable #l0 &reg "/history" "fhook/tcl" "dfhnopx"
+set-variable #l1 "adefhikmnoptux"
 set-char-mask "3" "-$."
 
 !if &not &exist .hilight.tcl
@@ -213,7 +213,7 @@ set-char-mask "3" "-$."
         hilight .hilight.tcl 1 "0[xX][[:xdigit:]]+" .scheme.constant
     !endif
 !endif
-!if &sin "a" #l0
+!if &sin "d" #l0
     0 indent  .hilight.tcl 0 10
     indent .hilight.tcl n "{"  4
     indent .hilight.tcl o "}" -4
@@ -295,7 +295,7 @@ define-macro fhook-tcl
     !if &and &sin "h" .fhook-tcl.setup &band .hilight.flags 0x02 
         set-variable $buffer-hilight .hilight.tcl
     !endif
-    !if &sin "a" .fhook-tcl.setup
+    !if &sin "d" .fhook-tcl.setup
         set-variable $buffer-indent  .hilight.tcl
     !endif
     fold-init .fhook-tcl.setup

@@ -10,7 +10,7 @@
  *
  *	Author:			Danial Lawrence
  *
- *	Creation Date:		10/05/91 08:27		<010109.1401>
+ *	Creation Date:		10/05/91 08:27		<010125.0814>
  *
  *	Modification date:	%G% : %U%
  *
@@ -136,25 +136,16 @@ forwWord(int f, int n)
         return (backWord(f, -n));
     while (n--)
     {
-#ifdef _NFWORD
-        while (inWord() != FALSE)
-        {
-            if (WforwChar(curwp, 1) == FALSE)
-                return (FALSE);
-        }
-#endif
         while (inWord() == FALSE)
         {
             if (WforwChar(curwp, 1) == FALSE)
                 return (FALSE);
         }
-#ifndef _NFWORD
         while (inWord() != FALSE)
         {
             if (WforwChar(curwp, 1) == FALSE)
                 return (FALSE);
         }
-#endif
     }
     return(TRUE);
 }
@@ -318,29 +309,6 @@ forwDelWord(int f, int n)
     size = 0;
     while (n--)
     {
-#ifdef _NFWORD
-        if (curwp->w_doto == llength(curwp->w_dotp))
-        {
-            if (WforwChar(curwp,1) == FALSE)
-                return(FALSE);
-            ++size;
-        }
-        
-        while (inWord() != FALSE)
-        {
-            if (WforwChar(curwp,1) == FALSE)
-                return(FALSE);
-            ++size;
-        }
-        
-        while ((inWord() == FALSE) &&
-               (curwp->w_doto != llength(curwp->w_dotp)))
-        {
-            if (WforwChar(curwp, 1) == FALSE)
-                return (FALSE);
-            ++size;
-        }
-#else
         /* inWord returns 0 if not in word - BUT if in word its return
          * value is only defined as non-zero, so must test if 0
          */
@@ -349,11 +317,8 @@ forwDelWord(int f, int n)
         {
             if (WforwChar(curwp, 1) == FALSE)
                 break ;
-/* return (FALSE);*/
             ++size;
         }
-
-#endif
      }
      curwp->w_dotp = dotp;
      curwp->w_doto = doto;
@@ -371,6 +336,7 @@ backDelWord(int f, int n)
 {
     uint8 delType ;
     int32 size;
+    int moveForw=TRUE ;
     
     if(n == 0)
         return TRUE ;
@@ -383,33 +349,18 @@ backDelWord(int f, int n)
     size = 0;
     while (n--)
     {
-#ifdef _NFWORD
-        while (inWord() == FALSE)
-        {
-            if (WbackChar(curwp, 1) == FALSE)
-                return (FALSE);
-            ++size;
-        }
-        while (inWord() != FALSE)
-        {
-            if (WbackChar(curwp, 1) == FALSE)
-                return (FALSE);
-            ++size;
-        }
-#else
         /* inWord returns 0 if not in word - BUT if in word its return
          * value is only defined as non-zero, so must test if 0
          */
         delType = (inWord() == 0) ;
         while ((inWord() == 0) == delType) 
         {
-            if (WbackChar(curwp, 1) == FALSE)
-                break ;
             ++size;
+            if ((moveForw=WbackChar(curwp, 1)) == FALSE)
+                break ;
         }
-#endif
     }
-    if (WforwChar(curwp, 1) == FALSE)
+    if (moveForw && (WforwChar(curwp, 1) == FALSE))
         return (FALSE);
     return (ldelete(size,3));
 }

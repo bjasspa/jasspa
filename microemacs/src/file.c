@@ -10,7 +10,7 @@
 *
 *	Author:			Danial Lawrence
 *
-*	Creation Date:		14/05/86 12:37		<001130.1052>
+*	Creation Date:		14/05/86 12:37		<010123.0846>
 *
 *	Modification date:	%G% : %U%
 *
@@ -364,7 +364,10 @@ set_dirs(void)
     
     s1 = meGetenv("HOME");                      /* Get home directory */
     if (s1 != NULL)			        /* Null ?? */
+    {
         homedir = meStrdup(s1) ;
+        fileNameConvertDirChar(homedir) ;
+    }
     else
         homedir = NULL ;			/* Set to NULL */
 #ifdef _UNIX
@@ -1192,7 +1195,7 @@ readin(register BUFFER *bp, uint8 *fname)
                     goto error_end ;
             }
 #endif
-            if((autotime > 0) && !createBackupName(afn,fn,'#') &&
+            if((autotime > 0) && !createBackupName(afn,fn,'#',0) &&
                (getFileStats(afn,0,&stats,NULL) == meFILETYPE_REGULAR) && (stats.stmtime > bp->stats.stmtime))
             {
                 uint8 prompt[200] ;
@@ -1941,7 +1944,7 @@ copyFile(int f, int n)
         if((fn=writeFileChecks(dfname,sfname,lfname,n)) == NULL)
             return ABORT ;
         /* can this be done by a simple rename? */
-        if(((n & 0xfe) == 0x8) && !meRename(sfname,dfname))
+        if(((n & 0xfe) == 0x8) && !meRename(sfname,fn))
             return TRUE ;
     }
     dFlags = (n & 0x0c) ? meRWFLAG_DELETE:0 ;
@@ -1969,7 +1972,7 @@ autowriteout(register BUFFER *bp)
     {
         getFileStats(bp->b_fname,0,NULL,lname) ;
         ff = (lname[0] == '\0') ? bp->b_fname:lname ;
-        if(createBackupName(fn,ff,'#'))
+        if(createBackupName(fn,ff,'#',1))
             ss = ABORT ;
         else if((ss=ffWriteFileOpen(fn,meRWFLAG_WRITE|meRWFLAG_AUTOSAVE,bp)) == TRUE)
         {    
@@ -2005,7 +2008,7 @@ autowriteremove(register BUFFER *bp)
     uint8 fn[FILEBUF] ;
 
     if((autotime > 0) && bufferNeedSaving(bp) &&
-       !createBackupName(fn,bp->b_fname,'#') &&
+       !createBackupName(fn,bp->b_fname,'#',0) &&
        !meTestExist(fn))
         /* get rid of any tempory file */
         meUnlink(fn) ;
@@ -2408,6 +2411,15 @@ changeDir(int f, int n)
 
 
 /************************ New file routines *****************************/
+#ifdef _CONVDIR_CHAR
+void
+fileNameConvertDirChar(uint8 *fname)
+{
+    /* convert all '\\' to '/' for dos etc */
+    while((fname=meStrchr(fname,_CONVDIR_CHAR)) != NULL)  /* got a '\\', -> '/' */
+        *fname++ = DIR_CHAR ;
+}
+#endif
 
 void
 pathNameCorrect(uint8 *oldName, int nameType, uint8 *newName, uint8 **baseName)
@@ -2418,14 +2430,8 @@ pathNameCorrect(uint8 *oldName, int nameType, uint8 *newName, uint8 **baseName)
 #if (defined _DOS) || (defined _WIN32)
     uint8 *gwdbuf ;
 #endif
-
-#ifdef _CONVDIR_CHAR
-    /* convert all '\\' to '/' for dos etc */
-    p1 = oldName ;
-    while((p1=meStrchr(p1,_CONVDIR_CHAR)) != NULL)  /* got a '\\', -> '/' */
-        *p1++ = DIR_CHAR ;
-#endif
     
+    fileNameConvertDirChar(oldName) ;
     flag = 0 ;
     p = p1 = oldName ;
     /* search for
@@ -2646,12 +2652,15 @@ fileNameCorrect(uint8 *oldName, uint8 *newName, uint8 **baseName)
     pathNameCorrect(oldName,PATHNAME_COMPLETE,newName,&bn) ;
     if(baseName != NULL)
         *baseName = bn ;
-    
-    if(
 #if URLAWAR
-       !isUrlLink(newName) && 
+    if(isUrlLink(newName))
+        return ;
 #endif
-       !fileNameWild(bn))
+    /* ensure the drive letter is stable, make it lower case */
+    if((newName[1] == _DRV_CHAR) && isUpper(newName[0]))
+        newName[0] = toLower(newName[0]) ;
+    
+    if(!fileNameWild(bn))
     {
         /* with windows naff file name case insensitivity we must get
          * the correct a single name letter case by using FindFirstFile*/

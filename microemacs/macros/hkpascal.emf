@@ -6,7 +6,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; buffer-setup flags
 set-variable #l0 &reg "/history" "fhook/pascal" "bhinx"
-set-variable #l1 "behimntux"
+set-variable #l1 "abehikmntux"
 
 !if &and &sin "h" #l0 &band .hilight.flags 0x02 
     ; High-light Pascal Mode

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Jon Green
 ;  Created       : Sat Jul 26 10:23:04 1997
-;  Last Modified : <001208.1248>
+;  Last Modified : <010123.1438>
 ;
 ;  Description   : OSD - On Screen Display macros.
 ;                  Controls the set up of the menus and screen overlays.
@@ -383,7 +383,7 @@ osd 7  40  "-"
 osd 7  50  ""  "Com&pare Windows"                 f compare-windows
 osd 7  60  ""  "&Compile"                         f compile
 osd 7  70  ""  "&Grep"                            f grep
-osd 7  75  ""  "G&raphical Diff"                  1 gdiff
+osd 7  75  ""  "G&raphical Diff"                  0 gdiff
 osd 7  80  ""  "&Diff"                            f diff
 osd 7  90  ""  "Di&ff Changes"                    f diff-changes
 osd 7  100 "-"

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips & Jon Green
 ;  Created       : Sat Jul 18 14:58:08 1998
-;  Last Modified : <001002.1230>
+;  Last Modified : <010123.1358>
 ;
 ;  Description   : Compile, grep and macro to wrap the diff utility.
 ;
@@ -21,7 +21,7 @@
         set-variable %tool-null-file &spr "\"%s\"" &find "null" ""
     !endif
     ; Once only. Add the default diff command line.
-    !if &seq %diff-com "ERROR"
+    !if &not &exi %diff-com
         ; Assume GNU diff utility - probably the best under all platforms !!.
         ;set-variable %diff-com "diff -c -w"
         ; Standard diff utility
@@ -130,26 +130,8 @@ define-macro diff-changes
     !endif
     ; get the real file name - this only has effect on unix, copes with symbolic links
     set-variable #l0 &stat "a" $buffer-fname
-    !if &band $system 0x400
-        !if &not &set #l1 &rsin "." #l0
-            set-variable #l1 &cat #l0 ".~~~"
-        !elif &gre &set #l1 &sub &len #l0 #l1 2
-            set-variable #l1 &cat &lef #l0 &sub &len #l0 1 "~"
-        !else
-            set-variable #l1 &spr "%s%n" #l0 &sub 3 #l1 "~"
-        !endif
-    !else
-        !if $kept-versions
-            set-variable #l1 &cat #l0 ".~0~"
-        !else
-            set-variable #l1 &cat #l0 "~"
-        !endif
-        ; if unix and hiding backups then prepend a '.'
-        !if &and &band $system 0x080 &band $system 0x100000
-            set-variable #l2 &rsin "/" #l1
-            set-variable #l1 &spr "%s.%s" &lef #l1 #l2 &rig #l1 #l2
-        !endif
-    !endif
+    ; get the backup name
+    set-variable #l1 $buffer-backup
     diff #l1 #l0
 !emacro
 define-macro execute-tool

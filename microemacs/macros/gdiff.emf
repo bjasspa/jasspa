@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Wed Jun 23 19:56:49 1999
-;  Last Modified : <001002.1214>
+;  Last Modified : <010124.2215>
 ;
 ;  Description
 ;
@@ -111,7 +111,6 @@ set-variable %gdiff-com &cond &seq %gdiff-com "ERROR" "diff -c -w" %gdiff-com
         !bell
         !abort
     !endif
-    set-variable .gdiff.status 0
     @# gdiff-select
 !emacro
 
@@ -121,7 +120,6 @@ set-variable %gdiff-com &cond &seq %gdiff-com "ERROR" "diff -c -w" %gdiff-com
         !bell
         !abort
     !endif
-    set-variable .gdiff.status 0
     set-variable #l1 $window-line
     gdiff-top
     !while &not &equ $line-scheme -1
@@ -131,7 +129,6 @@ set-variable %gdiff-com &cond &seq %gdiff-com "ERROR" "diff -c -w" %gdiff-com
 !emacro
 
 0 define-macro gdiff-global-select
-    set-variable .gdiff.status 0
     set-variable #l1 $window-line
     beginning-of-buffer
     !while &not &seq @wc ""
@@ -323,14 +320,15 @@ set-variable %gdiff-com &cond &seq %gdiff-com "ERROR" "diff -c -w" %gdiff-com
         popup-window &cond &les @# 0 .gdiff.bnold .gdiff.bnnew
     !endif
     set-variable #l1 $buffer-bname
-    set-variable #l0 &cond &seq #l1 .gdiff.bnold .gdiff.fnold .gdiff.fnnew
+    set-variable #l0 $buffer-fname
+    !if &seq #l0 ""
+	ml-write "[Error: Cannot save as this file]"
+	!return
+    !endif
     !force gdiff-create-comb
     !if $status
         find-buffer .gdiff.bncom
         !force !force 0 write-buffer #l0
-        !if $status
-            set-variable .gdiff.status 1
-        !endif
         0 delete-buffer $buffer-bname
     !endif
     find-buffer #l1
@@ -348,19 +346,14 @@ set-variable %gdiff-com &cond &seq %gdiff-com "ERROR" "diff -c -w" %gdiff-com
         !else
             !force !force !nma write-buffer
         !endif
-        !if $status
-            set-variable .gdiff.status 1
-        !endif
         0 delete-buffer $buffer-bname
     !endif
     find-buffer #l1
 !emacro
 
 0 define-macro gdiff-exit
-    !if &not .gdiff.status
-        !if &iseq @mc1 "Quit gdiff [y/n]? " "nNyY" "n"
-            !return
-        !endif
+    !if &iseq @mc1 "Quit gdiff [y/n]? " "nNyY" "n"
+        !return
     !endif
     delete-other-windows
     !force 0 delete-buffer .gdiff.bndiff
@@ -445,7 +438,10 @@ define-macro gdiff
     !force set-variable .fnnew @2
     !if $status
         set-variable .fnold @1
-    !elif @?
+    !elif &band @# 1
+        set-variable .fnold @ml04 "First version file"
+        set-variable .fnnew @ml04 "Second version file"
+    !else
         set-variable .osd-get-file.title "First Version"
         set-variable .osd-get-file.flags 0
         set-variable .osd-get-file.ft 1
@@ -454,10 +450,11 @@ define-macro gdiff
         set-variable .osd-get-file.title "Second Version"
         osd-get-file
         set-variable .fnnew .osd-get-file.result
-    !else
-        set-variable .fnold @ml04 "First version file"
-        set-variable .fnnew @ml04 "Second version file"
     !endif
+    set-variable .fnold-name .fnold
+    set-variable .fnnew-name .fnnew
+    !force set-variable .fnold-name @3
+    !force set-variable .fnnew-name @4
     !force 0 find-file .fnold
     !if &not $status
         ml-write &spr "[Failed to load %s]" .fnold
@@ -736,22 +733,35 @@ define-macro gdiff
     find-buffer .bnold
     beginning-of-buffer
     -1 buffer-mode "edit"
-     1 buffer-mode "view"
-    set-variable $buffer-mode-line &spr "- %%b %%l - (%s) " .fnold
+    1 buffer-mode "view"
+    set-variable $buffer-mode-line &spr "- %%b %%l - (%s) " .fnold-name
+    !if &seq &lef .fnold-name 1 "*"
+	osd .osd.gdiff 120  ""   "Save Left"
+	set-variable $buffer-fname ""
+    !else
+	osd .osd.gdiff 120  ""   "Save &Left"      -1 gdiff-save
+	set-variable $buffer-fname .fnold-name
+    !endif
     set-variable $buffer-input gdiff-input
     next-window
     find-buffer .bnnew
     beginning-of-buffer
     -1 buffer-mode "edit"
-     1 buffer-mode "view"
-    set-variable $buffer-mode-line &spr "- %%b %%l - (%s) " .fnnew
+    1 buffer-mode "view"
+    set-variable $buffer-mode-line &spr "- %%b %%l - (%s) " .fnnew-name
+    !if &seq &lef .fnnew-name 1 "*"
+	osd .osd.gdiff 130  ""   "Save Right"
+	set-variable $buffer-fname ""
+    !else
+	osd .osd.gdiff 130  ""   "Save &Right"      1 gdiff-save
+	set-variable $buffer-fname .fnnew-name
+    !endif
     set-variable $buffer-input gdiff-input
     set-variable .gdiff.scroll $scroll
     set-variable $scroll &bor &band $scroll 0xff00 0x2
     !if .status
         ml-write &spr "[%d differences found]" .status
     !else
-        set-variable .status -1
         ml-write "[No differences found]"
     !endif
 !emacro

@@ -199,18 +199,23 @@ meShell(int f, int n)
 #ifdef _DOS
     register char *cp;
 #endif
+    uint8 path[FILEBUF] ;		/* pathfrom where to execute */
+    int  cd, ss ;
+    
+    getFilePath(curbp->b_fname,path) ;
+    cd = (meStrcmp(path,curdir) && (meChdir(path) != -1)) ;
+
 #ifdef _WIN32
-    return (WinLaunchProgram (NULL, LAUNCH_SHELL, NULL, NULL, NULL, NULL));
+    ss = WinLaunchProgram (NULL, LAUNCH_SHELL, NULL, NULL, NULL, NULL) ;
 #endif
 #ifdef _DOS
     TTclose();
     if ((cp=meGetenv("COMSPEC")) == NULL)
-        system("command.com");
+        ss = system("command.com");
     else
-        system(cp);
+        ss = system(cp);
     TTopen();
     sgarbf = TRUE;
-    return(TRUE);
 #endif
 #ifdef _UNIX
 #ifdef _XTERM
@@ -224,18 +229,24 @@ meShell(int f, int n)
             mlwrite(MWABORT,(uint8 *)"exec failed, %s", sys_errlist[errno]);
             meExit(127);
         case -1:
-            return mlwrite(MWABORT,(uint8 *)"exec failed, %s", sys_errlist[errno]);
+            ss = mlwrite(MWABORT,(uint8 *)"exec failed, %s", sys_errlist[errno]);
         default:
-            return TRUE ;
+            ss = TRUE ;
         }
     }
+    else
 #endif
-    TTclose();				/* stty to old settings */
-    system((char *)getShellCmd()) ;
-    sgarbf = TRUE;
-    TTopen();
-    return(TRUE);
+    {
+	TTclose();				/* stty to old settings */
+	ss = system((char *)getShellCmd()) ;
+	sgarbf = TRUE;
+	TTopen();
+	ss = (ss < 0) ? FALSE:TRUE ;
+    }
 #endif
+    if(cd)
+        meChdir(curdir) ;
+    return ss ;
 }
 
 #ifdef _UNIX

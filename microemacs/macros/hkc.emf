@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; C hook - This file is invoked when a C file is loaded.
 ;
-; Last Modified : <001127.1132>
+; Last Modified : <010119.1516>
 ; Copyright (c) 1999 JASSPA.
 ;
 ; Notes:
@@ -11,8 +11,8 @@
 ;       the first line.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/c" "abfhnopx"
-set-variable #l1 "abefhimnoptux"
+set-variable #l0 &reg "/history" "fhook/c" "bdfhnopx"
+set-variable #l1 "abdefhikmnoptux"
 
 !if &and &sin "h" #l0 &band .hilight.flags 0x02 
     ; Hi-light C Mode
@@ -221,11 +221,11 @@ define-macro fhook-c
     !if &sin #l1 "yl"
         ; LEX or YACC rules - add LEX/YACC specific in here.
         ; Not useful to add an indent scheme.
-        !if &sin "a" .fhook-c.setup
+        !if &sin "d" .fhook-c.setup
             1 buffer-mode "indent"
         !endif
     !else
-        !if &sin "a" .fhook-c.setup
+        !if &sin "d" .fhook-c.setup
             1 buffer-mode "cmode"
         !endif
         fold-init .fhook-c.setup 

@@ -5,7 +5,7 @@
  *  Synopsis      : Unix X-Term and Termcap support routines
  *  Created By    : Steven Phillips
  *  Created       : 1993
- *  Last Modified : <001011.1802>
+ *  Last Modified : <010119.1616>
  *
  *  Description
  *    This implementation of unix support currently only supports Unix v5 (_USG),
@@ -392,7 +392,7 @@ TCAPgetWinSize(void)
 #ifdef TIOCGWINSZ
     /* BSD-style.  */
     struct winsize size;
-
+    
     if((ioctl(meStdin,TIOCGWINSZ,&size) == -1) ||
        ((TTnewWid = size.ws_col) <= 0) ||
        ((TTnewHig = size.ws_row) <= 0))
@@ -409,26 +409,31 @@ TCAPgetWinSize(void)
     {
         int  ii ;
 
-        /* Get the number of lines on the screen */
-        if((ii=tgetnum(tcaptab[TCAPlines].capKey)) != -1)
-        {
-            /* If automatic margins are active and there is a new line glitch
-             * then reduce the terminal height by 1 line. This prevents the
-             * screen from scrolling up */
-            if ((tgetnum(tcaptab[TCAPam].capKey) == 1) &&
-                (tgetnum(tcaptab[TCAPxenl].capKey) == 0))
-                ii--;
-            TTnewHig = ii ;
-        }            
-        else
-            TTnewHig = TTnrow + 1 ;
-        
         /* Get the number of columns on the screen */
         if((ii=tgetnum(tcaptab[TCAPcols].capKey)) != -1)
             TTnewWid = ii ;
         else
             TTnewWid = TTncol ;
+        
+	/* Get the number of lines on the screen */
+        if((ii=tgetnum(tcaptab[TCAPlines].capKey)) != -1)
+            TTnewHig = ii ;
+        else
+	{
+            TTnewHig = TTnrow + 1 ;
+	    /* return now to avoid a potential window size decrease if the
+             * below scroll glitch is true */
+	    return ;
+	}
     }
+    /* If there is a new line glitch and we have automargins then it is
+     * dangerous for us to use the last line as we cause a scroll that we
+     * cannot easily correct. If this is the case then reduce the number of
+     * lines by 1. */
+    if ((tcaptab[TCAPam].code.value != 0) &&
+        (tcaptab[TCAPxenl].code.value == 0) &&
+        (TTaMarginsDisabled == 0))
+        TTnewHig-- ;
 }
 
 static void
@@ -1412,13 +1417,6 @@ TCAPstart(void)
         puts(err_str);
         meExit(1);
     }
-    TCAPgetWinSize() ;
-    TTmrow = TTnewHig ;
-    TTmcol = TTnewWid ;
-
-    TTnrow = TTmrow - 1 ;
-    TTncol = TTmcol;
-
     /* Initialise the termcap strings */
     p = tcapbuf;
     for (ii = 0; ii < TCAPmax; ii++)
@@ -1463,20 +1461,13 @@ TCAPstart(void)
             TTaMarginsDisabled = 1;
         }
     }
-    
-    /* If there is a new line glitch and we have automargins then it is
-     * dangerous for us to use the last line as we cause a scroll that we
-     * cannot easily correct. If this is the case then reduce the number of
-     * lines by 1. */
-    if ((tcaptab[TCAPam].code.value != 0) &&
-        (tcaptab[TCAPxenl].code.value == 0) &&
-        (TTaMarginsDisabled == 0))
-    {
-        TTnewHig-- ;
-        TTmrow = TTnewHig ;
-        TTnrow = TTmrow - 1 ;
-    }
-    
+    TCAPgetWinSize() ;
+    TTmrow = TTnewHig ;
+    TTmcol = TTnewWid ;
+
+    TTnrow = TTmrow - 1 ;
+    TTncol = TTmcol;
+
     /* We rely on Clear and Move <x><y>, make sure that these exist */
     if ((tcaptab[TCAPclear].code.str == NULL) ||
         (tcaptab[TCAPcup].code.str == NULL))
@@ -2575,6 +2566,7 @@ TTahead(void)
         {
             changeScreenWidth(TRUE,TTnewWid); /* Change width */
             changeScreenDepth(TRUE,TTnewHig); /* Change depth */
+	    alarmState &= ~meALARM_WINSIZE ;
         }
         if(TTnoKeys)
             return TTnoKeys ;

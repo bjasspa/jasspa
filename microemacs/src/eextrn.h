@@ -1,7 +1,7 @@
 /****************************************************************************
  * External function definitions
  *
- * Last Modified:       <001015.1646>
+ * Last Modified:       <010123.1225>
  * 
  ****************************************************************************
  * 
@@ -296,6 +296,11 @@ extern	int     saveSomeBuffers APRAM((int f, int n)) ;
 extern	void	resetBufferNames APRAM((BUFFER *bp, uint8 *fname));
 extern	int	changeFileName APRAM((int f, int n));
 extern	int	changeDir APRAM((int f, int n));
+#ifdef _CONVDIR_CHAR
+extern  void    fileNameConvertDirChar APRAM((uint8 *fname)) ;
+#else
+#define fileNameConvertDirChar(ff)
+#endif
 #define PATHNAME_COMPLETE 0
 #define PATHNAME_PARTIAL  1
 extern  void    pathNameCorrect APRAM((uint8 *oldName, int nameType, 
@@ -329,7 +334,8 @@ extern  void    getDirectoryList APRAM((uint8 *pathName, meDIRLIST *dirList)) ;
 #define meRWFLAG_MKDIR     0x8000000
 
 extern int      ffReadFile APRAM((uint8 *fname, uint32 flags, BUFFER *bp, LINE *hlp)) ;
-extern int      createBackupName APRAM((uint8 *filename, uint8 *fn, uint8 backl)) ;
+#define meBACKUP_CREATE_PATH 0x0001
+extern int      createBackupName APRAM((uint8 *filename, uint8 *fn, uint8 backl, int flag)) ;
 
 
 extern int      ffWriteFileOpen APRAM((uint8 *fname, uint32 flags, BUFFER *bp)) ;
@@ -650,6 +656,7 @@ extern	int	quote APRAM((int f, int n));
 extern	int	meTab APRAM((int f, int n));
 extern	int	meBacktab APRAM((int f, int n));
 extern	int	insLine APRAM((int f, int n));
+extern	int	meLineSetIndent APRAM((int curInd, int newInd, int undo));
 extern	int	meNewline APRAM((int f, int n));
 extern	int	deblank APRAM((int f, int n));
 extern	int	forwDelChar APRAM((int f, int n));
@@ -1008,9 +1015,11 @@ extern int _getdrive(void) ;
 /* Doesn't exist if function returns -1 */
 #define meTestExist(fn)     (((int) GetFileAttributes(fn)) < 0)
 /* Can't read if doesn't exist or its a directory */
-#define meTestRead(fn)      (GetFileAttributes(fn) & 0x10)
+#define meTestRead(fn)      (GetFileAttributes(fn) & FILE_ATTRIBUTE_DIRECTORY)
 /* Can't write if exists and its readonly or a directory */
 #define meTestWrite(fn)     ((((int) GetFileAttributes(fn)) & 0xffff8011) > 0)
+/* File is a directory */
+#define meTestDir(fn)       ((GetFileAttributes(fn) & (0xf0000000|FILE_ATTRIBUTE_DIRECTORY)) != FILE_ATTRIBUTE_DIRECTORY)
 extern int meTestExecutable(uint8 *fileName) ;
 #define meStatTestRead(st)  (((st).stmode & FILE_ATTRIBUTE_DIRECTORY) == 0)
 #define meStatTestWrite(st) (((st).stmode & (FILE_ATTRIBUTE_DIRECTORY|FILE_ATTRIBUTE_READONLY)) == 0)
@@ -1037,6 +1046,8 @@ extern int  _meChdir(uint8 *path) ;
 #define meTestRead(fn)      (meGetFileAttributes(fn) & 0x10)
 /* Can't write if exists and its readonly or a directory */
 #define meTestWrite(fn)     ((meGetFileAttributes(fn) & 0xffff8011) > 0)
+/* File is a directory */
+#define meTestDir(fn)       ((meGetFileAttributes(fn) & 0xf0000010) != 0x010)
 extern int meTestExecutable(uint8 *fileName) ;
 #define meStatTestRead(st)  (((st).stmode & 0x10) == 0)
 #define meStatTestWrite(st) (((st).stmode & 0x11) == 0)
@@ -1169,6 +1180,9 @@ extern int meGidInGidList(gid_t gid) ;
 #endif
 #ifndef meTestExec
 #define meTestExec(fn) access((char *)(fn),X_OK)
+#endif
+#ifndef meTestDir
+#define meTestDir(fn) (getFileStats(fn,0,NULL,NULL) != meFILETYPE_DIRECTORY)
 #endif
 #ifndef meChmod
 #define meChmod(fn,attr) chmod((char *)(fn),attr)

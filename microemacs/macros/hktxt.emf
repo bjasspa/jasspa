@@ -12,7 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; buffer-setup flags
 set-variable #l0 &reg "/history" "fhook/txt" "ijpsw"
-set-variable #l1 "efhijmnpstuwx"
+set-variable #l1 "aefhijkmnpstuwx"
 
 ;
 ; Set up for documentation mode.
