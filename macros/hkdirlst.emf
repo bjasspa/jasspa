@@ -17,7 +17,7 @@ define-macro fhook-dirlst
     ; where the buffer is out of date (dir already changed) and inserting text
     ; can prompt the user 'do you really want to edit' - care is needed
     !if &seq $buffer-fname ""
-        ; toolbar creates an empty *files* buffer - ignore it 
+        ; toolbar creates an empty *files* buffer - ignore it
         !return
     !elif &exi :tag-count
         ; dont process the dir twice as it changes the buffer
@@ -26,7 +26,7 @@ define-macro fhook-dirlst
         1 buffer-mode "magic"
         1 buffer-mode "edit" "y"
         forward-line
-        !if &iseq &lef @wl 5 "total" 
+        !if &iseq &lef @wl 5 "total"
             forward-line
             insert-newline
         !else
@@ -91,8 +91,8 @@ define-macro fhook-dirlst
         set-variable :fmpf 32
         insert-string " Attr    Size          Modified Name  <Order by Extension>\n"
         !if &equ &lget .fhook-dirlst.mode 1 1
-            !force !force cvs-dir-conv            
-        !elif &lget .fhook-dirlst.mode 2
+            !force !force cvs-dir-conv
+        !else
             !force !force file-browser-filter
         !endif
     !endif
@@ -132,7 +132,7 @@ set-variable .fhook-dirlst.cvs-enable &sin "c" .fhook-dirlst.setup
     set-variable .find-file.flags 1
 !endif
 
-!if &and &sin "h" .fhook-dirlst.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-dirlst.setup &band .hilight.flags 0x02
     !if &not &exist .hilight.dirlst
         set-variable .hilight.dirlst &pinc .hilight.next 1
     !endif
@@ -207,7 +207,7 @@ set-variable .fhook-dirlst.cvs-enable &sin "c" .fhook-dirlst.setup
             !endif
         !endif
     !endif
-    ; loop through all windows to 
+    ; loop through all windows to
     6 next-window
     !repeat
         ; if part of a toolbar leave it alone
@@ -251,21 +251,24 @@ set-variable .file-browser-close.bn "\CH*directory*\CH*files*\CH*ftp-files*\CH*f
 
 0 define-macro file-browser-filter
     -1 buffer-mode "view"
-    1 buffer-mode "magic"
-    &cond &band $system 0x100 -1 1 buffer-mode "exact"
     set-variable $window-line 2
     end-of-line
-    insert-string " (Filtered)"
-    set-variable #l0 &spr "^.\\{%d,%d\\}\\(%s\\)$" :fmpf :fmpf .fhook-dirlst.filter-mask
-    set-variable $window-line 5
-    !force search-forward #l0
-    !while $status
-        beginning-of-line
-        set-mark
-        forward-line
-        -1 kill-region
-        !force search-forward #l0
-    !done
+    !if &lget .fhook-dirlst.mode 2
+        insert-string " (Filtered)"
+        set-variable #l0 &spr "^.\\{%d,%d\\}\\(%s\\)$" :fmpf :fmpf .fhook-dirlst.filter-mask
+        set-variable #l1 &cond &band $system 0x100 "mE" "me"
+        set-variable $window-line 5
+        !force search-buffer #l1 #l0
+        !while $status
+            beginning-of-line
+            set-mark
+            forward-line
+            -1 kill-region
+            !force search-buffer #l1 #l0
+        !done
+    !else
+        insert-string " (Not-Filtered)"
+    !endif
     -1 buffer-mode "edit"
     1 buffer-mode "view"
 !emacro
@@ -297,7 +300,7 @@ set-variable .fhook-dirlst.filter-mask &cat "\\./\\|.*" &rep #l0 " " "\\|.*"
         !endif
     !endif
     set-variable #l1 $window-mode-line
-    !force 0 next-window                    ; Do not wrap to top window 
+    !force 0 next-window                    ; Do not wrap to top window
     !if $status
         !if &equ #l1 $window-mode-line  ; No next window. Try previous.
             previous-window
@@ -318,7 +321,7 @@ set-variable .fhook-dirlst.filter-mask &cat "\\./\\|.*" &rep #l0 " " "\\|.*"
     !endif
     ; Split the window into 1/3rds. 1/3rd for the *directory* window
     ; 2/3 for the *files* window. Make sure we do not fail.
-    ; Note that we resize the *directory* window (left) and not the 
+    ; Note that we resize the *directory* window (left) and not the
     ; *files* window since the resize consumes space from the right
     ; i.e. we eat into the *files* window rather than the next
     ; adjacent horizontal window.
@@ -328,7 +331,7 @@ set-variable .fhook-dirlst.filter-mask &cat "\\./\\|.*" &rep #l0 " " "\\|.*"
         !force change-window-width &div #l1 3
         find-buffer "*directory*"
         next-window
-    !endif                
+    !endif
 !emacro
 
 0 define-macro file-browser-init
@@ -409,7 +412,20 @@ define-macro file-browser-swap-buffers
         !if &equ $window-line 4
             !force 1 dirlst-get-sort-col
             !abort
-        !elif &gre $window-line 1
+        !elif &gre $window-line 2
+        !elif &equ $window-line 2
+            set-variable #l2 &rsin " " &lef @wl $window-col
+            !if &seq &mid @wl #l2 1 "("
+                set-variable #l2 &add #l2 1
+            !endif
+            !if &seq &mid @wl #l2 &set #l1 12 "Not-Filtered"
+                1 file-browser-set-filter
+            !elif &seq &mid @wl #l2 &set #l1 8 "Filtered"
+                0 file-browser-set-filter
+            !elif &seq &mid @wl #l2 &set #l1 9 "CVS-Quick"
+                cvs-full-reread
+            !endif
+            !abort
         !elif &gre :fmpl 1
         !elif &les $window-col 22
         !elif &seq @wc "\n"
@@ -436,7 +452,7 @@ define-macro file-browser-swap-buffers
         set-variable #l0 @1
     !endif
     !if &seq &lef #l0 6 "ftp://"
-        ; it is unknown whether an ftp file is a directory until loaded 
+        ; it is unknown whether an ftp file is a directory until loaded
         ; if the ftp console tool is used make it visible
         !if &and &sin "s" %ftp-flags .toolbar.open
             !force toolbar-make-tool-visible "*ftp-console*"
@@ -457,7 +473,7 @@ define-macro file-browser-swap-buffers
             !endif
             find-buffer #l1
             !force change-buffer-name "*ftp-files*"
-        !endif            
+        !endif
         buffer-bind-create "bio" "delete" "" file-browser-close
         buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
     !elif &seq &rig #l0 &rsin "/" #l0 ""
@@ -491,7 +507,7 @@ define-macro file-browser-swap-buffers
         1 set-position "\x81"
         ; if the browser is lock and there are other windows open this file in another window
         !if &band $window-flags 4
-            ; loop through all windows to find a suitable one 
+            ; loop through all windows to find a suitable one
             6 next-window
             !repeat
                 !if &not &band $window-flags 4
@@ -538,7 +554,7 @@ define-macro file-browser-swap-buffers
         set-variable #l1 &lef $buffer-fname #l0
         ; if this is the 2nd / of a double / (e.g. current fname is //machine/ or ftp://site/) then fail
         !if &not &seq $mid #l1 &sub #l0 2 1 "/"
-            0 dirlst-find-file #l1 
+            0 dirlst-find-file #l1
         !endif
     !endif
 !emacro
@@ -1091,7 +1107,7 @@ osd .osd.dirlst 99  ""  "\HInvert Selection"      f dirlst-tag-invert
     !endif
     set-variable #l2 &spr "  %n%s  \n\n  %n%s  " &div &sub &len #l1 &len #l2 2 " " #l2 &div &sub &len #l2 &len #l1 2 " " #l1
     goto-position "\x83"
-    osd-xdialog "File Browser" #l2 3 " C\Hopy " " \HMove " " \HCancel " 
+    osd-xdialog "File Browser" #l2 3 " C\Hopy " " \HMove " " \HCancel "
     !if &equ $result 1
         ; copy files
         set-variable #l3 0x81
@@ -1116,7 +1132,27 @@ osd .osd.dirlst 99  ""  "\HInvert Selection"      f dirlst-tag-invert
 0 define-macro dirlst-mouse-pick-1
     set-variable :fmpl $window-line
     !if &les $window-line 4
-        !if &gre $window-line 1
+        !if &gre $window-line 2
+            !return
+        !elif &equ $window-line 2
+            set-variable #l2 &rsin " " &lef @wl $window-col
+            !if &seq &mid @wl #l2 1 "("
+                set-variable #l2 &add #l2 1
+            !endif
+            !if &seq &mid @wl #l2 &set #l1 12 "Not-Filtered"
+            !elif &seq &mid @wl #l2 &set #l1 8 "Filtered"
+            !elif &seq &mid @wl #l2 &set #l1 9 "CVS-Quick"
+            !else
+                set-variable #l1 0
+            !endif
+            !if #l1
+                set-variable #l0 $window-col
+                set-variable $window-col #l2
+                -3 show-region
+                set-variable $window-col &add #l2 #l1
+                3 show-region
+                set-variable $window-col #l0
+            !endif
             !return
         !elif &les $window-col 22
             !return
@@ -1152,7 +1188,19 @@ osd .osd.dirlst 99  ""  "\HInvert Selection"      f dirlst-tag-invert
 !emacro
 0 define-macro dirlst-mouse-drop-1
     !if &les $window-line 4
-        !if &gre $window-line 1
+        !if &gre $window-line 2
+        !elif &equ $window-line 2
+            set-variable #l2 &rsin " " &lef @wl $window-col
+            !if &seq &mid @wl #l2 1 "("
+                set-variable #l2 &add #l2 1
+            !endif
+            !if &seq &mid @wl #l2 &set #l1 12 "Not-Filtered"
+                1 file-browser-set-filter
+            !elif &seq &mid @wl #l2 &set #l1 8 "Filtered"
+                0 file-browser-set-filter
+            !elif &seq &mid @wl #l2 &set #l1 9 "CVS-Quick"
+                cvs-full-reread
+            !endif
         !elif &gre :fmpl 1
         !elif &les $window-col 22
         !elif &seq @wc "\n"

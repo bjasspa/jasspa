@@ -1527,7 +1527,7 @@ define-macro cvs-resolve-conflicts
         !force 0 delete-buffer "*cvs-temp*"
         find-buffer "*cvs-temp*"
         find-buffer #l1
-        set-variable #l7 &cat #l7 " - Quick CVS"
+        set-variable #l7 &cat #l7 " - CVS-Quick"
     !else
         6 pipe-shell-command &cat .cvs.com " -nq update -l" "*cvs-temp*"
         set-variable #l7 &cat #l7 " - CVS"
@@ -1535,6 +1535,8 @@ define-macro cvs-resolve-conflicts
     -1 buffer-mode "view"
     !if &lget .fhook-dirlst.mode 2
         set-variable #l7 &cat #l7 " - Filtered" 
+    !else
+        set-variable #l7 &cat #l7 " - Not-Filtered" 
     !endif
     2 goto-line
     end-of-line
