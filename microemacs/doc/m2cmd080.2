@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd080.2,v 2.6 2004-10-29 22:25:25 jon Exp $
+.Id $Id: m2cmd080.2,v 2.7 2005-02-06 13:07:41 jon Exp $
 .Im MicroEmacs command|paragraph|delete
 .so me.tni
 .TH kill-paragraph 2
@@ -18,50 +18,44 @@ kill-paragraph \- Delete a paragraph
 .ad
 .SH DESCRIPTION
 .B kill-paragraph
-deletes the next \fIn\fR  paragraphs, if \fIn\fR is +ve then the paragraph the
-cursor is currently in and the next \fIn\fR-1  paragraphs are killed and added
-to the kill buffer. If \fIn\fR is \-ve then the  paragraphs  are not placed in
-the kill buffer,  therefore the text is effectively lost (this does not affect
-the
-.Ht undo 2
-operation).
+deletes the next \fIn\fR  paragraphs  from the current  cursor  position,  the
+paragraphs  that are killed are added to the kill  buffer. If the cursor is in
+the middle of a paragraph  then the text from the current  cursor  position to
+the end (or start, depending on direction) of the paragraph is deleted.
 .PP
-If \fIn\fR is zero the command  simply  returns. The default value for \fIn\fR
-is 1.
+If \fIn\fR is +ve then the kill  direction is forwards, if \fIn\fR is -ve then
+the kill  direction  is  backwards.  If \fIn\fR is \fC0\fR  (zero) the command
+simply returns. The default value for \fIn\fR is \fC+1\fR.
 .SH DIAGNOSTICS
-.PP
 The  following  errors can be  generated,  in each case the command  returns a
 FALSE status:
 .IP "\fB[end of buffer]\fR"
-The  given  argument   \fIn\fR  was  greater  that  the  number  of  remaining
-paragraphs, all the remaining paragraphs are still removed.
+The +ve argument  \fIn\fR is greater than the number of remaining  paragraphs,
+all of the remaining paragraphs to the end of the buffer are still removed.
+.IP "\fB[top of buffer]\fR"
+The -ve argument  \fIn\fR is greater  than the number of previous  paragraphs,
+all of the previous paragraphs to the top of the buffer are still removed.
 .SH NOTES
 A paragraph is terminated by a blank line. All text residing between two blank
 lines is considered to be a paragraph - regardless of the text layout.
-.PP
-The  distinction  between  killed text and deleted  text is that text which is
-killed is placed into the yank buffer so that it can be pasted into any buffer
-using
-.Ht yank 2 .
-.SH EXAMPLE
-The -ve/+ve  behavior  to kill the  previous/next  paragraphs  may be achieved
-using the following macro wrap:-
-.Me $emf-scheme
-.CS
-define-macro my-kill-paragraph
-  !if &les @# 0
-    set-variable @# &abs @#
-    forward-paragraph
-    @# backward-paragraph
-  !endif
-  @# kill-paragraph
-!emacro
-.CE 0
-.Me $ehf-scheme
+.SH HISTORY
+The behavior of
+.B kill-paragraph
+was  modified in November 2004 after which the numeric  argument  \fIn\fR was
+interpreted  to control  the number and  direction  of  paragraphs  to delete.
+Previous releases  interpreted a -ve value as a control to disable the deleted
+text from entering the kill buffer. If the existing behavior is required then
+.Ht kill-region 2
+with a -ve argument should be used to delete a region of marked text,
+.Ht forward-paragraph 2
+and
+.Ht backward-paragraph 2
+may be used to move to the appropriate kill position.
 .SH "SEE ALSO"
 .na
 .Ht backward-paragraph 2 ,
 .Ht forward-paragraph 2 ,
+.Ht kill 2 ,
 .Ht kill-region 2 .
 .ad
 .FH

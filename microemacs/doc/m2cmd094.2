@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd094.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd094.2,v 2.6 2005-02-06 13:07:41 jon Exp $
 .Im MicroEmacs command|cursor|paragraph
 .ds C0 "(\fB\*en\fR)\ \&
 .ds C1 "(\fB\*ep\fR)\ \&
@@ -26,12 +26,15 @@ backward-paragraph \- Move the cursor to the previous paragraph
 .ad
 .SH DESCRIPTION
 .B forward-paragraph
-puts the  cursor  at the end of the  \fIn\fRth  paragraph  after  the  cursor,
-default is 1.
+moves  forwards  \fIn\fR  paragraphs.  The  cursor is placed at the end of the
+\fIn\fRth  paragraph at the start of the blank paragraph  separation line. The
+default  value  of  \fIn\fR  is 1, if  \fIn\fR  is -ve then the  direction  is
+backwards.
 .PP
 .B backward-paragraph
-puts the cursor at the beginning of the \fIn\fRth paragraph before the cursor,
-default is 1.
+similarly  moves  backwards  \fIn\fR  paragraphs.  The cursor is placed at the
+start of the blank paragraph  separation line. The default value of \fIn\fR is
+1, if \fIn\fR is -ve then the direction is forwards.
 .SH DIAGNOSTICS
 .PP
 The  following  errors can be  generated,  in each case the command  returns a
@@ -54,6 +57,7 @@ A paragraph break is defined as a blank line.
 .na
 .Ht backward-line 2 ,
 .Ht forward-line 2 ,
+.Ht kill-paragraph 2 ,
 .Ht scroll-down 2 ,
 .Ht scroll-up 2 .
 .ad
