@@ -4,7 +4,7 @@
  * main.c - Main entry point.
  *
  * Originally written by Dave G. Conroy for MicroEmacs
- * Copyright (C) 1987-1988 by Daniel M. Lawrence
+ * Copyright (C) 1987 by Daniel M. Lawrence
  * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
