@@ -57,13 +57,17 @@ set-variable .fhook-man.item-list-r1 "Sec \\1"
     ; Note that we do a .^H._^H_ check first to ensure we do not mix
     ; bold and italic.
     hilight .hilight.man 64 "\\(.\\)\CH\\1_\CH_\\}[^\CH]" "\\1_" .scheme.bold
-    
+
     ; GNU/Linux/Cygwin manual page hilighting.
     ; Linux uses some non-ASCII characters in manual pages correct.
     ; Right single quote
     hilight .hilight.man 64 "_\CH\xe2\x80\x99" "'"            .scheme.italic
     hilight .hilight.man 64 "\xe2\x80\x99\CH\xe2\x80\x99" "'" .scheme.bold
     hilight .hilight.man 64 "\xe2\x80\x99"                "'" $global-scheme
+    ; Another right single quote
+    hilight .hilight.man 64 "_\CH\xc2\xb4" "'"                .scheme.italic
+    hilight .hilight.man 64 "\xc2\xb4\CH\xc2\xb4" "'"         .scheme.bold
+    hilight .hilight.man 64 "\xc2\xb4" "'"                    $global-scheme
     ; Left single quote
     hilight .hilight.man 64 "_\CH\xe2\x80\x98" "`"            .scheme.italic
     hilight .hilight.man 64 "\xe2\x80\x98\CH\xe2\x80\x98" "`" .scheme.bold
