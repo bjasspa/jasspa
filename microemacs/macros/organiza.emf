@@ -649,9 +649,9 @@ osd .osd.orga-w 200 "Shf" " FT\HP      " 210
 osd .osd.orga-w 210 "EtxfH" .scheme.osd-entry "########################################" 23 org-addr-set-entry
 
 osd .osd.orga-n 0 "N"
-osd .osd.orga-n 1 "Ptfr" " \HHome " .osd.orga-h
-osd .osd.orga-n 2 "Ptfr" " Wor\Hk " .osd.orga-w
-osd .osd.orga-n 100 "It"            .osd.orga-h
+osd .osd.orga-n 1 "Ptf" " \HHome " .osd.orga-h
+osd .osd.orga-n 2 "Ptf" " Wor\Hk " .osd.orga-w
+osd .osd.orga-n 100 "It"           .osd.orga-h
 
 osd .osd.orga  10 ""
 osd .osd.orga  20 "Shf" "  \HRecord No " 50
