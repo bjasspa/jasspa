@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.29 2005-02-06 18:51:52 jon Exp $
+.Id $Id: me.nrs,v 2.30 2005-02-10 22:47:51 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -2050,6 +2050,42 @@ common editor across all working platforms has been achieved!
 .\"
 .B "8th Release - March 2005"
 .BS
+[050210]  Improved  movement  between  items  using the  cursor in the  search
+dialog.
+.BU    
+[050210] Fixed cvs dialog default settings.
+.BU
+[050210]   Corrected   search   path   expansion,   incorrectly   handling   a
+\fCPATH_CHAR\fR at the start of the string.
+.BU
+[050209] Up-dated  
+.Ht user-setup 3
+platform  page to new style and added  
+.Ht yank-rectangle 2 
+binding.
+.BU
+[050209] Fixed no-color termcap 
+.Ht $window-chars 5
+variable setting
+.BU
+[050209] Fixed hot keys (were 3 'U's) in \fCosdmisc.emf\fR.
+.BU
+[050209] Added  new   BraceStatement   indent   value  to  support  GNU  C
+indentation style.
+.BU
+[050209]  Fixed  the  \fCosdDisp()\fR   function  required  a  \fCTTflush()\fR
+otherwise the cursor is left in the wrong position on termcap systems.
+.BU    
+[050209] Fixed the default
+.Ht $window-chars 5
+variable setting.
+.BU
+[050209] Fixed the DOS home directory setting and compiler warnings.
+.BU
+[050208] Changed the C indent definition to be the same format as the existing
+indent  definitions i.e. uses flag & indent value, this makes it more flexible
+and extendible. Updated macro files.
+.BU
 [050205] Password generation macros added to \fCcontrib\fR directory.
 .BU
 [050205] Added  JavaDoc  highlighting  to Java  template.  Enablement  via
