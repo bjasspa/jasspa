@@ -7,10 +7,10 @@
  *  System        : 
  *  Module        : 
  *  Object Name   : $RCSfile: nr2html.c,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:28 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2000-10-21 15:02:02 $
  *  Author        : $Author: jon $
- *  Last Modified : <000125.2129>
+ *  Last Modified : <001021.1458>
  *
  *  Description	
  *
@@ -19,6 +19,9 @@
  *  History
  *	
  *  $Log: not supported by cvs2svn $
+ *  Revision 1.1  2000/10/21 14:31:28  jon
+ *  Import
+ *
  *  Revision 1.4  1997/02/13 21:00:02  jon
  *  Removed division copyright
  *
@@ -44,7 +47,7 @@
  *
  ****************************************************************************/
 
-static const char rcsid[] = "@(#) : $Id: nr2html.c,v 1.1 2000-10-21 14:31:28 jon Exp $";
+static const char rcsid[] = "@(#) : $Id: nr2html.c,v 1.2 2000-10-21 15:02:02 jon Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -78,6 +81,7 @@ static const char rcsid[] = "@(#) : $Id: nr2html.c,v 1.1 2000-10-21 14:31:28 jon
  * 1.0.1d - JG 16/04/97 Added copyright option.
  * 1.0.1e - JG 18/04/97 Added html extension pseudo name
  * 1.0.1f - JG 03/05/97 Ported to win32
+ * 1.0.1g - JG 21/10/00 Set the image border attribute to 0
  */
 
 #define MODULE_VERSION  "1.0.1f"
@@ -554,7 +558,7 @@ insertMainIcon (int level)
     home = nrHomeGet ();                /* Get the home page */
 
     htmlStr ("<A HREF=\"%s&HTML&\">"
-             "<IMG SRC=\"%s/%s\" ALIGN=BOTTOM ALT=\"[%s]\">"
+             "<IMG SRC=\"%s/%s\" BORDER=0 ALIGN=BOTTOM ALT=\"[%s]\">"
              "</A>",
              makeHTMLReference (level, home, home),   /* Add text file reference */
              makeHTMLReference (level, home, "logo"), /* Add image file reference */
@@ -982,7 +986,7 @@ nrHg_func (char *name, char *concat)
 static void
 nrGr_func (char *align, char *fname)
 {
-    htmlStr ("<IMG SRC=\"%s.gif\" ALIGN=BOTTOM ALT=\"[%s]\">" ,
+    htmlStr ("<IMG SRC=\"%s.gif\" BORDER=0 ALIGN=BOTTOM ALT=\"[%s]\">" ,
              fname, fname);
 }
 

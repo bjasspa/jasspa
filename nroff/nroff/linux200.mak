@@ -1,14 +1,13 @@
 #____________________________________________________________________________
 #
-# Last Edited <240398.1430>
+# Last Edited <001021.1435>
 #
 # Nroff tools makefile.
 #____________________________________________________________________________
 #
 TARGET	= linux
-LOCALDIR= ../src
-ROOTDIR = ../..
-include $(ROOTDIR)/etc/$(TARGET)/makeinc
+ROOTDIR = ..
+include $(ROOTDIR)/etc/linux200.mak
 #____________________________________________________________________________
 #
 # Local definitions.
@@ -22,9 +21,7 @@ CLIBS	=	libnroff.$A
 # -lmalloc
 # -DDEBUG
 
-HEADERS	=	$(LOCALDIR)/nroff.def	\
-		$(LOCALDIR)/_nroff.h	\
-		$(LOCALDIR)/nroff.h
+HEADERS	=	nroff.def	_nroff.h	nroff.h
 
 UTILS_H		= $(INSTINCDIR)/utils.h
 
@@ -34,10 +31,6 @@ MANEXES	=	superman$(EXE)	droff$(EXE)
 TOLEXES	=	nrsearch$(EXE)	nrinfo$(EXE)	nrcheck$(EXE)	ntags$(EXE) \
 		nrorder$(EXE)	difftags$(EXE)	nrar$(EXE)	hts2html$(EXE)
 LOCLEXES=	table$(EXE)
-# nroff$(ESH)
-# nroff.bat
-#nrpg$(EXE)
-#CANEXES	=	croff$(EXE)	dman$(EXE)	dbzc$(EXE)
 ALLEXES	=	$(RTFEXES) $(HTMEXES) $(MANEXES) $(TOLEXES) \
 		$(CANEXES) $(LOCLEXES)
 #____________________________________________________________________________
@@ -55,7 +48,7 @@ ALLEXES	=	$(RTFEXES) $(HTMEXES) $(MANEXES) $(TOLEXES) \
 	$(CC) $(CFLAGS) -c $< 
 	$(CC) $(CFLAGS) -o $* $*.$O $(LDFLAGS) $(CLIBS) $(LOCALLIBS) $(SYSLIBS)
 	
-all:		$(ALLEXES)
+all::		$(ALLEXES)
 
 croff.$O:	$(UTILS_H) $(HEADERS)
 dbzc.:		$(UTILS_H) $(HEADERS)
@@ -63,8 +56,8 @@ difftags.$O:	$(UTILS_H) $(HEADERS)
 dman.$O:	$(UTILS_H) $(HEADERS)
 droff.$O:	$(UTILS_H) $(HEADERS)
 htmlc.$O:	$(UTILS_H) $(HEADERS)
-nr2html.$O:	$(UTILS_H) $(HEADERS) $(LOCALDIR)/html.h
-nr2rtf.$O:	$(UTILS_H) $(HEADERS) $(LOCALDIR)/rtf.h
+nr2html.$O:	$(UTILS_H) $(HEADERS) html.h
+nr2rtf.$O:	$(UTILS_H) $(HEADERS) rtf.h
 nrcheck.$O:	$(UTILS_H) $(HEADERS)
 nrinfo.$O:	$(UTILS_H) $(HEADERS)
 nrorder.$O:	$(UTILS_H) $(HEADERS)
@@ -110,7 +103,7 @@ libnroff.$A:	$(LIBOBJ)
 # Install the files.
 #____________________________________________________________________________
 #
-install:	$(ALLEXES)
+install::	$(ALLEXES)
 		$(MKDIR) $(INSTBINDIR)
 		$(INSTALL) $(INSTBINFLAGS) $(RTFEXES) $(INSTBINDIR)
 		$(INSTALL) $(INSTBINFLAGS) $(HTMEXES) $(INSTBINDIR)
@@ -123,4 +116,4 @@ clean::
 
 spotless:: clean
 	$(RM) *~
-	$(RM) $(LOCALDIR)/*~
+	$(RM) tags

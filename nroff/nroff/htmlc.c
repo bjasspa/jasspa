@@ -7,10 +7,10 @@
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: htmlc.c,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:26 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2000-10-21 15:02:02 $
  *  Author        : $Author: jon $
- *  Last Modified : <030597.1458>
+ *  Last Modified : <001021.1405>
  *
  *  Description
  *
@@ -19,6 +19,9 @@
  *  History
  *
  *  $Log: not supported by cvs2svn $
+ *  Revision 1.1  2000/10/21 14:31:26  jon
+ *  Import
+ *
  *
  ****************************************************************************
  *
@@ -32,7 +35,7 @@
  *  written consent from Jon Green.
  ****************************************************************************/
 
-static const char rcsid[] = "@(#) : $Id: htmlc.c,v 1.1 2000-10-21 14:31:26 jon Exp $";
+static const char rcsid[] = "@(#) : $Id: htmlc.c,v 1.2 2000-10-21 15:02:02 jon Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -79,7 +82,9 @@ static char *dirHtmlName = NULL;
 static char *contentsName = NULL;
 static char *outFileName = NULL;
 static char *outPath = NULL;
+#ifndef _UNIX
 static char ctrlZStr[2] = {0x1a,'\0'};  /* Add Ctrl-Z */
+#endif
 static char *htmlEofStr;                /* End of file string */
 static char *htmlEolStr;                /* End ofline. */
 

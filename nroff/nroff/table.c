@@ -7,10 +7,10 @@
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: table.c,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:31 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2000-10-21 15:02:02 $
  *  Author        : $Author: jon $
- *  Last Modified : <030597.1452>
+ *  Last Modified : <001021.1406>
  *
  *  Description
  *
@@ -19,6 +19,9 @@
  *  History
  *
  *  $Log: not supported by cvs2svn $
+ *  Revision 1.1  2000/10/21 14:31:31  jon
+ *  Import
+ *
  *  Revision 1.2  1996/11/27 22:58:08  jon
  *  Added more tests
  *
@@ -38,7 +41,7 @@
  *  written consent from Division Ltd.
  ****************************************************************************/
 
-static const char rcsid[] = "@(#) : $Id: table.c,v 1.1 2000-10-21 14:31:31 jon Exp $";
+static const char rcsid[] = "@(#) : $Id: table.c,v 1.2 2000-10-21 15:02:02 jon Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -509,7 +512,7 @@ nrTSdata (char *line)
         return;
     }
     
-    while (*line != NULL)
+    while (*line != '\0')
     {
         if (findTab (&item, &line) == 0)
         {

@@ -7,10 +7,10 @@
  *  System        : 
  *  Module        : 
  *  Object Name   : $RCSfile: catman.c,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:25 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2000-10-21 15:02:02 $
  *  Author        : $Author: jon $
- *  Last Modified : <030597.1442>
+ *  Last Modified : <001021.1403>
  *
  *  Description	
  *
@@ -19,6 +19,9 @@
  *  History
  *	
  *  $Log: not supported by cvs2svn $
+ *  Revision 1.1  2000/10/21 14:31:25  jon
+ *  Import
+ *
  *
  ****************************************************************************
  *
@@ -32,7 +35,7 @@
  *  written consent from Jon Green.
  ****************************************************************************/
 
-static const char rcsid[] = "@(#) : $Id: catman.c,v 1.1 2000-10-21 14:31:25 jon Exp $";
+static const char rcsid[] = "@(#) : $Id: catman.c,v 1.2 2000-10-21 15:02:02 jon Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -262,9 +265,6 @@ void putPad (FILE *fp, char *s, long n, int len)
 
 void catmanInitialise (char *name, int manFlag)
 {
-    char *tmpExt;
-    char *outExt;
-
     dbprintf (("catmanInitialise\n"));
     ctmpname = "catman.~~~";
     dbprintf (("Openning file [%s]\n", ctmpname));
@@ -618,7 +618,7 @@ int dbzConcatinate (char *filename)
         }
 
         /* Copy the file to the output file. */
-        dbprintf (("dbzConcatinate: Seeking to %ld, length %d\n",
+        dbprintf (("dbzConcatinate: Seeking to %ld, length %ld\n",
                    compactOffset, offset - compactOffset));
         fseek (fp, compactOffset-1, SEEK_SET);
         cfileOffset += copyFile (fp, fpcat, offset - compactOffset - 1);

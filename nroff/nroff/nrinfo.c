@@ -7,10 +7,10 @@
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: nrinfo.c,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:29 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2000-10-21 15:02:02 $
  *  Author        : $Author: jon $
- *  Last Modified : <100597.0122>
+ *  Last Modified : <001021.1405>
  *
  *  Description
  *
@@ -19,6 +19,9 @@
  *  History
  *
  *  $Log: not supported by cvs2svn $
+ *  Revision 1.1  2000/10/21 14:31:29  jon
+ *  Import
+ *
  *
  ****************************************************************************
  *
@@ -32,7 +35,7 @@
  *  written consent from Jon Green.
  ****************************************************************************/
 
-static const char rcsid[] = "@(#) : $Id: nrinfo.c,v 1.1 2000-10-21 14:31:29 jon Exp $";
+static const char rcsid[] = "@(#) : $Id: nrinfo.c,v 1.2 2000-10-21 15:02:02 jon Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -197,7 +200,7 @@ infoInitialise (void)
 
     /* Identification */
     nrInstall (funcTab, XI_func, nrXI_func);
-    nrInstall (funcTab, XJ_func, nrXI_func);
+    nrInstall (funcTab, XJ_func, nrXJ_func);
     nrInstall (funcTab, Im_func, nrIm_func);
 
     /* Files */

@@ -99,6 +99,5 @@ clean::
 
 spotless:: clean
 	$(RM) *.??~
-	$(RM) $(LOCALDIR)\*.??~
 	$(RM) tags
 

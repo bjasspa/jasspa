@@ -1,6 +1,6 @@
 #____________________________________________________________________________
 #
-# Last Edited <001021.1510>
+# Last Edited <001021.1434>
 #
 # Utilties makefile.
 #____________________________________________________________________________
@@ -8,7 +8,7 @@
 TARGET	= linux
 LOCALDIR= ..
 ROOTDIR = ..
-include $(ROOTDIR)/etc/$(TARGET)/makeinc
+include $(ROOTDIR)/etc/linux200.mak
 #____________________________________________________________________________
 #
 # Local definitions.
@@ -36,16 +36,16 @@ utils.$O:	$(HEADERS)
 getfiles.$O:	$(HEADERS)
 dir.$O:		$(HEADERS)
 
-install: libutils.$A $(HEADERS)
+install:: libutils.$A $(HEADERS)
 	$(MKDIR) $(INSTINCDIR)
 	$(MKDIR) $(INSTLIBDIR)
 	$(INSTALL) $(INSTINCFLAGS) $(HEADERS) $(INSTINCDIR)
 	$(INSTALL) $(INSTLIBFLAGS) libutils.$A $(INSTLIBDIR)
 
 release: libutils.a $(HEADERS)
-clean:
+clean::
 	$(RM) libutils.a $(OBJ)
-spotless: clean
+spotless:: clean
 	$(RM) $(LOCALDIR)/*~
 	$(RM) *~
 	$(RM) tags

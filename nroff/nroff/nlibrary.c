@@ -7,10 +7,10 @@
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: nlibrary.c,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:27 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2000-10-21 15:02:02 $
  *  Author        : $Author: jon $
- *  Last Modified : <100597.0108>
+ *  Last Modified : <001021.1404>
  *
  *  Description
  *
@@ -19,6 +19,9 @@
  *  History
  *
  *  $Log: not supported by cvs2svn $
+ *  Revision 1.1  2000/10/21 14:31:27  jon
+ *  Import
+ *
  *
  ****************************************************************************
  *
@@ -41,7 +44,7 @@
 #include "_nroff.h"
 #include "nroff.h"
 
-static const char rcsid[] = "@(#) : $Id: nlibrary.c,v 1.1 2000-10-21 14:31:27 jon Exp $";
+static const char rcsid[] = "@(#) : $Id: nlibrary.c,v 1.2 2000-10-21 15:02:02 jon Exp $";
 
 #define TEST 0                          /* 1 to enabled standalone test */
 #define dprintf(x) /* printf x */
@@ -410,7 +413,6 @@ nrLibItemAdd (LibItem **lp, char *name, char *file, int ref, int *rstatus)
 LibBrowse *
 libFindBrowseSequence (char *module, char *name, char *section)
 {
-    static LibBrowse browseData;
     LibItem *i;
     LibModule *m;
     int browseNo;

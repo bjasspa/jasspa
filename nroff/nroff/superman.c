@@ -7,10 +7,10 @@
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: superman.c,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:31 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2000-10-21 15:02:02 $
  *  Author        : $Author: jon $
- *  Last Modified : <030597.1709>
+ *  Last Modified : <001021.1425>
  *
  *  Description
  *
@@ -19,6 +19,9 @@
  *  History
  *
  *  $Log: not supported by cvs2svn $
+ *  Revision 1.1  2000/10/21 14:31:31  jon
+ *  Import
+ *
  *  Revision 1.2  1996/11/27 22:57:58  jon
  *  Free off buffer in the correct place - stops crash
  *
@@ -38,7 +41,7 @@
  *
  ****************************************************************************/
 
-static const char rcsid[] = "@(#) : $Id: superman.c,v 1.1 2000-10-21 14:31:31 jon Exp $";
+static const char rcsid[] = "@(#) : $Id: superman.c,v 1.2 2000-10-21 15:02:02 jon Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -59,9 +62,10 @@ static const char rcsid[] = "@(#) : $Id: superman.c,v 1.1 2000-10-21 14:31:31 jo
  * 1.0.4d - JG 05/01/95 - Added external references
  * 1.0.4e - JG 29/08/96 - Added UNIX file name utilities.
  * 1.0.4f - JG 20/04/97 - Added base name option.
+ * 1.0.4g - JG 21/10/00 - Corrected the file extension comparison.
  */
 
-#define MODULE_VERSION  "1.0.4f"
+#define MODULE_VERSION  "1.0.4g"
 #define MODULE_NAME     "superman"
 
 static char *progname = MODULE_NAME;    /* Name of the module */
@@ -182,10 +186,10 @@ processFile (int pass, char *filename)
     else
         bname = fname;
 
-    isIncludeFile = ((strcmp (ext, ".so") == 0) || (strcmp (ext, ".tni") == 0));
+    isIncludeFile = ((strcmp (ext, "so") == 0) || (strcmp (ext, "tni") == 0));
 
 #if 1
-    if ((isIncludeFile == 0) && (strcmp (ext, ".sm") == 0))
+    if ((isIncludeFile == 0) && (strcmp (ext, "sm") == 0))
     {
         doSuperMan (pass, filename);
         pass = -1;

@@ -12,7 +12,7 @@ LIBDIR		= lib
 INCDIR		= include
 
 INSTBINDIR	= $(ROOTDIR)/$(BINDIR)
-INSTLIBDIR	= $(ROOTDIR)/$(LIBDIR)
+INSTLIBDIR	= $(ROOTDIR)/linux/$(LIBDIR)
 INSTINCDIR	= $(ROOTDIR)/$(INCDIR)
 
 INSTBINFLAGS	= -o jon -g users -m 0775
@@ -54,6 +54,7 @@ ARFLAGS		=	-rc
 # Tools
 #
 RM		=	rm -f
+RMDIR		=	rmdir
 INSTALL		=	install
 MKDIR		=	mkdir -p
 CD		=	cd
@@ -71,3 +72,21 @@ SHELL = /bin/sh
 #
 O	=	o
 A	=	a
+
+all::
+install::
+clean::
+	$(RM) *.$A
+	$(RM) *.$O
+	$(RM) *.pch
+	$(RM) *.out
+	$(RM) *.err
+	$(RM) *.pdb
+	$(RM) *.exe
+	$(RM) *.ilk
+
+spotless:: clean
+	$(RM) *~
+	$(RM) tags
+
+
