@@ -3,7 +3,7 @@
 # MicroEmacs date
 #
 MEYY=04
-MEMM=03
+MEMM=07
 MEDD=01
 MEVERS=20$(MEYY)$(MEMM)$(MEDD)
 #
