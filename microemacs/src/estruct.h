@@ -469,9 +469,10 @@ typedef FILETIME meFiletime ;
 (((t1).dwHighDateTime == (t2).dwHighDateTime) ? \
  ((t1).dwLowDateTime > (t2).dwLowDateTime):((t1).dwHighDateTime > (t2).dwHighDateTime))
 
-/* return a single in value - Dangerously ingoring the higher bits! */
+/* return a single int value - Dangerously ingoring the higher bits! */
 #define meFiletimeToInt(t1)                     \
-((((t1).dwLowDateTime  >> 24) & 0x000000ff) | (((t1).dwHighDateTime << 8) & 0x7fffff00))
+((meFiletimeIsInit(t1)) ? -1:                   \
+ ((((t1).dwLowDateTime  >> 24) & 0x000000ff) | (((t1).dwHighDateTime << 8) & 0x7fffff00)))
 
 #else
 #ifdef _UNIX
