@@ -57,7 +57,7 @@ release: $(OBJS)
 	$(RM)  $(OBJS)
 	dos2unix -U *.def *.[ch] *.mak *.txt *.gmk build COPYING *.xpm
 	unix2dos -D build.bat *.rc
-	find . -depth -type f -print | grep -v -i ".*cvs.*" | grep -v -i ".ziplist" | grep -v -i "\./makefile"  > $@.tmp
+	find . -depth -type f -print | grep -v -i ".*/cvs.*" | grep -v -i ".ziplist" | grep -v -i ".*/release.gmk"  > $@.tmp
 	sort $@.tmp | uniq > $@
 	$(RM) $@.tmp
 
