@@ -121,14 +121,14 @@ osd .osd.indstp 150 "BtcfHh" .scheme.osd-ebtt " \HOkay "  f void
 define-macro indent-setup
     !if &or $buffer-indent &exi :buffer-indent
         osd .osd.indstp 100 "fh" "  "
-        osd .osd.indstp 110 "Cptfx" &cat .osd.checkbox-chars "\} \HUse auto-indentation" 4 indent-setup-exec
+        osd .osd.indstp 110 "Cptfx" &cat .osd.checkbox-chars "\} Use \Hauto-indentation" 4 indent-setup-exec
     !else
         osd .osd.indstp 100 "D"
         osd .osd.indstp 110 "D"
     !endif
     !if &or $buffer-hilight &exi :buffer-hilight
         osd .osd.indstp 120 "fh" "  "
-        osd .osd.indstp 130 "Cptfx" &cat .osd.checkbox-chars "\} \HUse hilighting" 5 indent-setup-exec
+        osd .osd.indstp 130 "Cptfx" &cat .osd.checkbox-chars "\} Use \Hhilighting" 5 indent-setup-exec
     !else
         osd .osd.indstp 120 "D"
         osd .osd.indstp 130 "D"
