@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20050115.1749>
+# Last Modified: <20050116.1318>
 #
 ##############################################################################
 
@@ -116,10 +116,12 @@ NAR2_000=	$(DOCDIR)m2nar000.2 $(DOCDIR)m2nar001.2	$(DOCDIR)m2nar002.2 \
 		$(DOCDIR)m2nar006.2 $(DOCDIR)m2nar007.2 $(DOCDIR)m2nar008.2 \
 		$(DOCDIR)m2nar009.2
 #
-MOD2_000=	$(DOCDIR)m2mod000.2 $(DOCDIR)m2mod001.2 $(DOCDIR)m2mod002.2\
+MOD2_000=	$(DOCDIR)m2mod000.2 $(DOCDIR)m2mod001.2 \
 		$(DOCDIR)m2mod003.2 $(DOCDIR)m2mod004.2 $(DOCDIR)m2mod005.2\
 		$(DOCDIR)m2mod006.2 $(DOCDIR)m2mod007.2 $(DOCDIR)m2mod008.2\
 		$(DOCDIR)m2mod009.2
+# TODO: deleted c-mode(2m) - $(DOCDIR)m2mod002.2
+# 
 MOD2_010=	$(DOCDIR)m2mod010.2 $(DOCDIR)m2mod011.2 $(DOCDIR)m2mod012.2\
 		$(DOCDIR)m2mod013.2 $(DOCDIR)m2mod014.2 $(DOCDIR)m2mod015.2\
 		$(DOCDIR)m2mod016.2 $(DOCDIR)m2mod017.2 $(DOCDIR)m2mod018.2\
@@ -196,9 +198,13 @@ VAR5_000=	$(DOCDIR)m5var000.5 $(DOCDIR)m5var001.5 $(DOCDIR)m5var002.5\
 		$(DOCDIR)m5var006.5 $(DOCDIR)m5var007.5 $(DOCDIR)m5var008.5\
 		$(DOCDIR)m5var009.5
 VAR5_010=	$(DOCDIR)m5var010.5 $(DOCDIR)m5var011.5 $(DOCDIR)m5var012.5\
-		$(DOCDIR)m5var013.5 $(DOCDIR)m5var014.5 $(DOCDIR)m5var015.5\
-		$(DOCDIR)m5var016.5 $(DOCDIR)m5var017.5 $(DOCDIR)m5var018.5\
 		$(DOCDIR)m5var019.5
+# TODO: deleted $c-brace(5) - $(DOCDIR)m5var013.5
+# TODO: deleted $c-case(5), $c-switch - $(DOCDIR)m5var014.5
+# TODO: deleted $c-contcomm - $(DOCDIR)m5var015.5
+# TODO: deleted $c-margin - $(DOCDIR)m5var016.5 
+# TODO: deleted $c-statement(5) - $(DOCDIR)m5var017.5 
+# TODO: deleted $c-continue(5), $c-contmax - $(DOCDIR)m5var018.5
 VAR5_020=	$(DOCDIR)m5var020.5 $(DOCDIR)m5var021.5 $(DOCDIR)m5var022.5\
 		$(DOCDIR)m5var023.5 $(DOCDIR)m5var024.5 $(DOCDIR)m5var025.5\
 		$(DOCDIR)m5var026.5 $(DOCDIR)m5var027.5 $(DOCDIR)m5var028.5\
