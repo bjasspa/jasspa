@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Jul 5 17:44:15 1999
 .\"
-.Id $Id: m5var077.5,v 2.5 2002-01-11 21:58:43 jon Exp $
+.Id $Id: m5var077.5,v 2.6 2005-01-02 23:21:28 bill Exp $
 .Im MicroEmacs variable;environment|bind
 .so me.tni
 .TH $recent-keys 5
@@ -24,6 +24,8 @@ is a system  variable  that displays the last 100 keys entered into the system
 in reverse order. This variable is typically  used to solve  keyboard  mapping
 problems  when keys are not bound etc.  allowing  a visual  inspection  of the
 input into the editor.
+.PP
+The variable can only be set to the empty string (\fI""\fR), emptying the list.
 .SH "SEE ALSO"
 .na
 .Ht buffer-bind-key 2 ,
