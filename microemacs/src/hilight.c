@@ -64,6 +64,7 @@ typedef struct HILDATA {
     meUShort len;                       /* Transient length information */
     meUShort flag;                      /* Video structure flag */
     meUByte colno;                      /* Color number */
+    meUByte tabWidth;                   /* The current tab width */
 } HILDATA;    
 
 #define meHIL_TEST_BACKREF 0x00
@@ -1453,7 +1454,8 @@ findToken(meHilight *root, meUByte *text, meUByte mode,
     return NULL ;
 }
 
-#define __hilCopyChar(dstPos,cc)                                             \
+#define __hilCopyChar(dstPos,cc,tw)                                          \
+do                                                                           \
 {                                                                            \
     /* the largest character size is a tab which is user definable */        \
     if(dstPos >= disLineSize)                                                \
@@ -1472,7 +1474,7 @@ findToken(meHilight *root, meUByte *text, meUByte mode,
     }                                                                        \
     else if(cc == meCHAR_TAB)                                                \
     {                                                                        \
-        int ii=get_tab_pos(dstPos) ;                                         \
+        int ii=get_tab_pos(dstPos,tw) ;                                      \
         disLineBuff[dstPos++] = displayTab ;                                 \
         while(--ii >= 0)                                                     \
             disLineBuff[dstPos++] = ' ' ;                                    \
@@ -1490,7 +1492,8 @@ findToken(meHilight *root, meUByte *text, meUByte mode,
         disLineBuff[dstPos++] = hexdigits[cc/0x10] ;                         \
         disLineBuff[dstPos++] = hexdigits[cc%0x10] ;                         \
     }                                                                        \
-}
+}                                                                            \
+while(0)
 
 /*
  * hilSchemeChange.
@@ -1536,8 +1539,8 @@ hilCopyChar(register int dstPos, register meUByte cc, HILDATA *hd)
     if ((hd->srcOff != 0xffff) && (hd->srcPos >= hd->srcOff))
         hd->hfunc (dstPos, hd);
     /* Copy the character. */
-    __hilCopyChar(dstPos,cc)
-              return dstPos ;
+    __hilCopyChar(dstPos,cc,hd->tabWidth);
+    return dstPos ;
 }
 
 static int
@@ -1586,8 +1589,8 @@ hilCopyReplaceString(int sDstPos, register meUByte *srcText,
             else
                 hoff = 0x7fffffff ;
         }
-        __hilCopyChar(dstPos,cc)
-              }
+        __hilCopyChar(dstPos,cc,hd->tabWidth);
+    }
     /* This is not quite right - but will have to do for present. Change
      * the hilighting according to the ammount of text used. */
     return dstPos ;
@@ -1607,14 +1610,14 @@ hilCopyString(register int dstPos, register meUByte *srcText,HILDATA *hd)
         {
             if (hd->srcOff <= srcPos)
                 (hd->hfunc)(dstPos, hd);
-            __hilCopyChar(dstPos,cc);
+            __hilCopyChar(dstPos,cc,hd->tabWidth);
             srcPos++;
         }
     }
     else
     {
         while((cc = *srcText++) != '\0')
-            __hilCopyChar(dstPos,cc);
+            __hilCopyChar(dstPos,cc,hd->tabWidth);
     }
     return dstPos ;
 }
@@ -1637,7 +1640,7 @@ hilCopyLenString(register int dstPos, register meUByte *srcText,
                 (hd->hfunc)(dstPos, hd);
             
             cc = *srcText++ ;
-            __hilCopyChar(dstPos,cc);
+            __hilCopyChar(dstPos,cc,hd->tabWidth);
             srcPos++;
         }
     }
@@ -1646,7 +1649,7 @@ hilCopyLenString(register int dstPos, register meUByte *srcText,
         while(len--)
         {
             cc = *srcText++ ;
-            __hilCopyChar(dstPos,cc);
+            __hilCopyChar(dstPos,cc,hd->tabWidth);
         }
     }
     return dstPos ;
@@ -1706,6 +1709,7 @@ hilightLine(meVideoLine *vp1)
     hd.srcPos = 0;                      /* Reset the source position */
     hd.srcOff = 0xffff;                 /* No callback required */
     hd.blkp = hilBlock + 1;             /* block pointer */
+    hd.tabWidth = vp1->wind->buffer->tabWidth;
     
     /* Determine if we are processing a forground or hilighted line.
      * Determined by the current line flag */
@@ -2086,13 +2090,13 @@ hilightLookBack(meWindow *wp)
     }
 }
 
-#define hilOffsetChar(off,dstPos,dstJmp,cc)                                  \
+#define hilOffsetChar(off,dstPos,dstJmp,cc,tw)                               \
 {                                                                            \
     int ii ;                                                                 \
     if(isDisplayable(cc))                                                    \
         ii = 1 ;                                                             \
-    else if(cc == meCHAR_TAB)                                                 \
-        ii = get_tab_pos(dstPos) + 1 ;                                       \
+    else if(cc == meCHAR_TAB)                                                \
+        ii = get_tab_pos(dstPos,tw) + 1 ;                                    \
     else if(cc < 0x20)                                                       \
         ii = 2 ;                                                             \
     else                                                                     \
@@ -2107,30 +2111,30 @@ hilightLookBack(meWindow *wp)
     dstPos += ii ;                                                           \
 }
 
-#define hilOffsetString(lastcc,off,dstPos,dstJmp,srcText)                    \
+#define hilOffsetString(lastcc,off,dstPos,dstJmp,srcText,tw)                 \
 {                                                                            \
     meUByte __cc, *__ss=(srcText) ;                                          \
     while((__cc = *__ss++) != '\0')                                          \
     {                                                                        \
-        hilOffsetChar(off,dstPos,dstJmp,__cc)                                \
+        hilOffsetChar(off,dstPos,dstJmp,__cc,tw)                             \
         lastcc = __cc ;                                                      \
     }                                                                        \
 }
 
-#define hilOffsetLenString(lastcc,off,dstPos,dstJmp,srcText,len)             \
+#define hilOffsetLenString(lastcc,off,dstPos,dstJmp,srcText,len,tw)          \
 {                                                                            \
     meUShort __ll=len ;                                                      \
     meUByte *__ss=(srcText) ;                                                \
     while(__ll--)                                                            \
     {                                                                        \
         lastcc = *__ss++ ;                                                   \
-        hilOffsetChar(off,dstPos,dstJmp,lastcc)                              \
+        hilOffsetChar(off,dstPos,dstJmp,lastcc,tw)                           \
     }                                                                        \
 }
 
 static int
 hilOffsetReplaceString(register meUByte **offPtr, register int dstPos,
-                       int *dstJmp, register meUByte *srcText, int len)
+                       int *dstJmp, register meUByte *srcText, int len, int tw)
 {
     meUByte *off=*offPtr, cc, lastcc='\0' ;
     int            rlen=dstPos, ii, dd=*dstJmp ;
@@ -2140,7 +2144,7 @@ hilOffsetReplaceString(register meUByte **offPtr, register int dstPos,
         if((cc == meCHAR_LEADER) && ((cc=*srcText++) != meCHAR_TRAIL_LEADER))
             cc = varTable[cc] ;
         lastcc = cc ;
-        hilOffsetChar(off,dstPos,dd,cc)
+        hilOffsetChar(off,dstPos,dd,cc,tw)
     }
     
     rlen = dstPos-rlen ;
@@ -2175,6 +2179,7 @@ hilightCurLineOffsetEval(meWindow *wp)
     meUByte *srcText=wp->dotLine->text ;
     meUByte *off=wp->dotCharOffset->text ;
     meUByte  hilno=wp->buffer->hilight, cc=meCHAR_NL, mode ;
+    meUByte  tw = wp->buffer->tabWidth;
     meHilight *node, *root ;
     meUShort len ;
     register int srcWid=wp->dotLine->length, srcPos=0, dstPos=0 ;
@@ -2227,17 +2232,17 @@ column_token:
             {
                 if(node->tknSttOff)
                 {
-                    hilOffsetLenString(cc,off,dstPos,dstJmp,srcText+srcPos,node->tknSttOff) ;
+                    hilOffsetLenString(cc,off,dstPos,dstJmp,srcText+srcPos,node->tknSttOff,tw) ;
                     srcPos += node->tknSttOff ;
                     len -= node->tknSttOff ;
                 }
-                dstPos = hilOffsetReplaceString(&off,dstPos,&dstJmp,(meUByte *) node->rtoken,len) ;
+                dstPos = hilOffsetReplaceString(&off,dstPos,&dstJmp,(meUByte *) node->rtoken,len,tw) ;
                 if(*off)
                     cc = *off ;
             }
             else
             {
-                hilOffsetLenString(cc,off,dstPos,dstJmp,srcText+srcPos,len) ;
+                hilOffsetLenString(cc,off,dstPos,dstJmp,srcText+srcPos,len,tw) ;
             }
             srcPos += len ;
             
@@ -2292,13 +2297,13 @@ column_token:
                     if((tt == '\0') || (srcPos == srcWid))
                         break ;
                     ss = *s1++ ;
-                    hilOffsetChar(off,dstPos,dstJmp,ss) ;
+                    hilOffsetChar(off,dstPos,dstJmp,ss,tw) ;
                     if(ss == ignore)
                     {
                         if(++srcPos == srcWid)
                             break ;
                         ss = *s1++ ;
-                        hilOffsetChar(off,dstPos,dstJmp,ss) ;
+                        hilOffsetChar(off,dstPos,dstJmp,ss,tw) ;
                     }
                 }
                 if(tt != '\0')
@@ -2313,17 +2318,18 @@ column_token:
                 {
                     if(node->clsSttOff)
                     {
-                        hilOffsetLenString(cc,off,dstPos,dstJmp,s1,node->clsSttOff) ;
+                        hilOffsetLenString(cc,off,dstPos,dstJmp,s1,node->clsSttOff,tw) ;
                         srcPos += node->clsSttOff ;
                         len -= node->clsSttOff ;
                     }
-                    dstPos = hilOffsetReplaceString(&off,dstPos,&dstJmp,(meUByte *) node->rclose,len) ;
+                    dstPos = hilOffsetReplaceString(&off,dstPos,&dstJmp,
+                                                    (meUByte *) node->rclose,len,tw) ;
 					if(*off)
 						cc = *off ;
                 }
                 else
                 {
-                    hilOffsetLenString(cc,off,dstPos,dstJmp,s1,len) ;
+                    hilOffsetLenString(cc,off,dstPos,dstJmp,s1,len,tw) ;
                 }
                 srcPos += len ;
             }
@@ -2341,7 +2347,7 @@ column_token:
                 if((pos >= srcPos) &&
                    !strncmp((char *)srcText+pos,ss,len))
                 {
-                    hilOffsetString(cc,off,dstPos,dstJmp,srcText+srcPos) ;
+                    hilOffsetString(cc,off,dstPos,dstJmp,srcText+srcPos,tw) ;
                     goto hiline_exit ;
                 }
             }
@@ -2349,12 +2355,13 @@ column_token:
             {
                 if((node->type & HLREPLACE) && (node->type & HLREPTOEOL))
                 {
-                    dstPos = hilOffsetReplaceString(&off,dstPos,&dstJmp,(meUByte *) "",(srcWid-srcPos)) ;
+                    dstPos = hilOffsetReplaceString(&off,dstPos,&dstJmp,(meUByte *) "",
+                                                    (srcWid-srcPos),tw) ;
                     goto hiline_exit ;
                 }
                 if(!(node->type & HLBRINEOL) || (srcPos == srcWid))
                 {
-                    hilOffsetString(cc,off,dstPos,dstJmp,srcText+srcPos) ;
+                    hilOffsetString(cc,off,dstPos,dstJmp,srcText+srcPos,tw) ;
                     goto hiline_exit ;
                 }
                 mode |= meHIL_MODETOEOL ;
@@ -2379,7 +2386,7 @@ advance_char:
             mode &= ~(meHIL_MODEMOVE|meHIL_MODESTART) ;
             if((mode & meHIL_MODESTTLN) && !isSpace(cc))
                 mode &= ~meHIL_MODESTTLN ;
-            hilOffsetChar(off,dstPos,dstJmp,cc) ;
+            hilOffsetChar(off,dstPos,dstJmp,cc,tw) ;
             srcPos++ ;
         }
     }
@@ -2406,6 +2413,22 @@ hiline_exit:
 #define INDFILETYPE      (0x4000)
 #define INDFTNEXTONWARD  (INDINDONWARD|INDGOTIND)
 #define INDFTCURONWARD   (INDINDCURLINE|INDINDONWARD|INDGOTIND)
+
+/* Define the integer indent field. The format is:-
+ * 
+ *     7     6  5 4 3 2.1 0  
+ * +------+----+-+-+-+-+-+-+
+ * |indent|sign| | | | | | |
+ * +------+----+-+-+-+-+-+-+
+ * 
+ * With an implied decimal point if it is an 'indent' 
+ * size based definition.
+ */
+#define INDNUMINDSIZE     0x80          /* indentWidth based indent == 1 */
+#define INDNUMNEG         0x40          /* -ve offset */
+#define INDNUMOFFSETMASK  0x3f          /* Integer offset mask */
+#define INDNUMOFFSETSHIFT 2             /* The implied decimal point position */
+#define INDNUMMASK        0xff          /* Number mask */
 
 static meUByte
 indentLookBack(meLine *lp, meUShort offset)
@@ -2562,9 +2585,62 @@ indent(int f, int n)
     }
     if(typesFlag[itype] & INDGOTIND)
     {
+        char *p, *q;
+        int ipart;                      /* Integer part. */
+        
+        /* The indent type may be specified in a number of different ways:-
+         * 
+         * -4, 4, 8, ....        This is a character based indent.
+         * t,+t,-t,2t,-2t, ....  indentWidth based indent. 
+         * -2/3t, 3/2t, ...      tagsize vulgar fraction based indent.
+         */
         if(meGetString((meUByte *)"Indent",0,0,buf,meBUF_SIZE_MAX) <= 0)
             return meFALSE ;
-        node->scheme |= ((meByte) meAtoi(buf)) & 0x00ff ;
+        
+        node->scheme &= ~INDNUMMASK;
+        /* Get rid of any leading white space. */
+        for (q = buf; (*q == ' ') || (*q == '\t'); q++)
+            ;
+        /* Check for a indent offset */
+        if ((p = meStrchr(q, 't')) != NULL)
+        {
+            node->scheme |= INDNUMINDSIZE;
+            p[1] = '\0';                /* Get rid of any training information. */
+            
+            /* Test for special string cases */
+            if ((meStrcmp (q, "t") == 0) || (meStrcmp (q, "+t") == 0))
+                ipart = 1 << INDNUMOFFSETSHIFT;
+            else if (meStrcmp (q, "-t") == 0)
+                ipart = -1 << INDNUMOFFSETSHIFT;
+            else
+            {
+                int fpart;              /* Fractional part */
+                
+                /* Check for a vulgar fraction */
+                *p = '\0';              /* Get rid of 'i' */
+                if ((p = meStrchr(q, '/')) != NULL)
+                    *p++ = '\0';        /* Kill off the fraction */
+                ipart = meAtoi(q);      /* Get integer part */
+                
+                /* Get fractional part */
+                if (p == NULL)
+                    fpart = 1;
+                else if ((fpart = meAtoi(p)) == 0)
+                    fpart = 1;          /* Avoid divide by 0 */
+                
+                ipart = (ipart * (1 << INDNUMOFFSETSHIFT)) / fpart;
+            }
+        }
+        else
+            ipart = meAtoi(buf);
+        
+        /* Add the offset */
+        if (ipart < 0)
+        {
+            node->scheme |= INDNUMNEG;
+            ipart = -ipart;
+        }
+        node->scheme |= ipart & INDNUMOFFSETMASK;
     }
     if((typesFlag[itype] & INDFILETYPE) || (typesType[itype] & HLBRANCH))
     {
@@ -2575,6 +2651,22 @@ indent(int f, int n)
             node->scheme |= node->ignore ;
     }
     return meTRUE ;
+}
+
+/* Retrieve the indent value given the indent mask and the indentWidth to be used
+ * in any expansion. */
+static int
+getIndent (meUShort scheme, meUShort bIndentWidth)
+{
+    int ind;
+    
+    /* Get the indent out */
+    ind = (int)(scheme & INDNUMOFFSETMASK);
+    if ((scheme & INDNUMINDSIZE) != 0)
+        ind = (bIndentWidth * ind) / (1 << INDNUMOFFSETSHIFT);
+    if ((scheme & INDNUMNEG) != 0)
+        ind = -ind;
+    return ind;
 }
 
 int
@@ -2644,14 +2736,14 @@ indentLine(void)
     else
         fnoz = 0 ;
     if((fnoz & 0xff00) == INDFIXED)
-        ind = ((meByte) (fnoz & 0x0ff)) ;
+        ind = getIndent (fnoz, frameCur->bufferCur->indentWidth);
     else
     {
         int jj, brace=0, contFlag=0, aind, lind, nind ;
         
         if((fnoz & INDINDCURLINE) &&
            ((fnoz == blkp[0].scheme) || (cind >= blkp[0].column)))
-            aind = ((meByte) (fnoz & 0x0ff)) ;
+            aind = getIndent (fnoz, frameCur->bufferCur->indentWidth);
         else
             aind = 0 ;
         jj = (int) indents[indent]->close ;
@@ -2691,13 +2783,13 @@ indentLine(void)
             {
                 fnoz = (blkp[ii].scheme & 0xff00) ;
                 if(fnoz == INDNEXTONWARD)
-                    ind += ((meByte) (blkp[ii].scheme & 0x0ff)) ;
+                    ind += getIndent (blkp[ii].scheme, frameCur->bufferCur->indentWidth);
                 else if((fnoz == INDSINGLE) && 
                         ((ii == 0) || ((ii == 1) && ((ss-disLineBuff) >= blkp[0].column))))
-                    ind -= ((meByte) (blkp[ii].scheme & 0x0ff)) ;
+                    ind -= getIndent (blkp[ii].scheme, frameCur->bufferCur->indentWidth);
                 else if((fnoz == INDCURONWARD) && (ii != 0) &&
                         ((ii != 1) || ((ss-disLineBuff) < blkp[0].column)))
-                    ind += ((meByte) (blkp[ii].scheme & 0x0ff)) ;
+                    ind += getIndent (blkp[ii].scheme, frameCur->bufferCur->indentWidth);
                 else if(fnoz == INDBRACKETOPEN)
                 {
                     if(brace >= 0)
@@ -2710,7 +2802,7 @@ indentLine(void)
                 {
                     contFlag |= 0x03 ;
                     if(!(contFlag & 0x04))
-                        ind += ((meByte) (blkp[ii].scheme & 0x0ff)) ;
+                        ind += getIndent (blkp[ii].scheme, frameCur->bufferCur->indentWidth);
                 }
                 /*                printf("Colour change %d is to 0x%x at column %d, ind %d\n",ii,blkp[ii].scheme,blkp[ii].column,ind) ;*/
             }
@@ -2776,8 +2868,8 @@ indentLine(void)
             rr = 0 ;
         else
         {
-            rr = ind / tabwidth ;
-            ind -= rr * tabwidth ;
+            rr = ind / frameCur->bufferCur->tabWidth ;
+            ind -= rr * frameCur->bufferCur->tabWidth ;
             lineInsertChar(rr,'\t') ;
         }
         lineInsertChar(ind,' ') ;

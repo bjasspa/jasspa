@@ -185,7 +185,7 @@ extern  meUByte assessModeLine(meUByte *ml) ;
 extern  void    windCurLineOffsetEval(meWindow *wp) ;
 extern  void    reframe(meWindow *wp) ;
 extern  void    updCursor(register meWindow *wp) ;
-extern  int     renderLine(meUByte *s, int len, int wid);
+extern  int     renderLine(meUByte *s, int len, int wid, meBuffer *bp);
 extern	int	screenUpdate(int f, int n);
 extern	int	update(int force);
 extern	void	updone(meWindow *wp);
@@ -211,7 +211,7 @@ extern	int	screenPoke(int f, int n) ;
 #endif
 extern  void    menuline(int flag);
 
-extern  int     renderLine(meUByte *s1, int len, int wid) ;
+extern  int     renderLine(meUByte *s1, int len, int wid, meBuffer *bp) ;
 
 /* Virtual video interfaces */
 extern  int     meVideoAttach(meVideo *vvptr, meWindow *wp);
@@ -718,8 +718,10 @@ extern  void    sortStrings(int noStr, meUByte **strs, int offset, meIFuncSS cmp
 extern  int     sortLines(int f, int n) ;
 extern	int	bufferInfo(int f, int n);
 extern	int	getcline(meWindow *wp);
-extern	int	getcol(meUByte *ss, int off);
-#define getccol() getcol(frameCur->windowCur->dotLine->text,frameCur->windowCur->dotOffset)
+extern	int	getcol(meUByte *ss, int off, int tabWidth);
+#define getccol() getcol(frameCur->windowCur->dotLine->text,\
+                         frameCur->windowCur->dotOffset,\
+                         frameCur->windowCur->buffer->tabWidth)
 extern	int	setccol(int pos);
 extern	int	getcwcol(void);
 extern	int	setcwcol(int pos);
@@ -1406,10 +1408,14 @@ extern int      putenv(const char *s);
 #define mwResetCursor() TTmove(frameCur->mainRow,frameCur->mainColumn)
 #define resetCursor()   ((frameCur->mlStatus&(MLSTATUS_POSOSD|MLSTATUS_POSML)) ? mlResetCursor():mwResetCursor())
 
-#define get_tab_pos(c)      ((tabwidth-1) - (c)%tabwidth)       /* Get the number of characters to the next TAB position. */
-#define next_tab_pos(c)     (tabwidth - ((c)%tabwidth))         /* */
-#define	at_tab_pos(c)       ((c)%tabwidth)                      /* Get the number of characters to the next TAB position. */
-#define get_no_tabs_pos(c)  ((c)/tabwidth)                      /* Get the number of TAB characters to the current position. */
+/* Get the number of characters to the next TAB position. */
+#define get_tab_pos(c,tw)     ((tw-1) - (c)%tw) 
+/* Get the next tab position. */
+#define next_tab_pos(c,tw)    (tw - ((c)%tw))
+/* Get the number of characters to the next TAB position. */
+#define	at_tab_pos(c,tw)      ((c)%tw)
+/* Get the number of TAB characters to the current position. */
+#define get_no_tabs_pos(c,tw) ((c)/tw)                      
 
 #define restoreWindWSet(wp,ws)                                               \
 ((wp)->vertScroll=(ws)->vertScroll,(wp)->dotLine=(ws)->dotLine,              \

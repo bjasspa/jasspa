@@ -805,7 +805,7 @@ bclear(register meBuffer *bp)
      * zotbuf() calls bclear; hence any operation to delete a buffer
      * will cause the end hook to be executed.
      */
-    if((frameCur->windowCur->buffer == bp) && (bp->ehook >= 0))
+    if((frameCur->bufferCur == bp) && (bp->ehook >= 0))
     {
 	execBufferFunc(bp,bp->ehook,0,1) ;      /* Execute the end hook */
 	bp->ehook = -1;                         /* Disable the end hook */
@@ -838,6 +838,8 @@ bclear(register meBuffer *bp)
     bp->markOffset = 0;
     bp->markLineNo = 0;
     bp->lineCount = 0;
+    bp->tabWidth = tabWidth;
+    bp->indentWidth = indentWidth;
 #if MEOPT_FILEHOOK
     bp->fhook = bp->dhook = bp->bhook = bp->ehook = -1 ;
 #endif
@@ -963,8 +965,8 @@ zotbuf(register meBuffer *bp, int silent) /* kill the buffer pointed to by bp */
     ** it the current window and then remove it from the screen. Once
     ** this has been done, we can then go about zapping it.
     */
-    /* This must really be the frameCur->windowCur, ie frameCur->bufferCur must be bp otherwise
-    ** swbuffer fucks up big time.
+    /* This must really be the frameCur->windowCur, ie frameCur->bufferCur
+    ** must be bp otherwise swbuffer stuffs up big time.
     */
     if(HideBuffer(bp,1) <= 0)
 	/* only scratch left */
@@ -1405,6 +1407,8 @@ createBuffer(register meUByte *bname)
     /* set the colors of the new window */
     bp->scheme = globScheme;
 #endif
+    bp->indentWidth = indentWidth;
+    bp->tabWidth = tabWidth;
     lp->next = lp;
     lp->prev = lp;
     

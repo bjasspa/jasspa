@@ -18,7 +18,7 @@ define-macro fhook-jst
     ;     -!- jst; fill-column: <digit> ; fill-mode: <mode> -!-
     ;
     !if &not &seq #l1 ""
-        !if &xseq #l1 ".*fill-column:[ \t]*\\([0-9]+\\)[ \t]*;.*"
+       !if &xseq #l1 ".*fill-column:[ \t]*\\([0-9]+\\)[ \t]*;.*"
             set-variable :fill-col @s1
         !endif
         !if &xseq #l1 ".*fill-mode:[ \t]*\\([a-zA-Z]+\\)[ \t]*;.*"

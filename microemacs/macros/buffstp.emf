@@ -95,7 +95,7 @@
     !endif
 !emacro
 0 define-macro buffer-setup-fmark
-    set-variable #l0 &spr "fhook/%s-f%smark" &rig $buffer-fhook 6 &lget "|o|c|" &abs @#
+    set-variable #l0 &spr "fhook/%s-%s" &rig $buffer-fhook 6 &lget "|fomark|fcmark|tab-width|indent-width|" &abs @#
     set-variable #l1 &reg "/history" #l0 ""
     !if &les @# 0
         set-variable #l2 @ml2 "" #l1
@@ -191,8 +191,13 @@ define-macro buffer-setup
             !endif
         !endif
     !until &seq &lget .flags &inc #l0 1 ""
+    osd .osd.buffstp 900 "Sfh" "   Tab Width:       " 901
+    osd .osd.buffstp 901 "EtRxHf" 901 .scheme.osd-entry "##########" 3 buffer-setup-fmark
+    osd .osd.buffstp 902 "Sfh" "   Indent Width:    " 903
+    osd .osd.buffstp 903 "EtRxHf" 903 .scheme.osd-entry "##########" 4 buffer-setup-fmark
+    osd .osd.buffstp 904 ""
     !if &not &seq &lget &ind &spr ".%s.comment" $buffer-fhook 1 ""
-        osd .osd.buffstp 900 "Sfh" "   Fold Open\H/Close: " 910
+        osd .osd.buffstp 909 "Sfh" "   Fold Open\H/Close: " 910
         osd .osd.buffstp 910 "EtRxHfh" 910 .scheme.osd-entry "##########" 1 buffer-setup-fmark
         osd .osd.buffstp 915 "hf" "   "
         osd .osd.buffstp 920 "EtRxHf"  920 .scheme.osd-entry "##########" 2 buffer-setup-fmark

@@ -739,6 +739,8 @@ typedef struct  meBuffer {
     meUByte            hilight ;                /* hilight number               */
     meUByte            indent ;                 /* indent number                */
 #endif
+    meUByte            tabWidth;                /* Virtual tab size             */
+    meUByte            indentWidth;                 /* Real tab size                */
 } meBuffer ;
 
 

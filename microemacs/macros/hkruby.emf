@@ -149,37 +149,37 @@ set-variable .fhook-ruby.item-list-r3 "Def \ecB\\1\ecA"
 !if &sin "d" .fhook-ruby.setup
     0 indent  .hilight.ruby 0 25
     ; These will typically be at the start of a line.
-    indent .hilight.ruby N "^[ \t]*module" 4
-    indent .hilight.ruby N "^[ \t]*class" 4
-    indent .hilight.ruby N "begin" 4
-    indent .hilight.ruby N "case" 4
-    indent .hilight.ruby N "def" 4
+    indent .hilight.ruby N "^[ \t]*module" t
+    indent .hilight.ruby N "^[ \t]*class" t
+    indent .hilight.ruby N "begin" t
+    indent .hilight.ruby N "case" t
+    indent .hilight.ruby N "def" t
     ; 'if' is tricky becuase it may appear as modifier 'expr if expr'
-    indent .hilight.ruby N "^[ \t]*if" 4
+    indent .hilight.ruby N "^[ \t]*if" t
     ; 'unless' is tricky becuase it may appear as modifier 'expr unless expr'
-    indent .hilight.ruby N "^[ \t]*unless" 4
+    indent .hilight.ruby N "^[ \t]*unless" t
     ; 'while' is tricky becuase it may appear as modifier 'expr while expr'
     ; There is also another case of 'while expr do' where we want a single
     ; indent to 2. 
-    indent .hilight.ruby N "^[ \t]*while.*do" 4
-    indent .hilight.ruby N "^[ \t]*while" 4
+    indent .hilight.ruby N "^[ \t]*while.*do" t
+    indent .hilight.ruby N "^[ \t]*while" t
     ; 'until' is tricky becuase it may appear as modifier 'expr until expr'
     ; There is also another case of 'until expr do' where we want a single
     ; indent to 2. 
-    indent .hilight.ruby N "^[ \t]*until.*do" 4
-    indent .hilight.ruby N "^[ \t]*until" 4
+    indent .hilight.ruby N "^[ \t]*until.*do" t
+    indent .hilight.ruby N "^[ \t]*until" t
     ;
-    indent .hilight.ruby N "do" 4
-    indent .hilight.ruby n "{" 4
+    indent .hilight.ruby N "do" t
+    indent .hilight.ruby n "{" t
     ; Closing indents.
-    indent .hilight.ruby O "end" -4
-    indent .hilight.ruby o "}" -4
+    indent .hilight.ruby O "end" -t
+    indent .hilight.ruby o "}" -t
     ; Temporary indent items.
-    indent .hilight.ruby S "else" -4
-    indent .hilight.ruby S "elsif" -4
-    indent .hilight.ruby S "ensure" -4
-    indent .hilight.ruby S "rescue" -4
-    indent .hilight.ruby S "when" -4
+    indent .hilight.ruby S "else" -t
+    indent .hilight.ruby S "elsif" -t
+    indent .hilight.ruby S "ensure" -t
+    indent .hilight.ruby S "rescue" -t
+    indent .hilight.ruby S "when" -t
     ; Various brackets to ignore - strings, exec and regex.
     indent .hilight.ruby e "'" "'" "\\"
     indent .hilight.ruby e "\"" "\"" "\\"
@@ -197,10 +197,10 @@ set-variable .fhook-ruby.item-list-r3 "Def \ecB\\1\ecA"
     ; Brackets
     indent .hilight.ruby b "(" ")"
     ; Continue lines
-    indent .hilight.ruby c "\\\\" 4
+    indent .hilight.ruby c "\\\\" t
     ; Expressions at the end of a line - try with these
-    indent .hilight.ruby c "[-+=*/<>]$" 4
-    indent .hilight.ruby c "[-+=*/<>][ \t]+$" 4
+    indent .hilight.ruby c "[-+=*/<>]$" t
+    indent .hilight.ruby c "[-+=*/<>][ \t]+$" t
     ; Ignore comments.
     indent .hilight.ruby i "#"
 !endif

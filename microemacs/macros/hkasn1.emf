@@ -92,10 +92,10 @@ set-variable .fhook-asn1.comment "|--||=|-- | --|r|"
     ; This does not work very well so we do not enable it by default.
     ; This is becuse of the syntax of the language on a ::=
     0 indent   .hilight.asn1 0 50
-    indent  .hilight.asn1 N "BEGIN" 4
-    indent  .hilight.asn1 O "END" -4
-    indent  .hilight.asn1 n "{" 4
-    indent  .hilight.asn1 o "}" -4
+    indent  .hilight.asn1 N "BEGIN" t
+    indent  .hilight.asn1 O "END" -t
+    indent  .hilight.asn1 n "{" t
+    indent  .hilight.asn1 o "}" -t
 !endif
 
 buffer-init-fhook "asn1"

@@ -425,8 +425,8 @@ set-variable .fhook-phps.item-list-r1 "Func \ecB\\1\ecA"
 !endif
 !if &sin "d" .fhook-phps.setup
     0 indent  .hilight.phps 0 100
-    indent .hilight.phps n "{"  4
-    indent .hilight.phps o "}" -4
+    indent .hilight.phps n "{"  t
+    indent .hilight.phps o "}" -t
     ; must ignore \', \` & \"
     indent .hilight.phps o "\\\\'" 0
     indent .hilight.phps o "\\\\`" 0
@@ -439,8 +439,8 @@ set-variable .fhook-phps.item-list-r1 "Func \ecB\\1\ecA"
     indent .hilight.phps b "/\\*" "\\*/"
     indent .hilight.phps i "//"
     indent .hilight.phps i "#"
-    indent .hilight.phps s "case[ \t]+\\w+[ \t]*:" -4
-    indent .hilight.phps s "default[ \t]*:" -4
+    indent .hilight.phps s "case[ \t]+\\w+[ \t]*:" -t
+    indent .hilight.phps s "default[ \t]*:" -t
     ; let html based files use the phps indent for any php scripts
     set-variable .indent.phpscript .hilight.phps
 !endif

@@ -396,23 +396,23 @@ set-variable .fhook-au3.item-list-r1 "Func \ecB\\1\ecA"
 !if &sin "d" .fhook-au3.setup
     ; create a simple indentation rule for AutoIt
     0 indent .hilight.au3 1 20
-    indent .hilight.au3 N "func"  4
-    indent .hilight.au3 O "endfunc" -4
-    indent .hilight.au3 N "while"  4
-    indent .hilight.au3 O "wend" -4
-    indent .hilight.au3 N "do"  4
-    indent .hilight.au3 O "until" -4
-    indent .hilight.au3 N "for"  4
-    indent .hilight.au3 O "next" -4
-    indent .hilight.au3 N "if"  4
-    indent .hilight.au3 n "[\t ]then[\t ]+[^\t ;\n]" -4
-    indent .hilight.au3 S "elseif"  -4
-    indent .hilight.au3 S "else"  -4
-    indent .hilight.au3 O "endif"  -4
-    indent .hilight.au3 N "select"  4
-    indent .hilight.au3 O "endselect"  -4
+    indent .hilight.au3 N "func"  t
+    indent .hilight.au3 O "endfunc" -t
+    indent .hilight.au3 N "while"  t
+    indent .hilight.au3 O "wend" -t
+    indent .hilight.au3 N "do"  t
+    indent .hilight.au3 O "until" -t
+    indent .hilight.au3 N "for"  t
+    indent .hilight.au3 O "next" -t
+    indent .hilight.au3 N "if"  t
+    indent .hilight.au3 n "[\t ]then[\t ]+[^\t ;\n]" -t
+    indent .hilight.au3 S "elseif"  -t
+    indent .hilight.au3 S "else"  -t
+    indent .hilight.au3 O "endif"  -t
+    indent .hilight.au3 N "select"  t
+    indent .hilight.au3 O "endselect"  -t
     indent .hilight.au3 i ";"
-    ;    indent .hilight.au3 i "Then ExitLoop" this does not work
+    ;    indent .hilight.au3 t "Then ExitLoop" this does not work
 !endif
 
 buffer-init-fhook "au3"

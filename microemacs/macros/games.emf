@@ -7,6 +7,18 @@
 ; Synopsis:    Games wrapper file to keep me.emf small
 ; Authors:     Steven Phillips
 ;
+define-macro cross-word
+    execute-file crosswd
+    cross-word
+!emacro
+define-macro Mahjongg
+    execute-file mahjongg
+    Mahjongg
+!emacro
+define-macro Match-It
+    execute-file matchit
+    Match-It
+!emacro
 define-macro Metris
     execute-file metris
     Metris
@@ -18,13 +30,5 @@ define-macro Patience
 define-macro Triangle
     execute-file triangle
     Triangle
-!emacro
-define-macro Mahjongg
-    execute-file mahjongg
-    Mahjongg
-!emacro
-define-macro Match-It
-    execute-file matchit
-    Match-It
 !emacro
 

@@ -290,8 +290,8 @@ set-variable .fhook-perl.item-list-r1 "Sub  \ecB\\1\ecA"
 !endif
 !if &sin "d" .fhook-perl.setup
     0 indent  .hilight.perl 0 100
-    indent .hilight.perl n "{"  4
-    indent .hilight.perl o "}" -4
+    indent .hilight.perl n "{"  t
+    indent .hilight.perl o "}" -t
     indent .hilight.perl e "\"" "\"" "\\"
     ; note that tokens in perl can contain a single ', i.e. foo'bar
     ; but we also need to cope with split(' ',... as the '(' is a token

@@ -96,15 +96,15 @@ set-variable .fhook-psf.comment "|#||#|# | #||"
 ; Indentation scheme
 !if &sin "d" .fhook-psf.setup
     0 indent  .hilight.psf 0 50
-    indent .hilight.psf n "^[ \t]*bundle" 4
-    indent .hilight.psf n "^[ \t]*category[^_]" 4
-    indent .hilight.psf n "^[ \t]*control_files" 4
-    indent .hilight.psf n "^[ \t]*distribution" 4
-    indent .hilight.psf n "^[ \t]*fileset" 4
-    indent .hilight.psf n "^[ \t]*product" 4
-    indent .hilight.psf n "^[ \t]*subproduct" 4
-    indent .hilight.psf n "^[ \t]*vendor" 4
-    indent .hilight.psf o "^[ \t]*end" -4
+    indent .hilight.psf n "^[ \t]*bundle" t
+    indent .hilight.psf n "^[ \t]*category[^_]" t
+    indent .hilight.psf n "^[ \t]*control_files" t
+    indent .hilight.psf n "^[ \t]*distribution" t
+    indent .hilight.psf n "^[ \t]*fileset" t
+    indent .hilight.psf n "^[ \t]*product" t
+    indent .hilight.psf n "^[ \t]*subproduct" t
+    indent .hilight.psf n "^[ \t]*vendor" t
+    indent .hilight.psf o "^[ \t]*end" -t
     indent .hilight.psf e "\"" "\"" ""
     indent .hilight.psf i "#"
 !endif

@@ -296,12 +296,12 @@ set-variable .fhook-tcl.item-list-r8 "IBdy \ecB\\1\ecA"
 !endif
 !if &sin "d" .fhook-tcl.setup
     0 indent  .hilight.tcl 0 10
-    indent .hilight.tcl n "{"  4
-    indent .hilight.tcl o "}" -4
+    indent .hilight.tcl n "{"  t
+    indent .hilight.tcl o "}" -t
     indent .hilight.tcl e "\"" "\"" "\\"
     indent .hilight.tcl b "\\[" "]"
     indent .hilight.tcl b "(" ")"
-    indent .hilight.tcl c "\\\\\\s " 10
+    indent .hilight.tcl c "\\\\\\s " 5/2t
     indent .hilight.tcl i "#"  
 !endif
 

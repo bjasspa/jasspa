@@ -31,6 +31,7 @@ set-variable .fhook-xml.command-name  "|xml-forward-tag|xml-backward-tag|xml-for
 set-variable .fhook-xml.command-nbind "|||||||||"
 set-variable .fhook-xml.command-kbind "|S-right|S-left|esc C-f|esc C-b|C-]||||"
 set-variable .fhook-xml.command-desc  "|Forward Tag|Backward Tag|||Goto Matching Tag|Find Tag|Collapse/Uncollapse Tag|Verify the current buffer|"
+set-variable .fhook-xml.indent-width 2
 set-variable .fhook-xml.exact -1
 
 !if &not &exist fhook-vb
@@ -80,32 +81,32 @@ set-variable .fhook-xml.exact -1
     0 indent .hilight.xml 3 20 .hilight.xmlT
     !if &exist .indent.javascript
         indent .hilight.xmlT t "<script\\s +type=\"text/javascript[^>]*>" .indent.javascript
-        indent .hilight.xml  x "<script\\s +type=\"text/javascript[^>]*>" 2 .indent.javascript
+        indent .hilight.xml  x "<script\\s +type=\"text/javascript[^>]*>" t .indent.javascript
         indent .hilight.xmlT t "<script\\s +type=\"text/jscript[^>]*>"    .indent.javascript
-        indent .hilight.xml  x "<script\\s +type=\"text/jscript[^>]*>"    2 .indent.javascript
+        indent .hilight.xml  x "<script\\s +type=\"text/jscript[^>]*>"    t .indent.javascript
         indent .hilight.xmlT t "<script\\s +language=\"?javascript[^>]*>" .indent.javascript
-        indent .hilight.xml  x "<script\\s +language=\"?javascript[^>]*>" 2 .indent.javascript
+        indent .hilight.xml  x "<script\\s +language=\"?javascript[^>]*>" t .indent.javascript
         indent .hilight.xmlT t "<script\\s +language=\"?jscript[^>]*>"    .indent.javascript
-        indent .hilight.xml  x "<script\\s +language=\"?jscript[^>]*>"    2 .indent.javascript
-        indent .indent.javascript w "</script>" -2 0
+        indent .hilight.xml  x "<script\\s +language=\"?jscript[^>]*>"    t .indent.javascript
+        indent .indent.javascript w "</script>" -t 0
     !endif
     !if &exist .indent.vbscript
         indent .hilight.xmlT t "<script\\s +type=\"text/vbscript[^>]*>" .indent.vbscript
-        indent .hilight.xml  x "<script\\s +type=\"text/vbscript[^>]*>" 2 .indent.vbscript
+        indent .hilight.xml  x "<script\\s +type=\"text/vbscript[^>]*>" t .indent.vbscript
         indent .hilight.xmlT t "<script\\s +language=\"?vbscript[^>]*>" .indent.vbscript
-        indent .hilight.xml  x "<script\\s +language=\"?vbscript[^>]*>" 2 .indent.vbscript
-        indent .indent.vbscript w "</script>" -2 0
+        indent .hilight.xml  x "<script\\s +language=\"?vbscript[^>]*>" t .indent.vbscript
+        indent .indent.vbscript w "</script>" -t 0
     !endif
     indent .hilight.xmlT t "</script>" 0
-    indent .hilight.xml  o "</script>" -2
+    indent .hilight.xml  o "</script>" -t
     ; Define the indentation tokens. XML is well defined so there are
     ; always opening and closing brackets.
     indent .hilight.xml e "\"" "\"" "\\"
     indent .hilight.xml b "<!--" "-->"
     indent .hilight.xml b "<\\?" "\\?>"
-    indent .hilight.xml n "<[^/!]" 2 
-    indent .hilight.xml o "</"    -2 
-    indent .hilight.xml o "/>"    -2 
+    indent .hilight.xml n "<[^/!]" t 
+    indent .hilight.xml o "</"    -t 
+    indent .hilight.xml o "/>"    -t 
 !endif
 
 0 define-macro chook-xml

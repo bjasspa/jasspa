@@ -19,6 +19,7 @@ set-variable .fhook-vb.setup &reg "/history" "fhook/vb" "dghiopx"
 set-variable .fhook-vb.setup-mask "adeghikmoptux"
 set-variable .fhook-vb.tags "vbtags"
 set-variable .fhook-vb.comment "|'||'|' | '|r|"
+set-variable .fhook-vb.indent-width 2
 set-variable .fhook-vb.exact -1
 
 ; setup item-list
@@ -120,46 +121,46 @@ set-variable .fhook-vb.item-list-r3 "Prop \ecB\\2 \\3\ecA"
     indent .hilight.vb i "'"
     indent .hilight.vb i "^#"
     indent .hilight.vb e "\"" "\"" ""
-    indent .hilight.vb N "Declare" -2
-    indent .hilight.vb N "Function" 2
-    indent .hilight.vb N "Property" 2
-    indent .hilight.vb N "Sub" 2
-    ; A Then at the end of the line, then indent + 2; otherwise this is
+    indent .hilight.vb N "Declare" -t
+    indent .hilight.vb N "Function" t
+    indent .hilight.vb N "Property" t
+    indent .hilight.vb N "Sub" t
+    ; A Then at the end of the line, then indent + i; otherwise this is
     ; a single line 'if ... then' and no indenation is required.
-    indent .hilight.vb N "Then" 2
+    indent .hilight.vb N "Then" t
     indent .hilight.vb N "Then\\s +\\w+" 0
-    indent .hilight.vb N "Begin" 2
-    indent .hilight.vb S "Else" -2
-    indent .hilight.vb S "Case" -2
-    indent .hilight.vb N "Select\\s +Case" 4
-    indent .hilight.vb O "ElseIf" -2
-    indent .hilight.vb O "End" -2
+    indent .hilight.vb N "Begin" t
+    indent .hilight.vb S "Else" -t
+    indent .hilight.vb S "Case" -t
+    indent .hilight.vb N "Select\\s +Case" 2t
+    indent .hilight.vb O "ElseIf" -t
+    indent .hilight.vb O "End" -t
     ; the end in 'response.end' (common in asp) throws thing out  
     indent .hilight.vb o "\\.End\\s " 0
-    indent .hilight.vb N "Type" 2
+    indent .hilight.vb N "Type" t
     indent .hilight.vb S "Resume\\s +Next" 0
-    indent .hilight.vb O "End\\s +Select" -4
-    indent .hilight.vb O "End\\s +Function" -2
-    indent .hilight.vb O "End\\s +Property" -2
-    indent .hilight.vb O "End\\s +Sub" -2
-    indent .hilight.vb O "End\\s +Type" -2
+    indent .hilight.vb O "End\\s +Select" -2t
+    indent .hilight.vb O "End\\s +Function" -t
+    indent .hilight.vb O "End\\s +Property" -t
+    indent .hilight.vb O "End\\s +Sub" -t
+    indent .hilight.vb O "End\\s +Type" -t
     indent .hilight.vb O "Exit\\s +For" 0
     indent .hilight.vb O "Exit\\s +Function" 0
     indent .hilight.vb O "Exit\\s +Property" 0
     indent .hilight.vb O "Exit\\s +Sub" 0
-    indent .hilight.vb N "While" 2
-    indent .hilight.vb N "Do[ \t]+While" 2
-    indent .hilight.vb N "Do" 2
-    indent .hilight.vb O "Wend" -2
-    indent .hilight.vb O "Loop" -2
-    indent .hilight.vb O "Loop\\s +While" -2
+    indent .hilight.vb N "While" t
+    indent .hilight.vb N "Do[ \t]+While" t
+    indent .hilight.vb N "Do" t
+    indent .hilight.vb O "Wend" -t
+    indent .hilight.vb O "Loop" -t
+    indent .hilight.vb O "Loop\\s +While" -t
     indent .hilight.vb O "Exit\\s +Do" 0
-    indent .hilight.vb N "For" 2
-    indent .hilight.vb O "Next" -2
+    indent .hilight.vb N "For" t
+    indent .hilight.vb O "Next" -t
     indent .hilight.vb f "^\\w+:" 0
     ; ignore the rest of an open line as it may contain a For
-    indent .hilight.vb I "Open" 2
-    ;indent .hilight.vb c "\_" 2
+    indent .hilight.vb I "Open" t
+    ;indent .hilight.vb c "\_" t
     ; let html based files use the vb indent for any VBScripts
     set-variable .indent.vbscript .hilight.vb
 !endif

@@ -109,16 +109,16 @@ set-variable .fhook-lua.collapse-mnext  "-1"
     ; define indentation scheme
     0 indent .hilight.lua 1 10
     
-    indent .hilight.lua N "function" 4
-    indent .hilight.lua N "repeat"   4
-    indent .hilight.lua O "until"   -4
-    indent .hilight.lua N "do"       4
-    indent .hilight.lua N "if"       4
-    indent .hilight.lua S "else"    -4
-    indent .hilight.lua S "else\\s *if"  -4
-    indent .hilight.lua O "end"     -4
-    indent .hilight.lua n "{"        4
-    indent .hilight.lua o "}"       -4
+    indent .hilight.lua N "function" t
+    indent .hilight.lua N "repeat"   t
+    indent .hilight.lua O "until"   -t
+    indent .hilight.lua N "do"       t
+    indent .hilight.lua N "if"       t
+    indent .hilight.lua S "else"    -t
+    indent .hilight.lua S "else\\s *if"  -t
+    indent .hilight.lua O "end"     -t
+    indent .hilight.lua n "{"        t
+    indent .hilight.lua o "}"       -t
 ;    indent .hilight.lua c "[ \t]and[ \t]*\n" 6
 ;    indent .hilight.lua c "[ \t]or[ \t]*\n"  6
     indent .hilight.lua b "(" ")"

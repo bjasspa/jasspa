@@ -682,13 +682,22 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             time_stamp[meTIME_STAMP_SIZE_MAX-1] = '\0';
             break;
 #endif
-        case EVTABSIZE:
-            if((tabsize = (meUShort) meAtoi(vvalue)) <= 0)
-                tabsize = 1 ;
+        case EVINDWIDTH:
+            if((indentWidth = (meUByte) meAtoi(vvalue)) <= 0)
+                indentWidth = 1 ;
+            break;
+        case EVBUFINDWIDTH:
+            if((frameCur->bufferCur->indentWidth = (meUByte) meAtoi(vvalue)) <= 0)
+                frameCur->bufferCur->indentWidth = 1 ;
             break;
         case EVTABWIDTH:
-            if((tabwidth = (meUShort) meAtoi(vvalue)) <= 0)
-                tabwidth = 1 ;
+            if((tabWidth = (meUByte) meAtoi(vvalue)) <= 0)
+                tabWidth = 1 ;
+            frameAddModeToWindows(WFRESIZE) ;
+            break;
+        case EVBUFTABWIDTH:
+            if((frameCur->bufferCur->tabWidth = (meUByte) meAtoi(vvalue)) <= 0)
+                frameCur->bufferCur->tabWidth = 1 ;
             frameAddModeToWindows(WFRESIZE) ;
             break;
         case EVSRCHPATH:
@@ -1223,8 +1232,10 @@ handle_namesvar:
 #if MEOPT_TIMSTMP
     case EVTIMSTMP:     return time_stamp ;
 #endif
-    case EVTABSIZE:     return meItoa(tabsize);
-    case EVTABWIDTH:    return meItoa(tabwidth);
+    case EVINDWIDTH:    return meItoa(indentWidth);
+    case EVBUFINDWIDTH: return meItoa(frameCur->bufferCur->indentWidth);
+    case EVTABWIDTH:    return meItoa(tabWidth);
+    case EVBUFTABWIDTH: return meItoa(frameCur->bufferCur->tabWidth);
     case EVSRCHPATH:    return mePtos(searchPath) ;
     case EVHOMEDIR:     return mePtos(homedir) ;
 #if MEOPT_CFENCE

@@ -744,7 +744,7 @@ ipipeRead(meIPipe *ipipe)
     meStrcpy(buff,lp_old->text) ;
     p1 = buff+len ;
     noLines = 0 ;
-    curOff = getcol(buff,len) ;
+    curOff = getcol(buff,len,bp->tabWidth) ;
     for(;;)
     {
         if(!getNextCharFromPipe(ipipe,cc,rbuff,curROff,curRRead))
@@ -788,7 +788,7 @@ ipipeRead(meIPipe *ipipe)
             {
                 p1-- ;
                 len-- ;
-                curOff = getcol(buff,len) ;
+                curOff = getcol(buff,len,bp->tabWidth) ;
             }
             break ;
         case '\r':
@@ -868,7 +868,7 @@ get_another:
                                 memset(p1-nb,' ',nb) ;
                                 *p1 = '\0' ;
                             }
-                            curOff = getcol(buff,len) ;
+                            curOff = getcol(buff,len,bp->tabWidth) ;
                             break ;
                         case 'D':
                             if(!gotN)
@@ -877,7 +877,7 @@ get_another:
                                 na = len ;
                             p1 -= na ;
                             len -= na ;
-                            curOff = getcol(buff,len) ;
+                            curOff = getcol(buff,len,bp->tabWidth) ;
                             break ;
                         case 'A':
                             if(!gotN)
@@ -949,7 +949,7 @@ move_cursor_pos:
                                 memset(p1-na,' ',na) ;
                                 *p1 = '\0' ;
                             }
-                            curOff = getcol(buff,len) ;
+                            curOff = getcol(buff,len,bp->tabWidth) ;
                             noLines = 0 ;
                             break ;
 
@@ -1079,7 +1079,7 @@ cant_handle_this:
             }
             else if(*p1 == '\0')
                 p1[1] = '\0' ;
-            else if((cc == meCHAR_TAB) && (get_tab_pos(curOff) == 0))
+            else if((cc == meCHAR_TAB) && (get_tab_pos(curOff,bp->tabWidth) == 0))
             {
                 /* theres a strangeness with vt100 tab as it doesn't
                  * seem to erase the next character and seems to be used
@@ -1095,7 +1095,7 @@ cant_handle_this:
             if(isDisplayable(cc))
                 curOff++ ;
             else if(cc == meCHAR_TAB)
-                curOff += get_tab_pos(curOff) + 1 ;
+                curOff += get_tab_pos(curOff, bp->tabWidth) + 1 ;
             else if (cc  < 0x20)
                 curOff += 2 ;
             else

@@ -45,8 +45,8 @@ set-variable .fhook-jsp.command-desc  "|"
         indent .hilight.jsptag t "<%" .indent.java
         indent .hilight.jsptag t "%>" .hilight.jsp
         
-        indent .hilight.jsp x "<%" 2 .indent.java
-        indent .indent.java w "%>" -2 0
+        indent .hilight.jsp x "<%" t .indent.java
+        indent .indent.java w "%>" -t 0
     !endif
 !endif
 

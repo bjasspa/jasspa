@@ -329,8 +329,8 @@ set-variable .fhook-css.item-list-r1 "Item \ecB\\1\ecA"
 !endif
 !if &sin "d" .fhook-css.setup
     0 indent  .hilight.css 1 100
-    indent .hilight.css n "{"  4
-    indent .hilight.css o "}" -4
+    indent .hilight.css n "{"  t
+    indent .hilight.css o "}" -t
     indent .hilight.css b "<!--" "-->"
     indent .hilight.css b "/\\*" "\\*/"
 !endif

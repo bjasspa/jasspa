@@ -110,6 +110,7 @@ define-macro-file collapse collapse-current collapse-all
 !emacro
 
 0 define-macro buffer-init
+    set-variable #l9 $result
     set-variable $buffer-fhook &cat "fhook-" @1
     set-variable #l0 &ind &spr ".%s.setup" $buffer-fhook
     !if &not @#
@@ -119,10 +120,16 @@ define-macro-file collapse collapse-current collapse-all
             etfinsrt #l1
         !endif
     !endif
-    set-variable #l1 &ind &spr ".%s.command-flag"  $buffer-fhook
-    set-variable #l2 &ind &spr ".%s.command-kbind" $buffer-fhook
-    set-variable #l3 &ind &spr ".%s.command-nbind" $buffer-fhook
-    set-variable #l4 &ind &spr ".%s.command-name"  $buffer-fhook
+    !if &set #l1 &reg "/history" &spr "fhook/%s-tab-width" @1 "0"
+        set-variable $buffer-tab-width #l1
+    !elif &set #l1 &ind &spr ".%s.tab-width" $buffer-fhook
+        set-variable $buffer-tab-width #l1
+    !endif
+    !if &set #l1 &reg "/history" &spr "fhook/%s-indent-width" @1 "0"
+        set-variable $buffer-indent-width #l1
+    !elif &set #l1 &ind &spr ".%s.indent-width" $buffer-fhook
+        set-variable $buffer-indent-width #l1
+    !endif
     buffer-init-modes
     set-variable #l7 0
     !if &sin "h" #l0
@@ -136,6 +143,10 @@ define-macro-file collapse collapse-current collapse-all
     !if &sin "b" #l0
         !force buffer-abbrev-file &rig $buffer-fhook 6
     !endif
+    set-variable #l1 &ind &spr ".%s.command-flag"  $buffer-fhook
+    set-variable #l2 &ind &spr ".%s.command-kbind" $buffer-fhook
+    set-variable #l3 &ind &spr ".%s.command-nbind" $buffer-fhook
+    set-variable #l4 &ind &spr ".%s.command-name"  $buffer-fhook
     set-variable #l6 0
     !while &not &seq "" &set #l5 &lget #l1 &inc #l6 1
         !if &sin "b" #l5
@@ -177,6 +188,14 @@ define-macro-file collapse collapse-current collapse-all
             !if &reg "/history" "spell/autospell" "0"
                 1 auto-spell
             !endif
+        !endif
+    !endif
+    !if &not &seq #l9 ""
+        !if &xseq #l9 ".*indent-width[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;].*"
+            set-variable $buffer-indent-width @s1
+        !endif
+        !if &xseq #l9 ".*tab-width[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;].*"
+            set-variable $buffer-tab-width @s1
         !endif
     !endif
 !emacro
