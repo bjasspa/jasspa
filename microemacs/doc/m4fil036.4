@@ -1,0 +1,76 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m4fil036.4,v 1.1 2004-01-05 00:18:24 jon Exp $
+.Im MicroEmacs macro;variable
+.so me.tni
+.TH "HistoryGroupVariables" 4
+.XI "HistoryGroupVariables" - "Last history values"
+.XI "@h0" - "General history string"
+.XI "@h1" - "Buffer history string"
+.XI "@h2" - "Command history string"
+.XI "@h3" - "File history string"
+.XI "@h4" - "Search history string"
+.SH NAME
+@h0, @s1, @s2, ... @h4 \- History Group Variables.
+.SH SYNOPSIS
+.nf
+.na
+\fB@h0\fR \fIindex\fR \- General history string
+\fB@h1\fR \fIindex\fR \- Buffer history string
+\fB@h2\fR \fIindex\fR \- Command history string
+\fB@h2\fR \fIindex\fR \- File history string
+\fB@h4\fR \fIindex\fR \- Search history string
+.fi
+.ad
+.SH DESCRIPTION
+The history group variables  \fB@h\fR\|\fIn\fR  \fIindex\fR return the strings
+in the history  buffer ad a given  \fIindex\fR.  There are 5 history  buffers,
+\fIn\fR, as follows:-
+.PP
+\fC0\fR \- General history string
+.br
+\fC1\fR \- Buffer history string
+.br
+\fC2\fR \- Command history string
+.br
+\fC2\fR \- File history string
+.br
+\fC4\fR \- Search history string
+.PP
+Each history buffer  contains 20 slots which contain the history  information.
+The history  slot is selected  with the  \fIindex\fR  argument  which is valid
+in the range \fC0..19\fR,  index \fC0\fR is the
+most recent history slot in the history group.
+.PP
+The history  slots are  automatically  modified on the entry of a new command,
+search string etc.
+.PP
+\fB@h\fR\|\fIn\fR  \fIindex\fR  returns the whole of the history  string for a
+given slot.
+.SH DIAGNOSTICS
+An error is  generated  if an attempt is made to access  these  variables  and
+history buffer identifier \fIn\fR or the \fIindex\fR is out of range.
+.SH EXAMPLE
+The last search history may be extracted as follows:-
+.Me $emf-scheme\fB
+.CS
+set-variable #l1 @h4 0
+!force search-backward #l1
+!if &not $status
+    ; Not found
+!else
+    ; Found
+!endif
+.CE 0
+.Me $ehf-scheme
+.SH NOTES
+\fB@h\fR\|\fIn\fR was first introduced in the January 2004 release.
+.SH "SEE ALSO"
+.na
+.Ht read-history 2 ,
+.Ht save-history 2 .
+.ad
+.FH
