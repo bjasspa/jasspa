@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd077.2,v 2.7 2004-03-07 11:41:37 jon Exp $
+.Id $Id: m2cmd077.2,v 2.8 2005-01-15 14:52:25 jon Exp $
 .Im MicroEmacs command|shell
 .ds C0 "(\fB\*e backslash\fR)\ \&
 .so me.tni
@@ -27,7 +27,7 @@ ipipe-write \- Write a string to an incremental pipe
 .B ipipe-shell-command
 "\fIcommand\fR"
 ["\fIbuffer-name\fR"]
-["\|\fIbuffer-ipipe-command\fR|"] \*(C0
+["\|\fIbuffer-ipipe-command\fR\|"] \*(C0
 .br
 .I n
 .B ipipe-write
@@ -53,85 +53,87 @@ The  argument  \fIn\fR  can  be  used  to  change  the  default   behavior  of
 pipe-shell-command described above, \fIn\fR is a bit based flag where:-
 .IP \fB0x01\fR
 Enables the use of the default buffer name \fB*icommand*\fR (default). If this
-bit is clear the user must supply a buffer name. This enables  another command
-to be started without effecting any other command buffer.
+bit is clear the user must supply a buffer name  \fIbuffer-name\fR. The buffer
+naming  allows  another  command  to be started  without  effecting  any other
+existing command buffer.
 .IP \fB0x02\fR
-Hides the output  buffer,  default  action pops up a window and  displays  the
-output buffer in the new window.
+Hides the output buffer, the default  action pops up a window and displays the
+output buffer in a new window.
 .IP \fB0x04\fR
-Disable the use of the  command-line  processor  to launch the program  (win32
-versions  only). By default the  "\fBcommand\fR"  is launched by executing the
+Disable the use of the command-line  processor to launch the program (MS Win32
+versions  only). By default the  "\fIcommand\fR"  is launched by executing the
 command:
 .CS
-    %COMSPEC% /c command 
+    %COMSPEC% /c command
 .CE 0
 .IP
-Where  \fC%COMSPEC%\fR  is  typically  command.com.  If this  bit is set,  the
-"\fBcommand\fR" is launched directly.
+Where  \fC%COMSPEC%\fR  is  typically  \fCcommand.com\fR.  If this  bit is set
+"\fIcommand\fR" is launched directly.
 .IP \fB0x08\fR
-Detach the launched  process from \*(mS (win32  versions only). By default the
-command is launched as a child  process of \*(mS with a new console. With this
-bit set the process is completely detached from \*(mS instead.
+Detach the launched  process from \*(mS (MS Win32  versions  only). By default
+the command is launched as a child  process of \*(mS with a new console.  With
+this bit set the process is completely detached from \*(mS instead.
 .IP \fB0x10\fR
-Disable  the  command  name  mangling  (win32  versions  only). By default any
+Disable the command  name  mangling (MS Win32  versions  only). By default any
 \&'\fC/\fR' characters found in the command name (the first argument only) are
 converted to '\fC\\\fR' characters to make it Windows compliant.
 .IP \fB0x20\fR
-Displays the new process window, by default this window is hidden.
+Displays the new process window, by default the window is hidden.
 .IP \fB0x40\fR
 Raw ipipe,  disable  text  annotation  at the start and end of the pipe output
-and force 
-.Ht wrap 2m 
+and force
+.Ht wrap 2m
 mode off.
 .IP \fB0x80\fR
 Supply  a  function  \fIbuffer-ipipe-command\fR  to be  invoked  when the pipe
-receives  data and  terminates,  this is  equivalent  to  setting  the  buffer
-variable 
-.Ht $buffer-ipipe 5 
-but allows the pipe to be set when the ipipe is created. It is useful to 
-set the  \fI$buffer-ipipe\fR  on invocation and allows the pipe exit status to
-be trapped properly.
+receives  data and  terminates.  This is  equivalent  to  setting  the  buffer
+variable
+.Ht $buffer-ipipe 5
+but  allows  the  pipe to be set  when  the  ipipe  is  created.  Setting  the
+\fI$buffer-ipipe\fR  on  invocation  allows the pipe exit status to be trapped
+properly.
 .PP
 Many other macro commands (see
 .Ht compile 3 ,
-.Ht grep 3  etc.)
-use this command.
+.Ht grep 3 ,
+etc.) use this command.
 .PP
 .B ipipe-write
 writes a string \fIstring\fR to an open ipipe, \fIn\fR times.
 .PP
 .B ipipe-kill
-terminates  an  open  ipipe,  this is  automatically  called  when the ipipe
-buffer is deleted using
+terminates an open ipipe and is automatically invoked when the ipipe buffer is
+deleted using
 .Ht delete-buffer 2
-or when \*(mS is exited.. The numeric  argument  \fIn\fR can be used to change
-the signal generated, where \fIn\fR can take the following values:
+or when \*(mS is exited. The  numeric  argument  \fIn\fR may be used to change
+the signal generated, where \fIn\fR takes the following values:
 .IP \fB1\fR
-Sends a Terminate process signal, literally a \fCSIGKILL\fR  signal on unix or
-a  \fCWM_CLOSE\fR  on windows  platforms.  This is the  default  signal and is
+Sends  a  Terminate  process  signal,  literally  a  \fCSIGKILL\fR  signal  on
+\s-1UNIX\s0 or a \fCWM_CLOSE\fR  on Windows. This is the default signal and is
 typically bound to \fC\*cc \*ck\fR.
 .IP \fB2\fR
-Sends an  interrupt  signal,  writes a Ctrl-C to the  <stdin>  pipe on unix or
-sends  Ctrl-C  key events on windows  platforms.  This is  typically  bound to
-\fC\*cc \*cc\fR.
+Sends an interrupt signal, writes a \fICtrl-C\fR to the \fI<stdin>\fR  pipe on
+\s-1UNIX\s0  or sends  \fICtrl-C\fR  key events on Windows.  This is typically
+bound to \fC\*cc \*cc\fR.
 .SH NOTES
-On \s-1UNIX\s0  platforms the TERM environment variable of the new process can
-be set by setting the user variable  \fB%ipipe-term\fR  to the required value,
-e.g.:
+On  \s-1UNIX\s0  platforms  the  \s-1TERM\s0  environment  variable of the new
+process  may be set by  setting  the user  variable  \fB%ipipe-term\fR  to the
+required value, e.g.:
 .CS
     set-variable %ipipe-term "TERM=vt100-nam"
 .CE
 Ipipe  shells  support a large  sub-set of vt100  terminal  commands,  notable
-exceptions are color and font support and the support of  auto-margins.  Using
-the  terminal  type  "\fCvt100-nam\fR"   disables  the  use  of  auto-margins,
-providing better support.
+exceptions are color, font support and  auto-margins.  Using the terminal type
+"\fCvt100-nam\fR"  disables the use of auto-margins,  thereby providing better
+support.
 .PP
 On  platforms  which  do  not  support   \fBipipe-shell-command\fR,   such  as
 \s-1MS-DOS\s0, executing \fBipipe-shell-command\fR automatically invokes
-.Hl pipe-shell-command pipe-shell-command 2 ,
-hence macros may safely use ipipes  without  explicitly  checking the platform
-type.  \fBipipe-shell-command\fR  does not run reliably on \s-1Windows 3.11\s0
-and \s-1Windows 95\s0; \s-1Windows NT\s0 does support ipipes.
+.Hl pipe-shell-command pipe-shell-command 2 .
+Therefore  macros  may  safely  use ipipes  without  explicitly  checking  the
+platform   type.   \fBipipe-shell-command\fR   does   not  run   reliably   on
+\fBWindows\fR  \fB3.11\fR and \fBWindows\fR  \fB95\fR;  \fBWindows\fR \fBNT\fR
+does support ipipes.
 .PP
 While the pipe command is running, mode
 .Ht pipe 2m
