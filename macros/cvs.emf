@@ -58,14 +58,14 @@ set-variable #l0 0
         set-variable .hilight.cvsupd &pinc .hilight.next 1
     !endif
     
-    0 hilight .hilight.cvsupd 2 100    $global-scheme
-    hilight .hilight.cvsupd 0x102 "M " .scheme.no2
-    hilight .hilight.cvsupd 0x102 "U " .scheme.variable
-    hilight .hilight.cvsupd 0x102 "P " .scheme.variable
-    hilight .hilight.cvsupd 0x102 "A " .scheme.type
-    hilight .hilight.cvsupd 0x102 "R " .scheme.no1
-    hilight .hilight.cvsupd 0x102 "L " .scheme.no1
-    hilight .hilight.cvsupd 0x102 "C " .scheme.hlred
+    0 hilight .hilight.cvsupd 2 100      $global-scheme
+    hilight .hilight.cvsupd 0x102 "A[ *]" .scheme.no2
+    hilight .hilight.cvsupd 0x102 "C[ *]" .scheme.hlred
+    hilight .hilight.cvsupd 0x102 "L[ *]" .scheme.no1
+    hilight .hilight.cvsupd 0x102 "M[ *]" .scheme.no2
+    hilight .hilight.cvsupd 0x102 "P[ *]" .scheme.prepro
+    hilight .hilight.cvsupd 0x102 "R[ *]" .scheme.no1
+    hilight .hilight.cvsupd 0x102 "U[ *]" .scheme.prepro
     hilight .hilight.cvsupd 0x180 "\\*\\*\\*\\*\\*CVS exited" "" 0 $global-scheme
     set-variable .cvs.schemes &lset .cvs.schemes &lfind .cvs.names "State" .hilight.cvsupd
     set-variable .cvs.schemes &lset .cvs.schemes &lfind .cvs.names "Update" .hilight.cvsupd
@@ -81,14 +81,14 @@ set-variable #l0 0
     
     ; fix the *files* buffer hilighting for cvs additions
     hilight .hilight.dirlst 0x012 "[0-9][0-9]:[0-9][0-9] [0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9] [0-9][0-9]:[0-9][0-9] \\{" .scheme.file
-    hilight .hilight.dirlst 0x112 " dA"       .scheme.type
-    hilight .hilight.dirlst 0x112 " -A"       .scheme.type
+    hilight .hilight.dirlst 0x112 " dA"       .scheme.no2
+    hilight .hilight.dirlst 0x112 " -A"       .scheme.no2
     hilight .hilight.dirlst 0x112 " dL"       .scheme.no1
     hilight .hilight.dirlst 0x112 " -R"       .scheme.no1
     hilight .hilight.dirlst 0x112 " -L"       .scheme.no1
     hilight .hilight.dirlst 0x112 " -M"       .scheme.no2
     hilight .hilight.dirlst 0x112 " -C"       .scheme.hlred
-    hilight .hilight.dirlst 0x112 " -U"       .scheme.variable
+    hilight .hilight.dirlst 0x112 " -U"       .scheme.prepro
 !else
     set-variable .hilight.cvscon 0
 !endif
@@ -391,6 +391,48 @@ define-macro cvs-log-list
     0x10 goto-position "\x82"
 !emacro
     
+0 define-macro cvs-state-select
+    !if &xseq @wl "[?ACLMRU][ *].+"
+        set-variable #l0 $window-col
+        set-variable $window-col 1
+        set-variable @wc &cond &seq @wc " " "*" " "
+        set-variable $window-col #l0
+        forward-line
+    !else
+        ml-write "[Invalid line]"
+        !abort
+    !endif
+!emacro
+0 define-macro cvs-state-find-file
+    !if &xseq @wl "[?ACLMRU][ *]\\(.+\\)"
+        find-file @s1
+    !else
+        ml-write "[Invalid line]"
+        !abort
+    !endif
+!emacro
+0 define-macro cvs-state-mouse-pick-1
+    set-variable .cvs-state-mouse-drop-1.line $window-line
+!emacro
+0 define-macro cvs-state-mouse-drop-1
+    !if &xseq @wl "[?ACLMRU][ *].+"
+        !if &equ .line $window-line
+            !if &gre $window-col 1
+                cvs-state-find-file
+            !else
+                cvs-state-select
+                set-variable $window-line .line
+            !endif
+        !endif
+    !else
+        ml-write "[Invalid line]"
+    !endif
+!emacro
+0 define-macro cvs-state-mouse-drop-3
+    osd-cvs-file-menu
+    !force !force .osd.tmp osd
+!emacro
+
 0 define-macro cvs-exec-gdiff
     set-variable #l0 @1
     set-variable #l1 .find-file.file1
@@ -809,6 +851,16 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
         !endif
         dirlst-tag-list
         goto-position "\x82"
+    !elif &set #l9 &seq $buffer-bname "*cvs-state*"
+        beginning-of-buffer
+        1 buffer-mode "magic"
+        set-variable .find-file.file-count 0
+        !force search-forward "[?ACLMRU]\\*\\(.+\\)"
+        !while $status
+            set-variable &ind &cat ".find-file.file" &inc .find-file.file-count 1 @s1
+            !force search-forward "[?ACLMRU]\\*\\(.+\\)"
+        !done
+        goto-position "\x82"
     !else
         !if &sin "S" &lget .cvs.flags @#
             !if &and &bmod "edit" &not &seq &lef $buffer-bname 1 "*"
@@ -1107,6 +1159,14 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
     !else
         beginning-of-buffer
         set-variable $buffer-hilight &lget .cvs.schemes @#
+        !if &seq #l6 "*cvs-state*"
+            buffer-bind-create "bio" "return" "" cvs-state-find-file
+            buffer-bind-create "bio" "space" "" cvs-state-select
+            set-variable :mouse-pick-1 cvs-state-mouse-pick-1
+            set-variable :mouse-drop-1 cvs-state-mouse-drop-1
+            set-variable :mouse-pick-3 void
+            set-variable :mouse-drop-3 cvs-state-mouse-drop-3
+        !endif
     !endif
     !force goto-position "\x82"
     set-variable $mouse #l5
