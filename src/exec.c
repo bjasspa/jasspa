@@ -174,6 +174,10 @@ token(meUByte *src, meUByte *tok)
                 /* backward-delete-tab - replace with S-tab */
                 key = ME_SPECIAL|ME_SHIFT|SKEY_tab ;
                 goto quote_spec_key ;
+            case 'L':
+                /* Exec-line special - replace with x-line key */
+                key = ME_SPECIAL|SKEY_x_line ;
+                goto quote_spec_key ;
             case 'N':
                 /* Return key - replace with return */
                 key = ME_SPECIAL|SKEY_return ;
@@ -182,11 +186,15 @@ token(meUByte *src, meUByte *tok)
                 /* Go to set position, defined by \p - replace with \CXAP */
                 *dd++ = 'X' - '@';
                 *dd++ = 'A' ;
-                *dd++ = 'P';
+                *dd++ = meAM_EXSTRPOS ;
                 break;
             case 'T':
                 /* Tab key - replace with tab */
                 key = ME_SPECIAL|SKEY_tab ;
+                goto quote_spec_key ;
+            case 'X':
+                /* Exec-command special - replace with x-command key */
+                key = ME_SPECIAL|SKEY_x_command ;
 quote_spec_key:
                 *dd++ = 0xff ;
                 *dd++ = 2 ;
@@ -208,7 +216,7 @@ quote_spec_key:
             case 'p':
                 *dd++ = 'X' - '@';
                 *dd++ = 'A' - '@';
-                *dd++ = 'P';
+                *dd++ = meAM_EXSTRPOS ;
                 break;
             case 'r':   *dd++ = 0x0d; break;
             case 's':   

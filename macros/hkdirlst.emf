@@ -202,6 +202,11 @@ set-variable .fhook-dirlst.file-process ""
         !force -1 find-buffer #l1
     !done
     goto-position "\x81"
+    !return
+    ; avoid a toolbar window
+    !if &band $window-flags 0x1000
+        next-window
+    !endif
 !emacro
 set-variable .file-browser-close.bn "\CH*directory*\CH*files*\CH*ftp-files*\CH*ftp-console*\CH*cvs-console*\CH"
 
@@ -473,6 +478,10 @@ define-macro file-browser-swap-buffers
             !endif
             goto-position "\x81"
         !endif
+    !endif
+    ; if part of a toolbar update the mode lines
+    !if &band $window-flags 0x1000
+        set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x080
     !endif
 !emacro
 

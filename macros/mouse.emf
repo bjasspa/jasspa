@@ -82,6 +82,8 @@
                     !repeat
                         !if &and &equ $window-mode-line #l0 &les $window-depth #l1
                             !force delete-window
+                            ; we have deleted the current window so there's no mode-line to move!
+                            global-unbind-key &spr .mouse-event.mask "move"
                         !else
                             set-variable #l2 &add #l2 1
                             !force 0 previous-window
@@ -141,6 +143,8 @@
                     !repeat
                         !if &and &equ $window-scroll-bar #l0 &les $window-width #l1
                             !force delete-window
+                            ; we have deleted the current window so there's no mode-line to move!
+                            global-unbind-key &spr .mouse-event.mask "move"
                         !else
                             set-variable #l2 &add #l2 1
                             !force 0 previous-window

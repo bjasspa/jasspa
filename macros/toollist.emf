@@ -8,10 +8,10 @@
 ; Authors:     Steven Phillips
 ;
 ; Setup the Toolbar tools
-set-variable .toolbar.tool-descs "\CHBuffer File Info\CHBuffer List\CHKill List\CHAbbreviation List\CHBuffer Item List\CHDirectory Tree\CHDirectory File List\CHFavorites\CHFTP File List\CHFTP Console\CHCVS Console\CH"
-set-variable .toolbar.tool-names "\CHInfo\CHBuff List\CHKill List\CHAbbrevs\CHItems\CHDir Tree\CHFiles\CHFavorites\CHFTP Files\CHFTP Console\CHCVS Console\CH"
-set-variable .toolbar.tool-buffs "\CH*buffer-info*\CH*buffer-list*\CH*kill-list*\CH*abbrev-list*\CH*item-list*\CH*directory*\CH*files*\CH*favorites*\CH*ftp-files*\CH*ftp-console*\CH*cvs-console*\CH"
-set-variable .toolbar.tool-files "\CHtoolstd\CHtoolstd\CHkilllist\CHabbrlist\CHitemlist\CHtoolstd\CHtoolstd\CHfavorite\CHftp\CHftp\CHcvs\CH"
-set-variable .toolbar.tool-flags "\CH0x1b\CH0x11b\CH0x103\CH0x7\CH0xb\CH0x1\CH0x1\CH0x3\CH0x1\CH0x0\CH0x0\CH"
-set-variable .toolbar.tool-cmds  "\CHbuffer-info-create\CHbuffer-list-create\CHkill-list-create\CHabbrev-list-create\CHitem-list-create\CHtoolbar-dir-list-create\CHtoolbar-file-list-create\CHtoolbar-favorites\CHtoolbar-ftp-file-list-create\CHvoid\CHvoid\CH"
+set-variable .toolbar.tool-descs "\CHBuffer File Info\CHBuffer List\CHKill List\CHBuffer Tools\CHBuffer Abbreviations\CHBuffer Item List\CHDirectory Tree\CHDirectory File List\CHFavorites\CHFTP File List\CHFTP Console\CHCVS Console\CH"
+set-variable .toolbar.tool-names "\CHInfo\CHBuff List\CHKill List\CHTools\CHAbbrevs\CHItems\CHDir Tree\CHFiles\CHFavorites\CHFTP Files\CHFTP Console\CHCVS Console\CH"
+set-variable .toolbar.tool-buffs "\CH*buffer-info*\CH*buffer-list*\CH*kill-list*\CH*tool-list*\CH*abbrev-list*\CH*item-list*\CH*directory*\CH*files*\CH*favorites*\CH*ftp-files*\CH*ftp-console*\CH*cvs-console*\CH"
+set-variable .toolbar.tool-files "\CHtoolstd\CHtoolstd\CHkilllist\CHabbrlist\CHabbrlist\CHitemlist\CHtoolstd\CHtoolstd\CHfavorite\CHftp\CHftp\CHcvs\CH"
+set-variable .toolbar.tool-flags "\CH0x2001b\CH0x10001b\CH0x100003\CH0x10007\CH0x10007\CH0x2000b\CH0x1\CH0x40001\CH0x3\CH0x40001\CH0x0\CH0x0\CH"
+set-variable .toolbar.tool-cmds  "\CHbuffer-info-create\CHbuffer-list-create\CHkill-list-create\CHtool-list-create\CHabbrev-list-create\CHitem-list-create\CHtoolbar-dir-list-create\CHtoolbar-file-list-create\CHtoolbar-favorites\CHtoolbar-ftp-file-list-create\CHvoid\CHvoid\CH"
 

@@ -70,14 +70,14 @@
     !elif &equ @# 6
         ; fix tool size
         !if &set #l0 &lfind .toolbar.tool-buff $buffer-bname
-            set-variable #l1 &bxor 0x200 &lget .toolbar.tool-flag #l0
+            set-variable #l1 &bxor 0x100 &lget .toolbar.tool-flag #l0
             set-variable #l2 &lfind .toolbar.conv &band #l1 0xf000
-            set-variable $window-flags &cond &band #l1 0x200 0x103f &sub 0x103e &band #l2 1
+            set-variable $window-flags &cond &band #l1 0x100 0x103f &sub 0x103e &band #l2 1
             !if &band #l1 0x800
                 set-variable #l1 &lget .toolbar.tool-flag &dec #l0 1
                 !jump -2
             !endif
-            set-variable .toolbar.tool-flag &lset .toolbar.tool-flag #l0 &bxor 0x200 &lget .toolbar.tool-flag #l0
+            set-variable .toolbar.tool-flag &lset .toolbar.tool-flag #l0 &bxor 0x100 &lget .toolbar.tool-flag #l0
             !if &band &lget .toolbar.tool-flag &inc #l0 1 0x800
                 !jump -2
             !endif
@@ -92,10 +92,28 @@
             ; Note - when called by the add tool to remove the default tool the hidden flag has been set, just set the page
             !if &band #l1 0x800
                 ; page tool make previous tool visible
-                set-variable .toolbar.tool-flag &lset .toolbar.tool-flag &sub #l0 1 &bxor &lget .toolbar.tool-flag &sub #l0 1 &cond &equ @# -7 0x000 0x400
-            !elif &band &lget .toolbar.tool-flag &add #l0 1 0x800
+                set-variable #l3 &lget .toolbar.tool-flag &sub #l0 1
+                !if &not &or &band #l3 0x800 &band &lget .toolbar.tool-flag &add #l0 1 0x800
+                    ; last user of this window
+                    set-variable #l3 &bxor #l3 0x200
+                !endif
+                !if &not &equ @# -7
+                    ; if not called from adding tool to remove the default tool, make this visible
+                    set-variable #l3 &bxor #l3 0x400
+                !endif
+                set-variable .toolbar.tool-flag &lset .toolbar.tool-flag &sub #l0 1 #l3
+            !elif &band #l1 0x200
                 ; next is a page tool make it visible
-                set-variable .toolbar.tool-flag &lset .toolbar.tool-flag &add #l0 1 &bxor &lget .toolbar.tool-flag &add #l0 1 &cond &equ @# -7 0x800 0xc00
+                set-variable #l3 &bxor &lget .toolbar.tool-flag &add #l0 1 0x800
+                !if &not &band &lget .toolbar.tool-flag &add #l0 2 0x800
+                    ; last user of this window
+                    set-variable #l3 &bxor #l3 0x200
+                !endif
+                !if &not &equ @# -7
+                    ; if not called from adding tool to remove the default tool, make this visible
+                    set-variable #l3 &bxor #l3 0x400
+                !endif
+                set-variable .toolbar.tool-flag &lset .toolbar.tool-flag &add #l0 1 #l3
             !endif
             set-variable .toolbar.tool-name &ldel .toolbar.tool-name #l0
             set-variable .toolbar.tool-buff &ldel .toolbar.tool-buff #l0
@@ -116,8 +134,8 @@
                 set-variable #l3 &bor &lget .toolbar.tool-flags #l0 &band &lget .toolbar.tool-flag #l1 0xf000
                 !if &equ @# 9
                     ; adding as sub-page
-                    set-variable #l3 &bor #l3 0x800
-                    set-variable .toolbar.tool-flag &lset .toolbar.tool-flag #l1 &bor &lget .toolbar.tool-flag #l1 0x400
+                    set-variable #l3 &bor #l3 0xa00
+                    set-variable .toolbar.tool-flag &lset .toolbar.tool-flag #l1 &bor &lget .toolbar.tool-flag #l1 0x600
                 !endif
                 set-variable .toolbar.tool-name &lins .toolbar.tool-name &add #l1 1 &lget .toolbar.tool-names #l0
                 set-variable .toolbar.tool-buff &lins .toolbar.tool-buff &add #l1 1 &lget .toolbar.tool-buffs #l0
@@ -179,7 +197,7 @@ osd .osd.toolbar 50 "" "&Store Current State" 5 toolbar-setup-cmd
         !if &gre &lget .toolbar.flag #l0 1
             osd .osd.toolbar 20 "" "&Remove Tool" 7 toolbar-setup-cmd
         !endif
-        !if &band #l2 0x200
+        !if &band #l2 0x100
             osd .osd.toolbar 30 "" "Un&fix Tool Size" 6 toolbar-setup-cmd
         !else
             osd .osd.toolbar 30 "" "&Fix Tool Size" 6 toolbar-setup-cmd

@@ -104,13 +104,40 @@ meRegex meRegexStrCmp={0} ;
 int
 regexStrCmp(meUByte *str, meUByte *reg, int flags)
 {
-    int ii ;
+    meRegex *rg ;
+    int ii, rr ;
     
-    if(meRegexComp(&meRegexStrCmp,reg,(flags & meRSTRCMP_ICASE)) != meREGEX_OKAY)
+    if(flags & meRSTRCMP_USEMAIN)
+    {
+        rg = &mereRegex ;
+        srchLastState = meFALSE ;
+    }
+    else
+        rg = &meRegexStrCmp ;
+    
+    if(meRegexComp(rg,reg,(flags & meRSTRCMP_ICASE)) != meREGEX_OKAY)
         return -1 ;
     
     ii = meStrlen(str) ;
-    return meRegexMatch(&meRegexStrCmp,str,ii,0,ii,(flags & meRSTRCMP_WHOLE)) ;
+    rr = meRegexMatch(rg,str,ii,0,ii,(flags & meRSTRCMP_WHOLE)) ;
+    if((flags & meRSTRCMP_USEMAIN) && (rr == meTRUE))
+    {
+        extern meUByte *mereNewlBuf ;
+        extern int mereNewlBufSz ;
+        
+        if(ii >= mereNewlBufSz)
+        {
+            if((mereNewlBuf = meRealloc(mereNewlBuf,ii+128)) == NULL)
+            {
+                mereNewlBufSz = 0 ;
+                return meFALSE ;
+            }
+            mereNewlBufSz = ii+127 ;
+        }
+        strcpy(mereNewlBuf,str) ;
+        srchLastState = meTRUE ;
+    }
+    return rr ;
 }
 #endif
 
@@ -2433,8 +2460,8 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
     case UFSGREAT:     return(meLtoa(meStrcmp(arg1,arg2) > 0));
     case UFISEQUAL:    return(meLtoa(meStricmp(arg1,arg2) == 0));
 #if MEOPT_MAGIC
-    case UFXSEQ:       return(meLtoa(regexStrCmp(arg1,arg2,meRSTRCMP_WHOLE) == 1));
-    case UFXISEQ:      return(meLtoa(regexStrCmp(arg1,arg2,meRSTRCMP_ICASE|meRSTRCMP_WHOLE) == 1));
+    case UFXSEQ:       return(meLtoa(regexStrCmp(arg1,arg2,meRSTRCMP_WHOLE|meRSTRCMP_USEMAIN) == 1));
+    case UFXISEQ:      return(meLtoa(regexStrCmp(arg1,arg2,meRSTRCMP_ICASE|meRSTRCMP_WHOLE|meRSTRCMP_USEMAIN) == 1));
 #endif
 #if MEOPT_EXTENDED
     case UFLDEL:

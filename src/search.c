@@ -73,8 +73,8 @@ meUByte *srchLastMatch=NULL;               /* pointer to the last match string *
 int           srchLastMagic=meFALSE;              /* last search was a magic        */
 static int    reportErrors = meTRUE;
 
-static int    mereNewlBufSz=0 ;
-static meUByte *mereNewlBuf=NULL ;
+int      mereNewlBufSz=0 ;
+meUByte *mereNewlBuf=NULL ;
 
 #define mereNewlBufSzCheck(ll)                                               \
 do {                                                                         \

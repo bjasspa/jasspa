@@ -608,7 +608,6 @@ define-macro cvs
             delete-other-windows
             2 split-window-vertically
             change-window-depth 15
-            set-variable $window-flags 6
             find-buffer "*cvs-console*"
             buffer-bind-create "bio" "delete" "" file-browser-close
             3 previous-window

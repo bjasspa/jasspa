@@ -534,9 +534,9 @@ typedef struct meMacro {
     meInt              callback ;	        /* callback time for macro */
 } meMacro ;
 
-#define	meMACRO_HIDE  0x01			        /* Hide the function		*/
-#define	meMACRO_EXEC	 0x02			        /* Buffer is being executed	*/
-#define	meMACRO_FILE  0x04			        /* macro file define            */
+#define	meMACRO_HIDE  0x01                      /* Hide the function		*/
+#define	meMACRO_EXEC  0x02                      /* Buffer is being executed	*/
+#define	meMACRO_FILE  0x04                      /* macro file define            */
 
 
 /* An alphabetic mark is as follows. Alphabetic marks are implemented as a
