@@ -389,8 +389,10 @@ define-macro fold-remove
 
 ;OPEN fold-setup
 0 define-macro fold-setup
-    set-variable #l9 @#
-    fold-init @1
+    !if &not &set #l9 &exi :fold
+        set-variable #l9 @#
+        fold-init @1
+    !endif
     ; init didn't abort - if given an argument of 0 then only setup if a fold exists in the 1st 200 lines
     set-position "\x89"
     set-variable #l0 &bmod "magic"
