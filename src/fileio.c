@@ -1103,6 +1103,8 @@ ffUrlFileOpen(meUByte *urlName, meUByte *user, meUByte *pass, meUInt rwflag)
     if(ffurlGetInfo(fftype,&host,&port,&user,&pass) <= 0)
         return meFALSE ;
     
+    if(ss[0] == '\0')
+        ss = "/" ;
     /* is it a http: or ftp: */
     if(fftype == meURLTYPE_FTP)
         ii = ffFtpFileOpen(host,port,user,pass,ss,rwflag) ;
