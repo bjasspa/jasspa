@@ -864,18 +864,14 @@ meGetConsoleMessage(MSG *msg)
     DWORD dwCount;
 
     /* If in console mode, check whether we must render the clipboard */
-    if (clipState & CLIP_OWNER)
+    if((clipState & CLIP_OWNER) && OpenClipboard(NULL))
     {
         HANDLE hmem;
 
         hmem = WinKillToClipboard ();
-        if (hmem == NULL)
-            hmem = GlobalAlloc (GHND, 1);
-
-        OpenClipboard (NULL);
-        EmptyClipboard ();
+        EmptyClipboard();
         SetClipboardData (CF_OEMTEXT, hmem);
-        CloseClipboard ();
+        CloseClipboard();
 
         clipState &= ~CLIP_OWNER;
     }
@@ -1860,35 +1856,40 @@ WinKillToClipboard (void)
         killSize++ ;
 
     /* Create global buffer for the data */
-    hmem = GlobalAlloc (GMEM_MOVEABLE, killSize + 1);
-    bufp = GlobalLock (hmem);
-
-    /* Copy the data into the buffer */
-    if(noEmpty)
-        *bufp++ = ' ';
-    else if(klhead != NULL)
+    if((hmem = GlobalAlloc(GMEM_MOVEABLE, killSize + 1)) != NULL)
     {
-        for (killp = klhead->kill; killp != NULL; killp = killp->next)
+        bufp = GlobalLock(hmem);
+        
+        /* Copy the data into the buffer */
+        if(noEmpty)
+            *bufp++ = ' ';
+        else if(klhead != NULL)
         {
-            dd = killp->data;
-            while((cc = *dd++))
+            for (killp = klhead->kill; killp != NULL; killp = killp->next)
             {
-                /* Convert the end of line to CR/LF */
-                if (cc == meCHAR_NL)
-                    *bufp++ = '\r';
-                /* Convert any special characters */
-                else if ((meSystemCfg & meSYSTEM_FONTFIX) && (cc < TTSPECCHARS))
-                    cc = ttSpeChars [cc];
-                /* Copy in the character */
-                *bufp++ = cc;
+                dd = killp->data;
+                while((cc = *dd++))
+                {
+                    /* Convert the end of line to CR/LF */
+                    if (cc == meCHAR_NL)
+                        *bufp++ = '\r';
+                    /* Convert any special characters */
+                    else if ((meSystemCfg & meSYSTEM_FONTFIX) && (cc < TTSPECCHARS))
+                        cc = ttSpeChars [cc];
+                    /* Copy in the character */
+                    *bufp++ = cc;
+                }
             }
         }
+        
+        /* NULL terminate the buffer and unlock */
+        *bufp = '\0';                       /* Null terminate string */
+        GlobalUnlock(hmem) ;                /* Unlock the memory region */
     }
+    else
+        hmem = GlobalAlloc (GHND, 1);
 
-    /* NULL terminate the buffer and unlock */
-    *bufp = '\0';                       /* Null terminate string */
-    GlobalUnlock (hmem);                /* Unlock the memory region */
-    return (hmem);
+    return hmem ;
 }
 
 /*
@@ -1900,7 +1901,9 @@ WinKillToClipboard (void)
 void
 TTsetClipboard (void)
 {
-    /* fprintf(logfp,"In TTsetClipboard %x\n",clipState) ;*/
+    /* fprintf(logfp,"In TTsetClipboard %x - %d\n",clipState,*/
+    /*            ((!(clipState & CLIP_OWNER) || (clipState & CLIP_STALE)) &&*/
+    /*             !(meSystemCfg & meSYSTEM_NOCLIPBRD) && (kbdmode != mePLAY))) ;*/
     /* fflush(logfp) ;*/
     
     /* We aquire the clipboard and flush it under the following conditions;
@@ -1910,7 +1913,7 @@ TTsetClipboard (void)
      * aquire our next data block that has changed. */
     if((!(clipState & CLIP_OWNER) || (clipState & CLIP_STALE)) &&
        !(meSystemCfg & meSYSTEM_NOCLIPBRD) && (kbdmode != mePLAY) &&
-        (OpenClipboard(baseHwnd) == meTRUE))
+       OpenClipboard(baseHwnd))
     {
         if(clipState & CLIP_OWNER)
             /* if we are currently the owner of the clipboard, the call to EmptyClipboard
@@ -1938,33 +1941,34 @@ TTgetClipboard(void)
     meUByte cc;                           /* Local character buffer */
     meUByte *dd, *tp;                     /* Pointers to the data areas */
 
-    /* fprintf(logfp,"In TTgetClipboard %x\n",clipState) ;*/
+    /* fprintf(logfp,"In TTgetClipboard %x - %d\n",clipState,*/
+    /*            (!(clipState & CLIP_OWNER) && (kbdmode != mePLAY) && !(meSystemCfg & meSYSTEM_NOCLIPBRD))) ;*/
     /* fflush(logfp) ;*/
     
     /* Check the standard clipboard status, if owner or it has
      * been disabled then there's nothing to do */
-    if((clipState & CLIP_OWNER) || (kbdmode == mePLAY) || (meSystemCfg & meSYSTEM_NOCLIPBRD))
+    if((clipState & CLIP_OWNER) || (kbdmode == mePLAY) ||
+       (meSystemCfg & meSYSTEM_NOCLIPBRD) || !OpenClipboard(baseHwnd))
         return ;
 
     /* fprintf(logfp,"Cont TTgetClipboard %x\n",clipState) ;*/
     /* fflush(logfp) ;*/
     /* Get the data from the clipboard */
-    OpenClipboard (baseHwnd);
     if ((hmem = GetClipboardData ((ttlogfont.lfCharSet == OEM_CHARSET) ? CF_OEMTEXT : CF_TEXT)) != NULL)
     {
         int len;
         meUByte *tmpbuf;
-
+        
         bufp = GlobalLock (hmem);       /* Lock global buffer */
         len = strlen (bufp);            /* Get length of text */
-
+        
         /* Compute the length of the data and construct
          * a stripped down copy of the string excluding the
          * '\r' characters
          */
         if ((tmpbuf = (meUByte *) meMalloc (len+1)) == NULL)
             goto do_unlock;             /* Failed memory allocation */
-
+        
         tp = tmpbuf;                    /* Start of the temporary buffer */
         dd = bufp;                      /* Start of clipboard data */
         while ((cc = *dd++) !='\0')
@@ -1975,10 +1979,10 @@ TTgetClipboard(void)
                 *tp++ = cc;
         }
         *tp = '\0';
-
+        
         /* Make sure that it is not the same as the current
          * save buffer head */
-
+        
         if ((len == 0) ||
             (klhead == NULL) ||
             (klhead->kill == NULL) ||
@@ -5636,8 +5640,8 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmd
                     _CRTDBG_LEAK_CHECK_DF|_CRTDBG_DELAY_FREE_MEM_DF);
 #endif
 
-/*    if(logfp == NULL)*/
-/*        logfp = fopen("log","w+") ;*/
+    /* if(logfp == NULL)*/
+    /*    logfp = fopen("log","w+") ;*/
 
 #ifdef _ME_WINDOW
     /* Initialise the window data and register window class */
@@ -6194,18 +6198,18 @@ do_window_resize:
         break;
 
     case WM_RENDERALLFORMATS:           /* Clipboard data requests */
+        /* fprintf(logfp,"Got WM_RENDERALLFORMATS message %x %x %x\n",clipState,GetClipboardOwner(),baseHwnd) ;*/
+        /* fflush(logfp) ;*/
+        if(!OpenClipboard(baseHwnd))
+            break ;
+        EmptyClipboard();
     case WM_RENDERFORMAT:
+        /* fprintf(logfp,"Got WM_RENDERFORMAT message %x %x %x\n",clipState,GetClipboardOwner(),baseHwnd) ;*/
+        /* fflush(logfp) ;*/
         {
             HANDLE hmem;
-
             hmem = WinKillToClipboard ();
-            if (hmem == NULL)
-                hmem = GlobalAlloc (GHND, 1);
-
-            OpenClipboard(baseHwnd);
-            EmptyClipboard();
             SetClipboardData ((ttlogfont.lfCharSet == OEM_CHARSET) ? CF_OEMTEXT : CF_TEXT, hmem);
-            CloseClipboard ();
             /* Force the stale state. If another application is pulling data
              * from us while we are the clipboard owner we must force the
              * clipboard to be refreshed whenever the 'yank' buffer changes.
@@ -6213,7 +6217,11 @@ do_window_resize:
              * us to process optimally and not to continually report a
              * clipboard change whenever we change the yank data. */
             clipState |= CLIP_STALE;
+            /* fprintf(logfp,"Cont WM_RENDERFORMAT %x\n",clipState) ;*/
+            /* fflush(logfp) ;*/
         }
+        if(message == WM_RENDERALLFORMATS)
+            CloseClipboard();
         break;
 
     case WM_PAINT:
@@ -6324,8 +6332,8 @@ do_window_resize:
 
     default:
 unhandled_message:
-/*        fprintf(logfp,"Unhandled message %x %x %x\n",message, wParam, lParam) ;*/
-/*        fflush(logfp) ;*/
+        /* fprintf(logfp,"Unhandled message %x %x %x\n",message, wParam, lParam) ;*/
+        /* fflush(logfp) ;*/
         {
             int ii ;
             ii = DefWindowProc(hWnd, message, wParam, lParam) ;

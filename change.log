@@ -4,18 +4,20 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <040317.2140>
+>  Last Modified : <040318.2253>
 >
 
 7th Release - March 2004
 
+    [040318] Fix to Microsoft Windows clipboard when operating with VNC.
+
     [040317] Macro and source release set to "20040301".
-    
+
     [040317] Added "find" command to macro set.
-    
+
     [040317] Corrected  "rgrep" to use the  "%find-com" to specify the find(1)
              command.
-    
+
     [040310] Fix to graphical diff ("gdiff").  Occasions where all changes had
              been   accepted  and  the  changes  could  not  be  saved.  gdiff
              incorrectly prompted user to accept all changes first.
