@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd103.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd103.2,v 2.6 2005-03-20 15:59:25 jon Exp $
 .Im MicroEmacs command|essential
 .ds C0 "(\fB\*ez\fR)\ \&
 .ds C1 "(\fB\*(cX\*cc\fR)\ \&
@@ -20,9 +20,17 @@ save-buffers-exit-emacs \- Exit the editor prompt user to write changes
 .Me $a
 .SH SYNOPSIS
 .na
+.I n
 \fBquick-exit\fR \*(C0
+[
+.I exitCode
+]
 .br
+.I n
 \fBsave-buffers-exit-emacs\fR \*(C1
+[
+.I exitCode
+]
 .ad
 .SH DESCRIPTION
 .B quick-exit
@@ -31,13 +39,84 @@ changed dictionaries, killing any running commands and exits the editor.
 .PP
 .B save-buffers-exit-emacs
 operates a \fBquick-exit\fR only prompts the user before saving any files.
+.PP
+The numeric argument is defined as a bit-mask as follows:
+.IP "\fC1\fR"
+Prompting the user before saving any files, writes out all changed  buffers to
+the files they were read from. Saves all  changed  dictionaries,  killing  any
+running   commands   and   exits  the   editor.   This  bit  is   ignored   on
+\fBquick-exit\fR.
+.IP "\fC2\fR"
+Writes  out all  changed  buffers to the files they were read from,  saves all
+changed  dictionaries, killing any running commands and exits the editor. 
+The  behavior is modified by flags  \fC8\fR and  \fC16\fR.  This bit is always
+applied irrespective of the numeric argument. 
+.IP "\fC4\fR"
+Define the exit code \fIexitCode\fR from \*(mS, the default when omitted is 0.
+.IP "\fC8\fR"
+Discard  changed  buffers  (except the  history and  registry)  and delete any
+backup  files   associated   with  the  edited   buffer(s).  Only  valid  with
+\fBquick-exit\fR.
+.IP "\fC16\fR"
+Discard  changed  buffers  (except the history and registry) and create a auto
+save  file(s)  with  the  changes  from  unsaved   buffers.  Only  valid  with
+\fBquick-exit\fR.
+.SH "MACRO INTERACTION"
+If the macro 
+.Ht shut-down 3
+is defined  then it is invoked by the editor when it is closed. A user defined
+shutdown action may be associated with the close  operation. It is the callers
+responsibility  that the macro terminates  correctly otherwise the editor will
+hang.
+.SH EXAMPLE
+The exit code (\fC22\fR in this example) may be usefully set as follows, which
+allows the exit code to be specified and any user prompts are maintained.
+.Me $emf-scheme
+.CS
+7 save-buffers-exit-emacs "22" @mna
+.CE 1
+.Me $ehf-scheme
+The  behavior  of the exit  command  may be  changed,  the  following  example
+replaces the standard binding with a new exit command. The new command always
+prompts the user to confirm the exit. Note that 
+.B save-buffers-exit-emacs
+is invoked with argument 
+.Ht @mna 4
+which runs the command as if executed  from the command  line. This allows the
+command line interaction if any buffers are to be saved.
+.Me $emf-scheme
+.CS
+define-macro my-exit-emacs
+    !if &iseq @mc1 "Exit Emacs - Are you sure [y/n] ? " "yYnN" "y"
+        save-buffers-exit-emacs @mna
+    !endif
+!emacro
+global-bind-key my-exit-emacs "esc z"
+global-bind-key my-exit-emacs "C-x C-c"
+.CE
+.Me $ehf-scheme
+To discard unsaved buffers without prompting then the exit command key binding
+may be redefined:-
+.Me $emf-scheme
+.CS
+8 global-bind-key quick-exit "esc z"
+.CE
+.Me $ehf-scheme
+If the unsaved buffers should be saved as a recovery  file(s) then the binding
+may be defined as:-
+.Me $emf-scheme
+.CS
+16 global-bind-key quick-exit "esc z"
+.CE 0
+.Me $ehf-scheme
 .SH NOTES
 All buffers  with a name  starting  with a '\fB*\fR'  are assumed to be system
 buffer (i.e. \fB*scratch*\fR) and are not saved.
 .SH "SEE ALSO"
 .na
 .Ht exit-emacs 2 ,
-.Ht save-buffer 2 .
+.Ht save-buffer 2 ,
+.Ht shut-down 3 .
 .ad
 .rm C0
 .rm C1
