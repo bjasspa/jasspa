@@ -60,10 +60,12 @@
 #include <termios.h>
 struct  termios otermio;        /* original terminal characteristics */
 struct  termios ntermio;        /* charactoristics to use inside */
+typedef struct termios *meTermio ;
 #else
 #include <termio.h>
 struct  termio  otermio;        /* original terminal characteristics */
 struct  termio  ntermio;        /* charactoristics to use inside */
+typedef struct termio *meTermio ;
 #endif /* _TERMIOS */
 #endif /* _USG */
 
@@ -2175,6 +2177,51 @@ special_bound:
  * TCAP FUNCTIONS                                                           *
  ****************************************************************************/
 
+#ifdef _USG
+/* Get the terminal attributes structure. There are cases when the call will
+ * fail we have been launched off the desktop via an open action. Return an
+ * integer status of -1 if the call failed and we filled in the values. */
+static int
+TCAPgetattr (meTermio p)
+{
+#ifdef _TERMIOS
+    if (tcgetattr (0, p) < 0)
+#else
+    if (ioctl(0, TCGETA, p) < 0)
+#endif
+    {
+        /* Input flag defaults */
+        p->c_iflag = BRKINT|ICRNL|IXANY;
+        /* Output flag defaults */
+        p->c_oflag = OPOST|ONLCR;
+        /* Control modes */
+        p->c_cflag = CS8|CREAD|HUPCL;
+        /* Local modes */
+        p->c_lflag = ISIG|ICANON|ECHO|ECHOE|ECHOK|ECHOCTL|ECHOKE;
+        
+        /* Terminal special characters */
+        p->c_cc [VINTR] = 'C' - '@';    /* C-c : CINTR */
+        p->c_cc [VQUIT] = CQUIT;        /* FS, cntl | */
+        p->c_cc [VERASE] = 'H' - '@';   /* Backspace or '#' 0x7f */
+        p->c_cc [VKILL] = 'K' - '@';    /* '@' */
+        p->c_cc [VEOF] = CEOF;          /* C-d */
+        p->c_cc [VEOL] = 'J' - '@';     /* C-j */
+        p->c_cc [VMIN] = 1;
+        p->c_cc [VTIME] = 0;
+#ifdef _TERMIOS
+        p->c_cc [VWERASE] = 'H' - '@';  /* '#' */
+        p->c_cc [VLNEXT] = CLNEXT;      /* C-v */
+        p->c_cc [VDSUSP] = CSUSP;       /* C-z */
+        p->c_cc [VSUSP] = CSUSP;        /* C-z */
+        p->c_cc [VSTART] = CSTART;      /* C-q */
+        p->c_cc [VSTOP]  = CSTOP;       /* C-s */
+#endif
+        return -1;                      /* Original call failed */
+    }
+    return 0;
+}
+#endif /* _USG */
+
 int
 TCAPstart(void)
 {
@@ -2184,13 +2231,11 @@ TCAPstart(void)
     char err_str[72];
     int  ii ;
     
+    /* Get the attributes from the system */
 #ifdef _USG
-#ifdef _TERMIOS
-    tcgetattr (0, &otermio);
-#else
-    ioctl(0, TCGETA, &otermio) ;
+    TCAPgetattr (&otermio);
 #endif
-#endif
+    
     /* default to use fonts - usually supports reverse */
     meSystemCfg &= ~meSYSTEM_RGBCOLOR ;
     meSystemCfg |= (meSYSTEM_CONSOLE|meSYSTEM_FONTS) ;
@@ -3011,40 +3056,8 @@ XTERMstart(void)
      * uninitialised if we have been launched off the desktop via an open
      * action. */
 #ifdef _USG
-#ifdef _TERMIOS
-    if (tcgetattr (0, &otermio) < 0)
-#else
-    if (ioctl(0, TCGETA, &otermio) < 0)
+    TCAPgetattr (&otermio);
 #endif
-    {
-        /* Input flag defaults */
-        otermio.c_iflag = BRKINT|ICRNL|IXANY;
-        /* Output flag defaults */
-        otermio.c_oflag = OPOST|ONLCR;
-        /* Control modes */
-        otermio.c_cflag = CS8|CREAD|HUPCL;
-        /* Local modes */
-        otermio.c_lflag = ISIG|ICANON|ECHO|ECHOE|ECHOK|ECHOCTL|ECHOKE;
-        
-        /* Terminal special characters */
-        otermio.c_cc [VINTR] = 'C' - '@';    /* C-c : CINTR */
-        otermio.c_cc [VQUIT] = CQUIT;        /* FS, cntl | */
-        otermio.c_cc [VERASE] = 'H' - '@';   /* Backspace or '#' 0x7f */
-        otermio.c_cc [VKILL] = 'K' - '@';    /* '@' */
-        otermio.c_cc [VEOF] = CEOF;          /* C-d */
-        otermio.c_cc [VEOL] = 'J' - '@';     /* C-j */
-        otermio.c_cc [VMIN] = 1;
-        otermio.c_cc [VTIME] = 0;
-#ifdef _TERMIOS
-        otermio.c_cc [VWERASE] = 'H' - '@';  /* '#' */
-        otermio.c_cc [VLNEXT] = CLNEXT;      /* C-v */
-        otermio.c_cc [VDSUSP] = CSUSP;       /* C-z */
-        otermio.c_cc [VSUSP] = CSUSP;        /* C-z */
-        otermio.c_cc [VSTART] = CSTART;      /* C-q */
-        otermio.c_cc [VSTOP]  = CSTOP;       /* C-s */
-#endif
-    }
-#endif /* _USG */
     
     /* Configure X-Windows */
     XSetLocaleModifiers ("");
