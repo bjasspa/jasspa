@@ -260,15 +260,10 @@ execute(register int c, register int f, register int n)
     }
 #endif
     
-    if (kbdmode != mePLAY)
-    {
-#ifdef _CLIPBRD
-        clipState |= CLIP_TRY_GET|CLIP_TRY_SET ;
-#endif
 #if MEOPT_UNDO
+    if(kbdmode != mePLAY)
         undoContFlag++ ;
 #endif
-    }
     lastCommand = thisCommand ;
     lastIndex = thisIndex ;
     thisCommand = c ;

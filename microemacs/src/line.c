@@ -866,8 +866,7 @@ killSave(void)
     currkill = &(thiskl->kill) ;
 
 #ifdef _CLIPBRD
-    if(clipState & (CLIP_TRY_SET|CLIP_STALE))
-        TTsetClipboard() ;
+    TTsetClipboard() ;
 #endif
 
     return meTRUE ;
@@ -1531,8 +1530,7 @@ yank(int f, int n)
     }
         
 #ifdef _CLIPBRD
-    if(clipState & CLIP_TRY_GET)
-        TTgetClipboard() ;
+    TTgetClipboard() ;
 #endif
     /* make sure there is something to yank */
     if(klhead == NULL)

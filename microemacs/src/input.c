@@ -1570,8 +1570,7 @@ input_expand:
                 meKillNode *killp;
                 
 #ifdef _CLIPBRD
-                if((clipState & CLIP_TRY_GET) || (kbdmode != mePLAY))
-                    TTgetClipboard() ;
+                TTgetClipboard() ;
 #endif
                 if(klhead == (meKill*) NULL)
                 {

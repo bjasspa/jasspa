@@ -1900,25 +1900,29 @@ WinKillToClipboard (void)
 void
 TTsetClipboard (void)
 {
-    clipState &= ~CLIP_TRY_SET ;
-    
-    if(meSystemCfg & meSYSTEM_NOCLIPBRD)
-        /* system clipboard has been disabled - do nothing */
-        return ;
+    /* fprintf(logfp,"In TTsetClipboard %x\n",clipState) ;*/
+    /* fflush(logfp) ;*/
     
     /* We aquire the clipboard and flush it under the following conditions;
      * "We do NOT own it" or "Clipboard is stale". The clipboard becomes stale
      * when we own it but another application has aquired our clipboard data.
      * In this case we need to reset the clipboard so that the application may
      * aquire our next data block that has changed. */
-    if (((clipState ^ CLIP_OWNER) & (CLIP_OWNER|CLIP_STALE)) &&
+    if((!(clipState & CLIP_OWNER) || (clipState & CLIP_STALE)) &&
+       !(meSystemCfg & meSYSTEM_NOCLIPBRD) && (kbdmode != mePLAY) &&
         (OpenClipboard(baseHwnd) == meTRUE))
     {
-        EmptyClipboard ();
+        if(clipState & CLIP_OWNER)
+            /* if we are currently the owner of the clipboard, the call to EmptyClipboard
+             * will generate a WM_DESTROYCLIPBOARD to this window, ignore it! */
+            clipState |= CLIP_IGNORE_DC ;
+        EmptyClipboard();
         SetClipboardData (((ttlogfont.lfCharSet == OEM_CHARSET) ? CF_OEMTEXT : CF_TEXT), NULL);
         CloseClipboard ();
         clipState |= CLIP_OWNER ;
         clipState &= ~CLIP_STALE ;
+        /* fprintf(logfp,"Set TTsetClipboard %x\n",clipState) ;*/
+        /* fflush(logfp) ;*/
     }
 }
 
@@ -1934,13 +1938,16 @@ TTgetClipboard(void)
     meUByte cc;                           /* Local character buffer */
     meUByte *dd, *tp;                     /* Pointers to the data areas */
 
-    clipState &= ~CLIP_TRY_GET ;
-
+    /* fprintf(logfp,"In TTgetClipboard %x\n",clipState) ;*/
+    /* fflush(logfp) ;*/
+    
     /* Check the standard clipboard status, if owner or it has
      * been disabled then there's nothing to do */
-    if((clipState & CLIP_OWNER) || (meSystemCfg & meSYSTEM_NOCLIPBRD))
+    if((clipState & CLIP_OWNER) || (kbdmode == mePLAY) || (meSystemCfg & meSYSTEM_NOCLIPBRD))
         return ;
 
+    /* fprintf(logfp,"Cont TTgetClipboard %x\n",clipState) ;*/
+    /* fflush(logfp) ;*/
     /* Get the data from the clipboard */
     OpenClipboard (baseHwnd);
     if ((hmem = GetClipboardData ((ttlogfont.lfCharSet == OEM_CHARSET) ? CF_OEMTEXT : CF_TEXT)) != NULL)
@@ -6273,6 +6280,15 @@ do_window_resize:
         }
         break;
         
+    case WM_DESTROYCLIPBOARD: 
+        /* fprintf(logfp,"Got WM_DESTROYCLIPBOARD message %x %x %x\n",clipState,GetClipboardOwner(),baseHwnd) ;*/
+        /* fflush(logfp) ;*/
+        if(clipState & CLIP_IGNORE_DC)
+            clipState &= ~CLIP_IGNORE_DC ;
+        else if(clipState & CLIP_OWNER)
+            clipState &= ~CLIP_OWNER ;
+        break;
+
 #ifdef WM_INPUTLANGCHANGE
     case WM_INPUTLANGCHANGE:
         /* the user has changed language, change the font type if different */
