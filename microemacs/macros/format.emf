@@ -145,16 +145,14 @@ define-macro delete-indentation
     set-variable #l1 $window-line
     beginning-of-line
     !while &les $window-line #l0
-        !force -1 search-forward "^[ \t]*[^]*).-]?[^]*).-]?[^]*).-]?[]*).-][ \t]"
+        !force -1 search-forward &spr "^[ \t]*[^%s]\\{0,3\\}[%s][ \t]" .ifill-para2.bullet .ifill-para2.bullet
         !if $status
             2 backward-char
             set-variable #l2 &mid @wl $window-col 1
             beginning-of-line
             search-forward "^[ \t]*"
-            !if &sin #l2 "*.-"
-                set-variable #l2 &cat "\\" #l2
-            !endif
-            set-variable #l2 &spr "^%s%s%s%s" &lef @wl $window-col "[^]*).-]?[^]*).-]?[^]*).-]?" #l2 "[ \t]"
+            str-to-regex #l2
+            set-variable #l2 &spr "^%s[^%s]\\{0,3\\}%s[ \t]" &lef @wl $window-col .ifill-para2.bullet #l2
             beginning-of-line
             forward-line
             !force &sub &sub $window-line #l0 1 search-forward #l2
@@ -260,6 +258,16 @@ define-macro ifill-paragraph
     !else
         !return
     !endif
+    !if &les &len &set #l2 &rep $fill-bullet "]" "" &len $fill-bullet
+        set-variable #l2 &cat "]" #l2
+    !endif
+    !if &les &len &set #l3 &rep #l2 "\\" "" &len #l2
+        set-variable #l3 &cat #l3 "\\\\"
+    !endif
+    !if &les &len &set #l2 &rep #l3 "-" "" &len #l3
+        set-variable #l2 &cat #l2 "\\-"
+    !endif
+    set-variable .ifill-para2.bullet #l2
     set-variable #l1 &cond &bmod "magic" 1 -1
     1 buffer-mode "magic"
     beginning-of-line

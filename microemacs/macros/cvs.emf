@@ -21,13 +21,14 @@ set-variable .cvs.message ""
 
 !if &band .hilight.flags 0x02
     ; fix the *files* buffer hilighting for cvs additions
-    hilight .hilight.dirlst 0x012 "[0-9][0-9]:[0-9][0-9] [0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9] [0-9][0-9]:[0-9][0-9] \\{" ..scheme.file
-    hilight .hilight.dirlst 0x112 "*[?AMCR]" .scheme.select
+    hilight .hilight.dirlst 0x012 "[0-9][0-9]:[0-9][0-9] [0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9] [0-9][0-9]:[0-9][0-9] \\{" .scheme.file
+    hilight .hilight.dirlst 0x112 "*[?AMCRU]" .scheme.select
     hilight .hilight.dirlst 0x112 " \\?"     .scheme.keyword
     hilight .hilight.dirlst 0x112 " A"       .scheme.type
     hilight .hilight.dirlst 0x112 " M"       .scheme.operator
     hilight .hilight.dirlst 0x112 " C"       .scheme.error
     hilight .hilight.dirlst 0x112 " R"       .scheme.error
+    hilight .hilight.dirlst 0x112 " U"       .scheme.variable
     !if &not &exist .hilight.cvs
         set-variable .hilight.cvs &pinc .hilight.next 1
     !endif
@@ -331,7 +332,7 @@ define-macro cvs-resolve-conflicts
     !if &not &sin "Revis'n" .fhook-dirlst.col-name
         set-variable #l0 &lef .fhook-dirlst.col-name 1
         set-variable .fhook-dirlst.col-name &spr "%sRevis'n%sRepository Date %s" .fhook-dirlst.col-name #l0 #l0
-        set-variable .fhook-dirlst.col-flag &spr "%s1%1%s" ..fhook-dirlst.col-flag #l0 #l0
+        set-variable .fhook-dirlst.col-flag &spr "%s1%1%s" .fhook-dirlst.col-flag #l0 #l0
     !endif
     !if &seq &lef $buffer-fname 6 "ftp://"
         ; ftp directories not supported
@@ -557,7 +558,7 @@ define-macro cvs-resolve-conflicts
     !endif
     goto-position "\x82"
     set-variable $mouse #l5
-    !if &lfind "|1|2|6|" @#
+    !if &lfind "|1|2|6|9|" @#
         ; if update, commit or add then refresh or drop tags
         !if &band .find-file.flags 1
             dirlst-refresh
@@ -575,8 +576,8 @@ define-macro cvs-resolve-conflicts
         osd .osd.tmp 20 "" "&Commit files"      2 osd-cvs-file-menu-cmd
         osd .osd.tmp 40 "" "&Log files"         4 osd-cvs-file-menu-cmd
         osd .osd.tmp 50 "" "&Status files"      5 osd-cvs-file-menu-cmd
-        osd .osd.tmp 54 "" "&Add files"         6 osd-cvs-file-menu-cmd
-        osd .osd.tmp 54 "" "&Add binary files"  9 osd-cvs-file-menu-cmd
+        osd .osd.tmp 53 "" "&Add files"         6 osd-cvs-file-menu-cmd
+        osd .osd.tmp 54 "" "Add &binary files"  9 osd-cvs-file-menu-cmd
         osd .osd.tmp 55 "" "Remove files"       7 osd-cvs-file-menu-cmd
     !else
         osd .osd.tmp 10 "" "Update files"
@@ -584,7 +585,8 @@ define-macro cvs-resolve-conflicts
         osd .osd.tmp 30 "" "Diff files"
         osd .osd.tmp 40 "" "Log files"
         osd .osd.tmp 50 "" "Status files"
-        osd .osd.tmp 54 "" "Add files"
+        osd .osd.tmp 53 "" "Add files"
+        osd .osd.tmp 54 "" "Add binary files"
         osd .osd.tmp 55 "" "Remove files"
     !endif
     osd .osd.tmp 5  "" "Check&out files"        8 osd-cvs-file-menu-cmd
@@ -609,7 +611,7 @@ define-macro cvs
     15 resize-window-vertically
     find-buffer "*cvs-console*"
     buffer-bind-create "bio" "delete" "" file-browser-close
-    previous-window
+    3 previous-window
     file-browser-init
 !emacro
 

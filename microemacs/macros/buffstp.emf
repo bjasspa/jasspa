@@ -262,6 +262,8 @@ define-macro buffer-help
         buffer-help-add-item "auto-spell" "0" "Enable/Disable Auto-Spell"
         buffer-help-add-item "auto-spell-buffer" "" "Auto-Spell Buffer"
         buffer-help-add-item "auto-spell-reset" "" "Reset Auto-Spell"
+        buffer-help-add-item "auto-spell-ignore" "1" "Auto-Spell Ignore current word"
+        buffer-help-add-item "auto-spell-ignore" "2" "Auto-Spell Add current word to personal dictionary"
     !endif
     !if &exi &ind &spr ".%s.item-list-s1" $buffer-fhook
         buffer-help-add-item "" "" ""
@@ -374,6 +376,8 @@ define-macro buffer-help
         buffer-tool-add-item "auto-spell" "0" "Enable/Disable Auto-Spell" #l8
         buffer-tool-add-item "auto-spell-buffer" "" "Auto-Spell Buffer" #l8
         buffer-tool-add-item "auto-spell-reset" "" "Reset Auto-Spell" #l8
+        buffer-tool-add-item "auto-spell-ignore" "1" "Auto-Spell Ignore word" #l8
+        buffer-tool-add-item "auto-spell-ignore" "2" "Auto-Spell Add word to Dic" #l8
     !endif
     !if &set #l7 &exi &ind &spr ".%s.item-list-s1" $buffer-fhook
         buffer-tool-add-item "" "" "" #l8

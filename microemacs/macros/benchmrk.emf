@@ -176,9 +176,9 @@ define-macro start-up
 !emacro
 
 define-macro disptest
-    set-variable #l0 100
+    set-variable #l0 1000
     !while &dec #l0 1
-        screen-update
+        1 screen-update
     !done
 !emacro
 

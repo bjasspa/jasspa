@@ -27,7 +27,11 @@ define-macro ftp
 !endif
 
 0 define-macro ftp-create-layout
-    delete-other-windows
+    !if .toolbar.open
+        toolbar-close
+    !endif
+    3 delete-other-windows
+    set-variable $window-flags 0
     !if &sin "s" %ftp-flags
         2 split-window-vertically
         15 resize-window-vertically

@@ -87,7 +87,7 @@
     !elif &seq :pat-char "%"
         1 screen-poke #g2 #g3 .scheme.cardback :pat-card-none
         set-variable #g2 &add #g2 1
-        !if &less #g2 &sub $screen-depth 2
+        !if &less #g2 &sub $frame-depth 2
             !jump -3
         !endif
     !elif &seq :pat-char "#"

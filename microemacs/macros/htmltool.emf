@@ -53,7 +53,7 @@
     !if &band #p5 0x200
         set-variable #p1 &sub #p1 2
     !endif
-    set-variable #p5 &band #p5 0xc38
+    set-variable #p5 &band #p5 0xfcb8
     set-variable #p4 0
 !emacro
 
@@ -61,13 +61,13 @@
     !if &band #p5 0x10
         !if &band #p5 0x80
             insert-string "\ele"
-            set-variable #p8 &band #p8 0x7f
+            set-variable #p8 &band #p8 0xff7f
             !if #p8
                 insert-string &cat "\ec" &mid .html-to-ehf.colors #p8 1
             !endif
         !else
             set-mark
-            -1 search-backward "\els"
+            search-backward "\els"
             -1 kill-region
         !endif
         ; Remove 10 & 80 (link and text)
@@ -141,7 +141,7 @@
                 set-variable #l4 &add #l4 1
                 set-variable #l0 #l4
                 set-variable #l7 $window-col
-                set-variable #l5 &band #l5 0xffb
+                set-variable #l5 &band #l5 0xfffb
             !endif
             !jump -46
         !elif &seq @wc "&"
@@ -196,7 +196,7 @@
                     !if &iseq &lef #l3 1 "H"
                         !if &sin &mid #l3 1 1 "1234"
                             !if &band #l8 8
-                                set-variable #l8 &band #l8 0xf7
+                                set-variable #l8 &band #l8 0xfff7
                                 !if &not &band #l8 0x80
                                     insert-string &cat "\ec" &mid .colors #l8 1
                                 !endif
@@ -216,7 +216,7 @@
                         !endif
                     !elif &iseq #l3 "B>"
                         !if &band #l8 4
-                            set-variable #l8 &band #l8 0xfb
+                            set-variable #l8 &band #l8 0xfffb
                             !if &not &band #l8 0x80
                                 insert-string &cat "\ec" &mid .colors #l8 1
                             !endif
@@ -233,7 +233,7 @@
                         !endif
                     !elif &iseq #l3 "I>"
                         !if &band #l8 2
-                            set-variable #l8 &band #l8 0xfd
+                            set-variable #l8 &band #l8 0xfffd
                             !if &not &band #l8 0x80
                                 insert-string &cat "\ec" &mid .colors #l8 1
                             !endif
@@ -243,10 +243,10 @@
                             html-add-newline
                         !endif
                         html-add-newline
-                        set-variable #l5 &band #l5 0xfdf
+                        set-variable #l5 &band #l5 0xffdf
                     !elif &iseq #l3 "TT>"
                         !if &band #l8 0x20
-                            set-variable #l8 &band #l8 0xdf
+                            set-variable #l8 &band #l8 0xffdf
                             !if &not &band #l8 0x80
                                 insert-string &cat "\ec" &mid .colors #l8 1
                             !endif
@@ -256,10 +256,10 @@
                             html-add-newline
                         !endif
                         html-add-newline
-                        set-variable #l5 &band #l5 0xf9f
+                        set-variable #l5 &band #l5 0xff9f
                     !elif &iseq #l3 "U>"
                         !if &band #l8 1
-                            set-variable #l8 &band #l8 0xfe
+                            set-variable #l8 &band #l8 0xfffe
                             !if &not &band #l8 0x80
                                 insert-string &cat "\ec" &mid .colors #l8 1
                             !endif
@@ -346,6 +346,8 @@
                             set-variable #l5 &band #l5 0xffe
                         !elif &iseq #l3 "DIV>"
                             html-add-newline
+                        !elif &iseq #l3 "DEBUG>"
+                            set-variable $debug 1
                         !endif
                     !elif &iseq &lef #l3 1 "S"
                         !if &iseq &left #l3 6 "SCRIPT"

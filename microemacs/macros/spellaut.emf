@@ -95,7 +95,7 @@
                             set-variable #l2 &cat &rig $result 1 "\\}[^[:alnum:]]"
                         !endif
                         !if &inw #l2
-                            !force hilight $buffer-hilight 0 &cat "[^[:sword:]]\\{" #l2  .scheme.error
+                            !force hilight $buffer-hilight 0 &cat "[^[:word:]]\\{" #l2  .scheme.error
                         !else
                             !force hilight $buffer-hilight 0 &cat "[^[:alnum:]]\\{" #l2  .scheme.error
                         !endif
@@ -155,6 +155,36 @@
 !emacro
 
 set-variable .auto-spell-input.status "0"
+
+define-macro auto-spell-ignore
+    set-variable #l0 $buffer-mask
+    set-variable $buffer-mask "luh"
+    !force !force 0 spell
+    set-variable $buffer-mask #l0
+    !if &seq &lef $result 1 "E"
+        set-variable #l1 &rig $result 1
+        !if &equ @# 2
+            ; add word to personal dictionary
+            5 spell #l1 ""
+        !else
+            ; ignore the word
+            13 spell #l1 ""
+        !endif
+        ; re-hilight the word in global scheme - i.e. unhilight
+        !if &inw &rig $result &sub &len #l1 1
+            set-variable #l2 &cat #l1 "\\}[^[:sword:]]"
+        !else
+            set-variable #l2 &cat #l1 "\\}[^[:alnum:]]"
+        !endif
+        !if &inw #l2
+            !force hilight $buffer-hilight 0 &cat "[^[:sword:]]\\{" #l2  $global-scheme
+        !else
+            !force hilight $buffer-hilight 0 &cat "[^[:alnum:]]\\{" #l2  $global-scheme
+        !endif
+        ; force this line to be redrawn
+        set-variable $line-scheme $line-scheme
+    !endif
+!emacro
 
 define-macro auto-spell-buffer
     ml-write "[auto-spelling buffer..."

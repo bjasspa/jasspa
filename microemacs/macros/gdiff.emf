@@ -390,7 +390,7 @@ set-variable %gdiff-com &cond &seq %gdiff-com "ERROR" "diff -c -w" %gdiff-com
     !elif &lfi "|mouse-drop-1|" @cck
         gdiff-mouse-drop-1
     !elif &lfi "|mouse-drop-3|f1|" @cck
-        !if &and &gre $mouse-x 15 &les &sub $screen-width $mouse-x 32 
+        !if &and &gre $mouse-x 15 &les &sub $frame-width $mouse-x 32 
             osd .osd.gdiff 60  "Mdiw" "&Global"  .osd.gdiff-s  "0 gdiff-menu-sel"
             osd .osd.gdiff 70  "Mdiw" "&Region"  .osd.gdiff-s "16 gdiff-menu-sel"
             osd .osd.gdiff 80  "Mdiw" "&Line"    .osd.gdiff-s "32 gdiff-menu-sel"

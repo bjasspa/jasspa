@@ -681,7 +681,7 @@ define-macro dbx
     goto-alpha-mark "I"
     beginning-of-line
     set-variable #g4 #l1
-    !force &sub -1 &sub $window-line :last-line search-backward "^\\w+::(\\([^)]+\\):\\([0-9]+\\)):"
+    !force &sub -1 &sub $window-line :last-line search-backward "^\\w+::\\w*(\\([^)]+\\):\\([0-9]+\\)):"
     !if $status
         set-variable #l2 @s1
         set-variable #l3 @s2

@@ -1,0 +1,315 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     Tue Apr 16 2002
+; Synopsis:    Toolbar creation and management routines
+; Authors:     Steven Phillips
+; Notes:
+;     The toolbar is configured by the following 6 variables:
+;
+;     .toolbar.width - Sets the default width of the left hand vertical toolbar
+;     .toolbar.depth - Sets the default depth of the top horizontal toolbar
+;     .toolbar.tool-flags   - A list defining the location & behaviour of each tool
+;           the order of the list must be the same for this and the following variables,
+;           the flag is bitwise defined as follows:
+;           0x01 - position in the top horizontal toolbar (default is in the left hand 
+;                  vertical toolbar)
+;           0x02 - Call the update command if the current buffer changes
+;           0x04 - Call the update command if the current buffer type changes 
+;     .toolbar.tool-name    - A list defining the name of each tool's buffer
+;     .toolbar.tool-size    - A list defining the relative sizes of each tool
+;     .toolbar.tool-command - A list defining the command to be called when the
+;                             tool buffer needs updating - NOTE this command must
+;                             restore the window state and great care must be taken
+;                             if deleting the tool buffer as the window displaying
+;                             the tool buffer will swap to another window.
+;
+;     These variables are defined at the bottom of this file and can be over-ridden
+;     by setting them in your <user>.emf file.
+;
+;     The update command is always called when the toolbar is opened, from then on
+;     the command is only called when required (determined by the 0x02 & 0x04 bits
+;     of the flag. 
+;                             
+0 define-macro-file itemlist item-list-create
+0 define-macro-file abbrlist abbrev-list-create
+
+0 define-macro toolbar-redraw
+    !if :toolbar
+        @# screen-update
+        !return
+    !elif &seq .bn $buffer-bname
+        @# screen-update
+        !return
+    !elif &gre @# 2
+        @# screen-update
+        !return
+    !elif &les @# 1
+        @# screen-update
+        !return
+    !endif        
+    set-position "\x84"
+    set-variable .bn $buffer-bname
+    !if &seq .bt $buffer-fhook
+        set-variable #l0 2
+    !else
+        set-variable #l0 6
+        set-variable .bt $buffer-fhook
+    !endif
+    set-variable #l1 0
+    !while &not &seq "" &set #l2 &lget .toolbar.tool-flags &inc #l1 1
+        !if &or .all &band #l2 #l0
+            !if &not .toolbar.frame
+                !force 0 popup-window &lget .toolbar.tool-name #l1
+            !endif
+            !if $status
+                set-position "\x85"
+                1 goto-position "\x84"
+                !force !force execute-line &lget .toolbar.tool-command #l1
+            !endif
+        !endif
+    !done
+    set-variable .all 0
+    goto-position "\x84"
+    !if @?
+        @# screen-update
+    !else
+        screen-update
+    !endif
+!emacro
+
+define-macro toolbar-close
+    1 set-position "\x84"
+    !force global-unbind-key "redraw"
+    set-variable #l0 0
+    !while &not &seq "" &set #l1 &lget .toolbar.tool-name &inc #l0 1
+        !force 0 popup-window #l1
+        !if $status
+            delete-window
+            -1 find-buffer #l1
+        !endif
+    !done
+    set-variable .toolbar.open 0
+    goto-position "\x84"
+!emacro
+
+define-macro toolbar
+    !if &seq "" &lget .toolbar.tool-flags 1
+        ml-write "[Error: No registered tools]"
+        !abort
+    !endif
+    set-variable .frame &and &band .flags 1 &opt "mwf"
+    !if &not .frame
+        3 delete-other-windows
+    !endif
+    set-variable #l9 0
+    set-variable #l8 0
+    set-variable #l0 0
+    !while &not &seq "" &set #l7 &lget .toolbar.tool-flags &inc #l0 1
+        !if &band #l7 1
+            set-variable #l8 &add #l8 &lget .toolbar.tool-size #l0
+        !else
+            set-variable #l9 &add #l9 &lget .toolbar.tool-size #l0
+        !endif
+    !done
+    !if #l9
+        !if .frame
+            set-variable #l0 $frame-depth
+            create-frame
+            .width change-frame-width
+            #l0 change-frame-depth
+        !else
+            split-window-horizontally
+            .toolbar.width resize-window-horizontally
+        !endif
+        set-variable #l6 $window-depth
+        set-variable #l5 0
+        set-variable #l0 0
+        !while &not &seq "" &set #l7 &lget .toolbar.tool-flags &inc #l0 1
+            !if &and &not &band #l7 1 &lget .toolbar.tool-size #l0
+                !if #l5
+                    split-window-vertically
+                    &div &mul #l6 #l5 #l9 resize-window-vertically
+                    set-variable $window-flags 63
+                    next-window
+                    set-variable $window-flags 63
+                !endif
+                find-buffer &lget .toolbar.tool-name #l0
+                1 buffer-mode "hide"
+                set-variable :toolbar 1
+                set-variable $window-flags 63
+                set-variable #l5 &lget .toolbar.tool-size #l0
+            !endif
+        !done
+        !if &not .frame
+            3 next-window
+        !endif
+    !endif
+    !if #l8
+        !if .frame
+            set-variable #l0 $frame-width
+            create-frame
+            .depth change-frame-depth
+            #l0 change-frame-width
+        !else
+            split-window-vertically
+            .depth resize-window-vertically
+        !endif
+        set-variable #l6 $window-width
+        set-variable #l5 0
+        set-variable #l0 0
+        !while &not &seq "" &set #l7 &lget .toolbar.tool-flags &inc #l0 1
+            !if &and &band #l7 1 &lget .toolbar.tool-size #l0
+                !if #l5
+                    split-window-horizontally
+                    &div &mul #l6 #l5 #l8 resize-window-horizontally
+                    set-variable $window-flags 63
+                    next-window
+                    set-variable $window-flags 63
+                !endif
+                find-buffer &lget .toolbar.tool-name #l0
+                1 buffer-mode "hide"
+                set-variable :toolbar 1
+                set-variable $window-flags 63
+                set-variable #l5 &lget .toolbar.tool-size #l0
+            !endif
+        !done
+        !if &not .frame
+            3 next-window
+        !endif
+    !endif
+    !if .frame
+        next-frame
+    !endif
+    set-variable .toolbar-redraw.all 1
+    set-variable .toolbar-redraw.bn "\CH"
+    set-variable .toolbar-redraw.bt "\CH"
+    set-variable .toolbar.open 1
+    global-bind-key toolbar-redraw "redraw"
+!emacro
+
+0 define-macro buffer-info-create
+    set-position "\x86"
+    set-variable #l0 $buffer-fname
+    !if &not &seq "" #l0
+        set-variable #l1 &stat "m" $buffer-fname
+        set-variable #l1 &spr "%d-%02d-%02d" &lef #l1 4 &mid #l1 7 2 &mid #l1 9 2
+        set-variable #l2 &stat "s" $buffer-fname
+    !else
+        set-variable #l1 ""
+        set-variable #l2 ""
+    !endif
+    find-buffer "*buffer-info*" 
+    -1 buffer-mode "undo"
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    -1 kill-region
+    insert-string &spr "Buffer Info\n\nType:   %s\n" .toolbar-redraw.bt
+    insert-string &spr "Buffer: %s\n" .toolbar-redraw.bn
+    insert-string &spr "State:  %s\n" &cond &nbm .toolbar-redraw.bn "edit" "Modified" "Unchanged"
+    insert-string &spr "Path:   %s\n" &lef #l0 &rsin "/" #l0
+    insert-string &spr "Mod Dt: %s\n" #l1
+    insert-string &spr "F Size: %s\n" #l2
+    beginning-of-buffer
+    set-variable $line-scheme .scheme.header
+    -1 buffer-mode "edit"
+    goto-position "\x86"
+!emacro
+
+0 define-macro buffer-list-mouse-pick
+    set-variable .buffer-list-create.line $window-line
+    goto-position "\x82"
+!emacro
+
+0 define-macro buffer-list-mouse-drop
+    !if &gre $window-line 2
+        !if &equ .buffer-list-create.line $window-line
+            ml-write &spr "[%s]" @wl
+            !force popup-window @wl
+            !return
+        !endif
+    !endif
+    goto-position "\x82"
+!emacro
+
+0 define-macro buffer-list-create
+    set-position "\x86"
+    find-buffer "*buffer-list*" 
+    -1 buffer-mode "undo"
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    -1 kill-region
+    insert-string "Buffer List\n\n"
+    set-variable $buffer-names ".*"
+    !while &not &seq &set #l3 $buffer-names ""
+        !if &not &nbmod #l3 "hide"
+            insert-string #l3
+            insert-newline
+        !endif
+    !done
+    backward-delete-char
+    beginning-of-buffer
+    set-variable $line-scheme .scheme.header
+    set-variable :mouse-pick-1 buffer-list-mouse-pick
+    set-variable :mouse-drop-1 buffer-list-mouse-drop
+    -1 buffer-mode "edit"
+    goto-position "\x86"
+!emacro
+
+0 define-macro toolbar-dir-list-create
+    !if &seq "" &set #l0 &lef $buffer-fname &rsin "/" $buffer-fname
+        set-variable #l0 &stat "a" "."
+    !endif
+    set-position "\x86"
+    find-buffer "*directory*"
+    !if &not &seq #l0 $buffer-fname
+        0x0f directory-tree #l0
+    !endif
+    set-variable .fhook-dirlst.browser-lock 63
+    goto-position "\x86"
+!emacro
+
+0 define-macro toolbar-file-list-create
+    !if &seq "" &set #l0 &lef $buffer-fname &rsin "/" $buffer-fname
+        set-variable #l0 &stat "a" "."
+    !endif
+    set-position "\x86"
+    find-buffer "*files*"
+    !if &not &and &seq #l0 $buffer-fname &seq .fhook-dirlst.file-process :file-process
+        read-file #l0
+        !if &not &seq .fhook-dirlst.file-process :file-process
+            ; old buffer with the wrong processing - refresh
+            !force 0 delete-buffer $buffer-bname
+            find-file #l0
+        !endif
+        change-buffer-name "*files*"
+        ; as we have delete *files* the toolbar window would have been lost - restore
+        1 goto-position "\x85"
+        find-buffer "*files*"
+    !endif
+    buffer-bind-create "bio" "delete" "" file-browser-close
+    buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
+    set-variable .fhook-dirlst.browser-lock 63
+    goto-position "\x86"
+!emacro
+
+!if &not &exi .toolbar.width
+    set-variable .toolbar.flags 0
+!endif
+!if &not &exi .toolbar.width
+    set-variable .toolbar.width 20
+!endif
+!if &not &exi .toolbar.depth
+    set-variable .toolbar.depth 15
+!endif
+!if &not &exi .toolbar.tool-name
+    set-variable .toolbar.tool-name    "\CH*buffer-info*\CH*item-list*\CH*abbrev-list*\CH*buffer-list*\CH*directory*\CH*files*\CH"
+    set-variable .toolbar.tool-size    "\CH50\CH100\CH100\CH80\CH50\CH100\CH"
+    set-variable .toolbar.tool-flags   "\CH6\CH2\CH4\CH2\CH1\CH1\CH"
+    set-variable .toolbar.tool-command "\CHbuffer-info-create\CHitem-list-create \"*item-list*\"\CHabbrev-list-create\CHbuffer-list-create\CHtoolbar-dir-list-create\CHtoolbar-file-list-create\CH"
+!endif
+

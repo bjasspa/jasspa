@@ -27,7 +27,7 @@
 ; // -!- pseudo -!-
 ; // Author:       My Self
 ; // Created:      11/11/97
-; // Modified:     <011228.2337>
+; // Modified:     <020129.1012>
 ; // Location:     /xx/xx/zz.doc
 ; //
 ; //____________________________________________________________________________
@@ -55,6 +55,11 @@
 ;         ..
 ;     END
 ;
+0 define-macro fhook-pseudo
+    set-variable $buffer-hilight .hilight.pseudo
+!emacro
+set-variable .fhook-pseudo.setup &reg "/history" "fhook/pseudo" "h"
+
 !if &band .hilight.flags 0x02
     !if &not &exist .hilight.pseudo
         set-variable .hilight.pseudo  &pinc .hilight.next 1

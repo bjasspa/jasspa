@@ -56,16 +56,28 @@ define-macro fhook-jst
 set-variable .fhook-jst.setup &reg "/history" "fhook/jst" "fghijnopswx"
 set-variable .fhook-jst.setup-mask "aefghijkmnopstuwx"
 set-variable .fhook-jst.comment "|>||>|> | <||"
+set-variable .fhook-jst.insert-emphasis 1
 
-set-variable .fhook-jst.command-flag  "|thb|hb|thb|th|th|th|h|h|thb|thb|thb|thb|thb|h|h|th|h|h|thb|thb|thb|thb|thb|thb|"
-set-variable .fhook-jst.command-name  "|doc-mode-state|spell-buffer|paragraph-to-line|jst-to-text|jst-to-html||||fill-paragraph-both|fill-paragraph-center|fill-paragraph-left|fill-paragraph-gutter|fill-paragraph-right|fill-paragraph|ifill-paragraph||||doc-set-justify|doc-set-justify|doc-set-justify|doc-set-justify|doc-set-justify|doc-set-justify|"
-set-variable .fhook-jst.command-nbind "|||||||||||||||||||0|1|2|3|4|5|"
-set-variable .fhook-jst.command-kbind "|C-c C-h|C-c C-s|C-c o||||||C-c C-b|C-c C-c|C-c C-l|C-c C-g|C-c C-r||||||C-c a|C-c b|C-c c|C-c l|C-c n|C-c r|"
-set-variable .fhook-jst.command-desc  "|&Show Current Settings|Spell Check Buffer|Fill Paragraph for WP Export|Export to Plain Text|Export to HTML||To format current paragraph:||Justify Both Margins|Justify Center|Justify Left|Justify Gutter (on left margin)|Justify Right|Format Paragraph in Current Mode|Intelligently Format Paragraph||To change justification mode:||Change to auto justification [DEFAULT]|Change to both justification|Change to center justification|Change to left justification|Change to none justification|Change to right justification|"
+set-variable .fhook-jst.command-flag  "|bo|bo|thb|hb|thb|th|th|th|th|th|h|h|thb|thb|thb|thb|thb|h|h|th|h|h|thb|thb|thb|thb|thb|thb|"
+set-variable .fhook-jst.command-name  "|jst-fill-paragraph|jst-fill-paragraph|doc-mode-state|spell-buffer|paragraph-to-line|jst-to-html|jst-to-latex|jst-to-rtf|jst-to-text||||fill-paragraph-both|fill-paragraph-center|fill-paragraph-left|fill-paragraph-gutter|fill-paragraph-right|fill-paragraph|ifill-paragraph||||doc-set-justify|doc-set-justify|doc-set-justify|doc-set-justify|doc-set-justify|doc-set-justify|"
+set-variable .fhook-jst.command-nbind "|||||||||||||||||||||||0|1|2|3|4|5|"
+set-variable .fhook-jst.command-kbind "|esc q|esc o|C-c C-h|C-c C-s|C-c o||||||||C-c C-b|C-c C-c|C-c C-l|C-c C-g|C-c C-r||||||C-c a|C-c b|C-c c|C-c l|C-c n|C-c r|"
+set-variable .fhook-jst.command-desc  "|||&Show Current Settings|Spell Check Buffer|Fill Paragraph for WP Export|Export to HTML|Export to LaTeX|Export to RTF|Export to Plain Text||To format current paragraph:||Justify Both Margins|Justify Center|Justify Left|Justify Gutter (on left margin)|Justify Right|Format Paragraph in Current Mode|Intelligently Format Paragraph||To change justification mode:||Change to auto justification [DEFAULT]|Change to both justification|Change to center justification|Change to left justification|Change to none justification|Change to right justification|"
+
+; setup item-list
+set-variable .fhook-jst.item-list-s1 "^[ \t]*\\([0-9]+\\)\\.0[ \t]+\\(\\S .*\\)"
+set-variable .fhook-jst.item-list-r1 "Sct   \ecB\\1 \\2\ecA"
+set-variable .fhook-jst.item-list-s2 "^[ \t]*\\([0-9]+\\.[1-9][0-9]*\\)[ \t]+\\(\\S .*\\)"
+set-variable .fhook-jst.item-list-r2 "SSct  \ecB\\1 \\2\ecA"
+set-variable .fhook-jst.item-list-s3 "^[ \t]*\\([0-9]+\\.[0-9]+\\.[0-9.]+\\)[ \t]+\\(\\S .*\\)"
+set-variable .fhook-jst.item-list-r3 "SSSct \ecB\\1 \\2\ecA"
+set-variable .fhook-jst.item-list-s4 "^[ \t]*Appendix \\([[:alpha:]].*\\)"
+set-variable .fhook-jst.item-list-r4 "Appx  \ecB\\1\ecA"
+
 !if &sin "f" .fhook-jst.setup
     ; Define the folding definitions.
-    set-variable .fhook-jst.fold-open  "^[ \t]*\\(Appendix[ \t]+[A-Z][0-9.]*\\|[0-9]\\.[0-9.]*\\)[ \t]+\\w"
-    set-variable .fhook-jst.fold-close "^[ \t]*\\(Appendix[ \t]+[A-Z][0-9.]*\\|[0-9]\\.[0-9.]*\\)[ \t]+\\w"
+    set-variable .fhook-jst.fold-open  "^[ \t]*\\(Appendix[ \t]+[[:alpha:]]\\|[0-9]\\.[0-9.]*\\)[ \t]+\\w"
+    set-variable .fhook-jst.fold-close "^[ \t]*\\(Appendix[ \t]+[[:alpha:]]\\|[0-9]\\.[0-9.]*\\)[ \t]+\\w"
     set-variable .fhook-jst.fold-mopen "1"
     set-variable .fhook-jst.fold-mnext "-1"
 !endif
@@ -74,6 +86,8 @@ set-variable .fhook-jst.command-desc  "|&Show Current Settings|Spell Check Buffe
     !if &not &exist .hilight.jst
         set-variable .hilight.jst  &pinc .hilight.next 1
         set-variable .hilight.jst1 &pinc .hilight.next 1
+        set-variable .hilight.jst2 &pinc .hilight.next 1
+        set-variable .hilight.jst3 &pinc .hilight.next 1
     !endif
     ; Define the hilighting. Note that we use a look back so that
     ; we can process the inserted schemes if necessary. Ordinarily
@@ -81,121 +95,97 @@ set-variable .fhook-jst.command-desc  "|&Show Current Settings|Spell Check Buffe
     ; are none below then there is no adverse effect.
     0 hilight  .hilight.jst 2 100                               $global-scheme
     hilight .hilight.jst 0x22 "[0-9]+\\.[0-9.]+[ \t]+\\S "      .scheme.header
+    hilight .hilight.jst 0x22 "Appendix [[:alpha:]]"            .scheme.header
+    hilight .hilight.jst 0x22 "===+$"                           .scheme.bold
+    hilight .hilight.jst 0x22 "---+$"                           .scheme.bold
     hilight .hilight.jst 0x20 "*\\}[ \t]+\\S "                  .scheme.no1
     hilight .hilight.jst 0x20 "[0-9]+[]).]\\}[ \t]+\\S "        .scheme.no1
     hilight .hilight.jst 0x20 "[a-z][]).]\\}[ \t]+\\S "         .scheme.no1
     hilight .hilight.jst 0x20 "[A-Z][]).]\\}[ \t]+\\S "         .scheme.no1
     hilight .hilight.jst 0x20 "[IVXLC]+[]).]\\}[ \t]+\\S "      .scheme.no1
     hilight .hilight.jst 0x20 "[ivxlc]+[]).]\\}[ \t]+\\S "      .scheme.no1
-    hilight .hilight.jst 0x22 "^===+$"                          .scheme.header
-    hilight .hilight.jst 0x22 "^---+$"                          .scheme.header
+    hilight .hilight.jst 0x20 "\\[\\S [^]\n]*]"                 .scheme.no1
     hilight .hilight.jst 0x22 "^___+$"                          .scheme.under
-    hilight .hilight.jst 1 "\\*\\S [^*\n]*\\*"                  .scheme.bold
-    hilight .hilight.jst 1 "~\\S [^~\n]*~"                      .scheme.italic
-    hilight .hilight.jst 1 "_\\S [^_\n]*_"                      .scheme.under
-    hilight .hilight.jst 0 "^\\s *\\[\\w*\\]"                   .scheme.no1
-    hilight .hilight.jst 0x804 "\"" "\"" "\\"                   .scheme.string
-    hilight .hilight.jst 0x804 "`" "'" ""                       .scheme.bold-italic
-    hilight .hilight.jst 0    "'.'"                             .scheme.quote
-    hilight .hilight.jst 0    "'\\\\.'"                         .scheme.quote
-    hilight .hilight.jst 0x22 "^[ \t]*Appendix [[:alpha:]]"     .scheme.header
-    hilight .hilight.jst 0    "^>\\."                           .scheme.comment
-    hilight .hilight.jst 0x02 "^>_"                             .scheme.comment
-    hilight .hilight.jst 0x22 ">"                               .scheme.comment
+    hilight .hilight.jst 0x40 "^\x0c$" "<<Page-Break>>"         .scheme.keyword
+    hilight .hilight.jst 0x00 "\\*\\S [^*\n]*\\*"               .scheme.bold
+    hilight .hilight.jst 0x00 "~\\S [^~\n]*~"                   .scheme.italic
+    hilight .hilight.jst 0x00 "_\\S [^_\n]*_"                   .scheme.under
+    hilight .hilight.jst 0x00 "@\\S [^@\n]*@"                   .scheme.no2
+    hilight .hilight.jst 0x04 "`" "'" ""                        .scheme.bold-italic
+    hilight .hilight.jst 0x00 "^\\s *\\[\\w*\\]"                .scheme.no1
+;    hilight .hilight.jst 0x804 "\"" "\"" "\\"                   .scheme.string
+;    hilight .hilight.jst 0x00 "'.'"                             .scheme.quote
+;    hilight .hilight.jst 0x00 "'\\\\.'"                         .scheme.quote
+    hilight .hilight.jst 0x02 "^>"                              .scheme.comment
+    hilight .hilight.jst 0x80 "^>!" .hilight.jst2               .scheme.hide
+    hilight .hilight.jst 0x04 "^>!>" "^>end>" ""                $global-scheme
     hilight .hilight.jst 0x80 "^>@" .hilight.jst1               .scheme.no2
-    ; @ block
+    hilight .hilight.jst 0x04 "^>@>" "^>end>" ""                .scheme.no2
+    hilight .hilight.jst 0x80 "^>@\\." .hilight.jst1            .scheme.no2
+    hilight .hilight.jst 0x04 "^>@\\.>" "^>end>" ""             .scheme.no2
+    hilight .hilight.jst 0x00 "^>\\."                           .scheme.hide
+    hilight .hilight.jst 0x00 "^>\\.>"                          .scheme.hide
+    hilight .hilight.jst 0x00 "^>\\.@"                          .scheme.hide
+    hilight .hilight.jst 0x00 "^>\\.@>"                         .scheme.hide
+    hilight .hilight.jst 0x00 "^>jst>"                          .scheme.hide
+    hilight .hilight.jst 0x00 "^>end>"                          .scheme.hide
+    hilight .hilight.jst 0x00 "<<>>"                            .scheme.hide
+    hilight .hilight.jst 0x00 "<<.>>"                           $global-scheme
+    hilight .hilight.jst 0x04 "<<fb>>" "<</fb>>" ""             .scheme.bold
+    hilight .hilight.jst 0x04 "<<fh>>" "<</fh>>" ""             .scheme.bold-italic
+    hilight .hilight.jst 0x04 "<<fi>>" "<</fi>>" ""             .scheme.italic
+    hilight .hilight.jst 0x04 "<<fm>>" "<</fm>>" ""             .scheme.no2
+    hilight .hilight.jst 0x04 "<<fu>>" "<</fu>>" ""             .scheme.under
+    hilight .hilight.jst 0x80 "<<[[:alnum:]]*:?" .hilight.jst3  .scheme.keyword
+    hilight .hilight.jst 0x80 "<</[[:alnum:]]*:?" .hilight.jst3 .scheme.keyword
+    ; >@ block
     0 hilight .hilight.jst1 0                                   .scheme.no2
     hilight   .hilight.jst1 0x80 "^[ \t]*\n" .hilight.jst       $global-scheme
+    ; >! block
+    0 hilight .hilight.jst2 0                                   $global-scheme
+    hilight   .hilight.jst2 0x80 "^[ \t]*\n" .hilight.jst       $global-scheme
+    ; <<..>> block
+    0 hilight .hilight.jst3 0                                   .scheme.type
+    hilight .hilight.jst3 0x04 "<<" ">>" ""                     .scheme.keyword
+    hilight .hilight.jst3 0x00 "<<>>"                           .scheme.hide
+    hilight .hilight.jst3 0x00 "<<.>>"                          .scheme.type
+    hilight .hilight.jst3 0x04 "<<" ">>" ""                     .scheme.keyword
+    hilight .hilight.jst3 0x80 ">>" .hilight.jst                .scheme.keyword
     
     ; Allow inserts into the jst mode. You may add to the
     ; available inserts by adding to your myjst.emf file
     
+    0 define-macro jst-add-file-support
+        set-variable #l0 @1
+        ; Force the hilighting mode to load if not already loaded.
+        !if &not &exi &cat ".hilight." #l0
+            !force execute-file &cat "hk" #l0
+            ml-write &cat "executed " #l0
+        !endif
+        ; If the hilighting mode is loaded then modify it.
+        !if &and &sin "h" &ind &spr ".fhook-%s.setup" #l0 &band .hilight.flags 0x02 
+            hilight .hilight.jst 0x80 &spr "^>%s>" #l0 &ind &cat ".hilight." #l0 .scheme.hide
+            hilight &ind &cat ".hilight." #l0 0x80 "^>end>" .hilight.jst .scheme.hide
+        !endif
+    !emacro
+    
     ; Allow MicroEmacs Macro .emf inserts
     ; Force the ".emf" scheme to be loaded into the context of the jst
     ; scheme. We delimit the .emf scheme with a pair of markers ">emf>" and
-    ; ">jst>"
-    ;
-    ; Force the hilighting mode to load if not already loaded.
-    !if &not &exi .hilight.emf
-        !force execute-file "hkemf"
-    !endif
-    ; If the hilighting mode is loaded then modify it.
-    !if &and &sin "h" .fhook-emf.setup &band .hilight.flags 0x02 
-        hilight .hilight.jst 0x80 "^>emf>" .hilight.emf .scheme.hide
-        hilight .hilight.emf 0x80 "^>jst>" .hilight.jst .scheme.hide
-    !endif
-    
+    ; ">end>"
+    jst-add-file-support "emf"
     ; Allow Pseudo Code inserts
-    ; Force the ".pseudo" scheme to be loaded into the context of the jst
-    ; scheme. We delimit the .emf scheme with a pair of markers ">pseudo>" and
-    ; ">jst>"
-    ;
-    ; Force the hilighting mode to load if not already loaded.
-    !if &not &exi .hilight.pseudo
-        !force execute-file "hkpseudo"
-    !endif
-    ; If the hilighting mode is loaded then modify it.
-    !if &exi .hilight.pseudo
-        hilight .hilight.jst 0x80 "^>pseudo>" .hilight.pseudo .scheme.hide
-        hilight .hilight.pseudo 0x80 "^>jst>" .hilight.jst .scheme.hide
-    !endif
-    
+    jst-add-file-support "pseudo"
     ; Allow BNF inserts
-    ; Force the ".bnf" scheme to be loaded into the context of the jst
-    ; scheme. We delimit the .emf scheme with a pair of markers ">bnf>" and
-    ; ">jst>"
-    ;
-    ; Force the hilighting mode to load if not already loaded.
-    !if &not &exi .hilight.bnf
-        !force execute-file "hkbnf"
-    !endif
-    ; If the hilighting mode is loaded then modify it.
-    !if &and &sin "h" .fhook-bnf.setup &band .hilight.flags 0x02 
-        hilight .hilight.jst 0x80 "^>bnf>" .hilight.bnf .scheme.hide
-        hilight .hilight.bnf 0x80 "^>jst>" .hilight.jst .scheme.hide
-    !endif
-    
+    jst-add-file-support "bnf"
     ; Allow C Code inserts
-    ; Force the ".c" scheme to be loaded into the context of the jst
-    ; scheme. We delimit the .emf scheme with a pair of markers ">c>" and
-    ; ">jst>"
-    ;
-    ; Force the hilighting mode to load if not already loaded.
-    !if &not &exi .hilight.c
-        !force execute-file "hkc"
-    !endif
-    ; If the hilighting mode is loaded then modify it.
-    !if &and &sin "h" .fhook-c.setup &band .hilight.flags 0x02 
-        hilight .hilight.jst 0x80 "^>c>"   .hilight.c   .scheme.hide
-        hilight .hilight.c   0x80 "^>jst>" .hilight.jst .scheme.hide
-    !endif
-    
+    jst-add-file-support "c"
     ; Allow C++ Code inserts ...
-    !if &not &exi .hilight.cpp
-        !force execute-file "hkcpp"
-    !endif
-    !if &and &sin "h" .fhook-cpp.setup &band .hilight.flags 0x02 
-        hilight .hilight.jst 0x80 "^>cpp>"     .hilight.cpp .scheme.hide
-        hilight .hilight.jst 0x80 "^>c\\+\\+>" .hilight.cpp .scheme.hide
-        hilight .hilight.cpp 0x80 "^>jst>"     .hilight.jst .scheme.hide
-    !endif
+    jst-add-file-support "cpp"
     ; Allow Perl Code inserts ...
-    !if &not &exi .hilight.perl
-        !force execute-file "hkperl"
-    !endif
-    !if &and &sin "h" .fhook-perl.setup &band .hilight.flags 0x02 
-        hilight .hilight.jst  0x80 "^>perl>" .hilight.perl .scheme.hide
-        hilight .hilight.jst  0x80 "^>pl>"   .hilight.perl .scheme.hide
-        hilight .hilight.perl 0x80 "^>jst>"  .hilight.jst  .scheme.hide
-    !endif
+    jst-add-file-support "perl"
     ; Allow TCL Code inserts ...
-    !if &not &exi .hilight.tcl
-        !force execute-file "hktcl"
-    !endif
-    !if &and &sin "h" .fhook-cpp.setup &band .hilight.flags 0x02 
-        hilight .hilight.jst 0x80 "^>tcl>" .hilight.tcl .scheme.hide
-        hilight .hilight.tcl 0x80 "^>jst>" .hilight.jst .scheme.hide
-    !endif
+    jst-add-file-support "tcl"
 !endif
 
 ; Set up for jst mode.
@@ -213,10 +203,73 @@ set-variable .fhook-jst.command-desc  "|&Show Current Settings|Spell Check Buffe
     !endif
 !emacro
 
+
+; must replace the normal fill-paragraph with one which will skip inserts 
+0 define-macro jst-fill-paragraphi
+    set-variable #l1 &cond &les @# 0 -1 1
+    set-variable #l2 &abs @#
+    !repeat
+        !if &xseq @wl ">[^ \t\n>]+>.*"
+            !if &seq &lef @wl 5 ">end>"
+                ml-write "[Unexpected >end> tag]"
+                !abort
+            !endif
+            !force search-forward "^>end>"
+            !if &not $status
+                beginning-of-line
+                ml-write "[Missing >end> tag]"
+                !abort
+            !endif
+            forward-line
+            beginning-of-line
+            !if &not &seq "" &trb @wl
+                insert-newline
+                backward-line
+            !endif
+        !else
+            #l1 fill-paragraph @mna
+        !endif
+        !if &not &dec #l2 1
+            !return
+        !endif
+        forward-paragraph
+        backward-paragraph
+    !until 0
+!emacro
+
+define-macro jst-fill-paragraph
+    !if &not @#
+        !return
+    !endif
+    set-position "\x81"
+    set-variable #l0 &cond &bmod "magic" 1 -1
+    1 buffer-mode "magic"
+    !force search-backward "^>[^ \t\n>]*>"
+    !if $status
+        !if &seq @s0 ">end>"
+            goto-position "\x81"
+            beginning-of-line
+            forward-paragraph
+            backward-paragraph
+        !endif
+    !else
+        beginning-of-line
+        forward-paragraph
+        backward-paragraph
+    !endif
+    !force !force @# jst-fill-paragraphi
+    set-variable #l1 $status
+    #l0 buffer-mode "magic"
+    !if &not @?
+        goto-position "\x81"
+    !endif
+    !return #l1
+!emacro
+
 ; load docutl.emf to get the doc support macros
 execute-file "docutl"
 
-define-macro-file jstutl jst-to-text jst-to-html
+define-macro-file jstutl jst-to-html jst-to-latex jst-to-rtf jst-to-text
 
 ml-write "[JASSPA Structured Text file hook loaded]"
 

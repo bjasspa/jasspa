@@ -1,0 +1,205 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Fri Aug 10 10:28:53 2001
+;  Last Modified : <020426.1105>
+;  Description   : Create a list of abbreviations
+;
+;  Notes
+;
+;  Copyright (c) 2001 Jasspa
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+!if &band .hilight.flags 0x01 
+    !if &not &exist .hilight.abbrev-item
+        set-variable .hilight.abbrev-item &pinc .hilight.next 1
+    !endif
+    0 hilight .hilight.abbrev-item 0 $global-scheme
+    hilight .hilight.abbrev-item 0x40 ":EXSTR:.*" "" $global-scheme
+    hilight .hilight.abbrev-item 0x40 ">>><FOLDER>" ">>>" .scheme.dir-closed
+    hilight .hilight.abbrev-item 0x40 "<<<<FOLDER>" "<<<" .scheme.dir-open
+    hilight .hilight.abbrev-item 0x40 "</FOLDER>" "" $global-scheme
+    hilight .hilight.abbrev-item 0x44 "\ecB" "" "\ecA" "" "" .scheme.function
+    hilight .hilight.abbrev-item 0x44 "\ecC" "" "\ecA" "" "" .scheme.keyword
+    hilight .hilight.abbrev-item 0x44 "\ecD" "" "\ecA" "" "" .scheme.operator
+    hilight .hilight.abbrev-item 0x44 "\ecE" "" "\ecA" "" "" .scheme.variable
+    hilight .hilight.abbrev-item 0x44 "\ecF" "" "\ecA" "" "" .scheme.string
+!endif
+
+define-macro Test
+    ml-write &xre @wl "^\\([^ ]*\\)? +\"\\(\\(\\\\.\\|.\\)*\\)\" +\"\\(\\\\.\\|.\\)*\".*" "\\2"
+!emacro
+
+0 define-macro abbrev-list-add
+    !force set-variable #l0 @3
+    !if $status
+        find-buffer #p0
+        end-of-buffer
+        !if &seq &set #l1 @2 ""
+            insert-string &spr "%s" #l0
+        !else
+            insert-string &spr "%s:EXSTR:%s" #l0 #l1
+        !endif
+    !endif
+!emacro
+
+0 define-macro abbrev-list-create
+    set-position "\x86"
+    set-variable #l9 &rig $buffer-fhook 6
+    !if &seq #l9 ""
+        set-variable #l9 "default"
+    !endif
+    set-variable #l0 &cat "*abbrev-list*" #l9
+    find-buffer "*abbrev-list*" 
+    -1 buffer-mode "undo"
+    -1 buffer-mode "view"
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    -1 kill-region
+    !force 0 find-buffer #l0
+    !if &not $status
+        find-buffer #l0
+        1 buffer-mode "hide"
+        -1 buffer-mode "undo"
+        set-variable #l8 &ind &spr ".fhook-%s.name" #l9
+        !if &seq #l8 "ERROR"
+            set-variable #l8 &cat &sup &lef #l9 1 &rig #l9 1
+        !endif
+        insert-string &spr "%s Tools\n" #l8
+        !force 0 find-file &find #l9 ".eaf"
+        !if $status
+            set-variable #l1 $buffer-bname
+            set-variable #l2 1
+            beginning-of-buffer
+            !while &not &seq @wc ""
+                set-variable #l3 &xre @wl "^\\([^ ]*\\)? +\"\\(\\(\\\\.\\|[^\\\\\"\n]\\)*\\)\" +\"\\(\\(\\\\.\\|[^\\\\\"\n]\\)*\\)\".*" "\\4"
+                !if &not &seq #l3 @wl
+                    set-variable #l4 &xre @wl "^\\([^ ]*\\)? +\"\\(\\(\\\\.\\|[^\\\\\"\n]\\)*\\)\" +\"\\(\\(\\\\.\\|[^\\\\\"\n]\\)*\\)\".*" "\\2"
+                    find-buffer #l0
+                    end-of-buffer
+                    !if &seq #l3 ""
+                        insert-newline
+                    !else
+                        execute-line &spr "insert-string \"%s\"" #l3
+                        !if &not &seq #l4 ""
+                            insert-string &cat ":EXSTR:" #l4
+                        !endif
+                    !endif
+                    find-buffer #l1
+                !endif
+                set-variable $window-line &inc #l2 1
+            !done
+            !force 0 delete-buffer #l1
+            find-buffer #l0
+            beginning-of-buffer
+            !force search-forward ">>><FOLDER>"
+            !while $status
+                forward-line
+                set-mark
+                !force search-forward "</FOLDER>"
+                !if $status
+                    4 narrow-buffer
+                !endif
+                !force search-forward "<FOLDER>"
+            !done
+            -1 buffer-mode "edit"
+        !endif
+    !endif
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    copy-region
+    -1 find-buffer #l0
+    find-buffer "*abbrev-list*" 
+    yank
+    -1 yank
+    !force forward-delete-char
+    beginning-of-buffer
+    set-variable $line-scheme .scheme.header
+    set-variable $buffer-hilight .hilight.abbrev-item
+    set-variable :mouse-pick-1 void
+    set-variable :mouse-drop-1 abbrev-list-execute
+    set-variable :abbrev-list #l0
+    -1 buffer-mode "edit"
+    1 buffer-mode "view"
+    goto-position "\x86"
+!emacro
+
+define-macro abbrev-list
+    !if &not &sin "b" &ind &spr ".%s.setup-mask" $buffer-fhook
+        ml-write "[Abbreviations not supported in current buffer]"
+        !abort
+    !endif
+    set-position "\x81"
+    !force abbrev-list-create
+    !if &not $status
+        goto-position "\x81"
+        ml-write "[Failed to load abbreviation list for current buffer]"
+        !abort
+    !endif
+    goto-position "\x81"
+    popup-window "*abbrev-list*"
+    goto-position "\x81"
+!emacro
+
+define-macro abbrev-list-execute
+    !if &set #l0 &sin ":EXSTR:" @wl
+        set-variable #l0 &rig @wl &add #l0 6
+        goto-position "\x82"
+        execute-line &spr "execute-string \"%s\"" #l0
+    !elif &set #l0 &sin ">>><FOLDER>" @wl
+        set-variable #l1 "<<<"
+        !jump 3
+    !elif &set #l0 &sin "<<<<FOLDER>" @wl
+        set-variable #l1 ">>>"
+        -1 buffer-mode "view"
+        set-variable #l2 $window-line
+        !force 0 find-buffer :abbrev-list
+        !if $status
+            set-variable $window-line #l2
+            set-variable $window-col &sub #l0 1
+            3 forward-delete-char
+            -1 yank
+            insert-string #l1
+            !if &seq #l1 ">>>"
+                set-variable $window-line &add #l2 1
+                set-mark
+                !force search-forward "</FOLDER>"
+                !if $status
+                    set-variable #l3 $window-line
+                    4 narrow-buffer
+                    find-buffer "*abbrev-list*" 
+                    set-variable $window-line &add #l2 1
+                    set-mark
+                    set-variable $window-line #l3
+                    -1 kill-region
+                !endif
+            !else
+                set-variable $window-line &add #l2 1
+                !force 2 narrow-buffer
+                !if $status
+                    set-mark
+                    set-variable $window-line &add #l2 1
+                    copy-region
+                    find-buffer "*abbrev-list*" 
+                    -1 buffer-mode "view"
+                    set-variable $window-line &add #l2 1
+                    yank
+                    -1 yank
+                !endif
+            !endif
+            find-buffer "*abbrev-list*" 
+            set-variable $window-line #l2
+        !endif
+        set-variable $window-col &sub #l0 1
+        3 forward-delete-char
+        -1 yank
+        insert-string #l1
+        -1 buffer-mode "edit"
+        1 buffer-mode "view"
+        goto-position "\x82"
+    !else
+        goto-position "\x82"
+    !endif
+!emacro

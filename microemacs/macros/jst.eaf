@@ -1,0 +1,5 @@
+ "" "\ecCExport:\ecA"
+ "\Exjst-to-html\N\N" "  To HTML  (./<filename>.htm)"
+ "\Exjst-to-latex\N\N" "  To LaTeX (./<filename>.tex)"
+ "\Exjst-to-rtf\N\N" "  To RTF   (./<filename>.rtf)"
+ "\Exjst-to-text\N\N" "  To text  (./<filename>.txt)"

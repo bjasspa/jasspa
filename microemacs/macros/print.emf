@@ -20,7 +20,7 @@
         !if &not $status
             ; not found so try the default print.erf
             ;500 ml-write "[Loading print.erf]"
-            !force read-registry "print-history" &find "print" ".erf" "ab"
+            !force read-registry "print-history" &find "print" ".erf" "b"
             !if &not $status
                 ml-write "[Failed to find \"print.erf\"]"
                 !return

@@ -53,98 +53,6 @@
     hilight .hilight.list-item 0x44 "\ecB" "" "\ecA" "" "" .scheme.function
 !endif
 
-define-macro item-list
-    !force set-variable #l5 @2
-    !if &set #l8 $status
-        set-variable #l0 @1
-    !else
-        !if &not &exi &ind &spr ".%s.item-list-s1" $buffer-fhook
-            ml-write "[item-list not setup]"
-            !abort
-        !endif
-        set-variable #l0 &ind &spr ".%s.item-list-s1" $buffer-fhook
-        set-variable #l5 &ind &spr ".%s.item-list-r1" $buffer-fhook
-    !endif
-    set-variable #l1 $buffer-bname
-    !if &seq $buffer-fname ""
-        set-variable #l4 &spr "*%s*" $buffer-bname
-    !else
-        set-variable #l4 $buffer-fname
-    !endif
-    set-variable #l2 &bmod "magic"
-    set-variable #l3 $buffer-mask
-    1 buffer-mode "magic"
-    delete-other-windows
-    !force 0 delete-buffer "*item-list*"
-    find-buffer "*item-list*"
-    !if &equ @# 2
-        split-window-vertically
-    !else
-        split-window-horizontally
-        25 shrink-window-horizontally
-    !endif
-    ; to simple click the function
-    buffer-bind-create "bio" "return" "" item-list-find
-    buffer-bind-create "bio" "delete" "" item-list-close
-    buffer-bind-create "b"   "esc f7" "" item-list-close
-    set-variable :mouse-pick-1 item-list-mouse-pick
-    set-variable :mouse-drop-1 item-list-mouse-drop
-    set-variable $buffer-hilight .hilight.list-item
-    set-variable :next-file #l4
-    set-variable $buffer-mask #l3
-    -1 buffer-mode "undo"
-    1 buffer-mode "magic"
-    next-window-find-buffer #l1
-    set-alpha-mark "p"
-    set-variable #l9 1
-    !repeat
-        beginning-of-buffer
-        !force search-forward #l0 ; must be declared in my...emf-files
-        !while $status ; if found put into the *list-item* buffer
-            set-variable #l3 $window-line
-            next-window
-            set-variable #l4 $window-line
-            insert-string @s0
-            !if &not &seq #l5 "ERROR"
-                #l4 goto-line
-                -1 replace-string #l0 #l5
-            !endif
-            !if &gre $window-line #l4
-                delete-indentation
-                !jump -2
-            !endif
-            end-of-line
-            insert-newline
-            backward-line
-            insert-string &spr "%6d " #l3
-            &add #l4 1 goto-line
-            next-window
-            !force search-forward #l0
-        !done
-        !if #l8
-            set-variable #l0 "ERROR"
-        !else
-            set-variable #l0 &ind &spr ".%s.item-list-s%d" $buffer-fhook &inc #l9 1
-            set-variable #l5 &ind &spr ".%s.item-list-r%d" $buffer-fhook #l9
-        !endif
-    !until &seq #l0 "ERROR"
-    goto-alpha-mark "p"
-    next-window
-    beginning-of-buffer
-    insert-string "Type  Item     <Order by Position>\n"
-    end-of-buffer
-    backward-delete-char
-    item-list-order
-    next-window
-    &cond #l2 1 -1 buffer-mode "magic"
-!emacro
-
-set-variable .item-list.find 0
-set-variable .item-list.bcol "|15|0|6|"
-set-variable .item-list.ecol "|34|4|10|"
-set-variable .item-list.scol "|0|6|12|"
-set-variable .item-list.order 1
-
 0 define-macro item-list-order
     -1 buffer-mode "view"
     2 goto-line
@@ -189,32 +97,27 @@ set-variable .item-list.order 1
 
 0 define-macro item-list-mouse-pick
     !if &gre $window-line 1
-        !return
+        set-variable .item-list.find $window-line
+    !else
+        !force 0 item-list-set-order
+        !if $status
+            set-cursor-to-mouse
+            show-region
+        !endif
     !endif
-    !force 0 item-list-set-order
-    !if $status
-        set-cursor-to-mouse
-        show-region
-    !endif
-!emacro
-
-0 define-macro item-list-mouse-timeout
-    set-variable .item-list.find 0
+    goto-position "\x82"
 !emacro
 
 0 define-macro item-list-mouse-drop
     !if &gre $window-line 1
         !if &equ .item-list.find $window-line
             set-variable .item-list.find 0
-            -1 create-callback item-list-mouse-timeout
-            item-list-find
+            0 item-list-find
         !endif
-        set-variable .item-list.find $window-line
-        300 create-callback item-list-mouse-timeout
         !return
     !endif
     !force 1 item-list-set-order
-    set-cursor-to-mouse
+    goto-position "\x82"
 !emacro
 
 define-macro item-list-find
@@ -222,17 +125,101 @@ define-macro item-list-find
         ml-write "[Invalid line!]"
         !abort
     !endif
+    set-variable #l0 &mid :next-file 1 &sub &len :next-file 2
     beginning-of-line
     search-forward "^ *\\([0-9]+\\)"
     set-variable #l1 @s1
-    set-variable #l0 &len :next-file
-    !if &and &seq &lef :next-file 1 "*" &seq &rig :next-file &sub #l0 1 "*" 
-        next-window-find-buffer &mid :next-file 1 &sub #l0 2 @mna
+    !if @#
+        popup-window #l0
     !else
-        next-window-find-file :next-file @mna
+        goto-position "\x82"
+        find-buffer #l0
     !endif
     #l1 goto-line
     recenter
+!emacro
+
+define-macro item-list-create
+    set-position "\x86"
+    set-variable #l6 @1
+    set-variable #l1 $buffer-bname
+    set-variable #l3 $buffer-mask
+    find-buffer #l6
+    -1 buffer-mode "undo"
+    -1 buffer-mode "view"
+    1 buffer-mode "magic"
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    -1 kill-region
+    insert-string "Type  Item     <Order by Position>"
+    ; to simple click the function
+    buffer-bind-create "bio" "return" "" item-list-find
+    buffer-bind-create "bio" "delete" "" item-list-close
+    buffer-bind-create "b"   "esc f7" "" item-list-close
+    set-variable :mouse-pick-1 item-list-mouse-pick
+    set-variable :mouse-drop-1 item-list-mouse-drop
+    set-variable $buffer-hilight .hilight.list-item
+    set-variable :next-file &spr "*%s*" #l1
+    set-variable $buffer-mask #l3
+    find-buffer #l1
+    !force set-variable #l5 @3
+    !if &set #l8 $status
+        set-variable #l0 @2
+    !else
+        !if &not &exi &ind &spr ".%s.item-list-s1" $buffer-fhook
+            goto-position "\x86"
+            !return
+        !endif
+        set-variable #l0 &ind &spr ".%s.item-list-s1" $buffer-fhook
+        set-variable #l5 &ind &spr ".%s.item-list-r1" $buffer-fhook
+    !endif
+    set-variable #l2 &bmod "magic"
+    1 buffer-mode "magic"
+    set-variable #l9 1
+    set-variable #l4 1
+    !repeat
+        beginning-of-buffer
+        !force search-forward #l0
+        !while $status
+            set-variable #l3 $window-line
+            set-variable #l7 $window-col
+            find-buffer #l6
+            set-variable $window-line &inc #l4 1
+            insert-string @s0
+            !if &not &seq #l5 "ERROR"
+                #l4 goto-line
+                -1 replace-string #l0 #l5
+            !endif
+            !if &gre $window-line #l4
+                backward-line
+                end-of-line
+                insert-space
+                forward-delete-char
+                !jump -5
+            !endif
+            end-of-line
+            insert-newline
+            backward-line
+            insert-string &spr "%6d " #l3
+            find-buffer #l1
+            set-variable $window-line #l3
+            set-variable $window-col #l7
+            !force search-forward #l0
+        !done
+        !if #l8
+            set-variable #l0 "ERROR"
+        !else
+            set-variable #l0 &ind &spr ".%s.item-list-s%d" $buffer-fhook &inc #l9 1
+            set-variable #l5 &ind &spr ".%s.item-list-r%d" $buffer-fhook #l9
+        !endif
+    !until &seq #l0 "ERROR"
+    find-buffer #l6
+    end-of-buffer
+    backward-delete-char
+    item-list-order
+    goto-position "\x86"
+    &cond #l2 1 -1 buffer-mode "magic"
 !emacro
 
 define-macro item-list-close
@@ -240,6 +227,28 @@ define-macro item-list-close
     !if $status
         !force delete-window
         -1 find-buffer "*item-list*"
+    !endif
+!emacro
+
+define-macro item-list
+    !if &not &exi &ind &spr ".%s.item-list-s1" $buffer-fhook
+        ml-write "[item-list not setup]"
+        !abort
+    !endif
+    item-list-create "*item-list*"
+    !force 0 popup-window "*item-list*"
+    !if $status
+        goto-position "\x86"
+    !else
+        delete-other-windows
+        !if &equ @# 2
+            split-window-vertically
+        !else
+            split-window-horizontally
+            25 shrink-window-horizontally
+        !endif
+        find-buffer "*item-list*"
+        3 next-window
     !endif
 !emacro
 
@@ -269,9 +278,19 @@ define-macro occur
     !endif
     ; force the order back to position
     set-variable .item-list.order 1
-    @# item-list #l2 #l3
+    item-list-create "*occur*" #l2 #l3
+    popup-window "*occur*"
+    goto-position "\x86"
 !emacro
 
-0 add-next-line "*item-list*"
-add-next-line "*item-list*" "^ *%l "
+set-variable .item-list.find 0
+set-variable .item-list.bcol "|15|0|6|"
+set-variable .item-list.ecol "|34|4|10|"
+set-variable .item-list.scol "|0|6|12|"
+set-variable .item-list.order 1
+
+;0 add-next-line "*item-list*"
+;add-next-line "*item-list*" "^ *%l "
+0 add-next-line "*occur*"
+add-next-line "*occur*" "^ *%l "
 

@@ -395,7 +395,7 @@ osd 7  0   "b"
 osd 7  10  ""  "Count &Words   esc C-c"           f count-words
 osd 7  20  ""  "&Spell Word    esc $"             1 spell-word
 osd 7  30  ""  "Spell &Buffer"                    f spell-buffer
-osd 7  35  ""  "Word Complete"                    f spell-complete-word
+osd 7  35  ""  "Word Complete"                    f expand-word
 osd 7  40  "-"
 osd 7  50  ""  "Com&pare Windows"                 f compare-windows
 osd 7  60  ""  "&Compile"                         f compile

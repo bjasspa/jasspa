@@ -100,21 +100,21 @@ osd 25 2 "" "&Wide"     1 osd-25-scroll-bars
 
 ; NOTE Any item number changes may effect mouse-osd-multi
 osd 27 0  "bB"
-osd 27 1  ""   "Cu&t"              f kill-region    ; Kill off the region
-osd 27 2  ""   "&Copy"             f copy-region    ; Copy the region
-osd 27 3  ""   "&Paste"            f osd-mouse-yank ; Paste text
-osd 27 4  "-"
-osd 27 5  "i"  "&Find tag"         1 "3 find-tag @y"
-osd 27 6  ""   "Find &help"        f osd-find-help
-osd 27 7  "Md" "Sort &Lines"      28
-osd 27 8  ""   "Restyle &Region "  f restyle-region
-osd 27 9  "Md" "H&ilight Line"     .osd.tmp osd-line-scheme
-osd 27 10  "-"
-osd 27 11 ""   "Spell Buffer"      f spell-buffer
-osd 27 12 ""   "&Save Buffer"      f save-buffer    ; Save the buffer
-osd 27 13 ""   "&Close Buffer"     f osd-close      ; close the buffer
-osd 27 14 "Md" "&Buffer"          20 osd-1-buffer   ; Set up the buffers
-osd 27 15 "Md" "&Quick Open"      19                ; Open a file. 
+osd 27 10  ""   "Cu&t"              f kill-region    ; Kill off the region
+osd 27 20  ""   "&Copy"             f copy-region    ; Copy the region
+osd 27 30  ""   "&Paste"            f osd-mouse-yank ; Paste text
+osd 27 40  "-"
+osd 27 50  "i"  "&Find tag"         1 "3 find-tag @y"
+osd 27 60  ""   "Find &help"        f osd-find-help
+osd 27 70  "Md" "Sort &Lines"      28
+osd 27 80  ""   "Restyle &Region "  f restyle-region
+osd 27 90  "Md" "H&ilight Line"     .osd.tmp osd-line-scheme
+osd 27 100  "-"
+osd 27 120 ""   "Spell Buffer"      f spell-buffer
+osd 27 130 ""   "&Save Buffer"      f save-buffer    ; Save the buffer
+osd 27 140 ""   "&Close Buffer"     f osd-close      ; close the buffer
+osd 27 150 "Md" "&Buffer"          20 osd-1-buffer   ; Set up the buffers
+osd 27 160 "Md" "&Quick Open"      19                ; Open a file. 
 ;
 ; MENU 28 - Sort lines.
 ; Simple menu for options for the sort lines item. Used in the Pop-up menus.
@@ -131,17 +131,18 @@ define-macro mouse-osd-multi
         0 show-region
         set-variable #l2 $result
         goto-position "\x82"
-        !if &and &gre $mouse-x 20 &les &sub $screen-width $mouse-x 33 
-            osd 27 7  "Mdw" "Sort &Lines"      28
-            osd 27 9  "Mdw" "H&ilight Line"    .osd.tmp osd-line-scheme
-            osd 27 14 "Mdw" "&Buffer"          20 osd-1-buffer
-            osd 27 15 "Mdw" "&Quick Open"      19
+        !if &and &gre $mouse-x 20 &les &sub $frame-width $mouse-x 33 
+            osd 27 70  "Mdw" "Sort &Lines"      28
+            osd 27 90  "Mdw" "H&ilight Line"    .osd.tmp osd-line-scheme
+            osd 27 150 "Mdw" "&Buffer"          20 osd-1-buffer
+            osd 27 160 "Mdw" "&Quick Open"      19
         !else
-            osd 27 7  "Md"  "Sort &Lines"      28
-            osd 27 9  "Md"  "H&ilight Line"    .osd.tmp osd-line-scheme
-            osd 27 14 "Md"  "&Buffer"          20 osd-1-buffer
-            osd 27 15 "Md"  "&Quick Open"      19
+            osd 27 70  "Md"  "Sort &Lines"      28
+            osd 27 90  "Md"  "H&ilight Line"    .osd.tmp osd-line-scheme
+            osd 27 150 "Md"  "&Buffer"          20 osd-1-buffer
+            osd 27 160 "Md"  "&Quick Open"      19
         !endif
+        osd 27 110 "i" &cond &band $window-flags 4 "Unloc&k Window" "Loc&k Window" f "set-variable $window-flags &bxor $window-flags 4"
         !if &band #l2 1
             !force show-region
         !endif
