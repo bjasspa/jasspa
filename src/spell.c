@@ -47,8 +47,8 @@
 #define TBLINCSIZE 512
 #define NOTBLSIZES 11
 
-meUInt tableSizes[NOTBLSIZES+1] = 
-{   211,   419,   811,  1601,  3203, 4801, 6421, 
+meUInt tableSizes[NOTBLSIZES+1] = {
+    211,   419,   811,  1601,  3203, 4801, 6421, 
     8419, 10831, 13001, 16103, 20011
 } ;
 
@@ -74,14 +74,14 @@ typedef struct meSpellRule {
     meUByte rule ;
 } meSpellRule ;
 
-meUByte meRuleScore[NOSPELLRULES]={0} ;
-meUByte meRuleFlags[NOSPELLRULES+1]={0} ;
-meSpellRule  *meRuleTable[NOSPELLRULES+1]={0} ;
+meUByte meRuleScore[NOSPELLRULES] ;
+meUByte meRuleFlags[NOSPELLRULES+1] ;
+meSpellRule  *meRuleTable[NOSPELLRULES+1] ;
 
 typedef meUByte meDictAddr[3] ;
 #define meWORD_SIZE_MAX 127
-#define meGUESS_MAX 20
-#define meSCORE_MAX   60
+#define meGUESS_MAX     20
+#define meSCORE_MAX     60
 
 typedef struct {
     meDictAddr    next ;
@@ -91,9 +91,9 @@ typedef struct {
 } meDictWord ;
 
 typedef struct {
-    meDictAddr    next ;
-    meUByte wordLen ;     
-    meUByte flagLen ;     
+    meDictAddr next ;
+    meUByte    wordLen ;     
+    meUByte    flagLen ;     
     meUByte data[meWORD_SIZE_MAX+meWORD_SIZE_MAX] ;
 } meDictAddWord ;
 
@@ -111,23 +111,23 @@ typedef struct meDictionary {
 } meDictionary ;
 
 typedef meUByte meWORDBUF[meWORD_SIZE_MAX] ;
-static int           longestPrefixChange=0 ;
-static int           longestSuffixRemove=0 ;
-static meDictionary *dictHead=NULL ;
-static meDictionary *dictIgnr=NULL ;
-static meDictWord   *wordCurr=NULL ;
-static int           caseFlags=0 ;
-static int           hyphenCheck=1 ;
-static int           maxScore=meSCORE_MAX ;
+static int           longestPrefixChange ;
+static int           longestSuffixRemove ;
+static meDictionary *dictHead ;
+static meDictionary *dictIgnr ;
+static meDictWord   *wordCurr ;
+static int           caseFlags ;
+static int           hyphenCheck ;
+static int           maxScore ;
 
 /* find-words static variables */
-static meUByte *sfwCurMask=NULL ;
-static meDictionary  *sfwCurDict=NULL ;
-static meUInt         sfwCurIndx=0 ;
-static meDictWord    *sfwCurWord=NULL ;
-static meSpellRule   *sfwPreRule=NULL ;
-static meSpellRule   *sfwSufRule=NULL ;
-static int            sfwFlags=0 ;
+static meUByte *sfwCurMask ;
+static meDictionary  *sfwCurDict ;
+static meUInt         sfwCurIndx ;
+static meDictWord    *sfwCurWord ;
+static meSpellRule   *sfwPreRule ;
+static meSpellRule   *sfwSufRule ;
+static int            sfwFlags ;
 
 #define SPELL_ERROR           0x80
 
@@ -427,10 +427,10 @@ static meDictionary *
 meDictionaryFind(int flag)
 {
     meDictionary *dict ;
-    meUByte fname[meFILEBUF_SIZE_MAX], tmp[meFILEBUF_SIZE_MAX] ;
+    meUByte fname[meBUF_SIZE_MAX], tmp[meBUF_SIZE_MAX] ;
     int found ;
     
-    if(meGetString((meUByte *)"Dictionary name",MLFILECASE,0,tmp,meFILEBUF_SIZE_MAX) <= 0)
+    if(meGetString((meUByte *)"Dictionary name",MLFILECASE,0,tmp,meBUF_SIZE_MAX) <= 0)
         return meFALSE ;
     
     if(!fileLookup(tmp,(meUByte *)".edf",meFL_CHECKDOT|meFL_USESRCHPATH,fname))
@@ -725,7 +725,7 @@ meDictionarySave(meDictionary *dict, int n)
             return meTRUE ;
         if(dict->flags & DTCREATE)
         {
-            meUByte fname[meFILEBUF_SIZE_MAX], *pp, *ss ;
+            meUByte fname[meBUF_SIZE_MAX], *pp, *ss ;
             /* if the ctreated dictionary does not have a complete path then get one */
             if(meStrrchr(dict->fname,DIR_CHAR) == NULL)
             {

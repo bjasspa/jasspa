@@ -170,6 +170,11 @@ token(meUByte *src, meUByte *tok)
                 /* Escape key - replace with esc */
                 key = ME_SPECIAL|SKEY_esc ;
                 goto quote_spec_key ;
+            case 'H':
+                /* OSD hotkey */
+                *dd++ = meCHAR_LEADER ;
+                *dd++ = meCHAR_TRAIL_HOTKEY ;  
+                break;
             case 'I':
                 /* backward-delete-tab - replace with S-tab */
                 key = ME_SPECIAL|ME_SHIFT|SKEY_tab ;
@@ -196,8 +201,8 @@ token(meUByte *src, meUByte *tok)
                 /* Exec-command special - replace with x-command key */
                 key = ME_SPECIAL|SKEY_x_command ;
 quote_spec_key:
-                *dd++ = 0xff ;
-                *dd++ = 2 ;
+                *dd++ = meCHAR_LEADER ;
+                *dd++ = meCHAR_TRAIL_SPECIAL ;
                 *dd++ = key >> 8 ;
                 *dd++ = key & 0xff ;
                 break;
@@ -207,8 +212,8 @@ quote_spec_key:
             case 'e':   *dd++ = 0x1b; break;
             case 'f':   *dd++ = 0x0c; break;
             case 'i':
-                *dd++ = 0xff;
-                *dd++ = 2;  
+                *dd++ = meCHAR_LEADER ;
+                *dd++ = meCHAR_TRAIL_SPECIAL ;  
                 *dd++ = '@';
                 *dd++ = 'I' - '@';
                 break;
@@ -220,8 +225,8 @@ quote_spec_key:
                 break;
             case 'r':   *dd++ = 0x0d; break;
             case 's':   
-                *dd++ = 0xff;
-                *dd++ = 0x02;  
+                *dd++ = meCHAR_LEADER ;
+                *dd++ = meCHAR_TRAIL_SPECIAL ;  
                 break;
             case 't':   *dd++ = 0x09; break;
             case 'v':   *dd++ = 0x0b; break;
@@ -240,26 +245,39 @@ quote_spec_key:
                         cc = hexToNum(cc) ;
                     if(cc == 0)
                     {
-                        *dd++ = 0xff ;
+                        *dd++ = meCHAR_LEADER ;
                         *dd++ = 0x01 ;
                     }
-                    else if(cc == 0xff)
+                    else if(cc == meCHAR_LEADER)
                     {
-                        *dd++ = 0xff ;
-                        *dd++ = 0xff ;
+                        *dd++ = meCHAR_LEADER ;
+                        *dd++ = meCHAR_TRAIL_LEADER ;
                     }
                     else
                         *dd++ = cc ;
                 }
                 break;
+            case '{':
+                /* OSD start hilight */
+                *dd++ = meCHAR_LEADER ;
+                *dd++ = meCHAR_TRAIL_HILSTART ;  
+                break;
+            case '}':
+                /* OSD stop hilight */
+                *dd++ = meCHAR_LEADER ;
+                *dd++ = meCHAR_TRAIL_HILSTOP ;  
+                break;
+                
             default:
                 *dd++ = cc;
             }
             break ;
             
         case 255:
-            *dd++ = 0xff;
-            /* no break - must store 2 0xff's */
+            *dd++ = meCHAR_LEADER ;
+            *dd++ = meCHAR_TRAIL_LEADER ;
+            break ;
+        
         default:
             /* record the character */
             *dd++ = cc;
@@ -326,8 +344,8 @@ meGetString(meUByte *prompt, int option, int defnum, meUByte *buffer, int size)
             }
             for(; ((--size) > 0) && ((cc = *res++) != '\0') ; )
             {
-                if((cc == 0xff) && !(option & MLFFZERO) &&
-                   (((cc = *res++) == 0x0) || (cc == 0x01)))
+                if((cc == meCHAR_LEADER) && !(option & MLFFZERO) &&
+                   ((cc = *res++) != meCHAR_TRAIL_LEADER))
                     break ;
                 *ss++ = cc ;
             }
@@ -1297,7 +1315,7 @@ int
 dofile(meUByte *fname, int f, int n)
 {
     meVarList     varList={NULL,0} ;
-    meUByte         fn[meFILEBUF_SIZE_MAX] ;
+    meUByte         fn[meBUF_SIZE_MAX] ;
     meLine          hlp ;
     register int  status ;      /* results of various calls */
     

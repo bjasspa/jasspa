@@ -127,14 +127,14 @@ osd .osd.mmrg-opt 90  "Shf" "        Field Quote Char  " 70
 osd .osd.mmrg-opt 100 "ExfH" .scheme.osd-entry "####" 3 mmrg-options-set
 osd .osd.mmrg-opt 110 ""
 osd .osd.mmrg-opt 140 ""
-osd .osd.mmrg-opt 160 "BcfH"   .scheme.osd-ebtt "  &Ok  "  1 void
+osd .osd.mmrg-opt 160 "BcfH"   .scheme.osd-ebtt "  \HOk  "  1 void
 
 osd .osd.mmrg-popup 0   "b"
-osd .osd.mmrg-popup 1   "Md" "Insert &Field"       .osd.mmrg-ppfld
-osd .osd.mmrg-popup 2   ""   "&If Statement"       -1 mmrg-insert-data
-osd .osd.mmrg-popup 3   ""   "&If Else Statement"  -2 mmrg-insert-data
-osd .osd.mmrg-popup 4   ""   "&Next Record"        -3 mmrg-insert-data
-osd .osd.mmrg-popup 5   ""   "&Repeat Doc"         -4 mmrg-insert-data
+osd .osd.mmrg-popup 1   "M" "Insert \HField"       .osd.mmrg-ppfld
+osd .osd.mmrg-popup 2   ""  "\HIf Statement"       -1 mmrg-insert-data
+osd .osd.mmrg-popup 3   ""  "\HIf Else Statement"  -2 mmrg-insert-data
+osd .osd.mmrg-popup 4   ""  "\HNext Record"        -3 mmrg-insert-data
+osd .osd.mmrg-popup 5   ""  "\HRepeat Doc"         -4 mmrg-insert-data
 
 define-macro mail-merge-popup 
     ; redefine the position to be next to the cursor 
@@ -353,7 +353,7 @@ define-macro mail-merge-exec
 define-macro mail-merge
     !force mmrg-get-info
     !if &not $status
-        osd-xdialog "Mail Merge" "Mail merge the current buffer?" 1 "  &Yes  " "  &No  "
+        osd-xdialog "Mail Merge" "Mail merge the current buffer?" 1 "  \HYes  " "  \HNo  "
         !if &equ $result 2
             !abort
         !endif
@@ -362,7 +362,7 @@ define-macro mail-merge
         set-variable .mmrg.endfld  ","
         set-variable .mmrg.delimit "\""
     !endif
-    osd .osd.fobm 55  "BcftHx"  55 .scheme.osd-ebtt " &Options  " .osd.mmrg-opt osd
+    osd .osd.fobm 55  "BcftHx"  55 .scheme.osd-ebtt " \HOptions  " .osd.mmrg-opt osd
     set-variable .osd-get-file.title "Select Merge Data File"
     set-variable .osd-get-file.file-type "|Text file|All files|"
     set-variable .osd-get-file.file-mask "|*.txt|*|"

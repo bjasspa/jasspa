@@ -26,13 +26,13 @@
 ; on the mode line
 ;
 osd 23 0  b
-osd 23 1  "Md" "Buffer &Modes"    24
-osd 23 2  ""   "&Save Buffer"      f save-buffer    ; Save the buffer
-osd 23 3  ""   "&Close Buffer"     f osd-close      ; Close the buffer
-osd 23 4  "Md" "&Buffer"          20 osd-1-buffer   ; Set up the buffers
-osd 23 5  "Md" "&Quick Open"      19                ; Open a file. 
-osd 23 6  "Md" "S&croll Bars"     25
-osd 23 7  ""   "Store Frame Size"  f store-frame-size
+osd 23 1  "M" "Buffer \HModes"    24
+osd 23 2  ""  "\HSave Buffer"      f save-buffer    ; Save the buffer
+osd 23 3  ""  "\HClose Buffer"     f osd-close      ; Close the buffer
+osd 23 4  "M" "\HBuffer"          20 osd-1-buffer   ; Set up the buffers
+osd 23 5  "M" "\HQuick Open"      19                ; Open a file. 
+osd 23 6  "M" "S\Hcroll Bars"     25
+osd 23 7  ""  "Store Frame Size"  f store-frame-size
 ;
 ; MENU #24 - BUFFER MODES pop-up menu
 ; Show the buffer modes. These are check items on the popup menu, a callback
@@ -95,8 +95,8 @@ set-variable $mode-names ".*"
     !endif
 !emacro
 osd 25 0 "bB"
-osd 25 1 "" "&Enabled"  0 osd-25-scroll-bars
-osd 25 2 "" "&Wide"     1 osd-25-scroll-bars
+osd 25 1 "" "\HEnabled"  0 osd-25-scroll-bars
+osd 25 2 "" "\HWide"     1 osd-25-scroll-bars
 ;
 ; MENU 27 - EDIT POPUP - Generic popup sub-menu
 ;
@@ -111,25 +111,25 @@ osd 25 2 "" "&Wide"     1 osd-25-scroll-bars
 
 ; NOTE Any item number changes may effect mouse-osd-multi
 osd 27 0  "bB"
-osd 27 10  ""   "Cu&t"              f kill-region    ; Kill off the region
-osd 27 20  ""   "&Copy"             f copy-region    ; Copy the region
-osd 27 30  ""   "&Paste"            f osd-mouse-yank ; Paste text
+osd 27 10  ""  "Cu\Ht"              f kill-region    ; Kill off the region
+osd 27 20  ""  "\HCopy"             f copy-region    ; Copy the region
+osd 27 30  ""  "\HPaste"            f osd-mouse-yank ; Paste text
 osd 27 40  "-"
-osd 27 45  "i"  "&Occurrences"      f "2 occur @y"
-osd 27 50  "i"  "&Find tag"         1 "3 find-tag @y"
-osd 27 60  ""   "Find &help"        f osd-find-help
-osd 27 80  ""   "Restyle &Region "  f restyle-region
-osd 27 100  "-"
-osd 27 120 ""   "Spell Buffer"      f spell-buffer
-osd 27 130 ""   "&Save Buffer"      f save-buffer    ; Save the buffer
-osd 27 140 ""   "&Close Buffer"     f osd-close      ; close the buffer
+osd 27 45  "i" "\HOccurrences"      f "2 occur @y"
+osd 27 50  "i" "\HFind tag"         1 "3 find-tag @y"
+osd 27 60  ""  "Find \Hhelp"        f osd-find-help
+osd 27 80  ""  "Restyle \HRegion "  f restyle-region
+osd 27 100 "-"
+osd 27 120 ""  "Spell Buffer"      f spell-buffer
+osd 27 130 ""  "\HSave Buffer"      f save-buffer    ; Save the buffer
+osd 27 140 ""  "\HClose Buffer"     f osd-close      ; close the buffer
 ;
 ; MENU 28 - Sort lines.
 ; Simple menu for options for the sort lines item. Used in the Pop-up menus.
 ;
 osd 28 0  b
-osd 28 1  "" "&Case Sensitive"       f sort-lines
-osd 28 2  "" "&Ignore Case"          f sort-lines-ignore-case
+osd 28 1  "" "\HCase Sensitive"       f sort-lines
+osd 28 2  "" "\HIgnore Case"          f sort-lines-ignore-case
 ;
 ; The following is the osd behaviour determined by the position of the mouse
 define-macro mouse-osd-multi
@@ -140,15 +140,15 @@ define-macro mouse-osd-multi
         set-variable #l2 $result
         goto-position "\x82"
         set-variable #l1 &cond &and &gre $mouse-x 20 &les &sub $frame-width $mouse-x 33 "Mdw" "Md"
-        osd 27 70  #l1 "Sort &Lines"      28
-        osd 27 90  #l1 "H&ilight Line"    .osd.tmp osd-line-scheme
+        osd 27 70  #l1 "Sort \HLines"      28
+        osd 27 90  #l1 "H\Hilight Line"    .osd.tmp osd-line-scheme
         !if &reg "/history" "find-buffer" "0"
-            osd 27 150 #l1 "&Buffer"      .osd.find-buffer osd-find-buffer
+            osd 27 150 #l1 "\HBuffer"      .osd.find-buffer osd-find-buffer
         !else    
-            osd 27 150 #l1 "&Buffer"      20 osd-1-buffer   ; Set up the buffers
+            osd 27 150 #l1 "\HBuffer"      20 osd-1-buffer   ; Set up the buffers
         !endif
-        osd 27 160 #l1 "&Quick Open"      19
-        osd 27 110 "i" &cond &band $window-flags 4 "Unloc&k Window" "Loc&k Window" f "set-variable $window-flags &bxor $window-flags 4"
+        osd 27 160 #l1 "\HQuick Open"      19
+        osd 27 110 "i" &cond &band $window-flags 4 "Unloc\Hk Window" "Loc&k Window" f "set-variable $window-flags &bxor $window-flags 4"
         !if &band #l2 1
             !force show-region
         !endif

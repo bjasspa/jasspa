@@ -53,31 +53,31 @@
 -1 osd .osd.gtf
 osd .osd.gtf 0   "batcdHs" 10 3 46 0 -1 -1 250 .scheme.osd-title "Generate Tags File"
 osd .osd.gtf 10  ""
-osd .osd.gtf 20  "Shf"  "     Tags &Flags : " 4
+osd .osd.gtf 20  "Shf"  "     Tags \HFlags : " 4
 osd .osd.gtf 30  "ExfH" .scheme.osd-entry "###############" 1 generate-tags-file-entry
 osd .osd.gtf 40  "hf"   "    ("
-osd .osd.gtf 50  "Rhfx" "&Append"       1 generate-tags-file-flags
+osd .osd.gtf 50  "Rhfx" "\HAppend"       1 generate-tags-file-flags
 osd .osd.gtf 60  "hf"   ", "
-osd .osd.gtf 70  "Rhfx" "&Enum-types"   2 generate-tags-file-flags
+osd .osd.gtf 70  "Rhfx" "\HEnum-types"   2 generate-tags-file-flags
 osd .osd.gtf 80  "hf"   ", "
-osd .osd.gtf 90  "Rhfx" "&Multiple"     3 generate-tags-file-flags
+osd .osd.gtf 90  "Rhfx" "\HMultiple"     3 generate-tags-file-flags
 osd .osd.gtf 100 "hf"   ", "
-osd .osd.gtf 110 "Rhfx" "&Prototypes"   4 generate-tags-file-flags
+osd .osd.gtf 110 "Rhfx" "\HPrototypes"   4 generate-tags-file-flags
 osd .osd.gtf 120 "f"    ",  "
 osd .osd.gtf 130 "hf"   "     "
-osd .osd.gtf 140 "Rhfx" "&Recurse"      5 generate-tags-file-flags
+osd .osd.gtf 140 "Rhfx" "\HRecurse"      5 generate-tags-file-flags
 osd .osd.gtf 150 "hf"   ", "
-osd .osd.gtf 160 "Rhfx" "&Structure"    6 generate-tags-file-flags
+osd .osd.gtf 160 "Rhfx" "\HStructure"    6 generate-tags-file-flags
 osd .osd.gtf 170 "hf"   ", "
-osd .osd.gtf 180 "Rhfx" "global &Vars"  7 generate-tags-file-flags
+osd .osd.gtf 180 "Rhfx" "global \HVars"  7 generate-tags-file-flags
 osd .osd.gtf 190 "f"    ")"
 osd .osd.gtf 200 ""
-osd .osd.gtf 210 "Sf"   "  S&tarting Path :" 230
+osd .osd.gtf 210 "Sf"   "  S\Htarting Path :" 230
 osd .osd.gtf 220 "hf"   "  "
 osd .osd.gtf 230 "ExfH" .scheme.osd-entry "########################################" 2 generate-tags-file-entry
 osd .osd.gtf 240 ""
-osd .osd.gtf 250 "BhcfHi" .scheme.osd-ebtt " &Generate Tags "    f generate-tags-file-exec
-osd .osd.gtf 260 "BcfH"   .scheme.osd-ebtt " &Cancel "    1 void
+osd .osd.gtf 250 "BhcfHi" .scheme.osd-ebtt " \HGenerate Tags "    f generate-tags-file-exec
+osd .osd.gtf 260 "BcfH"   .scheme.osd-ebtt " \HCancel "    1 void
 
 ; generate-tags-file "<tagtype>" "[start-path]"
 ; runs ME @<tagtype> -v%tags-option=...

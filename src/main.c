@@ -171,7 +171,7 @@ insertChar(register int c, register int n)
         int index, ii=n ;
         for(index=0,n=0 ; (ii>0) && (frameCur->windowCur->dotOffset < frameCur->windowCur->dotLine->length) ; ii--)
         {
-            if((meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset) != meTABCHAR) ||
+            if((meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset) != meCHAR_TAB) ||
                (at_tab_pos(getccol()+index+1) == 0))
             {
                 lineSetChanged(WFMAIN);
@@ -611,7 +611,6 @@ exitEmacs(int f, int n)
             extern void regFreeMemory(void) ;
             extern void srchFreeMemory(void) ;
             extern void TTfreeTranslateKey(void) ;
-            extern meUByte *ffbuf ;
             extern meUByte *defHistFile ;
             extern meUInt *colTable ;
             meMacro      *mac ;
@@ -713,7 +712,6 @@ exitEmacs(int f, int n)
                 cuv = nuv ;
             }
             meFree(meRegHead) ;
-            meFree(ffbuf) ;
             meFree(progName) ;
             if(modeLineStr != orgModeLineStr)
                 meNullFree(modeLineStr) ;
@@ -1201,7 +1199,6 @@ doOneKey(void)
 void
 mesetup(int argc, char *argv[])
 {
-    extern meUByte *ffbuf ;
     meBuffer *bp, *mainbp ;
     int     carg,rarg;          /* current arg to scan            */
     int     noFiles=0 ;
@@ -1281,12 +1278,10 @@ mesetup(int argc, char *argv[])
 #endif /* _UNIX */
     count_key_table() ;
 
-    if(((meRegHead = meMalloc(sizeof(meRegister))) == NULL) ||
-       ((ffbuf = meMalloc(meFIOBUFSIZ+1)) == NULL))
+    /* Init the registers - Make the head registers point back to themselves so that
+     * accessing #p? gets #g? and not a core-dump */
+    if((meRegHead = meMalloc(sizeof(meRegister))) == NULL)
         exit(1) ;
-    /* Make the head registers point back to themselves so that
-     * accessing #p? gets #g? and not a core-dump
-     */
     meRegHead->prev = meRegHead ;
     meRegHead->commandName = NULL ;
     meRegHead->execstr = NULL ;
@@ -1750,7 +1745,7 @@ missing_arg:
         {
             if(HistNoFilesLoaded && isUrlLink(bp->fileName))
             {
-                meUByte prompt[meFILEBUF_SIZE_MAX+16] ;
+                meUByte prompt[meBUF_SIZE_MAX+16] ;
                 meStrcpy(prompt,"Reload file ") ;
                 meStrcat(prompt,bp->fileName) ;
                 if(mlyesno(prompt) <= 0)

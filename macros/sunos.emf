@@ -14,29 +14,5 @@
 add-next-line "*compile*" "\"%f\", line %l:"
 ; gcc compiler
 add-next-line "*compile*" "%f:%l:"
-;
-; Bind in any special keys for Solaris.
-; 
-; Number pad keys
-translate-key "f27" "home"
-translate-key "f29" "page-up"
-translate-key "f33" "end"
-translate-key "f35" "page-down"
-translate-key "f31" "5"
-translate-key "f25" "/"
-translate-key "f26" "*"
-translate-key "f24" "-"
-; Home key 
-translate-key "f28" "home"
-; Undo key 
-translate-key "f14" "C-_"
-; Copy key 
-translate-key "f16" "esc w"
-; Paste key
-translate-key "f18" "C-y"
-; Find key
-translate-key "f19" "C-s"
-; Cut key
-translate-key "f20" "C-w"
 
 

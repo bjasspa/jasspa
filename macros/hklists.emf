@@ -24,7 +24,7 @@ set-variable .fhook-lists.command-flag  "|thbio|"
 set-variable .fhook-lists.command-name  "|lists-find-link|"
 set-variable .fhook-lists.command-nbind "||"
 set-variable .fhook-lists.command-kbind "|return|"
-set-variable .fhook-lists.command-desc  "|&Get Help on Item|"
+set-variable .fhook-lists.command-desc  "|\HGet Help on Item|"
 
 !if &and &sin "h" .fhook-lists.setup &band .hilight.flags 0x02 
     !if &not &exist .hilight.lists

@@ -19,7 +19,7 @@ set-variable .fhook-bibtex.command-flag  "|thbH|"
 set-variable .fhook-bibtex.command-name  "|bibtex-swap-hilight|"
 set-variable .fhook-bibtex.command-nbind "||"
 set-variable .fhook-bibtex.command-kbind "|C-c C-h|"
-set-variable .fhook-bibtex.command-desc  "|T&oggle hilighting|"
+set-variable .fhook-bibtex.command-desc  "|T\Hoggle hilighting|"
 
 set-variable .fhook-bibtex.collapse-open  "^@"
 set-variable .fhook-bibtex.collapse-close "^@\\|\\'"

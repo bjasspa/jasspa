@@ -760,23 +760,23 @@ define-macro gdiff
 
 define-macro-file search osd-search
 osd .osd.gdiff 0   b
-osd .osd.gdiff 10  ""   "&Prev Diff"       -1 gdiff-next
-osd .osd.gdiff 20  ""   "&Next Diff"        1 gdiff-next
-osd .osd.gdiff 30  ""   "Pre&v Unassigned" -1 gdiff-next-unassigned
-osd .osd.gdiff 40  ""   "Nex&t Unassigned"  1 gdiff-next-unassigned
+osd .osd.gdiff 10  ""   "\HPrev Diff"       -1 gdiff-next
+osd .osd.gdiff 20  ""   "\HNext Diff"        1 gdiff-next
+osd .osd.gdiff 30  ""   "Pre\Hv Unassigned" -1 gdiff-next-unassigned
+osd .osd.gdiff 40  ""   "Nex\Ht Unassigned"  1 gdiff-next-unassigned
 osd .osd.gdiff 50  "-"
-osd .osd.gdiff 60  "Mdi" "&Global"  .osd.gdiff-s  "0 gdiff-menu-sel"
-osd .osd.gdiff 70  "Mdi" "&Region"  .osd.gdiff-s "16 gdiff-menu-sel"
-osd .osd.gdiff 80  "Mdi" "&Line"    .osd.gdiff-s "32 gdiff-menu-sel"
+osd .osd.gdiff 60  "Mi" "\HGlobal"  .osd.gdiff-s  "0 gdiff-menu-sel"
+osd .osd.gdiff 70  "Mi" "\HRegion"  .osd.gdiff-s "16 gdiff-menu-sel"
+osd .osd.gdiff 80  "Mi" "\HLine"    .osd.gdiff-s "32 gdiff-menu-sel"
 osd .osd.gdiff 90  "-"
-osd .osd.gdiff 100 ""   "&Search"           1 osd-search
+osd .osd.gdiff 100 ""   "\HSearch"           1 osd-search
 osd .osd.gdiff 110 "-"
-osd .osd.gdiff 120  ""   "Save &Left"      -1 gdiff-save
-osd .osd.gdiff 130  ""   "Save &Right"      1 gdiff-save
-osd .osd.gdiff 140  ""   "Save &As..."      1 gdiff-save-as
-osd .osd.gdiff 150  "-"
-osd .osd.gdiff 160 ""   "Gdiff &Help"       .osd.gdiff-help osd
-osd .osd.gdiff 170 ""   "E&xit Gdiff"       f gdiff-exit
+osd .osd.gdiff 120 ""   "Save \HLeft"       -1 gdiff-save
+osd .osd.gdiff 130 ""   "Save \HRight"       1 gdiff-save
+osd .osd.gdiff 140 ""   "Save \HAs..."       1 gdiff-save-as
+osd .osd.gdiff 150 "-"
+osd .osd.gdiff 160 ""   "Gdiff \HHelp"       .osd.gdiff-help osd
+osd .osd.gdiff 170 ""   "E\Hxit Gdiff"       f gdiff-exit
 
 osd .osd.gdiff-help 0  "batcdH" 9 3 99 .scheme.osd-title "Graphical Diff Help"
 osd .osd.gdiff-help 3  "" 
@@ -803,7 +803,7 @@ osd .osd.gdiff-help 22 ""  "    C-x k   - Exit graphical diff"
 osd .osd.gdiff-help 23 "" 
 osd .osd.gdiff-help 24 ""  "  Right mouse button activates a menu"
 osd .osd.gdiff-help 25 "" 
-osd .osd.gdiff-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
+osd .osd.gdiff-help 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void 
 
 set-variable .gdiff.bndiff "*gdiff diff*"
 set-variable .gdiff.bnold  "*gdiff 1st*"

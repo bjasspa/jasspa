@@ -49,6 +49,10 @@
 #include <termcap.h>
 #endif
 
+#if (defined _SUNOS55) || (defined _SUNOS56) 
+#include <X11/Sunkeysym.h>
+#endif
+
 #ifdef _USG                     /* System V */
 /* We need this stuff to do the pipes properly. */
 #ifdef _TERMIOS
@@ -718,11 +722,62 @@ meFrameXTermSetScheme(meFrame *frame, meScheme scheme)
 void
 meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
 {
-    XPoint points[3] ;
+    XPoint points[4] ;
     int ii ;
     /* Fill in the character */
     switch (cc)
     {
+    case 0x01:          /* checkbox left side ([) */
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
+                  x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth,
+                  x + mecm.fwidth - 2, y + mecm.fhdepth - mecm.fhwidth) ;
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
+                  x + mecm.fwidth - 2, y + mecm.fhdepth - mecm.fhwidth,
+                  x + mecm.fwidth - 2, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
+                  x + mecm.fwidth - 2, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth,
+                  x + mecm.fwidth - 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
+        break;
+        
+    case 0x02:          /* checkbox center not selected */
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
+                  x, y + mecm.fhdepth - mecm.fhwidth,
+                  x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
+                  x, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth,
+                  x + mecm.fwidth - 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
+        break;
+        
+    case 0x03:          /* checkbox center not selected */
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
+                  x, y + mecm.fhdepth - mecm.fhwidth,
+                  x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
+                  x, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth,
+                  x + mecm.fwidth - 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
+        points[0].x = x ;
+        points[0].y = y + mecm.fhdepth - mecm.fhwidth + 2 ;
+        points[1].x = x ;
+        points[1].y = y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth - 1 ;
+        points[2].x = x + mecm.fwidth ;
+        points[2].y = y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth - 1 ;
+        points[3].x = x + mecm.fwidth ;
+        points[3].y = y + mecm.fhdepth - mecm.fhwidth + 2 ;
+        XFillPolygon(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), points, 4, Convex, CoordModeOrigin) ;
+        break;
+        
+    case 0x04:          /* checkbox right side (]) */
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
+                  x, y + mecm.fhdepth - mecm.fhwidth,
+                  x + 1, y + mecm.fhdepth - mecm.fhwidth) ;
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
+                  x + 1, y + mecm.fhdepth - mecm.fhwidth,
+                  x + 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
+                  x + 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth,
+                  x, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
+        break;
+    
     case 0x07:          /* Line space '.' */
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+mecm.fhwidth, y+mecm.fhdepth, x+mecm.fhwidth+1, y+mecm.fhdepth);
         break;
@@ -790,22 +845,28 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
         break;
 
     case 0x10:          /* Cursor Arrows / Right */
+        ii = mecm.fwidth ;
+        if(ii > mecm.fhdepth)
+            ii = mecm.fhdepth ;
         points[0].x = x + 1 ;
-        points[0].y = y ;
+        points[0].y = y + mecm.fhdepth - ii ;
         points[1].x = x + 1 ;
-        points[1].y = y + mecm.fdepth - 1;
-        points[2].x = x + mecm.fwidth ;
+        points[1].y = y + mecm.fhdepth + ii ;
+        points[2].x = x + ii + 1 ;
         points[2].y = y + mecm.fhdepth ;
         XFillPolygon(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), points, 3, Convex, CoordModeOrigin) ;
         break;
 
     case 0x11:          /* Cursor Arrows / Left */
-        points [0].x = x + mecm.fwidth - 1 ;
-        points [0].y = y ;
-        points [1].x = x + mecm.fwidth - 1 ;
-        points [1].y = y + mecm.fdepth - 1 ;
-        points [2].x = x ;
-        points [2].y = y + mecm.fhdepth ;
+        ii = mecm.fwidth ;
+        if(ii > mecm.fhdepth)
+            ii = mecm.fhdepth ;
+        points[0].x = x + mecm.fwidth - 1 ;
+        points[0].y = y + mecm.fhdepth + ii ;
+        points[1].x = x + mecm.fwidth - 1 ;
+        points[1].y = y + mecm.fhdepth - ii ;
+        points[2].x = x + mecm.fwidth - 1 - ii ;
+        points[2].y = y + mecm.fhdepth ;
         XFillPolygon(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), points, 3, Convex, CoordModeOrigin) ;
         break;
 
@@ -813,6 +874,42 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x, y + mecm.fhdepth, x + mecm.fwidth - 1, y + mecm.fhdepth);
         break;
 
+    case 0x13:          /* cross box empty ([ ]) */
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
+                  x, y + mecm.fhdepth - mecm.fhwidth + 1,
+                  x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth + 1);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
+                  x, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth,
+                  x + mecm.fwidth - 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
+                  x, y + mecm.fhdepth - mecm.fhwidth + 1,
+                  x, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
+                  x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth + 1,
+                  x + mecm.fwidth - 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
+        break;
+    
+    case 0x14:          /* cross box ([X]) */
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
+                  x, y + mecm.fhdepth - mecm.fhwidth + 1,
+                  x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth + 1);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
+                  x, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth,
+                  x + mecm.fwidth - 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
+                  x, y + mecm.fhdepth - mecm.fhwidth + 1,
+                  x, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
+                  x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth + 1,
+                  x + mecm.fwidth - 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
+                  x, y + mecm.fhdepth - mecm.fhwidth + 1,
+                  x + mecm.fwidth - 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
+                  x, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth,
+                  x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth + 1);
+        break;
+    
     case 0x15:          /* Line Drawing / Left Tee |- */
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x + mecm.fhwidth, y, x + mecm.fhwidth, y + mecm.fdepth - 1);
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x + mecm.fhwidth, y + mecm.fhdepth, x + mecm.fwidth - 1, y + mecm.fhdepth);
@@ -837,6 +934,15 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x + mecm.fhwidth, y, x + mecm.fhwidth, y + mecm.fdepth - 1);
         break;
 
+    case 0x1a:          /* Line Drawing / Bottom right _| with resize */
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x, y + mecm.fhdepth, x + mecm.fhwidth, y + mecm.fhdepth);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x + mecm.fhwidth, y + mecm.fhdepth, x + mecm.fhwidth, y);
+        
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x, y + mecm.fdepth - 1, x + mecm.fwidth - 1, y + mecm.fdepth - mecm.fwidth);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x + 2, y + mecm.fdepth - 1, x + mecm.fwidth - 1, y + mecm.fdepth - mecm.fwidth + 2);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x + 4, y + mecm.fdepth - 1, x + mecm.fwidth - 1, y + mecm.fdepth - mecm.fwidth + 4);
+        break ;
+    
     case 0x1b:          /* Scroll box - vertical */
         for (ii = (y+1) & ~1; ii < y+mecm.fdepth; ii += 2)
             XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x, ii, x + mecm.fwidth - 1, ii);
@@ -1383,8 +1489,14 @@ meXEventHandler(void)
                 case XK_Clear:          ii = SKEY_clear; goto special_key;
                 case XK_Return:         ii = SKEY_return; goto special_key;
                     /* Pause, hold */
+#if (defined _SUNOS55) || (defined _SUNOS56) 
+                case XK_F21:
+#endif
                 case XK_Pause:          ii = SKEY_pause; goto special_key;
-                case XK_Scroll_Lock:    ii = SKEY_scroll_lock; goto special_key;
+#if (defined _SUNOS55) || (defined _SUNOS56) 
+                case XK_F22:                
+                case SunXK_Sys_Req:
+#endif
                 case XK_Sys_Req:        ii = SKEY_sys_req; goto special_key;
                 case XK_Escape:         ii = SKEY_esc; goto special_key;
                     /* Delete, rubout */ 
@@ -1436,7 +1548,6 @@ meXEventHandler(void)
                     /* case XK_Mode_switch:*/
                     /* Alias for mode_switch */
                     /* case XK_script_switch:*/
-                case XK_Num_Lock:       ii = SKEY_num_lock; goto special_bound;
                     
                     /* Keypad Functions, keypad numbers cleverly chosen to map to ascii */
                     
@@ -1449,28 +1560,49 @@ meXEventHandler(void)
                 case XK_KP_F2:          ii = SKEY_f2; goto special_key;
                 case XK_KP_F3:          ii = SKEY_f3; goto special_key;
                 case XK_KP_F4:          ii = SKEY_f4; goto special_key;
-                
+                    
+#if (defined _SUNOS55) || (defined _SUNOS56) 
+                case XK_F27:
+#endif
                 case XK_KP_Home:        ii = SKEY_kp_home; goto special_key;
                 case XK_KP_Left:        ii = SKEY_kp_left; goto special_key;
                 case XK_KP_Up:          ii = SKEY_kp_up; goto special_key;
                 case XK_KP_Right:       ii = SKEY_kp_right; goto special_key;
                 case XK_KP_Down:        ii = SKEY_kp_down; goto special_key;
                     /*  case XK_KP_Prior:       ii = SKEY_home;  goto special_key;*/
+#if (defined _SUNOS55) || (defined _SUNOS56) 
+                case XK_F29:          
+#endif
                 case XK_KP_Page_Up:     ii = SKEY_kp_page_up; goto special_key;
                     /* case XK_KP_Next:        ii = SKEY_end; goto special_key;*/
+#if (defined _SUNOS55) || (defined _SUNOS56) 
+                case XK_F35:
+#endif
                 case XK_KP_Page_Down:   ii = SKEY_kp_page_down; goto special_key;
+#if (defined _SUNOS55) || (defined _SUNOS56) 
+                case XK_F33:
+#endif
                 case XK_KP_End:         ii = SKEY_kp_end; goto special_key;
                 case XK_KP_Begin:       ii = SKEY_kp_begin; goto special_key;
                 case XK_KP_Insert:      ii = SKEY_kp_insert; goto special_key;
                 case XK_KP_Delete:      ii = SKEY_kp_delete; goto special_key;
                     /* equals */
                 case XK_KP_Equal:       ii = '='; goto done_key;
+#if (defined _SUNOS55) || (defined _SUNOS56) 
+                case XK_F26: 
+#endif
                 case XK_KP_Multiply:    ii = '*'; goto done_key;
                 case XK_KP_Add:         ii = '+'; goto done_key;
                     /* separator, often comma */
                 case XK_KP_Separator:   ii = ','; goto done_key;
+#if (defined _SUNOS55) || (defined _SUNOS56) 
+                case XK_F24:
+#endif
                 case XK_KP_Subtract:    ii = '-'; goto done_key;
                 case XK_KP_Decimal:     ii = '.'; goto done_key;
+#if (defined _SUNOS55) || (defined _SUNOS56) 
+                case XK_F25:
+#endif
                 case XK_KP_Divide:      ii = '/'; goto done_key;
                     
                 case XK_KP_0:           ii = '0'; goto done_key;
@@ -1500,62 +1632,35 @@ meXEventHandler(void)
                 case XK_F8:             ii = SKEY_f8; goto special_key;
                 case XK_F9:             ii = SKEY_f9; goto special_key;
                 case XK_F10:            ii = SKEY_f10; goto special_key;
+#if (defined _SUNOS55) || (defined _SUNOS56) 
+                case SunXK_F36:
+#endif
                 case XK_F11:            ii = SKEY_f11; goto special_key;
+#if (defined _SUNOS55) || (defined _SUNOS56) 
+                case SunXK_F37:
+#endif
                 case XK_F12:            ii = SKEY_f12; goto special_key;
-                case XK_F13:            ii = SKEY_f13; goto special_key;
-                case XK_F14:            ii = SKEY_f14; goto special_key;
-                case XK_F15:            ii = SKEY_f15; goto special_key;
-                case XK_F16:            ii = SKEY_f16; goto special_key;
-                case XK_F17:            ii = SKEY_f17; goto special_key;
-                case XK_F18:            ii = SKEY_f18; goto special_key;
-                case XK_F19:            ii = SKEY_f19; goto special_key;
-                case XK_F20:            ii = SKEY_f20; goto special_key;
-                case XK_F21:            ii = SKEY_f21; goto special_key;
-                case XK_F22:            ii = SKEY_f22; goto special_key;
-                case XK_F23:            ii = SKEY_f23; goto special_key;
-                case XK_F24:            ii = SKEY_f24; goto special_key;
-                case XK_F25:            ii = SKEY_f25; goto special_key;
-                case XK_F26:            ii = SKEY_f26; goto special_key;
-                case XK_F27:            ii = SKEY_f27; goto special_key;
-                case XK_F28:            ii = SKEY_f28; goto special_key;
-                case XK_F29:            ii = SKEY_f29; goto special_key;
-                case XK_F30:            ii = SKEY_f30; goto special_key;
-                case XK_F31:            ii = SKEY_f31; goto special_key;
-                case XK_F32:            ii = SKEY_f32; goto special_key;
-                case XK_F33:            ii = SKEY_f33; goto special_key;
-                case XK_F34:            ii = SKEY_f34; goto special_key;
-                case XK_F35:            ii = SKEY_f35; goto special_key;
                     
                     /* Modifiers */
                     
-                    /* Left shift */
-                case XK_Shift_L:        ii = SKEY_shift_left; goto special_bound;
-                    /* Right shift */
-                case XK_Shift_R:        ii = SKEY_shift_right; goto special_bound;    
-                    /* Left control */
-                case XK_Control_L:      ii = SKEY_ctrl_left;  goto special_bound;
-                    /* Right control */
-                case XK_Control_R:      ii = SKEY_ctrl_right;  goto special_bound;
-                    /* Caps lock */
                 case XK_Caps_Lock:      ii = SKEY_caps_lock; goto special_bound;
-                    /* Shift lock */
+                case XK_Num_Lock:       ii = SKEY_num_lock; goto special_bound;
+#if (defined _SUNOS55) || (defined _SUNOS56) 
+                case XK_F23:                
+#endif
+                case XK_Scroll_Lock:    ii = SKEY_scroll_lock; goto special_bound;
                 case XK_Shift_Lock:     ii = SKEY_shift_lock; goto special_bound;
-                    /* Left meta */
-                case XK_Meta_L:         ii = SKEY_meta_left; goto special_bound;
-                    /* Right meta */
-                case XK_Meta_R:         ii = SKEY_meta_right; goto special_bound;
-                    /* Left alt */
-                case XK_Alt_L:          ii = SKEY_alt_left; goto special_bound;
-                    /* Right alt */
-                case XK_Alt_R:          ii = SKEY_alt_left; goto special_bound;
-                    /* Left super */
-                    /* case XK_Super_L:*/
-                    /* Right super */
-                    /* case XK_Super_R:*/
-                    /* Left hyper */
-                    /* case XK_Hyper_L:*/
-                    /* Right hyper */
-                    /* case XK_Hyper_R:*/
+                    
+                    /* ignore these as ME has its own S-pick/S-drop key event generators */
+                case XK_Shift_L:
+                case XK_Shift_R:
+                case XK_Control_L:
+                case XK_Control_R:
+                case XK_Meta_L:
+                case XK_Meta_R:
+                case XK_Alt_L:
+                case XK_Alt_R:
+                    goto ignore_key;
                     
                     /* ISO keys */
 #ifdef XK_ISO_Left_Tab
@@ -1581,16 +1686,15 @@ done_key:
                 
                 /* printf ("Adding ff key to buffer %d(0x%04x)\n", ii, ii);*/
                 addKeyToBuffer(ii) ;
+ignore_key:
                 break;
                 
                 /* Keys that are tested for a binding */
 special_bound:
                 ii |= ME_SPECIAL;
                 
-                /* Only add the shift mask if it is special */
                 if (ShiftMask & ss)
                     ii |= ME_SHIFT;
-/*done_bound: Not used */
                 if (ControlMask & ss)
                     ii |= ME_CONTROL;
                 if (Mod1Mask & ss)

@@ -123,7 +123,7 @@ define-macro osd-fo-filelist
 define-macro osd-fo-masksel
     set-variable .osd-get-file.ft @#
     set-variable #l0 &lget .osd-get-file.file-type @#
-    osd .osd.fofm 6 "xMscfHt" 6 .scheme.osd-entry &spr "%s%n" &lef #l0 .osd.fo-width &sub .osd.fo-width &len #l0 " " .osd.foft
+    osd .osd.fofm 6 "xMdscfHt" 6 .scheme.osd-entry &spr "%s%n" &lef #l0 .osd.fo-width &sub .osd.fo-width &len #l0 " " .osd.foft
     set-variable .osd.fo-mask &lget .osd-get-file.file-mask @#
     set-variable .osd.fo-file .osd.fo-mask
     0 osd-fo-filelist
@@ -155,7 +155,7 @@ define-macro osd-fo-dirlist
         osd .osd.fodc 1 "" " "
     !endif
     !if &band $system 0x200
-        osd .osd.fodm 6 "xMscfHt" 6 .scheme.osd-entry &spr "%s%n" &lef .osd.fo-path 2 &sub .osd.fo-width 2 " " .osd.fodv
+        osd .osd.fodm 6 "xMdscfHt" 6 .scheme.osd-entry &spr "%s%n" &lef .osd.fo-path 2 &sub .osd.fo-width 2 " " .osd.fodv
     !endif
 !emacro
 
@@ -174,13 +174,13 @@ define-macro osd-fo-dirlist
 
 define-macro osd-fo-okay
     !if &seq .osd.fo-file ""
-        osd-dialog "Find File" "Error: No files selected!" "  &OK  "
+        osd-dialog "Find File" "Error: No files selected!" "  \HOK  "
     !else
         !if &or &or &sin "*" .osd.fo-file &sin "?" .osd.fo-file &sin "," .osd.fo-file
             !if &band .osd-get-file.flags 1
                 !if &band .osd-get-file.flags 2
                     set-variable #l0 &spr "\"%s\" may match multiple files, continue?" .osd.fo-file
-                    osd-xdialog "Find File" #l0 1 "  &Yes  " "  &No  "
+                    osd-xdialog "Find File" #l0 1 "  \HYes  " "  \HNo  "
                     !if &equ $result 2
                         !return
                     !endif
@@ -188,7 +188,7 @@ define-macro osd-fo-okay
                 set-variable .osd-get-file.status 1
                 1 osd-fo-filelist
             !else
-                osd-dialog "Find File" "Error: Invalid file name selected!" "  &OK  "
+                osd-dialog "Find File" "Error: Invalid file name selected!" "  \HOK  "
             !endif
         !else
             set-variable .osd-get-file.status 1
@@ -252,36 +252,36 @@ define-macro osd-fo-okay
     osd .osd.fodm 3 "ExHtfc" 3 .scheme.osd-entry #l2 1 osd-fo-dirset
     osd .osd.fodm 4 "IbHt" 4 .scheme.osd-sbar .osd.fo-width .osd.fo-depth .osd.fodc
     !if &band $system 0x200
-        osd .osd.fodm 6 "xMscfHt" 6 .scheme.osd-entry &spr "%s%n" &lef .osd.fo-path 2 &sub .osd.fo-width 2 " " .osd.fodv
+        osd .osd.fodm 6 "xMdscfHt" 6 .scheme.osd-entry &spr "%s%n" &lef .osd.fo-path 2 &sub .osd.fo-width 2 " " .osd.fodv
     !endif
     set-variable #l3 &lget .osd-get-file.file-type .osd-get-file.ft
-    osd .osd.fofm 6 "xMscfHt" 6 .scheme.osd-entry &spr "%s%n" &lef #l3 .osd.fo-width &sub .osd.fo-width &len #l3 " " .osd.foft
+    osd .osd.fofm 6 "xMdscfHt" 6 .scheme.osd-entry &spr "%s%n" &lef #l3 .osd.fo-width &sub .osd.fo-width &len #l3 " " .osd.foft
 !emacro
 
 osd .osd.fofm 0 ""
-osd .osd.fofm 1 "S" " &File Name:" 3
+osd .osd.fofm 1 "S" " \HFile Name:" 3
 osd .osd.fofm 3 "ExHtfc" 3 .scheme.osd-entry "####################" 1 osd-fo-fileset
 osd .osd.fofm 4 "IbHt" 4 .scheme.osd-sbar .osd.fo-width .osd.fo-depth .osd.fofc
-osd .osd.fofm 5 "S" " File &Type:" 6
+osd .osd.fofm 5 "S" " File \HType:" 6
 
 osd .osd.fodm 0 ""
-osd .osd.fodm 1 "S" " &Directories:" 3
+osd .osd.fodm 1 "S" " \HDirectories:" 3
 osd .osd.fodm 3 "ExHtfc" 3 .scheme.osd-entry "####################" 1 osd-fo-dirset
 osd .osd.fodm 4 "IbHt" 4 .scheme.osd-sbar .osd.fo-width .osd.fo-depth .osd.fodc
 !if &band $system 0x200
-    osd .osd.fodm 5 "S" " Dri&ve:" 6
+    osd .osd.fodm 5 "S" " Dri\Hve:" 6
 !endif
 
 osd .osd.fobm 0   ""
 osd .osd.fobm 10  ""
-osd .osd.fobm 20  "BcfxtH" 20 .scheme.osd-ebtt "    &OK    " .osd.fom osd-fo-okay
+osd .osd.fobm 20  "BcfxtH" 20 .scheme.osd-ebtt "    \HOK    " .osd.fom osd-fo-okay
 osd .osd.fobm 30  ""
-osd .osd.fobm 40  "BcftH"  40 .scheme.osd-ebtt "  &Cancel  " f void
+osd .osd.fobm 40  "BcftH"  40 .scheme.osd-ebtt "  \HCancel  " f void
 osd .osd.fobm 50  ""
 osd .osd.fobm 60  ""
 osd .osd.fobm 70  ""
 osd .osd.fobm 90  ""
-osd .osd.fobm 100  "Cpxt" 100 "^[ *] &Show backups" 1 osd-fo-options
+osd .osd.fobm 100  "Cpxt" 100 "^[ *] \HShow backups" 1 osd-fo-options
 
 osd .osd.fom 0  "batcHR" 3 6 .scheme.osd-title "" osd-fo-resize
 osd .osd.fom 1  ""
@@ -335,9 +335,9 @@ set-variable .osd-get-file.file-type &cond &seq .osd-get-file.file-type "ERROR" 
 
 define-macro osd-file-open
     osd .osd.fobm 110 ""
-    osd .osd.fobm 120 "Cpxt" 120 "^[ *] &View File"     8 osd-fo-options
-    osd .osd.fobm 130 "Cpxt" 130 "^[ *] &Binary File"   2 osd-fo-options
-    osd .osd.fobm 140 "Cpxt" 140 "^[ *] &Encrypt File"  4 osd-fo-options
+    osd .osd.fobm 120 "Cpxt" 120 "^[ *] \HView File"     8 osd-fo-options
+    osd .osd.fobm 130 "Cpxt" 130 "^[ *] \HBinary File"   2 osd-fo-options
+    osd .osd.fobm 140 "Cpxt" 140 "^[ *] \HEncrypt File"  4 osd-fo-options
     set-variable .osd-get-file.title "Find File"
     set-variable .osd-get-file.file-type ""
     set-variable .osd-get-file.ft .ft

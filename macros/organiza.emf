@@ -198,7 +198,7 @@ set-variable .org.addr-lbl  "|Record No|First Name|Surname|Nick Name|Selected|No
 
 0 define-macro org-addr-crt-index
     !if &and @# &not .org.addr-index1
-        osd-dialog "Sort Address" "Error: No primary key selected!" "  &OK  "
+        osd-dialog "Sort Address" "Error: No primary key selected!" "  \HOK  "
         !return
     !endif
     set-variable #l0 0
@@ -268,7 +268,7 @@ set-variable .org.addr-lbl  "|Record No|First Name|Surname|Nick Name|Selected|No
 0 define-macro org-addr-sort-field-set
     set-variable &ind &cat ".org.addr-index" .org.addr-index @#
     set-variable #l0 &cond @# &lget .org.addr-lbl @# "None"
-    osd .osd.orga-o &mul .org.addr-index 30 "MmxsfHzi" .scheme.osd-entry 20 1 #l0 .osd.org-m &cat "org-addr-sort-field " .org.addr-index
+    osd .osd.orga-o &mul .org.addr-index 30 "MdmxsfHzi" .scheme.osd-entry 20 1 #l0 .osd.org-m &cat "org-addr-sort-field " .org.addr-index
 !emacro
 0 define-macro org-addr-sort-field
     set-variable .org.addr-index @1
@@ -276,20 +276,20 @@ set-variable .org.addr-lbl  "|Record No|First Name|Surname|Nick Name|Selected|No
 
 osd .osd.orga-o 00  "btcdHs" 52 0 -1 -1 650 .scheme.osd-title "Sort Address Book"
 osd .osd.orga-o 10  ""
-osd .osd.orga-o 20  "Shf" "    &Primary Sort Field: " 30
-osd .osd.orga-o 30  "MmxsfHzi" .scheme.osd-entry 20 1 &cond .org.addr-index1 &lget .org.addr-lbl .org.addr-index1 "None" .osd.org-m "org-addr-sort-field 1"
+osd .osd.orga-o 20  "Shf" "    \HPrimary Sort Field: " 30
+osd .osd.orga-o 30  "MdmxsfHzi" .scheme.osd-entry 20 1 &cond .org.addr-index1 &lget .org.addr-lbl .org.addr-index1 "None" .osd.org-m "org-addr-sort-field 1"
 osd .osd.orga-o 40  ""
-osd .osd.orga-o 50  "Shf" "  &Secondary Sort Field: " 30
-osd .osd.orga-o 60  "MmxsfHzi" .scheme.osd-entry 20 1 &cond .org.addr-index2 &lget .org.addr-lbl .org.addr-index2 "None" .osd.org-m "org-addr-sort-field 2"
+osd .osd.orga-o 50  "Shf" "  \HSecondary Sort Field: " 30
+osd .osd.orga-o 60  "MdmxsfHzi" .scheme.osd-entry 20 1 &cond .org.addr-index2 &lget .org.addr-lbl .org.addr-index2 "None" .osd.org-m "org-addr-sort-field 2"
 osd .osd.orga-o 70  ""
-osd .osd.orga-o 80  "Shf" "   &Tertiary Sort Field: " 30
-osd .osd.orga-o 90  "MmxsfHzi" .scheme.osd-entry 20 1 &cond .org.addr-index3 &lget .org.addr-lbl .org.addr-index3 "None" .osd.org-m "org-addr-sort-field 3"
+osd .osd.orga-o 80  "Shf" "   \HTertiary Sort Field: " 30
+osd .osd.orga-o 90  "MdmxsfHzi" .scheme.osd-entry 20 1 &cond .org.addr-index3 &lget .org.addr-lbl .org.addr-index3 "None" .osd.org-m "org-addr-sort-field 3"
 osd .osd.orga-o 100 ""
 osd .osd.orga-o 600 ""
 osd .osd.orga-o 610 "hf" "  "
 ;osd .osd.orga-o 620 "BhcfH" .scheme.osd-ebtt " &Delete "  0 org-addr-crt-index
-osd .osd.orga-o 630 "BhcfH" .scheme.osd-ebtt " S&ort  "   1 org-addr-crt-index
-osd .osd.orga-o 650 "BhcfH" .scheme.osd-ebtt " E&xit  "   1 void
+osd .osd.orga-o 630 "BhcfH" .scheme.osd-ebtt " S\Hort  "   1 org-addr-crt-index
+osd .osd.orga-o 650 "BhcfH" .scheme.osd-ebtt " E\Hxit  "   1 void
 osd .osd.orga-o 660 "f" " "
 
 0 define-macro org-addr-sort
@@ -315,7 +315,7 @@ osd .osd.orga-o 660 "f" " "
 0 define-macro org-addr-find-field
     set-variable .org.addr-ffld @#
     set-variable #l0 &cond @# &lget .org.addr-lbl .org.addr-ffld "All"
-    osd .osd.orga-f 60 "MmxsfHz" .scheme.osd-entry 20 1 #l0 .osd.org-m
+    osd .osd.orga-f 60 "MdmxsfHz" .scheme.osd-entry 20 1 #l0 .osd.org-m
 !emacro
 0 define-macro org-addr-find-check
     !if &les @# 0
@@ -413,31 +413,31 @@ osd .osd.orga-o 660 "f" " "
 
 osd .osd.orga-f 00  "btcdHs" 52 0 -1 -1 650 .scheme.osd-title "Find Address"
 osd .osd.orga-f 10  ""
-osd .osd.orga-f 20  "Shf" "  &Search for: " 30
+osd .osd.orga-f 20  "Shf" "  \HSearch for: " 30
 osd .osd.orga-f 30  "ExfHz" .scheme.osd-entry 30 1 "" 1 org-addr-find-set
 osd .osd.orga-f 40  ""
-osd .osd.orga-f 50  "Shf" "  &In Field:   " 60
-osd .osd.orga-f 60  "MmxsfHz" .scheme.osd-entry 20 1 &cond .org.addr-ffld &lget .org.addr-lbl .org.addr-ffld "All" .osd.org-m
+osd .osd.orga-f 50  "Shf" "  \HIn Field:   " 60
+osd .osd.orga-f 60  "MdmxsfHz" .scheme.osd-entry 20 1 &cond .org.addr-ffld &lget .org.addr-lbl .org.addr-ffld "All" .osd.org-m
 osd .osd.orga-f 65  ""
 osd .osd.orga-f 70  ""
 osd .osd.orga-f 75  ""
 osd .osd.orga-f 80  "hf" "  Match:  "
-osd .osd.orga-f 90  "hCfxp" "^[ *] &Whole" 1 org-addr-find-check
+osd .osd.orga-f 90  "hCfxp" "^[ *] \HWhole" 1 org-addr-find-check
 osd .osd.orga-f 100 "hf" "  "
-osd .osd.orga-f 110 "hCfxp" "^[ *] S&tart" 2 org-addr-find-check
+osd .osd.orga-f 110 "hCfxp" "^[ *] S\Htart" 2 org-addr-find-check
 osd .osd.orga-f 120 "hf" "  "
-osd .osd.orga-f 130 "Cfxp"  "^[ *] &Any Part" 4 org-addr-find-check
+osd .osd.orga-f 130 "Cfxp"  "^[ *] \HAny Part" 4 org-addr-find-check
 osd .osd.orga-f 140  ""
 osd .osd.orga-f 150  "hf" "    "
-osd .osd.orga-f 160  "Cfxp" "^[ *] &Case insensitive" 0x10 org-addr-find-check
+osd .osd.orga-f 160  "Cfxp" "^[ *] \HCase insensitive" 0x10 org-addr-find-check
 osd .osd.orga-f 170  "hf" "    "
-osd .osd.orga-f 180 "Cfxp" "^[ *] &Magic mode" 0x20 org-addr-find-check
+osd .osd.orga-f 180 "Cfxp" "^[ *] \HMagic mode" 0x20 org-addr-find-check
 osd .osd.orga-f 600 ""
 osd .osd.orga-f 610 "hf" "  "
-osd .osd.orga-f 620 "BhcfxH" .scheme.osd-ebtt " &First "          3 org-addr-find-exec
-osd .osd.orga-f 630 "BhcfxH" .scheme.osd-ebtt " &Next  "          1 org-addr-find-exec
-osd .osd.orga-f 640 "BhcfxH" .scheme.osd-ebtt " &Reverse "       -1 org-addr-find-exec
-osd .osd.orga-f 650 "BhcfH"  .scheme.osd-ebtt " E&xit  "          1 void
+osd .osd.orga-f 620 "BhcfxH" .scheme.osd-ebtt " \HFirst "          3 org-addr-find-exec
+osd .osd.orga-f 630 "BhcfxH" .scheme.osd-ebtt " \HNext  "          1 org-addr-find-exec
+osd .osd.orga-f 640 "BhcfxH" .scheme.osd-ebtt " \HReverse "       -1 org-addr-find-exec
+osd .osd.orga-f 650 "BhcfH"  .scheme.osd-ebtt " E\Hxit  "          1 void
 osd .osd.orga-f 660 "f" " "
 
 0 define-macro org-addr-find
@@ -575,7 +575,7 @@ osd .osd.orga-h  40 "hf" " "
     osd .osd.orga-h  50 "EtxfH" 2 .scheme.osd-entry "####################" 8 org-addr-set-entry
 !endif
 osd .osd.orga-h  59 "" 
-osd .osd.orga-h  60 "Shf" " &Address  " 70
+osd .osd.orga-h  60 "Shf" " \HAddress  " 70
 !if &band .org.aflag 0x100
     osd .osd.orga-h 70 "EtNxfhHzh" 4 .scheme.osd-entry 40 5 "" 9 org-addr-set-entry
     osd .osd.orga-h 72 "hf" "  "
@@ -584,7 +584,7 @@ osd .osd.orga-h  60 "Shf" " &Address  " 70
     osd .osd.orga-h 70 "EtNxfhHz" 4 .scheme.osd-entry 40 5 "" 9 org-addr-set-entry
 !endif
 osd .osd.orga-h  80 "" 
-osd .osd.orga-h  90 "Shf" " &Tel      " 100
+osd .osd.orga-h  90 "Shf" " \HTel      " 100
 !if &band .org.aflag 0x100
     osd .osd.orga-h 100 "EtxfHh" 5 .scheme.osd-entry "#########################" 10 org-addr-set-entry
     osd .osd.orga-h 102 "hf" "  Chld "
@@ -615,57 +615,57 @@ osd .osd.orga-h 130 "Shf" " Mobile   " 140
     osd .osd.orga-h 140 "EtxfH" 11 .scheme.osd-entry "#########################" 12 org-addr-set-entry
 !endif
 osd .osd.orga-h 150 "" 
-osd .osd.orga-h 160 "Shf" " &E-Mail   " 170
+osd .osd.orga-h 160 "Shf" " \HE-Mail   " 170
 osd .osd.orga-h 170 "EtxfH" 14 .scheme.osd-entry "########################################" 13 org-addr-set-entry
-osd .osd.orga-h 180 "Shf" " &WWW      " 190
+osd .osd.orga-h 180 "Shf" " \HWWW      " 190
 osd .osd.orga-h 190 "EtxfH" 15 .scheme.osd-entry "########################################" 14 org-addr-set-entry
-osd .osd.orga-h 200 "Shf" " FT&P      " 210
+osd .osd.orga-h 200 "Shf" " FT\HP      " 210
 osd .osd.orga-h 210 "EtxfH" 16 .scheme.osd-entry "########################################" 15 org-addr-set-entry
 
 -1 osd .osd.orga-w
 osd .osd.orga-w   0 "s" 62 15 -1 -1 
 ;osd .osd.orga-w  10 ""
-osd .osd.orga-w  20 "Shf" " &Company  " 30
+osd .osd.orga-w  20 "Shf" " \HCompany  " 30
 osd .osd.orga-w  30 "EtxfHz" 1 .scheme.osd-entry 40 1 "" 16 org-addr-set-entry
 osd .osd.orga-w  59 "" 
-osd .osd.orga-w  60 "Shf" " &Address  " 70
+osd .osd.orga-w  60 "Shf" " \HAddress  " 70
 osd .osd.orga-w  70 "EtNxfHz" 3 .scheme.osd-entry 40 5 "" 17 org-addr-set-entry
 osd .osd.orga-w  80 "" 
-osd .osd.orga-w  90 "Shf" " &Tel      " 100
+osd .osd.orga-w  90 "Shf" " \HTel      " 100
 osd .osd.orga-w 100 "EtxfH" 4 .scheme.osd-entry "#########################" 18 org-addr-set-entry
 osd .osd.orga-w 110 "Shf" " Fax      " 120
 osd .osd.orga-w 120 "EtxfH" 5 .scheme.osd-entry "#########################" 19 org-addr-set-entry
 osd .osd.orga-w 130 "Shf" " Mobile   " 140
 osd .osd.orga-w 140 "EtxfH" 6 .scheme.osd-entry "#########################" 20 org-addr-set-entry
 osd .osd.orga-w 150 "" 
-osd .osd.orga-w 160 "Shf" " &E-Mail   " 170
+osd .osd.orga-w 160 "Shf" " \HE-Mail   " 170
 osd .osd.orga-w 170 "EtxfH" 7 .scheme.osd-entry "########################################" 21 org-addr-set-entry
-osd .osd.orga-w 180 "Shf" " &WWW      " 190
+osd .osd.orga-w 180 "Shf" " \HWWW      " 190
 osd .osd.orga-w 190 "EtxfH" 8 .scheme.osd-entry "########################################" 22 org-addr-set-entry
-osd .osd.orga-w 200 "Shf" " FT&P      " 210
+osd .osd.orga-w 200 "Shf" " FT\HP      " 210
 osd .osd.orga-w 210 "EtxfH" 9 .scheme.osd-entry "########################################" 23 org-addr-set-entry
 
 osd .osd.orga-n 0 "N"
-osd .osd.orga-n 1 "Ptfr" 1 " &Home " .osd.orga-h
-osd .osd.orga-n 2 "Ptfr" 2 " Wor&k " .osd.orga-w
+osd .osd.orga-n 1 "Ptfr" 1 " \HHome " .osd.orga-h
+osd .osd.orga-n 2 "Ptfr" 2 " Wor\Hk " .osd.orga-w
 osd .osd.orga-n 100 "It" 3           .osd.orga-h
 
 osd .osd.orga  10 ""
-osd .osd.orga  20 "Shf" "  &Record No " 50
+osd .osd.orga  20 "Shf" "  \HRecord No " 50
 osd .osd.orga  30 "RtBxhf" 1 "<<" 1 org-addr-dec-recno
 osd .osd.orga  35 "hf" " "
-osd .osd.orga  40 "RtBxhfT" 2 " &<" f org-addr-dec-recno
+osd .osd.orga  40 "RtBxhfT" 2 " \H<" f org-addr-dec-recno
 osd .osd.orga  45 "hf" " "
 osd .osd.orga  50 "RtExHhf" 3 .scheme.osd-entry "####" f org-addr-set-recno
 osd .osd.orga  55 "hf" " "
-osd .osd.orga  60 "RtBxhfT" 4 "&> " f org-addr-inc-recno
+osd .osd.orga  60 "RtBxhfT" 4 "\H> " f org-addr-inc-recno
 osd .osd.orga  65 "hf" " "
 osd .osd.orga  70 "RtBxhf" 5 ">>" 1 org-addr-inc-recno
 osd .osd.orga  73 "hf" "   "
-osd .osd.orga  75 "BtxfHh" 6 .scheme.osd-ebtt " &Find " f org-addr-find
+osd .osd.orga  75 "BtxfHh" 6 .scheme.osd-ebtt " \HFind " f org-addr-find
 osd .osd.orga  77 "hf" "  "
-osd .osd.orga  78 "BtxfH"  7 .scheme.osd-ebtt " S&ort " f org-addr-sort
-osd .osd.orga  80 "Shf" "  Na&me      " 90
+osd .osd.orga  78 "BtxfH"  7 .scheme.osd-ebtt " S\Hort " f org-addr-sort
+osd .osd.orga  80 "Shf" "  Na\Hme      " 90
 osd .osd.orga  90 "EtxfhH" 8 .scheme.osd-entry "##############" 2 org-addr-set-entry
 osd .osd.orga 100 "hf" " "
 !if &band .org.aflag 0x100
@@ -677,22 +677,22 @@ osd .osd.orga 100 "hf" " "
     osd .osd.orga 122 "D"
     osd .osd.orga 124 "D"
 !endif
-osd .osd.orga 130 "Shf" "  N&ickname  " 140
+osd .osd.orga 130 "Shf" "  N\Hickname  " 140
 osd .osd.orga 140 "EtxfhH" 10 .scheme.osd-entry "##############" 4 org-addr-set-entry
 osd .osd.orga 143 "hf" "                       "
-osd .osd.orga 145 "Cfx" "^  *^^Se&lect" 5 org-addr-set-check
+osd .osd.orga 145 "Cfx" "^  *^^Se\Hlect" 5 org-addr-set-check
 osd .osd.orga 150 "" 
 osd .osd.orga 160 "Itc" 11 .osd.orga-n
 osd .osd.orga 170 "" 
 osd .osd.orga 180 "" 
-osd .osd.orga 190 "Sf" "  &Notes" 160
+osd .osd.orga 190 "Sf" "  \HNotes" 160
 osd .osd.orga 200 "EtNcxHfz" 12 .scheme.osd-entry 60 5 "" 6 org-addr-set-entry
 osd .osd.orga 210 "" 
 osd .osd.orga 220 "" 
 osd .osd.orga 605 "hf" " "
-osd .osd.orga 610 "BtxhcfH" 13 .scheme.osd-ebtt " &Save " f organizer-save
-osd .osd.orga 613 "BtxhcfHR" 14 .scheme.osd-ebtt " D&up " f org-addr-dup
-osd .osd.orga 615 "BtxhcfHR" 15 .scheme.osd-ebtt " &Delete "  f org-addr-del
-osd .osd.orga 620 "BtxhcfH" 16 .scheme.osd-ebtt " Addr to &Buffer "  f org-addr-buffer
-osd .osd.orga 630 "BtcfH" 17 .scheme.osd-ebtt " E&xit "    1 void
+osd .osd.orga 610 "BtxhcfH" 13 .scheme.osd-ebtt " \HSave " f organizer-save
+osd .osd.orga 613 "BtxhcfHR" 14 .scheme.osd-ebtt " D\Hup " f org-addr-dup
+osd .osd.orga 615 "BtxhcfHR" 15 .scheme.osd-ebtt " \HDelete "  f org-addr-del
+osd .osd.orga 620 "BtxhcfH" 16 .scheme.osd-ebtt " Addr to \HBuffer "  f org-addr-buffer
+osd .osd.orga 630 "BtcfH" 17 .scheme.osd-ebtt " E\Hxit "    1 void
 

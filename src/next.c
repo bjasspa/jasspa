@@ -47,7 +47,7 @@ flNextFind(meUByte *str, meUByte **curFilePtr, meInt *curLine)
     
     ss = str+1 ;
     soff = 0 ;
-    while((soff < mePATBUF_SIZE_MAX) && ((cc=*ss++) != '\0'))
+    while((soff < meBUF_SIZE_MAX) && ((cc=*ss++) != '\0'))
     {
         if(cc == '%')
         {
@@ -80,7 +80,7 @@ flNextFind(meUByte *str, meUByte **curFilePtr, meInt *curLine)
         else
             pat[soff++] = cc ;
     }
-    if(soff >= mePATBUF_SIZE_MAX)
+    if(soff >= meBUF_SIZE_MAX)
         return mlwrite(MWABORT,(meUByte *)"[Search string to long]") ;
     pat[soff] = '\0' ;
 
@@ -183,7 +183,7 @@ getNextLine(int f,int n)
                 frameCur->windowCur->updateFlags |= WFMOVEL ;
                 if(nextFile != NULL)
                 {
-                    meUByte fname[meFILEBUF_SIZE_MAX], *value ;
+                    meUByte fname[meBUF_SIZE_MAX], *value ;
                     meVariable *var ;
                     
                     ii = meStrlen(nextFile) ;
@@ -191,7 +191,7 @@ getNextLine(int f,int n)
                     {
                         if(bp->fileName != NULL)
                         {
-                            meUByte tmp[meFILEBUF_SIZE_MAX] ;
+                            meUByte tmp[meBUF_SIZE_MAX] ;
                             getFilePath(bp->fileName,tmp) ;
                             meStrcat(tmp,nextFile) ;
                             fileNameCorrect(tmp,fname,NULL) ;
@@ -339,7 +339,7 @@ int
 doRcsCommand(meUByte *fname, register meUByte *comStr)
 {
     meUByte  pat[meBUF_SIZE_MAX+1], cc ;
-    meUByte  path[meFILEBUF_SIZE_MAX] ;
+    meUByte  path[meBUF_SIZE_MAX] ;
     meUByte *bname ;
     register int ii, len ;
     

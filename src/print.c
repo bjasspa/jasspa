@@ -613,11 +613,8 @@ expandText (meUByte *buf, meUByte *strp, int level)
             switch (cc = *strp)
             {
             case 'c':
-                if (((cc = *++strp) == 0xff) && (strp[1] == 0x01))
-                {
-                    strp++;
+                if(((cc = *++strp) == meCHAR_LEADER) && ((cc=*++strp) == meCHAR_TRAIL_NULL))
                     *buf++ = '\0';
-                }
                 else
                     *buf++ = cc;
                 break;
@@ -666,12 +663,12 @@ cat_string:
             if (*strp != '\0')
                 strp++;
         }
-        else if (cc == meNLCHAR)
+        else if (cc == meCHAR_NL)
         {
             if (level == 0)
                 buf += expandText (buf, printer.param [mePS_EOL].p, 1);
             else
-                *buf++ = meNLCHAR;
+                *buf++ = meCHAR_NL;
         }
         else if (cc == '\r')
         {
@@ -682,11 +679,11 @@ cat_string:
             *buf++ = ' ';
         else
         {
-            if(cc == 0xff)
+            if(cc == meCHAR_LEADER)
             {
                 if((cc = *strp++) == '\0')
                     break ;
-                if(cc == 0x01) 
+                if(cc == meCHAR_TRAIL_NULL) 
                     cc = '\0' ;
             }
             *buf++ = cc;
@@ -721,7 +718,7 @@ addFormatedLine (meLine **head, meLine **tail,
             for (; (cc = *p) != '\0'; /* NULL */)
             {
                 p++;
-                if (cc == meNLCHAR)
+                if (cc == meCHAR_NL)
                     break;
                 /* Filter the character if required. */
                 if (filter == 0)
@@ -1131,7 +1128,7 @@ dumpToBuffer (meBuffer *bp, meLine *lp)
                 jj++;
                 if ((cc = *p++) == '\0')
                     len += 2;
-                else if (cc == meNLCHAR)
+                else if (cc == meCHAR_NL)
                     break;
                 else 
                     len++;
@@ -1143,10 +1140,10 @@ dumpToBuffer (meBuffer *bp, meLine *lp)
             {
                 if ((cc = *p++) == '\0')
                 {
-                    *q++ = (char)0xff;
-                    *q++ = (char)0x01;
+                    *q++ = (char) meCHAR_LEADER ;
+                    *q++ = (char) meCHAR_TRAIL_NULL ;
                 }
-                else if (cc == meNLCHAR)
+                else if (cc == meCHAR_NL)
                     break;
                 else
                     *q++ = cc;

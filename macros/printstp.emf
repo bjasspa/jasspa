@@ -53,7 +53,7 @@
             !return
         !endif
         !if &seq &set #l2 &find #l1 ".erf" "ERROR"
-            osd-dialog "Print Setup" &spr "Error: Failed to find print driver \"%s.erf\"" #l1 "  &OK  "
+            osd-dialog "Print Setup" &spr "Error: Failed to find print driver \"%s.erf\"" #l1 "  \HOK  "
             !return
         !endif
         set-registry "/print-history" &cat $platform "/driver" #l1
@@ -71,16 +71,16 @@
         set-variable .print-setup.inter &reg "/print" "internal" "0"
     !endif
     set-variable #l1 &lget .print-setup.driver-names @#
-    osd .osd.prtstp-prt 30 "MtxmsfHz" 30 .scheme.osd-entry 25 1 #l1 .osd.tmp print-setup-setup-driver
+    osd .osd.prtstp-prt 30 "MdtxmsfHz" 30 .scheme.osd-entry 25 1 #l1 .osd.tmp print-setup-setup-driver
     !if .print-setup.inter
         osd .osd.prtstp-prt 120  ""
         osd .osd.prtstp-prt 130  ""
         osd .osd.prtstp-prt 140  ""
         osd .osd.prtstp-prt 150  "D"
         osd .osd.prtstp-pag  60  "ESsfhHz" .scheme.osd-entry 20 1  "" 2 print-setup-display-page-size
-        osd .osd.prtstp-pag  65  "BtHcfixR" 65 .scheme.osd-ebtt " &Edit "  f print-setup-setup-page
+        osd .osd.prtstp-pag  65  "BtHcfixR" 65 .scheme.osd-ebtt " \HEdit "  f print-setup-setup-page
     !else
-        osd .osd.prtstp-prt 120  "Sfh" "  &Command line : " 130
+        osd .osd.prtstp-prt 120  "Sfh" "  \HCommand line : " 130
         osd .osd.prtstp-prt 130  "EtfxH" 130 .scheme.osd-entry "#########################" 9 print-setup-set-entry
         osd .osd.prtstp-prt 140  "f"   "                 (%f=file)"
         osd .osd.prtstp-prt 150  ""
@@ -116,17 +116,17 @@
             !return
         !endif
     !endif
-    osd .osd.prtstp-prt 100 "MtxmsfHz" 100 .scheme.osd-entry 25 1 &lget "|To buffer only|Direct to printer|To file only|To file \\& print|" &add @# 1 .osd.tmp print-setup-setup-dest
+    osd .osd.prtstp-prt 100 "MdtxmsfHz" 100 .scheme.osd-entry 25 1 &lget "|To buffer only|Direct to printer|To file only|To file \\& print|" &add @# 1 .osd.tmp print-setup-setup-dest
 !emacro
 0 define-macro print-setup-setup-dest
     -1 osd .osd.tmp
     osd .osd.tmp 0 "bs" 27 0 0 0
-    osd .osd.tmp 1 "" "To &buffer only" 0 print-setup-set-dest
-    osd .osd.tmp 2 "" "To &file only"   2 print-setup-set-dest
+    osd .osd.tmp 1 "" "To \Hbuffer only" 0 print-setup-set-dest
+    osd .osd.tmp 2 "" "To \Hfile only"   2 print-setup-set-dest
     !if .print-setup.inter
-        osd .osd.tmp 3 "" "&Direct to printer" 1 print-setup-set-dest
+        osd .osd.tmp 3 "" "\HDirect to printer" 1 print-setup-set-dest
     !else
-        osd .osd.tmp 3 "" "To file \\& &print" 3 print-setup-set-dest
+        osd .osd.tmp 3 "" "To file & \Hprint" 3 print-setup-set-dest
     !endif
 !emacro
 
@@ -144,7 +144,7 @@
     !else
         set-variable #l1 &lget .print-setup.scheme-names &lfind .print-setup.scheme-files &reg "/print-history" &cat $platform "/scheme" &lget .print-setup.scheme-files 1
     !endif
-    osd .osd.prtstp-prt 60 "MtxmsfhHz" 60 .scheme.osd-entry 25 1 #l1 .osd.tmp print-setup-setup-scheme
+    osd .osd.prtstp-prt 60 "MdtxmsfhHz" 60 .scheme.osd-entry 25 1 #l1 .osd.tmp print-setup-setup-scheme
 !emacro
 0 define-macro print-setup-setup-scheme
     -1 osd .osd.tmp
@@ -191,7 +191,7 @@
     !if .print-setup.inter
         osd .osd.prtstp-pag 30 "sfHz" .scheme.osd-entry 20 1 #l1
     !else
-        osd .osd.prtstp-pag 30 "MtxmsfHzR" 30 .scheme.osd-entry 20 1 #l1 .osd.tmp print-setup-setup-page-size
+        osd .osd.prtstp-pag 30 "MdtxmsfHzR" 30 .scheme.osd-entry 20 1 #l1 .osd.tmp print-setup-setup-page-size
     !endif
 !emacro
 0 define-macro print-setup-setup-page-size
@@ -227,7 +227,7 @@
         set-variable #l1 &reg "/print-history" &cat $platform "/char-size" ""
     !endif
     !if &not .print-setup.inter
-        osd .osd.prtstp-pag 60 "MtxmsfHzR" 60 .scheme.osd-entry 20 1 #l1 .osd.tmp print-setup-setup-char-size
+        osd .osd.prtstp-pag 60 "MdtxmsfHzR" 60 .scheme.osd-entry 20 1 #l1 .osd.tmp print-setup-setup-char-size
     !endif
 !emacro
 0 define-macro print-setup-setup-char-size
@@ -270,12 +270,12 @@ set-variable .print-setup-display-page-size.value  "|"
 -1 osd .osd.prtstp-prt
 osd .osd.prtstp-prt   0 "s" 52 13 -1 -1
 osd .osd.prtstp-prt  10  ""
-osd .osd.prtstp-prt  20  "Sfh" "        &Driver : " 30
+osd .osd.prtstp-prt  20  "Sfh" "        \HDriver : " 30
 osd .osd.prtstp-prt  40  ""
-osd .osd.prtstp-prt  50  "Shf" "  Print &Scheme : " 60
-osd .osd.prtstp-prt  70  "BtHcfix" 70 .scheme.osd-ebtt " &Edit "  f "scheme-editor &reg \"/print-history\" &cat $platform \"/scheme\" \"printd\""
+osd .osd.prtstp-prt  50  "Shf" "  Print \HScheme : " 60
+osd .osd.prtstp-prt  70  "BtHcfix" 70 .scheme.osd-ebtt " \HEdit "  f "scheme-editor &reg \"/print-history\" &cat $platform \"/scheme\" \"printd\""
 osd .osd.prtstp-prt  80  ""
-osd .osd.prtstp-prt  90  "Shf" "   D&estination : " 100
+osd .osd.prtstp-prt  90  "Shf" "   D\Hestination : " 100
 osd .osd.prtstp-prt 110  ""
 osd .osd.prtstp-prt 210  ""
 osd .osd.prtstp-prt 220  "fh"  "     Page Size : "
@@ -284,18 +284,18 @@ osd .osd.prtstp-prt 230  "SEf" "#x# #####x#####" 1 print-setup-display-page-size
 -1 osd .osd.prtstp-pag
 osd .osd.prtstp-pag   0 "s" 52 13 -1 -1
 osd .osd.prtstp-pag  10  ""
-osd .osd.prtstp-pag  20  "Sfh" "      &Paper Size : " 30
+osd .osd.prtstp-pag  20  "Sfh" "      \HPaper Size : " 30
 osd .osd.prtstp-pag  40  ""
-osd .osd.prtstp-pag  50  "Shf" "  Character &Size : " 60
+osd .osd.prtstp-pag  50  "Shf" "  Character \HSize : " 60
 osd .osd.prtstp-pag  70  ""
-osd .osd.prtstp-pag  80  "Shf" "  No. of &Columns : " 90
+osd .osd.prtstp-pag  80  "Shf" "  No. of \HColumns : " 90
 osd .osd.prtstp-pag  90  "EtfxHR"  90 .scheme.osd-entry "#####" 1 print-setup-set-entry
-osd .osd.prtstp-pag 100  "Shf" "         &Rows    : " 110
+osd .osd.prtstp-pag 100  "Shf" "         \HRows    : " 110
 osd .osd.prtstp-pag 110  "EtfxHR" 110 .scheme.osd-entry "#####" 2 print-setup-set-entry
 osd .osd.prtstp-pag 120  ""
-osd .osd.prtstp-pag 130  "Shf" "    Line &Numbers : " 140
+osd .osd.prtstp-pag 130  "Shf" "    Line \HNumbers : " 140
 osd .osd.prtstp-pag 140  "CtfxR" 140 "^^NY^^" 0x40 print-setup-set-flag
-osd .osd.prtstp-pag 150  "Shf" "   Split &Line ID : " 160
+osd .osd.prtstp-pag 150  "Shf" "   Split \HLine ID : " 160
 osd .osd.prtstp-pag 160  "Ctfx" 160 "^^NY^^" 0x80 print-setup-set-flag
 osd .osd.prtstp-pag 170  ""
 osd .osd.prtstp-pag 180  "fh" "       Page Size : "
@@ -304,20 +304,20 @@ osd .osd.prtstp-pag 190  "SEf" "#x# #####x#####" 1 print-setup-display-page-size
 -1 osd .osd.prtstp-lyt
 osd .osd.prtstp-lyt   0 "s" 52 13 -1 -1
 osd .osd.prtstp-lyt  10  ""
-osd .osd.prtstp-lyt  20  "Sfh" "  Margins -  &Top : " 30
+osd .osd.prtstp-lyt  20  "Sfh" "  Margins -  \HTop : " 30
 osd .osd.prtstp-lyt  30  "EtfhxH" 30 .scheme.osd-entry "#####" 3 print-setup-set-entry
-osd .osd.prtstp-lyt  40  "Sfh" "  &Bottom : " 50
+osd .osd.prtstp-lyt  40  "Sfh" "  \HBottom : " 50
 osd .osd.prtstp-lyt  50  "EtfxH"  50 .scheme.osd-entry "#####" 4 print-setup-set-entry
-osd .osd.prtstp-lyt  70  "Sfh" "            &Left : " 80
+osd .osd.prtstp-lyt  70  "Sfh" "            \HLeft : " 80
 osd .osd.prtstp-lyt  80  "EtfhxH" 80 .scheme.osd-entry "#####" 5 print-setup-set-entry
-osd .osd.prtstp-lyt  90  "Sfh" "   &Right : " 100
+osd .osd.prtstp-lyt  90  "Sfh" "   \HRight : " 100
 osd .osd.prtstp-lyt 100  "EtfxH" 100 .scheme.osd-entry "#####" 6 print-setup-set-entry
 osd .osd.prtstp-lyt 110  ""
-osd .osd.prtstp-lyt 120  "Shf" "  &Header : " 140
+osd .osd.prtstp-lyt 120  "Shf" "  \HHeader : " 140
 osd .osd.prtstp-lyt 130  "Ctfx" 130 "^^NY^^" 0x10 print-setup-set-flag
 osd .osd.prtstp-lyt 140  "fh" "  "
 osd .osd.prtstp-lyt 150  "EtNfxHz" 150 .scheme.osd-entry 48 3 "" 7 print-setup-set-entry
-osd .osd.prtstp-lyt 160  "Shf" "  &Footer : " 170
+osd .osd.prtstp-lyt 160  "Shf" "  \HFooter : " 170
 osd .osd.prtstp-lyt 170  "Ctfx" 170 "^^NY^^" 0x20 print-setup-set-flag
 osd .osd.prtstp-lyt 180  "fh" "  "
 osd .osd.prtstp-lyt 190  "EtNfxHz" 190 .scheme.osd-entry 48 3 "" 8 print-setup-set-entry
@@ -333,8 +333,8 @@ osd .osd.prtstp-nb 100 "It" 10            .osd.prtstp-prt
 osd .osd.prtstp  00 "batcdHs" 6 3 56 19 -1 -1 120 .scheme.osd-title "Printer Setup"
 osd .osd.prtstp  10 "It" 1 .osd.prtstp-nb
 osd .osd.prtstp 100 ""
-osd .osd.prtstp 110 "BtHhcf" 11 .scheme.osd-ebtt " &Print " f print-buffer
-osd .osd.prtstp 120 "BtHcf"  12 .scheme.osd-ebtt " E&xit "  1 void
+osd .osd.prtstp 110 "BtHhcf" 11 .scheme.osd-ebtt " \HPrint " f print-buffer
+osd .osd.prtstp 120 "BtHcf"  12 .scheme.osd-ebtt " E\Hxit "  1 void
 
 define-macro print-setup
     !force exec-file "print"

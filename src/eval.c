@@ -305,7 +305,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                 int ll=0 ;
                 
                 if((frameCur->windowCur->dotLineNo == frameCur->bufferCur->lineCount) ||
-                   (meStrchr(vvalue,meNLCHAR) != NULL))
+                   (meStrchr(vvalue,meCHAR_NL) != NULL))
                     return ctrlg(0,1) ;
                 
                 frameCur->windowCur->dotOffset = 0 ;
@@ -942,7 +942,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                 }
                 if((fileNames.mask = meStrdup(mm)) != NULL)
                 {
-                    meUByte buff[meFILEBUF_SIZE_MAX] ;
+                    meUByte buff[meBUF_SIZE_MAX] ;
 #ifdef _DRV_CHAR
                     if((isAlpha(mm[0]) || (mm[0] == '.' )) && (mm[1] == _DRV_CHAR))
                     {
@@ -1461,6 +1461,27 @@ getval(meUByte *tkn)   /* find the value of a token */
             }
 #endif
             return abortm ;
+        }
+        else if(tkn[1] == 'h')
+        {
+            meUByte *ss, buff[meTOKENBUF_SIZE_MAX] ;
+            int ht, hn ;
+            
+            /* get the history type */
+            if((tkn[2] > '0') && (tkn[2] <= '4'))
+                ht = tkn[2]-'0' ;
+            else
+                ht = 0 ;
+            
+            /* Get and evaluate the next argument - this is the history number */
+            execstr = token(execstr, buff) ;
+            if((ss = getval(buff)) == abortm)
+                return abortm ;
+            hn = meAtoi(ss) ;
+            
+            if((ss = strHist[(ht*meHISTORY_SIZE)+hn]) == NULL)
+                ss = emptym ;
+            return ss ;
         }
         else if(tkn[1] == 'y')
         {
@@ -2127,9 +2148,9 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
         {
             int ii = meAtoi(arg1) ;
             evalResult[0] = (meUByte) ii ;
-            if(ii == 0xff)
+            if(ii == meCHAR_LEADER)
             {
-                evalResult[1] = 0xff ;
+                evalResult[1] = meCHAR_TRAIL_LEADER ;
                 evalResult[2] = '\0' ;
             }
             else
@@ -2166,7 +2187,7 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             dd = evalResult ;
             while(--ii >= 0)
             {
-                if((cc=*ss++) == 0xff)
+                if((cc=*ss++) == meCHAR_LEADER)
                 {
                     *dd++ = cc ;
                     cc = *ss++ ;
@@ -2185,7 +2206,7 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             ss = arg1 ;
             while(--ii >= 0)
             {
-                if((cc=*ss++) == 0xff)
+                if((cc=*ss++) == meCHAR_LEADER)
                     cc = *ss++ ;
                 if(cc == '\0')
                 {
@@ -2210,7 +2231,7 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             {
                 do
                 {
-                    if((cc=*ss++) == 0xff)
+                    if((cc=*ss++) == meCHAR_LEADER)
                         cc = *ss++ ;
                     if(cc == '\0')
                     {
@@ -2224,7 +2245,7 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             dd = evalResult ;
             while(--ll >= 0)
             {
-                if((cc=*ss++) == 0xff)
+                if((cc=*ss++) == meCHAR_LEADER)
                 {
                     *dd++ = cc ;
                     cc = *ss++ ;
@@ -2243,7 +2264,7 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             ss = arg1 ;
             for(;;)
             {
-                if((cc=*ss++) == 0xff)
+                if((cc=*ss++) == meCHAR_LEADER)
                     cc=*ss++ ;
                 if(cc == '\0')
                     break ;
@@ -2296,7 +2317,7 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
                     if((fnum == UFSIN) || (fnum == UFISIN))
                         break ;
                 }
-                if((cc=*ss++) == 0xff)
+                if((cc=*ss++) == meCHAR_LEADER)
                 {
                     cc = *ss++ ;
                     off++ ;
@@ -2334,9 +2355,9 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
                 if(ii || (mlen == 0))
                 {
                     ss++ ;
-                    if(cc == 0xff)
+                    if(cc == meCHAR_LEADER)
                     {
-                        evalResult[dlen++] = 0xff ;
+                        evalResult[dlen++] = meCHAR_LEADER ;
                         cc = *ss++ ;
                     }
                     evalResult[dlen++] = cc ;
@@ -2415,9 +2436,9 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
                     if(dlen >= meBUF_SIZE_MAX-2)
                         break ;
                     soff++ ;
-                    if(cc == 0xff)
+                    if(cc == meCHAR_LEADER)
                     {
-                        evalResult[dlen++] = 0xff ;
+                        evalResult[dlen++] = meCHAR_LEADER ;
                         cc = arg1[soff++] ;
                     }
                     evalResult[dlen++] = cc ;

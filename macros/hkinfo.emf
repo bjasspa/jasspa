@@ -23,7 +23,7 @@ set-variable .fhook-info.command-flag  "|bio|thbio|thbio|thbio|bio|thbio|bio|th|
 set-variable .fhook-info.command-name  "|buffer-help|info-jump-link|scroll-down|scroll-up|scroll-up|beginning-of-buffer|beginning-of-buffer||info-jump-link|info-jump-link|info-jump-link|info-jump-last||info-node-menu|info-goto-link|info-jump-link|info-jump-link|info-jump-link|info-follow-line|"
 set-variable .fhook-info.command-nbind "||5|||||||6|4|3||||||2|1||"
 set-variable .fhook-info.command-kbind "|?|h|space|backspace|delete|b|.||d|t|u|l||m|g|return|p|n|f|"
-set-variable .fhook-info.command-desc  "||View &Info Help|Page Down Node|Page Up Node||Top of Node|||&Directory node|&Top Node|&Up Node|&Last Node||&Menu of Nodes|&Goto Node|&Jump to Node|&Previous Node|&Next Node|&Follow Cross Reference|"
+set-variable .fhook-info.command-desc  "||View \HInfo Help|Page Down Node|Page Up Node||Top of Node|||\HDirectory node|\HTop Node|\HUp Node|\HLast Node||\HMenu of Nodes|\HGoto Node|\HJump to Node|\HPrevious Node|\HNext Node|\HFollow Cross Reference|"
 
 ; Quick check to make sure that hilighting is required.
 !if &and &sin "h" .fhook-info.setup &band .hilight.flags 0x02 

@@ -78,12 +78,16 @@ set-variable .change-font.type 0
 
 !if &reg "/history" &cat %platform "/ext-char-set" "0"
     set-char-mask "dp" "\CY\CM\CL\CN\CK\CX\CU\CO\CV\CW\CR\CP\CQ\C^\C_\CG\C[\C]"
-    set-char-mask "p"  "\CH\CI\CJ"
+    set-char-mask "p"  "\CA\CB\CC\CD\CH\CI\CJ\CS\CT\CZ"
+    set-variable .osd.checkbox-chars "^\CA\CB\CC\CD^"
     set-variable $box-chars "\CY\CM\CL\CN\CK\CX\CU\CO\CV\CW\CR"
-    set-variable $window-chars "=-#*%=\C^\C[ \C[\C_*==\C^\C^\C[\C[  \C[\C[\C_\C_**|\CQ\C] \C]\CP*||\CQ\CQ\C]\C]  \C]\C]\CP\CP** x*  \t\n\CG\CH\CI\\"
+    set-variable $window-chars "=-#*%=\C^\C[ \C[\C_*==\C^\C^\C[\C[  \C[\C[\C_\C_**|\CQ\C] \C]\CP*||\CQ\CQ\C]\C]  \C]\C]\CP\CP** \CT\CZ  \t\n\CG\CH\CI\\"
     set-variable $system &bor $system 0x10000
-!elif #l1
-    set-variable $box-chars "|+++++++++-"
-    set-variable $window-chars "=-#*%=^   v*==^^      vv**|<   >*||<<      >>** x*  >\\.$$\\"
-    set-variable $system &band $system &bnot 0x10000
+!else
+    set-variable .osd.checkbox-chars "^[ X]^"
+    !if #l1
+        set-variable $box-chars "|+++++++++-"
+        set-variable $window-chars "=-#*%=^   v*==^^      vv**|<   >*||<<      >>** x*  >\\.$$\\"
+        set-variable $system &band $system &bnot 0x10000
+    !endif
 !endif

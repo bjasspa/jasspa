@@ -1430,7 +1430,7 @@ osd .osd.vm-help 31 ""  " x       - Extract the next embedded data in the curren
 osd .osd.vm-help 32 ""  "           (copes with uuencoded and metamail sections)"
 osd .osd.vm-help 33 ""  " z       - Forward current message to someone else"
 osd .osd.vm-help 34 ""
-osd .osd.vm-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
+osd .osd.vm-help 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void 
 
 0 define-macro vm-input
     set-variable #l2 @cck

@@ -266,7 +266,7 @@
 ; The Search page ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 0 define-macro osd-help-search-scope
     set-variable .osd-help-search-list-crt.scope @#
-    osd .osd.ohlps 15  "Mtmsxfh" 2 $result .osd.ohlpss
+    osd .osd.ohlps 15  "Mdtmsxfh" 2 $result .osd.ohlpss
 !emacro
 0 define-macro osd-help-search-entry
     !if &les @# 0
@@ -274,7 +274,7 @@
         !if &seq .osd-help-search-list-crt.search ""
             osd .osd.ohlps 55 "BfSHh" .scheme.osd-dbtt " Search "
         !else
-            osd .osd.ohlps 55 "BtfHhx" 3 .scheme.osd-ebtt " Sea&rch " f osd-help-search-list-crt
+            osd .osd.ohlps 55 "BtfHhx" 3 .scheme.osd-ebtt " Sea\Hrch " f osd-help-search-list-crt
         !endif
     !else
         set-variable $result .osd-help-search-list-crt.search
@@ -296,14 +296,14 @@ set-variable .osd-help-search-list-crt.scope  1
 set-variable .osd-help-search-list-crt.search ""
 
 osd .osd.ohlpss 0 "b"
-osd .osd.ohlpss 1 "" "&All"              1 osd-help-search-scope
-osd .osd.ohlpss 2 "" "&Modes"            2 osd-help-search-scope
-osd .osd.ohlpss 3 "" "&Commands"         3 osd-help-search-scope
-osd .osd.ohlpss 4 "" "&Variables"        4 osd-help-search-scope
-osd .osd.ohlpss 5 "" "Ma&cro Variables"  5 osd-help-search-scope
-osd .osd.ohlpss 6 "" "&Directives"       6 osd-help-search-scope
-osd .osd.ohlpss 7 "" "&Functions"        7 osd-help-search-scope
-osd .osd.ohlpss 8 "" "File &Types"       8 osd-help-search-scope
+osd .osd.ohlpss 1 "" "\HAll"              1 osd-help-search-scope
+osd .osd.ohlpss 2 "" "\HModes"            2 osd-help-search-scope
+osd .osd.ohlpss 3 "" "\HCommands"         3 osd-help-search-scope
+osd .osd.ohlpss 4 "" "\HVariables"        4 osd-help-search-scope
+osd .osd.ohlpss 5 "" "Ma\Hcro Variables"  5 osd-help-search-scope
+osd .osd.ohlpss 6 "" "\HDirectives"       6 osd-help-search-scope
+osd .osd.ohlpss 7 "" "\HFunctions"        7 osd-help-search-scope
+osd .osd.ohlpss 8 "" "File \HTypes"       8 osd-help-search-scope
 
 -1 osd .osd.ohlpsl
 osd .osd.ohlpsl 0 "Sf" .scheme.osd-child
@@ -312,19 +312,19 @@ osd .osd.ohlpsl 1 "" ""
 -1 osd .osd.ohlps
 osd .osd.ohlps 0   ""
 osd .osd.ohlps 5   ""
-osd .osd.ohlps 10  "Sfh" "      S&cope : " 15
-osd .osd.ohlps 15  "Mtmsxfh" 2 "All" .osd.ohlpss
-osd .osd.ohlps 20  "BtfHhr"  4 .scheme.osd-ebtt " E&xit "  f void
+osd .osd.ohlps 10  "Sfh" "      S\Hcope : " 15
+osd .osd.ohlps 15  "Mdtmsxfh" 2 "All" .osd.ohlpss
+osd .osd.ohlps 20  "BtfHhr"  4 .scheme.osd-ebtt " E\Hxit "  f void
 osd .osd.ohlps 25  "fr" " "
 osd .osd.ohlps 30  ""
-osd .osd.ohlps 35  "Sfh" " &Search For : " 30
+osd .osd.ohlps 35  "Sfh" " \HSearch For : " 30
 osd .osd.ohlps 45  ""
 osd .osd.ohlps 50  "fh" " "
 osd .osd.ohlps 55  "BfSHh"  .scheme.osd-dbtt " Search "
 osd .osd.ohlps 60  "hf" "  "
-osd .osd.ohlps 65  "Cfxph" "^[ *] &Exact" 1 osd-help-search-flag
+osd .osd.ohlps 65  "Cfxph" "^[ *] \HExact" 1 osd-help-search-flag
 osd .osd.ohlps 70  "hf" " "
-osd .osd.ohlps 75  "Cfxp" "^[ *] &Magic" 2 osd-help-search-flag
+osd .osd.ohlps 75  "Cfxp" "^[ *] \HMagic" 2 osd-help-search-flag
 osd .osd.ohlps 80  ""
 osd .osd.ohlps 100 ""
 
@@ -338,26 +338,26 @@ osd .osd.ohlps 100 ""
         set-variable .scope 1
         set-variable $result "All"
     !endif
-    osd .osd.ohlpi 30  "MtmsxRfh" 1 $result .osd.ohlpis
+    osd .osd.ohlpi 30  "MdtmsxRfh" 1 $result .osd.ohlpis
     osd-help-create-list .osd.ohlpil .osd-help-index-list-crt.scope
     osd .osd.ohlpil 0 "AfsS" .scheme.osd-child &sub .osd-help-set-size.w 8 &sub .osd-help-set-size.d 10 0 -1 
 !emacro
 set-variable .osd-help-index-list-crt.scope 0
 
 osd .osd.ohlpis 0 "b"
-osd .osd.ohlpis 1 "" "&All"              1 osd-help-index-list-crt
-osd .osd.ohlpis 2 "" "&Modes"            2 osd-help-index-list-crt
-osd .osd.ohlpis 3 "" "&Commands"         3 osd-help-index-list-crt
-osd .osd.ohlpis 4 "" "&Variables"        4 osd-help-index-list-crt
-osd .osd.ohlpis 5 "" "Ma&cro Variables"  5 osd-help-index-list-crt
-osd .osd.ohlpis 6 "" "&Directives"       6 osd-help-index-list-crt
-osd .osd.ohlpis 7 "" "&Functions"        7 osd-help-index-list-crt
-osd .osd.ohlpis 8 "" "File &Types"       8 osd-help-index-list-crt
+osd .osd.ohlpis 1 "" "\HAll"              1 osd-help-index-list-crt
+osd .osd.ohlpis 2 "" "\HModes"            2 osd-help-index-list-crt
+osd .osd.ohlpis 3 "" "\HCommands"         3 osd-help-index-list-crt
+osd .osd.ohlpis 4 "" "\HVariables"        4 osd-help-index-list-crt
+osd .osd.ohlpis 5 "" "Ma\Hcro Variables"  5 osd-help-index-list-crt
+osd .osd.ohlpis 6 "" "\HDirectives"       6 osd-help-index-list-crt
+osd .osd.ohlpis 7 "" "\HFunctions"        7 osd-help-index-list-crt
+osd .osd.ohlpis 8 "" "File \HTypes"       8 osd-help-index-list-crt
 
 osd .osd.ohlpi 0   ""
 osd .osd.ohlpi 10  ""
-osd .osd.ohlpi 20  "Sfh" " &Scope : " 30
-osd .osd.ohlpi 40  "BtrfHh" 2 .scheme.osd-ebtt " E&xit " f void
+osd .osd.ohlpi 20  "Sfh" " \HScope : " 30
+osd .osd.ohlpi 40  "BtrfHh" 2 .scheme.osd-ebtt " E\Hxit " f void
 osd .osd.ohlpi 45  "rf" " "
 osd .osd.ohlpi 50  ""
 osd .osd.ohlpi 70  ""
@@ -419,7 +419,7 @@ osd .osd.ohlpi 70  ""
 
 osd .osd.ohlpc 0   ""
 osd .osd.ohlpc 2   ""
-osd .osd.ohlpc 4   "BtrfHh" 2 .scheme.osd-ebtt " E&xit " f void
+osd .osd.ohlpc 4   "BtrfHh" 2 .scheme.osd-ebtt " E\Hxit " f void
 osd .osd.ohlpc 6   "rf" " "
 osd .osd.ohlpc 10  ""
 osd .osd.ohlpc 30  ""

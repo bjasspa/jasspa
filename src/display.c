@@ -384,7 +384,7 @@ windCurLineOffsetEval(meWindow *wp)
         {
             if(isDisplayable(cc))
                 ii = 1 ;
-            else if(cc == meTABCHAR)
+            else if(cc == meCHAR_TAB)
                 ii = get_tab_pos(pos) + 1;
             else if (cc < 0x20)
                 ii = 2 ;
@@ -528,12 +528,12 @@ renderLine (meUByte *s1, int len, int wid)
             wid++ ;
             if(cc == ' ')
                 *s2++ = displaySpace ;
-            else if(cc == meTABCHAR)
+            else if(cc == meCHAR_TAB)
                 *s2++ = displayTab ;
             else
                 *s2++ = cc ;
         }
-        else if(cc == meTABCHAR)
+        else if(cc == meCHAR_TAB)
         {
             int ii=get_tab_pos(wid) ;
 
@@ -2380,7 +2380,7 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
             while(len--)
             {
                 schm = *scheme++ ;
-                if((schm == 0xff) && ((schm = *scheme++) == 1))
+                if((schm == meCHAR_LEADER) && ((schm = *scheme++) == meCHAR_TRAIL_NULL))
                     schm = 0 ;
                 else
                     schm = meSchemeCheck(schm)*meSCHEME_STYLES ;
@@ -2414,7 +2414,7 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
                 while(len--)
                 {
                     schm = *scheme++ ;
-                    if((schm == 0xff) && ((schm = *scheme++) == 1))
+                    if((schm == meCHAR_LEADER) && ((schm = *scheme++) == meCHAR_TRAIL_NULL))
                         schm = 0 ;
                     else
                         schm = meSchemeCheck(schm)*meSCHEME_STYLES ;
@@ -2438,7 +2438,7 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
                 while(len--)
                 {
                     schm = *scheme++ ;
-                    if((schm == 0xff) && ((schm = *scheme++) == 1))
+                    if((schm == meCHAR_LEADER) && ((schm = *scheme++) == meCHAR_TRAIL_NULL))
                         schm = 0 ;
                     else
                         schm = meSchemeCheck(schm)*meSCHEME_STYLES ;
@@ -2465,7 +2465,7 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
             while(len--)
             {
                 schm = *scheme++ ;
-                if((schm == 0xff) && ((schm = *scheme++) == 1))
+                if((schm == meCHAR_LEADER) && ((schm = *scheme++) == meCHAR_TRAIL_NULL))
                     schm = 0 ;
                 else
                     schm = meSchemeCheck(schm)*meSCHEME_STYLES ;
@@ -2485,7 +2485,7 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
             while(len--)
             {
                 schm = *scheme++ ;
-                if((schm == 0xff) && ((schm = *scheme++) == 1))
+                if((schm == meCHAR_LEADER) && ((schm = *scheme++) == meCHAR_TRAIL_NULL))
                     schm = 0 ;
                 else
                     schm = meSchemeCheck(schm)*meSCHEME_STYLES ;
@@ -2510,7 +2510,7 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
 #endif
     {
         schm = *scheme ;
-        if((schm == 0xff) && ((schm = *scheme++) == 1))
+        if((schm == meCHAR_LEADER) && ((schm = *scheme++) == meCHAR_TRAIL_NULL))
             schm = 0 ;
         else
             schm = meSchemeCheck(schm)*meSCHEME_STYLES ;

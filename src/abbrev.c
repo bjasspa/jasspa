@@ -112,7 +112,7 @@ doExpandAbbrev(meUByte *abName, int abLen, meAbbrev *abrev)
     hlp = &abrev->hlp ;
     if(!abrev->loaded)
     {
-        meUByte fname[meFILEBUF_SIZE_MAX] ;
+        meUByte fname[meBUF_SIZE_MAX] ;
         
         if(!fileLookup(abrev->fname,(meUByte *)".eaf",meFL_CHECKDOT|meFL_USESRCHPATH,fname) ||
            (ffReadFile(fname,meRWFLAG_SILENT,NULL,hlp,0,0) == meABORT))

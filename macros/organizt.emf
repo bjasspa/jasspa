@@ -41,7 +41,7 @@ set-variable .org.set-day 1
     !else
         set-variable @# &add 1 &reg "/org" "set/initpage" "0"
     !endif
-    osd .osd.orgt 60 "MtxmsfHz" 2 .scheme.osd-entry 12 1 &lget .org.pages @# .osd.org-m org-setup-pagec
+    osd .osd.orgt 60 "MdtxmsfHz" 2 .scheme.osd-entry 12 1 &lget .org.pages @# .osd.org-m org-setup-pagec
 !emacro
 
 0 define-macro org-setup-pagec
@@ -57,7 +57,7 @@ set-variable .org.set-day 1
     !if @?
         set-variable .org.set-month @#
     !endif
-    osd .osd.orgt 120 "MhtxmsfHz" 3 .scheme.osd-entry 12 1 &lget .org.months .org.set-month .osd.org-m org-setup-monthc
+    osd .osd.orgt 120 "MdhtxmsfHz" 3 .scheme.osd-entry 12 1 &lget .org.months .org.set-month .osd.org-m org-setup-monthc
 !emacro
 
 0 define-macro org-setup-monthc
@@ -88,7 +88,7 @@ set-variable .org.set-day 1
     !if @?
         set-variable .org.set-day @#
     !endif
-    osd .osd.orgt 160 "MhtxmsfHz" 4 .scheme.osd-entry 12 1 &lget .org.days .org.set-day .osd.org-m org-setup-dayc
+    osd .osd.orgt 160 "MdhtxmsfHz" 4 .scheme.osd-entry 12 1 &lget .org.days .org.set-day .osd.org-m org-setup-dayc
 !emacro
 
 0 define-macro org-setup-dayc
@@ -125,7 +125,7 @@ set-variable .org.set-day 1
     !else
         set-variable @# &add 1 &lef .org.set 1
     !endif
-    osd .osd.orgt 210 "MtxmsfHz" 7 .scheme.osd-entry 12 1 &lget .org.days @# .osd.org-m org-setup-1dofwc
+    osd .osd.orgt 210 "MdtxmsfHz" 7 .scheme.osd-entry 12 1 &lget .org.days @# .osd.org-m org-setup-1dofwc
 !emacro
 
 0 define-macro org-setup-1dofwc
@@ -210,17 +210,17 @@ osd .osd.orgt 355 ""
 osd .osd.orgt 360 "c" "Default Address Find Settings"
 osd .osd.orgt 365 ""
 osd .osd.orgt 370 "hf" "              "
-osd .osd.orgt 380 "hCfxp" "^[ *] &Whole" 1 org-setup-aflag-check
+osd .osd.orgt 380 "hCfxp" "^[ *] \HWhole" 1 org-setup-aflag-check
 osd .osd.orgt 390 "hf" "  "
-osd .osd.orgt 400 "hCfxp" "^[ *] S&tart" 2 org-setup-aflag-check
+osd .osd.orgt 400 "hCfxp" "^[ *] S\Htart" 2 org-setup-aflag-check
 osd .osd.orgt 410 "hf" "  "
-osd .osd.orgt 420 "Cfxp"  "^[ *] &Any Part" 4 org-setup-aflag-check
+osd .osd.orgt 420 "Cfxp"  "^[ *] \HAny Part" 4 org-setup-aflag-check
 osd .osd.orgt 430 "hf" "              "
-osd .osd.orgt 440 "Cfxp"  "^[ *] &Case insensitive" 0x10 org-setup-aflag-check
+osd .osd.orgt 440 "Cfxp"  "^[ *] \HCase insensitive" 0x10 org-setup-aflag-check
 osd .osd.orgt 450 "hf" "              "
-osd .osd.orgt 460 "Cfxp"  "^[ *] &Magic mode" 0x20 org-setup-aflag-check
+osd .osd.orgt 460 "Cfxp"  "^[ *] \HMagic mode" 0x20 org-setup-aflag-check
 osd .osd.orgt 600 "" 
 osd .osd.orgt 605 "" 
-osd .osd.orgt 610 "BtxhcfH" 20 .scheme.osd-ebtt " &Save " f organizer-save
-osd .osd.orgt 620 "BtcfH"   21 .scheme.osd-ebtt " E&xit " 1 void
+osd .osd.orgt 610 "BtxhcfH" 20 .scheme.osd-ebtt " \HSave " f organizer-save
+osd .osd.orgt 620 "BtcfH"   21 .scheme.osd-ebtt " E\Hxit " 1 void
 

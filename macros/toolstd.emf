@@ -217,17 +217,17 @@
     -1 osd .osd.tmp
     osd .osd.tmp 0 b
     !if &gre $window-line 1
-        osd .osd.tmp 10 "" "Switch to &Buffer"   3 buffer-list-command
-        osd .osd.tmp 20 "" "&Close Buffer"      -1 buffer-list-command
-        osd .osd.tmp 30 "" "Toggle &Save Flag"   1 buffer-list-command
-        osd .osd.tmp 40 "" "Toggle &Delete Flag" 0 buffer-list-command
+        osd .osd.tmp 10 "" "Switch to \HBuffer"   3 buffer-list-command
+        osd .osd.tmp 20 "" "\HClose Buffer"      -1 buffer-list-command
+        osd .osd.tmp 30 "" "Toggle \HSave Flag"   1 buffer-list-command
+        osd .osd.tmp 40 "" "Toggle \HDelete Flag" 0 buffer-list-command
     !else
         osd .osd.tmp 10 "" "Switch to Buffer"
         osd .osd.tmp 20 "" "Close Buffer"
         osd .osd.tmp 30 "" "Toggle Save Flag"
         osd .osd.tmp 40 "" "Toggle Delete Flag"
     !endif
-    osd .osd.tmp 50 "" "E&xecute Flags" -2 buffer-list-command
+    osd .osd.tmp 50 "" "E\Hxecute Flags" -2 buffer-list-command
     !force !force .osd.tmp osd
     !if &not $status
         goto-position "\x82"

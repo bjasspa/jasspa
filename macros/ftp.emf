@@ -208,7 +208,7 @@ define-macro ftp-connect
             !force mark-registry "/url" "g"
             !if &sin "u" $result
                 ; file changed, confirm action
-                osd-xdialog "FTP" "Current URL registry file has been changed" 1 " &Save " " &Discard " " Cancel "
+                osd-xdialog "FTP" "Current URL registry file has been changed" 1 " \HSave " " \HDiscard " " \HCancel "
                 !if &equ $result 1
                     !force save-registry "/url" "" @mna
                     !if &not $status
@@ -289,11 +289,11 @@ define-macro ftp-connect
         osd .osd.ftp 140 "Sf" "    Initial Host Path"
         osd .osd.ftp 150 "SExHf"  .scheme.osd-entry "############################"
     !else
-        osd .osd.ftp 100 "Shf" "    &User Name" 110
-        osd .osd.ftp 101 "Sf" "       &Password" 130
+        osd .osd.ftp 100 "Shf" "    \HUser Name" 110
+        osd .osd.ftp 101 "Sf" "       \HPassword" 130
         osd .osd.ftp 110 "EtxHhf" 11 .scheme.osd-entry "############" 3 ftp-data-entry
         osd .osd.ftp 130 "EtxHfR" 13 .scheme.osd-entry "############" 4 ftp-data-entry
-        osd .osd.ftp 140 "Sf" "    &Initial Host Path" 150
+        osd .osd.ftp 140 "Sf" "    \HInitial Host Path" 150
         osd .osd.ftp 150 "EtxHf"  15 .scheme.osd-entry "############################" 5 ftp-data-entry
     !endif
 !emacro
@@ -347,7 +347,7 @@ define-macro ftp-connect
                 ; if not and we are already looking at an ftp entry, does
                 ; the user want to rename this one or create anew one?
                 set-variable #l9 &spr "  Rename \"%s\" to \"%s\" or create new?  " .ftp.name #l0
-                osd-xdialog "FTP" #l9 1 " &Rename " " Create &New " " &Cancel "
+                osd-xdialog "FTP" #l9 1 " \HRename " " Create \HNew " " \HCancel "
                 !if &equ $result 3
                     !return
                 !endif
@@ -411,18 +411,18 @@ define-macro ftp-connect
 -1 osd .osd.ftp
 osd .osd.ftp 00  "batcdHs" 3 6 39 0 -1 -1 630 .scheme.osd-title "FTP Connection"
 osd .osd.ftp 10  ""
-osd .osd.ftp 20  "Sf" "    &Registry File" 30
+osd .osd.ftp 20  "Sf" "    \HRegistry File" 30
 osd .osd.ftp 25  "hf" "    "
 osd .osd.ftp 30  "EtxHf" 3 .scheme.osd-entry "############################" f ftp-regfile-entry
 osd .osd.ftp 35  ""
-osd .osd.ftp 39  "Sfh" "    &Display FTP Console: " 40
+osd .osd.ftp 39  "Sfh" "    \HDisplay FTP Console: " 40
 osd .osd.ftp 40  "Ctfx" 4 "^^NY^^" 1 ftp-console-checkbox
 osd .osd.ftp 45  ""
-osd .osd.ftp 50  "Sf" "    &Site Name" 70
+osd .osd.ftp 50  "Sf" "    \HSite Name" 70
 osd .osd.ftp 55  "hf" "    "
 osd .osd.ftp 60  "EtxHfhR" 6 .scheme.osd-entry "############################" 1 ftp-data-entry
-osd .osd.ftp 70  "MmxstfHiR" 7 .scheme.osd-ebtt &mid $window-chars 10 1 .osd.tmp ftp-host-setup
-osd .osd.ftp 80  "Sf" "    &Host Address" 90
+osd .osd.ftp 70  "MdmxstfHiR" 7 .scheme.osd-ebtt &mid $window-chars 10 1 .osd.tmp ftp-host-setup
+osd .osd.ftp 80  "Sf" "    \HHost Address" 90
 osd .osd.ftp 85  "hf" "    "
 osd .osd.ftp 90  "EtxHfR"  9 .scheme.osd-entry "############################" 2 ftp-data-entry
 osd .osd.ftp 105 "hf" "    "
@@ -430,6 +430,6 @@ osd .osd.ftp 120 "hf" "    "
 osd .osd.ftp 145 "hf" "    "
 osd .osd.ftp 600 ""
 osd .osd.ftp 610 ""
-osd .osd.ftp 620 "BthcfH" 62 .scheme.osd-ebtt " &Connect " f ftp-do-connect
-osd .osd.ftp 630 "BtcfH"  63 .scheme.osd-ebtt " E&xit  "   f void
+osd .osd.ftp 620 "BthcfH" 62 .scheme.osd-ebtt " \HConnect " f ftp-do-connect
+osd .osd.ftp 630 "BtcfH"  63 .scheme.osd-ebtt " E\Hxit  "   f void
 ftp-site-name-set ""

@@ -48,7 +48,7 @@
 
 /* Local Definitions */
 #define MF_DISABLE  0x00000001          /* D - disabled Menu item */
-#define MF_DISPTYPE 0x00000002          /* d - Display menu type (i.e. the .., > etc */
+#define MF_DISPTYPE 0x00000002          /* d - Disable display item type (i.e. the .., > etc) */
 #define MF_MANUAL   0x00000004          /* m - Manual open */
 #define MF_SUBMNU   0x00000008          /* M - Sub-menu item */
 #define MF_LINEFILL 0x00000010          /* - - Pad extra chars with '-', else ' ' */
@@ -74,9 +74,10 @@
 #define MF_SIZE     0x01000000          /* z - Specify an item size */
 #define MF_NINPUT   0x02000000          /* N - ML Newline input style */
 #define MF_REPEAT   0x04000000          /* T - Button Repeat execution */
-#define MF_NHILIGHT 0x08000000          /* X - No hilighting when under mouse */
+#define MF_NHILIGHT 0x08000000          /* u - No hilighting when under mouse */
+#define MF_COMBO    0x10000000          /* O - COmbo Box field type */
 
-static meUByte osdItemFlags[]="DdmM-CxishctbrfEBpSRHIGPzNTu" ; 
+static meUByte osdItemFlags[]="DdmM-CxishctbrfEBpSRHIGPzNTuO" ; 
 
 /* Following are the internal flags worked out from the information given */
 #define MFI_NOTEXT  0x00000001          /* No text is given, just pad */
@@ -96,15 +97,14 @@ static meUByte osdItemFlags[]="DdmM-CxishctbrfEBpSRHIGPzNTu" ;
 #define RF_RESIZE   0x00000400          /* R - The dialog has a resize macro */
 #define RF_MAINMN   0x00000800          /* M - The main top menu */
 #define RF_CONTROL  0x00001000          /* C - The dialog has a contorlling command */
-#define RF_HOTKEY   0x00002000          /* k - Disable hot keys for this dialog */
-#define RF_NOTEBOOK 0x00004000          /* N - Dialog is a notebook */
-#define RF_GRID     0x00008000          /* G - Dialog is a grid layout */
-#define RF_NEWLINE  0x00010000          /* n - Dialog is a grid layout */
-#define RF_FRSTLET  0x00020000          /* f - Use first letter as hotkey */
-#define RF_INSENSE  0x00040000          /* i - Case insensitive (Alpha lists) */
-#define RF_OFFSTPOS 0x00080000          /* o - Dialog Offset position */
-#define RF_FOCALITM 0x00100000          /* F - Set the item to focus on - temporary */
-#define RF_RISLBUT  0x00200000          /* B - Right is list button */
+#define RF_NOTEBOOK 0x00002000          /* N - Dialog is a notebook */
+#define RF_GRID     0x00004000          /* G - Dialog is a grid layout */
+#define RF_NEWLINE  0x00008000          /* n - Draw new-lines, don't start one */
+#define RF_FRSTLET  0x00010000          /* f - Use first letter as hotkey */
+#define RF_INSENSE  0x00020000          /* i - Case insensitive (Alpha lists) */
+#define RF_OFFSTPOS 0x00040000          /* o - Dialog Offset position */
+#define RF_FOCALITM 0x00080000          /* F - Set the item to focus on - temporary */
+#define RF_RISLBUT  0x00100000          /* B - Right is list button */
 
 #define RF_CONFIG   0x08000000          /* The display is currently being configured */
 #define RF_REDRAW   0x10000000          /* The menu has been changed - redraw */
@@ -112,7 +112,7 @@ static meUByte osdItemFlags[]="DdmM-CxishctbrfEBpSRHIGPzNTu" ;
 #define RF_DISABLE  0x40000000          /* This is a temporarily disabled */
 #define RF_NOPOP    0x80000000          /* Flag to stop the pop with a control */
 
-static meUByte osdMenuFlags[]="baAtdcrHsSRMCkNGnfioFB" ;
+static meUByte osdMenuFlags[]="baAtdcrHsSRMCNGnfioFB" ;
 
 
 #define CF_HORZADD  0x0001              /* Add to the next menu line */
@@ -615,7 +615,7 @@ itemAdd (osdDIALOG *rp, osdITEM *newmp)
  * Set up the menu arguments for calling an external function
  */
 static int
-menuExecute (osdITEM *mp, int flags, int n)
+menuExecute(osdITEM *mp, int flags, int n)
 {
     meUByte *p, *q;                        /* Local character pointers */
     int   cc, f, mpflags ;              /* Immediate character */
@@ -672,7 +672,7 @@ menuExecute (osdITEM *mp, int flags, int n)
     }
     else
     {
-        /* Return the menu name to the caller. Strip out any '&' delimiters
+        /* Return the menu name to the caller. Strip out any Hotkey delimiters
          * from the string prior to return. */
         q = resultStr;                      /* Start of the result string */
         if (mp->iflags & MFI_NOTEXT)
@@ -682,24 +682,27 @@ menuExecute (osdITEM *mp, int flags, int n)
             p = mp->strData ;
             if(mpflags & MF_CHECK)
                 p += 6 ;
-            if(flags & (RF_HOTKEY|RF_FRSTLET))
-                meStrcpy(q,mp->strData) ;
-            else
+            do
             {
-                do
+                if((cc=*p++) == meCHAR_LEADER)
                 {
-                    if (((cc=*p++) == '\\') || (cc == '&'))
-                        cc = *p++ ;
+                    if(((cc=*p++) != meCHAR_TRAIL_HOTKEY) &&
+                       (cc != meCHAR_TRAIL_HILSTART) && (cc != meCHAR_TRAIL_HILSTOP))
+                    {
+                        *q++ = meCHAR_LEADER ;
+                        *q++ = cc ;
+                    }
+                }
+                else
                     *q++ = cc;
-                } while(cc != '\0') ;
-            }
+            } while(cc != '\0') ;
         }
     }
     
     /* Get the f and n out */
     f = ((mp->iflags & MFI_ARG) != 0) ;  /* Argument flag */
     
-    if (mpflags & (MF_ENTRY|MF_CHECK))
+    if (mpflags & (MF_ENTRY|MF_CHECK|MF_COMBO))
     {
         if(!f)
             f = 1 ;
@@ -1067,51 +1070,29 @@ menuSetItemLength (osdDIALOG *rp, osdITEM *mp)
         p += 6 ;
     
     len = clen = 0 ;
-    if(rp->flags & (RF_HOTKEY|RF_FRSTLET))
+    
+    if(rp->flags & RF_FRSTLET)
+        mp->key = *p ;
+    while((cc = *p++) != '\0')
     {
-        if(rp->flags & RF_FRSTLET)
-            mp->key = *p ;
-        for(;;)
+        if((cc == meCHAR_NL) && !(rp->flags & RF_NEWLINE))
         {
-            if((cc = *p++) == '\0')
-                break ;
-            if((cc == meNLCHAR) && !(rp->flags & RF_NEWLINE))
-            {
-                mp->height++ ;
-                if(clen > len)
-                    len = clen ;
-                clen = 0 ;
-            }
-            else
-                clen++;
+            (mp->height)++ ;
+            if(clen > len)
+                len = clen ;
+            clen = 0 ;
         }
-    }
-    else
-    {
-        /* Process the menu text escape character '&' */
-        for(;;)
+        else if(cc == meCHAR_LEADER)
         {
-            if(((cc = *p++) == meNLCHAR) && !(rp->flags & RF_NEWLINE))
-            {
-                (mp->height)++ ;
-                if(clen > len)
-                    len = clen ;
-                clen = 0 ;
-            }
-            else
-            {
-                if(cc == '\\')
-                    cc = *p++ ;
-                else if(cc == '&')
-                {
-                    if((cc = *p++) != '\0')
-                        mp->key = cc ;          /* The character */
-                }
-                if(cc == '\0')
-                    break ;
-                clen++;
-            }
+            /* the text processing means this is either a LEADER char (0xff) or a hotkey/hilight stop/start */
+            cc = *p++ ;
+            if(cc == meCHAR_TRAIL_LEADER)
+                clen++ ;
+            else if(cc == meCHAR_TRAIL_HOTKEY)
+                mp->key = *p ;
         }
+        else
+            clen++;
     }
     if(clen > len)
         len = clen ;
@@ -1132,10 +1113,9 @@ menuSetItemLength (osdDIALOG *rp, osdITEM *mp)
         if(mp->strData[5] != '\0')
             len++ ;
     }
-    else if((mp->flags & MF_BUTTON) ||
-            ((mp->flags & MF_DISPTYPE) && (mp->flags & MF_SUBMNU)))
+    else if(!(mp->flags & MF_DISPTYPE) && (mp->flags & (MF_BUTTON|MF_SUBMNU)))
         /* Add 2 for '[xxxx]', '..' or ' >' */
-        len += 2;
+        len += 2 ;
     /* set up the length */
     mp->len = len ;
 }
@@ -1675,7 +1655,7 @@ osdRenderEntry(meUByte *txtp, meUByte *ss, int flags, int cpos,
         return osdRenderEntryLine(txtp,ss,-1,cpos, ww) ;
     }
     
-    s1 = meStrchr(ss,meNLCHAR) ;
+    s1 = meStrchr(ss,meCHAR_NL) ;
     s2 = ss ;
     start = 0 ;
     while((s1 != NULL) && ((len=((int) s1 - (int) s2)) < cpos))
@@ -1683,14 +1663,14 @@ osdRenderEntry(meUByte *txtp, meUByte *ss, int flags, int cpos,
         start++ ;
         s2 = s1+1 ;
         cpos -= len+1 ;
-        s1 = meStrchr(s2,meNLCHAR) ;
+        s1 = meStrchr(s2,meCHAR_NL) ;
     } 
         
     col = 0 ;
     while(s1 != NULL)
     {
         col++ ;
-        s1 = meStrchr(s1+1,meNLCHAR) ;
+        s1 = meStrchr(s1+1,meCHAR_NL) ;
     }
     row = (dd-1) >> 1 ;
     if((col+1+row) < dd)
@@ -1702,17 +1682,17 @@ osdRenderEntry(meUByte *txtp, meUByte *ss, int flags, int cpos,
     start -= row ;
     s1 = ss ;
     while(--start >= 0)
-        s1 = ((meUByte *)meStrchr(s1,meNLCHAR))+1 ;
+        s1 = ((meUByte *)meStrchr(s1,meCHAR_NL))+1 ;
     dd -= row+1 ;
     while(--row >= 0)
     {
-        s2 = meStrchr(s1,meNLCHAR) ;
+        s2 = meStrchr(s1,meCHAR_NL) ;
         len = ((int) s2 - (int) s1) ;
         osdRenderEntryLine(txtp,s1,len,0,ww) ;
         txtp += totWidth ;
         s1 = s2 + 1 ;
     }
-    s2 = meStrchr(s1,meNLCHAR) ;
+    s2 = meStrchr(s1,meCHAR_NL) ;
     if(s2 == NULL)
         len = -1 ;
     else
@@ -1726,7 +1706,7 @@ osdRenderEntry(meUByte *txtp, meUByte *ss, int flags, int cpos,
         else
         {
             s1 = s2+1 ;
-            s2 = meStrchr(s1,meNLCHAR) ;
+            s2 = meStrchr(s1,meCHAR_NL) ;
             if(s2 == NULL)
                 len = -1 ;
             else
@@ -1939,16 +1919,16 @@ menuRenderItem (osdDISPLAY *md, int offset, int flags)
                 maxx -= len ;
             }
         }
-        else if((mp->flags & MF_DISPTYPE) && (mp->flags & MF_SUBMNU))
+        else if(!(mp->flags & MF_DISPTYPE) && (mp->flags & MF_SUBMNU))
             maxx -= 2 ;
-        else if(mp->flags & MF_BUTTON)
+        else if(!(mp->flags & MF_DISPTYPE) && (mp->flags & MF_BUTTON))
         {
             *txtp++ = windowChars[WCOSDBTTOPN] ;
             curx++ ;
             maxx-- ;
         }
         /* Render the string */
-        if(mp->flags & MF_ENTRY)
+        if(mp->flags & (MF_ENTRY|MF_COMBO))
         {
             if(menuExecute(mp,0,1) > 0)
             {
@@ -1962,15 +1942,13 @@ menuRenderItem (osdDISPLAY *md, int offset, int flags)
         {
             meShort sttx = curx ;
             meShort cury = mcp->adepth ;
-            meUByte cc;                        /* Current character */
+            meUByte cc, hilStop=0;
             p = (meUByte *) mp->strData ;
             if(mp->flags & MF_CHECK)
                 p += 6 ;
-            for(;;)
+            while((cc = *p++) != '\0')
             {
-                if((cc = *p++) == '\0')
-                    break ;
-                if((cc == meNLCHAR) && !(md->flags & RF_NEWLINE))
+                if((cc == meCHAR_NL) && !(md->flags & RF_NEWLINE))
                 {
                     if(--cury <= 0)
                         break ;
@@ -1980,19 +1958,27 @@ menuRenderItem (osdDISPLAY *md, int offset, int flags)
                 }
                 else if(curx < maxx)
                 {
-                    if((cc == '&') && !(md->flags & (RF_HOTKEY|RF_FRSTLET)))
+                    if((cc == meCHAR_LEADER) && ((cc=*p++) != meCHAR_TRAIL_LEADER))
                     {
-                        colp[curx] = scheme+meSCHEME_CURRENT ;
-                        cc = *p++ ;
+                        /* the text processing means this is either a LEADER char (0xff) or a hotkey/hilight stop/start */
+                        if(cc == meCHAR_TRAIL_HOTKEY)
+                            colp[curx] = scheme+meSCHEME_CURRENT ;
+                        else if(cc == meCHAR_TRAIL_HILSTART)
+                            hilStop = 0 ;
+                        else if(scheme == (mp->scheme + meSCHEME_SELECT))
+                            hilStop = 1 ;
                     }
-                    else if((cc == '\\') && !(md->flags & (RF_HOTKEY|RF_FRSTLET)))
-                        cc = *p++ ;
-                    *txtp++ = cc ;
-                    curx++ ;
+                    else
+                    {
+                        if(hilStop)
+                            colp[curx] -= meSCHEME_SELECT ;
+                        *txtp++ = cc ;
+                        curx++ ;
+                    }
                 }
             }
         }
-        if(mp->flags & MF_BUTTON)
+        if(!(mp->flags & MF_DISPTYPE) && (mp->flags & MF_BUTTON))
         {   
             *txtp++ = windowChars[WCOSDBTTCLS] ;
             curx++ ;
@@ -2009,7 +1995,7 @@ menuRenderItem (osdDISPLAY *md, int offset, int flags)
             while((cc = *ss++) != '\0')
                 *txtp++ = cc ;
         }
-        else if((mp->flags & MF_DISPTYPE) && (mp->flags & MF_SUBMNU))
+        else if(!(mp->flags & MF_DISPTYPE) && (mp->flags & MF_SUBMNU))
         {
             /* Add menu annotaion */
             if (mp->flags & MF_MANUAL)
@@ -3575,7 +3561,7 @@ osdDisplaySub(osdDISPLAY *md, int flags)
 
     if(((index = md->curContext) == -1) ||
        ((mp = md->context [index].menu) == NULL) ||
-       !(mp->flags & MF_SUBMNU) ||
+       !(mp->flags & (MF_SUBMNU|MF_COMBO)) ||
        ((mp->flags & MF_MANUAL) && !(flags & OPEN_MENU)))
         return ;
     
@@ -4153,7 +4139,7 @@ osdDisplayGetMousePosition(osdDISPLAY *md, meShort xx, meShort yy, int leftPick)
                     {
                         mp = md->context[ii].menu ;
                         if((mp->item == itm) && 
-                           ((mp->flags & MF_SUBMNU) || (mp->cmdIndex >= 0)))
+                           ((mp->flags & (MF_SUBMNU|MF_COMBO)) || (mp->cmdIndex >= 0)))
                             break ;
                     }
                 }
@@ -4261,7 +4247,8 @@ osdDisplayMouseLocate(int leftPick)
         }
         if((md = md->prev) == NULL)
             break ;
-        if((osdDialogGetCurContextFlags(md) & (MF_SUBMNU|MF_MANUAL)) != MF_SUBMNU)
+        rr = osdDialogGetCurContextFlags(md) ;
+        if(((rr & (MF_SUBMNU|MF_COMBO)) == 0) || (rr & MF_MANUAL))
         {
             if(!leftPick)
                 break ;
@@ -4789,7 +4776,7 @@ menuInteraction (int *retState)
                 while(md->next != NULL)
                     md = md->next ;
                 while(((md=md->prev) != NULL) &&
-                      ((osdDialogGetCurContextFlags(md) & (MF_SUBMNU|MF_MANUAL)) != (MF_SUBMNU|MF_MANUAL)))
+                      ((osdDialogGetCurContextFlags(md) & MF_MANUAL) == 0))
                     ;
                 if(md != NULL)
                 {
@@ -4957,7 +4944,7 @@ menuInteraction (int *retState)
         
         mp = osdNewChild->context[osdNewChild->newContext].menu ;
         /* have we got something to execute?? */
-        if((state & EXECUTE_MENU) && !(mp->flags & MF_SUBMNU) && (mp->cmdIndex < 0))
+        if((state & EXECUTE_MENU) && !(mp->flags & (MF_SUBMNU|MF_COMBO)) && (mp->cmdIndex < 0))
         {
             /* Hot keys can be used to reference other items to execute cause they
              * themselves are separaters so get the real thing to execute */
@@ -4996,7 +4983,7 @@ menuInteraction (int *retState)
             }
             osdNewChild->newContext = nit ;
         }
-        if((state & EXECUTE_MENU) && !(mp->flags & MF_SUBMNU))
+        if((state & EXECUTE_MENU) && !(mp->flags & (MF_SUBMNU|MF_COMBO)))
         {
             osdDISPLAY *nem, *nec ;
             osdCONTEXT *nep ;
@@ -5041,11 +5028,11 @@ menuInteraction (int *retState)
                 }
             }
             
-            if((nem == NULL) && !(mp->flags & MF_ENTRY))
+            if((nem == NULL) && !(mp->flags & (MF_ENTRY|MF_COMBO)))
             {
-                /* if no non-exit was found & this is not an entry field then we can
-                 * quit before execute - store the md's flags so the item can be 
-                 * properly executed */
+                /* if no non-exit was found & this is not an entry or combo
+                 * box field then we can quit before execute - store the md's
+                 * flags so the item can be properly executed */
                 *retState = osdNewChild->flags ;
                 break ;
             }   
@@ -5118,8 +5105,8 @@ osd (int f, int n)
     osdITEM    *mp;                     /* Pointer to the menu */
     osdDISPLAY *md, *pmd;               /* Pointer to the osdDisplayHd */
     meUByte oldClexec;	                /* command line execution flag	*/
-    meUByte buf [meBUF_SIZE_MAX];                 /* Reply buffer */
-    int   noDis, ii ;                   /* Status of the invocation */
+    meUByte buf [meBUF_SIZE_MAX];       /* Reply buffer */
+    int   noDis, ii, jj ;               /* Status of the invocation */
 
     /* If no arguments are defined then a menu is being
      * defined. */
@@ -5402,7 +5389,7 @@ osd (int f, int n)
         {
             flags &= ~MF_SCRLBOX ;
             /* Get the string field - not needed if deleting a non alpha item */
-            if ((ii = meGetString((meUByte *)"Text", 0, 0, txtbuf, meBUF_SIZE_MAX)) == meABORT)
+            if ((ii = meGetString((meUByte *)"Text", MLFFZERO, 0, txtbuf, meBUF_SIZE_MAX)) == meABORT)
                 return meABORT ;
             else if (ii == meFALSE)
             {
@@ -5450,15 +5437,42 @@ osd (int f, int n)
         if(txtlen > 0)
         {
             /* Copy in the text data - convert any non-pokable chars to '.' */
-            ii = txtlen ;
-            dd[--ii] = 0 ;
-            while(--ii >= 0)
+            txtlen-- ;
+            for(ii=0, jj=0 ; ii < txtlen ; ii)
             {
-                cc = txtbuf[ii] ;
-                if(!isPokable(cc) && (cc != meNLCHAR))
+                cc = txtbuf[ii++] ;
+                if(cc == meCHAR_LEADER)
+                {
+                    cc = txtbuf[ii++] ;
+                    if(cc == meCHAR_TRAIL_SPECIAL)
+                    {
+                        ii += 2 ;
+                        cc = '.' ;
+                    }
+                    else if(cc == meCHAR_TRAIL_HOTKEY)
+                    {
+                        if(txtbuf[ii] == '\0')
+                            break ;
+                        dd[jj++] = meCHAR_LEADER ;
+                    }
+                    else if((cc == meCHAR_TRAIL_HILSTART) || (cc == meCHAR_TRAIL_HILSTOP))
+                        dd[jj++] = meCHAR_LEADER ;
+                    else if(cc == meCHAR_TRAIL_LEADER)
+                    {
+                        if(isPokable(meCHAR_LEADER))
+                            dd[jj++] = meCHAR_LEADER ;
+                        else
+                            cc = '.' ;
+                    }
+                    else
+                        cc = '.' ;
+                }
+                else if(!isPokable(cc) && ((cc != meCHAR_NL) || (rp->flags & RF_NEWLINE)))
                     cc = '.' ;
-                dd[ii] = cc ;
+                dd[jj++] = cc ;
             }
+            dd[jj++] = '\0' ;
+            txtlen = jj ;
         }
         if ((mp = itemFind (rp, item, (flags & MF_CHECK) ? dd+6:dd)) == NULL)
         {

@@ -29,7 +29,7 @@ set-variable .fhook-html.command-flag  "|th|h|th|h|th|h|thb|thb|"
 set-variable .fhook-html.command-name  "|||html-process-link||||html-show-buffer|html-toggle-mode|"
 set-variable .fhook-html.command-nbind "|||||||||"
 set-variable .fhook-html.command-kbind "|||||||C-c C-h|C-c C-i|"
-set-variable .fhook-html.command-desc  "|Html Browser Mode||&Goto Link||Html Author Mode||Process Current Buffer|Toggle Indent To VB Mode|"
+set-variable .fhook-html.command-desc  "|Html Browser Mode||\HGoto Link||Html Author Mode||Process Current Buffer|Toggle Indent To VB Mode|"
 
 ; setup item-list
 set-variable .fhook-html.item-list-s1 "<[hH]1>\\(\\s *<[^>]*>\\)*\\s *\\([^<]+\\)"
@@ -507,7 +507,7 @@ define-macro html-process-buffer
         osd .osd.tmp 100 ""
         osd .osd.tmp 200 "Ic" .osd.htmlcolr
         osd .osd.tmp 300 ""
-        osd .osd.tmp 610 "BtcfH" 61 .scheme.osd-ebtt " &Cancel " f void
+        osd .osd.tmp 610 "BtcfH" 61 .scheme.osd-ebtt " \HCancel " f void
         set-variable .mode 1
         !force .osd.tmp osd
         set-variable .mode 0
@@ -539,7 +539,7 @@ osd .osd.htmlcoll 113 "RTfxh" #l0 0x01001 html-get-color-com
 osd .osd.htmlcoll 120 "fh"  "   "
 osd .osd.htmlcoll 121 "RTfxh" #l0 0x10011 html-get-color-com
 osd .osd.htmlcoll 122 "RTfx"  #l0 0x01011 html-get-color-com
-osd .osd.htmlcoll 130 "Sfh" "    &Red : " 140
+osd .osd.htmlcoll 130 "Sfh" "    \HRed : " 140
 osd .osd.htmlcoll 140 "REtxHfh" 14 .scheme.osd-entry "####" 0x001 html-get-color-com
 osd .osd.htmlcoll 145 "fh"  "  "
 osd .osd.htmlcoll 150 "REtxHf" 15 .scheme.osd-entry "###"  0x011 html-get-color-com
@@ -557,7 +557,7 @@ osd .osd.htmlcoll 213 "RTfxh" #l0 0x01002 html-get-color-com
 osd .osd.htmlcoll 220 "fh"  "   "
 osd .osd.htmlcoll 221 "RTfxh" #l0 0x10012 html-get-color-com
 osd .osd.htmlcoll 222 "RTfx"  #l0 0x01012 html-get-color-com
-osd .osd.htmlcoll 230 "Sfh" "  &Green : " 240
+osd .osd.htmlcoll 230 "Sfh" "  \HGreen : " 240
 osd .osd.htmlcoll 240 "REtxHfh" 24 .scheme.osd-entry "####" 0x002 html-get-color-com
 osd .osd.htmlcoll 245 "fh"  "  "
 osd .osd.htmlcoll 250 "REtxHf"  25 .scheme.osd-entry "###"  0x012 html-get-color-com
@@ -575,7 +575,7 @@ osd .osd.htmlcoll 313 "RTfxh" #l0 0x01003 html-get-color-com
 osd .osd.htmlcoll 320 "fh"  "   "
 osd .osd.htmlcoll 321 "RTfxh" #l0 0x10013 html-get-color-com
 osd .osd.htmlcoll 322 "RTfx"  #l0 0x01013 html-get-color-com
-osd .osd.htmlcoll 330 "Sfh" "   &Blue : " 340
+osd .osd.htmlcoll 330 "Sfh" "   \HBlue : " 340
 osd .osd.htmlcoll 340 "REtxHfh" 34 .scheme.osd-entry "####" 0x003 html-get-color-com
 osd .osd.htmlcoll 345 "fh"  "  "
 osd .osd.htmlcoll 350 "REtxHf"  35 .scheme.osd-entry "###"  0x013 html-get-color-com
@@ -602,8 +602,8 @@ osd .osd.htmlcol 210 ""
 osd .osd.htmlcol 300 "Ic" .osd.htmlcolr
 osd .osd.htmlcol 500 ""
 osd .osd.htmlcol 510 ""
-osd .osd.htmlcol 600 "RBtcxfHh" 60 .scheme.osd-ebtt " Set &Pal " f html-get-color-pal
-osd .osd.htmlcol 620 "BtcfH"  62 .scheme.osd-ebtt " &Cancel " 0 void
+osd .osd.htmlcol 600 "RBtcxfHh" 60 .scheme.osd-ebtt " Set \HPal " f html-get-color-pal
+osd .osd.htmlcol 620 "BtcfH"  62 .scheme.osd-ebtt " \HCancel " 0 void
 
 define-macro html-get-color
     !force set-variable #l0 @1

@@ -25,10 +25,9 @@
         !force search-forward "^[ \t]*$"
     !done
     end-of-buffer
-    set-variable #l5 &rig #l4 &rsin "/" #l4
-    set-variable #l5 &rep &rep #l5 "\\" "\\\\" "&" "\\&"
+    set-variable #l5 &rep &rig #l4 &rsin "/" #l4 "\\" "\\\\"
     !if &les $window-line 18
-        insert-string &spr "&%d " &add 1 &div $window-line 2
+        insert-string &spr "\\H%d " &add 1 &div $window-line 2
     !endif
     insert-string &spr "%s\n%s" #l5 #l4
     find-buffer #l0
@@ -121,7 +120,7 @@
             !if &seq @wl "-"
                 set-variable #l1 "\n"
             !else
-                set-variable #l1 &xre @wl "[&\\\\]\\(.\\)" "\\1"
+                set-variable #l1 &xrep @wl "\\\\\\(H\\|\\(.\\)\\)" "\\2"
                 forward-line
             !endif
             find-buffer "*favorites*"
@@ -148,9 +147,9 @@
     !if &or &seq &lef $buffer-bname 1 "*" &seq $buffer-fname ""
         osd @# 1 "S" "Add"
     !else
-        osd @# 1 "" "&Add" f osd-favorites-add
+        osd @# 1 "" "\HAdd" f osd-favorites-add
     !endif
-    osd @# 2 "" "&Edit  "  f osd-favorites-edit
+    osd @# 2 "" "\HEdit  "  f osd-favorites-edit
     osd @# 3  "-"
     set-variable #l0 1
     !while &not &seq @wc ""
@@ -158,7 +157,8 @@
             !if &seq @wl "-"
                 osd @# &mul &pinc #l0 1 10 "-"
             !else
-                osd @# &mul #l0 10 "" @wl &pinc #l0 1 osd-favorites-sel
+                execute-line &spr "set-variable #l1 \"%s\"" @wl 
+                osd @# &mul #l0 10 "" #l1 &pinc #l0 1 osd-favorites-sel
                 forward-line
             !endif
         !endif

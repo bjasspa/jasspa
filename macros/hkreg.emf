@@ -24,7 +24,7 @@ set-variable .fhook-reg.command-flag  "|thbio|thbio|thbio|thbio|thbio|bio|thbio|
 set-variable .fhook-reg.command-name  "|reg-toggle-hidden|reg-set-node|reg-copy-node|reg-move-node|reg-delete-node|reg-delete-node|reg-insert-node|reg-insert-node|"
 set-variable .fhook-reg.command-nbind "|||||||||"
 set-variable .fhook-reg.command-kbind "|space|return|c|m|d|delete|i|insert|"
-set-variable .fhook-reg.command-desc  "|&Toggle Tree Visibility|&Set Value of Current Node|&Copy Current Node|&Move Current Node|&Delete Current Node||&Insert New Node||"
+set-variable .fhook-reg.command-desc  "|\HToggle Tree Visibility|\HSet Value of Current Node|\HCopy Current Node|\HMove Current Node|\HDelete Current Node||\HInsert New Node||"
 
 !if &and &sin "h" .fhook-reg.setup &band .hilight.flags 0x02 
     !if &not &exist .hilight.reg

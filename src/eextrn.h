@@ -967,6 +967,7 @@ extern	void	meUndoAddDelChars(meInt numChars);
 extern	void	meUndoAddReplaceBgn(meLine *elinep, meUShort elineo);
 extern	void	meUndoAddReplaceEnd(meInt numChars);
 extern	void    meUndoAddReplace(meUByte *dstr, meInt count) ;
+extern  meInt  *meUndoAddLineSort(meInt lineCount) ;
 #if MEOPT_NARROW
 extern  void    meUndoAddUnnarrow(meInt sln, meInt eln, meInt name, meScheme scheme,
                                   meInt markupCmd, meLine *markupLine) ;

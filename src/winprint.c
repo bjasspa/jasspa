@@ -1403,7 +1403,7 @@ do { \
                 continue;
             }
             /* New line */
-            else if (cc == meNLCHAR)
+            else if (cc == meCHAR_NL)
             {
                 FlushBuffer();
                 lineNo++;

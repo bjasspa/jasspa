@@ -21,7 +21,7 @@ set-variable .fhook-blist.command-flag  "|thbio|bio|thbio|bio|thbio|bio|h|thbio|
 set-variable .fhook-blist.command-name  "|blist-command|blist-command|blist-command|blist-command|blist-command|blist-command||blist-command|blist-command|blist-command|blist-command||list-buffers|list-buffers|blist-command|blist-command|blist-command|blist-command||"
 set-variable .fhook-blist.command-nbind "|1|1|2|2|3|3||4|4|5|5||||6|6|7|7||"
 set-variable .fhook-blist.command-kbind "|return|1|space|2|d|D||e|E|s|S||u|U|v|V|x|X||"
-set-variable .fhook-blist.command-desc  "|Switch to Buffer \\& Only Window||Switch to Buffer||Toggle Buffer &Deletion Flag||            ('D' in first column), see x|Toggle Buffer &Edited Status||Toggle Buffer &Save Flag||            ('S' in second column), see x|&Update Buffer List||Toggle Buffer &View mode||Execute all the 'D' and 'S' flags||            currently set ('S' first)|"
+set-variable .fhook-blist.command-desc  "|Switch to Buffer & Only Window||Switch to Buffer||Toggle Buffer \HDeletion Flag||            ('D' in first column), see x|Toggle Buffer \HEdited Status||Toggle Buffer \HSave Flag||            ('S' in second column), see x|\HUpdate Buffer List||Toggle Buffer \HView mode||Execute all the 'D' and 'S' flags||            currently set ('S' first)|"
 
 0 define-macro blist-command
     !if &not &seq $buffer-bname "*buffers*"

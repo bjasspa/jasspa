@@ -103,7 +103,7 @@ set-variable .fhook-dirlst.command-flag  "|thbio|thbio|th|thbio|thbio|thbio|bio|
 set-variable .fhook-dirlst.command-name  "|file-browser-swap-buffers|file-browser-close||dirlst-find-file|dirlst-tag-toggle|dirlst-tag-remove|dirlst-tag-remove|dirlst-tag-execute|dirlst-tag-execute||"
 set-variable .fhook-dirlst.command-nbind "|||||||||||"
 set-variable .fhook-dirlst.command-kbind "|tab|delete||return|space|d|D|x|X||"
-set-variable .fhook-dirlst.command-desc  "|Swap Browser &Windows|&Close File Browser||&Open File|Toggle &Selection|&Delete All Selections||E&xecute Shell Command on Selected||            (%p for path, %f for file & %% for %)|"
+set-variable .fhook-dirlst.command-desc  "|Swap Browser \HWindows|\HClose File Browser||\HOpen File|Toggle \HSelection|\HDelete All Selections||E\Hxecute Shell Command on Selected||            (%p for path, %f for file & %% for %)|"
 
 set-variable .fhook-dirlst.col-name "|Name|Attr|    Size|        Modified|"
 set-variable .fhook-dirlst.col-flag "|0|4|2|1|"
@@ -626,7 +626,7 @@ define-macro file-browser-swap-buffers
     !while &not &seq @wc ""
         !if &seq @wc "*"
             !if &and &not @# &seq &mid @wl 1 1 "d"
-                osd-dialog @1 "  Operation not supported  \n      on directories  " "Cancel"
+                osd-dialog @1 "  Operation not supported  \n      on directories  " " \HCancel "
                 !abort
             !endif
             set-variable #l2 &rig @wl :fmpf
@@ -753,7 +753,7 @@ define-macro file-browser-swap-buffers
 0 define-macro dirlst-tag-delete
     dirlst-pos -10 -4
     0 dirlst-tag-list "Delete Files"
-    2 osd-xdialog "Delete Files" &spr "  Delete %d files?  " .find-file.file-count 2 .dirlst-pos.x .dirlst-pos.y " &Yes " " &No "
+    2 osd-xdialog "Delete Files" &spr "  Delete %d files?  " .find-file.file-count 2 .dirlst-pos.x .dirlst-pos.y " \HYes " " \HNo "
     !if &equ $result 2
         !abort
     !endif
@@ -776,14 +776,14 @@ define-macro file-browser-swap-buffers
         !abort
     !endif
     set-variable #l0 ""
-    2 osd-entry "Rename File" "&New Name : " #l0 .dirlst-pos.x .dirlst-pos.y 20
+    2 osd-entry "Rename File" "\HNew Name : " #l0 .dirlst-pos.x .dirlst-pos.y 20
     !if &seq &set #l1 &stat "t" &cat .find-file.file-dir #l0 "R"
-        2 osd-xdialog "Rename File" &spr "  %s already exists, replace?  " #l0 2 .dirlst-pos.x .dirlst-pos.y " &Yes " " &No "
+        2 osd-xdialog "Rename File" &spr "  %s already exists, replace?  " #l0 2 .dirlst-pos.x .dirlst-pos.y " \HYes " " \HNo "
         !if &equ $result 2
             !abort
         !endif
     !elif &not &seq #l1 "X"
-        2 osd-dialog "Rename File" "  Illegal filename entered!  " .dirlst-pos.x .dirlst-pos.y " &Cancel "
+        2 osd-dialog "Rename File" "  Illegal filename entered!  " .dirlst-pos.x .dirlst-pos.y " \HCancel "
         !abort
     !endif
     0x40 file-op &cat .find-file.file-dir &ind &cat ".find-file.file" 1 &cat .find-file.file-dir #l0 @mna
@@ -801,7 +801,7 @@ define-macro file-browser-swap-buffers
     !endif
     set-variable #l0 &cat "  " &rep $result " [y/n]?" "?"
     set-variable #l0 &rep #l0 ", " "  \n\n          "
-    !force !force 2 osd-xdialog "Paste File" #l0 0 .dirlst-pos.x .dirlst-pos.y " &Yes " " Yes to &All" " &No " " &Abort "
+    !force !force 2 osd-xdialog "Paste File" #l0 0 .dirlst-pos.x .dirlst-pos.y " \HYes " " Yes to \HAll" " \HNo " " \HAbort "
     !if &or &not $status &equ $result 4
         set-variable .dirlst-tag-paste.state 0
         !abort
@@ -824,7 +824,7 @@ define-macro file-browser-swap-buffers
         set-variable #l0 "Copy"
         set-variable #l1 0x81
     !endif
-    2 osd-xdialog "Paste Files" &spr "  %s %d files?  " #l0 .find-file.file-count 2 .dirlst-pos.x .dirlst-pos.y "&Yes" "&No"
+    2 osd-xdialog "Paste Files" &spr "  %s %d files?  " #l0 .find-file.file-count 2 .dirlst-pos.x .dirlst-pos.y " \HYes " " \HNo "
     !if &equ $result 2
         !abort
     !endif
@@ -845,7 +845,7 @@ define-macro file-browser-swap-buffers
 0 define-macro dirlst-new-folder
     dirlst-pos -10 -4
     set-variable #l0 ""
-    2 osd-entry "New Folder" "Folder Name : " #l0 .dirlst-pos.x .dirlst-pos.y 20
+    2 osd-entry "New Folder" "Folder \HName : " #l0 .dirlst-pos.x .dirlst-pos.y 20
     0x100 file-op #l0
     !if &band .find-file.flags 1
         dirlst-refresh
@@ -862,24 +862,24 @@ define-macro file-browser-swap-buffers
 !emacro
 0 define-macro dirlst-auto-refresh
     set-variable .find-file.flags &bxor .find-file.flags 0x01
-    osd .osd.dirlst 130 ""  &cat "&Auto-Refresh: " &cond &band .find-file.flags 1 "On " "Off" f dirlst-auto-refresh
+    osd .osd.dirlst 130 ""  &cat "\HAuto-Refresh: " &cond &band .find-file.flags 1 "On " "Off" f dirlst-auto-refresh
 !emacro
 
 osd .osd.dirlst 0   b
 osd .osd.dirlst 60  "-"
 osd .osd.dirlst 80  "-"
-osd .osd.dirlst 110 ""  "&New Folder"          f dirlst-new-folder
-osd .osd.dirlst 120 ""  "Re&fresh"             f dirlst-refresh
-osd .osd.dirlst 130 ""  "&Auto-Refresh: on "   f dirlst-auto-refresh
+osd .osd.dirlst 110 ""  "\HNew Folder"          f dirlst-new-folder
+osd .osd.dirlst 120 ""  "Re\Hfresh"             f dirlst-refresh
+osd .osd.dirlst 130 ""  "\HAuto-Refresh: on "   f dirlst-auto-refresh
 
 0 define-macro dirlst-popup-menu
     !if :tag-count
-        osd .osd.dirlst  10 ""  "&Open"         f dirlst-tag-open
-        osd .osd.dirlst  20 ""  "Cu&t"          f dirlst-tag-cut
-        osd .osd.dirlst  30 ""  "&Copy"         f dirlst-tag-copy
-        osd .osd.dirlst  40 ""  "&Delete"       f dirlst-tag-delete
-        osd .osd.dirlst  90 ""  "E&xecute"      f dirlst-tag-execute
-        osd .osd.dirlst 100 ""  "De&select All" f dirlst-tag-remove
+        osd .osd.dirlst  10 ""  "\HOpen"         f dirlst-tag-open
+        osd .osd.dirlst  20 ""  "Cu\Ht"          f dirlst-tag-cut
+        osd .osd.dirlst  30 ""  "\HCopy"         f dirlst-tag-copy
+        osd .osd.dirlst  40 ""  "\HDelete"       f dirlst-tag-delete
+        osd .osd.dirlst  90 ""  "E\Hxecute"      f dirlst-tag-execute
+        osd .osd.dirlst 100 ""  "De\Hselect All" f dirlst-tag-remove
     !else
         osd .osd.dirlst  10 ""  "Open"
         osd .osd.dirlst  20 ""  "Cut"
@@ -897,32 +897,32 @@ osd .osd.dirlst 130 ""  "&Auto-Refresh: on "   f dirlst-auto-refresh
         osd .osd.dirlst 140 "" "FTP Connect"    f ftp-connect
         osd .osd.dirlst 141 "" "FTP Logout"  0x10 file-op
         !if &not &band $window-flags 0x1000
-            osd .osd.dirlst 145 "" &cond .fhook-dirlst.browser-lock "Un&lock Browser" "&Lock Browser" f file-browser-lock
-            osd .osd.dirlst 150 ""  "Close &Browser" f file-browser-close
+            osd .osd.dirlst 145 "" &cond .fhook-dirlst.browser-lock "Un\Hlock Browser" "&Lock Browser" f file-browser-lock
+            osd .osd.dirlst 150 ""  "Close \HBrowser" f file-browser-close
         !endif
     !else
         !if &not &seq $buffer-bname "*files*"
-            osd .osd.dirlst 150 ""  "Close &Buffer"  f osd-close
+            osd .osd.dirlst 150 ""  "Close \HBuffer"  f osd-close
         !elif &not &band $window-flags 0x1000
             ; the window is not part of a toolbar
-            osd .osd.dirlst 145 "" &cond .fhook-dirlst.browser-lock "Un&lock Browser" "&Lock Browser" f file-browser-lock
-            osd .osd.dirlst 150 ""  "Close &Browser" f file-browser-close
+            osd .osd.dirlst 145 "" &cond .fhook-dirlst.browser-lock "Un\Hlock Browser" "&Lock Browser" f file-browser-lock
+            osd .osd.dirlst 150 ""  "Close \HBrowser" f file-browser-close
         !endif
         !if &seq :file-process ""
             osd .osd.dirlst 140 "" "Enable Filter" f file-browser-set-filter
         !elif &seq :file-process "file-browser-filter"
             osd .osd.dirlst 140 "" "Disable Filter" f file-browser-set-filter
         !elif &seq :file-process "cvs-dir-conv"
-            osd .osd.dirlst 11 "Md" "C&VS" .osd.tmp osd-cvs-file-menu
+            osd .osd.dirlst 11 "M" "C\HVS" .osd.tmp osd-cvs-file-menu
         !endif
     !endif
     !if &equ :tag-count 1
-        osd .osd.dirlst 50 ""  "&Rename"       f dirlst-tag-rename
+        osd .osd.dirlst 50 ""  "\HRename"       f dirlst-tag-rename
     !else
         osd .osd.dirlst 50 ""  "Rename"
     !endif
     !if &band .find-file.flags 2
-        osd .osd.dirlst 70 ""  "&Paste"        f dirlst-tag-paste
+        osd .osd.dirlst 70 ""  "\HPaste"        f dirlst-tag-paste
     !else
         osd .osd.dirlst 70 ""  "Paste"
     !endif
@@ -976,7 +976,7 @@ osd .osd.dirlst 130 ""  "&Auto-Refresh: on "   f dirlst-auto-refresh
     !endif
     set-variable #l2 &spr "  %n%s  \n\n  %n%s  " &div &sub &len #l1 &len #l2 2 " " #l2 &div &sub &len #l2 &len #l1 2 " " #l1
     goto-position "\x83"
-    osd-xdialog "File Browser" #l2 3 " &Copy " " Mo&ve " " Cancel " 
+    osd-xdialog "File Browser" #l2 3 " C\Hopy " " \HMove " " \HCancel " 
     !if &equ $result 1
         ; copy files
         set-variable #l3 0x81

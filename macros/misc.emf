@@ -20,7 +20,7 @@
     insert-string &itoa @#
 !emacro
 
-osd .osd.symbol 0 "bknatcHsd" 2 3 75 0 -1 -1 620 .scheme.osd-title "Insert Symbol"
+osd .osd.symbol 0 "bnatcHsd" 2 3 75 0 -1 -1 620 .scheme.osd-title "Insert Symbol"
 osd .osd.symbol 1 ""
 osd .osd.symbol 2 "" "   D  X C   D  X C   D  X C   D  X C   D  X C   D  X C   D  X C   D  X C"
 osd .osd.symbol 3 ""

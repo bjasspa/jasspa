@@ -46,7 +46,7 @@ set-variable .org.bind-r0 "|1|1|1|1|"
     !done
     set-variable #l4 &lef .org.info 2
     set-variable #l5 &mid .org.info 3 1
-    osd .osd.orgm 30 "Mtmxsfh" 2 &lget .org.months .org.month .osd.org-m
+    osd .osd.orgm 30 "Mdtmxsfh" 2 &lget .org.months .org.month .osd.org-m
     set-variable #l2 1
     set-variable #l6 0
     !repeat
@@ -66,7 +66,7 @@ set-variable .org.bind-r0 "|1|1|1|1|"
     !if &les @# 0
         set-variable #l0 @ml2 "" .org.year
         !if &and &equ #l0 0 &not &seq #l0 "*"
-            osd-dialog "Organizer" "Error: Invalid year!" "  &OK  "
+            osd-dialog "Organizer" "Error: Invalid year!" "  \HOK  "
             !return
         !endif
         set-variable .org.year #l0
@@ -159,24 +159,24 @@ set-variable .org.bind-r0 "|1|1|1|1|"
     screen-update
 !emacro
 
-osd .osd.orgm-c 0 "Gk"
+osd .osd.orgm-c 0 "G"
 
 osd .osd.orgm 10 ""
 osd .osd.orgm 15 "hf" "       "
-osd .osd.orgm 20 "BtxfRhT" 1 " &<- " -1 org-month-inc-month
+osd .osd.orgm 20 "BtxfRhT" 1 " \H<- " -1 org-month-inc-month
 osd .osd.orgm 25 "fh" "          "
 osd .osd.orgm 35 "fh" " "
 osd .osd.orgm 40 "Etxfh" 3 "#####" f org-month-change-year
-osd .osd.orgm 50 "BtxrfRhT" 4 " -&> "  1 org-month-inc-month
+osd .osd.orgm 50 "BtxrfRhT" 4 " -\H> "  1 org-month-inc-month
 osd .osd.orgm 55 "rf" "       "
 osd .osd.orgm 100 "" 
 osd .osd.orgm 110 "Itc" 5 .osd.orgm-c
 osd .osd.orgm 200 "" 
-osd .osd.orgm 210 "Sf" "       &Notes" 220
+osd .osd.orgm 210 "Sf" "       \HNotes" 220
 osd .osd.orgm 220 "EtNcxHfz" 6 .scheme.osd-entry 50 5 "" 1 org-month-set-notes
 osd .osd.orgm 600 "" 
 osd .osd.orgm 605 "" 
-osd .osd.orgm 610 "BtxhcfH" 7 .scheme.osd-ebtt " &Save "    f organizer-save
-osd .osd.orgm 620 "BtxhcfH" 8 .scheme.osd-ebtt " Month to &Buffer "  f org-month-buffer
-osd .osd.orgm 630 "BtcfH"   9 .scheme.osd-ebtt " E&xit "    1 void
+osd .osd.orgm 610 "BtxhcfH" 7 .scheme.osd-ebtt " \HSave "    f organizer-save
+osd .osd.orgm 620 "BtxhcfH" 8 .scheme.osd-ebtt " Month to \HBuffer "  f org-month-buffer
+osd .osd.orgm 630 "BtcfH"   9 .scheme.osd-ebtt " E\Hxit "    1 void
 

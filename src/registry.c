@@ -357,7 +357,7 @@ regSave (meRegNode *rnp, meUByte *fname)
         flags |= meRWFLAG_BACKUP ;
     if(rnp->mode & meREGMODE_CRYPT)
     {
-        meUByte s1[meFILEBUF_SIZE_MAX], *s2 ;
+        meUByte s1[meBUF_SIZE_MAX], *s2 ;
         int len ;
         meCrypt(NULL,0);
         meStrcpy(s1,getFileBaseName(fname)) ;
@@ -652,7 +652,7 @@ regRead (meUByte *rname, meUByte *fname, int mode)
     /* have we been given a valid file name ? */
     if ((fname != NULL) && (fname [0] != '\0'))
     {
-        meUByte filename[meFILEBUF_SIZE_MAX] ;	/* Filename */
+        meUByte filename[meBUF_SIZE_MAX] ;	/* Filename */
         if(fileLookup(fname,(meUByte *)".erf",meFL_CHECKDOT|meFL_USESRCHPATH,filename))
             fn = meStrdup(filename) ;
         else
@@ -671,7 +671,7 @@ regRead (meUByte *rname, meUByte *fname, int mode)
     hlp.prev = &hlp ;
     if(mode & meREGMODE_CRYPT)
     {
-        meUByte s1[meFILEBUF_SIZE_MAX], *s2 ;
+        meUByte s1[meBUF_SIZE_MAX], *s2 ;
         int len ;
         meCrypt(NULL,0);
         meStrcpy(s1,getFileBaseName(fn)) ;
@@ -769,14 +769,14 @@ regDecodeMode (int *modep, meUByte *modeStr)
 int
 readRegistry (int f, int n)
 {
-    meUByte filebuf [meFILEBUF_SIZE_MAX];
+    meUByte filebuf [meBUF_SIZE_MAX];
     meUByte rootbuf [32];
     meUByte modebuf [10];
     int mode = 0;
 
     /* Get the input from the command line */
     if ((meGetString((meUByte *)"Read registry root",0, 0, rootbuf, 32) == meABORT) ||
-        (meGetString((meUByte *)"Registry file",MLFILECASE, 0, filebuf, meFILEBUF_SIZE_MAX) == meABORT) ||
+        (meGetString((meUByte *)"Registry file",MLFILECASE, 0, filebuf, meBUF_SIZE_MAX) == meABORT) ||
         (meGetString((meUByte *)"File Mode", 0, 0, modebuf, 10) == meABORT))
         return meABORT;
 
@@ -911,7 +911,7 @@ markRegistry (int f, int n)
 int
 saveRegistry (int f, int n)
 {
-    meUByte filebuf [meFILEBUF_SIZE_MAX];
+    meUByte filebuf [meBUF_SIZE_MAX];
     meUByte rootbuf [128];
     meRegNode *rnp;
     
@@ -943,7 +943,7 @@ saveRegistry (int f, int n)
         filebuf[0] = '\0' ;
     
     /* Get the filename */
-    if(meGetString((meUByte *)"Registry file",MLFILECASE|MLFILECASE, 0, filebuf, meFILEBUF_SIZE_MAX) <= 0)
+    if(meGetString((meUByte *)"Registry file",MLFILECASE|MLFILECASE, 0, filebuf, meBUF_SIZE_MAX) <= 0)
         return meFALSE ;
     return regSave (rnp, filebuf);
 }

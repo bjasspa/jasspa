@@ -74,7 +74,7 @@ findTagInFile(meUByte *file, meUByte *baseName, meUByte *tagTemp,
         {
             do
                 pos++ ;
-            while((pos <= end) && (fgetc(fp) != meNLCHAR)) ;
+            while((pos <= end) && (fgetc(fp) != meCHAR_NL)) ;
         }
         if(pos > end)
         {
@@ -163,7 +163,7 @@ findTagSearch(meUByte *key, meUByte *file, meUByte *patt)
             if(tagOption & 4)
             {
                 if(tagLastFile == NULL)
-                    tagLastFile = meMalloc(meFILEBUF_SIZE_MAX) ;
+                    tagLastFile = meMalloc(meBUF_SIZE_MAX) ;
                 if(tagLastFile != NULL)
                 {
                     ii = (size_t) baseName - (size_t) file ;
@@ -239,7 +239,7 @@ findTagSearchNext(meUByte *key, meUByte *file, meUByte *patt)
 static	int
 findTagExec(int nn, meUByte tag[])
 {
-    meUByte file[meFILEBUF_SIZE_MAX];	/* File name */
+    meUByte file[meBUF_SIZE_MAX];	/* File name */
     meUByte fpatt[meBUF_SIZE_MAX];	/* tag file pattern */
     meUByte mpatt[meBUF_SIZE_MAX];	/* magic pattern */
     int   flags ;
