@@ -5,7 +5,7 @@
  * Synopsis      : Win32 platform support
  * Created By    : Jon Green
  * Created       : 21/12/1996
- * Last Modified : <010205.0931>
+ * Last Modified : <010224.0127>
  *
  * Description
  *
@@ -496,7 +496,7 @@ TTopenClientServer (void)
 
         /* Open the response file for read/write, if this fails we are not the server, another
          * ME is */
-        if ((clientHandle = CreateFile (fname,
+        if ((clientHandle = CreateFile (strWfn1(fname),
                                         GENERIC_WRITE,
                                         FILE_SHARE_READ,
                                         NULL,
@@ -509,7 +509,7 @@ TTopenClientServer (void)
         }
         /* Open command file for read/write */
         mkTempName (fname, meUserName, ".cmd");
-        if ((serverHandle = CreateFile (fname,
+        if ((serverHandle = CreateFile (strWfn1(fname),
                                         GENERIC_READ,
                                         FILE_SHARE_READ|FILE_SHARE_WRITE,
                                         NULL,
@@ -666,7 +666,7 @@ TTconnectClientServer (void)
         mkTempName (fname, meUserName, ".cmd");
         if(meTestExist(fname) || DeleteFile (fname))
             return 0 ;
-        if ((connectHandle = CreateFile (fname, GENERIC_WRITE, FILE_SHARE_READ, NULL,
+        if ((connectHandle = CreateFile (strWfn1(fname), GENERIC_WRITE, FILE_SHARE_READ, NULL,
                                          OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL,NULL)) == INVALID_HANDLE_VALUE)
             return 0 ;
         /* Goto the end of the file */
@@ -674,7 +674,7 @@ TTconnectClientServer (void)
 
         /* Try opening the response file and get the ttHwnd value */
         mkTempName (fname, meUserName, ".rsp");
-        if ((hndl = CreateFile (fname, GENERIC_READ, FILE_SHARE_READ|FILE_SHARE_WRITE, NULL,
+        if ((hndl = CreateFile (strWfn1(fname), GENERIC_READ, FILE_SHARE_READ|FILE_SHARE_WRITE, NULL,
                                  OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL)) != INVALID_HANDLE_VALUE)
         {
             if((ReadFile(hndl,&fname,20,&ii,NULL) != 0) && (ii > 0))
@@ -1821,7 +1821,7 @@ mkTempCommName(uint8 *filename, uint8 *basename)
     {
         if(meTestExist(filename))
             break ;
-        else if ((hdl = CreateFile(filename,GENERIC_READ,FILE_SHARE_READ,NULL,
+        else if ((hdl = CreateFile(strWfn1(filename),GENERIC_READ,FILE_SHARE_READ,NULL,
                                    OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL)) != INVALID_HANDLE_VALUE)
         {
             CloseHandle(hdl);
@@ -2077,10 +2077,10 @@ WinLaunchProgram (uint8 *cmd, int flags, uint8 *inFile, uint8 *outFile,
                 strcpy (pipeOutFile, outFile);
 #else
                 HANDLE h ;
-                if((meSuInfo.hStdInput=CreateFile(inFile,GENERIC_READ,FILE_SHARE_READ,&sbuts,
+                if((meSuInfo.hStdInput=CreateFile(strWfn1(inFile),GENERIC_READ,FILE_SHARE_READ,&sbuts,
                                                   OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL)) == INVALID_HANDLE_VALUE)
                     return FALSE ;
-                if((meSuInfo.hStdOutput=CreateFile(outFile,GENERIC_WRITE,FILE_SHARE_READ,&sbuts,
+                if((meSuInfo.hStdOutput=CreateFile(strWfn1(outFile),GENERIC_WRITE,FILE_SHARE_READ,&sbuts,
                                                    OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL)) == INVALID_HANDLE_VALUE)
                 {
                     CloseHandle(meSuInfo.hStdInput) ;
@@ -2123,7 +2123,7 @@ WinLaunchProgram (uint8 *cmd, int flags, uint8 *inFile, uint8 *outFile,
                     strcat (cp, " > ");
                 strcat (cp, outFile);
 #else
-                meSuInfo.hStdOutput=CreateFile(outFile,GENERIC_WRITE,FILE_SHARE_WRITE,
+                meSuInfo.hStdOutput=CreateFile(strWfn1(outFile),GENERIC_WRITE,FILE_SHARE_WRITE,
                                                &sbuts,CREATE_ALWAYS,FILE_ATTRIBUTE_TEMPORARY,NULL) ;
                 if(meSuInfo.hStdOutput == INVALID_HANDLE_VALUE)
                     return FALSE ;
@@ -2152,12 +2152,12 @@ WinLaunchProgram (uint8 *cmd, int flags, uint8 *inFile, uint8 *outFile,
                  * Construct the dummy input file */
                 mkTempName (dummyInFile, DUMMY_STDIN_FILE,NULL);
 
-                if ((dumHdl = CreateFile(dummyInFile,GENERIC_WRITE,FILE_SHARE_WRITE,NULL,
+                if ((dumHdl = CreateFile(strWfn1(dummyInFile),GENERIC_WRITE,FILE_SHARE_WRITE,NULL,
                                          CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL)) != INVALID_HANDLE_VALUE)
                     CloseHandle (dumHdl);
 
                 /* Re-open the file for reading */
-                if ((dumHdl = CreateFile(dummyInFile,GENERIC_READ,FILE_SHARE_READ,NULL,
+                if ((dumHdl = CreateFile(strWfn1(dummyInFile),GENERIC_READ,FILE_SHARE_READ,NULL,
                                          OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL)) == INVALID_HANDLE_VALUE)
                 {
                     DeleteFile(dummyInFile) ;
@@ -2983,8 +2983,8 @@ done_syskeydown:
                     goto do_addbuf;             /* Yes - allow key to be pr0ocessed */
                 return FALSE;                   /* *IMPORTANT* Key is not processed */
             }
-#endif
             return FALSE;                       /* *IMPORTANT* Key is not processed */
+#endif
         case VK_F1:
             cc = SKEY_f1;
             goto do_keydown;
@@ -3136,16 +3136,6 @@ do_keydown:
             }
             else if ((wParam >= 'A') && (wParam <= 'Z'))
             {
-                /* Handle the C-g condition. */
-                if (wParam == 'G')
-                {
-                    if (macbug < 0)
-                    {
-                        macbug = 1 ;
-                        break;
-                    }
-                    TTbreakFlag = 1;
-                }
                 cc  = ttmodif | toLower(wParam) ;
             }
             else if ((wParam >= VK_NUMPAD0) && (wParam <= VK_NUMPAD9))
@@ -3315,15 +3305,6 @@ done_syschar:
                     cc = SKEY_backspace;
                     goto return_spec;
                 }
-            }
-            else if (cc == 0x07)
-            {
-                if (macbug < 0)
-                {
-                    macbug = 1 ;
-                    break;
-                }
-                TTbreakFlag = 1;
             }
         }
         else
@@ -5471,13 +5452,7 @@ MainWndProc (HWND hWnd, UINT message, UINT wParam, LONG lParam)
              * off. The drag and drop list is processed once we return to
              * a base state. */
             if (dadHead != NULL)
-            {
-                if (macbug < 0)
-                    macbug = 1 ;
-                else
-                    TTbreakFlag = 1;    /* Explicitly set break flag */
-                addKeyToBuffer (0x07);  /* Break character ctrl-G */
-            }
+                addKeyToBuffer(breakc);  /* Break character (ctrl-G) */
         }
         break;
 #endif

@@ -10,7 +10,7 @@
  *
  *	Author:			Danial Lawrence.
  *
- *	Creation Date:		07/05/91 08:19		<001108.2159>
+ *	Creation Date:		07/05/91 08:19		<010227.0954>
  *
  *	Modification date:	%G% : %U%
  *
@@ -2318,9 +2318,7 @@ use_prev_line:
             {
 use_contcomm:
                 if((lgetc(curwp->w_dotp,curwp->w_doto+1) == '*') &&
-                   (commentCont != NULL) &&
-                   (commentCont[0] == '*') &&
-                   (commentCont[1] == '*'))
+                   (commentCont[0] == '*') && (commentCont[1] == '*'))
                     comInd = 0 ;
             }
             curwp->w_dotp = oldlp ;
@@ -2370,7 +2368,7 @@ cinsert(void)
     if (lnewline() == FALSE)
         return FALSE ;
     doCindent(&inComment) ;
-    if(inComment && (commentCont != NULL))
+    if(inComment && (commentCont[0] != '\0'))
     {    
         doto = curwp->w_doto ;
         if(gotoFrstNonWhite() == 0)

@@ -1,7 +1,7 @@
 /*
  * Define the string name / internal variable name binding
  *
- * Last Modified:         <010122.1542>
+ * Last Modified:         <010220.2218>
  * 
  ****************************************************************************
  *
@@ -151,6 +151,7 @@ DEFFUN (UFBNOT,     "bno", FUN_MONAMIC)     /* Binary not test */
 DEFFUN (UFBOR,      "bor", FUN_DYNAMIC)     /* Binary or test */
 DEFFUN (UFBXOR,     "bxo", FUN_DYNAMIC)     /* Binary xor test */
 DEFFUN (UFCAT,      "cat", FUN_DYNAMIC)     /* concatinate string */
+DEFFUN (UFCBIND,    "cbi", FUN_MONAMIC)     /* Get keys command binding */
 DEFFUN (UFCOND,     "con", FUN_TRINAMIC)    /* conditional */
 DEFFUN (UFDEC,      "dec", FUN_DYNAMIC|FUN_SETVAR|FUN_GETVAR)     /* decrement variable and set */
 DEFFUN (UFDIV,      "div", FUN_DYNAMIC)     /* division */
@@ -165,7 +166,7 @@ DEFFUN (UFINWORD,   "inw", FUN_MONAMIC)     /* given char inword? */
 DEFFUN (UFISEQUAL,  "ise", FUN_DYNAMIC)     /* case insensitive string logical equality check */
 DEFFUN (UFISIN,     "isi", FUN_DYNAMIC)     /* case insensitive str in str */
 DEFFUN (UFITOA,     "ito", FUN_MONAMIC)     /* integer to char i.e. "41" to "A" */
-DEFFUN (UFKBIND,    "kbi", FUN_MONAMIC)     /* Get keys command binding */
+DEFFUN (UFKBIND,    "kbi", FUN_DYNAMIC)     /* Get commands key binding */
 DEFFUN (UFLDEL,     "lde", FUN_DYNAMIC)     /* delete list index value */
 DEFFUN (UFLEFT,     "lef", FUN_DYNAMIC)     /* left string(string, len) */
 DEFFUN (UFLEN,      "len", FUN_MONAMIC)     /* Length of a string */
@@ -177,6 +178,7 @@ DEFFUN (UFLSET,     "lse", FUN_TRINAMIC)    /* list set index value */
 DEFFUN (UFMID,      "mid", FUN_TRINAMIC)    /* mid string(string, pos, len) */
 DEFFUN (UFMOD,      "mod", FUN_DYNAMIC)     /* mod */
 DEFFUN (UFMUL,      "mul", FUN_DYNAMIC)     /* multiplication */
+DEFFUN (UFNBIND,    "nbi", FUN_MONAMIC)     /* Get keys command binding narg */
 DEFFUN (UFNBMODE,   "nbm", FUN_DYNAMIC)     /* Test for a given named buffer mode */
 DEFFUN (UFNEG,      "neg", FUN_MONAMIC)     /* negate */
 DEFFUN (UFNOT,      "not", FUN_MONAMIC)     /* logical not */

@@ -12,7 +12,7 @@
 *
 *	Creation Date:		29/04/91 09:13
 *
-*	Modification date:	%G% : %U%	<001011.1802>
+*	Modification date:	%G% : %U%	<010227.1955>
 *
 *	Current rev:		%I%
 *
@@ -129,7 +129,7 @@ vtinit(void)
         meExit (1);                     /* No quit */
     
     /* add 2 to hilBlockS to allow for a double trunc-scheme change */
-    if(((styleTable = malloc(2*meSCHEME_STYLES)) == NULL) ||
+    if(((styleTable = malloc(2*meSCHEME_STYLES*sizeof(meSTYLE))) == NULL) ||
        ((vvideo.video = malloc((TTmrow)*sizeof(VIDEO))) == NULL) ||
        ((hilBlock = malloc((hilBlockS+2)*sizeof(HILBLOCK))) == NULL) ||
        ((disLineBuff = malloc((disLineSize+32)*sizeof(uint8))) == NULL) ||
@@ -137,7 +137,7 @@ vtinit(void)
        ((mlStore = malloc(TTmcol+1)) == NULL))
         meExit(1);
 
-    memcpy(styleTable,defScheme,2*meSCHEME_STYLES);
+    memcpy(styleTable,defScheme,2*meSCHEME_STYLES*sizeof(meSTYLE));
 
     /* Initialise the virtual video structure. Allocate and reset to
      * zero. */

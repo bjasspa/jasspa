@@ -5,7 +5,7 @@
  *  Synopsis      : Narrow out regions of a buffer
  *  Created By    : On-Screen Display routines
  *  Created       : 26/07/97
- *  Last Modified : <001003.1646>
+ *  Last Modified : <010219.2035>
  *
  *  Description
  *     This file contains the on screen display routines that
@@ -3702,7 +3702,7 @@ osdDisplayMouseMove(osdDISPLAY *md)
     TTallKeys = 1 ;
     mmx = mouse_X ;
     mmy = mouse_Y ;
-    for( ; (cc=getkeycmd(FALSE,0,1)) != (ME_SPECIAL|SKEY_mouse_drop_1) ; )
+    for( ; (cc=getkeycmd(FALSE,0,meGETKEY_SILENT)) != (ME_SPECIAL|SKEY_mouse_drop_1) ; )
     {
         if(cc == (ME_SPECIAL|SKEY_mouse_move_1))
         {
@@ -3779,7 +3779,7 @@ osdDisplayMouseResize(void)
     TTallKeys = 1 ;
     mmx = mouse_X ;
     mmy = mouse_Y ;
-    for( ; (cc=getkeycmd(FALSE,0,1)) != (ME_SPECIAL|SKEY_mouse_drop_1);)
+    for( ; (cc=getkeycmd(FALSE,0,meGETKEY_SILENT)) != (ME_SPECIAL|SKEY_mouse_drop_1);)
     {
         if(cc == (ME_SPECIAL|SKEY_mouse_move_1))
         {
@@ -3846,7 +3846,7 @@ scrollScrollBarEvent(meSCROLLBAR *sb, int dd)
                 meScrollBarDrawBar(sb) ;
             meScrollBarDrawMain(sb) ;
         }
-        while((cc = getkeycmd(FALSE,0,1)) != (ME_SPECIAL|SKEY_mouse_time_1))
+        while((cc = getkeycmd(FALSE,0,meGETKEY_SILENT)) != (ME_SPECIAL|SKEY_mouse_time_1))
         {
             if(cc == (ME_SPECIAL|SKEY_mouse_drop_1))
             {
@@ -3916,7 +3916,7 @@ boxDragScrollBarEvent(meSCROLLBAR *sb)
                 meScrollBarDrawBar(sb) ;
             meScrollBarDrawMain(sb) ;
         }
-        while((cc = getkeycmd(FALSE,0,1)) != (ME_SPECIAL|SKEY_mouse_move_1))
+        while((cc = getkeycmd(FALSE,0,meGETKEY_SILENT)) != (ME_SPECIAL|SKEY_mouse_move_1))
         {
             if(cc == (ME_SPECIAL|SKEY_mouse_drop_1))
             {
@@ -4613,7 +4613,7 @@ menuInteraction (int *retState)
         nit = 0 ;
         state = 0 ;
         /* Get a command from the keyboard */
-        cc = getkeycmd (FALSE, 0, 1);
+        cc = getkeycmd(FALSE,0,meGETKEY_SILENT);
         /* handle and osd bindings first */
         if(osdCurMd->dialog->nobinds)
         {

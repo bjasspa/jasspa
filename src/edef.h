@@ -1,14 +1,14 @@
 /*
- *	SCCS:		%W%		%G%		%U%
+ *      SCCS:           %W%             %G%             %U%
  *
- *	Last Modified :	<010203.1728>
+ *      Last Modified : <010227.1242>
  *
- *	EDEF:		Global variable definitions for
- *			MicroEMACS 3.2
+ *      EDEF:           Global variable definitions for
+ *                      MicroEMACS 3.2
  *
- *			written by Dave G. Conroy
- *			modified by Steve Wilhite, George Jones
- *			greatly modified by Daniel Lawrence
+ *                      written by Dave G. Conroy
+ *                      modified by Steve Wilhite, George Jones
+ *                      greatly modified by Daniel Lawrence
  *                      greatly modified again by JASSPA.
  *
  ****************************************************************************
@@ -26,8 +26,8 @@
 /* initialized global external declarations */
 
 extern  meDIRLIST       curDirList ;
-extern  struct osdDIALOG  *osdDialogHd;  /* Root of the on screen displays */
-extern  struct osdDISPLAY *osdDisplayHd; /* Menu display list */
+extern  struct osdDIALOG  *osdDialogHd; /* Root of the on screen displays */
+extern  struct osdDISPLAY *osdDisplayHd;/* Menu display list */
 extern  meREGISTERS    *meRegHead;      /* The register Head            */
 extern  meREGISTERS    *meRegCurr;      /* The current register set     */
 extern  SELHILIGHT      selhilight;     /* Selection hilight            */
@@ -36,7 +36,7 @@ extern  meCOLOR         noColors ;      /* No defined colours           */
 extern  int             styleTableSize; /* Size of the colour table     */
 extern  meSTYLE        *styleTable;     /* Highlighting colour table    */
 #if ABREV
-extern  meABREV        *globalAbrev ;   /* Global Abreviation file	*/
+extern  meABREV        *globalAbrev ;   /* Global Abreviation file      */
 #endif
 extern  mePOS  *mePosition ;            /* Position stack head          */
 extern  uint16  mePositionMark ;        /* Position next alpha mark name*/
@@ -61,31 +61,31 @@ extern  int16   fillcol;                /* Fill column                  */
 extern  uint8   filleos[];              /* Fill E-O-S character class   */
 extern  int16   filleoslen;             /* Fill E-O-S ' ' insert len    */
 extern  uint8   fillignore[];           /* Fill Ignore character class  */
-extern  uint16	tabsize;	        /* Virtual Tab size             */
-extern  uint16	tabwidth;               /* Real TAB size                */
+extern  uint16  tabsize;                /* Virtual Tab size             */
+extern  uint16  tabwidth;               /* Real TAB size                */
 extern  int16   matchlen;               /* Fence matching delay length  */
-extern  uint8	*homedir;               /* Home directory               */
-extern  uint8	*searchPath;            /* emf search path              */
-extern  uint8	*curdir;                /* current working directory    */
+extern  uint8   *homedir;               /* Home directory               */
+extern  uint8   *searchPath;            /* emf search path              */
+extern  uint8   *curdir;                /* current working directory    */
 extern  uint8   *curFuncName ;          /* Current macro command name   */
-extern	uint8	*execstr;		/* pointer to string to execute */
-extern	int	execlevel;		/* execution IF level		*/
-extern	int	bufHistNo;		/* inc buff hist numbering      */
+extern  uint8   *execstr;               /* pointer to string to execute */
+extern  int     execlevel;              /* execution IF level           */
+extern  int     bufHistNo;              /* inc buff hist numbering      */
 extern  int     lastCommand ;           /* The last user executed key   */
 extern  int     lastIndex ;             /* The last user executed comm  */
 extern  int     thisCommand ;           /* The cur. user executed key   */
 extern  int     thisIndex ;             /* The cur. user executed comm  */
-extern  uint8	hexdigits[];
+extern  uint8   hexdigits[];
 extern  uint16  keyTableSize;           /* The current size of the key table */
-extern	KEYTAB	keytab[];		/* key bind to functions table	*/
+extern  KEYTAB  keytab[];               /* key bind to functions table  */
 extern  uint8   fillmode;               /* Justify mode                 */
 extern  uint8   scrollFlag ;            /* horiz/vert scrolling method  */
 extern  uint8   sgarbf;                 /* State of screen unknown      */
-extern	uint8   clexec;		        /* command line execution flag	*/
-extern	uint8   mcStore;		/* storing text to macro flag	*/
-extern	uint8   cmdstatus;              /* last command status		*/
-extern	uint8   kbdmode;		/* current keyboard macro mode	*/
-extern	int8    macbug;		/* macro debuging flag		*/
+extern  uint8   clexec;                 /* command line execution flag  */
+extern  uint8   mcStore;                /* storing text to macro flag   */
+extern  uint8   cmdstatus;              /* last command status          */
+extern  uint8   kbdmode;                /* current keyboard macro mode  */
+extern  int8    macbug;                 /* macro debuging flag          */
 extern  uint8   thisflag;               /* Flags, this command          */
 extern  uint8   lastflag;               /* Flags, last command          */
 extern  uint8   lastReplace;            /* set to non-zero if last was a replace */
@@ -184,12 +184,13 @@ extern int       noIpipes ;             /* count of all the cur pipes   */
 extern  uint8   alarmState;             /* Auto-save alarm time         */
 extern  int32   startTime;              /* me start time. used as offset*/
 extern  LINE   *menuLine ;              /* Menu-poke line */
-extern	LINE   *lpStore;		/* line off which to store macro*/
+extern  LINE   *lpStore;                /* line off which to store macro*/
 extern  BUFFER *lpStoreBp ;             /* help is stored in a buffer   */
 extern  uint16  thiskey;                /* the current key              */
-extern	int	taboff;		/* tab offset for display	*/
-extern	uint16  prefixc[];              /* prefix chars           */
-extern	uint16  reptc;		        /* current universal repeat char*/
+extern  int     taboff;                 /* tab offset for display       */
+extern  uint16  prefixc[];              /* prefix chars           */
+extern  uint16  reptc;                  /* current universal repeat char*/
+extern  uint16  breakc;                 /* current abort-command char*/
 #ifdef _CLIPBRD
 /* When implementing the clipboard it is best if the clipboard is only
  * attempted to be got or set once per command. This is because of other
@@ -234,24 +235,24 @@ extern  uint8   displayNewLine;         /* new-line \n display character */
 extern  uint8   displaySpace;           /* space ' ' display character */
 #endif
 
-extern  uint8  *envars[];               /* list of recognized env. vars	*/
+extern  uint8  *envars[];               /* list of recognized env. vars */
 extern  uint8  *derNames[];             /* name list of directives      */
 extern  uint8   derTypes[];             /* type list of directives      */
 extern  uint8  *funcNames[];            /* name list of user funcs      */
 extern  uint8   funcTypes[];            /* type list of user funcs      */
-extern	KILL   *kbufp;			/* current kill buffer chunk pointer */
-extern	KILL   *kbufh;			/* kill buffer header pointer	*/
+extern  KILL   *kbufp;                  /* current kill buffer chunk pointer */
+extern  KILL   *kbufh;                  /* kill buffer header pointer   */
 extern  uint8   lkbdptr[];              /* Holds last keybd macro data  */
 extern  int     lkbdlen;                /* Holds length of last macro   */
-extern	uint8  *kbdptr;		/* start of current keyboard buf*/
-extern	int     kbdlen;		/* len of current macro         */
-extern	int     kbdoff;		/* current offset of macro      */
-extern	int	kbdrep;			/* number of repetitions	*/
-extern  uint8	emptym[];	        /* empty literal	        */
-extern	uint8	errorm[];		/* error literal		*/
-extern	uint8	abortm[];		/* abort literal		*/
-extern	uint8	truem[];		/* true literal		*/
-extern	uint8	falsem[];		/* false litereal		*/
+extern  uint8  *kbdptr;                 /* start of current keyboard buf*/
+extern  int     kbdlen;                 /* len of current macro         */
+extern  int     kbdoff;                 /* current offset of macro      */
+extern  int     kbdrep;                 /* number of repetitions        */
+extern  uint8   emptym[];               /* empty literal                */
+extern  uint8   errorm[];               /* error literal                */
+extern  uint8   abortm[];               /* abort literal                */
+extern  uint8   truem[];                /* true literal         */
+extern  uint8   falsem[];               /* false litereal               */
 extern  meVARLIST usrVarList;           /* user variables list          */
 
 #if CFENCE
@@ -263,6 +264,7 @@ extern int16  switchIndent ;
 extern int16  braceIndent ;
 extern int16  caseIndent ;
 extern int16  commentMargin ;
+extern uint8  commentContOrg[] ;
 extern uint8 *commentCont ;
 #endif
 
@@ -329,9 +331,9 @@ extern HILNODEPTR *indents ;
 #endif
 
 #if LCLBIND
-extern uint8   useMlBinds;	        /* flag to use ml bindings      */
+extern uint8   useMlBinds;              /* flag to use ml bindings      */
 extern uint16  mlNoBinds;               /* no. of message line bindings */
-extern KEYTAB *mlBinds;                 /* pointer to ml local bindings	*/
+extern KEYTAB *mlBinds;                 /* pointer to ml local bindings */
 #endif
 
 /* uninitialized global external declarations */
@@ -345,7 +347,7 @@ extern  WINDOW  *wheadp;                /* Head of list of windows      */
 extern  BUFFER  *bheadp;                /* Head of list of buffers      */
 extern  meABREV *aheadp;                /* Head of list of abrev files  */
 
-extern	struct	KLIST* klhead;		/* Head of klist		*/
+extern  struct  KLIST* klhead;          /* Head of klist                */
 
 /* the character lookup tables */
 extern  uint8 charMaskTbl1[] ;
@@ -392,7 +394,7 @@ extern int     mlStoreCol ;
 * Constant declarations for the external definitions above. These are     *
 * only processed in main.c                                                *
 **************************************************************************/
-#ifdef	maindef
+#ifdef  maindef
 
 /* for MAIN.C */
 
@@ -412,7 +414,7 @@ SELHILIGHT selhilight={1,0} ;           /* Selection hilight            */
 uint16   hilBlockS=20 ;                 /* Hilight - HilBlock array siz */
 meSTYLE *styleTable = NULL;             /* Highlighting colour table    */
 #if ABREV
-meABREV *globalAbrev = NULL;            /* Global Abreviation file	*/
+meABREV *globalAbrev = NULL;            /* Global Abreviation file      */
 #endif
 mePOS *mePosition=NULL ;                /* Position stack head          */
 meCOLOR noColors=0 ;                    /* No defined colours           */
@@ -433,18 +435,18 @@ int16   fillcol = 78;                   /* Current fill column          */
 uint8   filleos[16]=".!?";              /* Fill E-O-S character class   */
 int16   filleoslen=1;                   /* Fill E-O-S ' ' insert len    */
 uint8   fillignore[16]=">_@";           /* Fill Ignore character class  */
-uint16  tabsize  = 4;		        /* Virtual Tab size             */
-uint16  tabwidth = 8;	        /* Real TAB size                */
+uint16  tabsize  = 4;                   /* Virtual Tab size             */
+uint16  tabwidth = 8;                   /* Real TAB size                */
 int16   matchlen = 2000;                /* Fence matching sleep length  */
-uint8	*searchPath=NULL;	/* emf search path              */
-uint8	*homedir=NULL;	/* Home directory               */
-uint8	*curdir=NULL;	/* current working directory    */
-uint8	*execstr = NULL;		/* pointer to string to execute */
+uint8   *searchPath=NULL;               /* emf search path              */
+uint8   *homedir=NULL;                  /* Home directory               */
+uint8   *curdir=NULL;                   /* current working directory    */
+uint8   *execstr = NULL;                /* pointer to string to execute */
 uint32  delaytime = 500;                /* mouse-time delay time 500ms  */
 uint32  repeattime = 25;                /* mouse-time repeat time 25ms  */
 uint32  idletime = 1000;                /* idle-time delay time 1sec    */
-int	execlevel = 0;			/* execution IF level		*/
-int	bufHistNo = 1;			/* inc buff hist numbering      */
+int     execlevel = 0;                  /* execution IF level           */
+int     bufHistNo = 1;                  /* inc buff hist numbering      */
 int     lastCommand = 0 ;               /* The last user executed key   */
 int     lastIndex = -1 ;                /* The last user executed comm  */
 int     thisCommand = 0 ;               /* The cur. user executed key   */
@@ -458,7 +460,7 @@ FILE   *ffrp;                           /* File read pointer, all func. */
 FILE   *ffwp;                           /* File write pointer, all func.*/
 #endif
 uint16  thiskey ;                       /* the current key              */
-uint8	hexdigits[] = "0123456789ABCDEF";
+uint8   hexdigits[] = "0123456789ABCDEF";
 uint32  cursorBlink = 0 ;               /* cursor-blink blink time      */
 int     blinkState=1 ;                  /* cursor blink state           */
 #if COLOR
@@ -478,9 +480,9 @@ int     gsbarmode = (WMUP |             /* Has upper end cap            */
                      WMSPLIT |          /* Has a splitter               */
                      WMVBAR             /* Window has a vertical bar    */
                      );                 /* global scroll bar mode       */
-uint8 boxChars[BCLEN+1] =       /* Set of box characters        */
+uint8 boxChars[BCLEN+1] =               /* Set of box characters        */
 "|+++++++++-";
-uint8 windowChars[WCLEN+1] =    /* Set of window characters     */
+uint8 windowChars[WCLEN+1] =            /* Set of window characters     */
 {
     '=',                                /* Mode line current sep */
     '-',                                /* Mode libe inactive sep */
@@ -539,12 +541,12 @@ uint8 lastflag;                         /* Flags, last command          */
 uint8 alarmState=0;                     /* Unix auto-save alarm time    */
 uint8 fillmode='B';                     /* Justification mode           */
 uint8 scrollFlag = 1 ;                  /* horiz/vert scrolling method  */
-uint8 sgarbf = TRUE;                    /* TRUE if screen is garbage	*/
-uint8 clexec = FALSE;                   /* command line execution flag	*/
-uint8 mcStore = FALSE;                  /* storing text to macro flag	*/
-int8  macbug = 0 ;		        /* macro debuging flag		*/
-uint8 cmdstatus = TRUE;		        /* last command status		*/
-uint8 kbdmode=STOP;		        /* current keyboard macro mode	*/
+uint8 sgarbf = TRUE;                    /* TRUE if screen is garbage    */
+uint8 clexec = FALSE;                   /* command line execution flag  */
+uint8 mcStore = FALSE;                  /* storing text to macro flag   */
+int8  macbug = 0 ;                      /* macro debuging flag          */
+uint8 cmdstatus = TRUE;                 /* last command status          */
+uint8 kbdmode=STOP;                     /* current keyboard macro mode  */
 uint8 lastReplace=0;                    /* set to non-zero if last was a replace */
 uint8 modeLineFlags=                    /* current modeline flags       */
 (WFMODE|WFRESIZE|WFMOVEL) ;
@@ -616,13 +618,13 @@ int       noIpipes=0 ;                  /* count of all the cur pipes   */
 #endif
 
 LINE *menuLine = NULL;                  /* Menu-poke line */
-LINE *lpStore = NULL;			/* line off which to store macro*/
+LINE *lpStore = NULL;                   /* line off which to store macro*/
 BUFFER *lpStoreBp = NULL;               /* help is stored in a buffer   */
 uint16 prefixc[ME_PREFIX_NUM+1]=
 { ME_INVALID_KEY,                       /* unused 0th value             */
-  ME_SPECIAL|SKEY_esc,	/* prefix1 = Escape             */
-  'X'-'@',		                /* prefix2 = ^X                 */
-  'H'-'@',		/* prefix3 = ^H                 */
+  ME_SPECIAL|SKEY_esc,                  /* prefix1 = Escape             */
+  'X'-'@',                              /* prefix2 = ^X                 */
+  'H'-'@',                              /* prefix3 = ^H                 */
   ME_INVALID_KEY, ME_INVALID_KEY,       /* rest unused                  */
   ME_INVALID_KEY, ME_INVALID_KEY,
   ME_INVALID_KEY, ME_INVALID_KEY,
@@ -631,21 +633,22 @@ uint16 prefixc[ME_PREFIX_NUM+1]=
   ME_INVALID_KEY, ME_INVALID_KEY,
   ME_INVALID_KEY
 } ;
-uint16 reptc    = 'U'-'@';	/* current universal repeat char*/
+uint16 reptc    = 'U'-'@';              /* current universal repeat char*/
+uint16 breakc   = 'G'-'@';              /* current abort-command char*/
 
-KLIST  *klhead	  = NULL;	/* klist header pointer		   */
-uint8   lkbdptr[NKBDM];   /* Holds last keybd macro data     */
-int     lkbdlen=0;              /* Holds length of last macro      */
-uint8  *kbdptr=NULL;	/* start of current keyboard buf   */
-int     kbdlen=0;		/* len of current macro            */
-int     kbdoff=0;		/* current offset of macro         */
-int	kbdrep=0;		/* number of repetitions	   */
-uint8	emptym[]  = "";	/* empty literal		   */
-uint8	errorm[]  = "ERROR";	/* error literal		   */
-uint8	abortm[]  = "ABORT";	/* abort literal		   */
-uint8	truem[]   = "1";	/* true literal		   */
-uint8	falsem[]  = "0";	/* false litereal	           */
-meVARLIST usrVarList={NULL,0} ; /* user variables list             */
+KLIST  *klhead    = NULL;               /* klist header pointer            */
+uint8   lkbdptr[NKBDM];                 /* Holds last keybd macro data     */
+int     lkbdlen=0;                      /* Holds length of last macro      */
+uint8  *kbdptr=NULL;                    /* start of current keyboard buf   */
+int     kbdlen=0;                       /* len of current macro            */
+int     kbdoff=0;                       /* current offset of macro         */
+int     kbdrep=0;                       /* number of repetitions           */
+uint8   emptym[]  = "";                 /* empty literal                   */
+uint8   errorm[]  = "ERROR";            /* error literal                   */
+uint8   abortm[]  = "ABORT";            /* abort literal                   */
+uint8   truem[]   = "1";                /* true literal            */
+uint8   falsem[]  = "0";                /* false litereal                  */
+meVARLIST usrVarList={NULL,0} ;         /* user variables list             */
 
 
 #if CFENCE
@@ -657,7 +660,8 @@ int16   switchIndent    = 0 ;
 int16   braceIndent     = -4 ;
 int16   caseIndent      = -4 ;
 int16   commentMargin   = -1 ;
-uint8  *commentCont     = NULL ;
+uint8   commentContOrg[]= " * " ;
+uint8  *commentCont     = commentContOrg ;
 #endif
 
 /* global buffer names */
@@ -666,16 +670,16 @@ uint8  BbindingsN[] = "*bindings*" ;
 uint8  BtranskeyN[] = "*translate-key*" ;
 uint8  BcompleteN[] = "*complete*" ;
 uint8  BcommandsN[] = "*commands*" ;
-uint8  BicommandN[] = "*icommand*";
-uint8  BregistryN[] = "*registry*";
+uint8  BicommandN[] = "*icommand*" ;
+uint8  BregistryN[] = "*registry*" ;
 uint8  BbuffersN[] = "*buffers*" ;
-uint8  BcommandN[] = "*command*";
-uint8  BolhelpN[] = "*on-line help*";
-uint8  BserverN[] = "*server*";
-uint8  BaboutN[] = "*about*";
-uint8  BstdinN[] = "*stdin*";
-uint8  BmainN[] = "*scratch*";
-uint8  BhelpN[] = "*help*";
+uint8  BcommandN[] = "*command*" ;
+uint8  BolhelpN[] = "*on-line help*" ;
+uint8  BserverN[] = "*server*" ;
+uint8  BaboutN[] = "*about*" ;
+uint8  BstdinN[] = "*stdin*" ;
+uint8  BmainN[] = "*scratch*" ;
+uint8  BhelpN[] = "*help*" ;
 
 uint8 *fileIgnore=NULL ;
 
@@ -704,17 +708,17 @@ uint8 *rcsUeStr=NULL ;
 #endif
 
 /* history variables used in mlgetstring */
-uint8 numStrHist = 0 ;       /* curent no. of hist. strings    */
-uint8 numBuffHist = 0 ;      /* curent no. of hist. buff names */
-uint8 numCommHist = 0 ;      /* curent no. of hist. comm names */
-uint8 numFileHist = 0 ;      /* curent no. of hist. file names */
-uint8 numSrchHist = 0 ;      /* curent no. of hist. search strs*/
-uint8 **strHist ;                     /* string history list            */
-uint8 **buffHist ;                    /* etc.                           */
+uint8 numStrHist = 0 ;                  /* curent no. of hist. strings    */
+uint8 numBuffHist = 0 ;                 /* curent no. of hist. buff names */
+uint8 numCommHist = 0 ;                 /* curent no. of hist. comm names */
+uint8 numFileHist = 0 ;                 /* curent no. of hist. file names */
+uint8 numSrchHist = 0 ;                 /* curent no. of hist. search strs*/
+uint8 **strHist ;                       /* string history list            */
+uint8 **buffHist ;                      /* etc.                           */
 uint8 **commHist ;
 uint8 **fileHist ;
 uint8 **srchHist ;
-int16 HistNoFilesLoaded = 0 ;        /* Count of no files loaded by hist */
+int16 HistNoFilesLoaded = 0 ;           /* Count of no files loaded by hist */
 
 #if HILIGHT
 uint8       noHilights=0 ;
@@ -724,38 +728,38 @@ HILNODEPTR *indents=NULL ;
 #endif
 
 #if LCLBIND
-uint8   useMlBinds=0;	        /* flag to use ml bindings      */
-uint16  mlNoBinds=0;     /* no. of message line bindings */
-KEYTAB *mlBinds=NULL;	        /* pointer to ml local bindings	*/
+uint8   useMlBinds=0;                   /* flag to use ml bindings      */
+uint16  mlNoBinds=0;                    /* no. of message line bindings */
+KEYTAB *mlBinds=NULL;                   /* pointer to ml local bindings */
 #endif
 
-int     curgoal;                /* Goal for C-P, C-N            */
-int16   numWindows;             /* Number of windows            */
-WINDOW  *curwp;                 /* Current window               */
-BUFFER  *curbp;                 /* Current buffer               */
-WINDOW  *wheadp;                /* Head of list of windows      */
-BUFFER  *bheadp;                /* Head of list of buffers      */
-meABREV *aheadp=NULL;           /* Head of list of abrev files  */
+int     curgoal;                        /* Goal for C-P, C-N            */
+int16   numWindows;                     /* Number of windows            */
+WINDOW  *curwp;                         /* Current window               */
+BUFFER  *curbp;                         /* Current buffer               */
+WINDOW  *wheadp;                        /* Head of list of windows      */
+BUFFER  *bheadp;                        /* Head of list of buffers      */
+meABREV *aheadp=NULL;                   /* Head of list of abrev files  */
 
-uint16  keyTableSize;           /* The current size of the key table */
-uint8   resultStr [MAXBUF];     /* Result string from commands  */
+uint16  keyTableSize;                   /* The current size of the key table */
+uint8   resultStr [MAXBUF];             /* Result string from commands  */
 
 /* the following are the cursor position and ml variables */
-int mwRow =0 ;                  /* Main Windows current row. */
-int mwCol =0 ;                  /* Main Windows current column */
-int osdCol=0 ;                  /* The osd current column */
-int osdRow=0 ;                  /* The osd current row */
+int mwRow =0 ;                          /* Main Windows current row. */
+int mwCol =0 ;                          /* Main Windows current column */
+int osdCol=0 ;                          /* The osd current column */
+int osdRow=0 ;                          /* The osd current row */
 
-int mlCol=0 ;                   /* ml current column */
-int mlStoreCol=0 ;              /* ml Store column */
-uint8 *mlStore;                 /* stored message line. */
-uint8 mlStatus=0 ;              /* ml status
-                                 * 0=not using it,
-                                 * 1=using it.
-                                 * 2=using it & its been broken so
-                                 * next time mlerease is used, it will
-                                 * restore */
+int mlCol=0 ;                           /* ml current column */
+int mlStoreCol=0 ;                      /* ml Store column */
+uint8 *mlStore;                         /* stored message line. */
+uint8 mlStatus=0 ;                      /* ml status
+                                         * 0=not using it,
+                                         * 1=using it.
+                                         * 2=using it & its been broken so
+                                         * next time mlerease is used, it will
+                                         * restore */
 #ifdef _CLIPBRD
-uint8 clipState=0;      /* clipboard status flag        */
+uint8 clipState=0;                      /* clipboard status flag        */
 #endif
 #endif

@@ -5,7 +5,7 @@
  *  Synopsis      : Unix X-Term and Termcap support routines
  *  Created By    : Steven Phillips
  *  Created       : 1993
- *  Last Modified : <010121.1430>
+ *  Last Modified : <010219.1533>
  *
  *  Description
  *    This implementation of unix support currently only supports Unix v5 (_USG),
@@ -1154,15 +1154,6 @@ meXEventHandler(void)
                 }
                 else
                     ii = keySym ;
-            }
-            if(ii == 0x07)
-            {
-                if(macbug < 0)
-                {
-                    macbug = 1 ;
-                    break ;
-                }
-                TTbreakFlag = 1 ;
             }
             addKeyToBuffer(ii) ;
             break ;
@@ -2566,7 +2557,7 @@ TTahead(void)
         {
             changeScreenWidth(TRUE,TTnewWid); /* Change width */
             changeScreenDepth(TRUE,TTnewHig); /* Change depth */
-            alarmState &= ~meALARM_WINSIZE ;
+	    alarmState &= ~meALARM_WINSIZE ;
         }
         if(TTnoKeys)
             return TTnoKeys ;

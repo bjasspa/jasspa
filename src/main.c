@@ -10,7 +10,7 @@
 *
 *	Author:			Jon Green
 *
-*	Creation Date:		03/05/91 17:19		<010203.2057>
+*	Creation Date:		03/05/91 17:19		<010227.1054>
 *
 *	Modification date:	%G% : %U%
 *
@@ -685,7 +685,8 @@ exitEmacs(int f, int n)
                 meNullFree(modeLineStr) ;
             meNullFree(flNextFileTemp) ;
             meNullFree(flNextLineTemp) ;
-            meNullFree(commentCont) ;
+            if(commentCont != commentContOrg)
+                meFree(commentCont) ;
 
             meNullFree(rcsFile) ;
             meNullFree(rcsCiStr) ;
@@ -1131,12 +1132,9 @@ doOneKey(void)
      * and it is not currntly being used - hence it is available for abuse !!
      */
     if (kbdmode == STOP)
-    {
         kbdmode = KBD_IDLE;             /* In an idle state  */
-        c = getkeycmd(FALSE, 1, 0);     /* Get an idle key   */
-    }
-    else
-        c = getkeycmd(FALSE, 1, 0);     /* Get a key */
+    
+    c = getkeycmd(FALSE, 1, meGETKEY_COMMAND);     /* Get a key */
 
     if (mlStatus & MLSTATUS_CLEAR)
         mlerase(MWCLEXEC) ;
@@ -1159,7 +1157,7 @@ doOneKey(void)
             mflag = 1 ;
             n = basec - '0' ;
         }
-        while(((c=getkeycmd(TRUE,(n * mflag),0)) >= '0') && (c <= '9'))
+        while(((c=getkeycmd(TRUE,(n * mflag),meGETKEY_COMMAND)) >= '0') && (c <= '9'))
             n = n * 10 + (c - '0');
         n *= mflag;    /* figure in the sign */
     }
@@ -1169,7 +1167,7 @@ doOneKey(void)
     {                           /* ^U, start argument   */
         f = TRUE;               /* In case not set */
         mflag = 1;              /* current minus flag */
-        for(;;c = getkeycmd(f, n,0))
+        for(;;c = getkeycmd(f,n,meGETKEY_COMMAND))
         {
             switch(c)
             {
@@ -1196,7 +1194,7 @@ doOneKey(void)
                  * get the next key, if a digit, update the
                  * count note that we do not handle "-" here
                  */
-                c = getkeycmd(TRUE,(mflag*n),0);
+                c = getkeycmd(TRUE,(mflag*n),meGETKEY_COMMAND);
                 if(c >= '0' && c <= '9')
                     n = n * 10 + (c - '0');
                 else
@@ -1835,7 +1833,7 @@ commandWait(int f, int n)
     meVARLIST *varList=NULL ;
     uint8 clexecSv ;
     int execlevelSv ;
-    char *ss ;
+    uint8 *ss ;
     
     if((curFuncName != errorm) &&
        ((f=decode_fncname(curFuncName,1)) >= 0))

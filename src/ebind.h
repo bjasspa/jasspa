@@ -2,7 +2,7 @@
  *	SCCS:		%W%		%G%		%U%
  *
  *      File          : ebind.h
- *	Last Modified :	<000107.1959>
+ *	Last Modified :	<010218.2255>
  *      Description   : Initial default key to function bindings for 
  *                      MicroEMACS 3.7
  * 
@@ -32,7 +32,7 @@ KEYTAB  keytab[NBINDS] = {
 
 #include	"ebind.def"
     
-    { ME_INVALID_KEY, 0, CK_MAX }
+    { ME_INVALID_KEY, 0, 0 }
 
 };
 

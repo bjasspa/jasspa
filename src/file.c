@@ -10,7 +10,7 @@
 *
 *	Author:			Danial Lawrence
 *
-*	Creation Date:		14/05/86 12:37		<010123.0846>
+*	Creation Date:		14/05/86 12:37		<010219.1448>
 *
 *	Modification date:	%G% : %U%
 *
@@ -1500,7 +1500,7 @@ findFileSingle(uint8 *fname, int bflag, int32 lineno)
 #endif
     for (bp=bheadp; bp!=NULL; bp=bp->b_bufp)
     {
-        if((bp->b_bname != NULL) && (bp->b_bname[0] != '*'))
+        if((bp->b_fname != NULL) && (bp->b_bname != NULL) && (bp->b_bname[0] != '*'))
         {
             if(
 #ifdef _UNIX

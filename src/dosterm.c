@@ -5,7 +5,7 @@
  *  Synopsis      : Dos terminal support routines
  *  Created By    : Steven Phillips
  *  Created       : 1994
- *  Last Modified : <000221.0749>
+ *  Last Modified : <010219.1502>
  *
  *  Description
  *
@@ -244,15 +244,6 @@ return_spec:
             ii = cc | (TTmodif & (ME_CONTROL|ME_ALT)) ;
         else
             ii = cc ;
-    }
-    if(ii == 0x07)
-    {
-        if(macbug < 0)
-        {
-            macbug = 1 ;
-            return ;
-        }
-        TTbreakFlag = 1 ;
     }
     addKeyToBuffer(ii) ;
 #if MOUSE

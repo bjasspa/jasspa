@@ -5,7 +5,7 @@
  *  Synopsis      : Generic terminal support routines
  *  Created By    : Steven Phillips
  *  Created       : 1993
- *  Last Modified : <001006.1813>
+ *  Last Modified : <010219.1757>
  *
  *  Description
  *     Many generic routines to support timers, key input and some output.
@@ -775,7 +775,7 @@ TTgetc(void)
     cc = TTkeyBuf[--TTnextKeyIdx] ;
     TTnoKeys-- ;
     /* remove the abort flag if we are waiting for the key */
-    if((cc == 0x07) && TTbreakFlag)
+    if((cc == breakc) && TTbreakFlag)
         TTbreakFlag = 0 ;
     return cc ;
 }
@@ -832,6 +832,15 @@ doIdleDropEvent(void)
 void
 addKeyToBuffer(uint16 cc)
 {
+    if(cc == breakc)
+    {
+        if(macbug < 0)
+        {
+            macbug = 1 ;
+            return ;
+        }
+        TTbreakFlag = 1 ;
+    }
 #if MOUSE
     /* Reset the mouse context if mouse interaction is outstanding. 
      * This should only be timer keys

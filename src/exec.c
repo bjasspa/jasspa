@@ -10,7 +10,7 @@
  *
  *       Author:                 Danial Lawrence
  *
- *       Creation Date:          14/05/86 12:37          <010203.2006>
+ *       Creation Date:          14/05/86 12:37          <010219.2054>
  *
  *       Modification date:      %G% : %U%
  *
@@ -845,6 +845,7 @@ dobuf(LINE *hlp)
             {
                 uint8 outline[MAXBUF];   /* string to hold debug line text */
                 LINE *tlp=hlp ;
+                uint16 cc ;
                 int lno=0 ;
                 
                 /*---   Generate the debugging line for the 'programmer' !! */
@@ -866,20 +867,12 @@ loop_round2:
                 {
 loop_round:
                     /* and get the keystroke */
-                    
-                    switch (tgetc())
+                    switch ((cc=getkeycmd(FALSE,0,meGETKEY_SILENT|meGETKEY_SINGLE)))
                     {
-                    case 7:                 /* Abort */
-                        /* Must exit the usual way so that macro storing and execlevel
-                         * are corrected */
-                        ctrlg(FALSE,1) ;
-                        status = ABORT ;
-                        errorLine = lp ;
-                        goto dobuf_exit ;
                     case '?':
                         mlwrite(MWSPEC,__dobufStr1) ;       /* Write out the debug line */
                         goto loop_round ;
-                    case 'l'-'@':
+                    case 'L'-'@':
                         goto loop_round2 ;
                     case 'v':
                         {
@@ -893,6 +886,15 @@ loop_round:
                             goto loop_round ;
                         }
                     default:
+                        if(cc == breakc)
+                        {
+                            /* Abort - Must exit the usual way so that macro
+                             * storing and execlevel are corrected */
+                            ctrlg(FALSE,1) ;
+                            status = ABORT ;
+                            errorLine = lp ;
+                            goto dobuf_exit ;
+                        }
                         debug = macbug ;
                     case '!':
                         macbug = 0 ;
@@ -1496,9 +1498,9 @@ execCommand(int f, int n)
     
     /* setup prompt */
     if(f==TRUE)
-        sprintf((char *)prm,"Arg %d: esc x ",n) ;
+        sprintf((char *)prm,"Arg %d: Command",n) ;
     else
-        meStrcpy(prm,"esc x ") ;
+        meStrcpy(prm,"Command") ;
     
     /* if we are executing a command line get the next arg and match it */
     if((idx = mlreply(prm, MLCOMMAND, 1, buf, MAXBUF)) != TRUE)
