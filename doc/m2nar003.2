@@ -29,7 +29,7 @@
 .\"
 .\"***************************************************************************
 .\"
-.Id $Id: m2nar003.2,v 2.4 2001-12-18 16:52:53 jon Exp $
+.Id $Id: m2nar003.2,v 2.5 2002-01-04 21:04:02 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .TH "User Profiles" 2
@@ -219,13 +219,50 @@ The following are examples of some individuals start-up files:-
 ; Macro to delete the whitespace, or if an a word all of the
 ; word until the next word is reached.
 define-macro super-delete
+    set-variable #l0 0
     !while &not &sin @wc " \\t\\n"
-        forward-delete-char
+        forward-char
+        set-variable #l0 &add #l0 1
     !done
     !repeat
-        forward-delete-char
+        !force forward-char
+        !if $status
+            set-variable #l0 &add #l0 1
+        !endif
     !until &or &seq @wc "" &not &sin @wc " \\t\\n"
+    #l0 backward-delete-char
     !return
+!emacro
+; Make a previous-buffer command.
+define-macro previous-buffer
+    &neg @# next-buffer
+!emacro
+; spotless; Perform a clean and remove any multi-blank lines.
+define-macro spotless
+    -1 clean
+!emacro
+; comment-adjust; Used for comments in electric-c mode (and the other
+; electic modes. Moves to the comment fill position, saves having to mess
+; around with comments at the end of the line.
+0 define-macro comment-adjust
+    ; delete all spaces up until the next character
+    !while &sin @wc " \\t"
+        forward-delete-char
+    !done
+    ; Fill the line to the current $c-margin. We use this as 
+    ; this is the only variable that tells us where the margin
+    ; should be. 
+    !if &gre $window-acol 0
+        backward-char
+        !if &sin @wc " \\t"
+	    forward-delete-char
+            !jump -4
+        !else
+            forward-char
+        !endif
+    !endif
+    ; Now fill to the $c-margin
+    &sub $c-margin $window-acol insert-string " "
 !emacro
 ; Macro to force buffer to compile buffer for C-x '
 define-macro compile-error-buffer
@@ -239,35 +276,48 @@ global-bind-key super-delete            "C-delete"
 global-bind-key beginning-of-line       "home"
 global-bind-key end-of-line             "end"
 global-bind-key undo                    "f4"
+!if &seq %emulate "ERROR"
+    global-bind-key comment-adjust      "esc tab" 
+    global-bind-key comment-adjust      "C-insert" 
+    ; Like a korn shell please.
+    ml-bind-key tab "esc esc"
+!endif
 ;
 ; Setup for windows and UNIX.
 ;
-; Change the cursor blink rate.
-set-variable $cursor-blink 750
-; Set scrolling to smooth scroll
-set-variable $scroll 0x11
-!if $use-x
-    ; Small font is better for me.
-    change-font "-misc-fixed-medium-r-normal--13-*-*-*-c-80-iso8859-1"
-!elif &seq $platform "win32"
-    ; Change the size of the screen 
-    82 change-screen-width
-    50 change-screen-depth
+; Define my hilighting colour for Windows and UNIX.
+!if &equ &band $system 0x001 0
+    !if &not &seq $platform "win32"
+        ; Small bold font is better for me.
+        change-font "-*-clean-medium-r-*-*-*-130-*-*-*-*-*-*"
+        ; Small non-bold font.
+        ; change-font "-misc-fixed-medium-r-normal--13-*-*-*-c-70-iso8859-1"
+        ; Change the size of the screen 
+        82 change-screen-width
+        50 change-screen-depth
+    !endif
 !endif
-; Define the home directories.
-!if &or &seq $platform "dos" &seq $platform "win32"  ; Is it an MS system ??
-    set-variable $home	"c:/usr/jon"
-!endif
-; Like a korn shell please.
-ml-bind-key tab "esc esc"
 ; Change the default diff command-line for GNU diff utility all platforms
 set-variable %diff-com "diff --context --minimal --ignore-space-change --report-identical-files --recursive"
+set-variable %gdiff-com "diff --context --ignore-space-change -w"
 ; Setup for cygnus
 !if &seq $platform "win32"
-    set-variable %cygnus-bin-path "C:/Cygnus/B19/h-i386~1/bin"
+    set-variable %cygnus-bin-path "c:/cygwin/bin"
     set-variable %cygnus-hilight 1
-    set-variable %cygnus-prompt "bash-2.01$"
+    set-variable %cygnus-prompt "$"
 !endif    
+; Set up the ftp flags. The letters have the following meaning:
+; c   - Create a console (*ftp-console* for ftp, *http-console* for http)
+; s   - Show the console
+; p   - Show download progress ('#' every 2Kb downloaded)
+set-variable %ftp-flags "csp"
+; Info files
+;To hilight the .info and also the dir file
+add-file-hook ".info dir"                                   fhook-info   ; Info-files
+;To hilight all info files without the extension .info 
+;but starting with the text "This is info file..
+-2 add-file-hook "This is Info file"                        fhook-info
+
 ; Finished
 ml-write "Configured to Jon's requirements"
 .CE 0

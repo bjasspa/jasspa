@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m8fil002.8,v 2.4 2001-12-18 16:52:53 jon Exp $
+.Id $Id: m8fil002.8,v 2.5 2002-01-04 21:04:02 jon Exp $
 .Im MicroEmacs files
 .so me.tni
 .TH edf 8
@@ -9,7 +9,7 @@ edf \- MicroEmacs spelling dictionary file
 .SH SYNOPSIS
 .na
 .sp
-.B american.edf
+.B lsdmenus.edf
 .br
 \fIuser\fR\|\fB.edf\fR
 .ad
@@ -17,15 +17,15 @@ edf \- MicroEmacs spelling dictionary file
 The spelling  dictionary  files are given the extension  \fB.edf\fR. These are
 binary files read by \*(mE and cannot be edited directly.
 .PP
-\*(mE is supplied with a dictionaries  for American and British English. It is
-recommended that these dictionaries are not modified, a personal dictionary is
-used and modified instead.
+\*(mE is supplied with a dictionaries for various languages. It is recommended
+that these  dictionaries  are not modified, a personal  dictionary is used and
+modified instead.
 .PP
-A  personal  dictionary,  \fIuser\fR\|\fB.edf\fR,  may be created in the users
-directory for additional spelling information.
+A personal dictionary, \fIuser\fR\|\fB.edf\fR, is automatically created in the
+users directory for additional spelling information.
 .SH FILES
-The  standard  dictionary  files  \fIlanguage\fR\fB.edf\fR  are located in the
-\*(mE \fIhome\fR directory.
+The  standard  dictionary  files  lsdm\fI<language><country>\fR\fB.edf\fR  are
+located in the \*(mE \fIhome\fR directory.
 .PP
 User's may create  their own  dictionary  files by  shadowing  the  \fIhome\fR
 directory  file with their  local  dictionary(s)  located in a personal  \*(mE
