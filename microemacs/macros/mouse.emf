@@ -133,7 +133,9 @@
             !force #l2 change-window-width
             !if $status
                 ; update the toolbar mode lines
-                set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x080
+                !if &exi .toolbar-redraw.bc
+                    set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x080
+                !endif
             !elif &band $scroll-bar 0x80
                 ; resizing failed, is this a request to delete the window?? Which way are we moving
                 !if &les #l2 0
