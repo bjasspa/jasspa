@@ -1,0 +1,24 @@
+Title:  Spotless - Clean all useless white space from file.
+Ref:    sub28
+Author: Jon Green
+Date:   Sat Mar 20 14:18:09 2004
+
+The macro "spotless"  removes all inappropriate  white space from a file. This
+includes  trailing  white space at the end of a line,  duplicate  blank lines.
+Trailing blank lines from the end of the file.
+
+Spotless  used to be a big  macro  and  since Dec 2002 has been  reduced  to a
+simple name wrapper for the clean command. However there is something symbolic
+about running  "spotless" when you have finished working on file, it basically
+marks the end of development when you tidy the file and put it to bed !
+
+Add the macros to your <user.emf> file and re-start the editor.
+
+To run the command then "esc-x spotless"
+
+==== spotless start =========================================================
+; spotless; Perform a clean and remove any multi-blank lines.
+define-macro spotless
+    -1 clean
+!emacro
+==== spotless end ===========================================================

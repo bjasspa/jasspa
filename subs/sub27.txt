@@ -1,0 +1,112 @@
+Title:  C++ hilighting extensions - Doxygen, TODO comments, etc.
+Ref:    sub27
+Author: Jon Green
+Date:   Sat Mar 20 14:18:09 2004
+
+The C++ hilighting may be extended to hilight the following:-
+
+    - TODO comments /* TODO: Do this */
+    - Doxygen keywords in comments.
+    - Curly braces {}
+    - Bad C constructs.
+
+The  following  file adds  hilighting  for all of the above.  Comment  out the
+blocks  that  are  not  required.  Extract  the  code  body  to a file  called
+"mycpp.emf" and add this to your private "jasspa" directory which is:-
+
+    ~.jasspa on UNIX.
+     $APPDATA\jasspa on Windows.
+
+==== mycpp.emf start =========================================================
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2004 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     Sat Mar 20 14:56:30 2004
+; Synopsis:    Extensions to the standard C++ hilighting
+; Authors:     Jon Green
+
+; If you do not require any of the following scheme extensions then comment
+; out the block by placing a ";" at the start of the line.
+
+; Hilight TODO in a comment - Examples
+; i.e. /* TODO I need to do this */
+; i.e. // TODO I need to do this */
+!if &and &sin "h" .fhook-cpp.setup &band .hilight.flags 0x02
+    hilight .hilight.cpp   20 "/\\*\\s +TODO" "*/" "" .scheme.error
+    hilight .hilight.cpp   18 "//\\s +TODO"           .scheme.error
+!endif
+
+; Doxygen hilighting extensions. Hilights keywords in Doxygen
+!if &and &sin "h" .fhook-cpp.setup &band .hilight.flags 0x02
+    ; Create a new doxygen hilighting scheme
+    !if &not &exi .hilight.cppdoxygen
+        set-variable .hilight.cppdoxygen  &pinc .hilight.next 1
+        set-variable .hilight.cppdoxygenc &pinc .hilight.next 1
+    !endif
+    ;
+    ; Cater for the /** .. */ type of comment.
+    ;
+    ; Add a hook into the normal C++ hilighing. We jump into cppdoxygen when
+    ; we see an opening "/**" or "/*!".
+    hilight .hilight.cpp 0x80 "/\\*\\*" .hilight.cppdoxygenc  .scheme.comment
+    hilight .hilight.cpp 0x80 "/\\*!"   .hilight.cppdoxygenc  .scheme.comment
+    ; Doxygen hilighting space.
+    0 hilight .hilight.cppdoxygenc  2 50                      .scheme.comment
+    ; "\}" or "@}"
+    hilight .hilight.cppdoxygenc    1 "[\\\\@]}"              .scheme.keyword
+    ; "\{" or "@{"
+    hilight .hilight.cppdoxygenc    1 "[\\\\@]{"              .scheme.keyword
+    ; "\a anyWord" or "@a anyWord"
+    hilight .hilight.cppdoxygenc    1 "[\\\\@]a[ \t]+\\w+"    .scheme.keyword
+    ; "\anyWord" or "@anyWord" - Use branch token and close when not a word!
+    hilight .hilight.cppdoxygenc    4 "[\\\\@]" "\\}\\W" ""   .scheme.keyword
+    ; We must return to C when we see the close of comment "*/"
+    hilight .hilight.cppdoxygenc 0x80 "\\*/" .hilight.cpp     .scheme.comment
+    ;
+    ; Cater for the /// type of comment
+    ;
+    ; Add a hook into the normal C++ hilighing. We jump into cppdoxygen when
+    ; we see an opening "///" or "//!".
+    hilight .hilight.cpp 0x80 "///" .hilight.cppdoxygen  .scheme.comment
+    hilight .hilight.cpp 0x80 "//!" .hilight.cppdoxygen  .scheme.comment
+    ; Doxygen hilighting space.
+    0 hilight .hilight.cppdoxygen   2 50                      .scheme.comment
+    ; "\}" or "@}"
+    hilight .hilight.cppdoxygen    1 "[\\\\@]}"              .scheme.keyword
+    ; "\{" or "@{"
+    hilight .hilight.cppdoxygen    1 "[\\\\@]{"              .scheme.keyword
+    ; "\a anyWord" or "@a anyWord"
+    hilight .hilight.cppdoxygen    1 "[\\\\@]a[ \t]+\\w+"    .scheme.keyword
+    ; "\anyWord" or "@anyWord" - Use branch token and close when not a word!
+    hilight .hilight.cppdoxygen    4 "[\\\\@]" "\\}\\W" ""   .scheme.keyword
+    ; We must return to C when we see the close of comment "*/"
+    hilight .hilight.cppdoxygen 0x80 "\n" .hilight.cpp       .scheme.comment
+!endif
+
+; Pick up bogus C++ constructs extension
+!if &and &sin "h" .fhook-cpp.setup &band .hilight.flags 0x02
+     ; Detect a for loop with no body - put semi-colon on next line, i.e.
+     ; for (i = 1; i < 10; i++);
+     ; { ... }
+     hilight .hilight.cpp  2 "for[ \t]*([^()]*)[ \t]*;" .scheme.hlred
+     ; Detect a bad 'if' statement that is terminated with ';' e.g.
+     ; if (i < x);
+     ; { ... }
+     hilight .hilight.cpp  2 "if[ \t]*([^()]*)[ \t]*;"  .scheme.hlred
+     ; Detect a spurious '\' at the end of the line that is
+     ; not a string or #define. i.e.
+     ; char *d = "This is a " \
+     ;           "Duff string continuation";
+     hilight .hilight.cpp  2 "\\\\$"                   .scheme.hlred
+!endif
+
+; Hilight curly braces used when it is difficult to differentiate between a
+; round bracket and curly brace.
+!if &and &sin "h" .fhook-cpp.setup &band .hilight.flags 0x02
+    ; In keyword colour
+    hilight .hilight.cpp 1 "{"                             .scheme.keyword
+    hilight .hilight.cpp 1 "}"                             .scheme.keyword
+!endif
+==== mycpp.emf end ===========================================================
