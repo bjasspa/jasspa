@@ -120,10 +120,9 @@ set-variable .scheme.constant   47
 ; Typically the keyword col, but no bold or other font
 ; effects are applied.
 set-variable .scheme.no1        48
-;
 ; .scheme.no2 -- Secondary color 2
 set-variable .scheme.no2        49
-;
+; .scheme.dmf -- Display matching fence
 set-variable .scheme.dmf        50
 
 ; FileBrower color schemes
@@ -178,8 +177,8 @@ set-variable .scheme.gdfselpad  71
 set-variable .scheme.gdfrej     72
 ; .scheme.gdfrejpad -- For rejected padded lines
 set-variable .scheme.gdfrejpad  73
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;>>> NOTICE: Add your last color above this line and then go back and   <<<;
-;>>>         change the .scheme.next variable to your "lastColorNumber+1".   <<<;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;>>> NOTICE: Add your last color above this line and then go back and      <<<;
+;>>>         change the .scheme.next variable to your "lastColorNumber+1". <<<;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
