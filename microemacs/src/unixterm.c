@@ -50,7 +50,7 @@
 #include <termcap.h>
 #endif
 
-#if (defined _SUNOS55) || (defined _SUNOS56) 
+#if (defined _SUNOS55) || (defined _SUNOS56)
 #include <X11/Sunkeysym.h>
 #endif
 
@@ -99,7 +99,7 @@ meUInt *colTable=NULL ;
 * TERMCAP Definitions                                                     *
 **************************************************************************/
 #ifndef _CYGWIN
-/* Termcap prototyes - really we should include the appropriate header */ 
+/* Termcap prototyes - really we should include the appropriate header */
 extern int      tgetnum(char *);
 extern int      tgetent(char *,char *);
 extern char *   tgetstr(char *,char **);
@@ -190,10 +190,10 @@ static meUByte tcapColors[tcapNumColors*3] =
 static char RCOLSTR[] =
 { 27, 91, 48,     109, 0 } ;   /* me - ESC[0m */
 /* set_a_foreground/setaf/AF/Set foreground color using ANSI escape */
-static char FCOLSTR[] = 
+static char FCOLSTR[] =
 { 27, 91, 51, 65, 109, 0 } ;   /* AF - ESC[3Am */
 /* set_a_background/setab/AB/Set background color using ANSI escape */
-static char BCOLSTR[] = 
+static char BCOLSTR[] =
 { 27, 91, 52, 65, 109, 0 } ;   /* AB - ESC[4Am */
 #endif /* MEOPT_COLOR */
 
@@ -224,9 +224,22 @@ static meUByte *tcapSpecKeyDefs[]=
 #include <X11/Xatom.h>
 #include <X11/cursorfont.h>
 
+/* X11 Drag and drop */
+#ifdef _DRAGNDROP
+static void xdndInitialize (Display * display);
+static void xdndAware (Window window);
+static int xdndSelectionNotify (XEvent *xevent, meFrame *frame);
+static int xdndClientMessage (XEvent *xevent, meFrame *frame);
+#else
+/* Disablers when not enabled. */
+#define xdndInitialize(display)             /* NULL */
+#define xdndAware(window)                   /* NULL */
+#define xdndSelectionNotify(xevent,frame)   /* NULL */
+#define xdndClientMessage(xevent, frame)    /* NULL */
+#endif /* (defined _DRAGNDROP) */
+
 /* Setup the xterm variables and things */
 meCellMetrics mecm ;
-
 
 static int disableResize = 0;           /* Flag to disable screen resize */
 
@@ -251,54 +264,54 @@ char *meIconName=ME_FULLNAME ;
 #define iconHeight 48
 static meUByte iconBits[] = {
 #ifdef _NANOEMACS
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-    0xfc, 0xff, 0xff, 0xff, 0xff, 0xff, 
-    0xfc, 0xff, 0xff, 0xff, 0xff, 0xff, 
-    0xfc, 0xff, 0xff, 0xff, 0xff, 0xff, 
-    0xfc, 0xff, 0xff, 0xff, 0xff, 0xff, 
-    0xf8, 0xff, 0xff, 0xff, 0xff, 0x3f, 
-    0x08, 0x00, 0x00, 0x00, 0x00, 0x20, 
-    0x10, 0x00, 0x00, 0x00, 0x00, 0x10, 
-    0xe0, 0xff, 0xff, 0xff, 0xff, 0x1f, 
-    0xe0, 0xff, 0xff, 0xff, 0xff, 0x1f, 
-    0xc0, 0xff, 0xff, 0xc0, 0xff, 0x0f, 
-    0xc0, 0xff, 0x20, 0x00, 0xff, 0x07, 
-    0xc0, 0xff, 0x00, 0x00, 0xfe, 0x07, 
-    0x80, 0xff, 0x00, 0x00, 0xfe, 0x03, 
-    0x00, 0xff, 0x80, 0x07, 0xfe, 0x03, 
-    0x00, 0xff, 0xc0, 0x0f, 0xfe, 0x03, 
-    0x00, 0xfe, 0xc0, 0x0f, 0xfe, 0x01, 
-    0x00, 0xfe, 0xe0, 0x0f, 0xfe, 0x00, 
-    0x00, 0xfe, 0xe0, 0x0f, 0xfe, 0x00, 
-    0x00, 0xfc, 0xe0, 0x0f, 0x7e, 0x00, 
-    0x00, 0xf8, 0xe0, 0x0f, 0x7e, 0x00, 
-    0x00, 0xf8, 0xe0, 0x0f, 0x3e, 0x00, 
-    0x00, 0xf0, 0xe0, 0x0f, 0x3e, 0x00, 
-    0x00, 0xf0, 0xe0, 0x0f, 0x1e, 0x00, 
-    0x00, 0xf0, 0xe0, 0x0f, 0x1e, 0x00, 
-    0x00, 0xe0, 0xe0, 0x0f, 0x0e, 0x00, 
-    0x00, 0xc0, 0xe0, 0x0f, 0x0e, 0x00, 
-    0x00, 0xc0, 0xe0, 0x0f, 0x0e, 0x00, 
-    0x00, 0x80, 0xe0, 0x0f, 0x06, 0x00, 
-    0x00, 0x80, 0xe0, 0x0f, 0x02, 0x00, 
-    0x00, 0x80, 0xff, 0xff, 0x03, 0x00, 
-    0x00, 0x00, 0xff, 0xff, 0x01, 0x00, 
-    0x00, 0x00, 0xfe, 0xff, 0x01, 0x00, 
-    0x00, 0x00, 0xfe, 0xff, 0x01, 0x00, 
-    0x00, 0x00, 0xfc, 0xff, 0x01, 0x00, 
-    0x00, 0x00, 0x04, 0x80, 0x00, 0x00, 
-    0x00, 0x00, 0x04, 0x40, 0x00, 0x00, 
-    0x00, 0x00, 0xfc, 0x7f, 0x00, 0x00, 
-    0x00, 0x00, 0xf0, 0x3f, 0x00, 0x00, 
-    0x00, 0x00, 0xf0, 0x3f, 0x00, 0x00, 
-    0x00, 0x00, 0xe0, 0x1f, 0x00, 0x00, 
-    0x00, 0x00, 0xe0, 0x0f, 0x00, 0x00, 
-    0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 
-    0x00, 0x00, 0xc0, 0x07, 0x00, 0x00, 
-    0x00, 0x00, 0x40, 0x04, 0x00, 0x00, 
-    0x00, 0x00, 0x80, 0x04, 0x00, 0x00, 
-    0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0xfc, 0xff, 0xff, 0xff, 0xff, 0xff,
+    0xfc, 0xff, 0xff, 0xff, 0xff, 0xff,
+    0xfc, 0xff, 0xff, 0xff, 0xff, 0xff,
+    0xfc, 0xff, 0xff, 0xff, 0xff, 0xff,
+    0xf8, 0xff, 0xff, 0xff, 0xff, 0x3f,
+    0x08, 0x00, 0x00, 0x00, 0x00, 0x20,
+    0x10, 0x00, 0x00, 0x00, 0x00, 0x10,
+    0xe0, 0xff, 0xff, 0xff, 0xff, 0x1f,
+    0xe0, 0xff, 0xff, 0xff, 0xff, 0x1f,
+    0xc0, 0xff, 0xff, 0xc0, 0xff, 0x0f,
+    0xc0, 0xff, 0x20, 0x00, 0xff, 0x07,
+    0xc0, 0xff, 0x00, 0x00, 0xfe, 0x07,
+    0x80, 0xff, 0x00, 0x00, 0xfe, 0x03,
+    0x00, 0xff, 0x80, 0x07, 0xfe, 0x03,
+    0x00, 0xff, 0xc0, 0x0f, 0xfe, 0x03,
+    0x00, 0xfe, 0xc0, 0x0f, 0xfe, 0x01,
+    0x00, 0xfe, 0xe0, 0x0f, 0xfe, 0x00,
+    0x00, 0xfe, 0xe0, 0x0f, 0xfe, 0x00,
+    0x00, 0xfc, 0xe0, 0x0f, 0x7e, 0x00,
+    0x00, 0xf8, 0xe0, 0x0f, 0x7e, 0x00,
+    0x00, 0xf8, 0xe0, 0x0f, 0x3e, 0x00,
+    0x00, 0xf0, 0xe0, 0x0f, 0x3e, 0x00,
+    0x00, 0xf0, 0xe0, 0x0f, 0x1e, 0x00,
+    0x00, 0xf0, 0xe0, 0x0f, 0x1e, 0x00,
+    0x00, 0xe0, 0xe0, 0x0f, 0x0e, 0x00,
+    0x00, 0xc0, 0xe0, 0x0f, 0x0e, 0x00,
+    0x00, 0xc0, 0xe0, 0x0f, 0x0e, 0x00,
+    0x00, 0x80, 0xe0, 0x0f, 0x06, 0x00,
+    0x00, 0x80, 0xe0, 0x0f, 0x02, 0x00,
+    0x00, 0x80, 0xff, 0xff, 0x03, 0x00,
+    0x00, 0x00, 0xff, 0xff, 0x01, 0x00,
+    0x00, 0x00, 0xfe, 0xff, 0x01, 0x00,
+    0x00, 0x00, 0xfe, 0xff, 0x01, 0x00,
+    0x00, 0x00, 0xfc, 0xff, 0x01, 0x00,
+    0x00, 0x00, 0x04, 0x80, 0x00, 0x00,
+    0x00, 0x00, 0x04, 0x40, 0x00, 0x00,
+    0x00, 0x00, 0xfc, 0x7f, 0x00, 0x00,
+    0x00, 0x00, 0xf0, 0x3f, 0x00, 0x00,
+    0x00, 0x00, 0xf0, 0x3f, 0x00, 0x00,
+    0x00, 0x00, 0xe0, 0x1f, 0x00, 0x00,
+    0x00, 0x00, 0xe0, 0x0f, 0x00, 0x00,
+    0x00, 0x00, 0xe0, 0x07, 0x00, 0x00,
+    0x00, 0x00, 0xc0, 0x07, 0x00, 0x00,
+    0x00, 0x00, 0x40, 0x04, 0x00, 0x00,
+    0x00, 0x00, 0x80, 0x04, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x03, 0x00, 0x00,
 #else
     0xff, 0xff, 0xff, 0xff, 0xff, 0x7f,
     0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
@@ -389,7 +402,6 @@ static meUShort mouseKeys[8] = { 0, 1, 2, 3, 4, 5 } ;
 
 #endif
 
-
 void
 meSetupPathsAndUser(char *progname)
 {
@@ -405,7 +417,7 @@ meSetupPathsAndUser(char *progname)
     struct passwd *pwdp;            /* Password structure entry */
     meUByte *ss, buff[meBUF_SIZE_MAX] ;
     int ii, ll, gotUserPath ;
-    
+
     /* If PWD is accurate, use it instead of calling gwd.
      * This solves problems with bad ~/ as the shell will
      * store as /user/.... etc.
@@ -416,7 +428,7 @@ meSetupPathsAndUser(char *progname)
        (dotstat.st_dev == pwdstat.st_dev))
     {
         meUByte cc, *dd ;
-        
+
         ll = meStrlen(ss) ;
         curdir = dd = meMalloc(ll+2) ;
         while((cc=*ss++) != '\0')
@@ -430,7 +442,7 @@ meSetupPathsAndUser(char *progname)
     if(curdir == NULL)
         /* not yet initialised so mlwrite will exit */
         mlwrite(MWCURSOR|MWABORT|MWWAIT,(meUByte *)"Failed to get cwd\n") ;
-    
+
     /* setup the $progname make it an absolute path. */
     if((ii = executableLookup((meUByte *) progname,evalResult)) == 0)
     {
@@ -458,7 +470,7 @@ meSetupPathsAndUser(char *progname)
     if((meUserName == NULL) &&
        ((ss = meGetenv ("MENAME")) != NULL) && (ss[0] != '\0'))
         meUserName = meStrdup(ss) ;
-    
+
     /* Get the user name and home directory from the password file. */
     pwdp = getpwuid (meUid);        /* Get the password entry */
     if (pwdp != NULL)
@@ -466,18 +478,18 @@ meSetupPathsAndUser(char *progname)
         /* Copy out the string information we need and initialise the
          * string variables. */
         if(pwdp->pw_dir != NULL)
-            homedir = meStrdup((meUByte *) pwdp->pw_dir) ; 
+            homedir = meStrdup((meUByte *) pwdp->pw_dir) ;
         if((pwdp->pw_name != NULL) && (meUserName == NULL))
-            meUserName = meStrdup((meUByte *) pwdp->pw_name) ; 
+            meUserName = meStrdup((meUByte *) pwdp->pw_name) ;
         /* Shut down the password retrieval and allow system to relinquish
          * any resource it may have cached. */
         endpwent() ;
     }
-    
+
     /* If no name yet then set to default 'user'. */
     if(meUserName == NULL)
         meUserName = meStrdup((meUByte *) "user") ;
-    
+
     /* get the users home directory, user path and search path */
     if((homedir == NULL) &&
        (((ss = meGetenv("HOME")) != NULL) && (ss[0] != '\0')))
@@ -496,7 +508,7 @@ meSetupPathsAndUser(char *progname)
 
     if(((ss = meGetenv ("MEUSERPATH")) != NULL) && (ss[0] != '\0'))
         meUserPath = meStrdup(ss) ;
-    
+
     if(((ss = meGetenv ("MEPATH")) != NULL) && (ss[0] != '\0'))
     {
         /* explicit path set by the user, don't need to look at anything else */
@@ -528,7 +540,7 @@ meSetupPathsAndUser(char *progname)
         else
             evalResult[0] = '\0' ;
         ll = meStrlen(evalResult) ;
-        
+
         /* look for the ~/.jasspa directory */
         if(homedir != NULL)
         {
@@ -539,7 +551,7 @@ meSetupPathsAndUser(char *progname)
                  * a .../<$user-name>/ directory */
                 gotUserPath = -1 ;
         }
-        
+
         /* Get the system path of the installed macros. Use $MEINSTPATH as the
          * MicroEmacs standard macros */
         if((((ss = meGetenv ("MEINSTALLPATH")) != NULL) && (ss[0] != '\0')) ||
@@ -548,7 +560,7 @@ meSetupPathsAndUser(char *progname)
             meStrcpy(buff,ss) ;
             ll = mePathAddSearchPath(ll,evalResult,buff,&gotUserPath) ;
         }
-        
+
         /* also check for directories in the same location as the binary */
         if((meProgName != NULL) && ((ss=meStrrchr(meProgName,DIR_CHAR)) != NULL))
         {
@@ -557,7 +569,7 @@ meSetupPathsAndUser(char *progname)
             buff[ii] = '\0' ;
             ll = mePathAddSearchPath(ll,evalResult,buff,&gotUserPath) ;
         }
-        
+
         if(!gotUserPath && (homedir != NULL))
         {
             /* We have not found a user path so set ~/ as the user-path
@@ -599,7 +611,6 @@ meSetupPathsAndUser(char *progname)
     }
 }
 
-    
 void
 sigAlarm(SIGNAL_PROTOTYPE)
 {
@@ -653,7 +664,7 @@ waitForEvent(int mode)
 #endif
            (sgarbf == meTRUE))
             break ;
-        
+
         TTdieTest() ;
         FD_ZERO(&select_set);
         FD_SET(meStdin, &select_set);
@@ -711,24 +722,24 @@ waitForEvent(int mode)
                  */
 #ifdef _USEPOLL
                 struct pollfd pfds [1];
-                
+
                 /* Set up the poll structure */
                 pfds[0].fd = meStdin;
                 pfds[0].events = POLLIN;
-                
+
                 /* As there is only one event we can rely on the return status
                  * to tell us what has happened. */
                 ii = poll (pfds, 1, 0);
                 if ((ii < 0) ||
                     ((ii == 1) && (pfds[0].revents & (POLLERR|POLLHUP|POLLNVAL))))
                     ii = 0;             /* Failed */
-                else 
+                else
                     ii = 1;             /* OK */
 #else
 #ifdef FIONREAD
                 int x;      /* holds # of pending chars */
                 ii = ioctl(meStdin,FIONREAD,&x);
-                
+
                 /* if ioctl fails don't die! */
                 ii = ((ii < 0) ? 1 : x);
 #else
@@ -772,7 +783,7 @@ TCAPgetWinSize(void)
 #ifdef TIOCGWINSZ
     /* BSD-style and lately SunOS.  */
     struct winsize size;
-    
+
     if((ioctl(meStdin,TIOCGWINSZ,&size) == -1) ||
        ((TTnewWid = size.ws_col) <= 0) ||
        ((TTnewHig = size.ws_row) <= 0))
@@ -794,7 +805,7 @@ TCAPgetWinSize(void)
             TTnewWid = ii ;
         else
             TTnewWid = frameCur->width ;
-        
+
 	/* Get the number of lines on the screen */
         if((ii=tgetnum(tcaptab[TCAPlines].capKey)) != -1)
             TTnewHig = ii ;
@@ -806,7 +817,7 @@ TCAPgetWinSize(void)
 	    return ;
 	}
     }
-    
+
     /* If there is a new line glitch and we have automargins then it is
      * dangerous for us to use the last line as we cause a scroll that we
      * cannot easily correct. If this is the case then reduce the number of
@@ -832,14 +843,13 @@ sigSize(SIGNAL_PROTOTYPE)
 #endif /* _TCAP */
 #endif /* _ME_CONSOLE */
 
-
 #ifdef _XTERM
 
 static Font
 __XTERMfontGetId(meUByte font)
 {
     meUByte fontNU ;
-    
+
     /* remove the underline as this is not a different font,
      * the underline is drawn on after */
     fontNU = (font & ~meFONT_UNDERLINE) ;
@@ -849,7 +859,7 @@ __XTERMfontGetId(meUByte font)
         char *weight;
         char *slant;
         char buf [meBUF_SIZE_MAX];              /* Local name buffer */
-        
+
         /* Process the bold field. If the X font specifier (weight) is
          * medium or undefined and this is a bold field identifier then
          * specify a bold font */
@@ -859,7 +869,7 @@ __XTERMfontGetId(meUByte font)
             weight = "light";
         else
             weight = (char *)mecm.fontPart [2];
-        
+
         /* Process the italic field. If the X font specified (slant) is r
          * or undefined and this is a italic field identifier then specify
          * an italic font. */
@@ -867,7 +877,7 @@ __XTERMfontGetId(meUByte font)
             slant = "o";
         else
             slant = (char *)mecm.fontPart [3];
-        
+
         /* Construct the new font name */
         sprintf (buf, "-%s-%s-%s-%s-%s-%s-%s-%s-%s-%s-%s-%s-%s-%s",
                  mecm.fontPart [0],  mecm.fontPart [1],  weight,
@@ -875,7 +885,7 @@ __XTERMfontGetId(meUByte font)
                  mecm.fontPart [6],  mecm.fontPart [7],  mecm.fontPart [8],
                  mecm.fontPart [9],  mecm.fontPart [10], mecm.fontPart [11],
                  mecm.fontPart [12], mecm.fontPart [13]);
-        
+
         if((fontQ=XLoadQueryFont(mecm.xdisplay,buf)) == NULL)
             mecm.fontTbl[fontNU] = mecm.fontTbl[0] ;
         else
@@ -897,7 +907,6 @@ __XTERMfontGetId(meUByte font)
 
 #define XTERMfontGetId(font) \
 ((mecm.fontTbl[font] == BadName) ? __XTERMfontGetId(font):mecm.fontTbl[font])
-
 
 void
 meFrameXTermSetScheme(meFrame *frame, meScheme scheme)
@@ -962,7 +971,7 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
                   x + mecm.fwidth - 2, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth,
                   x + mecm.fwidth - 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
         break;
-        
+
     case 0x02:          /* checkbox center not selected */
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
                   x, y + mecm.fhdepth - mecm.fhwidth,
@@ -971,7 +980,7 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
                   x, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth,
                   x + mecm.fwidth - 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
         break;
-        
+
     case 0x03:          /* checkbox center not selected */
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
                   x, y + mecm.fhdepth - mecm.fhwidth,
@@ -989,7 +998,7 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
         points[3].y = y + mecm.fhdepth - mecm.fhwidth + 2 ;
         XFillPolygon(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), points, 4, Convex, CoordModeOrigin) ;
         break;
-        
+
     case 0x04:          /* checkbox right side (]) */
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
                   x, y + mecm.fhdepth - mecm.fhwidth,
@@ -1001,7 +1010,7 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
                   x + 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth,
                   x, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
         break;
-    
+
     case 0x07:          /* Line space '.' */
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+mecm.fhwidth, y+mecm.fhdepth, x+mecm.fhwidth+1, y+mecm.fhdepth);
         break;
@@ -1112,7 +1121,7 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
                   x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth + 1,
                   x + mecm.fwidth - 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
         break;
-    
+
     case 0x14:          /* cross box ([X]) */
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
                   x, y + mecm.fhdepth - mecm.fhwidth + 1,
@@ -1133,7 +1142,7 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
                   x, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth,
                   x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth + 1);
         break;
-    
+
     case 0x15:          /* Line Drawing / Left Tee |- */
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x + mecm.fhwidth, y, x + mecm.fhwidth, y + mecm.fdepth - 1);
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x + mecm.fhwidth, y + mecm.fhdepth, x + mecm.fwidth - 1, y + mecm.fhdepth);
@@ -1161,22 +1170,22 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
     case 0x1a:          /* Line Drawing / Bottom right _| with resize */
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x, y + mecm.fhdepth, x + mecm.fhwidth, y + mecm.fhdepth);
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x + mecm.fhwidth, y + mecm.fhdepth, x + mecm.fhwidth, y);
-        
+
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x, y + mecm.fdepth - 1, x + mecm.fwidth - 1, y + mecm.fdepth - mecm.fwidth);
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x + 2, y + mecm.fdepth - 1, x + mecm.fwidth - 1, y + mecm.fdepth - mecm.fwidth + 2);
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x + 4, y + mecm.fdepth - 1, x + mecm.fwidth - 1, y + mecm.fdepth - mecm.fwidth + 4);
         break ;
-    
+
     case 0x1b:          /* Scroll box - vertical */
         for (ii = (y+1) & ~1; ii < y+mecm.fdepth; ii += 2)
             XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x, ii, x + mecm.fwidth - 1, ii);
         break;
-        
+
     case 0x1d:          /* Scroll box - horizontal */
         for (ii = (x+1) & ~1; ii < x+mecm.fwidth; ii += 2)
             XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), ii, y, ii, y + mecm.fdepth - 1);
         break;
-        
+
     case 0x1e:          /* Cursor Arrows / Up */
         points [0].x = x - 1 ;
         points [0].y = y + mecm.fdepth - 1 ;
@@ -1213,9 +1222,9 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
 void
 meFrameXTermDraw(meFrame *frame, int srow, int scol, int erow, int ecol)
 {
-    meFrameLine *flp;                     /* Frame store line pointer */
+    meFrameLine *flp;                   /* Frame store line pointer */
     meScheme  *fssp;                    /* Frame store colour pointer */
-    meUByte     *fstp;                    /* Frame store text pointer */
+    meUByte     *fstp;                  /* Frame store text pointer */
     meScheme   schm;                    /* Current colour */
     int col;                            /* Current column position */
     int row;                            /* Current row screen position */
@@ -1329,13 +1338,13 @@ static meFrame *
 meXEventGetFrame(XEvent *event)
 {
     meFrameLoopBegin() ;
-    
+
     if(((loopFrame->flags & meFRAME_HIDDEN) == 0) &&
        (meFrameGetXWindow(loopFrame) == event->xany.window))
             return loopFrame ;
 
     meFrameLoopEnd() ;
-    
+
     return NULL ;
 }
 
@@ -1474,7 +1483,6 @@ meXEventHandler(void)
             int srow;                   /* Current - Start row */
             int ecol;                   /* Current - End column */
             int erow;                   /* Current - End row */
-            
 
             /* Compute the start and end column widths. For the end
              * column then a rounding operation is performed to ensure
@@ -1560,7 +1568,7 @@ meXEventHandler(void)
         }
         break;
 #endif
-        
+
     case EnterNotify:
         /* Some window managers do not send the FocusIn and FocusOut events correctly
          * To fix this we have to track down Window Enter and Leave events and check
@@ -1584,7 +1592,7 @@ meXEventHandler(void)
             }
         }
         break ;
-    
+
     case FocusIn:
         if(((frame = meXEventGetFrame(&event)) != NULL) &&
            (frame->flags & meFRAME_NOT_FOCUS))
@@ -1612,7 +1620,7 @@ meXEventHandler(void)
                 meFrameKillFocus(frame) ;
         }
         break ;
-    
+
     case FocusOut:
         if(((frame = meXEventGetFrame(&event)) != NULL) &&
            !(frame->flags & meFRAME_NOT_FOCUS))
@@ -1623,7 +1631,7 @@ meXEventHandler(void)
     case ButtonPress:
         if((meMouseCfg & meMOUSE_ENBLE) &&
            ((frame = meXEventGetFrame(&event)) != NULL))
-           
+
         {
             unsigned int   bb ;
             meUShort ss ;
@@ -1675,7 +1683,7 @@ meXEventHandler(void)
         }
         break ;
 #endif
-        
+
     case KeyPress:
         {
             meUShort ii, ss ;
@@ -1698,19 +1706,19 @@ meXEventHandler(void)
                 case XK_Clear:          ii = SKEY_clear; goto special_key;
                 case XK_Return:         ii = SKEY_return; goto special_key;
                     /* Pause, hold */
-#if (defined _SUNOS55) || (defined _SUNOS56) 
+#if (defined _SUNOS55) || (defined _SUNOS56)
                 case XK_F21:
 #endif
                 case XK_Pause:          ii = SKEY_pause; goto special_key;
-#if (defined _SUNOS55) || (defined _SUNOS56) 
-                case XK_F22:                
+#if (defined _SUNOS55) || (defined _SUNOS56)
+                case XK_F22:
                 case SunXK_Sys_Req:
 #endif
                 case XK_Sys_Req:        ii = SKEY_sys_req; goto special_key;
                 case XK_Escape:         ii = SKEY_esc; goto special_key;
-                    /* Delete, rubout */ 
+                    /* Delete, rubout */
                 case XK_Delete:         ii = SKEY_delete; goto special_key;
-                    
+
                     /* Cursor control & motion */
 
                 case XK_Home:           ii = SKEY_home; goto special_key;
@@ -1721,7 +1729,7 @@ meXEventHandler(void)
                     /* Move right, right arrow */
                 case XK_Right:          ii = SKEY_right; goto special_key;
                     /* Move down, down arrow */
-                case XK_Down:           ii = SKEY_down; goto special_key;       
+                case XK_Down:           ii = SKEY_down; goto special_key;
                     /* Prior, previous */
                     /* XK_Prior*/
                 case XK_Page_Up:        ii = SKEY_page_up; goto special_key;
@@ -1729,11 +1737,11 @@ meXEventHandler(void)
                 case XK_Page_Down:      ii = SKEY_page_down; goto special_key;
                     /* EOL */
                 case XK_End:            ii = SKEY_end; goto special_key;
-                    /* BOL */                    
+                    /* BOL */
                 case XK_Begin:          ii = SKEY_home; goto special_key;
 
                     /* Misc Functions */
-                    
+
                     /* Select, mark */
                 case XK_Select:         ii = SKEY_select; goto special_key;
                 case XK_Print:          ii = SKEY_print; goto special_key;
@@ -1775,14 +1783,14 @@ meXEventHandler(void)
                 case XK_KP_Space:       ii = SKEY_space; goto special_key;
                 case XK_KP_Tab:         ii = SKEY_tab; goto special_key;
                     /* enter */
-                case XK_KP_Enter:       ii = SKEY_return; goto special_key;   
+                case XK_KP_Enter:       ii = SKEY_return; goto special_key;
                     /* PF1, KP_A, ... */
                 case XK_KP_F1:          ii = SKEY_f1; goto special_key;
                 case XK_KP_F2:          ii = SKEY_f2; goto special_key;
                 case XK_KP_F3:          ii = SKEY_f3; goto special_key;
                 case XK_KP_F4:          ii = SKEY_f4; goto special_key;
-                
-#if (defined _SUNOS55) || (defined _SUNOS56) 
+
+#if (defined _SUNOS55) || (defined _SUNOS56)
                 case XK_F27:
 #endif
                 case XK_KP_Home:        ii = SKEY_kp_home; goto special_key;
@@ -1791,16 +1799,16 @@ meXEventHandler(void)
                 case XK_KP_Right:       ii = SKEY_kp_right; goto special_key;
                 case XK_KP_Down:        ii = SKEY_kp_down; goto special_key;
                     /*  case XK_KP_Prior:       ii = SKEY_home;  goto special_key;*/
-#if (defined _SUNOS55) || (defined _SUNOS56) 
-                case XK_F29:          
+#if (defined _SUNOS55) || (defined _SUNOS56)
+                case XK_F29:
 #endif
                 case XK_KP_Page_Up:     ii = SKEY_kp_page_up; goto special_key;
                     /* case XK_KP_Next:        ii = SKEY_end; goto special_key;*/
-#if (defined _SUNOS55) || (defined _SUNOS56) 
+#if (defined _SUNOS55) || (defined _SUNOS56)
                 case XK_F35:
 #endif
                 case XK_KP_Page_Down:   ii = SKEY_kp_page_down; goto special_key;
-#if (defined _SUNOS55) || (defined _SUNOS56) 
+#if (defined _SUNOS55) || (defined _SUNOS56)
                 case XK_F33:
 #endif
                 case XK_KP_End:         ii = SKEY_kp_end; goto special_key;
@@ -1809,23 +1817,23 @@ meXEventHandler(void)
                 case XK_KP_Delete:      ii = SKEY_kp_delete; goto special_key;
                     /* equals */
                 case XK_KP_Equal:       ii = '='; goto done_key;
-#if (defined _SUNOS55) || (defined _SUNOS56) 
-                case XK_F26: 
+#if (defined _SUNOS55) || (defined _SUNOS56)
+                case XK_F26:
 #endif
                 case XK_KP_Multiply:    ii = '*'; goto done_key;
                 case XK_KP_Add:         ii = '+'; goto done_key;
                     /* separator, often comma */
                 case XK_KP_Separator:   ii = ','; goto done_key;
-#if (defined _SUNOS55) || (defined _SUNOS56) 
+#if (defined _SUNOS55) || (defined _SUNOS56)
                 case XK_F24:
 #endif
                 case XK_KP_Subtract:    ii = '-'; goto done_key;
                 case XK_KP_Decimal:     ii = '.'; goto done_key;
-#if (defined _SUNOS55) || (defined _SUNOS56) 
+#if (defined _SUNOS55) || (defined _SUNOS56)
                 case XK_F25:
 #endif
                 case XK_KP_Divide:      ii = '/'; goto done_key;
-                    
+
                 case XK_KP_0:           ii = '0'; goto done_key;
                 case XK_KP_1:           ii = '1'; goto done_key;
                 case XK_KP_2:           ii = '2'; goto done_key;
@@ -1836,7 +1844,7 @@ meXEventHandler(void)
                 case XK_KP_7:           ii = '7'; goto done_key;
                 case XK_KP_8:           ii = '8'; goto done_key;
                 case XK_KP_9:           ii = '9'; goto done_key;
-                    
+
                     /* foreign keyboard accent keys */
 #ifdef XK_dead_circumflex
                 case XK_dead_circumflex: ii = '^'; goto done_key;
@@ -1844,13 +1852,13 @@ meXEventHandler(void)
 #ifdef XK_dead_diaeresis
                 case XK_dead_diaeresis: ii = 0xa8; goto done_key;
 #endif
-                    
+
                     /* Auxilliary Functions; note the duplicate definitions
                      * for left and right function keys; Sun keyboards and a
                      * few other manufactures have such function key groups on
                      * the left and/or right sides of the keyboard. We've not
                      * found a keyboard with more than 35 function keys total. */
-                    
+
                 case XK_F1:             ii = SKEY_f1; goto special_key;
                 case XK_F2:             ii = SKEY_f2; goto special_key;
                 case XK_F3:             ii = SKEY_f3; goto special_key;
@@ -1861,11 +1869,11 @@ meXEventHandler(void)
                 case XK_F8:             ii = SKEY_f8; goto special_key;
                 case XK_F9:             ii = SKEY_f9; goto special_key;
                 case XK_F10:            ii = SKEY_f10; goto special_key;
-#if (defined _SUNOS55) || (defined _SUNOS56) 
+#if (defined _SUNOS55) || (defined _SUNOS56)
                 case SunXK_F36:
 #endif
                 case XK_F11:            ii = SKEY_f11; goto special_key;
-#if (defined _SUNOS55) || (defined _SUNOS56) 
+#if (defined _SUNOS55) || (defined _SUNOS56)
                 case SunXK_F37:
 #endif
                 case XK_F12:            ii = SKEY_f12; goto special_key;
@@ -1874,17 +1882,17 @@ meXEventHandler(void)
                     /* Back-tab */
                 case XK_ISO_Left_Tab:  ii = SKEY_tab | ME_SHIFT; goto special_key;
 #endif
-                    
+
                     /* Modifiers */
-                    
+
                 case XK_Caps_Lock:      ii = SKEY_caps_lock; goto special_bound;
                 case XK_Num_Lock:       ii = SKEY_num_lock; goto special_bound;
-#if (defined _SUNOS55) || (defined _SUNOS56) 
-                case XK_F23:                
+#if (defined _SUNOS55) || (defined _SUNOS56)
+                case XK_F23:
 #endif
                 case XK_Scroll_Lock:    ii = SKEY_scroll_lock; goto special_bound;
                 case XK_Shift_Lock:     ii = SKEY_shift_lock; goto special_bound;
-                    
+
                     /* ignore these as ME has its own S-pick/S-drop key event generators */
                 case XK_Shift_L:
                 case XK_Shift_R:
@@ -1903,7 +1911,7 @@ meXEventHandler(void)
                 case XK_Super_R:
 #endif
                     goto ignore_key;
-                    
+
                 default:
                     /* printf ("This is a default %d (0x%04x)\n", ii, ii);*/
                     ii = keySym & 0xff;
@@ -1911,7 +1919,7 @@ meXEventHandler(void)
                 }
 special_key:
                 ii |= ME_SPECIAL; /*bindKeyLookUp[ss & ME_BIND_MASK];*/
-                
+
                 /* Only add the shift mask if it is special */
                 if (ShiftMask & ss)
                     ii |= ME_SHIFT;
@@ -1920,23 +1928,23 @@ done_key:
                     ii |= ME_CONTROL;
                 if (Mod1Mask & ss)
                     ii |= ME_ALT;
-                
+
                 /* printf ("Adding ff key to buffer %d(0x%04x)\n", ii, ii);*/
                 addKeyToBuffer(ii) ;
 ignore_key:
                 break;
-                
+
                 /* Keys that are tested for a binding */
 special_bound:
                 ii |= ME_SPECIAL;
-                
+
                 if (ShiftMask & ss)
                     ii |= ME_SHIFT;
                 if (ControlMask & ss)
                     ii |= ME_CONTROL;
                 if (Mod1Mask & ss)
                     ii |= ME_ALT;
-                
+
                 /* Key bound */
                 /* printf ("Testing ff/bound key to buffer %d(0x%04x)\n", ii, ii);*/
                 {
@@ -2110,9 +2118,12 @@ special_bound:
                     }
                 }
                 XFree(buff) ;
+
+                /* Always flag that we got the event */
+                clipState |= CLIP_RECEIVED ;
             }
-            /* Always flag that we got the event */
-            clipState |= CLIP_RECEIVED ;
+            else
+                xdndSelectionNotify (&event, meXEventGetFrame(&event));
             break ;
         }
 
@@ -2183,6 +2194,8 @@ special_bound:
                 /* printf("Got a SAVE_YOURSELF\n") ;*/
             }
         }
+        else
+           xdndClientMessage (&event, meXEventGetFrame(&event));
         break ;
     default:
         /* all events selected by StructureNotifyMask
@@ -2192,10 +2205,7 @@ special_bound:
     } /* end switch */
 }
 
-
 #endif
-
-
 
 #ifdef _ME_CONSOLE
 #ifdef _TCAP
@@ -2212,7 +2222,7 @@ static int
 TCAPgetattr (meTermio p, int isX)
 {
     int status;                         /* Status for attribute retrieval. */
-    
+
 #ifdef _TERMIOS
     if ((status = tcgetattr (0, p)) < 0)
 #else
@@ -2227,7 +2237,7 @@ TCAPgetattr (meTermio p, int isX)
         p->c_cflag = CS8|CREAD|HUPCL;
         /* Local modes */
         p->c_lflag = ISIG|ICANON|ECHO|ECHOE|ECHOK|ECHOCTL|ECHOKE;
-        
+
         /* Terminal special characters */
         p->c_cc [VINTR] = 'C' - '@';    /* C-c : CINTR */
         p->c_cc [VQUIT] = CQUIT;        /* FS, cntl | */
@@ -2257,18 +2267,18 @@ TCAPgetattr (meTermio p, int isX)
          * an interactive shell session. */
 #ifdef _HPUX
         /* HP-UX seems to be susceptible to "su" problems when running "me&".
-         * 
+         *
          * Fix any base modes in-case we have been started in the background.
          * At the very minimum we need to echo characters and process
          * concanical input. */
         p->c_iflag |= ICRNL;
         p->c_lflag |= ICANON|ECHO|ECHOK|ECHOE;
-#endif        
+#endif
         /* Correct the erase if it is defaulted */
         if (p->c_cc [VERASE] == 0x7f)
             p->c_cc [VERASE] = 'H' - '@';  /* Backspace */
     }
-    
+
     /* Logging for tracing the output of the termio statement at start-up. We
      * cannot dump onto stdio because it may not exist. */
 #if 0
@@ -2279,7 +2289,7 @@ TCAPgetattr (meTermio p, int isX)
 #define MECC_LEN NCCS
 #else
 #define MECC_LEN NCC
-#endif        
+#endif
         if ((fp = fopen ("/tmp/termio.out", "w")) != NULL)
         {
             fprintf (fp, "status = %d\n", status);
@@ -2287,7 +2297,7 @@ TCAPgetattr (meTermio p, int isX)
             fprintf (fp, "c_oflag = 0x%08x %011o\n", p->c_oflag, p->c_oflag);
             fprintf (fp, "c_cflag = 0x%08x %011o\n", p->c_cflag, p->c_cflag);
             fprintf (fp, "c_lflag = 0x%08x %011o\n", p->c_lflag, p->c_lflag);
-            
+
             for (ii = 0; ii < MECC_LEN; ii++)
                 fprintf (fp, "c_cc[%d] = 0x%08x %011o\n",
                          ii, p->c_cc[ii], p->c_cc[ii]);
@@ -2295,7 +2305,7 @@ TCAPgetattr (meTermio p, int isX)
         }
     }
 #endif
-    
+
     /* Return the status of the system call. */
     return status;
 }
@@ -2309,12 +2319,12 @@ TCAPstart(void)
     char *tv_stype;
     char err_str[72];
     int  ii ;
-    
+
     /* Get the attributes from the system */
 #ifdef _USG
     TCAPgetattr (&otermio, 0);
 #endif
-    
+
     /* default to use fonts - usually supports reverse */
     meSystemCfg &= ~meSYSTEM_RGBCOLOR ;
     meSystemCfg |= (meSYSTEM_CONSOLE|meSYSTEM_FONTS) ;
@@ -2346,7 +2356,7 @@ TCAPstart(void)
                 tcaptab[ii].code.str = NULL;
         }
     }
-            
+
     /* Make sure that there was sufficient buffer space to process the strings */
     if (p >= &tcapbuf[TCAPSLEN])
     {
@@ -2355,13 +2365,13 @@ TCAPstart(void)
         puts(err_str);
         meExit(1);
     }
-    
+
     /* Sort out the visibility flags. We must have both set or both NULL */
     if (tcaptab[TCAPcivis].code.str == NULL)
         tcaptab[TCAPcnorm].code.str = NULL;
     else if (tcaptab[TCAPcnorm].code.str == NULL)
         tcaptab[TCAPcivis].code.str = NULL;
-    
+
     /* Determine if there is a mechanism to enable and disable the automatic
      * margins. If there is then disable them now */
     if (tcaptab[TCAPam].code.value == 1)
@@ -2387,7 +2397,7 @@ TCAPstart(void)
         puts(err_str);
         meExit(1);
     }
-    
+
     /* Try and setup some of the standard keys like the cursor keys */
     {
         char buf[20] ;
@@ -2523,7 +2533,7 @@ TCAPopen(void)
          ioctl (0, TIOCSETD, &ldisc);
      }
 #endif /*  NTTYDISC/TIOCSETD */
-    
+
     /* If automatic margins are enabled then try to disable them */
     if ((tcaptab[TCAPam].code.value) &&
         (tcaptab[TCAPrmam].code.str != NULL) &&
@@ -2534,7 +2544,7 @@ TCAPopen(void)
         tcaptab[TCAPam].code.value = tgetnum(tcaptab[TCAPam].capKey);
         TTaMarginsDisabled = 1;
     }
-    
+
     /* Success */
     return meTRUE ;
 }
@@ -2549,10 +2559,10 @@ TCAPclose(void)
 {
     if(alarmState & meALARM_PIPED)
         return meTRUE ;
-    
+
     mlerase(MWERASE|MWCURSOR);
     TCAPschemeReset() ;
-    
+
 #if MEOPT_COLOR
     /* Restore the original colors */
     if (tcaptab[TCAPoc].code.str != NULL)/* Restore colors */
@@ -2560,7 +2570,7 @@ TCAPclose(void)
     if (tcaptab[TCAPop].code.str != NULL)/* Restore pairs */
         putpad(tcaptab[TCAPop].code.str) ;
 #endif
-    
+
     /* If automatic margins are disabled then try to enable them again */
     if (TTaMarginsDisabled != 0)
     {
@@ -2571,7 +2581,7 @@ TCAPclose(void)
         }
         TTaMarginsDisabled = 0;
     }
-    
+
     /* Restore the terminal modes */
 #ifdef _USG
 #ifdef _TERMIOS
@@ -2649,14 +2659,14 @@ TCAPaddColor(meUByte index, meUByte r, meUByte g, meUByte b)
 
     jdif = 256*256*3 ;                  /* Smallest least squares. */
     ss = tcapColors ;
-    
+
     /* To find the nearest color then use a least squares method. This
      * produces a better approximation than a straight forward color
      * differencing algorithm as it takes into account the variance. */
     for(ii=0 ; ii<tcapNumColors ; ii++)
     {
         int delta;
-        
+
         delta = r - *ss++;
         idif  = (delta * delta) ;
         delta = g - *ss++;
@@ -2694,13 +2704,13 @@ TCAPschemeSet(meScheme scheme)
     meStyle nstyle ;
 
     nstyle = meSchemeGetStyle(scheme) ;
-    
+
     /* Termcap fonts */
 #ifdef _TCAPFONT
     if(meSystemCfg & meSYSTEM_FONTS)
     {
         meUByte font ;
-        
+
         font = meStyleGetFont(nstyle) ;
         if(meSchemeTestNoFont(scheme))
             font &= ~(meFONT_BOLD|meFONT_ITALIC|meFONT_UNDERLINE) ;
@@ -2742,13 +2752,13 @@ TCAPschemeSet(meScheme scheme)
         }
     }
 #endif /* _TCAPFONT */
-    
+
     /* Termcap coloring */
-#if MEOPT_COLOR    
+#if MEOPT_COLOR
     if(meSystemCfg & meSYSTEM_ANSICOLOR)
     {
         meUByte col ;
-        
+
         /* Foreground color */
         col = colTable[meStyleGetFColor(nstyle)] ;
         if(oschemeFcol != col)
@@ -2766,7 +2776,7 @@ TCAPschemeSet(meScheme scheme)
             }
             oschemeFcol = col ;
         }
-        
+
         /* Background color */
         col = colTable[meStyleGetBColor(nstyle)] ;
         if(oschemeBcol != col)
@@ -2805,7 +2815,7 @@ TCAPschemeReset(void)
         oschemeFntr = 0 ;
     }
 #endif
-    
+
 #if MEOPT_COLOR
     if(meSystemCfg & meSYSTEM_ANSICOLOR)
     {
@@ -2814,7 +2824,7 @@ TCAPschemeReset(void)
             /* Disable the color mode */
             if (tcaptab[TCAPsgr0].code.str != NULL)
                 putpad (tcaptab[TCAPsgr0].code.str);
-            else 
+            else
                 putpad (RCOLSTR);
         }
     }
@@ -2833,7 +2843,7 @@ TCAPmove(int row, int col)
      * checking if we can move with attributes enabled, if this is not the
      * case then we need to reset out modes, move and then re-apply. The API
      * would be better served with a TCAPmoveScheme() where we could set the
-     * next scheme at the same time. Keep this for a rainy day !! */ 
+     * next scheme at the same time. Keep this for a rainy day !! */
     tputs(tgoto(tcaptab[TCAPcup].code.str,col,row),1,putchar);
 }
 
@@ -2903,7 +2913,6 @@ TTinitMouse(void)
 }
 #endif
 
-
 #ifdef _ME_WINDOW
 #ifdef _XTERM
 
@@ -2922,7 +2931,7 @@ XTERMsetFont(char *fontName)
     /* Load the basic font into the server */
     if((font=XLoadQueryFont(mecm.xdisplay,fontName)) == NULL)
         return meFALSE ;
-    
+
     /* Make sure that the font is legal and we do not get a divide by zero
      * error through zero width characters. */
     if ((font->ascent + font->descent == 0) ||
@@ -2931,7 +2940,7 @@ XTERMsetFont(char *fontName)
         XUnloadFont (mecm.xdisplay, font->fid);
         return meFALSE;
     }
-    
+
     /* Font is acceptable - continue to load. */
     mecm.ascent    = font->ascent ;
     mecm.descent   = font->descent ;
@@ -3000,7 +3009,6 @@ XTERMsetFont(char *fontName)
     return meTRUE;
 }
 
-
 static meFrameData *
 XTERMcreateWindow(meUShort width, meUShort depth)
 {
@@ -3008,10 +3016,10 @@ XTERMcreateWindow(meUShort width, meUShort depth)
     XClassHint *classHint ;
     Pixmap iconPixmap ;
     XWMHints wmHints ;
-    
+
     if((frameData = meMalloc(sizeof(meFrameData))) == NULL)
         return NULL ;
-    
+
     sizeHints.x = TTdefaultPosX ;
     sizeHints.y = TTdefaultPosY ;
     sizeHints.width  = width*mecm.fwidth ;
@@ -3026,10 +3034,13 @@ XTERMcreateWindow(meUShort width, meUShort depth)
     classHint->res_class = "MicroEmacs";
     XSetClassHint(mecm.xdisplay, frameData->xwindow, classHint);
     XFree(classHint);
-    
+
     XSetWMNormalHints(mecm.xdisplay,frameData->xwindow,&sizeHints);
-    
+
     XSetWMProtocols(mecm.xdisplay,frameData->xwindow,meAtoms,2) ;
+
+    /* Make the window DND aware */
+    xdndAware (frameData->xwindow);
 
     /* Map the  window  a.s.a.p.  cos  officially  we can't draw to the window
      * until we get an Expose event. As this is not checked for by mapping now
@@ -3051,7 +3062,7 @@ XTERMcreateWindow(meUShort width, meUShort depth)
         wmHints.icon_pixmap = iconPixmap ;
     }
     XSetWMHints(mecm.xdisplay,frameData->xwindow,&wmHints) ;
-    
+
     frameData->font = 0 ;
     frameData->fontId = mecm.fontId ;
     frameData->xgcv.font = mecm.fontId ;
@@ -3098,9 +3109,9 @@ meFrameXTermInit(meFrame *frame, meFrame *sibling)
         /* see if we are the current focus */
         XGetInputFocus(mecm.xdisplay,&fwin,&rtr) ;
         if(fwin == meFrameGetXWindow(frame))
-            frame->flags &= ~meFRAME_NOT_FOCUS ; 
+            frame->flags &= ~meFRAME_NOT_FOCUS ;
         else
-            frame->flags |= meFRAME_NOT_FOCUS ; 
+            frame->flags |= meFRAME_NOT_FOCUS ;
     }
     else
         /* internal frame, just copy the window handler */
@@ -3144,7 +3155,7 @@ XTERMstart(void)
 #ifdef _USG
     TCAPgetattr (&otermio, 1);
 #endif
-    
+
     /* Configure X-Windows */
     XSetLocaleModifiers ("");
     {
@@ -3157,6 +3168,7 @@ XTERMstart(void)
             exit(1) ;
         }
     }
+
     meStdin = ConnectionNumber(mecm.xdisplay);
     xscreen = DefaultScreen(mecm.xdisplay) ;
     xcmap   = DefaultColormap(mecm.xdisplay,xscreen) ;
@@ -3204,21 +3216,21 @@ XTERMstart(void)
     }
     else
         sizeHints.flags = PSize | PResizeInc | PMinSize | PBaseSize ;
-    
+
     if((ww*mecm.fwidth) > ((meUInt) sizeHints.max_width))
         ww = sizeHints.max_width / mecm.fwidth ;
     if((hh*mecm.fdepth) > ((meUInt) sizeHints.max_height))
         hh = sizeHints.max_height / mecm.fdepth ;
     TTdepthDefault = hh ;
     TTwidthDefault = ww ;
-    
+
     if(xx < 0)
         xx = sizeHints.max_width + xx - (ww * mecm.fwidth) ;
     if(yy < 0)
         yy = sizeHints.max_height + yy - (hh * mecm.fdepth) ; ;
     TTdefaultPosX = xx ;
     TTdefaultPosY = yy ;
-    
+
     /* Set up the  protocol  defaults  required. We must do this before we map
      * the window. */
     {
@@ -3236,7 +3248,10 @@ XTERMstart(void)
             meAtoms[ii] = XInternAtom(mecm.xdisplay,meAtomNames[ii], meFALSE);
         meAtoms[ii] = XA_STRING ;
     }
-    
+
+    /* Initialise XDND */
+    xdndInitialize (mecm.xdisplay);
+
     if(XrmGetResource(rdb,"MicroEmacs.name","MicroEmacs.Name",&retType,&retVal) &&
        !strcmp(retType,"String") &&
        ((ss = meStrdup((meUByte *) retVal.addr)) != NULL))
@@ -3245,13 +3260,13 @@ XTERMstart(void)
     if(XrmGetResource(rdb,"MicroEmacs.iconname","MicroEmacs.IconName",&retType,&retVal) &&
        !strcmp(retType,"String") && ((ss = meStrdup((meUByte *) retVal.addr)) != NULL))
         meIconName = ss ;
-    
+
     /* Free off the resource database */
     XrmDestroyDatabase(rdb) ;
-    
+
     if((firstFrameData = XTERMcreateWindow(TTwidthDefault,TTdepthDefault)) == NULL)
         return meFALSE ;
-    
+
 #ifdef _ME_CONSOLE
 #ifdef _TCAP
     /* When the xterm version of ME has to die using meDie (using killing it
@@ -3265,7 +3280,7 @@ XTERMstart(void)
     tcaptab[TCAPcup].code.str = "" ;
 #endif /* _TCAP */
 #endif /* _ME_CONSOLE */
-    
+
     return meTRUE ;
 }
 
@@ -3372,16 +3387,15 @@ meFrameXTermShowCursor(meFrame *frame)
     }
 }
 
-
 int
 changeFont(int f, int n)
 {
     meUByte        buff[meBUF_SIZE_MAX] ;            /* Input buffer */
-	
+
     if(meSystemCfg & meSYSTEM_CONSOLE)
         /* change-font not supported on termcap */
         return notAvailable(f,n) ;
-    
+
     /* Get the name of the font. If it is specified as default then
      * do not collect the remaining arguments */
     if(meGetString((meUByte *)"Font Name", 0, 0, buff, meBUF_SIZE_MAX) == meABORT)
@@ -3396,7 +3410,7 @@ changeFont(int f, int n)
      * base size, minimum size and increment size.
      */
     meFrameLoopBegin() ;
-    
+
     meFrameLoopContinue(loopFrame->flags & meFRAME_HIDDEN) ;
 
     meFrameSetWindowSize(loopFrame) ;
@@ -3406,9 +3420,9 @@ changeFont(int f, int n)
     meFrameSetXGCFontId(loopFrame,mecm.fontId) ;
     meFrameGetXGCValues(loopFrame).font = mecm.fontId ;
     XChangeGC(mecm.xdisplay,meFrameGetXGC(loopFrame),GCFont,&meFrameGetXGCValues(loopFrame)) ;
-    
+
     meFrameLoopEnd() ;
-    
+
     sgarbf = meTRUE;
 
     return meTRUE ;
@@ -3465,7 +3479,7 @@ XTERMaddColor(meColor index, meUByte r, meUByte g, meUByte b)
             for(ii=0 ; ii<noCells ; ii++)
             {
                 int delta;
-                
+
                 delta = ((int) *ss++) - ((int) r) ;
                 diff  = (delta * delta) ;
                 delta = ((int) *ss++) - ((int) g) ;
@@ -3485,19 +3499,19 @@ XTERMaddColor(meColor index, meUByte r, meUByte g, meUByte b)
 
     }
     colTable[index] = col.pixel ;
-    
+
     /* the default colors are created before the first frame is so check there is a frame */
     if(frameCur != NULL)
     {
         meFrameLoopBegin() ;
-        
+
         meFrameLoopContinue(loopFrame->flags & meFRAME_HIDDEN) ;
-        
+
         if(meFrameGetXGCFCol(loopFrame) == index)
             meFrameSetXGCFCol(loopFrame,meCOLOR_INVALID) ;
         if(meFrameGetXGCBCol(loopFrame) == index)
             meFrameSetXGCBCol(loopFrame,meCOLOR_INVALID) ;
-        
+
         meFrameLoopEnd() ;
     }
     return meTRUE ;
@@ -3507,7 +3521,7 @@ void
 XTERMsetBgcol(void)
 {
     meFrameLoopBegin() ;
-    
+
     meFrameLoopContinue(loopFrame->flags & meFRAME_HIDDEN) ;
 
     /* change the background */
@@ -3518,7 +3532,7 @@ XTERMsetBgcol(void)
 
 /*
  * meFrameSetWindowSize
- * 
+ *
  * Resize the width & depth of the frame window. If the resize has been
  * disabled (within the configureNotify event) then do not modify the window
  * size - this operation is performed elsewhere.
@@ -3528,7 +3542,7 @@ meFrameSetWindowSize(meFrame *frame)
 {
     if(
 #ifdef _ME_CONSOLE
-       !(meSystemCfg & meSYSTEM_CONSOLE) && 
+       !(meSystemCfg & meSYSTEM_CONSOLE) &&
 #endif /* _ME_CONSOLE */
        (disableResize == 0))
     {
@@ -3538,9 +3552,8 @@ meFrameSetWindowSize(meFrame *frame)
     }
 }
 
-
 /* meFrameSetWindowTitle
- * 
+ *
  * Put the name of the buffer into the window frame
  */
 void
@@ -3607,7 +3620,6 @@ TTgetClipboard(void)
 #endif
 
 #endif /* _XTERM */
-
 
 #ifdef _ME_CONSOLE
 /* Special TTstart when both console and window are enabled, Its purpose is to
@@ -3677,7 +3689,7 @@ TTwaitForChar(void)
 #endif
 #endif /* _XTERM */
 #endif /* _ME_WINDOW */
-        
+
         /* Must only do one at a time else if you get A key while autosaving
          * the key can be proccessed by TTahead and then you sit and wait
          * in TCAPwait
@@ -3693,7 +3705,7 @@ TTwaitForChar(void)
 #if MEOPT_MWFRAME
         /* if the user has changed the window focus using the OS
          * but ME can swap to this frame because there is an active frame
-         * then give a warning */ 
+         * then give a warning */
         if((frameFocus != NULL) && (frameFocus != frameCur))
         {
             meUByte scheme=(globScheme/meSCHEME_STYLES) ;
@@ -3708,13 +3720,12 @@ TTwaitForChar(void)
     }
 }
 
-
 void
 TTsleep(int  msec, int  intable, meVarList *waitVarList)
 {
     meUByte *ss ;
     int sgarbfOld ;
-    
+
     if(intable && ((kbdmode == mePLAY) || (clexec == meTRUE)))
         return ;
 
@@ -3725,7 +3736,7 @@ TTsleep(int  msec, int  intable, meVarList *waitVarList)
         timerKill(SLEEP_TIMER_ID) ;             /* Kill off the timer */
     else
         return ;
-    
+
     sgarbfOld = sgarbf ;
     sgarbf = meFALSE ;
     do
@@ -3800,7 +3811,7 @@ TTahead(void)
     {
 #ifdef _USEPOLL
         struct pollfd pfds [1];
-        
+
         /* Set up the poll structure */
         pfds[0].fd = meStdin;
         pfds[0].events = POLLIN;
@@ -3813,14 +3824,14 @@ TTahead(void)
             meUByte cc ;
 #ifdef _USEPOLL
             int status;                 /* Status of the input check */
-            
+
             status = poll (pfds, 1, 0);
             if ((status != 1) || ((pfds[0].revents & (POLLIN|POLLPRI)) == 0))
                 break;                  /* No data pending */
 #else
 #ifdef FIONREAD
             int status;                 /* Status of the input check */
-            
+
             if (ioctl(meStdin,FIONREAD,&status) < 0)
                 break;                  /* ioctl failed */
             if (status <= 0)
@@ -3834,7 +3845,7 @@ TTahead(void)
             if(read(meStdin,&cc,1) > 0)
                 addKeyToBuffer(cc) ;
         }
-        
+
         if(alarmState & meALARM_WINSIZE)
         {
             frameChangeWidth(meTRUE,TTnewWid-frameCur->width);     /* Change width */
@@ -3966,7 +3977,6 @@ TTopenClientServer (void)
     }
 }
 
-
 void
 TTkillClientServer(void)
 {
@@ -4071,30 +4081,30 @@ putenv (const char *string)
     char **p;                           /* Temp environment ptr */
     int len;                            /* Length of the string */
     int ii;                             /* Loop counter */
-    
+
     /* Test the string for a valid value */
     if ((string == NULL) || (*string == '\0'))
         return -1;
-    
+
     /* If the local environment space has not been set up then do so now */
     if (meEnviron == NULL)
     {
         int jj;
-        
+
         /* Count the number of entries */
         for (ii = 0, p = environ; *p != NULL; p++)
             ii++;
-        
+
         /* Allocate space */
         if ((meEnviron = meMalloc (sizeof (char *) * (ii + 1))) == NULL)
             return -1;
-        
+
         /* Initialise to NULL */
         jj = ii;
         do
             meEnviron[jj] = NULL;
         while (--jj >= 0);
-        
+
         /* Copy across the environment */
         for (jj = 0; jj < ii; jj++)
         {
@@ -4107,16 +4117,16 @@ putenv (const char *string)
             }
         }
     }
-    
+
     /* Now try and find an existing entry with the same name */
     for (len = 0; string[len] != '\0'; len++)
         if (string [len] == '=')
             break;
-    
+
     /* Test for valid putenv value */
     if (string[len] == '\0')
         return -1;                      /* Invalid string */
-    
+
     /* Try and locate the environment value in the existing environment */
     for (ii = 0, p = meEnviron; (*p != NULL); ii++, p++)
     {
@@ -4128,12 +4138,12 @@ putenv (const char *string)
             return (0);
         }
     }
-    
+
     /* The variable value does not exist in the environment, make a new entry.
      * First re-size the environment. */
     if ((p = meRealloc (meEnviron, (ii+2) * sizeof (char *))) == NULL)
         return -1;
-    
+
     /* Inherit the new environment and add the new variable. */
     meEnviron = p;
     meEnviron [ii] = string;
@@ -4148,11 +4158,11 @@ megetenv (const char *string)
     {
         char **p;
         int len;
-        
+
         /* Test the string for a valid value */
         if ((string == NULL) || (*string == '\0'))
             return NULL;
-        
+
         /* Get the length of the string for the search */
         len = strlen (string);
         if ((p = meEnviron) != NULL)
@@ -4169,4 +4179,607 @@ megetenv (const char *string)
     }
     return (getenv(string));
 }
+#endif
+
+/***************************************************************************
+ * XDND Functions                                                          *
+ *                                                                         *
+ * XDND defines the X-Windows drag 'n' drop extensions and is based        *
+ * heavily on the work done by Paul Sheer especially files xdnd.h and      *
+ * xdnd.c which have been picked over and reduced to the minimum to        *
+ * support the xdnd drop protocol.                                         *
+ *                                                                         *
+ * The coupling to unixterm.c has been minimised as much as possible to    *
+ * reduce the complexity of the code and allow the xdnd code to be         *
+ * conditionally included.                                                 *
+ ***************************************************************************/
+
+#if (defined _DRAGNDROP) && (defined _XTERM)
+
+/* you can set this to either 2 (which support 0 and 1 as well) or 3 */
+/*#define XDND_VERSION 2*/
+#define XDND_VERSION 3
+
+/* XdndEnter */
+#define XDND_THREE 3
+#define XDND_ENTER_SOURCE_WIN(e)	((e)->xclient.data.l[0])
+#define XDND_ENTER_THREE_TYPES(e)	(((e)->xclient.data.l[1] & 0x1UL) == 0)
+#define XDND_ENTER_THREE_TYPES_SET(e,b)	(e)->xclient.data.l[1] = ((e)->xclient.data.l[1] & ~0x1UL) | (((b) == 0) ? 0 : 0x1UL)
+#define XDND_ENTER_VERSION(e)		((e)->xclient.data.l[1] >> 24)
+#define XDND_ENTER_VERSION_SET(e,v)	(e)->xclient.data.l[1] = ((e)->xclient.data.l[1] & ~(0xFF << 24)) | ((v) << 24)
+#define XDND_ENTER_TYPE(e,i)		((e)->xclient.data.l[2 + i])	/* i => (0, 1, 2) */
+
+/* XdndPosition */
+#define XDND_POSITION_SOURCE_WIN(e)	((e)->xclient.data.l[0])
+#define XDND_POSITION_ROOT_X(e)		((e)->xclient.data.l[2] >> 16)
+#define XDND_POSITION_ROOT_Y(e)		((e)->xclient.data.l[2] & 0xFFFFUL)
+#define XDND_POSITION_ROOT_SET(e,x,y)	(e)->xclient.data.l[2]  = ((x) << 16) | ((y) & 0xFFFFUL)
+#define XDND_POSITION_TIME(e)		((e)->xclient.data.l[3])
+#define XDND_POSITION_ACTION(e)		((e)->xclient.data.l[4])
+
+/* XdndStatus */
+#define XDND_STATUS_TARGET_WIN(e)	((e)->xclient.data.l[0])
+#define XDND_STATUS_WILL_ACCEPT(e)	((e)->xclient.data.l[1] & 0x1L)
+#define XDND_STATUS_WILL_ACCEPT_SET(e,b) (e)->xclient.data.l[1] = ((e)->xclient.data.l[1] & ~0x1UL) | (((b) == 0) ? 0 : 0x1UL)
+#define XDND_STATUS_WANT_POSITION(e)	((e)->xclient.data.l[1] & 0x2UL)
+#define XDND_STATUS_WANT_POSITION_SET(e,b) (e)->xclient.data.l[1] = ((e)->xclient.data.l[1] & ~0x2UL) | (((b) == 0) ? 0 : 0x2UL)
+#define XDND_STATUS_RECT_X(e)		((e)->xclient.data.l[2] >> 16)
+#define XDND_STATUS_RECT_Y(e)		((e)->xclient.data.l[2] & 0xFFFFL)
+#define XDND_STATUS_RECT_WIDTH(e)	((e)->xclient.data.l[3] >> 16)
+#define XDND_STATUS_RECT_HEIGHT(e)	((e)->xclient.data.l[3] & 0xFFFFL)
+#define XDND_STATUS_RECT_SET(e,x,y,w,h)	{(e)->xclient.data.l[2] = ((x) << 16) | ((y) & 0xFFFFUL); (e)->xclient.data.l[3] = ((w) << 16) | ((h) & 0xFFFFUL); }
+#define XDND_STATUS_ACTION(e)		((e)->xclient.data.l[4])
+
+/* XdndLeave */
+#define XDND_LEAVE_SOURCE_WIN(e)	((e)->xclient.data.l[0])
+
+/* XdndDrop */
+#define XDND_DROP_SOURCE_WIN(e)		((e)->xclient.data.l[0])
+#define XDND_DROP_TIME(e)		((e)->xclient.data.l[2])
+
+/* XdndFinished */
+#define XDND_FINISHED_TARGET_WIN(e)	((e)->xclient.data.l[0])
+
+/* Debugging */
+/*#define DEBUGOUT(x) (printf x, fflush (stdout))*/
+/*#define XWARNING(x) (printf x, fflush (stdout))*/
+#define DEBUGOUT(x)
+#define XWARNING(x)
+
+typedef struct _DndClass DndClass;
+struct _DndClass
+{
+    /**< The X-Windows display. */
+    Display *display;
+
+    /**< The atom identities. */
+    Atom XdndAware;
+    Atom XdndSelection;
+    Atom XdndEnter;
+    Atom XdndLeave;
+    Atom XdndPosition;
+    Atom XdndDrop;
+    Atom XdndFinished;
+    Atom XdndStatus;
+    Atom XdndActionCopy;
+    /* Atom XdndActionMove;*/
+    /* Atom XdndActionLink;*/
+    /* Atom XdndActionAsk;*/
+    /* Atom XdndActionPrivate;*/
+    /* Atom XdndTypeList;*/
+    /* Atom XdndActionList;*/
+    /* Atom XdndActionDescription;*/
+
+    Atom Xdnd_NON_PROTOCOL_ATOM;
+    Atom Xdnd_text_uri_list;
+
+    /**< The version of DND we are using. */
+    Atom version;
+
+    /**< The XDND processing step. */
+#define XDND_DROP_STAGE_IDLE		0
+#define XDND_DRAG_STAGE_DRAGGING	1
+#define XDND_DRAG_STAGE_ENTERED		2
+#define XDND_DROP_STAGE_CONVERTING	3
+#define XDND_DROP_STAGE_ENTERED		4
+    int stage;
+
+    /**< The window of the dragging source */
+    Window dragger_window;
+
+    /**< The dragger display */
+    Display *dragger_display;
+
+    /**< The window where the drop may occur. */
+    Window dropper_window;
+
+    /**< The XDND version of the dragging window */
+    Atom dragging_version;
+
+    /**< The Drop mouse position. */
+    int drop_x;
+    int drop_y;
+};
+
+/* The XDND class information used for intermediate state processing. */
+static DndClass dnd;
+
+/**
+ * Get the position relative to the window.
+ *
+ * @param w     The window we are computing.
+ * @param x_rel Relative X-coordinate.
+ * @param y_rel Relative y-coordinate.
+ */
+static void
+xdndWindowOffset (Window w, int *xp, int *yp)
+{
+    Display *d;
+    Window root, parent;
+    int x, y;
+
+    DEBUGOUT(("%s:%d: xdndWindowOffset\n", __FILE__, __LINE__));
+
+    d = dnd.dragger_display;
+    x = dnd.drop_x;
+    y = dnd.drop_y;
+    if (d == NULL || w == 0)
+        return;
+    /* Iterate over the tree until we get to the root window. */
+    do
+    {
+        Window *children;
+        unsigned int nchildren, width, height, border, depth;
+        int rel_x, rel_y;
+
+        rel_x = rel_y = 0;
+        if (!XQueryTree(d, w, &root, &parent, &children, &nchildren))
+            return;
+        if (children)
+            XFree(children);
+        /* Retrive the geometry information about the window */
+        if (!XGetGeometry (d, w, &root, &rel_x, &rel_y,
+                           &width, &height, &border, &depth))
+            return;
+        DEBUGOUT(("%s:%d: %d %d\n", __FILE__, __LINE__, rel_x, rel_y));
+        x -= rel_x;
+        y -= rel_y;
+        w = parent;
+    }
+    while (parent != root);
+    *xp = x;
+    *yp = y;
+    DEBUGOUT(("%s:%d: xdndWindowOffset (%d,%d)\n",
+              __FILE__, __LINE__, x, y));
+}
+
+/**
+ * Reset the DND structure.
+ *
+ * @param dnd The drag'n'drop class to be initialised.
+ */
+static void
+xdndReset (DndClass *dnd)
+{
+    dnd->stage = XDND_DROP_STAGE_IDLE;
+    dnd->dragging_version = 0;
+    dnd->dropper_window = 0;
+    dnd->dragger_window = 0;
+    dnd->dragger_display = NULL;
+}
+
+/**
+ * Initialise the xdnd component. Saves the X-display value, initialises
+ * structures and installs the X-Atoms required by DND.
+ *
+ * @param display The X-Windows display.
+ */
+static void
+xdndInitialize (Display *display)
+{
+    DEBUGOUT(("%s:%d: xdndInitialize\n", __FILE__, __LINE__));
+
+    memset (&dnd, 0, sizeof (dnd));
+
+    /* Initialise the display */
+    dnd.display = display;
+    dnd.version = XDND_VERSION;
+
+    /* Register the atoms. */
+    dnd.XdndAware = XInternAtom (dnd.display, "XdndAware", False);
+    dnd.XdndSelection = XInternAtom (dnd.display, "XdndSelection", False);
+    dnd.XdndEnter = XInternAtom (dnd.display, "XdndEnter", False);
+    dnd.XdndLeave = XInternAtom (dnd.display, "XdndLeave", False);
+    dnd.XdndPosition = XInternAtom (dnd.display, "XdndPosition", False);
+    dnd.XdndDrop = XInternAtom (dnd.display, "XdndDrop", False);
+    dnd.XdndFinished = XInternAtom (dnd.display, "XdndFinished", False);
+    dnd.XdndStatus = XInternAtom (dnd.display, "XdndStatus", False);
+    dnd.XdndActionCopy = XInternAtom (dnd.display, "XdndActionCopy", False);
+    /* dnd.XdndActionMove = XInternAtom (dnd.display, "XdndActionMove", False);*/
+    /* dnd.XdndActionLink = XInternAtom (dnd.display, "XdndActionLink", False);*/
+    /* dnd.XdndActionAsk = XInternAtom (dnd.display, "XdndActionAsk", False);*/
+    /* dnd.XdndActionPrivate = XInternAtom (dnd.display, "XdndActionPrivate", False);*/
+    /* dnd.XdndTypeList = XInternAtom (dnd.display, "XdndTypeList", False);*/
+    /* dnd.XdndActionList = XInternAtom (dnd.display, "XdndActionList", False);*/
+    /* dnd.XdndActionDescription = XInternAtom (dnd.display, "XdndActionDescription", False);*/
+
+    dnd.Xdnd_NON_PROTOCOL_ATOM = XInternAtom (dnd.display, "meSelectionProperty", False);
+    dnd.Xdnd_text_uri_list = XInternAtom (dnd.display, "text/uri-list", False);
+
+    /* Initialise the state */
+    xdndReset (&dnd);
+}
+
+/**
+ * Make the X-Window DND aware.
+ *
+ * @param window The X-Window.
+ */
+static void
+xdndAware (Window window)
+{
+    DEBUGOUT(("%s:%d: xdndAware\n", __FILE__, __LINE__));
+
+    /* Signal the window as XDND aware. */
+    XChangeProperty (dnd.display, window, dnd.XdndAware, XA_ATOM, 32,
+                     PropModeReplace, (unsigned char *) &dnd.version, 1);
+}
+
+/**
+ * Send a finsihed message to the calling window.
+ *
+ * @param  window  The desination window.
+ * @param  from    The originating window.
+ */
+static void
+xdndSendFinished (Window window, Window from)
+{
+    XEvent xevent;
+
+    DEBUGOUT(("%s:%d: xdndSendFinished\n", __FILE__, __LINE__));
+
+    memset (&xevent, 0, sizeof (xevent));
+
+    xevent.xany.type = ClientMessage;
+    xevent.xany.display = dnd.display;
+    xevent.xclient.window = window;
+    xevent.xclient.message_type = dnd.XdndFinished;
+    xevent.xclient.format = 32;
+
+    XDND_FINISHED_TARGET_WIN (&xevent) = from;
+
+    XSendEvent (dnd.display, window, 0, 0, &xevent);
+}
+
+/**
+ * Handle a client message from the X-server.
+ *
+ * @param xevent The X-event.
+ * @param frame  The frame associated with the event..
+ *
+ * @return The processing state of the event.
+ * @retval 0 The event was not processed.
+ * @retval 1 The event was processed.
+ */
+static int
+xdndClientMessage (XEvent *xevent, meFrame *frame)
+{
+    int processed = 0;
+
+    DEBUGOUT(("%s:%d: got ClientMessage\n", __FILE__, __LINE__));
+    if (frame == NULL)
+        DEBUGOUT(("%s:%d: NULL Frame \n", __FILE__, __LINE__));
+    else if (xevent->xclient.message_type == dnd.XdndEnter)
+    {
+        DEBUGOUT(("%s:%d: message_type is XdndEnter\n", __FILE__, __LINE__));
+
+        /* Start the DND transaction again */
+        xdndReset (&dnd);
+        dnd.dragger_window = XDND_ENTER_SOURCE_WIN (xevent);
+        dnd.dropper_window = xevent->xany.window;
+        /* TODO: Ckeck the types */
+        dnd.dragging_version = XDND_ENTER_VERSION (xevent);
+        dnd.stage = XDND_DROP_STAGE_ENTERED;
+        processed = 1;
+    }
+    else if (xevent->xclient.message_type == dnd.XdndLeave)
+    {
+        DEBUGOUT(("%s:%d: message_type is XdndLeave\n", __FILE__, __LINE__));
+        if ((dnd.dragger_window == XDND_LEAVE_SOURCE_WIN (xevent)) &&
+            (dnd.stage == XDND_DROP_STAGE_ENTERED))
+        {
+            DEBUGOUT(("%s:%d: leaving\n", __FILE__, __LINE__));
+
+            /* Left the window. Reset the dnd transaction. */
+            dnd.stage = XDND_DROP_STAGE_IDLE;
+            processed = 1;
+        }
+        else
+            DEBUGOUT(("%s:%d: wrong stage or from wrong window\n",
+                      __FILE__, __LINE__));
+    }
+    else if (xevent->xclient.message_type == dnd.XdndPosition)
+    {
+        DEBUGOUT(("%s:%d: message_type is XdndPosition\n",
+                  __FILE__, __LINE__));
+        if ((dnd.dragger_window == XDND_POSITION_SOURCE_WIN (xevent)) &&
+            (dnd.stage == XDND_DROP_STAGE_ENTERED))
+        {
+            XEvent revent;              /* Return event. */
+            Display *d;
+            Window w;
+
+            d = xevent->xany.display;
+            w = xevent->xany.window;
+
+            /* Save the position information relative to the window. */
+            dnd.drop_x = (xevent->xclient.data.l[2] >> 16) & 0xffff;
+            dnd.drop_y = (xevent->xclient.data.l[2]) & 0xffff;
+            dnd.dragger_display = d;
+            DEBUGOUT(("%s:%d: positioning (%d,%d)\n",
+                      __FILE__, __LINE__, dnd.drop_x, dnd.drop_y));
+
+            /* Acknowledge that we will accept the event. */
+            memset (&revent, 0, sizeof (revent));
+            revent.xany.type = ClientMessage;
+            revent.xany.display = dnd.display;
+            revent.xclient.message_type = dnd.XdndStatus;
+            revent.xclient.window = xevent->xclient.data.l[0];
+            revent.xclient.format = 32;
+
+            XDND_STATUS_TARGET_WIN (&revent) = w;
+            XDND_STATUS_WILL_ACCEPT_SET (&revent, 1);
+            XDND_STATUS_WANT_POSITION_SET (&revent, 0);
+            if (dnd.dragging_version >= 2)
+                XDND_STATUS_ACTION (&revent) = dnd.XdndActionCopy;
+
+            /* Send the event to the client window */
+            XSendEvent (d, revent.xclient.window, 0, 0, &revent);
+
+            processed = 1;
+        }
+        else
+            DEBUGOUT(("%s:%d: wrong stage or from wrong window\n",
+                      __FILE__, __LINE__));
+    }
+    else if (xevent->xclient.message_type == dnd.XdndDrop)
+    {
+        DEBUGOUT(("%s:%d:  message_type is XdndDrop\n", __FILE__, __LINE__));
+        if ((dnd.dragger_window == XDND_DROP_SOURCE_WIN (xevent)) &&
+            (dnd.stage == XDND_DROP_STAGE_ENTERED))
+        {
+            /* Convert to a selection event. */
+            XConvertSelection (xevent->xany.display, dnd.XdndSelection,
+                               dnd.Xdnd_text_uri_list, dnd.Xdnd_NON_PROTOCOL_ATOM,
+                               xevent->xany.window, /*xevent->xclient.data.l[2]*/
+                               CurrentTime);
+            dnd.stage = XDND_DROP_STAGE_CONVERTING;
+            processed = 1;
+        }
+        else
+            DEBUGOUT(("%s:%d: wrong stage or from wrong window\n",
+                      __FILE__, __LINE__));
+    }
+    else
+        DEBUGOUT(("%s:%d: Not a xdnd message %d\n",
+                  __FILE__, __LINE__, xevent->xclient.message_type));
+
+    return processed;
+}
+
+/**
+ * Push the file onto the Drag and drop list.
+ *
+ * @param frame The microemacs frame.
+ * @param mouse x position.
+ * @param mouse y position.
+ * @param filename The filename to be pushed.
+ */
+static void
+xdndPushFile (meFrame *frame, int x, int y, char *filename)
+{
+    struct s_DragAndDrop *dadp;         /* Drag and drop pointer */
+    int len;
+
+    len = meStrlen (filename);
+
+    /* Get the drag and drop buffer and add to the list */
+    if ((dadp = (struct s_DragAndDrop *) meMalloc (sizeof(struct s_DragAndDrop)
+                                                   + len)) == NULL)
+        return;
+
+    /* See if this is a local file object expressed as a URL. */
+    if ((len >= 7) &&
+        ((filename[0] == 'f') || (filename[0] == 'F')) &&
+        ((filename[1] == 'i') || (filename[1] == 'I')) &&
+        ((filename[2] == 'l') || (filename[2] == 'L')) &&
+        ((filename[3] == 'e') || (filename[3] == 'E')) &&
+        (filename[4] == ':') &&
+        (filename[5] == '/') &&
+        (filename[6] == '/'))
+    {
+        char *p, *q;                    /* Working loop pointers */
+
+        /* This is a local file URL. Remove the special URL characters of %xx
+         * where x is a hexadecimal character. */
+        p = &filename[7];
+        q = &dadp->fname[0];
+        while ((*q = *p++) != '\0')
+        {
+            if ((*q == '%') && isXDigit (p[0]) && isXDigit (p[1]))
+            {
+                *q++ = (hexToNum (p[0]) << 4) | hexToNum (p[1]);
+                p += 2;
+            }
+            else
+                q++;
+        }
+    }
+    else
+    {
+        /* Simply copy the name. This may be a http: or ftp: type file. */
+        meStrcpy (&dadp->fname[0], filename);
+    }
+
+    /* Add the dad structure to the list of pending files awaiting
+     * processing. */
+    dadp->mouse_x = x;
+    dadp->mouse_y = y;
+    dadp->frame = frame;
+    dadp->next = dadHead;
+    dadHead = dadp;
+    DEBUGOUT(("%s:%d: xdndPushFile \"%s\"\n", __FILE__, __LINE__, dadp->fname));
+}
+
+/**
+ * Selection event occured.
+ *
+ * @param xevent The X-event.
+ * @param frame  The frame associated with the event.
+ *
+ * @return The processing state of the event.
+ * @retval 0 The event was not processed.
+ * @retval 1 The event was processed.
+ */
+static int
+xdndSelectionNotify (XEvent *xevent, meFrame *frame)
+{
+    int processed = 0;
+
+    if (xevent->type == SelectionNotify)
+    {
+	DEBUGOUT(("%s:%d: got SelectionNotify\n", __FILE__, __LINE__));
+	if ((xevent->xselection.property == dnd.Xdnd_NON_PROTOCOL_ATOM) &&
+            (dnd.stage == XDND_DROP_STAGE_CONVERTING) && (frame != NULL))
+        {
+            long read;                  /* Number of bytes read */
+            unsigned long remaining;    /* Number of remaining calls */
+            char *buf = NULL;           /* Expanded buffer */
+            char *start;                /* Start of the filename */
+            char *end;                  /* End of the filename */
+
+            DEBUGOUT(("%s:%d: property is Xdnd_NON_PROTOCOL_ATOM"
+                      " - getting selection\n", __FILE__, __LINE__));
+
+            read = 0;
+            do
+            {
+                unsigned char *s = NULL;
+                Atom actual;
+                int format;
+                unsigned long count;
+
+                /* Retrive the file information from the property window */
+                if (XGetWindowProperty (dnd.display,
+                                        xevent->xany.window,
+                                        xevent->xselection.property,
+                                        read, 65536, True,
+                                        dnd.Xdnd_text_uri_list,
+                                        &actual, &format, &count, &remaining, &s) != Success)
+                {
+                    if (s != NULL)
+                        XFree (s);
+                    DEBUGOUT(("%s:%d: ERROR: count=%d remaining=%d read=%d format=%d\n",
+                              __FILE__, __LINE__, count, remaining, read, format));
+                    return 1;
+                }
+                DEBUGOUT(("%s:%d: count=%d remaining=%d read=%d format=%d\n",
+                          __FILE__, __LINE__, count, remaining, read, format));
+
+                /* Build the buffer by concatinating the data extracted from
+                 * the call into a linear buffer space. */
+                if ((count > 0) && (format == 8))
+                {
+                    int oread = read;
+                    char *p;
+                    read += count;
+
+                    if (buf == NULL)
+                    {
+                        p = malloc (count);
+                        if (p != NULL)
+                        {
+                            buf = p;
+                            memcpy (buf, s, count);
+                        }
+                    }
+                    else if ((p = realloc (buf, read)) != NULL)
+                    {
+                        buf = p;
+                        memcpy (&buf[oread], s, count);
+                    }
+                }
+
+                /* Free off the X data */
+                if (s != NULL)
+                    XFree (s);
+            } while (remaining != 0);
+
+            /* Extract all of the files from the composed buffer. */
+            if (buf != NULL)
+            {
+                int x, y;               /* Position of the cursor. */
+
+                /* XDND provides us with an absolute screen coordinate, this
+                 * needs to be changed relative to the window. */
+                x = dnd.drop_x;
+                y = dnd.drop_y;
+                xdndWindowOffset (xevent->xany.window, &x, &y);
+
+                /* Unpack the buffer into files. */
+                start = buf;
+                end = start;
+                for (;;)
+                {
+                    if ((*end == '\r') || (*end == '\n'))
+                    {
+                        *end = '\0';
+                        if (start != end)
+                        {
+                            /* Push the file ready for processing */
+                            xdndPushFile (frame, x, y, start);
+                            DEBUGOUT(("%s:%d: FILE: (%d,%d) %s\n",
+                                      __FILE__, __LINE__, x, y, start));
+                        }
+
+                        start = end+1;
+                        while ((*start == '\r') || (*start == '\n'))
+                            start++;
+                        if (*start == '\0')
+                            break;
+                        end = start;
+                    }
+                    else if (*end == '\0')
+                        break;
+                    else
+                        end++;
+                }
+                free (buf);
+            }
+
+	    /* Tell the client that we have finished. */
+            if (dnd.dragging_version >= 2)
+		xdndSendFinished (dnd.dragger_window, dnd.dropper_window);
+
+            /* Clean up the transaction. */
+            xdndReset (&dnd);
+	    dnd.stage = XDND_DROP_STAGE_IDLE;
+            processed = 1;
+
+            /* Flush the input queue, send an abort to kill any command off.
+             * The drag and drop list is processed once we return to a base
+             * state. */
+            if (dadHead != NULL)
+                addKeyToBuffer(breakc);  /* Break character (ctrl-G) */
+        }
+        else
+        {
+	    DEBUGOUT(("%s:%d: property is not Xdnd_NON_PROTOCOL_ATOM"
+                      " - ignoring (%d/0x%08x)\n", __FILE__, __LINE__,
+                      xevent->xselection.property, xevent->xselection.property));
+	}
+    }
+    return processed;
+}
+
 #endif

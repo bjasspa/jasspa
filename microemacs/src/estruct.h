@@ -1260,4 +1260,26 @@ typedef struct meRegNode
 
 #endif
 
-
+#ifdef _DRAGNDROP
+/* Retain a list of drag and drop files with thier raw screen position and
+ * filename for subsequent processing. This is a single linked list of
+ * filenames and screen positions. */
+struct s_DragAndDrop
+{
+    struct s_DragAndDrop *next;         /* Next drag and drop event */
+#ifdef _WIN32
+    /* In MS-Windows then the recieving window is raised and has focus so we
+     * do not need to send the frame as this is always the current frame
+     * (where we have multiple frames) */
+    POINT mousePos;                     /* Position of the mouse */
+#else
+    /* In UNIX then the receiving frame does not gain focus automatically
+     * hence we need to keep the frame information where we are running
+     * multiple frames. */
+    meUShort mouse_x;
+    meUShort mouse_y;
+    meFrame *frame;                     /* Eventing Frame */
+#endif
+    meUByte fname[1];                   /* Filename */
+};
+#endif

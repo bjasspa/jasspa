@@ -424,6 +424,10 @@ extern int        osdRow ;              /* The osd current row */
 #define MLSTATUS_NINPUT  0x20
 #define MLSTATUS_OSDPOS  0x40
 
+#ifdef _DRAGNDROP
+extern struct s_DragAndDrop *dadHead;   /* Drag and drop list */
+#endif
+
 /**************************************************************************
 * Constant declarations for the external definitions above. These are     *
 * only processed in main.c                                                *
@@ -838,4 +842,9 @@ meUByte   resultStr[meBUF_SIZE_MAX];    /* Result string from commands  */
 #ifdef _CLIPBRD
 meUByte   clipState=0;                  /* clipboard status flag        */
 #endif
+
+#ifdef _DRAGNDROP
+struct s_DragAndDrop *dadHead = NULL;   /* Drag and drop list           */
+#endif
+
 #endif

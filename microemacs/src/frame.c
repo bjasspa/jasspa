@@ -575,8 +575,16 @@ meFrameDelete(meFrame *frame, int flags)
     return meTRUE ;
 }
 
+/*
+ * Make the frame current.
+ * 
+ * The quiet flag performs a frame swap but does not call the terminal driver
+ * to raise the window. This is used in the UNIX drag and drop so that the
+ * desktop window order is not changed while the drag and drop files are being
+ * inserted into the appropriate window(s).
+ */
 void
-meFrameMakeCur(meFrame *frame)
+meFrameMakeCur(meFrame *frame, int quiet)
 {
     if(frame != frameCur)
     {
@@ -600,7 +608,12 @@ meFrameMakeCur(meFrame *frame)
             ff->flags |= meFRAME_HIDDEN ;
         }            
         if(frame->mainId != frameCur->mainId)
-            meFrameTermMakeCur(frame) ;
+        {
+            /* A quiet operation will not change the terminal to perform the
+             * swap */
+            if (!quiet)
+                meFrameTermMakeCur(frame) ;
+        }
 #if MEOPT_MWFRAME
         else
             frameFocus = frame ;
@@ -642,7 +655,7 @@ frameCreate(int f, int n)
     frame->next = frameCur->next ;
     restoreWindWSet(frame->windowCur,frameCur->windowCur) ;
     frameCur->next = frame ;
-    meFrameMakeCur(frame) ;
+    meFrameMakeCur(frame, 0) ;
     if(menuDepth)
         frameSetupMenuLine(menuDepth) ;
     sgarbf = meTRUE;                      /* Garbage the screen */
@@ -684,7 +697,7 @@ frameNext(int f, int n)
                  ((frame->flags & meFRAME_HIDDEN) == 0)))
             break ;
     }
-    meFrameMakeCur(frame) ;
+    meFrameMakeCur(frame, 0) ;
     return meTRUE ;
 }
 
