@@ -4,10 +4,18 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <040318.2253>
+>  Last Modified : <040324.0028>
 >
 
 7th Release - March 2004
+
+    [040322] Changed the interface to cvs, ftp and file-browser command so that
+             if a  numeric  argument  of 0 is given  then the  directory  tree
+             window is not opened, just the *files* buffer.
+
+    [040322] AutoIt hook. Thanks to Dr Detlef Groth.
+
+    [040322] Added CSS template. Thanks to Gabriel Tabares-Barreiro.
 
     [040318] Fix to Microsoft Windows clipboard when operating with VNC.
 
