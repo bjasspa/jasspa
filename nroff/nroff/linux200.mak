@@ -1,6 +1,6 @@
 #____________________________________________________________________________
 #
-# Last Edited <020310.1002>
+# Last Edited <040207.1236>
 #
 # Nroff tools makefile.
 #____________________________________________________________________________
@@ -30,7 +30,8 @@ TEXEXES	=	nr2tex$(EXE)
 HTMEXES	=	nr2html$(EXE)	htmlc$(EXE)
 MANEXES	=	superman$(EXE)	droff$(EXE)
 TOLEXES	=	nrsearch$(EXE)	nrinfo$(EXE)	nrcheck$(EXE)	ntags$(EXE) \
-		nrorder$(EXE)	difftags$(EXE)	nrar$(EXE)	hts2html$(EXE)
+		nrorder$(EXE)	difftags$(EXE)	nrar$(EXE)	hts2html$(EXE) \
+		hts$(EXE)
 LOCLEXES=	table$(EXE)
 ALLEXES	=	$(RTFEXES) $(HTMEXES) $(MANEXES) $(TOLEXES) \
 		$(CANEXES) $(TEXEXES) $(LOCLEXES)
