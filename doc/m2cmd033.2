@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Jul 25 00:00:27 1998
 .\"
-.Id $Id: m2cmd033.2,v 2.11 2005-02-08 23:58:14 jon Exp $
+.Id $Id: m2cmd033.2,v 2.12 2005-02-10 22:45:13 jon Exp $
 .Im MicroEmacs command|indent|scuts
 .so me.tni
 .TH indent 2
@@ -135,6 +135,10 @@ look-back scheme.
 "\|\fIbrace\fR\|"
 .br
 .B indent
+.C e
+"\|\fIbraceStatement\fR\|"
+.br
+.B indent
 .C w
 "\|\fIswitch\fR\|"
 .br
@@ -243,29 +247,10 @@ longVariable = LongFunctionNameWhichMeans(isSoFar,
 Where by the second argument indent has been  artificially  reduced because of
 it's length.
 .TP
-\fBindent\fR \fC"b"\fR \|\fIbrace\fR (=-t)
+\fBindent\fR \fC"b"\fR \|\fIbrace\fR (=0)
 .\"
-Sets the indent of a '\fC{\fR' and a '\fC}\fR' on a new line, from the current
-indent. For example, using a
-.Ht $buffer-indent-width 5
-of 4 if the current  indent was 20 then a line  starting with a '\fC{\fR' or a
-\'\fC}\fR' would be indented to 16, i.e.
-.ne 7
-.RS
-.CS
-                    xxxxxxxxxxx
-                    xxxxxxxxxxx
-                { xxxxxxxxxxx
-                    xxxxxxxxxxx
-                } xxxxxxxxxxx
-                    xxxxxxxxxxx
-.CE 0
-.RE
-.IP
-This may seem  strange,  but the  current  indent  is the  indent  of the last
-\'\fC{\fR' (or "\fCif\fR", "\fCelse\fR" etc.) a \fIstatement\fR
-which is 4, so this  brings it back into line with  '\fC{\fR''s,  "\fCif\fR"'s
-and "\fCelse\fR"'s etc., e.g.
+Sets the indent of a '\fC{\fR'  and a '\fC}\fR' on a new line from the current
+statement indent. For example, a value of 0 results in the following 
 .ne 6
 .RS
 .CS
@@ -277,7 +262,7 @@ and "\fCelse\fR"'s etc., e.g.
 .CE 0
 .RE
 .IP
-With a setting of -2, this would become:-
+With a setting of 2, this would become:-
 .ne 6
 .RS
 .CS
@@ -289,19 +274,24 @@ With a setting of -2, this would become:-
 .CE 0
 .RE
 .IP
-This works in conjunction  with  \fIstatement\fR  a change to  \fIstatement\fR
-will change the position of '\fC{\fR's. In summary:
+This works in conjunction  with  \fIstatement\fR  and  \fIbraceStatement\fR  a
+change to \fIstatement\fR will change the position of '\fC{\fR's. In summary:
 .ne 7
 .RS
 .CS
 if (condition)      if (condition)     if (condition)
 {                       {                {
     statement;          statement;         statement;
-}                       }                 }
+}                       }                }
 
-brace = -statement     brace = 0     brace = -1/2 statement
+brace = 0             brace = 4         brace = 2 
 .CE 0
 .RE
+.TP
+\fBindent\fR \fC"e"\fR \|\fIbraceStatement\fR (t)
+.\"
+The  \fIbraceStatement\fR  defines  the  indentation  following  a curly brace
+\'\fC{\fR' which follows a statement.
 .TP 
 \fBindent\fR \fC"w"\fR \|\fIswitch\fR (=0)
 .\"
@@ -474,12 +464,44 @@ The standard indent rule for setting up C and Java is defined as:-
 .CS
     0 indent .hilight.c 12
     indent .hilight.c "s" t     ; Default may be omitted
+    indent .hilight.c "e" t     ; Default may be omitted
     indent .hilight.c "c" 3/2t  ; Default may be omitted
     indent .hilight.c "x" 0     ; Default may be omitted
-    indent .hilight.c "b" -t    ; Default may be omitted
+    indent .hilight.c "b" 0     ; Default may be omitted
     indent .hilight.c "w" 0     ; Default may be omitted
     indent .hilight.c "a" -t    ; Default may be omitted
     indent .hilight.c "m" -1    ; Default may be omitted
+    indent .hilight.c "u" " * "
+.CE
+.Me $ehf-scheme
+.ne 4
+This is typically written with the defaults omitted.
+.Me $emf-scheme
+.CS
+    0 indent .hilight.c 12
+    indent .hilight.c "u" " * "
+.CE
+.Me $ehf-scheme
+.ne 7
+If GNU Emacs  indentation  is required  then the following  definition  may be
+used:- 
+.Me $emf-scheme
+.CS
+    0 indent .hilight.c 12            ; if (a == b)
+    indent .hilight.c "e" t           ;   {
+    indent .hilight.c "b" t           ;     c = d;
+    indent .hilight.c "s" t           ;   }
+    indent .hilight.c "u" " * "
+.CE
+.Me $ehf-scheme
+.ne 6
+The default configuration scheme is defined as:-
+.Me $emf-scheme
+.CS
+    0 indent .hilight.c 12            ; if (a == b)
+    indent .hilight.c "e" t           ; {
+    indent .hilight.c "b" 0           ;   c = d;
+    indent .hilight.c "s" t           ; }
     indent .hilight.c "u" " * "
 .CE
 .Me $ehf-scheme
