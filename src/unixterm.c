@@ -3006,6 +3006,17 @@ XTERMstart(void)
     meUInt       ww, hh  ;
     char        *ss ;
 
+    /* Copy the Terminal I/O. We may spawn a terminal in the window later and
+     * the termio structure must be initialised. */
+#ifdef _USG
+#ifdef _TERMIOS
+    tcgetattr (0, &otermio);
+#else
+    ioctl(0, TCGETA, &otermio) ;
+#endif
+#endif
+    
+    /* Configure X-Windows */
     XSetLocaleModifiers ("");
     {
         char *disp ;
