@@ -7,12 +7,12 @@
 #  System        :
 #  Module        :
 #  Object Name   : $RCSfile: Makefile,v $
-#  Revision      : $Revision: 1.2 $
-#  Date          : $Date: 2003-08-14 17:09:31 $
+#  Revision      : $Revision: 1.3 $
+#  Date          : $Date: 2003-08-17 22:59:50 $
 #  Author        : $Author: jon $
 #  Created By    : Jon Green
 #  Created       : Sun Aug 10 11:57:07 2003
-#  Last Modified : <030814.1653>
+#  Last Modified : <030817.1802>
 #
 #  Description
 #
@@ -21,6 +21,9 @@
 #  History
 #
 #  $Log: not supported by cvs2svn $
+#  Revision 1.2  2003/08/14 17:09:31  jon
+#  Version 1.1 of CDROM
+#
 #  Revision 1.1  2003/08/10 22:49:11  jon
 #  CD ISO9660 Image build directory
 #
@@ -299,6 +302,10 @@ $(FDIR)/packages:
 	mv $@/sun/jasspame-20021216 $@/sun/jasspa-sparc-sol8.pkg
 	unzip -o $(RELDIR)/sun-i386-8-jasspame-20021216.zip -d  $@/sun
 	mv $@/sun/jasspame-20021216 $@/sun/jasspa-i386-sol8.pkg
+	mkdir -p $@/hpux
+	gunzip -c $(RELDIR)/jasspame-loc-0212-10.20.depot.gz > $@/hpux/jasspame-loc-0212-10.20.depot
+	gunzip -c $(RELDIR)/jasspame-loc-0212-11.00.depot.gz > $@/hpux/jasspame-loc-0212-11.00.depot
+	gunzip -c $(RELDIR)/jasspame-opt-0212-11.00.depot.gz > $@/hpux/jasspame-opt-0212-11.00.depot
 	mkdir -p $@/linux
 	cp microemacs-jasspa-2002_12-1.i386.rpm $@/linux
 	cp package.txt $@/readme.unix
@@ -434,6 +441,7 @@ $(FDIR)/experimental:
 	cp $(EXPDIR)/medevbin_sparc_sol9.zip $@/bin
 	cp $(EXPDIR)/medevbin_linux_24.tgz   $@/bin
 	cp $(EXPDIR)/medevbin_win32.zip      $@/bin
+	cp $(EXPDIR)/medevbin_hpux11.tar.gz  $@/bin
 	mkdir -p $@/src
 	cp $(EXPDIR)/medevsrc.tar.gz         $@/src
 	mkdir -p $@/macros
