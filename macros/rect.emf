@@ -45,12 +45,15 @@ define-macro string-rectangle
              -2 show-region
          !endif
          ; Get the string to insert
-         !force set-variable #l6 @ml "String ? "
+         !force set-variable #l6 @1
          !if &not $status
-             ; Failed - Reactivate the region that is active.
-             goto-position "\x81"
-             !force 4 show-region
-             !abort
+             !force set-variable #l6 @ml "String ? "
+             !if &not $status
+                 ; Failed - Reactivate the region that is active.
+                 goto-position "\x81"
+                 !force 4 show-region
+                 !abort
+             !endif
          !endif
          ; Fill all of the lines in the region from the first column. 
          !repeat
@@ -69,13 +72,19 @@ define-macro string-rectangle
              set-variable #l1 &add #l1 1
          !until &gre #l1 #l2
          ; Knock off all of the region stuff and resume first position. 
-         !force -3 show-region
-         !force  3 show-region
-         !force -1 show-region
          goto-position "\x81"
          !return
      !endif
      !abort
+!emacro
+
+define-macro space-rectangle
+    set-variable #l0 &spr "%n" @# " "
+    string-rectangle #l0
+    exchange-point-and-mark
+    !force -3 show-region
+    exchange-point-and-mark
+    !force  3 show-region
 !emacro
 
 define-macro copy-rectangle
