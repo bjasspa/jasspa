@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil033.4,v 2.5 2002-01-11 21:58:43 jon Exp $
+.Id $Id: m4fil033.4,v 2.6 2004-01-17 22:31:46 jon Exp $
 .Im MicroEmacs macro;variable
 .so me.tni
 .TH "SearchGroups" 4
@@ -25,10 +25,10 @@
 .ad
 .SH DESCRIPTION
 The search group variables  \fB@s\fR\|\fIn\fR return the string matches of the
-last regular  expression  search i.e. 
-.Ht search-forward 2 
-(in 
-.Ht magic 2m 
+last regular  expression  search i.e.
+.Ht search-forward 2
+(in
+.Ht magic 2m
 mode) or
 .Ht regex-forward 3 .
 .PP
@@ -43,14 +43,14 @@ The  value  returned  for an  unused  group,  e.g.  @s2 for the  regex  string
 "\fC\\(a\\)\\|\\(b\\)\fR" if "\fCa\fR" was matched, is an empty string ("").
 .SH EXAMPLE
 The following macro code gives a simple example of their potential use:
-.Me $emf-scheme\fB
+.Me $emf-scheme
 .CS
 forward-search "Token *{\\\\(Start\\\\|End\\\\)}"
 !if $status
     ml-write "[found \\"%s\\"]" @s0
-    if &seq @s1 "Start"
-       .
-       .
+    !if &seq @s1 "Start"
+       \.
+       \.
 .CE 0
 .Me $ehf-scheme
 .SH NOTES

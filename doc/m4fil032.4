@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil032.4,v 2.5 2002-01-11 21:58:43 jon Exp $
+.Id $Id: m4fil032.4,v 2.6 2004-01-17 22:31:46 jon Exp $
 .Im MicroEmacs macro;directive|miscellaneousOperators
 .so me.tni
 .TH !jump 4
@@ -19,7 +19,7 @@
 .na
 .nf
 \fB!jump\fR \fIoffset\fR
-\fB!tjump\fR \fIcondition\fR \fIoffset\fR 
+\fB!tjump\fR \fIcondition\fR \fIoffset\fR
 .fi
 .ad
 .SH DESCRIPTION
@@ -38,9 +38,9 @@ using \fB!tjump\fR. This has an additional argument  \fIcondition\fR  which is
 evaluated  and if  \s-1TRUE\s0  (Non-zero)  then  the  branch  is  taken.  The
 \fIcondition\fR may be a variable or an evaluated expression.
 .PP
-\fB!jump\fR and \fB!tjump\fR are fast equivalents of 
-.Ht !goto 4 
-and 
+\fB!jump\fR and \fB!tjump\fR are fast equivalents of
+.Ht !goto 4
+and
 .Ht !tgoto 4 ,
 respectively.  \fB!jump\fR should be used with care as these calls are source
 sensitive and  unexpected  results may be obtained if the  \fIoffset\fR's  are
