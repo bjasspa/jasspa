@@ -19,18 +19,39 @@ user.emf
     WINDOWS:    c:/Documents and Settings/<user name>/Application Data/jasspa/
                 <user.emf>
 
-myc.emf
-mycpp.emf
+password.emf
 
-    Extensions  to the C and C++  Programming  language  templates for Doxygen
-    hilighting amongst other things.
+    Utilities to handle passwords.
 
-    Copy to your jasspa user directory.
+    n insert-password
 
-    UNIX:       ~/.jasspa/
-    WINDOWS:    c:/Documents and Settings/<user name>/Application Data/jasspa/
+        Generates  a new  password  of 'n'  characters  in  length.  If 'n' is
+        omitted then a 8 character  password is generated. The minimum  length
+        of a password is 3. All generated  passwords are guaranteed to have at
+        least one each of lowercase,  uppercase  and numeric  characters.  The
+        random number generator is always seeded before use.
 
-myjava.emf
+        The generated password is inserted into the current buffer, the output
+        is as follows:-
 
-    Extensions to the Java programming language templates to highlight javadoc
-    comments.
+        > M-x insert-password
+        > jvV37sJ9 (juliet - victor - VICTOR - Three - Seven - sierra - JULIET
+                    - Nine)
+
+        > 4 M-x insert-password
+        > Lf6O (LIMA - foxtrot - Six - OSCAR)
+
+    password-to-phonic
+
+        Converts a password string to a phonic alphabet string, typically used
+        to communicate a password to another user  unambiguously.  The user is
+        prompted  for the  string to  translate  and the  resultant  string is
+        inserted into the current buffer.
+
+        The alphabetic phonic conversion of
+
+            "1EhJ"
+
+        is
+
+            One - ECHO - hotel - JULIET
