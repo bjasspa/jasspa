@@ -1003,11 +1003,10 @@ define-macro file-browser-swap-buffers
 
 osd .osd.dirlst 0   b
 osd .osd.dirlst 60  "-"
-osd .osd.dirlst 80  "-"
 osd .osd.dirlst 110 ""  "\HNew Folder"          f dirlst-new-folder
 osd .osd.dirlst 120 ""  "Re\Hfresh"             f dirlst-refresh
 osd .osd.dirlst 130 ""  "\HAuto-Refresh: on "   f dirlst-auto-refresh
-osd .osd.dirlst 99  ""  "\HInvert Selection"      f dirlst-tag-invert
+osd .osd.dirlst 99  ""  "\HInvert Selection"    f dirlst-tag-invert
 
 0 define-macro dirlst-context-menu
     !if :tag-count
@@ -1051,7 +1050,8 @@ osd .osd.dirlst 99  ""  "\HInvert Selection"      f dirlst-tag-invert
             osd .osd.dirlst 140 "" "Enable Filter" 1 file-browser-set-filter
         !endif
         !if .fhook-dirlst.cvs-enable
-            osd .osd.dirlst 11 "M" "C\HVS" .osd.tmp osd-cvs-file-menu
+            osd .osd.dirlst 70 "M" "C\HVS" .osd.tmp osd-cvs-file-menu
+            osd .osd.dirlst 80  "-"
         !endif
     !endif
     !if &equ :tag-count 1
@@ -1060,9 +1060,9 @@ osd .osd.dirlst 99  ""  "\HInvert Selection"      f dirlst-tag-invert
         osd .osd.dirlst 50 ""  "Rename"
     !endif
     !if &band .find-file.flags 2
-        osd .osd.dirlst 70 ""  "\HPaste"        f dirlst-tag-paste
+        osd .osd.dirlst 35 ""  "\HPaste"        f dirlst-tag-paste
     !else
-        osd .osd.dirlst 70 ""  "Paste"
+        osd .osd.dirlst 35 ""  "Paste"
     !endif
     .osd.dirlst osd
 !emacro
