@@ -218,7 +218,7 @@ mere_scanner(int direct, int beg_or_end, int *n, SCANNERPOS *sp)
                 if(--lnno < 0)
                     return meFALSE ;
                 lp = meLineGetPrev(lp) ;
-                offe = meLineGetLength(lp)+1 ;
+                offe = meLineGetLength(lp) ;
             }
             offs = 0 ;
         }
