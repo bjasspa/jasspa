@@ -4,7 +4,7 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <040210.1700>
+>  Last Modified : <040210.2108>
 >
 
     [040210] BS/0401-4 - Major? - Target ?
@@ -32,6 +32,8 @@
         On unix the $progname may not be fully  expanded (has just "me") which
         may  lead  to a  ctags  generation  error  and  an  alternate  fix  to
         $search-path.
+        
+        Fixed 0401-5 04/02/10: Source change.
 
     [040206] SP/0401-4 - Major - Target 0401-5
 
