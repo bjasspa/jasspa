@@ -37,8 +37,8 @@
 #
 MEVER=		02
 
-RM	=	- erase
-RMDIR   =       - rd
+RM	=	rm -f
+RMDIR   =       rm -rf
 CD	=	cd
 MKDIR	=	mkdir
 CP	=	copy
