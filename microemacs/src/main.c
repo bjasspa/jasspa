@@ -1292,9 +1292,7 @@ mesetup(int argc, char *argv[])
             switch (argv[carg][1])
             {
 #if MEOPT_EXTENDED
-            case 0:      /* get input from stdin */
-/*                getStdin = 1 ;*/
-/*                break ;*/
+            case 0:      /* -  get input from stdin */
 #endif                
             case 'b':    /* -b bin flag */
             case 'k':    /* -k crypt flag */
