@@ -62,30 +62,64 @@ add-next-line "*compile*" "%f(%l) : warning"
 add-next-line "*compile*" "%f:%l:"
 ; Load additional hooks required for win32.
 define-macro-file hkipipe ishell perldb
+;--- COMSHELL
 ; As command.com's prompt echoing is broken ishell is useless without
 ; the following 2 variables which enable ME's command-line support
 ; NOTE - if you use a different prompt (i.e. not "PATH>") then you
-; must configure .ishell.prompt appropriately 
+; must configure .ishell.prompt appropriately
 set-variable .ishell.prompt "^[^>\n]*>"
 set-variable .ishell.noecho "1"
-; Define the cygwin dummy macro. This reports an error if the cygwin environment
-; has not been defined in the user start-up file.
-define-macro cygnus
-    !if &seq %cygnus-bin-path "ERROR"
-        ; Bitch if the environment is not defined.
-        5000 ml-write "[Error: %%cygnus-bin-path not set - see hkcygnus.emf]"
-        !abort
-    !else
-        ; Load the macro file and execute the cygnus session.
-        !force exec-file "hkcygnus"
-        !if $status
-            cygnus
+;--- CYGWIN
+; Try to find cygwin automatically.
+!if &not &exi %cygwin-path
+    !if &seq "D" &stat "t" "c:/cygwin"
+        set-variable %cygwin-path "c:/cygwin"
+        !if &not &exi $INFOPATH
+            set-variable $INFOPATH &cat %cygwin-path "/usr/share/info"
         !endif
     !endif
+!endif
+; Define the cygwin dummy macro. This reports an error if the cygwin environment
+; has not been defined in the user start-up file.
+define-macro cygwin
+    !if &seq %cygwin-path "ERROR"
+        ; Bitch if the environment is not defined.
+        5000 ml-write "[Error: %cygwin-path not set - see hkcygwin.emf]"
+        !abort
+        ; See if bash exists.
+    !elif &seq "R" &stat "t" &cat %cygwin-path "/bin/bash.exe"
+        ; Load the macro file and execute the cygwin session.
+        !force exec-file "hkcygwin"
+        !if $status
+            cygwin
+        !endif
+    !else
+        5000 ml-write &spr "[Error: Cannot find bash program. %s]" &cat %cygwin-path "/bin/bash.exe"
+        !abort
+    !endif
 !emacro
-; Disable cygwin hilighting by default.
-set-variable .cygnus.hilight 0
+; Define a dummy man macro. This reports an error if the cygwin environment
+; has not been defined in the user start-up file.
+define-macro man
+    !if &not &exi %man-com
+        !if &seq %cygwin-path "ERROR"
+            ; Bitch if the environment is not defined.
+            5000 ml-write "[Error: %cygwin-path not set - see hkcygwin.emf]"
+            !abort
+            ; See if the max.exe file exists.
+        !elif &seq "R" &stat "t" &cat %cygwin-path "/bin/man.exe"
+            ; Load the macro file and execute the man file
+            set-variable %man-com &cat %cygwin-path "/bin/man.exe"
+        !else
+            5000 ml-write "[Error: Cannot find man program.]"
+            !abort
+        !endif
+    !endif
+    !force exec-file "hkman"
+    !if $status
+        man
+    !endif
+!emacro
 ; Bind the windows Menu key to the menu. Users may choose to use this
 ; as an additional prefix key if they want.
 0xa0000 global-bind-key osd "menu"
-

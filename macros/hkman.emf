@@ -12,11 +12,14 @@ define-macro fhook-man
     set-variable :mouse-word-select man-process-link
     buffer-init-hooks
 !emacro
-
+; Set up the man command.
+!if &not &exi %man-com
+    set-variable %man-com "man"
+!endif
 ; buffer-init variables
 set-variable .fhook-man.name "UNIX Man page"
 set-variable .fhook-man.setup &reg "/history" "fhook/man" "Ughpo"
-set-variable .fhook-man.setup-mask "aeghmpo1" 
+set-variable .fhook-man.setup-mask "aeghmpo1"
 set-variable .fhook-man.command-flag  "|bo|bo|thbio|th|th|"
 set-variable .fhook-man.command-name  "|man-backward-word|man-forward-word|man-process-link||man-clean|"
 set-variable .fhook-man.command-nbind "||||||"
@@ -34,7 +37,7 @@ set-variable .fhook-man.item-list-r1 "Sec \\1"
     hilight .hilight.list-item 64 "\\(.\\)\CH\\1\CH\\1\CH\\1\\}[^\CH]" "\\1" .scheme.function
 !endif
 
-!if &and &sin "h" .fhook-man.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-man.setup &band .hilight.flags 0x02
     !if &not &exist .hilight.man "ERROR"
         set-variable .hilight.man &pinc .hilight.next 1
     !endif
@@ -81,7 +84,7 @@ define-macro aman
         !if &not $status
             !return
         !endif
-    !until &not &or &inw @wc &sin @wc "\b_" 
+    !until &not &or &inw @wc &sin @wc "\b_"
     forward-char
 !emacro
 
@@ -91,13 +94,13 @@ define-macro aman
     !until &inw @wc
     !repeat
         forward-char
-    !until &not &or &inw @wc &sin @wc "\b_" 
+    !until &not &or &inw @wc &sin @wc "\b_"
 !emacro
 
 0 define-macro man-process-link
     set-variable #l0 $window-col
     !while &not &inw @wc
-        !if &not &sin @wc "\b_" 
+        !if &not &sin @wc "\b_"
             set-variable $window-col #l0
             ml-write "Error! Not in a link"
             !abort
@@ -184,7 +187,7 @@ define-macro man
             !endif
         !endif
     !endif
-    0 pipe-shell-command &spr "man %s %s" #l1 #l0 &cat "*Man on " #l9
+    0 pipe-shell-command &spr "%s %s %s" %man-com #l1 #l0 &cat "*Man on " #l9
     -1 buffer-mode "view"
     set-mark
     2 forward-line
