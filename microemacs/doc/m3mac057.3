@@ -29,7 +29,7 @@
 .\"
 .\"***************************************************************************
 .\"
-.Id $Id: m3mac057.3,v 2.1 2001-07-14 10:11:23 jon Exp $
+.Id $Id: m3mac057.3,v 2.2 2001-07-16 19:13:55 jon Exp $
 .Im MicroEmacs shell|command
 .so me.tni
 .TH cvs 3
@@ -37,6 +37,7 @@
 .XI cvs-add - "\*(mS CVS interface - add file"
 .XI cvs-commit - "\*(mS CVS interface - commit changes"
 .XI cvs-diff - "\*(mS CVS interface - diff changes"
+.XI cvs-gdiff - "\*(mS CVS interface - graphical diff changes"
 .XI cvs-log - "\*(mS CVS interface - log changes"
 .XI cvs-remove - "\*(mS CVS interface - remove file"
 .XI cvs-resolve-conflicts - "\*(mS CVS interface - resolve conflicts"
@@ -54,6 +55,9 @@ cvs-commit \- \*(mS CVS interface - commit changes
 .br
 .Me "|cvs-diff"
 cvs-diff \- \*(mS CVS interface - diff changes
+.br
+.Me "|cvs-gdiff"
+cvs-gdiff \- \*(mS CVS interface - graphical diff changes
 .br
 .Me "|cvs-log"
 cvs-log \- \*(mS CVS interface - log changes
@@ -79,6 +83,8 @@ cvs-update \- \*(mS CVS interface - update directory files
 .B cvs-commit
 .br
 .B cvs-diff
+.br
+.B cvs-gdiff
 .br
 .B cvs-log
 .br
@@ -156,7 +162,12 @@ The  \fBcvs-commit\fR command commits any changes made to the currently buffer's
 (including addition) to the repository. The user is  prompted for a commit log
 message.
 .PP
-The \fBcvs-diff\fR command opens a
+The  \fBcvs-diff\fR  command opens a  \fI*cvs-diff*\fR  window  displaying the
+differences between the current buffer's local file and repository version. If
+the current buffer is a directory list it will list all the differences  found
+in all files within the directory.
+.PP
+The \fBcvs-gdiff\fR command opens a
 .Ht gdiff 3
 window displaying the differences  between the current buffer's local file and
 repository version.
