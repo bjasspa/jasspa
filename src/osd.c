@@ -5,7 +5,7 @@
  *  Synopsis      : Narrow out regions of a buffer
  *  Created By    : On-Screen Display routines
  *  Created       : 26/07/97
- *  Last Modified : <000719.1211>
+ *  Last Modified : <000720.1457>
  *
  *  Description
  *     This file contains the on screen display routines that
@@ -3127,12 +3127,12 @@ menuPosition(osdDISPLAY *md, int redraw)
  * Find the next item in the display list.
  */
 static int
-osdDisplayFindNext (osdDISPLAY *md, int curCont, int dir, int canLoop)
+osdDisplayFindNext (osdDISPLAY *md, int curCont, int dir, int canLoop, int depth)
 {
-    int ii=curCont, ei, si, jj, rowm, mn, mx ;
+    int ii, ei, si, jj, rowm, mn, mx ;
     
     /* if non are selected yet then select the first or last */
-    if (ii < 0)
+    if ((curCont < 0) || (depth < 0))
     {
         /* quick case - just do it */
         if (dir & (MF_EAST|MF_SOUTH))            /* Forwards */
@@ -3149,6 +3149,7 @@ osdDisplayFindNext (osdDISPLAY *md, int curCont, int dir, int canLoop)
         }
         return -1 ;
     }
+    ii = curCont;
     /* First thing to do is to get the row mask */
     rowm = md->context[ii].mcflags & CF_ROWMASK ;
     /* Now get the start and end context no for the row */
@@ -3163,6 +3164,7 @@ osdDisplayFindNext (osdDISPLAY *md, int curCont, int dir, int canLoop)
      */
     if(dir == MF_SOUTH)
     {
+        depth += md->context[ii].y ;
         mn = md->context[ii].x ;
         mx = mn + md->context[ii].width ;
         for(;;)
@@ -3171,11 +3173,13 @@ osdDisplayFindNext (osdDISPLAY *md, int curCont, int dir, int canLoop)
             {
                 if(!canLoop)
                     return ii ;
+                depth = 0 ;
                 ei = 0 ;
             }
             if(ei == si)
                 return ii ;
             if(!(md->context[ei].menu->flags & MF_SEP) &&
+               (md->context[ei].y >= depth) &&
                (md->context[ei].x < mx) &&
                ((md->context[ei].x+md->context[ei].width) > mn))
                 return ei ;
@@ -3183,6 +3187,7 @@ osdDisplayFindNext (osdDISPLAY *md, int curCont, int dir, int canLoop)
     }
     else if(dir == MF_NORTH)
     {
+        depth = md->context[ii].y - depth ;
         mn = md->context[ii].x ;
         mx = mn + md->context[ii].width ;
         for(;;)
@@ -3196,6 +3201,7 @@ osdDisplayFindNext (osdDISPLAY *md, int curCont, int dir, int canLoop)
             {
                 if(!canLoop)
                     return ii ;
+                depth = 0x7fffffff ;
                 si = md->numContexts-1 ;
             }
             else
@@ -3205,6 +3211,7 @@ osdDisplayFindNext (osdDISPLAY *md, int curCont, int dir, int canLoop)
             {
                 if(!canLoop)
                     return ii ;
+                depth = 0x7fffffff ;
                 si = md->numContexts ;
             }
             si-- ;
@@ -3212,6 +3219,7 @@ osdDisplayFindNext (osdDISPLAY *md, int curCont, int dir, int canLoop)
             if(si == ei)
                 return ii ;
             if(!(md->context[si].menu->flags & MF_SEP) &&
+               (md->context[si].y <= depth) &&
                (md->context[si].x < mx) &&
                ((md->context[si].x+md->context[si].width) > mn))
                 return si ;
@@ -3349,7 +3357,7 @@ osdDisplayPush(int id, int flags)
             }
         }
         else if((flags & ENTER_MENU) && (md->curContext < 0))
-            md->curContext = osdDisplayFindNext(md, -1, MF_EAST, 1);
+            md->curContext = osdDisplayFindNext(md, -1, MF_EAST, 1, 0);
     }
     /* Snapshot the region occupied by the menu. */
     osdDisplaySnapshotStore(md) ;
@@ -3507,7 +3515,7 @@ osdDisplaySub(osdDISPLAY *md, int flags)
         osdNewChild = nmd->next ;
         osdNewMd->newContext = osdNewMd->curContext ;
         if((flags & ENTER_MENU) && (osdNewMd->newContext < 0))
-            osdNewMd->newContext = osdDisplayFindNext(osdNewMd, -1, MF_EAST, 1);
+            osdNewMd->newContext = osdDisplayFindNext(osdNewMd, -1, MF_EAST, 1, 0);
         osdDisplaySetNewFocus(0) ;
     }
 }
@@ -4356,8 +4364,7 @@ static int
 osdDisplayKeyMove (int dir, int nn)
 {
     osdDISPLAY *hmd=osdCurMd, *md ;
-    int loop ;
-    int flags ;
+    int loop, depth, flags ;
     
     for(loop=1,md=hmd ; md != osdCurChild ; loop++)
     {
@@ -4370,29 +4377,15 @@ osdDisplayKeyMove (int dir, int nn)
     {
         if(loop == 0)
             hmd = md ;
-        md->newContext = osdDisplayFindNext(md,md->newContext,dir, 1);
+        if((dir & (MF_NORTH|MF_SOUTH)) && (nn == 0) && (md->prev != NULL) &&
+           !(md->prev->flags & RF_DISABLE) && (md->prev->newContext >= 0) &&
+           ((md->prev->context[md->prev->newContext].menu->flags & (MF_CHILD|MF_SCRLBOX)) == (MF_CHILD|MF_SCRLBOX)))
+            depth = md->prev->context[md->prev->newContext].child->wndDepth - 1 ;
+        else
+            depth = nn ;
+        md->newContext = osdDisplayFindNext(md,md->newContext,dir, 1, depth);
         if(md->newContext >= 0)
         {
-            if(nn < 0)
-            {
-                md->newContext = osdDisplayFindNext(md, -1, dir, 1);
-            }
-            else
-            {
-                if((nn == 0) && (md->prev != NULL) && !(md->prev->flags & RF_DISABLE) && (md->prev->newContext >= 0) &&
-                   ((md->prev->context[md->prev->newContext].menu->flags & (MF_CHILD|MF_SCRLBOX)) == (MF_CHILD|MF_SCRLBOX)))
-                {
-                    if(dir & (MF_EAST|MF_WEST))
-                        nn = md->prev->context[md->prev->newContext].child->wndWidth - 1 ;
-                    else
-                        nn = md->prev->context[md->prev->newContext].child->wndDepth - 1 ;
-                }
-                nn -= md->context[md->newContext].depth ;
-                do {
-                    md->newContext = osdDisplayFindNext(md,md->newContext,dir, 0);
-                    nn -= (md->context[md->newContext].depth > 0) ? md->context[md->newContext].depth:1 ;
-                } while(nn > 0) ;
-            }
             flags = md->context[md->newContext].menu->flags;
             if((md->newContext != md->curContext) || (loop == 0))
             {
