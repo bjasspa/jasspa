@@ -248,7 +248,7 @@ define-macro auto-spell
     !elif &seq $buffer-input ""
         ; Invoke the rules to setup spell, but don't invoke to check as this 
         ; will typically slow down start-up time 
-        spell-rules-init
+        0 spell-rules-init
         ; install auto-spell
         set-variable $buffer-input auto-spell-input
         !if &not $buffer-hilight
