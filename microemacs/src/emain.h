@@ -6,7 +6,7 @@
  *  Object Name   : emain.h
  *  Author        : Steve Philips
  *  Created       : Thu Nov 27 19:17:17 1997
- *  Last Modified : <000822.1932>
+ *  Last Modified : <010307.2208>
  *
  *  Description 
  *       Encapsulate all of the platform definitions into a sigle file
@@ -240,7 +240,6 @@
 #undef  _WIN32                          /* This is not win32             */
 #define _NO_XTERM      1                /* Do not want X-Windows         */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
-#define _meDEF_SYS_ERRLIST              /* errno.h not def sys_errlist   */
 #endif /* _CYGWIN */
 
 /**************************************************************************
@@ -367,6 +366,9 @@
 
 #ifdef _meDEF_SYS_ERRLIST
 extern const char *sys_errlist[];
+#endif
+#ifdef _CYGWIN
+#define sys_errlist _sys_errlist        /* Underscored in errno.h !! */
 #endif
 
 /* Standard Types */
