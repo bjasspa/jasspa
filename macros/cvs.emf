@@ -76,8 +76,8 @@ set-variable #l0 0
     set-variable .cvs.schemes &lset .cvs.schemes &lfind .cvs.names "Diff" .hilight.gdiff
     
     ; scheme for the console which simply swaps to the different tool schemes
-    0 hilight .hilight.cvscon 2 100    $global-scheme
-    hilight .hilight.cvscon 0xc0 &spr "^cvs-%d>" .hilight.cvsupd "" .hilight.cvsupd $global-scheme
+    0 hilight .hilight.cvscon 2 100 $global-scheme
+    hilight .hilight.cvscon 0xc0 &spr "^>cvs-%d>" .hilight.cvsupd "" .hilight.cvsupd $global-scheme
     
     ; fix the *files* buffer hilighting for cvs additions
     hilight .hilight.dirlst 0x012 "[0-9][0-9]:[0-9][0-9] [0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9] [0-9][0-9]:[0-9][0-9] \\{" .scheme.file
@@ -488,7 +488,9 @@ define-macro cvs-log-list
 
 0 define-macro cvs-exec-cmd-complete
     set-position "\x87"
+    set-variable #l4 ""
     !if &seq @cck "callback"
+        set-variable #l4 $buffer-bname
         0 find-buffer .cvs-exec-cmd-ipipe.bname
     !endif
     !if &exi :cvs-complete-done
@@ -555,7 +557,10 @@ define-macro cvs-log-list
     !endif
     set-variable #l2 0
     !if &exi .cvs.refresh
-        !force 0 find-buffer .cvs.refresh
+        !force 0 popup-window .cvs.refresh
+        !if &not $status
+            !force 0 find-buffer .cvs.refresh
+        !endif
         !if $status
             ; if update, commit remove or add then refresh or drop tags
             !if &band .find-file.flags 1
