@@ -26,7 +26,9 @@
 !endif
 ; If mename isn't set or registry file isn't found then set it to guest
 !if &seq $MENAME "ERROR"
-    !if &not &seq $LOGNAME "ERROR"
+    !if &not &seq $login-name "ERROR"
+        set-variable $MENAME $login-name
+    !elif &not &seq $LOGNAME "ERROR"
         set-variable $MENAME $LOGNAME
     !elif &not &seq $USER "ERROR"
         set-variable $MENAME $USER
@@ -42,6 +44,10 @@
         !if &seq $buffer-bname "*scratch*"
             help
             delete-window
+            ; Startup for a new user. 
+            !if &and &not &seq $login-home ERROR &seq $MEUSERPATH ERROR
+                newuser
+            !endif
         !endif
     !emacro
 !else
@@ -85,6 +91,7 @@ define-macro-file fattrib file-attrib
 define-macro-file organize organizer
 define-macro-file userstp user-setup
 define-macro-file word describe-word
+define-macro-file newuser
 define-macro-file gdiff
 define-macro-file calc
 define-macro-file draw
