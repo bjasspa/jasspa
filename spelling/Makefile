@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20040205.2200>
+# Last Modified: <20040206.1058>
 #
 ##############################################################################
 
@@ -108,11 +108,11 @@ $(RELWWWSPLDIR):
 $(JASSPLDIR):
 	$(MKDIR) $@
 $(RELZIPS): $(ZIPOBJS) $(RELWWWSPLDIR)
-	$(INSTALL) $(@F) $(@D)
+	$(INSTALL_FIL) $(@F) $(@D)
 $(RELTARS): $(TAROBJS) $(RELWWWSPLDIR)
-	$(INSTALL) $(@F) $(@D)
+	$(INSTALL_FIL) $(@F) $(@D)
 $(RELTXTS): $(TXTOBJS) $(JASSPLDIR)
-	$(INSTALL) $(@F) $(@D)
+	$(INSTALL_FIL) $(@F) $(@D)
 #
 # Clean area.
 #

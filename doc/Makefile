@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20040206.0902>
+# Last Modified: <20040206.1338>
 #
 ##############################################################################
 
@@ -36,8 +36,8 @@ TXTS	=	$(READTXT) $(FAQTXT) $(BUILDTXT) $(PATCHTXT)
 #
 RTFS	=	me.rtf me.hpj logo.bmp
 #
-ZIPS	=	mehtm.zip
-TARS	=	mehtml.tar.gz
+MEHTMZIP=	jasspa-mehtm-20$(MEYY)$(MEMM)$(MEDD).zip
+MEHTMLTGZ=	jasspa-mehtml-20$(MEYY)$(MEMM)$(MEDD).tar.gz
 #
 MAN1	=	$(DOCDIR)m1cmd000.1 $(DOCDIR)m1cmd001.1
 #
@@ -272,137 +272,34 @@ TEMPSMS	=	cmd2_000.sm	cmd2_010.sm	cmd2_020.sm	cmd2_030.sm \
 
 all:	$(HTSS) $(HLPS) $(SMS) $(EHFS) $(TXTS)
 #
-# Build the txt readme files.
-#
-$(READTXT): m2nar001.2 m2nar003.2 m2nar002.2
-	    $(DROFF) -l10000 -c JASSPA -p -o $@ m2nar001.2 m2nar003.2 m2nar002.2
-clean::
-	$(RM) $(READTXT)
-$(BUILDTXT): m2nar007.2
-	    $(DROFF) -l10000 -c JASSPA -p -o $@ m2nar007.2
-clean::
-	$(RM) $(BUILDTXT)
-$(FAQTXT):  faq.2
-	    $(DROFF) -l10000 -c JASSPA -p -o $@ faq.2
-clean::
-	$(RM) $(FAQTXT)
-$(PATCHTXT): m2nar009.2
-	    $(DROFF) -l10000 -c JASSPA -p -o $@ m2nar009.2
-clean::
-	$(RM) $(PATCHTXT)
-#
-# Build the local index page.
-#
-me.0: me.sm me.nrs
-	$(NRSEARCH) -E $(MANLOG) -d -o $@ -n me.nrs me.sm
-clean::
-	$(RM) me.0
-# Build symbol library
-me.lbn: me.sm me.0
-	$(NRAR) -E $(MANLOG) -M me me.0 me.sm
-clean::
-	$(RM) me.lbn
-# Build HTML archive
-me.hts: me.sm me.0 me.lbn me.tni forward.lbn logo.png
-	$(NR2HTML) -E $(MANLOG)			\
-		   -c JASSPA			\
-		   -x -M me			\
-		   -n me			\
-		   -H me			\
-		   -L. -lme -l$(DOCDIR)forward	\
-		   -tCommands:CommandGlossary	\
-		   -tVariables:VariableGlossary	\
-		   -tMacro-Dev:MacroGlossary	\
-		   -tGlossary:Glossary		\
-		   me.sm me.0
-	$(HTS) -a $@ -E $(MANLOG) -s me -b logo.gif
-clean::
-	$(RM) me.hts	
-# Build Windows Help File.
-me.hlp: $(HC31) me.hpj
-	$(HC31) me.hpj
-me.rtf: me.sm me.0 me.lbn me.tni forward.lbn me.hpj logo.bmp
-	$(NR2RTF)  -E $(MANLOG)			\
-		   -c JASSPA			\
-		   -x -M me			\
-		   -n me			\
-		   -H me			\
-		   -L. -lme -l$(DOCDIR)forward	\
-		   -tHome:me			\
-		   -tCommands:CommandGlossary   \
-		   -tVariables:VariableGlossary \
-		   -tMacro-Dev:MacroGlossary    \
-		   -tGlossary:Glossary		\
-		    me.sm me.0
-clean::
-	$(RM) me.rtf	
-# Build MicroEmacs EHF file.
-me.ehf: meehf.hts
-	$(RMDIR) ehf
-	$(MKDIR) ehf
-	$(MKDIR) ehf/me
-	$(RM) ehf/me/*.htm
-	$(RM) ehf/me/me.ehf
-	cd ehf; $(HTS2HTML) -l .htm ../meehf.hts
-	$(CP) ehf/me.htm ehf/me/1.htm
-	cd ehf/me; $(MEEXE) "@ehftools" *.htm
-	$(CP) ehf/me/me.ehf .
-	$(RMDIR) ehf
-clean::
-	$(RMDIR) ehf
-	$(RM) me.ehf
-# HTML Archive
-meehf.hts: me.sm me.0 me.lbn me.tni forward.lbn logo.png
-	$(NR2HTML) -E $(MANLOG)				\
-		   -b -c JASSPA				\
-		   -x -M me				\
-		   -n me -o meehf.hts			\
-		   -H me				\
-		   -L. -lme -l$(DOCDIR)forward		\
-		   -t Commands:CommandGlossary		\
-		   -t Variables:VariableGlossary	\
-		   -t Macro-Dev:MacroGlossary		\
-		   -t Glossary:Glossary			\
-		    me.sm me.0
-	$(HTS) -a $@ -E $(MANLOG) -b logo.gif
-	- $(RM) *.so
-clean::
-	$(RM) meehf.hts
-#
-# Build the postscript print job ordering files.
-#
-me.pso:	me.sm me.tni
-		$(NRORDER) $(NROFLAGS) -z -o $@ me.sm
-clean::
-	$(RM) me.pso
-#
 # Release
 # 
 RELWWWDOCDIR=	$(WWWRELDIR)/doc
-RELRTFFILES=	$(RTFS:%=$(RELRTFDIR)/%)
-RELZIPS=	$(ZIPS:%=$(RELWWWDOCDIR)/%)
-RELTARS=	$(TARS:%=$(RELWWWDOCDIR)/%)
-RELTXTS=	$(TXTS:%=$(RELWWWDOCDIR)/%) $(TXTS:%=$(JASSPADIR)/%)
-RELEASE=	$(RELRTFFILES) $(RELZIPS) $(RELTARS) $(RELTXTS)
+RELRTFS=	$(RTFS:%=$(RTFRELDIR)/%)
+RELZIPS=	$(MEHTMZIP:%=$(WWWRELDIR)/%)
+RELTARS=	$(MEHTMLTGZ:%=$(WWWRELDIR)/%)
+RELTXTS=	$(TXTS:%=$(RELWWWDOCDIR)/%) $(TXTS:%=$(MERELDIR)/%) \
+		$(TXTS:%=$(SRCRELDIR)/%)
+RELEASE=	$(RELRTFS) $(RELZIPS) $(RELTARS) $(RELTXTS)
 
-release: $(RELEASE)
+release: 	$(RELEASE)
 
 # Windows RTF
-$(RELRTFFILES): $(RTFS)
+$(RELRTFS):	$(RTFS)
 		$(MKDIR) $(@D)
-		$(INSTALL) $(@F) $(@D)
+		$(INSTALL_FIL) $(@F) $(@D)
 # Zips
-$(RELZIPS):	$(ZIPS)
+$(RELZIPS):	$(MEHTMZIP)
 		$(MKDIR) $(@D)
-		$(INSTALL) $(@F) $(@D)
+		$(INSTALL_FIL) $(@F) $(@D)
 # Tars
-$(RELTARS):	$(TARS)
+$(RELTARS):	$(MEHTMLTGZ)
 		$(MKDIR) $(@D)
-		$(INSTALL) $(@F) $(@D)
+		$(INSTALL_FIL) $(@F) $(@D)
 # Txts
 $(RELTXTS):	$(TXTS)
 		$(MKDIR) $(@D)
-		$(INSTALL) $(@F) $(@D)
+		$(INSTALL_FIL) $(@F) $(@D)
 #
 clean::
 	$(RM) *.sm
@@ -410,15 +307,17 @@ clean::
 	$(RM) me.err
 	$(RM) me.lbn
 	$(RM) me.gid
-
+#
 spotless:: clean
 	$(RM) *~
 	$(RM) core
 	$(RM) *.log
 	$(RM) tags
+##############################################################################
 #
 # Build the main components.
 #
+##############################################################################
 # Commands
 cmd2_000.sm:	$(CMD2_000)
 	$(SUPERMAN) -o $@ $(CMD2_000)
@@ -541,29 +440,129 @@ nar2_000.sm:	$(NAR2_000)
 me.sm: $(TEMPSMS) $(TNIS) $(MAN1)
 	$(SUPERMAN) -o $@ $(TNIS) $(MAN1) $(TEMPSMS)
 clean::
-	$(RM) me.sm
+	$(RM) *.sm
 # Zip 8.3 HTML (.htm) archive
-mehtm.zip: me.hts
+$(MEHTMZIP): me.hts
 	$(RMDIR) htm
 	$(MKDIR) htm
 	$(MKDIR) htm/me
 	cd htm; $(HTS2HTML) -l .htm ../me.hts
 	cd htm; $(ZIP) mehtm me.htm me/*
-	$(CP) htm/mehtm.zip .
+	$(CP) htm/mehtm.zip $@
 	$(RMDIR) htm
 clean::
 	$(RMDIR) htm
-	$(RM) mehtm.zip
+	$(RM) $(MEHTMZIP)
 # Tar 8.4 HTML (.html) archive
-mehtml.tar.gz: me.hts
+$(MEHTMLTGZ): me.hts
 	$(RMDIR) html
 	$(MKDIR) html
 	$(MKDIR) html/me
 	cd html; $(HTS2HTML) -l .html ../me.hts
 	cd html; $(TAR) cvf mehtml.tar me.html me
-	cd html; $(GZIP) -9 mehtml.tar
-	$(CP) html/mehtml.tar.gz mehtml.tar.gz
+	cd html; $(GZIP) mehtml.tar
+	$(CP) html/mehtml.tar.gz $@
 	$(RMDIR) html
 clean::
 	$(RMDIR) html
-	$(RM) mehtml.tgz
+	$(RM) $(MEHTMLTGZ)
+#
+# Build the txt readme files.
+#
+$(READTXT): m2nar001.2 m2nar003.2 m2nar002.2
+	    $(DROFF) -l10000 -c JASSPA -p -o $@ m2nar001.2 m2nar003.2 m2nar002.2
+clean::
+	$(RM) $(READTXT)
+$(BUILDTXT): m2nar007.2
+	    $(DROFF) -l10000 -c JASSPA -p -o $@ m2nar007.2
+clean::
+	$(RM) $(BUILDTXT)
+$(FAQTXT):  faq.2
+	    $(DROFF) -l10000 -c JASSPA -p -o $@ faq.2
+clean::
+	$(RM) $(FAQTXT)
+$(PATCHTXT): m2nar009.2
+	    $(DROFF) -l10000 -c JASSPA -p -o $@ m2nar009.2
+clean::
+	$(RM) $(PATCHTXT)
+# Build the local index page.
+me.0: me.sm me.nrs
+	$(NRSEARCH) -E $(MANLOG) -d -o $@ -n me.nrs me.sm
+clean::
+	$(RM) me.0
+# Build symbol library
+me.lbn: me.sm me.0
+	$(NRAR) -E $(MANLOG) -M me me.0 me.sm
+clean::
+	$(RM) me.lbn
+# Build HTML archive
+me.hts: me.sm me.0 me.lbn me.tni forward.lbn logo.png
+	$(NR2HTML) -E $(MANLOG)			\
+		   -c JASSPA			\
+		   -x -M me			\
+		   -n me			\
+		   -H me			\
+		   -L. -lme -l$(DOCDIR)forward	\
+		   -tCommands:CommandGlossary	\
+		   -tVariables:VariableGlossary	\
+		   -tMacro-Dev:MacroGlossary	\
+		   -tGlossary:Glossary		\
+		   me.sm me.0
+	$(HTS) -a $@ -E $(MANLOG) -s me -b logo.gif
+clean::
+	$(RM) me.hts	
+# Build Windows Help File.
+me.hlp: $(HC31) me.hpj
+	$(HC31) me.hpj
+me.rtf: me.sm me.0 me.lbn me.tni forward.lbn me.hpj logo.bmp
+	$(NR2RTF)  -E $(MANLOG)			\
+		   -c JASSPA			\
+		   -x -M me			\
+		   -n me			\
+		   -H me			\
+		   -L. -lme -l$(DOCDIR)forward	\
+		   -tHome:me			\
+		   -tCommands:CommandGlossary   \
+		   -tVariables:VariableGlossary \
+		   -tMacro-Dev:MacroGlossary    \
+		   -tGlossary:Glossary		\
+		    me.sm me.0
+clean::
+	$(RM) me.rtf	
+# Build MicroEmacs EHF file.
+me.ehf: meehf.hts
+	$(RMDIR) ehf
+	$(MKDIR) ehf
+	$(MKDIR) ehf/me
+	$(RM) ehf/me/*.htm
+	$(RM) ehf/me/me.ehf
+	cd ehf; $(HTS2HTML) -l .htm ../meehf.hts
+	$(CP) ehf/me.htm ehf/me/1.htm
+	cd ehf/me; $(MEEXE) "@ehftools" *.htm
+	$(CP) ehf/me/me.ehf .
+	$(RMDIR) ehf
+clean::
+	$(RMDIR) ehf
+	$(RM) me.ehf
+# HTML Archive
+meehf.hts: me.sm me.0 me.lbn me.tni forward.lbn logo.png
+	$(NR2HTML) -E $(MANLOG)				\
+		   -b -c JASSPA				\
+		   -x -M me				\
+		   -n me -o meehf.hts			\
+		   -H me				\
+		   -L. -lme -l$(DOCDIR)forward		\
+		   -t Commands:CommandGlossary		\
+		   -t Variables:VariableGlossary	\
+		   -t Macro-Dev:MacroGlossary		\
+		   -t Glossary:Glossary			\
+		    me.sm me.0
+	$(HTS) -a $@ -E $(MANLOG) -b logo.gif
+	- $(RM) *.so
+clean::
+	$(RM) meehf.hts
+# Build the postscript print job ordering files.
+me.pso:	me.sm me.tni
+		$(NRORDER) $(NROFLAGS) -z -o $@ me.sm
+clean::
+	$(RM) me.pso

@@ -1,7 +1,15 @@
 # -*- Makefile -*-
+#
+# MicroEmacs date
+#
+MEYY=04
+MEMM=02
+MEDD=06
+MEVERS=20$(MEYY)$(MEMM)$(MEDD)
+#
 # Include the other files.
+#
 UNAME:sh =uname | tr '[A-Z]' '[a-z]'
 include $(SRCROOT)/etc/makeinc.dir
 include $(SRCROOT)/etc/makeinc.$(UNAME)
-MEVERS=20040201
 

@@ -6,35 +6,40 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20040206.1109>
+# Last Modified: <20040206.1100>
 #
 ##############################################################################
 
 SRCROOT=..
 include $(SRCROOT)/etc/makeinc
 #
-# Pixmap files
+# Source files
 #
-PIXMAPS	=	me.l.pm		me.m.pm		me.t.pm	\
-		me.xpm		mini-me.xpm	ne.xpm	\
-		me_l.png	me_m.png	me_s.png \
-		ne_l.png	ne_m.png	ne_s.png
+MSDEV6	=	memsdev6.dsw	memsdev6.dsp
 
-RELPIXMAPS=	$(PIXMAPS:%=$(JASSPADIR)/pixmaps/%)
-
-all:
+#
+# Released files
+#
+RELMSDEV6=	$(MSDEV6:%=$(MERELDIR)/msdev6/%)
+RELEASES=	$(RELMSDEV6)
+#
+# Local rules.
+#
+# Build the local platform
+all:	
 	echo "Nothing to do"
-clean:
-	echo "Nothing to do"
+# Install files
 install:
 	echo "Nothing to do"
-release: $(RELPIXMAPS)
-
+# Build Release
+release:	$(RELEASES)
+# Release target files
+$(RELMSDEV6): $(MSDEV6)
+	$(MKDIR) $(@D)
+	$(INSTALL_FIL) $(@F) $(@D)		
+# Clean area.
+clean:
+	echo "Nothing to do"
+# Remove all working files.
 spotless: clean
 	$(RM) *~
-#
-# Local Rules
-#
-$(RELPIXMAPS):	$(PIXMAPS)
-		$(MKDIR) $(@D)
-		$(INSTALL_FIL) $(@F) $(@D)

@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20040206.1010>
+# Last Modified: <20040206.1100>
 #
 ##############################################################################
 
@@ -41,27 +41,24 @@ RELEASES	=	$(RELMEMSDEV)	$(RELMEMSDEVRES)
 #
 # Build the local platform
 #
-all:	
+all:
 	echo "Nothing to do"
-#
 # Build Release
-#
 release:	$(RELEASES)
 # Release target files
 $(RELMEMSDEV): $(MEMSDEV)
 	$(MKDIR) $(@D)
-	$(INSTALL) $(@F) $(@D)
+	$(INSTALL_FIL) $(@F) $(@D)
 $(RELMEMSDEVRES): $(MEMSDEVRES)
 	$(MKDIR) $(@D)
-	$(INSTALL) res/$(@F) $(@D)
-#
+	$(INSTALL_FIL) res/$(@F) $(@D)
 # Clean area.
-#
 clean:
 	echo "Nothing to do"
-#
+# Install files
+install:
+	echo "Nothing to do"
 # Remove all working files.
-#
 spotless: clean
 	$(RM) tags
 	$(RM) *~
