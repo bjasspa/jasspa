@@ -1,7 +1,7 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Perl hook - This file is invoked when a Perl script file is loaded.
 ;
-; Last Modified : <001004.0920>
+; Last Modified : <001009.2022>
 ; Copyright (c) 1999-2000 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 !if &band .hilight.flags 0x02
@@ -19,27 +19,26 @@
     hilight .hilight.perl 4    "^=head" "=cut" ""  .scheme.string
     ; Strings and things
     hilight .hilight.perl 0 "\\\\'"                $global-scheme 
+    hilight .hilight.perl 0 "\\\\`"                $global-scheme 
     hilight .hilight.perl 0x804 "'" "'" "\\"       .scheme.string
     hilight .hilight.perl 0x80 "[^\\\\]\\{\"" .hilight.perlS .scheme.string
     ; Replace strings 
     hilight .hilight.perl 0 "=~\\{[ \t]*\\{s\\(.\\)\\S1*\\1\\S1*\\1" .scheme.string
     hilight .hilight.perl 0 "!~\\{[ \t]*\\{s\\(.\\)\\S1*\\1\\S1*\\1" .scheme.string
-    ;hilight .hilight.perl 0 "\\W\\{s\\(.\\)\\S1*\\1\\S1*\\1" .scheme.string
-    hilight .hilight.perl 0x80 "=~\\{[ \t]*\\{s/"     .hilight.perlR .scheme.string
-    hilight .hilight.perl 0x80 "!~\\{[ \t]*\\{s/"     .hilight.perlR .scheme.string
-    hilight .hilight.perl 0x80 "\\W\\{s/"             .hilight.perlR .scheme.string
+    hilight .hilight.perl 0x80 "=~\\{[ \t]*\\{s/"  .hilight.perlR .scheme.string
+    hilight .hilight.perl 0x80 "!~\\{[ \t]*\\{s/"  .hilight.perlR .scheme.string
+    hilight .hilight.perl 0x80 "\\W\\{s/"          .hilight.perlR .scheme.string
     ; Translate strings
     hilight .hilight.perl 0 "=~\\{[ \t]*\\{tr\\(.\\)\\S1*\\1\\S1*\\1" .scheme.string
     hilight .hilight.perl 0 "!~\\{[ \t]*\\{tr\\(.\\)\\S1*\\1\\S1*\\1" .scheme.string
-    ;hilight .hilight.perl 0 "\\W\\{tr\\(.\\)\\S1*\\1\\S1*\\1"         .scheme.string
-    hilight .hilight.perl 0x80 "=~\\{[ \t]*\\{tr/"     .hilight.perlR .scheme.string
-    hilight .hilight.perl 0x80 "!~\\{[ \t]*\\{tr/"     .hilight.perlR .scheme.string
-    hilight .hilight.perl 0x80 "\\W\\{tr/"             .hilight.perlR .scheme.string
+    hilight .hilight.perl 0x80 "=~\\{[ \t]*\\{tr/"  .hilight.perlR .scheme.string
+    hilight .hilight.perl 0x80 "!~\\{[ \t]*\\{tr/"  .hilight.perlR .scheme.string
+    hilight .hilight.perl 0x80 "\\W\\{tr/"          .hilight.perlR .scheme.string
     hilight .hilight.perl 0 "=~\\{[ \t]*\\{y\\(.\\)\\S1*\\1\\S1*\\1" .scheme.string
     hilight .hilight.perl 0 "!~\\{[ \t]*\\{y\\(.\\)\\S1*\\1\\S1*\\1" .scheme.string
-    hilight .hilight.perl 0x80 "=~\\{[ \t]*\\{y/"     .hilight.perlR .scheme.string
-    hilight .hilight.perl 0x80 "!~\\{[ \t]*\\{y/"     .hilight.perlR .scheme.string
-    hilight .hilight.perl 0x80 "\\W\\{y/"             .hilight.perlR .scheme.string
+    hilight .hilight.perl 0x80 "=~\\{[ \t]*\\{y/"   .hilight.perlR .scheme.string
+    hilight .hilight.perl 0x80 "!~\\{[ \t]*\\{y/"   .hilight.perlR .scheme.string
+    hilight .hilight.perl 0x80 "\\W\\{y/"           .hilight.perlR .scheme.string
     ; Search strings 
     hilight .hilight.perl 0 "=~\\{[ \t]*\\([^st]\\)\\S1*\\1" .scheme.string
     hilight .hilight.perl 0 "!~\\{[ \t]*\\([^st]\\)\\S1*\\1" .scheme.string
@@ -260,8 +259,35 @@ indent .hilight.perl b "\\[" "]"
 indent .hilight.perl b "(" ")"
 indent .hilight.perl s "<[^ \t\n>]*>" 0
 indent .hilight.perl i "#"  
+;
+; Insert comment into line. i.e. xxx -> #xxx
+define-macro perl-comment-line
+    !while &gre &pdec @# 1 0
+        beginning-of-line
+        insert-string "#"
+        beginning-of-line
+        forward-line
+    !done
+!emacro
+;
+; uncoment line ie #xxx -> xxx
+define-macro perl-uncomment-line
+    beginning-of-line
+    !while &gre &pdec @# 1 0
+        !force -1 search-forward "#"
+        !if $status
+            backward-delete-char
+        !endif
+        forward-line
+        beginning-of-line
+    !done
+!emacro
 
 define-macro fhook-perl
+    ; if arg is 0 this is a new file so add template.
+    !if &not @#
+        etfinsrt "perl"
+    !endif
     set-variable $buffer-mask "luh1"
     !if &band .hilight.flags 0x02
         set-variable $buffer-hilight .hilight.perl
@@ -269,6 +295,19 @@ define-macro fhook-perl
     set-variable $buffer-indent .hilight.perl
     1 buffer-mode "indent"
     1 buffer-mode "time"
+    ; Abreviations
+    buffer-abbrev-file "perl"
+    ; Bind the standard fold keys
+    buffer-bind-unbound-key fold-current "f2"
+    buffer-bind-unbound-key fold-all     "f3"
+    ; Folding macros.
+    set-variable .fhook-perl.fold-open  "^sub"
+    set-variable .fhook-perl.fold-close "^}"
+    set-variable .fhook-perl.fold-mopen "1"
+    ; Standard local bindings.
+    buffer-bind-unbound-key perl-comment-line "C-c C-c"
+    buffer-bind-unbound-key perl-uncomment-line "C-c C-d"
+    buffer-bind-unbound-key restyle-region "A-C-i"
     ; execute user extensions if enabled
     !if &exist my-fhook-perl
         my-fhook-perl
