@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd145.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd145.2,v 2.6 2004-12-03 00:05:04 bill Exp $
 .Im MicroEmacs command|message
 .so me.tni
 .TH ml-write 2
@@ -23,18 +23,56 @@ writes the given  \fImessage\fR  to the message  line. If a positive  argument
 \fIn\fR  is given  then there will be an \fIn\fR  millisecond  uninterruptible
 delay, giving the user time to see the message.
 .PP
+.B ml-write
+can also be used to write lines to \fIstandard out\fR and \fIstandard error\fR
+by using a numeric  argument of \fI-1\fR or \fI-2\fR  respectively, a carriage
+return  (\fC'\\n'\fR) is automatically  added to the  \fImessage\fR to create a
+line.
+.SH NOTES
 A call to \fBml-write\fR  from a callback macro can erase a message line which
 is currently being used (to enter a buffer name say). A call to
 .Ht ml-clear 2
 restores the previous message-line.
+.PP
+If the  argument  given  is not -1 or -2 calls  to  ml-write  are  ignored  in
+standard \*(mS piped mode  (command-line  option  \fB-p\fR).  However they are
+printed to standard error when debug piped mode is used  (command-line  option
+\fB-P\fR),   making  the  debugging  and  maintenance  of  macro  based  piped
+processing far easier. 
 .SH EXAMPLE
 The  following  call  displays  a message on the  message-line  with a fixed 2
 second pause:
 .Me $emf-scheme
 .CS
 2000 ml-write "Hello World!"
-.CE 0
+.CE
 .Me $ehf-scheme
+The following
+.Ht start-up 3
+macro  can be  used to add a  header  and  footer  line to a file  piped  into
+standard in, writing the output to standard out.
+.Me $emf-scheme
+.CS
+define-macro start-up
+    find-buffer "*stdin*"
+    ml-write &spr "DEBUG: Read %d lines from stdin" $window-eline
+    ml-write &spr "DEBUG: About to write header"
+    -1 ml-write "<<<HEADER>>>"
+    ml-write &spr "DEBUG: About to write body"
+    0 save-buffer
+    ml-write &spr "DEBUG: About to write footer"
+    -1 ml-write "<<<FOOTER>>>"
+    -2 ml-write &spr "%d lines written to stdout" &add $window-eline 2
+    quick-exit
+!emacro
+.CE
+.Me $ehf-scheme
+To  run  this   example  save  this  macro  in  a  new  macro  file  (such  as
+\fCmlwrite_test.emf\fR) and in a shell run:
+.CS
+cat input_file | me -n -p @mlwrite_test - > output_file
+.CE
+Note the \fCDEBUG\fR lines will be printed if \fB-P\fR option is used instead.
 .SH "SEE ALSO"
 .na
 .Ht ml-clear 2 ,
