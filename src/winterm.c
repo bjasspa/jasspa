@@ -5548,12 +5548,14 @@ dostring:
      * uppercase and then push into the environment. */
     if (meStrncmp(label, "msdev", 5) != 0)
     {
-        char *p ;
-
-        for (p = label; *p != '\0'; p++)
-            *p = toUpper (*p) ;
+        meUByte buf[meBUF_SIZE_MAX];
+        meUByte *p ;
+        
+        meStrcpy (buf, label); 
+        for (p = buf; *p != '\0'; p++)
+            *p = toUpper ((char *)(*p)) ;
         *p++ = '=' ;
-        strcpy (p, value) ;
+        meStrcpy (p, value) ;
         mePutenv(meStrdup(label)); /* Duplicate for putenv */
     }
 }
