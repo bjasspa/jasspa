@@ -1,15 +1,23 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
-;  Author        : $Author: jon $
 ;  Created By    : Steven Phillips
 ;  Created       : Wed Feb 21 08:30:22 2001
-;  Last Modified : <010222.0803>
-;
-;  Description
-;
+;  Description   : NEdit v5 Emulation
 ;  Notes
-;
-;  History
+;      This is currently only a partical implementation created for proof
+;      of concept, please feel free to improve and submit correction.
+;      An emulation requires: 
+;        * Additional entries added to %emulate-names ("The full name")
+;          and %emulate-value ("label" - should be 5 or less chars).
+;        * An "melabel.emf" macro file like this one. This is executed
+;          at the end of me.emf after the editor has been configured for
+;          normal release - this allows any aspect of the editor to be
+;          changed.
+;        * Optionally an "osdlabel.emf" macro file (see osdedit.emf) which
+;          is executed at the end of executing osd.emf. osd.emf is executed
+;          when the user first opens the main menu and allows the emulation
+;          to change anything on the main menu (although care must be taken
+;          the menu is dynamically changed so the osd-main macro may need
+;          replacing).
 ;
 ;  Copyright (c) 2001 JASSPA
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

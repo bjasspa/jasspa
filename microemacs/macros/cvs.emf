@@ -463,6 +463,7 @@ define-macro cvs-resolve-conflicts
             set-variable #l3 &len #l2
         !endif
         set-variable #l1 &cat #l1 &cat " " #l4
+        set-variable #l3 &add #l3 &add &len #l4 1
     !done
     cvs-exec-file-menu-cmd #l1 @# 
     !force 0 popup-window "*cvs-console*"

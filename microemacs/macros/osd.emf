@@ -1,9 +1,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
 ;  Created By    : Jon Green
 ;  Created       : Sat Jul 26 10:23:04 1997
-;  Last Modified : <010305.1544>
-;
 ;  Description   : OSD - On Screen Display macros.
 ;                  Controls the set up of the menus and screen overlays.
 ;
@@ -15,8 +12,7 @@
 ;                  addition provides better handling of the mouse which was
 ;                  difficult in the macro environment (but not impossible !).
 ;
-;  History       : 2nd March 1997 - Steve Phillips menu definitions.
-;
+;  Copyright (c) 1997-2001 JASSPA
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
 ; NOTE:- The numbering of menus is crucial, osd uses 0 for the top-level-menu
