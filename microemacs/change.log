@@ -4,8 +4,159 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <041029.1143>
+>  Last Modified : <050116.1646>
 >
+
+    [050116] Added "TODO" highlighting rule for Makefile comments.
+
+    [050114] Fixed narrow(2) type numeric argument not processed correctly.
+
+    [050113] Added toolbar tool mouse select region command.
+
+    [050113] Added bindings for the cvs and ftp console tools.
+
+    [050113] Fixed organizer(3) duplicate index bug.
+
+    [050111] Deleted the  get-registry(2)  command, this has been  depreciated
+             and &reg should be used instead.
+
+    [050111] Extended the  read-registry(2)  and save-registry(2)  commands to
+             permit  reading and writing from a buffer based registry  (rather
+             than file).
+
+    [050111] Extended  list-registry(2)  to permit listing of specific  nodes,
+             the output buffer of the registry listing may be specified. Added
+             a  invisible  flag  to a  registry  node  which  hides  the  node
+             completely (but can be toggled).
+
+    [050111] Fixed windows  server cmd file polling of up to 60 times a second
+             by making the adder of the command responsible for 'waking' ME by
+             sending a WM_USER  message.  This is not a problem for UNIX as it
+             is possible to wait on file input and EOF is not reported.
+
+    [050105] Fixed several  narrow-to  usability  issues, with these fixes the
+             top and bottom narrow cannot be removed without a markup line and
+             the order cannot get muddled.
+
+    [050105] Fixed a problem with the anchor position up-date when inserting a
+             whole line.
+
+    [050105] Changed  the osd entry  mouse  handling to always  refocus,  this
+             allows the user to change location in the current entry using the
+             mouse.
+
+    [050105] Fixed.  insert-macro undo location was incorrect causing a crash.
+
+    [050103] Spelling  dialog.  Changed the Ignore  button to Continue if word
+             becomes   correct  without   changing  (word  added  or  language
+             changed).
+
+    [050103] Fixed. CVS osd dialog with bad hot-key.
+
+    [050102] Added setting of $recent-keys variable.
+
+    [041231] Variable    "$fmatchdelay"    renamed   to   "$pause-time".   The
+             "$pause-time" is now used for other  MicroEmacs  delay times when
+             the user is prompted for information.
+
+    [041224] Fixed  several  usability  issues in the search  replace  dialog.
+
+    [041224] Up-graded printer-setup dialog to new style OSD.
+
+    [041224] CVS dialog - added read-only option to checkout and update.
+
+    [041224] Fixed goto-line offset which as always going to the previous line
+             (one out).
+
+    [041221] Added  support  for proper kill buffer use in message  line, i.e.
+             set-mark,  kill-region,  copy-region, yank and reyank all work in
+             the same way as a normal buffer.
+
+    [041221] Fixed registry node deletion when the node is modified.
+
+    [041221] Removed osd 0 'd' flag and added 'I' initial item and 'D' default
+             button  flags,  existing  osd dialogs  which use 'd' will fail to
+             load and need are migrated to use the D and I flags.
+
+    [041218] auto-spell  key  bindings  are  promoted to global so its easy to
+             enable in any buffer.
+
+    [041218]  Corrected  setting of the $home  environment  variable to handle
+              MS-Windows '\\'s, auto terminate with '/'.
+
+    [041210] Added Enable/Disable Auto-Spell to the context menu.
+
+    [041210] Rearranged the organizer dialog to be a little easier to navigate
+             through.
+
+    [041210] Fixed nedit emulation insert binding.
+
+    [041210] Removed "ml-clear" command, replaced with "0 ml-write".
+
+    [041210] Removed the  change-directory  commands, a change in directory is
+             achieved by changing the "$buffer-fname" value such that the path
+             defines the location of the command. All macros operated relative
+             to the buffer location and never explicitly changed the directory
+             location.
+
+    [041210] Fixed CUA emulation insert binding.
+
+    [041210] Deleted letter(2m) mode.
+
+    [041210] Deleted  line(2m)  mode. Use a binding of "1 kill-line"  to mimic
+             the  line(2m)  mode  enabled and  "kill-line"  for line(2m)  mode
+             disabled.
+
+    [041210] Deleted cmode(2m). Electric-c is now configured with indent(2). C
+             and C++ indent  styles  can be  different,  can also have a GNU C
+             style  etc, can  change  the  indent  width  as new  indent  rule
+             supports 't', consistent $buffer-indent interface.
+
+    [041210] Created new osd file  "osdmisc.emf" for miscellaneous OSD macros,
+             this removes the OSD  dependency  when the MicroEmacs is executed
+             in special  start up modes with  startup  files. Moved search and
+             new  indent-setup  commands out of "search.emf"  and "format.emf"
+             into a new  "osdmisc.emf"  as they cause problems with utils that
+             do not run "me.emf" (e.g. "ehftools.emf")
+
+    [041210] Introduced  a  GNU  emacs   emulation  mode,  emulation  file  is
+             "meemacs.emf".
+
+    [041209] Fixed newuser  "$user-name.emf"  conflict  issue with an existing
+             macro (e.g.  zaurus.emf)  by testing for it and prefixing a digit
+             to make the file unique.
+
+    [041209] Added esc C-\\ binding to restyle-buffer.
+
+    [041209] Fixed some issues with the Tools user-setup dialog.
+
+    [041128] Added MinGW  makefile  posted to JASSPA  group, forms part of the
+             release makefiles.
+
+    [041126] Added  'k'  keyboard  setup  to  set-char-mask  which  is used to
+             translates foreign keys to a latin char.
+
+    [041126] Changed  the  internal  LEADER  byte  to  0x1c as 0xff is a valid
+             Russian char and it badly breaks $vars and macros.
+
+    [041126] Fixed spell dump word which was not  translating the words to the
+             users char-set.
+
+    [041126] Added support for Russian language.
+
+    [041126] Improved  the  aff  ispell  conversion   routines  (almost  works
+             automatically).
+
+    [041126] Stopped  auto-spell  from  triggering the no dictionaries  error,
+             leave it to spell-buffer etc.
+
+    [041125] Fixed OSD  multi-line C-k kill-line  behavior and  implemented -1
+             kill-line support.
+
+    [041125] Added basic support for Verilog programming language.
+
+    [041123] Fixed ftp OSD (auto  entering  entries broke the password  field)
+             and modernized.
 
     [041028] Fixed. *find* buffer exhibits the same behavior as *grep* buffer.
              i.e. the *find* buffer  remains on screen and a pop-up  window is
@@ -17,11 +168,110 @@
     [041027] Spruced  up old  "apache.conf"  highlighting  rules  and added to
              release.
 
+    [041022] Fixed very obscure cvs load-up bug.
+
+    [041122] Updated  schemes to set 'Show cursor in osd' suitably and to make
+             sure the cursor is not red as this conflicts with the match fence
+             display.
+
+    [041120] Fixed transpose-line crash when undo mode is disabled.
+
+    [041120] Removed  the  OSD  explicit  tab  order  value  as  this  was not
+             constructively used and causes many item order problems.
+
+    [041119] Many   improvements  to  OSD  dialog  user  interface   following
+             suggestions  for news group.  Updated  most of the osd dialogs to
+             use the new [*] checkbox  chars. Fixed  tabbing  orders and moved
+             some  items  over  to  combo-boxes.  Added  osd-cursor  visibilty
+             support to  scheme-edit.  Made the displaying of the cursor in an
+             osd dialog a $system bit set by the hilight  scheme and fixed the
+             position when in a child dialog.
+
+    [041118] Added a macro  recursion depth limit of 20 to avoid blowing up ME
+             when the user has created an infinitely recursive macro.
+
+    [041112] Added Paul Boekholt's suggested GNU Emacs key bindings.
+
+    [041107] kill-paragraph,     fill-paragraph,     forward-paragraph     and
+             backward-paragraph  commands redefined.  kill-paragraph now kills
+             forward  and  backward  rather  than  control  the  kill  buffer.
+             Paragraph  movement now defined  blank-line to blank-line  rather
+             than the first/last paragraph line.
+
+    [041105] Fixed kill-lines and kill-word numerical argument implementation.
+
+    [041104] Removed  "regex-forward"  and  "regex-backward"  macros and moved
+             uses of them over to search-buffer.
+
+    [041104] Added  "search-buffer"  command which replaces the macro commands
+             "regex-forward" and "regex-backward". Simplifies macro processing
+             of  searching  by  providing  a search that  explicitly  sets the
+             "exact" and "magic" modes. The default is to repect buffers exact
+             and  magic  mode and  flags  must have E or M to ensure  they are
+             disabled.
+
+    [041104] Changed any use of  "kill-line"  to "1 kill-line"  as this should
+             maintain  its  required  behavior. A "kill-line"  with no numeric
+             argument  kills  to the end of the line but  excludes  the end of
+             line character (GNU Emacs  compatibility). The default binding is
+             the "1 kill-line"  form, rebind the key to "kill-line" if the end
+             of line is not to be killed.
+
+    [041104] Removed  line and letter  buffer modes as these can be done using
+             numerical arguments to bindings. See the kill-line which replaces
+             line mode. See
+
+    [041104] Changed the  kill-word  commands to be more  consistent  with GNU
+             Emacs.
+
+    [041102] Moved winterm over to using  addKeyToBufferOnce()  for mouse move
+             and  time,  also  done  same  for UNIX  mouse  time  event.  This
+             minimizes  the number of mouse moved events that are processed by
+             the system.
+
+    [041101] MS Windows. Fixed mouse cursor  disappearing  after using a Shift
+             or Control mouse button event.
+
+    [041101] Auto reload the directory even if it is changed (hkdirlst.emf).
+
+    [041030] MS-Windows. Removed the  "WM_INPUTLANGCHANGE"  message handler as
+             this did the  wrong  thing  (use  Alt-Shift  to change  between 2
+             different keyboards e.g. US and Russian)
+
+    [041030] MS-Windows.  Changed  the method used to get the APPDATA  path to
+             use  SHGetSpecialFolderLocation()  as  this is  available  in all
+             versions of Windows.
+
+    [041030] UNIX. Fixed the mouse movement which caused a rendering  anomaly.
+             Mouse moved  commands are only added to the key buffer if the key
+             is not already  present in the key queue. This alleviates a large
+             build  up of  redundant  mouse  move  keys on the  queue.  (Added
+             function addKeyToBufferOnce())
+
+    [041030] Added mouse rectangle  region selection  methods,  copy-rectangle
+             and kill-rectangle.
+
+    [041029] Hardened C++ commenting on // alignment when the previous line is
+             a solid ////////// when re-styling buffer.
+
+    [041029] Fixed "*find*"  buffer  operation so that it operates like *grep*
+             on file  selection.  Keyboard  file  section  enabled  within the
+             "*grep*" and "*find*" buffer.
+
+    [041029] Added Apache configuration file highlighting rules.
+
     [041026] Spruced up old "smb.conf"  highlighting rules, brought them up to
              date with latest keywords and added to release.
 
+    [041026] Fixed indent-setup osd dialog.
+
     [041024] Macro/source  compatibility  macro and source versions updated to
              "20041001".
+
+    [041024] Fixed the cvs-diff options, local with HEAD was not correct.
+
+    [041024] Latex template extended. Buffer bindings for underscore and quote
+             keys. Search tools to determine current context.
 
     [041023] Extended  the  buffer  setup for the  indent  mechanism.  May now
              specify the default buffer indent-width and tabsize in the buffer
