@@ -18,6 +18,10 @@ set-variable .fhook-java.setup-mask "abdefghikmnoptux>"
 set-variable .fhook-java.tags "javatags"
 set-variable .fhook-java.comment "|/*| */|*| * | * |fr|"
 
+; Javadoc comment - /** ... detailed text ...
+;                    *  ... detailed text ... */
+set-variable .fhook-java.comment-1 "|/**| */|*| * | * |f|"
+
 ; Set up the collapse of functions
 set-variable .fhook-java.collapse-open   "^[a-zA-Z].*{$"
 set-variable .fhook-java.collapse-close  "^}"
@@ -161,4 +165,3 @@ define-macro ehook-java
 !endif
 
 buffer-init-fhook "java"
-

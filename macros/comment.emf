@@ -437,7 +437,7 @@ define-macro comment-end
         backward-line
         end-of-line
         insert-string &rig #l0 &len &lget :comment 1
-        insert-string &lget &trl :comment 2
+        insert-string &trl &lget :comment 2
     !endif
     beginning-of-buffer
     set-mark

@@ -46,26 +46,29 @@ set-variable .fhook-cpp.comment-5 "|/**<| */|*| *   | * |f|"
 ; Doxygen comment - /*!< ... member detailed text ...
 ;                    *   ... member detailed text ... */
 set-variable .fhook-cpp.comment-6 "|/*!<| */|*| *   | * |f|"
+; Doxygen comment - /** ... detailed text ...
+;                    *  ... detailed text ... */
+set-variable .fhook-cpp.comment-7 "|/**| */|*| * | * |f|"
 ; Fancy C - /*
 ;           ** Comment
 ;           */
-set-variable .fhook-cpp.comment-7 "|/*|*/|*|** | * |f|"
+set-variable .fhook-cpp.comment-8 "|/*|*/|*|** | * |f|"
 ; Fancy C - /*
 ;           ** Comment
 ;            */
-set-variable .fhook-cpp.comment-8 "|/*| */|*|** | * |f|"
+set-variable .fhook-cpp.comment-9 "|/*| */|*|** | * |f|"
 ; Fancy C - /*\
 ;            * Comment
 ;           \*/
-set-variable .fhook-cpp.comment-9 "|/*\\|\\*/|*| * | * |f|"
+set-variable .fhook-cpp.comment-10 "|/*\\|\\*/|*| * | * |f|"
 ; Standard comment - We repeat here incase the default comment style is
 ; over-ridden. 
 ; Standard C - /*
 ;               * ... comment ... 
 ;               */
-set-variable .fhook-cpp.comment-10 "|/*| */|*| * | * |f|"
+set-variable .fhook-cpp.comment-11 "|/*| */|*| * | * |f|"
 ; Standard C++ comment.
-set-variable .fhook-cpp.comment-11 "|//||/|// | //||"
+set-variable .fhook-cpp.comment-12 "|//||/|// | //||"
 
 ; Commands
 set-variable .fhook-cpp.command-flag  "|th|th|t|t|t|t|t|t|"
