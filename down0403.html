@@ -49,24 +49,25 @@
   <font size="+1"><a href="contrib.html" style="COLOR: black">contributions</a>&nbsp;&nbsp;</font>
   </p>
 
-  <HR color="#cccccc" noShade SIZE="1">
+  <HR color="#cccccc" noShade="1" SIZE="1"/>
 
-  <p><font size="+1"><b>Last Upload: 2nd October 2004</b></font></p>
+  <p><font size="+1"><b>Last Upload: 3rd October 2004</b></font></p>
 
   <p>When downloading the distribution then take both the source and the macro
-  components, these should NOT be mixed with a previous release. Users upgrading
-  from 2001 (or older) versions must also download the spelling dictionaries as
-  this release is no longer compatible with the older dictionaries.</p>
+  components, these should NOT be mixed with a previous release. Users
+  upgrading from 2001 (or older) versions must also download the spelling
+  dictionaries as this release is no longer compatible with the older
+  dictionaries.</p>
 
   <p>Files supplied in the UNIX tar.gz format may be downloaded to Microsoft
   Windows/DOS environments, use <a href="http://www.winzip.com/"
-  TARGET="_blank">Winzip</a> or native UNIX tools to unpack the files.</p>
- 
- <h2><img src="images/miniicon.gif" width="16" height="16">
- <font color="#0000FF">Building from source</font></h2>
-  
+   TARGET="_blank">Winzip</a> or native UNIX tools to unpack the files.</p>
+
+  <h2><img src="images/miniicon.gif" width="16" height="16"/>
+  <font color="#0000FF">Building from source</font></h2>
+
   <ul>
-    
+
     <p>If your system does not have a binary image then you may build one from
     the source. For UNIX a simple <tt>./build</tt> from the source directory
     will build an executable image for a supported target. A
@@ -75,111 +76,113 @@
 
   </ul>
 
-  <h2><img src="images/miniicon.gif" width="16" height="16">
+  <h2><img src="images/miniicon.gif" width="16" height="16"/>
   <font color="#0000FF">Upgrading from a previous release</font></h2>
-  
+
   <ul>
-    
+
     <p>If you are upgrading from a previous release then some of the binary
     data in the registry file <i>&lt;user&gt;.erf</i> file may have changed.
     Delete your existing <i>&lt;user&gt;.erf</i> file and re-configure using
     <tt>M-x user-setup</tt> (or via the menu <b>Help-&gt;User Setup</b>).
-    Failure to do so will mean that some of the buffer modes are incorrect.</p>
-    
+    Failure to do so will mean that some of the buffer modes are
+    incorrect.</p>
+
     <p>This notice also applies to the previous Release Candidates for '04 on
     Microsoft Windows environments where a Wheel Mouse is used. In this case
     the default key binding is changed and needs to be re-made via <tt>M-x
     user-setup</tt>.</p>
-    
+
     <p>Users of the tool bar are advised to delete all of the tool bars and
     then re-add them. Internally a number of tool bar state flags have changed
-    and the delete operation ensures that old state is removed.</p> 
-    
+    and the delete operation ensures that old state is removed.</p>
+
     <p>There have been some significant changes in this release with respect
     to the user set-up. This makes it much easier for new users to set up
     JASSPAs MicroEmacs correctly. Existing users should review their
     <tt>$MEPATH</TT> and <TT>$MENAME</TT> settings, most platforms will now
     run without the need to set these environment variables.</p>
-    
+
   </ul>
 
-  <h2><img src="images/miniicon.gif" width="16" height="16">
+  <h2><img src="images/miniicon.gif" width="16" height="16"/>
   <font color="#0000FF">Quick Download Guide</font></h2>
   <ul>
-    
+
     <p>The packaging has changed slightly in the March 2004 release. The
     archive <b>metree</b> contains a standard MicroEmacs macro tree,
     comprising the macros and help files and may be directly unpacked in
     <tt>/usr/local</tt> (UNIX), <tt>c:\</tt> (DOS) or <tt>C:\Program
     Files\</tt> (Windows) for the JASSPA directory.</p>
-    
+
     <p>Minimum download is:</p>
     <ul>
       <li>installation package</li>
       <li>OR <i>metree</i> and <i>executable image</i></li>
       <li>OR <i>metree</i> and <i>mesrc</i> to build your own image.</li>
-    </ul></p>
-    
-    <p>Please read the Installation Notes for further information</p> 
+    </ul>
+
+    <p>Please read the Installation Notes for further information</p>
   </ul>
-  
-  <h2><img src="images/miniicon.gif" width="16" height="16">
+
+  <h2><img src="images/miniicon.gif" width="16" height="16"/>
   <font color="#0000ff">Licensing</font></h2>
-  
+
   <ul>
-  <p>As of January 2002 Jasspa's MicroEmacs is distributed under the <a
-  href="http://www.fsf.org/copyleft/gpl.html">GNU General Public License
-  (GPL)</a>.</p>
+    <p>As of January 2002 Jasspa's MicroEmacs is distributed under the <a
+     href="http://www.fsf.org/copyleft/gpl.html">GNU General Public License
+    (GPL)</a>.</p>
   </ul>
-  
-  <!- CDROM Images -->
-  
-  <h2><img src="images/miniicon.gif" width="16" height="16">
+
+  <!-- CDROM Images -->
+
+  <h2><img src="images/miniicon.gif" width="16" height="16"/>
   <font color="#0000FF">Disc Images</font></h2>
-  
+
   <center><table border="1">
     <tr>
       <td bgcolor="#0000FF">
         <font color="#FFFF00">
-        <strong>ISO9660<br>Disc Images</strong></font></td>
+        <strong>ISO9660<br/>Disc Images</strong></font></td>
       <td bgcolor="#0000FF">
         <font color="#FFFF00">
         <i>ISO9660 CD-R Images of JASSPA MicroEmacs</i></font></td>
       <td align="center" bgcolor="#0000FF">
         <font color="#FFFF00">
-        <strong>Byte<br>Size</strong></font></td>
+        <strong>Byte<br/>Size</strong></font></td>
       <td align="center" bgcolor="#0000FF">
-        <font color="#FFFF00"><strong>Last update</strong><br>yyyy-mm-dd</font></td>
+        <font color="#FFFF00"><strong>Last update</strong><br/>yyyy-mm-dd</font></td>
     </tr>
     <tr>
       <td>
-        <p><a href="release_040301/jasspa-mecd-full-20040301.zip"><img src="images/cdfull.jpg" align="middle" width="70" height="70" border=0 ALT="[release_040301/jasspa-mecd-full-20040301.zip]"/></a>
-        &nbsp;<b>Version&nbsp;1.3</b></br>
+        <p><a href="release_040301/jasspa-mecd-full-20040301.zip"><img src="images/cdfull.jpg" align="middle" width="70" height="70" border="0" ALT="[release_040301/jasspa-mecd-full-20040301.zip]"/></a>
+        &nbsp;<b>Version&nbsp;1.3</b><br/>
         <a href="release_040301/jasspa-mecd-full-20040301.zip">jasspa-mecd-full-20040301.zip</a></p>
       </td>
       <td>
-        
+
         <p>A <b>ISO CDROM</b> image of all of the material on
         <b>jasspa.com</b> including full source, executables, packages,
         spelling dictionaries and documentation. CD labels are included on the
         CD. MicroEmacs or NanoEmacs may be run directly from the CD. Download
         suitable for Broadband.</p>
-        
+
         <p>Hybrid ISO9660 Disc, UNIX Rock Ridge, Microsoft Joliet, Apple HFS</p>
-        
-        <p><a href="release_040301/cdrom.txt">README</a> more information.</a></td>
-      
-      <td align="center">52906294<br>(52Mb)</td>
+
+        <p><a href="release_040301/cdrom.txt">README</a> more information.</p>
+      </td>
+
+      <td align="center">52906294<br/>(52Mb)</td>
       <td align="center">2004-03-01</td>
     </tr>
     <tr>
       <td>
-        <p><a href="release_040301/jasspa-mecd-exec-20040301.zip"><img src="images/cdexec.jpg" align="middle" width="70" height="70" border=0 ALT="[cdrom/jasspa-mecd-exec-20040301.zip]"/></a>
+        <p><a href="release_040301/jasspa-mecd-exec-20040301.zip"><img src="images/cdexec.jpg" align="middle" width="70" height="70" border="0" ALT="[cdrom/jasspa-mecd-exec-20040301.zip]"/></a>
         &nbsp;<b>Version 1.3</b>
         <br/><a href="release_040301/jasspa-mecd-exec-20040301.zip">jasspa-mecd-exec-20040301.zip</a></p>
       </td>
       <td>
-        
+
         <p>A <b>ISO CDROM</b> image containing executable versions of
         MicroEmacs and NanoEmacs that may be run directly from CD. This is a
         subset of the <i>full</i> image, source and macro archives
@@ -189,23 +192,24 @@
         spelling, documentation, packages, icons). The disc contains enough
         information to perform a binary install on all supported platforms in
         addition to a source build. Download suitable for Dial-up.</p>
-        
+
         <p>Hybrid ISO9660 Disc, UNIX Rock Ridge, Microsoft Joliet, Apple HFS.
         <i>Where the disc is to be used with HP-UX then the
         <a href="release_040301/jasspa-mecd-lexe-20040301.zip">jasspa-mecd-lexe-20040301.zip</a> image should be used.</i></p>
-        
-        <p><a href="release_040301/cdrom.txt">README</a> more information.</a></td>
-      <td align="center">10272405<br>(10Mb)</td>
+
+        <p><a href="release_040301/cdrom.txt">README</a> more information.</p>
+      </td>
+      <td align="center">10272405<br/>(10Mb)</td>
       <td align="center">2004-03-01</td>
     </tr>
     <tr>
       <td>
-        <p><a href="release_040301/jasspa-mecd-lexe-20040301.zip"><img src="images/cdexec.jpg" align="middle" width="70" height="70" border=0 ALT="[cdrom/jasspa-mecd-lexe-20040301.zip]"/></a>
+        <p><a href="release_040301/jasspa-mecd-lexe-20040301.zip"><img src="images/cdexec.jpg" align="middle" width="70" height="70" border="0" ALT="[cdrom/jasspa-mecd-lexe-20040301.zip]"/></a>
         &nbsp;<b>Version 1.3</b>
         <br/><a href="release_040301/jasspa-mecd-lexe-20040301.zip">jasspa-mecd-lexe-20040301.zip</a></p>
       </td>
       <td>
-        
+
         <p>A <b>ISO CDROM</b> image containing executable versions of
         MicroEmacs and NanoEmacs that may be run directly from CD. The disc is
         identical to <a href="release_040301/jasspa-mecd-exec-20040301.zip">jasspa-mecd-exec-20040301.zip</a>
@@ -213,25 +217,25 @@
         allow direct mounting of the CD-ROM under HP-UX. The disc does
         invalidate the ISO9660 standards and will not work with MS-DOS because
         of the long names, the disc is still valid with other UNIX and
-        Microsoft Windows operating systems. 
-        
+        Microsoft Windows operating systems.</p>
+
         <p>Hybrid non-standard ISO9660 Disc, UNIX Rock Ridge, Microsoft
         Joliet, Apple HFS with Untranslated filenames. <i>This disc is more
         suitable for HP-UX systems and may be mounted directly without Rock
-        Ridge extensions under HP-UX. </i></p>
-        
-        <p><a href="release_040301/cdrom.txt">README</a> more information.</a></td>
-      <td align="center">10269524<br>(10Mb)</td>
+        Ridge extensions under HP-UX.</i></p>
+
+        <p><a href="release_040301/cdrom.txt">README</a> more information.</p></td>
+      <td align="center">10269524<br/>(10Mb)</td>
       <td align="center">2004-03-01</td>
     </tr>
-    
+
   </table></center>
-  
+
   <!-- Documentation and Help -->
-  
-  <h2><img src="images/miniicon.gif" width="16" height="16"> 
+
+  <h2><img src="images/miniicon.gif" width="16" height="16"/>
   <font color="#0000FF">Documentation and Help</font></h2>
-  
+
   <p><center><table border="1" WIDTH="100%">
     <tr>
       <td bgcolor="#0000FF">
@@ -239,12 +243,12 @@
         <strong>Download Image</strong></font></td>
       <td bgcolor="#0000FF">
         <font color="#FFFF00">
-        <strong>Documentation</string></font></td>
+        <strong>Documentation</strong></font></td>
       <td align="center" bgcolor="#0000FF">
         <font color="#FFFF00">
-        <strong>Byte<br>Size</strong></font></td>
+        <strong>Byte<br/>Size</strong></font></td>
       <td align="center" bgcolor="#0000FF">
-        <font color="#FFFF00"><strong>Last update</strong><br>yyyy-mm-dd</font></td>
+        <font color="#FFFF00"><strong>Last update</strong><br/>yyyy-mm-dd</font></td>
     </tr>
     <tr>
       <td><a href="release_040301/doc/COPYING">COPYING</a></td>
@@ -305,19 +309,19 @@
         <a href="http://www.microemacs.de" target="_blank">PDF, CHM</a>
       </td>
       <td valign="top">
-        <a href="http://www.microemacs.de" target="_blank">www.microemacs.de<a>
+        <a href="http://www.microemacs.de" target="_blank">www.microemacs.de</a>
         offers alternative packaging of the MicroEmacs '04 documentation including
         Adobe PDF and Microsoft CHM format files in addition to a index HTML format.</td>
       <td align="center" valign="top">-</td>
       <td align="center" valign="top">2002-12-05</td>
     </tr>
   </table></center></p>
-  
+
   <!-- Source and Macro Downloads -->
-  
-  <h2><img src="images/miniicon.gif" width="16" height="16">
+
+  <h2><img src="images/miniicon.gif" width="16" height="16"/>
   <font color="#0000FF">Source and Macro Downloads</font></h2>
-  
+
   <p><center><table border="1" WIDTH="100%">
     <tr>
       <td bgcolor="#0000FF">
@@ -325,42 +329,42 @@
         <strong>Download Image</strong></font></td>
       <td bgcolor="#0000FF">
         <font color="#FFFF00">
-        <strong>Source Files</string></font></td>
+        <strong>Source Files</strong></font></td>
       <td align="center" bgcolor="#0000FF">
         <font color="#FFFF00">
-        <strong>Byte<br>Size</strong></font></td>
+        <strong>Byte<br/>Size</strong></font></td>
       <td align="center" bgcolor="#0000FF">
-        <font color="#FFFF00"><strong>Last update</strong><br>yyyy-mm-dd</font></td>
+        <font color="#FFFF00"><strong>Last update</strong><br/>yyyy-mm-dd</font></td>
     </tr>
     <tr>
-      <td><a href="release_040301/jasspa-mesrc-20040301.tar.gz">jasspa-mesrc-20040301.tar.gz</a><br>
+      <td><a href="release_040301/jasspa-mesrc-20040301.tar.gz">jasspa-mesrc-20040301.tar.gz</a><br/>
         <a href="release_040301/jasspa-mesrc-20040301.zip">jasspa-mesrc-20040301.zip</a></td>
       <td>Source file bundle.</td>
-      <td><center>732106<br>868216</center></td>
+      <td><center>732106<br/>868216</center></td>
       <td><center>2004-03-01</center></td>
     </tr>
     <tr>
-      <td><a href="release_040301/jasspa-memacros-20040301.tar.gz">jasspa-memacros-20040301.tar.gz</a><br>
+      <td><a href="release_040301/jasspa-memacros-20040301.tar.gz">jasspa-memacros-20040301.tar.gz</a><br/>
         <a href="release_040301/jasspa-memacros-20040301.zip">jasspa-memacros-20040301.zip</a></td>
-      
+
       <td>Macros and on-line help - no directory hierarchy. You do not require
         the <i>memacros</i> bundle if <i>metree</i> has been downloaded.</td>
-      
-      <td><center>869410<br>983695</center></td>
+
+      <td><center>869410<br/>983695</center></td>
       <td><center>2004-03-01</center></td>
     </tr>
     <tr>
       <td><a href="release_040301/jasspa-me-20040301-1.src.rpm">jasspa-me-20040301-1.src.rpm</a></td>
-      
+
       <td><b>Package:</b> Linux: Red Hat source package (up to Kernel 2.4)</td>
-    
+
       <td><center>1600896</center></td>
       <td><center>2004-03-01</center></td>
     </tr>
   </table></center></p>
-  
+
   <!-- Source and Macro Downloads -- Patches -->
-  
+
   <p><center><table border="1" WIDTH="100%">
     <tr>
       <td bgcolor="#FF0000">
@@ -368,42 +372,42 @@
         <strong>Latest Patched Image</strong></font></td>
       <td bgcolor="#FF0000">
         <font color="#FFFF00">
-        <strong>Source Files</string></font></td>
+        <strong>Source Files</strong></font></td>
       <td align="center" bgcolor="#FF0000">
         <font color="#FFFF00">
-        <strong>Byte<br>Size</strong></font></td>
+        <strong>Byte<br/>Size</strong></font></td>
       <td align="center" bgcolor="#FF0000">
-        <font color="#FFFF00"><strong>Last update</strong><br>yyyy-mm-dd</font></td>
+        <font color="#FFFF00"><strong>Last update</strong><br/>yyyy-mm-dd</font></td>
     </tr>
     <tr>
-      <td><a href="patch_040301/jasspa-mesrc-20040701.tar.gz">jasspa-mesrc-20040701.tar.gz</a><br>
+      <td><a href="patch_040301/jasspa-mesrc-20040701.tar.gz">jasspa-mesrc-20040701.tar.gz</a><br/>
         <a href="patch_040301/jasspa-mesrc-20040701.zip">jasspa-mesrc-20040701.zip</a></td>
       <td>Source file bundle. Use with 20040701 macros ONLY.</td>
-      <td><center>733187<br>872127</center></td>
+      <td><center>733187<br/>872127</center></td>
       <td><center>2004-07-28</center></td>
     </tr>
     <tr>
-      <td><a href="patch_040301/jasspa-memacros-20040701.tar.gz">jasspa-memacros-20040701.tar.gz</a><br>
+      <td><a href="patch_040301/jasspa-memacros-20040701.tar.gz">jasspa-memacros-20040701.tar.gz</a><br/>
         <a href="patch_040301/jasspa-memacros-20040701.zip">jasspa-memacros-20040701.zip</a></td>
-      
+
       <td>Macros and on-line help - no directory hierarchy. You do not require
         the <i>memacros</i> bundle if <i>metree</i> has been downloaded. Use with 20040701 source ONLY.</td>
-      
-      <td><center>871488<br>987165</center></td>
+
+      <td><center>871488<br/>987165</center></td>
       <td><center>2004-07-01</center></td>
     </tr>
     <tr>
       <td><a href="patch_040301/jasspa-me-20040701-2.src.rpm">jasspa-me-20040701-2.src.rpm</a></td>
-      
+
       <td><b>Package:</b> Linux: Red Hat source package (including Kernel 2.6)</td>
-    
+
       <td><center>1608190</center></td>
       <td><center>2004-07-28</center></td>
     </tr>
   </table></center></p>
-  
+
   <!-- Source Downloads -- Beta Test -->
-  
+
   <p><center><table border="1" WIDTH="100%">
     <tr>
       <td bgcolor="#00FF00">
@@ -411,12 +415,12 @@
         <strong>Experimental Prototype Images</strong></font></td>
       <td bgcolor="#00FF00">
         <font color="#0000FF">
-        <strong>Source Files</string></font></td>
+        <strong>Source Files</strong></font></td>
       <td align="center" bgcolor="#00FF00">
         <font color="#0000FF">
-        <strong>Byte<br>Size</strong></font></td>
+        <strong>Byte<br/>Size</strong></font></td>
       <td align="center" bgcolor="#00FF00">
-        <font color="#0000FF"><strong>Last update</strong><br>yyyy-mm-dd</font></td>
+        <font color="#0000FF"><strong>Last update</strong><br/>yyyy-mm-dd</font></td>
     </tr>
     <tr>
       <td><a href="patch_040301/jasspa-mesrc-20040701-xdnd.tar.gz">jasspa-mesrc-20040701-xdnd.tar.gz</a></td>
@@ -427,357 +431,383 @@
       <td><center>2004-10-02</center></td>
     </tr>
     <tr>
-      <td><a href="patch_040301/jasspame-memacros-20040701-xml.tar.gz">jasspame-memacros-20040701-xml.tar.gz</a><br>
+      <td><a href="patch_040301/jasspame-memacros-20040701-xml.tar.gz">jasspame-memacros-20040701-xml.tar.gz</a><br/>
         <a href="patch_040301/jasspame-memacros-20040701-xml.zip">jasspame-memacros-20040701-xml.zip</a></td>
+
+      <td>
+        
+        <p>Macro enhancement for handling SGML and XML files. Extract into
+        your <i>user</i> directory (UNIX: <tt>~/.jasspa</tt>, Microsoft:
+        <tt>c:/Documents and Settings/<i>user</i>/Application
+        Data/jasspa</tt>) The download bundle includes the files
+        <tt>hkxml.emf</tt>, <tt>hksgml.emf</tt>, <tt>xmlutil.emf</tt> and
+        <tt>abbrev.emf</tt>.</p>
+        
+        <p>Within XML or SGML files then <tt>&lt;esc&gt;&lt;esc&gt;</tt> will
+        complete a closing tag when the cursor follows <tt>&lt;/</tt>.
+        Addition of the new command <tt>M-x <b>xml-verify</b></tt> checks the
+        validity of the XML.</p>
       
-      <td>Macro enhancement for handling SGML and XML files. Extract into 
-        your <i>user</i> directory (UNIX: <tt>~/.jasspa</tt>,
-        Microsoft: <tt>c:/Documents and Settings/<i>user</i>/Application Data/jasspa</tt>)
-        The download bundle includes the files <tt>hkxml.emf</tt>, <tt>hksgml.emf</tt>,
-        <tt>xmlutil.emf</tt> and <tt>abbrev.emf</tt>. 
-        <p>Within XML or SGML files
-        then <tt>&lt;esc&gt;&lt;esc&gt;</tt> will complete a closing tag when
-        the cursor follows <tt>&lt;/</tt>. Addition of the new command <tt>M-x
-        <b>xml-verify</b></tt> checks the validity of the XML.</p></td>
-      <td><center>7907<br>9661</center></td>
+      </td>
+      <td><center>7907<br/>9661</center></td>
+      <td><center>2004-10-03</center></td>
+    </tr>
+    <tr>
+      <td><a href="patch_040301/myhtml.emf">myhtml.emf</a></td>
+
+      <td>
+        
+        <p>Macro enhancement to extend the handling of HTML files. Save into
+        your <i>user</i> directory (UNIX: <tt>~/.jasspa</tt>, Microsoft:
+        <tt>c:/Documents and Settings/<i>user</i>/Application
+        Data/jasspa</tt>). The download requires the
+        <b>jasspame-memacros-20040701-xml</b> bundle.</p>
+        
+        <p>Within HTML files then <tt>&lt;esc&gt;&lt;esc&gt;</tt> will
+        complete a closing tag when the cursor follows <tt>&lt;/</tt>.
+        Addition of the new command <tt>M-x <b>html-verify</b></tt> checks the
+        validity of the HTML (using a strict XML format).</p>
+      
+      </td>
+      <td><center>618</center></td>
       <td><center>2004-10-03</center></td>
     </tr>
   </table></center></p>
-  
+
   <!-- Package and Binary Downloads -->
-  
-  <h2><img src="images/miniicon.gif" width="16" height="16">
+
+  <h2><img src="images/miniicon.gif" width="16" height="16"/>
   <font color="#0000FF">Packages</font></h2>
-  
+
   <p>Packages are self contained, comprising an executable, on-line help and
   macros. Where a platform is not packaged then you require <b>metree</b>
   in addition to the binary executable image from the next section.</p>
-  
-  <p><center><table border="1" WIDTH="100%">
+
+  <center><table border="1" WIDTH="100%">
     <tr>
       <td bgcolor="#0000FF">
         <font color="#FFFF00"><strong>Download Image</strong></font></td>
       <td bgcolor="#0000FF">
         <font color="#FFFF00">
-        <strong>Pre-built Installation Files</string></font></td>
+        <strong>Pre-built Installation Files</strong></font></td>
       <td align="center" bgcolor="#0000FF">
-        <font color="#FFFF00"><strong>Byte<br>Size</strong></font></td>
+        <font color="#FFFF00"><strong>Byte<br/>Size</strong></font></td>
       <td align="center" bgcolor="#0000FF">
-        <font color="#FFFF00"><strong>Last update</strong><br>yyyy-mm-dd</font></td>
+        <font color="#FFFF00"><strong>Last update</strong><br/>yyyy-mm-dd</font></td>
     </tr>
     <tr>
       <td><a href="release_040301/jasspa-mepkg-ms-win32-2004030.zip">jasspa-mepkg-ms-win32-2004030.zip</a></td>
-      
-      <td><b>Package:</b> Microsoft Windows '95/'98/NT/2K/XP Install Shield packaged installer<br>
+
+      <td><b>Package:</b> Microsoft Windows '95/'98/NT/2K/XP Install Shield packaged installer<br/>
       <i>Includes source, macros and help.</i></td>
-    
+
       <td><center>4060415</center></td>
       <td><center>2004-03-01</center></td>
     </tr>
     <tr>
       <td><a href="release_040301/jasspa-me-20040301-1.i386.rpm">jasspa-me-20040301-1.i386.rpm</a></td>
-      <td><b>Package:</b> Linux: i386 Red Hat binary package (Kernel 2.4 - RedHat)<br><i>rpm -i jasspa-me-20040301-1.i386.rpm</td>
+      <td><b>Package:</b> Linux: i386 Red Hat binary package (Kernel 2.4 - RedHat)<br/><i>rpm -i jasspa-me-20040301-1.i386.rpm</i></td>
       <td><center>1140945</center></td>
       <td><center>2004-03-01</center></td>
     </tr>
     <tr>
       <td><a href="release_040301/jasspa-mepkg-sun-sparc-56-20040301.zip">jasspa-mepkg-sun-sparc-56-20040301.zip</a></td>
-      <td><b>Package:</b> Sun Solaris (sparc) 5.6/7 package.<br><i>(pkgadd -d jasspa-me)</i></td>
+      <td><b>Package:</b> Sun Solaris (sparc) 5.6/7 package.<br/><i>(pkgadd -d jasspa-me)</i></td>
       <td><center>1136955</center></td>
       <td><center>2004-03-01</center></td>
     </tr>
     <tr>
       <td><a href="release_040301/jasspa-mepkg-sun-sparc-58-20040301.zip">jasspa-mepkg-sun-sparc-58-20040301.zip</a></td>
-      
-      <td><b>Package:</b> Sun Solaris (sparc) 8 package.<br><i>(pkgadd -d jasspa-me)</i></td>
-    
+
+      <td><b>Package:</b> Sun Solaris (sparc) 8 package.<br/><i>(pkgadd -d jasspa-me)</i></td>
+
       <td><center>1164808</center></td>
       <td><center>2004-03-01</center></td>
     </tr>
     <tr>
       <td><a href="release_040301/jasspa-mepkg-sun-sparc-59-20040301.zip">jasspa-mepkg-sun-sparc-59-20040301.zip</a></td>
-      
-      <td><b>Package:</b> Sun Solaris (sparc) 9 package.<br><i>(pkgadd -d jasspa-me)</i></td>
-    
+
+      <td><b>Package:</b> Sun Solaris (sparc) 9 package.<br/><i>(pkgadd -d jasspa-me)</i></td>
+
       <td><center>1169900</center></td>
       <td><center>2004-03-01</center></td>
     </tr>
     <tr>
       <td><a href="release_040301/jasspa-mepkg-sun-i386-58-20040301.zip">jasspa-mepkg-sun-i386-58-20040301.zip</a></td>
-      
-      <td><b>Package:</b> Sun Solaris (i386) 8 package.<br><i>(pkgadd -d jasspa-me)</i></td>
-    
+
+      <td><b>Package:</b> Sun Solaris (i386) 8 package.<br/><i>(pkgadd -d jasspa-me)</i></td>
+
       <td><center>1106455</center></td>
       <td><center>2004-03-01</center></td>
     </tr>
     <tr>
       <td><a href="release_040301/jasspa-mepkg-sun-i386-59-20040301.zip">jasspa-mepkg-sun-i386-59-20040301.zip</a></td>
-      
-      <td><b>Package:</b> Sun Solaris (i386) 9 package.<br><i>(pkgadd -d jasspa-me)</i></td>
-    
+
+      <td><b>Package:</b> Sun Solaris (i386) 9 package.<br/><i>(pkgadd -d jasspa-me)</i></td>
+
       <td><center>1106060</center></td>
       <td><center>2004-03-01</center></td>
     </tr>
     <tr>
       <td><a href="release_040301/jasspa-mepkg-hpux-pa-10.20-20040301.depot.gz">jasspa-mepkg-hpux-pa-10.20-20040301.depot.gz</a></td>
-      
-      <td><b>Package:</b> HP HP-UX (pa-risc) 10.20 package.<br><i>(/usr/sbin/swinstall -s `pwd`/jasspa-mepkg-hpux-pa-10.20-20040301.depot jasspa-me)</i></td>
-    
+
+      <td><b>Package:</b> HP HP-UX (pa-risc) 10.20 package.<br/><i>(/usr/sbin/swinstall -s `pwd`/jasspa-mepkg-hpux-pa-10.20-20040301.depot jasspa-me)</i></td>
+
       <td><center>1218997</center></td>
       <td><center>2004-03-01</center></td>
     </tr>
     <tr>
       <td><a href="release_040301/jasspa-mepkg-hpux-pa-11.00-20040301.depot.gz">jasspa-mepkg-hpux-pa-11.00-20040301.depot.gz</a></td>
-      
-      <td><b>Package:</b> HP HP-UX (pa-risc) 11.00 package.<br><i>(/usr/sbin/swinstall -s `pwd`/jasspa-mepkg-hpux-pa-11.00-20040301.depot jasspa-me)</i></td>
-    
+
+      <td><b>Package:</b> HP HP-UX (pa-risc) 11.00 package.<br/><i>(/usr/sbin/swinstall -s `pwd`/jasspa-mepkg-hpux-pa-11.00-20040301.depot jasspa-me)</i></td>
+
       <td><center>1222476</center></td>
       <td><center>2004-03-01</center></td>
     </tr>
     <tr>
       <td>
         <a href="http://www.hardline.org" target="_blank">Linux (i386,SPARC,ARM)
-        <br>RPM and Debian</a></td>
+        <br/>RPM and Debian</a></td>
       <td>
         <p><b>Package:</b>
-        <a href="http://www.hardline.org" target="_blank">www.hardline.org<a>
+        <a href="http://www.hardline.org" target="_blank">www.hardline.org</a>
         provides pre-built packages (RPM, Debian) for Linux on various architectures. Source
-        and binary packages are provided.</td>
+        and binary packages are provided.</p></td>
       <td align="center">-</td>
       <td align="center" >2002-12-16</td>
     </tr>
   </table></center>
-  
+
   <!-- Latest package patches -->
-  
-    <p><center><table border="1" WIDTH="100%">
+
+    <center><table border="1" WIDTH="100%">
     <tr>
       <td bgcolor="#FF0000">
         <font color="#FFFF00"><strong>Latest Patched Image</strong></font></td>
       <td bgcolor="#FF0000">
         <font color="#FFFF00">
-        <strong>Pre-built Installation Files</string></font></td>
+        <strong>Pre-built Installation Files</strong></font></td>
       <td align="center" bgcolor="#FF0000">
-        <font color="#FFFF00"><strong>Byte<br>Size</strong></font></td>
+        <font color="#FFFF00"><strong>Byte<br/>Size</strong></font></td>
       <td align="center" bgcolor="#FF0000">
-        <font color="#FFFF00"><strong>Last update</strong><br>yyyy-mm-dd</font></td>
+        <font color="#FFFF00"><strong>Last update</strong><br/>yyyy-mm-dd</font></td>
     </tr>
     <tr>
       <td><a href="patch_040301/jasspa-mepkg-ms-win32-20040701.zip">jasspa-mepkg-ms-win32-20040701.zip</a></td>
-      
-      <td><b>Package:</b> Microsoft Windows '95/'98/NT/2K/XP Install Shield packaged installer<br>
+
+      <td><b>Package:</b> Microsoft Windows '95/'98/NT/2K/XP Install Shield packaged installer<br/>
       <i>Includes source, macros and help.</i></td>
-    
+
       <td><center>4074070</center></td>
       <td><center>2004-07-01</center></td>
     </tr>
     <tr>
       <td><a href="patch_040301/jasspa-me-20040701-1.i386.rpm">jasspa-me-20040701-1.i386.rpm</a></td>
-      
-      <td><b>Package:</b> Linux: i386 Red Hat binary package (Kernel 2.4 - RedHat)<br><i>rpm -i jasspa-me-20040701-1.i386.rpm</td>
+
+      <td><b>Package:</b> Linux: i386 Red Hat binary package (Kernel 2.4 - RedHat)<br/><i>rpm -i jasspa-me-20040701-1.i386.rpm</i></td>
       <td><center>1150162</center></td>
       <td><center>2004-07-01</center></td>
     </tr>
     <tr>
       <td><a href="patch_040301/jasspa-me-2.6-20040701-2.i386.rpm">jasspa-me-2.6-20040701-2.i386.rpm</a></td>
-      <td><b>Package:</b> Linux: i386 Red Hat binary package (Kernel 2.6 - Fedora)<br><i>rpm -i jasspa-me-2.6-20040701-2.i386.rpm</td>
+      <td><b>Package:</b> Linux: i386 Red Hat binary package (Kernel 2.6 - Fedora)<br/><i>rpm -i jasspa-me-2.6-20040701-2.i386.rpm</i></td>
       <td><center>1158718</center></td>
       <td><center>2004-07-28</center></td>
     </tr>
     <tr>
       <td><a href="patch_040301/jasspa-mepkg-sun-sparc-59-20040701.zip">jasspa-mepkg-sun-sparc-59-20040701.zip</a></td>
-      
-      <td><b>Package:</b> Sun Solaris (sparc) 9 package.<br><i>(pkgadd -d jasspa-me)</i></td>
-    
+
+      <td><b>Package:</b> Sun Solaris (sparc) 9 package.<br/><i>(pkgadd -d jasspa-me)</i></td>
+
       <td><center>1179262</center></td>
       <td><center>2004-07-01</center></td>
     </tr>
     <tr>
       <td><a href="patch_040301/jasspa-mepkg-sun-i386-58-20040701.zip">jasspa-mepkg-sun-i386-58-20040701.zip</a></td>
-      
-      <td><b>Package:</b> Sun Solaris (i386) 8 package.<br><i>(pkgadd -d jasspa-me)</i></td>
-    
+
+      <td><b>Package:</b> Sun Solaris (i386) 8 package.<br/><i>(pkgadd -d jasspa-me)</i></td>
+
       <td><center>1114975</center></td>
       <td><center>2004-07-01</center></td>
     </tr>
     <tr>
       <td><a href="patch_040301/jasspa-mepkg-sun-i386-59-20040701.zip">jasspa-mepkg-sun-i386-59-20040701.zip</a></td>
-      
-      <td><b>Package:</b> Sun Solaris (i386) 9 package.<br><i>(pkgadd -d jasspa-me)</i></td>
-    
+
+      <td><b>Package:</b> Sun Solaris (i386) 9 package.<br/><i>(pkgadd -d jasspa-me)</i></td>
+
       <td><center>1114387</center></td>
       <td><center>2004-07-01</center></td>
     </tr>
     <tr>
       <td><a href="patch_040301/jasspa-mepkg-hpux-pa-10.20-20040701.depot.gz">jasspa-mepkg-hpux-pa-10.20-20040701.depot.gz</a></td>
-      
-      <td><b>Package:</b> HP HP-UX (pa-risc) 10.20 package.<br><i>(/usr/sbin/swinstall -s `pwd`/jasspa-mepkg-hpux-pa-10.20-20040701.depot jasspa-me)</i></td>
-    
+
+      <td><b>Package:</b> HP HP-UX (pa-risc) 10.20 package.<br/><i>(/usr/sbin/swinstall -s `pwd`/jasspa-mepkg-hpux-pa-10.20-20040701.depot jasspa-me)</i></td>
+
       <td><center>1451039</center></td>
       <td><center>2004-07-01</center></td>
     </tr>
     <tr>
       <td><a href="patch_040301/jasspa-mepkg-hpux-pa-11.00-20040701.depot.gz">jasspa-mepkg-hpux-pa-11.00-20040701.depot.gz</a></td>
-      
-      <td><b>Package:</b> HP HP-UX (pa-risc) 11.00 package.<br><i>(/usr/sbin/swinstall -s `pwd`/jasspa-mepkg-hpux-pa-11.00-20040701.depot jasspa-me)</i></td>
-    
+
+      <td><b>Package:</b> HP HP-UX (pa-risc) 11.00 package.<br/><i>(/usr/sbin/swinstall -s `pwd`/jasspa-mepkg-hpux-pa-11.00-20040701.depot jasspa-me)</i></td>
+
       <td><center>1240083</center></td>
       <td><center>2004-07-01</center></td>
     </tr>
   </table></center>
 
   <!-- Pre-built Binaries -->
-  
-  <h2><img src="images/miniicon.gif" width="16" height="16">
+
+  <h2><img src="images/miniicon.gif" width="16" height="16"/>
   <font color="#0000FF">Pre-built Binaries</font></h2>
-  
+
   <p>Pre-built binary images. Where a platform is not packaged then you
   require <b>metree</b> in addition to the binary executable image.</p>
-  
+
   <p><center><table border="1" WIDTH="100%">
     <tr>
       <td bgcolor="#0000FF">
         <font color="#FFFF00"><strong>Download Image</strong></font></td>
       <td bgcolor="#0000FF">
         <font color="#FFFF00">
-        <strong>Pre-built Installation Files</string></font></td>
+        <strong>Pre-built Installation Files</strong></font></td>
       <td align="center" bgcolor="#0000FF">
-        <font color="#FFFF00"><strong>Byte<br>Size</strong></font></td>
+        <font color="#FFFF00"><strong>Byte<br/>Size</strong></font></td>
       <td align="center" bgcolor="#0000FF">
-        <font color="#FFFF00"><strong>Last update</strong><br>yyyy-mm-dd</font></td>
+        <font color="#FFFF00"><strong>Last update</strong><br/>yyyy-mm-dd</font></td>
     </tr>
     <tr>
-      <td><a href="release_040301/jasspa-metree-20040301.tar.gz">jasspa-metree-20040301.tar.gz</a><br>
+      <td><a href="release_040301/jasspa-metree-20040301.tar.gz">jasspa-metree-20040301.tar.gz</a><br/>
         <a href="release_040301/jasspa-metree-20040301.zip">jasspa-metree-20040301.zip</a></td>
-      
+
       <td>Pre-built macros tree for installation, includes macros and help information. You do not
       require the <i>memacros</i> bundle if this is downloaded.</td>
-      <td><center>866481<br>1000401</center></td>
+      <td><center>866481<br/>1000401</center></td>
       <td><center>2004-03-01</center></td>
     </tr>
-   
+
     <tr>
       <td><a href="release_040301/jasspa-me-ms-win32-20040301.zip">jasspa-me-ms-win32-20040301.zip</a></td>
-      <td>Microsoft Windows '95/'98/NT/2K/XP pre-built executable only. ME+Window (no URL support).<br>
+      <td>Microsoft Windows '95/'98/NT/2K/XP pre-built executable only. ME+Window (no URL support).<br/>
         <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run.</i></td>
       <td><center>230172</center></td>
       <td><center>2004-03-01</center></td>
     </tr>
     <tr>
       <td><a href="release_040301/jasspa-meu-ms-win32-20040301.zip">jasspa-meu-ms-win32-20040301.zip</a></td>
-      <td>Microsoft Windows '95/'98/NT/2K/XP pre-built executable only. ME+Window with URL support.<br>
+      <td>Microsoft Windows '95/'98/NT/2K/XP pre-built executable only. ME+Window with URL support.<br/>
         <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run.</i></td>
       <td><center>235182</center></td>
       <td><center>2004-03-01</center></td>
     </tr>
     <tr>
       <td><a href="release_040301/jasspa-meucw-ms-win32-20040301.zip">jasspa-meucw-ms-win32-20040301.zip</a></td>
-      <td>Microsoft Windows '95/'98/NT/2K/XP pre-built executable only. ME+Window with URL and console support.<br>
+      <td>Microsoft Windows '95/'98/NT/2K/XP pre-built executable only. ME+Window with URL and console support.<br/>
         <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run.</i></td>
       <td><center>238104</center></td>
       <td><center>2004-03-01</center></td>
     </tr>
     <tr>
       <td><a href="release_040301/jasspa-me-ms-win32s-20040301.zip">jasspa-me-ms-win32s-20040301.zip</a></td>
-      <td>Microsoft Windows win32s pre-built executable only. Window (no URL support).<br>
+      <td>Microsoft Windows win32s pre-built executable only. Window (no URL support).<br/>
         <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run.</i></td>
       <td><center>261005</center></td>
       <td><center>2004-03-01</center></td>
     </tr>
     <tr>
       <td><a href="release_040301/jasspa-me-msdos-djgpp1-20040301.zip">jasspa-me-msdos-djgpp1-20040301.zip</a></td>
-      <td>MS-DOS / DJGPP V1.0 pre-built executable only. (8.3 names only).<br>
+      <td>MS-DOS / DJGPP V1.0 pre-built executable only. (8.3 names only).<br/>
         <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run.</i></td>
       <td><center>229155</center></td>
       <td><center>2004-03-01</center></td>
     </tr>
     <tr>
       <td><a href="release_040301/jasspa-me-msdos-djgpp2-20040301.zip">jasspa-me-msdos-djgpp2-20040301.zip</a></td>
-      <td>MS-DOS / DJGPP V2.0 pre-built executable only. (long name support).<br>
+      <td>MS-DOS / DJGPP V2.0 pre-built executable only. (long name support).<br/>
         <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run.</i></td>
       <td><center>245443</center></td>
       <td><center>2004-03-01</center></td>
     </tr>
     <tr>
       <td><a href="release_040301/jasspa-mec-apple-darwin-6.6-20040301.gz">jasspa-mec-apple-darwin-6.6-20040301.gz</a></td>
-      <td>Apple PPC Darwin 6.6 executable only. ME console only.<br>
+      <td>Apple PPC Darwin 6.6 executable only. ME console only.<br/>
         <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run.</i></td>
       <td><center>266993</center></td>
       <td><center>2004-03-01</center></td>
     </tr>
     <tr>
       <td><a href="release_040301/jasspa-me-ibm-aix-4-20040301.gz">jasspa-me-ibm-aix-4-20040301.gz</a></td>
-      <td>IBM AIX 4.3 executable only.<br>
+      <td>IBM AIX 4.3 executable only.<br/>
         <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run.</i></td>
       <td><center>262512</center></td>
       <td><center>2004-03-01</center></td>
     </tr>
     <tr>
       <td><a href="release_040301/jasspa-me-sgi-irix-6-20040301.gz">jasspa-me-sgi-irix-6-20040301.gz</a></td>
-      <td>SGI IRIX 6.x executable only.<br>
+      <td>SGI IRIX 6.x executable only.<br/>
         <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run.</i></td>
       <td><center>393663</center></td>
       <td><center>2004-03-01</center></td>
     </tr>
     <tr>
       <td><a href="release_040301/jasspa-me-sun-sparc-56-20040301.gz">jasspa-me-sun-sparc-56-20040301.gz</a></td>
-      <td>Sun Solaris (sparc) 5.6/7 pre-built executable only.<br>
-        <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run.</td>
+      <td>Sun Solaris (sparc) 5.6/7 pre-built executable only.<br/>
+        <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run.</i></td>
       <td><center>262977</center></td>
       <td><center>2004-03-01</center></td>
     </tr>
     <tr>
       <td><a href="release_040301/jasspa-me-sun-sparc-58-20040301.gz">jasspa-me-sun-sparc-58-20040301.gz</a></td>
-      <td>Sun Solaris (sparc) 8 pre-built executable only.<br>
-        <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run.</td>
+      <td>Sun Solaris (sparc) 8 pre-built executable only.<br/>
+        <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run.</i></td>
       <td><center>290518</center></td>
       <td><center>2004-03-01</center></td>
     </tr>
     <tr>
       <td><a href="release_040301/jasspa-me-sun-sparc-59-20040301.gz">jasspa-me-sun-sparc-59-20040301.gz</a></td>
-      <td>Sun Solaris (sparc) 9 pre-built executable only.<br>
-        <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run.</td>
+      <td>Sun Solaris (sparc) 9 pre-built executable only.<br/>
+        <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run.</i></td>
       <td><center>295518</center></td>
       <td><center>2004-03-01</center></td>
     </tr>
     <tr>
       <td><a href="release_040301/jasspa-me-sun-i386-58-20040301.gz">jasspa-me-sun-i386-58-20040301.gz</a></td>
-      <td>Sun Solaris (i386) 8 pre-built executable only.<br>
-        <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run.</td>
+      <td>Sun Solaris (i386) 8 pre-built executable only.<br/>
+        <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run.</i></td>
       <td><center>232538</center></td>
       <td><center>2004-03-01</center></td>
     </tr>
     <tr>
       <td><a href="release_040301/jasspa-me-sun-i386-59-20040301.gz">jasspa-me-sun-i386-59-20040301.gz</a></td>
-      <td>Sun Solaris (i386) 9 pre-built executable only.<br>
-        <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run.</td>
+      <td>Sun Solaris (i386) 9 pre-built executable only.<br/>
+        <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run.</i></td>
       <td><center>232429</center></td>
       <td><center>2004-03-01</center></td>
     </tr>
     <tr>
       <td><a href="release_040301/jasspa-me-hpux-pa-10.20-20040301.gz">jasspa-me-hpux-pa-10.20-20040301.gz</a></td>
-      <td>HP HP-UX (pa-risc) 10.20 pre-built executable only.<br>
+      <td>HP HP-UX (pa-risc) 10.20 pre-built executable only.<br/>
         <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run.</i></td>
       <td><center>324645</center></td>
       <td><center>2004-03-01</center></td>
     </tr>
     <tr>
       <td><a href="release_040301/jasspa-me-hpux-pa-11.00-20040301.gz">jasspa-me-hpux-pa-11.00-20040301.gz</a></td>
-      <td>HP HP-UX (pa-risc) 11.x pre-built executable only.<br>
+      <td>HP HP-UX (pa-risc) 11.x pre-built executable only.<br/>
         <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run.</i></td>
       <td><center>328302</center></td>
       <td><center>2004-03-01</center></td>
     </tr>
     <tr>
       <td><a href="release_040301/jasspa-me-linux-i386-2.4-20040301.gz">jasspa-me-linux-i386-2.4-20040301.gz</a></td>
-      <td>Linux 2.4 pre-built executable only.<br>
+      <td>Linux 2.4 pre-built executable only.<br/>
         <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run.</i></td>
       <td><center>235525</center></td>
       <td><center>2004-03-01</center></td>
     </tr>
     <tr>
       <td><a href="release_040301/jasspa-me-openbsd-i386-3.4-20040301.gz">jasspa-me-openbsd-i386-3.4-20040301.gz</a></td>
-      <td>OpenBSD 3.4 executable only.<br>
+      <td>OpenBSD 3.4 executable only.<br/>
         <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run.</i></td>
       <td><center>227410</center></td>
       <td><center>2004-03-01</center></td>
@@ -785,7 +815,7 @@
     <tr>
       <td valign="top">
         <a href="release_040301/jasspa-mec-cygwin-20040301.exe.gz">jasspa-mec-cygwin-20040301.exe.gz</a></td>
-      <td valign="top">Cygwin pre-built executable supporting console only.<br>
+      <td valign="top">Cygwin pre-built executable supporting console only.<br/>
         <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run.</i></td>
       <td align="center" valign="top">230725</td>
       <td align="center" valign="top">2004-03-01</td>
@@ -793,92 +823,91 @@
     <tr>
       <td valign="top">
         <a href="release_040301/jasspa-me-cygwin-20040301.exe.gz">jasspa-me-cygwin-20040301.exe.gz</a></td>
-      <td valign="top">Cygwin pre-built executable supporting X-Windows and Console (X11 must be installed to run).<br>
+      <td valign="top">Cygwin pre-built executable supporting X-Windows and Console (X11 must be installed to run).<br/>
         <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run.</i></td>
       <td align="center" valign="top">249316</td>
       <td align="center" valign="top">2004-03-01</td>
     </tr>
   </table></center></p>
-    
-  
+
   <!-- Pre-built Binaries - Patched  -->
-  
+
   <p><center><table border="1" WIDTH="100%">
     <tr>
       <td bgcolor="#FF0000">
         <font color="#FFFF00"><strong>Latest Patched Image</strong></font></td>
       <td bgcolor="#FF0000">
         <font color="#FFFF00">
-        <strong>Pre-built Installation Files</string></font></td>
+        <strong>Pre-built Installation Files</strong></font></td>
       <td align="center" bgcolor="#FF0000">
-        <font color="#FFFF00"><strong>Byte<br>Size</strong></font></td>
+        <font color="#FFFF00"><strong>Byte<br/>Size</strong></font></td>
       <td align="center" bgcolor="#FF0000">
-        <font color="#FFFF00"><strong>Last update</strong><br>yyyy-mm-dd</font></td>
+        <font color="#FFFF00"><strong>Last update</strong><br/>yyyy-mm-dd</font></td>
     </tr>
     <tr>
-      <td><a href="patch_040301/jasspa-metree-20040701.tar.gz">jasspa-metree-20040701.tar.gz</a><br>
+      <td><a href="patch_040301/jasspa-metree-20040701.tar.gz">jasspa-metree-20040701.tar.gz</a><br/>
         <a href="patch_040301/jasspa-metree-20040701.zip">jasspa-metree-20040701.zip</a></td>
-      
+
       <td>Pre-built macros tree for installation, includes macros and help information. You do not
       require the <i>memacros</i> bundle if this is downloaded. Use with 20040701 source ONLY.</td>
-      <td><center>873890<br>1013237</center></td>
+      <td><center>873890<br/>1013237</center></td>
       <td><center>2004-07-01</center></td>
     </tr>
     <tr>
       <td><a href="patch_040301/jasspa-me-sun-sparc-59-20040701.gz">jasspa-me-sun-sparc-59-20040701.gz</a></td>
-      <td>Sun Solaris (sparc) 9 pre-built executable only.<br>
+      <td>Sun Solaris (sparc) 9 pre-built executable only.<br/>
         <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run. Use with 20040701 macros ONLY.</i></td>
       <td><center>296114</center></td>
       <td><center>2004-07-01</center></td>
     </tr>
     <tr>
       <td><a href="patch_040301/jasspa-me-sun-i386-58-20040701.gz">jasspa-me-sun-i386-58-20040701.gz</a></td>
-      <td>Sun Solaris (i386) 8 pre-built executable only.<br>
+      <td>Sun Solaris (i386) 8 pre-built executable only.<br/>
         <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run. Use with 20040701 macros ONLY.</i></td>
       <td><center>233382</center></td>
       <td><center>2004-07-01</center></td>
     </tr>
     <tr>
       <td><a href="patch_040301/jasspa-me-sun-i386-59-20040701.gz">jasspa-me-sun-i386-59-20040701.gz</a></td>
-      <td>Sun Solaris (i386) 9 pre-built executable only.<br>
+      <td>Sun Solaris (i386) 9 pre-built executable only.<br/>
         <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run. Use with 20040701 macros ONLY.</i></td>
       <td><center>232977</center></td>
       <td><center>2004-07-01</center></td>
     </tr>
     <tr>
       <td><a href="patch_040301/jasspa-me-hpux-pa-10.20-20040701.gz">jasspa-me-hpux-pa-10.20-20040701.gz</a></td>
-      <td>HP HP-UX (pa-risc) 10.20 pre-built executable only.<br>
+      <td>HP HP-UX (pa-risc) 10.20 pre-built executable only.<br/>
         <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run. Use with 20040701 macros ONLY.</i></td>
       <td><center>547489</center></td>
       <td><center>2004-07-01</center></td>
     </tr>
     <tr>
       <td><a href="patch_040301/jasspa-me-hpux-pa-11.00-20040701.gz">jasspa-me-hpux-pa-11.00-20040701.gz</a></td>
-      <td>HP HP-UX (pa-risc) 11.x pre-built executable only.<br>
+      <td>HP HP-UX (pa-risc) 11.x pre-built executable only.<br/>
         <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run. Use with 20040701 macros ONLY.</i></td>
       <td><center>337296</center></td>
       <td><center>2004-07-01</center></td>
     </tr>
     <tr>
       <td><a href="patch_040301/jasspa-me-openbsd-i386-3.4-20040701.gz">jasspa-me-openbsd-i386-3.4-20040701.gz</a></td>
-      <td>OpenBSD 3.4 executable only.<br>
+      <td>OpenBSD 3.4 executable only.<br/>
         <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run. Use with 20040701 macros ONLY.</i></td>
       <td><center>228315</center></td>
       <td><center>2004-07-01</center></td>
     </tr>
   </table></center></p>
-  
+
   <!-- NanoEmacs - Package and Binary Downloads -->
-  
-  <h2><img src="images/miniicon.gif" width="16" height="16">
+
+  <h2><img src="images/miniicon.gif" width="16" height="16"/>
   <font color="#0000FF">NanoEmacs</font></h2>
   <p>Small foot print version of JASSPA MicroEmacs. Runs without macro files (except Microsoft Windows).</p>
-  
+
   <p><center><table border="1" WIDTH="100%">
     <tr>
       <td bgcolor="#0000FF">
         <font color="#FFFF00">
-        <strong>NanoEmacs<br>Executable<br>Images</strong></font></td>
+        <strong>NanoEmacs<br/>Executable<br/>Images</strong></font></td>
       <td bgcolor="#0000FF">
         <font color="#FFFF00">
         <strong>Optional</strong><i> - Small foot print MicroEmacs may be run with no
@@ -886,9 +915,9 @@
         binaries as is to give you Emacs on a box via a floppy with no configuration files.</i></font></td>
       <td align="center" bgcolor="#0000FF">
         <font color="#FFFF00">
-        <strong>Byte<br>Size</strong></font></td>
+        <strong>Byte<br/>Size</strong></font></td>
       <td align="center" bgcolor="#0000FF">
-        <font color="#FFFF00"><strong>Last update</strong><br>yyyy-mm-dd</font></td>
+        <font color="#FFFF00"><strong>Last update</strong><br/>yyyy-mm-dd</font></td>
     </tr>
     <tr>
       <td valign="top">
@@ -963,14 +992,14 @@
     <tr>
       <td valign="top">
         <a href="release_040301/jasspa-ne-linux-2.4-20040301.gz">jasspa-ne-linux-2.4-20040301.gz</a></td>
-      <td valign="top">Linux 2.4.x - NanoEmacs console version.</i></td>
+      <td valign="top">Linux 2.4.x - NanoEmacs console version.</td>
       <td align="center" valign="top">95750</td>
       <td align="center" valign="top">2004-03-01</td>
     </tr>
     <tr>
       <td valign="top">
         <a href="release_040301/jasspa-ne-openbsd-i386-3.4-20040301.gz">jasspa-ne-openbsd-i386-3.4-20040301.gz</a></td>
-      <td valign="top">OpenBSD 3.4 - NanoEmacs console version.</i></td>
+      <td valign="top">OpenBSD 3.4 - NanoEmacs console version.</td>
       <td align="center" valign="top">92407</td>
       <td align="center" valign="top">2004-03-01</td>
     </tr>
@@ -1022,80 +1051,80 @@
       <td><center>2004-03-01</center></td>
     </tr>
   </table></center></p>
-    
+
   <!-- Miscellaneous Files -->
-  
-  <h2><img src="images/miniicon.gif" width="16" height="16">
+
+  <h2><img src="images/miniicon.gif" width="16" height="16"/>
   <font color="#0000FF">Miscellaneous</font></h2>
   <p>A miscellaneous collection of other useful items.</p>
-  
+
   <p><center><table border="1" WIDTH="100%">
     <tr>
       <td bgcolor="#0000FF">
         <font color="#FFFF00">
-        <strong>Miscellaneous<br>Files</strong></font></td>
+        <strong>Miscellaneous<br/>Files</strong></font></td>
       <td bgcolor="#0000FF">
         <font color="#FFFF00">
         <strong>Optional Components</strong><i> - Selection of miscellaneous items.</i></font></td>
       <td align="center" bgcolor="#0000FF">
         <font color="#FFFF00">
-        <strong>Byte<br>Size</strong></font></td>
+        <strong>Byte<br/>Size</strong></font></td>
       <td align="center" bgcolor="#0000FF">
-        <font color="#FFFF00"><strong>Last update</strong><br>yyyy-mm-dd</font></td>
+        <font color="#FFFF00"><strong>Last update</strong><br/>yyyy-mm-dd</font></td>
     </tr>
     <tr>
       <td valign="top">
-        <a href="release_040301/meicons.tar.gz">meicons.tar.gz</font></a>
+        <a href="release_040301/meicons.tar.gz">meicons.tar.gz</a>
       </td>
       <td valign="top">X-Windows Pixel Map Images of JASSPA's MicroEmacs and NanoEmacs Icons.
-        Also includes pixmap images for CDE.</font></td>
-      <td align="center" valign="top">1831</font></td>
-      <td align="center" valign="top">2002-12-16</font></td>
+        Also includes pixmap images for CDE.</td>
+      <td align="center" valign="top">1831</td>
+      <td align="center" valign="top">2002-12-16</td>
     </tr>
     <tr>
       <td valign="top">
-        <a href="release_040301/meicons.zip">meicons.zip</font></a>
+        <a href="release_040301/meicons.zip">meicons.zip</a>
       </td>
-      <td valign="top">Source (<i>meicons.exe</i>) and icon files for the Microsoft Windows environment.</font></td>
-      <td align="center" valign="top">54966</font></td>
-      <td align="center" valign="top">2002-01-06</font></td>
+      <td valign="top">Source (<i>meicons.exe</i>) and icon files for the Microsoft Windows environment.</td>
+      <td align="center" valign="top">54966</td>
+      <td align="center" valign="top">2002-01-06</td>
     </tr>
     <tr>
       <td valign="top">
-        <a href="release_040301/meicons-bin.zip">meicons-bin.zip</font></a>
+        <a href="release_040301/meicons-bin.zip">meicons-bin.zip</a>
       </td>
-      <td valign="top">meicons.exe icon file for the Microsoft Windows environment.</font></td>
-      <td align="center" valign="top">23932</font></td>
-      <td align="center" valign="top">2002-01-06</font></td>
+      <td valign="top">meicons.exe icon file for the Microsoft Windows environment.</td>
+      <td align="center" valign="top">23932</td>
+      <td align="center" valign="top">2002-01-06</td>
     </tr>
     <tr>
       <td valign="top">
-        <a href="release_040301/meicons_pm.tar.gz">meicons_pm.tar.gz</font></a>
+        <a href="release_040301/meicons_pm.tar.gz">meicons_pm.tar.gz</a>
       </td>
-      <td valign="top">Additional X-Windows Pixel Map Images for use with CDE.</font></td>
-      <td align="center" valign="top">49324</font></td>
-      <td align="center" valign="top">2003-08-14</font></td>
+      <td valign="top">Additional X-Windows Pixel Map Images for use with CDE.</td>
+      <td align="center" valign="top">49324</td>
+      <td align="center" valign="top">2003-08-14</td>
     </tr>
     <tr>
       <td valign="top">
-        <a href="release_040301/meicons-extra.tar.gz">meicons-extra.tar.gz</font></a><br>
-        <a href="release_040301/meicons-extra.tar.zip">meicons-extra.tar.zip</font></a><br>
+        <a href="release_040301/meicons-extra.tar.gz">meicons-extra.tar.gz</a><br/>
+        <a href="release_040301/meicons-extra.tar.zip">meicons-extra.tar.zip</a><br/>
       </td>
-      <td valign="top">Additional Icons. full icon set for use with GNOME or KDE.</font></td>
-      <td align="center" valign="top">43345<br>45195</font></td>
-      <td align="center" valign="top">2003-01-29</font></td>
+      <td valign="top">Additional Icons. full icon set for use with GNOME or KDE.</td>
+      <td align="center" valign="top">43345<br/>45195</td>
+      <td align="center" valign="top">2003-01-29</td>
     </tr>
     <tr>
       <td valign="top">
-        <a href="release_040301/readme.jasspa_gnome">readme.jasspa_gnome</font></a><br>
-        <a href="release_040301/jasspa_gnome.tar.zip">jasspa_gnome.tar.zip</font></a><br>
+        <a href="release_040301/readme.jasspa_gnome">readme.jasspa_gnome</a><br/>
+        <a href="release_040301/jasspa_gnome.tar.zip">jasspa_gnome.tar.zip</a><br/>
       </td>
-      <td valign="top">GNOME configuration files for JASSPA MicroEmacs to reconfigure Nautilus.</font></td>
-      <td align="center" valign="top">-<br>2867</font></td>
-      <td align="center" valign="top">2003-01-29</font></td>
+      <td valign="top">GNOME configuration files for JASSPA MicroEmacs to reconfigure Nautilus.</td>
+      <td align="center" valign="top">-<br/>2867</td>
+      <td align="center" valign="top">2003-01-29</td>
     </tr>
   </table></center></p>
-  
+
   <h1>NO WARRANTY</h1>
 
   <p>This program is licensed free of charge, there is no warranty for the
@@ -1119,7 +1148,7 @@
   <p>By downloading any material from this site you agree to these
   conditions.</p>
 
-  <HR color=#cccccc noShade SIZE=1>
+  <HR color="#cccccc" noShade="1" SIZE="1"/>
 
   <p><font size="-2"><i>Copyright &copy; 2000-2004 Jasspa</i></font></p>
   </body>
