@@ -1,1 +1,6 @@
-UNAME:=$(shell echo `uname | tr '[A-Z]' '[a-z]'`)
+_UNAME:=$(shell echo `uname | tr '[A-Z]' '[a-z]'`)
+#
+# For cygwin then get rid of the install base we do not need it.
+#
+__UNAME=$(_UNAME:cygwin%=cygwin)
+UNAME=$(__UNAME)
