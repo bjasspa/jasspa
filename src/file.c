@@ -492,11 +492,11 @@ fileLookup(meUByte *fname, meUByte *ext, meUByte flags, meUByte *outName)
          * with the end of the string, allowing double extensions to be
          * handled properly. */
         if (((ii = meStrlen (sp) - meStrlen(ext)) < 0) ||
- #ifdef _INSENSE_CASE
-              meStricmp(&sp[ii], ext)
- #else
-              meStrcmp(&sp[ii], ext)
- #endif
+#ifdef _INSENSE_CASE
+            meStricmp(&sp[ii], ext)
+#else
+            meStrcmp(&sp[ii], ext)
+#endif
             )
         {
             meStrcpy(nname,fname) ;
