@@ -209,7 +209,6 @@ extern  meInt     startTime;            /* me start time. used as offset*/
 extern  meLine   *lpStore;              /* line off which to store macro*/
 extern  meBuffer *lpStoreBp ;           /* help is stored in a buffer   */
 extern  meUShort  thiskey;              /* the current key              */
-extern  int       taboff;               /* tab offset for display       */
 extern  meUShort  prefixc[];            /* prefix chars           */
 extern  meUShort  reptc;                /* current universal repeat char*/
 extern  meUShort  breakc;               /* current abort-command char*/
