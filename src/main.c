@@ -57,7 +57,7 @@
 #include <sys/wait.h>
 
 /* Password entry retrieval */
-#ifdef _SUNOS
+#ifdef _UNIX
 #include <pwd.h>
 #endif
 
@@ -1235,7 +1235,7 @@ mesetup(int argc, char *argv[])
     else
         meGidSize = 0 ;
     
-#ifdef _SUNOS
+#ifdef _UNIX
     /* Get the login name and login home directory from the password file. */
     {
         struct passwd *pwdp;            /* Password structure entry */
