@@ -142,7 +142,13 @@ define-macro delete-indentation
 0 define-macro ifill-para2
     set-variable #l0 $window-line
     end-of-line
-    backward-paragraph
+    !force backward-paragraph
+    !if $status 
+        ; Special case for first line
+        !if &xseq @wl "^[ \t]*$"
+            forward-line
+        !endif
+    !endif
     set-variable #l1 $window-line
     beginning-of-line
     !while &les $window-line #l0
@@ -186,7 +192,6 @@ define-macro delete-indentation
                     -1 yank
                 !endif
                 forward-paragraph
-                forward-line
                 beginning-of-line
                 !return
             !endif
@@ -214,8 +219,15 @@ define-macro delete-indentation
     !if &not $status
         !return
     !endif
+    !force backward-line
     set-variable #l0 $window-line
-    backward-paragraph
+    !force backward-paragraph
+    !if $status 
+        ; Special case for first line
+        !if &xseq @wl "^[ \t]*$"
+            forward-line
+        !endif
+    !endif
     beginning-of-line
     set-variable #l1 $window-line
     set-variable #l2 0
