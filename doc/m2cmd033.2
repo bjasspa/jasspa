@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Jul 25 00:00:27 1998
 .\"
-.Id $Id: m2cmd033.2,v 2.10 2005-01-16 13:03:11 jon Exp $
+.Id $Id: m2cmd033.2,v 2.11 2005-02-08 23:58:14 jon Exp $
 .Im MicroEmacs command|indent|scuts
 .so me.tni
 .TH indent 2
@@ -20,22 +20,8 @@ indent \- Manage the auto-indentation methods
 .B indent
 "\|\fIind-no\fR\|"
 "\|\fIflags\fR\|"
-"\|\fIlook-back\fR\|"
+[ "\|\fIlook-back\fR\|" ]
 [ "\|\fIindent-scheme\fR\|" ]
-.br
-.I 0
-.B indent
-"\|\fIind-no\fR\|"
-"\|\fIflags\fR\|"
-"\|\fIstatement\fR\|"
-"\|\fIcontinue\fR\|"
-"\|\fImax\fR\|"
-"\|\fIbrace\fR\|"
-"\|\fIswitch\fR\|"
-"\|\fIcase\fR\|"
-"\|\fIcomment\fR\|"
-"\|\fImargin\fR\|"
-[ "\|\fIcomcont\fR" ]
 .sp
 .B indent
 "\|\fIind-no\fR\|"
@@ -125,29 +111,55 @@ the  current  indentation  can  never be found.  The  maximum  value  has been
 increase as of January 2004 from 255 to an integer (large  number), a value of
 10 is  typically  sufficient  for a normal  indent  scheme  and 500 for a fast
 look-back scheme.
-.SS "C Indentation Creation Method"
+.SS "C Indentation"
 .na
 .I 0
 .B indent
 "\|\fIind-no\fR\|"
 "\|\fIflags\fR\|"
+.br
+.B indent
+.C s
 "\|\fIstatement\fR\|"
+.br
+.B indent
+.C c
 "\|\fIcontinue\fR\|"
+.br
+.B indent
+.C x 
 "\|\fImax\fR\|"
+.br
+.B indent
+.C b
 "\|\fIbrace\fR\|"
+.br
+.B indent
+.C w
 "\|\fIswitch\fR\|"
+.br
+.B indent
+.C a
 "\|\fIcase\fR\|"
-"\|\fIcomment\fR\|"
+.br
+.B indent
+.C m
 "\|\fImargin\fR\|"
-[ "\|\fIcomcont\fR" ]
+.br
+.B indent
+.C u
+"\|\fIcomcont\fR"
 .ad
 .PP
-C mode is built  into the  editor  by  default  and is  enabled by setting the
+C mode is built  into the  editor by  default  and is  enabled by setting  the
 indent  intialization  flag bit  \fC0x04\fR.  With this bit  enabled  then the
 indentation  for  'C'  mode  is  defined  through  the  additional  arguments.
 \fIind-no\fR  and \fIflags\fR have the same meaning as defined in the previous
-section. The remaining C arguments are defined as follows:
-.IP "\|\fIstatement\fR (=t)"
+section. C mode is typically  initialized  with the value 12. The  remaining C
+arguments are defined as follows:
+.TP
+\fBindent\fR \fC"s"\fR \|\fIstatement\fR (=t)
+.\"
 The indent of the current  line is derived  from  \fIstatement\fR value plus the
 indent of the last c token  (\fIif\fR,  \fIelse\fR,  \fIwhile\fR  etc.) or the
 last  '\fC{\fR'  (which ever was found first). i.e. if the last  '\fC{\fR' was
@@ -172,7 +184,9 @@ or
 .IP
 C tokens are only used to indent the next line, whereas  '\fC{\fR' are used in
 indenting every line to it's partnering '\fC}\fR'.
-.IP "\fIcontinue\fR (=3/2t)"
+.TP 
+\fBindent\fR \fC"c"\fR \fIcontinue\fR (=3/2t)
+.\"
 .I continue
 sets the  indent  to be added to a split  line,  i.e. for an  indent  of 20, a
 continued statement would be indented to 30. A continued statement is a single
@@ -199,7 +213,9 @@ indented to the depth of the open bracket plus one, e.g.
              thirdFuncArg) ;
 .CE 0
 .RE
-.IP
+.TP
+\fBindent\fR \fC"x"\fR \|\fImax\fR\|
+.\"
 \fImax\fR  sets an upper  limit of the  indentation  where an open  bracket is
 encountered,  in the case where the leading  indent of the  function  name and
 open  bracket  exceeds  \fImax\fR,  then the  continuation  is  reduced to the
@@ -226,9 +242,9 @@ longVariable = LongFunctionNameWhichMeans(isSoFar,
 .IP
 Where by the second argument indent has been  artificially  reduced because of
 it's length.
-.IP "\fImax\fR (=0)"
-See \fIcontinue\fR.
-.IP "\|\fIbrace\fR (=-t)"
+.TP
+\fBindent\fR \fC"b"\fR \|\fIbrace\fR (=-t)
+.\"
 Sets the indent of a '\fC{\fR' and a '\fC}\fR' on a new line, from the current
 indent. For example, using a
 .Ht $buffer-indent-width 5
@@ -286,11 +302,14 @@ if (condition)      if (condition)     if (condition)
 brace = -statement     brace = 0     brace = -1/2 statement
 .CE 0
 .RE
-.IP "\|\fIswitch\fR (=0)"
+.TP 
+\fBindent\fR \fC"w"\fR \|\fIswitch\fR (=0)
+.\"
 The  additional  indent to be  applied  after a  \fBswitch\fR  statement,  the
 \fIstatement\fR  indent is applied in addition to the \fIswitch\fR indent. See
 the \fIcase\fR argument.
-.IP "\|\fIcase\fR (=-t)"
+.TP
+\fBindent\fR \fC"a"\fR \|\fIcase\fR (=-t)
 \fIswitch\fR value sets the offset of a "\fCcase\fR"  entry  statement  from the
 opening brace left margin position. The default value is zero. e.g.
 .ne 9
@@ -369,11 +388,12 @@ default:                default:
   case = -t            case = -t
 .CE 0
 .RE
-.IP "\|\fIcomment\fR (=1)"
-This appears to do nothing !
-.IP "\|\fImargin\fR (=-1)"
-If inserting a comment at the  end of a C line,  it is tedious typing \fIx\fR number
-of spaces to the comment column (by default tab  doesn't insert a tab when
+.TP
+\fBindent\fR \fC"m"\fR \|\fImargin\fR (=-1)
+.\"
+If  inserting a comment at the end of a C line, it is tedious  typing  \fIx\fR
+number of spaces to the  comment  column (by default tab does not insert a tab
+when
 .Ht indent 2
 is enabled, it reformats the  indentation of the line regardless of the cursor
 position). This variable sets the indent column of these comments. So with the
@@ -409,7 +429,7 @@ In summary:
 .CE 0
 .RE
 .TP
-\|\fIcomcont\fR "\fC * \fR"
+\fBindent\fR \fC"u"\fR \|\fIcomcont\fR "\fC * \fR"
 .\"
 This argument is only  specified if  \fIflags\fR  bit  \fC0x10\fR is set.
 This defines the string which is inserted  when a new line is started while in
@@ -448,18 +468,26 @@ In summary:
 .CE 0
 .RE
 .LP
-.ne 3
+.ne 12
 The standard indent rule for setting up C and Java is defined as:-
 .Me $emf-scheme
 .CS
-    0 indent .hilight.c 28 t 3/2t 0 -t 0 -t 1 -1 " * "
+    0 indent .hilight.c 12
+    indent .hilight.c "s" t     ; Default may be omitted
+    indent .hilight.c "c" 3/2t  ; Default may be omitted
+    indent .hilight.c "x" 0     ; Default may be omitted
+    indent .hilight.c "b" -t    ; Default may be omitted
+    indent .hilight.c "w" 0     ; Default may be omitted
+    indent .hilight.c "a" -t    ; Default may be omitted
+    indent .hilight.c "m" -1    ; Default may be omitted
+    indent .hilight.c "u" " * "
 .CE
 .Me $ehf-scheme
-Where  comments are to be aligned at the end of a statement then the following
-definition is preferred.
+Where  comments  are to be aligned at the end of a  statement  then the margin
+parameter may be defined in \fC<user>.emf\fR.
 .Me $emf-scheme
 .CS
-    0 indent .hilight.c 28 t 3/2t 0 -t 0 -t 1 40 " * "
+    indent .hilight.c "m" 40
 .CE 0
 .Me $ehf-scheme
 .SS "Indentation Rule Creation"
