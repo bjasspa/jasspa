@@ -451,13 +451,13 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
 #endif
             break;
         case EVMOUSEPOS:
-            mouse_pos = meAtoi(vvalue) ;
+            mouse_pos = (meUByte) meAtoi(vvalue) ;
             break;
         case EVMOUSEX:
-            mouse_X = meAtoi(vvalue) ;
+            mouse_X = (meShort) meAtoi(vvalue) ;
             break;
         case EVMOUSEY:
-            mouse_Y = meAtoi(vvalue) ;
+            mouse_Y = (meShort) meAtoi(vvalue) ;
             break;
 #if MEOPT_MOUSE
         case EVDELAYTIME:

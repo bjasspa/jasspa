@@ -2724,20 +2724,40 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
     int    noFiles ;
 #ifdef _UNIX
     struct stat statbuf;
-    meInt timeStamp ;
+    meFiletime stmtime ;
 
     if(!stat((char *)pathName,&statbuf))
-        timeStamp = statbuf.st_mtime ;
+        stmtime = statbuf.st_mtime ;
     else
-        timeStamp = 0 ;
+        meFiletimeInit(stmtime) ;
 #endif
-
+#ifdef _WIN32
+    meFiletime stmtime ;
+    WIN32_FIND_DATA fd;
+    HANDLE *handle;
+    int len ;
+    
+    meFiletimeInit(stmtime) ;
+    len = strlen(pathName) ;
+    if((len > 0) && (pathName[len-1] == DIR_CHAR))
+    {
+        pathName[len-1] = '\0';
+        if((handle = FindFirstFile(pathName,&fd)) != INVALID_HANDLE_VALUE)
+        {
+            stmtime.dwHighDateTime = fd.ftLastWriteTime.dwHighDateTime ;
+            stmtime.dwLowDateTime = fd.ftLastWriteTime.dwLowDateTime ;
+            FindClose(handle) ;
+        }
+        pathName[len-1] = DIR_CHAR ;
+    }
+#endif
+    
     if((dirList->path != NULL) &&
        !meStrcmp(dirList->path,pathName) &&
-#ifdef _UNIX
-       (timeStamp <= dirList->timeStamp)
+#if (defined _UNIX) || (defined _WIN32)
+       !meFiletimeIsModified(stmtime,dirList->stmtime)
 #else
-       !dirList->timeStamp
+       !dirList->stmtime
 #endif
        )
         return ;
@@ -2823,8 +2843,8 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
             }
             done = findnext(&fblk) ;
         }
-        dirList->timeStamp = 0 ;
     }
+    dirList->stmtime = 0 ;
 #endif
 #ifdef _WIN32
     if(pathName[0] == '\0')
@@ -2859,13 +2879,11 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
     }
     else
     {
-        HANDLE *handle;
-        WIN32_FIND_DATA fd;
         meUByte *ff, *ee, es[4] ;
 
         /* append the *.* - Note that this function assumes the pathName has a '/' and
          * its an array with 3 extra char larger than the string size */
-        ee = pathName + strlen(pathName) ;
+        ee = pathName + len ;
         ee[0] = '*' ;
         es[1] = ee[1] ;
         ee[1] = '.' ;
@@ -2905,8 +2923,9 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
             } while (FindNextFile (handle, &fd));
             FindClose (handle);
         }
-        dirList->timeStamp = 0 ;
     }
+    dirList->stmtime.dwHighDateTime = stmtime.dwHighDateTime ;
+    dirList->stmtime.dwLowDateTime = stmtime.dwLowDateTime ;
 #endif
 #ifdef _UNIX
     {
@@ -2970,7 +2989,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
             }
             closedir(dirp) ;
         }
-        dirList->timeStamp = timeStamp ;
+        dirList->stmtime = stmtime ;
     }
 #endif  /* _UNIX */
     dirList->path = meStrdup(pathName) ;

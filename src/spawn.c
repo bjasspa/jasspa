@@ -767,7 +767,14 @@ ipipeRead(meIPipe *ipipe)
                 meStrcpy(p1,ins) ;
             }
             ipipe->pid = -1 ;
-            cc = meCHAR_NL ;
+            /* Do not annotate the end of the ipipe in raw mode */
+            if ((ipipe->flag & meIPIPE_RAW) != 0)
+            {
+                *p1 = '\0' ;
+                cc = 0;
+            }
+            else
+                cc = meCHAR_NL ;
         }
         switch(cc)
         {
@@ -1390,8 +1397,8 @@ childSetupTty(void)
 }
 #endif
 
-int
-doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
+static int
+doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, int flags)
 {
     meIPipe  *ipipe ;
     meBuffer *bp ;
@@ -1423,9 +1430,10 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
             meChdir(curdir) ;
         free(ipipe) ;
         if(rr == meABORT)
-            /* returns meABORT when trying to IPIPE a DOS app on win95 (it doesn't work)
-             * Try doPipe instead */
-            return doPipeCommand(comStr,path,bufName,flags) ;
+            /* returns meABORT when trying to IPIPE a DOS app on win95 (it
+             * doesn't work) Try doPipe instead and maintain the same
+             * environment as the macros may rely on callbacks etc. */
+            return doPipeCommand(comStr,path,bufName,ipipeFunc,flags) ;
         return meFALSE;
     }
 #else
@@ -1678,7 +1686,10 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
     {
         meMode sglobMode ;
         meModeCopy(sglobMode,globMode) ;
-        meModeSet(globMode,MDWRAP) ;
+        if (flags & LAUNCH_RAW)
+            meModeClear(globMode,MDWRAP) ;
+        else
+            meModeSet(globMode,MDWRAP) ;
         meModeSet(globMode,MDPIPE) ;
         meModeSet(globMode,MDLOCK) ;
         meModeClear(globMode,MDUNDO) ;
@@ -1691,12 +1702,17 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
         return mlwrite(MWABORT,(meUByte *)"[Failed to create %s buffer]",bufName) ;
     }
     /* setup the buffer */
+    if (flags & LAUNCH_BUFIPIPE)
+        bp->ipipeFunc = ipipeFunc;
     bp->fileName = meStrdup(path) ;
-    meStrcpy(line,"cd ") ;
-    meStrcat(line,path) ;
-    addLineToEob(bp,line) ;
-    addLineToEob(bp,comStr) ;
-    addLineToEob(bp,(meUByte *)"\n") ;
+    if ((flags & LAUNCH_RAW) == 0)
+    {
+        meStrcpy(line,"cd ") ;
+        meStrcat(line,path) ;
+        addLineToEob(bp,line) ;
+        addLineToEob(bp,comStr) ;
+        addLineToEob(bp,(meUByte *)"\n") ;
+    }
     bp->dotLine = meLineGetPrev(bp->baseLine) ;
     bp->dotOffset = 0 ;
     bp->dotLineNo = bp->lineCount-1 ;
@@ -1704,6 +1720,8 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
 
     /* Set up the window dimensions - default to having auto wrap */
     ipipe->flag = 0 ;
+    if ((flags & LAUNCH_RAW) != 0)
+        ipipe->flag |= meIPIPE_RAW ;
     ipipe->strRow = 0 ;
     ipipe->strCol = 0 ;
     ipipe->noRows = 0 ;
@@ -1712,7 +1730,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
     /* get a popup window for the command output */
     {
         meWindow *wp ;
-        if((flags & LAUNCH_SILENT) || ((wp = meWindowPopup(bufName,0,NULL)) == NULL))
+        if((flags & LAUNCH_SILENT) || ((wp = meWindowPopup(bp->name,0,NULL)) == NULL))
             wp = frameCur->windowCur ;
         /* while executing the meWindowPopup function the ipipe could have exited so check */
         if(ipipes == ipipe)
@@ -1735,10 +1753,11 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
 int
 ipipeCommand(int f, int n)
 {
-    register int  ss ;			/* Fast variable */
-    meUByte         lbuf[meBUF_SIZE_MAX];		/* command line send to shell */
-    meUByte         nbuf[meBUF_SIZE_MAX], *bn ;	/* buffer name */
-    meUByte         pbuf[meBUF_SIZE_MAX] ;
+    meUByte lbuf[meBUF_SIZE_MAX];	/* command line send to shell */
+    meUByte nbuf[meBUF_SIZE_MAX], *bn ;	/* buffer name */
+    meUByte pbuf[meBUF_SIZE_MAX] ;
+    int ipipeFunc ;                     /* ipipe-buffer function. */
+    int ss ;
 
     if(!(meSystemCfg & meSYSTEM_IPIPES))
     {
@@ -1748,7 +1767,7 @@ ipipeCommand(int f, int n)
     /*---	Get the command to pipe in */
     if((ss=meGetString((meUByte *)"Ipipe", 0, 0, lbuf, meBUF_SIZE_MAX)) <= 0)
         return ss ;
-    if((n & 0x01) == 0)
+    if((n & LAUNCH_BUFFERNM) == 0)
     {
         /* prompt for and get the new buffer name */
         if((ss = getBufferName((meUByte *)"Buffer", 0, 0, nbuf)) <= 0)
@@ -1758,8 +1777,20 @@ ipipeCommand(int f, int n)
     else
         bn = BicommandN ;
 
+    /* Get the buffer ipipe if requested. */
+    if ((n & LAUNCH_BUFIPIPE) != 0)
+    {
+        /* prompt for the $buffer-ipipe */
+        if ((ss = meGetString((meUByte *)"Command", MLCOMMAND, 0,
+                              pbuf, meBUF_SIZE_MAX)) <= 0)
+            return ss;
+        ipipeFunc = decode_fncname(pbuf,1);
+    }
+    else
+        ipipeFunc = -1;
+    
     getFilePath(frameCur->bufferCur->fileName,pbuf) ;
-    return doIpipeCommand(lbuf,pbuf,bn,(n & LAUNCH_USER_FLAGS)) ;
+    return doIpipeCommand(lbuf,pbuf,bn,ipipeFunc,(n & LAUNCH_USER_FLAGS)) ;
 }
 
 int
@@ -1782,7 +1813,7 @@ anyActiveIpipe(void)
  * Bound to ^X @
  */
 int
-doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
+doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, int flags)
 {
     register meBuffer *bp;	/* pointer to buffer to zot */
     meUByte line[meBUF_SIZE_MAX+256] ;    /* new com line with "> command" (+256 to allow for the >.... */
@@ -1892,13 +1923,22 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
     TTopen();
     TTflush();
 #endif
-
-    meStrcpy(line,"cd ") ;
-    meStrcat(line,path) ;
-    addLineToEob(bp,line) ;
-    addLineToEob(bp,comStr) ;
-    addLineToEob(bp,(meUByte *)"") ;
-
+    if ((flags & LAUNCH_RAW) == 0)
+    {
+        meStrcpy(line,"cd ") ;
+        meStrcat(line,path) ;
+        addLineToEob(bp,line) ;
+        addLineToEob(bp,comStr) ;
+        addLineToEob(bp,(meUByte *)"") ;
+    }
+    /* If this is an ipipe launch then call the callback. */
+    if ((flags & LAUNCH_BUFIPIPE) && (ipipeFunc >= 0))
+    {
+#if MEOPT_IPIPES
+        bp->ipipeFunc = ipipeFunc;
+#endif
+        execBufferFunc(bp,ipipeFunc,(meEBF_ARG_GIVEN|meEBF_USE_B_DOT|meEBF_HIDDEN),1) ;
+    }
     /* and read the stuff in */
 #ifdef _UNIX
     ret = meBufferInsertFile(bp,NULL,meRWFLAG_SILENT,0,0) ;
@@ -1926,6 +1966,12 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
     if((flags & LAUNCH_SILENT) == 0)
         meWindowPopup(bp->name,WPOP_MKCURR,NULL) ;
 
+    /* Issue the callback if required. */
+#if MEOPT_IPIPES
+    ipipeFunc = bp->ipipeFunc;
+#endif 
+    if ((flags & LAUNCH_BUFIPIPE) && (ipipeFunc >= 0))
+        execBufferFunc(bp,ipipeFunc,(meEBF_ARG_GIVEN|meEBF_USE_B_DOT|meEBF_HIDDEN),0) ;
     meStrcpy(resultStr,meItoa(systemRet)) ;
     return ret ;
 }
@@ -1945,7 +1991,7 @@ pipeCommand(int f, int n)
     /* get the command to pipe in */
     if((ss=meGetString((meUByte *)"Pipe", 0, 0, line, meBUF_SIZE_MAX)) <= 0)
         return ss ;
-    if((n & 0x01) == 0)
+    if((n & LAUNCH_BUFFERNM) == 0)
     {
         /* prompt for and get the new buffer name */
         if((ss = getBufferName((meUByte *)"Buffer", 0, 0, nbuf)) <= 0)
@@ -1957,7 +2003,7 @@ pipeCommand(int f, int n)
 
     getFilePath(frameCur->bufferCur->fileName,pbuf) ;
 
-    return doPipeCommand(line,pbuf,bn,(n & LAUNCH_USER_FLAGS)) ;
+    return doPipeCommand(line,pbuf,bn,-1,(n & LAUNCH_USER_FLAGS)) ;
 }
 
 #if MEOPT_EXTENDED

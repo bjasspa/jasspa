@@ -379,7 +379,7 @@ doRcsCommand(meUByte *fname, register meUByte *comStr)
     pat[ii] = '\0' ;
     *bname = '\0' ;
     /* must do a pipe not an ipipe as its sequential */
-    ii = doPipeCommand(pat,path,(meUByte *)"*rcs*",LAUNCH_SILENT) ;
+    ii = doPipeCommand(pat,path,(meUByte *)"*rcs*",-1,LAUNCH_SILENT) ;
 
     return ii ;
 }

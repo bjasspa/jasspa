@@ -862,7 +862,9 @@ extern void mkTempCommName(meUByte *filename, meUByte *basename) ;
 #define LAUNCH_DETACHED      0x0008      /* Detached process launch   */
 #define LAUNCH_LEAVENAMES    0x0010      /* Leave the names untouched */
 #define LAUNCH_SHOWWINDOW    0x0020      /* Dont hide the new window  */
-#define LAUNCH_USER_FLAGS    0x002F      /* User flags bitmask        */
+#define LAUNCH_RAW           0x0040      /* Raw pipe output           */
+#define LAUNCH_BUFIPIPE      0x0080      /* Ipipe function provided   */
+#define LAUNCH_USER_FLAGS    0x00EF      /* User flags bitmask        */
 #define LAUNCH_SHELL         0x0100
 #define LAUNCH_SYSTEM        0x0200
 #define LAUNCH_FILTER        0x0400
@@ -872,11 +874,9 @@ extern	int	meShell(int f, int n);
 extern	int	doShellCommand(meUByte *cmdstr) ;
 extern	int	meShellCommand(int f, int n);
 extern  int     doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, 
-                                 int silent) ;
+                              int ipipe, int silent) ;
 extern	int	pipeCommand(int f, int n);
 #if MEOPT_IPIPES
-extern  int     doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, 
-                                  int silent) ;
 extern	int	ipipeCommand(int f, int n) ;
 extern	int	ipipeWrite(int f, int n) ;
 extern  void    ipipeRead(meIPipe *ipipe) ;
