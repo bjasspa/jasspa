@@ -279,6 +279,22 @@
     goto-position "\x82"
 !emacro
 
+0 define-macro toolbar-mouse-region-pick
+    0x21 set-position "\x85"
+    goto-position "\x82"
+    0x21 set-position "\x84"
+    goto-position "\x85"
+    mouse-pick-type1
+!emacro
+
+0 define-macro toolbar-mouse-region-drop
+    set-variable $delay-time 500
+    set-variable $scroll .mouse-event.scroll
+    !force 1 goto-position "\x82"
+    !force copy-region
+    goto-position "\x84"
+!emacro
+
 define-macro toolbar-close
     1 set-position "\x84"
     !force global-unbind-key "redraw"
