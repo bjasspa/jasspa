@@ -115,9 +115,14 @@ define-macro diff
         set-variable #l0 @ml04 "Old File"
         set-variable #l1 @ml04 "New File"
     !endif
-    ; If the file name ends with a '/' for a directory diff then remove it.
-    set-variable #l0 &xrep #l0 "/$" ""
-    set-variable #l1 &xrep #l1 "/$" ""
+    ; Winsows/DOS ONLY: If the file name ends with a '/' for a directory diff
+    ; then remove it. Correct the forward slash to backslash.
+    !if &band $system 0x100
+        set-variable #l0 &xrep #l0 "/$" ""
+        set-variable #l0 &rep #l0 "/" "\\"
+        set-variable #l1 &xrep #l1 "/$" ""
+        set-variable #l1 &rep #l1 "/" "\\"
+    !endif
     4 ipipe-shell-command &spr "%s \"%s\" \"%s\"" %diff-com #l0 #l1 "*diff*"
     !force popup-window  "*diff*"
 !emacro
@@ -293,4 +298,3 @@ define-macro find-bfile
 define-macro find-cfile
     &bor @# 4 find-file @mna
 !emacro
-
