@@ -1,563 +1,562 @@
 <html>
-<head>
-   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="description" content="Jasspa Home">
-   <meta name="resource-type" content="document">
-   <meta name="distribution" content="global">
-   <meta name="keywords" content="jasspa microemacs, microemacs, emacs, uemacs, free, text, editor, JASSPA, me">
-   <meta name="authors" content="JASSPA">
-   <meta name="GENERATOR" content="MicroEmacs">
-   <title>MicroEmacs JASSPA Distribution</title>
-   <!-- BASE HREF="http://www.jasspa.com" -->
-   
-<!--JASSPA - common from this point -->
-<!-- BACKGROUND="meback.png"  -->
-</head>
-<body bgcolor="white">
-<!-- Banner across the top of the page -->
-</head>
-<table WIDTH="100%" HEIGHT="95" BORDER=0 CELLSPACING=0 CELLPADDING=0 >
-<tr>
-  <td BACKGROUND="images/backgrd.jpg"><center><img SRC="images/header.jpg" alt="jasspa.com"></center></td>
-</tr>
-</table>
-<!-- width="100%"  -->
-<table border=0 cellpadding=3 cellspacing=1 bgcolor="yellow">
-  <tr bgcolor="#0000ff">
-    <td align=center width="100"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
-      <b><a href="index.html" style="COLOR: yellow" >Home</a></b></font></td>
-    <td align=center width="100"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
-      <b><a href="overview.html" style="COLOR: yellow">Overview</a></b></font></td>
-    <td align=center width="100"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
-      <b><a href="whatsnew.html" style="COLOR: yellow">What's New</a></b></font></td>
-    <td align=center width="100"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
-      <b><a href="support.html" style="COLOR: yellow">Support</a></b></font></td>
-    <td align=center width="100"  bgcolor="#0080ff"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
-      <b><a href="download.html" style="COLOR: yellow">Download</a></b></font></td>
-    <td align=center width="100"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
-      <b><a href="about.html" style="COLOR: yellow">About</a></b></font></td>
-  </tr>
-</table>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta name="description" content="Jasspa Home">
+    <meta name="resource-type" content="document">
+    <meta name="distribution" content="global">
+    <meta name="keywords" content="jasspa microemacs, microemacs, emacs, uemacs, free, text, editor, JASSPA, me">
+    <meta name="authors" content="JASSPA">
+    <meta name="GENERATOR" content="MicroEmacs">
+    <title>MicroEmacs JASSPA Distribution</title>
+    <!-- BASE HREF="http://www.jasspa.com" -->
 
-<!-- Section selection -->
-<p><font size="+3" color="#0000ff"><b>Download</b></font>
-<br>
-<font size="+1" ><a href="download.html" style="COLOR: black">overview</a>&nbsp;&nbsp;</font>
-<font size="+1" color="#ff0000">history&nbsp;&nbsp;</font>
-<font size="+1"><a href="down0201.html" style="COLOR: black">January 2002</a>&nbsp;&nbsp;</font>
-<font size="+1"><a href="spelling.html" style="COLOR: black">spelling dictionaries</a>&nbsp;&nbsp;</font>
-<font size="+1"><a href="contrib.html" style="COLOR: black">contributions</a>&nbsp;&nbsp;</font>
-</p>
-<p><center><font size=+2><b><em>JASSPA's</em> MicroEmacs Distribution History</b></font></center></p>
-<h2><img src="images/miniicon.gif" width="16" height="16"> <font color="#0000FF">
-Origins</font></h2>
-
-<p>This version of MicroEmacs is based on an early <i>MicroEmacs</i> release
-of 3.8 in 1988, the origins of which are unknown, except to say it was
-delivered on a unmarked 5 1/2&quot; floppy disk.
-
-<p>The program was originally ported to a Motorola MVME147 UNIX box as an
-alternative to <b>vi</b>. Reliability of the program proved to be a problem as
-it constantly crashed. In an attempt to rectify the problems the development
-of JASSPA's MicroEmacs commenced.
-
-<p>Development has continued from 1988 through to today, on the whole
-oblivious to further developments of the existing <b>MicroEmacs</b> program.
-This was due to no Internet access. It was not until 1996 the next version of
-<b>MicroEmacs</b> and <b>mewin</b> (Microsoft Windows (TM) port of the same
-program) was downloaded from the Internet and compared. By this time JASSPA's
-MicroEmacs was radically different and we were not about to mesh the two
-together - that would be a step backwards.
-
-<p>Development of JASSPA's MicroEmacs has been biased towards the UNIX platform, as
-most of the early development was performed in the UNIX domain. The
-first of the window servers was X-Windows, which in turn has shaped the
-implementation of the Microsoft Windows port. Latterly, we have seen the
-resurgence of the IBM-PC platform which is now commonplace. For the return
-port to the DOS environment, and subsequent development of the Microsoft
-Windows port, a UNIX like interface was required. Most existing users
-could not abide the primitive editors found on these machines; Microsoft
-Windows was an alien and hostile environment when compared with UNIX. Hence,
-the JASSPA's MicroEmacs interface utilizes UNIX style cut and paste across all
-platforms.
-
-<p>For portability, JASSPA's MicroEmacs utilizes character rendering on all
-platforms regardless of the window manager. Under X-Windows and Microsoft
-Windows, the display is still treated as a character based display, the subtle
-difference is that the display pane is re-sizable. This means that the scroll
-bars, fonts etc. are not as slick as they could be, certainly under Microsoft
-Windows JASSPA's MicroEmacs looks positively primitive!! Regardless of the
-look, the goal of a common editor across all working platforms has been
-achieved!
-
-<h2><img src="images/miniicon.gif" width="16" height="16"> <font color="#0000FF">
-Development History</font></h2>
-<h3>5th Release - January 2002</h3>
-<ul>
-  <li>[011230] Applied GPL License to code base. Transition to GPL following permission from Danial M Lawrence.</li>
-  <li>[011220] Fix to comment-restyle in comment.emf - stops a spin</li>
-  <li>[011220] nroff makefile full target building the txt files. (internal)</li>
-  <li>[011220] Added support for a $CURSOR$ tag to the etf files which sets the initial cursor position, and included h.etf as an example (thats been annoying me for some time).</li>
-  <li>[011220] Moved the template etfinsrt calls into the buffer-initialize macro </li>
-  <li>[011220] Fixed the exec fhook-cpp not working </li>
-  <li>[011220] Fixes to ctags for C++ function call initialisers</li>
-  <li>[011220] Fixed Windows Console &lt;RETURN&gt; key keyboard mapping, returning incorrect binding</li>
-  <li>[011219] Fixed Termcap &lt;TAB&gt; key translation</li>
-  <li>[011219] Fixed Termcap tparm() to use a default stack argument if not specified by default.</li>
-  <li>[011219] Added cygwin support to the build file</li>
-  <li>[011219] Added extra argument to buffer-initialise.</li>
-  <li>[011218] Added support for Euphoria language.</li>
-  <li>[011217] Italian spelling dictionary</li>
-  <li>[011217] Added scheme support for fence matching colors.</li>
-  <li>[011217] Removed global binding of TAB key from unixterm.emf and build in translation.</li>
-  <li>[011215] Fixed cygwin makefile for latest version, added cygwin macros</li>
-  <li>[011215] Fixed remaining termcap crash under cygwin.</li>
-  <li>[011214] Merged prototype cygwin code base into release, use poll() following select()</li>
-  <li>[011123] Fence matching added to user sertup (user-setup -&gt; Platform -&gt; Fence Display)</li>
-  <li>[011115] Reworked the buffer hooks such that mybhook/myehook can be defined.</li>
-  <li>[011031] Fixed a corking crash! (load random.c and do 2222 replace-string &quot;\n&quot; &quot;&quot;)</li>
-  <li>[011029] hklatex.emf item-list support (hit f7)</li>
-  <li>[011028] hklatex.emf  has a greatly  improved pseudo  hilighting</li>
-  <li>[011028] Tweaked  the @fs  variable to improve its  usability</li>
-  <li>[011028] set-position can now store the mark position</li>
-  <li>[011028] Fixes to windows file times</li>
-  <li>[011016] New caps-lock, num-lock, scroll-lock and pause key support for win32 & unix. The *-lock implementation to be more like S-pick and
-  C-pick as the keys are automatically supported (like the shift) so there are
-  no default binds to void, the keys are only generated if there are bound. Could not implement this on DOS.</li>
-  <li>[011016] <b>which</b> command built in i.e. &quot;M-x which&quot;. Used for command utilities.</li>
-  <li>[011026] A new Hide value feature when inputting strings, this is now used be the crypt and ftp Password
-  entry. The string is shown as '*'s.</li>
-  <li>[011025] Utilised the latest screen-update improvements to make the gdiff screen update rock solid</li>
-  <li>[011025] mlGetChar fix. The key &quot;return&quot; was the 78th special char, i.e. SKEY_SPEC|'N' and as the mlGetChar did not check the SKEY_SPEC bits, pressing return was like pressing 'N' so on a Y/N prompt try pressing return, its like saying No! </li>
-  <li>[011016] Spelling dictionaries renamed with ISO naming scheme. Because
-  of the language changes, you need to rename your personal dictionary to
-  lsdpengb.edf for British and lsdpenus.edf for American.</li>
-  <li>[011016] Hilighting brackets/braces as requested from user base.
-  The hilight braces required some other subtle changes to screen-update and
-  show-region and the addition of the rbin mode means that this version is
-  incompatible with the last in quite a few areas.</li>
-  <li>[011016] Fixed mouse handler (turns out that if the pick event was lost (use @cg or an error) then me would lock!)</li>
-  <li>[011016] Extended control on indent tab and return behaviour (can disable the tab behaviour)</li>
-  <li>[011016] C++ namespace indentation support</li>
-  <li>[011016] New language support interface so spelling is not required for a language to be supported (may only want the basic alphabet setup etc).</li>
-  <li>[011016] Changed file loading interface so all commands (like view-file) can load in bin,crypt or rbin mode.</li>
-  <li>[010123] Reduced binary mode added (rbin)</li>
-</ul>  
-<h3>4th Release - August 2001</h3>
-<ul>
-  <li>[010813] OSD bug fix for fixed size dialog boxes.</li>
-  <li>[010812] Inclusion of <tt>occur</tt> regexp function.</li>
-  <li>[010812] List function for sumarising file contents (F7 / Esc-F7 to close).</li>
-  <li>[010810] Rendered character for the scroll bar - improves clarity.</li>
-  <li>[010810] Modified the printer registry file location.</li>
-  <li>[010801] New Guest default color scheme.</li>
-</ul>  
-<h3>3rd Release - Minor Updates July 14th 2001 onwards</h3>
-<ul>
-  <li>[010718] LaTeX template includes incorrect bindings (lower line, marked &gt;, is correct)<pre>
-diff &quot;hklatex.emf-broken&quot; &quot;hklatex.emf&quot;
-46c46
-&lt; set-variable .fhook-latex.command-flag &quot;|bo|bo|bo|bo|thb|thb|thb|thb|th|thb|thb|th|thb|th|th|thbH|&quot;
----
-&gt; set-variable .fhook-latex.command-flag &quot;|bo|bo|bo|bo|thb|thb|thb|thb|th|thb|th|th|thbH|&quot;
-</pre>
-  <li>[010716] Corrected Windows Install Shield &quot;Company Entry&quot; + &quot;Registry entry fields&quot;</li>
-  <li>[010716] Minor macros modification to font selection for schemes. Default guest setup font
-  selection for cleaner 'first' page.</li>
-  <li>[010716] CVS macro update. Changed <tt>cvs-diff</tt> to <tt>cvs-gdiff</tt> and introduced a new
-  <tt>cvs-diff</tt> which just gives the <i>diff</i> output and fixed several bugs when
-  running with a cvs server. Also added support for the CVS/Template file when
-  committing.</li>
-  <li>[010716] Minor update to the CVS help page for the aforementioned (Affected all help files)</li>
-</ul>
-<h3>3rd Release - July 2001</h3>
-<ul>
-  <li>[010713] New style WWW JASSPA Pages</li>
-  <li>[010712] Added comment and menu support for <i>dos</i> and <i>m4</i> (hkdos.emf/hkm4.emf)</li>
-  <li>[010711] Added hpux11 support</li>
-  <li>[010711] Fixed windows erase when file doesn't exist problems</li>
-  <li>[010710] Removed cbox - replaced by generic comment implementation (cbox.emf/me.ehf)</li>
-  <li>[010710] Added a 'Plain Text' char set which only uses plain letters (charset.emf)</li>
-  <li>[010710] Fixed many little comment formatting bugs and annoyances (comment.emf)</li>
-  <li>[010710] Changes required to build on dos using DJGPP v1</li>
-  <li>[010705] Bug fix for windows rendering crash</li>
-  <li>[010630] Minor reorder to X-Windows initialisation for cygwin X-Server.</li>   
-  <li>[010507] Added generic commands for the creation, deletion and reformatting of comments now used by most of the file hooks.</li>
-  <li>[010412] Added new generic buffer setup, menu and help macros, creating the new buffer-setup(3) command. Ported all existing file hooks to this new interface greatly reducing the buffer hook size while increasing its functionality and consistency.</li> 
-  <li>[010402] Added support for new $buffer-backup(5) variable for setting the back-up file location.</li> 
-  <li>[010312] Support for new key bindings allowing CU emulations. Nedit bindings provided as example. Major work to enable the complete rebinding of all keys so the user interface to MicroEmacs can be completely changed, this allows for example a Windows feel to be created. This required many internal ghosts to be exorcised and add new macro functions.</li>
-  <li>[010308] User buffer configuration menu added.</li> 
-  <li>[010308] Improved Python support (Contribution PG).</li>
-  <li>[010304] Bug fixes to hilighting logic</li>
-  <li>[010228] Improved dialog box for search/replace.</li>
-  <li>[010210] Revised programming language templates; simplified the common elements used in congiguring the templates</li>
-  <li>[010202] Added new command-wait(2) command to enable macros to wait for user dependent completion, used in gdiff.</li>
-  <li>[010202] Changed buffer variables to except the form <tt>:&lt;buffer-name&gt;:&lt;variable&gt;</tt>, like command variables. This allows macros to access variable not defined in the current buffer.</li>
-  <li>[010126] File autosave location changes. Control save name and location</li>
-  <li>[001005] OSD speedups</li>
-  <li>[001005] Improved and increased the file system operations via the new file-op(2) command, created better menus in the file-browser(3). 
-  <li>[001010] Revamped the main ftp GUI to make it work much more rationally</li>
-  <li>[001010] Improved ipipe-shell-command efficiency on Windows by introducing a new thread approach to listen for activity. Implemented a shell command-line in an ipiped environment so ishell(3) command is now usable on Windows platforms.</li>
-  <li>[001010] Added new set-position(2) which can be used to store all information about the current window and goto-position(2) which will then restore them. Allowed macros to use non-letter characters for alpha marks and positions so they no longer need to clobber user ones.</li>
-  <li>[001010] Added new -k and -u command-line options and improved -s option.</li>
-  <li>[000922] Added GUI for tag dialogue for tags generation.</li>
-  <li>[000922] Recursive tags support (i.e. nested directory tag traversal).</li>
-  <li>[000810] <tt>emain.h</tt> <tt>#define</tt>'s properly supported again so MicroEmacs can be successfully compiled without options like SPELL and OSD etc. This can reduce the binary size by up to 37%.</li>
-  <li>[000718] Source trees now maintained under CVS.
-  <li>[000719] Improved TCL/TK and Perl template support</li>
-  <li>[000704] Improved FTP and HTTP support.</li>
-  <li>[000620] Java tags support</li>
-  <li>[000503] Revised printer support</li>
-  <li>[000503] Color printer support (Lexmark)</li>
-</ul>
-
-<h3>2nd Release - Alpha patch - March 2000</h3>
-<ul>
-<li><i>Alpha status release only.</i></li>
-<li>[000322] <b>FIRST PUBLIC RELEASE OF RENDERED FONT SUPPORT</b> </li>
-<li>[000322] Alpha build revision contains version information for 2000/03/22 </li>
-<li>[000322] Internal re-organisation of platform option selection.</li>
-<li>[000322] Minor fixes X color selection</li>
-<li>[000322] Minor fixes in the OSD</li>
-<li>[000322] Reviewed the documentation mode. A text description of the 
-using the documentation modes is included in the distribution in the 
-<tt>text</tt> directory.</li>
-<li>[000322] Minor modifications to support Borland 5.5 compiler (win32b55.mak)</li>
-<li>[000322] Support for Openstep 4.2 / NeXT Motorola 040 (Termcap only)</li>
-<li>[000322] Support for BSD 4.2/4.3</li>
-<li>[000322] Revised UNIX Termcap support.</li>
-<li>[000322] New font rendering, supporting bold, italic, underline etc. All 
-platforms modified to cope with font scheme definitions. Platforms optimised
-for speed.</li>
-<li>[000126] Beta build revision contains version information for 2000/01/26</li>
-<li>[000126] Directory file copy. Within this release files in the directory listings may be selected
-for copy and pasting from the menu. Use the right mouse button to pop-up a menu in the directory
-buffers. Copy and paste to/from a <i>ftp</i> directory buffer to a <i>local</i> drive buffer
-may be used to initiate an ftp transfer. (This is how these pages are uploaded).
-<li>[000126] New command <b>ftp</b> opens a <i>ftp</i> connection using a
-dialog. Use may save the host connection information in a registry file.
-<i>Note that the password information is exposed so be careful where this is
-used - if in doubt do not enter the password and you will be prompted</i></li>
-<li>[000126] New command <b>uniq</b> operates as the <tt>UNIX</tt> of the same
-name. used with <b>sort,</b> and reduces to unique lines</li>
-<li>[000126] Character translation; addition of character translation macros
-when moving between character sets. Accessible from <b>Menu -&gt; Format -&gt;
-Change Buffer Char Set</b></li>
-<li>[000126] Support for additional character sets, Windows GREEK, Windows
-TURKISH</li>
-<li>[000126] Line hilighting selection with the use of the mouse and auto
-search. When using the mouse  selection  to set up the line
-hilighting when invoked from a
-<p>
-<ul>right-mouse -&gt; Hilight Line -&gt; <i>color/remove</i>
-</ul></p>
-<p>selection. The macro  determines  the mouse  selected  region and
-makes  an  appropriate  decision  as to how the  line  hilighting
-scheme is to be applied. The following rules apply to the mouse selection:-
-</p>
-<ul>
-<li><b>Point in line selected (i.e. mark == point)</b><br>
-Hilight the line only.
-<li><b>Region in the line  selected.  Both point and mark are on
-the same line.</b><br>
-Extract  the  selected  text and  hilight  all lines that
-match the  search  pattern.  The color  &quot;remove&quot;  is also
-pattern matched to selectively remove lines.
-<li><b>Region selected mark & point on different lines</b></br>
-Block up the region with appropriate hilight.
-</ul>
-<p>
-Note that line  hilighting may be safely used in a folded buffer.</p></li>
-<li>[000126] Addition of special rendered space character. You may toggle this from the keyboard 
-using a macro in your <i>user</i>.emf as follows:-
-<p><ul><pre>
-; Macro to enable the display of TAB/CR. Note that we
-; force the screen to be updated.
-define-macro tab-display
-    set-variable $system &amp;bxor $system 0x80000
-    screen-update
-!emacro
-global-bind-key "tab-display" "f11"
-</pre></ul>
-<li>[000126] Documentation update on new features (contained in me.ehf).
-<li>[000114] Fixed font selection bug in 000112 beta.
-<li>[000112] Revised color hilighting schemes, reduced the number of colors in
-a number of schemes. Introduction of
-the <b>Sherwood Forest</b> color scheme (green theme obviously !!)</li>
-<li>[000112] Small revision to the user interface with respect to font selection. In order to make character set
-selection easier then the multiple choices for the box characters have been removed from <b>Menu -&gt; Help -&gt; User Setup</b>. These have been replaced with 
-a new check box <b>Extended Char  Set</b>. This box should be checked to enable the special rendering characters and 
-enable the box characters - this is typically enabled on X-Windows and MS-Windows.</li>
-<li>[000112] Provision for directory list sorting on name, modification time
-and size.
-<i>Selecting the directory column title performs a re-sort based on the
-selection, a further selection reverses the order of the list</i></li>
-<li>[000112] Addition of ftp support (<tt>meu</tt> build on Windows, enabled by default on UNIX). Enables files to be edited via ftp,
-(read and write supported).
-<i>Transfer to another system using
-</i><tt>ftp://[&lt;user&gt;[:&lt;password]@]&gt;&lt;host&gt;[:&lt;port&gt;]/&lt;pathname&gt;</tt></li>
-<li>[000112] Improved source code provision for foreign languages, various
-internal problems. Support for Russian (Windows and Cyrillic koi8-r)</li>
-<li>[000112] Y2K problems with time stamping and mode line date</li>
-<li>[000112] New spelling rules for number sequences and specialized wild card
-sequences.
-<ul>
-<p>Within the rule file (i.e. americar.emf, britishr.emf, etc.) then the
-following spelling rules may be added to cope with
-numeric sequences. The addition of these rules will spell check hexadecimal
-sequences and validate numeric sequences such as <tt>1st</tt>, <tt>2nd</tt>, <tt>3rd</tt> etc.
-A spelling of <tt>1nd</tt> would generate a spelling error. This has not been performed
-for other languages so submissions for other language equivalents would be
-appreciated.
-<pre>
-; Add some special word rules to make life easier.
-; These are for 1st, 2nd 3rd etc.
-add-spell-rule "*" "\\([0-9]*[02-9]\\)?1\\(st\\|ST\\)"
-add-spell-rule "*" "\\([0-9]*[02-9]\\)?2\\(nd\\|ND\\)"
-add-spell-rule "*" "\\([0-9]*[02-9]\\)?3\\(rd\\|RD\\)"
-add-spell-rule "*" "[0-9]*1[0-9]\\(th\\|TH\\)"
-add-spell-rule "*" "[0-9]*[04-9]\\(th\\|TH\\)"
-add-spell-rule "*" "0[xX][[:xdigit:]]+"
-; Spell rules for unit definitions.
-; These are for 50Mb, 10Kg, -45.56cm 12ft 10.00am 16.00pm etc.
-add-spell-rule "*" "-?\\([0-9]*.\\)?[0-9]+\\(Kg\\|Kb\\|Gb\\|Tb\\|Mb\\|mm\\|cm\\|m\\|Km\\|ft\\|inch\\|mph\\|lb\\|am\\|pm\\)"
-</pre>
-</ul>
-</li>
-<li>[000112] Box selection copy and paste. Bindings are defined as:-
-<p><ul>
-<b>Esc C-w</b> kill-rectangle<br>
-<b>Esc C-y</b> yank-rectangle
-</ul></p></li>
-<li>[000112] Enhanced info file hilighting (Thanks to Detlef for this)</li>
-<li>[000112] New <b>copy-file</b> command, typically used by the macro language for moving files around</li>
-<li>[000112] Error reporting of bad command line arguments in Microsoft Windows environment (Thanks to Pedro Gomes for this)</li>
-</ul>
-
-<h3>2nd Release - November 1999</h3>
-<ul>
-<li>Enhanced the <b>latex</b> support macros following various contributions from users.</li>
-<li>Added  <i>Favorites</i>  to the  <i>File</i>  pull down  menu. This is a simple mechanism to allow the user to add a file to a favorites list.</li>
-<li>Ground up implementation of the regular  expression pattern matcher, following
-licensing problems with the GNU regex. The resultant pattern matcher is now a 
-little  faster  than GNU regex and is capable of all of the  standard  regular
-expression pattern matches. The pattern matcher has diverged from GNU in that
-double  backslashes are required in the character classes  <tt>[..]</tt> to allow
-for escape  sequence  short cuts such as  '<tt>\n</tt>'  (newline),  '<tt>\t</tt>'
-(tab) etc. It was felt that this  compromise  was better  than having to quote
-the more obscure search characters.</li>
-<li>Changed the hilighting and indenting syntax to be GNU regex compliant.</li>
-<li>Modified <b>compare-windows</b> to ignore white space by default, <b>compare-windows-exact</b> performs an exact character for character comparison.</li>
-<li>Enhanced the tags support to handle multiple tags and recursive directory tree searching.</li>
-<li>Implemented osd-help, a gui front end to the on-line help. Required changes to the help system which gives macros  access to the on-line help buffer,  needed for the index and search.</li>
-<li>Over-hauled the hilighting scheme files and editor to support the disabling of buffer hilighting.</li>
-<li>Many bugs fixed on all  platforms,  in  particular  unix  cutting  and pasting (crashes exceed) and focus problems and NT exit delay.</li>
-<li>Added tab and newline character printing in buffers.</li>
-<li>Introduced message line variables <b>@mx</b> and <b>@mxa</b>.</li>
-<li>New Games - Crossword cracker. The ideal way to cheat at crosswords. Uses the spelling dictionary to guess at the word, given a number of known letters.</li>
-<li>Hook file protection against globally bound keys - prevents re-binding of user defined keys within the macro.</li>
-<li>Search/Replace fix for exact mode. Environment variable search path fix.</li>
-<li>hkm4.emf added back into the release (seemed to have gone missing)</li>
-<li>Cut and paste fix when running the UNIX version through an X-Server such as Exceed in the Windows environment.</li>
-<li>Plain text printer device added</li>
-<li>Obscure OSD fix</li>
-<li>New OSD help search facility Menu-&gt;Help-&gt;General Help</li>
-<li>Fix for NT hang-up on shut down (typically encountered when running a source debugger).</li>
-<li>Fix for NT process spawning with spaces in the names.</li>
-<li>Metris macro fix, OSD bug fix, NT display fix.</li>
-<li>New - color scheme, GVim look</li>
-<li>New - Unix/Linux support for Wheel Mouse (mouse.emf)</li>
-<li>New - Color schemes, Plain; for those that do not care for an abundance of colors</li>
-<li>Modified the numeric key-pad behaviour to be consistent on all platforms. Problems were noted with the UNIX number lock orientation which was reversed.</li>
-<li>New - Color sheme variables which allow the hkXXX files to determine the level of hilighting to apply to their templates.</li>
-<li>Line length fix; more graceful behaviour (i.e. does not crash) when the line length exceeds 64K.</li>
-<li>Intercept the windows 105 keyboard application key (typically right hand side of keyboard next to the control key). The key is called "menu".
-By default this is bound in win32.emf, however users may bind it as a prefix
-for their own key combinations in much the same way as <code>Alt</code> or
-<code>C-x</code> if required.</li>
-<li>New; OMG's IDL language template added.</li>
-<li>Fix for windows short name in <code>next-buffer</code>.</li>
-</ul>
-
-<h3>2nd Release - Beta #1 - May 1999.</h3>
-<ul>
-<li>Bug fixes with multi-language support and spelling dictionaries.</li>
-<li>Fixed <b>fill-paragraph</b> such that it retains the cursor position in the paragraph when invoked without arguments.</li>
-<li>Moved to GNU regex for search/replace engine.</li>
-<li>Enhanced <i>isearch</i> such that it operates in <i>*shell*</i> buffers (again).</li>
-<li><b>gdiff</b> macro  implementation  of  a  graphical  diff  to  allow  color  annotation  of differences and difference selection. Uses the output of a standard <tt>diff(1)</tt> utility.</li>
-<li>2nd port to IBM AIX.</li>
-</ul>
-
-<h3>1999</h3>
-<ul>
-<li>Introduction of the address and date <b>organizer</b> (replacing the existing <b>cal</b> interface)</li>
-<li>Generic buffer folding using <b>narrow-buffer</b>
-</li>Rendered cursor support on all platforms.</li>
-<li>Smooth scrolling mode.</li>
-<li>Win32s port, for Microsoft 3.1/3.11 O/S.</li>
-<li>Re-worked  <b>translate-tcap-key</b>  to generic <b>translate-key</b>to solve many of the foreign language problems.</li>
-<li>Re-worked  the  <tt>ALT</tt>  key mapping to allow  conventional  Emacs meta key bindings.</li>
-<li>Implemented Auto-Spell utility.</li>
-<li>Introduction   of  private  macro  variables  of  the  form   <i>.name</i>  and <i>.macro.name</i>.</li>
-<li>Port to Sun Solaris Intel platform (2.6)</li>
-<li>Merged the init-hilight and hilight-token into the single <b>hilight</b> command. Similarly for <b>indent</b>.</li>
-<li>Enhanced the regexp support in <b>hilight</b> tokens, vastly  improving it capability and usability. Similarly for indent tokens.</li>
-<li>Reorganized the hilighting files. Introduction of the <b>scheme-editor</b> and <i>Hilight Search</i> OSD's.</li>
-<li>Implemented box character override support (<b>$system</b> bit 0x10000) on Win32 and Xterm platforms.</li>
-<li>Microsoft Windows native console support.</li>
-</ul>
-
-<h3>Minor Patch - October 1998</h3>
-<ul>
-<li>Enhanced the operation of the Window pipe's</li>
-<li>Undo past the last save operation.</li>
-<li>Added Tabbed entries to OSD.</li>
-<li>Enhanced user setup using OSD.</ul>
-</ul>
-
-<h3>1st Release - September 1998</h3>
-<ul>
-<li>Support True-type fonts under windows, font selection dialog.</li>
-</ul>
-
-<h3>1998</h3>
-<ul>
-<li>Registry features for configuration.</li>
-<li>Re-implementation of OSD.</li>
-<li>Re-implementation of termcap extended key support.</li>
-<li>Narrow support.</li>
-<li>Re-implementation of the session history.</li>
-<li>Re-implemented the speller based on ispell dictionaries.</li>
-<li>Re-worked the printer interface for Windows.</li>
-<li>Rationalised mouse key bindings.</li>
-<li>Added $system variable to configure \*(mS.</li>
-<li>Added random hilight-token addition and removal support.</li>
-</ul>
-
-<h3>1997</h3>
-<ul>
-<li>Re-implementation of ipipes to enable terminal support.</li>
-<li>Initial Directory-Tree support.</li>
-<li>First implementation of the On Screen Display (OSD) menus and dialogues.</li>
-<li>Horizontal split window support.</li>
-<li>Scroll bar support.</li>
-<li>Added menu bar.</li>
-<li>Cursor position correction for hilights with invisible character.</li>
-<li>Indentation scheme support.</li>
-<li>Ported to Microsoft NT</li>
-<li>Ipipes supported on NT.</ul>
-</ul>
-
-<h3>1996</h3>
-<ul>
-<li>Ported to Slackware Linux.</li>
-<li>First menu system (implemented in macros).</li>
-<li>Undo support.</li>
-<li>First ported to Microsoft Windows 95.</li>
-<li>Re-implementation of get-next-line.</li>
-<li>Auto mode support.</li>
-<li>Magic file hooks added.</li>
-<li>Proper key name support.</li>
-<li>Key bindings support numeric arguments.</ul>
-</ul>
-
-<h3>1995</h3>
-<ul>
-<li>Integral speller.</li>
-<li>Ported to HP-UX.</li>
-<li>Multiple ipipes supported on Unix.</li>
-<li>Poke-screen support.</li>
-<li>Call-back macro support.</li>
-<li>Metris created.</li>
-<li>Abbreviation and completion.</li>
-<li>First implementation of mailing and View Mail.</li>
-<li>Isearch expanded to support magic mode.</li>
-<li>Session history support.</li>
-<li>First ported to X-Terminal.</li>
-<li>Mouse support.</li>
-<li>Initial printer support.</li>
-</ul>
-
-<h3>1994</h3>
-<ul>
-<li>DOS built with djgpp, allowed large files to be edited.</li>
-<li>Color hi-lighting.</li>
-<li>Re-implemented the macro language. Allowed separately named macros.</li>
-<li>Get-next-line support.</li>
-<li>File hooks added.</li>
-<li>Implemented Electric C.</li>
-<li>RCS support.</li>
-<li>Re-implemented backups and auto-saves.</li>
-<li>Re-implemented isearch.</li>
-<li>Re-implemented of keyboard macros.</li>
-<li>Binary file reading support.
-</ul>
-
-<h3>1992-1993</h3>
-<ul>
-<li>Ported to IBM AIX</li>
-<li>Ported to Silicon Graphics
-</ul>
-
-<h3>1988-1992</h3>
-<ul>
-<li>Ported to MVME147, UNIX using curses.</li>
-<li>Fire fighting to get a stable version.</li>
-<li>Expanded regular expression syntax.</li>
-</ul>
-<h2><img src="images/miniicon.gif" width="16" height="16"> <font color="#0000FF">
-Work In Progress or Planned</font></h2>
-<p>Development  of  JASSPA's MicroEmacs  is an  on-going  process,  follows  is a list  of work
-items which is currently  being undertaken or planned:-
-<ul>
-<li>Native printer support for the generation of postscript.</li>
-<li>GNU Emacs compatibility macro file. (Key bindings)</li>
-</ul>
-<h2><img src="images/miniicon.gif" width="16" height="16"> <font color="#0000FF">
-Release History</font></h2>
-<center><table border="0">
+    <!--JASSPA - common from this point -->
+    <!-- BACKGROUND="meback.png"  -->
+  </head>
+  <body bgcolor="white">
+  <!-- Banner across the top of the page -->
+  <table WIDTH="100%" HEIGHT="95" BORDER=0 CELLSPACING=0 CELLPADDING=0 >
     <tr>
-        <td align=center bgcolor="#0000FF"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif" size="4">Date</font></td>
-        <td align=center bgcolor="#0000FF"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif" size="4">Description</font></td>
+      <td BACKGROUND="images/backgrd.jpg"><center><img SRC="images/header.jpg" alt="jasspa.com"></center></td>
+    </tr>
+  </table>
+  <!-- width="100%"  -->
+  <table border=0 cellpadding=3 cellspacing=1 bgcolor="yellow">
+    <tr bgcolor="#0000ff">
+      <td align=center width="100"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
+        <b><a href="index.html" style="COLOR: yellow" >Home</a></b></font></td>
+      <td align=center width="100"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
+        <b><a href="overview.html" style="COLOR: yellow">Overview</a></b></font></td>
+      <td align=center width="100"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
+        <b><a href="whatsnew.html" style="COLOR: yellow">What's New</a></b></font></td>
+      <td align=center width="100"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
+        <b><a href="support.html" style="COLOR: yellow">Support</a></b></font></td>
+      <td align=center width="100"  bgcolor="#0080ff"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
+        <b><a href="download.html" style="COLOR: yellow">Download</a></b></font></td>
+      <td align=center width="100"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
+        <b><a href="about.html" style="COLOR: yellow">About</a></b></font></td>
+    </tr>
+  </table>
+
+  <!-- Section selection -->
+  <p><font size="+3" color="#0000ff"><b>Download</b></font>
+  <br>
+  <font size="+1" ><a href="download.html" style="COLOR: black">overview</a>&nbsp;&nbsp;</font>
+  <font size="+1" color="#ff0000">history&nbsp;&nbsp;</font>
+  <font size="+1"><a href="down0201.html" style="COLOR: black">January 2002</a>&nbsp;&nbsp;</font>
+  <font size="+1"><a href="spelling.html" style="COLOR: black">spelling dictionaries</a>&nbsp;&nbsp;</font>
+  <font size="+1"><a href="contrib.html" style="COLOR: black">contributions</a>&nbsp;&nbsp;</font>
+  </p>
+  <p><center><font size=+2><b><em>JASSPA's</em> MicroEmacs Distribution History</b></font></center></p>
+  <h2><img src="images/miniicon.gif" width="16" height="16"> <font color="#0000FF">
+  Origins</font></h2>
+
+  <p>This version of MicroEmacs is based on an early <i>MicroEmacs</i> release
+  of 3.8 in 1988, the origins of which are unknown, except to say it was
+  delivered on a unmarked 5 1/2&quot; floppy disk.
+
+  <p>The program was originally ported to a Motorola MVME147 UNIX box as an
+  alternative to <b>vi</b>. Reliability of the program proved to be a problem as
+  it constantly crashed. In an attempt to rectify the problems the development
+  of JASSPA's MicroEmacs commenced.
+
+  <p>Development has continued from 1988 through to today, on the whole
+  oblivious to further developments of the existing <b>MicroEmacs</b> program.
+  This was due to no Internet access. It was not until 1996 the next version of
+  <b>MicroEmacs</b> and <b>mewin</b> (Microsoft Windows (TM) port of the same
+  program) was downloaded from the Internet and compared. By this time JASSPA's
+  MicroEmacs was radically different and we were not about to mesh the two
+  together - that would be a step backwards.
+
+  <p>Development of JASSPA's MicroEmacs has been biased towards the UNIX platform, as
+  most of the early development was performed in the UNIX domain. The
+  first of the window servers was X-Windows, which in turn has shaped the
+  implementation of the Microsoft Windows port. Latterly, we have seen the
+  resurgence of the IBM-PC platform which is now commonplace. For the return
+  port to the DOS environment, and subsequent development of the Microsoft
+  Windows port, a UNIX like interface was required. Most existing users
+  could not abide the primitive editors found on these machines; Microsoft
+  Windows was an alien and hostile environment when compared with UNIX. Hence,
+  the JASSPA's MicroEmacs interface utilizes UNIX style cut and paste across all
+  platforms.
+
+  <p>For portability, JASSPA's MicroEmacs utilizes character rendering on all
+  platforms regardless of the window manager. Under X-Windows and Microsoft
+  Windows, the display is still treated as a character based display, the subtle
+  difference is that the display pane is re-sizable. This means that the scroll
+  bars, fonts etc. are not as slick as they could be, certainly under Microsoft
+  Windows JASSPA's MicroEmacs looks positively primitive!! Regardless of the
+  look, the goal of a common editor across all working platforms has been
+  achieved!
+
+  <h2><img src="images/miniicon.gif" width="16" height="16"> <font color="#0000FF">
+  Development History</font></h2>
+  <h3>5th Release - January 2002</h3>
+  <ul>
+    <li>[011230] Applied GPL License to code base. Transition to GPL following permission from Danial M Lawrence.</li>
+    <li>[011220] Fix to comment-restyle in comment.emf - stops a spin</li>
+    <li>[011220] nroff makefile full target building the txt files. (internal)</li>
+    <li>[011220] Added support for a $CURSOR$ tag to the etf files which sets the initial cursor position, and included h.etf as an example (thats been annoying me for some time).</li>
+    <li>[011220] Moved the template etfinsrt calls into the buffer-initialize macro </li>
+    <li>[011220] Fixed the exec fhook-cpp not working </li>
+    <li>[011220] Fixes to ctags for C++ function call initialisers</li>
+    <li>[011220] Fixed Windows Console &lt;RETURN&gt; key keyboard mapping, returning incorrect binding</li>
+    <li>[011219] Fixed Termcap &lt;TAB&gt; key translation</li>
+    <li>[011219] Fixed Termcap tparm() to use a default stack argument if not specified by default.</li>
+    <li>[011219] Added cygwin support to the build file</li>
+    <li>[011219] Added extra argument to buffer-initialise.</li>
+    <li>[011218] Added support for Euphoria language.</li>
+    <li>[011217] Italian spelling dictionary</li>
+    <li>[011217] Added scheme support for fence matching colors.</li>
+    <li>[011217] Removed global binding of TAB key from unixterm.emf and build in translation.</li>
+    <li>[011215] Fixed cygwin makefile for latest version, added cygwin macros</li>
+    <li>[011215] Fixed remaining termcap crash under cygwin.</li>
+    <li>[011214] Merged prototype cygwin code base into release, use poll() following select()</li>
+    <li>[011123] Fence matching added to user sertup (user-setup -&gt; Platform -&gt; Fence Display)</li>
+    <li>[011115] Reworked the buffer hooks such that mybhook/myehook can be defined.</li>
+    <li>[011031] Fixed a corking crash! (load random.c and do 2222 replace-string &quot;\n&quot; &quot;&quot;)</li>
+    <li>[011029] hklatex.emf item-list support (hit f7)</li>
+    <li>[011028] hklatex.emf  has a greatly  improved pseudo  hilighting</li>
+    <li>[011028] Tweaked  the @fs  variable to improve its  usability</li>
+    <li>[011028] set-position can now store the mark position</li>
+    <li>[011028] Fixes to windows file times</li>
+    <li>[011016] New caps-lock, num-lock, scroll-lock and pause key support for win32 & unix. The *-lock implementation to be more like S-pick and
+    C-pick as the keys are automatically supported (like the shift) so there are
+    no default binds to void, the keys are only generated if there are bound. Could not implement this on DOS.</li>
+    <li>[011016] <b>which</b> command built in i.e. &quot;M-x which&quot;. Used for command utilities.</li>
+    <li>[011026] A new Hide value feature when inputting strings, this is now used be the crypt and ftp Password
+    entry. The string is shown as '*'s.</li>
+    <li>[011025] Utilised the latest screen-update improvements to make the gdiff screen update rock solid</li>
+    <li>[011025] mlGetChar fix. The key &quot;return&quot; was the 78th special char, i.e. SKEY_SPEC|'N' and as the mlGetChar did not check the SKEY_SPEC bits, pressing return was like pressing 'N' so on a Y/N prompt try pressing return, its like saying No! </li>
+    <li>[011016] Spelling dictionaries renamed with ISO naming scheme. Because
+    of the language changes, you need to rename your personal dictionary to
+    lsdpengb.edf for British and lsdpenus.edf for American.</li>
+    <li>[011016] Hilighting brackets/braces as requested from user base.
+    The hilight braces required some other subtle changes to screen-update and
+    show-region and the addition of the rbin mode means that this version is
+    incompatible with the last in quite a few areas.</li>
+    <li>[011016] Fixed mouse handler (turns out that if the pick event was lost (use @cg or an error) then me would lock!)</li>
+    <li>[011016] Extended control on indent tab and return behaviour (can disable the tab behaviour)</li>
+    <li>[011016] C++ namespace indentation support</li>
+    <li>[011016] New language support interface so spelling is not required for a language to be supported (may only want the basic alphabet setup etc).</li>
+    <li>[011016] Changed file loading interface so all commands (like view-file) can load in bin,crypt or rbin mode.</li>
+    <li>[010123] Reduced binary mode added (rbin)</li>
+  </ul>
+  <h3>4th Release - August 2001</h3>
+  <ul>
+    <li>[010813] OSD bug fix for fixed size dialog boxes.</li>
+    <li>[010812] Inclusion of <tt>occur</tt> regexp function.</li>
+    <li>[010812] List function for sumarising file contents (F7 / Esc-F7 to close).</li>
+    <li>[010810] Rendered character for the scroll bar - improves clarity.</li>
+    <li>[010810] Modified the printer registry file location.</li>
+    <li>[010801] New Guest default color scheme.</li>
+  </ul>
+  <h3>3rd Release - Minor Updates July 14th 2001 onwards</h3>
+  <ul>
+    <li>[010718] LaTeX template includes incorrect bindings (lower line, marked &gt;, is correct)<pre>
+    diff &quot;hklatex.emf-broken&quot; &quot;hklatex.emf&quot;
+    46c46
+    &lt; set-variable .fhook-latex.command-flag &quot;|bo|bo|bo|bo|thb|thb|thb|thb|th|thb|thb|th|thb|th|th|thbH|&quot;
+    ---
+    &gt; set-variable .fhook-latex.command-flag &quot;|bo|bo|bo|bo|thb|thb|thb|thb|th|thb|th|th|thbH|&quot;
+    </pre>
+    <li>[010716] Corrected Windows Install Shield &quot;Company Entry&quot; + &quot;Registry entry fields&quot;</li>
+    <li>[010716] Minor macros modification to font selection for schemes. Default guest setup font
+    selection for cleaner 'first' page.</li>
+    <li>[010716] CVS macro update. Changed <tt>cvs-diff</tt> to <tt>cvs-gdiff</tt> and introduced a new
+    <tt>cvs-diff</tt> which just gives the <i>diff</i> output and fixed several bugs when
+    running with a cvs server. Also added support for the CVS/Template file when
+    committing.</li>
+    <li>[010716] Minor update to the CVS help page for the aforementioned (Affected all help files)</li>
+  </ul>
+  <h3>3rd Release - July 2001</h3>
+  <ul>
+    <li>[010713] New style WWW JASSPA Pages</li>
+    <li>[010712] Added comment and menu support for <i>dos</i> and <i>m4</i> (hkdos.emf/hkm4.emf)</li>
+    <li>[010711] Added hpux11 support</li>
+    <li>[010711] Fixed windows erase when file doesn't exist problems</li>
+    <li>[010710] Removed cbox - replaced by generic comment implementation (cbox.emf/me.ehf)</li>
+    <li>[010710] Added a 'Plain Text' char set which only uses plain letters (charset.emf)</li>
+    <li>[010710] Fixed many little comment formatting bugs and annoyances (comment.emf)</li>
+    <li>[010710] Changes required to build on dos using DJGPP v1</li>
+    <li>[010705] Bug fix for windows rendering crash</li>
+    <li>[010630] Minor reorder to X-Windows initialisation for cygwin X-Server.</li>
+    <li>[010507] Added generic commands for the creation, deletion and reformatting of comments now used by most of the file hooks.</li>
+    <li>[010412] Added new generic buffer setup, menu and help macros, creating the new buffer-setup(3) command. Ported all existing file hooks to this new interface greatly reducing the buffer hook size while increasing its functionality and consistency.</li>
+    <li>[010402] Added support for new $buffer-backup(5) variable for setting the back-up file location.</li>
+    <li>[010312] Support for new key bindings allowing CU emulations. Nedit bindings provided as example. Major work to enable the complete rebinding of all keys so the user interface to MicroEmacs can be completely changed, this allows for example a Windows feel to be created. This required many internal ghosts to be exorcised and add new macro functions.</li>
+    <li>[010308] User buffer configuration menu added.</li>
+    <li>[010308] Improved Python support (Contribution PG).</li>
+    <li>[010304] Bug fixes to hilighting logic</li>
+    <li>[010228] Improved dialog box for search/replace.</li>
+    <li>[010210] Revised programming language templates; simplified the common elements used in congiguring the templates</li>
+    <li>[010202] Added new command-wait(2) command to enable macros to wait for user dependent completion, used in gdiff.</li>
+    <li>[010202] Changed buffer variables to except the form <tt>:&lt;buffer-name&gt;:&lt;variable&gt;</tt>, like command variables. This allows macros to access variable not defined in the current buffer.</li>
+    <li>[010126] File autosave location changes. Control save name and location</li>
+    <li>[001005] OSD speedups</li>
+    <li>[001005] Improved and increased the file system operations via the new file-op(2) command, created better menus in the file-browser(3).
+    <li>[001010] Revamped the main ftp GUI to make it work much more rationally</li>
+    <li>[001010] Improved ipipe-shell-command efficiency on Windows by introducing a new thread approach to listen for activity. Implemented a shell command-line in an ipiped environment so ishell(3) command is now usable on Windows platforms.</li>
+    <li>[001010] Added new set-position(2) which can be used to store all information about the current window and goto-position(2) which will then restore them. Allowed macros to use non-letter characters for alpha marks and positions so they no longer need to clobber user ones.</li>
+    <li>[001010] Added new -k and -u command-line options and improved -s option.</li>
+    <li>[000922] Added GUI for tag dialogue for tags generation.</li>
+    <li>[000922] Recursive tags support (i.e. nested directory tag traversal).</li>
+    <li>[000810] <tt>emain.h</tt> <tt>#define</tt>'s properly supported again so MicroEmacs can be successfully compiled without options like SPELL and OSD etc. This can reduce the binary size by up to 37%.</li>
+    <li>[000718] Source trees now maintained under CVS.
+    <li>[000719] Improved TCL/TK and Perl template support</li>
+    <li>[000704] Improved FTP and HTTP support.</li>
+    <li>[000620] Java tags support</li>
+    <li>[000503] Revised printer support</li>
+    <li>[000503] Color printer support (Lexmark)</li>
+  </ul>
+
+  <h3>2nd Release - Alpha patch - March 2000</h3>
+  <ul>
+    <li><i>Alpha status release only.</i></li>
+    <li>[000322] <b>FIRST PUBLIC RELEASE OF RENDERED FONT SUPPORT</b> </li>
+    <li>[000322] Alpha build revision contains version information for 2000/03/22 </li>
+    <li>[000322] Internal re-organisation of platform option selection.</li>
+    <li>[000322] Minor fixes X color selection</li>
+    <li>[000322] Minor fixes in the OSD</li>
+    <li>[000322] Reviewed the documentation mode. A text description of the
+    using the documentation modes is included in the distribution in the
+    <tt>text</tt> directory.</li>
+    <li>[000322] Minor modifications to support Borland 5.5 compiler (win32b55.mak)</li>
+    <li>[000322] Support for Openstep 4.2 / NeXT Motorola 040 (Termcap only)</li>
+    <li>[000322] Support for BSD 4.2/4.3</li>
+    <li>[000322] Revised UNIX Termcap support.</li>
+    <li>[000322] New font rendering, supporting bold, italic, underline etc. All
+    platforms modified to cope with font scheme definitions. Platforms optimised
+    for speed.</li>
+    <li>[000126] Beta build revision contains version information for 2000/01/26</li>
+    <li>[000126] Directory file copy. Within this release files in the directory listings may be selected
+    for copy and pasting from the menu. Use the right mouse button to pop-up a menu in the directory
+    buffers. Copy and paste to/from a <i>ftp</i> directory buffer to a <i>local</i> drive buffer
+    may be used to initiate an ftp transfer. (This is how these pages are uploaded).
+    <li>[000126] New command <b>ftp</b> opens a <i>ftp</i> connection using a
+    dialog. Use may save the host connection information in a registry file.
+    <i>Note that the password information is exposed so be careful where this is
+    used - if in doubt do not enter the password and you will be prompted</i></li>
+    <li>[000126] New command <b>uniq</b> operates as the <tt>UNIX</tt> of the same
+    name. used with <b>sort,</b> and reduces to unique lines</li>
+    <li>[000126] Character translation; addition of character translation macros
+    when moving between character sets. Accessible from <b>Menu -&gt; Format -&gt;
+    Change Buffer Char Set</b></li>
+    <li>[000126] Support for additional character sets, Windows GREEK, Windows
+    TURKISH</li>
+    <li>[000126] Line hilighting selection with the use of the mouse and auto
+    search. When using the mouse  selection  to set up the line
+    hilighting when invoked from a
+    <p>
+    <ul>right-mouse -&gt; Hilight Line -&gt; <i>color/remove</i>
+    </ul></p>
+    <p>selection. The macro  determines  the mouse  selected  region and
+    makes  an  appropriate  decision  as to how the  line  hilighting
+    scheme is to be applied. The following rules apply to the mouse selection:-
+    </p>
+    <ul>
+      <li><b>Point in line selected (i.e. mark == point)</b><br>
+      Hilight the line only.
+      <li><b>Region in the line  selected.  Both point and mark are on
+      the same line.</b><br>
+      Extract  the  selected  text and  hilight  all lines that
+      match the  search  pattern.  The color  &quot;remove&quot;  is also
+      pattern matched to selectively remove lines.
+      <li><b>Region selected mark & point on different lines</b></br>
+      Block up the region with appropriate hilight.
+    </ul>
+    <p>
+    Note that line  hilighting may be safely used in a folded buffer.</p></li>
+    <li>[000126] Addition of special rendered space character. You may toggle this from the keyboard
+    using a macro in your <i>user</i>.emf as follows:-
+    <p><ul><pre>
+      ; Macro to enable the display of TAB/CR. Note that we
+      ; force the screen to be updated.
+      define-macro tab-display
+      set-variable $system &amp;bxor $system 0x80000
+      screen-update
+      !emacro
+      global-bind-key "tab-display" "f11"
+      </pre></ul>
+    <li>[000126] Documentation update on new features (contained in me.ehf).
+    <li>[000114] Fixed font selection bug in 000112 beta.
+    <li>[000112] Revised color hilighting schemes, reduced the number of colors in
+    a number of schemes. Introduction of
+    the <b>Sherwood Forest</b> color scheme (green theme obviously !!)</li>
+    <li>[000112] Small revision to the user interface with respect to font selection. In order to make character set
+    selection easier then the multiple choices for the box characters have been removed from <b>Menu -&gt; Help -&gt; User Setup</b>. These have been replaced with
+    a new check box <b>Extended Char  Set</b>. This box should be checked to enable the special rendering characters and
+    enable the box characters - this is typically enabled on X-Windows and MS-Windows.</li>
+    <li>[000112] Provision for directory list sorting on name, modification time
+    and size.
+    <i>Selecting the directory column title performs a re-sort based on the
+    selection, a further selection reverses the order of the list</i></li>
+    <li>[000112] Addition of ftp support (<tt>meu</tt> build on Windows, enabled by default on UNIX). Enables files to be edited via ftp,
+    (read and write supported).
+    <i>Transfer to another system using
+    </i><tt>ftp://[&lt;user&gt;[:&lt;password]@]&gt;&lt;host&gt;[:&lt;port&gt;]/&lt;pathname&gt;</tt></li>
+    <li>[000112] Improved source code provision for foreign languages, various
+    internal problems. Support for Russian (Windows and Cyrillic koi8-r)</li>
+    <li>[000112] Y2K problems with time stamping and mode line date</li>
+    <li>[000112] New spelling rules for number sequences and specialized wild card
+    sequences.
+    <ul>
+      <p>Within the rule file (i.e. americar.emf, britishr.emf, etc.) then the
+      following spelling rules may be added to cope with
+      numeric sequences. The addition of these rules will spell check hexadecimal
+      sequences and validate numeric sequences such as <tt>1st</tt>, <tt>2nd</tt>, <tt>3rd</tt> etc.
+      A spelling of <tt>1nd</tt> would generate a spelling error. This has not been performed
+      for other languages so submissions for other language equivalents would be
+      appreciated.
+      <pre>
+      ; Add some special word rules to make life easier.
+      ; These are for 1st, 2nd 3rd etc.
+      add-spell-rule "*" "\\([0-9]*[02-9]\\)?1\\(st\\|ST\\)"
+      add-spell-rule "*" "\\([0-9]*[02-9]\\)?2\\(nd\\|ND\\)"
+      add-spell-rule "*" "\\([0-9]*[02-9]\\)?3\\(rd\\|RD\\)"
+      add-spell-rule "*" "[0-9]*1[0-9]\\(th\\|TH\\)"
+      add-spell-rule "*" "[0-9]*[04-9]\\(th\\|TH\\)"
+      add-spell-rule "*" "0[xX][[:xdigit:]]+"
+      ; Spell rules for unit definitions.
+      ; These are for 50Mb, 10Kg, -45.56cm 12ft 10.00am 16.00pm etc.
+      add-spell-rule "*" "-?\\([0-9]*.\\)?[0-9]+\\(Kg\\|Kb\\|Gb\\|Tb\\|Mb\\|mm\\|cm\\|m\\|Km\\|ft\\|inch\\|mph\\|lb\\|am\\|pm\\)"
+      </pre>
+    </ul>
+    </li>
+    <li>[000112] Box selection copy and paste. Bindings are defined as:-
+    <p><ul>
+      <b>Esc C-w</b> kill-rectangle<br>
+      <b>Esc C-y</b> yank-rectangle
+    </ul></p></li>
+    <li>[000112] Enhanced info file hilighting (Thanks to Detlef for this)</li>
+    <li>[000112] New <b>copy-file</b> command, typically used by the macro language for moving files around</li>
+    <li>[000112] Error reporting of bad command line arguments in Microsoft Windows environment (Thanks to Pedro Gomes for this)</li>
+  </ul>
+
+  <h3>2nd Release - November 1999</h3>
+  <ul>
+    <li>Enhanced the <b>latex</b> support macros following various contributions from users.</li>
+    <li>Added  <i>Favorites</i>  to the  <i>File</i>  pull down  menu. This is a simple mechanism to allow the user to add a file to a favorites list.</li>
+    <li>Ground up implementation of the regular  expression pattern matcher, following
+    licensing problems with the GNU regex. The resultant pattern matcher is now a
+    little  faster  than GNU regex and is capable of all of the  standard  regular
+    expression pattern matches. The pattern matcher has diverged from GNU in that
+    double  backslashes are required in the character classes  <tt>[..]</tt> to allow
+    for escape  sequence  short cuts such as  '<tt>\n</tt>'  (newline),  '<tt>\t</tt>'
+    (tab) etc. It was felt that this  compromise  was better  than having to quote
+    the more obscure search characters.</li>
+    <li>Changed the hilighting and indenting syntax to be GNU regex compliant.</li>
+    <li>Modified <b>compare-windows</b> to ignore white space by default, <b>compare-windows-exact</b> performs an exact character for character comparison.</li>
+    <li>Enhanced the tags support to handle multiple tags and recursive directory tree searching.</li>
+    <li>Implemented osd-help, a gui front end to the on-line help. Required changes to the help system which gives macros  access to the on-line help buffer,  needed for the index and search.</li>
+    <li>Over-hauled the hilighting scheme files and editor to support the disabling of buffer hilighting.</li>
+    <li>Many bugs fixed on all  platforms,  in  particular  unix  cutting  and pasting (crashes exceed) and focus problems and NT exit delay.</li>
+    <li>Added tab and newline character printing in buffers.</li>
+    <li>Introduced message line variables <b>@mx</b> and <b>@mxa</b>.</li>
+    <li>New Games - Crossword cracker. The ideal way to cheat at crosswords. Uses the spelling dictionary to guess at the word, given a number of known letters.</li>
+    <li>Hook file protection against globally bound keys - prevents re-binding of user defined keys within the macro.</li>
+    <li>Search/Replace fix for exact mode. Environment variable search path fix.</li>
+    <li>hkm4.emf added back into the release (seemed to have gone missing)</li>
+    <li>Cut and paste fix when running the UNIX version through an X-Server such as Exceed in the Windows environment.</li>
+    <li>Plain text printer device added</li>
+    <li>Obscure OSD fix</li>
+    <li>New OSD help search facility Menu-&gt;Help-&gt;General Help</li>
+    <li>Fix for NT hang-up on shut down (typically encountered when running a source debugger).</li>
+    <li>Fix for NT process spawning with spaces in the names.</li>
+    <li>Metris macro fix, OSD bug fix, NT display fix.</li>
+    <li>New - color scheme, GVim look</li>
+    <li>New - Unix/Linux support for Wheel Mouse (mouse.emf)</li>
+    <li>New - Color schemes, Plain; for those that do not care for an abundance of colors</li>
+    <li>Modified the numeric key-pad behaviour to be consistent on all platforms. Problems were noted with the UNIX number lock orientation which was reversed.</li>
+    <li>New - Color sheme variables which allow the hkXXX files to determine the level of hilighting to apply to their templates.</li>
+    <li>Line length fix; more graceful behaviour (i.e. does not crash) when the line length exceeds 64K.</li>
+    <li>Intercept the windows 105 keyboard application key (typically right hand side of keyboard next to the control key). The key is called "menu".
+    By default this is bound in win32.emf, however users may bind it as a prefix
+    for their own key combinations in much the same way as <code>Alt</code> or
+    <code>C-x</code> if required.</li>
+    <li>New; OMG's IDL language template added.</li>
+    <li>Fix for windows short name in <code>next-buffer</code>.</li>
+  </ul>
+
+  <h3>2nd Release - Beta #1 - May 1999.</h3>
+  <ul>
+    <li>Bug fixes with multi-language support and spelling dictionaries.</li>
+    <li>Fixed <b>fill-paragraph</b> such that it retains the cursor position in the paragraph when invoked without arguments.</li>
+    <li>Moved to GNU regex for search/replace engine.</li>
+    <li>Enhanced <i>isearch</i> such that it operates in <i>*shell*</i> buffers (again).</li>
+    <li><b>gdiff</b> macro  implementation  of  a  graphical  diff  to  allow  color  annotation  of differences and difference selection. Uses the output of a standard <tt>diff(1)</tt> utility.</li>
+    <li>2nd port to IBM AIX.</li>
+  </ul>
+
+  <h3>1999</h3>
+  <ul>
+    <li>Introduction of the address and date <b>organizer</b> (replacing the existing <b>cal</b> interface)</li>
+    <li>Generic buffer folding using <b>narrow-buffer</b>
+    </li>Rendered cursor support on all platforms.</li>
+    <li>Smooth scrolling mode.</li>
+    <li>Win32s port, for Microsoft 3.1/3.11 O/S.</li>
+    <li>Re-worked  <b>translate-tcap-key</b>  to generic <b>translate-key</b>to solve many of the foreign language problems.</li>
+    <li>Re-worked  the  <tt>ALT</tt>  key mapping to allow  conventional  Emacs meta key bindings.</li>
+    <li>Implemented Auto-Spell utility.</li>
+    <li>Introduction   of  private  macro  variables  of  the  form   <i>.name</i>  and <i>.macro.name</i>.</li>
+    <li>Port to Sun Solaris Intel platform (2.6)</li>
+    <li>Merged the init-hilight and hilight-token into the single <b>hilight</b> command. Similarly for <b>indent</b>.</li>
+    <li>Enhanced the regexp support in <b>hilight</b> tokens, vastly  improving it capability and usability. Similarly for indent tokens.</li>
+    <li>Reorganized the hilighting files. Introduction of the <b>scheme-editor</b> and <i>Hilight Search</i> OSD's.</li>
+    <li>Implemented box character override support (<b>$system</b> bit 0x10000) on Win32 and Xterm platforms.</li>
+    <li>Microsoft Windows native console support.</li>
+  </ul>
+
+  <h3>Minor Patch - October 1998</h3>
+  <ul>
+    <li>Enhanced the operation of the Window pipe's</li>
+    <li>Undo past the last save operation.</li>
+    <li>Added Tabbed entries to OSD.</li>
+    <li>Enhanced user setup using OSD.</li>
+  </ul>
+
+  <h3>1st Release - September 1998</h3>
+  <ul>
+    <li>Support True-type fonts under windows, font selection dialog.</li>
+  </ul>
+
+  <h3>1998</h3>
+  <ul>
+    <li>Registry features for configuration.</li>
+    <li>Re-implementation of OSD.</li>
+    <li>Re-implementation of termcap extended key support.</li>
+    <li>Narrow support.</li>
+    <li>Re-implementation of the session history.</li>
+    <li>Re-implemented the speller based on ispell dictionaries.</li>
+    <li>Re-worked the printer interface for Windows.</li>
+    <li>Rationalised mouse key bindings.</li>
+    <li>Added $system variable to configure \*(mS.</li>
+    <li>Added random hilight-token addition and removal support.</li>
+  </ul>
+
+  <h3>1997</h3>
+  <ul>
+    <li>Re-implementation of ipipes to enable terminal support.</li>
+    <li>Initial Directory-Tree support.</li>
+    <li>First implementation of the On Screen Display (OSD) menus and dialogues.</li>
+    <li>Horizontal split window support.</li>
+    <li>Scroll bar support.</li>
+    <li>Added menu bar.</li>
+    <li>Cursor position correction for hilights with invisible character.</li>
+    <li>Indentation scheme support.</li>
+    <li>Ported to Microsoft NT</li>
+    <li>Ipipes supported on NT.</li>
+  </ul>
+
+  <h3>1996</h3>
+  <ul>
+    <li>Ported to Slackware Linux.</li>
+    <li>First menu system (implemented in macros).</li>
+    <li>Undo support.</li>
+    <li>First ported to Microsoft Windows 95.</li>
+    <li>Re-implementation of get-next-line.</li>
+    <li>Auto mode support.</li>
+    <li>Magic file hooks added.</li>
+    <li>Proper key name support.</li>
+    <li>Key bindings support numeric arguments.</li>
+  </ul>
+
+  <h3>1995</h3>
+  <ul>
+    <li>Integral speller.</li>
+    <li>Ported to HP-UX.</li>
+    <li>Multiple ipipes supported on Unix.</li>
+    <li>Poke-screen support.</li>
+    <li>Call-back macro support.</li>
+    <li>Metris created.</li>
+    <li>Abbreviation and completion.</li>
+    <li>First implementation of mailing and View Mail.</li>
+    <li>Isearch expanded to support magic mode.</li>
+    <li>Session history support.</li>
+    <li>First ported to X-Terminal.</li>
+    <li>Mouse support.</li>
+    <li>Initial printer support.</li>
+  </ul>
+
+  <h3>1994</h3>
+  <ul>
+    <li>DOS built with djgpp, allowed large files to be edited.</li>
+    <li>Color hi-lighting.</li>
+    <li>Re-implemented the macro language. Allowed separately named macros.</li>
+    <li>Get-next-line support.</li>
+    <li>File hooks added.</li>
+    <li>Implemented Electric C.</li>
+    <li>RCS support.</li>
+    <li>Re-implemented backups and auto-saves.</li>
+    <li>Re-implemented isearch.</li>
+    <li>Re-implemented of keyboard macros.</li>
+    <li>Binary file reading support.</li>
+  </ul>
+
+  <h3>1992-1993</h3>
+  <ul>
+    <li>Ported to IBM AIX</li>
+    <li>Ported to Silicon Graphics
+  </ul>
+
+  <h3>1988-1992</h3>
+  <ul>
+    <li>Ported to MVME147, UNIX using curses.</li>
+    <li>Fire fighting to get a stable version.</li>
+    <li>Expanded regular expression syntax.</li>
+  </ul>
+  <h2><img src="images/miniicon.gif" width="16" height="16"> <font color="#0000FF">
+  Work In Progress or Planned</font></h2>
+  <p>Development  of  JASSPA's MicroEmacs  is an  on-going  process,  follows  is a list  of work
+  items which is currently  being undertaken or planned:-
+  <ul>
+    <li>Native printer support for the generation of postscript.</li>
+    <li>GNU Emacs compatibility macro file. (Key bindings)</li>
+  </ul>
+  <h2><img src="images/miniicon.gif" width="16" height="16"> <font color="#0000FF">
+  Release History</font></h2>
+  <center><table border="0">
+    <tr>
+      <td align=center bgcolor="#0000FF"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif" size="4">Date</font></td>
+      <td align=center bgcolor="#0000FF"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif" size="4">Description</font></td>
     </tr>
     <tr>
       <td align=center bgcolor="#0080ff"><font  color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">January 2002</font></td>
       <td bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">5th Major Release - First under GPL</font></td>
-      
+
     </tr>
     <tr>
       <td align=center bgcolor="#0080ff"><font  color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">August 2001</font></td>
       <td bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">4th Major Release</font></td>
-      
+
     </tr>
     <tr>
       <td align=center bgcolor="#0080ff"><font  color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">July 2001</font></td>
       <td bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">3rd Major Release</font></td>
-      
-    </tr>
-    <tr>
-        <td align=center bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">March 2000</font></td>
-        <td bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">2nd Release - Alpha Patch</font></td>
-    </tr>
-    <tr>
-        <td align=center bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">December 1999</font></td>
-        <td bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">2nd Major Release</font></td>
-    </tr>
-    <tr>
-        <td align=center bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">May 1999</font></td>
-        <td bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">Beta Release</font></td>
-    </tr>
-    <tr>
-        <td align=center bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">September 1998</font></td>
-        <td bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">Minor patch to MicroEmacs '98 to correct a font problem on Windows platforms.</font></td>
-    </tr>
-    <tr>
-        <td align=center bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">October 1998</font></td>
-        <td bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">1st Major Release</font></td>
-    </tr>
-</table></center>
 
-<p><font size="-2"><i>Copyright &copy; 2000-2002 Jasspa</i></font></p>
-</body>
+    </tr>
+    <tr>
+      <td align=center bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">March 2000</font></td>
+      <td bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">2nd Release - Alpha Patch</font></td>
+    </tr>
+    <tr>
+      <td align=center bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">December 1999</font></td>
+      <td bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">2nd Major Release</font></td>
+    </tr>
+    <tr>
+      <td align=center bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">May 1999</font></td>
+      <td bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">Beta Release</font></td>
+    </tr>
+    <tr>
+      <td align=center bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">September 1998</font></td>
+      <td bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">Minor patch to MicroEmacs '98 to correct a font problem on Windows platforms.</font></td>
+    </tr>
+    <tr>
+      <td align=center bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">October 1998</font></td>
+      <td bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">1st Major Release</font></td>
+    </tr>
+  </table></center>
+
+  <p><font size="-2"><i>Copyright &copy; 2000-2002 Jasspa</i></font></p>
+  </body>
 </html>
