@@ -3,7 +3,7 @@
 ;  Author        : $Author: jon $
 ;  Created By    : Steven Phillips
 ;  Created       : Fri Nov 24 00:09:57 2000
-;  Last Modified : <001127.1129>
+;  Last Modified : <010119.1519>
 ;
 ;  Description
 ;
@@ -30,7 +30,7 @@ define-macro buffer-modes-init
     !elif &sin "M" #l1
         -1 buffer-mode "magic"
     !endif
-    !if &sin "a" #l1
+    !if &sin "d" #l1
         ; if auto-indent enabled don't enable indent mode
     !elif &sin "i" #l1
         1 buffer-mode "indent"
@@ -56,6 +56,16 @@ define-macro buffer-modes-init
         1 buffer-mode "time"
     !elif &sin "X" #l1
         -1 buffer-mode "time"
+    !endif
+    !if &sin "a" #l1
+        1 buffer-mode "auto"
+    !elif &sin "A" #l1
+        -1 buffer-mode "auto"
+    !endif
+    !if &sin "k" #l1
+        1 buffer-mode "backup"
+    !elif &sin "K" #l1
+        -1 buffer-mode "backup"
     !endif
     !if &sin "u" #l1
         1 buffer-mode "undo"

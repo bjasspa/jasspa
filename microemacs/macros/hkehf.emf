@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; ehf hook - This file is invoked when a MicroEmacs on-line help is loaded.
 ;
-; Last Modified : <000408.0754>
+; Last Modified : <010215.2311>
 ; Copyright (c) 1999 - 2000 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; buffer-setup flags
@@ -23,8 +23,10 @@ set-char-mask "2" "-$&#!%:@."
     hilight .hilight.ehfA 0x44 "\ecD" "" "\\}\e" "" "" .scheme.bold    ; bold
     hilight .hilight.ehfA 0x44 "\ecE" "" "\\}\e" "" "" .scheme.header  ; Header
     hilight .hilight.ehfA 0x44 "\ecF" "" "\\}\e" "" "" .scheme.comment ; image
+    hilight .hilight.ehfA 0x44 "\ecG" "" "\\}\e" "" "" .scheme.type    ; TT (curior)
     hilight .hilight.ehfA 0xc0 "\els" "" .hilight.ehfL $global-scheme  ; link start
-    hilight .hilight.ehfA 0x44 "\elm" "" "\ele" "" ""  .scheme.link    ; link name
+    hilight .hilight.ehfA 0x44 "\elm" "" "\el." "" ""  .scheme.link    ; link name - use '.' as n is used for links split across lines
+    hilight .hilight.ehfA 0x44 "\eln" "" "\ele" "" ""  .scheme.link    ; link name
     hilight .hilight.ehfA 0xc0 "\esB" "" .hilight.ehfB $global-scheme
     hilight .hilight.ehfA 0x40 "\esA" ""               $global-scheme
 
