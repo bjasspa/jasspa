@@ -1802,6 +1802,8 @@ input_addexpand:
     
     /* Store the history if it is not disabled. */
     if((option & (MLNOHIST|MLNOSTORE)) == 0)
+        addHistory(option,buf) ;
+#if 0
     {
         meUByte *ss=mlgsStoreBuf ;
         
@@ -1821,6 +1823,7 @@ input_addexpand:
             history[ii] = history[ii-1] ;
         history[0] = ss ;
     }
+#endif
     mlfreeList(option,noStrs,strList) ;
 
     return meTRUE;

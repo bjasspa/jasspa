@@ -298,10 +298,9 @@ return_spec:
 void
 TTwaitForChar(void)
 {
-    union REGS rg ;
-    meUShort cc;                  /* Local character code */
-
 #if MEOPT_MOUSE
+    union REGS rg ;
+
     if(meMouseCfg & meMOUSE_ENBLE)
     {
         meUShort mc ;
@@ -351,6 +350,7 @@ TTwaitForChar(void)
         if(meMouseCfg & meMOUSE_ENBLE)
         {
             meShort row, col, but ;
+            meUShort cc ;
             
             /* Get new mouse status. It appears that the fractional bits of
              * the mouse change across reads. ONLY Compare the non-fractional
