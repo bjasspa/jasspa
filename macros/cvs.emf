@@ -55,12 +55,11 @@ set-variable #l0 0
     !endif
 !done
 
+!if &not &exist .hilight.cvscon
+    set-variable .hilight.cvscon &pinc .hilight.next 1
+    set-variable .hilight.cvsupd &pinc .hilight.next 1
+!endif
 !if &band .hilight.flags 0x02
-    !if &not &exist .hilight.cvscon
-        set-variable .hilight.cvscon &pinc .hilight.next 1
-        set-variable .hilight.cvsupd &pinc .hilight.next 1
-    !endif
-    
     0 hilight .hilight.cvsupd 2 100      $global-scheme
     hilight .hilight.cvsupd 0x102 "A[ *]" .scheme.no2
     hilight .hilight.cvsupd 0x102 "C[ *]" .scheme.hlred
@@ -93,8 +92,6 @@ set-variable #l0 0
     hilight .hilight.dirlst 0x112 " -M"       .scheme.no2
     hilight .hilight.dirlst 0x112 " -C"       .scheme.hlred
     hilight .hilight.dirlst 0x112 " -U"       .scheme.prepro
-!else
-    set-variable .hilight.cvscon 0
 !endif
 
 0 define-macro cvs-command-init
