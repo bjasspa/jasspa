@@ -21,17 +21,23 @@ define-macro fhook-doc
 !emacro
 
 ; buffer-initialize variables
-set-variable .fhook-doc.setup &reg "/history" "fhook/doc" "fhijnopswx"
-set-variable .fhook-doc.setup-mask "aefhijkmnopstuwx"
+set-variable .fhook-doc.setup &reg "/history" "fhook/doc" "fghijnopswx"
+set-variable .fhook-doc.setup-mask "aefghijkmnopstuwx"
 set-variable .fhook-doc.name "Document"
 
 ; Set up for documentation mode.
 define-macro bhook-doc
     doc-bhook-body
+    !if &exist my-bhook-doc
+        my-bhook-doc
+    !endif
 !emacro
 
 define-macro ehook-doc
     doc-ehook-body
+    !if &exist my-ehook-doc
+        my-ehook-doc
+    !endif
 !emacro
 
 ; load docmacro.emf passing the doc setup flags

@@ -13,15 +13,12 @@ define-macro fhook-cobol
     !endif
     set-variable $buffer-mask "luh1"
     buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-cobol
-        my-fhook-cobol
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
-set-variable .fhook-cobol.setup &reg "/history" "fhook/cobol" "bhinopx"
-set-variable .fhook-cobol.setup-mask "aebhikmnoptux"
+set-variable .fhook-cobol.setup &reg "/history" "fhook/cobol" "bghinopx"
+set-variable .fhook-cobol.setup-mask "aebghikmnoptux"
 set-variable .fhook-cobol.comment "|*||*|* | *||"
 
 !if &and &sin "h" .fhook-cobol.setup &band .hilight.flags 0x02 

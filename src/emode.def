@@ -6,7 +6,7 @@
  *  Object Name   : emode.def
  *  Author        : Steve Philips
  *  Created       : Thu Jan 15 20:06:23 1998
- *  Last Modified : <010822.1456>
+ *  Last Modified : <011114.0921>
  *
  *  Description	
  *       Definition of the modes.
@@ -23,43 +23,44 @@
  *  
  ****************************************************************************/
 
-DEFMODE(MDAUTO, "auto",   'A')              /* Auto-file type detection     */
-DEFMODE(MDATSV, "autosv", 'a')              /* Auto-save the buffer         */
-DEFMODE(MDBACK, "backup", 'B')              /* Do file backup               */
-DEFMODE(MDBINRY,"binary", 'b')              /* File loaded in binary mode   */
-DEFMODE(MDCMOD, "cmode",  'C')              /* C indentation and fence match*/
-DEFMODE(MDCRLF, "crlf",   'c')              /* Save \r's on end of line     */
-DEFMODE(MDCRYPT,"crypt",  'Y')              /* encrytion mode active        */
-DEFMODE(MDCTRLZ,"ctrlz",  'z')              /* Save \CZ at end of file      */
-DEFMODE(MDDEL,  "del",    'd')              /* Flag buffer to be deleted    */
-DEFMODE(MDDIR,  "dir",    'D')              /* Buffer is of a directory     */
-DEFMODE(MDEDIT, "edit",   'e')              /* Changed since last write     */
-DEFMODE(MDEXACT,"exact",  'E')              /* Exact matching for searches  */
-DEFMODE(MDHIDE, "hide",   'H')              /* Buffer is hidden             */
-DEFMODE(MDINDEN,"indent", 'I')              /* indent mode                  */
-DEFMODE(MDJUST, "justify",'J')              /* indent mode                  */
-DEFMODE(MDLETTR,"letter", 'l')              /* letter mode                  */
-DEFMODE(MDLINE, "line",   'L')              /* line mode                    */
-DEFMODE(MDLOCK, "lock",   'k')              /* Ipipe buffer with reframe    */
-DEFMODE(MDMAGIC,"magic",  'M')              /* regular expresions in search */
-DEFMODE(MDNACT, "nact",   'n')              /* Buffer is not active         */
-DEFMODE(MDNRRW, "narrow", 'N')              /* Buffer has a narrowing       */
-DEFMODE(MDOVER, "over",   'O')              /* overwrite mode               */
-DEFMODE(MDPIPE, "pipe",   'P')              /* Buffer is an ipipe buffer    */
-DEFMODE(MDQUIET,"quiet",  'Q')              /* Quiet bell mode, global only */
-DEFMODE(MDRBIN, "rbin",   'r')              /* File loaded in reduced binary*/
-DEFMODE(MDSAVE, "save",   'S')              /* Flag buffer to be saved      */
-DEFMODE(MDTAB,  "tab",    'T')              /* Virtual tabs                 */
-DEFMODE(MDTIME, "time",   't')              /* Time stamping mode           */
-DEFMODE(MDUNDO, "undo",   'U')              /* Undo enabled                 */
-DEFMODE(MDUSR1, "usr1",   '1')              /* user 1                       */
-DEFMODE(MDUSR2, "usr2",   '2')              /* user 2                       */
-DEFMODE(MDUSR3, "usr3",   '3')              /* user 3                       */
-DEFMODE(MDUSR4, "usr4",   '4')              /* user 4                       */
-DEFMODE(MDUSR5, "usr5",   '5')              /* user 5                       */
-DEFMODE(MDUSR6, "usr6",   '6')              /* user 6                       */
-DEFMODE(MDUSR7, "usr7",   '7')              /* user 7                       */
-DEFMODE(MDUSR8, "usr8",   '8')              /* user 8                       */
-DEFMODE(MDVIEW, "view",   'V')              /* read-only buffer             */
-DEFMODE(MDWRAP, "wrap",   'W')              /* word wrap                    */
+DEFMODE(MDAUTO, "auto",   'A', MDAUTO_MASK, 0x01)        /* Auto-file type detection     */
+DEFMODE(MDATSV, "autosv", 'a', MDATSV_MASK, 0x02)        /* Auto-save the buffer         */
+DEFMODE(MDBACK, "backup", 'B', MDBACK_MASK, 0x04)        /* Do file backup               */
+DEFMODE(MDBINRY,"binary", 'b', MDBINRY_MASK, 0x08)       /* File loaded in binary mode   */
+DEFMODE(MDCMOD, "cmode",  'C', MDCMOD_MASK, 0x10)        /* C indentation and fence match*/
+DEFMODE(MDCRLF, "crlf",   'c', MDCRLF_MASK, 0x20)        /* Save \r's on end of line     */
+DEFMODE(MDCRYPT,"crypt",  'Y', MDCRYPT_MASK, 0x40)       /* encrytion mode active        */
+DEFMODE(MDCTRLZ,"ctrlz",  'z', MDCTRLZ_MASK, 0x80)       /* Save \CZ at end of file      */
+DEFMODE(MDDEL,  "del",    'd', MDDEL_MASK, 0x01)         /* Flag buffer to be deleted    */
+DEFMODE(MDDIR,  "dir",    'D', MDDIR_MASK, 0x02)         /* Buffer is of a directory     */
+DEFMODE(MDEDIT, "edit",   'e', MDEDIT_MASK, 0x04)        /* Changed since last write     */
+DEFMODE(MDEXACT,"exact",  'E', MDEXACT_MASK, 0x08)       /* Exact matching for searches  */
+DEFMODE(MDFENCE,"fence",  'f', MDFENCE_MASK, 0x10)       /* Auto display matching fence  */
+DEFMODE(MDHIDE, "hide",   'H', MDHIDE_MASK, 0x20)        /* Buffer is hidden             */
+DEFMODE(MDINDEN,"indent", 'I', MDINDEN_MASK, 0x40)       /* indent mode                  */
+DEFMODE(MDJUST, "justify",'J', MDJUST_MASK, 0x80)        /* indent mode                  */
+DEFMODE(MDLETTR,"letter", 'l', MDLETTR_MASK, 0x01)       /* letter mode                  */
+DEFMODE(MDLINE, "line",   'L', MDLINE_MASK, 0x02)        /* line mode                    */
+DEFMODE(MDLOCK, "lock",   'k', MDLOCK_MASK, 0x04)        /* Ipipe buffer with reframe    */
+DEFMODE(MDMAGIC,"magic",  'M', MDMAGIC_MASK, 0x08)       /* regular expresions in search */
+DEFMODE(MDNACT, "nact",   'n', MDNACT_MASK, 0x10)        /* Buffer is not active         */
+DEFMODE(MDNRRW, "narrow", 'N', MDNRRW_MASK, 0x20)        /* Buffer has a narrowing       */
+DEFMODE(MDOVER, "over",   'O', MDOVER_MASK, 0x40)        /* overwrite mode               */
+DEFMODE(MDPIPE, "pipe",   'P', MDPIPE_MASK, 0x80)        /* Buffer is an ipipe buffer    */
+DEFMODE(MDQUIET,"quiet",  'Q', MDQUIET_MASK, 0x01)       /* Quiet bell mode, global only */
+DEFMODE(MDRBIN, "rbin",   'r', MDRBIN_MASK, 0x02)        /* File loaded in reduced binary*/
+DEFMODE(MDSAVE, "save",   'S', MDSAVE_MASK, 0x04)        /* Flag buffer to be saved      */
+DEFMODE(MDTAB,  "tab",    'T', MDTAB_MASK, 0x08)         /* Virtual tabs                 */
+DEFMODE(MDTIME, "time",   't', MDTIME_MASK, 0x10)        /* Time stamping mode           */
+DEFMODE(MDUNDO, "undo",   'U', MDUNDO_MASK, 0x20)        /* Undo enabled                 */
+DEFMODE(MDUSR1, "usr1",   '1', MDUSR1_MASK, 0x40)        /* user 1                       */
+DEFMODE(MDUSR2, "usr2",   '2', MDUSR2_MASK, 0x80)        /* user 2                       */
+DEFMODE(MDUSR3, "usr3",   '3', MDUSR3_MASK, 0x01)        /* user 3                       */
+DEFMODE(MDUSR4, "usr4",   '4', MDUSR4_MASK, 0x02)        /* user 4                       */
+DEFMODE(MDUSR5, "usr5",   '5', MDUSR5_MASK, 0x04)        /* user 5                       */
+DEFMODE(MDUSR6, "usr6",   '6', MDUSR6_MASK, 0x08)        /* user 6                       */
+DEFMODE(MDUSR7, "usr7",   '7', MDUSR7_MASK, 0x10)        /* user 7                       */
+DEFMODE(MDUSR8, "usr8",   '8', MDUSR8_MASK, 0x20)        /* user 8                       */
+DEFMODE(MDVIEW, "view",   'V', MDVIEW_MASK, 0x40)        /* read-only buffer             */
+DEFMODE(MDWRAP, "wrap",   'W', MDWRAP_MASK, 0x80)        /* word wrap                    */
 

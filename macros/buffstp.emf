@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Thu Nov 23 21:19:31 2000
-;  Last Modified : <010810.1019>
+;  Last Modified : <011123.0816>
 ;
 ;  Description
 ;
@@ -16,6 +16,7 @@
 ;         d auto indent
 ;         e exact mode
 ;         f fold support
+;         g fence mode
 ;         h hilight
 ;         i indent
 ;         j justify
@@ -69,8 +70,8 @@
         set-variable #l1 .buffer-setup.nsetup
         !force @# buffer-setup-option
         set-variable #l2 $status
-        var-str-sub #l1 #l0 ""
-        var-str-sub #l1 &sup #l0 ""
+        set-variable #l1 &rep #l1 #l0 ""
+        set-variable #l1 &rep #l1 &sup #l0 ""
         !if #l2
             set-variable #l0 &sup #l0
         !endif
@@ -176,11 +177,11 @@ define-macro buffer-setup
     set-variable .nsetup .osetup
     .osd.buffstp osd
 !emacro
-set-variable .buffer-setup.flags  "|p|o|c|n|h|d|s|f|b|e|m|a|k|i|j|t|x|u|w|"
-set-variable .buffer-setup.blank  "|0|0|0|1|0|0|0|1|1|0|0|0|0|0|0|0|0|0|1|"
-set-variable .buffer-setup.labels "|Create Help &Page|Create T&ools Menu|Use Author Mode|Insert &New Template|Setup &Hilighting|Setup Auto In&dent|Setup Auto Spe&ll|Setup &Folding|Add A&bbreviations|Search Modes||Buffer Modes||||||||x|"
-set-variable .buffer-setup.prefix "||||||||||  &Exact|  &Magic|   &Auto| Bac&kup| &Indent|&Justify|    &Tab|   Time|   &Undo|   &Wrap|"
-set-variable .buffer-setup.modes  "||||||||||exact|magic|auto|backup|indent|justify|tab|time|undo|wrap|"
+set-variable .buffer-setup.flags  "|p|o|c|n|g|h|d|s|f|b|e|m|a|k|i|j|t|x|u|w|"
+set-variable .buffer-setup.blank  "|0|0|0|1|0|0|0|0|1|1|0|0|0|0|0|0|0|0|0|1|"
+set-variable .buffer-setup.labels "|Create Help &Page|Create T&ools Menu|Use Author Mode|Insert &New Template|Fence Display|Setup &Hilighting|Setup Auto In&dent|Setup Auto Spe&ll|Setup &Folding|Add A&bbreviations|Search Modes||Buffer Modes||||||||x|"
+set-variable .buffer-setup.prefix "|||||||||||  &Exact|  &Magic|   &Auto| Bac&kup| &Indent|&Justify|    &Tab|   Time|   &Undo|   &Wrap|"
+set-variable .buffer-setup.modes  "|||||||||||exact|magic|auto|backup|indent|justify|tab|time|undo|wrap|"
 
 ; buffer-help-add-item <command-name> <narg> <desc>
 ; adds the item to the help page (.osd.tmp) using and incrementing
@@ -197,16 +198,15 @@ set-variable .buffer-setup.modes  "||||||||||exact|magic|auto|backup|indent|just
             set-variable #l8 "          - "
         !else
             set-variable #l6 &len #l8
-            var-str-sub #l8 "&" "\\&"
-            set-variable #l8 &spr "  %s%n - " #l8 &sub 7 #l6 " "
+            set-variable #l8 &spr "  %s%n - " &rep #l8 "&" "\\&" &sub 7 #l6 " "
         !endif
     !endif
     !if &not &seq "" #l3
-        var-str-sub #l3 "\\\\" "\bY"
-        var-str-sub #l3 "\\&" "\bZ"
-        var-str-sub #l3 "&" ""
-        var-str-sub #l3 "\bY" "\\\\"
-        var-str-sub #l3 "\bZ" "\\&"
+        set-variable #l3 &rep #l3 "\\\\" "\bY"
+        set-variable #l3 &rep #l3 "\\&" "\bZ"
+        set-variable #l3 &rep #l3 "&" ""
+        set-variable #l3 &rep #l3 "\bZ" "\\&"
+        set-variable #l3 &rep #l3 "\bY" "\\\\"
         set-variable #l8 &cat #l8 #l3
     !endif
     osd .osd.tmp &inc #p9 1 "" &spr "  %s  " #l8
@@ -253,6 +253,7 @@ define-macro buffer-help
         buffer-help-add-item "comment-line" "" "Comment Out Line"
         buffer-help-add-item "uncomment-line" "" "&Delete Comment"
         buffer-help-add-item "comment-to-end-of-line" "" "Comment to &End of Line"
+        buffer-help-add-item "comment-restyle" "" "Restyle Current Comment"
     !endif
     !if &sin "f" #l0
         buffer-help-add-item "" "" ""
@@ -302,13 +303,11 @@ define-macro buffer-help
         !if &sin " " #l1
             osd .osd.tmp &inc #p9 1 "i" #l3 #l7 #l1
         !else
-            set-variable #l5 #l3
-            var-str-sub #l5 "&" ""
+            set-variable #l5 &rep #l3 "&" ""
             set-variable #l5 &spr "%s%n" #l3 &sub @4 &len #l5 " "
             set-variable #l6 &kbin #l2 #l1
             !if &not &seq #l6 ""
-                var-str-sub #l6 "&" "\\&"
-                set-variable #l5 &cat #l5 #l6
+                set-variable #l5 &cat #l5 &rep #l6 "&" "\\&"
             !endif
             osd .osd.tmp &inc #p9 1 "" #l5 #l7 #l1
         !endif
@@ -340,8 +339,7 @@ define-macro buffer-help
     !endif
     !while &not &seq "" &set #l6 &lget #l1 &inc #l7 1
         !if &sin "t" #l6
-            set-variable #l6 &lget #l4 #l7
-            var-str-sub #l6 "&" ""
+            set-variable #l6 &rep &lget #l4 #l7 "&" ""
             !if &gre &set #l6 &len #l6 #l8
                 set-variable #l8 #l6
             !endif

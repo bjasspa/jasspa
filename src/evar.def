@@ -1,7 +1,7 @@
 /*
  * Define the string name / internal variable name binding
  *
- * Last Modified:         <010804.2257>
+ * Last Modified:         <011119.0859>
  * 
  ****************************************************************************
  *
@@ -164,6 +164,7 @@ DEFFUN (UFGREATER,  "gre", FUN_DYNAMIC)     /* logical greater than */
 DEFFUN (UFINC,      "inc", FUN_DYNAMIC|FUN_SETVAR|FUN_GETVAR)     /* increment variable and set */
 DEFFUN (UFIND,      "ind", FUN_MONAMIC)     /* evaluate indirect value */
 DEFFUN (UFINWORD,   "inw", FUN_MONAMIC)     /* given char inword? */
+DEFFUN (UFIREP,     "ire", FUN_TRINAMIC)    /* case insensitive replace str in str */
 DEFFUN (UFISEQUAL,  "ise", FUN_DYNAMIC)     /* case insensitive string logical equality check */
 DEFFUN (UFISIN,     "isi", FUN_DYNAMIC)     /* case insensitive str in str */
 DEFFUN (UFITOA,     "ito", FUN_MONAMIC)     /* integer to char i.e. "41" to "A" */
@@ -187,6 +188,7 @@ DEFFUN (UFOR,       "or",  FUN_DYNAMIC)     /* boolean 'or' two logics together 
 DEFFUN (UFPDEC,     "pde", FUN_DYNAMIC|FUN_SETVAR|FUN_GETVAR)     /* post decrement variable and set */
 DEFFUN (UFPINC,     "pin", FUN_DYNAMIC|FUN_SETVAR|FUN_GETVAR)     /* post increment variable and set */
 DEFFUN (UFREGISTRY, "reg", FUN_TRINAMIC)    /* Retreive a registry value */
+DEFFUN (UFREP,      "rep", FUN_TRINAMIC)    /* replace str in str */
 DEFFUN (UFRIGHT,    "rig", FUN_DYNAMIC)     /* right string(string, pos) */
 DEFFUN (UFRISIN,    "ris", FUN_DYNAMIC)     /* recursive case insensitive str in str */
 DEFFUN (UFRSIN,     "rsi", FUN_DYNAMIC)     /* recursive str in str */
@@ -204,7 +206,9 @@ DEFFUN (UFTRIMB,    "trb", FUN_MONAMIC)     /* Trim whitespace both */
 DEFFUN (UFTRIML,    "trl", FUN_MONAMIC)     /* Trim whitespace left */
 DEFFUN (UFTRIMR,    "trr", FUN_MONAMIC)     /* Trim whitespace right */
 DEFFUN (UFWHICH,    "whi", FUN_MONAMIC)     /* Does a which on a given program name */
+DEFFUN (UFXIREP,    "xir", FUN_TRINAMIC)    /* regexp case insensitive replace str in str */
 DEFFUN (UFXISEQ,    "xis", FUN_DYNAMIC)     /* regexp case insensitive string logical equality check */
+DEFFUN (UFXREP,     "xre", FUN_TRINAMIC)    /* regexp replace str in str */
 DEFFUN (UFXSEQ,     "xse", FUN_DYNAMIC)     /* regexp string logical equality check */
 
 DEFDER (DRABORT,    "abo", DRFLAG_SWITCH|DRFLAG_ARG|DRFLAG_NARG|DRFLAG_OPTARG)

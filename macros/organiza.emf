@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Jul 26 14:36:36 1997
-;  Last Modified : <011010.0756>
+;  Last Modified : <011118.2252>
 ;
 ;  Description   : cal calendar macro
 ;
@@ -218,18 +218,15 @@ set-variable .org.addr-lbl  "|Record No|First Name|Surname|Nick Name|Selected|No
         !if $status
             !if .org.addr-index1
                 set-variable #l1 &reg "/org" &spr "addr/%d/%s" #l0 &lget .org.addr-reg .org.addr-index1 ""
-                var-str-sub #l1 "\n" "\CM"
-                insert-string &spr "\x01%s" #l1
+                insert-string &spr "\x01%s" &rep #l1 "\n" "\CM"
             !endif
             !if .org.addr-index2
                 set-variable #l1 &reg "/org" &spr "addr/%d/%s" #l0 &lget .org.addr-reg .org.addr-index2 ""
-                var-str-sub #l1 "\n" "\CM"
-                insert-string &spr "\x01%s" #l1
+                insert-string &spr "\x01%s" &rep #l1 "\n" "\CM"
             !endif
             !if .org.addr-index3
                 set-variable #l1 &reg "/org" &spr "addr/%d/%s" #l0 &lget .org.addr-reg .org.addr-index3 ""
-                var-str-sub #l1 "\n" "\CM"
-                insert-string &spr "\x01%s" #l1
+                insert-string &spr "\x01%s" &rep #l1 "\n" "\CM"
             !endif
             insert-string &spr "\x01%d\n" #l0
         !endif

@@ -4240,12 +4240,13 @@ meGetMessage (MSG *msg)
 #ifdef _WINCON
             if(meSystemCfg & meSYSTEM_CONSOLE)
             {
-                if(((jj <= 0) || (jj >= ii)) && meGetConsoleMessage(msg))
-                   return ;
+                if((PeekMessage(msg, ttHwndNull, WM_TIMER, WM_TIMER, PM_REMOVE) != FALSE) ||
+                   (((jj <= 0) || (jj >= ii)) && meGetConsoleMessage(msg)))
+                    return ;
             }
             else
 #endif
-            if((jj < 0) || (jj >= ii))
+                if((jj < 0) || (jj >= ii))
                 /* User activity, go get it! */
                 break ;
         }
@@ -4297,18 +4298,12 @@ TTwaitForChar(void)
     {
         MSG msg;                            /* Message buffer */
 
-        if(isTimerExpired(AUTOS_TIMER_ID))  /* Alarm expired ?? */
-            autoSaveHandler();              /* Initiate an auto save */
-        if(isTimerExpired(CALLB_TIMER_ID))  /* Alarm expired ?? */
-            callBackHandler();              /* Initiate any callbacks */
-        if(isTimerExpired(CURSOR_TIMER_ID)) /* Alarm expired ?? */
-            TThandleBlink(0);               /* Initiate a cursor blink */
-#ifdef _URLSUPP
-        if(isTimerExpired(SOCKET_TIMER_ID)) /* socket connection time-out */
-            ffFileOp(NULL,NULL,meRWFLAG_FTPCLOSE|meRWFLAG_SILENT) ;
-#endif
+        handleTimerExpired() ;
         if(TTahead())
             break ;
+        /* TTahead can process the timers so we need to recheck the timers
+         * before we wait for the next message */
+        handleTimerExpired() ;
 
         if (sgarbf == TRUE)
         {
@@ -4823,20 +4818,14 @@ TTsleep (int msec, int intable)
     {
         MSG msg;                            /* Message buffer */
 
-        if(isTimerExpired(AUTOS_TIMER_ID))  /* Alarm expired ?? */
-            autoSaveHandler();              /* Initiate an auto save */
-        if(isTimerExpired(CALLB_TIMER_ID))  /* Alarm expired ?? */
-            callBackHandler();              /* Initiate any callbacks */
-        if(isTimerExpired(CURSOR_TIMER_ID)) /* Alarm expired ?? */
-            TThandleBlink(0);               /* Initiate a cursor blink */
-#ifdef _URLSUPP
-        if(isTimerExpired(SOCKET_TIMER_ID)) /* socket connection time-out */
-            ffFileOp(NULL,NULL,meRWFLAG_FTPCLOSE|meRWFLAG_SILENT) ;
-#endif
+        handleTimerExpired() ;
 
         /* Call TTahead first to get the input */
         if (intable && TTahead())
             break;
+        /* TTahead can process the timers so we need to recheck the timers
+         * before we wait for the next message */
+        handleTimerExpired() ;
 
         /* Suspend until there is another message to process. */
         meGetMessage (&msg);

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips & Jon Green
 ;  Created       : Sat Jul 18 14:58:08 1998
-;  Last Modified : <010902.1200>
+;  Last Modified : <011116.2217>
 ;
 ;  Description   : Compile, grep and macro to wrap the diff utility.
 ;
@@ -173,14 +173,14 @@ define-macro execute-tool
             set-variable #l6 ""
         !endif
         !if &band $system 0x400
-            var-str-sub #l2 "/" "\\"
-            var-str-sub #l3 "/" "\\"
+            set-variable #l2 &rep #l2 "/" "\\"
+            set-variable #l3 &rep #l3 "/" "\\"
         !endif
-        var-str-sub #l1 "%ff" #l2
-        var-str-sub #l1 "%fp" #l3
-        var-str-sub #l1 "%fn" #l4
-        var-str-sub #l1 "%fb" #l5
-        var-str-sub #l1 "%fe" #l6
+        set-variable #l1 &rep #l1 "%ff" #l2
+        set-variable #l1 &rep #l1 "%fp" #l3
+        set-variable #l1 &rep #l1 "%fn" #l4
+        set-variable #l1 &rep #l1 "%fb" #l5
+        set-variable #l1 &rep #l1 "%fe" #l6
     !endif
     set-variable #l0 &reg "/history" &spr "%s/tool/%s/flag" $platform #l9 0x1a
     !if &and &bmod "edit" &band #l0 0x01
@@ -199,9 +199,9 @@ define-macro execute-tool
         set-variable #l3 1
     !else
         set-variable #l3 0
-        var-str-sub #l2 "%fn" #l4
-        var-str-sub #l2 "%fb" #l5
-        var-str-sub #l2 "%fe" #l6
+        set-variable #l2 &rep #l2 "%fn" #l4
+        set-variable #l2 &rep #l2 "%fb" #l5
+        set-variable #l2 &rep #l2 "%fe" #l6
     !endif
     !if &band #l0 0x20
         set-variable #l3 &bor #l3 2
@@ -283,10 +283,10 @@ define-macro reread-file
 !emacro
 
 define-macro find-bfile
-    &cond @# 3 2 find-file @mna
+    &bor @# 2 find-file @mna
 !emacro
 
 define-macro find-cfile
-    &cond @# 5 4 find-file @mna
+    &bor @# 4 find-file @mna
 !emacro
 

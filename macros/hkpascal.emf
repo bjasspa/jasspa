@@ -11,15 +11,12 @@ define-macro fhook-pascal
     !endif
     set-variable $buffer-mask "luh1"
     buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-pascal
-        my-fhook-pascal
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
-set-variable .fhook-pascal.setup &reg "/history" "fhook/pascal" "bhinopx"
-set-variable .fhook-pascal.setup-mask "abehikmnoptux"
+set-variable .fhook-pascal.setup &reg "/history" "fhook/pascal" "bghinopx"
+set-variable .fhook-pascal.setup-mask "abeghikmnoptux"
 set-variable .fhook-pascal.comment "|{|}|*|* | *|f|"
 
 !if &and &sin "h" .fhook-pascal.setup &band .hilight.flags 0x02 

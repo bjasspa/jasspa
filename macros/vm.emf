@@ -1,6 +1,6 @@
 ;       View Mail : Mail handling system
 ;
-;   Last Modified : <010805.0021>
+;   Last Modified : <011116.2209>
 ;
 !if &seq .hilight.mail "ERROR"
     execute-file "mail"
@@ -344,8 +344,7 @@ hilight .hilight.vmhl 0x40 "." ""                 $global-scheme
             &sub 32 $window-col insert-space
         !endif
         !if &not &seq &set #l4 %vm-subject ""
-            set-variable #l4 &rig #l4 9
-            var-str-sub #l4 "\n" ""
+            set-variable #l4 &rep &rig #l4 9 "\n" ""
         !endif
         !if &seq &mid %vm-date 12 1 " "
             insert-string &spr "0%s %s %s\n" &mid %vm-date 11 5 &mid %vm-date 19 2 #l4
@@ -1232,7 +1231,7 @@ define-macro-file htmltool html-to-ehf
     set-variable #l8 #l3
     !if &band $system 0x100
         ; on win32 and dos change '/' to '\'
-        var-str-sub #l8 "/" "\\"
+        set-variable #l8 &rep #l8 "/" "\\"
     !endif
     find-buffer &rig %vm-curbuf 1
     !if &seq &lef #l0 19 "Data Insert, base64"

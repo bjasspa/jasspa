@@ -11,15 +11,12 @@ define-macro fhook-perl
     !endif
     set-variable $buffer-mask "luh1"
     buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-perl
-        my-fhook-perl
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
-set-variable .fhook-perl.setup &reg "/history" "fhook/perl" "bdfhinopx"
-set-variable .fhook-perl.setup-mask "abdefhikmnoptux"
+set-variable .fhook-perl.setup &reg "/history" "fhook/perl" "bdfghinopx"
+set-variable .fhook-perl.setup-mask "abdefghikmnoptux"
 set-variable .fhook-perl.tags "perltags"
 set-variable .fhook-perl.comment "|#||#|# | #||"
 

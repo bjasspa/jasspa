@@ -28,7 +28,8 @@
     set-variable .osd.user-mailf &pinc .osd.next 1
 !endif
 
-; horizontal and vertical scrolling names
+; fence, horizontal and vertical scrolling names
+set-variable %fence-names   "|Never Display|Jump to open on close|Always draw|Always draw \\& jump when off screen|Always draw \\& jump on close|"
 set-variable %hscroll-names "|Fast, One line \\& Reset|Default, One line|Scroll All, Cursor Locked|Keep Scroll, No Lock|"
 set-variable %vscroll-names "|Default, Half screen|Smooth, Single line|"
 set-variable %scrollb-names "|Disabled|Narrow, no splitter|Narrow with splitter|Wide, no splitter|Wide with splitter|"
@@ -43,7 +44,7 @@ set-variable %scrollb-value "|0|0x13e|0x1be|0x13f|0x1bf|"
 0 exec-file "schemes"
 ; Implemented Emulation modes
 set-variable %emulate-names "|<No Emulation>|MicroEmacs v3.8|NEdit v5|"
-set-variable %emulate-value "||me3_8|nedit|"
+set-variable %emulate-value "||meme3_8|menedit|"
 
 set-variable .user-setup.name $MENAME
 set-variable .user-setup.path ""
@@ -190,6 +191,26 @@ set-variable .user-setup.path ""
     !done
 !emacro
 
+0 define-macro user-setup-fence
+    set-variable #l0 &cat %platform "/fence"
+    set-variable #l1 &reg "/history" #l0 "1"
+    !if @?
+        set-variable #l1 &sub @# 1
+        set-registry "/history" #l0 #l1
+    !endif
+    set-variable #l1 &lget %fence-names &add #l1 1
+    osd .osd.user-plat 747 "MtxmsfHz" 75 .scheme.osd-entry 31 1 #l1 .osd.user-sub user-setup-fencec
+!emacro
+
+0 define-macro user-setup-fencec
+    -1 osd .osd.user-sub
+    osd .osd.user-sub 0 "bs" 33 0 0 0
+    set-variable #l0 0
+    !while &not &seq "" &set #l1 &lget %fence-names &inc #l0 1
+        osd .osd.user-sub #l0 "" #l1 #l0 user-setup-fence
+    !done
+!emacro
+
 0 define-macro user-setup-backups
     !if &band 0x400 &reg "/history" &cat %platform "/system" $system
         osd .osd.user-plat 540 "f" " "
@@ -225,6 +246,7 @@ set-variable .user-setup.path ""
     user-setup-hscroll
     user-setup-vscroll
     user-setup-scrollb
+    user-setup-fence
     0 user-tool-setup
     0 user-set-tab-indent
 !emacro
@@ -753,8 +775,6 @@ set-variable #l0 0
 -1 osd .osd.user-mouse
 osd .osd.user-mouse 0   "s" 55 18 -1 -1 user-mouse-set-binding
 osd .osd.user-mouse 2   ""
-osd .osd.user-mouse 5   "c" "Mouse Setup"
-osd .osd.user-mouse 8   ""
 osd .osd.user-mouse 10  "Sfh" "       &Enable Mouse : "  12
 osd .osd.user-mouse 12  "Ctfx" 1 "^^NY^^" 0x010 user-set-mouse
 osd .osd.user-mouse 15  "Sfh" "     &Number Buttons : " 17
@@ -763,7 +783,9 @@ osd .osd.user-mouse 20  "Sfh" "       S&wap Buttons : "  22
 osd .osd.user-mouse 22  "Ctfx" 3 "^^NY^^" 0x020 user-set-mouse
 osd .osd.user-mouse 24  "Sfh" " Simulate 3 Buttons : "  22
 osd .osd.user-mouse 26  "Ctfx" 4 "^^NY^^" 3 user-set-pfcheckbox
-osd .osd.user-mouse 28  ""
+osd .osd.user-mouse 27  ""
+osd .osd.user-mouse 28   "c" "Mouse Button Bindings"
+osd .osd.user-mouse 29  ""
 osd .osd.user-mouse 30  "Sfh" "             &Button : " 25
 osd .osd.user-mouse 40  "MtmsxRf" 5 "Left" .osd.user-mouseb
 osd .osd.user-mouse 50  "Sfh" "      S&hift Pressed : "  60
@@ -840,8 +862,6 @@ set-variable .user-tool-init.cur 0
 
 osd .osd.user-tool 0   "s" 55 18 -1 -1 user-tool-init
 osd .osd.user-tool 10  ""
-osd .osd.user-tool 20  "c" "Tools Menu"
-osd .osd.user-tool 30  ""
 osd .osd.user-tool 200 ""
 osd .osd.user-tool 210 ""
 osd .osd.user-tool 220 ""
@@ -865,6 +885,7 @@ osd .osd.user-tool 360 "Ctfxh" 26 "^^NY^^" 0x10 user-tool-set-flag
 !else
     osd .osd.user-tool 410 ""
 !endif
+osd .osd.user-tool 425 ""
 osd .osd.user-tool 430 ""    "   Buffer file name = \\%ff or \\%fp\\%fn or \\%fp\\%fb\\%fe"
 
 ; file type setup ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1033,11 +1054,10 @@ set-variable #l0 0
 osd .osd.user-plat 0   "s" 55 18 -1 -1
 ; draw the common parts first
 osd .osd.user-plat 10  ""
-osd .osd.user-plat 20  "c" &spr "Platform %s%s Setup" $platform &cond &band $system 0x01 " Console" ""
-osd .osd.user-plat 30  ""
 osd .osd.user-plat 300 "Sfh" "   &Display Char Set : " 310
 osd .osd.user-plat 400 "Sfh" "  Draw &White Spaces : " 410
 osd .osd.user-plat 410 "Ctfx" 41 "^^NY^^" 0x80000 user-set-system
+osd .osd.user-plat 499 ""
 osd .osd.user-plat 600 "Sfh" "       &Ignore Files : " 610
 osd .osd.user-plat 610 "EtxHf" 61 .scheme.osd-entry "###############################" 5 user-set-cpfentry
 osd .osd.user-plat 700 ""
@@ -1045,6 +1065,8 @@ osd .osd.user-plat 710 "Sfh" "  Cursor &Blink Rate : " 720
 osd .osd.user-plat 720 "EtxHfh" 72 .scheme.osd-entry "#######" 1 user-set-cursorblink
 osd .osd.user-plat 730 "fh" "  "
 osd .osd.user-plat 740 "EtxHf"  74 .scheme.osd-entry "#######" 2 user-set-cursorblink
+osd .osd.user-plat 743 "Sfh" "      Fence Display : " 747
+osd .osd.user-plat 747 "MtxmsfH" 75 .scheme.osd-entry "" .osd.user-sub user-setup-scrollbc
 osd .osd.user-plat 750 "Sfh" "        Scroll Bars : " 760
 osd .osd.user-plat 760 "MtxmsfH" 76 .scheme.osd-entry "" .osd.user-sub user-setup-scrollbc
 osd .osd.user-plat 770 "Sfh" "  &Horizontal Scroll : " 780
@@ -1158,8 +1180,6 @@ set-variable $mode-names ".*"
 
 osd .osd.user-gener 0   "s" 55 18 -1 -1
 osd .osd.user-gener 10  ""
-osd .osd.user-gener 20  "c"  "General Setup"
-osd .osd.user-gener 30  ""
 osd .osd.user-gener 40  "Sfh" "          Full &Name : " 50
 osd .osd.user-gener 50  "EtxHf" 50 .scheme.osd-entry "#######################" 1 user-set-entry
 osd .osd.user-gener 60  "Sfh" "          &Organizer : " 70
@@ -1169,28 +1189,30 @@ osd .osd.user-gener 90 "Sfh" "     Auto-Sa&ve Time : " 100
 osd .osd.user-gener 100 "EtxHf" 100 .scheme.osd-entry "############" 10 user-set-entry
 osd .osd.user-gener 110 "Sfh" "       Global Modes : "
 osd .osd.user-gener 120 "Ctfx"  120 " [ *]^&Quiet" 8 user-set-checkbox
-osd .osd.user-gener 130 "Sfh" "       Buffer Modes : "
-osd .osd.user-gener 140 "Ctfxh" 140 " [ *]^&Auto "  6 user-set-checkbox
+osd .osd.user-gener 130 "fh"  "       Search Modes : "
+osd .osd.user-gener 140 "Ctfxh" 140 " [ *]^&Exact"  4 user-set-checkbox
 osd .osd.user-gener 150 "fh"  "  "
-osd .osd.user-gener 160 "Ctfx"  160 " [ *]^&Backup" 7 user-set-checkbox
-osd .osd.user-gener 170 "fh"  "                      "
-osd .osd.user-gener 180 "Ctfxh" 180 " [ *]^&Tab  " 9 user-set-checkbox
+osd .osd.user-gener 160 "Ctfx"  160 " [ *]^&Magic " 5 user-set-checkbox
+osd .osd.user-gener 170 "Sfh" "       Buffer Modes : "
+osd .osd.user-gener 180 "Ctfxh" 180 " [ *]^&Auto "  6 user-set-checkbox
 osd .osd.user-gener 190 "fh"  "  "
-osd .osd.user-gener 200 "Ctfx"  200 " [ *]^&Undo  " 10 user-set-checkbox
-osd .osd.user-gener 210 "fh"  "       Search Modes : "
-osd .osd.user-gener 220 "Ctfxh" 220 " [ *]^&Exact"  4 user-set-checkbox
+osd .osd.user-gener 200 "Ctfx"  200 " [ *]^&Backup" 7 user-set-checkbox
+osd .osd.user-gener 210 "fh"  "                      "
+osd .osd.user-gener 220 "Ctfxh" 220 " [ *]^&Tab  " 9 user-set-checkbox
 osd .osd.user-gener 230 "fh"  "  "
-osd .osd.user-gener 240 "Ctfx"  240 " [ *]^&Magic " 5 user-set-checkbox
+osd .osd.user-gener 240 "Ctfx"  240 " [ *]^&Undo  " 10 user-set-checkbox
+osd .osd.user-gener 245 ""
 osd .osd.user-gener 250 "Sfh" "  &Keep Undo History : " 260
 osd .osd.user-gener 260 "Ctfhx" 260 "^^NY^^" 0x8000 user-set-system
 osd .osd.user-gener 263 "Sfh" "          &Hide Backups : " 265
 osd .osd.user-gener 265 "Ctfx" 265 "^^NY^^" 0x100000 user-set-system
 osd .osd.user-gener 270 "Sfh" "          Main Menu : "  280
-osd .osd.user-gener 280 "Ctfx" 280 "^^NY^^" 1 user-set-checkbox
-osd .osd.user-gener 290 "Sfh" "   Alt &-> Main Menu : " 300
+osd .osd.user-gener 280 "Ctfhx" 280 "^^NY^^" 1 user-set-checkbox
+osd .osd.user-gener 290 "Sfh" "      Alt &-> Main Menu : " 300
 osd .osd.user-gener 300 "Ctfx" 300 "^^NY^^" 0x2000 user-set-system
-osd .osd.user-gener 310 "Sfh" "   Alt -&> Esc Prefx : " 320
+osd .osd.user-gener 310 "Sfh" "                             Alt -&> Esc Prefx : " 320
 osd .osd.user-gener 320 "Ctfx" 320 "^^NY^^" 0x4000 user-set-system
+osd .osd.user-gener 325 ""
 osd .osd.user-gener 330 "Sfh" "      Tab To &Indent : " 340
 osd .osd.user-gener 370 ""
 osd .osd.user-gener 380 "fh"  "                      "
@@ -1224,8 +1246,6 @@ osd .osd.user-gener 390 "MtxmfH" 390 .scheme.osd-ebtt " Sho&w Modes " .osd.user-
 
 osd .osd.user-start 0   "s" 55 18 -1 -1
 osd .osd.user-start 10  ""
-osd .osd.user-start 20  "c" "Start-up"
-osd .osd.user-start 30  ""
 osd .osd.user-start 40  "Sfh" "           Log &Name : " 50
 osd .osd.user-start 50  "EtRxHfh" 50 .scheme.osd-entry "##############" f user-set-logname
 osd .osd.user-start 53  "hf" "   "
@@ -1244,7 +1264,7 @@ osd .osd.user-start 140 "MtxmsfH" 140 .scheme.osd-entry "" .osd.user-sub user-se
 osd .osd.user-start 150 "Sfh" "    MS Shift region : "  160
 osd .osd.user-start 160 "Ctfx" 160 "^^NY^^" 12 user-set-checkbox
 osd .osd.user-start 500 ""
-osd .osd.user-start 510 "c"  "Language Setup"
+osd .osd.user-start 510 "c"  "Locale Setup"
 osd .osd.user-start 520 ""
 osd .osd.user-start 530 "Sfh" "           &Keyboard : " 540
 osd .osd.user-start 540 "MtxmsfH" 540 .scheme.osd-entry "" .osd.user-keyb
@@ -1267,7 +1287,7 @@ osd .osd.user-nb 7 "Pft" 7 "E-Mail" .osd.user-mail
 osd .osd.user-nb 100 "It" 8 .osd.user-start
 
 ; The main menu ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-osd .osd.user 0  "batcHds" 9 3 59 26 -1 -1 630 .scheme.osd-title "User Setup"
+osd .osd.user 0  "batcHds" 9 3 59 26 -1 -1 630 .scheme.osd-title &spr "User Setup (%s%s%s)" &sup &lef $platform 1 &rig $platform 1 &cond &band $system 0x01 " Console" ""
 osd .osd.user 100 "It" 1 .osd.user-nb
 osd .osd.user 600 ""
 osd .osd.user 620 "BtcfHhx" 2 .scheme.osd-ebtt " &Save " f user-set-save

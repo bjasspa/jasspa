@@ -11,16 +11,13 @@ define-macro fhook-imake
     !endif
     set-variable $buffer-mask "luh1"
     buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-imake
-        my-fhook-imake
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
 set-variable .fhook-imake.name "Imakefile"
-set-variable .fhook-imake.setup &reg "/history" "fhook/imake" "hinopTx"
-set-variable .fhook-imake.setup-mask "aehikmnoptux"
+set-variable .fhook-imake.setup &reg "/history" "fhook/imake" "ghinopTx"
+set-variable .fhook-imake.setup-mask "aeghikmnoptux"
 set-variable .fhook-imake.comment "|/*|*/|*| * | * |f|"
 
 !if &and &sin "h" .fhook-imake.setup &band .hilight.flags 0x02 

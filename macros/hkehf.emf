@@ -17,16 +17,13 @@ define-macro fhook-ehf
         buffer-bind-create "bio" "tab"   "" ehf-forward-link
         buffer-bind-create "bio" "S-tab" "" ehf-backward-link
     !endif
-    ; execute user extensions if enabled
-    !if &exist my-fhook-ehf
-        my-fhook-ehf
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
 set-variable .fhook-ehf.name "ME Help"
-set-variable .fhook-ehf.setup &reg "/history" "fhook/ehf" "hijmopwx"
-set-variable .fhook-ehf.setup-mask "aehijkopstuwx1"
+set-variable .fhook-ehf.setup &reg "/history" "fhook/ehf" "ghijmopwx"
+set-variable .fhook-ehf.setup-mask "aeghijkopstuwx1"
 set-variable .fhook-ehf.command-flag  "|th|th|th|"
 set-variable .fhook-ehf.command-name  "|ehf-process-link|ehf-backward-link|ehf-forward-link|"
 set-variable .fhook-ehf.command-nbind "|0|||"

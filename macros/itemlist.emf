@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Detlef Groth & Steven Phillips
 ;  Created       : Sat Aug 4 16:50:33 2001
-;  Last Modified : <010820.1516>
+;  Last Modified : <011118.2242>
 ;  Description   : Generic macros for creating a list of items defined
 ;                  in current buffer
 ;
@@ -255,9 +255,7 @@ define-macro occur
     !endif
     set-variable #l6 &cond &equ @# 2 28 15
     ; find out how many regex groups are being used
-    set-variable #l2 #l1
-    var-str-sub #l2 "\\(" "X"
-    set-variable #l4 &sub &len #l1 &len #l2
+    set-variable #l4 &sub &len #l1 &len &rep #l1 "\\(" "X"
     set-variable #l2 &spr "\\(%s\\)" #l1
     !if &not &seq &lef #l1 1 "^"
         set-variable #l2 &spr "\\(.\\{0,%d\\}\\)%s" #l6 #l2

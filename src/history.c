@@ -5,7 +5,7 @@
  *  Synopsis      : ME histroy saving and re-loading routines
  *  Created By    : Steven Phillips
  *  Created       : 1995
- *  Last Modified : <010902.1153>
+ *  Last Modified : <011114.1143>
  *
  *  Description
  *     Saves the main registry configuration, with a history of currently
@@ -45,11 +45,11 @@
  *
  ****************************************************************************/
 
-#define	__HISTORYC			/* Define the name of the file */
+#define	__HISTORYC		      /* Define the name of the file */
 
 #include "emain.h"
 
-static uint8 histVerId[] = "5" ;      /* History version */
+static uint8 histVerId[] = "6" ;      /* History version */
 uint8 *defHistFile=NULL ;
 
 /* Constants */

@@ -7,15 +7,12 @@
 define-macro fhook-python
     set-variable $buffer-mask "luh1"
     buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-python
-        my-fhook-python
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
-set-variable .fhook-python.setup &reg "/history" "fhook/python" "hiopx"
-set-variable .fhook-python.setup-mask "aehikmoptux"
+set-variable .fhook-python.setup &reg "/history" "fhook/python" "ghiopx"
+set-variable .fhook-python.setup-mask "aeghikmoptux"
 set-variable .fhook-python.comment "|#||#|# | #||"
 
 !if &and &sin "h" .fhook-python.setup &band .hilight.flags 0x02 

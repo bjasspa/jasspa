@@ -19,16 +19,13 @@ define-macro fhook-vhdl
     !endif
     set-variable $buffer-mask "luh1"
     buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-vhdl
-        my-fhook-vhdl
-    !endif
+    buffer-initialize-hooks
 !emacro    
 
 ; buffer-initialize variables
 set-variable .fhook-vhdl.name "VHDL"
-set-variable .fhook-vhdl.setup &reg "/history" "fhook/vhdl" "hinopx"
-set-variable .fhook-vhdl.setup-mask "aehikmnoptux"
+set-variable .fhook-vhdl.setup &reg "/history" "fhook/vhdl" "ghinopx"
+set-variable .fhook-vhdl.setup-mask "aeghikmnoptux"
 set-variable .fhook-vhdl.comment "|--||-|-- | --||"
     
 !if &and &sin "h" .fhook-vhdl.setup &band .hilight.flags 0x02 

@@ -7,16 +7,13 @@
 define-macro fhook-fvwm
     set-variable $buffer-mask "luh1"
     buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-fvwm
-        my-fhook-fvwm
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
 set-variable .fhook-fvwm.name "FVWM"
-set-variable .fhook-fvwm.setup &reg "/history" "fhook/fvwm" "hiopx"
-set-variable .fhook-fvwm.setup-mask "aehikmoptux"
+set-variable .fhook-fvwm.setup &reg "/history" "fhook/fvwm" "ghiopx"
+set-variable .fhook-fvwm.setup-mask "aeghikmoptux"
 set-variable .fhook-fvwm.comment "|#||#|# | #||"
 
 !if &and &sin "h" .fhook-fvwm.setup &band .hilight.flags 0x02 

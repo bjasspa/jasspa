@@ -5,7 +5,7 @@
 ;  Description   : Configure ME for the users language
 ;
 ;  Notes
-;      See help on command set-language(3) for adding support for a new lanugage
+;      See help on languageSupport(2) for adding support for a new lanugage
 ;
 ;  Copyright (c) 1999-2001 JASSPA
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

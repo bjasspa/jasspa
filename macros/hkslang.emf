@@ -20,15 +20,12 @@ define-macro fhook-slang
     !endif
     set-variable $buffer-mask "luh1"
     buffer-initialize
-    ; execute user extensions if defined
-    !if &exist my-fhook-slang
-        my-fhook-slang
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
-set-variable .fhook-slang.setup &reg "/history" "fhook/slang" "bdfhnopx"
-set-variable .fhook-slang.setup-mask "abdefhikmnoptux>"
+set-variable .fhook-slang.setup &reg "/history" "fhook/slang" "bdfghnopx"
+set-variable .fhook-slang.setup-mask "abdefghikmnoptux>"
 set-variable .fhook-slang.tags "ctags"
 set-variable .fhook-slang.comment "|/*|*/|*| * | * ||"
 set-variable .fhook-slang.command-flag  "|th|th|t|t|t|t|t|t|bo|bo|"

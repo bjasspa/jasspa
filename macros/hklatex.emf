@@ -32,23 +32,19 @@ define-macro fhook-latex
     ; Set up the default constants
     set-variable :fill-mode "L"
     set-variable :fill-col $fill-col
-    ; execute user extensions if enabled
-    !if &exist my-fhook-latex
-        my-fhook-latex
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 set-variable .fhook-latex.name "LaTeX"
-set-variable .fhook-latex.setup &reg "/history" "fhook/latex" "fhinopsx"
-set-variable .fhook-latex.setup-mask "aefhijkmnopstuwx"
+set-variable .fhook-latex.setup &reg "/history" "fhook/latex" "fghinopsx"
+set-variable .fhook-latex.setup-mask "aefghijkmnopstuwx"
 set-variable .fhook-latex.tags "textags"
 set-variable .fhook-latex.comment "|%||%|% | %||"
-set-variable .fhook-latex.command-flag  "|bo|bo|bo|bo|thb|thb|thb|thb|th|thb|th|th|thbH|"
-;set-variable .fhook-latex.command-name  "|latex-para|latex-para|latex-backward-paragraph|latex-forward-paragraph|latex-ref-goto-label|latex-ref-go-back|latex-list-section|latex-list-label||latex-popup|latex-compile|latex-view|latex-swap-hilight|"
-set-variable .fhook-latex.command-name  "|latex-para|latex-para|latex-backward-paragraph|latex-forward-paragraph|comment-restyle|latex-ref-go-back|latex-list-section|latex-list-label||latex-popup|latex-compile|latex-view|latex-swap-hilight|"
-set-variable .fhook-latex.command-nbind "||||||||||||||"
-set-variable .fhook-latex.command-kbind "|esc o|esc q|esc p|esc n|C-c r|C-c C-r|f7|f8||C-6|||C-c C-h|"
-set-variable .fhook-latex.command-desc  "|||||&Goto Reference Label|&Return to Reference|List &Sections|List &Labels||&Insert Token|Com&pile Buffer|&View Buffer|T&oggle hilighting|"
+set-variable .fhook-latex.command-flag  "|bo|bo|bo|bo|thb|thb|thb|th|thb|th|th|thbH|"
+set-variable .fhook-latex.command-name  "|latex-para|latex-para|latex-backward-paragraph|latex-forward-paragraph|latex-ref-goto-label|latex-ref-go-back|latex-list-label||latex-popup|latex-compile|latex-view|latex-swap-hilight|"
+set-variable .fhook-latex.command-nbind "|||||||||||||"
+set-variable .fhook-latex.command-kbind "|esc o|esc q|esc p|esc n|C-c l|C-c C-l|C-f7||C-6|||C-c C-h|"
+set-variable .fhook-latex.command-desc  "|||||&Goto Reference Label|&Return to Reference|List &Labels||&Insert Token|Com&pile Buffer|&View Buffer|T&oggle hilighting|"
 
 ; setup item-list
 set-variable .fhook-latex.item-list-s1 "\\\\chapter{\\([^}]*\\)}"
@@ -485,81 +481,17 @@ define-macro latex-view
     0 ipipe-shell-command #l0 "*latex-view*"
 !emacro
 
-0 define-macro latex-list-create
-    !if &not @#
-        !force 0 delete-buffer #p1
-    !endif
-    !force 0 popup-window #p1
-    !if &not $status
-        ml-write &spr "Generating content list for %s ... " #p0
-        popup-window #p1
-        -1 buffer-mode "undo"
-        find-buffer #p0
-        beginning-of-buffer
-        !force regex-forward .search
-        !while $status
-            set-variable #l0 $window-col
-            set-variable #l1 $window-line
-            -2 show-region
-            set-variable #l2 &mid @wl $window-col &sub #l0 $window-col
-            set-variable $window-col &sub #l0 1
-            !force goto-matching-fence
-            !if &and $status &equ #l1 $window-line
-                set-variable #l0 &mid @wl #l0 &sub $window-col #l0
-                set-alpha-mark "t"
-                find-buffer #p1
-                !if &seq &lef #l2 6 "\\label"
-                    insert-string "Label:      "
-                !elif &seq &lef #l2 5 "\\chap"
-                    insert-string "Chapter:    "
-                !elif &seq &lef #l2 5 "\\sect"
-                    insert-string "Section:     "
-                !elif &seq &lef #l2 8 "\\subsect"
-                    insert-string "SSection:     "
-                !else
-                    insert-string "SSSection:     "
-                !endif
-                insert-string #l0
-                insert-newline
-                find-buffer #p0
-                goto-alpha-mark "t"
-            !endif
-            !force regex-forward .search
-        !done
-        set-variable #l0 &cond &seq $buffer-fname "" $buffer-bname $buffer-fname
-        find-buffer #p1
-        beginning-of-buffer
-        insert-string &spr "Content Listing: %s\n\n" #l0
-        -1 buffer-mode "edit"
-        1 buffer-mode "view"
-        buffer-bind-create "b" "f7" "" latex-goto-buffer
-        buffer-bind-create "b" "f8" "" latex-goto-buffer 
-        buffer-bind-create "bo" "return" "" latex-goto-section
-        set-variable :mouse-word-select "latex-goto-section"
-        ml-write &spr "Generating content list for %s ... Done" #p0
-    !endif
-!emacro
-
-define-macro latex-list-section
-    set-variable #l0 $buffer-bname
-    set-variable #l1 &spr "*%s sectn-list*" #l0
-    set-variable .latex-list-create.search "\\\\\\(\\(sub\\)*section\\|chapter\\)\\*?{\\(\\\\centerline{\\)?"
-    !force !force @# latex-list-create
-    !if &not $status
-        !force 0 delete-buffer #l1
-        popup-window #l0
-    !endif
-!emacro
-
 define-macro latex-list-label
-    set-variable #l0 $buffer-bname
-    set-variable #l1 &spr "*%s label-list*" #l0
-    set-variable .latex-list-create.search "\\\\label\\*?{\\(\\\\centerline{\\)?"
-    !force !force @# latex-list-create
-    !if &not $status
-        !force 0 delete-buffer #l1
-        popup-window #l0
-    !endif
+    set-variable #l0 .fhook-latex.item-list-s1
+    set-variable #l1 .fhook-latex.item-list-r1
+    set-variable #l2 .fhook-latex.item-list-s2
+    set-variable .fhook-latex.item-list-s1 "\\\\label\\*?{\\([^}]*\\)}"
+    set-variable .fhook-latex.item-list-r1 "Label \ecB\\1\ecA"
+    unset-variable .fhook-latex.item-list-s2
+    !force !force item-list
+    set-variable .fhook-latex.item-list-s1 #l0
+    set-variable .fhook-latex.item-list-r1 #l1
+    set-variable .fhook-latex.item-list-s2 #l2
 !emacro
 
 0 define-macro latex-goto-buffer

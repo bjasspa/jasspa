@@ -10,7 +10,7 @@
  *
  *  Author:         Danial Lawrence
  *
- *  Creation Date:      14/05/86 12:37      <011026.2209>
+ *  Creation Date:      14/05/86 12:37      <011120.1315>
  *
  *  Modification date:  %G% : %U%
  *
@@ -123,6 +123,7 @@ meNAMESVAR varbNames={1,0} ;
 static meREGISTERS *gmaLocalRegPtr=NULL ;
 
 #if MAGIC
+static meRegex meRegexStrCmp={0} ;
 /* Quick and easy interface to regex compare
  * 
  * return -1 on error, 0 on no match 1 if matched
@@ -130,14 +131,13 @@ static meREGISTERS *gmaLocalRegPtr=NULL ;
 int
 regexStrCmp(uint8 *str, uint8 *reg, int exact)
 {
-    static meRegex regex={0} ;
     int ii ;
     
-    if(meRegexComp(&regex,reg,(exact) ? 0:meREGEX_ICASE) != meREGEX_OKAY)
+    if(meRegexComp(&meRegexStrCmp,reg,(exact) ? 0:meREGEX_ICASE) != meREGEX_OKAY)
         return -1 ;
     
     ii = meStrlen(str) ;
-    return meRegexMatch(&regex,str,ii,0,ii,(meREGEX_BEGBUFF|meREGEX_ENDBUFF|meREGEX_MATCHWHOLE)) ;
+    return meRegexMatch(&meRegexStrCmp,str,ii,0,ii,(meREGEX_BEGBUFF|meREGEX_ENDBUFF|meREGEX_MATCHWHOLE)) ;
 }
 #else
 /* Cheesy regular expression comparer
@@ -1853,9 +1853,10 @@ getval(uint8 *tkn)   /* find the value of a token */
                 }
                 else
                     ss = NULL ;
+                ret = (ret & 0x02) ? mlCR_QUOTE_CHAR:0 ;
                 
                 clexec = FALSE ;
-                ret = mlCharReply(prompt,mlCR_QUOTE_CHAR,ss,NULL) ;
+                ret = mlCharReply(prompt,ret,ss,NULL) ;
                 clexec = TRUE ;
                 if(ret < 0)
                     return abortm ;
@@ -2260,21 +2261,28 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
     case UFMID:
         {
             uint8 *dd, *ss, cc ;
-            int ii=meAtoi(arg2) ;
+            int ii, ll ;
             ss = arg1 ;
-            while(--ii >= 0)
+            
+            ll = meAtoi(arg3) ;
+            ii = meAtoi(arg2) ;
+            if(ii > 0)
             {
-                if((cc=*ss++) == 0xff)
-                    cc = *ss++ ;
-                if(cc == '\0')
+                do
                 {
-                    ss-- ;
-                    break ;
-                }
+                    if((cc=*ss++) == 0xff)
+                        cc = *ss++ ;
+                    if(cc == '\0')
+                    {
+                        ss-- ;
+                        break ;
+                    }
+                } while(--ii > 0) ;
             }
-            ii = meAtoi(arg3) ;
+            else
+                ll += ii ;
             dd = evalResult ;
-            while(--ii >= 0)
+            while(--ll >= 0)
             {
                 if((cc=*ss++) == 0xff)
                 {
@@ -2357,6 +2365,123 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
             if(lss != NULL)
                 return meItoa(lss-arg2-off+1);
             return meLtoa(0) ;
+        }
+    case UFREP:
+    case UFIREP:
+        {
+            Fintssi cmpIFunc ;
+            uint8 cc, *ss=arg1 ;
+            int mlen, dlen=0, rlen, ii ;
+            mlen = meStrlen(arg2) ;
+            rlen = meStrlen(arg3) ;
+            if(fnum == UFREP)
+                cmpIFunc = strncmp ;
+            else
+                cmpIFunc = strnicmp ;
+            
+            do
+            {
+                ii = cmpIFunc((char *)arg2,(char *)ss,mlen) ;
+                if(!ii)
+                {
+                    strcpy(evalResult+dlen,arg3) ;
+                    dlen += rlen ;
+                    ss += mlen ;
+                }
+                if((cc=*ss) == '\0')
+                    break ;
+                if(ii || (mlen == 0))
+                {
+                    ss++ ;
+                    if(cc == 0xff)
+                    {
+                        evalResult[dlen++] = 0xff ;
+                        cc = *ss++ ;
+                    }
+                    evalResult[dlen++] = cc ;
+                }
+            } while(dlen+rlen < MAXBUF) ;
+            evalResult[dlen] = '\0' ;
+            return evalResult ;
+        }
+    case UFXREP:
+    case UFXIREP:
+        {
+            uint8 cc, *rr ;
+            int slen, soff=0, mlen, dlen=0, ii ;
+            
+            if(meRegexComp(&meRegexStrCmp,arg2,(fnum == UFXREP) ? 0:meREGEX_ICASE) != meREGEX_OKAY)
+                return abortm ;
+    
+            slen = meStrlen(arg1) ;
+            for(;;)
+            {
+                ii = meRegexMatch(&meRegexStrCmp,arg1,slen,soff,slen,(meREGEX_BEGBUFF|meREGEX_ENDBUFF)) ;
+                if(ii)
+                {
+                    mlen = meRegexStrCmp.group[0].start - soff ;
+                    if(dlen+mlen >= MAXBUF)
+                        break ;
+                    strncpy(evalResult+dlen,arg1+soff,mlen) ;
+                    dlen += mlen ;
+                    rr = arg3 ;
+                    while((cc=*rr++) != '\0')
+                    {
+                        if(dlen >= MAXBUF-1)
+                            break ;
+                        if((cc == '\\') && (*rr != '\0'))
+                        {
+                            cc = *rr++ ;
+                            if((cc == '&') || ((cc >= '0') && (cc <= '9') && ((((int) cc) - '0') <= meRegexStrCmp.groupNo)))
+                            {
+                                cc = (cc == '&') ? 0:(cc-'0') ;
+                                /* if start offset is < 0, it was a ? auto repeat which was not found,
+                                   therefore replace str == "" */ 
+                                if((soff=meRegexStrCmp.group[cc].start) >= 0)
+                                {
+                                    mlen = meRegexStrCmp.group[cc].end - soff ;
+                                    if(dlen+mlen >= MAXBUF)
+                                        break ;
+                                    if(cc)
+                                        soff += meRegexStrCmp.group[0].start ;
+                                    strncpy(evalResult+dlen,arg1+soff,mlen) ;
+                                    dlen += mlen ;
+                                }
+                            }
+                            else
+                            {
+                                if(cc == 'n')
+                                    cc = '\n' ;
+                                else if(cc == 'r')
+                                    cc = '\r' ;
+                                else if(cc == 't')
+                                    cc = '\t' ;
+                                evalResult[dlen++] = cc ;
+                            }
+                        }
+                        else
+                            evalResult[dlen++] = cc ;
+                    }
+                    mlen = meRegexStrCmp.group[0].end - meRegexStrCmp.group[0].start ;
+                    soff = meRegexStrCmp.group[0].end ;
+                }
+                if((cc=arg1[soff]) == '\0')
+                    break ;
+                if(!ii || (mlen == 0))
+                {
+                    if(dlen >= MAXBUF-2)
+                        break ;
+                    soff++ ;
+                    if(cc == 0xff)
+                    {
+                        evalResult[dlen++] = 0xff ;
+                        cc = arg1[soff++] ;
+                    }
+                    evalResult[dlen++] = cc ;
+                }
+            }
+            evalResult[dlen] = '\0' ;
+            return evalResult ;
         }
     case UFNBMODE:
         {

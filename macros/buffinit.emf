@@ -71,6 +71,12 @@ define-macro-file fold fold-current fold-all
     !elif &sin "K" #l1
         -1 buffer-mode "backup"
     !endif
+    ; setup fence displaying - is the dmf extension being used?
+    !if .display-matching-fence.dmf
+        set-variable &ind &spr ".%s.dmf" $buffer-fhook &cond &sin "G" #l1 0 .display-matching-fence.dmf
+    !elif &sin "G" #l1
+        -1 buffer-mode "fence"
+    !endif
     !if &sin "u" #l1
         1 buffer-mode "undo"
     !elif &sin "U" #l1
@@ -163,3 +169,20 @@ define-macro-file fold fold-current fold-all
     !endif
 !emacro
 
+0 define-macro buffer-initialize-hooks
+    ; execute user extensions if defined
+    set-variable #l0 &rig $buffer-fhook 6
+    !if &exist &cat "my-fhook-" #l0
+        execute-named-command &cat "my-fhook-" #l0
+    !endif
+    !if &exist &cat "my-bhook-" #l0
+        !if &seq $buffer-bhook ""
+            set-variable $buffer-bhook &cat "my-bhook-" #l0
+        !endif
+    !endif
+    !if &exist &cat "my-ehook-" #l0
+        !if &seq $buffer-ehook ""
+            set-variable $buffer-ehook &cat "my-ehook-" #l0
+        !endif
+    !endif
+!emacro

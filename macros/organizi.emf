@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Fri Jan 1 13:49:17 1999
-;  Last Modified : <000719.0012>
+;  Last Modified : <011118.2252>
 ;
 ;  Description
 ;
@@ -48,7 +48,7 @@
             !if &seq &lef #l3 1 #g2
                 set-variable #l3 &mid #l3 1 &sub &len #l3 2
                 set-variable #l4 &spr "%s%s" #g2 #g2
-                var-str-sub #l3 #l4 #g2
+                set-variable #l3 &rep #l3 #l4 #g2
             !endif
             !if &seq #l3 ""
                 set-variable #l3 #p9
@@ -86,17 +86,17 @@
                 !if &seq &lef #l3 1 #g2
                     set-variable #l3 &mid #l3 1 &sub &len #l3 2
                     set-variable #l4 &spr "%s%s" #g2 #g2
-                    var-str-sub #l3 #l4 #g2
+                    set-variable #l3 &rep #l3 #l4 #g2
                 !endif
                 set-variable #l4 &cat "tmp/" &lget .org.addr-reg #l1
                 set-variable #l5 &reg "/org" #l4 ""
                 !if &not &seq #l5 ""
                     set-variable #l6 &lget .org.imp-field-app #p9
-                    var-str-sub #l6 "\\n" "\n"
+                    set-variable #l6 &rep #l6 "\\n" "\n"
                     set-variable #l5 &cat #l5 #l6
                 !endif
                 set-variable #l6 &lget .org.imp-field-pre #p9
-                var-str-sub #l6 "\\n" "\n"
+                set-variable #l6 &rep #l6 "\\n" "\n"
                 set-variable #l5 &cat &cat #l5 #l6 #l3
                 set-registry "/org" #l4 #l5
             !endif
@@ -264,15 +264,9 @@ osd .osd.org-aieo 160 "BcfH"   .scheme.osd-ebtt "  &Ok  "  1 void
 
 0 define-macro org-aie-setdelimit
     set-variable #l0 @1
-    set-variable #g0 &ind &spr ".org.%s-endrec" #l0
-    set-variable #g1 &ind &spr ".org.%s-endfld" #l0
-    set-variable #g2 &ind &spr ".org.%s-delimit" #l0
-    var-str-sub #g0 "\\n" "\n"
-    var-str-sub #g1 "\\n" "\n"
-    var-str-sub #g2 "\\n" "\n"
-    var-str-sub #g0 "\\t" "\t"
-    var-str-sub #g1 "\\t" "\t"
-    var-str-sub #g2 "\\t" "\t"
+    set-variable #g0 &rep &rep &ind &spr ".org.%s-endrec"  #l0 "\\n" "\n" "\\t" "\t"
+    set-variable #g1 &rep &rep &ind &spr ".org.%s-endfld"  #l0 "\\n" "\n" "\\t" "\t"
+    set-variable #g2 &rep &rep &ind &spr ".org.%s-delimit" #l0 "\\n" "\n" "\\t" "\t"
 !emacro
 
 osd .osd.org-aimp  0  "batcHds" 9 3 62 26 -1 -1 630 .scheme.osd-title "Import Address Database"
@@ -439,16 +433,16 @@ osd .osd.org-aimp 650 "BhcfH"  .scheme.osd-ebtt " E&xit  "   f void
                     !else
                         set-variable #l5 &reg "/org" &spr "addr/%d/%s" .org.addr #l4 ""
                         !if &seq #g2 ""
-                            var-str-sub #l5 #g1 .org.aexp-seperator
+                            set-variable #l5 &rep #l5 #g1 .org.aexp-seperator
                         !else
-                            var-str-sub #l5 #g2 &cat #g2 #g2
+                            set-variable #l5 &rep #l5 #g2 &cat #g2 #g2
                         !endif
                         !if &and &gre .org.aexp-addrfld 1 &seq &rig #l4 5 "addr"
                             set-variable #l6 &spr "%s%s%s" #g2 #g1 #g2
                             .org.aexp-addrfld var-str-sub #l5 "\n" #l6
                             set-variable #l5 &spr "%s%n" #l5 &sub .org.aexp-addrfld &add .var-str-sub.count 1 #l6
                         !endif
-                        var-str-sub #l5 #g0 .org.aexp-endrec
+                        set-variable #l5 &rep #l5 #g0 .org.aexp-endrec
                         insert-string &spr "%s%s%s%s" #g1 #g2 #l5 #g2
                     !endif
                 !done

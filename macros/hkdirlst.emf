@@ -88,16 +88,13 @@ define-macro fhook-dirlst
     set-variable :mouse-drop-1 dirlst-mouse-drop-1
     set-variable :mouse-pick-3 void
     set-variable :mouse-drop-3 dirlst-mouse-drop-3
-    ; execute user extensions if enabled
-    !if &exist my-fhook-dirlst
-        my-fhook-dirlst
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
 set-variable .fhook-dirlst.name "Directory List"
-set-variable .fhook-dirlst.setup &reg "/history" "fhook/dirlst" "hmop"
-set-variable .fhook-dirlst.setup-mask "aehop"
+set-variable .fhook-dirlst.setup &reg "/history" "fhook/dirlst" "ghmop"
+set-variable .fhook-dirlst.setup-mask "aeghop"
 set-variable .fhook-dirlst.command-flag  "|thbio|thbio|th|thbio|thbio|thbio|bio|thbio|bio|h|"
 set-variable .fhook-dirlst.command-name  "|file-browser-swap-buffers|file-browser-close||dirlst-find-file|dirlst-tag-toggle|dirlst-tag-remove|dirlst-tag-remove|dirlst-tag-execute|dirlst-tag-execute||"
 set-variable .fhook-dirlst.command-nbind "|||||||||||"
@@ -595,9 +592,8 @@ define-macro file-browser-swap-buffers
         set-variable $result "y"
         !return
     !endif
-    set-variable #l0 &cat "  " $result
-    var-str-sub #l0 " [y/n]?" "?"
-    var-str-sub #l0 ", " "  \n\n          "
+    set-variable #l0 &cat "  " &rep $result " [y/n]?" "?"
+    set-variable #l0 &rep #l0 ", " "  \n\n          "
     !force !force 2 osd-xdialog "Paste File" #l0 0 .dirlst-pos.x .dirlst-pos.y " &Yes " " Yes to &All" " &No " " &Abort "
     !if &or &not $status &equ $result 4
         set-variable .dirlst-tag-paste.state 0

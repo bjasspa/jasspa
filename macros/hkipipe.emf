@@ -126,7 +126,7 @@
                             set-variable &ind &cat ":dir-" &slo &lef #l4 1 #l4
                         !endif
                         ; ensure '/' are '\\'
-                        var-str-sub #l4 "/" "\\"
+                        set-variable #l4 &rep #l4 "/" "\\"
                         set-variable #l2 &cat "cd " #l4
                         set-variable #l3 #l2
                         !if &and &seq &mid #l4 1 1 ":" &not &seq &lef #l4 1 &lef #l5 1
@@ -187,7 +187,7 @@
             goto-position "\x83"
             !if &band $system 0x100
                 ; on windows change '\' to '/'
-                var-str-sub #l2 "\\" "/"
+                set-variable #l2 &rep #l2 "\\" "/"
             !endif
             set-variable #l3 &stat "a" &cat $buffer-fname #l2
             !force !force set-variable #l4 @ml61 "Filename" #l3
@@ -203,7 +203,7 @@
             !endif
             !if &band $system 0x100
                 ; on windows change '/' to '\'
-                var-str-sub #l4 "/" "\\"
+                set-variable #l4 &rep #l4 "/" "\\"
             !endif
             !force find-buffer &cat #l0 "-cmd"
             &len #l2 backward-delete-char
@@ -234,7 +234,7 @@
             !if &seq #l1 "\CH"
                 !force !force backward-delete-char
             !else
-                var-str-sub #l1 "\e" "\E"
+                set-variable #l1 &rep #l1 "\e" "\E"
                 !force !force execute-string #l1
             !endif
             set-variable #l9 $status
@@ -297,7 +297,7 @@
     !else
         goto-alpha-mark "I"
         !if &band $system 0x100
-            var-str-sub #l1 "\CM" "\CM\CJ"
+            set-variable #l1 &rep #l1 "\CM" "\CM\CJ"
         !endif
         ipipe-write #l1
     !endif
@@ -334,7 +334,7 @@
     !else
         goto-alpha-mark "I"
         !if &band $system 0x100
-            var-str-sub #l1 "\CM" "\CM\CJ"
+            set-variable #l1 &rep #l1 "\CM" "\CM\CJ"
         !endif
         ipipe-write #l1
     !endif

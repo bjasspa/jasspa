@@ -20,16 +20,13 @@ define-macro fhook-f90
     !endif
     set-variable $buffer-mask "luh1"
     buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-f90
-        my-fhook-f90
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
 set-variable .fhook-f90.name "Fortran"
-set-variable .fhook-f90.setup &reg "/history" "fhook/f90" "bhinopx"
-set-variable .fhook-f90.setup-mask "aebhikmnoptux"
+set-variable .fhook-f90.setup &reg "/history" "fhook/f90" "bghinopx"
+set-variable .fhook-f90.setup-mask "aebghikmnoptux"
 set-variable .fhook-f90.comment "|!||!|! | !||"
 
 !if &and &sin "h" .fhook-f90.setup &band .hilight.flags 0x02 

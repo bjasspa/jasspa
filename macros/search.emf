@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Jul 18 14:55:16 1998
-;  Last Modified : <011010.0756>
+;  Last Modified : <011116.2227>
 ;
 ;  Description   : Macros used for searching and replacing 
 ;
@@ -291,8 +291,7 @@ osd .osd.ftag 60  "" " "
 !emacro
 0 define-macro osd-search-set-hilight
     set-variable .osd-search.scheme @#
-    set-variable #l0 &cat "            " &lget .osd-search.hilnames @#
-    var-str-sub #l0 "&" ""
+    set-variable #l0 &cat "            " &rep &lget .osd-search.hilnames @# "&" ""
     osd .osd.sar-hll 50 "MHmsxfz" &lget .osd-search.hilschms @# 30 1 #l0 .osd.tmp osd-search-setup-hilight
 !emacro
 0 define-macro osd-search-setup-hilight

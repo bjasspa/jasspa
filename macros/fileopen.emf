@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sun Mar 22 20:25:48 1998
-;  Last Modified : <000926.0924>
+;  Last Modified : <011101.2300>
 ;
 ;  Description
 ;
@@ -210,7 +210,7 @@ define-macro osd-fo-okay
             set-variable .osd.fo-options &bxor .osd.fo-options 1
             0 osd-fo-filelist
         !else
-            set-variable .osd.fo-options &bxor &band .osd.fo-options &bor 1 &abs @# &abs @#
+            set-variable .osd.fo-options &bxor .osd.fo-options &abs @#
         !endif
     !elif &not &band .osd.fo-options @#
         !abort
@@ -330,22 +330,19 @@ set-variable .osd-get-file.cmd &cond &seq .osd-get-file.cmd "ERROR" "" .osd-get-
 set-variable .osd-get-file.file-type &cond &seq .osd-get-file.file-type "ERROR" "" .osd-get-file.file-type
 
 0 define-macro osd-file-open-cmd
-    !if &band .osd.fo-options 2
-        !force view-file @1 @mna
-    !elif &band .osd.fo-options 4
-        !force find-bfile @1 @mna
-    !elif &band .osd.fo-options 8
-        !force find-cfile @1 @mna
+    set-variable #l0 &bor 1 &band .osd.fo-options 6
+    !if &band .osd.fo-options 8
+        !force #l0 view-file @1 @mna
     !else
-        !force find-file @1 @mna
+        !force #l0 find-file @1 @mna
     !endif
 !emacro
 
 define-macro osd-file-open
     osd .osd.fobm 110 ""
-    osd .osd.fobm 120 "Cpxt" 120 "^[ *] &View File"     2 osd-fo-options
-    osd .osd.fobm 130 "Cpxt" 130 "^[ *] &Binary File"   4 osd-fo-options
-    osd .osd.fobm 140 "Cpxt" 140 "^[ *] &Encrypt File"  8 osd-fo-options
+    osd .osd.fobm 120 "Cpxt" 120 "^[ *] &View File"     8 osd-fo-options
+    osd .osd.fobm 130 "Cpxt" 130 "^[ *] &Binary File"   2 osd-fo-options
+    osd .osd.fobm 140 "Cpxt" 140 "^[ *] &Encrypt File"  4 osd-fo-options
     set-variable .osd-get-file.title "Find File"
     set-variable .osd-get-file.file-type ""
     set-variable .osd-get-file.ft .ft

@@ -11,16 +11,13 @@ define-macro fhook-lists
     set-variable $buffer-mask "luh12"
     buffer-initialize
     set-variable :mouse-word-select ehf-process-link
-    ; execute user extensions if enabled
-    !if &exist my-fhook-lists
-        my-fhook-lists
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
 set-variable .fhook-lists.name "ME List"
-set-variable .fhook-lists.setup &reg "/history" "fhook/lists" "hop"
-set-variable .fhook-lists.setup-mask "aehop"
+set-variable .fhook-lists.setup &reg "/history" "fhook/lists" "ghop"
+set-variable .fhook-lists.setup-mask "aeghop"
 set-variable .fhook-lists.command-flag  "|thbio|"
 set-variable .fhook-lists.command-name  "|lists-find-link|"
 set-variable .fhook-lists.command-nbind "||"

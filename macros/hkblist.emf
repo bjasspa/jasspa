@@ -9,16 +9,13 @@
 define-macro fhook-blist
     buffer-initialize
     set-variable :mouse-word-select "2 blist-command"
-    ; execute user extensions if enabled
-    !if &exist my-fhook-blist
-        my-fhook-blist
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
 set-variable .fhook-blist.name "Buffer List"
-set-variable .fhook-blist.setup &reg "/history" "fhook/blist" "op"
-set-variable .fhook-blist.setup-mask "aemop"
+set-variable .fhook-blist.setup &reg "/history" "fhook/blist" "gop"
+set-variable .fhook-blist.setup-mask "aegmop"
 set-variable .fhook-blist.command-flag  "|thbio|bio|thbio|bio|thbio|bio|h|thbio|bio|thbio|bio|h|thbio|bio|thbio|bio|thbio|bio|h|"
 set-variable .fhook-blist.command-name  "|blist-command|blist-command|blist-command|blist-command|blist-command|blist-command||blist-command|blist-command|blist-command|blist-command||list-buffers|list-buffers|blist-command|blist-command|blist-command|blist-command||"
 set-variable .fhook-blist.command-nbind "|1|1|2|2|3|3||4|4|5|5||||6|6|7|7||"

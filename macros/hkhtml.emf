@@ -17,15 +17,12 @@ define-macro fhook-html
     !else
         html-process-buffer
     !endif
-    ; execute user extensions if enabled
-    !if &exi my-fhook-html
-        my-fhook-html
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
-set-variable .fhook-html.setup &reg "/history" "fhook/html" "cdhiopsx"
-set-variable .fhook-html.setup-mask "acdehikmopstux"
+set-variable .fhook-html.setup &reg "/history" "fhook/html" "cdghiopsx"
+set-variable .fhook-html.setup-mask "acdeghikmopstux"
 set-variable .fhook-html.comment  "|<!|>|-| - | - ||"
 set-variable .fhook-html.command-flag  "|th|h|th|h|th|h|thb|thb|"
 set-variable .fhook-html.command-name  "|||html-process-link||||html-show-buffer|html-toggle-mode|"

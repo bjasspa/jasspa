@@ -11,16 +11,13 @@ define-macro fhook-info
     set-variable :mouse-pick-1 info-mouse-pick-1
     set-variable :mouse-drop-1 info-mouse-drop-1
     set-variable :node ""
-    ; execute user extensions if enabled
-    !if &exist my-fhook-info
-        my-fhook-info
-    !endif
+    buffer-initialize-hooks
 !emacro    
 
 ; buffer-initialize variables
 set-variable .fhook-info.name "GNU Info"
-set-variable .fhook-info.setup &reg "/history" "fhook/info" "EUmhop"
-set-variable .fhook-info.setup-mask "ahkop"
+set-variable .fhook-info.setup &reg "/history" "fhook/info" "EUmghop"
+set-variable .fhook-info.setup-mask "aghkop"
 set-variable .fhook-info.command-flag  "|bio|thbio|thbio|thbio|bio|thbio|bio|th|thbio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|"
 set-variable .fhook-info.command-name  "|buffer-help|info-jump-link|scroll-down|scroll-up|scroll-up|beginning-of-buffer|beginning-of-buffer||info-jump-link|info-jump-link|info-jump-link|info-jump-last||info-node-menu|info-goto-link|info-jump-link|info-jump-link|info-jump-link|info-follow-line|"
 set-variable .fhook-info.command-nbind "||5|||||||6|4|3||||||2|1||"
@@ -327,12 +324,11 @@ set-variable .fhook-info.command-desc  "||View &Info Help|Page Down Node|Page Up
         backward-char
     !endif
     copy-region
-    set-variable #l0 @y
+    set-variable #l0 &rep @y "\n" " "
     -1 yank
-    var-str-sub #l0 "\n" " "
     !repeat
         set-variable #l1 &len #l0
-        var-str-sub #l0 "  " " "
+        set-variable #l0 &rep #l0 "  " " "
     !until &equ #l1 &len #l0
     !if &seq &set #l0 &trb #l0 ""
         ml-write "[Invalid link]"

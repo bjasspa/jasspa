@@ -69,9 +69,7 @@ define-macro describe-word-find
     set-variable .describe-word.descn 0
     !force search-forward #l1
     !while $status
-        set-variable #l2 @s1
-        var-str-sub #l2 "\n" " "
-        var-str-sub #l2 "\t" " "
+        set-variable #l2 &rep &rep @s1 "\n" " " "\t" " "
         set-variable #l3 ""
         !if &gre &len #l2 60
             set-variable #l4 &lef #l2 &rsin " " &lef #l2 60

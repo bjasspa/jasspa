@@ -11,31 +11,32 @@
 define-macro fhook-txt
     ; use the document fhook in docmacro
     @# doc-fhook-body "text"
-    ; execute user extensions if enabled
-    ml-write "[esc h - for Text mode help]"
-    !if &exist my-fhook-txt
-        my-fhook-txt
-    !endif
 !emacro
 
 ; buffer-initialize variables
 set-variable .fhook-txt.name "Text"
-set-variable .fhook-txt.setup &reg "/history" "fhook/txt" "ijopsw"
-set-variable .fhook-txt.setup-mask "aefhijkmnopstuwx"
+set-variable .fhook-txt.setup &reg "/history" "fhook/txt" "gijopsw"
+set-variable .fhook-txt.setup-mask "aefghijkmnopstuwx"
 
 ; Set up for documentation mode.
 define-macro bhook-txt
     doc-bhook-body
+    !if &exist my-bhook-txt
+        my-bhook-txt
+    !endif
 !emacro
 
 define-macro ehook-txt
     doc-ehook-body
+    !if &exist my-ehook-txt
+        my-ehook-txt
+    !endif
 !emacro
 
 ; load docmacro.emf passing the doc setup flags
 execute-file "docmacro" "txt"
 
-ml-write "[Txt file hook loaded]"
+ml-write "[Txt file hook loaded - esc h for help]"
 
 ; load in user extensions if found
 !force execute-file "mytxt"

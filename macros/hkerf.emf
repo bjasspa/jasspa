@@ -7,16 +7,13 @@
 define-macro fhook-erf
     set-variable $buffer-mask "luh1"
     buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-erf
-        my-fhook-erf
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
 set-variable .fhook-erf.name "ME Registry"
-set-variable .fhook-erf.setup &reg "/history" "fhook/erf" "dfhiopx"
-set-variable .fhook-erf.setup-mask "adefhikmoptux"
+set-variable .fhook-erf.setup &reg "/history" "fhook/erf" "dfghiopx"
+set-variable .fhook-erf.setup-mask "adefghikmoptux"
 set-variable .fhook-erf.comment "|;||;|; | ;||"
 
 ; setup erf folding support
