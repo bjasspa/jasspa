@@ -8,7 +8,9 @@
 ; Authors:     Steven Phillips
 ;
 ; define some external macros which are used first.
-0 define-macro-file osd osd-1-buffer osd-close
+!if &not &exi osd-1-buffer
+    exec-file osd
+!endif
 0 define-macro-file search osd-line-scheme
 !if &reg "/history" "find-buffer" "0"
     !if &not &exi .osd.find-buffer
@@ -139,16 +141,15 @@ define-macro mouse-osd-multi
         0 show-region
         set-variable #l2 $result
         goto-position "\x82"
-        set-variable #l1 &cond &and &gre $mouse-x 20 &les &sub $frame-width $mouse-x 33 "Mdw" "Md"
-        osd 27 70  #l1 "Sort \HLines"      28
-        osd 27 90  #l1 "H\Hilight Line"    .osd.tmp osd-line-scheme
+        osd 27 70 "M" "Sort \HLines"      28
+        osd 27 90 "M" "H\Hilight Line"    .osd.tmp osd-line-scheme
         !if &reg "/history" "find-buffer" "0"
-            osd 27 150 #l1 "\HBuffer"      .osd.find-buffer osd-find-buffer
+            osd 27 150 "M" "\HBuffer"      .osd.find-buffer osd-find-buffer
         !else    
-            osd 27 150 #l1 "\HBuffer"      20 osd-1-buffer   ; Set up the buffers
+            osd 27 150 "M" "\HBuffer"      20 osd-1-buffer   ; Set up the buffers
         !endif
-        osd 27 160 #l1 "\HQuick Open"      19
-        osd 27 110 "i" &cond &band $window-flags 4 "Unloc\Hk Window" "Loc&k Window" f "set-variable $window-flags &bxor $window-flags 4"
+        osd 27 160 "M" "\HQuick Open"      19
+        osd 27 110 "i" &cond &band $window-flags 4 "Unloc\Hk Window" "Loc\Hk Window" f "set-variable $window-flags &bxor $window-flags 4"
         !if &band #l2 1
             !force show-region
         !endif

@@ -1,0 +1,50 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created      Thu Oct 16 2003
+; Synopsis:    ASP Hook File
+; Authors:     Steven Phillips
+;
+define-macro fhook-asp
+    set-variable $buffer-mask "luh1"
+    @# buffer-initialize "asp"
+    buffer-initialize-hooks
+!emacro
+
+; buffer-initialize variables
+set-variable .fhook-asp.name "ASP"
+set-variable .fhook-asp.setup &reg "/history" "fhook/asp" "cdghinopsx"
+set-variable .fhook-asp.setup-mask "acdeghikmnopstux"
+set-variable .fhook-asp.command-flag  "|"
+set-variable .fhook-asp.command-name  "|"
+set-variable .fhook-asp.command-nbind "|"
+set-variable .fhook-asp.command-kbind "|"
+set-variable .fhook-asp.command-desc  "|"
+
+; load in the html core
+!force execute-file "htmlcore" "asp" 
+
+; add the <% %> vb script support
+!if &and &sin "h" .fhook-asp.setup &band .hilight.flags 0x02 
+    !if &exist .hilight.vbscript
+        hilight .hilight.asp      0x80 "<%" .hilight.vbscript .scheme.prepro
+        hilight .hilight.asptag   0x80 "<%" .hilight.vbscript .scheme.prepro
+        hilight .hilight.vbscript 0x80 "%>" 0 .scheme.prepro
+    !endif
+!endif
+!if &sin "d" .fhook-asp.setup
+    !if &exist .indent.vbscript
+        indent .hilight.asptag t "<%" .indent.vbscript
+        indent .hilight.asptag t "%>" .hilight.asp
+        
+        indent .hilight.asp x "<%" 2 .indent.vbscript
+        indent .indent.vbscript w "%>" -2 0
+    !endif
+!endif
+
+ml-write "[ASP file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "myasp"

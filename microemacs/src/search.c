@@ -70,8 +70,8 @@ meUByte *srchLastMatch=NULL ;               /* pointer to the last match string 
 
 #if MEOPT_MAGIC
 
-int           srchLastMagic=meFALSE;              /* last search was a magic        */
-static int    reportErrors = meTRUE;
+int           srchLastMagic = 0 ;              /* last search was a magic        */
+static int    reportErrors = meTRUE ;
 
 int      mereNewlBufSz=0 ;
 meUByte *mereNewlBuf=NULL ;
@@ -712,11 +712,19 @@ readpattern(meUByte *prompt, int defnum)
          * since the pattern in question might have an
          * invalid meta combination.
          */
-        if((srchLastMagic=meModeTest(frameCur->bufferCur->mode,MDMAGIC)) != 0)
+        if(meModeTest(frameCur->bufferCur->mode,MDMAGIC))
+        {
+            srchLastMagic = meSEARCH_LAST_MAGIC_MAIN ;
             status = (mere_compile_pattern(srchPat) == meREGEX_OKAY) ;
+        }
         else
-#endif
+        {
+            srchLastMagic = 0 ;
             rvstrcpy(srchPat);
+        }
+#else
+        rvstrcpy(srchPat);
+#endif
     }
     return status ;
 }
@@ -1311,9 +1319,17 @@ huntForw(int f, int n)
         return mlwrite(MWABORT,(meUByte *)"[No pattern set]");
     
 #if MEOPT_MAGIC
-    /* if magic the recompile the search string */
-    if(srchLastMagic && (mere_compile_pattern(srchPat) != meREGEX_OKAY))
-        return meABORT ;
+    /* if magic the recompile the search string 
+     * SWP 2003-10-06 - check if the last main search was magic, use
+     * of &xse will set the STRCMP bit but srcPat remains set to the
+     * last main search which could be non- regex
+     */
+    srchLastMagic &= meSEARCH_LAST_MAGIC_MAIN ;
+    if(srchLastMagic)
+    {
+        if(mere_compile_pattern(srchPat) != meREGEX_OKAY)
+            return meABORT ;
+    }
 #endif
     
     /* Search for the pattern... */
@@ -1363,9 +1379,14 @@ huntBack(int f, int n)
         return mlwrite(MWABORT,(meUByte *)"[No pattern set]");
     
 #if MEOPT_MAGIC
+    /* if last was a magic search then recompile the search string 
+     * SWP 2003-10-06 - check if the last main search was magic, use
+     * of &xse will set the STRCMP bit but srcPat remains set to the
+     * last main search which could be non- regex
+     */
+    srchLastMagic &= meSEARCH_LAST_MAGIC_MAIN ;
     if(srchLastMagic)
     {
-        /* if magic then recompile the search string */
         if(mere_compile_pattern(srchPat) != meREGEX_OKAY)
             return meABORT ;
     }

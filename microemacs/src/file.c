@@ -335,13 +335,7 @@ set_dirs(void)
 #ifdef _SEARCH_PATH
     static meUByte lpath[] = _SEARCH_PATH ;
 #else
-    static meUByte lpath[] = 
-#if (defined _SUNOS55) || (defined _SUNOS56) 
-              "/opt/jasspa/company:/opt/jasspa/macros:/opt/jasspa/spelling"
-#else
-              "/usr/local/microemacs"
-#endif
-              ;
+    static meUByte lpath[] = "/usr/local/microemacs" ;
 #endif
 #endif    
     int ll ;

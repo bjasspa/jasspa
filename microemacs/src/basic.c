@@ -80,8 +80,8 @@ meWindowBackwardChar(register meWindow *wp, register int n)
             if ((lp=meLineGetPrev(wp->dotLine)) == wp->buffer->baseLine)
                 return meFALSE ;
             wp->dotLineNo-- ;
-            wp->dotLine  = lp;
-            wp->dotOffset  = meLineGetLength(lp);
+            wp->dotLine = lp;
+            wp->dotOffset = meLineGetLength(lp);
             wp->updateFlags |= WFMOVEL ;
         }
         else
@@ -103,8 +103,8 @@ meWindowForwardChar(register meWindow *wp, register int n)
             if (wp->dotLine == wp->buffer->baseLine)
                 return (meFALSE);
             wp->dotLineNo++ ;
-            wp->dotLine  = meLineGetNext(wp->dotLine);
-            wp->dotOffset  = 0;
+            wp->dotLine = meLineGetNext(wp->dotLine);
+            wp->dotOffset = 0;
             wp->updateFlags |= WFMOVEL ;
         } 
         else

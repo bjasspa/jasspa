@@ -2046,9 +2046,7 @@ find_bracket_fence:
                         }
                         else if((cc == 'n') &&
                                 !meStrncmp(frameCur->windowCur->dotLine->text+frameCur->windowCur->dotOffset,"namespace",9))
-                        {
                             indent = 2 ;
-                        }
                         if(indent)
                             off = frameCur->windowCur->dotOffset ;
                         else

@@ -1560,7 +1560,7 @@ meXEventHandler(void)
                 case XK_KP_F2:          ii = SKEY_f2; goto special_key;
                 case XK_KP_F3:          ii = SKEY_f3; goto special_key;
                 case XK_KP_F4:          ii = SKEY_f4; goto special_key;
-                    
+                
 #if (defined _SUNOS55) || (defined _SUNOS56) 
                 case XK_F27:
 #endif

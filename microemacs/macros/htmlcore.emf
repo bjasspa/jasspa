@@ -1,0 +1,347 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     Mon Sep 21 1998
+; Synopsis:    HTML Hook File
+; Authors:     Steven Phillips
+;
+set-variable #l0 @1
+set-variable #l9 &cat ".fhook-" #l0
+
+; buffer-initialize variables
+set-variable &ind &cat #l9 ".comment"  "|<!|>|-| - | - ||"
+set-variable &ind &cat #l9 ".command-flag"  &cat &ind &cat #l9 ".command-flag"  "thb|thb|thb|th|th|th|th|h|th|h|"
+set-variable &ind &cat #l9 ".command-name"  &cat &ind &cat #l9 ".command-name"  "html-forward-tag|html-backward-tag|html-goto-matching-tag|html-find-tag|html-collapse-tag||html-view-netscape||html-view-iexplorer||"
+set-variable &ind &cat #l9 ".command-nbind" &cat &ind &cat #l9 ".command-nbind" "|||||||||||"
+set-variable &ind &cat #l9 ".command-kbind" &cat &ind &cat #l9 ".command-kbind" "A-C-right|A-C-left|esc i||||||||"
+set-variable &ind &cat #l9 ".command-desc"  &cat &ind &cat #l9 ".command-desc"  "Forward Tag|Backward Tag|Goto Matching Tag|Find Tag|Collapse/Uncollapse Tag||Preview in Netscape|            (configure using html-config-netscape)|Preview in IExplorer|            (configure using html-config-iexplorer)|"
+
+;html-create-table
+;html-insert-color
+
+
+; setup item-list
+set-variable &ind &cat #l9 ".item-list-s1" "<[hH]1>\\(\\s *<[^>]*>\\)*\\s *\\([^<]+\\)"
+set-variable &ind &cat #l9 ".item-list-r1" "H1   \ecB\\2\ecA"
+set-variable &ind &cat #l9 ".item-list-s2" "<[hH]2>\\(\\s *<[^>]*>\\)*\\s *\\([^<]+\\)"
+set-variable &ind &cat #l9 ".item-list-r2" "H2   \ecB\\2\ecA"
+set-variable &ind &cat #l9 ".item-list-s3" "<[hH]3>\\(\\s *<[^>]*>\\)*\\s *\\([^<]+\\)"
+set-variable &ind &cat #l9 ".item-list-r3" "H3   \ecB\\2\ecA"
+set-variable &ind &cat #l9 ".item-list-s4" "<[hH][4-9]>\\(\\s *<[^>]*>\\)*\\s *\\([^<]+\\)"
+set-variable &ind &cat #l9 ".item-list-r4" "H4+  \ecB\\2\ecA"
+
+!if &not &exist fhook-vb
+    !force exec-file "hkvb"
+!endif
+!if &not &exist fhook-js
+    !force exec-file "hkjs"
+!endif
+
+!if &not &exist &set #l1 &ind &cat ".hilight." #l0
+    set-variable &ind &cat ".hilight." #l0 &set #l1 &pinc .hilight.next 1
+    set-variable &ind &spr ".hilight.%stag" #l0 &pinc .hilight.next 1
+!endif
+set-variable #l2 &ind &spr ".hilight.%stag" #l0
+!if &and &sin "h" &ind &cat #l9 ".setup" &band .hilight.flags 0x02 
+    0 hilight #l1 3 200                      $global-scheme
+    hilight #l1 0x80 "<\\w*" #l2             .scheme.keyword
+    hilight #l1 4 "</" ">" ""                .scheme.keyword
+    hilight #l1 4 "<!" ">" ""                .scheme.comment
+    hilight #l1 0 "&\\w\\w;"                 .scheme.variable
+    hilight #l1 0 "&\\w\\w\\w;"              .scheme.variable
+    hilight #l1 0 "&\\w\\w\\w\\w;"           .scheme.variable
+    hilight #l1 0 "&\\w\\w\\w\\w\\w;"        .scheme.variable
+    hilight #l1 0 "&\\w\\w\\w\\w\\w;"        .scheme.variable
+    hilight #l1 0 "&\\w\\w\\w\\w\\w\\w;"     .scheme.variable
+    hilight #l1 0x804 "\"" "\"" "\\"         .scheme.string
+    hilight #l1 4 "<script" "</script>" ""   .scheme.keyword
+    hilight #l1 4 "<%" "%>" ""               .scheme.keyword
+    
+    0 hilight #l2 1                         $global-scheme
+    hilight #l2 4  "=\\{\"" "\"" "\\"       .scheme.string
+    hilight #l2 4  "=\\{" "\\}[ \t\n>]" ""  .scheme.string
+    hilight #l2 4  "=\\{[^ \t\n<>]*<%" "%>[^ \t\n>]*" ""  .scheme.string
+    hilight #l2 1  "abbr"                   .scheme.operator
+    hilight #l2 1  "above"                  .scheme.operator
+    hilight #l2 1  "accept-charset"         .scheme.operator
+    hilight #l2 1  "accesskey"              .scheme.operator
+    hilight #l2 1  "action"                 .scheme.operator
+    hilight #l2 1  "align"                  .scheme.operator
+    hilight #l2 1  "alink"                  .scheme.operator
+    hilight #l2 1  "alt"                    .scheme.operator
+    hilight #l2 1  "archive"                .scheme.operator
+    hilight #l2 1  "axis"                   .scheme.operator
+    hilight #l2 1  "background"             .scheme.operator
+    hilight #l2 1  "balance"                .scheme.operator
+    hilight #l2 1  "behavior"               .scheme.operator
+    hilight #l2 1  "behaviour"              .scheme.operator
+    hilight #l2 1  "below"                  .scheme.operator
+    hilight #l2 1  "bgcolor"                .scheme.operator
+    hilight #l2 1  "bgproperties"           .scheme.operator
+    hilight #l2 1  "border"                 .scheme.operator
+    hilight #l2 1  "bordercolor"            .scheme.operator
+    hilight #l2 1  "bordercolordark"        .scheme.operator
+    hilight #l2 1  "bordercolorlight"       .scheme.operator
+    hilight #l2 1  "bottommargin"           .scheme.operator
+    hilight #l2 1  "cellpadding"            .scheme.operator
+    hilight #l2 1  "cellspacing"            .scheme.operator
+    hilight #l2 1  "challenge"              .scheme.operator
+    hilight #l2 1  "char"                   .scheme.operator
+    hilight #l2 1  "charoff"                .scheme.operator
+    hilight #l2 1  "charset"                .scheme.operator
+    hilight #l2 1  "checked"                .scheme.operator
+    hilight #l2 1  "cite"                   .scheme.operator
+    hilight #l2 1  "class"                  .scheme.operator
+    hilight #l2 1  "classid"                .scheme.operator
+    hilight #l2 1  "clear"                  .scheme.operator
+    hilight #l2 1  "clip"                   .scheme.operator
+    hilight #l2 1  "code"                   .scheme.operator
+    hilight #l2 1  "codebase"               .scheme.operator
+    hilight #l2 1  "codetype"               .scheme.operator
+    hilight #l2 1  "color"                  .scheme.operator
+    hilight #l2 1  "cols"                   .scheme.operator
+    hilight #l2 1  "colspan"                .scheme.operator
+    hilight #l2 1  "compact"                .scheme.operator
+    hilight #l2 1  "content"                .scheme.operator
+    hilight #l2 1  "coords"                 .scheme.operator
+    hilight #l2 1  "data"                   .scheme.operator
+    hilight #l2 1  "datafld"                .scheme.operator
+    hilight #l2 1  "dataformatas"           .scheme.operator
+    hilight #l2 1  "datapagesize"           .scheme.operator
+    hilight #l2 1  "datasrc"                .scheme.operator
+    hilight #l2 1  "datetime"               .scheme.operator
+    hilight #l2 1  "declare"                .scheme.operator
+    hilight #l2 1  "dir"                    .scheme.operator
+    hilight #l2 1  "direction"              .scheme.operator
+    hilight #l2 1  "disabled"               .scheme.operator
+    hilight #l2 1  "dynsrc"                 .scheme.operator
+    hilight #l2 1  "enctype"                .scheme.operator
+    hilight #l2 1  "face"                   .scheme.operator
+    hilight #l2 1  "for"                    .scheme.operator
+    hilight #l2 1  "frame"                  .scheme.operator
+    hilight #l2 1  "frameborder"            .scheme.operator
+    hilight #l2 1  "framespacing"           .scheme.operator
+    hilight #l2 1  "gutter"                 .scheme.operator
+    hilight #l2 1  "headers"                .scheme.operator
+    hilight #l2 1  "height"                 .scheme.operator
+    hilight #l2 1  "hidden"                 .scheme.operator
+    hilight #l2 1  "href"                   .scheme.operator
+    hilight #l2 1  "hreflang"               .scheme.operator
+    hilight #l2 1  "hspace"                 .scheme.operator
+    hilight #l2 1  "http-equiv"             .scheme.operator
+    hilight #l2 1  "id"                     .scheme.operator
+    hilight #l2 1  "ismap"                  .scheme.operator
+    hilight #l2 1  "label"                  .scheme.operator
+    hilight #l2 1  "lang"                   .scheme.operator
+    hilight #l2 1  "language"               .scheme.operator
+    hilight #l2 1  "left"                   .scheme.operator
+    hilight #l2 1  "leftmargin"             .scheme.operator
+    hilight #l2 1  "link"                   .scheme.operator
+    hilight #l2 1  "longdesc"               .scheme.operator
+    hilight #l2 1  "loop"                   .scheme.operator
+    hilight #l2 1  "lowsrc"                 .scheme.operator
+    hilight #l2 1  "marginheight"           .scheme.operator
+    hilight #l2 1  "marginwidth"            .scheme.operator
+    hilight #l2 1  "maxlength"              .scheme.operator
+    hilight #l2 1  "mayscript"              .scheme.operator
+    hilight #l2 1  "media"                  .scheme.operator
+    hilight #l2 1  "method"                 .scheme.operator
+    hilight #l2 1  "methods"                .scheme.operator
+    hilight #l2 1  "multiple"               .scheme.operator
+    hilight #l2 1  "name"                   .scheme.operator
+    hilight #l2 1  "noShade"                .scheme.operator
+    hilight #l2 1  "nohref"                 .scheme.operator
+    hilight #l2 1  "noresize"               .scheme.operator
+    hilight #l2 1  "nowrap"                 .scheme.operator
+    hilight #l2 1  "object"                 .scheme.operator
+    hilight #l2 0x200 "on"
+    hilight #l2 1  "onabort"                .scheme.operator
+    hilight #l2 1  "onafterupdate"          .scheme.operator
+    hilight #l2 1  "onbeforeunload"         .scheme.operator
+    hilight #l2 1  "onbeforeupdate"         .scheme.operator
+    hilight #l2 1  "onblur"                 .scheme.operator
+    hilight #l2 1  "onchange"               .scheme.operator
+    hilight #l2 1  "onclick"                .scheme.operator
+    hilight #l2 1  "ondataavailable"        .scheme.operator
+    hilight #l2 1  "ondatasetchanged"       .scheme.operator
+    hilight #l2 1  "ondatasetcomplete"      .scheme.operator
+    hilight #l2 1  "ondblclick"             .scheme.operator
+    hilight #l2 1  "ondragdrop"             .scheme.operator
+    hilight #l2 1  "ondragstart"            .scheme.operator
+    hilight #l2 1  "onerror"                .scheme.operator
+    hilight #l2 1  "onerrorupdate"          .scheme.operator
+    hilight #l2 1  "onfilterchange"         .scheme.operator
+    hilight #l2 1  "onfocus"                .scheme.operator
+    hilight #l2 1  "onhelp"                 .scheme.operator
+    hilight #l2 1  "onkeydown"              .scheme.operator
+    hilight #l2 1  "onkeypress"             .scheme.operator
+    hilight #l2 1  "onkeyup"                .scheme.operator
+    hilight #l2 1  "onload"                 .scheme.operator
+    hilight #l2 1  "onmousedown"            .scheme.operator
+    hilight #l2 1  "onmousemove"            .scheme.operator
+    hilight #l2 1  "onmouseout"             .scheme.operator
+    hilight #l2 1  "onmouseover"            .scheme.operator
+    hilight #l2 1  "onmouseup"              .scheme.operator
+    hilight #l2 1  "onmove"                 .scheme.operator
+    hilight #l2 1  "onreadystatechange"     .scheme.operator
+    hilight #l2 1  "onreset"                .scheme.operator
+    hilight #l2 1  "onresize"               .scheme.operator
+    hilight #l2 1  "onrowenter"             .scheme.operator
+    hilight #l2 1  "onrowexit"              .scheme.operator
+    hilight #l2 1  "onscroll"               .scheme.operator
+    hilight #l2 1  "onselect"               .scheme.operator
+    hilight #l2 1  "onselectstart"          .scheme.operator
+    hilight #l2 1  "onsubmit"               .scheme.operator
+    hilight #l2 1  "onunload"               .scheme.operator
+    hilight #l2 1  "pagex"                  .scheme.operator
+    hilight #l2 1  "pagey"                  .scheme.operator
+    hilight #l2 1  "palette"                .scheme.operator
+    hilight #l2 1  "pluginspage"            .scheme.operator
+    hilight #l2 1  "pluginurl"              .scheme.operator
+    hilight #l2 1  "point-size"             .scheme.operator
+    hilight #l2 1  "profile"                .scheme.operator
+    hilight #l2 1  "prompt"                 .scheme.operator
+    hilight #l2 1  "readonly"               .scheme.operator
+    hilight #l2 1  "rel"                    .scheme.operator
+    hilight #l2 1  "rev"                    .scheme.operator
+    hilight #l2 1  "rightmargin"            .scheme.operator
+    hilight #l2 1  "rows"                   .scheme.operator
+    hilight #l2 1  "rowspan"                .scheme.operator
+    hilight #l2 1  "rules"                  .scheme.operator
+    hilight #l2 1  "runat"                  .scheme.operator
+    hilight #l2 1  "scheme"                 .scheme.operator
+    hilight #l2 1  "scope"                  .scheme.operator
+    hilight #l2 1  "scrollamount"           .scheme.operator
+    hilight #l2 1  "scrolldelay"            .scheme.operator
+    hilight #l2 1  "scrolling"              .scheme.operator
+    hilight #l2 1  "selected"               .scheme.operator
+    hilight #l2 1  "shape"                  .scheme.operator
+    hilight #l2 1  "shapes"                 .scheme.operator
+    hilight #l2 1  "size"                   .scheme.operator
+    hilight #l2 1  "span"                   .scheme.operator
+    hilight #l2 1  "src"                    .scheme.operator
+    hilight #l2 1  "standby"                .scheme.operator
+    hilight #l2 1  "start"                  .scheme.operator
+    hilight #l2 1  "style"                  .scheme.operator
+    hilight #l2 1  "summary"                .scheme.operator
+    hilight #l2 1  "tabindex"               .scheme.operator
+    hilight #l2 1  "target"                 .scheme.operator
+    hilight #l2 1  "text"                   .scheme.operator
+    hilight #l2 1  "title"                  .scheme.operator
+    hilight #l2 1  "top"                    .scheme.operator
+    hilight #l2 1  "topmargin"              .scheme.operator
+    hilight #l2 1  "truespeed"              .scheme.operator
+    hilight #l2 1  "type"                   .scheme.operator
+    hilight #l2 1  "urn"                    .scheme.operator
+    hilight #l2 1  "usemap"                 .scheme.operator
+    hilight #l2 1  "valign"                 .scheme.operator
+    hilight #l2 1  "value"                  .scheme.operator
+    hilight #l2 1  "valuetype"              .scheme.operator
+    hilight #l2 1  "version"                .scheme.operator
+    hilight #l2 1  "visibility"             .scheme.operator
+    hilight #l2 1  "vlink"                  .scheme.operator
+    hilight #l2 1  "volume"                 .scheme.operator
+    hilight #l2 1  "vspace"                 .scheme.operator
+    hilight #l2 1  "weight"                 .scheme.operator
+    hilight #l2 1  "width"                  .scheme.operator
+    hilight #l2 1  "wrap"                   .scheme.operator
+    hilight #l2 1  "z-index"                .scheme.operator
+    hilight #l2 0  "\\w+"                   .scheme.error
+    hilight #l2 0x80 ">" 0                  .scheme.keyword
+    
+    !if &exist .hilight.javascript
+        hilight #l1 0x80 "<script>" .hilight.javascript .scheme.prepro
+        hilight #l1 0x80 "<script\\s +language=\"?javascript[^>]*>" .hilight.javascript .scheme.prepro
+        hilight .hilight.javascript 0x80 "</SCRIPT>" 0   .scheme.prepro
+        hilight .hilight.javascript 0x80 "</script>" 0   .scheme.prepro
+    !endif
+    !if &exist .hilight.vbscript
+        hilight #l1  0x80 "<script\\s +language=\"?vbscript[^>]*>" .hilight.vbscript .scheme.prepro
+        hilight .hilight.vbscript 0x80 "</script>" 0     .scheme.prepro
+    !endif
+!endif
+!if &sin "d" &ind &cat #l9 ".setup"
+    0 indent #l2 1 255
+    0 indent #l1 3 20 #l2
+    !if &exist .indent.javascript
+        indent #l2 t "<script>" .indent.javascript
+        indent #l1 x "<script>" 2 .indent.javascript
+        indent #l2 t "<script\\s +language=\"?javascript[^>]*>" .indent.javascript
+        indent #l1 x "<script\\s +language=\"?javascript[^>]*>" 2 .indent.javascript
+        indent .indent.javascript w "</script>" -2 0
+    !endif
+    !if &exist .indent.vbscript
+        indent #l2 t "<script\\s +language=\"?vbscript[^>]*>" .indent.vbscript
+        indent #l1 x "<script\\s +language=\"?vbscript[^>]*>" 2 .indent.vbscript
+        indent .indent.vbscript w "</script>" -2 0
+    !endif
+    indent #l2 t "</script>" 0
+    indent #l1 o "</script>" -2
+    ; Define the indentation tokens 
+    indent #l1 e "\"" "\"" "\\"
+    indent #l1 n "<" 1 
+    indent #l1 n ">" -1 
+    ;indent #l1 b "<" ">"
+    indent #l1 n "<html>" 2 
+    indent #l1 o "</html>" -2 
+    indent #l1 n "<head>" 2 
+    indent #l1 o "</head>" -2 
+    indent #l1 n "<ul>" 2 
+    indent #l1 o "</ul>" -2 
+    indent #l1 n "<table" 3
+    indent #l1 o "</table>" -2
+    indent #l1 n "<tr" 3
+    indent #l1 o "</tr>" -2
+    indent #l1 n "<td" 3
+    indent #l1 o "</td>" -2
+    indent #l1 n "<select" 3 
+    indent #l1 o "</select>" -2 
+    indent #l1 n "%>" -1
+!endif
+
+0 define-macro &cat "chook-" #l0
+    !force 2 indent
+    !if &equ $result .indent.vbscript
+        !if &seq :chook "vb"
+            !return
+        !endif
+        set-variable :chook "vb"
+    !elif &equ $result .indent.javascript
+        !if &seq :chook "js"
+            !return
+        !endif
+        set-variable :chook "js"
+    !elif &equ $result .indent.java
+        !if &seq :chook "java"
+            !return
+        !endif
+        set-variable :chook "java"
+    !elif &equ $result .indent.phpscript
+        !if &seq :chook "perl"
+            !return
+        !endif
+        set-variable :chook "perl"
+    !elif &exi :chook
+        unset-variable :chook
+    !else
+        !return
+    !endif
+    !if &sin "s" .fhook-html.setup
+        !if &exi :chook
+            set-variable :auto-spell &cond &seq $buffer-input "auto-spell-input" 1 -1
+            -1 auto-spell
+        !else
+            :auto-spell auto-spell
+        !endif
+    !endif
+    !if .toolbar.open
+        ; flag that the buffer type has changed
+        set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x004
+    !endif
+!emacro
+
+!if &not &exist html-spell-word
+    !force exec-file "htmlutil"
+!endif

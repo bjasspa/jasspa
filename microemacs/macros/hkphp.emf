@@ -1,0 +1,54 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created      Fri Oct 24 2003
+; Synopsis:    PHP Hook File
+; Authors:     Bruno Sabin & Steven Phillips
+;
+define-macro fhook-php
+    set-variable $buffer-mask "luh1"
+    @# buffer-initialize "php"
+    buffer-initialize-hooks
+!emacro
+
+; buffer-initialize variables
+set-variable .fhook-php.name "PHP"
+set-variable .fhook-php.setup &reg "/history" "fhook/php" "cdghinopsx"
+set-variable .fhook-php.setup-mask "acdeghikmnopstux"
+set-variable .fhook-php.command-flag  "|"
+set-variable .fhook-php.command-name  "|"
+set-variable .fhook-php.command-nbind "|"
+set-variable .fhook-php.command-kbind "|"
+set-variable .fhook-php.command-desc  "|"
+
+; load in perl & the html core
+!if &not &exist fhook-perl
+    !force exec-file "hkperl"
+!endif
+!force execute-file "htmlcore" "php" 
+
+!endif
+!if &and &sin "h" .fhook-php.setup &band .hilight.flags 0x02 
+    ; now setup php hilighting to use phpscript hilighting
+    !if &exist .hilight.phpscript
+        hilight .hilight.php       0x80 "<\\?php" .hilight.phpscript .scheme.prepro
+        hilight .hilight.phptag    0x80 "<\\?php" .hilight.phpscript .scheme.prepro
+        hilight .hilight.phpscript 0x80 "?>" 0 .scheme.prepro
+    !endif
+!endif
+!if &sin "d" .fhook-php.setup
+    !if &exist .indent.phpscript
+        indent .hilight.phptag t "<\\?php" .indent.phpscript
+        indent .hilight.phptag t "?>" .hilight.php
+        
+        indent .hilight.php x "<\\?php" 2 .indent.phpscript
+        indent .hilight.phpscript w "?>" -2 0
+    !endif
+!endif
+
+ml-write "[PHP file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "myphp"

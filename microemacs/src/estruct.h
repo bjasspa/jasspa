@@ -880,6 +880,7 @@ typedef struct meKill {
 
 /* indent init flags */
 #define HICASE     0x01
+#define HILOOKB    0x02   /* this indent has a lookback indent scheme */
 
 typedef struct meHilight {
     struct meHilight **list ;

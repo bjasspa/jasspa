@@ -24,7 +24,6 @@ set-variable .fhook-nroff.command-name  "|nroff-para|nroff-para|nroff-add-paddin
 set-variable .fhook-nroff.command-nbind "|||||||||||||||||"
 set-variable .fhook-nroff.command-kbind "|esc q|esc o|C-c &|C-x &||C-c C-b|C-c C-i|C-c C-m|C-c C-n||C-c b|C-c m|C-c i||C-c C-h||"
 set-variable .fhook-nroff.command-desc  "|\HFill paragraph||\HAdd Padding|Remove \HPadding||Change to \HBold|Change to \HItalic|Change to \HMono (Courier)|Change to \HNormal (Roman)||R\Hegion to Bold|Region to Mono|Re\Hgion to Italic||T\Hoggle hilighting|Convert Tex to Nroff|"
-set-variable %usr1mode "off"
 
 ; setup nroff collapsing
 set-variable .fhook-nroff.collapse-open  "^\\.S[SH]"

@@ -85,7 +85,13 @@
 ;       toggle the fold state.
 ;
 0 define-macro collapse-get-vars
-    set-variable #l0 &spr ".%s." $buffer-fhook
+    !if &exi &set #l1 &cat  "chook-" &set #l0 &rig $buffer-fhook 6
+        !force execute-named-command #l1
+    !endif
+    !if &exi :chook
+        set-variable #l0 :chook
+    !endif
+    set-variable #l0 &spr ".fhook-%s." #l0
     set-variable #p9 &ind &cat #l0 "collapse-open"
     set-variable #p8 &ind &cat #l0 "collapse-close"
     set-variable #p7 &ind &cat #l0 "collapse-mopen"

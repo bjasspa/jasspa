@@ -15,7 +15,7 @@
 ; Options:
 ;      r - recurse, a - append, m - multiple links to a tag, e - enum, s - struct
 set-variable %tag-option   &cond &exi %tag-option   %tag-option   ""
-set-variable %tag-filemask &cond &exi %tag-filemask %tag-filemask ":*.java:*.jav:"
+set-variable %tag-filemask &cond &exi %tag-filemask %tag-filemask ":*.java:*.jav:*.jsp:"
 set-variable %tag-ignore   &cond &exi %tag-ignore   %tag-ignore   ":SCCS/:CVS/:"
 
 set-char-mask "1" ":_~"

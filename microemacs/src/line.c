@@ -1194,7 +1194,7 @@ mldelete(meInt noChrs, meUByte *kstring)
             {
                 if(wp->vertScroll > elno)
                     wp->vertScroll -= elno-slno ;
-                else
+                else if(scrollFlag & 0x10)
                     wp->vertScroll = slno ;
             }
             if(wp->dotLineNo >= slno)

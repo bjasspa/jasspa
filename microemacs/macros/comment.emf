@@ -22,15 +22,25 @@
 ;           H   Fill header line with <comment pad> strings
 ;           j   Enable Justify mode in *comment* buffer
 ;
-; comment line ie xxx -> <comment start>xxx
-;              or xxx -> <comment start>xxx<comment end>
-define-macro comment-line
-    set-variable #l0 &ind &spr ".%s.comment"  $buffer-fhook
-    !if &seq &set #l1 &lget #l0 1 ""
+0 define-macro comment-get-def
+    !if &exi &set #l1 &cat  "chook-" &set #l0 &rig $buffer-fhook 6
+        !force execute-named-command #l1
+    !endif
+    !if &exi :chook
+        set-variable #l0 :chook
+    !endif
+    set-variable #p9 &ind &spr ".fhook-%s.comment" #l0
+    !if &seq &lget #p9 1 ""
         ml-write "[Comments not setup for this buffer]"
         !abort
     !endif
-    set-variable  #l2 &lget #l0 2
+!emacro
+; comment line ie xxx -> <comment start>xxx
+;              or xxx -> <comment start>xxx<comment end>
+define-macro comment-line
+    comment-get-def
+    set-variable #l1 &lget #l9 1
+    set-variable #l2 &lget #l9 2
     beginning-of-line
     !while &gre &pdec @# 1 0
         insert-string #l1
@@ -46,14 +56,11 @@ define-macro comment-line
 ; uncoment line ie <comment start>xxx -> xxx
 ;               or <comment start>xxx<comment end> -> xxx
 define-macro uncomment-line
-    set-variable #l0 &ind &spr ".%s.comment"  $buffer-fhook
-    !if &seq &set #l1 &lget #l0 1 ""
-        ml-write "[Comments not setup for this buffer]"
-        !abort
-    !endif
+    comment-get-def
+    set-variable #l1 &lget #l9 1
     set-variable #l3 &bmod "magic"
     -1 buffer-mode "magic"
-    !if &seq &set #l2 &lget #l0 2 ""
+    !if &seq &set #l2 &lget #l9 2 ""
         beginning-of-line
         !while &gre &pdec @# 1 0
             !force -1 search-forward #l1
@@ -83,16 +90,12 @@ define-macro uncomment-line
 ;
 ; fill from the current column to fill-col with <comment pad> and a trailing <comment end>
 define-macro comment-to-end-of-line
-    set-variable #l0 &ind &spr ".%s.comment"  $buffer-fhook
-    !if &seq &lget #l0 1 ""
-        ml-write "[Comments not setup for this buffer]"
-        !abort
-    !endif
-    !if &not &len &set #l1 &lget #l0 3
+    comment-get-def
+    !if &not &len &set #l1 &lget #l9 3
         set-variable #l1 " "
     !endif
-    !if &seq &set #l2 &lget #l0 2 ""
-        set-variable #l2 &trb &lget #l0 5
+    !if &seq &set #l2 &lget #l9 2 ""
+        set-variable #l2 &trb &lget #l9 5
     !endif
     &div &sub &sub $fill-col $window-acol &len #l2 &len #l1 insert-string #l1
     insert-string #l2
@@ -104,11 +107,7 @@ define-macro comment-start
     !if $status
         !return
     !endif
-    set-variable #l0 &ind &spr ".%s.comment"  $buffer-fhook
-    !if &seq  &lget #l0 1 ""
-        ml-write "[Comments not setup for this buffer]"
-        !abort
-    !endif
+    comment-get-def
     ; check we can edit the buffer 
     1 buffer-mode "edit" @mna
     set-position "\x83"
@@ -116,17 +115,17 @@ define-macro comment-start
     find-buffer "*comment*"
     1 buffer-mode "indent"
     1 buffer-mode "wrap"
-    !if &sin "j" &lget #l0 6
+    !if &sin "j" &lget #l9 6
         1 buffer-mode "justify"
     !else
         -1 buffer-mode "justify"
     !endif
-    set-variable :comment #l0
+    set-variable :comment #l9
     set-variable :column #l1
     set-variable :fill-col $fill-col
-    set-variable $fill-col &sub $fill-col &sub #l1 &len &lget #l0 4
+    set-variable $fill-col &sub $fill-col &sub #l1 &len &lget #l9 4
     !if &sin "b" &lget :comment 6
-        set-variable $fill-col &sub $fill-col &len &lget #l0 5
+        set-variable $fill-col &sub $fill-col &len &lget #l9 5
     !endif
     !if &les $fill-col 20
         set-variable $fill-col 20
@@ -423,11 +422,7 @@ define-macro comment-restyle
     !if $status
         !return
     !endif
-    set-variable #l9 &ind &spr ".%s.comment"  $buffer-fhook
-    !if &seq &lget #l9 1 ""
-        ml-write "[Comments not setup for this buffer]"
-        !abort
-    !endif
+    comment-get-def
     set-variable #l3 &bmod "magic"
     -1 buffer-mode "magic"
     !force !force comment-restyle-i

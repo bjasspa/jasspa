@@ -181,7 +181,7 @@ readHistory(int f, int n)
                         bp = bfind(fname,BFND_CREAT|BFND_MKNAM);
                         bp->intFlag |= BIFFILE ;
                         bp->fileName = fname ;
-                        bp->dotLineNo = lineNo ;
+                        bp->dotLineNo = lineNo+1 ;
                         bp->histNo = histNo ;
                         
                         meModeCopy(bp->mode,mode) ;
@@ -300,7 +300,7 @@ saveHistory(int f, int n)
                         if(bp == frameCur->bufferCur)
                         {
                             histno = 2 ;
-                            lineNo = frameCur->windowCur->dotLineNo+1;
+                            lineNo = frameCur->windowCur->dotLineNo ;
                         }
                         else
                         {
@@ -312,7 +312,7 @@ saveHistory(int f, int n)
                                 wp = wp->next ;
                             meFrameLoopBreak(wp != NULL) ;
                             meFrameLoopEnd() ;
-                            lineNo = wp->dotLineNo+1;
+                            lineNo = wp->dotLineNo ;
                         }
                     }
                     else

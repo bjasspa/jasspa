@@ -897,7 +897,7 @@ osd .osd.dirlst 130 ""  "\HAuto-Refresh: on "   f dirlst-auto-refresh
         osd .osd.dirlst 140 "" "FTP Connect"    f ftp-connect
         osd .osd.dirlst 141 "" "FTP Logout"  0x10 file-op
         !if &not &band $window-flags 0x1000
-            osd .osd.dirlst 145 "" &cond .fhook-dirlst.browser-lock "Un\Hlock Browser" "&Lock Browser" f file-browser-lock
+            osd .osd.dirlst 145 "" &cond .fhook-dirlst.browser-lock "Un\Hlock Browser" "\HLock Browser" f file-browser-lock
             osd .osd.dirlst 150 ""  "Close \HBrowser" f file-browser-close
         !endif
     !else
@@ -905,7 +905,7 @@ osd .osd.dirlst 130 ""  "\HAuto-Refresh: on "   f dirlst-auto-refresh
             osd .osd.dirlst 150 ""  "Close \HBuffer"  f osd-close
         !elif &not &band $window-flags 0x1000
             ; the window is not part of a toolbar
-            osd .osd.dirlst 145 "" &cond .fhook-dirlst.browser-lock "Un\Hlock Browser" "&Lock Browser" f file-browser-lock
+            osd .osd.dirlst 145 "" &cond .fhook-dirlst.browser-lock "Un\Hlock Browser" "\HLock Browser" f file-browser-lock
             osd .osd.dirlst 150 ""  "Close \HBrowser" f file-browser-close
         !endif
         !if &seq :file-process ""
