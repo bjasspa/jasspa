@@ -1,12 +1,12 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Steven Phillips
 .\"  Created       : Sat Aug 22 09:00:06 1998
 .\"
-.Id $Id: m3osd006.3,v 2.7 2002-10-16 22:28:04 jon Exp $
+.Id $Id: m3osd006.3,v 2.8 2004-01-11 18:44:45 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH "MainMenu" 3
@@ -17,8 +17,84 @@ Main Menu \- The top main menu
 .SH SYNOPSIS
 .na
 \fIn\fR osd
+.br
+.B toolbar
 .ad
-.SH DESCRIPTION
+.SH "FRAME COMPOSIOTION"
+The frame composition presented by \*(mS is defined as follows:-
+.CS
+          +--------------------------------------------+
+          | File  Edit .. .                   Help     | Menu Line
+          +-----+-+----------------------------------+-+
+          |     |=|                                  |=|Split Vertically
+          |  T  |^|                                  |^|
+          |  O  |||         CURRENT WINDOW           |#|Scroll Bar
+          |  O  |#|                                  |#|
+          |  L  |#|                                  |V|
+          |  B  |#||=* file = 17:30 04/1/11 (Aeb) == |*| Mode Line
+          |  A  |#|^  Split Horizontally             |^|
+          |  R  | |  ^ Buffer edit(*) Read Only(%)   |#|
+          |     | |                                  |#|
+          |     | |          OTHER WINDOW            | |
+          |     |v|                                  |v|
+          +<--->+*+|-- file - 17:30 04/1/11 (AeB) ---|*| Mode Line
+          |f-isearch..: forw                           | Message Line
+          +--------------------------------------------+
+.CE 0
+.IP "\fBMenu Line\fR"
+The  \fIMenu  Line\fR  appears  at the top of the  buffer. A left click of the
+mouse on the menu line shows a menu dialog for user selection.
+.IP "\fBWindow\fR"
+The windows appear at the center of the frame,  typically with a scroll bar to
+the right of the window and a \fBMode Line\fR at the bottom of the window. The
+mouse interactions with the window are defined as follows:-
+.RS
+.IP "Left mouse in window \- Selecting a region"
+Regions may be selected with
+the mouse. Select a position with the left mouse, keep the left button
+pressed move the mouse to the desired region end and release the left button.
+Theregion is hilighted, the text is copied the user does not need to perform
+any other selection operation to copy the text.
+.IP "Right mouse in window \- Pop up Dialog"
+A right mouse click in the window brings up a context sensitive pop-up menu. A
+right click on a spelling error, with
+.Ht auto-spell 3
+enabled shows a list of possible corrections.
+.IP "Right mouse on mode line \- Pop up Dialog"
+A right mouse click on the \fBMode  Line\fR brings up a pop-up menu to control
+the buffer.
+.IP "Left mouse on mode line \- split and resize window"
+If the \fC|\fR character is selected on the \fBMode Line\fR then the window is
+split into two  horizontally.  If the mode line is dragged with the mouse then
+the buffer is re-sized. If the window is dragged into another  window then the
+other window is deleted.
+.IP "Left mouse on scroll bar \- Up/down action"
+A left  click on the  scroll  bar moves the  window  up/down.  If the  \fC=\fR
+component  of the  scroll  bar is  selected  then the window is split into two
+vertically.  Dragging the scroll-bar  with the mouse  horizontally  causes the
+window to be  re-sized.  Selecting  the  \fC*\fR in the  corner of the  window
+allows the window to be resized both horizontally and vertically.
+.IP "Right mouse on scroll bar \- Scroll bar size"
+A right click of the mouse on the scroll bar allows the scroll bar width to be
+altered.
+.RE
+.IP "Message Line"
+The  message  line is used from  command  entry and  messages.  On  entering a
+command such as
+.Ht isearch-forward 2
+then the user  enters  text  into the  \fBMessage  Line\fR  until the  command
+completes. Messages are also displayed in the message line using
+.Ht ml-write 2 .
+.IP "Toolbar"
+The toolbar window is displayed if
+.Hl toolbar toolbar 3
+mode is enabled in
+.Ht user-setup 3 .
+The mouse  interaction is a little different from a conventional  mode line, a
+mouse  right  click on the toolbar  \fBMode  Line\fR  allows the tollbar to be
+configured. A Right click on the \fC<\fR and \fC>\fR characters of the toolbar
+mode line moves to the next or previous tool.
+.SH "MAIN MENU"
 The  main  menu is  provided  to give an  easier  access  to  parts  of  \*(mS
 functionality,  the menu is not burnt into \*(mS but  defined on  start-up  in
 \fCme.emf\fR and \fCosd.emf\fR. The
@@ -64,7 +140,7 @@ case the file is opened using command
 .Ht find-file 2 .
 The favorite file using to store the list is "\fB$MENAME\fR\fC.eff\fR"  and is
 saved in the first path given in the
-.Ht $search-path 5 . 
+.Ht $search-path 5 .
 Each favorite file takes 2 lines in the file, the first is the text  displayed
 in the dialog (note that characters '\fC\\\fR' and '\fC&\fR' must be protected
 with a '\fC\\\fR'  and the  '\fC&\fR'  can be used to set the Hot key) and the
@@ -73,7 +149,7 @@ a separater line in the dialog.
 .IP "\fCFind Tag\fR"
 Only  visible when a \fCtags\fR  file is found in the current  directory,  the
 command  jumps to the  current tag or if not on a tag or the tag is not found,
-opens a dialog enabling the user to select a tag. See command 
+opens a dialog enabling the user to select a tag. See command
 .Ht find-tag 2
 for more information.
 .IP "\fCFind File\fR"
@@ -88,7 +164,7 @@ Executes a dialog form of the command
 .IP "\fCAttributes\fR"
 Opens a dialog  enabling the user to set the current buffers file  attributes.
 See command
-.Ht file-attrib 3 
+.Ht file-attrib 3
 for more information.
 .IP "\fCSave\fR"
 Executes a dialog form of the command
@@ -140,19 +216,19 @@ Executes command
 .Ht yank 2 .
 .IP "\fCNarrow Out\fR"
 Executes command
-.Ht narrow-buffer 2 
+.Ht narrow-buffer 2
 with a numeric argument of \fC4\fR.
 .IP "\fCNarrow To\fR"
 Executes command
-.Ht narrow-buffer 2 
+.Ht narrow-buffer 2
 with a numeric argument of \fC3\fR.
 .IP "\fCRemove Single Narrow\fR"
 Executes command
-.Ht narrow-buffer 2 
+.Ht narrow-buffer 2
 with a numeric argument of \fC2\fR.
 .IP "\fCRemove All Narrows\fR"
 Executes command
-.Ht narrow-buffer 2 
+.Ht narrow-buffer 2
 with a numeric argument of \fC1\fR.
 .SS "Search Menu"
 .IP "\fCSearch\fR"
@@ -221,7 +297,7 @@ Executes command
 .Ht fill-paragraph 2 .
 .IP "\fCFill All Paragraphs\fR"
 Executes command
-.Ht fill-paragraph 2 
+.Ht fill-paragraph 2
 with a very large  positive  numerical  argument.  Note that this only effects
 paragraphs from the current position onwards.
 .IP "\fCParagraph to Line\fR"
@@ -371,7 +447,7 @@ Executes command
 Create  an new  external  frame,  only  available  on  version  which  support
 multiple-window frames. Executes command
 .Ht create-frame 2 .
-.IP "\fCCreate New Frame\fR"
+.IP "\fCClose This Frame\fR"
 Closes  the  current   frame,  only   available  on  version   which   support
 multiple-window  frames. The command  will fail if this is the only frame, use
 File -> Exit to exit \*(mS, executes command
@@ -449,7 +525,7 @@ be deleted). See \fCosd.emf\fR for examples of how to add items to the menu.
 .PP
 New sub-menus  should be added in the company or user setup files as this must
 be done at start-up.  The content on the menu is not  required  until the main
-menu is used so populating the new sub-menu can be done in \fCmyosd.emf\fR. 
+menu is used so populating the new sub-menu can be done in \fCmyosd.emf\fR.
 .SH "SEE ALSO"
 .na
 .Ht user-setup 3 .
