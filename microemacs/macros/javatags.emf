@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : 1998
-;  Last Modified : <000824.2156>
+;  Last Modified : <001009.2322>
 ;
 ;  Description   : Command-line macro for creating a java tags file
 ;
@@ -60,8 +60,16 @@ set-char-mask "1" ":_~"
         search-forward #l0
         !if &seq @s0 "/*"
             backward-char
-            goto-matching-fence
-            2 forward-char
+            ; Find the end of the comment. Recover from a bogus
+            ; comment formation by doing a hard search for the 
+            ; end of the comment to keep the tags going.
+            !force goto-matching-fence
+            !if $status
+                2 forward-char
+            !else
+                forward-char
+                search-forward "*/"
+            !endif
         !elif &seq @s0 "//"
             end-of-line
         !else
