@@ -1,5 +1,5 @@
 ;       C-macro : bunch of useful macros for writing c
-;   Last Modified : <010316.1334>
+;   Last Modified : <010805.0021>
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Bunch of C macros we may need.
@@ -124,9 +124,8 @@ define-macro c-hash-eval
                     set-mark
                     !force search-forward "*/"
                     !if $status
-                        kill-region
-                        -1 yank
-                        !jump -8
+                        -1 kill-region
+                        !jump -7
                     !endif
                     kill-line
                     -1 yank

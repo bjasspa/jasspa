@@ -5,10 +5,17 @@
 ;  Notes
 ;      To use, the current buffer fhook command variable .comment must be set
 ;      to a list giving the following:
-;           "|<Comment start>|<Comment end>|<comment pad>|<mid-box-left>|<mid-box-right>|<comment-end-flags>|"
+;           "|<Comment start>|<Comment end>|<comment pad>|<mid-box-left>|<mid-box-right>|<comment-flags>|"
 ;      e.g. the following are C and emf comments
 ;           set-variable .fhook-c.comment "|/*|*/|*| * | * |f|"
 ;           set-variable .fhook-emf.comment "|;||;|; | ;||"
+;      The following flags are used:
+;           b   Box format required, i.e. create right edge as well
+;           f   Footer line required
+;           F   Fill footer line with <comment pad> strings
+;           h   Header line required
+;           H   Fill header line with <comment pad> strings
+;           j   Enable Justify mode in *comment* buffer
 ;
 ;  Copyright (c) 2001 JASPPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -107,6 +114,11 @@ define-macro comment-start
     find-buffer "*comment*"
     1 buffer-mode "indent"
     1 buffer-mode "wrap"
+    !if &sin "j" &lget #l0 6
+        1 buffer-mode "justify"
+    !else
+        -1 buffer-mode "justify"
+    !endif
     set-variable :comment #l0
     set-variable :column #l1
     set-variable :fill-col $fill-col
@@ -285,8 +297,7 @@ define-macro comment-end
     -1 yank
     set-mark
     search-backward #p7
-    kill-region
-    -1 yank
+    -1 kill-region
     beginning-of-buffer
     &len #p8 forward-delete-char
     -1 yank
@@ -310,8 +321,12 @@ define-macro comment-end
     !endif
     1 buffer-mode "indent"
     1 buffer-mode "wrap"
+    !if &sin "j" &lget #l9 6
+        1 buffer-mode "justify"
+    !else
+        -1 buffer-mode "justify"
+    !endif
     1 buffer-mode "magic"
-    1 buffer-mode "justify"
     set-variable :column #l0
     set-variable :fill-col $fill-col
     set-variable $fill-col &sub $fill-col &add #l0 &len &lget #l9 4
@@ -352,8 +367,7 @@ define-macro comment-end
         beginning-of-line
         set-mark
         forward-line
-        kill-region
-        -1 yank
+        -1 kill-region
         set-variable #l3 &cat #l3 "Hh"
     !elif &seq @wl ""
         ; got an empty header line
@@ -372,8 +386,7 @@ define-macro comment-end
             beginning-of-line
             set-mark
             forward-line
-            kill-region
-            -1 yank
+            -1 kill-region
             set-variable #l3 &cat #l3 "Ff"
         !endif
     !endif

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Thu Oct 28 17:02:40 1999
-;  Last Modified : <991101.2334>
+;  Last Modified : <010805.0021>
 ;
 ;  Description
 ;
@@ -229,8 +229,7 @@ define-macro crosswd-create-word-list
             !if &seq #l2 ""
                 set-mark
                 end-of-buffer
-                kill-region
-                -1 yank
+                -1 kill-region
                 !return
             !endif
             set-variable #l3 &lget &ind &cat ".crosswd.crossrefpos" @# #l1
