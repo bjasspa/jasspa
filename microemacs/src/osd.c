@@ -5,7 +5,7 @@
  *  Synopsis      : Narrow out regions of a buffer
  *  Created By    : On-Screen Display routines
  *  Created       : 26/07/97
- *  Last Modified : <000718.2347>
+ *  Last Modified : <000719.1211>
  *
  *  Description
  *     This file contains the on screen display routines that
@@ -116,6 +116,7 @@ static uint8 osdItemFlags[]="DdmM-CxieswnhctbrfEBpSRHIGPzNTu" ;
 #define RF_INSENSE  0x00040000          /* i - Case insensitive (Alpha lists) */
 #define RF_OFFSTPOS 0x00080000          /* o - Dialog Offset position */
 #define RF_FOCALITM 0x00100000          /* F - Set the item to focus on - temporary */
+#define RF_RISLBUT  0x00200000          /* B - Right is list button */
 
 #define RF_CONFIG   0x08000000          /* The display is currently being configured */
 #define RF_REDRAW   0x10000000          /* The menu has been changed - redraw */
@@ -123,7 +124,7 @@ static uint8 osdItemFlags[]="DdmM-CxieswnhctbrfEBpSRHIGPzNTu" ;
 #define RF_DISABLE  0x40000000          /* This is a temporarily disabled */
 #define RF_NOPOP    0x80000000          /* Flag to stop the pop with a control */
 
-static uint8 osdMenuFlags[]="baAtdcrHsSRMCkNGnfioF" ;
+static uint8 osdMenuFlags[]="baAtdcrHsSRMCkNGnfioFB" ;
 
 
 #define CF_HORZADD  0x0001              /* Add to the next menu line */
@@ -4625,6 +4626,10 @@ menuInteraction (int *retState)
         /* Handle any literal keys */
         switch (cc)
         {
+        case ME_SPECIAL|SKEY_mouse_pick_3:
+            if(!(osdCurMd->flags & RF_RISLBUT))
+                break ;
+            /* no break */
         case ME_SPECIAL|SKEY_mouse_pick_1:
             nit = osdDisplayMouseLocate(1) ;
             if((nit == 1) && (osdNewChild->context[osdNewChild->newContext].menu->flags & MF_REPEAT))
@@ -4634,6 +4639,11 @@ menuInteraction (int *retState)
                 TTallKeys = 2 ;
             }
             break ;
+            
+        case ME_SPECIAL|SKEY_mouse_time_3:
+            if(!(osdCurMd->flags & RF_RISLBUT))
+                break ;
+            /* no break */
         case ME_SPECIAL|SKEY_mouse_time_1:
             nit = osdDisplayMouseLocate(0) ;
             if((nit == 1) && (osdNewChild->curContext == osdNewChild->newContext) &&
@@ -4642,10 +4652,23 @@ menuInteraction (int *retState)
             else
                 nit = 0 ;
             break ;
+        
+        case ME_SPECIAL|SKEY_mouse_move_3:
+            if(!(osdCurMd->flags & RF_RISLBUT))
+                break ;
+            /* no break */
         case ME_SPECIAL|SKEY_mouse_move_1:
         case ME_SPECIAL|SKEY_mouse_move:  /* Mouse moved */
             nit = osdDisplayMouseLocate(0) ;
             break ;
+        
+        case ME_SPECIAL|SKEY_mouse_drop_3:
+            if(!(osdCurMd->flags & RF_RISLBUT))
+            {
+                state = QUIT_MENU;
+                break ;
+            }
+            /* no break */
         case ME_SPECIAL|SKEY_mouse_drop_1:
             nit = osdDisplayMouseLocate(0) ;
             if(nit == -1)
@@ -4687,10 +4710,6 @@ menuInteraction (int *retState)
                 nit = 1 ;
                 state = EXECUTE_MENU|OPEN_MENU|FOCUS_MENU|ENTER_MENU;
             }
-            break;
-            
-        case ME_SPECIAL|SKEY_mouse_drop_3:
-            state = QUIT_MENU;
             break;
             
         default:
