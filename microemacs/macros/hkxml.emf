@@ -39,8 +39,8 @@ set-variable .fhook-xml.comment  "|<!--|-->|--|  -- | -- |f|"
     !endif
     0 hilight .hilight.xml 3 200                        $global-scheme
     hilight .hilight.xml 0x80 "<[\\t ]*[-/a-zA-Z0-9_]+" .hilight.xmlT .scheme.keyword
-    hilight .hilight.xml 0x80 "<?%[-/.:a-zA-Z0-9_]+"    .hilight.xmlT .scheme.keyword
-    hilight .hilight.xml 0x80 "<![^-][-/.:a-zA-Z0-9_]+" .hilight.xmlT .scheme.keyword
+    hilight .hilight.xml 0x80 "<\\?[\\t ]*[-/.:a-zA-Z0-9_]+" .hilight.xmlT .scheme.keyword
+    hilight .hilight.xml 0x80 "<![\\t ]*[^-][-/.:a-zA-Z0-9_]+" .hilight.xmlT .scheme.keyword
      hilight .hilight.xml 4 "<!--" "-->" ""             .scheme.comment
      hilight .hilight.xml 0 "&\\w\\w;"                  .scheme.operator
      hilight .hilight.xml 0 "&\\w\\w\\w;"               .scheme.operator
@@ -49,7 +49,9 @@ set-variable .fhook-xml.comment  "|<!--|-->|--|  -- | -- |f|"
     
     0 hilight .hilight.xmlT 0                           $global-scheme
     hilight .hilight.xmlT 4  "\"" "\"" "\\"             .scheme.string
-    hilight .hilight.xmlT 0x80 "/?>" .hilight.xml       .scheme.keyword
+    hilight .hilight.xmlT 0x80 ">" .hilight.xml         .scheme.keyword
+    hilight .hilight.xmlT 0x80 "/>" .hilight.xml        .scheme.keyword
+    hilight .hilight.xmlT 0x80 "\\?>" .hilight.xml      .scheme.keyword
     
     !force exec-file "hkvb"
     !if $status

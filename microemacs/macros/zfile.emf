@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sun Jan 10 20:57:03 1999
-;  Last Modified : <010301.1843>
+;  Last Modified : <010805.0021>
 ;
 ;  Description
 ;
@@ -162,8 +162,7 @@ define-macro find-zfile
             -2 show-region
         !endif
     !endif
-    !force kill-region "y"
-    -1 yank
+    !force -1 kill-region "y"
     insert-string &spr "%s file: %s\n\n" #l8 #l0
     beginning-of-buffer
     -1 buffer-mode "edit"

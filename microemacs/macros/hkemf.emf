@@ -99,8 +99,7 @@ set-variable .fhook-emf.fold-mopen "1"
         !force set-variable #l1 @ml63 "Command" #l1
     !endif
     !if $status
-        kill-region
-        -1 yank
+        -1 kill-region
         insert-string #l1
     !endif
 !emacro

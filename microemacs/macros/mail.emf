@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
 ;  Created By    : Steven Phillips
-;  Last Modified : <010304.1414>
+;  Last Modified : <010805.1133>
 ;
 ;  Description   : Macros used for sending e-mails
 ;
@@ -436,8 +436,7 @@ define-macro mail
     beginning-of-line
     set-mark
     forward-line
-    kill-region
-    -1 yank
+    -1 kill-region
     newline
     backward-line
     set-alpha-mark "T"
@@ -453,8 +452,7 @@ define-macro mail
             beginning-of-line
             set-mark
             forward-line
-            kill-region
-            -1 yank
+            -1 kill-region
             beginning-of-buffer
             ; get ascii time in #l9
             ascii-time
@@ -463,8 +461,7 @@ define-macro mail
             beginning-of-buffer
             set-mark
             forward-line
-            kill-region
-            -1 yank
+            -1 kill-region
         !endif
     !endif
     ; reduce ID lines to one line
@@ -497,8 +494,7 @@ define-macro mail
             !while $status
                 set-mark
                 forward-line
-                kill-region
-                -1 yank
+                -1 kill-region
                 !force search-backward "^Subject:"
             !done
             goto-alpha-mark "T"
@@ -512,8 +508,7 @@ define-macro mail
             beginning-of-line
             set-mark
             forward-line
-            kill-region
-            -1 yank
+            -1 kill-region
             !force search-backward "^To:"
         !done
         goto-alpha-mark "T"
@@ -526,8 +521,7 @@ define-macro mail
             beginning-of-line
             set-mark
             forward-line
-            kill-region
-            -1 yank
+            -1 kill-region
             !force search-backward "^Cc:"
         !done
         goto-alpha-mark "T"
@@ -583,8 +577,7 @@ define-macro mail-send-queue
         beginning-of-buffer
         set-mark
         end-of-buffer
-        kill-region
-        -1 yank
+        -1 kill-region
         !force narrow-buffer
         beginning-of-buffer
         set-mark
@@ -595,8 +588,7 @@ define-macro mail-send-queue
     beginning-of-buffer
     set-mark
     end-of-buffer
-    kill-region
-    -1 yank
+    -1 kill-region
     save-buffer
     !force 0 delete-buffer $buffer-bname
     !if #l0

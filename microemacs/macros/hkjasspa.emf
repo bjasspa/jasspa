@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Jon Green
 ;  Created       : Mon Sep 7 22:47:22 1998
-;  Last Modified : <010307.1148>
+;  Last Modified : <010805.0021>
 ;
 ;  Description   : Quick hack for the faq lists !!
 ;
@@ -65,8 +65,7 @@ define-macro jasspa-bug-fixed
     forward-word
     set-mark
     backward-word
-    kill-region
-    -1 yank
+    -1 kill-region
     insert-string "Closed"
     search-forward  "^_____"
     beginning-of-line

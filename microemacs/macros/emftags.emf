@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : 1998
-;  Last Modified : <010408.1430>
+;  Last Modified : <010805.0021>
 ;
 ;  Description   : Command-line macro for creating a macros (emf) tags file
 ;
@@ -139,8 +139,7 @@ define-macro emftags
         beginning-of-buffer
         set-mark
         end-of-buffer
-        kill-region
-        -1 yank
+        -1 kill-region
     !else
         end-of-buffer
     !endif

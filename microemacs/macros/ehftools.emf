@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Jun 13 10:25:33 1998
-;  Last Modified : <010513.2318>
+;  Last Modified : <010805.0021>
 ;
 ;  Description
 ;
@@ -30,8 +30,7 @@ define-macro ehf-process-buffer
     end-of-buffer
     set-mark
     !force search-backward "<HR>"
-    kill-region
-    -1 yank
+    -1 kill-region
 *start
     ; collect all the <!-- XI: buffer-mode(2) --> references
     beginning-of-buffer
@@ -98,8 +97,7 @@ define-macro ehf-process-buffer
     backward-char
     set-mark
     !force search-forward "<HR>"
-    kill-region
-    -1 yank
+    -1 kill-region
     set-variable :fill-col 78
     set-variable #g0 1
     html-to-ehf
@@ -168,8 +166,7 @@ define-macro ehf-process-all
     beginning-of-buffer
     set-mark
     end-of-buffer
-    kill-region
-    -1 yank
+    -1 kill-region
     next-window
     !while &not &seq $buffer-bname "me.ehf"
         ehf-process-buffer

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Fri Jul 23 10:05:30 1999
-;  Last Modified : <010301.1836>
+;  Last Modified : <010805.1134>
 ;
 ;  Description
 ;
@@ -287,12 +287,10 @@ define-macro-file calc calc-buffer
                         ml-write "[Bad if statement]"
                         !abort
                     !endif
-                    kill-region
-                    -1 yank
+                    -1 kill-region
                 !endif
             !else
-                kill-region
-                -1 yank
+                -1 kill-region
                 !if &seq @wc "{"
                     forward-delete-char
                     forward-delete-char
@@ -317,10 +315,10 @@ define-macro-file calc calc-buffer
             !if &not $status
                 !force 0 delete-buffer "*mail-merge-tmp*"
                 find-buffer "*mail-merge*"
+                -1 yank
                 set-mark
                 end-of-buffer
-                kill-region
-                -2 yank
+                -1 kill-region
                 !return
             !endif
             find-buffer "*mail-merge*"
@@ -399,8 +397,7 @@ define-macro mail-merge
     !if &seq &lef @wl 14 "{{Mail-Merge: "
         set-mark
         search-forward "}}"
-        kill-region
-        -1 yank
+        -1 kill-region
     !endif
     -1 osd .osd.mmrg-ppfld
     osd .osd.mmrg-ppfld 0   "b"
