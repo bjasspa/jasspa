@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20040207.1748>
+# Last Modified: <20040819.1127>
 #
 ##############################################################################
 
@@ -25,6 +25,7 @@ TARS	=	$(WWWRELDIR)/jasspa-mesrc-20$(MEYY)$(MEMM)$(MEDD).tar.gz\
 RELTXTS	=	$(TXTS:%=$(MERELDIR)/%)	$(TXTS:%=$(WWWRELDIR)/doc/%)
 
 all:
+	cd contribs;	$(MAKE) $@
 	cd macros;	$(MAKE) $@
 	cd spelling;	$(MAKE) $@
 	cd company;	$(MAKE) $@
@@ -35,6 +36,7 @@ all:
 	cd msdev6;	$(MAKE) $@
 
 install:
+	cd contribs;	$(MAKE) $@
 	cd macros;	$(MAKE) $@
 	cd spelling;	$(MAKE) $@
 	cd company;	$(MAKE) $@
@@ -45,6 +47,7 @@ install:
 	cd msdev6;	$(MAKE) $@
 
 release::
+	cd contribs;	$(MAKE) $@
 	cd macros;	$(MAKE) $@
 	cd spelling;	$(MAKE) $@
 	cd company;	$(MAKE) $@
@@ -55,6 +58,7 @@ release::
 	cd msdev6;	$(MAKE) $@
 
 clean:
+	cd contribs;	$(MAKE) $@
 	cd macros;	$(MAKE) $@
 	cd spelling;	$(MAKE) $@
 	cd company;	$(MAKE) $@
@@ -66,6 +70,7 @@ clean:
 	$(RMDIR) $(RELDIR)
 
 spotless: clean
+	cd contribs;	$(MAKE) $@
 	cd macros;	$(MAKE) $@
 	cd spelling;	$(MAKE) $@
 	cd company;	$(MAKE) $@

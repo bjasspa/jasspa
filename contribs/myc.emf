@@ -1,0 +1,298 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2004 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     Thu Mar 25 21:49:50 2004
+; Synopsis:    Private C extension to find correct indentation
+; Authors:     Jon Green
+;
+; Notes:       This is a very crude search for the indentation. Need to 
+;              do more work to process TABs and to validate indentation.
+; 
+;              The macro "c-indent" allows the indentation to be re-defined
+;              by the user.
+
+;;;
+;;; Automatically determine the indentation and retain.
+;;; On buffer by buffer basis
+;;; Uncomment to enable.
+;;;  
+;;;; Set up the correct indentation
+;;;define-macro my-fhook-c
+;;;    ; Save the old indentation
+;;;    set-variable :c-brace $c-brace
+;;;    set-variable :c-case  $c-case
+;;;    set-variable :c-statement $c-statement
+;;;    set-position "\x91"
+;;;    ; Find the current indentation
+;;;    beginning-of-buffer
+;;;    !force search-forward "^{"
+;;;    set-variable #l0 $status
+;;;    !if &not #l0
+;;;        ; K&R
+;;;        !force search-forward "^\\w.*{"
+;;;        set-variable #l0 $status
+;;;    !endif
+;;;    beginning-of-line
+;;;    !if #l0
+;;;        !force forward-line
+;;;        !if $status
+;;;            !force search-forward "^[ \t]+\\w"
+;;;            !if $status
+;;;                set-variable #l1 &sub $window-acol 1
+;;;                set-variable :c-brace &neg #l1
+;;;                set-variable :c-case  &neg #l1
+;;;                set-variable :c-statement #l1
+;;;            !endif
+;;;        !endif
+;;;    !endif
+;;;    goto-position "\x91"
+;;;!emacro
+;;;
+;;;; Swap to buffer context.
+;;;define-macro my-bhook-c
+;;;    ; Set up the default constants
+;;;    set-variable :oc-brace $c-brace
+;;;    set-variable $c-brace :c-brace
+;;;    set-variable :oc-case  $c-case
+;;;    set-variable $c-case :c-case
+;;;    set-variable :oc-statement $c-statement
+;;;    set-variable $c-statement :c-statement
+;;;!emacro
+;;;
+;;;; Swap away from buffer context
+;;;define-macro my-ehook-c
+;;;    ; Swap out the default constants
+;;;    set-variable :c-brace $c-brace
+;;;    set-variable $c-brace :oc-brace
+;;;    set-variable :c-case $c-case
+;;;    set-variable $c-case :oc-case
+;;;    set-variable :c-statement $c-statement
+;;;    set-variable $c-statement :oc-statement
+;;;!emacro
+;;;
+;;;; Macro to allow manual over-ride of the indent.
+;;;define-macro c-indent
+;;;    set-variable #l0 @ml2 "Indentation" $c-statement
+;;;    !if &not &gre #l0 0
+;;;        ml-write &cat "Invalid value " #l0
+;;;        !abort
+;;;    !endif
+;;;    set-variable $c-brace &neg #l0
+;;;    set-variable $c-case  &neg #l0
+;;;    set-variable $c-statement #l0
+;;;!emacro
+
+; JASSPA MicroEmacs specific tokens for source editing.
+!if &and &sin "h" .fhook-c.setup &band .hilight.flags 0x02
+    hilight   .hilight.c 1 "AMARK"          .scheme.type
+    hilight   .hilight.c 1 "BUFFER"         .scheme.type
+    hilight   .hilight.c 1 "CELL"           .scheme.type
+    hilight   .hilight.c 1 "DICTION"        .scheme.type
+    hilight   .hilight.c 1 "DIRNODE"        .scheme.type
+    hilight   .hilight.c 1 "FRAMELINE"      .scheme.type
+    hilight   .hilight.c 1 "FUNCNAME"       .scheme.type
+    hilight   .hilight.c 1 "HASHENT"        .scheme.type
+    hilight   .hilight.c 1 "HILCOLOR"       .scheme.type
+    hilight   .hilight.c 1 "HILNODE"        .scheme.type
+    hilight   .hilight.c 1 "HILNODEPTR"     .scheme.type
+    hilight   .hilight.c 1 "IPIPEBUF"       .scheme.type
+    hilight   .hilight.c 1 "KEYTAB"         .scheme.type
+    hilight   .hilight.c 1 "KILL"           .scheme.type
+    hilight   .hilight.c 1 "KLIST"          .scheme.type
+    hilight   .hilight.c 1 "LINE"           .scheme.type
+    hilight   .hilight.c 1 "REGHANDLE"      .scheme.type
+    hilight   .hilight.c 1 "REGION"         .scheme.type
+    hilight   .hilight.c 1 "RNODE"          .scheme.type
+    hilight   .hilight.c 1 "SELHILIGHT"     .scheme.type
+    hilight   .hilight.c 1 "UNDOND"         .scheme.type
+    hilight   .hilight.c 1 "UVAR"           .scheme.type
+    hilight   .hilight.c 1 "VIDEO"          .scheme.type
+    hilight   .hilight.c 1 "VVIDEO"         .scheme.type
+    hilight   .hilight.c 1 "WINDOW"         .scheme.type
+    hilight   .hilight.c 1 "meABREV"        .scheme.type
+    hilight   .hilight.c 1 "meDICTADDR"     .scheme.type
+    hilight   .hilight.c 1 "meDICTIONARY"   .scheme.type
+    hilight   .hilight.c 1 "meDICTWORD"     .scheme.type
+    hilight   .hilight.c 1 "meDIRLIST"      .scheme.type
+    hilight   .hilight.c 1 "meMACRO"        .scheme.type
+    hilight   .hilight.c 1 "meMODE"         .scheme.type
+    hilight   .hilight.c 1 "meNAMESVAR"     .scheme.type
+    hilight   .hilight.c 1 "meNARROW"       .scheme.type
+    hilight   .hilight.c 1 "meREGISTERS"    .scheme.type
+    hilight   .hilight.c 1 "meSCROLLBAR"    .scheme.type
+    hilight   .hilight.c 1 "meSPELLRULE"    .scheme.type
+    hilight   .hilight.c 1 "meSTAT"         .scheme.type
+    hilight   .hilight.c 1 "osdCHILD"       .scheme.type
+    hilight   .hilight.c 1 "osdCONTEXT"     .scheme.type
+    hilight   .hilight.c 1 "osdDIALOG"      .scheme.type
+    hilight   .hilight.c 1 "osdDISPLAY"     .scheme.type
+    hilight   .hilight.c 1 "osdITEM"        .scheme.type
+!endif
+
+; Extend the hilighting for the IEEE Std 1003.1 <stdint.h>
+; See http://www.opengroup.org/onlinepubs/007904975/basedefs/stdint.h.html
+!if &and &sin "h" .fhook-c.setup &band .hilight.flags 0x02
+    hilight .hilight.c    1 "uint8_t"          .scheme.type
+    hilight .hilight.c    1 "int8_t"           .scheme.type
+    hilight .hilight.c    1 "uint16_t"         .scheme.type
+    hilight .hilight.c    1 "int16_t"          .scheme.type
+    hilight .hilight.c    1 "uint32_t"         .scheme.type
+    hilight .hilight.c    1 "int32_t"          .scheme.type
+    hilight .hilight.c    1 "uint64_t"         .scheme.type
+    hilight .hilight.c    1 "int64_t"          .scheme.type
+    ; Minimum with integers
+    hilight .hilight.c    1 "int_least8_t"     .scheme.type
+    hilight .hilight.c    1 "int_least16_t"    .scheme.type
+    hilight .hilight.c    1 "int_least32_t"    .scheme.type
+    hilight .hilight.c    1 "int_least64_t"    .scheme.type
+    hilight .hilight.c    1 "uint_least8_t"    .scheme.type
+    hilight .hilight.c    1 "uint_least16_t"   .scheme.type
+    hilight .hilight.c    1 "uint_least32_t"   .scheme.type
+    hilight .hilight.c    1 "uint_least64_t"   .scheme.type
+    ; Fastest minimum-width integer types
+    hilight .hilight.c    1 "int_fast8_t"      .scheme.type
+    hilight .hilight.c    1 "int_fast16_t"     .scheme.type
+    hilight .hilight.c    1 "int_fast32_t"     .scheme.type
+    hilight .hilight.c    1 "int_fast64_t"     .scheme.type
+    hilight .hilight.c    1 "uint_fast8_t"     .scheme.type
+    hilight .hilight.c    1 "uint_fast16_t"    .scheme.type
+    hilight .hilight.c    1 "uint_fast32_t"    .scheme.type
+    hilight .hilight.c    1 "uint_fast64_t"    .scheme.type
+    ; Integer types capable of holding object pointers
+    hilight .hilight.c    1 "intptr_t"         .scheme.type
+    hilight .hilight.c    1 "uintptr_t"        .scheme.type
+    ; Greatest-width integer types
+    hilight .hilight.c    1 "intmax_t"         .scheme.type
+    hilight .hilight.c    1 "uintmax_t"        .scheme.type
+    ; Other types
+    hilight .hilight.c    1 "ptrdiff_t"        .scheme.type
+    hilight .hilight.c    1 "sig_atomic_t"     .scheme.type
+    hilight .hilight.c    1 "wchar_t"          .scheme.type
+    hilight .hilight.c    1 "wint_t"           .scheme.type
+    ; Limits of exact-width integer types
+    hilight .hilight.c    1 "INT8_MIN"         .scheme.prepro
+    hilight .hilight.c    1 "INT8_MAX"         .scheme.prepro
+    hilight .hilight.c    1 "UINT8_MAX"        .scheme.prepro
+    hilight .hilight.c    1 "INT16_MIN"        .scheme.prepro
+    hilight .hilight.c    1 "INT16_MAX"        .scheme.prepro
+    hilight .hilight.c    1 "UINT16_MAX"       .scheme.prepro
+    hilight .hilight.c    1 "INT32_MIN"        .scheme.prepro
+    hilight .hilight.c    1 "INT32_MAX"        .scheme.prepro
+    hilight .hilight.c    1 "UINT32_MAX"       .scheme.prepro
+    hilight .hilight.c    1 "INT64_MIN"        .scheme.prepro
+    hilight .hilight.c    1 "INT64_MAX"        .scheme.prepro
+    hilight .hilight.c    1 "UINT64_MAX"       .scheme.prepro
+    ; Limits of minimum-width integer types
+    hilight .hilight.c    1 "INT_LEAST8_MIN"   .scheme.prepro
+    hilight .hilight.c    1 "INT_LEAST8_MAX"   .scheme.prepro
+    hilight .hilight.c    1 "UINT_LEAST8_MAX"  .scheme.prepro
+    hilight .hilight.c    1 "INT_LEAST16_MIN"  .scheme.prepro
+    hilight .hilight.c    1 "INT_LEAST16_MAX"  .scheme.prepro
+    hilight .hilight.c    1 "UINT_LEAST16_MAX" .scheme.prepro
+    hilight .hilight.c    1 "INT_LEAST32_MIN"  .scheme.prepro
+    hilight .hilight.c    1 "INT_LEAST32_MAX"  .scheme.prepro
+    hilight .hilight.c    1 "UINT_LEAST32_MAX" .scheme.prepro
+    hilight .hilight.c    1 "INT_LEAST64_MIN"  .scheme.prepro
+    hilight .hilight.c    1 "INT_LEAST64_MAX"  .scheme.prepro
+    hilight .hilight.c    1 "UINT_LEAST64_MAX" .scheme.prepro
+    ; Limits of fastest minimum-width integer types
+    hilight .hilight.c    1 "INT_FAST8_MIN"    .scheme.prepro
+    hilight .hilight.c    1 "INT_FAST8_MAX"    .scheme.prepro
+    hilight .hilight.c    1 "UINT_FAST8_MAX"   .scheme.prepro
+    hilight .hilight.c    1 "INT_FAST16_MIN"   .scheme.prepro
+    hilight .hilight.c    1 "INT_FAST16_MAX"   .scheme.prepro
+    hilight .hilight.c    1 "UINT_FAST16_MAX"  .scheme.prepro
+    hilight .hilight.c    1 "INT_FAST32_MIN"   .scheme.prepro
+    hilight .hilight.c    1 "INT_FAST32_MAX"   .scheme.prepro
+    hilight .hilight.c    1 "UINT_FAST32_MAX"  .scheme.prepro
+    hilight .hilight.c    1 "INT_FAST64_MIN"   .scheme.prepro
+    hilight .hilight.c    1 "INT_FAST64_MAX"   .scheme.prepro
+    hilight .hilight.c    1 "UINT_FAST64_MAX"  .scheme.prepro
+    ; Limits of integer types capable of holding object pointers
+    hilight .hilight.c    1 "INTPTR_MIN"       .scheme.prepro
+    hilight .hilight.c    1 "INTPTR_MAX"       .scheme.prepro
+    ; Maximum value of pointer-holding unsigned integer type:
+    hilight .hilight.c    1 "UINTPTR_MAX"      .scheme.prepro
+    ; Limits of greatest-width integer types
+    hilight .hilight.c    1 "INTMAX_MIN"       .scheme.prepro
+    hilight .hilight.c    1 "INTMAX_MAX"       .scheme.prepro
+    hilight .hilight.c    1 "UINTMAX_MAX"      .scheme.prepro
+    ; Limits of Other Integer Types
+    ; Limits of ptrdiff_t:
+    hilight .hilight.c    1 "PTRDIFF_MIN"      .scheme.prepro
+    hilight .hilight.c    1 "PTRDIFF_MAX"      .scheme.prepro
+    ; Limits of sig_atomic_t:
+    hilight .hilight.c    1 "SIG_ATOMIC_MIN"   .scheme.prepro
+    hilight .hilight.c    1 "SIG_ATOMIC_MAX"   .scheme.prepro
+    ; Limit of size_t:
+    hilight .hilight.c    1 "SIZE_MAX"         .scheme.prepro
+    ; Limits of wchar_t:
+    hilight .hilight.c    1 "WCHAR_MIN"        .scheme.prepro
+    hilight .hilight.c    1 "WCHAR_MAX"        .scheme.prepro
+    ; Limits of wint_t:
+    hilight .hilight.c    1 "WINT_MIN"         .scheme.prepro
+    hilight .hilight.c    1 "WINT_MAX"         .scheme.prepro
+!endif
+
+; Hilight TODO in a comment - Examples
+; i.e. /* TODO I need to do this */
+; i.e. // TODO I need to do this */
+!if &and &sin "h" .fhook-c.setup &band .hilight.flags 0x02
+    hilight .hilight.c   20 "/\\*\\s +TODO" "*/" "" .scheme.error
+    hilight .hilight.c   18 "//\\s +TODO"           .scheme.error
+!endif
+
+; Doxygen hilighting extensions. Hilights keywords in Doxygen
+!if &and &sin "h" .fhook-c.setup &band .hilight.flags 0x02
+    ; Create a new doxygen hilighting scheme
+    !if &not &exi .hilight.cdoxygen
+        set-variable .hilight.cdoxygen &pinc .hilight.next 1
+    !endif
+    ; Add a hook into the normal 'C' hilighing. We jump into
+    ; cdoxygen when we see an opening "/**" or "/*!".
+    hilight .hilight.c 0x80 "/\\*\\*" .hilight.cdoxygen  .scheme.comment
+    hilight .hilight.c 0x80 "/\\*!"   .hilight.cdoxygen  .scheme.comment
+    ; Doxygen hilighting space.
+    0 hilight .hilight.cdoxygen  2 50                    .scheme.comment
+    ; "\}" or "@}"
+    hilight .hilight.cdoxygen    1 "[\\\\@]}"            .scheme.keyword
+    ; "\{" or "@{"
+    hilight .hilight.cdoxygen    1 "[\\\\@]{"            .scheme.keyword
+    ; "\a anyWord" or "@a anyWord"
+    hilight .hilight.cdoxygen    1 "[\\\\@]a[ \t]+\\w+"  .scheme.keyword
+    ; "\anyWord" or "@anyWord" - Use branch token and close when not a word!
+    hilight .hilight.cdoxygen    4 "[\\\\@]" "\\}\\W" "" .scheme.keyword
+    ; We must return to C when we see the close of comment "*/"
+    hilight .hilight.cdoxygen 0x80 "\\*/" .hilight.c     .scheme.comment
+!endif
+
+; Hilight curly braces used when it is difficult to differentiate between a
+; round bracket and curly brace.
+!if &and &sin "h" .fhook-c.setup &band .hilight.flags 0x02
+    ; In keyword colour
+    hilight .hilight.c 1 "{"                             .scheme.keyword
+    hilight .hilight.c 1 "}"                             .scheme.keyword
+!endif
+
+; Pick up bogus 'C' constructs extension
+!if &and &sin "h" .fhook-c.setup &band .hilight.flags 0x02
+     ; Detect a for loop with no body - put semi-colon on next line, i.e.
+     ; for (i = 1; i < 10; i++);
+     ; { ... }
+     hilight .hilight.c  2 "\\s \\{for[ \t]*([^()]*)[ \t]*;" .scheme.hlred
+     ; Detect a for loop with no body - put semi-colon on next line, i.e.
+     ; while (i == 1);
+     ; { ... }
+     ; hilight .hilight.c  2 "\\s \\{while[ \t]*([^()]*)[ \t]*;" .scheme.hlred
+     ; Detect a bad 'if' statement that is terminated with ';' e.g.
+     ; if (i < x);
+     ; { ... }
+     hilight .hilight.c  2 "\\s \\{if[ \t]*([^()]*)[ \t]*;"  .scheme.hlred
+     ; Detect a spurious '\' at the end of the line that is
+     ; not a string or #define. i.e.
+     ; char *d = "This is a " \
+     ;           "Duff string continuation";
+     hilight .hilight.c  2 "\\\\$"                   .scheme.hlred
+!endif
