@@ -13,14 +13,14 @@
 ;
 0 define-macro spell-rules-init
     !if &not &exi .spell.language
-        set-variable #l0 &spr "  Language \"%s\" not supported!  " &reg "/history" "language" "Default"
+        set-variable #l0 &spr "  Language \"%s\" not supported!  " &reg "/history/language" "Default"
         osd-dialog "Spelling Checker" #l0 "  \HOk  "
         !abort
     !endif
     !force execute-file &cat "lsr" .spell.language
     !if &not $status
         !if @#
-            set-variable #l0 &spr "  Rules and dictionaries for language \"%s\"  \n     are not available, please download." &reg "/history" "language" "Default"
+            set-variable #l0 &spr "  Rules and dictionaries for language \"%s\"  \n     are not available, please download." &reg "/history/language" "Default"
             osd-dialog "Spelling Checker" #l0 "  \HOk  "
         !endif
         !abort

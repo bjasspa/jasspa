@@ -18,7 +18,7 @@ define-macro fhook-reg
 
 ; buffer-init variables
 set-variable .fhook-reg.name "ME Registry"
-set-variable .fhook-reg.setup &reg "/history" "fhook/reg" "ghmop"
+set-variable .fhook-reg.setup &reg "/history/fhook/reg" "ghmop"
 set-variable .fhook-reg.setup-mask "aeghkop"
 set-variable .fhook-reg.command-flag  "|thbio|thbio|thbio|thbio|thbio|bio|thbio|bio|"
 set-variable .fhook-reg.command-name  "|reg-toggle-hidden|reg-set-node|reg-copy-node|reg-move-node|reg-delete-node|reg-delete-node|reg-insert-node|reg-insert-node|"
@@ -84,9 +84,9 @@ set-variable .fhook-reg.command-desc  "|\HToggle Tree Visibility|\HSet Value of 
     !if &sin "!" $result
         set-variable #l0 @ml &spr "Set %s to" &rig #l1 &rsin "/" #l1
     !else
-        set-variable #l0 @ml1 &spr "Set %s to" &rig #l1 &rsin "/" #l1 &reg #l1 "" ""
+        set-variable #l0 @ml1 &spr "Set %s to" &rig #l1 &rsin "/" #l1 &reg #l1 ""
     !endif
-    set-registry #l1 "" #l0
+    set-registry #l1 #l0
     list-registry
     set-variable $window-line #l2
     set-variable $window-y-scroll #l3
@@ -105,7 +105,7 @@ set-variable .fhook-reg.command-desc  "|\HToggle Tree Visibility|\HSet Value of 
     set-variable #l1 $result
     set-variable #l4 @ml &spr "Name of new node to add to %s" &rig #l1 &rsin "/" #l1
     set-variable #l0 @ml &spr "Set %s to" #l4
-    set-registry #l1 #l4 #l0
+    set-registry &spr "%s/%s" #l1 #l4 #l0
     list-registry
     set-variable $window-line #l2
     set-variable $window-y-scroll #l3

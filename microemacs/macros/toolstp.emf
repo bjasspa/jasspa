@@ -63,7 +63,7 @@
                     !jump -2
                 !endif
             !endif
-            set-registry "/history" "toolbar/size" .toolbar.size
+            set-registry "/history/toolbar/size" .toolbar.size
         !done
         ; don't need to reset the toolbar
         set-variable #l9 0
@@ -151,12 +151,12 @@
             !endif
         !endif
     !endif
-    set-registry "/history" "toolbar/tool-name" .toolbar.tool-name
-    set-registry "/history" "toolbar/tool-buff" .toolbar.tool-buff
-    set-registry "/history" "toolbar/tool-file" .toolbar.tool-file
-    set-registry "/history" "toolbar/tool-size" .toolbar.tool-size
-    set-registry "/history" "toolbar/tool-flag" .toolbar.tool-flag
-    set-registry "/history" "toolbar/tool-cmd"  .toolbar.tool-cmd
+    set-registry "/history/toolbar/tool-name" .toolbar.tool-name
+    set-registry "/history/toolbar/tool-buff" .toolbar.tool-buff
+    set-registry "/history/toolbar/tool-file" .toolbar.tool-file
+    set-registry "/history/toolbar/tool-size" .toolbar.tool-size
+    set-registry "/history/toolbar/tool-flag" .toolbar.tool-flag
+    set-registry "/history/toolbar/tool-cmd"  .toolbar.tool-cmd
     !if #l9
         goto-position "\x82"
         toolbar-close

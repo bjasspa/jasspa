@@ -120,27 +120,27 @@ set-variable .org.bind-r2 "|1|1|1|1|"
 
 0 define-macro org-day-set-notes
     !if &les @# 0
-        set-variable #l0 &reg "/org" &spr "cal/%s/%s/%s" .org.year .org.month .org.day &reg "/org" &spr "cal/*/%s/%s" .org.month .org.day ""
+        set-variable #l0 &reg &spr "/org/cal/%s/%s/%s" .org.year .org.month .org.day &reg &spr "/org/cal/*/%s/%s" .org.month .org.day ""
         set-variable #l1 @ml2 "" #l0
         !if &not &seq #l0 #l1
-            !if &seq #l1 &reg "/org" &spr "cal/*/%s/%s" .org.month .org.day ""
+            !if &seq #l1 &reg &spr "/org/cal/*/%s/%s" .org.month .org.day ""
                 delete-registry &spr "/org/cal/%s/%s/%s" .org.year .org.month .org.day #l1
             !elif &seq #l1 ""
-                set-registry "/org" &spr "cal/%s/%s/%s" .org.year .org.month .org.day " "
+                set-registry &spr "/org/cal/%s/%s/%s" .org.year .org.month .org.day " "
             !else
-                set-registry "/org" &spr "cal/%s/%s/%s" .org.year .org.month .org.day #l1
+                set-registry &spr "/org/cal/%s/%s/%s" .org.year .org.month .org.day #l1
             !endif
             mark-registry "/org" "u"
         !endif
     !else
-        set-variable $result &reg "/org" &spr "cal/%s/%s/%s" .org.year .org.month .org.day &reg "/org" &spr "cal/*/%s/%s" .org.month .org.day ""
+        set-variable $result &reg &spr "/org/cal/%s/%s/%s" .org.year .org.month .org.day &reg &spr "/org/cal/*/%s/%s" .org.month .org.day ""
     !endif
 !emacro
 
 0 define-macro org-day-buffer
     beginning-of-line
     insert-string &spr "       %s %d %s %d\n\n" &lget .org.days &add 1 &mid .org.info 4 1 .org.day &lget .org.months .org.month .org.year
-    insert-string &spr "%s\n\n" &reg "/org" &spr "cal/%s/%s/%s" .org.year .org.month .org.day &reg "/org" &spr "cal/*/%s/%s" .org.month .org.day ""
+    insert-string &spr "%s\n\n" &reg &spr "/org/cal/%s/%s/%s" .org.year .org.month .org.day &reg &spr "/org/cal/*/%s/%s" .org.month .org.day ""
     screen-update
 !emacro
 

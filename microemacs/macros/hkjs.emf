@@ -14,7 +14,7 @@ define-macro fhook-js
 
 ; buffer-init variables
 set-variable .fhook-js.name "JavaScript"
-set-variable .fhook-js.setup &reg "/history" "fhook/js" "bdfghnopx"
+set-variable .fhook-js.setup &reg "/history/fhook/js" "bdfghnopx"
 set-variable .fhook-js.setup-mask "abdefghikmnoptux"
 set-variable .fhook-js.tags "jstags"
 set-variable .fhook-js.comment "|/*|*/|*| * | * |fr|"

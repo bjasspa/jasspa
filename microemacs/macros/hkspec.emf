@@ -17,7 +17,7 @@ define-macro fhook-spec
 !emacro
 
 ; buffer-setup flags
-set-variable .fhook-spec.setup &reg "/history" "fhook/spec" "bghinopx"
+set-variable .fhook-spec.setup &reg "/history/fhook/spec" "bghinopx"
 set-variable .fhook-spec.setup-mask "aebghikmnoptux"
 set-variable .fhook-spec.comment "|#||#|# | #||"
 ; Hilighting

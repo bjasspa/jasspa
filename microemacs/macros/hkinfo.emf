@@ -17,7 +17,7 @@ define-macro fhook-info
 
 ; buffer-init variables
 set-variable .fhook-info.name "GNU Info"
-set-variable .fhook-info.setup &reg "/history" "fhook/info" "EUmghop"
+set-variable .fhook-info.setup &reg "/history/fhook/info" "EUmghop"
 set-variable .fhook-info.setup-mask "aghkop"
 set-variable .fhook-info.command-flag  "|bio|thbio|thbio|thbio|bio|thbio|bio|th|thbio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|"
 set-variable .fhook-info.command-name  "|buffer-help|info-jump-link|scroll-down|scroll-up|scroll-up|beginning-of-buffer|beginning-of-buffer||info-jump-link|info-jump-link|info-jump-link|info-jump-last||info-node-menu|info-goto-link|info-jump-link|info-jump-link|info-jump-link|info-follow-line|"

@@ -30,7 +30,7 @@ define-macro fhook-binary
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-binary.setup &reg "/history" "fhook/binary" "ghop"
+set-variable .fhook-binary.setup &reg "/history/fhook/binary" "ghop"
 set-variable .fhook-binary.setup-mask "aeghkmopu"
 set-variable .fhook-binary.command-flag  "|thbio|th|thbo|thbo|"
 set-variable .fhook-binary.command-name  "|binary-swap-section||binary-move-backward|binary-move-forward|"

@@ -30,10 +30,10 @@
     !elif &seq $result "All Buffers"
         set-variable #l0 ".*"
     !else
-        !if &not &set #l1 &lfi &reg "/history" "file-type" "\b" $result
+        !if &not &set #l1 &lfi &reg "/history/file-type" "\b" $result
             !abort
         !endif
-        set-variable #l0 &lget &reg "/history" "file-mask" "\b" #l1
+        set-variable #l0 &lget &reg "/history/file-mask" "\b" #l1
         filemask-to-regex #l0
         set-variable #l0 &cat &rep #l0 "," "\\(<[0-9]+>\\)?\\|" "\\(<[0-9]+>\\)?"
     !endif
@@ -63,7 +63,7 @@ osd .osd.find-buffer 0 "bo" 0 -3
 osd .osd.find-buffer 1 "Md" "All Buffers" .osd.tmp osd-find-buffer-submenu
 osd .osd.find-buffer 2 "Md" "\H* Buffers"  .osd.tmp osd-find-buffer-submenu
 osd .osd.find-buffer 3 "-"  
-set-variable #l0 &reg "/history" "file-type" "\b"
+set-variable #l0 &reg "/history/file-type" "\b"
 set-variable #l1 0
 !while &not &seq &set #l2 &lget #l0 &inc #l1 1 ""
     osd .osd.find-buffer &add #l1 3 "Md" #l2 .osd.tmp osd-find-buffer-submenu

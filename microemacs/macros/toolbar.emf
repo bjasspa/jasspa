@@ -315,13 +315,13 @@ define-macro toolbar-refresh
 !emacro
 
 define-macro toolbar
-    set-variable .size &reg "/history" "toolbar/size" "|20|15|20|15|"
-    set-variable .tool-name &reg "/history" "toolbar/tool-name" "\CHToolbar\CH"
-    set-variable .tool-buff &reg "/history" "toolbar/tool-buff" "\CH*toolbar-left*\CH"
-    set-variable .tool-file &reg "/history" "toolbar/tool-file" "\CHtooldef\CH"
-    set-variable .tool-size &reg "/history" "toolbar/tool-size" "\CH100\CH"
-    set-variable .tool-flag &reg "/history" "toolbar/tool-flag" "\CH0x1001\CH"
-    set-variable .tool-cmd  &reg "/history" "toolbar/tool-cmd"  "\CHtoolbar-default\CH"
+    set-variable .size &reg "/history/toolbar/size" "|20|15|20|15|"
+    set-variable .tool-name &reg "/history/toolbar/tool-name" "\CHToolbar\CH"
+    set-variable .tool-buff &reg "/history/toolbar/tool-buff" "\CH*toolbar-left*\CH"
+    set-variable .tool-file &reg "/history/toolbar/tool-file" "\CHtooldef\CH"
+    set-variable .tool-size &reg "/history/toolbar/tool-size" "\CH100\CH"
+    set-variable .tool-flag &reg "/history/toolbar/tool-flag" "\CH0x1001\CH"
+    set-variable .tool-cmd  &reg "/history/toolbar/tool-cmd"  "\CHtoolbar-default\CH"
     !if &seq "" &lget .toolbar.tool-flag 1
         ml-write "[Error: No registered tools]"
         !abort

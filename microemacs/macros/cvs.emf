@@ -33,23 +33,23 @@ set-variable .cvs.revs    "|||||"
 set-variable .cvs.tag     ""
 set-variable .cvs.message ""
 
-!if &len &set #l0 &reg "/history" "cvs/root" ""
+!if &len &set #l0 &reg "/history/cvs/root" ""
     set-variable $CVSROOT #l0
 !endif
-!if &len &set #l0 &reg "/history" &cat $platform "/cvs/rsh" ""
+!if &len &set #l0 &reg &spr "/history/%s/cvs/rsh" $platform ""
     set-variable $CVS_RSH #l0
 !endif
-set-variable .cvs.com &trb &reg "/history" &cat $platform "/cvs/com" "cvs"
-!if &set #l0 &reg "/history" "/cvs/z" "0"
+set-variable .cvs.com &trb &reg &spr "/history/%s/cvs/com" $platform "cvs"
+!if &set #l0 &reg "/history/cvs/z" "0"
     set-variable .cvs.com &spr "%s -z%d" .cvs.com #l0
 !endif
-!if &reg "/history" "/cvs/q" "0"
+!if &reg "/history/cvs/q" "0"
     set-variable .cvs.com &spr "%s -q" .cvs.com
 !endif
-set-variable .cvs.browse-mode &reg "/history" "cvs/browse-mode" "0"
+set-variable .cvs.browse-mode &reg "/history/cvs/browse-mode" "0"
 set-variable #l0 0
 !while &len &set #l1 &mid "RdP" &pinc #l0 1 1
-    !if &len &set #l2 &reg "/history" &cat "cvs/opt-" #l1 ""
+    !if &len &set #l2 &reg &cat "/history/cvs/opt-" #l1 ""
         set-variable #l3 &sin #l1 .cvs.options
         set-variable .cvs.values &cat &cat &lef .cvs.values &sub #l3 1 &lef #l2 1 &rig .cvs.values #l3
     !endif
@@ -1719,29 +1719,33 @@ define-macro cvs
 
 0 define-macro cvs-setup-entry
     set-variable #l2 &lget "|root|rsh|com|" &abs @#
-    set-variable #l2 &cat &cond &gre &abs @# 1 &cat $platform "/cvs/" "cvs/" #l2
-    !if &les @# 0
-        set-variable #l0 &reg "/history" #l2 ""
-        set-variable #l0 @ml2 "" #l0
-        set-registry "/history" #l2 #l0
+    !if &gre &abs @# 1
+        set-variable #l2 &spr "/history/%s/cvs/%s" $platform #l2
     !else
-        set-variable $result &reg "/history" #l2 ""
+        set-variable #l2 &cat "/history/cvs/" #l2
+    !endif
+    !if &les @# 0
+        set-variable #l0 &reg #l2 ""
+        set-variable #l0 @ml2 "" #l0
+        set-registry #l2 #l0
+    !else
+        set-variable $result &reg #l2 ""
     !endif
 !emacro
 
 0 define-macro cvs-setup-checkbox
-    set-variable #l2 &cat "cvs/" &lget "|q|browse-mode|opt-R|opt-d|opt-P|" &abs @#
+    set-variable #l2 &cat "/history/cvs/" &lget "|q|browse-mode|opt-R|opt-d|opt-P|" &abs @#
     set-variable #l0 &lget "|0|0|1|0|0|" &abs @#
-    set-variable #l0 &reg "/history" #l2 #l0
+    set-variable #l0 &reg #l2 #l0
     !if &les @# 0
         set-variable #l0 &bxor #l0 1
-        set-registry "/history" #l2 #l0
+        set-registry #l2 #l0
     !elif &not #l0
         !abort
     !endif
 !emacro
 0 define-macro cvs-setup-compression-set
-    set-registry "/history" "cvs/z" @#
+    set-registry "/history/cvs/z" @#
 !emacro
 0 define-macro cvs-setup-compression
     !if &les @# 0
@@ -1752,7 +1756,7 @@ define-macro cvs
         !repeat
             osd .osd.tmp &add #l0 10 "" &cat "Level " #l0 #l0 cvs-setup-compression-set
         !until &not &dec #l0 1
-    !elif &set #l0 &reg "/history" "cvs/z" "0"
+    !elif &set #l0 &reg "/history/cvs/z" "0"
         set-variable $result &cat "Level " #l0
     !else
         set-variable $result "No Compression"

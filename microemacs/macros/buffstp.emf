@@ -93,15 +93,15 @@
     !endif
 !emacro
 0 define-macro buffer-setup-fmark
-    set-variable #l0 &spr "fhook/%s-%s" &rig $buffer-fhook 6 &lget "|fomark|fcmark|tab-width|indent-width|" &abs @#
-    set-variable #l1 &reg "/history" #l0 ""
+    set-variable #l0 &spr "/history/fhook/%s-%s" &rig $buffer-fhook 6 &lget "|fomark|fcmark|tab-width|indent-width|" &abs @#
+    set-variable #l1 &reg #l0 ""
     !if &les @# 0
         set-variable #l2 @ml2 "" #l1
         !if &not &seq #l2 #l1
             !if &seq #l2 ""
-                !force delete-registry &cat "/history/" #l0
+                !force delete-registry #l0
             !else
-                set-registry "/history" #l0 #l2
+                set-registry #l0 #l2
             !endif
         !endif
     !else
@@ -110,7 +110,7 @@
 !emacro
 0 define-macro buffer-setup-save
     !if &not &seq .buffer-setup.nsetup .buffer-setup.osetup
-        set-registry "/history" &cat "fhook/" &rig $buffer-fhook 6 .buffer-setup.nsetup
+        set-registry &cat "/history/fhook/" &rig $buffer-fhook 6 .buffer-setup.nsetup
         set-variable &ind &spr ".%s.setup" $buffer-fhook .buffer-setup.nsetup
         set-variable .buffer-setup.osetup .buffer-setup.nsetup
     !endif

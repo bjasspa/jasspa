@@ -18,7 +18,7 @@ define-macro fhook-wiki
 
 ; buffer-init variables
 set-variable .fhook-wiki.name "GNU Wiki"
-set-variable .fhook-wiki.setup &reg "/history" "fhook/wiki" "fghijopsw"
+set-variable .fhook-wiki.setup &reg "/history/fhook/wiki" "fghijopsw"
 set-variable .fhook-wiki.setup-mask "acefghijkmnopstuwx"
 set-variable .fhook-wiki.setup-flags   "|c|"
 set-variable .fhook-wiki.setup-labels  "|Initial Edit Mode|"

@@ -13,7 +13,7 @@ define-macro fhook-awk
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-awk.setup &reg "/history" "fhook/awk" "ghiopx"
+set-variable .fhook-awk.setup &reg "/history/fhook/awk" "ghiopx"
 set-variable .fhook-awk.setup-mask "aeghikmoptux"
 set-variable .fhook-awk.comment "|#||#|# | #|r|"
 

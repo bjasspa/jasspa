@@ -15,7 +15,7 @@ define-macro fhook-yacc
 
 ; buffer-init variables
 set-variable .fhook-yacc.name "Lex/Yacc"
-set-variable .fhook-yacc.setup &reg "/history" "fhook/yacc" "ghinopx"
+set-variable .fhook-yacc.setup &reg "/history/fhook/yacc" "ghinopx"
 set-variable .fhook-yacc.setup-mask "aeghikmnoptux"
 set-variable .fhook-yacc.comment "|/*| */|*| * | * |f|"
 ; Doxygen comment - //!< ... member detailed text ...

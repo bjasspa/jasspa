@@ -18,7 +18,7 @@
     buffer-init-hooks
 !emacro
 
-set-variable .fhook-mail.setup &reg "/history" "fhook/mail" "bghijnopsw"
+set-variable .fhook-mail.setup &reg "/history/fhook/mail" "bghijnopsw"
 set-variable .fhook-mail.setup-mask "abeghijkmnopstuwx"
 set-variable .fhook-mail.command-flag  "|thb|th|thb|thb|h|h|h|h|h|h|"
 set-variable .fhook-mail.command-name  "|mail-send||mail-data-insert|mail-data-insert|||||||"
@@ -49,17 +49,17 @@ set-variable .fhook-mail.command-desc  "|\HSend mail||Insert given file, method 
 ;
 ; Mail checker
 define-macro mail-check
-    !if &seq &set %vm-mail-src &reg "/history" &cat $platform "/mail-src" "" ""
+    !if &seq &set %vm-mail-src &reg &spr "/history/%s/mail-src" $platform "" ""
         ml-write "[Incoming mail file not setup! Use Help/User setup]"
         !abort
     !endif
     ; reset the callback if its automatic
-    !if &set #l0 &reg "/history" &cat $platform "/mail-check" "0"
+    !if &set #l0 &reg &spr "/history/%s/mail-check" $platform "0"
         &mul #l0 1000 create-callback mail-check
     !endif
     ; if the user queues outgoing mail
-    !if &reg "/history" &cat $platform "/mail-queue" "0"
-        !if &seq &set %vm-mail-dir &reg "/history" &cat $platform "/mail-dir" "" ""
+    !if &reg &spr "/history/%s/mail-queue" $platform "0"
+        !if &seq &set %vm-mail-dir &reg &spr "/history/%s/mail-dir" $platform "" ""
             ml-write "[Mail directory not setup! Use Help/User setup]"
             !abort
         !endif
@@ -68,7 +68,7 @@ define-macro mail-check
             mail-send-queue
         !endif
     !endif
-    !if &seq "" &set #l0 &reg "/history" &cat $platform "/mail-get" ""
+    !if &seq "" &set #l0 &reg &spr "/history/%s/mail-get" $platform ""
         ml-write &spr "Checking for mail in %s..." %vm-mail-src
     !else
         ml-write &spr "Getting mail into %s..." %vm-mail-src
@@ -100,7 +100,7 @@ define-macro stop-mail-check
 !emacro
 
 0 define-macro mail-data-insert
-    !if &seq &set #l9 &reg "/history/" &spr "%s/mail-insert%s" $platform @# "" ""
+    !if &seq &set #l9 &reg &spr "/history/%s/mail-insert%s" $platform @# "" ""
         ml-write &spr "[%s/mail-insert%s is not set up]" $platform @#
         !abort
     !endif
@@ -167,7 +167,7 @@ set-variable .osd.mail-add 16
         !endif
         set-variable .osd-mail-addr-set.value $result
         set-variable .osd-mail-addr-abbrev.recno @#
-        set-variable .osd-mail-addr-abbrev.value &reg "/org" &spr "addr/%d/%s/emailabr" &abs @# &cond &les @# 0 "work" "home" ""
+        set-variable .osd-mail-addr-abbrev.value &reg &spr "/org/addr/%d/%s/emailabr" &abs @# &cond &les @# 0 "work" "home" ""
         osd .osd.mail-adr 70  "S" "A\Hbbrev:" 20
         osd .osd.mail-adr 80  "ExHf" .scheme.osd-entry "########" 1 osd-mail-addr-abbrev
     !elif &seq .osd-mail-addr-set.value ""
@@ -180,7 +180,7 @@ set-variable .osd.mail-add 16
 0 define-macro osd-mail-addr-abbrev
     !if &les @# 0
         set-variable .value @ml25 "" .value
-        set-registry "/org" &spr "addr/%d/%s/emailabr" &abs .recno &cond &les .recno 0 "work" "home" .value
+        set-registry &spr "/org/addr/%d/%s/emailabr" &abs .recno &cond &les .recno 0 "work" "home" .value
         mark-registry "/org" "u"
     !else
         set-variable $result .value
@@ -212,11 +212,11 @@ set-variable .osd.mail-add 16
     !repeat
         org-addr-inc-recno
         !if &not &seq .org.addr "*"
-            set-variable #l3 &reg "/org" &spr "addr/%d/home/email" .org.addr "" 
-            set-variable #l4 &reg "/org" &spr "addr/%d/work/email" .org.addr "" 
+            set-variable #l3 &reg &spr "/org/addr/%d/home/email" .org.addr "" 
+            set-variable #l4 &reg &spr "/org/addr/%d/work/email" .org.addr "" 
             !if &not &and &seq #l3 "" &seq #l4 ""
-                !if &seq &set #l5 &reg "/org" &spr "addr/%d/nname" .org.addr "" ""
-                    set-variable #l5 &spr "%s %s" &reg "/org" &spr "addr/%d/fname" .org.addr "" &reg "/org" &spr "addr/%d/sname" .org.addr ""
+                !if &seq &set #l5 &reg &spr "/org/addr/%d/nname" .org.addr "" ""
+                    set-variable #l5 &spr "%s %s" &reg &spr "/org/addr/%d/fname" .org.addr "" &reg &spr "/org/addr/%d/sname" .org.addr ""
                 !endif
                 !if &not &seq #l3 ""
                     set-variable #l3 &spr "%s%s <%s>" &trb #l5 &cond &seq #l4 "" "" " (Home)" #l3
@@ -305,11 +305,11 @@ osd .osd.mail-ad 60  "" " "
         ; search through the address book looking for an abbrev
         set-variable #l2 0
         !while &les &inc #l2 1 .org.naddr
-            !if &seq #l1 &reg "/org" &spr "addr/%d/home/emailabr" #l2 ""
-                set-variable .addr &reg "/org" &spr "addr/%d/home/email" #l2 ""
+            !if &seq #l1 &reg &spr "/org/addr/%d/home/emailabr" #l2 ""
+                set-variable .addr &reg &spr "/org/addr/%d/home/email" #l2 ""
                 set-variable #l2 .org.naddr
-            !elif &seq #l1 &reg "/org" &spr "addr/%d/work/emailabr" #l2 ""
-                set-variable .addr &reg "/org" &spr "addr/%d/work/email" #l2 ""
+            !elif &seq #l1 &reg &spr "/org/addr/%d/work/emailabr" #l2 ""
+                set-variable .addr &reg &spr "/org/addr/%d/work/email" #l2 ""
                 set-variable #l2 .org.naddr
             !endif
         !done
@@ -344,7 +344,7 @@ define-macro mail
     !if $status
         !return
     !endif
-    !if &seq &set %vm-mail-dir &reg "/history" &cat $platform "/mail-dir" "" ""
+    !if &seq &set %vm-mail-dir &reg &spr "/history/%s/mail-dir" $platform "" ""
         ml-write "[Mail directory not setup! Use Help/User setup]"
         !abort
     !endif
@@ -357,11 +357,11 @@ define-macro mail
     set-variable $buffer-hilight .hilight.mail
     insert-string "To:      \n"
     insert-string "Subject: \n"
-    !if &not &seq &set #l1 &reg "/history" "mail/fcc" "" ""
+    !if &not &seq &set #l1 &reg "/history/mail/fcc" "" ""
         insert-string &spr "Fcc:     %s%s\n" %vm-mail-dir #l1
     !endif
     insert-string "--text follows this line--\n"
-    !if &not &seq &set #l1 &reg "/history" "mail/sig" "" ""
+    !if &not &seq &set #l1 &reg "/history/mail/sig" "" ""
         end-of-buffer
         !force insert-file &cat %vm-mail-dir #l1
         !if &not $status
@@ -418,7 +418,7 @@ define-macro mail
 !emacro
 
 0 define-macro mail-send-msg
-    !if &seq &set #l0 &reg "/history" &cat $platform "/mail-send" "" ""
+    !if &seq &set #l0 &reg &spr "/history/%s/mail-send" $platform "" ""
     ml-write "[Send mail command not set up! Use Help/User setup]"
     !abort
     !endif
@@ -595,7 +595,7 @@ define-macro mail-send-queue
 !emacro
 
 define-macro mail-send
-    !if &reg "/history" &cat $platform "/mail-queue" "0"
+    !if &reg &spr "/history/%s/mail-queue" $platform "0"
         end-of-buffer
         0 write-buffer $buffer-fname
         insert-string "--MicroEmacs-send-mail-end-marker--"

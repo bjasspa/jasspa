@@ -29,9 +29,9 @@
     set-variable .org.days   "|Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|"
     set-variable .org.dinm   "|31|28|31|30|31|30|31|31|30|31|30|31|"
     ; Try and find the organizer file
-    set-variable #l1 &reg "/history" "organizer" $user-name
+    set-variable #l1 &reg "/history/organizer" $user-name
     !if &seq &set .org.dfile &find #l1 ".eof" "ERROR"
-        set-variable #l0 &reg "/" "history" ""
+        set-variable #l0 &reg "/history" ""
         set-variable .org.dfile &spr "%s%s.eof" &lef #l0 &rsin "/" #l0 #l1
     !endif
 !endif
@@ -318,17 +318,17 @@ osd-bind-key .osd.org org-key-bind "C-up"
 osd-bind-key .osd.org org-key-bind "C-down"
 
 0 define-macro org-init
-    !if &not &seq &reg "/" "org" "" @1
-        !if &not &seq &reg "/" "org" "" ""
+    !if &not &seq &reg "/org" "" @1
+        !if &not &seq &reg "/org" "" ""
             delete-registry "/org" @mna
         !endif
     !endif
     read-registry "org" @1 "cb"
-    set-variable .org.months &reg "/org" "set/months" .org.months
-    set-variable .org.days &reg "/org" "set/days" .org.days
-    set-variable .org.set &spr "%1d%1d" &reg "/org" "set/1dofw" "0" &reg "/org" "set/1wofy" "7"
-    set-variable .org.aflag &reg "/org" "set/aflag" "0x34"
-    set-variable .org.naddr &reg "/org" "addr/naddr" "1"
+    set-variable .org.months &reg "/org/set/months" .org.months
+    set-variable .org.days &reg "/org/set/days" .org.days
+    set-variable .org.set &spr "%1d%1d" &reg "/org/set/1dofw" "0" &reg "/org/set/1wofy" "7"
+    set-variable .org.aflag &reg "/org/set/aflag" "0x34"
+    set-variable .org.naddr &reg "/org/addr/naddr" "1"
     set-variable .org.addr ""
 !emacro
 
@@ -337,16 +337,16 @@ osd-bind-key .osd.org org-key-bind "C-down"
 !emacro
 
 0 define-macro organizer-init
-    !if &seq &reg "/" "org" "" ""
+    !if &seq &reg "/org" "" ""
         org-init .org.dfile
     !endif
 !emacro
 
 define-macro organizer
-    !if &seq &reg "/" "org" "" ""
+    !if &seq &reg "/org" "" ""
         org-init .org.dfile
     !endif
-    osd .osd.org-n 100 "It" &add .osd.orgm &reg "/org" "set/initpage" "0"
+    osd .osd.org-n 100 "It" &add .osd.orgm &reg "/org/set/initpage" "0"
     set-variable #l2 $time
     set-variable .org.year  &lef #l2 4
     set-variable .org.month &trb &mid #l2 7 2 

@@ -114,12 +114,12 @@ define-macro-file collapse collapse-current collapse-all
             etfinsrt #l1
         !endif
     !endif
-    !if &set #l1 &reg "/history" &spr "fhook/%s-tab-width" @1 "0"
+    !if &set #l1 &reg &spr "/history/fhook/%s-tab-width" @1 "0"
         set-variable $buffer-tab-width #l1
     !elif &set #l1 &ind &spr ".%s.tab-width" $buffer-fhook
         set-variable $buffer-tab-width #l1
     !endif
-    !if &set #l1 &reg "/history" &spr "fhook/%s-indent-width" @1 "0"
+    !if &set #l1 &reg &spr "/history/fhook/%s-indent-width" @1 "0"
         set-variable $buffer-indent-width #l1
     !elif &set #l1 &ind &spr ".%s.indent-width" $buffer-fhook
         set-variable $buffer-indent-width #l1
@@ -177,7 +177,7 @@ define-macro-file collapse collapse-current collapse-all
     !endif
     !if &sin "s" #l0
         !if &not &seq %language "Default"
-            !if &reg "/history" "spell/autospell" "0"
+            !if &reg "/history/spell/autospell" "0"
                 1 auto-spell
             !endif
         !endif
@@ -236,8 +236,8 @@ define-macro-file collapse collapse-current collapse-all
 
 0 define-macro buffer-init-fhook
     set-variable #l9 @1
-    !if &not &seq &set #l2 &reg "/history" &spr "fhook/%s-fomark" #l9 "" ""
-        set-variable #l3 &reg "/history" &spr "fhook/%s-fcmark" #l9 ""
+    !if &not &seq &set #l2 &reg &spr "/history/fhook/%s-fomark" #l9 "" ""
+        set-variable #l3 &reg &spr "/history/fhook/%s-fcmark" #l9 ""
         !if &not &seq &set #l1 &lget &set #l4 &ind &spr ".fhook-%s.comment" #l9 1 ""
             set-variable #l0 &spr "\b%s %s\b%s %s\b%s\b" #l1 #l2 #l1 #l3 &trr &lget #l4 2
             str-to-regex #l1

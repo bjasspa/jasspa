@@ -13,7 +13,7 @@ define-macro fhook-css
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-css.setup &reg "/history" "fhook/css" "dfghiopx"
+set-variable .fhook-css.setup &reg "/history/fhook/css" "dfghiopx"
 set-variable .fhook-css.setup-mask "adefghikmoptux"
 set-variable .fhook-css.comment   "|/*| */|*| * | * |fr|"
 set-variable .fhook-css.comment-1 "|<!--| -->|-|  -- | -- |r|"

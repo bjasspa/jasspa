@@ -15,7 +15,7 @@ define-macro fhook-mod2
 
 ; buffer-init variables
 set-variable .fhook-mod2.name "Modula-2"
-set-variable .fhook-mod2.setup &reg "/history" "fhook/mod2" "bfghinopx"
+set-variable .fhook-mod2.setup &reg "/history/fhook/mod2" "bfghinopx"
 set-variable .fhook-mod2.setup-mask "abefghikmnoptux"
 set-variable .fhook-mod2.comment "|(* | *)|*| * | * |fr|"
 

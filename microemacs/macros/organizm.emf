@@ -14,7 +14,7 @@ set-variable .org.bind-r0 "|1|1|1|1|"
 
 ; Create the current month osd dialog
 0 define-macro org-month-init-day
-    set-variable #l1 &reg "/org" &spr "cal/%s/%s/%s" .org.year .org.month @# &reg "/org" &spr "cal/*/%s/%s" .org.month @# ""
+    set-variable #l1 &reg &spr "/org/cal/%s/%s/%s" .org.year .org.month @# &reg &spr "/org/cal/*/%s/%s" .org.month @# ""
     set-variable #l1 &spr "  %2d\n%s" @# &lef #l1 6
     set-variable #l2 &add @# &mid .org.info 3 1
     !if &equ @# .org.day
@@ -115,21 +115,21 @@ set-variable .org.bind-r0 "|1|1|1|1|"
 0 define-macro org-month-set-notes
     !if .org.day
         !if &les @# 0
-            set-variable #l0 &reg "/org" &spr "cal/%s/%s/%s" .org.year .org.month .org.day &reg "/org" &spr "cal/*/%s/%s" .org.month .org.day ""
+            set-variable #l0 &reg &spr "/org/cal/%s/%s/%s" .org.year .org.month .org.day &reg &spr "/org/cal/*/%s/%s" .org.month .org.day ""
             set-variable #l1 @ml2 "" #l0
             !if &not &seq #l0 #l1
-                !if &seq #l1 &reg "/org" &spr "cal/*/%s/%s" .org.month .org.day ""
+                !if &seq #l1 &reg &spr "/org/cal/*/%s/%s" .org.month .org.day ""
                     delete-registry &spr "/org/cal/%s/%s/%s" .org.year .org.month .org.day #l1
                 !elif &seq #l1 ""
-                    set-registry "/org" &spr "cal/%s/%s/%s" .org.year .org.month .org.day " "
+                    set-registry &spr "/org/cal/%s/%s/%s" .org.year .org.month .org.day " "
                 !else
-                    set-registry "/org" &spr "cal/%s/%s/%s" .org.year .org.month .org.day #l1
+                    set-registry &spr "/org/cal/%s/%s/%s" .org.year .org.month .org.day #l1
                 !endif
                 mark-registry "/org" "u"
                 .org.day org-month-init-day
             !endif
         !else
-            set-variable $result &reg "/org" &spr "cal/%s/%s/%s" .org.year .org.month .org.day  &reg "/org" &spr "cal/*/%s/%s" .org.month .org.day ""
+            set-variable $result &reg &spr "/org/cal/%s/%s/%s" .org.year .org.month .org.day  &reg &spr "/org/cal/*/%s/%s" .org.month .org.day ""
         !endif
     !else
         set-variable $result ""
@@ -143,7 +143,7 @@ set-variable .org.bind-r0 "|1|1|1|1|"
     set-variable #l1 &lef .org.info 2
     set-variable #l2 &mid .org.info 3 1
     !repeat
-        set-variable #l3 &reg "/org" &spr "cal/%s/%s/%s" .org.year .org.month #l0 &reg "/org" &spr "cal/*/%s/%s" .org.month #l0 ""
+        set-variable #l3 &reg &spr "/org/cal/%s/%s/%s" .org.year .org.month #l0 &reg &spr "/org/cal/*/%s/%s" .org.month #l0 ""
         set-variable #l4 &add $window-line 1
         insert-string &spr "%2d %s %s\n" #l0 &lef &lget .org.days &inc #l2 1 3 #l3
         set-variable #l5 $window-line

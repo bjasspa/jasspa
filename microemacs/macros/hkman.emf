@@ -21,7 +21,7 @@ define-macro fhook-man
 !endif
 ; buffer-init variables
 set-variable .fhook-man.name "UNIX Man page"
-set-variable .fhook-man.setup &reg "/history" "fhook/man" "Ughpo"
+set-variable .fhook-man.setup &reg "/history/fhook/man" "Ughpo"
 set-variable .fhook-man.setup-mask "aeghmpo1"
 set-variable .fhook-man.command-flag  "|bo|bo|thbio|th|th|"
 set-variable .fhook-man.command-name  "|man-backward-word|man-forward-word|man-process-link||man-clean|"

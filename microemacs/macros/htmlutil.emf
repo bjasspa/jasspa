@@ -115,11 +115,11 @@
         !force .osd.tmp osd
         set-variable .mode 0
     !elif .mode
-        set-registry "/history" &cat "fhook/html-col" @# .html-get-color.icolor
+        set-registry &cat "/history/fhook/html-col" @# .html-get-color.icolor
         &add @# 128 html-get-color-schm .html-get-color.icolor
         !abort
     !else
-        set-variable #l8 &reg "/history" &cat "fhook/html-col" @# &lget .html-get-color.default &add @# 1
+        set-variable #l8 &reg &cat "/history/fhook/html-col" @# &lget .html-get-color.default &add @# 1
         set-variable .html-get-color.icolor #l8
         127 html-get-color-schm #l8
     !endif
@@ -221,7 +221,7 @@ define-macro html-get-color
     osd .osd.htmlcolr 0 "G"
     set-variable #l0 0
     !repeat
-        set-variable #l1 &reg "/history" &cat "fhook/html-col" #l0 &lget .default &add #l0 1
+        set-variable #l1 &reg &cat "/history/fhook/html-col" #l0 &lget .default &add #l0 1
         &add #l0 128 html-get-color-schm #l1
         osd .osd.htmlcolr &add 100 #l0 &cond &mod &add #l0 1 8 "RGHfxhz" "RGHfxz" &add 128 #l0 3 2 "" #l0 html-get-color-pal
     !until &not &les &inc #l0 1 16
@@ -661,22 +661,22 @@ define-macro html-create-table
     2 ipipe-shell-command #l0 "*html-viewer*" @mna
 !emacro
 define-macro html-view-iexplorer
-    set-variable #l0 &reg "/history" &cat $platform "/html-iexplorer" "iexplore \"%f\""
+    set-variable #l0 &reg &spr "/history/%s/html-iexplorer" $platform "iexplore \"%f\""
     html-view-launch #l0 @1
 !emacro
 define-macro html-view-netscape
-    set-variable #l0 &reg "/history" &cat $platform "/html-netscape" "netscape \"%f\""
+    set-variable #l0 &reg &spr "/history/%s/html-netscape" $platform "netscape \"%f\""
     html-view-launch #l0 @1
 !emacro
 
 define-macro html-config-iexplorer
-    set-variable #l0 &reg "/history" &cat $platform "/html-iexplorer" "iexplore \"%f\""
+    set-variable #l0 &reg &spr "/history/%s/html-iexplorer" $platform "iexplore \"%f\""
     set-variable #l0 @ml2 "IExplorer Command-line" #l0
-    set-registry "/history" &cat $platform "/html-iexplorer" #l0
+    set-registry &spr "/history/%s/html-iexplorer" $platform #l0
 !emacro
 define-macro html-config-netscape
-    set-variable #l0 &reg "/history" &cat $platform "/html-netscape" "netscape \"%f\""
+    set-variable #l0 &reg &spr "/history/%s/html-netscape" $platform "netscape \"%f\""
     set-variable #l0 @ml2 "Netscape Command-line" #l0
-    set-registry "/history" &cat $platform "/html-netscape" #l0
+    set-registry &spr "/history/%s/html-netscape" $platform #l0
 !emacro
 

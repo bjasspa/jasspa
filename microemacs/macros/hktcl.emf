@@ -16,7 +16,7 @@ define-macro fhook-tcl
 
 ; buffer-init variables
 set-variable .fhook-tcl.name "Tcl/Tk"
-set-variable .fhook-tcl.setup &reg "/history" "fhook/tcl" "bdfghnopx"
+set-variable .fhook-tcl.setup &reg "/history/fhook/tcl" "bdfghnopx"
 set-variable .fhook-tcl.setup-mask "abdefghikmnoptux"
 set-variable .fhook-tcl.tags "tcltags"
 set-variable .fhook-tcl.comment "|#||#|# | #|r|"

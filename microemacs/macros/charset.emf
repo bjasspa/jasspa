@@ -21,7 +21,7 @@
     !return
 !endif
 ; get the users display char set
-set-variable #l0 &reg "/history" &cat %platform "/char-set" ""
+set-variable #l0 &reg &spr "/history/%s/char-set" %platform ""
 set-variable #l1 1
 set-variable .change-font.type 0
 !if &seq #l0 ""
@@ -76,7 +76,7 @@ set-variable .change-font.type 0
     set-char-mask "M" "ÀAÁAÂAÃAÄAÇCÈEÉEÊEËEÌIÍIÎIÏIÑNÒOÓOÔOÕOÖO×xØOÙUÚUÛUÜUÝYßBàaáaâaäaåaçcèeéeêeëeìiíiîiïiñnòoóoôoõoöoøoùuúuûuüuýyþbÿy"
 !endif
 
-!if &reg "/history" &cat %platform "/ext-char-set" "0"
+!if &reg &spr "/history/%s/ext-char-set" %platform "0"
     set-char-mask "dp" "\CY\CM\CL\CN\CK\CX\CU\CO\CV\CW\CR\CP\CQ\C^\C_\CG\C[\C]"
     set-char-mask "p"  "\CA\CB\CC\CD\CH\CI\CJ\CS\CT\CZ"
     set-variable .osd.checkbox-chars "^\CA\CB\CC\CD^"

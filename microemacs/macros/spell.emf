@@ -655,17 +655,17 @@ set-variable .spell.check-wordo ""
 !emacro
 
 0 define-macro spell-set-language
-    set-variable #l0 &reg "/history" "language" "Default"
+    set-variable #l0 &reg "/history/language" "Default"
     !if @#
         set-variable #l1 $result
-        set-registry "/history" "language" #l1
+        set-registry "/history/language" #l1
         !force exec-file "language"
         !force spell-rules-init
         !if $status
             set-variable #l0 #l1
         !else
             ; language not available swap back!
-            set-registry "/history" "language" #l0
+            set-registry "/history/language" #l0
             !force exec-file "language"
             !force spell-rules-init
         !endif

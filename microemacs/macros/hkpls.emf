@@ -42,7 +42,7 @@ define-macro fhook-pls
 
 ; buffer-init variables
 set-variable .fhook-pls.name "PL/SQL"
-set-variable .fhook-pls.setup &reg "/history" "fhook/pls" "bfhnopx"
+set-variable .fhook-pls.setup &reg "/history/fhook/pls" "bfhnopx"
 set-variable .fhook-pls.setup-mask "abefghikmtux"
 set-variable .fhook-pls.comment "|/*| */|*| * | * |fr|"
 set-variable .fhook-pls.comment-1 "|rem|||rem |||"

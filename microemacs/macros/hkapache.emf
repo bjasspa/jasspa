@@ -14,7 +14,7 @@ define-macro fhook-apache
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-apache.setup &reg "/history" "fhook/apache" "ghnopx"
+set-variable .fhook-apache.setup &reg "/history/fhook/apache" "ghnopx"
 set-variable .fhook-apache.setup-mask "aeghkmnoptux"
 set-variable .fhook-apache.comment   "|#||#|# | #|r|"
 

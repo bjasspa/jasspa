@@ -30,7 +30,7 @@ set-variable .org.addr-lbl  "|Record No|First Name|Surname|Nick Name|Selected|No
 0 define-macro org-addr-init
     set-variable .org.page 3
     !if &seq .org.addr ""
-        set-variable .org.iaddr &cond &seq &reg "/org" "addr/i0" "" "" -1 0
+        set-variable .org.iaddr &cond &seq &reg "/org/addr/i0" "" "" -1 0
         org-addr-inc-recno
     !endif
 !emacro
@@ -38,7 +38,7 @@ set-variable .org.addr-lbl  "|Record No|First Name|Surname|Nick Name|Selected|No
 0 define-macro org-addr-set-entry
     set-variable #l2 &lget .org.addr-reg &abs @#
     !if &les @# 0
-        set-variable #l0 &reg "/org" &spr "addr/%d/%s" .org.addr #l2 ""
+        set-variable #l0 &reg &spr "/org/addr/%d/%s" .org.addr #l2 ""
         set-variable #l1 @ml2 "" #l0
         !if &not &seq #l1 #l0
             !if &seq .org.addr "*"
@@ -47,44 +47,44 @@ set-variable .org.addr-lbl  "|Record No|First Name|Surname|Nick Name|Selected|No
             !if &seq #l1 ""
                 delete-registry &spr "/org/addr/%d/%s" .org.addr #l2
             !else
-                set-registry "/org" &spr "addr/%d/%s" .org.addr #l2 #l1
+                set-registry &spr "/org/addr/%d/%s" .org.addr #l2 #l1
             !endif
             mark-registry "/org" "u"
             !if &equ .org.addr .org.naddr
                 set-variable .org.naddr &add .org.addr 1
-                set-registry "/org" "addr/naddr" .org.naddr
+                set-registry "/org/addr/naddr" .org.naddr
                 !if &gre .org.iaddr -1
-                    set-variable #l3 &lset &reg "/org" &spr "addr/i%d" &div .org.addr 128 "|" &band .org.addr 127 .org.addr
-                    set-registry "/org" &spr "addr/i%d" &div .org.addr 128 #l3
+                    set-variable #l3 &lset &reg &spr "/org/addr/i%d" &div .org.addr 128 "|" &band .org.addr 127 .org.addr
+                    set-registry &spr "/org/addr/i%d" &div .org.addr 128 #l3
                     set-variable .org.iaddr .org.naddr
                     org-addr-dec-recno
                 !endif
             !endif
         !endif
     !else
-        set-variable $result &reg "/org" &spr "addr/%d/%s" .org.addr #l2 ""
+        set-variable $result &reg &spr "/org/addr/%d/%s" .org.addr #l2 ""
     !endif
 !emacro
 
 0 define-macro org-addr-set-check
     set-variable #l2 &lget .org.addr-reg &abs @#
-    set-variable #l0 &reg "/org" &spr "addr/%d/%s" .org.addr #l2 ""
+    set-variable #l0 &reg &spr "/org/addr/%d/%s" .org.addr #l2 ""
     !if &les @# 0
         !if &seq .org.addr "*"
             set-variable .org.addr .org.naddr
         !endif
         !if &seq #l0 ""
-            set-registry "/org" &spr "addr/%d/%s" .org.addr #l2 "*"
+            set-registry &spr "/org/addr/%d/%s" .org.addr #l2 "*"
         !else
             delete-registry &spr "/org/addr/%d/%s" .org.addr #l2
         !endif
         mark-registry "/org" "u"
         !if &equ .org.addr .org.naddr
             set-variable .org.naddr &add .org.addr 1
-            set-registry "/org" "addr/naddr" .org.naddr
+            set-registry "/org/addr/naddr" .org.naddr
             !if &gre .org.iaddr -1
-                set-variable #l3 &lset &reg "/org" &spr "addr/i%d" &div .org.addr 128 "|" &band .org.addr 127 .org.addr
-                set-registry "/org" &spr "addr/i%d" &div .org.addr 128 #l3
+                set-variable #l3 &lset &reg &spr "/org/addr/i%d" &div .org.addr 128 "|" &band .org.addr 127 .org.addr
+                set-registry &spr "/org/addr/i%d" &div .org.addr 128 #l3
                 set-variable .org.iaddr .org.naddr
                 org-addr-dec-recno
             !endif
@@ -105,7 +105,7 @@ set-variable .org.addr-lbl  "|Record No|First Name|Surname|Nick Name|Selected|No
         !elif &gre .org.iaddr -1
             set-variable #l0 0
             !while &les &mul #l0 128 .org.naddr
-                !if &set #l1 &lfi &reg "/org" &spr "addr/i%d" "|" #l0 .org.addr
+                !if &set #l1 &lfi &reg &spr "/org/addr/i%d" "|" #l0 .org.addr
                     set-variable .org.iaddr &add &mul #l0 128 #l1
                     !return
                 !endif
@@ -130,7 +130,7 @@ set-variable .org.addr-lbl  "|Record No|First Name|Surname|Nick Name|Selected|No
                 set-variable .org.iaddr .org.naddr
             !endif
             !while &dec .org.iaddr 1
-                !if &set .org.addr &lget &reg "/org" &spr "addr/i%d" &div .org.iaddr 128 "|" &band .org.iaddr 127
+                !if &set .org.addr &lget &reg &spr "/org/addr/i%d" &div .org.iaddr 128 "|" &band .org.iaddr 127
                     !return
                 !endif
             !done
@@ -154,7 +154,7 @@ set-variable .org.addr-lbl  "|Record No|First Name|Surname|Nick Name|Selected|No
     !if &not @?
         !if &gre .org.iaddr -1
             !while &les &inc .org.iaddr 1 .org.naddr
-                !if &set .org.addr &lget &reg "/org" &spr "addr/i%d" &div .org.iaddr 128 "|" &band .org.iaddr 127
+                !if &set .org.addr &lget &reg &spr "/org/addr/i%d" &div .org.iaddr 128 "|" &band .org.iaddr 127
                     !return
                 !endif
             !done
@@ -177,11 +177,11 @@ set-variable .org.addr-lbl  "|Record No|First Name|Surname|Nick Name|Selected|No
         mark-registry "/org" "u"
         !if &equ &add .org.addr 1 .org.naddr
             set-variable .org.naddr .org.addr
-            set-registry "/org" "addr/naddr" .org.naddr
+            set-registry "/org/addr/naddr" .org.naddr
         !endif
         !if &gre .org.iaddr -1
-            set-variable #l0 &lset &reg "/org" &spr "addr/i%d" &div .org.iaddr 128 "|" &band .org.iaddr 127 ""
-            set-registry "/org" &spr "addr/i%d" &div .org.iaddr 128 #l0
+            set-variable #l0 &lset &reg &spr "/org/addr/i%d" &div .org.iaddr 128 "|" &band .org.iaddr 127 ""
+            set-registry &spr "/org/addr/i%d" &div .org.iaddr 128 #l0
         !endif
         org-addr-inc-recno
     !endif
@@ -193,10 +193,10 @@ set-variable .org.addr-lbl  "|Record No|First Name|Surname|Nick Name|Selected|No
         mark-registry "/org" "u"
         set-variable .org.addr .org.naddr
         set-variable .org.naddr &add .org.addr 1
-        set-registry "/org" "addr/naddr" .org.naddr
+        set-registry "/org/addr/naddr" .org.naddr
         !if &gre .org.iaddr -1
-            set-variable #l3 &lset &reg "/org" &spr "addr/i%d" &div .org.addr 128 "|" &band .org.addr 127 .org.addr
-            set-registry "/org" &spr "addr/i%d" &div .org.addr 128 #l3
+            set-variable #l3 &lset &reg &spr "/org/addr/i%d" &div .org.addr 128 "|" &band .org.addr 127 .org.addr
+            set-registry &spr "/org/addr/i%d" &div .org.addr 128 #l3
             set-variable .org.iaddr .org.naddr
             org-addr-dec-recno
         !endif
@@ -225,15 +225,15 @@ set-variable .org.addr-lbl  "|Record No|First Name|Surname|Nick Name|Selected|No
         !force find-registry &spr "/org/addr/%d" #l0 0
         !if $status
             !if .org.addr-index1
-                set-variable #l1 &reg "/org" &spr "addr/%d/%s" #l0 &lget .org.addr-reg .org.addr-index1 ""
+                set-variable #l1 &reg &spr "/org/addr/%d/%s" #l0 &lget .org.addr-reg .org.addr-index1 ""
                 insert-string &spr "\x01%s" &rep #l1 "\n" "\CM"
             !endif
             !if .org.addr-index2
-                set-variable #l1 &reg "/org" &spr "addr/%d/%s" #l0 &lget .org.addr-reg .org.addr-index2 ""
+                set-variable #l1 &reg &spr "/org/addr/%d/%s" #l0 &lget .org.addr-reg .org.addr-index2 ""
                 insert-string &spr "\x01%s" &rep #l1 "\n" "\CM"
             !endif
             !if .org.addr-index3
-                set-variable #l1 &reg "/org" &spr "addr/%d/%s" #l0 &lget .org.addr-reg .org.addr-index3 ""
+                set-variable #l1 &reg &spr "/org/addr/%d/%s" #l0 &lget .org.addr-reg .org.addr-index3 ""
                 insert-string &spr "\x01%s" &rep #l1 "\n" "\CM"
             !endif
             insert-string &spr "\x01%d\n" #l0
@@ -255,14 +255,14 @@ set-variable .org.addr-lbl  "|Record No|First Name|Surname|Nick Name|Selected|No
         set-variable #l2 &rig @wl $window-col
         set-variable #l1 &lset #l1 &band #l0 127 #l2
         !if &equ &band #l0 127 127
-            set-registry "/org" &spr "addr/i%d" &div #l0 128 #l1
+            set-registry &spr "/org/addr/i%d" &div #l0 128 #l1
             set-variable #l1 "|"
         !endif
         forward-line
     !done
     !force 0 delete-buffer "*org-index-tmp*"
     !if #l0
-        set-registry "/org" &spr "addr/i%d" &div #l0 128 #l1
+        set-registry &spr "/org/addr/i%d" &div #l0 128 #l1
         set-variable .org.iaddr 0
     !else
 *sort-exit
@@ -370,7 +370,7 @@ osd .osd.orga-o 660 "f" " "
             org-addr-inc-recno
         !endif
         !if .org.addr-ffld
-            !if &not &seq &set #l4 &reg "/org" &spr "addr/%d/%s" .org.addr #l2 "" ""
+            !if &not &seq &set #l4 &reg &spr "/org/addr/%d/%s" .org.addr #l2 "" ""
                 !if &band .org.aflag 0x10
                     set-variable #l4 &xis #l4 #l0
                 !else
@@ -385,7 +385,7 @@ osd .osd.orga-o 660 "f" " "
         !else
             set-variable #l2 0
             !while &not &seq &set #l4 &lget .org.addr-reg &inc #l2 1 ""
-                !if &not &seq &set #l4 &reg "/org" &spr "addr/%d/%s" .org.addr #l4 "" ""
+                !if &not &seq &set #l4 &reg &spr "/org/addr/%d/%s" .org.addr #l4 "" ""
                     !if &band .org.aflag 0x10
                         set-variable #l4 &xis #l4 #l0
                     !else
@@ -465,10 +465,10 @@ osd .osd.orga-f 660 "f" " "
 0 define-macro org-addr-buffer
     !if &not &seq .org.addr "*"
         beginning-of-line
-        set-variable #l0 &spr "addr/%d/" .org.addr
+        set-variable #l0 &spr "/org/addr/%d/" .org.addr
         insert-string &spr "Record No: %d\nName:      " .org.addr
-        set-variable #l2 &reg "/org" &cat #l0 "sname" ""
-        !if &not &seq &set #l1 &reg "/org" &cat #l0 "fname" "" ""
+        set-variable #l2 &reg &cat #l0 "sname" ""
+        !if &not &seq &set #l1 &reg &cat #l0 "fname" "" ""
             insert-string #l1
             !if &not &seq #l2 ""
                 insert-space
@@ -478,10 +478,10 @@ osd .osd.orga-f 660 "f" " "
             insert-string #l2
         !endif
         insert-newline
-        !if &not &seq &set #l1 &reg "/org" &cat #l0 "nname" "" ""
+        !if &not &seq &set #l1 &reg &cat #l0 "nname" "" ""
             insert-string &spr "Nick-Name: %s\n" #l1
         !endif
-        !if &or &not &seq &set #l1 &reg "/org" &cat #l0 "pfname" "" "" &not &seq &set #l2 &reg "/org" &cat #l0 "psname" "" ""
+        !if &or &not &seq &set #l1 &reg &cat #l0 "pfname" "" "" &not &seq &set #l2 &reg &cat #l0 "psname" "" ""
             insert-string &spr "Partner:   "
             !if &not &seq #l1 ""
                 insert-string #l1
@@ -494,73 +494,73 @@ osd .osd.orga-f 660 "f" " "
             !endif
             insert-newline
         !endif
-        !force find-registry &spr "/org/%s/home" #l0 0
+        !force find-registry &cat #l0 "home" 0
         !if $status
             insert-string &spr "\nHome:\n"
-            !if &not &seq &set #l1 &reg "/org" &cat #l0 "home/addr" "" ""
+            !if &not &seq &set #l1 &reg &cat #l0 "home/addr" "" ""
                 set-variable #l2 $window-line
                 insert-string &spr "  Address: %s\n" #l1
                 11 org-indent #l2
             !endif
-            !if &not &seq &set #l1 &reg "/org" &cat #l0 "home/tel" "" ""
+            !if &not &seq &set #l1 &reg &cat #l0 "home/tel" "" ""
                 insert-string &spr "\n  Tel:     %s" #l1
             !endif
-            !if &not &seq &set #l1 &reg "/org" &cat #l0 "home/fax" "" ""
+            !if &not &seq &set #l1 &reg &cat #l0 "home/fax" "" ""
                 insert-string &spr "\n  Fax:     %s" #l1
             !endif
-            !if &not &seq &set #l1 &reg "/org" &cat #l0 "home/mob" "" ""
+            !if &not &seq &set #l1 &reg &cat #l0 "home/mob" "" ""
                 insert-string &spr "\n  Mobile:  %s" #l1
             !endif
             !if &len @wl
                 insert-newline
             !endif
-            !if &not &seq &set #l1 &reg "/org" &cat #l0 "home/email" "" ""
+            !if &not &seq &set #l1 &reg &cat #l0 "home/email" "" ""
                 insert-string &spr "\n  E-Mail:  %s" #l1
             !endif
-            !if &not &seq &set #l1 &reg "/org" &cat #l0 "home/www" "" ""
+            !if &not &seq &set #l1 &reg &cat #l0 "home/www" "" ""
                 insert-string &spr "\n  WWW:     %s" #l1
             !endif
-            !if &not &seq &set #l1 &reg "/org" &cat #l0 "home/ftp" "" ""
+            !if &not &seq &set #l1 &reg &cat #l0 "home/ftp" "" ""
                 insert-string &spr "\n  FTP:     %s" #l1
             !endif
             !if &len @wl
                 insert-newline
             !endif
         !endif
-        !force find-registry &spr "/org/%s/work" #l0 0
+        !force find-registry &cat #l0 "work" 0
         !if $status
-            insert-string &spr "\nWork:\n  Company: %s\n" &reg "/org" &cat #l0 "work/comp" ""
-            !if &not &seq &set #l1 &reg "/org" &cat #l0 "work/addr" "" ""
+            insert-string &spr "\nWork:\n  Company: %s\n" &reg &cat #l0 "work/comp" ""
+            !if &not &seq &set #l1 &reg &cat #l0 "work/addr" "" ""
                 set-variable #l2 $window-line
                 insert-string &spr "  Address: %s\n" #l1
                 11 org-indent #l2
             !endif
-            !if &not &seq &set #l1 &reg "/org" &cat #l0 "work/tel" "" ""
+            !if &not &seq &set #l1 &reg &cat #l0 "work/tel" "" ""
                 insert-string &spr "\n  Tel:     %s" #l1
             !endif
-            !if &not &seq &set #l1 &reg "/org" &cat #l0 "work/fax" "" ""
+            !if &not &seq &set #l1 &reg &cat #l0 "work/fax" "" ""
                 insert-string &spr "\n  Fax:     %s" #l1
             !endif
-            !if &not &seq &set #l1 &reg "/org" &cat #l0 "work/mob" "" ""
+            !if &not &seq &set #l1 &reg &cat #l0 "work/mob" "" ""
                 insert-string &spr "\n  Mobile:  %s" #l1
             !endif
             !if &len @wl
                 insert-newline
             !endif
-            !if &not &seq &set #l1 &reg "/org" &cat #l0 "work/email" "" ""
+            !if &not &seq &set #l1 &reg &cat #l0 "work/email" "" ""
                 insert-string &spr "\n  E-Mail:  %s" #l1
             !endif
-            !if &not &seq &set #l1 &reg "/org" &cat #l0 "work/www" "" ""
+            !if &not &seq &set #l1 &reg &cat #l0 "work/www" "" ""
                 insert-string &spr "\n  WWW:     %s" #l1
             !endif
-            !if &not &seq &set #l1 &reg "/org" &cat #l0 "work/ftp" "" ""
+            !if &not &seq &set #l1 &reg &cat #l0 "work/ftp" "" ""
                 insert-string &spr "\n  FTP:     %s" #l1
             !endif
             !if &len @wl
                 insert-newline
             !endif
         !endif
-        !if &not &seq &set #l1 &reg "/org" &cat #l0 "notes" "" ""
+        !if &not &seq &set #l1 &reg &cat #l0 "notes" "" ""
             set-variable #l2 &add $window-line 1
             insert-string &spr "\nNotes:     %s\n" #l1
             11 org-indent #l2

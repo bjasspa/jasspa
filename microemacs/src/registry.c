@@ -1052,10 +1052,11 @@ setRegistry (int f, int n)
     /* Get the arguments */
     if(meGetString((meUByte *)"Registry Path", 0, 0, buf1, meBUF_SIZE_MAX) == meABORT)
         return meABORT;
-    if((rnp = regFind(&root,buf1)) == NULL)
-        return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Cannot find node %s]",buf1);
     if(n & 0x02)
     {
+        if((rnp = regFind(&root,buf1)) == NULL)
+            return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Cannot find node %s]",buf1);
+        
         /* setting the name of the node, not the value */
         if(meGetString((meUByte *)"name", 0, 0, buf2, meBUF_SIZE_MAX) == meABORT)
             return meABORT;
@@ -1098,12 +1099,11 @@ setRegistry (int f, int n)
     }
     else
     {
-        if((meGetString((meUByte *)"Sub key", 0, 0, buf1, meBUF_SIZE_MAX) == meABORT) ||
-           (meGetString((meUByte *)"Value", 0, 0, buf2, meBUF_SIZE_MAX) == meABORT))
+        if(meGetString((meUByte *)"Value", 0, 0, buf2, meBUF_SIZE_MAX) == meABORT)
             return meABORT;
 
         /* Assigns the new value */
-        if(regSet(rnp,buf1,buf2) == NULL)
+        if(regSet(&root,buf1,buf2) == NULL)
             return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Cannot set registry node]");
     }
     return meTRUE;

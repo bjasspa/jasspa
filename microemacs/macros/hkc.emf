@@ -21,7 +21,7 @@ define-macro fhook-c
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-c.setup &reg "/history" "fhook/c" "bdfghnopx"
+set-variable .fhook-c.setup &reg "/history/fhook/c" "bdfghnopx"
 set-variable .fhook-c.setup-mask "abdefghikmnoptux"
 set-variable .fhook-c.tags "ctags"
 

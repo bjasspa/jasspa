@@ -17,7 +17,7 @@ define-macro fhook-f90
 
 ; buffer-init variables
 set-variable .fhook-f90.name "Fortran 90"
-set-variable .fhook-f90.setup &reg "/history" "fhook/f90" "bghinopx"
+set-variable .fhook-f90.setup &reg "/history/fhook/f90" "bghinopx"
 set-variable .fhook-f90.setup-mask "aebghikmnoptux"
 set-variable .fhook-f90.comment "|!||!|! | !|r|"
 set-variable .fhook-f90.exact -1

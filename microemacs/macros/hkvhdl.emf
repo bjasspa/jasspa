@@ -21,7 +21,7 @@ define-macro fhook-vhdl
 
 ; buffer-init variables
 set-variable .fhook-vhdl.name "VHDL"
-set-variable .fhook-vhdl.setup &reg "/history" "fhook/vhdl" "ghinopx"
+set-variable .fhook-vhdl.setup &reg "/history/fhook/vhdl" "ghinopx"
 set-variable .fhook-vhdl.setup-mask "aeghikmnoptux"
 set-variable .fhook-vhdl.comment "|--||-|-- | --|r|"
 set-variable .fhook-vhdl.exact -1

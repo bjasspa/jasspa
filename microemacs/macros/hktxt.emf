@@ -16,7 +16,7 @@ define-macro fhook-txt
 
 ; buffer-init variables
 set-variable .fhook-txt.name "Text"
-set-variable .fhook-txt.setup &reg "/history" "fhook/txt" "gijopsw"
+set-variable .fhook-txt.setup &reg "/history/fhook/txt" "gijopsw"
 set-variable .fhook-txt.setup-mask "aefghijkmnopstuwx"
 
 ; Set up for documentation mode.

@@ -14,7 +14,7 @@ define-macro fhook-samba
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-samba.setup &reg "/history" "fhook/samba" "ghnopx"
+set-variable .fhook-samba.setup &reg "/history/fhook/samba" "ghnopx"
 set-variable .fhook-samba.setup-mask "aeghkmnoptux"
 set-variable .fhook-samba.comment   "|#||#|# | #|r|"
 set-variable .fhook-samba.comment-1 "|;||;|; | ;|r|"

@@ -18,7 +18,7 @@ define-macro fhook-idl
 
 ; buffer-init variables
 set-variable .fhook-idl.name "OMG IDL"
-set-variable .fhook-idl.setup &reg "/history" "fhook/idl" "dfghnopx"
+set-variable .fhook-idl.setup &reg "/history/fhook/idl" "dfghnopx"
 set-variable .fhook-idl.setup-mask "adefghikmnoptux"
 set-variable .fhook-idl.comment "|//||*|// | //|r|"
 set-variable .fhook-idl.exact -1

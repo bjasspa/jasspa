@@ -559,7 +559,7 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
     insert-string "; See the file me.emf for copying and conditions.\n"
     insert-string &spr "; Description: %s\n" .schm-osd.desc
     ; Setup the printer options
-    insert-string &spr "set-registry \"/\" \"print/scheme-flags\" %d\n" .schm-osd.print-option
+    insert-string &spr "set-registry \"/print/scheme-flags\" %d\n" .schm-osd.print-option
     ; write-out all the color definitions
     insert-string "; Create the colors first\n0 print-color\n"
     set-variable #l0 0
@@ -833,7 +833,7 @@ define-macro scheme-editor
         set-variable .schm-osd.fname #l0
         0 schm-osd-load-fname
     !elif &seq .schm-osd.fname "ERROR"
-        set-variable .schm-osd.fname &reg "/history" &cat %platform "/scheme" "schemed"
+        set-variable .schm-osd.fname &reg &spr "/history/%s/scheme" %platform "schemed"
         0 schm-osd-load-fname
     !endif
     .osd.schm osd

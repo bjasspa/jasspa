@@ -14,7 +14,7 @@ define-macro fhook-scheme
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-scheme.setup &reg "/history" "fhook/scheme" "ghiopx"
+set-variable .fhook-scheme.setup &reg "/history/fhook/scheme" "ghiopx"
 set-variable .fhook-scheme.setup-mask "aeghikmoptux"
 set-variable .fhook-scheme.comment "|;||;|; | ;|r|"
 

@@ -141,20 +141,20 @@ set-variable .org.bind-r1 "|1|1|1|1|"
         !endif
     !endif
     !if &les @# 0
-        set-variable #l0 &reg "/org" &spr "cal/%s/%s/%s" #l4 #l3 #l2 &reg "/org" &spr "cal/*/%s/%s" #l3 #l2 ""
+        set-variable #l0 &reg &spr "/org/cal/%s/%s/%s" #l4 #l3 #l2 &reg &spr "/org/cal/*/%s/%s" #l3 #l2 ""
         set-variable #l1 @ml2 "" #l0
         !if &not &seq #l0 #l1
-            !if &seq #l1 &reg "/org" &spr "cal/*/%s/%s" #l3 #l2 ""
+            !if &seq #l1 &reg &spr "/org/cal/*/%s/%s" #l3 #l2 ""
                 delete-registry &spr "/org/cal/%s/%s/%s" #l4 #l3 #l2 #l1
             !elif &seq #l1 ""
-                set-registry "/org" &spr "cal/%s/%s/%s" #l4 #l3 #l2 " "
+                set-registry &spr "/org/cal/%s/%s/%s" #l4 #l3 #l2 " "
             !else
-                set-registry "/org" &spr "cal/%s/%s/%s" #l4 #l3 #l2 #l1
+                set-registry &spr "/org/cal/%s/%s/%s" #l4 #l3 #l2 #l1
             !endif
             mark-registry "/org" "u"
         !endif
     !else
-        set-variable $result &reg "/org" &spr "cal/%s/%s/%s" #l4 #l3 #l2 &reg "/org" &spr "cal/*/%s/%s" #l3 #l2 ""
+        set-variable $result &reg &spr "/org/cal/%s/%s/%s" #l4 #l3 #l2 &reg &spr "/org/cal/*/%s/%s" #l3 #l2 ""
     !endif
 !emacro
 
@@ -174,7 +174,7 @@ set-variable .org.bind-r1 "|1|1|1|1|"
     insert-string &spr "       Week %s, %d %s %s\n\n" .org.week #l2 &lget .org.months #l3 #l4
     set-variable #l6 0
     !repeat
-        set-variable #l7 &reg "/org" &spr "cal/%s/%s/%s" #l4 #l3 #l2 &reg "/org" &spr "cal/*/%s/%s" #l3 #l2 ""
+        set-variable #l7 &reg &spr "/org/cal/%s/%s/%s" #l4 #l3 #l2 &reg &spr "/org/cal/*/%s/%s" #l3 #l2 ""
         set-variable #l8 &add $window-line 1
         set-variable #l1 &add 1 &mod &add &pinc #l6 1 &lef .org.set 1 7 
         insert-string &spr "%2d %s %s\n" #l2 &lef &lget .org.days #l1 3 #l7

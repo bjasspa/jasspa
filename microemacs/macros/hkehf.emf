@@ -25,7 +25,7 @@ define-macro fhook-ehf
 
 ; buffer-init variables
 set-variable .fhook-ehf.name "ME Help"
-set-variable .fhook-ehf.setup &reg "/history" "fhook/ehf" "ghijmopwx"
+set-variable .fhook-ehf.setup &reg "/history/fhook/ehf" "ghijmopwx"
 set-variable .fhook-ehf.setup-mask "aeghijkopstuwx1"
 set-variable .fhook-ehf.command-flag  "|th|th|th|"
 set-variable .fhook-ehf.command-name  "|ehf-process-link|ehf-backward-link|ehf-forward-link|"

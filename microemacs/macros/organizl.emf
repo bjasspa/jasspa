@@ -17,7 +17,7 @@
 !emacro
     
 0 define-macro org-list-entry
-    set-variable #l0 &reg "/org" &spr "list/%s/%d" .org.list &abs @# ""
+    set-variable #l0 &reg &spr "/org/list/%s/%d" .org.list &abs @# ""
     !if &les @# 0
         !if &seq #l0 " "
             set-variable #l0 ""
@@ -25,9 +25,9 @@
         set-variable #l1 @ml2 "" #l0
         !if &not &seq #l0 #l1
             !if &seq #l1 ""
-                set-registry "/org" &spr "list/%s/%d" .org.list &abs @# " "
+                set-registry &spr "/org/list/%s/%d" .org.list &abs @# " "
             !else
-                set-registry "/org" &spr "list/%s/%d" .org.list &abs @# #l1
+                set-registry &spr "/org/list/%s/%d" .org.list &abs @# #l1
             !endif
             mark-registry "/org" "u"
         !endif
@@ -39,7 +39,7 @@
     set-variable #l0 ""
     osd-entry "Organizer" "\HNew List : " #l0 20
     set-variable .org.list #l0
-    set-registry "/org" &spr "list/%s" .org.list ""
+    set-registry &spr "/org/list/%s" .org.list ""
     mark-registry "/org" "u"
     org-list-item
 !emacro
@@ -54,11 +54,11 @@
     !endif
 !emacro
 0 define-macro org-list-nolines
-    set-variable #l0  &reg "/org" &spr "list/%s/nolines" .org.list 1
+    set-variable #l0  &reg &spr "/org/list/%s/nolines" .org.list 1
     !if &les @# 0
         set-variable #l1 @ml2 "" #l0
         !if &and &gre #l1 0 &not &seq #l0 #l1
-            set-registry "/org" &spr "list/%s/nolines" .org.list #l1
+            set-registry &spr "/org/list/%s/nolines" .org.list #l1
             mark-registry "/org" "u"
             org-list-setup
         !endif
@@ -76,34 +76,34 @@
         ; New
         set-variable .org.listsize &add .org.listsize 1
         set-variable .org.listitem .org.listsize
-        set-registry "/org" &spr "list/%s/%d" .org.list .org.listitem " "
+        set-registry &spr "/org/list/%s/%d" .org.list .org.listitem " "
     !elif &equ @# 2
         ; Up
-        set-variable #l0 &reg "/org" &spr "list/%s/%d" .org.list .org.listitem " "
+        set-variable #l0 &reg &spr "/org/list/%s/%d" .org.list .org.listitem " "
         set-variable #l1 &sub .org.listitem 1
-        set-registry "/org" &spr "list/%s/%d" .org.list .org.listitem &reg "/org" &spr "list/%s/%d" .org.list #l1 " "
-        set-registry "/org" &spr "list/%s/%d" .org.list #l1 #l0
+        set-registry &spr "/org/list/%s/%d" .org.list .org.listitem &reg &spr "/org/list/%s/%d" .org.list #l1 " "
+        set-registry &spr "/org/list/%s/%d" .org.list #l1 #l0
         set-variable .org.listitem #l1
     !elif &equ @# 3
         ; Down
-        set-variable #l0 &reg "/org" &spr "list/%s/%d" .org.list .org.listitem " "
+        set-variable #l0 &reg &spr "/org/list/%s/%d" .org.list .org.listitem " "
         set-variable #l1 &add .org.listitem 1
-        set-registry "/org" &spr "list/%s/%d" .org.list .org.listitem &reg "/org" &spr "list/%s/%d" .org.list #l1 " "
-        set-registry "/org" &spr "list/%s/%d" .org.list #l1 #l0
+        set-registry &spr "/org/list/%s/%d" .org.list .org.listitem &reg &spr "/org/list/%s/%d" .org.list #l1 " "
+        set-registry &spr "/org/list/%s/%d" .org.list #l1 #l0
         set-variable .org.listitem #l1
     !elif &equ @# 4
         ; Insert
         set-variable .org.listsize &add .org.listsize 1
         set-variable #l0 .org.listsize
         !repeat
-            set-registry "/org" &spr "list/%s/%d" .org.list #l0 &reg "/org" &spr "list/%s/%d" .org.list &sub #l0 1 " "
+            set-registry &spr "/org/list/%s/%d" .org.list #l0 &reg &spr "/org/list/%s/%d" .org.list &sub #l0 1 " "
         !until &equ &dec #l0 1 .org.listitem
-        set-registry "/org" &spr "list/%s/%d" .org.list #l0 " "
+        set-registry &spr "/org/list/%s/%d" .org.list #l0 " "
     !elif &equ @# 5
         ; Delete
         set-variable #l0 .org.listitem
         !while &les &pinc #l0 1  .org.listsize
-            set-registry "/org" &spr "list/%s/%d" .org.list &sub #l0 1 &reg "/org" &spr "list/%s/%d" .org.list #l0 " "
+            set-registry &spr "/org/list/%s/%d" .org.list &sub #l0 1 &reg &spr "/org/list/%s/%d" .org.list #l0 " "
         !done
         delete-registry &spr "/org/list/%s/%d" .org.list .org.listsize
         set-variable .org.listsize &sub .org.listsize 1
@@ -127,8 +127,8 @@
     -1 osd .osd.orgl-c
     osd .osd.orgl-c 0 "sF" 60 25 -1 -1 &mul .org.listitem 2
     set-variable #l0 0
-    set-variable #l1 &reg "/org" &spr "list/%s/nolines" .org.list 1
-    !while &not &seq "" &reg "/org" &spr "list/%s/%d" .org.list &inc #l0 1 ""
+    set-variable #l1 &reg &spr "/org/list/%s/nolines" .org.list 1
+    !while &not &seq "" &reg &spr "/org/list/%s/%d" .org.list &inc #l0 1 ""
         !if &equ #l0 .org.listitem
             osd .osd.orgl-c    &mul #l0 2 "HfhzxR" .scheme.osd-entry 4 #l1 #l0 #l0 org-list-item
         !else
@@ -165,7 +165,7 @@
     beginning-of-line
     insert-string &spr "       List: %s\n\n" .org.list
     set-variable #l0 0
-    !while &not &seq "" &set #l1 &reg "/org" &spr "list/%s/%d" .org.list &inc #l0 1 ""
+    !while &not &seq "" &set #l1 &reg &spr "/org/list/%s/%d" .org.list &inc #l0 1 ""
         set-variable #l4 &add $window-line 1
         insert-string &spr "%2d: %s\n" #l0 #l1
         set-variable #l5 $window-line

@@ -2,7 +2,7 @@
 ; Copyright (C) 1999-2004 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ; Description: Epson ESC/P Color
-set-registry "/" "print/scheme-flags" 3
+set-registry "/print/scheme-flags" 3
 ; Create the colors first
 0 print-color
 print-color 0 0 0 0

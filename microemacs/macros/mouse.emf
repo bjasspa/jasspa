@@ -657,11 +657,11 @@
         set-variable #l0 "ERROR"
         !if &band .mode 15
             ; Not in the text window 
-            !if &reg "/history" &cat "mouse/" &spr .mask "auto" "0"
+            !if &reg &cat "/history/mouse/" &spr .mask "auto" "0"
                 ; do the scroll bar stuff
                 set-variable #l0 "mouse-auto-pick-event"
                 set-variable .drop-cmd "1 goto-position \"\x82\""
-            !elif &seq &reg "/history" &cat "mouse/" &spr .mask "drop" "" "mouse-osd-multi"
+            !elif &seq &reg &cat "/history/mouse/" &spr .mask "drop" "" "mouse-osd-multi"
                 ; do the popup menus
                 set-variable #l0 "1 goto-position \"\x82\""
                 set-variable .drop-cmd "mouse-osd-multi"
@@ -674,8 +674,8 @@
         !elif &not &seq &set #l0 :mouse-pick-all "ERROR"
             set-variable .drop-cmd :mouse-drop-all
         !else
-            set-variable #l0 &reg "/history" &cat "mouse/" #l1 "" ""
-            set-variable .drop-cmd &reg "/history" &cat "mouse/" &spr .mask "drop" ""
+            set-variable #l0 &reg &cat "/history/mouse/" #l1 ""
+            set-variable .drop-cmd &reg &cat "/history/mouse/" &spr .mask "drop" ""
         !endif
         set-variable .state 1
     !elif &not .state
@@ -717,20 +717,20 @@ set-variable .mouse-event.mask "mouse-%s-1"
     1 set-cursor-to-mouse
     !if &not &seq &set #l0 &ind &cat ":" #l1 "ERROR"
         execute-line #l0
-    !elif &not &seq &set #l0 &reg "/history" &cat "mouse/" #l1 "" ""
+    !elif &not &seq &set #l0 &reg &cat "/history/mouse/" #l1 "" ""
         execute-line #l0
     !endif
 !emacro
 
 set-variable #l0 0
-set-variable #l9 &reg "/history" &cat $platform "/mouse2to3" 0
+set-variable #l9 &reg &spr "/history/%s/mouse2to3" $platform 0
 !force find-registry "/history/mouse" &pinc #l0 1
 !while $status
     !if &sin "-auto" $result
     !elif &set #l2 &sin "-wup" $result
         set-variable #l1 $result
         global-bind-key mouse-wheel-event #l1
-        !if &seq &reg "/history" &cat "mouse/" #l1 "" "scroll-up"
+        !if &seq &reg &cat "/history/mouse/" #l1 "" "scroll-up"
             ml-bind-key scroll-up #l1
         !else
             ml-bind-key backward-line #l1
@@ -744,7 +744,7 @@ set-variable #l9 &reg "/history" &cat $platform "/mouse2to3" 0
     !elif &set #l2 &sin "-wdown" $result
         set-variable #l1 $result
         global-bind-key mouse-wheel-event #l1
-        !if &seq &reg "/history" &cat "mouse/" #l1 "" "scroll-down"
+        !if &seq &reg &cat "/history/mouse/" #l1 "" "scroll-down"
             ml-bind-key scroll-down #l1
         !else
             ml-bind-key forward-line #l1
@@ -760,7 +760,7 @@ set-variable #l9 &reg "/history" &cat $platform "/mouse2to3" 0
         global-bind-key mouse-event #l1
         !if &set #l2 &sin "-drop" #l1
             set-variable #l2 &cat &cat &lef #l1 #l2 "pick" &rig #l1 &add #l2 4
-            !if &sin "yank" &reg "history/mouse" #l1 ""
+            !if &sin "yank" &reg &cat "/history/mouse/" #l1 ""
                 ml-bind-key void #l2
                 ml-bind-key yank #l1
             !else

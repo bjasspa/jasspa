@@ -14,7 +14,7 @@ define-macro fhook-fvwm
 
 ; buffer-init variables
 set-variable .fhook-fvwm.name "FVWM"
-set-variable .fhook-fvwm.setup &reg "/history" "fhook/fvwm" "ghiopx"
+set-variable .fhook-fvwm.setup &reg "/history/fhook/fvwm" "ghiopx"
 set-variable .fhook-fvwm.setup-mask "aeghikmoptux"
 set-variable .fhook-fvwm.comment "|#||#|# | #|r|"
 set-variable .fhook-fvwm.exact -1

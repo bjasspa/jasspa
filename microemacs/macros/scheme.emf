@@ -13,7 +13,7 @@
 ;
 0 define-macro scheme
     ; Execute the required color scheme creator macro file:
-    !force -1 exec-file &reg "/history" &cat %platform "/scheme" "schemed"
+    !force -1 exec-file &reg &spr "/history/%s/scheme" %platform "schemed"
 !emacro
 ; The LAST color is set by .scheme.next below.
 !if &not &exi .scheme.next

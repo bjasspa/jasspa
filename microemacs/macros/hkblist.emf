@@ -15,7 +15,7 @@ define-macro fhook-blist
 
 ; buffer-init variables
 set-variable .fhook-blist.name "Buffer List"
-set-variable .fhook-blist.setup &reg "/history" "fhook/blist" "gop"
+set-variable .fhook-blist.setup &reg "/history/fhook/blist" "gop"
 set-variable .fhook-blist.setup-mask "aegmop"
 set-variable .fhook-blist.command-flag  "|thbio|bio|thbio|bio|thbio|bio|h|thbio|bio|thbio|bio|h|thbio|bio|thbio|bio|thbio|bio|h|"
 set-variable .fhook-blist.command-name  "|blist-command|blist-command|blist-command|blist-command|blist-command|blist-command||blist-command|blist-command|blist-command|blist-command||list-buffers|list-buffers|blist-command|blist-command|blist-command|blist-command||"

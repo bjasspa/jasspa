@@ -15,7 +15,7 @@ define-macro fhook-jsp
 
 ; buffer-init variables
 set-variable .fhook-jsp.name "JSP"
-set-variable .fhook-jsp.setup &reg "/history" "fhook/jsp" "cdghinopsx"
+set-variable .fhook-jsp.setup &reg "/history/fhook/jsp" "cdghinopsx"
 set-variable .fhook-jsp.setup-mask "acdeghikmnopstux"
 set-variable .fhook-jsp.command-flag  "|"
 set-variable .fhook-jsp.command-name  "|"

@@ -15,7 +15,7 @@ define-macro fhook-php
 
 ; buffer-init variables
 set-variable .fhook-php.name "PHP"
-set-variable .fhook-php.setup &reg "/history" "fhook/php" "cdghinopsx"
+set-variable .fhook-php.setup &reg "/history/fhook/php" "cdghinopsx"
 set-variable .fhook-php.setup-mask "acdeghikmnopstux"
 set-variable .fhook-php.command-flag  "|"
 set-variable .fhook-php.command-name  "|"

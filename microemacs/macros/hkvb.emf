@@ -15,7 +15,7 @@ define-macro fhook-vb
 
 ; buffer-init variables
 set-variable .fhook-vb.name "Visual Basic"
-set-variable .fhook-vb.setup &reg "/history" "fhook/vb" "dghiopx"
+set-variable .fhook-vb.setup &reg "/history/fhook/vb" "dghiopx"
 set-variable .fhook-vb.setup-mask "adeghikmoptux"
 set-variable .fhook-vb.tags "vbtags"
 set-variable .fhook-vb.comment "|'||'|' | '|r|"

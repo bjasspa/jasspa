@@ -14,7 +14,7 @@ define-macro fhook-rul
     buffer-init-hooks
 !emacro
 set-variable .fhook-rul.name "Install Shield Rul"
-set-variable .fhook-rul.setup &reg "/history" "fhook/rul" "bdfghnopx"
+set-variable .fhook-rul.setup &reg "/history/fhook/rul" "bdfghnopx"
 set-variable .fhook-rul.setup-mask "abdefghikmnoptux"
 set-variable .fhook-rul.comment "|/*| */|*| * | * |fr|"
 set-variable .fhook-rul.comment-1 "|//||/|// | //||"

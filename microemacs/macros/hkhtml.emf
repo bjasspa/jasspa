@@ -21,7 +21,7 @@ define-macro fhook-html
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-html.setup &reg "/history" "fhook/html" "cdghinopsx"
+set-variable .fhook-html.setup &reg "/history/fhook/html" "cdghinopsx"
 set-variable .fhook-html.setup-mask    "acdeghikmnopstux"
 set-variable .fhook-html.setup-flags   "|c|"
 set-variable .fhook-html.setup-labels  "|Use Author Mode|"
