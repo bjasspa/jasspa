@@ -16,8 +16,8 @@ define-macro fhook-latex
 !emacro
 
 set-variable .fhook-latex.name "LaTeX"
-set-variable .fhook-latex.setup &reg "/history" "fhook/latex" "fghinopsx"
-set-variable .fhook-latex.setup-mask "aefghijkmnopstuwx"
+set-variable .fhook-latex.setup &reg "/history" "fhook/latex" "bfghinopsx"
+set-variable .fhook-latex.setup-mask "abefghijkmnopstuwx"
 set-variable .fhook-latex.tags "textags"
 set-variable .fhook-latex.comment "|%||%|% | %||"
 set-variable .fhook-latex.command-flag  "|bo|bo|bo|bo|thb|thb|thb|th|thb|th|th|thbH|"
