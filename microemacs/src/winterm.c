@@ -72,6 +72,12 @@
 #include <string.h>                     /* String functions */
 #include <time.h>                       /* Time definitions */
 
+/* Shell objects for application directory locations. may not 
+ * work in versions earler than 6.x */
+#ifndef _WIN32s
+#include <shlobj.h>                     /* Shell object */
+#endif
+
 #ifndef WM_MOUSEWHEEL
 #define WM_MOUSEWHEEL (WM_MOUSELAST+1)  // message that will be supported
                                         // by the OS
@@ -5272,6 +5278,44 @@ meFrameSetWindowSize(meFrame *frame)
 }
 
 #ifndef _NANOEMACS
+static void
+winPutenv (char *label, char *value, int ispath)
+{
+    char  buf [meBUF_SIZE_MAX];
+    int ii;
+    
+    /* Push into the environment. Note that we strdup the name since it MUST
+     * exist for the duration of the program life. */
+    strcpy (buf, label);
+    strcat (buf, "=");
+    ii = strlen (buf);
+       
+    /* If it is a path then convert directory characters */
+    if (ispath)
+    {
+        while (*value != '\0')
+        {
+#if (DIR_CHAR == '/')
+            if (*value == '\\')
+                buf[ii] = DIR_CHAR;
+#else
+            if (*value == '/')
+                buf[ii] = DIR_CHAR;
+#endif
+            else
+                buf[ii] = *value;
+            ii++;
+            value++;
+        }
+        buf[ii] = '\0';
+    }
+    else
+        strcpy (&buf[ii], value);
+    
+    /* Push into the environment */
+    mePutenv(meStrdup(buf)) ;
+}    
+
 /****************************************************************************
  *
  * Read me32.ini
@@ -5290,17 +5334,37 @@ readIniFile (void)
     LPTSTR lpSectionNames;
     LPTSTR lpTemp;
     int ii;
-
+    
+    /* Get the default login name */
     status = meBUF_SIZE_MAX;                    /* Size of the retrieve buffer */
+    if ((GetUserName (logname, &status) == meTRUE) && (logname[0] != '\0'))
+        meStrrep(&loginName,(meUByte *)(logname)) ; 
+    
+    /* Decide on a name. */
     if (((p = meGetenv ("MENAME")) != NULL) && (*p != '\0'))
         strcpy (logname, p);
-    else if ((GetUserName (logname, &status) == meTRUE) && (logname[0] != '\0'))
-        ;
+    else if ((loginName != NULL) && (logname[0] != '\0'))
+        strcpy (logname, loginName);
     else if (((p = meGetenv ("LOGNAME")) != NULL) && (*p != '\0'))
         strcpy (logname, p);
     else
         strcpy (logname, meUserName);
-
+    
+    /* Get the default application data folder */
+#if (defined CSIDL_APPDATA)
+    {
+        char szPath[_MAX_PATH];         /* Path store */
+        
+        /* Get a pointer to an item ID list that represents the path of a
+         * special folder */
+        if (SHGetSpecialFolderPath(NULL, szPath, CSIDL_APPDATA, FALSE) != NOERROR)
+        {
+            meStrrep(&loginHome,(meUByte *)(szPath)) ; 
+            fileNameConvertDirChar (loginHome);
+        }
+    }
+#endif    
+        
     /* Get the user defaults and push them into the environment. */
     /* copy logname to a different buffer so we can change logname if required */
     strcpy (buf2, logname);
@@ -5317,24 +5381,13 @@ readIniFile (void)
         /* If the user has chaged their MENAME then remember the new name. */
         if ((strcmp(buf3, "MENAME") == 0) && (buf1[0] != '\0'))
             strcpy (logname, buf1);
-        else
-        {
-            /* Add a '=' and concat the data */
-            strcat(buf3, "=");             /* Add '=' assignment */
-            strcat(buf3, buf1);            /* Add the data */
-            mePutenv(meStrdup(buf3));      /* Duplicate for putenv */
-        }
+        else if ((strcmp(buf3, "MEUSERPATH") == 0) && (buf1[0] != '\0'))
+            winPutenv (buf3, buf1, 1);
     }
     HeapFree (GetProcessHeap(), 0L, lpSectionNames);
     
     /* set the $MENAME env to logname */
-    strcpy (buf1,"MENAME=");
-    strcpy (buf1+7,logname);
-    if((p = meStrdup(buf1)) != NULL)
-    {
-        mePutenv (p) ;
-        meUserName = p+7 ;
-    }
+    winPutenv ("MENAME", logname, 0);
 
     /*
      * [Defaults] mepath=pathname
@@ -5348,61 +5401,21 @@ readIniFile (void)
     {
         GetPrivateProfileString (iniSections [ii],"mepath","",buf1,meBUF_SIZE_MAX,ME_INI_FILE);
         if (buf1[0] != '\0')
+        {
+            winPutenv ("MEPATH", buf1, 1);
             break;
+        }
     }
 
-    /* Search for the default user path */
+    /* Search for the default install path */
     for (ii = 0; iniSections [ii] != NULL; ii++)
     {
-        GetPrivateProfileString (iniSections [ii],"userpath","",buf2,meBUF_SIZE_MAX,ME_INI_FILE);
-        if (buf2[0] != '\0')
-            break;
-    }
-
-    /* If the user path cannot be found then copy the default search path */
-    if ((buf1[0] != '\0') && (buf2[0] == '\0'))
-        strcpy (buf2, buf1);
-
-    /* Construct the userpath from the logname */
-    if (buf2[0] != '\0')
-    {
-        char cc;
-
-        /* Concatinate the mename */
-        len = strlen(buf2);
-        if (((cc = buf2[len-1]) != '\\') && (cc != '/'))
-            strcat (buf2, "/");
-        strcat (buf2, meUserName);
-    }
-
-    /* Concatinate the search and user paths. */
-    if ((buf1[0] != '\0') || (buf2[0] != '\0'))
-    {
-        strcpy (buf3, "MEPATH=");
-        if (buf2[0] != '\0')
-        {
-            strcat (buf3, buf2);
-            strcat (buf3, ";");
-        }
+        GetPrivateProfileString (iniSections [ii],"meinstallpath","",buf1,meBUF_SIZE_MAX,ME_INI_FILE);
         if (buf1[0] != '\0')
         {
-            strcat (buf3, buf1);
-            strcat (buf3, ";");
+            winPutenv ("MEINSTALLPATH", buf1, 1);
+            break;
         }
-
-        /* Push into the environment. Note that we strdup the name since it
-         * MUST exist for the duration of the program life.
-         * Convert all '\\' to '/' */
-        p = buf3;
-#if DIR_CHAR == '/'
-        while((p=strchr(p,'\\')) != NULL)    /* got a '\\', -> '/' */
-            *p++ = DIR_CHAR ;
-#else
-        while((p=strchr(p,'/')) != NULL)     /* got a '/', -> '\\' */
-            *p++ = DIR_CHAR ;
-#endif
-        p = meStrdup(buf3);
-        mePutenv(p);
     }
 
 #ifdef _ME_WINDOW
