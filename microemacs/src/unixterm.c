@@ -2211,7 +2211,9 @@ TCAPgetattr (meTermio p)
 #ifdef _TERMIOS
         p->c_cc [VWERASE] = 'H' - '@';  /* '#' */
         p->c_cc [VLNEXT] = CLNEXT;      /* C-v */
+#ifdef VDSUSP
         p->c_cc [VDSUSP] = CSUSP;       /* C-z */
+#endif
         p->c_cc [VSUSP] = CSUSP;        /* C-z */
         p->c_cc [VSTART] = CSTART;      /* C-q */
         p->c_cc [VSTOP]  = CSTOP;       /* C-s */
