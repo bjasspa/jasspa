@@ -36,38 +36,53 @@
     set-variable #l9 0
     !repeat
         !if &exi :watch
-            set-variable #l2 &stat d $buffer-fname
-            !if &gre #l2 :watch
-                ml-write &spr "[Watch updating %s]" $buffer-bname
-                !if &not &exi :watch-size
+            !if &exi :watch-size
+                set-variable #l2 &stat s $buffer-fname
+                ;ml-write &spr "Watch-size %s : %s %s" $time :watch-size #l2
+                !if &equ :watch-size #l2
+                !elif &les #l2 :watch-size
                     !force !force reread-file
                     set-variable $buffer-mode-line &rep $buffer-mode-line "%k" "%kW"
+                    set-variable :watch-size #l2
+                    set-variable :watch "0"
                     set-variable #l9 1
-                !elif &equ :watch-size &set #l3 &stat s $buffer-fname
-                !elif &les #l3 :watch-size
-                    !force !force reread-file
-                    set-variable $buffer-mode-line &rep $buffer-mode-line "%k" "%kW"
-                    set-variable :watch-size #l3
-                    set-variable #l9 1
-                !elif &gre #l3 :watch-size
+                !elif &gre #l2 :watch-size
                     0xce set-position "\x81"
                     set-variable #l5 &seq @wc ""
                     end-of-buffer
+                    ; check whether the last read had only a partial line (no terminating \n)
+                    !if &set #l6 &gre $window-line 1
+                        backward-line
+                        set-variable #l6 &cond &band $line-flags 0x10 &add $window-line 1 0
+                        forward-line
+                    !endif
                     set-variable #l4 &bmod "edit"
                     !force 1 buffer-mode "edit" "y"
-                    !force !force -1 insert-file $buffer-fname :watch-size &sub #l3 :watch-size
+                    !force !force -1 insert-file $buffer-fname :watch-size &sub #l2 :watch-size
+                    !if &and #l6 &sub $window-line #l6
+                        set-variable $window-line #l6
+                        backward-delete-char
+                    !endif
                     &cond #l4 1 -1 buffer-mode "edit"
                     !force goto-position "\x81"
                     !if #l5
                         end-of-buffer
                     !endif
-                    set-variable :watch-size #l3
+                    set-variable :watch-size #l2
                     set-variable #l9 1
                 !endif
-                set-variable :watch #l2
+            !else
+                set-variable #l2 &stat d $buffer-fname
+                ;ml-write &spr "Watch-date %s : %s %s" $time :watch #l2
+                !if &gre #l2 :watch
+                    ml-write &spr "[Watch updating %s]" $buffer-bname
+                    !force !force reread-file
+                    set-variable $buffer-mode-line &rep $buffer-mode-line "%k" "%kW"
+                    set-variable #l9 1
+                    set-variable :watch #l2
+                !endif
             !endif
         !endif
-*next-file
         ; visit EVERY window otherwise we might not get back to the starting one (toolbar!)
         3 next-window
     !until &equ $window-id #l0
