@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd068.2,v 2.11 2004-03-10 20:44:02 jon Exp $
+.Id $Id: m2cmd068.2,v 2.12 2005-01-14 00:15:04 bill Exp $
 .Im MicroEmacs command|buffer
 .so me.tni
 .TH narrow-buffer 2
@@ -104,19 +104,19 @@ is automatically set, when the last is removed this mode is deleted.
 .PP
 The effect of  \fBnarrow-buffer\fR  depends on the argument  given, defined as
 follows:-
-.BS 1 1 "1"
+.IP \fC1\fR
 Removes all narrows in the current  buffer  (Default).  Aborts if there are no
 narrows in the buffer.
-.BU "2"
+.IP \fC2\fR
 Removes the current line's narrow. Aborts if there is no narrow at the current
 line.
-.BU 3
+.IP \fC3\fR
 Narrow to region.  Hides all but the lines of text in the current  buffer from
 the
 .Hl mark set-mark 2
 position to the current cursor position, effectively 'narrowing' the buffer to
 the remaining text.
-.BU 4
+.IP \fC4\fR
 Narrow out region. Hides the lines of test in the current buffer from the
 .Hl mark set-mark 2
 position to the current cursor position, opposite to argument \fB3\fR.
