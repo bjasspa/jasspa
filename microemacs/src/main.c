@@ -171,7 +171,7 @@ insertChar(register int c, register int n)
         int index, ii=n ;
         for(index=0,n=0 ; (ii>0) && (frameCur->windowCur->dotOffset < frameCur->windowCur->dotLine->length) ; ii--)
         {
-            if((meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset) != TAB) ||
+            if((meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset) != meTABCHAR) ||
                (at_tab_pos(getccol()+index+1) == 0))
             {
                 lineSetChanged(WFMAIN);

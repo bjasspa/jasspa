@@ -422,7 +422,7 @@ getcol(meUByte *ss, int off)
         c = *ss++ ;
         if(isDisplayable(c))
             col++ ;
-        else if(c == TAB)
+        else if(c == meTABCHAR)
             col += get_tab_pos(col) + 1 ;
         else if (c  < 0x20)
             col += 2 ;
@@ -453,7 +453,7 @@ setccol(int pos)
         c = meLineGetChar(frameCur->windowCur->dotLine, i);
         if(isDisplayable(c))
             col++ ;
-        else if(c == TAB)
+        else if(c == meTABCHAR)
             col += get_tab_pos(col) + 1 ;
         else if (c  < 0x20)
             col += 2 ;
@@ -715,7 +715,7 @@ meTab(int f, int n)
     if(!meModeTest(frameCur->bufferCur->mode,MDTAB))
     {
         /* insert the required number of TABs */
-        ii = insertChar(TAB,n) ;
+        ii = insertChar(meTABCHAR,n) ;
     }
     else
     {
@@ -782,7 +782,7 @@ meBacktab(int f, int n)
             cc = meLineGetChar (frameCur->windowCur->dotLine, doto);
             if (cc != ' ')
             {
-                if (cc == TAB)	
+                if (cc == meTABCHAR)	
                     delspace++;	/* Remove <TAB> char */
                 break;			/* Quit */
             }
@@ -804,7 +804,7 @@ meBacktab(int f, int n)
         /*---	Natural tab spacing. If the previous character is a <TAB> then
            delete the <TAB> character from the line */
         
-        if (meLineGetChar(frameCur->windowCur->dotLine, doto) == TAB) 
+        if (meLineGetChar(frameCur->windowCur->dotLine, doto) == meTABCHAR) 
         {   /* Tab char ?? */
             frameCur->windowCur->dotOffset = doto;		/* Yes - back up */
             return(ldelete(1L,2));	/* and delete */
