@@ -8,7 +8,7 @@
  *  Object Name  : macro.c
  *  Created      : 1995
  *  Author       : Steve Philips
- *  Last Modified: <000718.2347> 
+ *  Last Modified: <000814.0931> 
  *
  *  Description	
  *
@@ -337,7 +337,7 @@ helpBufferLoad(BUFFER *hbp)
             return mlwrite(MWABORT,(uint8 *)"[Help file \"%s\" is not on-line]",helpFileName);
         /* and read the stuff in */
         meModeClear(hbp->b_mode,MDVIEW) ;
-        ffReadFile(fname,READ_SILENT,hbp,hbp->b_linep) ;
+        ffReadFile(fname,meRWFLAG_SILENT,hbp,hbp->b_linep) ;
         helpBufferReset(hbp) ;
     }
     return TRUE ;

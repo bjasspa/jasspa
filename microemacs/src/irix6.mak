@@ -6,7 +6,7 @@
 #  Description	 : Make file for SGI Irix v6
 #  Created       : Sat Jan 24 00:01:40 1998
 #
-#  Last Modified : <000309.2227>
+#  Last Modified : <000823.1754>
 #
 #  Notes
 #	Run "make -f irix6.mak"      for optimised build produces ./me
@@ -31,15 +31,21 @@ STRIP         =	strip
 CDEBUG        =	-g2
 COPTIMISE     =	-O3 -DNDEBUG=1
 CDEFS         = -D_IRIX6 -I.
-LIBS          = -lX11 -ltermcap
+LIBS          = -ltermcap
 LDFLAGS       = 
 INSTALL       =	install
+XLIBS         = -lX11
+# definition for the console only build
+CCONSOLE      = -D_NO_XTERM
 #
 # Rules
-.SUFFIXES: .c .o .od
+.SUFFIXES: .c .o .on .od
 
 .c.o:	
 	$(CC) $(COPTIMISE) $(CDEFS) $(MAKECDEFS) -c $<
+
+.c.on:
+	$(CC) $(COPTIMISE) $(CDEFS) $(CCONSOLE) $(MAKECDEFS) -o $@ -c $<
 
 .c.od:	
 	$(CC) $(CDEBUG) $(CDEFS) $(MAKECDEFS) -o $*.od -c $<
@@ -62,6 +68,10 @@ STDOBJ	= $(STDSRC:.c=.o)
 PLTOBJ  = $(PLTSRC:.c=.o)
 OBJ	= $(STDOBJ) $(PLTOBJ)
 
+NSTDOBJ	= $(STDSRC:.c=.on)
+NPLTOBJ = $(PLTSRC:.c=.on)
+NOBJ	= $(NSTDOBJ) $(NPLTOBJ)
+
 DSTDOBJ	= $(STDSRC:.c=.od)	
 DPLTOBJ = $(PLTSRC:.c=.od)
 DOBJ	= $(DSTDOBJ) $(DPLTOBJ)
@@ -74,24 +84,30 @@ install: me
 	@echo "install done"
 
 clean:
-	$(RM) me med *.o *.od core
+	$(RM) me men med *.o *.on *.od core
 
 spotless: clean
 	$(RM) tags *~
 
 me:	$(OBJ)
 	$(RM) $@
-	$(LD) $(LDFLAGS) -o $@ $(OBJ) $(LIBS)
+	$(LD) $(LDFLAGS) -o $@ $(OBJ) $(XLIBS) $(LIBS)
 	$(STRIP) $@
 
+men:	$(NOBJ)
+	$(RM) $@
+	$(LD) $(LDFLAGS) -o $@ $(NOBJ) $(LIBS)
 
 med:	$(DOBJ)
 	$(RM) $@
-	$(LD) $(LDFLAGS) -o $@ $(DOBJ) $(LIBS)
+	$(LD) $(LDFLAGS) -o $@ $(DOBJ) $(XLIBS) $(LIBS)
 #
 # Dependancies
 $(STDOBJ): $(STDHDR)
 $(PLTOBJ): $(STDHDR) $(PLTHDR)
+
+$(NSTDOBJ): $(STDHDR)
+$(NPLTOBJ): $(STDHDR) $(PLTHDR)
 
 $(DSTDOBJ): $(STDHDR)
 $(DPLTOBJ): $(STDHDR) $(PLTHDR)

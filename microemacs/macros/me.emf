@@ -1,6 +1,6 @@
 ;  Startup file for MicroEmacs '99 JASSPA Distribution
 ;
-;  Last Modified :  <000702.1733>
+;  Last Modified :  <000919.1014>
 ;  Copyright (c) 1999 JASSPA
 ;
 ; If mename isn't set or registry file isn't found then set it to guest
@@ -29,7 +29,7 @@
 ; Define extern file macros first
 0 define-macro-file scheme scheme
 0 define-macro-file osd osd-main osd-dialog osd-xdialog osd-entry
-0 define-macro-file utils ascii-time regex-forward regex-backward var-str-sub str-to-regex filemask-to-regex copy-registry generate-tags-file
+0 define-macro-file utils ascii-time regex-forward regex-backward var-str-sub str-to-regex filemask-to-regex copy-registry
 define-macro-file format clean sort-lines-ignore-case tabs-to-spaces paragraph-to-line delete-indentation restyle-region restyle-buffer ifill-paragraph
 define-macro-file abbrev expand-abbrev-handle spell-complete-word iso-accents-mode iso-accents-expand
 define-macro-file misc symbol check-line-length alarm time compare-windows-exact display-white-chars
@@ -43,6 +43,7 @@ define-macro-file fileopen osd-file-open osd-get-file
 define-macro-file hkinfo info info-on info-goto-link
 define-macro-file zfile find-zfile zfile-setup
 define-macro-file fold fold-current fold-all
+define-macro-file gentags generate-tags-file
 define-macro-file schemosd scheme-editor
 define-macro-file fattrib file-attrib
 define-macro-file hkdir file-browser
@@ -126,6 +127,7 @@ scheme
 global-bind-key grep                     "C-c g"
 global-bind-key replace-all-string       "A-C-r"
 global-bind-key query-replace-all-string "esc A-C-r"
+4 global-bind-key find-tag               "esc C-t"
 global-bind-key ifill-paragraph          "esc q"
 global-bind-key delete-indentation       "esc ^"
 global-bind-key file-browser             "f10"
@@ -175,7 +177,7 @@ add-file-hook ".bib"                                          fhook-bibtex
 add-file-hook ".n .1 .2 .3 .4 .5 .6 .7 .8 .9 .so .tni .sm"    fhook-nroff
 add-file-hook ".c .h .def .l .y .i"                           fhook-c
 add-file-hook ".cc .cpp .hpp .rc"                             fhook-cpp
-add-file-hook "Makefile makefile .mak"                        fhook-make
+add-file-hook "Makefile makefile .mak .mk .gmk"               fhook-make
 add-file-hook "Imakefile imakefile"                           fhook-imake
 add-file-hook ".sh .ksh .csh .login .cshrc .profile .tcshrc"  fhook-shell
 add-file-hook ".ini .hpj .reg .rgy"                           fhook-ini
@@ -208,6 +210,7 @@ add-file-hook ".m4"                                           fhook-m4
 add-file-hook ".texi"                                         fhook-texi
 add-file-hook ".idl"                                          fhook-idl
 add-file-hook ".info dir"                                     fhook-info
+add-file-hook ".diff .dif *diff*"                             fhook-diff
 ; Add magic hooks
  1 add-file-hook "^#![ \t]*/.*sh"                fhook-shell  ; UNIX shell files
  1 add-file-hook "^#![ \t]*/.*perl"              fhook-perl   ; UNIX perl script

@@ -10,7 +10,7 @@
 *
 *       Author:                 Danial Lawrence
 *
-*       Creation Date:          10/05/91 08:27          <000221.0805>
+*       Creation Date:          10/05/91 08:27          <000802.1147>
 *
 *       Modification date:      %G% : %U%
 *
@@ -492,7 +492,9 @@ makeCurWind(WINDOW *wp)
     if(isWordMask != curbp->isWordMask)
     {
         isWordMask = curbp->isWordMask ;
+#if MAGIC
         mereRegexClassChanged() ;
+#endif
     }
     
     /* Process the entry hook of the new buffer.
@@ -2062,29 +2064,193 @@ width_error:
 }
     
 int
-setWindow(int f, int n)		/* save ptr to current window */
+pushPosition(int f, int n)		/* save ptr to current window */
 {
-    swindow = curwp;
-    return(TRUE);
+    register mePOS *pos ;
+    
+    if(n == -1)
+    {
+        /* duplicate the previous */
+        if(mePosition == NULL)
+            return mlwrite(MWCLEXEC|MWABORT,(uint8 *)"[Position stack empty]");
+        if((pos = meMalloc(sizeof(mePOS))) == NULL)
+            return ABORT ;
+        memcpy(pos,mePosition,sizeof(mePOS)) ;
+        pos->prev = mePosition ;
+        mePosition = pos ;
+        if(pos->flags & mePOS_LINEMRK)
+            /* a bit horrible, if the previous used an alpha mark
+             * then this can use the same one, but we increment
+             * mePositionMark to allocate another one so we don't
+             * 'free' the shared one first time around */
+            mePositionMark++ ;
+        return TRUE ;
+    }
+    
+    pos = meMalloc(sizeof(mePOS)) ;
+    if(pos == NULL)
+        return ABORT ;
+    pos->prev = mePosition ;
+    mePosition = pos ;
+    if(f == FALSE)
+        n = mePOS_DEFAULT ;
+    
+    pos->flags = n ;
+    
+    if(n & mePOS_WINDOW)
+        pos->window = curwp ;
+    if(n & mePOS_BUFFER)
+        pos->buffer = curbp ;
+    if(n & mePOS_LINEMRK)
+    {
+        pos->line_amark = mePositionMark++ ;
+        if(alphaMarkSet(curbp,pos->line_amark,curwp->w_dotp,0,1) != TRUE)
+        {
+            popPosition(1,0) ;
+            return ABORT ;
+        }
+    }
+    if(n & mePOS_LINENO)
+        pos->line_no = curwp->line_no ;
+    if(n & mePOS_LINEOFF)
+        pos->w_doto = curwp->w_doto ;
+    if(n & mePOS_WINYSCRL)
+        pos->topLineNo = curwp->topLineNo ;
+    if(n & mePOS_WINXCSCRL)
+        pos->w_scscroll = curwp->w_scscroll ;
+    if(n & mePOS_WINXSCRL)
+        pos->w_sscroll = curwp->w_scscroll ;
+    
+    return TRUE ;
 }
 
 int
-gotoWindow(int f, int n)		/* restore the saved screen */
+popPosition(int f, int n)		/* restore the saved screen */
 {
-    register WINDOW *wp;
+    register mePOS *pos=mePosition ;
+    int ret=TRUE, sflg ;
     
-    /* find the window */
-    wp = wheadp;
-    while (wp != NULL)
+    if(n == -1)
     {
-        if(wp == swindow)
+        while(mePosition != NULL)
         {
-            makeCurWind(wp) ;
-            return (TRUE);
+            pos = mePosition ;
+            mePosition = pos->prev ;
+            free(pos) ;
         }
-        wp = wp->w_wndp;
+        mePositionMark = meAM_FRSTPOS ;
+        return TRUE ;
     }
-    return mlwrite(MWCLEXEC|MWABORT,(uint8 *)"[No such window exists]");
+    if(pos == NULL)
+        return mlwrite(MWCLEXEC|MWABORT,(uint8 *)"[Position stack empty]");
+    
+    if(f == FALSE)
+        n = pos->flags ;
+    else
+        n &= pos->flags ;
+    
+    if(ret && (n & mePOS_WINDOW))
+    {
+        /* find the window */
+        register WINDOW *wp;
+        wp = wheadp;
+        while (wp != NULL)
+        {
+            if(wp == pos->window)
+            {
+                makeCurWind(wp) ;
+                break ;
+            }
+            wp = wp->w_wndp;
+        }
+        if(wp == NULL)
+            ret = FALSE ;
+    }
+    if(ret && (n & mePOS_BUFFER))
+    {
+        /* find the buffer */
+        register BUFFER *bp;
+        bp = bheadp;
+        while (bp != NULL)
+        {
+            if(bp == pos->buffer)
+            {
+                swbuffer(curwp,bp) ;
+                break ;
+            }
+            bp = bp->b_bufp;
+        }
+        if(bp == NULL)
+            ret = FALSE ;
+    }
+    if(ret && (n & mePOS_LINEMRK))
+    {
+        if((ret = alphaMarkGet(curbp,pos->line_amark)) == TRUE)
+        {
+            curwp->w_dotp = curbp->b_dotp ;
+            curwp->line_no = curbp->line_no ;
+            curwp->w_doto = 0 ;
+            curwp->w_flag |= WFMOVEL ;
+        }
+    }
+    else if(ret && (n & mePOS_LINENO))
+        ret = gotoLine(1,pos->line_no+1) ;
+    
+    if(ret && (n & mePOS_LINEOFF))
+    {
+        if(pos->w_doto > llength(curwp->w_dotp))
+        {
+            curwp->w_doto = llength(curwp->w_dotp) ;
+            ret = FALSE ;
+        }
+        else
+            curwp->w_doto = pos->w_doto ;
+    }
+    
+    sflg = 0 ;
+    if(n & mePOS_WINYSCRL)
+    {
+        if(curbp->elineno && (pos->topLineNo >= curbp->elineno))
+            pos->topLineNo = curbp->elineno-1 ;
+        if(curwp->topLineNo != pos->topLineNo)
+        {
+            curwp->topLineNo = pos->topLineNo ;
+            curwp->w_flag |= WFMAIN|WFSBOX|WFLOOKBK ;
+            sflg = 1 ;
+        }
+    }
+    if(n & mePOS_WINXCSCRL)
+    {
+        if(pos->w_scscroll >= llength(curwp->w_dotp))
+            pos->w_scscroll = llength(curwp->w_dotp)-1 ;
+        if(curwp->w_scscroll != pos->w_scscroll)
+        {
+            curwp->w_scscroll = pos->w_scscroll ;
+            curwp->w_flag |= WFREDRAW ;        /* Force a screen update */
+            sflg = 1 ;
+        }
+    }
+    if(n & mePOS_WINXSCRL)
+    {
+        if(curwp->w_sscroll != pos->w_sscroll)
+        {
+            curwp->w_sscroll = pos->w_sscroll ;
+            curwp->w_flag |= WFREDRAW ;        /* Force a screen update */
+            sflg = 1 ;
+        }
+    }
+    if(sflg)
+        updCursor(curwp) ;
+    
+    /* remove the head of the stack */
+    mePosition = pos->prev ;
+    if(pos->flags & mePOS_LINEMRK)
+        mePositionMark-- ;
+    free(pos) ;
+
+    if(!ret)
+        return mlwrite(MWCLEXEC|MWABORT,(uint8 *)"[Failed to restore position]");
+    return TRUE ;
 }
 
 /*

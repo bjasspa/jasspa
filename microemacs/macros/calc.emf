@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Wed Jan 21 17:45:14 1998
-;  Last Modified : <000719.0012>
+;  Last Modified : <000731.0908>
 ;
 ;  Description   : calc - Simple message line integer calculator
 ;
@@ -236,11 +236,12 @@ define-macro calc
     !if &not $status
         set-variable #l0 @ml "Enter sum"
     !endif
+    push-position
     !force 0 delete-buffer "*calc*"
     find-buffer "*calc*"
     1 buffer-mode "hide"
     1 buffer-mode "magic"
     insert-string #l0
     @# calc-buffer
-    -1 find-buffer $buffer-bname
+    pop-position
 !emacro

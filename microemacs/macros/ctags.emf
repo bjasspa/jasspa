@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : 1998
-;  Last Modified : <000627.1330>
+;  Last Modified : <000918.1236>
 ;
 ;  Description   : Command-line macro for creating a C tags file
 ;
@@ -16,10 +16,10 @@
 ;
 ;  Copyright (c) 1998-99 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; options r - recurse, a - append, m - multiple links to a tag, e - enum, s - struct
-set-variable %tag-option    &cond &exi %tag-option    %tag-option    ""
-set-variable %tag-filemask  &cond &exi %tag-filemask  %tag-filemask  ":*.[cC]:*.cpp:*.cc:*.h:*.hpp:"
-set-variable %tag-ignoredir &cond &exi %tag-ignoredir %tag-ignoredir ":SCCS/:CVS/:"
+; options r - recurse, a - append, m - multiple links to a tag, e - enum, s - struct, v - static variables
+set-variable %tag-option   &cond &exi %tag-option   %tag-option   ""
+set-variable %tag-filemask &cond &exi %tag-filemask %tag-filemask ":*.h:*.hpp:*.[cC]:*.cpp:*.cc:"
+set-variable %tag-ignore   &cond &exi %tag-ignore   %tag-ignore   ":SCCS/:CVS/:"
 
 set-char-mask "1" ":_"
 set-char-mask "1" ":~"
@@ -354,14 +354,22 @@ set-char-mask "1" ":~"
 !emacro
 
 define-macro ctags-process-buffers
-    !while &not &iseq $buffer-bname "tags"
-        !if &bmod "dir"
-            set-variable #l0 $buffer-bname
-            set-variable #l1 $buffer-fname
-            0 delete-buffer #l0
-            !if &not &lfind %tag-ignoredir #l0
-                ctags-process-directory #l1
-            !endif
+    !repeat
+        set-variable #l0 $buffer-bname
+        !if &xse #l0 "^.*<[0-9]*>$"
+            set-variable #l1 &lef #l0 &sub &rsin "<" #l0 1
+        !else
+            set-variable #l1 #l0
+        !endif
+        !if &iseq #l1 "tags"
+            !return
+        !elif &lfind %tag-ignore #l1
+        !elif &bmod "dir"
+            set-variable #l2 $buffer-fname
+            set-variable #l3 0
+            !while &not &seq &set #l4 &lget %tag-filemask &inc #l3 1 ""
+                !force find-file &cat #l2 #l4 
+            !done
         !else
             beginning-of-buffer
             !force ctags-add-file
@@ -370,20 +378,10 @@ define-macro ctags-process-buffers
                 !bell
                 ;set-variable #l9 @cq
             !endif
-            0 delete-buffer $buffer-bname
         !endif
-    !done
+        0 delete-buffer #l0
+    !until 0
 !emacro
-
-define-macro ctags-process-directory
-    set-variable #l0 @1
-    set-variable #l1 0
-    !while &not &seq &set #l2 &lget %tag-filemask &inc #l1 1 ""
-        !force find-file &cat #l0 #l2 
-        ctags-process-buffers
-    !done
-!emacro
-
 
 define-macro ctags
     !if &seq &lget %tag-filemask 1 ""
@@ -407,16 +405,15 @@ define-macro ctags
         end-of-buffer
     !endif
     !if &sin "r" %tag-option
-        set-variable %tag-filemask &lins %tag-filemask -1 "[^.]*/"
+        set-variable %tag-filemask &lins %tag-filemask 0 "[^.]*/"
     !endif
     1 buffer-mode "magic"
     1 buffer-mode "exact"
     next-window
     !if &iseq $buffer-bname "tags"
-        ctags-process-directory #g2
-    !else
-        ctags-process-buffers
+        !force find-file "."
     !endif
+    ctags-process-buffers
     ctags-parse-tags
 !emacro
   

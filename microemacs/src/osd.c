@@ -5,7 +5,7 @@
  *  Synopsis      : Narrow out regions of a buffer
  *  Created By    : On-Screen Display routines
  *  Created       : 26/07/97
- *  Last Modified : <000720.1457>
+ *  Last Modified : <000723.1909>
  *
  *  Description
  *     This file contains the on screen display routines that
@@ -47,6 +47,9 @@
 
 /* Include files */
 #include "emain.h"                      /* Standard Microemacs definitions */
+
+#if MEOSD
+
 #include "efunc.h"                      /* Define the command identifiers */
 #include "eskeys.h"                     /* Define the key definitions */
 #include "eterm.h"
@@ -5556,5 +5559,7 @@ void osdFreeMemory(void)
         meFree(osdMainMenuMd) ;
     }
 }
+#endif
+
 #endif
 

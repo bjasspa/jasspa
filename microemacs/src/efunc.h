@@ -1,7 +1,7 @@
 /*
  *      SCCS:           %W%             %G%             %U%
  *
- *      Last Modified : <000513.1810>
+ *      Last Modified : <000723.2003>
  *
  *      EFUNC.H:        MicroEMACS function declarations and names
  *
@@ -137,7 +137,7 @@ meCMD  *cmdHash[cmdHashSize] =
     &__meFunc_DELBAK,     NULL,                 NULL,                 &__meFunc_TRNLINE,    &__meFunc_STRREP,
     NULL,                 NULL,                 NULL,                 NULL,                 &__meFunc_DEFFMAC,
     NULL,                 NULL,                 &__meFunc_CHGFONT,    NULL,                 &__meFunc_NEWLIN,
-    NULL,                 NULL,                 NULL,                 &__meFunc_RESWND,     NULL,
+    NULL,                 NULL,                 NULL,                 NULL,                 NULL,
     NULL,                 NULL,                 NULL,                 NULL,                 NULL,
     &__meFunc_UPDATE,     NULL,                 &__meFunc_WRTHIST,    NULL,                 NULL,
     NULL,                 &__meFunc_DELSBUF,    &__meFunc_UNDO,       NULL,                 NULL,
@@ -173,7 +173,7 @@ meCMD  *cmdHash[cmdHashSize] =
     &__meFunc_DESCVAR,    &__meFunc_MCRQURY,    NULL,                 NULL,                 &__meFunc_NBUFMOD,
     NULL,                 &__meFunc_SFNDBUF,    NULL,                 NULL,                 NULL,
     &__meFunc_KILEOL,     &__meFunc_SETVAR,     &__meFunc_REDVWND,    NULL,                 NULL,
-    &__meFunc_FORCHR,     NULL,                 NULL,                 &__meFunc_STRWND,     &__meFunc_HELPCOM,
+    &__meFunc_FORCHR,     NULL,                 NULL,                 NULL,                 &__meFunc_HELPCOM,
     &__meFunc_REDHIST,    &__meFunc_ADDRULE,    NULL,                 NULL,                 &__meFunc_CTOMOUSE,
     &__meFunc_SPWCLI,     NULL,                 NULL,                 NULL,                 &__meFunc_DIRTREE,
     &__meFunc_FNDBFIL,    NULL,                 NULL,                 NULL,                 NULL,
@@ -182,7 +182,7 @@ meCMD  *cmdHash[cmdHashSize] =
     &__meFunc_HUNBAK,     &__meFunc_SWPMRK,     NULL,                 NULL,                 NULL,
     NULL,                 &__meFunc_IPIPKLL,    &__meFunc_CMPBUF,     NULL,                 &__meFunc_PPPWND,
     &__meFunc_GOAMRK,     &__meFunc_ADDDICT,    NULL,                 NULL,                 &__meFunc_HUNFOR,
-    NULL,                 NULL,                 NULL,                 NULL,                 &__meFunc_DELREGY,
+    NULL,                 NULL,                 NULL,                 &__meFunc_PUSHPOS,    &__meFunc_DELREGY,
     NULL,                 NULL,                 NULL,                 NULL,                 NULL,
     NULL,                 NULL,                 &__meFunc_GOEOF,      NULL,                 NULL,
     NULL,                 NULL,                 NULL,                 NULL,                 NULL,
@@ -212,7 +212,7 @@ meCMD  *cmdHash[cmdHashSize] =
     &__meFunc_APROPS,     NULL,                 NULL,                 &__meFunc_SETAMRK,    NULL,
     &__meFunc_EXIT,       &__meFunc_STCHRMK,    NULL,                 &__meFunc_DESCKEY,    NULL,
     &__meFunc_IPIPCMD,    NULL,                 &__meFunc_FISRCH,     &__meFunc_RESIZE,     &__meFunc_SFNDFIL,
-    NULL,                 &__meFunc_INSFIL,     NULL,                 NULL,                 NULL,
+    &__meFunc_POPPOS,     &__meFunc_INSFIL,     NULL,                 NULL,                 NULL,
     NULL
 } ;
 

@@ -5,7 +5,7 @@
  *  Synopsis      : Abbrevation expansion routines
  *  Created By    : Steven Phillips
  *  Created       : 12/06/1995
- *  Last Modified : <000221.0749>
+ *  Last Modified : <000814.0931>
  *
  *  Description
  *        Handle character expansion. The expansion sequences are held in 
@@ -125,7 +125,7 @@ doExpandAbbrev(uint8 *abName, int abLen, meABREV *abrev)
         uint8 fname[FILEBUF] ;
         
         if(!fileLookup(abrev->fname,(uint8 *)".eaf",meFL_CHECKDOT|meFL_USESRCHPATH,fname) ||
-           (ffReadFile(fname,READ_SILENT,NULL,hlp) == ABORT))
+           (ffReadFile(fname,meRWFLAG_SILENT,NULL,hlp) == ABORT))
             return mlwrite(MWABORT,(uint8 *)"[Failed to abbrev file %s]",abrev->fname);
         abrev->loaded = 1 ;
     }

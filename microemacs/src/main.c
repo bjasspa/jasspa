@@ -10,7 +10,7 @@
 *
 *	Author:			Jon Green
 *
-*	Creation Date:		03/05/91 17:19		<000627.1026>
+*	Creation Date:		03/05/91 17:19		<000907.1419>
 *
 *	Modification date:	%G% : %U%
 *
@@ -84,10 +84,11 @@ static char meHelpPage[]=
 #ifdef _DOS
 "  -i      : Insert the current screen into the *scratch* buffer\n"
 #endif
+"  -k[key] : Load next file as a crypted file optionally giving the <key>\n"
 "  +<n> or\n"
-"  -l<n>   : Go to line <n> in the next given file\n"
+"  -l <n>  : Go to line <n> in the next given file\n"
 #ifdef _CLIENTSERVER
-"  -m<msg> : Post message to MicroEmacs server\n"
+"  -m <msg>: Post message <msg> to MicroEmacs server\n"
 #endif
 #ifdef _WINCON
 "  -n      : For not MS window, uses console instead\n"
@@ -100,11 +101,12 @@ static char meHelpPage[]=
 #endif
 "  -p      : Pipe stdin into *stdin*, when saved output to stdout\n"
 "  -r      : Read-only, all buffers will be in view mode\n"
-"  -s<s>   : Search for string \"s\" in the current buffer\n"
-"  -v<v=s> : Set variable v to string s\n"
+"  -s <s>  : Search for string <s> in the next given file\n"
+"  -v <v=s>: Set variable <v> to string <s>\n"
 #ifdef _UNIX
 "  -x      : Don't catch signals\n"
 #endif
+"\n"
 ;
 
 #ifdef _WIN32
@@ -268,6 +270,8 @@ execute(register int c, register int f, register int n)
         n *= (int) (arg + 0x80000000) ;
     }
     thisIndex = index ;
+    meRegCurr->f = f ;
+    meRegCurr->n = n ;
     /* SWP - 27/2/99 - to enable input commands to not have to jump through
      * so many hoops I've changed to input support so the macros can fail
      * in such a way as to indicate that they have not handled this input,
@@ -330,6 +334,7 @@ execute(register int c, register int f, register int n)
     if(insertChar(c,n) != TRUE)
         return (cmdstatus = FALSE) ;
 
+#if    CFENCE
     if(meModeTest(curbp->b_mode,MDCMOD))
     {
         if((c == '}') || (c == '#'))
@@ -369,7 +374,6 @@ execute(register int c, register int f, register int n)
             curwp->w_doto += 2 ;
         }
     }
-#if    CFENCE
     /* check for fence matching */
     if((c == '}') || (c == ')') || (c == ']'))
     {
@@ -784,9 +788,14 @@ exitEmacs(int f, int n)
 int
 saveExitEmacs(int f, int n)
 {
-    if((saveSomeBuffers(f,(n & 0x01)) == TRUE) &&
-       (saveDict(f,2|(n & 0x01)) == TRUE) &&
-       (saveRegistry(f,2|(n & 0x01)) == TRUE))
+    if((saveSomeBuffers(f,(n & 0x01)) == TRUE)
+#if SPELL
+       && (saveDict(f,2|(n & 0x01)) == TRUE)
+#endif
+#if REGSTRY
+       && (saveRegistry(f,2|(n & 0x01)) == TRUE)
+#endif
+       )
         return exitEmacs(f, n) ;            /* conditionally quit   */
     return FALSE ;
 }
@@ -823,6 +832,14 @@ ctrlg(int f, int n)
 }
 
 /*
+** function to report a commands not available (i.e. compiled out!) */
+int
+notAvailable(int f, int n)
+{
+    return mlwrite(MWABORT,(uint8 *)"[Command not available]");
+}
+
+/*
 ** function to report a no mark set error */
 int
 noMarkSet(void)
@@ -832,7 +849,6 @@ noMarkSet(void)
 
 /* tell the user that this command is illegal while we are in
    VIEW (read-only) mode                */
-
 int
 rdonly(void)
 {
@@ -962,7 +978,9 @@ meDie(void)
         bp = bp->b_bufp;            /* on to the next buffer */
     }
     saveHistory(1,0) ;
+#if REGSTRY
     saveRegistry(1,2) ;
+#endif
 #ifdef _IPIPES
     /* try to kill any child processes */
     while(ipipes != NULL)
@@ -1199,11 +1217,8 @@ void
 mesetup(int argc, char *argv[])
 {
     extern uint8 *ffbuf ;
-    BUFFER *bp;
+    BUFFER *bp, *mainbp ;
     int     carg,rarg;          /* current arg to scan            */
-    int     searchflag=FALSE;   /* Do we need to search at start? */
-    int     binflag=0 ;         /* load next file as a binary file*/
-    int     gline = 0 ;         /* what line? (-g option)         */
     int     noFiles=0 ;
     uint8  *file=NULL ;
 #ifdef _UNIX
@@ -1220,9 +1235,11 @@ mesetup(int argc, char *argv[])
 
 #ifdef _UNIX
     /* Get the usr id and group id for mode-line and file permissions */
-    meUmask = umask(0);
-    umask(meUmask);
-    meUmask = meUmask ^ (S_IROTH|S_IWOTH|S_IRGRP|S_IWGRP|S_IRUSR|S_IWUSR) ; /* 00666 */
+    meXUmask = umask(0);
+    umask(meXUmask);
+    meXUmask = (meXUmask & (S_IROTH|S_IWOTH|S_IXOTH|S_IRGRP|S_IWGRP|S_IXGRP|S_IRUSR|S_IWUSR|S_IXUSR)) ^ 
+              (S_IROTH|S_IWOTH|S_IXOTH|S_IRGRP|S_IWGRP|S_IXGRP|S_IRUSR|S_IWUSR|S_IXUSR) ; /* 00666 */
+    meUmask = meXUmask & (S_IROTH|S_IWOTH|S_IRGRP|S_IWGRP|S_IRUSR|S_IWUSR) ;
     meUid = getuid();
     meGid = getgid();
     /* get a list of groups the user belongs to */
@@ -1274,6 +1291,7 @@ mesetup(int argc, char *argv[])
     meRegHead->prev = meRegHead ;
     meRegHead->execstr = NULL ;
     meRegHead->varList = NULL ;
+    meRegHead->force = 0 ;
     meRegCurr = meRegHead ;
     /* Initialise the head as this is dumped in list-variables */
     for(carg = 0 ; carg<meNUMREG ; carg++)
@@ -1306,6 +1324,7 @@ mesetup(int argc, char *argv[])
             switch (argv[carg][1])
             {
             case 'b':    /* -b bin flag */
+            case 'k':    /* -k crypt flag */
                 /* don't want these options yet as they apply to the
                  * next file on the command line
                  */
@@ -1332,9 +1351,9 @@ mesetup(int argc, char *argv[])
                 /* don't want these options yet as they apply to the
                  * next file on the command line
                  */
+                argv[rarg++] = argv[carg] ;
                 if (argv[carg][2] == 0)
                 {
-                    char *ss ;
                     if (carg == argc-1)
                     {
 missing_arg:
@@ -1347,14 +1366,8 @@ missing_arg:
                             meExit(1);
                         }
                     }
-                    /* swap the arg order around as the second pass of the args
-                     * is done from last to first */
-                    ss = argv[carg++] ;
-                    argv[rarg++] = argv[carg] ;
-                    argv[rarg++] = ss ;
+                    argv[rarg++] = argv[++carg] ;
                 }
-                else
-                    argv[rarg++] = argv[carg] ;
                 break ;
 
 #ifdef _CLIENTSERVER
@@ -1392,15 +1405,13 @@ missing_arg:
                 break ;
 
             case 's':    /* -s for initial search string */
+                argv[rarg++] = argv[carg] ;
                 if(argv[carg][2] == '\0')
                 {
                     if (carg == argc-1)
                         goto missing_arg ;
-                    addHistory(MLSEARCH,(uint8 *)argv[++carg]) ;
+                    argv[rarg++] = argv[++carg] ;
                 }
-                else
-                    addHistory(MLSEARCH,(uint8 *)argv[carg]+2) ;
-                searchflag = TRUE;
                 break;
 
             case 'v':
@@ -1435,7 +1446,7 @@ missing_arg:
                 if((tt = strchr(ss,'=')) != NULL)
                 {
                     *tt++ = '\0' ;
-                    if(setVar(ss,tt,meRegCurr) != TRUE)		/* set a variable */
+                    if(setVar((uint8 *)ss,(uint8 *)tt,meRegCurr) != TRUE)  /* set a variable */
                     {
                         char buff[256] ;
                         sprintf(buff,"%s Error: Unable to set variable [%s]\n",argv[0],ss) ;
@@ -1472,10 +1483,10 @@ missing_arg:
 #ifdef _CLIENTSERVER
     if(userClientServer && TTconnectClientServer())
     {
-        BUFFER *bp ;
+        int     binflag=0 ;         /* load next file as a binary file*/
+        int     gline = 0 ;         /* what line? (-g option)         */
 
-        file=NULL ;
-        for(carg=rarg-1 ; carg > 0 ; carg--)
+        for(carg=1 ; carg < rarg ; carg++)
         {
             /* if its a switch, process it */
             if(argv[carg][0] == '-')
@@ -1484,31 +1495,33 @@ missing_arg:
                 {
                 case 'l':    /* -l for initial goto line */
                     if (argv[carg][2] == 0)
-                        gline = meAtoi(argv[--carg]);
+                        gline = meAtoi(argv[++carg]);
                     else
                         gline = meAtoi((argv[carg])+2);
                     break;
                 case 'b':    /* -b bin flag */
-                    binflag = BFND_BINARY ;
+                    binflag |= BFND_BINARY ;
                     break;
+                case 'k':    /* -k crypt flag */
+                    binflag |= BFND_CRYPT ;
+                    break;
+                case 's':
+                    /* -s not supported across client-server */
+                    if (argv[carg][2] == 0)
+                        carg++ ;
+                    break ;
                 }
             }
             else if (argv[carg][0] == '+')
                 gline = meAtoi((argv[carg])+1);
             else
             {
-                /* process a file name */
-                if(file != NULL)
-                    /* set up a buffer for this file */
-                    noFiles += findFileList(file,(BFND_CREAT|BFND_MKNAM|binflag),gline) ;
-                file = (uint8 *)argv[carg] ;
+                /* set up a buffer for this file */
+                noFiles += findFileList((uint8 *)argv[carg],(BFND_CREAT|BFND_MKNAM|binflag),gline) ;
                 gline = 0 ;
                 binflag = 0 ;
             }
         }
-        if(file != NULL)
-            /* set up a buffer for this file */
-            noFiles += findFileList(file,(BFND_CREAT|BFND_MKNAM|binflag),gline) ;
         if(clientMessage != NULL)
             TTsendClientServer(clientMessage) ;
         bp = bheadp ;
@@ -1516,8 +1529,14 @@ missing_arg:
         {
             if(bp->b_fname != NULL)
             {
-                uint8 buff[MAXBUF+30] ;
-                sprintf((char *)buff,"C:ME:find-file \"%s\"\n",bp->b_fname) ;
+                uint8 buff[MAXBUF+30], *ss ;
+                if(meModeTest(bp->b_mode,MDBINRY))
+                    ss = "b" ;
+                else if(meModeTest(bp->b_mode,MDCRYPT))
+                    ss = "c" ;
+                else
+                    ss = "" ;
+                sprintf((char *)buff,"C:ME:find-%sfile \"%s\"\n",ss,bp->b_fname) ;
                 TTsendClientServer(buff) ;
                 if(bp->line_no != 0)
                 {
@@ -1552,14 +1571,13 @@ missing_arg:
 #endif
     if(alarmState & meALARM_PIPED)
     {
-        BUFFER *sbp ;
 #ifdef _WIN32
         ffrp = GetStdHandle(STD_INPUT_HANDLE) ;
 #else
         ffrp = stdin ;
 #endif
-        sbp = bfind(BstdinN,BFND_CREAT);
-        readin(sbp,NULL) ;
+        bp = bfind(BstdinN,BFND_CREAT);
+        readin(bp,NULL) ;
     }
 
     mlerase(0);                /* Delete command line */
@@ -1567,56 +1585,107 @@ missing_arg:
     startup(file) ;
 
     /* initalize *scratch* colors and modes to global defaults */
-    if((bp=bfind(BmainN,0)) != NULL)
+    if((mainbp=bfind(BmainN,0)) != NULL)
     {
-        meModeCopy(bp->b_mode,globMode) ;
-        bp->scheme = globScheme;
+        meModeCopy(mainbp->b_mode,globMode) ;
+        mainbp->scheme = globScheme;
         /* make *scratch*'s history number very low so any other
          * buffer is preferable */
-        bp->histNo = -1 ;
+        mainbp->histNo = -1 ;
     }
 #ifdef _CLIENTSERVER
     /* also initialize the client server color scheme */
     if((ipipes != NULL) && (ipipes->pid == 0))
         ipipes->bp->scheme = globScheme;
 #endif
-
-    file=NULL ;
-    /* scan through the command line and get the files to edit */
-    for(carg=rarg-1 ; carg > 0 ; carg--)
+    
     {
-        /* if its a switch, process it */
-        if(argv[carg][0] == '-')
+        uint8  *searchStr=NULL, *cryptStr=NULL ;
+        int     binflag=0 ;         /* load next file as a binary file*/
+        int     gline = 0 ;         /* what line? (-g option)         */
+        int     obufHistNo ;
+        
+        obufHistNo = bufHistNo ;
+
+        /* scan through the command line and get the files to edit */
+        for(carg=1 ; carg < rarg ; carg++)
         {
-            switch(argv[carg][1])
+            /* if its a switch, process it */
+            if(argv[carg][0] == '-')
             {
-            case 'l':    /* -l for initial goto line */
-                if (argv[carg][2] == 0)
-                    gline = meAtoi(argv[--carg]);
-                else
-                    gline = meAtoi((argv[carg])+2);
-                break;
-            case 'b':    /* -b bin flag */
-                binflag = BFND_BINARY ;
-                break;
+                switch(argv[carg][1])
+                {
+                case 'l':    /* -l for initial goto line */
+                    if (argv[carg][2] == 0)
+                        gline = meAtoi(argv[++carg]);
+                    else
+                        gline = meAtoi((argv[carg])+2);
+                    break;
+                case 'b':    /* -b bin flag */
+                    binflag |= BFND_BINARY ;
+                    break;
+                case 'k':    /* -k crypt flag */
+                    binflag |= BFND_CRYPT ;
+                    if (argv[carg][2] != 0)
+                        cryptStr = (uint8 *) argv[carg] + 2 ;
+                    break;
+                case 's':
+                    /* -s not supported across client-server */
+                    if (argv[carg][2] == 0)
+                        searchStr = (uint8 *) argv[++carg] ;
+                    else
+                        searchStr = (uint8 *) argv[carg]+2 ;
+                    break ;
+                }
+            }
+            else if (argv[carg][0] == '+')
+                gline = meAtoi((argv[carg])+1);
+            else
+            {
+                /* set up a buffer for this file - force the history so the first file
+                 * on the command-line has the highest bufHistNo so is shown first */
+                bufHistNo = obufHistNo + rarg - carg ;
+                noFiles += findFileList((uint8 *)argv[carg],(BFND_CREAT|BFND_MKNAM|binflag),gline) ;
+                if((cryptStr != NULL) || (searchStr != NULL))
+                {
+                    /* Deal with -k<key> and -s <search> */
+                    bp = bheadp ;
+                    while(bp != NULL)
+                    {
+                        if(bp->histNo == bufHistNo)
+                        {
+                            if(cryptStr != NULL)
+                                setBufferCryptKey(bp,cryptStr) ;
+                            if(searchStr != NULL)
+                            {
+                                BUFFER *cbp ;
+                                int histNo, flags ;
+                                cbp = curbp ;
+                                histNo = cbp->histNo ;
+                                swbuffer(curwp,bp) ;
+                                flags = ISCANNER_QUIET ;
+                                if(meModeTest(bp->b_mode,MDMAGIC))
+                                    flags |= ISCANNER_MAGIC ;
+                                if(meModeTest(bp->b_mode,MDEXACT))
+                                    flags |= ISCANNER_EXACT ;
+                                /* what can we do if we fail to find it? */
+                                iscanner(searchStr,0,flags,NULL) ;
+                                swbuffer(curwp,cbp) ;
+                                cbp->histNo = histNo ;
+                                bp->histNo = bufHistNo ;
+                            }
+                        }
+                        bp = bp->b_bufp ;
+                    }
+                    cryptStr = NULL ;
+                    searchStr = NULL ;
+                }
+                gline = 0 ;
+                binflag = 0 ;
             }
         }
-	else if (argv[carg][0] == '+')
-            gline = meAtoi((argv[carg])+1);
-        else
-        {
-            /* process a file name */
-            if(file != NULL)
-                /* set up a buffer for this file */
-                noFiles += findFileList(file,(BFND_CREAT|BFND_MKNAM|binflag),gline) ;
-            file = (uint8 *)argv[carg] ;
-            gline = 0 ;
-            binflag = 0 ;
-        }
+        bufHistNo = obufHistNo + rarg ;
     }
-    if(file != NULL)
-        /* set up a buffer for this file */
-        noFiles += findFileList(file,(BFND_CREAT|BFND_MKNAM|binflag),gline) ;
 
     /* load-up the com-line or -c first and second files */
     if(!noFiles)
@@ -1626,33 +1695,32 @@ missing_arg:
 
     if(noFiles > 0)
     {
-        BUFFER *sbp ;
-        if((curbp == bp) && ((sbp = replacebuffer(NULL)) != bp) &&
-           (sbp->b_fname != NULL))
+        if((curbp == mainbp) && ((bp = replacebuffer(NULL)) != mainbp) &&
+           (bp->b_fname != NULL))
         {
-            if(HistNoFilesLoaded && isUrlLink(sbp->b_fname))
+            if(HistNoFilesLoaded && isUrlLink(bp->b_fname))
             {
                 uint8 prompt[FILEBUF+16] ;
                 meStrcpy(prompt,"Reload file ") ;
-                meStrcat(prompt,sbp->b_fname) ;
+                meStrcat(prompt,bp->b_fname) ;
                 if(mlyesno(prompt) != TRUE)
                 {
-                    sbp = NULL ;
+                    bp = NULL ;
                     noFiles = 0 ;
                 }
             }
 	}
         else
-            sbp = NULL ;
-        if(sbp != NULL)
+            bp = NULL ;
+        if(bp != NULL)
         {
-            swbuffer(curwp,sbp) ;
-	    bp->histNo = -1 ;
+            swbuffer(curwp,bp) ;
+	    mainbp->histNo = -1 ;
         }
-        if((noFiles > 1) && ((sbp = replacebuffer(NULL)) != bp) &&
-           (sbp->b_fname != NULL))
+        if((noFiles > 1) && ((bp = replacebuffer(NULL)) != mainbp) &&
+           (bp->b_fname != NULL))
         {
-            if(!HistNoFilesLoaded && !isUrlLink(sbp->b_fname))
+            if(!HistNoFilesLoaded && !isUrlLink(bp->b_fname))
             {
                 splitWindVert(TRUE,2) ;
                 swbuffer(curwp,replacebuffer(NULL)) ;
@@ -1698,10 +1766,6 @@ missing_arg:
 #endif /* _POSIX_SIGNALS */
     }
 #endif /* _UNIX */
-
-    /* Deal with startup gotos and searches */
-    if (searchflag)
-        huntForw(FALSE,1) ;
 
     /* setup to process commands */
     lastflag = 0;                       /* Fake last flags.     */

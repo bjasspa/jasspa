@@ -1,7 +1,7 @@
 /*
  *	SCCS:		%W%		%G%		%U%
  *
- *	Last Modified :	<000627.1043>
+ *	Last Modified :	<000814.1029>
  *
  *	EDEF:		Global variable definitions for
  *			MicroEMACS 3.2
@@ -38,6 +38,8 @@ extern  meSTYLE        *styleTable;     /* Highlighting colour table    */
 #if ABREV
 extern  meABREV        *globalAbrev ;   /* Global Abreviation file	*/
 #endif
+extern  mePOS  *mePosition ;            /* Position stack head          */
+extern  uint16  mePositionMark ;        /* Position next alpha mark name*/
 extern  uint8  *disLineBuff ;           /* interal display buffer array */
 extern  uint16  hilBlockS ;             /* Hilight - HilBlock array siz */
 extern  int     disLineSize ;           /* interal display buffer size  */
@@ -72,8 +74,6 @@ extern  int     lastCommand ;           /* The last user executed key   */
 extern  int     lastIndex ;             /* The last user executed comm  */
 extern  int     thisCommand ;           /* The cur. user executed key   */
 extern  int     thisIndex ;             /* The cur. user executed comm  */
-extern  int     thisF ;                 /* The cur. user comm args      */
-extern  int     thisN ;                 /* The cur. user comm args      */
 extern  uint8	hexdigits[];
 extern  uint16  keyTableSize;           /* The current size of the key table */
 extern	KEYTAB	keytab[];		/* key bind to functions table	*/
@@ -146,6 +146,7 @@ extern  uint16 meUmask ;                /* file creation umask          */
 #endif
 #ifdef _UNIX
 extern  uint16    meUmask ;             /* file creation umask          */
+extern  mode_t    meXUmask ;            /* directory creation umask     */
 extern  uid_t     meUid ;               /* current user id              */
 extern  gid_t     meGid ;               /* current group id             */
 extern  int       meGidSize ;           /* number of groups the user belongs to   */
@@ -239,7 +240,6 @@ extern  uint8  *funcNames[];            /* name list of user funcs      */
 extern  uint8   funcTypes[];            /* type list of user funcs      */
 extern	KILL   *kbufp;			/* current kill buffer chunk pointer */
 extern	KILL   *kbufh;			/* kill buffer header pointer	*/
-extern	WINDOW *swindow;		/* stored window pointer	*/
 extern  uint8   lkbdptr[];              /* Holds last keybd macro data  */
 extern  int     lkbdlen;                /* Holds length of last macro   */
 extern	uint8  *kbdptr;		/* start of current keyboard buf*/
@@ -291,12 +291,12 @@ extern uint8    noNextLine ;
 extern uint8  **nextName ;
 extern uint8   *nextLineCnt ;
 extern uint8 ***nextLineStr ;
+#endif
 
 extern uint8   fileHookCount ;
 extern uint8 **fileHookExt ;
 extern uint8 **fileHookFunc ;
 extern int16  *fileHookArg ;
-#endif
 
 #if DORCS
 extern uint8 *rcsFile ;
@@ -401,8 +401,10 @@ meDIRLIST  curDirList={0,0} ;
 #else
 meDIRLIST  curDirList={1,0} ;
 #endif
+#if MEOSD
 struct osdDIALOG  *osdDialogHd = NULL;  /* Root of the on screen displays */
 struct osdDISPLAY *osdDisplayHd = NULL; /* Menu display list */
+#endif
 meREGISTERS *meRegHead=NULL ;           /* The register Head            */
 meREGISTERS *meRegCurr=NULL ;           /* The current register set     */
 SELHILIGHT selhilight={1,0} ;           /* Selection hilight            */
@@ -411,6 +413,8 @@ meSTYLE *styleTable = NULL;             /* Highlighting colour table    */
 #if ABREV
 meABREV *globalAbrev = NULL;            /* Global Abreviation file	*/
 #endif
+mePOS *mePosition=NULL ;                /* Position stack head          */
+uint16  mePositionMark=meAM_FRSTPOS ;   /* Position next alpha mark name*/
 meCOLOR noColors=0 ;                    /* No defined colours           */
 int styleTableSize = 2;                 /* Size of the style table      */
 HILBLOCK *hilBlock;                     /* Hilighting style change      */
@@ -445,8 +449,6 @@ int     lastCommand = 0 ;               /* The last user executed key   */
 int     lastIndex = -1 ;                /* The last user executed comm  */
 int     thisCommand = 0 ;               /* The cur. user executed key   */
 int     thisIndex = -1 ;                /* The cur. user executed comm  */
-int     thisF=0 ;                       /* The cur. user comm args      */
-int     thisN=1 ;                       /* The cur. user comm args      */
 
 #ifdef _WIN32
 HANDLE  ffrp;                           /* File read pointer, all func. */
@@ -585,6 +587,7 @@ uint16 meUmask=0x020 ;                  /* file creation umask          */
 #endif
 #ifdef _UNIX
 uint16    meUmask ;                     /* file creation umask          */
+mode_t    meXUmask ;                    /* directory creation umask     */
 uid_t     meUid ;                       /* current user id              */
 gid_t     meGid ;                       /* current group id             */
 int       meGidSize ;                   /* number of groups the user belongs to   */
@@ -631,7 +634,6 @@ uint16 prefixc[ME_PREFIX_NUM+1]=
 uint16 reptc    = 'U'-'@';	/* current universal repeat char*/
 
 KLIST  *klhead	  = NULL;	/* klist header pointer		   */
-WINDOW *swindow  = NULL;	/* stored window pointer	   */
 uint8   lkbdptr[NKBDM];   /* Holds last keybd macro data     */
 int     lkbdlen=0;              /* Holds length of last macro      */
 uint8  *kbdptr=NULL;	/* start of current keyboard buf   */
@@ -685,12 +687,12 @@ uint8    noNextLine=0 ;
 uint8  **nextName=NULL ;
 uint8   *nextLineCnt=NULL ;
 uint8 ***nextLineStr=NULL ;
+#endif
 
 uint8    fileHookCount=0 ;
 uint8  **fileHookExt=NULL ;
 uint8  **fileHookFunc=NULL ;
 int16   *fileHookArg=NULL ;
-#endif
 
 #if DORCS
 uint8 *rcsFile=NULL ;

@@ -10,7 +10,7 @@
  *
  *       Author:                 Danial Lawrence
  *
- *       Creation Date:          14/05/86 12:37          <000615.2024>
+ *       Creation Date:          14/05/86 12:37          <000814.0931>
  *
  *       Modification date:      %G% : %U%
  *
@@ -627,7 +627,6 @@ docmd(uint8 *cline, register uint8 *tkn)
     register int  n ;           /* numeric repeat value */
     register uint8 cc ;         /* Character */
     register int  status ;      /* return status of function */
-    register int  force ;       /* force TRUE result? */
     register int  nmacro ;      /* run as it not a macro? */
     
     cc = *cline ;
@@ -641,7 +640,7 @@ docmd(uint8 *cline, register uint8 *tkn)
     
     nmacro = FALSE;
     execstr = cline;    /* and set this one as current */
-    force = 0 ;
+    meRegCurr->force = 0 ;
     
     /* process argument */
 try_again:
@@ -712,7 +711,7 @@ elif_jump:
                 mlwrite(MWABORT|MWWAIT,(uint8 *)"[Unexpected !emacro]");
                 return FALSE ;
             case DRFORCE:
-                force++ ;
+                (meRegCurr->force)++ ;
                 goto try_again;
             case DRNMACRO:
                 nmacro = TRUE;
@@ -785,7 +784,7 @@ elif_jump:
             status = TRUE ;
         else if(TTbreakFlag)
         {
-            if(force > 1)
+            if(meRegCurr->force > 1)
             {
                 /* A double !force - macro says \CG is okay, 
                  * remove all input (must remove the \CG) and rest flag
@@ -797,7 +796,7 @@ elif_jump:
             else
                 status = FALSE ;
         }
-        else if(force)
+        else if(meRegCurr->force)
             status = TRUE ;
         else
             status = FALSE ;
@@ -1080,19 +1079,15 @@ donbuf(LINE *hlp, meVARLIST *varList, int f, int n)
     rp.prev = meRegCurr ;
     rp.execstr = execstr ;
     rp.varList = varList ;
-    rp.f = thisF ;
-    rp.n = thisN ;
+    rp.f = f ;
+    rp.n = n ;
     meRegCurr = &rp ;
-    thisF = f ;
-    thisN = n ;
     
     status = dobuf(hlp) ;
     
     /* restore old arguments & stack */
     meRegCurr = rp.prev ;
     execstr = rp.execstr ;
-    thisF = rp.f ;
-    thisN = rp.n ;
     execlevel = oldexec ;
     clexec = oldcle;
     
@@ -1162,7 +1157,7 @@ execFunc(int index, int f, int n)
                     }
                 }
             }
-            else if((selhilight.flags & (SELHIL_ACTIVE|SELHIL_KEEP)) == SELHIL_ACTIVE)
+            else if(!meRegCurr->force && ((selhilight.flags & (SELHIL_ACTIVE|SELHIL_KEEP)) == SELHIL_ACTIVE))
                 selhilight.flags &= ~SELHIL_ACTIVE ;
         }
     }
@@ -1435,7 +1430,7 @@ dofile(uint8 *fname, int f, int n)
     hlp.l_bp = &hlp ;
     /* use a new buffer to ensure it doesn't mess with any loaded files */
     if(!fileLookup(fname,(uint8 *)".emf",meFL_CHECKDOT|meFL_USESRCHPATH,fn) ||
-       (ffReadFile(fn,READ_SILENT,NULL,&hlp) == ABORT))
+       (ffReadFile(fn,meRWFLAG_SILENT,NULL,&hlp) == ABORT))
         return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[Failed to load file %s]", fname);
     
     /* go execute it! */
@@ -1529,29 +1524,31 @@ lineExec (int f, int n, uint8 *cmdstr)
     uint8 *oldestr;                     /* original exec string */
     uint8  oldcle ;                     /* old contents of clexec flag */
     uint8  tkn[TOKENBUF] ;
-    int oldexec, oldF, oldN ;
+    int oldexec, oldF, oldN, oldForce ;
     
     /* save the arguments */
-    oldcle  = clexec;
+    oldcle = clexec;
     oldexec = execlevel ;
     oldestr = execstr;
-    oldF    = thisF ;
-    oldN    = thisN ;
+    oldF = meRegCurr->f ;
+    oldN = meRegCurr->n ;
+    oldForce = meRegCurr->force ;
     
     clexec = TRUE;                      /* in cline execution */
     execstr = NULL ;
     execlevel = 0;                      /* Reset execution level */
-    thisF = f ;
-    thisN = n ;
+    meRegCurr->f = f ;
+    meRegCurr->n = n ;
     
     status = docmd(cmdstr,tkn) ;
     
     /* restore old arguments */
     execlevel = oldexec ;
-    clexec    = oldcle;
-    execstr   = oldestr ;
-    thisF     = oldF ;
-    thisN     = oldN ;
+    clexec = oldcle;
+    execstr = oldestr ;
+    meRegCurr->f = oldF ;
+    meRegCurr->n = oldN ;
+    meRegCurr->force = oldForce ;
     
     return status ;
 }    

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Mon Sep 21 18:10:34 1998
-;  Last Modified : <000719.0012>
+;  Last Modified : <000721.2055>
 ;
 ;  Description : Visual Basic Hook File
 ;
@@ -49,6 +49,7 @@ set-variable %html-author &reg "/history" "html-author" "1"
     !endif
     !force exec-file "hkjava"
     !if $status
+        hilight .hilight.html 0x80 "<script\\s +language=javascript[^>]*>" .hilight.java .scheme.prepro
         hilight .hilight.html 0x80 "<script\\s +language=\"javascript\"[^>]*>" .hilight.java .scheme.prepro
         hilight .hilight.java 0x80 "</script>" 0       .scheme.prepro
         hilight .hilight.java 0x80 "</SCRIPT>" 0       .scheme.prepro

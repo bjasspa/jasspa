@@ -2,7 +2,7 @@
  * 
  *	SCCS:		%W%		%G%		%U%
  *
- *	Last Modified :	<000528.2119>
+ *	Last Modified :	<000731.1030>
  *
  *	ESTRUCT:	Structure and preprocesser defined for
  *			MicroEMACS 3.7
@@ -399,7 +399,6 @@ typedef struct  WINDOW {
     uint16  numRows;                    /* Window number text rows      */
     uint16  numTxtRows;                 /* # of rows of text in window  */
     uint16  numTxtCols;                 /* Video number of columns      */
-    uint16  w_sccol;                    /* the cur line's screen column */
     uint16  w_scscroll;                 /* cur horizontal scroll column */
     uint16  w_sscroll;                  /* the horizontal scroll column */
     uint16  w_margin;                   /* The margin for the window    */
@@ -483,9 +482,35 @@ typedef struct meMACRO {
 typedef	struct	meAMARK {
     struct meAMARK *next ;		/* pointer to next mark in list		     */
     LINE           *line ;		/* pointer to line associated with this mark */
-    uint16          offs ;		/* line offset  */
+    uint16          offs ;		/* line offset                               */
     uint16          name ;		/* mark name, (letter associated with it)    */
 } meAMARK;
+
+/* A position, stores the current window, buffer, line etc which can
+ * be restore later, used by push-position and pop-position */
+typedef	struct	mePOS {
+    struct mePOS   *prev ;              /* pointer to previous position (stack)	     */
+    WINDOW         *window ;            /* Current window                            */
+    struct BUFFER  *buffer ;            /* windows buffer                            */
+    int32           topLineNo ;         /* windows top line number                   */
+    int32           line_no;            /* current line number                       */
+    uint16          line_amark;         /* Alpha mark to current line                */
+    uint16          w_scscroll;         /* cur horizontal scroll column              */
+    uint16          w_sscroll;          /* the horizontal scroll column              */
+    uint16          w_doto;             /* Byte offset for "."                       */
+    uint16          flags;              /* Whats stored bit mask                     */
+} mePOS;
+#define mePOS_WINDOW    0x01
+#define mePOS_WINXSCRL  0x02
+#define mePOS_WINXCSCRL 0x04
+#define mePOS_WINYSCRL  0x08
+#define mePOS_BUFFER    0x10
+#define mePOS_LINEMRK   0x20
+#define mePOS_LINENO    0x40
+#define mePOS_LINEOFF   0x80
+#define mePOS_DEFAULT   \
+(mePOS_WINDOW|mePOS_WINXSCRL|mePOS_WINXCSCRL|mePOS_WINYSCRL| \
+ mePOS_BUFFER|mePOS_LINEMRK|mePOS_LINEOFF)
 
 #if NARROW
 typedef	struct	meNARROW {
@@ -493,8 +518,8 @@ typedef	struct	meNARROW {
     struct meNARROW *prev ;		/* pointer to previous narrow in list	     */
     LINE            *slp ;		/* pointer to narrow start line              */
     LINE            *elp ;		/* pointer to narrow end line                */
-    int32            noLines ;           /* Number of lines narrowed out              */
-    int32            sln ;               /* Narrows start line number                 */
+    int32            noLines ;          /* Number of lines narrowed out              */
+    int32            sln ;              /* Narrows start line number                 */
     uint16           name ;		/* amark name                                */
 } meNARROW ;
 
@@ -534,7 +559,7 @@ typedef struct  BUFFER {
 #if FLNEXT
     uint8  *nextFile ;                  /* Next's current File name     */
 #endif
-#if	CRYPT
+#if CRYPT
     uint8  *b_key;		        /* current encrypted key	*/
 #endif
 #if MEUNDO
@@ -726,17 +751,6 @@ typedef struct HILNODE {
     uint8    token[1] ;
 } HILNODE, *HILNODEPTR ;
 
-/*
- * HILBLOCK
- * Hilighting screen structure. The structure contains blocks of style
- * information used to render the screen. Each block describes the style
- * (front and back color + font) and the column on which the style ends.
- */
-typedef struct {
-    uint16   column;             /* change column */
-    meSCHEME scheme;             /* style index */
-} HILBLOCK;    
-
 #define TableLower (uint8)(' ')
 #define TableUpper (uint8)('z')
 #define TableSize  ((TableUpper - TableLower) + 3)
@@ -747,6 +761,19 @@ typedef struct {
  (((uint8)(cc) > TableUpper) ? TableSize-2:          \
   ((uint8)(cc)-TableLower+1)))
 #define hilListSize(r) (r->ordSize + r->listSize)
+
+#endif
+
+/*
+ * HILBLOCK
+ * Hilighting screen structure. The structure contains blocks of style
+ * information used to render the screen. Each block describes the style
+ * (front and back color + font) and the column on which the style ends.
+ */
+typedef struct {
+    uint16   column;             /* change column */
+    meSCHEME scheme;             /* style index */
+} HILBLOCK;    
 
 /*
  * Selection Highlighting 
@@ -777,8 +804,6 @@ typedef struct SELHILIGHT {
 
 #define SELHILU_ACTIVE   0x0001         /* Buffer has been edited    */
 #define SELHILU_KEEP     0x0002         /* Buffer has been edited    */
-
-#endif
 
 #define VFMESSL 0x0001                  /* Message line */
 #define VFMENUL 0x0002                  /* Menu line changed flag */
@@ -911,6 +936,7 @@ typedef struct meREGISTERS {
     meVARLIST *varList ;
     uint8 *execstr ;
     int   f, n ;
+    int   force ;
     uint8 reg[meNUMREG][MAXBUF] ;
 } meREGISTERS ;
 

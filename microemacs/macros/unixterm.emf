@@ -1,11 +1,11 @@
 ; Common unix setup file
-; Last Modified:     <000704.0834>
+; Last Modified:     <000825.1824>
 ;
 define-macro-file hkman man
 define-macro-file hkipipe ishell gdb dbx
 add-file-hook ".C" fhook-cpp
 0 define-macro exec-me
-    ipipe-shell-command &spr "\"%s\" %s" $progname @1
+    ipipe-shell-command &spr "\"%s\" %s" $progname @1 @mna
 !emacro
 !if &band $system 0x01
     ; Not using X - bind C-i to the tab character

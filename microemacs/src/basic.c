@@ -10,7 +10,7 @@
 *
 *	Author:			Danial Lawrence
 *
-*	Creation Date:		14/05/91 12:37		<000107.1959>
+*	Creation Date:		14/05/91 12:37		<000723.1817>
 *
 *	Modification date:	%G% : %U%
 *
@@ -320,9 +320,11 @@ gotoLine(int f, int n)
          */
         if (status)			/* Displacement ?? */
         {
+#if NARROW
             if (f != FALSE)
                 nlno += gotoAbsLine(-1) ;
             else
+#endif
                 nlno += curwp->line_no ;
         }
         if(nlno <= 0)
@@ -330,8 +332,10 @@ gotoLine(int f, int n)
             gotobob(FALSE,1) ;
             return bobError() ;
         }
+#if NARROW
         if (f != FALSE)
             return gotoAbsLine(nlno) ;
+#endif
     }
     else
         nlno = n ;

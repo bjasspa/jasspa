@@ -5,7 +5,7 @@
  *  Synopsis      : Windows Print handler.
  *  Created By    : Jon Green
  *  Created       : 28/02/1998
- *  Last Modified : <000718.2347>
+ *  Last Modified : <000723.1840>
  *
  *  Description
  *     Printer driver routines for the WIN32 build for Microsoft windows
@@ -44,6 +44,9 @@
 
 /* Emacs standard headers */
 #include "emain.h"
+
+#if PRINT
+
 #include "evers.h"                      /* Version information */
 #include "eskeys.h"                     /* Emacs special keys */
 #include "wintermr.h"                   /* Windows resource file */
@@ -656,7 +659,6 @@ pcdEnumFontFamiliesCallback (ENUMLOGFONT *lpelf, NEWTEXTMETRIC *lpntm, int fontT
 static void
 pcdChange (HWND hWnd)
 {
-    extern void printComputePageSetup (void);
     int buttons[] = {IDC_HEADER, IDC_FOOTER, IDC_LINE_NOS};
     int masks[] = {PFLAG_ENBLHEADER, PFLAG_ENBLFOOTER, PFLAG_ENBLLINENO};
     int combos[] = {IDC_HEIGHT,IDC_WIDTH,IDC_COLUMNS,IDC_ROWS};
@@ -1212,7 +1214,8 @@ WinPrintThread (LPVOID wParam)
     printDlg.hDC = printGetDC();
 
     /* Get the printer information out */
-    if (((printStatus & PRINT_DIALOGUE) == 0) || (printDlg.hDC == NULL))
+/*    if (((printStatus & PRINT_DIALOGUE) == 0) || (printDlg.hDC == NULL))*/
+    if (printDlg.hDC == NULL)
     {
         MessageBox (ttHwnd, "Device context not configured", title, MB_ICONEXCLAMATION|MB_OK);
         goto quick_exit;
@@ -1486,27 +1489,44 @@ WinPrint (uint8 *docName, LINE *ihead)
  * Use a dialogue for the user to set up the printer.
  */
 int
-printSetup (void)
+printSetup (int n)
 {
     /* Construct the default registry entry for windows */
     if((regPrint = regFind (NULL,regPrintName)) == NULL)
         regPrint = regSet (NULL, regPrintName, NULL);
     if (regPrint == NULL)
         return mlwrite (MWABORT, "[Cannot locate print registry]");
-
+    
     /* Make sure we are not already running a print spool. */
-    if (printStatus & PRINT_SPOOLING)
+    if ((printStatus & PRINT_SPOOLING) && (n >= 0))
         return mlwrite (MWABORT, "Print spooler currently processing a job in the background");
-
-    /* Set up the dialogue box and return the status.
-     * Note that we explicitly test the return status for TRUE which is
-     * returned if the dialogue 'Print' button is pressed. Any other value
-     * that is returned indicates that the 'Cancel' button was pressed or
-     * the dialogue could not be created (-1). */
-    if (DialogBox (ttInstance,
-                   MAKEINTRESOURCE (IDD_PRINTER_CONFIGURATION),
-                   ttHwnd,
-                   (DLGPROC) pcdDialogue) == TRUE)
-        return TRUE;
-    return FALSE;
+    
+    if ((n == -2) || (n == 0))
+    {
+        /* Set up the dialogue box and return the status.
+         * Note that we explicitly test the return status for TRUE which is
+         * returned if the dialogue 'Print' button is pressed. Any other value
+         * that is returned indicates that the 'Cancel' button was pressed or
+         * the dialogue could not be created (-1). */
+        if (DialogBox (ttInstance,
+                       MAKEINTRESOURCE (IDD_PRINTER_CONFIGURATION),
+                       ttHwnd,
+                       (DLGPROC) pcdDialogue) != TRUE)
+            return FALSE;
+    }
+    else if(n > 0)
+    {
+        /* Dialog box not required, simply setup the printer */
+        /* Copy the new font into the registry immediatly */
+        printer.param [mePI_FONTFACE].p = "Courier New" ;
+        
+        /* Compute the size of the font */
+        pcdComputeFont (&pd,
+                        printer.param [mePI_PAGEX].l, printer.param[mePI_SPECX].l,
+                        printer.param [mePI_PAGEY].l, printer.param[mePI_SPECY].l,
+                        10);
+    }
+    return TRUE;
 }
+
+#endif

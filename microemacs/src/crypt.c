@@ -10,7 +10,7 @@
 *
 *	Author:			Dana Hoggatt and Daniel Lawrence
 *
-*	Creation Date:		14/05/86 12:37		<000107.1959>
+*	Creation Date:		14/05/86 12:37		<000907.1403>
 *
 *	Modification date:	%G% : %U%
 *
@@ -60,32 +60,40 @@
 
 #define USE_OLD_CRYPT 0                 /* 0 = me3.8; 1 = me3.12 */
 
-int	
-setCryptKey(int f, int n)	/* reset encryption key of current buffer */
+/* reset encryption key of given buffer */
+int
+setBufferCryptKey(BUFFER *bp, uint8 *key)
 {
-    register int status;	/* return status */
-    uint8 key[NPAT]; 	/* new encryption string */
-
+    uint8 keybuf[NPAT]; 	/* new encryption string */
+	
+    if(key == NULL)
+    {
 	/* get the string to use as an encrytion string */
-    if((status = mlreply((uint8 *)"Encryption String", MLNOHIST,
-			 0, key, NPAT-1)) != TRUE)
-        return(status);
-    
-    meNullFree(curbp->b_key) ;
-    curbp->b_key = NULL ;
+        if(mlreply((uint8 *)"Encryption String", MLNOHIST, 0,keybuf, NPAT-1) != TRUE)
+            return FALSE ;
+        key = keybuf ;
+        mlerase(MWCLEXEC);		/* clear it off the bottom line */
+    }
+    meNullFree(bp->b_key) ;
+    bp->b_key = NULL ;
     if((key[0] == 0) ||
-       ((curbp->b_key = meStrdup(key)) == NULL))
-        meModeClear(curbp->b_mode,MDCRYPT) ;
+       ((bp->b_key = meStrdup(key)) == NULL))
+        meModeClear(bp->b_mode,MDCRYPT) ;
     else
     {
         /* and encrypt it */
-        meModeSet(curbp->b_mode,MDCRYPT) ;
+        meModeSet(bp->b_mode,MDCRYPT) ;
         meCrypt(NULL, 0);
-        meCrypt(curbp->b_key, meStrlen(key));
-    }        
-    mlerase(MWCLEXEC);		/* clear it off the bottom line */
-    curwp->w_flag |= WFMODE ;
-    return(TRUE);
+        meCrypt(bp->b_key, meStrlen(key));
+    }
+    addModeToBufferWindows(bp,WFMODE) ;
+    return TRUE ;
+}
+
+int
+setCryptKey(int f, int n)	/* reset encryption key of current buffer */
+{
+    return setBufferCryptKey(curbp,NULL) ;
 }
 
 #if USE_OLD_CRYPT            
@@ -338,9 +346,5 @@ meCrypt(register uint8 *bptr, register uint32 len)
         *bptr++ = cc;	/* put character back into buffer */
     }
     return(TRUE);
-}
-#else
-nocrypt()
-{
 }
 #endif

@@ -1,7 +1,7 @@
 /*
  * Define the string name / internal variable name binding
  *
- * Last Modified:         <000627.1026>
+ * Last Modified:         <000723.1842>
  * 
  ****************************************************************************
  *
@@ -64,7 +64,9 @@ DEFVAR ("fill-eos",            EVFILLEOS)       /* Fill end-of-sentance characte
 DEFVAR ("fill-eos-len",        EVFILLEOSLEN)    /* number of ' ' to insert after an eos  */
 DEFVAR ("fill-ignore",         EVFILLIGNORE)    /* Fill ignore character set */
 DEFVAR ("fill-mode",           EVFILLMODE)      /* Justify mode */
+#if SPELL
 DEFVAR ("find-words",          EVFINDWORDS)     /* Find words matching mask, sim. to file-names */
+#endif
 DEFVAR ("fmatchdelay",         EVMATCHLEN)      /* Fence matchin length */
 DEFVAR ("global-fmod",         EVGLOBFMOD)      /* file mod or attributes */
 #if COLOR

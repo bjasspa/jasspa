@@ -1,0 +1,99 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Tue Sep 19 10:10:01 2000
+;  Last Modified : <000919.1013>
+;
+;  Description   : Generic tags generator
+;
+;  Notes
+;
+;      Launchs ME with a tags generation macro file and %tag-option variable
+;      setting to generate the tags file, typical command-line is:
+;               me "@ntags" "-v%tag-option=mrcsev"
+;      Also provides a GUI front end for setting the flags and starting path,
+;      the gui can be disabled by passing an argument of -1.
+;
+;  Copyright (c) 2000 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+!if &not &exi .osd.gtf
+    set-variable .osd.gtf &pinc .osd.next 1
+!endif
+
+0 define-macro generate-tags-file-entry
+    !if &gre @# 0
+        set-variable $result &cond &equ @# 1 .generate-tags-file.flags .generate-tags-file.path
+    !elif &equ @# -1
+        set-variable .generate-tags-file.flags @ml20 "" .generate-tags-file.flags
+    !else
+        set-variable .generate-tags-file.path @ml21 "" .generate-tags-file.path
+    !endif
+!emacro
+
+0 define-macro generate-tags-file-flags
+    set-variable #l0 &lget "|a|e|m|r|s|v|" @#
+    !if &sin #l0 .generate-tags-file.flags
+        var-str-sub .generate-tags-file.flags #l0 ""
+    !else
+        set-variable .generate-tags-file.flags &cat .generate-tags-file.flags #l0
+    !endif
+!emacro
+
+0 define-macro generate-tags-file-exec
+    push-position
+    find-buffer "*generate-tags-file tmp*"
+    set-variable $buffer-fname .generate-tags-file.path
+    !if &band $system 0x080
+        !force exec-me &spr "\"@%s\" \"-v%%tag-option=%s\"" .generate-tags-file.type .generate-tags-file.flags
+    !else
+        !force exec-me &spr "\"@%s\" \"-v%%%%tag-option=%s\"" .generate-tags-file.type .generate-tags-file.flags
+    !endif
+    !force delete-buffer "*generate-tags-file tmp*"
+    pop-position
+!emacro
+
+osd .osd.gtf 0   "batcdHs" 10 3 46 0 -1 -1 11 .scheme.osd-title "Generate Tags File"
+osd .osd.gtf 10  ""
+osd .osd.gtf 20  "Shf"  "  Tags &Flags : " 4
+osd .osd.gtf 30  "ExfH" .scheme.osd-entry "###############" 1 generate-tags-file-entry
+osd .osd.gtf 31  "hf"   "    ("
+osd .osd.gtf 32  "Rhfx" "&Append"       1 generate-tags-file-flags
+osd .osd.gtf 33  "hf"   ", "
+osd .osd.gtf 34  "Rhfx" "&Enum-types"   2 generate-tags-file-flags
+osd .osd.gtf 35  "hf"   ", "
+osd .osd.gtf 36  "Rhfx" "&Multiple"     3 generate-tags-file-flags
+osd .osd.gtf 37  "f"    ","
+osd .osd.gtf 38  "hf"   "     "
+osd .osd.gtf 39  "Rhfx" "&Recurse"      4 generate-tags-file-flags
+osd .osd.gtf 40  "hf"   ", "
+osd .osd.gtf 41  "Rhfx" "&Structure"    5 generate-tags-file-flags
+osd .osd.gtf 42  "hf"   ", "
+osd .osd.gtf 43  "Rhfx" "global &Vars"  6 generate-tags-file-flags
+osd .osd.gtf 44  "f"    ")"
+osd .osd.gtf 50  ""
+osd .osd.gtf 60  "Sf"   "  Starting &Path :" 70
+osd .osd.gtf 65  "hf"   "  "
+osd .osd.gtf 70  "ExfH" .scheme.osd-entry "########################################" 2 generate-tags-file-entry
+osd .osd.gtf 80  ""
+osd .osd.gtf 90  "BhcfHi" .scheme.osd-ebtt " &Generate Tags "    f generate-tags-file-exec
+osd .osd.gtf 100 "BcfH"   .scheme.osd-ebtt " E&xit "    1 void
+
+; generate-tags-file "<tagtype>" "[start-path]"
+; runs ME @<tagtype> -v%tags-option=...
+0 define-macro generate-tags-file
+    set-variable .type @1
+    set-variable .path &lef $buffer-fname &rsin "/" $buffer-fname
+    !force set-variable #l2 @2
+    !if $status
+        set-variable .path &stat "a" &cat .path #l2
+    !endif
+    !if &band @# 1
+        ; if an argument of 1 is given then open the gui
+        .osd.gtf osd
+    !else
+        generate-tags-file-exec
+    !endif
+!emacro
+set-variable .generate-tags-file.flags %tag-option
+

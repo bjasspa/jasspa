@@ -5,7 +5,7 @@
  *  Synopsis      : Buffer printing routines
  *  Created By    : Jon Green & Steven Phillips
  *  Created       : 1996
- *  Last Modified : <000615.2118>
+ *  Last Modified : <000907.1418>
  *
  *  Description
  *     This file contains routines to format and print buffers
@@ -41,6 +41,8 @@
  ****************************************************************************/
 
 #include "emain.h"
+
+#if PRINT
 
 #if (defined _UNIX) || (defined _DOS) || (defined _WIN32)
 #include <sys/types.h>
@@ -416,7 +418,7 @@ printGetParams (void)
                             }
                             else
                             {
-                                fontStrlen[ii][jj] = (uint16) strlen(fontStrings[ii][jj]) ;
+                                fontStrlen[ii][jj] = (uint16) meStrlen(fontStrings[ii][jj]) ;
                                 fontMasks[ii][jj] = 1 << (kk+16) ;
                             }
 #if TESTPRINT
@@ -541,7 +543,7 @@ static int
 printInit (int f, int n)
 {
 #ifdef _WIN32
-    extern int printSetup(void);
+    extern int printSetup(int n);
 #endif
     /* Get the parameters out of the registry. */
     if (printGetParams () != TRUE)
@@ -553,16 +555,15 @@ printInit (int f, int n)
         printer.pLineNumDigits = 0 ;
 
 #ifdef _WIN32
-    /* If this is the windows printer then invoke the windows setup. */
-    if ((n == -2) || ((n == 0) && printer.pInternal))
-    {
-        if (printSetup() != TRUE)
-            return FALSE;
-    }
-    else
+    /* On windows call printSetup to handle the windows printer initialization
+     * and the setup dialog if required.
+     */
+    if (printer.pInternal && (printSetup(n) != TRUE))
+        return FALSE;
 #endif
-        if (printComputePageSetup (f) != TRUE)
-            return FALSE;
+    
+    if (printComputePageSetup (f) != TRUE)
+        return FALSE;
     
     if(n < 0)
     {
@@ -754,7 +755,7 @@ addFormatedLine (LINE **head, LINE **tail,
 
 #if HILIGHT
 static int
-printSetScheme(meSCHEME col, char *buff)
+printSetScheme(meSCHEME col, uint8 *buff)
 {
     meSCHEME ts ;
     meSTYLE ss, cs ;
@@ -807,7 +808,7 @@ printSetScheme(meSCHEME col, char *buff)
                 rr = mePrintColorGetRed(cc) ;
                 gg = mePrintColorGetGreen(cc) ;
                 bb = mePrintColorGetBlue(cc) ;
-                str = meTParm(fontStrings[sore][ii],cno,rr,gg,bb) ;
+                str = meTParm((char *)fontStrings[sore][ii],cno,rr,gg,bb) ;
                 if(buff != NULL)
                     meStrcpy(buff+len,str) ;
                 len += strlen(str) ;
@@ -840,8 +841,8 @@ composePage (int f)
 {
     LINE *head = NULL;
     LINE *tail = NULL;
-    uint8 buf [1024*5];         /* Heafty line store !! */
-    uint8 *p;                   /* Pointer to the buffer */
+    uint8 buf [1024*5];                 /* Heafty line store !! */
+    uint8 *p;                           /* Pointer to the buffer */
     int xx;                             /* Page column iterator */
     int yy;                             /* Page row iterator */
     int ll;                             /* Lines on page iterator */
@@ -883,7 +884,7 @@ composePage (int f)
                 rr = mePrintColorGetRed(cc) ;
                 gg = mePrintColorGetGreen(cc) ;
                 bb = mePrintColorGetBlue(cc) ;
-                str = meTParm(printer.param[mePS_BGCOL].p,cno,rr,gg,bb) ;
+                str = meTParm((char *)printer.param[mePS_BGCOL].p,cno,rr,gg,bb) ;
                 meStrcpy(p,str) ;
                 p += strlen(str) ;
             }
@@ -1657,3 +1658,4 @@ printBuffer (int f, int n)
                          lforw (curbp->b_linep), curbp->b_linep,n);
 }
 
+#endif

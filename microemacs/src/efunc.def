@@ -12,7 +12,7 @@
 *
 *	Creation Date:		17/10/91
 *
-*	Modification date:	%G%		<000513.1807>
+*	Modification date:	%G%		<000731.0826>
 *
 *	Current rev:		%I%
 *
@@ -43,43 +43,27 @@
 
 DEFFUNC ("abort-command",		0x42, ctrlg,		CK_ABTCMD, __meFunc_ABTCMD, &__meFunc_ABOUT, 0)
 DEFFUNC ("about",		        0x42, meAbout,	        CK_ABOUT, __meFunc_ABOUT, &__meFunc_ADDCOL, 0)
-#if COLOR
 DEFFUNC ("add-color",               	0x00, addColor,  	CK_ADDCOL, __meFunc_ADDCOL, &__meFunc_ADDCOLSCHM, 0)
 DEFFUNC ("add-color-scheme",		0x42, addColorScheme,	CK_ADDCOLSCHM, __meFunc_ADDCOLSCHM, &__meFunc_ADDDICT, 0)
-#endif
-#if SPELL
 DEFFUNC ("add-dictionary",              0x00, addDict,   	CK_ADDDICT, __meFunc_ADDDICT, &__meFunc_FLHOOK, 0)
-#endif
 DEFFUNC ("add-file-hook",               0x00, addFileHook,   	CK_FLHOOK, __meFunc_FLHOOK, &__meFunc_ADNXTLN, 0)
-#if FLNEXT
 DEFFUNC ("add-next-line",  	        0x00, addNextLine,      CK_ADNXTLN, __meFunc_ADNXTLN, &__meFunc_ADDRULE, 0)
-#endif
-#if SPELL
 DEFFUNC ("add-spell-rule",              0x00, addSpellRule,	CK_ADDRULE, __meFunc_ADDRULE, &__meFunc_APPBUF, 0)
-#endif
 DEFFUNC ("append-buffer",               0x42, appendBuffer,	CK_APPBUF, __meFunc_APPBUF, &__meFunc_BAKCHR, 0)
 DEFFUNC ("backward-char",		0xc8, backChar,		CK_BAKCHR, __meFunc_BAKCHR, &__meFunc_DELBAK, 0)
 DEFFUNC ("backward-delete-char",	0x04, backDelChar,	CK_DELBAK, __meFunc_DELBAK, &__meFunc_DELTAB, 0)
 DEFFUNC ("backward-delete-tab",		0x04, meBacktab,	CK_DELTAB, __meFunc_DELTAB, &__meFunc_DELWBAK, 0)
 DEFFUNC ("backward-kill-word",		0x04, backDelWord,	CK_DELWBAK, __meFunc_DELWBAK, &__meFunc_BAKLIN, 0)
 DEFFUNC ("backward-line",		0xc8, backLine,		CK_BAKLIN, __meFunc_BAKLIN, &__meFunc_GOBOP, 0)
-#if	WORDPRO
 DEFFUNC ("backward-paragraph",		0xc8, backPara,		CK_GOBOP, __meFunc_GOBOP, &__meFunc_BAKWRD, 0)
-#endif
 DEFFUNC ("backward-word",		0xc8, backWord,		CK_BAKWRD, __meFunc_BAKWRD, &__meFunc_GOBOF, 0)
 DEFFUNC ("beginning-of-buffer",		0xc8, gotobob,		CK_GOBOF, __meFunc_GOBOF, &__meFunc_GOBOL, 0)
 DEFFUNC ("beginning-of-line",		0xc8, gotobol,		CK_GOBOL, __meFunc_GOBOL, &__meFunc_BUFABREV, 0)
-#if ABREV
 DEFFUNC	("buffer-abbrev-file",		0x00, bufferAbbrev,	CK_BUFABREV, __meFunc_BUFABREV, &__meFunc_LCLBIND, 0)
-#endif
-#if LCLBIND
 DEFFUNC ("buffer-bind-key",		0x00, bufferBind,	CK_LCLBIND, __meFunc_LCLBIND, &__meFunc_BUFPOS, &__meFunc_MLUNBD)
-#endif
 DEFFUNC ("buffer-info",			0x00, bufferInfo,	CK_BUFPOS, __meFunc_BUFPOS, &__meFunc_BUFMOD, 0)
 DEFFUNC ("buffer-mode",			0x00, bufferMode,	CK_BUFMOD, __meFunc_BUFMOD, &__meFunc_LCLUNBD, 0)
-#if LCLBIND
 DEFFUNC ("buffer-unbind-key",		0x00, bufferUnbind,	CK_LCLUNBD, __meFunc_LCLUNBD, &__meFunc_CAPWRD, 0)
-#endif
 DEFFUNC ("capitalize-word",		0x04, capWord,		CK_CAPWRD, __meFunc_CAPWRD, &__meFunc_NAMBUF, 0)
 DEFFUNC ("change-buffer-name",		0x00, changeBufName,	CK_NAMBUF, __meFunc_NAMBUF, &__meFunc_CHGDIR, 0)
 DEFFUNC ("change-directory",		0x00, changeDir,	CK_CHGDIR, __meFunc_CHGDIR, &__meFunc_CHGFIL, 0)
@@ -91,22 +75,16 @@ DEFFUNC ("command-apropos",		0x42, commandApropos,	CK_APROPS, __meFunc_APROPS, &
 DEFFUNC ("compare-windows",		0x42, cmpBuffers,	CK_CMPBUF, __meFunc_CMPBUF, &__meFunc_FILECPY, 0)
 DEFFUNC ("copy-file",			0x04, copyFile,		CK_FILECPY, __meFunc_FILECPY, &__meFunc_CPYREG, 0)
 DEFFUNC ("copy-region",			0x39, copyRegion,	CK_CPYREG, __meFunc_CPYREG, &__meFunc_WRDCNT, 0)
-#if	WORDPRO
 DEFFUNC ("count-words",			0x42, countWords,	CK_WRDCNT, __meFunc_WRDCNT, &__meFunc_CRTCLBK, 0)
-#endif
 DEFFUNC ("create-callback",             0x00, createCallback,   CK_CRTCLBK, __meFunc_CRTCLBK, &__meFunc_DEFHELP, 0)
 DEFFUNC ("define-help",			0x00, macroHelpDefine,	CK_DEFHELP, __meFunc_DEFHELP, &__meFunc_DEFMAC, 0)
 DEFFUNC ("define-macro",		0x00, macroDefine,	CK_DEFMAC, __meFunc_DEFMAC, &__meFunc_DEFFMAC, 0)
 DEFFUNC ("define-macro-file",		0x00, macroFileDefine,	CK_DEFFMAC, __meFunc_DEFFMAC, &__meFunc_DELBLK, 0)
 DEFFUNC ("delete-blank-lines",		0x04, deblank,		CK_DELBLK, __meFunc_DELBLK, &__meFunc_DELBUF, 0)
 DEFFUNC ("delete-buffer",		0x42, delBuffer,	CK_DELBUF, __meFunc_DELBUF, &__meFunc_DELDICT, 0)
-#if SPELL
 DEFFUNC ("delete-dictionary",           0x00, deleteDict,   	CK_DELDICT, __meFunc_DELDICT, &__meFunc_ONLYWND, 0)
-#endif
 DEFFUNC ("delete-other-windows",	0x00, onlywind,		CK_ONLYWND, __meFunc_ONLYWND, &__meFunc_DELREGY, 0)
-#if REGSTRY
 DEFFUNC ("delete-registry",		0x42, deleteRegistry,	CK_DELREGY, __meFunc_DELREGY, &__meFunc_DELSBUF, 0)
-#endif
 DEFFUNC ("delete-some-buffers",		0x42, delSomeBuffers,	CK_DELSBUF, __meFunc_DELSBUF, &__meFunc_DELWND, 0)
 DEFFUNC ("delete-window",		0x42, delwind,		CK_DELWND, __meFunc_DELWND, &__meFunc_DESCBIN, 0)
 DEFFUNC ("describe-bindings",		0x42, descBindings,	CK_DESCBIN, __meFunc_DESCBIN, &__meFunc_DESCKEY, 0)
@@ -124,61 +102,40 @@ DEFFUNC ("execute-line",		0x00, execLine,		CK_EXECMD, __meFunc_EXECMD, &__meFunc
 DEFFUNC ("execute-named-command",       0x00, execCommand,       CK_EXENCMD, __meFunc_EXENCMD, &__meFunc_EXESTR, 0)
 DEFFUNC ("execute-string",              0x00, execString,  	CK_EXESTR, __meFunc_EXESTR, &__meFunc_EXIT, &__meFunc_TRNCHR)
 DEFFUNC ("exit-emacs",			0x00, exitEmacs,	CK_EXIT, __meFunc_EXIT, &__meFunc_EXABREV, 0)
-#if ABREV
 DEFFUNC	("expand-abbrev",		0x04, expandAbbrev,	CK_EXABREV, __meFunc_EXABREV, &__meFunc_FILPAR, 0)
-#endif
-#if	WORDPRO
 DEFFUNC ("fill-paragraph",		0x04, fillPara,		CK_FILPAR, __meFunc_FILPAR, &__meFunc_FILTBUF, 0)
-#endif
 DEFFUNC ("filter-buffer",		0x04, meFilter,		CK_FILTBUF, __meFunc_FILTBUF, &__meFunc_FNDBFIL, 0)
 DEFFUNC ("find-bfile",			0x42, findBFile,	CK_FNDBFIL, __meFunc_FNDBFIL, &__meFunc_USEBUF, &__meFunc_PREFIX)
 DEFFUNC ("find-buffer",			0x42, findBuffer,	CK_USEBUF, __meFunc_USEBUF, &__meFunc_FNDCFIL, &__meFunc_LSTREGY)
 DEFFUNC ("find-cfile",			0x42, findCFile,	CK_FNDCFIL, __meFunc_FNDCFIL, &__meFunc_FNDFIL, 0)
 DEFFUNC ("find-file",			0x42, findFile,		CK_FNDFIL, __meFunc_FNDFIL, &__meFunc_FNDREGY, 0)
-#if REGSTRY
 DEFFUNC ("find-registry",		0x42, findRegistry,	CK_FNDREGY, __meFunc_FNDREGY, &__meFunc_FNDTAG, 0)
-#endif
 DEFFUNC ("find-tag",		        0x42, findTag,		CK_FNDTAG, __meFunc_FNDTAG, &__meFunc_FORCHR, 0)
 DEFFUNC ("forward-char",		0xc8, forwChar,		CK_FORCHR, __meFunc_FORCHR, &__meFunc_DELFOR, 0)
 DEFFUNC ("forward-delete-char",		0x04, forwDelChar,	CK_DELFOR, __meFunc_DELFOR, &__meFunc_DELFWRD, &__meFunc_SETREGY)
 DEFFUNC ("forward-kill-word",		0x04, forwDelWord,	CK_DELFWRD, __meFunc_DELFWRD, &__meFunc_FORLIN, &__meFunc_FNDREGY)
 DEFFUNC ("forward-line",		0xc8, forwLine,		CK_FORLIN, __meFunc_FORLIN, &__meFunc_GOEOP, 0)
-#if WORDPRO
 DEFFUNC ("forward-paragraph",		0xc8, forwPara,		CK_GOEOP, __meFunc_GOEOP, &__meFunc_FORWRD, &__meFunc_WRDCNT)
-#endif
 DEFFUNC ("forward-word",		0xc8, forwWord,		CK_FORWRD, __meFunc_FORWRD, &__meFunc_FLNEXT, 0)
-#if FLNEXT
 DEFFUNC ("get-next-line",	        0x42, getNextLine,	CK_FLNEXT, __meFunc_FLNEXT, &__meFunc_GETREGY, 0)
-#endif
-#if REGSTRY
 DEFFUNC ("get-registry",		0x42, getRegistry,	CK_GETREGY, __meFunc_GETREGY, &__meFunc_GLOBABREV, 0)
-#endif
-#if ABREV
 DEFFUNC	("global-abbrev-file",		0x00, globalAbbrev,	CK_GLOBABREV, __meFunc_GLOBABREV, &__meFunc_BINDKEY, 0)
-#endif
 DEFFUNC ("global-bind-key",		0x00, globalBind,	CK_BINDKEY, __meFunc_BINDKEY, &__meFunc_GLOBMOD, 0)
 DEFFUNC ("global-mode",			0x00, globalMode,	CK_GLOBMOD, __meFunc_GLOBMOD, &__meFunc_UBNDKEY, 0)
 DEFFUNC ("global-unbind-key",		0x00, globalUnbind,	CK_UBNDKEY, __meFunc_UBNDKEY, &__meFunc_GOAMRK, 0)
 DEFFUNC	("goto-alpha-mark",		0x42, gotoAlphaMark,	CK_GOAMRK, __meFunc_GOAMRK, &__meFunc_GOLIN, &__meFunc_REDHWND)
 DEFFUNC ("goto-line",			0x42, gotoLine,		CK_GOLIN, __meFunc_GOLIN, &__meFunc_GOFNC, 0)
-#if	CFENCE
-DEFFUNC ("goto-matching-fence",		0x48, gotoFence,	CK_GOFNC, __meFunc_GOFNC, &__meFunc_RESWND, 0)
-#endif
-DEFFUNC ("goto-window",			0x42, gotoWindow,	CK_RESWND, __meFunc_RESWND, &__meFunc_ENGHORZWIN, 0)
+DEFFUNC ("goto-matching-fence",		0x48, gotoFence,	CK_GOFNC, __meFunc_GOFNC, &__meFunc_ENGHORZWIN, 0)
 DEFFUNC ("grow-window-horizontally",	0x00, growWindHorz,	CK_ENGHORZWIN, __meFunc_ENGHORZWIN, &__meFunc_ENGWIN, 0)
 DEFFUNC ("grow-window-vertically",	0x00, growWindVert,	CK_ENGWIN, __meFunc_ENGWIN, &__meFunc_HELP, 0)
 DEFFUNC ("help",			0x42, help,		CK_HELP, __meFunc_HELP, &__meFunc_HELPCOM, 0)
 DEFFUNC ("help-command",		0x42, helpCommand,	CK_HELPCOM, __meFunc_HELPCOM, &__meFunc_HELPITM, 0)
 DEFFUNC ("help-item",			0x42, helpItem,		CK_HELPITM, __meFunc_HELPITM, &__meFunc_HELPVAR, 0)
 DEFFUNC ("help-variable",		0x42, helpVariable,	CK_HELPVAR, __meFunc_HELPVAR, &__meFunc_HILIGHT, 0)
-#if HILIGHT
-DEFFUNC ("hilight",		        0x42, hilight,		CK_HILIGHT, __meFunc_HILIGHT, &__meFunc_HUNBAK, &__meFunc_EXEFIL)
-#endif
+DEFFUNC ("hilight",		        0x00, hilight,		CK_HILIGHT, __meFunc_HILIGHT, &__meFunc_HUNBAK, &__meFunc_EXEFIL)
 DEFFUNC ("hunt-backward",		0x00, huntBack,		CK_HUNBAK, __meFunc_HUNBAK, &__meFunc_HUNFOR, 0)
 DEFFUNC ("hunt-forward",		0x00, huntForw,		CK_HUNFOR, __meFunc_HUNFOR, &__meFunc_INDENT, 0)
-#if HILIGHT
-DEFFUNC ("indent",		        0x42, indent,		CK_INDENT, __meFunc_INDENT, &__meFunc_INSFIL, 0)
-#endif
+DEFFUNC ("indent",		        0x00, indent,		CK_INDENT, __meFunc_INDENT, &__meFunc_INSFIL, 0)
 DEFFUNC ("insert-file",			0x39, insFile,		CK_INSFIL, __meFunc_INSFIL, &__meFunc_INSFLNM, 0)
 DEFFUNC ("insert-file-name",            0x04, insFileName,    	CK_INSFLNM, __meFunc_INSFLNM, &__meFunc_INSMAC, 0)
 DEFFUNC ("insert-macro",		0x04, insMacro,		CK_INSMAC, __meFunc_INSMAC, &__meFunc_OPNLIN, &__meFunc_RCSCOCI)
@@ -189,72 +146,52 @@ DEFFUNC ("insert-tab",			0x04, insTab,		CK_INSTAB, __meFunc_INSTAB, &__meFunc_IP
 DEFFUNC ("ipipe-kill",			0x42, ipipeKill,	CK_IPIPKLL, __meFunc_IPIPKLL, &__meFunc_IPIPCMD, 0)
 DEFFUNC ("ipipe-shell-command",		0x42, ipipeCommand,	CK_IPIPCMD, __meFunc_IPIPCMD, &__meFunc_IPIPWRT, &__meFunc_LSTVAR)
 DEFFUNC ("ipipe-write",			0x42, ipipeWriteString,	CK_IPIPWRT, __meFunc_IPIPWRT, &__meFunc_BISRCH, 0)
-#if	ISRCH
 DEFFUNC ("isearch-backward",		0x00, isearchBack,	CK_BISRCH, __meFunc_BISRCH, &__meFunc_FISRCH, 0)
 DEFFUNC ("isearch-forward",		0x00, isearchForw,	CK_FISRCH, __meFunc_FISRCH, &__meFunc_MCRQURY, 0)
-#endif
 DEFFUNC ("kbd-macro-query",		0x00, macroQuery,	CK_MCRQURY, __meFunc_MCRQURY, &__meFunc_KILEOL, 0)
 DEFFUNC ("kill-line",			0x04, killLine,		CK_KILEOL, __meFunc_KILEOL, &__meFunc_KILPAR, &__meFunc_FILPAR)
-#if WORDPRO
 DEFFUNC ("kill-paragraph",		0x04, killPara,		CK_KILPAR, __meFunc_KILPAR, &__meFunc_KILRECT, 0)
-#endif
 DEFFUNC ("kill-rectangle",		0x04, killRectangle,	CK_KILRECT, __meFunc_KILRECT, &__meFunc_KILREG, 0)
 DEFFUNC ("kill-region",			0x04, killRegion,	CK_KILREG, __meFunc_KILREG, &__meFunc_LSTBUF, 0)
 DEFFUNC ("list-buffers",		0x42, listBuffers,	CK_LSTBUF, __meFunc_LSTBUF, &__meFunc_LSTCOM, &__meFunc_CAPWRD)
 DEFFUNC ("list-commands",		0x42, listCommands,	CK_LSTCOM, __meFunc_LSTCOM, &__meFunc_LSTREGY, 0)
-#if REGSTRY
 DEFFUNC ("list-registry",		0x42, listRegistry,	CK_LSTREGY, __meFunc_LSTREGY, &__meFunc_LSTVAR, 0)
-#endif
 DEFFUNC ("list-variables",              0x42, listVariables,    CK_LSTVAR, __meFunc_LSTVAR, &__meFunc_RCASLOW, 0)
 DEFFUNC ("lower-case-region",		0x04, lowerRegion,	CK_RCASLOW, __meFunc_RCASLOW, &__meFunc_LOWWRD, 0)
 DEFFUNC ("lower-case-word",		0x04, lowerWord,	CK_LOWWRD, __meFunc_LOWWRD, &__meFunc_MRKREGY, 0)
-#if REGSTRY
 DEFFUNC ("mark-registry",		0x42, markRegistry,	CK_MRKREGY, __meFunc_MRKREGY, &__meFunc_MLBIND, 0)
-#endif
-#if LCLBIND
 DEFFUNC ("ml-bind-key",			0x00, mlBind,		CK_MLBIND, __meFunc_MLBIND, &__meFunc_CLRMSG, 0)
-#endif
 DEFFUNC ("ml-clear",			0x00, mlClear,		CK_CLRMSG, __meFunc_CLRMSG, &__meFunc_MLUNBD, &__meFunc_PRTRGN)
-#if LCLBIND
 DEFFUNC ("ml-unbind-key",		0x00, mlUnbind,		CK_MLUNBD, __meFunc_MLUNBD, &__meFunc_WRTMSG, 0)
-#endif
 DEFFUNC ("ml-write",			0x00, mlWrite,		CK_WRTMSG, __meFunc_WRTMSG, &__meFunc_NAMMAC, 0)
 DEFFUNC ("name-kbd-macro",		0x00, nameKbdMacro,	CK_NAMMAC, __meFunc_NAMMAC, &__meFunc_NBUFMOD, 0)
 DEFFUNC ("named-buffer-mode",	        0x42, namedBufferMode,	CK_NBUFMOD, __meFunc_NBUFMOD, &__meFunc_NRRWBUF, 0)
-#if NARROW
 DEFFUNC ("narrow-buffer",	        0x04, narrowBuffer,	CK_NRRWBUF, __meFunc_NRRWBUF, &__meFunc_NEWLIN, 0)
-#endif
 DEFFUNC ("newline",			0x04, meNewline,	CK_NEWLIN, __meFunc_NEWLIN, &__meFunc_NXTBUF, 0)
 DEFFUNC ("next-buffer",			0x42, nextBuffer,	CK_NXTBUF, __meFunc_NXTBUF, &__meFunc_NXTWND, 0)
 DEFFUNC ("next-window",			0x42, nextWindow,	CK_NXTWND, __meFunc_NXTWND, &__meFunc_SFNDBUF, 0)
 DEFFUNC ("next-window-find-buffer",	0x42, nextWndFindBuf,	CK_SFNDBUF, __meFunc_SFNDBUF, &__meFunc_SFNDFIL, 0)
 DEFFUNC ("next-window-find-file",	0x42, nextWndFindFile,	CK_SFNDFIL, __meFunc_SFNDFIL, &__meFunc_OSD, 0)
-DEFFUNC ("osd",                         0x42, osd,              CK_OSD, __meFunc_OSD, &__meFunc_OSDBIND, 0)
-#if LCLBIND
+DEFFUNC ("osd",                         0x00, osd,              CK_OSD, __meFunc_OSD, &__meFunc_OSDBIND, 0)
 DEFFUNC ("osd-bind-key",		0x00, osdBind,		CK_OSDBIND, __meFunc_OSDBIND, &__meFunc_OSDUNBD, &__meFunc_GLOBABREV)
 DEFFUNC ("osd-unbind-key",		0x00, osdUnbind,	CK_OSDUNBD, __meFunc_OSDUNBD, &__meFunc_PIPCMD, 0)
-#endif
-DEFFUNC ("pipe-shell-command",		0x42, pipeCommand,	CK_PIPCMD, __meFunc_PIPCMD, &__meFunc_PPPWND, 0)
+DEFFUNC ("pipe-shell-command",		0x42, pipeCommand,	CK_PIPCMD, __meFunc_PIPCMD, &__meFunc_POPPOS, 0)
+DEFFUNC ("pop-position",		0x42, popPosition,	CK_POPPOS, __meFunc_POPPOS, &__meFunc_PPPWND, 0)
 DEFFUNC ("popup-window",		0x42, popupWindow,	CK_PPPWND, __meFunc_PPPWND, &__meFunc_PREFIX, 0)
 DEFFUNC ("prefix",			0x00, prefixFunc,	CK_PREFIX, __meFunc_PREFIX, &__meFunc_BAKWND, 0)
 DEFFUNC ("previous-window",		0x42, prevwind,		CK_BAKWND, __meFunc_BAKWND, &__meFunc_PRTBUF, &__meFunc_PRTSCHM)
-#if 	PRINT
 DEFFUNC ("print-buffer",		0x42, printBuffer,	CK_PRTBUF, __meFunc_PRTBUF, &__meFunc_PRTCOL, 0)
 DEFFUNC ("print-color",			0x42, printColor,	CK_PRTCOL, __meFunc_PRTCOL, &__meFunc_PRTRGN, 0)
 DEFFUNC ("print-region",		0x42, printRegion,	CK_PRTRGN, __meFunc_PRTRGN, &__meFunc_PRTSCHM, 0)
-DEFFUNC ("print-scheme",		0x42, printScheme,	CK_PRTSCHM, __meFunc_PRTSCHM, &__meFunc_QREP, 0)
-#endif
+DEFFUNC ("print-scheme",		0x42, printScheme,	CK_PRTSCHM, __meFunc_PRTSCHM, &__meFunc_PUSHPOS, 0)
+DEFFUNC ("push-position",		0x42, pushPosition,	CK_PUSHPOS, __meFunc_PUSHPOS, &__meFunc_QREP, 0)
 DEFFUNC ("query-replace-string",	0x42, queryReplaceStr,	CK_QREP, __meFunc_QREP, &__meFunc_QEXIT, 0)
 DEFFUNC ("quick-exit",			0x00, quickExit,	CK_QEXIT, __meFunc_QEXIT, &__meFunc_QUOTE, 0)
 DEFFUNC ("quote-char",			0x04, quote,		CK_QUOTE, __meFunc_QUOTE, &__meFunc_RCSCOCI, 0)
-#if DORCS
 DEFFUNC ("rcs-file",			0x42, rcsCiCoFile,	CK_RCSCOCI, __meFunc_RCSCOCI, &__meFunc_REDFILE, 0)
-#endif
 DEFFUNC ("read-file",		        0x42, readFile,		CK_REDFILE, __meFunc_REDFILE, &__meFunc_REDHIST, 0)
 DEFFUNC ("read-history",		0x42, readHistory,	CK_REDHIST, __meFunc_REDHIST, &__meFunc_REDREGY, 0)
-#if REGSTRY
 DEFFUNC ("read-registry",		0x42, readRegistry,	CK_REDREGY, __meFunc_REDREGY, &__meFunc_RECENT, 0)
-#endif
 DEFFUNC ("recenter",		        0x42, recenter,		CK_RECENT, __meFunc_RECENT, &__meFunc_STRREP, 0)
 DEFFUNC ("replace-string",		0x42, replaceStr,	CK_STRREP, __meFunc_STRREP, &__meFunc_RESIZEALL, 0)
 DEFFUNC ("resize-all-windows",          0x00, resizeAllWnd,     CK_RESIZEALL, __meFunc_RESIZEALL, &__meFunc_RESIZEHORZ, 0)
@@ -263,13 +200,9 @@ DEFFUNC ("resize-window-vertically",	0x00, resizeWndVert,	CK_RESIZE, __meFunc_RE
 DEFFUNC ("reyank",			0x39, reyank,		CK_REYANK, __meFunc_REYANK, &__meFunc_SAVBUF, 0)
 DEFFUNC ("save-buffer",			0x42, saveBuffer,	CK_SAVBUF, __meFunc_SAVBUF, &__meFunc_QUIT, 0)
 DEFFUNC ("save-buffers-exit-emacs",	0x00, saveExitEmacs,	CK_QUIT, __meFunc_QUIT, &__meFunc_SVDICTS, 0)
-#if SPELL
 DEFFUNC ("save-dictionary",             0x42, saveDict,  	CK_SVDICTS, __meFunc_SVDICTS, &__meFunc_WRTHIST, 0)
-#endif
 DEFFUNC ("save-history",		0x42, saveHistory,	CK_WRTHIST, __meFunc_WRTHIST, &__meFunc_SAVREGY, 0)
-#if REGSTRY
 DEFFUNC ("save-registry",		0x42, saveRegistry,	CK_SAVREGY, __meFunc_SAVREGY, &__meFunc_SAVSBUF, 0)
-#endif
 DEFFUNC ("save-some-buffers",		0x42, saveSomeBuffers,	CK_SAVSBUF, __meFunc_SAVSBUF, &__meFunc_PKSCRN, 0)
 DEFFUNC ("screen-poke",			0x00, screenPoke,	CK_PKSCRN, __meFunc_PKSCRN, &__meFunc_UPDATE, 0)
 DEFFUNC ("screen-update",		0x00, screenUpdate,	CK_UPDATE, __meFunc_UPDATE, &__meFunc_MOVDWND, 0)
@@ -284,16 +217,11 @@ DEFFUNC ("search-forward",		0x00, searchForw,	CK_FORSRCH, __meFunc_FORSRCH, &__m
 DEFFUNC	("set-alpha-mark",		0x42, setAlphaMark,	CK_SETAMRK, __meFunc_SETAMRK, &__meFunc_STCHRMK, 0)
 DEFFUNC ("set-char-mask",		0x00, setCharMask,	CK_STCHRMK, __meFunc_STCHRMK, &__meFunc_CTOMOUSE, 0)
 DEFFUNC	("set-cursor-to-mouse",		0xc8, setCursorToMouse,	CK_CTOMOUSE, __meFunc_CTOMOUSE, &__meFunc_SETCRY, &__meFunc_HELPVAR)
-#if	CRYPT
 DEFFUNC ("set-encryption-key",		0x42, setCryptKey,	CK_SETCRY, __meFunc_SETCRY, &__meFunc_SETMRK, 0)
-#endif
 DEFFUNC ("set-mark",			0x19, setMark,		CK_SETMRK, __meFunc_SETMRK, &__meFunc_SETREGY, &__meFunc_RECENT)
-#if REGSTRY
 DEFFUNC ("set-registry",		0x42, setRegistry,	CK_SETREGY, __meFunc_SETREGY, &__meFunc_SSWM, 0)
-#endif
 DEFFUNC ("set-scroll-with-mouse",       0xc8, setScrollWithMouse,  CK_SSWM, __meFunc_SSWM, &__meFunc_SETVAR, &__meFunc_INDENT)
-DEFFUNC ("set-variable",		0x00, setVariable,	CK_SETVAR, __meFunc_SETVAR, &__meFunc_STRWND, 0)
-DEFFUNC ("set-window",			0x42, setWindow,	CK_STRWND, __meFunc_STRWND, &__meFunc_SPWCLI, 0)
+DEFFUNC ("set-variable",		0x00, setVariable,	CK_SETVAR, __meFunc_SETVAR, &__meFunc_SPWCLI, 0)
 DEFFUNC ("shell",			0x42, meShell,		CK_SPWCLI, __meFunc_SPWCLI, &__meFunc_SYSTEM, 0)
 DEFFUNC ("shell-command",	        0x00, meShellCommand,	CK_SYSTEM, __meFunc_SYSTEM, &__meFunc_SHOWCUR, 0)
 DEFFUNC ("show-cursor",			0x42, showCursor,	CK_SHOWCUR, __meFunc_SHOWCUR, &__meFunc_SHOWSEL, 0)
@@ -301,9 +229,7 @@ DEFFUNC ("show-region",			0x00, showRegion,	CK_SHOWSEL, __meFunc_SHOWSEL, &__meF
 DEFFUNC ("shrink-window-horizontally",	0x00, shrinkWindHorz,	CK_REDHWND, __meFunc_REDHWND, &__meFunc_REDVWND, 0)
 DEFFUNC ("shrink-window-vertically",	0x00, shrinkWindVert,	CK_REDVWND, __meFunc_REDVWND, &__meFunc_SORTLNS, 0)
 DEFFUNC ("sort-lines",		        0x04, sortLines,	CK_SORTLNS, __meFunc_SORTLNS, &__meFunc_SPLLWRD, 0)
-#if SPELL
 DEFFUNC ("spell",                       0x42, spellWord,  	CK_SPLLWRD, __meFunc_SPLLWRD, &__meFunc_SWNDH, 0)
-#endif
 DEFFUNC ("split-window-horizontally",	0x42, splitWindHorz,	CK_SWNDH, __meFunc_SWNDH, &__meFunc_SWNDV, 0)
 DEFFUNC ("split-window-vertically",	0x42, splitWindVert,	CK_SWNDV, __meFunc_SWNDV, &__meFunc_BGNMAC, &__meFunc_FILECPY)
 DEFFUNC ("start-kbd-macro",		0x42, startKbdMacro,	CK_BGNMAC, __meFunc_BGNMAC, &__meFunc_SUSPEND, 0)
@@ -312,9 +238,7 @@ DEFFUNC ("tab",				0x04, meTab,		CK_DOTAB, __meFunc_DOTAB, &__meFunc_TRNSKEY, 0)
 DEFFUNC ("translate-key",		0x00, translateKey,	CK_TRNSKEY, __meFunc_TRNSKEY, &__meFunc_TRNCHR, 0)
 DEFFUNC ("transpose-chars",		0x04, transChars,	CK_TRNCHR, __meFunc_TRNCHR, &__meFunc_TRNLINE, &__meFunc_BGNMAC)
 DEFFUNC ("transpose-lines",	        0x04, transLines,	CK_TRNLINE, __meFunc_TRNLINE, &__meFunc_UNDO, 0)
-#if MEUNDO
 DEFFUNC ("undo",			0x04, meUndo,		CK_UNDO, __meFunc_UNDO, &__meFunc_UNVARG, 0)
-#endif
 DEFFUNC ("universal-argument",		0x00, uniArgument,	CK_UNVARG, __meFunc_UNVARG, &__meFunc_UNSET, 0)
 DEFFUNC ("unset-variable",		0x00, unsetVariable,	CK_UNSET, __meFunc_UNSET, &__meFunc_RCASHI, 0)
 DEFFUNC ("upper-case-region",		0x04, upperRegion,	CK_RCASHI, __meFunc_RCASHI, &__meFunc_HIWRD, 0)

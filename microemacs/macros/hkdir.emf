@@ -4,7 +4,7 @@
 ;       Author          : Jon Green
 ;       Created         : 19th February 1997
 ;
-;       Last Modified   : <000512.1845>
+;       Last Modified   : <000724.0008>
 ;
 ;       Comment         :
 !if &not &exist .osd.dir-help
@@ -57,7 +57,7 @@
 ; Creates 2 windows side by side.
 ;
 0 define-macro file-browser-close
-    set-window
+    1 push-position
     !force 0 popup-window "*ftp-console*"
     !if $status
         next-window
@@ -83,7 +83,7 @@
         !endif
     !endif
     !force -1 find-buffer "*files*"
-    goto-window
+    pop-position
 !emacro
 ;
 ; file-browser-twin
@@ -126,7 +126,7 @@
 define-macro file-browser
     ; Close down file-browser if it is showing and the *directory* and *files*
     ; windows are side by side.
-    set-window                      ; Save the window position
+    1 push-position                 ; Save the window position
     !force 1 next-window            ; Goto the top window.
     set-variable #l0 TRUE            ; Assume a true status
     !repeat
@@ -142,6 +142,7 @@ define-macro file-browser
             ; and window height are the same then close down file-browser
             !if &and &and &seq $buffer-bname "*files*" &equ $window-mode-line #l0 &equ $window-depth #l1
                 file-browser-close
+                0 pop-position
                 !return
             !endif
         !else
@@ -151,7 +152,8 @@ define-macro file-browser
         !endif
     !until &not #l0
 *done-search
-    goto-window                     ; Restore window position
+    ; Restore window position
+    pop-position
     ; file-browser is not showing. Bring up Explorer.
     !force 0 popup-window "*directory*"
     !if $status
@@ -585,7 +587,7 @@ osd .osd.file-menu 100 ""  "&Auto-Refresh: on " f files-auto-refresh
     !endif
     ; Render the *files* information.
     set-variable #l0 $buffer-fname
-    set-window
+    1 push-position
     !force 0 popup-window "*files*"
     !if $status
         !if &not &seq $buffer-fname #l0
@@ -594,8 +596,8 @@ osd .osd.file-menu 100 ""  "&Auto-Refresh: on " f files-auto-refresh
             buffer-bind-key file-browser-close "delete"
             buffer-bind-key dir-swap-buffers "tab"
         !endif
-        goto-window
     !endif
+    pop-position
 !emacro
 
 define-macro dir-swap-buffers
@@ -640,7 +642,7 @@ define-macro dir-swap-buffers
     ; Set up the echo in the *files* directory.
     buffer-bind-key file-browser-close "delete"
     set-variable #l0 $buffer-fname
-    set-window
+    1 push-position
     !force 0 popup-window "*files*"
     !if $status
         !if &not &seq $buffer-fname #l0
@@ -649,9 +651,8 @@ define-macro dir-swap-buffers
             buffer-bind-key dir-swap-buffers "tab"
             buffer-bind-key file-browser-close "delete"
         !endif
-        goto-window
     !endif
-    screen-update
+    pop-position
 !emacro
 
 0 define-macro dir-mouse-drop-3

@@ -1438,9 +1438,9 @@ doIpipeCommand(uint8 *comStr, uint8 *path, uint8 *bufName, int flags)
         if(ptyFp >= 0)
         {
 #ifdef O_NOCTTY
-            fds[1] = outFds[0] = open(line,O_RDWR|O_NOCTTY,0) ;
+            fds[1] = outFds[0] = open((const char *)line,O_RDWR|O_NOCTTY,0) ;
 #else
-            fds[1] = outFds[0] = open(line,O_RDWR,0) ;
+            fds[1] = outFds[0] = open((const char *)line,O_RDWR,0) ;
 #endif /* O_NOCTTY */
         }
 #endif /* !_LINUX/_FREEBSD/_SUNOS_X86/_BSD */
@@ -1485,22 +1485,15 @@ doIpipeCommand(uint8 *comStr, uint8 *path, uint8 *bufName, int flags)
             mePutenv(meStrdup(ss)) ;
         ss = getShellCmd() ;
 
-        /* Construct the new command to execute. */
-        if((ss=getUsrVar("ipipe-term")) != NULL)
-            putenv(strdup(ss)) ;
-        ss = getShellCmd() ;
-        if(strcmp(ss,comStr))
+        args[0] = (char *) ss ;
+        if(meStrcmp(ss,comStr))
         {
-            args[0] = ss ;
             args[1] = "-c" ;
-            args[2] = comStr ;
+            args[2] = (char *) comStr ;
             args[3] = NULL ;
         }
         else
-        {
-            args[0] = ss ;
             args[1] = NULL ;
-        }
 
 #ifndef _NOPUTENV
         execv(args[0],args) ;
@@ -1764,9 +1757,9 @@ doPipeCommand(uint8 *comStr, uint8 *path, uint8 *bufName, int flags)
 
     /* and read the stuff in */
 #ifdef _UNIX
-    ret = ifile(bp,NULL,READ_SILENT) ;
+    ret = ifile(bp,NULL,meRWFLAG_SILENT) ;
 #else
-    ret = ifile(bp,filnam,READ_SILENT) ;
+    ret = ifile(bp,filnam,meRWFLAG_SILENT) ;
 #endif
     /* give it the path as a filename */
     bp->b_fname = meStrdup(path) ;

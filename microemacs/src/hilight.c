@@ -5,7 +5,7 @@
  *  Synopsis      : Token based hilighting routines
  *  Created By    : Steven Phillips
  *  Created       : 21/12/94
- *  Last Modified : <000508.0833>
+ *  Last Modified : <000723.1900>
  *
  *  Description
  *
@@ -44,6 +44,8 @@
 #define	__HILIGHTC				/* Name file */
 
 #include "emain.h"
+
+#if HILIGHT
 
 /*
  * HilFunc
@@ -116,8 +118,6 @@ static uint8 *meHilTestNames[meHIL_TEST_NOCLASS]={
 
 #define HLASOL      0x2000
 #define HLASTTLINE  0x4000
-
-#if HILIGHT
 
 static uint8 varTable[11] ;
 

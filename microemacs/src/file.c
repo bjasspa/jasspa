@@ -10,7 +10,7 @@
 *
 *	Author:			Danial Lawrence
 *
-*	Creation Date:		14/05/86 12:37		<000408.1005>
+*	Creation Date:		14/05/86 12:37		<000825.1818>
 *
 *	Modification date:	%G% : %U%
 *
@@ -43,11 +43,11 @@
 * 
 ****************************************************************************/
 
-/*---	Include defintions */
+/*--- Include defintions */
 
 #define __FILEC 1                  /* Define the filename */
 
-/*---	Include files */
+/*--- Include files */
 
 #include "emain.h"
 #include "efunc.h"
@@ -74,30 +74,16 @@
 #include <dos.h>
 
 /* attribute stuff */
-#define	A_RONLY		0x01
-#define	A_HIDDEN	0x02
-#define	A_SYSTEM	0x04
-#define	A_LABEL		0x08
-#define	A_DIR		0x10
-#define	A_ARCHIVE	0x20
+#define A_RONLY         0x01
+#define A_HIDDEN        0x02
+#define A_SYSTEM        0x04
+#define A_LABEL         0x08
+#define A_DIR           0x10
+#define A_ARCHIVE       0x20
 
 /* dos call values */
-#define	DOSI_GETDRV	0x19
-#define	DOSI_SDTA	0x1A
-#define	DOSI_GDTA	0x2F
+#define DOSI_GETDRV     0x19
 #define DOSI_GETDIR     0x47
-#define	DOSI_FINDF	0x4E
-#define	DOSI_FINDN	0x4F
-
-typedef struct
-{
-    char d_buf[21];
-    char d_attrib;
-    unsigned short d_time;
-    unsigned short d_date;
-    long d_size;
-    char d_name[13];
-} Dta_buf;
 
 #endif  /* _DOS */
 
@@ -129,7 +115,7 @@ getFileStats(uint8 *file, int flag, meSTAT *stats, uint8 *lname)
     }
 #ifdef _DOS
     {
-        union REGS reg ;		/* cpu register for use of DOS calls */
+        union REGS reg ;                /* cpu register for use of DOS calls */
         int        len ;
         
         if(((len = meStrlen(file)) == 0) ||
@@ -321,15 +307,15 @@ gft_directory:
         }
         if(flag & 1)
         {
-#ifdef	S_IFIFO
+#ifdef S_IFIFO
             if(S_ISFIFO(statbuf.st_mode))
                 mlwrite(MWABORT|MWPAUSE,(uint8 *)"[%s is a FIFO]", file);
 #endif
-#ifdef	S_IFCHR
+#ifdef S_IFCHR
             else if(S_ISCHR(statbuf.st_mode))
                 mlwrite(MWABORT|MWPAUSE,(uint8 *)"[%s is character special]", file);
 #endif
-#ifdef	S_IFBLK
+#ifdef S_IFBLK
             else if(S_ISBLK(statbuf.st_mode))
                 mlwrite(MWABORT|MWPAUSE,(uint8 *)"[%s is block special]", file);
 #endif
@@ -357,9 +343,9 @@ fnamecmp(uint8 *f1, uint8 *f2)
 #endif
 }
 
-/*---	Set up directories. */
+/*--- Set up directories. */
 
-void	
+void
 set_dirs(void)
 {
 #if (defined _UNIX) || (defined _DOS) || (defined _WIN32)
@@ -376,7 +362,7 @@ set_dirs(void)
     int ll ;
 #endif
     
-    s1 = meGetenv("HOME");			/* Get home directory */
+    s1 = meGetenv("HOME");                      /* Get home directory */
     if (s1 != NULL)			        /* Null ?? */
         homedir = meStrdup(s1) ;
     else
@@ -452,19 +438,19 @@ set_dirs(void)
         printf("Failed to get cwd\n") ;
         meExit(1);
     }
-}	/* End of "set_dirs" () */
+}   /* End of "set_dirs" () */
 
-/*	Look up the existance of a file along the normal or PATH
-	environment variable. Look first in the HOME directory if
-	asked and possible
-*/
+/* Look up the existance of a file along the normal or PATH
+ * environment variable. Look first in the HOME directory if
+ * asked and possible
+ */
 
 int
 fileLookup(uint8 *fname, uint8 *ext, uint8 flags, uint8 *outName)
 {
-    register uint8 *path;	/* environmental PATH variable */
-    register uint8 *sp;	/* pointer into path spec */
-    register int   ii; 	/* index */
+    register uint8 *path;  /* environmental PATH variable */
+    register uint8 *sp;    /* pointer into path spec */
+    register int   ii;     /* index */
     uint8 nname[FILEBUF] ;
     uint8 buf[FILEBUF] ;
  
@@ -546,7 +532,7 @@ fileLookup(uint8 *fname, uint8 *ext, uint8 flags, uint8 *outName)
             if(!meTestExist(outName))
                 return 1 ;
     }
-    return 0 ;	/* no such luck */
+    return 0 ; /* no such luck */
 }
 
 
@@ -659,7 +645,7 @@ gwd(uint8 drive)
 #endif /* _WIN32 */
 
 #ifdef _DOS
-    union REGS reg ;		/* cpu register for use of DOS calls */
+    union REGS reg ;                /* cpu register for use of DOS calls */
 
     if(drive == 0)
     {
@@ -749,33 +735,23 @@ inputFileName(uint8 *prompt, uint8 *fn, int corFlag)
 }
 
 
-#if	CRYPT
+#if CRYPT
 int
-resetkey(BUFFER *bp)	/* reset the encryption key if needed */
+resetkey(BUFFER *bp) /* reset the encryption key if needed */
 {
-    BUFFER *obp ;
-    register int s; /* return status */
-
     /* if we are in crypt mode */
     if(meModeTest(bp->b_mode,MDCRYPT))
     {
-        if(bp->b_key == NULL)
-        {
-            obp = curbp ;
-            curbp = bp ;
-            s = setCryptKey(FALSE, 0);
-            curbp = obp ;
-            if (s != TRUE)
-                return(s);
-        }
+        if((bp->b_key == NULL) &&
+           (setBufferCryptKey(bp,NULL) != TRUE))
+            return FALSE ;
 
         /* and set up the key to be used! */
         meCrypt(NULL, 0);
         meCrypt(bp->b_key, meStrlen(bp->b_key));
 
     }
-
-    return(TRUE);
+    return TRUE ;
 }
 #endif
 
@@ -1028,7 +1004,12 @@ getDirectoryInfo(uint8 *fname)
             curFile->mtime.dwHighDateTime = fd.ftLastWriteTime.dwHighDateTime ;
             /* construct attribute string */
             if(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+            {
                 meStrncpy(curFile->attrib,"drwx",4) ;
+                /* On network drives the size is sometimes invalid. Clear
+                 * it just to make sure that this is not the case */
+                curFile->size = 0;
+            }
             else
             {
                 curFile->attrib[0] = '-' ;
@@ -1178,7 +1159,7 @@ readin(register BUFFER *bp, uint8 *fname)
     int   ss=ABORT ;
     uint8 lfn[FILEBUF], afn[FILEBUF], *fn=fname ;
     
-#if	CRYPT
+#if CRYPT
     if(resetkey(bp) != TRUE)
         return ABORT ;
 #endif
@@ -1345,27 +1326,27 @@ error_end:
  */
 /* must have the buffer line no. correct */
 int
-ifile(BUFFER *bp, uint8 *fname, int flags)
+ifile(BUFFER *bp, uint8 *fname, uint32 flags)
 {
     register WINDOW *wp ;
     register LINE   *lp ;
-    register int     ii, ss ;
+    register int     ss ;
     register long    nline ;
     meMODE md ;
     
-    meModeSet(bp->b_mode,MDEDIT) ;			/* we have changed	*/
+    meModeSet(bp->b_mode,MDEDIT) ;              /* we have changed	*/
     meModeCopy(md,bp->b_mode) ;
               
-#if	CRYPT
+#if CRYPT
     if(resetkey(bp) != TRUE)
         return FALSE ;
 #endif
-    if(!(flags & READ_SILENT))
+    if(!(flags & meRWFLAG_SILENT))
         mlwrite(MWCURSOR|MWCLEXEC,(uint8 *)"[Inserting file]");
     
     nline = bp->elineno ;
     lp = bp->b_dotp ;
-    ss = ffReadFile(fname,flags|READ_INSERT,bp,lp) ;
+    ss = ffReadFile(fname,flags|meRWFLAG_INSERT,bp,lp) ;
     nline = bp->elineno-nline ;
     /* restore the mode */
     meModeCopy(bp->b_mode,md) ;
@@ -1373,7 +1354,7 @@ ifile(BUFFER *bp, uint8 *fname, int flags)
     if(ss != ABORT)
     {
         ss = TRUE ;
-        if(!(flags & READ_SILENT))
+        if(!(flags & meRWFLAG_SILENT))
            mlwrite(MWCLEXEC,(uint8 *)"[inserted %d line%s]",nline,(nline==1) ? "":"s") ;
     }
     for (wp=wheadp; wp!=NULL; wp=wp->w_wndp)
@@ -1388,8 +1369,8 @@ ifile(BUFFER *bp, uint8 *fname, int flags)
 #if MEUNDO
     if((bp == curbp) && meModeTest(bp->b_mode,MDUNDO))
     {
+        int ii = 0 ;
         curwp->w_doto = 0 ;
-        ii = 0 ;
         while(nline--)
         {
             lp = lback(lp) ;
@@ -1615,7 +1596,10 @@ findFileList(uint8 *fname, int bflag, int32 lineno)
         nofiles += findFileSingle(fileName,bflag,lineno) ;
     else
 #endif
-        if(fileNameWild(baseName))
+        /* if the base name has a wild card letter (i.e. *, ? '[')
+         * and a file with that exact name does not exist then load
+         * any files which match the wild card mask */
+        if(fileNameWild(baseName) && meTestRead(fileName))
     {
         uint8 mask[FILEBUF] ;
         
@@ -1655,7 +1639,7 @@ findSwapFileList(uint8 *fname, int bflag, int32 lineno)
     for(bp=bheadp ; bp->histNo!=bufHistNo ; bp=bp->b_bufp)
         ;
     bufHistNo-=2 ;
-    ret = swbuffer(curwp,bp) ;	/* make buffer BP current */
+    ret = swbuffer(curwp,bp) ;  /* make buffer BP current */
     bufHistNo++ ;
     return ret ;
 }
@@ -1915,6 +1899,20 @@ copyFile(int f, int n)
         }
         fn = NULL ;
     }
+    else if(n & 0x10)
+    {
+        int s ;
+        if (inputFileName((uint8 *)"Create dir", sfname,1) != TRUE)
+            return ABORT ;
+        /* check that nothing of that name currently exists */
+        if (((s=getFileStats(sfname,0,NULL,NULL)) != meFILETYPE_NOTEXIST)
+#ifdef _URLSUPP
+            && (s != meFILETYPE_FTP)
+#endif
+            )
+            return mlwrite(MWABORT,"[%s already exists]",sfname);
+        fn = NULL ;
+    }
     else
     {
         static uint8 prompt[]="Copy file to" ;
@@ -1946,9 +1944,11 @@ copyFile(int f, int n)
         if(((n & 0xfe) == 0x8) && !meRename(sfname,dfname))
             return TRUE ;
     }
-    dFlags = (n & 0x0c) ? WRITE_DELETE:0 ;
+    dFlags = (n & 0x0c) ? meRWFLAG_DELETE:0 ;
     if(n & 0x02)
-        dFlags |= WRITE_BACKUP ;
+        dFlags |= meRWFLAG_BACKUP ;
+    if(n & 0x10)
+        dFlags |= meRWFLAG_MKDIR ;
     return ffCopyFile(sfname,fn,dFlags) ;
 }
 
@@ -1971,7 +1971,7 @@ autowriteout(register BUFFER *bp)
         ff = (lname[0] == '\0') ? bp->b_fname:lname ;
         if(createBackupName(fn,ff,'#'))
             ss = ABORT ;
-        else if((ss=ffWriteFileOpen(fn,WRITE_AUTOSAVE,bp)) == TRUE)
+        else if((ss=ffWriteFileOpen(fn,meRWFLAG_WRITE|meRWFLAG_AUTOSAVE,bp)) == TRUE)
         {    
             LINE *lp ;
             
@@ -1987,7 +1987,7 @@ autowriteout(register BUFFER *bp)
                     break ;
                 }
             }
-            ffWriteFileClose(fn,WRITE_AUTOSAVE,bp) ;
+            ffWriteFileClose(fn,meRWFLAG_WRITE|meRWFLAG_AUTOSAVE,bp) ;
         }
     }
     if(ss == TRUE)
@@ -2021,30 +2021,30 @@ autowriteremove(register BUFFER *bp)
  * checking of some sort.
  */
 static int
-writeOut(register BUFFER *bp, int flags, uint8 *fn)
+writeOut(register BUFFER *bp, uint32 flags, uint8 *fn)
 {
-    register int    s;
-    
 #if (defined _UNIX) || (defined _DOS) || (defined _WIN32)
     /* Add write permission to backup file. */
     if(meModeTest(bp->b_mode,MDBACK))
     {
+        register uint32 ss;
+        
 #ifdef _DOS
-        s = bp->stats.stmode & ~(meFILE_ATTRIB_READONLY|meFILE_ATTRIB_HIDDEN) ;
+        ss = bp->stats.stmode & ~(meFILE_ATTRIB_READONLY|meFILE_ATTRIB_HIDDEN) ;
         if(meSystemCfg & meSYSTEM_HIDEBCKUP)
-            s |= meFILE_ATTRIB_HIDDEN ;
+            ss |= meFILE_ATTRIB_HIDDEN ;
 #endif
 #ifdef _WIN32
-        s = bp->stats.stmode & ~(FILE_ATTRIBUTE_HIDDEN|FILE_ATTRIBUTE_READONLY) ;
+        ss = bp->stats.stmode & ~(FILE_ATTRIBUTE_HIDDEN|FILE_ATTRIBUTE_READONLY) ;
         if((meSystemCfg & (meSYSTEM_DOSFNAMES|meSYSTEM_HIDEBCKUP)) == meSYSTEM_HIDEBCKUP)
-            s |= FILE_ATTRIBUTE_HIDDEN ;
+            ss |= FILE_ATTRIBUTE_HIDDEN ;
 #endif
 #ifdef _UNIX
-        s = bp->stats.stmode | S_IWUSR ;
+        ss = bp->stats.stmode | S_IWUSR ;
 #endif
-        if(s == bp->stats.stmode)
-            s = 0 ;
-        flags |= WRITE_BACKUP | s ;
+        if(ss == bp->stats.stmode)
+            ss = 0 ;
+        flags |= meRWFLAG_BACKUP | ss ;
     }
 #endif
 #if	TIMSTMP
@@ -2148,8 +2148,7 @@ writeout(register BUFFER *bp, int flags, uint8 *fname)
             return ABORT;
     }
     
-    flags = (flags & 0x02) ? WRITE_IGNRNRRW : 0 ;
-    return writeOut(bp,flags,fn) ;
+    return writeOut(bp,((flags & 0x02) ? meRWFLAG_IGNRNRRW:0),fn) ;
 }
 
 void
@@ -2181,11 +2180,10 @@ resetBufferNames(BUFFER *bp, uint8 *fname)
 int
 writeBuffer(int f, int n)
 {
-    register int s;
     uint8 fname[FILEBUF], lname[FILEBUF], *fn ;
     
-    if ((s=inputFileName((uint8 *)"Write file",fname,1)) != TRUE)
-        return s ;
+    if(inputFileName((uint8 *)"Write file",fname,1) != TRUE)
+        return ABORT ;
 
     if(curbp->b_fname != NULL)
         fn = curbp->b_fname ;
@@ -2197,9 +2195,7 @@ writeBuffer(int f, int n)
     if((fn=writeFileChecks(fname,fn,lname,n)) == NULL)
         return ABORT ;
     
-    s = (n & 0x02) ? WRITE_IGNRNRRW : 0 ;
-
-    if(!writeOut(curbp,s,fn))
+    if(!writeOut(curbp,((n & 0x02) ? meRWFLAG_IGNRNRRW:0),fn))
         return FALSE ;
     
     resetBufferNames(curbp,fname) ;
@@ -2240,16 +2236,17 @@ saveBuffer(int f, int n)
 int
 appendBuffer(int f, int n)
 {
-    register int s;
+    register uint32 flags ;
+    register int ss ;
     uint8 fname[FILEBUF], lname[FILEBUF], *fn ;
 
-    if ((s=inputFileName((uint8 *)"Append to file",fname,1)) != TRUE)
-        return s ;
+    if(inputFileName((uint8 *)"Append to file",fname,1) != TRUE)
+        return ABORT ;
 
-    if(((s=getFileStats(fname,3,NULL,lname)) != meFILETYPE_REGULAR) && (s != meFILETYPE_NOTEXIST))
+    if(((ss=getFileStats(fname,3,NULL,lname)) != meFILETYPE_REGULAR) && (ss != meFILETYPE_NOTEXIST))
         return ABORT ;
     fn = (lname[0] == '\0') ? fname:lname ;
-    if(s == meFILETYPE_NOTEXIST)
+    if(ss == meFILETYPE_NOTEXIST)
     {
         if(n & 0x01)
         {
@@ -2258,15 +2255,15 @@ appendBuffer(int f, int n)
             if(mlyesno(prompt) != TRUE)
                 return ctrlg(FALSE,1);
         }
-        s = 0 ;
+        ss = 0 ;
     }
     else if(n & 0x04)
-        s = WRITE_OPENTRUNC ;
+        flags = meRWFLAG_OPENTRUNC ;
     else
-        s = WRITE_OPENEND ;
+        flags = meRWFLAG_OPENEND ;
     if(n & 0x02)
-        s |= WRITE_IGNRNRRW ;
-    return ffWriteFile(fname,s,curbp) ;
+        flags |= meRWFLAG_IGNRNRRW ;
+    return ffWriteFile(fname,flags,curbp) ;
 }
     
 /*
@@ -2587,7 +2584,7 @@ pathNameCorrect(uint8 *oldName, uint8 *newName, uint8 **baseName)
         while((p1=meStrchr(p1,DIR_CHAR)) != NULL)
         {
             if((p1[1] == '.') && (p1[2] == '.') &&         /* got /../YYYY */
-               (p1[3] == DIR_CHAR))
+               ((p1[3] == DIR_CHAR) || (p1[3] == '\0')))
             {
                 if(p == NULL)        /* got /../YYYY */
                     p = urle ;
@@ -2599,7 +2596,8 @@ pathNameCorrect(uint8 *oldName, uint8 *newName, uint8 **baseName)
                 p = NULL ;
                 p1 = urle ;
             }
-            else if((p1[1] == '.') && (p1[2] == DIR_CHAR))      /* got /./YYYY */
+            else if((p1[1] == '.') &&                      /* got /./YYYY */
+                    ((p1[2] == DIR_CHAR) || (p1[2] == '\0')))
             {
                 uint8 *tt ;
                 tt = p1+2 ;

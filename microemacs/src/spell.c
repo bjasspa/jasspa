@@ -5,7 +5,7 @@
  *  Synopsis      : Spell checking routines
  *  Created By    : Steven Phillips
  *  Created       : 21/12/94
- *  Last Modified : <000221.0749>
+ *  Last Modified : <000814.0937>
  *
  *  Description
  *
@@ -757,7 +757,7 @@ saveDictionary(meDICTIONARY *dict, int n)
             dict->fname = meStrdup(fname) ;
         }
     }
-    if((ii=ffWriteFileOpen(dict->fname,0,NULL)) == TRUE)
+    if((ii=ffWriteFileOpen(dict->fname,meRWFLAG_WRITE,NULL)) == TRUE)
     {    
         uint8 header[8] ;
                   
@@ -768,7 +768,7 @@ saveDictionary(meDICTIONARY *dict, int n)
         
         if((ii=ffWriteFileWrite(8,header,0)) == TRUE)
            ii = ffWriteFileWrite(dict->dUsed,(uint8 *) dict->table,0) ;
-        ffWriteFileClose(dict->fname,0,NULL) ;
+        ffWriteFileClose(dict->fname,meRWFLAG_WRITE,NULL) ;
         if(ii == TRUE)
         {
             dict->flags &= ~DTCHNGD ;

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Jun 13 13:00:52 1998
-;  Last Modified : <000719.1232>
+;  Last Modified : <000806.2353>
 ;
 ;  Description     Macros to implement typical Mouse functionality 
 ;
@@ -181,7 +181,9 @@
 !emacro
 
 0 define-macro mouse-pick-type1
-    set-window
+    ; set the cursor position to the mouse position
+    0 pop-position
+    161 push-position
     set-mark
     set-variable $delay-time $repeat-time
     set-variable .mouse-drop-t1.sl $window-line
@@ -234,12 +236,16 @@
         !jump 2
     !elif &seq .drop @cck
         set-cursor-to-mouse
-        goto-window
+        ; goto the original window - must dup the position
+        -1 push-position
+        1 pop-position
         !if &equ .type 1
-            !if &not &seq :mouse-word-select "ERROR"
+            !if &exi :mouse-word-select
                 !if &seq .drop @cck
                     set-variable $buffer-input .input
                     -1 create-callback mouse-drop-t1
+                    ; position nolonger needed
+                    0 pop-position
                     execute-line :mouse-word-select
                 !endif
                 !return
@@ -274,6 +280,8 @@
     !endif
     set-variable $buffer-input .input
     -1 create-callback mouse-drop-t1
+    ; position nolonger needed
+    0 pop-position
     !if &and &equ #l0 $window-line &equ #l1 $window-col
         !if &seq @cck "callback"
             !return
@@ -308,7 +316,10 @@
 !emacro
 
 0 define-macro mouse-drop-set-region
-    goto-window
+    ; goto the original window - must dup the position for the mouse-event & callback
+    1 pop-position
+    161 push-position
+    -1 push-position
     set-variable $delay-time 500
     set-variable $scroll .mouse-event.scroll
     set-variable .mouse-drop-t1.type @#
@@ -358,8 +369,9 @@
 !emacro
 
 0 define-macro mouse-no-move-yank
-    goto-window
-    goto-alpha-mark "T"
+    ; goto the original position - must dup the position
+    -1 push-position
+    pop-position
     !if .mouse-event.msshift
         -1 yank
         kill-region
@@ -370,8 +382,9 @@
 !emacro
 
 0 define-macro mouse-no-move-replace-yank
-    goto-window
-    goto-alpha-mark "T"
+    ; goto the original position - must dup the position
+    -1 push-position
+    pop-position
     !if .mouse-event.msshift
         -1 yank
         kill-region
@@ -395,34 +408,37 @@
 !emacro
 
 0 define-macro mouse-reyank
-    goto-window
-    goto-alpha-mark "T"
+    ; goto the original position - must dup the position
+    -1 push-position
+    pop-position
     set-variable @cl @cl
     reyank @mna
     set-variable @cc reyank
 !emacro
 
 0 define-macro mouse-undo
-    goto-window
-    goto-alpha-mark "T"
+    ; goto the original position - must dup the position
+    -1 push-position
+    pop-position
     set-variable @cc @cl
     undo @mna
     set-variable @cc undo
 !emacro
 
 0 define-macro mouse-pan-window
+    ; goto the original position
+    pop-position
     set-variable #l0 $mouse-x
     set-variable #l1 $mouse-y
     !force &sub #l1 .mouse-event.y scroll-up
     !force &sub #l0 .mouse-event.x scroll-left
-    set-alpha-mark "T"
+    ; store the new position
+    161 push-position
     set-variable .mouse-event.x #l0
     set-variable .mouse-event.y #l1
 !emacro
 
 0 define-macro mouse-pan-pick
-    set-window
-    set-alpha-mark "T"
     set-variable .mouse-event.mouse $mouse
     set-variable .mouse-event.scroll $scroll
     set-variable $mouse &bor 0x40000 &band 0xffff $mouse
@@ -431,8 +447,9 @@
 !emacro
 
 0 define-macro mouse-pan-drop
-    goto-window
-    goto-alpha-mark "T"
+    ; goto the original position - must dup the position
+    -1 push-position
+    pop-position
     set-variable $mouse .mouse-event.mouse
     set-variable $scroll .mouse-event.scroll
     unset-variable %pan-system
@@ -441,14 +458,14 @@
 
 0 define-macro mouse-mspan-window
     !if &set #l1 &sub .y $mouse-y
+        ; goto the original position
+        pop-position
         !force #l1 scroll-up
-        set-alpha-mark "T"
+        161 push-position
     !endif
 !emacro
 
 0 define-macro mouse-mspan-pick
-    set-window
-    set-alpha-mark "T"
     set-variable .mouse-mspan-window.y $mouse-y
     set-variable .mouse-event.mouse $mouse
     set-variable .mouse-event.scroll $scroll
@@ -458,8 +475,9 @@
 !emacro
 
 0 define-macro mouse-mspan-drop
-    goto-window
-    goto-alpha-mark "T"
+    ; goto the original position - must dup the position
+    -1 push-position
+    pop-position
     set-variable $mouse .mouse-event.mouse
     set-variable $scroll .mouse-event.scroll
     unset-variable %pan-system
@@ -552,10 +570,10 @@
     ; force the unbind of the last pick time or move - do this on pick and drop as a safety mechanism 
     !force global-unbind-key &spr .mask "time"
     !force global-unbind-key &spr .mask "move"
-    ; must store the original window and cursor position
     !if   &set #l0 &sin "-pick" #l1
-        set-window
-        set-alpha-mark "T"
+        ; must store the original window and cursor position, this
+        ; must stay on the position stack until the end of the drop 
+        161 push-position
         set-cursor-to-mouse
         ; work out the mouse mask
         set-variable .mode $mouse-pos
@@ -576,20 +594,32 @@
             !if &sin "-pick" #l1
                 mouse-auto-pick-event
             !else
-                goto-window
+                1 pop-position
             !endif
             !return
         !endif
     !endif
     !if &not &seq &set #l0 &ind &cat ":" #l1 "ERROR"
-        execute-line #l0
+        !jump 2
     !elif &not &seq &set #l0 &reg "/history" &cat "mouse/" #l1 "" ""
-        execute-line #l0
+        !force !force execute-line #l0
+        set-variable #l3 $status
+        0 show-region
+        set-variable #l2 $result
     !else
-        goto-window
-        goto-alpha-mark "T"
+        -1 push-position
+        pop-position
+        set-variable #l3 1
+    !endif
+    !if &sin "-drop" #l1
+        ; remove the original position from the stack
+        0 pop-position
+    !endif
+    ; was the region showing, if so make sure it is
+    !if &band #l2 1
         !force show-region
     !endif
+    !return #l3
 !emacro
 set-variable .mouse-event.msshift 0
 

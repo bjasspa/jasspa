@@ -1,14 +1,16 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Perl hook - This file is invoked when a Perl script file is loaded.
 ;
-; Last Modified : <000719.1924>
+; Last Modified : <000815.0819>
 ; Copyright (c) 1999-2000 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 !if &band .hilight.flags 0x02
     !if &not &exist .hilight.perl
         set-variable .hilight.perl  &pinc .hilight.next 1
+        set-variable .hilight.perlR &pinc .hilight.next 1
         set-variable .hilight.perlS &pinc .hilight.next 1
         set-variable .hilight.perlV &pinc .hilight.next 1
+        set-variable .hilight.perlX &pinc .hilight.next 1
     !endif
     
     ; Make file highlighting
@@ -17,8 +19,9 @@
     hilight .hilight.perl 4    "^=head" "=cut" ""  .scheme.string
     ; Strings and things
     hilight .hilight.perl 0x804 "'" "'" "\\"       .scheme.string
-    hilight .hilight.perl 0x804 "/" "/" "\\"       .scheme.string
     hilight .hilight.perl 0x80 "\"" .hilight.perlS .scheme.string
+    hilight .hilight.perl 0x80  "/" .hilight.perlX .scheme.string
+    hilight .hilight.perl 0x80 "s/" .hilight.perlR .scheme.string
     hilight .hilight.perl 4    "EOF;" "EOF" ""     .scheme.string
     hilight .hilight.perl 4    "\"EOF\";" "EOF" "" .scheme.string
     hilight .hilight.perl 4    "'EOF';" "EOF" ""   .scheme.string
@@ -66,6 +69,7 @@
     hilight .hilight.perl 1    "time"              .scheme.operator
     hilight .hilight.perl 1    "defined"           .scheme.operator
     hilight .hilight.perl 1    "undef"             .scheme.operator
+    hilight .hilight.perl 0x804 "`" "`" "\\"       .scheme.prepro
     hilight .hilight.perl 1    "<[^ \t\n>]*>"      .scheme.prepro
     hilight .hilight.perl 1    "STDIN"             .scheme.prepro
     hilight .hilight.perl 1    "STDOUT"            .scheme.prepro
@@ -134,6 +138,7 @@
     hilight .hilight.perl 1    "readdir"           .scheme.keyword
     hilight .hilight.perl 1    "readlink"          .scheme.keyword
     hilight .hilight.perl 1    "redo"              .scheme.keyword
+    hilight .hilight.perl 1    "rename"            .scheme.keyword
     hilight .hilight.perl 1    "reverse"           .scheme.keyword
     hilight .hilight.perl 1    "rindex"            .scheme.keyword
     hilight .hilight.perl 1    "rmdir"             .scheme.keyword
@@ -168,7 +173,8 @@
     !endif
     ; String hilighting
     0 hilight .hilight.perlS 0                     .scheme.string
-    hilight .hilight.perlS 0    "\\\\\""           .scheme.string
+    hilight .hilight.perlS 0    "\\\\."            .scheme.string
+    hilight .hilight.perlS 4   "@" "\\}\\W" ""     .scheme.variable
     hilight .hilight.perlS 4   "\\$" "\\}\\W" ""   .scheme.variable
     hilight .hilight.perlS 4   "\\${" "}" ""       .scheme.variable
     hilight .hilight.perlS 4   "\\$(" ")" ""       .scheme.variable
@@ -181,15 +187,25 @@
     hilight .hilight.perlV 4   "\"" "\"" ""        .scheme.string
     hilight .hilight.perlV 4   "\\${" "}" ""       .scheme.variable
     hilight .hilight.perlV 0x80 "}" .hilight.perl  .scheme.variable
+    ; /.../ regex string hilighting
+    0 hilight .hilight.perlX 0                     .scheme.string
+    hilight .hilight.perlX 0     "\\\\."           .scheme.string
+    hilight .hilight.perlX 0x80 "/" .hilight.perl  .scheme.string
+    ; s/.../.../ replace string hilighting
+    0 hilight .hilight.perlR 0                     .scheme.string
+    hilight .hilight.perlR 0    "\\\\."            .scheme.string
+    hilight .hilight.perlR 0x80 "/" .hilight.perlX .scheme.string
 !endif
 0 indent  .hilight.perl 0 10
 indent .hilight.perl n "{"  4
 indent .hilight.perl o "}" -4
 indent .hilight.perl e "\"" "\"" "\\"
 indent .hilight.perl e "'" "'" "\\"
+indent .hilight.perl e "`" "`" "\\"
 indent .hilight.perl e "/" "/" "\\"
 indent .hilight.perl b "\\[" "]"
 indent .hilight.perl b "(" ")"
+indent .hilight.perl s "<[^ \t\n>]*>" 0
 indent .hilight.perl i "#"  
 
 define-macro fhook-perl
@@ -210,5 +226,3 @@ ml-write "[Perl file hook loaded]"
 
 ; load in user extensions if found
 !force execute-file "myperl"
-
-
