@@ -2817,7 +2817,7 @@ WinMouse(HWND hwnd, UINT message, UINT wParam, LONG lParam)
             cc = ME_SPECIAL | ttmodif | (SKEY_mouse_move+mouseKeys[mouseState&MOUSE_STATE_BUTTONS]) ;
             /* Are we after all movements or mouse-move bound ?? */
             if((!TTallKeys && (decode_key(cc,&arg) != -1)) || (TTallKeys & 0x1))
-                addKeyToBuffer(cc) ;        /* Add key to keyboard buffer */
+                addKeyToBufferOnce(cc) ;        /* Add key to keyboard buffer */
             if(lParam != lastPos)
             {
                 /* Found that on NT ME continually gets MOUSEMOVE messages even though
@@ -4917,7 +4917,7 @@ TTahead (void)
         if((!TTallKeys && (decode_key(mc,&arg) != -1)) || (TTallKeys & 0x2))
         {
             /* Timer expired and still bound. Report the key. */
-            addKeyToBuffer(mc) ;
+            addKeyToBufferOnce(mc) ;
             /* Set the new timer and state */
             /* Start a new timer to clock in at 'repeat' intervals */
             /* printf("Setting mouse timer for repeat %d\n",repeattime) ;*/
@@ -5056,7 +5056,7 @@ TTaheadFlush (void)
         if((!TTallKeys && (decode_key(mc,&arg) != -1)) || (TTallKeys & 0x2))
         {
             /* Timer expired and still bound. Report the key. */
-            addKeyToBuffer(mc) ;
+            addKeyToBufferOnce(mc) ;
             /* Set the new timer and state */
             /* Start a new timer to clock in at 'repeat' intervals */
             /* printf("Setting mouse timer for repeat %d\n",repeattime) ;*/
