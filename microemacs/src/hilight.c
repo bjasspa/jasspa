@@ -2585,7 +2585,7 @@ indent(int f, int n)
     }
     if(typesFlag[itype] & INDGOTIND)
     {
-        char *p, *q;
+        meUByte *p, *q;
         int ipart;                      /* Integer part. */
         
         /* The indent type may be specified in a number of different ways:-

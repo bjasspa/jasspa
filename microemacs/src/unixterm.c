@@ -4612,7 +4612,7 @@ xdndPushFile (meFrame *frame, int x, int y, char *filename)
         /* This is a local file URL. Remove the special URL characters of %xx
          * where x is a hexadecimal character. */
         p = &filename[7];
-        q = &dadp->fname[0];
+        q = (char *) &dadp->fname[0];
         while ((*q = *p++) != '\0')
         {
             if ((*q == '%') && isXDigit (p[0]) && isXDigit (p[1]))

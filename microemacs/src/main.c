@@ -1943,7 +1943,7 @@ main(int argc, char *argv[])
             {
 #if MEOPT_FRAME            
                 /* Change to the correct frame */
-                meFrameMakeCur (dadp->frame, 1);
+                meFrameMakeCur(dadp->frame, 1);
 #endif
 
 #if MEOPT_MOUSE
@@ -1978,7 +1978,7 @@ main(int argc, char *argv[])
 #endif
 
             /* Display a message indicating last trasaction */
-            mlwrite (0, "Drag and Drop transaction completed");
+            mlwrite (0,(meUByte *) "Drag and Drop transaction completed");
         }
 #endif /* _DRAGNDROP */
     }
