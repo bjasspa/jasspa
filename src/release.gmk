@@ -67,7 +67,7 @@ release: $(OBJS)
 	$(RM) $@.tmp $@
 	$(RM)  $(OBJS)
 	$(DOS2UNIX) *.def *.[ch] *.mak *.txt *.gmk build COPYING *.xpm
-	$(UNIX2DOS) build.bat *.rc
+	$(UNIX2DOS) build.bat *.rc win*.mak dos*.mak
 	$(RM) *~
 	$(FIND) . -depth -type f -print | $(GREP) -v -i ".*/*\.lst" | $(GREP) -v -i ".*/cvs.*" | $(GREP) -v -i ".*\.o.*" | $(GREP) -v -i "\.ziplist" | $(GREP) -v -i ".*/release\.gmk"  > $@.tmp
 	sort $@.tmp | $(GREP) -v -i ".*\.tar\.gz" | $(GREP) -v -i ".*/\.cvsignore" | $(GREP) -v -i ".*\.zip" | $(GREP) -v -i ".*\.exe" | $(UNIQ) > $@
