@@ -29,7 +29,7 @@
 .\"
 .\"***************************************************************************
 .\"
-.Id $Id: me.nrs,v 2.3 2001-05-14 19:55:04 jon Exp $
+.Id $Id: me.nrs,v 2.4 2001-07-14 10:12:13 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -1574,6 +1574,86 @@ Many bugs fixed on all  platforms,  in  particular  unix  cutting  and pasting
 Added tab and newline character printing in buffers.
 .BU
 Introduced message line variables @mx and @mxa.
+.BU
+Added ftp  support  with a new ftp  'file-browser'  interface  to give easy to
+use ftp capability.
+.BE 0
+.IP 2000
+.BS 0
+Fixed several millennium bugs :)
+.BU
+Revamped the printing interface to support colors
+.BU
+Started using
+.Hr CVS 1
+at last, much better history from now on.
+.BU
+Got the emain #define's  properly  supported  again so options so \*(mS can be
+successfully  compiled without options like SPELL and OSD etc. This can reduce
+the binary size by up to 37%.
+.BU
+Improved the macro based tag  generators to support source code trees and many
+new items of information, added new generation GUI.
+.BU
+Greatly  improved the OSD based search and replace dialog, also added the line
+hilight into this dialog.
+.BU
+Added new -k and -u command-line options and improved -s option.
+.BU
+Greatly improved and increase the file system operations via the new
+.Ht file-op 2
+command, created better menus in the
+.Ht file-browser 3 .
+.BU
+Added new
+.Ht set-position 2
+which can be used to store all information about the current window and
+.Ht goto-position 2
+which will then restore them. Allowed macros to use non-letter  characters for
+alpha marks and positions so they no longer need to clobber user ones. 
+.BU
+Greatly  improved  ipipe-shell-command  efficiency on windows by introducing a
+new thread approach to listen for activity.  Implemented a shell  command-line
+in an ipiped environment so 
+.Ht ishell 3
+command is now usable on Windows platforms.
+.BU
+Revamped the main ftp GUI to make it work much more rationally.
+.BE 0
+.IP 2001
+.BS 0
+Changed buffer  variables to except the form  :<buffer-name>:<variable>,  like
+command  variables.  This allows macros to access  variable not defined in the
+current buffer.
+.BU
+Added new
+.Ht command-wait 2
+command  to  enable  macros  to wait for user  dependent  completion,  used in
+\fBgdiff\fR.
+.BU
+Added support for new
+.Ht $buffer-backup 5
+variable for setting the back-up file location. 
+.BU
+Major work to enable the complete  rebinding of all keys so the user interface
+to \*(mS can be completely  changed, this allows for example a Windows feel to
+be created. This  required  many  internal  ghosts to be exorcised and add new
+macro functions
+.BU
+Added new generic buffer setup, menu and help macros, creating the new
+.Ht buffer-setup 3
+command. Ported all existing file hooks to this new interface greatly reducing
+the buffer hook size while increasing its functionality and consistency.
+.BU
+Added generic commands for the creation, deletion and reformatting of comments
+now used by most of the file hooks.
+.BU
+\fB3rd Release\fR - July 2001. Fixed many bugs in the last 12 months as well
+as adding the above features.
+.Ht &cbind 4 ,
+.Ht &kbind 4
+and
+.Ht &nbind 4 .   
 .BE 0
 .SS "Work In Progress or Planned"
 Development  of  \*(mE  is an  on-going  process,  follows  is a list  of work

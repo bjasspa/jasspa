@@ -29,7 +29,7 @@
 .\"
 .\"***************************************************************************
 .\"
-.Id $Id: m2nar007.2,v 2.1 2001-05-14 19:54:08 jon Exp $
+.Id $Id: m2nar007.2,v 2.2 2001-07-14 10:11:03 jon Exp $
 .Im MicroEmacs search
 .so me.tni
 .TH "Build" 2
@@ -47,12 +47,12 @@ available compiler and build the editor.
 The build script recognizes the following options:-
 .IP \fB\-C\fR
 Build clean. Delete all of the object files.
-.IP \fB\-c\fR
-Build a console version (Windows '95/'98/NT only),  constructs the executable
-\fCmec32.exe\fR.
-.IP \fB-cu\fR
+.IP \fB\-n\fR
+Build a console version (i.e. no window support).  Constructs the executable
+\fCmen32.exe\fR on Windows, \fCmen\fR on Linux.
+.IP \fB-nu\fR
 Build a console version with URL support (Windows '95/'98/NT only),  constructs the executable
-\fCmecu32.exe\fR.
+\fCmenu32.exe\fR.
 .IP \fB-d\fR
 Build a debugging  version, the output is \fCmed\fR (or \fCmed32\fR for 32-bit
 Windows versions)
@@ -75,13 +75,17 @@ supplied makefiles include:-
 .BU
 \fCfreebsd.gmk\fR Free BSD using GNU tools.
 .BU
+\fChpux9.gmk\fR  HP-UX 9.x using GNU tools.
+.BU
+\fChpux9.mak\fR  HP-UX 9.x native
+.BU
 \fChpux10.gmk\fR HP-UX 10.x using GNU tools.
 .BU
 \fChpux10.mak\fR HP-UX 10.x native
 .BU
-\fChpux9.gmk\fR  HP-UX 9.x using GNU tools.
+\fChpux11.gmk\fR HP-UX 11.x using GNU tools.
 .BU
-\fChpux9.mak\fR  HP-UX 9.x native
+\fChpux11.mak\fR HP-UX 11.x native
 .BU
 \fCirix5.gmk\fR Silicon Graphics IRIX 5.x using GNU tools
 .BU
@@ -92,6 +96,8 @@ supplied makefiles include:-
 \fCirix6.mak\fR Silicon Graphics IRIX 6.x native
 .BU
 \fClinux200.gmk\fR Linux 2.0 using GNU tools
+.BU
+\fCopenstep.mak\fR Openstep 4.2 on NeXTstep (BSD 4.3).
 .BU
 \fCsunos55.gmak\fR Sun Solaris 5.5 using GNU tools
 .BU
@@ -104,6 +110,8 @@ supplied makefiles include:-
 \fCsunosx86.gmk\fR Sun Solarais 2.6 (Intel) using GNU tools.
 .BU
 \fCwin32bc.mak\fR Borland C, 32-bit Windows version.
+.BU
+\fCwin32b55.mak\fR Borland C 5.5, 32-bit Windows version (Free compiler).
 .BU
 \fCwin32sv2.mak\fR Microsoft Developer v2.x, Win32s (for Win 3.xx)
 .BU
@@ -139,11 +147,11 @@ The makefiles are supplied with the following targets:-
 .BU
 \fBmed\fR \- Builds a debugging version.
 .BU
-\fBmec\fR \- Builds console version (Windows only).
+\fBmen\fR \- Builds console version (Windows only).
 .BU
-\fBmeu\fR \- Builds a URL version (Windows only).
+\fBmen\fR \- Builds a URL version (Windows only).
 .BU
-\fBmecu\fR \- Builds console and URL version (Windows only).
+\fBmenu\fR \- Builds console and URL version (Windows only).
 .BE 0
 .SH NOTES
 Other  \s-1UNIX\s0  ports  should  be fairly  easy from the base set of ported

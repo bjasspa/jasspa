@@ -7,7 +7,7 @@
 #
 # Author      : Jon Green
 # Created     : 22nd February 1997
-# Last Edited : <010513.2257>
+# Last Edited : <010712.2357>
 #
 # History     : JG  220297 Original  Constructed from emacssrc
 #
@@ -22,9 +22,9 @@
 #
 #
 #
-MEVER=		98
+MEVER=		01
 
-RM	=	erase
+RM	=	- erase
 INSTALL	=	$(RUNBINDIR)\install
 MKDIR	=	mkdir
 COPY	=	copy
@@ -189,7 +189,7 @@ OSD3_000=	$(DOCDIR)m3osd000.3 $(DOCDIR)m3osd001.3 $(DOCDIR)m3osd002.3\
 		$(DOCDIR)m3osd003.3 $(DOCDIR)m3osd004.3 $(DOCDIR)m3osd005.3\
 		$(DOCDIR)m3osd006.3 $(DOCDIR)m3osd007.3 $(DOCDIR)m3osd008.3\
 		$(DOCDIR)m3osd009.3
-OSD3_010=	$(DOCDIR)m3osd010.3
+OSD3_010=	$(DOCDIR)m3osd010.3 $(DOCDIR)m3osd011.3
 
 FCL3_000=	$(DOCDIR)m3fcl001.3 $(DOCDIR)m3fcl002.3 $(DOCDIR)m3fcl003.3\
 		$(DOCDIR)m3fcl004.3 $(DOCDIR)m3fcl005.3 $(DOCDIR)m3fcl006.3\

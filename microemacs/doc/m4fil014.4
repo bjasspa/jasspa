@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m4fil014.4,v 2.1 2001-05-14 19:54:31 jon Exp $
+.Id $Id: m4fil014.4,v 2.2 2001-07-14 10:11:31 jon Exp $
 .Im MicroEmacs macro;variable
 .so me.tni
 .TH "MacroArguments" 4
@@ -9,22 +9,23 @@
 .XI "@0" - "Macro arguments (macro name)"
 .XI "@1" - "Macro arguments (first argument)"
 .XI "@2" - "Macro arguments (second argument)"
+.XI "@p" - "Macro arguments (calling macro name)"
 .SH NAME
-@?, @#, @0, @1, @2, @3, ... \- Macro arguments
+@?, @#, @0, @1, @2, @3, ... @p \- Macro arguments
 .SH SYNOPSIS
-\fB@\fR\fIn\fR
-.sp
 \fB@?\fR \- Boolean flagging if a numeric argument was supplied
 .br
 \fB@#\fR \- The value of the numeric argument
-.br
+.sp
 \fB@0\fR \- The name of the macro
 .br
 \fB@1\fR \- The first argument of macro
 .br
 \fB@2\fR \- The second argument of macro
 .br
-\fB@3\fR ...
+\fB@3\fR ... \fB@\fR\fIn\fR
+.sp
+\fB@p\fR \- The name of the calling (or parent) macro.
 .SH DESCRIPTION
 Macros may be passed  arguments,  allowing a macro to be used by other macros.
 The \fB@?\fR and \fB@#\fR are used to determine the numeric  argument given to
@@ -74,6 +75,11 @@ On  execution  the macro  writes  the  message
 "\fCTest-it %test-var = Hello World\fR"
 .LP
 and will set variable \fC%test-var\fR to "\fCGoodbye World\fR".
+.PP
+The  \fB@p\fR  variable  can be used to obtain the name of the macro  which is
+executing the current macro, i.e. the value of the parent's \fB@0\fR variable.
+If the macro was  executed  directly by the user then there is no parent macro
+and the value of \fB@p\fR is an empty string ("").
 .SH DIAGNOSTICS
 If an  attempt is made to access an  argument  which has not been given then a
 error occurs. This error can be trapped using the
@@ -103,6 +109,31 @@ define-macro replace-all-string
 .Me $ehf-scheme
 In this  example  if the 3rd  argument  is not given  then the macro  gets all
 arguments  from the user.
+.PP
+The \fB@p\fR  variable having a value of "" when a macro is called directly by
+the user can be useful when determining the amount of information to feed-back
+to the user. For example, executing the
+.Hl clean clean 3
+macro is an easy way to remove  surplus white  characters, so it is often used
+by other  macros  as well as by the user.  When  called  directly  \fBclean\fR
+refreshes the display and prints a message of  completion,  but when called by
+other macros this would cause an unwanted  screen-update and message, so clean
+only does this when executed by the user. This is done as follows:
+.Me $emf-scheme
+.CS
+define-macro clean
+    ;
+    ; Prepare to clean up file.
+    .
+    .
+    .
+    !if &seq @p ""
+        screen-update
+        ml-write "[Cleaned up buffer]"
+    !endif
+!emacro
+.CE 0
+.Me $ehf-scheme
 .SH NOTES
 The parsing of arguments can be  inefficient  because of the way the arguments
 have to be parsed; to get the 4th argument the 1st, 2nd and 3rd arguments must

@@ -29,18 +29,26 @@
 .\"
 .\"***************************************************************************
 .\"
-.Id $Id: m3mac027.3,v 2.1 2001-05-14 19:54:16 jon Exp $
+.Id $Id: m3mac027.3,v 2.2 2001-07-14 10:11:14 jon Exp $
 .Im MicroEmacs command|file|essential
-.ds C0 "(\fB\*ab\fR)\ \&
+.ds C0 "(\fB\*(fA\fR)\ \&
 .so me.tni
 .TH file-browser 3
 .XI file-browser \- "\*(C0Browse the file system"
+.XI file-browser-close \- "Close the file-browser"
+.XI file-browser-swap-buffers \- "Swap between file-browser windows"
 .SH NAME
-file-browser - Browse the file system
+file-browser \- Browse the file system
+file-browser-close \- Close the file-browser
+file-browser-swap-buffers \- Swap between file-browser windows
 .Me $a
 .SH SYNOPSIS
 .na
 \fBfile-browser\fR \*(C0
+.br
+\fBfile-browser-close\fR
+.br
+\fBfile-browser-swap-buffers\fR
 .ad
 .SH DESCRIPTION
 \fBfile-browser\fR  can be used to browse  around the file  system. When first
@@ -102,8 +110,13 @@ Move to the \fC*directory*\fR buffer.
 .IP \fCdelete\fR
 Closes file-browser.
 .PP
-If   file-browser   is  executed  again  then  if  both  windows  are  visible
-file-browser is closed, otherwise file-browser resets the windows.
+\fBfile-browser-swap-buffers\fR   swaps  between  the   \fC*directory*\fR  and
+\fC*file*\fR  windows,  making the other the current  window,  this is usually
+locally bound to the \fCtab\fR key.
+.PP 
+\fBfile-browser-close\fR  hides both the  \fC*directory*\fR  and  \fC*file*\fR
+windows,  closing  the  file-browser,  this is  usually  locally  bound to the
+\fCdelete\fR key.
 .SH "SEE ALSO"
 .na
 .Ht directory-tree 2 ,
