@@ -25,6 +25,8 @@
             !force &sub #l1 .mouse-event.y scroll-down
         !endif
         !force &sub $mouse-y $cursor-y forward-line
+    !elif &equ .mouse-event.x #l0
+        !return
     !endif
     !if &not &equ .mouse-event.x #l0
         !if &gre #l0 &sub $window-scroll-bar 3
@@ -39,7 +41,6 @@
                 !force &sub .mouse-event.x $mouse-x scroll-left
             !endif
         !endif
-        ;!force set-variable $window-acol &add $window-acol &sub #l0 $cursor-x
     !endif
     1 screen-update
     !if &les &set #l2 &sub .mouse-drop-t1.sc $window-x-scroll 0
@@ -75,7 +76,6 @@
     !done
     3 screen-poke #l0 #l2 .scheme.hlred @fs #l0 #l2
     1 screen-poke #l0 #l3 .scheme.hlred @fs #l0 #l3
-
 !emacro
 
 0 define-macro mouse-pick-rectangle
@@ -87,7 +87,7 @@
     ; Scroll the screen if we are marking.
     set-variable .mouse-event.scroll $scroll
     set-variable $scroll 3
-    global-bind-key mouse-rectangle-mark &spr .mouse-event.mask "move"
+    global-bind-key mouse-rectangle-mark &spr .mouse-event.mask "time"
 !emacro
 
 0 define-macro mouse-drop-rectangle
