@@ -4,12 +4,17 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <040206.1246>
+>  Last Modified : <040206.1830>
 >
 
 7th Release - February 2004
 
     [040206] RC4 - Release Candidate 4 - MicroEmacs '04
+
+    [040206] Fixes for toolbar Buffer Item List update  problem. Thanks to Dr.
+             Detlef Groth.
+    
+    [040206] Added template support for XML. Thanks to Dr. Detlef Groth.
 
     [040204] Re-worked Microsoft Windows "me32.ini" file specification.  Order
              revised and lookup simplified.
