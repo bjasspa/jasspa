@@ -7,12 +7,12 @@
 #  System        : 
 #  Module        : 
 #  Object Name   : $RCSfile: Makefile,v $
-#  Revision      : $Revision: 1.1 $
-#  Date          : $Date: 2004-02-07 16:57:00 $
+#  Revision      : $Revision: 1.2 $
+#  Date          : $Date: 2004-02-07 17:38:37 $
 #  Author        : $Author: jon $
 #  Created By    : <unknown>
 #  Created       : Sat Feb 7 15:01:38 2004
-#  Last Modified : <040207.1618>
+#  Last Modified : <040207.1701>
 #
 #  Description	
 #
@@ -45,8 +45,8 @@ clean spotless::
 	cd etc; $(MAKE) $@
 
 spotless::
-	$(RMDIR) $(INSTBINDIR)
-	$(RMDIR) $(INSTLIBDIR)
+	$(RMDIR) $(BINDIR)
+	$(RMDIR) $(LIBDIR)
 	$(RMDIR) $(INSTINCDIR)
 	$(RM) *~
 	$(RM) tags
