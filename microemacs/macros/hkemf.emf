@@ -27,7 +27,7 @@ set-variable .fhook-emf.command-kbind "||A-q|C-c C-q|esc q|esc o|"
 set-variable .fhook-emf.command-desc  "|Complete co\Hmmand|\HQuote command||||"
 
 ; setup emf collapsing
-set-variable .fhook-emf.collapse-open  "^0? ?define-macro"
+set-variable .fhook-emf.collapse-open  "^0? ?define-macro[ \t]"
 set-variable .fhook-emf.collapse-close "^!emacro"
 set-variable .fhook-emf.collapse-mclose "1"
 set-variable .fhook-emf.collapse-mnext "-1"
