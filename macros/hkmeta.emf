@@ -1,10 +1,15 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;       MetaPost and compatible MetaFont hook
 ;
 ;       Created by Pedro Gomes 99-06-08
 ;
 ;   Last Modified : <991125.1029>
-;
-!if &band .hilight.flags 0x02
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; buffer-setup flags
+set-variable #l0 &reg "/history" "fhook/meta" "hix"
+set-variable #l1 "ehimtux"
+
+!if &and &sin "h" #l0 &band .hilight.flags 0x02 
     !if &not &exist .hilight.meta
         set-variable .hilight.meta &pinc .hilight.next 1
     !endif
@@ -130,9 +135,11 @@
 !endif
 
 define-macro fhook-meta
-    1 buffer-mode "time"
-    1 buffer-mode "indent"
     set-variable $buffer-mask "luh1"
+    buffer-modes-init .fhook-meta.setup
+    !if &and &sin "h" .fhook-meta.setup &band .hilight.flags 0x02 
+        set-variable $buffer-hilight .hilight.meta
+    !endif
     !if &band .hilight.flags 0x02
         set-variable $buffer-hilight .hilight.meta
     !endif
@@ -141,6 +148,8 @@ define-macro fhook-meta
         my-fhook-meta
     !endif
 !emacro
+set-variable .fhook-meta.setup #l0
+set-variable .fhook-meta.setup-mask #l1
 
 ml-write "[MetaPost/Font file hook loaded]"
 

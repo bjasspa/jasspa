@@ -1,8 +1,13 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;       Install Shield awk file hook
 ;
 ;   Last Modified : <991125.1028>
-;
-!if &band .hilight.flags 0x02
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; buffer-setup flags
+set-variable #l0 &reg "/history" "fhook/awk" "hix"
+set-variable #l1 "ehimtux"
+
+!if &and &sin "h" #l0 &band .hilight.flags 0x02 
     !if &not &exist .hilight.awk
         set-variable .hilight.awk &pinc .hilight.next 1
     !endif
@@ -64,10 +69,9 @@
 !endif
 
 define-macro fhook-awk
-    1 buffer-mode "time"
-    1 buffer-mode "indent"
     set-variable $buffer-mask "luh1"
-    !if &band .hilight.flags 0x02
+    buffer-modes-init .fhook-awk.setup
+    !if &and &sin "h" .fhook-awk.setup &band .hilight.flags 0x02 
         set-variable $buffer-hilight .hilight.awk
     !endif
     ; execute user extensions if enabled
@@ -75,6 +79,8 @@ define-macro fhook-awk
         my-fhook-awk
     !endif
 !emacro
+set-variable .fhook-awk.setup #l0
+set-variable .fhook-awk.setup-mask #l1
 
 ml-write "[AWK file hook loaded]"
 

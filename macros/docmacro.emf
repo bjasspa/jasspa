@@ -10,16 +10,194 @@
 ;                  a set of common macros which may be invoked from 
 ;                  other templates rather than simply the doc one. 
 ;
-;  History
+; The Document template undersatnds magic tokens as follows:-
+;
+; -!- Document -!-
+;
+;     Read as a sectioned document. Uses a simple hilighting scheme
+;     such that the following is recognised:-
+;
+;     1.1 Title        - Whole line hilighted in yellow
+;     a) Text          - Bullets are hilighted.
+;     * Text           - Bullets are hilighted.
+;     "Text"           - Quoted text is hilighted.
+;
+;
+; SECTIONED DOCUMENT.
+;
+; Define using a magic string: -!- document -!-
+; Hilights the following items
+;
+; n.n.n
+;         Section headers, All lines commencing with a n.XX sequence which
+;         assumes a numbered section. e.g.
+;
+;         2.0 Scheduler
+;
+; Appendix
+;         Section headers. Assumes this is an Appendix. All lines commencing
+;         with "Appendix are assumed to be headers. e.g.
+;
+;         Appendix A - Data structures
+; >
+;         All lines commencing with '>' are assumed to be a comment.
+;         Typically used at the head of the document. e.g.
+;
+;         > -!- document; sectioned; pseudo-code -!-
+;         >
+;         > Author:       My Self
+;         > Created:      11/11/97
+;         > Modified:     <211197.1003>
+;         > Location:     /xx/yy/zz.doc
+; *
+;         All lines commencing with '*' are assumed to be bullet lists. Bullet
+;         is hilighted. e.g.
+;
+;         * Bullet item
+;
+; A) 1)
+;         All lines commencing with [a-zA-Z]) or [0-9]) are assumed to be
+;         minor sections. The section number is hilighted. e.g:
+;
+;         a) text
+;         1) text
+;
+; 'xx' "yy"
+;         All text in single or double quotes is hilighted, assumed to be
+;         literal text. e.g.
+;
+;         This is a "double quote" or 'a' single quote.
+; ____
+;         Lines commencing with '_' (underscore) are hilighted to the end.
+;         typically used as demarkation breaks or for section underlining
+;         e.g.
+;
+;
+;         text.....
+;         ________________________________________________________________
+;
+;         Add a nice big line to separate sections
 ;
 ;  Copyright (c) 2000 Samsung (SERI) Ltd.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; arguments when executed must be the "extension"
+set-variable #l1 @1
+set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
 
-!if &not &exist .osd.doc-help
-    set-variable .osd.doc-help &pinc .osd.next 1
-    set-variable .osd.doc-stat &pinc .osd.next 1
+!if &and &sin "h" #l0 &band .hilight.flags 0x02
+    !if &not &exist .hilight.doc
+        set-variable .hilight.doc  &pinc .hilight.next 1
+        set-variable .hilight.doc1 &pinc .hilight.next 1
+    !endif
+
+    ; Define the hilighting. Note that we use a look back so that
+    ; we can process the inserted schemes if necessary. Ordinarily
+    ; we do not need it. This will only hurt branch tokens, as there
+    ; are none below then there is no adverse effect.
+    0 hilight  .hilight.doc 2 100                               $global-scheme
+    hilight .hilight.doc 0x20 "*\\}[ \t]+\\w"                   .scheme.no1
+    hilight .hilight.doc 0x21 "\\w)"                            .scheme.no1
+    hilight .hilight.doc 1 "\\*[A-Za-z_]+\\*"                   .scheme.bold
+    hilight .hilight.doc 1 "<[A-Za-z_]+>"                       .scheme.italic
+    hilight .hilight.doc 1 "_[A-Za-z0-9]+_"                     .scheme.under
+    hilight .hilight.doc 0 "^\\s *\\[\\w*\\]"                   .scheme.no1
+    hilight .hilight.doc 0x22 "[0-9]\\.[0-9.]*[ \t]+\\w"        .scheme.header
+    hilight .hilight.doc 0x804 "\"" "\"" "\\"                   .scheme.string
+    hilight .hilight.doc 0x804 "`" "'" ""                       .scheme.no1
+    hilight .hilight.doc 0    "'.'"                             .scheme.quote
+    hilight .hilight.doc 0    "'\\\\.'"                         .scheme.quote
+    hilight .hilight.doc 0x22 "^[ \t]*Appendix [[:alpha:]]"     .scheme.header
+    hilight .hilight.doc 0x22 "_\\W"                            .scheme.comment
+    hilight .hilight.doc 0x22 ">"                               .scheme.comment
+    hilight .hilight.doc 0x80 "^[ \t]+@" .hilight.doc1          .scheme.no2
+    ; @ block
+    0 hilight .hilight.doc1 0                                   .scheme.no2
+    hilight   .hilight.doc1 0x80 "^[ \t]*\n" .hilight.doc       $global-scheme
+    hilight   .hilight.doc1 0x80 "^\n"       .hilight.doc       $global-scheme
+    
+    ; Allow inserts into the documentation mode. You may add to the
+    ; available inserts by adding to your mydoc.emf file
+    
+    ; Allow MicroEmacs Macro .emf inserts
+    ; Force the ".emf" scheme to be loaded into the context of the document
+    ; scheme. We delimit the .emf scheme with a pair of markers ">emf>" and
+    ; ">doc>"
+    ;
+    ; Force the hilighting mode to load if not already loaded.
+    !if &not &exi .hilight.emf
+        !force execute-file "hkemf"
+    !endif
+    ; If the hilighting mode is loaded then modify it.
+    !if &and &sin "h" .fhook-emf.setup &band .hilight.flags 0x02 
+        hilight .hilight.doc 0xc0 "^>emf>" ">emf>" .hilight.emf .scheme.hide
+        hilight .hilight.emf 0xc0 "^>doc>" ">doc>" .hilight.doc .scheme.hide
+    !endif
+    
+    ; Allow Pseudo Code inserts
+    ; Force the ".pseudo" scheme to be loaded into the context of the document
+    ; scheme. We delimit the .emf scheme with a pair of markers ">pseudo>" and
+    ; ">doc>"
+    ;
+    ; Force the hilighting mode to load if not already loaded.
+    !if &not &exi .hilight.pseudo
+        !force execute-file "hkpseudo"
+    !endif
+    ; If the hilighting mode is loaded then modify it.
+    !if &exi .hilight.pseudo
+        hilight .hilight.doc 0xc0 "^>pseudo>" ">pseudo>" .hilight.pseudo .scheme.hide
+        hilight .hilight.pseudo 0xc0 "^>doc>" ">doc>"    .hilight.doc .scheme.hide
+    !endif
+    
+    ; Allow BNF inserts
+    ; Force the ".bnf" scheme to be loaded into the context of the document
+    ; scheme. We delimit the .emf scheme with a pair of markers ">bnf>" and
+    ; ">doc>"
+    ;
+    ; Force the hilighting mode to load if not already loaded.
+    !if &not &exi .hilight.bnf
+        !force execute-file "hkbnf"
+    !endif
+    ; If the hilighting mode is loaded then modify it.
+    !if &and &sin "h" .fhook-bnf.setup &band .hilight.flags 0x02 
+        hilight .hilight.doc 0xc0 "^>bnf>" ">bnf>"   .hilight.bnf .scheme.hide
+        hilight .hilight.bnf 0xc0 "^>doc>" ">doc>"   .hilight.doc .scheme.hide
+    !endif
+    
+    ; Allow C Code inserts
+    ; Force the ".c" scheme to be loaded into the context of the document
+    ; scheme. We delimit the .emf scheme with a pair of markers ">c>" and
+    ; ">doc>"
+    ;
+    ; Force the hilighting mode to load if not already loaded.
+    !if &not &exi .hilight.c
+        !force execute-file "hkc"
+    !endif
+    ; If the hilighting mode is loaded then modify it.
+    !if &and &sin "h" .fhook-c.setup &band .hilight.flags 0x02 
+        hilight .hilight.doc 0xc0 "^>c>" ">c>"     .hilight.c   .scheme.hide
+        hilight .hilight.c   0xc0 "^>doc>" ">doc>" .hilight.doc .scheme.hide
+    !endif
+    
+    ; Allow C++ Code inserts
+    ; Force the ".cpp" scheme to be loaded into the context of the document
+    ; scheme. We delimit the .emf scheme with a pair of markers ">cpp>" and
+    ; ">doc>"
+    ;
+    ; Force the hilighting mode to load if not already loaded.
+    !if &not &exi .hilight.cpp
+        !force execute-file "hkcpp"
+    !endif
+    ; If the hilighting mode is loaded then modify it.
+    !if &and &sin "h" .fhook-cpp.setup &band .hilight.flags 0x02 
+        hilight .hilight.doc 0xc0 "^>cpp>" ">cpp>"     .hilight.cpp .scheme.hide
+        hilight .hilight.doc 0xc0 "^>c\\+\\+>" ">c++>" .hilight.cpp .scheme.hide
+        hilight .hilight.cpp 0xc0 "^>doc>" ">doc>"     .hilight.doc .scheme.hide
+    !endif
 !endif
 
+!if &not &exist .osd.doc-stat
+    set-variable .osd.doc-stat &pinc .osd.next 1
+!endif
 -1 osd .osd.doc-stat
 osd .osd.doc-stat 0  "batcdH" 9 3 99 .scheme.osd-title "Current Mode Settings"
 osd .osd.doc-stat 3  "" 
@@ -40,36 +218,41 @@ define-macro doc-mode-state
     .osd.doc-stat osd
 !emacro
 
-osd .osd.doc-help 0  "batcdH" 9 3 99 .scheme.osd-title "Documentation Mode Help"
-osd .osd.doc-help 1  "" 
-osd .osd.doc-help 2  ""  "    esc h   - View this help page"
-osd .osd.doc-help 3  ""  "    C-c C-h - Show current mode settings"
-osd .osd.doc-help 4  ""
-osd .osd.doc-help 5  ""  "    C-c C-s - Start spelling the buffer"
-osd .osd.doc-help 6  ""  "    C-c o   - Fill paragraph for WP export"
-osd .osd.doc-help 7  ""
-osd .osd.doc-help 8  ""
-osd .osd.doc-help 9  "c" "To format current paragraph:"
-osd .osd.doc-help 10 ""
-osd .osd.doc-help 11 ""  "    C-c C-b - Justify both margins"
-osd .osd.doc-help 12 ""  "    C-c C-c - Justify center"
-osd .osd.doc-help 13 ""  "    C-c C-l - Justify left"
-osd .osd.doc-help 14 ""  "    C-c C-g - Justify gutter (on left margin)"
-osd .osd.doc-help 15 ""  "    C-c C-r - Justify right"
-osd .osd.doc-help 16 ""  "    esc o   - To format paragraph in current mode"
-osd .osd.doc-help 17 ""
-osd .osd.doc-help 18 ""
-osd .osd.doc-help 19 "c" "To change justification mode:"
-osd .osd.doc-help 20 ""
-osd .osd.doc-help 21 ""  "    C-c a - Change to auto justification [DEFAULT]"
-osd .osd.doc-help 22 ""  "    C-c b - Change to both justification"
-osd .osd.doc-help 23 ""  "    C-c c - Change to center justification"
-osd .osd.doc-help 24 ""  "    C-c l - Change to left justification"
-osd .osd.doc-help 25 ""  "    C-c n - Change to none justification"
-osd .osd.doc-help 26 ""  "    C-c r - Change to right justification"
-osd .osd.doc-help 27 ""
-osd .osd.doc-help 28 ""
-osd .osd.doc-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
+!if &sin "p" #l0
+    !if &not &exist .osd.doc-help
+        set-variable .osd.doc-help &pinc .osd.next 1
+    !endif
+    osd .osd.doc-help 0  "batcdH" 9 3 99 .scheme.osd-title "Documentation Mode Help"
+    osd .osd.doc-help 1  "" 
+    osd .osd.doc-help 2  ""  "    esc h   - View this help page"
+    osd .osd.doc-help 3  ""  "    C-c C-h - Show current mode settings"
+    osd .osd.doc-help 4  ""
+    osd .osd.doc-help 5  ""  "    C-c C-s - Start spelling the buffer"
+    osd .osd.doc-help 6  ""  "    C-c o   - Fill paragraph for WP export"
+    osd .osd.doc-help 7  ""
+    osd .osd.doc-help 8  ""
+    osd .osd.doc-help 9  "c" "To format current paragraph:"
+    osd .osd.doc-help 10 ""
+    osd .osd.doc-help 11 ""  "    C-c C-b - Justify both margins"
+    osd .osd.doc-help 12 ""  "    C-c C-c - Justify center"
+    osd .osd.doc-help 13 ""  "    C-c C-l - Justify left"
+    osd .osd.doc-help 14 ""  "    C-c C-g - Justify gutter (on left margin)"
+    osd .osd.doc-help 15 ""  "    C-c C-r - Justify right"
+    osd .osd.doc-help 16 ""  "    esc o   - To format paragraph in current mode"
+    osd .osd.doc-help 17 ""
+    osd .osd.doc-help 18 ""
+    osd .osd.doc-help 19 "c" "To change justification mode:"
+    osd .osd.doc-help 20 ""
+    osd .osd.doc-help 21 ""  "    C-c a - Change to auto justification [DEFAULT]"
+    osd .osd.doc-help 22 ""  "    C-c b - Change to both justification"
+    osd .osd.doc-help 23 ""  "    C-c c - Change to center justification"
+    osd .osd.doc-help 24 ""  "    C-c l - Change to left justification"
+    osd .osd.doc-help 25 ""  "    C-c n - Change to none justification"
+    osd .osd.doc-help 26 ""  "    C-c r - Change to right justification"
+    osd .osd.doc-help 27 ""
+    osd .osd.doc-help 28 ""
+    osd .osd.doc-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
+!endif
 
 0 define-macro doc-set-justify
     set-variable $fill-mode &mid "BBCLnR" @# 1
@@ -86,28 +269,28 @@ define-macro fill-paragraph-center
 define-macro fill-paragraph-left
     set-variable #l1 $fill-mode
     set-variable $fill-mode "l"
-    @# fill-paragraph
+    @# fill-paragraph @mna
     set-variable $fill-mode #l1
 !emacro
 
 define-macro fill-paragraph-right
     set-variable #l1 $fill-mode
     set-variable $fill-mode "r"
-    @# fill-paragraph
+    @# fill-paragraph @mna
     set-variable $fill-mode #l1
 !emacro
 
 define-macro fill-paragraph-both
     set-variable #l1 $fill-mode
     set-variable $fill-mode "b"
-    @# fill-paragraph
+    @# fill-paragraph @mna
     set-variable $fill-mode #l1
 !emacro
 
 define-macro fill-paragraph-gutter
     set-variable #l1 $fill-mode
     set-variable $fill-mode "g"
-    @# fill-paragraph
+    @# fill-paragraph @mna
     set-variable $fill-mode #l1
 !emacro
 
@@ -132,13 +315,69 @@ define-macro doc-ehook-body
 
 ; Defualt body of a fhook
 define-macro doc-fhook-body
+    set-variable #l1 @1
+    set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
+    ; if arg is 0 this is a new file so add template
+    !if &not @#
+        etfinsrt #l1 #l0
+    !endif
     ; Set up the standard modes
-    1 buffer-mode "indent"
-    1 buffer-mode "wrap"
-    1 buffer-mode "justify"
-    1 buffer-mode "time"
+    buffer-modes-init #l0
+    ; Assign the hilighting variable
+    !if &and &sin "h" #l0 &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.doc
+    !endif
+    fold-init #l0
+    auto-spell-init #l0
+    ; Set up the default constants
+    set-variable :fill-mode $fill-mode
+    set-variable :fill-col $fill-col
+    ; Over-ride any special document modes
+    !force set-variable #l2 @2
+    !if &and $status &sin "n" #l0
+        ; Search for additional modes in a -!- document -!-
+        ;
+        ; -!- Document; fill-column: <digit> -!-
+        ;
+        ;
+        beginning-of-buffer
+        !force -20 regex-forward &spr "-[*!]-[ \t]*%s[ \t]*" #l2
+        !if $status
+            ; Search for fill-column: <var>;
+            !force -1 regex-forward "fill-column[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;]"
+            !if $status
+                set-variable :fill-col @s1
+                beginning-of-line
+            !endif
+            ; Search for fill-mode: <string>
+            !force -1 regex-forward "fill-mode[ \t]*:[ \t]*\\([a-zA-Z]+\\)[ \t]*[-;]"            
+            !if $status
+                set-variable #l0 @s1
+                !if &iseq #l0 "left"
+                    set-variable :fill-mode "L"
+                !elif &iseq #l0 "none"
+                    set-variable :fill-mode "n"
+                !elif &iseq #l0 "right"
+                    set-variable :fill-mode "R"
+                !elif &iseq #l0 "full"
+                    set-variable :fill-mode "B"
+                !elif &iseq #l0 "both"
+                    set-variable :fill-mode "B"
+                !elif &iseq #l0 "center"
+                    set-variable :fill-mode "C"
+                !endif
+                beginning-of-line
+            !endif
+            ; Add any others in here.
+
+            ; Back to the start of the buffer
+            beginning-of-buffer
+        !endif
+    !endif
     ; Local bindings
-    .osd.doc-help buffer-bind-key osd             "esc h"
+    !if &sin "p" #l0
+        .osd.doc-help buffer-bind-key osd         "esc h"
+    !endif
     buffer-bind-unbound-key doc-mode-state        "C-c C-h"
     buffer-bind-unbound-key spell-buffer          "C-c C-s"
     buffer-bind-unbound-key fill-paragraph-both   "C-c C-b"
@@ -153,11 +392,12 @@ define-macro doc-fhook-body
     3 buffer-bind-unbound-key doc-set-justify     "C-c l"
     4 buffer-bind-unbound-key doc-set-justify     "C-c n"
     5 buffer-bind-unbound-key doc-set-justify     "C-c r"
-    ; Initialise the speller.
-    auto-spell-init
-    ; Set up the default constants
-    set-variable :fill-mode $fill-mode
-    set-variable :fill-col $fill-col
-    ;
 !emacro
     
+!if &sin "f" #l0
+    ; Define the folding definitions.
+    set-variable &ind &spr ".fhook-%s.fold-open" #l1  "^[ \t]*\\(Appendix[ \t]+[A-Z][0-9.]*\\|[0-9]\\.[0-9.]*\\)[ \t]+\\w"
+    set-variable &ind &spr ".fhook-%s.fold-close" #l1 "^[ \t]*\\(Appendix[ \t]+[A-Z][0-9.]*\\|[0-9]\\.[0-9.]*\\)[ \t]+\\w"
+    set-variable &ind &spr ".fhook-%s.fold-mopen" #l1 "1"
+    set-variable &ind &spr ".fhook-%s.fold-mnext" #l1 "-1"
+!endif

@@ -1,18 +1,20 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; This file is invoked when an microemacs macro file is loaded.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
-;       MicroEmacs emc file hook
+; This file is invoked when a lisp file is loaded.
 ;
 ;   Last Modified : <991125.1029>
-;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; buffer-setup flags
+; buffer-setup flags
+set-variable #l0 &reg "/history" "fhook/lisp" "ahix"
+set-variable #l1 "aehimtux"
+
 set-char-mask "2" "-$&#!%:@."
 
 !if &not &exist .hilight.lisp
     set-variable .hilight.lisp &pinc .hilight.next 1
 !endif
 
-!if &band .hilight.flags 0x02
+!if &and &sin "h" #l0 &band .hilight.flags 0x02 
     0 hilight .hilight.lisp 2 50                     $global-scheme
     hilight .hilight.lisp 0x804  "\"" "\"" "\\"      .scheme.string
     hilight .hilight.lisp 20 "#|" "|#" ""            .scheme.comment
@@ -22,13 +24,15 @@ set-char-mask "2" "-$&#!%:@."
     hilight .hilight.lisp 1  "^\\s *(\\{defun"       .scheme.keyword
 !endif
 
-0 indent  .hilight.lisp 0 10
-indent .hilight.lisp n "(" 2
-indent .hilight.lisp o ")" -2
-indent .hilight.lisp i ";"
-indent .hilight.lisp e "\"" "\"" "\\"
-indent .hilight.lisp e "#|" "|#" ""
-indent .hilight.lisp i ";"
+!if &sin "a" #l0
+    0 indent  .hilight.lisp 0 10
+    indent .hilight.lisp n "(" 2
+    indent .hilight.lisp o ")" -2
+    indent .hilight.lisp i ";"
+    indent .hilight.lisp e "\"" "\"" "\\"
+    indent .hilight.lisp e "#|" "|#" ""
+    indent .hilight.lisp i ";"
+!endif
 
 define-macro lisp-comment-line
     !while &gre &pdec @# 1 0
@@ -55,15 +59,16 @@ define-macro lisp-uncomment-line
 define-macro fhook-lisp
     ; if arg is 0 this is a new file so add template 
     !if &not @#
-        etfinsrt "lisp"
+        etfinsrt "lisp" .fhook-lisp.setup
     !endif
     set-variable $buffer-mask "luh1"
-    !if &band .hilight.flags 0x02
+    buffer-modes-init .fhook-lisp.setup
+    !if &and &sin "h" .fhook-lisp.setup &band .hilight.flags 0x02 
         set-variable $buffer-hilight .hilight.lisp
     !endif
-    set-variable $buffer-indent .hilight.lisp
-    1 buffer-mode "time"
-    1 buffer-mode "indent"
+    !if &sin "a" .fhook-lisp.setup
+        set-variable $buffer-indent .hilight.lisp
+    !endif
     buffer-bind-unbound-key lisp-comment-line "C-c C-c"
     buffer-bind-unbound-key lisp-uncomment-line "C-c C-d"
     ; execute user extensions if enabled
@@ -71,6 +76,8 @@ define-macro fhook-lisp
         my-fhook-lisp
     !endif
 !emacro
+set-variable .fhook-lisp.setup #l0
+set-variable .fhook-lisp.setup-mask #l1
 
 ml-write "[Lisp file hook loaded]"
 

@@ -1,11 +1,14 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Pascal mode hook
 ;
 ; Last Modified : <991125.1029>
-;
-; Notes:
-;
-; Copyright (c) 1998-99 JASSPA.
-!if &band .hilight.flags 0x02
+; Copyright (c) 2000 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; buffer-setup flags
+set-variable #l0 &reg "/history" "fhook/pascal" "bhinx"
+set-variable #l1 "behimntux"
+
+!if &and &sin "h" #l0 &band .hilight.flags 0x02 
     ; High-light Pascal Mode
     !if &not &exist .hilight.pascal
         set-variable .hilight.pascal &pinc .hilight.next 1
@@ -88,19 +91,23 @@
 define-macro fhook-pascal
     ; if arg is 0 this is a new file so add template
     !if &not @#
-        etfinsrt "pascal"
+        etfinsrt "pascal" .fhook-pascal.setup
     !endif
-    1 buffer-mode "time"
-    1 buffer-mode "indent"
-    buffer-abbrev-file "pascal"
-    !if &band .hilight.flags 0x02
+    set-variable $buffer-mask "luh1"
+    buffer-modes-init .fhook-pascal.setup
+    !if &and &sin "h" .fhook-pascal.setup &band .hilight.flags 0x02 
         set-variable $buffer-hilight .hilight.pascal
+    !endif
+    !if &sin "b" .fhook-pascal.setup
+        buffer-abbrev-file "pascal"
     !endif
     ; execute user extensions if enabled
     !if &exist my-fhook-pascal
         my-fhook-pascal
     !endif
 !emacro
+set-variable .fhook-pascal.setup #l0
+set-variable .fhook-pascal.setup-mask #l1
 
 ml-write "[Pascal file hook loaded]"
 

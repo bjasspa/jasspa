@@ -1,14 +1,18 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;       Install Shield rul file hook
 ;
 ;   Last Modified : <000607.2015>
-;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; buffer-setup flags
+set-variable #l0 &reg "/history" "fhook/rul" "abfhnx"
+set-variable #l1 "abefhimntux"
 set-char-mask "3" "@"
 
 !if &not &exist .hilight.rul
     set-variable .hilight.rul &pinc .hilight.next 1
 !endif
 
-!if &band .hilight.flags 0x02
+!if &and &sin "h" #l0 &band .hilight.flags 0x02 
     0 hilight .hilight.rul 3 20            $global-scheme
     hilight .hilight.rul 0x1a "#" "\\"     .scheme.prepro
     hilight .hilight.rul 2  "//"           .scheme.comment
@@ -90,30 +94,30 @@ set-char-mask "3" "@"
     hilight .hilight.rul 1 "short"        .scheme.type
     hilight .hilight.rul 1 "string"       .scheme.type
 !endif
-
-; Initialise the indentation
-0 indent  .hilight.rul 1 30
-indent .hilight.rul N "then"       4
-indent .hilight.rul S "else"      -4
-indent .hilight.rul O "elseif"    -4
-indent .hilight.rul O "end"       -4
-indent .hilight.rul O "endif"     -4
-indent .hilight.rul N "begin"      4
-indent .hilight.rul N "repeat"     4
-indent .hilight.rul O "until"     -4
-indent .hilight.rul N "for"        4
-indent .hilight.rul O "endfor"    -4
-indent .hilight.rul N "while"      4
-indent .hilight.rul O "endwhile"  -4
-indent .hilight.rul N "switch"     4
-indent .hilight.rul S "case"      -4
-indent .hilight.rul S "default"   -4
-indent .hilight.rul O "endswitch" -4
-indent .hilight.rul b "(" ")"
-indent .hilight.rul i "//"
-indent .hilight.rul e "\"" "\"" "\\"
-indent .hilight.rul e "/\\*" "*/" ""
-
+!if &sin "a" #l0
+    ; Initialise the indentation
+    0 indent  .hilight.rul 1 30
+    indent .hilight.rul N "then"       4
+    indent .hilight.rul S "else"      -4
+    indent .hilight.rul O "elseif"    -4
+    indent .hilight.rul O "end"       -4
+    indent .hilight.rul O "endif"     -4
+    indent .hilight.rul N "begin"      4
+    indent .hilight.rul N "repeat"     4
+    indent .hilight.rul O "until"     -4
+    indent .hilight.rul N "for"        4
+    indent .hilight.rul O "endfor"    -4
+    indent .hilight.rul N "while"      4
+    indent .hilight.rul O "endwhile"  -4
+    indent .hilight.rul N "switch"     4
+    indent .hilight.rul S "case"      -4
+    indent .hilight.rul S "default"   -4
+    indent .hilight.rul O "endswitch" -4
+    indent .hilight.rul b "(" ")"
+    indent .hilight.rul i "//"
+    indent .hilight.rul e "\"" "\"" "\\"
+    indent .hilight.rul e "/\\*" "*/" ""
+!endif
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Bunch of macros we may need.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -157,28 +161,30 @@ define-macro rul-comm-to-end
 
 define-macro fhook-rul
     !if &not @#
-        etfinsrt "rul"
+        etfinsrt "rul" .fhook-rul.setup
     !endif
     set-variable $buffer-mask "luh13"
-    1 buffer-mode "time"
-    1 buffer-mode "indent"
-    buffer-abbrev-file "rul"
-    set-variable $buffer-mask "luh1"
-    !if &band .hilight.flags 0x02
+    buffer-modes-init .fhook-rul.setup
+    !if &and &sin "h" .fhook-rul.setup &band .hilight.flags 0x02 
         set-variable $buffer-hilight .hilight.rul
     !endif
-    set-variable $buffer-indent  .hilight.rul
+    !if &sin "a" .fhook-rul.setup
+        set-variable $buffer-indent  .hilight.rul
+    !endif
+    !if &sin "b" .fhook-rul.setup
+        buffer-abbrev-file "rul"
+    !endif
+    fold-init .fhook-rul.setup
     buffer-bind-unbound-key rul-comment-line   "C-c C-c"
     buffer-bind-unbound-key rul-uncomment-line "C-c C-d"
     buffer-bind-unbound-key rul-comm-to-end    "C-c C-e"
-    ; setup folds
-    buffer-bind-unbound-key fold-current "f2"
-    buffer-bind-unbound-key fold-all     "f3"
     ; execute user extensions if enabled
     !if &exist my-fhook-rul
         my-fhook-rul
     !endif
 !emacro
+set-variable .fhook-rul.setup #l0
+set-variable .fhook-rul.setup-mask #l1
 
 ; setup rul folding support
 set-variable .fhook-rul.fold-open  "^function"

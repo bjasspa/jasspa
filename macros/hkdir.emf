@@ -203,14 +203,16 @@ define-macro file-browser
         !endif
     !elif &seq &rig #l0 &rsin "/" #l0 ""
         read-file #l0
-        change-buffer-name "*files*"
-        buffer-bind-key file-browser-close "delete"
-        buffer-bind-key dir-swap-buffers "tab"
-        !force 0 popup-window "*directory*"
+        !force change-buffer-name "*files*"
         !if $status
-            0x6f directory-tree #l0
             buffer-bind-key file-browser-close "delete"
-            popup-window "*files*"
+            buffer-bind-key dir-swap-buffers "tab"
+            !force 0 popup-window "*directory*"
+            !if $status
+                0x6f directory-tree #l0
+                buffer-bind-key file-browser-close "delete"
+                popup-window "*files*"
+            !endif
         !endif
     !else
         file-browser-close

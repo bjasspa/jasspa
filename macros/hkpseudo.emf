@@ -56,11 +56,10 @@
 ;  Copyright (c) 2000 JASSPA
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-!if &not &exist .hilight.pseudo
-    set-variable .hilight.pseudo  &pinc .hilight.next 1
-!endif
-
 !if &band .hilight.flags 0x02
+    !if &not &exist .hilight.pseudo
+        set-variable .hilight.pseudo  &pinc .hilight.next 1
+    !endif
     0 hilight .hilight.pseudo 2 50                        $global-scheme
     hilight .hilight.pseudo 0x4  "\"" "\"" "\\"           .scheme.string
     hilight .hilight.pseudo 0    "'.'"                    .scheme.quote

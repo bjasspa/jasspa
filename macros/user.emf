@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Thu May 14 12:53:29 1998
-;  Last Modified : <000719.0013>
+;  Last Modified : <001203.1640>
 ;
 ;  Description
 ;
@@ -12,7 +12,7 @@
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-!if &seq .osd.user "ERROR"
+!if &not &exi .osd.user
     set-variable .osd.user &pinc .osd.next 1
     set-variable .osd.user-nb &pinc .osd.next 1
     set-variable .osd.user-start &pinc .osd.next 1
@@ -1179,8 +1179,6 @@ osd .osd.user-gener 310 "Sfh" "   Alt -&> Esc Prefx : " 320
 osd .osd.user-gener 320 "Ctfx" 320 "^^NY^^" 0x4000 user-set-system
 osd .osd.user-gener 330 "Sfh" "      Tab To &Indent : " 340
 osd .osd.user-gener 340 "Ctfx" 340 "^^NY^^" 0x1000 user-set-system
-;osd .osd.user-gener 350 "Sfh" "        &HTML Author : "  137
-;osd .osd.user-gener 360 "Ctfx" 16 "^^NY^^" 3 user-set-checkbox
 osd .osd.user-gener 370 ""
 osd .osd.user-gener 380 "fh"  "                      "
 osd .osd.user-gener 390 "MtxmfH" 390 .scheme.osd-ebtt " Sho&w Modes " .osd.user-modes

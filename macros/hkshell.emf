@@ -1,4 +1,4 @@
-;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;       UNIX shell hook
 ;
 ;       Author        : Jon Green
@@ -22,7 +22,12 @@
 ;                       I am not a csh shell user so I have probably missed
 ;                       alot of csh features.
 ;
-!if &band .hilight.flags 0x02
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; buffer-setup flags
+set-variable #l0 &reg "/history" "fhook/shell" "hix"
+set-variable #l1 "ehimtux"
+
+!if &and &sin "h" #l0 &band .hilight.flags 0x02 
     !if &not &exist .hilight.shell
         set-variable .hilight.shell  &pinc .hilight.next 1
         set-variable .hilight.shellS &pinc .hilight.next 1
@@ -146,17 +151,17 @@
 
 define-macro fhook-shell
     set-variable $buffer-mask "luh1"
-    !if &band .hilight.flags 0x02
+    buffer-modes-init .fhook-shell.setup
+    !if &and &sin "h" .fhook-shell.setup &band .hilight.flags 0x02 
         set-variable $buffer-hilight .hilight.shell
     !endif
-    1 buffer-mode "indent"
-    1 buffer-mode "time"
     ; execute user extensions if enabled
     !if &exist my-fhook-shell
         my-fhook-shell
     !endif
 !emacro
-; Done
+set-variable .fhook-shell.setup #l0
+set-variable .fhook-shell.setup-mask #l1
 
 ml-write "[UNIX shell file hook loaded]"
 

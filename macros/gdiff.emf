@@ -767,11 +767,11 @@ osd .osd.gdiff 60  "Mdi" "&Global"  .osd.gdiff-s  "0 gdiff-menu-sel"
 osd .osd.gdiff 70  "Mdi" "&Region"  .osd.gdiff-s "16 gdiff-menu-sel"
 osd .osd.gdiff 80  "Mdi" "&Line"    .osd.gdiff-s "32 gdiff-menu-sel"
 osd .osd.gdiff 90  "-"
-osd .osd.gdiff 100 ""   "&Search"           f osd-search
+osd .osd.gdiff 100 ""   "&Search"           1 osd-search
 osd .osd.gdiff 110 "-"
-osd .osd.gdiff 120  ""   "Save &Left"       -1 gdiff-save
-osd .osd.gdiff 130  ""   "Save &Right"       1 gdiff-save
-osd .osd.gdiff 140  ""   "Save &As..."       1 gdiff-save-as
+osd .osd.gdiff 120  ""   "Save &Left"      -1 gdiff-save
+osd .osd.gdiff 130  ""   "Save &Right"      1 gdiff-save
+osd .osd.gdiff 140  ""   "Save &As..."      1 gdiff-save-as
 osd .osd.gdiff 150  "-"
 osd .osd.gdiff 160 ""   "Gdiff &Help"       .osd.gdiff-help osd
 osd .osd.gdiff 170 ""   "E&xit Gdiff"       f gdiff-exit

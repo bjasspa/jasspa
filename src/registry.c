@@ -5,7 +5,7 @@
  *  Synopsis      : Internal registry support routines
  *  Created By    : Jon Green
  *  Created       : 26/03/1998
- *  Last Modified : <001103.2052>
+ *  Last Modified : <000814.0942>
  *
  *  Description
  *
@@ -110,7 +110,7 @@ rnodeDelete (RNODE *np)
         if (tnp->value != NULL)
             free (tnp->value);          /* Destruct the text value */
 /*        fprintf (stdout, "Deleting %s\n", tnp->name);*/
-        if (tnp->name[0] != '\0')       /* Root node ?? */
+        if (tnp->name != '\0')          /* Root node ?? */
         {
             free (tnp);                 /* No - Destruct node */
         }

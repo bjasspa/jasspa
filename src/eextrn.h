@@ -296,11 +296,14 @@ extern	int     saveSomeBuffers APRAM((int f, int n)) ;
 extern	void	resetBufferNames APRAM((BUFFER *bp, uint8 *fname));
 extern	int	changeFileName APRAM((int f, int n));
 extern	int	changeDir APRAM((int f, int n));
-extern  void    pathNameCorrect APRAM((uint8 *oldName, uint8 *newName, uint8 **baseName)) ;
+#define PATHNAME_COMPLETE 0
+#define PATHNAME_PARTIAL  1
+extern  void    pathNameCorrect APRAM((uint8 *oldName, int nameType, 
+                                       uint8 *newName, uint8 **baseName)) ;
 #ifdef _WIN32
 extern  void    fileNameCorrect APRAM((uint8 *oldName, uint8 *newName, uint8 **baseName)) ;
 #else
-#define fileNameCorrect pathNameCorrect
+#define fileNameCorrect(o,n,b) pathNameCorrect(o,PATHNAME_COMPLETE,n,b)
 #endif
 extern  void    getDirectoryList APRAM((uint8 *pathName, meDIRLIST *dirList)) ;
 
@@ -945,7 +948,7 @@ extern	int	forwDelWord APRAM((int f, int n));
 extern	int	backDelWord APRAM((int f, int n));
 #if WORDPRO
 extern	int	wrapWord APRAM((int f, int n));
-extern	int	justify	 APRAM((int leftMargin));
+extern	int	justify	 APRAM((int leftMargin, int leftDoto));
 extern	int	fillPara APRAM((int f, int n));
 extern	int	killPara APRAM((int f, int n));
 extern	int	countWords APRAM((int f, int n));

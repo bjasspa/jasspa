@@ -963,7 +963,7 @@ changeBufName(int f, int n)     /*      Rename the current buffer       */
 	{
 	    /* if the names the same */
 	    linkBuffer(curbp) ;
-	    return mlwrite(MWABORT,(uint8 *)"[Already exists!]") ;
+	    return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[Already exists!]") ;
 	}
     }
     else

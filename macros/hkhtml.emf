@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Mon Sep 21 18:10:34 1998
-;  Last Modified : <000721.2055>
+;  Last Modified : <001203.1642>
 ;
 ;  Description : Visual Basic Hook File
 ;
@@ -12,6 +12,10 @@
 ;
 ;  Copyright (c) 1998-99 JASSPA
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; buffer-setup flags
+set-variable #l0 &reg "/history" "fhook/html" "achiopsx"
+set-variable #l1 "acehimopstux"
+
 !if &not &exist .hilight.html
     set-variable .hilight.html   &pinc .hilight.next 1
     set-variable .hilight.htmlT  &pinc .hilight.next 1
@@ -20,9 +24,8 @@
     set-variable .osd.html-help  &pinc .osd.next 1
     set-variable .osd.html-tool  &pinc .osd.next 1
 !endif
-set-variable %html-author &reg "/history" "html-author" "1"
 
-!if &band .hilight.flags 0x02
+!if &and &sin "h" #l0 &band .hilight.flags 0x02 
     0 hilight .hilight.html 3 200                      $global-scheme
     hilight .hilight.html 0x80 "<" .hilight.htmlT      .scheme.keyword
     hilight .hilight.html 4 "</" ">" ""                .scheme.keyword
@@ -55,39 +58,42 @@ set-variable %html-author &reg "/history" "html-author" "1"
         hilight .hilight.java 0x80 "</SCRIPT>" 0       .scheme.prepro
     !endif
 !endif
-
-; Define the indentation tokens 
-0 indent .hilight.html 1 20 
-indent .hilight.html e "\"" "\"" "\\"
-indent .hilight.html b "<" ">"
-indent .hilight.html n "<html>" 2 
-indent .hilight.html o "</html>" -2 
-indent .hilight.html n "<head>" 2 
-indent .hilight.html o "</head>" -2 
-indent .hilight.html n "<table[^>]*>" 2 
-indent .hilight.html o "</table>" -2 
-indent .hilight.html n "<tr[^>]*>" 2 
-indent .hilight.html o "</tr>" -2 
-indent .hilight.html o "</td>" -2 
-indent .hilight.html n "<td[^>]*>" 2 
-indent .hilight.html o "</select>" -2 
-indent .hilight.html n "<select[^>]*>" 2 
-indent .hilight.html n "<%" 2 
-indent .hilight.html o "%>" -2 
+!if &and &sin "h" #l0 &band .hilight.flags 0x01 
+    0 hilight .hilight.htmlN 0                          $global-scheme
+    hilight .hilight.htmlN 0x44 "\ecA" "" "\\}\e" "" "" $global-scheme
+    hilight .hilight.htmlN 0x44 "\ecB" "" "\\}\e" "" "" .scheme.under  ; underline
+    hilight .hilight.htmlN 0x44 "\ecC" "" "\\}\e" "" "" .scheme.italic ; italic
+    hilight .hilight.htmlN 0x44 "\ecD" "" "\\}\e" "" "" .scheme.bold   ; bold
+    hilight .hilight.htmlN 0x44 "\ecE" "" "\\}\e" "" "" .scheme.header ; Header
+    hilight .hilight.htmlN 0x44 "\ecF" "" "\\}\e" "" "" .scheme.comment  ; image
+    hilight .hilight.htmlN 0xc0 "\els" "" .hilight.htmlNL $global-scheme ; link start
+    hilight .hilight.htmlN 0x44 "\elm" "" "\ele" "" ""  .scheme.link   ; link name
     
-0 hilight .hilight.htmlN 0                          $global-scheme
-hilight .hilight.htmlN 0x44 "\ecA" "" "\\}\e" "" "" $global-scheme
-hilight .hilight.htmlN 0x44 "\ecB" "" "\\}\e" "" "" .scheme.under  ; underline
-hilight .hilight.htmlN 0x44 "\ecC" "" "\\}\e" "" "" .scheme.italic ; italic
-hilight .hilight.htmlN 0x44 "\ecD" "" "\\}\e" "" "" .scheme.bold   ; bold
-hilight .hilight.htmlN 0x44 "\ecE" "" "\\}\e" "" "" .scheme.header ; Header
-hilight .hilight.htmlN 0x44 "\ecF" "" "\\}\e" "" "" .scheme.comment  ; image
-hilight .hilight.htmlN 0xc0 "\els" "" .hilight.htmlNL $global-scheme ; link start
-hilight .hilight.htmlN 0x44 "\elm" "" "\ele" "" ""  .scheme.link   ; link name
- 
-0 hilight .hilight.htmlNL 0                         $global-scheme
-hilight .hilight.htmlNL 0x80 "\\}\elm" .hilight.htmlN $global-scheme
-hilight .hilight.htmlNL 0x40 "." ""                 $global-scheme
+    0 hilight .hilight.htmlNL 0                         $global-scheme
+    hilight .hilight.htmlNL 0x80 "\\}\elm" .hilight.htmlN $global-scheme
+    hilight .hilight.htmlNL 0x40 "." ""                 $global-scheme
+!endif
+
+!if &sin "a" #l0
+    ; Define the indentation tokens 
+    0 indent .hilight.html 1 20 
+    indent .hilight.html e "\"" "\"" "\\"
+    indent .hilight.html b "<" ">"
+    indent .hilight.html n "<html>" 2 
+    indent .hilight.html o "</html>" -2 
+    indent .hilight.html n "<head>" 2 
+    indent .hilight.html o "</head>" -2 
+    indent .hilight.html n "<table[^>]*>" 2 
+    indent .hilight.html o "</table>" -2 
+    indent .hilight.html n "<tr[^>]*>" 2 
+    indent .hilight.html o "</tr>" -2 
+    indent .hilight.html o "</td>" -2 
+    indent .hilight.html n "<td[^>]*>" 2 
+    indent .hilight.html o "</select>" -2 
+    indent .hilight.html n "<select[^>]*>" 2 
+    indent .hilight.html n "<%" 2 
+    indent .hilight.html o "%>" -2 
+!endif
 
 define-macro-file htmltool html-to-ehf
 
@@ -146,7 +152,9 @@ define-macro html-process-buffer
     1 buffer-mode "magic"
     replace-string "http:/\\([^/]\\)" &cat #l0 "\\1"
     beginning-of-buffer
-    set-variable $buffer-hilight .hilight.htmlN
+    !if &and &sin "h" .fhook-html.setup &band .hilight.flags 0x01 
+        set-variable $buffer-hilight .hilight.htmlN
+    !endif
     -1 buffer-mode "edit"
     1 buffer-mode "view"
     set-variable :mouse-word-select html-process-link
@@ -197,9 +205,6 @@ define-macro html-process-buffer
     !abort
 !emacro
 
-0 define-macro html-toggle-author
-    set-variable %html-author &cond %html-author 0 1
-!emacro
 0 define-macro html-toggle-mode
     !if &bmod "usr1"
         set-variable :auto-spell &cond &seq $buffer-input "auto-spell-input" 1 -1
@@ -207,80 +212,96 @@ define-macro html-process-buffer
     !if &equ @# 2
         -1 buffer-mode "usr1"
          1 buffer-mode "usr2"
-        set-variable $buffer-indent .hilight.vb
-        -1 auto-spell
+         !if &sin "a" .fhook-html.setup
+             set-variable $buffer-indent .hilight.vb
+        !endif
+        !if &sin "s" .fhook-html.setup
+            -1 auto-spell
+        !endif
     !else
          1 buffer-mode "usr1"
         -1 buffer-mode "usr2"
-        set-variable $buffer-indent .hilight.html
-        :auto-spell auto-spell
+        !if &sin "a" .fhook-html.setup
+            set-variable $buffer-indent .hilight.html
+        !endif
+        !if &sin "s" .fhook-html.setup
+            :auto-spell auto-spell
+        !endif
     !endif
 !emacro
 
-osd .osd.html-tool 0  "b"
-osd .osd.html-tool 1  ""  "HTML tool &help  esc h"   .osd.html-help osd
-osd .osd.html-tool 2  ""  "Author &toggle   C-c C-a" f html-toggle-author
-osd .osd.html-tool 3  "-"
-osd .osd.html-tool 4  "c" "Author"
-osd .osd.html-tool 5  ""  "&Process buffer  C-c C-h" f html-show-buffer
-osd .osd.html-tool 6  "-"
-osd .osd.html-tool 7  "c" "Browser"
-osd .osd.html-tool 8  ""  "&Goto link       return"  f html-process-link
-; Add hook to load the OSD html tools menu.
-0 define-macro osd-ohook-html
-    osd 7 1 "Md" "HTML &Tools" .osd.html-tool
-    osd 7 2 "-"
-!emacro
-; Add hook to remove the OSD html tools menu.
-0 define-macro osd-chook-html
-    osd 7 1  "D"
-    osd 7 2  "D"
-!emacro
-
-osd .osd.html-help 0  "batcdH" 9 3 99 .scheme.osd-title "Html help"
-osd .osd.html-help 3  ""
-osd .osd.html-help 4  ""  "    esc h   - View this help page"
-osd .osd.html-help 5  ""  "    C-c C-a - Toggle between html author & browser"
-osd .osd.html-help 6  ""
-osd .osd.html-help 7  "c" "Html Author help"
-osd .osd.html-help 8  ""
-osd .osd.html-help 9  ""  "    C-c C-h - Process current buffer to a temporary "
-osd .osd.html-help 10 ""
-osd .osd.html-help 11 "c" "Html Browser help"
-osd .osd.html-help 12 "" 
-osd .osd.html-help 13 ""  "    return  - Go to current link (can also be done"
-osd .osd.html-help 14 ""  "              by double clicking left mouse button)"
-osd .osd.html-help 15 ""
-osd .osd.html-help 16 ""  " Use Help/User setup to alter the default Author/"
-osd .osd.html-help 17 ""  " browser setting"
-osd .osd.html-help 21 ""
-osd .osd.html-help 99 "Bcf" "  &OK  " f void 
+!if &sin "o" #l0 
+    osd .osd.html-tool 0  "b"
+    osd .osd.html-tool 1  ""  "HTML tool &help  esc h"   .osd.html-help osd
+    osd .osd.html-tool 3  "-"
+    osd .osd.html-tool 4  "c" "Author"
+    osd .osd.html-tool 5  ""  "&Process buffer  C-c C-h" f html-show-buffer
+    osd .osd.html-tool 6  "-"
+    osd .osd.html-tool 7  "c" "Browser"
+    osd .osd.html-tool 8  ""  "&Goto link       return"  f html-process-link
+    ; Add hook to load the OSD html tools menu.
+    0 define-macro osd-ohook-html
+        osd 7 1 "Md" "HTML &Tools" .osd.html-tool
+        osd 7 2 "-"
+    !emacro
+    ; Add hook to remove the OSD html tools menu.
+    0 define-macro osd-chook-html
+        osd 7 1  "D"
+        osd 7 2  "D"
+    !emacro
+!endif
+!if &sin "p" #l0
+    osd .osd.html-help 0  "batcdH" 9 3 99 .scheme.osd-title "Html help"
+    osd .osd.html-help 3  ""
+    osd .osd.html-help 4  ""  "    esc h   - View this help page"
+    osd .osd.html-help 5  ""  "    C-c C-a - Toggle between html author & browser"
+    osd .osd.html-help 6  ""
+    osd .osd.html-help 7  "c" "Html Author help"
+    osd .osd.html-help 8  ""
+    osd .osd.html-help 9  ""  "    C-c C-h - Process current buffer to a temporary "
+    osd .osd.html-help 10 ""
+    osd .osd.html-help 11 "c" "Html Browser help"
+    osd .osd.html-help 12 "" 
+    osd .osd.html-help 13 ""  "    return  - Go to current link (can also be done"
+    osd .osd.html-help 14 ""  "              by double clicking left mouse button)"
+    osd .osd.html-help 15 ""
+    osd .osd.html-help 16 ""  " Use Help/User setup to alter the default Author/"
+    osd .osd.html-help 17 ""  " browser setting"
+    osd .osd.html-help 21 ""
+    osd .osd.html-help 99 "Bcf" "  &OK  " f void 
+!endif
 
 define-macro fhook-html
-    !if %html-author
-        buffer-bind-unbound-key html-show-buffer "C-c C-h"
+    buffer-modes-init .fhook-html.setup
+    !if &sin "c" .fhook-html.setup
         set-variable $buffer-mask "luh1"
-        !if &band .hilight.flags 0x02
+        !if &and &sin "h" .fhook-html.setup &band .hilight.flags 0x02
             set-variable $buffer-hilight .hilight.html
         !endif
-        auto-spell-init
+        auto-spell-init .fhook-html.setup
         set-variable :auto-spell &cond &seq $buffer-input "auto-spell-input" 1 -1
+        buffer-bind-unbound-key html-show-buffer "C-c C-h"
         ; comment the next line to switch indentation off
         1 html-toggle-mode
     !else
         html-process-buffer
     !endif
-    .osd.html-help buffer-bind-key osd "esc h"
-    buffer-bind-key html-toggle-author "C-c C-a"
+    !if &sin "p" .fhook-html.setup 
+        .osd.html-help buffer-bind-key osd "esc h"
+    !endif
     ; execute user extensions if enabled
     !if &exi my-fhook-html
         my-fhook-html
     !endif
 !emacro
 
+set-variable .fhook-html.setup #l0
+set-variable .fhook-html.setup-mask #l1
+
 define-macro fhook-hts
     set-variable $buffer-mask "luh1"
-    !if &band .hilight.flags 0x02
+    buffer-modes-init .fhook-html.setup
+    !if &and &sin "h" .fhook-html.setup &band .hilight.flags 0x02
         set-variable $buffer-hilight .hilight.html
     !endif
     set-variable $buffer-fhook fhook-html

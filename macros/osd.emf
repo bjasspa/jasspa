@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Jon Green
 ;  Created       : Sat Jul 26 10:23:04 1997
-;  Last Modified : <001108.2130>
+;  Last Modified : <001208.1248>
 ;
 ;  Description   : OSD - On Screen Display macros.
 ;                  Controls the set up of the menus and screen overlays.
@@ -26,8 +26,7 @@
 ;        increment the value of .osd.next
 ;
 ; define some external macros which are used first.
-define-macro-file search   osd-find-tag osd-sar osd-goto-line
-define-macro-file hiline   line-scheme line-scheme-all line-scheme-search
+define-macro-file search   osd-find-tag osd-search osd-goto-line
 define-macro-file favorite osd-favorites
 define-macro-file insdate  osd-insert-date
 define-macro-file osdhelp  osd-help
@@ -69,6 +68,11 @@ define-macro-file crosswd  cross-word
         osd 9 10 "D"
     !else
         osd 9 10 "i" "Curr Buffer &Help  esc h" f "execute-string \"\\Eh\""
+    !endif
+    !if &seq &ind &spr ".%s.setup-mask" $buffer-fhook "ERROR"
+        osd 9 145 "D"
+    !else
+        osd 9 145 "" "Buffer &Setup" f buffer-setup
     !endif
     !if &band #l2 1
         show-region
@@ -309,10 +313,10 @@ osd 2  120 ""  "Remove A&ll Narrows"       1 narrow-buffer
 ; MENU #3 - SEARCH sub-menu
 ;
 osd 3  0  "b"
-osd 3  10 ""  "&Search         C-s"      1 osd-sar
-osd 3  20 ""  "&Replace        esc C-r"  2 osd-sar
+osd 3  10 ""  "&Search         C-s"      1 osd-search
+osd 3  20 ""  "&Replace        esc C-r"  2 osd-search
 osd 3  30 "-"
-osd 3  35 ""  "&Hilight Search"          3 osd-sar
+osd 3  35 ""  "&Hilight Search"          3 osd-search
 osd 3  40 ""  "Goto &Line      esc g"    f osd-goto-line
 osd 3  50 ""  "Goto &Fence     esc C-i"  f goto-matching-fence
 osd 3  60 ""  "Set &Bookmark   C-x C-a"  f set-alpha-mark
@@ -414,7 +418,7 @@ osd 9  40  ""  "Help on V&ariable  C-h C-v"       f help-variable
 osd 9  50  "-"
 osd 9  60  ""  "Describe &Bindings C-h b"         f describe-bindings
 osd 9  70  ""  "Describe &Key      C-h k"         f describe-key
-osd 9  80  ""  "De&scribe Variable C-h d"         f describe-variable
+osd 9  80  ""  "Describe Var&iable C-h d"         f describe-variable
 osd 9  85  ""  "Describe &Word     C-h w"         f describe-word
 osd 9  90  "-"
 osd 9  100 ""  "List Bu&ffers      C-x C-b"       f list-buffers

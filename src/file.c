@@ -10,7 +10,7 @@
 *
 *	Author:			Danial Lawrence
 *
-*	Creation Date:		14/05/86 12:37		<001002.1304>
+*	Creation Date:		14/05/86 12:37		<001130.1052>
 *
 *	Modification date:	%G% : %U%
 *
@@ -1910,7 +1910,7 @@ copyFile(int f, int n)
             && (s != meFILETYPE_FTP)
 #endif
             )
-            return mlwrite(MWABORT,"[%s already exists]",sfname);
+            return mlwrite(MWABORT,(uint8 *)"[%s already exists]",sfname);
         fn = NULL ;
     }
     else
@@ -2410,7 +2410,7 @@ changeDir(int f, int n)
 /************************ New file routines *****************************/
 
 void
-pathNameCorrect(uint8 *oldName, uint8 *newName, uint8 **baseName)
+pathNameCorrect(uint8 *oldName, int nameType, uint8 *newName, uint8 **baseName)
 {
     register uint8 *p, *p1 ;
     uint8 *urls, *urle ;
@@ -2586,7 +2586,7 @@ pathNameCorrect(uint8 *oldName, uint8 *newName, uint8 **baseName)
         while((p1=meStrchr(p1,DIR_CHAR)) != NULL)
         {
             if((p1[1] == '.') && (p1[2] == '.') &&         /* got /../YYYY */
-               ((p1[3] == DIR_CHAR) || (p1[3] == '\0')))
+               ((p1[3] == DIR_CHAR) || ((nameType == PATHNAME_COMPLETE) && (p1[3] == '\0'))))
             {
                 if(p == NULL)        /* got /../YYYY */
                     p = urle ;
@@ -2599,7 +2599,7 @@ pathNameCorrect(uint8 *oldName, uint8 *newName, uint8 **baseName)
                 p1 = urle ;
             }
             else if((p1[1] == '.') &&                      /* got /./YYYY */
-                    ((p1[2] == DIR_CHAR) || (p1[2] == '\0')))
+                    ((p1[2] == DIR_CHAR) || ((nameType == PATHNAME_COMPLETE) && (p1[2] == '\0'))))
             {
                 uint8 *tt ;
                 tt = p1+2 ;
@@ -2643,7 +2643,7 @@ fileNameCorrect(uint8 *oldName, uint8 *newName, uint8 **baseName)
 {
     uint8 *bn ;
     
-    pathNameCorrect(oldName,newName,&bn) ;
+    pathNameCorrect(oldName,PATHNAME_COMPLETE,newName,&bn) ;
     if(baseName != NULL)
         *baseName = bn ;
     

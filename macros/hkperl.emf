@@ -4,7 +4,11 @@
 ; Last Modified : <001009.2022>
 ; Copyright (c) 1999-2000 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-!if &band .hilight.flags 0x02
+; buffer-setup flags
+set-variable #l0 &reg "/history" "fhook/perl" "abfhinx"
+set-variable #l1 "abefhimntux"
+
+!if &and &sin "h" #l0 &band .hilight.flags 0x02 
     !if &not &exist .hilight.perl
         set-variable .hilight.perl  &pinc .hilight.next 1
         set-variable .hilight.perlR &pinc .hilight.next 1
@@ -12,8 +16,7 @@
         set-variable .hilight.perlV &pinc .hilight.next 1
         set-variable .hilight.perlX &pinc .hilight.next 1
     !endif
-    
-    ; Make file highlighting
+    ; Perl file highlighting
     0 hilight .hilight.perl 2 50                   $global-scheme
     ; Hilight the documentation backets
     hilight .hilight.perl 4    "^=head" "=cut" ""  .scheme.string
@@ -248,17 +251,19 @@
     hilight .hilight.perlR 0x80 "\n" .hilight.perl .scheme.string
     hilight .hilight.perlR 0x80 ";" .hilight.perl  .scheme.string
 !endif
-0 indent  .hilight.perl 0 10
-indent .hilight.perl n "{"  4
-indent .hilight.perl o "}" -4
-indent .hilight.perl e "\"" "\"" "\\"
-indent .hilight.perl e "'" "'" "\\"
-indent .hilight.perl e "`" "`" "\\"
-indent .hilight.perl e "/" "/" "\\"
-indent .hilight.perl b "\\[" "]"
-indent .hilight.perl b "(" ")"
-indent .hilight.perl s "<[^ \t\n>]*>" 0
-indent .hilight.perl i "#"  
+!if &sin "a" #l0
+    0 indent  .hilight.perl 0 10
+    indent .hilight.perl n "{"  4
+    indent .hilight.perl o "}" -4
+    indent .hilight.perl e "\"" "\"" "\\"
+    indent .hilight.perl e "'" "'" "\\"
+    indent .hilight.perl e "`" "`" "\\"
+    indent .hilight.perl e "/" "/" "\\"
+    indent .hilight.perl b "\\[" "]"
+    indent .hilight.perl b "(" ")"
+    indent .hilight.perl s "<[^ \t\n>]*>" 0
+    indent .hilight.perl i "#"  
+!endif
 ;
 ; Insert comment into line. i.e. xxx -> #xxx
 define-macro perl-comment-line
@@ -286,24 +291,21 @@ define-macro perl-uncomment-line
 define-macro fhook-perl
     ; if arg is 0 this is a new file so add template.
     !if &not @#
-        etfinsrt "perl"
+        etfinsrt "perl" .fhook-perl.setup
     !endif
     set-variable $buffer-mask "luh1"
-    !if &band .hilight.flags 0x02
+    buffer-modes-init .fhook-perl.setup
+    !if &and &sin "h" .fhook-perl.setup &band .hilight.flags 0x02 
         set-variable $buffer-hilight .hilight.perl
     !endif
-    set-variable $buffer-indent .hilight.perl
-    1 buffer-mode "indent"
-    1 buffer-mode "time"
-    ; Abreviations
-    buffer-abbrev-file "perl"
-    ; Bind the standard fold keys
-    buffer-bind-unbound-key fold-current "f2"
-    buffer-bind-unbound-key fold-all     "f3"
-    ; Folding macros.
-    set-variable .fhook-perl.fold-open  "^sub"
-    set-variable .fhook-perl.fold-close "^}"
-    set-variable .fhook-perl.fold-mopen "1"
+    !if &sin "a" .fhook-perl.setup
+        set-variable $buffer-indent .hilight.perl
+    !endif
+    !if &sin "b" .fhook-perl.setup
+        ; Abreviations
+        buffer-abbrev-file "perl"
+    !endif
+    fold-init .fhook-perl.setup
     ; Standard local bindings.
     buffer-bind-unbound-key perl-comment-line "C-c C-c"
     buffer-bind-unbound-key perl-uncomment-line "C-c C-d"
@@ -313,6 +315,13 @@ define-macro fhook-perl
         my-fhook-perl
     !endif
 !emacro
+set-variable .fhook-perl.setup #l0
+set-variable .fhook-perl.setup-mask #l1
+
+; Folding variables
+set-variable .fhook-perl.fold-open  "^sub"
+set-variable .fhook-perl.fold-close "^}"
+set-variable .fhook-perl.fold-mopen "1"
 
 ml-write "[Perl file hook loaded]"
 

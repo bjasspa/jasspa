@@ -12,7 +12,11 @@
 ;
 ;  Copyright (c) 1999 JASSPA
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-!if &band .hilight.flags 0x02
+; buffer-setup flags
+set-variable #l0 &reg "/history" "fhook/bnf" "hix"
+set-variable #l1 "ehimtux"
+
+!if &and &sin "h" #l0 &band .hilight.flags 0x02 
     !if &not &exist .hilight.bnf
         set-variable .hilight.bnf &pinc .hilight.next 1
     !endif
@@ -30,14 +34,8 @@
 !endif
 
 define-macro fhook-bnf
-    ; if arg is 0 this is a new file so add template
-;    !if &not @#
-;        etfinsrt "bnf"
-;    !endif
-    1 buffer-mode "time"
-    1 buffer-mode "indent"
-;    buffer-abbrev-file "bnf"
-    !if &band .hilight.flags 0x02
+    buffer-modes-init .fhook-bnf.setup
+    !if &and &sin "h" .fhook-bnf.setup &band .hilight.flags 0x02 
         set-variable $buffer-hilight .hilight.bnf
     !endif
     ; execute user extensions if enabled
@@ -45,6 +43,8 @@ define-macro fhook-bnf
         my-fhook-bnf
     !endif
 !emacro
+set-variable .fhook-bnf.setup #l0
+set-variable .fhook-bnf.setup-mask #l1
 
 ml-write "[BNF file hook loaded]"
 
