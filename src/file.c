@@ -1240,7 +1240,7 @@ readin(register meBuffer *bp, meUByte *fname)
                     goto error_end ;
             }
 #endif
-            if((autotime > 0) && !createBackupName(afn,fn,'#',0) &&
+            if((autoTime > 0) && !createBackupName(afn,fn,'#',0) &&
                (getFileStats(afn,0,&stats,NULL) == meFILETYPE_REGULAR) &&
                meFiletimeIsModified(stats.stmtime,bp->stats.stmtime))
             {
@@ -2020,7 +2020,7 @@ autowriteout(register meBuffer *bp)
 {
     meUByte fn[meBUF_SIZE_MAX], lname[meBUF_SIZE_MAX], *ff ;
 
-    bp->autotime = -1 ;
+    bp->autoTime = -1 ;
 
     if(bp->fileName != NULL)
     {
@@ -2061,12 +2061,12 @@ autowriteremove(register meBuffer *bp)
 {
     meUByte fn[meBUF_SIZE_MAX] ;
 
-    if((autotime > 0) && bufferNeedSaving(bp) &&
+    if((autoTime > 0) && bufferNeedSaving(bp) &&
        !createBackupName(fn,bp->fileName,'#',0) &&
        !meTestExist(fn))
         /* get rid of any tempory file */
         meUnlink(fn) ;
-    bp->autotime = -1 ;
+    bp->autoTime = -1 ;
 }
 
 /*

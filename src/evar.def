@@ -98,9 +98,7 @@ DEFVAR ("fill-mode",           EVFILLMODE)      /* Justify mode */
 #if MEOPT_SPELL
 DEFVAR ("find-words",          EVFINDWORDS)     /* Find words matching mask, sim. to file-names */
 #endif
-#if MEOPT_CFENCE
-DEFVAR ("fmatchdelay",         EVMATCHLEN)      /* Fence matchin length */
-#endif
+DEFVAR ("pause-time",          EVPAUSETIME)     /* Pause time (used in Fence matching etc) */
 DEFVAR ("frame-depth",         EVFRMDPTH)       /* frame depth */
 #if MEOPT_EXTENDED
 DEFVAR ("frame-id",            EVFRMID)         /* frame unique id */

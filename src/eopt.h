@@ -39,9 +39,6 @@ meUByte meOptionList[]=
 #if MEOPT_CALLBACK
     "cal\n"
 #endif
-#if MEOPT_CFENCE
-    "cfe\n"
-#endif
 #if MEOPT_CLIENTSERVER
     "cli\n"
 #endif
@@ -59,6 +56,9 @@ meUByte meOptionList[]=
 #endif
 #if MEOPT_EXTENDED
     "ext\n"
+#endif
+#if MEOPT_FENCE
+    "fen\n"
 #endif
 #if MEOPT_FILEHOOK
     "fho\n"

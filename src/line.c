@@ -202,19 +202,19 @@ bufferSetEdit(void)
         }
 #endif
     }
-    if((autotime > 0) && (frameCur->bufferCur->autotime < 0) &&
+    if((autoTime > 0) && (frameCur->bufferCur->autoTime < 0) &&
        meModeTest(frameCur->bufferCur->mode,MDATSV) &&
        (frameCur->bufferCur->name[0] != '*'))
     {
         struct   meTimeval tp ;
 
         gettimeofday(&tp,NULL) ;
-        frameCur->bufferCur->autotime = ((tp.tv_sec-startTime+autotime)*1000) +
+        frameCur->bufferCur->autoTime = ((tp.tv_sec-startTime+autoTime)*1000) +
                   (tp.tv_usec/1000) ;
         if(!isTimerExpired(AUTOS_TIMER_ID) &&
            (!isTimerSet(AUTOS_TIMER_ID) || 
-            (meTimerTime[AUTOS_TIMER_ID] > frameCur->bufferCur->autotime)))
-            timerSet(AUTOS_TIMER_ID,frameCur->bufferCur->autotime,((long)autotime) * 1000L) ;
+            (meTimerTime[AUTOS_TIMER_ID] > frameCur->bufferCur->autoTime)))
+            timerSet(AUTOS_TIMER_ID,frameCur->bufferCur->autoTime,((long)autoTime) * 1000L) ;
     }
     return meTRUE ;
 }

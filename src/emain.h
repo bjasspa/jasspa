@@ -379,7 +379,7 @@
 #define MEOPT_HILIGHT   1       /* color hilighting                      */
 #define MEOPT_ISEARCH   1       /* Incremental searches like ITS EMACS   */
 #define MEOPT_WORDPRO   1       /* Advanced word processing features     */
-#define MEOPT_CFENCE    1       /* fench matching in CMODE               */
+#define MEOPT_FENCE     1       /* fench matching in CMODE               */
 #define MEOPT_CRYPT     1       /* file encryption enabled?              */
 #define MEOPT_MAGIC     1       /* include regular expression matching?  */
 #define MEOPT_ABBREV    1       /* Abbreviated files                     */
@@ -451,7 +451,7 @@
 #define MEOPT_HILIGHT   0       /* color hilighting                      */
 #define MEOPT_ISEARCH   1       /* Incremental searches like ITS EMACS   */
 #define MEOPT_WORDPRO   0       /* Advanced word processing features     */
-#define MEOPT_CFENCE    0       /* fench matching in CMODE               */
+#define MEOPT_FENCE     0       /* fench matching in CMODE               */
 #define MEOPT_CRYPT     0       /* file encryption enabled?              */
 #define MEOPT_MAGIC     1       /* include regular expression matching?  */
 #define MEOPT_ABBREV    0       /* Abbreviated files                     */

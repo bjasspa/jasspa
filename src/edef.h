@@ -53,18 +53,19 @@ extern  meUByte  **ModeLineStr ;        /* modeline line format         */
 extern  meUByte    orgModeLineStr[] ;   /* original modeline line format*/
 extern  meUByte   *modeLineStr ;        /* current modeline format      */
 extern  meUByte    modeLineFlags ;      /* current modeline flags       */
-extern  meInt      autotime;            /* auto save time in seconds    */
 extern  meInt      keptVersions;        /* No. of kept backup versions  */
 #if MEOPT_EXTENDED
 extern  meInt      nextFrameId;         /* frame-id of the next create  */
 extern  meInt      nextWindowId;        /* window-id of the next create */
 #endif
+extern  meInt      autoTime;            /* auto save time in seconds    */
+extern  meShort    pauseTime;           /* Fence matching delay length  */
 #if MEOPT_MOUSE
-extern  meUInt     delaytime;           /* mouse-time delay time        */
-extern  meUInt     repeattime;          /* mouse-time repeat time       */
+extern  meUInt     delayTime;           /* mouse-time delay time        */
+extern  meUInt     repeatTime;          /* mouse-time repeat time       */
 #endif
 #if MEOPT_CALLBACK
-extern  meUInt     idletime;            /* idle-time delay time         */
+extern  meUInt     idleTime;            /* idle-time delay time         */
 #endif
 #if MEOPT_WORDPRO
 extern  meUByte    fillbullet[];        /* Fill bullet character class  */
@@ -77,7 +78,6 @@ extern  meUByte    fillmode;            /* Justify mode                 */
 #endif
 extern  meUByte    indentWidth;             /* Virtual Tab size             */
 extern  meUByte    tabWidth;            /* Real TAB size                */
-extern  meShort    matchlen;            /* Fence matching delay length  */
 extern  meUByte   *homedir;             /* Home directory               */
 extern  meUByte   *searchPath;          /* emf search path              */
 extern  meUByte   *curdir;              /* current working directory    */
@@ -464,7 +464,7 @@ meInt     cursorState=0 ;               /* Current state of cursor      */
 meUByte  *meProgName=NULL ;               /* the program name (argv[0])   */
 meUByte   orgModeLineStr[]="%s%r%u " ME_SHORTNAME " (%e) - %l %b (%f) ";
 meUByte  *modeLineStr=orgModeLineStr;   /* current modeline format      */
-meInt     autotime=300 ;                /* auto save time in seconds    */
+meInt     autoTime=300 ;                /* auto save time in seconds    */
 meInt     keptVersions=0 ;              /* No. of kept backup versions  */
 #if MEOPT_EXTENDED
 meInt     nextFrameId=0 ;               /* frame-id of the next create  */
@@ -479,19 +479,19 @@ meShort   filleoslen=1;                 /* Fill E-O-S ' ' insert len    */
 meUByte   fillignore[16]=">_@";         /* Fill Ignore character class  */
 meUByte   fillmode='B';                 /* Justification mode           */
 #endif
-meUByte   indentWidth  = 4;                 /* Virtual Tab size             */
+meUByte   indentWidth = 4;              /* Virtual Tab size             */
 meUByte   tabWidth = 8;                 /* Real TAB size                */
-meShort   matchlen = 2000;              /* Fence matching sleep length  */
+meShort   pauseTime = 2000;             /* Fence matching sleep length  */
 meUByte  *searchPath=NULL;              /* emf search path              */
 meUByte  *homedir=NULL;                 /* Home directory               */
 meUByte  *curdir=NULL;                  /* current working directory    */
 meUByte  *execstr = NULL;               /* pointer to string to execute */
 #if MEOPT_MOUSE
-meUInt    delaytime = 500;              /* mouse-time delay time 500ms  */
-meUInt    repeattime = 25;              /* mouse-time repeat time 25ms  */
+meUInt    delayTime = 500;              /* mouse-time delay time 500ms  */
+meUInt    repeatTime = 25;              /* mouse-time repeat time 25ms  */
 #endif
 #if MEOPT_CALLBACK
-meUInt    idletime = 1000;              /* idle-time delay time 1sec    */
+meUInt    idleTime = 1000;              /* idle-time delay time 1sec    */
 #endif
 int       execlevel = 0;                /* execution IF level           */
 int       bufHistNo = 1;                /* inc buff hist numbering      */

@@ -860,7 +860,7 @@ doIdlePickEvent(void)
         
         /* Now see if theres a idle-time event, if so start the timer */
         if(decode_key(ME_SPECIAL|SKEY_idle_time, &arg) != -1)
-            timerSet(IDLE_TIMER_ID,-1,idletime);
+            timerSet(IDLE_TIMER_ID,-1,idleTime);
         else if(decode_key(ME_SPECIAL|SKEY_idle_drop,&arg) != -1)
             meTimerState[IDLE_TIMER_ID] = IDLE_STATE_DROP ;
     }

@@ -408,8 +408,30 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
         switch(status)
         {
         case EVAUTOTIME:
-            autotime = meAtoi(vvalue);
+            autoTime = meAtoi(vvalue);
             break;
+        case EVPAUSETIME:
+            pauseTime = (meShort) meAtoi (vvalue);
+            break;
+#if MEOPT_CALLBACK
+        case EVIDLETIME:
+            idleTime = (meUInt) meAtoi(vvalue);
+            if (idleTime < 10)
+                idleTime = 10;
+            break;
+#endif
+#if MEOPT_MOUSE
+        case EVDELAYTIME:
+            delayTime = (meUInt) meAtoi(vvalue);
+            if (delayTime < 10)
+                delayTime = 10;
+            break;
+        case EVREPEATTIME:
+            repeatTime = (meUInt) meAtoi(vvalue);
+            if (repeatTime < 10)
+                repeatTime = 10;
+            break;
+#endif
         case EVKEPTVERS:
             if(!(meSystemCfg & meSYSTEM_DOSFNAMES) && 
                ((keptVersions = meAtoi(vvalue)) < 0))
@@ -431,13 +453,6 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                 }
             }
             break;
-#if MEOPT_CALLBACK
-        case EVIDLETIME:
-            idletime = (meUInt) meAtoi(vvalue);
-            if (idletime < 10)
-                idletime = 10;
-            break;
-#endif
             /* always allow the user to set the mouse position as termcap
              * does not support the mouse but context menus need to be positioned sensibly */
         case EVMOUSE:
@@ -455,18 +470,6 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
         case EVMOUSEY:
             mouse_Y = (meShort) meAtoi(vvalue) ;
             break;
-#if MEOPT_MOUSE
-        case EVDELAYTIME:
-            delaytime = (meUInt) meAtoi(vvalue);
-            if (delaytime < 10)
-                delaytime = 10;
-            break;
-        case EVREPEATTIME:
-            repeattime = (meUInt) meAtoi(vvalue);
-            if (repeattime < 10)
-                repeattime = 10;
-            break;
-#endif
         case EVMODELINE:
             if(modeLineStr != orgModeLineStr)
                 meFree(modeLineStr) ;
@@ -702,11 +705,6 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
         case EVHOMEDIR:
             fileNameSetHome(vvalue) ;
             break;
-#if MEOPT_CFENCE
-        case EVMATCHLEN:
-            matchlen = (meShort) meAtoi (vvalue);
-            break;
-#endif
 #if MEOPT_EXTENDED
         case EVSHWMDS:
             {
@@ -1020,16 +1018,17 @@ gtenv(meUByte *vname)   /* vname   name of environment variable to retrieve */
     switch(ii)
     {
         /* Fetch the appropriate value */
-    case EVAUTOTIME:    return meItoa(autotime);
-    case EVKEPTVERS:    return meItoa(keptVersions);
-    case EVBOXCHRS:     return boxChars;
+    case EVAUTOTIME:    return meItoa(autoTime);
+    case EVPAUSETIME:   return meItoa(pauseTime);
 #if MEOPT_MOUSE
-    case EVDELAYTIME:   return meItoa(delaytime);
-    case EVREPEATTIME:  return meItoa(repeattime);
+    case EVDELAYTIME:   return meItoa(delayTime);
+    case EVREPEATTIME:  return meItoa(repeatTime);
 #endif
 #if MEOPT_CALLBACK
-    case EVIDLETIME:    return meItoa(idletime);
+    case EVIDLETIME:    return meItoa(idleTime);
 #endif
+    case EVKEPTVERS:    return meItoa(keptVersions);
+    case EVBOXCHRS:     return boxChars;
     case EVMODELINE:    return modeLineStr ;
     case EVMACHINE:     return machineName ;
     case EVPROGNM:      return meProgName ;
@@ -1208,9 +1207,6 @@ handle_namesvar:
     case EVBUFTABWIDTH: return meItoa(frameCur->bufferCur->tabWidth);
     case EVSRCHPATH:    return mePtos(searchPath) ;
     case EVHOMEDIR:     return mePtos(homedir) ;
-#if MEOPT_CFENCE
-    case EVMATCHLEN:    return meItoa(matchlen);
-#endif
 #if MEOPT_EXTENDED
     case EVSHWMDS:
         {

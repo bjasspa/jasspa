@@ -2946,7 +2946,7 @@ mlwrite(int flags, meUByte *fmt, int arg)
          */
         meUByte oldMlStatus = frameCur->mlStatus ;
         frameCur->mlStatus = MLSTATUS_KEEP ;
-        TTsleep(2000,1,NULL)  ;
+        TTsleep(pauseTime,1,NULL)  ;
         frameCur->mlStatus = oldMlStatus ;
     }
     else if((flags & MWWAIT) || (clexec && (flags & MWCLWAIT)))

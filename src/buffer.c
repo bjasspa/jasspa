@@ -1381,7 +1381,7 @@ createBuffer(register meUByte *bname)
     meModeSet(bp->mode,MDNACT) ;
     meFiletimeInit(bp->stats.stmtime) ;
     bp->dotLine = bp->baseLine = lp;
-    bp->autotime = -1 ;
+    bp->autoTime = -1 ;
     bp->stats.stmode  = meUmask ;
     bp->stats.stsize  = 0 ;
 #ifdef _UNIX
@@ -1660,7 +1660,7 @@ invalid_global:
 	else
 #endif
             if(nn == MDATSV)
-	    bp->autotime = -1 ;
+	    bp->autoTime = -1 ;
     }
     /* display new mode line */
     if(bp != NULL)
