@@ -288,7 +288,7 @@ saveHistory(int f, int n)
             /* Write the buffer information */
             for (bp = bheadp; bp != NULL; bp = bp->next)
             {
-                if((bp->name[0] != '*') && (bp->fileName != NULL))
+                if((bp->name[0] != '*') && (bp->fileName != NULL) && !meModeTest(bp->mode,MDHIDE))
                 {
                     meUByte buff[40] ;
                     meInt lineNo ;
