@@ -1,0 +1,79 @@
+##############################################################################
+#
+#  			Copyright $YEAR$ $COMPANY_NAME$.
+#			      All Rights Reserved
+#
+#
+#  System        : 
+#  Module        : 
+#  Object Name   : $RCSfile$
+#  Revision      : $Revision$
+#  Date          : $Date$
+#  Author        : $Author$
+#  Created By    : $USER_NAME$
+#  Created       : $ASCII_TIME$
+#  Last Modified : <160495.1521>
+#
+#  Description	
+#
+#  Notes
+#
+#  History
+#
+##############################################################################
+#
+#  Copyright (c) $YEAR$ $COMPANY_NAME$.
+# 
+#  All Rights Reserved.
+# 
+#  This  document  may  not, in  whole  or in  part, be  copied,  photocopied,
+#  reproduced,  translated,  or  reduced to any  electronic  medium or machine
+#  readable form without prior written consent from $COMPANY_NAME$.
+#
+##############################################################################
+
+vendor
+    # 
+    tag yourtag
+    description "your description"
+    title "your title"
+end
+product
+    tag yourtag
+    title "your title"
+    description "your description"
+
+    # Revision
+    revision 1.0
+
+    #
+    # HP-UX 10.20
+    # architecture S700/800_HPUX_10
+    # machine_type 9000/[78]*
+    # os_name HP-UX
+    # os_release ?.10.*
+    # os_version *
+    #
+    # HP-UX 11.x
+    architecture HP-UX_B.11.00_32/64
+    machine_type 9000/[78]*:*
+    os_name HP-UX
+    os_release ?.11.*
+    os_version *
+        
+    copyright "Copyright (c) $YEAR$ $COMPANY_NAME$"
+
+    fileset
+        tag yourtag
+        title "your title"
+        revision 1.0
+        #
+        postinstall your.postinstall
+        postremove  your.postremove
+        #
+        directory product=/opt/product
+        file_permissions -u 022 -g bin -o bin
+        file *
+    end
+end    
+
