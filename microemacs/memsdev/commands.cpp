@@ -252,7 +252,7 @@ MicroEmacsClose (void)
 
 CCommands::CCommands()
 {
-    m_pApplication == NULL;
+    m_pApplication = NULL;
     m_pApplicationEventsObj = NULL;
     m_pDebuggerEventsObj = NULL;
     
