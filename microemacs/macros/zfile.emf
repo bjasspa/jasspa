@@ -216,7 +216,7 @@ hilight .hilight.zfile 0x44 "\eE" "" "\\}\e" "" "" .scheme.file
     find-buffer "*zfile log*"
     set-variable $buffer-fname #l0
     set-variable #l9 &rep #l9 "%zb" &rig #l4 &rsin "/" #l4 
-    !if &band $system 0x400
+    !if &band $system 0x100
         set-variable #l4 &rep #l4 "/" "\\"
     !endif
     set-variable #l9 &rep &rep #l9 "%zf" #l4 "%fb" #l2
@@ -261,7 +261,7 @@ hilight .hilight.zfile 0x44 "\eE" "" "\\}\e" "" "" .scheme.file
     find-buffer "*zfile log*"
     set-variable $buffer-fname #l0
     set-variable #l9 &rep #l9 "%zb" &rig #l4 &rsin "/" #l4 
-    !if &band $system 0x400
+    !if &band $system 0x100
         set-variable #l4 &rep #l4 "/" "\\"
     !endif
     set-variable #l9 &rep &rep #l9 "%zf" #l4 "%fb" #l3
