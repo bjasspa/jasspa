@@ -7,150 +7,174 @@
 ; Synopsis:    Compressed file/archive support.
 ; Authors:     Steven Phillips & Jon Green
 ;
-; Some standard zfile-setup definitions are:-
-;
-; GNU Tar file hilighting.
-!if &not &exist .hilight.tar
-    set-variable .hilight.tar &pinc .hilight.next 1
+!if &not &exist .hilight.zfile
+    set-variable .hilight.zfile &pinc .hilight.next 1
 !endif
-0 hilight .hilight.tar 0                           $global-scheme
-hilight .hilight.tar 0x102 "l"                     .scheme.dir-slink
-hilight .hilight.tar 0x102 "d"                     .scheme.dir
-hilight .hilight.tar 0x112 "-"                     $global-scheme
-hilight .hilight.tar 0x012 "[0-9][0-9]:[0-9][0-9] \\{\"" .scheme.file
-hilight .hilight.tar 0x012 "[0-9][0-9]:[0-9][0-9] \\{"   .scheme.file
-; zipinfo -sh hilighting
-!if &not &exist .hilight.zip
-    set-variable .hilight.zip &pinc .hilight.next 1
-!endif
-0 hilight .hilight.zip 0                           $global-scheme
-hilight .hilight.zip 0x002 "Archive:"              .scheme.header
-hilight .hilight.zip 0x102 "l"                     .scheme.dir-slink
-hilight .hilight.zip 0x102 "d"                     .scheme.dir
-hilight .hilight.zip 0x112 "-"                     $global-scheme
-hilight .hilight.zip 0x012 "[0-9][0-9]:[0-9][0-9] \\{\"" .scheme.file
-hilight .hilight.zip 0x012 "[0-9][0-9]:[0-9][0-9] \\{"   .scheme.file
+0 hilight .hilight.zfile 2 50                      $global-scheme
+hilight .hilight.zfile 0x44 "\eA" "" "\\}\e" "" "" $global-scheme
+hilight .hilight.zfile 0x44 "\eB" "" "\\}\e" "" "" .scheme.link
+hilight .hilight.zfile 0x44 "\eC" "" "\\}\e" "" "" .scheme.header
+hilight .hilight.zfile 0x44 "\eD" "" "\\}\e" "" "" .scheme.dir
+hilight .hilight.zfile 0x44 "\eE" "" "\\}\e" "" "" .scheme.file
 ;
 ; Set up the defaults for the standard archives.
 ; Edit the following section to define your defaults and then execute
 ; "zfile-default". Note that this is a hidden function and it will 
 ; not complete.
 ;
-0 define-macro zfile-default
-    ; -- .Z : Compressed file.
-    set-registry &cat "/history/" $platform "Z-extract" "zcat \"%zf\" > \"%fb\""
-    set-registry &cat "/history/" $platform "Z-remove"  "rm -f \"%fb\""
-    ; -- .bz : bzip2 file.
-    set-registry &cat "/history/" $platform "bz-extract" "bzcat \"%zf\" > \"%fb\""
-    set-registry &cat "/history/" $platform "bz-remove"  "rm -f \"%fb\""
-    ; -- .bz2 : bzip2 file.
-    set-registry &cat "/history/" $platform "bz2-remove" "bzcat \"%zf\" > \"%fb\""
-    set-registry &cat "/history/" $platform "bz2-remove" "rm -f \"%fb\""
-    ; -- .gz : gzip file
-    set-registry &cat "/history/" $platform "bz2-remove" "gzcat \"%zf\" > \"%fb\""
-    set-registry &cat "/history/" $platform "bz2-remove" "rm -f \"%fb\""
-    ; -- .tar : GNU Tar file
-    set-registry &cat "/history/" $platform "tar-cut-to"   ""
-    set-registry &cat "/history/" $platform "tar-extract"  "gtar xf \"%zf\" \"%fb\""
-    set-registry &cat "/history/" $platform "tar-file-col" "51"
-    set-registry &cat "/history/" $platform "tar-file-end" "$"
-    set-registry &cat "/history/" $platform "tar-list"     "gtar tvf \"%zb\""
-    set-registry &cat "/history/" $platform "tar-remove"   "rm -rf \"%fb\""
-    set-registry &cat "/history/" $platform "tar-hilight"  "tar"
-    ; -- .tar.Z : Compressed Tar file
-    set-registry &cat "/history/" $platform "tar.Z-cut-to"   ""
-    set-registry &cat "/history/" $platform "tar.Z-extract"  "gtar Zxf \"%zf\" \"%fb\""
-    set-registry &cat "/history/" $platform "tar.Z-file-col" "51"
-    set-registry &cat "/history/" $platform "tar.Z-file-end" "$"
-    set-registry &cat "/history/" $platform "tar.Z-list"     "gtar Ztvf \"%zb\""
-    set-registry &cat "/history/" $platform "tar.Z-remove"   "rm -rf \"%fb\""
-    set-registry &cat "/history/" $platform "tar.Z-hilight"  "tar"
-    ; -- .tar.bz : bzip2 tar file.
-    set-registry &cat "/history/" $platform "tar.bz-cut-to"   ""
-    set-registry &cat "/history/" $platform "tar.bz-extract"  "gtar jxf \"%zf\" \"%fb\""
-    set-registry &cat "/history/" $platform "tar.bz-file-col" "51"
-    set-registry &cat "/history/" $platform "tar.bz-file-end" "$"
-    set-registry &cat "/history/" $platform "tar.bz-list"     "gtar jtvf \"%zb\""
-    set-registry &cat "/history/" $platform "tar.bz-remove"   "rm -rf \"%fb\""
-    set-registry &cat "/history/" $platform "tar.bz-hilight"  "tar"
-    ; -- .tar.bz2 : bzip2 tar file.
-    set-registry &cat "/history/" $platform "tar.bz2-cut-to"   ""
-    set-registry &cat "/history/" $platform "tar.bz2-extract"  "gtar jxf \"%zf\" \"%fb\""
-    set-registry &cat "/history/" $platform "tar.bz2-file-col" "51"
-    set-registry &cat "/history/" $platform "tar.bz2-file-end" "$"
-    set-registry &cat "/history/" $platform "tar.bz2-list"     "gtar jtvf \"%zb\""
-    set-registry &cat "/history/" $platform "tar.bz2-remove"   "rm -rf \"%fb\""
-    set-registry &cat "/history/" $platform "tar.bz2-hilight"  "tar"
-    ; -- .tar.gz : gzip tar file.
-    set-registry &cat "/history/" $platform "tar.gz-cut-to"   ""
-    set-registry &cat "/history/" $platform "tar.gz-extract"  "gtar zxf \"%zf\" \"%fb\""
-    set-registry &cat "/history/" $platform "tar.gz-file-col" "51"
-    set-registry &cat "/history/" $platform "tar.gz-file-end" "$"
-    set-registry &cat "/history/" $platform "tar.gz-list"     "gtar ztvf \"%zb\""
-    set-registry &cat "/history/" $platform "tar.gz-remove"   "rm -rf \"%fb\""
-    set-registry &cat "/history/" $platform "tar.gz-hilight"  "tar"
-    ; -- .tbz : bzip2 tar file.
-    set-registry &cat "/history/" $platform "tbz-cut-to"   ""
-    set-registry &cat "/history/" $platform "tbz-extract"  "gtar jxf \"%zf\" \"%fb\""
-    set-registry &cat "/history/" $platform "tbz-file-col" "51"
-    set-registry &cat "/history/" $platform "tbz-file-end" "$"
-    set-registry &cat "/history/" $platform "tbz-list"     "gtar jtvf \"%zb\""
-    set-registry &cat "/history/" $platform "tbz-remove"   "rm -rf \"%fb\""
-    set-registry &cat "/history/" $platform "tbz-hilight"  "tar"
-    ; -- .tbz2 : bzip2 tar file.
-    set-registry &cat "/history/" $platform "tbz2-cut-to"   ""
-    set-registry &cat "/history/" $platform "tbz2-extract"  "gtar jxf \"%zf\" \"%fb\""
-    set-registry &cat "/history/" $platform "tbz2-file-col" "51"
-    set-registry &cat "/history/" $platform "tbz2-file-end" "$"
-    set-registry &cat "/history/" $platform "tbz2-list"     "gtar jtvf \"%zb\""
-    set-registry &cat "/history/" $platform "tbz2-remove"   "rm -rf \"%fb\""
-    set-registry &cat "/history/" $platform "tbz2-hilight"  "tar"
-    ; -- .tar.gz : gzip tar file.
-    set-registry &cat "/history/" $platform "tgz-cut-to"   ""
-    set-registry &cat "/history/" $platform "tgz-extract"  "gtar zxf \"%zf\" \"%fb\""
-    set-registry &cat "/history/" $platform "tgz-file-col" "51"
-    set-registry &cat "/history/" $platform "tgz-file-end" "$"
-    set-registry &cat "/history/" $platform "tgz-list"     "gtar ztvf \"%zb\""
-    set-registry &cat "/history/" $platform "tgz-remove"   "rm -rf \"%fb\""
-    set-registry &cat "/history/" $platform "tgz-hilight"  "tar"
-    ; -- .zip : zip file.
-    set-registry &cat "/history/" $platform "zip-cut-to"   "^Archive"
-    set-registry &cat "/history/" $platform "zip-extract"  "unzip -o \"%zf\" \"%fb\""
-    set-registry &cat "/history/" $platform "zip-file-col" "52"
-    set-registry &cat "/history/" $platform "zip-file-end" "$"
-    set-registry &cat "/history/" $platform "zip-list"     "zipinfo -sh \"%zb\""
-    set-registry &cat "/history/" $platform "zip-remove"   "rm -f \"%fb\""
-    set-registry &cat "/history/" $platform "zip-hilight"  "zip"
-!emacro
+!if &band $system 0x100
+    ; on windows use tar (usually cygwin's GNU tar assumed to be on the path)
+    set-variable #l0 "tar"
+!else
+    ; on Unix use gtar, GNU tar must be used as it supports Z and gz uncompressing
+    set-variable #l0 "gtar"
+!endif
+
+; -- .Z : Compressed file.
+!if &seq "" &reg "/history" &spr "%s/zfile/Z-extract" $platform ""
+    set-registry &cat "/history/" $platform "zfile/Z-extract" "uncompress -c \"%zf\" > \"%fb\""
+    set-registry &cat "/history/" $platform "zfile/Z-remove"  "rm -f \"%fb\""
+!endif
+; -- .bz : bzip2 file.
+!if &seq "" &reg "/history" &spr "%s/zfile/bz-extract" $platform ""
+    set-registry &cat "/history/" $platform "zfile/bz-extract" "bunzip2 -c \"%zf\" > \"%fb\""
+    set-registry &cat "/history/" $platform "zfile/bz-remove"  "rm -f \"%fb\""
+!endif
+; -- .bz2 : bzip2 file.
+!if &seq "" &reg "/history" &spr "%s/zfile/bz2-extract" $platform ""
+    set-registry &cat "/history/" $platform "zfile/bz2-extract" "bunzip2 -c \"%zf\" > \"%fb\""
+    set-registry &cat "/history/" $platform "zfile/bz2-remove" "rm -f \"%fb\""
+!endif
+; -- .gz : gzip file
+!if &seq "" &reg "/history" &spr "%s/zfile/gz-extract" $platform ""
+    set-registry &cat "/history/" $platform "zfile/gz-extract" "gunzip -c \"%zf\" > \"%fb\""
+    set-registry &cat "/history/" $platform "zfile/gz-remove" "rm -f \"%fb\""
+!endif
+; -- .tar : GNU Tar file
+!if &seq "" &reg "/history" &spr "%s/zfile/tar-list" $platform ""
+    set-registry &cat "/history/" $platform "zfile/tar-list"     &cat #l0 " tvf \"%zb\""
+    set-registry &cat "/history/" $platform "zfile/tar-cut-to"   "^."
+    set-registry &cat "/history/" $platform "zfile/tar-s1"       "\\( [0-9][0-9]:[0-9][0-9] +\\)\\(.*[^\n/]\\)$"
+    set-registry &cat "/history/" $platform "zfile/tar-r1"       "\\1\eE\\2\eA"
+    set-registry &cat "/history/" $platform "zfile/tar-s2"       "\\( [0-9][0-9]:[0-9][0-9] +\\)\\(.+/\\)$"
+    set-registry &cat "/history/" $platform "zfile/tar-r2"       "\\1\eD\\2\eA"
+    set-registry &cat "/history/" $platform "zfile/tar-extract"  &cat #l0 " xf \"%zf\" \"%fb\""
+    set-registry &cat "/history/" $platform "zfile/tar-remove"   "rm -rf \"%fb\""
+!endif
+; -- .tar.Z : Compressed Tar file
+!if &seq "" &reg "/history" &spr "%s/zfile/tar.Z-list" $platform ""
+    set-registry &cat "/history/" $platform "zfile/tar.Z-list"     &cat #l0 " Ztvf \"%zb\""
+    set-registry &cat "/history/" $platform "zfile/tar.Z-cut-to"   "^."
+    set-registry &cat "/history/" $platform "zfile/tar.Z-s1"       "\\( [0-9][0-9]:[0-9][0-9] +\\)\\(.*[^\n/]\\)$"
+    set-registry &cat "/history/" $platform "zfile/tar.Z-r1"       "\\1\eE\\2\eA"
+    set-registry &cat "/history/" $platform "zfile/tar.Z-s2"       "\\( [0-9][0-9]:[0-9][0-9] +\\)\\(.+/\\)$"
+    set-registry &cat "/history/" $platform "zfile/tar.Z-r2"       "\\1\eD\\2\eA"
+    set-registry &cat "/history/" $platform "zfile/tar.Z-extract"  &cat #l0 " Zxf \"%zf\" \"%fb\""
+    set-registry &cat "/history/" $platform "zfile/tar.Z-remove"   "rm -rf \"%fb\""
+!endif
+; -- .tar.bz : bzip2 tar file.
+!if &seq "" &reg "/history" &spr "%s/zfile/tar.bz-list" $platform ""
+    set-registry &cat "/history/" $platform "zfile/tar.bz-list"     &cat #l0 " jtvf \"%zb\""
+    set-registry &cat "/history/" $platform "zfile/tar.bz-cut-to"   "^."
+    set-registry &cat "/history/" $platform "zfile/tar.bz-s1"       "\\( [0-9][0-9]:[0-9][0-9] +\\)\\(.*[^\n/]\\)$"
+    set-registry &cat "/history/" $platform "zfile/tar.bz-r1"       "\\1\eE\\2\eA"
+    set-registry &cat "/history/" $platform "zfile/tar.bz-s2"       "\\( [0-9][0-9]:[0-9][0-9] +\\)\\(.+/\\)$"
+    set-registry &cat "/history/" $platform "zfile/tar.bz-r2"       "\\1\eD\\2\eA"
+    set-registry &cat "/history/" $platform "zfile/tar.bz-extract"  &cat #l0 " jxf \"%zf\" \"%fb\""
+    set-registry &cat "/history/" $platform "zfile/tar.bz-remove"   "rm -rf \"%fb\""
+!endif
+; -- .tar.bz2 : bzip2 tar file.
+!if &seq "" &reg "/history" &spr "%s/zfile/tar.bz2-list" $platform ""
+    set-registry &cat "/history/" $platform "zfile/tar.bz2-list"     &cat #l0 " jtvf \"%zb\""
+    set-registry &cat "/history/" $platform "zfile/tar.bz2-cut-to"   "^."
+    set-registry &cat "/history/" $platform "zfile/tar.bz2-s1"       "\\( [0-9][0-9]:[0-9][0-9] +\\)\\(.*[^\n/]\\)$"
+    set-registry &cat "/history/" $platform "zfile/tar.bz2-r1"       "\\1\eE\\2\eA"
+    set-registry &cat "/history/" $platform "zfile/tar.bz2-s2"       "\\( [0-9][0-9]:[0-9][0-9] +\\)\\(.+/\\)$"
+    set-registry &cat "/history/" $platform "zfile/tar.bz2-r2"       "\\1\eD\\2\eA"
+    set-registry &cat "/history/" $platform "zfile/tar.bz2-extract"  &cat #l0 " jxf \"%zf\" \"%fb\""
+    set-registry &cat "/history/" $platform "zfile/tar.bz2-remove"   "rm -rf \"%fb\""
+!endif
+; -- .tar.gz : gzip tar file.
+!if &seq "" &reg "/history" &spr "%s/zfile/tar.gz-list" $platform ""
+    set-registry &cat "/history/" $platform "zfile/tar.gz-list"     &cat #l0 " ztvf \"%zb\""
+    set-registry &cat "/history/" $platform "zfile/tar.gz-cut-to"   "^."
+    set-registry &cat "/history/" $platform "zfile/tar.gz-s1"       "\\( [0-9][0-9]:[0-9][0-9] +\\)\\(.*[^\n/]\\)$"
+    set-registry &cat "/history/" $platform "zfile/tar.gz-r1"       "\\1\eE\\2\eA"
+    set-registry &cat "/history/" $platform "zfile/tar.gz-s2"       "\\( [0-9][0-9]:[0-9][0-9] +\\)\\(.+/\\)$"
+    set-registry &cat "/history/" $platform "zfile/tar.gz-r2"       "\\1\eD\\2\eA"
+    set-registry &cat "/history/" $platform "zfile/tar.gz-extract"  &cat #l0 " zxf \"%zf\" \"%fb\""
+    set-registry &cat "/history/" $platform "zfile/tar.gz-remove"   "rm -rf \"%fb\""
+!endif
+; -- .tbz : bzip2 tar file.
+!if &seq "" &reg "/history" &spr "%s/zfile/tbz-list" $platform ""
+    set-registry &cat "/history/" $platform "zfile/tbz-list"     &cat #l0 " jtvf \"%zb\""
+    set-registry &cat "/history/" $platform "zfile/tbz-cut-to"   "^."
+    set-registry &cat "/history/" $platform "zfile/tbz-s1"       "\\( [0-9][0-9]:[0-9][0-9] +\\)\\(.*[^\n/]\\)$"
+    set-registry &cat "/history/" $platform "zfile/tbz-r1"       "\\1\eE\\2\eA"
+    set-registry &cat "/history/" $platform "zfile/tbz-s2"       "\\( [0-9][0-9]:[0-9][0-9] +\\)\\(.+/\\)$"
+    set-registry &cat "/history/" $platform "zfile/tbz-r2"       "\\1\eD\\2\eA"
+    set-registry &cat "/history/" $platform "zfile/tbz-extract"  &cat #l0 " jxf \"%zf\" \"%fb\""
+    set-registry &cat "/history/" $platform "zfile/tbz-remove"   "rm -rf \"%fb\""
+!endif
+; -- .tbz2 : bzip2 tar file.
+!if &seq "" &reg "/history" &spr "%s/zfile/tbz2-list" $platform ""
+    set-registry &cat "/history/" $platform "zfile/tbz2-list"     &cat #l0 " jtvf \"%zb\""
+    set-registry &cat "/history/" $platform "zfile/tbz2-cut-to"   "^."
+    set-registry &cat "/history/" $platform "zfile/tbz2-s1"       "\\( [0-9][0-9]:[0-9][0-9] +\\)\\(.*[^\n/]\\)$"
+    set-registry &cat "/history/" $platform "zfile/tbz2-r1"       "\\1\eE\\2\eA"
+    set-registry &cat "/history/" $platform "zfile/tbz2-s2"       "\\( [0-9][0-9]:[0-9][0-9] +\\)\\(.+/\\)$"
+    set-registry &cat "/history/" $platform "zfile/tbz2-r2"       "\\1\eD\\2\eA"
+    set-registry &cat "/history/" $platform "zfile/tbz2-extract"  &cat #l0 " jxf \"%zf\" \"%fb\""
+    set-registry &cat "/history/" $platform "zfile/tbz2-remove"   "rm -rf \"%fb\""
+!endif
+; -- .tgz : gzip tar file.
+!if &seq "" &reg "/history" &spr "%s/zfile/tgz-list" $platform ""
+    set-registry &cat "/history/" $platform "zfile/tgz-list"     &cat #l0 " ztvf \"%zb\""
+    set-registry &cat "/history/" $platform "zfile/tgz-cut-to"   "^."
+    set-registry &cat "/history/" $platform "zfile/tgz-s1"       "\\( [0-9][0-9]:[0-9][0-9] +\\)\\(.*[^\n/]\\)$"
+    set-registry &cat "/history/" $platform "zfile/tgz-r1"       "\\1\eE\\2\eA"
+    set-registry &cat "/history/" $platform "zfile/tgz-s2"       "\\( [0-9][0-9]:[0-9][0-9] +\\)\\(.+/\\)$"
+    set-registry &cat "/history/" $platform "zfile/tgz-r2"       "\\1\eD\\2\eA"
+    set-registry &cat "/history/" $platform "zfile/tgz-extract"  &cat #l0 " zxf \"%zf\" \"%fb\""
+    set-registry &cat "/history/" $platform "zfile/tgz-remove"   "rm -rf \"%fb\""
+!endif
+; -- .zip : zip file.
+!if &seq "" &reg "/history" &spr "%s/zfile/zip-list" $platform ""
+    set-registry &cat "/history/" $platform "zfile/zip-list"     "unzip -v \"%zb\""
+    set-registry &cat "/history/" $platform "zfile/zip-cut-to"   "^ Length"
+    set-registry &cat "/history/" $platform "zfile/zip-s1"       "^\\( Length .+\\)$"
+    set-registry &cat "/history/" $platform "zfile/zip-r1"       "\eC\\1\eA"
+    set-registry &cat "/history/" $platform "zfile/zip-s2"       "\\( [0-9][0-9]:[0-9][0-9] +[0-9A-Fa-f]+ +\\)\\(.*[^\n/]\\)$"
+    set-registry &cat "/history/" $platform "zfile/zip-r2"       "\\1\eE\\2\eA"
+    set-registry &cat "/history/" $platform "zfile/zip-s3"       "\\( [0-9][0-9]:[0-9][0-9] +[0-9A-Fa-f]+ +\\)\\(.+/\\)$"
+    set-registry &cat "/history/" $platform "zfile/zip-r3"       "\\1\eD\\2\eA"
+    set-registry &cat "/history/" $platform "zfile/zip-extract"  "unzip -o \"%zf\" \"%fb\""
+    set-registry &cat "/history/" $platform "zfile/zip-remove"   "rm -f \"%fb\""
+; uncomment the following to use zipinfo instead
+;    set-registry &cat "/history/" $platform "zfile/zip-list"     "zipinfo -sh \"%zb\""
+;    set-registry &cat "/history/" $platform "zfile/zip-cut-to"   "^Archive"
+;    set-registry &cat "/history/" $platform "zfile/zip-s1"       "^\\(Archive .+\\)$"
+;    set-registry &cat "/history/" $platform "zfile/zip-r1"       "\eC\\1\eA"
+;    set-registry &cat "/history/" $platform "zfile/zip-s2"       "\\( [0-9][0-9]:[0-9][0-9] +\\)\\(.*[^\n/]\\)$"
+;    set-registry &cat "/history/" $platform "zfile/zip-r2"       "\\1\eE\\2\eA"
+;    set-registry &cat "/history/" $platform "zfile/zip-s3"       "\\( [0-9][0-9]:[0-9][0-9] +\\)\\(.+/\\)$"
+;    set-registry &cat "/history/" $platform "zfile/zip-r3"       "\\1\eD\\2\eA"
+!endif
+
 ;
 ; Load in a file from an archive list 
 ; 
 0 define-macro zfile-loadfile
-    !if &les :zfcol 0
-        ml-write &spr "[find-zfile error: Registry entry \"/history/%s/%s-file-col\" not setup]" $platform :zftype
-        !abort
-    !endif
-    !if &seq "" &set #l0 &reg "/history" &spr "%s/%s-file-end" $platform :zftype ""
-        ml-write &spr "[find-zfile error: Registry entry \"/history/%s/%s-file-end\" not setup]" $platform :zftype
-        !abort
-    !endif
-    !if &seq "" &set #l9 &reg "/history" &spr "%s/%s-extract" $platform :zftype ""
-        ml-write &spr "[find-zfile error: Registry entry \"/history/%s/%s-extract\" not setup]" $platform :zftype
-        !abort
-    !endif
-    set-variable #l7 &reg "/history" &spr "%s/%s-remove" $platform :zftype ""
-    set-variable $window-acol :zfcol
-    !force regex-forward #l0
-    !force -2 show-region
-    set-mark
-    set-variable $window-acol :zfcol
-    copy-region
-    set-variable #l2 @y
-    -1 yank
-    !if &seq #l2 ""
+    !if &not &and &set #l0 &sin "\eE" @wl &set #l1 &sin "\eA" @wl
         ml-write "[find-zfile error: Invalid line]"
         !abort
     !endif
+    !if &seq "" &set #l9 &reg "/history" &spr "%s/zfile/%s-extract" $platform :zftype ""
+        ml-write &spr "[find-zfile error: Registry entry \"/history/%s/%s-extract\" not setup]" $platform :zftype
+        !abort
+    !endif
+    set-variable #l7 &reg "/history" &spr "%s/zfile/%s-remove" $platform :zftype ""
+    set-variable #l2 &mid @wl &add #l0 1 &sub #l1 &add #l0 2
     set-variable #l4 $buffer-fname
     ; get a tmp file name and use the path of it as our scratch area
     ; use &stat to get '/'s in a windows and dos system
@@ -166,6 +190,7 @@ hilight .hilight.zip 0x012 "[0-9][0-9]:[0-9][0-9] \\{"   .scheme.file
         ml-write &spr "[find-zfile error: Cannot output to file \"%s\"]" #l3
         !abort
     !endif
+    ml-write &spr "[Extracting %s]" #l2
     ; create a temporary buffer, set the filename to the path and kick off extract
     find-buffer "*zfile log*"
     set-variable $buffer-fname #l0
@@ -185,13 +210,14 @@ hilight .hilight.zip 0x012 "[0-9][0-9]:[0-9][0-9] \\{"   .scheme.file
     !endif
     set-variable $buffer-fname ""
     -1 find-buffer "*zfile log*"
+    ml-clear
 !emacro
 ;
 ; Extract a file from a compressed single file archive
 ; 
 0 define-macro zfile-extract
     set-variable #l4 &stat "a" @1
-    !if &seq "" &set #l9 &reg "/history" &spr "%s/%s-extract" $platform @2 ""
+    !if &seq "" &set #l9 &reg "/history" &spr "%s/zfile/%s-extract" $platform @2 ""
         ml-write &spr "[find-zfile error: Registry entry \"/history/%s/%s-extract\" not setup]" $platform @2
         !abort
     !endif
@@ -225,7 +251,7 @@ hilight .hilight.zip 0x012 "[0-9][0-9]:[0-9][0-9] \\{"   .scheme.file
     set-variable #l5 $buffer-bname
     find-buffer "*zfile log*"
     ; Get the remove action if there is one.
-    set-variable #l7 &reg "/history" &spr "%s/%s-remove" $platform @2 ""
+    set-variable #l7 &reg "/history" &spr "%s/zfile/%s-remove" $platform @2 ""
     !if &not &seq #l7 ""
         shell-command &rep #l7 "%fb" #l3
     !endif
@@ -234,30 +260,31 @@ hilight .hilight.zip 0x012 "[0-9][0-9]:[0-9][0-9] \\{"   .scheme.file
 !emacro
 
 0 define-macro zfile-mouse-pick-1
-    !if &les :zfcol 0
-        ml-write &spr "[find-zfile error: Registry entry \"/history/%s/%s-file-col\" not setup]" $platform :zftype
-        set-variable :zmpl -1
-    !elif &les $window-acol :zfcol
-        set-variable :zmpl -1
-    !else
-        set-variable :zmpl $window-line
-        !if &seq "" &set #l0 &reg "/history" &spr "%s/%s-file-end" $platform :zftype ""
-            ml-write &spr "[find-zfile error: Registry entry \"/history/%s/%s-file-end\" not setup]" $platform :zftype
-            !abort
+    set-variable :zmpl "|0|||"
+    !if &set #l0 &sin "\eE" @wl
+        !if &gre $window-col &sub #l0 2
+            !if &set #l1 &sin "\eA" @wl
+                !if &les $window-col #l1
+                    set-variable :zmpl &spr "|%d|%d|%d|" $window-line #l0 #l1
+                    set-variable $window-col #l0
+                    -3 show-region
+                    set-variable $window-col #l1
+                    3 show-region
+                    set-cursor-to-mouse
+                    show-region
+                !endif
+            !endif
         !endif
-        regex-forward #l0
-        -2 show-region
-        -3 show-region
-        set-variable $window-acol :zfcol
-        3 show-region
     !endif
-    set-cursor-to-mouse
-    show-region
 !emacro
 0 define-macro zfile-mouse-drop-1
-    !if &les :zmpl 0
-    !elif &not &les $window-acol :zfcol
-        zfile-loadfile
+    !force -1 show-region
+    !if &equ $window-line &lget :zmpl 1
+        !if &gre $window-col &sub &lget :zmpl 2 2
+            !if &les $window-col &lget :zmpl 3
+                zfile-loadfile
+            !endif
+        !endif
     !endif
 !emacro
 
@@ -275,8 +302,8 @@ define-macro find-zfile
     !endif
     ; Get the next extension if there is one.
     set-variable #l8 &rig #l8 &sin "." #l8
-    !if &iseq "" &set #l9 &reg "/history" &spr "%s/%s-list" $platform #l8 ""
-        !if &iseq "" &set #l9 &reg "/history" &spr "%s/%s-extract" $platform #l8 ""
+    !if &iseq "" &set #l9 &reg "/history" &spr "%s/zfile/%s-list" $platform #l8 ""
+        !if &iseq "" &set #l9 &reg "/history" &spr "%s/zfile/%s-extract" $platform #l8 ""
             ; Neither a list or extraction command.
             !goto again
         !else
@@ -316,43 +343,54 @@ define-macro find-zfile
     0 pipe-shell-command #l9 #l3 @mna
     set-variable $buffer-fname #l0
     -1 buffer-mode "view"
+    1 buffer-mode "magic"
     set-mark
     2 forward-line
-    !if &seq "" &set #l1 &reg "/history" &spr "%s/%s-cut-to" $platform #l8 ""
+    !if &seq "" &set #l1 &reg "/history" &spr "%s/zfile/%s-cut-to" $platform #l8 ""
     !else
-        !force regex-forward #l1
+        search-forward #l1
         !if $status
             -2 show-region
         !endif
     !endif
     !force -1 kill-region "y"
-    insert-string &spr "%s file: %s\n\n" #l8 #l0
+    set-variable #l1 0
+    !while &not &seq &set #l2 &reg "/history" &spr "%s/zfile/%s-s%d" $platform #l8 &inc #l1 1 "" ""
+        set-variable #l3 &reg "/history" &spr "%s/zfile/%s-r%d" $platform #l8 #l1 ""
+        !force replace-string #l2 #l3
+        beginning-of-buffer
+    !done
+    insert-string &spr "%s file: \eB%s\eA\n\n" #l8 #l0
     beginning-of-buffer
     -1 buffer-mode "edit"
     1 buffer-mode "view"
     buffer-bind-create "boi" "return" "" zfile-loadfile
+    set-variable $buffer-hilight .hilight.zfile
     set-variable :zftype #l8
-    set-variable :zfcol &reg "/history" &spr "%s/%s-file-col" $platform #l8 "-1"
     set-variable :mouse-pick-1 zfile-mouse-pick-1
     set-variable :mouse-drop-1 zfile-mouse-drop-1
-    set-variable #l9 &reg "/history" &spr "%s/%s-hilight" $platform :zftype ""
-    !if &not &seq #l9 "" 
-        set-variable $buffer-hilight &ind &cat ".hilight." #l9
-    !endif
 !emacro
 
 define-macro zfile-setup
     set-variable #l0 @ml "zfile extension"
-    set-variable #l1 @ml2 "zfile list command (%zb=zbase %zf=zfile)" &reg "/history" &spr "%s/%s-list" $platform #l0 ""
-    set-registry "/history" &spr "%s/%s-list" $platform #l0 #l1
-    set-variable #l1 @ml2 "zfile cut to search string" &reg "/history" &spr "%s/%s-cut-to" $platform #l0 ""
-    set-registry "/history" &spr "%s/%s-cut-to" $platform #l0 #l1
-    set-variable #l1 @ml2 "zfile list file column" &reg "/history" &spr "%s/%s-file-col" $platform #l0 ""
-    set-registry "/history" &spr "%s/%s-file-col" $platform #l0 #l1
-    set-variable #l1 @ml2 "zfile file end search string" &reg "/history" &spr "%s/%s-file-end" $platform #l0 ""
-    set-registry "/history" &spr "%s/%s-file-end" $platform #l0 #l1
-    set-variable #l1 @ml2 "zfile extract command (%zb=zbase %zf=zfile %fb=fbase)" &reg "/history" &spr "%s/%s-extract" $platform #l0 ""
-    set-registry "/history" &spr "%s/%s-extract" $platform #l0 #l1
-    set-variable #l1 @ml2 "zfile remove extract command (%fb=fbase)" &reg "/history" &spr "%s/%s-remove" $platform #l0 ""
-    set-registry "/history" &spr "%s/%s-remove" $platform #l0 #l1
+    set-variable #l1 @ml2 "zfile list command (%zb=zbase %zf=zfile)" &reg "/history" &spr "%s/zfile/%s-list" $platform #l0 ""
+    set-registry "/history" &spr "%s/zfile/%s-list" $platform #l0 #l1
+    set-variable #l1 @ml2 "zfile cut to search string" &reg "/history" &spr "%s/zfile/%s-cut-to" $platform #l0 ""
+    set-registry "/history" &spr "%s/zfile/%s-cut-to" $platform #l0 #l1
+    set-variable #l2 1
+    !repeat
+        set-variable #l1 @ml2 &cat "zfile search string " #l2 &reg "/history" &spr "%s/zfile/%s-s%d" $platform #l0 #l2 ""
+        !if &seq #l1 ""
+            !force delete-registry &spr "/history/%s/zfile/%s-s%d" $platform #l0 #l2 #l1
+        !else
+            set-registry "/history" &spr "%s/zfile/%s-s%d" $platform #l0 #l2 #l1
+            set-variable #l3 @ml2 &cat "zfile search string " #l2 &reg "/history" &spr "%s/zfile/%s-r%d" $platform #l0 #l2 ""
+            set-registry "/history" &spr "%s/zfile/%s-r%d" $platform #l0 #l2 #l3
+            set-variable #l2 &add #l2 1
+        !endif
+    !until &seq #l1 ""
+    set-variable #l1 @ml2 "zfile extract command (%zb=zbase %zf=zfile %fb=fbase)" &reg "/history" &spr "%s/zfile/%s-extract" $platform #l0 ""
+    set-registry "/history" &spr "%s/zfile/%s-extract" $platform #l0 #l1
+    set-variable #l1 @ml2 "zfile remove extract command (%fb=fbase)" &reg "/history" &spr "%s/zfile/%s-remove" $platform #l0 ""
+    set-registry "/history" &spr "%s/zfile/%s-remove" $platform #l0 #l1
 !emacro
