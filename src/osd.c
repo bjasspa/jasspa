@@ -3420,9 +3420,8 @@ osdDisplayPush(int id, int flags)
                    !(osdCurChild->context[ii].menu->flags & MF_SEP))
                 {
                     osdCurChild->curContext = ii ;
-                    /* if the default is an include select the child's default item */
-                    if(((osdCurChild->context[ii].menu->flags & MF_CHILD) == 0) ||
-                       ((osdCurChild->context[ii].child->display->flags & RF_DEFAULT) == 0))
+                    /* if the default is not a child we have the default item */
+                    if((osdCurChild->context[ii].menu->flags & MF_CHILD) == 0)
                     {
                         /* if this is an entry force entry by loading a space key event */
                         if(osdCurChild->context[ii].menu->flags & MF_ENTRY)
@@ -3430,6 +3429,17 @@ osdDisplayPush(int id, int flags)
                         break ;
                     }
                     osdCurChild = osdCurChild->context[ii].child->display ;
+                    if((osdCurChild->flags & RF_DEFAULT) == 0)
+                    {
+                        /* the child has no default, select the first item and finish */
+                        for(ii=0 ; ii<osdCurChild->numContexts ; ii++)
+                            if(!(osdCurChild->context[ii].menu->flags & MF_SEP))
+                            {
+                                osdCurChild->curContext = ii ;
+                                break ;
+                            }
+                        break ;
+                    }
                     defItem = osdCurChild->dialog->defItem ;
                     ii = -1 ;
                 }
@@ -4378,16 +4388,17 @@ osdDisplaySelectFirstLetter(int cc, osdDISPLAY *md)
 static int
 osdDisplayTabMove(osdDISPLAY *md, int dir, int mustSel)
 {
-    int tab, tt, btt=0, bii=-1, ii=md->curContext ;
+    int tab, tt, btt, bii, ii=md->curContext, loopItem=-1 ;
     
     if(mustSel || (ii < 0))
         tab = -1 ;
     else
         tab = md->context[ii].menu->item ;
     
+try_again:
     /* loop through the contexts find the closest match
      * (going backwards just for ease) */
-    for(ii=md->numContexts ; ii-- ; )
+    for(ii=md->numContexts,btt=0,bii=-1 ; ii-- ; )
     {
         /* only allow tab to select the current tab-page item, ignore the other pages */
         if((md->context[ii].menu->flags & MF_TAB) &&
@@ -4453,7 +4464,14 @@ osdDisplayTabMove(osdDISPLAY *md, int dir, int mustSel)
         if(md->context[bii].menu->flags & MF_CHILD)
         {
             if(!osdDisplayTabMove(md->context[bii].child->display,dir,1))
-                return 0 ;
+            {
+                if(loopItem < 0)
+                    loopItem = bii ;
+                else if(loopItem == bii)
+                    return 0 ;
+                tab = md->context[bii].menu->item ;
+                goto try_again ;
+            }
         }
         else
             osdNewChild = md ;
@@ -4469,8 +4487,6 @@ osdDisplayTabMove(osdDISPLAY *md, int dir, int mustSel)
         }
         return 1 ;
     }
-/*    if(!mustSel && (md->flags & RF_CHILD))*/
-/*        return osdDisplayTabMove(md->prev,dir,0) ;*/
     return 0 ;
 }
 
