@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var051.5,v 2.5 2002-01-11 21:58:43 jon Exp $
+.Id $Id: m5var051.5,v 2.6 2002-10-16 22:28:04 jon Exp $
 .Im MicroEmacs variable|hilight
 .so me.tni
 .TH $window-chars 5
@@ -13,7 +13,7 @@ $window-chars - Character set used to render the windows
 .Me $a
 .SH SYNOPSIS
 \fB$window-chars\fR "\fIsting\fR"; Default is
-"\fC=-#*%=^|#|v*==^^||##||vv**|<-#->*||<<--##-->>** x*[]>\\.\fR"
+"\fC=-#*%=^|#|v*==^^||##||vv**|<-#->*||<<--##-->>** x*[]>\\.$$\\\fR"
 .SH DESCRIPTION
 .B $window-chars
 is a fixed length string that defines the set of characters used to render the
@@ -76,35 +76,45 @@ Osd title bar blank character. Default is '\fB \fR'.
 .IP "Index 48"
 Osd title bar right corner kill character. Default is '\fBx\fR'.
 .IP "Index 49"
+Osd dialog bottom right corner resize character. Default is '\fB*\fR'.
+.IP "Index 50"
 Osd open button character. Default is '\fB \fR'.
-.IP "Index 48"
+.IP "Index 51"
 Osd close button character. Default is '\fB \fR'.
-.IP "Index 49"
+.IP "Index 52"
 Displayed tab character (used when
 .Ht $system 5
 bit 0x80000 is set). Default is '\fB>\fR'.
-.IP "Index 50"
+.IP "Index 53"
 Displayed new-line character (used when
 .Ht $system 5
 bit 0x80000 is set). Default is '\fB\\\fR'.
-.IP "Index 51"
+.IP "Index 54"
 Displayed space character (used when
 .Ht $system 5
 bit 0x80000 is set). Default is '\fB.\fR'.
+.IP "Index 55"
+Displayed  truncated  text to left  character  (used when the current  line is
+scrolled to the right). Default is '\fB$\fR'.
+.IP "Index 56"
+Displayed  truncated  text to right  character  (used when the current  line is
+longer than the window width). Default is '\fB$\fR'.
+.IP "Index 57"
+Inserted end of wrapped line character in an
+.Ht ipipe-shell-command 2
+buffer. Default is '\fB\\\fR'.
 .SH EXAMPLE
 The
 .B $window-chars
 is typically platform  dependent, it's setting is determined by the characters
 available  in  character  set  of  the  hosting  platform.  \s-1MS-DOS\s0  and
-Microsoft Windows environments might use a string such as:-
+Microsoft Windows use an OEM font might use the following value:
 .CS
-"=-#*%\\x1E\\xB1\\xDB\\xB1\\x1F\\x04 \\x1E\\xB1\\xB1\\xDB\\xDB\\xB1\\xB1 \\x1F\\x1B\\x1A\\xaf\\xfb\\xfa"
+"=-#*%=\\C^\\xB1 \\xB1\\C_\\CD==\\C^\\C^\\xB1\\xB1  \\xB1\\xB1\\C_\\C_\\C[
+\\CZ|\\CQ\\xB1 \\xB1\\CP\\CD||\\CQ\\CQ\\xB1\\xB1  \\xB1\\xB1\\CP\\CP\\C[
+\\CZ x*  >\\\\.$$\\\\"
 .CE
-X-Windows environments might use a string such as:-
-.CS
-"=-#*%^\\x02 \\x02v\\x01 ^\\x02\\x02  \\x02\\x02 v\\xAB\\xBB>\\\\."
-.CE
-Both  utilize  platform  specific  characters  to  render  some of the  window
+This utilizes  character-set  specific characters to render some of the window
 components.
 .SH NOTES
 .BS
@@ -115,6 +125,13 @@ used for the scroll box.
 Use
 .Ht symbol 3
 to determine the displayable characters on the host platform.
+.BU
+The use of \*(mS's  extended  character set on Windows and XTerm platforms can
+greatly  improve  the look and  usability  of \*(mS, see the  Extend  Char Set
+option in the Platform page of
+.Ht user-setup 3
+and bit \fC0x10000\fR of variable
+.Ht $system 5 .
 .BE 0
 .SH "SEE ALSO"
 .na

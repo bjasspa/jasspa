@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2mod015.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2mod015.2,v 2.6 2002-10-16 22:28:04 jon Exp $
 .Im MicroEmacs modes
 .so me.tni
 .TH usr 2m
@@ -23,6 +23,9 @@ modes have no  predefined  purpose,  they are present to provide the user with
 the ability to store some buffer state. All of these modes are off by default.
 For  example,  the user may wish to have two  commands  bound to the same key,
 with another command to toggle which one is currently active.
+.SH NOTES
+The  toolbar  'Buffer File Info' tool uses \fBusr8\fR mode to track the status
+of the buffer, when using this tool the mode should  not be used.
 .SH "SEE ALSO"
 .na
 .Ht buffer-mode 2 ,

@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd036.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd036.2,v 2.6 2002-10-16 22:28:04 jon Exp $
 .Im MicroEmacs command|window
 .ds C0 "(\fB\*(cX0\fR)\ \&
 .ds C1 "(\fB\*(cX1\fR)\ \&
@@ -20,14 +20,19 @@ delete-other-windows \- Delete other windows
 .Me $a
 .SH SYNOPSIS
 .na
-\fBdelete-window\fR \*(C0
+\fIn\fR \fBdelete-window\fR \*(C0
 .br
-\fBdelete-other-windows\fR \*(C1
+\fIn\fR \fBdelete-other-windows\fR \*(C1
 .ad
 .SH DESCRIPTION
 .B delete-window
 attempts  to delete  the  current  window  (remove  window  from the  screen),
-retrieving the lines for use in the window adjacent to it.
+retrieving  the lines for use in the window  adjacent to it. The command fails
+if  there is no other  window  or if the  current  window  is  protected  from
+deletion (see
+.Ht $window-flags 5 ).
+The deletion  protection  can be  overridden by giving the command a numerical
+argument \fIn\fR of 2.
 .PP
 The window  deletion  policy is  determined  by the  formation  of the windows
 displayed on the screen. The bias is for the \fIprevious\fR window (above) the
@@ -36,14 +41,19 @@ be merged when split horizontally.
 .PP
 .B delete-other-windows
 deletes all of the other windows, the current  window becomes the only window,
-using the entire available screen area.
+using the entire available screen area. Windows can be protected from deletion
+by using the  
+.Hl "$window-flags" "$window-flags" 5
+variable, giving the command a numerical  argument \fIn\fR of 2 overrides this
+protection.
 .SH "SEE ALSO"
 .na
 .Ht set-position 2 ,
 .Ht grow-window-vertically 2 ,
 .Ht resize-window-vertically 2 ,
 .Ht split-window-horizontally 2 ,
-.Ht split-window-vertically 2 .
+.Ht split-window-vertically 2 ,
+.Ht $window-flags 5 .
 .ad
 .rm C0
 .rm C1

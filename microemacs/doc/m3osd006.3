@@ -6,7 +6,7 @@
 .\"  Created By    : Steven Phillips
 .\"  Created       : Sat Aug 22 09:00:06 1998
 .\"
-.Id $Id: m3osd006.3,v 2.6 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m3osd006.3,v 2.7 2002-10-16 22:28:04 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH "MainMenu" 3
@@ -302,7 +302,7 @@ Executes command
 .IP "\fCWord Complete\fR"
 Takes the  incomplete  word to the left of the cursor and attempts to complete
 the word by using the users current language dictionary. Executes command
-.Ht spell-complete-word 3 .
+.Ht expand-word 3 .
 .IP "\fCCompare Windows\fR"
 Executes command
 .Ht compare-windows 2 .
@@ -338,19 +338,23 @@ Executes command
 .Ht split-window-vertically 2 .
 .IP "\fCGrow Window V\fR"
 Executes command
-.Ht grow-window-vertically 2 .
+.Ht change-window-depth 2
+with an argument of 1.
 .IP "\fCShrink Window V\fR"
 Executes command
-.Ht shrink-window-vertically 2 .
+.Ht change-window-depth 2
+with an argument of -1.
 .IP "\fCSplit Window H\fR"
 Executes command
 .Ht split-window-horizontally 2 .
 .IP "\fCGrow Window H\fR"
 Executes command
-.Ht grow-window-horizontally 2 .
+.Ht change-window-width 2
+with an argument of 1.
 .IP "\fCShrink Window H\fR"
 Executes command
-.Ht shrink-window-horizontally 2 .
+.Ht change-window-width 2
+with an argument of -1.
 .IP "\fCOne Window\fR"
 Executes command
 .Ht delete-other-windows 2 .
@@ -363,6 +367,15 @@ Executes command
 .IP "\fCNext Window\fR"
 Executes command
 .Ht next-window 2 .
+.IP "\fCCreate New Frame\fR"
+Create  an new  external  frame,  only  available  on  version  which  support
+multiple-window frames. Executes command
+.Ht create-frame 2 .
+.IP "\fCCreate New Frame\fR"
+Closes  the  current   frame,  only   available  on  version   which   support
+multiple-window  frames. The command  will fail if this is the only frame, use
+File -> Exit to exit \*(mS, executes command
+.Ht delete-frame 2 .
 .SS "Help Menu"
 .IP "\fCCurr Buffer Help\fR"
 For some file formats \*(mS  provides a file format  specific help page giving

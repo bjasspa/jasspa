@@ -6,31 +6,30 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Jul 5 18:16:21 1999
 .\"
-.Id $Id: m3mac045.3,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m3mac045.3,v 2.6 2002-10-16 22:28:04 jon Exp $
 .Im MicroEmacs scuts|bind
 .so me.tni
-.TH iso-accents-mode 3
-.XI iso-accents-mode - "ISO accent expansion short-cut mode" 
-.XI iso-accents-expand - "Expand an ISO accent" 
+.TH expand-iso-accents 3
+.XI expand-iso-accents - "Expand an ISO accent"
+.XI iso-accents-mode - "ISO accent expansion short-cut mode"
 .SH NAME
+.Me "|expand-iso-accents"
+expand-iso-accents \- Expand an ISO accent
+.br
 .Me "|iso-accents-mode"
 iso-accents-mode \- Enable/disable ISO accent expansion short-cut mode
-.br
-.Me "|iso-accents-expand"
-iso-accents-expand \- Expand an ISO accent
 .Me $a
 .SH SYNOPSIS
 .na
-.I n
-.B iso-accents-mode
+.B expand-iso-accents
 .br
 .I n
-.B iso-accents-expand
+.B iso-accents-mode
 .ad
 .SH DESCRIPTION
-\fBiso-accents-mode\fR provides a facility to enter a plain text representation
-of an ISO accent and then to expand it into a proper ISO  accented  character.
-For example:-
+\fBexpand-iso-accents\fR   provides   a   facility   to  enter  a  plain  text
+representation  of an ISO  accent  and  then to  expand  it into a proper  ISO
+accented character. For example:-
 .IP
 .na
 .nf
@@ -54,33 +53,47 @@ For example:-
 .fi
 .ad
 .PP
-In order to use the ISO accent  expansion  then it must be  installed,  either
-from  the  command  line  or,  for a more  permanent  installation,  from  the
-\fIuser\fR.emf   file.   Installation   is   performed   using   the   command
-\fBiso-accents-mode\fR,  if \fIn\fR is specified (any non-zero  numeric value)
-then the ISO accent expansion is installed locally into the current buffer. If
-\fIn\fR is omitted then expansion is available  globally (across all buffers).
-An argument of 0 and the \fBiso-accents-mode\fR is un-installed.
+The  \fBexpand-iso-accents\fR  can be  called  directly  to  expands  the  ISO
+abbreviated  character sequence into it's ISO ASCII character  equivalent. The
+command  looks at the 2 characters to the left of the cursor and tries to find
+a matching  abbreviation,  if found the 2 characters are removed,  replaced by
+the single ISO character.
 .PP
-.B iso-accents-expand
-is the macro command that expands the ISO abbreviated  character sequence into
-it's ISO ASCII  character  equivalent.  This is by default  bound to \fCESC\fR
-\fCESC\fR. If an ISO character is not located then
+The more typical way of using this feature is by enabling its use in the
+.Hl "abbreviation handler" expand-abbrev-handle 3
+which is  usually  bound to "\fC\*e  \*e\fR".  It can be  enabled by either by
+using   the   \fBiso-accents-mode\fR   command   or,  for  a  more   permanent
+installation, from the
+.Ht user-setup 3
+=> General => Abbrev Expansion settings.
+.PP
+When using the  \fBiso-accents-mode\fR  command, if a numeric argument \fIn\fR
+is given (the value is not used) then the ISO accent  expansion  is  installed
+locally  into the  current  buffer. If \fIn\fR is omitted  then  expansion  is
+enabled/disabled globally (across all buffers).
+.PP
+.B expand-iso-accents
+is the macro command that   This is by default  bound to
+\&. If an ISO character is not located then
 .Ht expand-abbrev 2
 is invoked to try a standard abbreviation.
 .SH NOTES
-\fBiso-accents-mode\fR and  \fBiso-accents-expand\fR are implemented as macros
-in the file  \fClangutl.emf\fR, the repertoire of expansions may be enhanced by
-editing this file. 
+\fBiso-accents-mode\fR and  \fBexpand-iso-accents\fR are implemented as macros
+in the file  \fCabbrev.emf\fR, the repertoire of expansions may be enhanced by
+editing this file.
 .PP
-The  operation  of  the  \fBiso-accents-mode\fR   could  equally  as  well  be
-implemented with the appropriate definitions in a
-.Ht global-abbrev-file 2 .
+Unlike the general
+.Ht expand-abbrev 2
+command  which  attempts to expand the current word,  \fBexpand-iso-accents\fR
+only  considers  the last two  characters  regardless of whether they are word
+characters or start a word. Therefore the general  \fBexpand-abbrev\fR command
+cannot be used to implement a similar feature.
 .SH "SEE ALSO"
 .na
+.Ht expand-abbrev-handle 3 ,
 .Ht buffer-abbrev-file 2 ,
 .Ht expand-abbrev 2 ,
-.Ht global-abbrev-file 2 ,
-.Ht global-abbrev-file 2 .
+.Ht expand-look-back 3 ,
+.Ht expand-word 3 .
 .ad
 .FH

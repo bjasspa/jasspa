@@ -6,7 +6,7 @@
 .\"  Created By    : Steven Phillips
 .\"  Created       : Sat Aug 22 09:00:06 1998
 .\"
-.Id $Id: m3osd000.3,v 2.8 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m3osd000.3,v 2.9 2002-10-16 22:28:04 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH user-setup 3
@@ -88,12 +88,32 @@ environment  of the other editor. \*(mE is released with two emulation  modes,
 MicroEmacs v3.8 which executes macro file \fCmeme3_8.emf\fR (See
 .Hl Compatibility Compatibility 2
 for more  information)  and NEdit v5 which is at best a demonstration  of what
-can be achieved, this executes macro file \fCmenedit.emf\fR. 
+can be achieved, this executes macro file \fCmenedit.emf\fR.
+.IP "\fCMS Friendly Keys\fR"
+When enabled the following key bindings are created to ease frustration for MS
+users:
+.RS
+.IP "\fChome\fR"
+Bound to beginning-of-line instead of beginning-of-buffer.
+.IP "\fCend\fR"
+Bound to end-of-line instead of end-of-buffer.
+.IP "\fCC-home\fR"
+Bound to beginning-of-buffer.
+.IP "\fCC-end\fR"
+Bound to end-of-buffer.
+.IP "\fCC-v\fR"
+Bound to yank (paste).
+.IP "\fCesc-v\fR"
+Bound to reyank.
+.RE
+.IP
+Note that the "\fCC-x\fR" and "\fCC-c\fR"  keys are just to intrinsic to \*(mS
+to rebind (sorry).
 .IP "\fCMS Shift Region\fR"
 Enables/disables  cursor  key  manipulation  with the  shift  key  similar  to
 the conventional Microsoft region selection. When enabled,
 pressing the shift key in  conjunction  with the cursor  movement keys selects
-a region which is hilighted. Once the region is selected then the 
+a region which is hilighted. Once the region is selected then the
 \fC<DELETE>\fR or \fC<BACKSPACE>\fR  key erases the selected region. This also
 enables a similar  behaviour  with the Mouse  \fBDrag  region\fR  driver,  see
 below.
@@ -158,7 +178,7 @@ seconds or 5 minutes. This indirectly sets the
 .Ht auto-time 5
 variable and the
 .Ht autosv 2m
-global mode. 
+global mode.
 .IP "\fCGlobal Modes\fR"
 Sets the initial state of the global
 .Ht quiet 2m
@@ -230,6 +250,15 @@ that global, local and menu hot-key  bindings  override these. This indirectly
 sets bit 0x4000 of the
 .Ht $system 5
 variable.
+.IP "\fCAbbrev Expansion\fR"
+Configures which expansion methods are enabled by default when the
+.Ht expand-abbrev-handle 3
+is executed. \fBAccent\fR enables
+.Ht expand-iso-accents 3 ,
+\fBLookbk\fR enables
+.Ht expand-look-back 3
+and \fBDict'n\fR enables
+.Ht expand-word 3 .
 .IP "\fCTab To Indent\fR"
 Sets the
 .Ht tab 2
@@ -288,11 +317,14 @@ characters. This indirectly sets bit
 \fC0x80000\fR of the
 .Ht $system 5
 variable.
+.IP "\fCEnable Toolbar\fR"
+Enables the Toolbar - configurable, managed windows giving easy access to many
+features and tools.
 .IP "\fCClient Server\fR"
 The  client/server  enables the file based external macro command driver to be
 enabled - see
 .Hl Client-Server Client-Server 2 .
-This by default is disabled, when enabled it is used by 
+This by default is disabled, when enabled it is used by
 .Hl command-line me 1
 options  \fB-m\fR  and  \fB-o\fR.
 .IP "\fCDOS File Names\fR"
@@ -429,7 +461,7 @@ See \fBPlatform UNIX Setup\fR above.
 See \fBPlatform UNIX Setup\fR above.
 .IP "\fCChoose Font\fR"
 Opens a windows  dialog  allowing the user to select a font, the  selection is
-used to configure the above font fields.  
+used to configure the above font fields.
 .IP "\fCDraw White Spaces\fR"
 See \fBPlatform UNIX Setup\fR above.
 .IP "\fCCapture Alt Space\fR"
@@ -439,8 +471,8 @@ to Windows  which  opens the top left window  menu, allow  keyboard  access to
 Window commands like Maximize.
 .IP "\fCClient Server\fR"
 See  \fBPlatform  UNIX Setup\fR  above. Note that on windows based systems the
-client/server is also used by 
-.Ht memsdev 1 
+client/server is also used by
+.Ht memsdev 1
 to drive the editor from the Microsoft Developer environment.
 .IP "\fCDOS File Names\fR"
 See  \fBPlatform  UNIX Setup\fR above. Note that some early version of Windows
@@ -713,7 +745,7 @@ The lower  half of the  dialog  configures  the  currently  selected  tool, as
 follows:-
 .IP "\fCTool Name\fR"
 Sets the  displayed  name of the tool. The tool name is used in the buttons in
-the top half of this dialog and in the \*(mS Main Tools Menu. 
+the top half of this dialog and in the \*(mS Main Tools Menu.
 .IP "\fCTool Command Line\fR"
 Sets the system command-line to be launched whenever the tool is executed, the
 following  special tokens may be used in the command-line which are substituted
@@ -754,10 +786,10 @@ and  inserted  into a new  buffer.  When  enabled  the  following  two  items,
 to execute the tool is
 .Ht shell-command 2 ,
 otherwise the command used is either
-.Ht pipe-shell-command 2 
+.Ht pipe-shell-command 2
 or
 .Ht ipipe-shell-command 2
-depending on the setting of \fCRun Concurrently\fR. 
+depending on the setting of \fCRun Concurrently\fR.
 .IP "\fCBuffer\fR"
 Specifies the buffer name the captured output should be dumped to, this option
 is only visible when  \fCCapture  Output\fR is enabled. The following  special

@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var033.5,v 2.5 2002-01-11 21:58:43 jon Exp $
+.Id $Id: m5var033.5,v 2.6 2002-10-16 22:28:04 jon Exp $
 .Im MicroEmacs variable|macrodevelop
 .so me.tni
 .TH $mouse-x 5
@@ -19,24 +19,24 @@ $mouse-y \- Mouse Y (vertical) position
 .SH SYNOPSIS
 \fB$mouse-x\fR \fIinteger\fR
 .sp
-0 <= \fIinteger\fR <= 
-.Hl "$screen-width" $screen-width  5
+0 <= \fIinteger\fR <=
+.Hl "$frame-width" $frame-width  5
 \- 1
 .sp
 \fB$mouse-y\fR \fIinteger\fR
 .sp
-0 <= \fIinteger\fR <= 
-.Hl "$screen-depth" $screen-depth  5
+0 <= \fIinteger\fR <=
+.Hl "$frame-depth" $frame-depth  5
 \- 1
 .SH DESCRIPTION
 .B $mouse-x
-and 
+and
 .B $mouse-y
 are  automatically  set to the  position of the mouse at the last mouse event,
 where an event is a button press or release.  Initialized to 0,0. The top left
 character of the screen is coordinate 0,0 bottom right is
-.Hl $screen-width $screen-width 5 ,
-.Hl $screen-depth $screen-depth 5 .
+.Hl $frame-width $frame-width 5 ,
+.Hl $frame-depth $frame-depth 5 .
 .SH NOTES
 These  variables  can not be set. Any  attempt  to set them will  result in an
 error.
@@ -45,7 +45,7 @@ error.
 .Ht set-cursor-to-mouse 2 ,
 .Ht $mouse-pos 5 ,
 .Ht $cursor-x 5 ,
-.Ht $screen-depth 5 ,
-.Ht $screen-width 5 .
+.Ht $frame-depth 5 ,
+.Ht $frame-width 5 .
 .ad
 .FH

@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var078.5,v 2.5 2002-01-11 21:58:43 jon Exp $
+.Id $Id: m5var078.5,v 2.6 2002-10-16 22:28:04 jon Exp $
 .Im MicroEmacs variable|macrodevelop
 .so me.tni
 .TH $cursor-x 5
@@ -19,31 +19,31 @@ $cursor-y \- Cursor Y (vertical) position
 .SH SYNOPSIS
 \fB$cursor-x\fR \fIinteger\fR
 .sp
-0 <= \fIinteger\fR <= 
-.Hl "$screen-width" $screen-width  5
+0 <= \fIinteger\fR <=
+.Hl "$frame-width" $frame-width  5
 \- 1
 .sp
 \fB$cursor-y\fR \fIinteger\fR
 .sp
-0 <= \fIinteger\fR <= 
-.Hl "$screen-depth" $screen-depth  5
+0 <= \fIinteger\fR <=
+.Hl "$frame-depth" $frame-depth  5
 \- 1
 .SH DESCRIPTION
 .B $cursor-x
-and 
+and
 .B $cursor-y
 are  automatically set to the position of the cursor at the last screen update
 (i.e. the  variables  are not updated  between  screen  updates). The top left
 character of the screen is coordinate 0,0 bottom right is
-.Hl $screen-width $screen-width 5 ,
-.Hl $screen-depth $screen-depth 5 .
+.Hl $frame-width $frame-width 5 ,
+.Hl $frame-depth $frame-depth 5 .
 .SH NOTES
 These  variables  can not be set. Any  attempt  to set them will  result in an
 error.
 .SH "SEE ALSO"
 .na
 .Ht $mouse-x 5 ,
-.Ht $screen-depth 5 ,
-.Ht $screen-width 5 .
+.Ht $frame-depth 5 ,
+.Ht $frame-width 5 .
 .ad
 .FH

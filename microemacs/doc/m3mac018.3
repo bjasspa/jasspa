@@ -3,11 +3,12 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac018.3,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m3mac018.3,v 2.6 2002-10-16 22:28:04 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH etfinsrt 3
 .XI etfinsrt - "Insert template file into current buffer"
+.XI %company-name 5 "Name of company for template"
 .SH NAME
 etfinsrt \- Insert template file into current buffer
 .Me $a
@@ -42,6 +43,9 @@ defined to the value "\fC<unknown>\fR". The user name is usually set up in the
 User setup dialog.
 .IP \fC$YEAR$\fR
 To the current year (4 digit number).
+.IP \fC$CURSOR$\fR
+To leave the cursor at this point, only one of these tokens  should be used in
+the template and the token is removed.
 .SH EXAMPLE
 The following is taken from  hkmake.emf  and inserts the  "\fImakefile.etf\fR"
 template if the buffer has been created. 

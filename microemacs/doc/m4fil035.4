@@ -1,0 +1,166 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m4fil035.4,v 1.1 2002-10-16 22:30:10 jon Exp $
+.Im MicroEmacs macro;function;miscellaneous
+.so me.tni
+.TH &opt 4
+.XI &opt - "\*(mS optional feature test"
+.SH NAME
+&opt \- \*(mS optional feature test
+.SH SYNOPSIS
+.na
+.B &opt
+.I str
+.ad
+.SH DESCRIPTION
+This  function can be used to test the  availability  of optional  features in
+the current  session of \*(mS. Some features, like spelling  checker  support,
+are a  compilation  option,  other  options  like  mouse  support  may also be
+unavailable on some  platforms. The \fB&opt\fR  function can be used by macros
+to check that required base functionality is available.
+.PP
+The function  returns  \fC1\fR in the given feature  "\fIstr\fR" is supported,
+otherwise it returns \fC0\fR if the feature is unknown or not supported in the
+running version.
+.SH NOTES
+Optional  components  of \*(mE are  enabled/disabled  at  compile  time,  most
+options are  configured  by  \fCMEOPT_\fR\fI<NAME>\fR  \fC#define\fR's  within
+the source file \fCemain.h\fR. Following is a complete list of options, giving
+the \fBopt\fR string and \fC#define\fR label:
+.IP "abb - MEOPT_ABBREV"
+Abbreviation functionality (see
+.Ht expand-abbrev 2 ).
+.IP "cal - MEOPT_CALLBACK"
+Callback and idle event handling (see
+.Ht create-callback 2 ).
+.IP "cfe - MEOPT_CFENCE"
+Fence matching (see
+.Ht $fmatchdelay 5 ).
+.IP "cli - MEOPT_CLIENTSERVER"
+Client/server support (see
+.Hl Client-Server Client-Server 2 ).
+.IP "col - MEOPT_COLOR"
+All color support (making hilighting redundent etc, see
+.Ht add-color 2 ).
+.IP "cry - MEOPT_CRYPT"
+File encryption (see
+.Ht crypt 2m
+mode).
+.IP "deb - MEOPT_DEBUGM"
+Macro debugging (see
+.Ht $debug 5 ).
+.IP "dir - MEOPT_DIRLIST"
+Directory listing when loading a directory (see
+.Ht file-browser 3
+and
+.Ht dir 2m
+mode ).
+.IP "ext - MEOPT_EXTENDED"
+Miscellaneous more advanced commands and features such as
+.Ht append-buffer 2 .
+.IP "fho - MEOPT_FILEHOOK"
+File type auto-detection and configuration (see
+.Ht add-file-hook 2 ).
+.IP "fra - MEOPT_FRAME"
+Multiple frames (Internal or external, see opt "\fBmwf\fR" and command
+.Ht create-frame 2 ).
+.IP "has - MEOPT_CMDHASH"
+Use a hash table for rapid command name lookup.
+.IP "hil - MEOPT_HILIGHT"
+Hilight and user definable indentation rules (see
+.Ht hilight 2
+and
+.Ht indent 2 ). 
+.IP "hsp - MEOPT_HSPLIT"
+Horizontal window splitting (see
+.Ht split-window-horizontally 2 ).
+.IP "ipi - MEOPT_IPIPES"
+Interactive pipes (see
+.Ht ipipe-shell-command 2 ).
+.IP "ise - MEOPT_ISEARCH"
+Incremental search (see
+.Ht isearch-forward 2 ).
+.IP "lbi - MEOPT_LOCALBIND"
+Buffer, message-line and OSD local binding overrides (see
+.Ht buffer-bind-key 2 ).
+.IP "mag - MEOPT_MAGIC"
+Regular expression search engine (see
+.Ht magic 2m
+mode).
+.IP "mou - MEOPT_MOUSE"
+Mouse support (see
+.Ht $mouse 5 ).
+.IP "mwf - MEOPT_MWFRAME"
+Multiple window frame support (see opt "\fBfra\fR").
+.IP "nar - MEOPT_NARROW"
+Buffer narrowing (see
+.Ht narrow-buffer 2 ).
+.IP "nex - MEOPT_FILENEXT"
+Location list stepping (see
+.Ht get-next-line 2 ).
+.IP "osd - MEOPT_OSD"
+On Screen Display GUI support (see
+.Ht osd 2 ).
+.IP "pok - MEOPT_POKE"
+Direct screen poking (see
+.Ht screen-poke 2 ).
+.IP "pos - MEOPT_POSITION"
+Position storing and returning (see
+.Ht set-position 2 ).
+.IP "pri - MEOPT_PRINT"
+Printing support (see
+.Ht print-buffer 2 ).
+.IP "rcs - MEOPT_RCS"
+File Revision Control Support (see
+.Ht $rcs-co-com 5 ).
+.IP "reg - MEOPT_REGISTRY"
+Internal registry and history support (see
+.Ht read-registry 2
+and
+.Ht read-history 2 ).
+.IP "scr - MEOPT_SCROLL"
+Window scroll-bar support.
+.IP "soc - MEOPT_SOCKET"
+URL support, FTP and HTTP via sockets (see
+.Ht find-file 2 ).
+.IP "spa - MEOPT_SPAWN"
+External process launching (see
+.Ht shell-command 2 ).
+.IP "spe - MEOPT_SPELL"
+Spelling checker support (see
+.Ht spell 2 ).
+.IP "tag - MEOPT_TAGS"
+Tags support (see
+.Ht find-tag 2 ).
+.IP "tim - MEOPT_TIMSTMP"
+File timestamping on save (see
+.Ht time 2m
+mode).
+.IP "typ - MEOPT_TYPEAH"
+Input detect or 'type-ahead' for background processing support.
+.IP "und - MEOPT_UNDO"
+Undo support (see
+.Ht undo 2 ).
+.IP "wor - MEOPT_WORDPRO"
+Word-processor style commands like
+.Ht fill-paragraph 2
+(see
+.Ht forward-paragraph 2 ).
+.SH EXAMPLE
+The following  example  checks for URL support and if not available it pops up
+an error:
+.Me $emf-scheme
+.CS
+!if &not &opt "soc"
+    osd-dialog "Opt Test" "Error: No URL support!" "  &OK  "
+!endif
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Hl "Building \*(mS" Build 2 .
+.ad
+.FH

@@ -1,0 +1,49 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m3mac062.3,v 1.1 2002-10-16 22:30:10 jon Exp $
+.Im MicroEmacs command|scuts
+.so me.tni
+.TH expand-look-back 3
+.XI expand-look-back - "Complete a word by looking back for a similar word"
+.SH NAME
+expand-look-back \- Complete a word by looking back for a similar word
+.Me $a
+.SH SYNOPSIS
+.na
+.B expand-look-back
+.ad
+.SH DESCRIPTION
+.B expand-look-back
+attempts to complete the word at the current  position by looking backward for
+another  word which  starts the same. If such a word is found within 100 lines
+of the current cursor  position the current  partial word is replaced with the
+word found.
+.PP
+.B expand-look-back
+is automatically invoked from the
+.Ht expand-abbrev-handle 3
+macro in  response  to an  expansion  command,  it is only  invoked if enabled
+in the 
+.Ht user-setup 3
+=> General => Abbrev Expansion => Lookbk setting is enabled.
+.SH NOTES
+.B expand-look-back
+is a macro implemented in \fCabbrev.emf\fR.
+.PP
+The \fBuser-setup\fR configuration simply sets the macro
+variable  \fC.expand-look-back.on\fR  to TRUE, i.e.:
+.Me emf-scheme
+.CS
+set-variable .expand-look-back.on 1
+.CE
+.Me ehf-scheme
+It may be subsequently disabled by setting the variable back to 0.
+.SH "SEE ALSO"
+.na
+.Ht expand-abbrev-handle 3 ,
+.Ht user-setup 3 .
+.ad
+.FH

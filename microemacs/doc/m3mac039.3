@@ -3,13 +3,14 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac039.3,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m3mac039.3,v 2.6 2002-10-16 22:28:04 jon Exp $
 .Im MicroEmacs command|spell
 .so me.tni
 .TH auto-spell 3
 .XI auto-spell - "Auto-spell support"
 .XI auto-spell-buffer - "Auto-spell whole buffer"
 .XI auto-spell-reset - "Auto-spell hilight reset"
+.XI auto-spell-ignore - "Auto-spell ignore current word"
 .SH NAME
 .Me "|auto-spell"
 auto-spell \- Auto-spell support
@@ -19,15 +20,21 @@ auto-spell-buffer \- Auto-spell whole buffer
 .br
 .Me "|auto-spell-reset"
 auto-spell-reset \- Auto-spell hilight reset
+.br
+.Me "|auto-spell-ignore"
+auto-spell-ignore \- Auto-spell ignore current word
 .Me $a
 .SH SYNOPSIS
 .na
 .I n
-\fBauto-spell\fR 
+\fBauto-spell\fR
 .br
 \fBauto-spell-buffer\fR
 .br
 \fBauto-spell-reset\fR
+.br
+.I n
+\fBauto-spell-ignore\fR
 .ad
 .SH DESCRIPTION
 \fBauto-spell\fR  enables and disables the auto spell  checking of the current
@@ -44,9 +51,16 @@ spell, hilighting any unknown or miss-spelled words found.
 .PP
 \fBauto-spell-reset\fR resets the buffer hilighting scheme, removing any added
 erroneous words.
+.PP
+\fBauto-spell-ignore\fR  gets  the  current  word and  deletes  the  erroneous
+hilighting  and  adds the word to the  current  temporary  ignore  dictionary,
+auto-spell and the  spelling-checker  will now ignore the word. If an argument
+\fBn\fR of 2 is given to the  command the word is added to the users  personal
+dictionary instead of the temporary ignore dictionary so the word is 'ignored'
+in all future sessions of \*(mS as well.
 .SH NOTES
-\fBauto-spell\fR and \fBauto-spell-reset\fR are
-macros defined in \fCspellaut.emf\fR.
+\fBauto-spell\fR,    \fBauto-spell-buffer\fR,    \fBauto-spell-reset\fR    and
+\fBauto-spell-ignore\fR are macros defined in \fCspellaut.emf\fR.
 .SH "SEE ALSO"
 .na
 .Ht user-setup 3 ,

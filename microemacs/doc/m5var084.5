@@ -1,0 +1,83 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m5var084.5,v 1.1 2002-10-16 22:30:10 jon Exp $
+.Im MicroEmacs variable|macrodevelop
+.so me.tni
+.TH $window-flags 5
+.XI $window-flags - "Current window setup flags"
+.SH NAME
+$window-flags \- Current window setup flags
+.Me $a
+.SH SYNOPSIS
+\fB$window-flags\fR \fIbitmask\fR; Default is \fC0\fR
+.SH DESCRIPTION
+The   \fB$window-flags\fR   variable  is  used  to  set or get various   behavioural
+characteristic settings of the current window, it is a bit based flag where:
+.IP \fB0x001\fR
+If set the width of the window is locked, calls to
+.Ht resize-all-windows 2
+will maintained the width of this window whenever possible.
+.IP \fB0x002\fR
+If set the depth of the window is locked, calls to
+.Ht resize-all-windows 2
+will maintained the depth of this window whenever possible.
+.IP \fB0x004\fR
+If set the buffer being  displayed by the window is locked, the user can still
+manually change the buffer being displayed (by using commands like
+.Ht find-buffer 2 )
+but commands that pop-up buffers (such as
+.Ht help 2
+or
+.Ht find-tag 2 )
+will not use this window.
+.IP \fB0x008\fR
+When set the command
+.Ht compare-windows 2
+will ignore this window.
+.IP \fB0x010\fR
+When set the commands like
+.Ht previous-window 2
+and 
+.Ht next-window 2
+will  skip this  window  unless  the  numeric  argument  given to the  command
+is used to override the flag setting.
+.IP \fB0x020\fR
+When set the command
+.Ht delete-other-windows 2
+will not delete this  window  unless  the  numeric  argument  given to the  command
+is used to override the flag setting.
+.IP \fB0x040\fR
+When set the command
+.Ht delete-window 2
+will not delete this  window  unless  the  numeric  argument  given to the  command
+is used to override the flag setting.
+.IP \fB0x080\fR
+When set the window cannot be split using either the
+.Ht split-window-horizontally 2
+or
+.Ht split-window-vertically 2
+commands.
+.IP \fB0x100\fR
+If not set the window cannot be deleted if it is the only window  without this
+bit set. This more  esoteric  feature is utilized by the  toolbar, all toolbar
+windows  have this bit set which  means  that the main user  window  cannot be
+delete.
+.SH NOTES
+The $window-flags setting is not preserved during a window splitting operation
+(i.e. using a command like
+.Ht split-window-vertically 2 )
+as the persistence of these settings can lead to unexpected behaviour.
+.PP
+The  toolbar  uses bit  0x1000 to  indicate  that the window is  displaying  a
+toolbar  tool, this bit  should  not be used by users and its value  should be
+maintained.
+.SH "SEE ALSO"
+.na
+.Ht next-window 2 ,
+.Ht delete-other-windows 2 ,
+.Ht compare-windows 2 .
+.ad
+.FH

@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var046.5,v 2.5 2002-01-11 21:58:43 jon Exp $
+.Id $Id: m5var046.5,v 2.6 2002-10-16 22:28:04 jon Exp $
 .Im MicroEmacs variable|window|macrodevelop|modeline
 .so me.tni
 .TH $window-mode-line 5
@@ -21,14 +21,14 @@ $window-scroll-bar \- Window scroll bar (or separator) position
 .I integer
 .sp
 1 <= \fIinteger\fR <=
-.Hl $screen-depth $screen-depth 5
+.Hl $frame-depth $frame-depth 5
 \- 2
 .sp 2
 .B $window-scroll-bar
 .I integer
 .sp
 0 <= \fIinteger\fR <=
-.Hl "$screen-width" $screen-width 5
+.Hl "$frame-width" $frame-width 5
 \- 1
 .SH DESCRIPTION
 .B $window-mode-line
@@ -47,7 +47,7 @@ line or scroll-bar
 and
 .Ht $scroll-bar 5 ).
 A value of greater than
-.Ht $screen-width 5
+.Ht $frame-width 5
 indicates that there is no right-hand  separator column or scroll bar present.
 Often used in conjunction with
 .Ht $mouse-x 5 .

@@ -3,42 +3,50 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var037.5,v 2.5 2002-01-11 21:58:43 jon Exp $
+.Id $Id: m5var037.5,v 2.6 2002-10-16 22:28:04 jon Exp $
 .Im MicroEmacs variable|hilight
 .so me.tni
-.TH $screen-depth 5 
+.TH $frame-depth 5
+.XI $frame-depth - "Number of lines on the current frame canvas"
+.XI $frame-width - "Number of columns on the current frame canvas"
 .XI $screen-depth - "Number of character lines on the screen canvas"
 .XI $screen-width - "Number of character columns on the screen canvas"
 .SH NAME
-.Me "|$screen-depth"
-$screen-depth \- Number of character lines on the screen canvas
+.Me "|$frame-depth"
+$frame-depth \- Number of lines on the current frame canvas
 .br
-.Me "|$screen-width"
-$screen-width \- Number of character columns on the screen canvas
+.Me "|$frame-width"
+$frame-width \- Number of columns on the current frame canvas
 .Me $a
 .SH SYNOPSIS
-\fB$screen-depth\fR \fIinteger\fR
+\fB$frame-depth\fR \fIinteger\fR
 .sp
 3 <= \fIinteger\fR <= 400
 .sp
-\fB$screen-width\fR \fIinteger\fR
+\fB$frame-width\fR \fIinteger\fR
 .sp
 8 <= \fIinteger\fR <= 400
 .SH DESCRIPTION
-These variables allow the viewable size of the screen canvas to be determined.
+These  variables  allow the  viewable  size of the current  frame canvas to be
+determined.
 .PP
-.B $screen-depth
-identifies number of screen lines currently used. This is the whole screen not
-the window length. The value returned is in the range 3 - \fIn\fR,  \fIn\fR is
-system dependent but no greater than 400.
-.PP
-.B $screen-width
-identifies  the number of screen  columns  currently  used (whole screen). The
-value returned is in the range 8 - \fIn\fR, \fIn\fR is system dependent but no
+.B $frame-depth
+identifies  depth of the current frame given as the number of character lines.
+This is the whole frame width, not just what is  currently  visible. The value
+returned  is in the  range 3 - \fIn\fR,  \fIn\fR  is system  dependent  but no
 greater than 400.
+.PP
+.B $frame-width
+identifies the width of the current frame as the number of character  columns.
+The value  returned is in the range 8 - \fIn\fR,  \fIn\fR is system  dependent
+but no greater than 400.
+.SH NOTES
+The   name  of  these   variables   changed   from   \fB$screen-depth\fR   and
+\fB$screen-width\fR due to the support for multiple frames introduced in April
+2002.
 .SH "SEE ALSO"
 .na
-.Ht change-screen-depth 2 ,
-.Ht change-screen-width 2 .
+.Ht change-frame-depth 2 ,
+.Ht change-frame-width 2 .
 .ad
 .FH

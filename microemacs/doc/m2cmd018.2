@@ -3,45 +3,51 @@
 .\" Copyright (c) 1988-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd018.2,v 2.5 2002-01-11 21:58:41 jon Exp $
+.Id $Id: m2cmd018.2,v 2.6 2002-10-16 22:28:04 jon Exp $
 .Im MicroEmacs command|hilight
 .so me.tni
-.TH change-screen-depth 2
+.TH change-frame-depth 2
+.XI change-frame-depth - "Change the number of lines on the current frame"
+.XI change-frame-width - "Change the number of columns on the current frame"
 .XI change-screen-depth - "Change the number of lines on the screen"
 .XI change-screen-width - "Change the number of columns on the screen"
 .SH NAME
 .nf
-.Me "|change-screen-depth"
-change-screen-depth \- Change the number of lines of the screen
-.Me "|change-screen-width"
-change-screen-width \- Change the number of columns on the screen
+.Me "|change-frame-depth"
+change-frame-depth \- Change the number of lines on the current frame
+.Me "|change-frame-width"
+change-frame-width \- Change the number of columns on the current frame
 .fi
 .Me $a
 .SH SYNOPSIS
 .na
-.I n
-.B change-screen-depth
+\fIn\fR \fBchange-frame-depth\fR [ "\fIdepth\fR" ]
 .br
-.I n
-.B change-screen-width
+\fIn\fR \fBchange-frame-width\fR [ "\fIwidth\fR" ]
 .ad
 .SH DESCRIPTION
-.B change-screen-depth
-changes the size of the screen to \fIn\fR  lines deep. It is assumed  that the
-screen is \fIn\fR lines deep and \*(mE draws \fIn\fR lines at the users peril.
-A change in depth causes all of the windows currently  displayed on the screen
-to be re-sized, the vertical  position of the windows is modified to match the
-new  screen  dimension,  the  horizontal   position  of  the  windows  remains
+.B change-frame-depth
+changes  the depth of the current  frame, if the numeric  argument  \fIn\fR is
+given  then the frame  depth is  changed  by \fIn\fR  lines. If \fIn\fR is not
+specified  the user is prompted  for the new  \fIdepth\fR  and the frame depth
+will be  changed  to this  value. It is  assumed  that the screen can draw the
+requested \fIn\fR lines and \*(mS draws the lines at the users peril.
+.PP
+A change in depth causes all of the internal  windows  currently  displayed in
+the frame to be re-sized, the vertical position of the windows are modified to
+match the new screen dimension, the horizontal position of the windows remains
 unaltered. If the window is down-sized and the currently displayed windows are
 not able to fit into the new screen  space then all  windows are deleted  with
 the exception of the current window.
 .PP
-.B change-screen-width
-changes the size of the screen to \fIn\fR  characters wide. It is assumed that
-the screen is \fIn\fR  columns  wide and \*(mE  draws  \fIn\fR  columns at the
-users peril. The windows are reorganized as
-.B change-screen-depth
-working horizontally rather than vertically.
+.B change-frame-width
+changes  the width of the current  frame, if the numeric  argument  \fIn\fR is
+given then the frame width is changed by \fIn\fR characters. If \fIn\fR is not
+specified  the user is prompted  for the new  \fIwidth\fR  and the frame width
+will be  changed  to this  value. It is  assumed  that the screen can draw the
+requested \fIn\fR columns and \*(mS draws them at the users peril. The windows
+are reorganized as  \fBchange-frame-depth\fR  working horizontally rather than
+vertically.
 .SH NOTES
 Within windowing environments such as
 .B X-Windows
@@ -50,16 +56,17 @@ and
 these  commands  cause the canvas  window to be  re-sized to  accommodate  the
 change in screen size.
 .PP
-In \s-1MS-DOS\s0 environments the physical size of the screen is determined by
-the characteristics of the display adapter.
-.B change-screen-depth
+In \s-1MS-DOS\s0 and \s-1UNIX Termcap\s0 environments the physical size of the
+screen is determined by the characteristics of the display adapter.
+.B change-frame-depth
 may be used to correct  anomalies  (usually on  portables) in the  displayable
-screen area and the graphics  mode. e.g. the graphics  mode utilizes 50 lines,
-and only 47 lines are viewable. In this case change the screen depth to 47 and
-\*(mE will not utilize the remaining lines which are not viewable.
+screen area and the graphics  mode. e.g. In DOS the graphics  mode utilizes 50
+lines, and only 47 lines are viewable. In this case change the screen depth to
+47 and \*(mS will not utilize the remaining lines which are not viewable.
 .SH "SEE ALSO"
 .na
-.Ht $screen-depth 5 ,
-.Ht $screen-width 5 .
+.Ht $frame-depth 5 ,
+.Ht $frame-width 5 .
 .ad
 .FH
+

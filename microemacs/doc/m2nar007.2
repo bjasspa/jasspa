@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jun 17 22:26:42 1999
 .\"
-.Id $Id: m2nar007.2,v 2.7 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2nar007.2,v 2.8 2002-10-16 22:28:04 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .TH "Build" 2
@@ -26,11 +26,15 @@ The build script recognizes the following options:-
 Build clean. Delete all of the object files.
 .IP \fB-d\fR
 Build a debugging  version, the output is \fCmed\fR (or \fCmed32\fR for 32-bit
-Windows versions)
-.IP \fB-g\fR
-UNIX only. Builds using GNU compiler and tools as opposed to native tools.
+Windows versions).
 .IP \fB\-h\fR
 Display a simple help page
+.IP "\fB-l\fR \fIlogfile\fR"
+Redirect all compilation output to the \fIlogfile\fR, this may not work on DOS
+or Windows systems. 
+.IP "\fB-la\fR \fIlogfile\fR"
+Append all compilation  output to the end of \fIlogfile\fR,  this may not work
+on DOS or Windows systems.
 .IP "\fB-m\fR \fImakefile\fR"
 Build using the specified  makefile.  over-riding  the auto system detect. The
 supplied makefiles include:-
@@ -95,18 +99,26 @@ supplied makefiles include:-
 \fCwin32v6.mak\fR Microsoft Developer v6.x, 32-bit Windows.
 .BE 0
 .RE
-.IP \fB\-n\fR
-Build a console version (i.e. no window support).  Constructs the executable
-\fCmen32.exe\fR on Windows, \fCmen\fR on Linux.
-.IP \fB-nu\fR
-Build a console version with URL support (Windows '95/'98/NT only),  constructs the executable
-\fCmenu32.exe\fR.
-.IP "\fB\-p\fR \fI\|<searchpath>\|\fR"
-Sets the  default  system  search path to  \fI<searchpath>\fR,  the default is
-\fC/usr/local/microemacs\fR. Sets the default system search path to
+.IP \fB\-ne\fR
+Build NanoEmacs (a cut down version aimed as a vi replacement),  the output is
+\fCne\fR (or \fCned32\fR for 32-bit Windows versions).
 .IP \fB-S\fR
 Build  spotless.  Deletes  all of the object  files and any backup  files, tag
 files etc.
+.IP "\fB-t\fR \fItype\fR"
+Set the build type, where \fItype\fR can be one of the following:
+.RS
+.BS
+\fCc\fR  Build a console only version (i.e. no window  support), the output is
+\fCmec\fR (or \fCmec32\fR on Windows).
+.BU
+\fCw\fR  Build a windows only version (i.e. no console  support), the output is
+\fCmew\fR (or \fCmew32\fR on Windows).
+.BU
+\fCcw\fR  Build a version which  supports both console and windows, the output
+is \fCmecw\fR (or \fCmecw32\fR on Windows).
+.BE 0
+.RE
 .IP \fB-u\fR
 Build a URL version (Windows '95/'98/NT only),  constructs the executable
 \fCmeu32.exe\fR.
@@ -138,18 +150,4 @@ Other  \s-1UNIX\s0  ports  should  be fairly  easy from the base set of ported
 platforms. If any new platform ports are performed by individuals  then please
 submit the makefiles and any source changes back to JASSPA \- see
 .Hl "Contact Information" Contact - .
-.SS "Search Path"
-The default  search path is defined as  "\fI/usr/local/microemacs\fR"  for all
-UNIX  type   environments.   Recently  there  has  been  a  move  to  use  the
-"\fI/usr/share\fR"  directory.  The search path may be re-defined  through the
-macro definition  "\fC_SEARCH_PATH\fR".  Change the C pre-processor to include
-the macro  definition.  For  example,  to use  "\fI/usr/share/jasspa\fR"  with
-multiple sub-directories for each of the components:-
-.CS
--D_SEARCH_PATH="\\"/usr/share/jasspa/company:\\
-/usr/share/jasspa/macros:\\
-/usr/share/jasspa/spelling\\""
-.CE
-Note due to the line length then the \fIbackslash\fR (\\) has been used
-to continue the lines.
 .FH

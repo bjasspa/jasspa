@@ -3,17 +3,18 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd063.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd063.2,v 2.6 2002-10-16 22:28:04 jon Exp $
 .Im MicroEmacs command|window
-.ds C0 "(\fB\*(cXz\fR)\ \&
-.ds C1 "(\fB\*(cX\*cz\fR)\ \&
-.ds C2 "(\fB\*(cXw\fR)\ \&
 .so me.tni
-.TH grow-window-vertically 2
-.XI grow-window-vertically \- "\*(C0Enlarge the current window (relative change)"
-.XI shrink-window-vertically \- "\*(C1Shrink the current window (relative change)"
-.XI resize-window-vertically \- "\*(C2Resize the current window (absolute change)"
+.TH change-window-depth 2
+.XI change-window-depth \- "Change the depth of the current window"
+.XI grow-window-vertically \- "Enlarge the current window (relative change)"
+.XI shrink-window-vertically \- "Shrink the current window (relative change)"
+.XI resize-window-vertically \- "Resize the current window (absolute change)"
 .SH NAME
+.Me "|change-window-depth"
+change-window-depth \- Change the depth of the current window
+.br
 .Me "|grow-window-vertically"
 grow-window-vertically \- Enlarge the current window (relative change)
 .br
@@ -25,35 +26,49 @@ resize-window-vertically \- Resize the current window (absolute change)
 .Me $a
 .SH SYNOPSIS
 .na
-\fIn\fR \fBgrow-window-vertically\fR \*(C0
+\fIn\fR \fBchange-window-depth\fR [ "\fIdepth\fR" ]
+.sp
+\fIn\fR \fBgrow-window-vertically\fR
 .br
-\fIn\fR \fBshrink-window-vertically\fR \*(C1
+\fIn\fR \fBshrink-window-vertically\fR
 .br
-\fIn\fR \fBresize-window-vertically\fR \*(C2
+\fIn\fR \fBresize-window-vertically\fR
 .ad
 .SH DESCRIPTION
-.B grow-window-vertically
-enlarges  the current  window by \fIn\fR  number of lines (1 by  default).  If
-\fIn\fR is negative then the window is shrunk.
-.PP
-.B shrink-window-vertically
-shrinks  the  current  window by \fIn\fR  number of lines (1 by  default).  If
-\fIn\fR is negative then the window is enlarged.
-.PP
-.B resize-window-vertically
-change the size of the  current  window to \fIn\fR  lines, if  possible.  i.e.
-resize window is not a relative displacement.
-.PP
-Growth is performed by consuming space from the next vertical window below the
-current  window, except at the bottom of the screen where the previous  window
-is consumed.
+\fBchange-window-depth\fR  changes  the depth of the  current  window,  if the
+numeric  argument \fIn\fR is given then the window depth is changed by \fIn\fR
+lines.  If  \fIn\fR  is not  specified  the  user  is  prompted  for  the  new
+\fIdepth\fR  and the window  depth will be changed to this value. The  command
+aborts if the requested  size cannot be achieved (the window becomes too small
+or a neighbouring one does).
+.SH NOTES
+Commands   \fBgrow-window-vertically\fR,   \fBshrink-window-vertically\fR  and
+\fBresize-window-vertically\fR      were      replaced      by     the     new
+\fBchange-window-depth\fR   command  in  April  2002.   Following   are  macro
+implementations of the old commands:
+.Me $emf-scheme
+.CS
+define-macro grow-window-vertically
+    @# change-window-depth
+!emacro
+
+define-macro shrink-window-vertically
+    &neg @# change-window-depth
+!emacro
+
+define-macro resize-window-vertically
+    !if &not @?
+        !abort
+    !endif
+    change-window-depth @#
+!emacro
+.CE 0
+.Me $ehf-scheme
 .SH "SEE ALSO"
 .na
-.Ht grow-window-horizontally 2 ,
+.Ht change-window-width 2 ,
 .Ht resize-all-windows 2 ,
 .Ht split-window-vertically 2 .
 .ad
-.rm C0
-.rm C1
-.rm C2
 .FH
+
