@@ -570,7 +570,7 @@ define-macro file-browser-swap-buffers
         !abort
     !endif
     set-variable #l0 ""
-    2 osd-entry "Rename File" "&New Name : " #l0 20 .dirlst-pos.x .dirlst-pos.y
+    2 osd-entry "Rename File" "&New Name : " #l0 .dirlst-pos.x .dirlst-pos.y 20
     !if &seq &set #l1 &stat "t" &cat .find-file.file-dir #l0 "R"
         2 osd-xdialog "Rename File" &spr "  %s already exists, replace?  " #l0 2 .dirlst-pos.x .dirlst-pos.y " &Yes " " &No "
         !if &equ $result 2
@@ -638,8 +638,9 @@ define-macro file-browser-swap-buffers
 !emacro
 
 0 define-macro dirlst-new-folder
+    dirlst-pos -10 -4
     set-variable #l0 ""
-    osd-entry "New Folder" "Folder Name : " #l0 20
+    2 osd-entry "New Folder" "Folder Name : " #l0 .dirlst-pos.x .dirlst-pos.y 20
     0x100 file-op #l0
     !if &band .find-file.flags 1
         dirlst-refresh

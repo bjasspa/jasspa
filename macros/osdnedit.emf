@@ -1,15 +1,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
-;  Author        : $Author: jon $
 ;  Created By    : Steven Phillips
 ;  Created       : Wed Feb 21 09:26:58 2001
-;  Last Modified : <010222.0802>
-;
-;  Description
-;
+;  Description   : NEdit v5 Emulation
 ;  Notes
-;
-;  History
+;      See meosd.emf for notes on emulaton.
 ;
 ;  Copyright (c) 2001 JASSPA
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
