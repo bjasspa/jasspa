@@ -1,12 +1,12 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jul 16 23:13:14 1998
 .\"
-.Id $Id: m2cmd042.2,v 2.6 2005-01-13 23:43:40 bill Exp $
+.Id $Id: m2cmd042.2,v 2.7 2005-01-15 13:35:45 jon Exp $
 .Im MicroEmacs command|registry
 .so me.tni
 .TH get-registry 2
@@ -21,17 +21,23 @@ set-registry \- Modify a node value in the registry.
 .br
 \fI2\fR \fBset-registry\fR "\fIroot\fR" \fI"new-name\fR"
 .ad
+.SH INTRODUCTION
+The  \fIregistry\fR  is a  hierarchical  tree of node  names  optionally  with
+associated  node  values that is used for storing and  retrieving  values. The
+registry  mechanism  is  used  for  saving  and  retrieving   persistent  user
+information between sessions.
 .SH DESCRIPTION
 .B set-registry
-adds (or modifies) a new value to the registry.  \fIroot\fR is the root of the
-new entry and  \s-1MUST\s0  exist or the call fails.  \fIsubkey\fR is the node
-name (or path) if the path does not exist then it is created.  \fIvalue\fR  is
-the value to assign to the node.
+adds a new value or modifies an existing value in the registry.  \fIroot\fR is
+the  root  of  the  new  entry  and  \s-1MUST\s0  exist  or  the  call  fails.
+\fIsubkey\fR  is the node name (or `\fC/\fR'  separated  path) if the nodes in
+the path do not  exist  then  they are  created.  \fIvalue\fR  is the value to
+assign to the node.
 .PP
-If a numeric  argument  of 2 is given the  \fIroot\fR  is renamed to the given
-\fInew-name\fR;   the  \fIroot\fR  must  exist  or  the  call  fails.  If  the
-\fInew-name\fR  contains a path (i.e.  "new/path/name")  the registry  node is
-moved  to the new path  which  must be an  existing  absolute  path,  i.e. not
+If  a  numeric  argument  of 2 is  specified  the  \fIroot\fR  is  renamed  to
+\fInew-name\fR,   the  \fIroot\fR  must  exist  or  the  call  fails.  If  the
+\fInew-name\fR contains a path (i.e.  "\fCnew/path/name\fR") the registry node
+is moved to the new path  which must be an  existing  absolute  path, i.e. not
 relative to its current location.
 .SH EXAMPLE
 The following call
@@ -56,10 +62,12 @@ The value of the registry node may be retrieved using:-
 &reg "/history" "foo/win32/printer"
 .CE
 .Me $ehf-scheme
-which would return "\fCfoo-bar\fR".
+which would return the value "\fCfoo-bar\fR".
 .SH NOTES
-The  \fBget-registry\fR  command  was  removed in January  2005 as  \fB&reg\fR
-should be used.
+The  \fBget-registry\fR  command  was  removed in January  2005 in  preference
+to the  
+.Ht &reg 4
+function, the existing get command was never used.
 .SH "SEE ALSO"
 .na
 .Ht find-registry 2 ,
