@@ -138,7 +138,7 @@ define-macro buffer-setup
         set-variable #l9 &cat &sup &mid $buffer-fhook 6 1 &rig $buffer-fhook 7
     !endif
     -1 osd .osd.buffstp
-    osd .osd.buffstp 0 "batcdHs" 9 3 48 10 -1 -1 970 .scheme.osd-title &cat #l9 " Buffer Setup"
+    osd .osd.buffstp 0 "batcDIHs" 9 3 48 10 -1 -1 960 970 .scheme.osd-title &cat #l9 " Buffer Setup"
     osd .osd.buffstp 5 ""
     !if &not &seq &set #l1 &ind &spr ".%s.setup-flags" $buffer-fhook "ERROR"
         set-variable #l2 &ind &spr ".%s.setup-labels" $buffer-fhook
@@ -263,7 +263,7 @@ define-macro buffer-help
         set-variable #l9 &cat &sup &lef #l5 1 &rig #l5 1
     !endif
     -1 osd .osd.tmp
-    osd .osd.tmp 0  "batcdH" 9 3 1001 .scheme.osd-title &cat #l9 " Mode Help"
+    osd .osd.tmp 0  "batcDIH" 9 3 1001 1001 .scheme.osd-title &cat #l9 " Mode Help"
     osd .osd.tmp 1  "" 
     set-variable #l9 10
     !if &sin "p" #l0

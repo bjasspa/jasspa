@@ -233,11 +233,11 @@
 !emacro
 
 0 define-macro osd-help-set-size
-    osd .osd.ohlp   0 "batcHdsR" 9 3 .w .d -1 -1 100 .scheme.osd-title "MicroEmacs Help" osd-help-resize
-    osd .osd.ohlpn  0 "Nsd" &sub .w 2 &sub .d 2 -1 -1 10
-    osd .osd.ohlpc  0 "sd"  &sub .w 4 &sub .d 6 -1 -1 20 osd-help-cont-list-crt
-    osd .osd.ohlpi  0 "sd"  &sub .w 4 &sub .d 6 -1 -1 60 osd-help-index-crt
-    osd .osd.ohlps  0 "sd"  &sub .w 4 &sub .d 6 -1 -1 40
+    osd .osd.ohlp   0 "batcHIsR" 9 3 .w .d -1 -1 100 .scheme.osd-title "MicroEmacs Help" osd-help-resize
+    osd .osd.ohlpn  0 "NsI" &sub .w 2 &sub .d 2 -1 -1 10
+    osd .osd.ohlpc  0 "sI"  &sub .w 4 &sub .d 6 -1 -1 20 osd-help-cont-list-crt
+    osd .osd.ohlpi  0 "sI"  &sub .w 4 &sub .d 6 -1 -1 60 osd-help-index-crt
+    osd .osd.ohlps  0 "sI"  &sub .w 4 &sub .d 6 -1 -1 40
     osd .osd.ohlpcl 0 "sSf"  .scheme.osd-child &sub .w 8 &sub .d 10 0 -1 
     osd .osd.ohlpil 0 "AfsS" .scheme.osd-child &sub .w 8 &sub .d 10 0 -1 
     osd .osd.ohlpsl 0 "sSf"  .scheme.osd-child &sub .w 8 &sub .d 14 0 -1 
@@ -418,7 +418,7 @@ osd .osd.ohlpc 10  ""
 osd .osd.ohlpc 30  ""
 
 ; The note-book ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-osd .osd.ohlpn 0  "Nd" 10
+osd .osd.ohlpn 0  "NI" 10
 osd .osd.ohlpn 1  "Pft" "Contents" .osd.ohlpc
 osd .osd.ohlpn 2  "Pft" "Index"    .osd.ohlpi
 osd .osd.ohlpn 3  "Pft" "Search"   .osd.ohlps

@@ -300,7 +300,7 @@ osd .osd.orgl 0 "s" 64 35 -1 -1 org-list-init
 osd .osd.orga 0 "s" 64 35 -1 -1 org-addr-init
 osd .osd.orgt 0 "s" 64 35 -1 -1 org-setup-init
 
-osd .osd.org-n 0 "Ns" 66 39 -1 -1
+osd .osd.org-n 0 "NsDI" 66 39 -1 -1 100 100
 osd .osd.org-n 1 "Ptf" "Month"   .osd.orgm
 osd .osd.org-n 2 "Ptf" "Week"    .osd.orgw
 osd .osd.org-n 3 "Ptf" "Day"     .osd.orgd
@@ -309,7 +309,7 @@ osd .osd.org-n 5 "Ptf" "Address" .osd.orga
 osd .osd.org-n 6 "Ptf" "Setup"   .osd.orgt
 osd .osd.org-n 100 "It"          .osd.orgm
 
-osd .osd.org 0 "batcdHs" 6 3 68 41 -1 -1 630 .scheme.osd-title "Organizer"
+osd .osd.org 0 "batcDIHs" 6 3 68 41 -1 -1 10 10 .scheme.osd-title "Organizer"
 osd .osd.org 10 "It" .osd.org-n
 
 osd-bind-key .osd.org org-key-bind "C-left"

@@ -42,7 +42,7 @@ define-macro osd-fo-filetype
         filemask-to-regex #l0
         set-variable $file-names &cat .osd.fo-path #l0
         !while &not &seq &set #l3 $file-names ""
-            osd .osd.fofc 1 "Rx" #l3 0 "osd-fo-fileselect"
+            osd .osd.fofc 1 "RxBd" #l3 0 "osd-fo-fileselect"
             set-variable #p4 0
         !done
     !endif
@@ -258,7 +258,7 @@ define-macro osd-fo-okay
     osd .osd.fofm 6 "xMdscfHt" .scheme.osd-entry &spr "%s%n" &lef #l3 .osd.fo-width &sub .osd.fo-width &len #l3 " " .osd.foft
 !emacro
 
-osd .osd.fofm 0 "d" 3
+osd .osd.fofm 0 "I" 3
 osd .osd.fofm 1 "S" " \HFile Name:" 3
 osd .osd.fofm 3 "ExHtfc" .scheme.osd-entry "####################" 1 osd-fo-fileset
 osd .osd.fofm 4 "IbHt" .scheme.osd-sbar .osd.fo-width .osd.fo-depth .osd.fofc
@@ -272,7 +272,7 @@ osd .osd.fodm 4 "IbHt" .scheme.osd-sbar .osd.fo-width .osd.fo-depth .osd.fodc
     osd .osd.fodm 5 "S" " Dri\Hve:" 6
 !endif
 
-osd .osd.fobm 0   ""
+osd .osd.fobm 0   "D" 20
 osd .osd.fobm 10  ""
 osd .osd.fobm 20  "BcfxtH" .scheme.osd-ebtt "    \HOK    " .osd.fom osd-fo-okay
 osd .osd.fobm 30  ""
@@ -283,7 +283,7 @@ osd .osd.fobm 70  ""
 osd .osd.fobm 90  ""
 osd .osd.fobm 100  "Cfpxt" &cat .osd.checkbox-chars "\} \HShow backups" 1 osd-fo-options
 
-osd .osd.fom 0  "batcdHR" 3 6 .scheme.osd-title 2 "" osd-fo-resize
+osd .osd.fom 0  "batcDIHR" 3 6 6 2 .scheme.osd-title "" osd-fo-resize
 osd .osd.fom 1  ""
 osd .osd.fom 2  "Iht" .osd.fofm
 osd .osd.fom 3  "h" " "
@@ -292,7 +292,7 @@ osd .osd.fom 5  "h" " "
 osd .osd.fom 6  "It" .osd.fobm
 
 0 define-macro osd-get-file
-    osd .osd.fom 0  "batcdHR" 3 6 2 .scheme.osd-title .osd-get-file.title osd-fo-resize
+    osd .osd.fom 0  "batcDIHR" 3 6 6 2 .scheme.osd-title .osd-get-file.title osd-fo-resize
     set-variable .osd.fo-path &lef $buffer-fname &rsin "/" $buffer-fname
     !if &seq .osd.fodv "ERROR"
         set-variable .osd.fodv &add .osd.fodc 1

@@ -44,7 +44,7 @@
 !emacro
 
 -1 osd .osd.fattr
-osd .osd.fattr 0  "batcdHs" 10 3 40 0 -1 -1 610 .scheme.osd-title "File attributes"
+osd .osd.fattr 0  "batcDHs" 10 3 40 0 -1 -1 610 .scheme.osd-title "File attributes"
 osd .osd.fattr 10  ""
 osd .osd.fattr 40  ""
 osd .osd.fattr 50  "" "  File Type : "

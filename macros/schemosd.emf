@@ -805,7 +805,7 @@ osd .osd.schm-nb 1   "Pft" "Colors" .osd.schm-c
 osd .osd.schm-nb 2   "Pft" "Schemes" .osd.schm-s
 osd .osd.schm-nb 100 "It" .osd.schm-c
 
-osd .osd.schm 0   "batcHds" 9 3 59 31 -1 -1 630 .scheme.osd-title "Color Scheme Editor" 
+osd .osd.schm 0   "batcHIs" 9 3 59 31 -1 -1 630 .scheme.osd-title "Color Scheme Editor" 
 osd .osd.schm 10  ""
 osd .osd.schm 20  "Sfh" "       \HFile Name: " 30
 osd .osd.schm 30  "EtxHfh" .scheme.osd-entry "############" 1 schm-osd-set-fname

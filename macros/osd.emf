@@ -181,10 +181,10 @@ define-macro-file osdhelp osd-help
     osd-get-file
     set-variable #l0 .osd-get-file.result
     !if &not &stat "w" #l0
-        2 osd-dialog "Save Buffer As" "  Invalid file name  " 10 6 " \HOK "
+        3 osd-dialog "Save Buffer As" "  Invalid file name  " 10 6 " \HOK "
         !abort
     !elif &sequ &stat "t" #l0 "R"
-        2 osd-xdialog "Save Buffer As" "  Over-write existing file?  " 1 10 6 " \HYes " " \HNo "
+        3 osd-xdialog "Save Buffer As" "  Over-write existing file?  " 1 10 6 " \HYes " " \HNo "
         !if &equ $result 2
             !abort
         !endif
@@ -200,7 +200,7 @@ define-macro-file osdhelp osd-help
             find-buffer #l0
             set-variable #l1 &spr "  Save changes to buffer \"%s\"  \n\n  File: %s  " #l0 $buffer-fname
             find-buffer #l2
-            2 osd-xdialog "Save All" #l1 1 10 6 " \HYes" " \HNo " " \HCancel "
+            3 osd-xdialog "Save All" #l1 1 10 6 " \HYes" " \HNo " " \HCancel "
             !if &equ $result 3
                 !abort
             !elif &equ $result 1
@@ -216,7 +216,7 @@ define-macro-file osdhelp osd-help
     ; can't do registry and dictionaries in macro code
     2 save-registry @mna
     2 save-dictionary @mna
-    2 osd-xdialog "Save All" "  Save default history  " 1 10 8 " \HYes " " \HNo " " \HCancel "
+    3 osd-xdialog "Save All" "  Save default history  " 1 10 8 " \HYes " " \HNo " " \HCancel "
     !if &equ $result 3
         !abort
     !elif &equ $result 1
@@ -226,7 +226,7 @@ define-macro-file osdhelp osd-help
 0 define-macro osd-close
     !if &bmod "edit"
         set-variable #l0 &spr "Buffer \"%s\" has been changed" $buffer-bname
-        2 osd-xdialog "Buffer Close" #l0 1 10 6 " \HSave First " " \HLose Changes " " \HCancel "
+        3 osd-xdialog "Buffer Close" #l0 1 10 6 " \HSave First " " \HLose Changes " " \HCancel "
         !if &equ $result 3
             !abort
         !elif &equ $result 1
@@ -235,7 +235,7 @@ define-macro-file osdhelp osd-help
     !endif
     !if &bmod "pipe"
         set-variable #l0 &spr "Buffer \"%s\" has active process" $buffer-bname
-        2 osd-xdialog "Buffer Close" #l0 1 10 6 " \HKill " " \HCancel "
+        3 osd-xdialog "Buffer Close" #l0 1 10 6 " \HKill " " \HCancel "
         !if &equ $result 2
             !abort
         !endif
@@ -534,7 +534,7 @@ set-variable #l0 0
     set-variable #l0 @1
     set-variable #l6 &spr "%s %d 0 0 0 " #l6 #l4
     !if &set #l1 @3
-        set-variable #l6 &spr "d%s %d" #l6 &mul #l1 10
+        set-variable #l6 &spr "I%s %d" #l6 &mul #l1 10
     !endif
     execute-line &spr "osd %d 0 \"bstcH%s %d \"%s\"" .osd.tmp #l6 .scheme.osd-title #l0
     !force !force .osd.tmp osd
@@ -578,7 +578,7 @@ set-variable #l0 0
     !force set-variable #l1 &ind &cat "@" #l5
     set-variable .type &cat "@ml2" #l1
     -1 osd .osd.tmp
-    execute-line &spr "osd %d 0 \"bcdtH%s 10 %d \"%s\"" .osd.tmp #l6 .scheme.osd-title @1
+    execute-line &spr "osd %d 0 \"bcIDtH%s 17 10 %d \"%s\"" .osd.tmp #l6 .scheme.osd-title @1
     osd .osd.tmp 1 ""
     osd .osd.tmp 2 "fh" "  "
     !if &gre #l2 1
