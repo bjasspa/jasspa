@@ -1058,9 +1058,10 @@ meFrameGainFocus(meFrame *frame)
     if(frame->flags & meFRAME_NOT_FOCUS)
     {
         frame->flags &= ~meFRAME_NOT_FOCUS ;
+#if MEOPT_MWFRAME
         if(frameCur != frame)
             frameFocus = frame ;
-        
+#endif        
         if((cursorState >= 0) && blinkState)
         {
             if(cursorBlink)
@@ -1079,9 +1080,10 @@ meFrameKillFocus(meFrame *frame)
     if(!(frame->flags & meFRAME_NOT_FOCUS))
     {
         frame->flags |= meFRAME_NOT_FOCUS ;
+#if MEOPT_MWFRAME
         if(frameFocus == frame)
             frameFocus = NULL ;
-        
+#endif        
         if(cursorState >= 0)
         {
             /* because the cursor is a part of the solid cursor we must
@@ -2844,17 +2846,20 @@ XTERMaddColor(meColor index, meUByte r, meUByte g, meUByte b)
     }
     colTable[index] = col.pixel ;
     
-    meFrameLoopBegin() ;
-    
-    meFrameLoopContinue(loopFrame->flags & meFRAME_HIDDEN) ;
-
-    if(meFrameGetXGCFCol(loopFrame) == index)
-        meFrameSetXGCFCol(loopFrame,meCOLOR_INVALID) ;
-    if(meFrameGetXGCBCol(loopFrame) == index)
-        meFrameSetXGCBCol(loopFrame,meCOLOR_INVALID) ;
-    
-    meFrameLoopEnd() ;
-    
+    /* the default colors are created before the first frame is so check there is a frame */
+    if(frameCur != NULL)
+    {
+        meFrameLoopBegin() ;
+        
+        meFrameLoopContinue(loopFrame->flags & meFRAME_HIDDEN) ;
+        
+        if(meFrameGetXGCFCol(loopFrame) == index)
+            meFrameSetXGCFCol(loopFrame,meCOLOR_INVALID) ;
+        if(meFrameGetXGCBCol(loopFrame) == index)
+            meFrameSetXGCBCol(loopFrame,meCOLOR_INVALID) ;
+        
+        meFrameLoopEnd() ;
+    }
     return meTRUE ;
 }
 
