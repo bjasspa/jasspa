@@ -675,7 +675,7 @@ extern int      changeFont(int f, int n);
 extern void     osdStoreAll(void) ;
 extern void     osdRestoreAll(int) ;
 extern void     osdDisp(meUByte *buf, meUByte *cont, int cpos) ;
-extern int      osdMouseContextChange(int leftPick) ;
+extern int      osdDisplayMouseLocate(int leftPick) ;
 extern int      osdMainMenuCheckKey(int cc) ;
 extern int      osd(int f, int n);
 extern void     osdMainMenuUpdate(int force) ;

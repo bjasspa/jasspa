@@ -1735,7 +1735,7 @@ ml_yank:
 #if MEOPT_OSD
                 if(frameCur->mlStatus & MLSTATUS_POSOSD)
                 {
-                    if(osdMouseContextChange(1))
+                    if(osdDisplayMouseLocate(1) > 0)
                         cont_flag = 0;
                 }
                 else

@@ -4177,7 +4177,7 @@ osdDisplayGetMousePosition(osdDISPLAY *md, meShort xx, meShort yy, int leftPick)
     return 0 ;
 }
 
-static int
+int
 osdDisplayMouseLocate(int leftPick)
 {
     osdDISPLAY *md;
@@ -4213,16 +4213,6 @@ osdDisplayMouseLocate(int leftPick)
         }
     }
     return -1 ;
-}
-
-int
-osdMouseContextChange(int leftPick)
-{
-    if((osdDisplayMouseLocate(leftPick) > 0) &&
-       ((osdNewChild != osdCurChild) || 
-        (osdCurChild->newContext != osdCurChild->curContext)))
-        return meTRUE ;
-    return meFALSE ;
 }
 #endif
 
