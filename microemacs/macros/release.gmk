@@ -65,6 +65,8 @@ release: $(OBJS)
 	$(RM) $@.tmp $@
 	$(DOS2UNIX) *.e[amrt]f
 	$(RM) *~
+	$(RM) .#*
+	$(RM) tags
 	$(FIND) . -name "*.e[admrt]f" -print > $@.tmp
 	$(FIND) . -name "*.txt" -print >> $@.tmp
 	$(FIND) . -name "COPYING" -print >> $@.tmp
