@@ -41,6 +41,7 @@ buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root
 #BuildRoot: /var/tmp/%{name}-buildroot
 Source0: %{name}src-%{version}.tar.gz
 Source1: %{name}tree-%{version}.tar.gz
+Source2: me.1.gz
 Packager: Jon Green <support@jasspa.com>
 
 Prefix:    %{_prefix}
@@ -63,8 +64,10 @@ and much more !
 %install
 install -d -m 0755 %{buildroot}%{_bindir}
 install -d -m 0755 %{buildroot}%{_datadir}
+install -d -m 0755 %{buildroot}%{_mandir}/cat1
 tar -C %{buildroot}%{_datadir} -zxf %{_sourcedir}/%{name}tree-%{version}.tar.gz
 install -c -m 0755 ./src/me %{buildroot}%{_bindir}
+install -c -m 0644 %{_sourcedir}/me.1.gz %{buildroot}%{_mandir}/cat1 
 
 %clean
 rm -rf %{buildroot}
@@ -73,6 +76,7 @@ rm -rf %{buildroot}
 %defattr(-,root,root)
 %{_bindir}/me
 %{_datadir}/jasspa
+%{_mandir}/cat1
 # %dir /usr/share/doc/jasspa
 # %doc /usr/share/doc/jasspa/readme.txt
 %changelog
