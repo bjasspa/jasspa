@@ -85,7 +85,7 @@ set-variable .fhook-c.collapse-mnext "-1"
 
 ; Set up menu items for C mode.
 set-variable .fhook-c.setup-flags   "|9|8|7|6|5|"
-set-variable .fhook-c.setup-labels  "|Enable JASSPA type highlighting|Enable Doxygen highlighting|Enable <stdint.h> hilighting|Brace highlighting|Bad C highlighting|"
+set-variable .fhook-c.setup-labels  "|JASSPA type highlighting|Doxygen highlighting|<stdint.h> hilighting|Brace highlighting|Bad C highlighting|"
 
 ; setup item-list
 set-variable .fhook-c.item-list-s1 "^\\(static[ \t]+\\|extern[ \t]+\\)?\\(const[ \t]+\\)?\\(union[ \t]+\\)?\\(struct[ \t]+\\)?\\(\\w+[\\* \\t]+\\)?\\(\\w+\\)[ \t]*("
@@ -235,9 +235,33 @@ set-variable .fhook-c.item-list-r6 "Clss \ecB\\1\ecA"
         hilight   .hilight.c 1 "osdITEM"        .scheme.type
     !endif
 
+    ; Doxygen highlighting extensions. Highlights keywords in Doxygen
+    !if &sin "8" .fhook-c.setup
+        ; Create a new doxygen hilighting scheme
+        !if &not &exi .hilight.cdoxygen
+            set-variable .hilight.cdoxygen &pinc .hilight.next 1
+        !endif
+        ; Add a hook into the normal 'C' hilighing. We jump into
+        ; cdoxygen when we see an opening "/**" or "/*!".
+        hilight .hilight.c 0x80 "/\\*\\*" .hilight.cdoxygen  .scheme.comment
+        hilight .hilight.c 0x80 "/\\*!"   .hilight.cdoxygen  .scheme.comment
+        ; Doxygen hilighting space.
+        0 hilight .hilight.cdoxygen  2 50                    .scheme.comment
+        ; "\}" or "@}"
+        hilight .hilight.cdoxygen    1 "[\\\\@]}"            .scheme.keyword
+        ; "\{" or "@{"
+        hilight .hilight.cdoxygen    1 "[\\\\@]{"            .scheme.keyword
+        ; "\a anyWord" or "@a anyWord"
+        hilight .hilight.cdoxygen    1 "[\\\\@]a[ \t]+\\w+"  .scheme.keyword
+        ; "\anyWord" or "@anyWord" - Use branch token and close when not a word!
+        hilight .hilight.cdoxygen    4 "[\\\\@]" "\\}\\W" "" .scheme.keyword
+        ; We must return to C when we see the close of comment "*/"
+        hilight .hilight.cdoxygen 0x80 "\\*/" .hilight.c     .scheme.comment
+    !endif
+
     ; Extend the hilighting for the IEEE Std 1003.1 <stdint.h>
     ; See http://www.opengroup.org/onlinepubs/007904975/basedefs/stdint.h.html
-    !if &sin "8" .fhook-c.setup
+    !if &sin "7" .fhook-c.setup
         hilight .hilight.c    1 "uint8_t"          .scheme.type
         hilight .hilight.c    1 "int8_t"           .scheme.type
         hilight .hilight.c    1 "uint16_t"         .scheme.type
@@ -338,30 +362,6 @@ set-variable .fhook-c.item-list-r6 "Clss \ecB\\1\ecA"
         ; Limits of wint_t:
         hilight .hilight.c    1 "WINT_MIN"         .scheme.prepro
         hilight .hilight.c    1 "WINT_MAX"         .scheme.prepro
-    !endif
-
-    ; Doxygen highlighting extensions. Highlights keywords in Doxygen
-    !if &sin "7" .fhook-c.setup
-        ; Create a new doxygen hilighting scheme
-        !if &not &exi .hilight.cdoxygen
-            set-variable .hilight.cdoxygen &pinc .hilight.next 1
-        !endif
-        ; Add a hook into the normal 'C' hilighing. We jump into
-        ; cdoxygen when we see an opening "/**" or "/*!".
-        hilight .hilight.c 0x80 "/\\*\\*" .hilight.cdoxygen  .scheme.comment
-        hilight .hilight.c 0x80 "/\\*!"   .hilight.cdoxygen  .scheme.comment
-        ; Doxygen hilighting space.
-        0 hilight .hilight.cdoxygen  2 50                    .scheme.comment
-        ; "\}" or "@}"
-        hilight .hilight.cdoxygen    1 "[\\\\@]}"            .scheme.keyword
-        ; "\{" or "@{"
-        hilight .hilight.cdoxygen    1 "[\\\\@]{"            .scheme.keyword
-        ; "\a anyWord" or "@a anyWord"
-        hilight .hilight.cdoxygen    1 "[\\\\@]a[ \t]+\\w+"  .scheme.keyword
-        ; "\anyWord" or "@anyWord" - Use branch token and close when not a word!
-        hilight .hilight.cdoxygen    4 "[\\\\@]" "\\}\\W" "" .scheme.keyword
-        ; We must return to C when we see the close of comment "*/"
-        hilight .hilight.cdoxygen 0x80 "\\*/" .hilight.c     .scheme.comment
     !endif
 
     ; Hilight curly braces used when it is difficult to differentiate between a
