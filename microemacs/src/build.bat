@@ -8,7 +8,6 @@ set LOGFILE=
 set LOGFILEA=
 set MAINTYPE=me
 set MEDEBUG=
-set MEURL=
 set METYPE=
 set MAKEFILE=
 :build_option
@@ -22,7 +21,7 @@ if "%1" == "-m"    goto build_mkfl
 if "%1" == "-ne"   set  MAINTYPE=ne
 if "%1" == "-S"    set  OPTIONS=spotless
 if "%1" == "-t"    goto build_type
-if "%1" == "-u"    set  MEURL=u
+if "%1" == "-u"    echo Option -u no longer required - all versons have URL support
 shift
 goto build_option
 
@@ -52,7 +51,7 @@ goto build_option
 
 :build_cont
 
-if "%OPTIONS%." == "." set OPTIONS=%MAINTYPE%%MEDEBUG%%MEURL%%METYPE%
+if "%OPTIONS%." == "." set OPTIONS=%MAINTYPE%%MEDEBUG%%METYPE%
 
 set MAKE=nmake
 if "%MAKEFILE%." == "." goto build_auto
@@ -168,7 +167,6 @@ echo          : Sets build type:
 echo               c  Console support only
 echo               w  Wondow support only (default)
 echo               cw Console and window support
-echo     -u   : Build win32 url version (output is meu*)
 
 :build_exit
 
