@@ -10,7 +10,7 @@
  *
  *	Author:			Danial Lawrence
  *
- *	Creation Date:		10/05/91 08:27		<010806.0908>
+ *	Creation Date:		10/05/91 08:27		<010807.0804>
  *
  *	Modification date:	%G% : %U%
  *
@@ -299,11 +299,9 @@ forwDelWord(int f, int n)
     
     if(n == 0)
         return TRUE ;
-    if (n < 0)
-        /* f must be true */
+    if((f=(n < 0)))
         n = -n ;
-    else
-        f = 0 ;
+    
     if(bchange() != TRUE)               /* Check we can change the buffer */
         return ABORT ;
     dotp   = curwp->w_dotp;
@@ -343,11 +341,9 @@ backDelWord(int f, int n)
     
     if(n == 0)
         return TRUE ;
-    if (n < 0)
-        /* f must be true */
+    if((f=(n < 0)))
         n = -n ;
-    else
-        f = 0 ;
+    
     if(bchange() != TRUE)               /* Check we can change the buffer */
         return ABORT ;
     if (WbackChar(curwp, 1) == FALSE)
@@ -1629,22 +1625,16 @@ noIndent:
 int	
 killPara(int f, int n)	/* delete n paragraphs starting with the current one */
 {
+    int ss ;
+    
     if(n == 0)
         return TRUE ;
-    if(n < 0)
-    {
-        if((backPara(FALSE, 1) != TRUE) ||
-           (forwPara(FALSE, 1) != TRUE) )
-            return FALSE ;
-        curwp->line_no++ ;
-        curwp->w_dotp = lforw(curwp->w_dotp);
-    }
-    else
-    {
-        if((forwPara(FALSE, 1) != TRUE) ||
-           (backPara(FALSE, 1) != TRUE) )
-            return FALSE ;
-    }
+    if((f=(n < 0)))
+        n = -n ;
+    
+    if((forwPara(FALSE, 1) != TRUE) ||
+       (backPara(FALSE, 1) != TRUE) )
+        return FALSE ;
     curwp->w_doto = 0 ;
     /* set the mark here */
     curwp->w_markp = curwp->w_dotp ;
@@ -1654,18 +1644,16 @@ killPara(int f, int n)	/* delete n paragraphs starting with the current one */
     if(bchange() != TRUE)               /* Check we can change the buffer */
         return ABORT ;
         
-    f = forwPara(TRUE,n) ;
+    ss = forwPara(TRUE,n) ;
     
-    if(n > 0)
-    {
-        curwp->line_no++ ;
-        curwp->w_dotp = lforw(curwp->w_dotp);
-    }
+    curwp->line_no++ ;
+    curwp->w_dotp = lforw(curwp->w_dotp);
     curwp->w_doto = 0 ;
+    
     /* and delete it */
-    if(killRegion(FALSE, 1) != TRUE)
+    if(killRegion(TRUE,(f) ? -1:1) != TRUE)
         return FALSE ;
-    return f ;
+    return ss ;
 }
 
 

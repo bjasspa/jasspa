@@ -5,7 +5,7 @@
  *  Synopsis      : Token based hilighting routines
  *  Created By    : Steven Phillips
  *  Created       : 21/12/94
- *  Last Modified : <010605.0911>
+ *  Last Modified : <010810.1440>
  *
  *  Description
  *
@@ -115,9 +115,6 @@ static uint8 *meHilTestNames[meHIL_TEST_NOCLASS]={
 #define meHIL_MODESTTLN 0x04
 #define meHIL_MODETOEOL 0x08
 #define meHIL_MODEMOVE  0x10
-
-#define HLASOL      0x2000
-#define HLASTTLINE  0x4000
 
 static uint8 varTable[11] ;
 
@@ -782,11 +779,12 @@ meHiltTokenAddSearchString(HILNODEPTR root, HILNODEPTR node, uint8 *token, int f
             ss += 3 ;
         }
         /* if the token ends with ".*\\}" then we can
-         * optimize this to HLENDLINE */
+         * optimize this to HLENDLINE - note as the token includes 
+         * the .*, a replace should also replace the .* */
         if(!l2 && (len || l1) && (lastItem[0] == 0xff) &&
            (lastItem[1] == (meHIL_TEST_VALID|meHIL_TEST_MATCH_NONE|meHIL_TEST_MATCH_MULTI|meHIL_TEST_ANY)))
         {
-            flags |= HLENDLINE ;
+            flags |= HLENDLINE|HLREPTOEOL ;
             len-- ;
             lastItem[0] = '\0' ;
         }
@@ -1925,8 +1923,13 @@ BracketJump:
             }
             if(node->type & HLENDLINE)
             {
-                if(!(node->type & HLBRINEOL) ||
-                   (hd.srcPos == srcWid))
+                if((node->type & HLREPLACE) && (node->type & HLREPTOEOL))
+                {
+                    hd.blkp->column = dstPos ;
+                    node = NULL ;
+                    goto hiline_exit ;
+                }
+                if(!(node->type & HLBRINEOL) || (hd.srcPos == srcWid))
                 {
                     dstPos = hilCopyString(dstPos,srcText+hd.srcPos, &hd) ;
                     hd.blkp->column = dstPos ;
@@ -2216,8 +2219,8 @@ column_token:
                     len -= node->tknSttOff ;
                 }
                 dstPos = hilOffsetReplaceString(&off,dstPos,&dstJmp,(uint8 *) node->rtoken,len) ;
-				if(*off)
-					cc = *off ;
+                if(*off)
+                    cc = *off ;
             }
             else
             {
@@ -2331,6 +2334,11 @@ column_token:
             }
             if(node->type & HLENDLINE)
             {
+                if((node->type & HLREPLACE) && (node->type & HLREPTOEOL))
+                {
+                    dstPos = hilOffsetReplaceString(&off,dstPos,&dstJmp,(uint8 *) "",(srcWid-srcPos)) ;
+                    goto hiline_exit ;
+                }
                 if(!(node->type & HLBRINEOL) || (srcPos == srcWid))
                 {
                     hilOffsetString(cc,off,dstPos,dstJmp,srcText+srcPos) ;

@@ -123,7 +123,7 @@ define-macro-file fold fold-current fold-all
             set-variable $buffer-hilight &ind &cat ".hilight." &rig $buffer-fhook 6
         !endif
     !endif
-    !if &sin "b" .fhook-emf.setup
+    !if &sin "b" #l0
         !force buffer-abbrev-file &rig $buffer-fhook 6
     !endif
     set-variable #l6 0
@@ -132,7 +132,7 @@ define-macro-file fold fold-current fold-all
             !if &not &sin "H" #l5
                 !jump 2
             !elif #l7
-                buffer-bind-create #l5 &lget #l2 #l6 &lget #l3 #l6 &lget #l4 #l6
+                !force buffer-bind-create #l5 &lget #l2 #l6 &lget #l3 #l6 &lget #l4 #l6
             !endif
         !endif
     !done

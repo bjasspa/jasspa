@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;       TCL mode hook
 ;
-;   Last Modified : <010319.2310>
+;   Last Modified : <010810.1019>
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 set-char-mask "3" "-$."
 
@@ -28,6 +28,10 @@ set-variable .fhook-tcl.comment "|#||#|# | #||"
 set-variable .fhook-tcl.fold-open  "^proc "
 set-variable .fhook-tcl.fold-close "^}"
 set-variable .fhook-tcl.fold-mopen "1"
+
+; setup item-list
+set-variable .fhook-tcl.item-list-s1 "^\\s *proc\\s +\\(\\w[1-9A-Za-z_']*\\)\\s *{"
+set-variable .fhook-tcl.item-list-r1 "Proc  \ecB\\1\ecA"
 
 !if &not &exist .hilight.tcl
     set-variable .hilight.tcl &pinc .hilight.next 1

@@ -46,6 +46,7 @@ define-macro-file hkdirlst file-browser file-browser-close file-browser-swap-buf
 define-macro-file spell spell-word spell-buffer spell-edit-word find-word
 define-macro-file games Metris Patience Triangle Mahjongg Match-It
 define-macro-file buffstp buffer-setup buffer-help buffer-tool
+define-macro-file itemlist item-list item-list-close occur
 define-macro-file mail mail mail-check stop-mail-check
 define-macro-file fileopen osd-file-open osd-get-file
 define-macro-file hkinfo info info-on info-goto-link
@@ -112,7 +113,6 @@ set-variable $cursor-blink &reg "/history" &cat %platform "/blink" $cursor-blink
 scheme
 ;
 ; key bindings
-0xa0000 global-bind-key osd              "f1"
 0x1 global-bind-key spell-word           "esc $"
 4 global-bind-key prefix                 "C-c"
 global-bind-key set-position             "C-c C-a"
@@ -124,6 +124,10 @@ global-bind-key query-replace-all-string "esc A-C-r"
 global-bind-key buffer-help              "esc h"
 global-bind-key ifill-paragraph          "esc q"
 global-bind-key delete-indentation       "esc ^"
+0xa0000 global-bind-key osd              "f1"
+global-bind-key item-list                "f7"
+global-bind-key occur                    "S-f7"
+global-bind-key item-list-close          "esc f7"
 global-bind-key file-browser             "f10"
 global-bind-key ftp                      "S-f10"
 global-bind-key cvs                      "C-f10"

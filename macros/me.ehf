@@ -1113,6 +1113,7 @@ ehf-scheme
     lslmcvs-add(3)le MicroEmacs CVS interface - add file 
     lslmcvs-commit(3)le MicroEmacs CVS interface - commit changes 
     lslmcvs-diff(3)le MicroEmacs CVS interface - diff changes 
+    lslmcvs-gdiff(3)le MicroEmacs CVS interface - graphical diff changes 
     lslmcvs-log(3)le MicroEmacs CVS interface - log changes 
     lslmcvs-remove(3)le MicroEmacs CVS interface - remove file 
     lslmcvs-resolve-conflicts(3)le MicroEmacs CVS interface - resolve conflicts 
@@ -1663,6 +1664,7 @@ ehf-scheme
     lslmcvs-add(3)le MicroEmacs CVS interface - add file 
     lslmcvs-commit(3)le MicroEmacs CVS interface - commit changes 
     lslmcvs-diff(3)le MicroEmacs CVS interface - diff changes 
+    lslmcvs-gdiff(3)le MicroEmacs CVS interface - graphical diff changes 
     lslmcvs-log(3)le MicroEmacs CVS interface - log changes 
     lslmcvs-remove(3)le MicroEmacs CVS interface - remove file 
     lslmcvs-resolve-conflicts(3)le MicroEmacs CVS interface - resolve conflicts 
@@ -2198,6 +2200,7 @@ ehf-scheme
     lslmcvs-add(3)le MicroEmacs CVS interface - add file 
     lslmcvs-commit(3)le MicroEmacs CVS interface - commit changes 
     lslmcvs-diff(3)le MicroEmacs CVS interface - diff changes 
+    lslmcvs-gdiff(3)le MicroEmacs CVS interface - graphical diff changes 
     lslmcvs-log(3)le MicroEmacs CVS interface - log changes 
     lslmcvs-remove(3)le MicroEmacs CVS interface - remove file 
     lslmcvs-resolve-conflicts(3)le MicroEmacs CVS interface - resolve conflicts 
@@ -2913,6 +2916,7 @@ ehf-scheme
     lslmcvs-add(3)le MicroEmacs CVS interface - add file 
     lslmcvs-commit(3)le MicroEmacs CVS interface - commit changes 
     lslmcvs-diff(3)le MicroEmacs CVS interface - diff changes 
+    lslmcvs-gdiff(3)le MicroEmacs CVS interface - graphical diff changes 
     lslmcvs-log(3)le MicroEmacs CVS interface - log changes 
     lslmcvs-remove(3)le MicroEmacs CVS interface - remove file 
     lslmcvs-resolve-conflicts(3)le MicroEmacs CVS interface - resolve conflicts 
@@ -27438,6 +27442,7 @@ $a
 ! 3 cvs-add
 ! 3 cvs-commit
 ! 3 cvs-diff
+! 3 cvs-gdiff
 ! 3 cvs-log
 ! 3 cvs-remove
 ! 3 cvs-resolve-conflicts
@@ -27454,6 +27459,8 @@ $a
     cvs-commit - MicroEmacs CVS interface - commit changes 
 |cvs-diff
     cvs-diff - MicroEmacs CVS interface - diff changes 
+|cvs-gdiff
+    cvs-gdiff - MicroEmacs CVS interface - graphical diff changes 
 |cvs-log
     cvs-log - MicroEmacs CVS interface - log changes 
 |cvs-remove
@@ -27475,6 +27482,7 @@ $a
     cDcvs-addcA 
     cDcvs-commitcA 
     cDcvs-diffcA 
+    cDcvs-gdiffcA 
     cDcvs-logcA 
     cDcvs-removecA 
     cDcvs-resolve-conflictscA 
@@ -27555,7 +27563,12 @@ $a
     file (including addition) to the repository. The user is prompted for a 
     commit log message. 
 
-    The cDcvs-diffcA command opens a lslmgdiff(3)le window displaying the differences 
+    The cDcvs-diffcA command opens a cC*cvs-diff*cA window displaying the differences 
+    between the current buffer's local file and repository version. If the 
+    current buffer is a directory list it will list all the differences found 
+    in all files within the directory. 
+
+    The cDcvs-gdiffcA command opens a lslmgdiff(3)le window displaying the differences 
     between the current buffer's local file and repository version. 
 
     The cDcvs-logcA command opens a cC*cvs-log*cA window displaying the CVS log of the 

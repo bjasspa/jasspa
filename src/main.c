@@ -10,7 +10,7 @@
 *
 *	Author:			Jon Green
 *
-*	Creation Date:		03/05/91 17:19		<010806.2042>
+*	Creation Date:		03/05/91 17:19		<010807.1414>
 *
 *	Modification date:	%G% : %U%
 *
@@ -493,7 +493,7 @@ meAbout(int f, int n)
 int
 exitEmacs(int f, int n)
 {
-    int s = TRUE;
+    int s=TRUE ;
 
     /* Argument forces it.  */
     if(f == FALSE)
@@ -527,11 +527,12 @@ exitEmacs(int f, int n)
 #endif
         if(buff[0] != '\0')
         {
+            /* somethings changed - check the user is happy */
             strcat(buff," exists, leave anyway") ;
             s = mlyesno((uint8 *)buff) ;
         }
     }
-    
+
     if(s == TRUE)
     {
         BUFFER *bp, *nbp ;

@@ -5,7 +5,7 @@
  *  Synopsis      : Internal registry support routines
  *  Created By    : Jon Green
  *  Created       : 26/03/1998
- *  Last Modified : <010802.1812>
+ *  Last Modified : <010807.1423>
  *
  *  Description
  *
@@ -95,29 +95,35 @@ rnodeNew (uint8 *name)
  * rnodeDel
  * Recursively delete a node.
  */
-static RNODE *
+static void
 rnodeDelete (RNODE *np)
 {
-    /* Recursively delete the tree */
-    while (np != NULL)
+    /* Root node ?? */
+    if (np == &root)
     {
-        RNODE *tnp;                     /* Temporary node pointer */
-
-        tnp = np;
-        np = tnp->sblg;
-        if (tnp->chld != NULL)          /* Destruct children */
-            rnodeDelete (tnp->chld);
-        if (tnp->value != NULL)
-            free (tnp->value);          /* Destruct the text value */
-/*        fprintf (stdout, "Deleting %s\n", tnp->name);*/
-        if (tnp->name != '\0')          /* Root node ?? */
+        /* delete the children and return */
+        if (np->chld != NULL)          /* Destruct children */
         {
+            rnodeDelete (np->chld);
+            np->chld = NULL ;
+        }
+    }
+    else
+    {
+        /* Recursively delete the tree */
+        RNODE *tnp;                     /* Temporary node pointer */
+        while (np != NULL)
+        {
+            tnp = np;
+            np = tnp->sblg;
+            if (tnp->chld != NULL)          /* Destruct children */
+                rnodeDelete (tnp->chld);
+            if (tnp->value != NULL)
+                free (tnp->value);          /* Destruct the text value */
+            /*        fprintf (stdout, "Deleting %s\n", tnp->name);*/
             free (tnp);                 /* No - Destruct node */
         }
-        else
-            break;
     }
-    return np;                          /* Return NULL pointer */
 }
 
 /*
@@ -567,7 +573,10 @@ vregFind (RNODE *sroot, uint8 *fmt)
 static int
 regTestSave(RNODE *sroot, int flags)
 {
-    if(!(sroot->mode & REGMODE_FROOT) || !(sroot->mode & REGMODE_CHANGE))
+    /* if its not a file or not  changed or the  changes  are to be  discarded
+     * then nothing to do */
+    if(!(sroot->mode & REGMODE_FROOT) || !(sroot->mode & REGMODE_CHANGE) ||
+       (sroot->mode & REGMODE_DISCARD))
         return TRUE ;
     
     if((flags & 0x01) && !(sroot->mode & REGMODE_AUTO))
@@ -890,8 +899,8 @@ saveRegistry (int f, int n)
         {
             /* we don't what to save the history this way */
             if(meStrcmp(rnp->name,"history") &&
-               (regTestSave(rnp,n) != TRUE))
-                    return ABORT ;
+               ((f=regTestSave(rnp,n)) != TRUE))
+                    return f ;
             rnp = rnp->sblg ;
         }
         return TRUE ;
@@ -926,8 +935,8 @@ anyChangedRegistry(void)
     while (rnp != NULL)
     {
         /* we don't consider the history here */
-        if(meStrcmp(rnp->name,"history") &&
-           (rnp->mode & REGMODE_FROOT) && (rnp->mode & REGMODE_CHANGE))
+        if(meStrcmp(rnp->name,"history") && (rnp->mode & REGMODE_FROOT) && 
+           (rnp->mode & REGMODE_CHANGE) && !(rnp->mode & REGMODE_DISCARD))
             return TRUE ;
         rnp = rnp->sblg ;
     }

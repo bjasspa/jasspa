@@ -1,0 +1,36 @@
+.\" -*- nroff -*-
+.Id $Id: m5var083.5,v 2.1 2001-08-16 18:16:53 jon Exp $
+.Im MicroEmacs variable|macrodevelop
+.so me.tni
+.TH $version 5
+.XI $version - "\*(mS version date-code"
+.SH NAME
+$version \- \*(mS version date-code
+.Me $a
+.SH SYNOPSIS
+\fB$version\fR "\fIYYYYMMDD\fR"
+.SH DESCRIPTION
+\fB$version\fR  is a system  variable which is defined as the \*(mS build date
+code. This value is fixed at compile  time and cannot be changed. The variable
+may be used in macros to identify incompatibility issues.
+.SH EXAMPLE
+Given a macro  that only  operates  with a \*(mS  executable  built on or
+after 1st August 2001 then this macro should check that  \fC$version\fR  is not
+less than \fC20010801\fR. The check may be performed as follows:
+.Me $emf-scheme
+.CS
+!if &les $version "20010801"
+    ml-write "[Error: MicroEmacs executable is incompatible]"
+    !abort
+!endif
+.CE 0
+.Me $ehf-scheme
+.SH NOTES
+This variable was introduced in 2001-08-01, evaluating this variable on an
+earlier  version  of \*(mS  would  return the string  "\fCERROR\fR"  unless an
+environment  variable  $version  has  been  defined.  "\fCERROR\fR"  evaluates
+to \fC0\fR hence the test still operates correctly.
+.PP
+This variable is used in the macro file  \fCme.emf\fR to check for any macro -
+executable incompatibility issues.
+.FH
