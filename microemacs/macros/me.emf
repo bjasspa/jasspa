@@ -298,8 +298,10 @@ osd 0  80  "Mfsh" "&Window  "  8
 osd 0  85  "fh" " "
 osd 0  90  "Mfsr" "&Help "     9
 osd -1 &cond &reg "/history" "main-menu" "1" "1" "-1"
-; Load in the mouse handling routines
-!force exec-file "mouse"
+; Load in the mouse handling routines if required
+!if &band $mouse 0x10
+    !force exec-file "mouse"
+!endif
 ; load in the platform specific stuff if found
 !force exec-file $platform
 ; execute any emulation file, e.g. Emacs, Vi etc
