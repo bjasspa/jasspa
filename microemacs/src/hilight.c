@@ -1219,60 +1219,6 @@ findToken(meHilight *root, meUByte *text, meUByte mode,
     int hi, low, mid ;
     meUShort type ;
     
-    if(*text == '\0')
-    {
-        /* one test is needed here for the one char token "\n"
-         * This is either the \n char or \s11 white space char
-         */
-        low = root->listSize ;
-        hi = root->ordSize ;
-        while((--low >= 0) && ((nn=root->list[hi++]),((cc=nn->token[0]) <= meCHAR_NL)))
-        {
-            if((cc == meCHAR_NL) && (nn->token[1] == 0) &&
-               !((type=nn->type) & HLVALID) && (nn->tknEndTst == meHIL_TEST_INVALID) &&
-               (!(mode & meHIL_MODETOEOL) || (type & HLBRINEOL)) &&
-               (!(type & HLSTTLINE) || (mode & meHIL_MODESTTLN)) &&
-               (!(type & HLSOL) || (mode & meHIL_MODESTART)) &&
-               (findTokenSingleCharTest(lastChar,nn->tknSttTst) ||
-                ((mode & meHIL_MODETOKEWS) && (mode & meHIL_MODETOKEND) &&
-                 findTokenSingleCharTest(' ',nn->tknSttTst))))
-            {
-                *len = (nn->tknEndOff) ? 1:0 ;
-                return nn ;
-            }
-        }
-        if((hi = root->ordSize) > 0)
-        {
-            s1 = text ;
-            while(--hi >= 0)
-            {
-                nn = root->list[hi] ;
-                if(!((type=nn->type) & HLVALID) && (nn->tknEndTst == meHIL_TEST_INVALID) &&
-                   (((mode & meHIL_MODETOEOL) == 0) || (type & HLBRINEOL)) &&
-                   (!(type & HLSTTLINE) || (mode & meHIL_MODESTTLN)) &&
-                   (!(type & HLSOL) || (mode & meHIL_MODESTART)) &&
-                   (findTokenSingleCharTest(lastChar,nn->tknSttTst) ||
-                    ((mode & meHIL_MODETOKEWS) && (mode & meHIL_MODETOKEND) &&
-                     findTokenSingleCharTest(' ',nn->tknSttTst))))
-                {
-                    meUByte rr, tt, lstc=1 ;
-                    s2 = nn->token ;
-                    tt = *s2++ ;
-                    s2++ ;
-                    findTokenCharTest(rr,lstc,s1,tt,s2) ;
-                    if(rr &&
-                       ((*s2 == '\0') || 
-                        ((lstc == 1) && (*s2 == '\n') && (s2[1] == '\0'))))
-                    {
-                        varTable[nn->token[1]] = '\0' ;
-                        *len = (nn->tknEndOff) ? 1:0 ;
-                        return nn ;
-                    }
-                }
-            }
-        }
-        return NULL ;
-    }
     if(root->table == NULL)
     {
         low = root->ordSize ;
