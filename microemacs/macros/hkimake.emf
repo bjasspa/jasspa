@@ -28,7 +28,7 @@ set-variable .fhook-imake.comment "|/*| */|*| * | * |fr|"
     hilight .hilight.imake 4  "\"" "\"" "\\"    .scheme.string
     hilight .hilight.imake 20 "/\\*" "*/" ""    .scheme.comment
     hilight .hilight.imake 0  "/\\*\\."         $global-scheme
-    hilight .hilight.imake 18 "#"               .scheme.prepro
+    hilight .hilight.imake 50 "#"               .scheme.prepro
     hilight .hilight.imake 4  "\\$(" ")" ""     .scheme.variable    
     hilight .hilight.imake 1  "\\$O"            .scheme.variable    
     hilight .hilight.imake 1  "\\$T"            .scheme.variable    
