@@ -4,7 +4,7 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <050206.1038>
+>  Last Modified : <050206.1229>
 >
 
     [050205] Password generation macros added to contrib directory.
@@ -50,6 +50,18 @@
              would be good to test on win95  (which  should work) and NT which
              should  not  work but  hopefully  will be no worse  than  current
              version.
+
+             This is a process  tree killing for ipipes, in win32  killing the
+             process we create is simply not good enough, all child  processes
+             continue unaffected. For example, run compile, kill the buffer in
+             mid compile and it carries on behind your back!
+
+             For  Unix we use a new  group  and kill the  group,  DOS does not
+             support  ipipe. We could have used the new Job  concept in ME but
+             this  is  only  present  in  win2000  & XP and the  binaries  are
+             unlikely  to run on win98  etc. This  should  run on every  win32
+             platform although it is unlikely to do anything positive on an NT
+             box (works in win2k)
 
     [050126] Changed  the  location  of the  fhook-default  macro  so its only
              defined if using buffinit (i.e. if running main me.emf)
