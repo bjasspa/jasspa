@@ -1838,10 +1838,10 @@ meXEventHandler(void)
                 case XK_KP_9:           ii = '9'; goto done_key;
                     
                     /* foreign keyboard accent keys */
-#ifdef XK_dead_circumflex:
+#ifdef XK_dead_circumflex
                 case XK_dead_circumflex: ii = '^'; goto done_key;
 #endif
-#ifdef XK_dead_diaeresis:
+#ifdef XK_dead_diaeresis
                 case XK_dead_diaeresis: ii = 0xa8; goto done_key;
 #endif
                     
