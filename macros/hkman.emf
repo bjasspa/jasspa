@@ -6,7 +6,10 @@
 ; Synopsis:    UNIX Man pages hook (does grotty string replaces)
 ; Authors:     Steven Phillips
 ;
+set-char-mask "3" "-._"
+
 define-macro fhook-man
+    set-variable $buffer-mask "luh13"
     @# buffer-init "man"
     1 buffer-mode "view"
     set-variable :mouse-word-select man-process-link
@@ -151,6 +154,7 @@ define-macro aman
     copy-region
     set-cursor-to-mouse
     find-buffer "*Man-tmp"
+    set-variable $buffer-mask "luh13"
     beginning-of-buffer
     yank
     -1 yank
