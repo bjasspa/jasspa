@@ -571,6 +571,7 @@ clean::
 	$(RM) $(READTXT)
 	$(RM) $(BUILDTXT)
 	$(RM) $(FAQTXT)
+	$(RM) $(PATCHTXT)
 
 spotless:: clean
 	$(RM) *~
