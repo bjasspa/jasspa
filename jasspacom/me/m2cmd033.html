@@ -1,0 +1,171 @@
+<HTML>
+<HEAD><TITLE>indent(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+indent(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>indent - Manage the auto-indentation methods </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>0</I> <B>indent</B> &quot;<I>ind-no</I>&quot; &quot;<I>flags</I>&quot; &quot;<I>look-back</I>&quot; 
+<P><B>indent</B> &quot;<I>ind-no</I>&quot; &quot;<I>type</I>&quot; &quot;<I>token</I>&quot; [ &quot;<I>close</I>&quot; [ &quot;<I>ignore</I>&quot; ]] [ &quot;<I>indent</I>&quot; ] </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The <B>indent</B> command creates and manages the auto-indenting methods, the process of creating a new indentation method is best described in 
+<A HREF="m2nar000.html">File Language Templates</A>. The command takes various forms as defined by the arguments. Each of the argument configurations is defined as follows:- </UL>
+<H2>Indentation Method Creation </H2>
+<UL><P><I>0</I> <B>indent</B> &quot;<I>ind-no</I>&quot; &quot;<I>flags</I>&quot; &quot;<I>look-back</I>&quot; 
+<P>With an argument of <TT>0</TT>, <B>indent</B> creates a new indentation method with the integer handle <I>ind-no</I>. The indentation method is assigned to a buffer by setting 
+<A HREF="m5var075.html">$buffer-indent(5)</A> to <I>ind-no</I>. <I>ind-no</I> cannot be 0 as setting <B>$buffer-indent</B> to zero disables indentation. If the indentation method with the same <I>ind-no</I> already exists, then the existing method is deleted and a new method may be created. 
+<P><I>flags</I> Sets the indent bit flags where:- 
+<P><TT>0x01</TT> 
+<BR><UL>Indent method is case insensitive. Note that <B>indent</B> tokens must be specified in lower case. </UL>
+<P><I>look-back</I> specifies the maximum number of lines, prior to the current line, considered when calculating the indentation of a line, i.e. if there are <I>look-back</I> number of lines between the line to be indented and the previous non-blank line then the current indentation is lost. 
+<P>If <I>look-back</I> is set to 0 then the indentation is effectively disabled as the current indentation can never be found. The value may be specified in the range 0-255, a value of 10 is typically sufficient. </UL>
+<H2>Indentation Rule Creation </H2>
+<UL><P><B>indent</B> &quot;<I>ind-no</I>&quot; &quot;<I>type</I>&quot; &quot;<I>token</I>&quot; [ &quot;<I>close</I>&quot; [ &quot;<I>ignore</I>&quot; ]] [ &quot;<I>indent</I>&quot; ] 
+<P>With the default argument of <TT>1</TT>, <B>indent</B> creates a new rule for the indentation method <I>ind-no</I> which must have previously been defined and initialized. 
+<P>The indentation of a line in a buffer, which is using an indentation method, is affected by the token types matched on the line (<I>type</I> <TT>f</TT>, <TT>o</TT>, <TT>s</TT>) and the current indentation (if line is not of type <TT>f</TT>). 
+<P>The current indentation is determined by searching the previous lines (look-back) for the indentation of the last indented line. This may not simply be the indentation of the last non-blank line, the exact indentation is determined by searching for tokens in the line and assessing their effect on the indentation of the current line. 
+<P>The format of the regex valid in the &quot;<I>token</I>&quot; and &quot;<I>close</I>&quot; arguments are the same as at used by hilight token creation, see 
+<A HREF="m2cmd069.html">hilight(2)</A> for more information. 
+<P>The indent tokens may be assigned one of the following types, using the <I>type</I> argument. If the type is specified in upper case then the token must be surrounded by non-alpha-numeric characters: 
+<P><B>Fixed</B> (<I>type</I> = '<TT>f</TT>' or '<TT>F</TT>') 
+<BR><UL>A line containing a fixed indent token will be indented to the given <I>indent</I> column from the left-hand edge. <I>indent</I> is the only argument specified. e.g. MicroEmacs macro <TT>!goto</TT> labels:- <UL>
+<PRE>indent&nbsp;.hilight.emf&nbsp;f&nbsp;&quot;*&quot;&nbsp;0 
+</PRE></UL>
+<P>producing <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;..... 
+*label 
+&nbsp;&nbsp;&nbsp;&nbsp;..... 
+</PRE></UL>
+<P>The fixed token must be the first non-white character on the line, the rest of the line is ignored. The indentation of the previous line has no effect. </UL>
+<P><B>Indent-from-next-line-onward</B> (<I>type</I> = '<TT>n</TT>' or '<TT>N</TT>') 
+<BR><UL>The indentation changes by <I>indent</I> from the next line onwards from the current line. <I>indent</I> is the only argument specified. e.g. MicroEmacs macro <TT>!if</TT>:- <UL>
+<PRE>indent&nbsp;.hilight.emf&nbsp;n&nbsp;&quot;!if&quot;&nbsp;4 
+</PRE></UL>
+<P>Keeps the indentation of the <TT>!if</TT> line the same as the previous indentation, change the indentation on the following lines by an extra 4 characters, to produce: <UL>
+<PRE>.... 
+!if 
+&nbsp;&nbsp;&nbsp;&nbsp;.... 
+</PRE></UL>
+</UL><P><B>Indent-from-current-line-onward</B> (<I>type</I> = '<TT>o</TT>' or '<TT>O</TT>') 
+<BR><UL>Increment the current and following lines indentation by <I>indent</I>. <I>indent</I> is the only argument specified. e.g. MicroEmacs macro <TT>!endif</TT> <UL>
+<PRE>indent&nbsp;.hilight.emf&nbsp;o&nbsp;&quot;!endif&quot;&nbsp;-4 
+</PRE></UL>
+<P>decrement the indent of the <TT>!endif</TT> line and following lines by 4 spaces producing: <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;.... 
+!endif 
+.... 
+</PRE></UL>
+</UL><P><B>Indent-single</B> (<I>type</I> = '<TT>s</TT>' or '<TT>S</TT>') 
+<BR><UL>Changes the indentation of the current line ONLY by <I>indent</I>. <I>indent</I> is the only argument specified. e.g. MicroEmacs macro <TT>!elif</TT>:- <UL>
+<PRE>indent&nbsp;.hilight.emf&nbsp;o&nbsp;&quot;!elif&quot;&nbsp;-4 
+</PRE></UL>
+<P>decrements the indentation of the <TT>!elif</TT> line by 4 characters, but restores the previous indentation after the current line, producing: <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;.... 
+!elif 
+&nbsp;&nbsp;&nbsp;&nbsp;.... 
+</PRE></UL>
+</UL><P><B>Bracket</B> (<I>type</I> = '<TT>b</TT>' or '<TT>B</TT>') 
+<BR><UL>A bracket should be used when a starting token pairs with a closing token which may span multiple lines. i.e. the opening and closing braces of a programming language. Note that the opening and closing tokens must be different otherwise they cannot be differentiated. A bracket has two main effects: 
+<P>When the previous line has an unmatched open bracket 
+<BR><UL>In this situation the current line is indented to the right of the mismatched bracket. </UL>
+<P>When the previous line has an unmatched close bracket 
+<BR><UL>In this situation the matching open bracket is hunted for in previous lines until either the <I>look-back</I> limit (See <B>Indentation Method Creation</B>) is exhausted or the bracket is matched, in which case the indent of that line is used. </UL>
+<P>For a bracket the only other argument given is the <I>close</I>. e.g. tcl's '<TT>(</TT>' and '<TT>)</TT>' brackets <UL>
+<PRE>indent&nbsp;.hilight.tcl&nbsp;b&nbsp;&quot;(&quot;&nbsp;&quot;)&quot; 
+</PRE></UL>
+<P>Which produces: <UL>
+<PRE>.... 
+....&nbsp;(.... 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.... 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;....) 
+.... 
+</PRE></UL>
+</UL><P><B>Continue</B> (<I>type</I> = '<TT>c</TT>' or '<TT>C</TT>') 
+<BR><UL>Indicates that when <I>token</I> is found on the current line, the next line is a continuation of the current line. The indentation of the next line is the indentation of the first continuation line plus the given <I>indent</I>. <I>indent</I> is the only argument specified. e.g. tcl's '\' <UL>
+<PRE>indent&nbsp;.hilight.tcl&nbsp;c&nbsp;&quot;\\&quot;&nbsp;10 
+</PRE></UL>
+<P>A simple example is <UL>
+<PRE>.... 
+12345678901234567890&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.... 
+.... 
+</PRE></UL>
+<P>When used in conjunction with brackets, the following effect is observed: <UL>
+<PRE>.... 
+12345678901234567890&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;....(....&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;....)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;....&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.... 
+.... 
+</PRE></UL>
+<P>This shows why the first continuation line (the <TT>123456...</TT> line) must be located and used as the base line from which the indentation is derived; again the <I>look-back</I> limits the search for this line. </UL>
+<P><B>Exclusion</B> (<I>type</I> = '<TT>e</TT>' or '<TT>E</TT>') 
+<BR><UL>Used to exclude text between start <I>token</I> and <I>close</I> token from the indentation calculation, typically used for quotes. The <I>ignore</I> argument is also specified (see 
+<A HREF="m2cmd069.html">hilight(2)</A> <TT>type 0x004</TT> type bracket) e.g. MicroEmacs macro quotes:- <UL>
+<PRE>indent&nbsp;.hilight.emf&nbsp;e&nbsp;&quot;\&quot;&quot;&nbsp;&quot;\&quot;&quot;&nbsp;&quot;\\&quot; 
+</PRE></UL>
+<P>e.g. tcl's quotes <UL>
+<PRE>indent&nbsp;.hilight.tcl&nbsp;e&nbsp;&quot;\&quot;&quot;&nbsp;&quot;\&quot;&quot;&nbsp;&quot;\\&quot; 
+</PRE></UL>
+<P>producing:- <UL>
+<PRE>.... 
+&quot;....&nbsp;ignore&nbsp;{&nbsp;...&nbsp;\&quot;&nbsp;...&nbsp;ignore&nbsp;another&nbsp;{&nbsp;token&nbsp;...&nbsp;&quot; 
+.... 
+</PRE></UL>
+</UL><P><B>Ignore</B> (<I>type</I> = '<TT>i</TT>' or '<TT>I</TT>') 
+<BR><UL>Text to the right of a line containing <I>token</I> is to be ignored; typically used for comments. e.g. MicroEmacs macro '<TT>;</TT>' comment:- <UL>
+<PRE>indent&nbsp;.hilight.emf&nbsp;i&nbsp;&quot;;&quot; 
+</PRE></UL>
+<P>Or tcl's '<TT>#</TT>' comment <UL>
+<PRE>indent&nbsp;.hilight.tcl&nbsp;i&nbsp;&quot;#&quot; 
+</PRE></UL>
+<P>producing <UL>
+<PRE>.... 
+#&nbsp;...&nbsp;ignore&nbsp;this&nbsp;{&nbsp;indent&nbsp;token 
+.... 
+</PRE></UL>
+</UL></UL><H2><B>EXAMPLE </B></H2>
+<UL><P>Examples of indentation method creations can be found in macro files <TT>hkemf.emf</TT>, <TT>hktcl.emf</TT> and <TT>hkvrml.emf</TT>. The following example is taken from <TT>hkemf.emf</TT>:- <UL>
+<PRE>!if&nbsp;&amp;sequal&nbsp;.hilight.emf&nbsp;&quot;ERROR&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;.hilight.emf&nbsp;&amp;pinc&nbsp;.hilight.next&nbsp;1 
+!endif 
+
+... 
+
+0&nbsp;indent&nbsp;&nbsp;.hilight.emf&nbsp;0&nbsp;10 
+indent&nbsp;.hilight.emf&nbsp;N&nbsp;&quot;define-macro&quot;&nbsp;4 
+indent&nbsp;.hilight.emf&nbsp;n&nbsp;&quot;!if&quot;&nbsp;4 
+indent&nbsp;.hilight.emf&nbsp;s&nbsp;&quot;!eli&quot;&nbsp;-4 
+indent&nbsp;.hilight.emf&nbsp;s&nbsp;&quot;!els&quot;&nbsp;-4 
+indent&nbsp;.hilight.emf&nbsp;o&nbsp;&quot;!end&quot;&nbsp;-4 
+indent&nbsp;.hilight.emf&nbsp;n&nbsp;&quot;!whi&quot;&nbsp;4 
+indent&nbsp;.hilight.emf&nbsp;o&nbsp;&quot;!don&quot;&nbsp;-4 
+indent&nbsp;.hilight.emf&nbsp;n&nbsp;&quot;!rep&quot;&nbsp;4 
+indent&nbsp;.hilight.emf&nbsp;o&nbsp;&quot;!until&quot;&nbsp;-4 
+indent&nbsp;.hilight.emf&nbsp;o&nbsp;&quot;!ema&quot;&nbsp;-4 
+indent&nbsp;.hilight.emf&nbsp;e&nbsp;&quot;\&quot;&quot;&nbsp;&quot;\&quot;&quot;&nbsp;&quot;\\&quot; 
+indent&nbsp;.hilight.emf&nbsp;i&nbsp;&quot;;&quot; 
+indent&nbsp;.hilight.emf&nbsp;f&nbsp;&quot;*&quot;&nbsp;0 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2nar000.html">File Language Templates</A>, 
+<A HREF="m5var075.html">$buffer-indent(5)</A>, 
+<A HREF="m2cmd003.html">add-file-hook(2)</A>, 
+<A HREF="m2cmd069.html">hilight(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

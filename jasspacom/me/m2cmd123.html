@@ -1,0 +1,60 @@
+<HTML>
+<HEAD><TITLE>append-buffer(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+append-buffer(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>append-buffer - Write contents of buffer to end of named file </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>append-buffer</B> &quot;<I>file-name</I>&quot; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>append-buffer</B> is used to write the contents of the current buffer into an EXISTING file. Use 
+<A HREF="m2cmd113.html">save-buffer(2)</A> if the buffer is to over-write the existing file already associated with the buffer. Use 
+<A HREF="m2cmd143.html">write-buffer(2)</A> if the buffer is to be written out to a new file, or to replace an existing file. 
+<P><B>append-buffer</B> writes the contents of the current buffer to the named file <I>file-name</I>. But unlike 
+<A HREF="m2cmd143.html">write-buffer(2)</A> the action of the write does not change the attributes associated with the file (if it exists), it also does not effect the stats of the current buffer. 
+<P>On writing the file, append-buffer ignores the 
+<A HREF="m2mod013.html">time(2m)</A> and 
+<A HREF="m2mod001.html">backup(2m)</A> mode settings. The current buffer will not be time stamped and a backup will not be created for &quot;<I>file-name</I>&quot;. If the buffer contains a 
+<A HREF="m2mod025.html">narrow(2m)</A> it will automatically be removed before saving so that the whole buffer is saved and restored when saving is complete 
+<P>The argument <I>n</I> is a bit based flag, where:- 
+<P><B>0x01</B> 
+<BR><UL>Enables validity checks (default). These include a check that the given file already exist, if not confirmation of writing is requested from the user. Without this flag the command will always succeed wherever possible. If &quot;<I>file-name</I>&quot; does not exist the buffer is written out in a similar fashion to using the command 
+<A HREF="m2cmd143.html">write-buffer(2)</A>. </UL>
+<P><B>0x02</B> 
+<BR><UL>Disables the expansion of any narrows (see 
+<A HREF="m2cmd068.html">narrow-buffer(2)</A>) before appending the buffer. </UL>
+<P><B>0x04</B> 
+<BR><UL>Truncate the existing file before writing out the contents of the buffer. This means that the file will consist solely of the contents of the buffer, but it will still have the file attributes of the original file. 
+</UL><P>If <I>n</I> is not specified then the default argument of 1 is used. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following example appends the current buffer onto the end of a file, creating the file if it does not exists <UL>
+<PRE>append-buffer&nbsp;&quot;things_to_do.txt&quot; 
+</PRE></UL>
+<P>The following example truncates the users email file while maintaining the file attributes. This is taken from 
+<A HREF="m3mac028.html">vm(3)</A> where it is used to remove the current mail from the system mail box. <UL>
+<PRE>find-buffer&nbsp;&quot;*vm-empty-buffer&quot; 
+-1&nbsp;buffer-mode&nbsp;&quot;ctrlz&quot; 
+5&nbsp;append-buffer&nbsp;%vm-mail-src 
+delete-buffer&nbsp;$buffer-bname 
+</PRE></UL>
+<P>Note that the macro ensures that 
+<A HREF="m2mod030.html">ctrlz(2m)</A> mode is removed. If it was enabled then the file written would not be empty. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd143.html">write-buffer(2)</A>, 
+<A HREF="m2cmd113.html">save-buffer(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

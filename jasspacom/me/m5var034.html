@@ -1,0 +1,76 @@
+<HTML>
+<HEAD><TITLE>$platform(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+$platform(5)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>$platform - MicroEmacs host platform identifier 
+<BR>%platform - MicroEmacs host platform type identifier </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>$platform</B> &quot;<I>string</I>&quot;; Default is platform specific 
+<BR><B>%platform</B> &quot;<I>string</I>&quot;; Default is platform specific </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The <B>$platform</B> variable is a fixed ASCII string used to identify the current working platform, attempts to set this variable result in an error returned from 
+<A HREF="m2cmd122.html">set-variable(2)</A>. 
+<P>Possible values are: 
+<P>&quot;<B>aix</B>&quot; 
+<BR><UL>All IBM AIX O/S. </UL>
+<P>&quot;<B>dos</B>&quot; 
+<BR><UL>All IBM-PCs and compatibles running MS-DOS. </UL>
+<P>&quot;<B>freebsd</B>&quot; 
+<BR><UL>All FreeBSD O/S. </UL>
+<P>&quot;<B>hpux</B>&quot; 
+<BR><UL>All Hewlett Packard's with HP-UX O/S. </UL>
+<P>&quot;<B>irix</B>&quot; 
+<BR><UL>All Silicon Graphics (SGI) IRIX platforms 4.x, 5.x, 6.x. </UL>
+<P>&quot;<B>linux</B>&quot; 
+<BR><UL>All LINUX O/S. </UL>
+<P>&quot;<B>sunos</B>&quot; 
+<BR><UL>All Sun's with SUNOS O/S. </UL>
+<P>&quot;<B>unixwr1</B>&quot; 
+<BR><UL>PC based UNIX platform (Consensus and Unixware). </UL>
+<P>&quot;<B>win32</B>&quot; 
+<BR><UL>Microsoft Windows based systems including Windows 3.x (with Win32s), Windows '95 and NT. </UL>
+<P><B>$platform</B> is often used in <B>.emf</B> files to allow portability of macro files across platforms, allowing macro files to perform platform specific operations. 
+<A HREF="m5var047.html">$system(5)</A> is also often used for this purpose as its value is easier to assess. 
+<P><B>%platform</B> is created at start-up when <TT>me.emf</TT> is executed, its value is identical to <B>$platform</B> except when the platform is a console in which case a '<TT>c</TT>' is appended to the $platform value, e.g. for MicroEmacs running a termcap version on LINUX the value will be &quot;<TT>linuxc</TT>&quot;. The variable is used when the console and window based versions need to be distinguish, e.g. some of the 
+<A HREF="m3osd000.html">user-setup</A> settings. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following example is taken from the <B>me.emf</B> file which uses the <B>$platform</B> variable to load the platform specific initialization files. <UL>
+<PRE>; 
+;&nbsp;load&nbsp;in&nbsp;the&nbsp;platform&nbsp;specific&nbsp;stuff 
+execute-file&nbsp;$platform 
+</PRE></UL>
+<P>This could be more explicitly done by: <UL>
+<PRE>; 
+;&nbsp;load&nbsp;in&nbsp;the&nbsp;platform&nbsp;specific&nbsp;stuff 
+!if&nbsp;&nbsp;&nbsp;&amp;seq&nbsp;$platform&nbsp;&quot;dos&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;is&nbsp;it&nbsp;an&nbsp;IBM-PC&nbsp;running&nbsp;dos&nbsp;? 
+&nbsp;&nbsp;&nbsp;&nbsp;execute-file&nbsp;&quot;dos&quot; 
+!elif&nbsp;&amp;seq&nbsp;$platform&nbsp;&quot;irix&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;is&nbsp;it&nbsp;an&nbsp;sgi&nbsp;? 
+&nbsp;&nbsp;&nbsp;&nbsp;execute-file&nbsp;&quot;irix&quot; 
+!elif&nbsp;&amp;seq&nbsp;$platform&nbsp;&quot;hpux&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;is&nbsp;it&nbsp;an&nbsp;hp&nbsp;? 
+&nbsp;&nbsp;&nbsp;&nbsp;execute-file&nbsp;&quot;hpux&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;. 
+&nbsp;&nbsp;&nbsp;&nbsp;. 
+!endif 
+</PRE></UL>
+</UL><H2><B>NOTES </B></H2>
+<UL><P>The <B>$platform</B> variable can not be set. Any attempt to set it will result in an error. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var047.html">$system(5)</A>, 
+<A HREF="m2cmd122.html">set-variable(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

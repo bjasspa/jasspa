@@ -1,0 +1,73 @@
+<HTML>
+<HEAD><TITLE>!if(4)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+!if(4)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>!if, !elif, !else, !endif - Conditional statements </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>!if</B>&nbsp;<I>condition</I> 
+<BR><UL><I>...&nbsp;condition&nbsp;body&nbsp;...</I> 
+<BR></UL>[<B>!elif</B>&nbsp;<I>condition</I> 
+<BR><UL><I>...&nbsp;condition&nbsp;body&nbsp;...</I> 
+<BR></UL>] 
+<BR>[<B>!else</B> 
+<BR><UL><I>...&nbsp;condition&nbsp;body&nbsp;...</I> 
+<BR></UL>] 
+<BR><B>!endif</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The conditional directives allow statements to be executed only if a condition specified in the directive is met, as follows:- <UL><P>
+<LI>Every line following the <B>!if</B> directive, until the first <B>!elif</B>, <B>!else</B> or <B>!endif</B> directive, is only executed if the expression following the <B>!if</B> directive evaluates to a <TT>TRUE</TT> value (non-zero). <P>
+<LI>If the <B>!if</B> evaluates to <TT>FALSE</TT> and a <B>!elif</B> directive is next then the expression following the <B>!if</B> is evaluated and following statements are executed if <TT>TRUE</TT>. <P>
+<LI>If no <B>!if</B> or <B>!elif</B> is found to be <TT>TRUE</TT> and a <B>!else</B> is found then the statements following it are executed. </UL><P>The <I>condition</I> may be any logical condition as evaluated by the 
+<A HREF="amicr026.html">variable functions</A> (e.g. 
+<A HREF="m4fil003.html">&amp;equal(4)</A>) returning <TT>TRUE</TT> or <TT>FALSE</TT>. An integer value, non-zero evaluates <TT>TRUE</TT>, zero evaluates to <TT>FALSE</TT>. A non-numerical argument, such as a string is always <TT>FALSE</TT>. 
+<P>The <I>conditional body</I> may be any <B>MicroEmacs '02</B> function, macro or directive with the exception of <B>define-macro</B> and <B>!emacro</B>. All directives that alter the execution of the macro are handled correctly within the <B>!if</B> statement (e.g. 
+<A HREF="m4fil009.html">!goto</A>, 
+<A HREF="m4fil010.html">!return</A> etc. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following macro segment creates the portion of a text file automatically. (yes believe me, this will be easier to understand then that last explanation....) <UL>
+<PRE>!if&nbsp;&amp;sequal&nbsp;%curplace&nbsp;&quot;timespace&nbsp;vortex&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;insert-string&nbsp;&quot;First,&nbsp;rematerialize\n&quot; 
+!endif 
+!if&nbsp;&amp;sequal&nbsp;%planet&nbsp;&quot;earth&quot;	;If&nbsp;we&nbsp;have&nbsp;landed&nbsp;on&nbsp;earth... 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;sequal&nbsp;%time&nbsp;&quot;late&nbsp;20th&nbsp;century&quot;&nbsp;&nbsp;;and&nbsp;we&nbsp;are&nbsp;then 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;Contact&nbsp;U.N.I.T.&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!elif&nbsp;&amp;sequal&nbsp;%time&nbsp;&quot;pre&nbsp;20th&nbsp;century&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;start&nbsp;praying&nbsp;for&nbsp;a&nbsp;miracle&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!else 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;insert-string&nbsp;&quot;Investigate&nbsp;the&nbsp;situation....\n&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;insert-string&nbsp;&quot;(SAY&nbsp;'stay&nbsp;here&nbsp;Sara')\n&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+!else 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;%conditions&nbsp;@ml&quot;Atmosphere&nbsp;conditions&nbsp;outside?&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;sequal&nbsp;%conditions&nbsp;&quot;safe&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;insert-string&nbsp;&amp;cat&nbsp;&quot;Go&nbsp;outside......&quot;&nbsp;&quot;\n&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;insert-string&nbsp;&quot;lock&nbsp;the&nbsp;door\n&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!else 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;insert-string&nbsp;&quot;Dematerialize..try&nbsp;somewhere&nbsp;else&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;newline 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+!endif 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="amicr026.html">Variable Fuctions</A>, 
+<A HREF="m4fil009.html">!goto(4)</A>, 
+<A HREF="m4fil003.html">&amp;equal(4)</A>, 
+<A HREF="m4fil010.html">!return(4)</A>, 
+<A HREF="m5var040.html">$status(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

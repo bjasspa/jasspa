@@ -1,0 +1,44 @@
+<HTML>
+<HEAD><TITLE>FAQ(23) - me32.ini - Where does it go, how do I know it's being processed ??</TITLE></HEAD>
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+FAQ(23) - me32.ini - Where does it go, how do I know it's being processed ??</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>QUESTION (23) </B></H2>
+<UL><P>me32.ini - Where does it go, how do I know it's being processed ?? </UL>
+<H2><B>ANSWER </B></H2>
+<UL><P>Question posed as:- <UL>
+<PRE>&gt;&nbsp;1)&nbsp;&nbsp;Am&nbsp;I&nbsp;right&nbsp;in&nbsp;assuming&nbsp;that&nbsp;for&nbsp;NT&nbsp;the&nbsp;file&nbsp;me32.ini&nbsp;goes 
+&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;into&nbsp;&nbsp;%windir%,&nbsp;i.e.&nbsp;into&nbsp;c: 
+</PRE></UL>
+<P>Yes, this is where the other .ini files are. <UL>
+<PRE>&gt;&nbsp;2)&nbsp;&nbsp;How&nbsp;do&nbsp;I&nbsp;know&nbsp;me32.ini&nbsp;is&nbsp;being&nbsp;processed?&nbsp;&nbsp;Creating&nbsp;one, 
+&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;as&nbsp;described&nbsp;in&nbsp;the&nbsp;readme.txt&nbsp;file&nbsp;doesn't&nbsp;seem&nbsp;to&nbsp;have 
+&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;any&nbsp;visible&nbsp;effect. 
+</PRE></UL>
+<P>From within the editor, if you show the variable 
+<A HREF="m5var057.html">$MEPATH(5)</A>, then it should echo the paths that you have defined in the me32.ini file. <UL>
+<PRE>esc-x&nbsp;describe-variable 
+$MEPATH 
+</PRE></UL>
+<P>See: 
+<A HREF="m8fil006.html">me32.ini(8)</A>, 
+<A HREF="m2nar001.html">Installation Information</A>, 
+<A HREF="m2nar003.html">Setting Up A User Profile</A>. <UL>
+<PRE>&gt;&nbsp;3)&nbsp;What&nbsp;does&nbsp;the&nbsp;&quot;fontfile&quot;&nbsp;statement&nbsp;do&nbsp;? 
+</PRE></UL>
+<P>For releases after May 1999 then the <I>fontfile</I> statement may be omitted as typically <B>Lucida Console</B> or <B>Courier New</B> is used. If you want to use the fixed OEM fonts then <I>fontfile</I> should be defined as <B>app860.fon</B> (or local language equivalent), this forces the font to be loaded as a resource, prior to use. 
+<P>
+<A HREF="amicr040.html">[FAQ Index]</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

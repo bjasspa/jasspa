@@ -1,0 +1,58 @@
+<HTML>
+<HEAD><TITLE>get-registry(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+get-registry(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>get-registry - Retrieve a node value from the registry. 
+<BR>set-registry - Modify a node value in the registry. </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>get-registry</B> &quot;<I>root</I>&quot; &quot;<I>subkey</I>&quot; 
+<BR><B>set-registry</B> &quot;<I>root</I>&quot; <I>&quot;subkey</I>&quot; <I>&quot;value</I>&quot; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>get-registry</B> retrieves the value of a node defined by <I>root</I>/<I>subkey</I> from the registry into the variable 
+<A HREF="m5var041.html">$result(5)</A>. 
+<P>The node name is specified in two components, typically required when iterating over a registry tree, where the <I>root</I> component is static and the <I>subkey</I> is dynamic, <I>subkey</I> may be specified as the null string (<TT>&quot;&quot;</TT>) if an absolute registry path is specified. 
+<P><B>set-registry</B> adds (or modifies) a new value to the registry. <I>root</I> is the root of the new entry and MUST exist or the call fails. <I>subkey</I> is the node name (or path) if the path does not exist then it is created. <I>value</I> is the value to assign to the node. </UL>
+<H2><B>DIAGNOSTICS </B></H2>
+<UL><P><B>get-registry</B> fails if the node does not exist, otherwise the registry string is returned in 
+<A HREF="m5var041.html">$result(5)</A>. 
+<P><B>set-registry</B> fails if the <I>root</I> node does not exist. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following call <UL>
+<PRE>set-registry&nbsp;&quot;/history&quot;&nbsp;&quot;foo/win32/printer&quot;&nbsp;&quot;foo-bar&quot; 
+</PRE></UL>
+<P>constructs a registry hierarchy of the form:- <UL>
+<PRE>&quot;history&quot;&nbsp;{ 
+&nbsp;&nbsp;&quot;foo&quot;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;win32&quot;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;printer&quot;=&quot;foo-bar&quot;; 
+&nbsp;&nbsp;&nbsp;&nbsp;} 
+&nbsp;&nbsp;} 
+} 
+</PRE></UL>
+<P>The value of the registry node may be retrieved using:- <UL>
+<PRE>get-registry&nbsp;&quot;/history&quot;&nbsp;&quot;foo/win32/printer&quot; 
+</PRE></UL>
+<P>which would return &quot;<TT>foo-bar</TT>&quot;. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd072.html">find-registry(2)</A>, 
+<A HREF="m2cmd025.html">list-registry(2)</A>, 
+<A HREF="m2cmd157.html">read-registry(2)</A>, 
+<A HREF="m4fil028.html">&amp;reg(4)</A>, 
+<A HREF="m8fil004.html">erf(8)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

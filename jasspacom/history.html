@@ -44,8 +44,7 @@
 <br>
 <font size="+1" ><a href="download.html" style="COLOR: black">overview</a>&nbsp;&nbsp;</font>
 <font size="+1" color="#ff0000">history&nbsp;&nbsp;</font>
-<font size="+1"><a href="down0107.html" style="COLOR: black">July 2001</a>&nbsp;&nbsp;</font>
-<font size="+1"><a href="down0108.html" style="COLOR: black">August 2001</a>&nbsp;&nbsp;</font>
+<font size="+1"><a href="down0201.html" style="COLOR: black">January 2002</a>&nbsp;&nbsp;</font>
 <font size="+1"><a href="spelling.html" style="COLOR: black">spelling dictionaries</a>&nbsp;&nbsp;</font>
 <font size="+1"><a href="contrib.html" style="COLOR: black">contributions</a>&nbsp;&nbsp;</font>
 </p>
@@ -60,17 +59,17 @@ delivered on a unmarked 5 1/2&quot; floppy disk.
 <p>The program was originally ported to a Motorola MVME147 UNIX box as an
 alternative to <b>vi</b>. Reliability of the program proved to be a problem as
 it constantly crashed. In an attempt to rectify the problems the development
-of MicroEmacs '99 commenced.
+of JASSPA's MicroEmacs commenced.
 
 <p>Development has continued from 1988 through to today, on the whole
 oblivious to further developments of the existing <b>MicroEmacs</b> program.
 This was due to no Internet access. It was not until 1996 the next version of
-<b>MicroEmacs</b> and <b>mewin</b> (Microsoft Windows (TM) port of the
-same program) was downloaded from the Internet and compared. By this time
-MicroEmacs '99 was radically different and we were not about to mesh the two
+<b>MicroEmacs</b> and <b>mewin</b> (Microsoft Windows (TM) port of the same
+program) was downloaded from the Internet and compared. By this time JASSPA's
+MicroEmacs was radically different and we were not about to mesh the two
 together - that would be a step backwards.
 
-<p>Development of MicroEmacs '99 has been biased towards the UNIX platform, as
+<p>Development of JASSPA's MicroEmacs has been biased towards the UNIX platform, as
 most of the early development was performed in the UNIX domain. The
 first of the window servers was X-Windows, which in turn has shaped the
 implementation of the Microsoft Windows port. Latterly, we have seen the
@@ -79,20 +78,72 @@ port to the DOS environment, and subsequent development of the Microsoft
 Windows port, a UNIX like interface was required. Most existing users
 could not abide the primitive editors found on these machines; Microsoft
 Windows was an alien and hostile environment when compared with UNIX. Hence,
-the MicroEmacs '99 interface utilizes UNIX style cut and paste across all
+the JASSPA's MicroEmacs interface utilizes UNIX style cut and paste across all
 platforms.
 
-<p>For  portability,  MicroEmacs '99  utilizes   character   rendering  on  all  platforms
-regardless of the window manager. Under  X-Windows and Microsoft  Windows, the
-display is still treated as a character  based display, the subtle  difference
-is that the display pane is re-sizable. This means that the scroll bars, fonts
-etc. are not as slick as they  could be,  certainly  under  Microsoft  Windows
-MicroEmacs '99  looks  positively  primitive!!  Regardless  of the  look, the goal of a
-common editor across all working platforms has been achieved!
+<p>For portability, JASSPA's MicroEmacs utilizes character rendering on all
+platforms regardless of the window manager. Under X-Windows and Microsoft
+Windows, the display is still treated as a character based display, the subtle
+difference is that the display pane is re-sizable. This means that the scroll
+bars, fonts etc. are not as slick as they could be, certainly under Microsoft
+Windows JASSPA's MicroEmacs looks positively primitive!! Regardless of the
+look, the goal of a common editor across all working platforms has been
+achieved!
 
 <h2><img src="images/miniicon.gif" width="16" height="16"> <font color="#0000FF">
 Development History</font></h2>
-<h3>4th Release - July 2001</h3>
+<h3>5th Release - January 2002</h3>
+<ul>
+  <li>[011230] Applied GPL License to code base. Transition to GPL following permission from Danial M Lawrence.</li>
+  <li>[011220] Fix to comment-restyle in comment.emf - stops a spin</li>
+  <li>[011220] nroff makefile full target building the txt files. (internal)</li>
+  <li>[011220] Added support for a $CURSOR$ tag to the etf files which sets the initial cursor position, and included h.etf as an example (thats been annoying me for some time).</li>
+  <li>[011220] Moved the template etfinsrt calls into the buffer-initialize macro </li>
+  <li>[011220] Fixed the exec fhook-cpp not working </li>
+  <li>[011220] Fixes to ctags for C++ function call initialisers</li>
+  <li>[011220] Fixed Windows Console &lt;RETURN&gt; key keyboard mapping, returning incorrect binding</li>
+  <li>[011219] Fixed Termcap &lt;TAB&gt; key translation</li>
+  <li>[011219] Fixed Termcap tparm() to use a default stack argument if not specified by default.</li>
+  <li>[011219] Added cygwin support to the build file</li>
+  <li>[011219] Added extra argument to buffer-initialise.</li>
+  <li>[011218] Added support for Euphoria language.</li>
+  <li>[011217] Italian spelling dictionary</li>
+  <li>[011217] Added scheme support for fence matching colors.</li>
+  <li>[011217] Removed global binding of TAB key from unixterm.emf and build in translation.</li>
+  <li>[011215] Fixed cygwin makefile for latest version, added cygwin macros</li>
+  <li>[011215] Fixed remaining termcap crash under cygwin.</li>
+  <li>[011214] Merged prototype cygwin code base into release, use poll() following select()</li>
+  <li>[011123] Fence matching added to user sertup (user-setup -&gt; Platform -&gt; Fence Display)</li>
+  <li>[011115] Reworked the buffer hooks such that mybhook/myehook can be defined.</li>
+  <li>[011031] Fixed a corking crash! (load random.c and do 2222 replace-string &quot;\n&quot; &quot;&quot;)</li>
+  <li>[011029] hklatex.emf item-list support (hit f7)</li>
+  <li>[011028] hklatex.emf  has a greatly  improved pseudo  hilighting</li>
+  <li>[011028] Tweaked  the @fs  variable to improve its  usability</li>
+  <li>[011028] set-position can now store the mark position</li>
+  <li>[011028] Fixes to windows file times</li>
+  <li>[011016] New caps-lock, num-lock, scroll-lock and pause key support for win32 & unix. The *-lock implementation to be more like S-pick and
+  C-pick as the keys are automatically supported (like the shift) so there are
+  no default binds to void, the keys are only generated if there are bound. Could not implement this on DOS.</li>
+  <li>[011016] <b>which</b> command built in i.e. &quot;M-x which&quot;. Used for command utilities.</li>
+  <li>[011026] A new Hide value feature when inputting strings, this is now used be the crypt and ftp Password
+  entry. The string is shown as '*'s.</li>
+  <li>[011025] Utilised the latest screen-update improvements to make the gdiff screen update rock solid</li>
+  <li>[011025] mlGetChar fix. The key &quot;return&quot; was the 78th special char, i.e. SKEY_SPEC|'N' and as the mlGetChar did not check the SKEY_SPEC bits, pressing return was like pressing 'N' so on a Y/N prompt try pressing return, its like saying No! </li>
+  <li>[011016] Spelling dictionaries renamed with ISO naming scheme. Because
+  of the language changes, you need to rename your personal dictionary to
+  lsdpengb.edf for British and lsdpenus.edf for American.</li>
+  <li>[011016] Hilighting brackets/braces as requested from user base.
+  The hilight braces required some other subtle changes to screen-update and
+  show-region and the addition of the rbin mode means that this version is
+  incompatible with the last in quite a few areas.</li>
+  <li>[011016] Fixed mouse handler (turns out that if the pick event was lost (use @cg or an error) then me would lock!)</li>
+  <li>[011016] Extended control on indent tab and return behaviour (can disable the tab behaviour)</li>
+  <li>[011016] C++ namespace indentation support</li>
+  <li>[011016] New language support interface so spelling is not required for a language to be supported (may only want the basic alphabet setup etc).</li>
+  <li>[011016] Changed file loading interface so all commands (like view-file) can load in bin,crypt or rbin mode.</li>
+  <li>[010123] Reduced binary mode added (rbin)</li>
+</ul>  
+<h3>4th Release - August 2001</h3>
 <ul>
   <li>[010813] OSD bug fix for fixed size dialog boxes.</li>
   <li>[010812] Inclusion of <tt>occur</tt> regexp function.</li>
@@ -104,13 +155,13 @@ Development History</font></h2>
 <h3>3rd Release - Minor Updates July 14th 2001 onwards</h3>
 <ul>
   <li>[010718] LaTeX template includes incorrect bindings (lower line, marked &gt;, is correct)<pre>
-diff "hklatex.emf-broken" "hklatex.emf"
+diff &quot;hklatex.emf-broken&quot; &quot;hklatex.emf&quot;
 46c46
-&lt; set-variable .fhook-latex.command-flag "|bo|bo|bo|bo|thb|thb|thb|thb|th|thb|thb|th|thb|th|th|thbH|"
+&lt; set-variable .fhook-latex.command-flag &quot;|bo|bo|bo|bo|thb|thb|thb|thb|th|thb|thb|th|thb|th|th|thbH|&quot;
 ---
-&gt; set-variable .fhook-latex.command-flag "|bo|bo|bo|bo|thb|thb|thb|thb|th|thb|th|th|thbH|"
+&gt; set-variable .fhook-latex.command-flag &quot;|bo|bo|bo|bo|thb|thb|thb|thb|th|thb|th|th|thbH|&quot;
 </pre>
-<li>[010716] Corrected Windows Install Shield "Company Entry" + "Registry entry fields"</li>
+  <li>[010716] Corrected Windows Install Shield &quot;Company Entry&quot; + &quot;Registry entry fields&quot;</li>
   <li>[010716] Minor macros modification to font selection for schemes. Default guest setup font
   selection for cleaner 'first' page.</li>
   <li>[010716] CVS macro update. Changed <tt>cvs-diff</tt> to <tt>cvs-gdiff</tt> and introduced a new
@@ -123,9 +174,12 @@ diff "hklatex.emf-broken" "hklatex.emf"
 <ul>
   <li>[010713] New style WWW JASSPA Pages</li>
   <li>[010712] Added comment and menu support for <i>dos</i> and <i>m4</i> (hkdos.emf/hkm4.emf)</li>
+  <li>[010711] Added hpux11 support</li>
+  <li>[010711] Fixed windows erase when file doesn't exist problems</li>
   <li>[010710] Removed cbox - replaced by generic comment implementation (cbox.emf/me.ehf)</li>
   <li>[010710] Added a 'Plain Text' char set which only uses plain letters (charset.emf)</li>
   <li>[010710] Fixed many little comment formatting bugs and annoyances (comment.emf)</li>
+  <li>[010710] Changes required to build on dos using DJGPP v1</li>
   <li>[010705] Bug fix for windows rendering crash</li>
   <li>[010630] Minor reorder to X-Windows initialisation for cygwin X-Server.</li>   
   <li>[010507] Added generic commands for the creation, deletion and reformatting of comments now used by most of the file hooks.</li>
@@ -207,7 +261,7 @@ Hilight the line only.
 <li><b>Region in the line  selected.  Both point and mark are on
 the same line.</b><br>
 Extract  the  selected  text and  hilight  all lines that
-match the  search  pattern.  The color  "remove"  is also
+match the  search  pattern.  The color  &quot;remove&quot;  is also
 pattern matched to selectively remove lines.
 <li><b>Region selected mark & point on different lines</b></br>
 Block up the region with appropriate hilight.
@@ -468,6 +522,16 @@ Release History</font></h2>
         <td align=center bgcolor="#0000FF"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif" size="4">Description</font></td>
     </tr>
     <tr>
+      <td align=center bgcolor="#0080ff"><font  color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">January 2002</font></td>
+      <td bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">5th Major Release - First under GPL</font></td>
+      
+    </tr>
+    <tr>
+      <td align=center bgcolor="#0080ff"><font  color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">August 2001</font></td>
+      <td bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">4th Major Release</font></td>
+      
+    </tr>
+    <tr>
       <td align=center bgcolor="#0080ff"><font  color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">July 2001</font></td>
       <td bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">3rd Major Release</font></td>
       
@@ -494,6 +558,6 @@ Release History</font></h2>
     </tr>
 </table></center>
 
-<p><font size="-2"><i>Copyright &copy; 2000-2001 Jasspa</i></font></p>
+<p><font size="-2"><i>Copyright &copy; 2000-2002 Jasspa</i></font></p>
 </body>
 </html>

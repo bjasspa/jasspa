@@ -1,0 +1,88 @@
+<HTML>
+<HEAD><TITLE>CompanyProfiles(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+CompanyProfiles(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>COMPANY PROFILES </B></H2>
+<UL><P>This section describes how a company profile should be incorporated into MicroEmacs '02. A company profile defines a set of extensions to MicroEmacs which encapsulate settings which are used on a company wide basis. This type of configuration is typically used with a networked (shared) installation. The company profile would typically include:- <UL><P>
+<LI>Name of the company. 
+<LI>Standard header files including company copyright statements. 
+<LI>Standard file layouts 
+<LI>Company defined language extensions. </UL></UL>
+<H2>Location Of The Company Information </H2>
+<UL><P>It is suggested that all of the company extensions applied to MicroEmacs '02 are performed in a separate directory location which shadows the MicroEmacs standard macro file directory. This enables the original files to be sourced if a user does not want to include the company files. This method also allows MicroEmacs to be updated in the future, whilst retaining the company files. For our example, we shall use a company called <B>JASSPA</B>, you should replace references to <I>jasspa</I> with your own company name. The steps involved are laid out as follows:- 
+<P><B>Create a new company directory </B>
+<BR><UL>You may skip this step if you are going to modify the standard installation. </UL>
+<UL><P>Create a new directory to hold the company information. i.e. 
+<UL><P><TT>/usr/local/microemacs/jasspa</TT> - UNIX 
+<BR><TT>c:\Program&nbsp;Files\JASSPA\MicroEmacs\jasspa</TT> - Microsoft </UL></UL>
+<UL><P>Modify the 
+<A HREF="m5var057.html">$MEPATH(5)</A> of the (of all users) to include the company directory on the search path i.e. 
+<P>UNIX 
+<BR><UL>Users edit their local <TT>$MEPATH</TT> or a base $MEPATH is added to the system <TT>.login</TT> or <TT>.profile</TT> scripts. 
+<UL><P><TT>MEPATH=/usr/local/microemacs</TT> 
+<BR><TT>MEPATH=/usr/local/microemacs/jasspa:$MEPATH</TT> </UL></UL>
+<P>Microsoft Windows Platforms 
+<BR><UL>Edit the <TT>me32.ini</TT> file and modify the <TT>mepath</TT> entry to reflect the location of the company directory:- 
+<UL><P><TT>mepath=C:\Prog....\Mic...\macros\jasspa;C:\Prog...\Mic...\macros</TT> </UL></UL>
+<P>DOS Platforms 
+<BR><UL>Edit the <B>autoexec.bat</B> file and modify <TT>MEPATH</TT> to include the company directory location. 
+<UL><P><TT>SET MEPATH=c:\me\jasspa;c:\me</TT> </UL></UL></UL></UL>
+<H2>Content Of The Company Information </H2>
+<UL><P><B>Company macro file </B>
+<BR><UL>The company file is typically called by the company name (i.e. <TT>jasspa.emf</TT>) create a new company file. The file includes your company name and hook functions for any new file types that have been defined for the company, an example company file for <B>Jasspa</B> might be defined as:- <UL>
+<PRE>;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+; 
+;&nbsp;&nbsp;Author&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;Jasspa 
+;&nbsp;&nbsp;Created&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;Thu&nbsp;Jul&nbsp;24&nbsp;09:44:49&nbsp;1997 
+;&nbsp;&nbsp;Last&nbsp;Modified&nbsp;:&nbsp;&lt;190698.2225&gt; 
+; 
+;&nbsp;&nbsp;Description&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Extensions&nbsp;for&nbsp;Jasspa 
+; 
+;&nbsp;&nbsp;Notes 
+; 
+;&nbsp;&nbsp;History 
+; 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+;&nbsp;Define&nbsp;the&nbsp;name&nbsp;of&nbsp;the&nbsp;company. 
+set-variable&nbsp;%company-name&nbsp;&quot;Jasspa&quot; 
+;&nbsp;Add&nbsp;Jasspa&nbsp;specific&nbsp;file&nbsp;hooks 
+;&nbsp;Make-up&nbsp;foo&nbsp;file&nbsp;hook 
+add-file-hook&nbsp;&quot;.foo&quot;&nbsp;&nbsp;&nbsp;&nbsp;fhook-foo 
+1&nbsp;add-file-hook&nbsp;&quot;-!-[&nbsp;\t]*foobar.*-!-&quot;&nbsp;fhook-foo&nbsp;;&nbsp;-!-&nbsp;foobar&nbsp;-!- 
+;&nbsp;Override&nbsp;the&nbsp;make&nbsp;with&nbsp;localised&nbsp;build&nbsp;command 
+set-variable&nbsp;%compile-com&nbsp;&quot;build&quot; 
+</PRE></UL>
+<P>The file contains company specific file hooks and the name of the company. </UL>
+<P><B>Other Company Files </B>
+<BR><UL>Files defined on behalf of the company are included in the company directory. These would include:- <UL><UL><P>
+<LI>Template header files 
+<A HREF="m8fil001.html">etf(8)</A>. 
+<LI>Hook file definitions (<B>hk</B><I>XXX</I><B>.emf</B>) for company specific files, see 
+<A HREF="m2cmd003.html">add-file-hook(2)</A>. 
+<LI>Extensions to the standard hook definitions (<B>my</B><I>XXX</I><B>.emf</B>) for company specific language extensions to the standard hook files. See 
+<A HREF="m2cmd202.html">File Hooks</A> and 
+<A HREF="m2nar000.html">File Language Templates</A>. </UL></UL></UL></UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var076.html">$MENAME(5)</A>, 
+<A HREF="m5var057.html">$MEPATH(5)</A>, 
+<A HREF="m2cmd202.html">File Hooks</A>, 
+<A HREF="m2nar000.html">File Language Templates</A>, 
+<A HREF="m2nar001.html">Installation</A>, 
+<A HREF="m3osd000.html">user-setup(3)</A>, 
+<A HREF="m2nar003.html">User Profiles</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,40 @@
+<HTML>
+<HEAD><TITLE>kill-line(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+kill-line(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>kill-line - Delete all characters to the end of the line </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>kill-line</B> (<B>C-k</B>)&nbsp; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>kill-line</B>, when used with no argument <I>n</I>, deletes all text from the cursor to the end of a line, the end of line character is also deleted if the cursor is in the first column and the 
+<A HREF="m2mod008.html">line(2m)</A> mode is disabled. The deleted text is placed in the kill buffer, see 
+<A HREF="m2cmd146.html">yank(2)</A> for more information on the kill buffer. When used on a blank line, it always deletes it. 
+<P>If a +ve argument <I>n</I> is supplied the specified number of lines is deleted, the setting of the <B>line</B> mode is ignore. If <I>n</I> is <TT>0</TT> the command has no effect. If a -ve argument is given, +<I>n</I> lines are deleted but the text is NOT added to the kill buffer. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P>If a line is accidentally removed then 
+<A HREF="m2cmd146.html">yank</A> the text back immediately or use 
+<A HREF="m2cmd136.html">undo(2)</A>. 
+<P>The -ve argument is typically used in macro scripts where the yank buffer is more precisely controlled by the script. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd081.html">kill-region(2)</A>, 
+<A HREF="m2mod008.html">line(2m)</A>, 
+<A HREF="m2cmd136.html">undo(2)</A>, 
+<A HREF="m2cmd146.html">yank(2)</A>, 
+<A HREF="m2cmd035.html">forward-kill-word(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

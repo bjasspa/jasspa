@@ -1,0 +1,53 @@
+<HTML>
+<HEAD><TITLE>$line-scheme(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+$line-scheme(5)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>$line-scheme - Set the current line color scheme </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>$line-scheme</B> <I>schemeNum</I>; Default is <TT>-1</TT> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>$line-scheme</B> sets the color scheme to be used for the current line of the current window. The given <I>schemeNum</I> can be any scheme number previously defined by the function 
+<A HREF="m2cmd001.html">add-color-scheme(2)</A>. 
+<P>A line's $line-scheme setting is removed by setting the variable to -1. 
+<P>A $line-scheme setting takes precedence over the buffer's color scheme ( 
+<A HREF="m5var001.html">$buffer-scheme(5)</A>) and the buffer's hilighting scheme ( 
+<A HREF="m5var004.html">$buffer-hilight(5)</A>). </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>
+<A HREF="m3mac017.html">c-hash-eval(3)</A> greys out lines of text by doing: <UL>
+<PRE>set-variable&nbsp;$line-scheme&nbsp;%lblack 
+</PRE></UL>
+<P>The lines are rest by doing <UL>
+<PRE>set-variable&nbsp;$line-scheme&nbsp;-1 
+</PRE></UL>
+<P>The 
+<A HREF="m3mac046.html">gdb(3)</A> interface hilights the current line of source by doing: <UL>
+<PRE>set-variable&nbsp;$line-scheme&nbsp;%yellow-lblack 
+</PRE></UL>
+</UL><H2><B>NOTES </B></H2>
+<UL><P>Due to line storage restrictions, only 15 different color schemes can be used in a buffer at any one time. When the 16th color scheme is used it replaces the first color scheme, all lines using the first color scheme will be colored using the new color scheme. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd001.html">add-color-scheme(2)</A>, 
+<A HREF="m3mac017.html">c-hash-eval(3)</A>, 
+<A HREF="m5var001.html">$buffer-scheme(5)</A>, 
+<A HREF="m5var004.html">$buffer-hilight(5)</A>, 
+<A HREF="m5var032.html">$mode-line-scheme(5)</A>, 
+<A HREF="m5var050.html">$scroll-bar-scheme(5)</A>, 
+<A HREF="m5var047.html">$system(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

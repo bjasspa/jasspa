@@ -1,0 +1,57 @@
+<HTML>
+<HEAD><TITLE>iso-accents-mode(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+iso-accents-mode(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>iso-accents-mode - Enable/disable ISO accent expansion short-cut mode 
+<BR>iso-accents-expand - Expand an ISO accent </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>iso-accents-mode</B> 
+<BR><I>n</I> <B>iso-accents-expand</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>iso-accents-mode</B> provides a facility to enter a plain text representation of an ISO accent and then to expand it into a proper ISO accented character. For example:- 
+<UL><P><TT>`a</TT>&nbsp;=&gt;&nbsp;small&nbsp;a,&nbsp;grave&nbsp;accent 
+<BR><TT>^a</TT>&nbsp;=&gt;&nbsp;small&nbsp;a,&nbsp;circumflex&nbsp;accent 
+<BR><TT>'a</TT>&nbsp;=&gt;&nbsp;small&nbsp;a,&nbsp;acute&nbsp;accent 
+<BR><TT>&quot;a</TT>&nbsp;=&gt;&nbsp;small&nbsp;a,&nbsp;umlaut 
+<BR><TT>~a</TT>&nbsp;=&gt;&nbsp;small&nbsp;a,&nbsp;tilde 
+<BR><TT>.a</TT>&nbsp;=&gt;&nbsp;small&nbsp;a,&nbsp;ring 
+<BR><TT>14</TT>&nbsp;=&gt;&nbsp;fraction,&nbsp;one-quater 
+<BR><TT>12</TT>&nbsp;=&gt;&nbsp;fraction,&nbsp;one-half 
+<BR><TT>34</TT>&nbsp;=&gt;&nbsp;fraction,&nbsp;three-quaters 
+<BR><TT>ae</TT>&nbsp;=&gt;&nbsp;ae&nbsp;ligature 
+<BR><TT>sz</TT>&nbsp;=&gt;&nbsp;small&nbsp;sz&nbsp;ligature,&nbsp;German. 
+<BR><TT>+-</TT>&nbsp;=&gt;&nbsp;plus&nbsp;or&nbsp;minus&nbsp;(math.) 
+<BR><TT>co</TT>&nbsp;=&gt;&nbsp;copyright 
+<BR><TT>rg</TT>&nbsp;=&gt;&nbsp;registered&nbsp;trademark 
+<BR><TT>tm</TT>&nbsp;=&gt;&nbsp;trade&nbsp;mark 
+<BR><TT>oe</TT>&nbsp;=&gt;&nbsp;small&nbsp;oe&nbsp;ligature 
+<BR><TT>/o</TT>&nbsp;=&gt;&nbsp;small&nbsp;o,&nbsp;slash 
+</UL><P>In order to use the ISO accent expansion then it must be installed, either from the command line or, for a more permanent installation, from the <I>user</I>.emf file. Installation is performed using the command <B>iso-accents-mode</B>, if <I>n</I> is specified (any non-zero numeric value) then the ISO accent expansion is installed locally into the current buffer. If <I>n</I> is omitted then expansion is available globally (across all buffers). An argument of 0 and the <B>iso-accents-mode</B> is un-installed. 
+<P><B>iso-accents-expand</B> is the macro command that expands the ISO abbreviated character sequence into it's ISO ASCII character equivalent. This is by default bound to <TT>ESC</TT> <TT>ESC</TT>. If an ISO character is not located then 
+<A HREF="m2cmd051.html">expand-abbrev(2)</A> is invoked to try a standard abbreviation. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P><B>iso-accents-mode</B> and <B>iso-accents-expand</B> are implemented as macros in the file <TT>langutl.emf</TT>, the repertoire of expansions may be enhanced by editing this file. 
+<P>The operation of the <B>iso-accents-mode</B> could equally as well be implemented with the appropriate definitions in a 
+<A HREF="m2cmd117.html">global-abbrev-file(2)</A>. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd117.html">buffer-abbrev-file(2)</A>, 
+<A HREF="m2cmd051.html">expand-abbrev(2)</A>, 
+<A HREF="m2cmd117.html">global-abbrev-file(2)</A>, 
+<A HREF="m2cmd117.html">global-abbrev-file(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

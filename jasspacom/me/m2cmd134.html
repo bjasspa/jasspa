@@ -1,0 +1,122 @@
+<HTML>
+<HEAD><TITLE>set-char-mask(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+set-char-mask(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>set-char-mask - Set character word mask </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>set-char-mask</B> &quot;<I>flags</I>&quot; [&quot;<I>value</I>&quot;] </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>set-char-mask</B> returns or modifies the setting of MicroEmacs internal character tables. The argument <I>n</I> defines the action to be taken, as follows:- 
+<P><B>-1</B> 
+<BR><UL>Removes characters from the given set. </UL>
+<P><B>0</B> 
+<BR><UL>Returns characters in the given set in 
+<A HREF="m5var041.html">$result(5)</A>. </UL>
+<P><B>1</B> 
+<BR><UL>Adds characters to the given set. 
+</UL><P>The first argument &quot;<I>flags</I>&quot; determines the required character set as follows:- 
+<P><B>d</B> 
+<BR><UL>Is Displayable. Characters in this set can be directly displayed to the screen (as a single character) when occurring in a buffer. When a character not in this set is to be displayed it is performed using more than one character. Characters in the range 1-31 are displayed as &quot;<TT>^?</TT>&quot; where <TT>?</TT> is the ASCII character plus 64, (e.g. 0x01 -&gt; 65, i.e. &quot;<TT>^A</TT>&quot;) otherwise the character is displayed in the form &quot;<TT>\xhh</TT>&quot; where <TT>hh</TT> is the hex form of the ASCII value. One notable exception is the tab character (0x09), by default this character is not displayable, instead it is displayed as a sequence of one or more spaces up to the next tab stop. </UL>
+<P><B>p</B> 
+<BR><UL>Is Pokable. Similar to <B>d</B>, characters in this set can be poked to the screen when using 
+<A HREF="m2cmd099.html">screen-poke(2)</A>. When found in a binary file the character is displayed in the right hand column. Unlike <B>d</B>, any character outside this set will be displayed as a single period '<TT>.</TT>', indicating that it cannot be displayed. </UL>
+<P><B>P</B> 
+<BR><UL>Is Printable. Similar to <B>d</B>, characters in this set may be printed as a single character when using 
+<A HREF="m2cmd101.html">print-buffer(2)</A> or 
+<A HREF="m2cmd101.html">print-region(2)</A>. Any character not in this set is printed in a similar fashion to <B>d</B>. </UL>
+<P><B>M</B> 
+<BR><UL>Character font Map. Internally MicroEmacs uses ISO-8859-1 (Latin 1) to configure alphabetic classes and the spell-checker, however the system font being by the native platform may not be the same, for example a small 'e' acute is character 0xe9 in ISO-8859-1 but character 0x82 in Windows OEM fonts. To change the characteristics of the 'e' acute character (such as making it an alphabetic character), the ISO-8859-1 character should always be used, but a correct mapping of ISO-8859-1 to the display font (such as Windows OEM) must also be supplied. </UL>
+<UL><P>Unlike other sets, this set cannot be incrementally altered, any calls to alter this set leads to the resetting of all the character tables so the character mapping must be performed first and in a single call. No other set may be altered in the same call. When setting, the &quot;<I>value</I>&quot; must supply pairs of characters, an ISO-8859-1 character followed by its system font equivalent. </UL>
+<P><B>L</B> 
+<BR><UL>ISO-8859-1 (Latin 1) character map list. This set cannot be altered using this flag, character mappings must be set up using flag <B>M</B>. The order of the characters in the returned <B>$result</B> string is the same as the order for flag <B>U</B>. </UL>
+<P><B>U</B> 
+<BR><UL>User font character map list. This set cannot be altered using this flag, character mappings must be set up using flag <B>M</B>. The order of the characters in <B>$result</B> when returned is the same as the order for flag <B>L</B>. </UL>
+<P><B>a</B> 
+<BR><UL>Is Alphabetic letter. Characters in this set are alphabetical characters, used by many MicroEmacs commands such as 
+<A HREF="m2cmd096.html">forward-word(2)</A>. When setting, the &quot;<I>value</I>&quot; must specify pairs of ISO-8859-1 (Latin 1) characters, an Upper-case character followed by its lower-case equivalent. This enables commands such as 
+<A HREF="m2cmd015.html">lower-case-word(2)</A> to operate correctly regardless of the font and language being used. Some fonts may not have all the characters available for rendering, for instance PC Code page 437 does not have an upper-case 'e' grave. In this case an ordinary 'E' should be used as a sensible replacement, i.e. &quot;E`e&quot; (where `e is an 'e' grave). However, this will lead to all upper-case 'E's to map to a lower-case 'e' grave in a case changing operation, this may be corrected by adding a further mapping of 'E' to 'e' to over-ride the 'e' grave mapping, i.e. &quot;E`eEe&quot;. This technique does fail when changing the case more than once, when all lower case 'e' graves will be lost. </UL>
+<UL><P>Note that the returned character list will pair all lower-case characters with their upper-case equivalent letters first. </UL>
+<P><B>l</B> 
+<BR><UL>Is Lower case letter. This set cannot be altered using this flag, alterations to the alphabetic set must be performed using flag <B>a</B>. Characters in this set are all the lower-case letters, typically the characters '<TT>a</TT>' to '<TT>z</TT>'. The order may not be the same as returned by flag <B>u</B>. </UL>
+<P><B>u</B> 
+<BR><UL>Is Upper case letter. This set cannot be altered using this flag, alterations to the alphabetic set must be performed using flag <B>a</B>. Characters in this set are all the upper-case letters, typically the characters '<TT>A</TT>' to '<TT>Z</TT>'. The order may not be the same as returned by </UL>
+<P><B>h</B> 
+<BR><UL>Is Hex-decimal Digit. The set is rarely used as it is invariably the digits '<TT>0</TT>' to '<TT>9</TT>' and the letters '<TT>a</TT>' to '<TT>f</TT>' in upper and lower case. It is often used in the setting of 
+<A HREF="m5var007.html">$buffer-mask(5)</A>. </UL>
+<P><B>A</B> 
+<BR><UL>Is Alpha-numeric. This set cannot be altered using this flag, alterations to the alphabetic set must be performed using flag <B>a</B>. Characters in this set are either alphabetic characters or the digits 0-9. </UL>
+<P><B>s</B> 
+<BR><UL>Is Spell extended word character. The characters in this set are recognized by the spell checker as characters which may be considered part of a word, for example the period '<TT>.</TT>'s in e.g. or the hyphen '<TT>-</TT>' in hyphenated-words. Typically this set contains the characters '<TT>'</TT>', '<TT>-</TT>' and '<TT>.</TT>'. </UL>
+<P><B>1</B>, <B>2</B>, <B>3</B> &amp; <B>4</B> 
+<BR><UL>Is in Word. These user definable sets are used to add characters to a buffer's word character set, affecting the operation of commands like 
+<A HREF="m2cmd096.html">forward-word(2)</A>. Many different file types operate better with a different word character set, e.g. it is preferable to include the '<TT>_</TT>' character when editing C files. See variable 
+<A HREF="m5var007.html">$buffer-mask(5)</A>. 
+</UL><P>Unless stated otherwise, multiple flags may be specified at the same time returning a combined character set or setting multiple properties for the given &quot;<I>value</I>&quot; characters. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>For many UNIX XTerm fonts the best characters to use for 
+<A HREF="m5var022.html">$box-chars(5)</A> (used in drawing 
+<A HREF="m2cmd066.html">osd(2)</A> dialogs) lie in the range 0x0B to 0x19. For example the vertical bar is '<TT>\x19</TT>', the top left hand corner is '<TT>\x0D</TT>' etc. These characters are by default set to be not displayable or pokable which renders them useless. They can be made displayable and pokable as follows:- <UL>
+<PRE>set-char-mask&nbsp;&quot;dp&quot;&nbsp;&quot;\x19\x0D\x0C\x0E\x0B\x18\x15\x0F\x16\x17\x12&quot; 
+</PRE></UL>
+<P>MicroEmacs variables have either '<TT>$</TT>', '<TT>#</TT>', '<TT>%</TT>', '<TT>:</TT>' or a '<TT>.</TT>' character prepended to their name, they may also contain a '<TT>-</TT>' character in the body of their name. It is preferable for these characters to be part of the variable 'word' so commands like 
+<A HREF="m2cmd035.html">forward-kill-word(2)</A> can work correctly. This may be achieved by adding these characters to user set <B>2</B> and setting the <B>buffer-mask</B> variable to include set <B>2</B>, as follows: <UL>
+<PRE>set-char-mask&nbsp;&quot;2&quot;&nbsp;&quot;$#%:.-&quot; 
+
+define-macro&nbsp;fhook-emf 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$buffer-mask&nbsp;&quot;luh2&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;. 
+&nbsp;&nbsp;&nbsp;&nbsp;. 
+!emacro 
+</PRE></UL>
+<P>For the examples below only the following subset of characters will be used:- <UL>
+<PRE>Character&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ISO-8859-1&nbsp;&nbsp;&nbsp;&nbsp;Windows&nbsp;OEM&nbsp;&nbsp;&nbsp;&nbsp;PC&nbsp;Page&nbsp;437 
+
+Capital&nbsp;A&nbsp;(A)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A 
+Capital&nbsp;A&nbsp;grave&nbsp;(`A)&nbsp;&nbsp;&nbsp;&nbsp;\xC0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\xB7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No&nbsp;equivalent 
+Capital&nbsp;A&nbsp;acute&nbsp;('A)&nbsp;&nbsp;&nbsp;&nbsp;\xC1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\x90&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No&nbsp;equivalent 
+Small&nbsp;a&nbsp;(a)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a 
+Small&nbsp;A&nbsp;grave&nbsp;(`a)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\xE0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\x85&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\x85 
+Small&nbsp;A&nbsp;acute&nbsp;('a)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\xE1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\xA0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\xA0 
+</PRE></UL>
+<P>As the spell checker only operates in ISO-8859-1 (Latin 1), the character font mapping (flag <B>M</B>) must be correctly setup for spell checking to operate correctly. For ISO-8859-1 (ISO) this is an empty string as the default mapping is correct, but for both Windows OEM (OEM) and PC Code Page 437 (PC-437) the mappings should be set as follows:- <UL>
+<PRE>;&nbsp;OEM&nbsp;font&nbsp;mapping&nbsp;setup 
+set-char-mask&nbsp;&quot;M&quot;&nbsp;&quot;\xC0\xB7\xC1\x90\xE0\x85\xE1\xA0&quot; 
+;&nbsp;PC-437&nbsp;font&nbsp;mapping&nbsp;setup 
+set-char-mask&nbsp;&quot;M&quot;&nbsp;&quot;\xC0A\xC1AAA\xE0\x85\xE1\xA0&quot; 
+</PRE></UL>
+<P>As all the characters in ISO have equivalents in OEM, the mapping for OEM is a simple ISO to OEM character list. However the missing capital <B>A</B>'s in PC-437 cause problems, for the command 
+<A HREF="m3mac041.html">charset-iso-to-user(3)</A> it is preferable for a mapping of <B>`A</B> to be given, otherwise the document being converted may remain unreadable. Therefore a mapping of <B>`A</B> to <B>A</B> is given to alleviate this problem, similarly <B>'A</B> is also mapped to <B>A</B>. 
+<P>This leads to a similar problem with the conversion of PC-437 back to ISO (the operation of command 
+<A HREF="m3mac041.html">charset-user-to-iso(3)</A>). If only the mapping of &quot;<TT>\xC0A\xC1A</TT>&quot; was given, the last mapping (<B>'A</B> to <B>A</B>) would also be the back conversion for <B>A</B>, i.e. ALL <B>A</B>'s would be converted back to <B>'A</B>'s. To solve this problem, a further seemingly pointless mapping of <B>A</B> to <B>A</B> is given to correct the back conversion. 
+<P>For languages which use these characters, the alphabetic character set must be extended to include these characters for letter based commands like 
+<A HREF="m2cmd096.html">forward-word(2)</A> and 
+<A HREF="m2cmd015.html">upper-case-word(2)</A> to operate correctly. The addition of extra letters must achieve two goals, firstly to define whether a character is a letter, enabling commands like <B>forward-word</B> to work correctly. The second is to provide an upper case to lower case character mapping, enabling commands like <B>upper-case-word</B> to work correctly. This is achieved with a single call to <B>set-char-mask</B> using the <B>a</B> flag as follows:- <UL>
+<PRE>set-char-mask&nbsp;&quot;a&quot;&nbsp;&quot;\xC0\xE0\xC1\xE1&quot; 
+</PRE></UL>
+<P>Note that this flag always expects a ISO-8859-1 character, this allows the same map character list to be used regardless of the font set being used, i.e. the above line can be used for ISO, OEM and PC-437 fonts. But it does mean that the ISO to user font character mapping (flag <B>M</B>) must already have been performed. 
+<P>Similar problems are encountered with the <B>M</B> flag with font PC-437. This problem is not immediately obvious because the mapping is given in ISO, but when this is converted to PC-437, the mapping string becomes &quot;<TT>A\x85A\xA0</TT>&quot;. As can be seen, <B>A</B> is mapped last to <B>'a</B> so an upper to lower character operation will convert a <B>A</B> to <B>'a</B>. A similar solution is used, a further mapping of <B>A</B> to <B>a</B> is given to correct the default case mapping for both <B>A</B> and <B>a</B>, i.e. the following line should always be used instead:- <UL>
+<PRE>set-char-mask&nbsp;&quot;a&quot;&nbsp;&quot;\xC0\xE0\xC1\xE1Aa&quot; 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd096.html">forward-word(2)</A>, 
+<A HREF="m5var007.html">$buffer-mask(5)</A>, 
+<A HREF="m2cmd099.html">screen-poke(2)</A>, 
+<A HREF="m2cmd125.html">spell(2)</A>, 
+<A HREF="m5var043.html">$tabwidth(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

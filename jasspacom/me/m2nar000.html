@@ -1,0 +1,445 @@
+<HTML>
+<HEAD><TITLE>languageTemplates(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+languageTemplates(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>FILE LANGUAGE TEMPLATES </B></H2>
+<UL><P>MicroEmacs '02 provides a large range of macros and templates to deal with the most commonly occurring types of ASCII file that may be edited. However, there is a requirement for users to extend this capability to include more obscure file types, in addition to bespoke files found internally within organizations, or devised by the user. 
+<P>For each file type, MicroEmacs '02 may be tailored to recognize the file and modify it's hilighting, key binding configuration, osd display and indentation to accommodate the file. In addition, new shorthand macros may be introduced to help deal with the contents of the file. 
+<P>This section outlines the steps to be taken to integrate a new file language template into MicroEmacs '02. </UL>
+<H2>The scope of the File Type </H2>
+<UL><P>The first step is to decide the scope of the file, this will determine where the file hook should be defined. The options are:- 
+<P><B>A standard file type not supported</B> 
+<BR><UL>If this is a standard file type not supported by MicroEmacs '02 then it should be added to <TT>me.emf</TT>, in addition 
+<A HREF="amicr038.html">contact us</A> and we will add it to the standard release. Any macro files associated with this file type should be available globally and are added to the MicroEmacs <I>macro</I> directory. </UL>
+<P><B>Local To your organization</B> 
+<BR><UL>If it is a file type local to your organization then it should be added to your <I>company</I>.emf file. Any macro files associated with the file type should be added to your local company MicroEmacs '02 directory. </UL>
+<P><B>Local to an individual</B> 
+<BR><UL>If this is a file type that is only used by a limited number of individuals then it should be added to the <I>user</I>.emf file. Any files associated with the file type are added to your local user MicroEmacs '02 directory. </UL></UL>
+<H2>Recognizing the File Type </H2>
+<UL><P>The next step to adding a new file type is to get MicroEmacs '02 to recognize the file as the new type. Recognition is performed by the 
+<A HREF="m2cmd202.html">File Hooks</A> which perform recognition on the file extension and/or the file content. The name of the file type must be determined, this is typically the name of the file prepended by <TT>hk</TT>. e.g. a file with extension <I>foo</I> uses the file <TT>hkfoo.emf</TT> for it's language specific definitions. 
+<P>Using the 
+<A HREF="m2cmd003.html">add-file-hook(2)</A> invocation the file recognition is bound to the file hook macro whenever the file type is loaded. The file hook is added to the appropriate global, company or user start up file as determined in step 1. The file hooks for file <I>foo</I> might be defined as follows, depending upon the recognition method:- 
+<P><B>Recognizing the extension</B> 
+<BR><UL>To recognize the file extension, then a space separated list of extensions may be defined, including the dot '<TT>.</TT>' (or other) extension separator. <UL>
+<PRE>add-file-hook&nbsp;&quot;.foo&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-foo 
+</PRE></UL>
+</UL><P><B>Recognizing a magic editor string in the file</B> 
+<BR><UL>If the file type adopts multiple extensions (or does not use a file extension) then an editor specific string may be inserted into the file to enable the editor to recognize it, typically of the form <TT>-!-</TT> <I>type</I> <TT>-!-</TT>, if the string is GNU Emacs compatible then the <TT>-*-</TT> convention may be used. The binding is defined as:- <UL>
+<PRE>-1&nbsp;add-file-hook&nbsp;&quot;-!-[&nbsp;\t]*foo.*-!-&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-foo 
+</PRE></UL>
+</UL><P><B>Recognizing a magic string in the file</B> 
+<BR><UL>UNIX files use a &quot;<TT>#!&lt;path&gt;</TT>&quot; notation for executable ASCII files. If the file is this type of file (or uses any other type of common string in the as the first characters of a file) then the binding may be defined as follows, in this case we have assumed <I>foo</I> is the UNIX executable variety i.e. <TT>#!/usr/local/bin/foo</TT>:- <UL>
+<PRE>1&nbsp;add-file-hook&nbsp;&quot;^#!/.*foo&quot;&nbsp;fhook-foo 
+</PRE></UL>
+</UL><P>Any, or all of the above recognition methods may be employed to invoke the language specific macro. Note that the methods are evaluated in a LIFO order, hence it is possible to over-ride an existing method. </UL>
+<H2>Defining the Macro File </H2>
+<UL><P>Once the hook has been defined, the language specific file must be created. Create the language specific file with the same name as defined in the hooks, removing the <B>fhook-</B> prefix and replacing it with <B>hk</B>, i.e. <TT>fhook-foo</TT> invokes the language specific file <TT>hkfoo.emf</TT>. Create, the file and add the file hook macro. for example hk<I>foo</I>.emf contents may be defined as: <UL>
+<PRE>define-macro&nbsp;fhook-foo 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Temporary&nbsp;comment&nbsp;to&nbsp;make&nbsp;sure&nbsp;that&nbsp;it&nbsp;works. 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;Loaded&nbsp;a&nbsp;foo&nbsp;file&quot; 
+!emacro 
+ml-write&nbsp;&quot;[MicroEmacs&nbsp;foo&nbsp;file&nbsp;hook&nbsp;loaded]&quot; 
+</PRE></UL>
+<P>The file hook may be tested by exiting and re-loading MicroEmacs '02, or simply by executing the file containing the <TT>add-file-hook</TT> function. Once the file bindings are installed a <I>foo</I> file may be loaded and the hook message should be displayed. </UL>
+<H2>Modifying an Existing file hook </H2>
+<UL><P>The standard file hooks supplied with MicroEmacs '02 should not be modified, typically a user will want to extend the repertoire of hi-lighting tokens to encompass locally defined programming libraries or syntactical extensions, in addition to extending support macros that are associated with the file type. In this case, an extension to the hook function is required. The hook file <B>my</B><I>XXX</I><B>.emf</B>, allows extensions to be made to the <B>hk</B><I>XXX</I><B>.emf</B>, without editing the original file. This may be considered to be an <I>include</I> file and is executed, if it exists, after the <B>hk</B> file has been executed. i.e. if the hook file <B>hkfoo.emf</B> is already defined and extensions are added to <B>myfoo.emf</B>. 
+<P>Note that the <B>my</B><I>XXX</I><B>.emf</B> files do not typically include any <B>fhook-XXX</B> functions, the original <I>fhook</I> functions would be used. However, if a different buffer environment is required from the one created be the hook, such as a different setting of 
+<A HREF="m2mod012.html">tab(2m)</A> mode, the hook function should be copied to <B>my</B><I>XXX</I><B>.emf</B> and altered appropriately. </UL>
+<H2>Adding Hilighting definitions </H2>
+<UL><P>File specific hilighting is used to pick out key words and tokens used within the file type, it greatly improves readability; the hilighting is also used for 
+<A HREF="m2cmd101.html">printing</A>. The hilighting is defined within the body of the file and is executed once when the hook file is loaded, this occurs when the hook function is executed. During development of the hilighting code, it is usually necessary to 
+<A HREF="m2cmd044.html">execute</A> the hook buffer to view the effects of any changes to the hilighting. 
+<P>The hilighting is defined using the command 
+<A HREF="m2cmd069.html">hilight(2)</A> which requires a hilighting identifier, used to identify the hilighting scheme. This identifier is dynamically allocated when the hook file is loaded, again using <I>foo</I>, the identifier is allocated at the top of the file and is protected such that a value is assigned once only. <UL>
+<PRE>!if&nbsp;&amp;sequal&nbsp;.hilight.foo&nbsp;&quot;ERROR&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;.hilight.foo&nbsp;&amp;pinc&nbsp;.hilight.next&nbsp;1 
+!endif 
+</PRE></UL>
+<P>The variable <TT>.hilight.next</TT> allocates unique hilighting numbers, typically a single hilighting number is consumed, incrementing the <TT>.hilight.next</TT> variable ready for the next allocation. The hilighting color scheme is defined in a macro variable <B>.hilight.</B><I>ext</I>, where <I>ext</I> is the name of the language scheme (i.e. <I>foo</I>). 
+<P>Given a hilighting number, the hilighting scheme may be defined. Each of the tokens in the language is assigned a hilighting color, for our simple <I>foo</I> file type:- <UL>
+<PRE>0&nbsp;hilight&nbsp;.hilight.foo&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$global-scheme 
+hilight&nbsp;.hilight.foo&nbsp;2&nbsp;&quot;#&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.comment 
+hilight&nbsp;.hilight.foo&nbsp;4&nbsp;&quot;\&quot;&quot;&nbsp;&quot;\&quot;&quot;&nbsp;&quot;\\&quot;&nbsp;&nbsp;&nbsp;.scheme.string 
+hilight&nbsp;.hilight.foo&nbsp;0&nbsp;&quot;'.'&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.quote 
+hilight&nbsp;.hilight.foo&nbsp;0&nbsp;&quot;'\\\\.'&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.quote&nbsp;;&nbsp;'\?'&nbsp;quoted&nbsp;char 
+
+hilight&nbsp;.hilight.foo&nbsp;1&nbsp;&quot;if&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.keyword 
+hilight&nbsp;.hilight.foo&nbsp;1&nbsp;&quot;then&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.keyword 
+hilight&nbsp;.hilight.foo&nbsp;1&nbsp;&quot;else&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.keyword 
+hilight&nbsp;.hilight.foo&nbsp;1&nbsp;&quot;endif&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.keyword 
+</PRE></UL>
+<P>When the hilighting tokens have been defined, the hilighting scheme is bound to the buffer. This is performed by assigning 
+<A HREF="m5var004.html">$buffer-hilight(5)</A> with the hilighting scheme within the <I>fhook</I> macro body, e.g. <UL>
+<PRE>define-macro&nbsp;fhook-foo 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Assign&nbsp;the&nbsp;hilighting 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$buffer-hilight&nbsp;.hilight.foo 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Temporary&nbsp;comment&nbsp;to&nbsp;make&nbsp;sure&nbsp;that&nbsp;it&nbsp;works. 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;Loaded&nbsp;a&nbsp;foo&nbsp;file&quot; 
+!emacro 
+</PRE></UL>
+<P>Putting it all together <TT>hkfoo.emf</TT> now comprises:- <UL>
+<PRE>!if&nbsp;&amp;sequal&nbsp;.hilight.foo&nbsp;&quot;ERROR&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Allocate&nbsp;a&nbsp;hilighting&nbsp;scheme&nbsp;number 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;.hilight.foo&nbsp;&amp;pinc&nbsp;.hilight.next&nbsp;1 
+!endif 
+
+;&nbsp;Define&nbsp;the&nbsp;hilighting&nbsp;scheme 
+0&nbsp;hilight&nbsp;.hilight.foo&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$global-scheme 
+hilight&nbsp;.hilight.foo&nbsp;2&nbsp;&quot;#&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.comment 
+hilight&nbsp;.hilight.foo&nbsp;4&nbsp;&quot;\&quot;&quot;&nbsp;&quot;\&quot;&quot;&nbsp;&quot;\\&quot;&nbsp;&nbsp;&nbsp;.scheme.string 
+hilight&nbsp;.hilight.foo&nbsp;0&nbsp;&quot;'.'&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.quote 
+hilight&nbsp;.hilight.foo&nbsp;0&nbsp;&quot;'\\\\.'&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.quote&nbsp;;&nbsp;'\?'&nbsp;quoted&nbsp;char 
+
+hilight&nbsp;.hilight.foo&nbsp;1&nbsp;&quot;if&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.keyword 
+hilight&nbsp;.hilight.foo&nbsp;1&nbsp;&quot;then&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.keyword 
+hilight&nbsp;.hilight.foo&nbsp;1&nbsp;&quot;else&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.keyword 
+hilight&nbsp;.hilight.foo&nbsp;1&nbsp;&quot;endif&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.keyword 
+
+;&nbsp;File&nbsp;hook&nbsp;-&nbsp;called&nbsp;when&nbsp;new&nbsp;file&nbsp;is&nbsp;loaded. 
+define-macro&nbsp;fhook-foo 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Assign&nbsp;the&nbsp;hilighting 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$buffer-hilight&nbsp;.hilight.foo 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Temporary&nbsp;comment&nbsp;to&nbsp;make&nbsp;sure&nbsp;that&nbsp;it&nbsp;works. 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;Loaded&nbsp;a&nbsp;foo&nbsp;file&quot; 
+!emacro 
+
+;&nbsp;Notification&nbsp;that&nbsp;hook&nbsp;is&nbsp;loaded. 
+ml-write&nbsp;&quot;[MicroEmacs&nbsp;foo&nbsp;file&nbsp;hook&nbsp;loaded]&quot; 
+</PRE></UL>
+</UL><H2>Adding a Template </H2>
+<UL><P>A template inserts initial text into a new file that is created. This mechanism is typically used to insert a standard header into the file on creation. The insertion text is defined within a template file, given the file extension 
+<A HREF="m8fil001.html">etf(8)</A>, which is created in the corresponding global, company or user directory as determined in step 1. The template is named <I>ext</I>.etf, so for our example file <I>foo</I>, the template file is called <TT>foo.etf</TT>. We shall simply add a file header, our comment is <TT>#</TT> (as defined by the hilighting tokens). Our example <I>foo</I> template file <TT>foo.etf</TT> may be defined as follows:- <UL>
+<PRE>#-!-&nbsp;foo&nbsp;-!-&nbsp;################################# 
+# 
+#&nbsp;&nbsp;Created&nbsp;By&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;$USER_NAME$ 
+#&nbsp;&nbsp;Created&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;$ASCII_TIME$ 
+#&nbsp;&nbsp;Last&nbsp;Modified&nbsp;:&nbsp;&lt;160495.1521&gt; 
+# 
+#&nbsp;&nbsp;Description 
+# 
+#&nbsp;&nbsp;Notes 
+# 
+#&nbsp;&nbsp;History 
+# 
+#&nbsp;&nbsp;Copyright&nbsp;(c)&nbsp;$YEAR$&nbsp;$COMPANY_NAME$. 
+############################################## 
+</PRE></UL>
+<P>The template file must be explicitly loaded by the hook file, within the <B>fhook</B> function. A new file condition may be tested within the fhook macro by checking the numerical argument, an argument of 0 indicates that this is a new file. The template file is inserted with an invocation of 
+<A HREF="m3mac018.html">etfinsrt(3)</A>. The <B>fhook</B> macro checks the argument and inserts the template file as follows:- <UL>
+<PRE>;&nbsp;File&nbsp;hook&nbsp;-&nbsp;called&nbsp;when&nbsp;new&nbsp;file&nbsp;is&nbsp;loaded. 
+define-macro&nbsp;fhook-foo 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;if&nbsp;arg&nbsp;is&nbsp;0&nbsp;this&nbsp;is&nbsp;a&nbsp;new&nbsp;file&nbsp;so&nbsp;add&nbsp;template 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;@# 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;etfinsrt&nbsp;&quot;foo&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Assign&nbsp;the&nbsp;hilighting 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$buffer-hilight&nbsp;.hilight.foo 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Temporary&nbsp;comment&nbsp;to&nbsp;make&nbsp;sure&nbsp;that&nbsp;it&nbsp;works. 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;Loaded&nbsp;a&nbsp;foo&nbsp;file&quot; 
+!emacro 
+</PRE></UL>
+</UL><H2>Adding abbreviations </H2>
+<UL><P>Abbreviations are short-cut expansions which may be defined for the language specific file. The abbreviations are defined in a 
+<A HREF="m8fil000.html">eaf(8)</A> file, <I>ext</I>.eaf, located in the appropriately defined MicroEmacs directory. The abbreviation file defines the key sequences which may be automatically inserted, under user intervention, using 
+<A HREF="m2cmd051.html">expand-abbrev(2)</A>. An abbreviation file for <I>foo</I>, <TT>foo.eaf</TT>, may be defined as:- <UL>
+<PRE>if&nbsp;&quot;if&nbsp;\p\rthen\rendif\P&quot; 
+el&nbsp;&quot;else\r\p\P&quot; 
+</PRE></UL>
+<P>The binding to the hook is defined in the <I>fhook</I> macro using 
+<A HREF="m2cmd117.html">buffer-abbrev-file(2)</A>. For the example language file <I>foo</I> the <I>fhook</I> macro becomes:- <UL>
+<PRE>;&nbsp;File&nbsp;hook&nbsp;-&nbsp;called&nbsp;when&nbsp;new&nbsp;file&nbsp;is&nbsp;loaded. 
+define-macro&nbsp;fhook-foo 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;if&nbsp;arg&nbsp;is&nbsp;0&nbsp;this&nbsp;is&nbsp;a&nbsp;new&nbsp;file&nbsp;so&nbsp;add&nbsp;template 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;@# 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;etfinsrt&nbsp;&quot;foo&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Assign&nbsp;the&nbsp;hilighting 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$buffer-hilight&nbsp;.hilight.foo 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Set&nbsp;the&nbsp;abbreviation&nbsp;file 
+&nbsp;&nbsp;&nbsp;&nbsp;buffer-abbrev-file&nbsp;&quot;foo&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Temporary&nbsp;comment&nbsp;to&nbsp;make&nbsp;sure&nbsp;that&nbsp;it&nbsp;works. 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;Loaded&nbsp;a&nbsp;foo&nbsp;file&quot; 
+!emacro 
+</PRE></UL>
+</UL><H2>Automatic Indentation </H2>
+<UL><P>Automatic indentation may be applied to the file, such that the indentation is automatically performed when new lines are entered into the file. Indentation also benefits from automatic re-styling operations using 
+<A HREF="m3mac025.html">restyle-region(3)</A> and 
+<A HREF="m3mac025.html">restyle-buffer(3)</A>. 
+<P>The indentation style is declared by defining language tokens that constitute positions in the syntax where the indentation is changed. The indentation requires a unique identifier to identify the indentation style, the hilighting identifier is used. If hilighting is not defined, then the language template may still obtain an identifier as described in the hilighting section. 
+<P>The indention is create with an argument of <TT>0</TT> to the 
+<A HREF="m2cmd033.html">indent(2)</A> command, the subsequent tokens are defined using <B>indent</B> with no argument. For our simple <I>foo</I> syntax then the indentation might be defined as follows:- <UL>
+<PRE>0&nbsp;indent&nbsp;&nbsp;.hilight.foo&nbsp;2&nbsp;10 
+indent&nbsp;.hilight.foo&nbsp;n&nbsp;&quot;then&quot;&nbsp;4 
+indent&nbsp;.hilight.foo&nbsp;s&nbsp;&quot;else&quot;&nbsp;-4 
+indent&nbsp;.hilight.foo&nbsp;o&nbsp;&quot;endif&quot;&nbsp;-4 
+</PRE></UL>
+<P>This provides an indentation of the form:- <UL>
+<PRE>if&nbsp;condition 
+then 
+&nbsp;&nbsp;&nbsp;&nbsp;XXXX 
+else 
+&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;condition 
+&nbsp;&nbsp;&nbsp;&nbsp;then 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XXXX 
+&nbsp;&nbsp;&nbsp;&nbsp;endif 
+endif 
+</PRE></UL>
+<P>The indentation is bound to the buffer in the <I>fhook</I> macro by defining 
+<A HREF="m5var075.html">$buffer-indent(5)</A>. For the example file <I>foo</I> then the <I>fhook</I> is defined as:- <UL>
+<PRE>;&nbsp;File&nbsp;hook&nbsp;-&nbsp;called&nbsp;when&nbsp;new&nbsp;file&nbsp;is&nbsp;loaded. 
+define-macro&nbsp;fhook-foo 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;if&nbsp;arg&nbsp;is&nbsp;0&nbsp;this&nbsp;is&nbsp;a&nbsp;new&nbsp;file&nbsp;so&nbsp;add&nbsp;template 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;@# 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;etfinsrt&nbsp;&quot;foo&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Assign&nbsp;the&nbsp;hilighting 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$buffer-hilight&nbsp;.hilight.foo 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Assign&nbsp;the&nbsp;buffer&nbsp;indentation 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$buffer-indent&nbsp;.hilight.foo 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Set&nbsp;the&nbsp;abbreviation&nbsp;file 
+&nbsp;&nbsp;&nbsp;&nbsp;buffer-abbrev-file&nbsp;&quot;foo&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Temporary&nbsp;comment&nbsp;to&nbsp;make&nbsp;sure&nbsp;that&nbsp;it&nbsp;works. 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;Loaded&nbsp;a&nbsp;foo&nbsp;file&quot; 
+!emacro 
+</PRE></UL>
+</UL><H2>Setting Buffer Modes </H2>
+<UL><P>Buffer modes which are to be adopted (or discarded) by the language specific file are defined in the <I>fhook</I> macro. Typical modes that are applied are:- 
+<P>
+<A HREF="m2mod013.html">time</A> 
+<BR><UL>Enables time stamping on the file, modifying the time stamp field with the modification date and time. </UL>
+<P>
+<A HREF="m2mod005.html">indent</A> 
+<BR><UL>Automatic indentation, where the cursor is returned to the same column on entering a new line, rather than to the start of the line. </UL>
+<P>As an example, the <I>foo</I> <I>fhook</I> file becomes:- <UL>
+<PRE>;&nbsp;File&nbsp;hook&nbsp;-&nbsp;called&nbsp;when&nbsp;new&nbsp;file&nbsp;is&nbsp;loaded. 
+define-macro&nbsp;fhook-foo 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;if&nbsp;arg&nbsp;is&nbsp;0&nbsp;this&nbsp;is&nbsp;a&nbsp;new&nbsp;file&nbsp;so&nbsp;add&nbsp;template 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;@# 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;etfinsrt&nbsp;&quot;foo&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Assign&nbsp;the&nbsp;hilighting 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$buffer-hilight&nbsp;.hilight.foo 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Assign&nbsp;the&nbsp;buffer&nbsp;indentation 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$buffer-indent&nbsp;.hilight.foo 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Set&nbsp;the&nbsp;abbreviation&nbsp;file 
+&nbsp;&nbsp;&nbsp;&nbsp;buffer-abbrev-file&nbsp;&quot;foo&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Set&nbsp;up&nbsp;the&nbsp;buffer&nbsp;modes 
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;buffer-mode&nbsp;&quot;time&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;buffer-mode&nbsp;&quot;indent&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Temporary&nbsp;comment&nbsp;to&nbsp;make&nbsp;sure&nbsp;that&nbsp;it&nbsp;works. 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;Loaded&nbsp;a&nbsp;foo&nbsp;file&quot; 
+!emacro 
+</PRE></UL>
+</UL><H2>Assigning New Bindings </H2>
+<UL><P>New bindings and language specific macros may be added to the language specific file. New macros, to extend the repertoire of commands specifically developed for the language file are defined within the macro body using 
+<A HREF="m2cmd029.html">define-macro(2)</A> these are automatically loaded when the hook file is loaded, which in turn is loaded when the file type is identified and loaded. 
+<P>New bindings, which may be associated with new macros or existing commands, are assigned within the <I>fhook</I> macro. As an example, we shall extend the <I>foo</I> language file to include a commenting and uncommenting macros, locally binding the macros to the keys &quot;<TT>C-c&nbsp; C-c</TT>&quot; and &quot;<TT>C-c&nbsp;C-d</TT>&quot; respectively. The macro definitions are defined as follows:- <UL>
+<PRE>;&nbsp;Macro&nbsp;to&nbsp;comment&nbsp;a&nbsp;line 
+define-macro&nbsp;foo-comment-line 
+&nbsp;&nbsp;&nbsp;&nbsp;!while&nbsp;&amp;gre&nbsp;&amp;pdec&nbsp;@#&nbsp;1&nbsp;0 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;beginning-of-line 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;insert-string&nbsp;&quot;#&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;beginning-of-line 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;forward-line 
+&nbsp;&nbsp;&nbsp;&nbsp;!done 
+!emacro 
+
+;&nbsp;Macro&nbsp;to&nbsp;remove&nbsp;a&nbsp;comment&nbsp;from&nbsp;a&nbsp;line 
+define-macro&nbsp;foo-uncomment-line 
+&nbsp;&nbsp;&nbsp;&nbsp;!while&nbsp;&amp;gre&nbsp;&amp;pdec&nbsp;@#&nbsp;1&nbsp;0 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;beginning-of-line 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;search-forward&nbsp;&quot;#&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;backward-delete-char 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;forward-line 
+&nbsp;&nbsp;&nbsp;&nbsp;!done 
+!emacro 
+</PRE></UL>
+<P>The key bindings for the macros are defined for the local buffer ONLY, as such are added using 
+<A HREF="m2cmd084.html">buffer-bind-key(2)</A>. The bindings are declared in the <I>fhook</I> macro as follows:- <UL>
+<PRE>;&nbsp;File&nbsp;hook&nbsp;-&nbsp;called&nbsp;when&nbsp;new&nbsp;file&nbsp;is&nbsp;loaded. 
+define-macro&nbsp;fhook-foo 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;if&nbsp;arg&nbsp;is&nbsp;0&nbsp;this&nbsp;is&nbsp;a&nbsp;new&nbsp;file&nbsp;so&nbsp;add&nbsp;template 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;@# 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;etfinsrt&nbsp;&quot;foo&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Assign&nbsp;the&nbsp;hilighting 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$buffer-hilight&nbsp;.hilight.foo 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Assign&nbsp;the&nbsp;buffer&nbsp;indentation 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$buffer-indent&nbsp;.hilight.foo 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Set&nbsp;the&nbsp;abbreviation&nbsp;file 
+&nbsp;&nbsp;&nbsp;&nbsp;buffer-abbrev-file&nbsp;&quot;foo&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Set&nbsp;up&nbsp;the&nbsp;buffer&nbsp;modes 
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;buffer-mode&nbsp;&quot;time&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;buffer-mode&nbsp;&quot;indent&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Set&nbsp;up&nbsp;local&nbsp;bindings 
+&nbsp;&nbsp;&nbsp;&nbsp;buffer-bind-key&nbsp;foo-comment-line&nbsp;&quot;C-c&nbsp;C-c&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;buffer-bind-key&nbsp;foo-uncomment-line&nbsp;&quot;C-c&nbsp;C-d&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Temporary&nbsp;comment&nbsp;to&nbsp;make&nbsp;sure&nbsp;that&nbsp;it&nbsp;works. 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;Loaded&nbsp;a&nbsp;foo&nbsp;file&quot; 
+!emacro 
+</PRE></UL>
+</UL><H2>Allowing Other to Modify the Hook </H2>
+<UL><P>Other users of the file hook may need to modify or extend the file hook, the most common form is the addition of user specific hilight tokens. MicroEmacs uses a simple mechanism of executing a user hook extension file if it exists. The extension file name must be of the form <B>my</B><I>XXX</I><B>.emf</B>, i.e. for our example it must be &quot;<TT>myfoo.emf</TT>&quot;. This is performed at the end of the macro file so that anything within the file can be altered, it is executed as follows:- <UL>
+<PRE>;&nbsp;load&nbsp;in&nbsp;user&nbsp;extensions&nbsp;if&nbsp;found 
+!force&nbsp;execute-file&nbsp;&quot;myfoo&quot; 
+</PRE></UL>
+<P>Note the 
+<A HREF="m4fil007.html">!force(4)</A> directive is used as the file may not exist. </UL>
+<H2>Summing Up </H2>
+<UL><P>The previous sections have presented the basic steps involved in setting up a new language file template. They cater for simple file types, for more complex examples then browse the <B>hk</B><I>xxx</I>.emf files. 
+<P>The completed files that should have been generated by following the previous examples are now presented:- 
+<P><B>file.foo</B> <UL>
+<PRE>#&nbsp;This&nbsp;is&nbsp;a&nbsp;comment. 
+if&nbsp;condition 
+then 
+&nbsp;&nbsp;&nbsp;&nbsp;do&nbsp;something 
+else 
+&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;condition 
+&nbsp;&nbsp;&nbsp;&nbsp;then 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;do&nbsp;something 
+&nbsp;&nbsp;&nbsp;&nbsp;endif 
+endif 
+</PRE></UL>
+<P><B>hkfoo.emf</B> <UL>
+<PRE>!if&nbsp;&amp;sequal&nbsp;.hilight.foo&nbsp;&quot;ERROR&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Allocate&nbsp;a&nbsp;hilighting&nbsp;scheme&nbsp;number 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;.hilight.foo&nbsp;&amp;pinc&nbsp;.hilight.next&nbsp;1 
+!endif 
+
+;&nbsp;Define&nbsp;the&nbsp;hilighting&nbsp;scheme 
+0&nbsp;hilight&nbsp;.hilight.foo&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$global-scheme 
+hilight&nbsp;.hilight.foo&nbsp;2&nbsp;&quot;#&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.comment 
+hilight&nbsp;.hilight.foo&nbsp;4&nbsp;&quot;\&quot;&quot;&nbsp;&quot;\&quot;&quot;&nbsp;&quot;\\&quot;&nbsp;&nbsp;&nbsp;.scheme.string 
+hilight&nbsp;.hilight.foo&nbsp;0&nbsp;&quot;'.'&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.quote 
+hilight&nbsp;.hilight.foo&nbsp;0&nbsp;&quot;'\\\\.'&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.quote&nbsp;;&nbsp;'\?'&nbsp;quoted&nbsp;char 
+
+hilight&nbsp;.hilight.foo&nbsp;1&nbsp;&quot;if&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.keyword 
+hilight&nbsp;.hilight.foo&nbsp;1&nbsp;&quot;then&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.keyword 
+hilight&nbsp;.hilight.foo&nbsp;1&nbsp;&quot;else&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.keyword 
+hilight&nbsp;.hilight.foo&nbsp;1&nbsp;&quot;endif&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.keyword 
+
+;&nbsp;File&nbsp;hook&nbsp;-&nbsp;called&nbsp;when&nbsp;new&nbsp;file&nbsp;is&nbsp;loaded. 
+define-macro&nbsp;fhook-foo 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Assign&nbsp;the&nbsp;hilighting 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$buffer-hilight&nbsp;.hilight.foo 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Temporary&nbsp;comment&nbsp;to&nbsp;make&nbsp;sure&nbsp;that&nbsp;it&nbsp;works. 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;Loaded&nbsp;a&nbsp;foo&nbsp;file&quot; 
+!emacro 
+
+;&nbsp;Define&nbsp;the&nbsp;indentation&nbsp;scheme 
+0&nbsp;indent&nbsp;&nbsp;.hilight.foo&nbsp;2&nbsp;10 
+indent&nbsp;.hilight.foo&nbsp;n&nbsp;&quot;then&quot;&nbsp;4 
+indent&nbsp;.hilight.foo&nbsp;s&nbsp;&quot;else&quot;&nbsp;-4 
+indent&nbsp;.hilight.foo&nbsp;o&nbsp;&quot;endif&quot;&nbsp;-4 
+
+;&nbsp;Reset&nbsp;the&nbsp;hilighting&nbsp;printer&nbsp;format&nbsp;and&nbsp;define&nbsp;the&nbsp;color&nbsp;bindings. 
+0&nbsp;hilight-print&nbsp;.hilight.foo 
+hilight-print&nbsp;.hilight.foo&nbsp;&quot;i&quot;&nbsp;&nbsp;.scheme.comment 
+hilight-print&nbsp;.hilight.foo&nbsp;&quot;b&quot;&nbsp;&nbsp;.scheme.keyword 
+hilight-print&nbsp;.hilight.foo&nbsp;&quot;bi&quot;&nbsp;.scheme.string&nbsp;.scheme.quote 
+
+;&nbsp;Macro&nbsp;to&nbsp;comment&nbsp;a&nbsp;line 
+define-macro&nbsp;foo-comment-line 
+&nbsp;&nbsp;&nbsp;&nbsp;!while&nbsp;&amp;gre&nbsp;&amp;pdec&nbsp;@#&nbsp;1&nbsp;0 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;beginning-of-line 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;insert-string&nbsp;&quot;#&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;beginning-of-line 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;forward-line 
+&nbsp;&nbsp;&nbsp;&nbsp;!done 
+!emacro 
+
+;&nbsp;Macro&nbsp;to&nbsp;remove&nbsp;a&nbsp;comment&nbsp;from&nbsp;a&nbsp;line 
+define-macro&nbsp;foo-uncomment-line 
+&nbsp;&nbsp;&nbsp;&nbsp;!while&nbsp;&amp;gre&nbsp;&amp;pdec&nbsp;@#&nbsp;1&nbsp;0 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;beginning-of-line 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;search-forward&nbsp;&quot;#&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;backward-delete-char 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;forward-line 
+&nbsp;&nbsp;&nbsp;&nbsp;!done 
+!emacro 
+
+;&nbsp;File&nbsp;hook&nbsp;-&nbsp;called&nbsp;when&nbsp;new&nbsp;file&nbsp;is&nbsp;loaded. 
+define-macro&nbsp;fhook-foo 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;if&nbsp;arg&nbsp;is&nbsp;0&nbsp;this&nbsp;is&nbsp;a&nbsp;new&nbsp;file&nbsp;so&nbsp;add&nbsp;template 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;@# 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;etfinsrt&nbsp;&quot;foo&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Assign&nbsp;the&nbsp;hilighting 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$buffer-hilight&nbsp;.hilight.foo 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Assign&nbsp;the&nbsp;buffer&nbsp;indentation 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$buffer-indent&nbsp;.hilight.foo 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Set&nbsp;the&nbsp;abbreviation&nbsp;file 
+&nbsp;&nbsp;&nbsp;&nbsp;buffer-abbrev-file&nbsp;&quot;foo&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Set&nbsp;up&nbsp;the&nbsp;buffer&nbsp;modes 
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;buffer-mode&nbsp;&quot;time&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;buffer-mode&nbsp;&quot;indent&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Set&nbsp;up&nbsp;local&nbsp;bindings 
+&nbsp;&nbsp;&nbsp;&nbsp;buffer-bind-key&nbsp;foo-comment-line&nbsp;&quot;C-c&nbsp;C-c&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;buffer-bind-key&nbsp;foo-uncomment-line&nbsp;&quot;C-c&nbsp;C-d&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Temporary&nbsp;comment&nbsp;to&nbsp;make&nbsp;sure&nbsp;that&nbsp;it&nbsp;works. 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;Loaded&nbsp;a&nbsp;foo&nbsp;file&quot; 
+!emacro 
+
+;&nbsp;Notification&nbsp;that&nbsp;hook&nbsp;is&nbsp;loaded. 
+ml-write&nbsp;&quot;[MicroEmacs&nbsp;foo&nbsp;file&nbsp;hook&nbsp;loaded]&quot; 
+
+;&nbsp;load&nbsp;in&nbsp;user&nbsp;extensions&nbsp;if&nbsp;found 
+!force&nbsp;execute-file&nbsp;&quot;myfoo&quot; 
+</PRE></UL>
+<P><B>foo.eaf</B> <UL>
+<PRE>if&nbsp;&quot;if&nbsp;\p\rthen\rendif\P&quot; 
+el&nbsp;&quot;else\r\p\P&quot; 
+</PRE></UL>
+<P><B>foo.etf</B> <UL>
+<PRE>#-!-&nbsp;foo&nbsp;-!-&nbsp;################################# 
+# 
+#&nbsp;&nbsp;Created&nbsp;By&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;$USER_NAME$ 
+#&nbsp;&nbsp;Created&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;$ASCII_TIME$ 
+#&nbsp;&nbsp;Last&nbsp;Modified&nbsp;:&nbsp;&lt;160495.1521&gt; 
+# 
+#&nbsp;&nbsp;Description 
+# 
+#&nbsp;&nbsp;Notes 
+# 
+#&nbsp;&nbsp;History 
+# 
+#&nbsp;&nbsp;Copyright&nbsp;(c)&nbsp;$YEAR$&nbsp;$COMPANY_NAME$. 
+############################################## 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd003.html">add-file-hook(2)</A>, 
+<A HREF="m2cmd117.html">buffer-abbrev-file(2)</A>, 
+<A HREF="m3mac018.html">etfinsrt(3)</A>, 
+<A HREF="m2cmd044.html">execute-buffer(2)</A>, 
+<A HREF="m2cmd051.html">expand-abbrev(2)</A>, 
+<A HREF="m2cmd117.html">global-abbrev-file(2)</A>, 
+<A HREF="m2cmd069.html">hilight(2)</A>, 
+<A HREF="m3osd005.html">scheme-editor(3)</A>, 
+<A HREF="m2cmd033.html">indent(2)</A>, 
+<A HREF="m2mod005.html">indent(2m)</A>, 
+<A HREF="m3mac025.html">restyle-buffer(3)</A>, 
+<A HREF="m3mac025.html">restyle-region(3)</A>, 
+<A HREF="m2mod013.html">time(2m)</A>, 
+<A HREF="m5var004.html">$buffer-hilight(5)</A>, 
+<A HREF="m5var075.html">$buffer-indent(5)</A>, 
+<A HREF="m8fil001.html">etf(8)</A>, 
+<A HREF="m8fil000.html">eaf(8)</A>, 
+<BR>
+<A HREF="m2cmd202.html">File Hooks</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,52 @@
+<HTML>
+<HEAD><TITLE>%ftp-flags(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+%ftp-flags(5)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>%ftp-flags - &quot;Configure the FTP console&quot; 
+<BR>%http-flags - &quot;Configure the HTTP console&quot; </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>%ftp-flags</B> &quot;[<TT>c</TT>|<TT>s</TT>|<TT>p</TT>]&quot; ; Default is undefined. 
+<BR><B>%http-flags</B> &quot;[<TT>c</TT>|<TT>s</TT>|<TT>p</TT>]&quot; ; Default is undefined. </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The <B>%ftp-flags</B> and <B>%http-flags</B> modify the behavior of the editor during FTP and HTTP file transfers, respectively. (see 
+<A HREF="m3mac050.html">ftp(3)</A> and 
+<A HREF="m2cmd056.html">find-file(2)</A>). 
+<P>By default, the flags are disabled, the facilities outlined below are enabled by setting the variable in the user configuration. The flag values for both flags are defined as follows:- 
+<P><B>c</B> 
+<BR><UL>Create a console buffer (<TT>*ftp-console*</TT> for ftp, <TT>*http-console*</TT> for http) into which the FTP/HTTP command interactions with the remote server are logged. </UL>
+<P><B>s</B> 
+<BR><UL>Show the console whenever a FTP/HTTP operation is performed. The console is popped into the display pane and shows the current interaction status. </UL>
+<P><B>p</B> 
+<BR><UL>Show the download progress within the console window ('<TT>#</TT>' for every 2Kb downloaded) </UL>
+<P>Typically the following flags are enabled in the <I>user</I>.emf file:- <UL>
+<PRE>set-variable&nbsp;%ftp-flags&nbsp;&quot;csp&quot; 
+set-variable&nbsp;%http-flags&nbsp;&quot;csp&quot; 
+</PRE></UL>
+<P>Once familiar with this facility the console pop-up becomes inconvenient and the flags are typically reduced to:- <UL>
+<PRE>set-variable&nbsp;%ftp-flags&nbsp;&quot;cp&quot; 
+set-variable&nbsp;%http-flags&nbsp;&quot;cp&quot; 
+</PRE></UL>
+<P>This disables the pop-up feature of the console. Enabling the limited flag set allows some post mortem debugging to be performed if anything goes wrong. The console buffers are manually selected when these flags are set. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P>Note that ftp and http facilities are available on UNIX by default, but must be compiled in for Windows versions. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var079.html">%http-proxy-addr(5)</A>, 
+<A HREF="m2cmd056.html">find-file(2)</A>, 
+<A HREF="m3mac050.html">ftp(3)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,57 @@
+<HTML>
+<HEAD><TITLE>rul(9)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+rul(9)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P>rul - Install Shield Rules </UL>
+<H2><B>FILES </B></H2>
+<UL><P><B>hkrul.emf</B> - Install Shield hook definition 
+<BR><B>rul.etf</B> - Install Shield template file. </UL>
+<H2><B>EXTENSIONS </B></H2>
+<UL><P><B>.rul</B> - Install Shield Rules file </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The <B>rul</B> file type template provides simple hilighting of Install Shield Rules files. 
+<P><B>Hilighting</B> 
+<BR><UL>The hilighting features allow commands, variables, logical, comments, strings and characters of the language to be differentiated and rendered in different colors. </UL>
+<P><B>Auto Layout</B> 
+<BR><UL>The 
+<A HREF="m2cmd033.html">indentation mechanism</A> is enabled which performs automatic layout of the text. 
+<A HREF="m3mac025.html">restyle-region(3)</A> and 
+<A HREF="m3mac025.html">restyle-buffer(3)</A> are available to reformat (re-layout) selected sections of the buffer, or the whole buffer, respectively. </UL>
+<P><B>Folding and Information Hiding</B> 
+<BR><UL>Generic folding is enabled within the rul file. The folds occur about the keywords <B>function</B>...<B>end</B> located on the left-hand margin. 
+<A HREF="m3mac029.html">fold-all(3)</A> (un)folds all regions in the file, 
+<A HREF="m3mac029.html">fold-current(3)</A> (un)folds the current region. </UL>
+<P><B>Short Cuts</B> 
+<BR><UL>The short cut keys used within the buffer are:- </UL>
+<UL><P><B>C-c C-c</B> - Comment out the current line. 
+<BR><B>C-c C-d</B> - Uncomment the current line. 
+<BR><B>C-c C-e</B> - Comment to the end of the line with stars (*). 
+<BR><B>f2</B> - (un)fold the current region 
+<BR><B>f3</B> - (un)fold all regions </UL></UL>
+<H2><B>BUGS </B></H2>
+<UL><P>None reported. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m3mac029.html">fold-current(3)</A>, 
+<A HREF="m3mac029.html">fold-all(3)</A>, 
+<A HREF="m2cmd033.html">indent(2)</A>, 
+<A HREF="m3mac025.html">restyle-region(3)</A> 
+<A HREF="m3mac025.html">restyle-buffer(3)</A> 
+<P>
+<A HREF="amicr030.html">Supported File Types</A> </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,178 @@
+<HTML>
+<HEAD><TITLE>Introduction to Variable Functions</TITLE></HEAD>
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+Introduction to Variable Functions</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>VARIABLE FUNCTIONS </B></H2>
+<UL><P>Functions can be used to manipulate variables in various ways. Functions have in general one, two, or three arguments. These arguments will always be placed after the function on the current command line. For example, if we wanted to increase the current fill column by two, using MicroEmacs '02's 
+<A HREF="m2cmd122.html">set-variable(2)</A> (C-x v) command, we would write: <UL>
+<PRE>set-variable&nbsp;$fill-col&nbsp;&amp;add&nbsp;$fill-col&nbsp;2 
+&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\____second&nbsp;operand 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\_________first&nbsp;operand 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\________________function&nbsp;to&nbsp;execute 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\______________________variable&nbsp;to&nbsp;set 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\__________________________________set-variable&nbsp;(C-x&nbsp;v)&nbsp;command 
+</PRE></UL>
+<P>Functions always begin with an ampersand (<B>&amp;</B>) character, and are only significant to the first 3 characters after the ampersand. Functions will normally expect one of three types of arguments, and will automatically convert types when needed. 
+<P><B>&lt;num&gt;</B> 
+<BR><UL>An ASCII string of digits which is interpreted as a numeric value. Any string which does not start with a digit or a minus sign (-) will be considered zero. </UL>
+<P><B>&lt;str&gt;</B> 
+<BR><UL>An arbitrary string of characters. At the moment, strings are limited to 128 characters in length. </UL>
+<P><B>&lt;log&gt;</B> 
+<BR><UL>A logical value consisting of a non-zero number for <B>TRUE</B> (e.g. &quot;<TT>1</TT>&quot;), anything else is considered <B>FALSE</B> (e.g. &quot;<TT>0</TT>&quot; or &quot;<TT>foo</TT>&quot;). This differs from earlier versions of MicroEmacs where the strings &quot;<TT>TRUE</TT>&quot; and &quot;<TT>FALSE</TT>&quot; were used. 
+</UL><P>A list of the currently available functions follows: 
+<UL><P><B>Numeric Functions</B> (returns <I>&lt;num&gt;</I>) 
+<P>
+<A HREF="m4fil001.html">&amp;abs(4)</A> Absolute value of a number 
+<BR>
+<A HREF="m4fil001.html">&amp;add(4)</A> Add two numbers 
+<BR>
+<A HREF="m4fil001.html">&amp;dec(4)</A> Pre-decrement variable 
+<BR>
+<A HREF="m4fil001.html">&amp;divide(4)</A> Division of two numbers 
+<BR>
+<A HREF="m4fil001.html">&amp;inc(4)</A> Pre-increment variable 
+<BR>
+<A HREF="m4fil001.html">&amp;mod(4)</A> Modulus of two numbers 
+<BR>
+<A HREF="m4fil001.html">&amp;multiply(4)</A> Multiply two numbers 
+<BR>
+<A HREF="m4fil001.html">&amp;negate(4)</A> Negation of two numbers 
+<BR>
+<A HREF="m4fil001.html">&amp;pdec(4)</A> Post-decrement variable 
+<BR>
+<A HREF="m4fil001.html">&amp;pinc(4)</A> Post-increment variable 
+<BR>
+<A HREF="m4fil001.html">&amp;sub(4)</A> Subtract two numbers 
+<P><B>Bitwise Functions</B> (returns <I>&lt;num&gt;</I>) 
+<P>
+<A HREF="m4fil021.html">&amp;band(4)</A> Bitwise AND operator 
+<BR>
+<A HREF="m4fil021.html">&amp;bnot(4)</A> Bitwise NOT operator 
+<BR>
+<A HREF="m4fil021.html">&amp;bor(4)</A> Bitwise OR operator 
+<BR>
+<A HREF="m4fil021.html">&amp;bxor(4)</A> Bitwise XOR operator 
+<P><B>String manipulation functions</B> (returns <I>&lt;str&gt;</I>) 
+<P>
+<A HREF="m4fil002.html">&amp;cat(4)</A> Concatenate two strings together 
+<BR>
+<A HREF="m4fil002.html">&amp;left(4)</A> Return the left most characters from a string 
+<BR>
+<A HREF="m4fil002.html">&amp;len(4)</A> Return the length of a string 
+<BR>
+<A HREF="m4fil002.html">&amp;mid(4)</A> Return a portion (middle) of a string 
+<BR>
+<A HREF="m4fil002.html">&amp;right(4)</A> Return the right most characters from a string 
+<BR>
+<A HREF="m4fil002.html">&amp;slower(4)</A> Return the string converted to lower case 
+<BR>
+<A HREF="m4fil004.html">&amp;sprintf(4)</A> Formatted string construction 
+<BR>
+<A HREF="m4fil002.html">&amp;supper(4)</A> Return the string converted to upper case 
+<BR>
+<A HREF="m4fil002.html">&amp;trboth(4)</A> Return string trimmed of white chars on both sides 
+<BR>
+<A HREF="m4fil002.html">&amp;trleft(4)</A> Return string trimmed of white chars on left side 
+<BR>
+<A HREF="m4fil002.html">&amp;trright(4)</A> Return string trimmed of white chars on right side 
+<P><B>List manipulation functions</B> (returns <I>&lt;str&gt;</I>) 
+<P>
+<A HREF="m4fil029.html">&amp;ldel(4)</A> Delete list item 
+<BR>
+<A HREF="m4fil029.html">&amp;lfind(4)</A> Find list item 
+<BR>
+<A HREF="m4fil029.html">&amp;lget(4)</A> Get list item 
+<BR>
+<A HREF="m4fil029.html">&amp;linsert(4)</A> Insert list item 
+<BR>
+<A HREF="m4fil029.html">&amp;lset(4)</A> Set list item 
+<P><B>Logical testing functions</B> (returns <I>&lt;log&gt;</I>) 
+<P>
+<A HREF="m4fil003.html">&amp;and(4)</A> Logical AND operator 
+<BR>
+<A HREF="m4fil003.html">&amp;equal(4)</A> Numerical equivalence operator 
+<BR>
+<A HREF="m4fil003.html">&amp;great(4)</A> Numerical greater than operator 
+<BR>
+<A HREF="m4fil030.html">&amp;isequal(4)</A> Case insensitive String equivalence operator 
+<BR>
+<A HREF="m4fil003.html">&amp;less(4)</A> Numerical less than operator 
+<BR>
+<A HREF="m4fil003.html">&amp;not(4)</A> Logical NOT operator 
+<BR>
+<A HREF="m4fil003.html">&amp;or(4)</A> Logical OR operator 
+<BR>
+<A HREF="m4fil030.html">&amp;sequal(4)</A> String equivalence operator 
+<BR>
+<A HREF="m4fil030.html">&amp;sgreat(4)</A> String greater than operator 
+<BR>
+<A HREF="m4fil030.html">&amp;sless(4)</A> String less than operator 
+<BR>
+<A HREF="m4fil030.html">&amp;xisequal(4)</A> Case insensitive regex String equivalence operator 
+<BR>
+<A HREF="m4fil030.html">&amp;xsequal(4)</A> Regex string equivalence operator 
+<P><B>Miscellaneous functions</B> 
+<P>
+<A HREF="m4fil005.html">&amp;atoi(4)</A> ASCII to integer conversion 
+<BR>
+<A HREF="m4fil005.html">&amp;bmode(4)</A> Determine buffer mode 
+<BR>
+<A HREF="m4fil026.html">&amp;cbind(4)</A> Return the command a key is bound to 
+<BR>
+<A HREF="m4fil022.html">&amp;cond(4)</A> Conditional expression operator 
+<BR>
+<A HREF="m4fil005.html">&amp;exist(4)</A> Test if a variable or command exists 
+<BR>
+<A HREF="m4fil024.html">&amp;find(4)</A> Find a file on the search path 
+<BR>
+<A HREF="m4fil005.html">&amp;gmode(4)</A> Determine global mode 
+<BR>
+<A HREF="m4fil005.html">&amp;indirect(4)</A> Evaluate a string as a variable 
+<BR>
+<A HREF="m4fil005.html">&amp;inword(4)</A> Test for a word character 
+<BR>
+<A HREF="m4fil000.html">&amp;irep(4)</A> Case insensitive replace string in string 
+<BR>
+<A HREF="m4fil031.html">&amp;isin(4)</A> Case insensitive test for string in string 
+<BR>
+<A HREF="m4fil005.html">&amp;itoa(4)</A> Integer to ASCII conversion 
+<BR>
+<A HREF="m4fil026.html">&amp;kbind(4)</A> Return the key a command is bound to 
+<BR>
+<A HREF="m4fil026.html">&amp;nbind(4)</A> Return the numerial argument of a binding 
+<BR>
+<A HREF="m4fil005.html">&amp;nbmode(4)</A> Determine named buffer mode 
+<BR>
+<A HREF="m4fil000.html">&amp;rep(4)</A> Replace string in string 
+<BR>
+<A HREF="m4fil031.html">&amp;risin(4)</A> Recursive case insensitive test for string in string 
+<BR>
+<A HREF="m4fil031.html">&amp;rsin(4)</A> Recursively test for string in string 
+<BR>
+<A HREF="m4fil023.html">&amp;set(4)</A> In-line macro variable assignment 
+<BR>
+<A HREF="m4fil031.html">&amp;sin(4)</A> Test for string in string 
+<BR>
+<A HREF="m4fil027.html">&amp;stat(4)</A> Retrieve a file statistic 
+<BR>
+<A HREF="m4fil024.html">&amp;which(4)</A> Find a program on the path 
+<BR>
+<A HREF="m4fil000.html">&amp;xirep(4)</A> Regex case insensitive Replace string in string 
+<BR>
+<A HREF="m4fil000.html">&amp;xrep(4)</A> Regex replace string in string </UL></UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>Directives </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2002/01/06</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

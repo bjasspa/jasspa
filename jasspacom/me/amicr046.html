@@ -1,0 +1,32 @@
+<HTML>
+<HEAD><TITLE>FAQ(05) - ipipes not working on Microsoft Windows network drives ?</TITLE></HEAD>
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+FAQ(05) - ipipes not working on Microsoft Windows network drives ?</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>QUESTION (05) </B></H2>
+<UL><P>ipipes not working on Microsoft Windows network drives ? </UL>
+<H2><B>ANSWER </B></H2>
+<UL><P>We are aware of a problem with the ipipe commands with '95 and '98 (not sure about NT) when the current drive is a Novel network drive. 
+<P>Although we have not been ably to fully characterize the problem, we know that:- <UL><P>
+<LI>Old Novel Clients prior to 2.2 - Does not work 
+<LI>Novel Intranetware Client 2.2 - Does not work. 
+<LI>Novel Network Client 2.5 - Does work. 
+<LI>Novel Client 3.01 - Does work. </UL><P>Any other information in this area would be appreciated to fully characterize the problem. 
+<P>To get around the problem then disable ipipes using 
+<A HREF="m5var047.html">$system(5)</A>. From within your <I>&lt;user&gt;.emf</I> knock off bit 0x800 from 
+<A HREF="m5var047.html">$system(5)</A>. This will enable regular pipes, which will work, albeit not in the background. 
+<P>
+<A HREF="amicr040.html">[FAQ Index]</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,74 @@
+<HTML>
+<HEAD><TITLE>item-list(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+item-list(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>item-list - Abbreviated search and list buffer contents. 
+<BR>item-list-find - Find the selected item in the item list 
+<BR>item-list-close - &quot;Close the item list&quot; </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>item-list</B> (<B>F7</B>)&nbsp; 
+<BR><B>item-list-find</B> 
+<BR><B>item-list-close</B> (<B>esc F7</B>)&nbsp; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>item-list</B> performs a regular expression search of a buffer, presenting a list of the located text and associated types in a separate window which is presented to the left of the buffer window. <B>item-list</B> is a generic function that interacts with the buffer environment variables to present abbreviated buffer information to the user. 
+<P>The regular expression search strings are predefined in the language templates. To add support for a new buffer type a list of search/replace strings must be created. The search strings must use regex (magic mode) and groups <TT>\(..\)</TT> to place the located object string into the replace string. Within the template buffer search strings (<B>s</B>) and replace (<B>r</B>) are defined with the following syntax:- 
+<UL><P>set-variable .<I>hookname</I>.item-list-s<I>x</I> &quot;<I>regexp</I>&quot; 
+<BR>set-variable .<I>hookname</I>.item-list-r<I>x</I> &quot;<I>replace</I>&quot; </UL>
+<P>Where:- 
+<P><I>hookname</I> 
+<BR><UL>The name of the file hook i.e. <TT>fhook-c</TT> for ANSI 'C'. </UL>
+<P><I>x</I> 
+<BR><UL>The search number, this is valid in the range 1..9, commencing from 1. The search is processed in the order of the numeric identity. </UL>
+<P><I>regexp</I> 
+<BR><UL>The regular expression to search for. One of the arguments must include a groups <TT>\(..\)</TT> definition to allow the string to be moved to the replace. </UL>
+<P><I>replace</I> 
+<BR><UL>The replace string, this typically includes a <I>type</I> and part of the search string. </UL>
+<P>On invocation of <B>item-list</B> the buffer is searched and the results are presented in the <TT>*item-list*</TT> window appearing at the left-hand side of the window. If there is no item list set up for the file type then an error message is displayed. 
+<P>The user may interact with the <TT>*item-list*</TT> buffer using the mouse or <TT>&lt;RETURN&gt;</TT>, on selecting a line then the user is moved to the corresponding line in the original buffer. 
+<P><B>item-list-find</B> finds the current item list item and searches for the text in the original buffer. This is typically bound to a mouse or key stroke action. 
+<P><B>item-list-close</B> closes the item list buffer. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following example works through the <B>item-list</B> definition for the ME macros e.g. given that the ME macro definition is: <UL>
+<PRE>define-macro&nbsp;macro-name 
+</PRE></UL>
+<P>Searching for &quot;<TT>define-macro&nbsp;\([a-z-]+\)</TT>&quot; and replacing with &quot;<TT>Macro&nbsp;\1</TT>&quot; will work most of the time. The space between <TT>define-macro</TT> and the name does not have to be a single space and the <I>name</I> does not have to contain just lower case letters, so these search strings should be a flexible as possible, try <UL>
+<PRE>&quot;define-macro\s&nbsp;+\(\w+\)&quot; 
+</PRE></UL>
+<P>This however is not as optimal as it could be and if you have large files this could become slow. Performance can be greatly increased if it can be anchored to the start of the line, e.g. <UL>
+<PRE>&quot;^define-macro\s&nbsp;+\(\w+\)&quot; 
+</PRE></UL>
+<P>but to allow for initial white spaces and the optional numeric argument, you really need <UL>
+<PRE>&quot;^\s&nbsp;*[0-9]*\s&nbsp;*define-macro\s&nbsp;+\(\w+\)&quot; 
+</PRE></UL>
+<P>To hilight the function name you need the name encased the name in a magic hilighting string, <UL>
+<PRE>&quot;\ecBmacro-name\ecA&quot; 
+</PRE></UL>
+<P>where <TT>\e</TT> is an escape char, so the replace string should be <UL>
+<PRE>&quot;Macro&nbsp;\ecB\1\ecA&quot; 
+</PRE></UL>
+<P>Now all thats needed is to set these variables as fhook command variables, for macro files, the file hook command is <TT>fhook-emf</TT>, therefore the following is required: <UL>
+<PRE>set-variable&nbsp;.fhook-emf.item-list-s1&nbsp;&quot;^\\s&nbsp;*[0-9]*\\s&nbsp;*define-macro\\s&nbsp;+\\(\\w+\\)&quot; 
+set-variable&nbsp;.fhook-emf.item-list-r1&nbsp;&quot;Macro&nbsp;\ecB\\1\ecA&quot; 
+</PRE></UL>
+<P>Note that you can have as many of these search and replace variables as you require, i.e. <TT>.item-list-s1</TT>, <TT>.item-list-s2</TT>, <TT>.item-list-s3</TT>, ... ; but the more you have the slower it will be, often a good regex can do the job of 2 or 3. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m3mac058.html">occur(3)</A>, 
+<A HREF="m2cmd116.html">search-forward(2)</A>, 
+<A HREF="m2nar006.html">Regular Expressions</A> </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

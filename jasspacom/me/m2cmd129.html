@@ -1,0 +1,50 @@
+<HTML>
+<HEAD><TITLE>print-color(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+print-color(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>print-color - Create a new printer color 
+<BR>print-scheme - Create a new printer color and font scheme </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>print-color</B> &quot;<I>col-no</I>&quot; &quot;<I>red</I>&quot; &quot;<I>green</I>&quot; &quot;<I>blue</I>&quot; 
+<BR><I>n</I> <B>print-scheme</B> &quot;<I>schemeNum</I>&quot; &quot;<I>fore</I>&quot; &quot;<I>back</I>&quot; &quot;<I>font-mask</I>&quot; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>print-color</B> and <B>print-scheme</B> are similar to 
+<A HREF="m2cmd001.html">add-color(2)</A> and 
+<A HREF="m2cmd001.html">add-color-scheme(2)</A> except they configure MicroEmacs's printer scheme. 
+<P><B>print-color</B> creates a new printer color and inserts it into the printer color table, where <I>red</I>, <I>green</I> and <I>blue</I> are the color components and <I>col-no</I> is the printer color index. The printer color table contains 256 entries indexed by <I>col-no</I> in the range 0-255. <B>print-color</B> may also be used to modify an existing <I>col-no</I> index by re-assignment, the existing color definition is over-written with the new color definition. 
+<P>An argument <I>n</I> of 0 to <B>print-color</B> resets the printer color table, removing all currently defined colors. 
+<P><B>print-scheme</B> creates a new printer scheme. A printer scheme maps the 
+<A HREF="m2cmd069.html">hilight(2)</A> buffer's text into a print scheme. For example key words could be printed in <I>bold</I> or in <I>blue</I> etc. <B>print-scheme</B> arguments comprise an identifying index number &quot;<I>schemeNum</I>&quot;, two color values, &quot;<I>fore</I>&quot; and &quot;<I>back</I>&quot; (defined by <B>print-color</B>) and a font setting &quot;<I>font-mask</I>&quot;. The <I>font-mask</I> is a bit mask where each bit is defined as follows: 
+<UL><P><TT>0x01</TT> Enable bold font. 
+<BR><TT>0x02</TT> Enable italic font. 
+<BR><TT>0x04</TT> Enable light font. 
+<BR><TT>0x08</TT> Enable reverse font. 
+<BR><TT>0x10</TT> Enable underlining. </UL>
+<P>An argument <I>n</I> of 0 to <B>print-scheme</B> resets the printer scheme table, removing all currently defined printer schemes. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P>Printer schemes may be created and altered using the 
+<A HREF="m3osd005.html">scheme-editor(3)</A> dialog, the created printer scheme may then be used directly in the 
+<A HREF="m3osd012.html">print-setup(3)</A> dialog. Therefore direct use of these commands is largely redundant. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m3osd005.html">scheme-editor(3)</A>, 
+<A HREF="m3osd012.html">print-setup(3)</A>, 
+<A HREF="m2cmd101.html">print-buffer(2)</A>, 
+<A HREF="m2cmd069.html">hilight(2)</A>, 
+<A HREF="m5var004.html">$buffer-hilight(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,122 @@
+<HTML>
+<HEAD><TITLE>eaf(8)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+eaf(8)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>eaf - MicroEmacs abbreviation file format </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>&lt;pattern&gt;&nbsp;&lt;insertionString&gt;</I> 
+<BR><I>&lt;pattern&gt;&nbsp;&lt;insertionString&gt;</I> 
+<BR><I>&lt;pattern&gt;&nbsp;&lt;insertionString&gt;</I> 
+<BR><I>&lt;pattern&gt;&nbsp;&lt;insertionString&gt;</I> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The MicroEmacs '02 abbreviation file, typically given the extension <B>.eaf</B>, defines a set of shorthand expansion strings which are used by the command 
+<A HREF="m2cmd051.html">expand-abbrev(2)</A>. 
+<A HREF="m2cmd117.html">buffer-abbrev-file(2)</A> defines the abbreviation file. 
+<P>The abbreviation file line based, with one abbreviation per line, with no intervening blank lines. Each line comprises of two columns, the first column <I>&lt;pattern&gt;</I> identifies the source pattern to be expanded, the second column <I>&lt;insertionString&gt;</I> defines the replacement text. The two text columns are separated by a space character. 
+<P>When 
+<A HREF="m2cmd051.html">expand-abbrev(2)</A> is invoked and the expansion <I>&lt;pattern&gt;</I> is recognized, then <I>&lt;pattern&gt;</I> is deleted from the buffer and replaced with <I>&lt;insertionString&gt;</I>. 
+<P>The fields are defined as follows:- 
+<P><I>&lt;pattern&gt;</I> 
+<BR><UL>The source pattern to be expanded. The data commences in text column 0 and spans to the first white space character (<TT>SPACE</TT> or <TT>tab</TT>). The pattern may not include any white space characters. </UL>
+<P><I>&lt;insertionString&gt;</I> 
+<BR><UL>The replacement string exists from the first non-white space character following the <I>&lt;pattern&gt;</I> to the end of the line. The replacement string may include special tokens, delimited by a backslash ('<TT>\</TT>') character which are interpreted as follows:- 
+<P><B>\b</B> Move cursor backwards 
+<BR><UL>A positioning control. Allows the cursor to be moved backwards 1 character. </UL>
+<P><B>\d</B> Delete <TT>tab</TT> backwards 
+<BR><UL>Back tab. Deletes a tab character backwards. </UL>
+<P><B>\m&quot;</B><I>&lt;string&gt;</I><B>&quot;</B> Macro execution 
+<BR><UL>Takes the remainder of the line as a keyboard macro definition. The macro <I>string</I> is generated using 
+<A HREF="m2cmd074.html">insert-macro(2)</A> and must be contained in double quotes. When invoked the keyboard macro is executed and the appropriate text is inserted into a buffer. This is typically only used for more complex operations. </UL>
+<P><B>\p</B> Position 
+<BR><UL>The resultant position of the cursor following the expansion. If the cursor position is not specified, the cursor is placed at the end of the expansion string by default. </UL>
+<P><B>\r</B> Carriage Return (Newline) 
+<BR><UL>A newline in the replacement text. Note while 
+<A HREF="m2mod005.html">indent(2m)</A> is enabled a sequence a single &quot;\r&quot; retains the indent on the next line, however a sequence of two &quot;\r\r&quot; characters does not retain the tab position and returns the cursor to the start of the second line. If blank lines are required retaining tab positioning then a keyboard macro string should be used instead. (see &quot;\m&quot; above). </UL>
+<P><B>\t</B> Tab 
+<BR><UL>A <TT>tab</TT> character in the replacement text. </UL></UL></UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following example provides abbreviations for the 'C' programming language, found in file <B>c.eaf</B>. All cursor positions in the examples are shown by <B>&lt;@&gt;</B>. <UL>
+<PRE>#i&nbsp;#include&nbsp;&lt;\p&gt;\r 
+#d&nbsp;#define&nbsp;\p 
+if&nbsp;if(\p)\r{\r\r}\r 
+ef&nbsp;else&nbsp;if(\p)\r{\r\r}\r 
+el&nbsp;else\r{\r\p\r}\r 
+wh&nbsp;while(\p)\r{\r\r}\r 
+sw&nbsp;switch(\p)\r{\rcase&nbsp;:\rdefault&nbsp;:\r}\r 
+</PRE></UL>
+<P>Given that the abbreviation file has been declared then expansion of: <UL>
+<PRE>#d&lt;@&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#define&nbsp;&lt;@&gt; 
+
+if&lt;@&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&lt;@&gt;) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ 
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} 
+
+sw&lt;@&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;switch(&lt;@&gt;) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case&nbsp;: 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;default&nbsp;: 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} 
+</PRE></UL>
+<P>Note, in all of the examples, the abbreviation replacement strings specify a resultant cursor position, typically where the next edit will take place. 
+<P>The macros may alternatively be defined using keyboard macros. The aforementioned macros could have been re-written with the following definitions which are equivalent:- <UL>
+<PRE>#i&nbsp;\m&quot;#include&nbsp;&lt;\CX\CAP&gt;\CM\CXaP\CX)&quot; 
+#d&nbsp;\m&quot;#define&nbsp;\CX)&quot; 
+if&nbsp;\m&quot;if(\CX\CAP)\CM{\CM}\CXaP\CX)&quot; 
+ef&nbsp;\m&quot;else&nbsp;if(\CX\CAP)\CM{\CM\CM}\CM\CXaP\CX)&quot; 
+el&nbsp;\m&quot;else\CM{\CM\CX\CAP\CM}\CM\CXaP\CX)&quot; 
+wh&nbsp;\m&quot;while(\CX\CAP)\CM{\CM\CM}\CM\CXaP\CX)&quot; 
+sw&nbsp;\m&quot;switch(\CX\CAP)\CM{\CMcase&nbsp;:\CMdefault:\CM}\CM\CXaP\CX)&quot; 
+</PRE></UL>
+<P>Within a macro, the cursor positioning is generally achieved by setting a mark where the resultant cursor is to be positioned (see 
+<A HREF="m2cmd121.html">set-mark(2)</A>), when the macro is finished then an 
+<A HREF="m2cmd043.html">exchange-point-and-mark(2)</A> is initiated to move the cursor to the correct position; alternatively a sequence of cursor movements may be used. 
+<P>The &quot;\b&quot; and &quot;\d&quot; are typically used for positioning the cursor on subsequent lines. &quot;\d&quot; is the inverse of &quot;\t&quot;. Consider the following Pascal definition for an <I>else</I>, <I>begin</I> and <I>end</I> sequence:- <UL>
+<PRE>el&nbsp;else\rbegin\r\t\p;\r\dend; 
+</PRE></UL>
+<P>with 
+<A HREF="m2mod005.html">indent(2m)</A> mode enabled generates:- <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;begin 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;@&gt;; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end; 
+</PRE></UL>
+<P>Similarly the &quot;\b&quot; is typically used when 
+<A HREF="m2mod005.html">indent(2m)</A> is enabled, but when the tab spacing is known. Consider the following example used in the MicroEmacs '02 <B>.emf</B> files to define a help entry. In this case the indent is known to be 5 characters. Hence to move the cursor back 5 characters then a sequence of <B>\b</B>'s are used:- <UL>
+<PRE>!h&nbsp;def&nbsp;..&nbsp;\rSEE&nbsp;ALSO\r&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;cross&nbsp;references&gt;\r\b\b\b\b\b!ehelp 
+</PRE></UL>
+<P>the expansion in this case is:- <UL>
+<PRE>define-help&nbsp;&quot;&lt;@&gt;&quot; 
+
+... 
+
+SEE&nbsp;ALSO 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;cross&nbsp;references&gt; 
+!ehelp 
+</PRE></UL>
+</UL><H2><B>FILES </B></H2>
+<UL><P>The default abbreviation files are located in the MicroEmacs '02 <I>home</I> directory. 
+<P>User's may specify their own abbreviation files by shadowing the <I>home</I> directory file with their own file located in a personal MicroEmacs '02 directory. See 
+<A HREF="m5var057.html">$MEPATH(5)</A>. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd051.html">expand-abbrev(2)</A>, 
+<A HREF="m2cmd117.html">buffer-abbrev-file(2)</A>, 
+<A HREF="m2cmd117.html">global-abbrev-file(2)</A>, 
+<A HREF="m3mac045.html">iso-accents-mode(3)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/20</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

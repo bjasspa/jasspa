@@ -1,0 +1,72 @@
+<HTML>
+<HEAD><TITLE>&stat(4)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+&stat(4)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>&amp;stat - Retrieve a file statistic </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>&amp;stat</B> <I>&lt;stat&gt;</I> <I>&lt;filename&gt;</I> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>&amp;stat</B> returns the specified <I>&lt;stat&gt;</I> on the given <I>&lt;filename&gt;</I>. Valid <I>&lt;stat&gt;</I> values are:- 
+<P><B>a</B> 
+<BR><UL>Returns the absolute file name, corrects relative paths and symbolic links, i.e. on unix if the filename is a symbolic link it returns the file name the link points to (recursive), otherwise returns the file name. </UL>
+<P><B>d</B> 
+<BR><UL>Returns the file's modification time stamp. The value returned is an integer, larger values indicate a later time. </UL>
+<P><B>r</B> 
+<BR><UL>Returns a non-zero value if the user has permission to read the given file. </UL>
+<P><B>s</B> 
+<BR><UL>Returns the size of the file in bytes. </UL>
+<P><B>t</B> 
+<BR><UL>Returns the type of the file, where values returned are 
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;&nbsp;&nbsp;File&nbsp;does&nbsp;not&nbsp;exist. 
+&nbsp;&nbsp;&nbsp;&nbsp;R&nbsp;&nbsp;&nbsp;File&nbsp;is&nbsp;a&nbsp;regular&nbsp;file. 
+&nbsp;&nbsp;&nbsp;&nbsp;D&nbsp;&nbsp;&nbsp;File&nbsp;is&nbsp;a&nbsp;directory. 
+&nbsp;&nbsp;&nbsp;&nbsp;H&nbsp;&nbsp;&nbsp;File&nbsp;is&nbsp;a&nbsp;http&nbsp;URL&nbsp;link&nbsp;(see&nbsp;note). 
+&nbsp;&nbsp;&nbsp;&nbsp;F&nbsp;&nbsp;&nbsp;File&nbsp;is&nbsp;an&nbsp;ftp&nbsp;URL&nbsp;file&nbsp;(see&nbsp;note). 
+&nbsp;&nbsp;&nbsp;&nbsp;N&nbsp;&nbsp;&nbsp;File&nbsp;is&nbsp;an&nbsp;untouchable&nbsp;system&nbsp;file. 
+</PRE></UL>
+<UL><P>Note that a URL type is determined from the file name, e.g. http://..., and its existence is not verified. </UL>
+<P><B>w</B> 
+<BR><UL>Returns a non-zero value if the user has permission to write to the given file. </UL>
+<P><B>x</B> 
+<BR><UL>Returns a non-zero value if the user has permission to execute the given file. </UL></UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following example is a macro which, given a file name, uses <B>&amp;stat</B> to check that file file is regular: <UL>
+<PRE>define-macro&nbsp;test-file 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;set-variable&nbsp;#l0&nbsp;@1 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;@ml04&nbsp;&quot;File&nbsp;name&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;&amp;equ&nbsp;&amp;stat&nbsp;&quot;t&quot;&nbsp;#l4&nbsp;1 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&amp;spr&nbsp;&quot;[%s&nbsp;is&nbsp;not&nbsp;a&nbsp;regular&nbsp;file]&quot;&nbsp;#l0 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!abort 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+!emacro 
+
+test-file&nbsp;&quot;foobar&quot; 
+</PRE></UL>
+<P>The macro can be passed a file name and aborts if the file is not regular, there by returning the state. 
+<P>The follow example checks that a file is not empty, this is used by <B>mail-check</B> to test for any incoming mail. <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;gre&nbsp;&amp;stat&nbsp;&quot;s&quot;&nbsp;%incoming-mail-box 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;[You&nbsp;have&nbsp;new&nbsp;mail]&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="amicr026.html">Variable Functions</A>, 
+<A HREF="m2cmd056.html">find-file(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

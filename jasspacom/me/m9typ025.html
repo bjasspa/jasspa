@@ -1,0 +1,60 @@
+<HTML>
+<HEAD><TITLE>html(9)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+html(9)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P>html - HyperText Markup Language File. </UL>
+<H2><B>FILES </B></H2>
+<UL><P><B>hkhtml.emf</B> - HyperText Markup Language file hook definition </UL>
+<H2><B>EXTENSIONS </B></H2>
+<UL><P><B>.htm</B>, <B>.html</B> - HyperText Markup Language File. 
+<BR><B>.htp</B> - <I>[Special]</I> Super HTML Preprocessor file. 
+<BR><B>.hts</B> - <I>[Special]</I> Super HTML file. </UL>
+<H2><B>MAGIC STRINGS </B></H2>
+<UL><P><B>&lt;html&gt;</B> 
+<BR><UL>MicroEmacs '02 recognizes the magic string on any of the first 4 lines of the file. The HTML files may be extension-less and are still recognized. </UL></UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The <B>html</B> file type template provides simple hilighting of HTML files. Additionally, MicroEmacs '02 is capable of rendering simple HTML files (without graphic content) into the current buffer and follow the hyper text links. The JASSPA HTML documentation may be viewed in this way. 
+<P><B>General Editing</B> 
+<BR><UL>HTML files may be edited or processed and rendered into the buffer. The <B>Use Author Mode</B> option in the 
+<A HREF="m3osd010.html">buffer-setup(3)</A> dialog determines the edit mode on loading a HTML file; when set to '<TT>N</TT>' the page is rendered, '<TT>Y</TT>' and the raw HTML file is presented. The default state is '<TT>Y</TT>'. </UL>
+<P><B>Hilighting</B> 
+<BR><UL>The hilighting features allow commands, variables, logical, preprocessor definitions, comments, strings and characters of the language to be differentiated and rendered in different colors. </UL>
+<P><B>Short Cuts</B> 
+<BR><UL>The short cut keys used within the buffer are:- </UL>
+<UL><P><B>C-c C-h</B> - Help information. 
+<BR><B>C-c C-a</B> - Toggle the HTML author status. 
+<BR><B>html-spell-check-word</B> - spell check the current word. </UL>
+<P><B>Rendered Mode</B> 
+<BR><UL>In the non-author mode, the HTML file is extracted and rendered to the buffer. The hypertext links may be followed by selecting them with the mouse or using the <TT>&lt;RETURN&gt;</TT> key. </UL>
+<UL><P>The rendered mode is typically used to check HTML text after it has been authored from the editor. The rendered mode only caters for regular HTML 2.0 text. It does not handle tables or frames etc. <I>(use a browser)</I>. </UL>
+<UL><P>Toggling between rendered and authoring mode, then the buffer should be killed as the translation is only performed when the file is read. </UL>
+<UL><P>The non-author mode can be permanently enabled by setting the <B>Use Author Mode</B> option in the 
+<A HREF="m3osd010.html">buffer-setup(3)</A> dialog to '<TT>N</TT>'. When set to N any HTML files loaded are automatically processed, and rendered according to their HTML content. </UL></UL>
+<H2><B>NOTES </B></H2>
+<UL><P>The 
+<A HREF="m2cmd101.html">print</A> driver may be used to generate HTML from the contents of the buffer. Select the printer destination as <I>buffer</I>, and <I>HTML</I> as the driver. The buffer being printed is converted to HTML and dumped in the print buffer. 
+<P><B>.hts</B> and <B>.htp</B> are computer generated extended HTML files used in the MicroEmacs '02 documentation system. </UL>
+<H2><B>BUGS </B></H2>
+<UL><P>None reported. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd101.html">print-buffer(2)</A>, 
+<A HREF="m3osd010.html">buffer-setup(3)</A>. 
+<P>
+<A HREF="amicr030.html">Supported File Types</A> </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,52 @@
+<HTML>
+<HEAD><TITLE>$buffer-fmod(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+$buffer-fmod(5)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>$buffer-fmod - Buffer file modes (or attributes) 
+<BR>$global-fmod - Global file modes (or attributes) </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>$buffer-fmod</B> <I>FileMode</I> 
+<BR><B>$global-fmod</B> <I>FileMode</I> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>$buffer-fmod</B> is bit based variable setting the buffers file system modes or attributes. If the buffer was loaded from an existing file then the value of <B>$buffer-fmod</B> is taken directly from the file. But if the buffer was created then the buffer inherits the default file modes, <B>$global-fmod</B>, which is determined from the users umask on UNIX or a default on others. 
+<P>The definition of the file mode bits are platform specific and are considered independently, as follows: </UL>
+<H2>UNIX </H2>
+<UL><P>The file modes of Unix are the standard read, write and execute permissions for user, group and global. See <B>chmod(1)</B> for a full description of their use and effect. 
+<P>The variable is displayed in octal. </UL>
+<H2>Microsoft Windows and DOS </H2>
+<UL><P>On Microsoft platforms each file attribute (see <B>attrib(1)</B>) is assigned a bit, on windows 95 and NT the new file attributes such as compressed are also represented. The bits are assigned as follows <UL>
+<PRE>Bit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Attrib&nbsp;Flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Attribute 
+0x001&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rad&nbsp;Only 
+0x002&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;H&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Hidden 
+0x004&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;S&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System 
+0x010&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Directory 
+0x020&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Archive 
+0x080&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Normal 
+0x100&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Temporary 
+0x800&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compressed 
+</PRE></UL>
+</UL><H2><B>EXAMPLE </B></H2>
+<UL><P>The following example changes the $buffer-fmod so that the file will be executable (UNIX only), useful when writing a shell script. <UL>
+<PRE>set-variable&nbsp;$buffer-fmod&nbsp;0775 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2mod024.html">crlf(2m)</A>, 
+<A HREF="m2mod030.html">ctrlz(2m)</A>, 
+<A HREF="m2mod000.html">auto(2m)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

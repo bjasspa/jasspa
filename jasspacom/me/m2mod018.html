@@ -1,0 +1,66 @@
+<HTML>
+<HEAD><TITLE>binary(2m)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+binary(2m)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>binary - Binary editor mode </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>binary Mode</B> 
+<P><B>b</B> - mode line letter. </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>binary</B> mode is enabled when a file is edited in binary mode. The mode is automatically enabled when a file is loaded as a binary file via 
+<A HREF="m3mac030.html">find-bfile(3)</A>. 
+<P>When a file is loaded using binary mode, every 16 bytes is converted into a line of text giving the hex address of the current position in the file, the bytes as hexadecimal numbers and all printable characters at the end of the line (all non-printable characters are displayed as a '<TT>.</TT>'). However, This format makes it memory hungry in that every 16 bytes of the file requires a 78 character line (approximately 5 times more memory!). For a more memory efficient binary mode see 
+<A HREF="m2mod031.html">rbin(2m)</A>. 
+<P>When writing out a file which has binary mode enabled the format of each line must have the binary mode format which is as follows: <UL>
+<PRE>&lt;address&gt;:&nbsp;XX&nbsp;XX&nbsp;XX&nbsp;XX&nbsp;XX&nbsp;....&nbsp;XX&nbsp;XX&nbsp;|&nbsp;&lt;text-form&gt; 
+</PRE></UL>
+<P>Only the hex values (the <TT>XX</TT>'s) between the starting '<I>:</I>' marker and the terminating '|' character are used, the <I>&lt;address&gt;</I> and <I>&lt;text-form&gt;</I> are ignored. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>Given a single line MSDOS file:- <UL>
+<PRE>Live&nbsp;long&nbsp;and&nbsp;prosper. 
+</PRE></UL>
+<P>When loaded in using <B>binary</B> mode the following 2 line buffer will be produced:- <UL>
+<PRE>00000000:&nbsp;4C&nbsp;69&nbsp;76&nbsp;65&nbsp;20&nbsp;6C&nbsp;6F&nbsp;6E&nbsp;67&nbsp;20&nbsp;61&nbsp;6E&nbsp;64&nbsp;20&nbsp;70&nbsp;72&nbsp;&nbsp;|&nbsp;&nbsp;Live&nbsp;long&nbsp;and&nbsp;pr 
+00000010:&nbsp;6F&nbsp;73&nbsp;70&nbsp;65&nbsp;72&nbsp;2E&nbsp;0D&nbsp;0A&nbsp;1A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;osper.... 
+</PRE></UL>
+<P>Note the &quot;<TT>0D 0A 1A</TT>&quot; at the end, this is due to MSDOS's &quot;<TT>\n\r</TT>&quot; carriage returns and <TT>^Z</TT> file termination, these characters are unprintable and are shown as '<TT>.</TT>' at the end of the line. 
+<P>When saving a binary file, only the text between the '<TT>:</TT>' and '<TT>|</TT>' is considered and it may contain any number of hexadecimal numbers. The given file could be made UNIX compatible by editing the buffer to:- <UL>
+<PRE>00000000:&nbsp;4C&nbsp;69&nbsp;76&nbsp;65&nbsp;20&nbsp;6C&nbsp;6F&nbsp;6E&nbsp;67&nbsp;20&nbsp;61&nbsp;6E&nbsp;64&nbsp;20&nbsp;70&nbsp;72&nbsp;&nbsp;|&nbsp;&nbsp;Live&nbsp;long&nbsp;and&nbsp;pr 
+00000010:&nbsp;6F&nbsp;73&nbsp;70&nbsp;65&nbsp;72&nbsp;2E&nbsp;0D&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;osper.... 
+</PRE></UL>
+<P>If the word &quot;<B>long</B>&quot; is required to be removed, the following would not work:- <UL>
+<PRE>00000000:&nbsp;4C&nbsp;69&nbsp;76&nbsp;65&nbsp;20&nbsp;6C&nbsp;6F&nbsp;6E&nbsp;67&nbsp;20&nbsp;61&nbsp;6E&nbsp;64&nbsp;20&nbsp;70&nbsp;72&nbsp;&nbsp;|&nbsp;&nbsp;Live&nbsp;and&nbsp;pr 
+00000010:&nbsp;6F&nbsp;73&nbsp;70&nbsp;65&nbsp;72&nbsp;2E&nbsp;0D&nbsp;0A&nbsp;1A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;osper.... 
+</PRE></UL>
+<P>The ASCII end letters are ignored, instead the following operation must be performed which removes the characters from the binary representation:- <UL>
+<PRE>00000000:&nbsp;4C&nbsp;69&nbsp;76&nbsp;65&nbsp;20&nbsp;61&nbsp;6E&nbsp;64&nbsp;20&nbsp;70&nbsp;72&nbsp;&nbsp;|&nbsp;&nbsp;Live&nbsp;long&nbsp;and&nbsp;pr 
+00000010:&nbsp;6F&nbsp;73&nbsp;70&nbsp;65&nbsp;72&nbsp;2E&nbsp;0D&nbsp;0A&nbsp;1A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;osper.... 
+</PRE></UL>
+<P>One could be nasty by doing the following:- <UL>
+<PRE>00000000:&nbsp;4C&nbsp;69&nbsp;76&nbsp;65&nbsp;20&nbsp;73&nbsp;68&nbsp;6F&nbsp;72&nbsp;74&nbsp;20&nbsp;61&nbsp;6E&nbsp;64&nbsp;20&nbsp;| 
+00000010:&nbsp;64&nbsp;6F&nbsp;6E&nbsp;27&nbsp;74&nbsp;20&nbsp;70&nbsp;72&nbsp;6F&nbsp;73&nbsp;70&nbsp;65&nbsp;72&nbsp;2E&nbsp;0D&nbsp;0A&nbsp;1A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 
+</PRE></UL>
+<P>(&quot;Live short and don't prosper&quot;). </UL>
+<H2><B>NOTES </B></H2>
+<UL><P><B>rbin</B> and <B>binary</B> modes are mutually exclusive, i.e. they cannot both be enabled at the same time. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m3mac030.html">find-bfile(3)</A>, 
+<A HREF="m2cmd056.html">find-file(2)</A>, 
+<A HREF="m2mod031.html">rbin(2m)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

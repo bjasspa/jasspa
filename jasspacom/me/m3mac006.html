@@ -1,0 +1,56 @@
+<HTML>
+<HEAD><TITLE>replace-all-string(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+replace-all-string(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>replace-all-string - Replace string with new string in a list of files </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>replace-all-string</B> &quot;<I>from</I>&quot; &quot;<I>to</I>&quot; &quot;<I>files</I>&quot; [&quot;<I>grep-from</I>&quot;] </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>replace-all-string</B>, similar to 
+<A HREF="m2cmd109.html">replace-string(2)</A>, replaces all occurrences of &quot;<I>from</I>&quot; to &quot;<I>to</I>&quot; in the given list of files without prompting the user. 
+<P>The command finds all occurrences of &quot;<I>from</I>&quot; by calling the command 
+<A HREF="m3mac001.html">grep(3)</A> to search for string &quot;<I>from</I>&quot; in files &quot;<I>files</I>&quot;. Thus all relevant edited files must be saved or <B>grep</B> may return the wrong line numbers. This is achieved by a call to 
+<A HREF="m2cmd150.html">save-some-buffers(2)</A> which prompts the user to save any changed buffers one at a time. 
+<P>Each occurrence of &quot;<I>from</I>&quot; is jumped to using 
+<A HREF="m2cmd058.html">get-next-line(2)</A> and the string is replaced by the call: <UL>
+<PRE>-1&nbsp;replace-string&nbsp;&quot;from&quot;&nbsp;&quot;to&quot; 
+</PRE></UL>
+<P>This replaces all occurrences of &quot;<I>from</I>&quot; to &quot;<I>to</I>&quot; on the current line only, hence the line numbers must be correct. This also means that the &quot;<I>from</I>&quot; search string must be correctly formatted for both grep and replace-string, unless bit 0x02 is set (see below). 
+<P>The given argument <I>n</I> is a bit based flag which changes the default behavior described above. The bits have the following effect:- 
+<P><B>0x01</B> 
+<BR><UL>Prompt before saving any changed buffer, enabled by default. If this bit is not set then any changed buffer is automatically saved before the <B>grep</B> is performed. </UL>
+<P><B>0x02</B> 
+<BR><UL>If set then a fourth argument &quot;<I>grep-from</I>&quot; must also be given. This string is used in place of the &quot;<I>from</I>&quot; string for the <B>grep</B> only. </UL></UL>
+<H2><B>NOTES </B></H2>
+<UL><P><B>replace-all-string</B> is a macro defined in <TT>search.emf</TT>. 
+<P>The <B>grep</B> command must be working before this command can function properly. 
+<P>It is not recommended to use a &quot;from&quot; or &quot;to&quot; string which uses more that one line as the results may be unpredictable. 
+<P>As the change is likely to be over several files a single call to 
+<A HREF="m2cmd136.html">undo(2)</A> at the end of execution will not undo all the changes made. To undo all the changes made, use 
+<A HREF="m2cmd058.html">get-next-line(2)</A> to loop through all the occurrences and call <B>undo</B> for each occurrence </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd109.html">replace-string(2)</A>, 
+<A HREF="m2cmd150.html">save-some-buffers(2)</A>, 
+<A HREF="m3mac001.html">grep(3)</A>, 
+<A HREF="m2cmd058.html">get-next-line(2)</A>, 
+<A HREF="m2cmd136.html">undo(2)</A>, 
+<A HREF="m3mac007.html">query-replace-all-string(3)</A>, 
+<A HREF="m3mac020.html">replace-all-pairs(3)</A>, 
+<A HREF="m2cmd116.html">search-forward(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,33 @@
+<HTML>
+<HEAD><TITLE>universal-argument(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+universal-argument(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>universal-argument - Set the command argument count </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>universal-argument</B> (<B>C-u</B>)&nbsp; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>universal-argument</B> sets the argument number passed to a command to 4^<I>n</I> (4 to the power of <I>n</I>) where <I>n</I> is the number of calls to <B>universal-argument</B>, e.g. the key sequence &quot;<TT>C-uC-n</TT>&quot; moves down 4 lines, &quot;<TT>C-uC-uC-uC-n</TT>&quot; moves down 4*4*4 = 64 lines. 
+<P>After invoking the <B>universal-command</B> a '<I>-</I>' character can be pressed to negate the argument value, and an alternative numeric argument can be entered using the '<I>0</I>' to '<I>9</I>' keys. 
+<P>Invoking this command via 
+<A HREF="m2cmd047.html">execute-named-command(2)</A> or by a macro has no effect. The command should be treated as a command key prefix (like 
+<A HREF="m2cmd028.html">prefix(2)</A>) in that it may be bound to only one key sequence which must be a single key stroke. Re-binding this command to another key unbinds the new key and also the current <B>universal-argument</B> key. 
+<P>The <B>prefix 1</B> key (by default bound to <TT>esc</TT>) may also be used to enter a numeric argument at the message line, e.g. &quot;<TT>esc 1 0 C-f</TT>&quot; will move forward 10 characters. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd028.html">prefix(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,126 @@
+<HTML>
+<HEAD><TITLE>add-color(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+add-color(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>add-color - Create a new color 
+<BR>add-color-scheme - Create a new color scheme </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>add-color</B> &quot;<I>col-no</I>&quot; &quot;<I>red</I>&quot; &quot;<I>green</I>&quot; &quot;<I>blue</I>&quot; 
+<BR><I>n</I> <B>add-color-scheme</B> &quot;<I>schemeNum</I>&quot; &quot;<I>fore</I>&quot; &quot;<I>back</I>&quot; &quot;<I>current-fore</I>&quot; &quot;<I>current-back</I>&quot; 
+<BR><UL><UL>&quot;<I>selected-fore</I>&quot; &quot;<I>selected-back</I>&quot; 
+<BR>&quot;<I>current-selected-fore</I>&quot; &quot;<I>current-selected-back</I>&quot; 
+<BR>[ &quot;<I>fm-fore</I>&quot; &quot;<I>fm-back</I>&quot; &quot;<I>fm-cur-fore</I>&quot; &quot;<I>fm-cur-back</I>&quot; 
+<BR>&quot;<I>fm-sel-fore</I>&quot; &quot;<I>fm-sel-back</I>&quot; 
+<BR>&quot;<I>fm-cur-sel-fore</I>&quot; &quot;<I>fm-cur-sel-back</I>&quot; ] </UL></UL></UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>add-color</B> creates a new color and inserts it into MicroEmacs '02 colors table, where <I>red</I>, <I>green</I> and <I>blue</I> are the color components and <I>col-no</I> is the MicroEmacs '02 color table number. The color table contains 256 entries indexed by <I>col-no</I> in the range 0-255. 
+<P>On some platforms (DOS and UNIX termcap) the number of colors is physically limited by the hardware to less than 256 (typically 16), in this case all 256 colors can be defined and for each created color the closest system color is used. 
+<P>By default, only color 0 (white) and 1 (black) are defined. Once created, the colors may be used to create color schemes, this is the sole use of colors. 
+<P><B>add-color</B> may be used to modify an existing <I>col-no</I> index by re-assignment, the existing color definition is over-written with the new color definition. <B>add-color-scheme</B> creates a color scheme entry used by 
+<A HREF="m2cmd069.html">hilight(2)</A>, 
+<A HREF="m2cmd099.html">screen-poke(2)</A>, 
+<A HREF="m2cmd066.html">osd(2)</A> and variables such as 
+<A HREF="m5var024.html">$global-scheme(5)</A>, 
+<A HREF="m5var001.html">$buffer-scheme(5)</A>, 
+<A HREF="m5var030.html">$ml-scheme(5)</A>. 
+<P>The command takes an index number &quot;<I>schemeNum</I>&quot; and eight color values (defined by <B>add-color</B>) alternating between foreground and background colors. The 8 colors represent the 4 color paired states of foreground and background that may appear in a text buffer. The paired states correspond to current and selected lines (or permutations thereof). If an argument <I>n</I> is given to the command then <I>schemeNum</I> is set to a duplicate of the <I>n</I>th scheme, no other arguments are required. 
+<P><I>schemeNum</I> is the identifying index that is used to recognize the scheme. By default only two color schemes are defined at initialization, they are a monochrome scheme and inverse scheme with indices 0 and 1 using white as foreground and black as background, selected text is inverted. When defining a color scheme, if an existing <I>schemeNum</I> index is used then that scheme is modified. 
+<P>The next eight arguments must be given, they specify foreground and background color pairs for the four different situations, as follows:- 
+<P>Default 
+<BR><UL>Color combination used when none of the following three are applicable. </UL>
+<P>Current 
+<BR><UL>Color combination used when the text is on the same line as the cursor. It is also used by the 
+<A HREF="m5var032.html">$mode-line-scheme(5)</A> for the current window's mode line and for the current selection on an 
+<A HREF="m2cmd066.html">osd(2)</A> dialog. </UL>
+<P>Selected 
+<BR><UL>Color combination used when the text is in the current selected region, but is not on the current line. Also used by <B>osd</B> for non-current item Hot keys. </UL>
+<P>Current-selected 
+<BR><UL>Color combination used when the text is on the current line and in the current selected region. Also used by <B>osd</B> for the current item's Hot key. 
+</UL><P>The following 8 arguments set up fonts and are optional, any missing arguments are defaulted to 0. Each argument is a bitmask indicating which font should be enabled, where each bit is as follows: 
+<UL><P><TT>0x01</TT> Enable bold font. 
+<BR><TT>0x02</TT> Enable italic font. 
+<BR><TT>0x04</TT> Enable light font. 
+<BR><TT>0x08</TT> Enable reverse font. 
+<BR><TT>0x10</TT> Enable underlining. </UL>
+<P>Normally only the foreground value is used, i.e. the first, third, fifth and seventh values. But 
+<A HREF="m2cmd099.html">screen-poke(2)</A> can be used to draw reversed color scheme in which case the background values are used. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The color palette is typically created at start-up via the configuration file <B>scheme</B><I>X</I><B>.emf</B>. These files are not easily read as they are automatically generated via the 
+<A HREF="m3osd005.html">scheme-editor(3)</A> dialog. A more readable form of &quot;<TT>schemed.emf</TT>&quot; would be as follows:- <UL>
+<PRE>;&nbsp;Standard&nbsp;colors 
+add-color&nbsp;&amp;set&nbsp;.white&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;200&nbsp;200&nbsp;200 
+add-color&nbsp;&amp;set&nbsp;.black&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;0&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;0 
+add-color&nbsp;&amp;set&nbsp;.red&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;200&nbsp;0&nbsp;&nbsp;&nbsp;0 
+add-color&nbsp;&amp;set&nbsp;.green&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3&nbsp;0&nbsp;&nbsp;&nbsp;200&nbsp;0 
+add-color&nbsp;&amp;set&nbsp;.yellow&nbsp;&nbsp;&nbsp;&nbsp;4&nbsp;200&nbsp;200&nbsp;0 
+add-color&nbsp;&amp;set&nbsp;.blue&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5&nbsp;0&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;200 
+add-color&nbsp;&amp;set&nbsp;.magenta&nbsp;&nbsp;&nbsp;6&nbsp;200&nbsp;0&nbsp;&nbsp;&nbsp;200 
+add-color&nbsp;&amp;set&nbsp;.cyan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7&nbsp;0&nbsp;&nbsp;&nbsp;200&nbsp;200 
+;&nbsp;Light&nbsp;colors 
+add-color&nbsp;&amp;set&nbsp;.lwhite&nbsp;&nbsp;&nbsp;&nbsp;8&nbsp;255&nbsp;255&nbsp;255 
+add-color&nbsp;&amp;set&nbsp;.lblack&nbsp;&nbsp;&nbsp;&nbsp;9&nbsp;75&nbsp;&nbsp;75&nbsp;&nbsp;75 
+add-color&nbsp;&amp;set&nbsp;.lred&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10&nbsp;255&nbsp;0&nbsp;&nbsp;&nbsp;0 
+add-color&nbsp;&amp;set&nbsp;.lgreen&nbsp;&nbsp;&nbsp;11&nbsp;0&nbsp;&nbsp;&nbsp;255&nbsp;0 
+add-color&nbsp;&amp;set&nbsp;.lyellow&nbsp;&nbsp;12&nbsp;255&nbsp;255&nbsp;0 
+add-color&nbsp;&amp;set&nbsp;.lblue&nbsp;&nbsp;&nbsp;&nbsp;13&nbsp;0&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;255 
+add-color&nbsp;&amp;set&nbsp;.lmagenta&nbsp;14&nbsp;255&nbsp;0&nbsp;&nbsp;&nbsp;255 
+add-color&nbsp;&amp;set&nbsp;.lcyan&nbsp;&nbsp;&nbsp;&nbsp;15&nbsp;0&nbsp;&nbsp;&nbsp;255&nbsp;255 
+;&nbsp;Selection&nbsp;color 
+add-color&nbsp;&amp;set&nbsp;.sel-col&nbsp;&nbsp;16&nbsp;91&nbsp;&nbsp;78&nbsp;&nbsp;131 
+;&nbsp;Set&nbsp;the&nbsp;required&nbsp;cursor-color 
+set-variable&nbsp;$cursor-color&nbsp;.col12 
+;&nbsp;Set&nbsp;up&nbsp;the&nbsp;standard&nbsp;schemes&nbsp;for&nbsp;the&nbsp;text,&nbsp;mode&nbsp;line&nbsp;message&nbsp;line,&nbsp;scroll&nbsp;bar&nbsp;and&nbsp;osd. 
+add-color-scheme&nbsp;$global-scheme&nbsp;&nbsp;.white&nbsp;.black&nbsp;.lwhite&nbsp;.black&nbsp;... 
+&nbsp;&nbsp;&nbsp;&nbsp;...&nbsp;.white&nbsp;.sel-col&nbsp;.lwhite&nbsp;.sel-col&nbsp;0&nbsp;8&nbsp;1&nbsp;9&nbsp;8&nbsp;0&nbsp;9&nbsp;1 
+add-color-scheme&nbsp;$ml-scheme&nbsp;&nbsp;.white&nbsp;.black&nbsp;.lwhite&nbsp;.black&nbsp;... 
+&nbsp;&nbsp;&nbsp;&nbsp;...&nbsp;.white&nbsp;.sel-col&nbsp;.lwhite&nbsp;.sel-col&nbsp;0&nbsp;8&nbsp;1&nbsp;9&nbsp;8&nbsp;0&nbsp;9&nbsp;1 
+add-color-scheme&nbsp;$mode-line-scheme&nbsp;&nbsp;.white&nbsp;.red&nbsp;.lwhite&nbsp;.lred&nbsp;... 
+&nbsp;&nbsp;&nbsp;&nbsp;...&nbsp;.white&nbsp;.red&nbsp;.lwhite&nbsp;.red&nbsp;8&nbsp;0&nbsp;9&nbsp;1&nbsp;0&nbsp;8&nbsp;1&nbsp;9 
+add-color-scheme&nbsp;$scroll-bar-scheme&nbsp;.white&nbsp;.lblack&nbsp;.lwhite&nbsp;.lblack&nbsp;... 
+&nbsp;&nbsp;&nbsp;&nbsp;...&nbsp;&nbsp;.lblack&nbsp;.white&nbsp;.lblack&nbsp;.lwhite&nbsp;8&nbsp;0&nbsp;9&nbsp;1&nbsp;0&nbsp;8&nbsp;1&nbsp;9 
+&nbsp;&nbsp;&nbsp;&nbsp;. 
+&nbsp;&nbsp;&nbsp;&nbsp;. 
+</PRE></UL>
+</UL><H2><B>NOTES </B></H2>
+<UL><P>Color schemes can be created and altered using the 
+<A HREF="m3osd005.html">scheme-editor(3)</A> dialog, the created color scheme can then the used from start-up by using the 
+<A HREF="m3osd000.html">user-setup(3)</A> dialog. Therefore direct use of these commands is largely redundant. 
+<P>The existence of a color or scheme index is checked as each entry is submitted, therefore any color or scheme used must have been previously been created, otherwise a default value is substituted. 
+<P>Changing any existing color definitions causes all references to the color from a scheme to adopt the new color. 
+<P>Changing any existing color-scheme definitions changes the rendered color of any 
+<A HREF="m2cmd069.html">hilight(2)</A> etc., that was using that color-scheme. 
+<P>A -ve color scheme value (i.e. <I>-n</I>) uses the previous '<I>n</I>'th entry that is defined in the color block. i.e. if <I>current-fore</I> was specified as -2 then it would inherit the <I>fore</I> field color. 
+<P>Not all UNIX terminals support all the above fonts. 
+<P>On some telnet packages color is not directly supported and some of the termcap display attributes such as bold and italic are represented by a color (e.g. italic text is shown in green). Using this translation it is possible to achieve reasonable color support on a VT100 terminal - it is a little awkward but is worth while if you have to use this type of connection frequently. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m3osd005.html">scheme-editor(3)</A>, 
+<A HREF="m3osd000.html">user-setup(3)</A>, 
+<A HREF="m2cmd027.html">change-font(2)</A>, 
+<A HREF="m2cmd069.html">hilight(2)</A>, 
+<A HREF="m2cmd099.html">screen-poke(2)</A>, 
+<A HREF="m5var004.html">$buffer-hilight(5)</A>, 
+<A HREF="m5var010.html">$cursor-color(5)</A>, 
+<A HREF="m5var024.html">$global-scheme(5)</A>, 
+<A HREF="m5var080.html">$trunc-scheme(5)</A>, 
+<A HREF="m5var030.html">$ml-scheme(5)</A>, 
+<A HREF="m5var009.html">$osd-scheme(5)</A>, 
+<A HREF="m5var032.html">$mode-line-scheme(5)</A>, 
+<A HREF="m5var050.html">$scroll-bar-scheme(5)</A>, 
+<A HREF="m5var047.html">$system(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

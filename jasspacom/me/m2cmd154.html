@@ -1,0 +1,69 @@
+<HTML>
+<HEAD><TITLE>mark-registry(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+mark-registry(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>mark-registry - Modify the operating mode of a registry node </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>mark-registry</B> &quot;<I>root</I>&quot; &quot;<I>mode</I>&quot; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>mark-registry</B> modifies the <I>mode</I> of a registry node <I>root</I>. If an argument <I>n</I> is supplied then the <I>n</I>th register node down from <B>root</B> (as viewed from 
+<A HREF="m2cmd025.html">list-registry(2)</A> output) is modified instead. The <I>mode</I> is string specifying the modes, each mode is represented by a character. Lower case characters add a mode, upper case characters delete a mode. The modes are defined as:- 
+<P><B>?</B> - Query Name 
+<BR><UL>Returns the full name, including path, of the given registry node in the variable 
+<A HREF="m5var041.html">$result(5)</A>. This does not alter the registry. </UL>
+<P><B>!</B> - Hide Value 
+<BR><UL>Hides the value of the given registry node, i.e. its value will not be displayed in the output of 
+<A HREF="m2cmd025.html">list-registry(2)</A>. Once set, this mode cannot be removed. </UL>
+<P><B>a</B> - Autosave 
+<BR><UL>Automatically saves the registry when it is deleted or unloaded from the registry. The user is not prompted for a save. </UL>
+<P><B>b</B> - Backup 
+<BR><UL>Automatically performs a backup of the registry file whenever a save operation is performed. </UL>
+<P><B>c</B> - Create 
+<BR><UL>If the registry file cannot be loaded then the <I>root</I> node is created and the invocation succeeds. If this mode is omitted then the call fails if the <I>file</I> cannot be found. </UL>
+<P><B>d</B> - Discard 
+<BR><UL>Marks the registry as discardable. This is typically used for registries that are not saved. </UL>
+<P><B>f</B> - File 
+<BR><UL>The registry node is marked as a file root, the value must be set to the registry file name. </UL>
+<P><B>g</B> - Get Modes 
+<BR><UL>Returns the list of modes currently set on the given registry node in the variable 
+<A HREF="m5var041.html">$result(5)</A>. This does not alter the registry. </UL>
+<P><B>h</B> - Hidden 
+<BR><UL>The registry node is marked as <I>Hidden</I>, i.e. its children will not be shown in 
+<A HREF="m2cmd025.html">list-registry(2)</A> output. </UL>
+<P><B>u</B> - Updated 
+<BR><UL>Marks the registry as modified. The modified bit is removed when the registry file is saved. If the modified bit is applied to a registry node the user will be prompted to save the registry when it is deleted (or it will be automatically saved when the <I>Autosave</I> mode is used). 
+</UL><P>Multiple modes may be applied. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>A history registry can be hidden with the following invocation:- <UL>
+<PRE>mark-registry&nbsp;&quot;/history&quot;&nbsp;&quot;h&quot; 
+</PRE></UL>
+<P>It could then be made visible again using:- <UL>
+<PRE>mark-registry&nbsp;&quot;/history&quot;&nbsp;&quot;H&quot; 
+</PRE></UL>
+</UL><H2><B>BUGS </B></H2>
+<UL><P>At exit only registry nodes attached to the root are saved. </UL>
+<H2><B>DIAGNOSTICS </B></H2>
+<UL><P><B>mark-registry</B> fails if <I>root</I> does not exist. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd042.html">get-registry(2)</A>, 
+<A HREF="m2cmd025.html">list-registry(2)</A>, 
+<A HREF="m2cmd157.html">read-registry(2)</A>, 
+<A HREF="m2cmd042.html">set-registry(2)</A>, 
+<A HREF="m8fil004.html">erf(8)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

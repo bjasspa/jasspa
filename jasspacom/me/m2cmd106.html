@@ -1,0 +1,47 @@
+<HTML>
+<HEAD><TITLE>read-file(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+read-file(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>read-file - Find and load file replacing current buffer </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>read-file</B> &quot;<I>file-name</I>&quot; (<B>C-x&nbsp;C-r</B>)&nbsp; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>read-file</B> operates like 
+<A HREF="m2cmd056.html">find-file(2)</A>, this command either finds the file in a buffer, or creates a new buffer and reads the file in. The command destroys the current buffer before the new buffer is created making this command ideal to use when the wrong file was entered on a 
+<A HREF="m2cmd056.html">find-file(2)</A>. This command is also useful for re-loading files that have changed on disk. 
+<P>The numeric argument <I>n</I> can be used to modify the default behaviour of the command, where the bits are defined as follows: 
+<P><B>0x01</B> 
+<BR><UL>If the file does not exist and this bit is not set the command fails at this point. If the file does not exist and this bit is set (or no argument is specified as the default argument is <TT>1</TT>) then a new empty buffer is created with the given file name, saving the buffer subsequently creates a new file. </UL>
+<P><B>0x02</B> 
+<BR><UL>If this bit is set the file will be loaded with 
+<A HREF="m2mod018.html">binary(2m)</A> mode enabled. See help on <B>binary</B> mode for more information on editing binary data files. </UL>
+<P><B>0x04</B> 
+<BR><UL>If this bit is set the file will be loaded with 
+<A HREF="m2mod003.html">crypt(2m)</A> mode enabled. See help on <B>crypt</B> mode for more information on editing encrypted files. </UL>
+<P><B>0x08</B> 
+<BR><UL>If this bit is set the file will be loaded with 
+<A HREF="m2mod031.html">rbin(2m)</A> mode enabled. See help on <B>rbin</B> mode for more information on efficient editing of binary data files. </UL></UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m3mac053.html">reread-file(3)</A>, 
+<A HREF="m2cmd056.html">find-file(2)</A>, 
+<A HREF="m2cmd140.html">view-file(2)</A>, 
+<A HREF="m2mod018.html">binary(2m)</A>, 
+<A HREF="m2mod003.html">crypt(2m)</A>, 
+<A HREF="m2mod031.html">rbin(2m)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,38 @@
+<HTML>
+<HEAD><TITLE>FAQ(15) - Termcap; Some of the keys do not work - how can I bind them ?</TITLE></HEAD>
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+FAQ(15) - Termcap; Some of the keys do not work - how can I bind them ?</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>QUESTION (15) </B></H2>
+<UL><P>Termcap; Some of the keys do not work - how can I bind them ? </UL>
+<H2><B>ANSWER </B></H2>
+<UL><P>In your user setup &lt;user&gt;.emf add the new keys. You have to be careful as to the environment and probably need to do something like the following:- <UL>
+<PRE>;&nbsp;First&nbsp;check&nbsp;we&nbsp;are&nbsp;not&nbsp;an&nbsp;Xterm 
+!if&nbsp;&amp;not&nbsp;$use-x 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Quick&nbsp;check&nbsp;on&nbsp;the&nbsp;terminal&nbsp;type.&nbsp;We&nbsp;probably&nbsp;need&nbsp;to 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;distinguish&nbsp;between&nbsp;terminal&nbsp;types&nbsp;for&nbsp;different&nbsp;bindings 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;seq&nbsp;$TERM&nbsp;&quot;myterm&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;translate-key&nbsp;&quot;&lt;from&gt;&quot;&nbsp;&quot;&lt;to&gt;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;... 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;translate-key&nbsp;&quot;&lt;from&gt;&quot;&nbsp;&quot;&lt;to&gt;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+!endif 
+</PRE></UL>
+<P>See 
+<A HREF="m2cmd133.html">translate-key(2)</A> for details of translating termcap keys. See 
+<A HREF="m2cmd039.html">describe-key(2)</A> to help identify the key. 
+<P>
+<A HREF="amicr040.html">[FAQ Index]</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

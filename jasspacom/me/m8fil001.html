@@ -1,0 +1,93 @@
+<HTML>
+<HEAD><TITLE>etf(8)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+etf(8)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>etf - MicroEmacs template file format </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>&lt;Free Form Text&gt;</I> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The MicroEmacs '02 template file, typically given the extension <B>.etf</B>, is a file template for a new file and defines common text that is automatically included when a new file is created. 
+<P>The file inclusion is usually performed by macro 
+<A HREF="m3mac018.html">etfinsrt(3)</A>, called from the 
+<A HREF="m2cmd202.html">File Hooks</A>. The template file has no specific format, although <B>etfinsrt</B> replaces key strings with relevant information. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The template file is inserted with the file hooks. If a file hook is called with an argument of <TT>0</TT> then the buffer has been created and the template file is inserted. <UL>
+<PRE>define-macro&nbsp;fhook-c 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;if&nbsp;arg&nbsp;is&nbsp;0&nbsp;this&nbsp;is&nbsp;a&nbsp;new&nbsp;file&nbsp;so&nbsp;add&nbsp;template 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;@# 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Is&nbsp;it&nbsp;an&nbsp;include&nbsp;h&nbsp;file&nbsp;or&nbsp;a&nbsp;c&nbsp;file? 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;seq&nbsp;&amp;mid&nbsp;$buffer-bname&nbsp;&amp;rsin&nbsp;&quot;.&quot;&nbsp;$buffer-bname&nbsp;1&nbsp;&quot;h&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;etfinsrt&nbsp;&quot;h&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!else 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;etfinsrt&nbsp;&quot;c&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;buffer-mode&nbsp;&quot;cmode&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;buffer-mode&nbsp;&quot;time&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;. 
+&nbsp;&nbsp;&nbsp;&nbsp;. 
+!emacro 
+</PRE></UL>
+<P>See 
+<A HREF="m3mac018.html">etfinsrt(3)</A> for more information on how the template file is located and inserted into the buffer. 
+<P>The default MicroEmacs '02 'C' mode template is defined as follows, but may be replaced with any other text:- <UL>
+<PRE>/*&nbsp;-*-&nbsp;C&nbsp;-*-&nbsp;**************************************************************** 
+&nbsp;* 
+&nbsp;*&nbsp;&nbsp;			Copyright&nbsp;$YEAR$&nbsp;$COMPANY_NAME$. 
+&nbsp;*			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;All&nbsp;Rights&nbsp;Reserved 
+&nbsp;* 
+&nbsp;* 
+&nbsp;*&nbsp;&nbsp;System&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: 
+&nbsp;*&nbsp;&nbsp;Module&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: 
+&nbsp;*&nbsp;&nbsp;Object&nbsp;Name&nbsp;&nbsp;&nbsp;:&nbsp;m8fil001.8 
+&nbsp;*&nbsp;&nbsp;Created&nbsp;By&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;$USER_NAME$ 
+&nbsp;*&nbsp;&nbsp;Created&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;$ASCII_TIME$ 
+&nbsp;*&nbsp;&nbsp;Last&nbsp;Modified&nbsp;:&nbsp;&lt;000719.1013&gt; 
+&nbsp;* 
+&nbsp;*&nbsp;&nbsp;Description	 
+&nbsp;* 
+&nbsp;*&nbsp;&nbsp;Notes 
+&nbsp;* 
+&nbsp;*&nbsp;&nbsp;History 
+&nbsp;*	 
+&nbsp;**************************************************************************** 
+&nbsp;* 
+&nbsp;*&nbsp;&nbsp;Copyright&nbsp;(c)&nbsp;$YEAR$&nbsp;$COMPANY_NAME$. 
+&nbsp;* 
+&nbsp;*&nbsp;&nbsp;All&nbsp;Rights&nbsp;Reserved. 
+&nbsp;* 
+&nbsp;*&nbsp;This&nbsp;&nbsp;document&nbsp;&nbsp;may&nbsp;&nbsp;not,&nbsp;in&nbsp;&nbsp;whole&nbsp;&nbsp;or&nbsp;in&nbsp;&nbsp;part,&nbsp;be&nbsp;&nbsp;copied,&nbsp;&nbsp;photocopied, 
+&nbsp;*&nbsp;reproduced,&nbsp;&nbsp;translated,&nbsp;&nbsp;or&nbsp;&nbsp;reduced&nbsp;to&nbsp;any&nbsp;&nbsp;electronic&nbsp;&nbsp;medium&nbsp;or&nbsp;machine 
+&nbsp;*&nbsp;readable&nbsp;form&nbsp;without&nbsp;prior&nbsp;written&nbsp;consent&nbsp;from&nbsp;$COMPANY_NAME$. 
+&nbsp;* 
+&nbsp;****************************************************************************/ 
+
+static&nbsp;const&nbsp;char&nbsp;rcsid[]&nbsp;=&nbsp;&quot;@(#)&nbsp;:&nbsp;$Id: m8fil001.html,v 1.1 2002-01-06 17:15:47 jon Exp $&quot;; 
+
+</PRE></UL>
+</UL><H2><B>FILES </B></H2>
+<UL><P>The default template files are located in the MicroEmacs '02 <I>home</I> directory. 
+<P>User's may specify their own template files by shadowing the <I>home</I> directory file with their own file located in a personal MicroEmacs '02 directory. See 
+<A HREF="m5var057.html">$MEPATH(5)</A>. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd202.html">File Hooks</A>. 
+<BR>
+<A HREF="m3mac018.html">etfinsrt(3)</A>, 
+<A HREF="m4fil024.html">&amp;find(4)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

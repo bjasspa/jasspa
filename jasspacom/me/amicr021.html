@@ -1,0 +1,109 @@
+<HTML>
+<HEAD><TITLE>Operating Modes</TITLE></HEAD>
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+Operating Modes</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>OPERATING MODES </B></H2>
+<UL><P><B>Modes</B> are switches (or states) that may be applied globally or on a per buffer basis whose settings determine how MicroEmacs '02 operates. Modes affect operations within a buffer, global modes determine the modes of newly created buffers. 
+<P>Commands to alter the operating state: 
+<UL><P>
+<A HREF="m2cmd005.html">add-global-mode(3)</A> Set a global buffer mode 
+<BR>
+<A HREF="m2cmd006.html">add-mode(3)</A> Set a local buffer mode 
+<BR>
+<A HREF="m2cmd006.html">buffer-mode(2)</A> (<B>C-x&nbsp;m</B>)&nbsp;Change a local buffer mode 
+<BR>
+<A HREF="m2cmd005.html">delete-global-mode(3)</A> Remove a global buffer mode 
+<BR>
+<A HREF="m2cmd006.html">delete-mode(3)</A> Remove a local buffer mode 
+<BR>
+<A HREF="m2cmd005.html">global-mode(2)</A> (<B>esc m</B>)&nbsp;Change a global buffer mode 
+<BR>
+<A HREF="m2cmd006.html">named-buffer-mode(2)</A> Change a named buffer mode 
+<BR>
+<A HREF="m2cmd006.html">unmark-buffer(3)</A> Remove buffer edited flag </UL></UL>
+<H2>Modes </H2>
+<UL><P>The operating modes are defined as follows: 
+<UL><P>
+<A HREF="m2mod000.html">auto(2m)</A> Automatic source file line type detection 
+<BR>
+<A HREF="m2mod019.html">autosv(2m)</A> Automatic file save 
+<BR>
+<A HREF="m2mod001.html">backup(2m)</A> Automatic file backup of last edit 
+<BR>
+<A HREF="m2mod018.html">binary(2m)</A> Binary editor mode 
+<BR>
+<A HREF="m2mod002.html">cmode(2m)</A> C Programming language mode 
+<BR>
+<A HREF="m2mod024.html">crlf(2m)</A> File's line feed style 
+<BR>
+<A HREF="m2mod003.html">crypt(2m)</A> Encrypted file mode 
+<BR>
+<A HREF="m2mod030.html">ctrlz(2m)</A> File's termination style 
+<BR>
+<A HREF="m2mod026.html">del(2m)</A> Flag buffer to be deleted 
+<BR>
+<A HREF="m2mod028.html">dir(2m)</A> Buffer is a directory listing 
+<BR>
+<A HREF="m2mod029.html">edit(2m)</A> Buffer has be changed 
+<BR>
+<A HREF="m2mod004.html">exact(2m)</A> Searching and sorting case sensitivity 
+<BR>
+<A HREF="m2mod032.html">fence(2m)</A> Auto fence matching mode 
+<BR>
+<A HREF="m2mod022.html">hide(2m)</A> Hide buffer 
+<BR>
+<A HREF="m2mod005.html">indent(2m)</A> Automatic indentation 
+<BR>
+<A HREF="m2mod006.html">justify(2m)</A> Justification Mode 
+<BR>
+<A HREF="m2mod007.html">letter(2m)</A> Letter kill policy 
+<BR>
+<A HREF="m2mod008.html">line(2m)</A> Line kill policy 
+<BR>
+<A HREF="m2mod021.html">lock(2m)</A> Pipe cursor position lock 
+<BR>
+<A HREF="m2mod009.html">magic(2m)</A> Regular expression search 
+<BR>
+<A HREF="m2mod023.html">nact(2m)</A> Buffer not active 
+<BR>
+<A HREF="m2mod025.html">narrow(2m)</A> Buffer contains a narrow 
+<BR>
+<A HREF="m2mod010.html">over(2m)</A> Over-strike Mode 
+<BR>
+<A HREF="m2mod020.html">pipe(2m)</A> Incremental Pipe running 
+<BR>
+<A HREF="m2mod011.html">quiet(2m)</A> Quiet mode 
+<BR>
+<A HREF="m2mod031.html">rbin(2m)</A> Reduced binary editor mode 
+<BR>
+<A HREF="m2mod027.html">save(2m)</A> Flag buffer to be saved 
+<BR>
+<A HREF="m2mod012.html">tab(2m)</A> Tabulation mode 
+<BR>
+<A HREF="m2mod013.html">time(2m)</A> File time stamping 
+<BR>
+<A HREF="m2mod014.html">undo(2m)</A> Retain edit modifications 
+<BR>
+<A HREF="m2mod015.html">usr(2m)</A> User buffer modes 
+<BR>
+<A HREF="m2mod016.html">view(2m)</A> Read only 
+<BR>
+<A HREF="m2mod017.html">wrap(2m)</A> Line wrap entered text </UL></UL>
+<H2>Mode Line </H2>
+<UL><P>The buffer modes may be shown on the 
+<A HREF="amicr027.html">mode line</A> as single letter mnemonics as follows:- 
+<UL><P><B>A</B>uto, <B>a</B>utosv, <B>B</B>ackup, <B>b</B>inary, <B>C</B>mode, <B>c</B>rlf, cr<B>Y</B>pt, ctrl<B>z</B>, <B>d</B>el, <B>D</B>ir, <B>e</B>dit, <B>E</B>xact, <B>H</B>ide, <B>I</B>ndent, <B>J</B>ustify, <B>l</B>etter, <B>L</B>ine, loc<B>k</B>, <B>M</B>agic, <B>n</B>act, <B>N</B>arrow, <B>O</B>ver, <B>P</B>ipe, <B>Q</B>uiet, <B>S</B>ave, <B>T</B>ab, <B>t</B>ime, <B>U</B>ndo, usr<B>1</B>, usr<B>2</B>, usr<B>3</B>, usr<B>4</B>, usr<B>5</B>, usr<B>6</B>, usr<B>7</B>, usr<B>8</B>, <B>V</B>iew, <B>W</B>rap. </UL></UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2002/01/06</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

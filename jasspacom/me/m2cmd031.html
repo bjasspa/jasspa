@@ -1,0 +1,32 @@
+<HTML>
+<HEAD><TITLE>delete-buffer(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+delete-buffer(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>delete-buffer - Delete a buffer </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>delete-buffer</B> &quot;<I>buffer-name</I>&quot; (<B>C-x&nbsp;k</B>)&nbsp; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>delete-buffer</B> disposes of buffer <I>buffer-name</I> in the editor and reclaim the memory. This does not delete the file that the buffer was read from. 
+<P>If the buffer has been edited and its name does not start with a '<B>*</B>' then the user is prompted as to whether the changes should be discarded. Also if the buffer has an active process running in it then confirmation is sort from the user before the process is killed. 
+<P>The argument <I>n</I> can be used to change the default behavior of delete-buffer described above, <I>n</I> is a bit based flag where:- 
+<P><B>0x01</B> 
+<BR><UL>Enables loss of work checks (default). These include a check that the buffer has not been modified, if so the user is prompted. Also if a process is running then user must confirm that the process can be killed. If this flag is not supplied then the buffer is killed without any user prompts (useful in macros). </UL></UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd091.html">next-buffer(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

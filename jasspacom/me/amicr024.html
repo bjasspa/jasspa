@@ -1,0 +1,104 @@
+<HTML>
+<HEAD><TITLE>Window Commands</TITLE></HEAD>
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+Window Commands</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>WINDOW COMMANDS </B></H2>
+<UL><P>MicroEmacs '02 uses windows to display and allow you to edit the contents of 
+<A HREF="amicr012.html">buffers</A>. Multiple windows may be present on the 
+<A HREF="amicr010.html">screen</A> at once, each is separated by a 
+<A HREF="amicr027.html">mode line</A> which describes the contents of the window above it. 
+<P>You can scroll text vertically and horizontally within a window by using the 
+<A HREF="amicr002.html">cursor</A> commands. Note that if a line of text extends beyond the boundary of a window, a dollar &quot;<B>$</B>&quot; sign is displayed instead of the first/last visible character. 
+<P>Commands that operate on windows are defined as follows: </UL>
+<H2>Commands </H2>
+<UL><P>
+<A HREF="m2cmd020.html">compare-windows(2)</A> Compare buffer windows, ignore whitespace 
+<BR>
+<A HREF="m2cmd020.html">compare-windows-exact(3)</A> Compare buffer windows, with whitespace 
+<BR>
+<A HREF="m2cmd036.html">delete-other-windows(2)</A> (<B>C-x&nbsp;1</B>)&nbsp;Delete other windows 
+<BR>
+<A HREF="m2cmd036.html">delete-window(2)</A> (<B>C-x&nbsp;0</B>)&nbsp;Delete current window 
+<BR>
+<A HREF="m2cmd152.html">grow-window-horizontally(2)</A> Enlarge current window horizontally (relative) 
+<BR>
+<A HREF="m2cmd063.html">grow-window-vertically(2)</A> (<B>C-x&nbsp;z</B>)&nbsp;Enlarge the current window (relative change) 
+<BR>
+<A HREF="m2cmd095.html">next-window(2)</A> (<B>C-x&nbsp;o</B>)&nbsp;Move the cursor to the next window 
+<BR>
+<A HREF="m2cmd126.html">next-window-find-buffer(2)</A> [<B></B>] Split the current window and show new buffer 
+<BR>
+<A HREF="m2cmd127.html">next-window-find-file(2)</A> (<B>C-x&nbsp;4</B>)&nbsp;Split the current window and find file 
+<BR>
+<A HREF="m2cmd095.html">previous-window(2)</A> (<B>C-x&nbsp;p</B>)&nbsp;Move the cursor to the previous window 
+<BR>
+<A HREF="m2cmd153.html">resize-all-windows(2)</A> Resize all windows (automatic change) 
+<BR>
+<A HREF="m2cmd152.html">resize-window-horizontally(2)</A> Resize current window horizontally (absolute) 
+<BR>
+<A HREF="m2cmd063.html">resize-window-vertically(2)</A> (<B>C-x&nbsp;w</B>)&nbsp;Resize the current window (absolute change) 
+<BR>
+<A HREF="m2cmd087.html">scroll-down(2)</A> (<B>C-n</B>)&nbsp;Move the window down (scrolling) 
+<BR>
+<A HREF="m2cmd149.html">scroll-left(2)</A> (<B>C-x&nbsp;&lt;</B>)&nbsp;Move the window left (scrolling) 
+<BR>
+<A HREF="m2cmd115.html">scroll-next-window-down(2)</A> (<B>esc C-v</B>)&nbsp;Scroll next window down 
+<BR>
+<A HREF="m2cmd115.html">scroll-next-window-up(2)</A> (<B>esc C-z</B>)&nbsp;Scroll next window up 
+<BR>
+<A HREF="m2cmd149.html">scroll-right(2)</A> (<B>C-x&nbsp;&gt;</B>)&nbsp;Move the window right (scrolling) 
+<BR>
+<A HREF="m2cmd087.html">scroll-up(2)</A> (<B>C-p</B>)&nbsp;Move the window up (scrolling) 
+<BR>
+<A HREF="m2cmd152.html">shrink-window-horizontally(2)</A> Shrink current window horizontally (relative) 
+<BR>
+<A HREF="m2cmd063.html">shrink-window-vertically(2)</A> (<B>C-x&nbsp;C-z</B>)&nbsp;Shrink the current window (relative change) 
+<BR>
+<A HREF="m2cmd151.html">split-window-horizontally(2)</A> (<B>C-x&nbsp;5</B>)&nbsp;Split current window into two (horizontally) 
+<BR>
+<A HREF="m2cmd128.html">split-window-vertically(2)</A> (<B>C-x&nbsp;2</B>)&nbsp;Split the current window into two </UL>
+<H2>Variables </H2>
+<UL><P>
+<A HREF="m5var027.html">$scroll(5)</A> Screen scroll control 
+<BR>
+<A HREF="m5var055.html">$scroll-bar(5)</A> Scroll bar configuration 
+<BR>
+<A HREF="m5var048.html">$window-acol(5)</A> Window cursor actual column 
+<BR>
+<A HREF="m5var048.html">$window-aline(5)</A> Window cursor actual line 
+<BR>
+<A HREF="m5var048.html">$window-col(5)</A> Window cursor column (no expansion) 
+<BR>
+<A HREF="m5var052.html">$window-depth(5)</A> Number of text lines in a window 
+<BR>
+<A HREF="m5var048.html">$window-line(5)</A> Window cursor line 
+<BR>
+<A HREF="m5var046.html">$window-mode-line(5)</A> Window mode line position 
+<BR>
+<A HREF="m5var046.html">$window-scroll-bar(5)</A> Window scroll bar (or separator) position 
+<BR>
+<A HREF="m5var048.html">$window-wcol(5)</A> Window cursor column (historic) 
+<BR>
+<A HREF="m5var052.html">$window-width(5)</A> Number of character columns in a window 
+<BR>
+<A HREF="m5var048.html">$window-wline(5)</A> Window cursor line (historic) 
+<BR>
+<A HREF="m5var081.html">$window-x-scroll(5)</A> Current window X scroll 
+<BR>
+<A HREF="m5var081.html">$window-xcl-scroll(5)</A> Current window current line X scroll 
+<BR>
+<A HREF="m5var081.html">$window-y-scroll(5)</A> Current window Y scroll </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2002/01/06</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

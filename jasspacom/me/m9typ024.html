@@ -1,0 +1,73 @@
+<HTML>
+<HEAD><TITLE>perl(9)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+perl(9)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P>perl - Practical Extraction and Report Language File. </UL>
+<H2><B>FILES </B></H2>
+<UL><P><B>hkperl.emf</B> - Practical Extraction and Report Language file hook definition 
+<BR><B>perl.etf</B> - Practical Extraction and Report Language header template file. 
+<BR><B>perl.eaf</B> - Practical Extraction and Report Language abbreviation file. </UL>
+<H2><B>EXTENSIONS </B></H2>
+<UL><P><B>.pl</B>, <B>.pm</B> - Perl file </UL>
+<H2><B>MAGIC STRINGS </B></H2>
+<UL><P><B>#![ \t]*/.*perl</B> 
+<BR><UL>MicroEmacs '02 recognizes the magic string on the first line of the file used to locate the executable. The Perl files may be extension-less and are still recognized. </UL>
+<P><B># -*- perl -*-</B> 
+<BR><UL>MicroEmacs '02 recognizes the standard GNU Emacs magic string on the first line of the file. The Perl files may be extension-less and are still recognized. </UL></UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The <B>perl</B> file type template provides the hilighting, indentation and tools definitions for a perl file. 
+<P>File recognition is performed using the standard file extension <B>.pl</B>, <B>.pm</B> or by the magic string. 
+<P><B>General Editing</B> 
+<BR><UL>On creating a new file, a new header is automatically included into the file. 
+<A HREF="m2mod013.html">time(2m)</A> is by default enabled, allowing the modification time-stamp to be maintained in the header. </UL>
+<P><B>Hilighting</B> 
+<BR><UL>The hilighting features allow commands, variables, logical, comments, strings and characters of the language to be differentiated and rendered in different colors. </UL>
+<P><B>Auto Layout</B> 
+<BR><UL>The 
+<A HREF="m2cmd033.html">indentation mechanism</A> is enabled which performs automatic layout of the text. 
+<A HREF="m3mac025.html">restyle-region(3)</A> and 
+<A HREF="m3mac025.html">restyle-buffer(3)</A> are available to reformat (re-layout) selected sections of the buffer, or the whole buffer, respectively. </UL>
+<P><B>Folding and Information Hiding</B> 
+<BR><UL>Generic folding is enabled within perl files. The folds occur about <I>sub</I>...<B>}</B> located on the left-hand margin. 
+<A HREF="m3mac029.html">fold-all(3)</A> (un)folds all regions in the file, 
+<A HREF="m3mac029.html">fold-current(3)</A> (un)folds the current region. </UL>
+<P><B>Short Cuts</B> 
+<BR><UL>The short cut keys used within the buffer are:- </UL>
+<UL><P><B>C-c C-c</B> - Comment out the current line. 
+<BR><B>C-c C-d</B> - Uncomment the current line. 
+<BR><B>C-c esc esc </B> - Command complete. 
+<BR><B>A-C-i</B> - Restyle the current region. 
+<BR><B>f2</B> - (un)fold the current region 
+<BR><B>f3</B> - (un)fold all regions </UL>
+<P><B>Debugging</B> 
+<BR><UL>Debugging a perl script can be done inside MicroEmacs by using the 
+<A HREF="m3mac055.html">perldb(3)</A> command. </UL></UL>
+<H2><B>BUGS </B></H2>
+<UL><P>The flexibility of the perl language does cause some hilighting anomalies from time to time, typically with unbalanced quote characters. Most of the common exceptions have been caught, however there are a few syntax sequences that involve quotation marks that can cause problems. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m3mac055.html">perldb(3)</A>, 
+<A HREF="m3mac029.html">fold-all(3)</A>, 
+<A HREF="m3mac029.html">fold-current(3)</A>, 
+<A HREF="m2cmd033.html">indent(2)</A>, 
+<A HREF="m3mac025.html">restyle-buffer(3)</A>, 
+<A HREF="m3mac025.html">restyle-region(3)</A>, 
+<A HREF="m2mod013.html">time(2m)</A>. 
+<P>
+<A HREF="amicr030.html">Supported File Types</A> </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

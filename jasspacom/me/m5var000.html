@@ -1,0 +1,46 @@
+<HTML>
+<HEAD><TITLE>$auto-time(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+$auto-time(5)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>$auto-time - Automatic buffer save time </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>$auto-time</B> <I>seconds</I>; Default is <TT>300</TT> seconds 
+<P>0 &lt;= <I>seconds</I> &lt;= t </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>Sets the number of seconds to wait until an edited buffer is auto-saved to temporary file to t seconds. A setting of 0 disables the auto-saving command. Auto-saving can be enabled and disabled on a per buffer basis using buffer mode 
+<A HREF="m2mod019.html">autosv(2m)</A>. 
+<P>The auto-save file naming convention is the same as the backup name only using hash ('<TT>#</TT>') instead of tilde ('<TT>~</TT>') and is automatically removed on saving a buffer. 
+<P>On unlimited length file name systems (UNIX), the following file naming conventions are used for file <TT>xxxxx</TT>: 
+<UL><P><TT>xxxxx -&gt; xxxxx#</TT> </UL>
+<P>On systems with an <TT>xxxxxxxx.yyy</TT> file name (DOS etc), the following file naming conventions are used: 
+<UL><P><TT>xxxxxxxx&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;&nbsp;xxxxxxxx.###</TT> 
+<BR><TT>xxxxxxxx.y&nbsp;&nbsp;&nbsp;-&gt;&nbsp;xxxxxxxx.y##</TT> 
+<BR><TT>xxxxxxxx.yy&nbsp;&nbsp;-&gt;&nbsp;xxxxxxxx.yy#</TT> 
+<BR><TT>xxxxxxxx.yyy&nbsp;-&gt;&nbsp;xxxxxxxx.yy#</TT> </UL></UL>
+<H2><B>NOTES </B></H2>
+<UL><P>The user is warned to be extra careful if files ending in '<TT>~</TT>' or '<TT>#</TT>'s are used, it is advisable to disable backup creation (see 
+<A HREF="m2cmd005.html">global-mode(2)</A>) and auto-saving (<TT>$auto-time = 0</TT>). The author denies all responsibility (yet again) for any loss of data! Please be careful. 
+<P>Auto-save files of URL files (i.e. &quot;<TT>ftp://...</TT>&quot; and &quot;<TT>http://...</TT>&quot;) are written to the system's temporary directory. This avoids potentially slow auto-saves. This can however lead to recovery problems as the buffer name must be used to avoid auto-saving conflict with other buffers with the same base file name but different paths. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2mod019.html">autosv(2m)</A>, 
+<A HREF="m2mod001.html">backup(2m)</A>, 
+<A HREF="m2cmd006.html">buffer-mode(2)</A> 
+<A HREF="m2cmd056.html">find-file(2)</A>, 
+<A HREF="m3mac050.html">ftp(3)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,35 @@
+<HTML>
+<HEAD><TITLE>delete-some-buffers(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+delete-some-buffers(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>delete-some-buffers - Delete buffers with query </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>delete-some-buffers</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>delete-some-buffers</B> cycles through all visible buffers (buffers without mode 
+<A HREF="m2mod022.html">hide(2m)</A> set) and prompts the user [<B>y</B>/<B>n</B>] as to whether the buffer should be deleted. A <B>y</B> response deletes the buffer, a <B>n</B> response retains the buffer. 
+<P>If a <B>y</B> response is given, the buffer has been edited, and its name does not start with a '<B>*</B>' then the user is prompted as to whether the changes should be discarded. Also if the buffer has an active process running in it then confirmation is sort from the user before the process is killed. 
+<P>The argument <I>n</I> can be used to change the default behavior of delete-some-buffers described above, <I>n</I> is a bit based flag where:- 
+<P><B>0x01</B> 
+<BR><UL>Enables all checks (default). These include the initial y/n prompt on each buffer, the buffer has not been modified check, if so the user is prompted. Also if a process is running then user must confirm that the process can be killed. If this flag is not supplied then all visible buffers are killed without any user prompts (useful in macros). </UL></UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd031.html">delete-buffer(2)</A>, 
+<A HREF="m2cmd091.html">next-buffer(2)</A>, 
+<A HREF="m2mod022.html">hide(2m)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

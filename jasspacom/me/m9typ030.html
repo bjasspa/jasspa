@@ -1,0 +1,37 @@
+<HTML>
+<HEAD><TITLE>asm(9)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+asm(9)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P>asm, s - Assembler File </UL>
+<H2><B>EXTENSIONS </B></H2>
+<UL><P><B>.s</B> - Platform specific assembler file. 
+<BR><B>.asm</B> - Platform specific assembler file. </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The standard assembler file extensions <B>.s</B> and <B>.asm</B> are by default not bound to any hook functions as they are platform specific. The user should define a default binding for the assembler file types as appropriate to the current platform and assembler development. i.e. for the Windows environment the 
+<A HREF="m9typ029.html">x86(9)</A> file type would be conditionally bound to the file e.g. <UL>
+<PRE>!if&nbsp;&amp;seq&nbsp;$platform&nbsp;&quot;win32&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;add-file-hook&nbsp;&quot;.s&nbsp;.asm&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-asmx86 
+!endif 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m9typ029.html">x86(9)</A>. 
+<BR>
+<A HREF="m2cmd202.html">File Hooks</A>, 
+<A HREF="amicr030.html">Supported File Types</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

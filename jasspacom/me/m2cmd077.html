@@ -1,0 +1,104 @@
+<HTML>
+<HEAD><TITLE>ipipe-shell-command(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+ipipe-shell-command(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>ipipe-shell-command - Incremental pipe (non-suspending system call) 
+<BR>ipipe-kill - Kill a incremental pipe 
+<BR>ipipe-write - Write a string to an incremental pipe </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>ipipe-shell-command</B> &quot;<I>command</I>&quot; [&quot;<I>buffer-name</I>&quot;] (<B>esc  backslash</B>)&nbsp; 
+<BR><I>n</I> <B>ipipe-write</B> &quot;<I>string</I>&quot; 
+<BR><I>n</I> <B>ipipe-kill</B> </UL>
+<H2><B>PLATFORM </B></H2>
+<UL><P>UNIX - <I>irix</I>, <I>hpux</I>, <I>sunos</I>, <I>freebsd</I>, <I>linux</I>. 
+<P>Windows NT - <I>win32</I>. </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>ipipe-shell-command</B> executes the given system command <I>command</I>, opening up a <B>*icommand*</B> buffer into which the results of the command execution are displayed. Unlike the 
+<A HREF="m2cmd098.html">pipe-shell-command(2)</A>, the user may continue editing during command execution. The command may be terminated by deleting the buffer or issuing a <B>ipipe-kill</B> command. 
+<P>The argument <I>n</I> can be used to change the default behavior of pipe-shell-command described above, <I>n</I> is a bit based flag where:- 
+<P><B>0x01</B> 
+<BR><UL>Enables the use of the default buffer name <B>*icommand*</B> (default). If this bit is clear the user must supply a buffer name. This enables another command to be started without effecting any other command buffer. </UL>
+<P><B>0x02</B> 
+<BR><UL>Hides the output buffer, default action pops up a window and displays the output buffer in the new window. </UL>
+<P><B>0x04</B> 
+<BR><UL>Disable the use of the command-line processor to launch the program (win32 versions only). By default the &quot;<B>command</B>&quot; is launched by executing the command: 
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;%COMSPEC%&nbsp;/c&nbsp;command 
+</PRE></UL>
+<UL><P>Where <TT>%COMSPEC%</TT> is typically command.com. If this bit is set, the &quot;<B>command</B>&quot; is launched directly. </UL>
+<P><B>0x08</B> 
+<BR><UL>Detach the launched process from MicroEmacs (win32 versions only). By default the command is launched as a child process of MicroEmacs with a new console. With this bit set the process is completely detached from MicroEmacs instead. </UL>
+<P><B>0x10</B> 
+<BR><UL>Disable the command name mangling (win32 versions only). By default any '<TT>/</TT>' characters found in the command name (the first argument only) are converted to '<TT>\</TT>' characters to make it Windows compliant. </UL>
+<P><B>0x20</B> 
+<BR><UL>Displays the new process window, by default this window is hidden. 
+</UL><P>Many other macro commands (see 
+<A HREF="m3mac000.html">compile(3)</A>, 
+<A HREF="m3mac001.html">grep(3)</A>etc.) use this command. 
+<P><B>ipipe-write</B> writes a string <I>string</I> to an open ipipe, <I>n</I> times. 
+<P><B>ipipe-kill</B> terminates an open ipipe, this is automatically called when the ipipe buffer is deleted using 
+<A HREF="m2cmd031.html">delete-buffer(2)</A> or when MicroEmacs is exited.. The numeric argument <I>n</I> can be used to change the signal generated, where <I>n</I> can take the following values: 
+<P><B>1</B> 
+<BR><UL>Sends a Terminate process signal, literally a <TT>SIGKILL</TT> signal on unix or a <TT>WM_CLOSE</TT> on windows platforms. This is the default signal and is typically bound to <TT>C-c C-k</TT>. </UL>
+<P><B>2</B> 
+<BR><UL>Sends an interrupt signal, writes a Ctrl-C to the &lt;stdin&gt; pipe on unix or sends Ctrl-C key events on windows platforms. This is typically bound to <TT>C-c C-c</TT>. </UL></UL>
+<H2><B>NOTES </B></H2>
+<UL><P>On UNIX platforms the TERM environment variable of the new process can be set by setting the user variable <B>%ipipe-term</B> to the required value, e.g.: <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;%ipipe-term&nbsp;&quot;TERM=vt100-nam&quot; 
+</PRE></UL>
+<P>Ipipe shells support a large sub-set of vt100 terminal commands, notable exceptions are color and font support and the support of auto-margins. Using the terminal type &quot;<TT>vt100-nam</TT>&quot; disables the use of auto-margins, providing better support. 
+<P>On platforms which do not support <B>ipipe-shell-command</B>, such as MS-DOS, executing <B>ipipe-shell-command</B> automatically invokes 
+<A HREF="m2cmd098.html">pipe-shell-command</A>, hence macros may safely use ipipes without explicitly checking the platform type. <B>ipipe-shell-command</B> does not run reliably on Windows 3.11 and Windows 95; Windows NT does support ipipes. 
+<P>While the pipe command is running, mode 
+<A HREF="m2mod020.html">pipe(2m)</A> is enabled. Modes 
+<A HREF="m2mod021.html">lock(2m)</A> and 
+<A HREF="m2mod017.html">wrap(2m)</A> effect the output behavior of an <B>ipipe-shell-command</B>. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following example is the 
+<A HREF="m3mac001.html">grep(3)</A> command macro which utilizes the <B>ipipe-shell-command</B>, diverting the output to a buffer called <B>*grep*</B>. <UL>
+<PRE>define-macro&nbsp;grep 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;seq&nbsp;%grep-com&nbsp;&quot;ERROR&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;%grep-com&nbsp;&quot;grep&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;set-variable&nbsp;#l0&nbsp;@1 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;@ml00&nbsp;%grep-com 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;@? 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;pipe-shell-command&nbsp;&amp;cat&nbsp;%grep-com&nbsp;#l0&nbsp;&quot;*grep*&quot;&nbsp;@mna 
+&nbsp;&nbsp;&nbsp;&nbsp;!else 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;ipipe-shell-command&nbsp;&amp;cat&nbsp;%grep-com&nbsp;#l0&nbsp;&quot;*grep*&quot;&nbsp;@mna 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+!emacro 
+</PRE></UL>
+<P>Note that if an argument is passed to <B>grep</B> then it uses pipe-shell-command instead. This is useful if another command is using <B>grep</B> which must finish before the calling command can continue, see 
+<A HREF="m3mac006.html">replace-all-string(3)</A> for an example. </UL>
+<H2><B>BUGS </B></H2>
+<UL><P>On MicroSoft Windows platforms, <B>ipipe-shell-command</B> spawns the shell (e.g. <TT>command.com</TT>) with the appropriate command line to make it execute the given command. If the command to be run detaches from the shell and creates its own window, for example <TT>me.exe</TT>, <B>ipipe-kill</B> will only kill the shell, it will not kill the actual process, i.e. the <TT>me.exe</TT>. 
+<P>On MicroSoft Windows platforms <B>ipipe-shell-command</B> does not work on Novell's Intranet Client v2.2 networked drives, version 2.5 does appear to work. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var006.html">$buffer-ipipe(5)</A>, 
+<A HREF="m3mac000.html">compile(3)</A>, 
+<A HREF="m3mac001.html">grep(3)</A>, 
+<A HREF="m2cmd098.html">pipe-shell-command(2)</A>, 
+<A HREF="m3mac006.html">replace-all-string(3)</A>, 
+<A HREF="m2cmd131.html">shell-command(2)</A>, 
+<A HREF="m2mod020.html">pipe(2m)</A>, 
+<A HREF="m2mod021.html">lock(2m)</A>, 
+<A HREF="m2mod017.html">wrap(2m)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/20</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,61 @@
+<HTML>
+<HEAD><TITLE>!force(4)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+!force(4)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>!force - Ignore command or macro status </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>!force</B> [<I>n</I>] <I>command</I> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>!force</B> ignores the return status of a <I>command</I> while executing a macro. When MicroEmacs '02 executes a macro, if any command fails, the macro is terminated at that point. If a line is preceded by a <B>!force</B> directive, execution continues whether the command succeeds or not. 
+<A HREF="m5var040.html">$status(5)</A> may be used following <B>!force</B> to determine if the command failed or not. 
+<P>A double <B>!force</B> can be used to catch a user termination (via the 
+<A HREF="m2cmd000.html">abort-command(2)</A> bound to <TT>C-g</TT>). A macro command aborted by the user will be terminated even with a single !force directive, but not with two. See the example below. 
+<P>When specifying a numerical argument with a <I>command</I>, it is placed after the <I>!force</I> directive and before the <I>command</I> i.e. <UL>
+<PRE>!force&nbsp;1&nbsp;forward-char 
+</PRE></UL>
+</UL><H2><B>EXAMPLE </B></H2>
+<UL><P>The following example shows how <B>!force</B> is used in conjunction with <B>$status</B>. <UL>
+<PRE>;	Merge&nbsp;the&nbsp;top&nbsp;two&nbsp;windows 
+
+push-position&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;remember&nbsp;where&nbsp;we&nbsp;are 
+1&nbsp;next-window&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;go&nbsp;to&nbsp;the&nbsp;top&nbsp;window 
+delete-window&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;merge&nbsp;it&nbsp;with&nbsp;the&nbsp;second&nbsp;window 
+!force&nbsp;pop-position&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;This&nbsp;will&nbsp;continue&nbsp;regardless 
+!if&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;Call&nbsp;PASSED&quot; 
+!else 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;Call&nbsp;FAILED&quot; 
+!endif 
+</PRE></UL>
+<P>The following example creates an infinite loop that can only be broken out of by a user abort. The calling macro catches this by using a double <B>!force</B> and continues. This concept is used by commands which take a considerable amount of time yet cannot be simply aborted by the user such as the spell-checker's best guess list generator. <UL>
+<PRE>define-macro&nbsp;infinite-loop 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;1 
+&nbsp;&nbsp;&nbsp;&nbsp;!while&nbsp;1 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&amp;cat&nbsp;&quot;In&nbsp;loop,&nbsp;C-g&nbsp;to&nbsp;exit:&nbsp;&quot;&nbsp;&amp;pinc&nbsp;#l0&nbsp;1 
+&nbsp;&nbsp;&nbsp;&nbsp;!done 
+!emacro 
+
+define-macro&nbsp;catch-abort 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;!force&nbsp;infinite-loop 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;You&nbsp;will&nbsp;see&nbsp;this&quot; 
+!emacro 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var040.html">$status(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

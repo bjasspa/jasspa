@@ -1,0 +1,72 @@
+<HTML>
+<HEAD><TITLE>MacroNumericArguments(4)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+MacroNumericArguments(4)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>@#, @? - Macro numeric arguments </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>@#</B> - The numerical argument to a macro 
+<BR><B>@?</B> - The truth of the numerical argument to a macro </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>All built-in commands and macros are invoked with a numerical argument. The argument is obtained from either the command line when the user invokes a command line such as: 
+<UL><P><B>esc 5 esc x forward-char</B> </UL>
+<P>where the argument is entered after 
+<A HREF="m2cmd028.html">prefix 1</A> (<B>esc</B>). In this case, causing the cursor to be moved forward 5 characters. Within a macro file the same operation is defined as:- 
+<UL><P><B>5 forward-char</B> </UL>
+<P>In both cases the numerical argument 5 is passed to the command requesting that the resultant operation is performed 5 times in succession before returning. The command itself is invoked once, it is the responsibility of the command to iterate if requested. 
+<P>The command determines how the numerical argument is interpreted, in the case of 
+<A HREF="m3osd002.html">spell-word</A> the argument identifies the type of word that is being spelled and NOT the number of words to spell. 
+<P>The invocation of named macros operate in the same way, the macro may use the variables <B>@?</B> and <B>@#</B> to determine the status of the numerical argument passed to it. The variables are interpreted as follows: 
+<P><B>@?</B> 
+<BR><UL>A logical value defined as <TT>TRUE</TT> (1) if a numerical argument has been specified, otherwise <TT>FALSE</TT> (0). </UL>
+<P><B>@#</B> 
+<BR><UL>A signed integer value of the supplied numeric argument. If no argument is supplied (i.e. <B>@?</B>==<TT>FALSE</TT>) then <B>@#</B> is set to 1. </UL>
+<P>The <B>@?</B> and <B>@#</B> are only valid for the current macro invocation. Other macros or commands that are invoked have their own values of <B>@?</B> and <B>@#</B>. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>Consider the following example, which sorts lines into alphabetical order using the 
+<A HREF="m2cmd124.html">sort-lines(2)</A> function. A new command <B>sort-lines-ignore-case</B> is created using a macro to sort lines case insensitively regardless of the current buffer mode. The command <B>sort-lines</B> takes an optional argument which determines which column should be used to perform the sort. <UL>
+<PRE>; 
+;&nbsp;sort-lines-ignore-case 
+;&nbsp;Sort&nbsp;lines&nbsp;case&nbsp;insensitively&nbsp;regardless&nbsp;of&nbsp;the&nbsp;current&nbsp;'exact'&nbsp;mode 
+;&nbsp;setting. 
+define-macro&nbsp;sort-lines-ignore-case 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;&amp;bmod&nbsp;exact 
+&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;buffer-mode&nbsp;&quot;exact&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;@? 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@#&nbsp;sort-lines 
+&nbsp;&nbsp;&nbsp;&nbsp;!else 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sort-lines 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;&amp;cond&nbsp;#l0&nbsp;1&nbsp;-1&nbsp;buffer-mode&nbsp;&quot;exact&quot; 
+!emacro 
+</PRE></UL>
+<P><B>@?</B> is used to test the presence of the argument, if it is false <B>sort-lines</B> is invoked without an argument. When true the numeric argument is propagated e.g. <B>@# sort-lines</B>. 
+<P>This particular macro highlights an important consideration when passing the numerical argument to other functions, had the macro been implemented as: <UL>
+<PRE>;&nbsp;INCORRECT&nbsp;IMPLEMENTATION 
+define-macro&nbsp;sort-lines-ignore-case 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;&amp;bmod&nbsp;exact 
+&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;buffer-mode&nbsp;&quot;exact&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;@#&nbsp;sort-lines 
+&nbsp;&nbsp;&nbsp;&nbsp;&amp;cond&nbsp;#l0&nbsp;1&nbsp;-1&nbsp;buffer-mode&nbsp;&quot;exact&quot; 
+!emacro 
+</PRE></UL>
+<P>then when <B>sort-lines-ignore-case</B> is invoked with no arguments <B>@#</B> is defined as 1, this is would be incorrectly propagated to <B>sort-lines</B> causing it to sort on column 1 rather than column 0 as expected. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m4fil014.html">MacroArguments</A>, 
+<A HREF="m2cmd029.html">define-macro(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

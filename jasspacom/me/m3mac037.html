@@ -1,0 +1,84 @@
+<HTML>
+<HEAD><TITLE>osd-dialog(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+osd-dialog(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>osd-dialog - OSD dialog box 
+<BR>osd-xdialog - OSD Extended dialog box 
+<BR>osd-entry - OSD entry dialog box </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>osd-dialog</B> &quot;<I>title</I>&quot; &quot;<I>prompt</I>&quot; [ &quot;<I>x-pos</I>&quot; &quot;<I>y-pos</I>&quot; ] &quot;<I>but1</I>&quot; 
+<BR><I>n</I> <B>osd-xdialog</B> &quot;<I>title</I>&quot; &quot;<I>prompt</I>&quot; <I>default</I> [ &quot;<I>x-pos</I>&quot; &quot;<I>y-pos</I>&quot; ] 
+<BR><UL>&quot;<I>but1</I>&quot; &quot;<I>but2</I>&quot; ... 
+<BR></UL><I>n</I> <B>osd-entry</B> &quot;<I>title</I>&quot; &quot;<I>prompt</I>&quot; <I>variable</I> [ &quot;<I>x-pos</I>&quot; &quot;<I>y-pos</I>&quot; ] 
+<BR><UL>[ [ &quot;<I>entry-xsize</I>&quot; | &quot;<I>entry-xsize</I>x<I>entry-ysize</I>&quot; ] [ &quot;<I>type</I>&quot; ] ] </UL></UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>osd-dialog</B> constructs a OSD dialog prompt with a title string <I>title</I>, a prompt string within the dialog of <I>prompt</I>. A single button, with text rendering <I>but1</I>, is placed within the dialog. The dialog remains on the screen until the button is selected or the user aborts. 
+<P><B>osd-xdialog</B> creates an extended dialog with multiple buttons similar to <B>osd-dialog</B>, the number of buttons created (<I>#</I>) is determined from the number of <I>but</I> arguments. The <I>default</I> integer argument specifies the default button (1..<I>#</I>), a value of 0 specifies that there is no default button. 
+<P>The commands return the button pressed in the variable 
+<A HREF="m5var041.html">$result(5)</A>. 
+<P><B>osd-entry</B> constructs a simple OSD entry dialog which prompts the user to type in a value. The value of the supplied variable is used as an initial entry value, the variable is set to the entered value when the user presses the &quot;<TT>Okay</TT>&quot; button but remains unchanged if the user Cancel or aborts. 
+<P>The size of the entry defaults to 30 characters if not specified by the user, when a size parameter is given it can take one of two forms, either simply &quot;<TT>w</TT>&quot; specifying the width, the height defaulting to 1, or &quot;<TT>w</TT><B>x</B><TT>h</TT>&quot; (i.e. &quot;<TT>40x5</TT>&quot;) specifying both. The last optional argument <I>type</I> sets the type of value being entered (e.g. file name, buffer name, etc) see flag <B>h</B> on the help page for 
+<A HREF="m4fil015.html">@ml(4)</A> for a list of entry types and the numerical value to be supplied. 
+<P>The argument <I>n</I> can be used to change the default behavior of the commands described above, <I>n</I> is a bit based flag where:- 
+<P><B>0x01</B> 
+<BR><UL>Enables command abort (default), except <B>osd-entry</B> which ignores the setting of this bit. When enabled, if the user abort by either closing the dialog (top right button) or using the <B>abort-command</B> the dialog command will also abort. If bit 0x01 is not set the command will not abort and <B>$result</B> will be set to -1. </UL>
+<P><B>0x02</B> 
+<BR><UL>When set, flags that a dialog position has also been provided, extra arguments <B>x-pos</B> and <B>y-pos</B> must also be given. By default the dialog is placed under the mouse. </UL></UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>A simple query dialog is typically constructed using <B>osd-dialog</B>, as follows:- <UL>
+<PRE>!if&nbsp;&amp;seq&nbsp;%osd-search-str&nbsp;&quot;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;osd-dialog&nbsp;&quot;Replace&quot;&nbsp;&quot;Error:&nbsp;Search&nbsp;string&nbsp;is&nbsp;empty!&quot;&nbsp;&quot;&nbsp;&nbsp;&amp;OK&nbsp;&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!return 
+!endif 
+</PRE></UL>
+<P>The following example uses multiple buttons within a single dialog, using <B>osd-xdialog</B>, as follows:- <UL>
+<PRE>0&nbsp;define-macro&nbsp;osd-close 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;bmod&nbsp;&quot;edit&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;&amp;spr&nbsp;&quot;Buffer&nbsp;\&quot;%s\&quot;&nbsp;changed&quot;&nbsp;$buffer-bname 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;osd-xdialog&nbsp;&quot;Buffer&nbsp;Close&quot;&nbsp;#l0&nbsp;1&nbsp;&quot;&amp;Save&nbsp;First&quot;&nbsp;\ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;&amp;Loose&nbsp;Changes&quot;&nbsp;&quot;&amp;Cancel&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;equ&nbsp;$result&nbsp;3 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!abort 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!elif&nbsp;&amp;equ&nbsp;$result&nbsp;2 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;buffer-mode&nbsp;&quot;edit&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!else 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;seq&nbsp;$buffer-fname&nbsp;&quot;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!nma&nbsp;write-buffer 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!else 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!nma&nbsp;save-buffer 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;delete-buffer&nbsp;$buffer-bname&nbsp;@mna 
+!emacro 
+</PRE></UL>
+<P>The next example macro can be used to change the value of a user variable to a user supplied file name: <UL>
+<PRE>set-variable&nbsp;%source-root&nbsp;&quot;~/&quot; 
+
+define-macro&nbsp;set-source-root 
+&nbsp;&nbsp;&nbsp;&nbsp;osd-entry&nbsp;&quot;Source&nbsp;Root&quot;&nbsp;&quot;&amp;Path&nbsp;:&nbsp;&quot;&nbsp;%source-root&nbsp;35&nbsp;1 
+!emacro 
+</PRE></UL>
+</UL><H2><B>NOTES </B></H2>
+<UL><P><B>osd-dialog</B>, <B>osd-xdialog</B> and <B>osd-entry</B> are macros defined in <TT>osd.emf</TT>, using 
+<A HREF="m2cmd066.html">osd(2)</A> to create the dialog. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var041.html">$result(5)</A>, 
+<A HREF="m2cmd066.html">osd(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,42 @@
+<HTML>
+<HEAD><TITLE>$mouse-x(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+$mouse-x(5)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>$mouse-x - Mouse X (horizontal) position 
+<BR>$mouse-y - Mouse Y (vertical) position </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>$mouse-x</B> <I>integer</I> 
+<P>0 &lt;= <I>integer</I> &lt;= 
+<A HREF="m5var037.html">$screen-width</A> - 1 
+<P><B>$mouse-y</B> <I>integer</I> 
+<P>0 &lt;= <I>integer</I> &lt;= 
+<A HREF="m5var037.html">$screen-depth</A> - 1 </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>$mouse-x</B> and <B>$mouse-y</B> are automatically set to the position of the mouse at the last mouse event, where an event is a button press or release. Initialized to 0,0. The top left character of the screen is coordinate 0,0 bottom right is 
+<A HREF="m5var037.html">$screen-width</A>, 
+<A HREF="m5var037.html">$screen-depth</A>. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P>These variables can not be set. Any attempt to set them will result in an error. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd119.html">set-cursor-to-mouse(2)</A>, 
+<A HREF="m5var038.html">$mouse-pos(5)</A>, 
+<A HREF="m5var078.html">$cursor-x(5)</A>, 
+<A HREF="m5var037.html">$screen-depth(5)</A>, 
+<A HREF="m5var037.html">$screen-width(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

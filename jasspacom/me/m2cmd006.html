@@ -1,0 +1,99 @@
+<HTML>
+<HEAD><TITLE>buffer-mode(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+buffer-mode(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>buffer-mode - Change a local buffer mode 
+<BR>named-buffer-mode - Change a named buffer mode 
+<BR>add-mode - Set a local buffer mode 
+<BR>delete-mode - Remove a local buffer mode 
+<BR>unmark-buffer - Remove buffer change flag </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>buffer-mode</B> &quot;<I>mode</I>&quot; (<B>C-x&nbsp;m</B>)&nbsp; 
+<BR><I>n</I> <B>named-buffer-mode</B> &quot;<I>buffer-name</I>&quot; &quot;<I>mode</I>&quot; 
+<BR><B>add-mode</B> &quot;<I>mode</I>&quot; 
+<BR><B>delete-mode</B> &quot;<I>mode</I>&quot; 
+<BR><B>unmark-buffer</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>buffer-mode</B> changes the state of a given buffer mode, affecting only the current buffer. A buffer's mode affects the behavior of MicroEmacs '02. The 
+<A HREF="m2cmd148.html">about(2)</A> command gives a list of the current global and buffer modes. Refer to 
+<A HREF="amicr021.html">Operating Modes</A> for a description of the buffer modes. 
+<P>The argument <I>n</I> when given, has the following meaning: <UL>
+<PRE>Delete&nbsp;&nbsp;&nbsp;&nbsp;Add&nbsp;&nbsp;&nbsp;&nbsp;toggle&nbsp;&nbsp;&nbsp;&nbsp;Mode 
+
+&nbsp;&nbsp;-1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use&nbsp;&quot;mode&quot; 
+&nbsp;&nbsp;-2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;130&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;auto 
+&nbsp;&nbsp;-3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;131&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;autosv 
+&nbsp;&nbsp;-4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;132&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;backup 
+&nbsp;&nbsp;-5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;133&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;binary 
+&nbsp;&nbsp;-6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;134&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmode 
+&nbsp;&nbsp;-7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;135&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;crlf 
+&nbsp;&nbsp;-8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;136&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;crypt 
+&nbsp;&nbsp;-9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;137&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ctrlz 
+&nbsp;&nbsp;-10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;138&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;del 
+&nbsp;&nbsp;-11&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;11&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;139&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dir 
+&nbsp;&nbsp;-12&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;12&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;140&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;edit 
+&nbsp;&nbsp;-13&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;13&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;141&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exact 
+&nbsp;&nbsp;-14&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;14&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;142&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hide 
+&nbsp;&nbsp;-15&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;15&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;143&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;indent 
+&nbsp;&nbsp;-16&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;16&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;144&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;justify 
+&nbsp;&nbsp;-17&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;17&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;145&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;letter 
+&nbsp;&nbsp;-18&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;18&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;146&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line 
+&nbsp;&nbsp;-19&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;19&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;147&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lock 
+&nbsp;&nbsp;-20&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;148&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;magic 
+&nbsp;&nbsp;-21&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;21&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;149&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nact 
+&nbsp;&nbsp;-22&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;22&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;150&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;narrow 
+&nbsp;&nbsp;-23&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;23&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;151&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;over 
+&nbsp;&nbsp;-24&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;24&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;152&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pipe 
+&nbsp;&nbsp;-25&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;25&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;153&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;quiet 
+&nbsp;&nbsp;-26&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;26&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;154&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rbin 
+&nbsp;&nbsp;-27&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;27&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;155&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;save 
+&nbsp;&nbsp;-28&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;28&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;156&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tab 
+&nbsp;&nbsp;-29&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;29&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;157&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;time 
+&nbsp;&nbsp;-30&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;30&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;158&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;undo 
+&nbsp;&nbsp;-31&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;31&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;159&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;usr1 
+&nbsp;&nbsp;-32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;160&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;usr2 
+&nbsp;&nbsp;-33&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;33&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;161&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;usr3 
+&nbsp;&nbsp;-34&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;34&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;162&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;usr4 
+&nbsp;&nbsp;-35&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;35&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;163&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;usr5 
+&nbsp;&nbsp;-36&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;36&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;164&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;usr6 
+&nbsp;&nbsp;-37&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;37&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;165&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;usr7 
+&nbsp;&nbsp;-38&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;38&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;166&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;usr8 
+&nbsp;&nbsp;-39&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;39&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;167&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;view 
+&nbsp;&nbsp;-40&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;40&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;168&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;wrap 
+</PRE></UL>
+<P>Note that when omitted the default argument is 0, i.e. prompt for and toggle a mode. 
+<P><B>named-buffer-mode</B> changes the state of a given buffer mode for a given buffer which may not be the current buffer. 
+<P><B>add-mode</B> and <B>delete-mode</B> are macros which use buffer-mode to add and remove a buffer mode. <B>unmark-buffer</B> is also a macro which removes the edit flag from the current buffer. They are defined for backward compatibility with MicroEMACS v3.8 and can be found in meme3_8.emf; add-mode is defined as follows: <UL>
+<PRE>define-macro&nbsp;add-mode 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Has&nbsp;the&nbsp;require&nbsp;mode&nbsp;been&nbsp;given&nbsp;as&nbsp;an&nbsp;argument,&nbsp;if&nbsp;so&nbsp;add&nbsp;it 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;1&nbsp;buffer-mode&nbsp;@1 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;No&nbsp;-&nbsp;use&nbsp;1&nbsp;buffer-mode&nbsp;to&nbsp;add&nbsp;a&nbsp;mode 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!nma&nbsp;1&nbsp;buffer-mode 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+!emacro 
+</PRE></UL>
+</UL><H2><B>NOTES </B></H2>
+<UL><P>When a buffer is created it inherits the current global mode state. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="amicr021.html">Operating Modes</A>, 
+<A HREF="m2cmd005.html">global-mode(2)</A>, 
+<A HREF="m2cmd148.html">about(2)</A>, 
+<A HREF="m4fil005.html">&amp;bmode(4)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

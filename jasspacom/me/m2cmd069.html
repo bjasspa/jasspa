@@ -1,0 +1,273 @@
+<HTML>
+<HEAD><TITLE>hilight(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+hilight(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>hilight - Manage the buffer hilighting schemes </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>0</I> <B>hilight</B> &quot;<I>hil-no</I>&quot; &quot;<I>flags</I>&quot; [ &quot;<I>nol</I>&quot; ] [ &quot;<I>buffer-scheme</I>&quot; [ &quot;<I>trunc-scheme</I>&quot; ] ] 
+<P><B>hilight</B> &quot;<I>hil-no</I>&quot; &quot;<I>type</I>&quot; &quot;<I>token</I>&quot; [ [&quot;<I>rtoken</I>&quot;] 
+<BR><UL>[ ( [ &quot;<I>close</I>&quot; [&quot;<I>rclose</I>&quot;] &quot;<I>ignore</I>&quot; ] ) | 
+<BR><UL>( [&quot;<I>continue</I>&quot;] ) | 
+<BR>( [&quot;<I>b-hil-no</I>&quot;] ) ] 
+<BR></UL>&quot;<I>schemeNum</I>&quot; 
+<BR></UL><B>hilight</B> &quot;<I>hil-no</I>&quot; &quot;<I>0x200</I>&quot; &quot;<I>token</I>&quot; 
+<BR><B>hilight</B> &quot;<I>hil-no</I>&quot; &quot;<I>0x400</I>&quot; &quot;<I>from-col</I>&quot; &quot;<I>to-col</I>&quot; &quot;<I>schemeNum</I>&quot; 
+<P><I>-1</I> <B>hilight</B> &quot;<I>hil-no</I>&quot; &quot;<I>type</I>&quot; &quot;<I>token</I>&quot; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The <B>hilight</B> command creates and manages the buffer hilighting, the process of creating a new hilighting scheme is best described in 
+<A HREF="m2nar000.html">File Language Templates</A>. The command takes various forms as defined by the arguments. Each of the argument configurations is defined as follows:- </UL>
+<H2>Hilight Scheme Creation </H2>
+<UL><P><I>0</I> <B>hilight</B> &quot;<I>hil-no</I>&quot; &quot;<I>flags</I>&quot; [ &quot;<I>nol</I>&quot; ] [ &quot;<I>buffer-scheme</I>&quot; [ &quot;<I>trunc-scheme</I>&quot; ] ] 
+<P>With an argument of <TT>0</TT>, <B>hilight</B> initializes or re-initializes the hilight scheme <I>hil-no</I> (1-255). Every buffer has a hilight scheme, the default is 0 which means no hi-lighting and only the 
+<A HREF="m5var024.html">$global-scheme(5)</A> etc. are used. The hilighting scheme must be defined before use and is used to specify how the buffer is to be hilighted. MicroEmacs '02 supports the following hilighting concepts:- <UL><P>
+<LI><B>hilight string</B>, a user specified string is hilighted in any color scheme. 
+<LI><B>Tokens</B>, same as a hilight string except that the string must be enclosed in non alpha-numeric characters. 
+<LI><B>Start-of-line hilights</B>, the start of the hilight must be the first non-white character of the line. 
+<LI><B>End-of-Line hilights</B>, the hilight starts from the current position and continues until the end of the line. Optionally, the hilight may continue onto the next line if the current line ends in a given string. A bracket may also be searched for within the line. 
+<LI><B>Bracket hilight</B>, hi-lights from the current position until the closing bracket token is found. 
+<LI><B>Replace string </B>, allows the hilight string to be replaced with a different user specified string. (i.e. the displayed representation is different from the buffer contents) </UL><P>Terminals that cannot display color directly may still be able to take advantage of the hi-lighting. A terminal that has fonts (i.e. <I>Termcap</I>) can use them in the same way using the 
+<A HREF="m2cmd001.html">add-color-scheme(2)</A> command. The hi-light scheme is also used in printing (see 
+<A HREF="m2cmd101.html">print-buffer(2)</A>). If your terminal cannot display color in any way, it is recommended that hi-lighting is disabled (except when printing) as it does take CPU time. 
+<P>The &quot;<I>hil-no</I>&quot; argument specifies which hi-lighting scheme is being initialized. Once a hilighting scheme has been initialized, hi-light tokens can be added to it and it can be used by setting the current buffer's 
+<A HREF="m5var004.html">$buffer-hilight(5)</A> variable to &quot;<I>hil-no</I>&quot;. The &quot;<I>flags</I>&quot; argument is a bit based flag setting global hi-light characteristics, where:- 
+<P><B>0x01</B> 
+<BR><UL>The hi-light scheme is case insensitive, i.e. the following tokens become equivalent:- 
+<UL><P><TT>house</TT> == <TT>HOUSE</TT> == <TT>hOuSe</TT> </UL></UL>
+<UL><P>When the hilight scheme is attributed as case insensitive then the tokens must <B>all</B> be specified in <B>lower</B> case. </UL>
+<P><B>0x02</B> 
+<BR><UL>Set a hi-light look-back. During the process of determining the window hilighting then the hilight process has to determine whether the top of the window starts in a hi-light bracket or not. The look-back command tries looking &quot;<I>nol</I>&quot; lines backwards for an open bracket. If an open bracket is found then the top of the window is assumed to start with that bracket, else it is assumed that the top of the window is not in a bracket. For example, in `C', a comment starts with &quot;<TT>/*</TT>&quot; and ends with &quot;<TT>*/</TT>&quot; so if the hilight was initialized with <UL>
+<PRE>0&nbsp;hilight&nbsp;1&nbsp;2&nbsp;10&nbsp;$global-scheme 
+</PRE></UL>
+<P>of the following, only the first would begin hi-lighted which is correct (assuming the &quot;<TT>/*</TT>&quot; is 10 or less lines away). <UL>
+<PRE>&nbsp;/*&nbsp;........&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/*.........&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;......... 
+&nbsp;&nbsp;&nbsp;&nbsp;........&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.........*/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;......... 
+----------------&nbsp;&nbsp;&nbsp;&nbsp;---------------&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---------------&nbsp;top&nbsp;of 
+&nbsp;&nbsp;&nbsp;&nbsp;........*/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.........&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.........&nbsp;&nbsp;&nbsp;&nbsp;window 
+</PRE></UL>
+</UL><P>The optional argument &quot;<I>buffer-scheme</I>&quot; specifies the default scheme to use if there is no specific hi-light, when omitted the value of 
+<A HREF="m5var024.html">$global-scheme(5)</A> is used. The <I>buffer-scheme</I> is a reference to a set of foreground and background color pairs previously defined with 
+<A HREF="m2cmd001.html">add-color-scheme(2)</A>. The last argument &quot;<I>trunc-scheme</I>&quot; is also optional and specifies the line truncation scheme, when omitted the value of 
+<A HREF="m5var080.html">$trunc-scheme(5)</A> is used. 
+<P>The hi-lighting scheme required is based on the type of file being edited and so is usually directly related to the file extension, thus it can be automatically set using file hooks (see 
+<A HREF="m2cmd003.html">add-file-hook(2)</A>). </UL>
+<H2>Hilight Scheme Token Creation </H2>
+<UL><P><B>hilight</B> &quot;<I>hil-no</I>&quot; &quot;<I>type</I>&quot; &quot;<I>token</I>&quot; [ [&quot;<I>rtoken</I>&quot;] 
+<BR><UL>[ ( [ &quot;<I>close</I>&quot; [&quot;<I>rclose</I>&quot;] &quot;<I>ignore</I>&quot; ] ) | 
+<BR><UL>( [&quot;<I>continue</I>&quot; [&quot;<I>rcontinue</I>&quot;] ] ) | 
+<BR>( [&quot;<I>b-hil-no</I>&quot;] ) ] 
+<BR></UL>&quot;<I>schemeNum</I>&quot; 
+<BR></UL><B>hilight</B> &quot;<I>hil-no</I>&quot; &quot;<I>0x200</I>&quot; &quot;<I>token</I>&quot; 
+<BR><B>hilight</B> &quot;<I>hil-no</I>&quot; &quot;<I>0x400</I>&quot; &quot;<I>from-col</I>&quot; &quot;<I>to-col</I>&quot; &quot;<I>schemeNum</I>&quot; 
+<P>With the default argument of <TT>1</TT>, <B>hilight</B> creates a hilight token to be used in hilight color scheme identified by &quot;<I>hil-no</I>&quot; (1-255) (see the section on <B>Hilight Scheme Creation</B> for a overview of hi-lighting). The second argument &quot;<I>type</I>&quot; specifies the token type and must always be specified, it determines which other arguments required. 
+<P>Typically the last argument, <I>schemeNum</I>, is also required. This identifies the color scheme to use when hilighting the token, defining the foreground, background and selection color schemes. This is an index generated from 
+<A HREF="m2cmd001.html">add-color-scheme(2)</A>. If the <I>schemeNum</I> argument is omitted the default hilght color scheme is used. 
+<P>The token &quot;<B>type</B>&quot; is a bit based flag of which 0, 1 or more of the bits may be set, the effect of the bits are defined as follows: 
+<P><B>0x001</B> 
+<BR><UL>The &quot;<I>token</I>&quot; must be surrounded by non-word characters (word characters are typically the alpha-numeric characters), e.g. the following defines &quot;<TT>if</TT>&quot; as a token: <UL>
+<PRE>hilight&nbsp;1&nbsp;1&nbsp;&quot;if&quot;&nbsp;.scheme.keyword 
+</PRE></UL>
+<P>this hilights the 'if' in &quot;<TT> if </TT>&quot; but not in &quot;<TT>aifa</TT>&quot;. </UL>
+<P><B>0x002</B> 
+<BR><UL>Color this to the end of the line, often used for comments etc. For example in MicroEmacs macro language a '<TT>;</TT>' character signifies the rest of the line as a comment, hilighting is defined as follows: <UL>
+<PRE>;&nbsp;this&nbsp;is&nbsp;a&nbsp;comment&nbsp;line 
+hilight&nbsp;1&nbsp;2&nbsp;&quot;;&quot;&nbsp;.scheme.comment 
+</PRE></UL>
+</UL><P><B>0x004</B> 
+<BR><UL>This is a bracket token, the closing bracket string &quot;<I>close</I>&quot; and an ignore character &quot;<I>ignore</I>&quot; must also be supplied. The ignore character indicates that when found it should ignore the next character; this prevents an early end on bracket miss-match. For example, in C a '<TT>&quot;</TT>' character can be inserted into a string by 'protecting' it with a '<TT>\</TT>' character, such as &quot;<I>this is a string with a \&quot; in it</I>&quot;. In this example the ignore character should be '<I>\</I>' so the mid string '<TT>&quot;</TT>' is correctly ignored, as follows: <UL>
+<PRE>hilight&nbsp;1&nbsp;4&nbsp;&quot;\&quot;&quot;&nbsp;&quot;\&quot;&quot;&nbsp;&quot;\\&quot;&nbsp;.scheme.string 
+</PRE></UL>
+</UL><UL><P>An empty value, &quot;&quot;, effectively disables the ignore feature. If replacing bit <TT>0x040</TT> is set the replacement close bracket &quot;<I>rclose</I>&quot; must be supplied. </UL>
+<P><B>0x008</B> 
+<BR><UL>The token has a continuation string, usually used with 0x02 but cannot be used with token types <TT>0x004</TT> and <TT>0x080</TT>. The argument &quot;<I>continue</I>&quot; must be supplied and if the replacing bit <TT>0x040</TT> is set the replacement continue string &quot;<I>rcontinue</I>&quot; must also be supplied. The best example of its use can again be found in C; macros defined using the <TT>#define</TT> pre-processor construct may be constructed on single or multiple lines. The macro continues onto another line if the current line ends with a backslash '<TT>\</TT>' character, e.g.: <UL>
+<PRE>#define&nbsp;a_single_line_macro()&nbsp;printf(&quot;hello&nbsp;world\n&quot;) 
+
+#define&nbsp;a_four_lined_macro()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ 
+do&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ 
+&nbsp;&nbsp;&nbsp;&nbsp;printf(&quot;hello&nbsp;world\n&quot;)&nbsp;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ 
+}&nbsp;while(0) 
+</PRE></UL>
+<P>This can be correctly hilighted with the pre-processor scheme using: <UL>
+<PRE>;&nbsp;use&nbsp;to-end-of-line&nbsp;(2)&nbsp;and&nbsp;continuation&nbsp;(8),&nbsp;i.e.&nbsp;2+8=10 
+hilight&nbsp;1&nbsp;10&nbsp;&quot;#&quot;&nbsp;&quot;\\&quot;&nbsp;.scheme.prepro 
+</PRE></UL>
+</UL><P><B>0x010</B> <UL>
+<P>If this is an end of line token (<TT>0x002</TT>) then 
+<BR><UL>The rest of the line is checked for any valid brackets. </UL>
+<P>Else if this is a bracket token (<TT>0x004</TT>) then 
+<BR><UL>This is still searched for after an end of line token is found. </UL>
+<P>Else 
+<BR><UL>Ignored </UL></UL>
+<UL><P>This feature enables the searching and hilighting of specific brackets contained within a to-end-of-line scheme. For example, consider the following C code: <UL>
+<PRE>#define&nbsp;My_Token&nbsp;0x01&nbsp;&nbsp;/*&nbsp;This&nbsp;is&nbsp;a&nbsp;multi-lined&nbsp;comment 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;describing&nbsp;My_Token&nbsp;*/ 
+</PRE></UL>
+</UL><UL><P>With the '<TT>#</TT>' pre-processor hilight (see bit 0x08 above) the #define line would all be hilighted with the pre-process scheme, the comment would be missed causing incorrect hilighting of the next line. Instead this feature may be used by both the pre-processor and comment hilight tokens to correctly hilight the above example: <UL>
+<PRE>hilight&nbsp;1&nbsp;26&nbsp;&quot;#&quot;&nbsp;&quot;\\&quot;&nbsp;.scheme.prepro 
+hilight&nbsp;1&nbsp;20&nbsp;&quot;/\\*&quot;&nbsp;&quot;*/&quot;&nbsp;&quot;&quot;&nbsp;.scheme.comment 
+</PRE></UL>
+</UL><P><B>0x020</B> 
+<BR><UL>This token must be the first non-white character of the line. </UL>
+<P><B>0x040</B> 
+<BR><UL>The token (and closing bracket tokens) are to be replaced by the given replacement strings. This is often utilized when displaying formated text such as MicroEmacs on-line help 
+<A HREF="m8fil005.html">ehf(8)</A> pages, the output from UNIX <B>man(1)</B> etc. In MicroEmacs help pages, the start of bold text is delimited with the character sequence &quot;<TT>\C[cD</TT>&quot; and ends with the character sequence &quot;<TT>\C[cA</TT>&quot;, e.g. <UL>
+<PRE>&quot;the&nbsp;word&nbsp;\C[cDbold\C[cA&nbsp;is&nbsp;in&nbsp;\C[cDbold\C[cA&quot; 
+</PRE></UL>
+<P>Obviously the hilight delimiters should not appear so the character sequence may be correctly drawn using a bracket token, starting with &quot;<TT>\C[cD</TT>&quot; and ending with &quot;<TT>\C[cA</TT>&quot;, replacing both with an empty string: <UL>
+<PRE>hilight&nbsp;1&nbsp;0x44&nbsp;&quot;\C[cD&quot;&nbsp;&quot;&quot;&nbsp;&quot;\C[cA&quot;&nbsp;&quot;&quot;&nbsp;&quot;&quot;&nbsp;.scheme.bold 
+</PRE></UL>
+</UL><P><B>0x080</B> 
+<BR><UL>This is a branch token. When this token is found, the token (or the replace string) is colored using the given color <I>schemeNum</I> and then the current hilighting scheme is changed to &quot;<I>b-hil-no</I>&quot; (which MUST be defined by the time it is first used). The &quot;<I>b-hil-no</I>&quot; hi-light scheme should also contain a branch token which branches back to &quot;<I>hil-no</I>&quot; or &quot;<TT>0</TT>&quot; (which branches to 
+<A HREF="m5var004.html">$buffer-hilight(5)</A>). A branch does not have to branch back to &quot;<I>hil-no</I>&quot;, it may branch to any other hi-light scheme. The branches are not stacked and there is no limit on the nesting. </UL>
+<P><B>0x100</B> 
+<BR><UL>The token must be at the start of the line. </UL>
+<P><B>0x200</B> 
+<BR><UL>This is an invalid token in its own right, which is used for optimizing a hi-lighting scheme. </UL>
+<UL><P>This has the second highest precedence (see <B>0x400</B>) and all other bits are ignored. Only the first 3 arguments are required. For example, if there are 11 tokens starting with &quot;<TT>delete-</TT>&quot; as with the hi-lighting of this buffer, then adding the token &quot;<TT>delete-</TT>&quot;, while invalid in its own right, means that &quot;<TT>delete-</TT>&quot; is only checked for once. This also reduces the size of the internal hilighting tables so if the message &quot;<B>Table full</B>&quot; appears, the hilighting scheme should be reduced by removal of the common components. </UL>
+<P><B>0x400</B> 
+<BR><UL>This is a column hilighting token, which allows absolute columns within a window to be hilighted (irrespective of the contents). This bit takes precedence over all other bits and all other bits are ignored. Column highlighting is a different concept to token in that it requires a &quot;<I>from-col</I>&quot; and a &quot;<I>to-col</I>&quot; column positions and a line will be hilighted in the given scheme between these two columns. </UL>
+<P><B>0x800</B> 
+<BR><UL>The flag is used with bracket tokens (<TT>0x04</TT>) and indicates that the bracket is typically contained on a single line. This information is used by MicroEmacs in trying to avoid hilighting anomalies caused when the start and end tokens of the bracket are the same (e.g. a string's start and end token is '<TT>&quot;</TT>'). Problems arise when the bracket starts on one line and closes on a later line, even with a large look-back, eventually the start bracket will become too far back and only the end bracket is found. But as this is the same as the open token it is mistaken for an open bracket and the strings become out of synch. This test can reset this if further down the file an open and close bracket is found on the same line. For this to have any effect, the hilighting scheme must use look-back (flag <TT>0x02</TT> of <B>Hilight Creation</B>). </UL>
+<P>Note that <TT>0x004</TT>, <TT>0x008</TT> and <TT>0x080</TT> are mutually exclusive and more than 1 should not be set in any one hilight token, if 2 or more are set the effect is undefined. Other than this there is no restrictions placed on the types of token used, although strange combinations like <TT>0x006</TT> may lead to unexpected results -- hopefully not a core dump, but not guaranteed ! 
+<P>The token and close token of brackets may contain a limited subset of regular expression tokens as follows:- 
+<P><B>^</B> 
+<BR><UL>When specified as the first character of the token, the token must be at the start of the line. </UL>
+<P><B>$</B> 
+<BR><UL>The token must be at the end of the line, must be the last character. </UL>
+<P><B>\{</B> 
+<BR><UL>Indicates the start of the hilighted part of the token, only one may be used per token. This token use is different from regex. </UL>
+<P><B>\}</B> 
+<BR><UL>Indicates the end of the hilighted part of the token, only one may be used per token. The rest of the token must be matched for it to be used but is not considered part of the token, i.e. hilighting continues on the character immediately after the &quot;<I>\}</I>&quot;, not at the end of the token. Similar to the <B>\&lt;</B> token, the length of the rest of the token must be fixed. This token use is different from regex. </UL>
+<P><B>\(.\)</B> 
+<BR><UL>Groups are supported in hilighting, but they must only enclose a single character, closures ('*', '?' and '+') must come after the closure, i.e. use &quot;\(.\)*&quot;, not &quot;\(.*\)&quot;. Alternatives (&quot;<TT>\|</TT>&quot;) are not supported. </UL>
+<P><B>.</B> 
+<BR><UL>Matches any character. </UL>
+<P><B>[...]</B> 
+<BR><UL>Matches a single buffer character to a range of characters, for example to hilight MicroEmacs register variables (i.e. <TT>#g0</TT>-<TT>#g9</TT>, <TT>#p0</TT>-<TT>#p9</TT>, <TT>#l0</TT>-<TT>#l9</TT>) the following regex string may be used: <UL>
+<PRE>hilight&nbsp;1&nbsp;1&nbsp;&quot;#[gpl][0-9]&quot; 
+</PRE></UL>
+</UL><UL><P>This matches a token which starts with a '<TT>#</TT>', followed by a '<TT>g</TT>', '<TT>p</TT>' or '<TT>l</TT>' character and ends with a numerical digit. If the user required the replacement (bit 0x40) of the &quot;<TT>#</TT>&quot; to &quot;#register&quot; to aid readability, the replacement string some now needs to know whether the second character was a '<TT>g</TT>', '<TT>p</TT>' or '<TT>l</TT>' and which digit. Up to 9 groups (&quot;<TT>\(.\)</TT>&quot;) can be use to store a store a single search character, which can be used later in the search string and in the replacement string by using the form &quot;\<TT>#</TT>&quot;, where <TT>#</TT> is the range test number counting from the left, e.g. for the given example use: <UL>
+<PRE>hilight&nbsp;1&nbsp;65&nbsp;&quot;#\\([gpl]\\)\\([0-9]\\)&quot;&nbsp;&quot;#register\\1\\2&quot; 
+</PRE></UL>
+</UL><UL><P>The content of the brackets (<B>[</B>...<B>]</B>) include a set of special short cuts and regular expression syntax definitions as follows:- 
+<P><TT>[abc]</TT> 
+<BR><UL>A list of characters. </UL>
+<P><TT>[a-z]</TT> 
+<BR><UL>A range of characters. </UL>
+<P><TT>[-.0-9]</TT> 
+<BR><UL>A combination of character lists and ranges. </UL>
+<P><TT>[[:space:]]</TT> 
+<BR><UL>A white space character. See 
+<A HREF="m2cmd134.html">set-char-mask(2)</A> for a full description on MicroEmacs character range support. </UL>
+<P><TT>[[:digit:]]</TT> 
+<BR><UL>A digit, 0-9. </UL>
+<P><TT>[[:xdigit:]]</TT> 
+<BR><UL>A hexadecimal digit, 0-9, a-f, A-F. </UL>
+<P><TT>[[:lower:]]</TT> 
+<BR><UL>A lower case letter, by default a-z. </UL>
+<P><TT>[[:upper:]]</TT> 
+<BR><UL>An upper case letter, by default A-Z. </UL>
+<P><TT>[[:alpha:]]</TT> 
+<BR><UL>A lower or upper case letter. </UL>
+<P><TT>[[:alnum:]]</TT> 
+<BR><UL>A lower or upper case letter or a digit. </UL>
+<P><TT>[[:sword:]]</TT> 
+<BR><UL>A spell word character. </UL>
+<P><B>[^...]</B> 
+<BR><UL>Matches all characters except the given range of characters, e.g. &quot;<TT>[^[:space:]]</TT>&quot;. </UL>
+<P><TT>\#</TT> 
+<BR><UL>The same character which matched the #th group token. This functionality is best explained using UNIX <B>man(1)</B> output as an example, to create a bold character '<B>X</B>' it produces &quot;<TT>X\CHX</TT>&quot; where <TT>\CH</TT> is a backspace character thereby overstriking the first '<TT>X</TT>' with another creating a bold character. This can be checked for and simulated in MicroEmacs using the following: <UL>
+<PRE>hilight&nbsp;1&nbsp;64&nbsp;&quot;\\(.\\)\CH\\1&quot;&nbsp;&quot;\\1&quot;&nbsp;.scheme.bold 
+</PRE></UL>
+</UL><P>The use of &quot;<TT>\1</TT>&quot; in the search string ensures that the second character is the same as the first. This is replace by a single character drawn in the bold scheme. </UL>
+<P><B>?</B> <B>+</B> <B>*</B> 
+<BR><UL>Matches 0 or 1, 1 or more and 0 or more of the previous character or character range respectively. 
+</UL><P>Following is a list of hilighting regular expression restrictions: 
+<UL><P>The number of characters to the left of a <B>\{</B> and to the right of a <B>\}</B> token must be fixed, i.e. the '<B>?</B>', '<B>+</B>' and '<B>*</B>' tokens cannot be used before this token. Consider the hilighting of a C function name defined to be a token at the start of a line followed by 0 or more spaces followed by a '('. The following hilight token looks valid but the variable space match is incorrect as it is to the right of the <B>\}</B>: <UL>
+<PRE>hilight&nbsp;1&nbsp;0&nbsp;&quot;^\\w+\\}\\s-*(&quot;&nbsp;.scheme.function 
+</PRE></UL>
+<P>Instead either the space match must be include in the function token hilighting (which may cause problems, particularly if printing with underlining) or by fixing the number of spaces as follows: <UL>
+<PRE>;&nbsp;include&nbsp;the&nbsp;spaces&nbsp;in&nbsp;the&nbsp;function&nbsp;hilighting 
+hilight&nbsp;1&nbsp;0&nbsp;&quot;^\\w+\\s-*\\}(&quot;&nbsp;.scheme.function 
+;&nbsp;or&nbsp;fix&nbsp;the&nbsp;number&nbsp;of&nbsp;spaces&nbsp;to&nbsp;0,&nbsp;1&nbsp;... 
+hilight&nbsp;.hilight.c&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&quot;^\\w+\\}(&quot;&nbsp;.scheme.function 
+hilight&nbsp;.hilight.c&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&quot;^\\w+\}\\s-(&quot;&nbsp;.scheme.function 
+</PRE></UL>
+</UL><UL><P>The <B>+</B> and <B>*</B> tokens match the longest string and do not narrow, e.g. consider the hilighting of a C goto label which takes the form of an alpha-numerical name at the start of a line followed by a ':' character. The token &quot;<TT>^.*:</TT>&quot; cannot be used as <TT>.</TT> will also match and move past the ending ':', ending only at the end of the line. As no narrowing is performed the final '<TT>:</TT>' in the token will not match and the label will not be hilighted. Instead a character range which excludes a ':' character must be used, e.g. &quot;<B>^[^:]*:</B>&quot;. </UL>
+<UL><P>A group should not be followed by a <B>?</B> or <B>*</B> closure, it should either be a fixed single character or followed by a <B>+</B> closure (in which case the last matching character is stored). 
+</UL><P>Following is a list of hilight type bit / token regex equivalents: 
+<P><B>0x01</B> 
+<BR><UL>&quot;<TT>[^word]\{????\}[^word]</TT>&quot; </UL>
+<P><B>0x02</B> 
+<BR><UL>&quot;<TT>????.*</TT>&quot; </UL>
+<P><B>0x20</B> 
+<BR><UL>&quot;<TT>^\s-*\{????</TT>&quot; - (note that this is strictly incorrect as the <TT>\s-*</TT> is to the left of the <TT>\{</TT>, it is correctly handled for the ease of use). </UL>
+<P><B>0x100</B> 
+<BR><UL>&quot;<TT>^????</TT>&quot; </UL></UL>
+<H2>Hilight Scheme Token Deletion </H2>
+<UL><P><I>-1</I> <B>hilight</B> &quot;<I>hil-no</I>&quot; &quot;<I>type</I>&quot; &quot;<I>token</I>&quot; With a -ve argument <B>hilight</B> deletes the given &quot;<I>token</I>&quot; from a hi-light color scheme identified by &quot;<I>hil-no</I>&quot;. The token &quot;<I>type</I>&quot; must also be specified to distinguish between normal and column token types. </UL>
+<H2><B>EXAMPLE </B></H2>
+<H2>Example 1 </H2>
+<UL><P>Hilighting a MicroEmacs character given in hex form, checking its validity (i.e. &quot;<TT>\x??</TT>&quot; where <TT>?</TT> is a hex digit): <UL>
+<PRE>hilight&nbsp;1&nbsp;0&nbsp;&quot;\\x[[:xdigit:]][[:xdigit:]]&quot;&nbsp;.hilight.variable 
+</PRE></UL>
+<P>Hilighting a C style variable length hex number (i.e. &quot;<TT>0x???</TT>&quot;): <UL>
+<PRE>hilight&nbsp;1&nbsp;1&nbsp;&quot;0[xX][[:xdigit:]]+&quot;&nbsp;.hilight.variable 
+</PRE></UL>
+</UL><H2>Example 2 </H2>
+<UL><P>Replacing a quoted character with just the character (i.e. <TT>'x'</TT> -&gt; <TT>x</TT>) <UL>
+<PRE>hilight&nbsp;1&nbsp;64&nbsp;&quot;'\\(.\\)'&quot;&nbsp;&quot;\\1&quot;&nbsp;%magenta 
+</PRE></UL>
+</UL><H2>Example 3 </H2>
+<UL><P>The following example uses the branch hilighting feature to hilight each window line a different color to its neighbors by cycle through 3 different color schemes: <UL>
+<PRE>0&nbsp;hilight&nbsp;.hilight.line1&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$global-scheme 
+&nbsp;&nbsp;hilight&nbsp;.hilight.line1&nbsp;0x80&nbsp;&quot;\\n&quot;&nbsp;.hilight.line2&nbsp;.scheme.no1 
+0&nbsp;hilight&nbsp;.hilight.line2&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.no1 
+&nbsp;&nbsp;hilight&nbsp;.hilight.line2&nbsp;0x80&nbsp;&quot;\\n&quot;&nbsp;.hilight.line3&nbsp;.scheme.no2 
+0&nbsp;hilight&nbsp;.hilight.line3&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.no2 
+&nbsp;&nbsp;hilight&nbsp;.hilight.line3&nbsp;0x80&nbsp;&quot;\\n&quot;&nbsp;.hilight.line1&nbsp;$global-scheme 
+</PRE></UL>
+</UL><H2>Example 4 </H2>
+<UL><P>Simulate the hilighting from the output of a UNIX man page (taken from hkman.emf): <UL>
+<PRE>0&nbsp;hilight&nbsp;&nbsp;.hilight.man&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$global-scheme 
+;&nbsp;ignore 
+hilight&nbsp;.hilight.man&nbsp;64&nbsp;&quot;.\CH&quot;&nbsp;&quot;&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$global-scheme 
+;&nbsp;normal&nbsp;underline/italic 
+hilight&nbsp;.hilight.man&nbsp;64&nbsp;&quot;_\CH\\(.\\)\\}[^\CH]&quot;&nbsp;&quot;\\1&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.italic 
+hilight&nbsp;.hilight.man&nbsp;64&nbsp;&quot;\\(.\\)\CH_\\}[^\CH]&quot;&nbsp;&quot;\\1&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.italic 
+;&nbsp;bold&nbsp;-&nbsp;first&nbsp;is&nbsp;for&nbsp;nroff&nbsp;-man 
+hilight&nbsp;.hilight.man&nbsp;64&nbsp;&quot;\\(.\\)\CH\\1\\}[^\CH]&quot;&nbsp;&quot;\\1&quot;&nbsp;&nbsp;&nbsp;.scheme.bold 
+hilight&nbsp;.hilight.man&nbsp;64&nbsp;&quot;_\CH_\CH_\CH_\\}[^\CH]&quot;&nbsp;&quot;_&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.header 
+hilight&nbsp;.hilight.man&nbsp;64&nbsp;&quot;\\(.\\)\CH\\1\CH\\1\CH\\1\\}[^\CH]&quot;&nbsp;&quot;\\1&quot;&nbsp;.scheme.header 
+;&nbsp;bold&nbsp;underline 
+hilight&nbsp;.hilight.man&nbsp;64&nbsp;&quot;_\CH_\CH_\CH_\CH_\\}[^\CH]&quot;&nbsp;&quot;_&quot;&nbsp;.scheme.italic 
+hilight&nbsp;.hilight.man&nbsp;64&nbsp;&quot;_\CH\\(.\\)\CH\\1\CH\\1\CH\\1\\}[^\CH]&quot;&nbsp;&quot;\\1&quot;&nbsp;.scheme.italic 
+</PRE></UL>
+<P>This replaces the complex nroff character string with a single hi-lighted character (don't believe me, try it!). </UL>
+<H2><B>NOTES </B></H2>
+<UL><P>MicroEmacs hilight was written with speed and flexibility in mind, as a result the user is assumed to know what they are doing, if not the effects can be fatal. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2nar000.html">File Language Templates</A>, 
+<A HREF="m5var004.html">$buffer-hilight(5)</A>, 
+<A HREF="m2cmd003.html">add-file-hook(2)</A>, 
+<A HREF="m2cmd001.html">add-color-scheme(2)</A>, 
+<A HREF="m2cmd129.html">print-scheme(2)</A>, 
+<A HREF="m2cmd033.html">indent(2)</A>, 
+<A HREF="m5var047.html">$system(5)</A>, 
+<A HREF="m2cmd101.html">print-buffer(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

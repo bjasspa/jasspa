@@ -1,0 +1,41 @@
+<HTML>
+<HEAD><TITLE>osd-help(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+osd-help(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>osd-help - GUI based on-line help </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>osd-help</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>osd-help</B> provides a GUI front end to the on-line help manual, the dialog consists of 3 pages which are defined as follows:- </UL>
+<H2>Contents </H2>
+<UL><P>The contents page displays a list on contents similar to the 
+<A HREF="m2cmd065.html">help(2)</A> high level help page. Selecting an item will display the help page in a buffer, selecting <B>Exit</B> will exit the dialog. </UL>
+<H2>Index </H2>
+<UL><P>The index page gives a list of help items, the <B>Scope</B> menu can be used to narrow the index list to the required item type. </UL>
+<H2>Search </H2>
+<UL><P>The search page provides a way of searching the on-line help for a given topic. Similarly to the Index page, the <B>Scope</B> menu is provided to narrow the search to the required area. 
+<P>The search strings is considered to be made up of items separated by spaces, an item can be enclosed in quotes ('<TT>&quot;</TT>') so that the item can include a space. If the first letter of an item is a '<TT>+</TT>' the given item must be found in a page for it to match, if the character is a '<TT>-</TT>' the item must NOT be found on a page for it to match, or other items are considered optional. At least one item must be found on a page for it to be a match, the numbers to the right of each found page is the number of items found. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P>See 
+<A HREF="amicr000.html">Help!</A> for help on the on-line help pages. 
+<P><B>osd-help</B> is a macro using 
+<A HREF="m2cmd066.html">osd(2)</A>, defined in osdhelp.emf. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd065.html">help(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

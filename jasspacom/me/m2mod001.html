@@ -1,0 +1,63 @@
+<HTML>
+<HEAD><TITLE>backup(2m)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+backup(2m)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>backup - Automatic file backup of last edit </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>backup Mode</B> 
+<P><B>B</B> - mode line letter. </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>backup</B> mode, when enabled, performs an automatic backup of the last edit when a save file operation is performed. The backup file name is derived from the base file name and is written into the same directory as the source file, the backup file name can be obtained from the variable 
+<A HREF="m5var082.html">$buffer-backup(5)</A>. 
+<P>On unlimited file name length systems the naming convention used depends on bit <B>0x400</B> of variable 
+<A HREF="m5var047.html">$system(5)</A>, if this bit is set then the system simulates a DOS style 8.3 file naming convention. If this bit is clear then variable 
+<A HREF="m5var074.html">$kept-versions(5)</A> can be used to create multiple backup files. 
+<P>Where an existing backup file already exists, then the old backup file is removed and replaced by the newer backup file. The naming convention for backup files is defined as follows:- 
+<UL><P>On unlimited length file name systems (UNIX and some Windows systems) with a single backup file, the following file naming conventions are used for file <TT>xxxxx</TT>: 
+<UL><P><TT>xxxxx -&gt; xxxxx~</TT> </UL>
+<P>On unlimited length file name systems with multiple backup files, the following file naming conventions are used for file <TT>xxxxx</TT>: 
+<UL><P><TT>xxxxx -&gt; xxxxx.~?~</TT> </UL>
+<P>Where <TT>?</TT> is the backup number, the most recent backup file is always &quot;<TT>.~0~</TT>&quot;. 
+<P>On systems with an <TT>xxxxxxxx.yyy</TT> file name (MS-DOS etc), the following file naming conventions are used: 
+<UL><P><TT>xxxxxxxx&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;&nbsp;xxxxxxxx.~~~</TT> 
+<BR><TT>xxxxxxxx.yyy&nbsp;&nbsp;-&gt;&nbsp;xxxxxxxx.yy~</TT> 
+<BR><TT>xxxxxxxx.yyyy&nbsp;-&gt;&nbsp;xxxxxxxx.yyy~</TT> </UL>
+</UL><P>The environment variables 
+<A HREF="m5var082.html">$MEBACKUPPATH(5)</A> and 
+<A HREF="m5var082.html">$MEBACKUPSUB(5)</A> can be used to modify this behaviour. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P><B>backup</B> is enabled by default. 
+<P>Reference should also be made to 
+<A HREF="m2cmd136.html">undo(2)</A> which allows previous edits to be removed. Also see 
+<A HREF="m5var000.html">$auto-time(5)</A> and 
+<A HREF="m2mod019.html">autosv(2m)</A> which allows a timed backup of a running edit to be periodically performed. 
+<P>The user is warned to be extra careful if files ending in '<TT>~</TT>' or '<TT>#</TT>'s are used, it is advisable to disable backup creation (see 
+<A HREF="m2cmd005.html">global-mode(2)</A>) and auto-saving (<TT>$auto-time = 0</TT>). The author denies all responsibility (yet again) for any loss of data! Please be careful. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var082.html">$buffer-backup(5)</A>. 
+<A HREF="m5var047.html">$system(5)</A>, 
+<A HREF="m5var074.html">$kept-versions(5)</A>, 
+<A HREF="m5var082.html">$MEBACKUPPATH(5)</A>, 
+<A HREF="m5var082.html">$MEBACKUPSUB(5)</A>, 
+<A HREF="m2cmd006.html">buffer-mode(2)</A>, 
+<A HREF="m2cmd005.html">global-mode(2)</A>, 
+<A HREF="m2mod014.html">undo(2m)</A>, 
+<A HREF="m2mod019.html">autosv(2m)</A>, 
+<A HREF="m5var000.html">$auto-time(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

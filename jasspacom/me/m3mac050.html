@@ -1,0 +1,75 @@
+<HTML>
+<HEAD><TITLE>ftp(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+ftp(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>ftp - Initiate an FTP connection </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>ftp</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>ftp</B> initiates a File Transfer Protocol (FTP) connection to a remote host on the network. Using FTP, editing of files may be performed in much the same way as on the local file system. Directory listings may be retrieved and traversed using the mouse or cursor keys. Using the directory listing, files may be transfered to/from the remote host to the local machine. 
+<P>On issuing the command then a dialog is presented to the user which is used to open the connection. The dialog entries are defined as follows:- 
+<P><B>Registry File</B> 
+<BR><UL>The name of a MicroEmacs registry file which is used to store the FTP information. If a registry name is provided then all FTP address information is stored in the registry file and saved for later sessions. Be aware that password information is saved in this file as plain text if a password is entered into the site information. </UL>
+<UL><P>If the registry information is omitted then the information is not saved between sessions. </UL>
+<P><B>Site Name</B> 
+<BR><UL>An ASCII pseudo name for the remote host. The pull-down menu may be used to select existing sites that have been previously entered. </UL>
+<P><B>Host Address</B> 
+<BR><UL>The address of the host, this may be an IP address (<TT>111.222.333.444</TT>) or a DNS name (i.e. <TT>ftp.mysite.com</TT>). </UL>
+<P><B>User Name</B> 
+<BR><UL>The login name for the site. If this is omitted then <TT>guest</TT> is used by default. </UL>
+<P><B>Password</B> 
+<BR><UL>The password used to enter the site for the given login name. If the password is NOT supplied then the user is prompted for the password when a transaction takes place. If the password is omitted and left to promt then it is not stored in the registry. </UL>
+<UL><P>Take note of the comments provided above regarding the password information. </UL>
+<P><B>Initial Host Path</B> 
+<BR><UL>The starting directory at the remote host. If this is omitted then the root directory ('<TT>/</TT>') is used by default. 
+</UL><P>On selecting <B>Connect</B> then a FTP connection is opened and the initial directory appears as a directory listing, if the initial path is a file then the file is loaded into the editor. 
+<P>Thereafter the file may be edited within the editor as normal, on a write operation then the file is written back to the host, via FTP. 
+<P>On opening a FTP connection the progress of the transfer, and the FTP commands issued, may be viewed in the <TT>*ftp-console*</TT> buffer. This buffer may automatically appear depending upon the value of the 
+<A HREF="m5var049.html">%ftp-flags(5)</A> variable. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P><B>ftp</B> is a macro implemented in <TT>ftp.emf</TT>. This uses the underlying command 
+<A HREF="m2cmd056.html">find-file(2)</A> to implement the FTP transfer. 
+<P>FTP files can be directly loaded and edited using the standard file commands such as 
+<A HREF="m2cmd056.html">find-file(2)</A>. 
+<P>The FTP addresses are retained in a registry file (see 
+<A HREF="m8fil004.html">erf(8)</A>). The registry file is automatically loaded when MicroEmacs starts up each session. The current site information may be viewed using 
+<A HREF="m2cmd025.html">list-registry(2)</A> and is located at the following registry addresses:- 
+<P><B>/url</B> 
+<BR><UL>Data value is file system location of the FTP registry file. </UL>
+<P><B>/url/ftp/</B><I>&lt;hostName&gt;</I> 
+<BR><UL>The name of the host to which the connection is to be made. </UL>
+<P><B>/url/ftp/</B><I>&lt;hostName&gt;</I><B>/host</B> 
+<BR><UL>The name or IP address of the remote host </UL>
+<P><B>/url/ftp/</B><I>&lt;hostName&gt;</I><B>/user</B> 
+<BR><UL>The user name used to log into the remote host. </UL>
+<P><B>/url/ftp/</B><I>&lt;hostName&gt;</I><B>/pass</B> 
+<BR><UL>The user password to the remote host. If this entry is empty then the user is always prompted for the password when the connection is made. </UL>
+<P><B>/url/ftp/</B><I>&lt;hostName&gt;</I><B>/path</B> 
+<BR><UL>The initial path at the remote site. 
+</UL><P>When a FTP connection is initiated then the connection (socket) remains open for a period of approximately 4 minutes from the last transfer time, after that the connection is automatically closed and is re-initiated if required again. 
+<P><B>NOTE:</B> For windows platforms then the resultant executable must be built with URL support enabled, for UNIX platforms socket support is automatically enabled. </UL>
+<H2><B>BUGS </B></H2>
+<UL><P>Directory completion is not available when the current working directory is an FTP address. To work around this from the command line, select <TT>&lt;RETURN&gt;</TT> to get a directory listing of the current directory and select the file(s) from the directory to load. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var049.html">%ftp-flags(5)</A>, 
+<A HREF="m8fil004.html">erf(8)</A>, 
+<A HREF="m2cmd056.html">find-file(2)</A>, 
+<A HREF="m2cmd158.html">file-op(2)</A>, 
+<A HREF="m2cmd025.html">list-registry(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

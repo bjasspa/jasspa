@@ -1,0 +1,44 @@
+<HTML>
+<HEAD><TITLE>generate-tags-file(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+generate-tags-file(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>generate-tags-file - Generate a tags file </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>generate-tags-file</B> [ &quot;<I>tag-command</I>&quot; ] </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The <B>generate-tags-file</B> command provides an interface to tag file generation. Typically the &quot;<I>tag-command</I>&quot; argument will not be required as the current buffer will automatically configure <B>generate-tags-file</B> on how tags are generated for the current buffer's file type. See the notes below for more information on configuration. 
+<P><B>generate-tags-file</B> supports two different methods of tag generation, firstly via a MicroEmacs macro file and secondly by an external shell command (such as <B>ctags(1)</B>). It is generally configured in the current buffer's 
+<A HREF="m2cmd202.html">setup hook</A>. 
+<P>If a macro file is used a setup dialog is opened if an argument of 0 is given to <B>generate-tags</B>. This dialog can be used to configure which type of tags are required and the starting directory (useful when using recursive tags over a source tree). Note that not all tag types are available for all file types. 
+<P>The generated tags file can then be used by the 
+<A HREF="m2cmd057.html">find-tag(2)</A> command. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P><B>generate-tags-file</B> is a macro defined in file <TT>gentags.emf</TT>. 
+<P><B>generate-tags-file</B> can be configured in one of 2 ways: <UL>
+<P>When a MicroEmacs macro file (such as <TT>ctags.emf</TT>) is to be used, simply give the name of the macro file to be run as the &quot;<I>tag-command</I>&quot; argument. Alternatively set the variable <B>.</B><I>&lt;$buffer-fhook&gt;</I><B>.tags</B> to this name, e.g. for C files <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;.fhook-c.tags&nbsp;&quot;ctags&quot; 
+</PRE></UL>
+<P>Note the &quot;<TT>.emf</TT>&quot; extension is assumed. 
+<P>When an external shell command is to be used, set the <I>tag-command</I> to the shell command-line prefixed with a '<TT>!</TT>' character, for example to use <B>ctags(1)</B> try the following: <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;.fhook-c.tags&nbsp;&quot;!ctags&nbsp;*.c&nbsp;*h&quot; 
+</PRE></UL>
+<P>Note that the generate-tags dialog is not available in this mode of execution. </UL></UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd057.html">find-tag(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

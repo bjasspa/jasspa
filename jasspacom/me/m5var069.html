@@ -1,0 +1,40 @@
+<HTML>
+<HEAD><TITLE>$temp-name(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+$temp-name(5)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>$temp-name - Temporary file name </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>$temp-name</B> <I>FileName</I> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>$temp-names</B> is automatically set to a nonexistent file name in the systems temporary file directory. On UNIX systems the temporary directory is fixed to &quot;<TT>/tmp/</TT>&quot;, on other systems the temporary directory is set by the <B>$TEMP</B> environment variable. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following example uuencodes a given file into a temporary file and then inserts this file into the current buffer. <UL>
+<PRE>set-variable&nbsp;#l0&nbsp;@ml04&nbsp;&quot;Uuencode&nbsp;and&nbsp;insert&nbsp;file&quot; 
+set-variable&nbsp;#l1&nbsp;$temp-name 
+!force&nbsp;shell-command&nbsp;&amp;spr&nbsp;&quot;uuencode&nbsp;%s&nbsp;&lt;&nbsp;%s&nbsp;&gt;&nbsp;%s&quot;&nbsp;#l0&nbsp;#l0&nbsp;#l1 
+insert-file&nbsp;#l1 
+!force&nbsp;shell-command&nbsp;&amp;cat&nbsp;&quot;rm&nbsp;&quot;&nbsp;#l1 
+</PRE></UL>
+</UL><H2><B>NOTES </B></H2>
+<UL><P>This variable can not be set, any attempt to set it will result in an error. 
+<P>The returned file name is not guaranteed to be unique between calls, only that the file does not currently exist. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd131.html">shell-command(2)</A>, 
+<A HREF="m2cmd158.html">file-op(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

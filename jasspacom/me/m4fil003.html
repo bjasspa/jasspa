@@ -1,0 +1,75 @@
+<HTML>
+<HEAD><TITLE>&and(4)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+&and(4)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>&amp;and, &amp;or, &amp;not, &amp;equal, &amp;sequal - Logical macro operators </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>&amp;and</B> <I>log1</I> <I>log2</I> 
+<BR><B>&amp;or</B> <I>log1</I> <I>log2</I> 
+<BR><B>&amp;not</B> <I>log</I> 
+<P><B>&amp;equal</B> <I>num1</I> <I>num2</I> 
+<BR><B>&amp;great</B> <I>num1</I> <I>num2</I> 
+<BR><B>&amp;less</B> <I>num1</I> <I>num2</I> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The logical testing operators perform comparison tests, returning a boolean value of <TT>TRUE</TT> (1) or <TT>FALSE</TT> (0). 
+<P>The functions may all be abbreviated to their three letter abbreviation (i.e. <B>&amp;great</B> may be expressed as <B>&amp;gre</B>). In all cases the first argument is completely evaluated before the second argument. Logical operators include:- 
+<P><B>&amp;and </B><I>log1</I> <I>log2</I> 
+<BR><UL><TT>TRUE</TT> if the logical arguments <I>log1</I> and <I>log2</I> are both <TT>TRUE</TT>. </UL>
+<P><B>&amp;or</B> <I>log1</I> <I>log2</I> 
+<BR><UL><TT>TRUE</TT> if either one of the logical arguments <I>log1</I> and <I>log2</I> are <TT>TRUE</TT>. </UL>
+<P><B>&amp;not</B> <I>log</I> 
+<BR><UL>Logical NOT. Returns the opposite logical value to <I>log</I>. </UL>
+<P>The numerical logical functions operate with integer arguments: 
+<P><B>&amp;equal</B> <I>num1</I> <I>num2</I> 
+<BR><UL><TT>TRUE</TT>. If numerical arguments <I>num1</I> and <I>num2</I> numerically equal. Abbreviated form of the function is <B>&amp;equ</B>. </UL>
+<P><B>great</B> <I>num1</I> <I>num2</I> 
+<BR><UL><TT>TRUE</TT>. If numerical argument <I>num1</I> is greater than <I>num2</I>. Abbreviated form of the function is <B>&amp;gre</B>. </UL>
+<P><B>&amp;less</B> <I>num1</I> <I>num2</I> 
+<BR><UL><TT>TRUE</TT>. If numerical argument <I>num1</I> is less than <I>num2</I> Abbreviated form of the function is <B>&amp;les</B>. </UL>
+<P>Evaluation of the logical operators are left to right, the leftmost argument is fully evaluated before the next argument. The operator ordering is prefix notation (see 
+<A HREF="m4fil001.html">&amp;add(4)</A> for an example of prefix ordering). </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>Test for integers in the range greater than 12: <UL>
+<PRE>!if&nbsp;&amp;great&nbsp;%i&nbsp;12 
+&nbsp;&nbsp;&nbsp;&nbsp;... 
+</PRE></UL>
+<P>Test for integers in the range 8-12, inclusive <UL>
+<PRE>!if&nbsp;&amp;and&nbsp;&amp;great&nbsp;7&nbsp;&amp;less&nbsp;13 
+&nbsp;&nbsp;&nbsp;&nbsp;... 
+</PRE></UL>
+</UL><H2><B>NOTES </B></H2>
+<UL><P>MicroEmacs always evaluates all arguments operators BEFORE the result is obtained, this differs from most programming languages. Consider the following example: <UL>
+<PRE>!if&nbsp;&amp;and&nbsp;&amp;bmod&nbsp;&quot;edit&quot;&nbsp;&amp;iseq&nbsp;@mc1&nbsp;&quot;Save&nbsp;buffer&nbsp;first&nbsp;[y/n]?&nbsp;&quot;&nbsp;&quot;nNyY&quot;&nbsp;&quot;y&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;save-buffer 
+!endif 
+</PRE></UL>
+<P>This would not not work as the user may expect, the user would be prompted to save every time regardless of whether the buffer has been changed. Instead the following should be used: <UL>
+<PRE>!if&nbsp;&amp;bmod&nbsp;&quot;edit&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;iseq&nbsp;@mc1&nbsp;&quot;Save&nbsp;buffer&nbsp;first&nbsp;[y/n]?&nbsp;&quot;&nbsp;&quot;nNyY&quot;&nbsp;&quot;y&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;save-buffer 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+!endif 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="amicr026.html">Variable Functions</A>, 
+<A HREF="m4fil001.html">&amp;add(4)</A>, 
+<A HREF="m4fil030.html">&amp;sequal(4)</A>, 
+<A HREF="m4fil031.html">&amp;sin(4)</A>, 
+<A HREF="m4fil022.html">&amp;cond(4)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,54 @@
+<HTML>
+<HEAD><TITLE>Patience(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+Patience(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>Patience - MicroEmacs '02 version of Patience (or Solitaire) </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>Patience</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>Patience (or Solitaire) is a solitaire game using a standard set of playing cards. The object of the game is to use all of the cards in the deck to build up four suit stacks from Ace to King. 
+<P>The board is laid out with the dealer pile at the top right hand corner, to the left are four suit stacks onto which cards of the same suit are placed, in ascending order from the Ace. Below these two areas of the board are seven row stacks, organized in a triangular shape with zero to six downward facing cards. 
+<P>Cards may be moved around the playing area by stacking alternative red and black cards in descending order on the row stacks. When a row stack has no upturned cards on the stack then the top card may be turned over and may be played. If a stack becomes empty then only a King may be moved into the vacant position. Cards may be removed from the dealer, they are over-turned in sets of three cards, the underlying 2 cards are visible, but are not accessible, only the top card may be removed and played from the dealer. 
+<P>Cards are moved around the board using the mouse. Cards may be moved from the dealer or between the row stacks by placing the mouse over the card to be moved and pressing the left mouse button. Move the cursor to the new card position and release the left mouse button. If the move is legal then the card(s) are moved to the new stack. Multiple cards may be moved from the row stacks, the appropriate card(s) to be moved is automatically determined. 
+<P>Cards may be moved onto the suit stacks by a single left mouse press and release on the same card, the card is moved to the appropriate suit stack. The same technique is used to turn cards over in the suit stacks, and to deal the next set of cards by the dealer. To deal, then click on the down-turned card stack, if there are no further cards at the dealer then click on the empty position and the dealer will turn over the dealer stack and deal from the top again. 
+<P>Note that once a card is played onto the suit stacks then it cannot be removed. 
+<P>To the right of the board are a number of control buttons. To select an option, click the left mouse button on it, the buttons are labeled: 
+<P><B>DEAL</B> 
+<BR><UL>Start a new game by dealing new cards. </UL>
+<P><B>QUIT</B> 
+<BR><UL>Exit the game </UL>
+<P><B>HELP</B> 
+<BR><UL>This help page 
+</UL><P>Note that the screen may be updated at any time using &quot;<I>C-l</I>&quot;. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P><B>Patience</B> is a macro defined in <TT>patience.emf</TT>. 
+<P>The game is best played with a mouse, it is possible to play with the keyboard, as follows:- 
+<UL><P>&quot;<I>esc h</I>&quot; for help </UL>
+<UL><P>To move a card between stacks enter the source and destination column number (&quot;<I>1</I>&quot;,&quot;<I>2</I>&quot;,..&quot;<I>7</I>&quot;). To move from the dealer pile then the source is the &quot;<I>space</I>&quot; key. </UL>
+<UL><P>&quot;<I>tab</I>&quot; deals the next cards. </UL>
+<UL><P>To overturn a card on the row stacks then enter the card column twice i.e. source and destination are the same. </UL>
+<UL><P>To move a card from the row to the suit stacks then either enter the card column twice, or enter the destination as &quot;<I>h</I>&quot;,&quot;<I>d</I>&quot;,&quot;<I>c</I>&quot;,&quot;<I>s</I>&quot; (i.e. &quot;<I>2 2</I>&quot; or &quot;<I>2 s</I>&quot; to move the card in column 2 to the spades stack). </UL>
+<UL><P>&quot;<I>C-c C-c</I>&quot; to deal the cards again. </UL>
+<UL><P>&quot;<I>C-l</I>&quot; redraw the screen. </UL>
+<UL><P>&quot;<I>q</I>&quot; to quit the game. </UL></UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="amicr029.html">Games</A>, 
+<A HREF="m3mac016.html">Triangle(3)</A>, 
+<A HREF="m3mac012.html">Mahjongg(3)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

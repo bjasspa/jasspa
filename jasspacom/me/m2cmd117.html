@@ -1,0 +1,93 @@
+<HTML>
+<HEAD><TITLE>global-abbrev-file(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+global-abbrev-file(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>global-abbrev-file, buffer-abbrev-file - Set abbreviation file(s). </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>global-abbrev-file</B> &quot;<I>abbrev-file</I>&quot; 
+<BR><I>n</I> <B>buffer-abbrev-file</B> &quot;<I>abbrev-file</I>&quot; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The abbreviation files allow the user to define a set of short-cut expansion text, whereby a short sequence of chararacters are associated with a longer text segment. When the short sequence is entered, the user may elect to maually expand the sequnce with the associated replacement text. Provision for cursor positioning may be made in the replacement text. 
+<P><B>buffer-abbrev-file</B> sets the current buffer's abbreviation file (limit of one abbreviation file per buffer). <B>buffer-abbrev-file</B> does the minimal amount of work to increase speed at load-up. The first use of 
+<A HREF="m2cmd051.html">expand-abbrev(2)</A> attempts to load the abbreviation file at which point errors may be reported. 
+<P>An argument <I>n</I> of zero, forces the buffer abbreviation file to be uncached, such that the next abbreviation that is expanded forces a re-load of the abbreviation file. This is typically only used when an abbreviation file is being constructed and tested. 
+<P><B>global-abbrev-file</B> assigns a global set of abbreviations accross ALL buffers, such that the abbreviation is available regardless of the current buffer type. The global abbreviation file has a lower presidence than the <B>buffer-abbrev-file</B>, hence the currently assigned <B>buffer-abbrev-file</B> is searched before the <B>global-abbrev-file</B>. 
+<P>Similarly for <B>global-abbrev-file</B>, an argument of zero forces the global abbreviation file to be uncached and re-loaded on the next use. 
+<P>An abbreviation is a string which is expanded to an alternate form, e.g. 
+<UL><P><B>e.g.</B> -&gt; <B>for example</B> 
+<BR></UL>or 
+<BR><UL><B>PI</B> -&gt; <B>3.1415926536</B> 
+<BR></UL>etc. 
+<P>An abbreviation file is an ordinary text file with a strict format, it is loaded only once at the first call to 
+<A HREF="m2cmd051.html">expand-abbrev(2)</A>, from then on it reminds buffered. An abbreviation file has an abbreviation per line, they cannot use multiple lines. This is not a draw back as the expansion string is executed using 
+<A HREF="m2cmd048.html">execute-string(2)</A> so any MicroEmacs '02 command may also be called. 
+<P>For example the following expansion string inserts the string &quot;<TT>!continue</TT>&quot; and a newline:- <UL>
+<P>&quot;<TT>!abort\r</TT>&quot; </UL>
+<P>Note that '<TT>\r</TT>' is used instead of '<TT>\n</TT>' as <B>C-m</B> is bound to 
+<A HREF="m2cmd090.html">newline(2)</A> and not <B>C-j</B>. The expansion string can also make use of a few useful abbreviations:- <UL>
+<P><B>\p</B> 
+<BR><UL>Mark the current position (expanded to &quot;<TT>C-x C-a P</TT>&quot;) </UL>
+<P><B>\P</B> 
+<BR><UL>Move cursor to the marked position (expanded to &quot;<TT>C-x a P</TT>&quot;) </UL>
+</UL><P>See help on 
+<A HREF="m2cmd048.html">execute-string(2)</A> for more useful abbreviations. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The abbreviation must be on the left hand side followed by at least 1 space, the expansion string must then be on the same line in quotes. So for the given examples, the abbreviation file would be: <UL>
+<PRE>| 
+|e.g.&nbsp;&quot;for&nbsp;example&quot; 
+|PI&nbsp;&nbsp;&nbsp;&quot;3.1415926536&quot; 
+| 
+</PRE></UL>
+<P>The following abbreviation could be used for a C <I>if-else</I> statement. <UL>
+<PRE>| 
+|if&nbsp;&quot;if(\p)\r{\r\r}\relse\r{\r\r}\r\P&quot; 
+| 
+</PRE></UL>
+<P>This is particularly useful for email address, e.g. <UL>
+<PRE>| 
+|JA&nbsp;&quot;\&quot;JASSPA\&quot;&nbsp;&lt;support@jasspa.com&gt;&quot; 
+| 
+</PRE></UL>
+<P>The following example is MicroEmacs '02 C-Mode abbreviation file for constructing C files. Remember <B>\p</B> is where the cursor is positioned following the expansion. <UL>
+<PRE>#i&nbsp;&quot;#include&nbsp;&lt;\p&gt;\r\P&quot; 
+#d&nbsp;&quot;#define&nbsp;&quot; 
+if&nbsp;&quot;if(\p)\r{\r\r}\r\P&quot; 
+ef&nbsp;&quot;else&nbsp;if(\p)\r{\r\r}\r\P&quot; 
+el&nbsp;&quot;else\r{\r\p\r}\r\P&quot; 
+wh&nbsp;&quot;while(\p)\r{\r\r}\r\P&quot; 
+sw&nbsp;&quot;switch(\p)\r{\rcase&nbsp;:\rdefault:\r}\r\P&quot; 
+</PRE></UL>
+</UL><H2><B>NOTES </B></H2>
+<UL><P>Abbreviation files are given the extension <B>.eaf</B> in the MicroEmacs '02 home directory. 
+<P>One of the easiest ways to create more complex abbreviations is to record a keyboard macro, name it and then insert the resultant macro. See notes on commands 
+<A HREF="m2cmd011.html">start-kbd-macro(2)</A>, 
+<A HREF="m2cmd089.html">name-kbd-macro(2)</A> and 
+<A HREF="m2cmd074.html">insert-macro(2)</A>. 
+<P>Try to avoid using named key, such as &quot;<TT>up</TT>&quot; and &quot;<TT>return</TT>&quot;, as the keyboard macro equivalent is not readable and is likely to change in future releases. </UL>
+<H2><B>FILES </B></H2>
+<UL><P><B>c.eaf</B> - C-Mode abbreviation file. <B>emf.eaf</B> - Macro code abbreviation file. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd048.html">execute-string(2)</A>, 
+<A HREF="m2cmd051.html">expand-abbrev(2)</A>, 
+<A HREF="m2cmd074.html">insert-macro(2)</A>, 
+<A HREF="m3mac045.html">iso-accents-mode(3)</A>, 
+<A HREF="m2cmd089.html">name-kbd-macro(2)</A>, 
+<A HREF="m2cmd011.html">start-kbd-macro(2)</A>, 
+<A HREF="m8fil000.html">eaf(8)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,670 @@
+<HTML>
+<HEAD><TITLE>MicroEmacs '02 - Split Command Glossary</TITLE></HEAD>
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+MicroEmacs '02 - Split Command Glossary</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>SPLIT COMMAND GLOSSARY </B></H2>
+<UL><P>The following is a list of all of the built in commands provided by <B>MicroEmacs '02</B> [See 
+<A HREF="amicr031.html">mixed listing</A>]: 
+<P>
+<A HREF="m2cmd000.html">abort-command(2)</A> (<B>C-g</B>)&nbsp;Abort command 
+<BR>
+<A HREF="m2cmd148.html">about(2)</A> Information About MicroEmacs 
+<BR>
+<A HREF="m2cmd001.html">add-color(2)</A> Create a new color 
+<BR>
+<A HREF="m2cmd001.html">add-color-scheme(2)</A> Create a new color scheme 
+<BR>
+<A HREF="m2cmd002.html">add-dictionary(2)</A> Declare existence of a spelling dictionary 
+<BR>
+<A HREF="m2cmd003.html">add-file-hook(2)</A> Declare file name context dependent configuration 
+<BR>
+<A HREF="m2cmd007.html">add-next-line(2)</A> Define the searching behavior of command output 
+<BR>
+<A HREF="m2cmd138.html">add-spell-rule(2)</A> Add a new spelling rule to the dictionary 
+<BR>
+<A HREF="m2cmd123.html">append-buffer(2)</A> Write contents of buffer to end of named file 
+<BR>
+<A HREF="m2cmd010.html">backward-char(2)</A> (<B>C-b</B>)&nbsp;Move the cursor left 
+<BR>
+<A HREF="m2cmd034.html">backward-delete-char(2)</A> (<B>backspace</B>)&nbsp;Delete the previous character at the cursor position 
+<BR>
+<A HREF="m2cmd037.html">backward-delete-tab(2)</A> (<B>S-tab</B>)&nbsp;Delete white space to previous tab-stop 
+<BR>
+<A HREF="m2cmd035.html">backward-kill-word(2)</A> (<B>esc backspace</B>)&nbsp;Delete the previous word at the cursor position 
+<BR>
+<A HREF="m2cmd092.html">backward-line(2)</A> (<B>C-p</B>)&nbsp;Move the cursor to the previous line 
+<BR>
+<A HREF="m2cmd094.html">backward-paragraph(2)</A> (<B>esc p</B>)&nbsp;Move the cursor to the previous paragraph 
+<BR>
+<A HREF="m2cmd096.html">backward-word(2)</A> (<B>esc b</B>)&nbsp;Move the cursor to the previous word 
+<BR>
+<A HREF="m2cmd012.html">beginning-of-buffer(2)</A> (<B>esc &lt;</B>)&nbsp;Move to beginning of buffer/file 
+<BR>
+<A HREF="m2cmd026.html">beginning-of-line(2)</A> (<B>C-a</B>)&nbsp;Move to beginning of line 
+<BR>
+<A HREF="m2cmd117.html">buffer-abbrev-file(2)</A> Set buffers' abbreviation file 
+<BR>
+<A HREF="m2cmd084.html">buffer-bind-key(2)</A> Create local key binding for current buffer 
+<BR>
+<A HREF="m2cmd014.html">buffer-info(2)</A> (<B>C-x&nbsp;=</B>)&nbsp;Status information on current buffer position 
+<BR>
+<A HREF="m2cmd006.html">buffer-mode(2)</A> (<B>C-x&nbsp;m</B>)&nbsp;Change a local buffer mode 
+<BR>
+<A HREF="m2cmd084.html">buffer-unbind-key(2)</A> Remove local key binding for current buffer 
+<BR>
+<A HREF="m2cmd015.html">capitalize-word(2)</A> (<B>esc c</B>)&nbsp;Capitalize word 
+<BR>
+<A HREF="m2cmd088.html">change-buffer-name(2)</A> (<B>esc C-n</B>)&nbsp;Change name of current buffer 
+<BR>
+<A HREF="m2cmd016.html">change-directory(2)</A> [<B>C-x&nbsp;C-d</B>] Change the current working directory 
+<BR>
+<A HREF="m2cmd017.html">change-file-name(2)</A> (<B>C-x&nbsp;n</B>)&nbsp;Change the file name of the current buffer 
+<BR>
+<A HREF="m2cmd027.html">change-font(2)</A> Change the screen font 
+<BR>
+<A HREF="m2cmd018.html">change-screen-depth(2)</A> Change the number of lines on the screen 
+<BR>
+<A HREF="m2cmd018.html">change-screen-width(2)</A> Change the number of columns on the screen 
+<BR>
+<A HREF="m2cmd009.html">command-apropos(2)</A> (<B>C-h&nbsp;a</B>)&nbsp;List commands involving a concept 
+<BR>
+<A HREF="m2cmd160.html">command-wait(2)</A> Conditional wait command 
+<BR>
+<A HREF="m2cmd020.html">compare-windows(2)</A> Compare buffer windows, ignore whitespace 
+<BR>
+<A HREF="m2cmd022.html">copy-region(2)</A> (<B>esc w</B>)&nbsp;Copy a region of the buffer 
+<BR>
+<A HREF="m2cmd023.html">count-words(2)</A> (<B>esc C-c</B>)&nbsp;Count the number of words in a region 
+<BR>
+<A HREF="m2cmd024.html">create-callback(2)</A> Create a timer callback 
+<BR>
+<A HREF="m2cmd093.html">define-help(2)</A> Define help information 
+<BR>
+<A HREF="m2cmd029.html">define-macro(2)</A> Define a new macro 
+<BR>
+<A HREF="m2cmd147.html">define-macro-file(2)</A> Define macro file location 
+<BR>
+<A HREF="m2cmd030.html">delete-blank-lines(2)</A> (<B>C-x&nbsp;C-o</B>)&nbsp;Delete blank lines about cursor 
+<BR>
+<A HREF="m2cmd031.html">delete-buffer(2)</A> (<B>C-x&nbsp;k</B>)&nbsp;Delete a buffer 
+<BR>
+<A HREF="m2cmd041.html">delete-dictionary(2)</A> Remove a spelling dictionary from memory 
+<BR>
+<A HREF="m2cmd036.html">delete-other-windows(2)</A> (<B>C-x&nbsp;1</B>)&nbsp;Delete other windows 
+<BR>
+<A HREF="m2cmd114.html">delete-registry(2)</A> Delete a registry tree 
+<BR>
+<A HREF="m2cmd155.html">delete-some-buffers(2)</A> Delete buffers with query 
+<BR>
+<A HREF="m2cmd036.html">delete-window(2)</A> (<B>C-x&nbsp;0</B>)&nbsp;Delete current window 
+<BR>
+<A HREF="m2cmd038.html">describe-bindings(2)</A> (<B>C-h&nbsp;b</B>)&nbsp;Show current command/key binding 
+<BR>
+<A HREF="m2cmd039.html">describe-key(2)</A> (<B>C-x&nbsp;?</B>)&nbsp;Report keyboard key name and binding 
+<BR>
+<A HREF="m2cmd040.html">describe-variable(2)</A> (<B>C-h&nbsp;v</B>)&nbsp;Describe current setting of a variable 
+<BR>
+<A HREF="m2cmd032.html">directory-tree(2)</A> Draw the file directory tree 
+<BR>
+<A HREF="m2cmd011.html">end-kbd-macro(2)</A> (<B>C-x&nbsp;)</B>)&nbsp;Stop recording keyboard macro 
+<BR>
+<A HREF="m2cmd012.html">end-of-buffer(2)</A> (<B>esc &gt;</B>)&nbsp;Move to end of buffer/file 
+<BR>
+<A HREF="m2cmd026.html">end-of-line(2)</A> (<B>C-e</B>)&nbsp;Move to end of line 
+<BR>
+<A HREF="m2cmd043.html">exchange-point-and-mark(2)</A> (<B>C-x&nbsp;C-x</B>)&nbsp;Exchange the cursor and marked position 
+<BR>
+<A HREF="m2cmd044.html">execute-buffer(2)</A> Execute script lines from a buffer 
+<BR>
+<A HREF="m2cmd045.html">execute-file(2)</A> (<B>esc /</B>)&nbsp;Execute script lines from a file 
+<BR>
+<A HREF="m2cmd046.html">execute-kbd-macro(2)</A> (<B>C-x&nbsp;e</B>)&nbsp;Execute a keyboard macro 
+<BR>
+<A HREF="m2cmd044.html">execute-line(2)</A> Execute a typed in script line 
+<BR>
+<A HREF="m2cmd047.html">execute-named-command(2)</A> [<B>esc x</B>] Execute a named command 
+<BR>
+<A HREF="m2cmd048.html">execute-string(2)</A> Execute a string as a command 
+<BR>
+<A HREF="m2cmd049.html">exit-emacs(2)</A> Exit MicroEmacs 
+<BR>
+<A HREF="m2cmd051.html">expand-abbrev(2)</A> Expand an abbreviation 
+<BR>
+<A HREF="m2cmd158.html">file-op(2)</A> File system operations command 
+<BR>
+<A HREF="m2cmd052.html">fill-paragraph(2)</A> (<B>esc o</B>)&nbsp;Format a paragraph 
+<BR>
+<A HREF="m2cmd053.html">filter-buffer(2)</A> (<B>C-x&nbsp;#</B>)&nbsp;Filter the current buffer through an O/S command 
+<BR>
+<A HREF="m2cmd091.html">find-buffer(2)</A> (<B>C-x&nbsp;b</B>)&nbsp;Switch to a named buffer 
+<BR>
+<A HREF="m2cmd056.html">find-file(2)</A> (<B>C-x&nbsp;C-f</B>)&nbsp;Load a file 
+<BR>
+<A HREF="m2cmd072.html">find-registry(2)</A> Index search of a registry sub-tree 
+<BR>
+<A HREF="m2cmd057.html">find-tag(2)</A> (<B>esc t</B>)&nbsp;Find tag, auto-load file and move to tag position 
+<BR>
+<A HREF="m2cmd010.html">forward-char(2)</A> (<B>C-f</B>)&nbsp;Move the cursor right 
+<BR>
+<A HREF="m2cmd034.html">forward-delete-char(2)</A> (<B>C-d</B>)&nbsp;Delete the next character at the cursor position 
+<BR>
+<A HREF="m2cmd035.html">forward-kill-word(2)</A> (<B>esc d</B>)&nbsp;Delete the next word at the cursor position 
+<BR>
+<A HREF="m2cmd092.html">forward-line(2)</A> (<B>C-n</B>)&nbsp;Move the cursor to the next line 
+<BR>
+<A HREF="m2cmd094.html">forward-paragraph(2)</A> (<B>esc n</B>)&nbsp;Move the cursor to the next paragraph 
+<BR>
+<A HREF="m2cmd096.html">forward-word(2)</A> (<B>esc f</B>)&nbsp;Move the cursor to the next word 
+<BR>
+<A HREF="m2cmd058.html">get-next-line(2)</A> (<B>C-x&nbsp;`</B>)&nbsp;Find the next command line 
+<BR>
+<A HREF="m2cmd042.html">get-registry(2)</A> Retrieve a node value from the registry 
+<BR>
+<A HREF="m2cmd117.html">global-abbrev-file(2)</A> Set global abbreviation file 
+<BR>
+<A HREF="m2cmd013.html">global-bind-key(2)</A> (<B>esc k</B>)&nbsp;Bind a key to a named command or macro 
+<BR>
+<A HREF="m2cmd005.html">global-mode(2)</A> (<B>esc m</B>)&nbsp;Change a global buffer mode 
+<BR>
+<A HREF="m2cmd013.html">global-unbind-key(2)</A> (<B>esc C-k</B>)&nbsp;Unbind a key from a named command or macro 
+<BR>
+<A HREF="m2cmd059.html">goto-alpha-mark(2)</A> (<B>C-x&nbsp;a</B>)&nbsp;Move the cursor to a alpha marked location 
+<BR>
+<A HREF="m2cmd060.html">goto-line(2)</A> (<B>esc g</B>)&nbsp;Move the cursor to specified line 
+<BR>
+<A HREF="m2cmd061.html">goto-matching-fence(2)</A> (<B>esc C-f</B>)&nbsp;Move the cursor to matching fence 
+<BR>
+<A HREF="m2cmd110.html">goto-position(2)</A> Restore a stored position 
+<BR>
+<A HREF="m2cmd110.html">goto-window(2)</A> Restore a saved window to the current window (historic) 
+<BR>
+<A HREF="m2cmd152.html">grow-window-horizontally(2)</A> Enlarge current window horizontally (relative) 
+<BR>
+<A HREF="m2cmd063.html">grow-window-vertically(2)</A> (<B>C-x&nbsp;z</B>)&nbsp;Enlarge the current window (relative change) 
+<BR>
+<A HREF="m2cmd065.html">help(2)</A> (<B>esc ?</B>)&nbsp;Help; high level introduction to help 
+<BR>
+<A HREF="m2cmd065.html">help-command(2)</A> (<B>C-h&nbsp;C-c</B>)&nbsp;Help; command information 
+<BR>
+<A HREF="m2cmd065.html">help-item(2)</A> (<B>C-h&nbsp;C-i</B>)&nbsp;Help; item information 
+<BR>
+<A HREF="m2cmd065.html">help-variable(2)</A> (<B>C-h&nbsp;C-v</B>)&nbsp;Help; variable information 
+<BR>
+<A HREF="m2cmd069.html">hilight(2)</A> Manage the buffer hilighting schemes 
+<BR>
+<A HREF="m2cmd070.html">hunt-backward(2)</A> (<B>C-x&nbsp;C-h</B>)&nbsp;Resume previous search in backward direction 
+<BR>
+<A HREF="m2cmd070.html">hunt-forward(2)</A> (<B>C-x&nbsp;h</B>)&nbsp;Resume previous search in forward direction 
+<BR>
+<A HREF="m2cmd033.html">indent(2)</A> Manage the auto-indentation methods 
+<BR>
+<A HREF="m2cmd073.html">insert-file(2)</A> (<B>C-x&nbsp;C-i</B>)&nbsp;Insert file into current buffer 
+<BR>
+<A HREF="m2cmd050.html">insert-file-name(2)</A> (<B>C-x&nbsp;C-y</B>)&nbsp;Insert filename into current buffer 
+<BR>
+<A HREF="m2cmd074.html">insert-macro(2)</A> Insert keyboard macro into buffer 
+<BR>
+<A HREF="m2cmd097.html">insert-newline(2)</A> (<B>C-o</B>)&nbsp;Insert new line at cursor position 
+<BR>
+<A HREF="m2cmd075.html">insert-space(2)</A> Insert space(s) into current buffer 
+<BR>
+<A HREF="m2cmd076.html">insert-string(2)</A> Insert character string into current buffer 
+<BR>
+<A HREF="m2cmd156.html">insert-tab(2)</A> (<B>C-i</B>)&nbsp;Insert tab(s) into current buffer 
+<BR>
+<A HREF="m2cmd077.html">ipipe-kill(2)</A> Kill a incremental pipe 
+<BR>
+<A HREF="m2cmd077.html">ipipe-shell-command(2)</A> (<B>esc  backslash</B>)&nbsp;Incremental pipe (non-suspending system call) 
+<BR>
+<A HREF="m2cmd077.html">ipipe-write(2)</A> Write a string to an incremental pipe 
+<BR>
+<A HREF="m2cmd078.html">isearch-backward(2)</A> (<B>C-r</B>)&nbsp;Search backwards incrementally (interactive) 
+<BR>
+<A HREF="m2cmd078.html">isearch-forward(2)</A> (<B>C-s</B>)&nbsp;Search forward incrementally (interactive) 
+<BR>
+<A HREF="m2cmd079.html">kbd-macro-query(2)</A> (<B>C-x&nbsp;q</B>)&nbsp;Query termination of keyboard macro 
+<BR>
+<A HREF="m2cmd082.html">kill-line(2)</A> (<B>C-k</B>)&nbsp;Delete all characters to the end of the line 
+<BR>
+<A HREF="m2cmd080.html">kill-paragraph(2)</A> Delete a paragraph 
+<BR>
+<A HREF="m2cmd159.html">kill-rectangle(2)</A> (<B>esc C-w</B>)&nbsp;Delete a column of text 
+<BR>
+<A HREF="m2cmd081.html">kill-region(2)</A> (<B>C-w</B>)&nbsp;Delete all characters in the marked region 
+<BR>
+<A HREF="m2cmd083.html">list-buffers(2)</A> (<B>C-x&nbsp;C-b</B>)&nbsp;List all buffers and show their status 
+<BR>
+<A HREF="m2cmd062.html">list-commands(2)</A> (<B>C-h&nbsp;c</B>)&nbsp;List available commands 
+<BR>
+<A HREF="m2cmd025.html">list-registry(2)</A> Display the registry in a buffer 
+<BR>
+<A HREF="m2cmd086.html">list-variables(2)</A> (<B>C-h&nbsp;v</B>)&nbsp;List defined variables 
+<BR>
+<A HREF="m2cmd015.html">lower-case-region(2)</A> (<B>C-x&nbsp;C-l</B>)&nbsp;Lowercase a region (downcase) 
+<BR>
+<A HREF="m2cmd015.html">lower-case-word(2)</A> (<B>esc l</B>)&nbsp;Lowercase word (downcase) 
+<BR>
+<A HREF="m2cmd154.html">mark-registry(2)</A> Modify the operating mode of a registry node 
+<BR>
+<A HREF="m2cmd085.html">ml-bind-key(2)</A> Create key binding for message line 
+<BR>
+<A HREF="m2cmd019.html">ml-clear(2)</A> Clear the message line 
+<BR>
+<A HREF="m2cmd085.html">ml-unbind-key(2)</A> Remove key binding from message line 
+<BR>
+<A HREF="m2cmd145.html">ml-write(2)</A> Write message on message line 
+<BR>
+<A HREF="m2cmd089.html">name-kbd-macro(2)</A> Assign a name to the last keyboard macro 
+<BR>
+<A HREF="m2cmd006.html">named-buffer-mode(2)</A> Change a named buffer mode 
+<BR>
+<A HREF="m2cmd068.html">narrow-buffer(2)</A> Hide buffer lines 
+<BR>
+<A HREF="m2cmd090.html">newline(2)</A> (<B>return</B>)&nbsp;Insert a new line 
+<BR>
+<A HREF="m2cmd091.html">next-buffer(2)</A> (<B>C-x&nbsp;x</B>)&nbsp;Switch to the next buffer 
+<BR>
+<A HREF="m2cmd095.html">next-window(2)</A> (<B>C-x&nbsp;o</B>)&nbsp;Move the cursor to the next window 
+<BR>
+<A HREF="m2cmd126.html">next-window-find-buffer(2)</A> [<B></B>] Split the current window and show new buffer 
+<BR>
+<A HREF="m2cmd127.html">next-window-find-file(2)</A> (<B>C-x&nbsp;4</B>)&nbsp;Split the current window and find file 
+<BR>
+<A HREF="m2cmd066.html">osd(2)</A> Manage the On-Screen Display 
+<BR>
+<A HREF="m2cmd004.html">osd-bind-key(2)</A> Create key binding for OSD dialog 
+<BR>
+<A HREF="m2cmd004.html">osd-unbind-key(2)</A> Remove key binding from OSD dialog 
+<BR>
+<A HREF="m2cmd098.html">pipe-shell-command(2)</A> (<B>esc @</B>)&nbsp;Execute a single operating system command 
+<BR>
+<A HREF="m2cmd100.html">popup-window(2)</A> Pop-up a window on the screen 
+<BR>
+<A HREF="m2cmd028.html">prefix(2)</A> Key prefix command 
+<BR>
+<A HREF="m2cmd095.html">previous-window(2)</A> (<B>C-x&nbsp;p</B>)&nbsp;Move the cursor to the previous window 
+<BR>
+<A HREF="m2cmd101.html">print-buffer(2)</A> Print buffer, with formatting 
+<BR>
+<A HREF="m2cmd129.html">print-color(2)</A> Create a new printer color 
+<BR>
+<A HREF="m2cmd101.html">print-region(2)</A> Print region, with formatting 
+<BR>
+<A HREF="m2cmd129.html">print-scheme(2)</A> Create a new printer color and font scheme 
+<BR>
+<A HREF="m2cmd102.html">query-replace-string(2)</A> (<B>esc C-r</B>)&nbsp;Search and replace a string - with query 
+<BR>
+<A HREF="m2cmd103.html">quick-exit(2)</A> (<B>esc z</B>)&nbsp;Exit the editor writing changes 
+<BR>
+<A HREF="m2cmd104.html">quote-char(2)</A> (<B>C-q</B>)&nbsp;Insert literal character 
+<BR>
+<A HREF="m2cmd105.html">rcs-file(2)</A> (<B>C-x&nbsp;C-q</B>)&nbsp;Handle Revision Control System (RCS) files 
+<BR>
+<A HREF="m2cmd106.html">read-file(2)</A> (<B>C-x&nbsp;C-r</B>)&nbsp;Find and load file replacing current buffer 
+<BR>
+<A HREF="m2cmd107.html">read-history(2)</A> Read in session history information 
+<BR>
+<A HREF="m2cmd157.html">read-registry(2)</A> Read in a registry definition file 
+<BR>
+<A HREF="m2cmd108.html">recenter(2)</A> (<B>C-l</B>)&nbsp;Recenter the window (refresh the screen) 
+<BR>
+<A HREF="m2cmd109.html">replace-string(2)</A> (<B>esc r</B>)&nbsp;Replace string with new string 
+<BR>
+<A HREF="m2cmd153.html">resize-all-windows(2)</A> Resize all windows (automatic change) 
+<BR>
+<A HREF="m2cmd152.html">resize-window-horizontally(2)</A> Resize current window horizontally (absolute) 
+<BR>
+<A HREF="m2cmd063.html">resize-window-vertically(2)</A> (<B>C-x&nbsp;w</B>)&nbsp;Resize the current window (absolute change) 
+<BR>
+<A HREF="m2cmd111.html">reyank(2)</A> (<B>esc y</B>)&nbsp;Restore next yank buffer 
+<BR>
+<A HREF="m2cmd113.html">save-buffer(2)</A> (<B>C-x&nbsp;C-s</B>)&nbsp;Save contents of changed buffer to file 
+<BR>
+<A HREF="m2cmd103.html">save-buffers-exit-emacs(2)</A> (<B>esc z</B>)&nbsp;Exit the editor prompt user to write changes 
+<BR>
+<A HREF="m2cmd112.html">save-dictionary(2)</A> Save changed spelling dictionaries 
+<BR>
+<A HREF="m2cmd144.html">save-history(2)</A> Write history information to history file 
+<BR>
+<A HREF="m2cmd008.html">save-registry(2)</A> Write a registry definition file 
+<BR>
+<A HREF="m2cmd150.html">save-some-buffers(2)</A> Save contents of all changed buffers to file (with query) 
+<BR>
+<A HREF="m2cmd099.html">screen-poke(2)</A> Immediate write string to the screen 
+<BR>
+<A HREF="m2cmd139.html">screen-update(2)</A> (<B>redraw</B>)&nbsp;Force screen update 
+<BR>
+<A HREF="m2cmd087.html">scroll-down(2)</A> (<B>C-n</B>)&nbsp;Move the window down (scrolling) 
+<BR>
+<A HREF="m2cmd149.html">scroll-left(2)</A> (<B>C-x&nbsp;&lt;</B>)&nbsp;Move the window left (scrolling) 
+<BR>
+<A HREF="m2cmd115.html">scroll-next-window-down(2)</A> (<B>esc C-v</B>)&nbsp;Scroll next window down 
+<BR>
+<A HREF="m2cmd115.html">scroll-next-window-up(2)</A> (<B>esc C-z</B>)&nbsp;Scroll next window up 
+<BR>
+<A HREF="m2cmd149.html">scroll-right(2)</A> (<B>C-x&nbsp;&gt;</B>)&nbsp;Move the window right (scrolling) 
+<BR>
+<A HREF="m2cmd087.html">scroll-up(2)</A> (<B>C-p</B>)&nbsp;Move the window up (scrolling) 
+<BR>
+<A HREF="m2cmd116.html">search-backward(2)</A> (<B>C-x&nbsp;r</B>)&nbsp;Search for a string in the backward direction 
+<BR>
+<A HREF="m2cmd116.html">search-forward(2)</A> (<B>C-x&nbsp;s</B>)&nbsp;Search for a string in the forward direction 
+<BR>
+<A HREF="m2cmd118.html">set-alpha-mark(2)</A> (<B>C-x&nbsp;C-a</B>)&nbsp;Place an alphabetic marker in the buffer 
+<BR>
+<A HREF="m2cmd134.html">set-char-mask(2)</A> Set character word mask 
+<BR>
+<A HREF="m2cmd119.html">set-cursor-to-mouse(2)</A> Move the cursor to the current mouse position 
+<BR>
+<A HREF="m2cmd120.html">set-encryption-key(2)</A> (<B>esc e</B>)&nbsp;Define the encryption key 
+<BR>
+<A HREF="m2cmd121.html">set-mark(2)</A> (<B>esc space</B>)&nbsp;Set starting point of region 
+<BR>
+<A HREF="m2cmd110.html">set-position(2)</A> Store the current position 
+<BR>
+<A HREF="m2cmd042.html">set-registry(2)</A> Modify a node value in the registry 
+<BR>
+<A HREF="m2cmd021.html">set-scroll-with-mouse(2)</A> Scroll the window with the mouse 
+<BR>
+<A HREF="m2cmd122.html">set-variable(2)</A> (<B>C-x&nbsp;v</B>)&nbsp;Assign a new value to a variable 
+<BR>
+<A HREF="m2cmd110.html">set-window(2)</A> Save the current window for restore (historic) 
+<BR>
+<A HREF="m2cmd071.html">shell(2)</A> [<B>C-x&nbsp;c</B>] Create a new command processor or shell 
+<BR>
+<A HREF="m2cmd131.html">shell-command(2)</A> Perform an operating system command 
+<BR>
+<A HREF="m2cmd067.html">show-cursor(2)</A> Change the visibility of the cursor 
+<BR>
+<A HREF="m2cmd132.html">show-region(2)</A> Show the current copy region 
+<BR>
+<A HREF="m2cmd152.html">shrink-window-horizontally(2)</A> Shrink current window horizontally (relative) 
+<BR>
+<A HREF="m2cmd063.html">shrink-window-vertically(2)</A> (<B>C-x&nbsp;C-z</B>)&nbsp;Shrink the current window (relative change) 
+<BR>
+<A HREF="m2cmd124.html">sort-lines(2)</A> Alphabetically sort lines 
+<BR>
+<A HREF="m2cmd125.html">spell(2)</A> Spell checker service provider 
+<BR>
+<A HREF="m2cmd151.html">split-window-horizontally(2)</A> (<B>C-x&nbsp;5</B>)&nbsp;Split current window into two (horizontally) 
+<BR>
+<A HREF="m2cmd128.html">split-window-vertically(2)</A> (<B>C-x&nbsp;2</B>)&nbsp;Split the current window into two 
+<BR>
+<A HREF="m2cmd011.html">start-kbd-macro(2)</A> (<B>C-x&nbsp;(</B>)&nbsp;Start recording keyboard macro 
+<BR>
+<A HREF="m2cmd130.html">suspend-emacs(2)</A> Suspend editor and place in background 
+<BR>
+<A HREF="m2cmd064.html">tab(2)</A> (<B>tab</B>)&nbsp;Handle the tab key 
+<BR>
+<A HREF="m2cmd133.html">translate-key(2)</A> Translate key 
+<BR>
+<A HREF="m2cmd135.html">transpose-chars(2)</A> (<B>C-t</B>)&nbsp;Exchange (swap) adjacent characters 
+<BR>
+<A HREF="m2cmd135.html">transpose-lines(2)</A> (<B>C-x&nbsp;C-t</B>)&nbsp;Exchange (swap) adjacent lines 
+<BR>
+<A HREF="m2cmd136.html">undo(2)</A> (<B>C-x&nbsp;u</B>)&nbsp;Undo the last edit 
+<BR>
+<A HREF="m2cmd137.html">universal-argument(2)</A> (<B>C-u</B>)&nbsp;Set the command argument count 
+<BR>
+<A HREF="m2cmd122.html">unset-variable(2)</A> Delete a variable 
+<BR>
+<A HREF="m2cmd015.html">upper-case-region(2)</A> (<B>C-x&nbsp;C-u</B>)&nbsp;Uppercase a region (upcase) 
+<BR>
+<A HREF="m2cmd015.html">upper-case-word(2)</A> (<B>esc u</B>)&nbsp;Uppercase word (upcase) 
+<BR>
+<A HREF="m2cmd140.html">view-file(2)</A> (<B>C-x&nbsp;C-v</B>)&nbsp;Load a file read only 
+<BR>
+<A HREF="m2cmd141.html">void(2)</A> Null command 
+<BR>
+<A HREF="m2cmd142.html">wrap-word(2)</A> Wrap word onto next line 
+<BR>
+<A HREF="m2cmd143.html">write-buffer(2)</A> (<B>C-x&nbsp;C-w</B>)&nbsp;Write contents of buffer to named (new) file 
+<BR>
+<A HREF="m2cmd146.html">yank(2)</A> (<B>C-y</B>)&nbsp;Paste (copy) kill buffer contents into buffer 
+<BR>
+<A HREF="m2cmd159.html">yank-rectangle(2)</A> (<B>esc C-y</B>)&nbsp;Insert a column of text 
+<P>The following is a list of documented macro commands provided by <B>MicroEmacs '02</B>: 
+<P>
+<A HREF="m2cmd005.html">add-global-mode(3)</A> Set a global buffer mode 
+<BR>
+<A HREF="m2cmd006.html">add-mode(3)</A> Set a local buffer mode 
+<BR>
+<A HREF="m3mac011.html">alarm(3)</A> Set an alarm 
+<BR>
+<A HREF="m9typ026.html">aman(3)</A> Compile an nroff file into a buffer (UNIX) 
+<BR>
+<A HREF="m3mac019.html">ascii-time(3)</A> Return the current time as a string 
+<BR>
+<A HREF="m3mac039.html">auto-spell(3)</A> Auto-spell support 
+<BR>
+<A HREF="m3mac039.html">auto-spell-buffer(3)</A> Auto-spell whole buffer 
+<BR>
+<A HREF="m3mac039.html">auto-spell-reset(3)</A> Auto-spell hilight reset 
+<BR>
+<A HREF="m3osd011.html">buffer-help(3)</A> Displays help page for current buffer 
+<BR>
+<A HREF="m3osd010.html">buffer-setup(3)</A> Configures the current buffer settings 
+<BR>
+<A HREF="m3mac017.html">c-hash-del(3)</A> Remove C/C++ #define evaluation 
+<BR>
+<A HREF="m3mac017.html">c-hash-eval(3)</A> Evaluate C/C++ #defines 
+<BR>
+<A HREF="m3mac017.html">c-hash-set-define(3)</A> Set a C/C++ #define 
+<BR>
+<A HREF="m3mac017.html">c-hash-unset-define(3)</A> Unset a C/C++ #define 
+<BR>
+<A HREF="m3mac009.html">calc(3)</A> Integer calculator 
+<BR>
+<A HREF="m3mac041.html">charset-change(3)</A> Convert buffer between two character sets 
+<BR>
+<A HREF="m3mac041.html">charset-iso-to-user(3)</A> Convert buffer from ISO standard to user character set 
+<BR>
+<A HREF="m3mac041.html">charset-user-to-iso(3)</A> Convert buffer from user to ISO standard character set 
+<BR>
+<A HREF="m3mac052.html">check-line-length(3)</A> Check the length of text lines are valid 
+<BR>
+<A HREF="m3mac005.html">clean(3)</A> Remove redundant white spaces from the current buffer 
+<BR>
+<A HREF="m2cmd020.html">compare-windows-exact(3)</A> Compare buffer windows, with whitespace 
+<BR>
+<A HREF="m3mac000.html">compile(3)</A> Start a compilation process 
+<BR>
+<A HREF="m3mac057.html">cvs(3)</A> MicroEmacs CVS interface 
+<BR>
+<A HREF="m3mac057.html">cvs-add(3)</A> MicroEmacs CVS interface - add file 
+<BR>
+<A HREF="m3mac057.html">cvs-checkout(3)</A> MicroEmacs CVS interface - checkout files 
+<BR>
+<A HREF="m3mac057.html">cvs-commit(3)</A> MicroEmacs CVS interface - commit changes 
+<BR>
+<A HREF="m3mac057.html">cvs-diff(3)</A> MicroEmacs CVS interface - diff changes 
+<BR>
+<A HREF="m3mac057.html">cvs-gdiff(3)</A> MicroEmacs CVS interface - graphical diff changes 
+<BR>
+<A HREF="m3mac057.html">cvs-log(3)</A> MicroEmacs CVS interface - log changes 
+<BR>
+<A HREF="m3mac057.html">cvs-remove(3)</A> MicroEmacs CVS interface - remove file 
+<BR>
+<A HREF="m3mac057.html">cvs-resolve-conflicts(3)</A> MicroEmacs CVS interface - resolve conflicts 
+<BR>
+<A HREF="m3mac057.html">cvs-state(3)</A> MicroEmacs CVS interface - list state of directory files 
+<BR>
+<A HREF="m3mac057.html">cvs-update(3)</A> MicroEmacs CVS interface - update directory files 
+<BR>
+<A HREF="m3mac033.html">cygnus(3)</A> Open a Cygwin BASH window 
+<BR>
+<A HREF="m2cmd005.html">delete-global-mode(3)</A> Remove a global buffer mode 
+<BR>
+<A HREF="m3mac021.html">delete-indentation(3)</A> Join 2 lines deleting white spaces 
+<BR>
+<A HREF="m2cmd006.html">delete-mode(3)</A> Remove a local buffer mode 
+<BR>
+<A HREF="m3osd009.html">describe-word(3)</A> Display a dictionary definition of a word 
+<BR>
+<A HREF="m3mac035.html">diff(3)</A> Difference files or directories 
+<BR>
+<A HREF="m3mac035.html">diff-changes(3)</A> Find the differences from a previous edit session 
+<BR>
+<A HREF="m3mac051.html">display-white-chars(3)</A> Toggle the displaying of white characters 
+<BR>
+<A HREF="m3mac032.html">draw(3)</A> Simple line drawing utility 
+<BR>
+<A HREF="m3mac022.html">edit-dictionary(3)</A> Insert a dictionary in a buffer 
+<BR>
+<A HREF="m3mac018.html">etfinsrt(3)</A> Insert template file into current buffer 
+<BR>
+<A HREF="m3mac042.html">execute-tool(3)</A> Execute a user defined shell tool 
+<BR>
+<A HREF="m3mac047.html">expand-abbrev-handle(3)</A> (<B>esc esc</B>)&nbsp;Expand an abbreviation handler 
+<BR>
+<A HREF="m3osd008.html">file-attrib(3)</A> Set the current buffers system file attributes 
+<BR>
+<A HREF="m3mac027.html">file-browser(3)</A> (<B>f10</B>)&nbsp;Browse the file system 
+<BR>
+<A HREF="m3mac027.html">file-browser-close(3)</A> Close the file-browser 
+<BR>
+<A HREF="m3mac027.html">file-browser-swap-buffers(3)</A> Swap between file-browser windows 
+<BR>
+<A HREF="m3mac030.html">find-bfile(3)</A> (<B>C-x&nbsp;9</B>)&nbsp;Load a file as binary data 
+<BR>
+<A HREF="m3mac030.html">find-cfile(3)</A> Load a crypted file 
+<BR>
+<A HREF="m3osd002.html">find-word(3)</A> Find a using spelling dictionaries 
+<BR>
+<A HREF="m3mac040.html">find-zfile(3)</A> Compressed file support 
+<BR>
+<A HREF="m3mac029.html">fold-all(3)</A> (<B>f3</B>)&nbsp;(Un)Fold all regions in the current buffer 
+<BR>
+<A HREF="m3mac029.html">fold-current(3)</A> (<B>f2</B>)&nbsp;(un)Fold a region in the current buffer 
+<BR>
+<A HREF="m3mac050.html">ftp(3)</A> Initiate an FTP connection 
+<BR>
+<A HREF="m3mac044.html">gdiff(3)</A> Graphical file difference 
+<BR>
+<A HREF="m3mac056.html">generate-tags-file(3)</A> Generate a tags file 
+<BR>
+<A HREF="m3mac001.html">grep(3)</A> Execute grep command 
+<BR>
+<A HREF="m3mac026.html">ifill-paragraph(3)</A> (<B>esc q</B>)&nbsp;Format a paragraph 
+<BR>
+<A HREF="m3mac043.html">info(3)</A> Display a GNU Info database 
+<BR>
+<A HREF="m3mac043.html">info-goto-link(3)</A> Display Info on a given link 
+<BR>
+<A HREF="m3mac043.html">info-on(3)</A> Display Info on a given topic 
+<BR>
+<A HREF="m3mac034.html">ishell(3)</A> Open a Cygwin BASH window 
+<BR>
+<A HREF="m3osd004.html">line-scheme-search(3)</A> Search and annotate the current buffer 
+<BR>
+<A HREF="m3mac012.html">Mahjongg(3)</A> MicroEmacs '02 version of the solitaire Mah Jongg game 
+<BR>
+<A HREF="m3osd006.html">MainMenu(3)</A> The top main menu 
+<BR>
+<A HREF="m3mac013.html">Match-It(3)</A> MicroEmacs '02 version of the Match-It game 
+<BR>
+<A HREF="m3mac014.html">Metris(3)</A> MicroEmacs '02 version of the falling blocks game 
+<BR>
+<A HREF="m3mac028.html">mail(3)</A> Compose and send an email 
+<BR>
+<A HREF="m3mac028.html">mail-check(3)</A> Check for new email 
+<BR>
+<A HREF="m3mac031.html">man(3)</A> UNIX manual page viewer 
+<BR>
+<A HREF="m3mac031.html">man-clean(3)</A> Clean UNIX manual page 
+<BR>
+<A HREF="m3mac054.html">normal-tab(3)</A> Insert a normal tab 
+<BR>
+<A HREF="m3osd001.html">organizer(3)</A> Calendar and address organizer 
+<BR>
+<A HREF="m3mac037.html">osd-dialog(3)</A> OSD dialog box 
+<BR>
+<A HREF="m3mac037.html">osd-entry(3)</A> OSD entry dialog box 
+<BR>
+<A HREF="m3osd007.html">osd-help(3)</A> GUI based on-line help 
+<BR>
+<A HREF="m3mac037.html">osd-xdialog(3)</A> OSD Extended dialog box 
+<BR>
+<A HREF="m3mac015.html">Patience(3)</A> MicroEmacs '02 version of Patience (or Solitaire) 
+<BR>
+<A HREF="m3mac003.html">paragraph-to-line(3)</A> Convert a paragraph to a single line 
+<BR>
+<A HREF="m3osd012.html">print-setup(3)</A> Configure (*mS's printer interface 
+<BR>
+<A HREF="m3mac007.html">query-replace-all-string(3)</A> Query replace string in a list of files 
+<BR>
+<A HREF="m3mac036.html">regex-backward(3)</A> Search for a magic string in the backward direction 
+<BR>
+<A HREF="m3mac036.html">regex-forward(3)</A> Search for a magic string in the forward direction 
+<BR>
+<A HREF="m3mac020.html">replace-all-pairs(3)</A> Replace string pairs in a list of files 
+<BR>
+<A HREF="m3mac006.html">replace-all-string(3)</A> Replace string with new string in a list of files 
+<BR>
+<A HREF="m3mac053.html">reread-file(3)</A> Reload the current buffer's file 
+<BR>
+<A HREF="m3mac022.html">restore-dictionary(3)</A> Save dictionary user changes 
+<BR>
+<A HREF="m3mac025.html">restyle-buffer(3)</A> Automatically reformat a buffer's indentation 
+<BR>
+<A HREF="m3mac025.html">restyle-region(3)</A> Automatically reformat a regions indentation 
+<BR>
+<A HREF="m3mac001.html">rgrep(3)</A> Execute recursive grep command 
+<BR>
+<A HREF="m3mac002.html">save-all(3)</A> Save all modified files (with query) 
+<BR>
+<A HREF="m3osd005.html">scheme-editor(3)</A> Color Scheme Editor 
+<BR>
+<A HREF="m3mac024.html">shut-down(3)</A> Editor exit callback command 
+<BR>
+<A HREF="m3mac004.html">sort-lines-ignore-case(3)</A> Alphabetically sort lines ignoring case 
+<BR>
+<A HREF="m3mac023.html">spell-add-word(3)</A> Add a word to the main dictionary 
+<BR>
+<A HREF="m3osd002.html">spell-buffer(3)</A> Spell check the current buffer 
+<BR>
+<A HREF="m3mac048.html">spell-complete-word(3)</A> Complete a word by invocation of the speller 
+<BR>
+<A HREF="m3osd002.html">spell-edit-word(3)</A> Edits a spell word entry 
+<BR>
+<A HREF="m3osd002.html">spell-word(3)</A> (<B>esc $</B>)&nbsp;Spell check a single word 
+<BR>
+<A HREF="m3mac024.html">start-up(3)</A> Editor startup callback command 
+<BR>
+<A HREF="m3mac028.html">stop-mail-check(3)</A> Disable the check for new email 
+<BR>
+<A HREF="m3osd003.html">symbol(3)</A> Insert an ASCII character 
+<BR>
+<A HREF="m3mac016.html">Triangle(3)</A> MicroEmacs '02 version of Triangle patience game 
+<BR>
+<A HREF="m3mac008.html">tabs-to-spaces(3)</A> Converts all tabs to spaces 
+<BR>
+<A HREF="m9typ026.html">tex2nr(3)</A> Convert a Latex file into nroff 
+<BR>
+<A HREF="m3mac010.html">time(3)</A> Command time evaluator 
+<BR>
+<A HREF="m3mac049.html">uniq(3)</A> Make lines in a sorted list unique 
+<BR>
+<A HREF="m2cmd006.html">unmark-buffer(3)</A> Remove buffer edited flag 
+<BR>
+<A HREF="m3osd000.html">user-setup(3)</A> Configure MicroEmacs for a specific user 
+<BR>
+<A HREF="m3mac028.html">vm(3)</A> Email viewer 
+<BR>
+<A HREF="m3mac038.html">which(3)</A> Program finder 
+<BR>
+<A HREF="m3mac040.html">zfile-setup(3)</A> Compressed file support setup </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2002/01/06</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

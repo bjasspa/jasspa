@@ -1,0 +1,101 @@
+<HTML>
+<HEAD><TITLE>txt(9)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+txt(9)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P>txt, doc - Plain text document file </UL>
+<H2><B>FILES </B></H2>
+<UL><P><B>hkdoc.emf</B> - Plain text hook definition </UL>
+<H2><B>EXTENSIONS </B></H2>
+<UL><P><B>.txt</B> - ASCII plain text file 
+<BR><B>.doc</B> - ASCII plain text document file </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The <B>doc</B> file type template handles the hilighting and text formating of a plain text file. Within the text document justification and word wrapping are typically enabled. The template allows the user to format text as left, right, center or no justification. 
+<P><B>Auto Layout</B> 
+<BR><UL>The automatic layout of the text is restricted to justification and wrapping and the detection of bulleted lists. 
+<A HREF="m5var053.html">fill-bullet(5)</A> may be used to determine the character set used for bullet points, on encountering a bullet the left-hand justification might be modified. </UL>
+<P><B>Formatting rules</B> 
+<BR><UL>The default mode of operation is automatic mode which attempts to retain the document style whenever a paragraph is re-formatted. This allows rapid entry of text into a reasonable format with no special formating character embedded in the text. </UL>
+<UL><P>The automatic formatting rules used by 
+<A HREF="m2cmd052.html">fill-paragraph(2)</A> in an automatic text mode are defined as follows:- 
+<P>Text on column 0 
+<BR><UL>Text appearing in the first column is always assumed to be left justified, and non-wrapping, provided that the text does not extend to the 
+<A HREF="m5var021.html">fill column</A>. This is typically used for headers and addresses. </UL>
+<P>Text on right edge 
+<BR><UL>Text ending at the right edge (the 
+<A HREF="m5var021.html">fill-col(5)</A>), which commences from more that 50% of the page width is assumed to be right justified, non-wrapping. Typically used for addresses. </UL>
+<P>Text centered 
+<BR><UL>Text which is centered on the page is assumed to be centered, this is non-wrapping. </UL>
+<P>Indented 
+<BR><UL>All other text, not covered by the cases above is assumed to be available for filling. In this case the text is filled by the paragraph and left/right justification is applied. </UL></UL>
+<P><B>Short Cuts</B> 
+<BR><UL>The short cut keys used within the buffer are:- </UL>
+<UL><P><B>C-c C-h</B> - Help information on current mode. 
+<BR><B>C-c C-s</B> - Spell the buffer. 
+<BR><B>C-c C-b</B> - Fill both; perform left and right justification on the margins. 
+<BR><B>C-c C-b</B> - Fill center; center the text on the current line. 
+<BR><B>C-c C-l</B> - Fill left; fill the text on the paragraph (ragged right edge). 
+<BR><B>C-c C-r</B> - Fill right; place text on right margin. 
+<BR><B>C-c C-o</B> - Reduce a paragraph to a single line. 
+<BR><B>C-c a</B> - Move to automatic formatting mode (default). 
+<BR><B>C-c l</B> - Change mode to left formating 
+<BR><B>C-c r</B> - Change mode to right formating 
+<BR><B>C-c r</B> - Change mode to both formating 
+<BR><B>C-c c</B> - Change mode to center formating 
+<BR><B>C-c n</B> - Change mode to no formating </UL></UL>
+<H2><B>NOTES </B></H2>
+<UL><P>To move text to a word processor then it is advised that all paragraphs are reduced to single lines, leading white space should be deleted (any possibly blank lines) and then import to the word processor. This saves considerable time as the word processor styles may be applied without handling spaces and band end of line characters. </UL>
+<H2><B>MAGIC STRINGS </B></H2>
+<UL><P><B>-!- document -!-</B> 
+<BR><UL>MicroEmacs specific tag, recognizes the file as a plain text document. No hilighting of the document is performed. </UL>
+<P><B>-!- document; sectioned -!-</B> 
+<BR><UL>MicroEmacs specific tag, recognizes the file as a document that contains sections. A crude section hilighting is enabled as follows:- </UL>
+<UL><P>Lines commencing with <B>&gt;</B> are assumed to be comments, typically used at the head of the document . <UL>
+<PRE>&gt;&nbsp;-!-&nbsp;document;&nbsp;sectioned&nbsp;-!- 
+&gt; 
+&gt;&nbsp;Author:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;My&nbsp;Self 
+&gt;&nbsp;Created:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;11/11/97 
+&gt;&nbsp;Modified:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;211197.1003&gt; 
+&gt;&nbsp;Location:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/xx/yy/zz.doc 
+</PRE></UL>
+</UL><UL><P>All lines commencing with start (<TT>*</TT>) are assumed to be bullet lists. Bullet is hilighted. </UL>
+<UL><P>All lines commencing with <TT>[a-zA-Z])</TT> or <TT>[0-9])</TT> are assumed to be minor sections. The section number is hilighted. e.g.: <UL>
+<PRE>a)&nbsp;text 
+1)&nbsp;text 
+</PRE></UL>
+</UL><UL><P>All text in single or double quotes is hilighted, assumed to be literal text. and are hilighted i.e. This is a <B>&quot;double quote&quot;</B> or <B>'a'</B> single quote. </UL>
+<UL><P>Lines commencing with underscore (<TT>_</TT>) are hilighted to the end. typically used as demarcation breaks or for section underlining </UL>
+<P><B>-!- Document; pseudo-code -!-</B> 
+<BR><UL>The document contains pseudo code, and the pseudo code is hilighted. The pseudo-code tokens are defined as follows:- </UL>
+<UL><P><B>//</B> introduces a comment to the end of the line. 
+<P>Command words comprise:- 
+<BR><UL><TT>BEGIN</TT>, <TT>BREAK</TT>, <TT>CASE</TT>, <TT>CLEAR</TT>, <TT>CONTINUE</TT>, <TT>DO</TT>, <TT>DONE</TT>, <TT>ELIF</TT>, <TT>ELSE</TT>, <TT>END</TT>, <TT>ENDIF</TT>, <TT>FOR</TT>, <TT>FUNCTION</TT>, <TT>GOTO</TT>, <TT>IF</TT>, <TT>ONEVENT</TT>, <TT>ONINTERRUPT</TT>, <TT>PROCEDURE</TT>, <TT>REPEAT</TT>, <TT>RETURN</TT>, <TT>SET</TT>, <TT>SWITCH</TT>, <TT>THEN</TT>, <TT>TO</TT>, <TT>UNTIL</TT>, <TT>WHILE</TT>, </UL>
+<P>Pseudo logical operators include 
+<BR><UL><TT>AND</TT>, <TT>FALSE</TT>, <TT>MOD</TT>, <TT>NOT</TT>, <TT>OR</TT>, <TT>TRUE</TT>, <TT>XOR</TT>, </UL></UL>
+<P><B>-!- document; sectioned; pseudo-code -!-</B> 
+<BR><UL>A combination of both of the above. </UL></UL>
+<H2><B>BUGS </B></H2>
+<UL><P>The automatic mode sometimes mistakes an indented paragraph for a centered paragraph. This only typically occurs when the first line of the paragraph is not filled to the right. When the formatting error occurs, simply pad the line out so that it extends past the fill column and re-apply the formatting. 
+<P>Unfortunately there is nothing that can be done to alleviate this problem, but it occurs infrequently. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var021.html">fill-col(5)</A>, 
+<A HREF="m2cmd052.html">fill-paragraph(2)</A>, 
+<A HREF="m3osd002.html">spell-buffer(3)</A>. 
+<P>
+<A HREF="amicr030.html">Supported File Types</A> </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

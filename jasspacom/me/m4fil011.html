@@ -1,0 +1,48 @@
+<HTML>
+<HEAD><TITLE>!while(4)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+!while(4)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>!while, !continue, !done - Conditional loop </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>!while</B>&nbsp;<I>condition</I> 
+<BR><UL>...&nbsp;loop&nbsp;body&nbsp;... 
+<BR>[<B>!continue</B>] 
+<BR></UL><B>!done</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The <B>!while</B> directive allows statements only to be executed if a <I>condition</I> specified in the directive is met. Every line following the <B>!while</B> directive, until the first <B>!done</B> directive, is only executed if the expression following the <B>!while</B> directive evaluates to a <TT>TRUE</TT> value. 
+<P>A <B>!continue</B> may be used in the loop, this immediately returns control to the <B>!while</B> statement and skips the rest of the section. 
+<P><B>!while statement may not be nested.</B> That is, only one <B>!while</B> statement may be outstanding at a time, a 
+<A HREF="m4fil012.html">!repeat(4)</A> statement may be used within the <B>!while</B> to create an inner loop if required. Alternatively the 
+<A HREF="m4fil009.html">!goto(4)</A> used in conjunction with the 
+<A HREF="m4fil008.html">!if(4)</A> statement may be used to construct loops. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>For example, the following macro segment fills to the fill column with spaces. <UL>
+<PRE>!while&nbsp;&amp;less&nbsp;$curcol&nbsp;$fill-col 
+&nbsp;&nbsp;&nbsp;&nbsp;insert-string&nbsp;&quot;&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;equal&nbsp;%example&nbsp;&quot;1&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Silly&nbsp;to&nbsp;show&nbsp;continue 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!continue&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Goto&nbsp;!while 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;You&nbsp;wont&nbsp;see&nbsp;me&nbsp;if&nbsp;%example&nbsp;=&nbsp;1&quot; 
+!done 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m4fil008.html">!if(4)</A>, 
+<A HREF="m4fil009.html">!goto(4)</A>, 
+<A HREF="m4fil012.html">!repeat(4)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,191 @@
+<HTML>
+<HEAD><TITLE>MicroEmacs '02 - Origins</TITLE></HEAD>
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+MicroEmacs '02 - Origins</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>ORIGINS </B></H2>
+<UL><P>This version of MicroEmacs is based on an early <I>MicroEmacs</I> release of 3.8 in 1988, the origins of which are unknown, except to say it was delivered on a unmarked 5 1/2&quot; floppy disk. 
+<P>The program was originally ported to a Motorola MVME147 UNIX box as an alternative to <B>vi</B>. Reliability of the program proved to be a problem as it constantly crashed. In an attempt to rectify the problems the development of MicroEmacs '02 commenced. 
+<P>Development has continued from 1988 through to today, on the whole oblivious to further developments of the existing <B>MicroEmacs</B> program. This was due to no Internet access. It was not until 1996 the next version of <B>MicroEmacs</B> and <B>mewin</B> (Microsoft Windows (TM) port of the same program) was downloaded from the Internet and compared. By this time MicroEmacs '02 was radically different and we were not about to mesh the two together - that would be a step backwards. 
+<P>Development of MicroEmacs '02 has been biased towards the UNIX platform, as most of the early development was performed in the UNIX domain. The first of the window servers was X-Windows, which in turn has shaped the implementation of the Microsoft Windows port. Latterly, we have seen the resurgence of the IBM-PC platform which is now commonplace. For the return port to the DOS environment, and subsequent development of the Microsoft Windows port, a UNIX like interface was required. Most existing users could not abide the primitive editors found on these machines; Microsoft Windows was an alien and hostile environment when compared with UNIX. Hence, the MicroEmacs '02 interface utilizes UNIX style cut and paste across all platforms. 
+<P>For portability, MicroEmacs '02 utilizes character rendering on all platforms regardless of the window manager. Under X-Windows and Microsoft Windows, the display is still treated as a character based display, the subtle difference is that the display pane is re-sizable. This means that the scroll bars, fonts etc. are not as slick as they could be, certainly under Microsoft Windows MicroEmacs '02 looks positively primitive!! Regardless of the look, the goal of a common editor across all working platforms has been achieved! </UL>
+<H2>Development History </H2>
+<UL><P>1988-92 <UL><UL><P>
+<LI>Ported to MVME147, UNIX using curses. 
+<LI>Fire fighting to get a stable version. 
+<LI>Expanded regular expression syntax. </UL></UL>
+<P>1992-1993 <UL><UL><P>
+<LI>Ported to IBM AIX 
+<LI>Ported to Silicon Graphics </UL></UL>
+<P>1994 <UL><UL><P>
+<LI>DOS built with djgpp, allowed large files to be edited. 
+<LI>Color hi-lighting. 
+<LI>Re-implemented the macro language. Allowed separately named macros. 
+<LI>Get-next-line support. 
+<LI>File hooks added. 
+<LI>Implemented Electric C. 
+<LI>RCS support. 
+<LI>Re-implemented backups and auto-saves. 
+<LI>Re-implemented isearch. 
+<LI>Re-implemented of keyboard macros. 
+<LI>Binary file reading support. </UL></UL>
+<P>1995 <UL><UL><P>
+<LI>Integral speller. 
+<LI>Ported to HP-UX. 
+<LI>Multiple ipipes supported on Unix. 
+<LI>Poke-screen support. 
+<LI>Call-back macro support. 
+<LI>Metris created. 
+<LI>Abbreviation and completion. 
+<LI>First implementation of mailing and View Mail. 
+<LI>Isearch expanded to support magic mode. 
+<LI>Session history support. 
+<LI>First ported to X-Terminal. 
+<LI>Mouse support. 
+<LI>Initial printer support. </UL></UL>
+<P>1996 <UL><UL><P>
+<LI>Ported to Slackware Linux. 
+<LI>First menu system (implemented in macros). 
+<LI>Undo support. 
+<LI>First ported to Microsoft Windows 95. 
+<LI>Re-implementation of get-next-line. 
+<LI>Auto mode support. 
+<LI>Magic file hooks added. 
+<LI>Proper key name support. 
+<LI>Key bindings support numeric arguments. </UL></UL>
+<P>1997 <UL><UL><P>
+<LI>Re-implementation of ipipes to enable terminal support. 
+<LI>Initial Directory-Tree support. 
+<LI>First implementation of the On Screen Display (OSD) menus and dialogues. 
+<LI>Horizontal split window support. 
+<LI>Scroll bar support. 
+<LI>Added menu bar. 
+<LI>Cursor position correction for hilights with invisible character. 
+<LI>Indentation scheme support. 
+<LI>Ported to Microsoft NT 
+<LI>Ipipes supported on NT. </UL></UL>
+<P>1998 <UL><UL><P>
+<LI>Registry features for configuration. 
+<LI>Re-implementation of OSD. 
+<LI>Re-implementation of termcap extended key support. 
+<LI>Narrow support. 
+<LI>Re-implementation of the session history. 
+<LI>Re-implemented the speller based on ispell dictionaries. 
+<LI>Re-worked the printer interface for Windows. 
+<LI>Rationalised mouse key bindings. 
+<LI>Added $system variable to configure MicroEmacs. 
+<LI>Added random hilight-token addition and removal support. 
+<LI><B>1st Release</B> - September 1998. 
+<LI>Support True-type fonts under windows, font selection dialog. 
+<LI><B>Minor Patch</B> - October 1998. 
+<LI>Enhanced the operation of the Window pipe's 
+<LI>Undo past the last save operation. 
+<LI>Added Tabbed entries to OSD. 
+<LI>Enhanced user setup using OSD. </UL></UL>
+<P>1999 <UL><UL><P>
+<LI>Introduction of the address and date 
+<A HREF="m3osd001.html">organizer(3)</A> (replacing the existing <B>cal</B> interface) 
+<LI>Generic buffer folding using 
+<A HREF="m2cmd068.html">narrow-buffer(2)</A> 
+<LI>Rendered cursor support on all platforms. 
+<LI>Smooth scrolling mode. 
+<LI>Win32s port, for Microsoft 3.1/3.11 O/S. 
+<LI>Re-worked <B>translate-tcap-key</B> to generic 
+<A HREF="m2cmd133.html">translate-key(2)</A> to solve many of the foreign language problems. 
+<LI>Re-worked the ALT key mapping to allow conventional Emacs meta key bindings. 
+<LI>Implemented Auto-Spell utility. 
+<LI>Introduction of private macro variables of the form <I>.name</I> and <I>.macro.name</I>. 
+<LI>Port to Sun Solaris Intel platform (2.6) 
+<LI>Merged the init-hilight and hilight-token into the single 
+<A HREF="m2cmd069.html">hilight(2)</A> command. Similarly for 
+<A HREF="m2cmd033.html">indent(2)</A>. 
+<LI>Enhanced the regexp support in 
+<A HREF="m2cmd069.html">hilight</A> tokens, vastly improving it capability and usability. Similarly for indent tokens. 
+<LI>Reorganized the hilighting files. Introduction of the 
+<A HREF="m3osd005.html">scheme-editor(3)</A> and <I>Hilight Search</I> OSD's. 
+<LI>Implemented box character override support ( 
+<A HREF="m5var047.html">$system(5)</A> bit 0x10000) on Win32 and Xterm platforms. 
+<LI>Microsoft Windows native console support. 
+<LI><B>2nd Release - Beta #1</B> - May 1999. 
+<LI>Bug fixes with multi-language support and spelling dictionaries. 
+<LI>Fixed 
+<A HREF="m2cmd052.html">fill-paragraph(2)</A> such that it retains the cursor position in the paragraph when invoked without arguments. 
+<LI>Moved to GNU regex for search/replace engine. 
+<LI>Enhanced <I>isearch</I> such that it operates in <I>*shell*</I> buffers (again). 
+<LI>
+<A HREF="m3mac044.html">gdiff(3)</A> macro implementation of a graphical diff to allow color annotation of differences and difference selection. Uses the output of a standard <B>diff(1)</B> utility. 
+<LI>2nd port to IBM AIX. 
+<LI><B>2nd Release - Beta #2</B> - November 1999 
+<LI>Enhanced the 
+<A HREF="m9typ004.html">latex(9)</A> support macros following various contributions from users. 
+<LI>Added <I>Favorites</I> to the <I>File</I> pull down menu. This is a simple mechanism to allow the user to add a file to a favorites list. 
+<LI>Ground up implementation of the regular expression pattern matcher, following licensing problems with the GNU regex. The resultant pattern matcher is now a little faster than GNU regex and is capable of all of the standard regular expression pattern matches. The pattern matcher has diverged from GNU in that double backslashes are required in the character classes <TT>[..]</TT> to allow for escape sequence short cuts such as '<TT>\n</TT>' (newline), '<TT>\t</TT>' (tab) etc. It was felt that this compromise was better than having to quote the more obscure search characters. 
+<LI>Changed the hilighting and indenting syntax to be GNU regex compliant. 
+<LI>Modified 
+<A HREF="m2cmd020.html">compare-windows(2)</A> to ignore white space by default, 
+<A HREF="m2cmd020.html">compare-windows-exact(3)</A> performs an exact character for character comparison. 
+<LI>Enhanced the tags support to handle multiple tags and recursive directory tree searching. 
+<LI>Implemented osd-help, a gui front end to the on-line help. Required changes to the help system which gives macros access to the on-line help buffer, needed for the index and search. 
+<LI>Over-hauled the hilighting scheme files and editor to support the disabling of buffer hilighting. 
+<LI>Many bugs fixed on all platforms, in particular unix cutting and pasting (crashes exceed) and focus problems and NT exit delay. 
+<LI>Added tab and newline character printing in buffers. 
+<LI>Introduced message line variables @mx and @mxa. 
+<LI>Added ftp support with a new ftp 'file-browser' interface to give easy to use ftp capability. </UL></UL>
+<P>2000 <UL><UL><P>
+<LI>Fixed several millennium bugs :) 
+<LI>Revamped the printing interface to support colors 
+<LI>Started using <B>CVS(1)</B> at last, much better history from now on. 
+<LI>Got the emain #define's properly supported again so options so MicroEmacs can be successfully compiled without options like SPELL and OSD etc. This can reduce the binary size by up to 37%. 
+<LI>Improved the macro based tag generators to support source code trees and many new items of information, added new generation GUI. 
+<LI>Greatly improved the OSD based search and replace dialog, also added the line hilight into this dialog. 
+<LI>Added new -k and -u command-line options and improved -s option. 
+<LI>Greatly improved and increase the file system operations via the new 
+<A HREF="m2cmd158.html">file-op(2)</A> command, created better menus in the 
+<A HREF="m3mac027.html">file-browser(3)</A>. 
+<LI>Added new 
+<A HREF="m2cmd110.html">set-position(2)</A> which can be used to store all information about the current window and 
+<A HREF="m2cmd110.html">goto-position(2)</A> which will then restore them. Allowed macros to use non-letter characters for alpha marks and positions so they no longer need to clobber user ones. 
+<LI>Greatly improved ipipe-shell-command efficiency on windows by introducing a new thread approach to listen for activity. Implemented a shell command-line in an ipiped environment so 
+<A HREF="m3mac034.html">ishell(3)</A> command is now usable on Windows platforms. 
+<LI>Revamped the main ftp GUI to make it work much more rationally. </UL></UL>
+<P>2001 <UL><UL><P>
+<LI>Changed buffer variables to except the form :&lt;buffer-name&gt;:&lt;variable&gt;, like command variables. This allows macros to access variable not defined in the current buffer. 
+<LI>Added new 
+<A HREF="m2cmd160.html">command-wait(2)</A> command to enable macros to wait for user dependent completion, used in <B>gdiff</B>. 
+<LI>Added support for new 
+<A HREF="m5var082.html">$buffer-backup(5)</A> variable for setting the back-up file location. 
+<LI>Major work to enable the complete rebinding of all keys so the user interface to MicroEmacs can be completely changed, this allows for example a Windows feel to be created. This required many internal ghosts to be exorcised and add new macro functions 
+<LI>Added new generic buffer setup, menu and help macros, creating the new 
+<A HREF="m3osd010.html">buffer-setup(3)</A> command. Ported all existing file hooks to this new interface greatly reducing the buffer hook size while increasing its functionality and consistency. 
+<LI>Added generic commands for the creation, deletion and reformatting of comments now used by most of the file hooks. 
+<LI><B>3rd Release</B> - July 2001. Fixed many bugs in the last 12 months as well as adding the above features. 
+<A HREF="m4fil026.html">&amp;cbind(4)</A>, 
+<A HREF="m4fil026.html">&amp;kbind(4)</A> and 
+<A HREF="m4fil026.html">&amp;nbind(4)</A>. </UL></UL></UL>
+<H2>Work In Progress or Planned </H2>
+<UL><P>Development of MicroEmacs '02 is an on-going process, follows is a list of work items which is currently being undertaken or planned:- <UL><P>
+<LI>Integrate the mouse interaction, especially the pop-up menus of the right mouse to be buffer sensitive and to deal with regions. (Macro implementation). 
+<LI>Native printer support for the generation of postscript. 
+<LI>GNU Emacs compatibility macro file. </UL></UL>
+<H2>Release History </H2>
+<UL><P><B>May 1999</B> 
+<BR><UL>2nd Major Release - MicroEmacs '99. </UL>
+<P><B>October 1998</B> 
+<BR><UL>Minor patch to MicroEmacs '98 to correct a font problem on Windows platforms. </UL>
+<P><B>September 1998</B> 
+<BR><UL>1st Major Release - MicroEmacs '98. </UL></UL>
+<H2>Documentation </H2>
+<UL><P>The documentation is all written in UNIX <B>nroff(1)</B> and converted to HTML, Microsoft Windows Help File format and MicroEmacs Help file format. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2002/01/06</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

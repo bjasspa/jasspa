@@ -1,0 +1,246 @@
+<HTML>
+<HEAD><TITLE>fileHooks(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+fileHooks(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>FILE HOOKS </B></H2>
+<UL><P>File hooks provide a mechanism to automatically invoke a set of macros for a given buffer type when the following events occur: <UL><P>
+<LI>Loading of a file into a buffer 
+<LI>Moving into a buffer (i.e. making a buffer current) 
+<LI>Moving out of a buffer (i.e. making another buffer current) 
+<LI>Deleting an active buffer </UL><P>The file hook selection (see below) is performed on the file name / extension and on the textual content of the buffer using 
+<A HREF="m2cmd003.html">add-file-hook</A>. 
+<P>Refer to 
+<A HREF="m2nar000.html">Language Templates</A> for a description of how the file hooks are used to define a new template for a new text format. 
+<P>The hook macros allow buffer modes and highlighting, applicable to the text type of the file, to be applied to the buffer. In addition, the associated hook macros may be located in a separate file and are loaded on demand when the file reading determines that a set of hook macros are required. 
+<P>Consider a file hook definition of the form; <UL>
+<PRE>add-file-hook&nbsp;&quot;.c&nbsp;.h&quot;&nbsp;&quot;fhook-c&quot; 
+</PRE></UL>
+<P>which binds the file hook <B>fhook-c</B> to any files that are loaded with the extension <B>.c</B> and <B>.h</B>. The operations undertaken by MicroEmacs '02 are defined as follows when a file <TT>foo.c</TT> is loaded:- <UL><P>
+<LI>Attempt to load file <TT>foo.c</TT>, if <TT>foo.c</TT> is not found then create a new buffer and assign file name <TT>foo.c</TT>. <P>
+<LI>If <TT>foo.c</TT> is found then load file into buffer. Search the first line(s) of the buffer for magic hook text (<I>add-file-hook</I> with argument). <P>
+<LI>If magic hook was not found then determine hook name from the file extension (<I>add-file-hook</I> information). <P>
+<LI>If a hook command is located, assign the file hook <B>fhook-c</B> to the buffer, assign the buffer entry (begin) hook macro of <B>bhook-c</B>; assign a buffer exit hook of <B>ehook-c</B>. <P>
+<LI>If the macro <B>fhook-c</B> is undefined then execute the macro file <B>hkc.emf</B> from the MicroEmacs home directory in an attempt to load the macro. If the file <B>myc.emf</B> is defined, then the modifications to the language template are applied after <B>hkc.emf</B> is loaded. <P>
+<LI>If the macro <B>fhook-c</B> is (now) defined then <TT>foo.c</TT> is TEMPORARILY made the current buffer and the file hook macro <B>fhook-c</B> is executed to completion and the previous current buffer is restored. [<I>TEMPORARY</I> here implies that no buffer hooks are executed on the flip in/out of <TT>foo.c</TT>]. <P>
+<LI>The current buffer is officially swapped to <TT>foo.c</TT>. At this point the <I>ehook</I> of the old current buffer is executed (while its still current) and then <TT>foo.c</TT> is swapped in to become the current buffer; the begin buffer hook <I>bhook-cmode</I> is then executed for <TT>foo.c</TT> (if it exists). <P>
+<LI>If the user moves to another buffer execute the end hook macro <B>ehook-cmode</B> (if it exists) and move to the new buffer, executing it's begin hook. <P>
+<LI>If the user subsequently returns to buffer <TT>foo.c</TT> execute the previous buffers end hook macro, set the current buffer to <I>foo.c</I> and execute the begin hook macro <B>bhook-c</B> (if it exists). <P>
+<LI>If the user kills buffer <TT>foo.c</TT>, if <TT>foo.c</TT> is the current buffer then an alternative buffer is made current, <TT>ehook</TT> and <TT>bhook</TT> executed as normal. If macro <B>dhook-c</B> is defined then <TT>foo.c</TT> is TEMPORARILY made the current buffer and the delete hook macro <B>dhook-c</B> is executed to completion and the previous current buffer is restored. </UL><P>The name of the file hook macro name is important, hook commands must commence with the text <B>fhook-</B><I>mode</I> where <I>mode</I> is an identifier for the operating mode. The name space is decomposed as follows:- <UL><P>
+<LI>The initial <B>f</B> is removed and replaced with <B>b</B> for the begin hook macro and <B>e</B> for the end hook macro. <P>
+<LI>When the <B>fhook</B> macro is undefined the <I>mode</I> component is removed and the file <B>hk</B><I>mode</I><B>.emf</B> is executed from the MicroEmacs home directory in an attempt to define the macro. </UL><P>The <B>fhook-</B> nomenclature may be omitted provided that the name is less than 6 characters, however the file, begin and end hook macros MUST commence with <B>f</B>, <B>b</B> and <B>e</B> respectively. In addition the macros must be defined as no auto file loading is performed. </UL>
+<H2>Buffer Hook Variables </H2>
+<UL><P>The macros bound to a buffer may be interrogated, the variables 
+<A HREF="m5var002.html">$buffer-fhook(5)</A>, 
+<A HREF="m5var002.html">$buffer-bhook(5)</A>, 
+<A HREF="m5var002.html">$buffer-ehook(5)</A> and 
+<A HREF="m5var002.html">$buffer-dhook(5)</A> contain the names of any associated macro attached as a macro hooks, defining the <I>file</I>, <I>begin</I>, <I>end</I> and <I>delete</I> hooks respectively. If a macro is not bound then the empty string <TT>&quot;&quot;</TT> is returned. Setting the variables has the effect of defining the hook and is a method by which the buffer hooks may be affected after the buffer has been loaded. </UL>
+<H2>Determination of a new file </H2>
+<UL><P>The <I>file</I> hook <B>fhook-XXX</B> numeric argument may be used to determine if the file associated with a buffer is a new file created by the user, or an existing file. Typically this distinction is used to determine whether a boiler template is added to the file or not. The macro argument <B>@#</B> is defined as zero (0) if this is a new file that has been created, or non-zero otherwise. 
+<P>The macro argument status is typically tested on entry to the macro as follows:- <UL>
+<PRE>define-macro&nbsp;fhook-mode 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;@# 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;This&nbsp;is&nbsp;a&nbsp;new&nbsp;file.&nbsp;Do&nbsp;new&nbsp;file&nbsp;things 
+&nbsp;&nbsp;&nbsp;&nbsp;!else 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;This&nbsp;is&nbsp;an&nbsp;existing&nbsp;file 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Set&nbsp;up&nbsp;bindings 
+!emacro 
+</PRE></UL>
+<P>An example of a generic <B>hook</B> file is given at the end of this section which elaborates on the file hooks. </UL>
+<H2>Begin and End hooks </H2>
+<UL><P>The <I>begin</I> and <I>end</I> hooks are usually used to save and restore global states which require special settings for a particular buffer type. This typically involves saving and restoring global variables which are used by other buffers in a different configuration. For example the following is used to reformat the time stamp string; the time stamp is a global variable 
+<A HREF="m5var045.html">$timestamp(5)</A> and if it is changed in one buffer, it must be restored ready for another. In this case the old time stamp is retained in a local buffer variable whenever the buffer is entered, the time stamp is then modified for the buffers requirements. On exit from the buffer the old time stamp format is restored to it's former state. <UL>
+<PRE>0&nbsp;define-macro&nbsp;bhook-foo 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;.timestamp&nbsp;$timestamp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Save&nbsp;old&nbsp;time&nbsp;stamp. 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$timestamp&nbsp;&quot;19%Y/%M/%D&nbsp;%h:%m:%s&quot; 
+!emacro 
+
+0&nbsp;define-macro&nbsp;ehook-foo 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$timestamp&nbsp;.bhook-foo.timestamp 
+!emacro 
+</PRE></UL>
+<P>Note that in both cases the 
+<A HREF="m2cmd029.html">define-macro(2)</A> invocation is defined as zero, this merely hides the macro from the command line since both are private macros not normally invoked by the user. </UL>
+<H2><B>FILE HOOK SELECTION </B></H2>
+<UL><P>MicroEmacs '02 may be reconfigured to operate in different modes (referred to a <I>Major Modes</I> in GNU <B>emacs(1)</B>) using the 
+<A HREF="m2cmd003.html">macro file hooks</A>. The file hooks allow the working environment to be customized for the editing of text of a particular sort, by importing text specific macros, key rebinding and highlighting. 
+<P>MicroEmacs '02, by default, loads a file into a buffer with default global modes with no highlighting. There are no mode specific key bindings, variable settings, macros or highlights, buffer interaction behaves in it's default state. The state of the buffer interaction may be modified through the use of the buffer modes (see 
+<A HREF="amicr021.html">Operating Modes</A>), for example the 'C' programming language 
+<A HREF="m2mod002.html">cmode(2m)</A> changes the characteristics of the <TT>tab</TT> character and performs language specific indentation of statements. When a text specific set of highlighting rules are applied to the buffer, the text becomes emphasized through the use of color applied selectively to the text i.e. comments, keywords, strings are shown in different colors, allowing them to be differentiated without studying the content. 
+<P>Setting the operating mode of the buffer would be tedious to perform from the command line, instead MicroEmacs '02 uses three different prioritized criteria to endeavor to select the correct operating mode. The operating mode is applied to the buffer by execution of a set of file specific macros, referred to a hook commands. The selection criteria of the hook commands is performed as follows, ordered in lowest to highest priority:- 
+<P><B>File Name</B> 
+<BR><UL>MicroEmacs '02 uses the filename and/or the file extension to select a start-up hook command. File names and extensions are bound to a set of macro hooks in a space separated list e.g. 
+<UL><P>
+<A HREF="m2cmd003.html">add-file-hook</A> &quot;<B>c cpp</B>&quot; &quot;<B>fhook-cmode</B>&quot; 
+<BR>
+<A HREF="m2cmd003.html">add-file-hook</A> &quot;<B>doc txt README</B>&quot; &quot;<B>fhook-doc</B>&quot; </UL></UL>
+<UL><P>The space separated list of names are interpreted as either file extensions or filenames. In this case any file with the extension <B>.c</B>, <B>.cpp</B> is bound to a file hook called <B>fhook-cmode</B> e.g. <TT>foo.c</TT>. Similarly files with the extension <B>.doc</B> or <B>.txt</B> are interpreted as plain text documents and are bound to <B>fhook-doc</B>. e.g. <TT>foo.txt</TT>. The entry <B>README</B> that exists in the documentation hook list may refer to a file <TT>README</TT> and also <TT>foo.README</TT>, both cases invoke the document hook. </UL>
+<UL><P>The file selection is the lowest priority selection criteria but usually satisfies most mode selection requirements. </UL>
+<P><B>Magic Strings</B> 
+<BR><UL>There are cases when file extensions may be omitted from files, typically these files include an identifier, or magic string, on the first line of the file which is used to identify the file to the operating system or application e.g. shell scripts under UNIX. MicroEmacs '02 automatically interrogates the top of every file that is loaded to locate some form of identification string. The identification strings are defined in a similar way to the file name hooks, except instead of defining a file extension the location and text content of the identifier is defined: 
+<UL><P>1 
+<A HREF="m2cmd003.html">add-file-hook</A> &quot;<B>#!/bin/sh</B>&quot; &quot;<B>fhook-shell</B>&quot; 
+<BR>1 
+<A HREF="m2cmd003.html">add-file-hook</A> &quot;<B>#!/usr/local/bin/wish</B>&quot; &quot;<B>fhook-tcl</B>&quot; </UL></UL>
+<UL><P>In this case, any file that commences with &quot;<B>#!/bin/sh</B>&quot; is interpreted as a shell script and invokes the shell hook <B>fhook-shell</B>. Where the identifier does not appear on the first non-blank line, the argument may be increased to the number of lines to be searched. Also it the magic sting should be search for without 
+<A HREF="m2mod004.html">exact(2m)</A> mode then the argument should be negated, e.g. 
+<UL><P>-4 <B>add-file-hook</B> &quot;&lt;html&gt;&quot; &quot;<B>fhook-html</B>&quot; </UL></UL>
+<UL><P>invokes <B>fhook-html</B> whenever &quot;<TT>&lt;html&gt;</TT>&quot;, &quot;<TT>&lt;HTML&gt;</TT>&quot; etc. is found in the first 4 lines of a file header, e.g.: <UL>
+<PRE>&lt;!--&nbsp;Comment&nbsp;line&nbsp;--&gt; 
+&lt;HtMl&gt; 
+</PRE></UL>
+</UL><UL><P>A match on a string identifier is assigned a higher priority than the file extension. It is recommended that magic strings are only used where there are no predefined file extensions, or conflicts exist between files with the same extension containing data interpreted in a different context. </UL>
+<P><B>Explicit Strings</B> 
+<BR><UL>The last method allows an explicit identifier string to be embedded into the text of the file informing MicroEmacs '02 which mode it should adopt. GNU Emacs supports this (see <B>Major Mode</B> in the GNU Emacs documentation) type of operation by insertion of strings of the form: 
+<UL><P><B>-*-</B> <I>mode</I> <B>-*-</B> </UL></UL>
+<UL><P>Where <I>mode</I> represents the major mode within GNU Emacs. The same format as used by <B>Magic Strings</B> can be used to find and extract the <I>mode</I>, e.g.: 
+<UL><P><B>-1</B> 
+<A HREF="m2cmd003.html">add-file-hook</A> &quot;<B>-[*!]-[ \t]nroff.*-[*!]-</B>&quot; &quot;<B>fhook-nroff</B>&quot; </UL></UL>
+<UL><P>The definition would detect the GNU Emacs mode defined in an Nroff file e.g. 
+<UL><P>.\&quot;&nbsp;-*-&nbsp;nroff&nbsp;-*-&nbsp;&quot; 
+<BR>.TH&nbsp;man&nbsp;1 
+<BR>.SH&nbsp;NAME 
+<BR>... </UL></UL>
+<UL><P>It should be stressed that the <B>-*-</B> syntax belongs to GNU Emacs and NOT MicroEmacs '02, MicroEmacs '02 provides a mechanism to locate, extract and interpret the string. The <B>-*-</B> syntax should only be applied to files if it is known that the <I>mode</I> is a GNU mode. </UL>
+<UL><P>A MicroEmacs '02 specific string is also provided, defined as: 
+<UL><P><B>-!-</B>&nbsp;<I>mode</I>&nbsp;<B>-!-</B> </UL></UL>
+<UL><P>where <I>mode</I> is an arbitrary string defined by <I>add-file-hook</I>. User defined modes may be created and assigned to files with this syntax, this does not conflict with the GNU Emacs command. For example to assign a new mode <I>mymode</I> to a file we would define the following:- 
+<UL><P><B>-1</B> 
+<A HREF="m2cmd003.html">add-file-hook</A> &quot;<B>-!-[ \t]mymode.*-!-</B>&quot; &quot;<B>fhook-mymode</B>&quot; </UL></UL>
+<UL><P>Files containing a the following identifier would be loaded with <I>mymode</I> hook: 
+<UL><P>#&nbsp;-!-&nbsp;mymode&nbsp;-!- 
+<BR># 
+<BR>#&nbsp;Last&nbsp;Modified:&nbsp;&nbsp;&lt;120683.1014&gt; </UL></UL></UL>
+<H2><B>FILE HOOK SCRIPTS </B></H2>
+<UL><P>The buffer hook files <B>hk</B><I>name</I><B>.emf</B> typically follow a standard layout, and are generally associated with hi-lighting as follows, <B>mode</B> in this case is the name of the file mode associated with the file:- <UL>
+<PRE>!if&nbsp;&amp;seq&nbsp;.hilight.mode&nbsp;&quot;ERROR&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;.hilight.mode&nbsp;&amp;pinc&nbsp;.hilight.next&nbsp;1 
+!endif 
+; 
+;&nbsp;Define&nbsp;the&nbsp;hilighting 
+; 
+0&nbsp;hilight&nbsp;.hilight.mode&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$global-scheme 
+hilight&nbsp;.hilight.mode&nbsp;2&nbsp;&quot;\*\*&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.comment 
+hilight&nbsp;.hilight.mode&nbsp;4&nbsp;&quot;\&quot;&quot;&nbsp;&quot;\&quot;&quot;&nbsp;&quot;\\&quot;&nbsp;&nbsp;&nbsp;.scheme.string 
+hilight&nbsp;.hilight.mode&nbsp;0&nbsp;&quot;'.'&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.quote 
+
+hilight&nbsp;.hilight.mode&nbsp;1&nbsp;&quot;if&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.keyword 
+hilight&nbsp;.hilight.mode&nbsp;1&nbsp;&quot;elif&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.keyword 
+hilight&nbsp;.hilight.mode&nbsp;1&nbsp;&quot;else&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.keyword 
+... 
+
+;&nbsp;Reset&nbsp;the&nbsp;hilighting&nbsp;printer&nbsp;format&nbsp;and&nbsp;define&nbsp;the&nbsp;color&nbsp;bindings. 
+0&nbsp;hilight-print&nbsp;.hilight.mode 
+hilight-print&nbsp;.hilight.mode&nbsp;&quot;i&quot;&nbsp;&nbsp;.scheme.comment 
+hilight-print&nbsp;.hilight.mode&nbsp;&quot;b&quot;&nbsp;&nbsp;.scheme.keyword&nbsp;.scheme.variable 
+hilight-print&nbsp;.hilight.mode&nbsp;&quot;bi&quot;&nbsp;.scheme.string&nbsp;.scheme.quote 
+... 
+
+;&nbsp;Define&nbsp;the&nbsp;indentation&nbsp;tokens 
+0&nbsp;indent&nbsp;&nbsp;.hilight.mode&nbsp;2&nbsp;10 
+indent&nbsp;.hilight.mode&nbsp;n&nbsp;&quot;if&quot;&nbsp;4 
+indent&nbsp;.hilight.mode&nbsp;s&nbsp;&quot;elif&quot;&nbsp;-4 
+indent&nbsp;.hilight.mode&nbsp;s&nbsp;&quot;else&quot;&nbsp;-4 
+indent&nbsp;.hilight.mode&nbsp;o&nbsp;&quot;endif&quot;&nbsp;-4 
+indent&nbsp;.hilight.mode&nbsp;n&nbsp;&quot;while&quot;&nbsp;4 
+... 
+
+define-macro&nbsp;fhook-mode 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;if&nbsp;arg&nbsp;is&nbsp;0&nbsp;this&nbsp;is&nbsp;a&nbsp;new&nbsp;file&nbsp;so&nbsp;add&nbsp;template 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;@# 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;etfinsrt&nbsp;&quot;mode&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$buffer-hilight&nbsp;.hilight.mode 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$buffer-indent&nbsp;.hilight.mode 
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;buffer-mode&nbsp;&quot;time&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;buffer-mode&nbsp;&quot;indent&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;buffer-abbrev-file&nbsp;&quot;mode&quot; 
+!emacro 
+</PRE></UL>
+<P>The previous example shows how the <B>fhook-mode</B> numeric argument is used to determine if this is a new file. If the argument <B>@#</B> is zero then this is interpreted as a new file, in this case a standard template is inserted (from file <B>mode.etf</B>) and the generic strings such as <TT>$YEAR$</TT> replaced with construction information. The template is generally used for standard headers and skeleton text body. 
+<P>In addition an abbreviation file <B>mode.eaf</B> (see 
+<A HREF="m8fil000.html">eaf(8)</A>) is bound to the buffer using the 
+<A HREF="m2cmd117.html">buffer-abbrev-file(2)</A> command and the buffer hi-lighting enabled by assignment of the 
+<A HREF="m5var004.html">$buffer-hilight(5)</A> variable. </UL>
+<H2><B>MODIFYING FILE HOOKS </B></H2>
+<UL><P>The standard hook files supplied with MicroEmacs '02 should not be modified, changes to the file hooks may be applied using a separate macro file called <B>my</B><I>XXX.emf</I>, this is automatically executed after the <B>hk</B><I>XXX.emf</I> file is executed. 
+<P>The extended hook functions may be defined company wide, or by the user, to over-ride some of the standard hook functions, or to extend the syntax of the base files with locally defined extensions. As an example, consider the following file <B>myc.emf</B> which extends the basic <B>hkc.emf</B> file set of hi-lighting tokens for the 'C' Language. <UL>
+<PRE>;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+; 
+;&nbsp;&nbsp;Created&nbsp;By&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;Steven&nbsp;Phillips 
+;&nbsp;&nbsp;Created&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;Thu&nbsp;Jun&nbsp;18&nbsp;15:34:05&nbsp;1998 
+;&nbsp;&nbsp;Last&nbsp;Modified&nbsp;:&nbsp;&lt;230798.0854&gt; 
+; 
+;&nbsp;&nbsp;Description&nbsp;&nbsp;&nbsp;Extension&nbsp;hilighting&nbsp;for&nbsp;the&nbsp;'C'&nbsp;language. 
+; 
+;&nbsp;&nbsp;Notes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Define&nbsp;the&nbsp;locally&nbsp;defined&nbsp;'C'&nbsp;library&nbsp;types&nbsp;and&nbsp;definitions 
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;as&nbsp;extensions&nbsp;to&nbsp;the&nbsp;'C'&nbsp;programming&nbsp;language. 
+; 
+;&nbsp;&nbsp;History 
+; 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+
+;&nbsp;MicroEmacs&nbsp;specific&nbsp;tokens 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;LINE&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;BUFFER&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;WINDOW&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;REGION&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;KEYTAB&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;KILL&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;KLIST&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;HILNODE&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;HILNODEPTR&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;HILCOLOR&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;SELHILIGHT&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;VIDEO&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;VVIDEO&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;FRAMELINE&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;IPIPEBUF&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;DIRNODE&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;UNDOND&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;meVARLIST&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;meVARIABLE&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;meCMD&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;meAMARK&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;meABREV&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;meMACRO&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;meNARROW&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;meREGISTERS&quot;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;meSTAT&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;osdITEM&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;osdDIALOG&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;osdCHILD&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;meSCROLLBAR&quot;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;osdCONTEXT&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;osdDISPLAY&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;RNODE&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;REGHANDLE&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;meDIRLIST&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;meNAMESVAR&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;meDICTADDR&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;meSPELLRULE&quot;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;meDICTWORD&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;meDICTIONARY&quot;&nbsp;&nbsp;&nbsp;.scheme.type 
+hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;meMODE&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.type 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="amicr021.html">Operating Modes</A>, 
+<A HREF="m2nar000.html">Language Templates</A>, 
+<A HREF="m2cmd003.html">add-file-hook(2)</A>, 
+<A HREF="m2mod002.html">cmode(2m)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

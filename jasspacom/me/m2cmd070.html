@@ -1,0 +1,45 @@
+<HTML>
+<HEAD><TITLE>hunt-forward(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+hunt-forward(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>hunt-forward - Resume previous search in forward direction hunt-backward - Resume previous search in backward direction </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>hunt-forward</B> (<B>C-x&nbsp;h</B>)&nbsp; 
+<BR><I>n</I> <B>hunt-backward</B> (<B>C-x&nbsp;C-h</B>)&nbsp; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>hunt-forward</B> repeats the last search with the last search string in a forwards direction, from the current cursor position. 
+<A HREF="m2mod009.html">magic(2m)</A> and 
+<A HREF="m2mod004.html">exact(2m)</A> modes are operational. 
+<P><B>hunt-backward</B> repeats the last search with the last search string in a backwards direction, as per <B>hunt-forward</B>. 
+<P>The numeric argument <I>n</I> is interpreted as follows:- 
+<P><B>n &gt; 0</B> 
+<BR><UL>The <I>n</I>th occurrence of the pattern is located. </UL>
+<P><B>n &lt; 0</B> 
+<BR><UL>The first occurrence of the pattern is located in the next <I>n</I> lines. </UL></UL>
+<H2><B>DIAGNOSTICS </B></H2>
+<UL><P>The command returns a status of <TT>FALSE</TT> if no previous search string has been established, or if the pattern could not be located (or <I>n</I>th pattern where <I>n</I> occurrences are requested). If the pattern is found within the given search criteria the return status is <TT>TRUE</TT>. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2mod004.html">exact(2m)</A>, 
+<A HREF="m2cmd078.html">isearch-forward(2)</A>, 
+<A HREF="m2mod009.html">magic(2m)</A>, 
+<A HREF="m2cmd116.html">search-backward(2)</A>, 
+<A HREF="m2cmd116.html">search-forward(2)</A>, 
+<BR>
+<A HREF="m2nar006.html">Regular Expressions</A> </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

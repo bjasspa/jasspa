@@ -1,0 +1,110 @@
+<HTML>
+<HEAD><TITLE>scheme-editor(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+scheme-editor(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>scheme-editor - Color Scheme Editor </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>scheme-editor</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>scheme-editor</B> is a color and font scheme editor that provides a dialog interface to configure the display schemes used by the editor. The schemes may be created or modified within the scheme editor and then committed to the configuration files for general use. 
+<P>The editor can be used to create both screen and printer color/font schemes, they are typically stored in the <TT>macros</TT> directory and are executed as macro files at start up or when printing. The standard screen schemes are called <TT>scheme</TT><I>X</I><TT>.emf</TT> and printer ones <TT>print</TT><I>X</I><TT>.emf</TT>. 
+<P>The <B>scheme-editor</B> is displayed within a single dialog box, tab selections at the top of the dialog box enable <B>color</B> and <B>scheme</B> creation and/or modification. Navigation is typically performed using the mouse, where the mouse is absent then the <TT>TAB</TT> key may be used to move between the fields. The information presented is defined as follows:- 
+<P><B>File Name</B> 
+<BR><UL>The name of the color scheme to be modified. This is the name of the <B>scheme</B><I>X</I><B>.emf</B> file, omitting the file extension. See the <B>FILES</B> section below for a list of standard screen and printer scheme supplied with MicroEmacs '02. </UL>
+<P><B>Type</B> 
+<BR><UL>Defines whether the scheme is a screen or printer type. </UL>
+<P><B>Description</B> 
+<BR><UL>An ASCII description of the color scheme, used to identify the color scheme. </UL>
+<P><B>Buffer Hilight</B> 
+<BR><UL>Available when scheme is a screen type. Defines whether buffer hilighting should be enabled, when <I>Completely Disable</I> all buffers are displayed character for character in the standard text scheme, this will ensure maximum update performance but some file formats such as the on-line help will become unreadable so this option is really selected. Similarly <I>Reformat Only</I> disables the majority of buffers, hilighting is only enabled when the file would be unreadable without it, such as the on-line help or man page files. The default <I>Fully Enabled</I> setting enables all buffer hilighting. </UL>
+<P><B>Print Option</B> 
+<BR><UL>Available when scheme is a printer type. Defines what components of a scheme is to be used when printing. </UL></UL>
+<H2>Colors </H2>
+<UL><P>The <B>colors</B> tab allows the basic palette colors of the editor to be created and modified. The left-hand side of the dialog contains a scrolling window containing the existing color entries. The right-hand side of the dialog provides the controls to add and change the color assignment. The controls operate on the currently selected palette entry. 
+<P><B>Add</B> 
+<BR><UL>Creates and adds a new color entry into the palette. The new palette entry is created with a default color that may be subsequently modified. </UL>
+<P><B>Change</B> 
+<BR><UL>Commits the current selection color to the palette. </UL>
+<P><B>Red</B>/<B>Green</B>/<B>Blue</B> 
+<BR><UL>The color entries allow the currently selected palette color entry to be modified. The color values may be changed by direct numeric entry (0..255) or via the ^/v controls; the color is committed to the palette using the <B>Add</B> or <B>Change</B> button. </UL></UL>
+<H2>Schemes </H2>
+<UL><P>The <B>schemes</B> tab allows the schemes to be edited. The left-hand side of the dialog contains a scrolling window of the available color palette (created from the <B>Colors</B> tab). The right-hand side of the window shows the variants of the scheme. 
+<P><B>Selection</B> 
+<BR><UL>The <B>selection</B> item provides a pull-down menu containing gross scheme categories used by the editor. </UL>
+<P><B>Scheme</B> 
+<BR><UL>A pull-down menu containing the schemes of the selection, modifying this entry shows the variants of the scheme in the <B>Normal</B>, <B>Current</B>, <B>Select</B> and <B>Sel-Cur</B> dialogs. </UL>
+<P>There are 4 variants, or styles, for a single scheme; each style is comprised of a foreground and background color, and a row of toggle button to enable/disable fonts, defined as follows. 
+<UL><P><TT>B</TT> - Bold. 
+<BR><TT>I</TT> - Italic. 
+<BR><TT>L</TT> - Light (typically not supported). 
+<BR><TT>R</TT> - Reverse video (fore/back-ground swapped). 
+<BR><TT>U</TT> - Underline. 
+<BR><TT>V</TT> - Toggle reverse video when inverted. </UL>
+<P>The last mode <B>V</B> needs a little more explanation; commands such as 
+<A HREF="m2cmd099.html">screen-poke(2)</A> are able to invert the color scheme, i.e. use the fore color for the background etc. Enabling this mode will toggle the reverse video mode (<B>R</B>) when this feature is used. 
+<P>The style displayed by a particular scheme depends upon the selection/current status of the text: 
+<P><B>Normal</B> 
+<BR><UL>The normal style, when the text object is not selected or current (i.e. out of focus). </UL>
+<P><B>Current</B> 
+<BR><UL>The style used when the text object is current (i.e. in focus) </UL>
+<P><B>Select</B> 
+<BR><UL>The style used when the text object is selected (i.e. by the mouse) and is not current. </UL>
+<P><B>Sel-Cur</B> 
+<BR><UL>The style used when the text object is selected and is current. 
+</UL><P>Note that a printer scheme only uses the Normal style. 
+<P>Setting of the <B>selection</B> and <B>scheme</B> shows the current scheme in the <B>Normal</B>, <B>Current</B>, <B>Select</B> and <B>Sel-Cur</B> dialogs. New colors are assigned by selecting a color in the palette area and making it current. The current color is applied by selecting the <B>Fore</B> / <B>Back</B> boxes of the scheme dialog. The assigned color is displayed in the text box <I>The big brown fox...</I>. </UL>
+<H2>Controls </H2>
+<UL><P>The controls at the bottom of the dialog apply the edits to the configuration files. 
+<P><B>Current</B> 
+<BR><UL>Makes the changes to the palette and schemes current, they are applied to the current editing session but are not committed to file. This allows the palette changes to be used prior to commitment. Note that all modifications are lost if they are not saved and the editing session is terminated. </UL>
+<P><B>Save</B> 
+<BR><UL>Saves the scheme modifications to file, effectively making the changes permanent. Note however that the scheme macro file will be saved in the first directory in the 
+<A HREF="m5var057.html">$search-path(5)</A>, regardless of the location of the original. For network systems this typically means that the changes will only effect the current user. </UL>
+<P><B>Install</B> 
+<BR><UL>Installs the current color scheme into the configuration files, making the color scheme accessible to the 
+<A HREF="m3osd000.html">user-setup(3)</A> dialog. </UL>
+<P><B>Exit</B> 
+<BR><UL>Quits the scheme editor without modifying the settings. </UL></UL>
+<H2><B>FILES </B></H2>
+<UL><P><TT>scheme.emf</TT> - Defines the standard scheme variables, including the available scheme list, and associated text. 
+<BR><TT>schemed.emf</TT> - Default white on black color scheme. 
+<BR><TT>schemej.emf</TT> - Black on cream color scheme. 
+<BR><TT>schemevi</TT> - Sandy shores. 
+<BR><TT>schemesf</TT> - Sherwood Forest. 
+<BR><TT>schemebh</TT> - Blue Hue. 
+<BR><TT>schemepd</TT> - Plain Black on Cream. 
+<BR><TT>schemepl</TT> - Plain White on Black. 
+<BR><TT>schemel</TT> - Black on grey. 
+<BR><TT>schememd</TT> - Microsoft Developer Studio Colors. 
+<BR><TT>printers.emf</TT> - Defines the list of available printer schemes and drivers. 
+<BR><TT>printd</TT> - Default plain print-out. 
+<BR><TT>printf</TT> - Print using fonts. 
+<BR><TT>printepc</TT> - Print using Epson base colors and fonts. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P><B>scheme-editor</B> is a macro that is implemented in file <TT>schemosd.emf</TT>. The scheme editor uses 
+<A HREF="m2cmd066.html">osd(2)</A> to create and manage the dialogs. 
+<P>Only the Normal scheme style is used by printer schemes. 
+<P>The setting of <B>Buffer Hilight</B> can effect the way buffer hooks are load so changing from one scheme to another with differing Buffer Hilight settings may not fully work. This can be rectified by restart MicroEmacs with the new scheme as default. 
+<P>The current screen scheme can effect the printing due to the <B>Buffer</B> <B>Hilight</B> setting, e.g. if the screen scheme is set to completely disable hilighting then any print-out will also have no hilighting. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m3osd000.html">user-setup(3)</A>, 
+<A HREF="m2cmd001.html">add-color-scheme(2)</A>, 
+<A HREF="m2cmd129.html">print-scheme(2)</A>, 
+<A HREF="m2cmd066.html">osd(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

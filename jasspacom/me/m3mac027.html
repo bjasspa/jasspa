@@ -1,0 +1,62 @@
+<HTML>
+<HEAD><TITLE>file-browser(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+file-browser(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>file-browser - Browse the file system file-browser-close - Close the file-browser file-browser-swap-buffers - Swap between file-browser windows </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>file-browser</B> (<B>f10</B>)&nbsp; 
+<BR><B>file-browser-close</B> 
+<BR><B>file-browser-swap-buffers</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>file-browser</B> can be used to browse around the file system. When first executed <B>file-browser</B> creates 2 buffers, &quot;<TT>*directory*</TT>&quot; displaying the directory structure and &quot;<TT>*files*</TT>&quot; listing the files in the current directory with information on each file. <B>file-browser</B> displays these buffers side by side, splitting the current window horizontally if required. 
+<P>Once open the user can browse through the system using the following keys in the <TT>*directory*</TT> buffer: 
+<P><TT>space</TT> 
+<BR><UL>Selects the directory on the current line and up-dates the <TT>*files*</TT> buffer with the information on this directory. This can also be done by clicking the left mouse button on the directory name. </UL>
+<P><TT>return</TT> 
+<BR><UL>Selects the directory on the current line, if open (sub-directories displayed) then closes it or if closed it is opened. The <TT>*files*</TT> buffer is up-dated with the information on the directory. This can also be done by clicking the left mouse button on the '<TT>+</TT>' or '<TT>-</TT>' symbol just before the directory name. </UL>
+<P><TT>C-return</TT> 
+<BR><UL>As with <TT>return</TT> expect sub-directories are recursively opened or closed, note that this could take some time on large file systems. This can also be done by clicking the right mouse button on the '<TT>+</TT>' or '<TT>-</TT>' symbol just before the directory name. </UL>
+<P><TT>tab</TT> 
+<BR><UL>Move to the <TT>*files*</TT> buffer. </UL>
+<P><TT>delete</TT> 
+<BR><UL>Closes file-browser. 
+</UL><P>The following keys can be used in the <TT>*files*</TT> buffer: 
+<P><TT>return</TT> 
+<BR><UL>If the current line is a directory, this because the current directory, updating both the <TT>*directory*</TT> and <TT>*files*</TT> buffers. If the line is a file then it is opened using 
+<A HREF="m2cmd056.html">find-file(2)</A>. This can also be done by clicking the left mouse button on the file name. </UL>
+<P><TT>space</TT> 
+<BR><UL>Toggles the tag state of the file on the current line, see <TT>x</TT> command. This can also be done by clicking the left mouse button anywhere before the file name, or for multiple files drag a region with the left mouse button. </UL>
+<P><TT>X</TT> or <TT>x</TT> 
+<BR><UL>Executes a 
+<A HREF="m2cmd131.html">shell-command(2)</A> on all tagged files. The user is prompted for the command line which can contain the following special tokens: <UL><TT>%p&nbsp;&nbsp;</TT>Full&nbsp;file&nbsp;name,&nbsp;including&nbsp;path. 
+<BR><TT>%f&nbsp;&nbsp;</TT>The&nbsp;file&nbsp;name&nbsp;without&nbsp;the&nbsp;path. 
+<BR></UL>As the <B>shell-command</B> is executed in the directory <TT>%f</TT> is safe to use in a command such as &quot;<TT>del %f</TT>&quot;. </UL>
+<P><TT>D</TT> or <TT>d</TT> 
+<BR><UL>Deletes all the tags in the buffer. </UL>
+<P><TT>tab</TT> 
+<BR><UL>Move to the <TT>*directory*</TT> buffer. </UL>
+<P><TT>delete</TT> 
+<BR><UL>Closes file-browser. 
+</UL><P><B>file-browser-swap-buffers</B> swaps between the <TT>*directory*</TT> and <TT>*file*</TT> windows, making the other the current window, this is usually locally bound to the <TT>tab</TT> key. 
+<P><B>file-browser-close</B> hides both the <TT>*directory*</TT> and <TT>*file*</TT> windows, closing the file-browser, this is usually locally bound to the <TT>delete</TT> key. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd032.html">directory-tree(2)</A>, 
+<A HREF="m2cmd056.html">find-file(2)</A>, 
+<A HREF="m2cmd131.html">shell-command(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

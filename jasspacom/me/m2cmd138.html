@@ -1,0 +1,84 @@
+<HTML>
+<HEAD><TITLE>add-spell-rule(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+add-spell-rule(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>add-spell-rule - Add a new spelling rule to the dictionary </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>add-spell-rule</B> [&nbsp;&quot;<I>rule-letter</I>&quot; &quot;<I>base-ending</I>&quot; &quot;<I>remove</I>&quot; &quot;<I>derive-ending</I>&quot;&nbsp;] </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>add-spell-rule</B> adds a new spelling rule to the speller. The rules effectively define the prefix and suffix character replacements of words, which is given an alphabetical identifier used within the speller , in conjunction with the language dictionary. The letter conventions are defined by the <B>Free Software Foundation</B> GNU <B>ispell(1)</B> package. 
+<P><B>add-spell-rule</B> is used in the MicroEmacs '02 dictionary initialization files called <I>&lt;language&gt;</I>r.emf, e.g. <TT>americar.erf</TT>, <TT>britishr.erf</TT> supplied in the MicroEmacs macros directory. 
+<P>The command takes a single numeric argument <I>n</I> to control the addition of a rule to the speller, as follows:- 
+<P><TT>0</TT> <B>add-spell-rule</B> 
+<BR><UL>Removes all existing rules and re-initializes. This is, by convention, explicitly called before instantiating a new set of rules. </UL>
+<P><TT>-1</TT> <B>add-spell-rule</B> &quot;<I>rule-letter</I>&quot; &quot;<I>base-ending</I>&quot; &quot;&quot; &quot;<I>deriv-ending</I>&quot; 
+<P><TT>-2</TT> <B>add-spell-rule</B> &quot;<I>rule-letter</I>&quot; &quot;<I>base-ending</I>&quot; &quot;&quot; &quot;<I>deriv-ending</I>&quot; 
+<BR><UL>Adds a prefix rule, an argument of -1 indicates that this prefix rule cannot be used with a suffix rule. An argument of -2 indicates it can be matched with any suffix rule which can be used with a prefix rule (e.g. argument of 2). </UL>
+<UL><P>&quot;<I>rule-letter</I>&quot; is any character in the range <TT>A</TT>-<TT>z</TT> except '<TT>_</TT>', all rules of the given letter must be a prefix rule of the same type (i.e. same argument). The start of a base word must match the given &quot;<I>base-ending</I>&quot; regular expression string for the rule to be applied, the &quot;<I>remove</I>&quot; string must be empty for a prefix and the &quot;<I>deriv-ending</I>&quot; is the prefix string. Example, for the American language;- </UL>
+<UL><P><TT>-2 add-spell-rule &quot;I&quot; &quot;&quot; &quot;&quot; &quot;in&quot;</TT> ; As in disposed &gt; indisposed </UL>
+<UL><P>A prefix rule of type '<TT>I</TT>' can be applied to any base word which has rule '<TT>I</TT>' enabled, and it prefixes &quot;<TT>in</TT>&quot; to the word. </UL>
+<P><TT>1</TT> <B>add-spell-rule</B> &quot;<I>rule-letter</I>&quot; &quot;<I>base-ending</I>&quot; &quot;<I>remove</I>&quot; &quot;<I>deriv-ending</I>&quot; 
+<P><TT>2</TT> <B>add-spell-rule</B> &quot;<I>rule-letter</I>&quot; &quot;<I>base-ending</I>&quot; &quot;<I>remove</I>&quot; &quot;<I>deriv-ending</I>&quot; 
+<BR><UL>Add suffix rules. An argument of 1 indicates that this prefix rule cannot be used with a prefix rule. An argument of 2 indicates it can be matched with any prefix rule which can be used with a suffix rule (i.e. argument of -2). </UL>
+<UL><P>&quot;<I>rule-letter</I>&quot; is any character in the range <TT>A</TT>-<TT>z</TT>, all rules of the given letter must be a suffix rule of the same type (i.e. same argument). The end of a base word must match the given &quot;<I>base-ending</I>&quot; regular expression string for the rule to be applied, the &quot;<I>remove</I>&quot; string must be a fixed string and the &quot;<I>deriv-ending</I>&quot; must also be a fixed string which is appended to the base-word after &quot;<I>remove</I>&quot; has been removed. Example, for the American language;- <UL>
+<PRE>2&nbsp;add-spell-rule&nbsp;&quot;N&quot;&nbsp;&quot;e&quot;&nbsp;&quot;e&quot;&nbsp;&quot;ion&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;As&nbsp;in&nbsp;create&nbsp;&gt;&nbsp;creation 
+2&nbsp;add-spell-rule&nbsp;&quot;N&quot;&nbsp;&quot;y&quot;&nbsp;&quot;y&quot;&nbsp;&quot;ication&quot;&nbsp;;&nbsp;As&nbsp;in&nbsp;multiply&nbsp;&gt;&nbsp;multiplication 
+2&nbsp;add-spell-rule&nbsp;&quot;N&quot;&nbsp;&quot;[^ey]&quot;&nbsp;&quot;&quot;&nbsp;&quot;en&quot;&nbsp;&nbsp;&nbsp;;&nbsp;As&nbsp;in&nbsp;fall&nbsp;&gt;&nbsp;fallen 
+</PRE></UL>
+<P>A suffix rule of type '<TT>N</TT>' can be applied to any base word which has rule '<TT>N</TT>' enabled, and it can be used with prefixes, e.g. with rule;- <UL>
+<PRE>-2&nbsp;add-spell-rule&nbsp;&quot;A&quot;&nbsp;&quot;&quot;&nbsp;&quot;&quot;&nbsp;&quot;re&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;As&nbsp;in&nbsp;enter&nbsp;&gt;&nbsp;reenter 
+</PRE></UL>
+<P>to derive &quot;<I>recreation</I>&quot; from &quot;<I>create</I>&quot;. A rule which cannot be used with prefixes, i.e.: <UL>
+<PRE>1&nbsp;add-spell-rule&nbsp;&quot;V&quot;&nbsp;&quot;e&quot;&nbsp;&quot;e&quot;&nbsp;&quot;ive&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;As&nbsp;in&nbsp;create&nbsp;&gt;&nbsp;creative 
+1&nbsp;add-spell-rule&nbsp;&quot;V&quot;&nbsp;&quot;[^e]&quot;&nbsp;&quot;&quot;&nbsp;&quot;ive&quot;&nbsp;&nbsp;&nbsp;;&nbsp;As&nbsp;in&nbsp;prevent&nbsp;&gt;&nbsp;preventive 
+</PRE></UL>
+<P>While some prefix words are legal, such as &quot;<I>recreative</I>&quot; but some are not, such as &quot;<I>collect</I>&quot; where &quot;<I>recollect</I>&quot; is correct, so is &quot;<I>collective</I>&quot; but &quot;<I>recollective</I>&quot; is not. </UL></UL>
+<H2>SPECIAL RULES </H2>
+<UL><P>Following are special forms of add-spell-rule used for tuning the spell support, note that an argument can not be given:- 
+<P><B>add-spell-rule</B> &quot;<I>-</I>&quot; &quot;&lt;<I>y</I>|<I>n</I>&gt;&quot; 
+<UL><P>Enables and disables the acceptance of hyphens joining correct words. By default the phrase &quot;<TT>out-of-date</TT>&quot; would be accepted in American even though the phrase does not exist in the American dictionary. This is because the three words making up the phrase are correct and by default hyphens joining words are allowed. Some Latin language such as Spanish do not use this concept so this feature can be disable. 
+</UL><P><B>add-spell-rule</B> &quot;<I>#</I>&quot; &quot;<I>score</I>&quot; 
+<UL><P>Sets the maximum allowed error score when creating a spelling guess list. When comparing a dictionary word with the user supplied word, <B>spell</B> checks for differences, each difference or error is scored in the range of 20 to 27 points, once the maximum allowed score has been exceeded the word is ignored. The default guess error score is 60, allowing for 2 errors. 
+</UL><P><B>add-spell-rule</B> &quot;<I>*</I>&quot; &quot;<I>regex</I>&quot; 
+<UL><P>Adds a correct word in the form of a 
+<A HREF="m2nar006.html">regex</A> if a word being spell checked is completely matched by the <B>regex</B> the word is deemed to be correct. For example, the following rule can be used to make the spell-checker allow all hex numbers: 
+<PRE>add-spell-rule&nbsp;&quot;*&quot;&nbsp;&quot;0[xX][[:xdigit:]]+&quot; 
+</PRE></UL>
+<P>This will completely match the words &quot;<TT>0x0</TT>&quot;, &quot;<TT>0xff</TT>&quot; etc but not &quot;<TT>0x00z</TT>&quot; as the whole word is not matched, only the first 4 letters. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P>The format of the dictionary is a list of base words with each word having a list of rules which can be applied to that word. Therefore the list of words and the rules used for them are linked e.g. <UL>
+<PRE>aback 
+abaft 
+abandon/DGRS 
+abandonment/S 
+abase/DGRS 
+abasement/S 
+abash/DGS 
+abashed/U 
+abate/DGRS 
+</PRE></UL>
+<P>where the &quot;<TT>/...</TT>&quot; is the valid list of rules for that word. 
+<P>The '_' character is used to separate different rule lists for a single word. 
+<P>The format of the dictionary word list and the rule list is compatible with <B>ispell(1)</B>. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd002.html">add-dictionary(2)</A>, 
+<A HREF="m2cmd125.html">spell(2)</A> 
+<A HREF="m3osd002.html">spell-buffer(3)</A>, 
+<A HREF="m3osd002.html">spell-word(3)</A>, <B>ispell(1)</B>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

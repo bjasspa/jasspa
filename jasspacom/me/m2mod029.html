@@ -1,0 +1,40 @@
+<HTML>
+<HEAD><TITLE>edit(2m)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+edit(2m)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>edit - Buffer has be changed </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>edit Mode</B> 
+<P><B>e</B> - mode line letters. </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>edit</B> mode indicated that the buffer has been edited. Many commands and typing 'edit' the current buffer, automatically setting this mode. Commands which save these edits, such as 
+<A HREF="m2cmd113.html">save-buffer(2)</A>, automatically remove this mode. 
+<P>A '*' character, 3 characters from the left on the mode line is used to indicate that this mode is set, see 
+<A HREF="m5var031.html">$mode-line(5)</A>. 
+<A HREF="m2cmd083.html">list-buffers(2)</A> also displays the state of this mode in its output, as a '*' in the second column. 
+<P>When this mode is set and 
+<A HREF="m2mod014.html">undo(2m)</A> mode is enabled, the 
+<A HREF="m2cmd136.html">undo(2)</A> command can be used to undo all edits and the removal of this mode. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd113.html">save-buffer(2)</A>, 
+<A HREF="m2cmd136.html">undo(2)</A>, 
+<A HREF="m2cmd083.html">list-buffers(2)</A>, 
+<A HREF="m5var031.html">$mode-line(5)</A>, 
+<A HREF="m2mod014.html">undo(2m)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

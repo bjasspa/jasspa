@@ -1,0 +1,70 @@
+<HTML>
+<HEAD><TITLE>sort-lines(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+sort-lines(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>sort-lines - Alphabetically sort lines </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>sort-lines</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>sort-lines</B> alphabetically sorts lines of text in the current buffer from the 
+<A HREF="m2cmd121.html">mark</A> position to the current cursor position. If the buffer mode 
+<A HREF="m2mod004.html">exact(2m)</A> is enabled then the sort is case sensitive, otherwise the sort is case insensitive. By default the text is compared from left to right from column 0 (the left hand edge), if a positive argument <I>n</I> is given then the text is compared left to right from the <I>n</I>th column, any lines shorter than <I>n</I> characters are moved to the top and sorted from column 0. 
+<P>If a negative argument <I>n</I> is given then the text is sorted in reverse order. The comparison starts at column <TT>-1-n</TT>, i.e. an argument of -1 sorts in reverse order from column 0. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following table gives the results of <B>sort-lines</B> for different exact modes and values of <I>n</I>. <UL>
+<PRE>___________________________________________________________ 
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Original&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sorted&nbsp;Lines 
+___________________________________________________________ 
+
+&nbsp;&nbsp;exact&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n 
+&nbsp;&nbsp;&nbsp;&nbsp;n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-2 
+___________________________________________________________ 
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Aa&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Aa 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Aa&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CA 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a2 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Aa&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b1 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Aa&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Aa&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Aa&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B 
+___________________________________________________________ 
+</PRE></UL>
+</UL><H2><B>NOTES </B></H2>
+<UL><P>Typically MicroEmacs is executed with 
+<A HREF="m2mod004.html">exact(2m)</A> mode enabled, the macro command <B>sort-lines-ignore-case</B> provides a command to sort lines case insensitively while <B>exact</B> mode is enabled. The macro is defined as follows:- <UL>
+<PRE>define-macro&nbsp;sort-lines-ignore-case 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;&amp;bmod&nbsp;exact 
+&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;buffer-mode&nbsp;&quot;exact&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;@? 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@#&nbsp;sort-lines 
+&nbsp;&nbsp;&nbsp;&nbsp;!else 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sort-lines 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;&amp;cond&nbsp;#l0&nbsp;1&nbsp;-1&nbsp;buffer-mode&nbsp;&quot;exact&quot; 
+!emacro 
+</PRE></UL>
+<P>
+<A HREF="m3mac004.html">sort-lines-ignore-case(3)</A> is a macro defined in format.emf. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd006.html">buffer-mode(2)</A>, 
+<A HREF="m2mod004.html">exact(2m)</A>, 
+<A HREF="m3mac004.html">sort-lines-ignore-case(3)</A>, 
+<A HREF="m2cmd135.html">transpose-lines(2)</A>, 
+<A HREF="m3mac049.html">uniq(3)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

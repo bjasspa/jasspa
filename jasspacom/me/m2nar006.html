@@ -1,0 +1,154 @@
+<HTML>
+<HEAD><TITLE>RegularExpressions(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+RegularExpressions(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>REGULAR EXPRESSIONS </B></H2>
+<UL><P>Regular Expressions are used in the search (and replace) operations. The following notes are applicable when 
+<A HREF="m2mod009.html">magic(2m)</A> mode is enabled. </UL>
+<H2>Overview </H2>
+<UL><P>A &quot;<I>regular expression</I>&quot; (or &quot;<I>regex</I>&quot;, or &quot;<I>pattern</I>&quot;) is a text string that describes some (mathematical) set of strings. A regex <B>R</B> &quot;<I>matches</I>&quot; a string <B>S</B> if <B>S</B> is in the set of strings described by <B>R</B>. 
+<P>MicroEmacs '02 includes the GNU <B>reg</B>ular <B>exp</B>ression pattern matcher library, <B>regex</B> which provides a powerful search engine, using the search engine you can: <UL><P>
+<LI>see if a string matches a specified pattern as a whole, and 
+<LI>search within a string for a substring matching a specified pattern. </UL><P>Some regular expressions match only one string, i.e., the set they describe has only one member. For example, the regular expression '<TT>foo</TT>' matches the string '<TT>foo</TT>' and no others. Other regular expressions match more than one string, i.e., the set they describe has more than one member. For example, the regular expression '<TT>f*</TT>' matches the set of strings made up of any number (including zero) of '<TT>f</TT>'s. As you can see, some characters in regular expressions match themselves (such as '<TT>f</TT>') and some don't (such as '<TT>*</TT>'); the ones that do not match themselves instead let you specify patterns that describe many different strings. </UL>
+<H2>Syntax of Regular Expressions </H2>
+<UL><P>Regular expressions have a syntax in which a few characters are special constructs and the rest are &quot;<I>ordinary</I>&quot;. An ordinary character is a simple regular expression which matches that same character and nothing else. The special characters are '<TT>$</TT>', '<TT>^</TT>', '<TT>.</TT>', '<TT>*</TT>', '<TT>+</TT>', '<TT>?</TT>', '<TT>[</TT>', '<TT>]</TT>' and '<TT>\</TT>'. Any other character appearing in a regular expression is ordinary, unless a '<TT>\</TT>' precedes it. 
+<P>For example, '<TT>f</TT>' is not a special character, so it is ordinary, and therefore '<TT>f</TT>' is a regular expression that matches the string '<TT>f</TT>' and no other string. (It does <B>not</B> match the string '<TT>ff</TT>'.) Likewise, '<TT>o</TT>' is a regular expression that matches only '<TT>o</TT>'. (When case distinctions are being ignored, these regexs also match '<TT>F</TT>' and '<TT>O</TT>', but we consider this a generalization of &quot;<I>the same string</I>&quot;, rather than an exception.) 
+<P>Any two regular expressions <TT>A</TT> and <TT>B</TT> can be concatenated. The result is a regular expression which matches a string if <TT>A</TT> matches some amount of the beginning of that string and <TT>B</TT> matches the rest of the string. 
+<P>As a simple example, we can concatenate the regular expressions '<TT>f</TT>' and '<TT>o</TT>' to get the regular expression '<TT>fo</TT>', which matches only the string '<TT>fo</TT>'. Still trivial. To do something nontrivial, you need to use one of the special characters. Here is a list of them. 
+<P><B>.</B> (Period) 
+<BR><UL>is a special character that matches any single character except a newline. Using concatenation, we can make regular expressions like '<TT>a.b</TT>', which matches any three-character string that begins with '<TT>a</TT>' and ends with '<TT>b</TT>'. </UL>
+<P><B>*</B> (asterisk) 
+<BR><UL>is not a construct by itself; it is a postfix operator that means to match the preceding regular expression repetitively as many times as possible. Thus, '<TT>o*</TT>' matches any number of '<TT>o</TT>'s (including no '<TT>o</TT>'s). </UL>
+<UL><P>'<TT>*</TT>' always applies to the <B>smallest</B> possible preceding expression. Thus, '<TT>fo*</TT>' has a repeating '<TT>o</TT>', not a repeating '<TT>fo</TT>'. It matches '<TT>f</TT>', '<TT>fo</TT>', '<TT>foo</TT>', and so on. </UL>
+<UL><P>The matcher processes a '<TT>*</TT>' construct by matching, immediately, as many repetitions as can be found. Then it continues with the rest of the pattern. If that fails, backtracking occurs, discarding some of the matches of the '<TT>*</TT>'-modified construct in case that makes it possible to match the rest of the pattern. For example, in matching '<TT>ca*ar</TT>' against the string '<TT>caaar</TT>', the '<TT>a*</TT>' first tries to match all three '<TT>a</TT>'s; but the rest of the pattern is '<TT>ar</TT>' and there is only '<TT>r</TT>' left to match, so this try fails. The next alternative is for '<TT>a*</TT>' to match only two '<TT>a</TT>'s. With this choice, the rest of the regex matches successfully. </UL>
+<UL><P><B>+</B> (plus) is a postfix operator, similar to '<TT>*</TT>' except that it must match the preceding expression at least once. So, for example, '<TT>ca+r</TT>' matches the strings '<TT>car</TT>' and '<TT>caaaar</TT>' but not the string '<TT>cr</TT>', whereas '<TT>ca*r</TT>' matches all three strings. </UL>
+<P>'<B>?</B>' (question mark) 
+<BR><UL>is a postfix operator, similar to '<TT>*</TT>' except that it can match the preceding expression either once or not at all. For example, '<TT>ca?r</TT>' matches '<TT>car</TT>' or '<TT>cr</TT>'; nothing else. </UL>
+<P><B>[</B> ... <B>]</B> 
+<BR><UL>is a &quot;character set&quot;, which begins with '<TT>[</TT>' and is terminated by '<TT>]</TT>'. In the simplest case, the characters between the two brackets are what this set can match. </UL>
+<UL><P>Thus, '<TT>[ad]</TT>' matches either one '<TT>a</TT>' or one '<TT>d</TT>', and '<TT>[ad]*</TT>' matches any string composed of just '<TT>a</TT>'s and '<TT>d</TT>'s (including the empty string), from which it follows that '<TT>c[ad]*r</TT>' matches '<TT>cr</TT>', '<TT>car</TT>', '<TT>cdr</TT>', '<TT>caddaar</TT>', etc. </UL>
+<UL><P>You can also include character ranges in a character set, by writing the starting and ending characters with a '<TT>-</TT>' between them. Thus, '<TT>[a-z]</TT>' matches any lower-case ASCII letter. Ranges may be intermixed freely with individual characters, as in '<TT>[a-z$%.]</TT>', which matches any lower-case ASCII letter or '<TT>$</TT>', '<TT>%</TT>' or period. </UL>
+<UL><P>Note that the usual regex special characters are not special inside a character set. A completely different set of special characters exists inside character sets: '<TT>]</TT>', '<TT>-</TT>' and '<TT>^</TT>'. </UL>
+<UL><P>To include a '<TT>]</TT>' in a character set, you must make it the first character. For example, '<TT>[]a]</TT>' matches '<TT>]</TT>' or '<TT>a</TT>'. To include a '<TT>-</TT>', write '<TT>-</TT>' as the first or last character of the set, or put it after a range. Thus, '<TT>[]-]</TT>' matches both '<TT>]</TT>' and '<TT>-</TT>'. </UL>
+<UL><P>To include '<TT>^</TT>' in a set, put it anywhere but at the beginning of the set. </UL>
+<UL><P>When you use a range in case-insensitive search, you should write both ends of the range in upper case, or both in lower case, or both should be non-letters. The behavior of a mixed-case range such as '<TT>A-z</TT>' is somewhat ill-defined, and it may change in future Emacs versions. </UL>
+<P><B>[^</B> ... <B>]</B> 
+<BR><UL>'<TT>[^</TT>' begins a &quot;<I>complemented character set</I>&quot;, which matches any character except the ones specified. Thus, '<TT>[^a-z0-9A-Z]</TT>' matches all characters *<B>except</B>* letters and digits. </UL>
+<UL><P>'<TT>^</TT>' is not special in a character set unless it is the first character. The character following the '<TT>^</TT>' is treated as if it were first (in other words, '<TT>-</TT>' and '<TT>]</TT>' are not special there). </UL>
+<UL><P>A complemented character set can match a newline, unless newline is mentioned as one of the characters not to match. This is in contrast to the handling of regexs in programs such as <B>grep(1)</B>. </UL>
+<P><B>^</B> (caret) 
+<BR><UL>is a special character that matches the empty string, but only at the beginning of a line in the text being matched. Otherwise it fails to match anything. Thus, '<TT>^foo</TT>' matches a '<TT>foo</TT>' that occurs at the beginning of a line. </UL>
+<P><B>$</B> (dollar) 
+<BR><UL>is similar to '<TT>^</TT>' but matches only at the end of a line. Thus, '<TT>x+$</TT>' matches a string of one '<TT>x</TT>' or more at the end of a line. </UL>
+<P><B>\</B> (backslash) 
+<BR><UL>has two functions: it quotes the special characters (including '<TT>\</TT>'), and it introduces additional special constructs. </UL>
+<UL><P>Because '<TT>\</TT>' quotes special characters, '<TT>\$</TT>' is a regular expression that matches only '<TT>$</TT>', and '<TT>\[</TT>' is a regular expression that matches only '<TT>[</TT>', and so on. </UL>
+<UL><P><B>Note:</B> for historical compatibility, special characters are treated as ordinary ones if they are in contexts where their special meanings make no sense. For example, '<TT>*foo</TT>' treats '<TT>*</TT>' as ordinary since there is no preceding expression on which the '<TT>*</TT>' can act. It is poor practice to depend on this behavior; it is better to quote the special character anyway, regardless of where it appears. </UL>
+<UL><P>For the most part, '<TT>\</TT>' followed by any character matches only that character. However, there are several exceptions: two-character sequences starting with '<TT>\</TT>' that have special meanings. The second character in the sequence is always an ordinary character when used on its own. Here is a table of '<TT>\</TT>' constructs. 
+<P><B>\|</B> (bar) 
+<BR><UL>specifies an alternative. Two regular expressions <TT>A</TT> and <TT>B</TT> with '<TT>\|</TT>' in between form an expression that matches some text if either <TT>A</TT> matches it or <TT>B</TT> matches it. It works by trying to match <TT>A</TT>, and if that fails, by trying to match <TT>B</TT>. </UL>
+<UL><P>Thus, '<TT>foo\|bar</TT>' matches either 'foo' or 'bar' but no other string. </UL>
+<UL><P>'<TT>\|</TT>' applies to the largest possible surrounding expressions. Only a surrounding '<TT>\( ... \)</TT>' grouping can limit the grouping power of '<TT>\|</TT>'. </UL>
+<UL><P>Full backtracking capability exists to handle multiple uses of '<TT>\|</TT>'. </UL>
+<P><B>\(</B> ... <B>\)</B> 
+<BR><UL>is a grouping construct that serves three purposes: <UL><UL><P>
+<LI>To enclose a set of '<TT>\|</TT>' alternatives for other operations. Thus, '<TT>\(foo\|bar\)x</TT>' matches either '<TT>foox</TT>' or '<TT>barx</TT>'. 
+<LI>To enclose a complicated expression for the postfix operators '<TT>*</TT>', '<TT>+</TT>' and '<TT>?</TT>' to operate on. Thus, '<TT>ba\(na\)*</TT>' matches '<TT>bananana</TT>', etc., with any (zero or more) number of '<TT>na</TT>' strings. 
+<LI>To record a matched substring for future reference. This last application is not a consequence of the idea of a parenthetical grouping; it is a separate feature that is assigned as a second meaning to the same '<TT>\( ... \)</TT>' construct. In practice there is no conflict between the two meanings. </UL></UL></UL>
+<P>'<B>\D</B>' 
+<BR><UL>matches the same text that matched the Dth occurrence of a `<TT>\(</TT> ... <TT>\)</TT>' construct. </UL>
+<UL><P>After the end of a '<TT>\( ... \)</TT>' construct, the matcher remembers the beginning and end of the text matched by that construct. Then, later on in the regular expression, you can use '<TT>\</TT>' followed by the digit <TT>D</TT> to mean &quot;match the same text matched the <TT>D</TT>th time by the '<TT>\(</TT> ... <TT>\)</TT>' construct.&quot; </UL>
+<UL><P>The strings matching the first nine '<TT>\(</TT> ... <TT>\)</TT>' constructs appearing in a regular expression are assigned numbers 1 through 9 in the order that the open-parentheses appear in the regular expression. So you can use '<TT>\1</TT>' through '<TT>\9</TT>' to refer to the text matched by the corresponding '<TT>\(</TT> ... <TT>\)</TT>' constructs. </UL>
+<UL><P>For example, '<TT>\(.*\)\1</TT>' matches any newline-free string that is composed of two identical halves. The '<TT>\(.*\)</TT>' matches the first half, which may be anything, but the '<TT>\1</TT>' that follows must match the same exact text. </UL>
+<UL><P>If a particular '<TT>\( ... \)</TT>' construct matches more than once (which can easily happen if it is followed by '<TT>*</TT>'), only the last match is recorded. </UL>
+<P><TT>\`</TT> 
+<BR><UL>matches the empty string, but only at the beginning of the buffer or string being matched against. </UL>
+<UL><P><B>NOTE:</B> This currently only matches the start of the current line - it does not match the start of the buffer. </UL>
+<P><TT>\'</TT> 
+<BR><UL>matches the empty string, but only at the end of the buffer or string being matched against. </UL>
+<UL><P><B>NOTE:</B> This currently only matches the end of the current line - it does not match the end of the buffer. </UL>
+<P><TT>\=</TT> 
+<BR><UL>matches the empty string, but only at point. </UL>
+<P><TT>\b</TT> 
+<BR><UL>matches the empty string, but only at the beginning or end of a word. Thus, '<TT>\bfoo\b</TT>' matches any occurrence of '<TT>foo</TT>' as a separate word. '<TT>\bballs?\b</TT>' matches '<TT>ball</TT>' or '<TT>balls</TT>' as a separate word. </UL>
+<UL><P>'<TT>\b</TT>' matches at the beginning or end of the buffer regardless of what text appears next to it. </UL>
+<UL><P><TT>\B</TT> matches the empty string, but *not* at the beginning or end of a word. </UL>
+<P><TT>\&lt;</TT> 
+<BR><UL>matches the empty string, but only at the beginning of a word. '<TT>\&lt;</TT>' matches at the beginning of the buffer only if a word-constituent character follows. </UL>
+<P><TT>\&gt;</TT> 
+<BR><UL>matches the empty string, but only at the end of a word. '<TT>\&gt;</TT>' matches at the end of the buffer only if the contents end with a word-constituent character. </UL>
+<P><TT>\w</TT> 
+<BR><UL>matches any word-constituent character. The syntax table determines which characters these are. </UL>
+<P><TT>\W</TT> 
+<BR><UL>matches any character that is not a word-constituent. </UL>
+<P><TT>\sC</TT> 
+<BR><UL>matches any character whose syntax is <TT>C</TT>. Here <TT>C</TT> is a character that represents a syntax code: thus, '<TT>w</TT>' for word constituent, '<TT>-</TT>' for whitespace, '<TT>(</TT>' for open parenthesis, etc. Represent a character of whitespace (which can be a newline) by either '<TT>-</TT>' or a space character. </UL>
+<P><TT>\SC</TT> 
+<BR><UL>matches any character whose syntax is not <TT>C</TT>. </UL>
+<P><TT>\{N,M\}</TT> 
+<BR><UL>Matches an integer number of the previous item, where <TT>N</TT> and <TT>M</TT> are integer constants interpreted as follows:- 
+<P><TT>\{N\}</TT> 
+<BR><UL>The preceeding item is matched exactly <TT>N</TT> times. </UL>
+<P><TT>\{N,\}</TT> 
+<BR><UL>The preceeding item is matched <TT>N</TT> or more times. </UL>
+<P><TT>\{N,M\}</TT> 
+<BR><UL>The preceeding item is matched at least <TT>N</TT> times, but no more than <TT>M</TT> times. </UL>
+<P><TT>\{,M\}</TT> 
+<BR><UL>The preceeding item is optional and is matched at most <TT>M</TT> times. </UL></UL></UL>
+<P>The constructs that pertain to words and syntax are controlled by the setting of the syntax table. </UL>
+<H2>Syntax of Replacement Expressions </H2>
+<UL><P>A regular expression replacement, 
+<A HREF="m2cmd102.html">query-replace-string(2)</A> command (with 
+<A HREF="m2mod009.html">magic(2m)</A> mode enabled), replaces exact matches for a single string or pattern. The replacement pattern may be a constant; it may also refer to all or part of what is matched by the regular expression search string. 
+<P><B>\&amp;</B> 
+<BR><UL>In the replacement pattern, <B>\&amp;</B> stands for the entire match being replaced. (as does <TT>\0</TT>). </UL>
+<P><B>\D</B> 
+<BR><UL>In the replacement pattern, where <B>D</B> is a digit 1-9, stands for whatever matched the Dth parenthesized grouping (<TT>\( .. \)</TT>) in search pattern. To include a '<TT>\</TT>' in the text to replace with, you must enter '<TT>\\</TT>'. For example, <UL>
+<PRE>M-x&nbsp;query-replace-string&lt;RET&gt;&nbsp;c[ad]+r&nbsp;&lt;RET&gt;&nbsp;\&amp;-safe&nbsp;&lt;RET&gt; 
+</PRE></UL>
+</UL><UL><P>replaces (for example) &quot;<TT>cadr</TT>&quot; with &quot;<TT>cadr-safe</TT>&quot; and &quot;<TT>cddr</TT>&quot; with &quot;<TT>cddr-safe</TT>&quot;. <UL>
+<PRE>M-x&nbsp;query-replace-string&lt;RET&gt;&nbsp;\(c[ad]+r\)-safe&nbsp;&lt;RET&gt;&nbsp;\1&nbsp;&lt;RET&gt; 
+</PRE></UL>
+</UL><UL><P>performs the inverse transformation. </UL>
+<UL><P><B>\0</B> is a special case, this represents the whole of the search pattern, it is equivalent to <B>\&amp;</B>. </UL></UL>
+<H2>Searching and Case </H2>
+<UL><P>Searching may be either case sensitive or case insensitive, and is controlled by the 
+<A HREF="m2mod004.html">exact(2m)</A> mode. When <I>exact</I> mode is enabled (default) the then searches are case sensitive; disabled then case is ignored. The 
+<A HREF="m2mod004.html">exact(2m)</A> mode is set on a per-buffer basis. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P>The search engine searches for the longest string that matches a given pattern, the longest pattern is sometimes the pattern that is not actually required. For instance, consider searching for an HTML bracket set. The simplest search is:- <UL>
+<PRE>M-x&nbsp;search-forward&nbsp;&quot;&lt;.*&gt;&quot; 
+</PRE></UL>
+<P>Unfortunately, this pattern is not specific enough, given an HTML line:- <UL>
+<PRE>&lt;a&nbsp;href=&quot;www.jasspa.com&quot;&gt;Jasspa&nbsp;Site&lt;/a&gt; 
+</PRE></UL>
+<P>Then the pattern matched is actually the whole line as the <TT>.*</TT> matches everything to the last <TT>&gt;</TT>, this is the longest string. To rectify the pattern then we must be more specific, the correct search pattern to use in this instance is:- <UL>
+<PRE>M-x&nbsp;search-forward&nbsp;&quot;&lt;[^&gt;]*&gt;&quot; 
+</PRE></UL>
+<P>In this case we match any character excluding the closing character, this guarantees that we always find the shortest string match. A search of our HTML line locates two separate instances of the regular expression <TT>&lt;a&nbsp;href=&quot;www.jasspa.com&quot;&gt;</TT> and <TT>&lt;/a&gt;</TT>. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd116.html">search-forward(2)</A>, 
+<A HREF="m2cmd116.html">search-backward(2)</A>, 
+<A HREF="m2cmd006.html">buffer-mode(2)</A>, 
+<A HREF="m2mod004.html">exact(2m)</A>, 
+<A HREF="m2cmd070.html">hunt-backward(2)</A>, 
+<A HREF="m2cmd070.html">hunt-forward(2)</A>, 
+<A HREF="m2cmd078.html">isearch-forward(2)</A>, 
+<A HREF="m2mod009.html">magic(2m)</A>, 
+<A HREF="m2cmd109.html">replace-string(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

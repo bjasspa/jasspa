@@ -1,0 +1,37 @@
+<HTML>
+<HEAD><TITLE>next-window(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+next-window(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>next-window - Move the cursor to the next window 
+<BR>previous-window - Move the cursor to the previous window </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>next-window</B> (<B>C-x&nbsp;o</B>)&nbsp; 
+<BR><I>n</I> <B>previous-window</B> (<B>C-x&nbsp;p</B>)&nbsp; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>next-window</B> makes the next window down the current window. A +ve argument <I>n</I>, makes the <I>n</I>th window from the top current, where 1 is the first window. A -ve argument <I>n</I> specifies the <I>nth</I> window from the bottom current. An argument <I>n</I> of 0, makes the next window down current, if this is the last window then the command fails. 
+<P><B>previous-window</B> makes the next window up the current window. A +ve argument <I>n</I>, this makes the <I>n</I>th window from the bottom the current window. A -ve argument <I>n</I> makes the <I>nth</I> window from the top current. An argument <I>n</I> of zero makes the previous window current, if this is the first window then the command fails. 
+<P>When no argument is supplied then the next (or previous) window becomes the current window. Wrapping occurs from bottom to top on <B>next-window</B>, and top to bottom on <B>previous-window</B>. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P>The <I>n=0</I> argument is typically used to traverse the window list from top to bottom, where the <TT>FALSE</TT> status may be trapped and used as an indicator that end of the windows list has been reached. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd126.html">next-window-find-buffer(2)</A>, 
+<A HREF="m2cmd127.html">next-window-find-file(2)</A>, 
+<A HREF="m2cmd110.html">set-position(2)</A>, 
+<A HREF="m2cmd110.html">goto-position(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,36 @@
+<HTML>
+<HEAD><TITLE>$version(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+$version(5)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>$version - MicroEmacs version date-code </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>$version</B> &quot;<I>YYYYMMDD</I>&quot; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>$version</B> is a system variable which is defined as the MicroEmacs build date code. This value is fixed at compile time and cannot be changed. The variable may be used in macros to identify incompatibility issues. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>Given a macro that only operates with a MicroEmacs executable built on or after 1st August 2001 then this macro should check that <TT>$version</TT> is not less than <TT>20010801</TT>. The check may be performed as follows: <UL>
+<PRE>!if&nbsp;&amp;les&nbsp;$version&nbsp;&quot;20010801&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;[Error:&nbsp;MicroEmacs&nbsp;executable&nbsp;is&nbsp;incompatible]&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!abort 
+!endif 
+</PRE></UL>
+</UL><H2><B>NOTES </B></H2>
+<UL><P>This variable was introduced in 2001-08-01, evaluating this variable on an earlier version of MicroEmacs would return the string &quot;<TT>ERROR</TT>&quot; unless an environment variable $version has been defined. &quot;<TT>ERROR</TT>&quot; evaluates to <TT>0</TT> hence the test still operates correctly. 
+<P>This variable is used in the macro file <TT>me.emf</TT> to check for any macro - executable incompatibility issues. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>
+

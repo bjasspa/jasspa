@@ -1,0 +1,147 @@
+<HTML>
+<HEAD><TITLE>define-macro(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+define-macro(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>define-macro - Define a new macro </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>define-macro</B> <I>macro-name</I> <UL><I>Macro&nbsp;body</I> 
+<BR></UL><B>!emacro</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>define-macro</B> starts the definition of an macro named <I>macro-name</I>, only used within macro files or buffers. After the above header line, the body of the macro is added, one command or expression on a line. The macro definition is completed by the 
+<A HREF="m4fil006.html">!emacro</A> directive. 
+<P>The numeric argument <I>n</I>, specified as zero, defines the macro as private such that it does not appear on a command completion list. A zero argument is generally used on helper macro's that form part of a larger macro. If the argument is omitted, or non-zero, then the macro appears in the command completion list. 
+<P>See 
+<A HREF="m2cmd045.html">execute-file(2)</A> for a complete definition and examples of the MicroEmacs '02 macro language. 
+<P>Once the macro has been defined, it becomes indistinguishable from a standard MicroEmacs '02 command, i.e. 
+<A HREF="m2cmd047.html">execute-named-command(2)</A> (<TT>esc x</TT>) can be used to execute the macro and 
+<A HREF="m2cmd013.html">global-bind-key(2)</A> can be used to globally bind the command to a key combination. 
+<P>There are no restrictions on the number of macros that may be defined, provided that the name space is managed properly. Consideration must be given as to when any additional macros that are created are loaded into MicroEmacs '02. We usually like start-up to be rapid and macros are loaded as and when requested by the user, or by the buffer hooks as new files are loaded (see 
+<A HREF="m2cmd003.html">add-file-hook(2)</A> and 
+<A HREF="m2cmd147.html">define-macro-file(2)</A>). 
+<P>User defined macros may be documented with on-line help by including a 
+<A HREF="m2cmd093.html">define-help(2)</A> construct within the macro file. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following are two standard macros provided with MicroEmacs '02. The first is a macro called <B>clean</B>, this strips trailing white space from the ends of lines in a file and removes blank lines from the end of the file. <UL>
+<PRE>define-macro&nbsp;clean 
+&nbsp;&nbsp;&nbsp;&nbsp;; 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Prepare&nbsp;to&nbsp;clean&nbsp;up&nbsp;file. 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Remember&nbsp;line&nbsp;&amp;&nbsp;magic&nbsp;mode 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;$window-line 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l1&nbsp;&amp;not&nbsp;&amp;bmod&nbsp;magic 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;#l1 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;buffer-mode&nbsp;&quot;magic&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;; 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Get&nbsp;rid&nbsp;of&nbsp;trailing&nbsp;white&nbsp;space&nbsp;on&nbsp;EOL 
+&nbsp;&nbsp;&nbsp;&nbsp;beginning-of-buffer 
+&nbsp;&nbsp;&nbsp;&nbsp;replace-string&nbsp;&quot;[\t&nbsp;]+$&quot;&nbsp;&quot;\\0&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;beginning-of-buffer 
+&nbsp;&nbsp;&nbsp;&nbsp;replace-string&nbsp;&quot;[&nbsp;]+\t&quot;&nbsp;&quot;\t&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;; 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Strip&nbsp;trailing&nbsp;blank&nbsp;lines. 
+&nbsp;&nbsp;&nbsp;&nbsp;end-of-buffer 
+&nbsp;&nbsp;&nbsp;&nbsp;backward-line 
+&nbsp;&nbsp;&nbsp;&nbsp;!while&nbsp;&amp;and&nbsp;&amp;gre&nbsp;$window-line&nbsp;1&nbsp;&amp;sequal&nbsp;@wc&nbsp;&quot;\n&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;kill-line 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;backward-line 
+&nbsp;&nbsp;&nbsp;&nbsp;!done 
+&nbsp;&nbsp;&nbsp;&nbsp;; 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Clean&nbsp;up&nbsp;-&nbsp;restore&nbsp;buffer&nbsp;modes&nbsp;etc. 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Move&nbsp;back&nbsp;to&nbsp;starting&nbsp;line&nbsp;&amp;&nbsp;restore&nbsp;original&nbsp;magic&nbsp;mode 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;goto-line&nbsp;#l0 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;#l1 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;buffer-mode&nbsp;&quot;magic&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;screen-update 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;Cleaned&nbsp;up&nbsp;file.&quot; 
+!emacro 
+</PRE></UL>
+<P>The second example converts all of the <TT>&lt;tab&gt;</TT> characters in the file to their <TT>&lt;SPACE&gt;</TT> character equivalent. <UL>
+<PRE>; 
+;&nbsp;tabs-to-spaces. 
+;&nbsp;Convert&nbsp;all&nbsp;of&nbsp;the&nbsp;tabs&nbsp;to&nbsp;spaces. 
+define-macro&nbsp;tabs-to-spaces 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Remember&nbsp;line 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;$window-line 
+&nbsp;&nbsp;&nbsp;&nbsp;beginning-of-buffer 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;search-forward&nbsp;&quot;\t&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!while&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l1&nbsp;$window-acol 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;backward-delete-char 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;sub&nbsp;#l1&nbsp;$window-acol&nbsp;insert-space 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;search-forward&nbsp;&quot;\t&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!done 
+&nbsp;&nbsp;&nbsp;&nbsp;goto-line&nbsp;#l0 
+&nbsp;&nbsp;&nbsp;&nbsp;screen-update 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;[Converted&nbsp;tabs]&quot; 
+!emacro 
+</PRE></UL>
+<P>Both of these commands are available from the command line, they are indistinguishable from the built in commands. 
+<P>Macros may also be nested, as shown in the next example, this macro contains a <B>define-macro</B> within itself, when executed the macro creates another macro dynamically - dynamic macros are generally given a prefix of <B>%</B> and are highlighted differently in 
+<A HREF="m2cmd038.html">describe-bindings(2)</A>. 
+<P>The following example is taken from the 
+<A HREF="m3mac011.html">alarm(3)</A> macro, executing <B>alarm</B> the user is prompted for a message, and the time interval before the alarm expires in hours and minutes. It then creates a new macro with a callback so that the new macro will be called at the correct time. <UL>
+<PRE>!if&nbsp;&amp;seq&nbsp;%alarm-numb&nbsp;&quot;ERROR&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;%alarm-numb&nbsp;0 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;%osd-alarm&nbsp;&amp;pinc&nbsp;%osd&nbsp;1 
+!endif 
+
+define-macro&nbsp;alarm 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;%alarm-numb&nbsp;&amp;add&nbsp;%alarm-numb&nbsp;1 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;&amp;cat&nbsp;&quot;%alarm-&quot;&nbsp;%alarm-numb 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;set-variable&nbsp;#l2&nbsp;@3 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;&amp;ind&nbsp;#l0&nbsp;@ml&nbsp;&quot;Message&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l1&nbsp;@ml&nbsp;&quot;Hours&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l2&nbsp;@ml&nbsp;&quot;Minutes&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!else 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;&amp;ind&nbsp;#l0&nbsp;@1 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l1&nbsp;@2 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l1&nbsp;&amp;mul&nbsp;60000&nbsp;&amp;add&nbsp;&amp;mul&nbsp;60&nbsp;#l1&nbsp;#l2 
+&nbsp;&nbsp;&nbsp;&nbsp;define-macro&nbsp;#l0 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!bell 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;&amp;add&nbsp;&amp;len&nbsp;&amp;ind&nbsp;@0&nbsp;10 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;osd&nbsp;%osd-alarm&nbsp;0&nbsp;&quot;bat&quot;&nbsp;9&nbsp;3 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;osd&nbsp;%osd-alarm&nbsp;1&nbsp;&quot;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;osd&nbsp;%osd-alarm&nbsp;2&nbsp;&quot;c&quot;&nbsp;&quot;ALARM&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;osd&nbsp;%osd-alarm&nbsp;3&nbsp;&quot;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;osd&nbsp;%osd-alarm&nbsp;4&nbsp;&quot;&quot;&nbsp;&amp;ind&nbsp;@0 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;osd&nbsp;%osd-alarm&nbsp;5&nbsp;&quot;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;osd&nbsp;%osd-alarm&nbsp;6&nbsp;&quot;Bcf&quot;&nbsp;&quot;&nbsp;OK&nbsp;&quot;&nbsp;f&nbsp;void 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%osd-alarm&nbsp;osd 
+&nbsp;&nbsp;&nbsp;&nbsp;!emacro 
+&nbsp;&nbsp;&nbsp;&nbsp;#l1&nbsp;create-callback&nbsp;#l0 
+!emacro 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
+<UL><P>Refer to 
+<A HREF="m4fil010.html">!return(4)</A> and 
+<A HREF="m4fil010.html">!abort(4)</A> for details macro termination. 
+<P>
+<A HREF="m4fil006.html">!emacro(4)</A>, 
+<A HREF="m2cmd003.html">add-file-hook(2)</A>, 
+<A HREF="m2cmd147.html">define-macro-file(2)</A>, 
+<A HREF="m2cmd093.html">define-help(2)</A>, 
+<A HREF="m2cmd038.html">describe-bindings(2)</A>, 
+<A HREF="m2cmd045.html">execute-file(2)</A>, 
+<A HREF="m2cmd047.html">execute-named-command(2)</A>, 
+<A HREF="m2cmd013.html">global-bind-key(2)</A>, 
+<A HREF="m2cmd074.html">insert-macro(2)</A>, 
+<A HREF="m2cmd011.html">start-kbd-macro(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

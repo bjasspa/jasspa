@@ -1,0 +1,100 @@
+<HTML>
+<HEAD><TITLE>keyNames(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+keyNames(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>KEY BINDING NAMES </B></H2>
+<UL><P>Every key which can be generated in MicroEmacs '02 has a character string or name representation which can be used to bind and unbind the key to a command. The name of simple keys like &quot;<TT>a</TT>&quot; or &quot;<TT>$</TT>&quot; is simply the character, i.e. &quot;<TT>a</TT>&quot; and &quot;<TT>$</TT>&quot;. Following is a list of other parts to a key name. </UL>
+<H2>Modify Keys </H2>
+<UL><P>There are 3 modifying keys, Shift, Control and Alt, these are represented as &quot;<TT>S-</TT>&quot;, &quot;<TT>C-</TT>&quot;, &quot;<TT>A-</TT>&quot; respectively. For example the key &quot;<TT>A-C-S-up</TT>&quot; is generated when the up cursor key is pressed when Shift, Control and Alt keys where also pressed. 
+<P>The Control and Alt modifiers are case insensitive so <TT>C-a</TT> is the same as <TT>C-A</TT> and <TT>C-S-a</TT>. </UL>
+<H2>Prefix Keys </H2>
+<UL><P>Many binding are single stroke key sequences (e.g. &quot;<TT>C-a</TT>&quot; =&gt; beginning-of-line). However MicroEmacs '02 has a 
+<A HREF="m2cmd028.html">prefix(2)</A> command which can be used to bind up to 8 single stroke keys, turning them into two stroke keys; this greatly increasing the number of available bindable key sequences. For example <B>prefix 1</B> is bound to the escape character (<TT>esc</TT>), this allows key sequences like &quot;<TT>esc a</TT>&quot; to be used. Following is a list of prefixes and their default bindings <UL>
+<P>
+<A HREF="m2cmd028.html">prefix 1</A> =&gt; <TT>esc</TT> 
+<BR>
+<A HREF="m2cmd028.html">prefix 2</A> =&gt; <TT>C-x</TT> 
+<BR>
+<A HREF="m2cmd028.html">prefix 3</A> =&gt; <TT>C-h</TT> 
+<BR>
+<A HREF="m2cmd028.html">prefix 4</A> =&gt; <TT>C-c</TT> </UL></UL>
+<H2>Special Keys </H2>
+<UL><P>Following is a complete list of recognized keyboard key names, not all are able to be generated on every platform:- <UL>
+<P><TT>backspace</TT>, <TT>delete</TT>, <TT>down</TT>, <TT>end</TT>, <TT>esc</TT>, <TT>f1</TT>, <TT>f2</TT>, <TT>f3</TT>, <TT>f4</TT>, <TT>f5</TT>, <TT>f6</TT>, <TT>f7</TT>, <TT>f8</TT>, <TT>f9</TT>, <TT>f10</TT>, <TT>f11</TT>, <TT>f12</TT>, <TT>f13</TT>, <TT>f14</TT>, <TT>f15</TT>, <TT>f16</TT>, <TT>f17</TT>, <TT>f18</TT>, <TT>f19</TT>, <TT>f20</TT>, <TT>home</TT>, <TT>insert</TT>, <TT>kp-0</TT>, <TT>kp-1</TT>, <TT>kp-2</TT>, <TT>kp-3</TT>, <TT>kp-4</TT>, <TT>kp-5</TT>, <TT>kp-6</TT>, <TT>kp-7</TT>, <TT>kp-8</TT>, <TT>kp-9</TT>, <TT>kp-add</TT>, <TT>kp-begin</TT>, <TT>kp-decimal</TT>, <TT>kp-delete</TT>, <TT>kp-divide</TT>, <TT>kp-down</TT>, <TT>kp-end</TT>, <TT>kp-enter</TT>, <TT>kp-home</TT>, <TT>kp-insert</TT>, <TT>kp-left</TT>, <TT>kp-multiply</TT>, <TT>kp-page-down</TT>, <TT>kp-page-up</TT>, <TT>kp-right</TT>, <TT>kp-subtract</TT>, <TT>kp-up</TT>, <TT>left</TT>, <TT>page-down</TT>, <TT>page-up</TT>, <TT>return</TT>, <TT>right</TT>, <TT>space</TT>, <TT>tab</TT>, <TT>up</TT> </UL>
+<P>The name of any key can be obtained by using 
+<A HREF="m2cmd039.html">describe-key(2)</A>. </UL>
+<H2>Mouse Keys </H2>
+<UL><P>Following is a list of mouse related keys:- 
+<P><B>mouse-pick-1</B>, <B>mouse-pick-2</B>, <B>mouse-pick-3</B>, <B>mouse-pick-4</B>, <B>mouse-pick-5</B> 
+<BR><UL>These keys are generated when the user presses a mouse button, these key events are always created. On most systems button 1 is the left, 2 the middle and 3 the right mouse button. If the system only has a 2 button mouse then a <TT>mouse-pick-2</TT> cannot be generated. The order of the buttons can be revered (i.e. 1 becomes right) and the number of buttons can be set using the 
+<A HREF="m5var047.html">$system(5)</A> variable. Note that X-servers support up to 5 buttons and with the growing popularity of pilot 'wheel' mice, the 4th and 5th button are often used to report wheel spin up and down events. The 
+<A HREF="m2cmd133.html">translate-key(2)</A> command can be used to translate these buttons to the mouse wheel keys. </UL>
+<P><B>mouse-drop-1</B>, <B>mouse-drop-2</B>, <B>mouse-drop-3</B>, <B>mouse-drop-4</B>, <B>mouse-drop-5</B> 
+<BR><UL>These keys are generated when the user release a mouse button, these key events are always created. </UL>
+<P><B>mouse-move-1</B>, <B>mouse-move-2</B>, <B>mouse-move-3</B>, <B>mouse-move-4</B>, <B>mouse-move-5</B>, <B>mouse-move</B> 
+<BR><UL>These key events are generated when the user moves the mouse and are only if they are bound to a command. The key generated depends on whether a button is being held down by the user, if the user is pressing button 1 then a <TT>mouse-move-1</TT> key is created etc. </UL>
+<P><B>mouse-time-1</B>, <B>mouse-time-2</B>, <B>mouse-time-3</B>, <B>mouse-time-5</B>, <B>mouse-time-5</B>, <B>mouse-time</B> 
+<BR><UL>These key events are generated only when they are bound to a command. They are pseudo keys created when the user hold the mouse buttons done for a period of time, see <B>Pseudo Keys</B> below for more information. </UL>
+<P><B>mouse-wheel-up</B>, <B>mouse-wheel-down</B> 
+<BR><UL>Pilot mouse wheel events, generated when the wheel is spun up or down respectively. </UL></UL>
+<H2>Modifier Keys </H2>
+<UL><P>The Shift, Control and Alt modifier keys will also generate key input whenever pressed or released. The keys are however only generated if they are bound to a command. The key names are as follows: 
+<P><B>S-pick</B>, <B>S-drop</B> 
+<BR><UL>Shift modifier. </UL>
+<P><B>C-pick</B>, <B>C-drop</B> 
+<BR><UL>Control modifier. </UL>
+<P><B>A-pick</B>, <B>A-drop</B> 
+<BR><UL>Alt modifier. 
+</UL><P>Note that the keys are only generated when another key is pressed, i.e. if the user presses and holds only the shift key, no &quot;<TT>S-pick</TT>&quot; key will be generated until another key, such as <TT>down</TT>, is also pressed. If the shift key is released before another key is pressed the event will not be reported. </UL>
+<H2>Pseudo Keys </H2>
+<UL><P>Pseudo keys events cannot be directly created by the user, they are created internally by MicroEmacs. They are treated like normal keys to allow the user to handle the events properly themselves. Following is a complete list of the system generated pseudo keys:- 
+<P><B>bell</B> 
+<BR><UL>The pseudo key is generated when the bell is rung. </UL>
+<P><B>callback</B> 
+<BR><UL>The pseudo key when a 
+<A HREF="m2cmd024.html">create-callback(2)</A> macro is executed, this allows the executed macro to know it was executed via a create-callback as 
+<A HREF="m4fil017.html">@cck(4)</A> will be set to this. </UL>
+<P><B>idle-pick</B>, <B>idle-drop</B>, <B>idle-time</B> 
+<BR><UL>The commands bound to these keys are executed when the system becomes idle for a period of time. See help on 
+<A HREF="m5var072.html">$idle-time(5)</A> for more information. </UL>
+<P><B>mouse-time-1</B>, <B>mouse-time-2</B>, <B>mouse-time-3</B>, <B>mouse-time-4</B>, <B>mouse-time-5</B>, <B>mouse-time</B> 
+<BR><UL>The command bound to these keys are executed when mouse button 1, 2, 3, 4, 5 or a combination are held bound for a period of time. See help on 
+<A HREF="m5var071.html">$delay-time(5)</A> for more information. </UL>
+<P><B>redraw</B> 
+<BR><UL>The command bound to this pseudo key is executed whenever the screen needs redrawing, by default it is bound to 
+<A HREF="m2cmd139.html">screen-update(2)</A>. If the user unbinds this key then <B>screen-update</B> is still called, but if the user binds it to a function which does not redraw the screen, such as 
+<A HREF="m2cmd141.html">void(2)</A>, then the screen will not be up-dated. 
+</UL><P>The command executed is always given an argument, a non-zero argument indicates a forced complete redraw, an argument of zero indicates that just an up-date is required. </UL>
+<H2>Alt Key </H2>
+<UL><P>The <B>Alt Key</B> has special binding priorities defined as follows:- <UL><P>
+<LI>Direct key binding (e.g. <B>A-b</B> executes 
+<A HREF="m3mac027.html">file-browser</A>) 
+<LI>Main menu hot key (e.g. <B>A-f</B> opens the File menu) 
+<LI>Meta key binding (e.g. <B>A-space</B> -&gt; <B>esc&nbsp;space</B> -&gt; 
+<A HREF="m2cmd121.html">set-mark</A>) </UL><P>If the <TT>ALT</TT> key is to be used strictly as the Emacs Meta key then the bindings for the menu should be over-ridden by <I>Direct Key Bindings</I> from the user configuration file i.e. to re-map the default MicroEmacs Alt key to equivalent <TT>esc</TT> keys then the following keys should be re-bound. <UL>
+<PRE>global-bind-key&nbsp;forward-word&nbsp;&quot;A-f&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Over-ride&nbsp;File&nbsp;menu&nbsp;binding 
+:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;For&nbsp;all&nbsp;of&nbsp;the&nbsp;other&nbsp;menu&nbsp;items. 
+: 
+global-bind-key&nbsp;backward-word&nbsp;&quot;A-b&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Over-ride&nbsp;the&nbsp;file&nbsp;browser. 
+global-bind-key&nbsp;replace-string&nbsp;&quot;A-r&quot;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Over-ride&nbsp;tools&nbsp;binding. 
+</PRE></UL>
+<P>This creates a higher priority binding which overrides the underlying default. The commands that are displaced would have to be re-bound to different keys if required. </UL>
+<H2><B>KEYBOARD MACROS </B></H2>
+<UL><P>Keyboard macros do not store the name of keys, instead a more machine oriented format is used (usually in the form &quot;<TT>\s??</TT>&quot;) these will work across platforms (assuming the key bindings are the same) but they may not work across different releases. 
+<P>As a result it is advised that any long term macro should avoid named keys like <TT>up</TT> in favor of using a standard key binding such as <TT>C-p</TT>. See help on 
+<A HREF="m2cmd048.html">execute-string(2)</A> for more information. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

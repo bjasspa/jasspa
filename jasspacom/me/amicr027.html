@@ -1,0 +1,40 @@
+<HTML>
+<HEAD><TITLE>Mode Line</TITLE></HEAD>
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+Mode Line</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>MODE LINE </B></H2>
+<UL><P>The <B>modeLine</B> is the line of text shown at the bottom of each 
+<A HREF="amicr024.html">window</A> identifying the window being displayed. The mode line typically contains the name of the 
+<A HREF="amicr012.html">buffer</A>, the file and operating mode associated with the buffer displayed in the window. e.g. <UL>
+<PRE>#*-me&nbsp;(BEI)&nbsp;-&nbsp;250&nbsp;foo&nbsp;(foo.txt)&nbsp;---------------- 
+</PRE></UL>
+<P><B>Note</B> that only a sub-set of the modes are visible on the mode line, this reduces the cluttering of the mode line. Use the 
+<A HREF="m2cmd148.html">about(2)</A> command to determine the exact modes that are active. 
+<P>The text content and color of the mode line is fully configurable and may be defined in the users start-up script. The currently active buffer is generally indicated by the state of the mode line, e.g. highlighted color (typically red) and/or double line separator characters <B>===</B>; conversely inactive buffers are shown in a dull color with single line separator characters <B>---</B>. 
+<P>The mode line may be configured or interrogated using the following variables:- 
+<P>
+<A HREF="m5var008.html">$buffer-mode-line(5)</A> Buffer mode line string 
+<BR>
+<A HREF="m5var031.html">$mode-line(5)</A> Mode line format 
+<BR>
+<A HREF="m5var032.html">$mode-line-scheme(5)</A> Mode line color scheme 
+<BR>
+<A HREF="m5var019.html">$show-modes(5)</A> Select buffer modes to display 
+<BR>
+<A HREF="m5var046.html">$window-mode-line(5)</A> Window mode line position 
+<BR>
+<A HREF="m5var046.html">$window-scroll-bar(5)</A> Window scroll bar (or separator) position </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2002/01/06</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,93 @@
+<HTML>
+<HEAD><TITLE>!jump(4)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+!jump(4)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>!jump - Unconditional relative branch 
+<BR>!tjump - conditional relative branch </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>!jump</B>&nbsp;<I>offset</I> 
+<BR><B>!tjump</B>&nbsp;<I>condition</I>&nbsp;<I>offset</I> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>Flow can be controlled within a MicroEmacs '02 macro using the <B>!jump</B> directive. It takes as a numerical argument <I>offset</I>. The <I>offset</I> is a signed relative displacement, it may be a literal numeric value, a variable or an evaluated expression (see 
+<A HREF="amicr026.html">Variable Functions</A>). The displacement to jump starts from the current <B>!jump</B> line. (i.e. <B>0 goto</B>) would loop forever as it jumps to itself). Negative <I>offset</I> branches backwards, positive <I>offset</I> forwards. 
+<P>A conditional relative branch, with a numerical displacement is specified using <B>!tjump</B>. This has an additional argument <I>condition</I> which is evaluated and if TRUE (Non-zero) then the branch is taken. The <I>condition</I> may be a variable or an evaluated expression. 
+<P><B>!jump</B> and <B>!tjump</B> are fast equivalents of 
+<A HREF="m4fil009.html">!goto(4)</A> and 
+<A HREF="m4fil009.html">!tgoto(4)</A>, respectively. <B>!jump</B> should be used with care as these calls are source sensitive and unexpected results may be obtained if the <I>offset</I>'s are specified incorrectly. </UL>
+<H2><B>WARNING </B></H2>
+<UL><P>Comments are not counted as valid lines within the relative displacement, these are stripped out when the macro is loaded. When using a relative branch ensure that ONLY the <I>code</I> lines are counted. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>For some seriously dirty macro tricks then the <B>!jump</B> directive becomes very useful. The following example is taken from the <B>Metris</B> macro (which is packed with goodies if you can find time to work out what it does !!). The following example uses the random number generator 
+<A HREF="m5var035.html">$random(5)</A> to generate a random number which scaled and used as a <B>!jump</B> offset, thereby creating a <I>switch</I> type statement. <UL>
+<PRE>0&nbsp;define-macro&nbsp;met-select-piece 
+&nbsp;&nbsp;&nbsp;&nbsp;!jump&nbsp;&amp;mul&nbsp;5&nbsp;&amp;add&nbsp;1&nbsp;&amp;div&nbsp;&amp;mod&nbsp;$random&nbsp;71&nbsp;10 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-np1&nbsp;&quot;&nbsp;X&nbsp;&quot;&nbsp;&nbsp;;&nbsp;1st&nbsp;3&nbsp;lines&nbsp;are&nbsp;dummies&nbsp;to&nbsp;get&nbsp;offset&nbsp;right 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-np1&nbsp;&quot;&nbsp;X&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-np1&nbsp;&quot;&nbsp;X&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-np1&nbsp;&quot;&nbsp;X&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-np1&nbsp;&quot;&nbsp;X&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-np2&nbsp;&quot;XX&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-np3&nbsp;&quot;&nbsp;X&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-ncol&nbsp;%lyellow 
+&nbsp;&nbsp;&nbsp;&nbsp;!return 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-np1&nbsp;&quot;XX&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-np2&nbsp;&quot;XX&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-np3&nbsp;&quot;&nbsp;&nbsp;&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-ncol&nbsp;%yellow 
+&nbsp;&nbsp;&nbsp;&nbsp;!return 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-np1&nbsp;&quot;X&nbsp;&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-np2&nbsp;&quot;XX&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-np3&nbsp;&quot;&nbsp;X&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-ncol&nbsp;%lmagenta 
+&nbsp;&nbsp;&nbsp;&nbsp;!return 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-np1&nbsp;&quot;&nbsp;&nbsp;X&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-np2&nbsp;&quot;&nbsp;XX&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-np3&nbsp;&quot;&nbsp;X&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-ncol&nbsp;%lgreen 
+&nbsp;&nbsp;&nbsp;&nbsp;!return 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-np1&nbsp;&quot;&nbsp;X&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-np2&nbsp;&quot;&nbsp;X&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-np3&nbsp;&quot;&nbsp;XX&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-ncol&nbsp;%magenta 
+&nbsp;&nbsp;&nbsp;&nbsp;!return 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-np1&nbsp;&quot;&nbsp;X&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-np2&nbsp;&quot;&nbsp;X&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-np3&nbsp;&quot;XX&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-ncol&nbsp;%green 
+&nbsp;&nbsp;&nbsp;&nbsp;!return 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-np1&nbsp;&quot;&nbsp;X&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-np2&nbsp;&quot;&nbsp;X&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-np3&nbsp;&quot;&nbsp;X&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-ncol&nbsp;%lblue 
+&nbsp;&nbsp;&nbsp;&nbsp;!return 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-np1&nbsp;&quot;&nbsp;X&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-np2&nbsp;&quot;&nbsp;X&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-np3&nbsp;&quot;X&nbsp;X&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;:met-ncol&nbsp;%lred 
+!emacro 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="amicr026.html">Variable Fuctions</A>, 
+<A HREF="m4fil009.html">!goto(4)</A>, 
+<A HREF="m4fil008.html">!if(4)</A>, 
+<A HREF="m4fil012.html">!repeat(4)</A>, 
+<A HREF="m4fil010.html">!return(4)</A>, 
+<A HREF="m4fil009.html">!tgoto(4)</A>, 
+<A HREF="m4fil011.html">!while(4)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,380 @@
+<HTML>
+<HEAD><TITLE>Bindings(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+Bindings(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>DEFAULT KEY BINDINGS </B></H2>
+<UL><P>The default key bindings are presented below in four alphabetical lists, one for single key bindings and one for each of the 4 bound prefixes (<TT>esc</TT>, <TT>C-x</TT>, <TT>C-h</TT> &amp; <TT>C-c</TT>). See 
+<A HREF="m2cmd203.html">Key Names</A> for a list of valid key names. </UL>
+<H2>Single-Key Sequences </H2>
+<UL><P><TT>backspace</TT> 
+<A HREF="m2cmd034.html">backward-delete-char</A> Delete the previous character. 
+<BR><TT>delete</TT> 
+<A HREF="m2cmd034.html">forward-delete-char</A> Delete character under the cursor. 
+<BR><TT>down</TT> 
+<A HREF="m2cmd092.html">forward-line</A> Move to next line. 
+<BR><TT>end</TT> 
+<A HREF="m2cmd012.html">end-of-buffer</A> Move to the end of the buffer. 
+<BR><TT>esc</TT> 
+<A HREF="m2cmd028.html">prefix 1</A> Meta character prefix. 
+<BR><TT>f1</TT> 
+<A HREF="m2cmd066.html">osd</A> Open top main menu. 
+<BR><TT>home</TT> 
+<A HREF="m2cmd012.html">beginning-of-buffer</A> Move to the start of the buffer. 
+<BR><TT>insert</TT> 
+<A HREF="m2cmd006.html">buffer-mode</A> Toggle over-write mode. 
+<BR><TT>left</TT> 
+<A HREF="m2cmd010.html">backward-char</A> Move backward one character (left). 
+<BR><TT>page-down</TT> 
+<A HREF="m2cmd087.html">scroll-down</A> Move forward by one screen. 
+<BR><TT>page-up</TT> 
+<A HREF="m2cmd087.html">scroll-up</A> Move backward by one screen. 
+<BR><TT>return</TT> 
+<A HREF="m2cmd090.html">newline</A> Insert a new line. 
+<BR><TT>right</TT> 
+<A HREF="m2cmd010.html">forward-char</A> Move forward one character (right). 
+<BR><TT>tab</TT> 
+<A HREF="m2cmd064.html">tab</A> Insert a tab character. 
+<BR><TT>up</TT> 
+<A HREF="m2cmd092.html">backward-line</A> Move to previous line. 
+<P><TT>S-backspace</TT> 
+<A HREF="m2cmd034.html">backward-delete-char</A> Delete the previous character. 
+<BR><TT>S-delete</TT> 
+<A HREF="m2cmd034.html">forward-delete-char</A> Delete character under the cursor. 
+<BR><TT>S-tab</TT> 
+<A HREF="m2cmd037.html">backward-delete-tab</A> Delete white space to previous tab-stop. 
+<P><TT>C-a</TT> 
+<A HREF="m2cmd026.html">beginning-of-line</A> Move to beginning of line. 
+<BR><TT>C-b</TT> 
+<A HREF="m2cmd010.html">backward-char</A> Move backwards by one character 
+<BR><TT>C-c</TT> 
+<A HREF="m2cmd028.html">prefix</A> Control character prefix. 
+<BR><TT>C-d</TT> 
+<A HREF="m2cmd034.html">forward-delete-char</A> Delete character under the cursor. 
+<BR><TT>C-e</TT> 
+<A HREF="m2cmd026.html">end-of-line</A> Move to end of line. 
+<BR><TT>C-f</TT> 
+<A HREF="m2cmd010.html">forward-char</A> Move forward one character (right). 
+<BR><TT>C-g</TT> 
+<A HREF="m2cmd000.html">abort-command</A> Abort current command. 
+<BR><TT>C-h</TT> 
+<A HREF="m2cmd028.html">prefix</A> Control character prefix. 
+<BR><TT>C-i</TT> 
+<A HREF="m2cmd156.html">insert-tab</A> Insert tab character. 
+<BR><TT>C-k</TT> 
+<A HREF="m2cmd082.html">kill-line</A> Delete from cursor to the end of the line. 
+<BR><TT>C-l</TT> 
+<A HREF="m2cmd108.html">recenter</A> Redraw screen with current line in the center. 
+<BR><TT>C-m</TT> 
+<A HREF="m2cmd090.html">newline</A> Insert a new line. 
+<BR><TT>C-n</TT> 
+<A HREF="m2cmd092.html">forward-line</A> Move to next line (down). 
+<BR><TT>C-o</TT> 
+<A HREF="m2cmd097.html">insert-newline</A> Open up a blank line. 
+<BR><TT>C-p</TT> 
+<A HREF="m2cmd092.html">backward-line</A> Move to previous line (up). 
+<BR><TT>C-q</TT> 
+<A HREF="m2cmd104.html">quote-char</A> Insert literal character. 
+<BR><TT>C-r</TT> 
+<A HREF="m2cmd078.html">isearch-backward</A> Start incremental search backwards. 
+<BR><TT>C-s</TT> 
+<A HREF="m2cmd078.html">isearch-forward</A> Start incremental search forwards. 
+<BR><TT>C-t</TT> 
+<A HREF="m2cmd135.html">transpose-chars</A> Transpose two letters. 
+<BR><TT>C-u</TT> 
+<A HREF="m2cmd137.html">universal-argument</A> Repeat the next command <I>n</I> times (default is 4). 
+<BR><TT>C-v</TT> 
+<A HREF="m2cmd087.html">scroll-down</A> Move forward by one screen. 
+<BR><TT>C-w</TT> 
+<A HREF="m2cmd081.html">kill-region</A> Delete a marked region. 
+<BR><TT>C-x</TT> 
+<A HREF="m2cmd028.html">prefix</A> Control character prefix. 
+<BR><TT>C-y</TT> 
+<A HREF="m2cmd146.html">yank</A> Restore what was copied or deleted. 
+<BR><TT>C-z</TT> 
+<A HREF="m2cmd087.html">scroll-up</A> Move backward by one screen. 
+<BR><TT>C-_</TT> 
+<A HREF="m2cmd136.html">undo</A> Undo the previous edit. 
+<BR><TT>C-down</TT> 
+<A HREF="m2cmd092.html">forward-line</A> Move forward five lines. 
+<BR><TT>C-left</TT> 
+<A HREF="m2cmd096.html">backward-word</A> Move one word backward. 
+<BR><TT>C-page-down</TT> 
+<A HREF="m2cmd115.html">scroll-next-window-down</A> Scroll next window down a page. 
+<BR><TT>C-page-up</TT> 
+<A HREF="m2cmd115.html">scroll-next-window-up</A> Scroll the next window up a page. 
+<BR><TT>C-right</TT> 
+<A HREF="m2cmd096.html">forward-word</A> Move one word forward. 
+<BR><TT>C-up</TT> 
+<A HREF="m2cmd092.html">backward-line</A> Move backward 5 lines. 
+<P><TT>A-e</TT> 
+<A HREF="m3mac027.html">file-browser</A> Browse the file system. 
+<BR><TT>A-r</TT> 
+<A HREF="m3mac006.html">replace-all-string</A> Replace string with new string in a list of files. 
+<BR><TT>A-down</TT> 
+<A HREF="m2cmd087.html">scroll-down</A> Scroll the current window down one line. 
+<BR><TT>A-left</TT> 
+<A HREF="m2cmd149.html">scroll-left</A> Scroll the current window left one character. 
+<BR><TT>A-right</TT> 
+<A HREF="m2cmd149.html">scroll-right</A> Scroll the current window right one character. 
+<BR><TT>A-up</TT> 
+<A HREF="m2cmd087.html">scroll-up</A> Scroll the current window up one line. </UL>
+<H2>esc  Prefix Sequences </H2>
+<UL><P><TT>esc !</TT> 
+<A HREF="m2cmd098.html">pipe-shell-command</A> Pipe a shell command to a buffer. 
+<BR><TT>esc $</TT> 
+<A HREF="m3osd002.html">spell-word</A> Spell a word. 
+<BR><TT>esc .</TT> 
+<A HREF="m2cmd121.html">set-mark</A> Set the start of a region. 
+<BR><TT>esc /</TT> 
+<A HREF="m2cmd045.html">execute-file</A> Execute script lines from a file. 
+<BR><TT>esc &lt;</TT> 
+<A HREF="m2cmd012.html">beginning-of-buffer</A> Move to the start of the buffer. 
+<BR><TT>esc &gt;</TT> 
+<A HREF="m2cmd012.html">end-of-buffer</A> Move to the end of the buffer. 
+<BR><TT>esc ?</TT> 
+<A HREF="m2cmd065.html">help</A> Help - high level introduction to MicroEmacs. 
+<BR><TT>esc @</TT> 
+<A HREF="m2cmd098.html">pipe-shell-command</A> Pipe a shell command to a buffer. 
+<BR><TT>esc [</TT> 
+<A HREF="m2cmd094.html">backward-paragraph</A> Goto the beginning of the paragraph. 
+<BR><TT>esc \</TT> 
+<A HREF="m2cmd077.html">ipipe-shell-command</A> Incrementally pipe a shell command to a buffer. 
+<BR><TT>esc ]</TT> 
+<A HREF="m2cmd094.html">forward-paragraph</A> Move forward one paragraph 
+<BR><TT>esc ^</TT> 
+<A HREF="m3mac021.html">delete-indentation</A> Join 2 lines deleting white spaces. 
+<BR><TT>esc b</TT> 
+<A HREF="m2cmd096.html">backward-word</A> Move one word backwards 
+<BR><TT>esc c</TT> 
+<A HREF="m2cmd015.html">capitalize-word</A> Capitalize first letter of a word 
+<BR><TT>esc d</TT> 
+<A HREF="m2cmd035.html">forward-kill-word</A> Delete word the cursor is on. 
+<BR><TT>esc e</TT> 
+<A HREF="m2cmd120.html">set-encryption-key</A> Reset the encryption key. 
+<BR><TT>esc f</TT> 
+<A HREF="m2cmd096.html">forward-word</A> Move one word forward. 
+<BR><TT>esc g</TT> 
+<A HREF="m2cmd060.html">goto-line</A> Goto a line. 
+<BR><TT>esc i</TT> 
+<A HREF="m2cmd064.html">tab</A> Insert a tab character. 
+<BR><TT>esc k</TT> 
+<A HREF="m2cmd013.html">global-bind-key</A> Bind a key to a command or macro. 
+<BR><TT>esc l</TT> 
+<A HREF="m2cmd015.html">lower-case-word</A> Lowercase word. 
+<BR><TT>esc m</TT> 
+<A HREF="m2cmd005.html">global-mode</A> Toggle a global mode. 
+<BR><TT>esc n</TT> 
+<A HREF="m2cmd094.html">forward-paragraph</A> Move forward one paragraph 
+<BR><TT>esc o</TT> 
+<A HREF="m2cmd052.html">fill-paragraph</A> Reformat (fill) current paragraph. 
+<BR><TT>esc p</TT> 
+<A HREF="m2cmd094.html">backward-paragraph</A> Goto the beginning of the paragraph. 
+<BR><TT>esc q</TT> 
+<A HREF="m3mac026.html">ifill-paragraph</A> Reformat (fill) current paragraph. 
+<BR><TT>esc r</TT> 
+<A HREF="m2cmd109.html">replace-string</A> Search and replace text (no query). 
+<BR><TT>esc t</TT> 
+<A HREF="m2cmd057.html">find-tag</A> Find a tag. 
+<BR><TT>esc u</TT> 
+<A HREF="m2cmd015.html">upper-case-word</A> Uppercase word. 
+<BR><TT>esc v</TT> 
+<A HREF="m2cmd087.html">scroll-down</A> Move to the previous screen. 
+<BR><TT>esc w</TT> 
+<A HREF="m2cmd022.html">copy-region</A> Copy region to the kill buffer. 
+<BR><TT>esc x</TT> 
+<A HREF="m2cmd047.html">execute-named-command</A> Execute the named command. 
+<BR><TT>esc y</TT> 
+<A HREF="m2cmd111.html">reyank</A> Kill current yank data and restore previous kill buffer data. 
+<BR><TT>esc z</TT> 
+<A HREF="m2cmd103.html">quick-exit</A> Save all buffers and exit. 
+<P><TT>esc ~</TT> 
+<A HREF="m2cmd006.html">buffer-mode</A> Remove edited status from current buffer. 
+<BR><TT>esc backspace</TT> 
+<A HREF="m2cmd035.html">backward-kill-word</A> Delete the word under the cursor. 
+<BR><TT>esc esc</TT> 
+<A HREF="m2cmd051.html">expand-abbrev</A> Expand an abbreviation. 
+<BR><TT>esc space</TT> 
+<A HREF="m2cmd121.html">set-mark</A> Set the start of a region. 
+<P><TT>esc C-c</TT> 
+<A HREF="m2cmd023.html">count-words</A> Count words in a region. 
+<BR><TT>esc C-f</TT> 
+<A HREF="m2cmd061.html">goto-matching-fence</A> Reposition the cursor at an opposing bracket. 
+<BR><TT>esc C-g</TT> 
+<A HREF="m2cmd000.html">abort-command</A> Abort current command. 
+<BR><TT>esc C-i</TT> 
+<A HREF="m2cmd064.html">tab</A> Insert tab character. 
+<BR><TT>esc C-k</TT> 
+<A HREF="m2cmd013.html">global-unbind-key</A> Unbind a key from a command or macro 
+<BR><TT>esc C-n</TT> 
+<A HREF="m2cmd088.html">change-buffer-name</A> Rename current buffer. 
+<BR><TT>esc C-r</TT> 
+<A HREF="m2cmd102.html">query-replace-string</A> Search and replace with query. 
+<BR><TT>esc C-v</TT> 
+<A HREF="m2cmd115.html">scroll-next-window-down</A> Scroll next window down a page. 
+<BR><TT>esc C-w</TT> 
+<A HREF="m2cmd080.html">kill-paragraph</A> Delete current paragraph. 
+<BR><TT>esc C-z</TT> 
+<A HREF="m2cmd115.html">scroll-next-window-up</A> Scroll the next window up a page. 
+<P><TT>esc A-r</TT> 
+<A HREF="m3mac007.html">query-replace-all-string</A> Query replace string in a list of files. </UL>
+<H2>C-x&nbsp; Prefix Sequences </H2>
+<UL><P><TT>C-x&nbsp;#</TT> 
+<A HREF="m2cmd053.html">filter-buffer</A> Filter the buffer through a shell filter. 
+<BR><TT>C-x&nbsp;(</TT> 
+<A HREF="m2cmd011.html">start-kbd-macro</A> Start recording a keyboard macro. 
+<BR><TT>C-x&nbsp;)</TT> 
+<A HREF="m2cmd011.html">end-kbd-macro</A> Stop recording a keyboard macro. 
+<BR><TT>C-x&nbsp;/</TT> 
+<A HREF="m2cmd078.html">isearch-forward</A> Start incremental search forwards. 
+<BR><TT>C-x&nbsp;0</TT> 
+<A HREF="m2cmd036.html">delete-window</A> Delete the current window. 
+<BR><TT>C-x&nbsp;1</TT> 
+<A HREF="m2cmd036.html">delete-other-windows</A> Delete other windows. 
+<BR><TT>C-x&nbsp;2</TT> 
+<A HREF="m2cmd128.html">split-window-vertically</A> Split the current window into two. 
+<BR><TT>C-x&nbsp;3</TT> 
+<A HREF="m2cmd126.html">next-window-find-buffer</A> Find a buffer into the next window, split if necessary. 
+<BR><TT>C-x&nbsp;4</TT> 
+<A HREF="m2cmd127.html">next-window-find-file</A> Load a file into the next window, split if necessary. 
+<BR><TT>C-x&nbsp;5</TT> 
+<A HREF="m2cmd151.html">split-window-horizontally</A> Split the current window horizontally into two. 
+<BR><TT>C-x&nbsp;9</TT> 
+<A HREF="m3mac030.html">find-bfile</A> Find and load a file for binary editing. 
+<BR><TT>C-x&nbsp;&lt;</TT> 
+<A HREF="m2cmd149.html">scroll-left</A> Scroll the window left by one screen width. 
+<BR><TT>C-x&nbsp;=</TT> 
+<A HREF="m2cmd014.html">buffer-info</A> Show cursor position information 
+<BR><TT>C-x&nbsp;&gt;</TT> 
+<A HREF="m2cmd149.html">scroll-right</A> Scroll the window right by one screen width. 
+<BR><TT>C-x&nbsp;?</TT> 
+<A HREF="m2cmd039.html">describe-key</A> Describe binding of command to key. 
+<BR><TT>C-x&nbsp;@</TT> 
+<A HREF="m2cmd098.html">pipe-shell-command</A> Pipe a shell command to buffer. 
+<BR><TT>C-x&nbsp;[</TT> 
+<A HREF="m2cmd087.html">scroll-up</A> Move backward by one screen. 
+<BR><TT>C-x&nbsp;]</TT> 
+<A HREF="m2cmd087.html">scroll-down</A> Move forward by one screen. 
+<BR><TT>C-x&nbsp;^</TT> 
+<A HREF="m2cmd063.html">grow-window-vertically</A> Enlarge the current window by a line. 
+<BR><TT>C-x&nbsp;`</TT> 
+<A HREF="m2cmd058.html">get-next-line</A> Find the next command line. 
+<BR><TT>C-x&nbsp;a</TT> 
+<A HREF="m2cmd059.html">goto-alpha-mark</A> Move the cursor to an alphabetic mark. 
+<BR><TT>C-x&nbsp;b</TT> 
+<A HREF="m2cmd091.html">find-buffer</A> Switch window to a buffer. 
+<BR><TT>C-x&nbsp;c</TT> 
+<A HREF="m2cmd071.html">shell</A> Start a new command processor. 
+<BR><TT>C-x&nbsp;e</TT> 
+<A HREF="m2cmd046.html">execute-kbd-macro</A> Execute a macro. 
+<BR><TT>C-x&nbsp;h</TT> 
+<A HREF="m2cmd070.html">hunt-forward</A> Continue search in forward direction. 
+<BR><TT>C-x&nbsp;k</TT> 
+<A HREF="m2cmd031.html">delete-buffer</A> Delete buffer. 
+<BR><TT>C-x&nbsp;m</TT> 
+<A HREF="m2cmd006.html">buffer-mode</A> Toggle a local buffer mode. 
+<BR><TT>C-x&nbsp;n</TT> 
+<A HREF="m2cmd017.html">change-file-name</A> Rename current buffer file name. 
+<BR><TT>C-x&nbsp;o</TT> 
+<A HREF="m2cmd095.html">next-window</A> Move to the next window. 
+<BR><TT>C-x&nbsp;p</TT> 
+<A HREF="m2cmd095.html">previous-window</A> Move to the previous window. 
+<BR><TT>C-x&nbsp;q</TT> 
+<A HREF="m2cmd079.html">kbd-macro-query</A> Query keyboard macro. 
+<BR><TT>C-x&nbsp;r</TT> 
+<A HREF="m2cmd116.html">search-backward</A> Search in a reverse direction. 
+<BR><TT>C-x&nbsp;s</TT> 
+<A HREF="m2cmd116.html">search-forward</A> Search in a forward direction. 
+<BR><TT>C-x&nbsp;u</TT> 
+<A HREF="m2cmd136.html">undo</A> Undo the previous edit. 
+<BR><TT>C-x&nbsp;v</TT> 
+<A HREF="m2cmd122.html">set-variable</A> Assign a new value to a variable. 
+<BR><TT>C-x&nbsp;w</TT> 
+<A HREF="m2cmd063.html">resize-window-vertically</A> Resize the window. 
+<BR><TT>C-x&nbsp;x</TT> 
+<A HREF="m2cmd091.html">next-buffer</A> Switch to the next buffer. 
+<BR><TT>C-x&nbsp;z</TT> 
+<A HREF="m2cmd063.html">grow-window-vertically</A> Enlarge the current window. 
+<BR><TT>C-x&nbsp;{</TT> 
+<A HREF="m2cmd152.html">shrink-window-horizontally</A> Shrink current window horizontally. 
+<BR><TT>C-x&nbsp;}</TT> 
+<A HREF="m2cmd152.html">grow-window-horizontally</A> Enlarge current window horizontally. 
+<P><TT>C-x&nbsp;C-a</TT> 
+<A HREF="m2cmd118.html">set-alpha-mark</A> Mark the current position with an alphabetic mark. 
+<BR><TT>C-x&nbsp;C-b</TT> 
+<A HREF="m2cmd083.html">list-buffers</A> Display buffer list. 
+<BR><TT>C-x&nbsp;C-c</TT> 
+<A HREF="m2cmd103.html">save-buffer-exit-emacs</A> Exit MicroEmacs '02. 
+<BR><TT>C-x&nbsp;C-d</TT> 
+<A HREF="m2cmd016.html">change-directory</A> Change the current working directory. 
+<BR><TT>C-x&nbsp;C-e</TT> 
+<A HREF="m2cmd046.html">execute-kbd-macro</A> Execute a macro. 
+<BR><TT>C-x&nbsp;C-f</TT> 
+<A HREF="m2cmd056.html">find-file</A> Find a file and load into buffer. 
+<BR><TT>C-x&nbsp;C-g</TT> 
+<A HREF="m2cmd000.html">abort-command</A> Abort current command. 
+<BR><TT>C-x&nbsp;C-h</TT> 
+<A HREF="m2cmd070.html">hunt-backward</A> Resume search in backwards direction. 
+<BR><TT>C-x&nbsp;C-i</TT> 
+<A HREF="m2cmd073.html">insert-file</A> Insert file into the current buffer. 
+<BR><TT>C-x&nbsp;C-l</TT> 
+<A HREF="m2cmd015.html">lower-case-region</A> Lowercase region. 
+<BR><TT>C-x&nbsp;C-n</TT> 
+<A HREF="m2cmd087.html">scroll-down</A> Scroll the current window down one line. 
+<BR><TT>C-x&nbsp;C-o</TT> 
+<A HREF="m2cmd030.html">delete-blank-lines</A> Delete blank lines about the cursor. 
+<BR><TT>C-x&nbsp;C-p</TT> 
+<A HREF="m2cmd087.html">scroll-up</A> Scroll the current window up one line. 
+<BR><TT>C-x&nbsp;C-q</TT> 
+<A HREF="m2cmd105.html"> rcs-file</A> Interact with RCS to check in/out a file. 
+<BR><TT>C-x&nbsp;C-r</TT> 
+<A HREF="m2cmd106.html">read-file</A> Read a file from disk. 
+<BR><TT>C-x&nbsp;C-s</TT> 
+<A HREF="m2cmd113.html">save-buffer</A> Save current file to disk. 
+<BR><TT>C-x&nbsp;C-t</TT> 
+<A HREF="m2cmd135.html">transpose-lines</A> Swap adjacent lines. 
+<BR><TT>C-x&nbsp;C-u</TT> 
+<A HREF="m2cmd015.html">upper-case-region</A> Uppercase region. 
+<BR><TT>C-x&nbsp;C-v</TT> 
+<A HREF="m2cmd140.html">view-file</A> Read a file for viewing (read only). 
+<BR><TT>C-x&nbsp;C-w</TT> 
+<A HREF="m2cmd143.html">write-buffer</A> Write a file to disk witn new name. 
+<BR><TT>C-x&nbsp;C-x</TT> 
+<A HREF="m2cmd043.html">exchange-point-and-mark</A> Exchange cursor with mark position. 
+<BR><TT>C-x&nbsp;C-y</TT> 
+<A HREF="m2cmd050.html">insert-file-name</A> Insert filename into current buffer. 
+<BR><TT>C-x&nbsp;C-z</TT> 
+<A HREF="m2cmd063.html">shrink-window-vertically</A> Reduce size of current window. </UL>
+<H2>C-h&nbsp; Prefix Sequences </H2>
+<UL><P><TT>C-h&nbsp;a</TT> 
+<A HREF="m2cmd009.html">command-apropos</A> List commands involving a concept. 
+<BR><TT>C-h&nbsp;b</TT> 
+<A HREF="m2cmd038.html">describe-bindings</A> Show current command/key binding. 
+<BR><TT>C-h&nbsp;c</TT> 
+<A HREF="m2cmd062.html">list-commands</A> List available commands. 
+<BR><TT>C-h&nbsp;d</TT> 
+<A HREF="m2cmd040.html">describe-variable</A> Describe current setting of a variable. 
+<BR><TT>C-h&nbsp;k</TT> 
+<A HREF="m2cmd039.html">describe-key</A> Describe keyboard binding. 
+<BR><TT>C-h&nbsp;v</TT> 
+<A HREF="m2cmd086.html">list-variables</A> List defined variables. 
+<P><TT>C-h&nbsp;C-c</TT> 
+<A HREF="m2cmd065.html">help-command</A> Display command help information. 
+<BR><TT>C-h&nbsp;C-i</TT> 
+<A HREF="m2cmd065.html">help-item</A> Display item help information. 
+<BR><TT>C-h&nbsp;C-v</TT> 
+<A HREF="m2cmd065.html">help-variable</A> Display variable help information. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

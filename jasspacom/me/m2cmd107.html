@@ -1,0 +1,40 @@
+<HTML>
+<HEAD><TITLE>read-history(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+read-history(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>read-history - Read in session history information </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>read-history</B> [ &quot;<I>hist-file</I>&quot; ] </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>read-history</B> reads in a MicroEmacs '02 history file, setting the current history information. If argument <B>n</B> is not given then the given &quot;<I>hist-file</I>&quot; is simply read in. If a non-zero argument is specified then default history is set to the given file-name and the file is read. If an argument of zero is given then the default history is re-read. Information read in (and saved) from the history file includes:- <UL><P>
+<LI>Searching and replacing history. 
+<LI>Buffer name history. 
+<LI>Command name history. 
+<LI>File name history. 
+<LI>General (all the rest) history. 
+<LI>Buffer and file list with line numbers. </UL><P>MicroEmacs '02's environment may be retained almost intact by the use of the default history and using the <B>-c</B> (continue) command-line option to re-load all files that were being edited in a previous session. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P>When running multiple MicroEmacs '02 sessions on the same work-station (or different workstations sharing the same home directory), the default history is saved when MicroEmacs '02 exits. As a result the last MicroEmacs '02 sessions that terminates writes the history information used next time. 
+<P>The history information is saved in a registry format file (see 
+<A HREF="m8fil004.html">erf(8)</A>). Reference should be made to the notes included in 
+<A HREF="m8fil004.html">erf(8)</A> as to how the history file may be edited and effected in the same MicroEmacs '02 session. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m8fil004.html">erf(8)</A>, 
+<A HREF="m2cmd144.html">save-history(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

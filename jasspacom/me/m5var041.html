@@ -1,0 +1,89 @@
+<HTML>
+<HEAD><TITLE>$result(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+$result(5)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>$result - Various command return values </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>$result</B> <I>returnValue</I> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>$result</B> is used to return the results of several commands: 
+<P>
+<A HREF="m2cmd014.html">buffer-info(2)</A> <B>$result</B> is set to the same output string as printed to the message-line by this command. 
+<P>
+<A HREF="m2cmd027.html">change-font(2)</A> 
+<BR><UL><B>$result</B> is used to return the user select font when hte windows font selection dialog is used (Windows systems only). </UL>
+<P>
+<A HREF="m2cmd023.html">count-words(2)</A> 
+<BR><UL><B>$result</B> is set to the same output string as printed to the message-line by this command. </UL>
+<P>
+<A HREF="m2cmd072.html">find-registry(2)</A> 
+<BR><UL><B>$result</B> is used to return the name of a registry child node given the parent and index from the user. </UL>
+<P>
+<A HREF="m2cmd042.html">get-registry(2)</A> 
+<BR><UL><B>$result</B> is used to return the current value of a user supplied registry entry. </UL>
+<P>
+<A HREF="m2cmd154.html">mark-registry(2)</A> 
+<BR><UL><B>$result</B> is used to return the full name of the given registry node. </UL>
+<P>
+<A HREF="m2cmd066.html">osd(2)</A> 
+<UL><P><B>$result</B> is used to give and return information to osd item commands, information depends on the type of <B>osd</B> item. </UL>
+<P>
+<A HREF="m3mac037.html">osd-dialog(3)</A> 
+<BR><UL>
+<A HREF="m3mac037.html">osd-xdialog(3)</A> </UL>
+<UL><P><B>$result</B> is used to return the button pressed by the user. </UL>
+<P>
+<A HREF="m2cmd131.html">shell-command(2)</A> 
+<UL><P><B>$result</B> is set to the exit status of the <B>system</B> call. The combination of <B>shell-command</B> calls and return value checking can be used in a variety of ways, for example, to test the existence of a file: 
+<PRE>set-variable&nbsp;%filename&nbsp;@ml&quot;Enter&nbsp;file&nbsp;name&quot; 
+shell-command&nbsp;&amp;cat&nbsp;&quot;test&nbsp;-f&nbsp;&quot;&nbsp;%filename 
+!if&nbsp;&amp;equ&nbsp;$result&nbsp;0 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;file&nbsp;exists&quot; 
+!else 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;file&nbsp;does&nbsp;not&nbsp;exists&quot; 
+!endif 
+</PRE></UL>
+<P>
+<A HREF="m2cmd132.html">show-region(2)</A> 
+<UL><P><B>$result</B> is set to the current status of the region when an argument of <I>0</I> is given to <B>show-region</B>. </UL>
+<P>
+<A HREF="m2cmd125.html">spell(2)</A> 
+<UL><P><B>$result</B> is used to return information on the current word, the information depends on the argument given to <B>spell</B>. </UL>
+<P>
+<A HREF="m5var064.html">$file-names(5)</A> 
+<UL><P><B>$result</B> is set to the absolute path of the <B>$file-names</B> query directory when the variable is set. 
+</UL><P>For more information see the help pages on referenced commands and variables. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P>The current value of <B>$result</B> is lost on the next command call which uses it. As a call to 
+<A HREF="m2cmd024.html">create-callback(2)</A> can cause the execution of a macro to interrupt another which is waiting for user input, the value of <B>$result</B> should be copied before getting user input. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd014.html">buffer-info(2)</A>, 
+<A HREF="m2cmd027.html">change-font(2)</A>, 
+<A HREF="m2cmd023.html">count-words(2)</A>, 
+<A HREF="m2cmd072.html">find-registry(2)</A>, 
+<A HREF="m2cmd042.html">get-registry(2)</A>, 
+<A HREF="m2cmd154.html">mark-registry(2)</A>, 
+<A HREF="m2cmd066.html">osd(2)</A>, 
+<A HREF="m2cmd131.html">shell-command(2)</A>, 
+<A HREF="m2cmd132.html">show-region(2)</A>, 
+<A HREF="m2cmd125.html">spell(2)</A>, 
+<A HREF="m5var064.html">$file-names(5)</A>. 
+<A HREF="m2cmd024.html">create-callback(2)</A>, 
+<A HREF="m5var040.html">$status(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

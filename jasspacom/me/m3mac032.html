@@ -1,0 +1,48 @@
+<HTML>
+<HEAD><TITLE>draw(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+draw(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>draw - Simple line drawing utility </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>draw</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>draw</B> provides a simple way of drawing lines into the current buffer, this has a variety of uses such as drawing tables. <B>draw</B> copies the current buffer into a temporary buffer and then allows the user to draw using simple commands until the user either aborts, discarding any changes, or exits insert the changes back into the buffer. 
+<P>The keys for <B>draw</B> are defined as follows:- 
+<P><B>esc h</B> 
+<BR><UL>Display a help dialog. </UL>
+<P><B>up</B>, <B>down</B>, <B>left</B>, <B>right</B> 
+<BR><UL>The cursor keys (or any other keys bound the the same commands) will move the cursor, drawing in the current mode. </UL>
+<P><B>d</B> 
+<BR><UL>Change the current mode to <B>d</B>raw (default), cursor movement will result in drawing in the current style. </UL>
+<P><B>e</B> 
+<BR><UL>Change the current mode to <B>e</B>rase, cursor movement will result in erasing to spaces. </UL>
+<P><B>m</B> 
+<BR><UL>Change the current mode to <B>m</B>ove, no drawing is performed with cursor movement. </UL>
+<P><B>u</B> 
+<BR><UL>Change the current mode to <B>u</B>ndo, cursor movement will result in undoing the character to the original or a space. </UL>
+<P><B>-</B> 
+<BR><UL>Sets the current horizontal line drawing style to use '<TT>-</TT>'s (default). </UL>
+<P><B>=</B> 
+<BR><UL>Sets the current horizontal line drawing style to use '<TT>=</TT>'s. </UL>
+<P><B>C-g</B> 
+<BR><UL>Abort - changes are lost. </UL>
+<P><B>return</B> 
+<BR><UL>Exit, inserting any changes into the current buffer. </UL></UL>
+<H2><B>NOTES </B></H2>
+<UL><P><B>draw</B> is a macro defined in <TT>draw.emf</TT>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,88 @@
+<HTML>
+<HEAD><TITLE>$idle-time(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+$idle-time(5)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>$idle-time - System idle event delay time </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>$idle-time</B> <I>milliseconds</I>; Default is <TT>1000</TT> 
+<P>10 &lt;= <I>milliseconds</I> &lt;= t </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>$idle-time</B> sets the time waited between the last user event and the generation of a <TT>idle-pick</TT> key event. When user input stops for <B>$idle-time</B> milliseconds MicroEmacs checks the binding of the special <TT>idle-pick</TT> key, if this pseudo key is bound then the command it is bound to will be executed. MicroEmacs will then cycle, generating a <TT>idle-pick</TT> every <B>$idle-time</B> milliseconds until user activity starts. At this point a <TT>idle-drop</TT> key event is generated, if this pseudo key is bound then the command it is bound to will be executed. 
+<P>This system is useful for things which can be done in the background. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following example is taken from <TT>ssaver.emf</TT> and implements a simple screen saver:- <UL>
+<PRE>set-variable&nbsp;%screen-saver&nbsp;0 
+define-macro&nbsp;screen-saver 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;&amp;pinc&nbsp;%screen-saver&nbsp;1 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;seq&nbsp;@cck&nbsp;&quot;idle-pick&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;default&nbsp;is&nbsp;to&nbsp;switch&nbsp;on&nbsp;in&nbsp;5&nbsp;minutes&nbsp;time 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;cond&nbsp;@?&nbsp;@#&nbsp;300000&nbsp;create-callback&nbsp;screen-saver 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!else 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;seq&nbsp;@cck&nbsp;&quot;callback&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@#&nbsp;create-callback&nbsp;screen-saver 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!elif&nbsp;@? 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;user&nbsp;has&nbsp;suppled&nbsp;argument,&nbsp;install&nbsp;or&nbsp;remove 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;gre&nbsp;@#&nbsp;0 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;mul&nbsp;@#&nbsp;60000&nbsp;global-bind-key&nbsp;screen-saver&nbsp;&quot;idle-pick&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!else 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;global-unbind-key&nbsp;&quot;idle-pick&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;%screen-saver&nbsp;&amp;sub&nbsp;%screen-saver&nbsp;1 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!return 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;@#&nbsp;$screen-depth 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!while&nbsp;&amp;dec&nbsp;@#&nbsp;1 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;screen-poke&nbsp;@#&nbsp;0&nbsp;$global-scheme&nbsp;&amp;spr&nbsp;&quot;%n&quot;&nbsp;$screen-width&nbsp;&quot;&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!done 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;screen-poke&nbsp;0&nbsp;0&nbsp;$global-scheme&nbsp;&amp;spr&nbsp;&quot;%n&quot;&nbsp;$screen-width&nbsp;&quot;&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;show-cursor 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;must&nbsp;set&nbsp;this&nbsp;to&nbsp;stop&nbsp;recursion&nbsp;when&nbsp;waiting&nbsp;for&nbsp;a&nbsp;key! 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;%screen-saver&nbsp;0 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;@#&nbsp;@cg 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;%screen-saver&nbsp;1 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;show-cursor 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;screen-update 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ml-clear 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;%screen-saver&nbsp;&amp;sub&nbsp;%screen-saver&nbsp;1 
+!emacro 
+</PRE></UL>
+</UL><H2><B>NOTES </B></H2>
+<UL><P>Care must be taken to ensure that a recursive loop is not created, consider the following example:- <UL>
+<PRE>define-macro&nbsp;bored 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;iseq&nbsp;@mc1&nbsp;&quot;Are&nbsp;you&nbsp;bored&nbsp;(y/n)?&nbsp;&quot;&nbsp;&quot;nNyY&quot;&nbsp;&quot;y&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;Play&nbsp;a&nbsp;silly&nbsp;game!&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+!emacro 
+global-bind-key&nbsp;bored&nbsp;idle-pick 
+</PRE></UL>
+<P>If this was executed MicroEmacs would very quickly crash! As soon as a second past <B>bored</B> would execute, which will prompt the user and wait for input. If a second passes without input <B>bored</B> will be executed again and again and again until stack memory runs out! To avoid this <TT>idle-pick</TT> should be unbound before waiting for user input, i.e.:- <UL>
+<PRE>define-macro&nbsp;bored 
+&nbsp;&nbsp;&nbsp;&nbsp;global-unbind-key&nbsp;idle-pick 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;iseq&nbsp;@mc1&nbsp;&quot;Are&nbsp;you&nbsp;bored&nbsp;(y/n)?&nbsp;&quot;&nbsp;&quot;nNyY&quot;&nbsp;&quot;y&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;Play&nbsp;a&nbsp;silly&nbsp;game!&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;global-bind-key&nbsp;bored&nbsp;idle-pick 
+!emacro 
+global-bind-key&nbsp;bored&nbsp;idle-pick 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var071.html">$delay-time(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

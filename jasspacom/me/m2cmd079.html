@@ -1,0 +1,32 @@
+<HTML>
+<HEAD><TITLE>kbd-macro-query(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+kbd-macro-query(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>kbd-macro-query - Query termination of keyboard macro </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>[Definition]</I> 
+<BR><B>kbd-macro-query</B> (<B>C-x&nbsp;q</B>)&nbsp; 
+<P><I>[Execution]</I> 
+<BR><B>kbd-macro-query</B> &quot;<B>y</B>&quot;|&quot;<B>n</B>&quot;|&quot;<B>C-g</B>&quot; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>kbd-macro-query</B> queries the termination state of keyboard macro recording. If the command is executed during a keyboard macro definition, at that point during its execution the user is prompted as to whether to continue the macro execution. A reply of &quot;<B>y</B>&quot; continues the execution as normal, &quot;<B>n</B>&quot; stops execution at that point once, if executing the macro <I>n</I> times the macro will still executed a further <I>n-1</I> times. If the &quot;<TT>C-g</TT>&quot; abort command is entered then all keyboard macro execution is aborted, regardless of the number of repetitions. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd011.html">start-kbd-macro(2)</A>, 
+<A HREF="m2cmd046.html">execute-kbd-macro(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

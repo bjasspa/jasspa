@@ -1,0 +1,76 @@
+<HTML>
+<HEAD><TITLE>&ldel(4)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+&ldel(4)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>&amp;ldel, &amp;lfind, &amp;lget, &amp;linsert, &amp;lset - List manipulation functions </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>&amp;ldel</B> <I>list</I> <I>index</I> 
+<BR><B>&amp;lfind</B> <I>list</I> <I>value</I> 
+<BR><B>&amp;lget</B> <I>list</I> <I>index</I> 
+<BR><B>&amp;linsert</B> <I>list</I> <I>index</I> <I>value</I> 
+<BR><B>&amp;lset</B> <I>list</I> <I>index</I> <I>value</I> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The list manipulation functions perform operations on specially formatted strings called lists. A list is defined as: <UL>
+<PRE>&quot;|value1|value2|.....|valueN|&quot; 
+</PRE></UL>
+<P>Where '<TT>|</TT>' is the dividing character, this is not fixed to a '<TT>|</TT>', but is defined by the first character of the string. Following are all valid lists. 
+<UL><P>&quot;<TT>|1|2|3|4|5|</TT>&quot; 
+<BR>&quot;<TT>X1X2X3X4X5X</TT>&quot; 
+<BR>&quot;<TT>\CAHello\CAWorld\CA</TT>&quot; 
+<BR>&quot;<TT>??</TT>&quot; 
+</UL><P>The functions may all be abbreviated to their three letter abbreviation (i.e. <B>&amp;linsert</B> may be expressed as <B>&amp;lin</B>). In all cases the first argument is completely evaluated before the second or third argument. 
+<P><B>&amp;ldel</B> <I>list</I> <I>index</I> 
+<BR><UL>Creates a new list from deleting item <I>index</I> from <I>list</I>. If <I>index</I> is out of <I>list</I>'s range (0 &lt; index &lt;= # items in list) then <I>list</I> is returned unchanged. </UL>
+<P><B>&amp;lfind</B> <I>list</I> <I>value</I> 
+<BR><UL>Returns the index whose item is the same as <I>value</I> in <I>list</I>. If <I>value</I> is not found in <I>list</I> then &quot;<TT>0</TT>&quot; is returned. </UL>
+<P><B>&amp;lget</B> <I>list</I> <I>index</I> 
+<BR><UL>Returns the value of item <I>index</I> in <I>list</I>. If <I>index</I> is out of <I>list</I>'s range (0 &lt; index &lt;= # items in list) then an empty string is returned. </UL>
+<P><B>&amp;linsert</B> <I>list</I> <I>index</I> <I>value</I> 
+<BR><UL>Creates a new list from inserting <I>value</I> into <I>list</I> at point <I>index</I>, thereby pushing item <I>index</I> to <I>index</I>+1 etc. If <I>index</I> is 0 the <I>value</I> is inserted at the beginning of the list, if <I>index</I> is less than 0 or greater that the number of items in <I>list</I> then <I>value</I> is inserted at the end of the list. </UL>
+<P><B>&amp;lset</B> <I>list</I> <I>index</I> <I>value</I> 
+<BR><UL>Creates a new list from setting <I>index</I> of <I>list</I> to <I>value</I>. If <I>index</I> is out of <I>list</I>'s range (0 &lt; index &lt;= # items in list) then <B>&amp;lset</B> behaves like <B>&amp;linsert</B>. </UL></UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following example moves item 4 in a list to position 2: <UL>
+<PRE>set-variable&nbsp;#l0&nbsp;&amp;lget&nbsp;%list&nbsp;4 
+set-variable&nbsp;#l1&nbsp;&amp;ldel&nbsp;%list&nbsp;4 
+set-variable&nbsp;%list&nbsp;&amp;lins&nbsp;#l1&nbsp;2&nbsp;#l0 
+</PRE></UL>
+<P>The following example is taken from vm.emf, it firstly checks where the user has entered a vm command, if not then the key is execute as normal, otherwise the appropriate vm command is executed. <UL>
+<PRE>define-macro&nbsp;vm-input 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l2&nbsp;@cck 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l3&nbsp;@cc 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;&amp;set&nbsp;#l0&nbsp;&amp;lfi&nbsp;&quot;|esc&nbsp;h|delete|space|return|A|a|C|c|....|z|&quot;&nbsp;#l2 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;&amp;seq&nbsp;#l3&nbsp;&quot;ERROR&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;execute-line&nbsp;&amp;spr&nbsp;&quot;!nma&nbsp;%s&nbsp;%s&quot;&nbsp;&amp;cond&nbsp;@?&nbsp;@#&nbsp;&quot;&quot;&nbsp;#l3 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!return 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&amp;spr&nbsp;&quot;[Key&nbsp;\&quot;%s\&quot;&nbsp;not&nbsp;bound&nbsp;-&nbsp;\&quot;esc&nbsp;h\&quot;&nbsp;to&nbsp;view&nbsp;help]&quot;&nbsp;#l2 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!abort 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l1&nbsp;&amp;lget&nbsp;&quot;|%osd-vm-help&nbsp;osd|vm-del-windows|scroll-down|.... 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;....vm-goto-list|vm-Archive-box|vm-archive-box|.... 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vm-cut-all-data|0&nbsp;vm-extract-data|...|vm-forward|&quot;&nbsp;#l0 
+&nbsp;&nbsp;&nbsp;&nbsp;execute-line&nbsp;#l1 
+!emacro 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="amicr026.html">Variable Functions</A>, 
+<A HREF="m4fil002.html">&amp;mid(4)</A>, 
+<A HREF="m4fil002.html">&amp;cat(4)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,107 @@
+<HTML>
+<HEAD><TITLE>buffer-setup(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+buffer-setup(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>buffer-setup - Configures the current buffer settings </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>buffer-setup</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>buffer-setup</B> provides a dialog interface to configuring the setup of the current buffer's file type within MicroEmacs. <B>user-setup</B> may be invoked from the main <I>help</I> menu or directly from the command line using 
+<A HREF="m2cmd047.html">execute-named-command(2)</A>. 
+<P>The changes made to a configuration in <B>buffer-setup</B> are maintained in future MicroEmacs sessions by storing them within the user's setup registry file, &quot;<I>&lt;logname&gt;</I><TT>.erf</TT>&quot;. Note that not all file types may be supported by <B>buffer-setup</B>, if not the help menu item will not be available. 
+<P>The contents of the dialog change, depending on the features the current buffer's file type supports. These features are implemented and installed within the 
+<A HREF="m2cmd202.html">buffer's  file hook</A>. The following buttons are always present at the bottom of the dialog: 
+<P><TT>Save</TT> 
+<BR><UL>Saves the changes made to the configuration back to the users registry file, i.e. &quot;<I>&lt;Log-Name&gt;</I><TT>.erf</TT>&quot; but does not re-initialize the current buffer. No changes made will effect the current buffer unless the <B>Current</B> button is pressed. Buffers of the same type created after the save may inherrit some of the changes. </UL>
+<P><TT>Current</TT> 
+<BR><UL>Makes the current buffer reflect the changes made, dismissing the <B>buffer-setup</B> dialog. This also performs the above '<B>Save</B>' operation. Some changes such as dialog creation changes, will only take effect when MicroEmacs is restarted. </UL>
+<P><TT>Exit</TT> 
+<BR><UL>Quits buffer-setup, if changes where not <B>Save</B>d or made <B>Current</B> they will be lost. 
+</UL><P>Following is a list of configurable features which may be available: 
+<P>Create Help Page 
+<BR><UL>Enables/disables the creation of a help page dialog for the tools available for the current file type. </UL>
+<P>Create Tools Menu 
+<BR><UL>Enables/disables the creation of a file type specific sub menu located within the main menu's <B>Tools</B> sub-menu. </UL>
+<P>Use Author Mode 
+<BR><UL>For file types which have an automatic formatter/viewer (currently only html) enabling this will simply load the file enabling the source code to be viewed and edited. When disabled files of this type will be automatically processed giving a more readable 'formatted' representation. </UL>
+<P>Insert New Template 
+<BR><UL>When creating a new buffer/file of this type, a default template will be inserted if this is enabled. When disabled the buffer will remain empty. </UL>
+<P>Fence Display 
+<BR><UL>Enables or disables the displaying of matching fences for this file type. Note that the way in which the matching fence is display is determined by the <B>Fence Display</B> option on the Platform page of 
+<A HREF="m3osd000.html">user-setup(3)</A>; the <B>buffer-setup</B> option is ignored if this option is set to &quot;<TT>Never Display</TT>&quot;. </UL>
+<P>Setup Hilighting 
+<BR><UL>Creates and enables the token 
+<A HREF="m2cmd069.html">hilighting</A> for the current file type. </UL>
+<P>Setup Auto Indent 
+<BR><UL>Enables automatic formating (indenting) for the current file type. The indentation rules are either the built in 'C' indentation 
+<A HREF="m2mod002.html">cmode(2m)</A> or created using the 
+<A HREF="m2cmd033.html">indent(2)</A> command. When enabled the 
+<A HREF="m2mod012.html">tab(2m)</A> is still adhered to, but the 
+<A HREF="m2mod005.html">indent(2m)</A> mode is ignored; when disabled the indent mode can be used. </UL>
+<P>Setup Auto Spell 
+<BR><UL>Enables the setting up of 
+<A HREF="m3mac039.html">auto-spell(3)</A>. When enabled the auto-spell key bindings are created and auto-spell is enabled if enabled within the user-setup dialog. </UL>
+<P>Setup Folding 
+<BR><UL>Enables the setting up of section 
+<A HREF="m3mac029.html">folding</A>, when enabled the folding key bindings are created. </UL>
+<P>Add Abbreviations 
+<BR><UL>Adds the file type's abbreviation file to the buffer using 
+<A HREF="m2cmd117.html">buffer-abbrev-file(2)</A> </UL>
+<P>Search Modes: Exact 
+<BR><UL>Enables/disables the 
+<A HREF="m2mod004.html">exact(2m)</A> mode over-riding the setting within the 
+<A HREF="m3osd000.html">user-setup(3)</A> dialog. If this setting is changed the setting within user-setup will be ignored for the current file type. </UL>
+<P>Search Modes: Magic 
+<BR><UL>Enables/disables the 
+<A HREF="m2mod009.html">magic(2m)</A> mode over-riding the setting within the 
+<A HREF="m3osd000.html">user-setup(3)</A> dialog. If this setting is changed the setting within user-setup will be ignored for the current file type. </UL>
+<P>Buffer Modes: Auto 
+<BR><UL>Enables/disables the 
+<A HREF="m2mod000.html">auto(2m)</A> mode. </UL>
+<P>Buffer Modes: Backup 
+<BR><UL>Enables/disables the 
+<A HREF="m2mod001.html">backup(2m)</A> mode. </UL>
+<P>Buffer Modes: Indent 
+<BR><UL>Enables/disables the 
+<A HREF="m2mod005.html">indent(2m)</A> mode. </UL>
+<P>Buffer Modes: Justify 
+<BR><UL>Enables/disables the 
+<A HREF="m2mod006.html">justify(2m)</A> mode. </UL>
+<P>Buffer Modes: Tab 
+<BR><UL>Enables/disables the 
+<A HREF="m2mod012.html">tab(2m)</A> mode over-riding the setting within the 
+<A HREF="m3osd000.html">user-setup(3)</A> dialog. If this setting is changed the setting within user-setup will be ignored for the current file type. </UL>
+<P>Buffer Modes: Time 
+<BR><UL>Enables/disables the 
+<A HREF="m2mod013.html">time(2m)</A> mode. </UL>
+<P>Buffer Modes: Undo 
+<BR><UL>Enables/disables the 
+<A HREF="m2mod014.html">undo(2m)</A> mode over-riding the setting within the 
+<A HREF="m3osd000.html">user-setup(3)</A> dialog. If this setting is changed the setting within user-setup will be ignored for the current file type. </UL>
+<P>Buffer Modes: Wrap 
+<BR><UL>Enables/disables the 
+<A HREF="m2mod017.html">wrap(2m)</A> mode. </UL></UL>
+<H2><B>NOTES </B></H2>
+<UL><P><B>buffer-setup</B> is a macro using 
+<A HREF="m2cmd066.html">osd(2)</A>, defined in <TT>buffstp.emf</TT>. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m3osd011.html">buffer-help(3)</A>, 
+<A HREF="m3osd000.html">user-setup(3)</A>. 
+<A HREF="m2cmd202.html">File Hooks</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

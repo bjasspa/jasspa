@@ -1,0 +1,55 @@
+<HTML>
+<HEAD><TITLE>$mode-line(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+$mode-line(5)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>$mode-line - Mode line format </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>$mode-line</B> &quot;<I>string</I>&quot;; Default is &quot;<TT>%s%r%u me (%e) - %l %b (%f) </TT>&quot; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>$mode-line</B> defines the format of the mode line printed for every window, where the character following a percent ('<TT>%</TT>') has the following effect:- 
+<UL><P><TT>D</TT>&nbsp;Prints&nbsp;the&nbsp;current&nbsp;day. 
+<BR><TT>M</TT>&nbsp;Prints&nbsp;the&nbsp;current&nbsp;month. 
+<BR><TT>Y</TT>&nbsp;Prints&nbsp;the&nbsp;current&nbsp;year&nbsp;(2&nbsp;digits). 
+<BR><TT>y</TT>&nbsp;Prints&nbsp;the&nbsp;current&nbsp;year&nbsp;(4&nbsp;digits). 
+<BR><TT>b</TT>&nbsp;Prints&nbsp;the&nbsp;current&nbsp;buffer's&nbsp;name. 
+<BR><TT>c</TT>&nbsp;Prints&nbsp;the&nbsp;current&nbsp;buffer's&nbsp;column&nbsp;number. 
+<BR><TT>e</TT>&nbsp;Prints&nbsp;the&nbsp;current&nbsp;buffer's&nbsp;editing&nbsp;modes. 
+<BR><TT>f</TT>&nbsp;Prints&nbsp;the&nbsp;current&nbsp;buffer's&nbsp;file&nbsp;name. 
+<BR><TT>h</TT>&nbsp;Prints&nbsp;the&nbsp;current&nbsp;hour&nbsp;of&nbsp;the&nbsp;day. 
+<BR><TT>k</TT>&nbsp;Prints&nbsp;the&nbsp;current&nbsp;keyboard&nbsp;macro&nbsp;status. 
+<BR><TT>l</TT>&nbsp;Prints&nbsp;the&nbsp;current&nbsp;buffer's&nbsp;line&nbsp;number. 
+<BR><TT>m</TT>&nbsp;Prints&nbsp;the&nbsp;current&nbsp;minute&nbsp;of&nbsp;the&nbsp;hour. 
+<BR><TT>n</TT>&nbsp;Prints&nbsp;the&nbsp;current&nbsp;buffer's&nbsp;total&nbsp;number&nbsp;of&nbsp;lines. 
+<BR><TT>r</TT>&nbsp;Prints&nbsp;the&nbsp;current&nbsp;root&nbsp;user&nbsp;status&nbsp;(UNIX&nbsp;only). 
+<BR><TT>s</TT>&nbsp;Prints&nbsp;the&nbsp;horizontal&nbsp;window&nbsp;split&nbsp;character. 
+<BR><TT>u</TT>&nbsp;Prints&nbsp;the&nbsp;current&nbsp;buffer's&nbsp;(un)changed&nbsp;or&nbsp;view&nbsp;mode&nbsp;flag. 
+<BR><TT>%</TT>&nbsp;Prints&nbsp;a&nbsp;percentage&nbsp;escape&nbsp;character. 
+<BR><TT>-</TT>&nbsp;Prints&nbsp;a&nbsp;literal&nbsp;minus&nbsp;character&nbsp;('<TT>-</TT>')&nbsp;-&nbsp;see&nbsp;NOTES. 
+<BR><TT>*</TT>&nbsp;All&nbsp;other&nbsp;characters&nbsp;are&nbsp;printed&nbsp;literally. </UL></UL>
+<H2><B>NOTES </B></H2>
+<UL><UL><P>
+<LI>Refer to 
+<A HREF="m5var051.html">$window-chars(5)</A> for the characters utilized in the mode line. Typically a the '<TT>-</TT>' character is changed to a '<TT>=</TT>' if it is the current window. If a '<TT>-</TT>' is always required, use &quot;<TT>%-</TT>&quot;. 
+<LI>A buffer can have its own mode-line, and be uneffected be the global mode line, see 
+<A HREF="m5var008.html">$buffer-mode-line(5)</A>. </UL></UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var008.html">$buffer-mode-line(5)</A>, 
+<A HREF="m5var032.html">$mode-line-scheme(5)</A>, 
+<A HREF="m5var051.html">$window-chars(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

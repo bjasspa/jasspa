@@ -1,0 +1,60 @@
+<HTML>
+<HEAD><TITLE>define-macro-file(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+define-macro-file(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>define-macro-file - Define macro file location </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>define-macro-file</B> &quot;<I>file-name</I>&quot; [&quot;<I>macro-name</I>&quot; &quot;<I>macro2-name</I>&quot; ...] </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>Macros are loaded as late as possible using an on-demand mechanism, this speeds up the load time of MicroEmacs '02, it also keeps the startup file clean since macros are not defined within the start-up file. Only when the user first executes a macro defined via <B>define-macro-file</B> is the file loaded, the macro becomes defined and is executed. Subsequent calls to the macro will not reload the file as the macro will now be fully defined. 
+<P><B>define-macro-file</B> binds macros (<I>macro-name</I> ...) to a file name (<I>file-name</I>). This operation informs MicroEmacs '02 which file should be loaded when <I>macro-name</I> is first executed. The <I>macro-name</I> arguments may be omitted if the file contains only one exported macro which has the same name as <I>file-name</I>. 
+<P>Alternatively the macro file may contain many macros all of which can be defined by a single call to <B>define-macro-file</B>, listing all macros on the same line after the <I>file-name</I>. If a <I>macro-name</I> is given then the default macro <I>file-name</I> is not created, if a macro of that name does exist it must be added to the <I>macro-name</I> list. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following definitions are found in the <TT>me.emf</TT> start-up file:- <UL>
+<PRE>0&nbsp;define-macro-file&nbsp;utils&nbsp;ascii-time&nbsp;regex-forward&nbsp;regex-backward 
+define-macro-file&nbsp;format&nbsp;clean&nbsp;sort-lines-ignore-case&nbsp;tabs-to-spaces&nbsp;... 
+define-macro-file&nbsp;cvs&nbsp;cvs&nbsp;cvs-state&nbsp;cvs-update&nbsp;cvs-commit&nbsp;cvs-log&nbsp;... 
+define-macro-file&nbsp;abbrev&nbsp;expand-abbrev-handle&nbsp;spell-complete-word&nbsp;... 
+define-macro-file&nbsp;misc&nbsp;symbol&nbsp;check-line-length&nbsp;alarm&nbsp;time 
+define-macro-file&nbsp;search&nbsp;replace-all-string&nbsp;query-replace-all-string 
+define-macro-file&nbsp;tools&nbsp;compile&nbsp;grep&nbsp;rgrep&nbsp;which&nbsp;diff&nbsp;diff-changes 
+define-macro-file&nbsp;hkdirlst&nbsp;file-browser&nbsp;file-browser-close 
+define-macro-file&nbsp;comment&nbsp;comment-line&nbsp;uncomment-line&nbsp;comment-to-end-of-line 
+define-macro-file&nbsp;spell&nbsp;spell-word&nbsp;spell-buffer&nbsp;spell-edit-word&nbsp;find-word 
+define-macro-file&nbsp;games&nbsp;Metris&nbsp;Patience&nbsp;Triangle&nbsp;Mahjongg&nbsp;Match-It 
+define-macro-file&nbsp;buffstp&nbsp;buffer-setup&nbsp;buffer-help&nbsp;buffer-tool 
+define-macro-file&nbsp;fattrib&nbsp;file-attrib 
+define-macro-file&nbsp;osd&nbsp;osd-main 
+define-macro-file&nbsp;gdiff 
+define-macro-file&nbsp;calc 
+define-macro-file&nbsp;draw 
+</PRE></UL>
+<P>Hilighting a number of entries as examples; macro file <B>calc</B> is defined with no macro definition, the macro is assumed to be <B>calc</B>. The file <B>tools.emf</B> contains multiple macros <B>compile</B>, <B>grep</B>, <B>diff</B> and <B>diff-changes</B>; all can be defined by a single <B>define-macro-file</B> entry. </UL>
+<H2><B>NOTES </B></H2>
+<UL><UL><P>
+<LI>Macro files are searched for in the current directory and along the 
+<A HREF="m5var057.html">$search-path(5)</A>. 
+<LI>The macro file is not loaded unless a binding has been defined using <B>define-macro-file</B>. 
+<LI>Any other macros that exist in the <I>file-name</I> macro file become defined when the entry point macro is loaded and are available for use. This is potentially useful as a single <I>entry</I> macro may be defined using <B>define-macro-file</B>, when invoked other helper macros become available. </UL></UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd003.html">add-file-hook(2)</A>, 
+<A HREF="m2cmd029.html">define-macro(2)</A>, 
+<A HREF="m5var057.html">$search-path(5)</A>, 
+<A HREF="m3mac024.html">start-up(3)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

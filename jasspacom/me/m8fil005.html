@@ -1,0 +1,171 @@
+<HTML>
+<HEAD><TITLE>ehf(8)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+ehf(8)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>ehf - MicroEmacs help file </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>!</B><I>&lt;helpTag&gt;</I> 
+<BR><I>&lt;Text&nbsp;Description&gt;</I> 
+<BR>... 
+<BR><B>|</B><I>&lt;helpId&gt;</I> 
+<BR><I>&lt;Text&nbsp;Description&nbsp;Line&gt;</I> 
+<BR>... 
+<BR><B>$</B><I>?</I> 
+<BR>... 
+<BR><I>&lt;Text&nbsp;Description&gt;</I> 
+<BR><B>!</B><I>&lt;helpTag&gt;</I> 
+<BR><B>!</B><I>&lt;helpTag&gt;</I> 
+<BR><I>&lt;Text&nbsp;Description&gt;</I> 
+<BR>... </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The on-line help information is retained in the file <B>me.ehf</B>, this is an ASCII text file which holds all of the on-line help information. The help file comprises of formatted text <I>&lt;Text Description&gt;</I> which is literally displayed to the user when help information is requested. Each text description is delimited into pages with a <B>!</B><I>&lt;helpTag&gt;</I> which identifies the block of text with a help label. 
+<P>The <B>!</B><I>&lt;helpTag&gt;</I> is placed before the text description and is identified by a exclamation mark (`<B>!</B>') placed at the beginning of the line. The <I>&lt;helpTag&gt;</I> is the identifying name used by the help system and takes the following form: 
+<UL><P><TT>LSSNNNN...</TT> 
+</UL><P>Where: 
+<P><B>L</B> 
+<BR><UL>Is the length of the &quot;<TT>NNNN...</TT>&quot; name which must be matched, a value of '<TT> </TT>' indicates that the whole name must be matched, otherwise the value must be in the range '<TT>1</TT>' - '<TT>9</TT>' indicating the number of characters to be match. </UL>
+<P><B>SS</B> 
+<BR><UL>Is the section number of the page, the first character should be a numeric (i.e. '<TT>3</TT>' for a macro) and the second is an optional section letter. A value of '<TT> </TT>' indicates no section number and/or letter. </UL>
+<P><B>NNNN...</B> 
+<BR><UL>The page name, the length is unlimited but must be on one line. 
+</UL><P>Multiple <I>&lt;helpTag&gt;</I>'s may be associated with a common text description by proceeding a block of text with multiple tags, each on a separate line, with no intervening non-tag lines (i.e. lines that do not commence with <B>!</B>). 
+<P>The <I>&lt;Text Description&gt;</I> that follows is the text associated with the tag. When the help system is invoked with the tag then the text is displayed. There are 2 types of internal command lines, lines starting with a '<TT>|</TT>' indicate that the following line should only be displayed if the requested help page is <I>&lt;helpId&gt;</I>, where <I>&lt;helpId&gt;</I> is the the name used in the <I>&lt;helpTag&gt;</I>. This is a useful mechanism for pages with multiple <I>&lt;helpTag&gt;</I>s. 
+<P>Lines which contain just &quot;<TT>$?</TT>&quot; are MicroEmacs command lines where <TT>?</TT> can be: 
+<P><TT>a</TT> 
+<BR><UL>For a command help page display any global key bindings, for variables display its current value. 
+</UL><P>MicroEmacs uses a special hilighting scheme to control color schemes and hyper-text links, the special embedded tags all start with and escape character (0x1b or '<TT>^[</TT>') and are defined as follows: 
+<P><TT>^[c?</TT> 
+<BR><UL>Tag used to change color where <TT>?</TT> can be: <UL><TT>A&nbsp;&nbsp;</TT>white,&nbsp;used&nbsp;for&nbsp;main&nbsp;text. 
+<BR><TT>B&nbsp;&nbsp;</TT>red,&nbsp;used&nbsp;for&nbsp;underlining. 
+<BR><TT>C&nbsp;&nbsp;</TT>green,&nbsp;used&nbsp;for&nbsp;italic&nbsp;font. 
+<BR><TT>D&nbsp;&nbsp;</TT>cyan,&nbsp;used&nbsp;for&nbsp;bold&nbsp;font. 
+<BR><TT>E&nbsp;&nbsp;</TT>light&nbsp;yellow,&nbsp;used&nbsp;for&nbsp;a&nbsp;header. 
+<BR><TT>F&nbsp;&nbsp;</TT>light&nbsp;red,&nbsp;used&nbsp;for&nbsp;and&nbsp;image&nbsp;link. </UL></UL>
+<P><TT>^[s?</TT> 
+<BR><UL>Tag used to change hilighting scheme where <TT>?</TT> can be: <UL><TT>A&nbsp;&nbsp;</TT>Normal&nbsp;ehf&nbsp;hilight. 
+<BR><TT>B&nbsp;&nbsp;</TT>MicroEmacs&nbsp;macro&nbsp;(or&nbsp;emf)&nbsp;hilighting. 
+<BR></UL>Note that other tags can only be used in the normal ehf hilighting scheme. </UL>
+<P><TT>^[ls&lt;link&gt;^[lm&lt;name&gt;^[le</TT> 
+<BR><UL>Used to create hyper-links, <TT>&lt;link&gt;</TT> is the help link name which can be omitted if it is the same as <TT>&lt;name&gt;</TT>. <TT>&lt;name&gt;</TT> should not contain any other tags, it is automatically displayed in the magenta color scheme. </UL></UL>
+<H2><B>NOTES </B></H2>
+<UL><P>When the help system is invoked for the first time, <B>me.ehf</B> is loaded into internal memory and fragmented into labeled pages using the <I>&lt;helpTag&gt;</I> information. Hence, any edits made to <B>me.emf</B> are not visible in the help system until the next session. 
+<P>Macros and alike may add additional help information to the internal help database at run-time using the 
+<A HREF="m2cmd093.html">define-help(2)</A> command. 
+<P>The help hilighting is applied to the help buffer from the hilighting macro's defined in <B>hkhelp.emf</B>. The hilighting is NOT part of the help file. 
+<P>Special hilighting keys may be included in <B>me.ehf</B> provided that they are interpreted by the help hilighting defined in <B>hkehf.emf</B>. 
+<P><I>&lt;Text Description&gt;</I> lines cannot commence with <B>!</B>, <B>|</B> or <B>$</B> in the first column. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following help entry defines the help for 
+<A HREF="m2cmd005.html">global-mode(2)</A>, 
+<A HREF="m2cmd005.html">add-global-mode(3)</A> and 
+<A HREF="m2cmd005.html">delete-global-mode(3)</A>. It uses most features mentioned, namely multiple link names, color and scheme changes and several hyper-text links: <UL>
+<PRE>!&nbsp;2&nbsp;global-mode 
+!&nbsp;3&nbsp;add-global-mode 
+!&nbsp;3&nbsp;delete-global-mode 
+^[cE^[cENAME&nbsp;^[cE^[cA 
+
+
+|global-mode 
+&nbsp;&nbsp;&nbsp;&nbsp;global-mode&nbsp;-&nbsp;Change&nbsp;a&nbsp;global&nbsp;buffer&nbsp;mode 
+|add-global-mode 
+&nbsp;&nbsp;&nbsp;&nbsp;add-global-mode&nbsp;-&nbsp;Set&nbsp;a&nbsp;global&nbsp;buffer&nbsp;mode 
+|delete-global-mode 
+&nbsp;&nbsp;&nbsp;&nbsp;delete-global-mode&nbsp;-&nbsp;Remove&nbsp;a&nbsp;global&nbsp;buffer&nbsp;mode 
+$a 
+
+
+^[cE^[cESYNOPSIS&nbsp;^[cE^[cA 
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;^[cCn^[cA&nbsp;^[cDglobal-mode^[cA&nbsp;&quot;^[cCmode^[cA&quot;&nbsp;(^[cDesc&nbsp;m^[cA) 
+&nbsp;&nbsp;&nbsp;&nbsp;^[cDadd-global-mode^[cA&nbsp;&quot;^[cCmode^[cA&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;^[cDdelete-global-mode^[cA&nbsp;&quot;^[cCmode^[cA&quot; 
+
+
+^[cE^[cEDESCRIPTION&nbsp;^[cE^[cA 
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;^[cDglobal-mode^[cA&nbsp;changes&nbsp;the&nbsp;state&nbsp;of&nbsp;one&nbsp;of&nbsp;the&nbsp;hereditary 
+&nbsp;&nbsp;&nbsp;&nbsp;global&nbsp;modes.&nbsp;A&nbsp;buffer's&nbsp;modes&nbsp;are&nbsp;initialized&nbsp;to&nbsp;the&nbsp;global 
+&nbsp;&nbsp;&nbsp;&nbsp;modes&nbsp;when&nbsp;first&nbsp;created.&nbsp;This&nbsp;command&nbsp;is&nbsp;very&nbsp;useful&nbsp;in&nbsp;changing 
+&nbsp;&nbsp;&nbsp;&nbsp;some&nbsp;of&nbsp;the&nbsp;default&nbsp;behavior&nbsp;such&nbsp;as&nbsp;case&nbsp;sensitive&nbsp;searching&nbsp;(see 
+&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;example&nbsp;below).&nbsp;See&nbsp;^[ls^[lmOperating&nbsp;Modes^[le&nbsp;for&nbsp;a&nbsp;full&nbsp;list 
+&nbsp;&nbsp;&nbsp;&nbsp;and&nbsp;description&nbsp;of&nbsp;modes.&nbsp;Also&nbsp;see&nbsp;^[ls^[lmbuffer-mode(2)^[le&nbsp;for&nbsp;a 
+&nbsp;&nbsp;&nbsp;&nbsp;full&nbsp;description&nbsp;of&nbsp;the&nbsp;use&nbsp;of&nbsp;the&nbsp;argument&nbsp;^[cCn^[cA. 
+
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;^[ls^[lminfo(2)^[le&nbsp;command&nbsp;gives&nbsp;a&nbsp;list&nbsp;of&nbsp;the&nbsp;current&nbsp;global 
+&nbsp;&nbsp;&nbsp;&nbsp;and&nbsp;buffer&nbsp;modes. 
+
+&nbsp;&nbsp;&nbsp;&nbsp;^[cDadd-global-mode^[cA&nbsp;and&nbsp;^[cDdelete-global-mode^[cA&nbsp;are&nbsp;macros 
+&nbsp;&nbsp;&nbsp;&nbsp;defined&nbsp;in&nbsp;me3_8.emf&nbsp;which&nbsp;use&nbsp;global-mode&nbsp;to&nbsp;add&nbsp;or&nbsp;remove&nbsp;a&nbsp;global 
+&nbsp;&nbsp;&nbsp;&nbsp;mode.&nbsp;They&nbsp;are&nbsp;defined&nbsp;for&nbsp;backward&nbsp;compatibility&nbsp;and&nbsp;for&nbsp;ease&nbsp;of 
+&nbsp;&nbsp;&nbsp;&nbsp;use;&nbsp;they&nbsp;are&nbsp;simple&nbsp;macros,&nbsp;add-global-mode&nbsp;is&nbsp;defined&nbsp;as&nbsp;follows: 
+^[sB 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;define-macro&nbsp;add-global-mode 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Has&nbsp;the&nbsp;require&nbsp;mode&nbsp;been&nbsp;given&nbsp;as&nbsp;an&nbsp;argument,&nbsp;if&nbsp;so&nbsp;add&nbsp;it 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;1&nbsp;global-mode&nbsp;@1 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;No&nbsp;-&nbsp;use&nbsp;1&nbsp;global-mode&nbsp;to&nbsp;add&nbsp;a&nbsp;mode 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!nma&nbsp;1&nbsp;global-mode 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!emacro 
+
+^[sA 
+
+^[cE^[cEEXAMPLE&nbsp;^[cE^[cA 
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;following&nbsp;example&nbsp;globally&nbsp;disables&nbsp;^[ls^[lmexact(2m)^[le&nbsp;and 
+&nbsp;&nbsp;&nbsp;&nbsp;^[ls^[lmmagic(2m)^[le&nbsp;modes,&nbsp;if&nbsp;these&nbsp;lines&nbsp;are&nbsp;copied&nbsp;to&nbsp;the&nbsp;user 
+&nbsp;&nbsp;&nbsp;&nbsp;setup&nbsp;file&nbsp;then&nbsp;are&nbsp;searches&nbsp;will&nbsp;be&nbsp;simple&nbsp;and&nbsp;case&nbsp;insensitive&nbsp;by 
+&nbsp;&nbsp;&nbsp;&nbsp;default: 
+^[sB 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;global-mode&nbsp;&quot;exact&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;global-mode&nbsp;&quot;magic&quot; 
+
+^[sA 
+
+^[cE^[cENOTES&nbsp;^[cE^[cA 
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;Globally&nbsp;adding&nbsp;^[ls^[lmbinary(2m)^[le&nbsp;and&nbsp;^[ls^[lmcrypt(2m)^[le 
+&nbsp;&nbsp;&nbsp;&nbsp;modes&nbsp;is&nbsp;strongly&nbsp;discouraged&nbsp;as&nbsp;any&nbsp;file&nbsp;loaded&nbsp;would&nbsp;be&nbsp;assigned 
+&nbsp;&nbsp;&nbsp;&nbsp;these&nbsp;modes.&nbsp;Instead&nbsp;the&nbsp;use&nbsp;of&nbsp;commands&nbsp;^[ls^[lmfind-bfile(3)^[le 
+&nbsp;&nbsp;&nbsp;&nbsp;and&nbsp;^[ls^[lmfind-cfile(3)^[le&nbsp;are&nbsp;recommended. 
+
+&nbsp;&nbsp;&nbsp;&nbsp;^[ls^[lmauto(2m)^[le,&nbsp;^[ls^[lmautosv(2m)^[le,&nbsp;^[ls^[lmbackup(2m)^[le, 
+&nbsp;&nbsp;&nbsp;&nbsp;^[ls^[lmexact(2m)^[le,&nbsp;^[ls^[lmmagic(2m)^[le,&nbsp;^[ls^[lmquiet(2m)^[le, 
+&nbsp;&nbsp;&nbsp;&nbsp;^[ls^[lmtab(2m)^[le&nbsp;and&nbsp;^[ls^[lmundo(2m)^[le&nbsp;modes&nbsp;are&nbsp;present&nbsp;on&nbsp;all 
+&nbsp;&nbsp;&nbsp;&nbsp;platforms&nbsp;by&nbsp;default.&nbsp;On&nbsp;Windows&nbsp;and&nbsp;DOS&nbsp;platforms&nbsp;^[ls^[lmcrlf(2m)^[le 
+&nbsp;&nbsp;&nbsp;&nbsp;is&nbsp;also&nbsp;present&nbsp;and&nbsp;on&nbsp;DOS&nbsp;^[ls^[lmctrlz(2m)^[le&nbsp;is&nbsp;also&nbsp;present. 
+
+
+^[cE^[cESEE&nbsp;ALSO&nbsp;^[cE^[cA 
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;^[ls^[lmOperating&nbsp;Modes^[le,&nbsp;^[ls^[lmbuffer-mode(2)^[le, 
+&nbsp;&nbsp;&nbsp;&nbsp;^[ls^[lmfind-bfile(3)^[le,&nbsp;^[ls^[lmfind-cfile(3)^[le, 
+&nbsp;&nbsp;&nbsp;&nbsp;^[ls^[lminfo(2)^[le. 
+</PRE></UL>
+</UL><H2><B>FILES </B></H2>
+<UL><P>The help file <B>me.ehf</B> is located in the MicroEmacs '02 <I>home</I> directory. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd093.html">define-help(2)</A>, 
+<A HREF="m5var057.html">$MEPATH(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

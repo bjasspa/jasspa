@@ -1,0 +1,83 @@
+<HTML>
+<HEAD><TITLE>narrow-buffer(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+narrow-buffer(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>narrow-buffer - Hide buffer lines </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>narrow-buffer</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The effect of <B>narrow-buffer</B> depends on the argument given, defined as follows:- 
+<P>1 
+<BR><UL>Removes all narrows in the current buffer (Default). </UL>
+<P>2 
+<BR><UL>Removes the current line's narrow. </UL>
+<P>3 
+<BR><UL>Narrow to region. Hides all but the lines of test in the current buffer from the 
+<A HREF="m2cmd121.html">mark</A> position to the current cursor position, effectively 'narrowing' the buffer to the remaining text. </UL>
+<P>4 
+<BR><UL>Narrow out region. Hides the lines of test in the current buffer from the 
+<A HREF="m2cmd121.html">mark</A> position to the current cursor position, opposite to argument <B>3</B>. 
+</UL><P>When a narrow is created the buffer mode 
+<A HREF="m2mod025.html">narrow(2m)</A> is automatically set, when the last is removed this mode is deleted. 
+<P>For example, if the buffer contains the following text: <UL>
+<PRE>1&nbsp;Richmond 
+2&nbsp;Lafayette 
+3&nbsp;Bloomington 
+4&nbsp;Indianapolis 
+5&nbsp;Gary 
+6 
+</PRE></UL>
+<P>If the mark is on line 2 and the current point is on line 4, executing:- <UL>
+<PRE>4&nbsp;narrow-buffer 
+</PRE></UL>
+<P>Creates one narrow, narrowing out line 2 and 3. Line 4 becomes the narrow anchor line, when the narrow is removed lines 2 and 3 will be inserted before line 4. The buffer will become:- <UL>
+<PRE>1&nbsp;Richmond 
+4&nbsp;Indianapolis 
+5&nbsp;Gary 
+</PRE></UL>
+<P>If instead the following was executed:- <UL>
+<PRE>3&nbsp;narrow-buffer 
+</PRE></UL>
+<P>Two narrows are created, the first narrowing out line 4 and 5 (line 6, the last line, being the anchor line) the second narrowing out line 1 (line 2 being the anchor line). The buffer will become:- <UL>
+<PRE>2&nbsp;Lafayette 
+3&nbsp;Bloomington 
+6 
+</PRE></UL>
+<P>Executing <B>narrow-buffer</B> with an argument of <B>2</B> will only work on the anchor lines, namely 4 in the first example and 2 and 6 in the second. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P>Alpha mark set by 
+<A HREF="m2cmd118.html">set-alpha-mark(2)</A> in text which is subsequently narrowed out will automatically remove the narrow if the user returns to the mark using 
+<A HREF="m2cmd059.html">goto-alpha-mark(2)</A>. 
+<P>
+<A HREF="m2cmd058.html">get-next-line(2)</A> operates on the unnarrowed buffer and will remove any narrows hiding the 'next' line. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>
+<A HREF="m3mac017.html">c-hash-eval(3)</A> macro defined in cmacros.emf uses narrow-buffer to hide regions of source code which has been #defined out, improving readability. 
+<P>
+<A HREF="m3mac028.html">vm(3)</A> defined in vm.emf uses narrow-buffer with appropriate arguments to 
+<A HREF="m2cmd123.html">append-buffer(2)</A> and 
+<A HREF="m2cmd143.html">write-buffer(2)</A> to write out only parts of the current buffer. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2mod025.html">narrow(2m)</A>, 
+<A HREF="m2cmd121.html">set-mark(2)</A>, 
+<A HREF="m2cmd118.html">set-alpha-mark(2)</A>, 
+<A HREF="m2cmd058.html">get-next-line(2)</A>, 
+<A HREF="m3mac017.html">c-hash-eval(3)</A>, 
+<A HREF="m3mac028.html">vm(3)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

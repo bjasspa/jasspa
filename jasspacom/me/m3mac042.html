@@ -1,0 +1,81 @@
+<HTML>
+<HEAD><TITLE>execute-tool(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+execute-tool(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>execute-tool - Execute a user defined shell tool </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>execute-tool</B> &quot;<I>tool-name</I>&quot; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>execute-tool</B> launches a predefined shell tool, the tools are typically defined by the 
+<A HREF="m3osd000.html">user-setup(3)</A> Tools page and executed using the MicroEmacs main Tools menu. See help on 
+<A HREF="m3osd000.html">user-setup(3)</A> for more information on the basic facilities given by execute-tool. 
+<P>If the numeric argument <I>n</I> is supplied it is used as the tool name to be executed, otherwise the argument &quot;<I>tool-name</I>&quot; must be given. 
+<P>A tool with a numeric name can be executed via a key binding, for example, to execute tool <B>3</B> (as defined by <B>user-setup</B>) to '<TT>C-3</TT>' add the following line to the user setup file:- <UL>
+<PRE>3&nbsp;global-bind-key&nbsp;execute-tool&nbsp;&quot;C-3&quot; 
+</PRE></UL>
+</UL><H2><B>NOTES </B></H2>
+<UL><P>The registry entries for a tool must be located in registry directory &quot;<TT>/history/</TT><B>$platform</B><B>/tool/</B><B>tool-name</B>&quot; where <B>$platform</B> is the current setting of variable 
+<A HREF="m5var034.html">$platform(5)</A> and <B>tool-name</B> is the name of the tool as given to the command. The following registry entries are used:- 
+<P><B>name</B> 
+<BR><UL>The name of the tool as displayed in the user-setup Tools dialog and the Main Tools menu. This is only used for tools <TT>0</TT> to <TT>9</TT>. </UL>
+<P><B>command</B> 
+<BR><UL>The command-line to be launched when the tool is executed, the following special tokens may be used in the command-line which are substituted at execution:- 
+<P><B>%ff</B> 
+<BR><UL>The current buffer's full file name, including the path. </UL>
+<P><B>%fp</B> 
+<BR><UL>The current buffer's file path. </UL>
+<P><B>%fn</B> 
+<BR><UL>The current buffer's file name without the path. </UL>
+<P><B>%fb</B> 
+<BR><UL>The current buffer's file base name, i.e. the file name without the path or the extension. </UL>
+<P><B>%fe</B> 
+<BR><UL>The current buffer's file extension with the '<I>.</I>' (e.g. &quot;<I>.emf</I>&quot;), set to the empty string if the file name does not have an extension. </UL></UL>
+<UL><P>Note that &quot;<B>%ff</B>&quot; is always the same as &quot;<B>%fp%fn</B>&quot; and &quot;<B>%fp%fb%fe</B>&quot;. If any of these tokens are used, the tool will fail to execute if the current buffer does not have a file name. </UL>
+<P><B>flag</B> 
+<BR><UL>A bit based flag setting the tool characteristics, where:- 
+<P><B>0x01</B> 
+<BR><UL>Enable current buffer saving. </UL>
+<P><B>0x02</B> 
+<BR><UL>Enable prompt before saving current buffer. </UL>
+<P><B>0x04</B> 
+<BR><UL>Enable all edited buffers saving. </UL>
+<P><B>0x08</B> 
+<BR><UL>Enable prompt before saving an edited buffer. </UL>
+<P><B>0x10</B> 
+<BR><UL>Enable output capturing. </UL>
+<P><B>0x20</B> 
+<BR><UL>Enable concurrent running, not available on all platforms, see variable 
+<A HREF="m5var047.html">$system(5)</A>. </UL></UL>
+<P><B>bname</B> 
+<BR><UL>The name of the buffer to be used if the output is captured. The following special tokens may be used in the buffer name which are substituted at execution:- 
+<P><B>%fn</B> 
+<BR><UL>The current buffer's file name without the path, set to the buffer name if the current buffer does not have a file name. </UL>
+<P><B>%fb</B> 
+<BR><UL>The current buffer's file base name, i.e. the file name without the path or the extension. Set to the buffer name if the current buffer does not have a file name. </UL>
+<P><B>%fe</B> 
+<BR><UL>The current buffer's file extension with the '<I>.</I>' (e.g. &quot;<I>.emf</I>&quot;), set to the empty string if the current buffer does not have a file name or it does not have an extension. </UL>Note that &quot;<B>%fn</B>&quot; is always the same as &quot;<B>%fb%fe</B>&quot;. Default buffer name when this field is left empty is &quot;<I>*command*</I>&quot;, or &quot;<I>*icommand*</I>&quot; if <TT>Run Concurrently</TT> is enabled. 
+</UL><P>If more than 10 tools are required (maximum number definable by <B>user-setup</B>) or names are preferred, it is recommended that the <B>user-setup</B> dialog is used to define the tool and then use the registry copy utility bound to '<TT>c</TT>' in a 
+<A HREF="m2cmd025.html">list-registry(2)</A> buffer. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m3osd000.html">user-setup(3)</A>, 
+<A HREF="m2cmd077.html">ipipe-shell-command(2)</A>, 
+<A HREF="m2cmd098.html">pipe-shell-command(2)</A>, 
+<A HREF="m2cmd131.html">shell-command(2)</A>, 
+<A HREF="m5var047.html">system(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

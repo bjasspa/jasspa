@@ -1,0 +1,97 @@
+<HTML>
+<HEAD><TITLE>&cat(4)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+&cat(4)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>&amp;cat, &amp;lef, &amp;rig, &amp;mid, &amp;len, &amp;slo, &amp;trb - String macro operators </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>&amp;cat</B> <I>str1</I> <I>str2</I> 
+<BR><B>&amp;lef</B> <I>str</I> <I>len</I> 
+<BR><B>&amp;right</B> <I>str</I> <I>index</I> 
+<BR><B>&amp;mid</B> <I>str</I> <I>index</I> <I>len</I> 
+<P><B>&amp;len</B> <I>str</I> 
+<P><B>&amp;slower</B> <I>str</I> 
+<BR><B>&amp;supper</B> <I>str</I> 
+<P><B>&amp;trboth</B> <I>str</I> 
+<BR><B>&amp;trleft</B> <I>str</I> 
+<BR><B>&amp;trright</B> <I>str</I> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The string operators operate on character strings (<B>%</B> or <B>$</B> variables), performing general string manipulation, returning a string result. 
+<P>The operators may all be abbreviated to their three letter abbreviation (i.e. <B>&amp;right</B> may be expressed as <B>&amp;rig</B>). In all cases the first argument is completely evaluated before the second argument. 
+<P><B>&amp;cat</B> <I>str1</I> <I>str2</I> 
+<BR><UL>Concatenate two string <I>str1</I> with <I>str2</I> to form a new string. i.e. <I>str1str2</I> </UL>
+<P><B>&amp;lef</B> <I>str</I> <I>len</I> 
+<BR><UL>Return <I>len</I> leftmost characters from <I>str</I>. If <I>str</I> length is shorter than <I>len</I> then the string itself is returned. A <I>len</I> of zero returns the empty string. </UL>
+<P><B>&amp;rig</B> <I>str</I> <I>index</I> 
+<BR><UL>Returns the rightmost characters of string <I>str</I> from index <I>index</I>. This function causes some confusion, consider <B>&amp;lef</B> and <B>&amp;rig</B> to be the string equivalents of their integer counterparts 
+<A HREF="m4fil001.html">&amp;div</A> and 
+<A HREF="m4fil001.html">&amp;mod</A>; <B>&amp;rig</B> returns the remainder of the equivalent <B>&amp;lef</B> function. Invocation with <I>index</I> set to zero returns <I>str</I>. </UL>
+<P><B>&amp;mid</B> <I>index</I> <I>len</I> 
+<BR><UL>Extracts a sub-string from string <I>str</I>, starting at position <I>index</I> of length <I>len</I>. </UL>
+<P><B>&amp;len</B> <I>str</I> 
+<BR><UL>Returns the integer length of the string (number of characters). </UL>
+<P><B>&amp;slower</B> <I>str</I> 
+<BR><UL>Returns the given string with all upper case characters converted to lower case. </UL>
+<P><B>&amp;supper</B> <I>str</I> 
+<BR><UL>Returns the given string with all lower case characters converted to upper case. </UL>
+<P><B>&amp;trboth</B> <I>str</I> 
+<BR><UL>Returns the given string trimmed of white spaces (i.e. '<TT> </TT>', '<TT>\t</TT>', '<TT>\r</TT>', '<TT>\n</TT>', '<TT>\Cl</TT>' and '<TT>\Ck</TT>') from both sides of the string. </UL>
+<P><B>&amp;trleft</B> <I>str</I> 
+<BR><UL>Returns the given string trimmed of white spaces from the left side of the string only. </UL>
+<P><B>&amp;trright</B> <I>str</I> 
+<BR><UL>Returns the given string trimmed of white spaces from the right side, or end, of the string only. </UL>
+<P>Evaluation of the strings is left to right, the leftmost argument is fully evaluated before the next argument. The operator ordering is prefix notation (see 
+<A HREF="m4fil001.html">&amp;add(4)</A> for an example of prefix ordering). </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>Concatenate two strings <TT>abc</TT> and <TT>def</TT> together:- <UL>
+<PRE>set-variable&nbsp;%result&nbsp;&amp;cat&nbsp;&quot;abc&quot;&nbsp;&quot;def&quot; 
+</PRE></UL>
+<P>To concatenate three strings <TT>abc</TT>, <TT>def</TT> <TT>ghi</TT> together: <UL>
+<PRE>set-variable&nbsp;%result&nbsp;&amp;cat&nbsp;&quot;abc&quot;&nbsp;&amp;cat&nbsp;&quot;def&quot;&nbsp;&quot;ghi&quot; 
+</PRE></UL>
+<P>or, a slightly different ordering: <UL>
+<PRE>set-variable&nbsp;%result&nbsp;&amp;cat&nbsp;&amp;cat&nbsp;&quot;abc&quot;&nbsp;&quot;def&quot;&nbsp;&quot;ghi&quot; 
+</PRE></UL>
+<P>Retrieve the leftmost character of a string variable, modify the variable to contain the remainder. <UL>
+<PRE>set-variable&nbsp;%foo&nbsp;&quot;abcdef&quot; 
+set-variable&nbsp;%c&nbsp;&nbsp;&nbsp;&amp;lef&nbsp;%foo&nbsp;1 
+set-variable&nbsp;%foo&nbsp;&amp;rig&nbsp;%foo&nbsp;1 
+</PRE></UL>
+<P>Where <TT>%c</TT> = &quot;<TT>a</TT>&quot;; <TT>%foo</TT> = &quot;<TT>bcdef</TT>&quot; following evaluation. 
+<P>To retrieve the characters <TT>cde</TT> into variable <TT>%result</TT> from the string &quot;<TT>abcdef</TT>&quot; use: <UL>
+<PRE>set-variable&nbsp;%result&nbsp;&amp;mid&nbsp;&quot;abcdef&quot;&nbsp;2&nbsp;3 
+</PRE></UL>
+<P>To retrieve the rightmost character from the string: <UL>
+<PRE>set-variable&nbsp;%foo&nbsp;&quot;abcdef&quot; 
+set-variable&nbsp;%result&nbsp;&amp;rig&nbsp;%foo&nbsp;&amp;sub&nbsp;&amp;len&nbsp;%foo&nbsp;1 
+</PRE></UL>
+<P>or the same result could be achieved using <B>&amp;mid</B>: <UL>
+<PRE>set-variable&nbsp;%result&nbsp;&amp;mid&nbsp;%foo&nbsp;&amp;sub&nbsp;&amp;len&nbsp;%foo&nbsp;1&nbsp;1 
+</PRE></UL>
+<P>To get an input string from the user which is free of spaces at the start and end: <UL>
+<PRE>set-variable&nbsp;%result&nbsp;&amp;trb&nbsp;@ml&nbsp;&quot;Enter&nbsp;string&quot; 
+</PRE></UL>
+</UL><H2><B>NOTES </B></H2>
+<UL><P>The original <B>MicroEMACS</B> &quot;<B>&amp;rig</B> <I>str</I> <I>n</I>&quot; function returns the last <I>n</I> characters from the string <I>str</I> this differs from the definition of <B>&amp;rig</B> in this implementation. As most string decomposition is performed left to right, and to make <B>&amp;lef</B> and <B>&amp;rig</B> complement each other, the indexing of the function has been modified. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="amicr026.html">Variable Functions</A>, 
+<A HREF="m4fil031.html">&amp;sin(4)</A>, 
+<A HREF="m4fil030.html">&amp;sequal(4)</A>, 
+<A HREF="m4fil029.html">&amp;lget(4)</A>, 
+<A HREF="m4fil004.html">&amp;sprintf(4)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

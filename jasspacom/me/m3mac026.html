@@ -1,0 +1,62 @@
+<HTML>
+<HEAD><TITLE>ifill-paragraph(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+ifill-paragraph(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>ifill-paragraph - Format a paragraph </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>ifill-paragraph</B> (<B>esc q</B>)&nbsp; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>ifill-paragraph</B>, like <B>fill-paragraph</B>, fills the current paragraph from the left margin to the current fill column. In addition ifill-paragraph also recognizes joined bullet lists and fills each bullet paragraph separately. 
+<P>See 
+<A HREF="m2cmd052.html">fill-paragraph(2)</A> for more information on the process of filling paragraphs. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>Following are 2 copies of the same paragraph, the first has been filled using <B>ifill-paragraph</B>: <UL>
+<PRE>This&nbsp;&nbsp;is&nbsp;the&nbsp;&nbsp;main&nbsp;&nbsp;paragraph&nbsp;&nbsp;which&nbsp;&nbsp;can&nbsp;be&nbsp;as&nbsp;long&nbsp;as&nbsp;&nbsp;required, 
+following&nbsp;is&nbsp;a&nbsp;list&nbsp;of&nbsp;bullets,&nbsp;some&nbsp;with&nbsp;a&nbsp;sub-bullet&nbsp;&nbsp;list.&nbsp;Here 
+is&nbsp;the&nbsp;list: 
+&nbsp;&nbsp;&nbsp;&nbsp;a)&nbsp;The&nbsp;bullet&nbsp;paragraph&nbsp;can&nbsp;also&nbsp;be&nbsp;as&nbsp;long&nbsp;as&nbsp;required&nbsp;and&nbsp;it 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;also&nbsp;can&nbsp;have&nbsp;a&nbsp;bullet&nbsp;&nbsp;list&nbsp;&nbsp;following&nbsp;&nbsp;(sub-bullet&nbsp;&nbsp;list) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;which&nbsp;will&nbsp;also&nbsp;be&nbsp;filled&nbsp;correctly.&nbsp;Here&nbsp;is&nbsp;the&nbsp;sub-bullet 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;list: 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.&nbsp;First&nbsp;&nbsp;sub-bullet&nbsp;-&nbsp;again&nbsp;no&nbsp;length&nbsp;&nbsp;restrictions,&nbsp;&nbsp;this 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;will&nbsp;be&nbsp;filled&nbsp;correctly. 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.&nbsp;second&nbsp;sub-bullet&nbsp;-&nbsp;no&nbsp;problems. 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.&nbsp;Third&nbsp;sub-bullet&nbsp;-&nbsp;again&nbsp;no&nbsp;length&nbsp;restrictions,&nbsp;this&nbsp;is 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;getting&nbsp;boring. 
+&nbsp;&nbsp;&nbsp;&nbsp;b)&nbsp;This&nbsp;is&nbsp;the&nbsp;second&nbsp;&nbsp;major&nbsp;bullet&nbsp;and&nbsp;this&nbsp;can&nbsp;just&nbsp;carry&nbsp;on 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for&nbsp;ever,&nbsp;but&nbsp;all&nbsp;things&nbsp;must&nbsp;come&nbsp;to&nbsp;an 
+</PRE></UL>
+<P>The following version has been filled using the normal <B>fill-paragraph</B>: <UL>
+<PRE>This&nbsp;&nbsp;is&nbsp;the&nbsp;&nbsp;main&nbsp;&nbsp;paragraph&nbsp;&nbsp;which&nbsp;&nbsp;can&nbsp;be&nbsp;as&nbsp;long&nbsp;as&nbsp;&nbsp;required, 
+following&nbsp;is&nbsp;a&nbsp;list&nbsp;of&nbsp;bullets,&nbsp;some&nbsp;with&nbsp;a&nbsp;sub-bullet&nbsp;&nbsp;list.&nbsp;Here 
+is&nbsp;the&nbsp;&nbsp;list:&nbsp;&nbsp;a)&nbsp;The&nbsp;&nbsp;bullet&nbsp;&nbsp;paragraph&nbsp;&nbsp;can&nbsp;&nbsp;also&nbsp;&nbsp;be&nbsp;as&nbsp;long&nbsp;as 
+required&nbsp;and&nbsp;it&nbsp;also&nbsp;can&nbsp;have&nbsp;a&nbsp;bullet&nbsp;list&nbsp;following&nbsp;&nbsp;(sub-bullet 
+list)&nbsp;which&nbsp;will&nbsp;also&nbsp;be&nbsp;filled&nbsp;&nbsp;correctly.&nbsp;Here&nbsp;is&nbsp;the&nbsp;sub-bullet 
+list:&nbsp;1.&nbsp;First&nbsp;&nbsp;sub-bullet&nbsp;&nbsp;-&nbsp;again&nbsp;no&nbsp;length&nbsp;&nbsp;restrictions,&nbsp;&nbsp;this 
+will&nbsp;be&nbsp;filled&nbsp;&nbsp;correctly.&nbsp;2.&nbsp;second&nbsp;&nbsp;sub-bullet&nbsp;-&nbsp;no&nbsp;problems.&nbsp;3. 
+Third&nbsp;sub-bullet&nbsp;-&nbsp;again&nbsp;no&nbsp;length&nbsp;&nbsp;restrictions,&nbsp;&nbsp;this&nbsp;is&nbsp;getting 
+boring.&nbsp;b)&nbsp;This&nbsp;is&nbsp;the&nbsp;second&nbsp;major&nbsp;bullet&nbsp;and&nbsp;this&nbsp;can&nbsp;just&nbsp;carry 
+on&nbsp;for&nbsp;ever,&nbsp;but&nbsp;all&nbsp;things&nbsp;must&nbsp;come&nbsp;to&nbsp;an 
+</PRE></UL>
+</UL><H2><B>NOTES </B></H2>
+<UL><P><B>ifill-paragraph</B> is a macro defined in <TT>format.emf</TT>. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd052.html">fill-paragraph(2)</A>, 
+<A HREF="m3mac003.html">paragraph-to-line(3)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

@@ -1,0 +1,42 @@
+<HTML>
+<HEAD><TITLE>forward-word(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+forward-word(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>forward-word - Move the cursor to the next word 
+<BR>backward-word - Move the cursor to the previous word </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>forward-word</B> (<B>esc f</B>)&nbsp; 
+<BR><I>n</I> <B>backward-word</B> (<B>esc b</B>)&nbsp; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>forward-word</B> places the cursor at the end of the <I>n</I>th word from the current position; the default is 1. 
+<P><B>backward-word</B> places the cursor at the beginning of the <I>n</I>th previous word, default 1. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P>Words are distinguished by non-alphanumeric characters and need not be white space such as spaces and tabs. 
+<P>A character is considered to be part of a word if it is in the 
+<A HREF="m5var007.html">$buffer-mask(5)</A> character set. The default setting for <B>$buffer-mask</B> is &quot;<TT>luh</TT>&quot; which gives a word character set of the alphanumeric characters, i.e. <TT>0</TT>-<TT>9</TT>, <TT>A</TT>-<TT>Z</TT>, <TT>a</TT>-<TT>z</TT>, this may be changed by setting the <B>$buffer-mask</B> variable. The character sets (including 4 user character sets <TT>1</TT>-<TT>4</TT>) may be altered by using the command 
+<A HREF="m2cmd134.html">set-char-mask(2)</A>. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd092.html">backward-line(2)</A>, 
+<A HREF="m2cmd094.html">backward-paragraph(2)</A>, 
+<A HREF="m2cmd092.html">forward-line(2)</A>, 
+<A HREF="m2cmd094.html">forward-paragraph(2)</A>, 
+<A HREF="m2nar008.html">Locale Support</A>, 
+<A HREF="m5var007.html">$buffer-mask(5)</A>, 
+<A HREF="m2cmd134.html">set-char-mask(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

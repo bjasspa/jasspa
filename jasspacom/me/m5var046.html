@@ -1,0 +1,72 @@
+<HTML>
+<HEAD><TITLE>$window-mode-line(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+$window-mode-line(5)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>$window-mode-line - Window mode line position 
+<BR>$window-scroll-bar - Window scroll bar (or separator) position </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>$window-mode-line</B> <I>integer</I> 
+<P>1 &lt;= <I>integer</I> &lt;= 
+<A HREF="m5var037.html">$screen-depth</A> - 2 
+<P><B>$window-scroll-bar</B> <I>integer</I> 
+<P>0 &lt;= <I>integer</I> &lt;= 
+<A HREF="m5var037.html">$screen-width</A> - 1 </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>$window-mode-line</B> stores the screen line of the current windows mode-line, where screen lines are counted from 0 at the top of the screen. Often used in conjunction with 
+<A HREF="m2cmd119.html">set-cursor-to-mouse(2)</A> and 
+<A HREF="m5var033.html">$mouse-y(5)</A> to add more complex mouse functionality. 
+<P><B>$window-scroll-bar</B> stores the screen position of the right-hand horizontal window separator line or scroll-bar (see 
+<A HREF="m2cmd151.html">split-window-horizontally(2)</A> and 
+<A HREF="m5var055.html">$scroll-bar(5)</A>). A value of greater than 
+<A HREF="m5var037.html">$screen-width(5)</A> indicates that there is no right-hand separator column or scroll bar present. Often used in conjunction with 
+<A HREF="m5var033.html">$mouse-x(5)</A>. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>In the following example the position of the mouse is checked to see if it is on the mode line of the window, if so then a different action is taken. <UL>
+<PRE>set-cursor-to-mouse 
+;&nbsp;&nbsp;&nbsp;If&nbsp;we&nbsp;are&nbsp;on&nbsp;the&nbsp;mode&nbsp;line&nbsp;then&nbsp;interpret&nbsp;position&nbsp;of 
+;&nbsp;&nbsp;&nbsp;the&nbsp;cursor&nbsp;on&nbsp;line&nbsp;to&nbsp;control&nbsp;the&nbsp;screen. 
+!if&nbsp;&amp;equal&nbsp;$window-mode-line&nbsp;$mouse-y 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;less&nbsp;$mouse-x&nbsp;&quot;2&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;menu-main&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Inform&nbsp;buffer&nbsp;to&nbsp;pop&nbsp;up&nbsp;menu. 
+&nbsp;&nbsp;&nbsp;&nbsp;!elif&nbsp;&amp;equal&nbsp;$mouse-x&nbsp;&quot;2&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete-window 
+&nbsp;&nbsp;&nbsp;&nbsp;!elif&nbsp;&amp;equal&nbsp;$mouse-x&nbsp;&quot;3&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete-other-windows 
+&nbsp;&nbsp;&nbsp;&nbsp;!elif&nbsp;&amp;equal&nbsp;$mouse-x&nbsp;&quot;4&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;backward-page 
+&nbsp;&nbsp;&nbsp;&nbsp;!elif&nbsp;&amp;equal&nbsp;$mouse-x&nbsp;&quot;5&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;forward-page 
+&nbsp;&nbsp;&nbsp;&nbsp;!elif&nbsp;&amp;equal&nbsp;$mouse-x&nbsp;&quot;6&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;recenter 
+&nbsp;&nbsp;&nbsp;&nbsp;!elif&nbsp;&amp;equal&nbsp;$mouse-x&nbsp;&quot;7&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;undo 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+!else 
+&nbsp;&nbsp;&nbsp;&nbsp;..... 
+!endif 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var031.html">$mode-line(5)</A>, 
+<A HREF="m5var033.html">$mouse-x(5)</A>, 
+<A HREF="m5var033.html">$mouse-y(5)</A>, 
+<A HREF="m5var055.html">$scroll-bar(5)</A>, 
+<A HREF="m5var038.html">$mouse-pos(5)</A>, 
+<A HREF="m2cmd119.html">set-cursor-to-mouse(2)</A>, 
+<A HREF="m2cmd151.html">split-window-horizontally(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

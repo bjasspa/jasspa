@@ -1,0 +1,52 @@
+<HTML>
+<HEAD><TITLE>$buffer-fhook(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+$buffer-fhook(5)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>$buffer-fhook - Buffer macro hook command name (buffer creation) 
+<BR>$buffer-dhook - Buffer macro hook command name (buffer deletion) 
+<BR>$buffer-bhook - Buffer macro hook command name (buffer current) 
+<BR>$buffer-ehook - Buffer macro hook command name (buffer swapped) </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>$buffer-fhook</B> <I>FunctionName</I> 
+<BR><B>$buffer-dhook</B> <I>FunctionName</I> 
+<BR><B>$buffer-bhook</B> <I>FunctionName</I> 
+<BR><B>$buffer-ehook</B> <I>FunctionName</I> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>Sets the buffer create, delete, begin and end hook command which are executed: 
+<P><B>buffer-fhook</B> 
+<BR><UL>When the buffer is created. </UL>
+<P><B>buffer-dhook</B> 
+<BR><UL>When the buffer is deleted. </UL>
+<P><B>buffer-bhook</B> 
+<BR><UL>When the buffer becomes the current buffer. </UL>
+<P><B>buffer-ehook</B> 
+<BR><UL>When the buffer is swapped out from being the current buffer. </UL>
+<P>The variable <B>$buffer-fhook</B> is largely redundant as the file hook is executed only once and before it can be sent. Its main use is within macros which wish to ascertain what type of buffer it is executing on, i.e. if a command was to be executed only on c file then the follow ensures that this is the case: <UL>
+<PRE>!if&nbsp;&amp;not&nbsp;&amp;seq&nbsp;$buffer-fhook&nbsp;&quot;fhook-cmode&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!abort 
+!endif 
+</PRE></UL>
+<P>Where the command <I>fhook-cmode</I> is the c file hook. 
+<P><B>dhooks</B> are executed when a buffer is deleted, but before the contents of the buffer are lost. Note that dhooks will not be called if the buffer never becomes active, or if MicroEmacs '02 quits due to the receipt of a panic signal. 
+<P><B>bhooks</B> and <B>ehooks</B> are usually used to set and restore global variables which require different setting in the current buffer. 
+<P>The order of The default settings of these variable are determined by the command 
+<A HREF="m2cmd003.html">add-file-hook(2)</A>. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd003.html">add-file-hook(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>

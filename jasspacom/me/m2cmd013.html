@@ -1,0 +1,75 @@
+<HTML>
+<HEAD><TITLE>global-bind-key(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+global-bind-key(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>global-bind-key - Bind a key to a named command or macro 
+<BR>global-unbind-key - &quot;Unbind a key from a named command or macro&quot; </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>global-bind-key</B> &quot;<I>command</I>&quot; &quot;<I>key</I>&quot; (<B>esc k</B>)&nbsp; 
+<BR><I>n</I> <B>global-unbind-key</B> &quot;<I>key</I>&quot; (<B>esc C-k</B>)&nbsp; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>global-bind-key</B> takes one of the named commands and binds it to a key. Thereafter, whenever that key is struck, the bound command is executed. If an argument <I>n</I> is given then the bound command is executed <I>n</I> times when the key is struck. (i.e. the command is passed the numeric argument '<I>n</I>'). 
+<P><B>global-unbind-key</B> unbinds (detaches) a user entered <I>key</I> sequence (i.e. <TT>C-x&nbsp;C-f</TT>) from any command to which it may be bound. This does not work with 
+<A HREF="m2cmd084.html">buffer</A> or 
+<A HREF="m2cmd085.html">message line</A> key bindings, see 
+<A HREF="m2cmd084.html">buffer-unbind-key(2)</A> and 
+<A HREF="m2cmd085.html">ml-unbind-key(2)</A>. If an argument of 0 is given to <B>global-unbind-key</B>, only a single key is obtained for the user, if the character is currently bound to the 
+<A HREF="m2cmd028.html">prefix</A> command, the prefix binding and any sub-bindings are removed. <B>global-bind-key</B> calls <B>global-unbind-key</B> first if the key to be bound is already bound to something else. 
+<P>If a -ve argument is given to <B>global-unbind-key</B> then all bindings are removed, <B>caution</B> - removing all bindings interactively will render the current MicroEmacs session unusable. This can only be used within macro development where new bindings are created immediately afterwards. 
+<P>The <B>global-bind-key</B> command, currently bound to <TT>esc k</TT>, prompts the user for the named command and the key to which it is to be bound. This help file gives a complete list of all built in commands, and some useful macros, a complete list of all commands and macros can be obtained by using the command completion (type <TT>esc x</TT>&nbsp;<TT>tab</TT>&nbsp;<TT>tab</TT>, see 
+<A HREF="m2cmd085.html">ml-bind-key(2)</A>) or using the command 
+<A HREF="m2cmd038.html">describe-bindings(2)</A>. 
+<P>The mouse buttons are considered to be <I>keys</I>, there is a <I>key</I> for each button press and release event, use 
+<A HREF="m2cmd039.html">describe-key(2)</A> to get the binding key string. 
+<P>The non-ASCII standard keys such as the cursor keys have 'standard' key names to make cross platform binding support easy. Some systems such as <I>termcap</I> do not have fixed key-bindings, for these key the users must use the command 
+<A HREF="m2cmd133.html">translate-key(2)</A> to convert the system key binding to the standard key binding. 
+<P>Permanent changes are done indirectly through the <TT>me.emf</TT> file. This is a file that MicroEmacs '02 reads and executes (see 
+<A HREF="m2cmd045.html">execute-file(2)</A>) during startup and hence results in the appearance of a permanent change in the key bindings. The syntax of commands in the <TT>me.emf</TT> file is described under the 
+<A HREF="m2cmd045.html">execute-file</A> command. Of principal concern here are the two commands <B>global-bind-key</B> and <B>global-unbind-key</B>. The primary difference between the way parameters are passed to these commands in the <TT>me.emf</TT> file is that the keys are not typed in directly (as in the <I>control-I</I> key when you want <TT>C-i</TT>) but by symbolic names. Every key has a unique name which can be easily obtained with the current binding by using the command 
+<A HREF="m2cmd039.html">describe-key(2)</A>. 
+<P>See help on 
+<A HREF="m2cmd203.html">Key Names</A> for a description of the symbolic naming system and a complete list of valid key names. Also see 
+<A HREF="m2cmd200.html">Bindings</A> for a complete list of default key bindings. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P><B>Alt P</B> <UL>
+<PRE>global-bind-key&nbsp;&quot;func&quot;&nbsp;&quot;A-p&quot; 
+</PRE></UL>
+<P><B>Control F2</B> <UL>
+<PRE>global-bind-key&nbsp;&quot;func&quot;&nbsp;&quot;C-f3&quot; 
+</PRE></UL>
+<P><B>Shift Alt Left Cursor</B> <UL>
+<PRE>global-bind-key&nbsp;&quot;func&quot;&nbsp;&quot;A-S-left&quot; 
+</PRE></UL>
+<P><B>Control Alt Delete</B> <UL>
+<PRE>global-bind-key&nbsp;&quot;func&quot;&nbsp;&quot;C-A-delete&quot; 
+</PRE></UL>
+<UL><P>Note that binding <B>Control-Alt-Delete</B> is not recommended for MS-DOS systems for obvious reasons. </UL></UL>
+<H2><B>NOTES </B></H2>
+<UL><P>Some ASCII keys, such as <TT>&lt;CR&gt;</TT> (C-m), <TT>&lt;tab&gt;</TT> (C-i), <TT>&lt;BACKSPACE&gt;</TT> (C-h) have non-ASCII key bindings, namely &quot;<B>return</B>&quot;, &quot;<B>tab</B>&quot;, &quot;<B>backspace</B>&quot; etc. this is to allow separate key-bindings for the real &quot;<B>C-m</B>&quot; etc. 
+<P>Be very careful in binding and unbinding keys since you could get into some very peculiar situations such as being unable to abort out of a command (if you unbind CTRL-G or bind it to something else) or recover from the bad binding/unbinding if you unbind 
+<A HREF="m2cmd047.html">execute-named-command(2)</A> or the <B>global-unbind-key</B> command. As long as you leave yourself the opportunity to do both of the last two commands, you can recover from disastrous bindings/unbindings. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd084.html">buffer-bind-key(2)</A>, 
+<A HREF="m2cmd084.html">buffer-unbind-key(2)</A>, 
+<A HREF="m2cmd038.html">describe-bindings(2)</A>, 
+<A HREF="m2cmd039.html">describe-key(2)</A>, 
+<A HREF="m2cmd085.html">ml-bind-key(2)</A>, 
+<A HREF="m2cmd085.html">ml-unbind-key(2)</A>, 
+<A HREF="m2cmd133.html">translate-key(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2002</I>
+<BR><I>Last Modified: 2001/12/18</I>
+<BR><I>Generated On: 2002/01/06</I>
+</BODY></HMTL>
