@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac061.3,v 1.1 2002-10-16 22:30:10 jon Exp $
+.Id $Id: m3mac061.3,v 1.2 2005-01-01 15:02:12 bill Exp $
 .Im MicroEmacs cursor
 .so me.tni
 .TH display-matching-fence 3
@@ -26,8 +26,8 @@ If the  matching  fence is  currently  being  drawn (i.e. it is visible)  both
 fences are drawn in the '\fINormal\fR' Matching Fence scheme (see
 .Ht scheme-editor 3 ).
 If the matching fence is not currently visible the cursor is temporarily moved
-to the match fence for
-.Ht $fmatchdelay 5
+to the matching fence for
+.Ht $pause-time 5
 milliseconds  before  returning  to the  starting  position,  the  fences  are
 hilighted using the Matching Fence 'Current'  scheme. The matching fence delay
 can be  interrupted  by pressing  any key. If the fence  cannot be matched the
@@ -59,6 +59,6 @@ numeric argument flags.
 .Ht goto-matching-fence 2 ,
 .Ht user-setup 3 ,
 .Ht scheme-editor 3 ,
-.Ht $fmatchdelay 5 .
+.Ht $pause-time 5 .
 .ad
 .FH

@@ -3,39 +3,35 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var023.5,v 2.5 2002-01-11 21:58:43 jon Exp $
+.Id $Id: m5var023.5,v 2.6 2005-01-01 15:02:12 bill Exp $
 .Im MicroEmacs variable|cursor
 .so me.tni
-.TH $fmatchdelay 5
+.TH $pause-time 5
+.XI $pause-time - "Length of time to pause for user"
 .XI $fmatchdelay - "Fence matching delay time"
 .SH NAME
-$fmatchdelay\- Fence matching delay time
+$pause-time \- Length of time to pause for user
 .Me $a
 .SH SYNOPSIS
-\fB$fmatchdelay\fR \fIdelayTime\fR; Default is \fC2000\fR
+\fB$pause-time\fR \fImilliseconds\fR; Default is \fC2000\fR
 .sp
-0 <= \fIdelayTime\fR <= \fIn\fR
+0 <= \fImilliseconds\fR <= \fIt\fR
 .SH DESCRIPTION
-The number of milliseconds to wait in a fence match  operation. When a closing
-fence \'\fC)\fR' '\fC]\fR' or '\fC}\fR' is added the opening fence is searched
-for,  scrolling  the  screen  up where  necessary,  this is the time  that the
-opening fence is displayed, interruptible by typing any key.
-.PP
-When
-.Ht cmode 2m
-is enable the search algorithm used is '\fIC\fR' aware and if a matching fence
-is not found then the bell is rung as a warning.  The  automatic  matching  of
-fences can be enabled/disabled via the
+Defines the number of  milliseconds  to pause,  allowing  the user to see some
+information.  The  pause  time  is  used  predominantly  by  the  fence  match
+operation, determining the time  that the
+opening fence is displayed, see
 .Ht fence 2m
 mode.
 .PP
-A cursor can be moved to the matching fence using the
-.Ht goto-matching-fence 2
-command. 
+The  \fB$pause-time\fR is also used during the printing of some error messages
+on the message-line. These errors are typically important ones that should not
+be  ignored  so the system  pauses to ensure the user has enough  time to read
+them.
+.SH NOTES
+The variable name was changed from \fB$fmatchdelay\fR in December 2004. 
 .SH "SEE ALSO"
 .na
-.Ht fence 2m ,
-.Ht cmode 2m ,
-.Ht goto-matching-fence 2 .
+.Ht fence 2m .
 .ad
 .FH
