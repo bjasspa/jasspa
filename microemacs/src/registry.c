@@ -1244,7 +1244,8 @@ listRegistry (int f, int n)
         /* Descend child */
         if((cnp != NULL) && !(rnp->mode & (meREGMODE_HIDDEN|meREGMODE_INTERNAL)))
         {
-            vstrbuf[level++] = (level && (nnp != NULL)) ? boxChars[BCNS] : ' ' ;
+            vstrbuf[level] = (level && (nnp != NULL)) ? boxChars[BCNS] : ' ' ;
+            level++;
             rnp = cnp ;
             continue ;
         }
