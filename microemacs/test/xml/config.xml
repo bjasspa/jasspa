@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<config>
+  
+  <general>
+    <auth type="ldap"/>
+	<theme name="classic"/>
+  </general>
+  
+  <!-- ldap definitions -->
+  <ldap server="localhost" port="">
+    <bind dn="cn=rubypawapawa,dc=webtime,dc=net" passwd="mypass">
+    pipo for test with xpath
+	</bind>
+  </ldap>
+  
+  <!-- Database definitions -->
+  <database dsn="base">
+    <user login="base" passwd="pipo" />
+  </database>
+
+  <class name = "adresse" table = "adresses">
+    <field name = "id"        col = "a_int_id"       type = "int"        null = "auto" />
+    <field name = "address1"  col = "a_str_address1" type = "vchar(255)" null = "1" />
+    <field name = "address2"  col = "a_str_address2" type = "vchar(255)" null = "1" />
+    <field name = "cp"        col = "a_str_cp"       type = "vchar(10)"  null = "1" />
+    <field name = "ville"     col = "a_str_ville"    type = "vchar(128)" null = "1" />
+    <field name = "cedex?"    col = "a_bol_cedex"    type = "bool"       null = "1" />
+    <field name = "cedex"     col = "a_str_cedex"    type = "vchar(10)"  null = "1" />
+    <field name = "telephone" col = "a_str_phone"    type = "vchar(32)"  null = "1" />
+    <field name = "fax"       col = "a_str_fax"      type = "vchar(32)"  null = "1" />
+  </class>
+
+  <class name = "societe" table = "societes">
+    <field name = "id"  col = "s_int_id"  type = "int"        null = "auto" />
+    <field name = "nom" col = "s_str_nom" type = "vchar(255)" null = "0" />
+  </class>
+
+  <link name = "societe.adresses" table = "socaddress">
+    <field col = "x_int_s_id" ref = "societe.id" />
+    <field col = "x_int_a_id" ref = "adresse.id" />
+  </link>
+
+  <class name = "user" table = "users">
+    <field name = "id"        col = "u_int_id"       type = "int"        null = "auto" />
+    <field name = "mail"      col = "u_str_mail"     type = "vchar(255)" null = "0" />
+    <field name = "password"  col = "u_str_passwd"   type = "vchar(16)"  null = "0" />
+    <field name = "civilite"  col = "u_str_civil"    type = "vchar(5)"   null = "1" />
+    <field name = "nom"       col = "u_str_nom"      type = "vchar(128)" null = "1" />
+    <field name = "prenom"    col = "u_str_prenom"   type = "vchar(128)" null = "1" />
+    <field name = "societe"   col = "u_int_s_id"     type = "int"        null = "0" ref = "societe.id" />
+    <field name = "adresse"   col = "u_int_a_id"     type = "int"        null = "0" ref = "adresse.id" />
+    <field name = "telephone" col = "u_str_phone"    type = "vchar(32)"  null = "1" />
+    <field name = "mobile"    col = "u_str_mobil"    type = "vchar(32)"  null = "1" />
+    <field name = "fax"       col = "u_str_fax"      type = "vchar(32)"  null = "1" />
+    <field name = "admin"     col = "u_bol_admin"    type = "bool"       null = "1" />
+    <field name = "valide"    col = "u_bol_valid"    type = "bool"       null = "1" />
+    <field name = "creation"  col = "u_dtm_creation" type = "date"       null = "0" />
+  </class>
+</config>

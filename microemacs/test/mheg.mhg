@@ -1,0 +1,190 @@
+// -!- mhg -!- //////////////////////////////////////////////////////////////
+//
+//  			Copyright 1999 Division Ltd.
+//			      All Rights Reserved
+//
+//
+//  System        : 
+//  Module        : 
+//  Object Name   : $RCSfile: mheg.mhg,v $
+//  Revision      : $Revision: 1.1 $
+//  Date          : $Date: 2005-02-18 22:57:20 $
+//  Author        : $Author: jon $
+//  Created By    : Steven Phillips
+//  Created       : Wed Mar 24 07:10:59 1999
+//  Last Modified : <240399.0714>
+//
+//  Description	
+//
+//  Notes
+//
+//  History
+//	
+//  $Log: not supported by cvs2svn $
+//  Revision 1.1.1.1  2000/07/14 22:05:25  Phillips
+//  Import
+//
+//
+/////////////////////////////////////////////////////////////////////////////
+//
+//  Copyright (c) 1999 Division Ltd.
+// 
+//  All Rights Reserved.
+// 
+// This  document  may  not, in  whole  or in  part, be  copied,  photocopied,
+// reproduced,  translated,  or  reduced to any  electronic  medium or machine
+// readable form without prior written consent from Division Ltd.
+//
+//////////////////////////////////////////////////////////////////////////////
+
+{:Scene
+	( 'DSM://performance/350702.misc/scene1.mhg' 0 )
+	:Items (
+		{:Text
+			11
+			:CHook 10
+			:OrigContent
+				'Press RED-Key to exit application'
+			:OrigBoxSize 585 30
+			:OrigPosition 65 500
+			:FontAttributes 'plain.24.30.0'
+			:HJustification centre
+		}
+		{:Text
+			12
+			:CHook 10
+			:OrigContent
+				'Press GREEN-Key to start recursive links'
+			:OrigBoxSize 585 30
+			:OrigPosition 65 450
+			:FontAttributes 'plain.24.30.0'
+			:HJustification centre
+		}
+		{:Text
+			13
+			:CHook 10
+			:OrigContent
+				'Performance II (recursive links)'
+			:OrigBoxSize 585 30
+			:OrigPosition 65 50
+			:FontAttributes 'plain.24.30.0'
+			:HJustification centre
+		}
+		{:Rectangle
+			100
+			:OrigBoxSize 65 50
+			:OrigPosition 260 250
+			:OrigRefFillColour '=FF=00=00=00' 
+		}
+		{:Rectangle
+			200
+			:OrigBoxSize 65 50
+			:OrigPosition 390 250
+			:OrigRefFillColour '=00=00=FF=00' 
+		}
+		{:BooleanVar
+			500
+			:OrigValue true
+		}
+		{:IntegerVar
+			501
+			:OrigValue 0
+		}
+		{:IntegerVar
+			502
+			:OrigValue 1000
+		}
+		{:Link
+			1100
+			:InitiallyActive false
+			:EventSource 500
+			:EventType TestEvent
+			:EventData  true
+			:LinkEffect (
+				:Run ( 200 )
+				:Add ( 501 1 )
+				:TestVariable ( 501 1 :GInteger :IndirectRef 502 )
+				:TestVariable ( 500 1 :GBoolean false )
+			)
+		}
+		{:Link
+			1101
+			:InitiallyActive false
+			:EventSource 500
+			:EventType TestEvent
+			:EventData  false
+			:LinkEffect (
+				:Stop ( 200 )
+				:Add ( 501 1 )
+				:TestVariable ( 501 1 :GInteger :IndirectRef 502 )
+				:TestVariable ( 500 1 :GBoolean true )
+			)
+		}
+		{:Link
+			1200
+			:EventSource 0
+			:EventType IsRunning
+			:LinkEffect (
+				:SetTimer ( 0 1 100 )
+			)
+		}
+		{:Link
+			1301
+			:EventSource 501
+			:EventType TestEvent
+			:EventData  true
+			:LinkEffect (
+				:Deactivate ( 1100 )
+				:Deactivate ( 1101 )
+				:Activate ( 1000 )
+				:SetVariable ( 500 :GBoolean true )
+				:SetVariable ( 501 :GInteger 0 )
+			)
+		}
+		{:Link
+			1201
+			:EventSource 0
+			:EventType TimerFired
+			:EventData 1
+			:LinkEffect (
+				:Run ( 100 )
+				:SetTimer ( 0 2 100 )
+			)
+		}
+		{:Link
+			1202
+			:EventSource 0
+			:EventType TimerFired
+			:EventData 2
+			:LinkEffect (
+				:Stop ( 100 )
+				:SetTimer ( 0 1 100 )
+			)
+		}
+		{:Link
+			1000
+			:EventSource 0
+			:EventType UserInput
+			:EventData 101
+			:LinkEffect (
+				:Deactivate ( 1000 )
+				:Activate ( 1100 )
+				:Activate ( 1101 )
+				:Add ( 502 1 )
+				:TestVariable ( 500 1 :GBoolean false )
+			)
+		}
+		{:Link
+			1002
+			:EventSource 0
+			:EventType UserInput
+			:EventData 100
+			:LinkEffect (
+				:Quit ( ( 'DSM://performance/350702.misc/startup' 0 ) )
+			)
+		}
+	)
+	:InputEventReg 3
+	:SceneCS 720 576
+}
+

@@ -1,0 +1,197 @@
+<HTML>
+<HEAD><TITLE>hilight(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jun 17 1998 - Jon Green (1995-97) -->
+<BODY>
+<H1><A HREF="../me.htm"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+hilight(2)</H1>
+<FONT SIZE=2>
+<A HREF="../me.htm">[Home]</A>
+<A HREF="amicr029.htm">[Commands]</A>
+<A HREF="amicr031.htm">[Variables]</A>
+<A HREF="amicr032.htm">[Macro-Dev]</A>
+<A HREF="amicr033.htm">[Glossary]</A>
+</FONT>
+<HR>
+<!-- XI: hilight(2) -->
+<H2><B>NAME </B></H2>
+<UL><P>hilight - Manage the buffer hilighting schemes <!-- Me: $a --></UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>0</I> <B>hilight</B> &quot;<I>hil-no</I>&quot; &quot;<I>flags</I>&quot; [&quot;<I>nol</I>&quot; &quot;<I>open</I>&quot; &quot;<I>close</I>&quot;] &quot;<I>colorScheme</I>&quot; 
+<P><B>hilight</B> &quot;<I>hil-no</I>&quot; &quot;<I>type</I>&quot; &quot;<I>token</I>&quot; [ [&quot;<I>rtoken</I>&quot;] 
+<BR><UL>[ ( [ &quot;<I>close</I>&quot; [&quot;<I>rclose</I>&quot;] &quot;<I>ignore</I>&quot; ] ) | 
+<BR><UL>( [&quot;<I>continue</I>&quot;] ) | 
+<BR>( [&quot;<I>b-hil-no</I>&quot;] ) ] 
+<BR></UL>&quot;<I>schemeNum</I>&quot; 
+<BR></UL><B>hilight</B> &quot;<I>hil-no</I>&quot; &quot;<I>0x200</I>&quot; &quot;<I>token</I>&quot; 
+<BR><B>hilight</B> &quot;<I>hil-no</I>&quot; &quot;<I>0x400</I>&quot; &quot;<I>from-col</I>&quot; &quot;<I>to-col</I>&quot; &quot;<I>schemeNum</I>&quot; 
+<P><I>-1</I> <B>hilight</B> &quot;<I>hil-no</I>&quot; &quot;<I>type</I>&quot; &quot;<I>token</I>&quot; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The <B>hilight</B> command creates and manages the buffer hilighting, the process of creating a new hilighting scheme is best described in 
+<A HREF="m2nar000.htm">File Language Templates</A>. The command takes various forms as defined by the arguments. Each of the argument configurations is defined as follows:- </UL>
+<H2>Hilight Scheme Creation </H2>
+<UL><P><I>0</I> <B>hilight</B> &quot;<I>hil-no</I>&quot; &quot;<I>flags</I>&quot; [&quot;<I>nol</I>&quot; &quot;<I>open</I>&quot; &quot;<I>close</I>&quot;] &quot;<I>colorScheme</I>&quot; 
+<P>With an argument of <TT>0</TT>, <B>hilight</B> initializes or re-initializes the hilight scheme <I>hil-no</I> (1-255). Every buffer has a hilight scheme, the default is 0 which means no hi-lighting and only the 
+<A HREF="m5var024.htm">$global-scheme(5)</A> etc. are used. The hilighting scheme must be defined before use and is used to specify how the buffer is to be hilighted. MicroEmacs '99 supports the following hilighting concepts:- <UL><P>
+<LI><B>hilight string</B>, any user specified string will be hilighted in any color scheme. 
+<LI><B>Tokens</B>, same as a hilight string only must be enclosed in non alpha-numeric characters. 
+<LI><B>Start-of-line hilights</B>, the start of the hilight must be the first non-white character of the line. 
+<LI><B>End-of-Line hilights</B>, the hilight starts from the current position and continues until the end of the line. Also has the ability of continuing onto the next line if the current line ends in a given string. Bracket can also be searched for within the line. 
+<LI><B>Bracket hilight</B>, hi-lights from the current position until the closing bracket token is found. 
+<LI><B>Replace string </B>, this enables the hilight string to be replaced with a different user specified string. </UL><P>Terminals that cannot display color directly may still be able to take benefit from hi-lighting. A terminal that has fonts can use them in the same way using the 
+<A HREF="m2cmd001.htm">add-color-scheme(2)</A> command. The hi-light scheme is also used in printing (see 
+<A HREF="m2cmd101.htm">print-buffer(2)</A>). If, however, your terminal cannot display color in any way, it is recommended that hi-lighting is disabled (except when printing) as it does take CPU time. 
+<P>The &quot;<I>hil-no</I>&quot; argument specifies which hi-lighting scheme is being initialized. Once a hilighting scheme has been initialized, hi-light tokens can be added to it and it can be used by setting the current buffer's 
+<A HREF="m5var004.htm">$buffer-hilight(5)</A> variable to &quot;<I>hil-no</I>&quot;. The &quot;<I>flags</I>&quot; argument is a bit based flag setting global hi-light characteristics, where:- 
+<DL COMPACT>
+<DT><B>0x1</B><DD>The hi-light scheme is case insensitive, i.e. the for tokens would be equivalent:- 
+<UL><P><TT>house</TT> == <TT>HOUSE</TT> == <TT>hOuSe</TT> </UL>
+<UL><P>The tokens must all be given in lower case. </UL>
+<DT><B>0x2</B><DD>Set a hi-light look-back. When hi-lighting it is unknown whether the top of the window starts in a hi-light bracket or not, so the look- back command tries looking &quot;<I>nol</I>&quot; lines backwards for an open bracket. If an open bracket is found then the top of the window is assumed to start with that bracket, else it is assumed that the top of the window is not in a bracket. For example, in `C' a comment starts with &quot;<TT>/*</TT>&quot; and ends with &quot;<TT>*/</TT>&quot; so if the hilight was initialized with <!-- Me: $emf-scheme --><UL>
+<PRE>0&nbsp;hilight&nbsp;1&nbsp;2&nbsp;10&nbsp;$global-scheme 
+</PRE>
+<!-- Me: $ehf-scheme --><P>of the following, only the first would begin hi-lighted which is correct (assuming the &quot;<TT>/*</TT>&quot; is 10 or less lines away). <UL>
+<PRE>&nbsp;/*&nbsp;........&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/*.........&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;......... 
+&nbsp;&nbsp;&nbsp;&nbsp;........&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.........*/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;......... 
+----------------&nbsp;&nbsp;&nbsp;&nbsp;---------------&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---------------&nbsp;top&nbsp;of 
+&nbsp;&nbsp;&nbsp;&nbsp;........*/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.........&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.........&nbsp;&nbsp;&nbsp;&nbsp;window 
+</PRE></UL>
+</UL><P>The argument &quot;<I>colorScheme</I>&quot; specify the default colors to use if there is no specific hi-light, the <I>colorScheme</I> is a reference to a set of foreground and background color pairs previously defined with 
+<A HREF="m2cmd001.htm">add-color-scheme(2)</A>. 
+<P>The hi-lighting scheme required is based on the type of file being edited and so is usually directly related to the file extension, thus it can be automatically set using file hooks (see 
+<A HREF="m2cmd003.htm">add-file-hook(2)</A>). </UL>
+<H2>Hilight Scheme Token Creation </H2>
+<UL><P><B>hilight</B> &quot;<I>hil-no</I>&quot; &quot;<I>type</I>&quot; &quot;<I>token</I>&quot; [ [&quot;<I>rtoken</I>&quot;] 
+<BR><UL>[ ( [ &quot;<I>close</I>&quot; [&quot;<I>rclose</I>&quot;] &quot;<I>ignore</I>&quot; ] ) | 
+<BR><UL>( [&quot;<I>continue</I>&quot;] ) | 
+<BR>( [&quot;<I>b-hil-no</I>&quot;] ) ] 
+<BR></UL>&quot;<I>schemeNum</I>&quot; 
+<BR></UL><B>hilight</B> &quot;<I>hil-no</I>&quot; &quot;<I>0x200</I>&quot; &quot;<I>token</I>&quot; 
+<BR><B>hilight</B> &quot;<I>hil-no</I>&quot; &quot;<I>0x400</I>&quot; &quot;<I>from-col</I>&quot; &quot;<I>to-col</I>&quot; &quot;<I>schemeNum</I>&quot; 
+<P>With the default argument of <TT>1</TT>, <B>hilight</B> creates a hi-light token to be used in hi-light color scheme identified by &quot;<I>hil-no</I>&quot; (1-255) (see the section on <B>Hilight Scheme Creation</B> for a overview of hi-lighting). The second argument &quot;<I>type</I>&quot; is a bit based flag indicating the token type, where:- 
+<P><DL COMPACT><DT><B>0x01</B>
+<DD>The &quot;<I>token</I>&quot; must be surrounded by non-alpha-numeric characters.</DL>
+<P><DL COMPACT><DT><B>0x02</B>
+<DD>Color this to the end of the line.</DL>
+<P><DL COMPACT><DT><B>0x04</B>
+<DD>This is a bracket, must give a closing string &quot;<I>close</I>&quot; and an ignore character &quot;<I>ignore</I>&quot;. If replacing bit is set <TT>0x040</TT> the replacement close bracket &quot;<I>rclose</I>&quot; must be given.</DL>
+<P><DL COMPACT><DT><B>0x08</B>
+<DD>This bit has 2 uses depending on whether bit <TT>0x004</TT> or <TT>0x080</TT> is set:- 
+<P><DL COMPACT><DT>Bit 0x04 or 0x080 set 
+<DD>If bit 0x004 is set then this bit indicates that the closing token is not to be considered as part of the bracket, and thus will not be hilighted as part of the bracket. </DL>
+<P><DL COMPACT><DT>Bit 0x04 clear 
+<DD>If bit 0x004 is not set then this indicates that the token has a continuation string, usually used with 0x02 (must give continuation string). </DL></DL>
+<P><DL COMPACT><DT><B>0x10</B>
+<DD>If this is an end of line token (<TT>0x002</TT>) then <UL>The rest of the line is checked for any valid brackets. </UL>
+<P>Else if this is a bracket token (<TT>0x004</TT>) then 
+<BR><UL>This is still searched for after an end of line token is found. </DL>
+<P>Else 
+<BR><UL>Ignored </UL></DL>
+<P><B>0x020</B> 
+<BR><UL>This token must be the first non-white character of the line. </UL>
+<P><B>0x040</B> 
+<BR><UL>The token (and closing bracket tokens) are to be replaced by the given replacement strings. </UL>
+<P><B>0x080</B> 
+<BR><UL>This is a branch token. When this token is found, the token (or the replace string) is colored using the given color <I>schemeNum</I> and then the current hilighting scheme is changed to &quot;<I>b-hil-no</I>&quot; (which MUST be defined by the time it is first used). The &quot;<I>b-hil-no</I>&quot; hi-light scheme should also contain a branch token which branches back to &quot;<I>hil-no</I>&quot; or &quot;<TT>0</TT>&quot; (which branches to 
+<A HREF="m5var004.htm">$buffer-hilight(5)</A>). A branch does not have to branch back to &quot;<I>hil-no</I>&quot;, it can branch to any other hi-light scheme. </UL>
+<P><B>0x100</B> 
+<BR><UL>The token must be at the start of the line. </UL>
+<P><B>0x200</B> 
+<BR><UL>This is an invalid token in its own right, this is the second highest precedence, see <B>0x400</B>, and all other bits are ignored. Only the first 3 arguments are required, and is used for optimizing a hi-lighting scheme. For example, if there are 11 tokens starting with &quot;<TT>delete-</TT>&quot; as with the hi-lighting of this buffer, then adding the token &quot;<TT>delete-</TT>&quot;, while invalid in its own right, means that &quot;<TT>delete-</TT>&quot; is only checked for once. Also reduces the size of the main tables so if you get the message &quot;<B>Table full</B>&quot;, this is what you do. </UL>
+<P><B>0x400</B> 
+<BR><UL>This is a column hilighting token, this bit takes precedence over all other bits and all other bits are ignored. Column highlighting is a different concept to token in that it requires a &quot;<I>from-col</I>&quot; and a &quot;<I>to-col</I>&quot; column positions and a line will be hilighted in the given scheme between these two columns. </UL>
+<P>Note that <TT>0x004</TT>, <TT>0x008</TT> and <TT>0x080</TT> are mutually exclusive and more than 1 should not be set in any one <B>hilight</B>, if 2 or more are set, then the effect is undefined (but probably involves wacky coloring and a core dump). Outside this there is no restriction placed on the type of token used (although strange combinations like <TT>0x006</TT> may lead to unexpected results! (hopefully not a core dump (but not guaranteed))). 
+<P>If the token is a bracket then 2 extra values must be given, i.e. the closing bracket token and an ignore character. The ignore character tells hilight that when found, to ignore the next character so to hilight a string in `C', use <!-- Me: $emf-scheme --><UL>
+<PRE>hilight&nbsp;1&nbsp;4&nbsp;&quot;\&quot;&quot;&nbsp;&quot;\&quot;&quot;&nbsp;&quot;\\&quot;&nbsp;%magenta 
+</PRE></UL>
+<!-- Me: $ehf-scheme --><P>so that the string &quot;<TT>string&nbsp;with&nbsp;a&nbsp;\&quot;&nbsp;in&nbsp;it</TT>&quot; is still correctly hilighted. 
+<P>Consider the token <TT>&amp;xxxxxx</TT>, where '<TT>&amp;</TT>' indicates the start of the token and the token ends at the first character that is not an '<TT>x</TT>'. In this case the '<TT>,</TT>' should not be hilighted so bit <TT>0x008</TT> is used for this purpose, i.e. <!-- Me: $emf-scheme --><UL>
+<PRE>hilight&nbsp;1&nbsp;12&nbsp;&quot;&amp;&quot;&nbsp;&quot;\s21&quot;&nbsp;&quot;&quot;&nbsp;%green 
+</PRE></UL>
+<!-- Me: $ehf-scheme --><P>Note that hilight interpretation re-starts at the START of the close bracket so it could be part of the next token, e.g. <TT>&amp;xxxxx'y'</TT> 
+<P>If the token has continue set then an extra continue token must be given. This command is aimed at the end of line token type to allow the continuation of coloring into the next line. When a token is found with a continuation, the end of the line is checked for the given token an if found then the next line will be colored the same (and the next if the token is found at the end of that line). So in 'C' a <TT>#define</TT> could be colored correctly using <!-- Me: $emf-scheme --><UL>
+<PRE>hilight&nbsp;1&nbsp;10&nbsp;&quot;#define&quot;&nbsp;&quot;\\&quot;&nbsp;%yellow 
+</PRE></UL>
+<!-- Me: $ehf-scheme --><P>By default, once an end of line token is found the rest of the line is immediately colored. This can cause brackets to be missed leading to bad coloring on this and following lines. by setting the 5th bit, of the appropriate brackets and end of line tokens,this problem is avoided, e.g. to hi-light C <TT>#include</TT> and <I>comments</I> correctly use: <!-- Me: $emf-scheme --><UL>
+<PRE>hilight&nbsp;1&nbsp;18&nbsp;&quot;#include&quot;&nbsp;&quot;&quot;&nbsp;%yellow 
+hilight&nbsp;1&nbsp;20&nbsp;&quot;/*&quot;&nbsp;&quot;*/&quot;&nbsp;&quot;&quot;&nbsp;&nbsp;%red 
+</PRE></UL>
+<!-- Me: $ehf-scheme --><P>So that the following is still correctly hi-lighted <UL>
+<PRE>#include&nbsp;&lt;foo.h&gt;&nbsp;&nbsp;&nbsp;&nbsp;/*&nbsp;this&nbsp;comment 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;goes&nbsp;onto&nbsp;the&nbsp;next&nbsp;line&nbsp;*/ 
+</PRE></UL>
+<P>If the <TT>0x40</TT> bit is set then the token (and close bracket token if 0x04 is set) are replaced with the given strings. WARNING editing buffers with replacement tokens having differing sizes can lead to unexpected results, I take no responsibility for ANY loss of data. 
+<P>A &quot;<I>token</I>&quot; and a bracket &quot;<I>close</I>&quot; token can contain wild card characters which compare with a predefined set of characters. The format used is:- <UL>
+<PRE>&quot;\stv&quot; 
+</PRE></UL>
+<P>Where 
+<UL><P><B>\s</B> Indicates a wild card character. 
+<BR><B>t</B> Character class Test to be used (1-9) (see following table). 
+<BR><B>v</B> Variable number to store the character (1-9). </UL>
+<P>Both <B>t</B> and <B>v</B> are required. 
+<P><B>t</B> takes the character values of '<TT>1</TT>' to '<TT>9</TT>' which performs the follow tests on the current character: 
+<UL><P><TT>1</TT> - Is a white space ('<TT>&nbsp;</TT> ', '<TT>\t</TT>', '<TT>\n</TT>', '<TT>\r</TT>') 
+<BR><TT>2</TT> - Is a word character (see 
+<A HREF="m5var007.htm">$buffer-mask(5)</A>) 
+<BR><TT>3</TT> - Is a digit ('<TT>0</TT>'-'<TT>9</TT>') 
+<BR><TT>4</TT> - Is a Hex digit ('<TT>0</TT>'-'<TT>9</TT>', '<TT>A</TT>'-'<TT>F</TT>', '<TT>a</TT>'-'<TT>f</TT>') 
+<BR><TT>5</TT> - Is a lower case letter ('<TT>a</TT>'-'<TT>z</TT>') 
+<BR><TT>6</TT> - Is an upper case letter ('<TT>A</TT>'-'<TT>Z</TT>') 
+<BR><TT>7</TT> - Is a letter ('<TT>A</TT>'-'<TT>Z</TT>', '<TT>a</TT>'-'<TT>z</TT>') 
+<BR><TT>8</TT> - Any character 
+<BR><TT>9</TT> - See <TT>B</TT>. 
+<BR><TT>A</TT> - Is not a white space ('<TT>&nbsp;</TT> ', '<TT>\t</TT>', '<TT>\n</TT>', '<TT>\r</TT>') 
+<BR><TT>B</TT> - Is not a word character (see 
+<A HREF="m5var007.htm">$buffer-mask(5)</A>) 
+<BR><TT>C</TT> - Is not a digit ('<TT>0</TT>'-'<TT>9</TT>') 
+<BR><TT>D</TT> - Is not a Hex digit ('<TT>0</TT>'-'<TT>9</TT>', '<TT>A</TT>'-'<TT>F</TT>', '<TT>a</TT>'-'<TT>f</TT>') 
+<BR><TT>E</TT> - Is not a lower case letter ('<TT>a</TT>'-'<TT>z</TT>') 
+<BR><TT>F</TT> - Is not an upper case letter ('<TT>A</TT>'-'<TT>Z</TT>') 
+<BR><TT>G</TT> - Is not a letter ('<TT>A</TT>'-'<TT>Z</TT>', '<TT>a</TT>'-'<TT>z</TT>') 
+<BR><TT>H</TT> - Is not any character (pretty pointless !). </UL>
+<P>If the current character fulfills the given requirement then rest of the token is tested. If this leads to a match then the value of the character is stored in the given variable slot so that it can be recalled in the replacement string. To recall a wild card character in a replacement string the format used is &quot;<TT>\sv</TT>&quot;, identical to the token usage except the Test number is not required. 
+<P>The <I>schemeNum</I> identifies the color scheme, defining the foreground, background and selection color schemes. This is an index generated from 
+<A HREF="m2cmd001.htm">add-color-scheme(2)</A>. If the <I>schemeNum</I> argument is omitted the default hilght color scheme is used. </UL>
+<H2>Hilight Scheme Token Deletion </H2>
+<UL><P><I>-1</I> <B>hilight</B> &quot;<I>hil-no</I>&quot; &quot;<I>type</I>&quot; &quot;<I>token</I>&quot; With a -ve argument <B>hilight</B> deletes the given &quot;<I>token</I>&quot; from a hi-light color scheme identified by &quot;<I>hil-no</I>&quot;. The token &quot;<I>type</I>&quot; must also be specified to distinguish between normal and column token types. </UL>
+<H2><B>EXAMPLE </B></H2>
+<H2>Example 1 </H2>
+<UL><P>Hilighting a MicroEmacs '99 style hex number, checking its validity (i.e. <TT>\0xx</TT>) <!-- Me: $emf-scheme --><UL>
+<PRE>hilight&nbsp;1&nbsp;0&nbsp;&quot;\\0\s41\s42&quot;&nbsp;%cyan 
+</PRE></UL>
+<!-- Me: $ehf-scheme --><P>the variable storage is not used in this case as no replacement string is required. </UL>
+<H2>Example 2 </H2>
+<UL><P>Replacing a quoted character with just the character (i.e. <TT>'x'</TT> -&gt; <TT>x</TT>) <!-- Me: $emf-scheme --><UL>
+<PRE>hilight&nbsp;1&nbsp;64&nbsp;&quot;'\s91'&quot;&nbsp;&quot;\s1&quot;&nbsp;%magenta 
+</PRE></UL>
+<!-- Me: $ehf-scheme --></UL><H2>Example 3 </H2>
+<UL><P>Simulate the hilighting from the output of a UNIX man page (taken from hkman.emf): <!-- Me: $emf-scheme --><UL>
+<PRE>0&nbsp;hilight&nbsp;.hilight.man&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$global-scheme 
+;&nbsp;ignore 
+hilight&nbsp;.hilight.man&nbsp;64&nbsp;&quot;\s91\CH&quot;&nbsp;&quot;&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$global-scheme 
+;&nbsp;normal&nbsp;underline/italic 
+hilight&nbsp;.hilight.man&nbsp;64&nbsp;&quot;_\CH\s91&quot;&nbsp;&quot;\s1&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.italic 
+hilight&nbsp;.hilight.man&nbsp;64&nbsp;&quot;\s91\CH_&quot;&nbsp;&quot;\s1&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.italic 
+;&nbsp;bold&nbsp;-&nbsp;first&nbsp;is&nbsp;for&nbsp;nroff&nbsp;-man 
+hilight&nbsp;.hilight.man&nbsp;64&nbsp;&quot;\s91\CH\s91&quot;&nbsp;&quot;\s1&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.bold 
+hilight&nbsp;.hilight.man&nbsp;64&nbsp;&quot;_\CH_\CH_\CH_&quot;&nbsp;&quot;_&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.bold 
+hilight&nbsp;.hilight.man&nbsp;64&nbsp;&quot;\s91\CH\s91\CH\s91\CH\s91&quot;&nbsp;&quot;\s1&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.bold 
+;&nbsp;bold&nbsp;underline 
+hilight&nbsp;.hilight.man&nbsp;64&nbsp;&quot;_\CH_\CH_\CH_\CH_&quot;&nbsp;&quot;_&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.italic 
+hilight&nbsp;.hilight.man&nbsp;64&nbsp;&quot;_\CH\s91\CH\s91\CH\s91\CH\s91&quot;&nbsp;&quot;\s1&quot;&nbsp;.scheme.italic 
+</PRE></UL>
+<!-- Me: $ehf-scheme --><P>This replaces the complex nroff character string with a single hi-lighted character (don't believe me, try it!). </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2nar000.htm">File Language Templates</A>, 
+<A HREF="m5var004.htm">$buffer-hilight(5)</A>, 
+<A HREF="m2cmd003.htm">add-file-hook(2)</A>, 
+<A HREF="m2cmd001.htm">add-color-scheme(2)</A>, 
+<A HREF="m2cmd129.htm">hilight-print(2)</A>, 
+<A HREF="m2cmd033.htm">indent(2)</A>, 
+<A HREF="m5var047.htm">$system(5)</A>, 
+<A HREF="m2cmd101.htm">print-buffer(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 1999</I>
+<BR><I>Last Modified: 1999/02/27</I>
+<BR><I>Generated On: 1999/03/18</I>
+</BODY></HMTL>
