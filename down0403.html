@@ -1,14 +1,14 @@
 <html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-    <meta name="description" content="Jasspa Home">
-    <meta name="resource-type" content="document">
-    <meta name="distribution" content="global">
-    <meta name="keywords" content="jasspa microemacs, microemacs, emacs, uemacs, free, text, editor, JASSPA, me">
-    <meta name="authors" content="JASSPA">
-    <meta name="GENERATOR" content="MicroEmacs">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+    <meta name="description" content="Jasspa Home"/>
+    <meta name="resource-type" content="document"/>
+    <meta name="distribution" content="global"/>
+    <meta name="keywords" content="jasspa microemacs, microemacs, emacs, uemacs, free, text, editor, JASSPA, me"/>
+    <meta name="authors" content="JASSPA"/>
+    <meta name="GENERATOR" content="MicroEmacs"/>
     <title>MicroEmacs JASSPA Distribution</title>
-    <link REL="icon" HREF="images/menuicon.png" TYPE="image/png">
+    <link REL="icon" HREF="images/menuicon.png" TYPE="image/png"/>
     <!-- BASE HREF="http://www.jasspa.com" -->
 
     <!--JASSPA - common from this point -->
@@ -16,40 +16,40 @@
   </head>
   <body bgcolor="white">
   <!-- Banner across the top of the page -->
-  <table WIDTH="100%" HEIGHT="95" BORDER=0 CELLSPACING=0 CELLPADDING=0 >
+  <table WIDTH="100%" HEIGHT="95" BORDER="0" CELLSPACING="0" CELLPADDING="0" >
     <tr>
-      <td BACKGROUND="images/backgrd.jpg"><center><img SRC="images/header.jpg" alt="jasspa.com"></center></td>
+      <td BACKGROUND="images/backgrd.jpg"><center><img SRC="images/header.jpg" alt="jasspa.com"/></center></td>
     </tr>
   </table>
   <!-- width="100%"  -->
-  <table border=0 cellpadding=3 cellspacing=1 bgcolor="yellow">
+  <table border="0" cellpadding="3" cellspacing="1" bgcolor="yellow">
     <tr bgcolor="#0000ff">
-      <td align="center" width="100"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
+      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
         <b><a href="index.html" style="COLOR: yellow" >Home</a></b></font></td>
-      <td align="center" width="100"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
+      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
         <b><a href="overview.html" style="COLOR: yellow">Overview</a></b></font></td>
-      <td align="center" width="100"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
+      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
         <b><a href="whatsnew.html" style="COLOR: yellow">What's New</a></b></font></td>
-      <td align="center" width="100"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
+      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
         <b><a href="support.html" style="COLOR: yellow">Support</a></b></font></td>
-      <td align="center" width="100"  bgcolor="#0080ff"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
+      <td align="center" width="100"  bgcolor="#0080ff"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
         <b><a href="download.html" style="COLOR: yellow">Download</a></b></font></td>
-      <td align="center" width="100"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
+      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
         <b><a href="about.html" style="COLOR: yellow">About</a></b></font></td>
     </tr>
   </table>
 
   <!-- Section selection -->
   <p><font size="+3" color="#0000ff"><b>Download</b></font>
-  <br>
+  <br/>
   <font size="+1"><a href="download.html" style="COLOR: black">overview</a>&nbsp;&nbsp;</font>
   <font size="+1"><a href="history.html" style="COLOR: black">history</a>&nbsp;&nbsp;</font>
-  <font size="+1" color="#ff0000">March 2004</a>&nbsp;&nbsp;</font>
+  <font size="+1" color="#ff0000">March 2004&nbsp;&nbsp;</font>
   <font size="+1"><a href="spelling.html" style="COLOR: black">spelling dictionaries</a>&nbsp;&nbsp;</font>
   <font size="+1"><a href="contrib.html" style="COLOR: black">contributions</a>&nbsp;&nbsp;</font>
   </p>
 
-  <HR color=#cccccc noShade SIZE=1>
+  <HR color="#cccccc" noShade SIZE="1">
 
   <p><font size="+1"><b>Last Upload: 2nd October 2004</b></font></p>
 
@@ -425,6 +425,22 @@
       configured for all platforms. Use with 20040701 macros ONLY.</td>
      <td><center>750199</center></td>
       <td><center>2004-10-02</center></td>
+    </tr>
+    <tr>
+      <td><a href="patch_040301/jasspame-memacros-20040701-xml.tar.gz">jasspame-memacros-20040701-xml.tar.gz</a><br>
+        <a href="patch_040301/jasspame-memacros-20040701-xml.zip">jasspame-memacros-20040701-xml.zip</a></td>
+      
+      <td>Macro enhancement for handling SGML and XML files. Extract into 
+        your <i>user</i> directory (UNIX: <tt>~/.jasspa</tt>,
+        Microsoft: <tt>c:/Documents and Settings/<i>user</i>/Application Data/jasspa</tt>)
+        The download bundle includes the files <tt>hkxml.emf</tt>, <tt>hksgml.emf</tt>,
+        <tt>xmlutil.emf</tt> and <tt>abbrev.emf</tt>. 
+        <p>Within XML or SGML files
+        then <tt>&lt;esc&gt;&lt;esc&gt;</tt> will complete a closing tag when
+        the cursor follows <tt>&lt;/</tt>. Addition of the new command <tt>M-x
+        <b>xml-verify</b></tt> checks the validity of the XML.</p></td>
+      <td><center>7907<br>9661</center></td>
+      <td><center>2004-10-03</center></td>
     </tr>
   </table></center></p>
   
