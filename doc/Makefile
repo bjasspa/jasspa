@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20040206.1535>
+# Last Modified: <20040206.1538>
 #
 ##############################################################################
 
@@ -543,7 +543,7 @@ me.ehf: meehf.hts
 	$(RM) ehf/me/me.ehf
 	cd ehf; $(HTS2HTML) -l .htm ../meehf.hts
 	$(CP) ehf/me.htm ehf/me/1.htm
-	cd ehf/me; $(MEEXE) "@ehftools" *.htm
+	cd ehf/me; $(ME) -n "@ehftools" *.htm
 	$(CP) ehf/me/me.ehf .
 	$(RMDIR) ehf
 clean::
