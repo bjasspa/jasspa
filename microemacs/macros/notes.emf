@@ -7,14 +7,30 @@
 ; Synopsis:    Hierarchical notes file
 ; Authors:     Steven Phillips
 ;
-!if &not &exist .osd.notes-tmn
+!if &not &exist .osd.notes-mn
+    set-variable .osd.notes-mn &pinc .osd.next 1
     set-variable .osd.notes-tmn &pinc .osd.next 1
 !endif
+define-macro fhook-enf
+    @# buffer-init "enf"
+    ; Hyperlink with the mouse.
+    set-variable :mouse-pick-3 void
+    set-variable :mouse-drop-3 notes-context-menu
+    set-variable :mouse-word-select notes-process-link
+    buffer-init-hooks
+!emacro
+
+set-variable .fhook-enf.name "ME Notes"
+set-variable .fhook-enf.setup &reg "/history/fhook/enf" "ghijmopwx"
+set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
 
 !if &band .hilight.flags 0x01
-    !if &not &exist .hilight.enft
-        set-variable .hilight.enft  &pinc .hilight.next 1
+    !if &not &exist .hilight.enf
+        set-variable .hilight.enf  &pinc .hilight.next 1
+        set-variable .hilight.enfL &pinc .hilight.next 1
+        set-variable .hilight.enft &pinc .hilight.next 1
     !endif
+    ; note tree hilighting
     set-variable #l0 &mid $box-chars 3 1
     set-variable #l1 &mid $box-chars 6 1
     0 hilight  .hilight.enft  0                  $global-scheme
@@ -26,9 +42,61 @@
     hilight .hilight.enft  0x001 &cat #l0 "\\{-" .scheme.dir-open
     hilight .hilight.enft  0x001 &cat #l1 "\\{-" .scheme.dir-open
     hilight .hilight.enft  0x44 " \"[[:xdigit:]]+\" = \"" " " "\"$" "" "" $global-scheme
+    
+    0 hilight  .hilight.enf 2 50                      $global-scheme
+    hilight .hilight.enf 0x44 "\ecA" "" "\\}\e" "" "" $global-scheme
+    hilight .hilight.enf 0x44 "\ecB" "" "\\}\e" "" "" .scheme.under   ; underline
+    hilight .hilight.enf 0x44 "\ecC" "" "\\}\e" "" "" .scheme.italic  ; italic
+    hilight .hilight.enf 0x44 "\ecD" "" "\\}\e" "" "" .scheme.bold    ; bold
+    hilight .hilight.enf 0x44 "\ecE" "" "\\}\e" "" "" .scheme.header  ; Header
+    hilight .hilight.enf 0x44 "\ecF" "" "\\}\e" "" "" .scheme.comment ; image
+    hilight .hilight.enf 0x44 "\ecG" "" "\\}\e" "" "" .scheme.type    ; TT (curior)
+    hilight .hilight.enf 0xc0 "\els" "" .hilight.enfL $global-scheme  ; link start
+    hilight .hilight.enf 0x44 "\elm" "" "\el." "" ""  .scheme.link    ; link name - use '.' as n is used for links split across lines
+    hilight .hilight.enf 0x44 "\eln" "" "\ele" "" ""  .scheme.link    ; link name
+    ; HTTP links etc.
+    hilight .hilight.enf 0    "http:[-@~_a-zA-Z%\\.:\\/0-9]*"   .scheme.link
+    hilight .hilight.enf 0    "https:[-@~_a-zA-Z%\\.:\\/0-9]*"  .scheme.link
+    hilight .hilight.enf 0    "ftp:[-@_a-zA-Z%\\.:\\/0-9]+"     .scheme.link
+    hilight .hilight.enf 0    "mailto:[-@_a-zA-Z%\\.:\\/0-9]+"  .scheme.link
+    hilight .hilight.enf 0    "news:[-_a-zA-Z%\\.:\\\\/@0-9]+"  .scheme.link 
+    
+    0 hilight  .hilight.enfL 2 50                     $global-scheme
+    hilight .hilight.enfL 0x80 "\\}\elm" .hilight.enf $global-scheme
+    hilight .hilight.enfL 0x40 "." ""                 $global-scheme
+    
+    0 define-macro enf-add-file-support
+        set-variable #l0 @1
+        ; Force the hilighting mode to load if not already loaded.
+        !if &not &exi &cat ".hilight." #l0
+            !force execute-file &cat "hk" #l0
+            ml-write &cat "executed " #l0
+        !endif
+        ; If the hilighting mode is loaded then modify it.
+        !if &and &sin "h" &ind &spr ".fhook-%s.setup" #l0 &band .hilight.flags 0x02 
+            hilight .hilight.enf 0x80 &spr "^>%s>" #l0 &ind &cat ".hilight." #l0 .scheme.hide
+            hilight &ind &cat ".hilight." #l0 0x80 "^>end>" .hilight.enf .scheme.hide
+        !endif
+    !emacro
+    
+    ; Allow MicroEmacs Macro .emf inserts
+    ; Force the ".emf" scheme to be loaded into the context of the enf
+    ; scheme. We delimit the .emf scheme with a pair of markers ">emf>" and
+    ; ">end>"
+    enf-add-file-support "emf"
+    ; Allow Pseudo Code inserts
+    enf-add-file-support "pseudo"
+    ; Allow BNF inserts
+    enf-add-file-support "bnf"
+    ; Allow C Code inserts
+    enf-add-file-support "c"
+    ; Allow C++ Code inserts ...
+    enf-add-file-support "cpp"
+    ; Allow Perl Code inserts ...
+    enf-add-file-support "perl"
+    ; Allow TCL Code inserts ...
+    enf-add-file-support "tcl"
 !endif
-
-define-macro-file hkjst fhook-jst
 
 0 define-macro mark-registry-tree
     set-variable #l0 @1
@@ -690,55 +758,72 @@ define-macro notes-close
 define-macro notes-file
     !force set-variable #l0 @1
     !if &not $status
-        set-variable #l0 @ml01 "notes-file"
+        set-variable #l0 @ml04 "notes-file"
     !endif
     set-position "\x82"
-    !force &band @# 4 find-file #l0 @mna
-    !if &not $status
-        set-variable #l2 ""
-        osd-entry "Create Note File" "Root Note \HName: " #l2 20
-        &bor 1 &band @# 4 find-file #l0 @mna
-        !if &sub 1 $window-eline
-            ml-write &spr "[Error: file \"%s\" should not exist and be empty]" #l0
-            !abort
+    !if &seq &set #l1 &find #l0 ".enf" "ERROR"
+        set-variable #l1 #l0
+        !if &seq &rig #l0 &sub &len #l0 4 ".enf"
+            set-variable #l0 &lef #l0 &sub &len #l0 4
+        !else
+            set-variable #l1 &cat #l1 ".enf"
         !endif
-        insert-string &spr "-!- enf -!-\n\"000050\" = \"%s\"\n\"id-next\" = \"1\"\n\b\benf\b\bdivider\b\b0\n\n\b\benf\b\bdivider\b\bEND" &rep &rep #l2 "\\" "\\\\" "\"" "\\\""
-        ml-write &spr "[Notes file \"%s\" created]" #l0
+        !if &set #l2 &sin "/" #l0
+            set-variable #l0 &rig #l0 #l2
+        !else
+            set-variable #l1 &cat $user-path #l1
+        !endif
+        ; if we still find the file then the user has already created the notes file in this session but not saved
+        &bor 1 &band @# 4 find-file #l1 @mna
+        !if &les $window-eline 2
+            set-variable #l2 #l0
+            osd-entry &spr "Create Note File: %s.enf" #l0 "Root Note \HName: " #l2 20
+            insert-string &spr "-!- enf -!-\n\"000050\" = \"%s\"\n\"id-next\" = \"1\"\n\b\benf\b\bdivider\b\b0\n\n\b\benf\b\bdivider\b\bEND" &rep &rep #l2 "\\" "\\\\" "\"" "\\\""
+            ml-write &spr "[Notes file \"%s\" created]" #l1
+        !else
+            !force narrow-buffer
+        !endif
         !goto init-note
-    !elif &not &exi :notes-root
+    !else
+        !force &band @# 4 find-file #l1 @mna
+        !if &not $status
+            ml-write &spr "[Error: failed to load file \"%s\"]" #l1
+            !abort
+        !elif &not &exi :notes-root
 *init-note
-        beginning-of-buffer
-        !if &not &seq &lef @wl 7 "-!- enf"
-            ml-write &spr "[Error: file \"%s\" does not appear to be an enf file]" #l1
+            beginning-of-buffer
+            !if &not &seq &lef @wl 7 "-!- enf"
+                ml-write &spr "[Error: file \"%s\" does not appear to be an enf file]" #l1
+                !abort
+            !endif
+            end-of-buffer
+            backward-line
+            !if &not &seq @wl "\b\benf\b\bdivider\b\bEND"
+                ml-write &spr "[Format Error: End divider missing]"
+                !abort
+            !endif
+            beginning-of-buffer
+            forward-line
+            set-mark
+            !force search-buffer "me" "^\b\benf\b\bdivider\b\b"
+            !if &not &seq @wl "\b\benf\b\bdivider\b\b0"
+                ml-write "[Format Error: Initial divider missing]"
+                !abort
+            !endif
+            beginning-of-line
+            3 narrow-buffer
+            set-variable :notes-root &spr "/enf/%d/" &inc .notes.file-id 1
+            4 read-registry :notes-root ""
+            narrow-buffer
+            1 buffer-mode "hide"
+            set-variable :notes-cur &reg &cat :notes-root "node-cur" "1"
+            ;mark-registry "/enf" "!"
+            ; make the current buffer a 'jst' file
+            fhook-enf
+        !elif &les :notes-cur 1
+            ml-write "[Error: variable :notes-cur not set]"
             !abort
         !endif
-        end-of-buffer
-        backward-line
-        !if &not &seq @wl "\b\benf\b\bdivider\b\bEND"
-            ml-write &spr "[Format Error: End divider missing]"
-            !abort
-        !endif
-        beginning-of-buffer
-        forward-line
-        set-mark
-        !force search-buffer "me" "^\b\benf\b\bdivider\b\b"
-        !if &not &seq @wl "\b\benf\b\bdivider\b\b0"
-            ml-write "[Format Error: Initial divider missing]"
-            !abort
-        !endif
-        beginning-of-line
-        3 narrow-buffer
-        set-variable :notes-root &spr "/enf/%d/" &inc .notes.file-id 1
-        4 read-registry :notes-root ""
-        narrow-buffer
-        1 buffer-mode "hide"
-        set-variable :notes-cur &reg &cat :notes-root "node-cur" "1"
-        ;mark-registry "/enf" "!"
-        ; make the current buffer a 'jst' file
-        fhook-jst
-    !elif &les :notes-cur 1
-        ml-write "[Error: variable :notes-cur not set]"
-        !abort
     !endif
     set-variable .notes.current $buffer-bname
     goto-position "\x82"
@@ -769,6 +854,80 @@ osd .osd.notes-tmn 180 ""  "\HHide Notes"          f notes-close
     .osd.notes-tmn osd
 !emacro
 
+0 define-macro notes-process-link
+    set-variable #l0 $window-col
+    set-variable #l1 $window-line
+    ; end of link must be found within 5 lines
+    !force -5 search-forward "\ele"
+    !if $status
+        !force -10 search-backward "\els"
+        !if &and $status &or &les $window-line #l1 &and &equ $window-line #l1 &not &gre $window-col #l0
+            3 forward-char
+            set-mark
+            -1 search-forward "\elm"
+            3 backward-char
+            copy-region
+            set-variable #l2 @y
+            -1 yank
+            !if &seq #l2 ""
+                3 forward-char
+                set-mark
+                -1 search-forward "\ele"
+                3 backward-char
+                copy-region
+                set-variable #l2 @y
+                -1 yank
+            !endif
+            !if &seq &rig #l2 &sub &len #l2 4 ".enf"
+                notes-file #l2
+            !else
+                notes-close
+                find-file #l2
+            !endif
+            !return
+        !endif
+    !endif
+    set-variable $window-line #l1
+    set-variable $window-col #l0
+    ml-write "[Error! Not in a link]"
+    !abort
+!emacro
+
+0 define-macro notes-region-create-link
+    -2 show-region
+    set-alpha-mark "\x81"
+    2 show-region
+    set-alpha-mark "\x82"
+    goto-position "\x82"
+    set-variable #l2 ""
+    osd-entry "Create Link" "Link \HName: " #l2 20
+    goto-alpha-mark "\x81"
+    insert-string "\els"
+    !if &seq #l2 ""
+        insert-string "\elm"
+    !endif
+    goto-alpha-mark "\x82"
+    !if &not &seq #l2 ""
+        insert-string &cat "\elm" #l2
+    !endif
+    insert-string "\ele"
+!emacro
+
+-1 osd .osd.notes-mn
+osd .osd.notes-mn 0   b
+0 define-macro notes-context-menu
+    0 show-region
+    set-variable #l2 $result
+    !if &band #l2 1
+        osd .osd.notes-mn  10 ""  "Create \HLink" f notes-region-create-link
+        
+        !force show-region
+    !else
+        osd .osd.notes-mn  10 ""  "Create Link"
+    !endif
+.osd.notes-mn osd
+!emacro
+
 define-macro notes
     !force 0 notes-get-frame
     !if &not $status
@@ -783,7 +942,22 @@ define-macro notes
         !endif
     !endif
 !emacro
-    
+
+define-macro notes
+    ; See if user already has a notes file loaded
+    !force 0 notes-get-frame
+    !if $status
+        !force 0 find-buffer .current
+        !if &and $status &exi :notes-cur
+            notes-create-display
+            !return
+        !endif
+        notes-close
+    !endif
+    ; None loaded, get the users default notes file
+    @# notes-file $user-name
+!emacro
+ 
 !if &not &exi .notes.file-id
     set-variable .notes.file-id 0
 !endif

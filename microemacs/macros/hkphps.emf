@@ -49,7 +49,7 @@ set-variable .fhook-phps.item-list-r1 "Func \ecB\\1\ecA"
     hilight .hilight.phps 0 "\\\\'"                $global-scheme 
     hilight .hilight.phps 0 "\\\\`"                $global-scheme 
     hilight .hilight.phps 0 "\\\\\""               $global-scheme 
-    hilight .hilight.phps 0x804 "'" "'" "\\"       .scheme.string
+    hilight .hilight.phps 4 "'" "'" "\\"           .scheme.string
     hilight .hilight.phps 0x80 "\"" .hilight.phpsS .scheme.string
     hilight .hilight.phps 0    "\\W\\{/[^/]*\\}$"  $global-scheme 
     hilight .hilight.phps 20   "/\\*" "*/" ""      .scheme.comment

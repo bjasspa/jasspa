@@ -142,15 +142,15 @@ define-macro watch-reset
         ml-write "[All watches have been removed]"
     !elif .watch.count
         ml-write &spr "[Watched buffers:%s]" #l2
-        .time create-callback watch-callback
+        .watch.time create-callback watch-callback
     !else
         ml-write "[No watched buffers]"
     !endif
 !emacro
 
 define-macro watch-time
-    set-variable #l0 @ml1 "Watch time (s)" &div .time 1000
-    set-variable .time &mul 1000 &cond &les #l0 1 1 #l0
+    set-variable #l0 @ml1 "Watch time (s)" &div .watch.time 1000
+    set-variable .watch.time &mul 1000 &cond &les #l0 1 1 #l0
     watch-reset
 !emacro
 
@@ -158,5 +158,3 @@ define-macro watch-time
     set-variable .watch.time 10000
     set-variable .watch.count 0
 !endif
-
-
