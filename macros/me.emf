@@ -2,7 +2,7 @@
 ; JASSPA MicroEmacs - www.jasspa.com
 ; me.emf - Startup file for JASSPA MicroEmacs Distribution
 ;
-; Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+; Copyright (C) 1988-2004 JASSPA (www.jasspa.com)
 ;
 ; This program is free software; you can redistribute it and/or modify it
 ; under the terms of the GNU General Public License as published by the Free
@@ -21,7 +21,7 @@
 ; Authors:     Steven Phillips & Jon Green
 ;
 ; Is this macro release compatible with the binary?
-!if &les $version "20020412"
+!if &les $version "20040101"
     5000 ml-write "[Warning: The MicroEmacs executable is not compatible with this macro release]"
 !endif
 ; If mename isn't set or registry file isn't found then set it to guest
@@ -222,6 +222,7 @@ add-file-hook ".jst"                                          fhook-jst
 add-file-hook ".tex"                                          fhook-latex
 add-file-hook ".bib"                                          fhook-bibtex
 add-file-hook ".n .1 .2 .3 .4 .5 .6 .7 .8 .9 .so .tni .sm"    fhook-nroff
+add-file-hook ".sgm .sgml"                                    fhook-sgml
 add-file-hook ".c .h .def .i"                                 fhook-c
 add-file-hook ".cc .cpp .hpp .rc"                             fhook-cpp
 add-file-hook ".l .y"                                         fhook-yacc
@@ -264,9 +265,9 @@ add-file-hook ".idl"                                          fhook-idl
 add-file-hook ".info dir"                                     fhook-info
 add-file-hook ".diff .dif *diff*"                             fhook-diff
 add-file-hook ".xml"                                          fhook-xml
-add-file-hook ".sgm .sgml"                                    fhook-sgml
 add-file-hook ".ex .exw .exu .e .ew .eu"                      fhook-euphor
 add-file-hook ".pls"                                          fhook-pls
+add-file-hook ".lua"                                          fhook-lua
 ; Add magic hooks
  1 add-file-hook "^#![ \t]*/.*sh"                fhook-shell  ; UNIX shell files
  1 add-file-hook "^#![ \t]*/.*perl"              fhook-perl   ; UNIX perl script
@@ -286,7 +287,6 @@ add-file-hook ".pls"                                          fhook-pls
 -1 add-file-hook "-[*!]-[ \t]*nroff.*-[*!]-"     fhook-nroff  ; -*- nroff -*-
 -1 add-file-hook "-[*!]-[ \t]*cobol.*-[*!]-"     fhook-cobol  ; -*- cobol -*-
 -1 add-file-hook "-[*!]-[ \t]*pl/?sq?l?.*-[*!]-" fhook-pls    ; -*- pl/sql -*- or -*- pls -*-
--1 add-file-hook "-[*!]-[ \t]*sgml.*-[*!]-"      fhook-sgml   ; -!- sgml -!-
 -1 add-file-hook "-!-[ \t]*mhg.*-!-"             fhook-mhg    ; -!- mhg -!-
 -1 add-file-hook "-!-[ \t]*shell.*-!-"           fhook-shell  ; -!- shell -!-
 -1 add-file-hook "-!-[ \t]*msdos.*-!-"           fhook-dos    ; -!- msdos -!-
@@ -294,6 +294,8 @@ add-file-hook ".pls"                                          fhook-pls
 -1 add-file-hook "-!-[ \t]*imakefile.*-!-"       fhook-imake  ; -!- imakefile -!-
 -1 add-file-hook "-!-[ \t]*document.*-!-"        fhook-doc    ; -!- document -!-
 -1 add-file-hook "-!-[ \t]*jst.*-!-"             fhook-jst    ; -!- jst -!-
+-1 add-file-hook "-[*!]-[ \t]*sgml.*-[*!]-"      fhook-sgml   ; -!- sgml -!-
+-1 add-file-hook "DTD DocBook"                   fhook-sgml
 -1 add-file-hook "-!-[ \t]*fvwm.*-!-"            fhook-fvwm   ; -!- fvwm -!-
 -1 add-file-hook "-!-[ \t]*emf.*-!-"             fhook-emf    ; -!- emf -!-
 -1 add-file-hook "-!-[ \t]*erf.*-!-"             fhook-erf    ; -!- erf -!-
@@ -301,12 +303,6 @@ add-file-hook ".pls"                                          fhook-pls
 -1 add-file-hook "-!-[ \t]*asmx86.*-!-"          fhook-asmx86 ; -!- asmx86 -!-
 -1 add-file-hook "-!-[ \t]*text.*-!-"            fhook-txt    ; -!- text -!-
 -1 add-file-hook "-!-[ \t]*msvb.*-!-"            fhook-vb     ; -!- msvb -!-
-; Load in the mouse handling routines if required
-!if &band $mouse 0x10
-    !force exec-file "mouse"
-!endif
-; load in the platform specific stuff if found
-!force exec-file $platform
 !if &set #l0 &reg "/history" &cat %platform "/frame-width" "0"
     change-frame-width #l0
 !endif
@@ -334,10 +330,16 @@ osd 0  80  "Mdfsh" "\HWindow  "  8
 osd 0  85  "fh" " "
 osd 0  90  "Mdfsr" "\HHelp "     9
 osd -1 &cond &reg "/history" "main-menu" "1" "1" "-1"
+; Load in the mouse handling routines if required
+!if &band $mouse 0x10
+    !force exec-file "mouse"
+!endif
 ; setup the toolbar
 !if &reg "/history" &cat %platform "/toolbar" "0"
     toolbar
 !endif
+; load in the platform specific stuff if found
+!force exec-file $platform
 ; execute any emulation file, e.g. Emacs etc
 !if &not &seq &set #l0 &reg "/history" "emulate" "" ""
     set-variable %emulate #l0

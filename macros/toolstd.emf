@@ -1,6 +1,6 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 2002 JASSPA (www.jasspa.com)
+; Copyright (C) 2002-2004 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     Fri May 24 2002
@@ -191,8 +191,8 @@
         -1 buffer-mode "edit"
         1 buffer-mode "view"
     !elif &gre @# 2
-        ml-write &spr "[%s]" #l9
-        !force popup-window #l9
+        goto-position "\x82"
+        find-buffer #l9
         !return
     !endif
     goto-position "\x82"
@@ -273,33 +273,6 @@
             set-variable #l0 &stat "a" "."
         !endif
         0x0f directory-tree #l0
-        buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
     !endif
     goto-position "\x86"
 !emacro
-
-0 define-macro toolbar-file-list-create
-    set-variable #l0 $buffer-fname
-    set-position "\x86"
-    find-buffer "*files*"
-    !if &seq $buffer-fname ""
-        !if &lfind "|http:/|ftp://|" &lef #l0 6
-            set-variable #l0 &stat "a" "."
-        !elif &seq "" &set #l0 &lef #l0 &rsin "/" #l0
-            set-variable #l0 &stat "a" "."
-        !endif
-        read-file #l0
-        !if &not &seq .fhook-dirlst.file-process :file-process
-            ; old buffer with the wrong processing - refresh
-            !force 0 delete-buffer $buffer-bname
-            find-file #l0
-        !endif
-        change-buffer-name "*files*"
-        ; as we have delete *files* the toolbar window would have been lost - restore
-        1 goto-position "\x85"
-        find-buffer "*files*"
-        buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
-    !endif
-    goto-position "\x86"
-!emacro
-

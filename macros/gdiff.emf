@@ -1,6 +1,6 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; Copyright (C) 1999-2004 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     Wed Jun 23 1999
@@ -729,7 +729,7 @@ define-macro gdiff
 	osd .osd.gdiff 120  ""   "Save Left"
 	set-variable $buffer-fname ""
     !else
-	osd .osd.gdiff 120  ""   "Save &Left"      -1 gdiff-save
+	osd .osd.gdiff 120  ""   "Save \HLeft"      -1 gdiff-save
 	set-variable $buffer-fname .fnold-name
     !endif
     set-variable $buffer-input gdiff-input
@@ -743,7 +743,7 @@ define-macro gdiff
 	osd .osd.gdiff 130  ""   "Save Right"
 	set-variable $buffer-fname ""
     !else
-	osd .osd.gdiff 130  ""   "Save &Right"      1 gdiff-save
+	osd .osd.gdiff 130  ""   "Save \HRight"      1 gdiff-save
 	set-variable $buffer-fname .fnnew-name
     !endif
     set-variable $buffer-input gdiff-input

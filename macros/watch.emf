@@ -1,15 +1,37 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 2000-2002 JASSPA (www.jasspa.com)
+; Copyright (C) 2000-2004 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     Tue May 9 2000
 ; Synopsis:    Sets up a watch on the current buffer's file and auto-reloads
 ; Authors:     Steven Phillips
+; Description: Run watch in any file buffer and ME will automatically check
+;              for updates to this file every 10sec.
+; Notes:
+;   * If a watch file has been changed it will be automatically re-loaded.
+;   * A watched buffer is only checked if it is currently visible, i.e. it
+;     is shown in a window.
+;   * You can stop a watch on a buffer by going to the buffer and running watch
+;     again, i.e. running watch toggles its watch state
+;   * You can force a buffer to be watch by giving watch an argument of 1, i.e.:
+;         find-buffer "buffer-to-be-watched"
+;         1 watch
+;   * And ensure the watch is stopped by giving watch an argument of -1, i.e.:
+;         find-buffer "watched-buffer"
+;         -1 watch
+;   * The default 10sec delay between watch cycles can be altered by executing
+;     watch with an argument of 0, i.e.:
+;         0 watch
+;   * Watch keeps a count of the number of buffers being watch and if this gets
+;     back to zero it stops watching, but it is easily confused by users simply
+;     deleting a watched buffer. If this happens watch will continue to be called
+;     but should have no effect.
+;   * Use the watch-reset command to stop all watch, which also fixes the above
+;     problem
 ;
 0 define-macro watch-callback
-    set-variable #l0 $window-mode-line
-    set-variable #l1 $window-scroll-bar
+    set-variable #l0 $window-id
     set-variable #l9 0
     !repeat
         !if &exi :watch
@@ -21,10 +43,11 @@
                 set-variable #l9 1
             !endif
         !endif
-        next-window
-    !until &and &equ #l0 $window-mode-line #l1 $window-scroll-bar
-    ml-clear
+        ; visit EVERY window otherwise we might not get back to the starting one (toolbar!)
+        3 next-window
+    !until &equ $window-id #l0
     !if #l9
+        ml-clear
         screen-update
     !endif
     .watch.time create-callback watch-callback

@@ -1,5 +1,5 @@
 ; Generated color scheme file for JASSPA MicroEmacs
-; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; Copyright (C) 1999-2004 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ; Description: Lemon Jelly
 set-variable .hilight.flags 7

@@ -1,6 +1,6 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
+; Copyright (C) 2003-2004 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Created      Fri Oct 24 2003
@@ -9,11 +9,11 @@
 ;
 define-macro fhook-php
     set-variable $buffer-mask "luh1"
-    @# buffer-initialize "php"
-    buffer-initialize-hooks
+    @# buffer-init "php"
+    buffer-init-hooks
 !emacro
 
-; buffer-initialize variables
+; buffer-init variables
 set-variable .fhook-php.name "PHP"
 set-variable .fhook-php.setup &reg "/history" "fhook/php" "cdghinopsx"
 set-variable .fhook-php.setup-mask "acdeghikmnopstux"
@@ -48,7 +48,4 @@ set-variable .fhook-php.command-desc  "|"
     !endif
 !endif
 
-ml-write "[PHP file hook loaded]"
-
-; load in user extensions if found
-!force execute-file "myphp"
+buffer-init-fhook "emf"

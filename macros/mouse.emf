@@ -1,6 +1,6 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; Copyright (C) 1999-2004 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     Sat Jun 13 1998
@@ -615,8 +615,7 @@
                 set-variable #l0 "mouse-auto-pick-event"
                 set-variable .drop-cmd "1 goto-position \"\x82\""
             !elif &seq &reg "/history" &cat "mouse/" &spr .mask "drop" "" "mouse-osd-multi"
-                ; the auto event on a button which does the multi menus does the multi menus
-                ; do the scroll bar stuff
+                ; do the popup menus
                 set-variable #l0 "1 goto-position \"\x82\""
                 set-variable .drop-cmd "mouse-osd-multi"
             !endif

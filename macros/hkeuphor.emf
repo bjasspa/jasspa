@@ -1,6 +1,6 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 2001-2002 JASSPA (www.jasspa.com)
+; Copyright (C) 2001-2004 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     Tue, 11 Dec 2001
@@ -73,7 +73,7 @@ set-variable .fhook-euphor.item-list-r4 "Proc \ecB\\2\ecA"
 !endif
 
 !if &sin "d" .fhook-euphor.setup
-    0 indent .hilight.euphor 2 10
+    0 indent .hilight.euphor 1 10
 
     indent .hilight.euphor N "function"      3
     indent .hilight.euphor O "end function" -3

@@ -1,6 +1,6 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 1997-2002 JASSPA (www.jasspa.com)
+; Copyright (C) 1997-2004 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     Thu Mar 1 2001
@@ -64,6 +64,9 @@ set-variable .fhook-dirtre.command-desc  "|Swap Browser \HWindows|\HClose File B
     set-variable #l2 $window-line    ; Save the line number
     set-variable #l3 $window-y-scroll
     @# directory-tree
+    !if &band $window-flags 0x1000
+        1 buffer-mode "hide"
+    !endif
     set-variable $window-line #l2
     set-variable $window-y-scroll #l3
     !if &not &band @# 2              ; Making the directory current ??
@@ -99,6 +102,9 @@ set-variable .fhook-dirtre.command-desc  "|Swap Browser \HWindows|\HClose File B
     !force -1 search-forward &cat &cat "[-?+" &rig $box-chars 10 "] "
     !if &not $status
         set-variable $window-col #l0
+        !if &band $window-flags 0x1000
+            1 goto-position "\x82"
+        !endif
         !return
     !endif
     set-variable #l1 $window-col
@@ -109,24 +115,37 @@ set-variable .fhook-dirtre.command-desc  "|Swap Browser \HWindows|\HClose File B
     ; if '+', '-' or '?' tag position.
     !if &equ &sub #l1 2 #l0
         &cond @? @# 0x66 directory-tree
+        !if &band $window-flags 0x1000
+            1 buffer-mode "hide"
+        !endif
         set-variable #l4 0
     !elif &les #l0 #l1
         ; hit char between the name and '+'/'-'
+        !if &band $window-flags 0x1000
+            1 goto-position "\x82"
+        !endif
         !return
     !else
         ; hit the name, just select it
         0x02 directory-tree
+        !if &band $window-flags 0x1000
+            1 buffer-mode "hide"
+        !endif
         set-variable #l4 1
     !endif
     ; Reframe the *directory* window:
     ; Done by going to the old line number and reframing the window
     set-variable $window-line #l2
     set-variable $window-y-scroll #l3
+    set-variable #l0 $buffer-fname
+    ; if this is a toolbar dir-tree go back to the original window - return now so popup of *files* works okay
+    !if &band $window-flags 0x1000
+        1 goto-position "\x82"
+    !endif
     !if #l4
         ; If selected the name then setup the echo in the *files* directory.
-        set-variable #l0 $buffer-fname
         1 set-position "\x81"
-        !force 0 popup-window "*files*"
+        !force 1 popup-window "*files*"
         !if $status
             !if &not &and &seq #l0 $buffer-fname &seq .fhook-dirlst.file-process :file-process
                 read-file #l0
@@ -141,6 +160,10 @@ set-variable .fhook-dirtre.command-desc  "|Swap Browser \HWindows|\HClose File B
             !endif
         !endif
         goto-position "\x81"
+    !endif
+    ; if this is a toolbar dir-tree go back to the original window
+    !if &band $window-flags 0x1000
+        1 goto-position "\x82"
     !endif
 !emacro
 

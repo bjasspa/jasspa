@@ -1,6 +1,6 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
+; Copyright (C) 1998-2004 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     Mon Sep 21 1998
@@ -14,7 +14,6 @@ define-macro fhook-html
     !elif &or &seq #l0 "hts" &seq #l0 "htp"
         set-variable $buffer-mask "luh1"
         @# buffer-init "html"
-         1 buffer-mode "usr1"
     !else
         html-process-buffer
     !endif
@@ -23,12 +22,14 @@ define-macro fhook-html
 
 ; buffer-init variables
 set-variable .fhook-html.setup &reg "/history" "fhook/html" "cdghinopsx"
-set-variable .fhook-html.setup-mask "acdeghikmnopstux"
-set-variable .fhook-html.command-flag  "|h|h|h|h|h|h|thb|"
-set-variable .fhook-html.command-name  "|||html-process-link||||html-show-buffer|"
-set-variable .fhook-html.command-nbind "||||||||"
-set-variable .fhook-html.command-kbind "|||||||C-c C-h|"
-set-variable .fhook-html.command-desc  "|Html Browser Mode||\HGoto Link||Html Author Mode||Preview in MicroEmacs|"
+set-variable .fhook-html.setup-mask    "acdeghikmnopstux"
+set-variable .fhook-html.setup-flags   "|c|"
+set-variable .fhook-html.setup-labels  "|Use Author Mode|"
+set-variable .fhook-html.command-flag  "|"
+set-variable .fhook-html.command-name  "|"
+set-variable .fhook-html.command-nbind "|"
+set-variable .fhook-html.command-kbind "|"
+set-variable .fhook-html.command-desc  "|"
 
 ; load in the html core
 !force execute-file "htmlcore" "html" 
@@ -36,7 +37,7 @@ set-variable .fhook-html.command-desc  "|Html Browser Mode||\HGoto Link||Html Au
 set-variable .fhook-html.command-flag  &cat .fhook-html.command-flag  "thb|"
 set-variable .fhook-html.command-name  &cat .fhook-html.command-name  "html-show-buffer|"
 set-variable .fhook-html.command-nbind &cat .fhook-html.command-nbind "|"
-set-variable .fhook-html.command-kbind &cat .fhook-html.command-kbind "|"
+set-variable .fhook-html.command-kbind &cat .fhook-html.command-kbind "C-c C-h|"
 set-variable .fhook-html.command-desc  &cat .fhook-html.command-desc  "Preview in MicroEmacs|"
 
 !if &and &sin "h" .fhook-html.setup &band .hilight.flags 0x01 
