@@ -1399,7 +1399,7 @@ define-macro vm
     vm-ready-box
 !emacro
 
-osd .osd.vm-help 0  "batcdH" 9 3 99 .scheme.osd-title "View Mail Help"
+osd .osd.vm-help 0  "batcDH" 9 3 99 .scheme.osd-title "View Mail Help"
 osd .osd.vm-help 3  "" 
 osd .osd.vm-help 4  ""  " esc h   - View this help page"
 osd .osd.vm-help 5  ""  " delete  - Hide VM windows"

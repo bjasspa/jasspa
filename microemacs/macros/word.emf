@@ -151,7 +151,7 @@ define-macro describe-word-com
     !endif
 !emacro
 
-osd .osd.word 0  "batcHsd" 9 3 66 17 -1 -1 30 .scheme.osd-title "Describe Word"
+osd .osd.word 0  "batcHsD" 9 3 66 17 -1 -1 30 .scheme.osd-title "Describe Word"
 osd .osd.word 10 ""
 osd .osd.word 15 "Shf" "  \HWord: " 20
 osd .osd.word 20 "ExHfth" .scheme.osd-entry "##############################" 1 describe-word-com

@@ -114,7 +114,7 @@
     !endif
 !emacro
 
-osd .osd.mmrg-opt 0   "batcdHs" 3 6 36 0 -1 -1 150 .scheme.osd-title "Mail Merge Options"
+osd .osd.mmrg-opt 0   "batcDHs" 3 6 36 0 -1 -1 160 .scheme.osd-title "Mail Merge Options"
 osd .osd.mmrg-opt 10  ""
 osd .osd.mmrg-opt 20  "Shf" "  Data File has Header  " 100
 osd .osd.mmrg-opt 30  "Cfx" "^^NY^^" 4 mmrg-options-set

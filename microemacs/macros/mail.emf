@@ -266,14 +266,14 @@ set-variable .osd.mail-add 16
     osd .osd.mail-adl 40 "IbHt" .scheme.osd-sbar #l0 #l1 .osd.mail-adc
 !emacro
 
-osd .osd.mail-adl 0   ""
+osd .osd.mail-adl 0   "I" 20
 osd .osd.mail-adl 10  "S" " \HAddress or Filter" 20
 osd .osd.mail-adl 20  "ExHcfzt" .scheme.osd-entry .osd.mail-adw 1 "" 1 osd-mail-addr-set
 osd .osd.mail-adl 30  ""
 osd .osd.mail-adl 40  "IbHt" .scheme.osd-sbar .osd.mail-adw .osd.mail-add .osd.mail-adc
 osd .osd.mail-adl 50  ""
 
-osd .osd.mail-adr 0   ""
+osd .osd.mail-adr 0   "D" 30
 osd .osd.mail-adr 5   ""
 osd .osd.mail-adr 10  "BHRxt" .scheme.osd-ebtt " \HFilter "  0 osd-mail-addr-parse
 osd .osd.mail-adr 20  ""
@@ -283,7 +283,7 @@ osd .osd.mail-adr 50  "BHt"  .scheme.osd-ebtt " \HCancel "   f void
 osd .osd.mail-adr 60  ""
 
 -1 osd .osd.mail-ad
-osd .osd.mail-ad 0  "batcdHR" 3 6 80 .scheme.osd-title "Insert E-Mail Address" osd-mail-addr-resize
+osd .osd.mail-ad 0  "batcDIHR" 3 6 50 30 .scheme.osd-title "Insert E-Mail Address" osd-mail-addr-resize
 osd .osd.mail-ad 10  ""
 osd .osd.mail-ad 20  "h" " "
 osd .osd.mail-ad 30  "Iht" .osd.mail-adl

@@ -1003,7 +1003,7 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
         !goto no-gui
     !endif
     -1 osd .osd.cvsosd
-    osd .osd.cvsosd 0 "batcdHs" 9 3 47 4 -1 -1 2020 .scheme.osd-title &cat "CVS " &lget .cvs.names @#
+    osd .osd.cvsosd 0 "batcDHs" 9 3 47 4 -1 -1 2020 .scheme.osd-title &cat "CVS " &lget .cvs.names @#
     set-variable #l0 0
     !repeat
         set-variable #l1 &mid .cvs.options #l0 1
@@ -1248,7 +1248,6 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
     !if &seq #l6 "*cvs-console*"
         set-variable $buffer-hilight .hilight.cvscon
     !else
-        beginning-of-buffer
         set-variable $buffer-hilight &lget .cvs.schemes @#
         !if &seq #l6 "*cvs-state*"
             buffer-bind-create "bio" "return" "" cvs-state-find-file
@@ -1747,7 +1746,7 @@ define-macro cvs
 !emacro
 
 -1 osd .osd.cvsstp
-osd .osd.cvsstp 0 "batcdHs" 9 3 74 4 -1 -1 2020 .scheme.osd-title "CVS Setup"
+osd .osd.cvsstp 0 "batcDHs" 9 3 74 4 -1 -1 2020 .scheme.osd-title "CVS Setup"
 set-variable #l2 10
 osd .osd.cvsstp &inc #l2 1 "" ""
 osd .osd.cvsstp &inc #l2 1 "" "  CVS Command Setup"

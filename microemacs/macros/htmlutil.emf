@@ -106,7 +106,7 @@
 0 define-macro html-get-color-pal
     !if &not @?
         -1 osd .osd.tmp
-        osd .osd.tmp 0 "btcHds" 38 12 -1 -1 610 .scheme.osd-title "Set HTML Pallette Color" 
+        osd .osd.tmp 0 "btcHIs" 38 12 -1 -1 610 .scheme.osd-title "Set HTML Pallette Color" 
         osd .osd.tmp 100 ""
         osd .osd.tmp 200 "Ic" .osd.htmlcolr
         osd .osd.tmp 300 ""
@@ -192,7 +192,7 @@ osd .osd.htmlcoll 372 "RTfx"  #l1 0x01113 html-get-color-com
 
 osd .osd.htmlcolr 0 "G"
 
-osd .osd.htmlcol 0   "batcHds" 9 3 40 16 -1 -1 610 .scheme.osd-title "HTML Color" 
+osd .osd.htmlcol 0   "batcHDs" 9 3 40 16 -1 -1 610 .scheme.osd-title "HTML Color" 
 osd .osd.htmlcol 10  ""
 osd .osd.htmlcol 20  ""
 osd .osd.htmlcol 100 "fh" " "

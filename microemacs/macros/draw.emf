@@ -152,7 +152,7 @@ hilight .hilight.draw 0 "="  .scheme.no2
     1 buffer-mode "view"
 !emacro
 
-osd .osd.draw-help 0  "batcdH" 9 3 99 .scheme.osd-title "Draw Mode Help"
+osd .osd.draw-help 0  "batcDH" 9 3 99 .scheme.osd-title "Draw Mode Help"
 osd .osd.draw-help 3  "" 
 osd .osd.draw-help 4  ""  " esc h   - View this help page"
 osd .osd.draw-help 5  ""  " C-g     - Abort draw - discard drawing"

@@ -167,7 +167,7 @@ osd .osd.spell-editl 40  ""
 osd .osd.spell-editl 60  ""
 osd .osd.spell-editl 90  ""
 
-osd .osd.spell-editr 0   "d" 100
+osd .osd.spell-editr 0   "I" 100
 osd .osd.spell-editr 10  ""
 osd .osd.spell-editr 30  ""
 osd .osd.spell-editr 50  ""
@@ -177,7 +177,7 @@ osd .osd.spell-editr 100 "BHcf" .scheme.osd-ebtt " E\Hxit      " 1 void
 osd .osd.spell-editr 110 ""
 0 spell-edit-word-setbutt
 
-osd .osd.spell-edit 0  "batcdH" 9 3 20 .scheme.osd-title "Spell Edit Word"
+osd .osd.spell-edit 0  "batcIH" 9 3 20 .scheme.osd-title "Spell Edit Word"
 osd .osd.spell-edit 10 "Ih" .osd.spell-editl
 osd .osd.spell-edit 15 "h"  "  "
 osd .osd.spell-edit 20 "Ih" .osd.spell-editr

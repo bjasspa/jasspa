@@ -152,7 +152,7 @@ define-macro charset-change
 !emacro
 
 -1 osd .osd.charset
-osd .osd.charset 0   "batcdHs" 3 6 43 0 -1 -1 630 .scheme.osd-title "Character Set Change"
+osd .osd.charset 0   "batcDIHs" 3 6 43 0 -1 -1 620 630 .scheme.osd-title "Character Set Change"
 osd .osd.charset 10  ""
 osd .osd.charset 20  "Sfh" "  Change \HFrom : " 30
 osd .osd.charset 40  ""

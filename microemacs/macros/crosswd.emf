@@ -428,7 +428,7 @@ osd .osd.crosswdc 0 "s" 50 30 0 -1
 osd .osd.crosswdc 1 ""
 
 -1 osd .osd.crosswd
-osd .osd.crosswd 0  "batcdH" 3 6 80 .scheme.osd-title "Cross-Word Cracker"
+osd .osd.crosswd 0  "batcDIH" 3 6 36 36 .scheme.osd-title "Cross-Word Cracker"
 osd .osd.crosswd 10  ""
 osd .osd.crosswd 20  "Shf" " \HNumber of words " 30
 osd .osd.crosswd 30  "EtxfHh" .scheme.osd-entry "     " 1 crosswd-set-noword

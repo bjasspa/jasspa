@@ -777,7 +777,7 @@ osd .osd.gdiff 150 "-"
 osd .osd.gdiff 160 ""   "Gdiff \HHelp"       .osd.gdiff-help osd
 osd .osd.gdiff 170 ""   "E\Hxit Gdiff"       f gdiff-exit
 
-osd .osd.gdiff-help 0  "batcdH" 9 3 99 .scheme.osd-title "Graphical Diff Help"
+osd .osd.gdiff-help 0  "batcDH" 9 3 99 .scheme.osd-title "Graphical Diff Help"
 osd .osd.gdiff-help 3  "" 
 osd .osd.gdiff-help 4  ""  "    esc h   - View this help page"
 osd .osd.gdiff-help 5  "" 

@@ -345,10 +345,10 @@ set-variable %emulate-value "||emacs|cua|me3_8|nedit|"
 0 define-macro user-mail-filter
     -1 osd .osd.user-sub
     !if @#
-        osd .osd.user-sub 0 "batcHds" 9 3 56 0 -1 -1 640 .scheme.osd-title "E-Mail Auto-Archive Setup"
+        osd .osd.user-sub 0 "batcHIs" 9 3 56 0 -1 -1 640 .scheme.osd-title "E-Mail Auto-Archive Setup"
         set-variable #g0 "mail/archive/"
     !else
-        osd .osd.user-sub 0 "batcHds" 9 3 56 0 -1 -1 640 .scheme.osd-title "E-Mail Pre-filter Setup"
+        osd .osd.user-sub 0 "batcHIs" 9 3 56 0 -1 -1 640 .scheme.osd-title "E-Mail Pre-filter Setup"
         set-variable #g0 "mail/filter/"
     !endif
     osd .osd.user-sub 10 ""
@@ -363,10 +363,10 @@ set-variable %emulate-value "||emacs|cua|me3_8|nedit|"
     osd .osd.user-sub 80  "fh" "  "
     osd .osd.user-sub 90  "ExHf" .scheme.osd-entry "###############" 2 user-maila-set
     osd .osd.user-sub 600 ""
-    osd .osd.user-sub 610 "BdcfhxH" .scheme.osd-ebtt "  \HAdd  "  1 user-maila-com
-    osd .osd.user-sub 620 "BdcfhxH" .scheme.osd-ebtt " \HChange " 2 user-maila-com
-    osd .osd.user-sub 630 "BdcfhxH" .scheme.osd-ebtt " \HDelete " 3 user-maila-com
-    osd .osd.user-sub 640 "BdcfH"   .scheme.osd-ebtt " E\Hxit "   f void
+    osd .osd.user-sub 610 "BcfhxH" .scheme.osd-ebtt "  \HAdd  "  1 user-maila-com
+    osd .osd.user-sub 620 "BcfhxH" .scheme.osd-ebtt " \HChange " 2 user-maila-com
+    osd .osd.user-sub 630 "BcfhxH" .scheme.osd-ebtt " \HDelete " 3 user-maila-com
+    osd .osd.user-sub 640 "BcfH"   .scheme.osd-ebtt " E\Hxit "   f void
     user-maila-create
     0 user-mailf-set-fields
     .osd.user-sub osd
@@ -414,7 +414,7 @@ osd .osd.user-mail 270 "EtxHf" .scheme.osd-entry "##############################
 osd .osd.user-mail 280 "Sfh" "  \HUuencode Extract:    " 280
 osd .osd.user-mail 290 "EtxHf" .scheme.osd-entry "##############################" 5 user-set-pfentry
 osd .osd.user-mail 310 "fh"  "                       "
-osd .osd.user-mail 320 "BdtfxH" .scheme.osd-ebtt "\HAuto-Archive" 1 user-mail-filter
+osd .osd.user-mail 320 "BtfxH" .scheme.osd-ebtt " \HAuto-Archive " 1 user-mail-filter
 
 ; Mouse setup ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 set-variable %user-mouse-but 1
@@ -568,7 +568,7 @@ osd .osd.user-mouse 140 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 130
 osd .osd.user-mouse 150  "Sfh" "                "
 osd .osd.user-mouse 160 "Ctpfx" &cat .osd.checkbox-chars "\} \HHandle Scroll Bars" f user-mouse-set-auto
 osd .osd.user-mouse 600 ""
-osd .osd.user-mouse 610 "BcdtfHxR" .scheme.osd-ebtt " \HDefaults " f user-mouse-defaults
+osd .osd.user-mouse 610 "BctfHxR" .scheme.osd-ebtt " \HDefaults " f user-mouse-defaults
 
 ; The Tools menu ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 0 define-macro user-tool-init
@@ -661,7 +661,6 @@ osd .osd.user-tool 400 "Sfh" "  \HAll Buffers:    " 410
 osd .osd.user-tool 410 "Ctpfxh" &cat .osd.checkbox-chars "\} Save" 0x04 user-tool-set-flag
 osd .osd.user-tool 420 "Sfh" "  "
 osd .osd.user-tool 430 "Ctpfx" &cat .osd.checkbox-chars "\} Promp\Ht Before Saving" 0x08 user-tool-set-flag
-osd .osd.user-tool 440 "Sfh" "  "
 
 ; file type setup ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 0 define-macro user-filetype-set-fields
@@ -777,9 +776,9 @@ osd .osd.user-ftype 70  "EtxHfh" .scheme.osd-entry "################" 1 user-fil
 osd .osd.user-ftype 80  "fh" "  "
 osd .osd.user-ftype 90  "EtxHf" .scheme.osd-entry "############################" 2 user-filetype-set
 osd .osd.user-ftype 600 ""
-osd .osd.user-ftype 610 "BdtcfhxH" .scheme.osd-ebtt "  \HAdd  "  1 user-filetype-com
-osd .osd.user-ftype 620 "BdtcfhxH" .scheme.osd-ebtt " C\Hhange " 2 user-filetype-com
-osd .osd.user-ftype 630 "BdtcfxH"  .scheme.osd-ebtt " \HDelete " 3 user-filetype-com
+osd .osd.user-ftype 610 "BtcfhxH" .scheme.osd-ebtt "  \HAdd  "  1 user-filetype-com
+osd .osd.user-ftype 620 "BtcfhxH" .scheme.osd-ebtt " C\Hhange " 2 user-filetype-com
+osd .osd.user-ftype 630 "BtcfxH"  .scheme.osd-ebtt " \HDelete " 3 user-filetype-com
     
 ; The platform menu ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 !if &and &seq $platform "win32" &not &band $system 0x01
@@ -1004,7 +1003,7 @@ osd .osd.user-plat 821 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 820
         osd .osd.user-plat 140 "Ctfx" "^^NY^^" 0x10 user-set-system
         osd .osd.user-plat 320 "Sfh" "    \HExtend Char Set : " 330
         osd .osd.user-plat 330 "Ctfxh" "^^NY^^" 2 user-set-cpfcheckbox
-        osd .osd.user-plat 340 "fh"  "               "
+        osd .osd.user-plat 340 "fh"  "                 "
         osd .osd.user-plat 350 "BdtfxHR" .scheme.osd-ebtt " Choose Font " f user-set-winfont
         osd .osd.user-plat 410 "Ctfxh" "^^NY^^" 0x80000 user-set-system
         osd .osd.user-plat 420 "Sfh" "     Capture Alt Space : " 430
@@ -1047,7 +1046,7 @@ osd .osd.user-plat 821 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 820
     osd .osd.user-modes @# "CxH" .scheme.osd-ebtt &cat "^^^^^^" $result @# osd-user-show-mode
 !emacro
 
-osd .osd.user-modes 0 "b"
+osd .osd.user-modes 0 "bo" 0 -16
 set-variable #l1 0
 set-variable $mode-names ".*"
 !while &not &seq &set #l0 $mode-names ""
@@ -1226,12 +1225,12 @@ osd .osd.user-nb 7 "Pft" "E-Mail" .osd.user-mail
 osd .osd.user-nb 100 "It" .osd.user-start
 
 ; The main menu ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-osd .osd.user 0  "batcHds" 9 3 59 26 -1 -1 630 .scheme.osd-title &spr "User Setup (%s%s%s)" &sup &lef $platform 1 &rig $platform 1 &cond &band $system 0x01 " Console" ""
+osd .osd.user 0  "batcHDIs" 9 3 59 26 -1 -1 625 630 .scheme.osd-title &spr "User Setup (%s%s%s)" &sup &lef $platform 1 &rig $platform 1 &cond &band $system 0x01 " Console" ""
 osd .osd.user 100 "It" .osd.user-nb
 osd .osd.user 600 ""
-osd .osd.user 620 "BdtcfHhx" .scheme.osd-ebtt " \HSave " f user-set-save
-osd .osd.user 625 "BdtcfHh"  .scheme.osd-ebtt " \HCurrent " f user-set-current
-osd .osd.user 630 "BdtcfH"   .scheme.osd-ebtt " E\Hxit " f void
+osd .osd.user 620 "BtcfHhx" .scheme.osd-ebtt " \HSave " f user-set-save
+osd .osd.user 625 "BtcfHh"  .scheme.osd-ebtt " \HCurrent " f user-set-current
+osd .osd.user 630 "BtcfH"   .scheme.osd-ebtt " E\Hxit " f void
 
 define-macro user-setup
     !force 0 save-history

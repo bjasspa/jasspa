@@ -374,7 +374,7 @@ set-variable .wiki-node-menu.d 25
     set-variable .osd.wikim &pinc .osd.next 1
 !endif
 -1 osd .osd.wikim
-osd .osd.wikim 0  "batcdHR" 3 6 20 .scheme.osd-title "Node List" wiki-node-menu-resize
+osd .osd.wikim 0  "batcIHR" 3 6 20 .scheme.osd-title "Node List" wiki-node-menu-resize
 osd .osd.wikim 10  ""
 osd .osd.wikim 15  "h" "  "
 osd .osd.wikim 20  "IbHht" .scheme.osd-sbar .wiki-node-menu.w .wiki-node-menu.d .osd.tmp

@@ -13,7 +13,7 @@
     set-variable .osd.doc-stat &pinc .osd.next 1
 !endif
 -1 osd .osd.doc-stat
-osd .osd.doc-stat 0  "batcdH" 9 3 99 .scheme.osd-title "Current Mode Settings"
+osd .osd.doc-stat 0  "batcDH" 9 3 99 .scheme.osd-title "Current Mode Settings"
 osd .osd.doc-stat 3  "" 
 osd .osd.doc-stat 7  "" 
 osd .osd.doc-stat 11 "" 

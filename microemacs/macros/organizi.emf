@@ -222,7 +222,7 @@
     mark-registry "/org" "u"
 !emacro
 
-osd .osd.org-aieo 0 "batcdHs" 3 6 36 0 -1 -1 160 .scheme.osd-title "Options"
+osd .osd.org-aieo 0 "batcDHs" 3 6 36 0 -1 -1 160 .scheme.osd-title "Options"
 osd .osd.org-aieo 10 ""
 osd .osd.org-aieo 30 "Cfx" "^^NY^^" 5 org-aie-options-set
 osd .osd.org-aieo 40 ""
@@ -239,14 +239,14 @@ osd .osd.org-aieo 160 "BcfH"   .scheme.osd-ebtt "  \HOk  "  1 void
 
 0 define-macro org-aie-options
     !if &equ @# 1
-        osd .osd.org-aieo 0   "batcdHs" 3 6 36 0 -1 -1 150 .scheme.osd-title "Import Options"
+        osd .osd.org-aieo 0   "batcDHs" 3 6 36 0 -1 -1 160 .scheme.osd-title "Import Options"
         osd .osd.org-aieo 20  "Shf" "  Import File has Header  " 100
         osd .osd.org-aieo 120 "D"
         osd .osd.org-aieo 130 "D"
         osd .osd.org-aieo 135 "D"
         set-variable .org.aie-type "aimp" 
     !else
-        osd .osd.org-aieo 0   "batcdHs" 3 6 36 0 -1 -1 150 .scheme.osd-title "Export Options"
+        osd .osd.org-aieo 0   "batcDHs" 3 6 36 0 -1 -1 160 .scheme.osd-title "Export Options"
         osd .osd.org-aieo 20  "Shf" "    Export Record Header  " 100
         osd .osd.org-aieo 120 "Shf" "     Export Addresses to  " 130
         osd .osd.org-aieo 130 "ExfHh" .scheme.osd-entry "####" 4 org-aie-options-set
@@ -263,7 +263,7 @@ osd .osd.org-aieo 160 "BcfH"   .scheme.osd-ebtt "  \HOk  "  1 void
     set-variable #g2 &rep &rep &ind &spr ".org.%s-delimit" #l0 "\\n" "\n" "\\t" "\t"
 !emacro
 
-osd .osd.org-aimp  0  "batcHds" 9 3 62 26 -1 -1 630 .scheme.osd-title "Import Address Database"
+osd .osd.org-aimp  0  "batcHDs" 9 3 62 26 -1 -1 640 .scheme.osd-title "Import Address Database"
 osd .osd.org-aimp  5  "hf" " "
 osd .osd.org-aimp 10  "ItbHf" .scheme.osd-sbar 54 20 .osd.org-aimpc
 osd .osd.org-aimp 20  ""
