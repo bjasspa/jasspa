@@ -5,7 +5,7 @@
  *  Synopsis      : Token based hilighting routines
  *  Created By    : Steven Phillips
  *  Created       : 21/12/94
- *  Last Modified : <010417.2124>
+ *  Last Modified : <010430.0841>
  *
  *  Description
  *
@@ -2417,8 +2417,8 @@ indent(int f, int n)
     n = (n < 0) ? ADDTOKEN_REMOVE:0 ;
     
     if((meGetString((uint8 *)"Ind no",0,0,buf,MAXBUF-1) != TRUE) ||
-       ((indno = (uint8) meAtoi(buf)) > noIndents) ||
-       (indents == NULL) ||
+       ((indno = (uint8) meAtoi(buf)) == 0) ||
+       (indno >= noIndents) ||
        ((root  = indents[indno]) == NULL) ||
        ((itype = mlCharReply((uint8 *)"Type: ",0,typesChar,NULL)) == -1) ||
        (meGetString((uint8 *)"Token",0,0,buf,MAXBUF-1) != TRUE))
