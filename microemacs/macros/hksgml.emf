@@ -109,7 +109,7 @@ set-variable .fhook-sgml.exact -1
     @# xml-spell-word
 !emacro
 
-0 define-macro xml-pre-expand-abbrev
+0 define-macro sgml-pre-expand-abbrev
     @# xml-pre-expand-abbrev
 !emacro
 
