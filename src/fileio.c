@@ -2021,11 +2021,7 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
             {
                 /* if backing up as well the file is already effectively deleted */
                 if(meUnlink(fname))
-                {
-                    int ii = GetLastError() ;
-                    printf("Error %d\n",ii) ;
                     return meABORT ;
-                }
             }
         }
         if(!(flags & meRWFLAG_WRITE))

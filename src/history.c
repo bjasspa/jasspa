@@ -391,15 +391,25 @@ setupHistory(int option, meUByte **numPtr, meUByte ***list)
 void
 addHistory(int option, meUByte *str)
 {
-    meUByte   *numPtr, numHist,i ;
+    meUByte   *numPtr, numHist ;
     meUByte  **history, *buf ;
+    meInt      ii ;
 
     numHist = setupHistory(option, &numPtr, &history) ;
 
-    if((numHist > 0) && !meStrcmp(str,history[0]))
-        return ;
+    for(ii=0 ; ii<numHist ; ii++)
+        if(!meStrcmp(str,history[ii]))
+        {
+            buf = history[ii] ;
+            while(--ii >= 0)
+                history[ii+1] = history[ii] ;
+            history[0] = buf ;
+            return ;
+        }
+    
     if((buf = meMalloc(meStrlen(str)+1)) == NULL)
         return ;
+    meStrcpy(buf,str) ;
     if(numHist == meHISTORY_SIZE)
         meFree(history[numHist-1]) ;
     else
@@ -407,9 +417,8 @@ addHistory(int option, meUByte *str)
         numHist++ ;
         (*numPtr)++ ;
     }
-    for(i=numHist-1 ; i>0 ; i--)
-        history[i] = history[i-1] ;
-    meStrcpy(buf,str) ;
+    for(ii=numHist-1 ; ii>0 ; ii--)
+        history[ii] = history[ii-1] ;
     history[0] = buf ;
 }
 

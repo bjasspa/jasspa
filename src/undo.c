@@ -435,8 +435,8 @@ meUndo(int f, int n)
                     fprintf(undoFp,"Undo 0x%02x %x Nrrw %x %ld %ld %d [%s]\n",nun->type,(int) nun->next,
                             nun->name,nun->count,nun->dotp,nun->markupCmd,nun->str) ;
                 }
-#endif
                 else
+#endif
                 {
                     fprintf(undoFp,"Undo 0x%02x %x %ld (%ld,%d) [%s]\n",nn->type,(int) nn->next,nn->count,
                             nn->udata.dotp,nn->doto,nn->str) ;
