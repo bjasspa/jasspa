@@ -483,22 +483,28 @@ meDictionaryFind(int flag)
 static void
 meDictWordDump(meDictWord *ent, meUByte *buff)
 {
-    meUByte  *ss=buff ;
+    meUByte cc, *ss=meWordGetWord(ent), *dd=buff ;
     int len ;
     
     len = meWordGetWordLen(ent) ;
-    memcpy(ss,meWordGetWord(ent),len) ;
-    ss += len ;
+    do {
+        cc = *ss++ ;
+        *dd++ = toUserFont(cc) ;
+    } while(--len > 0) ;
+    
     if((len = meWordGetFlagLen(ent)) > 0)
     {
         if(meWordGetErrorFlag(ent))
-            *ss++ = '>' ;
+            *dd++ = '>' ;
         else
-            *ss++ = '/' ;
-        memcpy(ss,meWordGetFlag(ent),len) ;
-        ss += len ;
+            *dd++ = '/' ;
+        ss = meWordGetFlag(ent) ;
+        do {
+            cc = *ss++ ;
+            *dd++ = toUserFont(cc) ;
+        } while(--len > 0) ;
     }
-    *ss = '\0' ;
+    *dd = '\0' ;
 }
 
 int
