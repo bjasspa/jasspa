@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac011.3,v 2.6 2004-12-10 00:57:33 bill Exp $
+.Id $Id: m3mac011.3,v 2.7 2005-01-15 16:58:54 jon Exp $
 .Im MicroEmacs command
 .so me.tni
 .TH alarm 3
@@ -18,9 +18,9 @@ alarm \- Set an alarm
 .ad
 .SH DESCRIPTION
 .B alarm
-creates  an alarm for the user which will print the given  "\fImessage\fR"  in
-the given number of "\fIhours\fR" and "\fIminutes\fR"  time from the moment of
-creation.
+creates an alarm notification which displays  "\fImessage\fR" to the user. The
+alarm  time  is   specified   as  an  elapsed   time  in   "\fIhours\fR"   and
+"\fIminutes\fR" from the time of creation.
 .PP
 The message is printed on the screen using
 .Ht osd 2 .
