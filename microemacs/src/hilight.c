@@ -1805,7 +1805,13 @@ column_token:
             {
                 dstPos = hilCopyLenString(dstPos,srcText+hd.srcPos,node->tknSttOff,&hd) ;
                 hd.srcPos += node->tknSttOff ;
-                len -= node->tknSttOff ;
+                /* The length may be 0 if this is a 0 length RE so we must
+                 * not decrement the start offset below zero. We always make
+                 * sure that the length remains valid. */
+                if (len >= node->tknSttOff)
+                    len -= node->tknSttOff ;
+                else
+                    len = 0 ;
             }
             
             if(hd.blkp->column == dstPos)
