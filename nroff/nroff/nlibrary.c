@@ -7,10 +7,10 @@
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: nlibrary.c,v $
- *  Revision      : $Revision: 1.2 $
- *  Date          : $Date: 2000-10-21 15:02:02 $
+ *  Revision      : $Revision: 1.3 $
+ *  Date          : $Date: 2002-03-10 18:30:37 $
  *  Author        : $Author: jon $
- *  Last Modified : <001021.1404>
+ *  Last Modified : <020310.1826>
  *
  *  Description
  *
@@ -19,6 +19,9 @@
  *  History
  *
  *  $Log: not supported by cvs2svn $
+ *  Revision 1.2  2000/10/21 15:02:02  jon
+ *  Compiled under Linux
+ *
  *  Revision 1.1  2000/10/21 14:31:27  jon
  *  Import
  *
@@ -44,7 +47,7 @@
 #include "_nroff.h"
 #include "nroff.h"
 
-static const char rcsid[] = "@(#) : $Id: nlibrary.c,v 1.2 2000-10-21 15:02:02 jon Exp $";
+static const char rcsid[] = "@(#) : $Id: nlibrary.c,v 1.3 2002-03-10 18:30:37 jon Exp $";
 
 #define TEST 0                          /* 1 to enabled standalone test */
 #define dprintf(x) /* printf x */
@@ -59,9 +62,23 @@ static LibPath *nrLibPathHead = NULL;   /* Library path head pointer */
 static LibPath *nrLibPathTail = NULL;   /* Library path tail pointer */
 static char *nrLibModName = NULL;       /* Library module name */
 static char *nrHome = NULL;             /* Home page */
+static int nrLibCurrentNameFormat = 0;  /* Name format */
 
 LibModule *nrLibModule = NULL;
 LibModule *undefModule = NULL;
+
+/*
+ * Library name mode
+ */
+int
+nrLibNameFormat (int newmode)
+{
+    int oldFormat = nrLibCurrentNameFormat;
+    
+    if (newmode >= 0)
+        nrLibCurrentNameFormat = newmode;
+    return oldFormat;
+}
 
 /*
  * Library name searching utilies.
@@ -593,6 +610,72 @@ libFindAddReference (char *module, char *name, char *file,
                                  rmodule, rfile, handle, ref));
 }
 
+static char *
+nrXlateRefStr (char *dest, char *src)
+{
+    char *p = dest;
+    char c;
+    
+    for (/* NULL */; (c = *src) != '\0'; src++)
+    {
+        if (isupper (c))
+            *p++ = tolower (c);
+        else if (islower (c))
+            *p++ = c;
+        else if ((nrLibCurrentNameFormat == 0) && (isdigit (c)))
+            *p++ = c;
+        else if (nrLibCurrentNameFormat != 0)
+        {
+            switch (c)
+            {
+            case '0': *p++='Z'; *p++='E'; *p++='R'; *p++='O'; break;
+            case '1': *p++='O'; *p++='N'; *p++='E'; break; 
+            case '2': *p++='T'; *p++='W'; *p++='O'; break;
+            case '3': *p++='T'; *p++='H'; *p++='R'; *p++='E'; *p++='E'; break;
+            case '4': *p++='F'; *p++='O'; *p++='U'; *p++='R'; break;
+            case '5': *p++='F'; *p++='I'; *p++='V'; *p++='E'; break;
+            case '6': *p++='S'; *p++='I'; *p++='X'; break; 
+            case '7': *p++='S'; *p++='E'; *p++='V'; *p++='E'; *p++='N'; break;
+            case '8': *p++='E'; *p++='I'; *p++='G'; *p++='H'; *p++='T'; break;
+            case '9': *p++='N'; *p++='I'; *p++='N'; *p++='E'; *p++='T'; break;
+            case '_': *p++='U'; *p++='S'; break; 
+            case '#': *p++='H'; *p++='A'; *p++='A'; *p++='S'; *p++='H'; break;
+            case '&': *p++='A'; *p++='N'; *p++='D'; break; 
+            case '>': *p++='G'; *p++='T'; break; 
+            case '<': *p++='L'; *p++='H'; break;
+            case ':': *p++='C'; *p++='O'; *p++='L'; *p++='O'; *p++='N'; break;
+            case '.': *p++='D'; *p++='O'; *p++='T'; break;
+            case ',': *p++='C'; *p++='O'; *p++='M'; *p++='M'; *p++='A'; break;
+            case ';': *p++='S'; *p++='E'; *p++='M'; *p++='I'; break; 
+            case '-': *p++='M'; *p++='I'; *p++='N'; *p++='U'; *p++='S'; break;
+            case '+': *p++='P'; *p++='L'; *p++='U'; *p++='S'; break;
+            case '@': *p++='A'; *p++='T'; break;
+            case '\'':*p++='R'; *p++='Q'; *p++='U'; break; 
+            case '`': *p++='L'; *p++='Q'; *p++='U'; break; 
+            case '"': *p++='D'; *p++='Q'; *p++='U'; break;
+            case '~': *p++='T'; *p++='I'; *p++='L'; *p++='D'; *p++='E'; break;
+            case '(': *p++='L'; *p++='R'; *p++='B'; break; 
+            case ')': *p++='R'; *p++='R'; *p++='B'; break;
+            case '{': *p++='L'; *p++='C'; *p++='B'; break;
+            case '}': *p++='R'; *p++='C'; *p++='B'; break;
+            case '[': *p++='L'; *p++='S'; *p++='B'; break;
+            case ']': *p++='R'; *p++='S'; *p++='B'; break;
+            case '?': *p++='Q'; *p++='U'; break; 
+            case '|': *p++='V'; *p++='B'; break;
+            case '=': *p++='E'; *p++='Q'; break;
+            case '*': *p++='S'; *p++='T'; break;
+            case '\\':*p++='B'; *p++='S'; break;
+            case '/': *p++='F'; *p++='S'; break;
+            case '!': *p++='E'; *p++='X'; break;
+            case '%': *p++='P'; *p++='E'; break; 
+            case '^': *p++='C'; *p++='A'; break;
+            }
+        }
+    }
+    return p;
+}    
+
+
 char *
 nrMakeXref (char *name, char *section)
 {
@@ -601,27 +684,11 @@ nrMakeXref (char *name, char *section)
     char *p;
     char c;
 
-    p = buffer;
+    p=buffer;
     if ((s = name) != NULL)
-    {
-        for (/* NULL */; (c = *s) != '\0'; s++)
-        {
-            if (isupper (c))
-                *p++ = tolower (c);
-            else if (isdigit (c) || islower (c))
-                *p++ = c;
-        }
-    }
+        p = nrXlateRefStr (buffer, name);
     if ((s = section) != NULL)
-    {
-        for (/* NULL */; (c = *s) != '\0'; s++)
-        {
-            if (isupper (c))
-                *p++ = tolower (c);
-            else if (isdigit (c) || islower (c))
-                *p++ = c;
-        }
-    }
+        p = nrXlateRefStr (p, section);
 
     /*
      * Terminate the buffer or return NULL
