@@ -14,7 +14,7 @@ define-macro fhook-java
 
 ; buffer-init variables
 set-variable .fhook-java.setup &reg "/history/fhook/java" "bdfghnopx"
-set-variable .fhook-java.setup-mask "abdefghikmnoptux9"
+set-variable .fhook-java.setup-mask "abdefghikmnoptuxr"
 set-variable .fhook-java.tags "javatags"
 set-variable .fhook-java.comment "|/*| */|*| * | * |fr|"
 
@@ -28,7 +28,7 @@ set-variable .fhook-java.collapse-close  "^}"
 set-variable .fhook-java.collapse-mclose "1"
 set-variable .fhook-java.collapse-mnext  "-1"
 ; Set up menu items for Java mode.
-set-variable .fhook-java.setup-flags   "|9|"
+set-variable .fhook-java.setup-flags   "|r|"
 set-variable .fhook-java.setup-labels  "|Brace highlighting|"
 ; setup item-list
 set-variable .fhook-java.item-list-s1 "^[ \t]*\\([a-zA-Z0-9_ \t]*[ \t]\\)?\\([a-zA-Z0-9_]+\\)[ \t]*([a-zA-Z0-9_,\t]*)[ \t]*{"
@@ -129,7 +129,7 @@ set-variable .fhook-java.item-list-r2 "Clss \ecB\\2\ecA"
     hilight .hilight.java 1 "virtual"      .scheme.type
 
     ; Hilight curly braces
-    !if &sin "9" .fhook-java.setup
+    !if &sin "r" .fhook-java.setup
         hilight .hilight.java 1 "{"        .scheme.keyword
         hilight .hilight.java 1 "}"        .scheme.keyword
     !endif

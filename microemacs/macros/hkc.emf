@@ -21,8 +21,8 @@ define-macro fhook-c
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-c.setup &reg "/history/fhook/c" "bdfghnopx875"
-set-variable .fhook-c.setup-mask "abdefghikmnoptux98765"
+set-variable .fhook-c.setup &reg "/history/fhook/c" "bdfghnopxlqv"
+set-variable .fhook-c.setup-mask "abdefghikmnoptuxclqrv"
 set-variable .fhook-c.tags "ctags"
 
 ; Comments
@@ -84,7 +84,7 @@ set-variable .fhook-c.collapse-mclose "1"
 set-variable .fhook-c.collapse-mnext "-1"
 
 ; Set up menu items for C mode.
-set-variable .fhook-c.setup-flags   "|9|8|7|6|5|"
+set-variable .fhook-c.setup-flags   "|c|l|q|r|v|"
 set-variable .fhook-c.setup-labels  "|JASSPA type highlighting|Doxygen highlighting|<stdint.h> hilighting|Brace highlighting|Bad C highlighting|"
 
 ; setup item-list
@@ -189,7 +189,7 @@ set-variable .fhook-c.item-list-r6 "Clss \ecB\\1\ecA"
     ; flag for 'C', see .fhook-c.setup-flags and .fhook-c.setup-labels above.
     ; The hilighting is enabled through the buffer setup flags, set via "M-x
     ; buffer-setup" or Help->BufferSetup
-    !if &sin "9" .fhook-c.setup
+    !if &sin "c" .fhook-c.setup
         hilight   .hilight.c 1 "AMARK"          .scheme.type
         hilight   .hilight.c 1 "BUFFER"         .scheme.type
         hilight   .hilight.c 1 "CELL"           .scheme.type
@@ -236,7 +236,7 @@ set-variable .fhook-c.item-list-r6 "Clss \ecB\\1\ecA"
     !endif
 
     ; Doxygen highlighting extensions. Highlights keywords in Doxygen
-    !if &sin "8" .fhook-c.setup
+    !if &sin "l" .fhook-c.setup
         ; Create a new doxygen hilighting scheme
         !if &not &exi .hilight.cdoxygen
             set-variable .hilight.cdoxygen &pinc .hilight.next 1
@@ -261,7 +261,7 @@ set-variable .fhook-c.item-list-r6 "Clss \ecB\\1\ecA"
 
     ; Extend the hilighting for the IEEE Std 1003.1 <stdint.h>
     ; See http://www.opengroup.org/onlinepubs/007904975/basedefs/stdint.h.html
-    !if &sin "7" .fhook-c.setup
+    !if &sin "q" .fhook-c.setup
         hilight .hilight.c    1 "uint8_t"          .scheme.type
         hilight .hilight.c    1 "int8_t"           .scheme.type
         hilight .hilight.c    1 "uint16_t"         .scheme.type
@@ -366,14 +366,14 @@ set-variable .fhook-c.item-list-r6 "Clss \ecB\\1\ecA"
 
     ; Hilight curly braces used when it is difficult to differentiate between a
     ; round bracket and curly brace.
-    !if &sin "6" .fhook-c.setup
+    !if &sin "r" .fhook-c.setup
         ; In keyword colour
         hilight .hilight.c 1 "{"                             .scheme.keyword
         hilight .hilight.c 1 "}"                             .scheme.keyword
     !endif
 
     ; Pick up bogus 'C' constructs extension
-    !if &sin "5" .fhook-c.setup
+    !if &sin "v" .fhook-c.setup
         ; Detect a for loop with no body - put semi-colon on next line, i.e.
         ; for (i = 1; i < 10; i++);
         ; { ... }
