@@ -10,7 +10,7 @@
  *
  *	Author:			Danial Lawrence.
  *
- *	Creation Date:		07/05/91 08:19		<000309.1846>
+ *	Creation Date:		07/05/91 08:19		<000719.1747>
  *
  *	Modification date:	%G% : %U%
  *
@@ -1941,7 +1941,8 @@ prevCToken(uint8 *token, int size)
 {
     register int offset ;
     
-    if((offset = curwp->w_doto - size + 1) < 0)
+    if(((offset = curwp->w_doto - size + 1) < 0) ||
+       ((offset > 0) && !isSpace(curwp->w_dotp->l_text[offset-1])))
         return 0 ;
     return !meStrncmp(curwp->w_dotp->l_text+offset,token,size) ;
 }
