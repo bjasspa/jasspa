@@ -2,7 +2,7 @@
  * 
  *	SCCS:		%W%		%G%		%U%
  *
- *	Last Modified :	<011010.0906>
+ *	Last Modified :	<011029.1149>
  *
  *	ESTRUCT:	Structure and preprocesser defined for
  *			MicroEMACS 3.7
@@ -494,6 +494,7 @@ typedef	struct	mePOS {
     struct BUFFER  *buffer ;            /* windows buffer                            */
     int32           topLineNo ;         /* windows top line number                   */
     int32           line_no ;           /* current line number                       */
+    int32           mlineno;            /* current mark line number                  */
     uint16          winMinRow ;         /* Which window - store the co-ordinate      */
     uint16          winMinCol ;         /* so we can restore to the best matching    */
     uint16          winMaxRow ;         /* window on a goto - this greatly improves  */
@@ -502,17 +503,21 @@ typedef	struct	mePOS {
     uint16          w_scscroll ;        /* cur horizontal scroll column              */
     uint16          w_sscroll ;         /* the horizontal scroll column              */
     uint16          w_doto ;            /* Byte offset for "."                       */
+    uint16          w_marko ;           /* Byte offset for "mark"       */
     uint16          flags ;             /* Whats stored bit mask                     */
     uint16          name ;		/* position name, (letter associated with it)*/
 } mePOS;
-#define mePOS_WINDOW    0x01
-#define mePOS_WINXSCRL  0x02
-#define mePOS_WINXCSCRL 0x04
-#define mePOS_WINYSCRL  0x08
-#define mePOS_BUFFER    0x10
-#define mePOS_LINEMRK   0x20
-#define mePOS_LINENO    0x40
-#define mePOS_LINEOFF   0x80
+#define mePOS_WINDOW    0x001
+#define mePOS_WINXSCRL  0x002
+#define mePOS_WINXCSCRL 0x004
+#define mePOS_WINYSCRL  0x008
+#define mePOS_BUFFER    0x010
+#define mePOS_LINEMRK   0x020
+#define mePOS_LINENO    0x040
+#define mePOS_LINEOFF   0x080
+#define mePOS_MLINEMRK  0x100
+#define mePOS_MLINENO   0x200
+#define mePOS_MLINEOFF  0x400
 #define mePOS_DEFAULT   \
 (mePOS_WINDOW|mePOS_WINXSCRL|mePOS_WINXCSCRL|mePOS_WINYSCRL| \
  mePOS_BUFFER|mePOS_LINEMRK|mePOS_LINEOFF)
@@ -708,6 +713,7 @@ typedef	struct	KLIST {
 /* hilight init flags */
 #define HFCASE     0x01
 #define HFLOOKB    0x02
+#define HFTOKEWS   0x04   /* treat a token end as a white space */
 
 /* hilight init internal flags */
 #define HFRPLCDIFF 0x8000
@@ -735,9 +741,6 @@ typedef	struct	KLIST {
 
 /* indent init flags */
 #define HICASE     0x01
-#define HINEWLINE  0x02
-#define HITABFST   0x04
-#define HITABANY   0x08
 
 typedef struct HILNODE {
     struct HILNODE **list ;

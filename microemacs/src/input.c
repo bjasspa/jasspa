@@ -1,7 +1,7 @@
 /*
  *	SCCS:		%W%		%G%		%U%
  *
- *	Last Modified :	<010823.1255>
+ *	Last Modified :	<011025.2328>
  *
  *	INPUT:	Various input routines for MicroEMACS 3.7
  *		written by Daniel Lawrence
@@ -122,14 +122,14 @@ mlCharReply(uint8 *prompt, int mask, uint8 *validList, uint8 *helpStr)
         }
         else
         {
-            if(mask & mlCR_LOWER_CASE)
+            if((mask & mlCR_LOWER_CASE) && ((cc & 0xff00) == 0))
                 cc = toLower(cc) ;
             
             if((cc == '?') && (helpStr != NULL))
                 pp = helpStr ;
             else if((cc != '\0') &&
                     (!(mask & mlCR_ALPHANUM_CHAR) || isAlphaNum(cc)) &&
-                    ((validList == NULL) || (meStrchr(validList,cc) != NULL)))
+                    ((validList == NULL) || (((cc & 0xff00) == 0) && (meStrchr(validList,cc) != NULL))))
             {
                 if (inpType == 2)
                 {
@@ -1044,7 +1044,17 @@ meGetStringFromUser(uint8 *prompt, int option, int defnum, uint8 *buf, int nbuf)
         int idx ;
         int ff ;
         
-        mlgsDisp(prom, buf, contstr, ipos) ;
+        if(option & MLHIDEVAL)
+        {
+            uint8 hbuf[MAXBUF] ;
+            ff = strlen(buf) ;
+            meAssert(ff < MAXBUF) ;
+            memset(hbuf,'*',ff) ;
+            hbuf[ff] = '\0' ;
+            mlgsDisp(prom,hbuf,contstr,ipos) ;
+        }
+        else
+            mlgsDisp(prom,buf,contstr,ipos) ;
         contstr = NULL ;
 
         /*

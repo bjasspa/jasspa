@@ -10,7 +10,7 @@
 *
 *	Author:			Dana Hoggatt and Daniel Lawrence
 *
-*	Creation Date:		14/05/86 12:37		<010305.0749>
+*	Creation Date:		14/05/86 12:37		<011025.2304>
 *
 *	Modification date:	%G% : %U%
 *
@@ -69,7 +69,7 @@ setBufferCryptKey(BUFFER *bp, uint8 *key)
     if(key == NULL)
     {
 	/* get the string to use as an encrytion string */
-        if(meGetString((uint8 *)"Encryption String", MLNOHIST, 0,keybuf, NPAT-1) != TRUE)
+        if(meGetString((uint8 *)"Encryption String",MLNOHIST|MLHIDEVAL,0,keybuf,NPAT-1) != TRUE)
             return FALSE ;
         key = keybuf ;
         mlerase(MWCLEXEC);		/* clear it off the bottom line */

@@ -1,5 +1,5 @@
 /*
- * Last Modified : <010305.0757>
+ * Last Modified : <011025.2328>
  * 
  * The functions in this file implement commands that perform incremental
  * searches in the forward and backward directions.  This "ISearch" command
@@ -180,7 +180,7 @@ scanmore(uint8 *patrn, int flags, int histNo, int16 *histLen, SCANNERPOS *histPo
 
 #define mlisDisp(pat,status)                                                 \
 do {                                                                         \
-    mlDisp(isHeadStr,pat,statusStr[(status & 0x3)],-1) ;                     \
+    mlDisp(isHeadStr,pat,statusStr[(status & 0x3)],-1) ;                   \
     mlStatus=MLSTATUS_KEEP ;                                                 \
     if(status & 0x80)                                                        \
     {                                                                        \

@@ -12,7 +12,7 @@
  *
  *	Creation Date:		07/05/85 08:19		
  *
- *	Modification date:	<010813.0926>
+ *	Modification date:	<011031.1645>
  *
  *	Current rev:		10.1
  *
@@ -1179,7 +1179,6 @@ replaces(int kind, int ff, int nn)
     int32        lastlno;       /* line no (for 'u' query option) */
     int	onemore =FALSE;		/* only do one more replace */
     int	ilength = 0;		/* Last insert length */
-    int	numline;		/* Number of lines to search over */
     int	state_mc;		/* State machine */
     
     int 	cc;		/* input char for query */

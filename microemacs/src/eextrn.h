@@ -1,7 +1,7 @@
 /****************************************************************************
  * External function definitions
  *
- * Last Modified:       <010902.1152>
+ * Last Modified:       <011025.2328>
  * 
  ****************************************************************************
  * 
@@ -386,6 +386,7 @@ extern  int     createVarList  APRAM((uint8 ***listPtr)) ;
 #define	MLMACNORT    0x04000		/* dont reset the buffer even if mac */
 #define MLINSENSCASE 0x08000            /* ignore letter case in completion  */
 #define MLFFZERO     0x10000            /* en/disable \x00 -> \xff encode    */
+#define MLHIDEVAL    0x20000            /* Hide the value using '*'s         */
 
 /* setup a #define with the correct flags for getting a filename, this must
  * consider where the platform file system only has one case and where it

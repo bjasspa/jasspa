@@ -10,7 +10,7 @@
  *
  *  Author:         Danial Lawrence
  *
- *  Creation Date:      14/05/86 12:37      <010820.2221>
+ *  Creation Date:      14/05/86 12:37      <011026.2209>
  *
  *  Modification date:  %G% : %U%
  *
@@ -1651,7 +1651,7 @@ getval(uint8 *tkn)   /* find the value of a token */
                 
                 if((flag=tkn[3]) != '\0')
                 {
-                    flag -= '0' ;
+                    flag = hexToNum(flag) ;
                     if(((cc=tkn[4]) > '0') && (cc<='9'))
                         cc -= '0' ;
                     else if(cc == 'a')
@@ -1726,6 +1726,8 @@ getval(uint8 *tkn)   /* find the value of a token */
                     /* set the first key to 'tab' to expand the input according 
                      * to the completion list */
                     mlfirst = ME_SPECIAL|SKEY_tab ;
+                if(flag & 0x08)
+                    option |= MLHIDEVAL ;
                 
                 if(flag & 0x100)
                 {
@@ -1790,8 +1792,11 @@ getval(uint8 *tkn)   /* find the value of a token */
                 {
                     if(!(option & MLNORESET))
                         getFilePath(curbp->b_fname,buff) ;
+                    option &= MLHIDEVAL ;
+                    option |= MLFILECASE|MLNORESET|MLMACNORT ;
+
                     clexec = FALSE ;
-                    if((cc = meGetString(prompt,(MLFILECASE|MLNORESET|MLMACNORT),0,buff,MAXBUF)) == TRUE)
+                    if((cc = meGetString(prompt,option,0,buff,MAXBUF)) == TRUE)
                         fileNameCorrect(buff,evalResult,NULL) ;
                     clexec = TRUE ;
                 }
@@ -1850,7 +1855,7 @@ getval(uint8 *tkn)   /* find the value of a token */
                     ss = NULL ;
                 
                 clexec = FALSE ;
-                ret = mlCharReply(prompt,0,ss,NULL) ;
+                ret = mlCharReply(prompt,mlCR_QUOTE_CHAR,ss,NULL) ;
                 clexec = TRUE ;
                 if(ret < 0)
                     return abortm ;
@@ -1886,9 +1891,12 @@ getval(uint8 *tkn)   /* find the value of a token */
             /* Off the screen ?? */
             if((row < 0) || (row > TTnrow) ||
                (col < 0) || (col >= TTncol))
-                return abortm ;
-            evalResult[0] = frameStore[row].text[col] ;
-            evalResult[1] = 0 ;
+                evalResult[0] = 0 ;
+            else
+            {
+                evalResult[0] = frameStore[row].text[col] ;
+                evalResult[1] = 0 ;
+            }
         }
         else
         {
