@@ -4,8 +4,77 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <050306.0315>
+>  Last Modified : <050320.1651>
 >
+
+    [050320] Newuser  registry  file -  added  default  entry  for  Apple  Mac
+             "darwin". Confirmed operation under Mac X-Windows.
+
+    [050320] Extended ME exit  commands to support the  discarding of modified
+             buffers '0x8 discard modified buffers' and '0x10 discard modified
+             buffers and create recovery file for changes'.
+
+    [050320] Corrected  XML syntax for strings "..." to fix indent and hilight
+             anomalies. 
+    
+    [050319] Added -R  command  line  option  to  reverse  the  built in video
+             schemes - specifically for ne(1) also works with me(1).
+
+    [050319] Corrected  default mode settings.  Recent  removal of letter(2m),
+             line(2m) etc. changed the mode byte assignment of some modes. The
+             built in global  mode  default was not updated for this change in
+             bytes  and  incorrect   global  modes  appeared  as  a  result  -
+             specifically quiet(2m) which has jumped bytes.
+
+    [050315] LEX/YACC template - Corrected LEX and YACC highlighting.  Aligned
+             C, C++ and YACC/LEX templates to be consistent.
+
+    [050315] C/C++  templates - buffer  setup  modified  for GNU Indent  Style
+             setting.
+
+    [050315] Added new browse(3)  command and binding to f3, changed  existing
+             collapse-all f3 binding to C-f2.
+    
+    [050315] Modified  ME exit  commands to support a bitwise arg n where main
+             exit-emacs  has '0x01  Prompt',  '0x02  Save each  buffer/reg/dic
+             (with  prompt if 0x01  set)' and '0x04  Prompt  for exit code and
+             exit ME with that code.'
+
+    [050313] Latex  template -  Corrected  the  latex-fill-paragraph.  Set the
+             fill-mode  to 'l'  rather  than 'L'  because  its a pain  when it
+             selects centre rather than left and messes things up.
+
+    [050311] Directory  list - changed  column  sorting so  Modified is sorted
+             most recent first.
+
+    [050311] Fixed perldb pipe operation.
+
+    [050310] OSD  simplified the main context menu and moved paste a cvs items
+             in the directory context menu 
+
+    [050310] Fixed diff's file name input, was not completing correctly
+
+    [050310] CVS changed the default setting of the recursive add to off.
+
+    [050310] JASSPA MicroEmacs quick start document released. 
+
+    [050309] Fixed bug in regex  multi-line  search  backwards,  searching for
+             "foo[^a]" is a mult-line as [^a] matches \\n, if "foob" exists at
+             the start of the line isearch-backward refuses to move on.
+
+    [050309] Catman pages added for ne(1) and me(1)  complaints with gentoo as
+             missing. Added to the package builds.
+
+    [050308] Fixed a nasty  bug with ftp  connect  dialog  when the host has a
+             port. Changed the default path to be nothing which becomes /~/ to
+             list the login directory. Change the tab order to not include the
+             password  as tabbing  through  the entry will lose the  password,
+             must now access via mouse or hot key which is not ideal.
+
+    [050308] Added  support for relative ftp browsing via new  ftp://???/~/???
+             url form. Added file name completion support for ftp
+
+    [050306] Corrected the docmacro http:// ling regular expression.        
 
     [050306] Changed the date format of the -V command  line option to include
              the century, same format as the about(2) buffer.
