@@ -191,6 +191,7 @@ getPrinterInfo (int index)
     DWORD dwNeeded;                     /* Bytes needed for devices */
     DWORD dwReturned;                   /* Bytes returned for devices */
     int best=-1 ;
+    int any=-1;                         /* Any printer */
 
     /* Figure out how much memory is needed and allocate it. */
     EnumPrinters (PRINTER_ENUM_LOCAL|PRINTER_ENUM_FAVORITE,
@@ -220,6 +221,29 @@ getPrinterInfo (int index)
                 if (pi2[ii].Attributes & PRINTER_ATTRIBUTE_HIDDEN)
                     continue;
 
+                /* Find the named printer from our parameters this is always the best. */
+                if ((index == -1) &&
+                    (/*((printer.param [mePI_WINDRIVER].p != NULL) &&
+                      (pi2[ii].pDriverName != NULL) &&
+                      (strcmp (printer.param [mePI_WINDRIVER].p, pi2[ii].pDriverName) == 0)) &&*/
+                     ((printer.param [mePI_WINDEVICE].p != NULL) &&
+                      (pi2[ii].pPrinterName != NULL) &&
+                      (strcmp (printer.param [mePI_WINDEVICE].p, pi2[ii].pPrinterName) == 0)) &&
+                     ((printer.param [mePI_WINPORT].p != NULL) &&
+                      (pi2[ii].pPortName != NULL) &&
+                      (strcmp (printer.param [mePI_WINPORT].p, pi2[ii].pPortName) == 0))))
+                {
+                    /* Set this to our index. */
+                    index = ii;
+                }
+
+                if ((pi2[ii].Attributes & PRINTER_ATTRIBUTE_DEFAULT) && (best < 0))
+                {
+                    best = ii;
+                    continue;
+                }
+
+                /* See if this is the printer we want. */
                 if (((index == -1) && (pi2[ii].Attributes & PRINTER_ATTRIBUTE_DEFAULT)) ||
                     (index == ii))
                 {
@@ -259,15 +283,19 @@ getPrinterInfo (int index)
                     GlobalUnlock (hDevNames);
                     break;              /* Quit - we have found it */
                 }
-                else if((best < 0) && (ii != index))
-                    best = ii ;
+                else if((any < 0) && (ii != index))
+                    any = ii ;
             }
         }
         /* Free off the memory */
         LocalFree (LocalHandle (pi2));
     }
-    if((hDevNames == NULL) && (best >= 0))
+    if((hDevNames == NULL) && ((best >= 0) || (any >= 0)))
+    {
+        if (best < 0)
+            best = any;
         hDevNames = getPrinterInfo (best) ;
+    }
     return hDevNames;
 }
 
@@ -405,7 +433,6 @@ AbortProc(HDC hdc, int nCode)
      */
      return /*(printStatus & PRINT_SPOOLING) ? meTRUE : meFALSE;*/ bPrint;
 }
-
 
 LRESULT CALLBACK
 AbortPrintJob (HWND hwndDlg,     /* window handle of dialog box     */
@@ -606,7 +633,6 @@ done:
     pd->upapery = (pd->upagey * printer.param[mePI_ROWS].l) + xtraDepth;
     return meTRUE;
 }
-
 
 /*
  * pcdEnumFontFamiliesCallback
@@ -1036,7 +1062,7 @@ WinPrintSetColor(HDC hDC, int colNo, int setBgCol)
     static COLORREF *pColorTbl=NULL;
     static HPALETTE pPal=NULL;                 /* Windows palette table */
     static int pPalSize=0;                     /* Size of the palette */
-    
+
     if(colNo < 0)
     {
         /* free the pColorTbl */
@@ -1061,14 +1087,14 @@ WinPrintSetColor(HDC hDC, int colNo, int setBgCol)
         while(--ii >= 0)
            pColorTbl[ii] = CLR_INVALID ;
     }
-    
+
     if(pColorTbl[colNo] == CLR_INVALID)
     {
         COLORREF cReq;                      /* Color requested */
         COLORREF cAsg;                      /* Color assigned */
         meUInt   cc ;
         BYTE rr, gg, bb ;
-        
+
         cc = printer.color[colNo] ;
         rr = (BYTE) mePrintColorGetRed(cc) ;
         gg = (BYTE) mePrintColorGetGreen(cc) ;
@@ -1104,12 +1130,12 @@ WinPrintSetColor(HDC hDC, int colNo, int setBgCol)
                     /* Fail if the colour map is full */
                     if (pPalSize == maxPaletteSize)
                         return ;
-                    
+
                     /* A  a new entry to the palette */
                     closeIndex = pPalSize;
                     pPalSize++;
                     ResizePalette(pPal,pPalSize);
-                    
+
                     closeEntry.peRed = rr;
                     closeEntry.peGreen = gg;
                     closeEntry.peBlue = bb;
@@ -1131,7 +1157,6 @@ WinPrintSetColor(HDC hDC, int colNo, int setBgCol)
                 lPal->palPalEntry [0]. peGreen = gg;
                 lPal->palPalEntry [0]. peBlue = bb;
                 lPal->palPalEntry [0]. peFlags = 0;
-
 
                 /* Create the palette */
                 pPal = CreatePalette (lPal);
@@ -1171,7 +1196,7 @@ static void
 WinPrintThread (LPVOID wParam)
 {
     static const char title[] = ME_FULLNAME " " meVERSION " Print Spooler";
-    
+
     HWND curHwnd ;
     DOCINFO di;                         /* Document information. */
     RECT paperArea;                     /* Paper area */
@@ -1179,7 +1204,7 @@ WinPrintThread (LPVOID wParam)
     char nambuf [meBUF_SIZE_MAX];               /* Name buffer */
     char *docName;
     meLine *ihead;
-    
+
 #ifdef _ME_CONSOLE
 #ifdef _ME_WINDOW
     if (meSystemCfg & meSYSTEM_CONSOLE)
@@ -1192,7 +1217,7 @@ WinPrintThread (LPVOID wParam)
 #ifdef _ME_WINDOW
         curHwnd = meFrameGetWinHandle(frameCur) ;
 #endif /* _ME_WINDOW */
-    
+
     /* Pick up the arguments */
     docName = ((char **)(wParam))[0];
     ihead = (meLine *)(((char **)(wParam)) [1]);
@@ -1294,7 +1319,7 @@ do { \
             }
             if(ihead == NULL)
                 break ;
-            
+
             /* Get the next character */
             cc = ihead->text [charIdx++];
 
@@ -1302,10 +1327,10 @@ do { \
             if ((cc == 0x1b) && (charIdx < ihead->length))
             {
                 FlushBuffer();
-                
+
                 /* Get the command character */
                 cc = ihead->text [charIdx++];
-                
+
                 /* Change Font or color */
                 if((cc == 'c') || (cc == 'f'))
                 {
@@ -1405,7 +1430,7 @@ do { \
                 /* Handle the below 32 characters */
 		if((meSystemCfg & meSYSTEM_FONTFIX) && ((cc & 0xe0) == 0))
 		    cc = ttSpeChars [cc];
-                
+
                 /* SWP - removed OEM -> ANSI font printing fix */
                 buffer [bindex++] = cc;
             }
@@ -1497,11 +1522,11 @@ printSetup (int n)
         regPrint = regSet (NULL, regPrintName, NULL);
     if (regPrint == NULL)
         return mlwrite (MWABORT, "[Cannot locate print registry]");
-    
+
     /* Make sure we are not already running a print spool. */
     if ((printStatus & PRINT_SPOOLING) && (n >= 0))
         return mlwrite (MWABORT, "Print spooler currently processing a job in the background");
-    
+
     if ((n == -2) || (n == 0))
     {
         /* Set up the dialogue box and return the status.
@@ -1523,7 +1548,7 @@ printSetup (int n)
 #ifdef _ME_WINDOW
             curHwnd = meFrameGetWinHandle(frameCur) ;
 #endif /* _ME_WINDOW */
-        
+
         if (DialogBox (ttInstance,
                        MAKEINTRESOURCE (IDD_PRINTER_CONFIGURATION),
                        curHwnd,
@@ -1535,7 +1560,7 @@ printSetup (int n)
         /* Dialog box not required, simply setup the printer */
         /* Copy the new font into the registry immediatly */
         printer.param [mePI_FONTFACE].p = "Courier New" ;
-        
+
         /* Compute the size of the font */
         pcdComputeFont (&pd,
                         printer.param [mePI_PAGEX].l, printer.param[mePI_SPECX].l,
