@@ -1,0 +1,213 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"  			Copyright 2001 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"  Created By    : Steven Phillips
+.\"  Created       : Sat Jul 28 10:59:37 2001
+.\"  Last Modified : <160495.1521>
+.\"
+.\"  Description	
+.\"
+.\"  Notes
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 2001 JASSPA.
+.\" 
+.\"  All Rights Reserved.
+.\" 
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied, 
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m3osd012.3,v 2.1 2001-08-16 18:16:52 jon Exp $
+.Im MicroEmacs command|osd|print
+.so me.tni
+.TH print-setup 3
+.XI print-setup - "Configure \(*mS's printer interface"
+.SH NAME
+print-setup \- Configure \*(mS's printer interface
+.Me $a
+.SH SYNOPSIS
+.na
+.B print-setup
+.ad
+.SH DESCRIPTION
+\fBprint-setup\fR provides a dialog interface for configuring \*(mS's printing
+interface.  \fBprint-setup\fR  may be invoked from the main \fIFile\fR menu or
+directly from the command line using
+.Ht execute-named-command 2 .
+.PP
+The \fBprint-setup\fR  dialog is broken down into three pages of configuration
+options, on all pages the  following  buttons are  available at the bottom of
+the dialog:-
+.IP "\fCPrint\fR"
+Prints the current buffer using the current configuration.
+.IP "\fCExit\fR"
+Quits \fBprint-setup\fR, changes made to the configuration will be saved.
+.PP
+The following pages appear in the dialog:-
+.SS Printer
+The  \fBPrinter\fR  page is used to configure  the type, style and location of
+the printer, the items on this page are defined as follows:-
+.IP "\fCDriver\fR"
+Sets the printer type to be used, selecting this item creates a drop down list
+of  available  printer  drivers.  The drivers  inform  \*(mS which fonts and
+colors are available and how to enable/disable them, these are usually special
+character sequences. The following special drivers are defined:-
+.RS
+.IP "Default Plain Text"
+This  driver  does not use any special  character  sequences  so the output it
+produces  is plain  text. This  should  work with most  printers,  but it does
+not support any colors or fonts. 
+.IP "HTML"
+This is a virtual printer driver as no printer uses HTML directly. However the
+files produced by this driver can be loaded by a web-browser and rendered with
+full color and font  support so provides an efficient  way of testing  printer
+schemes. In addition  may be used to convert the text  rendered in  MicroEmacs
+into HTML content.
+.IP "Windows"
+This utilizes \*(mS's built-in Windows printer  interface  (Windows  platforms
+only). When selected \*(mS communicates directly to the MS Printer Manager.
+.RE
+.IP "\fCPrint Scheme\fR"
+Sets the color and font scheme to be used,  selecting this item creates a drop
+down  list of  available  printer  schemes - choose  one  appropriated  for your
+printer.  The  Default  Plain Text  scheme  does not use any color or fonts so
+should  work  for all  drivers.  see the next  item for  scheme  creation  and
+editing.
+.IP "\fCEdit\fR"
+Opens the
+.Ht scheme-editor 3
+dialog box to edit the currently  selected printer scheme, the editor may also
+be used to create and install new printer schemes.
+.IP "\fCDestination\fR"
+Specifies  the resultant  print output, when selected a drop down menu appears
+containing the following items:
+.RS
+.IP "To buffer only"
+Creates a "\fC*printer*\fR" buffer and prints to the buffer.
+.IP "To file only"
+Creates a new temporary file and prints to it.
+.IP "To file & print"
+Prints to a temporary file and then executes the command-line  (see next item)
+to print the  resultant  file  (option not  available  when using the  Windows
+printer driver).
+.IP "Direct to printer"
+Output is sent directly to the printer,  option only  available when using the
+Windows driver.
+.RE
+.IP "\fCCommand-line\fR"
+Sets the  command-line  required to print a generated  print file  (option not
+available  when the Windows  driver is selected as printing is done by talking
+to MS Print  Manager  directly).  The  command-line  should be a single  shell
+command  using  "\fC%f\fR"  whenever  the  name of the file to be  printed  is
+required, e.g. on UNIX systems
+.Hr lp 1
+or
+.Hr lpr 1
+can usually be used as follows:-
+.RS
+.CS
+lp -s %f
+.CE
+On MS-DOS  machines  this can  usually be  achieved by copying the file to the
+\fCPRN\fR device, as follows:
+.CS
+copy %f PRN
+.CE 0
+.RE
+.IP "\fCPage Size\fR"
+Displays the currently  configured page size in the form: 
+.RS
+.IP
+\fIColumns\fR\fBx\fR\fIRows\fR \fIChars-Wide\fR\fBx\fR\fIChars-High\fR
+.PP
+the field cannot be edited  directly,  the settings  \fBPage  Setup\fR  affect
+these values.
+.RE
+.SS "Page Setup"
+.IP "\fCPaper Size\fR"
+Sets the size of the  printer  paper,  selecting  this  item  will  produce  a
+pop down menu  listing all  available  paper sizes unless the Windows  printer
+driver is being  used in which  case this  field  cannot be  selected  and the
+\fBEdit\fR button must be used.
+.IP "\fCCharacter Size\fR"
+Sets the size of a character within the page, expressed in terms of the number
+of  characters  which will fit on the paper  (\fIwidth\fR\fBx\fR\fIheight\fR).
+When selected a drop down menu lists all available sizes for the current paper
+size unless the Windows  driver is selected in which case this field cannot be
+selected and the \fBEdit\fR button must be used.
+.IP "\fCEdit\fR (Windows only)"
+Opens a Windows  printer  dialog box  allowing  the user to specify  the  windows
+printer, paper size and character size etc.
+.IP "\fCNo. of Columns\fR and \fCRows\fR"
+Sets the  number of  sub-columns  and rows to divide  the page into,  creating
+pages within a page.
+.IP "\fCLine Numbers\fR"
+When enabled, prints the line number at the left hand edge for each line.
+.IP "\fCSplit Line ID\fR"
+When  enabled  the  last  right  hand  text  column  is  reserved  for a split
+identifier.  Whenever  a line is too long to fit on a single  line it is split
+over two or more lines, if this  option is enabled  the right edge will be set
+to the split  character  (usually a '\fC\\\fR' char) to clearly  indicate that
+the line is split.
+.IP "\fCPage Size\fR"
+As with the  \fBPrinter\fR  \fBPage Size\fR it displays the current page size,
+the field cannot be edited. 
+.SS "Layout"
+.IP "\fCMargins\fR"
+Configures the top, bottom, left and right margins in characters.
+.IP "\fCHeader\fR"
+Sets  whether  a header  should be  printed  and if so what it should  be, the
+following special strings can be used:
+.RS
+.IP "\fC%%\fR"
+Print a '\fC%\fR' character.
+.IP "\fC%b\fR"
+Print the current buffer's name.
+.IP "\fC%D\fR"
+Print the current day of the month.
+.IP "\fC%f\fR"
+Print the current buffer's file name.
+.IP "\fC%h\fR"
+Print the current hour.
+.IP "\fC%M\fR"
+Print the current month of the year.
+.IP "\fC%m\fR"
+Print the current minute of the hour.
+.IP "\fC%p\fR"
+Print the current page number.
+.IP "\fC%s\fR"
+Print the current seconds.
+.IP "\fC%Y\fR"
+Print the current year as a 2 digit number.
+.IP "\fC%y\fR"
+Print the current year as a 4 digit number.
+.RE
+.IP "\fCFooter\fR"
+Sets  whether  a footer  should be  printed  and if so what it should  be, the
+same special strings can be used as for the header.
+.SH NOTES
+\fBuser-setup\fR is a macro using
+.Ht osd 2 ,
+defined in \fCprintstp.emf\fR.
+.PP
+The list of available printer drivers and print schemes is stored in the macro
+file \fCprinters.emf\fR. Using the \fBInstall\fR option of the
+.Ht scheme-editor 3
+automatically  adds the new scheme to the print  schemes list. To create a new
+printer  driver  a  new  configuration  registry  file  (\fCerf\fR  file - see
+\fCprint*.erf\fR for examples) must be created and added to the printer driver
+lists within \fCprinter.emf\fR.
+.SH "SEE ALSO"
+.na
+.Ht print-buffer 2 ,
+.Ht scheme-editor 3 ,
+.Ht osd 2 .
+.ad
+.FH
+

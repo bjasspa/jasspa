@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Tue May 23 08:06:34 2000
-;  Last Modified : <010728.2231>
+;  Last Modified : <010807.1227>
 ;
 ;  Description
 ;
@@ -357,7 +357,7 @@ define-macro print-setup
     !else
         set-variable #l0 $search-path
     !endif
-    set-registry "/" "print-history" &spr "%s/print.erf" #l0
+    set-registry "/" "print-history" &spr "%s/myprint.erf" #l0
     print-setup-set-driver
     print-setup-set-scheme
     print-setup-set-dest

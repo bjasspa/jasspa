@@ -1,0 +1,166 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			     Copyright 2001 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m3mac046.3
+.\"  Created By    : Jon Green
+.\"  Created       : Mon Jul 5 18:16:21 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 2001 JASSPA.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m3mac059.3,v 2.1 2001-08-16 18:16:52 jon Exp $
+.Im MicroEmacs shell|search
+.ds C0 "(\fBF7\fR)\ \&
+.ds C1 "(\fB\*eF7\fR)\ \&
+.so me.tni
+.TH item-list 3
+.XI item-list - "\*(C0Abbreviated search and list buffer contents"
+.XI item-list-find - "Find the selected item in the item list"
+.XI item-list-close - "\*(C1Close the item list"
+.SH NAME
+.Me "|item-list"
+item-list \- Abbreviated search and list buffer contents.
+.br
+.Me "|item-list-find"
+item-list-find \- Find the selected item in the item list
+.br
+.Me "|item-list-close"
+item-list-close - "Close the item list"
+.Me $a
+.SH SYNOPSIS
+.na
+.B item-list
+\*(C0
+.br
+.B item-list-find
+.br
+.B item-list-close
+\*(C1
+.ad
+.SH DESCRIPTION
+\fBitem-list\fR
+performs a regular expression search of a buffer, presenting a list of the
+located text and associated types in a separate window which is presented to
+the left of the buffer window. \fBitem-list\fR is a generic function that
+interacts with the buffer environment variables to present abbreviated buffer
+information to the user.
+.PP
+The  regular   expression  search  strings  are  predefined  in  the  language
+templates.  To add  support  for a new  buffer  type a list of  search/replace
+strings  must be created. The search  strings  must use regex (magic mode) and
+groups  \fC\\(..\\)\fR  to place the  located  object  string into the replace
+string.  Within the  template  buffer  search  strings  (\fBs\fR)  and replace
+(\fBr\fR) are defined with the following syntax:-
+.PP
+.RS
+set-variable .\fIhookname\fR.item-list-s\fIx\fR "\fIregexp\fR"
+.br
+set-variable .\fIhookname\fR.item-list-r\fIx\fR "\fIreplace\fR"
+.RE
+.PP
+Where:-
+.IP \fIhookname\fR 
+The name of the file hook i.e. \fCfhook-c\fR for ANSI 'C'.
+.IP \fIx\fR
+The search  number,  this is valid in the range 1..9,  commencing  from 1. The
+search is processed in the order of the numeric identity.
+.IP \fIregexp\fR
+The regular expression to search for. One of the arguments must include a 
+groups  \fC\\(..\\)\fR  definition  to  allow  the  string  to be moved to the
+replace.
+.IP  \fIreplace\fR
+The replace  string,  this  typically  includes a  \fItype\fR  and part of the
+search string.
+.LP
+On invocation of \fBitem-list\fR the buffer is searched and the results are presented in the
+\fC*item-list*\fR   window   appearing   at   the   left-hand   side   of  the
+window.  If  there  is no item  list  set up for the file  type  then an error
+message is displayed.
+.PP
+The user may interact with the \fC\&*item-list*\fR\& buffer using the mouse or
+\fC<RETURN>\fR,   on   selecting  a  line  then  the  user  is  moved  to  the
+corresponding line in the original buffer.
+.PP
+.B item-list-find
+finds the  current  item list item and  searches  for the text in the  original
+buffer. This is typically bound to a mouse or key stroke action.
+.PP
+.B item-list-close
+closes the item list buffer.
+.SH EXAMPLE
+The following example works through the  \fBitem-list\fR  definition for the ME
+macros e.g. given that the ME macro definition is:
+.CS
+define-macro macro-name
+.CE
+Searching for "\fCdefine-macro\ \\([a\-z\-]+\\)\fR" and replacing with
+"\fCMacro\ \\1\fR" will work most of the time. The space between
+\fCdefine-macro\fR and the name does not have to be a single space
+and the \fIname\fR does not have to contain just lower case letters,
+so these search strings should be a flexible as  possible, try
+.CS
+"define-macro\\s\ +\\(\\w+\\)"
+.CE
+This however is not as optimal as it could be and if you have large files this
+could become slow. Performance can be greatly  increased if it can be anchored
+to the start of the line, e.g.
+.CS
+"^define-macro\\s\ +\\(\\w+\\)"
+.CE
+but to allow for initial white spaces and the optional  numeric  argument,  you
+really need
+.CS
+"^\\s\ *[0\-9]*\\s\ *define\-macro\\s\ +\\(\\w+\\)"
+.CE
+To hilight the function name you need the name encased the name in a magic
+hilighting string,
+.CS
+"\\ecBmacro\-name\\ecA"
+.CE
+where \fC\\e\fR is an escape char, so the replace string should be
+.CS
+"Macro \\ecB\\1\\ecA"
+.CE
+Now all thats needed is to set these variables as fhook command variables,
+for macro files, the file hook command is \fCfhook-emf\fR, therefore the
+following is required:
+.Me $emf-scheme
+.CS
+set-variable .fhook-emf.item-list-s1 "^\\\\s\ *[0\-9]*\\\\s\ *define\-macro\\\\s\ +\\\\(\\\\w+\\\\)"
+set-variable .fhook-emf.item-list-r1 "Macro \\ecB\\\\1\\ecA"
+.CE
+.Me $ehf-scheme
+Note that you can have as many of these search and replace variables as you
+require, i.e. \fC.item-list-s1\fR, \fC.item-list-s2\fR, \fC.item-list-s3\fR, ...
+; but the more you have the slower it will be, often a good regex can do the
+job of 2 or 3.
+.SH "SEE ALSO"
+.na
+.Ht occur 3 ,
+.Ht search-forward 2 ,
+.Hl "Regular Expressions" RegularExpressions 2
+.ad
+.rm C0
+.rm C1
+.FH

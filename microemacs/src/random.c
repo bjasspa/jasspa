@@ -10,7 +10,7 @@
  *
  *	Author:			Danial Lawrence.
  *
- *	Creation Date:		07/05/91 08:19		<010806.0913>
+ *	Creation Date:		07/05/91 08:19		<010807.0802>
  *
  *	Modification date:	%G% : %U%
  *
@@ -1133,8 +1133,8 @@ killLine(int f, int n)
     if(n == 0)
         return TRUE ;
     if((del=(n < 0)))
-        /* f must be true */
         n = -n ;
+    
     if((s=bchange()) != TRUE)               /* Check we can change the buffer */
         return s ;
     if(curwp->w_dotp == curbp->b_linep)

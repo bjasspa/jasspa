@@ -1,6 +1,6 @@
 ; Auto-created color scheme file for MicroEmacs
 ; Description: MS Dev-Studio Colors
-; Last Modified : <000714.1604>
+; Last Modified : <010718.2203>
 ; Copyright (c) 1999 JASSPA Ltd.
 set-variable .hilight.flags 7
 ; Create the colors first
@@ -43,9 +43,9 @@ add-color-scheme $trunc-scheme .col2 .col26 .col2 .col8 .col2 .col15 .col2 .col1
 add-color-scheme .scheme.no1 .col22 .col26 .col22 .col8 .col22 .col15 .col22 .col15 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.no2 .col22 .col26 .col22 .col8 .col22 .col15 .col22 .col15 0 8 0 8 0 8 0 8
 ; OSD
-add-color-scheme $osd-scheme .col1 .col0 .col10 .col0 .col8 .col9 .col10 .col9 0 8 0 0 0 8 1 9
-add-color-scheme .scheme.osd-entry .col1 .col26 .col10 .col26 .col1 .col8 .col10 .col8 0 8 1 9 8 0 9 1
-add-color-scheme .scheme.osd-ebtt .col0 .col1 .col10 .col1 .col0 .col9 .col10 .col9 0 8 0 8 0 8 1 9
+add-color-scheme $osd-scheme .col1 .col0 .col2 .col0 .col8 .col9 .col10 .col9 0 8 0 0 0 8 0 8
+add-color-scheme .scheme.osd-entry .col1 .col26 .col10 .col26 .col1 .col8 .col10 .col8 0 8 0 8 8 0 8 0
+add-color-scheme .scheme.osd-ebtt .col0 .col1 .col10 .col1 .col0 .col9 .col10 .col9 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.osd-dbtt .col9 .col1 .col5 .col1 .col1 .col9 .col5 .col9 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.osd-title .col0 .col5 .col8 .col13 .col0 .col5 .col8 .col13 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.osd-child .col1 .col26 .col9 .col26 .col1 .col15 .col1 .col15 0 8 0 8 0 8 0 8

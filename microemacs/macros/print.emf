@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Mon May 22 21:45:18 2000
-;  Last Modified : <000719.0012>
+;  Last Modified : <010807.1227>
 ;
 ;  Description
 ;
@@ -18,13 +18,19 @@
     ; get the current print scheme
     set-variable #l9 &reg "/print" "scheme" ""
     
-    ; get the user configuration stored in print.erf
+    ; get the user configuration
     !if &seq &reg "/" "print-history" "" ""
-        ;500 ml-write "[Loading print.erf]"
-        !force read-registry "print-history" &find "print" ".erf" "ab"
+        ; not yet loaded, search for a myprint.erf first
+        ;500 ml-write "[Loading myprint.erf]"
+        !force read-registry "print-history" &find "myprint" ".erf" "ab"
         !if &not $status
-            ml-write "[Failed to find \"print.erf\"]"
-            !return
+            ; not found so try the default print.erf
+            ;500 ml-write "[Loading print.erf]"
+            !force read-registry "print-history" &find "print" ".erf" "ab"
+            !if &not $status
+                ml-write "[Failed to find \"print.erf\"]"
+                !return
+            !endif
         !endif
     !endif
     

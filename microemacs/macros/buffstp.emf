@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Thu Nov 23 21:19:31 2000
-;  Last Modified : <010520.1622>
+;  Last Modified : <010810.1019>
 ;
 ;  Description
 ;
@@ -265,6 +265,11 @@ define-macro buffer-help
         buffer-help-add-item "auto-spell-buffer" "" "Auto-Spell Buffer"
         buffer-help-add-item "auto-spell-reset" "" "Reset Auto-Spell"
     !endif
+    !if &exi &ind &spr ".%s.item-list-s1" $buffer-fhook
+        buffer-help-add-item "" "" ""
+        buffer-help-add-item "item-list" "" "List Functions"
+        buffer-help-add-item "item-list-close" "" "Close List Items window"
+    !endif
     !if &exi &ind &spr ".%s.tags" $buffer-fhook
         buffer-help-add-item "" "" ""
         buffer-help-add-item "" "" "Tag generation is available under the Tools menu"
@@ -375,8 +380,15 @@ define-macro buffer-help
         buffer-tool-add-item "auto-spell-buffer" "" "Auto-Spell Buffer" #l8
         buffer-tool-add-item "auto-spell-reset" "" "Reset Auto-Spell" #l8
     !endif
-    !if &exi &ind &spr ".%s.tags" $buffer-fhook
+    !if &set #l7 &exi &ind &spr ".%s.item-list-s1" $buffer-fhook
         buffer-tool-add-item "" "" "" #l8
+        buffer-tool-add-item "item-list" "" "List Functions" #l8
+        buffer-tool-add-item "item-list-close" "" "Close List Items" #l8
+    !endif
+    !if &exi &ind &spr ".%s.tags" $buffer-fhook
+        !if &not #l7
+            buffer-tool-add-item "" "" "" #l8
+        !endif
         buffer-tool-add-item "generate-tags-file" "0" "Generate &Tags File" #l8
     !endif
 !emacro

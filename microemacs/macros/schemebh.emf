@@ -1,6 +1,6 @@
 ; Auto-created color scheme file for MicroEmacs
 ; Description: Blue Hue
-; Last Modified : <000512.1653>
+; Last Modified : <010718.1714>
 ; Copyright (c) 1999 JASSPA Ltd.
 set-variable .hilight.flags 7
 ; Create the colors first
@@ -39,7 +39,7 @@ add-color &set .col31 31 233 215 253
 ; Set the required cursor-color
 set-variable $cursor-color .col1
 ; Create the color schemes
-; 
+; Standard
 add-color-scheme $global-scheme .col1 .col22 .col1 .col21 .col1 .col23 .col1 .col23 0 8 0 8 0 8 0 8
 add-color-scheme $ml-scheme .col1 .col21 .col1 .col21 .col1 .col23 .col1 .col23 0 8 0 8 0 8 0 8
 add-color-scheme $mode-line-scheme .col7 .col0 .col6 .col1 .col1 .col24 .col1 .col1 0 8 0 8 0 8 0 8
@@ -48,10 +48,10 @@ add-color-scheme $trunc-scheme .col9 .col22 .col9 .col21 .col9 .col23 .col9 .col
 add-color-scheme .scheme.no1 .col16 .col22 .col16 .col21 .col16 .col23 .col16 .col23 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.no2 .col3 .col22 .col3 .col21 .col3 .col23 .col3 .col23 0 8 0 8 0 8 0 8
 ; OSD
-add-color-scheme $osd-scheme .col1 .col0 .col2 .col0 .col6 .col7 .col27 .col7 0 8 0 0 0 8 1 9
+add-color-scheme $osd-scheme .col1 .col0 .col2 .col0 .col6 .col7 .col27 .col7 0 8 0 0 0 8 0 8
 add-color-scheme .scheme.osd-entry .col16 .col22 .col16 .col22 .col16 .col21 .col16 .col21 0 8 0 8 0 8 0 8
-add-color-scheme .scheme.osd-ebtt .col0 .col1 .col27 .col1 .col0 .col7 .col27 .col7 0 8 0 8 0 8 1 9
-add-color-scheme .scheme.osd-dbtt .col7 .col22 .col2 .col22 .col1 .col22 .col2 .col22 0 8 0 8 0 8 1 9
+add-color-scheme .scheme.osd-ebtt .col0 .col1 .col27 .col1 .col0 .col7 .col27 .col7 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.osd-dbtt .col7 .col22 .col2 .col22 .col1 .col22 .col2 .col22 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.osd-title .col6 .col1 .col24 .col1 .col6 .col1 .col24 .col1 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.osd-child .col16 .col22 .col16 .col21 .col16 .col23 .col16 .col23 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.osd-sbar .col24 .col22 .col22 .col1 .col24 .col22 .col24 .col6 0 8 0 8 0 8 0 8

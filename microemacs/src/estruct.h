@@ -2,7 +2,7 @@
  * 
  *	SCCS:		%W%		%G%		%U%
  *
- *	Last Modified :	<010802.1811>
+ *	Last Modified :	<010810.1438>
  *
  *	ESTRUCT:	Structure and preprocesser defined for
  *			MicroEMACS 3.7
@@ -727,10 +727,13 @@ typedef	struct	KLIST {
 #define HLSOL      0x0100
 #define HLVALID    0x0200
 #define HLCOLUMN   0x0400
+#define HLREPTOEOL 0x0800
 #define HLONELNBT  0x0800
 #define HLSNGLLNBT 0x1000
 
 /* hilight token internal flags */
+#define HLASOL     0x2000
+#define HLASTTLINE 0x4000
 #define HLRPLCDIFF 0x8000
 
 /* indent init flags */
@@ -997,19 +1000,21 @@ typedef struct {
 #define REG_HANDLE(a,b,c,d) ((((uint32)(a))<<24)|(((uint32)(b))<<16)| \
                              (((uint32)(c))<<8)|((uint32)(d)))
 
-/* Registry Open types */
+/* Registry Open types - NOTE any changes to these must be reflected in
+ * the variable meRegModeList defined in registry.c */
 #define REGMODE_INTERNAL   0x001         /* Internal registry - hidden */
 #define REGMODE_HIDDEN     0x002         /* Node is hidden */
 #define REGMODE_FROOT      0x004         /* File root */
 #define REGMODE_CHANGE     0x008         /* Tree has changed */
 #define REGMODE_BACKUP     0x010         /* Perform a backup of the file */
 #define REGMODE_AUTO       0x020         /* Automatic save */
-#define REGMODE_MERGE      0x040         /* Merge a loaded registry */
-#define REGMODE_RELOAD     0x080         /* Reload existing registry */
-#define REGMODE_CREATE     0x100         /* Create if does not exist */
-#define REGMODE_QUERY      0x200         /* Query the current node */
-#define REGMODE_GETMODE    0x400         /* Return modes set in $result */
-#define REGMODE_STORE_MASK 0x03f         /* Bits actually worth storing */
+#define REGMODE_DISCARD    0x040         /* Discardable entry (memory only) */
+#define REGMODE_MERGE      0x080         /* Merge a loaded registry */
+#define REGMODE_RELOAD     0x100         /* Reload existing registry */
+#define REGMODE_CREATE     0x200         /* Create if does not exist */
+#define REGMODE_QUERY      0x400         /* Query the current node */
+#define REGMODE_GETMODE    0x800         /* Return modes set in $result */
+#define REGMODE_STORE_MASK 0x07f         /* Bits actually worth storing */
 /*
  * RNODE
  * Data structure to hold a hierarchy node

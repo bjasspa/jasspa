@@ -8,7 +8,7 @@
  *  Object Name   : eterm.h
  *  Created By    : Steven Phillips and Jon Green
  *  Create Date   : Some time in 1994
- *  Last Modified : <20010805.2316>
+ *  Last Modified : <20001011.1802>
  *
  *  Description	  : Terminal I/O definitions.
  *
