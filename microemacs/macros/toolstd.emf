@@ -263,28 +263,31 @@
 !emacro
 
 0 define-macro toolbar-dir-list-create
-    !if &lfind "|http:/|ftp://|" &lef $buffer-fname 6
-        set-variable #l0 &stat "a" "."
-    !elif &seq "" &set #l0 &lef $buffer-fname &rsin "/" $buffer-fname
-        set-variable #l0 &stat "a" "."
-    !endif
+    set-variable #l0 $buffer-fname
     set-position "\x86"
     find-buffer "*directory*"
-    !if &not &seq #l0 $buffer-fname
+    !if &seq $buffer-fname ""
+        !if &lfind "|http:/|ftp://|" &lef #l0 6
+            set-variable #l0 &stat "a" "."
+        !elif &seq "" &set #l0 &lef #l0 &rsin "/" #l0
+            set-variable #l0 &stat "a" "."
+        !endif
         0x0f directory-tree #l0
+        buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
     !endif
     goto-position "\x86"
 !emacro
 
 0 define-macro toolbar-file-list-create
-    !if &lfind "|http:/|ftp://|" &lef $buffer-fname 6
-        set-variable #l0 &stat "a" "."
-    !elif &seq "" &set #l0 &lef $buffer-fname &rsin "/" $buffer-fname
-        set-variable #l0 &stat "a" "."
-    !endif
+    set-variable #l0 $buffer-fname
     set-position "\x86"
     find-buffer "*files*"
-    !if &not &and &seq #l0 $buffer-fname &seq .fhook-dirlst.file-process :file-process
+    !if &seq $buffer-fname ""
+        !if &lfind "|http:/|ftp://|" &lef #l0 6
+            set-variable #l0 &stat "a" "."
+        !elif &seq "" &set #l0 &lef #l0 &rsin "/" #l0
+            set-variable #l0 &stat "a" "."
+        !endif
         read-file #l0
         !if &not &seq .fhook-dirlst.file-process :file-process
             ; old buffer with the wrong processing - refresh
@@ -295,9 +298,8 @@
         ; as we have delete *files* the toolbar window would have been lost - restore
         1 goto-position "\x85"
         find-buffer "*files*"
+        buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
     !endif
-    buffer-bind-create "bio" "delete" "" file-browser-close
-    buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
     goto-position "\x86"
 !emacro
 

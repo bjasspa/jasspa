@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Fri Aug 10 10:28:53 2001
-;  Last Modified : <020713.1701>
+;  Last Modified : <020718.2241>
 ;  Description   : Create a list of abbreviations
 ;
 ;  Notes
@@ -45,6 +45,8 @@
 !emacro
 
 define-macro eaf-list-execute
+    0 show-region
+    set-variable #l5 $result
     !if &xseq &rig @wl $window-col "\\(</FOLD>\\)*<FOLD[+-]>.*"
         set-variable #l0 &add 4 &add $window-col &sin "<FOLD" &rig @wl $window-col
         set-variable #l1 &con &seq &mid @wl #l0 1 "-" "+" "-"
@@ -102,6 +104,9 @@ define-macro eaf-list-execute
     !else
         set-variable #l0 &rig @wl &add #l0 6
         goto-position "\x82"
+        !if &band #l2 1
+            !force show-region
+        !endif
         execute-line &spr "execute-string \"%s\"" #l0
     !endif
 !emacro
