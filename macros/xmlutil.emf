@@ -116,7 +116,7 @@ define-macro xml-backward-tag
             set-variable #l9 -5
         !endif
     !else
-        !if &not &xseq &rig @wl #l0 "<\\(\\w[-._:a-zA-Z0-9]*\\)\\([ \t>].*\\)?"
+        !if &not &xseq &rig @wl #l0 "<\\(\\w[-._:a-zA-Z0-9]*\\)\\([ \t/>].*\\)?"
             set-variable #l9 -6
         !elif &seq &rig #l4 1 "/>"
             set-variable #l9 3
