@@ -48,7 +48,7 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		au3.eaf		\
 	hknroff.emf	\
 	hkpascal.emf	hkperl.emf	hkphp.emf	hkphps.emf	\
 	hkpls.emf	hkpseudo.emf	hkpsf.emf	hkpython.emf	\
-	hkreg.emf	hkrul.emf	\
+	hkreg.emf	hkruby.emf	hkrul.emf	\
 	hkscheme.emf	hksgml.emf	hkshell.emf	hkslang.emf	\
 	hkspec.emf	hksql.emf	\
 	hktcl.emf	hktexi.emf	hktxt.emf	\
@@ -103,7 +103,7 @@ ETFS=	asmx86.etf	asn1.etf	\
 	makefile.etf	mhg.etf		mod2.etf	\
 	newcomp.etf	newuser.etf	nroff.etf	\
 	pascal.etf	perl.etf	pls.etf		psf.etf		\
-	rul.etf		\
+	ruby.etf	rul.etf		\
 	spec.etf	\
 	tcl.etf		\
 	vhdl.etf	\
