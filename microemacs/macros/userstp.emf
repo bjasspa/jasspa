@@ -188,7 +188,7 @@ set-variable %emulate-value "||me3_8|nedit|"
         !endif
     !endif
     !if &not &seq &set #l0 &reg "/history" "setup-file" "" ""
-        set-variable #l0 "%s/%s.emf" $user-path #l0
+        set-variable #l0 &spr "%s/%s.emf" $user-path #l0
         !if &sequ &stat "t" #l0 "R"
             !if &reg "/history" "edituser" "1"
                 !force 0 find-file &cat "file:" #l0
