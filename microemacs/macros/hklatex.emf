@@ -20,11 +20,11 @@ set-variable .fhook-latex.setup &reg "/history" "fhook/latex" "bfghinopsx"
 set-variable .fhook-latex.setup-mask "abefghijkmnopstuwx"
 set-variable .fhook-latex.tags "textags"
 set-variable .fhook-latex.comment "|%||%|% | %||"
-set-variable .fhook-latex.command-flag  "|bo|bo|bo|bo|thb|thb|thb|th|thb|th|th|thbH|"
-set-variable .fhook-latex.command-name  "|latex-para|latex-para|latex-backward-paragraph|latex-forward-paragraph|latex-ref-goto-label|latex-ref-go-back|latex-list-label||latex-popup|latex-compile|latex-view|latex-swap-hilight|"
-set-variable .fhook-latex.command-nbind "|||||||||||||"
-set-variable .fhook-latex.command-kbind "|esc o|esc q|esc p|esc n|C-c l|C-c C-l|C-f7||C-6|||C-c C-h|"
-set-variable .fhook-latex.command-desc  "|||||\HGoto Reference Label|\HReturn to Reference|List \HLabels||\HInsert Token|Com\Hpile Buffer|\HView Buffer|T\Hoggle hilighting|"
+set-variable .fhook-latex.command-flag  "|bo|bo|bo|bo|thb|thb|thb|th|thb|th|th|thbH|bo|bo|bo|bo|bo|bo|"
+set-variable .fhook-latex.command-name  "|latex-para|latex-para|latex-backward-paragraph|latex-forward-paragraph|latex-ref-goto-label|latex-ref-go-back|latex-list-label||latex-popup|latex-compile|latex-view|latex-swap-hilight|tex-insert-braces|tex-insert-quote|tex-close-latex-block|tex-goto-last-unclosed-latex-block|tex-up-list|tex-insert-underscore|"
+set-variable .fhook-latex.command-nbind "|||||||||||||||||||"
+set-variable .fhook-latex.command-kbind "|esc o|esc q|esc p|esc n|C-c l|C-c C-l|C-f7||C-6|||C-c C-h|C-c {|\"|C-c C-e|C-c C-u|C-c }|_|"
+set-variable .fhook-latex.command-desc  "|||||\HGoto Reference Label|\HReturn to Reference|List \HLabels||\HInsert Token|Com\Hpile Buffer|\HView Buffer|T\Hoggle hilighting|Insert \HBraces|Insert \HQuote|Close Block|Goto opening block|Up list|Insert Underscore|"
 
 ; setup item-list
 set-variable .fhook-latex.item-list-s1 "^[ \t]*\\\\chapter\\*?{\\([^}]*\\)}"
@@ -60,8 +60,8 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|se
     set-variable %latex-compile &cond &seq %latex-compile "ERROR" "latex -interaction=nonstopmode" %latex-compile
     set-variable %latex-view    &cond &seq %latex-view    "ERROR" "xdvi"  %latex-view
 !endif
-    
-!if &and &sin "h" .fhook-latex.setup &band .hilight.flags 0x02 
+
+!if &and &sin "h" .fhook-latex.setup &band .hilight.flags 0x02
     !if &not &exist .hilight.latex
         set-variable .hilight.latex &pinc .hilight.next 1
         set-variable .hilight.latexs &pinc .hilight.next 1
@@ -734,6 +734,998 @@ define-macro latex-popup
     !if &exist my-ehook-latex
         my-ehook-latex
     !endif
+!emacro
+
+; Find the previous opening latex block. The macro assumes that the caller is
+; running magic mode. The state of the call is returned to the caller in #l9.
+; The return information is defined as a list as follows:-
+;
+; |n|
+;     There are no containing \begin blocks open
+;
+; |o|begin|name|line|col|
+;     Open \begin block pending.
+;
+; |e|end|name|line|col|
+;     \end exists with no \begin.
+;
+; |m|end|name|line|col|begin|name|line|col|
+;     Mismatch of \begin and \end. The position information is supplied.
+;
+0 define-macro latex-block-find-backward
+    set-variable #l9 0
+    set-variable #l8 "||"
+    set-variable #l7 "||"
+    set-variable #l6 "||"
+    set-variable #l5 "o"
+    !repeat
+        ; Search for begin or end.
+        !force search-backward "\\\\\\(begin\\|end\\){\\([^}]+\\)}"
+        !if $status
+            ; Save the search
+            set-variable #l1 @s1
+            set-variable #l2 @s2
+            ; ml-write &spr "Found[%d] \\%s{%s}:%d" #l9 #l1 #l2 $window-line
+
+            ; Make sure we are not in a comment.
+            !if &gre $window-col 0
+                !force -1 search-backward "\\(^%\\|[^\\\\]%\\)"
+                !if $status
+                    ; Found comment, start search again.
+                    set-variable #l5 "c"
+                !endif
+            !endif
+
+            ; Process the search.
+            !if &seq #l5 "c"
+                set-variable #l5 "o"
+            !elif &iseq #l1 "end"
+                ; Found an '\end' push onto the stack.
+                set-variable #l9 &add #l9 1
+                set-variable #l8 &lset #l8 #l9 #l2
+                set-variable #l7 &lset #l7 #l9 $window-line
+                set-variable #l6 &lset #l6 #l9 $window-col
+                set-variable #l5 "b"
+            !elif &equ #l9 0
+                ; Found a '\begin' with nothing on stack exit with an open status.
+                set-variable #l5 "q"
+                set-variable #p9 &spr "|o|begin|%s|%d|%d|" #l2 $window-line $window-col
+            !else
+                ; Found a '\begin' with '\end' on the stack
+                !if &not &seq #l2 &lget #l8 #l9
+                    ; The '\begin' does not match the '\end'
+                    set-variable #l5 "q"
+                    set-variable #p9 &spr "|m|end|%s|%d|%d|begin|%s|%d|%d|" &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9 #l2 $window-line $window-col
+                !else
+                    set-variable #l9 &sub #l9 1
+                    set-variable #l5 "b"
+                !endif
+            !endif
+        !elif &gre #l9 0
+            set-variable #l5 "q"
+            set-variable #p9 &spr "|e|end|%s|%d|%d|" &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
+        !else
+            set-variable #l5 "q"
+            set-variable #p9 "|n|"
+        !endif
+        !if &seq #l5 "b"
+            !force backward-char
+            !if $status
+                set-variable #l5 "o"
+            !elif &gre #l9 0
+                set-variable #l5 "q"
+                set-variable #p9 &spr "|e|end|%s|%d|%d|" &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
+            !else
+                set-variable #l5 "q"
+                set-variable #p9 "|n|"
+            !endif
+        !endif
+    !until &seq #l5 "q"
+!emacro
+
+; Find the next closing latex block. The macro assumes that the caller is
+; running magic mode. The state of the call is returned to the caller in #l9.
+; The return information is defined as a list as follows:-
+;
+; |n|
+;     There are no containing \begin blocks open
+;
+; |o|begin|name|line|col|
+;     Open \begin block pending.
+;
+; |e|end|name|line|col|
+;     \end exists with no \begin.
+;
+; |m|end|name|line|col|begin|name|line|col|
+;     Mismatch of \begin and \end. The position information is supplied.
+;
+0 define-macro latex-block-find-forward
+    set-variable #l9 0
+    set-variable #l8 "||"
+    set-variable #l7 "||"
+    set-variable #l6 "||"
+    set-variable #l5 "o"
+    set-variable #l4 0
+    !repeat
+        ; Search for begin or end.
+        !force search-forward "\\\\\\(begin\\|end\\){\\([^}]+\\)}"
+        ; 1 screen-update
+        !if $status
+            ; Save the search
+            set-variable #l1 @s1
+            set-variable #l2 @s2
+            set-variable #l4 &add #l4 1
+            ; ml-write &spr "Processing[%05d/%d] \\%s{%s}:%d" #l4 #l9 #l1 #l2 $window-line
+
+            ; Make sure we are not in a comment.
+            set-position "\x82"
+            !if &gre $window-col 0
+                backward-char
+                !force -1 search-backward "\\(^%\\|[^\\\\]%\\)"
+                !if $status
+                    ; Found comment, start search again.
+                    set-variable #l5 "c"
+                !endif
+           !endif
+           goto-position "\x82"
+
+            ; Process the search.
+            !if &seq #l5 "c"
+                set-variable #l5 "o"
+                end-of-line
+            !elif &iseq #l1 "begin"
+                ; Found an '\begin' push onto the stack.
+                set-variable #l9 &add #l9 1
+                set-variable #l8 &lset #l8 #l9 #l2
+                set-variable #l7 &lset #l7 #l9 $window-line
+                set-variable #l6 &lset #l6 #l9 $window-col
+                set-variable #l5 "o"
+            !elif &equ #l9 0
+                ; Found a '\end' with nothing on stack exit with an open status.
+                set-variable #l5 "q"
+                set-variable #p9 &spr "|o|end|%s|%d|%d|" #l2 $window-line $window-col
+            !else
+                ; Found a '\begin' with '\end' on the stack
+                !if &not &seq #l2 &lget #l8 #l9
+                    ; The '\end' does not match the '\begin'
+                    set-variable #l5 "q"
+                    set-variable #p9 &spr "|m|end|%s|%d|%d|begin|%s|%d|%d|" #l2 $window-line $window-col &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
+                !else
+                    set-variable #l9 &sub #l9 1
+                    set-variable #l5 "o"
+                !endif
+            !endif
+        !elif &gre #l9 0
+            set-variable #l5 "q"
+            set-variable #p9 &spr "|e|begin|%s|%d|%d|" &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
+        !else
+            set-variable #l5 "q"
+            set-variable #p9 "|n|"
+        !endif
+    !until &seq #l5 "q"
+!emacro
+
+; Find the next closing latex block that has not been opened. The macro
+; assumes that the caller is running magic mode. The state of the call is
+; returned to the caller in #l9. The return information is defined as a list
+; as follows:-
+;
+; |n|
+;     There are no containing \begin blocks open
+;
+; |o|name|line|col|
+;     Open block pending.
+;
+; |e|name|line|col|
+;     Closing bracket exists with no opening.
+;
+; |m|names|lines|cols|name2e|linee|cole|
+;     Mismatch of start and end brackets.
+;     The position information is supplied.
+;
+0 define-macro tex-bracket-find-forward
+    set-variable #l9 0
+    set-variable #l8 "||"
+    set-variable #l7 "||"
+    set-variable #l6 "||"
+    set-variable #l5 "o"
+    set-variable #l4 0
+    !repeat
+        ; Search for next significant construct
+        !force search-forward "\\(\\\\begin{\\|\\\\end{\\|[{}$\\[\\]]\\)"
+        !if $status
+            ; Save the search
+            set-variable #l1 @s1
+            set-variable #l4 &add #l4 1
+            ; ml-write &spr "Processing[%05d/%d] %s:%d \"%s\" \"%s\" \"%s\"" #l4 #l9 #l1 $window-line #l8 #l7 #l6
+            ; 1 screen-update
+
+            ; Make sure we are not in a comment.
+            set-position "\x82"
+            !if &gre $window-col 1
+                backward-char
+                !force -1 search-backward "\\(^%\\|[^\\\\]%\\)"
+                !if $status
+                    ; Found comment, start search again.
+                    set-variable #l5 "c"
+                !endif
+            !endif
+            goto-position "\x82"
+
+            ; Process the search.
+            !if &seq #l5 "c"
+                set-variable #l5 "o"
+                end-of-line
+            !elif &seq #l1 "\\begin{"
+                ; See if this is a verbatim environment, if so then skip over
+                ; it.
+                set-variable #l3 ""
+                !while &not &sin @wc "}\n"
+                    set-variable #l3 &cat #l3 @wc
+                    forward-char
+                !done
+                !if &and &seq @wc "}" &seq #l3 "verbatim"
+                    !force search-forward "\\\\end{verbatim}"
+                    !if $status
+                        set-variable #l5 "s"
+                    !endif
+                !endif
+
+                ; Determine if skipping.
+                !if &seq #l5 "s"
+                    set-variable #l5 "o"
+                !else
+                    goto-position "\x82"
+                    ; Push onto the stack.
+                    set-variable #l9 &add #l9 1
+                    set-variable #l8 &lset #l8 #l9 "\\begin"
+                    set-variable #l7 &lset #l7 #l9 $window-line
+                    set-variable #l6 &lset #l6 #l9 $window-col
+                    backward-char
+                !endif
+            !elif &seq #l1 "\\end{"
+                backward-char
+                !if &equ #l9 0
+                    set-variable #l5 "q"
+                    set-variable #p9 &spr "|o|%s|%d|%d|" #l1 $window-line $window-col
+                !elif &not &seq "\\begin" &lget #l8 #l9
+                    ; Found a '\end' with '\begin' on the stack
+                    set-variable #l5 "q"
+                    set-variable #p9 &spr "|m|%s|%d|%d|%s|%d|%d|" "\\end" $window-line $window-col &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
+                !else
+                    set-variable #l8 &lset #l8 #l9 ""
+                    set-variable #l7 &lset #l7 #l9 ""
+                    set-variable #l6 &lset #l6 #l9 ""
+                    set-variable #l9 &sub #l9 1
+                !endif
+            !elif &or &iseq #l1 "{" &iseq #l1 "["
+
+                ; Simple test to see if '[' is in a {[} enclosure.
+                !if &and &iseq #l1 "[" &seq @wc "}"
+                    !if &gre $window-col 1
+                        2 backward-char
+                        !if &seq @wc "{"
+                            set-variable #l5 "s"
+                        !endif
+                        2 forward-char
+                    !endif
+                !endif
+
+                ; Simple test to see if '{' is escaped '\{'.
+                !if &and &iseq #l1 "{" &gre $window-col 1
+                    2 backward-char
+                    !if &seq @wc "\\"
+                        set-variable #l5 "s"
+                    !endif
+                    2 forward-char
+                !endif
+                ;
+                ; Precheck.
+                !if &seq #l5 "s"
+                    set-variable #l5 "o"
+                !else
+                    ; Push onto the stack.
+                    set-variable #l9 &add #l9 1
+                    set-variable #l8 &lset #l8 #l9 #l1
+                    set-variable #l7 &lset #l7 #l9 $window-line
+                    set-variable #l6 &lset #l6 #l9 $window-col
+                !endif
+                set-variable #l5 "o"
+            !elif &iseq #l1 "}"
+                ; Simple test to see if '}' is escaped '\}'.
+                !if &gre $window-col 1
+                    2 backward-char
+                    !if &seq @wc "\\"
+                        set-variable #l5 "s"
+                    !endif
+                    2 forward-char
+                !endif
+                ; Precheck.
+                !if &seq #l5 "s"
+                    ; Skipping escaped character.
+                    set-variable #l5 "o"
+                !elif &equ #l9 0
+                    ; Mismatched.
+                    set-variable #l5 "q"
+                    set-variable #p9 &spr "|o|%s|%d|%d|" #l1 $window-line $window-col
+                !elif &not &seq "{" &lget #l8 #l9
+                    ; Found a '}' with '{' on the stack
+                    set-variable #l5 "q"
+                    set-variable #p9 &spr "|m|%s|%d|%d|%s|%d|%d|" #l1 $window-line $window-col &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
+                !else
+                    ; Matched - pop last opening off the stack.
+                    set-variable #l8 &lset #l8 #l9 ""
+                    set-variable #l7 &lset #l7 #l9 ""
+                    set-variable #l6 &lset #l6 #l9 ""
+                    set-variable #l9 &sub #l9 1
+                !endif
+            !elif &iseq #l1 "]"
+                ; Simple test to see if '[' is in a {[} enclosure.
+                !if &seq @wc "}"
+                    !if &gre $window-col 1
+                        2 backward-char
+                        !if &seq @wc "{"
+                            set-variable #l5 "s"
+                        !endif
+                        2 forward-char
+                    !endif
+                !endif
+
+                ; Process the close bracket.
+                !if &seq #l5 "s"
+                    set-variable #l5 "o"
+                !elif &equ #l9 0
+                    set-variable #l5 "q"
+                    set-variable #p9 &spr "|o|%s|%d|%d|" #l1 $window-line $window-col
+                !elif &not &seq "[" &lget #l8 #l9
+                    ; Found a ']' with '[' on the stack
+                    set-variable #l5 "q"
+                    set-variable #p9 &spr "|m|%s|%d|%d|%s|%d|%d|" #l1 $window-line $window-col &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
+                !else
+                    set-variable #l8 &lset #l8 #l9 ""
+                    set-variable #l7 &lset #l7 #l9 ""
+                    set-variable #l6 &lset #l6 #l9 ""
+                    set-variable #l9 &sub #l9 1
+                !endif
+            !elif &iseq #l1 "$"
+                ; Simple test to see if '$' is escaped '\$'.
+                !if &gre $window-col 1
+                    2 backward-char
+                    !if &seq @wc "\\"
+                        set-variable #l5 "s"
+                    !endif
+                    2 forward-char
+                !endif
+
+                ; Precheck.
+                !if &seq #l5 "s"
+                    set-variable #l5 "o"
+                ; Found a '$' with '$' on the stack
+                !elif &seq "$" &lget #l8 #l9
+                    set-variable #l8 &lset #l8 #l9 ""
+                    set-variable #l7 &lset #l7 #l9 ""
+                    set-variable #l6 &lset #l6 #l9 ""
+                    set-variable #l9 &sub #l9 1
+                !else
+                    set-variable #l9 &add #l9 1
+                    set-variable #l8 &lset #l8 #l9 #l1
+                    set-variable #l7 &lset #l7 #l9 $window-line
+                    set-variable #l6 &lset #l6 #l9 $window-col
+                !endif
+            !elif &equ #l9 0
+                ; Found a '\end' with nothing on stack exit with an open status.
+                set-variable #l5 "q"
+                set-variable #p9 &spr "|o|end|%s|%d|%d|" #l1 $window-line $window-col
+            !else
+                ; Error - should never get here.
+                set-variable #l5 "q"
+                set-variable #p9 &spr "|H|ERROR|%s|%d|%d|" #l1 $window-line $window-col
+            !endif
+        !elif &gre #l9 0
+            set-variable #l5 "q"
+            set-variable #p9 &spr "|e|%s|%d|%d|" &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
+        !else
+            set-variable #l5 "q"
+            set-variable #p9 "|n|"
+        !endif
+        !if &and &seq #l5 "f" 0
+            !force forward-char
+            !if &not $status
+                !if &gre #l9 0
+                    set-variable #l5 "q"
+                    set-variable #p9 &spr "|e|%s|%d|%d|" &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
+                !else
+                    set-variable #l5 "q"
+                    set-variable #p9 "|n|"
+                !endif
+            !endif
+            set-variable #l5 "o"
+        !endif
+    !until &seq #l5 "q"
+!emacro
+
+; Find the next opening tex block that has not been opened. The macro
+; assumes that the caller is running magic mode. The state of the call is
+; returned to the caller in #l9. The return information is defined as a list
+; as follows:-
+;
+; |n|
+;     There are no containing \begin blocks open
+;
+; |o|name|line|col|
+;     Open block pending.
+;
+; |e|name|line|col|
+;     Opening bracket exists with no matching closing.
+;
+; |m|names|lines|cols|name2e|linee|cole|
+;     Mismatch of start and end brackets.
+;     The position information is supplied.
+;
+0 define-macro tex-bracket-find-backward
+    set-variable #l9 0
+    set-variable #l8 "||"
+    set-variable #l7 "||"
+    set-variable #l6 "||"
+    set-variable #l5 "o"
+    set-variable #l4 0
+    !repeat
+        ; !force backward-char
+        ; Search for next significant construct
+        !force search-backward "\\([{}$\\[\\]]\\|\\\\begin{\\|\\\\end{\\)"
+        !if $status
+            ; Save the search
+            set-variable #l1 @s1
+            set-variable #l4 &add #l4 1
+            ; 1 screen-update
+            ; 50 ml-write &spr "Processing[%05d/%d] %s:%d \"%s\" \"%s\" \"%s\"" #l4 #l9 #l1 $window-line #l8 #l7 #l6
+
+            ; Make sure we are not in a comment.
+            set-position "\x82"
+            !if &gre $window-col 1
+                backward-char
+                !force -1 search-backward "\\(^%\\|[^\\\\]%\\)"
+                !if $status
+                    ; Found comment, start search again.
+                    set-variable #l5 "c"
+                !endif
+            !endif
+            goto-position "\x82"
+
+            ; Process the search.
+            !if &seq #l5 "c"
+                !if &equ $window-col 0
+                    backward-line
+                    end-of-line
+                !endif
+                set-variable #l5 "o"
+            !elif &seq #l1 "\\end{"
+                exchange-point-and-mark
+                set-variable #l3 ""
+                forward-char
+                !while &not &sin @wc "}\n"
+                    set-variable #l3 &cat #l3 @wc
+                    forward-char
+                !done
+                !if &and &seq @wc "}" &seq #l3 "verbatim"
+                    !force search-backwards "\\\\begin{verbatim}"
+                    !if $status
+                        set-variable #l5 "s"
+                    !endif
+                !endif
+
+                ; Determine if skipping.
+                !if &seq #l5 "s"
+                    set-variable #l5 "b"
+                !else
+                    goto-position "\x82"
+                    ; Push onto the stack.
+                    set-variable #l9 &add #l9 1
+                    set-variable #l8 &lset #l8 #l9 "\\end"
+                    set-variable #l7 &lset #l7 #l9 $window-line
+                    set-variable #l6 &lset #l6 #l9 $window-col
+                !endif
+            !elif &seq #l1 "\\begin{"
+                ; Pop the '\end'
+                !if &seq #l5 "q"
+                !elif &equ #l9 0
+                    set-variable #l5 "q"
+                    set-variable #p9 &spr "|o|%s|%d|%d|" #l1 $window-line $window-col
+                !elif &not &seq "\\end" &lget #l8 #l9
+                    ; Found a '\end' with '\begin' on the stack
+                    set-variable #l5 "q"
+                    set-variable #p9 &spr "|m|%s|%d|%d|%s|%d|%d|" "\\end" $window-line $window-col &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
+                !else
+                    set-variable #l8 &lset #l8 #l9 ""
+                    set-variable #l7 &lset #l7 #l9 ""
+                    set-variable #l6 &lset #l6 #l9 ""
+                    set-variable #l9 &sub #l9 1
+                !endif
+            !elif &or &iseq #l1 "}" &iseq #l1 "]"
+                ; Simple test to see if '[' is in a {[} enclosure.
+                !if &gre $window-col 0
+                    backward-char
+                    ; Simple test to see if '{' is escaped '\{'.
+                    !if &and &iseq #l1 "{" &seq @wc "\\"
+                        set-variable #l5 "s"
+                    !elif &and &iseq @wc "{" &seq #l1 "["
+                        2 forward-char
+                        !if &seq @wc "}"
+                            set-variable #l5 "s"
+                        !endif
+                        2 backward-char
+                    !endif
+                    forward-char
+                !endif
+
+                ; Precheck.
+                !if &not &seq #l5 "s"
+                    ; Push onto the stack.
+                    set-variable #l9 &add #l9 1
+                    set-variable #l8 &lset #l8 #l9 #l1
+                    set-variable #l7 &lset #l7 #l9 $window-line
+                    set-variable #l6 &lset #l6 #l9 $window-col
+                !endif
+                set-variable #l5 "o"
+            !elif &iseq #l1 "{"
+                ; Simple test to see if '{' is escaped '\{'.
+                !if &gre $window-col 0
+                    backward-char
+                    !if &seq @wc "\\"
+                        set-variable #l5 "s"
+                    !endif
+                    forward-char
+                !endif
+                ; Precheck.
+                !if &seq #l5 "s"
+                    ; Skipping escaped character.
+                    set-variable #l5 "o"
+                !elif &equ #l9 0
+                    ; Mismatched.
+                    set-variable #l5 "q"
+                    set-variable #p9 &spr "|o|%s|%d|%d|" #l1 $window-line $window-col
+                !elif &not &seq "}" &lget #l8 #l9
+                    ; Found a '}' with '{' on the stack
+                    set-variable #l5 "q"
+                    set-variable #p9 &spr "|m|%s|%d|%d|%s|%d|%d|" #l1 $window-line $window-col &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
+                !else
+                    ; Matched - pop last opening off the stack.
+                    set-variable #l8 &lset #l8 #l9 ""
+                    set-variable #l7 &lset #l7 #l9 ""
+                    set-variable #l6 &lset #l6 #l9 ""
+                    set-variable #l9 &sub #l9 1
+                !endif
+            !elif &iseq #l1 "["
+                ; Simple test to see if '[' is in a {[} enclosure.
+                !if &gre $window-col 0
+                    backward-char
+                    !if &seq @wc "{"
+                        2 forward-char
+                        !if &seq @wc "}"
+                            set-variable #l5 "s"
+                        !endif
+                        2 backward-char
+                    !endif
+                    forward-char
+                !endif
+
+                ; Process the close bracket.
+                !if &seq #l5 "s"
+                    set-variable #l5 "o"
+                !elif &equ #l9 0
+                    set-variable #l5 "q"
+                    set-variable #p9 &spr "|o|%s|%d|%d|" #l1 $window-line $window-col
+                !elif &not &seq "]" &lget #l8 #l9
+                    ; Found a ']' with '[' on the stack
+                    set-variable #l5 "q"
+                    set-variable #p9 &spr "|m|%s|%d|%d|%s|%d|%d|" #l1 $window-line $window-col &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
+                !else
+                    set-variable #l8 &lset #l8 #l9 ""
+                    set-variable #l7 &lset #l7 #l9 ""
+                    set-variable #l6 &lset #l6 #l9 ""
+                    set-variable #l9 &sub #l9 1
+                !endif
+            !elif &iseq #l1 "$"
+                ; Simple test to see if '$' is escaped '\$'.
+                !if &gre $window-col 0
+                    backward-char
+                    !if &seq @wc "\\"
+                        set-variable #l5 "s"
+                    !endif
+                    forward-char
+                !endif
+
+                ; Precheck.
+                !if &seq #l5 "s"
+                    set-variable #l5 "o"
+                ; Found a '$' with '$' on the stack
+                !elif &seq "$" &lget #l8 #l9
+                    set-variable #l8 &lset #l8 #l9 ""
+                    set-variable #l7 &lset #l7 #l9 ""
+                    set-variable #l6 &lset #l6 #l9 ""
+                    set-variable #l9 &sub #l9 1
+                !else
+                    set-variable #l9 &add #l9 1
+                    set-variable #l8 &lset #l8 #l9 #l1
+                    set-variable #l7 &lset #l7 #l9 $window-line
+                    set-variable #l6 &lset #l6 #l9 $window-col
+                !endif
+            !elif &equ #l9 0
+                ; Found a '\end' with nothing on stack exit with an open status.
+                set-variable #l5 "q"
+                set-variable #p9 &spr "|o|end|%s|%d|%d|" #l1 $window-line $window-col
+            !else
+                ; Error - should never get here.
+                set-variable #l5 "q"
+                set-variable #p9 &spr "|H|ERROR|%s|%d|%d|" #l1 $window-line $window-col
+            !endif
+        !elif &gre #l9 0
+            set-variable #l5 "q"
+            set-variable #p9 &spr "|e|%s|%d|%d|" &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
+        !else
+            set-variable #l5 "q"
+            set-variable #p9 "|n|"
+        !endif
+        !if &and &seq #l5 "f" 0
+            !force forward-char
+            !if &not $status
+                !if &gre #l9 0
+                    set-variable #l5 "q"
+                    set-variable #p9 &spr "|e|%s|%d|%d|" &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
+                !else
+                    set-variable #l5 "q"
+                    set-variable #p9 "|n|"
+                !endif
+            !endif
+            set-variable #l5 "o"
+        !endif
+    !until &seq #l5 "q"
+!emacro
+
+; Moves up a level by advancing forwards to the next bracket that closes a
+; statement. i.e. Finds the next "\end{", "}" or "]"
+define-macro tex-find-forward
+    set-position "\x81"
+    set-variable #l3 &bmod "magic"
+    1 buffer-mode "magic"
+    tex-bracket-find-forward
+    set-variable #l0 &lget #l9 1
+    !if &seq #l0 "n"
+        ml-write "No bracket mismatches."
+    !elif &seq #l0 "o"
+        ml-write &spr "Next '%s':%d/%d" &lget #l9 2 &lget #l9 3 &lget #l9 4
+    !elif &seq #l0 "m"
+        ml-write &spr "Mismatch '%s':%d/%d ... '%s':%d/%d" &lget #l9 5 &lget #l9 6 &lget #l9 7 &lget #l9 2 &lget #l9 3 &lget #l9 4
+    !elif &seq #l0 "e"
+        ml-write &spr "No matching '%s':%d/%d" &lget #l9 2 &lget #l9 2 &lget #l9 3 &lget #l9 4
+    !else
+        ml-write &spr "ERROR: status=%s(%s)" #l0 #l9
+    !endif
+    &cond #l3 1 -1 buffer-mode "magic"
+!emacro
+
+; Down up a level by advancing backwards to the next bracket that closes a
+; statement. i.e. Finds the next "\begin{", "{" or "["
+define-macro tex-find-backward
+    set-position "\x81"
+    set-variable #l3 &bmod "magic"
+    1 buffer-mode "magic"
+    tex-bracket-find-backward
+    set-variable #l0 &lget #l9 1
+    !if &seq #l0 "n"
+        ml-write "No bracket mismatches."
+    !elif &seq #l0 "o"
+        ml-write &spr "Next '%s':%d/%d" &lget #l9 2 &lget #l9 3 &lget #l9 4
+    !elif &seq #l0 "m"
+        ml-write &spr "Mismatch '%s':%d/%d ... '%s':%d/%d" &lget #l9 5 &lget #l9 6 &lget #l9 7 &lget #l9 2 &lget #l9 3 &lget #l9 4
+    !elif &seq #l0 "e"
+        ml-write &spr "No matching '%s':%d/%d" &lget #l9 2 &lget #l9 2 &lget #l9 3 &lget #l9 4
+    !else
+        ml-write &spr "ERROR: status=%s(%s)" #l0 #l9
+    !endif
+    &cond #l3 1 -1 buffer-mode "magic"
+!emacro
+
+; Find the next \begin{...} block backwards.
+define-macro latex-find-backward
+    set-position "\x81"
+    set-variable #l4 &bmod "magic"
+    1 buffer-mode "magic"
+    latex-block-find-backward
+    set-variable #l0 &lget #l9 1
+    !if &seq #l0 "n"
+        ml-write "At outermost level. No \\begin{...} ... \\end{...} mismatch."
+    !elif &seq #l0 "o"
+        ml-write &spr "Next \\begin{%s}:%d(%d)" &lget #l9 3 &lget #l9 4 &lget #l9 5
+    !elif &seq #l0 "m"
+        ml-write &spr "Mismatch \\begin{%s}:%d(%d) ... \\end{%s}:%d(%d)." &lget #l9 7 &lget #l9 8 &lget #l9 9 &lget #l9 3 &lget #l9 4 &lget #l9 5
+    !elif &seq #l0 "e"
+        ml-write &spr "No \begin{%s} matching \\end{%s}:%d(%d)." &lget #l9 3 &lget #l9 3 &lget #l9 4 &lget #l9 5
+    !else
+        ml-write &spr "ERROR: status=%s(%s)" #l0 #l9
+    !endif
+    &cond #l4 1 -1 buffer-mode "magic"
+!emacro
+
+; Find the next open \end{...} block forwards.
+define-macro latex-find-forward
+    set-position "\x81"
+    set-variable #l4 &bmod "magic"
+    1 buffer-mode "magic"
+    latex-block-find-forward
+    set-variable #l0 &lget #l9 1
+    !if &seq #l0 "n"
+        ml-write "At outermost level. No \\begin{...} ... \\end{...} mismatch."
+    !elif &seq #l0 "o"
+        ml-write &spr "Next \\end{%s}:%d(%d)" &lget #l9 3 &lget #l9 4 &lget #l9 5
+        set-variable $window-line &lget #l9 4
+        set-variable $window-col &lget #l9 5
+    !elif &seq #l0 "m"
+        ml-write &spr "Mismatch \\begin{%s}:%d(%d) ... \\end{%s}:%d(%d)." &lget #l9 7 &lget #l9 8 &lget #l9 9 &lget #l9 3 &lget #l9 4 &lget #l9 5
+        set-variable $window-line &lget #l9 4
+        set-variable $window-col &lget #l9 5
+    !elif &seq #l0 "e"
+        ml-write &spr "No \end{%s} matching \\begin{%s}:%d(%d)." &lget #l9 3 &lget #l9 3 &lget #l9 4 &lget #l9 5
+        set-variable $window-line &lget #l9 4
+        set-variable $window-col &lget #l9 5
+    !else
+        ml-write &spr "ERROR: status=%s(%s)" #l0 #l9
+    !endif
+    &cond #l4 1 -1 buffer-mode "magic"
+!emacro
+
+; Goto the last unclosed latex block. i.e. moves to \begin{...} This is
+; typically bound to C-c C-u
+define-macro tex-goto-last-unclosed-latex-block
+    set-position "\x81"
+    set-variable #l8 &bmod "magic"
+    1 buffer-mode "magic"
+    latex-block-find-backward
+    set-variable #l0 &lget #l9 1
+    !if &seq #l0 "n"
+        ml-write "Not Found - at outermost level. (All \\begin{...} ... \\end{...} matched)"
+        goto-position "\x81"
+    !elif &seq #l0 "o"
+        ml-write &spr "Next \\begin{%s}:%d(%d)" &lget #l9 3 &lget #l9 4 &lget #l9 5
+        set-variable $window-line &lget #l9 4
+        set-variable $window-col &lget #l9 5
+    !elif &seq #l0 "m"
+        ml-write &spr "Mismatch \\begin{%s}:%d(%d) ... \\end{%s}:%d(%d)." &lget #l9 7 &lget #l9 8 &lget #l9 9 &lget #l9 3 &lget #l9 4 &lget #l9 5
+        set-variable $window-line &lget #l9 4
+        set-variable $window-col &lget #l9 5
+    !elif &seq #l0 "e"
+        ml-write &spr "No \begin{%s} matching \\end{%s}:%d(%d)." &lget #l9 3 &lget #l9 3 &lget #l9 4 &lget #l9 5
+        goto-position "\x81"
+    !else
+        ml-write &spr "Macro error: Status=%s(%s)" #l0 #l9
+        goto-position "\x81"
+    !endif
+    &cond #l8 1 -1 buffer-mode "magic"
+!emacro
+
+; Create an \end{...} to match the last unclosed \begin{...}
+; Typically bound to "C-c C-e"
+define-macro tex-close-latex-block
+    set-position "\x81"
+    set-variable #l8 &bmod "magic"
+    1 buffer-mode "magic"
+    set-variable #l1 ""
+    latex-block-find-backward
+    set-variable #l0 &lget #l9 1
+    !if &seq #l0 "n"
+        ml-write "Not Found - at outermost level. (All \\begin{...} ... \\end{...} matched)"
+        goto-position "\x81"
+    !elif &seq #l0 "o"
+        ml-write &spr "Found \\begin{%s} at line %d col %d" &lget #l9 3 &lget #l9 4 &lget #l9 5
+        goto-position "\x81"
+        insert-string &spr "\\end{%s}" &lget #l9 3
+        set-variable #l3
+    !elif &seq #l0 "m"
+        set-variable #l1 &spr "Mismatch \\begin{%s}:%d(%d) ... \\end{%s}:%d(%d)." &lget #l9 7 &lget #l9 8 &lget #l9 9 &lget #l9 3 &lget #l9 4 &lget #l9 5
+        set-variable $window-line &lget #l9 4
+        set-variable $window-col &lget #l9 5
+    !elif &seq #l0 "e"
+        set-variable #l1 &spr "No \begin{%s} matching \\end{%s}:%d(%d)." &lget #l9 3 &lget #l9 3 &lget #l9 4 &lget #l9 5
+        set-variable $window-line &lget #l9 4
+        set-variable $window-col &lget #l9 5
+    !else
+        ml-write &spr "Macro error: Status=%s(%s)" #l0 #l9
+        goto-position "\x81"
+    !endif
+    ; See if the user wants to go to the error.
+    !if &not &seq #l1 ""
+        set-variable #l1 &cat #l1 " Goto error (y/n) ? "
+        !if &iseq @mc1 #l1 "yYnN" "n"
+            goto-position "\x81"
+        !endif
+    !endif
+    &cond #l8 1 -1 buffer-mode "magic"
+!emacro
+
+; Verify that all of the latex blocks are closed from the current position.
+define-macro latex-verify
+    set-position "\x81"
+    set-variable #l8 &bmod "magic"
+    1 buffer-mode "magic"
+    ml-write "Checking for \\begin{..} .. \\end{..} pairs from current position ..."
+    latex-block-find-forward
+    set-variable #l0 &lget #l9 1
+    !if &seq #l0 "n"
+        ml-write "All \\begin{...} ... \\end{...} matched OK)"
+        goto-position "\x81"
+        ; Check for bracket matching by looking forward.
+        ml-write "\\begin{}/\\end{} OK. Checking bracket {}[] matching from current position ..."
+        tex-find-forward
+    !elif &seq #l0 "o"
+        ml-write &spr "ERROR: No \\begin for \\end{%s}@%d/%d" &lget #l9 3 &lget #l9 4 &lget #l9 5
+        set-variable $window-line &lget #l9 4
+        set-variable $window-col &lget #l9 5
+    !elif &seq #l0 "m"
+        ml-write &spr "ERROR: Mismatched \\begin{%s}@%d/%d ... \\end{%s}@%d/%d" &lget #l9 7 &lget #l9 8 &lget #l9 9 &lget #l9 3 &lget #l9 4 &lget #l9 5
+        set-variable $window-line &lget #l9 4
+        set-variable $window-col &lget #l9 5
+    !elif &seq #l0 "e"
+        ml-write &spr "ERROR: No \begin{%s} matching \\end{%s}@%d/%d" &lget #l9 3 &lget #l9 3 &lget #l9 4 &lget #l9 5
+        set-variable $window-line &lget #l9 4
+        set-variable $window-col &lget #l9 5
+    !else
+        ml-write &spr "Macro error: Status=%s(%s)" #l0 #l9
+        goto-position "\x81"
+    !endif
+    &cond #l8 1 -1 buffer-mode "magic"
+!emacro
+
+; Handle the expansion of LaTeX abbreviations. The only one we handle here is
+; \\end{}. If we are not performing an expansion then simply return NULL.
+0 define-macro latex-pre-expand-abbrev
+    ; Handling \end.
+    !if &not &seq &mid @wl &sub $window-col 5 5 "\\end{"
+        !abort
+    !endif
+    ; Set up the buffer to look for the backward tag.
+    set-position "\x81"
+    set-variable #l8 &bmod "magic"
+    1 buffer-mode "magic"
+    5 backward-char
+    ; Find the block backwards.
+    latex-block-find-backward
+    set-variable #l0 &lget #l9 1
+    !if &seq #l0 "o"
+        ; Found a match - insert it.
+        goto-position "\x81"
+        insert-string &spr "%s" &lget #l9 3
+        &cond #l8 1 -1 buffer-mode "magic"
+        !return
+    !endif
+    ; Failed. Restore position and return abort.
+    goto-position "\x81"
+    &cond #l8 1 -1 buffer-mode "magic"
+    !abort
+!emacro
+
+; Insert a quote for Tex in context sensitive way. A numeric argument always
+; inserts a literal quote. This is simply bound to '"'
+define-macro tex-insert-quote
+    ; If there is an arqument then insert a literal.
+    !if @?
+        set-variable #l0 "\""
+    !else
+        set-variable #l0 "''"
+        ; If we are in a verbatim environment then insert a literal.
+        set-position "\x81"
+        set-variable #l8 &bmod "magic"
+        1 buffer-mode "magic"
+        latex-block-find-backward
+        set-variable #l1 &lget #l9 1
+        goto-position "\x81"
+        &cond #l8 1 -1 buffer-mode "magic"
+        ; Process.
+        !if &and &seq #l1 "o" &seq "verbatim" &lget #l9 3
+            ; Verbatim environment.
+            set-variable #l0 "\""
+        !elif &equ $window-col 0
+            ; If we are at the start of the line or the previous character is
+            ; space then insert an opening quote.
+            set-variable #l0 "``"
+        !else
+            ; Find the previous character.
+            !force backward-char
+            !if $status
+                set-variable #l1 @wc
+                !if &sin #l1 " \t"
+                    set-variable #l0 "``"
+                !elif &sin #l1 "\\"
+                    set-variable #l0 "\""
+                !endif
+                forward-char
+            !endif
+        !endif
+    !endif
+    insert-string #l0
+!emacro
+
+; Inserts an underscore, bound to "_"
+define-macro tex-insert-underscore
+    ; If there is an arqument then insert a literal.
+    !if @?
+        set-variable #l0 "_"
+    !else
+        ; If we are in a verbatim environment then insert a literal.
+        set-position "\x81"
+        set-variable #l8 &bmod "magic"
+        1 buffer-mode "magic"
+        latex-block-find-backward
+        set-variable #l0 &lget #l9 1
+        goto-position "\x81"
+        &cond #l8 1 -1 buffer-mode "magic"
+        ; Process.
+        !if &and &seq #l0 "o" &seq "verbatim" &lget #l9 3
+            ; Verbatim environment.
+            set-variable #l0 "_"
+        !elif &equ $window-col 0
+            ; If we are at the start of the line or the previous character is
+            ; space then insert an opening quote.
+            set-variable #l0 "\\_"
+        !else
+            ; Find the previous character.
+            backward-char
+            set-variable #l1 @wc
+            !if &sin #l1 "\\"
+                set-variable #l0 "_"
+            !else
+                set-variable #l0 "\\_"
+            !endif
+            forward-char
+        !endif
+    !endif
+    insert-string #l0
+!emacro
+
+; Insert a set of brackets, typically bound to "C-c {"
+define-macro tex-insert-braces
+    insert-string "{}"
+    backward-char
+!emacro
+
+; Move to the next set of braces, typically bound to "C-c }".
+; n Move up 'n' levels.
+; -n Move backwards 'n' levels
+define-macro tex-up-list
+    set-variable #l8 &bmod "magic"
+    1 buffer-mode "magic"
+    ; Get numeric argument.
+    !if @?
+        set-variable #l1 @#
+    !else
+        set-variable #l1 1
+    !endif
+    ; Do the processing.
+    !if &less #l1 0
+        !while #l1 &less 0
+            tex-bracket-find-backward
+            set-variable #l0 &lget #l9 1
+            !if &seq #l0 "n"
+                ml-write "At outmost level."
+                set-variable #l1 0
+            !elif &seq #l0 "o"
+                ; Found !
+            !endif
+            set-variable #l1 &add #l1 1
+        !done
+    !else
+        !while #l1 &gre 0
+            tex-bracket-find-forward
+            set-variable #l0 &lget #l9 1
+            !if &seq #l0 "n"
+                ml-write "At outmost level."
+                set-variable #l1 0
+            !elif &seq #l0 "o"
+                ; Found !
+            !endif
+            set-variable #l1 &sub #l1 1
+        !done
+    !endif
+    &cond #l8 1 -1 buffer-mode "magic"
 !emacro
 
 buffer-init-fhook "latex"
