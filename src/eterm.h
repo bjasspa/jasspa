@@ -8,7 +8,7 @@
  *  Object Name   : eterm.h
  *  Created By    : Steven Phillips and Jon Green
  *  Create Date   : Some time in 1994
- *  Last Modified : <20011114.2206>
+ *  Last Modified : <20011215.1333>
  *
  *  Description	  : Terminal I/O definitions.
  *
@@ -195,9 +195,11 @@ extern void sigAlarm(SIGNAL_PROTOTYPE) ;
 extern uint16 TTmrow, TTnrow, TTsrow, TTmcol, TTncol, TTmargin, TTscrsiz ;
 extern char  *CM, *CL ;
 
+#ifndef _CYGWIN
 /* Following are functions used by termcap & an xterm */
 extern	int   tputs(char *, int, int (*)(int)) ;
 extern	char *tgoto(char *, int, int ) ;
+#endif
 
 #define TTNbell()      (putchar(BELL),fflush(stdout))
 #define TTdieTest()    if(alarmState & meALARM_DIE) meDie()

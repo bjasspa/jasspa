@@ -1,40 +1,40 @@
 /****************************************************************************
  *
- *                      Copyright 1997 Jasspa
+ *                      Copyright 1997-2001 Jasspa
  *
  *  System        : MicroEmacs Jasspa Distribution
  *  Object Name   : emain.h
  *  Author        : Steve Philips
  *  Created       : Thu Nov 27 19:17:17 1997
- *  Last Modified : <010802.1225>
+ *  Last Modified : <011215.1338>
  *
- *  Description 
+ *  Description
  *       Encapsulate all of the platform definitions into a sigle file
  *
  *  Notes
  *       Macro definitions defined within this file obey the
  *       following rules:-
- * 
+ *
  *       _XXXX - Underscore names are tested using
  *               "#if (defined _XXXX)", and are disabled by
  *               using "#undef _XXXX" following the definition
  *               to remove or disable.
  *
- *       XXXX  - Non-underscore names are tested using 
+ *       XXXX  - Non-underscore names are tested using
  *               "#if XXXXX". A zero disables the option.
  *               Non-zero (typically 1) enables the option.
  *
  *  History
- *      
+ *
  ****************************************************************************
  *
- * Copyright (C) 1997 - 1999, JASSPA 
- * 
+ * Copyright (C) 1997 - 2001, JASSPA
+ *
  * The MicroEmacs Jasspa distribution can be copied and distributed freely for
  * any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
  * incorporated into commercial software with the expressed permission of
  * JASSPA.
- *  
+ *
  ****************************************************************************/
 #ifndef __EMAIN_H__
 #define __EMAIN_H__
@@ -46,7 +46,7 @@
 /*#define _ME_FULL_DEBUG*/
 /*#define _ME_FREE_ALL_MEMORY*/
 
-/* These next 2 defines are platform specific, but as all supported 
+/* These next 2 defines are platform specific, but as all supported
  * platforms use these and all future ones should I've put them here
  * for now.
  */
@@ -138,7 +138,7 @@
 /**************************************************************************
 * UNIX : UNIXWARE                                                         *
 **************************************************************************/
-#ifdef _UNIXWR1 
+#ifdef _UNIXWR1
 #define meSYSTEM_NAME  "unixwr1"        /* Identity name of the system   */
 #define _UNIX          1                /* This is a UNIX system         */
 #define _USG           1                /* UNIX system V                 */
@@ -245,9 +245,16 @@
 #define _TCAP          1                /* Use TERMCAP                   */
 #define _TCAPFONT      1                /* Use TERMCAP fonts to color    */
 #undef  _WIN32                          /* This is not win32             */
-#define _NO_XTERM      1                /* Do not want X-Windows         */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
-#define _meDEF_SYS_ERRLIST              /* errno.h not def sys_errlist   */
+#define _USEPOLL       1                /* use poll() for stdin polling  */
+#ifndef _NO_XTERM
+#define _CLIENTSERVER  1                /* Client server support         */
+#define _URLSUPP       1                /* Supports url reading          */
+#define _IPIPES        1                /* platform supports Inc. pipes  */
+#define _XTERM         1                /* Use Xlib                      */
+#endif
+/* Under cygwin sys_errlist is defined slightly differently - redefine   */
+#define sys_errlist _sys_errlist        /* sys_errlist specially defined */
 #endif /* _CYGWIN */
 
 /**************************************************************************
@@ -398,4 +405,3 @@ typedef unsigned long  uint32 ;
 #include "eextrn.h"     /* External function defintions  */
 
 #endif /* __EMAIN_H__ */
-
