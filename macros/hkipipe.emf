@@ -498,6 +498,8 @@ define-macro fhook-ipipe
             !endif
         !elif &seq $buffer-bname "*grep*"
             set-variable :mouse-word-select "mouse-get-next-line"
+            ; Bind <return> to select the buffer - same as mouse.
+            buffer-bind-key return-get-next-line "return"
         !endif
         !if &exi my-fhook-ipipe
             my-fhook-ipipe
