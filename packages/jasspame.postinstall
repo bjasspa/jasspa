@@ -1,0 +1,29 @@
+#!/sbin/sh
+# Post-Install Script Template for /opt
+# From: http://www.hpworks.org.uk/newsletter/articles/cookbook/a3.html
+
+PATH=$SW_PATH:/sbin:/usr/bin:/usr/ccs/sbin
+export PATH
+
+# is it already there?
+
+if grep -q /opt/jasspa/bin /etc/PATH
+then exit
+fi
+
+echo "add /opt/jasspa/bin to the /etc/PATH file and"
+#echo "add /opt/jasspa/man to the /etc/MANPATH file..."
+
+mv /etc/PATH /etc/PATH.old
+#mv /etc/MANPATH /etc/MANPATH.old
+
+awk '{print $1 ":/opt/jasspa/bin" }' < /etc/PATH.old    >/etc/PATH
+#awk '{print $1 ":/opt/jasspa/man" }' < /etc/MANPATH.old >/etc/MANPATH
+
+if [ -f /etc/PATH ]
+then rm -f /etc/PATH.old
+fi
+
+#if [ -f /etc/MANPATH ]
+#then rm -f /etc/MANPATH.old
+#fi

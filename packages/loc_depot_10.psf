@@ -1,0 +1,50 @@
+#
+#  System        : MicroEmacs
+#  Module        : Package File.
+#  Object Name   : $RCSfile: loc_depot_10.psf,v $
+#  Revision      : $Revision: 1.1 $
+#  Date          : $Date: 2003-08-17 14:08:02 $
+#  Author        : $Author: jon $
+#  Created By    : Jon Green
+#  Created       : Sun Aug 17 12:58:23 2003
+#  Last Modified : <160495.1521>
+#
+# Depot Product Specification File for HP-UX 10.20
+#
+vendor
+	tag jasspa
+	description "JASSPAs MicroEmacs text editor www.jasspa.com"
+	title "JASSPAs MicroEmacs"
+end
+product
+    tag jasspame
+    title "JASSPAs MicroEmacs"
+    description "JASSPAs MicroEmacs text editor www.jasspa.com"
+    revision 2002.12
+    #
+    architecture S700/800_HPUX_10
+    machine_type 9000/[78]*:*
+    os_name HP-UX
+    os_release ?.10.*
+    os_version *
+    copyright "Copyright (c) 1988-2003 JASSPA - www.jasspa.com"
+    #
+    fileset
+        tag bin
+        title "JASSPA MicroEmacs Executables"
+        revision 2002.12
+        #
+        directory loc10/bin=/usr/local/bin
+        file_permissions -u 222 -g bin -o bin
+        file *
+    end
+    fileset
+        tag macros
+        title "JASSPA MicroEmacs Macro Files"
+        revision 2002.12
+        #
+        directory loc10/microemacs=/usr/local/microemacs
+        file_permissions -u 222 -g bin -o bin
+        file *
+    end
+end

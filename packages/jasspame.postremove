@@ -1,0 +1,23 @@
+#!/sbin/sh
+# Post-Remove Script Template for /opt
+# From: http://www.hpworks.org.uk/newsletter/articles/cookbook/a4.html
+
+PATH=$SW_PATH:/sbin:/usr/bin:/usr/ccs/sbin
+export PATH
+
+echo "removing /opt/xxx/bin from the /etc/PATH file and"
+#echo "removing /opt/xxx/man from the /etc/MANPATH file..."
+
+mv /etc/PATH /etc/PATH.old
+#mv /etc/MANPATH /etc/MANPATH.old
+
+sed 's|:/opt/XXX/bin||g' < /etc/PATH.old    >/etc/PATH
+#sed 's|:/opt/XXX/man||g' < /etc/MANPATH.old >/etc/MANPATH
+
+if [ -f /etc/PATH ]
+then rm -f /etc/PATH.old
+fi
+
+#if [ -f /etc/MANPATH ]
+#then rm -f /etc/MANPATH.old
+#fi
