@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2mod000.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2mod000.2,v 2.6 2004-01-05 00:19:23 jon Exp $
 .Im MicroEmacs modes
 .so me.tni
 .TH auto 2m
@@ -30,7 +30,7 @@ buffer mode
 .Ht crlf 2m ,
 and if a CTRL-Z is found at the end of the file then mode
 .Ht ctrlz 2m
-is enabled. Otherwise these modes are cleared. 
+is enabled. Otherwise these modes are cleared.
 .PP
 At write time, if \fBauto\fR mode is enabled then the file is written out is a
 style determined by modes \fBcrlf\fR and \fBctrlz\fR. For example, if crlf was
@@ -72,6 +72,7 @@ Windows  systems  tend to use a  '\fB\\r\\n\fR'  style  line  feed but with no
 trailing ctrl-z.
 .SH "SEE ALSO"
 .na
+.Hl "Operating Modes" Modes - ,
 .Ht global-mode 2 ,
 .Ht buffer-mode 2 ,
 .Ht crlf 2m ,

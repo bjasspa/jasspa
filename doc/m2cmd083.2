@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd083.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd083.2,v 2.6 2004-01-05 00:19:23 jon Exp $
 .Im MicroEmacs command|help|buffer
 .ds C0 "(\fB\*(cX\*cb\fR)\ \&
 .so me.tni
@@ -14,6 +14,7 @@ list-buffers \- List all buffers and show their status
 .Me $a
 .SH SYNOPSIS
 .na
+.I n
 \fBlist-buffers\fR \*(C0
 .ad
 .SH DESCRIPTION
@@ -24,6 +25,17 @@ flag for each buffer is displayed. (The change flag is a \fB*\fR  character if
 the buffer has been  changed  and not  written  out. The active flag is not an
 \fB@\fR if the file had been  specified on the command  line, but has not been
 read in yet since nothing has switched to that buffer.)
+.PP
+The numerical argument \fIn\fR determines the information that is displayed by
+the command and follows:-
+.PP
+\fC\ \ 1\fR \- The default, when omitted, displays all user visible buffers.
+.br
+\fC\ \ 0\fR \- Displays both visible and hidden buffers.
+.br
+\fC\-ve\fR \- Display the visible buffers and size information.
+.br
+\fC+ve\fR \- Displays both visible and hidden buffers with size information.
 .PP
 The buffer list has some special  command keys  associated with it which allow
 the state of the  buffers  to be edited  from the buffer  list, the  editing

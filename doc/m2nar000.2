@@ -1,12 +1,12 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Jul 11 13:30:15 1998
 .\"
-.Id $Id: m2nar000.2,v 2.6 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2nar000.2,v 2.7 2004-01-05 00:19:24 jon Exp $
 .Im MicroEmacs macrodevelop
 .so me.tni
 .TH languageTemplates 2
@@ -25,6 +25,9 @@ help deal with the contents of the file.
 .PP
 This section outlines the steps to be taken to integrate a new file language
 template into \*(mE.
+.Ht buff-init 3
+automates  many of the operations  defined below and it is suggested that this
+is a preferable method to add a new language template into \*(mS.
 .SS "The scope of the File Type"
 The  first  step is to decide  the scope of the file, this  will  determine
 where the file hook should be defined. The options are:-
@@ -630,6 +633,7 @@ el "else\\r\\p\\P"
 .na
 .Ht add-file-hook 2 ,
 .Ht buffer-abbrev-file 2 ,
+.Ht buff-init 3 ,
 .Ht etfinsrt 3 ,
 .Ht execute-buffer 2 ,
 .Ht expand-abbrev 2 ,
