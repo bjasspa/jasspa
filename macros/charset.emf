@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Tue Feb 16 09:37:57 1999
-;  Last Modified : <000719.0012>
+;  Last Modified : <000719.2317>
 ;
 ;  Description   : Sets up the chatacter translations for the different 
 ;                  char sets. The internal default is ISO-8859 (1-...).
@@ -12,7 +12,7 @@
 ;
 ;  History
 ;
-;  Copyright (c) 1999 JASSPA.
+;  Copyright (c) 1999-2000 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 !if &les @# 1
     ; if executed with an argument of 0 or less, return the list
@@ -40,4 +40,44 @@ set-variable .change-font.type 0
 !elif &seq #l0 "Win-OEM"
     set-char-mask "M" "£œª¦«®¬ª®©°§±ñ²ı³ü´îµæ¶õ·ú¸ı¹û»¯¼¬½«¾ó¿¨À·ÁÂŠÃ²ÄÆ’Ç€ÈÔÉÊÒËÑÌŞÍÖÎ×ÏØĞÑÑ¥ÒãÓàÔâÕåÖ™×ØÙëÚéÛêÜšİìŞçßÿà…á âƒä„å†æ‘ç‡èŠé‚êˆë‰ìí¡îŒï‹ñ¤ò•ó¢ô“õäö”÷öø›ù—ú£û–üıìşèÿ˜"
     set-variable $box-chars "³Ú¿ÀÙÂÃÅ´ÁÄ"
-    set-variable $window-chars "=-#*%=\C^± ±\C_==\C^\C^±±  ±±\C_\C_
+    set-variable $window-chars "=-#*%=\C^± ±\C_\CD==\C^\C^±±  ±±\C_\C_\C[\CZ|\CQ± ±\CP\CD||\CQ\CQ±±  ±±\CP\CP\C[\CZ x*  \xaf\xfb\xfa"
+    set-variable $system &band $system &bnot 0x10000
+    set-variable .change-font.type 255
+    set-variable #l1 0
+!elif &seq #l0 "Win-GREEK" ; ISO-7
+    set-char-mask "M" ""
+    set-variable .change-font.type 161
+!elif &seq #l0 "Win-TURK" ; ISO-3
+    set-char-mask "M" ""
+    set-variable .change-font.type 162
+!elif &seq #l0 "Win-RUS" ; ISO-5
+    set-char-mask "M" "°À±Á²Â³Ã´ÄµÅ¶Æ·Ç¸È¹ÉºÊ»Ë¼Ì½Í¾Î¿ÏÀĞÁÑÂÒÃÓÄÔÅÕÆÖÇ×ÈØÉÙÊÚËÛÌÜÍİÎŞÏß¡¨ĞàÑáÒâÓãÔäÕåÖæ×çØèÙéÚêÛëÜìİíŞîßïàğáñâòãóäôåõæöç÷èøéùêúëûìüíıîşïÿñ¸"
+    set-variable .change-font.type 204
+!elif &seq #l0 "PC-437"
+    set-char-mask "M" "£œª¦«®¬ª°ø±ñ²ıµæ·ú»¯¼¬½«¿¨ÀAÁAÂAÃAÄÅÆ’AAÇ€ÈEÉÊEËEEEÌIÍIÎIÏIIIÑ¥ÒOÓOÔOÕOÖ™OOÙUÚUÛUÜšUUİYßáà…á âƒãaä„åaæ‘aaç‡èŠé‚êˆë‰ìí¡îŒï‹ñ¤ò•ó¢ô“õoö”÷öøoooù—ú£û–üuuıyÿ˜yy"
+    set-variable $box-chars "³Ú¿ÀÙÂÃÅ´ÁÄ"
+    set-variable $window-chars "=-#*%=\C^± ±\C_\CD==\C^\C^±±  ±±\C_\C_\C[\CZ|\CQ± ±\CP\CD||\CQ\CQ±±  ±±\CP\CP\C[\CZ x*  >\\."
+    set-variable $system &band $system &bnot 0x10000
+    set-variable #l1 0
+!elif &seq #l0 "PC-850"
+    set-char-mask "M" "£œª¦«®¬ª®©°§±ñ²ı³ü´îµæ¶õ·ú¸ı¹û»¯¼¬½«¾ó¿¨À·ÁÂŠÃ²ÄÆ’Ç€ÈÔÉÊÒËÑÌŞÍÖÎ×ÏØĞÑÑ¥ÒãÓàÔâÕåÖ™×ØÙëÚéÛêÜšİìŞçßÿà…á âƒä„å†æ‘ç‡èŠé‚êˆë‰ìí¡îŒï‹ñ¤ò•ó¢ô“õäö”÷öø›ù—ú£û–üıìşèÿ˜"
+    set-variable $box-chars "³Ú¿ÀÙÂÃÅ´ÁÄ"
+    set-variable $window-chars "=-#*%=\C^± ±\C_\CD==\C^\C^±±  ±±\C_\C_\C[\CZ|\CQ± ±\CP\CD||\CQ\CQ±±  ±±\CP\CP\C[\CZ x*  >\\."
+    set-variable $system &band $system &bnot 0x10000
+    set-variable #l1 0
+!elif &seq #l0 "koi8-r"
+    set-char-mask "M" "°á±â²÷³ç´äµå¶ö·ú¸é¹êºë»ì¼í½î¾ï¿ğÀòÁóÂôÃõÄæÅèÆãÇşÈûÉıÊÿËùÌøÍüÎàÏñ¡³ĞÁÑÂÒ×ÓÇÔÄÕÅÖÖ×ÚØÉÙÊÚËÛÌÜÍİÎŞÏßĞàÒáÓâÔãÕäÆåÈæÃçŞèÛéİêßëÙìØíÜîÀïÑñ£"
+    set-variable .change-font.type 204
+!endif
+
+!if &reg "/history" &cat %platform "/ext-char-set" "0"
+    set-char-mask "dp" "\CY\CM\CL\CN\CK\CX\CU\CO\CV\CW\CR\CP\CQ\C^\C_\CG"
+    set-char-mask "p"  "\CI\CJ"
+    set-variable $box-chars "\CY\CM\CL\CN\CK\CX\CU\CO\CV\CW\CR"
+    set-variable $window-chars "=-#*%=\C^   \C_*==\C^\C^      \C_\C_**|\CQ   \CP*||\CQ\CQ      \CP\CP** x*  \t\n\CG"
+    set-variable $system &bor $system 0x10000
+!elif #l1
+    set-variable $box-chars "|+++++++++-"
+    set-variable $window-chars "=-#*%=^   v*==^^      vv**|<   >*||<<      >>** x*  >\\."
+    set-variable $system &band $system &bnot 0x10000
+!endif
