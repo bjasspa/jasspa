@@ -588,11 +588,9 @@ lineInsertNewline(meInt undoCall)
 static int
 bufferIsTextInsertLegal(meUByte *str)
 {
-    char *ss ;
-    
     if((str[0] != '\0') &&
        (meLineGetFlag(frameCur->windowCur->dotLine) & meLINE_PROTECT) &&
-       ((ss=meStrchr(str,meCHAR_NL)) != NULL))
+       (meStrchr(str,meCHAR_NL) != NULL))
         return mlwrite(MWABORT,(meUByte *)"[Protected Line!]") ;
     return meTRUE ;
 }
