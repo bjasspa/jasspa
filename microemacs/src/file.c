@@ -352,7 +352,8 @@ set_subdirs (int index, meUByte *path_name, meUByte *path_base)
     while (*path_base != '\0')
     {
         meUByte *p ;
-        
+        int ii ;
+                
         /* Construct the base name */
         p = base_name ;
         while ((*p = *path_base) != '\0')
@@ -365,8 +366,16 @@ set_subdirs (int index, meUByte *path_name, meUByte *path_base)
             }
             p++;
         }
-        if (base_name[0] == '\0')
+        
+        /* Clean up any trailing directory characters */
+        ii = meStrlen (base_name) ;
+        if (ii < _ROOT_DIR_LEN)
             continue;
+        if (ii > _ROOT_DIR_LEN)
+        {
+            if (base_name[--ii] == DIR_CHAR)
+                base_name[ii] = '\0';
+        }
     
         /* Append the search paths if necessary. We construct the standard
          * JASSPA MicroEmacs paths and then test for the existance of the
@@ -376,7 +385,6 @@ set_subdirs (int index, meUByte *path_name, meUByte *path_base)
         if (subdirs != NULL)
         {
             char *s ;
-            int ii ;
             
             /* Build up strings ":<s1>/<jdirs[ii]>" */
             for (ii = 0; (s = subdirs[ii]) != NULL; ii++)
@@ -425,9 +433,10 @@ void
 set_dirs(meUByte *argv)
 {
     int ll ;                            /* Line length */
+    int nohome = 1;                     /* No home directory */
     meUByte *s1 ;                       /* Search word */
     meUByte *mepath = NULL;             /* $MEPATH */
-
+    
     /* The Hidden directory, by default this is the <logpath>/.jasspa */
 #if (!defined _HIDDEN_DIR) 
 #if (defined _UNIX) || (defined _WIN32)
@@ -480,29 +489,34 @@ set_dirs(meUByte *argv)
      * over-rides everything when defined. */
     if (mepath == NULL)
     {
+        meUByte loghome [meBUF_SIZE_MAX] ;
+        int ii;
+        
         s1 = meGetenv ("MEUSERPATH") ;
         if (s1 != NULL)
         {
-            /* Use $MEUSERPATH as the home directory, no questions asked */
-            ll = meStrlen (s1) ;
-            meStrcpy(evalResult, s1) ;
-            if ((ll > _ROOT_DIR_LEN) && (evalResult[ll-1] == DIR_CHAR))
-                ll-- ;                  /* Remove DIR_CHAR */
+            /* Use $MEUSERPATH as the home directory */
+            meStrcpy(loghome, s1) ;
+#ifdef _CONVDIR_CHAR
+            fileNameConvertDirChar (loghome) ;
+#endif
         }
         else if ((loginHome != NULL) && (hdir[0] != '\0'))
         {
-            meUByte loghome [meBUF_SIZE_MAX] ;
-            int ii;
-            
             /* Use "$login-home/.jasspa" */
-            meStrcpy(loghome, loginHome);
+            meStrcpy(loghome, loginHome) ;
             ii = meStrlen (loghome) ;
             if (loghome[ii-1] != DIR_CHAR)
                 loghome[ii++] = DIR_CHAR ;
             meStrcpy (&loghome[ii], hdir) ;
-            
-            /* Append and search sub-directories */
-            ii = set_subdirs (ll, evalResult, loghome);
+        }
+        else
+            loghome[0] = '\0';
+        
+        /* Append and search any sub-directories */
+        if (loghome[0] != '\0')
+        {
+            ii = set_subdirs (ll, evalResult, loghome) ;
             if (ii == ll)
             {
                 /* We have not added the home directory, force it so the
@@ -513,9 +527,10 @@ set_dirs(meUByte *argv)
                 ll += meStrlen(loghome) ;
             }
             else
-                ll = ii;
+                ll = ii ;
+            nohome = 0;
         }
-
+        
         /* Get the system path of the installed macros. Use $MEINSTPATH as the
          * MicroEmacs standard macros */
         s1 = meGetenv ("MEINSTALLPATH") ;
@@ -536,10 +551,6 @@ set_dirs(meUByte *argv)
     if (ll > 0)
         meStrrep (&searchPath, evalResult) ;
     
-    /* Use a default if non available */
-    if ((searchPath == NULL) && ((s1 = meGetenv("PATH")) != NULL))
-        searchPath = meStrdup(s1) ;
-
 #ifdef _UNIX
     {
         meUByte *pwd;
@@ -623,11 +634,48 @@ set_dirs(meUByte *argv)
             /* Find the sub-directories and add them */
             set_subdirs (ll, evalResult, resultStr);
             meStrrep (&searchPath, evalResult);
+
+#if (defined _WIN32) || (defined _DOS)            
+            /* On Windows and MS-DOS then we can be in the situation where
+             * there is no home directory. We allow the user to create a home
+             * directory in the sub-directory containing the executable. This
+             * can then have the normal sub-directories */
+            if (nohome)
+            {
+                /* Get the user name out */
+                s1 = meGetenv ("MENAME") ;
+                if ((s1 == NULL) || (*s1 == '\0'))
+                    s1 = loginName ;
+                if ((s1 == NULL) || (*s1 == '\0'))
+                    s1 = "default" ;       /* For default user */
+                
+                /* Create a path that exists below the executable. */
+                ll = meStrlen (resultStr) ;
+                if (resultStr[ll-1] != DIR_CHAR)
+                    resultStr[ll++] = DIR_CHAR ;
+                meStrcpy (&resultStr[ll], s1);
+                
+                /* Evaluate sub-directories */
+                evalResult[0] = '\0';
+                ll = set_subdirs (0, evalResult, resultStr);
+                if (ll > 0)
+                {
+                    /* Pre-pend the search string */
+                    evalResult[ll++] = mePATH_CHAR ;
+                    meStrcpy (&evalResult[ll], searchPath) ;
+                    meStrrep (&searchPath, evalResult);
+                }
+            }
+#endif
         }
     }
     
     /* Release the mepath */
     meNullFree (mepath);
+
+    /* Use a default if none available */
+    if ((searchPath == NULL) && ((s1 = meGetenv("PATH")) != NULL))
+        searchPath = meStrdup(s1) ;
 
      printf ("Search path = %s\n", searchPath);
      printf ("Prog name   = %s\n", progName);
