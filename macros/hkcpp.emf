@@ -126,6 +126,14 @@ set-variable .fhook-cpp.item-list-r6 "Clss \ecB\\1\ecA"
     hilight .hilight.cpp    1 "virtual"      .scheme.type
     hilight .hilight.cpp    1 "void"         .scheme.type
     hilight .hilight.cpp    1 "volatile"     .scheme.type
+    ;
+    hilight .hilight.cpp    1 "static_cast"      .scheme.type
+    hilight .hilight.cpp    1 "dynamic_cast"     .scheme.type
+    hilight .hilight.cpp    1 "const_cast"       .scheme.type
+    hilight .hilight.cpp    1 "reinterpret_cast" .scheme.type
+    ; Type qualifiers.
+    hilight .hilight.cpp    1 "__restrict"   .scheme.type
+    hilight .hilight.cpp    1 "__unaligned"  .scheme.type
     ; Add some system types
     hilight .hilight.cpp    1 "FILE"         .scheme.type
     ; Pre-processor directives
@@ -134,6 +142,7 @@ set-variable .fhook-cpp.item-list-r6 "Clss \ecB\\1\ecA"
     hilight .hilight.cpp    0 "__LINE__"     .scheme.prepro
     hilight .hilight.cpp    0 "__STDC__"     .scheme.prepro
     hilight .hilight.cpp    0 "__TIME__"     .scheme.prepro
+    hilight .hilight.cpp    0 "NULL"         .scheme.prepro
     !if &band .hilight.flags 0x08
         ; hilight constants, e.g. numbers
         hilight .hilight.cpp 1 "[[:digit:]]+"       .scheme.constant
