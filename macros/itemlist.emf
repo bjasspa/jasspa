@@ -36,7 +36,7 @@
 ;     following is required:
 ;
 ;    set-variable .fhook-emf.item-list-s1 "^\\s *[0-9]*\\s *define-macro\\s +\\(\\w+\\)"
-;    set-variable .fhook-emf.item-list-r1 "Macro \ecB\\1\ecA"
+;    set-variable .fhook-emf.item-list-r1 "Macr \ecB\\1\ecA"
 ;
 ;    Also note that you can have as many of these search and replace variables as you
 ;    require, i.e. .item-list-s1, .item-list-s2, .item-list-s3, ...
@@ -48,7 +48,7 @@
         set-variable .hilight.list-item &pinc .hilight.next 1
     !endif
     0 hilight .hilight.list-item 0 $global-scheme
-    hilight .hilight.list-item 0x02 "Type  Item"  .scheme.header
+    hilight .hilight.list-item 0x02 "Type Item"  .scheme.header
     hilight .hilight.list-item 0x40 "^[ 0-9][ 0-9][ 0-9][ 0-9][ 0-9][ 0-9] " "" $global-scheme
     hilight .hilight.list-item 0x44 "\ecB" "" "\ecA" "" "" .scheme.function
 !endif
@@ -152,7 +152,7 @@ define-macro item-list-create
     set-mark
     end-of-buffer
     -1 kill-region
-    insert-string "Type  Item     <Order by Position>"
+    insert-string "Type Item     <Order by Position>"
     ; to simple click the function
     buffer-bind-create "bio" "return" "" item-list-find
     buffer-bind-create "bio" "delete" "" item-list-close
@@ -284,9 +284,9 @@ define-macro occur
 !emacro
 
 set-variable .item-list.find 0
-set-variable .item-list.bcol "|15|0|6|"
-set-variable .item-list.ecol "|34|4|10|"
-set-variable .item-list.scol "|0|6|12|"
+set-variable .item-list.bcol "|14|0|5|"
+set-variable .item-list.ecol "|33|4|9|"
+set-variable .item-list.scol "|0|6|11|"
 set-variable .item-list.order 1
 
 ;0 add-next-line "*item-list*"

@@ -152,9 +152,20 @@ set-variable .fhook-dirlst.file-process ""
     !if $status
         !force 2 next-window
         !if &seq $buffer-bname "*files*"
+            ; if there is another normal window and the browser was locked then remove both windows
+            set-variable #l0 0
+            !if .fhook-dirlst.browser-lock
+                1 set-position "\x83"
+                !force next-window
+                set-variable #l0 $status
+                goto-position "\x83"
+            !endif
             set-variable $window-flags 0
             2 previous-window
             delete-window
+            !if #l0
+                delete-window
+            !endif
         !endif
     !endif
     ; loop through all windows to 

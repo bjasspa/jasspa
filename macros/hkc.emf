@@ -36,14 +36,14 @@ set-variable .fhook-c.fold-open  "^{"
 set-variable .fhook-c.fold-close "^}"
 
 ; setup item-list
-set-variable .fhook-c.item-list-s1 "^\\(static\\s +\\)?\\(const\\s +\\)?\\(union\\s +\\)?\\(struct\\s +\\)?\\(\\w+[\\* \\t]+\\)?\\(\\w+\\)\\s *("
-set-variable .fhook-c.item-list-r1 "Func  \ecB\\6\ecA"
+set-variable .fhook-c.item-list-s1 "^\\(static\\s +\\|extern\\s +\\)?\\(const\\s +\\)?\\(union\\s +\\)?\\(struct\\s +\\)?\\(\\w+[\\* \\t]+\\)?\\(\\w+\\)\\s *("
+set-variable .fhook-c.item-list-r1 "Func \ecB\\6\ecA"
 set-variable .fhook-c.item-list-s2 "^\\s *#\\s *define\\s +\\(\\w+\\)"
-set-variable .fhook-c.item-list-r2 "Defn  \ecB\\1\ecA"
+set-variable .fhook-c.item-list-r2 "Defn \ecB\\1\ecA"
 set-variable .fhook-c.item-list-s3 "^\\s *typedef\\s +struct\\s +\\(\\w+\\)\\s *{"
-set-variable .fhook-c.item-list-r3 "Type  \ecB\\1\ecA"
+set-variable .fhook-c.item-list-r3 "Type \ecB\\1\ecA"
 set-variable .fhook-c.item-list-s4 "^}\\s *\\(\\w+\\)\\(\\s *,.*\\)?\\s *;"
-set-variable .fhook-c.item-list-r4 "Type  \ecB\\1\ecA"
+set-variable .fhook-c.item-list-r4 "Type \ecB\\1\ecA"
 
 !if &and &sin "h" .fhook-c.setup &band .hilight.flags 0x02 
     ; Hi-light C Mode

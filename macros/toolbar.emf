@@ -61,9 +61,7 @@
     set-variable #l1 0
     !while &not &seq "" &set #l2 &lget .toolbar.tool-flags &inc #l1 1
         !if &or .all &band #l2 #l0
-            !if &not .toolbar.frame
-                !force 0 popup-window &lget .toolbar.tool-name #l1
-            !endif
+            !force 0 popup-window &lget .toolbar.tool-name #l1
             !if $status
                 set-position "\x85"
                 1 goto-position "\x84"
@@ -100,10 +98,7 @@ define-macro toolbar
         ml-write "[Error: No registered tools]"
         !abort
     !endif
-    set-variable .frame &and &band .flags 1 &opt "mwf"
-    !if &not .frame
-        3 delete-other-windows
-    !endif
+    3 delete-other-windows
     set-variable #l9 0
     set-variable #l8 0
     set-variable #l0 0
@@ -115,15 +110,8 @@ define-macro toolbar
         !endif
     !done
     !if #l9
-        !if .frame
-            set-variable #l0 $frame-depth
-            create-frame
-            .width change-frame-width
-            #l0 change-frame-depth
-        !else
-            split-window-horizontally
-            .toolbar.width resize-window-horizontally
-        !endif
+        split-window-horizontally
+        .toolbar.width resize-window-horizontally
         set-variable #l6 $window-depth
         set-variable #l5 0
         set-variable #l0 0
@@ -143,20 +131,11 @@ define-macro toolbar
                 set-variable #l5 &lget .toolbar.tool-size #l0
             !endif
         !done
-        !if &not .frame
-            3 next-window
-        !endif
+        3 next-window
     !endif
     !if #l8
-        !if .frame
-            set-variable #l0 $frame-width
-            create-frame
-            .depth change-frame-depth
-            #l0 change-frame-width
-        !else
-            split-window-vertically
-            .depth resize-window-vertically
-        !endif
+        split-window-vertically
+        .depth resize-window-vertically
         set-variable #l6 $window-width
         set-variable #l5 0
         set-variable #l0 0
@@ -176,12 +155,7 @@ define-macro toolbar
                 set-variable #l5 &lget .toolbar.tool-size #l0
             !endif
         !done
-        !if &not .frame
-            3 next-window
-        !endif
-    !endif
-    !if .frame
-        next-frame
+        3 next-window
     !endif
     set-variable .toolbar-redraw.all 1
     set-variable .toolbar-redraw.bn "\CH"
@@ -203,6 +177,7 @@ define-macro toolbar
     !endif
     find-buffer "*buffer-info*" 
     -1 buffer-mode "undo"
+    -1 buffer-mode "view"
     beginning-of-buffer
     set-mark
     end-of-buffer
@@ -216,47 +191,145 @@ define-macro toolbar
     beginning-of-buffer
     set-variable $line-scheme .scheme.header
     -1 buffer-mode "edit"
+    1 buffer-mode "view"
     goto-position "\x86"
 !emacro
 
-0 define-macro buffer-list-mouse-pick
+0 define-macro buffer-list-create-single
+    !if &nbmod #p9 "del"
+        set-variable #l4 "D"
+    !elif &nbmod #p9 "nact"
+        set-variable #l4 " "
+    !else
+        set-variable #l4 "@"
+    !endif
+    !if &nbmod #p9 "save"
+        set-variable #l4 &cat #l4 "S "
+    !elif &nbmod #p9 "edit"
+        set-variable #l4 &cat #l4 "* "
+    !elif &nbmod #p9 "view"
+        set-variable #l4 &cat #l4 "% "
+    !else
+        set-variable #l4 &cat #l4 "  "
+    !endif
+    insert-string &cat #l4 #p9
+    insert-newline
+!emacro
+
+0 define-macro buffer-list-command
+    set-variable #l9 &rig @wl 3
+    !if &equ @# -2
+        goto-position "\x82"
+        set-variable $buffer-names ".*"
+        !while &not &seq &set #l0 $buffer-names ""
+            !if &and &not &nbmod #l0 "hide" &nbmod #l0 "save"
+                find-buffer #l0
+                save-buffer @mna
+            !endif
+        !done
+        set-variable $buffer-names ".*"
+        !while &not &seq &set #l0 $buffer-names ""
+            !if &and &nbmod #l0 "nact" &nbmod #l0 "del"
+                delete-buffer #l0 @mna
+            !endif
+        !done
+        set-variable $buffer-names ".*"
+        !while &not &seq &set #l0 $buffer-names ""
+            !if &and &not &nbmod #l0 "hide" &nbmod #l0 "del"
+                delete-buffer #l0 @mna
+            !endif
+        !done
+        ; force a toolbar update on buffers
+        set-variable .toolbar-redraw.bn "\CH"
+    !elif &equ @# -1
+        !force !force delete-buffer #l9 @mna
+        !if $status
+            ; force a toolbar update on buffers
+            set-variable .toolbar-redraw.bn "\CH"
+        !endif
+    !elif &not @#
+        0 named-buffer-mode #l9 "del"
+        !jump 3
+    !elif &equ @# 1
+        0 named-buffer-mode #l9 "save"
+        -1 buffer-mode "view"
+        beginning-of-line
+        set-mark
+        forward-line
+        -1 kill-region
+        buffer-list-create-single
+        backward-line
+        -1 buffer-mode "edit"
+        1 buffer-mode "view"
+    !elif &gre @# 2
+        ml-write &spr "[%s]" #l9
+        !force popup-window #l9
+        !return
+    !endif
+    goto-position "\x82"
+!emacro
+
+0 define-macro buffer-list-mouse-pick-1
     set-variable .buffer-list-create.line $window-line
     goto-position "\x82"
 !emacro
 
-0 define-macro buffer-list-mouse-drop
-    !if &gre $window-line 2
+0 define-macro buffer-list-mouse-drop-1
+    !if &gre $window-line 1
         !if &equ .buffer-list-create.line $window-line
-            ml-write &spr "[%s]" @wl
-            !force popup-window @wl
+            $window-col buffer-list-command
             !return
         !endif
     !endif
     goto-position "\x82"
 !emacro
 
+0 define-macro buffer-list-mouse-drop-3
+    -1 osd .osd.tmp
+    osd .osd.tmp 0 b
+    !if &gre $window-line 1
+        osd .osd.tmp 10 "" "Switch to &Buffer"   3 buffer-list-command
+        osd .osd.tmp 20 "" "&Close Buffer"      -1 buffer-list-command
+        osd .osd.tmp 30 "" "Toggle &Save Flag"   1 buffer-list-command
+        osd .osd.tmp 40 "" "Toggle &Delete Flag" 0 buffer-list-command
+    !else
+        osd .osd.tmp 10 "" "Switch to Buffer"
+        osd .osd.tmp 20 "" "Close Buffer"
+        osd .osd.tmp 30 "" "Toggle Save Flag"
+        osd .osd.tmp 40 "" "Toggle Delete Flag"
+    !endif
+    osd .osd.tmp 50 "" "E&xecute Flags" -2 buffer-list-command
+    !force !force .osd.tmp osd
+    !if &not $status
+        goto-position "\x82"
+    !endif
+!emacro
+
 0 define-macro buffer-list-create
     set-position "\x86"
     find-buffer "*buffer-list*" 
     -1 buffer-mode "undo"
+    -1 buffer-mode "view"
     beginning-of-buffer
     set-mark
     end-of-buffer
     -1 kill-region
-    insert-string "Buffer List\n\n"
+    insert-string "AC Buffer List\n"
     set-variable $buffer-names ".*"
-    !while &not &seq &set #l3 $buffer-names ""
-        !if &not &nbmod #l3 "hide"
-            insert-string #l3
-            insert-newline
+    !while &not &seq &set #l9 $buffer-names ""
+        !if &not &nbmod #l9 "hide"
+            buffer-list-create-single
         !endif
     !done
     backward-delete-char
     beginning-of-buffer
     set-variable $line-scheme .scheme.header
-    set-variable :mouse-pick-1 buffer-list-mouse-pick
-    set-variable :mouse-drop-1 buffer-list-mouse-drop
+    set-variable :mouse-pick-1 buffer-list-mouse-pick-1
+    set-variable :mouse-drop-1 buffer-list-mouse-drop-1
+    set-variable :mouse-pick-3 void
+    set-variable :mouse-drop-3 buffer-list-mouse-drop-3
     -1 buffer-mode "edit"
+    1 buffer-mode "view"
     goto-position "\x86"
 !emacro
 

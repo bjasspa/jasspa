@@ -66,13 +66,13 @@ set-variable .fhook-jst.command-desc  "|||&Show Current Settings|Spell Check Buf
 
 ; setup item-list
 set-variable .fhook-jst.item-list-s1 "^[ \t]*\\([0-9]+\\)\\.0[ \t]+\\(\\S .*\\)"
-set-variable .fhook-jst.item-list-r1 "Sct   \ecB\\1 \\2\ecA"
+set-variable .fhook-jst.item-list-r1 "Sct  \ecB\\1 \\2\ecA"
 set-variable .fhook-jst.item-list-s2 "^[ \t]*\\([0-9]+\\.[1-9][0-9]*\\)[ \t]+\\(\\S .*\\)"
-set-variable .fhook-jst.item-list-r2 "SSct  \ecB\\1 \\2\ecA"
+set-variable .fhook-jst.item-list-r2 "SSct \ecB\\1 \\2\ecA"
 set-variable .fhook-jst.item-list-s3 "^[ \t]*\\([0-9]+\\.[0-9]+\\.[0-9.]+\\)[ \t]+\\(\\S .*\\)"
-set-variable .fhook-jst.item-list-r3 "SSSct \ecB\\1 \\2\ecA"
+set-variable .fhook-jst.item-list-r3 "SSSc \ecB\\1 \\2\ecA"
 set-variable .fhook-jst.item-list-s4 "^[ \t]*Appendix \\([[:alpha:]].*\\)"
-set-variable .fhook-jst.item-list-r4 "Appx  \ecB\\1\ecA"
+set-variable .fhook-jst.item-list-r4 "Appx \ecB\\1\ecA"
 
 !if &sin "f" .fhook-jst.setup
     ; Define the folding definitions.
@@ -132,7 +132,7 @@ set-variable .fhook-jst.item-list-r4 "Appx  \ecB\\1\ecA"
     hilight .hilight.jst 0x00 "<<>>"                            .scheme.hide
     hilight .hilight.jst 0x00 "<<.>>"                           $global-scheme
     hilight .hilight.jst 0x04 "<<fb>>" "<</fb>>" ""             .scheme.bold
-    hilight .hilight.jst 0x04 "<<fh>>" "<</fh>>" ""             .scheme.bold-italic
+    hilight .hilight.jst 0x04 "<<fe>>" "<</fe>>" ""             .scheme.bold-italic
     hilight .hilight.jst 0x04 "<<fi>>" "<</fi>>" ""             .scheme.italic
     hilight .hilight.jst 0x04 "<<fm>>" "<</fm>>" ""             .scheme.no2
     hilight .hilight.jst 0x04 "<<fu>>" "<</fu>>" ""             .scheme.under

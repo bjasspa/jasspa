@@ -28,17 +28,17 @@ set-variable .fhook-latex.command-desc  "|||||&Goto Reference Label|&Return to R
 
 ; setup item-list
 set-variable .fhook-latex.item-list-s1 "\\\\chapter{\\([^}]*\\)}"
-set-variable .fhook-latex.item-list-r1 "Chptr \ecB\\1\ecA"
+set-variable .fhook-latex.item-list-r1 "Chpt \ecB\\1\ecA"
 set-variable .fhook-latex.item-list-s2 "\\\\part{\\([^}]*\\)}"
-set-variable .fhook-latex.item-list-r2 "Part  \ecB\\1\ecA"
+set-variable .fhook-latex.item-list-r2 "Part \ecB\\1\ecA"
 set-variable .fhook-latex.item-list-s3 "\\\\section{\\([^}]*\\)}"
-set-variable .fhook-latex.item-list-r3 "Sct   \ecB\\1\ecA"
+set-variable .fhook-latex.item-list-r3 "Sct  \ecB\\1\ecA"
 set-variable .fhook-latex.item-list-s4 "\\\\subsection{\\([^}]*\\)}"
-set-variable .fhook-latex.item-list-r4 "SSct  \ecB\\1\ecA"
+set-variable .fhook-latex.item-list-r4 "SSct \ecB\\1\ecA"
 set-variable .fhook-latex.item-list-s5 "\\\\subsubsection{\\([^}]*\\)}"
-set-variable .fhook-latex.item-list-r5 "SSSct \ecB\\1\ecA"
+set-variable .fhook-latex.item-list-r5 "SSSc \ecB\\1\ecA"
 set-variable .fhook-latex.item-list-s6 "\\\\markboth{\\([^}]*\\)}"
-set-variable .fhook-latex.item-list-r6 "Mark  \ecB\\1\ecA"
+set-variable .fhook-latex.item-list-r6 "Mark \ecB\\1\ecA"
 
 set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|section\\|chap\\|subsec\\|label\\|begin\\|paragraph\\|subparagraph\\|end\\)\\)"
 
@@ -466,7 +466,7 @@ define-macro latex-list-label
     set-variable #l1 .fhook-latex.item-list-r1
     set-variable #l2 .fhook-latex.item-list-s2
     set-variable .fhook-latex.item-list-s1 "\\\\label\\*?{\\([^}]*\\)}"
-    set-variable .fhook-latex.item-list-r1 "Label \ecB\\1\ecA"
+    set-variable .fhook-latex.item-list-r1 "Lbl  \ecB\\1\ecA"
     unset-variable .fhook-latex.item-list-s2
     !force !force item-list
     set-variable .fhook-latex.item-list-s1 #l0

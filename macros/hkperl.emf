@@ -33,7 +33,7 @@ set-variable .fhook-perl.fold-mopen "1"
 
 ; setup item-list
 set-variable .fhook-perl.item-list-s1 "^\\s *sub\\s +\\(\\w[1-9A-Za-z_']*\\)"
-set-variable .fhook-perl.item-list-r1 "Sub   \ecB\\1\ecA"
+set-variable .fhook-perl.item-list-r1 "Sub  \ecB\\1\ecA"
 
 !if &and &sin "h" .fhook-perl.setup &band .hilight.flags 0x02 
     !if &not &exist .hilight.perl
