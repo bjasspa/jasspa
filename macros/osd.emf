@@ -227,7 +227,7 @@ define-macro-file crosswd  cross-word
 0 define-macro osd-close
     !if &bmod "edit"
         set-variable #l0 &spr "Buffer \"%s\" has been changed" $buffer-bname
-        2 osd-xdialog "Buffer Close" #l0 1 10 6 " \HSave First " " \HLoose Changes " " \HCancel "
+        2 osd-xdialog "Buffer Close" #l0 1 10 6 " \HSave First " " \HLose Changes " " \HCancel "
         !if &equ $result 3
             !abort
         !elif &equ $result 1
