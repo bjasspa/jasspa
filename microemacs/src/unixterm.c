@@ -2205,16 +2205,16 @@ TCAPgetattr (meTermio p, int isX)
         p->c_cc [VINTR] = 'C' - '@';    /* C-c : CINTR */
         p->c_cc [VQUIT] = CQUIT;        /* FS, cntl | */
         p->c_cc [VERASE] = 'H' - '@';   /* Backspace or '#' 0x7f */
-        p->c_cc [VKILL] = 'K' - '@';    /* '@' */
+        p->c_cc [VKILL] = 'K' - '@';    /* C-k */
         p->c_cc [VEOF] = CEOF;          /* C-d */
         p->c_cc [VEOL] = 'J' - '@';     /* C-j */
         p->c_cc [VMIN] = 1;
         p->c_cc [VTIME] = 0;
 #ifdef _TERMIOS
-        p->c_cc [VWERASE] = 'H' - '@';  /* '#' */
+        p->c_cc [VWERASE] = 'W' - '@';  /* C-w */
         p->c_cc [VLNEXT] = CLNEXT;      /* C-v */
 #ifdef VDSUSP
-        p->c_cc [VDSUSP] = CSUSP;       /* C-z */
+        p->c_cc [VDSUSP] = CDSUSP;      /* C-y */
 #endif
         p->c_cc [VSUSP] = CSUSP;        /* C-z */
         p->c_cc [VSTART] = CSTART;      /* C-q */
