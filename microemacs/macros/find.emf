@@ -1,0 +1,108 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2004 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     Sun Mar 14 2004
+; Synopsis:    "find" command handling
+; Authors:     Jon Green
+
+; By default use "find" on Windows then use the native windows tools from
+; "http://unxutils.sourceforge.net/" and set the absolute path to %find-com
+!if &not &exi %find-com
+    set-variable %find-com "find"
+!endif
+;
+; find - invoke the find command. The command may be invoked directly from a
+; macro.
+;
+; @param n          If defined used pipe otherwise ipipe.
+; @param directory  The find directory.
+; @param string     The search string.
+;
+define-macro find
+    !force set-variable #l2 @2
+    !if &not $status
+        set-variable #l0 @ml01 "find in directory"
+        set-variable #l1 @ml00 "find what"
+    !else
+        set-variable #l0 @1
+    !endif
+    ; Convert to absolute path.
+    set-variable #l0 &stat "a" #l0
+    !if &band $system 0x100
+        ; If this is a drive then add a dot to the end.
+        !if &xis #l0 "[a-z]:/"
+            set-variable #l0 &cat #l0 "."
+        !endif
+        set-variable #l0 &xrep #l0 "/$" ""
+        set-variable #l0 &rep #l0 "/" "\\"
+        !if @?
+            0x4 pipe-shell-command &spr "%s \"%s\" -name \"%s\" -print" %find-com #l0 #l1 "*find*" @mna
+        !else
+            0x4 ipipe-shell-command &spr "%s \"%s\" -name \"%s\" -print" %find-com  #l0 #l1 "*find*" @mna
+        !endif
+    !else
+        ;set-variable #l0 &xrep #l0 "/$" ""
+        !if @?
+            0x0 pipe-shell-command &spr "%s \"%s\" -name \"%s\" -print" %find-com #l0 #l1 "*find*" @mna
+        !else
+            0x0 ipipe-shell-command &spr "%s \"%s\" -name \"%s\" -print" %find-com  #l0 #l1 "*find*" @mna
+        !endif
+    !endif
+!emacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+; Buffer setup for *find* buffer handling.
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; Read a file from the list of files
+0 define-macro find-read
+    set-variable #l0 @wl
+    !if &les $window-line 4
+        ml-write "Invalid line"
+        !abort
+    !elif &seq #l0 ""
+        ml-write "Empty line"
+        !abort
+    !elif &seq &lef #l0 5 "[EXIT"
+        ml-write "End"
+        !abort
+    !elif &xis #l0 "^.*find.*: .*"
+        ml-write "Error line"
+        !abort
+    !endif
+    find-file #l0 @nma
+!emacro
+; Handle a tar file being read.
+define-macro fhook-find
+    -1 buffer-mode "view"
+    -1 buffer-mode "wrap"
+    buffer-init "find"
+    buffer-bind-create "bio" "return" "" find-read
+    set-variable :mouse-word-select find-read
+    buffer-init-hooks
+!emacro
+; The find buffer-init variables.
+set-variable .fhook-find.name "Find"
+set-variable .fhook-find.setup &reg "/history" "fhook/find" "ghmop"
+set-variable .fhook-find.setup-mask    "aceghop"
+; Define the hilighting.
+!if &and &sin "h" .fhook-find.setup &band .hilight.flags 0x02
+    !if &not &exist .hilight.find
+        set-variable .hilight.find &pinc .hilight.next 1
+    !endif
+    0 hilight .hilight.find 0                  $global-scheme
+    !if &band $system 0x100
+        hilight .hilight.find 2   "find.exe: " .scheme.comment
+    !else
+        hilight .hilight.find 0x2 "find: "     .scheme.comment
+    !endif
+    hilight .hilight.find 0x102   "\\[EXIT"    .scheme.comment
+    hilight .hilight.find 0x102   "cd "        .scheme.link
+!endif
+; Add the file hook and complete buffer setup.
+add-file-hook "*find*" fhook-find
+buffer-init-fhook "find"
