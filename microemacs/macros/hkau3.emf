@@ -10,14 +10,6 @@ set-char-mask "3" "_$@."
 define-macro fhook-au3
     set-variable $buffer-mask "luh13"
     @# buffer-init "au3"
-    !if &not @# 
-        etfinsrt "au3" 
-    !endif 
-    ; Assign the hilighting 
-    set-variable $buffer-hilight .hilight.au3
-    ; Assign the buffer indentation 
-    set-variable $buffer-indent .hilight.au3
-    buffer-abbrev-file "au3" 
     buffer-init-hooks
 !emacro
 
