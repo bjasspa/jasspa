@@ -334,18 +334,21 @@ meGetString(meUByte *prompt, int option, int defnum, meUByte *buffer, int size)
                     size-- ;
                 }
             }
-            if(option & MLFFZERO)
+            if (res != NULL)
             {
-                while((--size > 0) && ((cc = *res++) != '\0'))
-                    *ss++ = cc ;
-            }
-            else
-            {
-                for(; ((--size) > 0) && ((cc = *res++) != '\0') ; )
+                if(option & MLFFZERO)
                 {
-                    if((cc == meCHAR_LEADER) && ((cc = *res++) != meCHAR_TRAIL_LEADER))
-                        break ;
-                    *ss++ = cc ;
+                    while((--size > 0) && ((cc = *res++) != '\0'))
+                        *ss++ = cc ;
+                }
+                else
+                {
+                    for(; ((--size) > 0) && ((cc = *res++) != '\0') ; )
+                    {
+                        if((cc == meCHAR_LEADER) && ((cc = *res++) != meCHAR_TRAIL_LEADER))
+                            break ;
+                        *ss++ = cc ;
+                    }
                 }
             }
             *ss = '\0' ;
