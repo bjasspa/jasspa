@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m2mod018.2,v 2.2 2001-07-14 10:10:57 jon Exp $
+.Id $Id: m2mod018.2,v 2.3 2001-12-06 00:04:32 jon Exp $
 .Im MicroEmacs modes
 .so me.tni
 .TH binary 2m
@@ -14,9 +14,72 @@ binary \- Binary editor mode
 .B binary
 mode  is  enabled  when  a  file  is  edited  in  binary  mode.  The  mode  is
 automatically enabled when a file is loaded as a binary file via
-.Ht find-bfile 2 .
+.Ht find-bfile 3 .
+.PP
+When a file is loaded  using  \s-1binary\s0  mode, every 16 bytes is converted
+into a line of text  giving the hex  address of the  current  position  in the
+file, the bytes as hexadecimal numbers and all printable characters at the end
+of the line (all  non-printable  characters  are  displayed  as a  '\fC.\fR').
+However, This format makes it memory hungry in that every 16 bytes of the file
+requires a 78 character line  (approximately 5 times more memory!). For a more
+memory efficient binary mode see
+.Ht rbin 2m .
+.PP
+When  writing out a file which has binary mode enabled the format of each line
+must have the binary mode format which is as follows:
+.CS
+<address>: XX XX XX XX XX .... XX XX | <text-form>
+.CE
+Only the hex values (the \fCXX\fR's) between the starting '\fI:\fR' marker and
+the   terminating   '|'   character   are   used,  the   \fI<address>\fR   and
+\fI<text-form>\fR are ignored.
+.SH EXAMPLE
+Given a single line \s-1MSDOS\s0 file:-
+.CS
+Live long and prosper.
+.CE
+When  loaded in using  \fBbinary\fR  mode the  following 2 line buffer will be
+produced:-
+.CS
+00000000: 4C 69 76 65 20 6C 6F 6E 67 20 61 6E 64 20 70 72  |  Live long and pr
+00000010: 6F 73 70 65 72 2E 0D 0A 1A                       |  osper....
+.CE
+Note  the  "\fC0D  0A  1A\fR"  at  the  end,  this  is  due to  \s-1MSDOS\s0's
+"\fC\\n\\r\fR"   carriage  returns  and  \fC^Z\fR  file   termination,   these
+characters  are  unprintable and are shown as '\fC.\fR' at the end of the line.
+.PP
+When saving a binary file, only the text  between the  '\fC:\fR' and '\fC|\fR'
+is considered and it may contain any number of hexadecimal  numbers. The given
+file could be made \s-1UNIX\s0 compatible by editing the buffer to:-
+.CS
+00000000: 4C 69 76 65 20 6C 6F 6E 67 20 61 6E 64 20 70 72  |  Live long and pr
+00000010: 6F 73 70 65 72 2E 0D                       |  osper....
+.CE
+If the word  "\fBlong\fR"  is required to be removed, the following  would not
+work:-
+.CS
+00000000: 4C 69 76 65 20 6C 6F 6E 67 20 61 6E 64 20 70 72  |  Live and pr
+00000010: 6F 73 70 65 72 2E 0D 0A 1A                       |  osper....
+.CE
+The ASCII end letters are ignored,  instead the  following  operation  must be
+performed which removes the characters from the binary representation:-
+.CS
+00000000: 4C 69 76 65 20 61 6E 64 20 70 72  |  Live long and pr
+00000010: 6F 73 70 65 72 2E 0D 0A 1A                       |  osper....
+.CE
+One could be nasty by doing the following:-
+.CS
+00000000: 4C 69 76 65 20 73 68 6F 72 74 20 61 6E 64 20 |
+00000010: 64 6F 6E 27 74 20 70 72 6F 73 70 65 72 2E 0D 0A 1A           |
+.CE
+("Live  short  and  don't  prosper").
+.SH NOTES
+\fBrbin\fR  and  \fBbinary\fR  modes are mutually  exclusive, i.e. they cannot
+both be enabled at the same time.
 .SH "SEE ALSO"
 .na
-.Ht find-bfile 2 .
+.Ht find-bfile 3 ,
+.Ht find-file 2 ,
+.Ht rbin 2m .
 .ad
 .FH

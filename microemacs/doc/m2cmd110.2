@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m2cmd110.2,v 2.2 2001-07-14 10:10:36 jon Exp $
+.Id $Id: m2cmd110.2,v 2.3 2001-12-06 00:04:31 jon Exp $
 .Im MicroEmacs command|cursor|macrodevelop
 .so me.tni
 .TH set-position 2
@@ -25,7 +25,7 @@ goto-position \- Restore a stored position
 "\fIlabel\fR"
 .ad
 .SH DESCRIPTION
-\fBset-position\fR   stores  current   window,  buffer  and  cursor   position
+\fBset-position\fR  stores  current  window,  buffer, cursor and mark position
 information   against  the  given   '\fClabel\fR'   (a  single   alpha-numeric
 character).   \fBgoto-position\fR  takes  the  positional  information  stored
 against the given  '\fClabel\fR'  and  restores the window,  buffer and cursor
@@ -38,28 +38,39 @@ information and may be restored multiple times.
 The numerical argument to \fBset-position\fR is used to define the information
 that is stored in the position item. The argument is intrepreted as a bitmask,
 flagging what information is to be stored. The bit mask is defined as follows:
-.IP \fC0x01\fR
+.IP \fC0x001\fR
 Store the current window.
-.IP \fC0x02\fR
+.IP \fC0x002\fR
 Store the current window's horizonal scroll (value of
 .Ht $window-x-scroll 5 ).
-.IP \fC0x04\fR
+.IP \fC0x004\fR
 Store the current window's current line horizonal scroll (value of
 .Ht $window-xcl-scroll 5 ).
-.IP \fC0x08\fR
+.IP \fC0x008\fR
 Store the current window's vertical scroll (value of
 .Ht $window-y-scroll 5 ).
-.IP \fC0x10\fR
+.IP \fC0x010\fR
 Store the current buffer.
-.IP \fC0x20\fR
+.IP \fC0x020\fR
 Store the current window's current line using an 
 .Hl "alpha mark" set-alpha-mark 2 .
-.IP \fC0x40\fR
+.IP \fC0x040\fR
 Store the current window's current line number (value of
 .Ht $window-line 5 ).
-.IP \fC0x80\fR
+.IP \fC0x080\fR
 Store the current window's current column offset (value of
 .Ht $window-col 5 ).
+.IP \fC0x100\fR
+Store the current window's mark line using an 
+.Hl "alpha mark" set-alpha-mark 2 .
+.IP \fC0x200\fR
+Store the current window's mark line number (value of
+.Ht $window-line 5 
+when mark was set).
+.IP \fC0x400\fR
+Store the current window's mark column offset (value of
+.Ht $window-col 5
+when mark was set).
 .PP
 When \fIn\fR is not  specified, the default value is  \fC0x0bf\fR,  i.e. store
 all information required to return to the window, buffer and cursor position.
@@ -71,7 +82,7 @@ restoring a position, information stored during the call to \fBset-position\fR
 which is not  requested  in  corresponding  \fBgoto\fR  is ignored,  similarly
 information requested in a \fBgoto\fR which was not stored in the \fBset\fR is
 also ignored.
-.SH EXAMPLES
+.SH EXAMPLE
 The following example shows the typical use of these commands:
 .Me $emf-scheme
 .CS

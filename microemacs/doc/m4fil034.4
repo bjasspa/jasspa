@@ -1,0 +1,58 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil034.4,v 1.1 2001-12-06 00:05:23 jon Exp $
+.Im MicroEmacs macro;variable
+.so me.tni
+.TH "@fs" 4
+.XI "@fs" - "Frame store variable"
+.SH NAME
+@fs \- Frame store variable
+.SH SYNOPSIS
+\fB@fs\fR \fIrow\fR \fIcolumn\fR
+.SH DESCRIPTION
+The  frame  store  variable  \fB@fs\fR  gives  macros a way of  obtaining  the
+character  currently  being drawn on the screen at the given  location. If the
+given value of \fIrow\fR or  \fIcolumn\fR is out range, i.e. less than zero or
+greater than or equal to the screen size (see
+.Ht $screen-width 5 )
+then the value returned is the empty string (i.e. \fC""\fR).
+.PP
+This variable  cannot be set and is only updated  during a screen update, this
+means that  macros  that  change the cursor  position  will need to redraw the
+screen before using this variable.
+.SH EXAMPLE
+The following example gets the word under the current mouse position, this may
+not be the current cursor position:
+.Me $emf-scheme
+.CS        
+define-macro word-under-mouse
+    set-variable #l0 $mouse-y
+    set-variable #l1 $mouse-x
+    !if &not &inw @fs #l0 #l1
+        ml-write "[mouse not over a word]"
+        !return
+    !endif
+    set-variable #l2 @fs #l0 #l1
+    set-variable #l1 &sub #l1 1
+    !if &inw @fs #l0 #l1
+        set-variable #l2 &cat @fs #l0 #l1 #l2
+        !jump -3
+    !endif
+    set-variable #l1 $mouse-x
+    set-variable #l1 &add #l1 1
+    !if &inw @fs #l0 #l1
+        set-variable #l2 &cat #l2 @fs #l0 #l1
+        !jump -3
+    !endif
+    ml-write &spr "[mouse is over the word \\"%s\\"]" #l2
+!emacro
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Ht $screen-width 5 ,
+.Ht screen-update 2 ,
+.Hl MacroArguments MacroArguments 4 ,
+.Hl MacroNumericArguments MacroNumericArguments 4 ,
+.Ht define-macro 2 .
+.ad
+.FH

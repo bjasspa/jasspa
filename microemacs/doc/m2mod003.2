@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m2mod003.2,v 2.2 2001-07-14 10:10:53 jon Exp $
+.Id $Id: m2mod003.2,v 2.3 2001-12-06 00:04:31 jon Exp $
 .Im MicroEmacs modes
 .so me.tni
 .TH crypt 2m
@@ -26,13 +26,13 @@ is active and there is no encryption key, \*(mE will ask:
 Type in a word or  phrase of at least  five and up to 128  characters  for the
 encryption  to use. If you look at the file which is then written out, all the
 printable characters have been scrambled. To read such a file later, use
-.Ht find-cfile 2
+.Ht find-cfile 3
 to load  \fIciphertext\fR  files, you will be asked the  encryption key before
 the file is read.
 .SH "SEE ALSO"
 .na
 .Ht buffer-mode 2 ,
-.Ht find-cfile 2 ,
+.Ht find-cfile 3 ,
 .Ht global-mode 2 ,
 .Ht set-encryption-key 2 .
 .ad

@@ -1,4 +1,4 @@
-.Id $Id: m1cmd000.1,v 2.4 2001-07-14 10:10:05 jon Exp $
+.Id $Id: m1cmd000.1,v 2.5 2001-12-06 00:04:31 jon Exp $
 .Im MicroEmacs function
 .so me.tni
 .TH me 1
@@ -74,7 +74,9 @@ and
 .Hl "Command Line Filters" filters - 
 for more information.
 .IP \fB\-b\fR
-Load next file as a binary file (binary editor mode).
+Load next file as a binary file (binary editor mode, uses
+.Ht binary 2m
+buffer mode).
 .IP \fB\-c\fR
 Continuation  mode. Load  \fB\*(mE\fR  last edit session,  restoring  the
 buffers to their  previous  loaded state and position.  Note that history mode
@@ -87,6 +89,12 @@ Show the help page (does not start the editor).
 .IP \fB\-i\fR
 \s-1MS-DOS\s0  versions of  \fB\*(mE\fR  only. Insert the contents of the
 current screen into the \fB*scratch*\fR buffer
+.IP \fB\-k\fR[\fIkey\fR]
+Load next file as an encrypted file (uses
+.Ht crypt 2m
+buffer  mode). The  optional  adjoining  argument  can be used to specify  the
+decrypting  key, if this argument is not specify the user will be prompted for
+it on start-up. 
 .IP \fB\-l\fR\|\fIlineNo\fR
 Go to line  \fIlineNo\fR in the next given file. Typically used with utilities
 such a
@@ -174,6 +182,10 @@ characteristics of the startup file(s).
 default  captures  an handles  all illicit  signal  interrupts.  The option is
 enabled when  debugging  the source code allowing  exception  conditions to be
 trapped within the debugger.
+.IP \fB\-y\fR
+Load next file as a reduced binary file (uses
+.Ht rbin 2m
+buffer mode).
 .SH ENVIRONMENT
 The following environment variables are used by \fB\*(mE\fR.
 .IP \fBDISPLAY\fR

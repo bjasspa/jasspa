@@ -1,0 +1,84 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil000.4,v 1.1 2001-12-06 00:05:23 jon Exp $
+.Im MicroEmacs macro;function;miscellaneous
+.so me.tni
+.TH &rep 4
+.XI &rep - "Replace string in string"
+.XI &irep - "Case insensitive replace string in string"
+.XI &xrep - "Regex replace string in string"
+.XI &xirep - "Regex case insensitive Replace string in string"
+.SH NAME
+&rep, &irep, &xrep, &xirep \- Replace string in string functions
+.SH SYNOPSIS
+.na
+.B &rep
+.I str1
+.I str2
+.I str3
+.br
+.B &irep
+.I str1
+.I str2
+.I str3
+.br
+.B &xrep
+.I str1
+.I str2
+.I str3
+.br
+.B &xirep
+.I str1
+.I str2
+.I str3
+.ad
+.SH DESCRIPTION
+These  functions  search  for  \fIstr2\fR  in  \fIstr1\fR,  replacing  it with
+\fIstr3\fR, returning the resultant string.
+.PP
+The functions may all be abbreviated to their three letter  abbreviation (i.e.
+\fB&xirep\fR  may be expressed as \fB&xir\fR). In all cases the first argument
+is completely evaluated before the second and third arguments.
+.IP "\fB&rep\fR \fIstring\fR \fIsearch\fR \fIreplace\fR"
+Searches for the \fIsearch\fR  string in the given \fIstring\fR using a simple
+case sensitive exact match  algorithm. Any occurrences are removed from \fIstring\fR
+and  \fIreplace\fR is inserted in its place. Either of the 3 input strings can
+be the empty string (\fC""\fR).
+.IP "\fB&irep\fR \fIstring\fR \fIsearch\fR \fIreplace\fR"
+\fB&irep\fR  is  identical  to  \fB&rep\fR  except a case  insensitive  search
+algorithm is used.
+.IP "\fB&xrep\fR \fIstring\fR \fIregex-search\fR \fIregex-replace\fR"
+\fB&xrep\fR  can be  used to  access  the  more  powerful  regular  expression
+searching  capabilities. The function is similar to \fB&rep\fR except it takes
+a regex search string and the replacement string may also refer to all or part
+of the matched string. See
+.Hl "Regular Expressions" RegularExpressions 2
+for information on the \fIregex\fR format.
+.IP "\fB&xirep\fR \fIstring\fR \fIregex-search\fR \fIregex-replace\fR"
+\fB&xirep\fR  is  identical to  \fB&xrep\fR  except a case  insensitive  regex
+search is used.
+.SH EXAMPLE
+The  following  example  turns a UNIX  format  file name (using a '\fC/\fR' to
+divide  directories  - like  \*(mS)  into an  windows  format  name  (using  a
+\&'\fC\\\fR'):
+.Me $emf-scheme
+.CS
+set-variable #l0 &rep #l0 "/" "\\\\"
+.CE
+.Me $ehf-scheme
+The following example replaces one or more white spaces in the variable with a
+single space, this is an easy way to remove unnecessary spaces:
+.Me $emf-scheme
+.CS
+set-variable #l0 "This   is   not   so    spacey    after   xrep"
+set-variable #l0 &xrep #l0 "\\\\s +" " "
+ml-write #l0
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Hl "Operating Modes" Modes - ,
+.Hl "Variable Functions" Functions - ,
+.Ht &sequal 4 ,
+.Ht &sin 4 .
+.ad
+.FH

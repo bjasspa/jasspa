@@ -1,4 +1,4 @@
-.Id $Id: m2cmd127.2,v 2.2 2001-07-14 10:10:41 jon Exp $
+.Id $Id: m2cmd127.2,v 2.3 2001-12-06 00:04:31 jon Exp $
 .Im MicroEmacs command|window
 .ds C0 "(\fB\*(cX4\fR)\ \&
 .so me.tni
@@ -23,13 +23,40 @@ command followed by a
 When there is  insufficient  space in the current window to perform the split,
 then the  current  window is  replaced.  The  requested  \fIfile\fR  is always
 displayed,  if the file  does not  already  exist it is  effectively  created
-within  \*(mE  (although  it will  not  exist  on the  disk  until a save
+within  \*(mS  (although  it will  not  exist  on the  disk  until a save
 operation is performed).
+.PP
+The numeric  argument  \fIn\fR can be used to modify the default  behaviour of
+the command, where the bits are defined as follows:
+.IP \fB0x01\fR
+If the file does not exist and this bit is not set the  command  fails at this
+point.  If the file  does not  exist  and this bit is set (or no  argument  is
+specified  as the  default  argument  is \fC1\fR)  then a new empty  buffer is
+created with the given file name, saving the buffer subsequently creates a new
+file.
+.IP \fB0x02\fR
+If this bit is set the file will be loaded with
+.Ht binary 2m
+mode enabled. See help on  \fBbinary\fR  mode for more  information on editing
+binary data files.
+.IP \fB0x04\fR
+If this bit is set the file will be loaded with
+.Ht crypt 2m
+mode enabled. See help on  \fBcrypt\fR  mode for more  information  on editing
+encrypted files.
+.IP \fB0x08\fR
+If this bit is set the file will be loaded with
+.Ht rbin 2m
+mode enabled. See help on \fBrbin\fR  mode for more  information  on efficient
+editing of binary data files.
 .SH "SEE ALSO"
 .na
 .Ht find-file 2 ,
 .Ht next-window-find-buffer 2 ,
-.Ht split-window-vertically 2 .
+.Ht split-window-vertically 2 ,
+.Ht binary 2m ,
+.Ht crypt 2m ,
+.Ht rbin 2m .
 .ad
 .rm C0
 .FH

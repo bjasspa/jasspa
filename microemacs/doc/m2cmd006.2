@@ -1,4 +1,4 @@
-.Id $Id: m2cmd006.2,v 2.2 2001-07-14 10:10:07 jon Exp $
+.Id $Id: m2cmd006.2,v 2.3 2001-12-06 00:04:31 jon Exp $
 .Im MicroEmacs command|modes
 .ds C0 "(\fB\*(cXm\fR)\ \&
 .so me.tni
@@ -82,20 +82,21 @@ Delete    Add    toggle    Mode
   -23      23      151     over
   -24      24      152     pipe
   -25      25      153     quiet
-  -26      26      154     save
-  -27      27      155     tab
-  -28      28      156     time
-  -29      29      157     undo
-  -30      30      158     usr1
-  -31      31      159     usr2
-  -32      32      160     usr3
-  -33      33      161     usr4
-  -34      34      162     usr5
-  -35      35      163     usr6
-  -36      36      164     usr7
-  -37      37      165     usr8
-  -38      38      166     view
-  -39      39      167     wrap
+  -26      26      154     rbin
+  -27      27      155     save
+  -28      28      156     tab
+  -29      29      157     time
+  -30      30      158     undo
+  -31      31      159     usr1
+  -32      32      160     usr2
+  -33      33      161     usr3
+  -34      34      162     usr4
+  -35      35      163     usr5
+  -36      36      164     usr6
+  -37      37      165     usr7
+  -38      38      166     usr8
+  -39      39      167     view
+  -40      40      168     wrap
 .CE
 Note that when omitted the default  argument is 0, i.e. prompt for and toggle a
 mode.
@@ -103,11 +104,11 @@ mode.
 \fBnamed-buffer-mode\fR  changes the state of a given  buffer mode for a given
 buffer which may not be the current buffer.
 .PP
-\fBadd-mode\fR  and   \fBdelete-mode\fR  are  macros  which  use
-buffer-mode  to add and remove a buffer  mode.  \fBunmark-buffer\fR  is also a
-macro which  removes the edit flag from the current  buffer.  They are defined
-for backward compatibility with MicroEMACS v3.8 and can be found in me3_8.emf;
-add-mode is defined as follows:
+\fBadd-mode\fR and  \fBdelete-mode\fR  are macros which use buffer-mode to add
+and remove a buffer mode.  \fBunmark-buffer\fR  is also a macro which  removes
+the  edit  flag  from  the  current  buffer.  They are  defined  for  backward
+compatibility  with MicroEMACS v3.8 and can be found in meme3_8.emf;  add-mode
+is defined as follows:
 .Me $emf-scheme
 .CS
 define-macro add-mode

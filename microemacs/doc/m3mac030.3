@@ -1,167 +1,51 @@
-.\"*-*- nroff -*-*************************************************************
-.\"
-.\"			Copyright 1998 JASSPA.
-.\"			      All Rights Reserved
-.\"
-.\"
-.\"  System        :
-.\"  Module        :
-.\"  Object Name   : m3mac030.3
-.\"  Created By    : Steven Phillips
-.\"  Created       : Fri Aug 7 07:32:59 1998
-.\"  Last Modified : <000719.1013>
-.\"
-.\"  Description
-.\"
-.\"  Notes
-.\"
-.\"  History
-.\"
-.\"***************************************************************************
-.\"
-.\"  Copyright (c) 1998 JASSPA.
-.\"
-.\"  All Rights Reserved.
-.\"
-.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
-.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
-.\"  readable form without prior written consent from JASSPA.
-.\"
-.\"***************************************************************************
-.\"
-.Id $Id: m3mac030.3,v 2.2 2001-07-14 10:11:15 jon Exp $
-.Im MicroEmacs command
+.\" -*- nroff -*-
+.Id $Id: m3mac030.3,v 2.3 2001-12-06 00:04:32 jon Exp $
+.Im MicroEmacs command|file
+.ds C0 "(\fB\*(cX9\fR)\ \&
 .so me.tni
-.TH set-language 3
-.XI set-language \- "Set the current language"
+.TH find-bfile 3
+.XI find-bfile \- "\*(C0Load a file as binary data"
+.XI find-cfile \- "Load a crypted file"
 .SH NAME
-set-language - Set the current language
+.Me "|find-bfile"
+find-bfile \- Load a file as binary data
+.br
+.Me "|find-cfile"
+find-cfile \- Load a crypted file
 .Me $a
 .SH SYNOPSIS
 .na
-\fBset-language\fR "\fIlanguage\fR"
+.I n
+.B find-bfile
+"\fIfile-name\fR" \*(C0
+.br
+.I n
+.B find-cfile
+"\fIfile-name\fR"
 .ad
 .SH DESCRIPTION
-\fBset-language\fR  sets the current  language in \*(mS. The language  setting
-affects the following areas:-
-.BS
-ASCII characters  belonging to the alphabetic  letter set, affecting commands
-such as
-.Ht forward-word 2 .
-.BU
-ASCII characters which may be displayed on the screen
-.BU
-The rules and dictionaries that
-.Ht spell 2
-uses.
-.BE
-The standard release of \*(mE supports the following languages:-
-.CS
-    American
-    American (Ext)
-    British
-    British (Ext)
-.CE
-The extended
-languages (\fBExt\fR) are identical to their base languages except
-.Ht spell 2
-uses the extended dictionary in addition to the basic dictionary, doubling the
-dictionary size.
-.PP
-Other languages have been supported by \*(mE, i.e. French, Spanish.
-.SH NOTES
-To support a new language the following steps should be taken:-
-.IP \fB1)\fR
-Decide  on the name of the  language  and the  pseudo  file  name  (maximum  8
-characters long) to be used ("\fCDutch\fR" and "\fCdutch\fR" say).
-.IP \fB2)\fR
-Create a dictionary for the language ("\fCdutch.edf\fR"), see
-.Ht add-dictionary 2 .
-.IP \fB3)\fR
-Create the set of spell rules for the language, see
-.Ht add-spell-rule 2 .
-Save these in the macro file  "\fCdutchr.emf\fR"  say, this file should also
-include the following definitions:-
-.Me $emf-scheme
-.RS
-.CS
-; define the rule-init command to initialize the language
-define-macro rules-init
-!emacro
-; Get a list of rule letters which are used
-set-variable %spell-rules "HIJLMNOPQRSTUVWXYZ"
-; reset the spell rules
-0 add-spell-rule
-; Now add the dutch spell rules
-2 add-spell-rule "J" "e" "e" "\\xEDsimo" ; grande grand'isimo
-\.
-\.
-.CE 0
-.RE
-.Me $ehf-scheme
-.IP
-Note the empty \fBrules-init\fR  command must be defined, the rule file may be
-large  (Spanish  is 4000 lines) and should  only be loaded on demand, not by
-default at start-up. Defining the empty \fBrules-init\fR command and using the
-.Ht define-macro-file 2
-command is the method employed by \*(mS to load the rule file on demand.
-.IP \fB4)\fR
-Create the main language  macro file  ("\fCdutch.emf\fR")  which is executed
-when the  Spanish  language is set,  typically  at  start-up.  This macro file
-should contain any required key translations (see
-.Ht translate-key 2 ),
-in addition to word and display character changes (see
-.Ht set-char-mask 2 ).
-The macro file adds the dictionary and creates the hook to the rule file:-
-.Me $emf-scheme
-.RS
-.CS
-; Create any key translations required to insert accent letters
-translate-key "A-C-[" 0x94
-\.
-\.
-; Add the standard dictionary
-add-dictionary "dutch"
-
-; expand the normal letter range to include the accent letters,
-; make sure they're disablyable, pokable
-set-char-mask "dpa" "\\xC1\\xE1Aa\\xC9\\xE9Ee..."
-        
-0 define-macro language-tidy
-    -1 set-char-mask "a" "\\xC1\\xE1\\xC9\\xE9..."
-!emacro
-        
-0 define-macro-file dutchr spell-rules-init
-.CE 0
-.RE
-.Me $ehf-scheme
-.IP
-Note the \fBlanguage-tidy\fR command \s-1MUST\s0 be defined and should restore
-any changes it may have made to the character sets.
-.IP \fB5)\fR
-Add the language to \fClanguage.emf\fR so other commands such as
-.Ht user-setup 3
+\fBfind-bfile\fR  and  \fBfind-cfile\fR  provide a simple interface to loading
+files in
+.Ht binary 2m
 and
-.Ht spell-buffer 3
-can use it. There are two  variables  that must be changed, the language  name
-must be added to \fB%language-names\fR and the pseudo file name (with a single
-digit  argument  to be given to the  execution  of the  setup  macro  file) to
-%language-val, i.e.:-
-.Me $emf-scheme
-.RS
-.CS
-set-variable %language-names "|American|American (Ext)...
-    \...|British|British (Ext)|Dutch|"
-set-variable %language-val   "|1american|2american...
-    \...|1british|2british|1dutch|"
-.CE  0
-.RE
-.Me $ehf-scheme
+.Ht crypt 2m
+modes respectively. The numeric argument has the same effect as with the
+.Ht find-file 2
+command except the respective  modes are always enabled. See  documentation on
+the modes an \fBfind-file\fR command for more information.
+.SH NOTES
+\fBfind-bfile\fR   and   \fBfind-cfile\fR   are   macros   defined   in   file
+\fCtools.emf\fR.
+.PP
+The command
+.Ht find-file 2
+is bound to key "\fC\*(cX9\fR" with a numeric argument of 2, this is equivalent
+to executing \fBfind-bfile\fR with no argument.
 .SH "SEE ALSO"
 .na
-.Ht user-setup 3 ,
-.Ht spell-buffer 3 ,
-.Ht translate-key 2 ,
-.Ht set-char-mask 2 .
+.Ht find-file 2 ,
+.Ht binary 2m ,
+.Ht crypt 2m .
 .ad
+.rm C0
 .FH

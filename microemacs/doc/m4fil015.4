@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m4fil015.4,v 2.2 2001-07-14 10:11:31 jon Exp $
+.Id $Id: m4fil015.4,v 2.3 2001-12-06 00:04:32 jon Exp $
 .Im MicroEmacs macro;variable
 .so me.tni
 .TH "MessageLineVariables" 4
@@ -43,6 +43,11 @@ The \fIdefault\fR value will be specified and this will be returned by default.
 .IP \fC0x02\fR
 The \fIinitial\fR value will be specified and this will be initial value given
 on the input line.
+.IP \fC0x04\fR
+Auto-complete using the initial value, usually used with bit \fC0x02\fR.
+.IP \fC0x08\fR
+Hide the input  string, the  characters  in the current  input  string are all
+displayed as \fC'*'\fRs.
 .PP
 If no  value is  specified  then  default  value is 0 and  \fBh\fR  can not be
 specified. The  \fIdefault\fR  value is returned when the user enters an empty
@@ -93,13 +98,12 @@ completion lists as there is no size restrictions.
 The  \fB@mc\fR  variable can be used to get a single  character  from the user
 using the message-line. The optional flag \fBf\fR is a bitwise flag where each
 bit has the following meaning
-.IP
-.nf
-.na
-\fC0x01\fR The \fIvalid-list\fR specifies all valid letters.
-.fi
-.ad
-.LP
+.IP \fC0x01\fR
+The \fIvalid-list\fR specifies all valid letters.
+.IP \fC0x02\fR
+Quote the typed character, this allows keys such as '\fCC-g\fR' which is bound
+to the abort command to be entered.
+.PP
 The  default  value  for  \fBf\fR  is 0. When  \fB@mc\fR  is used, the user is
 prompted, with the given prompt, for a single character. If a \fIvalid-list\fR
 is  specified  then  only a  specified  valid  character  or an  error  can be

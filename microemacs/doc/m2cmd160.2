@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m2cmd160.2,v 2.1 2001-07-14 10:10:50 jon Exp $
+.Id $Id: m2cmd160.2,v 2.2 2001-12-06 00:04:31 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH command-wait 2
@@ -9,22 +9,46 @@ command-wait \- Conditional wait command
 .Me $a
 .SH SYNOPSIS
 .na
+.I n
 .B command-wait
 .ad
 .SH DESCRIPTION
-.B command-wait
-loops  getting and  processing  events (user input, screen  updates etc) until
-either the calling commands  \fB.wait\fR  command variable is undefined or set
-to false (\fC0\fR).
+When a +ve  argument  \fIn\fR is given  \fBcommand-wait\fR  waits for  \fIn\fR
+milliseconds  before  returning,  this wait  cannot be  interrupted.  If a -ve
+argument is given, \fBcommand-wait\fR waits for \-\fIn\fR milliseconds but the
+command  will  return if the user  interrupts  with any input  activity  (i.e.
+presses a key).
 .PP
-The  command is used when a main macro must wait and  process  input  until an
-exit criteria has been met, the input is best processed by setting the
+When no  argument is given  \fBcommand-wait\fR  loops  getting and  processing
+events  (user input,  screen  updates etc) until  either the calling  commands
+\fB.wait\fR command variable is undefined or set to false (\fC0\fR). This more
+complex  use of the  command  is used when a main macro must wait and  process
+input  until an exit  criteria  has been met, the input is best  processed  by
+setting the
 .Ht $buffer-input 5
 variable to a second macro. The macro
 .Ht gdiff 3
 uses this command in this way.
+.SH EXAMPLE
+The  following  macro code will  display a message on the screen for a fixed 5
+seconds:
+.Me $emf-scheme
+.CS
+16 screen-poke 10 10 0 "Hello World!"
+5000 command-wait
+.CE
+.Me $ehf-scheme
+Similarly the following  macro code will display a message for up to 5 seconds
+or till the user presses a key:
+.Me $emf-scheme
+.CS
+16 screen-poke 10 10 0 "Hello World!"
+-5000 command-wait
+.CE 0
+.Me $ehf-scheme
 .SH "SEE ALSO"
 .na
+.Ht ml-write 2 ,
 .Ht $buffer-input 5 .
 .ad
 .FH

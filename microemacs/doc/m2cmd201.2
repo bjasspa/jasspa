@@ -1,21 +1,21 @@
 .\" -*- nroff -*-
-.Id $Id: m2cmd201.2,v 2.2 2001-07-14 10:10:51 jon Exp $
+.Id $Id: m2cmd201.2,v 2.3 2001-12-06 00:04:31 jon Exp $
 .Im MicroEmacs bindings
 .so me.tni
 .TH Compatibility 2
 .XI Compatibility - "Compatibility with the original MicroEmacs"
 .SH "COMPATIBILITY"
-\*(mE is based on the original version of \fBMicroEmacs\fR  produced by Danial
-Lawrence at revision  3.8, the source files were  obtained  approximately  8-9
-years ago. The exact  origin of the files is  unknown. In that  period of time
-the source files have undergone an awful lot of change,  without  reference to
-the  subsequent  releases  made of  MicroEmacs  by Danial  Lawrence (due to no
-network access). As a result this version of \fBMicroEmacs\fR does not include
-any  modifications  or  features  that may have been  implemented  since. This
-version of  \fBMicroEmacs\fR  has been tailored to suite the requirements of a
-small group of individuals  who have used the editor on a daily basis across a
-limited  number  of  platforms,  for a  variety  of very  different  tasks and
-operating requirements.
+JASSPA \*(mS is based on the original version of \fBMicroEMACS\fR  produced by
+Danial   Lawrence  at  revision  3.8,  the  source  files  were   obtained  in
+approximately  1990. The exact  origin of the files is unknown. In that period
+of time the  source  files  have  undergone  an awful lot of  change,  without
+reference to the  subsequent  releases  made of MicroEMACS by Danial  Lawrence
+(due to no network access). As a result the JASSPA version of \fBMicroEmacs\fR
+does not include any  modifications or features that may have been implemented
+since.  This  version  of  \fBMicroEmacs\fR  has been  tailored  to suite  the
+requirements  of a small  group of  individuals  who have used the editor on a
+daily  basis  across a  limited  number of  platforms,  for a variety  of very
+different tasks and operating requirements.
 .PP
 This   version   of  \*(mS  is  biased   towards   \s-1UNIX\s0   environments,
 \s-1MS-DOS\s0 and Microsoft Windows ports have been performed however they are
@@ -24,7 +24,7 @@ wherever  possible.  The  intention is that  programmers,  and alike, may move
 across platforms using a common editor environment without being frustrated by
 the idiosyncrasies of different platforms. The most noticeable platform is the
 Microsoft  Windows platform which mimics the X-Windows cut and paste mechanism
-within the \*(mE environment. If you want a Windows style environment then use
+within the \*(mS environment. If you want a Windows style environment then use
 .Hr Notepad 1
 or
 .Hr Wordpad 1 ,
@@ -95,18 +95,18 @@ File type determination system, based on either the file name or embedded file
 text  allows  file  type  specific  macros  (hooks)  to  be  applied,  thereby
 configuring the editor into the correct mode for the file type.
 .BU
-Introduction  of  special  \*(mE  search  path  allowing  all of the  standard
+Introduction  of  special  \*(mS  search  path  allowing  all of the  standard
 configuration files to be utilized from a shared directory.
 .BE
 .\".BS "\&"
 .\"The  macro  lanugage  includes  a number of new
 .\".Hl "command  functions" ,
 .\".Hl "register variables"
-The name space of \*(mE  differs from the original  MicroEMACS  and has become
-more  compliant with the GNU  implementation  of Emacs. A list of the original
-MicroEMACS  verses  the new  command  name set is as  follows,  executing  the
-compatibility macro file  \fCme3_8.emf\fR  will create macro versions of these
-commands:
+The name space of JASSPA \*(mS  differs from the original  MicroEMACS  and has
+become  more  compliant  with the GNU  implementation  of Emacs. A list of the
+original  MicroEMACS verses the new command name set is as follows,  executing
+the compatibility macro file  \fCmeme3_8.emf\fR  will create macro versions of
+these commands:
 .RS
 .PP
 .B add-global-mode

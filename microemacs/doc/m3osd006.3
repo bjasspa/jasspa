@@ -29,7 +29,7 @@
 .\"
 .\"***************************************************************************
 .\"
-.Id $Id: m3osd006.3,v 2.3 2001-08-12 14:42:22 jon Exp $
+.Id $Id: m3osd006.3,v 2.4 2001-12-06 00:04:32 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH "MainMenu" 3
@@ -66,12 +66,14 @@ Changes the current buffer to a new buffer.
 Opens a dialog  enabling  the user to select  files for opening into \*(mS. By
 default the dialog opens the selected file using command
 .Ht find-file 2 ,
-but if the view, binary or encrypt options are used the command used is
-.Ht view-file 2 ,
-.Ht find-bfile 2
+but if the view option is selected the
+.Ht view-file 2
+command is used. The binary or encrypt options configure whether the files are
+to be loaded with
+.Ht binary 2m
 or
-.Ht find-cfile 2
-respectively.
+.Ht crypt 2m
+modes enabled.
 .IP "\fCQuick Open\fR"
 Opens a sub-menu list all user file types (defined in
 .Ht user-setup 3 ).

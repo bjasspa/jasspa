@@ -9,7 +9,7 @@
 .\"  Object Name   : m3osd000.3
 .\"  Created By    : Steven Phillips
 .\"  Created       : Sat Aug 22 09:00:06 1998
-.\"  Last Modified : <000719.1013>
+.\"  Last Modified : <011126.2158>
 .\"
 .\"  Description
 .\"
@@ -29,7 +29,7 @@
 .\"
 .\"***************************************************************************
 .\"
-.Id $Id: m3osd000.3,v 2.5 2001-08-12 14:42:22 jon Exp $
+.Id $Id: m3osd000.3,v 2.6 2001-12-06 00:04:32 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH user-setup 3
@@ -104,12 +104,14 @@ company macro file should  contain all company wide standard  settings such as
 .Hl "Setting Up a Company Profile" CompanyProfiles 2
 for more information.
 .IP "\fCEmulate\fR"
-Sets an emulation  macro file name which is executed at start-up. An emulation
-macro file should  contain macro code which creates an environment  similar to
-another  editor. \*(mE is released with one emulation  file,  \fCme3_8.emf\fR,
-which emulates MicroEmacs version 3.8 (See
+Sets an emulation mode which changes the behaviour on \*(mS to emulate another
+editor/program;  this  is  done by  executing  a macro  file at  start-up.  An
+emulation  macro file should  contain the macro code  required to simulate the
+environment  of the other editor. \*(mE is released with two emulation  modes,
+MicroEmacs v3.8 which executes macro file \fCmeme3_8.emf\fR (See
 .Hl Compatibility Compatibility 2
-for more information).
+for more  information)  and NEdit v5 which is at best a demonstration  of what
+can be achieved, this executes macro file \fCmenedit.emf\fR. 
 .IP "\fCMS Shift Region\fR"
 Enables/disables  cursor  key  manipulation  with the  shift  key  similar  to
 the conventional Microsoft region selection. When enabled,
@@ -118,35 +120,34 @@ a region which is hilighted. Once the region is selected then the
 \fC<DELETE>\fR or \fC<BACKSPACE>\fR  key erases the selected region. This also
 enables a similar  behaviour  with the Mouse  \fBDrag  region\fR  driver,  see
 below.
-.SS "Language Setup"
+.SS "Locale Setup"
 .IP "\fCKeyboard\fR"
 Configures  \*(mS to the user's  keyboard.  Accent  character  generation keys
 present on foreign  keyboards  cannot be  automatically  supported  on Windows
 platforms.  \*(mS must be  informed of the  keyboard  being used to  correctly
 interpret the keys. If a required keyboard is not supported please see
 .Hl FAQ38 faq38 0f
-on how to setup the keyboard.
+on how to setup the keyboard, also see
+.Hl "Locale Support" localeSupport 2 .
 .IP "\fCLanguage\fR"
-Sets the user language, this sets the printable  characters, letter characters
-and sets up
+Sets the user  language,  this  sets the word (or  letter)  characters  and if
+available sets up
 .Ht spell 2
-with appropriate spelling rules and dictionaries. The "\fC(Ext)\fR"  languages
-are identical to the standard languages except they use the extended language
-dictionary as well as the base  dictionary,  vastly  increasing the word list.
-This indirectly executes
-.Ht set-language 3
-with  the  given   language.   \*(mS  by  default   comes  with   support  for
-\fBAmerican\fR  and  \fBBritish\fR.  If the user  creates  support for another
-language   it   can  be   installed   into   \*(mS   by   adding   it  to  the
-\fB%language-names\fR    and    \fB%language-val\fR    variables    found   in
-\fClanguage.emf\fR.
-.IP "\fCPers <language> Dic\fR"
-Sets   the    personal    dictionary    file   for   the   current    language
-("\fI<language>\fR").   Setting  the  personal  dictionary  for  the  language
-"\fCDefault\fR" sets the default personal dictionary file for a language which
-does not have a specific  personal  dictionary. The  \fBDefault\fR  language's
-default file is  "\fC<log-name>\fR".  Any words or auto-corrected  words added
-while configured for this language are added to this dictionary.
+with  appropriate  spelling rules and  dictionaries.  For more  information on
+adding support for a language see
+.Hl "Locale Support" localeSupport 2 .
+.IP \fBNOTES\fR
+Earlier versions \*(mS had "\fC(Ext)\fR" languages which use extended
+language   dictionaries,   vastly  increasing  the  word  list.  New  versions
+automatically test for and use these dictionaries if available.
+.IP
+In earlier versions a personal dictionary name could be set in the next field,
+this option was removed on Oct 2001.  Instead a personal  dictionary  for each
+language is automatically  created for you, any words or auto-corrected  words
+will be  added  to the  current  languages  personal  dictionary.  The name of
+dictionary is "\fClsdp\fR\fI<lang-id>\fR\fC.edf\fR" where "\fI<lang-id>\fR" is
+the 4 letter \*(mS  language name (e.g.  "\fCenus\fR"  for  American),  simply
+rename any existing personal dictionary to this new name.
 .IP "\fCAuto Spell\fR"
 Enables Auto Spell Checking in file types which support this feature  (usually
 text based files such as
@@ -259,7 +260,7 @@ behavior in a buffer which has
 .Ht cmode 2m
 enabled or an
 .Hl indentation indent 2
-method. This indirectly sets bit 0x1000 of the
+method. This indirectly sets bits \fC0x1000\fR and \fC0x200000\fR of the
 .Ht $system 5
 variable.
 .IP "\fCShow Modes\fR"
@@ -298,10 +299,16 @@ and
 greatly improving the look of
 .Ht osd 2
 dialogs, the scroll bars etc.
+.IP "\fCUse Fonts\fR"
+When enabled the bold, italic, light and underline characteristics of the font
+will be used depending on their  availability and the Color Scheme being used.
+This indirectly sets bit \fC0x10\fR of the
+.Ht $system 5
+variable.
 .IP "\fCDraw White Spaces\fR"
 Enables the drawing of visible white  spaces, i.e. space, tab and new-line
 characters. This indirectly sets bit
-0x80000 of the
+\fC0x80000\fR of the
 .Ht $system 5
 variable.
 .IP "\fCClient Server\fR"
@@ -339,6 +346,18 @@ the  hidden  time. A  visible  time  of 600  and  hidden  time of 200  gives a
 reasonable blink cycle. This indirectly sets the
 .Ht $cursor-blink 5
 variable.
+.IP "\fCFence Display\fR"
+Sets the  preferred  method of displaying a matching  fence, a fence is one of
+the following brackets:
+.CS
+{...}   (...)   [...]
+.CE
+Jumping to the  opening  fence only  occurs  when the closing  brace is typed,
+whereas the drawing of matching  fences  occurs  whenever  the cursor is on an
+open fence or one  character  past the close fence. When this option is set to
+"\fCNever Display\fR" the
+.Ht buffer-setup 3
+setting is ignored.
 .IP "\fCScroll Bars\fR"
 Selects the scroll bar support  required.  When Splitter is enabled, the first
 character  of the  scroll  bar and  mode-line  is a split  character  used for
@@ -377,20 +396,8 @@ If this option is disabled  Termcap  fonts (such as bold) are used  instead to
 create a primitive hi-lighting. This indirectly sets bit 0x004 of the
 .Ht $system 5
 variable.
-.IP "\fCWith Bold\fR"
-This option only has an effect when  Termcap  Color is used. When  enabled the
-Termcap Bold font is used to create  brighter  colors,  doubling the number of
-foreground colors available. This indirectly sets bit 0x008 of the
-.Ht $system 5
-variable.
-.IP "\fCTermcap Fonts\fR"
-This  option  determines  whether  Termcap  fonts  should be used to  simulate
-colors,  creating  a  primitive  hi-lighting.  The fonts  available  are bold,
-italic, light,  reverse and underline,  depending on the terminal  being used.
-This feature cannot be used with Termcap  Colors, it does improve the look but
-at the cost of display performance. This indirectly sets bit 0x010 of the
-.Ht $system 5
-variable.
+.IP "\fCUse Fonts\fR"
+See \fBPlatform UNIX Setup\fR above.
 .IP "\fCDisplay Char Set\fR"
 See \fBPlatform UNIX Setup\fR above.
 .IP "\fCDraw White Spaces\fR"
@@ -437,6 +444,8 @@ the range -11 .. -14 generally produce reasonably sized fonts. The \fIhight\fR
 and  \fIwidth\fR  may be  specified  as +ve  values  and allow  explicit  font
 dimensions  to be  specified,  generally  used to achieve a precise  font size
 requirement.
+.IP "\fCUse Fonts\fR"
+See \fBPlatform UNIX Setup\fR above.
 .IP "\fCDisplay Char Set\fR"
 See \fBPlatform UNIX Setup\fR above.
 .IP "\fCExtend Char Set\fR"

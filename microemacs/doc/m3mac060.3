@@ -1,0 +1,51 @@
+.\" -*- nroff -*-
+.Id $Id: m3mac060.3,v 1.1 2001-12-06 00:05:23 jon Exp $
+.Im MicroEmacs command|file
+.ds C0 "(\fB\*(cX9\fR)\ \&
+.so me.tni
+.TH find-bfile 3
+.XI find-bfile \- "\*(C0Load a file as binary data"
+.XI find-cfile \- "Load a crypted file"
+.SH NAME
+.Me "|find-bfile"
+find-bfile \- Load a file as binary data
+.br
+.Me "|find-cfile"
+find-cfile \- Load a crypted file
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B find-bfile
+"\fIfile-name\fR" \*(C0
+.br
+.I n
+.B find-cfile
+"\fIfile-name\fR"
+.ad
+.SH DESCRIPTION
+\fBfind-bfile\fR  and  \fBfind-cfile\fR  provide a simple interface to loading
+files in
+.Ht binary 2m
+and
+.Ht crypt 2m
+modes respectively. The numeric argument has the same effect as with the
+.Ht find-file 2
+command except the respective  modes are always enabled. See  documentation on
+the modes an \fBfind-file\fR command for more information.
+.SH NOTES
+\fBfind-bfile\fR   and   \fBfind-cfile\fR   are   macros   defined   in   file
+\fCtools.emf\fR.
+.PP
+The command
+.Ht find-file 2
+is bound to key "\fC\*(cX9\fR" with a numeric argument of 2, this is equivalent
+to executing \fBfind-bfile\fR with no argument.
+.SH "SEE ALSO"
+.na
+.Ht find-file 2 ,
+.Ht binary 2m ,
+.Ht crypt 2m .
+.ad
+.rm C0
+.FH
