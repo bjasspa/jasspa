@@ -7,23 +7,18 @@
 #  System        :
 #  Module        :
 #  Object Name   : $RCSfile: Makefile,v $
-#  Revision      : $Revision: 1.1 $
-#  Date          : $Date: 2003-08-22 23:01:10 $
+#  Revision      : $Revision: 1.2 $
+#  Date          : $Date: 2004-02-13 15:22:09 $
 #  Author        : $Author: jon $
 #  Created By    : Jon Green
 #  Created       : Sun Jul 27 17:56:28 2003
-#  Last Modified : <030822.2355>
+#  Last Modified : <040213.1519>
 #
 #  Description
 #
 #  Notes
 #
 #  History
-#
-#  $Log: not supported by cvs2svn $
-#  Revision 1.1  2003/07/27 17:14:48  jon
-#  Added mac conversion tools
-#
 #
 ##############################################################################
 #
@@ -38,13 +33,14 @@
 ##############################################################################
 
 # Set up the defaults for the environment.
-RM = rm -f
-CC = gcc $(CFLAGS)
-LD = gcc
-CFLAGS	= -O3 -I.
-LDFLAGS = -O3
+TOPDIR=..
+include $(TOPDIR)/etc/makeinc
+# Local definitions for compiler.
+INCLUDES=$(I)./ $(I)$(INSTINCDIR)
+LOCALDEFS= -DTSDUMP_PLATFORM_SUNOS
 
-TARGET	=	unix2dos	dos2unix
+TARGET		=	unix2dos$(EXE)	dos2unix$(EXE)
+INSTALL_TARGET	=	$(TARGET:%=$(INSTBINDIR)/%)
 
 all:	$(TARGET)
 
@@ -52,6 +48,15 @@ unix2dos:	unix2dos.c
 	$(CC) $(CCFLAGS) -o $@ $@.c
 dos2unix:	dos2unix.c
 	$(CC) $(CCFLAGS) -o $@ $@.c
+
+install:	$(INSTALL_TARGET)
+
+$(INSTBINDIR)/unix2dos$(EXE): unix2dos$(EXE)
+	$(MKDIR) ${@D}
+	$(INSTALL_EXE) ${@F} ${@D}
+$(INSTBINDIR)/dos2unix$(EXE): dos2unix$(EXE)
+	$(MKDIR) ${@D}
+	$(INSTALL_EXE) ${@F} ${@D}
 
 clean:
 	$(RM) ${TARGET}

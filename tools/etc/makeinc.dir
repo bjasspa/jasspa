@@ -1,0 +1,16 @@
+# -!- Makefile -!-
+# Directory
+#
+RELDIR	=	$(TOPDIR)/release
+#
+# Base directory names
+# 
+BINDIR		= bin
+LIBDIR		= lib
+INCDIR		= include
+#
+# Install directory names
+# 
+INSTINCDIR=	$(TOPDIR)/$(INCDIR)
+INSTBINDIR=	$(TOPDIR)/$(BINDIR)/$(TARGETDIR)
+INSTLIBDIR=	$(TOPDIR)/lib/$(TARGETDIR)/$(USECC)

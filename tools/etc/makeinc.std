@@ -1,0 +1,31 @@
+# -*- Makefile -*-
+#
+# Standard definitions for things.
+#
+# Remove unconditionally + copy
+RM	= rm -f
+CP	= cp
+#
+# Directory stuff
+#
+MKDIR	= mkdir -p
+RMDIR	= rm -rf
+#
+# Archives - always full compression.
+#
+TAR	= tar
+ZIP	= zip -9
+GZIP	= gzip -9
+#
+# Install
+#
+INSTALL		= install
+INSTALL_FIL	= $(INSTALL) -m 0666
+INSTALL_DIR	= $(INSTALL) -m 0755
+INSTALL_EXE	= $(INSTALL) -m 0777
+#
+# Use microemacs for conversions.
+#
+ME      = me
+DOS2UNIX= $(ME) -n "@dos2unix"
+UNIX2DOS= $(ME) -n "@unix2dos"

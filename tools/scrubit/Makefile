@@ -1,33 +1,31 @@
 ##############################################################################
 #
-#  			Copyright 2003 Jon Green.
+#			Copyright 2003 Jon Green.
 #			      All Rights Reserved
 #
 #
-#  System        : 
-#  Module        : 
-#  Object Name   : $RCSfile: makefile_old,v $
-#  Revision      : $Revision: 1.1.1.1 $
-#  Date          : $Date: 2003-03-18 00:53:39 $
+#  System        :
+#  Module        :
+#  Object Name   : $RCSfile: Makefile,v $
+#  Revision      : $Revision: 1.1 $
+#  Date          : $Date: 2004-02-13 15:21:41 $
 #  Author        : $Author: jon $
-#  Created By    : <unknown>
-#  Created       : Tue Mar 18 00:04:48 2003
-#  Last Modified : <030318.0039>
+#  Created By    : Jon Green
+#  Created       : Sun Jul 27 17:56:28 2003
+#  Last Modified : <040213.1520>
 #
-#  Description	
+#  Description
 #
 #  Notes
 #
 #  History
-#	
-#  $Log: not supported by cvs2svn $
 #
 ##############################################################################
 #
 #  Copyright (c) 2003 Jon Green.
-# 
+#
 #  All Rights Reserved.
-# 
+#
 #  This  document  may  not, in  whole  or in  part, be  copied,  photocopied,
 #  reproduced,  translated,  or  reduced to any  electronic  medium or machine
 #  readable form without prior written consent from Jon Green.
@@ -35,29 +33,31 @@
 ##############################################################################
 
 # Set up the defaults for the environment.
-RM = rm -f
-CC = gcc $(CFLAGS)
-LD = gcc
-CFLAGS	= -O3 -I. -DTSDUMP_PLATFORM_SUNOS
-LDFLAGS = -O3
+TOPDIR=..
+include $(TOPDIR)/etc/makeinc
+# Local definitions for compiler.
+INCLUDES=$(I)./ $(I)$(INSTINCDIR)
+LOCALDEFS= -DTSDUMP_PLATFORM_SUNOS
 
-SRC	=	scrubit.c
-OBJ	=	$(SRC:.c=.o)
-TARGET	=	scrubit
+TARGET		=	scrubit$(EXE)
+INSTALL_TARGET	=	$(TARGET:%=$(INSTBINDIR)/%)
 
 all:	$(TARGET)
 
-scrubit:	$(OBJ)
-	$(LD) $(LDFLAGS) -o $@ $(OBJ) 
+scrubit:	scrubit.c
+	$(CC) $(CCFLAGS) -o $@ $@.c
 
-clean:	
-	$(RM) ${TARGET} 
+install:	$(INSTALL_TARGET)
+
+$(INSTBINDIR)/scrubit$(EXE): scrubit$(EXE)
+	$(MKDIR) ${@D}
+	$(INSTALL_EXE) ${@F} ${@D}
+
+clean:
+	$(RM) ${TARGET}
 	$(RM) *.o
 
 spotless: clean
 	$(RM) *~
 	$(RM) core
 	$(RM) tags
-			
-
-

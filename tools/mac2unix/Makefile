@@ -7,20 +7,18 @@
 #  System        :
 #  Module        :
 #  Object Name   : $RCSfile: Makefile,v $
-#  Revision      : $Revision: 1.1 $
-#  Date          : $Date: 2003-07-27 17:14:48 $
+#  Revision      : $Revision: 1.2 $
+#  Date          : $Date: 2004-02-13 15:22:18 $
 #  Author        : $Author: jon $
 #  Created By    : Jon Green
 #  Created       : Sun Jul 27 17:56:28 2003
-#  Last Modified : <030727.1801>
+#  Last Modified : <040213.1518>
 #
 #  Description
 #
 #  Notes
 #
 #  History
-#
-#  $Log: not supported by cvs2svn $
 #
 ##############################################################################
 #
@@ -35,13 +33,14 @@
 ##############################################################################
 
 # Set up the defaults for the environment.
-RM = rm -f
-CC = gcc $(CFLAGS)
-LD = gcc
-CFLAGS	= -O3 -I. -DTSDUMP_PLATFORM_SUNOS
-LDFLAGS = -O3
+TOPDIR=..
+include $(TOPDIR)/etc/makeinc
+# Local definitions for compiler.
+INCLUDES=$(I)./ $(I)$(INSTINCDIR)
+LOCALDEFS= -DTSDUMP_PLATFORM_SUNOS
 
-TARGET	=	unix2mac	mac2unix
+TARGET		=	unix2mac$(EXE)	mac2unix$(EXE)
+INSTALL_TARGET	=	$(TARGET:%=$(INSTBINDIR)/%)
 
 all:	$(TARGET)
 
@@ -49,6 +48,15 @@ unix2mac:	unix2mac.c
 	$(CC) $(CCFLAGS) -o $@ $@.c
 mac2unix:	mac2unix.c
 	$(CC) $(CCFLAGS) -o $@ $@.c
+
+install:	$(INSTALL_TARGET)
+
+$(INSTBINDIR)/unix2mac$(EXE): unix2mac$(EXE)
+	$(MKDIR) ${@D}
+	$(INSTALL_EXE) ${@F} ${@D}
+$(INSTBINDIR)/mac2unix$(EXE): mac2unix$(EXE)
+	$(MKDIR) ${@D}
+	$(INSTALL_EXE) ${@F} ${@D}
 
 clean:
 	$(RM) ${TARGET}

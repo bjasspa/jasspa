@@ -1,0 +1,25 @@
+# -*- Makefile -*-
+# Make rules for SunOS
+# 
+# Use standard definitions
+include $(TOPDIR)/etc/makeinc.std
+#
+# Host specific definitions
+# 
+TARGETDIR   =   $(UNAME)
+#
+# Set up the compiler we determine the compiler
+# to use from the path of the compiler. If it
+# is "/usr/bin/cc" then this is the dummy one.
+#
+_USECC	 =AaBb$(WHICHCC)
+__USECC  =$(_USECC:AaBb=gcc)
+___USECC =$(__USECC:AaBbno=gcc)
+____USECC=$(___USECC:AaBb/usr/ucb/cc=gcc)
+USECC    =$(____USECC:AaBb$(WHICHCC)=$(UNAME)-cc)
+include $(TOPDIR)/etc/makeinc.$(USECC)
+#
+# Platform specific defines.
+#
+CPP_PLATDEFS=   -D_SUNOS -D_UNIX
+INSTALL=	ginstall
