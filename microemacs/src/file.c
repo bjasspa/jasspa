@@ -2023,37 +2023,35 @@ autowriteout(register meBuffer *bp)
 
     bp->autotime = -1 ;
 
-    if(bp->fileName == NULL)
-        ss = meABORT ;
-    else
+    if(bp->fileName != NULL)
     {
         getFileStats(bp->fileName,0,NULL,lname) ;
         ff = (lname[0] == '\0') ? bp->fileName:lname ;
-        if(createBackupName(fn,ff,'#',1))
-            ss = meABORT ;
-        else if((ss=ffWriteFileOpen(fn,meRWFLAG_WRITE|meRWFLAG_AUTOSAVE,bp)) > 0)
+        if(!createBackupName(fn,ff,'#',1) &&
+           (ffWriteFileOpen(fn,meRWFLAG_WRITE|meRWFLAG_AUTOSAVE,bp) > 0))
         {
             meLine *lp ;
-
+            
             lp = meLineGetNext(bp->baseLine);            /* First line.          */
             while((lp != bp->baseLine) &&
-                  ((ss=ffWriteFileWrite(meLineGetLength(lp),meLineGetText(lp),
-                                    !(lp->flag & meLINE_NOEOL))) > 0))
+                  (ffWriteFileWrite(meLineGetLength(lp),meLineGetText(lp),
+                                    !(lp->flag & meLINE_NOEOL)) > 0))
             {
                 lp = meLineGetNext(lp) ;
                 if(TTbreakTest(1))
                 {
-                    ss = meABORT ;
-                    break ;
+                    ctrlg(1,1) ;
+                    return ;
                 }
             }
-            ffWriteFileClose(fn,meRWFLAG_WRITE|meRWFLAG_AUTOSAVE,bp) ;
+            if(ffWriteFileClose(fn,meRWFLAG_WRITE|meRWFLAG_AUTOSAVE,bp) > 0)
+            {
+                mlerase(MWCLEXEC) ;
+                return ;
+            }
         }
     }
-    if(ss > 0)
-        mlerase(MWCLEXEC) ;
-    else
-        mlwrite(0,(meUByte *)"[Auto-writeout failure for buffer %s]",bp->name) ;
+    mlwrite(0,(meUByte *)"[Auto-writeout failure for buffer %s]",bp->name) ;
 }
 
 /*

@@ -1617,6 +1617,11 @@ missing_arg:
                     bp->histNo = bufHistNo ;
                     bp->intFlag |= BIFFILE ;
                     noFiles++ ;
+#ifdef _WIN32
+                    ffrp = GetStdHandle(STD_INPUT_HANDLE) ;
+#else
+                    ffrp = stdin ;
+#endif
                     stdinflag = 1 ;
                     goto handle_stdin ;
 #endif

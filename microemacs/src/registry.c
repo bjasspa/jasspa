@@ -368,7 +368,7 @@ regSave (meRegNode *rnp, meUByte *fname)
         flags |= meRWFLAG_CRYPT ;
     }
     /* Open the file */
-    if((ss=ffWriteFileOpen(fname,flags,NULL)) > 0)
+    if(ffWriteFileOpen(fname,flags,NULL) > 0)
     {
         meRegNode *rr ;
         
@@ -445,8 +445,8 @@ regSave (meRegNode *rnp, meUByte *fname)
                 }
             }
         }
-        ffWriteFileClose(fname,meRWFLAG_WRITE,NULL) ;
-        if(ss > 0)
+        
+        if(ffWriteFileClose(fname,meRWFLAG_WRITE,NULL) > 0)
         {
             rnp->mode &= ~meREGMODE_CHANGE;
             return meTRUE ;
