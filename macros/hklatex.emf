@@ -27,17 +27,17 @@ set-variable .fhook-latex.command-kbind "|esc o|esc q|esc p|esc n|C-c l|C-c C-l|
 set-variable .fhook-latex.command-desc  "|||||\HGoto Reference Label|\HReturn to Reference|List \HLabels||\HInsert Token|Com\Hpile Buffer|\HView Buffer|T\Hoggle hilighting|"
 
 ; setup item-list
-set-variable .fhook-latex.item-list-s1 "^[ \t]*\\\\chapter{\\([^}]*\\)}"
+set-variable .fhook-latex.item-list-s1 "^[ \t]*\\\\chapter\\*?{\\([^}]*\\)}"
 set-variable .fhook-latex.item-list-r1 "Chpt \ecB\\1\ecA"
-set-variable .fhook-latex.item-list-s2 "^[ \t]*\\\\part{\\([^}]*\\)}"
+set-variable .fhook-latex.item-list-s2 "^[ \t]*\\\\part\\*?{\\([^}]*\\)}"
 set-variable .fhook-latex.item-list-r2 "Part \ecB\\1\ecA"
-set-variable .fhook-latex.item-list-s3 "^[ \t]*\\\\section{\\([^}]*\\)}"
+set-variable .fhook-latex.item-list-s3 "^[ \t]*\\\\section\\*?{\\([^}]*\\)}"
 set-variable .fhook-latex.item-list-r3 "Sct  \ecB\\1\ecA"
-set-variable .fhook-latex.item-list-s4 "^[ \t]*\\\\subsection{\\([^}]*\\)}"
+set-variable .fhook-latex.item-list-s4 "^[ \t]*\\\\subsection\\*?{\\([^}]*\\)}"
 set-variable .fhook-latex.item-list-r4 "SSct \ecB\\1\ecA"
-set-variable .fhook-latex.item-list-s5 "^[ \t]*\\\\subsubsection{\\([^}]*\\)}"
+set-variable .fhook-latex.item-list-s5 "^[ \t]*\\\\subsubsection\\*?{\\([^}]*\\)}"
 set-variable .fhook-latex.item-list-r5 "SSSc \ecB\\1\ecA"
-set-variable .fhook-latex.item-list-s6 "^[ \t]*\\\\markboth{\\([^}]*\\)}"
+set-variable .fhook-latex.item-list-s6 "^[ \t]*\\\\markboth\\*?{\\([^}]*\\)}"
 set-variable .fhook-latex.item-list-r6 "Mark \ecB\\1\ecA"
 
 set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|section\\|chap\\|subsec\\|label\\|begin\\|paragraph\\|subparagraph\\|end\\)\\)"
@@ -45,7 +45,7 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|se
 !if &sin "f" .fhook-latex.setup
     ; Set up collapse for LaTeX
     set-variable .fhook-latex.collapse-open  "\\\\chapter\\|\\\\section\\|\\\\subsection"
-    set-variable .fhook-latex.collapse-close "\\\\chapter\\|\\\\section\\|\\\\subsection\\|\\\\end{document}"
+    set-variable .fhook-latex.collapse-close "\\\\chapter\\|\\\\section\\|\\\\subsection\\|\\\\markboth\\|\\\\end{document}"
     set-variable .fhook-latex.collapse-mnext "-1"
 !endif
 
@@ -60,8 +60,8 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|se
     set-variable %latex-compile &cond &seq %latex-compile "ERROR" "latex -interaction=nonstopmode" %latex-compile
     set-variable %latex-view    &cond &seq %latex-view    "ERROR" "xdvi"  %latex-view
 !endif
-    
-!if &and &sin "h" .fhook-latex.setup &band .hilight.flags 0x02 
+
+!if &and &sin "h" .fhook-latex.setup &band .hilight.flags 0x02
     !if &not &exist .hilight.latex
         set-variable .hilight.latex &pinc .hilight.next 1
         set-variable .hilight.latexs &pinc .hilight.next 1
@@ -70,6 +70,7 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|se
         set-variable .hilight.latexh &pinc .hilight.next 1
         set-variable .hilight.latexi &pinc .hilight.next 1
         set-variable .hilight.latexm &pinc .hilight.next 1
+        set-variable .hilight.latexn &pinc .hilight.next 1
         set-variable .hilight.latexbi &pinc .hilight.next 1
         set-variable .hilight.latexbt &pinc .hilight.next 1
         set-variable .hilight.latexib &pinc .hilight.next 1
@@ -79,7 +80,7 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|se
         set-variable .hilight.latexv &pinc .hilight.next 1
     !endif
     ; hilight-latex-common <hilightScheme> <schemeIdentifier>
-    ; 
+    ;
     ; Take all of the common objects that are used in the various hilighting
     ; schemes and apply them to the current hilighting format.
     ;
@@ -90,89 +91,90 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|se
         ; Comments
         hilight #l1 2 "^%"                .scheme.comment
         ;symbols
-        hilight #l1 64 "\\$\\\\bullet\\$" "·"                      #l2
-        hilight #l1 64 "\\\\_" "_"                                 #l2
-        hilight #l1 64 "\\\\>" "    ‘"                             #l2
-        hilight #l1 64 "\\\\\\\\" "\f"                             #l2
-        hilight #l1 64 "\\$\\\\vert\\$" "|"                        #l2
-        hilight #l1 64 "\\$\\\\beta\\$" "ß*"                       #l2
-        hilight #l1 64 "\\$\\\\alpha\\$" "a*"                      #l2
-        hilight #l1 64 "\\$\\\\mu\\$" "µ"                          #l2
-        hilight #l1 64 "\\$\\\\geqq\\$" "|>=|"                     #l2
-        hilight #l1 64 "\\$\\\\leqq\\$" "|<=|"                     #l2
-        hilight #l1 64 "\\$\\^{\\\\rm TM}\\$" "™"                  #l2
-        hilight #l1 64 "\\$\\^{\\\\copyright}\\$" "©"              #l2
-        hilight #l1 64 "\\$\\^{\\\\circledR}\\$"  "®"              #l2
-        hilight #l1 64 "\\$\\^{\\\\circ}\\$" "°"                   #l2            
-        hilight #l1 64 "\\\\_" "_"                                 #l2
-        hilight #l1 64 "\\\\ " " "                                 #l2
-        hilight #l1 64 "\\\\textbackslash" "\\"                    #l2
-        hilight #l1 64 "\\\\textbar" "|"                           #l2
-        hilight #l1 64 "\\\\textless" "<"                          #l2
-        hilight #l1 64 "\\\\textgreater" ">"                       #l2
-        hilight #l1 64 "\\\\textasciicircum" "^"                   #l2
-        hilight #l1 64 "\\\\textasciitilde" "~"                    #l2
-        
+        hilight #l1 64 "\\$\\\\bullet\\$" "·" #l2
+        hilight #l1 64 "\\\\>" "    ‘" #l2
+        hilight #l1 64 "\\\\\\\\" "\f" #l2
+        hilight #l1 64 "\\$\\\\vert\\$" "|" #l2
+        hilight #l1 64 "\\$\\\\beta\\$" "ß*" #l2
+        hilight #l1 64 "\\$\\\\alpha\\$" "a*" #l2
+        hilight #l1 64 "\\$\\\\mu\\$" "µ" #l2
+        hilight #l1 64 "\\$\\\\ldots\\$" "..." #l2
+        hilight #l1 64 "\\$\\\\geqq\\$" "|>=|" #l2
+        hilight #l1 64 "\\$\\\\leqq\\$" "|<=|" #l2
+        hilight #l1 64 "\\$\\^{\\\\rm TM}\\$" "™" #l2
+        hilight #l1 64 "\\$\\^{\\\\copyright}\\$" "©" #l2
+        hilight #l1 64 "\\$\\^{\\\\circledR}\\$" "®" #l2
+        hilight #l1 64 "\\$\\^{\\\\circ}\\$" "°" #l2
+        hilight #l1 64 "\\\\_" "_" #l2
+        hilight #l1 64 "\\\\-" "" #l2
+        hilight #l1 64 "\\\\ " " " #l2
+        hilight #l1 64 "\\\\textbackslash" "\\" #l2
+        hilight #l1 64 "\\\\textbar" "|" #l2
+        hilight #l1 64 "\\\\textless" "<" #l2
+        hilight #l1 64 "\\\\textgreater" ">" #l2
+        hilight #l1 64 "\\\\textasciicircum" "^" #l2
+        hilight #l1 64 "\\\\textasciitilde" "~" #l2
+
         ; Umlauts only examples, use gsar.exe for umlauts
         ; tranlations during compiling
-        hilight #l1 64 "\"a" "ä"                                   #l2
-        hilight #l1 64 "\"o" "ö"                                   #l2
-        hilight #l1 64 "\\\\`a" "à"                                #l2
-        hilight #l1 64 "\\\\`e" "è"                                #l2
-        hilight #l1 64 "\\\\'e" "é"                                #l2
-        ; Double quotes 
-        hilight #l1 64 "``" "`"                                    #l2
-        hilight #l1 64 "''" "'"                                    #l2
+        hilight #l1 64 "\"a" "ä" #l2
+        hilight #l1 64 "\"o" "ö" #l2
+        hilight #l1 64 "\\\\`a" "à" #l2
+        hilight #l1 64 "\\\\`e" "è" #l2
+        hilight #l1 64 "\\\\'e" "é" #l2
+        ; Double quotes
+        hilight #l1 64 "``" "`" #l2
+        hilight #l1 64 "''" "'" #l2
         ; Quotes
-        hilight #l1 64 "\\\\glqq " "„"                             #l2
-        hilight #l1 64 "\\\\grqq" "\""                             #l2
+        hilight #l1 64 "\\\\glqq " "„" #l2
+        hilight #l1 64 "\\\\grqq" "\"" #l2
         ; specials
-        hilight #l1 64 "\\\\BibTeX\\}\\W" "BibTeX"                .scheme.bold
-        hilight #l1 64 "\\\\LaTeX\\}\\W"  "LaTeX"                 .scheme.bold
-        hilight #l1 64 "\\\\teTeX\\}\\W"  "teTeX"                 .scheme.bold
-        hilight #l1 64 "\\\\LaTeXe\\}\\W" "LaTeXe"                .scheme.bold
-        hilight #l1 64 "\\\\Linux\\}\\W"  "Linux"                 .scheme.bold
-        hilight #l1 64 "\\\\TeX\\}\\W"    "TeX"                   .scheme.bold
-        hilight #l1 64 "\\\\MF\\}\\W"     "MF"                    .scheme.bold
-        hilight #l1 64 "\\\\AmSLaTeX\\}\\W" "AmSLaTeX"            .scheme.bold
-        
-        ;        hilight #l1 64 "\\\\TeX\\}[^\\]" "TeX"                     .scheme.bold
-        hilight #l1 64 "\\\\dvipdfm\\\\" "dvipdfm"                 .scheme.bold
+        hilight #l1 64 "\\\\BibTeX\\}\\W" "BibTeX" .scheme.bold
+        hilight #l1 64 "\\\\LaTeX\\}\\W"  "LaTeX" .scheme.bold
+        hilight #l1 64 "\\\\teTeX\\}\\W"  "teTeX" .scheme.bold
+        hilight #l1 64 "\\\\LaTeXe\\}\\W" "LaTeXe" .scheme.bold
+        hilight #l1 64 "\\\\Linux\\}\\W"  "Linux" .scheme.bold
+        hilight #l1 64 "\\\\TeX\\}\\W"    "TeX" .scheme.bold
+        hilight #l1 64 "\\\\MF\\}\\W"     "MF" .scheme.bold
+        hilight #l1 64 "\\\\AmSLaTeX\\}\\W" "AmSLaTeX" .scheme.bold
+        hilight #l1 64 "\\\\dvipdfm\\\\" "dvipdfm" .scheme.bold
         ; character quoting
-        hilight #l1 64 "\\$\\(.\\)\\$" "\\1"                       #l2
-        hilight #l1 64 "\\\\\\$" "$"                               #l2
-        hilight #l1 64 "\\\\{" "{"                                 #l2
-        hilight #l1 64 "\\\\}" "}"                                 #l2
-        hilight #l1 64 "\\\\%" "%"                                 #l2
-        hilight #l1 64 "\\\\#" "#"                                 #l2
-        hilight #l1 64 "\\\\&" "&"                                 #l2
-        hilight #l1 64 "\\\\char`\\\\\\(.\\)" "\\1"                #l2
+        hilight #l1 64 "\\$\\(.\\)\\$" "\\1" #l2
+        hilight #l1 64 "\\\\\\$" "$" #l2
+        hilight #l1 64 "\\\\{" "{" #l2
+        hilight #l1 64 "\\\\}" "}" #l2
+        hilight #l1 64 "\\\\%" "%" #l2
+        hilight #l1 64 "\\\\#" "#" #l2
+        hilight #l1 64 "\\\\&" "&" #l2
+        hilight #l1 64 "\\\\char`\\\\\\(.\\)" "\\1" #l2
         hilight #l1 64 "~" " "                                     #l2
         ;references
-        hilight #l1 64 "\\\\index{[^}]*}" ""                       #l2
-        hilight #l1 64 "\\\\label{[^}]*}" ""                       #l2
-        hilight #l1 64 "\\\\plabel{[^}]*}" ""                      #l2
+        hilight #l1 64 "\\\\index{[^}]*}" "" #l2
+        hilight #l1 64 "\\\\label{[^}]*}" "" #l2
+        hilight #l1 64 "\\\\plabel{[^}]*}" "" #l2
         hilight #l1 64 "\\\\pdfbookmark\\[[^]]*]{[^}]*}{[^}]*}" "" #l2
-        hilight #l1 68 "\\\\cite\\[" "[Cite: " "]{[^}]*}" "]"      #l2 
-        hilight #l1 68 "\\\\cite{" "[Cite: " "}" "]"               #l2 
-        hilight #l1 68 "\\\\ref{" "" "}" "" ""                     .scheme.link 
-        hilight #l1 68 "\\\\pref{" "" "}" "" ""                    .scheme.link
+        hilight #l1 68 "\\\\cite\\[" "[Cite: " "]{[^}]*}" "]" #l2
+        hilight #l1 68 "\\\\citet\\[" "[Citet: " "]{[^}]*}" "]" #l2
+        hilight #l1 68 "\\\\cite{" "[Cite: " "}" "]" #l2
+        hilight #l1 68 "\\\\citet{" "[Citet: " "}" "]" #l2
+        hilight #l1 68 "\\\\ref{" "" "}" "" "" .scheme.link
+        hilight #l1 68 "\\\\pref{" "" "}" "" "" .scheme.link
         hilight #l1 68 "\\\\includegraphics{" "[Image: " "}" "]" "" .scheme.keyword
-        hilight #l1 68 "\\\\caption{" "Caption: " "}" "" ""        #l2
-        hilight #l1 68 "\\\\pageref{" "|" "}" "|‘" ""              .scheme.link 
-        hilight #l1 68 "\\\\link{" "" "}{[^}]*}" "" ""             .scheme.link
-        hilight #l1 68 "\\\\footnote{" "[Footnote: " "}" "]" ""    .scheme.keyword
-        hilight #l1 68 "\\\\dest{" "" "}" "" ""                    .scheme.link
-        hilight #l1 68 "\\\\emph{" "" "}" "" ""                    .scheme.bold
+        hilight #l1 68 "\\\\caption{" "Caption: " "}" "" "" #l2
+        hilight #l1 68 "\\\\pageref{" "|" "}" "|‘" "" .scheme.link
+        hilight #l1 68 "\\\\link{" "" "}{[^}]*}" "" "" .scheme.link
+        hilight #l1 68 "\\\\footnote{" "[Footnote: " "}" "]" "" .scheme.keyword
+        hilight #l1 68 "\\\\dest{" "" "}" "" "" .scheme.link
+        hilight #l1 68 "\\\\emph{" "" "}" "" "" .scheme.bold
         ; Other Text modifiers
-        hilight #l1 68 "\\\\textrm{" "" "}" "" ""                #l2
-        hilight #l1 68 "\\\\textsf{" "" "}" "" ""                #l2
-        ; For literal text surround in verticals - some people 
+        hilight #l1 68 "\\\\textrm{" "" "}" "" "" #l2
+        hilight #l1 68 "\\\\textsf{" "" "}" "" "" #l2
+        ; For literal text surround in verticals - some people
         ; use this. Uncomment to enable.
-        ; hilight #l1 68 "|" "" "|" "" ""               .scheme.string
-        hilight #l1 64 "\\\\\\\\$" ""                              #l2
+        ; hilight #l1 68 "|" "" "|" "" "" .scheme.string
+        hilight #l1 64 "\\\\\\\\$" "" #l2
     !emacro
-    
+
     0 hilight .hilight.latex 0                                     $global-scheme
     ; take out the \% token first so we can hilight comments correctly
     hilight .hilight.latex 0 "\\\\%"                               .scheme.prepro
@@ -180,8 +182,8 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|se
     hilight .hilight.latex 2 "%"                                   .scheme.comment
     hilight .hilight.latex 0 "\\\\\\\\"                            .scheme.keyword
     hilight .hilight.latex 4 "\\\\" "\\}\\W" ""                    .scheme.keyword
-    hilight .hilight.latex 0 "\\\\section{[^}]*}"                  .scheme.header
-    hilight .hilight.latex 0 "\\\\subsection{[^}]*}"               .scheme.header
+    hilight .hilight.latex 0 "\\\\section\\*?{[^}]*}"              .scheme.header
+    hilight .hilight.latex 0 "\\\\subsection\\*?{[^}]*}"           .scheme.header
     hilight .hilight.latex 0 "\\\\ref{[^}]*}"                      .scheme.link
     hilight .hilight.latex 0 "\\\\link{[^}]*}{[^}]*}"              .scheme.link
     hilight .hilight.latex 0 "\\\\dest{[^}]*}"                     .scheme.link
@@ -193,7 +195,8 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|se
     hilight .hilight.latex 0 "\\\\textit"                          .scheme.operator
     hilight .hilight.latex 0 "\\\\texttt"                          .scheme.operator
     hilight .hilight.latex 0 "\\\\textcolor"                       .scheme.operator
-    
+    hilight .hilight.latex 0 "\\\\textnormal"                      .scheme.operator
+
     ;; simulation hilighting
     set-variable #l2 &rig $box-chars 10
     0 hilight .hilight.latexs 0                                           $global-scheme
@@ -203,24 +206,21 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|se
     hilight .hilight.latexs 2 "[^\\\\]\\{%"                               .scheme.comment
     hilight .hilight.latexs 4 "\\\\" "\\}\\W" ""                          .scheme.keyword
     ;headers
-    hilight .hilight.latexs 68 "\\\\chapter{" "*" "}" "" ""               .scheme.header
-    hilight .hilight.latexs 68 "\\\\chapter\\*{" "*" "}" "" ""            .scheme.header
-    hilight .hilight.latexs 68 "\\\\part{" "Part: " "}" "" ""             .scheme.header
-    hilight .hilight.latexs 68 "\\\\section{" "**" "}" "" ""              .scheme.header  
-    hilight .hilight.latexs 68 "\\\\section\\*{" "**" "}" "" ""           .scheme.header  
-    hilight .hilight.latexs 68 "\\\\subsection{" "***" "}" "" ""          .scheme.header 
-    hilight .hilight.latexs 68 "\\\\subsection\\*{" "***" "}" "" ""       .scheme.header 
-    hilight .hilight.latexs 68 "\\\\subsubsection{" "****" "}" "" ""      .scheme.header
-    hilight .hilight.latexs 68 "\\\\subsubsection\\*{" "****" "}" "" ""   .scheme.header
-    hilight .hilight.latexs 68 "\\\\paragraph{" "*****" "}" "" ""         .scheme.header
-    hilight .hilight.latexs 68 "\\\\subparagraph{" "******" "}" "" ""     .scheme.header 
-    hilight .hilight.latexs 68 "\\\\markboth{" "" "}{[^}]*}" "" ""        .scheme.header 
+    hilight .hilight.latexs 68 "\\\\chapter\\*?{" "*" "}" "" ""           .scheme.header
+    hilight .hilight.latexs 68 "\\\\part\\*?{" "Part: " "}" "" ""          .scheme.header
+    hilight .hilight.latexs 68 "\\\\section\\*?{" "**" "}" "" ""          .scheme.header
+    hilight .hilight.latexs 68 "\\\\subsection\\*?{" "***" "}" "" ""      .scheme.header
+    hilight .hilight.latexs 68 "\\\\subsubsection\\*?{" "****" "}" "" ""  .scheme.header
+    hilight .hilight.latexs 68 "\\\\paragraph\\*?{" "*****" "}" "" ""     .scheme.header
+    hilight .hilight.latexs 68 "\\\\subparagraph\\*?{" "******" "}" "" "" .scheme.header
+    hilight .hilight.latexs 68 "\\\\markboth{" "" "}{[^}]*}" "" ""        .scheme.header
     hilight .hilight.latexs 68 "\\\\bibliography{" "<<Bibliography: " "}" ">>" "" .scheme.keyword
     hilight .hilight.latexs 64 "\\\\tableofcontents" "<<Table of Contents>>" .scheme.keyword
     ;
     ; hide some unimportant tokens completely
     hilight .hilight.latexs 64 "\\\\bibliographystyle{[^}]*}" ""          $global-scheme
     hilight .hilight.latexs 64 "\\\\pagenumbering{[^}]*}" ""              $global-scheme
+    hilight .hilight.latexs 64 "\\\\newline" ""                           $global-scheme
     ;Lines
     hilight .hilight.latexs 64 "\\\\newpage" &spr "%n<<Page Break>>%n" 32 #l2 32 #l2 .scheme.italic
     hilight .hilight.latexs 64 "\\\\hline" &spr "%n" 78 #l2               $global-scheme
@@ -230,123 +230,132 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|se
     hilight .hilight.latexs 68 "\\\\begin{" "|" "}" ">>" ""               .scheme.keyword
     hilight .hilight.latexs 68 "\\\\end{" "<<" "}" "|" ""                 .scheme.keyword
     hilight .hilight.latexs 68 "\\\\verb\\+" "" "\\+" "" ""               $global-scheme
+    ;
     hilight .hilight.latexs 0xc0 "\\\\begin{verbatim}" "|verbatim>>" .hilight.latexv .scheme.keyword
-    hilight .hilight.latexs 64 "\\\\begin{figure}\\[[^]]*]" "|figure>>"   .scheme.keyword
-    hilight .hilight.latexs 64 "\\\\begin{table}\\[[^]]*]" "|table>>"     .scheme.keyword
-    hilight .hilight.latexs 64 "\\\\begin{tabular}{[^}]*}" "|tabular>>"   .scheme.keyword
-    hilight .hilight.latexs 68 "\\\\begin{biography}{" "|biography: " "}" ">>" "" .scheme.keyword
+    hilight .hilight.latexs 64 "\\\\begin{figure}\\[[^]]*]" "|figure>>"              .scheme.keyword
+    hilight .hilight.latexs 64 "\\\\begin{table}\\[[^]]*]" "|table>>"                .scheme.keyword
+    hilight .hilight.latexs 64 "\\\\begin{tabular}{[^}]*}" "|tabular>>"              .scheme.keyword
+    hilight .hilight.latexs 68 "\\\\begin{biography}{" "|biography: " "}" ">>" ""    .scheme.keyword
     ; Division help
-    hilight .hilight.latexs 64 "\\\\-" ""                                 .scheme.italic 
-    hilight .hilight.latexs 64 "\\\\item" "   *"                          .scheme.italic 
-    hilight .hilight.latexs 64 "\\\\itemitem" "       *"                  .scheme.italic 
-    hilight .hilight.latexs 68 "\\\\item\\[" "" "]" "" ""                 .scheme.bold
-    hilight .hilight.latexs 64 "\\\\ind" "    "                           $global-scheme
+    hilight .hilight.latexs 64 "\\\\-" ""                 .scheme.italic
+    hilight .hilight.latexs 64 "\\\\item" "   *"          .scheme.italic
+    hilight .hilight.latexs 64 "\\\\itemitem" "       *"  .scheme.italic
+    hilight .hilight.latexs 68 "\\\\item\\[" "" "]" "" "" .scheme.bold
+    hilight .hilight.latexs 64 "\\\\ind" "    "           $global-scheme
     ; Environment
-    hilight .hilight.latexs 64 "&" "|"                                    $global-scheme
-    hilight .hilight.latexs 64 "\\\\linewidth" "ˆlw|"                     .scheme.italic 
-    hilight .hilight.latexs 64 "\\\\pdfimage width" "PNG*"                .scheme.italic 
+    hilight .hilight.latexs 64 "&" "|"                     $global-scheme
+    hilight .hilight.latexs 64 "\\\\linewidth" "ˆlw|"   .scheme.italic
+    hilight .hilight.latexs 64 "\\\\pdfimage width" "PNG*" .scheme.italic
     ; textformat
-    hilight .hilight.latexs 0xc0 "\\\\textbf{" "" .hilight.latexb         .scheme.bold
-    hilight .hilight.latexs 0xc0 "\\\\textit{" "" .hilight.latexi         .scheme.italic 
-    hilight .hilight.latexs 0xc0 "\\\\texttt{" "" .hilight.latext         .scheme.string 
-    hilight .hilight.latexs 0xc0 "{\\\\ttfamily" "" .hilight.latext       .scheme.string 
-    hilight .hilight.latexs 0xc0 "{\\\\bf *" ""   .hilight.latexb         .scheme.bold
-    hilight .hilight.latexs 0xc0 "{\\\\it *" ""   .hilight.latexi         .scheme.italic
-    hilight .hilight.latexs 0xc0 "{\\\\tt *" ""   .hilight.latext         .scheme.string
-    ;hilight .hilight.latexs 0xc0 "\\$" ""         .hilight.latexm         .scheme.string
+    hilight .hilight.latexs 0xc0 "\\\\textbf{" ""     .hilight.latexb .scheme.bold
+    hilight .hilight.latexs 0xc0 "\\\\textit{" ""     .hilight.latexi .scheme.italic
+    hilight .hilight.latexs 0xc0 "\\\\texttt{" ""     .hilight.latext .scheme.string
+    hilight .hilight.latexs 0xc0 "\\\\textnormal{" "" .hilight.latexn $global-scheme
+    hilight .hilight.latexs 0xc0 "{\\\\ttfamily" ""   .hilight.latext .scheme.string
+    hilight .hilight.latexs 0xc0 "{\\\\bf *" ""       .hilight.latexb .scheme.bold
+    hilight .hilight.latexs 0xc0 "{\\\\it *" ""       .hilight.latexi .scheme.italic
+    hilight .hilight.latexs 0xc0 "{\\\\tt *" ""       .hilight.latext .scheme.string
+    ;hilight .hilight.latexs 0xc0 "\\$" ""            .hilight.latexm .scheme.string
+    ;
+    ; hilight scheme for normal
+    ;
+    0 hilight  .hilight.latexn 2 50                                     $global-scheme
+    hilight-latex-common                              .hilight.latexn   $global-scheme
+    hilight .hilight.latexn 0xc0 "}" ""               .hilight.latexs   $global-scheme
+    hilight .hilight.latexn 0xc0 "{\\\\bf *" ""       .hilight.latexb  .scheme.bold
+    hilight .hilight.latexn 0xc0 "{\\\\it *" ""       .hilight.latexi  .scheme.italic
+    hilight .hilight.latexn 0xc0 "{\\\\tt *" ""       .hilight.latext  .scheme.string
+    hilight .hilight.latexn 0xc0 "\\\\textbf{" ""     .hilight.latexb  .scheme.bold
+    hilight .hilight.latexn 0xc0 "\\\\textit{" ""     .hilight.latexbi .scheme.italic
+    hilight .hilight.latexn 0xc0 "\\\\texttt{" ""     .hilight.latexbt .scheme.string
+    hilight .hilight.latexn 0xc0 "\\\\textnormal{" "" .hilight.latexn  .scheme.error
     ;
     ; hilight scheme for bold
     ;
-    0 hilight  .hilight.latexb 2 50                                .scheme.bold
-    hilight-latex-common                          .hilight.latexb  .scheme.bold
-    hilight .hilight.latexb 0xc0 "}" ""           .hilight.latexs  .scheme.bold
-    hilight .hilight.latexb 0xc0 "{\\\\bf *" ""   .hilight.latexb  .scheme.error
-    hilight .hilight.latexb 0xc0 "{\\\\it *" ""   .hilight.latexbi .scheme.italic
-    hilight .hilight.latexb 0xc0 "{\\\\tt *" ""   .hilight.latexbt .scheme.string
-    hilight .hilight.latexb 0xc0 "\\\\textbf{" "" .hilight.latexb  .scheme.error
-    hilight .hilight.latexb 0xc0 "\\\\textit{" "" .hilight.latexbi .scheme.italic 
-    hilight .hilight.latexb 0xc0 "\\\\texttt{" "" .hilight.latexbt .scheme.string 
+    0 hilight  .hilight.latexb 2 50                                    .scheme.bold
+    hilight-latex-common                              .hilight.latexb  .scheme.bold
+    hilight .hilight.latexb 0xc0 "}" ""               .hilight.latexs  .scheme.bold
+    hilight .hilight.latexb 0xc0 "{\\\\bf *" ""       .hilight.latexb  .scheme.error
+    hilight .hilight.latexb 0xc0 "{\\\\it *" ""       .hilight.latexbi .scheme.italic
+    hilight .hilight.latexb 0xc0 "{\\\\tt *" ""       .hilight.latexbt .scheme.string
+    hilight .hilight.latexb 0xc0 "\\\\textbf{" ""     .hilight.latexb  .scheme.error
+    hilight .hilight.latexb 0xc0 "\\\\textit{" ""     .hilight.latexbi .scheme.italic
+    hilight .hilight.latexb 0xc0 "\\\\texttt{" ""     .hilight.latexbt .scheme.string
+    hilight .hilight.latexb 0xc0 "\\\\textnormal{" "" .hilight.latexn  $global-scheme
     ;
     ; hilight scheme for italic
     ;
-    0 hilight  .hilight.latexi 2 50                                .scheme.italic
-    hilight-latex-common                          .hilight.latexi  .scheme.italic
-    hilight .hilight.latexi 0xc0 "}" ""           .hilight.latexs  .scheme.italic
-    hilight .hilight.latexi 0xc0 "{\\\\bf *" ""   .hilight.latexib .scheme.bold
-    hilight .hilight.latexi 0xc0 "{\\\\it *" ""   .hilight.latexi  .scheme.error
-    hilight .hilight.latexi 0xc0 "{\\\\tt *" ""   .hilight.latexit .scheme.string
-    hilight .hilight.latexi 0xc0 "{\\\\tt *" ""   .hilight.latexit .scheme.string
-    hilight .hilight.latexi 0xc0 "\\\\textbf{" "" .hilight.latexib .scheme.bold
-    hilight .hilight.latexi 0xc0 "\\\\textit{" "" .hilight.latexi  .scheme.error 
-    hilight .hilight.latexi 0xc0 "\\\\texttt{" "" .hilight.latexit .scheme.string 
+    0 hilight  .hilight.latexi 2 50                                    .scheme.italic
+    hilight-latex-common                              .hilight.latexi  .scheme.italic
+    hilight .hilight.latexi 0xc0 "}" ""               .hilight.latexs  .scheme.italic
+    hilight .hilight.latexi 0xc0 "{\\\\bf *" ""       .hilight.latexib .scheme.bold
+    hilight .hilight.latexi 0xc0 "{\\\\it *" ""       .hilight.latexi  .scheme.error
+    hilight .hilight.latexi 0xc0 "{\\\\tt *" ""       .hilight.latexit .scheme.string
+    hilight .hilight.latexi 0xc0 "{\\\\tt *" ""       .hilight.latexit .scheme.string
+    hilight .hilight.latexi 0xc0 "\\\\textbf{" ""     .hilight.latexib .scheme.bold
+    hilight .hilight.latexi 0xc0 "\\\\textit{" ""     .hilight.latexi  .scheme.error
+    hilight .hilight.latexi 0xc0 "\\\\texttt{" ""     .hilight.latexit .scheme.string
+    hilight .hilight.latexi 0xc0 "\\\\textnormal{" "" .hilight.latexn  $global-scheme
     ;
     ; hilight scheme for fixed-font
     ;
-    0 hilight  .hilight.latext 2 50                                .scheme.string
-    hilight-latex-common                          .hilight.latext  .scheme.string
-    hilight .hilight.latext 0xc0 "}" ""           .hilight.latexs  .scheme.string
-    hilight .hilight.latext 0xc0 "{\\\\bf *" ""   .hilight.latextb .scheme.bold
-    hilight .hilight.latext 0xc0 "{\\\\it *" ""   .hilight.latexti .scheme.italic
-    hilight .hilight.latext 0xc0 "{\\\\tt *" ""   .hilight.latext  .scheme.error
-    hilight .hilight.latext 0xc0 "\\\\textbf{" "" .hilight.latextb .scheme.bold
-    hilight .hilight.latext 0xc0 "\\\\textit{" "" .hilight.latexti .scheme.italic
-    hilight .hilight.latext 0xc0 "\\\\texttt{" "" .hilight.latext  .scheme.error 
+    0 hilight  .hilight.latext 2 50                                    .scheme.string
+    hilight-latex-common                              .hilight.latext  .scheme.string
+    hilight .hilight.latext 0xc0 "}" ""               .hilight.latexs  .scheme.string
+    hilight .hilight.latext 0xc0 "{\\\\bf *" ""       .hilight.latextb .scheme.bold
+    hilight .hilight.latext 0xc0 "{\\\\it *" ""       .hilight.latexti .scheme.italic
+    hilight .hilight.latext 0xc0 "{\\\\tt *" ""       .hilight.latext  .scheme.error
+    hilight .hilight.latext 0xc0 "\\\\textbf{" ""     .hilight.latextb .scheme.bold
+    hilight .hilight.latext 0xc0 "\\\\textit{" ""     .hilight.latexti .scheme.italic
+    hilight .hilight.latext 0xc0 "\\\\texttt{" ""     .hilight.latext  .scheme.error
+    hilight .hilight.latext 0xc0 "\\\\textnormal{" "" .hilight.latexn  $global-scheme
     ;
     ; hilight scheme for italic bold
     ;
-    0 hilight  .hilight.latexib 2 50                               .scheme.bold
-    hilight-latex-common                          .hilight.latexib .scheme.bold
-    hilight .hilight.latexib 0xc0 "}" ""          .hilight.latexi  .scheme.italic
+    0 hilight  .hilight.latexib 2 50                      .scheme.bold
+    hilight-latex-common                 .hilight.latexib .scheme.bold
+    hilight .hilight.latexib 0xc0 "}" "" .hilight.latexi  .scheme.italic
     ;
     ; hilight scheme for italic fixed-font
     ;
-    0 hilight  .hilight.latexit 2 50                               .scheme.bold
-    hilight-latex-common                          .hilight.latexit .scheme.bold
-    hilight .hilight.latexit 0xc0 "}" ""          .hilight.latexi  .scheme.italic
+    0 hilight  .hilight.latexit 2 50                      .scheme.bold
+    hilight-latex-common                 .hilight.latexit .scheme.bold
+    hilight .hilight.latexit 0xc0 "}" "" .hilight.latexi  .scheme.italic
     ;
     ; hilight scheme for bold italic
     ;
-    0 hilight  .hilight.latexbi 2 50                               .scheme.italic
-    hilight-latex-common                          .hilight.latexit .scheme.italic
-    hilight .hilight.latexbi 0xc0 "}" ""          .hilight.latexb  .scheme.bold
+    0 hilight  .hilight.latexbi 2 50                      .scheme.italic
+    hilight-latex-common                 .hilight.latexit .scheme.italic
+    hilight .hilight.latexbi 0xc0 "}" "" .hilight.latexb  .scheme.bold
     ;
     ; hilight scheme for bold fixed-font
     ;
-    0 hilight  .hilight.latexbt 2 50                               .scheme.string
-    hilight-latex-common                          .hilight.latexbt .scheme.string
-    hilight .hilight.latexbt 0xc0 "}" ""          .hilight.latexb  .scheme.bold
+    0 hilight  .hilight.latexbt 2 50                      .scheme.string
+    hilight-latex-common                 .hilight.latexbt .scheme.string
+    hilight .hilight.latexbt 0xc0 "}" "" .hilight.latexb  .scheme.bold
     ;
     ; hilight scheme for fixed-font bold
     ;
-    0 hilight  .hilight.latextb 2 50                               .scheme.bold
-    hilight-latex-common                          .hilight.latextb .scheme.bold
-    hilight .hilight.latextb 0xc0 "}" ""          .hilight.latext  .scheme.string
+    0 hilight  .hilight.latextb 2 50                      .scheme.bold
+    hilight-latex-common                 .hilight.latextb .scheme.bold
+    hilight .hilight.latextb 0xc0 "}" "" .hilight.latext  .scheme.string
     ;
-    ; hilight scheme for fixed-font italic 
+    ; hilight scheme for fixed-font italic
     ;
-    0 hilight  .hilight.latexti 2 50                               .scheme.italic
-    hilight-latex-common                          .hilight.latexti .scheme.italic
-    hilight .hilight.latexti 0xc0 "}" ""          .hilight.latext  .scheme.string
+    0 hilight  .hilight.latexti 2 50                      .scheme.italic
+    hilight-latex-common                 .hilight.latexti .scheme.italic
+    hilight .hilight.latexti 0xc0 "}" "" .hilight.latext  .scheme.string
     ;
     ; hilight scheme for maths
     ;
-    0 hilight  .hilight.latexm 2 50                                .scheme.string
-    hilight-latex-common                          .hilight.latexm  .scheme.string
-    hilight .hilight.latexm 0xc0 "\\$" ""         .hilight.latexs  .scheme.string
+    0 hilight  .hilight.latexm 2 50                        .scheme.string
+    hilight-latex-common                  .hilight.latexm  .scheme.string
+    hilight .hilight.latexm 0xc0 "\\$" "" .hilight.latexs  .scheme.string
     ;
     ; hilight scheme for verbatim text
     ;
     0 hilight  .hilight.latexv 2 50                                $global-scheme
     hilight .hilight.latexv 0xc0 "\\\\end{verbatim}" "<<verbatim|" .hilight.latexs .scheme.keyword
-    
-    ; Jons extensions
-    hilight .hilight.latexs 0xc0 "\\\\dl{" ""  .hilight.latext  .scheme.string 
-    hilight .hilight.latexs 0xc0 "\\\\ddl{" "" .hilight.latext  .scheme.string 
-    hilight .hilight.latexs 0xc0 "\\\\tv{" ""  .hilight.latext  .scheme.string
-    hilight .hilight.latexs 64 "\\\\di{[^}]*}" "    "           .scheme.string 
-    hilight .hilight.latexs 64 "\\\\ddi" "  "                   .scheme.string 
-    hilight .hilight.latexs 64 "\\\\ddc" "  "                   .scheme.string 
-    hilight .hilight.latexs 68 "\\\\tableTitle{" "" "}" "" ""   .scheme.bold
 
     0 define-macro latex-swap-hilight
         !if &equal $buffer-hilight .hilight.latex
@@ -368,7 +377,7 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|se
 ; This is a little bit different from the latex-para as we ignore
 ; comments.
 0 define-macro latex-forward-paragraph
-    ; Iterate for the number of times requested. 
+    ; Iterate for the number of times requested.
     !while &gre &pdec @# 1 0
         forward-line
         ; Find the end of the paragraph
@@ -384,7 +393,7 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|se
 ; This is a little bit different from the latex-para as we ignore
 ; comments.
 0 define-macro latex-backward-paragraph
-    ; Iterate for the number of times requested. 
+    ; Iterate for the number of times requested.
     !while &gre &pdec @# 1 0
         backward-line
         ; Find the start of the paragraph
@@ -623,11 +632,11 @@ define-macro latex-ref-go-back
 !endif
 
 osd .osd.latex-popgk 0   "b"
-osd .osd.latex-popgk 1   "" "\Halpha"           1 latex-popup-greek 
+osd .osd.latex-popgk 1   "" "\Halpha"           1 latex-popup-greek
 osd .osd.latex-popgk 2   "" "\Hbeta"            2 latex-popup-greek
 osd .osd.latex-popgk 3   "" "\Hgamma"           3 latex-popup-greek
 osd .osd.latex-popgk 4   "" "\Hdelta"           4 latex-popup-greek
-osd .osd.latex-popgk 5   "" "\Hepsilon"         5 latex-popup-greek 
+osd .osd.latex-popgk 5   "" "\Hepsilon"         5 latex-popup-greek
 osd .osd.latex-popgk 6   "" "\Hmy"              6 latex-popup-greek
 
 osd .osd.latex-pophd 0   "b"
@@ -642,7 +651,7 @@ osd .osd.latex-popsb 0   "b"
 osd .osd.latex-popsb 1   "" "\H1 TM"            1 latex-popup-symbol
 osd .osd.latex-popsb 2   "" "\H2 ©"             2 latex-popup-symbol
 osd .osd.latex-popsb 3   "" "\H3 ®"             3 latex-popup-symbol
-osd .osd.latex-popsb 4   "-" 
+osd .osd.latex-popsb 4   "-"
 osd .osd.latex-popsb 5   "" "\H4 quotes „"      4 latex-popup-symbol
 osd .osd.latex-popsb 6   "" "\H5 quotes \""     5 latex-popup-symbol
 
@@ -655,16 +664,16 @@ osd .osd.latex-poprf 4   "" "\Hcite"            4 latex-popup-reference
 osd .osd.latex-popft 0   "b"
 osd .osd.latex-popft 1   ""  "\Htextbf"         1 latex-popup-format
 osd .osd.latex-popft 2   ""  "text\Hit"         2 latex-popup-format
-osd .osd.latex-popft 3   "-" 
+osd .osd.latex-popft 3   "-"
 osd .osd.latex-popft 4   ""  "\HLarge"          3 latex-popup-format
 osd .osd.latex-popft 5   ""  "l\Harge"          4 latex-popup-format
 osd .osd.latex-popft 6   ""  "\Hsmall"          5 latex-popup-format
 osd .osd.latex-popft 7   ""  "\Hfootnotesize"   6 latex-popup-format
 osd .osd.latex-popft 8   ""  "s\Hcriptsize"     7 latex-popup-format
-osd .osd.latex-popft 9   "-"             
+osd .osd.latex-popft 9   "-"
 osd .osd.latex-popft 10  ""  "\Hhigh number"    1 latex-make-format
 osd .osd.latex-popft 20  ""  "lo\Hw number"     2 latex-make-format
-osd .osd.latex-popft 29  "-"     
+osd .osd.latex-popft 29  "-"
 osd .osd.latex-popft 30  ""  "\Hmake italic"    3 latex-make-format
 osd .osd.latex-popft 40  ""  "make \Hbold"      4 latex-make-format
 
@@ -680,16 +689,16 @@ osd .osd.latex-popup 4   "M" "\HEnvironment"   .osd.latex-popev
 osd .osd.latex-popup 5   "M" "\HGreek"         .osd.latex-popgk
 osd .osd.latex-popup 6   "M" "\HSymbols"       .osd.latex-popsb
 
-define-macro latex-popup 
+define-macro latex-popup
     !if @#
         ; redefine the position to be next to the cursor if this has
-        ; been invoked with an argument. 
+        ; been invoked with an argument.
         osd .osd.latex-popup  0 "ba" &add $cursor-x 1 &sub $cursor-y 1
     !else
         osd .osd.latex-popup  0 "b"
     !endif
     .osd.latex-popup osd
-!emacro 
+!emacro
 
 ;; osd Tools ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -704,7 +713,7 @@ define-macro latex-popup
 ; Buffer hook. Modify the fill mode to left only. This ensures that we
 ; always fill the line correctly irrespective of the mode of the caller.
 ; The likes of centre and justified are not warrented in a TeX buffer.
-; 
+;
 0 define-macro bhook-latex
     ; Save the other context. Restore local context
     set-variable :ofill-mode $fill-mode
