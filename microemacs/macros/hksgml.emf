@@ -9,8 +9,8 @@
 ;
 define-macro fhook-sgml
     set-variable $buffer-mask "luh1"
-    buffer-initialize "sgml"
-    buffer-initialize-hooks
+    @# buffer-init "sgml" #l0
+    buffer-init-hooks
 !emacro
 
 ; buffer-initialize variables
