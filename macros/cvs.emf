@@ -28,7 +28,7 @@ set-variable .cvs.cmds    "|add|checkout|commit|diff|gdiff|log|remove|-n update|
 set-variable .cvs.flags   "|kAS*|fDvRPo*|mZRS*|OZRScw|OSs|ZR|*|ZSR|ZR|tZRbrF*|ZSRdPCo*|vZR|Ss|"
 set-variable .cvs.schemes "|0|0|0|0|0|0|0|0|0|0|0|0|0|"
 set-variable .cvs.options "mfDtvOZkRdAPCcwbrFo"
-set-variable .cvs.values  " 0  111001100110000"
+set-variable .cvs.values  "  0 111010100110000"
 set-variable .cvs.revs    "|||||"
 set-variable .cvs.tag     ""
 set-variable .cvs.message ""
