@@ -1,0 +1,198 @@
+Title:  Converting a Netscape mailbox to Microsoft IIS News files.
+Ref:    sub15
+Author: Jon Green
+Date:   2000-03-22
+
+The  following  attached  macro  file  converts a Netscape  mail  folder  into
+Microsoft  Internet  Information  Server (MIIS) News files. The motivation for
+this is to publish a private mail box on a news server.
+
+The macro presented operates on a buffer that contains the Netscape Mail folder
+file  (i.e. the  macro is  executed  while the Mail  folder is in the  current
+buffer). The macro prompts the user for various arguments  concerning the news
+group and then  extracts  each  message in turn and writes them to a file with
+the appropriate headers for MIIS.
+
+Since  the  macro is  rarely  used  then the best way to load it into ME is to
+simply load the macro into a buffer and then execute it:-
+
+    M-x execute-buffer
+
+Once executed the macro is available at the command line, move to the Netscape
+Mail buffer and run the macro:-
+
+    M-x netscape-mail-to-miis-news-files
+
+This  should  result  in  each  mail  message  in a  separate  file  with  the
+appropriate headers as defined by the prompted arguments. If a mistake is made
+then simply delete the generated files and retry.
+
+==== mail2new.emf start =================================================
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : $Author: jon $
+;  Created By    : Jon Green
+;  Created       : Tue Mar 21 13:24:30 2000
+;  Last Modified : <000322.1328>
+;
+;  Description   : Convert a Netscape mail box to a Microsoft Internet
+;                  Information Server News files.
+;
+;  Notes         :
+;
+;  History
+;
+;  Copyright (c) JASSPA 2000.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro netscape-mail-to-miis-news-files
+    ; #l0 The base name (excluding the extension) of the generated file.
+    ; #l1 The name of the buffer and generated file.
+    ; #l2 The loop counter runs 1..n
+    ; #l3 The news group name i.e. comp.emacs
+    ; #l4 The name of the news server host (i.e. inet.jasspa.com)
+    ; #l5 The base name of the directory into which we generate the file.
+    ; #l8 The line number count
+    ; #l9 The flag to force an exit 1 = run, 0 = exit
+
+    ; Confirm that this is a mail file
+    beginning-of-buffer
+    !force regex-forward "From - [A-Za-z][A-Za-z][A-Za-z] [A-Za-z][A-Za-z][A-Za-z] [0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9] [0-9][0-9][0-9][0-9]"
+    !if &not $status
+        ml-write "This is not a Netscape mail file"
+        !abort
+    !endif
+    ;
+    ; Promot the user for the names of the server. (#l3)
+    ;
+    set-variable #l3 @ml "News group name (i.e. comp.emacs) ? "
+    !if &seq #l3 ""
+        2000 ml-write "No news group name, aborting"
+        !abort
+    !endif
+    ;
+    ; Promt the user for then name of the mail server. (#l4)
+    ;
+    set-variable #l4 @ml "News server name (i.e. inet.jasspa.com) ? "
+    !if &seq #l4 ""
+        2000 ml-write "No News server name, aborting"
+        !abort
+    !endif
+    ;
+    ; Get the base directory name (#l5)
+    ;
+    set-variable #l5 &rsin "/" $buffer-fname
+    !if &equ #l5 0
+        ml-write "Cannot find base directory location"
+        !abort
+    !endif
+    set-variable #l5 &lef $buffer-fname #l5
+    ml-write &spr "Base name %s => %s" $buffer-fname  #l5
+
+    ;
+    ; Initialise variables
+    ; #l2 - loop counter
+    ; #l9 - Exit flag
+    set-variable #l2 1
+    set-variable #l9 1
+
+    ;
+    ; Knock off undo mode from the buffer
+    ;
+    -1 buffer-mode "undo"
+
+    ; Leave the 'from' line as the top line in the buffer
+    ; Remove all leading lines up until the first header.
+    beginning-of-line
+    set-mark
+    beginning-of-buffer
+    kill-region
+    -1 yank
+    ;
+    ; Iterate through the buffer looking for the messages
+    ; to process. Extract each message in turn.
+    ;
+    !repeat
+        beginning-of-buffer
+        kill-line
+        ml-write &spr "Processing Message %d" #l2
+        !force regex-forward "From - [A-Za-z][A-Za-z][A-Za-z] [A-Za-z][A-Za-z][A-Za-z] [0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9] [0-9][0-9][0-9][0-9]"
+        !if &not $status
+            set-variable #l9 0
+            end-of-buffer
+            set-mark
+        !else
+            beginning-of-line
+            set-mark
+        !endif
+        beginning-of-buffer
+        kill-region
+        ; Construct the name for the new file. The naming for the MS server
+        ; is a little strange. Basically the filename is the ASCII
+        ; name of the message number, starting from 1. But the LSB
+        ; is the MSB of the file name. The name is in ASCII hexadecimal.
+        ; We will generate up to 2^24 files.
+        set-variable #l0          &mul &band 0x000000ff #l2 0x10000
+        set-variable #l0 &add #l0      &band 0x0000ff00 #l2
+        set-variable #l0 &add #l0 &div &band 0x00ff0000 #l2 0x10000
+        set-variable #l0 &spr "%x00" #l0
+        ;
+        ; Construct the resultant file name and buffer name
+        ; Create the buffer and yank in the message.
+        set-variable #l1 &cat #l0 ".nws"
+        find-buffer  #l1
+        -1 buffer-mode "undo"
+        yank
+        -1 yank
+        beginning-of-buffer
+        ; Add the news trailers, this is the first blank line
+        ; following the headers. We need to count the lines
+        ; as well.
+        !force regex-forward "^ *\n"
+        backward-line
+        insert-string &spr "Path: %s" #l4
+        newline
+        insert-string &spr "Xref: %s %s:%d" #l4 #l3 #l2
+        newline
+        insert-string "NNTP-Posting-Host: MicroEmacs 127.0.0.1"
+        newline
+        set-variable #l8 $window-line
+        set-mark
+        end-of-buffer
+        set-variable #l8 &sub $window-line #l8
+        insert-string "."
+        exchange-point-and-mark
+        insert-string &spr "Lines: %d" #l8
+        newline
+        ;
+        ; We have found that we get some Message-Id fields with the
+        ; same identity. This causes the MS Server to fail the file
+        ; and mark it as bad. Fix up the Message-Id with some bogus
+        ; value to fool the stupid server. If the Message-Id does not
+        ; exist then create one.
+        !force regex-backward "^[Mm][Ee][Ss][Ss][Aa][Gg][Ee]-[Ii][Dd]:[ \t]*<"
+        !if $status
+            ; Back to the opening bracket.
+            regex-forward "<"
+            insert-string &spr "me/%s/" #l0
+        !else
+            insert-string &spr "Message-Id: <me/%s/%s>" #l0 #l3
+            newline
+        !endif
+        ;
+        ; Save the file in the current directory
+        ;
+;        5000 ml-write &cat #l5 #l1
+        !force write-buffer &cat #l5 #l1
+        !if &not $status
+            ml-write &spr "Cannot write file \"%s%s\" - probably exists" #l5 #l1
+            delete-buffer #l1
+            !abort
+        !endif
+        delete-buffer #l1
+        set-variable #l2 &add #l2 1
+    !until &equ #l9 0
+!emacro
+
+==== mail2new.emf end =================================================

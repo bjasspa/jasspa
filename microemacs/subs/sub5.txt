@@ -1,0 +1,50 @@
+Title:  Hypertexting to help from list-commands buffer
+Ref:    sub5
+Author: Jon Green
+Date:   2000-03-15
+
+The command  list-commands  (C-h c), creates a buffer of commands which may be
+double-clicked  on to open  the  relevant  help  file.  This is a good  thing.
+However, this cannot be done via the keyboard! The following macro will do it.
+Paste the  following  into file  "mylists.emf"  and then it will find the help
+using the "return" key. This type of mechanism should go into the base macro.
+
+==== mylists.emf start =======================================================
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Description   : Extensions to access the help for the command from the 
+;                  keyboard. a <RETURN> invokes the help page.
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; Forward reference the ehf find command.
+define-macro-file hkehf ehf-find-help
+
+
+; Local macro to process the links from the keyboard.
+; Bound to <RETURN>. Note that we process from the 
+; end of the line. This makes it easy to process 
+; the command where there are multiple key bindings.
+0 define-macro lists-process-link-by-key
+    set-mark
+    end-of-line
+    !force search-backward "^ +\\([-a-zA-Z0-9]+\\)"
+    !if $status
+        ; Get the name of the command out and help
+        ; on it.
+        set-variable #l0 @s1
+        ehf-find-help #l0
+        !return
+    !endif
+    exchange-point-and-mark
+    ml-write "Error! Not in a link"
+    !abort
+!emacro
+
+0 define-macro my-fhook-lists
+    buffer-bind-key "lists-process-link-by-key" "return"
+!emacro
+
+==== mylists.emf end =========================================================
+

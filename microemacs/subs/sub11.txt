@@ -1,0 +1,71 @@
+Title:  Invoking Help files from ME (java-version)
+Ref:    sub11
+Author: Dr. Detlef Groth
+Date:   2001-02-15
+
+Here are just two macros  which allows you to invoke the  java-api-files  from
+the ME, these should be defined in your  myjava.emf  file.  Versions for other
+programming-languages can be made in a similar manner.
+
+Hope this helps.
+
+By the way, the ME-help-pages are still online at:
+http://www.microemacs.de/findex094/bin/findex.htm
+
+-----
+Note, with release  2001-07 onwards the java tool menu addition should be done
+as follows:
+
+set-variable .fhook-java.command-flag  &cat .fhook-java.command-flag  "th|th|th|"
+set-variable .fhook-java.command-name  &cat .fhook-java.command-name  "|find-java-api|find-java-class-help|"
+set-variable .fhook-java.command-nbind &cat .fhook-java.command-nbind "|||"
+set-variable .fhook-java.command-kbind &cat .fhook-java.command-kbind "|||"
+set-variable .fhook-java.command-desc  &cat .fhook-java.command-desc  "|Java Api Help|Java Class Help|"
+
+Steve Phillips
+-----
+==== myjava.emf start ========================================================
+
+; two small macros delivering support for the java-api-help-pages
+
+; two variables which must be adjusted individually
+set-variable :java-api-path "F:/java/jdk1.2.2/api/"
+set-variable :browser "E:/Programme/Netscape/Communicator/Program/netscape.exe " ; space at the end !
+
+;simple-invokation of the java-api
+define-macro find-java-api
+    shell-command &cat &cat :browser :java-api-path "index.html"
+!emacro
+
+; invoke the page in dependence of the marked text
+; par example if something like `java.io.*' is marked a directory-listing for
+; all io-files will be given
+; if `java.awt.Button' is marked the java/awt/Button.html page is shown
+define-macro find-java-class-help
+    set-variable #l0 @y ; get the marked text
+    find-buffer "*temp*" ; do some replacements here
+    execute-string #l0
+    beginning-of-buffer
+    replace-string "\\." "/"
+    beginning-of-buffer
+    replace-string "\*" ""
+    beginning-of-buffer
+    set-mark
+    end-of-line
+    exchange-point-and-mark
+    kill-region
+    delete-buffer "*temp*"
+    !if &sin "*" #l0 ; ie a directory listing
+        shell-command &cat &cat :browser :java-api-path @y
+    !else ; ie a certain class
+        shell-command &cat &cat &cat :browser :java-api-path @y ".html"
+    !endif
+    -1 yank
+!emacro
+
+; two ugly additions into the java-menu you can make shortcuts also
+osd .osd.java-tool 50 "-"
+osd .osd.java-tool 51 "" "open java-api"       f find-java-api
+osd .osd.java-tool 52 "" "open java-class-api" f find-java-class-help
+
+==== myjava.emf end ==========================================================
