@@ -2,6 +2,7 @@
 ; Copyright (C) 1999-2004 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ; Description: Lemon Jelly
+set-variable $system &band $system &bnot 0x020
 set-variable .hilight.flags 7
 ; Create the colors first
 add-color &set .col0 0 165 185 220
@@ -39,7 +40,7 @@ add-color &set .col31 31 233 215 253
 add-color &set .col32 32 253 234 0
 add-color &set .col33 33 235 235 235
 ; Set the required cursor-color
-set-variable $cursor-color .col2
+set-variable $cursor-color .col20
 ; Create the color schemes
 ; Standard
 add-color-scheme $global-scheme .col1 .col22 .col1 .col21 .col1 .col11 .col1 .col11 0 8 0 8 0 8 0 8
