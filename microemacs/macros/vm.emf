@@ -66,7 +66,7 @@ hilight .hilight.vmhl 0x40 "." ""                 $global-scheme
         popup-window %vm-curbuf
         find-buffer &rig %vm-curbuf 1
         beginning-of-buffer
-        #l0 search-forward "^from [!-z]* [MTWFS][ouehra][neduitn] [JFMAJSOND][aepuico][nbrynlgptvc] +[0-9]+ [0-2][0-9]:[0-5][0-9]:[0-5][0-9]"
+        #l0 search-forward "^from [!-z]* +[MTWFS][ouehra][neduitn] [JFMAJSOND][aepuico][nbrynlgptvc] +[0-9]+ [0-2][0-9]:[0-5][0-9]:[0-5][0-9]"
         set-variable &ind %vm-curmpos $window-line
         vm-show-current
         popup-window %vm-curbuf
@@ -361,7 +361,7 @@ hilight .hilight.vmhl 0x40 "." ""                 $global-scheme
             insert-string &spr "%s %s %s\n" &mid %vm-date 11 6 &mid %vm-date 20 2 #l4
         !endif
         find-buffer &rig %vm-curbuf 1
-        !force search-forward "^from [!-z]* [MTWFS][ouehra][neduitn] [JFMAJSOND][aepuico][nbrynlgptvc] +[0-9]+ [0-2][0-9]:[0-5][0-9]:[0-5][0-9]"
+        !force search-forward "^from [!-z]* +[MTWFS][ouehra][neduitn] [JFMAJSOND][aepuico][nbrynlgptvc] +[0-9]+ [0-2][0-9]:[0-5][0-9]:[0-5][0-9]"
         !if $status
             beginning-of-line
         !else
@@ -445,7 +445,7 @@ hilight .hilight.vmhl 0x40 "." ""                 $global-scheme
         !if &seq &set #l4 &lget #l3 &inc #l2 1 ""
             !if &seq %vm-date ""
                 set-variable $window-line &sub #l1 1
-                !force -1 search-forward "^from [!-z]* \\([MTWFS]..\\) \\([JFMAJSOND]..\\) +\\([0-9]+\\) \\([0-2][0-9]:[0-5][0-9]:[0-5][0-9]\\) \\([0-9]+\\)"
+                !force -1 search-forward "^from [!-z]* +\\([MTWFS]..\\) \\([JFMAJSOND]..\\) +\\([0-9]+\\) \\([0-2][0-9]:[0-5][0-9]:[0-5][0-9]\\) \\([0-9]+\\)"
                 !if $status
                     set-variable %vm-date &spr "Date: %s, %2d %s %4d %s +0000" @s1 @s3 @s2 @s5 @s4
                 !else
@@ -603,7 +603,7 @@ hilight .hilight.vmhl 0x40 "." ""                 $global-scheme
         !if &seq &lef @wl 11 "MicroEmacs:"
             insert-string "--"
         !endif
-        !force search-forward "^from [!-z]* [MTWFS][ouehra][neduitn] [JFMAJSOND][aepuico][nbrynlgptvc] +[0-9]+ [0-2][0-9]:[0-5][0-9]:[0-5][0-9]"
+        !force search-forward "^from [!-z]* +[MTWFS][ouehra][neduitn] [JFMAJSOND][aepuico][nbrynlgptvc] +[0-9]+ [0-2][0-9]:[0-5][0-9]:[0-5][0-9]"
     !done
     ; Now remove any other MicroEmacs string
     vm-remove-vm-info
@@ -614,7 +614,7 @@ hilight .hilight.vmhl 0x40 "." ""                 $global-scheme
         !force search-forward "^$"
         set-variable #l1 $window-line
         forward-char
-        !force search-forward "^from [!-z]* [MTWFS][ouehra][neduitn] [JFMAJSOND][aepuico][nbrynlgptvc] +[0-9]+ [0-2][0-9]:[0-5][0-9]:[0-5][0-9]"
+        !force search-forward "^from [!-z]* +[MTWFS][ouehra][neduitn] [JFMAJSOND][aepuico][nbrynlgptvc] +[0-9]+ [0-2][0-9]:[0-5][0-9]:[0-5][0-9]"
         !if &not $status
             end-of-buffer
         !endif
