@@ -106,8 +106,8 @@ osd .osd.fattr 100 ""
 
 osd .osd.fattr 590 ""
 osd .osd.fattr 595 ""
-osd .osd.fattr 600 "BHcfxh" .scheme.osd-ebtt " &Save changes " 0 save-buffer
-osd .osd.fattr 610 "BHcf"   .scheme.osd-ebtt "  &OK  "         1 void
+osd .osd.fattr 600 "BHcfxh" .scheme.osd-ebtt " \HSave changes " 0 save-buffer
+osd .osd.fattr 610 "BHcf"   .scheme.osd-ebtt "  \HOK  "         1 void
 
 define-macro file-attrib
     ; correct the main osd entry now we know the menu number

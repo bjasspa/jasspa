@@ -165,7 +165,7 @@ extern	int   tputs(char *, int, int (*)(int)) ;
 extern	char *tgoto(char *, int, int ) ;
 #endif
 
-#define TTNbell()      (putchar(meBELLCHAR),fflush(stdout))
+#define TTNbell()      (putchar(meCHAR_BELL),fflush(stdout))
 #define TTdieTest()    if(alarmState & meALARM_DIE) meDie()
 #define TTbreakTest(x) ((--TTbreakCnt == 0) &&                         \
                        (((alarmState & meALARM_DIE) && meDie()) ||     \
@@ -536,7 +536,7 @@ extern void TTwaitForChar(void) ;
 extern void TThideCur(void) ;
 extern void TTshowCur(void) ;
 extern int  bdos(int func, unsigned dx, unsigned al);
-#define TTNbell()   bdos(6,meBELLCHAR, 0);
+#define TTNbell()   bdos(6,meCHAR_BELL, 0);
 
 extern void TTsleep(int msec, int intable) ;
 #if MEOPT_TYPEAH

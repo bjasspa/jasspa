@@ -36,7 +36,7 @@ set-variable .fhook-binary.command-flag  "|thbio|th|thbo|thbo|"
 set-variable .fhook-binary.command-name  "|binary-swap-section||binary-move-backward|binary-move-forward|"
 set-variable .fhook-binary.command-nbind "|||||"
 set-variable .fhook-binary.command-kbind "|tab||A-up|A-down|"
-set-variable .fhook-binary.command-desc  "|&Swap section||Move &backward|Move &forward|"
+set-variable .fhook-binary.command-desc  "|\HSwap section||Move \Hbackward|Move \Hforward|"
 
 !if &and &sin "h" .fhook-binary.setup &band .hilight.flags 0x02 
     !if &not &exist .hilight.binary

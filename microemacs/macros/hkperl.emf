@@ -23,7 +23,7 @@ set-variable .fhook-perl.comment "|#||#|# | #||"
     set-variable .fhook-perl.command-name  "|perldb|"
     set-variable .fhook-perl.command-nbind "|2|"
     set-variable .fhook-perl.command-kbind "||"
-    set-variable .fhook-perl.command-desc  "|&Debug Current Script|See tool menu to debug current script|"
+    set-variable .fhook-perl.command-desc  "|\HDebug Current Script|See tool menu to debug current script|"
 !endif
 
 ; Setup collapse

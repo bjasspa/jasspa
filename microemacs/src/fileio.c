@@ -180,9 +180,10 @@ meUByte charLatinUserTbl[256] = {
 meUByte charMaskFlags[]="luhs1234dpPwaAMLU" ;
 meUByte isWordMask=CHRMSK_DEFWORDMSK;
 
+#define meFIOBUFSIZ 2048              /* File read/write buffer size  */
 
 static int       ffremain ;
-       meUByte  *ffbuf=NULL ;
+static meUByte   ffbuf[meFIOBUFSIZ+1] ;
 static meUByte  *ffcur ;
 static meUByte   ffcrypt=0 ;
 static meUByte   ffauto=0 ;
@@ -648,9 +649,9 @@ ffurlGetInfo(int type, meUByte **host, meUByte **port, meUByte **user, meUByte *
     {
         if(*pass == NULL)
         {
-            meUByte buff[mePATBUF_SIZE_MAX] ;
+            meUByte buff[meSBUF_SIZE_MAX] ;
             
-            if((meGetString((meUByte *)"Password", MLNOHIST|MLHIDEVAL, 0, buff, mePATBUF_SIZE_MAX-1) <= 0) ||
+            if((meGetString((meUByte *)"Password", MLNOHIST|MLHIDEVAL, 0, buff, meSBUF_SIZE_MAX) <= 0) ||
                ((ffpasswdReg = regSet(root,(meUByte *)"pass",buff)) == NULL))
                 return meFALSE ;
             ffpasswdReg->mode |= meREGMODE_INTERNAL ;
@@ -769,7 +770,7 @@ ffFtpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByt
     if(rwflag & meRWFLAG_BACKUP)
     {
         /* try to back-up the existing file - no error checking! */
-        meUByte filename[meFILEBUF_SIZE_MAX] ;
+        meUByte filename[meBUF_SIZE_MAX] ;
         
         if(!createBackupName(filename,file,'~',1) &&
            (ftpCommand(0,"RNFR %s",file) == ftpPOS_INTERMED))
@@ -1240,7 +1241,7 @@ createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag)
 #if MEOPT_SOCKET
     if((backl == '#') && isUrlLink(fn))
     {
-        meUByte tmp[meFILEBUF_SIZE_MAX] ;
+        meUByte tmp[meBUF_SIZE_MAX] ;
         s = getFileBaseName(fn) ;
         meStrcpy(tmp,s) ;
         s = tmp ;
@@ -1829,7 +1830,7 @@ ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
         }
     }
     if(length > 0)
-        sprintf(resultStr,"|%d|%d|",ffoffset,ffoffset+ffread-ffremain) ;
+        sprintf((char *)resultStr,"|%d|%d|",ffoffset,ffoffset+ffread-ffremain) ;
     return ss ;
 }
 
@@ -1921,7 +1922,7 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
         {
             if(flags & meRWFLAG_BACKUP)
             {
-                meUByte filename[meFILEBUF_SIZE_MAX] ;
+                meUByte filename[meBUF_SIZE_MAX] ;
                 int ii ;
                 
                 ii = createBackupName(filename,fname,'~',1) ;
@@ -1947,7 +1948,7 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
                      * This is done for all flavours of windows as these drives can be networked
                      */
                     extern int platformId;
-                    meUByte filenameOldB[meFILEBUF_SIZE_MAX], *filenameOld ;
+                    meUByte filenameOldB[meBUF_SIZE_MAX], *filenameOld ;
                     
                     if(!(meSystemCfg & meSYSTEM_DOSFNAMES))
                     {
@@ -1986,7 +1987,7 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
                         }
                         if(ii)
                         {
-                            meUByte filename2[meFILEBUF_SIZE_MAX] ;
+                            meUByte filename2[meBUF_SIZE_MAX] ;
                             meStrcpy(filename2,filename) ;
                             while(ii > 0)
                             {

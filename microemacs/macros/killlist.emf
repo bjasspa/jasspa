@@ -79,12 +79,12 @@
     !else
         -1 osd .osd.tmp
         osd .osd.tmp 0 b
-        osd .osd.tmp 10 "" "&Store current kill"   1 kill-list-command
-        osd .osd.tmp 20 "" "Make &current kill"    2 kill-list-command
-        osd .osd.tmp 30 "" "&Paste"                3 kill-list-command
-        osd .osd.tmp 40 "" "&Delete"               4 kill-list-command
+        osd .osd.tmp 10 "" "\HStore current kill"   1 kill-list-command
+        osd .osd.tmp 20 "" "Make \Hcurrent kill"    2 kill-list-command
+        osd .osd.tmp 30 "" "\HPaste"                3 kill-list-command
+        osd .osd.tmp 40 "" "\HDelete"               4 kill-list-command
         osd .osd.tmp 50 "-"
-        osd .osd.tmp 60 "" "&Add another"          5 kill-list-command
+        osd .osd.tmp 60 "" "\HAdd another"          5 kill-list-command
         !force !force .osd.tmp osd
     !endif
     goto-position "\x82"

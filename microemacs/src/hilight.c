@@ -207,7 +207,7 @@ addTokenNode(meHilight *root, meUByte *token, int flags)
     if(!(flags & ADDTOKEN_OPTIM) && (hilListSize(root) == 0xfe))
         hilNodeOptimize(root,flags) ;
 
-    if((*token == 0xff) && (*++token != 0xff))
+    if((*token == meCHAR_LEADER) && (*++token != meCHAR_TRAIL_LEADER))
     {
         /* special test */
         ii  = 0 ;
@@ -387,7 +387,7 @@ meHiltItemCompile(meUByte *dest, meUByte **token,
         meUByte *s1, *dd ;
         meUByte tt, ii=0 ;
         
-        *dest++ = 0xff ;
+        *dest++ = meCHAR_LEADER ;
         tt = meHIL_TEST_VALID ;
         if(*ss == '^')
         {
@@ -444,7 +444,7 @@ meHiltItemCompile(meUByte *dest, meUByte **token,
         switch(cc)
         {
         case 'S':
-            *dest++ = 0xff ;
+            *dest++ = meCHAR_LEADER ;
             cc = *ss++ ;
             switch(cc)
             {
@@ -474,7 +474,7 @@ meHiltItemCompile(meUByte *dest, meUByte **token,
             }
             break ;
         case 'W':
-            *dest++ = 0xff ;
+            *dest++ = meCHAR_LEADER ;
             *dest++ = meHIL_TEST_VALID|meHIL_TEST_INVERT|meHIL_TEST_WORD ;
             *dest++ = meHIL_TEST_DEF_GROUP ;
             break ;
@@ -485,7 +485,7 @@ meHiltItemCompile(meUByte *dest, meUByte **token,
         case 'n':   *dest++ = 0x0a; break;
         case 'r':   *dest++ = 0x0d; break;
         case 's':
-            *dest++ = 0xff ;
+            *dest++ = meCHAR_LEADER ;
             cc = *ss++ ;
             switch(cc)
             {
@@ -516,7 +516,7 @@ meHiltItemCompile(meUByte *dest, meUByte **token,
         case 't':   *dest++ = 0x09; break;
         case 'v':   *dest++ = 0x0b; break;
         case 'w':
-            *dest++ = 0xff ;
+            *dest++ = meCHAR_LEADER ;
             *dest++ = meHIL_TEST_VALID|meHIL_TEST_WORD ;
             *dest++ = meHIL_TEST_DEF_GROUP ;
             break ;
@@ -540,9 +540,9 @@ meHiltItemCompile(meUByte *dest, meUByte **token,
                 }
                 if(changeCase)
                     cc = toLower(cc) ;
-                if(cc == 0xff)
-                    *dest++ = 0xff ;
                 *dest++ = cc ;
+                if(cc == meCHAR_LEADER)
+                    *dest++ = meCHAR_TRAIL_LEADER ;
             }
             break;
         case '|':
@@ -562,7 +562,7 @@ meHiltItemCompile(meUByte *dest, meUByte **token,
                     mlwrite(MWABORT|MWWAIT,(meUByte *)"[Back reference out of range]");
                     return NULL ;
                 }
-                *dest++ = 0xff ;
+                *dest++ = meCHAR_LEADER ;
                 *dest++ = meHIL_TEST_VALID|meHIL_TEST_BACKREF ;
                 *dest++ = meHIL_TEST_DEF_GROUP ;
                 *dest++ = cc ;
@@ -577,13 +577,22 @@ meHiltItemCompile(meUByte *dest, meUByte **token,
     }
     else if(cc == '.')
     {
-        *dest++ = 0xff ;
+        *dest++ = meCHAR_LEADER ;
         *dest++ = meHIL_TEST_VALID|meHIL_TEST_ANY ;
         *dest++ = meHIL_TEST_DEF_GROUP ;
     }
     else
     {
-        if(changeCase)
+        if(cc == meCHAR_LEADER)
+        {
+            *dest++ = meCHAR_LEADER ;
+            if((cc = *ss++) != meCHAR_TRAIL_LEADER)
+            {
+                mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unsupported special \\ quoted char]");
+                return NULL ;
+            }
+        }
+        else if(changeCase)
             cc = toLower(cc) ;
         *dest++ = cc;
     }
@@ -659,7 +668,7 @@ meHiltStringCompile(meUByte *dest, meUByte *token, meUByte changeCase,
             if(endOffset < 0)
                 endOffset = len ;
             dd = dest ;
-            *dd++ = 0xff ;
+            *dd++ = meCHAR_LEADER ;
             *dd++ = meHIL_TEST_VALID|meHIL_TEST_EOL ;
             *dd++ = meHIL_TEST_DEF_GROUP ;
         }
@@ -678,7 +687,7 @@ meHiltStringCompile(meUByte *dest, meUByte *token, meUByte changeCase,
                  * turn it into a test */
                 dest[3] = dest[0] ;
                 dest[1] = (meHIL_TEST_VALID|meHIL_TEST_SINGLE) ;
-                dest[0] = 0xff ;
+                dest[0] = meCHAR_LEADER ;
                 dd = dest+4 ;
             }
             dest[2] = ++nextGroupNo ;
@@ -694,7 +703,7 @@ meHiltStringCompile(meUByte *dest, meUByte *token, meUByte changeCase,
                 dest[3] = dest[0] ;
                 dest[2] = meHIL_TEST_DEF_GROUP ;
                 dest[1] = (meHIL_TEST_VALID|meHIL_TEST_SINGLE) ;
-                dest[0] = 0xff ;
+                dest[0] = meCHAR_LEADER ;
                 dd = dest+4 ;
             }
             if(cc != '+')
@@ -740,7 +749,7 @@ meHiltTokenAddSearchString(meHilight *root, meHilight *node, meUByte *token, int
         else
         {
             /* dirty special case */
-            *dd++ = 0xff ;
+            *dd++ = meCHAR_LEADER ;
             *dd++ = meHIL_TEST_SOL ;
         }
         ss++ ;
@@ -761,7 +770,7 @@ meHiltTokenAddSearchString(meHilight *root, meHilight *node, meUByte *token, int
         ss = buff ;
         /* if the token starts with "^[[:space:]]*\\{" then we can
          * optimize this to HLSTTLINE */
-        if(l1 && (len || l2) && (flags & HLSOL) && (ss[0] == 0xff) &&
+        if(l1 && (len || l2) && (flags & HLSOL) && (ss[0] == meCHAR_LEADER) &&
            (ss[1] == (meHIL_TEST_VALID|meHIL_TEST_MATCH_NONE|meHIL_TEST_MATCH_MULTI|meHIL_TEST_SPACE)))
         {
             flags &= ~HLSOL ;
@@ -772,7 +781,7 @@ meHiltTokenAddSearchString(meHilight *root, meHilight *node, meUByte *token, int
         /* if the token ends with ".*\\}" then we can
          * optimize this to HLENDLINE - note as the token includes 
          * the .*, a replace should also replace the .* */
-        if(!l2 && (len || l1) && (lastItem[0] == 0xff) &&
+        if(!l2 && (len || l1) && (lastItem[0] == meCHAR_LEADER) &&
            (lastItem[1] == (meHIL_TEST_VALID|meHIL_TEST_MATCH_NONE|meHIL_TEST_MATCH_MULTI|meHIL_TEST_ANY)))
         {
             flags |= HLENDLINE|HLREPTOEOL ;
@@ -788,7 +797,7 @@ meHiltTokenAddSearchString(meHilight *root, meHilight *node, meUByte *token, int
         }
         else
         {
-            if(l1 && (len || l2) && (ss[0] == 0xff) &&
+            if(l1 && (len || l2) && (ss[0] == meCHAR_LEADER) &&
                ((ss[1] & ~(meHIL_TEST_MASK|meHIL_TEST_INVERT)) == meHIL_TEST_VALID) &&
                ((ss[1] & meHIL_TEST_MASK) > meHIL_TEST_CLASS))
             {
@@ -798,7 +807,7 @@ meHiltTokenAddSearchString(meHilight *root, meHilight *node, meUByte *token, int
             }
             else
                 sttTst = meHIL_TEST_INVALID ;
-            if(l2 && (len || l1) && (lastItem[0] == 0xff) &&
+            if(l2 && (len || l1) && (lastItem[0] == meCHAR_LEADER) &&
                ((lastItem[1] & ~(meHIL_TEST_MASK|meHIL_TEST_INVERT)) == meHIL_TEST_VALID) &&
                ((lastItem[1] & meHIL_TEST_MASK) > meHIL_TEST_CLASS))
             {
@@ -819,12 +828,12 @@ meHiltTokenAddSearchString(meHilight *root, meHilight *node, meUByte *token, int
         dd = ss ;
         while(dd <= lastItem)
         {
-            if((*dd++ == 0xff) && (*dd++ != 0xff) && (dd != ss+2)) 
+            if((*dd++ == meCHAR_LEADER) && (*dd++ != meCHAR_TRAIL_LEADER) && (dd != ss+2)) 
             {
                 dd[-2] = '\0' ;
                 if(addTokenNode(root,ss,flags|ADDTOKEN_DUMMY) == NULL)
                     return NULL ;
-                dd[-2] = 0xff ;
+                dd[-2] = meCHAR_LEADER ;
                 dd++ ;
             }
         }
@@ -869,14 +878,18 @@ meHiltTokenAddReplaceString(meHilight *root, meHilight *node, meUByte *token, in
             cc = *ss++ ;
             if((cc > '0') && (cc <= '9'))
             {
-                *dd++ = 0xff ;
+                *dd++ = meCHAR_LEADER ;
                 cc -= '0' ;
             }
         }
-        else if(cc == 0xff)
+        else if(cc == meCHAR_LEADER)
         {
-            *dd++ = 0xff ;
-            cc = *ss++ ;
+            *dd++ = meCHAR_LEADER ;
+            if((cc = *ss++) != meCHAR_TRAIL_LEADER)
+            {
+                mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unsupported special \\ quoted char]");
+                return NULL ;
+            }
         }
         *dd++ = cc ;
         len++ ;
@@ -1049,7 +1062,7 @@ get_scheme:
 #define findTokenCharTest(ret,lastChar,srcText,tokTest,testStr)              \
 do {                                                                         \
     meUByte *__ts, ftctcc ;                                                    \
-    if((ftctcc=*srcText++) == '\0') ftctcc=meNLCHAR ;                        \
+    if((ftctcc=*srcText++) == '\0') ftctcc=meCHAR_NL ;                        \
                                                                              \
     switch(tokTest & meHIL_TEST_MASK)                                        \
     {                                                                        \
@@ -1092,7 +1105,7 @@ do {                                                                         \
 	    break ;                                                          \
 	}                                                                    \
     case meHIL_TEST_EOL:                                                     \
-	ret = (ftctcc == meNLCHAR) ;                                         \
+	ret = (ftctcc == meCHAR_NL) ;                                         \
 	break ;                                                              \
     case meHIL_TEST_SPACE:                                                   \
 	ret = isSpace(ftctcc) ;                                              \
@@ -1136,7 +1149,7 @@ do {                                                                         \
 	}                                                                    \
 	tokTest = 0 ;                                                        \
     }                                                                        \
-    else if((lastChar=ftctcc) == meNLCHAR)                                   \
+    else if((lastChar=ftctcc) == meCHAR_NL)                                   \
 	tokTest = 0 ;                                                        \
     else if(tokTest & meHIL_TEST_MATCH_MULTI)                                \
     {                                                                        \
@@ -1211,9 +1224,9 @@ findToken(meHilight *root, meUByte *text, meUByte mode,
          */
         low = root->listSize ;
         hi = root->ordSize ;
-        while((--low >= 0) && ((nn=root->list[hi++]),((cc=nn->token[0]) <= meNLCHAR)))
+        while((--low >= 0) && ((nn=root->list[hi++]),((cc=nn->token[0]) <= meCHAR_NL)))
         {
-            if((cc == meNLCHAR) && (nn->token[1] == 0) &&
+            if((cc == meCHAR_NL) && (nn->token[1] == 0) &&
                !((type=nn->type) & HLVALID) && (nn->tknEndTst == meHIL_TEST_INVALID) &&
                (!(mode & meHIL_MODETOEOL) || (type & HLBRINEOL)) &&
                (!(type & HLSTTLINE) || (mode & meHIL_MODESTTLN)) &&
@@ -1292,7 +1305,7 @@ findToken(meHilight *root, meUByte *text, meUByte mode,
                     break ;
                 else if (status < 0)
                 {
-                    if((status == '\0' - meNLCHAR) && (cc == '\0') && (*s2 == '\0') &&
+                    if((status == '\0' - meCHAR_NL) && (cc == '\0') && (*s2 == '\0') &&
                        (nn->tknEndTst == meHIL_TEST_INVALID))
                     {
                         if(!nn->tknEndOff)
@@ -1321,7 +1334,7 @@ findToken(meHilight *root, meUByte *text, meUByte mode,
                     break ;
                 else if (status < 0)
                 {
-                    if((status == '\0' - meNLCHAR) && (cc == '\0') && (*s2 == '\0') &&
+                    if((status == '\0' - meCHAR_NL) && (cc == '\0') && (*s2 == '\0') &&
                        (nn->tknEndTst == meHIL_TEST_INVALID))
                     {
                         if(!nn->tknEndOff)
@@ -1377,7 +1390,7 @@ findToken(meHilight *root, meUByte *text, meUByte mode,
             findTokenCharTest(cc,lstc,s1,dd,s2) ;
             if(cc)
             {
-                if(lstc != meNLCHAR)
+                if(lstc != meCHAR_NL)
                 {
                     if(mode & meHIL_MODECASE)
                     {
@@ -1394,7 +1407,7 @@ findToken(meHilight *root, meUByte *text, meUByte mode,
                             if((cc=*s1++) != dd)
                                 break ;
                     }
-                    if((dd == meNLCHAR) && (cc == '\0') &&
+                    if((dd == meCHAR_NL) && (cc == '\0') &&
                        (nn->tknEndTst == meHIL_TEST_INVALID))
                     {
                         if(!nn->tknEndOff)
@@ -1452,12 +1465,12 @@ findToken(meHilight *root, meUByte *text, meUByte mode,
     {                                                                        \
         if(cc == ' ')                                                        \
             disLineBuff[dstPos++] = displaySpace ;                           \
-        else if(cc == meTABCHAR)                                             \
+        else if(cc == meCHAR_TAB)                                             \
             disLineBuff[dstPos++] = displayTab ;                             \
         else                                                                 \
             disLineBuff[dstPos++] = cc ;                                     \
     }                                                                        \
-    else if(cc == meTABCHAR)                                                 \
+    else if(cc == meCHAR_TAB)                                                 \
     {                                                                        \
         int ii=get_tab_pos(dstPos) ;                                         \
         disLineBuff[dstPos++] = displayTab ;                                 \
@@ -1544,7 +1557,7 @@ hilCopyReplaceString(int sDstPos, register meUByte *srcText,
         dstLen = 0 ;
         while((cc = *ss++) != 0)
         {
-            if(cc == 0xff)
+            if(cc == meCHAR_LEADER)
                 ss++ ;
             dstLen++ ;
         }
@@ -1557,7 +1570,7 @@ hilCopyReplaceString(int sDstPos, register meUByte *srcText,
         hoff = 0x7fffffff ;
     while((cc = *srcText++) != '\0')
     {
-        if((cc == 0xff) && ((cc=*srcText++) != 0xff))
+        if((cc == meCHAR_LEADER) && ((cc=*srcText++) != meCHAR_TRAIL_LEADER))
             cc = varTable[cc] ;
         if(dstPos >= hoff)
         {
@@ -1680,7 +1693,7 @@ meUShort
 hilightLine(meVideoLine *vp1)
 {
     meUByte *srcText=vp1->line->text ;
-    meUByte  hilno = vp1->hilno, cc=meNLCHAR, mode ;
+    meUByte  hilno = vp1->hilno, cc=meCHAR_NL, mode ;
     meHilight *node;
     meUShort len ;
     register int srcWid=vp1->line->length, dstPos=0 ;
@@ -1820,7 +1833,7 @@ BracketJump:
                 
                 c1 = (meUByte *) node->close ;
                 /* the SOL is a special close bracket code for '^' */
-                if((solt = ((c1[0] == 0xff) && (c1[1] == meHIL_TEST_SOL))))
+                if((solt = ((c1[0] == meCHAR_LEADER) && (c1[1] == meHIL_TEST_SOL))))
                     c1 += 2 ;
                 ignore = node->ignore ;
                 s1 = srcText+hd.srcPos ;
@@ -1832,7 +1845,7 @@ BracketJump:
                         s2 = s1 ;
                         while((tt = *c2++) != '\0')
                         {
-                            if((tt == 0xff) && ((tt = *c2++) != 0xff))
+                            if((tt == meCHAR_LEADER) && ((tt = *c2++) != meCHAR_TRAIL_LEADER))
                             {
                                 meUByte ret, vv ;
                                 
@@ -1848,13 +1861,13 @@ BracketJump:
                             else
                             {
                                 if((ss = *s2++) == '\0')
-                                    ss = meNLCHAR ;
+                                    ss = meCHAR_NL ;
                                 else if(mode & meHIL_MODECASE)
                                     ss = toLower(ss) ;
                                 if(tt != ss)
                                     break ;
                             }
-                            if(ss == meNLCHAR)
+                            if(ss == meCHAR_NL)
                             {
                                 if((tt=*c2) != '\0')
                                     break ;
@@ -2078,7 +2091,7 @@ hilightLookBack(meWindow *wp)
     int ii ;                                                                 \
     if(isDisplayable(cc))                                                    \
         ii = 1 ;                                                             \
-    else if(cc == meTABCHAR)                                                 \
+    else if(cc == meCHAR_TAB)                                                 \
         ii = get_tab_pos(dstPos) + 1 ;                                       \
     else if(cc < 0x20)                                                       \
         ii = 2 ;                                                             \
@@ -2124,7 +2137,7 @@ hilOffsetReplaceString(register meUByte **offPtr, register int dstPos,
     
     while((cc = *srcText++) != '\0')
     {
-        if((cc == 0xff) && ((cc=*srcText++) != 0xff))
+        if((cc == meCHAR_LEADER) && ((cc=*srcText++) != meCHAR_TRAIL_LEADER))
             cc = varTable[cc] ;
         lastcc = cc ;
         hilOffsetChar(off,dstPos,dd,cc)
@@ -2161,7 +2174,7 @@ hilightCurLineOffsetEval(meWindow *wp)
 {
     meUByte *srcText=wp->dotLine->text ;
     meUByte *off=wp->dotCharOffset->text ;
-    meUByte  hilno=wp->buffer->hilight, cc=meNLCHAR, mode ;
+    meUByte  hilno=wp->buffer->hilight, cc=meCHAR_NL, mode ;
     meHilight *node, *root ;
     meUShort len ;
     register int srcWid=wp->dotLine->length, srcPos=0, dstPos=0 ;
@@ -2235,7 +2248,7 @@ column_token:
                 
                 c1 = (meUByte *) node->close ;
                 /* the SOL is a special close bracket code for '^' */
-                if((solt = ((c1[0] == 0xff) && (c1[1] == meHIL_TEST_SOL))))
+                if((solt = ((c1[0] == meCHAR_LEADER) && (c1[1] == meHIL_TEST_SOL))))
                     c1 += 2 ;
                 ignore = node->ignore ;
                 s1 = srcText+srcPos ;
@@ -2247,7 +2260,7 @@ column_token:
                         s2 = s1 ;
                         while((tt = *c2++) != '\0')
                         {
-                            if((tt == 0xff) && ((tt = *c2++) != 0xff))
+                            if((tt == meCHAR_LEADER) && ((tt = *c2++) != meCHAR_TRAIL_LEADER))
                             {
                                 meUByte ret, vv ;
                                 
@@ -2262,7 +2275,7 @@ column_token:
                             }
                             else if((ss = *s2++) != tt)
                             {
-                                if((tt != meNLCHAR) || (ss != '\0'))
+                                if((tt != meCHAR_NL) || (ss != '\0'))
                                     break ;
                             }
                             if(ss == '\0')

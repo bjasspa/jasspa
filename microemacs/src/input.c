@@ -454,19 +454,22 @@ kbd_rep:
         if(kbdoff < kbdlen)
         {
             cc = (meUShort) kbdptr[kbdoff++] ;
-            if(cc == 0xff)
+            if(cc == meCHAR_LEADER)
             {
                 cc = kbdptr[kbdoff++] ;
-                if(cc == 0x02)
+                if(cc == meCHAR_TRAIL_SPECIAL)
                 {
                     meUByte dd ;    /* fetched character */
                     cc = ((meUShort) kbdptr[kbdoff++]) << 8 ;
-                    if(((dd = kbdptr[kbdoff++]) != 0xff) ||
-                       ((dd = kbdptr[kbdoff++]) != 0x01))
+                    if(((dd = kbdptr[kbdoff++]) != meCHAR_LEADER) ||
+                       ((dd = kbdptr[kbdoff++]) != meCHAR_TRAIL_NULL))
                         cc |= dd ;
                 }
-                else if(cc == 0x01)
+                else if(cc == meCHAR_TRAIL_NULL)
                     cc = 0 ;
+                else if(cc == meCHAR_TRAIL_LEADER)
+                    /* special '\?' key (e.g. OSD hot key) - ignore */
+                    goto kbd_rep ;
             }
             return cc ;
         }
@@ -500,7 +503,7 @@ kbd_rep:
 #endif
         /* Each 'key' could take 5 chars to store - if we haven't got room
          * stop so we don't overrun the buffer */
-        if(kbdlen > meKBDMACRO_SIZE_MAX - 5)
+        if(kbdlen > meBUF_SIZE_MAX - 5)
         {
             kbdmode = meSTOP;
             TTbell();
@@ -514,20 +517,20 @@ kbd_rep:
              */
             if(cc > 0xff)
             {
-                kbdptr[kbdlen++] = 0xff ;
-                kbdptr[kbdlen++] = 2 ;
+                kbdptr[kbdlen++] = meCHAR_LEADER ;
+                kbdptr[kbdlen++] = meCHAR_TRAIL_SPECIAL ;
                 kbdptr[kbdlen++] = cc >> 8 ;
             }
             dd = (cc & 0xff) ;
-            if(dd == 0xff)
+            if(dd == meCHAR_LEADER)
             {
-                kbdptr[kbdlen++] = 0xff ;
-                kbdptr[kbdlen++] = 0xff ;
+                kbdptr[kbdlen++] = meCHAR_LEADER ;
+                kbdptr[kbdlen++] = meCHAR_TRAIL_LEADER ;
             }
             else if(dd == 0x0)
             {
-                kbdptr[kbdlen++] = 0xff ;
-                kbdptr[kbdlen++] = 0x01 ;
+                kbdptr[kbdlen++] = meCHAR_LEADER ;
+                kbdptr[kbdlen++] = meCHAR_TRAIL_NULL ;
             }
             else
                 kbdptr[kbdlen++] = dd ;
@@ -1030,7 +1033,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
         {
             meUByte *s1, *s2 ;
             s1 = buf ;
-            while((--osdRow >= 0) && ((s2 = meStrchr(s1,meNLCHAR)) != NULL))
+            while((--osdRow >= 0) && ((s2 = meStrchr(s1,meCHAR_NL)) != NULL))
                 s1 = s2+1 ;
             if(osdRow >= 0)
                 ipos = ilen ;
@@ -1039,7 +1042,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
                 ipos = (int) s1 - (int) buf + osdCol ;
                 if(ipos > ilen)
                     ipos = ilen ;
-                if(((s2 = meStrchr(s1,meNLCHAR)) != NULL) &&
+                if(((s2 = meStrchr(s1,meCHAR_NL)) != NULL) &&
                     (((int) s2 - (int) buf) < ipos))
                     ipos = (int) s2 - (int) buf ;
             }
@@ -1109,7 +1112,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
         case CK_GOBOL:          /* ^A : Move to start of buffer */
             if(frameCur->mlStatus & MLSTATUS_NINPUT)
             {
-                while(ipos && (buf[ipos-1] != meNLCHAR))
+                while(ipos && (buf[ipos-1] != meCHAR_NL))
                     ipos-- ;
             }
             else
@@ -1134,7 +1137,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
         case CK_GOEOL:    /* ^E : Move to end of buffer */
             if(frameCur->mlStatus & MLSTATUS_NINPUT)
             {
-                while((ipos < ilen) && (buf[ipos] != meNLCHAR))
+                while((ipos < ilen) && (buf[ipos] != meCHAR_NL))
                     ipos++ ;
             }
             else
@@ -1171,7 +1174,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
 input_expand:
             if(option & MLFILE)
             {
-                meUByte fname[meFILEBUF_SIZE_MAX], *base ;
+                meUByte fname[meBUF_SIZE_MAX], *base ;
                 
                 pathNameCorrect(buf,PATHNAME_PARTIAL,fname,&base) ;
                 meStrcpy(buf,fname) ;
@@ -1340,7 +1343,7 @@ input_expand:
             if(frameCur->mlStatus & MLSTATUS_NINPUT)
             {
                 ii = ipos ;
-                while((--ii >= 0) && (buf[ii] != meNLCHAR))
+                while((--ii >= 0) && (buf[ii] != meCHAR_NL))
                     ;
                 if(ii >= 0)
                 {
@@ -1348,7 +1351,7 @@ input_expand:
                     jj = ipos - ii ;
                     ipos = ii ;
                     /* work out the new line offset */
-                    while((--ii >= 0) && (buf[ii] != meNLCHAR))
+                    while((--ii >= 0) && (buf[ii] != meCHAR_NL))
                         ;
                     if((ii+jj) < ipos)
                         ipos = ii+jj ;
@@ -1378,17 +1381,17 @@ input_expand:
             if(frameCur->mlStatus & MLSTATUS_NINPUT)
             {
                 ii = ipos ;
-                while((ii < ilen) && (buf[ii] != meNLCHAR))
+                while((ii < ilen) && (buf[ii] != meCHAR_NL))
                     ii++ ;
                 if(ii < ilen)
                 {
                     int jj ;
                     jj = ipos ;
-                    while(jj-- && (buf[jj] != meNLCHAR))
+                    while(jj-- && (buf[jj] != meCHAR_NL))
                         ;
                     jj = ipos-jj-1 ;
                     ipos = ii+1 ;
-                    while((--jj >= 0) && (ipos < ilen) && (buf[ipos] != meNLCHAR))
+                    while((--jj >= 0) && (ipos < ilen) && (buf[ipos] != meCHAR_NL))
                         ipos++ ;
                 }
             }
@@ -1418,12 +1421,12 @@ input_expand:
                 if(frameCur->mlStatus & MLSTATUS_NINPUT)
                 {
                     ii = ilen ;
-                    while((ipos < ilen) && (buf[ipos] != meNLCHAR))
+                    while((ipos < ilen) && (buf[ipos] != meCHAR_NL))
                         cdel(buf, ipos, &ilen);
                     if((ii==ilen) ||
                        (!meModeTest(globMode,MDLINE) &&         /* if line kill mode    */
                         (ipos < ilen) &&                        /* some chars left      */
-                        (!ipos || (buf[ipos-1] == meNLCHAR))))  /* whole line           */
+                        (!ipos || (buf[ipos-1] == meCHAR_NL))))  /* whole line           */
                         cdel(buf, ipos, &ilen);
                 }
                 else
@@ -1444,7 +1447,7 @@ input_expand:
         case CK_NEWLIN:  /* ^J : New line. Finish processing */
             if(frameCur->mlStatus & MLSTATUS_NINPUT)
             {
-                cc = meNLCHAR ;
+                cc = meCHAR_NL ;
                 goto input_addexpand ;
             }
             cont_flag = 0;

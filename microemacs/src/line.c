@@ -590,8 +590,8 @@ bufferIsTextInsertLegal(meUByte *str)
     
     if((str[0] != '\0') &&
        (meLineGetFlag(frameCur->windowCur->dotLine) & meLINE_PROTECT) &&
-       ((ss=meStrchr(str,meNLCHAR)) != NULL) &&
-       (frameCur->windowCur->dotOffset || (ss[strlen(ss)-1] != meNLCHAR)))
+       ((ss=meStrchr(str,meCHAR_NL)) != NULL) &&
+       (frameCur->windowCur->dotOffset || (ss[strlen(ss)-1] != meCHAR_NL)))
         return mlwrite(MWABORT,(meUByte *)"[Protected Line!]") ;
     return meTRUE ;
 }
@@ -613,7 +613,7 @@ bufferInsertText(meUByte *str)
     /* ZZZZ - handle a cut length of 0xfff0 */
     for(;;)
     {
-        while(((cc=*ss++) != '\0') && (cc != meNLCHAR))
+        while(((cc=*ss++) != '\0') && (cc != meCHAR_NL))
             ;
         ss-- ;
         len = (((size_t) ss) - ((size_t) str)) ;
@@ -642,7 +642,7 @@ bufferInsertText(meUByte *str)
             }
             *ss = '\0' ;
             status = addLine(frameCur->windowCur->dotLine,str) ;
-            *ss = meNLCHAR ;
+            *ss = meCHAR_NL ;
             if(status <= 0)
                 break ;
             tlen += len+1 ;
@@ -980,7 +980,7 @@ mldelete(meInt noChrs, meUByte *kstring)
         ss = slp->text+soff ;
         while(ii--)
             *ks++ = *ss++ ;
-        *ks++ = meNLCHAR ;
+        *ks++ = meCHAR_NL ;
     }
     /* The deletion involves more than one line, lets find the end point */
     while((nn != 0) && (elp != frameCur->bufferCur->baseLine))
@@ -1007,7 +1007,7 @@ mldelete(meInt noChrs, meUByte *kstring)
             ss = elp->text ;
             for( ; ii ; ii--)
                 *ks++ = *ss++ ;
-            *ks++ = meNLCHAR ;
+            *ks++ = meCHAR_NL ;
         }
         elp = meLineGetNext(elp) ;
         elno++ ;
@@ -1428,7 +1428,7 @@ yankfrom(struct meKill *pklist)
         killp = pklist->kill;
         while(killp != NULL)
         {
-            if(meStrchr(killp->data,meNLCHAR) != NULL)
+            if(meStrchr(killp->data,meCHAR_NL) != NULL)
                 break ;
             killp = killp->next;
         }
@@ -1441,7 +1441,7 @@ yankfrom(struct meKill *pklist)
             while((kk=kk->next)  != NULL)
                 if(kk->data[0] != '\0')
                     killp = kk ;
-            if(killp->data[meStrlen(killp->data)-1] != meNLCHAR)
+            if(killp->data[meStrlen(killp->data)-1] != meCHAR_NL)
                 return mlwrite(MWABORT,(meUByte *)"[Protected Line!]") ;
         }
     }

@@ -198,11 +198,12 @@ sortStrings(int noStr, meUByte **strs, int offset, meIFuncSS cmpFunc)
 int
 sortLines(int f, int n)
 {
-    meIFuncSS    cmpFunc ;
-    meLine     *sL, *eL ;
-    register  meLine *l, **list ;
-    meInt     sln, noL, ii, jj, len ;
-    int       offs ;
+    meIFuncSS cmpFunc ;
+    meLine *sL, *eL, *l, **list ;
+    meInt sln, noL, ii, jj, offs ;
+#if MEOPT_UNDO
+    meInt *undoInfo ;
+#endif
     
     if (frameCur->windowCur->markLine == NULL)
         return noMarkSet() ;
@@ -238,22 +239,20 @@ sortLines(int f, int n)
         f = n ;
     if((list = (meLine **) meMalloc(noL*sizeof(meLine *))) == NULL)
         return meFALSE ;
-    for(ii=0, len=0, l=meLineGetNext(sL) ; ii<noL ; l=meLineGetNext(l),ii++)
+    for(ii=0, l=meLineGetNext(sL) ; ii<noL ; l=meLineGetNext(l),ii++)
     {
         list[ii] = l ;
-        len += meLineGetLength(l)+1 ;
+#if MEOPT_UNDO
+        l->prev = (meLine *) ii ;
+#endif
     }
-    if(l != eL)
-        return ctrlg(meFALSE,1);
+    meAssert(l == eL) ;
     frameCur->windowCur->dotOffset = 0 ;
 #if MEOPT_UNDO
-    meUndoAddDelChars(len) ;
+    undoInfo = meUndoAddLineSort(noL) ;
 #endif
     frameCur->windowCur->dotLine = eL ;
     frameCur->windowCur->dotLineNo = sln+noL ;
-#if MEOPT_UNDO
-    meUndoAddReplaceEnd(len) ;
-#endif
     
     if(meModeTest(frameCur->bufferCur->mode,MDEXACT))
         cmpFunc = strcmp ;
@@ -279,6 +278,10 @@ sortLines(int f, int n)
     
     for(ii=0, l=sL ; ii<noL ; l=meLineGetNext(l),ii++)
     {
+#if MEOPT_UNDO
+        if(undoInfo != NULL)
+            *undoInfo++ = (meInt) list[ii]->prev ;
+#endif
         l->next = list[ii] ;
         list[ii]->prev = l ;
     }
@@ -321,7 +324,7 @@ getBufferInfo(meInt *numlines, meInt *predlines,
             *predlines = *numlines;
             *predchars = *numchars + frameCur->windowCur->dotOffset;
             if((curchar = meLineGetChar(lp, frameCur->windowCur->dotOffset)) == '\0')
-                curchar = meNLCHAR;
+                curchar = meCHAR_NL;
         }
         /* on to the next line */
         (*numlines)++ ;
@@ -334,7 +337,7 @@ getBufferInfo(meInt *numlines, meInt *predlines,
     {
         *predlines = *numlines;
         *predchars = *numchars;
-        curchar = meNLCHAR;
+        curchar = meCHAR_NL;
     }
     return curchar ; 
 }
@@ -422,7 +425,7 @@ getcol(meUByte *ss, int off)
         c = *ss++ ;
         if(isDisplayable(c))
             col++ ;
-        else if(c == meTABCHAR)
+        else if(c == meCHAR_TAB)
             col += get_tab_pos(col) + 1 ;
         else if (c  < 0x20)
             col += 2 ;
@@ -453,7 +456,7 @@ setccol(int pos)
         c = meLineGetChar(frameCur->windowCur->dotLine, i);
         if(isDisplayable(c))
             col++ ;
-        else if(c == meTABCHAR)
+        else if(c == meCHAR_TAB)
             col += get_tab_pos(col) + 1 ;
         else if (c  < 0x20)
             col += 2 ;
@@ -552,8 +555,8 @@ transChars(int f, int n)
 int
 transLines(int f, int n)
 {
-    register meLine *ln1, *ln2 ;
-    register int i, j, len ;
+    meLine *ln1, *ln2 ;
+    meInt i, j ;
     
     if((n<0) && (windowBackwardLine(meTRUE, 1) <= 0))
         return meFALSE ;
@@ -562,19 +565,11 @@ transLines(int f, int n)
     lineSetChanged(WFMAIN|WFMOVEL);
     frameCur->windowCur->dotOffset = 0 ;
     
-    for(i=0,j=abs(n) ; i<j ; i++)
+    for(i=0,j=abs(n) ; ; )
     {
         if(((ln1 = frameCur->windowCur->dotLine) == meLineGetPrev(frameCur->bufferCur->baseLine)) ||
            ((ln2 = meLineGetNext(ln1)) == frameCur->bufferCur->baseLine))
-            return meFALSE ;
-#if MEOPT_UNDO
-        len = meLineGetLength(ln1) + meLineGetLength(ln2) + 2 ;
-        meUndoAddDelChars(len) ;
-        /* ZZZZ - yuck */
-        frameCur->windowCur->dotLineNo += 2 ;
-        meUndoAddReplaceEnd(len) ;
-        frameCur->windowCur->dotLineNo -= 2 ;
-#endif
+            break ;
         meLineGetPrev(meLineGetNext(ln2)) = ln1 ;
         meLineGetNext(meLineGetPrev(ln1)) = ln2 ;
         meLineGetPrev(ln2) = meLineGetPrev(ln1) ;
@@ -582,14 +577,40 @@ transLines(int f, int n)
         meLineGetPrev(ln1) = ln2 ;
         meLineGetNext(ln2) = ln1 ;
         frameCur->windowCur->dotLineNo++ ;
+        if(++i == j)
+        {
+            if(n < 0)
+                windowBackwardLine(meTRUE, 1) ;
+            break ;
+        }
         if((n<0) && (windowBackwardLine(meTRUE, 2) <= 0))  
             /* move back over one swapped aswell */
-            return meFALSE ;
+            break ;
     }
-    if(n < 0) 
-        windowForwardLine(meTRUE, 1) ;
+#if MEOPT_UNDO
+    if(i > 0)
+    {
+        meInt *undoInfo ;
+        undoInfo = meUndoAddLineSort(i+1) ;
+        j = 0 ;
+        if(n < 0)
+        {
+            j=0 ;
+            *undoInfo++ = i-- ;
+        }
+        else
+        {
+            j=1 ;
+            undoInfo[-1] -= i ;
+            undoInfo[i] = 0 ;
+        }
+        do
+            *undoInfo++ = j++ ;
+        while(j<=i) ;
+    }
+#endif
     update(meFALSE) ;
-    return (meTRUE);
+    return (i == j) ? meTRUE:meFALSE ;
 }
 
 int
@@ -654,7 +675,7 @@ quote(int f, int n)
         return mlwrite(MWABORT,(meUByte *)"[Cannot quote this key]") ;
     if((s=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
         return s ;
-    if(c == meNLCHAR)
+    if(c == meCHAR_NL)
     {
         f = n ;
         do 
@@ -715,7 +736,7 @@ meTab(int f, int n)
     if(!meModeTest(frameCur->bufferCur->mode,MDTAB))
     {
         /* insert the required number of TABs */
-        ii = insertChar(meTABCHAR,n) ;
+        ii = insertChar(meCHAR_TAB,n) ;
     }
     else
     {
@@ -782,7 +803,7 @@ meBacktab(int f, int n)
             cc = meLineGetChar (frameCur->windowCur->dotLine, doto);
             if (cc != ' ')
             {
-                if (cc == meTABCHAR)	
+                if (cc == meCHAR_TAB)	
                     delspace++;	/* Remove <TAB> char */
                 break;			/* Quit */
             }
@@ -804,7 +825,7 @@ meBacktab(int f, int n)
         /*---	Natural tab spacing. If the previous character is a <TAB> then
            delete the <TAB> character from the line */
         
-        if (meLineGetChar(frameCur->windowCur->dotLine, doto) == meTABCHAR) 
+        if (meLineGetChar(frameCur->windowCur->dotLine, doto) == meCHAR_TAB) 
         {   /* Tab char ?? */
             frameCur->windowCur->dotOffset = doto;		/* Yes - back up */
             return(ldelete(1L,2));	/* and delete */
@@ -1973,28 +1994,28 @@ find_bracket_fence:
                 {
                     if(cc == ')')
                     {
-			    int foundFence=-999 ;
-			    if(frameCur->windowCur->dotLine == lp)
-			    {
-				    if((foundFence=findfence('(',0)) == 1)
-				    {
-					    lp  = frameCur->windowCur->dotLine ;
-					    off = frameCur->windowCur->dotOffset ;
-					    lno = frameCur->windowCur->dotLineNo ;
-				    }
-			    }
-			    if(!brakCont)
-			    {
-				    /* have we found a switch? */
-				    if(foundFence == -999) 
-					    foundFence = findfence('(',0) ;
-				    if((foundFence == 1) &&
-				       (moveToNonWhite(0,&mtnwFlag) != 0) &&
-				       prevCToken((meUByte *)"switch",6))
-					    indent = -1 ;
-			    }
-                            frameCur->windowCur->dotLine = lp ;
-                            frameCur->windowCur->dotLineNo = lno ;
+                        int foundFence=-999 ;
+                        if(frameCur->windowCur->dotLine == lp)
+                        {
+                            if((foundFence=findfence('(',0)) == 1)
+                            {
+                                lp  = frameCur->windowCur->dotLine ;
+                                off = frameCur->windowCur->dotOffset ;
+                                lno = frameCur->windowCur->dotLineNo ;
+                            }
+                        }
+                        if(!brakCont)
+                        {
+                            /* have we found a switch? */
+                            if(foundFence == -999) 
+                                foundFence = findfence('(',0) ;
+                            if((foundFence == 1) &&
+                               (moveToNonWhite(0,&mtnwFlag) != 0) &&
+                               prevCToken((meUByte *)"switch",6))
+                                indent = -1 ;
+                        }
+                        frameCur->windowCur->dotLine = lp ;
+                        frameCur->windowCur->dotLineNo = lno ;
                     }
                     else if(cc == '=')
                     {
@@ -2025,7 +2046,9 @@ find_bracket_fence:
                         }
                         else if((cc == 'n') &&
                                 !meStrncmp(frameCur->windowCur->dotLine->text+frameCur->windowCur->dotOffset,"namespace",9))
+                        {
                             indent = 2 ;
+                        }
                         if(indent)
                             off = frameCur->windowCur->dotOffset ;
                         else
@@ -2142,8 +2165,8 @@ find_bracket_fence:
                         frameCur->windowCur->dotOffset = 0 ;
                         gotoFrstNonWhite() ;
                         brakCont = getccol() ;
-			    frameCur->windowCur->dotOffset = odoto ;
-			    onBrace = 0 ;
+                        frameCur->windowCur->dotOffset = odoto ;
+                        onBrace = 0 ;
                     }
                 }
             }
@@ -2209,7 +2232,7 @@ int
 doCindent(int *inComment)
 {
     meLine *oldlp;    	        /* original line pointer */
-    int   ind=1, curOff, curInd, curPos, cc ; 
+    int   ind=1, curOff, curInd, curPos, cc, ii ; 
     int   addInd=0, comInd=3, onBrace=0 ;
     long  lineno ;
     
@@ -2239,10 +2262,21 @@ doCindent(int *inComment)
                 !meStrncmp(frameCur->windowCur->dotLine->text+frameCur->windowCur->dotOffset,"default",7) &&
                 !isAlpha(frameCur->windowCur->dotLine->text[frameCur->windowCur->dotOffset+7]))
             addInd += caseIndent ;
+        else if((cc == 'p') && 
+                ((ii=7,!meStrncmp(frameCur->windowCur->dotLine->text+frameCur->windowCur->dotOffset,"private",ii)) ||
+                 (ii=6,!meStrncmp(frameCur->windowCur->dotLine->text+frameCur->windowCur->dotOffset,"public",ii)) ||
+                 (ii=9,!meStrncmp(frameCur->windowCur->dotLine->text+frameCur->windowCur->dotOffset,"protected",ii))) &&
+                !isAlpha(frameCur->windowCur->dotLine->text[frameCur->windowCur->dotOffset+ii]))
+        {
+            ii += frameCur->windowCur->dotOffset ;
+            while(((cc = meLineGetChar(frameCur->windowCur->dotLine,ii++)) == ' ') || (cc == '\t'))
+                ;
+            if(cc == ':')
+                addInd -= statementIndent ;
+        }
         else
         {
             /* check to see if its a lable */
-            int ii ;
             ii = curOff ;
             do
                 cc = meLineGetChar(frameCur->windowCur->dotLine,++ii) ;

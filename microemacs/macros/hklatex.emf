@@ -24,7 +24,7 @@ set-variable .fhook-latex.command-flag  "|bo|bo|bo|bo|thb|thb|thb|th|thb|th|th|t
 set-variable .fhook-latex.command-name  "|latex-para|latex-para|latex-backward-paragraph|latex-forward-paragraph|latex-ref-goto-label|latex-ref-go-back|latex-list-label||latex-popup|latex-compile|latex-view|latex-swap-hilight|"
 set-variable .fhook-latex.command-nbind "|||||||||||||"
 set-variable .fhook-latex.command-kbind "|esc o|esc q|esc p|esc n|C-c l|C-c C-l|C-f7||C-6|||C-c C-h|"
-set-variable .fhook-latex.command-desc  "|||||&Goto Reference Label|&Return to Reference|List &Labels||&Insert Token|Com&pile Buffer|&View Buffer|T&oggle hilighting|"
+set-variable .fhook-latex.command-desc  "|||||\HGoto Reference Label|\HReturn to Reference|List \HLabels||\HInsert Token|Com\Hpile Buffer|\HView Buffer|T\Hoggle hilighting|"
 
 ; setup item-list
 set-variable .fhook-latex.item-list-s1 "^[ \t]*\\\\chapter{\\([^}]*\\)}"
@@ -623,62 +623,62 @@ define-macro latex-ref-go-back
 !endif
 
 osd .osd.latex-popgk 0   "b"
-osd .osd.latex-popgk 1   "" "&alpha"           1 latex-popup-greek 
-osd .osd.latex-popgk 2   "" "&beta"            2 latex-popup-greek
-osd .osd.latex-popgk 3   "" "&gamma"           3 latex-popup-greek
-osd .osd.latex-popgk 4   "" "&delta"           4 latex-popup-greek
-osd .osd.latex-popgk 5   "" "&epsilon"         5 latex-popup-greek 
-osd .osd.latex-popgk 6   "" "&my"              6 latex-popup-greek
+osd .osd.latex-popgk 1   "" "\Halpha"           1 latex-popup-greek 
+osd .osd.latex-popgk 2   "" "\Hbeta"            2 latex-popup-greek
+osd .osd.latex-popgk 3   "" "\Hgamma"           3 latex-popup-greek
+osd .osd.latex-popgk 4   "" "\Hdelta"           4 latex-popup-greek
+osd .osd.latex-popgk 5   "" "\Hepsilon"         5 latex-popup-greek 
+osd .osd.latex-popgk 6   "" "\Hmy"              6 latex-popup-greek
 
 osd .osd.latex-pophd 0   "b"
-osd .osd.latex-pophd 1   "" "&1 chapter"       1 latex-popup-header
-osd .osd.latex-pophd 2   "" "&2 section"       2 latex-popup-header
-osd .osd.latex-pophd 3   "" "&3 subsection"    3 latex-popup-header
-osd .osd.latex-pophd 4   "" "&4 subsubsection" 4 latex-popup-header
-osd .osd.latex-pophd 5   "" "&5 paragraph"     5 latex-popup-header
-osd .osd.latex-pophd 6   "" "&6 subparagraph"  6 latex-popup-header
+osd .osd.latex-pophd 1   "" "\H1 chapter"       1 latex-popup-header
+osd .osd.latex-pophd 2   "" "\H2 section"       2 latex-popup-header
+osd .osd.latex-pophd 3   "" "\H3 subsection"    3 latex-popup-header
+osd .osd.latex-pophd 4   "" "\H4 subsubsection" 4 latex-popup-header
+osd .osd.latex-pophd 5   "" "\H5 paragraph"     5 latex-popup-header
+osd .osd.latex-pophd 6   "" "\H6 subparagraph"  6 latex-popup-header
 
 osd .osd.latex-popsb 0   "b"
-osd .osd.latex-popsb 1   "" "&1 TM"            1 latex-popup-symbol
-osd .osd.latex-popsb 2   "" "&2 ©"             2 latex-popup-symbol
-osd .osd.latex-popsb 3   "" "&3 ®"             3 latex-popup-symbol
+osd .osd.latex-popsb 1   "" "\H1 TM"            1 latex-popup-symbol
+osd .osd.latex-popsb 2   "" "\H2 ©"             2 latex-popup-symbol
+osd .osd.latex-popsb 3   "" "\H3 ®"             3 latex-popup-symbol
 osd .osd.latex-popsb 4   "-" 
-osd .osd.latex-popsb 5   "" "&4 quotes „"      4 latex-popup-symbol
-osd .osd.latex-popsb 6   "" "&5 quotes \""     5 latex-popup-symbol
+osd .osd.latex-popsb 5   "" "\H4 quotes „"      4 latex-popup-symbol
+osd .osd.latex-popsb 6   "" "\H5 quotes \""     5 latex-popup-symbol
 
 osd .osd.latex-poprf 0   "b"
-osd .osd.latex-poprf 1   "" "&ref"             1 latex-popup-reference
-osd .osd.latex-poprf 2   "" "&pageref"         2 latex-popup-reference
-osd .osd.latex-poprf 3   "" "&label"           3 latex-popup-reference
-osd .osd.latex-poprf 4   "" "&cite"            4 latex-popup-reference
+osd .osd.latex-poprf 1   "" "\Href"             1 latex-popup-reference
+osd .osd.latex-poprf 2   "" "\Hpageref"         2 latex-popup-reference
+osd .osd.latex-poprf 3   "" "\Hlabel"           3 latex-popup-reference
+osd .osd.latex-poprf 4   "" "\Hcite"            4 latex-popup-reference
 
 osd .osd.latex-popft 0   "b"
-osd .osd.latex-popft 1   "" "&textbf"          1 latex-popup-format
-osd .osd.latex-popft 2   "" "text&it"          2 latex-popup-format
+osd .osd.latex-popft 1   ""  "\Htextbf"         1 latex-popup-format
+osd .osd.latex-popft 2   ""  "text\Hit"         2 latex-popup-format
 osd .osd.latex-popft 3   "-" 
-osd .osd.latex-popft 4  "" "&Large"            3 latex-popup-format
-osd .osd.latex-popft 5   "" "l&arge"           4 latex-popup-format
-osd .osd.latex-popft 6   "" "&small"           5 latex-popup-format
-osd .osd.latex-popft 7   "" "&footnotesize"    6 latex-popup-format
-osd .osd.latex-popft 8   "" "s&criptsize"      7 latex-popup-format
+osd .osd.latex-popft 4   ""  "\HLarge"          3 latex-popup-format
+osd .osd.latex-popft 5   ""  "l\Harge"          4 latex-popup-format
+osd .osd.latex-popft 6   ""  "\Hsmall"          5 latex-popup-format
+osd .osd.latex-popft 7   ""  "\Hfootnotesize"   6 latex-popup-format
+osd .osd.latex-popft 8   ""  "s\Hcriptsize"     7 latex-popup-format
 osd .osd.latex-popft 9   "-"             
-osd .osd.latex-popft 10   "" "&high number"    1 latex-make-format
-osd .osd.latex-popft 20   "" "lo&w number"     2 latex-make-format
-osd .osd.latex-popft 29   "-"     
-osd .osd.latex-popft 30   "" "&make italic"    3 latex-make-format
-osd .osd.latex-popft 40   "" "make &bold"      4 latex-make-format
+osd .osd.latex-popft 10  ""  "\Hhigh number"    1 latex-make-format
+osd .osd.latex-popft 20  ""  "lo\Hw number"     2 latex-make-format
+osd .osd.latex-popft 29  "-"     
+osd .osd.latex-popft 30  ""  "\Hmake italic"    3 latex-make-format
+osd .osd.latex-popft 40  ""  "make \Hbold"      4 latex-make-format
 
 osd .osd.latex-popev 0   "b"
-osd .osd.latex-popev 1   ""  "&enumerate"      1 latex-popup-environment
-osd .osd.latex-popev 2   ""  "&itemize"        2 latex-popup-environment
+osd .osd.latex-popev 1   ""  "\Henumerate"      1 latex-popup-environment
+osd .osd.latex-popev 2   ""  "\Hitemize"        2 latex-popup-environment
 
 osd .osd.latex-popup 0   "b"
-osd .osd.latex-popup 1   "Md"  "&Header"        .osd.latex-pophd
-osd .osd.latex-popup 2   "Md"  "&References"    .osd.latex-poprf
-osd .osd.latex-popup 3   "Md"  "&Format"        .osd.latex-popft
-osd .osd.latex-popup 4   "Md"  "&Environment"   .osd.latex-popev
-osd .osd.latex-popup 5   "Md"  "&Greek"         .osd.latex-popgk
-osd .osd.latex-popup 6   "Md"  "&Symbols"       .osd.latex-popsb
+osd .osd.latex-popup 1   "M" "\HHeader"        .osd.latex-pophd
+osd .osd.latex-popup 2   "M" "\HReferences"    .osd.latex-poprf
+osd .osd.latex-popup 3   "M" "\HFormat"        .osd.latex-popft
+osd .osd.latex-popup 4   "M" "\HEnvironment"   .osd.latex-popev
+osd .osd.latex-popup 5   "M" "\HGreek"         .osd.latex-popgk
+osd .osd.latex-popup 6   "M" "\HSymbols"       .osd.latex-popsb
 
 define-macro latex-popup 
     !if @#

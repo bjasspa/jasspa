@@ -21,7 +21,7 @@ set-variable .fhook-man.command-flag  "|bo|bo|thbio|th|th|"
 set-variable .fhook-man.command-name  "|man-backward-word|man-forward-word|man-process-link||man-clean|"
 set-variable .fhook-man.command-nbind "||||||"
 set-variable .fhook-man.command-kbind "|C-left|C-right|return|||"
-set-variable .fhook-man.command-desc  "|||&Goto Link||&Clean Man-page|"
+set-variable .fhook-man.command-desc  "|||\HGoto Link||\HClean Man-page|"
 
 set-variable .fhook-man.item-list-s1 "^\\([-A-Z][-A-Z\CH ]+\\)"
 set-variable .fhook-man.item-list-r1 "Sec \\1"

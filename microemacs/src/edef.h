@@ -694,8 +694,8 @@ meUShort  prefixc[ME_PREFIX_NUM+1]=
 meUShort  reptc    = 'U'-'@';           /* current universal repeat char*/
 meUShort  breakc   = 'G'-'@';           /* current abort-command char*/
 
-meKill    *klhead    = NULL;             /* klist header pointer            */
-meUByte   lkbdptr[meKBDMACRO_SIZE_MAX];               /* Holds last keybd macro data     */
+meKill    *klhead  = NULL;              /* klist header pointer            */
+meUByte   lkbdptr[meBUF_SIZE_MAX];      /* Holds last keybd macro data     */
 int       lkbdlen=0;                    /* Holds length of last macro      */
 meUByte  *kbdptr=NULL;                  /* start of current keyboard buf   */
 int       kbdlen=0;                     /* len of current macro            */

@@ -23,7 +23,7 @@ set-variable .fhook-nroff.command-flag  "|thbo|bo|thb|thb|th|thb|thb|thb|thb|th|
 set-variable .fhook-nroff.command-name  "|nroff-para|nroff-para|nroff-add-padding|nroff-remove-padding||nroff-bold|nroff-italic|nroff-mono|nroff-roman||nroff-bold-region|nroff-mono-region|nroff-italic-region||nroff-swap-hilight|tex2nr|"
 set-variable .fhook-nroff.command-nbind "|||||||||||||||||"
 set-variable .fhook-nroff.command-kbind "|esc q|esc o|C-c &|C-x &||C-c C-b|C-c C-i|C-c C-m|C-c C-n||C-c b|C-c m|C-c i||C-c C-h||"
-set-variable .fhook-nroff.command-desc  "|&Fill paragraph||&Add Padding|Remove &Padding||Change to &Bold|Change to &Italic|Change to &Mono (Courier)|Change to &Normal (Roman)||R&egion to Bold|Region to Mono|Re&gion to Italic||T&oggle hilighting|Convert Tex to Nroff|"
+set-variable .fhook-nroff.command-desc  "|\HFill paragraph||\HAdd Padding|Remove \HPadding||Change to \HBold|Change to \HItalic|Change to \HMono (Courier)|Change to \HNormal (Roman)||R\Hegion to Bold|Region to Mono|Re\Hgion to Italic||T\Hoggle hilighting|Convert Tex to Nroff|"
 set-variable %usr1mode "off"
 
 ; setup nroff collapsing

@@ -149,20 +149,10 @@ define-macro i-shell
     shell
 !emacro
 define-macro incremental-search
-    !force set-variable #l0 @1
-    !if $status
-        isearch-forward #l0
-    !else
-        !nma isearch-forward
-    !endif
+    !nma isearch-forward
 !emacro
 define-macro reverse-incremental-search
-    !force set-variable #l0 @1
-    !if $status
-        isearch-backward #l0
-    !else
-        !nma isearch-backward
-    !endif
+    !nma isearch-backward
 !emacro
 define-macro search-reverse
     !force set-variable #l0 @1

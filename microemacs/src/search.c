@@ -49,11 +49,11 @@
 /*--- Local variable definitions */
 
 static meUByte notFoundStr[] ="[Not Found]";
-static int exactFlag = 1;                   /* Use to cache EXACT mode state */
-meUByte  srchPat [mePATBUF_SIZE_MAX]="";    /* Search pattern array */
-meUByte  srchRPat[mePATBUF_SIZE_MAX]="";    /* Reversed pattern array */
-int      srchLastState=meFALSE;             /* status of last search */
-meUByte *srchLastMatch=NULL;                /* pointer to the last match string */
+static int exactFlag ;                      /* Use to cache EXACT mode state */
+meUByte  srchPat [meBUF_SIZE_MAX] ;         /* Search pattern array */
+meUByte  srchRPat[meBUF_SIZE_MAX] ;         /* Reversed pattern array */
+int      srchLastState=meFALSE ;            /* status of last search */
+meUByte *srchLastMatch=NULL ;               /* pointer to the last match string */
 
 /*
  * boundry -- Return information depending on whether we may search no
@@ -63,8 +63,8 @@ meUByte *srchLastMatch=NULL;                /* pointer to the last match string 
  *      meFALSE depending on if a boundry is hit (ouch).
  */
 #define boundry(curline,curoff,dir)                                          \
-(((dir) == meFORWARD) ?                                                        \
- (curline == frameCur->bufferCur->baseLine) :                                               \
+(((dir) == meFORWARD) ?                                                      \
+ (curline == frameCur->bufferCur->baseLine) :                                \
  ((curoff == 0) && (meLineGetPrev(curline) == frameCur->bufferCur->baseLine)))
 
 
@@ -83,371 +83,11 @@ do {                                                                         \
         if((mereNewlBuf = meRealloc(mereNewlBuf,ll+128)) == NULL)            \
         {                                                                    \
             mereNewlBufSz = 0 ;                                              \
-            return meFALSE ;                                                   \
+            return meFALSE ;                                                 \
         }                                                                    \
         mereNewlBufSz = ll+127 ;                                             \
     }                                                                        \
 } while(0)
-
-#ifdef _GNU_REGEX
-
-struct re_pattern_buffer mereBuffer={0} ;
-struct re_registers mereRegs={0} ;
-meUByte        mereLastPat[mePATBUF_SIZE_MAX]="";  /* last pattern array - reset by set-char-mask */
-static meUByte mereTranslate[256] ;
-int          mereNumRegs=0 ;
-static int   mereNumNewl=0 ;
-
-
-static int
-mere_compile_pattern(meUByte *apat)
-{
-    const char *err ;
-    char cc, *ss ;
-    int ii, ll ;
-    
-    if(!mereBuffer.allocated)
-    {
-        re_syntax_options = RE_CHAR_CLASSES|RE_INTERVALS ;
-        mereBuffer.allocated = 8;
-        mereBuffer.buffer = malloc(mereBuffer.allocated);
-        mereBuffer.fastmap = malloc(256);
-        mereBuffer.regs_allocated = REGS_UNALLOCATED;
-    }
-    else if(!strcmp(apat,mereLastPat))
-        return meREGEX_OKAY ;
-
-    /* set-up the translation table */
-    if(exactFlag)
-    {
-        /* Map uppercase characters to corresponding lowercase ones.  */
-        for (ii = 1; ii < 256 ; ii++)
-            mereTranslate[ii] = toLower(ii) ;
-        mereBuffer.translate = mereTranslate ;
-    }
-    else
-        mereBuffer.translate = NULL ;
-    
-    mereNumNewl = 0 ; 
-    ss = apat ;
-    ll = 0 ;
-    while((cc=*ss++) != '\0')
-    {
-        if(cc == meNLCHAR)
-            mereNumNewl++ ;
-        ll++ ;
-    }
-    if((err=re_compile_pattern (apat,ll,&mereBuffer)) != NULL)
-    {
-        if(reportErrors)
-            mlwrite(MWABORT,"[Regex Error: %s]",err) ;
-        return meREGEX_ERROR_UNKNOWN ;
-    }
-    strncpy(mereLastPat,apat,mePATBUF_SIZE_MAX-1) ;
-    mereLastPat[mePATBUF_SIZE_MAX-1] = '\0' ;
-    return meREGEX_OKAY ;
-}
-
-static int
-mere_scanner(int direct, int beg_or_end, int *n, SCANNERPOS *sp)
-{
-    register meLine *lp=frameCur->windowCur->dotLine, *nlp ;
-    register meInt lnno=frameCur->windowCur->dotLineNo, nlnno ;
-    register int   ii=frameCur->windowCur->dotOffset, jj=meLineGetLength(lp), kk, count=*n ;
-    
-    srchLastState = meFALSE ;
-    /* Moved the TTbreakTest() to the start of the loop as some of the
-     * main problems as caused by search string with no length, such as ^,
-     * or [ ]*$ on a line with no end spaces. In these cases is the user
-     * is trying to replace it then they couldn't interupt as this
-     * immediately returned success, hence the move!
-     */
-    if(TTbreakTest(1))
-    {
-        ctrlg(meFALSE,1) ;
-        return meFALSE ;
-    }
-    /* treat the first line as a special case */
-    if(direct == meFORWARD)
-    {
-        if(lp == frameCur->bufferCur->baseLine)
-            return meFALSE ;
-        ii = re_search_2(&mereBuffer,NULL,0,(char *) meLineGetText(lp),jj,
-                         ii,jj-ii,&mereRegs,jj) ;
-    }
-    /* special case on the first line if going backward, if ii is 0
-     * it cannot match and we must catch this case as 0-ii == 0 == forward! */
-    else if(ii != 0)
-    {
-        ii = re_search_2(&mereBuffer,NULL,0,(char *) meLineGetText(lp),jj,
-                         ii-1,0-ii,&mereRegs,jj) ;
-    }
-    else
-        ii = -1 ;
-    
-    if(ii >= 0)
-    {
-        kk = mereRegs.end[0] ;
-        nlp = lp ;
-        nlnno = lnno ;
-        jj = kk - ii ;
-        mereNewlBufSzCheck(jj) ;
-        memcpy(mereNewlBuf,meLineGetText(lp)+ii,jj) ;
-        srchLastMatch = mereNewlBuf ;
-    }
-    else if(mereNumNewl == 0)
-    {
-        if(direct == meFORWARD)
-        {
-            /* On entry, if count=0 then no line limit, therefore test if (--count == 0) as count == -1 */ 
-            while((--count != 0) && ((lp=meLineGetNext(lp)) != frameCur->bufferCur->baseLine))
-            {
-                if(TTbreakTest(1))
-                {
-                    ctrlg(meFALSE,1) ;
-                }
-                lnno++ ;
-                ii = meLineGetLength(lp) ;
-                if((ii=re_search_2(&mereBuffer,NULL,0,(char *) meLineGetText(lp),ii,
-                                   0,ii,&mereRegs,ii)) >= 0)
-                    break ;
-            }
-        }
-        else
-        {
-            while((--count != 0) && ((lp=meLineGetPrev(lp)) != frameCur->bufferCur->baseLine))
-            {
-                if(TTbreakTest(1))
-                {
-                    ctrlg(meFALSE,1) ;
-                    return meFALSE ;
-                }
-                lnno-- ;
-                ii = meLineGetLength(lp) ;
-                if((ii=re_search_2(&mereBuffer,NULL,0,(char *) meLineGetText(lp),ii,
-                                   ii,-ii,&mereRegs,ii)) >= 0)
-                    break ;
-            }
-        }
-        if(ii < 0)
-            return meFALSE ;
-        kk = mereRegs.end[0] ;
-        nlp = lp ;
-        nlnno = lnno ;
-        jj = kk - ii ;
-        mereNewlBufSzCheck(jj) ;
-        memcpy(mereNewlBuf,meLineGetText(lp)+ii,jj) ;
-        srchLastMatch = mereNewlBuf ;
-    }
-    else if(--count == 0)
-        return meFALSE ;
-    else
-    {
-        /* treat the 1st-2nd line as a special case */
-        ii = frameCur->windowCur->dotOffset ;
-        if(direct == meFORWARD)
-        {
-            nlp = meLineGetNext(lp) ;
-            kk = meLineGetLength(nlp) ;
-            meLineSetChar(lp,jj,meNLCHAR) ;
-            ii = re_search_2(&mereBuffer,(char *) meLineGetText(lp),jj+1,(char *) meLineGetText(nlp),kk,
-                             ii,jj+1+kk-ii,&mereRegs,jj+1+kk) ;
-            meLineSetChar(lp,jj,0) ;
-        }
-        else
-        {
-            nlp = lp ;
-            lp = meLineGetPrev(lp) ;
-            if(lp == frameCur->bufferCur->baseLine)
-                return meFALSE ;
-            lnno-- ;
-            kk = jj ;
-            jj = meLineGetLength(lp) ;
-            meLineSetChar(lp,jj,meNLCHAR) ;
-            ii = re_search_2(&mereBuffer,(char *) meLineGetText(lp),jj+1,(char *) meLineGetText(nlp),kk,
-                             jj+1+((ii) ? ii-1:0),0-(jj+1+ii),&mereRegs,jj+1+kk) ;
-            meLineSetChar(lp,jj,0) ;
-        }
-        if(ii < 0)
-        {
-            if(mereNumNewl == 1)
-            {
-                if(direct == meFORWARD)
-                {
-                    /* On entry, if count=0 then no line limit, therefore test if (--count == 0) as count == -1 */ 
-                    while((--count != 0) && ((lp=nlp) != frameCur->bufferCur->baseLine))
-                    {
-                        if(TTbreakTest(1))
-                        {
-                            ctrlg(meFALSE,1) ;
-                            return meFALSE ;
-                        }
-                        lnno++ ;
-                        jj = kk ;
-                        nlp = meLineGetNext(nlp) ;
-                        kk = meLineGetLength(nlp) ;
-                        meLineSetChar(lp,jj,meNLCHAR) ;
-                        ii = re_search_2(&mereBuffer,(char *) meLineGetText(lp),jj+1,(char *) meLineGetText(nlp),kk,
-                                         0,jj+1+kk,&mereRegs,jj+1+kk) ;
-                        meLineSetChar(lp,jj,0) ;
-                        if(ii >= 0)
-                            break ;
-                    }
-                }
-                else
-                {
-                    /* On entry, if count=0 then no line limit, therefore test if (--count == 0) as count == -1 */ 
-                    while((--count != 0) && ((nlp=lp),((lp=meLineGetPrev(lp)) != frameCur->bufferCur->baseLine)))
-                    {
-                        if(TTbreakTest(1))
-                        {
-                            ctrlg(meFALSE,1) ;
-                            return meFALSE ;
-                        }
-                        lnno-- ;
-                        kk = jj ;
-                        jj = meLineGetLength(lp) ;
-                        meLineSetChar(lp,jj,meNLCHAR) ;
-                        ii = re_search_2(&mereBuffer,(char *) meLineGetText(lp),jj+1,(char *) meLineGetText(nlp),kk,
-                                         jj+1+kk,0-(jj+1+kk),&mereRegs,jj+1+kk) ;
-                        meLineSetChar(lp,jj,0) ;
-                        if(ii >= 0)
-                            break ;
-                    }
-                }
-                
-            }
-            else
-            {
-                /* generic multi-line case */
-                int noln=2, tnoln=mereNumNewl+1, offs ;
-                
-                if(direct == meFORWARD)
-                    offs = frameCur->windowCur->dotOffset ;
-                else
-                    offs = meLineGetLength(frameCur->windowCur->dotLine)-frameCur->windowCur->dotOffset ;
-                while(--count != 0)
-                {
-                    if(TTbreakTest(1))
-                    {
-                        ctrlg(meFALSE,1) ;
-                        return meFALSE ;
-                    }
-                    if(direct == meFORWARD)
-                    {
-                        if(nlp == frameCur->bufferCur->baseLine)
-                            break ;
-                        if(noln == tnoln)
-                        {
-                            lnno++ ;
-                            lp = meLineGetNext(lp) ;
-                        }
-                    }
-                    else
-                    {
-                        if((lp=meLineGetPrev(lp)) == frameCur->bufferCur->baseLine)
-                            break ;
-                        lnno-- ;
-                    }
-                    if(noln == tnoln)
-                        offs = 0 ;
-                    else
-                        noln++ ;
-                    ii = noln ;
-                    jj = ii ;
-                    nlp = lp ;
-                    while(--ii >= 0)
-                    {
-                        jj += meLineGetLength(nlp) ;
-                        nlp = meLineGetNext(nlp) ;
-                    }
-                    mereNewlBufSzCheck(jj) ;
-                    ii = noln ;
-                    jj = 0 ;
-                    nlp = lp ;
-                    for(;;)
-                    {
-                        kk = meLineGetLength(nlp) ;
-                        memcpy(mereNewlBuf+jj,meLineGetText(nlp),kk) ;
-                        jj += kk ;
-                        /* we don't want the last \n or move nlp to past the
-                         * last line so drop out here */
-                        if(--ii == 0)
-                            break ;
-                        mereNewlBuf[jj++] = meNLCHAR ;
-                        nlp = meLineGetNext(nlp) ;
-                    }
-                    if(direct == meFORWARD)
-                        ii = re_search_2(&mereBuffer,NULL,0,mereNewlBuf,jj,
-                                         offs,jj,&mereRegs,jj) ;
-                    else
-                        ii = re_search_2(&mereBuffer,NULL,0,mereNewlBuf,jj,
-                                         jj-((offs) ? offs-1:0),0-(jj-offs),&mereRegs,jj) ;
-                    if(ii >= 0)
-                        break ;
-                }
-            }
-            if(ii < 0)
-                return meFALSE ;
-        }
-        kk = mereRegs.end[0] ;
-        srchLastMatch = mereNewlBuf+ii ;
-        while(ii > meLineGetLength(lp))
-        {
-            jj = meLineGetLength(lp)+1 ;
-            ii -= jj ;
-            kk -= jj ;
-            lnno++ ;
-            lp = meLineGetNext(lp) ;
-        }
-        nlp = lp ;
-        nlnno = lnno ;
-        while(kk > meLineGetLength(nlp))
-        {
-            kk -= meLineGetLength(nlp)+1 ;
-            nlnno++ ;
-            nlp = meLineGetNext(nlp) ;
-        }
-    }
-    if(beg_or_end == PTEND)
-    {
-        frameCur->windowCur->dotLine = nlp ;
-        frameCur->windowCur->dotLineNo = nlnno ;
-        frameCur->windowCur->dotOffset = kk ;
-    }
-    else
-    {
-        frameCur->windowCur->dotLine = lp ;
-        frameCur->windowCur->dotLineNo = lnno ;
-        frameCur->windowCur->dotOffset = ii ;
-    }
-    if (sp != NULL)
-    {
-        sp->startline = lp ;
-        sp->startline_no = lnno ;
-        sp->startoff = ii ;
-        sp->endline = nlp ;
-        sp->endline_no = nlnno ;
-        sp->endoffset = kk ;
-    }
-    setShowRegion(frameCur->bufferCur,lnno,ii,nlnno,kk) ;
-    frameCur->windowCur->flag |= WFMOVEL|WFSELHIL ;
-    /* change the regs \( \) start and end points so the start is at zero */
-    ii = mereRegexGroupStart(0) ;
-    jj = mereNumRegs = mereBuffer.re_nsub ;
-    do {
-        if(mereRegexGroupStart(jj) >= 0)
-        {#
-            mereRegexGroupStart(jj) -= ii ;
-            mereRegexGroupEnd(jj)   -= ii ;
-        }
-    } while(--jj >= 0) ;
-    srchLastMatch[mereRegexGroupEnd(0)] = '\0' ;
-    srchLastState = meTRUE ;
-    return meTRUE ;
-}
-
-#else
 
 meRegex mereRegex ;
 
@@ -619,7 +259,7 @@ mere_scanner(int direct, int beg_or_end, int *n, SCANNERPOS *sp)
                  * last line so drop out here */
                 if(--ii == 0)
                     break ;
-                mereNewlBuf[jj++] = meNLCHAR ;
+                mereNewlBuf[jj++] = meCHAR_NL ;
                 nlp = meLineGetNext(nlp) ;
             }
             mereNewlBuf[jj] = '\0' ;
@@ -702,8 +342,6 @@ mere_scanner(int direct, int beg_or_end, int *n, SCANNERPOS *sp)
     *n = count ;
     return meTRUE ;
 }
-
-#endif
 
 #endif
 
@@ -794,9 +432,9 @@ scanner(meUByte *patrn, int direct, int beg_or_end, int *count,
                     curline = meLineGetNext(curline) ;  /* skip to next line */
                     curlnno++ ;
                     curptr = curline->text ;
-                    cc = meNLCHAR;        /* and return a <NL> */
+                    cc = meCHAR_NL;        /* and return a <NL> */
                     if((*count > 0) && (--(*count) == 0) &&
-                       ((patrn[0] != meNLCHAR) || (patrn[1] != '\0')))
+                       ((patrn[0] != meCHAR_NL) || (patrn[1] != '\0')))
                         /* must check that the pattern isn't "\n" */
                         break ;
                 }
@@ -814,7 +452,7 @@ scanner(meUByte *patrn, int direct, int beg_or_end, int *count,
                         break ;
                     curlnno-- ;
                     curoff = meLineGetLength(curline);
-                    cc = meNLCHAR;
+                    cc = meCHAR_NL;
                 }
             }
             else
@@ -846,7 +484,7 @@ scanner(meUByte *patrn, int direct, int beg_or_end, int *count,
                             matchline = meLineGetNext(matchline) ; /* skip to next line */
                             matchlnno++ ;
                             matchptr = matchline->text ;
-                            cc = meNLCHAR;          /* and return a <NL> */
+                            cc = meCHAR_NL;          /* and return a <NL> */
                         }
                     }
                 }
@@ -860,7 +498,7 @@ scanner(meUByte *patrn, int direct, int beg_or_end, int *count,
                         {
                             matchlnno-- ;
                             matchoff = meLineGetLength(matchline);
-                            cc = meNLCHAR;
+                            cc = meCHAR_NL;
                         }
                     }
                     else
@@ -991,17 +629,32 @@ expandexp(int slen, meUByte *s, int dlen, int doff, meUByte *d,
     {
         if(cpos == ii)
             *opos = doff ;
-        if(((cc = *s++) == 0xff) && (flags & meEXPAND_FFZERO))
+        if(((cc = *s++) == meCHAR_LEADER) && (flags & meEXPAND_FFZERO))
         {
-            if((cc = *s++) == 2)
+            if((cc = *s++) == meCHAR_TRAIL_NULL)
+                cc = 0 ;
+            else if(cc == meCHAR_TRAIL_SPECIAL)
             {
                 d[doff++] = '\\' ;
                 d[doff++] = 's' ;
                 cc = *s++ ;
                 ii++ ;
             }
-            else if(cc == 1)
-                cc = 0 ;
+            else if(cc == meCHAR_TRAIL_HOTKEY)
+            {
+                d[doff++] = '\\' ;
+                cc = 'H' ;
+            }
+            else if(cc == meCHAR_TRAIL_HILSTART)
+            {
+                d[doff++] = '\\' ;
+                cc = '{' ;
+            }
+            else if(cc == meCHAR_TRAIL_HILSTOP)
+            {
+                d[doff++] = '\\' ;
+                cc = '}' ;
+            }
             ii++ ;
         }
         doff += expandchar( ((int) cc) & 0xff, d+doff, flags) ;
@@ -1021,8 +674,8 @@ rvstrcpy(register meUByte *str)
     register meUByte *rvstr ;
     register int ii ;
     
-    if((ii = meStrlen(str)) > mePATBUF_SIZE_MAX-1)
-        ii = mePATBUF_SIZE_MAX-1;
+    if((ii = meStrlen(str)) > meBUF_SIZE_MAX-1)
+        ii = meBUF_SIZE_MAX-1;
     
     rvstr = srchRPat+ii ;
     *rvstr = '\0' ;
@@ -1051,7 +704,7 @@ readpattern(meUByte *prompt, int defnum)
      * Then, if it's the search string, make a reversed pattern.
      * *Then*, make the meta-pattern, if we are defined that way.
      */
-    if((status = meGetString(prompt,MLSEARCH,defnum,srchPat,mePATBUF_SIZE_MAX)) > 0)
+    if((status = meGetString(prompt,MLSEARCH,defnum,srchPat,meBUF_SIZE_MAX)) > 0)
     {
         exactFlag = (meModeTest(frameCur->bufferCur->mode,MDEXACT) == 0);
 #if MEOPT_MAGIC
@@ -1094,7 +747,7 @@ replaces(int kind, int ff, int nn)
     register int i;		/* loop index */
     register int slength;	/* Length of search string */
     register int rlength;	/* length of replace string */
-    meUByte        rpat[mePATBUF_SIZE_MAX];	/* replacement pattern		*/
+    meUByte        rpat[meBUF_SIZE_MAX];	/* replacement pattern		*/
     int	         numsub;	/* number of substitutions */
     int	         nummatch;	/* number of found matches */
     int	         status;	/* success flag on pattern inputs */
@@ -1111,7 +764,7 @@ replaces(int kind, int ff, int nn)
     
     int 	cc;		/* input char for query */
     meUByte	tmpc;		/* temporary character */
-    meUByte	tpat[mePATBUF_SIZE_MAX];	/* temporary to hold search pattern */
+    meUByte	tpat[meBUF_SIZE_MAX];	/* temporary to hold search pattern */
     
     /* Determine if we are  in the correct viewing  mode, and if the number
        of repetitions is correct. */
@@ -1154,7 +807,7 @@ replaces(int kind, int ff, int nn)
             /* Set up flags so we can make sure not to do a recursive
              * replace on the last line. */
             
-            nlflag = (srchPat[slength - 1] == meNLCHAR);
+            nlflag = (srchPat[slength - 1] == meCHAR_NL);
             nlrepl = meFALSE;
             state_mc = SL_GETREPLACE;	/* Move to next state */
             break;
@@ -1163,10 +816,10 @@ replaces(int kind, int ff, int nn)
         case SL_INCREPLACE :	/* Ask for incremental replacement */
             
             meStrcpy(tpat,"Replace [") ;
-            i = expandexp(-1,srchPat, mePATBUF_SIZE_MAX-17, 9, tpat, -1, NULL, 0) ;
+            i = expandexp(-1,srchPat, meBUF_SIZE_MAX-17, 9, tpat, -1, NULL, 0) ;
             meStrcpy(tpat+i,"] with");
             
-            if ((status=meGetString(tpat,MLSEARCH,0,rpat,mePATBUF_SIZE_MAX)) <= 0)
+            if ((status=meGetString(tpat,MLSEARCH,0,rpat,meBUF_SIZE_MAX)) <= 0)
             {
                 lastReplace = 0 ;
                 return status ;
@@ -1178,7 +831,7 @@ replaces(int kind, int ff, int nn)
             {
                 tpat[i+6] = ' ' ;
                 tpat[i+7] = '[' ;
-                i = expandexp(-1,rpat, mePATBUF_SIZE_MAX-i-13, i+8, tpat, -1, NULL, 0) ;
+                i = expandexp(-1,rpat, meBUF_SIZE_MAX-i-13, i+8, tpat, -1, NULL, 0) ;
                 meStrcpy(tpat+i,"] ? ") ;
             }            
             state_mc = (state_mc == SL_GETREPLACE) ?
@@ -1261,7 +914,7 @@ replaces(int kind, int ff, int nn)
              *  just make it work!
              */
             {
-                meUByte srchPatStore[mePATBUF_SIZE_MAX];	/* replacement pattern		*/
+                meUByte srchPatStore[meBUF_SIZE_MAX];	/* replacement pattern		*/
 #if MEOPT_MAGIC
                 meRegexGroup groupStore[10] ;
                 int ii, srchLastMagicStore ;
@@ -1444,7 +1097,7 @@ replaces(int kind, int ff, int nn)
                             for(k=mereRegexGroupEnd(tmpc) ;
                                 ((j < k) && (status > 0)); ilength++)
                             {
-                                if ((tmpc=dpat[j++]) != meNLCHAR)
+                                if ((tmpc=dpat[j++]) != meCHAR_NL)
                                     status = lineInsertChar(1, tmpc);
                                 else
                                     status = lineInsertNewline(meFALSE);
@@ -1462,7 +1115,7 @@ replaces(int kind, int ff, int nn)
                             tmpc = '\r' ;
                         else if(tmpc == 't')
                             tmpc = '\t' ;
-                        if (tmpc != meNLCHAR)
+                        if (tmpc != meCHAR_NL)
                             status = lineInsertChar(1, tmpc);
                         else
                             status = lineInsertNewline(meFALSE);
@@ -1471,7 +1124,7 @@ replaces(int kind, int ff, int nn)
                 else
 #endif
                 {
-                    if (tmpc != meNLCHAR)
+                    if (tmpc != meCHAR_NL)
                         status = lineInsertChar(1, tmpc);
                     else
                         status = lineInsertNewline(meFALSE);
@@ -1789,10 +1442,7 @@ iscanner(meUByte *apat, int n, int flags, SCANNERPOS *sp)
 void srchFreeMemory(void)
 {
 #if MEOPT_MAGIC
-#ifdef _GNU_REGEX
-#else
     meRegexFree(&mereRegex) ;
-#endif
 #endif
 }
 #endif

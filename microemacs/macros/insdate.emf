@@ -48,7 +48,7 @@
         set-variable #l2 &rep #l2 "#K" &spr "%02d" &mid #l0 14 2
         set-variable #l2 &rep #l2 "#L" &spr "%02d" &mid #l0 16 2
         set-variable #l2 &rep #l2 "##" "#"
-        osd 31 #l1 "" &spr "&%s %s" &itoa &add #l1 64 #l2 f osd-insert-date-exec
+        osd 31 #l1 "" &spr "\H%s %s" &itoa &add #l1 64 #l2 f osd-insert-date-exec
     !done
 !emacro
 

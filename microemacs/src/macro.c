@@ -357,7 +357,7 @@ helpBufferLoad(meBuffer *hbp)
 {
     if(!meModeTest(hbp->mode,MDUSR1))
     {
-        meUByte fname[meFILEBUF_SIZE_MAX] ;
+        meUByte fname[meBUF_SIZE_MAX] ;
     
         meModeSet(hbp->mode,MDUSR1) ;
         if(!fileLookup(helpFileName,NULL,meFL_CHECKDOT|meFL_USESRCHPATH,fname))

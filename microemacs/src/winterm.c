@@ -1107,50 +1107,99 @@ meGetConsoleMessage(MSG *msg)
 static void
 WinSpecialChar (HDC hdc, CharMetrics *cm, int x, int y, meUByte cc, COLORREF fcol)
 {
-    POINT points [3];                   /* Triangular points */
+    POINT points [4];                   /* Triangular points */
     int ii ;
 
     /* Fill in the character */
     switch (cc)
     {
+    case 0x01:          /* checkbox left side ([) */
+        MoveToEx (hdc, x + cm->sizeX - 1, y + 1, NULL);
+        LineTo   (hdc, x + cm->sizeX - 2, y + 1);
+        LineTo   (hdc, x + cm->sizeX - 2, y + cm->sizeY - 2) ;
+        LineTo   (hdc, x + cm->sizeX, y + cm->sizeY - 2) ;
+        break;
+        
+    case 0x02:          /* checkbox center not selected */
+        MoveToEx (hdc, x, y + 1, NULL);
+        LineTo   (hdc, x + cm->sizeX, y + 1);
+        MoveToEx (hdc, x, y + cm->sizeY - 2, NULL);
+        LineTo   (hdc, x + cm->sizeX, y + cm->sizeY - 2);
+        break;
+        
+    case 0x03:          /* checkbox center not selected */
+        {
+            HBRUSH obrush;
+            HBRUSH fbrush;
+
+            MoveToEx (hdc, x, y + 1, NULL);
+            LineTo   (hdc, x + cm->sizeX, y + 1);
+            MoveToEx (hdc, x, y + cm->sizeY - 2, NULL);
+            LineTo   (hdc, x + cm->sizeX, y + cm->sizeY - 2);
+            
+            points[0].x = x ;
+            points[0].y = y + 3 ;
+            points[1].x = x ;
+            points[1].y = y + cm->sizeY - 4 ;
+            points[2].x = x + cm->sizeX - 1 ;
+            points[2].y = y + cm->sizeY - 4 ;
+            points[3].x = x + cm->sizeX - 1 ;
+            points[3].y = y + 3 ;
+            
+            fbrush = CreateSolidBrush (fcol);
+            obrush = (HBRUSH) SelectObject (hdc, fbrush);
+            SetPolyFillMode (hdc, WINDING);
+            Polygon (hdc, points, 4);
+            SelectObject (hdc, obrush);
+            DeleteObject (fbrush);
+        }
+        break;
+        
+    case 0x04:          /* checkbox right side (]) */
+        MoveToEx (hdc, x, y + 1, NULL);
+        LineTo   (hdc, x + 1, y + 1);
+        LineTo   (hdc, x + 1, y + cm->sizeY - 2) ;
+        LineTo   (hdc, x - 1, y + cm->sizeY - 2) ;
+        break;
+    
     case 0x07:          /* Line space '.' */
         MoveToEx (hdc, x + cm->midX, y + cm->midY, NULL);
         LineTo   (hdc, x + cm->midX + 1, y + cm->midY);
         break;
     
     case 0x08:          /* Line & Poly / Backspace <- */
-        ii = ((cm->midY+1) >> 1) ;
+        ii = cm->midY >> 1 ;
         MoveToEx (hdc, x + cm->sizeX - 2, y + cm->midY, NULL);
         LineTo   (hdc, x + cm->midX - 1, y + cm->midY);
         points [0].x = x + cm->midX - 1 ;
-        points [0].y = y + ii ;
+        points [0].y = y + cm->midY - ii ;
         points [1].x = x + cm->midX - 1 ;
-        points [1].y = y + cm->sizeY - ii - 1 ;
+        points [1].y = y + cm->midY + ii ;
         points [2].x = x ;
         points [2].y = y + cm->midY ;
         goto makePoly;
 
     case 0x09:          /* Line & Poly / Tab -> */
-        ii = ((cm->midY+1) >> 1) ;
+        ii = cm->midY >> 1 ;
         MoveToEx (hdc, x, y + cm->midY, NULL);
-        LineTo   (hdc, x + cm->midX - 1, y + cm->midY);
-        points [0].x = x + cm->midX - 1 ;
-        points [0].y = y + ii ;
-        points [1].x = x + cm->midX - 1 ;
-        points [1].y = y + cm->sizeY - ii - 1 ;
-        points [2].x = x + cm->sizeX - 2 ;
-        points [2].y = y + cm->midY;
+        LineTo   (hdc, x + cm->sizeX - cm->midX - 1, y + cm->midY);
+        points [0].x = x + cm->sizeX - cm->midX - 1 ;
+        points [0].y = y + cm->midY - ii ;
+        points [1].x = x + cm->sizeX - 2 ;
+        points [1].y = y + cm->midY;
+        points [2].x = x + cm->sizeX - cm->midX - 1 ;
+        points [2].y = y + cm->midY + ii ;
         goto makePoly;
 
     case 0x0a:          /* Line & Poly / CR <-| */
-        ii = ((cm->midY+1) >> 1) ;
+        ii = cm->midY >> 1 ;
         MoveToEx (hdc, x + cm->midX,      y + cm->midY, NULL);
         LineTo   (hdc, x + cm->sizeX - 2, y + cm->midY);
-        LineTo   (hdc, x + cm->sizeX - 2, y + ii - 2) ;
+        LineTo   (hdc, x + cm->sizeX - 2, y + cm->midY - ii - 2) ;
         points [0].x = x + cm->midX ;
-        points [0].y = y + ii ;
+        points [0].y = y + cm->midY - ii ;
         points [1].x = x + cm->midX ;
-        points [1].y = y + cm->sizeY - ii - 1 ;
+        points [1].y = y + cm->midY + ii ;
         points [2].x = x + 1 ;
         points [2].y = y + cm->midY;
         goto makePoly;
@@ -1168,52 +1217,77 @@ WinSpecialChar (HDC hdc, CharMetrics *cm, int x, int y, meUByte cc, COLORREF fco
         break;
 
     case 0x0d:          /* Line Drawing / Top left */
-        MoveToEx (hdc, x + cm->sizeX, y + cm->midY, NULL);
+        MoveToEx (hdc, x + cm->midX, y + cm->sizeY + 1, NULL);
         LineTo   (hdc, x + cm->midX, y + cm->midY);
-        LineTo   (hdc, x + cm->midX, y + cm->sizeY + 1);
+        LineTo   (hdc, x + cm->sizeX, y + cm->midY);
         break;
 
     case 0x0e:          /* Line Drawing / Bottom left |_ */
         MoveToEx (hdc, x + cm->midX, y, NULL);
         LineTo   (hdc, x + cm->midX, y + cm->midY);
-        LineTo   (hdc, x + cm->sizeX + 1, y + cm->midY);
+        LineTo   (hdc, x + cm->sizeX, y + cm->midY);
         break;
 
     case 0x0f:          /* Line Drawing / Centre cross + */
         MoveToEx (hdc, x, y + cm->midY, NULL);
-        LineTo   (hdc, x + cm->sizeX + 1, y + cm->midY);
+        LineTo   (hdc, x + cm->sizeX, y + cm->midY);
         MoveToEx (hdc, x + cm->midX, y, NULL);
         LineTo   (hdc, x + cm->midX, y + cm->sizeY + 1);
         break;
 
     case 0x10:          /* Cursor Arrows / Right */
-        points [0].x = x;
-        points [0].y = y + 1;
-        points [1].x = x;
-        points [1].y = y + cm->sizeY - 1;
-        points [2].x = x + cm->sizeX;
-        points [2].y = y + cm->midY;
+        ii = cm->sizeX - 2 ;
+        if(ii > cm->midY)
+            ii = cm->midY ;
+        points[0].x = x + 1 ;
+        points[0].y = y + cm->midY - ii ;
+        points[1].x = x + 1 ;
+        points[1].y = y + cm->midY + ii ;
+        points[2].x = x + ii + 1 ;
+        points[2].y = y + cm->midY ;
         goto makePoly;
 
     case 0x11:          /* Cursor Arrows / Left */
-        points [0].x = x + cm->sizeX;
-        points [0].y = y + 1;
-        points [1].x = x + cm->sizeX;
-        points [1].y = y + cm->sizeY - 1;
-        points [2].x = x;
-        points [2].y = y + cm->midY;
+        ii = cm->sizeX - 2 ;
+        if(ii > cm->midY)
+            ii = cm->midY ;
+        points[0].x = x + cm->sizeX - 2 ;
+        points[0].y = y + cm->midY + ii ;
+        points[1].x = x + cm->sizeX - 2 ;
+        points[1].y = y + cm->midY - ii ;
+        points[2].x = x + cm->sizeX - 2 - ii ;
+        points[2].y = y + cm->midY ;
         goto makePoly;
 
     case 0x12:          /* Line Drawing / Horizontal line - */
         MoveToEx (hdc, x, y + cm->midY, NULL);
-        LineTo   (hdc, x + cm->sizeX + 1, y + cm->midY);
+        LineTo   (hdc, x + cm->sizeX, y + cm->midY);
         break;
 
+    case 0x13:          /* cross box empty ([ ]) */
+        MoveToEx (hdc, x, y + cm->midY - cm->midX, NULL);
+        LineTo   (hdc, x + cm->sizeX - 1, y + cm->midY - cm->midX);
+        LineTo   (hdc, x + cm->sizeX - 1, y + cm->midY + cm->sizeX - cm->midX) ;
+        LineTo   (hdc, x, y + cm->midY + cm->sizeX - cm->midX) ;
+        LineTo   (hdc, x, y + cm->midY - cm->midX) ;
+        break;
+    
+    case 0x14:          /* cross box ([X]) */
+        MoveToEx (hdc, x, y + cm->midY - cm->midX, NULL);
+        LineTo   (hdc, x + cm->sizeX - 1, y + cm->midY - cm->midX);
+        LineTo   (hdc, x + cm->sizeX - 1, y + cm->midY + cm->sizeX - cm->midX) ;
+        LineTo   (hdc, x, y + cm->midY + cm->sizeX - cm->midX) ;
+        LineTo   (hdc, x, y + cm->midY - cm->midX) ;
+        LineTo   (hdc, x + cm->sizeX - 1, y + cm->midY + cm->sizeX - cm->midX) ;
+        MoveToEx (hdc, x + cm->sizeX - 1, y + cm->midY - cm->midX,NULL);
+        LineTo   (hdc, x, y + cm->midY + cm->sizeX - cm->midX) ;
+        break;
+    
     case 0x15:          /* Line Drawing / Left Tee |- */
         MoveToEx (hdc, x + cm->midX, y, NULL);
         LineTo   (hdc, x + cm->midX, y + cm->sizeY + 1);
         MoveToEx (hdc, x + cm->midX, y + cm->midY, NULL);
-        LineTo   (hdc, x + cm->sizeX + 1, y + cm->midY);
+        LineTo   (hdc, x + cm->sizeX, y + cm->midY);
         break;
 
     case 0x16:          /* Line Drawing / Right Tee -| */
@@ -1225,14 +1299,14 @@ WinSpecialChar (HDC hdc, CharMetrics *cm, int x, int y, meUByte cc, COLORREF fco
 
     case 0x17:          /* Line Drawing / Bottom Tee _|_ */
         MoveToEx (hdc, x,  y + cm->midY, NULL);
-        LineTo   (hdc, x + cm->sizeX + 1, y + cm->midY);
+        LineTo   (hdc, x + cm->sizeX, y + cm->midY);
         MoveToEx (hdc, x + cm->midX, y, NULL);
         LineTo   (hdc, x + cm->midX, y + cm->midY);
         break;
 
     case 0x18:          /* Line Drawing / Top Tee -|- */
         MoveToEx (hdc, x,  y + cm->midY, NULL);
-        LineTo   (hdc, x + cm->sizeX + 1, y + cm->midY);
+        LineTo   (hdc, x + cm->sizeX, y + cm->midY);
         MoveToEx (hdc, x + cm->midX, y + cm->sizeY, NULL);
         LineTo   (hdc, x + cm->midX, y + cm->midY);
         break;
@@ -1242,11 +1316,24 @@ WinSpecialChar (HDC hdc, CharMetrics *cm, int x, int y, meUByte cc, COLORREF fco
         LineTo   (hdc, x + cm->midX, y + cm->sizeY + 1);
         break;
 
+    case 0x1a:          /* Line Drawing / Bottom right _| with resize */
+        MoveToEx (hdc, x, y + cm->midY, NULL);
+        LineTo   (hdc, x + cm->midX, y + cm->midY);
+        LineTo   (hdc, x + cm->midX, y - 1);
+        
+        MoveToEx (hdc, x, y + cm->sizeY, NULL);
+        LineTo   (hdc, x + cm->sizeX, y + cm->sizeY - cm->sizeX);
+        MoveToEx (hdc, x + 2, y + cm->sizeY, NULL);
+        LineTo   (hdc, x + cm->sizeX, y + cm->sizeY - cm->sizeX + 2);
+        MoveToEx (hdc, x + 4, y + cm->sizeY, NULL);
+        LineTo   (hdc, x + cm->sizeX, y + cm->sizeY - cm->sizeX + 4);
+        break ;
+    
     case 0x1b:          /* Scroll box - vertical */
         for (ii = (y+1) & ~1; ii < y + cm->sizeY; ii += 2)
         {
             MoveToEx (hdc, x, ii, NULL);
-            LineTo (hdc, x + cm->sizeX + 1, ii);
+            LineTo (hdc, x + cm->sizeX, ii);
         }
         break;
         
@@ -1788,7 +1875,7 @@ WinKillToClipboard (void)
         for (killp = klhead->kill; killp != NULL; killp = killp->next)
         {
             for (dd = killp->data; (cc = *dd++) != '\0'; killSize++)
-                if (cc == meNLCHAR)
+                if (cc == meCHAR_NL)
                     killSize++; /* Add 1 for the '\r' */
         }
     }
@@ -1810,7 +1897,7 @@ WinKillToClipboard (void)
             while((cc = *dd++))
             {
                 /* Convert the end of line to CR/LF */
-                if (cc == meNLCHAR)
+                if (cc == meCHAR_NL)
                     *bufp++ = '\r';
                 /* Convert any special characters */
                 else if ((meSystemCfg & meSYSTEM_FONTFIX) && (cc < TTSPECCHARS))
@@ -2051,13 +2138,13 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
 {
     PROCESS_INFORMATION mePInfo ;
     STARTUPINFO meSuInfo ;
-    meUByte  cmdLine[meBUF_SIZE_MAX+102], *cp ;          /* Buffer for the command line */
-    meUByte  dummyInFile[meFILEBUF_SIZE_MAX] ;              /* Dummy input file */
-    meUByte  pipeOutFile[meFILEBUF_SIZE_MAX] ;              /* Pipe output file */
+    meUByte  cmdLine[meBUF_SIZE_MAX+102], *cp ;  /* Buffer for the command line */
+    meUByte  dummyInFile[meBUF_SIZE_MAX] ;       /* Dummy input file */
+    meUByte  pipeOutFile[meBUF_SIZE_MAX] ;       /* Pipe output file */
     int    status ;
 #ifdef _WIN32s
-    meUByte *endOfComString = NULL;             /* End of the com string */
-    static int pipeStderr = 0;                 /* Remember the stderr state */
+    meUByte *endOfComString = NULL;              /* End of the com string */
+    static int pipeStderr = 0;                   /* Remember the stderr state */
 #else
     HANDLE inHdl, outHdl, dumHdl ;
 #endif
@@ -6054,15 +6141,15 @@ do_window_resize:
                 clexec = savcle ;
                 return meFALSE ;
             }
-            else if ((anyChangedBuffer() == meFALSE)
+            else if (anyChangedBuffer()
 #if MEOPT_SPELL
-                     || (anyChangedDictionary() != meFALSE)
+                     || anyChangedDictionary()
 #endif
 #if MEOPT_REGISTRY
-                     || (anyChangedRegistry() != meFALSE)
+                     || anyChangedRegistry()
 #endif
 #if MEOPT_IPIPES
-                     || (anyActiveIpipe() != meFALSE)
+                     || anyActiveIpipe()
 #endif
                      )
             {

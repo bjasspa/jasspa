@@ -28,20 +28,28 @@
  */
 
 /* internal constants */
+#ifdef _NANOEMACS
+#define meBIND_MAX            192               /* max # of globally bound keys */
+#else
 #define meBIND_MAX            384               /* max # of globally bound keys */
-#define meKBDMACRO_SIZE_MAX   256               /* # of strokes, keyboard macro */
+#endif
 #define meLINE_BLOCK_SIZE     12                /* line block chunk size        */
 #define meWINDOW_MAX          64                /* # of windows MAXIMUM         */
 #define meSBUF_SIZE_MAX       128               /* # of bytes, string buffers   */
 #define meBUF_SIZE_MAX        1024              /* size of various inputs       */
-#define mePATBUF_SIZE_MAX     128               /* # of bytes, pattern          */
-#define meFILEBUF_SIZE_MAX    1024              /* size of a file name input    */
 #define meTOKENBUF_SIZE_MAX   meBUF_SIZE_MAX+4  /* meBUF_SIZE_MAX + an overrun safe area*/
 #define meTIME_STAMP_SIZE_MAX 40                /* Max len of a time stamp str. */
 
-#define meNLCHAR       0x0a                     /* the \n char ^J, not ^M       */
-#define meBELLCHAR     0x07                    
-#define meTABCHAR      '\t'
+#define meCHAR_BELL           0x07              /* the bell character           */
+#define meCHAR_TAB            0x09              /* the tab character            */
+#define meCHAR_NL             0x0a              /* the \n char ^J, not ^M       */
+#define meCHAR_LEADER         0xff              /* the special char leader flag */
+#define meCHAR_TRAIL_NULL     0x01              /* the trail byte of a '\0'     */
+#define meCHAR_TRAIL_SPECIAL  0x02              /* the trail byte of a \s??     */
+#define meCHAR_TRAIL_HOTKEY   0x03              /* trail of an osd hotkey (\H)  */
+#define meCHAR_TRAIL_HILSTART 0x04              /* trail of osd start hilight (\{) */
+#define meCHAR_TRAIL_HILSTOP  0x05              /* trail of osd stop hilight (\}) */
+#define meCHAR_TRAIL_LEADER   0xff              /* trail of a 0xff, must be 0xff */
 
 #define ME_SHIFT       0x0100                   /* special key shift            */
 #define ME_CONTROL     0x0200                   /* special key conrtol          */
@@ -71,16 +79,8 @@
 #define meFORWARD 0                             /* forward direction            */
 #define meREVERSE 1                             /* backwards direction          */
 
-/* File I/O States */
-#define meFIOSUC    0                           /* File I/O, success.           */
-#define meFIOFNF    1                           /* File I/O, file not found.    */
-#define meFIOEOF    2                           /* File I/O, end of file.       */
-#define meFIOERR    3                           /* File I/O, error.             */
-#define meFIOLNG    4                           /* line longer than allowed len */
-#define meFIOFUN    5                           /* File I/O, eod of file/bad line*/
-#define meFIOBUFSIZ 2048
-
-/* Maximum history size */
+/* Number of different history types & Maximum history size */
+#define meHISTORY_COUNT 5
 #define meHISTORY_SIZE 20
 
 /* Last command states */
@@ -1120,6 +1120,7 @@ typedef struct meUndoNode {
     struct meUndoNode *next ;
     union {
         meInt          dotp ;
+        meInt         *lineSort ;
         meUndoCoord   *pos ;
     } udata ;
     meInt              count ;
@@ -1158,11 +1159,14 @@ typedef struct meUndoNarrow {
 #define meUNDO_UNSET_EDIT    0x01
 #define meUNDO_NARROW        0x10
 #define meUNDO_NARROW_ADD    0x01
+#define meUNDO_LINE_SORT     0x08
+#define meUNDO_SPECIAL_MASK  0x7C
 
 
 #define meUndoIsReplace(uu)  (((uu)->type & (meUNDO_SPECIAL|meUNDO_REPLACE)) == meUNDO_REPLACE)
-#define meUndoIsSetEdit(uu)  (((uu)->type & (meUNDO_SPECIAL|meUNDO_SET_EDIT)) == (meUNDO_SPECIAL|meUNDO_SET_EDIT))
-#define meUndoIsNarrow(uu)   (((uu)->type & (meUNDO_SPECIAL|meUNDO_NARROW)) == (meUNDO_SPECIAL|meUNDO_NARROW))
+#define meUndoIsSetEdit(uu)  (((uu)->type & meUNDO_SPECIAL_MASK) == (meUNDO_SPECIAL|meUNDO_SET_EDIT))
+#define meUndoIsNarrow(uu)   (((uu)->type & meUNDO_SPECIAL_MASK) == (meUNDO_SPECIAL|meUNDO_NARROW))
+#define meUndoIsLineSort(uu) (((uu)->type & meUNDO_SPECIAL_MASK) == (meUNDO_SPECIAL|meUNDO_LINE_SORT))
 #endif
 
 /* The variable register (#0 - #9) uses a linked structure

@@ -259,7 +259,7 @@ copy_middle:
 add_newline:
         if(left != 0)
         {
-            *dd++ = meNLCHAR ;
+            *dd++ = meCHAR_NL ;
             line = meLineGetNext(line);
             left-- ;
         }
@@ -453,7 +453,7 @@ killRectangle(int f, int n)
             {
                 lspc = soff - coff ;
                 /* as we can convert tabs to spaces, adjust the offset */
-                if(meLineGetChar(frameCur->windowCur->dotLine,ii) == meTABCHAR)
+                if(meLineGetChar(frameCur->windowCur->dotLine,ii) == meCHAR_TAB)
                     off[ii] -= lspc ;
                 coff = soff ;
                 break ;
@@ -479,7 +479,7 @@ killRectangle(int f, int n)
                 if((coff+ll) > eoff)
                 {
                     /* as we can convert tabs to spaces, delete and convert */
-                    if(cc == meTABCHAR)
+                    if(cc == meCHAR_TAB)
                     {
                         lspc += coff + ll - eoff ;
                         jj++ ;
@@ -487,7 +487,7 @@ killRectangle(int f, int n)
                     break ;
                 }
                 coff += ll ;
-                if(cc == meTABCHAR)
+                if(cc == meCHAR_TAB)
                 {
                     /* convert tabs to spaces for better column support */
                     do
@@ -557,7 +557,7 @@ yankRectangleKill(struct meKill *pklist, int soff, int notLast)
         while(*ss != '\0')
         {
             tt = ss ;
-            while(((cc = *ss) != '\0') && (cc != meNLCHAR))
+            while(((cc = *ss) != '\0') && (cc != meCHAR_NL))
                 ss++ ;
             ii = (size_t) ss - (size_t) tt ;
             windCurLineOffsetEval(frameCur->windowCur) ;
@@ -573,7 +573,7 @@ yankRectangleKill(struct meKill *pklist, int soff, int notLast)
                 if((coff+off[jj]) > soff)
                 {
                     /* if its a tab we can remove the tab and replace with spaces */
-                    if(meLineGetChar(frameCur->windowCur->dotLine,jj) == meTABCHAR)
+                    if(meLineGetChar(frameCur->windowCur->dotLine,jj) == meCHAR_TAB)
                     {
                         ldel = 1 ;
                         lespc = off[jj] - soff + coff ;
@@ -592,7 +592,7 @@ yankRectangleKill(struct meKill *pklist, int soff, int notLast)
 #if MEOPT_UNDO
             if(ldel > 0)
             {
-                *dd = meTABCHAR ;
+                *dd = meCHAR_TAB ;
                 frameCur->windowCur->dotOffset = jj ;
                 meUndoAddDelChars(ldel) ;
             }
@@ -611,7 +611,7 @@ yankRectangleKill(struct meKill *pklist, int soff, int notLast)
             else
                 meUndoAddInsChars(linsc) ;
 #endif
-            if(*ss == meNLCHAR)
+            if(*ss == meCHAR_NL)
                 ss++ ;
             frameCur->windowCur->dotLineNo++ ;
             frameCur->windowCur->dotLine  = meLineGetNext(frameCur->windowCur->dotLine);

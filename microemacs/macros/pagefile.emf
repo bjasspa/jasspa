@@ -1,19 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2000-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Author        : $Author: jon $
-;  Created By    : Steven Phillips
-;  Created       : Mon May 19 10:25:05 2003
-;  Last Modified : <030530.1626>
+; Created:     Mon May 19 10:25:05 2003
+; Synopsis:    Large file paging routines
+; Authors:     Steven Phillips
 ;
-;  Description
-;
-;  Notes
-;
-;  History
-;
-;  Copyright (c) 2003 PTC.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 ; set %page-file-backup to -1 to disable backups or 1 to enable (note that one backup is always created)
 set-variable %page-file-backup &cond &exi %page-file-backup %page-file-backup -1
 
@@ -423,6 +416,100 @@ define-macro page-file-search-backward
     !endif
 !emacro
 
+0 define-macro page-file-isearch
+    set-variable #l0 @#
+    !repeat
+        !if &band #l0 2
+            !if &band #l0 1
+                !force search-backward #l1
+                !if &not $status
+                    beginning-of-buffer
+                    !if &lget :page-0 1
+                        !goto next-page-back
+                    !endif
+*beg-of-buff
+                    execute-line &spr "isearch-backward %s @mna" &xrep #l1 "\\(.\\)" " \"\\1\"" 
+                !else
+                    2 show-region
+                    execute-line &spr "0 isearch-backward %s @mna" &xrep #l1 "\\(.\\)" " \"\\1\"" 
+                !endif
+            !else
+                set-variable #l2 &xrep #l1 "\\(.\\)" " \"\\1\"" 
+                !force search-forward #l1
+                !if &not $status
+                    end-of-buffer
+                    !if &les &lget :page-1 2 :page-fsize
+                        !goto next-page-forw
+                    !endif
+*end-of-buff
+                    execute-line &spr "isearch-forward %s @mna" &xrep #l1 "\\(.\\)" " \"\\1\""
+                !else
+                    -2 show-region
+                    execute-line &spr "0 isearch-forward %s @mna" &xrep #l1 "\\(.\\)" " \"\\1\""
+                !endif
+            !endif
+        !elif &band #l0 1
+            0 isearch-backward @mna
+        !else
+            0 isearch-forward @mna
+        !endif
+        !if &not &seq @cc "page-file-isearch-forward"
+            !return
+        !endif
+        set-variable #l1 @h4 0
+        !if $window-col
+            !return
+        !elif &equ $window-line 1
+            set-variable #l0 3
+            !if &lget :page-0 1
+                set-variable #l2 @mc1 "Continue search onto the previous page [y/n]? " "yYnN"
+                !if &iseq #l2 "n"
+                    beginning-of-buffer
+                    !goto beg-of-buff
+                !endif
+*next-page-back
+                !force page-file-page-up
+                !if &not $status
+                    beginning-of-buffer
+                    !abort
+                !endif
+                goto-alpha-mark "\x83"
+            !else
+                beginning-of-buffer
+                !goto beg-of-buff
+            !endif
+        !elif &equ $window-line $window-eline
+            set-variable #l0 2
+            !if &les &lget :page-1 2 :page-fsize
+                set-variable #l2 @mc1 "Continue search onto the next page [y/n]? " "yYnN"
+                !if &iseq #l2 "n"
+                    end-of-buffer
+                    !goto end-of-buff
+                !endif
+*next-page-forw
+                !force page-file-page-down
+                !if &not $status
+                    end-of-buffer
+                    !abort
+                !endif
+                goto-alpha-mark "\x83"
+            !else
+                end-of-buffer
+                !goto end-of-buff
+            !endif
+        !else
+            !return
+        !endif
+    !until 0
+!emacro
+
+define-macro page-file-isearch-forward
+    0 page-file-isearch
+!emacro
+define-macro page-file-isearch-backward
+    1 page-file-isearch
+!emacro
+
 define-macro page-file
     !force set-variable #l0 @1
     !if &not $status
@@ -491,10 +578,12 @@ define-macro page-file
     5 buffer-bind-key "page-file-forward-line" "C-down"
     buffer-bind-key "page-file-search-backward" "C-x r"
     buffer-bind-key "page-file-search-forward" "C-x s"
+    buffer-bind-key "page-file-isearch-backward" "C-r"
+    buffer-bind-key "page-file-isearch-forward" "C-s"
 !emacro
 
 define-macro page-bfile
     3 page-file
 !emacro
 
-set-variable .page-file.page-size 10240
+set-variable .page-file.page-size 102400

@@ -224,7 +224,7 @@ gft_directory:
             return meFILETYPE_NOTEXIST ;
         else if(S_ISLNK(statbuf.st_mode))
         {
-            meUByte lbuf[meFILEBUF_SIZE_MAX], buf[meFILEBUF_SIZE_MAX], *ss ;
+            meUByte lbuf[meBUF_SIZE_MAX], buf[meBUF_SIZE_MAX], *ss ;
             int ii, jj ;
             
             ii = meStrlen(file) ;
@@ -235,7 +235,7 @@ gft_directory:
                 lbuf[ii] = '\0' ;
                 if(statbuf.st_mtime > stmtime)
                     stmtime = statbuf.st_mtime ;
-                if((jj=readlink((char *)lbuf,(char *)buf, meFILEBUF_SIZE_MAX)) <= 0)
+                if((jj=readlink((char *)lbuf,(char *)buf, meBUF_SIZE_MAX)) <= 0)
                 {
                     if(flag & 1)
                         mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s symbolic link problems]", file);
@@ -335,7 +335,13 @@ set_dirs(void)
 #ifdef _SEARCH_PATH
     static meUByte lpath[] = _SEARCH_PATH ;
 #else
-    static meUByte lpath[] = "/usr/local/microemacs" ;
+    static meUByte lpath[] = 
+#if (defined _SUNOS55) || (defined _SUNOS56) 
+              "/opt/jasspa/company:/opt/jasspa/macros:/opt/jasspa/spelling"
+#else
+              "/usr/local/microemacs"
+#endif
+              ;
 #endif
 #endif    
     int ll ;
@@ -439,8 +445,8 @@ fileLookup(meUByte *fname, meUByte *ext, meUByte flags, meUByte *outName)
     register meUByte *path;  /* environmental PATH variable */
     register meUByte *sp;    /* pointer into path spec */
     register int   ii;     /* index */
-    meUByte nname[meFILEBUF_SIZE_MAX] ;
-    meUByte buf[meFILEBUF_SIZE_MAX] ;
+    meUByte nname[meBUF_SIZE_MAX] ;
+    meUByte buf[meBUF_SIZE_MAX] ;
  
     if(ext != NULL)
     {
@@ -710,13 +716,13 @@ getFilePath(meUByte *fname, meUByte *path)
 int
 inputFileName(meUByte *prompt, meUByte *fn, int corFlag)
 {
-    meUByte tmp[meFILEBUF_SIZE_MAX], *buf ;
+    meUByte tmp[meBUF_SIZE_MAX], *buf ;
     int  s ;
     
     buf = (corFlag) ? tmp:fn ;
 
     getFilePath(frameCur->bufferCur->fileName,buf) ;
-    s = meGetString(prompt,(MLFILECASE|MLNORESET|MLMACNORT), 0, buf, meFILEBUF_SIZE_MAX) ;
+    s = meGetString(prompt,(MLFILECASE|MLNORESET|MLMACNORT), 0, buf, meBUF_SIZE_MAX) ;
     if(corFlag && (s > 0))
         fileNameCorrect(tmp,fn,NULL) ;
     return s ;
@@ -1148,7 +1154,7 @@ int
 readin(register meBuffer *bp, meUByte *fname)
 {
     int   ss=meABORT ;
-    meUByte lfn[meFILEBUF_SIZE_MAX], afn[meFILEBUF_SIZE_MAX], *fn=fname ;
+    meUByte lfn[meBUF_SIZE_MAX], afn[meBUF_SIZE_MAX], *fn=fname ;
     
 #if MEOPT_CRYPT
     if(resetkey(bp) <= 0)
@@ -1211,7 +1217,7 @@ readin(register meBuffer *bp, meUByte *fname)
             }
             if(ft == meFILETYPE_NOTEXIST)
             {   /* File not found.      */
-                meUByte dirbuf [meFILEBUF_SIZE_MAX];
+                meUByte dirbuf [meBUF_SIZE_MAX];
 
                 /* See if we can write to the directory. */
                 getFilePath (fn, dirbuf);
@@ -1394,7 +1400,7 @@ int
 insertFile(int f, int n)
 {
     register int s;
-    meUByte fname[meFILEBUF_SIZE_MAX] ;
+    meUByte fname[meBUF_SIZE_MAX] ;
     meInt offset, length ;
 
     if((s=inputFileName((meUByte *)"Insert file",fname,1)) <= 0)
@@ -1614,7 +1620,7 @@ int
 findFileList(meUByte *fname, int bflag, meInt lineno)
 {
     register int nofiles=0, ii ;
-    meUByte fileName[meFILEBUF_SIZE_MAX], *baseName ;
+    meUByte fileName[meBUF_SIZE_MAX], *baseName ;
     
     bufHistNo++ ;
     fileNameCorrect(fname,fileName,&baseName) ;
@@ -1626,7 +1632,7 @@ findFileList(meUByte *fname, int bflag, meInt lineno)
         /* if the base name has a wild card letter (i.e. *, ? '[')
          * and a file with that exact name does not exist then load
          * any files which match the wild card mask */
-        meUByte mask[meFILEBUF_SIZE_MAX] ;
+        meUByte mask[meBUF_SIZE_MAX] ;
         
         fileMaskToRegex(mask,baseName) ;
         *baseName = '\0' ;
@@ -1658,12 +1664,12 @@ findSwapFileList(meUByte *fname, int bflag, meInt lineno)
     meBuffer *bp ;
     int     ret ;
 
-    bufHistNo++ ;
+    bufHistNo += 2 ;
     if(!findFileList(fname,bflag,lineno))
         return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[Failed to find file %s]",fname);
     for(bp=bheadp ; bp->histNo!=bufHistNo ; bp=bp->next)
         ;
-    bufHistNo-=2 ;
+    bufHistNo -= 2 ;
     ret = swbuffer(frameCur->windowCur,bp) ;  /* make buffer BP current */
     bufHistNo++ ;
     return ret ;
@@ -1681,7 +1687,7 @@ findSwapFileList(meUByte *fname, int bflag, meInt lineno)
 int
 findFile(int f, int n)
 {
-    meUByte fname[meFILEBUF_SIZE_MAX], prompt[16], *ss ;
+    meUByte fname[meBUF_SIZE_MAX], prompt[16], *ss ;
     
     ss = prompt ;
     *ss++ = 'f' ;
@@ -1718,7 +1724,7 @@ findFile(int f, int n)
 int
 nextWndFindFile(int f, int n)
 {
-    meUByte fname[meFILEBUF_SIZE_MAX];	/* file user wishes to find */
+    meUByte fname[meBUF_SIZE_MAX];	/* file user wishes to find */
 
     if(inputFileName((meUByte *)"Find file",fname,0) <= 0)
         return meABORT ;
@@ -1732,7 +1738,7 @@ nextWndFindFile(int f, int n)
 int
 readFile(int f, int n)
 {
-    meUByte fname[meFILEBUF_SIZE_MAX];	/* file user wishes to find */
+    meUByte fname[meBUF_SIZE_MAX];	/* file user wishes to find */
     register int s;		/* status return */
 
     if(inputFileName((meUByte *)"Read file", fname,0) <= 0)
@@ -1746,7 +1752,7 @@ readFile(int f, int n)
 int
 viewFile(int f, int n)	/* visit a file in VIEW mode */
 {
-    meUByte fname[meFILEBUF_SIZE_MAX];	/* file user wishes to find */
+    meUByte fname[meBUF_SIZE_MAX];	/* file user wishes to find */
     register int ss, vv;	/* status return */
 
     if (inputFileName((meUByte *)"View file", fname,0) <= 0)
@@ -1771,7 +1777,7 @@ viewFile(int f, int n)	/* visit a file in VIEW mode */
 static int 
 writeCheck (meUByte *pathname, int flags, meStat *statp)
 {
-    meUByte dirbuf [meFILEBUF_SIZE_MAX];
+    meUByte dirbuf [meBUF_SIZE_MAX];
 #if MEOPT_SOCKET
     if(isFtpLink(pathname))
         return meTRUE ;
@@ -1885,7 +1891,7 @@ writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
 int
 fileOp(int f, int n)
 {
-    meUByte sfname[meFILEBUF_SIZE_MAX], dfname[meFILEBUF_SIZE_MAX], lfname[meFILEBUF_SIZE_MAX], *fn=NULL ;
+    meUByte sfname[meBUF_SIZE_MAX], dfname[meBUF_SIZE_MAX], lfname[meBUF_SIZE_MAX], *fn=NULL ;
     int dFlags=0 ;
 	
     if((n & (meFILEOP_FTPCLOSE|meFILEOP_DELETE|meFILEOP_MOVE|meFILEOP_COPY|meFILEOP_MKDIR)) == 0)
@@ -1965,7 +1971,7 @@ fileOp(int f, int n)
 void
 autowriteout(register meBuffer *bp)
 {
-    meUByte fn[meFILEBUF_SIZE_MAX], lname[meFILEBUF_SIZE_MAX], *ff ;
+    meUByte fn[meBUF_SIZE_MAX], lname[meBUF_SIZE_MAX], *ff ;
     int ss ;
     
     bp->autotime = -1 ;
@@ -2009,7 +2015,7 @@ autowriteout(register meBuffer *bp)
 void
 autowriteremove(register meBuffer *bp)
 {
-    meUByte fn[meFILEBUF_SIZE_MAX] ;
+    meUByte fn[meBUF_SIZE_MAX] ;
 
     if((autotime > 0) && bufferNeedSaving(bp) &&
        !createBackupName(fn,bp->fileName,'#',0) &&
@@ -2127,7 +2133,7 @@ writeOut(register meBuffer *bp, meUInt flags, meUByte *fn)
 int
 writeout(register meBuffer *bp, int flags, meUByte *fname)
 {
-    meUByte lname[meFILEBUF_SIZE_MAX], *fn ;
+    meUByte lname[meBUF_SIZE_MAX], *fn ;
     if(!meStrcmp(bp->name,"*stdin*"))
         fn = NULL ;
     else if((bp->name[0] == '*') || (fname == NULL))
@@ -2187,7 +2193,7 @@ resetBufferNames(meBuffer *bp, meUByte *fname)
 int
 writeBuffer(int f, int n)
 {
-    meUByte fname[meFILEBUF_SIZE_MAX], lname[meFILEBUF_SIZE_MAX], *fn ;
+    meUByte fname[meBUF_SIZE_MAX], lname[meBUF_SIZE_MAX], *fn ;
     
     if(inputFileName((meUByte *)"Write file",fname,1) <= 0)
         return meABORT ;
@@ -2246,7 +2252,7 @@ appendBuffer(int f, int n)
 {
     register meUInt flags ;
     register int ss ;
-    meUByte fname[meFILEBUF_SIZE_MAX], lname[meFILEBUF_SIZE_MAX], *fn ;
+    meUByte fname[meBUF_SIZE_MAX], lname[meBUF_SIZE_MAX], *fn ;
 
     if(inputFileName((meUByte *)"Append to file",fname,1) <= 0)
         return meABORT ;
@@ -2323,7 +2329,7 @@ int
 changeFileName(int f, int n)
 {
     register int s, ft ;
-    meUByte fname[meFILEBUF_SIZE_MAX], lname[meFILEBUF_SIZE_MAX], *fn ;
+    meUByte fname[meBUF_SIZE_MAX], lname[meBUF_SIZE_MAX], *fn ;
 
     if ((s=inputFileName((meUByte *)"New file name",fname,1)) == meABORT)
         return s ;
@@ -2398,7 +2404,7 @@ changeDir(int f, int n)
      */
 #if (defined _UNIX) || (defined _DOS) || (defined _WIN32)
     register int    s;
-    meUByte *dd, dname[meFILEBUF_SIZE_MAX];		/* directory to change to   */
+    meUByte *dd, dname[meBUF_SIZE_MAX];		/* directory to change to   */
 
     if((s = inputFileName((meUByte *)"Directory Name ",dname,1)) <= 0)
         return(s);
@@ -2897,7 +2903,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
             struct  direct *dp ;
 #endif
             struct stat statbuf;
-            meUByte *ff, *bb, fname[meFILEBUF_SIZE_MAX] ;
+            meUByte *ff, *bb, fname[meBUF_SIZE_MAX] ;
             
             meStrcpy(fname,pathName) ;
             bb = fname + meStrlen(fname) ;

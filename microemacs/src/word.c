@@ -398,7 +398,7 @@ wrapWord(int f, int n)
     do
     {
         c = meLineGetChar(frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset) ;
-        if((c == ' ') || (c == meTABCHAR))
+        if((c == ' ') || (c == meCHAR_TAB))
         {
             if(last == 1)
                 cnt = frameCur->windowCur->dotOffset+1 ;
@@ -415,7 +415,7 @@ wrapWord(int f, int n)
     else
     {
         frameCur->windowCur->dotOffset = off ;
-        if(((c = meLineGetChar(frameCur->windowCur->dotLine,off)) != ' ') && (c != meTABCHAR))
+        if(((c = meLineGetChar(frameCur->windowCur->dotLine,off)) != ' ') && (c != meCHAR_TAB))
             return meTRUE ;
     }
     off = meLineGetLength(frameCur->windowCur->dotLine) - off ;
@@ -562,7 +562,7 @@ justify(int leftMargin, int leftDoto)
     while(len > 0)
     {
         len-- ;
-        if(((cc = meLineGetChar(frameCur->windowCur->dotLine,len)) != ' ') && (cc != meTABCHAR))
+        if(((cc = meLineGetChar(frameCur->windowCur->dotLine,len)) != ' ') && (cc != meCHAR_TAB))
         {
             len++ ;
             break ;
@@ -599,7 +599,7 @@ justify(int leftMargin, int leftDoto)
     /* check for and trash any TABs on the rest of the line */
     while((cc=meLineGetChar(frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset)) != '\0')
     {
-	if (cc == meTABCHAR)
+	if (cc == meCHAR_TAB)
 	{
 	    /* Get expansion width of TAB */ 
 	    int jj = next_tab_pos(getccol());
@@ -730,13 +730,13 @@ lookahead(meInt fillState)
     for (ii = 0, last_c = (char) 1; ii < limit; ii++)
     {
         c = meLineGetChar (frameCur->windowCur->dotLine, ii);
-        if ((meStrchr (fillbullet, last_c) != NULL) && (c == ' ' || c == meTABCHAR))
+        if ((meStrchr (fillbullet, last_c) != NULL) && (c == ' ' || c == meCHAR_TAB))
         {
             /* Go to the end of the spaces. */
             while (++ii < limit)
             {
                 c = meLineGetChar(frameCur->windowCur->dotLine, ii);
-                if ((c != ' ') && (c != meTABCHAR))
+                if ((c != ' ') && (c != meCHAR_TAB))
                     break;
             }
             
@@ -763,7 +763,7 @@ lookahead(meInt fillState)
                     for (jj = 0; jj < jlen; jj++)
                     {
                         c = meLineGetChar(frameCur->windowCur->dotLine, jj);
-                        if ((c != ' ') && (c != meTABCHAR))
+                        if ((c != ' ') && (c != meCHAR_TAB))
                             break;
                     }
                 
@@ -1114,7 +1114,7 @@ noIndent:
             /* get the next character in the paragraph */
             if((c = meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset)) == '\0')
             {
-                c = meTABCHAR ;
+                c = meCHAR_TAB ;
                 if (meLineGetNext(frameCur->windowCur->dotLine) == eopline)
                     fillState |= FILL_EOP;  /* End of paragraph */
                 
@@ -1123,7 +1123,7 @@ noIndent:
             }
             
             /* if not a separator, just add it in */
-            if ((c == ' ') || (c == meTABCHAR))
+            if ((c == ' ') || (c == meCHAR_TAB))
             {
                 if (wordlen)
                 {
@@ -1322,7 +1322,7 @@ countWords(int f, int n)
         /* get the current character */
         if((ch = meLineGetChar(lp, offset)) == '\0')
         {   /* end of line */
-            ch = meNLCHAR;
+            ch = meCHAR_NL;
             lp = meLineGetNext(lp);
             offset = 0;
             nlines++ ;

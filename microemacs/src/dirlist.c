@@ -373,7 +373,7 @@ static DIRNODE *
 addLinkPath(DIRNODE *dnode, meUByte *pathname)
 {
     DIRNODE *dp ;
-    meUByte    lpp[meFILEBUF_SIZE_MAX], buff[meFILEBUF_SIZE_MAX], *ff ;
+    meUByte lpp[meBUF_SIZE_MAX], buff[meBUF_SIZE_MAX], *ff ;
     
     if(dnode->mask & DIR_UNKNOWN)
         dnode->mask = (dnode->mask & ~DIR_UNKNOWN)|DIR_HIDDEN ;
@@ -807,7 +807,7 @@ int
 directoryTree(int f, int n)
 {
     DIRNODE *dnode, *dn ;
-    meUByte buf[meFILEBUF_SIZE_MAX] ;
+    meUByte buf[meBUF_SIZE_MAX] ;
     
     if(n & LDO_GETPATH)
     {

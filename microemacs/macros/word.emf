@@ -155,17 +155,17 @@ define-macro describe-word-com
 
 osd .osd.word 0  "batcHsd" 9 3 66 17 -1 -1 30 .scheme.osd-title "Describe Word"
 osd .osd.word 10 ""
-osd .osd.word 15 "Shf" "  &Word : " 20
+osd .osd.word 15 "Shf" "  \HWord : " 20
 osd .osd.word 20 "ExHfh" .scheme.osd-entry "##############################" 1 describe-word-com
-osd .osd.word 25 "BHcfh" .scheme.osd-ebtt " &Insert " f void
-osd .osd.word 30 "BHcf"  .scheme.osd-ebtt " E&xit "   0 void
+osd .osd.word 25 "BHcfh" .scheme.osd-ebtt " \HInsert " f void
+osd .osd.word 30 "BHcf"  .scheme.osd-ebtt " E\Hxit "   0 void
 osd .osd.word 40 ""
 osd .osd.word 50 "IbHc" .scheme.osd-sbar 60 10 .osd.wordc
 
 define-macro describe-word
     !if &not &exi &ind &spr ".%s-command" .spell.language
         set-variable #l0 &spr "  Not setup for current language (%s),  \n    see word.emf for more information." .spell.language
-        osd-dialog "Describe Word" #l0 "E&xit"
+        osd-dialog "Describe Word" #l0 "E\Hxit"
         !abort
     !endif
     !force set-variable #l3 @1
@@ -186,7 +186,7 @@ define-macro describe-word
     !if &not &exi &ind &spr ".%s-search" .spell.language
         !if &seq .word ""
             set-variable #l0 ""
-            osd-entry "Describe Word" "&Word : " #l0 20
+            osd-entry "Describe Word" "\HWord : " #l0 20
             set-variable .word #l0
         !endif
         set-variable #l1 &spr &ind &spr ".describe-word.%s-command" .spell.language .word .word .word .word .word

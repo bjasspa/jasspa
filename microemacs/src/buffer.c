@@ -166,7 +166,7 @@ assignHooks (meBuffer *bp, meUByte *hooknm)
        ((hooknm != rbinHookName) || !triedRbin) &&
        (meStrlen(hooknm) > 6))
     {
-	meUByte fn[meFILEBUF_SIZE_MAX], buff[meBUF_SIZE_MAX] ;             /* Temporary buffer */
+	meUByte fn[meBUF_SIZE_MAX], buff[meBUF_SIZE_MAX] ;             /* Temporary buffer */
 
 	buff[0] = 'h' ;
 	buff[1] = 'k' ;
@@ -1179,6 +1179,7 @@ makelist(meBuffer *blistp, int verb)
 	for( ; ii>0 ; ii--)
 	    *cp1++ = ' ';
 	
+#if MEOPT_EXTENDED
 	if(verb)
 	{
 #if MEOPT_UNDO
@@ -1215,11 +1216,13 @@ makelist(meBuffer *blistp, int verb)
 	    nn = bp->undoHead ;
 	    while(nn != NULL)
 	    {
+		if(meUndoIsLineSort(nn))
+                    ii += sizeof(meUndoNode) + (sizeof(meInt) * (nn->count + 1)) ;
 #if MEOPT_NARROW
-		if(meUndoIsNarrow(nn))
+		else if(meUndoIsNarrow(nn))
                     ii += sizeof(meUndoNarrow) ;
-                else
 #endif
+                else
                 {
                     ii += sizeof(meUndoNode) ;
                     if(nn->type & meUNDO_DELETE)
@@ -1234,8 +1237,10 @@ makelist(meBuffer *blistp, int verb)
 		*cp1++ = cc ;
 #endif
 	}
-	else if((bp->name[0] != '*') &&
-	   ((cp2 = bp->fileName) != NULL))
+	else
+#endif
+            if((bp->name[0] != '*') &&
+               ((cp2 = bp->fileName) != NULL))
 	{
 	    if((ii=meStrlen(cp2))+(cp1-line) > frameCur->width)
 	    {
@@ -1462,7 +1467,7 @@ adjustMode(meBuffer *bp, int nn)  /* change the editor mode status */
     register meUByte *mode ;
     int   func ;
     meUByte prompt[50];            /* string to prompt user with */
-    meUByte cbuf[mePATBUF_SIZE_MAX];            /* buffer to recieve mode name into */
+    meUByte cbuf[meSBUF_SIZE_MAX];            /* buffer to recieve mode name into */
     
     if(nn >= 128)
     {
@@ -1503,7 +1508,7 @@ adjustMode(meBuffer *bp, int nn)  /* change the editor mode status */
 	mlgsStrListSize = MDNUMMODES ;
 	
 	/* prompt the user and get an answer */
-	if(meGetString(prompt, MLLOWER|MLUSER, 0, cbuf, mePATBUF_SIZE_MAX) == meABORT)
+	if(meGetString(prompt, MLLOWER|MLUSER, 0, cbuf, meSBUF_SIZE_MAX) == meABORT)
 	    return(meFALSE);
     
 	/* test it against the modes we know */

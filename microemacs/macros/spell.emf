@@ -45,18 +45,18 @@ set-variable .spell.gscore 2
 
 0 define-macro spell-edit-word-setbutt
     !if @#
-        osd .osd.spell-editr 40 "BHcf" .scheme.osd-ebtt " &Replace   " 3 spell-edit-word-add
-        osd .osd.spell-editr 60 "BHcf" .scheme.osd-ebtt " &Delete    " 1 spell-edit-word-add
+        osd .osd.spell-editr 40 "BHcf" .scheme.osd-ebtt " \HReplace   " 3 spell-edit-word-add
+        osd .osd.spell-editr 60 "BHcf" .scheme.osd-ebtt " \HDelete    " 1 spell-edit-word-add
     !else
-        osd .osd.spell-editr 40 "BHcf" .scheme.osd-dbtt " &Replace   "
-        osd .osd.spell-editr 60 "BHcf" .scheme.osd-dbtt " &Delete    "
+        osd .osd.spell-editr 40 "BHcf" .scheme.osd-dbtt " \HReplace   "
+        osd .osd.spell-editr 60 "BHcf" .scheme.osd-dbtt " \HDelete    "
     !endif
     !if &equ @# 2
-        osd .osd.spell-editr 20 "BHcf" .scheme.osd-ebtt " &Add       " 2 spell-edit-word-add
-        osd .osd.spell-editr 80 "BHcf" .scheme.osd-ebtt " To &Buffer " 0 spell-edit-word-add
+        osd .osd.spell-editr 20 "BHcf" .scheme.osd-ebtt " \HAdd       " 2 spell-edit-word-add
+        osd .osd.spell-editr 80 "BHcf" .scheme.osd-ebtt " To \HBuffer " 0 spell-edit-word-add
     !else
-        osd .osd.spell-editr 20 "BHcf" .scheme.osd-dbtt " &Add       "
-        osd .osd.spell-editr 80 "BHcf" .scheme.osd-dbtt " To &Buffer "
+        osd .osd.spell-editr 20 "BHcf" .scheme.osd-dbtt " \HAdd       "
+        osd .osd.spell-editr 80 "BHcf" .scheme.osd-dbtt " To \HBuffer "
     !endif
 !emacro
 
@@ -86,7 +86,7 @@ set-variable .spell.gscore 2
             osd .osd.spell-editl 50 "h" "        Correct word"
         !else
             osd .osd.spell-editl 50 "h" "        New word"
-            osd .osd.spell-editl 55 "BHrfx" .scheme.osd-ebtt " Auto-&Correct "  f spell-edit-word-auto
+            osd .osd.spell-editl 55 "BHrfx" .scheme.osd-ebtt " Auto-\HCorrect "  f spell-edit-word-auto
         !endif
         -1 osd .osd.spell-editd
         osd .osd.spell-editd 0 ""
@@ -154,14 +154,14 @@ set-variable .spell.gscore 2
     set-variable .spell.edit-wordf "1"
     osd .osd.spell-editl 50 "h" "        Auto-correct"
     osd .osd.spell-editl 55 ""
-    osd .osd.spell-editl 70 "hS" " &To   : " 80
+    osd .osd.spell-editl 70 "hS" " \HTo   : " 80
     osd .osd.spell-editl 80 "ExH" .scheme.osd-entry "##############################" f spell-edit-worda-set
     1 spell-edit-word-setbutt
 !emacro
 
 osd .osd.spell-editl 0   ""
 osd .osd.spell-editl 10  ""
-osd .osd.spell-editl 20  "hS" " &Word : " 32
+osd .osd.spell-editl 20  "hS" " \HWord : " 32
 osd .osd.spell-editl 30  "ExH"  .scheme.osd-entry "##############################" f spell-edit-word-set
 osd .osd.spell-editl 40  ""
 osd .osd.spell-editl 60  ""
@@ -173,7 +173,7 @@ osd .osd.spell-editr 30  ""
 osd .osd.spell-editr 50  ""
 osd .osd.spell-editr 70  ""
 osd .osd.spell-editr 90  ""
-osd .osd.spell-editr 100 "BHcf" .scheme.osd-ebtt " E&xit      " 1 void
+osd .osd.spell-editr 100 "BHcf" .scheme.osd-ebtt " E\Hxit      " 1 void
 osd .osd.spell-editr 110 ""
 0 spell-edit-word-setbutt
 
@@ -210,14 +210,14 @@ set-variable .find-word.depth 10
     !while &not &seq &set #l1 $find-words ""
         !if &equ &inc #l0 1 200
             set-variable .spell.find-last #l1
-            osd .osd.spell-fndr 10 "BHcf"  .scheme.osd-ebtt " &Insert " f void
-            osd .osd.spell-fndr 20 "BHxcf" .scheme.osd-ebtt " &Next   " f find-word-set-list
+            osd .osd.spell-fndr 10 "BHcf"  .scheme.osd-ebtt " \HInsert " f void
+            osd .osd.spell-fndr 20 "BHxcf" .scheme.osd-ebtt " \HNext   " f find-word-set-list
             osd .osd.spell-fndl 40 "" " 200+ matches"
             !return
         !endif
         osd .osd.spell-fndc 1 "x" #l1 f find-word-setr
     !done
-    osd .osd.spell-fndr 10 "BHcf" .scheme.osd-ebtt " &Insert " f void
+    osd .osd.spell-fndr 10 "BHcf" .scheme.osd-ebtt " \HInsert " f void
     osd .osd.spell-fndr 20 "BHSc" .scheme.osd-dbtt " Next   "
     !if #l0
         osd .osd.spell-fndl 40 "" &spr " %s matches" #l0
@@ -298,7 +298,7 @@ define-macro find-word
     -1 osd .osd.spell-fndc
     osd .osd.spell-fndc 0 "sS" .scheme.osd-child .find-word.width .find-word.depth -1 -1
     osd .osd.spell-fndc 1 ""
-    osd .osd.spell-fndr 10 "BHcf" .scheme.osd-dbtt " &Insert " f void
+    osd .osd.spell-fndr 10 "BHcf" .scheme.osd-dbtt " \HInsert " f void
     osd .osd.spell-fndr 20 "BHSc" .scheme.osd-dbtt " Next   "
     !force .osd.spell-find osd
     !if &and &not $status &not #l3
@@ -316,17 +316,17 @@ osd .osd.spell-find 20 "I"  .osd.spell-fndr
 
 osd .osd.spell-fndl 0   ""
 osd .osd.spell-fndl 5   ""
-osd .osd.spell-fndl 10  "S"  " &Word Mask :" 30
+osd .osd.spell-fndl 10  "S"  " \HWord Mask :" 30
 osd .osd.spell-fndl 30 "ExHfc" .scheme.osd-entry &spr "%n" .find-word.width "#" f find-word-set
 osd .osd.spell-fndl 50  "IbH" .scheme.osd-sbar .find-word.width .find-word.depth .osd.spell-fndc
 
 osd .osd.spell-fndr 0  ""
 osd .osd.spell-fndr 5  ""
-osd .osd.spell-fndr 10 "BHcf" .scheme.osd-dbtt " &Insert " f void
+osd .osd.spell-fndr 10 "BHcf" .scheme.osd-dbtt " \HInsert " f void
 osd .osd.spell-fndr 15 ""
 osd .osd.spell-fndr 20 "BHSc" .scheme.osd-dbtt " Next   "
 osd .osd.spell-fndr 25 ""
-osd .osd.spell-fndr 30 "BHcf" .scheme.osd-ebtt " E&xit   " 0 abort-command
+osd .osd.spell-fndr 30 "BHcf" .scheme.osd-ebtt " E\Hxit   " 0 abort-command
 
 set-variable .spell.check-wordo ""
 
@@ -341,8 +341,8 @@ set-variable .spell.check-wordo ""
         !abort
     !else
         set-variable .spell.check-word $result
-        osd .osd.spell-chkr 10 "BHcft" 1 .scheme.osd-ebtt " &Replace     " 1 spell-check-replace
-        osd .osd.spell-chkr 20 "BHcf"    .scheme.osd-ebtt " Re&place All " 2 spell-check-replace
+        osd .osd.spell-chkr 10 "BHcft" 1 .scheme.osd-ebtt " \HReplace     " 1 spell-check-replace
+        osd .osd.spell-chkr 20 "BHcf"    .scheme.osd-ebtt " Re\Hplace All " 2 spell-check-replace
         osd .osd.spell-chkl 15 "" " Word correct"
     !endif
 !emacro
@@ -352,11 +352,11 @@ set-variable .spell.check-wordo ""
         osd .osd.spell-chkr 10 "BcfSH" .scheme.osd-dbtt " Replace     "
         osd .osd.spell-chkr 20 "BcfSH" .scheme.osd-dbtt " Replace All "
     !else
-        osd .osd.spell-chkr 10 "BcfHt" 1 .scheme.osd-ebtt " &Replace     " 1 spell-check-replace
-        osd .osd.spell-chkr 20 "BcfH"    .scheme.osd-ebtt " Re&place All " 2 spell-check-replace
+        osd .osd.spell-chkr 10 "BcfHt" 1 .scheme.osd-ebtt " \HReplace     " 1 spell-check-replace
+        osd .osd.spell-chkr 20 "BcfH"    .scheme.osd-ebtt " Re\Hplace All " 2 spell-check-replace
     !endif
     -1 osd .osd.spell-guess
-    osd .osd.spell-guess 0 "ksS" .scheme.osd-child 22 9 -1 -1
+    osd .osd.spell-guess 0 "sS" .scheme.osd-child 22 9 -1 -1
     osd .osd.spell-guess 1 ""
     !if &not &seq .spell.check-word ""
         !if &seq &lef $result 1 "O"
@@ -465,7 +465,7 @@ set-variable .spell.check-wordo ""
 
 0 define-macro spell-check-insertflag
     !if &bmod "view"
-        osd-xdialog "Spelling Checker" "Buffer in view mode, remove?" 1 "  &Yes  " "  &No  "
+        osd-xdialog "Spelling Checker" "Buffer in view mode, remove?" 1 "  \HYes  " "  \HNo  "
         !if &equ $result 2
             !abort
         !endif
@@ -492,7 +492,7 @@ set-variable .spell.check-wordo ""
         ; don't inc the undo count for auto corrections
         !if &not &equ @# 3
             !if &not &pinc #g0 1
-                osd .osd.spell-chkr 87 "BcfHt" 4 .scheme.osd-ebtt " &Undo Last   " f spell-check-undo
+                osd .osd.spell-chkr 87 "BcfHt" 4 .scheme.osd-ebtt " \HUndo Last   " f spell-check-undo
             !endif
         !endif
         set-variable @cc spell-buffer
@@ -588,13 +588,13 @@ set-variable .spell.check-wordo ""
             1 show-region
             ; Alter some of the buttons to cope with the double word
             osd .osd.spell-chkl 15 "" "Double word"
-            osd .osd.spell-chkr 10 "BHSc"     .scheme.osd-dbtt " &Replace     "
-            osd .osd.spell-chkr 20 "BHcft"  2 .scheme.osd-ebtt " &Delete 2nd  " 4 spell-check-replace
-            osd .osd.spell-chkr 40 "BHcft"  3 .scheme.osd-ebtt " &Ignore      " 4 spell-check-ignore
-            osd .osd.spell-chkr 50 "BHcfi"    .scheme.osd-ebtt " Disable &Chk " f "set-variable #g4 2"
+            osd .osd.spell-chkr 10 "BHSc"     .scheme.osd-dbtt " \HReplace     "
+            osd .osd.spell-chkr 20 "BHcft"  2 .scheme.osd-ebtt " \HDelete 2nd  " 4 spell-check-replace
+            osd .osd.spell-chkr 40 "BHcft"  3 .scheme.osd-ebtt " \HIgnore      " 4 spell-check-ignore
+            osd .osd.spell-chkr 50 "BHcfi"    .scheme.osd-ebtt " Disable \HChk " f "set-variable #g4 2"
             osd .osd.spell-chkr 60 "BHcfS"    .scheme.osd-dbtt " Add         "
             -1 osd .osd.spell-guess
-            osd .osd.spell-guess 0 "ksS" .scheme.osd-child 22 9 -1 -1
+            osd .osd.spell-guess 0 "sS" .scheme.osd-child 22 9 -1 -1
             osd .osd.spell-guess 1 ""
             .spell.recenter recenter
             screen-update
@@ -602,9 +602,9 @@ set-variable .spell.check-wordo ""
             set-variable #l0 $status
             ; must restore some of the buttons
             osd .osd.spell-chkr 20 "BHcS"     .scheme.osd-dbtt " Replace All "
-            osd .osd.spell-chkr 40 "BHcft"  3 .scheme.osd-ebtt " &Ignore      " 1 spell-check-ignore
-            osd .osd.spell-chkr 50 "BHcf"     .scheme.osd-ebtt " I&gnore All  " 2 spell-check-ignore
-            osd .osd.spell-chkr 60 "BHcfi"    .scheme.osd-ebtt " &Add         " f "5 spell .spell.check-word \"\""
+            osd .osd.spell-chkr 40 "BHcft"  3 .scheme.osd-ebtt " \HIgnore      " 1 spell-check-ignore
+            osd .osd.spell-chkr 50 "BHcf"     .scheme.osd-ebtt " I\Hgnore All  " 2 spell-check-ignore
+            osd .osd.spell-chkr 60 "BHcfi"    .scheme.osd-ebtt " \HAdd         " f "5 spell .spell.check-word \"\""
             !if &not #l0
                 !if #g3
                     ; not a real abort, just had to get out of osd
@@ -661,7 +661,7 @@ set-variable .spell.check-wordo ""
         !endif
         add-spell-rule "#" &mul .spell.gscore 30
     !endif
-    osd .osd.spell-chkl 65 "xMmsfH" .scheme.osd-entry &spr "%s%n" #l0 &sub 14 &len #l0 " " .osd.spell-chkg
+    osd .osd.spell-chkl 65 "xMdmsfH" .scheme.osd-entry &spr "%s%n" #l0 &sub 14 &len #l0 " " .osd.spell-chkg
     !if @#
         1 spell .spell.check-word
         spell-check-set-guess
@@ -717,18 +717,18 @@ set-variable #l0 0
 -1 osd .osd.spell-chkl
 osd .osd.spell-chkl 0  ""
 osd .osd.spell-chkl 5  ""
-osd .osd.spell-chkl 10 "Shf"  " &Word : " 30
+osd .osd.spell-chkl 10 "Shf"  " \HWord : " 30
 osd .osd.spell-chkl 15 ""  "  "
 osd .osd.spell-chkl 29 "hf" " "
 osd .osd.spell-chkl 30 "ExHf" .scheme.osd-entry "######################" f spell-check-set-word
 osd .osd.spell-chkl 32 ""
 osd .osd.spell-chkl 34 "fh" "            "
-osd .osd.spell-chkl 36 "BfHx" .scheme.osd-ebtt " &Meaning " 2 spell-check-com
+osd .osd.spell-chkl 36 "BfHx" .scheme.osd-ebtt " \HMeaning " 2 spell-check-com
 osd .osd.spell-chkl 38 ""
 osd .osd.spell-chkl 40 ""  " Suggestions :"
 osd .osd.spell-chkl 50 "IbHt" 1 .scheme.osd-sbar 22 9 .osd.spell-guess
 osd .osd.spell-chkl 55 ""
-osd .osd.spell-chkl 60 "Sh" " &Language : " 65
+osd .osd.spell-chkl 60 "Sh" " \HLanguage : " 65
 
 -1 osd .osd.spell-chkr
 osd .osd.spell-chkr 0  "s" 17 18 -1 -1
@@ -737,19 +737,19 @@ osd .osd.spell-chkr 10 "BcfSH"    .scheme.osd-dbtt " Replace     "
 osd .osd.spell-chkr 15 ""
 osd .osd.spell-chkr 20 "BcfSH"    .scheme.osd-dbtt " Replace All "
 osd .osd.spell-chkr 25 ""
-osd .osd.spell-chkr 40 "BcfHt"  3 .scheme.osd-ebtt " &Ignore      " 1 spell-check-ignore
+osd .osd.spell-chkr 40 "BcfHt"  3 .scheme.osd-ebtt " \HIgnore      " 1 spell-check-ignore
 osd .osd.spell-chkr 45 ""
-osd .osd.spell-chkr 50 "BcfH"     .scheme.osd-ebtt " I&gnore All  " 2 spell-check-ignore
+osd .osd.spell-chkr 50 "BcfH"     .scheme.osd-ebtt " I\Hgnore All  " 2 spell-check-ignore
 osd .osd.spell-chkr 55 ""
-osd .osd.spell-chkr 60 "BcfiH"    .scheme.osd-ebtt " &Add         " f "5 spell .spell.check-word \"\""
+osd .osd.spell-chkr 60 "BcfiH"    .scheme.osd-ebtt " \HAdd         " f "5 spell .spell.check-word \"\""
 osd .osd.spell-chkr 65 ""
-osd .osd.spell-chkr 70 "BcfHx"    .scheme.osd-ebtt " &Edit        " 0 spell-check-com
+osd .osd.spell-chkr 70 "BcfHx"    .scheme.osd-ebtt " \HEdit        " 0 spell-check-com
 osd .osd.spell-chkr 75 ""
-osd .osd.spell-chkr 80 "BcfHx"    .scheme.osd-ebtt " &Find        " 1 spell-check-com
+osd .osd.spell-chkr 80 "BcfHx"    .scheme.osd-ebtt " \HFind        " 1 spell-check-com
 osd .osd.spell-chkr 85 ""
 osd .osd.spell-chkr 87 "BcfSH"    .scheme.osd-dbtt " Undo Last   "
 osd .osd.spell-chkr 88 ""
-osd .osd.spell-chkr 90 "BcfHt"  5 .scheme.osd-ebtt " E&xit        " 0 abort-command
+osd .osd.spell-chkr 90 "BcfHt"  5 .scheme.osd-ebtt " E\Hxit        " 0 abort-command
 osd .osd.spell-chkr 92 ""
 osd .osd.spell-chkr 95 "hf" " "
 osd .osd.spell-chkr 96 "Exfh"    "###" f spell-check-set-gscore
@@ -775,7 +775,7 @@ define-macro spell-buffer
     set-variable #g6 &bmod "edit"
     set-variable .spell.check-word ""
     -1 osd .osd.spell-guess
-    osd .osd.spell-guess 0 "ksS" .scheme.osd-child 20 10 -1 -1
+    osd .osd.spell-guess 0 "sS" .scheme.osd-child 20 10 -1 -1
     osd .osd.spell-guess 1 ""
     osd .osd.spell-check 0  "batcHC" 9 3 .scheme.osd-title "Spelling Checker" spell-check-control
     osd .osd.spell-chkr 87 "BcSfH" .scheme.osd-dbtt " Undo Last   "

@@ -308,23 +308,23 @@ add-file-hook ".pls"                                          fhook-pls
 ; Initialize the top menu line
 osd 0  0  "asM" 0 0 -1 0 0 0 osd-main
 osd 0  5   "fh" " "
-osd 0  10  "Mfsh" "&File   "   1
+osd 0  10  "Mdfsh" "\HFile   "   1
 osd 0  15  "fh" " "
-osd 0  20  "Mfsh" "&Edit   "   2
+osd 0  20  "Mdfsh" "\HEdit   "   2
 osd 0  25  "fh" " "
-osd 0  30  "Mfsh" "&Search  "  3
+osd 0  30  "Mdfsh" "\HSearch  "  3
 osd 0  35  "fh" " "
-osd 0  40  "Mfsh" "&Insert  "  4
+osd 0  40  "Mdfsh" "\HInsert  "  4
 osd 0  45  "fh" " "
-osd 0  50  "Mfsh" "F&ormat  "  5
+osd 0  50  "Mdfsh" "F\Hormat  "  5
 osd 0  55  "fh" " "
-osd 0  60  "Mfsh" "E&xecute "  6
+osd 0  60  "Mdfsh" "E\Hxecute "  6
 osd 0  65  "fh" " "
-osd 0  70  "Mfsh" "&Tools   "  7
+osd 0  70  "Mdfsh" "\HTools   "  7
 osd 0  75  "fh" " "
-osd 0  80  "Mfsh" "&Window  "  8
+osd 0  80  "Mdfsh" "\HWindow  "  8
 osd 0  85  "fh" " "
-osd 0  90  "Mfsr" "&Help "     9
+osd 0  90  "Mdfsr" "\HHelp "     9
 osd -1 &cond &reg "/history" "main-menu" "1" "1" "-1"
 ; setup the toolbar
 !if &reg "/history" &cat %platform "/toolbar" "0"

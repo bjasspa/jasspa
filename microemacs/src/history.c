@@ -46,10 +46,10 @@ static meUByte histVerId[] = "6" ;      /* History version */
 meUByte *defHistFile=NULL ;
 
 /* Constants */
-static meUByte *regNames[5] = {
+static meUByte *regNames[meHISTORY_COUNT] = {
     (meUByte *)"string",(meUByte *)"buffer",(meUByte *)"command",(meUByte *)"file",(meUByte *)"search"
 };
-static meUByte *numList[5]=
+static meUByte *numList[meHISTORY_COUNT]=
 {
     &numStrHist,
     &numBuffHist,
@@ -68,7 +68,7 @@ readHistory(int f, int n)
     meBuffer *bp ;                        /* Buffer pointer */
     meRegNode *regRoot;                  /* Root of the registry */
     meRegNode *reg;                      /* temp registry pointer */
-    meUByte filename[meFILEBUF_SIZE_MAX] ;	        /* Filename */
+    meUByte filename[meBUF_SIZE_MAX] ;	        /* Filename */
     meUByte *fname;	                /* Resulting file name to execute */
     int ii;                             /* Loop counter */
     
@@ -87,7 +87,7 @@ readHistory(int f, int n)
     }
     else
     {
-        if (meGetString((meUByte *)"Read history", MLFILECASE,0,filename,meFILEBUF_SIZE_MAX) <= 0)
+        if (meGetString((meUByte *)"Read history", MLFILECASE,0,filename,meBUF_SIZE_MAX) <= 0)
             return meABORT ;
         fname = filename ;
     }
@@ -107,7 +107,7 @@ readHistory(int f, int n)
         meUByte *ss;                       /* temp string pointer */
         
         /* Load in the history */
-        for (ii = 0; ii < 5; ii++)
+        for (ii = 0; ii < meHISTORY_COUNT; ii++)
         {
             int numHistory = 0;
             
@@ -153,7 +153,7 @@ readHistory(int f, int n)
                 while (reg != NULL)
                 {
                     meStat stats ;
-                    meUByte  fnbuf[meFILEBUF_SIZE_MAX] ;
+                    meUByte  fnbuf[meBUF_SIZE_MAX] ;
                     int    flags ;
                     
                     /* Get the filename */
@@ -228,7 +228,7 @@ saveHistory(int f, int n)
     meRegNode *regRoot;                  /* Root of the registry */
     meRegNode *regHistory;               /* Handle into the registry */
     meUByte name[2] = "0";                /* Automatic name seed */
-    meUByte filename[meFILEBUF_SIZE_MAX] ;           /* Filename */
+    meUByte filename[meBUF_SIZE_MAX] ;           /* Filename */
     meUByte *fname;                       /* Resulting file name to execute */
 
     if(n == 0)
@@ -238,8 +238,8 @@ saveHistory(int f, int n)
     }
     else
     {
-        meUByte tmp[meFILEBUF_SIZE_MAX] ;	/* Filename */
-        if(meGetString((meUByte *)"Save history",MLFILECASE,0,tmp,meFILEBUF_SIZE_MAX) <= 0)
+        meUByte tmp[meBUF_SIZE_MAX] ;	/* Filename */
+        if(meGetString((meUByte *)"Save history",MLFILECASE,0,tmp,meBUF_SIZE_MAX) <= 0)
             return meFALSE ;
         if(!fileLookup(tmp,(meUByte *)".erf",meFL_CHECKDOT|meFL_USESRCHPATH,filename))
             meStrcpy(filename,tmp) ;
@@ -264,7 +264,7 @@ saveHistory(int f, int n)
         /* Write the version information in */
         regSet (regHistory,(meUByte *)"version", histVerId);
         
-        for (ii = 0; ii < 5; ii++)
+        for (ii = 0; ii < meHISTORY_COUNT ; ii++)
         {
             /* Construct the new node container */
             if ((regSection = regSet(regHistory, regNames [ii],(meUByte *)"")) != NULL)
@@ -344,12 +344,12 @@ void
 initHistory(void)
 {
     /* Must malloc the 20 history slots for the 5 history types */
-    if((strHist = (meUByte **) meMalloc(sizeof(meUByte *) * 5 * meHISTORY_SIZE)) == NULL)
+    if((strHist = (meUByte **) meMalloc(sizeof(meUByte *) * meHISTORY_COUNT * meHISTORY_SIZE)) == NULL)
         meExit(1) ;
     /* Initialise the array to NULLS so we know they don't point to a history
      * string
      */
-    memset(strHist,0,sizeof(meUByte *) * 5 * meHISTORY_SIZE) ;
+    memset(strHist,0,sizeof(meUByte *) * meHISTORY_COUNT * meHISTORY_SIZE) ;
     buffHist = strHist + meHISTORY_SIZE ;
     commHist = buffHist + meHISTORY_SIZE ;
     fileHist = commHist + meHISTORY_SIZE ;

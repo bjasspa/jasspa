@@ -104,13 +104,8 @@ __mkTempName (meUByte *buf, meUByte *name)
         sprintf((char *)buf, "/tmp/me%d%s",(int) getpid(),name);
     else
     {
-        static int index = 0;
-        /* mktemp() is unsafe, mkstemp() is an alternative, but this opens the
-         * file. We can better generate a unique name by using the PID and a
-         * static index. */
-        /* strcpy((char *)buf, "/tmp/meXXXXXX") ;*/
-        /* mktemp((char *)buf) ;*/
-        sprintf ((char *)buf, "/tmp/me%d_%d",(int) getpid(),index);
+        strcpy((char *)buf, "/tmp/meXXXXXX") ;
+        mktemp((char *)buf) ;
     }
 }
 
@@ -198,7 +193,7 @@ meShell(int f, int n)
 #ifdef _DOS
     register char *cp;
 #endif
-    meUByte path[meFILEBUF_SIZE_MAX] ;		/* pathfrom where to execute */
+    meUByte path[meBUF_SIZE_MAX] ;		/* pathfrom where to execute */
     int  cd, ss ;
     
     getFilePath(frameCur->bufferCur->fileName,path) ;
@@ -258,7 +253,7 @@ meShell(int f, int n)
 int
 doShellCommand(meUByte *cmdstr)
 {
-    meUByte path[meFILEBUF_SIZE_MAX] ;		/* pathfrom where to execute */
+    meUByte path[meBUF_SIZE_MAX] ;		/* pathfrom where to execute */
     int  systemRet ;                    /* return value of last system  */
     int  cd, ss ;
 #ifdef _UNIX
@@ -768,7 +763,7 @@ ipipeRead(meIPipe *ipipe)
                 break ;
             ipipe->pid = -1 ;
             meStrcpy(p1,ins) ;
-            cc = meNLCHAR ;
+            cc = meCHAR_NL ;
         }
         switch(cc)
         {
@@ -789,7 +784,7 @@ ipipeRead(meIPipe *ipipe)
             p1 = buff ;
             len = curOff = 0 ;
             break ;
-        case meNLCHAR:
+        case meCHAR_NL:
 #if _UNIX
             if(!(ipipe->flag & meIPIPE_OVERWRITE) && (curRow+1 < ipipe->noRows))
             {
@@ -1073,7 +1068,7 @@ cant_handle_this:
             }
             else if(*p1 == '\0')
                 p1[1] = '\0' ;
-            else if((cc == meTABCHAR) && (get_tab_pos(curOff) == 0))
+            else if((cc == meCHAR_TAB) && (get_tab_pos(curOff) == 0))
             {
                 /* theres a strangeness with vt100 tab as it doesn't
                  * seem to erase the next character and seems to be used
@@ -1088,7 +1083,7 @@ cant_handle_this:
             *p1++ = cc ;
             if(isDisplayable(cc))
                 curOff++ ;
-            else if(cc == meTABCHAR)
+            else if(cc == meCHAR_TAB)
                 curOff += get_tab_pos(curOff) + 1 ;
             else if (cc  < 0x20)
                 curOff += 2 ;
@@ -1739,7 +1734,7 @@ ipipeCommand(int f, int n)
     register int  ss ;			/* Fast variable */
     meUByte         lbuf[meBUF_SIZE_MAX];		/* command line send to shell */
     meUByte         nbuf[meBUF_SIZE_MAX], *bn ;	/* buffer name */
-    meUByte         pbuf[meFILEBUF_SIZE_MAX] ;
+    meUByte         pbuf[meBUF_SIZE_MAX] ;
 
     if(!(meSystemCfg & meSYSTEM_IPIPES))
     {

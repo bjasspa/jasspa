@@ -37,31 +37,6 @@
 
 #if MEOPT_MAGIC
 
-#ifdef _GNU_REGEX
-
-#ifndef __STDC__
-#define __STDC__ 1
-#endif
-
-#include <gnuregex.h>
-
-extern struct re_pattern_buffer mereBuffer ;
-extern struct re_registers mereRegs ;
-
-#define mereRegexInvalidate()                                                \
-do {                                                                         \
-    extern char mereLastPat[] ;                                              \
-    mereLastPat[0] = '\0' ;                                                  \
-} while(0)
-#define mereRegexClassChanged() 
-
-
-#define mereRegexGroupStart(n) (mereRegs.start[(n)])
-#define mereRegexGroupEnd(n)   (mereRegs.end[(n)])
-#define mereRegexGroupNo()     (mereNumRegs)
-
-#else
-
 #define meREGEXCLASS_SIZE 32
 typedef unsigned char meRegexClass[meREGEXCLASS_SIZE] ;
 typedef unsigned char meRegexDouble[2] ;
@@ -161,8 +136,6 @@ extern meRegex meRegexStrCmp ;     /* meRegex used meRegexStrCmp  */
 
 #endif
 
-#endif
-
 typedef struct {                       
     meLine *startline;                  /* Pattern start position */
     int   startoff;                     /* Pattern start line offset */
@@ -193,14 +166,15 @@ extern int    srchLastMagic;            /* last search was a magic        */
 #endif
 
 /* Incremental search defines */
-#define ISCANNER_MAGIC  0x01            /* Require magical scanner */
-#define ISCANNER_PTBEG  0x02            /* Point at start of string */
-#define ISCANNER_QUIET  0x04            /* Turn off pattern building errors */
-#define ISCANNER_EXACT  0x08            /* Exact pattern matching */
-#define ISCANNER_BACKW  0x10            /* Search backwards */
-#define ISEARCH_SCANMR  0x20            /* Isearch flag to scan more */
+#define ISCANNER_MAGIC   0x01           /* Require magical scanner */
+#define ISCANNER_PTBEG   0x02           /* Point at start of string */
+#define ISCANNER_QUIET   0x04           /* Turn off pattern building errors */
+#define ISCANNER_EXACT   0x08           /* Exact pattern matching */
+#define ISCANNER_BACKW   0x10           /* Search backwards */
+#define ISCANNER_EOBQUIT 0x20           /* Quit if the end or beginning of buffer is reached */
+#define ISCANNER_SCANMR  0x40           /* Isearch flag to scan more */
 #if MEOPT_IPIPES
-#define ISEARCH_PIPE    0x40            /* Isearch performed in ipipe buffer */
+#define ISCANNER_PIPE    0x80           /* Isearch performed in ipipe buffer */
 #endif
 
 #if MEOPT_ISEARCH

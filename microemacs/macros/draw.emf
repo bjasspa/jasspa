@@ -167,7 +167,7 @@ osd .osd.draw-help 13 ""
 osd .osd.draw-help 14 ""  " Use normal cursor keys to 'draw' in the"
 osd .osd.draw-help 15 ""  " current mode."
 osd .osd.draw-help 16 ""
-osd .osd.draw-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
+osd .osd.draw-help 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void 
 
 define-macro draw
     !force 0 find-buffer  "*draw*"

@@ -38,22 +38,22 @@ define-macro-file crosswd  cross-word
     !endif
     set-variable #l1 &cat &lef $buffer-fname &rsin "/" $buffer-fname "tags"
     !if &seq #l1 .osd.tag-last
-        osd 1 40 ""  "Find &Tag" f "osd-find-tag"
+        osd 1 40 ""  "Find \HTag" f "osd-find-tag"
     !elif &gre &stat "s" #l1 0
-        osd 1 40 ""  "Find &Tag" f "osd-find-tag"
+        osd 1 40 ""  "Find \HTag" f "osd-find-tag"
     !else
         osd 1 40 "D"
     !endif
     !if &seq @cl "undo"
         !jump 2
     !elif &and &seq @cl "osd-redo" .undo.count
-        osd 2 20  ""  "&Redo" f osd-redo
+        osd 2 20  ""  "\HRedo" f osd-redo
     !else
         osd 2 20  ""  "Redo"
     !endif
     set-variable #l0 &ind &spr ".%s.setup" $buffer-fhook
     !if &sin "p" #l0
-        osd 9 10 "" &spr "View %s &Help  %s" &rig $buffer-fhook 6 &kbind "" buffer-help f buffer-help
+        osd 9 10 "" &spr "View %s \HHelp  %s" &rig $buffer-fhook 6 &kbind "" buffer-help f buffer-help
     !else
         osd 9 10 "D"
     !endif
@@ -62,7 +62,7 @@ define-macro-file crosswd  cross-word
         !if &seq #l9 "ERROR"
             set-variable #l9 &cat &sup &mid $buffer-fhook 6 1 &rig $buffer-fhook 7
         !endif
-        osd 7 1 "Md" &cat #l9 " &Tools" .osd.tmp buffer-tool
+        osd 7 1 "M" &cat #l9 " \HTools" .osd.tmp buffer-tool
         osd 7 2 "-"
     !else
         osd 7 1  "D"
@@ -71,7 +71,7 @@ define-macro-file crosswd  cross-word
     !if &seq &ind &spr ".%s.setup-mask" $buffer-fhook "ERROR"
         osd 9 145 "D"
     !else
-        osd 9 145 "" "Buffer &Setup" f buffer-setup
+        osd 9 145 "" "Buffer \HSetup" f buffer-setup
     !endif
     ; let the current buffer type modify the menu
     !if &exi &set #l0 &cat "osd-ohook-" &rig $buffer-fhook 6
@@ -182,10 +182,10 @@ define-macro-file crosswd  cross-word
     osd-get-file
     set-variable #l0 .osd-get-file.result
     !if &not &stat "w" #l0
-        2 osd-dialog "Save Buffer As" "  Invalid file name  " 10 6 " &OK "
+        2 osd-dialog "Save Buffer As" "  Invalid file name  " 10 6 " \HOK "
         !abort
     !elif &sequ &stat "t" #l0 "R"
-        2 osd-xdialog "Save Buffer As" "  Over-write existing file?  " 1 10 6 "&Yes" "&No"
+        2 osd-xdialog "Save Buffer As" "  Over-write existing file?  " 1 10 6 " \HYes " " \HNo "
         !if &equ $result 2
             !abort
         !endif
@@ -201,7 +201,7 @@ define-macro-file crosswd  cross-word
             find-buffer #l0
             set-variable #l1 &spr "  Save changes to buffer \"%s\"  \n\n  File: %s  " #l0 $buffer-fname
             find-buffer #l2
-            2 osd-xdialog "Save All" #l1 1 10 6 "&Yes" "&No" "&Cancel"
+            2 osd-xdialog "Save All" #l1 1 10 6 " \HYes" " \HNo " " \HCancel "
             !if &equ $result 3
                 !abort
             !elif &equ $result 1
@@ -217,7 +217,7 @@ define-macro-file crosswd  cross-word
     ; can't do registry and dictionaries in macro code
     2 save-registry @mna
     2 save-dictionary @mna
-    2 osd-xdialog "Save All" "  Save default history  " 1 10 8 "&Yes" "&No" "&Cancel"
+    2 osd-xdialog "Save All" "  Save default history  " 1 10 8 " \HYes " " \HNo " " \HCancel "
     !if &equ $result 3
         !abort
     !elif &equ $result 1
@@ -227,7 +227,7 @@ define-macro-file crosswd  cross-word
 0 define-macro osd-close
     !if &bmod "edit"
         set-variable #l0 &spr "Buffer \"%s\" has been changed" $buffer-bname
-        2 osd-xdialog "Buffer Close" #l0 1 10 6 "&Save First" "&Loose Changes" "&Cancel"
+        2 osd-xdialog "Buffer Close" #l0 1 10 6 " \HSave First " " \HLoose Changes " " \HCancel "
         !if &equ $result 3
             !abort
         !elif &equ $result 1
@@ -236,7 +236,7 @@ define-macro-file crosswd  cross-word
     !endif
     !if &bmod "pipe"
         set-variable #l0 &spr "Buffer \"%s\" has active process" $buffer-bname
-        2 osd-xdialog "Buffer Close" #l0 1 10 6 "&Kill" "&Cancel"
+        2 osd-xdialog "Buffer Close" #l0 1 10 6 " \HKill " " \HCancel "
         !if &equ $result 2
             !abort
         !endif
@@ -245,33 +245,33 @@ define-macro-file crosswd  cross-word
 !emacro
 
 osd 1  0   "b"
-osd 1  10  ""   "&New"                f osd-new-buffer ; Create a new document
-osd 1  20  ""   "&Open       C-x C-f" f osd-file-open  ; Find a new file
-osd 1  30  "Md" "&Quick Open"        19
-osd 1  35  "Md" "&Favorites"         30 osd-favorites  ; Set up favorites
-osd 1  50  ""   "Find file  f10"      f file-browser   ; file browser
-osd 1  55  ""   "FTP        S-f10"    f ftp            ; ftp browser
-osd 1  60  ""   "&Close      C-x k"   f osd-close
+osd 1  10  ""  "\HNew"                f osd-new-buffer ; Create a new document
+osd 1  20  ""  "\HOpen       C-x C-f" f osd-file-open  ; Find a new file
+osd 1  30  "M" "\HQuick Open"         19
+osd 1  35  "M" "\HFavorites"          30 osd-favorites  ; Set up favorites
+osd 1  50  ""  "Find file  f10"       f file-browser   ; file browser
+osd 1  55  ""  "FTP        S-f10"     f ftp            ; ftp browser
+osd 1  60  ""  "\HClose      C-x k"   f osd-close
 osd 1  70  "-"
-osd 1  80  ""   "Att&ributes"         f file-attrib    ; Set file attributes
-osd 1  90  ""   "&Save       C-x C-s" f osd-save       ; Save the buffer
-osd 1  100 ""   "Save &As    C-x C-w" f osd-save-as    ; Save new file
-osd 1  110 ""   "Save A&ll"           f osd-save-all
+osd 1  80  ""  "Att\Hributes"         f file-attrib    ; Set file attributes
+osd 1  90  ""  "\HSave       C-x C-s" f osd-save       ; Save the buffer
+osd 1  100 ""  "Save \HAs    C-x C-w" f osd-save-as    ; Save new file
+osd 1  110 ""  "Save A\Hll"           f osd-save-all
 osd 1  120 "-"
-osd 1  130 ""   "Printer Set&up"      f print-setup    ; Setup printer
-osd 1  140 ""   "&Print"              f print-buffer   ; Print
+osd 1  130 ""  "Printer Set\Hup"      f print-setup    ; Setup printer
+osd 1  140 ""  "\HPrint"              f print-buffer   ; Print
 osd 1  150 "-"
 !if &reg "/history" "find-buffer" "0"
     !if &not &exi .osd.find-buffer
         set-variable .osd.find-buffer &pinc .osd.next 1
         0 define-macro-file findbuff osd-find-buffer
     !endif
-    osd 1  160 "Md" "&Buffer" .osd.find-buffer osd-find-buffer
+    osd 1  160 "M" "\HBuffer" .osd.find-buffer osd-find-buffer
 !else    
-    osd 1  160 "Md" "&Buffer"        20 osd-1-buffer   ; Set up the buffers
+    osd 1  160 "M" "\HBuffer"        20 osd-1-buffer   ; Set up the buffers
 !endif
 osd 1  170 "-"
-osd 1  180 ""   "E&xit"               f save-buffers-exit-emacs
+osd 1  180 ""   "E\Hxit"               f save-buffers-exit-emacs
 
 ; MENU #19 - Quick-open
 ; if the file-type is found in the registry then add entry to menu 1 
@@ -280,7 +280,7 @@ set-variable #l0 &cat &reg "/history" "file-type" "\b" "All files\b"
 osd 19 0 "b"
 set-variable #l1 0
 !while &not &seq &set #l2 &lget #l0 &inc #l1 1 ""
-    osd 19 #l1 "M" #l2 20 "osd-1-file"
+    osd 19 #l1 "Md" #l2 20 "osd-1-file"
 !done
 ;
 ; MENU #2 - EDIT sub-menu
@@ -332,171 +332,171 @@ set-variable .undo.count 0
     !endif
 !emacro
 osd 2  0   "b"
-osd 2  10  ""  "&Undo       C-x u"         1 osd-undo      ; Undo the last command
+osd 2  10  ""  "\HUndo       C-x u"         1 osd-undo      ; Undo the last command
 osd 2  20  ""  "Redo"                                      ; Re-do the last osd-undo
-osd 2  25  ""  "Undo &All"                 0 osd-undo      ; Undo all changes to last save
+osd 2  25  ""  "Undo \HAll"                 0 osd-undo      ; Undo all changes to last save
 osd 2  30  "-"
-osd 2  40  ""  "&Set Mark   esc space"     f set-mark      ; Set buffer mark
-osd 2  50  ""  "Cu&t        C-w"           f kill-region   ; Kill off the region
-osd 2  60  ""  "&Copy       esc w"         f copy-region   ; Copy the region
-osd 2  70  ""  "&Paste      C-y"           f yank          ; Paste text
+osd 2  40  ""  "\HSet Mark   esc space"     f set-mark      ; Set buffer mark
+osd 2  50  ""  "Cu\Ht        C-w"           f kill-region   ; Kill off the region
+osd 2  60  ""  "\HCopy       esc w"         f copy-region   ; Copy the region
+osd 2  70  ""  "\HPaste      C-y"           f yank          ; Paste text
 osd 2  80  "-"
-osd 2  90  "i" "Narrow &Out"               f "0x34 narrow-buffer .scheme.fold-close osd-narrow-markup"
-osd 2  100 "i" "&Narrow To"                f "0x33 narrow-buffer .scheme.fold-close osd-narrow-markup"
-osd 2  110 ""  "Remove S&ingle Narrow"     2 narrow-buffer
-osd 2  120 ""  "Remove A&ll Narrows"       1 narrow-buffer
+osd 2  90  "i" "Narrow \HOut"               f "0x34 narrow-buffer .scheme.fold-close osd-narrow-markup"
+osd 2  100 "i" "\HNarrow To"                f "0x33 narrow-buffer .scheme.fold-close osd-narrow-markup"
+osd 2  110 ""  "Remove S\Hingle Narrow"     2 narrow-buffer
+osd 2  120 ""  "Remove A\Hll Narrows"       1 narrow-buffer
 ;
 ; MENU #3 - SEARCH sub-menu
 ;
 osd 3  0   "b"
-osd 3  10  ""  "&Search         C-s"      1 osd-search
-osd 3  20  ""  "&Replace        esc C-r"  2 osd-search
+osd 3  10  ""  "\HSearch         C-s"      1 osd-search
+osd 3  20  ""  "\HReplace        esc C-r"  2 osd-search
 osd 3  30  "-"
-osd 3  35  ""  "&Hilight Search"          3 osd-search
-osd 3  40  ""  "Goto &Line      esc g"    f osd-goto-line
-osd 3  50  ""  "Goto &Fence     esc C-i"  f goto-matching-fence
-osd 3  60  ""  "Set &Bookmark   C-x C-a"  f set-alpha-mark
-osd 3  70  ""  "&Goto Bookmark  C-x a"    f goto-alpha-mark
+osd 3  35  ""  "\HHilight Search"          3 osd-search
+osd 3  40  ""  "Goto \HLine      esc g"    f osd-goto-line
+osd 3  50  ""  "Goto \HFence     esc C-i"  f goto-matching-fence
+osd 3  60  ""  "Set \HBookmark   C-x C-a"  f set-alpha-mark
+osd 3  70  ""  "\HGoto Bookmark  C-x a"    f goto-alpha-mark
 ;
 ; MENU #4 - INSERT sub-menu
 ;
 osd 4  0   "b"
-osd 4  10  ""   "&Symbol"               f symbol
-osd 4  20  "Md" "&Date \\& Time"       31 osd-insert-date
+osd 4  10  ""  "\HSymbol"               f symbol
+osd 4  20  "M" "\HDate & Time"         31 osd-insert-date
 osd 4  30  "-"
-osd 4  40  ""   "&File       C-x C-i"   f insert-file
-osd 4  50  ""   "File &Name  C-x C-y"   f insert-file-name
+osd 4  40  ""  "\HFile       C-x C-i"   f insert-file
+osd 4  50  ""  "File \HName  C-x C-y"   f insert-file-name
 osd 4  60  "-"
-osd 4  70  ""   "Macro..."              f insert-macro
+osd 4  70  ""  "Macro..."               f insert-macro
 ;
 ; MENU #5 - FORMAT sub-menu
 ;
 osd 5  0   "b"
-osd 5  10  ""  "Restyle &Buffer"                  f restyle-buffer
-osd 5  20  ""  "Restyle &Region"                  f restyle-region
-osd 5  23  ""  "&Clean Buffer"                    f clean
-osd 5  25  ""  "C&hange Buffer Char Set"          f charset-change
+osd 5  10  ""  "Restyle \HBuffer"                  f restyle-buffer
+osd 5  20  ""  "Restyle \HRegion"                  f restyle-region
+osd 5  23  ""  "\HClean Buffer"                    f clean
+osd 5  25  ""  "C\Hhange Buffer Char Set"          f charset-change
 osd 5  30  "-"
-osd 5  40  ""  "I&Q Fill Paragraph"               f ifill-paragraph
-osd 5  50  ""  "&Fill Paragraph         esc q"    f fill-paragraph
-osd 5  60  ""  "Fill &All Paragraphs"         65536 fill-paragraph
+osd 5  40  ""  "I\HQ Fill Paragraph"               f ifill-paragraph
+osd 5  50  ""  "\HFill Paragraph         esc q"    f fill-paragraph
+osd 5  60  ""  "Fill \HAll Paragraphs"         65536 fill-paragraph
 osd 5  70  ""  "Paragraph to Line"                f paragraph-to-line
 osd 5  80  ""  "All Paragraphs to Lines"      65536 paragraph-to-line
 osd 5  90  "-"
-osd 5  100 ""  "&Sort Lines"                      f sort-lines
-osd 5  110 ""  "&Ignore Case Sort Lines"          f sort-lines-ignore-case
+osd 5  100 ""  "\HSort Lines"                      f sort-lines
+osd 5  110 ""  "\HIgnore Case Sort Lines"          f sort-lines-ignore-case
 osd 5  140 "-"
-osd 5  150 ""  "Capitali&ze Word        esc c"    f capitalize-word
-osd 5  160 ""  "&Lower Case Word        esc l"    f lower-case-word
-osd 5  170 ""  "L&ower Case Region      C-x C-l"  f lower-case-region
-osd 5  180 ""  "&Upper Case Word        esc u"    f upper-case-word
-osd 5  190 ""  "U&pper Case Region      C-x C-u"  f upper-case-region
+osd 5  150 ""  "Capitali\Hze Word        esc c"    f capitalize-word
+osd 5  160 ""  "\HLower Case Word        esc l"    f lower-case-word
+osd 5  170 ""  "L\Hower Case Region      C-x C-l"  f lower-case-region
+osd 5  180 ""  "\HUpper Case Word        esc u"    f upper-case-word
+osd 5  190 ""  "U\Hpper Case Region      C-x C-u"  f upper-case-region
 ;
 ; MENU #6 - EXECUTE sub-menu
 ;
 osd 6  0   "b"
-osd 6  10  ""  "Execute &Command    esc x"        f execute-named-command
-osd 6  20  "i" "Execute &Buffer"                  f "execute-buffer $buffer-bname"
-osd 6  30  ""  "Execute &File       esc /"        f execute-file
+osd 6  10  ""  "Execute \HCommand    esc x"        f execute-named-command
+osd 6  20  "i" "Execute \HBuffer"                  f "execute-buffer $buffer-bname"
+osd 6  30  ""  "Execute \HFile       esc /"        f execute-file
 osd 6  40  "-"
-osd 6  50  ""  "&Start Kbd Macro    C-x ("        f start-kbd-macro
-osd 6  60  ""  "&Query Kbd Macro    C-x q"        f kbd-macro-query
-osd 6  70  ""  "&End Kbd Macro      C-x )"        f end-kbd-macro
-osd 6  80  ""  "Execute &Kbd Macro  C-x e"        f execute-kbd-macro
-osd 6  90  ""  "&Name Kbd Macro"                  f name-kbd-macro
+osd 6  50  ""  "\HStart Kbd Macro    C-x ("        f start-kbd-macro
+osd 6  60  ""  "\HQuery Kbd Macro    C-x q"        f kbd-macro-query
+osd 6  70  ""  "\HEnd Kbd Macro      C-x )"        f end-kbd-macro
+osd 6  80  ""  "Execute \HKbd Macro  C-x e"        f execute-kbd-macro
+osd 6  90  ""  "\HName Kbd Macro"                  f name-kbd-macro
 osd 6  100 "-"
-osd 6  110 ""  "&Ipipe command      esc \\\\"     f ipipe-shell-command
-osd 6  120 ""  "S&hell              C-x c"        f shell
+osd 6  110 ""  "\HIpipe command      esc \\"       f ipipe-shell-command
+osd 6  120 ""  "S\Hhell              C-x c"        f shell
 ;
 ; MENU #7 - TOOLS sub-menu
 ; Start at item 10 so buffer specific tool menus can be inserted
 osd 7  0   "b"
-osd 7  10  ""  "Count &Words   esc C-c"           f count-words
-osd 7  20  ""  "&Spell Word    esc $"             1 spell-word
-osd 7  30  ""  "Spell &Buffer"                    f spell-buffer
+osd 7  10  ""  "Count \HWords   esc C-c"           f count-words
+osd 7  20  ""  "\HSpell Word    esc $"             1 spell-word
+osd 7  30  ""  "Spell \HBuffer"                    f spell-buffer
 osd 7  35  ""  "Word Complete"                    f expand-word
 osd 7  40  "-"
-osd 7  50  ""  "Com&pare Windows"                 f compare-windows
-osd 7  60  ""  "&Compile"                         f compile
-osd 7  70  ""  "&Grep"                            f grep
-osd 7  75  ""  "G&raphical Diff"                  0 gdiff
-osd 7  80  ""  "&Diff"                            f diff
-osd 7  90  ""  "Di&ff Changes"                    f diff-changes
+osd 7  50  ""  "Com\Hpare Windows"                 f compare-windows
+osd 7  60  ""  "\HCompile"                         f compile
+osd 7  70  ""  "\HGrep"                            f grep
+osd 7  75  ""  "G\Hraphical Diff"                  0 gdiff
+osd 7  80  ""  "\HDiff"                            f diff
+osd 7  90  ""  "Di\Hff Changes"                    f diff-changes
 osd 7  100 "-"
-osd 7  110 ""  "&Organizer"                       f organizer
-osd 7  120 "i" "&Mail"                            f "mail"
-osd 7  130 "i" "&View Mail"                       f "vm"
+osd 7  110 ""  "\HOrganizer"                       f organizer
+osd 7  120 "i" "\HMail"                            f "mail"
+osd 7  130 "i" "\HView Mail"                       f "vm"
 osd 7  140 "-"
-osd 7  300 "Md" "More..."                         22
+osd 7  300 "M" "More..."                         22
 ;
 ; MENU #8 - WINDOW sub-menu
 ;
 osd 8  0   "b"
-osd 8  10  ""  "&Split Window V   C-x 2"          f split-window-vertically
-osd 8  20  ""  "&Grow Window V    C-x z"          1 change-window-depth
-osd 8  30  ""  "S&hrink Window V  C-x C-z"       -1 change-window-depth
-osd 8  40  ""  "Spl&it Window H   C-x 3"          f split-window-horizontally
-osd 8  50  ""  "G&row Window H    C-x }"          1 change-window-width
-osd 8  60  ""  "Shr&ink Window H  C-x {"         -1 change-window-width
+osd 8  10  ""  "\HSplit Window V   C-x 2"          f split-window-vertically
+osd 8  20  ""  "\HGrow Window V    C-x z"          1 change-window-depth
+osd 8  30  ""  "S\Hhrink Window V  C-x C-z"       -1 change-window-depth
+osd 8  40  ""  "Spl\Hit Window H   C-x 3"          f split-window-horizontally
+osd 8  50  ""  "G\Hrow Window H    C-x }"          1 change-window-width
+osd 8  60  ""  "Shr\Hink Window H  C-x {"         -1 change-window-width
 osd 8  70  "-"
-osd 8  80  ""  "&One Window       C-x 1"          f delete-other-windows
-osd 8  90  ""  "&Delete Window    C-x 0"          f delete-window
+osd 8  80  ""  "\HOne Window       C-x 1"          f delete-other-windows
+osd 8  90  ""  "\HDelete Window    C-x 0"          f delete-window
 osd 8  100 "-"
-osd 8  110 ""  "&Previous Window  C-x C-p"        f previous-window
-osd 8  120 ""  "&Next Window      C-x C-o"        f next-window
+osd 8  110 ""  "\HPrevious Window  C-x C-p"        f previous-window
+osd 8  120 ""  "\HNext Window      C-x C-o"        f next-window
 !if &and &not &band $system 0x01 &opt "mwf"
     ; running a version that can support multiple frames
     osd 8  150 "-"
-    osd 8  160 ""  "Create New &Frame"            f create-frame
-    osd 8  170 ""  "&Close This Frame"            f delete-frame
+    osd 8  160 ""  "Create New \HFrame"            f create-frame
+    osd 8  170 ""  "\HClose This Frame"            f delete-frame
 !endif
 ;
 ; MENU #9 - HELP sub-window
 ;
 osd 9  0   "b"
-osd 9  20  ""  "General Help      esc &?"         f osd-help
-osd 9  30  ""  "Help on C&ommand   C-h C-c"       f help-command
-osd 9  40  ""  "Help on V&ariable  C-h C-v"       f help-variable
+osd 9  20  ""  "General Help      esc \H?"         f osd-help
+osd 9  30  ""  "Help on C\Hommand   C-h C-c"       f help-command
+osd 9  40  ""  "Help on V\Hariable  C-h C-v"       f help-variable
 osd 9  50  "-"
-osd 9  60  ""  "Describe &Bindings C-h b"         f describe-bindings
-osd 9  70  ""  "Describe &Key      C-h k"         f describe-key
-osd 9  80  ""  "Describe Var&iable C-h d"         f describe-variable
-osd 9  85  ""  "Describe &Word     C-h w"         f describe-word
+osd 9  60  ""  "Describe \HBindings C-h b"         f describe-bindings
+osd 9  70  ""  "Describe \HKey      C-h k"         f describe-key
+osd 9  80  ""  "Describe Var\Hiable C-h d"         f describe-variable
+osd 9  85  ""  "Describe \HWord     C-h w"         f describe-word
 osd 9  90  "-"
-osd 9  100 ""  "List Bu&ffers      C-x C-b"       f list-buffers
-osd 9  110 ""  "List &Commands     C-h c"         f list-commands
-osd 9  115 ""  "List &Registry"                   f list-registry
-osd 9  120 ""  "List &Variables    C-h v"         f list-variables
-osd 9  130 ""  "Command &Apropos   C-h a"         f command-apropos
+osd 9  100 ""  "List Bu\Hffers      C-x C-b"       f list-buffers
+osd 9  110 ""  "List \HCommands     C-h c"         f list-commands
+osd 9  115 ""  "List \HRegistry"                   f list-registry
+osd 9  120 ""  "List \HVariables    C-h v"         f list-variables
+osd 9  130 ""  "Command \HApropos   C-h a"         f command-apropos
 osd 9  140 "-"
-osd 9  150 ""   "&User Setup"                     f user-setup
-osd 9  160 ""   "Scheme &Editor"                  f scheme-editor
-osd 9  170 "Md" "&Games"                         21
-osd 9  180 "i" "&Product Support"                 f "help-item \"Contact\""
-osd 9  190 ""  "About &MicroEmacs"                f about
+osd 9  150 ""  "\HUser Setup"                      f user-setup
+osd 9  160 ""  "Scheme \HEditor"                   f scheme-editor
+osd 9  170 "M" "\HGames"                          21
+osd 9  180 "i" "\HProduct Support"                 f "help-item \"Contact\""
+osd 9  190 ""  "About \HMicroEmacs"                f about
 ;
 ; MENU #21 - GAMES sub-menu
 ;
 osd 21 0   b
-osd 21 10  ""  "&Cross-Word" f cross-word
-osd 21 20  ""  "&Mahjongg"   f Mahjongg
-osd 21 30  ""  "Match-&It"   f Match-It
-osd 21 40  ""  "M&etris"     f Metris
-osd 21 50  ""  "&Patience"   f Patience
-osd 21 60  ""  "&Triangle"   f Triangle
+osd 21 10  ""  "\HCross-Word" f cross-word
+osd 21 20  ""  "\HMahjongg"   f Mahjongg
+osd 21 30  ""  "Match-\HIt"   f Match-It
+osd 21 40  ""  "M\Hetris"     f Metris
+osd 21 50  ""  "\HPatience"   f Patience
+osd 21 60  ""  "\HTriangle"   f Triangle
 ;
 ; MENU #22 - MORE TOOLS sub-menu
 ;
 osd 22 0   b
-osd 22 10  ""  "&Alarm"      f alarm
-osd 22 20  ""  "Calc&ulate"  f calc
-osd 22 30  ""  "Line &Draw"  f draw
+osd 22 10  ""  "\HAlarm"      f alarm
+osd 22 20  ""  "Calc\Hulate"  f calc
+osd 22 30  ""  "Line \HDraw"  f draw
 ;
 ; Setup the users tools
 set-variable #l0 0
 !repeat
     !if &not &seq "" &set #l1 &reg "/history" &spr "%s/tool/%d/name" $platform #l0 ""
-        osd 7 &add 200 #l0 "" &spr "&%d %s" #l0 #l1 #l0 execute-tool
+        osd 7 &add 200 #l0 "" &spr "\H%d %s" #l0 #l1 #l0 execute-tool
         osd 7 290 "-"
     !endif
 !until &equ &inc #l0 1 10
@@ -506,7 +506,7 @@ set-variable #l0 0
     -1 osd .osd.tmp
     osd .osd.tmp 0 ""
     osd .osd.tmp 1 ""
-    osd .osd.tmp 2 "c" &rep &rep @2 "\\" "\\\\" "&" "\\&"
+    osd .osd.tmp 2 "c" @2
     osd .osd.tmp 3 ""
     set-variable #l0 1
     set-variable #l2 1
@@ -589,8 +589,8 @@ set-variable #l0 0
     !endif
     osd .osd.tmp 15 "f" "  "
     osd .osd.tmp 16 ""
-    osd .osd.tmp 17 "BtcfHh" 17 .scheme.osd-ebtt " &Okay "   f void
-    osd .osd.tmp 18 "BtcfH"  18 .scheme.osd-ebtt " &Cancel " 0 void
+    osd .osd.tmp 17 "BtcfHh" 17 .scheme.osd-ebtt " \HOkay "   f void
+    osd .osd.tmp 18 "BtcfH"  18 .scheme.osd-ebtt " \HCancel " 0 void
     .osd.tmp osd
     set-variable @3 .value
 !emacro

@@ -24,7 +24,7 @@ set-variable .fhook-mail.command-flag  "|thb|th|thb|thb|h|h|h|h|h|h|"
 set-variable .fhook-mail.command-name  "|mail-send||mail-data-insert|mail-data-insert|||||||"
 set-variable .fhook-mail.command-nbind "|||1|2|||||||"
 set-variable .fhook-mail.command-kbind "|C-c C-c||C-c C-i|C-c C-z|||||||"
-set-variable .fhook-mail.command-desc  "|&Send mail||Insert given file, method 1|Insert given file, method 2||Abbreviation file is set to mail.eaf, mail also uses|the organizer(3) address book||See Help/User Setup/Mail to setup the command-lines|Windows mail can use postie or blat|"
+set-variable .fhook-mail.command-desc  "|\HSend mail||Insert given file, method 1|Insert given file, method 2||Abbreviation file is set to mail.eaf, mail also uses|the organizer(3) address book||See Help/User Setup/Mail to setup the command-lines|Windows mail can use postie or blat|"
 
 !if &and &sin "h" .fhook-mail.setup &band .hilight.flags 0x02
     !if &not &exist .hilight.mail
@@ -168,7 +168,7 @@ set-variable .osd.mail-add 16
         set-variable .osd-mail-addr-set.value $result
         set-variable .osd-mail-addr-abbrev.recno @#
         set-variable .osd-mail-addr-abbrev.value &reg "/org" &spr "addr/%d/%s/emailabr" &abs @# &cond &les @# 0 "work" "home" ""
-        osd .osd.mail-adr 70  "S" "A&bbrev:" 20
+        osd .osd.mail-adr 70  "S" "A\Hbbrev:" 20
         osd .osd.mail-adr 80  "ExHf" .scheme.osd-entry "########" 1 osd-mail-addr-abbrev
     !elif &seq .osd-mail-addr-set.value ""
         ml-write "[No address selected]"
@@ -267,7 +267,7 @@ set-variable .osd.mail-add 16
 !emacro
 
 osd .osd.mail-adl 0   ""
-osd .osd.mail-adl 10  "S" " &Address or Filter" 20
+osd .osd.mail-adl 10  "S" " \HAddress or Filter" 20
 osd .osd.mail-adl 20  "ExHcfz" .scheme.osd-entry .osd.mail-adw 1 "" 1 osd-mail-addr-set
 osd .osd.mail-adl 30  ""
 osd .osd.mail-adl 40  "IbH" .scheme.osd-sbar .osd.mail-adw .osd.mail-add .osd.mail-adc
@@ -275,11 +275,11 @@ osd .osd.mail-adl 50  ""
 
 osd .osd.mail-adr 0   ""
 osd .osd.mail-adr 5   ""
-osd .osd.mail-adr 10  "BHRx" .scheme.osd-ebtt " &Filter "  0 osd-mail-addr-parse
+osd .osd.mail-adr 10  "BHRx" .scheme.osd-ebtt " \HFilter "  0 osd-mail-addr-parse
 osd .osd.mail-adr 20  ""
-osd .osd.mail-adr 30  "BH" .scheme.osd-ebtt " &Insert "    f osd-mail-addr-insert
+osd .osd.mail-adr 30  "BH" .scheme.osd-ebtt " \HInsert "    f osd-mail-addr-insert
 osd .osd.mail-adr 40  ""
-osd .osd.mail-adr 50  "BH"  .scheme.osd-ebtt " &Cancel "   f void
+osd .osd.mail-adr 50  "BH"  .scheme.osd-ebtt " \HCancel "   f void
 osd .osd.mail-adr 60  ""
 
 -1 osd .osd.mail-ad

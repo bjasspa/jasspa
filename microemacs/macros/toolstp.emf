@@ -210,12 +210,12 @@
 !emacro
 
 osd .osd.toolbar 0  "bB"
-osd .osd.toolbar 5  ""   "&Refresh Tool"      f toolbar-refresh-tool
-osd .osd.toolbar 7  "Md" "&Find Tool"         .osd.tmp toolbar-setup-find
-osd .osd.toolbar 10 "Md" "&Add Tool (win)"    .osd.tmp toolbar-setup-add
-osd .osd.toolbar 15 "Md" "Add Tool (&page)"   .osd.tmp toolbar-setup-add
+osd .osd.toolbar 5  ""  "\HRefresh Tool"      f toolbar-refresh-tool
+osd .osd.toolbar 7  "M" "\HFind Tool"         .osd.tmp toolbar-setup-find
+osd .osd.toolbar 10 "M" "\HAdd Tool (win)"    .osd.tmp toolbar-setup-add
+osd .osd.toolbar 15 "M" "Add Tool (\Hpage)"   .osd.tmp toolbar-setup-add
 osd .osd.toolbar 40 "-"
-osd .osd.toolbar 50 "" "&Store Current State" 5 toolbar-setup-cmd
+osd .osd.toolbar 50 ""  "\HStore Current State" 5 toolbar-setup-cmd
 
 0 define-macro toolbar-setup
     osd .osd.toolbar 20 "" "Remove Tool"
@@ -224,39 +224,39 @@ osd .osd.toolbar 50 "" "&Store Current State" 5 toolbar-setup-cmd
         set-variable #l2 &lget .toolbar.tool-flag #l1
         set-variable #l0 &lfind .toolbar.conv &band #l2 0xf000
         !if &gre &lget .toolbar.flag #l0 1
-            osd .osd.toolbar 20 "" "&Delete Tool" 7 toolbar-setup-cmd
+            osd .osd.toolbar 20 "" "\HDelete Tool" 7 toolbar-setup-cmd
         !endif
         !if &band #l2 0x100
-            osd .osd.toolbar 30 "" "Un&fix Tool Size" 6 toolbar-setup-cmd
+            osd .osd.toolbar 30 "" "Un\Hfix Tool Size" 6 toolbar-setup-cmd
         !else
-            osd .osd.toolbar 30 "" "&Fix Tool Size" 6 toolbar-setup-cmd
+            osd .osd.toolbar 30 "" "\HFix Tool Size" 6 toolbar-setup-cmd
         !endif
     !endif
     !if &not &lget .toolbar.flag 1
-        osd .osd.toolbar 60 "" "Add &Left Toolbar" 1 toolbar-setup-cmd
+        osd .osd.toolbar 60 "" "Add \HLeft Toolbar" 1 toolbar-setup-cmd
     !elif &gre &lget .toolbar.flag 5 1
-        osd .osd.toolbar 60 "" "Delete &Left Toolbar" 1 toolbar-setup-cmd
+        osd .osd.toolbar 60 "" "Delete \HLeft Toolbar" 1 toolbar-setup-cmd
     !else
         osd .osd.toolbar 60 "D"
     !endif
     !if &not &lget .toolbar.flag 2
-        osd .osd.toolbar 70 ""   "Add &Top Toolbar" 2 toolbar-setup-cmd
+        osd .osd.toolbar 70 ""   "Add \HTop Toolbar" 2 toolbar-setup-cmd
     !elif &gre &lget .toolbar.flag 5 1
-        osd .osd.toolbar 70 ""   "Delete &Top Toolbar" 2 toolbar-setup-cmd
+        osd .osd.toolbar 70 ""   "Delete \HTop Toolbar" 2 toolbar-setup-cmd
     !else
         osd .osd.toolbar 70 "D"
     !endif
     !if &not &lget .toolbar.flag 3
-        osd .osd.toolbar 80 "" "Add R&ight Toolbar" 3 toolbar-setup-cmd
+        osd .osd.toolbar 80 "" "Add R\Hight Toolbar" 3 toolbar-setup-cmd
     !elif &gre &lget .toolbar.flag 5 1
-        osd .osd.toolbar 80 "" "Delete R&ight Toolbar" 3 toolbar-setup-cmd
+        osd .osd.toolbar 80 "" "Delete R\Hight Toolbar" 3 toolbar-setup-cmd
     !else
         osd .osd.toolbar 80 "D"
     !endif
     !if &not &lget .toolbar.flag 4
-        osd .osd.toolbar 90 "" "Add &Bottom Toolbar" 4 toolbar-setup-cmd
+        osd .osd.toolbar 90 "" "Add \HBottom Toolbar" 4 toolbar-setup-cmd
     !elif &gre &lget .toolbar.flag 5 1
-        osd .osd.toolbar 90 "" "Delete &Bottom Toolbar" 4 toolbar-setup-cmd
+        osd .osd.toolbar 90 "" "Delete \HBottom Toolbar" 4 toolbar-setup-cmd
     !else
         osd .osd.toolbar 90 "D"
     !endif

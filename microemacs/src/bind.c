@@ -112,51 +112,61 @@ meGetKey(int flag)
     register meUShort cc ;	/* character fetched */
     
     /* check to see if we are executing a command line */
-    if (clexec)
+    if(clexec == meTRUE)
     {
         meUByte *tp;		/* pointer into the token */
         meUByte tok[meBUF_SIZE_MAX];	/* command incoming */
         
-        macarg(tok);	        /* get the next token */
-        
-        tp = tok ;
-        if((cc = meGetKeyFromString(&tp)) == 0)
-            return 0 ;
-        
-        if(!(flag & meGETKEY_SINGLE))
+        tp = execstr ;
+        execstr = token(tp,tok) ;
+        if((tok[0] != '@') || (tok[1] != 'm') || (tok[2] != 'n'))
         {
-            int ii=ME_PREFIX_NUM+1 ;
+            tp = getval(tok) ;
+            if((tp == abortm) || ((cc = meGetKeyFromString(&tp)) == 0))
+                return 0 ;
             
-            while(--ii > 0)
-                if(cc == prefixc[ii])
-                {
-                    cc = ii << ME_PREFIX_BIT ;
-                    break ;
-                }
-            if(cc & ME_PREFIX_MASK)
+            if(!(flag & meGETKEY_SINGLE))
             {
-                meUShort ee ;	/* character fetched */
-                meUByte  dd ;
-                while(((dd=*tp) != '\0') && isSpace(dd))
-                    tp++ ;
+                int ii=ME_PREFIX_NUM+1 ;
                 
-                if((ee = meGetKeyFromString(&tp)) == 0)
-                    return 0 ;
-                
-                if((ee >= 'A') && (ee <= 'Z'))
-                    /* with a prefix make a letter lower case */
-                    ee ^= 0x20 ;
-                cc |= ee ;
+                while(--ii > 0)
+                    if(cc == prefixc[ii])
+                    {
+                        cc = ii << ME_PREFIX_BIT ;
+                        break ;
+                    }
+                if(cc & ME_PREFIX_MASK)
+                {
+                    meUShort ee ;	/* character fetched */
+                    meUByte  dd ;
+                    while(((dd=*tp) != '\0') && isSpace(dd))
+                        tp++ ;
+                    
+                    if((ee = meGetKeyFromString(&tp)) == 0)
+                        return 0 ;
+                    
+                    if((ee >= 'A') && (ee <= 'Z'))
+                        /* with a prefix make a letter lower case */
+                        ee ^= 0x20 ;
+                    cc |= ee ;
+                }
             }
+            /* check there are no superfluous chars in the string, fail if found as
+             * this is probably a bad bind string */
+            if(*tp != '\0')
+                return 0 ;
+            return cc ;
         }
-        /* check there are no superfluous chars in the string, fail if found as
-         * this is probably a bad bind string */
-        if(*tp != '\0')
-            return 0 ;
+        /* if @mna (get all input from user) then rewind the execstr */
+        if(tok[3] == 'a')
+            execstr = tp ;
+        /* Force an update of the screen to to ensure that the user
+         * can see the information in the correct location */
+        update (meTRUE);
     }
-    else
-        /* or the normal way */
-        cc = meGetKeyFromUser(meFALSE,0,flag) ;
+    /* or the normal way */
+    cc = meGetKeyFromUser(meFALSE,0,flag) ;
+    
     return cc ;
 }
 

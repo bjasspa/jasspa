@@ -31,7 +31,7 @@ set-variable .fhook-ehf.command-flag  "|th|th|th|"
 set-variable .fhook-ehf.command-name  "|ehf-process-link|ehf-backward-link|ehf-forward-link|"
 set-variable .fhook-ehf.command-nbind "|0|||"
 set-variable .fhook-ehf.command-kbind "||||"
-set-variable .fhook-ehf.command-desc  "|&Goto Link|Move to &Previous Link|Move to &Next Link|"
+set-variable .fhook-ehf.command-desc  "|\HGoto Link|Move to \HPrevious Link|Move to \HNext Link|"
 
 !if &and &sin "h" .fhook-ehf.setup &band .hilight.flags 0x01
     !if &not &exist .hilight.ehf

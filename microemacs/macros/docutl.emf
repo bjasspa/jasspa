@@ -17,7 +17,7 @@ osd .osd.doc-stat 0  "batcdH" 9 3 99 .scheme.osd-title "Current Mode Settings"
 osd .osd.doc-stat 3  "" 
 osd .osd.doc-stat 7  "" 
 osd .osd.doc-stat 11 "" 
-osd .osd.doc-stat 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
+osd .osd.doc-stat 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void 
 
 define-macro doc-mode-state
     osd .osd.doc-stat 4  "" &spr " Filling to column : %d " $fill-col 

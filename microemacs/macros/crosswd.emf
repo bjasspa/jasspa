@@ -296,9 +296,9 @@ define-macro crosswd-create-word-list
                 set-variable #l4 &add #l3 &mul #l1 2
                 set-variable &ind &spr ".crosswd.letter%d-%d" @# #l1 " "
                 set-variable &ind &spr ".crosswd.crossref%d-%d" @# #l1 " "
-                osd .osd.crosswdc &add #l4 4   "MimxRHfh" .scheme.osd-entry " " .osd.crosswdl &spr "crosswd-setup-letter %d %d" @# #l1
+                osd .osd.crosswdc &add #l4 4   "MdimxRHfh" .scheme.osd-entry " " .osd.crosswdl &spr "crosswd-setup-letter %d %d" @# #l1
                 osd .osd.crosswdc &add #l4 5   "hf" " "
-                osd .osd.crosswdc &add #l4 129 "MimxRHfh" .scheme.osd-entry " " .osd.crosswdr &spr "crosswd-setup-crossref %d %d" @# #l1
+                osd .osd.crosswdc &add #l4 129 "MdimxRHfh" .scheme.osd-entry " " .osd.crosswdr &spr "crosswd-setup-crossref %d %d" @# #l1
                 osd .osd.crosswdc &add #l4 130 "hf" " "
             !done
         !endif
@@ -315,7 +315,7 @@ define-macro crosswd-create-word-list
     !endif
     set-variable &ind &spr ".crosswd.letter%d-%d" .word .letter #l0
     set-variable #l4 &add &add 104 &mul .word 256 &mul .letter 2
-    osd .osd.crosswdc #l4 "MimxRHfh" .scheme.osd-entry #l0 .osd.crosswdl &spr "crosswd-setup-letter %d %d" .word .letter
+    osd .osd.crosswdc #l4 "MdimxRHfh" .scheme.osd-entry #l0 .osd.crosswdl &spr "crosswd-setup-letter %d %d" .word .letter
 !emacro
 
 0 define-macro crosswd-setup-letter
@@ -331,7 +331,7 @@ define-macro crosswd-create-word-list
     !endif
     set-variable &ind &spr ".crosswd.crossref%d-%d" .word .letter #l0
     set-variable #l4 &add &add 229 &mul .word 256 &mul .letter 2
-    osd .osd.crosswdc #l4 "MimxRHfh" .scheme.osd-entry #l0 .osd.crosswdr &spr "crosswd-setup-crossref %d %d" .word .letter
+    osd .osd.crosswdc #l4 "MdimxRHfh" .scheme.osd-entry #l0 .osd.crosswdr &spr "crosswd-setup-crossref %d %d" .word .letter
 !emacro
 
 0 define-macro crosswd-setup-crossref
@@ -382,46 +382,46 @@ define-macro crosswd-create-word-list
 !emacro
 
 osd .osd.crosswdl 0  "b"
-osd .osd.crosswdl 1  "" "& "  0 crosswd-set-letter
-osd .osd.crosswdl 2  "" "&A"  1 crosswd-set-letter
-osd .osd.crosswdl 3  "" "&B"  2 crosswd-set-letter
-osd .osd.crosswdl 4  "" "&C"  3 crosswd-set-letter
-osd .osd.crosswdl 5  "" "&D"  4 crosswd-set-letter
-osd .osd.crosswdl 6  "" "&E"  5 crosswd-set-letter
-osd .osd.crosswdl 7  "" "&F"  6 crosswd-set-letter
-osd .osd.crosswdl 8  "" "&G"  7 crosswd-set-letter
-osd .osd.crosswdl 9  "" "&H"  8 crosswd-set-letter
-osd .osd.crosswdl 10 "" "&I"  9 crosswd-set-letter
-osd .osd.crosswdl 11 "" "&J" 10 crosswd-set-letter
-osd .osd.crosswdl 12 "" "&K" 11 crosswd-set-letter
-osd .osd.crosswdl 13 "" "&L" 12 crosswd-set-letter
-osd .osd.crosswdl 14 "" "&M" 13 crosswd-set-letter
-osd .osd.crosswdl 15 "" "&N" 14 crosswd-set-letter
-osd .osd.crosswdl 16 "" "&O" 15 crosswd-set-letter
-osd .osd.crosswdl 17 "" "&P" 16 crosswd-set-letter
-osd .osd.crosswdl 18 "" "&Q" 17 crosswd-set-letter
-osd .osd.crosswdl 19 "" "&R" 18 crosswd-set-letter
-osd .osd.crosswdl 20 "" "&S" 19 crosswd-set-letter
-osd .osd.crosswdl 21 "" "&T" 20 crosswd-set-letter
-osd .osd.crosswdl 22 "" "&U" 21 crosswd-set-letter
-osd .osd.crosswdl 23 "" "&V" 22 crosswd-set-letter
-osd .osd.crosswdl 24 "" "&W" 23 crosswd-set-letter
-osd .osd.crosswdl 25 "" "&X" 24 crosswd-set-letter
-osd .osd.crosswdl 26 "" "&Y" 25 crosswd-set-letter
-osd .osd.crosswdl 27 "" "&Z" 26 crosswd-set-letter
+osd .osd.crosswdl 1  "" "\H "  0 crosswd-set-letter
+osd .osd.crosswdl 2  "" "\HA"  1 crosswd-set-letter
+osd .osd.crosswdl 3  "" "\HB"  2 crosswd-set-letter
+osd .osd.crosswdl 4  "" "\HC"  3 crosswd-set-letter
+osd .osd.crosswdl 5  "" "\HD"  4 crosswd-set-letter
+osd .osd.crosswdl 6  "" "\HE"  5 crosswd-set-letter
+osd .osd.crosswdl 7  "" "\HF"  6 crosswd-set-letter
+osd .osd.crosswdl 8  "" "\HG"  7 crosswd-set-letter
+osd .osd.crosswdl 9  "" "\HH"  8 crosswd-set-letter
+osd .osd.crosswdl 10 "" "\HI"  9 crosswd-set-letter
+osd .osd.crosswdl 11 "" "\HJ" 10 crosswd-set-letter
+osd .osd.crosswdl 12 "" "\HK" 11 crosswd-set-letter
+osd .osd.crosswdl 13 "" "\HL" 12 crosswd-set-letter
+osd .osd.crosswdl 14 "" "\HM" 13 crosswd-set-letter
+osd .osd.crosswdl 15 "" "\HN" 14 crosswd-set-letter
+osd .osd.crosswdl 16 "" "\HO" 15 crosswd-set-letter
+osd .osd.crosswdl 17 "" "\HP" 16 crosswd-set-letter
+osd .osd.crosswdl 18 "" "\HQ" 17 crosswd-set-letter
+osd .osd.crosswdl 19 "" "\HR" 18 crosswd-set-letter
+osd .osd.crosswdl 20 "" "\HS" 19 crosswd-set-letter
+osd .osd.crosswdl 21 "" "\HT" 20 crosswd-set-letter
+osd .osd.crosswdl 22 "" "\HU" 21 crosswd-set-letter
+osd .osd.crosswdl 23 "" "\HV" 22 crosswd-set-letter
+osd .osd.crosswdl 24 "" "\HW" 23 crosswd-set-letter
+osd .osd.crosswdl 25 "" "\HX" 24 crosswd-set-letter
+osd .osd.crosswdl 26 "" "\HY" 25 crosswd-set-letter
+osd .osd.crosswdl 27 "" "\HZ" 26 crosswd-set-letter
 
 osd .osd.crosswdr 0  "b"
-osd .osd.crosswdr 1  "" "& " -1 crosswd-set-crossref
-osd .osd.crosswdr 2  "" "&0"  0 crosswd-set-crossref
-osd .osd.crosswdr 3  "" "&1"  1 crosswd-set-crossref
-osd .osd.crosswdr 4  "" "&2"  2 crosswd-set-crossref
-osd .osd.crosswdr 5  "" "&3"  3 crosswd-set-crossref
-osd .osd.crosswdr 6  "" "&4"  4 crosswd-set-crossref
-osd .osd.crosswdr 7  "" "&5"  5 crosswd-set-crossref
-osd .osd.crosswdr 8  "" "&6"  6 crosswd-set-crossref
-osd .osd.crosswdr 9  "" "&7"  7 crosswd-set-crossref
-osd .osd.crosswdr 10 "" "&8"  8 crosswd-set-crossref
-osd .osd.crosswdr 11 "" "&9"  9 crosswd-set-crossref
+osd .osd.crosswdr 1  "" "\H " -1 crosswd-set-crossref
+osd .osd.crosswdr 2  "" "\H0"  0 crosswd-set-crossref
+osd .osd.crosswdr 3  "" "\H1"  1 crosswd-set-crossref
+osd .osd.crosswdr 4  "" "\H2"  2 crosswd-set-crossref
+osd .osd.crosswdr 5  "" "\H3"  3 crosswd-set-crossref
+osd .osd.crosswdr 6  "" "\H4"  4 crosswd-set-crossref
+osd .osd.crosswdr 7  "" "\H5"  5 crosswd-set-crossref
+osd .osd.crosswdr 8  "" "\H6"  6 crosswd-set-crossref
+osd .osd.crosswdr 9  "" "\H7"  7 crosswd-set-crossref
+osd .osd.crosswdr 10 "" "\H8"  8 crosswd-set-crossref
+osd .osd.crosswdr 11 "" "\H9"  9 crosswd-set-crossref
 
 -1 osd .osd.crosswdc
 osd .osd.crosswdc 0 "s" 50 30 0 -1
@@ -430,11 +430,11 @@ osd .osd.crosswdc 1 ""
 -1 osd .osd.crosswd
 osd .osd.crosswd 0  "batcdH" 3 6 80 .scheme.osd-title "Cross-Word Cracker"
 osd .osd.crosswd 10  ""
-osd .osd.crosswd 20  "Shf" " &Number of words " 30
+osd .osd.crosswd 20  "Shf" " \HNumber of words " 30
 osd .osd.crosswd 30  "EtxfHh" 1 .scheme.osd-entry "     " 1 crosswd-set-noword
-osd .osd.crosswd 34  "BtrfHh" 2 .scheme.osd-ebtt " &Compute " f crosswd-compute
+osd .osd.crosswd 34  "BtrfHh" 2 .scheme.osd-ebtt " \HCompute " f crosswd-compute
 osd .osd.crosswd 35  "hf" "  "
-osd .osd.crosswd 36  "BtrfHh" 3 .scheme.osd-ebtt " E&xit " f void
+osd .osd.crosswd 36  "BtrfHh" 3 .scheme.osd-ebtt " E\Hxit " f void
 osd .osd.crosswd 37  "f" " "
 osd .osd.crosswd 40  ""
 osd .osd.crosswd 50  "IbHt" 4 .scheme.osd-sbar 50 30 .osd.crosswdc
