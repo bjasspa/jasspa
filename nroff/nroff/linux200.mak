@@ -1,6 +1,6 @@
 #____________________________________________________________________________
 #
-# Last Edited <001021.1435>
+# Last Edited <020310.1002>
 #
 # Nroff tools makefile.
 #____________________________________________________________________________
@@ -26,13 +26,14 @@ HEADERS	=	nroff.def	_nroff.h	nroff.h
 UTILS_H		= $(INSTINCDIR)/utils.h
 
 RTFEXES	=	nr2rtf$(EXE)
+TEXEXES	=	nr2tex$(EXE)
 HTMEXES	=	nr2html$(EXE)	htmlc$(EXE)
 MANEXES	=	superman$(EXE)	droff$(EXE)
 TOLEXES	=	nrsearch$(EXE)	nrinfo$(EXE)	nrcheck$(EXE)	ntags$(EXE) \
 		nrorder$(EXE)	difftags$(EXE)	nrar$(EXE)	hts2html$(EXE)
 LOCLEXES=	table$(EXE)
 ALLEXES	=	$(RTFEXES) $(HTMEXES) $(MANEXES) $(TOLEXES) \
-		$(CANEXES) $(LOCLEXES)
+		$(CANEXES) $(TEXEXES) $(LOCLEXES)
 #____________________________________________________________________________
 #
 # Dependencies
@@ -57,6 +58,7 @@ dman.$O:	$(UTILS_H) $(HEADERS)
 droff.$O:	$(UTILS_H) $(HEADERS)
 htmlc.$O:	$(UTILS_H) $(HEADERS)
 nr2html.$O:	$(UTILS_H) $(HEADERS) html.h
+nr2tex.$O:	$(UTILS_H) $(HEADERS)
 nr2rtf.$O:	$(UTILS_H) $(HEADERS) rtf.h
 nrcheck.$O:	$(UTILS_H) $(HEADERS)
 nrinfo.$O:	$(UTILS_H) $(HEADERS)
@@ -106,6 +108,7 @@ libnroff.$A:	$(LIBOBJ)
 install::	$(ALLEXES)
 		$(MKDIR) $(INSTBINDIR)
 		$(INSTALL) $(INSTBINFLAGS) $(RTFEXES) $(INSTBINDIR)
+		$(INSTALL) $(INSTBINFLAGS) $(TEXEXES) $(INSTBINDIR)
 		$(INSTALL) $(INSTBINFLAGS) $(HTMEXES) $(INSTBINDIR)
 		$(INSTALL) $(INSTBINFLAGS) $(MANEXES) $(INSTBINDIR)
 		$(INSTALL) $(INSTBINFLAGS) $(TOLEXES) $(INSTBINDIR)

@@ -1,39 +1,41 @@
 ##############################################################################
 #
-#  			Copyright 2000 samsung.
+#			Copyright 2000 samsung.
 #			      All Rights Reserved
 #
 #
-#  System        : 
-#  Module        : 
+#  System        :
+#  Module        :
 #  Object Name   : $RCSfile: linux200.mak,v $
-#  Revision      : $Revision: 1.1 $
-#  Date          : $Date: 2000-10-21 15:03:17 $
+#  Revision      : $Revision: 1.2 $
+#  Date          : $Date: 2002-03-10 14:23:14 $
 #  Author        : $Author: jon $
 #  Created By    : Jon Green
 #  Created       : Sat Oct 21 14:13:05 2000
-#  Last Modified : <001021.1453>
+#  Last Modified : <020310.1422>
 #
-#  Description	
+#  Description
 #
 #  Notes
 #
 #  History
-#	
+#
 #  $Log: not supported by cvs2svn $
+#  Revision 1.1  2000/10/21 15:03:17  jon
+#  Compiled under Linux
+#
 #
 ##############################################################################
 #
 #  Copyright (c) 2000 samsung.
-# 
+#
 #  All Rights Reserved.
-# 
+#
 #  This  document  may  not, in  whole  or in  part, be  copied,  photocopied,
 #  reproduced,  translated,  or  reduced to any  electronic  medium or machine
 #  readable form without prior written consent from samsung.
 #
 ##############################################################################
-
 
 #____________________________________________________________________________
 #
@@ -56,10 +58,11 @@ COPY	=	cp
 # Documentation components
 #
 DOCBIN	=	../bin/
-DOCDIR	=	
+DOCDIR	=
 
 SUPERMAN=	$(DOCBIN)superman -b
 NR2RTF	=	$(DOCBIN)nr2rtf
+NR2TEX	=	$(DOCBIN)nr2tex
 NRAR	=	$(DOCBIN)nrar
 NR2HTML	=	$(DOCBIN)nr2html
 NR2EHF	=	$(DOCBIN)nr2ehf
@@ -96,7 +99,11 @@ TNIS	=	opt_e.tni	opt_h.tni	opt_hh.tni	opt_i.tni \
 
 MANRUN	=	$(MAN1) $(MAN4) $(MAN7) $(TNIS)
 
-all:: $(HLPS) $(HTSS)
+TEX1	=	$(MAN1:.1=.tex)
+TEX4	=	$(MAN1:.4=.tex)
+TEX7	=	$(MAN1:.7=.tex)
+
+all:: $(HLPS) $(HTSS) $(TEX1)
 install:: all
 #____________________________________________________________________________
 #
@@ -129,12 +136,17 @@ manrun.hts: manrun.sm manrun.1 manrun.lbn forward.lbn
 
 manrun.rtf: manrun.sm manrun.1 manrun.lbn forward.lbn
 	$(NR2RTF) -x -M manrun manrun.sm manrun.1	\
-	           -c JASSPA                            \
-		   -H jasspa				\
-		   -p toollogo.bmp			\
-		   -L. -lmanrun -lforward		\
-		   -thome:manrun			\
-		   -tbuild:build
+	          -c JASSPA                             \
+		  -H jasspa				\
+		  -p toollogo.bmp			\
+		  -L. -lmanrun -lforward		\
+		  -thome:manrun				\
+		  -tbuild:build
+$(TEX1):	manrun.sm manrun.1 manrun.lbn forward.lbn
+	$(NR2TEX) -x -M manrun manrun.sm manrun.1	\
+		  -c JASSPA				\
+		  -L. -lmanrun -lforward		\
+
 #
 # Build the postscript print job ordering files.
 #
