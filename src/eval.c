@@ -398,6 +398,15 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             meRegCurr->f = meAtoi(vvalue) ;
         else if(*nn == '#')
             meRegCurr->n = meAtoi(vvalue) ;
+        else if(*nn == 'h')
+        {
+            int option ;
+            if((nn[1] > '0') && (nn[1] <= '4'))
+                option = 1 << (nn[1] - '1') ;
+            else
+                option = 0 ;
+            addHistory(option,vvalue) ;
+        }
         else
             return mlwrite(MWABORT,(meUByte *)"[Cannot set variable %s]",vname);
         break ;
@@ -1456,6 +1465,9 @@ getval(meUByte *tkn)   /* find the value of a token */
         {
             meUByte buff[meBUF_SIZE_MAX] ;
             int ht, hn ;
+            
+            if(alarmState & meALARM_VARIABLE)
+                return tkn ;
             
             /* get the history type */
             if((tkn[2] > '0') && (tkn[2] <= '4'))
