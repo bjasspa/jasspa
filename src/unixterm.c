@@ -1837,6 +1837,14 @@ meXEventHandler(void)
                 case XK_KP_8:           ii = '8'; goto done_key;
                 case XK_KP_9:           ii = '9'; goto done_key;
                     
+                    /* foreign keyboard accent keys */
+#ifdef XK_dead_circumflex:
+                case XK_dead_circumflex: ii = '^'; goto done_key;
+#endif
+#ifdef XK_dead_diaeresis:
+                case XK_dead_diaeresis: ii = 0xa8; goto done_key;
+#endif
+                    
                     /* Auxilliary Functions; note the duplicate definitions
                      * for left and right function keys; Sun keyboards and a
                      * few other manufactures have such function key groups on
@@ -1861,6 +1869,11 @@ meXEventHandler(void)
                 case SunXK_F37:
 #endif
                 case XK_F12:            ii = SKEY_f12; goto special_key;
+                    /* ISO keys */
+#ifdef XK_ISO_Left_Tab
+                    /* Back-tab */
+                case XK_ISO_Left_Tab:  ii = SKEY_tab | ME_SHIFT; goto special_key;
+#endif
                     
                     /* Modifiers */
                     
@@ -1884,13 +1897,13 @@ meXEventHandler(void)
 #ifdef XK_ISO_Level3_Shift
                 case XK_ISO_Level3_Shift:
 #endif
+#ifdef XK_Super_L
+                    /* Windows keys */
+                case XK_Super_L:
+                case XK_Super_R:
+#endif
                     goto ignore_key;
                     
-                    /* ISO keys */
-#ifdef XK_ISO_Left_Tab
-                    /* Back-tab */
-                case XK_ISO_Left_Tab:  ii = SKEY_tab | ME_SHIFT; goto special_key;
-#endif
                 default:
                     /* printf ("This is a default %d (0x%04x)\n", ii, ii);*/
                     ii = keySym & 0xff;
