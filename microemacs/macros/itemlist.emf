@@ -165,6 +165,7 @@ define-macro item-list-create
             -1 buffer-mode "undo"
             -1 buffer-mode "view"
             1 buffer-mode "magic"
+            ; ZZZZ - #l9 looks uninitialised
             #l9 buffer-mode "exact"
             beginning-of-buffer
             set-mark

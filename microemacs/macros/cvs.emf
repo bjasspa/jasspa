@@ -980,10 +980,10 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
             ; check that all the selected files have been 'lost' (deleted locally) first
             !if &equ #l9 2
                 set-variable $window-line 3
-                !force regex-forward "^[^L*\n]\\*"
+                !force search-buffer "em" "^[^L*\n]\\*"
             !else
                 set-variable $window-line 5
-                !force regex-forward "^\\*.[^L\n]"
+                !force search-buffer "em" "^\\*.[^L\n]"
             !endif
             !if $status
                 beginning-of-line

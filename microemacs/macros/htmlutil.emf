@@ -13,7 +13,7 @@
     set-variable #l1 $window-line
     -2 show-region
     set-variable #l2 $window-col
-    !force -5 regex-backward "[<>]"
+    !force -5 search-buffer "bem" "[<>]"
     !if $status
         set-variable #l3 @wc
         set-variable $window-line #l1

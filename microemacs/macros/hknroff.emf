@@ -276,7 +276,7 @@ set-variable .fhook-nroff.item-list-r1 "\\1  \ecB\\2\ecA"
     beginning-of-line
     !while &gre &pdec @# 1 0
         !if &not &sequal @wc "."
-            !force regex-forward "^\\."
+            !force search-buffer "em" "^\\."
             !if &not $status
                 end-of-buffer
                 ; Force an ending !!
@@ -284,7 +284,7 @@ set-variable .fhook-nroff.item-list-r1 "\\1  \ecB\\2\ecA"
             !endif
             beginning-of-line
             insert-newline
-            !force regex-backward "^\\."
+            !force search-buffer "bem" "^\\."
             !if $status
                 forward-line
             !else
@@ -293,10 +293,10 @@ set-variable .fhook-nroff.item-list-r1 "\\1  \ecB\\2\ecA"
             insert-newline
             -1 fill-paragraph
             forward-delete-char
-            regex-backward "^\\."
+            search-buffer "bem" "^\\."
             forward-line
             forward-delete-char
-            regex-forward "^\\."
+            search-buffer "em" "^\\."
             beginning-of-line
         !endif
         forward-line

@@ -206,7 +206,7 @@ set-variable .fhook-jst.item-list-r4 "Appx \ecB\\1\ecA"
                 ml-write "[Unexpected >end> tag]"
                 !abort
             !endif
-            !force search-forward "^>end>"
+            !force search-buffer "em" "^>end>"
             !if &not $status
                 beginning-of-line
                 ml-write "[Missing >end> tag]"
@@ -234,9 +234,7 @@ define-macro jst-fill-paragraph
         !return
     !endif
     set-position "\x81"
-    set-variable #l0 &cond &bmod "magic" 1 -1
-    1 buffer-mode "magic"
-    !force search-backward "^>[^ \t\n>]*>"
+    !force search-buffer "bem" "^>[^ \t\n>]*>"
     !if $status
         !if &seq @s0 ">end>"
             goto-position "\x81"
@@ -251,7 +249,6 @@ define-macro jst-fill-paragraph
     !endif
     !force !force @# jst-fill-paragraphi
     set-variable #l1 $status
-    #l0 buffer-mode "magic"
     !if &not @?
         goto-position "\x81"
     !endif

@@ -46,7 +46,7 @@
 ;         >
 ;         > Author:       My Self
 ;         > Created:      11/11/97
-;         > Modified:     <041022.1548>
+;         > Modified:     <041104.2103>
 ;         > Location:     /xx/yy/zz.doc
 ; *
 ;         All lines commencing with '*' are assumed to be bullet lists. Bullet
@@ -230,16 +230,16 @@ define-macro doc-fhook-body
         ;
         ;
         beginning-of-buffer
-        !force -20 regex-forward &spr "-[*!]-[ \t]*%s[ \t]*" #l2
+        !force -20 search-buffer "em" &spr "-[*!]-[ \t]*%s[ \t]*" #l2
         !if $status
             ; Search for fill-column: <var>;
-            !force -1 regex-forward "fill-column[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;]"
+            !force -1 search-buffer "em" "fill-column[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;]"
             !if $status
                 set-variable :fill-col @s1
                 beginning-of-line
             !endif
             ; Search for fill-mode: <string>
-            !force -1 regex-forward "fill-mode[ \t]*:[ \t]*\\([a-zA-Z]+\\)[ \t]*[-;]"            
+            !force -1 search-buffer "em" "fill-mode[ \t]*:[ \t]*\\([a-zA-Z]+\\)[ \t]*[-;]"            
             !if $status
                 set-variable #l0 @s1
                 !if &iseq #l0 "left"
