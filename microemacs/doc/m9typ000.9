@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ000.9,v 2.8 2004-01-05 00:19:24 jon Exp $
+.Id $Id: m9typ000.9,v 2.9 2004-01-17 22:27:29 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH c 9
@@ -146,6 +146,32 @@ The short cut keys used within the buffer are:-
 \fBf2\fR \- (un)fold the current region
 .br
 \fBf3\fR \- (un)fold all regions
+.BP "Additional Commands"
+A number of additional commands are available as follows:-
+.RS
+.BS
+.Ht c-slashify 3 
+\- Append backslash to end of lines of region.
+.BU
+.Ht c-deslashify 3 
+\- Remove backslash to end of lines of region.
+.BU 
+.Ht c-to-cpp-convert 3
+\- Convert a C file to C++
+.BU
+.Ht c-hash-eval 3
+\- Evaluate C/C++ \fC#define\fRs.
+.BU
+.Ht c-hash-del 3
+\- Remove C/C++ \fC#define\fR evaluation.
+.BU
+.Ht c-hash-set-define 3
+\- Set a C/C++ \fC#define\fR.
+.BU 
+.Ht c-hash-unset-define 3
+\- Unset a C/C++ \fC#define\fR
+.BE 0
+.RE
 .SH NOTES
 If the  default  language  is C++, rather than 'C' the order of the file hooks
 should be over-ridden in the users local setup, using:-
@@ -181,6 +207,9 @@ onto \fB.cpp\fR. Do not attept to re-style.
 .SH "SEE ALSO"
 .na
 .Ht c-brace 5 ,
+.Ht c-deslashify 3 ,
+.Ht c-slashify 3 ,
+.Ht c-to-cpp-convert 3 ,
 .Ht cmode 2m ,
 .Ht collapse-all 3 ,
 .Ht collapse-current 3 ,

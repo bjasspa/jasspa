@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd161.2,v 1.1 2002-10-16 22:30:10 jon Exp $
+.Id $Id: m2cmd161.2,v 1.2 2004-01-17 22:27:28 jon Exp $
 .Im MicroEmacs command|window|macrodevelop
 .so me.tni
 .TH create-frame 2
@@ -16,38 +16,68 @@ create-frame \- Create a new frame
 .I n
 .B create-frame
 .ad
-.SH DESCRIPTION
-\fBcreate-frame\fR  creates a new frame for the current \*(mS  session.  \*(mS
-support  the  creation of  'internal'  multiple  frames on all  platforms  and
-\&'external'  frames on  windowing  platforms  (such as Windows and XTerm). An
-external  frame creates a new OS window so both the existing frame and the new
-frame  are  visible,  whereas  an  internal  frame  uses the same OS window or
-console which means that the existing  frame is hidden and the new frame takes
-its place.
-.PP
-The numeric  argument  \fIn\fR can be used to define which type of frame is to
-be  created. If an  argument  of \fC1\fR is given (the  default  argument)  an
-external  frame will be created,  whereas an internal frame will be created if
-an argument of \fC0\fR is given.
-.SH NOTES
-Internal frames can only be accessed via the
+.SH INTODUCTION
+A  \fBframe\fR  in \*(mS is the screen  canvas on which all of the windows are
+attached.  \*(mS allows the  creation of new frames which  creates a new blank
+canvas which is can then be populated with new windows. Frames may be swapped
+and when swapped the window layout for a given frame is preserved until the
+frame is displayed again. There are two types of frame:
+.IP Internal
+An internal frame uses the same OS window or console hiding any other frames.
+This means that any existing  frame is hidden and a new frame blank takes
+its place. Internal frames are supported on all platforms.
+.IP External
+An external frame creates a new OS window allowing both the original frame and
+new  frame to be  visible  in  different  windows.  External  frames  are only
+available under windowing  platforms such as X-Windows and Microsoft  Windows.
+External frames may also be paged with internal frames.
+.LP
+This is shown in the following diagram:-
+.CS
+         +-----------------+           +-----------------+
+         |                 +-+         |                 +-+
+         |                 | +-+       |                 | |
+         |                 | | |       |                 | |
+         |                 | | |       |                 | |
+         +-+---------------+ | |       +-+---------------+ |
+           +-+---------------+ |         +-----------------+
+             +-----------------+
+
+          Three Internal Frames        External Frame with
+                                       two internal frames
+.CE
+The user may move to the next frame using
 .Ht next-frame 2
-command, external frames can usually be accessed via the OS as well.
+which swaps the current frame for the next frame. External  frames may also be
+accessed via the window manager by selecting the window.
 .PP
-\*(mS is not  multi-threaded  in that  only one frame can be active at any one
-time  (the  complexity  of being  able to run a  command  in one  frame  while
-editing in another  would rapidly lead it away from the 'Micro'  status). This
-means that if a command is left active (such as a search) in one frame and the
-focus is  changed to another  the input is 'sent' to the frame with the active
-command and the message '[NOT FOCUS]' will appear in the  message-line  of the
+A frame may be subsequently deleted with
+.Ht delete-frame 2 .
+.SH DESCRIPTION
+\fBcreate-frame\fR  creates a new frame for the current \*(mS session, the new
+frame is assigned a unique identity 
+.Ht $frame-id 5 
+which exists for the life of the frame.
+.PP
+The numeric  argument  \fIn\fR  defines the type of frame to be created. If an
+argument  of \fC1\fR is given (the  default  argument)  an  external  frame is
+created. An internal frame is created with an argument of \fC0\fR.
+.SH NOTES
+\*(mS is not  multi-threaded  and only one frame may be active at any one time
+(the  complexity  of being able to run a command in one frame while editing in
+another  would rapidly lead it away from the 'Micro'  status). This means that
+if a command is left  active  (such as a search) in one frame and the focus is
+changed  to  another  the input is  \fIsent\fR  to the frame  with the  active
+command and the message \fC[NOT  FOCUS]\fR  appears in the message-line of the
 frame with the OS focus.
 .PP
-\fBcreate-frame\fR  may be useful in macros that rely on a window layout, this
-is because they can preserve the users  current  window layout by creating and
-new internal frame in which to run.
+\fBcreate-frame\fR  is useful in macros  that rely on a window  layout, as the
+macro can preserve the users current  window layout by creating a new internal
+frame in which to run.
 .SH "SEE ALSO"
 .na
 .Ht delete-frame 2 ,
-.Ht next-frame 2 .
+.Ht next-frame 2 ,
+.Ht $frame-id 5 .
 .ad
 .FH

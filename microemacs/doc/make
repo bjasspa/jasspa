@@ -52,8 +52,8 @@ MEEXE	=	"c:\Program Files\Jasspa\MicroEmacs\me32.exe"
 #
 # Documentation components
 #
-DOCBIN	=	
-DOCDIR	=	
+DOCBIN	=
+DOCDIR	=
 
 SUPERMAN=	$(DOCBIN)superman -b
 DROFF	=	$(DOCBIN)droff
@@ -169,7 +169,7 @@ CMD2_200=	$(DOCDIR)m2cmd200.2 $(DOCDIR)m2cmd201.2 $(DOCDIR)m2cmd202.2\
 NAR2_000=	$(DOCDIR)m2nar000.2 $(DOCDIR)m2nar001.2	$(DOCDIR)m2nar002.2 \
 		$(DOCDIR)m2nar003.2 $(DOCDIR)m2nar004.2 $(DOCDIR)m2nar005.2 \
 		$(DOCDIR)m2nar006.2 $(DOCDIR)m2nar007.2 $(DOCDIR)m2nar008.2 \
-		$(DOCDIR)m2nar009.2 
+		$(DOCDIR)m2nar009.2
 
 MOD2_000=	$(DOCDIR)m2mod000.2 $(DOCDIR)m2mod001.2 $(DOCDIR)m2mod002.2\
 		$(DOCDIR)m2mod003.2 $(DOCDIR)m2mod004.2 $(DOCDIR)m2mod005.2\
@@ -211,13 +211,17 @@ MAC3_050=	$(DOCDIR)m3mac050.3 $(DOCDIR)m3mac051.3 $(DOCDIR)m3mac052.3\
 		$(DOCDIR)m3mac059.3
 MAC3_060=	$(DOCDIR)m3mac060.3 $(DOCDIR)m3mac061.3 $(DOCDIR)m3mac062.3\
 		$(DOCDIR)m3mac063.3 $(DOCDIR)m3mac064.3 $(DOCDIR)m3mac065.3\
-		$(DOCDIR)m3mac066.3
-		
+		$(DOCDIR)m3mac066.3 $(DOCDIR)m3mac067.3 $(DOCDIR)m3mac068.3\
+		$(DOCDIR)m3mac069.3
+MAC3_070=	$(DOCDIR)m3mac070.3 $(DOCDIR)m3mac071.3 $(DOCDIR)m3mac072.3\
+		$(DOCDIR)m3mac073.3
+
 OSD3_000=	$(DOCDIR)m3osd000.3 $(DOCDIR)m3osd001.3 $(DOCDIR)m3osd002.3\
 		$(DOCDIR)m3osd003.3 $(DOCDIR)m3osd004.3 $(DOCDIR)m3osd005.3\
 		$(DOCDIR)m3osd006.3 $(DOCDIR)m3osd007.3 $(DOCDIR)m3osd008.3\
 		$(DOCDIR)m3osd009.3
-OSD3_010=	$(DOCDIR)m3osd010.3 $(DOCDIR)m3osd011.3 $(DOCDIR)m3osd012.3
+OSD3_010=	$(DOCDIR)m3osd010.3 $(DOCDIR)m3osd011.3 $(DOCDIR)m3osd012.3\
+		$(DOCDIR)m3osd013.3
 
 FCL3_000=	$(DOCDIR)m3fcl001.3 $(DOCDIR)m3fcl002.3 $(DOCDIR)m3fcl003.3\
 		$(DOCDIR)m3fcl004.3 $(DOCDIR)m3fcl005.3 $(DOCDIR)m3fcl006.3\
@@ -228,11 +232,11 @@ FCL3_010=	$(DOCDIR)m3fcl010.3 $(DOCDIR)m3fcl011.3
 FIL4_000=	$(DOCDIR)m4fil000.4 $(DOCDIR)m4fil001.4 $(DOCDIR)m4fil002.4\
 		$(DOCDIR)m4fil003.4 $(DOCDIR)m4fil004.4 $(DOCDIR)m4fil005.4\
 		$(DOCDIR)m4fil006.4 $(DOCDIR)m4fil007.4 $(DOCDIR)m4fil008.4\
-		$(DOCDIR)m4fil009.4 
+		$(DOCDIR)m4fil009.4
 FIL4_010=	$(DOCDIR)m4fil010.4 $(DOCDIR)m4fil011.4 $(DOCDIR)m4fil012.4\
 		$(DOCDIR)m4fil013.4 $(DOCDIR)m4fil014.4 $(DOCDIR)m4fil015.4\
 		$(DOCDIR)m4fil016.4 $(DOCDIR)m4fil017.4 $(DOCDIR)m4fil018.4\
-		$(DOCDIR)m4fil019.4 
+		$(DOCDIR)m4fil019.4
 
 FIL4_020=	$(DOCDIR)m4fil020.4 $(DOCDIR)m4fil021.4 $(DOCDIR)m4fil022.4\
 		$(DOCDIR)m4fil023.4 $(DOCDIR)m4fil024.4 $(DOCDIR)m4fil025.4\
@@ -275,7 +279,8 @@ VAR5_070=	$(DOCDIR)m5var070.5 $(DOCDIR)m5var071.5 $(DOCDIR)m5var072.5\
 		$(DOCDIR)m5var076.5 $(DOCDIR)m5var077.5 $(DOCDIR)m5var078.5\
 		$(DOCDIR)m5var079.5
 VAR5_080=	$(DOCDIR)m5var080.5 $(DOCDIR)m5var081.5 $(DOCDIR)m5var082.5\
-		$(DOCDIR)m5var083.5 $(DOCDIR)m5var084.5 $(DOCDIR)m5var085.5
+		$(DOCDIR)m5var083.5 $(DOCDIR)m5var084.5 $(DOCDIR)m5var085.5\
+		$(DOCDIR)m5var086.5 $(DOCDIR)m5var087.5
 
 FIL8_000=	$(DOCDIR)m8fil000.8 $(DOCDIR)m8fil001.8 $(DOCDIR)m8fil002.8\
 		$(DOCDIR)m8fil003.8 $(DOCDIR)m8fil004.8 $(DOCDIR)m8fil005.8\
@@ -295,7 +300,7 @@ TYP9_020=	$(DOCDIR)m9typ020.9 $(DOCDIR)m9typ021.9 $(DOCDIR)m9typ022.9\
 		$(DOCDIR)m9typ023.9 $(DOCDIR)m9typ024.9 $(DOCDIR)m9typ025.9\
 		$(DOCDIR)m9typ026.9 $(DOCDIR)m9typ027.9 $(DOCDIR)m9typ028.9\
 		$(DOCDIR)m9typ029.9
-		
+
 TYP9_030=	$(DOCDIR)m9typ030.9 $(DOCDIR)m9typ031.9 $(DOCDIR)m9typ032.9\
 		$(DOCDIR)m9typ033.9 $(DOCDIR)m9typ034.9 $(DOCDIR)m9typ035.9\
 		$(DOCDIR)m9typ036.9
@@ -311,7 +316,7 @@ TEMPSMS	=	cmd2_000.sm	cmd2_010.sm	cmd2_020.sm	cmd2_030.sm \
 		nar2_000.sm \
 		mod2_000.sm	mod2_010.sm	mod2_020.sm	mod2_030.sm \
 		mac3_000.sm	mac3_010.sm	mac3_020.sm	mac3_030.sm \
-		mac3_040.sm	mac3_050.sm	mac3_060.sm \
+		mac3_040.sm	mac3_050.sm	mac3_060.sm	mac3_070.sm \
 		osd3_000.sm	osd3_010.sm \
 		fcl3_000.sm	fcl3_010.sm \
 		fil4_000.sm	fil4_010.sm	fil4_020.sm	fil4_030.sm \
@@ -320,7 +325,6 @@ TEMPSMS	=	cmd2_000.sm	cmd2_010.sm	cmd2_020.sm	cmd2_030.sm \
 		var5_080.sm	fil8_000.sm \
 		typ9_000.sm	typ9_010.sm	typ9_020.sm	typ9_030.sm \
 		faq.2
-		
 
 all:: $(HTSS) $(HLPS) $(SMS) $(EHFS) $(TXTS)
 #
@@ -409,6 +413,8 @@ mac3_050.sm:	$(MAC3_050)
 	$(SUPERMAN) -o $@ $(MAC3_050)
 mac3_060.sm:	$(MAC3_060)
 	$(SUPERMAN) -o $@ $(MAC3_060)
+mac3_070.sm:	$(MAC3_070)
+	$(SUPERMAN) -o $@ $(MAC3_070)
 
 osd3_000.sm:	$(OSD3_000)
 	$(SUPERMAN) -o $@ $(OSD3_000)
@@ -469,7 +475,7 @@ me.sm: $(TEMPSMS) $(TNIS) $(MAN1)
 me.hts: me.sm me.0 me.lbn me.tni forward.lbn logo.gif
 	$(NR2HTML) -E $(MANLOG)			\
 		   -c JASSPA			\
-		   -x -M me me.sm me.0 		\
+		   -x -M me me.sm me.0		\
 		   -n me			\
 		   -H me			\
 		   -L. -lme -l$(DOCDIR)forward	\
@@ -483,7 +489,7 @@ me.hts: me.sm me.0 me.lbn me.tni forward.lbn logo.gif
 me.hlp: me.sm me.0 me.lbn me.tni forward.lbn me.hpj logo.bmp
 	$(NR2RTF)  -E $(MANLOG)			\
 		   -c JASSPA			\
-		   -x -M me me.sm me.0 		\
+		   -x -M me me.sm me.0		\
 		   -n me			\
 		   -H me			\
 		   -L. -lme -l$(DOCDIR)forward	\
@@ -502,7 +508,7 @@ me.hlp: me.sm me.0 me.lbn me.tni forward.lbn me.hpj logo.bmp
 meehf.hts: me.sm me.0 me.lbn me.tni forward.lbn logo.gif
 	$(NR2HTML) -E $(MANLOG)				\
 		   -b -c JASSPA				\
-		   -x -M me me.sm me.0 			\
+		   -x -M me me.sm me.0			\
 		   -n me -o meehf.hts			\
 		   -H me				\
 		   -L. -lme -l$(DOCDIR)forward		\
@@ -512,7 +518,6 @@ meehf.hts: me.sm me.0 me.lbn me.tni forward.lbn logo.gif
 		   -t Glossary:Glossary
 	$(HTS) -a $@ -E $(MANLOG) -b logo.gif
 	- $(RM) *.so
-
 
 #
 # Build the postscript print job ordering files.
@@ -576,7 +581,7 @@ spotless:: clean
 	$(RMDIR) html
 
 me.ehf: meehf.hts
-	- $(MKDIR) ehf 
+	- $(MKDIR) ehf
 	- $(MKDIR) ehf\me
 	$(CD) ehf
 	$(RM) me\*.htm
@@ -587,9 +592,9 @@ me.ehf: meehf.hts
 	$(MEEXE) "@ehftools" *.htm
 	$(CP) me.ehf ..\..
 	$(CD) ..\..
- 
+
 mehtm.zip: me.hts
-	- $(MKDIR) htm 
+	- $(MKDIR) htm
 	- $(MKDIR) htm\me
 	$(CD) htm
 	$(RM) *.htm
@@ -600,11 +605,11 @@ mehtm.zip: me.hts
 	cd me
 	$(DOS2UNIX) *.htm
 	cd ..
-	$(DOS2UNIX) *.htm	
+	$(DOS2UNIX) *.htm
 	$(ZIP) mehtm me.htm me/*
 	$(CP) mehtm.zip ..
 	$(CD) ..
-	
+
 mehtml.tgz: me.hts
 	- $(MKDIR) html
 	- $(MKDIR) html\me
@@ -625,7 +630,7 @@ mehtml.tgz: me.hts
 
 mewinhlp.zip: me.hlp
 	$(ZIP) mewinhlp me.hlp
-	
+
 full:: mehtm.zip mehtml.tgz mewinhlp.zip $(HLPS) me.ehf $(TXTS)
 
 release:: all full
@@ -653,5 +658,3 @@ spotless::
 	$(RM) *.zip
 	$(RM) *.gz
 	$(RM) *.tgz
-	
-	

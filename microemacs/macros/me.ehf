@@ -320,8 +320,10 @@ Miscellaneous Information
     lslmbackward-kill-word(2)le (cDesc backspacecA) Delete the previous word at the 
     cursor position 
     lslmclean(3)le Remove redundant white spaces from the current buffer 
+    lslmcopy-rectangle(3)le Copy a rectangular region of text 
     lslmdelete-blank-lines(2)le (cDC-x C-ocA) Delete blank lines about cursor 
     lslmdelete-indentation(3)le Join 2 lines deleting white spaces 
+    lslmfold-kill(3)le (cDC-x C-kcA) Delete the fold and all its contents 
     lslmforward-delete-char(2)le (cDC-dcA) Delete the next character at the cursor 
     position 
     lslmforward-kill-word(2)le (cDesc dcA) Delete the next word at the cursor position 
@@ -330,18 +332,24 @@ Miscellaneous Information
     lslmkill-rectangle(2)le (cDesc C-wcA) Delete a column of text 
     lslmkill-region(2)le (cDC-wcA) Delete all characters in the marked region 
     lslmyank-rectangle(2)le (cDesc C-ycA) Insert a column of text 
+    lslmyank-rectangle-overwrite(3)le Insert a column of text with overwrite 
 
 
 cEInsertion cA
 
 
+    lslmcopy-rectangle(3)le Copy a rectangular region of text 
     lslminsert-newline(2)le (cDC-ocA) Insert new line at cursor position 
     lslminsert-tab(2)le (cDC-icA) Insert tab(s) into current buffer 
+    lslmkill-rectangle(2)le (cDesc C-wcA) Delete a column of text 
     lslmnormal-tab(3)le Insert a normal tab 
+    lslmopen-line(3)le (cDC-ocA) Open new line at cursor position 
     lslmquote-char(2)le (cDC-qcA) Insert literal character 
     lslmreyank(2)le (cDesc ycA) Restore next yank buffer 
     lslmtab(2)le (cDtabcA) Handle the tab key 
     lslmyank(2)le (cDC-ycA) Paste (copy) kill buffer contents into buffer 
+    lslmyank-rectangle(2)le (cDesc C-ycA) Insert a column of text 
+    lslmyank-rectangle-overwrite(3)le Insert a column of text with overwrite 
 
 
 cEVariables cA
@@ -378,6 +386,7 @@ Miscellaneous Information
     A region is the text located between the cDpointcA (the current cursor 
     position) and the cDmarkcA defined by lsset-mark(2)lmset-markle. 
 
+    lslmcopy-rectangle(3)le Copy a rectangular region of text 
     lslmcopy-region(2)le (cDesc wcA) Copy a region of the buffer 
     lslmcount-words(2)le (cDesc C-ccA) Count the number of words in a region 
     lslmexchange-point-and-mark(2)le (cDC-x C-xcA) Exchange the cursor and marked 
@@ -388,6 +397,7 @@ Miscellaneous Information
     lslmset-alpha-mark(2)le (cDC-x C-acA) Place an alphabetic marker in the buffer 
     lslmset-mark(2)le (cDesc spacecA) Set starting point of region 
     lslmyank-rectangle(2)le (cDesc C-ycA) Insert a column of text 
+    lslmyank-rectangle-overwrite(3)le Insert a column of text with overwrite 
 
 
 cEVariables cA
@@ -411,6 +421,7 @@ Miscellaneous Information
 cECommands cA
 
 
+    lslmabbrev-list(3)le Create a list of abbreviations 
     lslmbuffer-abbrev-file(2)le Set buffers' abbreviation file 
     lslmcomment-end(3)le End the current comment 
     lslmcomment-line(3)le Comment out the current line 
@@ -587,8 +598,10 @@ Miscellaneous Information
     lslmchange-frame-width(2)le Change the number of columns on the current frame 
     lslmchange-screen-depth(2)le Change the number of lines on the screen 
     lslmchange-screen-width(2)le Change the number of columns on the screen 
+    lslmdelete-hilight-lines(3)le Delete hilight lines 
     lslmhilight(2)le Manage the buffer hilighting schemes 
     lslmindent(2)le Manage the auto-indentation methods 
+    lslmline-scheme(3)le Apply line annotation in current buffer 
     lslmline-scheme-search(3)le Search and annotate the current buffer 
     lslmprint-color(2)le Create a new printer color 
     lslmprint-scheme(2)le Create a new printer color and font scheme 
@@ -837,6 +850,7 @@ Miscellaneous Information
     lslmdescribe-word(3)le Display a dictionary definition of a word 
     lslmfind-word(3)le Find a using spelling dictionaries 
     lslmgenerate-tags-file(3)le Generate a tags file 
+    lslmline-scheme(3)le Apply line annotation in current buffer 
     lslmline-scheme-search(3)le Search and annotate the current buffer 
     lslmMainMenu(3)le The top main menu 
     lslmorganizer(3)le Calendar and address organizer 
@@ -1168,6 +1182,8 @@ Miscellaneous Information
     lslmcvs-remove(3)le MicroEmacs CVS interface - remove file 
     lslmcvs-resolve-conflicts(3)le MicroEmacs CVS interface - resolve conflicts 
     lslmcvs-state(3)le MicroEmacs CVS interface - list state of directory files 
+    lslmcvs-status(3)le MicroEmacs CVS interface - status of files 
+    lslmcvs-tag(3)le MicroEmacs CVS interface - tag files 
     lslmcvs-update(3)le MicroEmacs CVS interface - update directory files 
     lslmcygnus(3)le Open a Cygwin BASH window 
     lslmdbx(3)le UNIX Debugger 
@@ -1303,12 +1319,15 @@ Miscellaneous Information
 cEVariables cA
 
 
+    lslm$frame-id(5)le Current frame identity 
     lslm$scroll(5)le Screen scroll control 
     lslm$scroll-bar(5)le Scroll bar configuration 
     lslm$window-acol(5)le Window cursor actual column 
     lslm$window-aline(5)le Window cursor actual line 
     lslm$window-col(5)le Window cursor column (no expansion) 
     lslm$window-depth(5)le Number of text lines in a window 
+    lslm$window-eline(5)le Window end line 
+    lslm$window-id(5)le Current window identity 
     lslm$window-line(5)le Window cursor line 
     lslm$window-mode-line(5)le Window mode line position 
     lslm$window-scroll-bar(5)le Window scroll bar (or separator) position 
@@ -1657,6 +1676,7 @@ Miscellaneous Information
     The following is a list of all of the commands (built-in and macro) 
     provided by cDMicroEmacs '04cA [See lsMicroEmacs '04 - Split Command Glossarylmsplit listingle]: 
 
+    lslmabbrev-list(3)le Create a list of abbreviations 
     lslmabort-command(2)le (cDC-gcA) Abort command 
     lslmabout(2)le Information About MicroEmacs 
     lslmadd-color(2)le Create a new color 
@@ -1696,10 +1716,13 @@ Miscellaneous Information
     lslmbuffer-mode(2)le (cDC-x mcA) Change a local buffer mode 
     lslmbuffer-setup(3)le Configures the current buffer settings 
     lslmbuffer-unbind-key(2)le Remove local key binding for current buffer 
+    lslmc-deslashify(3)le C language, remove backslash to end of lines of region 
     lslmc-hash-del(3)le Remove C/C++ #define evaluation 
     lslmc-hash-eval(3)le Evaluate C/C++ #defines 
     lslmc-hash-set-define(3)le Set a C/C++ #define 
     lslmc-hash-unset-define(3)le Unset a C/C++ #define 
+    lslmc-slashify(3)le C language, append backslash to end of lines of region 
+    lslmc-to-cpp-convert(3)le Convert a C file to C++ 
     lslmcalc(3)le Integer calculator 
     lslmcapitalize-word(2)le (cDesc ccA) Capitalize word 
     lslmchange-buffer-name(2)le (cDesc C-ncA) Change name of current buffer 
@@ -1726,6 +1749,7 @@ Miscellaneous Information
     lslmcompare-windows(2)le Compare buffer windows, ignore whitespace 
     lslmcompare-windows-exact(3)le Compare buffer windows, with whitespace 
     lslmcompile(3)le Start a compilation process 
+    lslmcopy-rectangle(3)le Copy a rectangular region of text 
     lslmcopy-region(2)le (cDesc wcA) Copy a region of the buffer 
     lslmcount-words(2)le (cDesc C-ccA) Count the number of words in a region 
     lslmcreate-callback(2)le Create a timer callback 
@@ -1740,6 +1764,8 @@ Miscellaneous Information
     lslmcvs-remove(3)le MicroEmacs CVS interface - remove file 
     lslmcvs-resolve-conflicts(3)le MicroEmacs CVS interface - resolve conflicts 
     lslmcvs-state(3)le MicroEmacs CVS interface - list state of directory files 
+    lslmcvs-status(3)le MicroEmacs CVS interface - status of files 
+    lslmcvs-tag(3)le MicroEmacs CVS interface - tag files 
     lslmcvs-update(3)le MicroEmacs CVS interface - update directory files 
     lslmcygnus(3)le Open a Cygwin BASH window 
     lslmdefine-help(2)le Define help information 
@@ -1750,6 +1776,7 @@ Miscellaneous Information
     lslmdelete-dictionary(2)le Remove a spelling dictionary from memory 
     lslmdelete-frame(2)le Delete the current frame 
     lslmdelete-global-mode(3)le Remove a global buffer mode 
+    lslmdelete-hilight-lines(3)le Delete hilight lines 
     lslmdelete-indentation(3)le Join 2 lines deleting white spaces 
     lslmdelete-mode(3)le Remove a local buffer mode 
     lslmdelete-other-windows(2)le (cDC-x 1cA) Delete other windows 
@@ -1799,6 +1826,14 @@ Miscellaneous Information
     lslmfind-tag(2)le (cDesc tcA) Find tag, auto-load file and move to tag position 
     lslmfind-word(3)le Find a using spelling dictionaries 
     lslmfind-zfile(3)le Compressed file support 
+    lslmfold-close(3)le (cDC-f2cA) Close an open fold (in-line) 
+    lslmfold-create(3)le (cDC-f2cA) Create a new fold 
+    lslmfold-enter(3)le (cDf3cA) Enter fold 
+    lslmfold-exit(3)le (cDesc f3cA) Exit a fold 
+    lslmfold-exit-all(3)le (cDesc C-f3cA) Exit all folds 
+    lslmfold-kill(3)le (cDC-x C-kcA) Delete the fold and all its contents 
+    lslmfold-open(3)le (cDf2cA) Open fold (in-line) 
+    lslmfold-remove(3)le (cDesc C-f3cA) Remove the fold, maintaining content 
     lslmforward-char(2)le (cDC-fcA) Move the cursor right 
     lslmforward-delete-char(2)le (cDC-dcA) Delete the next character at the cursor 
     position 
@@ -1854,6 +1889,7 @@ Miscellaneous Information
     lslmkill-paragraph(2)le Delete a paragraph 
     lslmkill-rectangle(2)le (cDesc C-wcA) Delete a column of text 
     lslmkill-region(2)le (cDC-wcA) Delete all characters in the marked region 
+    lslmline-scheme(3)le Apply line annotation in current buffer 
     lslmline-scheme-search(3)le Search and annotate the current buffer 
     lslmlist-buffers(2)le (cDC-x C-bcA) List all buffers and show their status 
     lslmlist-commands(2)le (cDC-h ccA) List available commands 
@@ -1884,6 +1920,7 @@ Miscellaneous Information
     lslmnext-window-find-buffer(2)le [cDcA] Split the current window and show new buffer 
     lslmnext-window-find-file(2)le (cDC-x 4cA) Split the current window and find file 
     lslmnormal-tab(3)le Insert a normal tab 
+    lslmopen-line(3)le (cDC-ocA) Open new line at cursor position 
     lslmorganizer(3)le Calendar and address organizer 
     lslmosd(2)le Manage the On-Screen Display 
     lslmosd-bind-key(2)le Create key binding for OSD dialog 
@@ -2028,6 +2065,7 @@ Miscellaneous Information
     lslmwrite-buffer(2)le (cDC-x C-wcA) Write contents of buffer to named (new) file 
     lslmyank(2)le (cDC-ycA) Paste (copy) kill buffer contents into buffer 
     lslmyank-rectangle(2)le (cDesc C-ycA) Insert a column of text 
+    lslmyank-rectangle-overwrite(3)le Insert a column of text with overwrite 
     lslmzfile-setup(3)le Compressed file support setup 
 !   MicroEmacs '04 - Split Command Glossary
 cEcESPLIT COMMAND GLOSSARY cEcA
@@ -2266,6 +2304,7 @@ Miscellaneous Information
     The following is a list of documented macro commands provided by 
     cDMicroEmacs '04cA: 
 
+    lslmabbrev-list(3)le Create a list of abbreviations 
     lslmadd-global-mode(3)le Set a global buffer mode 
     lslmadd-mode(3)le Set a local buffer mode 
     lslmalarm(3)le Set an alarm 
@@ -2280,10 +2319,13 @@ Miscellaneous Information
     lslmbuffer-init-fhook(3)le Initialize the buffer file hooks 
     lslmbuffer-init-hooks(3)le Initialize the buffer language template hooks 
     lslmbuffer-setup(3)le Configures the current buffer settings 
+    lslmc-deslashify(3)le C language, remove backslash to end of lines of region 
     lslmc-hash-del(3)le Remove C/C++ #define evaluation 
     lslmc-hash-eval(3)le Evaluate C/C++ #defines 
     lslmc-hash-set-define(3)le Set a C/C++ #define 
     lslmc-hash-unset-define(3)le Unset a C/C++ #define 
+    lslmc-slashify(3)le C language, append backslash to end of lines of region 
+    lslmc-to-cpp-convert(3)le Convert a C file to C++ 
     lslmcalc(3)le Integer calculator 
     lslmcharset-change(3)le Convert buffer between two character sets 
     lslmcharset-iso-to-user(3)le Convert buffer from ISO standard to user character 
@@ -2296,6 +2338,7 @@ Miscellaneous Information
     lslmcollapse-current(3)le (cDf2cA) (un)Fold a region in the current buffer 
     lslmcompare-windows-exact(3)le Compare buffer windows, with whitespace 
     lslmcompile(3)le Start a compilation process 
+    lslmcopy-rectangle(3)le Copy a rectangular region of text 
     lslmcvs(3)le MicroEmacs CVS interface 
     lslmcvs-add(3)le MicroEmacs CVS interface - add file 
     lslmcvs-checkout(3)le MicroEmacs CVS interface - checkout files 
@@ -2306,9 +2349,12 @@ Miscellaneous Information
     lslmcvs-remove(3)le MicroEmacs CVS interface - remove file 
     lslmcvs-resolve-conflicts(3)le MicroEmacs CVS interface - resolve conflicts 
     lslmcvs-state(3)le MicroEmacs CVS interface - list state of directory files 
+    lslmcvs-status(3)le MicroEmacs CVS interface - status of files 
+    lslmcvs-tag(3)le MicroEmacs CVS interface - tag files 
     lslmcvs-update(3)le MicroEmacs CVS interface - update directory files 
     lslmcygnus(3)le Open a Cygwin BASH window 
     lslmdelete-global-mode(3)le Remove a global buffer mode 
+    lslmdelete-hilight-lines(3)le Delete hilight lines 
     lslmdelete-indentation(3)le Join 2 lines deleting white spaces 
     lslmdelete-mode(3)le Remove a local buffer mode 
     lslmdescribe-word(3)le Display a dictionary definition of a word 
@@ -2330,6 +2376,14 @@ Miscellaneous Information
     lslmfind-cfile(3)le Load a crypted file 
     lslmfind-word(3)le Find a using spelling dictionaries 
     lslmfind-zfile(3)le Compressed file support 
+    lslmfold-close(3)le (cDC-f2cA) Close an open fold (in-line) 
+    lslmfold-create(3)le (cDC-f2cA) Create a new fold 
+    lslmfold-enter(3)le (cDf3cA) Enter fold 
+    lslmfold-exit(3)le (cDesc f3cA) Exit a fold 
+    lslmfold-exit-all(3)le (cDesc C-f3cA) Exit all folds 
+    lslmfold-kill(3)le (cDC-x C-kcA) Delete the fold and all its contents 
+    lslmfold-open(3)le (cDf2cA) Open fold (in-line) 
+    lslmfold-remove(3)le (cDesc C-f3cA) Remove the fold, maintaining content 
     lslmftp(3)le Initiate an FTP connection 
     lslmgdiff(3)le Graphical file difference 
     lslmgenerate-tags-file(3)le Generate a tags file 
@@ -2339,6 +2393,7 @@ Miscellaneous Information
     lslminfo-goto-link(3)le Display Info on a given link 
     lslminfo-on(3)le Display Info on a given topic 
     lslmishell(3)le Open a Cygwin BASH window 
+    lslmline-scheme(3)le Apply line annotation in current buffer 
     lslmline-scheme-search(3)le Search and annotate the current buffer 
     lslmMahjongg(3)le MicroEmacs '04 version of the solitaire Mah Jongg game 
     lslmMainMenu(3)le The top main menu 
@@ -2349,6 +2404,7 @@ Miscellaneous Information
     lslmman(3)le UNIX manual page viewer 
     lslmman-clean(3)le Clean UNIX manual page 
     lslmnormal-tab(3)le Insert a normal tab 
+    lslmopen-line(3)le (cDC-ocA) Open new line at cursor position 
     lslmorganizer(3)le Calendar and address organizer 
     lslmosd-dialog(3)le OSD dialog box 
     lslmosd-entry(3)le OSD entry dialog box 
@@ -2411,6 +2467,7 @@ Miscellaneous Information
     lslmuser-setup(3)le Configure MicroEmacs for a specific user 
     lslmvm(3)le Email viewer 
     lslmwhich(3)le Program finder 
+    lslmyank-rectangle-overwrite(3)le Insert a column of text with overwrite 
     lslmzfile-setup(3)le Compressed file support setup 
 !   MicroEmacs '04 - Variable Glossary
 !9  Variable Glossary - MicroEmacs '04
@@ -2473,6 +2530,7 @@ Miscellaneous Information
     lslm$find-words(5)le Filtered word list 
     lslm$fmatchdelay(5)le Fence matching delay time 
     lslm$frame-depth(5)le Number of lines on the current frame canvas 
+    lslm$frame-id(5)le Current frame identity 
     lslm$frame-width(5)le Number of columns on the current frame canvas 
     lslm$global-fmod(5)le Global file modes (or attributes) 
     lslm$global-scheme(5)le Global buffer color scheme 
@@ -2526,7 +2584,9 @@ Miscellaneous Information
     lslm$window-chars(5)le Character set used to render the windows 
     lslm$window-col(5)le Window cursor column (no expansion) 
     lslm$window-depth(5)le Number of text lines in a window 
+    lslm$window-eline(5)le Window end line 
     lslm$window-flags(5)le Current window setup flags 
+    lslm$window-id(5)le Current window identity 
     lslm$window-line(5)le Window cursor line 
     lslm$window-mode-line(5)le Window mode line position 
     lslm$window-scroll-bar(5)le Window scroll bar (or separator) position 
@@ -2682,6 +2742,7 @@ Miscellaneous Information
     lslm@cq(4)le Get a quoted command name from the user 
     lslm@cqk(4)le Get a quoted key from the user 
     lslm@fs(4)le Frame store variable 
+    lslm@fss(4)le Frame store scheme variable 
     lslm@h0(4)le General history string 
     lslm@h1(4)le Buffer history string 
     lslm@h2(4)le Command history string 
@@ -2793,6 +2854,7 @@ Miscellaneous Information
     lslm$find-words(5)le Filtered word list 
     lslm$fmatchdelay(5)le Fence matching delay time 
     lslm$frame-depth(5)le Number of lines on the current frame canvas 
+    lslm$frame-id(5)le Current frame identity 
     lslm$frame-width(5)le Number of columns on the current frame canvas 
     lslm$global-fmod(5)le Global file modes (or attributes) 
     lslm$global-scheme(5)le Global buffer color scheme 
@@ -2846,7 +2908,9 @@ Miscellaneous Information
     lslm$window-chars(5)le Character set used to render the windows 
     lslm$window-col(5)le Window cursor column (no expansion) 
     lslm$window-depth(5)le Number of text lines in a window 
+    lslm$window-eline(5)le Window end line 
     lslm$window-flags(5)le Current window setup flags 
+    lslm$window-id(5)le Current window identity 
     lslm$window-line(5)le Window cursor line 
     lslm$window-mode-line(5)le Window mode line position 
     lslm$window-scroll-bar(5)le Window scroll bar (or separator) position 
@@ -2956,6 +3020,7 @@ Miscellaneous Information
     lslm@cq(4)le Get a quoted command name from the user 
     lslm@cqk(4)le Get a quoted key from the user 
     lslm@fs(4)le Frame store variable 
+    lslm@fss(4)le Frame store scheme variable 
     lslm@h0(4)le General history string 
     lslm@h1(4)le Buffer history string 
     lslm@h2(4)le Command history string 
@@ -2975,6 +3040,7 @@ Miscellaneous Information
     lslm@wc(4)le Extract character from the current buffer 
     lslm@wl(4)le Extract a line from the current buffer 
     lslm@y(4)le Yank buffer variable 
+    lslmabbrev-list(3)le Create a list of abbreviations 
     lslmabort-command(2)le (cDC-gcA) Abort command 
     lslmabout(2)le Information About MicroEmacs 
     lslmadd-color(2)le Create a new color 
@@ -3036,10 +3102,13 @@ Miscellaneous Information
     lslmCompatibility(2)le Compatibility with the original MicroEmacs 
     lslmCurrentBufferVariables(4)le Extract information from the current buffer 
     lslmc(9)le C programming language 
+    lslmc-deslashify(3)le C language, remove backslash to end of lines of region 
     lslmc-hash-del(3)le Remove C/C++ #define evaluation 
     lslmc-hash-eval(3)le Evaluate C/C++ #defines 
     lslmc-hash-set-define(3)le Set a C/C++ #define 
     lslmc-hash-unset-define(3)le Unset a C/C++ #define 
+    lslmc-slashify(3)le C language, append backslash to end of lines of region 
+    lslmc-to-cpp-convert(3)le Convert a C file to C++ 
     lslmcalc(3)le Integer calculator 
     lslmcapitalize-word(2)le (cDesc ccA) Capitalize word 
     lslmcbl(9)le Cobol (85) File 
@@ -3075,6 +3144,7 @@ Miscellaneous Information
     lslmcompare-windows(2)le Compare buffer windows, ignore whitespace 
     lslmcompare-windows-exact(3)le Compare buffer windows, with whitespace 
     lslmcompile(3)le Start a compilation process 
+    lslmcopy-rectangle(3)le Copy a rectangular region of text 
     lslmcopy-region(2)le (cDesc wcA) Copy a region of the buffer 
     lslmcount-words(2)le (cDesc C-ccA) Count the number of words in a region 
     lslmcpp(9)le C++ programming language 
@@ -3095,6 +3165,8 @@ Miscellaneous Information
     lslmcvs-remove(3)le MicroEmacs CVS interface - remove file 
     lslmcvs-resolve-conflicts(3)le MicroEmacs CVS interface - resolve conflicts 
     lslmcvs-state(3)le MicroEmacs CVS interface - list state of directory files 
+    lslmcvs-status(3)le MicroEmacs CVS interface - status of files 
+    lslmcvs-tag(3)le MicroEmacs CVS interface - tag files 
     lslmcvs-update(3)le MicroEmacs CVS interface - update directory files 
     lslmcygnus(3)le Open a Cygwin BASH window 
     lslmdbx(3)le UNIX Debugger 
@@ -3108,6 +3180,7 @@ Miscellaneous Information
     lslmdelete-dictionary(2)le Remove a spelling dictionary from memory 
     lslmdelete-frame(2)le Delete the current frame 
     lslmdelete-global-mode(3)le Remove a global buffer mode 
+    lslmdelete-hilight-lines(3)le Delete hilight lines 
     lslmdelete-indentation(3)le Join 2 lines deleting white spaces 
     lslmdelete-mode(3)le Remove a local buffer mode 
     lslmdelete-other-windows(2)le (cDC-x 1cA) Delete other windows 
@@ -3180,6 +3253,14 @@ Miscellaneous Information
     lslmfind-tag(2)le (cDesc tcA) Find tag, auto-load file and move to tag position 
     lslmfind-word(3)le Find a using spelling dictionaries 
     lslmfind-zfile(3)le Compressed file support 
+    lslmfold-close(3)le (cDC-f2cA) Close an open fold (in-line) 
+    lslmfold-create(3)le (cDC-f2cA) Create a new fold 
+    lslmfold-enter(3)le (cDf3cA) Enter fold 
+    lslmfold-exit(3)le (cDesc f3cA) Exit a fold 
+    lslmfold-exit-all(3)le (cDesc C-f3cA) Exit all folds 
+    lslmfold-kill(3)le (cDC-x C-kcA) Delete the fold and all its contents 
+    lslmfold-open(3)le (cDf2cA) Open fold (in-line) 
+    lslmfold-remove(3)le (cDesc C-f3cA) Remove the fold, maintaining content 
     lslmforward-char(2)le (cDC-fcA) Move the cursor right 
     lslmforward-delete-char(2)le (cDC-dcA) Delete the next character at the cursor 
     position 
@@ -3268,6 +3349,7 @@ Miscellaneous Information
     lslmlatex(9)le TeX Documentation 
     lslmletter(2m)le Letter kill policy 
     lslmline(2m)le Line kill policy 
+    lslmline-scheme(3)le Apply line annotation in current buffer 
     lslmline-scheme-search(3)le Search and annotate the current buffer 
     lslmlist-buffers(2)le (cDC-x C-bcA) List all buffers and show their status 
     lslmlist-commands(2)le (cDC-h ccA) List available commands 
@@ -3320,6 +3402,7 @@ Miscellaneous Information
     lslmnroff(9)le UNIX nroff file 
     lslmntags(3f)le Generate a nroff tags file 
     lslmoccur(3)le Regular expression search for occurrences 
+    lslmopen-line(3)le (cDC-ocA) Open new line at cursor position 
     lslmorganizer(3)le Calendar and address organizer 
     lslmosd(2)le Manage the On-Screen Display 
     lslmosd-bind-key(2)le Create key binding for OSD dialog 
@@ -3520,6 +3603,7 @@ Miscellaneous Information
     lslmy(9)le YACC programming language 
     lslmyank(2)le (cDC-ycA) Paste (copy) kill buffer contents into buffer 
     lslmyank-rectangle(2)le (cDesc C-ycA) Insert a column of text 
+    lslmyank-rectangle-overwrite(3)le Insert a column of text with overwrite 
     lslmzfile-setup(3)le Compressed file support setup 
     lslmzsh(9)le Z-Shell file 
 !   MicroEmacs '04 - Acknowledgments
@@ -6444,7 +6528,7 @@ Miscellaneous Information
 sB
         set-variable $tabwidth 2 
 
-sA
+sB
     then whenever you start a new session you will always have the $tabwidth 
     defined as you want it. 
 
@@ -8178,7 +8262,6 @@ $a
 sB
         add-next-line "*grep*" "" 
 
-sA
 
 cEcESEE ALSO cEcA
 
@@ -12702,7 +12785,8 @@ $a
 
 
     lslm!abort(4)le, lslm$line-flags(5)le, lslm$result(5)le, lsMacroArguments(4)lm@#(4)le, lslm@wl(4)le, lslmappend-buffer(2)le, 
-    lslmc-hash-eval(3)le, lslmcopy-region(2)le, lslmget-next-line(2)le, lslmgoto-alpha-mark(2)le, 
+    lslmc-hash-eval(3)le, lslmcollapse-all(3)le, lslmcollapse-current(3)le, lslmcopy-region(2)le, 
+    lslmfold-close(3)le, lslmfold-open(3)le, lslmget-next-line(2)le, lslmgoto-alpha-mark(2)le, 
     lslmhilight(2)le, lslmkill-region(2)le, lslmnarrow(2m)le, lslmsave-buffer(2)le, lslmset-alpha-mark(2)le, 
     lslmset-mark(2)le, lslmvm(3)le, lslmwrite-buffer(2)le. 
 ! 2 hilight
@@ -14891,7 +14975,7 @@ $a
 cEcENAME cEcA
 
 
-    insert-newline - Move the cursor to the next word 
+    insert-newline - Insert new line at cursor position 
 $a
 
 
@@ -14908,11 +14992,15 @@ $a
     does not move the cursor. Any text following the cursor is moved to the 
     newly created line. 
 
+    cDinsert-newlinecA is the built in key binding for (cDC-ocA) the key binding is 
+    typically replaced with lslmopen-line(3)le which behaves correctly by 
+    maintaining the cursor position. 
+
 
 cEcESEE ALSO cEcA
 
 
-    lslmnewline(2)le. 
+    lslmnewline(2)le, lslmopen-line(3)le. 
 ! 2 pipe-shell-command
 ! 5 $ME_PIPE_STDERR
 cEcENAME cEcA
@@ -19133,15 +19221,16 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    cDkill-rectanglecA deletes a rectangle (or column) of text defined be the 
+    cDkill-rectanglecA deletes a rectangle (or column) of text defined between the 
     cursor and the lsset-mark(2)lmset-markle position. The text between the mark column and the 
     cursor column is removed from every line between the mark line and the 
     cursor line inclusive and copied to the kill buffer. The delete text may 
-    then be extracted from the kill buffer using lslmyank(2)le or cDyank-rectanglecA. 
+    then be extracted from the kill buffer using lslmyank(2)le, cDyank-rectanglecA or 
+    lslmyank-rectangle-overwrite(3)le. 
 
     The mark position may be ahead or behind the current cursor position. If 
     the rectangle column boundary divides a tab character which spans multiple 
-    columns, the tab character is replaces with the equivalent number of 
+    columns, the tab character is replaced with the equivalent number of 
     spaces. Similarly if the boundary divides an unprintable character which 
     is displayed using multiple characters (e.g. 'cG^AcA' for character 0x01) then 
     spaces are inserted before the character to move it to the right of the 
@@ -19156,38 +19245,11 @@ $a
     line of text in the kill buffer etc. 
 
 
-cEcENOTES cEcA
-
-
-    The command copy-rectangle is not provided by default as this command is 
-    rarely required. If this command is required, the following macro 
-    definition can be used: 
-sB
-        define-macro copy-rectangle 
-            set-alpha-mark "T" 
-            set-variable #l0 &bmod "view" 
-            set-variable #l1 &bmod "edit" 
-            set-variable #l2 &bmod "undo" 
-            -1 buffer-mode view 
-            1 buffer-mode undo 
-            kill-rectangle 
-            ; undo the kill and restore the buffer state 
-            undo 
-            &cond #l2 1 -1 buffer-mode "undo" 
-            &cond #l1 1 -1 buffer-mode "edit" 
-            &cond #l0 1 -1 buffer-mode "view" 
-            goto-alpha-mark "T" 
-            ; flag the command to be a copy-region type command 
-            set-variable @cl copy-region 
-        !emacro 
-
-sA
-
 cEcESEE ALSO cEcA
 
 
-    lslmcopy-region(2)le, lslmkill-region(2)le, lslmreyank(2)le, lslmset-mark(2)le, 
-    lslmstring-rectangle(3)le, lslmundo(2)le, lslmyank(2)le. 
+    lslmcopy-rectangle(3)le, lslmcopy-region(2)le, lslmkill-region(2)le, lslmreyank(2)le, lslmset-mark(2)le, 
+    lslmstring-rectangle(3)le, lslmundo(2)le, lslmyank(2)le, lslmyank-rectangle-overwrite(3)le. 
 ! 2 command-wait
 cEcENAME cEcA
 
@@ -19255,46 +19317,82 @@ $a
     cCncA cDcreate-framecA 
 
 
+cEcEINTODUCTION cEcA
+
+
+    A cDframecA in MicroEmacs is the screen canvas on which all of the windows are 
+    attached. MicroEmacs allows the creation of new frames which creates a new 
+    blank canvas which is can then be populated with new windows. Frames may 
+    be swapped and when swapped the window layout for a given frame is 
+    preserved until the frame is displayed again. There are two types of 
+    frame: 
+
+    Internal 
+        An internal frame uses the same OS window or console hiding any other 
+        frames. This means that any existing frame is hidden and a new frame 
+        blank takes its place. Internal frames are supported on all platforms. 
+
+    External 
+        An external frame creates a new OS window allowing both the original 
+        frame and new frame to be visible in different windows. External 
+        frames are only available under windowing platforms such as X-Windows 
+        and Microsoft Windows. External frames may also be paged with internal 
+        frames. 
+
+    This is shown in the following diagram:- 
+
+                 +-----------------+           +-----------------+ 
+                 |                 +-+         |                 +-+ 
+                 |                 | +-+       |                 | | 
+                 |                 | | |       |                 | | 
+                 |                 | | |       |                 | | 
+                 +-+---------------+ | |       +-+---------------+ | 
+                   +-+---------------+ |         +-----------------+ 
+                     +-----------------+ 
+
+                  Three Internal Frames        External Frame with 
+                                               two internal frames 
+
+
+    The user may move to the next frame using lslmnext-frame(2)le which swaps the 
+    current frame for the next frame. External frames may also be accessed via 
+    the window manager by selecting the window. 
+
+    A frame may be subsequently deleted with lslmdelete-frame(2)le. 
+
+
 cEcEDESCRIPTION cEcA
 
 
-    cDcreate-framecA creates a new frame for the current MicroEmacs session. 
-    MicroEmacs support the creation of 'internal' multiple frames on all 
-    platforms and 'external' frames on windowing platforms (such as Windows 
-    and XTerm). An external frame creates a new OS window so both the existing 
-    frame and the new frame are visible, whereas an internal frame uses the 
-    same OS window or console which means that the existing frame is hidden 
-    and the new frame takes its place. 
+    cDcreate-framecA creates a new frame for the current MicroEmacs session, the 
+    new frame is assigned a unique identity lslm$frame-id(5)le which exists for the 
+    life of the frame. 
 
-    The numeric argument cCncA can be used to define which type of frame is to be 
-    created. If an argument of cG1cA is given (the default argument) an external 
-    frame will be created, whereas an internal frame will be created if an 
-    argument of cG0cA is given. 
+    The numeric argument cCncA defines the type of frame to be created. If an 
+    argument of cG1cA is given (the default argument) an external frame is 
+    created. An internal frame is created with an argument of cG0cA. 
 
 
 cEcENOTES cEcA
 
 
-    Internal frames can only be accessed via the lslmnext-frame(2)le command, 
-    external frames can usually be accessed via the OS as well. 
+    MicroEmacs is not multi-threaded and only one frame may be active at any 
+    one time (the complexity of being able to run a command in one frame while 
+    editing in another would rapidly lead it away from the 'Micro' status). 
+    This means that if a command is left active (such as a search) in one 
+    frame and the focus is changed to another the input is cCsentcA to the frame 
+    with the active command and the message cG[NOT FOCUS]cA appears in the 
+    message-line of the frame with the OS focus. 
 
-    MicroEmacs is not multi-threaded in that only one frame can be active at 
-    any one time (the complexity of being able to run a command in one frame 
-    while editing in another would rapidly lead it away from the 'Micro' 
-    status). This means that if a command is left active (such as a search) in 
-    one frame and the focus is changed to another the input is 'sent' to the 
-    frame with the active command and the message '[NOT FOCUS]' will appear in 
-    the message-line of the frame with the OS focus. 
-
-    cDcreate-framecA may be useful in macros that rely on a window layout, this is 
-    because they can preserve the users current window layout by creating and 
-    new internal frame in which to run. 
+    cDcreate-framecA is useful in macros that rely on a window layout, as the 
+    macro can preserve the users current window layout by creating a new 
+    internal frame in which to run. 
 
 
 cEcESEE ALSO cEcA
 
 
-    lslmdelete-frame(2)le, lslmnext-frame(2)le. 
+    lslmdelete-frame(2)le, lslmnext-frame(2)le, lslm$frame-id(5)le. 
 ! 2 delete-frame
 cEcENAME cEcA
 
@@ -19312,13 +19410,14 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    cDdelete-framecA deletes the current frame. 
+    cDdelete-framecA deletes the current frame and the next is displayed. If there 
+    is no next frame then the command fails. 
 
 
 cEcESEE ALSO cEcA
 
 
-    lslmcreate-frame(2)le, lslmnext-frame(2)le. 
+    lslmcreate-frame(2)le, lslmnext-frame(2)le. lslm$frame-id(5)le. 
 ! 2 next-frame
 cEcENAME cEcA
 
@@ -21960,6 +22059,10 @@ $a
     the file bindings are installed a cCfoocA file may be loaded and the hook 
     message should be displayed. 
 
+    The best way to create a new file hook is to find an existing file type 
+    with similar support to the new file hook you wish to create and re-use 
+    the hook code to create the new one. 
+
 
 cEModifying an Existing file hook cA
 
@@ -21980,6 +22083,11 @@ $a
     different buffer environment is required from the one created be the hook, 
     such as a different setting of lslmtab(2m)le mode, the hook function should be 
     copied to cDmycAcCXXXcAcD.emfcA and altered appropriately. 
+
+    Most extensions and changes to the buffer environment may be performed 
+    using cDmycAcCXXXcAcD.emfcA. If the extension macro file includes a macro definition 
+    cDmy-fhook-cAcCXXXcA, then cDmy-fhookcAcCXXXcA is automatically executed after cDfhookcAcCXXXcA 
+    has been run. 
 
 
 cEAdding Hilighting definitions cA
@@ -27338,7 +27446,7 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    MicroEmacs '04 provides a generic, albeit course, folding mechanism which 
+    MicroEmacs '04 provides a generic, albeit coarse, folding mechanism which 
     is applied to some of the well known file modes. The folding mechanism 
     allows parts of the buffer to be scrolled up and hidden, leaving a residue 
     hilighting marker within the buffer indicating a folded region. A folded 
@@ -27407,6 +27515,28 @@ $a
         continued on the fold operation. This is only used by cDcollapse-allcA. 
 
 
+cEcEPRESENTATION cEcA
+
+
+    The presentation of a collapsed region takes the form: 
+
+        cC<open line string>cA ... cC<close line string>cA 
+
+    Where cC<open line string>cA and cC<close line string>cA are automatically 
+    extracted from the originating buffer using the search string definition. 
+    Existing cDcollapsecA implementations used a simpler format: 
+
+        cC<open line string>cA ... 
+
+    In MicroEmacs '04 and later versions, then the cC<close line string>cA is 
+    always appended. Appending of the closing token is required to ensure that 
+    any lsindent(2)lmindentationle is maintained. This allows the indent processing to find 
+    both an cCopencA and cCclosecA character sequence and not introduce an unwanted 
+    indentation. To ensure that indentation consistency is maintained then the 
+    cD.fhook-XXX.collapse-closecA definition should minimally match the 
+    corresponding indentation close regular expression. 
+
+
 cEcEEXAMPLE cEcA
 
 
@@ -27439,7 +27569,7 @@ $a
     the folded version appears as follows:- 
 
         static void 
-        myfunc (int a, int b) ... 
+        myfunc (int a, int b) ... } 
 
 
 cEemf cA
@@ -27464,7 +27594,7 @@ $a
 sA
     the collapsed version of the macro is defined as:- 
 sB
-        0 define-macro mymacro ... 
+        0 define-macro mymacro ... !emacro 
 
 sA
 
@@ -27519,7 +27649,7 @@ $a
 
     The collapsed version of the same section appears as:- 
 
-        proc tixControl:InitWidgetRec {w} { ... 
+        proc tixControl:InitWidgetRec {w} { ... } 
 
 
 cEcENOTES cEcA
@@ -27544,7 +27674,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lsfileHooks(2)lmFile Hooksle, lslmbuffer-init(3)le, lslmuser-setup(3)le, lslmnarrow-buffer(2)le. 
+    lsfileHooks(2)lmFile Hooksle, lslmbuffer-init(3)le, lslmindent(2)le, lslmuser-setup(3)le, lslmnarrow-buffer(2)le. 
 ! 3 find-bfile
 ! 3 find-cfile
 cEcENAME cEcA
@@ -29746,6 +29876,8 @@ $a
 ! 3 cvs-remove
 ! 3 cvs-resolve-conflicts
 ! 3 cvs-state
+! 3 cvs-status
+! 3 cvs-tag
 ! 3 cvs-update
 cEcENAME cEcA
 
@@ -29770,6 +29902,10 @@ $a
     cvs-resolve-conflicts - MicroEmacs CVS interface - resolve conflicts 
 |cvs-state
     cvs-state - MicroEmacs CVS interface - list state of directory files 
+|cvs-status
+    cvs-status - MicroEmacs CVS interface - status of files 
+|cvs-tag
+    cvs-tag - MicroEmacs CVS interface - tag files 
 |cvs-update
     cvs-update - MicroEmacs CVS interface - update directory files 
 $a
@@ -29789,6 +29925,8 @@ $a
     cDcvs-removecA 
     cDcvs-resolve-conflictscA 
     cDcvs-statecA 
+    cDcvs-statuscA 
+    cDcvs-tagcA 
     cDcvs-updatecA 
 
 
@@ -29809,7 +29947,14 @@ $a
     the exception that additional CVS item controls are located in the mouse 
     context menu (opened by clicking the right mouse button in the cG*files*cA 
     buffer). This menu item opens another sub-menu providing access to the 
-    following items: 
+    items below. When selecting commands than a pop-up check-box may be 
+    displayed which allows options to be selected for the command. 
+
+    cDCurrent StatecA 
+        Checks the state of selected file(s) or directory against the 
+        repository. Differences detected are shown in the cG*cvs-state*cA window. 
+        This provides a quick method of determining the working directory 
+        state. This runs the command "cGcvs -nq update <files>cA". 
 
     cDCheckout filescA 
         Checks out a file or directory from the repository into the current 
@@ -29825,7 +29970,8 @@ $a
 
     cDCommit filescA 
         Commits any changes made to the selected files back to the CVS 
-        repository. This runs the command "cGcvs commit <files>cA". 
+        repository. This runs the command "cGcvs commit <files>cA". The user is 
+        prompted for the message to add on the commit. 
 
     cDDiff filescA 
         Displays any differences between the selected files and the CVS 
@@ -29840,10 +29986,18 @@ $a
         Displays the CVS status for each of the selected files in the 
         cC*cvs-console*cA window. This runs the command "cGcvs status -v <files>cA". 
 
+    cDTag filescA 
+        Adds, removes or moves a CVS tag on the selected file(s) or 
+        directories. A pop-up window is displayed which allows entry of the 
+        tag name and define the operation. This runs the command "cGcvs tag 
+        <files>cA". 
+
     cDAdd filescA 
         Adds the selected files to the CVS repository. Note this command only 
         performs the local add, a cDCVS commitcA is required to make the addition 
-        permanent. This runs the command "cGcvs add <files>cA". 
+        permanent. This runs the command "cGcvs add <files>cA". A pop-up is 
+        displayed to allow the user to change the mode of the add to binary or 
+        text. 
 
     cDRemove filescA 
         This command is deliberately not implemented as its far to dangerous! 
@@ -29905,6 +30059,13 @@ $a
     file in the current directory which is not up-to-date. Note that unlike 
     most cvs sub commands this command executes over all files in the current 
     buffer's file directory. 
+
+    The cDcvs-statuscA command opens a cC*cvs-state*cA window and shows the state of 
+    the current buffer in the window including the modification state, 
+    repository etc. 
+
+    The cDcvs-tagcA command opens a dialog box and allows the user to add, remove 
+    or delete a CVS tag. 
 
     The cDcvs-updatecA command updates all files in the current directory, the 
     output being reported to a new cC*cvs-update*cA window. Note that unlike most 
@@ -30514,7 +30675,7 @@ $a
 
     cDbuffer-init-fhookscA is invoked from the buffer file hook lsfileHooks(2)lmfhookle typically 
     following the cDbuffer-initcA call this macro invokes any user defined file 
-    hooks of the form cDmy-fhook-xxcA. User defined cDmy-bhook-XXXcA and cDmy-ehook-XXXcA 
+    hooks of the form cDmy-fhook-XXXcA. User defined cDmy-bhook-XXXcA and cDmy-ehook-XXXcA 
     are configured into the buffer space ready for execution. 
 
     cDbuffer-init-fhookcA is placed at the end of the hook file definition and 
@@ -30531,29 +30692,26 @@ $a
     from the file system and executed. Execution causes all of the variables 
     to be defined and finally, when all definitions have been made, 
     cDbuffer-init-fhookcA is executed to load in any user defined extensions. At 
-    this point then the macro cDfhook-XXXcA (in our example cCfhook-XXXcA) has ONLY 
-    been defined it has NOT been executed. This load operation is performed 
-    once only and is performed on demand. 
+    this point then the macro cDfhook-XXXcA has ONLY been defined it has NOT been 
+    executed. This load operation is performed once only and is on demand. 
 
     The cDfhook-XXXcA macro must be defined BEFORE any of the variables associated 
     with the hook as all subsequent variables are command variables and are 
     defined in the context of the macro definition. See lslmVariables(4)le for more 
     information on macro variables. 
 
-    Once all of the user information has been loaded then the macro cDfhook-XXXcA 
-    is invoked, this applies hilighting, buffer key bindings, indentation etc. 
-    to the newly loaded buffer. 
+    cDfhook-XXXcA is invoked to apply hilighting, buffer key bindings, indentation 
+    etc. to the newly loaded buffer. 
 
 
 cEConfiguration Masks cA
 
 
     Buffer initialization is controlled by the settings of the variables 
-    cD.fhook-XXX.setupcA and cDfhook-c.setup-maskcA, for the 'C' language then this is 
-    defined as:- 
+    cD.fhook-XXX.setupcA and cDfhook-XXX.setup-maskcA:- 
 sB
-        set-variable .fhook-c.setup &reg "/history" "fhook/c" "bdfghnopx" 
-        set-variable .fhook-c.setup-mask "abdefghikmnoptux>" 
+        set-variable .fhook-XXX.setup &reg "/history" "fhook/XXX" "bdfghnopx" 
+        set-variable .fhook-XXX.setup-mask "abdefghikmnoptux>" 
 
 sA
     The variables use an ASCII configuration string that identifies the modes 
@@ -30562,7 +30720,7 @@ $a
     the flag is not specified then the mode is not changed. 
 
     cGacA - Auto mode 
-        Automatic lslmauto(2m)le mode for automatic source file line type detection. 
+        Configure lslmauto(2m)le mode for automatic source file line type detection. 
         Typically enabled for text files. 
 
     cGbcA - Abbreviation mode 
@@ -30570,18 +30728,20 @@ $a
         buffer. 
 
     cGccA - View / Author mode 
-        Viewing lslmview(2m)le mode for read only or authoring. 
+        Configure lslmview(2m)le mode for read only or authoring. 
 
     cGdcA - Auto indentation operation. 
-        Automatic indent is enabled. Where electric-c is required then the 
-        flag cG>cA should be used in conjunction with the cGdcA flag, otherwise the 
-        indentation should be defined in the template using lslmindent(2)le. 
+        Automatic indent is enabled. Where cCC-modecA is required (see lslmcmode(2m)le) 
+        then the flag cG>cA should be used in conjunction with the cGdcA flag, 
+        otherwise the indentation should be defined in the template using 
+        lslmindent(2)le. 
 
         Where lslmindent(2m)le mode is required then omit the cGdcA flag and use flag cGicA 
         instead. 
 
     cGecA - Exact or case sensitivity operation 
-        Exact lslmexact(2m)le case sensitive mode. cGecA enable exact, cGEcA disable exact. 
+        Configure lslmexact(2m)le case sensitive mode. cGecA enable exact, cGEcA disable 
+        exact. 
 
     cGfcA - Folding/Collapsing operation 
         Configures folding support, if enabled then the variables 
@@ -30589,8 +30749,8 @@ $a
         folding points. 
 
     cGgcA - Fence matching operation 
-        Fence matching mode with lslmfence(2m)le. Note that fence matching is now 
-        typically performed in the macro environment using 
+        Configure fence matching mode with lslmfence(2m)le. Note that fence matching 
+        is now typically performed in the macro environment using 
         lslmdisplay-matching-fence(3)le rather than the in-built fence matching. 
         This colorizes the fences that are matched. cGgcA enable fence matching, cGGcA 
         disable fence matching. 
@@ -30601,19 +30761,20 @@ $a
 
     cGicA - Automatic indentation 
         Support indentation using lslmindent(2m)le. Automatic indentation defined 
-        with the cGdcA and optionally the cG>cA flag where the in-built electric-c is 
-        required. cGicA enable indent, cGJcA disable indent. 
+        with the cGdcA and optionally the cG>cA flag where the in-built cCC-modecA (see 
+        lslmcmode(2m)le) is required. cGicA enable indent, cGJcA disable indent. 
 
     cGjcA - Justify 
-        Support paragraph justification using lslmjustify(2m)le. cGjcA enable justify, cGJcA 
-        disable justify. 
+        Configure paragraph justification using lslmjustify(2m)le. cGjcA enable justify, 
+        cGJcA disable justify. 
 
     cGkcA - Backup mode 
-        Enable backups with lslmbackup(2m)le mode. cGkcA enable backup, cGKcA disable 
+        Configure backups with lslmbackup(2m)le mode. cGkcA enable backup, cGKcA disable 
         backup. 
 
     cGmcA - Magic mode 
-        Regular expression lslmmagic(2m)le mode. cGmcA enable magic, cGMcA disable magic. 
+        Configure regular expression lslmmagic(2m)le mode. cGmcA enable magic, cGMcA disable 
+        magic. 
 
     cGncA - New buffer header 
         Enable the insertion of a buffer header from the lslmetf(8)le template file. 
@@ -30625,21 +30786,21 @@ $a
         Produce a help page for the buffer describing the bindings. 
 
     cGscA - Auto spell 
-        Enable automatic spelling for the buffer using lslmauto-spell(3)le. 
+        Configure automatic spelling for the buffer using lslmauto-spell(3)le. 
 
     cGtcA - Tab mode 
-        Allow insertion of literal tabs by enabling lslmtab(2m)le mode. cGtcA enable 
+        Configure insertion of literal tabs by enabling lslmtab(2m)le mode. cGtcA enable 
         tab, cGTcA disable tab. 
 
     cGucA - Undo 
-        Maintain an undo/redo history using lslmundo(2m)le mode. cGucA enable undo, cGUcA 
+        Configure the undo/redo history using lslmundo(2m)le mode. cGucA enable undo, cGUcA 
         disable undo. 
 
     cGwcA - Wrap 
-        Enable wrapping using lslmwrap(2m)le mode. cGwcA enable wrap, cGWcA disable wrap. 
+        Configure wrapping using lslmwrap(2m)le mode. cGwcA enable wrap, cGWcA disable wrap. 
 
     cGxcA - Time stamping 
-        Enable time stamping as defined by lslmtime(2m)le. 
+        Configure time stamping as defined by lslmtime(2m)le. 
 
     cG>cA - Electric-c indentation. 
         A special internal flag indicating that indentation is to be performed 
@@ -30655,21 +30816,21 @@ $a
         format should be defined with the cC.fhook-XXX.commentcA variable within 
         the template. 
 
-    cD.fhook-XXX.setupcA is the default set-up, this is normally defined to take 
-    settings from the registry and provides defaults when not defined. This is 
-    the only mask that is allowed to carry the uppercase flags. All values 
+    cD.fhook-XXX.setupcA is the current set-up, this is normally defined to take 
+    settings from the registry providing a default when not defined. This is 
+    the only mask that is allowed to include the uppercase flags. All values 
     defined in cD.fhook-XXX.setupcA are explicitly enabled or disabled by default. 
     The setup set should contain the configuration flags that are required to 
     make the template operate correctly, but should not include modes that the 
     user may set up i.e. cCexactcA or cCmagiccA etc. 
 
-    cD.fhook-xx.setup-maskcA defines the set of flags that are allowed with the 
+    cD.fhook-XXX.setup-maskcA defines the set of flags that are allowed with the 
     template. The configuration defined in lslmbuffer-setup(3)le is tested against 
     the mask, if the mask allows it then the mode is enabled. cD.fhook-XXX.setupcA 
-    is generally a subset of cD.fhook-xx.setup-maskcA. 
+    is generally a subset of cD.fhook-XXX.setup-maskcA. 
 
-    lslmbuffer-setup(3)le operates with the vales defined by cD.fhook-XXX.setupcA and 
-    cD.fhook-xx.setup-maskcA. The initialization of cD.fhook-XXX.setupcA is performed 
+    lslmbuffer-setup(3)le operates with the values defined by cD.fhook-XXX.setupcA and 
+    cD.fhook-XXX.setup-maskcA. The initialization of cD.fhook-XXX.setupcA is performed 
     using the registry as follows:- 
 sB
         set-variable .fhook-XXX.setup &reg "/history" "fhook/XXX" "bdfghnopx" 
@@ -30685,13 +30846,31 @@ $a
 cETags cA
 
 
-    Some language templates include a cCtagscA facility to generate a tags file 
-    (See lslmemftags(3f)le - cGemftags.emfcA, lslmctags(3f)le - cGctags.emfcA, lslmntags(3f)le - 
-    cGntags.emfcA). The buffer setup may be configured to add a tags generator to 
-    the language template,this is added to the menu. A tag generator should be 
-    written for the given language template and is declared to the template by 
-    assignment of the cD.fhook-XXX.tagscA variable .i.e for the 'C' Programming 
-    Language:- 
+    The buffer setup may be configured to add a tags generator to the language 
+    template, this is added to the menu. The tags generation is declared in 
+    the template by assigning the variable cD.fhook-XXX.tagscA with a command line 
+    to run tags utility. The command line string should commence with a cG!cA 
+    character to tell MicroEmacs to execute an external command, for example 
+    to use the GNU cDctags(2)cA utility is defined as:- 
+sB
+        set-variable .fhook-c.tags "!ctags *.c *.h" 
+
+sA
+    When the value starts with a 'cG!cA' then rest of the line is spawned as a 
+    process, no additional interface is provided to the command. 
+
+    Some language templates include a macro cCtagscA facility to generate a tags 
+    file (See lslmemftags(3f)le - cGemftags.emfcA, lslmctags(3f)le - cGctags.emfcA, lslmntags(3f)le - 
+    cGntags.emfcA). cD.fhook-XXX.tagscA may be defined to use an internal macro based 
+    tags generator rather than an external command. Without the 'cG!cA' character 
+    the command line is assumed to be an MicroEmacs macro based and runs the 
+    command 
+
+        me @<.tags-var-value> -v%tag-options=<options> 
+
+
+    A macros based command line for the 'C' Programming Language is defined 
+    as:- 
 sB
         set-variable .fhook-c.tags "ctags" 
 
@@ -30853,47 +31032,52 @@ $a
 
     Local buffer commands and key bindings for over-riding key definitions 
     used within the buffer are defined with the cGfhook-XXX.command-*cA variables. 
-    The variables are defined as a list of keys, commands and bindings each 
-    command is separated by a 'cG|cA' character. The field order in all of the 
-    cGfhook-XXX.command-*cA variables MUST be consistent, so if a command is 
-    defined in field 5, then all definitions associated with that command MUST 
-    be defined in field 5 for all variables. The variables that defined the 
-    commands are defined as follows:- 
+    These are defined as MicroEmacs list variables (see lslm&lfind(4)le, lslm&lget(4)le, 
+    etc. for the full syntax definition) and define a list of keys, commands 
+    and bindings. Each command is typically separated by the 'cG|cA' character. 
+    The field order in all of the cGfhook-XXX.command-*cA variables MUST be 
+    consistent, so if a command is defined in field 5, then all definitions 
+    associated with that command MUST be defined in field 5 for all variables. 
+    The command variables are defined as follows:- 
 
     cC.fhook-c.command-flagcA 
         A configuration flag that defines the components to use for the 
         command. The flags are set as individual characters and are defined as 
         follows:- 
 
-                * Show the command in the toolbar. The cG.fhook-XXX.command-desccA 
-                  variable should contain a readable name for the command to 
-                  display in the menu. An optional hot key for selection in 
-                  any lsosd(2)lmosdle is specified by prefixing the character in the 
-                  string with cG\HcA. 
+        cGtcA - Toolbar 
+            Show the command in the toolbar. The cG.fhook-XXX.command-desccA 
+            variable should contain a readable name for the command to display 
+            in the menu. An optional hot key for selection in any lsosd(2)lmosdle is 
+            specified by prefixing the character in the string with cG\HcA. 
 
-                * Show the command in the help screen. The 
-                  cG.fhook-XXX.command-desccA variable should contain a readable 
-                  name for the command to display in the menu. An optional hot 
-                  key for selection in any lsosd(2)lmosdle is specified by prefixing the 
-                  character in the string with cG\HcA. 
+        cGhcA - Help Screen 
+            Show the command in the help screen. The cG.fhook-XXX.command-desccA 
+            variable should contain a readable name for the command to display 
+            in the menu. An optional hot key for selection in any lsosd(2)lmosdle is 
+            specified by prefixing the character in the string with cG\HcA. 
 
-                * Create a buffer key binding for the command, the key to bind 
-                  is defined by the variable cGfhook-XXX.command-kbindcA, if the 
-                  command requires a numerical argument then this is defined 
-                  in the variable cGfhook-XXX.command-nbindcA. The binding is only 
-                  created if the key buffer binding does not already exist, 
-                  the binding may be forced by using the cGocA flag. Where a key 
-                  binding is only to be created if hilighting is enabled then 
-                  the cGbcA flag should be qualified with the cGHcA flag. 
+        cGbcA - Key binding 
+            Create a buffer key binding for the command, the key to bind is 
+            defined by the variable cGfhook-XXX.command-kbindcA, if the command 
+            requires a numerical argument then this is defined in the variable 
+            cGfhook-XXX.command-nbindcA. The binding is only created if the key 
+            buffer binding does not already exist, the binding may be forced 
+            by using the cGocA flag. Where a key binding is only to be created if 
+            hilighting is enabled then the cGbcA flag should be qualified with the 
+            cGHcA flag. 
 
-                * Optionally used with the cGbcA and forces the binding to 
-                  over-write any existing binding. 
+        cGocA - Forced key binding 
+            Optionally used with the cGbcA and forces the binding to over-write 
+            any existing binding. 
 
-                * Used with the cGbcA flag, ignores key bindings that are 
-                  emulation mappings. 
+        cGicA - Emulated key binding 
+            Used with the cGbcA flag, ignores key bindings that are emulation 
+            mappings. 
 
-                * Used with the cGbcA flag, only performs the key binding if 
-                  hilighting is enabled. 
+        cGHcA - Hilighting key binding 
+            Used with the cGbcA flag, only performs the key binding if hilighting 
+            is enabled. 
 
     cC.fhook-XXX.command-namecA 
         Specifies the name of the command to execute, this may be a built in 
@@ -30913,15 +31097,13 @@ $a
 
     cC.fhook-c.command-desccA 
         A short description of the command that is used for the help page (cGhcA) 
-        and toolbar (cGtcA). A hot key for use in the lsosd(2)lmosdle is specified by 
-        prefixing the hot key character with cG\HcA. The field may be empty if the 
-        field is not specified for insertion into the toolbar or help page. 
+        and toolbar (cGtcA). The field may be empty if the field is not specified 
+        for insertion into the toolbar or help page. 
 
     As an example, two new commands or bindings may be defined for a template, 
     the first field is bound to key cGA-qcA which executes macro cGXXX-compcA with a 
-    numerical argument of 2. The command appears in the toolbar and is 
-    described in the help page and uses hot-key cGmcA. The second field binds a 
-    new key to lslmcomment-restyle(3)le. 
+    numerical argument of 2. The second field binds a new key to 
+    lslmcomment-restyle(3)le. 
 sB
 
         ..... 
@@ -30930,27 +31112,45 @@ $a
         set-variable .fhook-XXX.command-name  "|XXX-comp|comment-restyle|" 
         set-variable .fhook-XXX.command-nbind "|2||" 
         set-variable .fhook-XXX.command-kbind "|A-q|esc o|" 
-        set-variable .fhook-XXX.command-desc  "|Complete co\Hmmand||" 
+        set-variable .fhook-XXX.command-desc  "|Complete command||" 
 
         ..... 
 
         ; Local macro definition to perform command completion 
-        define macro XXX-comp 
+        define-macro XXX-comp 
             set-variable #l1 @# 
             ..... 
         !emacro 
 
 sA
+    The key bindings sometimes need to be protected where they have been 
+    redefined to perform some other operation for example when emulation modes 
+    are used (i.e. cDneditcA, cDme3.8cA). The buffer initialisation uses the command 
+    cDbuffer-bind-createcA and the variables cD.buffer-bind-create.map-fromcA and 
+    cD.buffer-bind-create.map-tocA which define replacement keys for bindings. As 
+    an example the cDneditcA emulation mode uses key binding cGC-c C-ccA and provides 
+    a buffer binding mapping to translate any key buffer binding to a 
+    different key. i.e. 
+sB
+        ; reconfigure the buffer bindings 
+        set-variable .buffer-bind-key.map-from "|C-c C-c|C-c C-d|" 
+        set-variable .buffer-bind-key.map-to   "|C-b|C-u|" 
 
-cEInformation Hiding with Collapsing cA
+sA
+
+cEInformation Hiding with Collapse cA
 
 
-    MicroEmacs '04 provides a generic, albeit course, folding mechanism which 
+    MicroEmacs '04 provides a generic, albeit coarse, folding mechanism which 
     is applied to some of the well known file modes. The folding mechanism 
     allows parts of the buffer to be scrolled up and hidden, leaving a residue 
     hilighting marker within the buffer indicating a folded region. A folded 
     buffer typically allows a summary of the buffer contents to be viewed 
     within several windows, hiding the detail of the buffer. 
+
+    Note: cDcollapsecA was called cDfoldcA in earlier releases but the name was 
+    changed when real fold editing support was added, see cGfold.emfcA for more 
+    information. 
 
     The folding mechanism uses well defined cCstartcA and cCendcA markers which form 
     part of the syntax of the well known file mode. i.e. in 'C' this is the 
@@ -30967,31 +31167,31 @@ $a
     cCXXXcA is the file hook base name. The cG.fhook-XXX.collapse-*cA variables define 
     the regular expression search pattern and line positioning. 
 
-    cD.fhook-cAcCxxxxcAcD-collapse-opencA 
+    cD.fhook-cAcCXXXcAcD-collapse-opencA 
         A regular expression search string used to locate the start of the 
         string. For speed the search string should include a regular 
         expression start or end of line character whenever possible. i.e. in C 
         the open is defined as "cG^{cA". 
 
-    cD.fhook-cAcCxxxxcAcD-collapse-closecA 
+    cD.fhook-cAcCXXXcAcD-collapse-closecA 
         A regular expression search string used to locate the end of the 
         string. For speed the search string should include a regular 
         expression start or end line character whenever possible. i.e. in C 
         the close is defined as "cG^}cA". 
 
-    cD.fhook-cAcCxxxxcAcD-collapse-mopencA 
+    cD.fhook-cAcCXXXcAcD-collapse-mopencA 
         An integer value that denotes the number of lines to move in a forward 
         or (-ve) backward direction from the cCstartcA line located by the search 
         string to the position in the buffer to be folded. If default value 
         when cDmopencA is omitted is 0, starting the fold from the search string 
         line. 
 
-    cD.fhook-cAcCxxxxcAcD-collapse-mclosecA 
+    cD.fhook-cAcCXXXcAcD-collapse-mclosecA 
         The relative displacement from the close fold line to the fold 
         position, this is a positive or negative displacement depending on 
         where the fold is to be positioned. 
 
-    cD.fhook-cAcCxxxxcAcD-collapse-mnextcA 
+    cD.fhook-cAcCXXXcAcD-collapse-mnextcA 
         Specifies the number of lines to advance before the next search is 
         continued on the fold operation. This is only used by lscollapse-current(3)lmcollapse-allle. 
 
@@ -31022,7 +31222,7 @@ $a
         the folded version appears as follows:- 
 
             static void 
-            myfunc (int a, int b) ... 
+            myfunc (int a, int b) ... } 
 
 
     cDemfcA 
@@ -31045,7 +31245,7 @@ $a
 sA
         the collapsed version of the macro is defined as:- 
 sB
-            0 define-macro mymacro ... 
+            0 define-macro mymacro ... !emacro 
 
 sA
     cDnroffcA 
@@ -31095,7 +31295,7 @@ $a
 
         The collapsed version of the same section appears as:- 
 
-            proc tixControl:InitWidgetRec {w} { ... 
+            proc tixControl:InitWidgetRec {w} { ... } 
 
 
 cEItem Lists cA
@@ -31109,8 +31309,8 @@ $a
     to the user. 
 
     The regular expression search strings are predefined in the language 
-    templates, using the variables cD.fhook-cAcCxxxxcAcD-item-list-scAcCYcA and 
-    cD.fhook-cAcCxxxxcAcD-item-list-rcAcCYcA and are described more fully in lslmitem-list(3)le. 
+    templates, using the variables cD.fhook-cAcCXXXcAcD-item-list-scAcCYcA and 
+    cD.fhook-cAcCXXXcAcD-item-list-rcAcCYcA and are described more fully in lslmitem-list(3)le. 
 
 
 cEHilighting cA
@@ -31534,6 +31734,337 @@ $a
 
 
     lslmosd(2)le, lslmrecenter(2)le. 
+! 3 abbrev-list
+cEcENAME cEcA
+
+
+    abbrev-list - Create a list of abbreviations 
+
+
+cEcESYNOPSIS cEcA
+
+
+    cDabbrev-listcA 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    cDabbrev-listcA operates opens a new pop-up window and displays a list of 
+    abbreviations that are available. Selecting an abbreviation within the 
+    window with the mouse inserts the abbreviation into the current buffer. 
+
+    The abbreviations are defined by the lseaf(8)lmXXX.eafle abbreviation file, where cGXXXcA 
+    is the buffer template. The abbreviation file is defined to the buffer 
+    using lslmbuffer-abbrev-file(2)le which is configured and loaded by 
+    lslmbuffer-init(3)le. 
+
+    When the lslmtoolbar(3)le is enabled then the command does not produce a pop-up 
+    window, the abbreviation list may be found (or added) to the toolbar. 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmbuffer-abbrev-file(2)le, lslmbuffer-init(3)le, lslmeaf(8)le, lslmexpand-abbrev(2)le, 
+    lslmtoolbar(3)le. 
+! 3 c-to-cpp-convert
+cEcENAME cEcA
+
+
+    c-to-cpp-convert - Convert a C file to C++ 
+
+
+cEcESYNOPSIS cEcA
+
+
+    cDc-to-cpp-convertcA 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    cDc-to-cpp-convertcA changes the buffer type from C to C++ and loads the C++ 
+    language template lslmcpp(9)le. The command is only available once a 'C' file is 
+    loaded as the command is defined within the C language template file 
+    cGhkc.emfcA. 
+
+    The command is normally used when a new C++ file is being created, if the 
+    default file type is C rather than C++ then the new file is converted to 
+    C++ by changing the magic string from cG-*- c -*-cA to cG-*- c++ -*-cA, whenever 
+    the file is subsequently loaded then it will be presented in the correct 
+    mode. 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmc(9)le, lslmcpp(9)le. 
+! 3 c-slashify
+! 3 c-deslashify
+cEcENAME cEcA
+
+
+|c-slashify
+    c-slashify - C language, append backslash to end of lines of region 
+|c-deslashify
+    c-deslashify - C language, remove backslash to end of lines of region 
+$a
+
+
+cEcESYNOPSIS cEcA
+
+
+    cDc-slashifycA 
+    cDc-deslashifycA 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    cDc-slashifycA and cDc-deslashifycA add and remove backslash characters to the 
+    ends of line(s) defined by a region, respectively. 
+
+    The commands are used with the C programming language for cG#definecA macro 
+    editing, allowing backslashes to be added and removed quickly. Backslashes 
+    are typically removed with cDc-deslashifycA and the macro edited before the 
+    backslashes are re-applied using cDc-slashifycA. 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmc(9)le, lslmcpp(9)le. 
+! 3 delete-hilight-lines
+cEcENAME cEcA
+
+
+    delete-hilight-lines - Delete hilight lines 
+
+
+cEcESYNOPSIS cEcA
+
+
+    cDdelete-hilight-linescA 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    cDdelete-hilight-linescA deletes all lines in the buffer that are hilighted 
+    with a line color scheme applied by lslmline-scheme-search(3)le or 
+    lslmline-scheme(3)le. Deletion is only performed on the user hilight lines, 
+    lslmcollapse-current(3)le annotation lines that use a line based hilight scheme 
+    are not removed. 
+
+    The line hilighting may be used to mark up lines that are not required, 
+    typically in debugging logs, and then delete those lines using 
+    cDdelete-hilight-linescA. 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmcollapse-all(3)le, lslmcollapse-current(3)le, lslmhilight(2)le, lslmline-scheme-search(3)le, 
+    lslmline-scheme(3)le, lslm$line-scheme(5)le. 
+! 3 open-line
+cEcENAME cEcA
+
+
+    open-line - Open new line at cursor position 
+
+
+cEcESYNOPSIS cEcA
+
+
+    cCncA cDopen-linecA (cDC-ocA) 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    cDopen-linecA inserts cCncA new lines after the current cursor position Any text 
+    following the cursor is moved to the newly created line(s). The cursor 
+    position is maintained by the command. 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslminsert-newline(2)le, lslmnewline(2)le. 
+! 3 copy-rectangle
+! 3 yank-rectangle-overwrite
+cEcENAME cEcA
+
+
+|copy-rectangle
+    copy-rectangle - Copy a rectangular region of text 
+|yank-rectangle-overwrite
+    yank-rectangle-overwrite - Insert a column of text with overwrite 
+$a
+
+
+cEcESYNOPSIS cEcA
+
+
+    cDcopy-rectanglecA 
+    cDyank-rectangle-overwritecA 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    cDcopy-rectanglecA copies a rectangle (or column) of text defined between the 
+    cursor and the lsset-mark(2)lmset-markle position. The text between the mark column and the 
+    cursor column is copied from every line between the mark line and the 
+    cursor line inclusive and copied to the kill buffer. The copied text may 
+    then be extracted from the kill buffer using lslmyank(2)le, lslmyank-rectangle(2)le or 
+    cDyank-rectangle-overwritecA. 
+
+    The mark position may be ahead or behind the current cursor position. If 
+    the rectangle column boundary divides a tab character which spans multiple 
+    columns, the tab character is replaced with the equivalent number of 
+    spaces. Similarly if the boundary divides an unprintable character which 
+    is displayed using multiple characters (e.g. 'cG^AcA' for character 0x01) then 
+    spaces are inserted before the character to move it to the right of the 
+    boundary. 
+
+    cDyank-rectangle-overwritecA replaces a column of text with the current kill 
+    buffer, overwriting existing text with the contents of the kill buffer. 
+    The kill buffer should contain a rectangle region acquired with 
+    cDcopy-rectanglecA or lslmkill-rectangle(2)le. The current cursor position 
+    identifies the top left of the column to be written, the width of the 
+    column to be replaced is determined by the width of the kill buffer text 
+    being inserted. 
+
+    Where an overwrite is not required then use lslmyank-rectangle(2)le. 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmcopy-region(2)le, lslmkill-rectangle(2)le, lslmkill-region(2)le, lslmreyank(2)le, lslmset-mark(2)le, 
+    lslmstring-rectangle(3)le, lslmundo(2)le, lslmyank(2)le, lslmyank-rectangle(2)le. 
+! 3 fold-create
+! 3 fold-close
+! 3 fold-enter
+! 3 fold-exit
+! 3 fold-exit-all
+! 3 fold-kill
+! 3 fold-open
+! 3 fold-remove
+cEcENAME cEcA
+
+
+|fold-create
+    fold-create - Create a new fold (cDC-f2cA) 
+|fold-close
+    fold-close - Close an open fold (in-line) (cDC-f2cA) 
+|fold-enter
+    fold-enter - Enter fold (cDf3cA) 
+|fold-exit
+    fold-exit - Exit a fold (cDesc f3cA) 
+|fold-exit-all
+    fold-exit-all - Exit all folds (cDesc C-f3cA) 
+|fold-kill
+    fold-kill - Delete the fold and all its contents (cDC-x C-kcA) 
+|fold-open
+    fold-open - Open fold (in-line) (cDf2cA) 
+|fold-remove
+    fold-remove - Remove the fold, maintaining content (cDesc C-f3cA) 
+$a
+
+
+cEcESYNOPSIS cEcA
+
+
+    cDfold-createcA (cDC-f2cA) 
+    cDfold-closecA (cDC-f2cA) 
+    cDfold-entercA (cDf3cA) 
+    cDfold-exitcA (cDesc f3cA) 
+    cDfold-exit-allcA (cDesc C-f3cA) 
+    cDfold-killcA (cDC-x C-kcA) 
+    cDfold-opencA (cDf2cA) 
+    cDfold-removecA (cDesc C-f3cA) 
+
+
+cEcEINTRODUCTION cEcA
+
+
+    MicroEmacs supports folding editor type features that allow folds to be 
+    created, deleted and traversed. Folded regions of the file may be entered 
+    and edited whilst hiding information in other folds. Folds may also be 
+    opened in-line such that more than one fold is visible at any time. 
+
+    The cDfoldcA operation has different semantics than lscollapse-current(3)lmcollapsele which simply 
+    hides information with a single narrow and does not provide features such 
+    as entering the fold. 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    cDfold-createcA creates a new fold from the text defined between the cursor 
+    and the lsset-mark(2)lmset-markle position. The text between the mark line and the cursor 
+    line inclusive are then folded and fold markers are inserted into the 
+    buffer. The folded line may be commented with a fold comment. The fold may 
+    be subsequently removed with cDfold-removecA which removes the fold under the 
+    cursor, deleting any fold annotations. 
+
+    cDfold-opencA opens the fold under the cursor, the fold is expanded in line 
+    such that the contents of the fold are visible. The fold may be 
+    subsequently closed using cDfold-closecA when the body of the text is hidden 
+    underneath a fold marker. 
+
+    cDfold-entercA enters a fold under the cursor and the contents of the fold are 
+    reveled the rest of the buffer is narrowed out. The previous fold level 
+    may be restored with cDfold-exitcA. Where the fold nesting is deep then 
+    cDfold-exit-allcA may be used to return to the top level. 
+
+    cDfold-killcA deletes the fold under the cursor and all of the information 
+    contained within the fold. lslmundo(2)le will restore the fold if this was not 
+    the required action. 
+
+
+cEcEDEFINITION cEcA
+
+
+    Any file may be folded provided that the opening and closing fold strings 
+    are defined. Folding may be defined and initialized for a file type using 
+    lslmbuffer-init(3)le by defining the cDfhopok-XXX.foldcA variable to define the 
+    opening and closing fold markers. i.e. 
+sB
+        set-variable .fhook-XXX.fold "<open> <close>" 
+
+sA
+    Where cC<open>cA and cC<close>cA are the opening and closing fold strings. 
+
+    Folding may also be introduced on a file basis by defining the sold 
+    markers in the magic string by assignment of the open and close fold 
+    strings through the variables cDfold-open:cA and cDfold-close:cA. The macro file 
+    cGfold.emfcA does this to fold a MicroEmacs macro file as follows:- 
+sB
+        ; -!- emf: fold-open: ";OPEN" ; fold-close: ";CLOSE" ; -!- 
+
+        ;OPEN fold-idle 
+        0 define-macro fold-idle 
+            !if &lfind "|yank|reyank|" @cl 
+                fold-region 
+                2 screen-update 
+            !endif 
+            !if &exi :fold-idle 
+                execute-line :fold-idle 
+            !endif 
+        !emacro 
+        ;CLOSE 
+
+sA
+
+cEcESEE ALSO cEcA
+
+
+    lslm$line-flags(5)le, lslmbuffer-init(3)le, lslmcollapse-all(3)le, lslmcollapse-current(3)le, 
+    lslmnarrow(2m)le, lslmnarrow-buffer(2)le, lslmset-mark(2)le. 
 ! 3 user-setup
 cEcENAME cEcA
 
@@ -33319,7 +33850,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmosd(2)le, lslm$line-scheme(5)le. 
+    lslmdelete-hilight-lines(3)le, lslmline-scheme(3)le, lslmosd(2)le, lslm$line-scheme(5)le. 
 ! 3 scheme-editor
 cEcENAME cEcA
 
@@ -33569,7 +34100,7 @@ $a
                   |     | |                                  |#| 
                   |     | |          OTHER WINDOW            | | 
                   |     |v|                                  |v| 
-                  +<--->+*+|-- file - 17:30 04/1/11 (AeB) ---|*| Mode Line 
+                  +<--->+*+|-- file - 17:30 04/1/11 (AeB) ---+*| Mode Line 
                   |f-isearch..: forw                           | Message Line 
                   +--------------------------------------------+ 
 
@@ -34770,6 +35301,55 @@ $a
 
 
     lslmprint-buffer(2)le, lslmscheme-editor(3)le, lslmosd(2)le. 
+! 3 line-scheme
+cEcENAME cEcA
+
+
+    line-scheme - Apply line annotation in current buffer 
+$a
+
+
+cEcESYNOPSIS cEcA
+
+
+    cCncA cDline-schemecA 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    cDline-schemecA applies or removes line hilighting by assignment of the buffer 
+    line variable lslm$line-scheme(5)le. The numerical argument cCncA is the line scheme 
+    number to apply to the line or region when omitted (or specified as 1) 
+    then any line hilighting is removed. 
+
+    If a region is defined then the command operates as follows:- 
+
+    Region contained on a single line 
+        When the region is contained on a single line then this is assumed to 
+        be a search string and all lines in the buffer that match the region 
+        text are hilighted with the color scheme cCncA. 
+
+    Region spans multiple lines 
+        When the region spans multiple lines then all of the lines of the 
+        region are hilighted with the color scheme cCncA. 
+
+    cDline-schemecA is typically invoked from the pop-up menu (mouse right) to 
+    apply line hilighting annotation to a line or region. The user may select 
+    to apply a region hilight, remove the region hilight, remove all 
+    hilighting or perform a search using lslmline-scheme-search(3)le. 
+
+
+cEcENOTES cEcA
+
+
+    cDline-schemecA is a macro implemented in cGsearch.emfcA. 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmdelete-hilight-lines(3)le, lslmline-scheme-search(3)le, lslmosd(2)le, lslm$line-scheme(5)le. 
 ! 4 &rep
 !44 &irep
 !44 &xrep
@@ -36387,7 +36967,7 @@ $a
 sB
         save-some-buffers @mna 
 
-sA
+
     The following example sets cG%languagecA to a language supplied by the user 
     from a given list, giving the current setting as a default 
 sB
@@ -38159,11 +38739,12 @@ $a
 
 
     The following macro code gives a simple example of their potential use: 
-sB
+$emf-scheme
+
         forward-search "Token *{\\(Start\\|End\\)}" 
         !if $status 
             ml-write "[found \"%s\"]" @s0 
-            !if &seq @s1 "Start" 
+            if &seq @s1 "Start" 
                . 
                . 
 
@@ -38182,30 +38763,39 @@ $a
 
     lslmmagic(2m)le, lslmsearch-forward(2)le, lslmregex-forward(3)le. 
 ! 4 @fs
+! 4 @fss
 cEcENAME cEcA
 
 
+|@fs
     @fs - Frame store variable 
+|@fss
+    @fss - Frame store scheme variable 
+$a
 
 
 cEcESYNOPSIS cEcA
 
 
     cD@fscA cCrowcA cCcolumncA 
+    cD@fsscA cCrowcA cCcolumncA 
 
 
 cEcEDESCRIPTION cEcA
 
 
-    The frame store variable cD@fscA gives macros a way of obtaining the character 
-    currently being drawn on the screen at the given location. If the given 
-    value of cCrowcA or cCcolumncA is out range, i.e. less than zero or greater than 
-    or equal to the screen size (see lslm$frame-width(5)le) then the value returned 
-    is the empty string (i.e. cG""cA). 
+    The frame store variable cD@fscA permits macros to obtain the character 
+    currently being drawn on the screen at the specified location. If the 
+    given value of cCrowcA or cCcolumncA is out range, i.e. less than zero or greater 
+    than or equal to the screen size (see lslm$frame-width(5)le) then the value 
+    returned is the empty string (i.e. cG""cA). 
 
-    This variable cannot be set and is only updated during a screen update, 
-    this means that macros that change the cursor position will need to redraw 
-    the screen before using this variable. 
+    The frame store scheme variable cD@fsscA operates in the same way as cD@fscA but 
+    returns the hilighting scheme number as opposed to the character. 
+
+    These variables cannot be set and are only updated during a screen update, 
+    this means that macros that change the cursor position need to redraw the 
+    screen before using this variable (see lslmscreen-update(2)le). 
 
 
 cEcEEXAMPLE cEcA
@@ -38235,6 +38825,38 @@ $a
             !endif 
             ml-write &spr "[mouse is over the word \"%s\"]" #l2 
         !emacro 
+
+sA
+    Knowledge of the display scheme as returned by the cD@fsscA variable is a 
+    little more obscure than the previous example. This variable is currently 
+    used to determine if there is a spelling error under the cursor position. 
+    When lslmauto-spell(3)le is enabled then spelling errors are hilighted in a 
+    different colour, return of the lshilight(2)lmhilightingle scheme allows the caller to 
+    determine that there is a spelling error at the current position, this 
+    could also be applied to collapsed regions etc. The following example is 
+    taken from cGmouseosd.emfcA to determine if there is a spelling error at the 
+    mouse position. 
+sB
+        set-variable #l0 &band $mouse-pos 15 
+        !if &equ #l0   0 
+            ; Text window - must goto the original position or cut etc wont work - must dup the position 
+            0 show-region 
+            set-variable #l2 $result 
+            set-variable #l0 20 
+            osd 27 5  "D" 
+            !if &seq $buffer-input "auto-spell-input" 
+                !if &equ @fss $mouse-y $mouse-x .scheme.spell-error 
+                    auto-spell-test 
+                    !if &seq &lef $result 1 "E" 
+                        set-position "\x83" 
+                        set-variable .auto-spell-osd.word &rig $result 1 
+                        osd 27 5  "M" "Auto Spell" .osd.spell-auto auto-spell-osd 
+                        set-variable #l0 &add #l0 1 
+                    !endif 
+                !endif 
+            !endif 
+            goto-position "\x82" 
+            .... 
 
 sA
 
@@ -41432,9 +42054,10 @@ $a
     lslmuser-setup(3)le, lslm$mouse(5)le, lslm$platform(5)le, lslmadd-color(2)le, lslmadd-color-scheme(2)le, 
     lslmipipe-shell-command(2)le, lslm$global-scheme(5)le. 
 ! 5 $window-col
-! 5 $window-line
 ! 5 $window-acol
+! 5 $window-line
 ! 5 $window-aline
+! 5 $window-eline
 ! 5 $window-wcol
 ! 5 $window-wline
 cEcENAME cEcA
@@ -41448,6 +42071,8 @@ $a
     $window-acol - Window cursor actual column (expansion) 
 |$window-aline
     $window-aline - Window cursor actual line (ignore narrows) 
+|$window-aline
+    $window-eline - Window end line 
 $a
 
 
@@ -41455,19 +42080,18 @@ $a
 
 
     cD$window-colcA cCintegercA 
-
     0 <= cCintegercA <= 65535 
 
     cD$window-linecA cCintegercA 
-
     1 <= cCintegercA <= n 
 
     cD$window-acolcA cCintegercA 
-
     0 <= cCintegercA <= n 
 
     cD$window-alinecA cCintegercA 
+    1 <= cCintegercA <= n 
 
+    cD$window-elinecA cCintegercA 
     1 <= cCintegercA <= n 
 
 
@@ -41478,6 +42102,10 @@ $a
     current line in the current window. Column zero is the left hand edge. 
     This differs from cD$window-acolcA in that tab and special characters only 
     count for 1 character. cD$window-colcA is valid in the range 0 - cCncA. 
+
+    cD$window-acolcA is defined as the current column of the cursor in the current 
+    window. Column zero is the left hand edge. This differs from cD$window-colcA 
+    in that tab and special characters may not count for 1 character. 
 
     cD$window-linecA is defined as the current buffer line number the cursor is on 
     in the current window. Line numbering starts from 1. cD$window-linecA is valid 
@@ -41492,9 +42120,11 @@ $a
     narrow is automatically removed. See lslmnarrow-buffer(2)le for more information 
     on narrowing. 
 
-    cD$window-acolcA is defined as the current column of the cursor in the current 
-    window. Column zero is the left hand edge. This differs from cD$window-colcA 
-    in that tab and special characters may not count for 1 character. 
+    cD$window-elinecA is the end line of the window, that is the line number of 
+    the last line of the buffer showing in the window. This is a useful value 
+    for mouse operations when the position of the mouse may be tested to 
+    ensure that the mouse position is within the valid text region of the 
+    buffer. 
 
 
 cEcENOTES cEcA
@@ -43987,6 +44617,63 @@ $a
 
     lslmnarrow-buffer(2)le, lslmset-alpha-mark(2)le, lslmset-variable(2)le, lslm$buffer-hilight(5)le, 
     lslm$buffer-scheme(5)le lslm$line-scheme(5)le. 
+! 5 $frame-id
+cEcENAME cEcA
+
+
+    $frame-id - Current frame identity 
+
+
+cEcESYNOPSIS cEcA
+
+
+    cD$frame-idcA 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    cD$frame-idcA retrieves the identity of the current frame, this is a integer 
+    value (1..n) that is automatically allocated when the frame was created 
+    using lslmcreate-frame(2)le. 
+
+    The cD$frame-idcA is guaranteed to be unique and is typically used in macros 
+    to locate a previously created frame. 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmcreate-frame(2)le, lslmdelete-frame(2)le, lslmnext-frame(2)le, lslm$window-id(5)le. 
+! 5 $window-id
+cEcENAME cEcA
+
+
+    $window-id - Current window identity 
+
+
+cEcESYNOPSIS cEcA
+
+
+    cD$window-idcA 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    cD$window-idcA retrieves the identity of the current window, this is a integer 
+    value (1..n) that is automatically allocated when a window is created 
+    using lslmsplit-window-horizontally(2)le or lslmsplit-window-vertically(2)le. 
+
+    The cD$window-idcA is guaranteed to be unique and is typically used in macros 
+    to locate a previous window. 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmnext-window(2)le, lslmsplit-window-horizontally(2)le, lslmsplit-window-vertically(2)le, 
+    lslm$frame-id(5)le. 
 ! 8 eaf
 cEcENAME cEcA
 
@@ -45008,6 +45695,18 @@ $a
         cDf2cA - (un)fold the current region 
         cDf3cA - (un)fold all regions 
 
+    cDAdditional Commands cA
+        A number of additional commands are available as follows:- 
+
+                * lslmc-slashify(3)le - Append backslash to end of lines of region. 
+                * lslmc-deslashify(3)le - Remove backslash to end of lines of 
+                  region. 
+                * lslmc-to-cpp-convert(3)le - Convert a C file to C++ 
+                * lslmc-hash-eval(3)le - Evaluate C/C++ cG#definecAs. 
+                * lslmc-hash-del(3)le - Remove C/C++ cG#definecA evaluation. 
+                * lslmc-hash-set-define(3)le - Set a C/C++ cG#definecA. 
+                * lslmc-hash-unset-define(3)le - Unset a C/C++ cG#definecA 
+
 
 cEcENOTES cEcA
 
@@ -45049,9 +45748,9 @@ $a
 cEcESEE ALSO cEcA
 
 
-    ls$c-brace(5)lmc-brace(5)le, lslmcmode(2m)le, lslmcollapse-all(3)le, lslmcollapse-current(3)le, lslmcompile(3)le, 
-    lslmctags(3f)le, lslmfind-tag(2)le, lslmrcs-file(2)le, lslmrestyle-buffer(3)le, lslmrestyle-region(3)le, 
-    lslmtime(2m)le. 
+    ls$c-brace(5)lmc-brace(5)le, lslmc-deslashify(3)le, lslmc-slashify(3)le, lslmc-to-cpp-convert(3)le, 
+    lslmcmode(2m)le, lslmcollapse-all(3)le, lslmcollapse-current(3)le, lslmcompile(3)le, lslmctags(3f)le, 
+    lslmfind-tag(2)le, lslmrcs-file(2)le, lslmrestyle-buffer(3)le, lslmrestyle-region(3)le, lslmtime(2m)le. 
 
     lsMicroEmacs '04 - Supported File TypeslmSupported File Typesle 
 ! 9 ehf

@@ -1,0 +1,30 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m3mac071.3,v 2.1 2004-01-17 22:27:28 jon Exp $
+.Im MicroEmacs command|insert
+.ds C0 "(\fB\*co\fR)\ \&
+.so me.tni
+.TH open-line 3
+.XI open-line - "\*(C0Open new line at cursor position"
+.SH NAME
+open-line \- Open new line at cursor position
+.SH SYNOPSIS
+.na
+.I n
+\fBopen-line\fR \*(C0
+.ad
+.SH DESCRIPTION
+.B open-line
+inserts \fIn\fR new lines after the current cursor position Any text following
+the  cursor is moved to the newly  created  line(s).  The cursor  position  is
+maintained by the command.
+.SH "SEE ALSO"
+.na
+.Ht insert-newline 2 ,
+.Ht newline 2 .
+.ad
+.rm C0
+.FH

@@ -1,0 +1,57 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.\"  Created By    : Jon Green
+.\"  Created       : Tue Feb 2 21:10:34 1999
+.\"
+.Id $Id: m3osd013.3,v 2.1 2004-01-17 22:27:28 jon Exp $
+.Im MicroEmacs command|hilight|osd
+.ds C0 "(\fB\*e$\fR)\ \&
+.so me.tni
+.TH line-scheme 3
+.XI line-scheme 3 "Apply line annotation in current buffer"
+.SH NAME
+line-scheme \- Apply line annotation in current buffer
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+\fBline-scheme\fR 
+.ad
+.SH DESCRIPTION
+.B line-scheme 
+applies or removes line hilighting by assignment of the buffer line variable
+.Ht $line-scheme 5 . 
+The numerical  argument \fIn\fR is the line scheme number to apply to the line
+or  region  when  omitted  (or  specified  as 1) then any line  hilighting  is
+removed. 
+.PP
+If a region is defined then the command operates as follows:-
+.IP "Region contained on a single line"
+When the  region is  contained  on a single  line then this is assumed to be a
+search  string  and all lines in the  buffer  that  match the region  text are
+hilighted with the color scheme \fIn\fR.
+.IP "Region spans multiple lines"
+When the region spans multiple lines then all of the lines of the region are 
+hilighted with the color scheme \fIn\fR.
+.PP
+.B line-scheme
+is  typically  invoked  from the  pop-up  menu  (mouse  right)  to apply  line
+hilighting  annotation  to a line or  region.  The user may  select to apply a
+region  hilight, remove the region hilight, remove all hilighting or perform a
+search using
+.Ht line-scheme-search 3 .
+.SH "NOTES"
+.B line-scheme
+is a macro implemented in \fCsearch.emf\fR.
+.SH "SEE ALSO"
+.na
+.Ht delete-hilight-lines 3 ,
+.Ht line-scheme-search 3 ,
+.Ht osd 2 ,
+.Ht $line-scheme 5 .
+.ad
+.rm C0
+.FH

@@ -1,28 +1,44 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil034.4,v 1.4 2002-10-16 22:28:04 jon Exp $
+.Id $Id: m4fil034.4,v 1.5 2004-01-17 22:27:28 jon Exp $
 .Im MicroEmacs macro;variable
 .so me.tni
 .TH "@fs" 4
 .XI "@fs" - "Frame store variable"
+.XI "@fss" - "Frame store scheme variable" 
 .SH NAME
+.Me "|@fs"
 @fs \- Frame store variable
+.br
+.Me "|@fss"
+@fss \- Frame store scheme variable
+.Me $a
 .SH SYNOPSIS
+.na
+.nf
 \fB@fs\fR \fIrow\fR \fIcolumn\fR
+\fB@fss\fR \fIrow\fR \fIcolumn\fR
+.fi
+.ad
 .SH DESCRIPTION
-The  frame  store  variable  \fB@fs\fR  gives  macros a way of  obtaining  the
-character  currently  being drawn on the screen at the given  location. If the
-given value of \fIrow\fR or  \fIcolumn\fR is out range, i.e. less than zero or
+The frame store  variable  \fB@fs\fR  permits  macros to obtain the  character
+currently  being drawn on the screen at the  specified  location. If the given
+value of  \fIrow\fR  or  \fIcolumn\fR  is out  range,  i.e. less  than zero or
 greater than or equal to the screen size (see
 .Ht $frame-width 5 )
 then the value returned is the empty string (i.e. \fC""\fR).
 .PP
-This variable  cannot be set and is only updated  during a screen update, this
-means that  macros  that  change the cursor  position  will need to redraw the
-screen before using this variable.
+The  frame  store  scheme  variable  \fB@fss\fR  operates  in the  same way as
+\fB@fs\fR  but  returns  the  hilighting  scheme  number  as  opposed  to  the
+character.
+.PP
+These  variables  cannot be set and are only updated  during a screen  update,
+this means that macros that change the cursor position need to redraw the
+screen before using this variable (see
+.Ht screen-update 2 ).
 .SH EXAMPLE
 The following example gets the word under the current mouse position, this may
 not be the current cursor position:
@@ -49,6 +65,42 @@ define-macro word-under-mouse
     !endif
     ml-write &spr "[mouse is over the word \\"%s\\"]" #l2
 !emacro
+.CE
+.Me $ehf-scheme
+Knowledge of the display scheme as returned by the \fB@fss\fR variable is
+a little more obscure than the previous example. This variable is 
+currently used to determine if there is a spelling  error under the 
+cursor position. When 
+.Ht auto-spell 3
+is enabled then spelling errors are hilighted in a different colour,
+return of the 
+.Hl hilighting hilight 2
+scheme allows the caller to determine that there is a spelling error at
+the current position, this could also be applied to collapsed regions etc.
+The following example is taken from \fCmouseosd.emf\fR to determine if
+there is a spelling error at the mouse position.
+.Me $emf-scheme
+.CS
+set-variable #l0 &band $mouse-pos 15
+!if &equ #l0   0
+    ; Text window - must goto the original position or cut etc wont work - must dup the position
+    0 show-region
+    set-variable #l2 $result
+    set-variable #l0 20
+    osd 27 5  "D"
+    !if &seq $buffer-input "auto-spell-input"
+        !if &equ @fss $mouse-y $mouse-x .scheme.spell-error
+            auto-spell-test
+            !if &seq &lef $result 1 "E"
+                set-position "\\x83"
+                set-variable .auto-spell-osd.word &rig $result 1
+                osd 27 5  "M" "Auto Spell" .osd.spell-auto auto-spell-osd
+                set-variable #l0 &add #l0 1
+            !endif
+        !endif
+    !endif
+    goto-position "\\x82"
+    \....
 .CE 0
 .Me $ehf-scheme
 .SH "SEE ALSO"

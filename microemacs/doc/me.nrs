@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.15 2004-01-11 20:38:26 jon Exp $
+.Id $Id: me.nrs,v 2.16 2004-01-17 22:27:29 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -1097,14 +1097,14 @@ approximately two months.
 .SS "How was the JASSPA logo derived ?"
 The logo was derived from the program initials Me. Given the limited number of
 pixels available in an icon then the 'e' was superimposed in the center of the
-'M'. With some further  refinement the legs of the 'M' were later lost leaving
-a triangular  shape - this was then adopted as the iconic outline. The colored
-lines at the top and  bottom  portray  the  visual  appearance  of a  JASSPA's
-MicroEmacs  from afar when  viewing an X-term  running me within an  X-Windows
-environment. The blue line  representing the window header color (that I use),
-the red line  representing  the MicroEmacs  mode bar; the screen was typically
-black with white or yellow characters. The icon was incrementally refined over
-a period of approximately six months.
+\'M'.  With  some  further  refinement  the legs of the \'M' were  later  lost
+leaving a triangular  shape - this was then adopted as the iconic outline. The
+colored  lines  at the top and  bottom  portray  the  visual  appearance  of a
+JASSPA's  MicroEmacs  from afar when  viewing  an X-term  running me within an
+X-Windows  environment.  The blue line  representing  the window  header color
+(that I use), the red line  representing  the MicroEmacs  mode bar; the screen
+was  typically   black  with  white  or  yellow   characters.   The  icon  was
+incrementally refined over a period of approximately six months.
 .NH Copyright - "\*(mE \- Copyright"
 .\" "Copyright" is a link burnt into executable (bind.c)
 .Me "!9  Copyright - \*(mE"

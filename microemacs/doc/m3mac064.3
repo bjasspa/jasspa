@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 2004 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac064.3,v 1.6 2004-01-11 16:52:42 jon Exp $
+.Id $Id: m3mac064.3,v 1.7 2004-01-17 22:27:28 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH buffer-init 3
@@ -141,7 +141,7 @@ is invoked from the buffer file hook
 typically following the
 .B buffer-init
 call  this  macro   invokes   any  user   defined   file  hooks  of  the  form
-\fBmy-fhook-xx\fR. User defined  \fBmy-bhook-XXX\fR and \fBmy-ehook-XXX\fR are
+\fBmy-fhook-XXX\fR. User defined \fBmy-bhook-XXX\fR and \fBmy-ehook-XXX\fR are
 configured into the buffer space ready for execution.
 .PP
 .B buffer-init-fhook
@@ -155,10 +155,9 @@ On identifying a new file hook then the  \fChkXXX.emf\fR  file is fetched from
 the file system and  executed.  Execution  causes all of the  variables  to be
 defined and finally, when all definitions have been made,
 .B buffer-init-fhook
-is executed to load in any user defined extensions. At this point then
-the macro  \fBfhook-XXX\fR  (in our example  \fIfhook-XXX\fR\|)  has ONLY been
-defined it has NOT been executed. This load  operation is performed  once only
-and is performed on demand.
+is  executed to load in any user  defined  extensions.  At this point then the
+macro  \fBfhook-XXX\fR  has ONLY been defined it has NOT been  executed.  This
+load operation is performed once only and is on demand.
 .PP
 The  \fBfhook-XXX\fR  macro  must  be  defined  BEFORE  any  of the  variables
 associated with the hook as all subsequent variables are command variables and
@@ -166,17 +165,15 @@ are defined in the context of the macro definition. See
 .Ht Variables 4
 for more information on macro variables.
 .PP
-Once  all  of  the  user   information   has  been   loaded   then  the  macro
-\fBfhook-XXX\fR  is invoked,  this applies  hilighting,  buffer key  bindings,
+\fBfhook-XXX\fR   is  invoked  to  apply  hilighting,   buffer  key  bindings,
 indentation etc. to the newly loaded buffer.
 .SS "Configuration Masks"
 Buffer   initialization  is  controlled  by  the  settings  of  the  variables
-\fB.fhook-XXX.setup\fR and \fBfhook-c.setup-mask\fR, for the 'C' language then
-this is defined as:-
+\fB.fhook-XXX.setup\fR and \fBfhook-XXX.setup-mask\fR:-
 .Me $emf-scheme
 .CS
-set-variable .fhook-c.setup &reg "/history" "fhook/c" "bdfghnopx"
-set-variable .fhook-c.setup-mask "abdefghikmnoptux>"
+set-variable .fhook-XXX.setup &reg "/history" "fhook/XXX" "bdfghnopx"
+set-variable .fhook-XXX.setup-mask "abdefghikmnoptux>"
 .CE
 .Me $ehf-scheme
 The variables use an ASCII  configuration  string that identifies the modes of
@@ -186,7 +183,7 @@ specified then the mode is not changed.
 .TP
 \fCa\fR \- Auto mode
 .\"
-Automatic
+Configure
 .Ht auto 2m
 mode for automatic source file line type detection. Typically enabled for text
 files.
@@ -199,13 +196,14 @@ for the buffer.
 .TP
 \fCc\fR \- View / Author mode
 .\"
-Viewing
+Configure
 .Ht view 2m
 mode for read only or authoring.
 .TP
 \fCd\fR \- Auto indentation operation.
 .\"
-Automatic indent is enabled. Where electric-c is required
+Automatic indent is enabled. Where \fIC-mode\fR is required (see
+.Ht cmode 2m )
 then the flag \fC>\fR should be used in conjunction with
 the \fCd\fR flag, otherwise the indentation should be defined
 in the template using
@@ -217,7 +215,7 @@ mode is required then omit the \fCd\fR flag and use flag \fCi\fR instead.
 .TP
 \fCe\fR \- Exact or case sensitivity operation
 .\"
-Exact
+Configure
 .Ht exact 2m
 case sensitive mode. \fCe\fR enable exact, \fCE\fR disable exact.
 .TP
@@ -229,7 +227,7 @@ points.
 .TP
 \fCg\fR \- Fence matching operation
 .\"
-Fence matching mode with
+Configure fence matching mode with
 .Ht fence 2m .
 Note that fence matching is now typically  performed in the macro  environment
 using
@@ -247,23 +245,24 @@ by \fI.hilight.XXX\fR is attached to the buffer.
 Support indentation using
 .Ht indent 2m .
 Automatic indentation defined with the \fCd\fR and optionally the \fC>\fR flag
-where the in-built  electric-c is required.  \fCi\fR  enable  indent,  \fCJ\fR
-disable indent.
+where the in-built  \fIC-mode\fR  (see 
+.Ht cmode 2m )
+is required. \fCi\fR enable indent, \fCJ\fR disable indent.
 .TP
 \fCj\fR \- Justify
-Support paragraph justification using
+Configure paragraph justification using
 .Ht justify 2m .
 \fCj\fR enable justify, \fCJ\fR disable justify.
 .TP
 \fCk\fR \- Backup mode
 .\"
-Enable backups with
+Configure backups with
 .Ht backup 2m
 mode. \fCk\fR enable backup, \fCK\fR disable backup.
 .TP
 \fCm\fR \- Magic mode
 .\"
-Regular expression
+Configure regular expression
 .Ht magic 2m
 mode. \fCm\fR enable magic, \fCM\fR disable magic.
 .TP
@@ -283,30 +282,30 @@ Produce a help page for the buffer describing the bindings.
 .TP
 \fCs\fR \- Auto spell
 .\"
-Enable automatic spelling for the buffer using
+Configure automatic spelling for the buffer using
 .Ht auto-spell 3 .
 .TP
 \fCt\fR \- Tab mode
 .\"
-Allow insertion of literal tabs by enabling
+Configure insertion of literal tabs by enabling
 .Ht tab 2m
 mode. \fCt\fR enable tab, \fCT\fR disable tab.
 .TP
 \fCu\fR \- Undo
 .\"
-Maintain an undo/redo history using
+Configure the undo/redo history using
 .Ht undo 2m
 mode. \fCu\fR enable undo, \fCU\fR disable undo.
 .TP
 \fCw\fR \- Wrap
 .\"
-Enable wrapping using
+Configure wrapping using
 .Ht wrap 2m
 mode. \fCw\fR enable wrap, \fCW\fR disable wrap.
 .TP
 \fCx\fR \- Time stamping
 .\"
-Enable time stamping as defined by
+Configure time stamping as defined by
 .Ht time 2m .
 .TP
 \fC>\fR \- Electric-c indentation.
@@ -328,23 +327,23 @@ Special flag used to indicate commenting is supported. The comment format
 should be defined with the \fI.fhook-XXX.comment\fR variable within the
 template.
 .LP
-\fB.fhook-XXX.setup\fR is the default set-up, this is normally defined to take
-settings  from the  registry  and  provides  defaults  when not defined.  This
-is the only mask that is  allowed  to carry the  uppercase  flags. All  values
-defined in  \fB.fhook-XXX.setup\fR  are  explicitly  enabled  or disabled by
-default.  The  setup set  should  contain  the  configuration  flags  that are
-required to make the template operate correctly, but should not include modes
-that the user may set up i.e. \fIexact\fR or \fImagic\fR etc.
+\fB.fhook-XXX.setup\fR is the current set-up, this is normally defined to take
+settings  from the registry  providing a default when not defined. This is the
+only mask that is allowed to include the uppercase  flags. All values  defined
+in  \fB.fhook-XXX.setup\fR  are explicitly enabled or disabled by default. The
+setup set should contain the configuration flags that are required to make the
+template operate correctly, but should not include modes that the user may set
+up i.e. \fIexact\fR or \fImagic\fR etc.
 .PP
-\fB.fhook-xx.setup-mask\fR  defines the set of flags that are allowed  with the
+\fB.fhook-XXX.setup-mask\fR defines the set of flags that are allowed with the
 template. The configuration defined in
 .Ht buffer-setup 3
 is tested  against  the mask, if the mask  allows it then the mode is enabled.
-\fB.fhook-XXX.setup\fR  is  generally a subset of  \fB.fhook-xx.setup-mask\fR.
+\fB.fhook-XXX.setup\fR is generally a subset of \fB.fhook-XXX.setup-mask\fR.
 .PP
 .Ht buffer-setup 3
-operates    with   the   vales   defined   by    \fB.fhook-XXX.setup\fR    and
-\fB.fhook-xx.setup-mask\fR.  The initialization of  \fB.fhook-XXX.setup\fR  is
+operates   with   the   values   defined   by    \fB.fhook-XXX.setup\fR    and
+\fB.fhook-XXX.setup-mask\fR.  The initialization of  \fB.fhook-XXX.setup\fR  is
 performed using the registry as follows:-
 .Me $emf-scheme
 .CS
@@ -363,7 +362,23 @@ include   \fCa\fR,  \fCb\fR,  \fCc\fR,  \fCd\fR,  \fCe\fR,  \fCf\fR,  \fCg\fR,
 \fCh\fR,  \fCi\fR,  \fCj\fR,  \fCk\fR,  \fCm\fR,  \fCn\fR,  \fCo\fR,  \fCp\fR,
 \fCs\fR, \fCt\fR, \fCu\fR, \fCw\fR, and \fCx\fR.
 .SS Tags
-Some language templates include a \fItags\fR  facility to generate a tags file
+The buffer  setup may be  configured  to add a tags  generator to the language
+template,  this is added to the menu. The tags  generation  is declared in the
+template by assigning the variable  \fB.fhook-XXX.tags\fR  with a command line
+to run tags utility. The command line string  should  commence  with a \fC!\fR
+character to tell \*(mS to execute an external command, for example to use the
+GNU 
+.Hr ctags 2 
+utility is defined as:-
+.Me $emf-scheme
+.CS
+set-variable .fhook-c.tags "!ctags *.c *.h"
+.CE
+.Me $ehf-scheme
+When the value  starts with a '\fC!\fR'  then rest of the line is spawned as a
+process, no additional interface is provided to the command.
+.PP
+Some language templates include a macro \fItags\fR  facility to generate a tags file
 (See
 .Ht emftags 3f
 \- \fCemftags.emf\fR,
@@ -371,11 +386,13 @@ Some language templates include a \fItags\fR  facility to generate a tags file
 \- \fCctags.emf\fR,
 .Ht ntags 3f
 \- \fCntags.emf\fR).
-The buffer setup may be configured to add a tags generator to the language
-template,this is added to the menu. A tag generator should be written for the
-given language template and is declared to the template by assignment of the
-\fB.fhook-XXX.tags\fR
-variable .i.e for the 'C' Programming Language:-
+\fB.fhook-XXX.tags\fR  may be  defined  to use an internal macro  based  tags  generator
+rather than an external command. Without the '\fC!\fR' character the 
+command line is assumed to be an \*(mS macro based and runs the command
+.CS
+me @<.tags-var-value> -v%tag-options=<options>
+.CE
+A macros based command line for the 'C' Programming Language is defined as:-
 .Me $emf-scheme
 .CS
 set-variable .fhook-c.tags "ctags"
@@ -589,34 +606,44 @@ rem Comment to end of line
 Local buffer  commands and key bindings for  over-riding key definitions  used
 within the buffer are defined with the
 .C fhook-XXX.command-*
-variables.  The variables are defined as a list of keys, commands and bindings
-each command is separated by a '\fC|\fR'  character. The field order in all of
-the
+variables.  These are defined as \*(mS list variables 
+(see 
+.Ht &lfind 4 ,
+.Ht &lget 4 ,
+etc. for the full syntax  definition)  and define a list of keys, commands and
+bindings. Each command is typically  separated by the '\fC|\fR' character. The
+field order in all of the
 .C fhook-XXX.command-*
 variables  MUST be consistent, so if a command is defined in field 5, then all
 definitions  associated  with that  command MUST be defined in field 5 for all
-variables. The variables that defined the commands are defined as follows:-
+variables. The command variables are defined as follows:-
 .TP
 \fI.fhook-c.command-flag\fR
 .\"
 A  configuration  flag that defines the components to use for the command. The
 flags are set as individual characters and are defined as follows:-
 .RS
-.BS 1 1 "t"
+.TP
+\fCt\fR \- Toolbar
+.\"
 Show the command in the toolbar. The
 .C .fhook-XXX.command-desc
 variable  should  contain a  readable  name for the  command to display in the
 menu. An optional hot key for selection in any
 .Hl osd osd 2
 is  specified by prefixing  the  character in the string with  \fC\\H\fR.
-.BU "h"
+.TP 
+\fCh\fR \- Help Screen
+.\"
 Show the command in the help screen. The
 .C .fhook-XXX.command-desc
 variable  should  contain a  readable  name for the  command to display in the
 menu. An optional hot key for selection in any
 .Hl osd osd 2
 is specified by prefixing the character in the string with \fC\\H\fR.
-.BU "b"
+.TP
+\fCb\fR \- Key binding
+.\"
 Create a buffer key binding for the command, the key to bind is defined by the
 variable  \fCfhook-XXX.command-kbind\fR,  if the command  requires a numerical
 argument  then this is defined in the variable  \fCfhook-XXX.command-nbind\fR.
@@ -624,15 +651,20 @@ The binding is only created if the key buffer binding does not already exist,
 the  binding  may be forced by using the \fCo\fR flag. Where a key binding is
 only to be created if  hilighting  is enabled  then the \fCb\fR flag should be
 qualified with the \fCH\fR flag.
-.BU "o"
+.TP
+\fCo\fR \- Forced key binding
+.\"
 Optionally  used with the  \fCb\fR and forces the  binding to  over-write  any
 existing binding.
-.BU "i"
+.TP
+\fCi\fR \- Emulated key binding
+.\"
 Used with the \fCb\fR flag, ignores key bindings that are emulation mappings.
-.BU "H"
+.TP
+\fCH\fR \- Hilighting key binding
+.\"
 Used with the \fCb\fR  flag, only  performs the key binding if  hilighting  is
 enabled.
-.BE 0
 .RE
 .TP
 \fI.fhook-XXX.command-name\fR
@@ -656,16 +688,12 @@ required for each binding.
 \fI.fhook-c.command-desc\fR
 .\"
 A short  description  of the command that is used for the help page  (\fCh\fR)
-and toolbar (\fCt\fR). A hot key for use in the
-.Hl osd osd 2
-is specified by prefixing the hot key character with \fC\\H\fR. The field
-may be empty if the field is not  specified for insertion  into the toolbar or
-help page.
+and toolbar  (\fCt\fR).  The field may be empty if the field is not  specified
+for insertion into the toolbar or help page.
 .LP
 As an example, two new commands or bindings may be defined for a template, the
 first field is bound to key \fCA-q\fR which executes macro \fCXXX-comp\fR with
-a numerical argument of 2. The command appears in the toolbar and is described
-in the help page and uses hot-key \fCm\fR. The second field binds a new key to
+a numerical argument of 2. The second field binds a new key to
 .Ht comment-restyle 3 .
 .ne 17
 .Me $emf-scheme
@@ -677,24 +705,49 @@ set-variable .fhook-XXX.command-flag  "|th|bo|"
 set-variable .fhook-XXX.command-name  "|XXX-comp|comment-restyle|"
 set-variable .fhook-XXX.command-nbind "|2||"
 set-variable .fhook-XXX.command-kbind "|A-q|esc o|"
-set-variable .fhook-XXX.command-desc  "|Complete co\\Hmmand||"
+set-variable .fhook-XXX.command-desc  "|Complete command||"
 
 \.....
 
 ; Local macro definition to perform command completion
-define macro XXX-comp
+define-macro XXX-comp
     set-variable #l1 @#
     \.....
 !emacro
+.CE
+.Me $ehf-scheme
+The key bindings sometimes need to be protected where they have been redefined
+to perform  some other  operation  for example when  emulation  modes are used
+(i.e. \fBnedit\fR, \fBme3.8\fR). The buffer initialisation uses the command
+.B buffer-bind-create 
+and the variables
+.B .buffer-bind-create.map-from
+and 
+.B .buffer-bind-create.map-to
+which  define  replacement  keys for  bindings. As an example the  \fBnedit\fR
+emulation  mode uses key binding  \fCC-c C-c\fR and provides a buffer  binding
+mapping to translate any key buffer binding to a different key. i.e.
+.Me $emf-scheme
+.CS
+; reconfigure the buffer bindings
+set-variable .buffer-bind-key.map-from "|C-c C-c|C-c C-d|"
+set-variable .buffer-bind-key.map-to   "|C-b|C-u|"
 .CE 0
 .Me $ehf-scheme
-.SS "Information Hiding with Collapsing"
-\*(mE provides a generic, albeit course, folding mechanism which is applied to
+.SS "Information Hiding with Collapse"
+\*(mE provides a generic, albeit coarse, folding mechanism which is applied to
 some of the well known file modes. The folding  mechanism  allows parts of the
 buffer to be  scrolled  up and  hidden,  leaving a residue  hilighting  marker
 within   the   buffer   indicating   a   folded   region.   A  folded   buffer
 typically  allows a summary of the buffer contents to be viewed within several
 windows, hiding the detail of the buffer.
+.PP
+Note: 
+.B collapse
+was called 
+.B fold
+in earlier  releases  but the name was changed when real fold editing  support
+was added, see \fCfold.emf\fR for more information.
 .PP
 The folding  mechanism  uses well defined  \fIstart\fR  and \fIend\fR  markers
 which form part of the syntax of the well known file mode. i.e. in 'C' this is
@@ -715,24 +768,24 @@ initialized  for the  syntactical  contents of the buffer. The buffer specific
 variables are defined as follows, where \fIXXX\fR is the file hook base name.
 The \fC.fhook-XXX.collapse-*\fR variables define the regular expression search
 pattern and line positioning.
-.IP "\fB.fhook-\fR\|\fIxxxx\fR\|\fB-collapse-open\fR"
+.IP "\fB.fhook-\fR\|\fIXXX\fR\|\fB-collapse-open\fR"
 A regular expression search string used to locate the start of the string. For
 speed the search string should  include a regular  expression  start or end of
 line character whenever possible. i.e. in C the open is defined as "\fC^{\fR".
-.IP "\fB.fhook-\fR\|\fIxxxx\fR\|\fB-collapse-close\fR"
+.IP "\fB.fhook-\fR\|\fIXXX\fR\|\fB-collapse-close\fR"
 A regular  expression  search string used to locate the end of the string. For
 speed the search string should include a regular  expression start or end line
 character whenever possible. i.e. in C the close is defined as "\fC^}\fR".
-.IP "\fB.fhook-\fR\|\fIxxxx\fR\|\fB-collapse-mopen\fR"
+.IP "\fB.fhook-\fR\|\fIXXX\fR\|\fB-collapse-mopen\fR"
 An  integer  value  that  denotes  the number of lines to move in a forward or
 (\-ve)  backward  direction  from the  \fIstart\fR  line located by the search
 string to the  position  in the  buffer to be folded. If  default  value  when
 \fBmopen\fR is omitted is 0, starting the fold from the search string line.
-.IP "\fB.fhook-\fR\|\fIxxxx\fR\|\fB-collapse-mclose\fR"
+.IP "\fB.fhook-\fR\|\fIXXX\fR\|\fB-collapse-mclose\fR"
 The relative  displacement from the close fold line to the fold position, this
 is a positive or negative  displacement  depending  on where the fold is to be
 positioned.
-.IP "\fB.fhook-\fR\|\fIxxxx\fR\|\fB-collapse-mnext\fR"
+.IP "\fB.fhook-\fR\|\fIXXX\fR\|\fB-collapse-mnext\fR"
 Specifies the number  of lines to advance  before the next search is continued
 on the fold operation. This is only used by
 .Hl collapse-all collapse-all 3 .
@@ -766,7 +819,7 @@ myfunc (int a, int b)
 the folded version appears as follows:-
 .CS
 static void
-myfunc (int a, int b) ...
+myfunc (int a, int b) ... }
 .CE
 .RE
 .B "emf"
@@ -794,7 +847,7 @@ Given a macro definition:-
 the collapsed version of the macro is defined as:-
 .Me "$emf-scheme"
 .CS
-0 define-macro mymacro ...
+0 define-macro mymacro ... !emacro
 .CE
 .Me "$ehf-scheme"
 .RE
@@ -849,7 +902,7 @@ proc tixControl:InitWidgetRec {w} {
 .CE
 The collapsed version of the same section appears as:-
 .CS
-proc tixControl:InitWidgetRec {w} { ...
+proc tixControl:InitWidgetRec {w} { ... }
 .CE 0
 .RE
 .SS "Item Lists"
@@ -863,8 +916,8 @@ present abbreviated buffer information to the user.
 .PP
 The  regular   expression  search  strings  are  predefined  in  the  language
 templates,                 using                 the                 variables
-\fB.fhook-\fR\|\fIxxxx\fR\|\fB-item-list-s\fR\|\fIY\fR                     and
-\fB.fhook-\fR\|\fIxxxx\fR\|\fB-item-list-r\fR\|\fIY\fR  and are described more
+\fB.fhook-\fR\|\fIXXX\fR\|\fB-item-list-s\fR\|\fIY\fR                     and
+\fB.fhook-\fR\|\fIXXX\fR\|\fB-item-list-r\fR\|\fIY\fR  and are described more
 fully in
 .Ht item-list 3 .
 .SS Hilighting

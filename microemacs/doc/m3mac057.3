@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Jul 5 18:16:21 1999
 .\"
-.Id $Id: m3mac057.3,v 2.6 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m3mac057.3,v 2.7 2004-01-17 22:27:28 jon Exp $
 .Im MicroEmacs shell|command
 .so me.tni
 .TH cvs 3
@@ -20,6 +20,8 @@
 .XI cvs-remove - "\*(mS CVS interface - remove file"
 .XI cvs-resolve-conflicts - "\*(mS CVS interface - resolve conflicts"
 .XI cvs-state - "\*(mS CVS interface - list state of directory files"
+.XI cvs-status - "\*(mS CVS interface - status of files"
+.XI cvs-tag - "\*(mS CVS interface - tag files"
 .XI cvs-update - "\*(mS CVS interface - update directory files"
 .SH NAME
 .Me "|cvs"
@@ -52,6 +54,12 @@ cvs-resolve-conflicts \- \*(mS CVS interface - resolve conflicts
 .Me "|cvs-state"
 cvs-state \- \*(mS CVS interface - list state of directory files
 .br
+.Me "|cvs-status"
+cvs-status \- \*(mS CVS interface - status of files
+.br
+.Me "|cvs-tag"
+cvs-tag \- \*(mS CVS interface - tag files
+.br
 .Me "|cvs-update"
 cvs-update \- \*(mS CVS interface - update directory files
 .Me $a
@@ -77,13 +85,17 @@ cvs-update \- \*(mS CVS interface - update directory files
 .br
 .B cvs-state
 .br
+.B cvs-status
+.br
+.B cvs-tag
+.br
 .B cvs-update
 .ad
 .SH DESCRIPTION
-The cvs and  sub-commands  provide  \*(mS  with an  interface  to 
-.Hr cvs 1 . 
+The cvs and  sub-commands  provide  \*(mS  with an  interface  to
+.Hr cvs 1 .
 \fBCVS\fR is a version control system; using it, you can record the history of
-your source file  modifications. CVS is licensed under the GNU General Public
+your source file  modifications.  CVS is licensed under the GNU General Public
 License  and is  freely  available  on the  Internet,  see  the  documentation
 provided with CVS for more information on its features and use.
 .PP
@@ -95,11 +107,19 @@ date. The  functionality  of the  file-browser is the same as a non-CVS folder
 with the exception that  additional CVS item controls are located in the mouse
 context  menu (opened by clicking the right mouse button in the  \fC*files*\fR
 buffer).  This  menu  item  opens  another  sub-menu  providing  access to the
-following items:
+items below. When selecting  commands than a pop-up check-box may be displayed
+which allows options to be selected for the command.
+.IP "\fBCurrent State\fR"
+Checks the state of  selected  file(s) or  directory  against the  repository.
+Differences detected are shown in the \fC*cvs-state*\fR  window. This provides
+a quick method of determining the working directory state.
+This runs the command
+.\"
+"\fCcvs\ -nq\ update <files>\fR".
 .IP "\fBCheckout files\fR"
 Checks out a file or directory from the repository into the current directory.
 The file or  directory  is specified by typing the name into a dialog which is
-opened when this option is selected.  This runs the command 
+opened when this option is selected.  This runs the command
 .\"
 "\fCcvs\ checkout\ <file>\fR".
 .IP "\fBUpdate files\fR"
@@ -109,22 +129,30 @@ by 'dragging' a hilight region over the required  files. This runs the command
 "\fCcvs update <files>\fR".
 .IP "\fBCommit files\fR"
 Commits any changes  made to the  selected  files back to the CVS  repository.
-This runs the command "\fCcvs commit <files>\fR".
+This runs the command
+.\"
+"\fCcvs\ commit\ <files>\fR". The user is prompted for the message to add on
+the commit.
 .IP "\fBDiff files\fR"
 Displays any  differences  between the selected  files and the CVS  repository
 version in the \fI*cvs-console*\fR window. This runs the command
 \&"\fCcvs diff <files>\fR".
 .IP "\fBLog files\fR"
 Displays  the CVS  logs  for the  selected  files  in the  \fI*cvs-console*\fR
-window. This runs the command "\fCcvs log <files>\fR".
+window. This runs the command "\fCcvs\ log\ <files>\fR".
 .IP "\fBStatus files\fR"
 Displays   the  CVS   status   for   each  of  the   selected   files  in  the
 \fI*cvs-console*\fR window.
 This runs the command "\fCcvs status -v <files>\fR".
+.IP "\fBTag files\fR"
+Adds,  removes or moves a CVS tag on the selected  file(s) or  directories.  A
+pop-up  window is displayed  which allows entry of the tag name and define the
+operation. This runs the command "\fCcvs\ tag\ <files>\fR".
 .IP "\fBAdd files\fR"
 Adds the selected files to the CVS repository. Note this command only performs
 the local add, a \fBCVS commit\fR is required to make the addition  permanent.
-This runs the command "\fCcvs add <files>\fR".
+This runs the command "\fCcvs add  <files>\fR". A pop-up is displayed to allow
+the user to change the mode of the add to binary or text.
 .IP "\fBRemove files\fR"
 This command is deliberately not implemented as its far to dangerous!  Instead
 it  opens a  dialog  informing  the user to use the  \fBcvs-remove\fR  command
@@ -175,7 +203,7 @@ performs   the  local   removal;  as  it  deletes  the  buffer  and  file  the
 \fBcvs-commit\fR  command  cannot  be used to commit  the  removal  to the CVS
 repository. Instead the main \fBcvs\fR file-browser menu or
 .Hr cvs 1
-itself must be used. 
+itself must be used.
 .PP
 The  \fBcvs-resolve-conflicts\fR  command may be used to resolve any conflicts
 created by CVS when the current buffer's file is updated. The command opens a
@@ -187,6 +215,13 @@ The \fBcvs-state\fR command opens a \fI*cvs-state*\fR window listing the state
 of any file in the current directory which is not up-to-date. Note that unlike
 most cvs sub  commands  this  command  executes  over all files in the current
 buffer's file directory.
+.PP
+The \fBcvs-status\fR command opens a \fI*cvs-state*\fR window and shows the
+state of the current buffer in the window  including the  modification  state,
+repository etc.
+.PP
+The  \fBcvs-tag\fR  command  opens a dialog  box and  allows  the user to add,
+remove or delete a CVS tag. 
 .PP
 The  \fBcvs-update\fR  command updates all files in the current directory, the
 output  being  reported to a new  \fI*cvs-update*\fR  window. Note that unlike
