@@ -334,8 +334,10 @@ fnamecmp(meUByte *f1, meUByte *f2)
 /*#if (defined _UNIX)*/
 /* Search the directory and subdirectories for MicroEmacs macro directories */
 static int
-set_subdirs (int index, meUByte *path_name, meUByte *base_name)
+set_subdirs (int index, meUByte *path_name, meUByte *path_base)
 {
+    meUByte base_name [meTOKENBUF_SIZE_MAX] ;
+    
     /* Common sub-directories of JASSPAs MicroEmacs */
     static char *subdirs[] =
     {
@@ -344,43 +346,74 @@ set_subdirs (int index, meUByte *path_name, meUByte *base_name)
         "macros",                       /* Standard distribution macros */
         "spelling",                     /* Spelling dictionaries */
         NULL
-    };
+    } ;
     
-    /* Append the search paths if necessary. We construct the standard JASSPA
-     * MicroEmacs paths and then test for the existance of the directory. If
-     * the directory exists then we add it to the search path. We do not add
-     * any directories to the search path that do not exist. */
-    if (subdirs != NULL)
+    /* Iterate over all of the paths */
+    while (*path_base != '\0')
     {
-        char *s;
-        int ii;
+        meUByte *p ;
         
-        /* Build up strings ":<s1>/<jdirs[ii]>" */
-        for (ii = 0; (s = subdirs[ii]) != NULL; ii++)
+        /* Construct the base name */
+        p = base_name ;
+        while ((*p = *path_base) != '\0')
         {
-            int last_index = index ;    /* Save the position */
-            int path_index ;            /* Start of path position */ 
-            int pathtype;               /* Path file type */
+            path_base++ ;
+            if (*p == mePATH_CHAR)
+            {
+                *p = '\0' ;
+                break;
+            }
+            p++;
+        }
+        if (base_name[0] == '\0')
+            continue;
+    
+        /* Append the search paths if necessary. We construct the standard
+         * JASSPA MicroEmacs paths and then test for the existance of the
+         * directory. If the directory exists then we add it to the search
+         * path. We do not add any directories to the search path that do not
+         * exist. */
+        if (subdirs != NULL)
+        {
+            char *s ;
+            int ii ;
             
-            if (index > 0)
-                path_name[index++] = mePATH_CHAR ;
-            path_index = index ;        /* Save start of path */
-            
-            meStrcpy (&path_name[index], base_name) ;
-            index += meStrlen (base_name) ;
-            if (*s != '\0')     /* Special case of the empty string */
-                path_name[index++] = DIR_CHAR ;
-            meStrcpy (&path_name[index], s) ;
-            index += meStrlen (s) ;
-            path_name[index] = '\0' ;
-            
-            /* Test the directory for existance, if it does not exist
-             * then do not add it as we do not want to search any
-             * directory unecessarily. */
-            pathtype = getFileStats(&path_name[path_index],0,NULL,NULL);
-             printf ("Testing %s : %d\n",  &path_name[path_index], pathtype);
-            if(pathtype != meFILETYPE_DIRECTORY)
-                index = last_index;     /* Skip this path. */
+            /* Build up strings ":<s1>/<jdirs[ii]>" */
+            for (ii = 0; (s = subdirs[ii]) != NULL; ii++)
+            {
+                int last_index = index ;    /* Save the position */
+                int path_index ;            /* Start of path position */ 
+                int pathtype ;              /* Path file type */
+                
+                if (index > 0)
+                    path_name[index++] = mePATH_CHAR ;
+                path_index = index ;        /* Save start of path */
+                
+                meStrcpy (&path_name[index], base_name) ;
+                index += meStrlen (base_name) ;
+                if (*s != '\0')     /* Special case of the empty string */
+                    path_name[index++] = DIR_CHAR ;
+                meStrcpy (&path_name[index], s) ;
+                index += meStrlen (s) ;
+                path_name[index] = '\0' ;
+                
+                /* Test the directory for existance, if it does not exist
+                 * then do not add it as we do not want to search any
+                 * directory unecessarily. */
+                pathtype = getFileStats(&path_name[path_index],0,NULL,NULL) ;
+                printf ("Testing %s : %d\n",
+                        &path_name[path_index], pathtype);
+                if(pathtype != meFILETYPE_DIRECTORY)
+                {
+                    index = last_index ;      /* Skip this path. */
+                    path_name[index] = '\0';  /* Remove path. */
+                    
+                    /* If this is the NIL path then do not do any more as no
+                     * sub-directories will exist here. */
+                    if (*s == '\0')
+                        break;
+                }
+            }
         }
     }
     return index;
@@ -401,36 +434,18 @@ set_dirs(meUByte *argv)
 #define _HIDDEN_DIR ".jasspa"
 #else
 #define _HIDDEN_DIR ""
-#endif
-#endif
+#endif /* _UNIX + _WIN32 */
+#endif /* _HIDDEN_DIR */
     static meUByte hdir[] = _HIDDEN_DIR ;
     
-    /* Pre-built search path, this is a path built into the executable. */
-#ifdef _SEARCH_PATH
+    /* Pre-built search path, this is a path built into the executable. The
+     * installation root path of the installation macros searched in the order
+     * specified. Once a directory has been located then it is used as the
+     * default path. */
+#ifndef _SEARCH_PATH
+#define _SEARCH_PATH _DEFAULT_SEARCH_PATH
+#endif
     static meUByte lpath[] = _SEARCH_PATH ;
-#endif
-    
-    /* The installation root path of the installation macros searched in the
-     * order specified. Once a directory has been located then it is used as
-     * the default path. */
-#ifdef _INSTALL_PATH
-    static meUByte ipath[] = _INSTALL_PATH ;
-#else
-    static char *spath[] =
-    {
-#ifdef _UNIX
-        /* MicroEmacs '04 and later distributions standard macro locations */
-#if (!defined _LINUX)
-        "/opt/jasspa",
-#endif
-        "/usr/share/jasspa",
-        "/usr/local/jasspa",
-        /* Historical locations */
-        "/usr/local/microemacs",
-#endif
-        NULL
-    };
-#endif /* _INSTALL_PATH */
     
     /* Use $HOME if the loginHome is not defined. */
     s1 = meGetenv("MEHOME");            /* Use $MEHOME by default */
@@ -504,40 +519,10 @@ set_dirs(meUByte *argv)
         /* Get the system path of the installed macros. Use $MEINSTPATH as the
          * MicroEmacs standard macros */
         s1 = meGetenv ("MEINSTALLPATH") ;
-#ifdef _SEARCH_PATH
         if ((s1 == NULL) && ((lpath != NULL) && (lpath[0] != '\0')))
             s1 = lpath;                 /* Use the built in path 'lpath' */
-#endif
         if (s1 != NULL)
-        {
-            if (ll > 0)
-                evalResult[ll++] = mePATH_CHAR ;
-            meStrcpy (&evalResult[ll], s1) ;
-            ll += meStrlen(s1) ;
-        }
-        else
-        {
-#ifdef _INSTALL_PATH
-            /* Use the installation path defined in the build. */
-            s1  = ipath;
-#else
-            int ii;
-
-            /* Search for a path in the root directories. We search for
-             * "jasspa" in the following variable */
-            for (ii = 0; spath[ii] != NULL; ii++)
-            {
-                if(getFileStats((meUByte *)(spath[ii]),0,NULL,NULL) == meFILETYPE_DIRECTORY)
-                {
-                    s1 = (meUByte *)(spath[ii]);
-                    break;
-                }
-            }
-#endif
-            /* Append the search path and sub-directories if necessary.  */
-             if (s1 != NULL)
-                ll = set_subdirs (ll, evalResult, s1);
-        }
+            ll = set_subdirs (ll, evalResult, s1);
     }
     else if (mepath[0] != '\0')
     {
