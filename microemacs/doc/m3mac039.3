@@ -3,17 +3,21 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac039.3,v 2.6 2002-10-16 22:28:04 jon Exp $
+.Id $Id: m3mac039.3,v 2.7 2004-12-09 23:33:09 bill Exp $
 .Im MicroEmacs command|spell
 .so me.tni
 .TH auto-spell 3
 .XI auto-spell - "Auto-spell support"
+.XI auto-spell-menu - "Auto-spell context menu"
 .XI auto-spell-buffer - "Auto-spell whole buffer"
 .XI auto-spell-reset - "Auto-spell hilight reset"
 .XI auto-spell-ignore - "Auto-spell ignore current word"
 .SH NAME
 .Me "|auto-spell"
 auto-spell \- Auto-spell support
+.br
+.Me "|auto-spell-menu"
+auto-spell-menu \- Auto-spell context menu
 .br
 .Me "|auto-spell-buffer"
 auto-spell-buffer \- Auto-spell whole buffer
@@ -45,6 +49,11 @@ every  completed word hilighting any erroneous words in the error color scheme
 The argument \fIn\fR determines  whether  auto-spell is enabled or disabled, a
 +ve argument  enables and a \-ve argument  disables. If no argument or \fI0\fR
 is supplied the auto-spell state is toggled.
+.PP
+\fBauto-spell-menu\fR  opens the auto-spell context menu which lists suggested
+corrections  for the current  word and other  useful  auto-spell  commands and
+configuration  options.  This  menu can also be  accessed  via the main  mouse
+context menu when the current buffer has auto spell enabled.
 .PP
 \fBauto-spell-buffer\fR  checks  all  words  within  the  current  buffer  for
 spell, hilighting any unknown or miss-spelled words found.
