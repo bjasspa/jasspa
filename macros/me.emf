@@ -48,9 +48,9 @@
 0 define-macro-file utils frame-handle ascii-time var-str-sub str-to-regex filemask-to-regex copy-registry create-file-path
 define-macro-file cvs cvs cvs-setup cvs-add cvs-annotate cvs-checkout cvs-commit cvs-diff cvs-gdiff cvs-log cvs-remove cvs-resolve-conflicts cvs-state cvs-status cvs-tag cvs-update 
 define-macro-file format clean sort-lines-ignore-case normal-tab tabs-to-spaces paragraph-to-line delete-indentation restyle-region restyle-buffer ifill-paragraph
-define-macro-file misc save-all open-line symbol check-line-length alarm time compare-windows-exact display-white-chars
 define-macro-file tools compile grep rgrep which diff diff-changes execute-tool uniq reread-file find-bfile find-cfile
 define-macro-file abbrev expand-abbrev-handle expand-iso-accents expand-look-back expand-word iso-accents-mode
+define-macro-file misc save-all open-line check-line-length time compare-windows-exact display-white-chars
 define-macro-file comment comment-line uncomment-line comment-to-end-of-line comment-start comment-restyle
 define-macro-file search replace-all-string query-replace-all-string replace-all-pairs
 define-macro-file hkdirlst file-browser file-browser-close file-browser-swap-buffers
@@ -65,6 +65,7 @@ define-macro-file itemlist item-list item-list-close occur
 define-macro-file mail mail mail-check stop-mail-check
 define-macro-file fileopen osd-file-open osd-get-file
 define-macro-file hkinfo info info-on info-goto-link
+define-macro-file osdmisc symbol indent-setup alarm
 define-macro-file pagefile page-file page-bfile
 define-macro-file zfile find-zfile zfile-setup
 define-macro-file gentags generate-tags-file
@@ -74,7 +75,6 @@ define-macro-file schemosd scheme-editor
 define-macro-file mouseosd context-menu
 define-macro-file printstp print-setup
 define-macro-file abbrlist abbrev-list
-define-macro-file osdmisc indent-setup
 define-macro-file fattrib file-attrib
 define-macro-file organize organizer
 define-macro-file userstp user-setup

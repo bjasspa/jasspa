@@ -8,9 +8,6 @@
 ; Authors:     Steven Phillips & Jon Green
 ;
 !if &not &exi %alarm-numb
-    set-variable %alarm-numb 0
-    set-variable .osd.alarm &pinc .osd.next 1
-    set-variable .osd.symbol &pinc .osd.next 1
 !endif
 ; save-all - saves any changes to any buffer, registry or dictionary
 define-macro save-all
@@ -29,38 +26,6 @@ define-macro open-line
     @# insert-newline
     @# backward-char
 !emacro
-;
-; symbol
-; Macro to print up the ascii table on screen using the poke and allowing
-; the user to select a code
-0 define-macro symbol-insert
-    insert-string &itoa @#
-!emacro
-
-osd .osd.symbol 0 "bnatcHsd" 2 3 75 0 -1 -1 620 .scheme.osd-title "Insert Symbol"
-osd .osd.symbol 1 ""
-osd .osd.symbol 2 "" "   D  X C   D  X C   D  X C   D  X C   D  X C   D  X C   D  X C   D  X C"
-osd .osd.symbol 3 ""
-
-set-variable #l0 255
-!repeat
-    set-variable #l1 &spr "%3d %2x %s" #l0 #l0 &itoa #l0
-    set-variable #l1 &spr "%s%n" #l1 &sub 8 &len #l1 " "
-    !if &equ &band #l0 7 7
-        osd .osd.symbol &add &mul #l0 2 11 "f"  #l1 #l0 symbol-insert
-    !else
-        osd .osd.symbol &add &mul #l0 2 11 "hf" #l1 #l0 symbol-insert
-    !endif
-    osd .osd.symbol &add &mul #l0 2 10 "hf" " "
-!until &not &pdec #l0 1
-!endif
-osd .osd.symbol 600 ""
-osd .osd.symbol 610 ""
-osd .osd.symbol 620 "BcfH" .scheme.osd-ebtt " Cancel " f void
-
-define-macro symbol
-    .osd.symbol osd
-!emacro
 
 define-macro check-line-length
     !repeat
@@ -71,35 +36,6 @@ define-macro check-line-length
         !endif
         !force forward-line
     !until &not $status
-!emacro
-
-; alarm - Create a simple alarm
-define-macro alarm
-    set-variable %alarm-numb &add %alarm-numb 1
-    set-variable #l0 &cat "%alarm-" %alarm-numb
-    !force set-variable #l2 @3
-    !if &not $status
-        set-variable &ind #l0 @ml "Message"
-        set-variable #l1 @ml "Hours"
-        set-variable #l2 @ml "Minutes"
-    !else
-        set-variable &ind #l0 @1
-        set-variable #l1 @2
-    !endif
-    set-variable #l1 &mul 60000 &add &mul 60 #l1 #l2
-    0 define-macro #l0
-        !bell
-        set-variable #l0 &add &len &ind @0 10
-        osd .osd.alarm 0 "bat" 9 3
-        osd .osd.alarm 1 ""
-        osd .osd.alarm 2 "c" "ALARM"
-        osd .osd.alarm 3 ""
-        osd .osd.alarm 4 "" &ind @0
-        osd .osd.alarm 5 ""
-        osd .osd.alarm 6 "Bcf" " OK " f void
-        .osd.alarm osd
-    !emacro
-    #l1 create-callback #l0
 !emacro
 
 define-macro time
