@@ -345,9 +345,10 @@ setBufferContext(meBuffer *bp)
 int
 swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
 {
-    register meWindow *twp ;
-    register meBuffer *tbp ;
-    long             lineno=0 ;
+    meWindow *twp ;
+    meBuffer *tbp ;
+    long lineno=0 ;
+    int reload=0 ;
     
     if(meModeTest(bp->mode,MDNACT))
     {   
@@ -357,6 +358,10 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
 	    /* The buffer is linked to a file, load it in */
 	    lineno = bp->dotLineNo ;
 	    readin(bp,bp->fileName);
+            /* if this is also the current buffer then we have an out-of-date
+             * buffer being reloaded. We must be careful of what hooks we
+             * execute and the state stored */
+            reload = (wp->buffer == bp) ;
 	}
 	meModeClear(bp->mode,MDNACT) ;
 #if MEOPT_FILEHOOK
@@ -366,21 +371,17 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
     }
     tbp = wp->buffer ;
 #if MEOPT_FILEHOOK
-    if((wp == frameCur->windowCur) && (frameCur->bufferCur->ehook >= 0))
+    /* If this is an out-of-date reload find-file, the call to bclear will
+     * have executed the ehook and dhook so do do this now. */
+    if((wp == frameCur->windowCur) && !reload && (frameCur->bufferCur->ehook >= 0))
         execBufferFunc(frameCur->bufferCur,frameCur->bufferCur->ehook,0,1) ;
 #endif
     tbp->histNo = ++bufHistNo ;
-    if(--tbp->windowCount == 0)
+    if((--tbp->windowCount == 0) && !reload)
     {
-        /* Get the line number before it beomes corrupted */
-        if ((meModeTest(bp->mode,MDNACT)) && (bp->intFlag & BIFFILE))
-        {
-            lineno = bp->dotLineNo ;
-            storeWindBSet(tbp,wp) ;
-            bp->dotLineNo = lineno ;
-        }
-        else
-            storeWindBSet(tbp,wp) ;
+        /* don't do this on a reload as the bclear means the window state is
+         * rubbish! */
+        storeWindBSet(tbp,wp) ;
     }
     
     /* Switch. reset any scroll */

@@ -77,7 +77,7 @@ osd .osd.gtf 220 "hf"   "  "
 osd .osd.gtf 230 "ExfH" .scheme.osd-entry "########################################" 2 generate-tags-file-entry
 osd .osd.gtf 240 ""
 osd .osd.gtf 250 "BhcfHi" .scheme.osd-ebtt " &Generate Tags "    f generate-tags-file-exec
-osd .osd.gtf 260 "BcfH"   .scheme.osd-ebtt " E&xit "    1 void
+osd .osd.gtf 260 "BcfH"   .scheme.osd-ebtt " &Cancel "    1 void
 
 ; generate-tags-file "<tagtype>" "[start-path]"
 ; runs ME @<tagtype> -v%tags-option=...
