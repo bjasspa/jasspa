@@ -514,12 +514,15 @@ Miscellaneous Information
 
     Text searching and replacing commands: 
 
-    lslmBuild(2)le Build 
     lslmhunt-backward(2)le (cDC-x C-hcA) Resume previous search in backward direction 
     lslmhunt-forward(2)le (cDC-x hcA) Resume previous search in forward direction 
     lslmisearch-backward(2)le (cDC-rcA) Search backwards incrementally (interactive) 
     lslmisearch-forward(2)le (cDC-scA) Search forward incrementally (interactive) 
+    lslmitem-list(3)le (cDF7cA) Abbreviated search and list buffer contents 
+    lslmitem-list-close(3)le (cDesc F7cA) Close the item list 
+    lslmitem-list-find(3)le Find the selected item in the item list 
     lslmline-scheme-search(3)le Search and annotate the current buffer 
+    lslmoccur(3)le Regular expression search for occurrences 
     lslmquery-replace-all-string(3)le Query replace string in a list of files 
     lslmquery-replace-string(2)le (cDesc C-rcA) Search and replace a string - with query 
     lslmRegularExpressions(2)le Regular Expressions 
@@ -771,8 +774,8 @@ ehf-scheme
     lslmfile-browser-close(3)le Close the file-browser 
     lslmfile-browser-swap-buffers(3)le Swap between file-browser windows 
     lslmfile-op(2)le File system operations command 
-    lslmfind-bfile(2)le (cDC-x 9cA) Load a file as binary data 
-    lslmfind-cfile(2)le Load a crypted file 
+    lslmfind-bfile(3)le (cDC-x 9cA) Load a file as binary data 
+    lslmfind-cfile(3)le Load a crypted file 
     lslmfind-file(2)le (cDC-x C-fcA) Load a file 
     lslmfind-zfile(3)le Compressed file support 
     lslmftp(3)le Initiate an FTP connection 
@@ -827,6 +830,7 @@ ehf-scheme
     lslmosd-dialog(3)le OSD dialog box 
     lslmosd-entry(3)le OSD entry dialog box 
     lslmosd-xdialog(3)le OSD Extended dialog box 
+    lslmprint-setup(3)le Configure (*mS's printer interface 
     lslmscheme-editor(3)le Color Scheme Editor 
     lslmspell-buffer(3)le Spell check the current buffer 
     lslmspell-edit-word(3)le Edits a spell word entry 
@@ -947,6 +951,7 @@ ehf-scheme
     lslminsert-space(2)le Insert space(s) into current buffer 
     lslminsert-string(2)le Insert character string into current buffer 
     lslmlanguageTemplates(2)le File Language Templates 
+    lslmlocaleSupport(2)le Locale Support 
     lslmnewline(2)le (cDreturncA) Insert a new line 
     lslmosd-dialog(3)le OSD dialog box 
     lslmosd-entry(3)le OSD entry dialog box 
@@ -1003,6 +1008,7 @@ ehf-scheme
     lslm$system(5)le System configuration variable 
     lslm$temp-name(5)le Temporary file name 
     lslm$variable-names(5)le Filtered variable name list 
+    lslm$version(5)le MicroEmacs version date-code 
     lslm$window-mode-line(5)le Window mode line position 
     lslm$window-scroll-bar(5)le Window scroll bar (or separator) position 
     lslm.calc.result(5)le Last calc calculation result 
@@ -1065,6 +1071,7 @@ ehf-scheme
         lslmdir(2m)le Buffer is a directory listing 
         lslmedit(2m)le Buffer has be changed 
         lslmexact(2m)le Searching and sorting case sensitivity 
+        lslmfence(2m)le Auto fence matching mode 
         lslmhide(2m)le Hide buffer 
         lslmindent(2m)le Automatic indentation 
         lslmjustify(2m)le Justification Mode 
@@ -1077,6 +1084,7 @@ ehf-scheme
         lslmover(2m)le Over-strike Mode 
         lslmpipe(2m)le Incremental Pipe running 
         lslmquiet(2m)le Quiet mode 
+        lslmrbin(2m)le Reduced binary editor mode 
         lslmsave(2m)le Flag buffer to be saved 
         lslmtab(2m)le Tabulation mode 
         lslmtime(2m)le File time stamping 
@@ -1111,6 +1119,7 @@ ehf-scheme
     lslmcompile(3)le Start a compilation process 
     lslmcvs(3)le MicroEmacs CVS interface 
     lslmcvs-add(3)le MicroEmacs CVS interface - add file 
+    lslmcvs-checkout(3)le MicroEmacs CVS interface - checkout files 
     lslmcvs-commit(3)le MicroEmacs CVS interface - commit changes 
     lslmcvs-diff(3)le MicroEmacs CVS interface - diff changes 
     lslmcvs-gdiff(3)le MicroEmacs CVS interface - graphical diff changes 
@@ -1135,6 +1144,10 @@ ehf-scheme
     system call) 
     lslmipipe-write(2)le Write a string to an incremental pipe 
     lslmishell(3)le Open a Cygwin BASH window 
+    lslmitem-list(3)le (cDF7cA) Abbreviated search and list buffer contents 
+    lslmitem-list-close(3)le (cDesc F7cA) Close the item list 
+    lslmitem-list-find(3)le Find the selected item in the item list 
+    lslmoccur(3)le Regular expression search for occurrences 
     lslmperldb(3)le Perl Debugger 
     lslmpipe-shell-command(2)le (cDesc @cA) Execute a single operating system command 
     lslmrcs-file(2)le (cDC-x C-qcA) Handle Revision Control System (RCS) files 
@@ -1274,6 +1287,7 @@ ehf-scheme
     lslmprint-color(2)le Create a new printer color 
     lslmprint-region(2)le Print region, with formatting 
     lslmprint-scheme(2)le Create a new printer color and font scheme 
+    lslmprint-setup(3)le Configure (*mS's printer interface 
 
 !   Introduction to Variable Functions
 cEcEVARIABLE FUNCTIONS cEcA
@@ -1384,17 +1398,21 @@ ehf-scheme
         lslm&gmode(4)le Determine global mode 
         lslm&indirect(4)le Evaluate a string as a variable 
         lslm&inword(4)le Test for a word character 
+        lslm&irep(4)le Case insensitive replace string in string 
         lslm&isin(4)le Case insensitive test for string in string 
         lslm&itoa(4)le Integer to ASCII conversion 
         lslm&kbind(4)le Return the key a command is bound to 
         lslm&nbind(4)le Return the numerial argument of a binding 
         lslm&nbmode(4)le Determine named buffer mode 
+        lslm&rep(4)le Replace string in string 
         lslm&risin(4)le Recursive case insensitive test for string in string 
         lslm&rsin(4)le Recursively test for string in string 
         lslm&set(4)le In-line macro variable assignment 
         lslm&sin(4)le Test for string in string 
         lslm&stat(4)le Retrieve a file statistic 
         lslm&which(4)le Find a program on the path 
+        lslm&xirep(4)le Regex case insensitive Replace string in string 
+        lslm&xrep(4)le Regex replace string in string 
 
 
 cEcESEE ALSO cEcA
@@ -1454,8 +1472,8 @@ ehf-scheme
     lslmfile-browser-close(3)le Close the file-browser 
     lslmfile-browser-swap-buffers(3)le Swap between file-browser windows 
     lslmfile-op(2)le File system operations command 
-    lslmfind-bfile(2)le (cDC-x 9cA) Load a file as binary data 
-    lslmfind-cfile(2)le Load a crypted file 
+    lslmfind-bfile(3)le (cDC-x 9cA) Load a file as binary data 
+    lslmfind-cfile(3)le Load a crypted file 
     lslmfind-file(2)le (cDC-x C-fcA) Load a file 
     lslmfind-zfile(3)le Compressed file support 
     lslmftp(3)le Initiate an FTP connection 
@@ -1662,6 +1680,7 @@ ehf-scheme
     lslmcreate-callback(2)le Create a timer callback 
     lslmcvs(3)le MicroEmacs CVS interface 
     lslmcvs-add(3)le MicroEmacs CVS interface - add file 
+    lslmcvs-checkout(3)le MicroEmacs CVS interface - checkout files 
     lslmcvs-commit(3)le MicroEmacs CVS interface - commit changes 
     lslmcvs-diff(3)le MicroEmacs CVS interface - diff changes 
     lslmcvs-gdiff(3)le MicroEmacs CVS interface - graphical diff changes 
@@ -1717,9 +1736,9 @@ ehf-scheme
     lslmfile-op(2)le File system operations command 
     lslmfill-paragraph(2)le (cDesc ocA) Format a paragraph 
     lslmfilter-buffer(2)le (cDC-x #cA) Filter the current buffer through an O/S command 
-    lslmfind-bfile(2)le (cDC-x 9cA) Load a file as binary data 
+    lslmfind-bfile(3)le (cDC-x 9cA) Load a file as binary data 
     lslmfind-buffer(2)le (cDC-x bcA) Switch to a named buffer 
-    lslmfind-cfile(2)le Load a crypted file 
+    lslmfind-cfile(3)le Load a crypted file 
     lslmfind-file(2)le (cDC-x C-fcA) Load a file 
     lslmfind-registry(2)le Index search of a registry sub-tree 
     lslmfind-tag(2)le (cDesc tcA) Find tag, auto-load file and move to tag position 
@@ -1830,6 +1849,7 @@ ehf-scheme
     lslmprint-color(2)le Create a new printer color 
     lslmprint-region(2)le Print region, with formatting 
     lslmprint-scheme(2)le Create a new printer color and font scheme 
+    lslmprint-setup(3)le Configure (*mS's printer interface 
     lslmquery-replace-all-string(3)le Query replace string in a list of files 
     lslmquery-replace-string(2)le (cDesc C-rcA) Search and replace a string - with query 
     lslmquick-exit(2)le (cDesc zcA) Exit the editor writing changes 
@@ -1879,7 +1899,6 @@ ehf-scheme
     lslmset-char-mask(2)le Set character word mask 
     lslmset-cursor-to-mouse(2)le Move the cursor to the current mouse position 
     lslmset-encryption-key(2)le (cDesc ecA) Define the encryption key 
-    lslmset-language(3)le Set the current language 
     lslmset-mark(2)le (cDesc spacecA) Set starting point of region 
     lslmset-position(2)le Store the current position 
     lslmset-registry(2)le Modify a node value in the registry 
@@ -2012,9 +2031,7 @@ ehf-scheme
     lslmfile-op(2)le File system operations command 
     lslmfill-paragraph(2)le (cDesc ocA) Format a paragraph 
     lslmfilter-buffer(2)le (cDC-x #cA) Filter the current buffer through an O/S command 
-    lslmfind-bfile(2)le (cDC-x 9cA) Load a file as binary data 
     lslmfind-buffer(2)le (cDC-x bcA) Switch to a named buffer 
-    lslmfind-cfile(2)le Load a crypted file 
     lslmfind-file(2)le (cDC-x C-fcA) Load a file 
     lslmfind-registry(2)le Index search of a registry sub-tree 
     lslmfind-tag(2)le (cDesc tcA) Find tag, auto-load file and move to tag position 
@@ -2198,6 +2215,7 @@ ehf-scheme
     lslmcompile(3)le Start a compilation process 
     lslmcvs(3)le MicroEmacs CVS interface 
     lslmcvs-add(3)le MicroEmacs CVS interface - add file 
+    lslmcvs-checkout(3)le MicroEmacs CVS interface - checkout files 
     lslmcvs-commit(3)le MicroEmacs CVS interface - commit changes 
     lslmcvs-diff(3)le MicroEmacs CVS interface - diff changes 
     lslmcvs-gdiff(3)le MicroEmacs CVS interface - graphical diff changes 
@@ -2223,6 +2241,8 @@ ehf-scheme
     lslmfile-browser(3)le (cDf10cA) Browse the file system 
     lslmfile-browser-close(3)le Close the file-browser 
     lslmfile-browser-swap-buffers(3)le Swap between file-browser windows 
+    lslmfind-bfile(3)le (cDC-x 9cA) Load a file as binary data 
+    lslmfind-cfile(3)le Load a crypted file 
     lslmfind-word(3)le Find a using spelling dictionaries 
     lslmfind-zfile(3)le Compressed file support 
     lslmfold-all(3)le (cDf3cA) (Un)Fold all regions in the current buffer 
@@ -2253,6 +2273,7 @@ ehf-scheme
     lslmosd-xdialog(3)le OSD Extended dialog box 
     lslmPatience(3)le MicroEmacs '01 version of Patience (or Solitaire) 
     lslmparagraph-to-line(3)le Convert a paragraph to a single line 
+    lslmprint-setup(3)le Configure (*mS's printer interface 
     lslmquery-replace-all-string(3)le Query replace string in a list of files 
     lslmregex-backward(3)le Search for a magic string in the backward direction 
     lslmregex-forward(3)le Search for a magic string in the forward direction 
@@ -2265,7 +2286,6 @@ ehf-scheme
     lslmrgrep(3)le Execute recursive grep command 
     lslmsave-all(3)le Save all modified files (with query) 
     lslmscheme-editor(3)le Color Scheme Editor 
-    lslmset-language(3)le Set the current language 
     lslmshut-down(3)le Editor exit callback command 
     lslmsort-lines-ignore-case(3)le Alphabetically sort lines ignoring case 
     lslmspell-add-word(3)le Add a word to the main dictionary 
@@ -2392,6 +2412,7 @@ ehf-scheme
     lslm$timestamp(5)le Time stamp string 
     lslm$trunc-scheme(5)le Truncation color scheme 
     lslm$variable-names(5)le Filtered variable name list 
+    lslm$version(5)le MicroEmacs version date-code 
     lslm$window-acol(5)le Window cursor actual column 
     lslm$window-aline(5)le Window cursor actual line 
     lslm$window-chars(5)le Character set used to render the windows 
@@ -2458,6 +2479,7 @@ ehf-scheme
     lslm&inc(4)le Pre-increment variable 
     lslm&indirect(4)le Evaluate a string as a variable 
     lslm&inword(4)le Test for a word character 
+    lslm&irep(4)le Case insensitive replace string in string 
     lslm&isequal(4)le Case insensitive String equivalence operator 
     lslm&isin(4)le Case insensitive test for string in string 
     lslm&itoa(4)le Integer to ASCII conversion 
@@ -2481,6 +2503,7 @@ ehf-scheme
     lslm&pdec(4)le Post-decrement variable 
     lslm&pinc(4)le Post-increment variable 
     lslm&reg(4)le Retrieve a registry value (with default) 
+    lslm&rep(4)le Replace string in string 
     lslm&right(4)le Return the right most characters from a string 
     lslm&risin(4)le Recursive case insensitive test for string in string 
     lslm&rsin(4)le Recursively test for string in string 
@@ -2498,7 +2521,9 @@ ehf-scheme
     lslm&trleft(4)le Return string trimmed of white chars on left side 
     lslm&trright(4)le Return string trimmed of white chars on right side 
     lslm&which(4)le Find a program on the path 
+    lslm&xirep(4)le Regex case insensitive Replace string in string 
     lslm&xisequal(4)le Case insensitive regex String equivalence operator 
+    lslm&xrep(4)le Regex replace string in string 
     lslm&xsequal(4)le Regex string equivalence operator 
 
 
@@ -2547,6 +2572,7 @@ ehf-scheme
     lslm@clk(4)le Last command key 
     lslm@cq(4)le Get a quoted command name from the user 
     lslm@cqk(4)le Get a quoted key from the user 
+    lslm@fs(4)le Frame store variable 
     lslm@#(4)le Macro arguments (numeric argument value) 
     lslm@mc(4)le Message line character input request 
     lslm@ml(4)le Message line input request 
@@ -2697,6 +2723,7 @@ ehf-scheme
     lslm$timestamp(5)le Time stamp string 
     lslm$trunc-scheme(5)le Truncation color scheme 
     lslm$variable-names(5)le Filtered variable name list 
+    lslm$version(5)le MicroEmacs version date-code 
     lslm$window-acol(5)le Window cursor actual column 
     lslm$window-aline(5)le Window cursor actual line 
     lslm$window-chars(5)le Character set used to render the windows 
@@ -2747,6 +2774,7 @@ ehf-scheme
     lslm&inc(4)le Pre-increment variable 
     lslm&indirect(4)le Evaluate a string as a variable 
     lslm&inword(4)le Test for a word character 
+    lslm&irep(4)le Case insensitive replace string in string 
     lslm&isequal(4)le Case insensitive String equivalence operator 
     lslm&isin(4)le Case insensitive test for string in string 
     lslm&itoa(4)le Integer to ASCII conversion 
@@ -2770,6 +2798,7 @@ ehf-scheme
     lslm&pdec(4)le Post-decrement variable 
     lslm&pinc(4)le Post-increment variable 
     lslm&reg(4)le Retrieve a registry value (with default) 
+    lslm&rep(4)le Replace string in string 
     lslm&right(4)le Return the right most characters from a string 
     lslm&risin(4)le Recursive case insensitive test for string in string 
     lslm&rsin(4)le Recursively test for string in string 
@@ -2787,7 +2816,9 @@ ehf-scheme
     lslm&trleft(4)le Return string trimmed of white chars on left side 
     lslm&trright(4)le Return string trimmed of white chars on right side 
     lslm&which(4)le Find a program on the path 
+    lslm&xirep(4)le Regex case insensitive Replace string in string 
     lslm&xisequal(4)le Case insensitive regex String equivalence operator 
+    lslm&xrep(4)le Regex replace string in string 
     lslm&xsequal(4)le Regex string equivalence operator 
     lslm.calc.result(5)le Last calc calculation result 
     lslm.which.result(5)le Program path 
@@ -2804,6 +2835,7 @@ ehf-scheme
     lslm@clk(4)le Last command key 
     lslm@cq(4)le Get a quoted command name from the user 
     lslm@cqk(4)le Get a quoted key from the user 
+    lslm@fs(4)le Frame store variable 
     lslm@#(4)le Macro arguments (numeric argument value) 
     lslm@mc(4)le Message line character input request 
     lslm@ml(4)le Message line input request 
@@ -2914,6 +2946,7 @@ ehf-scheme
     lslmctrlz(2m)le File's termination style 
     lslmcvs(3)le MicroEmacs CVS interface 
     lslmcvs-add(3)le MicroEmacs CVS interface - add file 
+    lslmcvs-checkout(3)le MicroEmacs CVS interface - checkout files 
     lslmcvs-commit(3)le MicroEmacs CVS interface - commit changes 
     lslmcvs-diff(3)le MicroEmacs CVS interface - diff changes 
     lslmcvs-gdiff(3)le MicroEmacs CVS interface - graphical diff changes 
@@ -2984,6 +3017,7 @@ ehf-scheme
     lslmf(9)le Fortran File 
     lslmf77(9)le Fortran 77 File 
     lslmf90(9)le Fortran 90 File 
+    lslmfence(2m)le Auto fence matching mode 
     lslmfile-attrib(3)le Set the current buffers system file attributes 
     lslmfile-browser(3)le (cDf10cA) Browse the file system 
     lslmfile-browser-close(3)le Close the file-browser 
@@ -2992,9 +3026,9 @@ ehf-scheme
     lslmfileHooks(2)le File Hooks 
     lslmfill-paragraph(2)le (cDesc ocA) Format a paragraph 
     lslmfilter-buffer(2)le (cDC-x #cA) Filter the current buffer through an O/S command 
-    lslmfind-bfile(2)le (cDC-x 9cA) Load a file as binary data 
+    lslmfind-bfile(3)le (cDC-x 9cA) Load a file as binary data 
     lslmfind-buffer(2)le (cDC-x bcA) Switch to a named buffer 
-    lslmfind-cfile(2)le Load a crypted file 
+    lslmfind-cfile(3)le Load a crypted file 
     lslmfind-file(2)le (cDC-x C-fcA) Load a file 
     lslmfind-registry(2)le Index search of a registry sub-tree 
     lslmfind-tag(2)le (cDesc tcA) Find tag, auto-load file and move to tag position 
@@ -3072,6 +3106,9 @@ ehf-scheme
     lslmishell(3)le Open a Cygwin BASH window 
     lslmiso-accents-expand(3)le Expand an ISO accent 
     lslmiso-accents-mode(3)le ISO accent expansion short-cut mode 
+    lslmitem-list(3)le (cDF7cA) Abbreviated search and list buffer contents 
+    lslmitem-list-close(3)le (cDesc F7cA) Close the item list 
+    lslmitem-list-find(3)le Find the selected item in the item list 
     lslmjav(9)le Java programming language 
     lslmjava(9)le Java programming language 
     lslmjavatags(3f)le Generate a C tags file from Java sources 
@@ -3093,6 +3130,7 @@ ehf-scheme
     lslmlist-commands(2)le (cDC-h ccA) List available commands 
     lslmlist-registry(2)le Display the registry in a buffer 
     lslmlist-variables(2)le (cDC-h vcA) List defined variables 
+    lslmlocaleSupport(2)le Locale Support 
     lslmlock(2m)le Pipe cursor position lock 
     lslmlogin(9)le Shell user login file 
     lslmlower-case-region(2)le (cDC-x C-lcA) Lowercase a region (downcase) 
@@ -3137,6 +3175,7 @@ ehf-scheme
     lslmnormal-tab(3)le Insert a normal tab 
     lslmnroff(9)le UNIX nroff file 
     lslmntags(3f)le Generate a nroff tags file 
+    lslmoccur(3)le Regular expression search for occurrences 
     lslmorganizer(3)le Calendar and address organizer 
     lslmosd(2)le Manage the On-Screen Display 
     lslmosd-bind-key(2)le Create key binding for OSD dialog 
@@ -3163,6 +3202,7 @@ ehf-scheme
     lslmprint-color(2)le Create a new printer color 
     lslmprint-region(2)le Print region, with formatting 
     lslmprint-scheme(2)le Create a new printer color and font scheme 
+    lslmprint-setup(3)le Configure (*mS's printer interface 
     lslmprintall(3f)le Formatted print job 
     lslmprofile(9)le Shell user profile 
     lslmpy(9)le Python Language File 
@@ -3174,6 +3214,7 @@ ehf-scheme
     lslmquote-char(2)le (cDC-qcA) Insert literal character 
     lslmRegisterVariables(4)le Register variables 
     lslmRegularExpressions(2)le Regular Expressions 
+    lslmrbin(2m)le Reduced binary editor mode 
     lslmrc(9)le Microsoft Developer resource file 
     lslmrcs-file(2)le (cDC-x C-qcA) Handle Revision Control System (RCS) files 
     lslmread-file(2)le (cDC-x C-rcA) Find and load file replacing current buffer 
@@ -3229,7 +3270,6 @@ ehf-scheme
     lslmset-char-mask(2)le Set character word mask 
     lslmset-cursor-to-mouse(2)le Move the cursor to the current mouse position 
     lslmset-encryption-key(2)le (cDesc ecA) Define the encryption key 
-    lslmset-language(3)le Set the current language 
     lslmset-mark(2)le (cDesc spacecA) Set starting point of region 
     lslmset-position(2)le Store the current position 
     lslmset-registry(2)le Modify a node value in the registry 
@@ -3499,7 +3539,7 @@ ehf-scheme
         The host platform which is exhibiting a problem 
 
     cDVersioncA 
-        The version of MicroEmacs '01. Use the cGesc x infocA to retrieve the 
+        The version of MicroEmacs '01. Use the cGesc x aboutcA to retrieve the 
         information e.g. 
 
             cGMicroEmacs 01 - Date 01/01/01 - win32cA 
@@ -4005,8 +4045,8 @@ ehf-scheme
 
 
     No not at the moment. The GNU Emacs bindings would be added as a 
-    compatibility file (gnu.emf) in much the same way that the me3.8 bindings 
-    are added, see me3_8.emf. 
+    compatibility file (meemacs.emf) in much the same way that the me3.8 
+    bindings are added, see meme3_8.emf. 
 
     From the user-setup(3), the user would then ask for "gnu" compatibility. 
 
@@ -4163,9 +4203,9 @@ ehf-scheme
 cEcEANSWER cEcA
 
 
-    From lslmuser-setup(3)le set the Compatibility to "cGme3_8cA". On re-starting (or 
-    current) the macro file cGme3_8.emfcA is executed and the bindings loaded. 
-    This file should restore your familiar execution set. 
+    From lslmuser-setup(3)le set the Emulation to "cGMicroEmacs v3.8cA". On re-starting 
+    (or Current) the macro file cGmeme3_8.emfcA is executed and the bindings 
+    loaded. This file should restore your familiar execution set. 
 
     lsFrequently Asked Questionslm[FAQ Index]le. 
 
@@ -4931,13 +4971,12 @@ ehf-scheme
 
     The quickest and best solution is to use the cDKeyboardcA setup on the 
     Start-Up page of lslmuser-setup(3)le. This however may not provide the solution 
-    a this is a new feature (post 99Beta1) and few keyboards are currently 
-    supported. If you are using an unsupported keyboard please send 
-    configuration information back to JASSPA for inclusion in the next 
-    release. Also keyboard configuration information is stored in the macro 
-    file cGkeyboard.emfcA. 
+    as not all keyboards are currently supported. If you are using an 
+    unsupported keyboard please send configuration information back to JASSPA 
+    for inclusion in the next release. The keyboard configuration information 
+    is stored in the macro file cGkeyboard.emfcA. 
 
-    If cDuser-setupcA does not currently support your keyboard, or you which to 
+    If cDuser-setupcA does not currently support your keyboard, or you wish to 
     remap some keys, then the command lslmtranslate-key(2)le should be used. 
     cDtranslate-keycA remaps generated key stroke(s) into another key at a low 
     level so the mapping is supported in all areas. If a macro and key binding 
@@ -5181,7 +5220,8 @@ ehf-scheme
         information. 
 
     cD-bcA 
-        Load next file as a binary file (binary editor mode). 
+        Load next file as a binary file (binary editor mode, uses lslmbinary(2m)le 
+        buffer mode). 
 
     cD-ccA 
         Continuation mode. Load cDMicroEmacs '01cA last edit session, restoring 
@@ -5199,6 +5239,12 @@ ehf-scheme
     cD-icA 
         MS-DOS versions of cDMicroEmacs '01cA only. Insert the contents of the 
         current screen into the cD*scratch*cA buffer 
+
+    cD-kcA[cCkeycA] 
+        Load next file as an encrypted file (uses lslmcrypt(2m)le buffer mode). The 
+        optional adjoining argument can be used to specify the decrypting key, 
+        if this argument is not specify the user will be prompted for it on 
+        start-up. 
 
     cD-lcAcClineNocA 
         Go to line cClineNocA in the next given file. Typically used with 
@@ -5283,6 +5329,9 @@ ehf-scheme
         default captures an handles all illicit signal interrupts. The option 
         is enabled when debugging the source code allowing exception 
         conditions to be trapped within the debugger. 
+
+    cD-ycA 
+        Load next file as a reduced binary file (uses lslmrbin(2m)le buffer mode). 
 
 
 cEcEENVIRONMENT cEcA
@@ -6045,10 +6094,11 @@ $a
         add-file-hook ".doc .txt" "fhook-doc" 
 
 sA
-    There are two special file hooks, which are cDfhook-binarycA and 
+    There are three special file hooks, which are cDfhook-binarycA, cDfhook-rbincA and 
     cDfhook-defaultcA, these are not predefined, but if the user defines them then 
-    they are executed whenever a file is loaded in binary mode (see 
-    lslmbuffer-mode(2)le) or the extension does not match any of those defined. 
+    they are executed whenever a file is loaded in lsbinary(2m)lmbinaryle or lsrbin(2m)lmreduced binaryle 
+    mode (see lslmbuffer-mode(2)le) or the extension does not match any of those 
+    defined. 
 
     Considering the cGfhook-XXXcA prefix, the initial 'cDfcA' character must be 
     present as this is changed to a 'cDbcA' and an 'cDecA' when looking for the enter 
@@ -6433,7 +6483,7 @@ $a
 
     The lslmabout(2)le command gives a list of the current global and buffer modes. 
 
-    cDadd-global-modecA and cDdelete-global-modecA are macros defined in me3_8.emf 
+    cDadd-global-modecA and cDdelete-global-modecA are macros defined in meme3_8.emf 
     which use global-mode to add or remove a global mode. They are defined for 
     backward compatibility with MicroEMACS v3.8 and for ease of use; they are 
     simple macros, add-global-mode is defined as follows: 
@@ -6464,9 +6514,10 @@ $a
 cEcENOTES cEcA
 
 
-    Globally adding lslmbinary(2m)le and lslmcrypt(2m)le modes is strongly discouraged as 
-    any file loaded would be assigned these modes. Instead the use of commands 
-    lslmfind-bfile(2)le and lslmfind-cfile(2)le are recommended. 
+    Globally adding lslmbinary(2m)le, lslmcrypt(2m)le and lslmrbin(2m)le modes is strongly 
+    discouraged as any file loaded would be assigned these modes. Instead use 
+    the numeric argument of command lslmfind-file(2)le or commands lslmfind-bfile(3)le and 
+    lslmfind-cfile(3)le. 
 
     lslmauto(2m)le, lslmautosv(2m)le, lslmbackup(2m)le, lslmexact(2m)le, lslmmagic(2m)le, lslmquiet(2m)le, lslmtab(2m)le 
     and lslmundo(2m)le modes are present on all platforms by default. On Windows and 
@@ -6477,7 +6528,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmOperating Modesle, lslmbuffer-mode(2)le, lslmfind-bfile(2)le, lslmfind-cfile(2)le, lslmabout(2)le. 
+    lslmOperating Modesle, lslmbuffer-mode(2)le, lslmfind-bfile(3)le, lslmfind-cfile(3)le, lslmabout(2)le. 
 
 ! 2 buffer-mode
 ! 2 named-buffer-mode
@@ -6547,20 +6598,21 @@ $a
           -23      23      151     over 
           -24      24      152     pipe 
           -25      25      153     quiet 
-          -26      26      154     save 
-          -27      27      155     tab 
-          -28      28      156     time 
-          -29      29      157     undo 
-          -30      30      158     usr1 
-          -31      31      159     usr2 
-          -32      32      160     usr3 
-          -33      33      161     usr4 
-          -34      34      162     usr5 
-          -35      35      163     usr6 
-          -36      36      164     usr7 
-          -37      37      165     usr8 
-          -38      38      166     view 
-          -39      39      167     wrap 
+          -26      26      154     rbin 
+          -27      27      155     save 
+          -28      28      156     tab 
+          -29      29      157     time 
+          -30      30      158     undo 
+          -31      31      159     usr1 
+          -32      32      160     usr2 
+          -33      33      161     usr3 
+          -34      34      162     usr4 
+          -35      35      163     usr5 
+          -36      36      164     usr6 
+          -37      37      165     usr7 
+          -38      38      166     usr8 
+          -39      39      167     view 
+          -40      40      168     wrap 
 
 
     Note that when omitted the default argument is 0, i.e. prompt for and 
@@ -6572,8 +6624,8 @@ $a
     cDadd-modecA and cDdelete-modecA are macros which use buffer-mode to add and 
     remove a buffer mode. cDunmark-buffercA is also a macro which removes the edit 
     flag from the current buffer. They are defined for backward compatibility 
-    with MicroEMACS v3.8 and can be found in me3_8.emf; add-mode is defined as 
-    follows: 
+    with MicroEMACS v3.8 and can be found in meme3_8.emf; add-mode is defined 
+    as follows: 
 sB
         define-macro add-mode 
             ; Has the require mode been given as an argument, if so add it 
@@ -8261,7 +8313,7 @@ $a
     described above, cCncA is a bit based flag where:- 
 
     cD0x01cA 
-        Enables lost of work checks (default). These include a check that the 
+        Enables loss of work checks (default). These include a check that the 
         buffer has not been modified, if so the user is prompted. Also if a 
         process is running then user must confirm that the process can be 
         killed. If this flag is not supplied then the buffer is killed without 
@@ -8732,16 +8784,22 @@ $a
 
     cDforward-kill-wordcA deletes the next cCncA words starting at the current cursor 
     position, the deleted text is added to the kill buffer. See 
-    lslmforward-word(2)le for a description of word boundaries. 
+    lslmforward-word(2)le for a description of word boundaries. If the argument cCncA is 
+    cG0cA the command has no effect. If a -ve argument is specified, +cCncA words are 
+    deleted and the text is not added to the kill buffer. 
 
     cDbackward-kill-wordcA deletes the previous cCncA words before the cursor, the 
-    deleted text is added to the kill buffer. 
+    deleted text is added to the kill buffer. The numeric argument has the 
+    same effect as with cDforward-kill-wordcA. 
 
 
 cEcENOTES cEcA
 
 
     cDbackward-kill-wordcA is also bound to cDesc backspacecA. 
+
+    The -ve argument is typically used from macro scripts where the kill 
+    buffer is more precisely controlled. 
 
 
 cEcESEE ALSO cEcA
@@ -9748,133 +9806,6 @@ $a
 
     lslmpipe-shell-command(2)le. 
 
-! 2 find-bfile
-cEcENAME cEcA
-
-
-    find-bfile - Load a file as binary data 
-$a
-
-
-cEcESYNOPSIS cEcA
-
-
-    cCncA cDfind-bfilecA "cCfile-namecA" (cDC-x 9cA) 
-
-
-cEcEDESCRIPTION cEcA
-
-
-    cDfind-bfilecA loads a file as binary, providing binary editing capabilities. 
-
-    The command operates as lslmfind-file(2)le except that it loads the given file 
-    with lslmbinary(2m)le mode set. binary mode loads any file and converts every 16 
-    bytes into a line of text giving the hex address of the current position 
-    in the file, the bytes as hexadecimal numbers and all printable characters 
-    at the end of the line (all non-printable characters are displayed as a 
-    'cG.cA'). 
-
-    The extension of a file loaded in binary mode is ignored with respect to 
-    file hooks (See lslmadd-file-hook(2)le). Instead the cDfhook-binarycA command is 
-    always executed if it exists. 
-
-    Each line of text may be edited, providing that the basic format of every 
-    line remains the same, the altered file may be written out, providing full 
-    binary editing capabilities. This mode has two draw-backs, firstly it is 
-    memory hungry in that every 16 byte of the file requires a 78 character 
-    line (approximately 5 times more memory!). Secondly if the binary mode is 
-    added globally then EVERY file is loaded in binary mode, including macro 
-    files which subsequently will not execute. For this reason, it is 
-    recommended that this mode is not added globally. 
-
-    Example, given a single line MSDOS file:- 
-
-        Live long and prosper. 
-
-
-    When loaded in binary mode will produce the following 2 line buffer:- 
-
-        00000000: 4C 69 76 65 20 6C 6F 6E 67 20 61 6E 64 20 70 72  |  Live long and pr 
-        00000010: 6F 73 70 65 72 2E 0D 0A 1A                       |  osper.... 
-
-
-    Note the "cG0D 0A 1AcA" at the end, this is due to MSDOS's "cG\n\rcA" carriage 
-    returns and cG^ZcA file termination, these characters are unprintable and are 
-    shown as 'cG.cA' at the end of the line. The basic form of a binary file is:- 
-
-        AAAAAAAA: XX XX XX XX ....  | 
-
-
-    When saving a binary file, only the text between the 'cG:cA' and 'cG|cA' is 
-    considered and it may contain any number of hexadecimal numbers. The given 
-    file could be made UNIX compatible by editing the buffer to:- 
-
-        00000000: 4C 69 76 65 20 6C 6F 6E 67 20 61 6E 64 20 70 72  |  Live long and pr 
-        00000010: 6F 73 70 65 72 2E 0D                       |  osper.... 
-
-
-    If the word "cDlongcA" is required to be removed, the following would not 
-    work:- 
-
-        00000000: 4C 69 76 65 20 6C 6F 6E 67 20 61 6E 64 20 70 72  |  Live and pr 
-        00000010: 6F 73 70 65 72 2E 0D 0A 1A                       |  osper.... 
-
-
-    The ASCII end letters are ignored, instead the following operation must be 
-    performed which removes the characters from the binary representation:- 
-
-        00000000: 4C 69 76 65 20 61 6E 64 20 70 72  |  Live long and pr 
-        00000010: 6F 73 70 65 72 2E 0D 0A 1A                       |  osper.... 
-
-
-    One could be nasty by doing the following:- 
-
-        00000000: 4C 69 76 65 20 73 68 6F 72 74 20 61 6E 64 20 | 
-        00000010: 64 6F 6E 27 74 20 70 72 6F 73 70 65 72 2E 0D 0A 1A           | 
-
-
-    ("Live short and don't prosper"). 
-
-
-cEcESEE ALSO cEcA
-
-
-    lslmfind-file(2)le, lslmbinary(2m)le. 
-
-! 2 find-cfile
-cEcENAME cEcA
-
-
-    find-cfile - Load a crypted file 
-$a
-
-
-cEcESYNOPSIS cEcA
-
-
-    cCncA cDfind-cfilecA "cCfile-namecA" 
-
-
-cEcEDESCRIPTION cEcA
-
-
-    cDfind-cfilecA loads an encrypted file. 
-
-    The command operates as lslmfind-file(2)le except that it loads the given file 
-    with lslmcrypt(2m)le mode set. crypt mode prompts the user for a crypt key, the 
-    file is then loaded decrypting the file using the given key. When writing 
-    out a file with crypt mode, if the key has not yet been set then the user 
-    is prompted and the file is written out with the same algorithm. While the 
-    crypting method is crackable, it should be enough to deter most prying 
-    eyes. The encryption string can be set at any time using the command 
-    lslmset-encryption-key(2)le. 
-
-
-cEcESEE ALSO cEcA
-
-
-    lslmcrypt(2m)le, lslmfind-file(2)le, lslmset-encryption-key(2)le. 
-
 ! 2 find-file
 cEcENAME cEcA
 
@@ -9896,15 +9827,30 @@ $a
     make that buffer active in the current window, otherwise attempt to create 
     a new buffer and read the file into it. 
 
-    If the file does not exist and the variable lslm$rcs-file(5)le is set then the 
-    existence of the RCS file is tested. If the rcs file exists then it will 
-    be checked out using a command-line created from the variable 
-    lslm$rcs-co-com(5)le. If the check-out is successful then this file is loaded. 
+    The numeric argument cCncA can be used to modify the default behaviour of the 
+    command, where the bits are defined as follows: 
 
-    If the file does not exist and an argument cCncA of 0 is specified the command 
-    fails at this point. If the file does not exist and a non-zero or no 
-    argument is specified then a new empty buffer is created with the given 
-    file name, saving the buffer subsequently creates a new file. 
+    cD0x01cA 
+        If the file does not exist and this bit is not set the command fails 
+        at this point. If the file does not exist and this bit is set (or no 
+        argument is specified as the default argument is cG1cA) then a new empty 
+        buffer is created with the given file name, saving the buffer 
+        subsequently creates a new file. 
+
+    cD0x02cA 
+        If this bit is set the file will be loaded with lslmbinary(2m)le mode 
+        enabled. See help on cDbinarycA mode for more information on editing 
+        binary data files. 
+
+    cD0x04cA 
+        If this bit is set the file will be loaded with lslmcrypt(2m)le mode 
+        enabled. See help on cDcryptcA mode for more information on editing 
+        encrypted files. 
+
+    cD0x08cA 
+        If this bit is set the file will be loaded with lslmrbin(2m)le mode enabled. 
+        See help on cDrbincA mode for more information on efficient editing of 
+        binary data files. 
 
     Text files are usually thought of as named collections of text residing on 
     disk (or some other storage medium). In MicroEmacs '01 the disk based 
@@ -9946,6 +9892,19 @@ $a
     lsview-file(2)lmviewingle only. 
 
 
+cERCS Support cA
+
+
+    If the file does not exist and the variable lslm$rcs-file(5)le is set then the 
+    existence of the RCS file is tested. If the rcs file exists then it will 
+    be checked out using a command-line created from the variable 
+    lslm$rcs-co-com(5)le. If the check-out is successful then this file is loaded. 
+
+    This raw interface for supporting file revision control systems has been 
+    adapted to support SCCS and Visual Source Safe see help on variable 
+    cD$rcs-filecA for more information and examples. 
+
+
 cEHTTP Support cA
 
 
@@ -9979,7 +9938,7 @@ $a
 
     See also lslmftp(3)le. 
 
-    The progress of the FTP transer, and the FTP commands issued, may be 
+    The progress of the FTP transfer, and the FTP commands issued, may be 
     viewed in the cG*ftp-console*cA buffer. This is popped up depending on the 
     setting of the lslm%ftp-flags(5)le variable. 
 
@@ -10016,10 +9975,11 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslm$rcs-file(5)le, lslm%ftp-flags(5)le, lslm%http-flags(5)le, lslm%http-proxy-addr(5)le, 
-    lslmauto(2m)le, lslmbuffer-mode(2)le, lslmfind-bfile(2)le, lslmftp(3)le, lslmnext-window-find-file(2)le, 
-    lslmread-file(2)le, lslmsave-buffer(2)le, lslmtime(2m)le, lslmview(2m)le, lslmview-file(2)le, 
-    lslmwrite-buffer(2)le, lslmfile-op(2)le, lslmfile-attrib(3)le. 
+    lslmauto(2m)le, lslmbinary(2m)le, lslmcrypt(2m)le, lslmrbin(2m)le, lslmtime(2m)le, lslmview(2m)le, 
+    lslmbuffer-mode(2)le, lslmfind-bfile(3)le, lslmftp(3)le, lslm$rcs-file(5)le, lslm%ftp-flags(5)le, 
+    lslm%http-flags(5)le, lslm%http-proxy-addr(5)le, lslmnext-window-find-file(2)le, 
+    lslmread-file(2)le, lslmsave-buffer(2)le, lslmview-file(2)le, lslmwrite-buffer(2)le, lslmfile-op(2)le, 
+    lslmfile-attrib(3)le. 
 
 ! 2 find-tag
 cEcENAME cEcA
@@ -10256,11 +10216,16 @@ $a
     cG#ifcA, cG#elifcA, cG#elsecA and cG#endifcA constructs, cycling through them in the given 
     order. 
 
+    When the lslmfence(2m)le buffer mode is enabled the matching open fence is 
+    automatically displayed when the closing fence is typed. The length of 
+    time the matching fence is displayed for can be controlled by the 
+    lslm$fmatchdelay(5)le variable. 
+
 
 cEcESEE ALSO cEcA
 
 
-    lslmgoto-line(2)le. 
+    lslmfence(2m)le, lslm$fmatchdelay(5)le, lslmgoto-line(2)le. 
 
 ! 2 list-commands
 cEcENAME cEcA
@@ -12421,7 +12386,7 @@ $a
 cEcESYNOPSIS cEcA
 
 
-    cDkill-regioncA (cDC-wcA) 
+    cCncA cDkill-regioncA (cDC-wcA) 
 
 
 cEcEDESCRIPTION cEcA
@@ -12429,7 +12394,10 @@ $a
 
     cDkill-regioncA deletes all characters from the cursor to the mark set with 
     the lslmset-mark(2)le command. The characters removed are copied into the kill 
-    buffer and may be extracted using lslmyank(2)le. 
+    buffer and may be extracted using lslmyank(2)le. If a numeric argument of cG0cA is 
+    given the command has no effect. If a -ve argument is given the characters 
+    are not placed in the kill buffer, therefore the text is effectively lost 
+    (this does not effect the lslmundo(2)le operation). 
 
     The mark position may be ahead or behind the current cursor position. 
 
@@ -12490,14 +12458,16 @@ $a
 
 
     cDkill-linecA, when used with no argument cCncA, deletes all text from the cursor 
-    to the end of a line. When used on a blank line, it deletes the blank 
-    line. If a non-zero argument cCncA is supplied it deletes the specified number 
-    of lines. 
+    to the end of a line, the end of line character is also deleted if the 
+    cursor is in the first column and the lslmline(2m)le mode is disabled. The 
+    deleted text is placed in the kill buffer, see lslmyank(2)le for more 
+    information on the kill buffer. When used on a blank line, it always 
+    deletes it. 
 
-    When the buffer mode lslmline(2m)le is enabled and the cursor is at the start of 
-    the line then the text on the line and the line itself are removed. 
-
-    The removed text is placed in the lsyank(2)lmyankle buffer. 
+    If a +ve argument cCncA is supplied the specified number of lines is deleted, 
+    the setting of the cDlinecA mode is ignore. If cCncA is cG0cA the command has no 
+    effect. If a -ve argument is given, +cCncA lines are deleted but the text is 
+    NOT added to the kill buffer. 
 
 
 cEcENOTES cEcA
@@ -12506,11 +12476,14 @@ $a
     If a line is accidentally removed then lsyank(2)lmyankle the text back immediately or 
     use lslmundo(2)le. 
 
+    The -ve argument is typically used in macro scripts where the yank buffer 
+    is more precisely controlled by the script. 
+
 
 cEcESEE ALSO cEcA
 
 
-    lslmkill-region(2)le, lslmline(2m)le, lslmundo(2)le, lslmyank(2)le. 
+    lslmkill-region(2)le, lslmline(2m)le, lslmundo(2)le, lslmyank(2)le, lslmforward-kill-word(2)le. 
 
 ! 2 list-buffers
 cEcENAME cEcA
@@ -13343,7 +13316,7 @@ $a
 
 
     lslmbackward-line(2)le, lslmbackward-paragraph(2)le, lslmforward-line(2)le, 
-    lslmforward-paragraph(2)le, lslm$buffer-mask(5)le, lslmset-char-mask(2)le. 
+    lslmforward-paragraph(2)le, lslocaleSupport(2)lmLocale Supportle, lslm$buffer-mask(5)le, lslmset-char-mask(2)le. 
 
 ! 2 insert-newline
 cEcENAME cEcA
@@ -13768,8 +13741,8 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmscheme-editor(3)le, lslmprint-scheme(2)le, lslmhilight(2)le, lslmprintall(3f)le, 
-    lslm$buffer-hilight(5)le. 
+    lslmprint-setup(3)le, lslmscheme-editor(3)le, lslmprint-scheme(2)le, lslmhilight(2)le, 
+    lslmprintall(3f)le, lslm$buffer-hilight(5)le. 
 
 ! 2 query-replace-string
 cEcENAME cEcA
@@ -13957,7 +13930,7 @@ $a
 cEcESYNOPSIS cEcA
 
 
-    cDread-filecA "cCfile-namecA" (cDC-x C-rcA) 
+    cCncA cDread-filecA "cCfile-namecA" (cDC-x C-rcA) 
 
 
 cEcEDESCRIPTION cEcA
@@ -13970,11 +13943,37 @@ $a
     This command is also useful for re-loading files that have changed on 
     disk. 
 
+    The numeric argument cCncA can be used to modify the default behaviour of the 
+    command, where the bits are defined as follows: 
+
+    cD0x01cA 
+        If the file does not exist and this bit is not set the command fails 
+        at this point. If the file does not exist and this bit is set (or no 
+        argument is specified as the default argument is cG1cA) then a new empty 
+        buffer is created with the given file name, saving the buffer 
+        subsequently creates a new file. 
+
+    cD0x02cA 
+        If this bit is set the file will be loaded with lslmbinary(2m)le mode 
+        enabled. See help on cDbinarycA mode for more information on editing 
+        binary data files. 
+
+    cD0x04cA 
+        If this bit is set the file will be loaded with lslmcrypt(2m)le mode 
+        enabled. See help on cDcryptcA mode for more information on editing 
+        encrypted files. 
+
+    cD0x08cA 
+        If this bit is set the file will be loaded with lslmrbin(2m)le mode enabled. 
+        See help on cDrbincA mode for more information on efficient editing of 
+        binary data files. 
+
 
 cEcESEE ALSO cEcA
 
 
-    lslmreread-file(3)le, lslmfind-file(2)le, lslmview-file(2)le. 
+    lslmreread-file(3)le, lslmfind-file(2)le, lslmview-file(2)le, lslmbinary(2m)le, lslmcrypt(2m)le, 
+    lslmrbin(2m)le. 
 
 ! 2 read-history
 cEcENAME cEcA
@@ -14123,8 +14122,8 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    cDset-positioncA stores current window, buffer and cursor position information 
-    against the given 'cGlabelcA' (a single alpha-numeric character). 
+    cDset-positioncA stores current window, buffer, cursor and mark position 
+    information against the given 'cGlabelcA' (a single alpha-numeric character). 
     cDgoto-positioncA takes the positional information stored against the given 
     'cGlabelcA' and restores the window, buffer and cursor positions from those 
     previously cDsetcA. 
@@ -14138,34 +14137,45 @@ $a
     bitmask, flagging what information is to be stored. The bit mask is 
     defined as follows: 
 
-    cG0x01cA 
+    cG0x001cA 
         Store the current window. 
 
-    cG0x02cA 
+    cG0x002cA 
         Store the current window's horizonal scroll (value of 
         lslm$window-x-scroll(5)le). 
 
-    cG0x04cA 
+    cG0x004cA 
         Store the current window's current line horizonal scroll (value of 
         lslm$window-xcl-scroll(5)le). 
 
-    cG0x08cA 
+    cG0x008cA 
         Store the current window's vertical scroll (value of 
         lslm$window-y-scroll(5)le). 
 
-    cG0x10cA 
+    cG0x010cA 
         Store the current buffer. 
 
-    cG0x20cA 
+    cG0x020cA 
         Store the current window's current line using an lsset-alpha-mark(2)lmalpha markle. 
 
-    cG0x40cA 
+    cG0x040cA 
         Store the current window's current line number (value of 
         lslm$window-line(5)le). 
 
-    cG0x80cA 
+    cG0x080cA 
         Store the current window's current column offset (value of 
         lslm$window-col(5)le). 
+
+    cG0x100cA 
+        Store the current window's mark line using an lsset-alpha-mark(2)lmalpha markle. 
+
+    cG0x200cA 
+        Store the current window's mark line number (value of lslm$window-line(5)le 
+        when mark was set). 
+
+    cG0x400cA 
+        Store the current window's mark column offset (value of lslm$window-col(5)le 
+        when mark was set). 
 
     When cCncA is not specified, the default value is cG0x0bfcA, i.e. store all 
     information required to return to the window, buffer and cursor position. 
@@ -14178,7 +14188,7 @@ $a
     requested in a cDgotocA which was not stored in the cDsetcA is also ignored. 
 
 
-cEcEEXAMPLES cEcA
+cEcEEXAMPLE cEcA
 
 
     The following example shows the typical use of these commands: 
@@ -14794,7 +14804,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmbuffer-mode(2)le, lslmcrypt(2m)le, lslmfind-cfile(2)le. 
+    lslmbuffer-mode(2)le, lslmcrypt(2m)le, lslmfind-file(2)le, lslmfind-cfile(3)le. 
 
 ! 2 set-mark
 cEcENAME cEcA
@@ -15178,7 +15188,8 @@ $a
 
 
     lslmadd-dictionary(2)le, lslmadd-spell-rule(2)le, lslmdelete-dictionary(2)le, 
-    lslmsave-dictionary(2)le, lslmshow-region(2)le, lslmspell-buffer(3)le, lslmspell-word(3)le. 
+    lslmsave-dictionary(2)le, lslmshow-region(2)le, lslmspell-buffer(3)le, lslmspell-word(3)le, lslocaleSupport(2)lmLocaleln
+    lnSupportle. 
 
 ! 2 next-window-find-buffer
 cEcENAME cEcA
@@ -15236,14 +15247,40 @@ $a
     When there is insufficient space in the current window to perform the 
     split, then the current window is replaced. The requested cCfilecA is always 
     displayed, if the file does not already exist it is effectively created 
-    within MicroEmacs '01 (although it will not exist on the disk until a save 
+    within MicroEmacs (although it will not exist on the disk until a save 
     operation is performed). 
+
+    The numeric argument cCncA can be used to modify the default behaviour of the 
+    command, where the bits are defined as follows: 
+
+    cD0x01cA 
+        If the file does not exist and this bit is not set the command fails 
+        at this point. If the file does not exist and this bit is set (or no 
+        argument is specified as the default argument is cG1cA) then a new empty 
+        buffer is created with the given file name, saving the buffer 
+        subsequently creates a new file. 
+
+    cD0x02cA 
+        If this bit is set the file will be loaded with lslmbinary(2m)le mode 
+        enabled. See help on cDbinarycA mode for more information on editing 
+        binary data files. 
+
+    cD0x04cA 
+        If this bit is set the file will be loaded with lslmcrypt(2m)le mode 
+        enabled. See help on cDcryptcA mode for more information on editing 
+        encrypted files. 
+
+    cD0x08cA 
+        If this bit is set the file will be loaded with lslmrbin(2m)le mode enabled. 
+        See help on cDrbincA mode for more information on efficient editing of 
+        binary data files. 
 
 
 cEcESEE ALSO cEcA
 
 
-    lslmfind-file(2)le, lslmnext-window-find-buffer(2)le, lslmsplit-window-vertically(2)le. 
+    lslmfind-file(2)le, lslmnext-window-find-buffer(2)le, lslmsplit-window-vertically(2)le, 
+    lslmbinary(2m)le, lslmcrypt(2m)le, lslmrbin(2m)le. 
 
 ! 2 split-window-vertically
 cEcENAME cEcA
@@ -15308,12 +15345,12 @@ $a
     modify an existing cCcol-nocA index by re-assignment, the existing color 
     definition is over-written with the new color definition. 
 
-    If an argument cCncA of 0 is given to cDprint-colorcA the printer color table is 
-    reset, removing all currently defined colors. 
+    An argument cCncA of 0 to cDprint-colorcA resets the printer color table, removing 
+    all currently defined colors. 
 
-    cDprint-schemecA creates a new printer scheme which defines how schemes, used 
-    by lslmhilight(2)le when rendering a buffer's text, are to be printed. For 
-    example key words could be printed in bold or in blue etc. It takes an 
+    cDprint-schemecA creates a new printer scheme. A printer scheme maps the 
+    lslmhilight(2)le buffer's text into a print scheme. For example key words could 
+    be printed in cCboldcA or in cCbluecA etc. cDprint-schemecA arguments comprise an 
     identifying index number "cCschemeNumcA", two color values, "cCforecA" and "cCbackcA" 
     (defined by cDprint-colorcA) and a font setting "cCfont-maskcA". The cCfont-maskcA is 
     a bit mask where each bit is defined as follows: 
@@ -15324,15 +15361,15 @@ $a
         cG0x08cA Enable reverse font. 
         cG0x10cA Enable underlining. 
 
-    If an argument cCncA of 0 is given to cDprint-schemecA the printer scheme table is 
-    reset, removing all currently defined printer schemes. 
+    An argument cCncA of 0 to cDprint-schemecA resets the printer scheme table, 
+    removing all currently defined printer schemes. 
 
 
 cEcENOTES cEcA
 
 
-    Printer schemes can be created and altered using the lslmscheme-editor(3)le 
-    dialog, the created printer scheme can then the used directly in the 
+    Printer schemes may be created and altered using the lslmscheme-editor(3)le 
+    dialog, the created printer scheme may then be used directly in the 
     lslmprint-setup(3)le dialog. Therefore direct use of these commands is largely 
     redundant. 
 
@@ -15340,7 +15377,8 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmscheme-editor(3)le, lslmprint-buffer(2)le, lslmhilight(2)le, lslm$buffer-hilight(5)le. 
+    lslmscheme-editor(3)le, lslmprint-setup(3)le, lslmprint-buffer(2)le, lslmhilight(2)le, 
+    lslm$buffer-hilight(5)le. 
 
 ! 2 suspend-emacs
 cEcENAME cEcA
@@ -15447,6 +15485,7 @@ $a
         cG 1cA - Enable the hilighting of the current region. 
         cG 2cA - Move the cursor the  Dot position. 
         cG 3cA - Set the end position of the region. 
+        cG 4cA - Reactivate the current region. 
 
     Where an argument of 0 is used to return the current state the value of 
     $result is a bit based flag where:- 
@@ -16318,21 +16357,72 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    cDscreen-updatecA updates the current screen, usually used in macros. If the 
-    argument cCncA is 0 then only the parts of the screen which require updating 
-    are redrawn, else the screen is completely cleared and redrawn (as if 
-    garbled). 
+    cDscreen-updatecA updates the current screen, usually used in macros. The 
+    argument cCncA can be used to change the behaviour of this command as follows: 
 
-    Every time the screen requires updating, MicroEmacs '01 executes the 
-    cCredrawcA key, it is similar in mechanism to the user pressing cCC-lcA to refresh 
-    the screen. Also the user can re-bind the cCredrawcA key to another command or 
-    macro, there by allowing the user complete control of what is displayed. 
+    cG-vecA 
+        Disables the next -cCncA screen updates, i.e. if cCncA is cG-1cA then the next 
+        time the screen needs to be redrawn nothing will happen. 
+
+    cG0cA 
+        Resets the screen update disable count to zero, useful to remember 
+        when the the disable feature has been used incorrectly. 
+
+    cG1cA 
+        Full screen update (default), the screen is completely cleared and 
+        redrawn (as if garbled). 
+
+    cG2cA 
+        Partial screen update, only the parts of the screen which require 
+        updating are redrawn. 
+
+    cG3cA 
+        No screen redraw, only window variables are up-dated. This feature is 
+        provided for macros which manipulate the screen view and need to know 
+        where the cursor is in the window without redrawing the screen (which 
+        may cause unwanted flickering). Note that as the screen is not redrawn 
+        not all variables may have the correct value, for example the frame 
+        store variable lslm@fs(4)le could be out of date. 
+
+
+cEcEEXAMPLES cEcA
+
+
+    The following macro demonstrates the problems encountered when trying to 
+    use screen variables in macros after the current position has changed. The 
+    first value printed is the starting cursor Y position and the next value 
+    should be one less than the first value due to the call to 
+    lslmbackward-line(2)le. But it is the same as the first because the screen (and 
+    its variables) have not been updated. The subsequent call to screen-update 
+    ensures that the third value is the correct one although by giving it an 
+    argument of 3 the screen is not visibly updated thus avoiding any annoying 
+    screen flicker: 
+sB
+        define-macro test-screen-update 
+            set-variable #l0 $cursor-y 
+            backward-line 
+            set-variable #l1 $cursor-y 
+            3 screen-update 
+            set-variable #l2 $cursor-y 
+            forward-line 
+            ml-write &spr "%d %d %d" #l0 #l1 #l2 
+        !emacro 
+
+sA
+
+cEcENOTES cEcA
+
+
+    Every time the screen requires updating, MicroEmacs executes the cCredrawcA 
+    key, it is similar in mechanism to the user pressing cCC-lcA to refresh the 
+    screen. The user can therefore re-bind the cCredrawcA key to another command 
+    or macro, thereby allowing the user complete control of what is displayed. 
     For example if cCredrawcA was bound to lslmvoid(2)le the screen would not be 
-    up-dated, this is difficult to get out of and many require MicroEmacs '01 
-    to be killed. 
+    up-dated (cDNotecA: this is difficult to get out of and may require MicroEmacs 
+    to be killed). 
 
     This feature is often exploited by macros which take control of the input 
-    and output, such macros include lslmMetris(3)le, and lslmMahjongg(3)le. 
+    and output, such macros include lslmgdiff(3)le, lslmMetris(3)le, and lslmMahjongg(3)le. 
 
 
 cEcESEE ALSO cEcA
@@ -16351,7 +16441,7 @@ $a
 cEcESYNOPSIS cEcA
 
 
-    cDview-filecA "cCfile-namecA" (cDC-x C-vcA) 
+    cCncA cDview-filecA "cCfile-namecA" (cDC-x C-vcA) 
 
 
 cEcEDESCRIPTION cEcA
@@ -16361,11 +16451,37 @@ $a
     creates a new buffer and reads the file in. A new file is left in lslmview(2m)le 
     mode if the file was found (i.e. cannot be edited). 
 
+    The numeric argument cCncA can be used to modify the default behaviour of the 
+    command, where the bits are defined as follows: 
+
+    cD0x01cA 
+        If the file does not exist and this bit is not set the command fails 
+        at this point. If the file does not exist and this bit is set (or no 
+        argument is specified as the default argument is cG1cA) then a new empty 
+        buffer is created with the given file name, saving the buffer 
+        subsequently creates a new file. 
+
+    cD0x02cA 
+        If this bit is set the file will be loaded with lslmbinary(2m)le mode 
+        enabled. See help on cDbinarycA mode for more information on editing 
+        binary data files. 
+
+    cD0x04cA 
+        If this bit is set the file will be loaded with lslmcrypt(2m)le mode 
+        enabled. See help on cDcryptcA mode for more information on editing 
+        encrypted files. 
+
+    cD0x08cA 
+        If this bit is set the file will be loaded with lslmrbin(2m)le mode enabled. 
+        See help on cDrbincA mode for more information on efficient editing of 
+        binary data files. 
+
 
 cEcESEE ALSO cEcA
 
 
-    lslmbuffer-mode(2)le, lslmfind-file(2)le, lslmread-file(2)le, lslmview(2m)le. 
+    lslmbuffer-mode(2)le, lslmfind-file(2)le, lslmread-file(2)le, lslmview(2m)le, lslmbinary(2m)le, 
+    lslmcrypt(2m)le, lslmrbin(2m)le. 
 
 ! 2 void
 cEcENAME cEcA
@@ -16548,18 +16664,28 @@ $a
 
 
     cDml-writecA writes the given cCmessagecA to the message line. If a positive 
-    argument cCncA is given then there will be an cCncA second uninterruptible delay, 
-    giving the user time to see the message. 
+    argument cCncA is given then there will be an cCncA millisecond uninterruptible 
+    delay, giving the user time to see the message. 
 
     A call to cDml-writecA from a callback macro can erase a message line which is 
     currently being used (to enter a buffer name say). A call to lslmml-clear(2)le 
     restores the previous message-line. 
 
 
+cEcEEXAMPLE cEcA
+
+
+    The following call displays a message on the message-line with a fixed 2 
+    second pause: 
+sB
+        2000 ml-write "Hello World!" 
+
+sA
+
 cEcESEE ALSO cEcA
 
 
-    lslmml-clear(2)le, lslmcreate-callback(2)le. 
+    lslmml-clear(2)le, lslmcommand-wait(2)le, lslmcreate-callback(2)le. 
 
 ! 2 yank
 cEcENAME cEcA
@@ -16642,7 +16768,7 @@ $a
 
 
     lslmyank-rectangle(2)le, lslmcopy-region(2)le, lslmkill-region(2)le, lslmletter(2m)le, lslmreyank(2)le, 
-    lslm@cc(4)le. 
+    lslm@y(4)le, lslm@cc(4)le. 
 
 ! 2 define-macro-file
 cEcENAME cEcA
@@ -16769,7 +16895,7 @@ $a
 
           Modes on  : auto backup crlf exact magic quiet tab undo 
           Modes off : binary cmode crypt ctrlz del dir edit hide indent 
-                      justify letter line lock nact narrow over pipe 
+                      justify letter line lock nact narrow over pipe rbin 
                       save time usr1 usr2 usr3 usr4 usr5 usr6 usr7 usr8 
                       view wrap 
 
@@ -16783,8 +16909,8 @@ $a
           Modes on  : auto backup edit exact indent justify magic quiet 
                       tab time undo wrap 
           Modes off : binary cmode crlf crypt ctrlz del dir hide letter 
-                      line lock nact narrow over pipe save usr1 usr2 usr3 
-                      usr4 usr5 usr6 usr7 usr8 view 
+                      line lock nact narrow over pipe save rbin usr1 usr2 
+                      usr3 usr4 usr5 usr6 usr7 usr8 view 
 
 
 cEcESEE ALSO cEcA
@@ -17540,26 +17666,48 @@ $a
 cEcESYNOPSIS cEcA
 
 
-    cDcommand-waitcA 
+    cCncA cDcommand-waitcA 
 
 
 cEcEDESCRIPTION cEcA
 
 
-    cDcommand-waitcA loops getting and processing events (user input, screen 
-    updates etc) until either the calling commands cD.waitcA command variable is 
-    undefined or set to false (cG0cA). 
+    When a +ve argument cCncA is given cDcommand-waitcA waits for cCncA milliseconds 
+    before returning, this wait cannot be interrupted. If a -ve argument is 
+    given, cDcommand-waitcA waits for -cCncA milliseconds but the command will return 
+    if the user interrupts with any input activity (i.e. presses a key). 
 
-    The command is used when a main macro must wait and process input until an 
-    exit criteria has been met, the input is best processed by setting the 
+    When no argument is given cDcommand-waitcA loops getting and processing events 
+    (user input, screen updates etc) until either the calling commands cD.waitcA 
+    command variable is undefined or set to false (cG0cA). This more complex use 
+    of the command is used when a main macro must wait and process input until 
+    an exit criteria has been met, the input is best processed by setting the 
     lslm$buffer-input(5)le variable to a second macro. The macro lslmgdiff(3)le uses this 
     command in this way. 
 
 
+cEcEEXAMPLE cEcA
+
+
+    The following macro code will display a message on the screen for a fixed 
+    5 seconds: 
+sB
+        16 screen-poke 10 10 0 "Hello World!" 
+        5000 command-wait 
+
+sA
+    Similarly the following macro code will display a message for up to 5 
+    seconds or till the user presses a key: 
+sB
+        16 screen-poke 10 10 0 "Hello World!" 
+        -5000 command-wait 
+
+sA
+
 cEcESEE ALSO cEcA
 
 
-    lslm$buffer-input(5)le. 
+    lslmml-write(2)le, lslm$buffer-input(5)le. 
 
 ! 2 Bindings
 cEcEDEFAULT KEY BINDINGS cEcA
@@ -17707,7 +17855,7 @@ $a
     necessary. 
     cGC-x 5cA lssplit-window-horizontally(2)lmsplit-window-horizontallyle Split the current window horizontally into 
     two. 
-    cGC-x 9cA lsfind-bfile(2)lmfind-bfilele Find and load a file for binary editing. 
+    cGC-x 9cA lsfind-bfile(3)lmfind-bfilele Find and load a file for binary editing. 
     cGC-x <cA lsscroll-left(2)lmscroll-leftle Scroll the window left by one screen width. 
     cGC-x =cA lsbuffer-info(2)lmbuffer-infole Show cursor position information 
     cGC-x >cA lsscroll-left(2)lmscroll-rightle Scroll the window right by one screen width. 
@@ -17781,12 +17929,12 @@ $a
 cEcECOMPATIBILITY cEcA
 
 
-    MicroEmacs '01 is based on the original version of cDMicroEmacscA produced by 
-    Danial Lawrence at revision 3.8, the source files were obtained 
-    approximately 8-9 years ago. The exact origin of the files is unknown. In 
-    that period of time the source files have undergone an awful lot of 
-    change, without reference to the subsequent releases made of MicroEmacs by 
-    Danial Lawrence (due to no network access). As a result this version of 
+    JASSPA MicroEmacs is based on the original version of cDMicroEMACScA produced 
+    by Danial Lawrence at revision 3.8, the source files were obtained in 
+    approximately 1990. The exact origin of the files is unknown. In that 
+    period of time the source files have undergone an awful lot of change, 
+    without reference to the subsequent releases made of MicroEMACS by Danial 
+    Lawrence (due to no network access). As a result the JASSPA version of 
     cDMicroEmacscA does not include any modifications or features that may have 
     been implemented since. This version of cDMicroEmacscA has been tailored to 
     suite the requirements of a small group of individuals who have used the 
@@ -17800,8 +17948,8 @@ $a
     a common editor environment without being frustrated by the idiosyncrasies 
     of different platforms. The most noticeable platform is the Microsoft 
     Windows platform which mimics the X-Windows cut and paste mechanism within 
-    the MicroEmacs '01 environment. If you want a Windows style environment 
-    then use cDNotepad(1)cA or cDWordpad(1)cA, this editor is not for you !! 
+    the MicroEmacs environment. If you want a Windows style environment then 
+    use cDNotepad(1)cA or cDWordpad(1)cA, this editor is not for you !! 
 
     The gross changes to cDMicroEmacs '01cA are summarized as follows:- 
 
@@ -17873,14 +18021,13 @@ $a
           applied, thereby configuring the editor into the correct mode for 
           the file type. 
 
-        * Introduction of special MicroEmacs '01 search path allowing all of 
-          the standard configuration files to be utilized from a shared 
-          directory. 
+        * Introduction of special MicroEmacs search path allowing all of the 
+          standard configuration files to be utilized from a shared directory. 
 
-    The name space of MicroEmacs '01 differs from the original MicroEMACS and 
-    has become more compliant with the GNU implementation of Emacs. A list of 
-    the original MicroEMACS verses the new command name set is as follows, 
-    executing the compatibility macro file cGme3_8.emfcA will create macro 
+    The name space of JASSPA MicroEmacs differs from the original MicroEMACS 
+    and has become more compliant with the GNU implementation of Emacs. A list 
+    of the original MicroEMACS verses the new command name set is as follows, 
+    executing the compatibility macro file cGmeme3_8.emfcA will create macro 
     versions of these commands: 
 
         cDadd-global-modecA => lsglobal-mode(2)lmglobal-modele 
@@ -18821,14 +18968,14 @@ ehf-scheme
     Type in a word or phrase of at least five and up to 128 characters for the 
     encryption to use. If you look at the file which is then written out, all 
     the printable characters have been scrambled. To read such a file later, 
-    use lslmfind-cfile(2)le to load cCciphertextcA files, you will be asked the 
+    use lslmfind-cfile(3)le to load cCciphertextcA files, you will be asked the 
     encryption key before the file is read. 
 
 
 cEcESEE ALSO cEcA
 
 
-    lslmbuffer-mode(2)le, lslmfind-cfile(2)le, lslmglobal-mode(2)le, lslmset-encryption-key(2)le. 
+    lslmbuffer-mode(2)le, lslmfind-cfile(3)le, lslmglobal-mode(2)le, lslmset-encryption-key(2)le. 
 
 ! 2mexact
 cEcENAME cEcA
@@ -19444,13 +19591,88 @@ ehf-scheme
 
     cDbinarycA mode is enabled when a file is edited in binary mode. The mode is 
     automatically enabled when a file is loaded as a binary file via 
-    lslmfind-bfile(2)le. 
+    lslmfind-bfile(3)le. 
+
+    When a file is loaded using binary mode, every 16 bytes is converted into 
+    a line of text giving the hex address of the current position in the file, 
+    the bytes as hexadecimal numbers and all printable characters at the end 
+    of the line (all non-printable characters are displayed as a 'cG.cA'). 
+    However, This format makes it memory hungry in that every 16 bytes of the 
+    file requires a 78 character line (approximately 5 times more memory!). 
+    For a more memory efficient binary mode see lslmrbin(2m)le. 
+
+    When writing out a file which has binary mode enabled the format of each 
+    line must have the binary mode format which is as follows: 
+
+        <address>: XX XX XX XX XX .... XX XX | <text-form> 
+
+
+    Only the hex values (the cGXXcA's) between the starting 'cC:cA' marker and the 
+    terminating '|' character are used, the cC<address>cA and cC<text-form>cA are 
+    ignored. 
+
+
+cEcEEXAMPLE cEcA
+
+
+    Given a single line MSDOS file:- 
+
+        Live long and prosper. 
+
+
+    When loaded in using cDbinarycA mode the following 2 line buffer will be 
+    produced:- 
+
+        00000000: 4C 69 76 65 20 6C 6F 6E 67 20 61 6E 64 20 70 72  |  Live long and pr 
+        00000010: 6F 73 70 65 72 2E 0D 0A 1A                       |  osper.... 
+
+
+    Note the "cG0D 0A 1AcA" at the end, this is due to MSDOS's "cG\n\rcA" carriage 
+    returns and cG^ZcA file termination, these characters are unprintable and are 
+    shown as 'cG.cA' at the end of the line. 
+
+    When saving a binary file, only the text between the 'cG:cA' and 'cG|cA' is 
+    considered and it may contain any number of hexadecimal numbers. The given 
+    file could be made UNIX compatible by editing the buffer to:- 
+
+        00000000: 4C 69 76 65 20 6C 6F 6E 67 20 61 6E 64 20 70 72  |  Live long and pr 
+        00000010: 6F 73 70 65 72 2E 0D                       |  osper.... 
+
+
+    If the word "cDlongcA" is required to be removed, the following would not 
+    work:- 
+
+        00000000: 4C 69 76 65 20 6C 6F 6E 67 20 61 6E 64 20 70 72  |  Live and pr 
+        00000010: 6F 73 70 65 72 2E 0D 0A 1A                       |  osper.... 
+
+
+    The ASCII end letters are ignored, instead the following operation must be 
+    performed which removes the characters from the binary representation:- 
+
+        00000000: 4C 69 76 65 20 61 6E 64 20 70 72  |  Live long and pr 
+        00000010: 6F 73 70 65 72 2E 0D 0A 1A                       |  osper.... 
+
+
+    One could be nasty by doing the following:- 
+
+        00000000: 4C 69 76 65 20 73 68 6F 72 74 20 61 6E 64 20 | 
+        00000010: 64 6F 6E 27 74 20 70 72 6F 73 70 65 72 2E 0D 0A 1A           | 
+
+
+    ("Live short and don't prosper"). 
+
+
+cEcENOTES cEcA
+
+
+    cDrbincA and cDbinarycA modes are mutually exclusive, i.e. they cannot both be 
+    enabled at the same time. 
 
 
 cEcESEE ALSO cEcA
 
 
-    lslmfind-bfile(2)le. 
+    lslmfind-bfile(3)le, lslmfind-file(2)le, lslmrbin(2m)le. 
 
 ! 2mautosv
 cEcENAME cEcA
@@ -19876,6 +20098,120 @@ ehf-scheme
 
 
     lslmauto(2m)le, lslmcrlf(2m)le, lslmsave-buffer(2)le, lslmfind-file(2)le, lslm$buffer-fmod(5)le. 
+
+! 2mrbin
+cEcENAME cEcA
+
+
+    rbin - Reduced binary editor mode 
+
+
+cEcESYNOPSIS cEcA
+
+
+    cDrbin ModecA 
+
+    cDrcA - mode line letter. 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    cDrbincA mode is enabled when a file is edited in reduced binary mode. The 
+    mode is automatically enabled when a file is loaded as a binary data file 
+    via lslmfind-file(2)le. 
+
+    When a file is loaded using cDrbincA mode, every 256 bytes is converted into a 
+    line of text, the line is a single list of hex numbers 512 characters 
+    long, 2 bytes for each character. This format is not very user friend 
+    unlike lslmbinary(2m)le mode, but is much more memory efficient (requiring 
+    approximately 2 times more memory than the file size). 
+
+    When writing out a file which has rbin mode enabled the format of each 
+    line must be correct, namely an even number of hex numbers with no other 
+    characters. 
+
+
+cEcEEXAMPLE cEcA
+
+
+    Given a single line MSDOS file:- 
+
+        Live long and prosper. 
+
+
+    When loaded in using cDbinarycA mode the following 2 line buffer will be 
+    produced:- 
+
+        4C697665206C6F6E6720616E642070726F737065722E0D0A1A 
+
+
+    Note the "cG0D 0A 1AcA" at the end, this is due to MSDOS's "cG\n\rcA" carriage 
+    returns and cG^ZcA file termination. The given file could be made UNIX 
+    compatible by editing the buffer to:- 
+
+        4C697665206C6F6E6720616E642070726F737065722E0D 
+
+
+cEcENOTES cEcA
+
+
+    cDrbincA and cDbinarycA modes are mutually exclusive, i.e. they cannot both be 
+    enabled at the same time. 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmfind-file(2)le, lslmbinary(2m)le. 
+
+! 2mfence
+cEcENAME cEcA
+
+
+    fence - Auto fence matching mode 
+
+
+cEcESYNOPSIS cEcA
+
+
+    cDfence ModecA 
+
+    cDfcA - mode line letter. 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    cDfencecA mode can be used to enable or disable the automatic displaying of 
+    and open fence when the corresponding closing fence is typed. When the 
+    mode is enabled and the closing fence is typed the cursor is temporarily 
+    move to the position of the opening fence. The duration of the move can be 
+    controlled by the lslm$fmatchdelay(5)le variable; any user input interrupts the 
+    display. 
+
+    If lslmcmode(2m)le is also enabled the search algorithm used is 'cCCcA' aware and if 
+    a matching fence is not found then the bell is rung as a warning. If cDcmodecA 
+    is not enable any closing fence which cannot be matched is ignored. 
+
+
+cEcENOTES cEcA
+
+
+    The following characters are considered closing fences: 
+
+        }  )  ] 
+
+
+    These are match with the following opening fences respectively: 
+
+        {  (  [ 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslm$fmatchdelay(5)le, lslmcmode(2m)le, lslmgoto-matching-fence(2)le. 
 
 ! 2 languageTemplates
 cEcEFILE LANGUAGE TEMPLATES cEcA
@@ -22088,14 +22424,6 @@ ehf-scheme
     cD-CcA 
         Build clean. Delete all of the object files. 
 
-    cD-ncA 
-        Build a console version (i.e. no window support). Constructs the 
-        executable cGmen32.execA on Windows, cGmencA on Linux. 
-
-    cD-nucA 
-        Build a console version with URL support (Windows '95/'98/NT only), 
-        constructs the executable cGmenu32.execA. 
-
     cD-dcA 
         Build a debugging version, the output is cGmedcA (or cGmed32cA for 32-bit 
         Windows versions) 
@@ -22142,6 +22470,14 @@ ehf-scheme
                 * cGwin32v5.makcA Microsoft Developer v5.x, 32-bit Windows. 
                 * cGwin32v6.makcA Microsoft Developer v6.x, 32-bit Windows. 
 
+    cD-ncA 
+        Build a console version (i.e. no window support). Constructs the 
+        executable cGmen32.execA on Windows, cGmencA on Linux. 
+
+    cD-nucA 
+        Build a console version with URL support (Windows '95/'98/NT only), 
+        constructs the executable cGmenu32.execA. 
+
     cD-ScA 
         Build spotless. Deletes all of the object files and any backup files, 
         tag files etc. 
@@ -22177,6 +22513,279 @@ ehf-scheme
     platforms. If any new platform ports are performed by individuals then 
     please submit the makefiles and any source changes back to JASSPA - see 
     lslmContact Informationle. 
+
+! 2 localeSupport
+cEcELOCALE SUPPORT cEcA
+
+
+    Locale support within MicroEmacs handles the hardware and software 
+    configuration with respect to location, including:- 
+
+        Displayed Character Set 
+        Keyboard Support 
+        Word characters 
+        Spell Support 
+
+    There are many other locale problems which are not addressed in this help 
+    page. Supporting different locale configurations often requires specific 
+    hardware (a locale specific keyboard) and knowledge of the language and 
+    customs of the region. This makes it a very difficult area for one 
+    localized development team to support, as such, JASSPA rely heavily on the 
+    user base to report locale issues. 
+
+
+cENote on Names and IDs cA
+
+
+    The language name is not sufficient to identify a locale (Mexican Spanish 
+    is different to Spanish Spanish) neither is the country name (two 
+    languages are commonly used in Belgium), so before we've really started 
+    the first problem of what to call the locale has no standard answer! Call 
+    it what you like but please try to call it something meaningful so others 
+    may understand and benefit from your work. 
+
+    In addition, the cCinternal idcA and cCdata filecA names have a length limit of 
+    just four characters due to the "cG8.3cA" naming conversion of MS-DOS. The 
+    standard adopted by JASSPA MicroEmacs for the internal locale id is to 
+    combine the 2 letter ISO language name (ISO 639-1) with the 2 letter ISO 
+    country name (ISO 3166-1). Should the locale encompasses more than one 
+    country, then the most appropriate cCcountry idcA is selected. 
+
+
+cEcEDisplayed Character Set cEcA
+
+
+    A character set is the mapping of an integer number to a display symbol 
+    (i.e. character). The ASCII standard defines a mapping of numbers to the 
+    standard English characters, this standard is well defined and accepted, 
+    as a result the character set rarely causes a problem for plain English. 
+
+    Problems occur when displaying characters found outside the ASCII 
+    standard, such as letters with accents, letters which are not Latin based 
+    (e.g. Greek alphabet) and graphical characters (used for drawing dialog 
+    boxes etc.). There are many different character sets to choose between and 
+    if the wrong character set is selected then the incorrect character 
+    translation is performed resulting in an incorrect character display. If 
+    the character display looks incorrect then first try changing the font and 
+    character-set setting, these can be configured using the platform page of 
+    lslmuser-setup(3)le. 
+
+    If the problem persists (i.e. because the character set used to write the 
+    text is not supported on your current system) use the lslmcharset-change(3)le 
+    command to convert the text to the current character set. 
+
+    If your character-set is not supported then first make sure that 
+    MicroEmacs will draw all of the characters to be used. By default 
+    MicroEmacs does not draw some characters directly as the symbol may not be 
+    defined. When a character is not defined then there will typically be a 
+    gap or space in the text at the unknown character, in some cases there may 
+    be no space at all which will make it very hard to use. The lslmsymbol(3)le 
+    command (menu->symbol) is a good way of looking at which characters can be 
+    used with the current character set. 
+
+    For a character to be rendered (when in main text) or poked (drawn by 
+    lslmscreen-poke(2)le or lslmosd(2)le) is defined by the lslmset-char-mask(2)le command. The 
+    characters that are used when drawing MicroEmacs's window boarders or cDosdcA 
+    dialogs is set via the lslm$box-chars(5)le and lslm$window-chars(5)le variables. 
+
+    MicroEmacs attempts to improve the availability of useful graphics 
+    characters on Windows and UNIX X-Term interfaces. The characters between 0 
+    and 31 are typically control characters with no graphical representation 
+    (e.g. new-line, backspace, tab etc.) if bit 0x10000 of the lslm$system(5)le 
+    variable is set then MicroEmacs renders its own set of characters. These 
+    characters are typically used for drawing boxes and scroll-bars. 
+
+    With so many character sets, each with their own character mappings, then 
+    the problem of spelling dictionary support is also tied to the locale. 
+    MicroEmacs uses the ISO standard character sets (ISO 8859) internally for 
+    word and spelling support and therefore a mapping between the ISO standard 
+    and the user character set is required. This mapping is defined by using 
+    the 'cGMcA' flag of the lslmset-char-mask(2)le command. 
+
+    The user may declare the current character set in the platform page of 
+    lslmuser-setup(3)le. All the settings required for supporting each character set 
+    may be found in the cGcharset.emfcA macro file, so if your character set is 
+    not supported, this is the file to edit. 
+
+
+cEcEKeyboard Support cEcA
+
+
+    The keyboard to character mapping is defined in the Start-Up page of 
+    lslmuser-setup(3)le, where the keyboard may be selected from a list of known 
+    keyboards. If your keyboard is not present, or is not working correctly, 
+    then this section should allow you to fix the problem (please send JASSPA 
+    the fix). 
+
+    Most operating systems seem to handle keyboard mappings with the exception 
+    of MS-Windows which requires a helping hand. The root of the problems with 
+    MS-Windows is it's own locale character mappings which change the 
+    visibility status of the keyboard messages which conflict with Emacs 
+    keystroke bindings. To support key-bindings like 'cGC-tabcA' or 'cGS-returncA' a 
+    low level keyboard interface is required, but this can lead to strange 
+    problems with the more obscure keys, particularly with the 'cGAlt GrcA' 
+    accented letter keys. For example on American keyboards pressing 'cGC-#cA' 
+    results in two 'cGC-#cA' key events being generated, this peculiarity only 
+    occurs with this one key. On a British keyboard the same key generates a 
+    'cGC-#cA' followed by a 'cGC-\cA'. 
+
+    This problem can be diagnosed using the lslm$recent-keys(5)le variable. Simply 
+    type an obvious character, e.g. 'cGAcA' then the offending key followed by 
+    another obvious key ('cGBcA'), then look for this key sequence in the 
+    cD$recent-keyscA variable (use the lslmlist-variables(2)le or lslmdescribe-variable(2)le 
+    command). So for the above British keyboard problem the recent-keys would 
+    be: 
+
+            B C-\\ C-# A 
+
+
+    ($recent-keys lists the keys backwards). Once you have found the key 
+    sequence generated by the key, the problem may be fixed using the 
+    lslmtranslate-key(2)le to automatically convert the incorrect key sequence into 
+    the required key. For the problem above the following line is required: 
+sB
+        translate-key "C-# C-\\" "C-#" 
+
+sA
+    Note that once a key sequence has been translated everything, including 
+    cD$recent-keyscA, receive only the translated key. So if you a suspected a 
+    problem with the existing definition, change the keyboard type in 
+    cDuser-setupcA to cDDefaultcA so no translations are performed, quit and restart 
+    MicroEmacs before attempting to re-diagnose the problem. 
+
+    All the settings required for supporting each keyboard may be found in the 
+    cGkeyboard.emfcA macro file, so if your keyboard is not supported, this is the 
+    file you need to edit. 
+
+
+cEcEWord characters cEcA
+
+
+    Word characters are those characters which are deemed to be part of a 
+    word, numbers are usually included. Many MicroEmacs commands use the 
+    'Word' character set such as lslmforward-word(2)le and lslmupper-case-word(2)le. The 
+    characters that form the word class are determined by the language being 
+    used and this can be set in the Start-Up page of lslmuser-setup(3)le. 
+
+    If your language is not supported you will need to add it to the list and 
+    define the word characters, these settings may be found in the 
+    cGlanguage.emfcA macro file. The 'cGacA' flag of command lslmset-char-mask(2)le is used 
+    to specify whether a character is part of a word, you must specify the 
+    uppercase letter and then the lowercase equivalent so the case conversion 
+    functions work correctly. 
+
+    A list of characters to be removed from the word character set is stored 
+    in the cD.set-char-mask.rm-charscA variable. This is done so that the language 
+    may be changed many times in the same session of MicroEmacs without any 
+    side effects (such as the expansion of the word character set to include 
+    all letters of all languages). This makes MicroEmacs ideal for writing 
+    multi-language documents. 
+
+    This may unfortunately be made a little more tricky by the requirement 
+    that this list must be specified in the most appropriate ISO standard 
+    character set (see cDDisplayed Character SetcA section). When extending the 
+    word character set the characters have to be mapped to the current 
+    character set which may not support all the required characters. For 
+    example in the PC-437 DOS character set there is an e-grave (cG`ecA) but no 
+    E-grave so the E-grave is mapped to the normal E. As a result, if trying 
+    to write French text the case changing commands will behave oddly, for 
+    example: 
+
+            r`egle -> REGLE -> r`egl`e 
+
+
+    The conversion of all 'cGEcA's to 'cG`ecA' is an undesirable side effect of 'cG`EcA' 
+    being mapped to cGEcA. This can be avoided by redefining the base letter again 
+    at the end of the word character list, for example: 
+sB
+        set-char-mask "a" "`E`eEe" 
+
+sA
+
+cEcESpell Support cEcA
+
+
+    The current language is set using the Language setting on General page of 
+    lslmuser-setup(3)le, if your required language is not listed you must first 
+    create the basic language support by following the guide lines in the cDWord 
+    CharactercA section above. If you Language is listed, select it and enable 
+    it by either pressing cDCurrentcA or saving and restarting MicroEmacs. in a 
+    suitable test buffer run the lsspell-buffer(3)lmspelling checkerle, one of three things will 
+    happen: 
+
+    The cGSpelling CheckercA dialog opens and spelling is checked 
+
+        The spelling checker is supported by the current language and can be 
+        used (the rules and dictionaries have been downloaded and installed). 
+
+    Dialog opens with the following error message: 
+
+            Rules and dictionaries for language "XXXX" 
+               are not available, please download. 
+
+
+        The spelling checker is supported by the current language but the 
+        required rules and dictionaries have not been downloaded. You should 
+        be able to download them from the JASSPA website, see lsMicroEmacs '01 - Contact InformationlmContactln
+        lnInformationle. Once downloaded they must be placed in the MicroEmacs 
+        ls$search-path(5)lmsearch pathle, i.e. where the other macro files (like cGme.emfcA) are 
+        located. 
+
+    Dialog opens with the following error message: 
+
+            Language "XXXX" not supported! 
+
+
+        The spelling checker is not supported by the current language, see the 
+        following cDAdding Spell SupportcA section. 
+
+
+cEAdding Spell Support cA
+
+
+    To support a language MicroEmacs's spelling checker requires a base word 
+    dictionary and a set of rules which define what words can be derived from 
+    each base word in the dictionary. The concept and format of the word list 
+    and rules are compatible with the cDFree Software FoundationcA GNU cDispell(1)cA 
+    package. 
+
+    The best starting point is to obtain cDispellcA rules and word lists in plain 
+    text form, the web can usually yield these. Once these have been obtained 
+    the rules file (or affix file) must be converted to a MicroEmacs macro 
+    file calling the lslmadd-spell-rule(2)le command to define the rules. The rule 
+    file should be named "cGlsrcAcC<lang-id>cAcG.emfcA" where "cC<lang-id>cA" is the spelling 
+    language id, determined by the cD.spell.languagecA variable set in the 
+    cGlanguage.emfcA macro file. 
+
+    The cGspellutl.emfcA macro file contains the command cDspell-conv-aff-buffercA 
+    which will attempt to convert the buffer but due to formatting anomalies 
+    this process often goes wrong so using the command cDspell-conv-aff-linecA 
+    (also contained in cGspellutl.emfcA) to convert a single line is often 
+    quicker. See existing spelling rule files (cGlsr*.emfcA) for examples and help 
+    on command lslmadd-spell-rule(2)le. 
+
+    cDNotecA: the character set used by the rules should be the most appropriate 
+    ISO standard (see cDDisplayed Character SetcA section), this can make the 
+    process much more difficult if the current character set not compatible, 
+    if you are having difficulty with this please e-mail lsMicroEmacs '01 - Contact InformationlmJASSPA Supportle. 
+
+    Once the rules have been created, create a dictionary for the language 
+    from the word lists, see help on command lslmadd-dictionary(2)le. The dictionary 
+    file name should be "cGlsdmcAcC<lang-id>cAcG.edfcA", if the dictionary is large and 
+    can be split into two sections, a set of common words and a set of more 
+    obscure ones, create two dictionaries calling the dictionary containing 
+    obscure words "cGlsdxcAcC<lang-id>cAcG.edfcA" and the other as above. 
+
+    Once the generated word and dictionary files have been place in the 
+    MicroEmacs ls$search-path(5)lmsearch pathle, the spelling checker should find and use them. 
+    Please submit your generated support to MicroEmacs for others to benefit. 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmuser-setup(3)le, lslmcharset-change(3)le, lslmset-char-mask(2)le, lslmtranslate-key(2)le, 
+    lslm$box-chars(5)le, lslm$window-chars(5)le, lslm$recent-keys(5)le. 
 
 ! 3fgdiff
 cEcENAME cEcA
@@ -23027,7 +23636,7 @@ $a
 cEcENOTES cEcA
 
 
-    cDsave-allcA is a macro defined in cGosd.emfcA, using commands 
+    cDsave-allcA is a macro defined in cGme.emfcA, using commands 
     lslmsave-some-buffers(2)le, lslmsave-dictionary(2)le and lslmsave-registry(2)le. 
 
 
@@ -25170,132 +25779,48 @@ $a
 
     lsfileHooks(2)lmFile Hooksle, lslmuser-setup(3)le, lslmnarrow-buffer(2)le. 
 
-! 3 set-language
+! 3 find-bfile
+! 3 find-cfile
 cEcENAME cEcA
 
 
-    set-language - Set the current language 
+|find-bfile
+    find-bfile - Load a file as binary data 
+|find-cfile
+    find-cfile - Load a crypted file 
 $a
 
 
 cEcESYNOPSIS cEcA
 
 
-    cDset-languagecA "cClanguagecA" 
+    cCncA cDfind-bfilecA "cCfile-namecA" (cDC-x 9cA) 
+    cCncA cDfind-cfilecA "cCfile-namecA" 
 
 
 cEcEDESCRIPTION cEcA
 
 
-    cDset-languagecA sets the current language in MicroEmacs. The language setting 
-    affects the following areas:- 
-
-        * ASCII characters belonging to the alphabetic letter set, affecting 
-          commands such as lslmforward-word(2)le. 
-        * ASCII characters which may be displayed on the screen 
-        * The rules and dictionaries that lslmspell(2)le uses. 
-
-    The standard release of MicroEmacs '01 supports the following languages:- 
-
-            American 
-            American (Ext) 
-            British 
-            British (Ext) 
-
-
-    The extended languages (cDExtcA) are identical to their base languages except 
-    lslmspell(2)le uses the extended dictionary in addition to the basic dictionary, 
-    doubling the dictionary size. 
-
-    Other languages have been supported by MicroEmacs '01, i.e. French, 
-    Spanish. 
+    cDfind-bfilecA and cDfind-cfilecA provide a simple interface to loading files in 
+    lslmbinary(2m)le and lslmcrypt(2m)le modes respectively. The numeric argument has the 
+    same effect as with the lslmfind-file(2)le command except the respective modes 
+    are always enabled. See documentation on the modes an cDfind-filecA command 
+    for more information. 
 
 
 cEcENOTES cEcA
 
 
-    To support a new language the following steps should be taken:- 
+    cDfind-bfilecA and cDfind-cfilecA are macros defined in file cGtools.emfcA. 
 
-    cD1)cA 
-        Decide on the name of the language and the pseudo file name (maximum 8 
-        characters long) to be used ("cGDutchcA" and "cGdutchcA" say). 
+    The command lslmfind-file(2)le is bound to key "cGC-x 9cA" with a numeric argument 
+    of 2, this is equivalent to executing cDfind-bfilecA with no argument. 
 
-    cD2)cA 
-        Create a dictionary for the language ("cGdutch.edfcA"), see 
-        lslmadd-dictionary(2)le. 
-
-    cD3)cA 
-        Create the set of spell rules for the language, see lslmadd-spell-rule(2)le. 
-        Save these in the macro file "cGdutchr.emfcA" say, this file should also 
-        include the following definitions:- 
-sB
-            ; define the rule-init command to initialize the language 
-            define-macro rules-init 
-            !emacro 
-            ; Get a list of rule letters which are used 
-            set-variable %spell-rules "HIJLMNOPQRSTUVWXYZ" 
-            ; reset the spell rules 
-            0 add-spell-rule 
-            ; Now add the dutch spell rules 
-            2 add-spell-rule "J" "e" "e" "\xEDsimo" ; grande grand'isimo 
-            . 
-            . 
-
-sA
-        Note the empty cDrules-initcA command must be defined, the rule file may 
-        be large (Spanish is 4000 lines) and should only be loaded on demand, 
-        not by default at start-up. Defining the empty cDrules-initcA command and 
-        using the lslmdefine-macro-file(2)le command is the method employed by 
-        MicroEmacs to load the rule file on demand. 
-
-    cD4)cA 
-        Create the main language macro file ("cGdutch.emfcA") which is executed 
-        when the Spanish language is set, typically at start-up. This macro 
-        file should contain any required key translations (see 
-        lslmtranslate-key(2)le), in addition to word and display character changes 
-        (see lslmset-char-mask(2)le). The macro file adds the dictionary and creates 
-        the hook to the rule file:- 
-sB
-            ; Create any key translations required to insert accent letters 
-            translate-key "A-C-[" 0x94 
-            . 
-            . 
-            ; Add the standard dictionary 
-            add-dictionary "dutch" 
-
-            ; expand the normal letter range to include the accent letters, 
-            ; make sure they're disablyable, pokable 
-            set-char-mask "dpa" "\xC1\xE1Aa\xC9\xE9Ee..." 
-
-            0 define-macro language-tidy 
-                -1 set-char-mask "a" "\xC1\xE1\xC9\xE9..." 
-            !emacro 
-
-            0 define-macro-file dutchr spell-rules-init 
-
-sA
-        Note the cDlanguage-tidycA command MUST be defined and should restore any 
-        changes it may have made to the character sets. 
-
-    cD5)cA 
-        Add the language to cGlanguage.emfcA so other commands such as 
-        lslmuser-setup(3)le and lslmspell-buffer(3)le can use it. There are two variables 
-        that must be changed, the language name must be added to 
-        cD%language-namescA and the pseudo file name (with a single digit argument 
-        to be given to the execution of the setup macro file) to 
-        %language-val, i.e.:- 
-sB
-            set-variable %language-names "|American|American (Ext)... 
-                ...|British|British (Ext)|Dutch|" 
-            set-variable %language-val   "|1american|2american... 
-                ...|1british|2british|1dutch|" 
-
-sA
 
 cEcESEE ALSO cEcA
 
 
-    lslmuser-setup(3)le, lslmspell-buffer(3)le, lslmtranslate-key(2)le, lslmset-char-mask(2)le. 
+    lslmfind-file(2)le, lslmbinary(2m)le, lslmcrypt(2m)le. 
 
 ! 3 man
 ! 3 man-clean
@@ -26425,7 +26950,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmuser-setup(3)le, lslmset-char-mask(2)le, lslmset-language(3)le. 
+    lslmuser-setup(3)le, lslmset-char-mask(2)le, lslocaleSupport(2)lmLocale Supportle. 
 
 ! 3 execute-tool
 cEcENAME cEcA
@@ -27440,6 +27965,7 @@ $a
 
 ! 3 cvs
 ! 3 cvs-add
+! 3 cvs-checkout
 ! 3 cvs-commit
 ! 3 cvs-diff
 ! 3 cvs-gdiff
@@ -27455,6 +27981,8 @@ $a
     cvs - MicroEmacs CVS interface 
 |cvs-add
     cvs-add - MicroEmacs CVS interface - add file 
+|cvs-checkout
+    cvs-checkout - MicroEmacs CVS interface - checkout files and directories 
 |cvs-commit
     cvs-commit - MicroEmacs CVS interface - commit changes 
 |cvs-diff
@@ -27480,6 +28008,7 @@ $a
     cDcvscA 
 
     cDcvs-addcA 
+    cDcvs-checkoutcA 
     cDcvs-commitcA 
     cDcvs-diffcA 
     cDcvs-gdiffcA 
@@ -27495,23 +28024,31 @@ $a
 
     The cvs and sub-commands provide MicroEmacs with an interface to cDcvs(1)cA. 
     cDCVScA is a version control system; using it, you can record the history of 
-    your source files. CVS is licensed under the GNU General Public License 
-    and is freely available on the internet, see documentation provided with 
-    CVS for more information on its features and use. 
+    your source file modifications. CVS is licensed under the GNU General 
+    Public License and is freely available on the Internet, see the 
+    documentation provided with CVS for more information on its features and 
+    use. 
 
     The MicroEmacs cDcvscA command opens up a modified lslmfile-browser(3)le with an 
-    extra "cG*cvs-console*cA" window underneath, the "cG*files*cA" window has extra 
-    columns giving the CVS state, revision and repository date. The 
-    functionality of the file-browser is the same except for an additional CVS 
-    item in the mouse context mouse menu (opened by clicking the right mouse 
-    button in the cG*files*cA buffer). This menu item opens another sub-menu 
-    giving access to the following items: 
+    additional "cG*cvs-console*cA" window. The "cG*files*cA" window includes 
+    additional columns showing the CVS state, revision and repository date. 
+    The functionality of the file-browser is the same as a non-CVS folder with 
+    the exception that additional CVS item controls are located in the mouse 
+    context menu (opened by clicking the right mouse button in the cG*files*cA 
+    buffer). This menu item opens another sub-menu providing access to the 
+    following items: 
+
+    cDCheckout filescA 
+        Checks out a file or directory from the repository into the current 
+        directory. The file or directory is specified by typing the name into 
+        a dialog which is opened when this option is selected. This runs the 
+        command "cGcvs checkout <file>cA". 
 
     cDUpdate filescA 
         Updates the currently selected files, files are selected by clicking 
-        the left button to the left of the required file name, Multiple files 
-        can be selected at once by 'dragging' a hilight region over the 
-        required files. This runs the command "cGcvs update <files>cA". 
+        the left button to the left of the required file name. Multiple files 
+        may be selected by 'dragging' a hilight region over the required 
+        files. This runs the command "cGcvs update <files>cA". 
 
     cDCommit filescA 
         Commits any changes made to the selected files back to the CVS 
@@ -27532,7 +28069,7 @@ $a
 
     cDAdd filescA 
         Adds the selected files to the CVS repository. Note this command only 
-        performs the local add, a CVS commit is required to make the addition 
+        performs the local add, a cDCVS commitcA is required to make the addition 
         permanent. This runs the command "cGcvs add <files>cA". 
 
     cDRemove filescA 
@@ -27546,21 +28083,25 @@ $a
         command only works with a single file. 
 
     cDResolve conflictscA 
-        This command can be used to resolve merge conflicts created by a CVS 
-        update. The command opens a lslmgdiff(3)le window showing the areas of 
-        conflict allowing the user to select the correct version and saving 
-        the resultant version back to the local file. Note this command only 
-        works with a single file. 
+        This command may be used to resolve merge conflicts created by a cCCVScA 
+        cCupdatecA operation. The command opens a lslmgdiff(3)le window showing the 
+        areas of conflict allowing the user to select the correct version and 
+        saving the resultant version back to the local file. Note this command 
+        only works with a single file. 
 
     cDClear cvs consolecA 
         Clears the cC*cvs-console*cA buffer. 
 
     The cDcvs-addcA command adds the current buffers file to the repository. Note 
-    that this command only performs the local addition, a CVS commit is 
+    that this command only performs the local addition, a cCCVScA cCcommitcA is 
     required to make the addition permanent. 
 
+    The cDcvs-checkoutcA command checks out a file or directory from the 
+    repository into the current directory. The user specifies the file on the 
+    message line. 
+
     The cDcvs-commitcA command commits any changes made to the currently buffer's 
-    file (including addition) to the repository. The user is prompted for a 
+    file (including additions) to the repository. The user is prompted for a 
     commit log message. 
 
     The cDcvs-diffcA command opens a cC*cvs-diff*cA window displaying the differences 
@@ -27576,14 +28117,14 @@ $a
 
     The cDcvs-removecA command removes the current buffer's file from the 
     repository - PLEASE NOTE THIS CAN LEAD TO LOST DATA!!! This command only 
-    performs the local removal and as it deletes the buffer and file the 
+    performs the local removal; as it deletes the buffer and file the 
     cDcvs-commitcA command cannot be used to commit the removal to the CVS 
     repository. Instead the main cDcvscA file-browser menu or cDcvs(1)cA itself must 
     be used. 
 
-    The cDcvs-resolve-conflictscA command can be used to resolve any conflicts 
-    created by CVS when the current buffer's file was updated. The command 
-    opens a gdiff window displaying the areas of conflict, the user can then 
+    The cDcvs-resolve-conflictscA command may be used to resolve any conflicts 
+    created by CVS when the current buffer's file is updated. The command 
+    opens a gdiff window displaying the areas of conflict, the user may then 
     select the correct version in each case and save the resultant new version 
     over the local file. 
 
@@ -27603,14 +28144,193 @@ $a
 
     cDcvscA and sub-commands are macros defined in file cGcvs.emfcA. 
 
-    By default cDcvscA filters out all files ignored by cDcvs(1)cA. This is configured 
-    by the variable cD.cvs.filtercA, setting this to 0 will disable the filtering. 
+    By default MicroEmacs's cDcvscA commands skip all files ignored by cDcvs(1)cA. 
+    This is configured by the variable cD.cvs.filtercA, defining this variable to 
+    cG0cA disables this special filtering. 
 
 
 cEcESEE ALSO cEcA
 
 
     lslmfile-browser(3)le. 
+
+! 3 occur
+cEcENAME cEcA
+
+$a
+
+cEcESYNOPSIS cEcA
+
+
+    cDoccurcA 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    cDoccurcA performs a regular expression search for a string in the current 
+    buffer; generating a list of every occurrence of the regular expression in 
+    the buffer. 
+
+    On invocation the user is prompted for a lsRegularExpressions(2)lmRegular Expressionsle the buffer is 
+    searched for the expression and the results are presented in the 
+    cG*item-list*cA window appearing at the left-hand side of the window. 
+
+    The user may interact with the cG*item-list*cA buffer using the mouse or 
+    cG<RETURN>cA, on selecting a line then the user is moved to the corresponding 
+    line in the original buffer. 
+
+
+cEcENOTES cEcA
+
+
+    The cG*item-list*cA window may be closed with the command lslmitem-list-close(3)le 
+    typically bound to cGesc-F7cA. 
+
+    cDoccurcA is a macro defined in cGitemlist.emfcA. 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmitem-list(3)le, lslmitem-list-close(3)le, lslmsearch-forward(2)le, lsRegularExpressions(2)lmRegular Expressionsle 
+
+! 3 item-list
+! 3 item-list-find
+! 3 item-list-close
+cEcENAME cEcA
+
+
+|item-list
+    item-list - Abbreviated search and list buffer contents. 
+|item-list-find
+    item-list-find - Find the selected item in the item list 
+|item-list-close
+    item-list-close - "Close the item list" 
+$a
+
+
+cEcESYNOPSIS cEcA
+
+
+    cDitem-listcA (cDF7cA) 
+    cDitem-list-findcA 
+    cDitem-list-closecA (cDesc F7cA) 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    cDitem-listcA performs a regular expression search of a buffer, presenting a 
+    list of the located text and associated types in a separate window which 
+    is presented to the left of the buffer window. cDitem-listcA is a generic 
+    function that interacts with the buffer environment variables to present 
+    abbreviated buffer information to the user. 
+
+    The regular expression search strings are predefined in the language 
+    templates. To add support for a new buffer type a list of search/replace 
+    strings must be created. The search strings must use regex (magic mode) 
+    and groups cG\(..\)cA to place the located object string into the replace 
+    string. Within the template buffer search strings (cDscA) and replace (cDrcA) are 
+    defined with the following syntax:- 
+
+        set-variable .cChooknamecA.item-list-scCxcA "cCregexpcA" 
+        set-variable .cChooknamecA.item-list-rcCxcA "cCreplacecA" 
+
+    Where:- 
+
+    cChooknamecA 
+        The name of the file hook i.e. cGfhook-ccA for ANSI 'C'. 
+
+    cCxcA 
+        The search number, this is valid in the range 1..9, commencing from 1. 
+        The search is processed in the order of the numeric identity. 
+
+    cCregexpcA 
+        The regular expression to search for. One of the arguments must 
+        include a groups cG\(..\)cA definition to allow the string to be moved to 
+        the replace. 
+
+    cCreplacecA 
+        The replace string, this typically includes a cCtypecA and part of the 
+        search string. 
+
+    On invocation of cDitem-listcA the buffer is searched and the results are 
+    presented in the cG*item-list*cA window appearing at the left-hand side of the 
+    window. If there is no item list set up for the file type then an error 
+    message is displayed. 
+
+    The user may interact with the cG*item-list*cA buffer using the mouse or 
+    cG<RETURN>cA, on selecting a line then the user is moved to the corresponding 
+    line in the original buffer. 
+
+    cDitem-list-findcA finds the current item list item and searches for the text 
+    in the original buffer. This is typically bound to a mouse or key stroke 
+    action. 
+
+    cDitem-list-closecA closes the item list buffer. 
+
+
+cEcEEXAMPLE cEcA
+
+
+    The following example works through the cDitem-listcA definition for the ME 
+    macros e.g. given that the ME macro definition is: 
+
+        define-macro macro-name 
+
+
+    Searching for "cGdefine-macro \([a-z-]+\)cA" and replacing with "cGMacro \1cA" 
+    will work most of the time. The space between cGdefine-macrocA and the name 
+    does not have to be a single space and the cCnamecA does not have to contain 
+    just lower case letters, so these search strings should be a flexible as 
+    possible, try 
+
+        "define-macro\s +\(\w+\)" 
+
+
+    This however is not as optimal as it could be and if you have large files 
+    this could become slow. Performance can be greatly increased if it can be 
+    anchored to the start of the line, e.g. 
+
+        "^define-macro\s +\(\w+\)" 
+
+
+    but to allow for initial white spaces and the optional numeric argument, 
+    you really need 
+
+        "^\s *[0-9]*\s *define-macro\s +\(\w+\)" 
+
+
+    To hilight the function name you need the name encased the name in a magic 
+    hilighting string, 
+
+        "\ecBmacro-name\ecA" 
+
+
+    where cG\ecA is an escape char, so the replace string should be 
+
+        "Macro \ecB\1\ecA" 
+
+
+    Now all thats needed is to set these variables as fhook command variables, 
+    for macro files, the file hook command is cGfhook-emfcA, therefore the 
+    following is required: 
+sB
+        set-variable .fhook-emf.item-list-s1 "^\\s *[0-9]*\\s *define-macro\\s +\\(\\w+\\)" 
+        set-variable .fhook-emf.item-list-r1 "Macro \ecB\\1\ecA" 
+
+sA
+    Note that you can have as many of these search and replace variables as 
+    you require, i.e. cG.item-list-s1cA, cG.item-list-s2cA, cG.item-list-s3cA, ... ; but 
+    the more you have the slower it will be, often a good regex can do the job 
+    of 2 or 3. 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmoccur(3)le, lslmsearch-forward(2)le, lsRegularExpressions(2)lmRegular Expressionsle 
 
 ! 3 user-setup
 cEcENAME cEcA
@@ -27630,7 +28350,7 @@ $a
 
 
     cDuser-setupcA provides a dialog interface to enable the user to configure the 
-    editor. cDuser-setupcA may be invoked from the main cChelpcA menu or directly from 
+    editor. cDuser-setupcA may be invoked from the main cCHelpcA menu or directly from 
     the command line using lslmexecute-named-command(2)le. cDuser-setupcA configures the 
     user's setup registry file, "cC<logname>cAcG.erfcA" which is used by MicroEmacs to 
     initialize the environment to a user's preference. 
@@ -27696,11 +28416,14 @@ $a
         lnCompany Profilele for more information. 
 
     cGEmulatecA 
-        Sets an emulation macro file name which is executed at start-up. An 
-        emulation macro file should contain macro code which creates an 
-        environment similar to another editor. MicroEmacs '01 is released with 
-        one emulation file, cGme3_8.emfcA, which emulates MicroEmacs version 3.8 
-        (See lsCompatibility(2)lmCompatibilityle for more information). 
+        Sets an emulation mode which changes the behaviour on MicroEmacs to 
+        emulate another editor/program; this is done by executing a macro file 
+        at start-up. An emulation macro file should contain the macro code 
+        required to simulate the environment of the other editor. MicroEmacs 
+        '01 is released with two emulation modes, MicroEmacs v3.8 which 
+        executes macro file cGmeme3_8.emfcA (See lsCompatibility(2)lmCompatibilityle for more 
+        information) and NEdit v5 which is at best a demonstration of what can 
+        be achieved, this executes macro file cGmenedit.emfcA. 
 
     cGMS Shift RegioncA 
         Enables/disables cursor key manipulation with the shift key similar to 
@@ -27712,7 +28435,7 @@ $a
         below. 
 
 
-cELanguage Setup cA
+cELocale Setup cA
 
 
     cGKeyboardcA 
@@ -27721,28 +28444,27 @@ $a
         supported on Windows platforms. MicroEmacs must be informed of the 
         keyboard being used to correctly interpret the keys. If a required 
         keyboard is not supported please see lsfaq38(0f)lmFAQ38le on how to setup the 
-        keyboard. 
+        keyboard, also see lslocaleSupport(2)lmLocale Supportle. 
 
     cGLanguagecA 
-        Sets the user language, this sets the printable characters, letter 
-        characters and sets up lslmspell(2)le with appropriate spelling rules and 
-        dictionaries. The "cG(Ext)cA" languages are identical to the standard 
-        languages except they use the extended language dictionary as well as 
-        the base dictionary, vastly increasing the word list. This indirectly 
-        executes lslmset-language(3)le with the given language. MicroEmacs by 
-        default comes with support for cDAmericancA and cDBritishcA. If the user 
-        creates support for another language it can be installed into 
-        MicroEmacs by adding it to the cD%language-namescA and cD%language-valcA 
-        variables found in cGlanguage.emfcA. 
+        Sets the user language, this sets the word (or letter) characters and 
+        if available sets up lslmspell(2)le with appropriate spelling rules and 
+        dictionaries. For more information on adding support for a language 
+        see lslocaleSupport(2)lmLocale Supportle. 
 
-    cGPers <language> DiccA 
-        Sets the personal dictionary file for the current language 
-        ("cC<language>cA"). Setting the personal dictionary for the language 
-        "cGDefaultcA" sets the default personal dictionary file for a language 
-        which does not have a specific personal dictionary. The cDDefaultcA 
-        language's default file is "cG<log-name>cA". Any words or auto-corrected 
-        words added while configured for this language are added to this 
-        dictionary. 
+    cDNOTEScA 
+        Earlier versions MicroEmacs had "cG(Ext)cA" languages which use extended 
+        language dictionaries, vastly increasing the word list. New versions 
+        automatically test for and use these dictionaries if available. 
+
+        In earlier versions a personal dictionary name could be set in the 
+        next field, this option was removed on Oct 2001. Instead a personal 
+        dictionary for each language is automatically created for you, any 
+        words or auto-corrected words will be added to the current languages 
+        personal dictionary. The name of dictionary is "cGlsdpcAcC<lang-id>cAcG.edfcA" 
+        where "cC<lang-id>cA" is the 4 letter MicroEmacs language name (e.g. 
+        "cGenuscA" for American), simply rename any existing personal dictionary 
+        to this new name. 
 
     cGAuto SpellcA 
         Enables Auto Spell Checking in file types which support this feature 
@@ -27830,8 +28552,8 @@ $a
 
     cGTab To IndentcA 
         Sets the lslmtab(2)le behavior in a buffer which has lslmcmode(2m)le enabled or an 
-        lsindent(2)lmindentationle method. This indirectly sets bit 0x1000 of the lslm$system(5)le 
-        variable. 
+        lsindent(2)lmindentationle method. This indirectly sets bits cG0x1000cA and cG0x200000cA of 
+        the lslm$system(5)le variable. 
 
     cGShow ModescA 
         Selects which modes are to be displayed on the mode-line whenever a 
@@ -27866,9 +28588,15 @@ $a
         lslm$window-chars(5)le greatly improving the look of lslmosd(2)le dialogs, the 
         scroll bars etc. 
 
+    cGUse FontscA 
+        When enabled the bold, italic, light and underline characteristics of 
+        the font will be used depending on their availability and the Color 
+        Scheme being used. This indirectly sets bit cG0x10cA of the lslm$system(5)le 
+        variable. 
+
     cGDraw White SpacescA 
         Enables the drawing of visible white spaces, i.e. space, tab and 
-        new-line characters. This indirectly sets bit 0x80000 of the 
+        new-line characters. This indirectly sets bit cG0x80000cA of the 
         lslm$system(5)le variable. 
 
     cGClient ServercA 
@@ -27901,6 +28629,18 @@ $a
         second box sets the hidden time. A visible time of 600 and hidden time 
         of 200 gives a reasonable blink cycle. This indirectly sets the 
         lslm$cursor-blink(5)le variable. 
+
+    cGFence DisplaycA 
+        Sets the preferred method of displaying a matching fence, a fence is 
+        one of the following brackets: 
+
+        {...}   (...)   [...] 
+
+
+    Jumping to the opening fence only occurs when the closing brace is typed, 
+    whereas the drawing of matching fences occurs whenever the cursor is on an 
+    open fence or one character past the close fence. When this option is set 
+    to "cGNever DisplaycA" the lslmbuffer-setup(3)le setting is ignored. 
 
     cGScroll BarscA 
         Selects the scroll bar support required. When Splitter is enabled, the 
@@ -27938,19 +28678,8 @@ $a
         bold) are used instead to create a primitive hi-lighting. This 
         indirectly sets bit 0x004 of the lslm$system(5)le variable. 
 
-    cGWith BoldcA 
-        This option only has an effect when Termcap Color is used. When 
-        enabled the Termcap Bold font is used to create brighter colors, 
-        doubling the number of foreground colors available. This indirectly 
-        sets bit 0x008 of the lslm$system(5)le variable. 
-
-    cGTermcap FontscA 
-        This option determines whether Termcap fonts should be used to 
-        simulate colors, creating a primitive hi-lighting. The fonts available 
-        are bold, italic, light, reverse and underline, depending on the 
-        terminal being used. This feature cannot be used with Termcap Colors, 
-        it does improve the look but at the cost of display performance. This 
-        indirectly sets bit 0x010 of the lslm$system(5)le variable. 
+    cGUse FontscA 
+        See cDPlatform UNIX SetupcA above. 
 
     cGDisplay Char SetcA 
         See cDPlatform UNIX SetupcA above. 
@@ -28011,6 +28740,9 @@ $a
         may be specified as +ve values and allow explicit font dimensions to 
         be specified, generally used to achieve a precise font size 
         requirement. 
+
+    cGUse FontscA 
+        See cDPlatform UNIX SetupcA above. 
 
     cGDisplay Char SetcA 
         See cDPlatform UNIX SetupcA above. 
@@ -28549,7 +29281,7 @@ $a
 cEcENOTES cEcA
 
 
-    cDuser-setupcA is a macro using lslmosd(2)le, defined in userstp.emf. 
+    cDuser-setupcA is a macro using lslmosd(2)le, defined in cGuserstp.emfcA. 
 
 
 cEcESEE ALSO cEcA
@@ -29039,7 +29771,9 @@ $a
 
     cDspell-buffercA spell checks the current buffer, from the current position, 
     to the end of the buffer. On invocation, an lslmosd(2)le dialog is opened and 
-    any corrections are made through this interface. 
+    any corrections are made through this interface. If an error dialog opens 
+    instead the current language is not setup, please see the Language setting 
+    in lslmuser-setup(3)le and lslocaleSupport(2)lmLocale Supportle. 
 
     The dialog provides the user with an interface from which a new spelling 
     may be selected, in addition new words may be added to the spelling 
@@ -29226,7 +29960,8 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmosd(2)le, lslmspell(2)le, lslmuser-setup(3)le, lslmdescribe-word(3)le, lslm$find-words(5)le. 
+    lslmuser-setup(3)le, lslocaleSupport(2)lmLocale Supportle, lslmosd(2)le, lslmspell(2)le, lslmdescribe-word(3)le, 
+    lslm$find-words(5)le. 
 
 ! 3 symbol
 cEcENAME cEcA
@@ -29612,9 +30347,10 @@ $a
     cGOpencA 
         Opens a dialog enabling the user to select files for opening into 
         MicroEmacs. By default the dialog opens the selected file using 
-        command lslmfind-file(2)le, but if the view, binary or encrypt options are 
-        used the command used is lslmview-file(2)le, lslmfind-bfile(2)le or lslmfind-cfile(2)le 
-        respectively. 
+        command lslmfind-file(2)le, but if the view option is selected the 
+        lslmview-file(2)le command is used. The binary or encrypt options configure 
+        whether the files are to be loaded with lslmbinary(2m)le or lslmcrypt(2m)le modes 
+        enabled. 
 
     cGQuick OpencA 
         Opens a sub-menu list all user file types (defined in lslmuser-setup(3)le). 
@@ -29664,7 +30400,7 @@ $a
 
     cGPrinter SetupcA 
         Opens a dialog which enables the user to configure the printer driver, 
-        output location and page layout. 
+        output location and page layout (executes command lslmprint-setup(3)le). 
 
     cGPrintcA 
         Executes command lslmprint-buffer(2)le. 
@@ -30380,6 +31116,13 @@ $a
         be inserted if this is enabled. When disabled the buffer will remain 
         empty. 
 
+    Fence Display 
+        Enables or disables the displaying of matching fences for this file 
+        type. Note that the way in which the matching fence is display is 
+        determined by the cDFence DisplaycA option on the Platform page of 
+        lslmuser-setup(3)le; the cDbuffer-setupcA option is ignored if this option is 
+        set to "cGNever DisplaycA". 
+
     Setup Hilighting 
         Creates and enables the token lshilight(2)lmhilightingle for the current file type. 
 
@@ -30412,6 +31155,12 @@ $a
         Enables/disables the lslmmagic(2m)le mode over-riding the setting within the 
         lslmuser-setup(3)le dialog. If this setting is changed the setting within 
         user-setup will be ignored for the current file type. 
+
+    Buffer Modes: Auto 
+        Enables/disables the lslmauto(2m)le mode. 
+
+    Buffer Modes: Backup 
+        Enables/disables the lslmbackup(2m)le mode. 
 
     Buffer Modes: Indent 
         Enables/disables the lslmindent(2m)le mode. 
@@ -30473,6 +31222,308 @@ $a
 
 
     lslmbuffer-setup(3)le. 
+
+! 3 print-setup
+cEcENAME cEcA
+
+
+    print-setup - Configure MicroEmacs's printer interface 
+$a
+
+
+cEcESYNOPSIS cEcA
+
+
+    cDprint-setupcA 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    cDprint-setupcA provides a dialog interface for configuring MicroEmacs's 
+    printing interface. cDprint-setupcA may be invoked from the main cCFilecA menu or 
+    directly from the command line using lslmexecute-named-command(2)le. 
+
+    The cDprint-setupcA dialog is broken down into three pages of configuration 
+    options, on all pages the following buttons are available at the bottom of 
+    the dialog:- 
+
+    cGPrintcA 
+        Prints the current buffer using the current configuration. 
+
+    cGExitcA 
+        Quits cDprint-setupcA, changes made to the configuration will be saved. 
+
+    The following pages appear in the dialog:- 
+
+
+cEPrinter cA
+
+
+    The cDPrintercA page is used to configure the type, style and location of the 
+    printer, the items on this page are defined as follows:- 
+
+    cGDrivercA 
+        Sets the printer type to be used, selecting this item creates a drop 
+        down list of available printer drivers. The drivers inform MicroEmacs 
+        which fonts and colors are available and how to enable/disable them, 
+        these are usually special character sequences. The following special 
+        drivers are defined:- 
+
+        Default Plain Text 
+            This driver does not use any special character sequences so the 
+            output it produces is plain text. This should work with most 
+            printers, but it does not support any colors or fonts. 
+
+        HTML 
+            This is a virtual printer driver as no printer uses HTML directly. 
+            However the files produced by this driver can be loaded by a 
+            web-browser and rendered with full color and font support so 
+            provides an efficient way of testing printer schemes. In addition 
+            may be used to convert the text rendered in MicroEmacs into HTML 
+            content. 
+
+        Windows 
+            This utilizes MicroEmacs's built-in Windows printer interface 
+            (Windows platforms only). When selected MicroEmacs communicates 
+            directly to the MS Printer Manager. 
+
+    cGPrint SchemecA 
+        Sets the color and font scheme to be used, selecting this item creates 
+        a drop down list of available printer schemes - choose one 
+        appropriated for your printer. The Default Plain Text scheme does not 
+        use any color or fonts so should work for all drivers. see the next 
+        item for scheme creation and editing. 
+
+    cGEditcA 
+        Opens the lslmscheme-editor(3)le dialog box to edit the currently selected 
+        printer scheme, the editor may also be used to create and install new 
+        printer schemes. 
+
+    cGDestinationcA 
+        Specifies the resultant print output, when selected a drop down menu 
+        appears containing the following items: 
+
+        To buffer only 
+            Creates a "cG*printer*cA" buffer and prints to the buffer. 
+
+        To file only 
+            Creates a new temporary file and prints to it. 
+
+        To file & print 
+            Prints to a temporary file and then executes the command-line (see 
+            next item) to print the resultant file (option not available when 
+            using the Windows printer driver). 
+
+        Direct to printer 
+            Output is sent directly to the printer, option only available when 
+            using the Windows driver. 
+
+    cGCommand-linecA 
+        Sets the command-line required to print a generated print file (option 
+        not available when the Windows driver is selected as printing is done 
+        by talking to MS Print Manager directly). The command-line should be a 
+        single shell command using "cG%fcA" whenever the name of the file to be 
+        printed is required, e.g. on UNIX systems cDlp(1)cA or cDlpr(1)cA can usually 
+        be used as follows:- 
+
+            lp -s %f 
+
+
+        On MS-DOS machines this can usually be achieved by copying the file to 
+        the cGPRNcA device, as follows: 
+
+            copy %f PRN 
+
+
+    cGPage SizecA 
+        Displays the currently configured page size in the form: 
+
+            cCColumnscAcDxcAcCRowscA cCChars-WidecAcDxcAcCChars-HighcA 
+
+        the field cannot be edited directly, the settings cDPage SetupcA affect 
+        these values. 
+
+
+cEPage Setup cA
+
+
+    cGPaper SizecA 
+        Sets the size of the printer paper, selecting this item will produce a 
+        pop down menu listing all available paper sizes unless the Windows 
+        printer driver is being used in which case this field cannot be 
+        selected and the cDEditcA button must be used. 
+
+    cGCharacter SizecA 
+        Sets the size of a character within the page, expressed in terms of 
+        the number of characters which will fit on the paper (cCwidthcAcDxcAcCheightcA). 
+        When selected a drop down menu lists all available sizes for the 
+        current paper size unless the Windows driver is selected in which case 
+        this field cannot be selected and the cDEditcA button must be used. 
+
+    cGEditcA (Windows only) 
+        Opens a Windows printer dialog box allowing the user to specify the 
+        windows printer, paper size and character size etc. 
+
+    cGNo. of ColumnscA and cGRowscA 
+        Sets the number of sub-columns and rows to divide the page into, 
+        creating pages within a page. 
+
+    cGLine NumberscA 
+        When enabled, prints the line number at the left hand edge for each 
+        line. 
+
+    cGSplit Line IDcA 
+        When enabled the last right hand text column is reserved for a split 
+        identifier. Whenever a line is too long to fit on a single line it is 
+        split over two or more lines, if this option is enabled the right edge 
+        will be set to the split character (usually a 'cG\cA' char) to clearly 
+        indicate that the line is split. 
+
+    cGPage SizecA 
+        As with the cDPrintercA cDPage SizecA it displays the current page size, the 
+        field cannot be edited. 
+
+
+cELayout cA
+
+
+    cGMarginscA 
+        Configures the top, bottom, left and right margins in characters. 
+
+    cGHeadercA 
+        Sets whether a header should be printed and if so what it should be, 
+        the following special strings can be used: 
+
+        cG%%cA 
+            Print a 'cG%cA' character. 
+
+        cG%bcA 
+            Print the current buffer's name. 
+
+        cG%DcA 
+            Print the current day of the month. 
+
+        cG%fcA 
+            Print the current buffer's file name. 
+
+        cG%hcA 
+            Print the current hour. 
+
+        cG%McA 
+            Print the current month of the year. 
+
+        cG%mcA 
+            Print the current minute of the hour. 
+
+        cG%pcA 
+            Print the current page number. 
+
+        cG%scA 
+            Print the current seconds. 
+
+        cG%YcA 
+            Print the current year as a 2 digit number. 
+
+        cG%ycA 
+            Print the current year as a 4 digit number. 
+
+    cGFootercA 
+        Sets whether a footer should be printed and if so what it should be, 
+        the same special strings can be used as for the header. 
+
+
+cEcENOTES cEcA
+
+
+    cDuser-setupcA is a macro using lslmosd(2)le, defined in cGprintstp.emfcA. 
+
+    The list of available printer drivers and print schemes is stored in the 
+    macro file cGprinters.emfcA. Using the cDInstallcA option of the lslmscheme-editor(3)le 
+    automatically adds the new scheme to the print schemes list. To create a 
+    new printer driver a new configuration registry file (cGerfcA file - see 
+    cGprint*.erfcA for examples) must be created and added to the printer driver 
+    lists within cGprinter.emfcA. 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmprint-buffer(2)le, lslmscheme-editor(3)le, lslmosd(2)le. 
+
+! 4 &rep
+!44 &irep
+!44 &xrep
+!44 &xirep
+cEcENAME cEcA
+
+
+    &rep, &irep, &xrep, &xirep - Replace string in string functions 
+
+
+cEcESYNOPSIS cEcA
+
+
+    cD&repcA cCstr1cA cCstr2cA cCstr3cA 
+    cD&irepcA cCstr1cA cCstr2cA cCstr3cA 
+    cD&xrepcA cCstr1cA cCstr2cA cCstr3cA 
+    cD&xirepcA cCstr1cA cCstr2cA cCstr3cA 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    These functions search for cCstr2cA in cCstr1cA, replacing it with cCstr3cA, returning 
+    the resultant string. 
+
+    The functions may all be abbreviated to their three letter abbreviation 
+    (i.e. cD&xirepcA may be expressed as cD&xircA). In all cases the first argument is 
+    completely evaluated before the second and third arguments. 
+
+    cD&repcA cCstringcA cCsearchcA cCreplacecA 
+        Searches for the cCsearchcA string in the given cCstringcA using a simple case 
+        sensitive exact match algorithm. Any occurrences are removed from 
+        cCstringcA and cCreplacecA is inserted in its place. Either of the 3 input 
+        strings can be the empty string (cG""cA). 
+
+    cD&irepcA cCstringcA cCsearchcA cCreplacecA 
+        cD&irepcA is identical to cD&repcA except a case insensitive search algorithm 
+        is used. 
+
+    cD&xrepcA cCstringcA cCregex-searchcA cCregex-replacecA 
+        cD&xrepcA can be used to access the more powerful regular expression 
+        searching capabilities. The function is similar to cD&repcA except it 
+        takes a regex search string and the replacement string may also refer 
+        to all or part of the matched string. See lsRegularExpressions(2)lmRegular Expressionsle for 
+        information on the cCregexcA format. 
+
+    cD&xirepcA cCstringcA cCregex-searchcA cCregex-replacecA 
+        cD&xirepcA is identical to cD&xrepcA except a case insensitive regex search is 
+        used. 
+
+
+cEcEEXAMPLE cEcA
+
+
+    The following example turns a UNIX format file name (using a 'cG/cA' to divide 
+    directories - like MicroEmacs) into an windows format name (using a 'cG\cA'): 
+sB
+        set-variable #l0 &rep #l0 "/" "\\" 
+
+sA
+    The following example replaces one or more white spaces in the variable 
+    with a single space, this is an easy way to remove unnecessary spaces: 
+sB
+        set-variable #l0 "This   is   not   so    spacey    after   xrep" 
+        set-variable #l0 &xrep #l0 "\\s +" " " 
+        ml-write #l0 
+
+sA
+
+cEcESEE ALSO cEcA
+
+
+    lslmOperating Modesle, lsIntroduction to Variable FunctionslmVariable Functionsle, lslm&sequal(4)le, lslm&sin(4)le. 
 
 ! 4 &abs
 ! 4 &add
@@ -31940,6 +32991,13 @@ $a
         The cCinitialcA value will be specified and this will be initial value 
         given on the input line. 
 
+    cG0x04cA 
+        Auto-complete using the initial value, usually used with bit cG0x02cA. 
+
+    cG0x08cA 
+        Hide the input string, the characters in the current input string are 
+        all displayed as cG'*'cAs. 
+
     If no value is specified then default value is 0 and cDhcA can not be 
     specified. The cCdefaultcA value is returned when the user enters an empty 
     string. If the cCinitialcA string is specified the the input buffer will be 
@@ -31984,7 +33042,12 @@ $a
     the message-line. The optional flag cDfcA is a bitwise flag where each bit has 
     the following meaning 
 
-        cG0x01cA The cCvalid-listcA specifies all valid letters. 
+    cG0x01cA 
+        The cCvalid-listcA specifies all valid letters. 
+
+    cG0x02cA 
+        Quote the typed character, this allows keys such as 'cGC-gcA' which is 
+        bound to the abort command to be entered. 
 
     The default value for cDfcA is 0. When cD@mccA is used, the user is prompted, with 
     the given prompt, for a single character. If a cCvalid-listcA is specified 
@@ -32837,7 +33900,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lsMacroArguments(4)lmMacroArgumentsle, lsMacroNumericArguments(4)lmMacroNumericArgumentsle, lslmdefine-macro(2)le. 
+    lslmyank(2)le, lsMacroArguments(4)lmMacroArgumentsle, lsMacroNumericArguments(4)lmMacroNumericArgumentsle, lslmdefine-macro(2)le. 
 
 !44 &band
 ! 4 &bor
@@ -33091,8 +34154,8 @@ $a
 cEcEEXAMPLE cEcA
 
 
-    The following example is taken from macro file cGme3_8.emfcA and shows how to 
-    add a buffer mode. 
+    The following example is taken from macro file cGmeme3_8.emfcA and shows how 
+    to add a buffer mode. 
 sB
         ; Add a buffer mode 
         define-macro add-mode 
@@ -33549,8 +34612,8 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lsIntroduction to Variable FunctionslmVariable Functionsle, lslm&sin(4)le, lslm&slower(4)le, lslm&add(4)le, lslm&equal(4)le, lslm&cond(4)le, 
-    lsRegularExpressions(2)lmRegular Expressionsle. 
+    lsIntroduction to Variable FunctionslmVariable Functionsle, lslm&sin(4)le, lslm&slower(4)le, lslm&rep(4)le, lslm&add(4)le, lslm&equal(4)le, 
+    lslm&cond(4)le, lsRegularExpressions(2)lmRegular Expressionsle. 
 
 ! 4 &sin
 !44 &isin
@@ -33648,7 +34711,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmOperating Modesle, lsIntroduction to Variable FunctionslmVariable Functionsle, lslm&sequal(4)le. 
+    lslmOperating Modesle, lsIntroduction to Variable FunctionslmVariable Functionsle, lslm&sequal(4)le, lslm&rep(4)le. 
 
 !44 !jump
 !44 !tjump
@@ -33833,6 +34896,69 @@ $emf-scheme
 
 
     lslmmagic(2m)le, lslmsearch-forward(2)le, lslmregex-forward(3)le. 
+
+! 4 @fs
+cEcENAME cEcA
+
+
+    @fs - Frame store variable 
+
+
+cEcESYNOPSIS cEcA
+
+
+    cD@fscA cCrowcA cCcolumncA 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    The frame store variable cD@fscA gives macros a way of obtaining the character 
+    currently being drawn on the screen at the given location. If the given 
+    value of cCrowcA or cCcolumncA is out range, i.e. less than zero or greater than 
+    or equal to the screen size (see lslm$screen-width(5)le) then the value returned 
+    is the empty string (i.e. cG""cA). 
+
+    This variable cannot be set and is only updated during a screen update, 
+    this means that macros that change the cursor position will need to redraw 
+    the screen before using this variable. 
+
+
+cEcEEXAMPLE cEcA
+
+
+    The following example gets the word under the current mouse position, this 
+    may not be the current cursor position: 
+sB
+        define-macro word-under-mouse 
+            set-variable #l0 $mouse-y 
+            set-variable #l1 $mouse-x 
+            !if &not &inw @fs #l0 #l1 
+                ml-write "[mouse not over a word]" 
+                !return 
+            !endif 
+            set-variable #l2 @fs #l0 #l1 
+            set-variable #l1 &sub #l1 1 
+            !if &inw @fs #l0 #l1 
+                set-variable #l2 &cat @fs #l0 #l1 #l2 
+                !jump -3 
+            !endif 
+            set-variable #l1 $mouse-x 
+            set-variable #l1 &add #l1 1 
+            !if &inw @fs #l0 #l1 
+                set-variable #l2 &cat #l2 @fs #l0 #l1 
+                !jump -3 
+            !endif 
+            ml-write &spr "[mouse is over the word \"%s\"]" #l2 
+        !emacro 
+
+sA
+
+cEcESEE ALSO cEcA
+
+
+    lslm$screen-width(5)le, lslmscreen-update(2)le, lsMacroArguments(4)lmMacroArgumentsle, lsMacroNumericArguments(4)lmMacroNumericArgumentsle, 
+    lslmdefine-macro(2)le. 
 
 ! 5 $auto-time
 cEcENAME cEcA
@@ -34972,7 +36098,7 @@ $a
 cEcESYNOPSIS cEcA
 
 
-    cD$fmatchdelaycA cCdelayTimecA; Default is cG2cA 
+    cD$fmatchdelaycA cCdelayTimecA; Default is cG2000cA 
 
     0 <= cCdelayTimecA <= cCncA 
 
@@ -34980,12 +36106,24 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    The number of seconds to wait in a fence match operation. When a closing 
-    fence 'cG)cA' 'cG]cA' or 'cG}cA' is added in cGcmodecA then the opening fence is searched 
-    for, scrolling the screen up where necessary, this is the time that the 
-    opening fence is displayed, interruptible by typing any key. 
+    The number of milliseconds to wait in a fence match operation. When a 
+    closing fence 'cG)cA' 'cG]cA' or 'cG}cA' is added the opening fence is searched for, 
+    scrolling the screen up where necessary, this is the time that the opening 
+    fence is displayed, interruptible by typing any key. 
 
-    cCdelayTimecA is specified in seconds. 
+    When lslmcmode(2m)le is enable the search algorithm used is 'cCCcA' aware and if a 
+    matching fence is not found then the bell is rung as a warning. The 
+    automatic matching of fences can be enabled/disabled via the lslmfence(2m)le 
+    mode. 
+
+    A cursor can be moved to the matching fence using the 
+    lslmgoto-matching-fence(2)le command. 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmfence(2m)le, lslmcmode(2m)le, lslmgoto-matching-fence(2)le. 
 
 ! 5 $global-scheme
 cEcENAME cEcA
@@ -36549,10 +37687,17 @@ $a
         colors available to 16. On UNIX systems if the TERMCAP interface is 
         being used then this bit can be changed to (de)select the used of bold 
         with color to create this extended color set for foreground colors. 
-        But many unix terminals do not support this use of color with the bold 
+        But many UNIX terminals do not support this use of color with the bold 
         font so this should be set appropriately. On all other systems this 
         bit cannot be changed and MS-DOS is currently the only other system to 
         support this. 
+
+    cD0x010cA 
+        If this bit is set then the current system supports the use of fonts 
+        (bold, italic, light and underline). Whether these fonts can be 
+        successfully utilized depends upon the platform and the system font 
+        being used, for UNIX TERMCAP systems it will also depend on the 
+        terminal being used. This option is not supported on MS_DOS. 
 
     cD0x080cA 
         This bit is set if the current system is a UNIX based system such as 
@@ -36586,15 +37731,15 @@ $a
         If this bit set, the then execution of the lslmtab(2)le command (bound to 
         cGtabcA) always checks and adjusts the indentation of the current line 
         when the current buffer is in lslmcmode(2m)le or has an lsindent(2)lmindentationle method. 
-        If the bit is clear then cGtabcA only checks the indentation when the 
-        cursor is in column zero. 
+        If the bit is clear then the cGtabcA may only checks the indentation when 
+        the cursor is in column zero depending on the setting of bit cD0x200000cA. 
 
     cD0x2000cA 
         If this bit is set the main menu Alt hot-key bindings are enabled. 
         These are dynamic bindings automatically generated from the main menu. 
         Typically the first item in the main menu is "cGFilecA" with a hot key of 
         'cDFcA', with this bit set 'cGA-fcA' will open this menu item. Note that 
-        global and local key bindings override these. Also see bit 0x4000. 
+        global and local key bindings override these. Also see bit cD0x4000cA. 
 
     cD0x4000cA 
         If this bit is set the Alt key acts as a lsprefix(2)lmprefix 1le modifier key. By 
@@ -36633,7 +37778,7 @@ $a
                 Box Character; Bottom left 
 
             cG0x0fcA 
-                Box Character; Centre cross 
+                Box Character; Center cross 
 
             cG0x10cA 
                 Arrows; Right 
@@ -36697,6 +37842,14 @@ $a
         Enables hiding MicroEmacs generated backup files. On Windows and Dos 
         platforms the Hidden file attribute is used to hide the file, whereas 
         on UNIX the backup file name is prepended with a 'cG.cA'. 
+
+    cD0x200000cA 
+        If this bit set, the then execution of the lslmtab(2)le command (bound to 
+        cGtabcA) checks and adjusts the indentation of the current line when the 
+        cursor is in column zero and current buffer is in lslmcmode(2m)le or has an 
+        lsindent(2)lmindentationle method. The setting of this bit has no effect if bit 
+        cD0x1000cA is set. If this and bit cD0x1000cA are clear then the cGtabcA will not 
+        check the indentation. 
 
 
 cEcEEXAMPLE cEcA
@@ -39123,6 +40276,53 @@ $a
 
     lslmbackup(2m)le, lslm$system(5)le, lslm$kept-versions(5)le. 
 
+! 5 $version
+cEcENAME cEcA
+
+
+    $version - MicroEmacs version date-code 
+$a
+
+
+cEcESYNOPSIS cEcA
+
+
+    cD$versioncA "cCYYYYMMDDcA" 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    cD$versioncA is a system variable which is defined as the MicroEmacs build 
+    date code. This value is fixed at compile time and cannot be changed. The 
+    variable may be used in macros to identify incompatibility issues. 
+
+
+cEcEEXAMPLE cEcA
+
+
+    Given a macro that only operates with a MicroEmacs executable built on or 
+    after 1st August 2001 then this macro should check that cG$versioncA is not 
+    less than cG20010801cA. The check may be performed as follows: 
+sB
+        !if &les $version "20010801" 
+            ml-write "[Error: MicroEmacs executable is incompatible]" 
+            !abort 
+        !endif 
+
+sA
+
+cEcENOTES cEcA
+
+
+    This variable was introduced in 2001-08-01, evaluating this variable on an 
+    earlier version of MicroEmacs would return the string "cGERRORcA" unless an 
+    environment variable $version has been defined. "cGERRORcA" evaluates to cG0cA 
+    hence the test still operates correctly. 
+
+    This variable is used in the macro file cGme.emfcA to check for any macro - 
+    executable incompatibility issues. 
+
 ! 8 eaf
 cEcENAME cEcA
 
@@ -39823,8 +41023,8 @@ $a
 
             Globally adding ^[ls^[lmbinary(2m)^[le and ^[ls^[lmcrypt(2m)^[le 
             modes is strongly discouraged as any file loaded would be assigned 
-            these modes. Instead the use of commands ^[ls^[lmfind-bfile(2)^[le 
-            and ^[ls^[lmfind-cfile(2)^[le are recommended. 
+            these modes. Instead the use of commands ^[ls^[lmfind-bfile(3)^[le 
+            and ^[ls^[lmfind-cfile(3)^[le are recommended. 
 
             ^[ls^[lmauto(2m)^[le, ^[ls^[lmautosv(2m)^[le, ^[ls^[lmbackup(2m)^[le, 
             ^[ls^[lmexact(2m)^[le, ^[ls^[lmmagic(2m)^[le, ^[ls^[lmquiet(2m)^[le, 
@@ -39837,7 +41037,7 @@ $a
 
 
             ^[ls^[lmOperating Modes^[le, ^[ls^[lmbuffer-mode(2)^[le, 
-            ^[ls^[lmfind-bfile(2)^[le, ^[ls^[lmfind-cfile(2)^[le, 
+            ^[ls^[lmfind-bfile(3)^[le, ^[ls^[lmfind-cfile(3)^[le, 
             ^[ls^[lminfo(2)^[le. 
 
 
