@@ -52,11 +52,11 @@ set-variable .fhook-jst.setup-mask "aefghijkmnopstuwx"
 set-variable .fhook-jst.comment "|>||>|> | <||"
 set-variable .fhook-jst.insert-emphasis 1
 
-set-variable .fhook-jst.command-flag  "|bo|bo|thb|hb|thb|th|th|th|th|th|h|h|thb|thb|thb|thb|thb|h|h|th|h|h|thb|thb|thb|thb|thb|thb|"
-set-variable .fhook-jst.command-name  "|jst-fill-paragraph|jst-fill-paragraph|doc-mode-state|spell-buffer|paragraph-to-line|jst-to-html|jst-to-latex|jst-to-rtf|jst-to-text||||fill-paragraph-both|fill-paragraph-center|fill-paragraph-left|fill-paragraph-gutter|fill-paragraph-right|fill-paragraph|ifill-paragraph||||doc-set-justify|doc-set-justify|doc-set-justify|doc-set-justify|doc-set-justify|doc-set-justify|"
-set-variable .fhook-jst.command-nbind "|||||||||||||||||||||||0|1|2|3|4|5|"
-set-variable .fhook-jst.command-kbind "|esc q|esc o|C-c C-h|C-c C-s|C-c o||||||||C-c C-b|C-c C-c|C-c C-l|C-c C-g|C-c C-r||||||C-c a|C-c b|C-c c|C-c l|C-c n|C-c r|"
-set-variable .fhook-jst.command-desc  "|||\HShow Current Settings|Spell Check Buffer|Fill Paragraph for WP Export|Export to HTML|Export to LaTeX|Export to RTF|Export to Plain Text||To format current paragraph:||Justify Both Margins|Justify Center|Justify Left|Justify Gutter (on left margin)|Justify Right|Format Paragraph in Current Mode|Intelligently Format Paragraph||To change justification mode:||Change to auto justification [DEFAULT]|Change to both justification|Change to center justification|Change to left justification|Change to none justification|Change to right justification|"
+set-variable .fhook-jst.command-flag  "|bo|bo|thb|hb|thb|th|th|th|th|th|h|h|thb|thb|thb|thb|thb|h|h|th|h|h|thb|thb|thb|thb|thb|"
+set-variable .fhook-jst.command-name  "|jst-fill-paragraph|jst-fill-paragraph|doc-mode-state|spell-buffer|paragraph-to-line|jst-to-html|jst-to-latex|jst-to-rtf|jst-to-text||||fill-paragraph-both|fill-paragraph-center|fill-paragraph-left|fill-paragraph-gutter|fill-paragraph-right|fill-paragraph|ifill-paragraph||||doc-set-justify|doc-set-justify|doc-set-justify|doc-set-justify|doc-set-justify|"
+set-variable .fhook-jst.command-nbind "|||||||||||||||||||||||0|1|2|3|4|"
+set-variable .fhook-jst.command-kbind "|esc q|esc o|C-c C-h|C-c C-s|C-c o||||||||C-c C-b|C-c C-c|C-c C-l|C-c C-g|C-c C-r||||||C-c a|C-c b|C-c c|C-c l|C-c n|"
+set-variable .fhook-jst.command-desc  "|||\HShow Current Settings|Spell Check Buffer|Fill Paragraph for WP Export|Export to HTML|Export to LaTeX|Export to RTF|Export to Plain Text||To format current paragraph:||Justify Both Margins|Justify Center|Justify Left|Justify Gutter (on left margin)|Justify Right|Format Paragraph in Current Mode|Intelligently Format Paragraph||To change justification mode:||Change to auto justification [DEFAULT]|Change to both justification|Change to center justification|Change to left justification|Change to none justification|"
 
 ; setup item-list
 set-variable .fhook-jst.item-list-s1 "^[ \t]*\\([0-9]+\\)\\.0[ \t]+\\(\\S .*\\)"

@@ -4,7 +4,7 @@
 ; See the file me.emf for copying and conditions.
 ;
 ; Synopsis:    TCL mode hook
-; Authors:     Steven Phillips
+; Authors:     Steven Phillips & Detlef Groth
 ;
 set-char-mask "3" "-$."
 
@@ -19,7 +19,7 @@ set-variable .fhook-tcl.name "Tcl/Tk"
 set-variable .fhook-tcl.setup &reg "/history" "fhook/tcl" "bdfghnopx"
 set-variable .fhook-tcl.setup-mask "abdefghikmnoptux"
 set-variable .fhook-tcl.tags "tcltags"
-set-variable .fhook-tcl.comment "|#||#|# | #||"
+set-variable .fhook-tcl.comment "|#||#|# | #|r|"
 
 set-variable .fhook-tcl.collapse-open  "^\\(proc \\|snit::\\)"
 set-variable .fhook-tcl.collapse-close "^}"

@@ -18,7 +18,7 @@ set-variable .fhook-vb.name "Visual Basic"
 set-variable .fhook-vb.setup &reg "/history" "fhook/vb" "dghiopx"
 set-variable .fhook-vb.setup-mask "adeghikmoptux"
 set-variable .fhook-vb.tags "vbtags"
-set-variable .fhook-vb.comment "|'||'|' | '||"
+set-variable .fhook-vb.comment "|'||'|' | '|r|"
 set-variable .fhook-vb.exact -1
 
 ; setup item-list

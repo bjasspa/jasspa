@@ -21,7 +21,193 @@
 ;           h   Header line required
 ;           H   Fill header line with <comment pad> strings
 ;           j   Enable Justify mode in *comment* buffer
+;           r   Rebind the fill-para keys to the comment-restyle macro
 ;
+; Find the type of the comment from a list of alternative comment types, we
+; perform a syntax check to determine the formation of the comment. The type
+; of comments. Where there are multiple language types in a file then the base
+; style is determined with a chook macro. Once the comment base hook has been
+; determined then try to find the appropriate comment type for this block.
+; Comments take the form ".fhook-xxx.comment-n" where 'n' goes from 0 to n.
+; 
+; @param  #p0 The name of the hook to use.
+; @return #p9 The comment definition to get.
+;
+define-macro comment-get-type
+    set-variable #l7 1
+    set-variable #l8 &ind &spr ".fhook-%s.comment" #p0
+    set-variable :comment-best "|||||||"
+    set-variable :comment-score 0
+    set-variable #l3 &bmod "magic"
+    -1 buffer-mode "magic"
+    set-alpha-mark "\x80"
+    !while &gre #l7 0
+        ; Get the next entry from the buffer definition.
+        goto-alpha-mark "\x80"
+        set-variable #l9 &ind &spr ".fhook-%s.comment-%d" #p0 &pinc #l7 1
+        !if &seq &lget #l9 1 ""
+            ; Hook definition not found.
+            set-variable #l7 0
+            !continue
+        !endif
+        ; Make sure we are not doing same as base comment.
+        !if &seq #l8 #l9
+            !continue;
+        !endif
+        ; Look at the start of the line.
+        set-variable #l1 &lget #l9 1
+        !if &seq &set #l2 &trl &lget #l9 2 ""
+            ; Openning comment to end of line.
+            beginning-of-line
+            !force -1 search-forward #l1
+            !if &not $status
+                !continue
+            !endif
+            ; See if this is different from the main comment.
+            set-variable #l5 &lget #l8 1
+            !if &gre &len #l2 &len #l5
+                !if &not &seq #l5 &lef #l2 &len #l5
+                    ; Found a different comment.
+                    set-variable #l7 0
+                    !continue;
+                !endif
+            !elif &equ &len #l2 &len #l5
+                !if &not &seq #l2 #l5
+                    ; Found a different comment.
+                    set-variable #l7 0
+                    !continue
+                !endif
+            !elif &not &seq #l2 &lef #l5 &len #l2
+                ; Found a different comment.
+                set-variable #l7 0
+                !continue
+            !endif
+            ; See if we can match 'mid' 
+            set-variable #l4 &lget #l9 4
+            beginning-of-line
+            !force -1 search-forward #l4
+            !if $status
+                ; Found a different comment.
+                set-variable #l7 0
+                !continue
+            !endif
+            ; Try the previous line.
+            !force backward-line
+            !if $status 
+                beginning-of-line
+                !force -1 search-forward #l4
+                !if $status
+                    ; Found a different comment.
+                    set-variable #l7 0
+                    !continue
+                !endif
+            !endif
+            ; Try the next line.
+            goto-alpha-mark "\x80"
+            !force forward-line
+            !if $status 
+                beginning-of-line
+                !force -1 search-forward #l4
+                !if $status
+                    ; Found a different comment.
+                    set-variable #l7 0
+                    !continue
+                !endif
+            !endif
+            ; We do not know - reject.
+            !continue;
+        !endif
+        ;
+        ; Start/end marker comment pair.
+        ;
+        ; Search for end marker.
+        !force search-forward #l2
+        !if &not $status
+            !continue
+        !endif
+        set-variable #l4 $window-line
+        ; Search for start marker.
+        !force search-backward #l1
+        !if &not $status
+            !continue
+        !endif
+        set-variable #l5 $window-col
+        set-variable #l6 $window-line
+        ; Search forward again for the end marker.
+        !force search-forward #l2
+        !if &not $status
+            !continue
+        !endif
+        ; Confirm the pairing of brackets.
+        !if &not &equ $window-line #l4
+            !continue
+        !endif
+        ; Back to current line.
+        goto-alpha-mark "\x80"
+        !if &gre #l6 $window-line
+            ; Search not in current position
+            !continue;
+        !endif
+        ; The current position is within comment. Check for a mid line.
+        !if &and &equ $window-line #l6 &equ $window-line #l4
+            !if &not &and &seq #l1 &lget #l8 1 &seq #l2 &trl &lget #l8 2
+                ; Different from default, use this one.
+                set-variable #l7 0
+            !endif
+            !continue
+        !endif
+        ; Current line is part of a block, find line start. Note we trim
+        ; trailing space for best match.
+        !if &seq &set #l0 &trr &lget #l9 4 ""
+            !if &not &and &seq #l1 &lget #l8 1 &seq #l2 &trl &lget #l8 2
+                ; Different from default, use this one.
+                set-variable #l7 0
+            !endif
+            !continue
+        !endif
+        ; Start marker on the line - move to the next line if necessary.
+        !if &equ $window-line #l6
+            !force forward-line
+        !endif
+        beginning-of-line
+        !force -1 search-forward #l0
+        !if &not $status
+            !continue
+        !endif
+        ; Mid columns must match.
+        !if &not &equ &sub $window-col &len #l0 #l5
+            !continue
+        !endif
+        ; Final confirmation, check the end marker exact column match. If we
+        ; get and exact end column match then this is the comment type. If it
+        ; is correct, but the white space is different then we make this a
+        ; better choice. 
+        !force search-forward &lget #l9 2
+        !if $status
+            !if &equ &sub $window-col &len #l0 #l5
+                ; Exact match - this is the type.
+                set-variable #l7 0
+            !endif
+        !endif
+        ; Best match.
+        set-variable #l0 &add &len #l9 &add &len #l0 &len #l2
+        !if &gre #l0 :comment-score
+            set-variable :comment-best  #l9
+            set-variable :comment-score #l0
+        !endif
+    !done
+    ; restore position and magic mode
+    goto-alpha-mark "\x80"
+    &cond #l3 1 -1 buffer-mode "magic"
+    ; Use the current comment or the best one if it does not exist. 
+    !if &seq &lget #l9 1 ""
+        set-variable #l9 :comment-best
+    !endif
+    set-variable #p9 #l9
+!emacro
+; Get the definition of the comment. If "chook-xxx" exists then call this
+; macro to find the comment type. If the macro is passed an argument then use
+; this as the comment type
 0 define-macro comment-get-def
     !if &exi &set #l1 &cat  "chook-" &set #l0 &rig $buffer-fhook 6
         !force execute-named-command #l1
@@ -29,7 +215,16 @@
     !if &exi :chook
         set-variable #l0 :chook
     !endif
+    ; Get the standard comment style.
     set-variable #p9 &ind &spr ".fhook-%s.comment" #l0
+    ; Pull the standard style if requested.
+    !if &not @?
+        ; Search for a special comment.
+        comment-get-type
+        !if &not &seq &lget #l9 1 ""
+            set-variable #p9 #l9
+        !endif
+    !endif
     !if &seq &lget #p9 1 ""
         ml-write "[Comments not setup for this buffer]"
         !abort
@@ -38,9 +233,9 @@
 ; comment line ie xxx -> <comment start>xxx
 ;              or xxx -> <comment start>xxx<comment end>
 define-macro comment-line
-    comment-get-def
+    0 comment-get-def
     set-variable #l1 &lget #l9 1
-    set-variable #l2 &lget #l9 2
+    set-variable #l2 &trl &lget #l9 2
     beginning-of-line
     !while &gre &pdec @# 1 0
         insert-string #l1
@@ -60,7 +255,7 @@ define-macro uncomment-line
     set-variable #l1 &lget #l9 1
     set-variable #l3 &bmod "magic"
     -1 buffer-mode "magic"
-    !if &seq &set #l2 &lget #l9 2 ""
+    !if &seq &set #l2 &trl &lget #l9 2 ""
         beginning-of-line
         !while &gre &pdec @# 1 0
             !force -1 search-forward #l1
@@ -88,19 +283,19 @@ define-macro uncomment-line
     &cond #l3 1 -1 buffer-mode "magic"
 !emacro
 ;
-; fill from the current column to fill-col with <comment pad> and a trailing <comment end>
+; fill from the current column to fill-col with <comment pad> and a trailing
+; <comment end> 
 define-macro comment-to-end-of-line
     comment-get-def
     !if &not &len &set #l1 &lget #l9 3
         set-variable #l1 " "
     !endif
-    !if &seq &set #l2 &lget #l9 2 ""
+    !if &seq &set #l2 &trl &lget #l9 2 ""
         set-variable #l2 &trb &lget #l9 5
     !endif
     &div &sub &sub $fill-col $window-acol &len #l2 &len #l1 insert-string #l1
     insert-string #l2
 !emacro
-
 
 define-macro comment-start
     !force 0 find-buffer "*comment*"
@@ -108,7 +303,7 @@ define-macro comment-start
         !return
     !endif
     comment-get-def
-    ; check we can edit the buffer 
+    ; check we can edit the buffer
     1 buffer-mode "edit" @mna
     set-position "\x83"
     set-variable #l1 $window-acol
@@ -130,11 +325,17 @@ define-macro comment-start
     !if &les $fill-col 20
         set-variable $fill-col 20
     !endif
-    buffer-bind-create "b" "C-c C-c" "" comment-end 
+    buffer-bind-create "b" "C-c C-c" "" comment-end
 !emacro
 
 define-macro comment-end
     clean
+    ; Add an extra space at end if required as clean removes spaces from the
+    ; end. 
+    !if &sin "ff" &lget :comment 6
+        end-of-buffer
+        insert-newline
+    !endif
     beginning-of-buffer
     set-variable #l0 &lget :comment 4
     set-variable #l9 &lget :comment 5
@@ -157,7 +358,7 @@ define-macro comment-end
         !endif
         insert-newline
     !else
-        ; if the line starts with a fill string don't insert any white spaces etc
+        ; if the line starts with a fill string don't insert any white spaces etc 
         set-variable #l1 &or &sin #l8 " " &not &seq &mid @wl $window-col &len #l8 #l8
         !if &sin "b" &lget :comment 6
             end-of-line
@@ -215,7 +416,7 @@ define-macro comment-end
         !elif &sin "b" &lget :comment 6
             set-variable #l1 " "
             insert-string &trr #l0
-            !if &seq &set #l3 &lget :comment 2 ""
+            !if &seq &set #l3 &trl &lget :comment 2 ""
                 set-variable #l3 #l9
             !endif
             set-variable #l2 &add $fill-col &sub &len #l0 &len &trr #l0
@@ -229,14 +430,14 @@ define-macro comment-end
         !elif &seq &lget :comment 2 ""
             insert-string &trr #l0
         !else
-            insert-string &lef #l0 &sub &len #l0 &len &trl #l0
-            insert-string &trl &lget :comment 2
+            ; insert-string &lef #l0 &sub &len #l0 &len &trl #l0
+            insert-string &lget :comment 2
         !endif
     !elif &not $seq "" &lget :comment 2
         backward-line
         end-of-line
         insert-string &rig #l0 &len &lget :comment 1
-        insert-string &lget :comment 2
+        insert-string &lget &trl :comment 2
     !endif
     beginning-of-buffer
     set-mark
@@ -276,7 +477,9 @@ define-macro comment-end
     set-position "\x83"
     kill-region @mna
     set-variable #p0 $window-acol
+    ; Find the comment buffer for editing and make sure magic mode is off.
     find-buffer "*comment*"
+    -1 buffer-mode "magic"
     yank
     -1 yank
     backward-delete-char
@@ -293,11 +496,17 @@ define-macro comment-end
     set-position "\x83"
     kill-region @mna
     set-variable #p0 $window-acol
+    ; Find the comment buffer for editing and make sure magic mode is off.
     find-buffer "*comment*"
+    -1 buffer-mode "magic"
     yank
     -1 yank
     set-mark
     search-backward #p7
+    ; Add a dummy space before the end comment. This ensures that the line
+    ; does not go empty and we loose the footer. The comment reformatting with
+    ; trim white space. 
+    insert-string " "
     -1 kill-region
     beginning-of-buffer
     &len #p8 forward-delete-char
@@ -313,7 +522,7 @@ define-macro comment-end
 0 define-macro comment-restyle-i
     set-variable #l9 #p9
     set-variable #l8 &lget #l9 1
-    set-variable #l7 &lget #l9 2
+    set-variable #l7 &trl &lget #l9 2
     !if &seq #l7 ""
         comment-restyle-get-s
     !else
@@ -333,7 +542,7 @@ define-macro comment-end
     set-variable $fill-col &sub $fill-col &add #l0 &len &lget #l9 4
     set-variable #l2 &lget #l9 4
     set-variable #l1 &trb #l2
-    set-variable #l2 &rig #l2 &len &trr #l8
+    set-variable #l2 &rig #l2 &len &trr #l2
     str-to-regex #l1
     str-to-regex #l2
     set-variable #l0 &spr "^\\s *%s\\(%s\\)?" #l1 #l2
@@ -347,15 +556,26 @@ define-macro comment-end
     set-variable #l4 &seq &trl @wl ""
     beginning-of-buffer
     set-variable #l2 &trb &lget #l9 5
-    str-to-regex #l2
-    set-variable #l0 &spr "\\(.*[ a-zA-Z1-9].*\\)\\s *%s\\s *$" #l2
-    set-variable #l1 0
-    !force 1 replace-string #l0 "\\1"
-    !if $status
-        set-variable #l1 1
-        !jump -3
+    !if &not &seq #l2 ""
+        set-variable #l1 0
+        ; Deal with non-space filled lines.
+        str-to-regex #l2
+        set-variable #l0 &spr "\\(\\S \\) \\s *%s\\s *$" #l2
+        !force 1 replace-string #l0 "\\1"
+        !if $status
+            set-variable #l1 1
+            !jump -3
+        !endif
+        ; Deal with blank lines as special case.
+        beginning-of-buffer
+        set-variable #l0 &spr "^\\s *%s\\s *$" #l2
+        !force 1 replace-string #l0 " "
+        !if $status
+            set-variable #l1 1
+            !jump -3
+        !endif
+        clean
     !endif
-    clean
     set-variable #l3 ""
     set-variable #l2 &lget #l9 3
     str-to-regex #l2
@@ -379,6 +599,9 @@ define-macro comment-end
     !if #l4
         set-variable #l3 &cat #l3 "f"
     !else
+        ; Adjust the fill length if there is no footer and we have an end
+        ; comment marker. 
+        set-variable $fill-col &sub $fill-col &add 1 &trl #l7
         end-of-buffer
         backward-line
         !force -1 search-forward #l0
@@ -388,7 +611,14 @@ define-macro comment-end
             set-mark
             forward-line
             -1 kill-region
-            set-variable #l3 &cat #l3 "Ff"
+            !force backward-line
+            ; Use 'ff' if a double footer is required. This compensates for
+            ; using 'clean' which removes all white space from the end of the
+            ; buffer. 
+            !if &and $status &seq &trl @wl ""
+                set-variable #l3 &cat #l3 "f"
+            !endif
+            set-variable #l3 &cat #l3 "fF"
         !endif
     !endif
     ; find any dividing lines
@@ -425,8 +655,49 @@ define-macro comment-restyle
     comment-get-def
     set-variable #l3 &bmod "magic"
     -1 buffer-mode "magic"
+    ;
+    ; Make sure we are in a comment.
+    ;
+    set-alpha-mark "\x80"
+    ; Look at the start of the line.
+    set-variable #l0 0
+    set-variable #l1 &lget #l9 1
+    !if &seq &set #l2 &trb &lget #l9 2 ""
+        ; Openning comment to end of line.
+        beginning-of-line
+        !force -1 search-forward #l1
+        !if $status
+            set-variable #l0 1
+        !endif
+    !else
+        set-variable #l6 $window-line
+        ; Search for end marker.
+        !force search-forward #l2
+        !if $status
+            set-variable #l4 $window-line
+            ; Search for start marker.
+            !force search-backward #l1
+            !if $status 
+                set-variable #l5 $window-line
+                !if &not &gre #l5 #l6
+                    ; Search forward again for the end marker.
+                    !force search-forward #l2
+                    ; Confirm the pairing of brackets.
+                    !if &equ $window-line #l4
+                        set-variable #l0 1
+                    !endif
+                !endif
+            !endif
+        !endif
+    !endif
+    ; Back to current line.
+    goto-alpha-mark "\x80"
+    !if &equ #l0 0
+        ml-write "[Not in a comment]"
+        &cond #l3 1 -1 buffer-mode "magic"
+        !abort
+    !endif
     !force !force comment-restyle-i
     ; restore magic mode
     &cond #l3 1 -1 buffer-mode "magic"
 !emacro
-

@@ -111,7 +111,7 @@ define-macro-file collapse collapse-current collapse-all
 0 define-macro buffer-init
     set-variable $buffer-fhook &cat "fhook-" @1
     set-variable #l0 &ind &spr ".%s.setup" $buffer-fhook
-    !if &and &not @# &not &bmod "pipe"
+    !if &not @#
         !if &sin "n" #l0
             !force set-variable #l1 @2
             set-variable #l1 &cond $status #l1 @1
@@ -154,7 +154,11 @@ define-macro-file collapse collapse-current collapse-all
         buffer-bind-create "b" "C-c C-c" "" comment-line
         buffer-bind-create "b" "C-c C-d" "" uncomment-line
         buffer-bind-create "b" "C-c C-e" "" comment-to-end-of-line
-        buffer-bind-create "b" "C-c C-r" "" comment-restyle
+        buffer-bind-create "b" "C-c C-o" "" comment-restyle
+        !if &sin "r" &lget #l5 6
+            buffer-bind-create "bo" "esc o" "" comment-restyle
+            buffer-bind-create "bo" "esc q" "" comment-restyle
+        !endif
     !endif
     !if &or &exi &ind &spr ".%s.fold" $buffer-fhook &sin "fold-open:" $result
         !force 0 fold-setup $result
@@ -202,7 +206,7 @@ define-macro-file collapse collapse-current collapse-all
     !if &not &seq &set #l2 &reg "/history" &spr "fhook/%s-fomark" #l9 "" ""
         set-variable #l3 &reg "/history" &spr "fhook/%s-fcmark" #l9 ""
         !if &not &seq &set #l1 &lget &set #l4 &ind &spr ".fhook-%s.comment" #l9 1 ""
-            set-variable #l0 &spr "\b%s %s\b%s %s\b%s\b" #l1 #l2 #l1 #l3 &lget #l4 2
+            set-variable #l0 &spr "\b%s %s\b%s %s\b%s\b" #l1 #l2 #l1 #l3 &trr &lget #l4 2
             str-to-regex #l1
             str-to-regex #l2
             str-to-regex #l3

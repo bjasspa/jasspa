@@ -230,8 +230,6 @@ set-variable %gdiff-com &cond &seq %gdiff-com "ERROR" "diff -c -w" %gdiff-com
             find-buffer .gdiff.bnnew
             !if &seq @wc ""
                 find-buffer .gdiff.bncom
-                ; Fails here why is the forward-delete here ?
-                ; forward-delete-char
                 !return
             !endif
             !while &not &equ $line-scheme -1

@@ -4,7 +4,7 @@
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     Sat Feb 6 1999
-; Synopsis:    Simply hilighting of a SQL file.
+; Synopsis:    Simple hilighting of an SQL file.
 ; Authors:     Jon Green
 ;
 define-macro fhook-sql
@@ -18,6 +18,9 @@ set-variable .fhook-sql.name "SQL"
 set-variable .fhook-sql.setup &reg "/history" "fhook/sql" "ghix"
 set-variable .fhook-sql.setup-mask "aeghikmtux"
 set-variable .fhook-sql.exact -1
+set-variable .fhook-sql.comment "|/*| */|*| * | * |fr|"
+set-variable .fhook-sql.comment-1 "|--||-|-- | --||"
+set-variable .fhook-sql.comment-2 "|rem|||rem |||"
 
 !if &and &sin "h" .fhook-sql.setup &band .hilight.flags 0x02 
     !if &not &exist .hilight.sql

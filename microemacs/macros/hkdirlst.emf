@@ -214,7 +214,6 @@ set-variable .fhook-dirlst.cvs-enable &sin "c" .fhook-dirlst.setup
         !force -1 find-buffer #l1
     !done
     goto-position "\x81"
-    !return
     ; avoid a toolbar window
     !if &band $window-flags 0x1000
         next-window

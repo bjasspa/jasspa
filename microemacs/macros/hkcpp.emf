@@ -25,12 +25,54 @@ set-variable .fhook-cpp.name "C++"
 set-variable .fhook-cpp.setup &reg "/history" "fhook/cpp" "bdfghnopx"
 set-variable .fhook-cpp.setup-mask "abdefghikmnoptux>"
 set-variable .fhook-cpp.tags "ctags"
-set-variable .fhook-cpp.comment "|//||/|// | //||"
-set-variable .fhook-cpp.command-flag  "|th|th|t|t|t|t|t|t|bo|bo|"
-set-variable .fhook-cpp.command-name  "|c-slashify|c-deslashify||c-hash-set-define|c-hash-unset-define|c-hash-eval|c-hash-eval|c-hash-del|comment-restyle|comment-restyle|"
-set-variable .fhook-cpp.command-nbind "|||||||1||||"
-set-variable .fhook-cpp.command-kbind "|||||||||esc q|esc o|"
-set-variable .fhook-cpp.command-desc  "|Slashify region|Deslashify region||\HSet #define|\HUnset #define|Evaluate \H#'s|Evaluate #'s use \HNarrow|\HRemove # evaluation|||"
+
+; Comments
+set-variable .fhook-cpp.comment "|//||/|// | //|r|"
+; Doxygen comment - //!< ... member detailed text ...
+;                   //!< ... member detailed text ...
+set-variable .fhook-cpp.comment-1 "|//!<|||//!< |||"
+; Doxygen comment - //! ... text ...
+;                   //! ... text ...
+set-variable .fhook-cpp.comment-2 "|//!|||//! |||" 
+; Doxygen comment - ///< ... text ...
+;                   ///< ... text ...
+set-variable .fhook-cpp.comment-3 "|///<||/|///< | ///||"
+; Doxygen comment - /// ... text ...
+;                   /// ... text ...
+set-variable .fhook-cpp.comment-4 "|///||/|/// | ///||"
+; Doxygen comment - /**< ... member detailed text ...
+;                    *   ... member detailed text ... */
+set-variable .fhook-cpp.comment-5 "|/**<| */|*| *   | * |f|"
+; Doxygen comment - /*!< ... member detailed text ...
+;                    *   ... member detailed text ... */
+set-variable .fhook-cpp.comment-6 "|/*!<| */|*| *   | * |f|"
+; Fancy C - /*
+;           ** Comment
+;           */
+set-variable .fhook-cpp.comment-7 "|/*|*/|*|** | * |f|"
+; Fancy C - /*
+;           ** Comment
+;            */
+set-variable .fhook-cpp.comment-8 "|/*| */|*|** | * |f|"
+; Fancy C - /*\
+;            * Comment
+;           \*/
+set-variable .fhook-cpp.comment-9 "|/*\\|\\*/|*| * | * |f|"
+; Standard comment - We repeat here incase the default comment style is
+; over-ridden. 
+; Standard C - /*
+;               * ... comment ... 
+;               */
+set-variable .fhook-cpp.comment-10 "|/*| */|*| * | * |f|"
+; Standard C++ comment.
+set-variable .fhook-cpp.comment-11 "|//||/|// | //||"
+
+; Commands
+set-variable .fhook-cpp.command-flag  "|th|th|t|t|t|t|t|t|"
+set-variable .fhook-cpp.command-name  "|c-slashify|c-deslashify||c-hash-set-define|c-hash-unset-define|c-hash-eval|c-hash-eval|c-hash-del|"
+set-variable .fhook-cpp.command-nbind "|||||||1||"
+set-variable .fhook-cpp.command-kbind "|||||||||"
+set-variable .fhook-cpp.command-desc  "|Slashify region|Deslashify region||\HSet #define|\HUnset #define|Evaluate \H#'s|Evaluate #'s use \HNarrow|\HRemove # evaluation|"
 
 ; Set up the collaspe for C++
 set-variable .fhook-cpp.collapse-open  "^{"

@@ -23,7 +23,7 @@ define-macro fhook-ini
 ; buffer-init variables
 set-variable .fhook-ini.setup &reg "/history" "fhook/ini" "fghiopx"
 set-variable .fhook-ini.setup-mask "aefghikmoptux"
-set-variable .fhook-ini.comment "|;||;|; | ;||"
+set-variable .fhook-ini.comment "|;||;|; | ;|r|"
 
 ; setup ini file collapse
 set-variable .fhook-ini.collapse-open  "^\\["
