@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20040205.2156>
+# Last Modified: <20040206.1055>
 #
 ##############################################################################
 
@@ -42,17 +42,17 @@ all:
 release:: $(RELEMFS) $(RELETFS) $(RELEAFS) $(RELERFS) $(RELEDFS) $(RELOTHS)
 # Release target files
 $(RELEMFS): $(EMFS) $(JASMACDIR)
-	$(INSTALL) $(@F) $(@D)
+	$(INSTALL_FIL) $(@F) $(@D)
 $(RELETFS): $(ETFS) $(JASMACDIR)
-	$(INSTALL) $(@F) $(@D)
+	$(INSTALL_FIL) $(@F) $(@D)
 $(RELEAFS): $(EAFS) $(JASMACDIR)
-	$(INSTALL) $(@F) $(@D)
+	$(INSTALL_FIL) $(@F) $(@D)
 $(RELERFS): $(ERFS) $(JASMACDIR)
-	$(INSTALL) $(@F) $(@D)
+	$(INSTALL_FIL) $(@F) $(@D)
 $(RELEDFS): $(EDFS) $(JASMACDIR)
-	$(INSTALL) $(@F) $(@D)
+	$(INSTALL_FIL) $(@F) $(@D)
 $(RELOTHS): $(OTHERS) $(JASMACDIR)
-	$(INSTALL) $(@F) $(@D)
+	$(INSTALL_FIL) $(@F) $(@D)
 # Release target directory.
 $(JASMACDIR):
 	$(MKDIR) $@
