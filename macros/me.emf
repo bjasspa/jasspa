@@ -241,6 +241,7 @@ add-file-hook ".f .f77 .f90"                                  fhook-f90
 add-file-hook ".p .pas"                                       fhook-pascal
 add-file-hook ".el"                                           fhook-lisp
 add-file-hook ".vhdl .vhd"                                    fhook-vhdl
+add-file-hook ".v"                                            fhook-verilg
 add-file-hook ".fvwm .fvwm2rc"                                fhook-fvwm
 add-file-hook ".nsr"                                          fhook-nsr
 add-file-hook ".erf"                                          fhook-erf
