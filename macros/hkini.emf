@@ -1,6 +1,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
-; Last Modified:    <991125.1029>
+; Last Modified:    <010228.1016>
 ;
 ; Comments:         Typically used for Microsoft Windows environments
 ;                   primarily for the initalisation files. The syntax is
@@ -36,11 +36,7 @@ set-variable #l1 "aefhikmtux"
 
 define-macro fhook-ini
     set-variable $buffer-mask "luh1"
-    buffer-modes-init .fhook-ini.setup
-    !if &and &sin "h" .fhook-ini.setup &band .hilight.flags 0x02 
-        set-variable $buffer-hilight .hilight.ini
-    !endif
-    fold-init .fhook-ini.setup
+    buffer-initialize
     ; execute user extensions if enabled
     !if &exist my-fhook-ini
         my-fhook-ini

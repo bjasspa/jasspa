@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steve Philip
 ;  Created       : Jan 26 21:56:01 1998
-;  Last Modified : <000719.0012>
+;  Last Modified : <010228.0958>
 ;
 ;  Description    MicroEmacs LaTeX file hook
 ;
@@ -31,10 +31,8 @@
 set-variable #l0 &reg "/history" "fhook/latex" "fhinopsx"
 set-variable #l1 "aefhijkmnopstuwx"
 
-!if &not &exist .osd.latex-help
+!if &not &exist .osd.latex-popup
     ; set up the osd tool menu & help dialog
-    set-variable .osd.latex-help  &pinc .osd.next 1
-    set-variable .osd.latex-tool  &pinc .osd.next 1
     set-variable .osd.latex-popup &pinc .osd.next 1
     set-variable .osd.latex-popgk &pinc .osd.next 1
     set-variable .osd.latex-pophd &pinc .osd.next 1
@@ -499,9 +497,9 @@ define-macro latex-view
         insert-string &spr "Content Listing: %s\n\n" #l0
         -1 buffer-mode "edit"
         1 buffer-mode "view"
-        buffer-bind-unbound-key latex-goto-buffer "f7"
-        buffer-bind-unbound-key latex-goto-buffer "f8"
-        buffer-bind-key latex-goto-section "return"
+        buffer-bind-create "b" "f7" "" latex-goto-buffer
+        buffer-bind-create "b" "f8" "" latex-goto-buffer 
+        buffer-bind-create "bo" "return" "" latex-goto-section
         set-variable :mouse-word-select "latex-goto-section"
         ml-write &spr "Generating content list for %s ... Done" #p0
     !endif
@@ -739,60 +737,6 @@ define-macro latex-popup
 
 ;; osd Tools ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-!if &sin "o" #l0 
-    osd .osd.latex-tool 0  "b"
-    osd .osd.latex-tool 1  ""   "LaTeX Tool &Help   esc h"   .osd.latex-help osd
-    osd .osd.latex-tool 2  ""   "&Goto Ref Label    C-c r"   f latex-ref-goto-label
-    osd .osd.latex-tool 3  ""   "&Return to Ref     C-c C-r" f latex-ref-go-back
-    osd .osd.latex-tool 4  ""   "List &Sections     f7"      f latex-list-section
-    osd .osd.latex-tool 5  ""   "List &Labels       f8"      f latex-list-label
-    osd .osd.latex-tool 6  "-"
-    osd .osd.latex-tool 7  "Md" "&Insert Token      C-6"     .osd.latex-popup
-    osd .osd.latex-tool 8  ""   "Com&pile Buffer"            f latex-compile
-    osd .osd.latex-tool 9  ""   "&View Buffer"               f latex-view
-    osd .osd.latex-tool 10 "-"
-    osd .osd.latex-tool 11 ""   "&Comment Line      C-c C-c" f latex-comment-line
-    osd .osd.latex-tool 12 ""   "&Uncomment Line    C-c C-d" f 
-    osd .osd.latex-tool 13 "-"
-    osd .osd.latex-tool 14 ""   "Toggle hilighting C-c C-h"  f latex-swap-hilight
-    osd .osd.latex-tool 15 "i"  "Create &Tags File"          f "exec-me \"\\\"@textags\\\"\""
-    ; Add hook to load the OSD latex tools menu.
-    0 define-macro osd-ohook-latex
-        osd 7 1 "Md" "LaTeX &Tools" .osd.latex-tool
-        osd 7 2 "-"
-        osd 4 15 "Md" "&LaTex Token" .osd.latex-popup
-    !emacro
-    ; Add hook to remove the OSD latex tools menu.
-    0 define-macro osd-chook-latex
-        osd 7 1  "D"
-        osd 7 2  "D"
-        osd 4 15 "D"
-    !emacro
-!endif
-
-!if &sin "p" #l0 
-    osd .osd.latex-help 0  "batcdH" 9 3 99 .scheme.osd-title "LaTeX Mode Help" 
-    osd .osd.latex-help 3  "" 
-    osd .osd.latex-help 4  ""  "    esc h   - View this help page"
-    osd .osd.latex-help 5  "" 
-    osd .osd.latex-help 6  ""  "    C-c r   - Find current reference's label"
-    osd .osd.latex-help 7  ""  "    C-c C-r - Return back to current reference"
-    osd .osd.latex-help 8  "" 
-    osd .osd.latex-help 9  ""  "    f7      - Goto section (Given 0 arg to rebuild  "
-    osd .osd.latex-help 10 ""  "              completion list)"
-    osd .osd.latex-help 11 ""  "    f8      - Goto label (Given 0 arg to rebuild  "
-    osd .osd.latex-help 12 ""  "              completion list)"
-    osd .osd.latex-help 13 "" 
-    osd .osd.latex-help 14 ""  "    C-6     - Insert LaTeX token"
-    osd .osd.latex-help 15 "" 
-    osd .osd.latex-help 16 ""  "    C-c C-c - Comment out current line"
-    osd .osd.latex-help 17 ""  "    C-c C-d - Uncomment current line"
-    osd .osd.latex-help 18 "" 
-    osd .osd.latex-help 19 ""  "    C-c C-h - Toggle simulated hilighting"
-    osd .osd.latex-help 98 "" 
-    osd .osd.latex-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
-!endif
-;
 ; Delete hook. This cleans up after the buffer has been closed.
 ;
 0 define-macro dhook-latex
@@ -824,31 +768,9 @@ define-macro latex-popup
 define-macro fhook-latex
     ; if arg is 0 this is a new file so add template 
     !if &not @#
-        etfinsrt "latex" .fhook-latex.setup
+        etfinsrt "latex"
     !endif
-    buffer-modes-init .fhook-latex.setup
-    !if &and &sin "h" .fhook-latex.setup &band .hilight.flags 0x02 
-        set-variable $buffer-hilight .hilight.latex
-        buffer-bind-unbound-key latex-swap-hilight "C-c C-h"
-    !endif
-    fold-init .fhook-latex.setup
-    auto-spell-init .fhook-latex.setup
-    !if &sin "p" .fhook-latex.setup 
-        .osd.latex-help buffer-bind-key osd  "esc h"
-    !endif
-    ; Rebind the paragraph movement keys. 
-    buffer-bind-key latex-para               "esc o"
-    buffer-bind-key latex-para               "esc q"
-    buffer-bind-key latex-backward-paragraph "esc p"
-    buffer-bind-key latex-forward-paragraph  "esc n"
-    
-    buffer-bind-unbound-key latex-popup       "C-6"
-    ; Latex pop-up on C-right-mouse
-    0 buffer-bind-unbound-key latex-popup "C-mouse-pick-3"
-    buffer-bind-unbound-key latex-list-section   "f7"
-    buffer-bind-unbound-key latex-list-label     "f8"
-    buffer-bind-unbound-key latex-comment-line   "C-c C-c"
-    buffer-bind-unbound-key latex-uncomment-line "C-c C-d"
+    buffer-initialize
     ; Set up the default constants
     set-variable :fill-mode "L"
     set-variable :fill-col $fill-col
@@ -857,9 +779,16 @@ define-macro fhook-latex
         my-fhook-latex
     !endif
 !emacro
+set-variable .fhook-latex.name "LaTeX"
 set-variable .fhook-latex.setup #l0
 set-variable .fhook-latex.setup-mask #l1
-
+set-variable .fhook-latex.tags "textags"
+set-variable .fhook-latex.comment "|%||%|"
+set-variable .fhook-latex.command-flag  "|bo|bo|bo|bo|thb|thb|thb|thb|th|thb|thb|th|thb|th|th|thbH|"
+set-variable .fhook-latex.command-name  "|latex-para|latex-para|latex-backward-paragraph|latex-forward-paragraph|latex-ref-goto-label|latex-ref-go-back|latex-list-section|latex-list-label||latex-comment-line|latex-uncomment-line||latex-popup|latex-compile|latex-view|latex-swap-hilight|"
+set-variable .fhook-latex.command-nbind "|||||||||||||||||"
+set-variable .fhook-latex.command-kbind "|esc o|esc q|esc p|esc n|C-c r|C-c C-r|f7|f8||C-c C-c|C-c C-d||C-6|||C-c C-h|"
+set-variable .fhook-latex.command-desc  "|||||&Goto Reference Label|&Return to Reference|List &Sections|List &Labels||&Comment out Line|&Uncomment Line||&Insert Token|Com&pile Buffer|&View Buffer|T&oggle hilighting|"
 !if &sin "f" #l0 
     ; Set up the folding tokens for LaTeX
     set-variable .fhook-latex.fold-open  "\\\\chapter\\|\\\\section\\|\\\\subsection"

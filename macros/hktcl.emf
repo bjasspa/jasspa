@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;       TCL mode hook
 ;
-;   Last Modified : <010119.1520>
+;   Last Modified : <010228.0948>
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; buffer-setup flags
 set-variable #l0 &reg "/history" "fhook/tcl" "dfhnopx"
@@ -224,90 +224,22 @@ set-char-mask "3" "-$."
     indent .hilight.tcl i "#"  
 !endif
 
-; coment line ie xxx -> #xxx
-define-macro tcl-comment-line
-    !while &gre &pdec @# 1 0
-        beginning-of-line
-        insert-string "#"
-        beginning-of-line
-        forward-line
-    !done
-!emacro
-;
-; uncoment line ie #xxx -> xxx
-define-macro tcl-uncomment-line
-    beginning-of-line
-    !while &gre &pdec @# 1 0
-        !force -1 search-forward "#"
-        !if $status
-            backward-delete-char
-        !endif
-        forward-line
-        beginning-of-line
-    !done
-!emacro
-
-!if &sin "o" #l0
-    !if &not &exist .osd.tcl-tool
-        set-variable .osd.tcl-tool &pinc .osd.next 1
-    !endif
-    osd .osd.tcl-tool 0  "b"
-    osd .osd.tcl-tool 1  ""  "Tk/Tcl tool &help esc h"   .osd.tcl-help osd
-    osd .osd.tcl-tool 2  ""  "&Restyle region   A-C-i"   f restyle-region
-    osd .osd.tcl-tool 5  "-"
-    osd .osd.tcl-tool 6  ""  "&Comment line     C-c C-c" f tcl-comment-line
-    osd .osd.tcl-tool 7  ""  "&Uncomment line   C-c C-d" f tcl-uncomment-line
-    osd .osd.tcl-tool 11 "-"
-    osd .osd.tcl-tool 18 "i" "Create &tags file"        f "generate-tags-file tcltags"
-    ; Add hook to load the OSD tcl tools menu.
-    0 define-macro osd-ohook-tcl
-        osd 7 1 "Md" "Tk/Tcl &Tools" .osd.tcl-tool
-        osd 7 2 "-"
-    !emacro
-    ; Add hook to remove the OSD tcl tools menu.
-    0 define-macro osd-chook-tcl
-        osd 7 1  "D"
-        osd 7 2  "D"
-    !emacro
-!endif
-
-!if &sin "p" #l0
-    !if &not &exist .osd.tcl-help
-        set-variable .osd.tcl-help &pinc .osd.next 1
-    !endif
-    osd .osd.tcl-help 0  "batcdH" 9 3 99 .scheme.osd-title "Tk/Tcl Mode Help"
-    osd .osd.tcl-help 3  "" 
-    osd .osd.tcl-help 4  ""  "    esc h   - View this help page"
-    osd .osd.tcl-help 5  "" 
-    osd .osd.tcl-help 7  ""  "    C-c C-c - Comment out current line"
-    osd .osd.tcl-help 8  ""  "    C-c C-d - Uncomment current line"
-    osd .osd.tcl-help 9  "" 
-    osd .osd.tcl-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
-!endif
-
 define-macro fhook-tcl
     ; if arg is 0 this is a new file so add template 
     !if &not @#
-        etfinsrt "tcl" .fhook-tcl.setup
+        etfinsrt "tcl"
     !endif
     set-variable $buffer-mask "luh13"
-    buffer-modes-init .fhook-tcl.setup
-    !if &and &sin "h" .fhook-tcl.setup &band .hilight.flags 0x02 
-        set-variable $buffer-hilight .hilight.tcl
-    !endif
-    !if &sin "d" .fhook-tcl.setup
-        set-variable $buffer-indent  .hilight.tcl
-    !endif
-    fold-init .fhook-tcl.setup
-    buffer-bind-unbound-key tcl-comment-line   "C-c C-c"
-    buffer-bind-unbound-key tcl-uncomment-line "C-c C-d"
-    ; execute user extensions if enabled
+    buffer-initialize
     !if &exist my-fhook-tcl
         my-fhook-tcl
     !endif
 !emacro
+set-variable .fhook-tcl.name "Tcl/Tk"
 set-variable .fhook-tcl.setup #l0
 set-variable .fhook-tcl.setup-mask #l1
+set-variable .fhook-tcl.tags "tcltags"
+set-variable .fhook-tcl.comment "|#||#|"
 
 ; setup tcl folding support
 set-variable .fhook-tcl.fold-open  "^proc "

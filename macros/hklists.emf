@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Stephen Pillips
 ;  Created       : Wed Mar 12 20:29:38 1997
-;  Last Modified : <000719.0012>
+;  Last Modified : <010228.1023>
 ;
 ;  Description   : Lists hook
 ;
@@ -75,6 +75,7 @@ define-macro-file hkehf ehf-process-link ehf-find-help
 !emacro
 
 define-macro fhook-lists
+    ; ZZZZ
     1 buffer-mode "justify"
     1 buffer-mode "indent"
     1 buffer-mode "wrap"

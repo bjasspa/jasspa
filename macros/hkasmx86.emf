@@ -1,19 +1,25 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;       ASSEMBLER X86 mode hook
 ;
 ;       Pedro Gomes
 ;       Created on 99/03/28
-;   Last Modified : <991125.1028>
-;
+;   Last Modified : <010228.1005>
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; buffer-setup flags
+set-variable #l0 &reg "/history" "fhook/asmx86" "dfhnopx"
+set-variable #l1 "adefhikmnoptux"
+
 !if &not &exist .hilight.asmx86
     set-variable .hilight.asmx86 &pinc .hilight.next 1
     ; set up the osd tool menu & help dialog
     set-variable .osd.asmx86-help &pinc .osd.next 1
     set-variable .osd.asmx86-tool &pinc .osd.next 1
 !endif
-!if &band .hilight.flags 0x02
-    ;
+!if &not &exist .hilight.asmx86
+    set-variable .hilight.asmx86 &pinc .hilight.next 1
+!endif
+!if &and &sin "h" #l0 &band .hilight.flags 0x02 
     ; Highlight Assembler Mode
-    ;
     0 hilight .hilight.asmx86 0                $global-scheme
     hilight   .hilight.asmx86 0 "^\\s *\\{#.*" .scheme.comment
     hilight   .hilight.asmx86 0 "\\\\."        $global-scheme
@@ -157,89 +163,38 @@
     hilight   .hilight.asmx86 1 "word"         .scheme.keyword
 !endif
 
-0 indent  .hilight.asmx86 0 10
-indent .hilight.asmx86 n "{"  4
-indent .hilight.asmx86 o "}" -4
-indent .hilight.asmx86 e "\"" "\"" "\\"
-indent .hilight.asmx86 b "\\[" "]"
-indent .hilight.asmx86 b "(" ")"
-indent .hilight.asmx86 c "\\\\\\s " 10
-indent .hilight.asmx86 i ";"
-
-; coment line ie xxx -> ;#xxx
-define-macro asmx86-comment-line
-    !while &gre &pdec @# 1 0
-        beginning-of-line
-        insert-string ";"
-        beginning-of-line
-        forward-line
-    !done
-!emacro
-;
-; uncoment line ie ;xxx -> xxx
-define-macro asmx86-uncomment-line
-    beginning-of-line
-    !while &gre &pdec @# 1 0
-        !force -1 search-forward ";"
-        !if $status
-            backward-delete-char
-        !endif
-        forward-line
-        beginning-of-line
-    !done
-!emacro
-
-osd .osd.asmx86-tool 0  "b"
-osd .osd.asmx86-tool 1  ""  "Assembler x86  tool &help esc h"   .osd.asmx86-help osd
-osd .osd.asmx86-tool 6  ""  "&Comment line     C-c C-c" asm-comment-line
-osd .osd.asmx86-tool 7  ""  "&Uncomment line   C-c C-d" asm-uncomment-line
-;osd .osd.asmx86-tool 11 "-"
-; Add hook to load the OSD asmx86 tools menu.
-0 define-macro osd-ohook-asmx86
-    osd 7 1 "Md" "Assembler &Tools" .osd.asmx86-tool
-    osd 7 2 "-"
-!emacro
-; Add hook to remove the OSD asmx86 tools menu.
-0 define-macro osd-chook-asmx86
-    osd 7 1  "D"
-    osd 7 2  "D"
-!emacro
-
-osd .osd.asmx86-help 0  "batcdH" 9 3 99 .scheme.osd-title "x86 Assembler Mode Help"
-osd .osd.asmx86-help 3  ""
-osd .osd.asmx86-help 4  ""  "    esc h   - View this help page"
-osd .osd.asmx86-help 5  ""
-osd .osd.asmx86-help 7  ""  "    C-c C-c - Comment out current line"
-osd .osd.asmx86-help 8  ""  "    C-c C-d - Uncomment current line"
-osd .osd.asmx86-help 9  ""
-osd .osd.asmx86-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void
+!if &sin "d" #l0
+    0 indent  .hilight.asmx86 0 10
+    indent .hilight.asmx86 n "{"  4
+    indent .hilight.asmx86 o "}" -4
+    indent .hilight.asmx86 e "\"" "\"" "\\"
+    indent .hilight.asmx86 b "\\[" "]"
+    indent .hilight.asmx86 b "(" ")"
+    indent .hilight.asmx86 c "\\\\\\s " 10
+    indent .hilight.asmx86 i ";"
+!endif
 
 define-macro fhook-asmx86
     ; if arg is 0 this is a new file so add template
     !if &not @#
         etfinsrt "asmx86"
     !endif
-    1 buffer-mode "time"
-    set-variable $buffer-mask "luh13"
-    !if &band .hilight.flags 0x02
-        set-variable $buffer-hilight .hilight.asmx86
-    !endif
-    set-variable $buffer-indent  .hilight.asmx86
-    buffer-bind-unbound-key asmx86-comment-line   "C-c C-c"
-    buffer-bind-unbound-key asmx86-uncomment-line "C-c C-d"
-    ; setup.asmx86-x86 folds
-    ; buffer-bind-key fold-current "f2"
-    ; buffer-bind-key fold-all     "f3"
+    set-variable $buffer-mask "luh1"
+    buffer-initialize
     ; execute user extensions if enabled
     !if &exist my-fhook-asmx86
         my-fhook-asmx86
     !endif
 !emacro
+set-variable .fhook-asmx86.name "x86 Assembler"
+set-variable .fhook-asmx86.setup #l0
+set-variable .fhook-asmx86.setup-mask #l1
+set-variable .fhook-asmx86.comment "|;||;|"
 
 ; setup.asmx86 folding support
-;set-variable .fhook.asmx86.fold-open  "^proc "
-;set-variable .fhook.asmx86.fold-close "^}"
-;set-variable .fhook.asmx86.fold-mopen "1"
+set-variable .fhook.asmx86.fold-open  "^proc "
+set-variable .fhook.asmx86.fold-close "^}"
+set-variable .fhook.asmx86.fold-mopen "1"
 
 ml-write "[Intel x86 Assembler file hook loaded]"
 

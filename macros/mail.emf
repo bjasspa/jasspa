@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
 ;  Created By    : Steven Phillips
-;  Last Modified : <000719.0012>
+;  Last Modified : <010220.2227>
 ;
 ;  Description   : Macros used for sending e-mails
 ;
@@ -63,7 +63,7 @@ define-macro mail-check
         !if &not &seq &mid $mode-line 2 1 #l0
             set-variable #l1 &rig $mode-line &cond &seq &mid $mode-line 2 1 "%" 4 3
             set-variable $mode-line &cat &cat &lef $mode-line 2 #l0 #l1
-            execute-named-command &kbind "redraw"
+            execute-named-command &cbind "redraw"
             !if &seq #l0 "M"
                 !bell 0
                 !bell 2

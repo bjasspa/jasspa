@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Jon Green
 ;  Created       : Sat Mar 20 19:18:31 1999
-;  Last Modified : <000719.0012>
+;  Last Modified : <010228.1023>
 ;
 ;  Description   : MHEG-5
 ;
@@ -49,16 +49,13 @@ define-macro fhook-mhg
         !force etfinsrt "mhg" .fhook-mhg.setup
     !endif
     set-variable $buffer-mask "luh1"
-    buffer-modes-init .fhook-mhg.setup
-    !if &and &sin "h" .fhook-mhg.setup &band .hilight.flags 0x02 
-        set-variable $buffer-hilight .hilight.mhg
-    !endif
-    fold-init .fhook-mhg.setup
+    buffer-initialize
     ; execute user extensions if enabled
     !if &exist my-fhook-mhg
         my-fhook-mhg
     !endif
 !emacro
+set-variable .fhook-mhg.name "MHEG"
 set-variable .fhook-mhg.setup #l0
 set-variable .fhook-mhg.setup-mask #l1
 

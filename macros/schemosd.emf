@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Mar 13 14:31:05 1999
-;  Last Modified : <010202.1543>
+;  Last Modified : <010220.2227>
 ;
 ;  Description
 ;
@@ -825,7 +825,7 @@ osd .osd.schm 630 "BtcfH"   13 .scheme.osd-ebtt " E&xit " f void
 
 define-macro scheme-editor
     set-variable .schm-osd.buffer $buffer-bname
-    set-variable .schm-osd.redraw &kbind "redraw"
+    set-variable .schm-osd.redraw &cbind "redraw"
     !force set-variable #l0 @1
     !if $status
         set-variable .schm-osd.fname #l0

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Thu May 27 00:17:10 1999
-;  Last Modified : <000719.1218>
+;  Last Modified : <010220.2227>
 ;
 ;  Description     Implementation of MS windows shift region definition style
 ;
@@ -50,7 +50,7 @@
         !if &seq "mouse-event" @cc
             set-variable #l1 &sin "yank" &reg "history/mouse" #l0 ""
         !else &not &set #l1 &sin "yank" @cc
-            set-variable #l1 &sin "yank" &kbind #l0
+            set-variable #l1 &sin "yank" &cbind #l0
         !endif
         !if #l1
             set-variable #l2 @cqk
@@ -83,7 +83,7 @@
     !endif
     set-variable #l0 @cck
     var-str-sub #l0 "S-" ""
-    set-variable #l1 &kbind #l0
+    set-variable #l1 &cbind #l0
     set-variable @cl @cl
     !if @?
         @# execute-named-command #l1

@@ -1,12 +1,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This file is invoked when a lisp file is loaded.
 ;
-;   Last Modified : <010119.1520>
+;   Last Modified : <010228.0958>
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; buffer-setup flags
 ; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/lisp" "dhix"
-set-variable #l1 "adehikmtux"
+set-variable #l0 &reg "/history" "fhook/lisp" "dhiopx"
+set-variable #l1 "adehikmoptux"
 
 set-char-mask "2" "-$&#!%:@."
 
@@ -34,43 +34,13 @@ set-char-mask "2" "-$&#!%:@."
     indent .hilight.lisp i ";"
 !endif
 
-define-macro lisp-comment-line
-    !while &gre &pdec @# 1 0
-        beginning-of-line
-        insert-string ";"
-        beginning-of-line
-        forward-line
-    !done
-!emacro
-;
-; uncoment line ie ;xxx -> xxx
-define-macro lisp-uncomment-line
-    beginning-of-line
-    !while &gre &pdec @# 1 0
-        !force -1 search-forward ";"
-        !if $status
-            backward-delete-char
-        !endif
-        forward-line
-        beginning-of-line
-    !done
-!emacro
-
 define-macro fhook-lisp
     ; if arg is 0 this is a new file so add template 
     !if &not @#
-        etfinsrt "lisp" .fhook-lisp.setup
+        etfinsrt "lisp"
     !endif
     set-variable $buffer-mask "luh1"
-    buffer-modes-init .fhook-lisp.setup
-    !if &and &sin "h" .fhook-lisp.setup &band .hilight.flags 0x02 
-        set-variable $buffer-hilight .hilight.lisp
-    !endif
-    !if &sin "d" .fhook-lisp.setup
-        set-variable $buffer-indent .hilight.lisp
-    !endif
-    buffer-bind-unbound-key lisp-comment-line "C-c C-c"
-    buffer-bind-unbound-key lisp-uncomment-line "C-c C-d"
+    buffer-initialize
     ; execute user extensions if enabled
     !if &exist my-fhook-lisp
         my-fhook-lisp
@@ -78,6 +48,7 @@ define-macro fhook-lisp
 !emacro
 set-variable .fhook-lisp.setup #l0
 set-variable .fhook-lisp.setup-mask #l1
+set-variable .fhook-lisp.comment "|;||;|"
 
 ml-write "[Lisp file hook loaded]"
 

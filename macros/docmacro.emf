@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Jon Green
 ;  Created       : Mon Mar 20 22:36:48 2000
-;  Last Modified : <000719.0012>
+;  Last Modified : <010228.1005>
 ;
 ;  Description   : Common document macros. 
 ;
@@ -89,7 +89,9 @@ set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
         set-variable .hilight.doc  &pinc .hilight.next 1
         set-variable .hilight.doc1 &pinc .hilight.next 1
     !endif
-
+    !if &not &exist &ind &cat ".hilight." #l1
+        set-variable  &ind &cat ".hilight." #l1 .hilight.doc
+    !endif
     ; Define the hilighting. Note that we use a look back so that
     ; we can process the inserted schemes if necessary. Ordinarily
     ; we do not need it. This will only hurt branch tokens, as there
@@ -129,8 +131,8 @@ set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
     !endif
     ; If the hilighting mode is loaded then modify it.
     !if &and &sin "h" .fhook-emf.setup &band .hilight.flags 0x02 
-        hilight .hilight.doc 0xc0 "^>emf>" ">emf>" .hilight.emf .scheme.hide
-        hilight .hilight.emf 0xc0 "^>doc>" ">doc>" .hilight.doc .scheme.hide
+        hilight .hilight.doc 0x80 "^>emf>" .hilight.emf .scheme.hide
+        hilight .hilight.emf 0x80 "^>doc>" .hilight.doc .scheme.hide
     !endif
     
     ; Allow Pseudo Code inserts
@@ -144,8 +146,8 @@ set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
     !endif
     ; If the hilighting mode is loaded then modify it.
     !if &exi .hilight.pseudo
-        hilight .hilight.doc 0xc0 "^>pseudo>" ">pseudo>" .hilight.pseudo .scheme.hide
-        hilight .hilight.pseudo 0xc0 "^>doc>" ">doc>"    .hilight.doc .scheme.hide
+        hilight .hilight.doc 0x80 "^>pseudo>" .hilight.pseudo .scheme.hide
+        hilight .hilight.pseudo 0x80 "^>doc>" .hilight.doc .scheme.hide
     !endif
     
     ; Allow BNF inserts
@@ -159,8 +161,8 @@ set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
     !endif
     ; If the hilighting mode is loaded then modify it.
     !if &and &sin "h" .fhook-bnf.setup &band .hilight.flags 0x02 
-        hilight .hilight.doc 0xc0 "^>bnf>" ">bnf>"   .hilight.bnf .scheme.hide
-        hilight .hilight.bnf 0xc0 "^>doc>" ">doc>"   .hilight.doc .scheme.hide
+        hilight .hilight.doc 0x80 "^>bnf>" .hilight.bnf .scheme.hide
+        hilight .hilight.bnf 0x80 "^>doc>" .hilight.doc .scheme.hide
     !endif
     
     ; Allow C Code inserts
@@ -174,24 +176,35 @@ set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
     !endif
     ; If the hilighting mode is loaded then modify it.
     !if &and &sin "h" .fhook-c.setup &band .hilight.flags 0x02 
-        hilight .hilight.doc 0xc0 "^>c>" ">c>"     .hilight.c   .scheme.hide
-        hilight .hilight.c   0xc0 "^>doc>" ">doc>" .hilight.doc .scheme.hide
+        hilight .hilight.doc 0x80 "^>c>"   .hilight.c   .scheme.hide
+        hilight .hilight.c   0x80 "^>doc>" .hilight.doc .scheme.hide
     !endif
     
-    ; Allow C++ Code inserts
-    ; Force the ".cpp" scheme to be loaded into the context of the document
-    ; scheme. We delimit the .emf scheme with a pair of markers ">cpp>" and
-    ; ">doc>"
-    ;
-    ; Force the hilighting mode to load if not already loaded.
+    ; Allow C++ Code inserts ...
     !if &not &exi .hilight.cpp
         !force execute-file "hkcpp"
     !endif
-    ; If the hilighting mode is loaded then modify it.
     !if &and &sin "h" .fhook-cpp.setup &band .hilight.flags 0x02 
-        hilight .hilight.doc 0xc0 "^>cpp>" ">cpp>"     .hilight.cpp .scheme.hide
-        hilight .hilight.doc 0xc0 "^>c\\+\\+>" ">c++>" .hilight.cpp .scheme.hide
-        hilight .hilight.cpp 0xc0 "^>doc>" ">doc>"     .hilight.doc .scheme.hide
+        hilight .hilight.doc 0x80 "^>cpp>"     .hilight.cpp .scheme.hide
+        hilight .hilight.doc 0x80 "^>c\\+\\+>" .hilight.cpp .scheme.hide
+        hilight .hilight.cpp 0x80 "^>doc>"     .hilight.doc .scheme.hide
+    !endif
+    ; Allow Perl Code inserts ...
+    !if &not &exi .hilight.perl
+        !force execute-file "hkperl"
+    !endif
+    !if &and &sin "h" .fhook-perl.setup &band .hilight.flags 0x02 
+        hilight .hilight.doc  0x80 "^>perl>" .hilight.perl .scheme.hide
+        hilight .hilight.doc  0x80 "^>pl>"   .hilight.perl .scheme.hide
+        hilight .hilight.perl 0x80 "^>doc>"  .hilight.doc  .scheme.hide
+    !endif
+    ; Allow TCL Code inserts ...
+    !if &not &exi .hilight.tcl
+        !force execute-file "hktcl"
+    !endif
+    !if &and &sin "h" .fhook-cpp.setup &band .hilight.flags 0x02 
+        hilight .hilight.doc 0x80 "^>tcl>" .hilight.tcl .scheme.hide
+        hilight .hilight.tcl 0x80 "^>doc>" .hilight.doc .scheme.hide
     !endif
 !endif
 
@@ -217,42 +230,6 @@ define-macro doc-mode-state
     osd .osd.doc-stat 10 "" &spr " Bullet lookahead  : %d " $fill-bullet-len
     .osd.doc-stat osd
 !emacro
-
-!if &sin "p" #l0
-    !if &not &exist .osd.doc-help
-        set-variable .osd.doc-help &pinc .osd.next 1
-    !endif
-    osd .osd.doc-help 0  "batcdH" 9 3 99 .scheme.osd-title "Documentation Mode Help"
-    osd .osd.doc-help 1  "" 
-    osd .osd.doc-help 2  ""  "    esc h   - View this help page"
-    osd .osd.doc-help 3  ""  "    C-c C-h - Show current mode settings"
-    osd .osd.doc-help 4  ""
-    osd .osd.doc-help 5  ""  "    C-c C-s - Start spelling the buffer"
-    osd .osd.doc-help 6  ""  "    C-c o   - Fill paragraph for WP export"
-    osd .osd.doc-help 7  ""
-    osd .osd.doc-help 8  ""
-    osd .osd.doc-help 9  "c" "To format current paragraph:"
-    osd .osd.doc-help 10 ""
-    osd .osd.doc-help 11 ""  "    C-c C-b - Justify both margins"
-    osd .osd.doc-help 12 ""  "    C-c C-c - Justify center"
-    osd .osd.doc-help 13 ""  "    C-c C-l - Justify left"
-    osd .osd.doc-help 14 ""  "    C-c C-g - Justify gutter (on left margin)"
-    osd .osd.doc-help 15 ""  "    C-c C-r - Justify right"
-    osd .osd.doc-help 16 ""  "    esc o   - To format paragraph in current mode"
-    osd .osd.doc-help 17 ""
-    osd .osd.doc-help 18 ""
-    osd .osd.doc-help 19 "c" "To change justification mode:"
-    osd .osd.doc-help 20 ""
-    osd .osd.doc-help 21 ""  "    C-c a - Change to auto justification [DEFAULT]"
-    osd .osd.doc-help 22 ""  "    C-c b - Change to both justification"
-    osd .osd.doc-help 23 ""  "    C-c c - Change to center justification"
-    osd .osd.doc-help 24 ""  "    C-c l - Change to left justification"
-    osd .osd.doc-help 25 ""  "    C-c n - Change to none justification"
-    osd .osd.doc-help 26 ""  "    C-c r - Change to right justification"
-    osd .osd.doc-help 27 ""
-    osd .osd.doc-help 28 ""
-    osd .osd.doc-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
-!endif
 
 0 define-macro doc-set-justify
     set-variable $fill-mode &mid "BBCLnR" @# 1
@@ -315,25 +292,18 @@ define-macro doc-ehook-body
 
 ; Defualt body of a fhook
 define-macro doc-fhook-body
-    set-variable #l1 @1
+    set-variable #l1 &rig $buffer-fhook 6
     set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
     ; if arg is 0 this is a new file so add template
     !if &not @#
-        etfinsrt #l1 #l0
+        etfinsrt #l1
     !endif
-    ; Set up the standard modes
-    buffer-modes-init #l0
-    ; Assign the hilighting variable
-    !if &and &sin "h" #l0 &band .hilight.flags 0x02
-        set-variable $buffer-hilight .hilight.doc
-    !endif
-    fold-init #l0
-    auto-spell-init #l0
+    buffer-initialize
     ; Set up the default constants
     set-variable :fill-mode $fill-mode
     set-variable :fill-col $fill-col
     ; Over-ride any special document modes
-    !force set-variable #l2 @2
+    !force set-variable #l2 @1
     !if &and $status &sin "n" #l0
         ; Search for additional modes in a -!- document -!-
         ;
@@ -374,26 +344,13 @@ define-macro doc-fhook-body
             beginning-of-buffer
         !endif
     !endif
-    ; Local bindings
-    !if &sin "p" #l0
-        .osd.doc-help buffer-bind-key osd         "esc h"
-    !endif
-    buffer-bind-unbound-key doc-mode-state        "C-c C-h"
-    buffer-bind-unbound-key spell-buffer          "C-c C-s"
-    buffer-bind-unbound-key fill-paragraph-both   "C-c C-b"
-    buffer-bind-unbound-key fill-paragraph-center "C-c C-c"
-    buffer-bind-unbound-key fill-paragraph-left   "C-c C-l"
-    buffer-bind-unbound-key fill-paragraph-gutter "C-c C-g"
-    buffer-bind-unbound-key fill-paragraph-right  "C-c C-r"
-    buffer-bind-unbound-key paragraph-to-line     "C-c o"
-    0 buffer-bind-unbound-key doc-set-justify     "C-c a"
-    1 buffer-bind-unbound-key doc-set-justify     "C-c b"
-    2 buffer-bind-unbound-key doc-set-justify     "C-c c"
-    3 buffer-bind-unbound-key doc-set-justify     "C-c l"
-    4 buffer-bind-unbound-key doc-set-justify     "C-c n"
-    5 buffer-bind-unbound-key doc-set-justify     "C-c r"
 !emacro
-    
+
+set-variable &ind &spr ".fhook-%s.command-flag"  #l1 "|thb|hb|thb|th|h|h|thb|thb|thb|thb|thb|h|h|th|h|h|thb|thb|thb|thb|thb|thb|"
+set-variable &ind &spr ".fhook-%s.command-name"  #l1 "|doc-mode-state|spell-buffer|paragraph-to-line||||fill-paragraph-both|fill-paragraph-center|fill-paragraph-left|fill-paragraph-gutter|fill-paragraph-right|fill-paragraph|ifill-paragraph||||doc-set-justify|doc-set-justify|doc-set-justify|doc-set-justify|doc-set-justify|doc-set-justify|"
+set-variable &ind &spr ".fhook-%s.command-nbind" #l1 "|||||||||||||||||0|1|2|3|4|5|"
+set-variable &ind &spr ".fhook-%s.command-kbind" #l1 "|C-c C-h|C-c C-s|C-c o||||C-c C-b|C-c C-c|C-c C-l|C-c C-g|C-c C-r||||||C-c a|C-c b|C-c c|C-c l|C-c n|C-c r|"
+set-variable &ind &spr ".fhook-%s.command-desc"  #l1 "|&Show Current Settings|Spell Check Buffer|Fill Paragraph for WP Export||To format current paragraph:||Justify Both Margins|Justify Center|Justify Left|Justify Gutter (on left margin)|Justify Right|Format Paragraph in Current Mode|Intelligently Format Paragraph||To change justification mode:||Change to auto justification [DEFAULT]|Change to both justification|Change to center justification|Change to left justification|Change to none justification|Change to right justification|"
 !if &sin "f" #l0
     ; Define the folding definitions.
     set-variable &ind &spr ".fhook-%s.fold-open" #l1  "^[ \t]*\\(Appendix[ \t]+[A-Z][0-9.]*\\|[0-9]\\.[0-9.]*\\)[ \t]+\\w"

@@ -1,11 +1,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;       Java mode hook
 ;
-;   Last Modified : <010119.1520>
+;   Last Modified : <010228.0957>
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; buffer-setup flags
 set-variable #l0 &reg "/history" "fhook/java" "bdfhnopx"
-set-variable #l1 "abdefhikmnoptux"
+set-variable #l1 "abdefhikmnoptux>"
 
 !if &band .hilight.flags 0x02
     ; High-light Java Mode
@@ -99,63 +99,8 @@ set-variable #l1 "abdefhikmnoptux"
 ; Bunch of Java macros we may need.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; use C's commenting commands
-define-macro-file cmacros c-comment-line c-uncomment-line c-comm-to-end c-insert-tab c-slashify c-deslashify c-start-comment c-hash-eval c-hash-set-define c-hash-unset-define c-hash-del
+define-macro-file cmacros c-start-comment
 define-macro-file cbox c-box
-;
-; Set up the variables for java - use 'C'
-;
-set-variable $c-contcomm " * "
-
-!if &sin "o" #l0 
-    !if &not &exist .osd.java-tool
-        set-variable .osd.java-tool &pinc .osd.next 1
-    !endif
-    osd .osd.java-tool 0  "b"
-    osd .osd.java-tool 1  ""  "Java tool &help esc h"     .osd.java-help osd
-    osd .osd.java-tool 2  ""  "&Restyle region   A-C-i"   f restyle-region
-    osd .osd.java-tool 5  "-"
-    osd .osd.java-tool 6  ""  "&Comment line     C-c C-c" f c-comment-line
-    osd .osd.java-tool 7  ""  "&Uncomment line   C-c C-d" f c-uncomment-line
-    osd .osd.java-tool 8  ""  "Start co&mment   esc C-c"  f c-start-comment
-    osd .osd.java-tool 9  ""  "Comment to &end  C-c C-e"  f c-comm-to-end
-    osd .osd.java-tool 10 ""  "Restyle c&omment esc o"    f c-box
-    osd .osd.java-tool 11 "-"
-    osd .osd.java-tool 18 "i" "Create &tags file"         f "generate-tags-file javatags"
-    ; Add hook to load the OSD C-tools menu.
-    0 define-macro osd-ohook-java
-        osd 7 1 "Md" "Java &Tools" .osd.java-tool
-        osd 7 2 "-"
-    !emacro
-    ; Add hook to remove the OSD C-tools menu.
-    0 define-macro osd-chook-java
-        osd 7 1  "D"
-        osd 7 2  "D"
-    !emacro
-!endif
-
-!if &sin "p" #l0 
-    !if &not &exist .osd.java-help
-        set-variable .osd.java-help &pinc .osd.next 1
-    !endif
-    osd .osd.java-help 0  "batcdH" 9 3 99 .scheme.osd-title "Java Mode Help"
-    osd .osd.java-help 3  "" 
-    osd .osd.java-help 4  ""  "    esc h   - View this help page"
-    osd .osd.java-help 5  "" 
-    osd .osd.java-help 6  ""  "    esc C-c - Start comment"
-    osd .osd.java-help 7  ""  "    C-c C-c - Comment out current line"
-    osd .osd.java-help 8  ""  "    C-c C-d - Remove current or next comment "
-    osd .osd.java-help 9  ""  "    C-c C-e - Comment to end of line"
-    osd .osd.java-help 10 "" 
-    osd .osd.java-help 11 ""  "    A-i     - Insert as tab (obeys tab mode)"
-    osd .osd.java-help 12 ""  "    A-C-i   - Restyle region"
-    osd .osd.java-help 13 "" 
-    osd .osd.java-help 14 ""  "    esc o"
-    osd .osd.java-help 15 ""  "    esc q   - Reformat current comment"
-    osd .osd.java-help 16 "" 
-    osd .osd.java-help 17 ""  " Abbreviation file is set to c.abr "
-    osd .osd.java-help 18 "" 
-    osd .osd.java-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
-!endif
 
 ; Begin hook - entering the buffer - save the current fill-ignore characters
 define-macro bhook-java
@@ -175,31 +120,10 @@ define-macro ehook-java
 define-macro fhook-java
     ; if arg is 0 this is a new file so add template 
     !if &not @#
-        etfinsrt "java" .fhook-java.setup
+        etfinsrt "java"
     !endif
     set-variable $buffer-mask "luh1"
-    buffer-modes-init .fhook-java.setup
-    !if &and &sin "h" .fhook-java.setup &band .hilight.flags 0x02 
-        set-variable $buffer-hilight .hilight.java
-    !endif
-    !if &sin "d" .fhook-java.setup
-        1 buffer-mode "cmode"
-    !endif
-    !if &sin "b" .fhook-java.setup
-        buffer-abbrev-file "c"
-    !endif
-    fold-init .fhook-java.setup 
-    !if &sin "p" .fhook-java.setup 
-        .osd.java-help buffer-bind-key osd   "esc h"
-    !endif
-    buffer-bind-key c-start-comment          "esc C-c"
-    buffer-bind-unbound-key c-comment-line   "C-c C-c"
-    buffer-bind-unbound-key c-uncomment-line "C-c C-d"
-    buffer-bind-unbound-key c-comm-to-end    "C-c C-e"
-    buffer-bind-key c-insert-tab             "A-tab"
-    buffer-bind-unbound-key restyle-region   "A-C-i"
-    buffer-bind-key c-box                    "esc q"
-    buffer-bind-key c-box                    "esc o"
+    buffer-initialize
     ; execute user extensions if enabled
     !if &exist my-fhook-java
         my-fhook-java
@@ -207,6 +131,13 @@ define-macro fhook-java
 !emacro
 set-variable .fhook-java.setup #l0
 set-variable .fhook-java.setup-mask #l1
+set-variable .fhook-java.tags "javatags"
+set-variable .fhook-java.comment "|/*|*/|*|"
+set-variable .fhook-java.command-flag  "|thb|thbo|thbo|bo|"
+set-variable .fhook-java.command-name  "|normal-tab|c-start-comment|c-box|c-box|"
+set-variable .fhook-java.command-nbind "|||||"
+set-variable .fhook-java.command-kbind "|A-tab|esc C-c|esc q|esc o|"
+set-variable .fhook-java.command-desc  "|&Insert tab|Start co&mment|Restyle c&omment||"
 
 ; Set up the folding of functions
 set-variable .fhook-java.fold-open  "^[a-zA-Z].*{$"

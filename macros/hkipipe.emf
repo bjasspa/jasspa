@@ -404,6 +404,7 @@
 define-macro fhook-ipipe
     set-variable $buffer-mask "luh1"
     set-variable $buffer-fhook "fhook-ipipe"
+    ; ZZZZZ
     buffer-bind-key ipipe-kill "C-c C-k"
     2 buffer-bind-key ipipe-kill "C-c C-c"
     buffer-bind-key ipipe-rerun "C-return"

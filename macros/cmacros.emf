@@ -1,51 +1,10 @@
 ;       C-macro : bunch of useful macros for writing c
-;   Last Modified : <000607.2015>
+;   Last Modified : <010227.1301>
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Bunch of C macros we may need.
 ;
-; comment line ie xxx -> /*xxx*/
-;
-define-macro c-comment-line
-    !while &gre &pdec @# 1 0
-        beginning-of-line
-        insert-string "/*"
-        end-of-line
-        insert-string "*/"
-        beginning-of-line
-        forward-line
-    !done
-!emacro
-;
-; uncoment line ie /*xxx*/ -> xxx
-;
-define-macro c-uncomment-line
-    ; The next line store magic state and enables magic
-    &set #l0 &bmod "magic" buffer-mode "magic"
-    !while &gre &pdec @# 1 0
-        search-forward "*/"
-        search-backward "/\\*"
-        forward-delete-char
-        forward-delete-char
-        search-forward "*/"
-        backward-delete-char
-        backward-delete-char
-        beginning-of-line
-        forward-line
-    !done
-    ; restore magic mode
-    #l0 buffer-mode "magic"
-!emacro
-;
-; fill from the current column to fill-col with '*' and a trailing '/'
-;
-define-macro c-comm-to-end
-    &sub &sub $fill-col $window-acol 2 insert-string "*"
-    insert-string "*/"
-!emacro
-;
 ; Insert a normal none c-mode tab (still effected by tab mode)
-;
 define-macro c-insert-tab
     ; Remember we have set cmode
     set-variable #l0 &bmod cmode
@@ -119,7 +78,7 @@ define-macro c-start-comment
     find-buffer "*c-comment*"
     1 buffer-mode "indent"
     1 buffer-mode "wrap"
-    buffer-bind-unbound-key c-end-comment "C-c C-c"
+    buffer-bind-create "b" "C-c C-c" "" c-end-comment 
 !emacro
 
 define-macro c-end-comment
@@ -176,7 +135,7 @@ define-macro c-hash-eval
                 set-variable #l0 &add #l0 1
                 set-mark
             !endif
-            set-variable $line-scheme %lblack
+            set-variable $line-scheme .scheme.hide
             !if &seq &lef @wl 3 "#if"
                 set-variable #l0 &add #l0 2
             !elif &seq &lef @wl 6 "#endif"
@@ -191,7 +150,7 @@ define-macro c-hash-eval
             !endif
         !else
             !if &seq &lef @wl 3 "#if"
-                set-variable $line-scheme %lblack
+                set-variable $line-scheme .scheme.hide
                 beginning-of-line
                 set-variable #l0 @wl
                 !force 0 delete-buffer "*calc*"
@@ -234,10 +193,10 @@ define-macro c-hash-eval
                 -1 find-buffer $buffer-bname
                 set-variable #l0 &cond .calc.result 0 1
             !elif &seq &lef @wl 5 "#else"
-                set-variable $line-scheme %lblack
+                set-variable $line-scheme .scheme.hide
                 set-variable #l0 1
             !elif &seq &lef @wl 6 "#endif"
-                set-variable $line-scheme %lblack
+                set-variable $line-scheme .scheme.hide
             !elif &seq &lef @wl 7 "#define"
                 set-variable $line-scheme -1
                 set-variable #l5 &rig @wl 7

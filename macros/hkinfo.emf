@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Fri Apr 23 13:14:46 1999
-;  Last Modified : <000719.0012>
+;  Last Modified : <010228.1410>
 ;
 ;  Description
 ;
@@ -12,9 +12,9 @@
 ;
 ;  Copyright (c) 1999 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-!if &seq .osd.info-help "ERROR"
-    set-variable .osd.info-help &pinc .osd.next 1
-!endif
+; buffer-setup flags
+set-variable #l0 &reg "/history" "fhook/info" "EUmhop"
+set-variable #l1 "ahkop"
 
 ; Quick check to make sure that hilighting is required.
 !if &band .hilight.flags 0x02
@@ -176,33 +176,9 @@
     !endif
     -1 buffer-mode "edit"
     1 buffer-mode "view"
-    ; Force hilighting on the buffer
-    !if &band .hilight.flags 0x02
-        set-variable $buffer-hilight .hilight.info
-    !endif
     beginning-of-buffer
-    buffer-bind-key info-jump-link "return"
-    1 buffer-bind-key info-jump-link "n"
-    2 buffer-bind-key info-jump-link "p"
-    3 buffer-bind-key info-jump-link "u"
-    4 buffer-bind-key info-jump-link "t"
-    5 buffer-bind-key info-jump-link "h"
-    6 buffer-bind-key info-jump-link "d"
-    buffer-bind-key info-follow-line "f"
-    buffer-bind-key info-jump-last "l"
-    buffer-bind-key info-goto-link "g"
-    buffer-bind-key info-node-menu "m"
-    buffer-bind-key scroll-down "space"
-    buffer-bind-key scroll-up "backspace"
-    buffer-bind-key scroll-up "delete"
-    buffer-bind-key beginning-of-buffer "b"
-    buffer-bind-key beginning-of-buffer "."
-    .osd.info-help buffer-bind-key osd "esc h"
-    .osd.info-help buffer-bind-key osd "?"
     set-variable $buffer-fhook "fhook-info"
-    set-variable :mouse-pick-1 info-mouse-pick-1
-    set-variable :mouse-drop-1 info-mouse-drop-1
-    set-variable :node ""
+    fhook-info
 !emacro
 
 0 define-macro info-jump-link
@@ -442,7 +418,6 @@
     find-buffer #l2
     set-alpha-mark "t"
     beginning-of-buffer
-    set-variable #l0 "\CJ"
     !force search-forward "^\\*.*:."
     !while $status
         set-variable #l1 &mid @wl 1 &sub &sin ":" @wl 2
@@ -537,34 +512,25 @@ define-macro info
     info-on "dir"
 !emacro
 
-osd .osd.info-help 0  "batcdH" 9 3 99 .scheme.osd-title "GNU Info Mode Help"
-osd .osd.info-help 1  ""
-osd .osd.info-help 2  ""  "    ?,"
-osd .osd.info-help 3  ""  "    esc h   - View this help page"
-osd .osd.info-help 4  ""
-osd .osd.info-help 5  ""  "    space   - Page down node"
-osd .osd.info-help 6  ""  "    backspace,"
-osd .osd.info-help 7  ""  "    delete  - Page up node"
-osd .osd.info-help 8  ""  "    b, .    - Top of node"
-osd .osd.info-help 9  ""
-osd .osd.info-help 10 ""  "    g       - Goto to node"
-osd .osd.info-help 11 ""  "    l       - Last node"
-osd .osd.info-help 12 ""  "    m       - Menu of nodes"
-osd .osd.info-help 13 ""  "    n       - Next node"
-osd .osd.info-help 14 ""  "    p       - Previous node"
-osd .osd.info-help 15 ""  "    u       - Up node"
-osd .osd.info-help 16 ""  "    t       - Top node"
-osd .osd.info-help 17 ""  "    d       - Dir node"
-osd .osd.info-help 18 ""  "    f       - Follow cross reference    "
-osd .osd.info-help 19 ""
-osd .osd.info-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void
-
-0  define-macro fhook-info
-    ; Force hilighting on the buffer
-    !if &band .hilight.flags 0x02
-        set-variable $buffer-hilight .hilight.info
+define-macro fhook-info
+    buffer-initialize
+    set-variable :mouse-pick-1 info-mouse-pick-1
+    set-variable :mouse-drop-1 info-mouse-drop-1
+    set-variable :node ""
+    ; execute user extensions if enabled
+    !if &exist my-fhook-info
+        my-fhook-info
     !endif
 !emacro    
+
+set-variable .fhook-info.name "GNU Info"
+set-variable .fhook-info.setup #l0
+set-variable .fhook-info.setup-mask #l1
+set-variable .fhook-info.command-flag  "|bio|thbio|thbio|thbio|bio|thbio|bio|th|thbio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|"
+set-variable .fhook-info.command-name  "|buffer-help|info-jump-link|scroll-down|scroll-up|scroll-up|beginning-of-buffer|beginning-of-buffer||info-jump-link|info-jump-link|info-jump-link|info-jump-last||info-node-menu|info-goto-link|info-jump-link|info-jump-link|info-jump-link|info-follow-line|"
+set-variable .fhook-info.command-nbind "||5|||||||6|4|3||||||2|1||"
+set-variable .fhook-info.command-kbind "|?|h|space|backspace|delete|b|.||d|t|u|l||m|g|return|p|n|f|"
+set-variable .fhook-info.command-desc  "||View &Info Help|Page Down Node|Page Up Node||Top of Node|||&Directory node|&Top Node|&Up Node|&Last Node||&Menu of Nodes|&Goto Node|&Jump to Node|&Previous Node|&Next Node|&Follow Cross Reference|"
 
 ; load in user extensions if found
 !force execute-file "myinfo"

@@ -4,7 +4,7 @@
 ;       Author        : Jon Green
 ;       Created       : 2nd November 1996
 ;
-;   Last Modified : <000707.1631>
+;   Last Modified : <010228.1021>
 ;
 ;       Comment       : This shell file has given me grief. It is difficult
 ;                       to know how much to hilight. At the moment it appears
@@ -151,10 +151,7 @@ set-variable #l1 "aehikmtux"
 
 define-macro fhook-shell
     set-variable $buffer-mask "luh1"
-    buffer-modes-init .fhook-shell.setup
-    !if &and &sin "h" .fhook-shell.setup &band .hilight.flags 0x02 
-        set-variable $buffer-hilight .hilight.shell
-    !endif
+    buffer-initialize
     ; execute user extensions if enabled
     !if &exist my-fhook-shell
         my-fhook-shell

@@ -1,11 +1,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;       Install Shield rul file hook
 ;
-;   Last Modified : <010119.1520>
+;   Last Modified : <010228.1003>
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/rul" "bdfhnx"
-set-variable #l1 "abdefhikmntux"
+set-variable #l0 &reg "/history" "fhook/rul" "bdfhnopx"
+set-variable #l1 "abdefhikmnoptux"
 set-char-mask "3" "@"
 
 !if &not &exist .hilight.rul
@@ -118,66 +118,13 @@ set-char-mask "3" "@"
     indent .hilight.rul e "\"" "\"" "\\"
     indent .hilight.rul e "/\\*" "*/" ""
 !endif
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Bunch of macros we may need.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
-; comment line ie xxx -> /*xxx*/
-define-macro rul-comment-line
-    !while &gre &pdec @# 1 0
-        beginning-of-line
-        insert-string "/*"
-        end-of-line
-        insert-string "*/"
-        beginning-of-line
-        forward-line
-    !done
-!emacro
-;
-; uncoment line ie /*xxx*/ -> xxx
-define-macro rul-uncomment-line
-    ; The next line store magic state and enables magic
-    &set #l0 &bmod "magic" buffer-mode "magic"
-    !while &gre &pdec @# 1 0
-        search-forward "*/"
-        search-backward "/\\*"
-        forward-delete-char
-        forward-delete-char
-        search-forward "*/"
-        backward-delete-char
-        backward-delete-char
-        beginning-of-line
-        forward-line
-    !done
-    ; restore magic mode
-    #l0 buffer-mode "magic"
-!emacro
-;
-; fill from the current column to fill-col with '*' and a trailing '/'
-define-macro rul-comm-to-end
-    &sub &sub $fill-col $window-acol 2 insert-string "*"
-    insert-string "*/"
-!emacro
 
 define-macro fhook-rul
     !if &not @#
-        etfinsrt "rul" .fhook-rul.setup
+        etfinsrt "rul"
     !endif
     set-variable $buffer-mask "luh13"
-    buffer-modes-init .fhook-rul.setup
-    !if &and &sin "h" .fhook-rul.setup &band .hilight.flags 0x02 
-        set-variable $buffer-hilight .hilight.rul
-    !endif
-    !if &sin "d" .fhook-rul.setup
-        set-variable $buffer-indent  .hilight.rul
-    !endif
-    !if &sin "b" .fhook-rul.setup
-        buffer-abbrev-file "rul"
-    !endif
-    fold-init .fhook-rul.setup
-    buffer-bind-unbound-key rul-comment-line   "C-c C-c"
-    buffer-bind-unbound-key rul-uncomment-line "C-c C-d"
-    buffer-bind-unbound-key rul-comm-to-end    "C-c C-e"
+    buffer-initialize
     ; execute user extensions if enabled
     !if &exist my-fhook-rul
         my-fhook-rul
@@ -185,6 +132,7 @@ define-macro fhook-rul
 !emacro
 set-variable .fhook-rul.setup #l0
 set-variable .fhook-rul.setup-mask #l1
+set-variable .fhook-rul.comment "|/*|*/|*|"
 
 ; setup rul folding support
 set-variable .fhook-rul.fold-open  "^function"

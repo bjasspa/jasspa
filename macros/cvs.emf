@@ -3,7 +3,7 @@
 ;  Author        : $Author: jon $
 ;  Created By    : Steven Phillips
 ;  Created       : Tue Jan 23 14:09:08 2001
-;  Last Modified : <010214.1219>
+;  Last Modified : <010228.1415>
 ;
 ;  Description
 ;
@@ -22,7 +22,7 @@ set-variable .cvs.filter  1
 set-variable .cvs.console-hilight "|||||||"
 set-variable .cvs.message ""
 
-!if &band .hilight.flags 0x01
+!if &band .hilight.flags 0x02
     ; fix the *files* buffer hilighting for cvs additions
     hilight .hilight.file 0x012 "[0-9][0-9]:[0-9][0-9] [0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9] [0-9][0-9]:[0-9][0-9] \\{" .scheme.file
     hilight .hilight.file 0x112 "*[?AMCR]" .scheme.select

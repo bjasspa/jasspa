@@ -1,6 +1,6 @@
 ;  Startup file for MicroEmacs '99 JASSPA Distribution
 ;
-;  Last Modified :  <010213.1631>
+;  Last Modified :  <010228.0943>
 ;  Copyright (c) 1999 JASSPA
 ;
 ; If mename isn't set or registry file isn't found then set it to guest
@@ -29,16 +29,18 @@
 ; Define extern file macros first
 0 define-macro-file scheme scheme
 0 define-macro-file osd osd-main osd-dialog osd-xdialog osd-entry
+0 define-macro-file buffinit buffer-initialize buffer-bind-create
 0 define-macro-file utils ascii-time regex-forward regex-backward var-str-sub str-to-regex filemask-to-regex copy-registry
-define-macro-file format clean sort-lines-ignore-case tabs-to-spaces paragraph-to-line delete-indentation restyle-region restyle-buffer ifill-paragraph
+define-macro-file format clean sort-lines-ignore-case normal-tab tabs-to-spaces paragraph-to-line delete-indentation restyle-region restyle-buffer ifill-paragraph
 define-macro-file cvs cvs cvs-state cvs-update cvs-commit cvs-log cvs-diff cvs-add cvs-remove cvs-resolve-conflicts
 define-macro-file abbrev expand-abbrev-handle spell-complete-word iso-accents-mode iso-accents-expand
 define-macro-file misc symbol check-line-length alarm time compare-windows-exact display-white-chars
 define-macro-file search replace-all-string query-replace-all-string replace-all-pairs line-scheme
 define-macro-file tools compile grep rgrep which diff diff-changes execute-tool uniq reread-file
+define-macro-file comment comment-line uncomment-line comment-to-end-of-line
 define-macro-file spell spell-word spell-buffer spell-edit-word find-word
-define-macro-file buffinit buffer-modes-init auto-spell-init fold-init
 define-macro-file games Metris Patience Triangle Mahjongg Match-It
+define-macro-file buffstp buffer-setup buffer-help buffer-tool
 define-macro-file mail mail mail-check stop-mail-check
 define-macro-file fileopen osd-file-open osd-get-file
 define-macro-file hkinfo info info-on info-goto-link
@@ -46,7 +48,6 @@ define-macro-file zfile find-zfile zfile-setup
 define-macro-file gentags generate-tags-file
 define-macro-file schemosd scheme-editor
 define-macro-file printstp print-setup
-define-macro-file buffstp buffer-setup
 define-macro-file fattrib file-attrib
 define-macro-file hkdir file-browser
 define-macro-file organize organizer
@@ -83,18 +84,9 @@ define-macro save-all
     &bor 2 @# save-registry @mna
     &bor 2 @# save-dictionary @mna
     !if &not @?
-        !if &iseq @mc1 "Save default history [y/n]? " "nNyY" "y"
+        set-variable #l0 @mc1 "Save default history [y/n]? " "nNyY"
+        !if &iseq #l0 "y"
             0 save-history
-        !endif
-    !endif
-!emacro
-; buffer-bind-unbound-key - Conditionally bind a key if not bound
-0 define-macro buffer-bind-unbound-key
-    !if &seq &kbind @2 "ERROR"
-        !if @?
-            @# buffer-bind-key @1 @2
-        !else
-            buffer-bind-key @1 @2
         !endif
     !endif
 !emacro
@@ -110,10 +102,6 @@ set-variable $show-modes &reg "/history" "show-modes" $show-modes
 set-variable $cursor-blink &reg "/history" &cat %platform "/blink" $cursor-blink
 !force exec-file "keyboard"
 !force exec-file "language"
-; execute any emulation file, e.g. Emacs, Vi etc
-!if &not &seq &set #l0 &reg "/history" "emulate" "" ""
-    !force exec-file #l0
-!endif
 ; execute msshift if using MS Shift style region definition
 !if &reg "/history" "msshift" "0"
     !force exec-file msshift
@@ -131,6 +119,7 @@ global-bind-key grep                     "C-c g"
 global-bind-key replace-all-string       "A-C-r"
 global-bind-key query-replace-all-string "esc A-C-r"
 4 global-bind-key find-tag               "esc C-t"
+global-bind-key buffer-help              "esc h"
 global-bind-key ifill-paragraph          "esc q"
 global-bind-key delete-indentation       "esc ^"
 global-bind-key file-browser             "f10"
@@ -180,8 +169,9 @@ add-file-hook ".txt"                                          fhook-txt
 add-file-hook ".tex"                                          fhook-latex
 add-file-hook ".bib"                                          fhook-bibtex
 add-file-hook ".n .1 .2 .3 .4 .5 .6 .7 .8 .9 .so .tni .sm"    fhook-nroff
-add-file-hook ".c .h .def .l .y .i"                           fhook-c
+add-file-hook ".c .h .def .i"                                 fhook-c
 add-file-hook ".cc .cpp .hpp .rc"                             fhook-cpp
+add-file-hook ".l .y"                                         fhook-yacc
 add-file-hook "Makefile makefile .mak .mk .gmk"               fhook-make
 add-file-hook "Imakefile imakefile"                           fhook-imake
 add-file-hook ".sh .ksh .csh .login .cshrc .profile .tcshrc"  fhook-shell
@@ -271,6 +261,11 @@ osd -1 &cond &reg "/history" "main-menu" "1" "1" "-1"
 !force exec-file "mouse"
 ; load in the platform specific stuff if found
 !force exec-file $platform
+; execute any emulation file, e.g. Emacs, Vi etc
+!if &not &seq &set #l0 &reg "/history" "emulate" "" ""
+    set-variable %emulate #l0
+    !force execute-file &cat "me" #l0
+!endif
 ; load ftp/http registry file
 !if &not &seq &set #l0 &reg "/history" "url-file" "" ""
     read-registry "/url" &find #l0 ".erf" "" 

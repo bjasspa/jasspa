@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Jon Green
 ;  Created       : Fri Feb 5 20:40:45 1999
-;  Last Modified : <000719.0012>
+;  Last Modified : <010228.1013>
 ;
 ;  Description   : Fortran 90 hook
 ;
@@ -106,31 +106,26 @@ set-variable #l1 "aebhikmntux"
 !endif
 
 define-macro fhook-f90
-    set-variable #l1 &mid $buffer-bname &rsin "." $buffer-bname 3
     ; if arg is 0 this is a new file so add template
     !if &not @#
         ; Is this a f77 or other fortran file ??
-        !if &seq #l1 "f90"
-            etfinsrt "f90" .fhook-f90.setup
+        !if &seq &mid $buffer-bname &rsin "." $buffer-bname 3 "f90"
+            etfinsrt "f90"
         !else
-            etfinsrt "f" .fhook-f90.setup
+            etfinsrt "f"
         !endif
     !endif
     set-variable $buffer-mask "luh1"
-    buffer-modes-init .fhook-f90.setup
-    !if &and &sin "h" .fhook-f90.setup &band .hilight.flags 0x02 
-        set-variable $buffer-hilight .hilight.f90
-    !endif
-    !if &sin "b" .fhook-f90.setup
-        buffer-abbrev-file "f90"
-    !endif
+    buffer-initialize
     ; execute user extensions if enabled
     !if &exist my-fhook-f90
         my-fhook-f90
     !endif
 !emacro
+set-variable .fhook-f90.name "Fortran"
 set-variable .fhook-f90.setup #l0
 set-variable .fhook-f90.setup-mask #l1
+set-variable .fhook-f90.comment "|!||!|"
 
 ml-write "[Fortran file hook loaded]"
 

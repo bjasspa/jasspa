@@ -1,0 +1,132 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; LEX/YACC hook - This file is invoked when a lex or yacc file is loaded.
+;
+; Last Modified : <010228.1003>
+; Copyright (c) 1999 JASSPA.
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; buffer-setup flags
+set-variable #l0 &reg "/history" "fhook/yacc" "hinopx"
+set-variable #l1 "aehikmnoptux"
+
+!if &and &sin "h" #l0 &band .hilight.flags 0x02 
+    ; Hi-light LEX/YACC Mode
+    !if &not &exi .hilight.yacc
+        set-variable .hilight.yacc &pinc .hilight.next 1
+    !endif
+    0 hilight .hilight.yacc  2 50
+    ; C style hilighting
+    ; comments, strings and quotes
+    hilight .hilight.yacc 0x3a "#" "\\"       .scheme.prepro
+    hilight .hilight.yacc   20 "/\\*" "*/" ""   .scheme.comment
+    ; the following is strictly C++ commenting - but people don't seem to know the difference
+    hilight .hilight.yacc   18 "//"           .scheme.comment
+    hilight .hilight.yacc    4 "\"" "\"" "\\" .scheme.string
+    hilight .hilight.yacc    0 "'.'"      .scheme.quote
+    hilight .hilight.yacc    0 "'\\\\.'"  .scheme.quote
+    hilight .hilight.yacc    0 "'\\\\'"       .scheme.error
+    hilight .hilight.yacc    0 "'\\\\''"      .scheme.quote
+    ; Function names and goto labels
+    !if &band .hilight.flags 0x04
+        hilight .hilight.yacc    0 "^\\w+\\}\\s (" .scheme.function
+        hilight .hilight.yacc    0 "^\\w+\\}(" .scheme.function
+    !endif
+    hilight .hilight.yacc    0 "^\\w+\\}:" .scheme.link
+    ; keywords
+    hilight .hilight.yacc    1 "break"        .scheme.keyword
+    hilight .hilight.yacc    1 "case"         .scheme.keyword
+    hilight .hilight.yacc    1 "continue"     .scheme.keyword
+    hilight .hilight.yacc    1 "default"      .scheme.keyword
+    hilight .hilight.yacc    1 "do"           .scheme.keyword
+    hilight .hilight.yacc    1 "else"         .scheme.keyword
+    hilight .hilight.yacc    1 "for"          .scheme.keyword
+    hilight .hilight.yacc    1 "goto"         .scheme.keyword
+    hilight .hilight.yacc    1 "if"           .scheme.keyword
+    hilight .hilight.yacc    1 "return"       .scheme.keyword
+    hilight .hilight.yacc    1 "switch"       .scheme.keyword
+    hilight .hilight.yacc    1 "while"        .scheme.keyword
+    ; tokens
+    hilight .hilight.yacc    1 "auto"         .scheme.type
+    hilight .hilight.yacc    1 "char"         .scheme.type
+    hilight .hilight.yacc    1 "const"        .scheme.type
+    hilight .hilight.yacc    1 "double"       .scheme.type
+    hilight .hilight.yacc    1 "enum"         .scheme.type
+    hilight .hilight.yacc    1 "extern"       .scheme.type
+    hilight .hilight.yacc    1 "float"        .scheme.type
+    hilight .hilight.yacc    1 "int"          .scheme.type
+    hilight .hilight.yacc    1 "long"         .scheme.type
+    hilight .hilight.yacc    1 "register"     .scheme.type
+    hilight .hilight.yacc    1 "short"        .scheme.type
+    hilight .hilight.yacc    1 "signed"       .scheme.type
+    hilight .hilight.yacc    1 "size_t"       .scheme.type
+    hilight .hilight.yacc    1 "sizeof"       .scheme.keyword
+    hilight .hilight.yacc    1 "static"       .scheme.type
+    hilight .hilight.yacc    1 "struct"       .scheme.type
+    hilight .hilight.yacc    1 "typedef"      .scheme.type
+    hilight .hilight.yacc    1 "union"        .scheme.type
+    hilight .hilight.yacc    1 "unsigned"     .scheme.type
+    hilight .hilight.yacc    1 "void"         .scheme.type
+    hilight .hilight.yacc    1 "volatile"     .scheme.type
+    ; Add some system types
+    hilight .hilight.yacc    1 "FILE"         .scheme.type
+    ; Pre-processor directives
+    hilight .hilight.yacc    0 "__DATE__"     .scheme.prepro
+    hilight .hilight.yacc    0 "__FILE__"     .scheme.prepro
+    hilight .hilight.yacc    0 "__LINE__"     .scheme.prepro
+    hilight .hilight.yacc    0 "__STDC__"     .scheme.prepro
+    hilight .hilight.yacc    0 "__TIME__"     .scheme.prepro
+    ; Add YACC tokens - do not appear in typical 'C' space.
+    hilight .hilight.yacc 0x22 "%token"       .scheme.prepro
+    hilight .hilight.yacc 0x22 "%union"       .scheme.prepro
+    hilight .hilight.yacc 0x22 "%type"        .scheme.prepro
+    hilight .hilight.yacc 0x22 "%start"       .scheme.prepro
+    hilight .hilight.yacc 0x22 "%%"           .scheme.prepro
+    hilight .hilight.yacc 0x22 "%{"           .scheme.prepro
+    hilight .hilight.yacc 0x22 "%}"           .scheme.prepro
+    ; Add LEX tokens - do not appeat in typical 'C' space.
+    hilight .hilight.yacc 0x22 "%a"           .scheme.prepro
+    hilight .hilight.yacc 0x22 "%p"           .scheme.prepro
+    hilight .hilight.yacc 0x22 "%e"           .scheme.prepro
+    hilight .hilight.yacc 0x22 "%k"           .scheme.prepro
+    hilight .hilight.yacc 0x22 "%n"           .scheme.prepro
+    hilight .hilight.yacc 0x22 "%o"           .scheme.prepro
+    hilight .hilight.yacc    1 "\\$[0-9]+"    .scheme.prepro
+    !if &band .hilight.flags 0x08
+        ; hilight constants, e.g. numbers
+        hilight .hilight.yacc 1 "[[:digit:]]+"       .scheme.constant
+        hilight .hilight.yacc 1 "-[[:digit:]]+"      .scheme.constant
+        hilight .hilight.yacc 1 "0[xX][[:xdigit:]]+" .scheme.constant
+        hilight .hilight.yacc 1 "[[:digit:]]+\\.[[:digit:]]+"  .scheme.constant
+        hilight .hilight.yacc 1 "-[[:digit:]]+\\.[[:digit:]]+" .scheme.constant
+        hilight .hilight.yacc 1 "[[:digit:]]+\\.[[:digit:]]+f"  .scheme.constant
+        hilight .hilight.yacc 1 "-[[:digit:]]+\\.[[:digit:]]+f" .scheme.constant
+    !endif
+!endif
+;
+define-macro fhook-yacc
+    ; if arg is 0 this is a new file so add template 
+    !if &not @#
+        ; Use c template for LEX & YACC
+        etfinsrt "c"
+    !endif
+    set-variable $buffer-mask "luh1"
+    buffer-initialize
+    ; execute user extensions if defined
+    !if &exist my-fhook-yacc
+        my-fhook-yacc
+    !endif
+!emacro
+set-variable .fhook-yacc.setup #l0
+set-variable .fhook-yacc.setup-mask #l1
+set-variable .fhook-yacc.comment "|/*|*/|*|"
+set-variable .fhook-yacc.command-flag  "|"
+set-variable .fhook-yacc.command-name  "|"
+set-variable .fhook-yacc.command-nbind "|"
+set-variable .fhook-yacc.command-kbind "|"
+set-variable .fhook-yacc.command-desc  "|"
+
+ml-write "[Lex/Yacc file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "myyacc"
+

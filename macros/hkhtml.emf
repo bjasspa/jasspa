@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Mon Sep 21 18:10:34 1998
-;  Last Modified : <010215.2316>
+;  Last Modified : <010228.1023>
 ;
 ;  Description : Visual Basic Hook File
 ;
@@ -153,6 +153,7 @@ define-macro html-process-buffer
     1 buffer-mode "magic"
     replace-string "http:/\\([^/]\\)" &cat #l0 "\\1"
     beginning-of-buffer
+    ; ZZZZ
     !if &and &sin "h" .fhook-html.setup &band .hilight.flags 0x01 
         set-variable $buffer-hilight .hilight.htmlN
     !endif
@@ -273,6 +274,7 @@ define-macro html-process-buffer
 !endif
 
 define-macro fhook-html
+    ; ZZZZZ
     buffer-modes-init .fhook-html.setup
     !if &sin "c" .fhook-html.setup
         set-variable $buffer-mask "luh1"
@@ -301,6 +303,7 @@ set-variable .fhook-html.setup-mask #l1
 
 define-macro fhook-hts
     set-variable $buffer-mask "luh1"
+    ; ZZZZZ
     buffer-modes-init .fhook-html.setup
     !if &and &sin "h" .fhook-html.setup &band .hilight.flags 0x02
         set-variable $buffer-hilight .hilight.html

@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
 ;  Created       : Mon Dec 15 14:06:31 1997
-;  Last Modified : <001124.1026>
+;  Last Modified : <010228.0945>
 ;
 ;  Description
 ;      etfinsrt "etf-name"
@@ -20,9 +20,8 @@
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 0 define-macro etfinsrt
-    !force set-variable #l0 @2
-    !if $status
-        !if &not &sin "n" #l0
+    !if &exi &ind &spr ".%s.setup" $buffer-fhook
+        !if &not &sin "n" &ind &spr ".%s.setup" $buffer-fhook
             ; header insertion has been disabled - do nothing 
             !return
         !endif

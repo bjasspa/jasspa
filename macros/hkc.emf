@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; C hook - This file is invoked when a C file is loaded.
 ;
-; Last Modified : <010119.1516>
+; Last Modified : <010228.0947>
 ; Copyright (c) 1999 JASSPA.
 ;
 ; Notes:
@@ -12,7 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; buffer-setup flags
 set-variable #l0 &reg "/history" "fhook/c" "bdfhnopx"
-set-variable #l1 "abdefhikmnoptux"
+set-variable #l1 "abdefhikmnoptux>"
 
 !if &and &sin "h" #l0 &band .hilight.flags 0x02 
     ; Hi-light C Mode
@@ -79,20 +79,6 @@ set-variable #l1 "abdefhikmnoptux"
     hilight .hilight.c    0 "__LINE__"     .scheme.prepro
     hilight .hilight.c    0 "__STDC__"     .scheme.prepro
     hilight .hilight.c    0 "__TIME__"     .scheme.prepro
-    ; Add YACC tokens - do not appear in typical 'C' space.
-    hilight .hilight.c 0x22 "%token"       .scheme.prepro
-    hilight .hilight.c 0x22 "%union"       .scheme.prepro
-    hilight .hilight.c 0x22 "%type"        .scheme.prepro
-    hilight .hilight.c 0x22 "%start"       .scheme.prepro
-    hilight .hilight.c 0x22 "%%"           .scheme.prepro
-    hilight .hilight.c 0x22 "%{"           .scheme.prepro
-    hilight .hilight.c 0x22 "%}"           .scheme.prepro
-    ; Add LEX tokens - do not appeat in typical 'C' space.
-    hilight .hilight.c 0x22 "%a"           .scheme.prepro
-    hilight .hilight.c 0x22 "%p"           .scheme.prepro
-    hilight .hilight.c 0x22 "%e"           .scheme.prepro
-    hilight .hilight.c 0x22 "%n"           .scheme.prepro
-    hilight .hilight.c 0x22 "%o"           .scheme.prepro
     !if &band .hilight.flags 0x08
         ; hilight constants, e.g. numbers
         hilight .hilight.c 1 "[[:digit:]]+"       .scheme.constant
@@ -132,119 +118,21 @@ define-macro c-to-cpp-convert
 ;
 ; setup useful C fuctions to auto-load cmacros
 ;
-define-macro-file cmacros c-comment-line c-uncomment-line c-comm-to-end c-insert-tab c-slashify c-deslashify c-start-comment c-hash-eval c-hash-set-define c-hash-unset-define c-hash-del
+define-macro-file cmacros c-slashify c-deslashify c-start-comment c-hash-eval c-hash-set-define c-hash-unset-define c-hash-del
 define-macro-file cbox c-box
-;
-; Set up the variables for 'C'
-set-variable $c-contcomm " * "
-
-!if &sin "o" #l0 
-    !if &not &exi .osd.c-tool
-        set-variable .osd.c-tool &pinc .osd.next 1
-    !endif
-    osd .osd.c-tool 0  "b"
-    osd .osd.c-tool 1  ""  "C tool &help     esc h"   .osd.c-help osd
-    osd .osd.c-tool 2  ""  "Convert to C&++"          f c-to-cpp-convert
-    osd .osd.c-tool 3  ""  "&Insert tab"              f c-insert-tab
-    osd .osd.c-tool 4  ""  "&Restyle region  A-C-i"   f restyle-region
-    osd .osd.c-tool 5  "-"
-    osd .osd.c-tool 6  ""  "&Comment line    C-c C-c" f c-comment-line
-    osd .osd.c-tool 7  ""  "&Delete comment  C-c C-d" f c-uncomment-line
-    osd .osd.c-tool 8  ""  "Start co&mment   esc C-c" f c-start-comment
-    osd .osd.c-tool 9  ""  "Comment to &end  C-c C-e" f c-comm-to-end
-    osd .osd.c-tool 10 ""  "Restyle c&omment esc o"   f c-box
-    osd .osd.c-tool 11 "-"
-    osd .osd.c-tool 12 ""  "Slashify region"          f c-slashify
-    osd .osd.c-tool 13 ""  "Deslashify region"        f c-deslashify
-    osd .osd.c-tool 14 "-"
-    osd .osd.c-tool 15 ""  "&Set #define"             f c-hash-set-define
-    osd .osd.c-tool 16 ""  "&Unset #define"           f c-hash-unset-define
-    osd .osd.c-tool 17 ""  "Evaluate &#'s"            f c-hash-eval
-    osd .osd.c-tool 18 ""  "Evaluate #'s use &Narrow" 1 c-hash-eval
-    osd .osd.c-tool 19 ""  "Re&move # evaluation"     f c-hash-del
-    osd .osd.c-tool 20 "-"
-    osd .osd.c-tool 21 "i" "Create &tags file"        f "generate-tags-file ctags"
-    ; Add hook to load the OSD C-tools menu.
-    0 define-macro osd-ohook-c
-        osd 7 1 "Md" "C &Tools" .osd.c-tool
-        osd 7 2 "-"
-    !emacro
-    ; Add hook to remove the OSD C-tools menu.
-    0 define-macro osd-chook-c
-        osd 7 1  "D"
-        osd 7 2  "D"
-    !emacro
-!endif
-
-!if &sin "p" #l0 
-    !if &not &exi .osd.c-help
-        set-variable .osd.c-help &pinc .osd.next 1
-    !endif
-    osd .osd.c-help 0  "batcdH" 9 3 99 .scheme.osd-title "C Mode Help"
-    osd .osd.c-help 3  "" 
-    osd .osd.c-help 4  ""  "    esc h   - View this help page"
-    osd .osd.c-help 5  "" 
-    osd .osd.c-help 6  ""  "    esc C-c - Start comment"
-    osd .osd.c-help 7  ""  "    C-c C-c - Comment out current line"
-    osd .osd.c-help 8  ""  "    C-c C-d - Remove current or next comment "
-    osd .osd.c-help 9  ""  "    C-c C-e - Comment to end of line"
-    osd .osd.c-help 10 "" 
-    osd .osd.c-help 11 ""  "    A-i     - Insert as tab (obeys tab mode)"
-    osd .osd.c-help 12 ""  "    A-C-i   - Restyle region"
-    osd .osd.c-help 13 "" 
-    osd .osd.c-help 14 ""  "    esc o"
-    osd .osd.c-help 15 ""  "    esc q   - Reformat current comment"
-    osd .osd.c-help 16 "" 
-    osd .osd.c-help 17 ""  " Abbreviation file is set to c.abr "
-    osd .osd.c-help 18 "" 
-    osd .osd.c-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
-!endif
 
 define-macro fhook-c
-    set-variable #l1 &slo &mid $buffer-bname &rsin "." $buffer-bname 1
     ; if arg is 0 this is a new file so add template 
     !if &not @#
         ; Is it an include h file or a c file?
-        !if &seq #l1 "h"
-            etfinsrt "h" .fhook-c.setup
+        !if &iseq &mid $buffer-bname &rsin "." $buffer-bname 1 "h"
+            etfinsrt "h"
         !else
-            ; Allow LEX & YACC to default in here.
-            etfinsrt "c" .fhook-c.setup
+            etfinsrt "c"
         !endif
     !endif
     set-variable $buffer-mask "luh1"
-    buffer-modes-init .fhook-c.setup
-    ; Set up the hilight mode
-    !if &and &sin "h" .fhook-c.setup &band .hilight.flags 0x02 
-        set-variable $buffer-hilight .hilight.c
-    !endif
-    !if &sin #l1 "yl"
-        ; LEX or YACC rules - add LEX/YACC specific in here.
-        ; Not useful to add an indent scheme.
-        !if &sin "d" .fhook-c.setup
-            1 buffer-mode "indent"
-        !endif
-    !else
-        !if &sin "d" .fhook-c.setup
-            1 buffer-mode "cmode"
-        !endif
-        fold-init .fhook-c.setup 
-    !endif
-    !if &sin "b" .fhook-c.setup
-        buffer-abbrev-file "c"
-    !endif
-    ; Bind macros
-    !if &sin "p" .fhook-c.setup 
-        .osd.c-help buffer-bind-key osd  "esc h"
-    !endif
-    buffer-bind-unbound-key c-comment-line   "C-c C-c"
-    buffer-bind-unbound-key c-uncomment-line "C-c C-d"
-    buffer-bind-unbound-key c-comm-to-end    "C-c C-e"
-    buffer-bind-unbound-key restyle-region   "A-C-i"
-    buffer-bind-key c-start-comment  "esc C-c"
-    buffer-bind-key c-insert-tab     "A-tab"
-    buffer-bind-key c-box            "esc q"
-    buffer-bind-key c-box            "esc o"
+    buffer-initialize
     ; execute user extensions if defined
     !if &exist my-fhook-c
         my-fhook-c
@@ -252,6 +140,13 @@ define-macro fhook-c
 !emacro
 set-variable .fhook-c.setup #l0
 set-variable .fhook-c.setup-mask #l1
+set-variable .fhook-c.tags "ctags"
+set-variable .fhook-c.comment "|/*|*/|*|"
+set-variable .fhook-c.command-flag  "|t|t|thb|thbo|thbo|bo|th|th|th|t|t|t|t|t|t|"
+set-variable .fhook-c.command-name  "|c-to-cpp-convert||normal-tab|c-start-comment|c-box|c-box||c-slashify|c-deslashify||c-hash-set-define|c-hash-unset-define|c-hash-eval|c-hash-eval|c-hash-del|"
+set-variable .fhook-c.command-nbind "||||||||||||||1||"
+set-variable .fhook-c.command-kbind "|||A-tab|esc C-c|esc q|esc o||||||||||"
+set-variable .fhook-c.command-desc  "|Convert to C&++||&Insert tab|Start co&mment|Restyle c&omment|||Slashify region|Deslashify region||&Set #define|&Unset #define|Evaluate &#'s|Evaluate #'s use &Narrow|&Remove # evaluation|"
 
 ; Set up the folds for 'C' and C++
 set-variable .fhook-c.fold-open  "^{"

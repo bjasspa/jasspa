@@ -1,6 +1,6 @@
 ; C mode hook
 ;
-; Last Modified : <010214.1230>
+; Last Modified : <010228.0955>
 ;
 ; Notes:
 ;       There is a distinction between C++ and C because of problems with
@@ -10,7 +10,7 @@
 ;
 ; buffer-setup flags
 set-variable #l0 &reg "/history" "fhook/cpp" "bdfhnopx"
-set-variable #l1 "abdefhikmnoptux"
+set-variable #l1 "abdefhikmnoptux>"
 
 !if &not &exist .hilight.cpp
     set-variable .hilight.cpp &pinc .hilight.next 1
@@ -106,143 +106,38 @@ set-variable #l1 "abdefhikmnoptux"
         hilight .hilight.cpp 1 "-[[:digit:]]+\\.[[:digit:]]+" .scheme.constant
     !endif
 !endif
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Bunch of C macros we may need.
-;
-; comment line ie xxx -> //xxx
-;
-define-macro cpp-comment-line
-    !while &gre &pdec @# 1 0
-        beginning-of-line
-        insert-string "//"
-        beginning-of-line
-        forward-line
-    !done
-!emacro
-;
-; uncoment line ie //xxx -> xxx
-;
-define-macro cpp-uncomment-line
-    beginning-of-line
-    !while &gre &pdec @# 1 0
-        search-forward "//"
-        backward-delete-char
-        backward-delete-char
-        beginning-of-line
-        forward-line
-    !done
-!emacro
-;
-; fill from the current column to fill-col with '*'
-;
-define-macro cpp-comm-to-end
-    &sub $fill-col $window-acol insert-string "*"
-!emacro
 ;
 ; setup fuctions to auto-load from cmacros & cbox
-;
-define-macro-file cmacros c-insert-tab c-slashify c-deslashify c-start-comment c-hash-eval c-hash-set-define c-hash-unset-define c-hash-del
+define-macro-file cmacros c-slashify c-deslashify c-start-comment c-hash-eval c-hash-set-define c-hash-unset-define c-hash-del
 define-macro-file cbox c-box
-;
-; Set up the variables for 'C++'
-set-variable $c-contcomm " * "
-
-!if &sin "o" #l0 
-    osd .osd.cpp-tool 0  b 
-    osd .osd.cpp-tool 1  "" "C++ tool &help   esc h"    .osd.cpp-help "osd"
-    osd .osd.cpp-tool 2  ""  "&Insert tab      A-tab"   f "c-insert-tab"
-    osd .osd.cpp-tool 3  ""  "&Restyle region  A-C-i"   f "restyle-region"
-    osd .osd.cpp-tool 4  "-"
-    osd .osd.cpp-tool 5  ""  "&Comment line    C-c C-c" f "cpp-comment-line"
-    osd .osd.cpp-tool 6  ""  "&Delete comment  C-c C-d" f "cpp-uncomment-line"
-    osd .osd.cpp-tool 7  ""  "Start co&mment   esc C-c" f "c-start-comment"
-    osd .osd.cpp-tool 8  ""  "Comment to &end  C-c C-e" f "cpp-comm-to-end"
-    osd .osd.cpp-tool 9  ""  "Restyle c&omment esc o"   f "c-box"
-    osd .osd.cpp-tool 10 "-"
-    osd .osd.cpp-tool 11 ""  "Slashify region"          f c-slashify
-    osd .osd.cpp-tool 12 ""  "Deslashify region"        f c-deslashify
-    osd .osd.cpp-tool 13 "-"
-    osd .osd.cpp-tool 14 ""  "&Set #define"             f c-hash-set-define
-    osd .osd.cpp-tool 15 ""  "&Unset #define"           f c-hash-unset-define
-    osd .osd.cpp-tool 16 ""  "Evaluate &#'s"            f c-hash-eval
-    osd .osd.cpp-tool 17 ""  "Evaluate #'s use &Narrow" 1 c-hash-eval
-    osd .osd.cpp-tool 18 ""  "Re&move # evaluation"     f c-hash-del
-    osd .osd.cpp-tool 19 "-"
-    osd .osd.cpp-tool 20 "i" "Create &tags file"        f "generate-tags-file ctags"
-    ; Add hook to load the OSD C-tools menu.
-    0 define-macro osd-ohook-cpp
-        osd 7 1 "Md" "C++ &Tools" .osd.cpp-tool
-        osd 7 2 "-"
-    !emacro
-    ; Add hook to remove the OSD C-tools menu.
-    0 define-macro osd-chook-cpp
-        osd 7 1  "D"
-        osd 7 2  "D"
-    !emacro
-!endif
-
-!if &sin "p" #l0 
-    osd .osd.cpp-help 0  "batcdH" 9 3 99 .scheme.osd-title "C++ Mode Help"
-    osd .osd.cpp-help 3  "" 
-    osd .osd.cpp-help 4  ""  "    esc h   - View this help page"
-    osd .osd.cpp-help 5  "" 
-    osd .osd.cpp-help 6  ""  "    esc C-c - Start comment"
-    osd .osd.cpp-help 8  ""  "    C-c C-d - Remove current or next comment "
-    osd .osd.cpp-help 9  ""  "    C-c C-e - Comment to end of line"
-    osd .osd.cpp-help 10 "" 
-    osd .osd.cpp-help 11 ""  "    A-i     - Insert as tab (obeys tab mode)"
-    osd .osd.cpp-help 12 ""  "    A-C-i   - Restyle region"
-    osd .osd.cpp-help 13 "" 
-    osd .osd.cpp-help 14 ""  "    esc o"
-    osd .osd.cpp-help 15 ""  "    esc q   - Reformat current comment"
-    osd .osd.cpp-help 16 "" 
-    osd .osd.cpp-help 17 ""  " Abbreviation file is set to c.abr "
-    osd .osd.cpp-help 18 "" 
-    osd .osd.cpp-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
-!endif
 
 define-macro fhook-cpp
     ; if arg is 0 this is a new file so add template 
     !if &not @#
         ; Is it an include h file or a c file?
         !if &seq &mid $buffer-bname &rsin "." $buffer-bname 1 "h"
-            etfinsrt "hpp" .fhook-cpp.setup
+            etfinsrt "hpp"
         !else
-            etfinsrt "cpp" .fhook-cpp.setup
+            etfinsrt "cpp"
         !endif
     !endif
     set-variable $buffer-mask "luh1"
-    buffer-modes-init .fhook-cpp.setup
-    ; Set up the hilight mode
-    !if &and &sin "h" .fhook-cpp.setup &band .hilight.flags 0x02 
-        set-variable $buffer-hilight .hilight.cpp
-    !endif
-    !if &sin "d" .fhook-emf.setup
-	1 buffer-mode "cmode"
-    !endif
-    !if &sin "b" .fhook-cpp.setup
-        buffer-abbrev-file "c"
-    !endif
-    fold-init .fhook-cpp.setup
-    ; Bind macros
-    !if &sin "p" .fhook-cpp.setup
-        .osd.cpp-help buffer-bind-key osd  "esc h"
-    !endif
-    buffer-bind-unbound-key cpp-comment-line   "C-c C-c"
-    buffer-bind-unbound-key cpp-uncomment-line "C-c C-d"
-    buffer-bind-unbound-key cpp-comm-to-end    "C-c C-e"
-    buffer-bind-unbound-key restyle-region     "A-C-i"
-    buffer-bind-key c-start-comment    "esc C-c"
-    buffer-bind-key c-insert-tab       "A-tab"
-    buffer-bind-key c-box              "esc q"
-    buffer-bind-key c-box              "esc o"
+    buffer-initialize
     ; execute user extensions if enabled
     !if &exist my-fhook-cpp
         my-fhook-cpp
     !endif
 !emacro
+set-variable .fhook-cpp.name "C++"
 set-variable .fhook-cpp.setup #l0
 set-variable .fhook-cpp.setup-mask #l1
+set-variable .fhook-cpp.tags "ctags"
+set-variable .fhook-cpp.comment "|//||/|"
+set-variable .fhook-cpp.command-flag  "|thb|thbo|thbo|bo|th|th|th|t|t|t|t|t|t|"
+set-variable .fhook-cpp.command-name  "|normal-tab|c-start-comment|c-box|c-box||c-slashify|c-deslashify||c-hash-set-define|c-hash-unset-define|c-hash-eval|c-hash-eval|c-hash-del|"
+set-variable .fhook-cpp.command-nbind "||||||||||||1||"
+set-variable .fhook-cpp.command-kbind "|A-tab|esc C-c|esc q|esc o||||||||||"
+set-variable .fhook-cpp.command-desc  "|&Insert tab|Start co&mment|Restyle c&omment|||Slashify region|Deslashify region||&Set #define|&Unset #define|Evaluate &#'s|Evaluate #'s use &Narrow|&Remove # evaluation|"
 
 set-variable .fhook-cpp.fold-open  "^{"
 set-variable .fhook-cpp.fold-close "^}"

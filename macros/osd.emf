@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Jon Green
 ;  Created       : Sat Jul 26 10:23:04 1997
-;  Last Modified : <010204.2306>
+;  Last Modified : <010227.1525>
 ;
 ;  Description   : OSD - On Screen Display macros.
 ;                  Controls the set up of the menus and screen overlays.
@@ -47,10 +47,6 @@ define-macro-file crosswd  cross-word
     !if &exi &ind .chook
         execute-named-command .chook
     !endif
-    !if &exi &set #l0 &cat "osd-ohook-" &rig $buffer-fhook 6
-        set-variable .chook &cat "osd-chook-" &rig $buffer-fhook 6
-        execute-named-command #l0
-    !endif
     set-variable #l1 &cat &lef $buffer-fname &rsin "/" $buffer-fname "tags"
     !if &seq #l1 .osd.tag-last
         osd 1 40 ""  "Find &Tag" f "osd-find-tag"
@@ -64,15 +60,32 @@ define-macro-file crosswd  cross-word
     !else
         osd 2 20  ""  "Redo"
     !endif
-    !if &seq &kbi "esc h" "ERROR"
-        osd 9 10 "D"
+    set-variable #l0 &ind &spr ".%s.setup" $buffer-fhook
+    !if &sin "p" #l0
+        osd 9 10 "" &spr "View %s &Help  %s" &rig $buffer-fhook 6 &kbind "" buffer-help f buffer-help
     !else
-        osd 9 10 "i" "Curr Buffer &Help  esc h" f "execute-string \"\\Eh\""
+        osd 9 10 "D"
+    !endif
+    !if &sin "o" #l0
+        set-variable #l9 &ind &spr ".%s.name" $buffer-fhook
+        !if &seq #l9 "ERROR"
+            set-variable #l9 &cat &sup &mid $buffer-fhook 6 1 &rig $buffer-fhook 7
+        !endif
+        osd 7 1 "Md" &cat #l9 " &Tools" .osd.tmp buffer-tool
+        osd 7 2 "-"
+    !else
+        osd 7 1  "D"
+        osd 7 2  "D"
     !endif
     !if &seq &ind &spr ".%s.setup-mask" $buffer-fhook "ERROR"
         osd 9 145 "D"
     !else
         osd 9 145 "" "Buffer &Setup" f buffer-setup
+    !endif
+    ; let the current buffer type modify the menu
+    !if &exi &set #l0 &cat "osd-ohook-" &rig $buffer-fhook 6
+        set-variable .chook &cat "osd-chook-" &rig $buffer-fhook 6
+        execute-named-command #l0
     !endif
     !if &band #l2 1
         show-region
@@ -300,7 +313,7 @@ osd 2  10  ""  "&Undo       C-x u"         1 osd-undo      ; Undo the last comma
 osd 2  20  ""  "Redo"                                      ; Re-do the last osd-undo
 osd 2  25  ""  "Undo &All"                 0 osd-undo      ; Undo all changes to last save
 osd 2  30  "-"
-osd 2  40  ""  "&Set mark   esc space"     f set-mark      ; Set buffer mark
+osd 2  40  ""  "&Set Mark   esc space"     f set-mark      ; Set buffer mark
 osd 2  50  ""  "Cu&t        C-w"           f kill-region   ; Kill off the region
 osd 2  60  ""  "&Copy       esc w"         f copy-region   ; Copy the region
 osd 2  70  ""  "&Paste      C-y"           f yank          ; Paste text
@@ -556,5 +569,9 @@ set-variable #l0 0
     !endif
 !emacro
 
+; execute any emulation osd file, e.g. Emacs, Vi etc
+!if &not &exi %emulate
+    !force execute-file &cat "osd" %emulate
+!endif
 ; load in user extensions if found
 !force execute-file "myosd"
