@@ -46,7 +46,7 @@
 ;         >
 ;         > Author:       My Self
 ;         > Created:      11/11/97
-;         > Modified:     <050224.2302>
+;         > Modified:     <050306.0856>
 ;         > Location:     /xx/yy/zz.doc
 ; *
 ;         All lines commencing with '*' are assumed to be bullet lists. Bullet
@@ -110,10 +110,10 @@ set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
     hilight .hilight.doc 0x22 ">"                               .scheme.comment
     hilight .hilight.doc 0x80 "^[ \t]+@" .hilight.doc1          .scheme.no2
     ; HTTP links etc.
-    hilight .hilight.doc 0    "http:[-_a-zA-Z%\\.:\\/0-9]*"     .scheme.link
-    hilight .hilight.doc 0    "ftp:[-_a-zA-Z%\\.:\\/0-9]+"      .scheme.link
-    hilight .hilight.doc 0    "mailto:[-_a-zA-Z%\\.:\\/0-9]+"   .scheme.link
-    hilight .hilight.doc 0    "news:[-_a-zA-Z%\\.:\\\\/@0-9]+"  .scheme.link 
+    hilight .hilight.doc 0    "http:[-_a-zA-Z@%.:\\/0-9]*"     .scheme.link
+    hilight .hilight.doc 0    "ftp:[-_a-zA-Z@%.:\\/0-9]+"      .scheme.link
+    hilight .hilight.doc 0    "mailto:[-_a-zA-Z@%.:\\/0-9]+"   .scheme.link
+    hilight .hilight.doc 0    "news:[-_a-zA-Z@%.:\\\\/@0-9]+"  .scheme.link 
     ; @ block
     0 hilight .hilight.doc1 0                                   .scheme.no2
     hilight   .hilight.doc1 0x80 "^[ \t]*\n" .hilight.doc       $global-scheme
