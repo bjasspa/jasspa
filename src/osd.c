@@ -124,10 +124,14 @@ static meUByte osdMenuFlags[]="baAtdcrHsSRMCNGnfioFB" ;
 #define CF_NBPTOP   0x0040              /* Notebook Page on top */
 #define CF_NBPBOT   0x0080              /* Notebook Page on top */
 
-#define osdMOVE_LEFT  0x0001            /* item move direction */
-#define osdMOVE_DOWN  0x0002            /* item move direction */
-#define osdMOVE_RIGHT 0x0004            /* item move direction */
-#define osdMOVE_UP    0x0008            /* item move direction */
+#define osdMOVE_LEFT      0x0001        /* item move direction */
+#define osdMOVE_DOWN      0x0002        /* item move direction */
+#define osdMOVE_RIGHT     0x0004        /* item move direction */
+#define osdMOVE_UP        0x0008        /* item move direction */
+#define osdMOVE_PAGE_UP   0x0018        /* item move direction */
+#define osdMOVE_PAGE_DOWN 0x0022        /* item move direction */
+#define osdMOVE_TOP       0x0042        /* item move direction */
+#define osdMOVE_BOTTOM    0x0088        /* item move direction */
 
 /* Local type definitions */
 
@@ -3189,169 +3193,15 @@ menuPosition(osdDISPLAY *md, int redraw)
     }
 }
             
-/*
- * osdDisplayFindNext
- * Find the next item in the display list.
- */
+
 static int
-osdDisplayFindNext (osdDISPLAY *md, int curCont, int dir, int canLoop, int depth)
+osdDisplayFindFirst(osdDISPLAY *md)
 {
-    int ii, ei, si, jj, rowm, mn, mx ;
-    
-    /* if non are selected yet then select the first or last */
-    if ((curCont < 0) || (depth < 0))
-    {
-        /* quick case - just do it */
-        if (dir & (osdMOVE_LEFT|osdMOVE_DOWN))            /* Forwards */
-        {
-            for (ii = 0 ; ii < md->numContexts ; ii++)
-                if (!(md->context [ii].menu->flags & MF_SEP))
-                    return ii;
-        }
-        else
-        {
-            for (ii = md->numContexts-1 ; ii >= 0 ; ii--)
-                if (!(md->context[ii].menu->flags & MF_SEP))
-                    return ii;
-        }
-        return -1 ;
-    }
-    ii = curCont;
-    /* First thing to do is to get the row mask */
-    rowm = md->context[ii].mcflags & CF_ROWMASK ;
-    /* Now get the start and end context no for the row */
-    for (si=ii ; (si >= 0) && ((md->context[si].mcflags & CF_ROWMASK) == rowm) ; si--)
-        ;
-    si++ ;
-    for (ei=ii ; (ei < md->numContexts) && ((md->context[ei].mcflags & CF_ROWMASK) == rowm)  ; ei++)
-        ;
-    ei-- ;
-    /* moving north or south is trivial as its simply the next item after
-     * the end of the current row
-     */
-    if(dir == osdMOVE_DOWN)
-    {
-        depth += md->context[ii].y ;
-        mn = md->context[ii].x ;
-        mx = mn + md->context[ii].width ;
-        for(;;)
-        {
-            if(++ei >= md->numContexts)
-            {
-                if(!canLoop)
-                    return ii ;
-                depth = 0 ;
-                ei = 0 ;
-            }
-            if(ei == si)
-                return ii ;
-            if(!(md->context[ei].menu->flags & MF_SEP) &&
-               (md->context[ei].y >= depth) &&
-               (md->context[ei].x < mx) &&
-               ((md->context[ei].x+md->context[ei].width) > mn))
-                return ei ;
-        }
-    }
-    else if(dir == osdMOVE_UP)
-    {
-        depth = md->context[ii].y - depth ;
-        mn = md->context[ii].x ;
-        mx = mn + md->context[ii].width ;
-        for(;;)
-        {
-#if 1
-            /* The gcc based compilers seems to be a bit broken here
-             * I've no idea why the version below breaks it, but
-             * it does, so do it this way instead.
-             */
-            if(si == 0)
-            {
-                if(!canLoop)
-                    return ii ;
-                depth = 0x7fffffff ;
-                si = md->numContexts-1 ;
-            }
-            else
-                si-- ;
-#else
-            if(si == 0)
-            {
-                if(!canLoop)
-                    return ii ;
-                depth = 0x7fffffff ;
-                si = md->numContexts ;
-            }
-            si-- ;
-#endif
-            if(si == ei)
-                return ii ;
-            if(!(md->context[si].menu->flags & MF_SEP) &&
-               (md->context[si].y <= depth) &&
-               (md->context[si].x < mx) &&
-               ((md->context[si].x+md->context[si].width) > mn))
-                return si ;
-        }
-    }
-    /* moving East or West is more difficult as multi-column dialogs mean that
-     * we are looking for any context which is in the current rows y range */
-    /* First thing to do is to find the y span */
-    mn = md->context[si].y ;
-    mx = mn + md->context[si].depth ;
-    for (jj=si+1 ; jj <= ei ; jj++)
-    {
-        if(mn > md->context[jj].y)
-            mn = md->context[jj].y ;
-        if(mx < (md->context[jj].y+md->context[jj].depth))
-            mx = md->context[jj].y+md->context[jj].depth ;
-    }
-    jj = ii ;
-    if(dir == osdMOVE_LEFT)
-    {
-        for(;;)
-        {
-            if(++jj >= md->numContexts)
-            {
-                if(!canLoop)
-                    return ii ;
-                jj = 0 ;
-            }
-            if((jj == ii) ||
-               (!(md->context[jj].menu->flags & MF_SEP) &&
-                (md->context[jj].y >= mn) &&
-                ((md->context[jj].y+md->context[jj].depth) <= mx)))
-                break ;
-        }
-    }
-    else
-    {
-        for(;;)
-        {
-#if 1
-            /* The gcc based compilers seems to be a bit broken here
-             * I've no idea why the version below breaks it, but
-             * it does, so do it this way instead.
-             */
-            if(jj == 0)
-            {
-                if(!canLoop)
-                    return ii ;
-                jj = md->numContexts-1 ;
-            }
-            else
-                jj-- ;
-#else
-            if(jj == 0)
-                jj = md->numContexts ;
-            jj-- ;
-#endif
-            if((jj == ii) ||
-               (!(md->context[jj].menu->flags & MF_SEP) &&
-                (md->context[jj].y >= mn) &&
-                ((md->context[jj].y+md->context[si].depth) <= mx)))
-                break ;
-        }
-    }
-    return jj ;
+    int ii ;
+    for(ii = 0 ; ii < md->numContexts ; ii++)
+        if(!(md->context [ii].menu->flags & MF_SEP))
+            return ii;
+    return -1 ;
 }
 
 
@@ -3446,7 +3296,7 @@ osdDisplayPush(int id, int flags)
             }
         }
         else if((flags & meOSD_ENTER_MENU) && (md->curContext < 0))
-            md->curContext = osdDisplayFindNext(md, -1, osdMOVE_LEFT, 1, 0);
+            md->curContext = osdDisplayFindFirst(md);
     }
     /* Snapshot the region occupied by the menu. */
     osdDisplaySnapshotStore(md) ;
@@ -3604,7 +3454,7 @@ osdDisplaySub(osdDISPLAY *md, int flags)
         osdNewChild = nmd->next ;
         osdNewMd->newContext = osdNewMd->curContext ;
         if((flags & meOSD_ENTER_MENU) && (osdNewMd->newContext < 0))
-            osdNewMd->newContext = osdDisplayFindNext(osdNewMd, -1, osdMOVE_LEFT, 1, 0);
+            osdNewMd->newContext = osdDisplayFindFirst(osdNewMd) ;
         osdDisplaySetNewFocus(0) ;
     }
 }
@@ -4491,83 +4341,177 @@ try_again:
 }
 
 static int
-osdDisplayKeyMove(int dir, int nn)
+osdDisplayFindClosest(int dir, osdDISPLAY *md, int posOffset[2], 
+                      int posCur[2], int posBest[2])
 {
-    osdDISPLAY *hmd=osdCurMd, *md ;
-    int loop, depth, flags ;
+    int ret=-1, ii, pos[2], posTop[2], xx, yy ;
     
-    for(loop=1,md=hmd ; md != osdCurChild ; loop++)
+    posTop[0] = md->x ;
+    posTop[1] = md->y ;
+    if(posOffset != NULL)
     {
-        md->newContext = md->curContext ;
-        md = md->context[md->curContext].child->display ;
+        posTop[0] += posOffset[0] ;
+        posTop[1] += posOffset[1] ;
     }
-    md->newContext = md->curContext ;
-    
-    for( ; loop>=0 ; loop--)
+    for(ii=md->numContexts ; ii-- ; )
     {
-        if(loop == 0)
-            hmd = md ;
-        if((dir & (osdMOVE_UP|osdMOVE_DOWN)) && (nn == 0) && (md->prev != NULL) &&
-           !(md->prev->flags & RF_DISABLE) && (md->prev->newContext >= 0) &&
-           ((md->prev->context[md->prev->newContext].menu->flags & (MF_CHILD|MF_SCRLBOX)) == (MF_CHILD|MF_SCRLBOX)))
-            depth = md->prev->context[md->prev->newContext].child->wndDepth - 1 ;
-        else
-            depth = nn ;
-        md->newContext = osdDisplayFindNext(md,md->newContext,dir, 1, depth);
-        if(md->newContext >= 0)
+        /* only allow tab to select the current tab-page item, ignore the other pages */
+        if(!(md->context[ii].menu->flags & MF_SEP) &&
+           (((md->context[ii].menu->flags & MF_NBPAGE) == 0) ||
+            (dir & (osdMOVE_LEFT|osdMOVE_RIGHT)) ||
+            (md->context[ii].menu->argc == md->context[md->nbpContext].menu->argc)))
         {
-            flags = md->context[md->newContext].menu->flags;
-            if((md->newContext != md->curContext) || (loop == 0))
+            pos[0] = posTop[0] + md->context[ii].x ;
+            pos[1] = posTop[1] + md->context[ii].y ;
+            if(md->context[ii].menu->flags & MF_CHILD)
             {
-                if(flags & MF_CHILD)
+                /* if this is a child then look in the child */
+                if(osdDisplayFindClosest(dir,md->context[ii].child->display,
+                                         pos,posCur,posBest) > 0)
                 {
-                    /* if this is a child then move into the child */
-                    loop += 2 ;
-                    md = md->context[md->newContext].child->display ;
-                    continue ;
+                    md->newContext = ii ;
+                    ret = 1 ;
                 }
-                osdNewMd = hmd ;
-                osdNewChild = md ;
-                return 1 ;
             }
-            /* If this is the first loop & we have a sub-menu and we're going
-             * the right direction open it. */
-            if((flags & MF_SUBMNU) &&
-               (((flags & MF_SOUTH) && (dir & (osdMOVE_UP|osdMOVE_DOWN))) ||
-                (!(flags & MF_SOUTH) && (dir & (osdMOVE_LEFT|osdMOVE_RIGHT))) ))
+            else if(ii != md->curContext)
             {
-                /* we may want to actually go back to the parent, lets check */
-                if((md->prev != NULL) && (md->parPosition & dir))
+                if(dir & (osdMOVE_UP|osdMOVE_LEFT))
                 {
-                    /* The cursor movement is back to the parent */
-                    osdNewChild = md->prev ;
-                    if(osdNewChild == osdNewMd->prev)
-                        osdNewMd = osdNewChild ;
-                    osdNewMd->newContext = osdNewMd->curContext ;
-                    return 1 ;
+                    xx = posCur[0] - pos[0] - md->context[ii].width + 1 ;
+                    yy = posCur[1] - pos[1] ;
                 }
-                
-                if(md->next == NULL)
-                    osdDisplaySub(md,meOSD_OPEN_MENU) ;
-                if((md = md->next) == NULL)
-                    return -1 ;
-                if((md->newContext=md->curContext) < 0)
-                    continue ;
-                osdNewMd = hmd ;
-                osdNewChild = md ;
+                else
+                {
+                    xx = pos[0] - posCur[0] ;
+                    yy = pos[1] - posCur[1] ;
+                }
+                if(xx < 0)
+                {
+                    xx += md->context[ii].width - 1 ;
+                    if(xx >= 0)
+                        xx = 0 ;
+                    else if(dir & (osdMOVE_LEFT|osdMOVE_RIGHT))
+                        xx += 32768 ;
+                    else
+                        xx = 0 - xx ;
+                }
+                if(yy < 0)
+                    yy += 32768 ;
+                meAssert(yy >= 0) ;
+                if(((yy > 0) || (dir & (osdMOVE_LEFT|osdMOVE_RIGHT))) &&
+                   ((posBest[1] < 0) || (yy < posBest[1]) ||
+                    (yy == posBest[1]) && (xx < posBest[0])))
+                {
+                    posBest[0] = xx ;
+                    posBest[1] = yy ;
+                    osdNewChild = md ;
+                    md->newContext = ii ;
+                    ret = 1 ;
+                }
+            }
+        }
+    }
+    return ret ;
+}
+
+static int
+osdDisplayKeyMove(int dir)
+{
+    /* go through the whole dialog looking for the closest item in the right direction */
+    osdDISPLAY *mdTop, *md=osdCurChild ;
+    int ret, posCur[2], posBest[2] ;
+    
+    /* Get the top left position of the current item */
+    posCur[0] = posCur[1] = 0 ;
+    do
+    {
+        posCur[0] += md->x ;
+        posCur[1] += md->y ;
+        if(md->curContext >= 0)
+        {
+            posCur[0] += md->context[md->curContext].x ;
+            posCur[1] += md->context[md->curContext].y ;
+        }
+        mdTop = md ;
+    } while((md != osdCurMd) && (((md = md->prev)->context[md->curContext].menu->flags & MF_SCRLBOX) == 0)) ;
+    
+    if(dir == osdMOVE_TOP)
+        /* make the posCur a fictitious very top point and move DOWN to the
+         * first real item. As y is a short -65536 must be higher than any y */
+        posCur[1] = -65536 ;
+    else if(dir == osdMOVE_BOTTOM)
+        posCur[1] = 65536 ;
+    else if(dir == osdMOVE_PAGE_UP)
+    {
+        if(md != NULL)
+            /* in a scrolled child, set posCur to be the first visible line */
+            posCur[1] = md->y ;
+    }
+    else if(dir == osdMOVE_PAGE_DOWN)
+    {
+        if(md != NULL)
+            posCur[1] = md->depth - 3 ;
+    }
+    
+    posBest[1] = -1 ;
+    ret = osdDisplayFindClosest(dir,mdTop,NULL,posCur,posBest) ;
+    if((ret < 0) ||
+       ((dir & (osdMOVE_LEFT|osdMOVE_RIGHT)) && (posBest[1] > 0)) ||
+       ((dir & osdMOVE_UP) && (posBest[1] > 16384)))
+    {
+        /* no obvious item to go to, handle moving in and out of children */
+        /* if moving forward and current item is a sub-menu go into it */
+        if((dir & (osdMOVE_DOWN|osdMOVE_RIGHT)) &&
+           ((osdCurChild->curContext < 0) ||
+            (osdCurChild->context[osdCurChild->curContext].menu->flags & MF_SUBMNU)))
+        {
+            if(osdCurChild->next == NULL)
+                osdDisplaySub(osdCurChild,meOSD_OPEN_MENU) ;
+            if((osdNewMd = osdCurChild->next) != NULL)
+            {
+                osdCurChild->newContext = osdCurChild->curContext ;
+                posBest[1] = -1 ;
+                posCur[0] = osdNewMd->x - osdNewMd->dialog->x ;
+                posCur[1] = osdNewMd->y - osdNewMd->dialog->y ;
+                if(osdDisplayFindClosest(dir,osdNewMd,NULL,posCur,posBest) < 0)
+                    osdNewChild = osdNewMd ;
                 return 1 ;
             }
         }
-        /* If we've got this far, we can't move in the current menu
-         * So lets see if we are actually try to manipulate the
-         * parent menu
-         */
-        if(((md = md->prev) == NULL) ||
-           (md->flags & RF_DISABLE))
-            break ;
+        /* user may be backing out of the current sub-menu */
+        else if((mdTop == osdCurMd) && (osdCurMd->prev != NULL))
+        {
+            /* special case mainly triggered with the main menu, if in a main sub-menu
+             * item which does not have a sub-menu then move up and across */
+            if((dir & (osdMOVE_LEFT|osdMOVE_RIGHT)) && (posBest[1] > 0) &&
+               (osdCurMd->prev->context[osdCurMd->prev->curContext].menu->flags & MF_SOUTH))
+            {
+                osdNewMd = osdNewChild = osdCurMd->prev ;
+                osdNewMd->newContext = osdNewMd->curContext ;
+                posBest[1] = -1 ;
+                if(osdDisplayFindClosest(dir,osdNewMd,NULL,posCur,posBest) < 0)
+                    osdNewChild = osdNewMd ;
+                return 1 ;
+            }
+            else if((dir & osdMOVE_LEFT) ||
+                    ((dir & osdMOVE_UP) && (osdCurMd->prev->context[osdCurMd->prev->curContext].menu->flags & MF_SOUTH)))
+            {
+                /* The cursor movement is back to the parent */
+                osdNewMd = osdNewChild = osdCurMd->prev ;
+                osdNewMd->newContext = osdNewMd->curContext ;
+                while((osdNewChild->curContext >= 0) &&
+                      (osdNewChild->context[osdNewChild->curContext].menu->flags & MF_CHILD))
+                {
+                    osdNewChild = osdNewChild->context[osdNewChild->curContext].child->display ;
+                    osdNewChild->newContext = osdNewChild->curContext ;
+                }
+                return 1 ;
+            }
+        }
     }
-    return -1 ;
-    
+    if(ret > 0)
+        osdNewMd = osdCurMd ;
+    return ret ;
 }
 
 static int
@@ -4891,27 +4835,27 @@ menuInteraction (int *retState)
             switch (ii)
             {
             case CK_GOBOF:                  /* M-< - beginning of buffer */
-                nit = osdDisplayKeyMove(osdMOVE_DOWN,-1) ;
+                nit = osdDisplayKeyMove(osdMOVE_TOP) ;
                 state = meOSD_KEY_MOVE ;
                 break;
-            case CK_GOEOF:                  /* M-< - end of buffer */
-                nit = osdDisplayKeyMove(osdMOVE_UP,-1) ;
+            case CK_GOEOF:                  /* M-> - end of buffer */
+                nit = osdDisplayKeyMove(osdMOVE_BOTTOM) ;
                 state = meOSD_KEY_MOVE ;
                 break;
             case CK_FORCHR:                 /* ^F  - Forward character */
-                nit = osdDisplayKeyMove(osdMOVE_LEFT,n) ;
+                nit = osdDisplayKeyMove(osdMOVE_RIGHT) ;
                 state = meOSD_KEY_MOVE ;
                 break;
             case CK_BAKCHR:                 /* ^B  - Previous charater */
-                nit = osdDisplayKeyMove(osdMOVE_RIGHT,n) ;
+                nit = osdDisplayKeyMove(osdMOVE_LEFT) ;
                 state = meOSD_KEY_MOVE ;
                 break;
             case CK_BAKLIN:                 /* C-p - Previous line */
-                nit = osdDisplayKeyMove(osdMOVE_UP,n) ;
+                nit = osdDisplayKeyMove(osdMOVE_UP) ;
                 state = meOSD_KEY_MOVE ;
                 break;
             case CK_FORLIN:                 /* C-n - Next line */
-                nit = osdDisplayKeyMove(osdMOVE_DOWN,n) ;
+                nit = osdDisplayKeyMove(osdMOVE_DOWN) ;
                 state = meOSD_KEY_MOVE ;
                 break;
             case CK_MOVUWND:                  /* M-N - Move menu up */
@@ -4919,7 +4863,7 @@ menuInteraction (int *retState)
                 {
                     /* if scrolling by a page then assume its a page-up and
                      * we want to scroll a child dialog */
-                    nit = osdDisplayKeyMove(osdMOVE_UP,0) ;
+                    nit = osdDisplayKeyMove(osdMOVE_PAGE_UP) ;
                     state = meOSD_KEY_MOVE ;
                 }
                 else if(osdCurMd->flags & (RF_TITLE|RF_BOARDER))
@@ -4931,7 +4875,7 @@ menuInteraction (int *retState)
             case CK_MOVDWND:                  /* M-N - Move menu down */
                 if(f == 0)
                 {
-                    nit = osdDisplayKeyMove(osdMOVE_DOWN,0) ;
+                    nit = osdDisplayKeyMove(osdMOVE_PAGE_DOWN) ;
                     state = meOSD_KEY_MOVE ;
                 }
                 else if(osdCurMd->flags & (RF_TITLE|RF_BOARDER))
@@ -4940,7 +4884,7 @@ menuInteraction (int *retState)
             case CK_MOVLWND:                 /* M-N - Move menu left */
                 if(f == 0)
                 {
-                    nit = osdDisplayKeyMove(osdMOVE_LEFT,0) ;
+                    nit = osdDisplayKeyMove(osdMOVE_LEFT) ;
                     state = meOSD_KEY_MOVE ;
                 }
                 else if(osdCurMd->flags & (RF_TITLE|RF_BOARDER))
@@ -4949,7 +4893,7 @@ menuInteraction (int *retState)
             case CK_MOVRWND:                 /* M-N - Move menu right */
                 if(f == 0)
                 {
-                    nit = osdDisplayKeyMove(osdMOVE_RIGHT,0) ;
+                    nit = osdDisplayKeyMove(osdMOVE_RIGHT) ;
                     state = meOSD_KEY_MOVE ;
                 }
                 else if(osdCurMd->flags & (RF_TITLE|RF_BOARDER))
@@ -4957,7 +4901,7 @@ menuInteraction (int *retState)
                 break ;
             case CK_DELFOR:                 /* Del - Delete */
             case CK_ABTCMD:                 /* ^G  - Abort */
-                /* ZZZZ - only close current sub-menu if one is open,
+                /* only close current sub-menu if one is open,
                  * otherwise follow through and close whole dialog */
                 if((osdCurMd->prev == NULL) ||
                    (osdCurMd->prev->flags & RF_DISABLE))
