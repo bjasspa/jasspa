@@ -51,7 +51,7 @@
 "mouse" {
  "mouse-auto-1" = "1"
  "mouse-drop-1" = "mouse-drop-type1"
- "mouse-drop-2" = "mouse-no-move-yank"
+ "mouse-drop-2" = "mouse-move-yank"
  "mouse-drop-3" = "mouse-osd-multi"
  "mouse-pick-1" = "mouse-pick-type1"
  "mouse-pick-2"
