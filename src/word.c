@@ -73,7 +73,7 @@
  */
 
 #define	__WORDC			/* Define filename */
-
+#define meTABCHAR '\t'
 #include "emain.h"
 
 /*
