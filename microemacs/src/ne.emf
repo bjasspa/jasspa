@@ -59,27 +59,27 @@
     set-variable $trunc-scheme 0
     set-variable $cursor-color 5
     ; END BLACK ON WHITE
-    
+
     ; Change the font a windows system (not console).
     !if &seq $platform "win32"
         1 change-font "Lucida Console" 0 4 7 11
-        80 change-screen-width
+        change-frame-width 80
     !endif
 !endif
 
 ; Change the keyboard for the appropriate locale. Enable the approriate
 ; translation depending on your locale by setting the !if value to 1.
 ; For a minimal configuration then delete the language translations you
-; do not need. 
+; do not need.
 !if &seq $platform "win32"
     !if 0                                   ; American
         translate-key "C-# C-#" "C-#"
     !endif
-    
+
     !if 0                                   ; British
         translate-key "C-# C-\\" "C-#"
     !endif
-    
+
     !if 0                                   ; Belgian & Francais
         ; Thanks to Meyer Jean-Francois
         translate-key "A-C-9 A-C-{" "{"
@@ -87,7 +87,7 @@
         translate-key "A-C-; A-C-]" "]"
         translate-key "A-C-] A-C-[" "["
     !endif
-    
+
     !if 0                                   ; Deutsch
         ; Thanks to Detlef Groth
         translate-key "A-C-7 A-C-{" "\x7b"
@@ -101,7 +101,7 @@
         translate-key "A-C-2 A-C-≤" "\xb2"
         translate-key "A-C-b A-C-|" "\x7c"
     !endif
-    
+
     !if 0                                   ; Espanol
         ; Thanks to Rodolfo Valeiras
         translate-key "A-C-# A-C-{" "{"
@@ -114,7 +114,7 @@
         translate-key "A-C-3 A-C-#" "#"
         translate-key "A-C-6 A-C-¨" "¨"
     !endif
-    
+
     !if 0                                   ; Polish
         ; Thanks to Piotr Poczta
         translate-key "A-C-S-a" "•"
@@ -136,7 +136,7 @@
         translate-key "A-C-x" "ü"
         translate-key "A-C-S-X" "è"
     !endif
-    
+
     !if 0                                   ; Portugues
         ; Thanks to Pedro Gomes
         translate-key "C-/" "C-~"
@@ -176,4 +176,3 @@
         translate-key "A-C-0 A-C-}" "}"
     !endif
 !endif
-
