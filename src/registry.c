@@ -232,7 +232,7 @@ rnodeFind (meRegNode *np, meUByte *name)
  * Parse the file and import into the registry.
  */
 static void
-parseFile (meRegNode *rnp, meLine *hlp)
+parseFile(meRegNode *rnp, meLine *hlp)
 {
     meLine  *lp;                          /* Current line pointer */
     meRegNode *cnp;                         /* Current node pointer */
@@ -283,45 +283,49 @@ parseFile (meRegNode *rnp, meLine *hlp)
         
         case '{':
             if ((lnp == NULL) || needValue)
-                mlwrite(MWWAIT,(meUByte *)"[Registry unexpected '{' %s:%d]",
-                        rnp->value, lineNo);
-            else
             {
-                level++;
-                cnp = lnp;
-                lnp = NULL;
+                mlwrite(MWWAIT,(meUByte *)"[Registry error: unexpected '{' %s:%d]",
+                        rnp->value, lineNo);
+                return ;
             }
+            level++;
+            cnp = lnp;
+            lnp = NULL;
             break;
         case '}':
-            if (!needValue && (level > 0))
+            if(needValue || (level <= 0))
             {
-                cnp = cnp->parent;        /* Back up a level */
-                lnp = NULL;
-                level--;
-            }
-            else
-                mlwrite(MWWAIT,(meUByte *)"[Registry mismatched '}' %s:%d]",
+                mlwrite(MWWAIT,(meUByte *)"[Registry error: mismatched '}' %s:%d]",
                         rnp->value, lineNo);
+                return ;
+            }
+            cnp = cnp->parent;        /* Back up a level */
+            lnp = NULL;
+            level--;
             break;
         case '=':
-            if ((needValue == 0) && (lnp != NULL))
-                needValue = 1;
-            else
-                mlwrite(MWWAIT,(meUByte *)"[Registry syntax, expected <name>=<value> %s:%d]",
+            if(needValue || (lnp == NULL))
+            {
+                mlwrite(MWWAIT,(meUByte *)"[Registry error: expected <name>=<value> %s:%d]",
                         rnp->value, lineNo);
+                return ;
+            }
+            needValue = 1;
             break;
         default:
-            if (isDigit(buf[0]) && (needValue == 0) && (lnp != NULL))
-                lnp->mode |= meAtoi(buf) ;
-            else
-                mlwrite(MWWAIT,(meUByte *)"[Registry syntax, unexpected token \"%s\":%d]",
+            if(!isDigit(buf[0]) || needValue || (lnp == NULL))
+            {
+                mlwrite(MWWAIT,(meUByte *)"[Registry error: unexpected token \"%s\":%d]",
                         buf,lineNo);
+                return ;
+            }
+            lnp->mode |= meAtoi(buf) ;
         }
     }
 
     /* End of file. Check for unmatched braces. */
     if (level > 0)
-        mlwrite(MWWAIT,(meUByte *)"[Registry mismatched '}' at EOF. %d levels open %s:%d]",
+        mlwrite(MWWAIT,(meUByte *)"[Registry error: mismatched '}' at EOF. %d levels open %s:%d]",
                 level, rnp->value, lineNo);
 }
 
@@ -763,7 +767,7 @@ regRead(meUByte *rname, meUByte *fname, int mode)
         rnp->value = fn ;
     }
     /* Now parse the registry file */
-    parseFile (rnp, lp) ;
+    parseFile(rnp, lp) ;
     
     if(mode & meREGMODE_FROOT)
         meLineLoopFree(lp,0) ;
