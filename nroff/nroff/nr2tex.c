@@ -7,12 +7,12 @@
  *  System        : 
  *  Module        : 
  *  Object Name   : $RCSfile: nr2tex.c,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2002-03-10 14:24:42 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2002-03-10 18:36:17 $
  *  Author        : $Author: jon $
  *  Created By    : Jon Green
  *  Created       : Thu Mar 7 20:45:45 2002
- *  Last Modified : <020310.1401>
+ *  Last Modified : <020310.1827>
  *
  *  Description	
  *
@@ -21,6 +21,9 @@
  *  History
  *	
  *  $Log: not supported by cvs2svn $
+ *  Revision 1.1  2002/03/10 14:24:42  jon
+ *  Tex prototype
+ *
  *
  ****************************************************************************
  *
@@ -110,19 +113,6 @@ static int  day;                        /* The current day */
 static int  bodgeMode=0;                /* Emacs bodge mode */
 
 /* Constant string definitions */
-
-int
-hyperChr (int c)
-{
-    if ((c >= 'A') && (c <= 'Z'))
-        return (tolower(c));
-    if (((c >= '0') && (c <= '9')) ||
-        ((c >= 'a') && (c <= 'z')) ||
-        /*(c == '.') || */ (c == '_'))
-        return (c);
-    return ('\0');
-}
-
 static void
 makeLaTeXName (char *s)
 {
@@ -138,49 +128,6 @@ makeLaTeXName (char *s)
 
     bufFree (fileLaTeXName);
     fileLaTeXName = cb;
-}
-
-static char *
-makeLaTeXReference (int level, char *module, char *file)
-{
-    static char filename [1024];
-    char        *home;
-
-    filename[0] = '\0';
-    home = nrHomeGet ();
-
-    if (module == NULL)
-    {
-        if (level == 0)
-        {
-            if (strcmp (file, home) == 0)
-                return (file);
-            strcat (filename, home);
-            strcat (filename, "/");
-        }
-        else
-        {
-            if (strcmp (file, home) == 0)
-                strcat (filename, "../");
-            else
-                return (file);
-        }
-        strcat (filename, file);
-        return (filename);
-    }
-
-    if (level == 1)
-        strcat (filename, "../");
-
-    if ((strcmp (file, home) == 0) && (strcmp (module, home) == 0))
-        strcat (filename, file);
-    else
-    {
-        strcat (filename, module);
-        strcat (filename, "/");
-        strcat (filename, file);
-    }
-    return (filename);
 }
 
 static void
@@ -423,7 +370,7 @@ latexFormatStr (int lmode, char *s, int *newMode)
             latexStr ("\\_");
             break;
         case '%':
-            latexStr ("\\%");
+            latexStr ("%s", "\\%");
             break;
         case '#':
             latexStr ("\\#");
@@ -547,15 +494,14 @@ nrTH_func (char *id, char *num, char *date, char *company, char *title)
     sectionId = bufNStr (NULL, num);
 
     sectionLevel = nrGetLevel (sectionName, sectionId);
-    if (sectionLevel == 0)
-        latexStr("\\TH{%s}{}", sectionName);
+    if ((sectionLevel == 0) || (sectionId == NULL) || (sectionId[0] == '\0'))
+        latexStr("\\THNO{%s}", sectionName);
     else
-        latexStr("\\TH{%s}{%d}", sectionName, sectionId);
+        latexStr("\\TH{%s}{%s}", sectionName, sectionId);
     latexEol();                          /* Make pretty */
     latexStr ("% %s - Version %s - %s - %s - Jon Green (2002)",
              MODULE_NAME, MODULE_VERSION, nroffVersion, __DATE__);
     latexEol ();                         /* Make pretty */
-
     prevMode = 0;
     mode = 0;                           /* Start at mode zero !! */
 }
@@ -1028,23 +974,6 @@ nrTextline (char *s)
 static void
 nrXI_func (char *name, char *id, char *desc, char *comp)
 {
-    if (bodgeMode)
-    {
-        if (name != NULL)
-        {
-            latexStr ("<!-- XI: %s", name);
-            if (id != NULL)
-                latexStr ("(%s)", id);
-            else if (sectionId != NULL)
-                latexStr ("(%s)", sectionId);
-            latexStr (" -->");
-            latexEol ();
-        }
-    }
-    
-    if (compiling != 0)                 /* If we are compiling do not need */
-        return;
-
     if (id == NULL)
         id = sectionId;
 
@@ -1056,7 +985,8 @@ nrXI_func (char *name, char *id, char *desc, char *comp)
 #endif
     {
         /* Add definition x-ref */
-        latexStr ("<<D%s<", nrMakeXref (name,id));
+        latexStr ("\\XI{%s}", nrMakeXref (name,id));
+        latexEol ();
     }
 }
 
@@ -1073,16 +1003,8 @@ nrXJ_func (char *name, char *id, char *desc, char *comp)
 #endif
     {
         /* Add definition x-ref */
-        latexStr ("<A NAME=\"%s\">", nrMakeXref (name,id));
-        if (compiling == 0)                 /* If we are not compiling add definition */
-        {
-            latexStr ("<<D%s<", nrMakeXref (name,id));
-        }
-        if (bodgeMode)
-        {
-            latexStr ("<!-- XJ: %s(%s) -->", name, id);
-            latexEol ();
-        }
+        latexStr ("\\XI{%s}", nrMakeXref (name,id));
+        latexEol ();
     }
 }
 
@@ -1102,8 +1024,8 @@ nrXP_func (char *name, char *id, char *desc, char *comp)
          (strcmp (id, sectionId) != 0)))
 #endif
     {
-        /* Add definition x-ref */
-        latexStr ("<<DP%s<", nrMakeXref (name,id));
+        latexStr ("\\XI{%s}", nrMakeXref (name,id));
+        latexEol ();
     }
 }
 
@@ -1313,6 +1235,9 @@ int main (int argc, char *argv [])
     uWarnSet (&wcount);                 /* Warning count */
     uUtilitySet (progname);             /* Set name of program */
     uVerboseSet (0);                    /* Verbose setting */
+    
+    /* Change to an ASCII name format */
+    nrLibNameFormat(1);
 
     while (1) {
         c = getopt (argc, argv, "c:be:E:H:i:Il:L:M:n:o:p:qst:x");

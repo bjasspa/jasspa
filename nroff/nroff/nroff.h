@@ -7,10 +7,10 @@
  *  System        : nroff
  *  Module        : Main library
  *  Object Name   : $RCSfile: nroff.h,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:30 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2002-03-10 18:35:57 $
  *  Author        : $Author: jon $
- *  Last Modified : <300597.0000>
+ *  Last Modified : <020310.1827>
  *
  *  Description
  *
@@ -19,6 +19,9 @@
  *  History
  *
  *  $Log: not supported by cvs2svn $
+ *  Revision 1.1  2000/10/21 14:31:30  jon
+ *  Import
+ *
  *
  ****************************************************************************
  *
@@ -267,6 +270,7 @@ typedef struct st_LibBrowse
 extern LibModule *nrLibModule;
 extern LibModule *undefModule;
 
+extern int nrLibNameFormat (int newmode);
 extern LibModule *nrLibModuleConstruct (char *name, int ref);
 extern LibModule *nrLibModuleDestruct (LibModule *p);
 extern LibModule *nrLibModuleFind (LibModule *p, char *name);
