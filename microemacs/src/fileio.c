@@ -971,7 +971,7 @@ ffUrlFileSetupFlags(int flag)
 static int
 ffUrlFileOpen(meUByte *urlName, meUByte *user, meUByte *pass, meUInt rwflag)
 {
-    meUByte buff[meBUF_SIZE_MAX], sockAddr[meBUF_SIZE_MAX], *host, *port, *ss, *dd, *ee, cc ;
+    meUByte buff[meBUF_SIZE_MAX+32], sockAddr[meBUF_SIZE_MAX], *host, *port, *ss, *dd, *ee, cc ;
     int ii ;
     
 #ifdef _WIN32
@@ -1063,18 +1063,17 @@ ffUrlFileOpen(meUByte *urlName, meUByte *user, meUByte *pass, meUInt rwflag)
                  * 2) Add the top Directory Listing line
                  */
                 int ll ;
-                ll = meStrlen(ffurlReadBp->fileName) ;
-                if(ffurlReadBp->fileName[ll-1] != DIR_CHAR)
+                meStrcpy(buff,"Directory listing of: ") ;
+                meStrcpy(buff+22,ffurlReadBp->fileName) ;
+                ll = meStrlen(buff) ;
+                if(buff[ll-1] != DIR_CHAR)
                 {
-                    meStrcpy(buff,ffurlReadBp->fileName) ;
                     buff[ll] = DIR_CHAR ;
                     buff[ll+1] = '\0' ;
                     /* the original fname is freed in ffReadFile */
                     ffurlReadBp->fileName = NULL ;
-                    resetBufferNames(ffurlReadBp,buff) ;
+                    resetBufferNames(ffurlReadBp,buff+22) ;
                 }
-                meStrcpy(buff,"Directory listing of: ") ;
-                ffurlCreateName(buff+22,(fftype|meURLTYPE_DIR),host,port,user,NULL,ss) ;
                 addLineToEob(ffurlReadBp,buff) ;
             }
             ffurlReadBp = NULL ;

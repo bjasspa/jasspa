@@ -263,6 +263,7 @@ set-variable .file-browser-close.bn "\CH*directory*\CH*files*\CH*ftp-files*\CH*f
 !emacro
 !if &not &exi .file-browser.filter
     set-variable #l0 &rep $file-ignore "./ " ""
+    set-variable #l0 &rep #l0 " ./" ""
     str-to-regex #l0
     set-variable .file-browser.filter &cat "\\./\\|.*" &rep #l0 " " "\\|.*"
 !endif

@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20040207.1749>
+# Last Modified: <20040210.2018>
 #
 ##############################################################################
 
@@ -86,7 +86,7 @@ ETFS=	asmx86.etf	asn1.etf	\
 	f.etf		f90.etf		\
 	h.etf		hpp.etf		html.etf	\
 	idl.etf		imake.etf	\
-	java.etf	jst.etf		\
+	java.etf	js.etf		jst.etf		\
 	latex.etf	\
 	makefile.etf	mhg.etf		\
 	newcomp.etf	newuser.etf	nroff.etf	\

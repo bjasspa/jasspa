@@ -1351,14 +1351,13 @@ missing_arg:
                     clientMessage = (meUByte *)argv[carg]+2 ;
                 break;
 #endif
+#ifdef _ME_CONSOLE
             case 'n':
 #ifdef _ME_WINDOW
-#ifdef _ME_CONSOLE
-                /* Only process option if supported */
                 meSystemCfg |= meSYSTEM_CONSOLE ;
-#endif /* _ME_CONSOLE */
 #endif /* _ME_WINDOW */
                 break ;
+#endif /* _ME_CONSOLE */
 #if MEOPT_CLIENTSERVER
             case 'o':
                 userClientServer=1 ;

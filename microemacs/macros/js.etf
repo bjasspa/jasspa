@@ -1,0 +1,20 @@
+/* -*- javascript -*- 
+     Copyright $YEAR$ $COMPANY_NAME$.
+     All Rights Reserved
+     System        : $BUFFER_NAME$ : 
+     Object Name   : $RCS_FILE$
+     Revision      : $REVISION$
+     Date          : $ASCII_TIME$
+     Created By    : $USER_NAME$, $COMPANY_NAME$
+     Created       : $ASCII_TIME$
+
+     Last Modified : <030310.0724>
+     ID            : $Id$
+     Source        : $Source$
+     Description	
+     Notes
+     $Log$
+*/
+var ns4 = document.layers;
+var ie4 = document.all;
+var nn6 = document.getElementById && !document.all;
