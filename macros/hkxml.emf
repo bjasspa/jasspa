@@ -26,6 +26,11 @@ define-macro fhook-xml
 set-variable .fhook-xml.setup &reg "/history" "fhook/xml" "cdghinopsx"
 set-variable .fhook-xml.setup-mask "acdeghikmnopstux"
 set-variable .fhook-xml.comment  "|<!--|-->|--|  -- | -- |f|"
+set-variable .fhook-xml.command-flag  "|thb|thb|b|b|thb|th|th|th|"
+set-variable .fhook-xml.command-name  "|xml-forward-tag|xml-backward-tag|xml-forward-tag|xml-backward-tag|xml-goto-matching-tag|xml-find-tag|xml-collapse-tag|xml-verify|"
+set-variable .fhook-xml.command-nbind "|||||||||"
+set-variable .fhook-xml.command-kbind "|S-right|S-left|esc C-f|esc C-b|C-]||||"
+set-variable .fhook-xml.command-desc  "|Forward Tag|Backward Tag|||Goto Matching Tag|Find Tag|Collapse/Uncollapse Tag|Verify the current buffer|"
 set-variable .fhook-xml.exact -1
 
 !if &not &exist fhook-vb
@@ -33,6 +38,9 @@ set-variable .fhook-xml.exact -1
 !endif
 !if &not &exist fhook-js
     !force exec-file "hkjs"
+!endif
+!if &not &exist xml-forward-tag
+    !force exec-file "xmlutil"
 !endif
 
 !if &not &exist .hilight.xml

@@ -1,0 +1,569 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : $Author: bill $
+;  Created By    : Steven Phillips
+;  Created       : Mon Sep 13 17:11:16 2004
+;  Last Modified : <040915.2320>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 2004 PTC.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro xml-forward-tag
+    forward-char
+    set-variable #l9 &bmod "magic"
+    1 buffer-mode "magic"
+    !force search-forward "[<>]"
+    !if &not $status
+        end-of-buffer
+        !force backward-char
+    !else
+        backward-char
+        !if &seq @s0 ">"
+            forward-char
+        !endif
+    !endif
+    &cond #l9 1 -1 buffer-mode "magic"
+!emacro
+
+define-macro xml-backward-tag
+    backward-char
+    set-variable #l9 &bmod "magic"
+    1 buffer-mode "magic"
+    !force search-backward "[<>]"
+    !if &not $status
+        beginning-of-buffer
+    !else
+        forward-char
+        !if &seq @s0 "<"
+            backward-char
+        !endif
+    !endif
+    &cond #l9 1 -1 buffer-mode "magic"
+!emacro
+
+; xml-get-tag-info - returns info on the current tag in #p9, the variable
+; is set to a list with the following fields:
+;  |<type>|<start-line>|<start-col>|<end-line>|<end-col>|<TAG>|
+; the <type> of the current tag is on of:
+; -ve - a bad tag
+;   1 - comment tag     <!-- ... -->
+;   2 - declaration tag <?TAG ... ?>
+;   3 - standalone tag <TAG ... />
+;   4 - open tag <TAG ... >
+;   5 - close tag </TAG ... >
+;
+; The numeric arg is a bitmask with the following value:
+;   0x01 - report errors
+;   0x02 - extended validity check (check attributes & values etc)
+;   0x04 - return cursor back to tag start even on error
+;   0x08 - debug info printout
+; xml-goto-matching-tag-f also uses
+;   0x10 - move cursor to the end of the tag
+; Cursor must be at opening '<' and assumes magic mode is enabled.
+0 define-macro xml-get-tag-info
+    set-variable #l0 $window-col
+    set-variable #l1 $window-line
+    ; handle comments first as anything from the <!-- to the first --> is a comment that can throw the rest of this macro out
+    !if &seq &mid @wl $window-col 4 "<!--"
+        !force search-forward "-->"
+        !if $status
+            set-variable #p9 &spr "|1|%d|%d|%d|%d||" #l1 #l0 $window-line $window-col
+            !if &band @# 8
+                100 ml-write &spr "[Got tag on line %d, type 1, tag '']" #l1
+            !endif
+        !else
+            set-variable #p9 "|-1||||||"
+            !if &band @# 1
+                ml-write "[comment tag not closed properly - '-->']"
+            !endif
+        !endif
+        set-variable $window-line #l1
+        set-variable $window-col #l0
+        !return
+    !endif
+    forward-char
+    !repeat
+        set-variable #l2 1 
+        !force search-forward "[<>\"]"
+        !if &not $status
+        !elif &seq &mid @wl &sub $window-col 1 1 "\""
+            !force search-forward "\""
+            set-variable #l2 &not $status  
+        !endif
+    !until #l2
+    set-variable #l4 &mid @wl &sub $window-col 3 3
+    set-variable #l4 &spr "%n%s" &sub 3 &len #l4 " " #l4
+    set-variable #l2 $window-col
+    set-variable #l3 $window-line
+    set-variable $window-line #l1
+    set-variable $window-col #l0
+    set-variable #l5 ""
+    !if &not &seq &rig #l4 2 ">"
+        set-variable #l9 -2
+    !elif &seq &mid @wl #l0 2 "<?"
+        !if &not &seq &rig #l4 1 "?>"
+            set-variable #l9 -3
+        !elif &xseq &rig @wl #l0 "<\\?\\(\\w[-._:a-zA-Z0-9]*\\)\\([ \t>].*\\)?"
+            set-variable #l9 2
+            set-variable #l5 @s1
+        !else
+            set-variable #l9 -4
+        !endif
+    !elif &seq &mid @wl #l0 2 "</"
+        !if &xseq &rig @wl #l0 "</\\(\\w[-._:a-zA-Z0-9]*\\)\\([ \t>].*\\)?"
+            set-variable #l9 5
+            set-variable #l5 @s1
+        !else
+            set-variable #l9 -5
+        !endif
+    !else
+        !if &not &xseq &rig @wl #l0 "<\\(\\w[-._:a-zA-Z0-9]*\\)\\([ \t>].*\\)?"
+            set-variable #l9 -6
+        !elif &seq &rig #l4 1 "/>"
+            set-variable #l9 3
+            set-variable #l5 @s1
+        !else
+            set-variable #l9 4
+            set-variable #l5 @s1
+        !endif
+    !endif
+    !if &band @# 2
+        !if &gre #l9 1
+            set-variable $window-col &add #l0 &add &len #l5 &lget "||1|0|0|1|" #l9
+            set-variable #l6 &sub #l2 &lget "||2|2|1|1|" #l9
+            set-variable #l4 1
+            !repeat
+                forward-char
+                !if &and &equ $window-line #l3 &equ $window-col #l6
+                    !if &gre #l4 2
+                        set-variable #l9 -7
+                    !endif
+                    set-variable #l4 0
+                !elif &sin @wc " \t\n"
+                    !if &equ #l4 2
+                        set-variable #l4 1                        
+                    !elif &equ #l4 3
+                        set-variable #l4 4                        
+                    !endif
+                !elif &equ #l4 1
+                    !if &inw @wc
+                        set-variable #l4 3
+                    !else
+                        set-variable #l9 -8
+                        set-variable #l4 0
+                    !endif
+                !elif &equ #l4 2
+                    set-variable #l9 -11
+                    set-variable #l4 0
+                !elif &equ #l4 3
+                    !if &seq @wc "="
+                        set-variable #l4 5
+                    !elif &not &xseq @wc "[-._:a-zA-Z0-9]"
+                        set-variable #l9 -8
+                        set-variable #l4 0
+                    !endif
+                !elif &equ #l4 4
+                    !if &seq @wc "="
+                        set-variable #l4 5
+                    !else
+                        set-variable #l9 -9
+                        set-variable #l4 0
+                    !endif
+                !elif &equ #l4 5
+                    !if &seq @wc "\""
+                        set-variable #l4 6
+                    !else
+                        set-variable #l9 -10
+                        set-variable #l4 0
+                    !endif
+                !elif &equ #l4 6
+                    !if &seq @wc "\""
+                        set-variable #l4 2
+                    !endif
+                !endif
+            !until &not #l4
+        !endif
+    !endif
+    set-variable #p9 &spr "|%d|%d|%d|%d|%d|%s|" #l9 #l1 #l0 #l3 #l2 #l5
+    !if &band @# 8
+        100 ml-write &spr "[Got tag on line %d, type %d, tag '%s', ends %d:%d]" #l1 #l9 #l5 #l3 #l2
+    !endif
+    !if &les #l9 0
+        !if &band @# 1
+            ml-write &spr "[malformed tag on line %d, %s]" #l1 &lget "||expected closing '>'|expected closing declaration '?>'|declaration tag form '<?TAG ... ?>'|expected '</TAG ... >'|expected '<TAG ... >'|tag ends before attribute fully defined|illegal attribute name|'=' expected after attribute name|quoted value expected|separator required between attributes|" &abs #l9
+        !endif
+        !if &band @# 4
+            set-variable $window-line #l1
+            set-variable $window-col #l0
+        !endif
+    !else
+        set-variable $window-line #l1
+        set-variable $window-col #l0
+    !endif
+!emacro
+11 global-bind-key xml-get-tag-info "C-j"
+
+0 define-macro xml-goto-matching-tag-b
+    set-variable #l2 &lget #p9 6
+    str-to-regex #l2
+    set-variable #l2 &spr "<%s\\([ \t>].*\\)?" #l2
+    !repeat
+        !force search-backward "<"
+        !if &not $status
+            ml-write &spr "[failed to find openning <%s> for tag on line %d]" &lget #p9 6 &lget #p9 2
+            !abort
+        !endif
+        !force @# xml-get-tag-info
+        !if &not $status
+            ml-write "[xml-get-tag-info failed]"
+            !abort
+        !elif &les &set #l0 &lget #l9 1 0
+            !abort
+        !elif &equ #l0 4
+            !if &xise &rig @wl $window-col #l2
+                !return
+            !endif
+            ml-write &spr "[failed to find openning <%s> for tag on line %d]" &lget #p9 6 &lget #p9 2
+            !abort
+        !elif &equ #l0 5
+            @# xml-goto-matching-tag-b
+        !endif
+    !until 0
+!emacro
+
+0 define-macro xml-goto-matching-tag-f
+    set-variable #l2 &lget #p9 6
+    str-to-regex #l2
+    set-variable #l2 &spr "</%s\\([ \t>].*\\)?" #l2
+    set-variable $window-line &lget #p9 4
+    set-variable $window-col &lget #p9 5
+    !repeat
+        !force search-forward "<"
+        !if &not $status
+            ml-write &spr "[failed to find closing </%s> for tag on line %d]" &lget #p9 6 &lget #p9 2
+            !abort
+        !endif
+        backward-char
+        !force @# xml-get-tag-info
+        !if &not $status
+            ml-write "[xml-get-tag-info failed]"
+            !abort
+        !elif &les &set #l0 &lget #l9 1 0
+            !abort
+        !elif &equ #l0 4
+            &bor @# 16 xml-goto-matching-tag-f
+        !elif &equ #l0 5
+            !if &xise &rig @wl $window-col #l2
+                !if &band @# 16
+                    set-variable $window-line &lget #l9 4
+                    set-variable $window-col &lget #l9 5
+                !endif
+                !return
+            !endif
+            ml-write &spr "[failed to find closing </%s> for tag on line %d]" &lget #p9 6 &lget #p9 2
+            !abort
+        !else
+            set-variable $window-line &lget #l9 4
+            set-variable $window-col &lget #l9 5
+        !endif
+    !until 0
+!emacro
+
+define-macro xml-goto-matching-tag
+    set-position "\x81"
+    set-variable #l8 &bmod "magic"
+    1 buffer-mode "magic"
+    !if &not &seq @wc "<"
+        !force search-backward "[<>]"
+        !if &not &seq @wc "<"
+            &cond #l8 1 -1 buffer-mode "magic"
+            goto-position "\x81"
+            ml-write "[not in a tag]"
+            !abort
+        !endif
+    !endif
+    set-variable #l2 0
+    !force !force @# xml-get-tag-info
+    !if &not $status
+        ml-write "[xml-get-tag-info failed]"
+    !elif &les &set #l0 &lget #l9 1 0
+    !elif &equ #l0 4
+        !force !force @# xml-goto-matching-tag-f
+        set-variable #l2 $status
+    !elif &equ #l0 5
+        !force !force @# xml-goto-matching-tag-b
+        set-variable #l2 $status
+    !else
+        !if &seq @p ""
+            ml-write &spr "[standalone %stag]" &lget "|comment |declaration ||||" #l0
+        !endif
+        set-variable #l2 1
+    !endif
+    &cond #l8 1 -1 buffer-mode "magic"
+    !force -1 show-region
+    !return #l2
+!emacro
+
+define-macro xml-verify
+    set-position "\x81"
+    beginning-of-buffer
+    set-variable #l8 &bmod "magic"
+    1 buffer-mode "magic"
+    ml-write "[verifying xml ...]"
+    !repeat
+        !force search-forward "<"
+        !if &not $status
+            &cond #l8 1 -1 buffer-mode "magic"
+            !force -1 show-region
+            goto-position "\x81"
+            ml-write "[Verified OK]"
+            !return
+        !endif
+        backward-char
+        set-variable #l2 0
+        !force 3 xml-get-tag-info
+        !if &not $status
+            ml-write "[xml-get-tag-info failed]"
+        !elif &les &set #l0 &lget #l9 1 0
+        !elif &equ #l0 4
+            ml-write &spr "[verifying tag <%s> ...]" &lget #l9 6
+            !force !force 19 xml-goto-matching-tag-f
+            set-variable #l2 $status
+        !elif &equ #l0 5
+            ml-write &spr "[verifying tag </%s> ...]" &lget #l9 6
+            !force !force 3 xml-goto-matching-tag-b
+            set-variable #l2 $status
+            !if #l2
+                set-variable $window-line &lget #l9 4
+                set-variable $window-col &lget #l9 5
+            !endif
+        !else
+            set-variable $window-line &lget #l9 4
+            set-variable $window-col &lget #l9 5
+            set-variable #l2 1
+        !endif
+    !until &not #l2
+    &cond #l8 1 -1 buffer-mode "magic"
+    !force -1 show-region
+    !abort
+!emacro
+
+define-macro xml-collapse-tag
+    set-position "\x83"
+    set-variable #l0 $window-line
+    !force 2 narrow-buffer
+    !if $status
+        set-variable $window-line #l0
+        !return
+    !endif
+    !force xml-goto-matching-tag
+    !if &not $status
+        ml-write "[Failed to find matching tag]"
+        !abort
+    !endif
+    set-variable #l1 $window-line
+    !if &equ #l0 #l1
+        goto-position "\x83"
+        ml-write "[tag is on one line - whats the point?]"
+        !abort
+    !endif
+    !if &gre #l1 #l0
+        xml-forward-tag
+        set-variable #l5 &rig @wl $window-col
+        backward-char
+    !else
+        set-variable #l4 &lef @wl $window-col
+        forward-word
+        set-variable #l6 $window-col
+        backward-word
+        set-variable #l7 &mid @wl $window-col &sub #l6 $window-col
+    !endif
+    !force xml-goto-matching-tag
+    !if &not &and $status &equ $window-line #l0
+        goto-position "\x83"
+        ml-write "[Weird tag mismatch problem - abort]"
+        !abort
+    !endif
+    !if &gre #l0 #l1
+        xml-forward-tag
+        set-variable #l5 &rig @wl $window-col
+        forward-line
+    !else
+        set-variable #l4 &lef @wl $window-col
+        forward-word
+        set-variable #l6 $window-col
+        backward-word
+        set-variable #l7 &mid @wl $window-col &sub #l6 $window-col
+    !endif
+    !if &not &seq &trb #l4 ""
+        goto-position "\x83"
+        ml-write "[Extra text at the start of tag - abort]"
+        !abort
+    !elif &not &seq &trb #l5 ""
+        goto-position "\x83"
+        ml-write "[Extra text at the end of tag - abort]"
+        !abort
+    !endif
+    set-mark
+    set-variable $window-line #l1
+    !if &gre #l1 #l0
+        forward-line
+    !endif
+    0x34 narrow-buffer .scheme.fold-close &spr "%s<%s> ... </%s>" #l4 #l7 #l7
+!emacro
+
+; n xml-find-tag "name"
+; If n is 0 then the search starts at the top of the buffer
+define-macro xml-find-tag
+    !force set-variable #l0 @1
+    !if &not $status
+        set-variable #l0 @ml "Find XML Tag"
+    !endif
+    !if &not @#
+        beginning-of-buffer
+    !endif
+    set-variable #l8 &bmod "exact"
+    -1 buffer-mode "exact"
+    !force search-forward &cat "<" #l0
+    set-variable #l1 $status
+    &cond #l8 1 -1 buffer-mode "exact"
+    !if &not #l1
+        !if &or &seq @p "" &seq &lef @p 6 "mouse-"
+            ml-write "[Tag not found]"
+        !endif
+        !abort
+    !endif
+!emacro
+
+; n xml-insert-tag "name"
+; n is a bitwise flag where:
+;      0x01  insert </name> end tag
+;      0x02  ignore the current region
+;      0x04  leave cursor at end of start tag
+define-macro xml-insert-tag
+    set-variable #l2 0
+    !if &not &band 0x02 @#
+        0 show-region
+        !if &equ &band $result 0x05 0x05
+            set-variable #l2 $result
+            3 show-region
+        !endif
+    !endif
+    !force set-variable #l0 @1
+    !if &not $status
+        set-variable #l0 @ml "Insert XML Tag"
+    !endif
+    !if #l2
+        ; get the end of the current  region
+        &cond &band #l2 0x08 -2 2 show-region
+        set-variable #l3 $window-line
+        set-variable #l4 $window-col
+        &cond &band #l2 0x08 2 -2 show-region
+    !endif
+    set-position "\x81"
+    !force forward-char
+    !force xml-backward-tag
+    !if &not $status
+        goto-position "\x81"
+    !elif &seq @wc "<"
+        !force xml-forward-tag
+    !else
+        goto-position "\x81"
+    !endif
+    insert-string &spr "<%s>" #l0
+    !if &band @# 1
+        set-variable #l5 $window-line
+        set-variable #l6 $window-col
+        !if #l2
+            !if &equ $window-line #l3
+                set-variable $window-col &add #l4 &add &len #l0 2
+            !else
+                set-variable $window-line #l3
+                set-variable $window-col #l4
+            !endif
+            set-position "\x81"
+            !force forward-char
+            !force xml-backward-tag
+            !if &not $status
+                goto-position "\x81"
+            !elif &seq @wc "<"
+                !force xml-forward-tag
+            !else
+                goto-position "\x81"
+            !endif
+        !endif
+        set-variable #l1 $window-col
+        insert-string &spr "</%s>" #l0
+        !if &band @# 4
+            set-variable $window-line #l5
+            set-variable $window-col #l6
+        !else
+            set-variable $window-col #l1
+        !endif
+    !endif
+!emacro
+
+; n xml-insert-attrib "name"
+; n is a bitwise flag where:
+;      0x01  search for existing value
+;      0x02  insert an =
+;      0x04  insert an =""
+define-macro xml-insert-attrib
+    !force set-variable #l0 @1
+    !if &not $status
+        set-variable #l0 @ml "XML Attribute"
+    !endif
+    0x13f set-position "\x81"
+    !force xml-backward-tag
+    !if &not &and $status &seq @wc "<"
+        0x0bf goto-position "\x81"
+        ml-write "[Error: Not in a tag]"
+        !abort
+    !endif
+    set-mark
+    !force xml-forward-tag
+    !if &not $status
+        !jump 3
+    !elif &seq @wc "<"
+        backward-char
+        search-backward "\\S "
+        forward-char
+        !if &seq @wc " "
+            forward-char
+        !endif
+    !else
+        backward-char
+        !if &not &seq @wc ">"
+            forward-char
+        !endif
+    !endif
+    !if &band @# 1
+        copy-region
+        !if &xis @y &spr ".*\\s %s%s\\(.*\\)" #l0 &cond &band @# 2 "=\"?" ""
+            set-variable #l1 &len @s1
+            #l1 backward-char
+            -1 yank
+            0x500 goto-position "\x81"
+            !return
+        !endif
+        -1 yank
+    !endif
+    0x100 goto-position "\x81"
+    !if &not $window-col
+    !elif &not &seq &mid @wl &sub $window-col 1 1 " "
+        insert-space
+    !endif
+    insert-string #l0
+    !if &band @# 2
+        insert-string "="
+    !elif &band @# 4
+        insert-string "=\"\""
+        backward-char
+    !endif
+!emacro
