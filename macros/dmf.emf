@@ -89,7 +89,7 @@ define-macro display-matching-fence
                     2 screen-update
                     0x02 screen-poke #l0 #l1 .scheme.dmf #l2
                     0x00 screen-poke #l5 #l4 .scheme.dmf #l3
-                    !force !force &neg $fmatchdelay command-wait
+                    !force !force &neg $pause-time command-wait
                 !endif
                 goto-position #l8
                 !if &equ #l9 7
@@ -115,7 +115,7 @@ define-macro display-matching-fence
         !endif
         2 screen-update
         7 display-matching-fence
-        !force !force &neg $fmatchdelay command-wait
+        !force !force &neg $pause-time command-wait
     !endif
     goto-position #l8
     !if &equ #l9 7
