@@ -1,28 +1,49 @@
 /****************************************************************************
  *
- *			Copyright 1995 Jon Green.
+ *			Copyright 1995-2004 Jon Green.
  *			   All Rights Reserved
  *
  *
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: droff.c,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:26 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2004-01-06 00:53:50 $
  *  Author        : $Author: jon $
- *  Last Modified : <000125.2130>
+ *  Last Modified : <040103.1957>
  *
  *  Description
  *
  *  Notes
  *
  *  History
+ * 
+ * Version 1.0.0g - 03/01/04 - JG
+ * Ported to Sun Solaris 9
  *
- *  $Log: not supported by cvs2svn $
+ * Version 1.0.0f - 14/05/97 - JG
+ * Added copyright option.
+ *
+ * Version 1.0.0e - 06/01/95 - JG
+ * Modified arguments for the new compiling option.
+ * 
+ * Version 1.0.0d - 05/12/95 - JG
+ * Added bullet support.
+ *
+ * Version 1.0.0c - 15/11/95 - JG
+ * Added .sp and .ne support for blank lines and space requirements
+ * for pictures etc.
+ *
+ * Version 1.0.0b - 14/11/95 - JG
+ * Corrected code to detect bad font chnages. Now produces
+ * an error when a fonts are mixed badly.
+ *
+ * Version 1.0.0a - 04/10/95 - JG
+ * Remove the sub-indent anomaly with RTF generation on .CS.
  *
  ****************************************************************************
  *
- *  Copyright (c) 1995 Jon Green.
+ *  Copyright (c) 1995-2004 Jon Green.
  *
  *  All Rights Reserved.
  *
@@ -40,7 +61,7 @@
 #include <sys/types.h>
 #include <time.h>
 
-#if ((defined _HPUX) || (defined _LINUX))
+#if ((defined _HPUX) || (defined _LINUX) || (defined _SUNOS))
 #include <unistd.h>
 #else
 #include <getopt.h>
@@ -51,28 +72,9 @@
 #include "nroff.h"
 
 /*
- * Version 1.0.0a - 04/10/95 - JG
- * Remove the sub-indent anomaly with RTF generation on .CS.
- *
- * Version 1.0.0b - 14/11/95 - JG
- * Corrected code to detect bad font chnages. Now produces
- * an error when a fonts are mixed badly.
- *
- * Version 1.0.0c - 15/11/95 - JG
- * Added .sp and .ne support for blank lines and space requirements
- * for pictures etc.
- *
- * Version 1.0.0d - 05/12/95 - JG
- * Added bullet support.
- *
- * Version 1.0.0e - 06/01/95 - JG
- * Modified arguments for the new compiling option.
- * 
- * Version 1.0.0f - 14/05/97 - JG
- * Added copyright option.
  */
 
-#define MODULE_VERSION  "1.0.0f"
+#define MODULE_VERSION  "1.0.0g"
 #define MODULE_NAME     "droff"
 
 #define FULL_INDENT 5

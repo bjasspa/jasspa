@@ -1,16 +1,16 @@
 /****************************************************************************
  *
- *  			Copyright 1996 Jon Green.
+ *  			Copyright 1996-2004 Jon Green.
  *                         All Rights Reserved
  *
  *
  *  System        : 
  *  Module        : 
  *  Object Name   : $RCSfile: utils.c,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:40 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2004-01-06 00:52:20 $
  *  Author        : $Author: jon $
- *  Last Modified : <240398.1441>
+ *  Last Modified : <040104.0023>
  *
  *  Description	
  *
@@ -18,11 +18,9 @@
  *
  *  History
  *	
- *  $Log: not supported by cvs2svn $
- *
  ****************************************************************************
  *
- *  Copyright (c) 1996 Jon Green.
+ *  Copyright (c) 1996-2004 Jon Green.
  * 
  *  All Rights Reserved.
  * 
@@ -31,8 +29,6 @@
  * readable form without prior written consent from Jon Green.
  *
  ****************************************************************************/
-
-static const char rcsid[] = "@(#) : $Id: utils.c,v 1.1 2000-10-21 14:31:40 jon Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>

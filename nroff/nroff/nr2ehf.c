@@ -1,16 +1,16 @@
 /****************************************************************************
  *
- *			Copyright 1995 Jon Green.
+ *			Copyright 1995-2004 Jon Green.
  *			   All Rights Reserved
  *
  *
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: nr2ehf.c,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:27 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2004-01-06 00:53:50 $
  *  Author        : $Author: jon $
- *  Last Modified : <000125.2136>
+ *  Last Modified : <040104.0030>
  *
  *  Description
  *
@@ -18,11 +18,13 @@
  *
  *  History
  *
- *  $Log: not supported by cvs2svn $
+ * 1.0.0b JG 2004-01-03 Ported to Sun Solaris 9
+ * 1.0.0a JG 1997-05-30 Added nroffId string.
+ * 1.0.0  JG 1997-05-14 Initial derived from droff.c
  *
  ****************************************************************************
  *
- *  Copyright (c) 1995 Jon Green.
+ *  Copyright (c) 1995-2004 Jon Green.
  *
  *  All Rights Reserved.
  *
@@ -40,7 +42,7 @@
 #include <sys/types.h>
 #include <time.h>
 
-#if ((defined _HPUX) || (defined _LINUX))
+#if ((defined _HPUX) || (defined _LINUX) || (defined _SUNOS))
 #include <unistd.h>
 #else
 #include <getopt.h>
@@ -50,12 +52,7 @@
 
 #include "nroff.h"
 
-/*
- * 1.0.0  JG 970514 Initial derived from droff.c
- * 1.0.0a JG 970530 Added nroffId string.
- */
-
-#define MODULE_VERSION  "1.0.0f"
+#define MODULE_VERSION  "1.0.0b"
 #define MODULE_NAME     "nr2ehf"
 
 #define FULL_INDENT 5
@@ -171,7 +168,7 @@ outChar (int ic)
         return;
     else if (c == ZSPACE_CHAR)
         return;
-    
+
     if (asciiMode)
     {
         switch (ic & FONT_MODE) {
@@ -226,7 +223,6 @@ outBuf (Line *lp, int reset)
     }   /* End of 'for' */
 }
 
-
 static int
 outHeader ()
 {
@@ -272,7 +268,6 @@ outLine (Line *lp)
 #endif
     return (0);
 }
-
 
 static void
 insertLineChar (char c, int *pos, Line *lp)
@@ -452,8 +447,6 @@ int     gap_pos;
     }
 }
 
-
-
 static void
 insert_word (char *s, int mode, Line *lp, int *newMode)
 {
@@ -575,7 +568,7 @@ insert (char *s, int mode, Line *lp)
             else
                 length++;
         }
-        
+
         buffer [length] = '\0';
         s = &s [wlength];
 #ifdef INSERT_DEBUG
@@ -590,7 +583,7 @@ insert (char *s, int mode, Line *lp)
 #ifdef INSERT_DEBUG
         fprintf (fp,"insert word Space In (%#010x)\n", mode);
 #endif
-        if (no_space == 0) 
+        if (no_space == 0)
             insert_word (" ", mode, lp, &mode);
         else
             no_space = 0;
@@ -657,7 +650,7 @@ nrTH_func (char *id, char *num, char *date, char *company, char *title)
         date = date_buf;
     if (company == NULL)
         company = companyName;
-        
+
     if (title == NULL)
         title = im_buf;
 #if 0
@@ -673,7 +666,7 @@ nrTH_func (char *id, char *num, char *date, char *company, char *title)
     }
     else
         insert ("\001", 0, &header);
-    
+
     if (title != NULL) {
         temp.pos = 0;
         insert (title, BOLD_MODE|SPACE_MODE, &temp);
@@ -785,7 +778,7 @@ nrHh_func (char *text, char *name, char *section,
     }
     insert (buf, mode, NULL);
     bufFree (buf);
-}    
+}
 
 static void
 nrHr_func (char *name, char *section, char *concat)
@@ -994,7 +987,7 @@ static void
 nrTP_func (int i)
 {
     int j;
-    
+
     if (i != 0)                         /* Start of function */
     {
         insertPara (0);
@@ -1044,12 +1037,11 @@ nrXI_func (char *name, char *id, char *desc, char *comp)
     fprintf (fo, "!%s\n", name);
 }
 
-
 static void
 nrft_func (int font)
 {
     int lastFont;
-    
+
     lastFont = mode & FONT_MODE;
     switch (font)
     {
@@ -1157,14 +1149,14 @@ static void droffInitialise (void)
 
     /* Define the id name */
     nroffId = progname;                 /* Set to the program name */
-    
+
     /* Get the time - require the year */
     clock = time (0);
     time_ptr = (struct tm *) localtime (&clock);	/* Get time frame */
     year = time_ptr->tm_year + 1900;    /* The year */
     month = time_ptr->tm_mon + 1;       /* The month */
     day = time_ptr->tm_mday;            /* The day of the month */
-    
+
     /* Build the copyright/company name */
     if (copyrightName == NULL)
         companyName =  bufFormat (NULL, "(c) Copyright %4d/%02d/%02d.",
@@ -1172,7 +1164,7 @@ static void droffInitialise (void)
     else
         companyName = bufFormat (NULL, "%s %4d/%02d/%02d.", copyrightName,
                                  year, month, day);
-    
+
     /* Headers */
     nrInstall (funcTab, NH_func, NULL);
     nrInstall (funcTab, FH_func, NULL);
@@ -1237,10 +1229,10 @@ static void droffInitialise (void)
 
     /* Text */
     nrInstall (funcTab, textline_func, nrTextline);
-    
+
     /* Special */
     nrInstall (funcTab, Me_func, nrMe_func);
-    
+
     nrInstallFunctionTable (&funcTab);
 }
 
@@ -1302,7 +1294,7 @@ int main
             break;
         }
     }
-    
+
     uOpenErrorChannel ();
     argv = getfiles (&argc, argv, optind);
 
@@ -1322,7 +1314,7 @@ int main
     for (i = 1; i < argc; i++) {
         if ((nrfp = nrFilePush (argv[i])) == NULL)
             exit (1);
-        
+
         /* Break up the file name and add an extension */
         if (oname == NULL && fo == NULL)
         {
@@ -1330,7 +1322,7 @@ int main
             char *path;
             char *base;
             char *name;
-            
+
             if (splitFilename (nrfp->fileName, &drive, &path, &base, NULL) != 0)
                 uFatal ("Cannot decompose filename [%s]\n", nrfp->fileName);
             if ((name = makeFilename (drive, path, base, "nro")) == NULL)

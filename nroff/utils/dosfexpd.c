@@ -1,38 +1,34 @@
 /****************************************************************************
  *
- *  			Copyright 1997 Jon Green.
+ *			Copyright 1997-2004 Jon Green.
  *			    All Rights Reserved
  *
  *
  *  System        : Utilities.
- *  Module        : 
+ *  Module        :
  *  Object Name   : $RCSfile: dosfexpd.c,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:39 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2004-01-06 00:52:20 $
  *  Author        : $Author: jon $
- *  Last Modified : <030597.1146>
+ *  Last Modified : <040104.0022>
  *
- *  Description	
+ *  Description
  *
  *  Notes
  *
  *  History
- *	
- *  $Log: not supported by cvs2svn $
  *
  ****************************************************************************
  *
- *  Copyright (c) 1997 Jon Green.
- * 
+ *  Copyright (c) 1997-2004 Jon Green.
+ *
  *  All Rights Reserved.
- * 
+ *
  *  This Document may not, in whole or in part, be copied,
  *  photocopied, reproduced, translated, or reduced to any
  *  electronic medium or machine readable form without prior
  *  written consent from Jon Green.
  ****************************************************************************/
-
-static const char rcsid[] = "@(#) : $Id: dosfexpd.c,v 1.1 2000-10-21 14:31:39 jon Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -56,12 +52,12 @@ char **fileNameExpand (char *name)
 {
     static char buffer [1024];
     int ii;
-    
+
     if (name == NULL)
         return (NULL);
-    
+
     strcpy (buffer, name);
-#if 0    
+#if 0
     /*
      * The following hack forms a base name.
      */
@@ -82,7 +78,6 @@ struct	s_name	{
     struct  s_name  *next;
     char            str[1];
 }   t_name;
-
 
 static int
 readLine (FILE *fp, char *cbuf)
@@ -115,7 +110,6 @@ readLine (FILE *fp, char *cbuf)
     }   /* End of 'while' */
 }   /* End of 'readLine' */
 
-
 static int
 addNewItem (char *s, t_name **head, int sortFlag)
 {
@@ -128,7 +122,7 @@ addNewItem (char *s, t_name **head, int sortFlag)
     strcpy (new_item->str, s);
     if ((tail = *head) != NULL) {
         for (prev_tail = NULL;
-             ((tail != NULL) && 
+             ((tail != NULL) &&
               ((sortFlag == 0) || (status = strcmp (s, tail->str)) > 0));
              prev_tail = tail, tail = tail->next)
             /* NULL operation */;
@@ -155,14 +149,14 @@ destructTable (char ***table, int *count)
 {
     int i;
     char **ltable;
-    
+
     /* Destruct the table */
-    
+
     ltable = *table;                    /* Local table pointer */
     for (i = *count; --i >= 0; /* NULL */)
         free (ltable [i]);              /* Destruct each entry */
     free (ltable);                      /* Destruct the table */
-    
+
     *table = NULL;                      /* Reset table */
     *count = 0;                         /* Reset count */
 }
@@ -190,7 +184,7 @@ char
     int         literalFlag = 0;
 
     /*--- Do for the file in the argument list */
-    
+
     if (name == NULL)
     {
         if (table == NULL)              /* Table empty ?? */
@@ -203,11 +197,11 @@ char
         }
         return (table [count++]);       /* Return the next entry */
     }
-    
+
     count = 0;
     head = NULL;
 
-    if 
+    if
     for (file_cnt = 1; file_cnt < *argc; file_cnt++)
     {
         fname = argv[file_cnt];
@@ -218,7 +212,7 @@ char
                 fprintf (stderr, "Bad @ reference in file list\n");
                 exit (1);
             }
-            
+
             /* We do not sort a response file */
             sortFlag = 0;
             while ((status = readLine (fp, buffer)) >= 0) {
@@ -274,7 +268,6 @@ char
     table[0] = argv[0];
     *argc = count+1;
     return (table);
-
 
 }	/* End of 'getfiles' */
 #endif

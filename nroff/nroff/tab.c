@@ -1,16 +1,16 @@
 /****************************************************************************
  *
- *			Copyright 1995 Division Limited.
+ *			Copyright 1995-2004 Jon Green.
  *			      All Rights Reserved
  *
  *
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: tab.c,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:31 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2004-01-06 00:53:51 $
  *  Author        : $Author: jon $
- *  Last Modified : <270496.2121>
+ *  Last Modified : <040104.0038>
  *
  *  Description
  *
@@ -18,24 +18,17 @@
  *
  *  History
  *
- *  $Log: not supported by cvs2svn $
- *  Revision 1.1  1996/09/26 17:53:25  jon
- *  Initial revision
- *
- *
  ****************************************************************************
  *
- *  Copyright (c) 1995 Division Ltd.
+ *  Copyright (c) 1995 Jon Green.
  *
  *  All Rights Reserved.
  *
  *  This Document may not, in whole or in part, be copied,
  *  photocopied, reproduced, translated, or reduced to any
  *  electronic medium or machine readable form without prior
- *  written consent from Division Ltd.
+ *  written consent from Jon Green.
  ****************************************************************************/
-
-static const char rcsid[] = "@(#) : $Id: tab.c,v 1.1 2000-10-21 14:31:31 jon Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -114,7 +107,7 @@ typedef struct {
 #define TS_TABLE_BORD      0x01000000   /* Table border */
 #define TS_TABLE_DBORD     0x02000000   /* Table double border */
 
-static ValueKeywords vkeywords [] = 
+static ValueKeywords vkeywords [] =
 {
     { 'b', TS_COL_BOLD    },
     { 'i', TS_COL_ITALIC  },
@@ -129,7 +122,7 @@ static ValueKeywords vkeywords [] =
     { '\0',0              }
 };
 
-/* 
+/*
  * Format for the data
  */
 typedef struct stEntry {
@@ -161,7 +154,7 @@ static Entry *
 entryConstruct (Entry *root)
 {
     Entry *e;
-    
+
     e = malloc (sizeof (Entry));
     if (e == NULL)
         uFatal ("Cannot allocate table entry\n");
@@ -186,11 +179,10 @@ treeDestruct (Entry *node)
 {
     Entry *col;
     Entry *row;
-    
-    
+
     if (node == NULL)
         return;
-    do 
+    do
     {
         col = node->col;
         do
@@ -202,7 +194,7 @@ treeDestruct (Entry *node)
         }
         while ((node = row) != NULL);
     } while ((node = col) != NULL);
-}        
+}
 
 /*
  * entryLinkRow
@@ -214,15 +206,15 @@ entryLinkRow (Entry *last, Entry *node, int flag)
 {
     Entry *row;                         /* Head of the row. */
     Entry *parent;                      /* Parent node */
-    
+
     if (node == NULL)
         node = entryConstruct (node);
-    
+
     row = last->head;                   /* Head of the row. */
     node->head = row;                   /* Link to head of row. */
     node->root = last->root;            /* Link to head of table. */
     last->row = node;                   /* Link last to the node */
-    
+
     if ((parent = last->parent) != NULL)
     {
         /* Link to parent. */
@@ -230,7 +222,7 @@ entryLinkRow (Entry *last, Entry *node, int flag)
             parent->row->col = node;    /* Vertical column link */
         else
             uError ("Column linkage inconsistancy\n");
-        
+
         if (flag)
         {
             node->origMode = parent->origMode;
@@ -249,7 +241,7 @@ entryLinkRow (Entry *last, Entry *node, int flag)
 static Entry *
 entryLinkCol (Entry *last, Entry *node, int flag)
 {
-    
+
     if ((last == NULL) || (node == NULL))
         node = entryConstruct ((last == NULL) ? last : last->root);
     if ((node->parent = last) == NULL)
@@ -260,45 +252,45 @@ entryLinkCol (Entry *last, Entry *node, int flag)
         last->col = node;
     }
     node->head = node;                  /* This node is the head !! */
-    
+
     node->column = 1;
     node->columnCount = 1;
-    
+
     if ((node->parent = last) != NULL) /* Link parent + child */
     {
         last->col = node;
         if (flag)
         {
             Entry *p, *q;
-            
+
             node->origMode = last->origMode;
             node->origWidth = last->origWidth;
-            
+
             for (q = node, p = last; p->row != NULL; p = p->row)
                 q = entryLinkRow (q, NULL, flag);
         }
     }
     return (node);
 }
-    
+
 /*
  * nrTSoptions
  * Extract the options from a Nroff text line.
  */
 
-static void 
+static void
 nrTSoptions (char *line)
 {
     char *p;
     OptionKeywords *kp;
     int  id = 0;
-    
+
     uVerbose (0, "nrTSoptions (%s)\n", line);
     tsPosition = 0;                     /* margin position of table */
     tsBox = 0;                          /* box line type */
     tsTab = '\t';                       /* tab character */
     tsLine = 1;                         /* box line size */
-    
+
     while ((p = getFirstParam (&line)) != NULL)
     {
         for (kp = keywords; (id = kp->id) != TS_OPTION_END; kp++)
@@ -306,13 +298,13 @@ nrTSoptions (char *line)
             if (strncmp (p, kp->name, strlen (kp->name)) == 0)
                 break;
         }
-        
+
         switch (id)
         {
         case TS_OPTION_CENTRE:          /* Centre position */
         case TS_OPTION_EXPAND:          /* Flush with margins */
             if (tsPosition != 0)
-                uError ("Table position already specified. Ignoring \"%s\".\n", 
+                uError ("Table position already specified. Ignoring \"%s\".\n",
                         kp->name);
             else
                 tsPosition = kp->data;  /* Set the data */
@@ -344,10 +336,10 @@ nrTSoptions (char *line)
             break;
         }
     }
-    
+
     if (id != TS_OPTION_TERMINAL)
         uError ("Table option line not terminated with a semi-colon\n");
-}              
+}
 
 static int
 getUnitOption (char **line, float *fitem)
@@ -355,9 +347,9 @@ getUnitOption (char **line, float *fitem)
     char *s, *r;
     char c;
     int status = 1;
-    
+
     s = *line;
-    
+
     if (*++s != '(')
         uError ("Open bracket '(' expected.\n");
     else
@@ -372,9 +364,9 @@ getUnitOption (char **line, float *fitem)
                 break;
             }
         }
-        
+
         /* Check the end of the string */
-        if (c != 'i')   
+        if (c != 'i')
             uError ("w(XX.Xi) expected\n");
         if (*r != ')')
             uError ("Close bracked ')' expected.\n");
@@ -395,9 +387,9 @@ nrTSvalues (Entry *e, char *line, int *rstatus)
     int status = 0;
     int id;
     int i;
-    
+
     uVerbose (0, "nrTSvalues (%s)\n", line);
-    
+
     while ((p = getFirstParam (&line)) != NULL)
     {
         /* If this is not a column separator then move onto the
@@ -409,7 +401,7 @@ nrTSvalues (Entry *e, char *line, int *rstatus)
             else
                 r = entryLinkRow (r, NULL, 0);    /* Make new row item */
         }
-        
+
         /* Process the entry  */
         while ((c = *p) != '\0')
         {
@@ -465,11 +457,11 @@ findTab (char **dest, char **src)
 {
     char *p;
     char c;
-    
+
     p = *src;
     if ((c = *p) == '\0')
         return 0;
-    
+
     *dest = p;                          /* Start of the return string */
     do {
         if (c == tsTab)                 /* Tab character ?? */
@@ -478,7 +470,7 @@ findTab (char **dest, char **src)
             break;                      /* Quit loop */
         }
     } while ((c = *++p) != '\0');       /* Get next char */
-    
+
     *src = p;                           /* Restore new source position. */
     return (1);                         /* Return OK status */
 }
@@ -489,13 +481,13 @@ nrTSdata (Entry *e, char *line)
     Entry *r;
     char *item;
     char c;                             /* Local character pointer */
-    
+
     if (e == NULL)
         r = tableHead;
     else if ((r = e->col) == NULL)      /* Does the next row exist ?? */
         r = entryLinkCol (e, r, 1);     /* No - create a new one */
     e = r;                              /* Last row !! */
-    
+
     c = *line;
     /* Check for horizontal line */
     if (((c == '_') || (c == '=')) && (line[1] == '\0'))
@@ -503,7 +495,7 @@ nrTSdata (Entry *e, char *line)
         r->curMode = (c == '_') ? TS_TABLE_BORD : TS_TABLE_DBORD;
         return (r);
     }
-    
+
     while (*line != '\0')
     {
         r->curMode = r->origMode;
@@ -524,7 +516,7 @@ nrTSdata (Entry *e, char *line)
                     r->curMode = TS_ROW_DBORD;/* Horizontal double line */
                 else                    /* This MUST be a text entry. Add it. */
                     r->text = strdup (item);
-                    
+
             }
             else
                 uFatal ("Cannot cope with complex tables.\n");
@@ -545,7 +537,7 @@ static float
 computeTextWidth (char *text)
 {
     int len;
-    
+
     if ((text == NULL) || ((len = strlen (text)) == 0))
         return (0.0f);
     return ((float) (len) / 10.0f);
@@ -554,9 +546,9 @@ computeTextWidth (char *text)
 static void
 computeMinWidth (Entry *r, float *width)
 {
-    
+
     float f;
-    
+
     f = computeTextWidth (r->text);
     if (r->curWidth < r->origWidth)
         r->curWidth = r->origWidth;
@@ -576,7 +568,7 @@ nrTSend (void)
     float width [132];
     int i;
     int columns = 0;
-    
+
     for (i = 0, row = tableHead; row != NULL; row = row->row, i++)
     {
         columns++;
@@ -584,22 +576,21 @@ nrTSend (void)
         for (col = row; col != NULL; col = col->col)
             computeMinWidth (col, &width [i]);
     }
-    
+
     for (i = 0; i < columns; i++)
         printf ("Column %d = %6.3f\"\n", i+1, width [i]);
 }
-                  
 
 static void
 nrTSprint (void)
 {
     Entry *r;
     Entry *c;
-    
+
     for (c = tableHead; c != NULL; c = c->col)
         for (r = c; r != NULL; r = r->row)
         {
-            printf ("Row: %d. Value: [%s] %6.3f\"\n", 
+            printf ("Row: %d. Value: [%s] %6.3f\"\n",
                     r->column, r->text, r->curWidth);
         }
 }
@@ -610,14 +601,14 @@ int main (int argc, char *argv [])
     int     wcount = 0;                 /* Warn count */
     Entry   *e;
     Entry   *r;
-    
+
     /* Initialise the error channel */
     uErrorSet (0, &ecount);             /* Max Num entries + counter */
     uWarnSet (&wcount);                 /* Warning count */
     uUtilitySet ("table");              /* Set name of program */
-              
+
     uOpenErrorChannel ();
-    
+
     r = e = nrTSvalues  (NULL, strdup ("l l."), NULL);
     r = nrTSdata (NULL, strdup ("ISO 8859-1	west European languages (Latin-1)"));
     r = nrTSdata (r, strdup ("ISO 8859-2	east European languages (Latin-2)"));
@@ -642,7 +633,7 @@ int main (int argc, char *argv [])
     nrTSend ();
     nrTSprint ();
 #endif
-#if 0    
+#if 0
     nrTSoptions ("center box linesize(6) tab(@) ;");
     nrTSoptions ("center box linesize(6) tab() ;");
     nrTSoptions ("center allbox box linesize(6) tab(@) ;");
@@ -654,9 +645,7 @@ int main (int argc, char *argv [])
     nrTSvalues ("ci | ci ci");
     nrTSvalues ("c || l s.");
     nrTSdata   ("_");
-#endif    
+#endif
     uCloseErrorChannel ();
     return (ecount);
 }
-
-

@@ -1,16 +1,16 @@
 /****************************************************************************
  *
- *			Copyright 1995 Jon Green.
+ *			Copyright 1995-2004 Jon Green.
  *			   All Rights Reserved
  *
  *
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: nroff.c,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:29 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2004-01-06 00:53:51 $
  *  Author        : $Author: jon $
- *  Last Modified : <240398.1457>
+ *  Last Modified : <040104.0036>
  *
  *  Description
  *
@@ -18,11 +18,42 @@
  *
  *  History
  *
- *  $Log: not supported by cvs2svn $
+ * 1.3.4a - JG 03/01/04 Ported to Sun Solaris 9
+ * 1.3.4  - JG 24/03/98 Added .Gr for graphical objects.
+ * 1.3.3e - JG 30/05/97 Added .ie/.el + Id comparitor.
+ * 1.3.3d - JG 10/05/97 Added hypertext jumps .Lj, .XJ.
+ * 1.3.3b - JG 02/09/96 Extended the .Li to include the .XI stuff
+ * 1.3.3a - JG 20/04/97 Lowercase module name.
+ * 1.3.3  - JG 09/03/96 Added function binding tables.
+ * 1.3.2d - JG 15/02/96 Added .ll and .pl for droff - set line and page length
+ * 1.3.2c - JG 17/01/96 Corrected problem of macro expansion in instr.
+ * 1.3.2b - JG 16/01/96 Removed comma parameters - groff does not understand.
+ * 1.3.2a - JG 10/01/96 Added check to detect un-closed .RS statement.
+ * 1.3.2  - JG 09/12/95 Increased global error checking. Added bullets.
+ *                      Added support for point size change (.ps)
+ *                      Added support for vertical spacing (.vs)
+ *                      Fixed .I/BP to use .ne 3 so stop page wrapping.
+ * 1.3.1a - JG 16/11/95 Increased error detection rate on \\ statements.
+ * 1.3.1  - JG 09/11/95 Corrected double \\ on IP and BP lines.
+ * 1.3.0h - JG 09/11/95 Added .sp and .ne to nroff data set.
+ * 1.3.0g - JG 09/11/95 Added warning ignore to file
+ *                      Use .\" IGNORE to ignore next line error and warning.
+ *                      Use .\" IGNORE-WARNING to ignore warnings only.
+ *                      Use .\" IGNORE-ERROR to ignore errors only.
+ *                      Use .\" ERROR <message> to force an error.
+ *                      Use .\" WARNING <message> to force a warning.
+ * 1.3.0f - JG 10/08/95 Added the store previous command flag
+ * 1.3.0e - JG 09/08/95 Detect spurious arguments on .PP
+ * 1.3.0d - JG 09/08/95 Increased checking on text lines.
+ * 1.3.0c - JG 05/08/95 Increased checking on .CE statements.
+ * 1.3.0b - JG 05/08/95 Increased checking on .Ht and .Hr statements.
+ * 1.3.0a - JG 01/08/95 Added string macro .ds.
+ * 1.3.0  - JG 13/06/95 Stablised - added version number.
+ *
  *
  ****************************************************************************
  *
- *  Copyright (c) 1995 Jon Green.
+ *  Copyright (c) 1995-2004 Jon Green.
  *
  *  All Rights Reserved.
  *
@@ -42,46 +73,15 @@
 #include "_nroff.h"
 #include "nroff.h"
 
-/*
- * 1.3.0  - JG 13/06/95 Stablised - added version number.
- * 1.3.0a - JG 01/08/95 Added string macro .ds.
- * 1.3.0b - JG 05/08/95 Increased checking on .Ht and .Hr statements.
- * 1.3.0c - JG 05/08/95 Increased checking on .CE statements.
- * 1.3.0d - JG 09/08/95 Increased checking on text lines.
- * 1.3.0e - JG 09/08/95 Detect spurious arguments on .PP
- * 1.3.0f - JG 10/08/95 Added the store previous command flag
- * 1.3.0g - JG 09/11/95 Added warning ignore to file
- *                      Use .\" IGNORE to ignore next line error and warning.
- *                      Use .\" IGNORE-WARNING to ignore warnings only.
- *                      Use .\" IGNORE-ERROR to ignore errors only.
- *                      Use .\" ERROR <message> to force an error.
- *                      Use .\" WARNING <message> to force a warning.
- * 1.3.0h - JG 09/11/95 Added .sp and .ne to nroff data set.
- * 1.3.1  - JG 09/11/95 Corrected double \\ on IP and BP lines.
- * 1.3.1a - JG 16/11/95 Increased error detection rate on \\ statements.
- * 1.3.2  - JG 09/12/95 Increased global error checking. Added bullets.
- *                      Added support for point size change (.ps)
- *                      Added support for vertical spacing (.vs)
- *                      Fixed .I/BP to use .ne 3 so stop page wrapping.
- * 1.3.2a - JG 10/01/96 Added check to detect un-closed .RS statement.
- * 1.3.2b - JG 16/01/96 Removed comma parameters - groff does not understand.
- * 1.3.2c - JG 17/01/96 Corrected problem of macro expansion in instr.
- * 1.3.2d - JG 15/02/96 Added .ll and .pl for droff - set line and page length
- * 1.3.3  - JG 09/03/96 Added function binding tables.
- * 1.3.3a - JG 20/04/97 Lowercase module name.
- * 1.3.3b - JG 02/09/96 Extended the .Li to include the .XI stuff
- * 1.3.3d - JG 10/05/97 Added hypertext jumps .Lj, .XJ.
- * 1.3.3e - JG 30/05/97 Added .ie/.el + Id comparitor.
- * 1.3.4  - JG 24/03/98 Added .Gr for graphical objects.
- */
-
-#define VERSION_STRING "1.3.4"
+#define VERSION_STRING "1.3.4a"
 #ifdef _WIN32
 #define PLATFORM_STRING "Win32"
 #elif defined (_DOS)
 #define PLATFORM_STRING "MsDos"
 #elif defined (_LINUX)
 #define PLATFORM_STRING "Linux"
+#elif defined (_SUNOS)
+#define PLATFORM_STRING "SunOS"
 #else
 #define PLATFORM_STRING "Undefined"
 #endif
@@ -92,7 +92,8 @@ char *nroffId = "nroff";
 /* Local definitions */
 
 #define dprintf(x)                      /* NULL */
-#define nrCallback(x,y) (((nrftab != NULL) && (nrftab->x)) ? (*(nrftab->x)) y : 0)
+#define nrCallback(x,y) (((nrftab != NULL) && (nrftab->x != NULL)) ? \
+                         (*(nrftab->x)) y, 1 : 0)
 
 /* Type definitions */
 
@@ -141,7 +142,7 @@ static KeyType keyTab [] = {
 
 /* Local memory definitions */
 
-static const char rcsid[] = "@(#) : $Id: nroff.c,v 1.1 2000-10-21 14:31:29 jon Exp $";
+static const char rcsid[] = "@(#) : $Id: nroff.c,v 1.2 2004-01-06 00:53:51 jon Exp $";
 
 static dsRecord *dsHead = NULL;
 static char *instr;                     /* Instruction buffer */
@@ -269,7 +270,6 @@ dsPush (char *name, char *data)
 {
     dsRecord *p;
 
-
     /* Find name on list */
     if ((p = dsFind (name)) != NULL)
     {
@@ -352,7 +352,6 @@ int
 nrImCmp (char *item, char *ritem)
 {
     int len;
-
 
     if (ritem == NULL)
         ritem = "misc";
@@ -484,7 +483,6 @@ isalnumstr (char *s)
             return (0);
     return (1);
 }
-
 
 int
 isnullstr (char *s)
@@ -1213,7 +1211,6 @@ TH_func (void)
 
     uDebug (1, ("TH [%s][%s][%s][%s][%s]\n", sid, snum, sdate, scompany, stitle));
 
-
     nrCallback (TH_func, (sid, snum, sdate, scompany, stitle));
     bufFree (stitle);
     bufFree (scompany);
@@ -1231,13 +1228,13 @@ TH_func (void)
     ps_size = PS_DEFAULT;       /* Point size */
 }
 
-static void 
+static void
 Gr_func (void)
 {
     char *align;
     char *image;
     char *ending;
-    
+
     if ((align = bufNStr (NULL, getFirstParam (&instr))) == NULL)
     {
         uError ("Alignment string expected. Param #1.\n");
@@ -1253,17 +1250,16 @@ Gr_func (void)
         uError ("Image string expected. Param #2n\n");
         image = bufNStr (NULL, "logo");
     }
-    
+
     if ((ending = getAllParam (&instr)) != NULL)
         uError ("Unexpected arguments [%s]\n", ending);
-    
+
     nrCallback (Gr_func, (align, image));
     bufFree (ending);
-    bufFree (image); 
+    bufFree (image);
     bufFree (align);
 }
 
-        
 static void
 NH_func (void)
 {
@@ -1448,7 +1444,7 @@ Hl_func (void)
         uError ("Cannot resolve external reference to [%s%s]\n",
                  (bufname == NULL) ? "NoName" : bufname,
                  (bufnum == NULL) ? "" : bufnum);
-    
+
     if (nroffCmd == KW_Hl) {
         nrCallback (Hl_func, (buftext, bufname, bufnum,
                               catdata, modulename, filename, linkType));
@@ -1958,7 +1954,6 @@ XJ_func (void)
 {
     _XIP_func (LS_JUMP);
 }
-
 
 static void
 br_func (void)
@@ -2564,7 +2559,7 @@ static void
 Me_func (void)
 {
     char *text;
-    
+
     if ((text = getOnlyParam (&instr)) == NULL)
         uWarn ("Expected single argument for .Me\n");
     if (instr != NULL)
@@ -2623,7 +2618,7 @@ if_func (void)
     else if (strncmp (instr, "\"\\n(.I\"", 7) == 0)
     {
         char converter [1024];
-        
+
         sprintf (converter, "\"\\n(.I\"%s\"", nroffId);
         if (strncmp (instr, converter, strlen (converter)) == 0)
         {
@@ -2788,7 +2783,6 @@ endFile_func (void)
     includeMode = 0;
 }
 
-
 static void
 includeFile_func (void)
 {
@@ -2932,7 +2926,6 @@ nroff (nrFILE *fp, int mode)
     endSuperman = nrfp->superman;
     uWarnIgnore (nrWarnIgnore = 0);
     uErrorIgnore (nrErrorIgnore = 0);
-
 
     while ((exitFile == 0) && (readLine (&inLine) != -1))
     {

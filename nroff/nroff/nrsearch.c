@@ -1,16 +1,16 @@
 /****************************************************************************
  *
- *			Copyright 1996 Jon Green.
+ *			Copyright 1996-2004 Jon Green.
  *                         All Rights Reserved
  *
  *
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: nrsearch.c,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:30 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2004-01-06 00:53:51 $
  *  Author        : $Author: jon $
- *  Last Modified : <250398.1832>
+ *  Last Modified : <040103.1959>
  *
  *  Description
  *
@@ -18,26 +18,12 @@
  *
  *  History
  *
- *  $Log: not supported by cvs2svn $
- *  Revision 1.5  1996/11/27 22:57:42  jon
- *  Added more complesx search definitions
- *
- *  Revision 1.4  1996/10/03 19:27:00  jon
- *  Added .Li extension definition - extended library syntax.
- *
- *  Revision 1.3  1996/09/28 23:08:38  jon
- *  Added package extensions
- *
- *  Revision 1.2  1996/09/27 23:49:38  jon
- *  Added file inclusion capability + Puxsh/Pop capability
- *
- *  Revision 1.1  1996/09/26 17:53:25  jon
- *  Initial revision
- *
+ * 2.0.0b 03/01/04 JG Ported to Sun Solaris 9
+ * 2.0.0a 30/05/97 JG Ported to win32.
  *
  ****************************************************************************
  *
- *  Copyright (c) 1996 Jon Green.
+ *  Copyright (c) 1996-2004 Jon Green.
  *
  *  All Rights Reserved.
  *
@@ -47,8 +33,6 @@
  *
  ****************************************************************************/
 
-static const char rcsid[] = "@(#) : $Id: nrsearch.c,v 1.1 2000-10-21 14:31:30 jon Exp $";
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -56,7 +40,7 @@ static const char rcsid[] = "@(#) : $Id: nrsearch.c,v 1.1 2000-10-21 14:31:30 jo
 #include <ctype.h>
 #include <signal.h>
 
-#if ((defined _HPUX) || (defined _LINUX))
+#if ((defined _HPUX) || (defined _LINUX) | (defined _SUNOS))
 #include <unistd.h>
 #else
 #include <getopt.h>
@@ -65,12 +49,7 @@ static const char rcsid[] = "@(#) : $Id: nrsearch.c,v 1.1 2000-10-21 14:31:30 jo
 #include <utils.h>                      /* Standard utilities */
 #include "nroff.h"                      /* Nroff definitions */
 
-/*
- * History
- * 
- * 2.0.0a 30/05/97 JG Ported to win32.
- */
-#define MODULE_VERSION  "2.0.0a"
+#define MODULE_VERSION  "2.0.0b"
 #define MODULE_NAME     "nrsearch"
 
 #define WHITE_SPACE_SKIP       1

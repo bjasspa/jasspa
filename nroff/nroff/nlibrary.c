@@ -1,16 +1,16 @@
 /****************************************************************************
  *
- *			   Copyright 1995-97 Jon Green.
+ *			   Copyright 1995-2004 Jon Green.
  *			      All Rights Reserved
  *
  *
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: nlibrary.c,v $
- *  Revision      : $Revision: 1.3 $
- *  Date          : $Date: 2002-03-10 18:30:37 $
+ *  Revision      : $Revision: 1.4 $
+ *  Date          : $Date: 2004-01-06 00:53:50 $
  *  Author        : $Author: jon $
- *  Last Modified : <020310.1826>
+ *  Last Modified : <040104.0029>
  *
  *  Description
  *
@@ -18,17 +18,9 @@
  *
  *  History
  *
- *  $Log: not supported by cvs2svn $
- *  Revision 1.2  2000/10/21 15:02:02  jon
- *  Compiled under Linux
- *
- *  Revision 1.1  2000/10/21 14:31:27  jon
- *  Import
- *
- *
  ****************************************************************************
  *
- *  Copyright (c) 1995-97 Jon Green
+ *  Copyright (c) 1995-2004 Jon Green
  *
  *  All Rights Reserved.
  *
@@ -46,8 +38,6 @@
 #include <utils.h>
 #include "_nroff.h"
 #include "nroff.h"
-
-static const char rcsid[] = "@(#) : $Id: nlibrary.c,v 1.3 2002-03-10 18:30:37 jon Exp $";
 
 #define TEST 0                          /* 1 to enabled standalone test */
 #define dprintf(x) /* printf x */

@@ -1,16 +1,16 @@
 /****************************************************************************
  *
- *			Copyright 1997 Jon Green.
+ *			Copyright 1997-2004 Jon Green.
  *			    All Rights Reserved
  *
  *
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: nrinfo.c,v $
- *  Revision      : $Revision: 1.2 $
- *  Date          : $Date: 2000-10-21 15:02:02 $
+ *  Revision      : $Revision: 1.3 $
+ *  Date          : $Date: 2004-01-06 00:53:51 $
  *  Author        : $Author: jon $
- *  Last Modified : <001021.1405>
+ *  Last Modified : <040103.2000>
  *
  *  Description
  *
@@ -18,14 +18,15 @@
  *
  *  History
  *
- *  $Log: not supported by cvs2svn $
- *  Revision 1.1  2000/10/21 14:31:29  jon
- *  Import
- *
+ * 1.0.0e - JG 03/01/04 Ported to Sun Solaris 9
+ * 1.0.0d - JG 03/05/97 Ported to win32.
+ * 1.0.0c - JG 27/09/97 Added package support.
+ * 1.0.0b - JG 05/12/95 Added bullet support.
+ * 1.0.0a - JG 16/11/96 Integrated new utilies library.
  *
  ****************************************************************************
  *
- *  Copyright (c) 1997 Jon Green.
+ *  Copyright (c) 1997-2004 Jon Green.
  *
  *  All Rights Reserved.
  *
@@ -35,8 +36,6 @@
  *  written consent from Jon Green.
  ****************************************************************************/
 
-static const char rcsid[] = "@(#) : $Id: nrinfo.c,v 1.2 2000-10-21 15:02:02 jon Exp $";
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -44,7 +43,7 @@ static const char rcsid[] = "@(#) : $Id: nrinfo.c,v 1.2 2000-10-21 15:02:02 jon 
 #include <ctype.h>
 #include <signal.h>
 
-#if ((defined _HPUX) || (defined _LINUX))
+#if ((defined _HPUX) || (defined _LINUX) || (defined _SUNOS))
 #include <unistd.h>
 #else
 #include <getopt.h>
@@ -54,14 +53,7 @@ static const char rcsid[] = "@(#) : $Id: nrinfo.c,v 1.2 2000-10-21 15:02:02 jon 
 #include "nroff.h"
 
 /* Macro Definitions */
-/*
- * 1.0.0a - JG 16/11/96 Integrated new utilies library.
- * 1.0.0b - JG 05/12/95 Added bullet support.
- * 1.0.0c - JG 27/09/97 Added package support.
- * 1.0.0d - JG 03/05/97 Ported to win32.
- */
-
-#define MODULE_VERSION  "1.0.0d"
+#define MODULE_VERSION  "1.0.0e"
 #define MODULE_NAME     "nrinfo"
 
 static char *sectionId = NULL;
@@ -70,12 +62,10 @@ static char *sectionComponent = NULL;
 static char *progname = MODULE_NAME;
 static FILE *fpr = NULL;
 
-/*
- * addComponent
- * Add a component to the tags. Decompose into it's component parts.
+/**
+ * addComponent; Add a component to the tags. Decompose into it's component
+ * parts.
  */
-
-
 static void
 addComponent (char *s)
 {

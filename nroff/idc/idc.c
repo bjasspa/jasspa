@@ -1,16 +1,16 @@
 /****************************************************************************
  *
- *  			Copyright 1996 Jon Green.
+ *  			Copyright 1996-2004 Jon Green.
  *                         All Rights Reserved
  *
  *
  *  System        : 
  *  Module        : 
  *  Object Name   : $RCSfile: idc.c,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:22 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2004-01-06 00:53:09 $
  *  Author        : $Author: jon $
- *  Last Modified : <000125.2136>
+ *  Last Modified : <040104.0006>
  *
  *  Description	
  *
@@ -18,11 +18,66 @@
  *
  *  History
  *	
- *  $Log: not supported by cvs2svn $
+ * Version 2.2.0a - 03/01/04 - JG
+ * Ported to Sun Solaris 9.
+ * 
+ * Version 2.2.0 - 03/09/96 - JG
+ * Added new hml in-line text formatting extensions
+ * Removed "Base Address:" construct.
+ * Removed "eftp:" construct - "ftp:" is now a line item not a 
+ * group item.
+ *
+ * Version 2.1.1 - 31/08/96 - JG
+ * Added title option. 
+ * 
+ * Version 2.0.2g - 27/01/96 - JG
+ * Increased error reporting. Return exit status on error count.
+ * Fixed the "reportFor" field being on same line - added bullet.
+ * 
+ * Version 2.0.2f - 05/01/96 - JG
+ * Added home page for external link to extenal module.
+ * 
+ * Version 2.0.2e - 16/11/95 - JG
+ * RTF needs to generate smaller files. Create RTF for each I/P file.
+ * 
+ * Version 2.0.2d - 07/11/95 - JG
+ * Removed indent for bulleted text in the bug synopsis section.
+ *
+ * Version 2.0.2c - 05/11/95 - JG
+ * Added RTF conversion capability.
+ * Renamed utility idc - Information Database Compiler.
+ *
+ * Version 2.0.2b - 03/11/95 - JG
+ * Getting rid of HTM specific fields.
+ *
+ * Version 2.0.2a - 02/11/95 - JG
+ * Corrected crashing problem. Renamed pages for consistency.
+ *
+ * Version 2.0.2 - 2/11/95 - JG
+ * Added bug sub-menu. Moved all bug info from
+ * bug2html.c to bug.c - tidied menu page naming for consistency.
+ *
+ * Version 2.0.1d - 29/10/95 - JG
+ * Added news/infomation referencing.
+ *
+ * Version 2.0.1c - 27/10/95 - JG
+ * Added home page referencing.
+ * *
+ * Version 2.1.0a - 29/08/96 - JG
+ * Added UNIX filename handling routines.
+ * 
+ * Version 2.1.0 - 12/03/96 - JG
+ * Added new error reporting.
+ * 
+ * Version 2.0.0 - 14/10/95 - JG
+ * Added patch information.
+ *
+ * Version 1.0.0 - 10/10/95 - JG
+ * Original Version.
  *
  ****************************************************************************
  *
- *  Copyright (c) 1996 Jon Green.
+ *  Copyright (c) 1996-2004 Jon Green.
  * 
  *  All Rights Reserved.
  * 
@@ -32,8 +87,6 @@
  *
  ****************************************************************************/
 
-static const char rcsid[] = "@(#) : $Id: idc.c,v 1.1 2000-10-21 14:31:22 jon Exp $";
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -42,66 +95,14 @@ static const char rcsid[] = "@(#) : $Id: idc.c,v 1.1 2000-10-21 14:31:22 jon Exp
 #include <time.h>
 
 #include "idc.h"
+
+#if ((defined _HPUX) || (defined _LINUX) || (defined _SUNOS))
+#include <unistd.h>
+#else
 #include <getopt.h>
-/*#include <getfiles.h>*/
+#endif
 
-/*
- * Version 1.0.0 - 10/10/95 - JG
- * Original Version.
- *
- * Version 2.0.0 - 14/10/95 - JG
- * Added patch information.
- *
- * Version 2.0.1c - 27/10/95 - JG
- * Added home page referencing.
- * *
- * Version 2.0.1d - 29/10/95 - JG
- * Added news/infomation referencing.
- *
- * Version 2.0.2 - 2/11/95 - JG
- * Added bug sub-menu. Moved all bug info from
- * bug2html.c to bug.c - tidied menu page naming for consistency.
- *
- * Version 2.0.2a - 02/11/95 - JG
- * Corrected crashing problem. Renamed pages for consistency.
- *
- * Version 2.0.2b - 03/11/95 - JG
- * Getting rid of HTM specific fields.
- *
- * Version 2.0.2c - 05/11/95 - JG
- * Added RTF conversion capability.
- * Renamed utility idc - Information Database Compiler.
- *
- * Version 2.0.2d - 07/11/95 - JG
- * Removed indent for bulleted text in the bug synopsis section.
- *
- * Version 2.0.2e - 16/11/95 - JG
- * RTF needs to generate smaller files. Create RTF for each I/P file.
- * 
- * Version 2.0.2f - 05/01/96 - JG
- * Added home page for external link to extenal module.
- * 
- * Version 2.0.2g - 27/01/96 - JG
- * Increased error reporting. Return exit status on error count.
- * Fixed the "reportFor" field being on same line - added bullet.
- * 
- * Version 2.1.0 - 12/03/96 - JG
- * Added new error reporting.
- * 
- * Version 2.1.0a - 29/08/96 - JG
- * Added UNIX filename handling routines.
- * 
- * Version 2.1.1 - 31/08/96 - JG
- * Added title option. 
- * 
- * Version 2.2.0 - 03/09/96 - JG
- * Added new hml in-line text formatting extensions
- * Removed "Base Address:" construct.
- * Removed "eftp:" construct - "ftp:" is now a line item not a 
- * group item.
- */
-
-#define MODULE_VERSION  "2.2.0"
+#define MODULE_VERSION  "2.2.0a"
 #define MODULE_NAME     "idc"
 
 char *progname = MODULE_NAME;           /* Name of the progrm */

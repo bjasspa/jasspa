@@ -1,16 +1,16 @@
 /****************************************************************************
  *
- *			Copyright 1995 Jon Green.
+ *			Copyright 1995-2004 Jon Green.
  *		          All Rights Reserved
  *
  *
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: hts2html.c,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:27 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2004-01-06 00:53:50 $
  *  Author        : $Author: jon $
- *  Last Modified : <120597.2022>
+ *  Last Modified : <040103.2010>
  *
  *  Description
  *
@@ -18,11 +18,14 @@
  *
  *  History
  *
- *  $Log: not supported by cvs2svn $
+ * 1.0.4f JG 2004-01-03 Ported to Sun Solaris 9
+ * 1.0.4e JG 1997-05-12 Added binary entry.
+ * 1.0.4d JG 1997-04-20 Added &HTML& expansion for file extension.
+ * 1.0.4c JG 1995-11-16 Ported to UNIX world
  *
  ****************************************************************************
  *
- *  Copyright (c) 1995 Jon Green.
+ *  Copyright (c) 1995-2004 Jon Green.
  *
  *  All Rights Reserved.
  *
@@ -40,7 +43,7 @@
 #include <signal.h>
 #include <sys/stat.h>
 
-#if ((defined _HPUX) || (defined _LINUX))
+#if ((defined _HPUX) || (defined _LINUX) || (defined _SUNOS))
 #include <sys/types.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -54,17 +57,9 @@
 
 #include <utils.h>
 
-/*
- * 1.0.4c - JG 16/11/95 - Ported to UNIX world
- * 1.0.4d - JG 20/04/97 - Added &HTML& expansion for file extension.
- * 1.0.4e - JG 12/05/97 - Added binary entry.
- */
-
-#define MODULE_VERSION  "1.0.4e"
+#define MODULE_VERSION  "1.0.4f"
 #define MODULE_NAME     "hts2html"
 #define LINELEN (1024*8)                /* Maximum length of I/P line */
-
-static const char rcsid[] = "@(#) : $Id: hts2html.c,v 1.1 2000-10-21 14:31:27 jon Exp $";
 
 static char *progname = MODULE_NAME;    /* Program name */
 static char *outPath = NULL;            /* Output path */
@@ -79,13 +74,13 @@ convertBinary (char *buffer)
     int len;
     int ii;
     unsigned char byte;
-    
+
     if (((len = strlen (buffer)) & 1) != 0)
     {
         uError ("Even number of characters expected on a binary line\n");
         return;
     }
-    
+
     /* Convert the line to binary */
     byte = 0;
     while (len > 0)
@@ -95,7 +90,7 @@ convertBinary (char *buffer)
             byte |= ii - '0';
         else
             byte |= tolower (ii) + 10 - 'a';
-        
+
         if (len & 1)
         {
             fwrite (&byte, 1, 1, fo);
@@ -105,7 +100,7 @@ convertBinary (char *buffer)
             byte <<= 4;
         len--;
     }
-}        
+}
 
 static void
 processBinary (char *buffer)
@@ -113,7 +108,7 @@ processBinary (char *buffer)
     char *pname;
     char *fname;
     int len;
-    
+
     /* Always close the previous file descriptor. */
     if (fo != NULL)
         fclose (fo);
@@ -131,7 +126,7 @@ processBinary (char *buffer)
         /* Strip white space off end. */
         fname [len-1] = '\0';
         fname = trimWhiteSpace (fname);
-        
+
         /* Close the previous output file descriptor and open a new
          * one with the new file name. */
         pname = makeFilename (NULL, outPath, fname, NULL);
@@ -142,7 +137,6 @@ processBinary (char *buffer)
         binaryFile = 1;
     }
 }
-    
 
 static void
 processDirectory (char *buffer)
@@ -162,14 +156,14 @@ processDirectory (char *buffer)
     else
     {
         struct stat sbuf;
-        
+
         /* Strip white space off end. */
         dname [len-1] = '\0';
         dname = trimWhiteSpace (dname);
 
         /* Make the new directory */
         pname = makeFilename (NULL, outPath, dname, NULL);
-        
+
         /* Check the existance of the directory */
         if (stat (pname, &sbuf) >= 0)
         {
@@ -180,8 +174,7 @@ processDirectory (char *buffer)
         if (mkdir (pname, 0777) < 0)
             uFatal ("Cannot construct sub-directory [%s]\n", pname);
         uVerbose (1, "Constructing directory [%s]\n", pname);
-        
-        
+
     }
 }
 
@@ -209,7 +202,7 @@ processFile (char *buffer)
         /* Strip white space off end. */
         fname [len-1] = '\0';
         fname = trimWhiteSpace (fname);
-        
+
         /* Close the previous output file descriptor and open a new
          * one with the new file name. */
         pname = makeFilename (NULL, outPath, fname, NULL);
@@ -317,7 +310,6 @@ processData (char *fname)
     fclose (fp);
     uFileSet (NULL, NULL);
 }
-
 
 static void
 usage (void)

@@ -1,16 +1,16 @@
 /****************************************************************************
  *
- *			Copyright 1997 Jon Green.
+ *			Copyright 1997-2004 Jon Green.
  *			    All Rights Reserved
  *
  *
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: nrcheck.c,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:28 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2004-01-06 00:53:51 $
  *  Author        : $Author: jon $
- *  Last Modified : <030597.1436>
+ *  Last Modified : <040103.2002>
  *
  *  Description
  *
@@ -18,11 +18,13 @@
  *
  *  History
  *
- *  $Log: not supported by cvs2svn $
+ * 1.0.0c - JG 03/01/04 Ported to Sun Solaris 9
+ * 1.0.0b - JG 05/12/95 Added bullet support.
+ * 1.0.0a - JG 16/11/96 Integrated new utilies library.
  *
  ****************************************************************************
  *
- *  Copyright (c) 1997 Jon Green.
+ *  Copyright (c) 1997-2004 Jon Green.
  *
  *  All Rights Reserved.
  *
@@ -32,8 +34,6 @@
  *  written consent from Jon Green.
  ****************************************************************************/
 
-static const char rcsid[] = "@(#) : $Id: nrcheck.c,v 1.1 2000-10-21 14:31:28 jon Exp $";
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -41,7 +41,7 @@ static const char rcsid[] = "@(#) : $Id: nrcheck.c,v 1.1 2000-10-21 14:31:28 jon
 #include <ctype.h>
 #include <signal.h>
 
-#if ((defined _HPUX) || (defined _LINUX))
+#if ((defined _HPUX) || (defined _LINUX) || (defined _SUNOS))
 #include <unistd.h>
 #else
 #include <getopt.h>
@@ -51,13 +51,7 @@ static const char rcsid[] = "@(#) : $Id: nrcheck.c,v 1.1 2000-10-21 14:31:28 jon
 #include "nroff.h"
 
 /* Macro Definitions */
-/*
- * 1.0.0a - JG 16/11/96 Integrated new utilies library.
- *
- * 1.0.0b - JG 05/12/95 Added bullet support.
- */
-
-#define MODULE_VERSION  "1.0.0b"
+#define MODULE_VERSION  "1.0.0c"
 #define MODULE_NAME     "nrcheck"
 
 #define NORMAL_MODE 0x0000

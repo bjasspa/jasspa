@@ -1,16 +1,16 @@
 /****************************************************************************
  *
- *			  Copyright 1995 Jon Green.
+ *			  Copyright 1995-2004 Jon Green.
  *			    All Rights Reserved
  *
  *
  *  System        : nroff tools
  *  Module        : nroff definitions
  *  Object Name   : $RCSfile: nroff.def,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:29 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2004-01-06 00:53:51 $
  *  Author        : $Author: jon $
- *  Last Modified : <240398.1255>
+ *  Last Modified : <040104.0040>
  *
  *  Description
  *                This file describes the nroff keys that are recognised by
@@ -22,11 +22,9 @@
  *
  *  History
  *
- *  $Log: not supported by cvs2svn $
- *
  ****************************************************************************
  *
- *  Copyright (c) 1995 Jon Green
+ *  Copyright (c) 1995-2004 Jon Green
  *
  *  All Rights Reserved.
  *
@@ -153,6 +151,5 @@ EXT_KW(".SUPERMANEND",                  /* End of an nroff file */
 
 EXT_KW("", KW_TEXT,
        textline_func, v_c, CMD_INV)                        /* TextLine */
-
 
 #undef KNULL

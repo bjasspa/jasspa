@@ -1,42 +1,34 @@
 /* -*- C -*- ****************************************************************
  *
- *  			    Copyright 2002 Jon Green.
- *			      All Rights Reserved
+ *                       Copyright 2002-2004 Jon Green.
+ *                            All Rights Reserved
  *
  *
- *  System        : 
- *  Module        : 
+ *  System        :
+ *  Module        :
  *  Object Name   : $RCSfile: nr2tex.c,v $
- *  Revision      : $Revision: 1.4 $
- *  Date          : $Date: 2003-03-12 20:46:04 $
+ *  Revision      : $Revision: 1.5 $
+ *  Date          : $Date: 2004-01-06 00:53:51 $
  *  Author        : $Author: jon $
  *  Created By    : Jon Green
  *  Created       : Thu Mar 7 20:45:45 2002
- *  Last Modified : <020402.2138>
+ *  Last Modified : <040103.2012>
  *
- *  Description	
+ *  Description
  *
  *  Notes
  *
  *  History
- *	
- *  $Log: not supported by cvs2svn $
- *  Revision 1.3  2002/04/02 20:26:22  jon
- *  Intermediate save
  *
- *  Revision 1.2  2002/03/10 18:36:17  jon
- *  New label name space for TEX
- *
- *  Revision 1.1  2002/03/10 14:24:42  jon
- *  Tex prototype
- *
+ *  1.0.0a JG 2004-01-03 Ported to Sun Solaris 9
+ *  1.0.0  JG 2002-03-07 Original
  *
  ****************************************************************************
  *
- *  Copyright (c) 2002 Jon Green.
- * 
+ *  Copyright (c) 2002-2004 Jon Green.
+ *
  *  All Rights Reserved.
- * 
+ *
  * This  document  may  not, in  whole  or in  part, be  copied,  photocopied,
  * reproduced,  translated,  or  reduced to any  electronic  medium or machine
  * readable form without prior written consent from Jon Green.
@@ -52,7 +44,7 @@
 #include <sys/types.h>
 #include <time.h>
 
-#if ((defined _HPUX) || (defined _LINUX))
+#if ((defined _HPUX) || (defined _LINUX) || (defined _SUNOS))
 #include <unistd.h>
 #else
 #include <getopt.h>
@@ -61,7 +53,7 @@
 
 #include "nroff.h"
 
-#define MODULE_VERSION  "1.0.0"
+#define MODULE_VERSION  "1.0.0a"
 #define MODULE_NAME     "nr2tex"
 
 #define FULL_INDENT 1                   /* Full indent distance. */
@@ -197,7 +189,7 @@ setIndentMode (void)
 {
     int cur_indent;
     return;
-    
+
     /* Compare the current paragraph indent level with what the application
        has requested - add and remove paragraph indents as appropriate.  Note
        when they are equal - we drop through both whiles and do nothing.  */
@@ -257,7 +249,7 @@ insertPara (int pmode)
 #else
 /*        latexEol();*/
 /*        latexEol();*/
-#endif        
+#endif
         para_mode = PARA_NORMAL;
         para_clean = 1;
     }
@@ -291,7 +283,6 @@ latexFormatStr (int lmode, char *s, int *newMode)
         para_mode &= ~PARA_BREAK;
     }
     setIndentMode ();
-
 
     while ((c = *s++) != '\0')
     {
@@ -706,7 +697,7 @@ nrBS_func (int i, int j, char *bullet)
     }
     else
         bulletItemList = 1;
-    
+
     /* First space */
     insertPara (PARA_NORMAL);
     insert ("", 0);
@@ -726,7 +717,7 @@ nrBS_func (int i, int j, char *bullet)
         insert (bullet, 0);
         latexStr ("<DD>");
 #else
-        insert (bullet, 0);      
+        insert (bullet, 0);
 #endif
     }
     latexStr("}");
@@ -761,7 +752,7 @@ nrBE_func (int i)
     latexEol();
     if (i != 0)
         insertPara (PARA_NORMAL);
-    
+
     if (bulletItemList == 0)
     {
         insertPara (PARA_TERM);
@@ -1129,20 +1120,20 @@ usage (void)
     exit (1);
 }
 
-
-static void latexInitialise (void)
+static void
+latexInitialise (void)
 {
     static  nrFUNCTION funcTab = {NULL};
-    time_t     clock;		/* Time in machine format. */
+    time_t     clock;           /* Time in machine format. */
     struct tm  *time_ptr;       /* Pointer to time frame. */
 
     /* Get the time - require the year */
     clock = time (0);
-    time_ptr = (struct tm *) localtime (&clock);	/* Get time frame */
+    time_ptr = (struct tm *) localtime (&clock);        /* Get time frame */
     year = time_ptr->tm_year + 1900;    /* The year */
     month = time_ptr->tm_mon + 1;       /* The month */
     day = time_ptr->tm_mday;            /* The day of the month */
-    
+
     /* Headers */
     nrInstall (funcTab, NH_func, nrNH_func);
     nrInstall (funcTab, FH_func, nrFH_func);
@@ -1175,7 +1166,7 @@ static void latexInitialise (void)
 
     /* Graphics */
     nrInstall (funcTab, Gr_func, nrGr_func);
-    
+
     /* Fonts */
     nrInstall (funcTab, ft_func, nrft_func);
     nrInstall (funcTab, CS_func, nrCS_func);
@@ -1216,11 +1207,12 @@ static void latexInitialise (void)
 
     /* Special */
     nrInstall (funcTab, Me_func, nrMe_func);
-    
+
     nrInstallFunctionTable (&funcTab);
 }
 
-int main (int argc, char *argv [])
+int
+main (int argc, char *argv [])
 {
     char    *oname = NULL;
     int     ecount = 0;                 /* Error count */
@@ -1233,7 +1225,7 @@ int main (int argc, char *argv [])
     uWarnSet (&wcount);                 /* Warning count */
     uUtilitySet (progname);             /* Set name of program */
     uVerboseSet (0);                    /* Verbose setting */
-    
+
     /* Change to an ASCII name format */
     nrLibNameFormat(1);
 
@@ -1355,7 +1347,7 @@ int main (int argc, char *argv [])
             char *path;
             char *base;
             char *name;
-            
+
             if (splitFilename (nrfp->fileName, &drive, &path, &base, NULL) != 0)
                 uFatal ("Cannot decompose filename [%s]\n", nrfp->fileName);
             if ((name = makeFilename (drive, path, base, "tex")) == NULL)
@@ -1365,7 +1357,7 @@ int main (int argc, char *argv [])
                 uFatal ("Cannot open file %s\n", name);
             droff_init ();              /* Start up if in sections */
         }
-            
+
         nroff (nrfp, ((compiling == 0) ? NROFF_MODE_DEFAULT :
                       NROFF_MODE_COMPILE));
 

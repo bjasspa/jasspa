@@ -1,38 +1,34 @@
 /****************************************************************************
  *
- *  			Copyright 1996 Jon Green.
+ *			Copyright 1996-2004 Jon Green.
  *                         All Rights Reserved
  *
  *
- *  System        : 
- *  Module        : 
+ *  System        :
+ *  Module        :
  *  Object Name   : $RCSfile: error.c,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:39 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2004-01-06 00:52:20 $
  *  Author        : $Author: jon $
- *  Last Modified : <110597.1355>
+ *  Last Modified : <040104.0022>
  *
- *  Description	
+ *  Description
  *
  *  Notes
  *
  *  History
- *	
- *  $Log: not supported by cvs2svn $
  *
  ****************************************************************************
  *
- *  Copyright (c) 1996 Jon Green.
- * 
+ *  Copyright (c) 1996-2004 Jon Green.
+ *
  *  All Rights Reserved.
- * 
+ *
  * This  Document  may  not, in  whole  or in  part, be  copied,  photocopied,
  * reproduced,  translated,  or  reduced to any  electronic  medium or machine
  * readable form without prior written consent from Jon Green.
  *
  ****************************************************************************/
-
-static const char rcsid[] = "@(#) : $Id: error.c,v 1.1 2000-10-21 14:31:39 jon Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -74,13 +70,13 @@ uUtilitySet (char *name)
     uProgname = name;
 }
 
-void 
+void
 uErrorSet (int max, int *count)
 {
     uErrorCount = count;
     uErrorMax = (max == 0) ? -1 : max;  /* Only trap if >= 1 */
 }
-    
+
 void uErrorIgnore (int enable)
 {
     uErrorIgnoreFlag = enable;
@@ -91,19 +87,19 @@ void uWarnIgnore (int enable)
     uWarnIgnoreFlag = enable;
 }
 
-void 
+void
 uWarnSet (int *count)
 {
     uWarnCount = count;
 }
-    
+
 void
 uDebugSet (int level)
 {
     uDebugLevel = level;
 }
 
-void 
+void
 uVerboseSet (int level)
 {
     uVerboseLevel = level;
@@ -114,7 +110,7 @@ uFileSet (int *lineNo, char *filename)
 {
     uLineNo = lineNo;
     uFileName = filename;
-}    
+}
 
 void uErrorChannelSet (char *name, int mode)
 {
@@ -126,7 +122,7 @@ void uErrorChannelSet (char *name, int mode)
         uChannelName = strdup (name);
     uChannelMode = mode;
 }
-    
+
 void
 uOpenErrorChannel (void)
 {
@@ -147,7 +143,7 @@ uOpenErrorChannel (void)
         exit (2);
     }
 }
-        
+
 void
 uCloseErrorChannel (void)
 {
@@ -165,16 +161,15 @@ uInteractive (char *format, ...)
 {
     static int currentLen = 0;
     va_list ap;
-    
-    
+
     if (uInteractiveEnable == 0)        /* Interactive enabled ?? */
         return;                         /* No - quit now */
-    
+
     /*
-     * Clear the previous entry. If there is 
+     * Clear the previous entry. If there is
      * no more output then clear line and quit early.
      */
-    
+
     if (currentLen > 0)
     {
         while (--currentLen >= 0)
@@ -186,19 +181,19 @@ uInteractive (char *format, ...)
     }
     else if (format == NULL)
         return;
-    
+
     /*
      * Display the interactive message.
-     * Rememeber the line length so we can clear later. 
+     * Rememeber the line length so we can clear later.
      */
-    
+
     if (uProgname != NULL)
         currentLen = fprintf (stdout, "%s: ", uProgname);
     va_start (ap, format);
     currentLen += vfprintf (stdout, format, ap);
     va_end (ap);
     fflush (stdout);
-}   
+}
 
 static void
 _uReport (FILE *fp, char *label, char *format, va_list ap)
@@ -217,7 +212,7 @@ __uDebug (char *format, ...)
 {
     static char *label = "DEBUG: ";
     va_list ap;
-    
+
     va_start(ap, format);
     _uReport (stderr, label, format, ap);
     if (fperror != NULL)
@@ -230,15 +225,15 @@ uFatal (char *format, ...)
 {
     static char *label = "FATAL: ";
     va_list ap;
-    
+
     uInteractive (NULL);
-    
+
     va_start(ap, format);
     _uReport (stderr, label, format, ap);
     if (fperror != NULL)
         _uReport (fperror, label, format, ap);
     va_end(ap);
-    
+
     uCloseErrorChannel ();
     exit (1);
 }
@@ -248,18 +243,18 @@ uError (char *format, ...)
 {
     static char *label = "ERROR: ";
     va_list ap;
-    
+
     if (uErrorIgnoreFlag > 0)
         return (0);
-    
+
     uInteractive (NULL);
-    
+
     va_start(ap, format);
     _uReport (stderr, label, format, ap);
     if (fperror != NULL)
         _uReport (fperror, label, format, ap);
     va_end(ap);
-    
+
     if (uErrorCount != NULL)
     {
         *uErrorCount += 1;
@@ -274,9 +269,9 @@ uReport (char *format, ...)
 {
     static char *label = "REPORT: ";
     va_list ap;
-    
+
     uInteractive (NULL);
-    
+
     va_start(ap, format);
     _uReport (stderr, label, format, ap);
     if (fperror != NULL)
@@ -289,18 +284,18 @@ uWarn (char *format, ...)
 {
     static char *label = "WARN: ";
     va_list ap;
-    
+
     if (uWarnIgnoreFlag > 0)
         return;
-    
+
     uInteractive (NULL);
-    
+
     va_start(ap, format);
     _uReport (stderr, label, format, ap);
     if (fperror != NULL)
         _uReport (fperror, label, format, ap);
     va_end(ap);
-    
+
     if (uWarnCount != NULL)
         *uWarnCount += 1;
 }
@@ -309,31 +304,29 @@ void duVerboseM (int i, int j, char *format, ...)
 {
     static char *label = "VERBOSE: ";
     va_list ap;
-    
+
     if ((i & j) == 0)
         return;
-    
+
     va_start(ap, format);
     _uReport (stderr, label, format, ap);
     if (fperror != NULL)
         _uReport (fperror, label, format, ap);
     va_end(ap);
-}    
-
+}
 
 void
 uVerbose (int i, char *format, ...)
 {
     va_list ap;
-    
+
     if (i >= uVerboseLevel)
         return;
     else
         uInteractive (NULL);
-    
+
     va_start(ap, format);
     vfprintf(stdout, format, ap);
     fflush (stdout);
     va_end(ap);
 }
-

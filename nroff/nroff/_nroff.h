@@ -1,16 +1,16 @@
 /****************************************************************************
  *
- *			Copyright 1995 Jon Green.
+ *			Copyright 1995-2004 Jon Green.
  *			   All Rights Reserved
  *
  *
  *  System        : nroff
  *  Module        : Main library
  *  Object Name   : $RCSfile: _nroff.h,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:25 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2004-01-06 00:53:50 $
  *  Author        : $Author: jon $
- *  Last Modified : <100597.0018>
+ *  Last Modified : <040104.0038>
  *
  *  Description
  *
@@ -18,11 +18,9 @@
  *
  *  History
  *
- *  $Log: not supported by cvs2svn $
- *
  ****************************************************************************
  *
- *  Copyright (c) 1995 Jon Green.
+ *  Copyright (c) 1995-2004 Jon Green.
  *
  *  All Rights Reserved.
  *

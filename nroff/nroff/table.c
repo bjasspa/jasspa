@@ -1,16 +1,16 @@
 /****************************************************************************
  *
- *			Copyright 1995 Division Limited.
+ *			Copyright 1995-2004 Jon Green.
  *			      All Rights Reserved
  *
  *
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: table.c,v $
- *  Revision      : $Revision: 1.2 $
- *  Date          : $Date: 2000-10-21 15:02:02 $
+ *  Revision      : $Revision: 1.3 $
+ *  Date          : $Date: 2004-01-06 00:53:51 $
  *  Author        : $Author: jon $
- *  Last Modified : <001021.1406>
+ *  Last Modified : <040103.2015>
  *
  *  Description
  *
@@ -18,30 +18,20 @@
  *
  *  History
  *
- *  $Log: not supported by cvs2svn $
- *  Revision 1.1  2000/10/21 14:31:31  jon
- *  Import
- *
- *  Revision 1.2  1996/11/27 22:58:08  jon
- *  Added more tests
- *
- *  Revision 1.1  1996/09/26 17:53:25  jon
- *  Initial revision
- *
+ * 1.0.0b JG 2004-01-03 Ported to Sun Solaris 9
+ * 1.0.0a JG 2002-10-21 Added multiple library support.
+ * 1.0.0  JG 1995-12-10 Orginal
  *
  ****************************************************************************
  *
- *  Copyright (c) 1995 Division Ltd.
+ *  Copyright (c) 1995-2004 Jon Green.
  *
  *  All Rights Reserved.
  *
- *  This Document may not, in whole or in part, be copied,
- *  photocopied, reproduced, translated, or reduced to any
- *  electronic medium or machine readable form without prior
- *  written consent from Division Ltd.
+ *  This Document may not, in whole or in part, be copied, photocopied,
+ *  reproduced, translated, or reduced to any electronic medium or machine
+ *  readable form without prior written consent from Jon Green.
  ****************************************************************************/
-
-static const char rcsid[] = "@(#) : $Id: table.c,v 1.2 2000-10-21 15:02:02 jon Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -50,20 +40,14 @@ static const char rcsid[] = "@(#) : $Id: table.c,v 1.2 2000-10-21 15:02:02 jon E
 #include <ctype.h>
 #include <signal.h>
 
-#ifndef _HPUX
-#include <getopt.h>
-#else
+#if ((defined _HPUX) || (defined _LINUX) || (defined _SUNOS))
 #include <unistd.h>
+#else
+#include <getopt.h>
 #endif
 #include <utils.h>
 #include "_nroff.h"
 /*#include "nroff.h"*/
-
-/*
- * 1.0.0  - JG 10/12/95 Orginal
- *
- * 1.0.0a - JG Added multiple library support.
- */
 
 typedef struct {
     char *name;
@@ -117,7 +101,7 @@ typedef struct {
 #define TS_ROW_BORD        0x00020000   /* Row border */
 #define TS_ROW_DBORD       0x00040000   /* Row double border */
 
-static ValueKeywords vkeywords [] = 
+static ValueKeywords vkeywords [] =
 {
     { 'b', TS_COL_BOLD    },
     { 'i', TS_COL_ITALIC  },
@@ -142,7 +126,7 @@ typedef struct stRow {
     float width [TS_COL_MAX];           /* Column width */
 } nrRow;
 
-/* 
+/*
  * Format for the data
  */
 typedef struct stDataLine {
@@ -171,7 +155,6 @@ static int  tsPosition = 0;                /* margin position of table */
 static int  tsBox = 0;                     /* box line type */
 static char tsTab = '\t';                  /* tab character */
 static int  tsLine = 1;                    /* box line size */
-   
 
 /*
  * rowConstruct
@@ -183,12 +166,12 @@ rowConstruct (nrRow **head)
 {
     nrRow *r;
     nrRow *p;
-    
+
     r = (nrRow *) malloc (sizeof (nrRow));
     r->noColumns = 0;
     memset (r, 0, sizeof (nrRow));
     r->next = NULL;
-    
+
     if ((p = *head) == NULL)
         *head = p;
     else
@@ -199,7 +182,7 @@ rowConstruct (nrRow **head)
     }
     return (r);
 }
-    
+
 /*
  * rowDestruct
  * Destruct a list of row elements.
@@ -209,7 +192,7 @@ static void
 rowDestruct (nrRow **head)
 {
     nrRow *r;
-    
+
     while ((r = *head) != NULL)
     {
         *head = r->next;
@@ -217,25 +200,24 @@ rowDestruct (nrRow **head)
     }
 }
 
-
 /*
  * nrTSoptions
  * Extract the options from a Nroff text line.
  */
 
-static void 
+static void
 nrTSoptions (char *line)
 {
     char *p;
     OptionKeywords *kp;
     int  id;
-    
+
     uVerbose (0, "nrTSoptions (%s)\n", line);
     tsPosition = 0;                     /* margin position of table */
     tsBox = 0;                          /* box line type */
     tsTab = '\t';                       /* tab character */
     tsLine = 1;                         /* box line size */
-    
+
     while ((p = getFirstParam (&line)) != NULL)
     {
         for (kp = keywords; (id = kp->id) != TS_OPTION_END; kp++)
@@ -243,13 +225,13 @@ nrTSoptions (char *line)
             if (strncmp (p, kp->name, strlen (kp->name)) == 0)
                 break;
         }
-        
+
         switch (id)
         {
         case TS_OPTION_CENTRE:          /* Centre position */
         case TS_OPTION_EXPAND:          /* Flush with margins */
             if (tsPosition != 0)
-                uError ("Table position already specified. Ignoring \"%s\".\n", 
+                uError ("Table position already specified. Ignoring \"%s\".\n",
                         kp->name);
             else
                 tsPosition = kp->data;  /* Set the data */
@@ -281,10 +263,10 @@ nrTSoptions (char *line)
             break;
         }
     }
-    
+
     if (id != TS_OPTION_TERMINAL)
         uError ("Table option line not terminated with a semi-colon\n");
-}              
+}
 
 static int
 getUnitOption (char **line, float *fitem)
@@ -292,9 +274,9 @@ getUnitOption (char **line, float *fitem)
     char *s, *r;
     char c;
     int status = 1;
-    
+
     s = *line;
-    
+
     if (*++s != '(')
         uError ("Open bracket '(' expected.\n");
     else
@@ -309,9 +291,9 @@ getUnitOption (char **line, float *fitem)
                 break;
             }
         }
-        
+
         /* Check the end of the string */
-        if (c != 'i')   
+        if (c != 'i')
             uError ("w(XX.Xi) expected\n");
         if (*r != ')')
             uError ("Close bracked ')' expected.\n");
@@ -328,9 +310,9 @@ DataLineAdd (DataRowItem *ri)
 {
     DataLine *l;
     DataLine *p;
-    
+
     l = (DataLine *) malloc (sizeof (DataLine));
-    
+
     /* Initialise the data */
     l->line = NULL;
     l->next = NULL;
@@ -351,9 +333,9 @@ DataRowItemAdd (DataRow *r)
 {
     DataRowItem *ri;
     DataRowItem *p;
-    
+
     ri = (DataRowItem *) malloc (sizeof (DataRowItem));
-    
+
     /* Initialise the data */
     ri->next = NULL;
     ri->mode = 0;
@@ -365,7 +347,7 @@ DataRowItemAdd (DataRow *r)
     {
         while (p->next != NULL)
             p = p->next;
-    
+
         p->next = ri;
     }
     return (ri);
@@ -375,7 +357,7 @@ static DataRow *
 dataRowConstruct (void)
 {
     DataRow *r;
-    
+
     r = (DataRow *) malloc (sizeof (DataRow));
     /* Initialise the data */
     r->next = NULL;
@@ -401,17 +383,17 @@ nrTSvalues (char *line)
     int status = 0;
     int id;
     int i;
-    
+
     uVerbose (0, "nrTSvalues (%s)\n", line);
 
     r = dataRowConstruct ();
-    
+
     column = 0;
     while ((p = getFirstParam (&line)) != NULL)
     {
         if (*p != '|')
             ri = DataRowItemAdd (r);    /* Make new row item */
-        
+
         while ((c = *p) != '\0')
         {
             /* Look up keyword */
@@ -469,11 +451,11 @@ findTab (char **dest, char **src)
 {
     char *p;
     char c;
-    
+
     p = *src;
     if ((c = *p) == '\0')
         return 0;
-    
+
     *dest = p;                          /* Start of the return string */
     do {
         if (c == tsTab)                 /* Tab character ?? */
@@ -482,7 +464,7 @@ findTab (char **dest, char **src)
             break;                      /* Quit loop */
         }
     } while ((c = *++p) != '\0');       /* Get next char */
-    
+
     *src = p;                           /* Restore new source position. */
     return (1);                         /* Return OK status */
 }
@@ -495,10 +477,10 @@ nrTSdata (char *line)
     DataLine *l;
     char *item;
     char c;                             /* Local character pointer */
-    
+
     c = *line++;
     r = dataRowConstruct ();            /* Construct a new row */
-    
+
     /* Check for horizontal line */
     if ((line [0] == '_') && (line [1] == '\0'))
     {
@@ -511,7 +493,7 @@ nrTSdata (char *line)
         r->mode = TS_ROW_DBORD;
         return;
     }
-    
+
     while (*line != '\0')
     {
         if (findTab (&item, &line) == 0)
@@ -522,10 +504,10 @@ nrTSdata (char *line)
         else
         {
             ri = DataRowItemAdd (r);
-            
+
             if (strcmp (item, "T{") == 0)
             {
-                
+
                 if (strcmp ("\\^", item) == 0)
                     ri->mode = TS_ROW_SPAN; /* Spanning column */
                 else if (strcmp ("\\_", item) == 0)
@@ -540,7 +522,7 @@ nrTSdata (char *line)
                 }
             }
         }
-        
+
     }
 }
 
@@ -548,14 +530,14 @@ int main (int argc, char *argv [])
 {
     int     ecount = 0;                 /* Error count */
     int     wcount = 0;                 /* Warn count */
-    
+
     /* Initialise the error channel */
     uErrorSet (0, &ecount);             /* Max Num entries + counter */
     uWarnSet (&wcount);                 /* Warning count */
     uUtilitySet ("table");              /* Set name of program */
-              
+
     uOpenErrorChannel ();
-    
+
     nrTSoptions (bufNStr (NULL, "center box linesize(6) tab(@) ;"));
     nrTSoptions (bufNStr (NULL, "center box linesize(6) tab() ;"));
     nrTSoptions (bufNStr (NULL, "center allbox box linesize(6) tab(@) ;"));
@@ -568,7 +550,7 @@ int main (int argc, char *argv [])
     nrTSvalues (bufNStr (NULL, "c || l s."));
     nrTSdata   (bufNStr (NULL, "_"));
     nrTSdata   (bufNStr (NULL, "This is some test@And some Mode"));
-    
+
     uCloseErrorChannel ();
     return (ecount);
 }

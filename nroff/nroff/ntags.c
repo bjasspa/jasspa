@@ -1,16 +1,16 @@
 /****************************************************************************
  *
- *			Copyright 1997 Jon Green.
+ *			Copyright 1997-2004 Jon Green.
  *			    All Rights Reserved
  *
  *
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: ntags.c,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:31 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2004-01-06 00:53:51 $
  *  Author        : $Author: jon $
- *  Last Modified : <120597.1913>
+ *  Last Modified : <040103.2004>
  *
  *  Description
  *
@@ -18,11 +18,13 @@
  *
  *  History
  *
- *  $Log: not supported by cvs2svn $
+ * 1.0.0c 03/01/04 JG Ported to Sun Solaris 9
+ * 1.0.0b 03/03/97 JG Ported towin32
+ * 1.0.0a 16/08/95 JG Added -o option for output name.
  *
  ****************************************************************************
  *
- *  Copyright (c) 1997 Jon Green.
+ *  Copyright (c) 1997-2004 Jon Green.
  *
  *  All Rights Reserved.
  *
@@ -32,14 +34,12 @@
  *  written consent from Jon Green.
  ****************************************************************************/
 
-static const char rcsid[] = "@(#) : $Id: ntags.c,v 1.1 2000-10-21 14:31:31 jon Exp $";
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
 #include <signal.h>
-#if ((defined _HPUX) || (defined _LINUX))
+#if ((defined _HPUX) || (defined _LINUX) || (defined _SUNOS))
 #include <unistd.h>
 #else
 #include <getopt.h>
@@ -47,12 +47,7 @@ static const char rcsid[] = "@(#) : $Id: ntags.c,v 1.1 2000-10-21 14:31:31 jon E
 
 #include <utils.h>
 
-/*
- * 1.0.0a 16/08/95 JG Added -o option for output name.
- * 1.0.0b 03/03/97 JG Ported towin32
- */
-
-#define MODULE_VERSION  "1.0.0a"
+#define MODULE_VERSION  "1.0.0c"
 #define MODULE_NAME     "ntags"
 
 typedef struct tagEntry {

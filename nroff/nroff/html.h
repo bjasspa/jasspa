@@ -1,31 +1,29 @@
 /****************************************************************************
  *
- *  			Copyright 1997 Jon Green.
+ *			Copyright 1997-2004 Jon Green.
  *			    All Rights Reserved
  *
  *
- *  System        : 
- *  Module        : 
+ *  System        :
+ *  Module        :
  *  Object Name   : $RCSfile: html.h,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:26 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2004-01-06 00:53:50 $
  *  Author        : $Author: jon $
- *  Last Modified : <030597.1532>
+ *  Last Modified : <040104.0039>
  *
- *  Description	
+ *  Description
  *
  *  Notes
  *
  *  History
- *	
- *  $Log: not supported by cvs2svn $
  *
  ****************************************************************************
  *
- *  Copyright (c) 1997 Jon Green.
- * 
+ *  Copyright (c) 1997-2004 Jon Green.
+ *
  *  All Rights Reserved.
- * 
+ *
  *  This Document may not, in whole or in part, be copied,
  *  photocopied, reproduced, translated, or reduced to any
  *  electronic medium or machine readable form without prior

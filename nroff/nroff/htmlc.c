@@ -1,16 +1,16 @@
 /****************************************************************************
  *
- *			Copyright 1995 Jon Green
+ *			Copyright 1995-2004 Jon Green
  *			      All Rights Reserved
  *
  *
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: htmlc.c,v $
- *  Revision      : $Revision: 1.2 $
- *  Date          : $Date: 2000-10-21 15:02:02 $
+ *  Revision      : $Revision: 1.3 $
+ *  Date          : $Date: 2004-01-06 00:53:50 $
  *  Author        : $Author: jon $
- *  Last Modified : <001021.1405>
+ *  Last Modified : <040103.1954>
  *
  *  Description
  *
@@ -18,14 +18,13 @@
  *
  *  History
  *
- *  $Log: not supported by cvs2svn $
- *  Revision 1.1  2000/10/21 14:31:26  jon
- *  Import
- *
- *
+ * 1.0.4e - JG 03/01/04 - Ported to Sun Solaris 9.
+ * 1.0.4d - JG 05/01/95 - Added external references
+ * 1.0.4c - JG 16/11/95 - Ported to UNIX world
+ * 
  ****************************************************************************
  *
- *  Copyright (c) 1995 Jon Green
+ *  Copyright (c) 1995-2004 Jon Green
  *
  *  All Rights Reserved.
  *
@@ -35,8 +34,6 @@
  *  written consent from Jon Green.
  ****************************************************************************/
 
-static const char rcsid[] = "@(#) : $Id: htmlc.c,v 1.2 2000-10-21 15:02:02 jon Exp $";
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -44,7 +41,7 @@ static const char rcsid[] = "@(#) : $Id: htmlc.c,v 1.2 2000-10-21 15:02:02 jon E
 #include <ctype.h>
 #include <signal.h>
 
-#if ((defined _HPUX) || (defined _LINUX))
+#if ((defined _HPUX) || (defined _LINUX) || (defined _SUNOS))
 #include <unistd.h>
 #else
 #include <getopt.h>
@@ -60,11 +57,9 @@ static const char rcsid[] = "@(#) : $Id: htmlc.c,v 1.2 2000-10-21 15:02:02 jon E
 #define MAXPATHNAMELEN  1024            /* Max length of pathname */
 
 /*
- * 1.0.4c - JG 16/11/95 - Ported to UNIX world
- * 1.0.4d - JG 05/01/95 - Added external references
  */
 
-#define MODULE_VERSION  "1.0.4d"
+#define MODULE_VERSION  "1.0.4e"
 #define MODULE_NAME     "htmlc"
 
 typedef struct sRefBlk {
@@ -535,7 +530,6 @@ void processFile (char *fname)
                     }
                 }
                 goto tidyExit;
-                return;
             }
             if (fo == NULL)
                 continue;

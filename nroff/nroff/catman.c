@@ -1,16 +1,16 @@
 /****************************************************************************
  *
- *  			Copyright 1997 Jon Green.
+ *  			Copyright 1997-2004 Jon Green.
  *			    All Rights Reserved
  *
  *
  *  System        : 
  *  Module        : 
  *  Object Name   : $RCSfile: catman.c,v $
- *  Revision      : $Revision: 1.2 $
- *  Date          : $Date: 2000-10-21 15:02:02 $
+ *  Revision      : $Revision: 1.3 $
+ *  Date          : $Date: 2004-01-06 00:53:50 $
  *  Author        : $Author: jon $
- *  Last Modified : <001021.1403>
+ *  Last Modified : <040104.0024>
  *
  *  Description	
  *
@@ -18,14 +18,9 @@
  *
  *  History
  *	
- *  $Log: not supported by cvs2svn $
- *  Revision 1.1  2000/10/21 14:31:25  jon
- *  Import
- *
- *
  ****************************************************************************
  *
- *  Copyright (c) 1997 Jon Green.
+ *  Copyright (c) 1997-2004 Jon Green.
  * 
  *  All Rights Reserved.
  * 
@@ -34,8 +29,6 @@
  *  electronic medium or machine readable form without prior
  *  written consent from Jon Green.
  ****************************************************************************/
-
-static const char rcsid[] = "@(#) : $Id: catman.c,v 1.2 2000-10-21 15:02:02 jon Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>

@@ -1,38 +1,71 @@
 /****************************************************************************
  *
- *  			Copyright 1996 Jon Green.
+ *			Copyright 1996-2004 Jon Green.
  *                         All Rights Reserved
  *
  *
- *  System        : 
- *  Module        : 
+ *  System        :
+ *  Module        :
  *  Object Name   : $RCSfile: nr2rtf.c,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:28 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2004-01-06 00:53:50 $
  *  Author        : $Author: jon $
- *  Last Modified : <000125.2129>
+ *  Last Modified : <040104.0033>
  *
- *  Description	
+ *  Description
  *
  *  Notes
  *
  *  History
- *	
- *  $Log: not supported by cvs2svn $
+ *
+ *
+ * Version 1.1.0f  - 03/05/97 - JG
+ * Ported to Sun Solaris 9
+ *
+ * Version 1.1.0e  - 03/05/97 - JG
+ * Ported to win32
+ *
+ * Version 1.1.0d  - 16/04/97
+ * Added copyright option.
+ *
+ * Version 1.1.0c  - 03/09/96
+ * Added logo option.
+ *
+ * Version 1.1.0b  - 28/08/96 - JG
+ * Added file handling name routines for UNIX
+ *
+ * Version 1.1.0a  - 06/07/96 - JG
+ * Corrected header line. Lines now adjacent with image.
+ *
+ * Version 1.1.0  - 15/12/95 - JG
+ * Added immediate mode compilation.
+ *
+ * Version 1.0.0e - 05/12/95 - JG
+ * Added support for bullets.
+ *
+ * Version 1.0.0d - 16/11/95 - JG
+ * Linked with new utilities library.
+ *
+ * Version 1.0.0c - 03/10/95 - JG
+ * Remove the sub-indent anomaly with RTF generation on .CS.
+ *
+ * Version 1.0.0b - 03/10/95 - JG
+ * Added word mode to generated rtf for word.
+ *
+ * Version 1.0.0a - 16/08/95 - JG
+ * Added browse section number to rtf converter.
  *
  ****************************************************************************
  *
- *  Copyright (c) 1996 Jon Green.
- * 
+ *  Copyright (c) 1996-2004 Jon Green.
+ *
  *  All Rights Reserved.
- * 
+ *
  * This  Document  may  not, in  whole  or in  part, be  copied,  photocopied,
  * reproduced,  translated,  or  reduced to any  electronic  medium or machine
  * readable form without prior written consent from Jon Green.
  *
  ****************************************************************************/
-
-static const char rcsid[] = "@(#) : $Id: nr2rtf.c,v 1.1 2000-10-21 14:31:28 jon Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -43,7 +76,7 @@ static const char rcsid[] = "@(#) : $Id: nr2rtf.c,v 1.1 2000-10-21 14:31:28 jon 
 #include <sys/types.h>
 #include <time.h>
 
-#if ((defined _HPUX) || (defined _LINUX))
+#if ((defined _HPUX) || (defined _LINUX) || (defined _SUNOS))
 #include <unistd.h>
 #else
 #include <getopt.h>
@@ -55,42 +88,7 @@ static const char rcsid[] = "@(#) : $Id: nr2rtf.c,v 1.1 2000-10-21 14:31:28 jon 
 
 /* Macro Definitions */
 
-/*
- * Version 1.0.0a - 16/08/95 - JG
- * Added browse section number to rtf converter.
- *
- * Version 1.0.0b - 03/10/95 - JG
- * Added word mode to generated rtf for word.
- *
- * Version 1.0.0c - 03/10/95 - JG
- * Remove the sub-indent anomaly with RTF generation on .CS.
- *
- * Version 1.0.0d - 16/11/95 - JG
- * Linked with new utilities library.
- *
- * Version 1.0.0e - 05/12/95 - JG
- * Added support for bullets.
- *
- * Version 1.1.0  - 15/12/95 - JG
- * Added immediate mode compilation.
- * 
- * Version 1.1.0a  - 06/07/96 - JG
- * Corrected header line. Lines now adjacent with image.
- * 
- * Version 1.1.0b  - 28/08/96 - JG
- * Added file handling name routines for UNIX
- * 
- * Version 1.1.0c  - 03/09/96
- * Added logo option.
- * 
- * Version 1.1.0d  - 16/04/97
- * Added copyright option.
- * 
- * Version 1.1.0e  - 03/05/97 - JG
- * Ported to win32
- */
-
-#define MODULE_VERSION  "1.1.0e"
+#define MODULE_VERSION  "1.1.0f"
 #define MODULE_NAME     "nr2rtf"
 
 #define NORMAL_MODE     0x0000
@@ -499,7 +497,7 @@ nrFH_func (void)
     /* Set up the font size */
     font_type = rtfFont->co_font;
     font_size = rtfFont->co_size;
-    
+
     /* Add the copyright string */
     insertPara (PARA_BLANK);
     if (copyrightName != NULL)
@@ -575,12 +573,12 @@ insertTitleLine (void)
 
     if ((p = nrTitleGet (NULL, &title, &xref, &module, NULL)) == NULL)
         return;
-#if 0    
+#if 0
     insertPara (PARA_CLOSE);
     mode = PARA_MODE|TITLE_MODE|SUB_TITLE_MODE;
 #else
     setParaMode (0);
-#endif    
+#endif
     rtfEol ();
     rtfStr ("\\line {\\f%d\\fs%d ", rtfFont->tx_font, FONT_POINTS (9));
 
@@ -675,9 +673,9 @@ nrTH_func (char *id, char *num, char *date, char *company, char *title)
     }
     else
         rtfFormatStr (mode, title, NULL);
-    
+
     insertTitleLine ();              /* Add tile line to title */
-    
+
     mode = 0;
     setParaMode (0);
     font_type = rtfFont->tx_font;
@@ -743,9 +741,9 @@ nrNH_func (char *id, char *num, char *title, char *xref)
     }
     else
         rtfFormatStr (mode, title, NULL);
-    
+
     insertTitleLine ();                 /* Add tile line to title */
-    
+
     font_type = rtfFont->tx_font;
     font_size = rtfFont->tx_size;
     setParaMode (PARA_TERM);
@@ -965,7 +963,6 @@ nrBS_func (int i, int j, char *bullet)
     rtfStr ("\\tab ");
     first_indent = 0;
 }
-
 
 static void
 nrBU_func (int i, char *bullet)
@@ -1361,10 +1358,10 @@ static void rtfInitialise (void)
     nrInstall (funcTab, Ht_func, nrHt_func);
     nrInstall (funcTab, Hr_func, nrHr_func);
     nrInstall (funcTab, Hg_func, nrHg_func);
-    
+
     /* Graphics */
     nrInstall (funcTab, Gr_func, nrGr_func);
-    
+
     /* Fonts */
     nrInstall (funcTab, CS_func, nrCS_func);
     nrInstall (funcTab, CE_func, nrCE_func);
@@ -1545,7 +1542,7 @@ main (int argc, char *argv [])
             char *path;
             char *base;
             char *name;
-            
+
             if (splitFilename (nrfp->fileName, &drive, &path, &base, NULL) != 0)
                 uFatal ("Cannot decompose filename [%s]\n", nrfp->fileName);
             if ((name = makeFilename (drive, path, base, "rtf")) == NULL)
@@ -1555,7 +1552,7 @@ main (int argc, char *argv [])
                 uFatal ("Cannot open file %s\n", name);
             droff_init ();              /* Start up if in sections */
         }
-            
+
         nroff (nrfp, ((compiling == 0) ? NROFF_MODE_DEFAULT :
                       NROFF_MODE_COMPILE));
 

@@ -1,43 +1,42 @@
 /****************************************************************************
  *
- *  			Copyright 1996 Jon Green.
+ *  			Copyright 1996-2004 Jon Green.
  *                         All Rights Reserved
  *
  *
  *  System        : 
  *  Module        : 
  *  Object Name   : $RCSfile: nr2html.c,v $
- *  Revision      : $Revision: 1.2 $
- *  Date          : $Date: 2000-10-21 15:02:02 $
+ *  Revision      : $Revision: 1.3 $
+ *  Date          : $Date: 2004-01-06 00:53:50 $
  *  Author        : $Author: jon $
- *  Last Modified : <001021.1458>
+ *  Last Modified : <040106.0034>
  *
  *  Description	
  *
  *  Notes
  *
  *  History
- *	
- *  $Log: not supported by cvs2svn $
- *  Revision 1.1  2000/10/21 14:31:28  jon
- *  Import
  *
- *  Revision 1.4  1997/02/13 21:00:02  jon
- *  Removed division copyright
- *
- *  Revision 1.3  1996/09/28 23:07:49  jon
- *  Added package extensions
- *
- *  Revision 1.2  1996/09/27 23:48:43  jon
- *  Corrected .Hl and .Ht text production in HTML
- *
- *  Revision 1.1  1996/09/26 17:53:25  jon
- *  Initial revision
- *
+ * 1.0.1i - JG 05/01/04 Changed logo image to .png.
+ * 1.0.1h - JG 05/01/04 Corrected the HTML logo reference.
+ * 1.0.1g - JG 21/10/00 Set the image border attribute to 0
+ * 1.0.1f - JG 03/05/97 Ported to win32
+ * 1.0.1e - JG 18/04/97 Added html extension pseudo name
+ * 1.0.1d - JG 16/04/97 Added copyright option.
+ * 1.0.1c - JG 27/09/96 Corrected the .Ht/.Hl references - not
+ *                      fixing strings fot HTML e.g. < and > were being
+ *                      allowed through.
+ * 
+ * 1.0.1b - JG 03/09/96 Added logo name option.
+ * 1.0.1a - JG 29/08/96 Added filename construction for UNIX.
+ * 1.0.1  - JG 01/04/96 Added globl error reporting + functional API.
+ * 1.0.0b - JG 05/12/95 Added bullet support.
+ * 1.0.0a - JG 16/11/96 Integrated new utilies library.
  *
  ****************************************************************************
  *
- *  Copyright (c) 1996 Jon Green.
+ *  Copyright (c) 1996-2004 Jon Green.
  * 
  *  All Rights Reserved.
  * 
@@ -46,8 +45,6 @@
  * readable form without prior written consent from Jon Green.
  *
  ****************************************************************************/
-
-static const char rcsid[] = "@(#) : $Id: nr2html.c,v 1.2 2000-10-21 15:02:02 jon Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -58,7 +55,7 @@ static const char rcsid[] = "@(#) : $Id: nr2html.c,v 1.2 2000-10-21 15:02:02 jon
 #include <sys/types.h>
 #include <time.h>
 
-#if ((defined _HPUX) || (defined _LINUX))
+#if ((defined _HPUX) || (defined _LINUX) || (defined _SUNOS))
 #include <unistd.h>
 #else
 #include <getopt.h>
@@ -69,22 +66,7 @@ static const char rcsid[] = "@(#) : $Id: nr2html.c,v 1.2 2000-10-21 15:02:02 jon
 #include "html.h"
 
 /* Macro Definitions */
-/*
- * 1.0.0a - JG 16/11/96 Integrated new utilies library.
- * 1.0.0b - JG 05/12/95 Added bullet support.
- * 1.0.1  - JG 01/04/96 Added globl error reporting + functional API.
- * 1.0.1a - JG 29/08/96 Added filename construction for UNIX.
- * 1.0.1b - JG 03/09/96 Added logo name option.
- * 1.0.1c - JG 27/09/96 Corrected the .Ht/.Hl references - not
- *                      fixing strings fot HTML e.g. < and > were being
- *                      allowed through.
- * 1.0.1d - JG 16/04/97 Added copyright option.
- * 1.0.1e - JG 18/04/97 Added html extension pseudo name
- * 1.0.1f - JG 03/05/97 Ported to win32
- * 1.0.1g - JG 21/10/00 Set the image border attribute to 0
- */
-
-#define MODULE_VERSION  "1.0.1f"
+#define MODULE_VERSION  "1.0.1i"
 #define MODULE_NAME     "nr2html"
 
 #define NORMAL_MODE 0x0000
@@ -129,7 +111,7 @@ static int  sectionLevel = 0;           /* Position of section */
 static char *fileHTMLName = NULL;
 static char *localName = NULL;
 static char *localNum = NULL;
-static char *logoName = "logo.gif";     /* Default logo name */
+static char *logoName = "logo.png";     /* Default logo name */
 static FILE *fo;
 static FILE *fpr = NULL;
 static int  compiling = 0;              /* Compile to resolve all refrences */
@@ -552,15 +534,23 @@ static void
 insertMainIcon (int level)
 {
     char *home;
-
+    char html_name [1024];
+    char *p;
+    
     /* Create icon and link to the home page. */
-
     home = nrHomeGet ();                /* Get the home page */
 
+    /* Get the HTML page, store this so we do not destruct the reference. */
+    p = makeHTMLReference (level, home, home);
+    if (p != NULL)
+        strcpy (html_name, p);
+    else
+        html_name[0] = '\0';
+              
     htmlStr ("<A HREF=\"%s&HTML&\">"
              "<IMG SRC=\"%s/%s\" BORDER=0 ALIGN=BOTTOM ALT=\"[%s]\">"
              "</A>",
-             makeHTMLReference (level, home, home),   /* Add text file reference */
+             html_name,                 /* Add text file reference */
              makeHTMLReference (level, home, "logo"), /* Add image file reference */
              logoName,
              home);                     /* Alturnative image text name */

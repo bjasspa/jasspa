@@ -1,16 +1,16 @@
 /****************************************************************************
  *
- *			   Copyright 1995-97 Jon Green.
+ *			   Copyright 1995-2004 Jon Green.
  *			      All Rights Reserved
  *
  *
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: nrar.c,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:28 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2004-01-06 00:53:51 $
  *  Author        : $Author: jon $
- *  Last Modified : <290599.0008>
+ *  Last Modified : <040103.2008>
  *
  *  Description
  *
@@ -18,11 +18,16 @@
  *
  *  History
  *
- *  $Log: not supported by cvs2svn $
+ * 1.0.0e JG 2004-01-03 Ported to Sun Solaris 9
+ * 1.0.0d JG 1999-05-29 Fixed cross reference problem with .NH sections
+ * 1.0.0c JG 1997-05-03 Ported to win32
+ * 1.0.0b JG 1996-11-27 Added symbol mode.
+ * 1.0.0a JG 1996-10-31 Added multiple library support.
+ * 1.0.0  JG 1995-12-10 Orginal
  *
  ****************************************************************************
  *
- *  Copyright (c) 1995-97 Jon Green
+ *  Copyright (c) 1995-2004 Jon Green
  *
  *  All Rights Reserved.
  *
@@ -32,9 +37,6 @@
  *  written consent from Jon Green.
  ****************************************************************************/
 
-static const char rcsid[] = "@(#) : $Id: nrar.c,v 1.1 2000-10-21 14:31:28 jon Exp $";
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -42,7 +44,7 @@ static const char rcsid[] = "@(#) : $Id: nrar.c,v 1.1 2000-10-21 14:31:28 jon Ex
 #include <ctype.h>
 #include <signal.h>
 
-#if ((defined _HPUX) || (defined _LINUX))
+#if ((defined _HPUX) || (defined _LINUX) || (defined _SUNOS))
 #include <unistd.h>
 #else
 #include <getopt.h>
@@ -50,15 +52,7 @@ static const char rcsid[] = "@(#) : $Id: nrar.c,v 1.1 2000-10-21 14:31:28 jon Ex
 #include <utils.h>
 #include "nroff.h"
 
-/*
- * 1.0.0  - JG 10/12/95 Orginal
- * 1.0.0a - JG 31/10/96 Added multiple library support.
- * 1.0.0b - JG 27/11/96 Added symbol mode.
- * 1.0.0c - JG 03/05/97 Ported to win32
- * 1.0.0d - JG 29/05/99 Fixed cross reference problem with .NH sections
- */
-
-#define MODULE_VERSION "1.0.0d"
+#define MODULE_VERSION "1.0.0e"
 #define MODULE_NAME    "nrar"
 
 typedef struct {

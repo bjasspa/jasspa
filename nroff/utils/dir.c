@@ -1,28 +1,26 @@
 /****************************************************************************
  *
- *			Copyright 1996 Jon Green.
+ *			Copyright 1996-2004 Jon Green.
  *                         All Rights Reserved
  *
  *
  *  System        : Utils
  *  Module        : File utilities
  *  Object Name   : $RCSfile: dir.c,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:39 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2004-01-06 00:52:20 $
  *  Author        : $Author: jon $
- *  Last Modified : <030597.1130>
+ *  Last Modified : <040104.0021>
  *
  *  Description     These utilities manipulate filenames.
- *  
+ *
  *  Notes
  *
  *  History
  *
- *  $Log: not supported by cvs2svn $
- *
  ****************************************************************************
  *
- *  Copyright (c) 1996 Jon Green.
+ *  Copyright (c) 1996-2004 Jon Green.
  *
  *  All Rights Reserved.
  *
@@ -32,7 +30,7 @@
  *
  ****************************************************************************/
 
-static const char rcsid[] = "@(#) : $Id: dir.c,v 1.1 2000-10-21 14:31:39 jon Exp $";
+static const char rcsid[] = "@(#) : $Id: dir.c,v 1.2 2004-01-06 00:52:20 jon Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -130,7 +128,7 @@ splitFilename (char *fname, char **adrive, char **apath, char **abase, char **ae
 
     if (((f = fname) == NULL) || (*f == '\0'))
         return (-1);
-    
+
     f = reslashFilename (tname, f, '\\', '/');
     /*
      * Get the drive letter out.
@@ -189,19 +187,19 @@ splitFilename (char *fname, char **adrive, char **apath, char **abase, char **ae
         *abase = base;
     if (aext != NULL)
         *aext = ext;
-    
+
 #if 0
     printf ("\n");
     printf ("In:  [%s]\n", fname);
     printf ("Out: [%s][%s][%s][%s]\n", drive, path, base, ext);
     makeFilename (drive, path, base, ext);
 #endif
-    
+
     return (0);
 }
 
 /*
- * unifyFilename 
+ * unifyFilename
  * Make unitform filename - assume that all upper case characters are converted
  * to lower case. Convert all backslash directory characters to forward slash.
  */
@@ -212,13 +210,13 @@ unifyFilename (char *afname)
     static char fname [1024];
     char *p, *q;
     char c;
-    
+
     if (afname == NULL)
         return NULL;
-    
+
     p = fname;
     q = afname;
-    
+
     /* Convert DOS directory characters and convert from upper to lower */
     while ((c = *q++) != '\0')
     {
@@ -229,12 +227,9 @@ unifyFilename (char *afname)
         *p++ = c;
     }
     *p = c;
-    
+
     return (fname);
 }
-              
-
-
 
 #if 0
 int main (int argc, char *argv[])

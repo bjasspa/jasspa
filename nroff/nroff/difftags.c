@@ -1,16 +1,16 @@
 /****************************************************************************
  *
- *			   Copyright 1995 Jon Green.
+ *			   Copyright 1995-2004 Jon Green.
  *			      All Rights Reserved
  *
  *
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: difftags.c,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:25 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2004-01-06 00:53:50 $
  *  Author        : $Author: jon $
- *  Last Modified : <030597.1443>
+ *  Last Modified : <040104.0024>
  *
  *  Description
  *
@@ -18,11 +18,9 @@
  *
  *  History
  *
- *  $Log: not supported by cvs2svn $
- *
  ****************************************************************************
  *
- *  Copyright (c) 1995 Jon Green.
+ *  Copyright (c) 1995-2004 Jon Green.
  *
  *  All Rights Reserved.
  *
@@ -31,8 +29,6 @@
  *  electronic medium or machine readable form without prior
  *  written consent from Jon Green.
  ****************************************************************************/
-
-static const char rcsid[] = "@(#) : $Id: difftags.c,v 1.1 2000-10-21 14:31:25 jon Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>

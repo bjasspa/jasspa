@@ -1,16 +1,16 @@
 /****************************************************************************
  *
- *			Copyright 1995 Jon Green.
+ *			Copyright 1995-2004 Jon Green.
  *			   All Rights Reserved
  *
  *
  *  System        : nroff
  *  Module        : Main library
  *  Object Name   : $RCSfile: nroff.h,v $
- *  Revision      : $Revision: 1.2 $
- *  Date          : $Date: 2002-03-10 18:35:57 $
+ *  Revision      : $Revision: 1.3 $
+ *  Date          : $Date: 2004-01-06 00:53:51 $
  *  Author        : $Author: jon $
- *  Last Modified : <020310.1827>
+ *  Last Modified : <040104.0039>
  *
  *  Description
  *
@@ -18,14 +18,9 @@
  *
  *  History
  *
- *  $Log: not supported by cvs2svn $
- *  Revision 1.1  2000/10/21 14:31:30  jon
- *  Import
- *
- *
  ****************************************************************************
  *
- *  Copyright (c) 1995 Jon Green.
+ *  Copyright (c) 1995-2004 Jon Green.
  *
  *  All Rights Reserved.
  *
@@ -62,7 +57,6 @@
 #define DEGREE_CHAR     ((char) 19)
 #define CONTINUE_CHAR   ((char) 20)
 #define ZSPACE_CHAR     ((char) 21)
-
 
 #define FT_P   0
 #define FT_R   1

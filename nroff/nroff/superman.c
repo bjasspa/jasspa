@@ -1,16 +1,16 @@
 /****************************************************************************
  *
- *			Copyright 1996 Jon Green.
+ *			Copyright 1996-2004 Jon Green.
  *                         All Rights Reserved
  *
  *
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: superman.c,v $
- *  Revision      : $Revision: 1.2 $
- *  Date          : $Date: 2000-10-21 15:02:02 $
+ *  Revision      : $Revision: 1.3 $
+ *  Date          : $Date: 2004-01-06 00:53:51 $
  *  Author        : $Author: jon $
- *  Last Modified : <001021.1425>
+ *  Last Modified : <040103.1956>
  *
  *  Description
  *
@@ -18,20 +18,16 @@
  *
  *  History
  *
- *  $Log: not supported by cvs2svn $
- *  Revision 1.1  2000/10/21 14:31:31  jon
- *  Import
- *
- *  Revision 1.2  1996/11/27 22:57:58  jon
- *  Free off buffer in the correct place - stops crash
- *
- *  Revision 1.1  1996/09/26 17:53:25  jon
- *  Initial revision
- *
+ * 1.0.4h - JG 03/01/04 - Ported to Sun Solaris 9.
+ * 1.0.4g - JG 21/10/00 - Corrected the file extension comparison.
+ * 1.0.4f - JG 20/04/97 - Added base name option.
+ * 1.0.4e - JG 29/08/96 - Added UNIX file name utilities.
+ * 1.0.4d - JG 05/01/95 - Added external references
+ * 1.0.4c - JG 16/11/95 - Ported to UNIX world
  *
  ****************************************************************************
  *
- *  Copyright (c) 1996 Jon Green.
+ *  Copyright (c) 1996-2004 Jon Green.
  *
  *  All Rights Reserved.
  *
@@ -41,15 +37,13 @@
  *
  ****************************************************************************/
 
-static const char rcsid[] = "@(#) : $Id: superman.c,v 1.2 2000-10-21 15:02:02 jon Exp $";
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
 #include <ctype.h>
 #include <signal.h>
-#if ((defined _HPUX) || (defined _LINUX))
+#if ((defined _HPUX) || (defined _LINUX) || (defined _SUNOS))
 #include <unistd.h>
 #else
 #include <getopt.h>
@@ -58,14 +52,9 @@ static const char rcsid[] = "@(#) : $Id: superman.c,v 1.2 2000-10-21 15:02:02 jo
 #include <utils.h>
 
 /*
- * 1.0.4c - JG 16/11/95 - Ported to UNIX world
- * 1.0.4d - JG 05/01/95 - Added external references
- * 1.0.4e - JG 29/08/96 - Added UNIX file name utilities.
- * 1.0.4f - JG 20/04/97 - Added base name option.
- * 1.0.4g - JG 21/10/00 - Corrected the file extension comparison.
  */
 
-#define MODULE_VERSION  "1.0.4g"
+#define MODULE_VERSION  "1.0.4h"
 #define MODULE_NAME     "superman"
 
 static char *progname = MODULE_NAME;    /* Name of the module */

@@ -1,16 +1,16 @@
 /****************************************************************************
  *
- *			Copyright 1997 Jon Green.
+ *			Copyright 1997-2004 Jon Green.
  *			    All Rights Reserved
  *
  *
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: rtf.h,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:31 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2004-01-06 00:53:51 $
  *  Author        : $Author: jon $
- *  Last Modified : <110798.1202>
+ *  Last Modified : <040104.0039>
  *
  *  Description
  *
@@ -18,11 +18,9 @@
  *
  *  History
  *
- *  $Log: not supported by cvs2svn $
- *
  ****************************************************************************
  *
- *  Copyright (c) 1997 Jon Green.
+ *  Copyright (c) 1997-2004 Jon Green.
  *
  *  All Rights Reserved.
  *

@@ -1,31 +1,29 @@
 /****************************************************************************
  *
- *  			Copyright 1996 Jon Green.
+ *			Copyright 1996-2004 Jon Green.
  *                         All Rights Reserved
  *
  *
- *  System        : 
- *  Module        : 
+ *  System        :
+ *  Module        :
  *  Object Name   : $RCSfile: utils.h,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:41 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2004-01-06 00:52:20 $
  *  Author        : $Author: jon $
- *  Last Modified : <110597.1417>
+ *  Last Modified : <040104.0023>
  *
- *  Description	
+ *  Description
  *
  *  Notes
  *
  *  History
- *	
- *  $Log: not supported by cvs2svn $
  *
  ****************************************************************************
  *
- *  Copyright (c) 1996 Jon Green.
- * 
+ *  Copyright (c) 1996-2004 Jon Green.
+ *
  *  All Rights Reserved.
- * 
+ *
  * This  Document  may  not, in  whole  or in  part, be  copied,  photocopied,
  * reproduced,  translated,  or  reduced to any  electronic  medium or machine
  * readable form without prior written consent from Jon Green.
@@ -43,7 +41,7 @@ typedef struct {
     char **argv;
     int  argc;
 } Args;
-              
+
 /* External References */
 
 extern char *bufStr (char *h, char *s);
@@ -64,7 +62,7 @@ extern int varStrCmpAll (char *item, char **ritem);
 extern int varStrCmpAllC (char *item, char *ritem);
 
 /*
- * Case insensitive character comparisions 
+ * Case insensitive character comparisions
  */
 
 int strncasecmp (const char *s1, const char *s2, size_t n);

@@ -1,16 +1,16 @@
 /****************************************************************************
  *
- *  			Copyright 1997 Jon Green.
+ *  			Copyright 1997-2004 Jon Green.
  *			    All Rights Reserved
  *
  *
  *  System        : 
  *  Module        : 
  *  Object Name   : $RCSfile: hts.c,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:26 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2004-01-06 00:53:50 $
  *  Author        : $Author: jon $
- *  Last Modified : <110597.1451>
+ *  Last Modified : <040104.0026>
  *
  *  Description	
  *
@@ -18,11 +18,12 @@
  *
  *  History
  *	
- *  $Log: not supported by cvs2svn $
- *
+ * 1.0.0a - JG 2004-01-03 Ported to Sun Solaris 9
+ * 1.0.0  - JG 1997-05-10 Created new utility.
+ * 
  ****************************************************************************
  *
- *  Copyright (c) 1997 Jon Green.
+ *  Copyright (c) 1997-2004 Jon Green.
  * 
  *  All Rights Reserved.
  * 
@@ -40,7 +41,7 @@
 #include <signal.h>
 #include <sys/stat.h>
 
-#if ((defined _HPUX) || (defined _LINUX))
+#if ((defined _HPUX) || (defined _LINUX) || (defined _SUNOS))
 #include <sys/types.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -54,18 +55,12 @@
 
 #include <utils.h>
 
-/*
- * 1.0.0  - JG 10/05/97 - Created new utility.
- */
-
-#define MODULE_VERSION  "1.0.0"
+#define MODULE_VERSION  "1.0.0a"
 #define MODULE_NAME     "hts"
 #define LINELEN (1024*8)                /* Maximum length of I/P line */
 
 #define HTS_CONCAT   1                  /* Concatination mode */
 #define HTS_BINARY   2                  /* Binary mode */
-
-static const char rcsid[] = "@(#) : $Id: hts.c,v 1.1 2000-10-21 14:31:26 jon Exp $";
 
 static char *progname = MODULE_NAME;    /* Program name */
 static char *outPath = NULL;            /* Output path */

@@ -1,38 +1,37 @@
 /****************************************************************************
  *
- *  			Copyright 1997 Jon Green.
+ *			Copyright 1997-2004 Jon Green.
  *			    All Rights Reserved
  *
  *
- *  System        : 
- *  Module        : 
+ *  System        :
+ *  Module        :
  *  Object Name   : $RCSfile: nrorder.c,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:30 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2004-01-06 00:53:51 $
  *  Author        : $Author: jon $
- *  Last Modified : <070297.2335>
+ *  Last Modified : <040103.2006>
  *
- *  Description	
+ *  Description
  *
  *  Notes
  *
  *  History
- *	
- *  $Log: not supported by cvs2svn $
+ *
+ * 1.0.0a JG 2004/01/03 Ported to Sun Solaris 9
+ * 1.0.0  JG 2000/10/21 Ported to Win32
  *
  ****************************************************************************
  *
- *  Copyright (c) 1997 Jon Green.
- * 
+ *  Copyright (c) 1997-2004 Jon Green.
+ *
  *  All Rights Reserved.
- * 
+ *
  *  This Document may not, in whole or in part, be copied,
  *  photocopied, reproduced, translated, or reduced to any
  *  electronic medium or machine readable form without prior
  *  written consent from Jon Green.
  ****************************************************************************/
-
-static const char rcsid[] = "@(#) : $Id: nrorder.c,v 1.1 2000-10-21 14:31:30 jon Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -41,7 +40,7 @@ static const char rcsid[] = "@(#) : $Id: nrorder.c,v 1.1 2000-10-21 14:31:30 jon
 #include <ctype.h>
 #include <signal.h>
 
-#if ((defined _HPUX) || (defined _LINUX))
+#if ((defined _HPUX) || (defined _LINUX) || (defined _SUNOS))
 #include <unistd.h>
 #else
 #include <getopt.h>
@@ -51,7 +50,7 @@ static const char rcsid[] = "@(#) : $Id: nrorder.c,v 1.1 2000-10-21 14:31:30 jon
 
 #include "nroff.h"
 
-#define MODULE_VERSION  "1.0.0"
+#define MODULE_VERSION  "1.0.0a"
 #define MODULE_NAME     "nrorder"
 
 static int  lineMode = 0;
