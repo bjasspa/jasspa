@@ -91,16 +91,17 @@
     !if &exi :chook
         set-variable #l0 :chook
     !endif
-    set-variable #l0 &spr ".fhook-%s." #l0
-    set-variable #p9 &ind &cat #l0 "collapse-open"
-    set-variable #p8 &ind &cat #l0 "collapse-close"
-    set-variable #p7 &ind &cat #l0 "collapse-mopen"
-    set-variable #p6 &ind &cat #l0 "collapse-mclose"
-    set-variable #p5 &ind &cat #l0 "collapse-mnext"
+    set-variable #l1 &spr ".fhook-%s." #l0
+    set-variable #p9 &ind &cat #l1 "collapse-open"
+    set-variable #p8 &ind &cat #l1 "collapse-close"
     !if &or &seq #p9 "ERROR" &seq #p8 "ERROR"
-        ml-write "[Collapse environment not setup]"
+        ml-write &spr "[Collapse not available for %s]" #l0 
         !abort
     !endif
+    set-variable #p7 &ind &cat #l1 "collapse-mopen"
+    set-variable #p6 &ind &cat #l1 "collapse-mclose"
+    set-variable #p5 &ind &cat #l1 "collapse-mnext"
+    set-variable #p4 &cond &les &ind &cat #l1 "exact" 0 "Em" "em"
 !emacro
 
 ; PUBLIC:: Toggle a collapse open/shut
@@ -114,10 +115,14 @@ define-macro collapse-current
     !endif
     #l7 backward-line
     end-of-line
-    !force search-buffer "bem" #l9
+    !force search-buffer &cat "b" #l4 #l9
     !if &not $status
+        !jump 2
+    !elif &equ &band $line-flags 0x64 0x64
+        ; this is a narrowed marker line, most likely a collapsed function which still matches the open search - fail
+        -1 show-region
         set-variable $window-line #l0
-        ml-write "[Collapse not found]"
+        ml-write "[Collapse open not found]"
         !abort
     !endif
     set-variable #l2 " ..."
@@ -127,11 +132,11 @@ define-macro collapse-current
     #l7 forward-line
     set-variable #l1 $window-line
     end-of-line
-    !force search-buffer "em" #l8
+    !force search-buffer #l4 #l8
     !if &or &not $status &les $window-line #l0
         !force -1 show-region
         set-variable $window-line #l0
-        ml-write "[Collapse not found]"
+        ml-write "[Collapse close not found]"
         !abort
     !endif
     !if &gre #l6 0
@@ -154,7 +159,7 @@ define-macro collapse-all
     !endif
     !if &set :collapsed &not :collapsed
         beginning-of-buffer
-        !force search-buffer "em" #l9
+        !force search-buffer #l4 #l9
         !while $status
             set-variable #l2 " ..."
             !if &les #l7 0
@@ -164,7 +169,7 @@ define-macro collapse-all
             set-variable #l1 &lef @wl 128
             end-of-line
             set-mark
-            !force search-buffer "em" #l8
+            !force search-buffer #l4 #l8
             !if $status
                 !if &gre #l6 0
                     set-variable #l2 &cat #l2 &cat " "  &lef &trb @s0 15
@@ -173,7 +178,7 @@ define-macro collapse-all
                 0x34 narrow-buffer .scheme.fold-close &cat #l1 #l2
                 #l5 forward-line
                 end-of-line
-                !force search-buffer "em" #l9
+                !force search-buffer #l4 #l9
             !endif
         !done
         ; the start line could be the first line of a collapse that should
@@ -194,4 +199,69 @@ define-macro collapse-all
         ml-write "[Removed all collapses]"
     !endif
     set-variable $window-y-scroll &sub $window-line #l0
+!emacro
+
+define-macro beginning-of-function
+    collapse-get-vars
+    !while &gre &pdec @# 1 0
+        set-alpha-mark "\x81"
+        #l7 backward-line
+        !force search-buffer &cat "b" #l4 #l9
+        !if &not $status
+            goto-alpha-mark "\x81"
+            ml-write "[Function beginning not found]"
+            !abort
+        !endif
+    !done
+    -1 show-region
+    #l7 forward-line
+!emacro
+
+define-macro end-of-function
+    collapse-get-vars
+    !while &gre &pdec @# 1 0
+        set-alpha-mark "\x81"
+        forward-char
+        !force search-buffer #l4 #l8
+        !if &not $status
+            goto-alpha-mark "\x81"
+            ml-write "[Function end not found]"
+            !abort
+        !endif
+    !done
+    -1 show-region
+    beginning-of-line
+    #l6 forward-line
+!emacro
+
+define-macro goto-function-line
+    collapse-get-vars
+    !if &not @?
+        set-variable @# @ml "Goto function line"
+    !endif
+    beginning-of-function
+    &sub @# #l7 forward-line
+!emacro
+
+define-macro mark-function
+    collapse-get-vars
+    set-alpha-mark "\x81"
+    forward-char
+    !force search-buffer #l4 #l8
+    !if &not $status
+        goto-alpha-mark "\x81"
+        ml-write "[Function end not found]"
+        !abort
+    !endif
+    beginning-of-line
+    #l6 forward-line
+    set-mark
+    !force search-buffer &cat "b" #l4 #l9
+    !if &not $status
+        goto-alpha-mark "\x81"
+        ml-write "[Function beginning not found]"
+        !abort
+    !endif
+    -1 show-region
+    #l7 forward-line
 !emacro
