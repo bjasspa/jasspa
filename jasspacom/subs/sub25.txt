@@ -1,0 +1,46 @@
+Title:  comment-adjust - Move to the comment fill position.
+Ref:    sub25
+Author: Jon Green
+Date:   Sat Mar 20 14:18:09 2004
+
+comment-adjust  is used  for  comments  in  electric-c  mode and  moves to the
+comment  fill  position.  This saves  having to mess  around with  setting the
+comment position at the end of the line.
+
+Add the macros to your <user.emf> file and re-start the editor.
+
+The key bindings defined below are:- "esc tab" and "C-insert"
+
+You can change the indentation level by setting the following variable in your
+<user.emf> file.
+
+; Fix 'C' mode stuff.
+set-variable $c-margin       40      ; Margin for comments in C mode
+
+==== comment-adjust start ==================================================
+; comment-adjust; Used for comments in electric-c mode (and the other
+; electic modes. Moves to the comment fill position, saves having to mess
+; around with comments at the end of the line.
+0 define-macro comment-adjust
+    ; delete all spaces up until the next character
+    !while &sin @wc " \t"
+        forward-delete-char
+    !done
+    ; Fill the line to the current $c-margin. We use this as
+    ; this is the only variable that tells us where the margin
+    ; should be.
+    !if &gre $window-acol 0
+        backward-char
+        !if &sin @wc " \t"
+	    forward-delete-char
+            !jump -4
+        !else
+            forward-char
+        !endif
+    !endif
+    ; Now fill to the $c-margin
+    &sub $c-margin $window-acol insert-string " "
+!emacro
+global-bind-key comment-adjust          "esc tab"
+global-bind-key comment-adjust          "C-insert"
+==== comment-adjust end ===================================================

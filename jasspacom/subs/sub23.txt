@@ -1,0 +1,76 @@
+Title:  super-delete - context sensitive deletion of characters at cursor.
+Ref:    sub23
+Author: Jon Green
+Date:   Sat Mar 20 14:18:09 2004
+
+Macros to enhance the  operation  of delete and  backspace  akin to deleting a
+word or all of the white space. super-delete operates as follows:-
+
+* If a space  character  is under the cursor  then all white space to the next
+  non-white space character is deleted in a forward direction.
+
+* If a non-white  space character is under the cursor then all non-white space
+  characters  are  deleted to the next  non-white  space  character,  then all
+  whitespace characters are deleted to the next non-white space character.
+
+In both cases then the cursor position remains unchanged.
+
+super-backspace  operates in the same way as super-delete  except it runs in a
+backward direction. This does affect the cursor position.
+
+Add the macros to your <user.emf> file and re-start the editor.
+
+super-delete is bound to key C-delete or [CONTROL][DEL]
+super-backspace is bound to C-backspace or [CONTROL][BACKSPACE]
+
+==== super-delete start ==================================================
+; Macro to delete the whitespace, or if on a word all of the word until the
+; next word is reached.
+0 define-macro super-delete
+    set-variable #l0 0
+    !while &not &sin @wc " \t\n"
+        forward-char
+        set-variable #l0 &add #l0 1
+    !done
+    !repeat
+        !force forward-char
+        !if $status
+            set-variable #l0 &add #l0 1
+        !endif
+    !until &or &seq @wc "" &not &sin @wc " \t\n"
+    #l0 backward-delete-char
+    !return
+!emacro
+global-bind-key super-delete            "C-delete"
+
+; Macro to backspace the whitespace, or if on a word all of the word until the
+; previous word is reached.
+0 define-macro super-backspace
+    set-variable #l0 -1
+    set-variable #l1 0
+    !repeat
+        !force backward-char
+        !if $status
+            set-variable #l0 &add #l0 1
+            !if &sin @wc " \t\n"
+                set-variable #l1 1
+            !endif
+        !else
+            set-variable #l1 1
+        !endif
+    !until #l1
+    !repeat
+        !force backward-char
+        !if $status
+            set-variable #l0 &add #l0 1
+        !else
+            &add #l0 1 forward-delete-char
+            !return
+        !endif
+    !until &not &sin @wc " \t\n"
+    forward-char
+    #l0 forward-delete-char
+    !return
+!emacro
+global-bind-key super-backspace         "C-backspace"
+==== super-delete  end ===================================================

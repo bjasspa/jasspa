@@ -1,0 +1,19 @@
+Title:  insert-date - Insert the date at the cursor position.
+Ref:    sub24
+Author: Jon Green
+Date:   Sat Mar 20 14:18:09 2004
+
+Macro to insert the date at the current cursor position. 
+
+Add the macros to your <user.emf> file and re-start the editor.
+
+To run the command then "esc-x insert-date"
+
+==== insert-date start ==================================================
+; insert-date; Insert the current date into the text.
+define-macro insert-date
+    ascii-time
+    ; ascii-time returns a formatted string in #l9
+    insert-string #l9
+!emacro
+==== insert-date end ===================================================
