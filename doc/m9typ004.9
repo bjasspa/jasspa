@@ -6,12 +6,14 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ004.9,v 2.5 2002-01-11 21:58:43 jon Exp $
+.Id $Id: m9typ004.9,v 2.6 2005-01-24 23:37:04 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH latex 9
 .XI latex - "TeX Documentation"
+.XI bib - "TeX Bibliography File"
 .XI tex - "TeX Documentation"
+.XI sty - "TeX Style File"
 .SH SYNOPSIS
 latex \- TeX Documentation
 .SH FILES
@@ -21,10 +23,17 @@ latex \- TeX Documentation
 .br
 .B latex.etf
 \- Template file
+.br
+.B hkbibtex.emf
+\- TeX Bibliography Files
 .ad
 .SH EXTENSIONS
 .na
 \fB.tex\fR \- TeX Documentation
+.br
+\fB.bib\fR \- TeX Bibliography Files
+.br
+\fB.sty\fR \- TeX Style file
 .ad
 .SH DESCRIPTION
 The  \fBlatex\fR  file  type  template  handles  the  hilighting  of  the  TeX
@@ -41,12 +50,40 @@ special recognition of the command strings is performed.
 The LaTeX content may be viewed with synthetic  hilighting  such that headers,
 text  in  bold  and  italic  are   displayed,   removing  the  LaTeX   control
 sequences.
+.IP "\fBFolding and Information Hiding\fR"
+Generic  folding is enabled,  the folds occur about
+\fB\\section{...}\fR and \fB\\subsection{...}\fR constructs.
+.Ht collapse-all 3
+(un)folds all regions in the file,
+.Ht collapse-current 3
+(un)folds the current region.
+.IP "\fBSpelling\fR"
+Buffer spell checking is LaTeX aware.
+.IP "\fBList Items\fR"
+Item listing is available and the key  constructs of the file may be listed in
+the \fIitem-list\fR.
+.IP "\fBBuffer Commands\fR"
+.B latex-verify
+verifies  the  syntax  of the  (La)TeX  from  the  current  position  forward,
+reporting braces that are not matched.
 .IP "\fBShort Cuts\fR"
 The short cut keys used within the buffer are:-
 .IP
 \fB\*cc \*cc\fR \- Comment out the current line.
 .br
 \fB\*cc \*cd\fR \- Uncomment the current line.
+.br
+\fB\*cc \*ce\fR \- Comment to the end of the line with hash (%).
+.br
+\fB\*cc \*co\fR \- Format a comment
+.br
+\fBf2\fR \- (un)fold the current region
+.br
+\fBf3\fR \- (un)fold all regions
+.br
+\fBf6\fR \- List items.
+.br
+\fB\*ef6\fR \- Close list items window.
 .sp 1
 The command  \fBlatex-compile\fR  is available within the buffer which invokes
 an external process to build the text.
