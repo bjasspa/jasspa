@@ -633,12 +633,15 @@ Added Samba config file hilighting rules.
 Added Apache config file hilighting rules.
 
 Add samba & apache (8) page. 
+
+Done Doc [Jon  2005/02/13]
 ----------------------------
 date: 2004/10/23 22:06:09
 author: bill
 Created new indent-setup command (accessed from the Format main menu) to setup the current buffer's indent and tab width
 
 Doc new command
+Done Doc [Jon  2005/02/13]
 ----------------------------
 date: 2004/10/23 21:16:34
 author: bill
@@ -664,6 +667,8 @@ First stab at an xml verifier, added some other useful xml tools to a new xmluti
 Improved the bindings to the html & xml forw/back tag commands
 
 Doc improvements to xml & sgml ? - verify tag movement etc.
+
+Done Doc for XML - to do SGML [Jon  2005/02/13]
 ----------------------------
 date: 2004/08/23 18:35:39
 author: bill
@@ -695,3 +700,11 @@ Added support for multiple templates in one etf file. First is added when file i
 Doc this etf file format extension.
 ----------------------------
 
+User jon's Log Message:
+-----------
+Added Steves "write-region" posted to Jasspa on 28th Sept 2004
+me/macros:
+    misc.emf (r2.7 -> r2.8)
+    me.emf (r2.65 -> r2.66)
+    
+Done Doc [Jon  2005/02/13]
