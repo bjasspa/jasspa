@@ -114,7 +114,12 @@ if [ ".$MAKEFILE" = "." ] ; then
         if [ $MACHINE = "arm" ] ; then
             MAKEBAS=zaurus
         else
-            MAKEBAS=linux2
+            KERNEL_MAJOR=`uname -r | cut -c 1-1`
+            KERNEL_MINOR=`uname -r | cut -c 3-3`
+            MAKEBAS="linux$KERNEL_MAJOR$KERNEL_MINOR"
+            if [ ! -r $MAKEBAS.gmk ] ; then
+                MAKEBAS="linux2"
+            fi                
         fi
     elif [ $PLATFORM = "OpenBSD" ] ; then
          MAKEBAS=openbsd
