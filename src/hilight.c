@@ -2542,6 +2542,7 @@ int
 indent(int f, int n)
 {
 #define noINDTYPES 11
+    static meUByte  ctypesChar[meHICMODE_SIZE+2]="scxbwamu" ;
     static meUByte  typesChar[(noINDTYPES*2)+1]="bcefinostwxBCEFINOSTWX" ;
     static meUShort typesFlag[noINDTYPES]= { 
         INDBRACKETOPEN, INDCONTINUE, INDEXCLUSION, INDFIXED, INDIGNORE, INDNEXTONWARD, 
@@ -2567,22 +2568,14 @@ indent(int f, int n)
         root->type = itype ;
         if(itype & HICMODE)
         {
-            static meUByte *prompts[meHICMODE_SIZE]={
-                (meUByte *) "Statement", (meUByte *) "Continue", (meUByte *) "Max",
-                (meUByte *) "Brace", (meUByte *) "Switch", (meUByte *) "Case",
-                (meUByte *) "Comment", (meUByte *) "Margin"
-            } ;
-            int ii ;
-            
-            for(ii=0 ; ii<meHICMODE_SIZE ; ii++)
-            {
-                if((n = meGetIndent(prompts[ii])) < 0)
-                    return meFALSE ;
-                root->token[ii] = (meUByte) n ;
-            }
-            if((itype & HICOMCONT) &&
-               (meGetString((meUByte *)"Com Cont",0,0,buf,meBUF_SIZE_MAX) > 0) && (buf[0] != '\0'))
-                root->rtoken = meStrdup(buf) ;
+            /* Initialise to t 3/2t 0 -t 0 -t -1 and no CommentContinue */
+            root->token[0] = (meUByte) 0x84 ;
+            root->token[1] = (meUByte) 0x86 ;
+            root->token[2] = (meUByte) 0x00 ;
+            root->token[3] = (meUByte) 0xc4 ;
+            root->token[4] = (meUByte) 0x00 ;
+            root->token[5] = (meUByte) 0xc4 ;
+            root->token[7] = (meUByte) 0x41 ;
         }
         else
         {
@@ -2599,7 +2592,7 @@ indent(int f, int n)
         indents[indno] = root ;
         return meTRUE ;
     }
-    else if(n == 2)
+    if(n == 2)
     {
         if(((indno = frameCur->bufferCur->indent) != 0) &&
            (indents[indno]->type & HILOOKB))
@@ -2631,11 +2624,36 @@ indent(int f, int n)
     if((meGetString((meUByte *)"Ind no",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
        ((indno = (meUByte) meAtoi(buf)) == 0) ||
        (indno >= noIndents) ||
-       ((root  = indents[indno]) == NULL) ||
-       ((itype = mlCharReply((meUByte *)"Type: ",0,typesChar,NULL)) == -1) ||
-       (meGetString((meUByte *)"Token",0,0,buf,meBUF_SIZE_MAX) <= 0))
+       ((root  = indents[indno]) == NULL))
         return meFALSE ;
     
+    if(root->type & HICMODE)
+    {
+        if((itype = mlCharReply((meUByte *)"Type: ",0,ctypesChar,NULL)) == -1)
+              return meFALSE ;
+        itype = (int) (((meUByte *)meStrchr(ctypesChar,itype)) - ctypesChar) ;
+        if(itype < meHICMODE_SIZE)
+        {
+            if((n = meGetIndent((meUByte *)"Indent")) < 0)
+                return meFALSE ;
+            root->token[itype] = (meUByte) n ;
+        }
+        else if(meGetString((meUByte *)"Com Cont",0,0,buf,meBUF_SIZE_MAX) <= 0)
+            return meFALSE ;
+        else if(buf[0] == '\0')
+        {
+            meNullFree(root->rtoken) ;
+            root->rtoken = NULL ;
+        }
+        else
+            root->rtoken = meStrdup(buf) ;
+        return meTRUE ;
+    }
+    
+    if(((itype = mlCharReply((meUByte *)"Type: ",0,typesChar,NULL)) == -1) ||
+       (meGetString((meUByte *)"Token",0,0,buf,meBUF_SIZE_MAX) <= 0))
+        return meFALSE ;
+
     itype = (int) (((meUByte *)meStrchr(typesChar,itype)) - typesChar) ;
     if(itype >= noINDTYPES)
     {
