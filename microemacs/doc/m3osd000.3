@@ -6,7 +6,7 @@
 .\"  Created By    : Steven Phillips
 .\"  Created       : Sat Aug 22 09:00:06 1998
 .\"
-.Id $Id: m3osd000.3,v 2.12 2004-02-01 22:49:56 jon Exp $
+.Id $Id: m3osd000.3,v 2.13 2004-02-03 19:59:40 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH user-setup 3
@@ -87,9 +87,9 @@ MicroEmacs v3.8 which executes macro file \fCmeme3_8.emf\fR (See
 .Hl Compatibility Compatibility 2
 for more  information)  and NEdit v5 which is at best a demonstration  of what
 can be achieved, this executes macro file \fCmenedit.emf\fR.
-.IP "\fCMS Friendly Keys\fR"
-When enabled the following key bindings are created to ease frustration for MS
-users:
+.IP "\fCRebind Home Keys\fR"
+When  enabled the  following  key  bindings  are created to ease  frustration,
+particularly for MS users:
 .RS
 .IP "\fChome\fR"
 Bound to beginning-of-line instead of beginning-of-buffer.
@@ -99,14 +99,7 @@ Bound to end-of-line instead of end-of-buffer.
 Bound to beginning-of-buffer.
 .IP "\fCC-end\fR"
 Bound to end-of-buffer.
-.IP "\fCC-v\fR"
-Bound to yank (paste).
-.IP "\fCesc-v\fR"
-Bound to reyank.
 .RE
-.IP
-Note that the "\fCC-x\fR" and "\fCC-c\fR"  keys are just to intrinsic to \*(mS
-to rebind (sorry).
 .IP "\fCMS Shift Region\fR"
 Enables/disables  cursor  key  manipulation  with the  shift  key  similar  to
 the conventional Microsoft region selection. When enabled,

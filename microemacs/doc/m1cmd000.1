@@ -5,7 +5,7 @@
 .\"
 .\" Created By: Jon Green
 .\"
-.Id $Id: m1cmd000.1,v 2.8 2004-02-01 22:49:56 jon Exp $
+.Id $Id: m1cmd000.1,v 2.9 2004-02-03 19:59:40 jon Exp $
 .Im MicroEmacs function
 .so me.tni
 .TH me 1
@@ -258,7 +258,7 @@ Initiates an 80 column by 25 line screen.
 A user defined string to set an explicit  graphics card mode. The operation is
 dependent upon the support offered by the graphics adapter.
 .RE
-.IP \fBMEUSERPATH\fR
+.TP \fB$MEINSTALLPATH\fR
 .Ht $MEINSTALLPATH 5 
 is an environment  variable that overrides any internally  defined search path
 for \*(mS system macros and defines the root  directory(s)  of the  MicroEmacs
@@ -272,7 +272,7 @@ where user configuration files such as
 .Hl $user-name $user-name 5 \fB.erf\fR
 and personal spelling  dictionaries are stored. This is an absolute  directory
 path. The environment variable sets the \*(mS variable
-.Ht $user-name 5 .
+.Ht $user-path 5 .
 .IP \fBMEPATH\fR
 .Ht $MEPATH 5
 is an environment variable that may be used to define the absolute search path
@@ -286,8 +286,8 @@ as the first path when the environment variable
 is not defined. If  \fB$MEUSERPATH\fR  is defined  then this path name appears
 before the \fB$MEPATH\fR variable to define the user directory location.
 .B $MEPATH
-is not  searching,  so  \s-1ALL\s0  all  directories  to be  searched  must be
-included in the path specification.
+is not searching, so \s-1ALL\s0 directories to be searched must be included in
+the path specification.
 .IP
 .Ht $MEUSERPATH 5
 is the preferred method used to defined the user directory.

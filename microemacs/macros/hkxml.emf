@@ -27,13 +27,20 @@ set-variable .fhook-xml.setup &reg "/history" "fhook/xml" "cdghiopsx"
 set-variable .fhook-xml.setup-mask "acdeghikmopstux"
 set-variable .fhook-xml.comment  "|<!--|-->|--|  -- | -- |f|"
 
+!if &not &exist fhook-vb
+    !force exec-file "hkvb"
+!endif
+!if &not &exist fhook-js
+    !force exec-file "hkjs"
+!endif
+
+!if &not &exist .hilight.xml
+    set-variable .hilight.xml   &pinc .hilight.next 1
+    set-variable .hilight.xmlT  &pinc .hilight.next 1
+!endif
 !if &and &sin "h" .fhook-xml.setup &band .hilight.flags 0x02 
-    !if &not &exist .hilight.xml
-        set-variable .hilight.xml   &pinc .hilight.next 1
-        set-variable .hilight.xmlT  &pinc .hilight.next 1
-    !endif
     0 hilight .hilight.xml 3 200                        $global-scheme
-    hilight .hilight.xml 0x80 "<[\\t ]*[-/a-zA-Z0-9_]+" .hilight.xmlT .scheme.keyword
+    hilight .hilight.xml 0x80 "<[\\t ]*[-/.:a-zA-Z0-9_]+" .hilight.xmlT .scheme.keyword
     hilight .hilight.xml 0x80 "<\\?[\\t ]*[-/.:a-zA-Z0-9_]+" .hilight.xmlT .scheme.keyword
     hilight .hilight.xml 0x80 "<![\\t ]*[^-][-/.:a-zA-Z0-9_]+" .hilight.xmlT .scheme.keyword
      hilight .hilight.xml 4 "<!--" "-->" ""             .scheme.comment
@@ -48,31 +55,33 @@ set-variable .fhook-xml.comment  "|<!--|-->|--|  -- | -- |f|"
     hilight .hilight.xmlT 0x80 "/>" .hilight.xml        .scheme.keyword
     hilight .hilight.xmlT 0x80 "\\?>" .hilight.xml      .scheme.keyword
     
-    !force exec-file "hkvb"
-    !if $status
-        hilight .hilight.xml  0x80 "<%" .hilight.vb     .scheme.prepro
-        hilight .hilight.xmlT 0x80 "<%" .hilight.vb     .scheme.prepro
-        hilight .hilight.vb    0x90 "%>" 0              .scheme.prepro
-        hilight .hilight.xml  0x80 "<script\\s +language=VBScript[^>]*>" .hilight.vb .scheme.prepro
-        hilight .hilight.vb    0x80 "</script>" 0       .scheme.prepro
-        ;    indent .hilight.vb b "<" ">"
+    !if &exist .hilight.javascript
+        hilight .hilight.xml 0x80 "<script\\s +type=\"text/javascript[^>]*>" .hilight.javascript .scheme.prepro
+        hilight .hilight.javascript 0x80 "</script>" 0   .scheme.prepro
     !endif
-    !force exec-file "hkjava"
-    !if $status
-        hilight .hilight.xml 0x80 "<script\\s +language=javascript[^>]*>" .hilight.java .scheme.prepro
-        hilight .hilight.xml 0x80 "<script\\s +language=\"javascript\"[^>]*>" .hilight.java .scheme.prepro
-        hilight .hilight.java 0x80 "</script>" 0        .scheme.prepro
-        hilight .hilight.java 0x80 "</SCRIPT>" 0        .scheme.prepro
+    !if &exist .hilight.vbscript
+        hilight .hilight.xml 0x80 "<script\\s +type=\"text/vbscript[^>]*>" .hilight.vbscript .scheme.prepro
+        hilight .hilight.vbscript 0x80 "</script>" 0     .scheme.prepro
     !endif
 !endif
 
 !if &sin "d" .fhook-xml.setup
-    !if &not &exist .hilight.xml
-        set-variable .hilight.xml   &pinc .hilight.next 1
+    0 indent .hilight.xmlT 1 500
+    0 indent .hilight.xml 3 20 .hilight.xmlT
+    !if &exist .indent.javascript
+        indent .hilight.xmlT t "<script\\s +type=\"text/javascript[^>]*>" .indent.javascript
+        indent .hilight.xml  x "<script\\s +type=\"text/javascript[^>]*>" 2 .indent.javascript
+        indent .indent.javascript w "</script>" -2 0
     !endif
+    !if &exist .indent.vbscript
+        indent .hilight.xmlT t "<script\\s +type=\"text/vbscript[^>]*>" .indent.vbscript
+        indent .hilight.xml  x "<script\\s +type=\"text/vbscript[^>]*>" 2 .indent.vbscript
+        indent .indent.vbscript w "</script>" -2 0
+    !endif
+    indent .hilight.xmlT t "</script>" 0
+    indent .hilight.xml  o "</script>" -2
     ; Define the indentation tokens. XML is well defined so there are
     ; always opening and closing brackets.
-    0 indent .hilight.xml 1 20 
     indent .hilight.xml e "\"" "\"" "\\"
     indent .hilight.xml b "<!--" "-->"
     indent .hilight.xml b "<\\?" "\\?>"
@@ -80,6 +89,65 @@ set-variable .fhook-xml.comment  "|<!--|-->|--|  -- | -- |f|"
     indent .hilight.xml o "</"    -2 
     indent .hilight.xml o "/>"    -2 
 !endif
+
+0 define-macro chook-xml
+    !force 2 indent
+    !if &equ $result .indent.vbscript
+        !if &seq :chook "vb"
+            !return
+        !endif
+        set-variable :chook "vb"
+    !elif &equ $result .indent.javascript
+        !if &seq :chook "js"
+            !return
+        !endif
+        set-variable :chook "js"
+    !elif &exi :chook
+        unset-variable :chook
+    !else
+        !return
+    !endif
+    !if &sin "s" .fhook-xml.setup
+        !if &exi :chook
+            set-variable :auto-spell &cond &seq $buffer-input "auto-spell-input" 1 -1
+            -1 auto-spell
+        !else
+            :auto-spell auto-spell
+        !endif
+    !endif
+    !if .toolbar.open
+        ; flag that the buffer type has changed
+        set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x004
+    !endif
+!emacro
+
+0 define-macro xml-spell-word
+    ; simply skip any text in a <..> token - put a 5 line limit on it
+    set-variable #l0 $window-col
+    set-variable #l1 $window-line
+    -2 show-region
+    set-variable #l2 $window-col
+    !force -5 regex-backward "[<>]"
+    !if $status
+        set-variable #l3 @wc
+        set-variable $window-line #l1
+        set-variable $window-col #l0
+        !if &seq #l3 "<"
+            ; this is a <..> token, skip all if spelling buffer (@# != 0)
+            !if @#
+                !force search-forward ">"
+                set-variable .spell.check-word ""
+            !endif
+            !return
+        !endif
+    !endif
+    ; must redefine the region as the search blows it away
+    set-variable $window-col #l2
+    -3 show-region
+    set-variable $window-col #l0
+    3 show-region
+    !abort
+!emacro
 
 buffer-init-fhook "xml"
 

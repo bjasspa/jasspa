@@ -2441,7 +2441,7 @@ int
 indent(int f, int n)
 {
 #define noINDTYPES 11
-    static meUByte  typesChar[(noINDTYPES*2)+1]="bcefinostwxBCEFINOSTwx" ;
+    static meUByte  typesChar[(noINDTYPES*2)+1]="bcefinostwxBCEFINOSTWX" ;
     static meUShort typesFlag[noINDTYPES]= { 
         INDBRACKETOPEN, INDCONTINUE, INDEXCLUSION, INDFIXED, INDIGNORE, INDNEXTONWARD, 
         INDCURONWARD, INDSINGLE, INDFILETYPE, INDFTCURONWARD, INDFTNEXTONWARD } ;

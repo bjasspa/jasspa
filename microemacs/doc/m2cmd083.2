@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd083.2,v 2.7 2004-01-29 22:02:09 jon Exp $
+.Id $Id: m2cmd083.2,v 2.8 2004-02-03 19:59:40 jon Exp $
 .Im MicroEmacs command|help|buffer
 .ds C0 "(\fB\*(cX\*cb\fR)\ \&
 .so me.tni
@@ -26,11 +26,13 @@ the buffer has been  changed  and not  written  out. The active flag is not an
 \fB@\fR if the file had been  specified on the command  line, but has not been
 read in yet since nothing has switched to that buffer.)
 .PP
-The numerical argument \fIn\fR determines the information that is displayed by
-the command and is interpreted follows:-
+The  numerical  argument  \fIn\fR  is a  bitwise  flag  which  determines  the
+information that is displayed by the command, it is interpreted follows:-
 .PP
 \fC\ \ 1\fR \- The default, when the bit is set displays visible buffers only.
-When clear displays both visible and invisible buffers.
+When clear displays both visible and
+.Hl hidden hide 2m
+buffers.
 .br
 \fC\ \ 2\fR \- When set shows buffer size  information,  including  file size,
 memory size and undo size in bytes. 
