@@ -8,8 +8,7 @@
 ;
 define-macro fhook-yacc
     set-variable $buffer-mask "luh1"
-    ; Use c template for LEX & YACC
-    @# buffer-init "yacc" "c"
+    @# buffer-init "yacc"
     buffer-init-hooks
 !emacro
 

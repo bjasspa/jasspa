@@ -16,7 +16,6 @@ include $(TOPDIR)/etc/makeinc
 #
 # EMFS:sh=ls *.emf
 EMFS=	abbrev.emf	abbrlist.emf	aix.emf		au3.eaf		\
-	au3.etf		\
 	benchmrk.emf	bookmark.emf	buffinit.emf	buffstp.emf	\
 	calc.emf	charset.emf	charsutl.emf	cmacros.emf	\
 	collapse.emf	comment.emf	crosswd.emf	ctags.emf	\
@@ -92,7 +91,7 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		au3.eaf		\
 	watch.emf	win32.emf	word.emf	\
 	zaurus.emf	zfile.emf
 # ETFS:sh =ls *.etf
-ETFS=	asmx86.etf	asn1.etf	\
+ETFS=	asmx86.etf	asn1.etf	au3.etf		\
 	bibtex.etf	\
 	c.etf		cobol.etf	cpp.etf		\
 	doc.etf		\
@@ -109,7 +108,8 @@ ETFS=	asmx86.etf	asn1.etf	\
 	spec.etf	\
 	tcl.etf		\
 	vhdl.etf	\
-	xml.etf
+	xml.etf		\
+	yacc.etf
 #EAFS:sh=ls *.eaf
 EAFS=	ada.eaf		asp.eaf		\
 	c.eaf		cpp.eaf		\
