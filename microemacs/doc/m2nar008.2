@@ -1,0 +1,309 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.\"  Created By    : Jon Green
+.\"  Created       : Sat Jul 11 13:30:15 1998
+.\"
+.Id $Id: m2nar008.2,v 1.6 2005-01-22 15:32:30 jon Exp $
+.Im MicroEmacs macrodevelop
+.so me.tni
+.TH localeSupport 2
+.XI localeSupport - "Locale Support"
+.SH "LOCALE SUPPORT"
+Locale  support  within \*(mS handles the hardware and software  configuration
+with respect to location, including:-
+.RS
+.sp
+.na
+Displayed Character Set
+.br
+Keyboard Support
+.br
+Word characters
+.br
+Spell Support
+.ad
+.sp
+.RE
+There are many other  locale  problems  which are not  addressed  in this help
+page.  Supporting  different  locale  configurations  often requires  specific
+hardware (a locale  specific  keyboard)  and  knowledge  of the  language  and
+customs of the region. This makes it a very  difficult  area for one localized
+development  team to support, as such, JASSPA rely heavily on the user base to
+report locale issues.
+.SS "Note on Names and IDs"
+The language name is not sufficient to identify a locale  (Mexican  Spanish is
+different to Spanish  Spanish)  neither is the country name (two languages are
+commonly used in Belgium), so before we've really started the first problem of
+what to call the  locale  has no  standard  answer!  Call it what you like but
+please  try to call it  something  meaningful  so others  may  understand  and
+benefit from your work.
+.PP
+In addition, the  \fIinternal  id\fR and \fIdata  file\fR  names have a length
+limit of just four  characters  due to the  "\fC8.3\fR"  naming  conversion of
+MS-DOS. The standard  adopted by JASSPA \*(mS for the internal locale id is to
+combine  the 2 letter  ISO  language  name (ISO  639-1)  with the 2 letter ISO
+country  name (ISO  3166-1).  Should  the  locale  encompasses  more  than one
+country, then the most appropriate \fIcountry id\fR is selected.
+.SH "Displayed Character Set"
+A character set is the mapping of an integer  number to a display symbol (i.e.
+character).  The ASCII  standard  defines a mapping of numbers to the standard
+English  characters,  this  standard is well defined and accepted, as a result
+the character set rarely causes a problem for plain English.
+.PP
+Problems occur when  displaying  characters  found outside the ASCII standard,
+such as letters with  accents,  letters  which are not Latin based (e.g. Greek
+alphabet) and graphical characters (used for drawing dialog boxes etc.). There
+are many different character sets to choose between and if the wrong character
+set  is  selected  then  the  incorrect  character  translation  is  performed
+resulting in an incorrect  character  display. If the character  display looks
+incorrect  then first try changing the font and  character-set  setting, these
+can be configured using the platform page of
+.Ht user-setup 3 .
+.PP
+If the problem persists (i.e. because the character set used to write the text
+is not supported on your current system) use the
+.Ht charset-change 3
+command to convert the text to the current character set.
+.PP
+If your  character-set  is not supported  then first make sure that \*(mS will
+draw all of the  characters  to be used. By  default  \*(mS does not draw some
+characters  directly as the symbol may not be defined. When a character is not
+defined then there will typically be a gap or space in the text at the unknown
+character,  in some cases there may be no space at all which will make it very
+hard to use. The
+.Ht symbol 3
+command  (menu->symbol)  is a good way of looking at which  characters  can be
+used with the current character set.
+.PP
+For a character to be rendered (when in main text) or poked (drawn by
+.Ht screen-poke 2
+or
+.Ht osd 2 )
+is defined by the
+.Ht set-char-mask 2
+command. The characters  that are used when drawing \*(mS's window boarders or
+\fBosd\fR dialogs is set via the
+.Ht $box-chars 5
+and
+.Ht $window-chars 5
+variables.
+.PP
+\*(mS attempts to improve the  availability  of useful graphics  characters on
+Windows  and UNIX  X-Term  interfaces.  The  characters  between  0 and 31 are
+typically control characters with no graphical  representation (e.g. new-line,
+backspace, tab etc.) if bit 0x10000 of the
+.Ht $system 5
+variable is set then \*(mS renders its own set of characters. These characters
+are typically used for drawing boxes and scroll-bars.
+.PP
+With so many character sets, each with their own character  mappings, then the
+problem of spelling  dictionary support is also tied to the locale. \*(mS uses
+the ISO standard  character  sets (ISO 8859)  internally for word and spelling
+support  and  therefore  a  mapping  between  the ISO  standard  and the  user
+character set is required. This mapping is defined by using the '\fCM\fR' flag
+of the
+.Ht set-char-mask 2
+command.
+.PP
+The user may declare the current character set in the platform page of
+.Ht user-setup 3 .
+All the settings  required for  supporting  each character set may be found in
+the  \fCcharset.emf\fR  macro file, so if your character set is not supported,
+this is the file to edit.
+.SH "Keyboard Support"
+The keyboard to character mapping is defined in the Start-Up page of
+.Ht user-setup 3 ,
+where the  keyboard may be selected  from a list of known  keyboards.  If your
+keyboard is not present, or is not working correctly, then this section should
+allow you to fix the problem (please send JASSPA the fix).
+.PP 
+Most operating  systems seem to handle keyboard mappings with the exception of
+MS-Windows  which  requires  a  helping  hand. The root of the  problems  with
+MS-Windows is it's own locale  character  mappings which change the visibility
+status of the keyboard messages which conflict with Emacs keystroke  bindings.
+To support  key-bindings like  \&'\fCC-tab\fR' or '\fCS-return\fR' a low level
+keyboard interface is required, but this can lead to strange problems with the
+more obscure keys,  particularly with the '\fCAlt Gr\fR' accented letter keys.
+For  example  on  American  keyboards  pressing  '\fCC-#\fR'  results  in  two
+\&'\fCC-#\fR'  key events being generated, this  peculiarity  only occurs with
+this one key. On a  British  keyboard  the same key  generates  a  '\fCC-#\fR'
+followed by a \'\fCC-\\\fR'.
+.PP
+This problem can be diagnosed using the
+.Ht $recent-keys 5
+variable. Simply type an obvious  character, e.g. '\fCA\fR' then the offending
+key  followed  by  another  obvious  key  ('\fCB\fR'),  then look for this key
+sequence in the \fB$recent-keys\fR variable (use the
+.Ht list-variables 2
+or 
+.Ht describe-variable 2
+command). So for the above British keyboard problem the recent-keys would be:
+.CS
+    B C-\\\\ C-# A
+.CE
+($recent-keys  lists the keys backwards). Once you have found the key sequence
+generated by the key, the problem may be fixed using the
+.Ht translate-key 2
+to automatically convert the incorrect key sequence into the required key. For
+the problem above the following line is required:
+.Me $emf-scheme
+.CS
+translate-key "C-# C-\\\\" "C-#"
+.CE
+.Me $ehf-scheme
+Note  that  once a key  sequence  has been  translated  everything,  including
+\fB$recent-keys\fR,  receive only the translated  key. So if you a suspected a
+problem   with  the  existing   definition,   change  the  keyboard   type  in
+\fBuser-setup\fR  to \fBDefault\fR so no translations  are performed, quit and
+restart \*(mS before attempting to re-diagnose the problem.
+.PP
+All the settings  required for  supporting  each  keyboard may be found in the
+\fCkeyboard.emf\fR  macro file, so if your keyboard is not supported,  this is
+the file you need to edit.
+.SH "Word characters"
+Word  characters are those  characters  which are deemed to be part of a word,
+numbers are usually included. Many \*(mS commands use the 'Word' character set
+such as
+.Ht forward-word 2
+and
+.Ht upper-case-word 2 .
+The  characters  that form the word class are determined by the language being
+used and this can be set in the Start-Up page of
+.Ht user-setup 3 .
+.PP
+If your  language  is not  supported  you will  need to add it to the list and
+define   the   word   characters,   these   settings   may be  found  in  the
+\fClanguage.emf\fR macro file. The '\fCa\fR' flag of command
+.Ht set-char-mask 2
+is used to specify whether a character is part of a word, you must specify the
+uppercase  letter  and  then the  lowercase  equivalent so the case
+conversion  functions work  correctly.
+.PP
+A list of  characters  to be removed from the word  character set is stored in
+the \fB.set-char-mask.rm-chars\fR  variable. This is done so that the language
+may be  changed  many  times in the same  session  of \*(mS  without  any side
+effects  (such as the  expansion  of the word  character  set to  include  all
+letters of all languages).  This makes \*(mS ideal for writing  multi-language
+documents.
+.PP
+This may  unfortunately  be made a little more tricky by the requirement  that
+this list must be specified in the most appropriate ISO standard character set
+(see \fBDisplayed Character Set\fR section). When extending the word character
+set the  characters  have to be mapped to the current  character set which may
+not  support  all the  required  characters.  For  example  in the  PC-437 DOS
+character set there is an e-grave  (\fC`e\fR) but no E-grave so the E-grave is
+mapped to the normal E. As a result, if trying to write  French  text the case
+changing commands will behave oddly, for example:
+.CS
+    r`egle -> REGLE -> r`egl`e
+.CE
+The  conversion of all '\fCE\fR's to '\fC`e\fR' is an undesirable  side effect
+of '\fC`E\fR'  being mapped to \fCE\fR. This can be avoided by redefining  the
+base letter again at the end of the word character list, for example:
+.Me $emf-scheme
+.CS
+set-char-mask "a" "`E`eEe"
+.CE 0
+.Me $ehf-scheme
+.SH "Spell Support"
+The current language is set using the Language setting on General page of
+.Ht user-setup 3 ,
+if your  required  language  is not  listed  you must  first  create the basic
+language  support by  following  the guide  lines in the \fBWord  Character\fR
+section  above. If you  Language is listed,  select it and enable it by either
+pressing  \fBCurrent\fR  or saving and  restarting  \*(mS. in a suitable  test
+buffer run the
+.Hl "spelling checker" spell-buffer 3 ,
+one of three things will happen:
+.PP
+The \fCSpelling Checker\fR dialog opens and spelling is checked
+.PP
+.RS
+The spelling checker is  supported by the current  language and can be used (the
+rules and dictionaries have been downloaded and installed).
+.RE
+.PP
+Dialog opens with the following error message:
+.RS
+.CS
+Rules and dictionaries for language "XXXX"
+   are not available, please download.
+.CE
+The  spelling  checker is  supported by the current  language but the required
+rules  and  dictionaries  have  not been  downloaded.  You  should  be able to
+download them from the JASSPA website, see
+.Hl "Contact Information" Contact - .
+Once downloaded they must be placed in the \*(mS
+.Hl "search path" $search-path 5 ,
+i.e. where the other macro files (like \fCme.emf\fR) are located.
+.RE
+.PP
+Dialog opens with the following error message:
+.RS
+.CS
+Language "XXXX" not supported!
+.CE
+The  spelling  checker  is not  supported  by the  current  language,  see the
+following \fBAdding Spell Support\fR section.
+.RE
+.SS "Adding Spell Support"
+To support a language \*(mS's spelling checker requires a base word dictionary
+and a set of rules which  define what words can be derived from each base word
+in the  dictionary.  The  concept  and  format  of the word list and rules are
+compatible with the \fBFree Software Foundation\fR GNU
+.Hr ispell 1
+package.
+.PP
+The best  starting  point is to obtain  \fBispell\fR  rules and word  lists in
+plain  text  form, the web can  usually  yield  these.  Once  these  have been
+obtained  the rules file (or affix  file) must be  converted  to a \*(mS macro
+file calling the
+.Ht add-spell-rule 2
+command   to   define   the   rules.   The   rule   file   should   be   named
+"\fClsr\fR\fI<lang-id>\fR\fC.emf\fR"  where  "\fI<lang-id>\fR" is the spelling
+language  id,  determined  by the  \fB.spell.language\fR  variable  set in the
+\fClanguage.emf\fR macro file.
+.PP
+The     \fCspellutl.emf\fR     macro     file     contains     the     command
+\fBspell-conv-aff-buffer\fR  which will  attempt to convert the buffer but due
+to  formatting  anomalies  this process  often goes wrong so using the command
+\fBspell-conv-aff-line\fR  (also contained in \fCspellutl.emf\fR) to convert a
+single   line  is  often   quicker.   See   existing   spelling   rule   files
+(\fClsr*.emf\fR) for examples and help on command
+.Ht add-spell-rule 2 .
+.PP
+\fBNote\fR: the character set used by the rules should be the most appropriate
+ISO standard (see  \fBDisplayed  Character  Set\fR section), this can make the
+process much more  difficult if the current  character set not  compatible, if
+you are having difficulty with this please e-mail
+.Hl "JASSPA Support" Contact - .
+.PP
+Once the rules have been created,  create a dictionary  for the language  from
+the word lists, see help on command
+.Ht add-dictionary 2 .
+The dictionary file name should be  "\fClsdm\fR\fI<lang-id>\fR\fC.edf\fR",  if
+the  dictionary  is large and can be split into two  sections, a set of common
+words and a set of more  obscure  ones,  create two  dictionaries  calling the
+dictionary containing obscure words  "\fClsdx\fR\fI<lang-id>\fR\fC.edf\fR" and
+the other as above.
+.PP
+Once the generated word and dictionary files have been place in the \*(mS
+.Hl "search path" $search-path 5 ,
+the spelling  checker  should find and use them. Please submit your  generated
+support to \*(mS for others to benefit.
+.SH "SEE ALSO"
+.na
+.Ht set-char-mask 2 ,
+.Ht translate-key 2 ,
+.Ht charset-change 3 ,
+.Ht user-setup 3 ,
+.Ht $box-chars 5 ,
+.Ht $recent-keys 5 .
+.Ht $search-path 5 ,
+.Ht $user-path 5 ,
+.Ht $window-chars 5 .
+.ad
+.FH
