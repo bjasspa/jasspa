@@ -145,8 +145,9 @@ if [ ".$MAKEFILE" = "." ] ; then
         fi
         # Special rules for sun, if cc is /usr/ucb then this is a dummy.
         if [ $PLATFORM = "SunOS" ] ; then 
-            if [ `which cc` = "/usr/ucb/cc" ] ; then
-                MAKEFILE=
+            WHATCC=`/usr/bin/which cc`
+            if [ "$WHATCC" = "/usr/ucb/cc" ] ; then
+                MAKEFILE=""
             fi
         fi                      
     fi
