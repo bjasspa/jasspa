@@ -3,7 +3,7 @@
 !   MicroEmacs
 !   Contents
 | home
-MicroEmacs '01
+MicroEmacs '02
 |
  
 | osd-help(3)
@@ -78,7 +78,7 @@ Contents
     Registry
 | Command Line Filters
     Command Line Filters
-| MicroEmacs '01 - Games
+| MicroEmacs '02 - Games
     Games
 |
  
@@ -110,7 +110,7 @@ Miscellaneous Information
     Compatibility
 | Interfacing(2)
     Interfacing to external components
-| MicroEmacs '01 - Supported File Types
+| MicroEmacs '02 - Supported File Types
     Supported File Types
 | Client-Server(2)
     Client-Server Interface
@@ -4151,6 +4151,13 @@ ehf-scheme
         author. 
 
 
+cELicense Terms 2002 and subsequent years cA
+
+
+    GNU Public License (GPL) for all source material. GNU Free Documentation 
+    License (GFDL) for all documentation material. 
+
+!   MicroEmacs '02 - Contact Information
 cESpelling Dictionary Copyrights cA
 
 
@@ -4158,7 +4165,9 @@ ehf-scheme
     spelling dictionary has it's own copyright which is reproduced within the 
     appropriate language spelling macro file. 
 
-    cDNO WARRANTYcA 
+
+cENO WARRANTY cA
+
 
     THIS PROGRAM IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY FOR THE 
     PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN OTHERWISE 
@@ -4181,16 +4190,9 @@ ehf-scheme
     ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. 
 
     cDTHIS NOTICE MUST BE CARRIED IN ALL COPIES OF THE DISTRIBUTIONcA 
-
-
-cELicense Terms 2002 and subsequent years cA
-
-
-    GNU Public License (GPL) for all source material. GNU Free Documentation 
-    License (GFDL) for all documentation material. 
-
-!   MicroEmacs '02 - Contact Information
 !7  Contact Information - MicroEmacs '02
+
+
 cEcECONTACT INFORMATION cEcA
 
 
