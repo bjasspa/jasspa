@@ -164,7 +164,8 @@ set-variable .fhook-java.item-list-r2 "Clss \ecB\\2\ecA"
 !endif
 !if &sin "d" .fhook-java.setup
     ; create main indent scheme
-    0 indent .hilight.java 28 t 3/2t 0 -t 0 -t 1 -1 " * "
+    0 indent .hilight.java 12
+    indent .hilight.java "u" " * "
     ; create a simple indentation rule for javascript - real java files use the built in C indentation
     0 indent .indent.java 1 20
     indent .indent.java n "{"  t

@@ -103,6 +103,7 @@ define-macro perltags
     split-window-vertically
     find-buffer "*scratch*"
     find-file "tags"
+    -1 buffer-mode "view"
     !force 0 delete-buffer "*scratch*"
     set-variable #g1 &rsin "/" $buffer-fname
     set-variable #g2 &lef $buffer-fname #g1
