@@ -177,7 +177,7 @@ define-macro buffer-setup
                     set-variable #l6 &cat #l6 "h"
                 !endif
             !endif
-            osd .osd.buffstp &add 205 &mul #l0 10 #l6 &add 20 #l0 &spr "%s\} %s" .osd.checkbox-chars #l7 &add #l0 20 buffer-setup-option
+            osd .osd.buffstp &add 205 &mul #l0 10 #l6 &spr "%s\} %s" .osd.checkbox-chars #l7 &add #l0 20 buffer-setup-option
             set-variable #l1 1
         !endif
         !if &band #l1 #l4
