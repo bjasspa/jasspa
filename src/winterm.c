@@ -5553,10 +5553,10 @@ dostring:
         
         meStrcpy (buf, label); 
         for (p = buf; *p != '\0'; p++)
-            *p = toUpper ((char *)(*p)) ;
+            *p = toUpper ((char)(*p)) ;
         *p++ = '=' ;
         meStrcpy (p, value) ;
-        mePutenv(meStrdup(label)); /* Duplicate for putenv */
+        mePutenv(meStrdup(buf)); /* Duplicate for putenv */
     }
 }
 
