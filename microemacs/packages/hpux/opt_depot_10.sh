@@ -3,20 +3,20 @@
 #  System        : MicroEmacs
 #  Module        : Package Build script.
 #  Object Name   : $RCSfile: opt_depot_10.sh,v $
-#  Revision      : $Revision: 1.1 $
-#  Date          : $Date: 2004-02-08 19:21:58 $
+#  Revision      : $Revision: 1.2 $
+#  Date          : $Date: 2004-03-17 21:31:58 $
 #  Author        : $Author: jon $
 #  Created By    : <unknown>
 #  Created       : Sun Aug 17 12:58:23 2003
-#  Last Modified : <040208.1803>
+#  Last Modified : <040317.2131>
 #
 # Rules to build the HPUX 10.20 depot file. We build the executable only.
 #
 MKDIR=mkdir
 SEARCH_PATH="/opt/jasspa/company:/opt/jasspa/macros:/opt/jasspa/spelling"
 BASEDIR=.
-METREE=jasspa-metree-20040206.tar.gz
-MEBIN=jasspa-me-hpux-pa-10.20-20040206.gz
+METREE=jasspa-metree-20040301.tar.gz
+MEBIN=jasspa-me-hpux-pa-10.20-20040301.gz
 BASEFILESET="${METREE} ${MEBIN}"
 # Set to "mak" for native or "gmk" for GCC
 PLATFORM=`uname`
@@ -83,11 +83,11 @@ chmod a+rx ${BASEDIR}/jasspa/bin/me
 # Build the ".prj" file.
 #
 echo "As root run the following command to build the depot"
-echo '/usr/sbin/swpackage -d "| /usr/contrib/bin/gzip -c > jasspa-mepkg-hpux-pa-10.20-20040206.depot.gz" -x target_type=tape -s opt_depot_10.psf'
+echo '/usr/sbin/swpackage -d "| /usr/contrib/bin/gzip -c > jasspa-mepkg-hpux-pa-10.20-20040301.depot.gz" -x target_type=tape -s opt_depot_10.psf'
 echo ""
 echo "To install:-"
-echo "/usr/contrib/bin/gunzip -c jasspa-mepkg-hpux-pa-10.20-20040206.depot.gz > jasspa-mepkg-hpux-pa-10.20-20040206.depot"
-echo "/usr/sbin/swinstall -s `pwd`/jasspa-mepkg-hpux-pa-10.20-20040206.depot"
+echo "/usr/contrib/bin/gunzip -c jasspa-mepkg-hpux-pa-10.20-20040301.depot.gz > jasspa-mepkg-hpux-pa-10.20-20040301.depot"
+echo "/usr/sbin/swinstall -s `pwd`/jasspa-mepkg-hpux-pa-10.20-20040301.depot"
 echo ""
 echo "To subsequently remove:-"
 echo "/usr/sbin/swremove jasspa-me"

@@ -4,7 +4,7 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 22:33:31 2004
->  Last Modified : <040206.2325>
+>  Last Modified : <040317.2129>
 >
 
 Building the RedHat RPM
@@ -46,8 +46,8 @@ Copy the information into the directory
     Copy the source files into the tree for build:-
 
     > jasspa.spec                   -> $(HOME)/rpmbuild/SPECS/
-    > jasspa-mesrc-20040206.tar.gz  -> $(HOME)/rpmbuild/SOURCES
-    > jasspa-metree-20040206.tar.gz -> $(HOME)/rpmbuild/SOURCES/
+    > jasspa-mesrc-20040301.tar.gz  -> $(HOME)/rpmbuild/SOURCES
+    > jasspa-metree-20040301.tar.gz -> $(HOME)/rpmbuild/SOURCES/
 
 Build the RPM
 -------------
@@ -55,15 +55,15 @@ Build the RPM
     The RPM is build using the command "rpmbuild" the resultant output is
     generated as follows:-
 
-    >% $(HOME)/rpmbuild/RPMS/i386/jasspa-me-20040206-1.i386.rpm
-    >% $(HOME)/rpmbuild/SRPMS/jasspa-me-20040206-1.src.rpm
+    >% $(HOME)/rpmbuild/RPMS/i386/jasspa-me-20040301-1.i386.rpm
+    >% $(HOME)/rpmbuild/SRPMS/jasspa-me-20040301-1.src.rpm
 
 To install the RPM
 ------------------
 
     As root:
 
-    >% rpm -i jasspa-me-20040206-1.i386.rpm
+    >% rpm -i jasspa-me-20040301-1.i386.rpm
 
 To query what is installed
 --------------------------

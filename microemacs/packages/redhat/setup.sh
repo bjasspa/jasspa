@@ -5,7 +5,7 @@
 #
 #  Created By    : Jon Green
 #  Created       : Fri Feb 6 22:33:31 2004
-#  Last Modified : <040206.2336>
+#  Last Modified : <040317.2129>
 #  Description   : Creates the RedHat directory structure for building a RPM
 #                  file.
 #
@@ -38,24 +38,24 @@ cp jasspa.spec ~/rpmbuild/SPECS/
 #
 # Copy the release TAR files to the SOURCES directory
 #
-if [ ! -f ./jasspa-mesrc-20040206.tar.gz ] ; then
-    echo "Cannot find file jasspa-mesrc-20040206.tar.gz"
+if [ ! -f ./jasspa-mesrc-20040301.tar.gz ] ; then
+    echo "Cannot find file jasspa-mesrc-20040301.tar.gz"
     exit 1
 fi
-cp ./jasspa-mesrc-20040206.tar.gz ~/rpmbuild/SOURCES/
+cp ./jasspa-mesrc-20040301.tar.gz ~/rpmbuild/SOURCES/
 #
-if [ ! -f ./jasspa-metree-20040206.tar.gz ] ; then
-    echo "Cannot find file jasspa-metree-20040206.tar.gz"
+if [ ! -f ./jasspa-metree-20040301.tar.gz ] ; then
+    echo "Cannot find file jasspa-metree-20040301.tar.gz"
     exit 1
 fi
-cp ./jasspa-metree-20040206.tar.gz ~/rpmbuild/SOURCES/
+cp ./jasspa-metree-20040301.tar.gz ~/rpmbuild/SOURCES/
 #
 # Now make the RPM
 #
 (cd ~/rpmbuild/SPECS; rpmbuild -ba jasspa.spec)
-if [ -f ~/rpmbuild/RPMS/i386/jasspa-me-20040206-1.i386.rpm ] ; then
-    cp ~/rpmbuild/RPMS/i386/jasspa-me-20040206-1.i386.rpm .
+if [ -f ~/rpmbuild/RPMS/i386/jasspa-me-20040301-1.i386.rpm ] ; then
+    cp ~/rpmbuild/RPMS/i386/jasspa-me-20040301-1.i386.rpm .
 fi
-if [ -f ~/rpmbuild/SRPMS/jasspa-me-20040206-1.src.rpm ] ; then
-    cp ~/rpmbuild/SRPMS/jasspa-me-20040206-1.src.rpm .
+if [ -f ~/rpmbuild/SRPMS/jasspa-me-20040301-1.src.rpm ] ; then
+    cp ~/rpmbuild/SRPMS/jasspa-me-20040301-1.src.rpm .
 fi
