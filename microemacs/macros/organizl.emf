@@ -125,7 +125,7 @@
     !done
     osd .osd.orgl-p 1 "" "Default" f org-list-set-list
     -1 osd .osd.orgl-c
-    osd .osd.orgl-c 0 "sF" 60 25 -1 -1 &mul .org.listitem 2
+    osd .osd.orgl-c 0 "s" 60 25 -1 -1
     set-variable #l0 0
     set-variable #l1 &reg &spr "/org/list/%s/nolines" .org.list 1
     !while &not &seq "" &reg &spr "/org/list/%s/%d" .org.list &inc #l0 1 ""
