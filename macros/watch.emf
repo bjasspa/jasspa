@@ -30,6 +30,8 @@
 ;   * Use the watch-reset command with a n argument of 0 to stop all watches.
 ;
 0 define-macro watch-callback
+    0 show-region
+    set-variable #l8 &band $result 0x07
     set-variable #l0 $window-id
     set-variable #l9 0
     !repeat
@@ -69,11 +71,15 @@
         ; visit EVERY window otherwise we might not get back to the starting one (toolbar!)
         3 next-window
     !until &equ $window-id #l0
+    .watch.time create-callback watch-callback
     !if #l9
         0 ml-write
         screen-update
+    !elif &equ #l8 7
+        !force show-region
+    !elif &equ #l8 5
+        !force 4 show-region
     !endif
-    .watch.time create-callback watch-callback
 !emacro
 
 define-macro watch
