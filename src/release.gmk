@@ -66,6 +66,9 @@ release: $(OBJS)
 .ziplist:
 	$(RM) $@.tmp $@
 	$(RM)  $(OBJS)
+	$(RM) tags
+	$(RM) .#*
+	$(RM) *~
 	$(DOS2UNIX) *.def *.[ch] *.mak *.txt *.gmk build COPYING *.xpm
 	$(UNIX2DOS) build.bat *.rc win*.mak dos*.mak
 	$(RM) *~
