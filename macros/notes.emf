@@ -28,6 +28,8 @@
     hilight .hilight.enft  0x44 " \"[[:xdigit:]]+\" = \"" " " "\"$" "" "" $global-scheme
 !endif
 
+define-macro-file hkjst fhook-jst
+
 0 define-macro mark-registry-tree
     set-variable #l0 @1
     set-variable #l1 @2
@@ -691,12 +693,23 @@ define-macro notes-file
         set-variable #l0 @ml01 "notes-file"
     !endif
     set-position "\x82"
-    @# find-file #l0 @mna
-    !if &not &exi :notes-root
-        set-variable :notes-root &spr "/enf/%d/" &inc .notes.file-id 1
+    !force &band @# 4 find-file #l0 @mna
+    !if &not $status
+        set-variable #l2 ""
+        osd-entry "Create Note File" "Root Note \HName: " #l2 20
+        &bor 1 &band @# 4 find-file #l0 @mna
+        !if &sub 1 $window-eline
+            ml-write &spr "[Error: file \"%s\" should not exist and be empty]" #l0
+            !abort
+        !endif
+        insert-string &spr "-!- enf -!-\n\"000050\" = \"%s\"\n\"id-next\" = \"1\"\n\b\benf\b\bdivider\b\b0\n\n\b\benf\b\bdivider\b\bEND" &rep &rep #l2 "\\" "\\\\" "\"" "\\\""
+        ml-write &spr "[Notes file \"%s\" created]" #l0
+        !goto init-note
+    !elif &not &exi :notes-root
+*init-note
         beginning-of-buffer
         !if &not &seq &lef @wl 7 "-!- enf"
-            ml-write &spr "[Error: file \"%s\" does not appear to be an enf file]" #l0
+            ml-write &spr "[Error: file \"%s\" does not appear to be an enf file]" #l1
             !abort
         !endif
         end-of-buffer
@@ -715,13 +728,17 @@ define-macro notes-file
         !endif
         beginning-of-line
         3 narrow-buffer
+        set-variable :notes-root &spr "/enf/%d/" &inc .notes.file-id 1
         4 read-registry :notes-root ""
         narrow-buffer
         1 buffer-mode "hide"
         set-variable :notes-cur &reg &cat :notes-root "node-cur" "1"
         ;mark-registry "/enf" "!"
+        ; make the current buffer a 'jst' file
+        fhook-jst
     !elif &les :notes-cur 1
         ml-write "[Error: variable :notes-cur not set]"
+        !abort
     !endif
     set-variable .notes.current $buffer-bname
     goto-position "\x82"
