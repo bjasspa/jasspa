@@ -4,7 +4,7 @@
  * main.c - Main entry point.
  *
  * Originally written by Dave G. Conroy for MicroEmacs
- * Copyright (C) 1987 by Daniel M. Lawrence
+ * Copyright (C) 1987-1988 by Daniel M. Lawrence
  * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -24,20 +24,9 @@
 /*
  * Created:     Unknown
  * Synopsis:    Main entry point.
- * Authors:     Dave G. Conroy, Steve Wilhite, George Jones, Daniel M. Lawrence,
- *          Jon Green & Steven Phillips
- * 
- * Original MicroEMACS 3.8 Copyright notice:
- * 
- *	MicroEMACS 3.8
- *			written by Dave G. Conroy.
- *			greatly modified by Daniel M. Lawrence
- *
- *	(C)opyright 1987 by Daniel M. Lawrence
- *	MicroEMACS 3.8 can be copied and distributed freely for any
- *	non-commercial purposes. MicroEMACS 3.8 can only be incorporated
- *	into commercial software with the permission of the current author.
- *
+ * Authors:     Dave G. Conroy, Steve Wilhite, George Jones,
+ *              Daniel M. Lawrence,
+ *              Jon Green & Steven Phillips (JASSPA)
  */
 
 #define	__MAINC			/* Define program name */
