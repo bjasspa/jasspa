@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
 ;  Created By    : Steven Phillips
-;  Last Modified : <011123.0807>
+;  Last Modified : <011219.2326>
 ;
 ;  Description   : Macros used for sending e-mails
 ;
@@ -14,7 +14,7 @@
     1 buffer-mode "wrap"
     1 buffer-mode "indent"
     1 buffer-mode "justify"
-    buffer-initialize
+    @# buffer-initialize "mail"
     ; Must explictily setup the auto-spell reset and abbrev as there is no fhook
     set-variable :auto-spell-reset "mail"
     buffer-initialize-hooks

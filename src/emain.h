@@ -6,7 +6,7 @@
  *  Object Name   : emain.h
  *  Author        : Steve Philips
  *  Created       : Thu Nov 27 19:17:17 1997
- *  Last Modified : <011217.1315>
+ *  Last Modified : <011220.1239>
  *
  *  Description 
  *       Encapsulate all of the platform definitions into a sigle file
@@ -255,6 +255,8 @@
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 /* Under cygwin sys_errlist is defined slightly differently - redefine   */
 #define sys_errlist _sys_errlist        /* sys_errlist specially defined */
+/* Set up the search path */
+#define _SEARCH_PATH   "/usr/share/jasspa/macros:/usr/share/jasspa/spelling"
 #endif /* _CYGWIN */
 
 /**************************************************************************

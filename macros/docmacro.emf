@@ -44,7 +44,7 @@
 ;         >
 ;         > Author:       My Self
 ;         > Created:      11/11/97
-;         > Modified:     <011114.0001>
+;         > Modified:     <011219.2324>
 ;         > Location:     /xx/yy/zz.doc
 ; *
 ;         All lines commencing with '*' are assumed to be bullet lists. Bullet
@@ -289,18 +289,15 @@ define-macro doc-ehook-body
 
 ; Defualt body of a fhook
 define-macro doc-fhook-body
-    set-variable #l1 &rig $buffer-fhook 6
-    set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
+    set-variable #l1 @1
     ; if arg is 0 this is a new file so add template
-    !if &not @#
-        etfinsrt #l1
-    !endif
-    buffer-initialize
+    @# buffer-initialize #l1 
     ; Set up the default constants
     set-variable :fill-mode $fill-mode
     set-variable :fill-col $fill-col
     ; Over-ride any special document modes
-    !force set-variable #l2 @1
+    set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
+    !force set-variable #l2 @2
     !if &and $status &sin "n" #l0
         ; Search for additional modes in a -!- document -!-
         ;

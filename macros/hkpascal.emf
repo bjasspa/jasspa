@@ -5,12 +5,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro fhook-pascal
-    ; if arg is 0 this is a new file so add template
-    !if &not @#
-        etfinsrt "pascal"
-    !endif
     set-variable $buffer-mask "luh1"
-    buffer-initialize
+    @# buffer-initialize "pascal"
     buffer-initialize-hooks
 !emacro
 

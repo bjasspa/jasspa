@@ -9,7 +9,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro fhook-dirtre
-    buffer-initialize
+    @# buffer-initialize "dirtre"
     set-variable :mouse-pick-1 void
     set-variable :mouse-drop-1 dirtre-mouse-drop-1
     set-variable :mouse-pick-3 void

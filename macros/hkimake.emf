@@ -5,12 +5,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro fhook-imake
-    ; if arg is 0 this is a new file so add template 
-    !if &not @#
-        etfinsrt "imake"
-    !endif
     set-variable $buffer-mask "luh1"
-    buffer-initialize
+    @# buffer-initialize "imake"
     buffer-initialize-hooks
 !emacro
 

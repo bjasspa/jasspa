@@ -12,12 +12,7 @@
 
 define-macro fhook-doc
     ; use the document fhook in docmacro
-    @# doc-fhook-body "document"
-    ml-write "[esc h - for Documentation mode help]"
-    ; execute user extensions if enabled
-    !if &exist my-fhook-doc
-        my-fhook-doc
-    !endif
+    @# doc-fhook-body "doc" "document"
 !emacro
 
 ; buffer-initialize variables

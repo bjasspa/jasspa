@@ -1,17 +1,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;       TCL mode hook
 ;
-;   Last Modified : <011123.0807>
+;   Last Modified : <011219.2333>
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 set-char-mask "3" "-$."
 
 define-macro fhook-tcl
-    ; if arg is 0 this is a new file so add template 
-    !if &not @#
-        etfinsrt "tcl"
-    !endif
     set-variable $buffer-mask "luh13"
-    buffer-initialize
+    @# buffer-initialize "tcl"
     buffer-initialize-hooks
 !emacro
 

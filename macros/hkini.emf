@@ -13,7 +13,7 @@
 
 define-macro fhook-ini
     set-variable $buffer-mask "luh1"
-    buffer-initialize
+    @# buffer-initialize "ini"
     buffer-initialize-hooks
 !emacro
 

@@ -6,7 +6,7 @@
 #  Description	 : Make file for Cygnus Cygwin v20.1
 #  Created       : Sat Jan 24 00:01:40 1998
 #
-#  Last Modified : <011217.1309>
+#  Last Modified : <011218.1717>
 #
 #  Notes
 #       The executable produced does not currently work, for some reason ME
@@ -88,13 +88,13 @@ install: me
 	@echo "install done"
 
 clean:
-	$(RM) me med men *.o *.od *.on core
+	$(RM) me.exe med.exe men.exe *.o *.od *.on core
 
 spotless: clean
 	$(RM) tags *~
 
 me:	$(OBJ)
-	$(RM) $@
+	$(RM) $@.exe
 	$(LD) $(LDFLAGS) -o $@ $(OBJ) $(XLIBS) $(LIBS)
 	$(STRIP) $@.exe
 
@@ -103,7 +103,7 @@ men:	$(NOBJ)
 	$(LD) $(LDFLAGS) -o $@ $(NOBJ) $(LIBS)
 
 med:	$(DOBJ)
-	$(RM) $@
+	$(RM) $@.exe
 	$(LD) $(LDFLAGS) -o $@ $(DOBJ) $(XLIBS) $(LIBS)
 #
 # Dependancies

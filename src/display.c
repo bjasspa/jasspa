@@ -12,7 +12,7 @@
 *
 *	Creation Date:		29/04/91 09:13
 *
-*	Modification date:	%G% : %U%	<011010.0800>
+*	Modification date:	%G% : %U%	<011021.2037>
 *
 *	Current rev:		%I%
 *
@@ -368,30 +368,10 @@ showRegion(int f, int n)
 
     absn = (n < 0) ? -n:n ;
 
-    if((absn == 1) || (absn == 2))
-    {
-        if(!(selhilight.flags & SELHIL_FIXED))
-            return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[No current region]") ;
-        if(absn == 2)
-        {
-            if(selhilight.bp != curbp)
-                return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[Current region not in this buffer]") ;
-            curwp->w_flag |= WFMOVEL ;
-            if(n == 2)
-            {
-                n = gotoLine(TRUE,selhilight.dlineno+1) ;
-                f = selhilight.dlineoff ;
-            }
-            else
-            {
-                n = gotoLine(TRUE,selhilight.mlineno+1) ;
-                f = selhilight.mlineoff ;
-            }
-            if((n == TRUE) && (f <= llength(curwp->w_dotp)))
-                curwp->w_doto = (uint16) f ;
-            return n ;
-        }
-    }
+    if(((absn == 1) || (absn == 2)) && !(selhilight.flags & SELHIL_FIXED))
+        return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[No current region]") ;
+    if(((absn == 2) || (n == 4)) && (selhilight.bp != curbp))
+        return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[Current region not in this buffer]") ;
     switch(n)
     {
     case -3:
@@ -402,6 +382,17 @@ showRegion(int f, int n)
         selhilight.dlineoff = curwp->w_doto;   /* Current mark offset */
         selhilight.dlineno = curwp->line_no;    /* Current mark line number */
         break ;
+    
+    case -2:
+        curwp->w_flag |= WFMOVEL ;
+        if((gotoLine(TRUE,selhilight.mlineno+1) == TRUE) &&
+           (selhilight.mlineoff <= llength(curwp->w_dotp)))
+        {
+            curwp->w_doto = (uint16) selhilight.mlineoff ;
+            return TRUE ;
+        }
+        return FALSE ;
+        
     case -1:
         selhilight.flags &= ~SELHIL_ACTIVE ;
         break ;
@@ -430,11 +421,22 @@ showRegion(int f, int n)
         sprintf((char *)resultStr,"%d",n) ;
         return TRUE ;
 
-    case  1:
+    case 1:
         selhilight.flags |= SELHIL_ACTIVE;
         if(f || (selhilight.uFlags & SELHILU_KEEP))
             selhilight.flags |= SELHIL_KEEP ;
         break ;
+   
+    case 2:
+        curwp->w_flag |= WFMOVEL ;
+        if((gotoLine(TRUE,selhilight.dlineno+1) == TRUE) &&
+           (selhilight.dlineoff <= llength(curwp->w_dotp)))
+        {
+            curwp->w_doto = (uint16) selhilight.dlineoff ;
+            return TRUE ;
+        }
+        return FALSE ;
+        
     case 3:
         if(((selhilight.flags & (SELHIL_FIXED|SELHIL_ACTIVE)) == 0) ||
            (selhilight.bp != curbp))
@@ -449,15 +451,14 @@ showRegion(int f, int n)
         selhilight.dlineoff = curwp->w_doto;      /* Current mark offset */
         selhilight.dlineno = curwp->line_no;      /* Current mark line number */
         break ;
+   
     case 4:
-        if(selhilight.bp == curbp)
-        {
-            selhilight.flags = SELHIL_ACTIVE|SELHIL_CHANGED ;
-            selhilight.dlineoff = curwp->w_doto;      /* Current mark offset */
-            selhilight.dlineno = curwp->line_no;      /* Current mark line number */
-            break ;
-        }
-    default:
+        selhilight.flags = SELHIL_ACTIVE|SELHIL_CHANGED ;
+        selhilight.dlineoff = curwp->w_doto;      /* Current mark offset */
+        selhilight.dlineno = curwp->line_no;      /* Current mark line number */
+        break ;
+   
+   default:
         return ABORT ;
     }
     addModeToBufferWindows(selhilight.bp, WFSELHIL);

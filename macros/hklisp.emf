@@ -6,12 +6,8 @@
 set-char-mask "2" "-$&#!%:@."
 
 define-macro fhook-lisp
-    ; if arg is 0 this is a new file so add template 
-    !if &not @#
-        etfinsrt "lisp"
-    !endif
     set-variable $buffer-mask "luh1"
-    buffer-initialize
+    @# buffer-initialize "lisp"
     buffer-initialize-hooks
 !emacro
 

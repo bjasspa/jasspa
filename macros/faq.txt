@@ -11,7 +11,7 @@ FREQUENTLY ASKED QUESTIONS - Contact Information
      the  E-Mail  reflector  and  associated  logs,  described  in  the Contact
      Information section, alternatively questions may be submitted to:- 
 
-          Mailto:jasspa@geocities.com 
+          Email:support@jasspa.com 
 
      We cannot promise  to resolve all  questions, but will  endeavor to answer
      most. We would also appreciate comments  on how to improve the readability
@@ -103,8 +103,8 @@ QUESTION (03)
 
 ANSWER 
      No not  at  the  moment.  The  GNU Emacs  bindings  would  be  added  as a
-     compatibility file (gnu.emf) in much the  same way that the me3.8 bindings
-     are added, see me3_8.emf. 
+     compatibility file  (meemacs.emf)  in much  the  same way  that  the me3.8
+     bindings are added, see meme3_8.emf. 
 
      From the user-setup(3), the user would then ask for "gnu" compatibility. 
 
@@ -221,9 +221,9 @@ QUESTION (09)
      MicroEmacs Bindings; How do I get the original MicroEmacs bindings ? 
 
 ANSWER 
-     From user-setup(3) set  the Compatibility  to "me3_8".  On re-starting (or
-     current) the  macro file  me3_8.emf is  executed and  the bindings loaded.
-     This file should restore your familiar execution set. 
+     From user-setup(3) set the Emulation  to "MicroEmacs v3.8". On re-starting
+     (or Current)  the  macro file  meme3_8.emf  is executed  and  the bindings
+     loaded. This file should restore your familiar execution set. 
 
      [FAQ Index]. 
 
@@ -669,7 +669,7 @@ QUESTION (31)
      Microsoft Drag and Drop; is it supported ?? 
 
 ANSWER 
-     MicroEmacs '00  supports  Microsoft  drag and  drop  interaction. Multiple
+     MicroEmacs '02  supports  Microsoft  drag and  drop  interaction. Multiple
      files and  directories may  be dragged  from Microsoft  Explorer (or other
      application) and  dropped  into a  buffer  window. The  destination buffer
      window is the window in which the dropped file(s) are displayed. 
@@ -683,20 +683,20 @@ QUESTION (32)
      Cut and Paste to/from other applications; is it supported ?? 
 
 ANSWER 
-     MicroEmacs '00 supports cut and paste operations on all platforms. 
+     MicroEmacs '02 supports cut and paste operations on all platforms. 
 
-     To copy a region from MicroEmacs '00 to another application 
+     To copy a region from MicroEmacs '02 to another application 
           Select a region (with the mouse or keys) - there is no need to invoke
           a copy operation. All selected text is immediately available to other
           applications. 
 
           Move to the new application and paste, as dictated by the platform. 
 
-     To copy a region from another application to MicroEmacs '00 
+     To copy a region from another application to MicroEmacs '02 
           Select the region in the  application into the clipboard, as dictated
           by the platform. 
 
-          Move to  MicroEmacs  '00, position  the  cursor and  yank(2)  (C-y or
+          Move to  MicroEmacs  '02, position  the  cursor and  yank(2)  (C-y or
           typically the middle mouse button) the clipboard text. 
 
      [FAQ Index]. 
@@ -734,7 +734,7 @@ QUESTION (35)
      File Types; how do I interchange between UNIX, Windows and DOS files ?? 
 
 ANSWER 
-     MicroEmacs '00 facilitates the  editing of the standard  file types on all
+     MicroEmacs '02 facilitates the  editing of the standard  file types on all
      platforms. All files retain their line  ending type through edits. i.e. if
      a DOS file is edited on a UNIX  system, the file is still written as a DOS
      file. When  new files  are  created, they  are  created with  the standard
@@ -757,7 +757,7 @@ QUESTION (36)
      Non-English Languages; What font should I select ?? 
 
 ANSWER 
-     MicroEmacs '00 has only  been tested with  Western Lanuguages only. Within
+     MicroEmacs '02 has only  been tested with  Western Lanuguages only. Within
      the Microsoft Windows  environment an  ANSI type font  should be selected,
      assuming of  course  that the  characters  required are  in  the ISO-Latin
      character set. UNIX typically supports ISO-Latin character sets. 
@@ -791,13 +791,12 @@ ANSWER
 
      The quickest  and  best  solution is  to  use  the Keyboard  setup  on the
      Start-Up page of user-setup(3). This  however may not provide the solution
-     a this is  a new  feature (post 99Beta1)  and few  keyboards are currently
-     supported.  If  you   are  using  an   unsupported  keyboard  please  send
-     configuration  information  back  to  JASSPA  for  inclusion  in  the next
-     release. Also keyboard  configuration information  is stored  in the macro
-     file keyboard.emf. 
+     as not  all  keyboards  are  currently  supported.  If  you  are  using an
+     unsupported keyboard please send  configuration information back to JASSPA
+     for inclusion in the next  release. The keyboard configuration information
+     is stored in the macro file keyboard.emf. 
 
-     If user-setup does  not currently support  your keyboard, or  you which to
+     If user-setup does  not currently  support your  keyboard, or  you wish to
      remap  some  keys,  then  the  command  translate-key(2)  should  be used.
      translate-key remaps  generated key  stroke(s) into  another key  at a low
      level so the mapping is supported in all areas. If a macro and key binding
@@ -914,7 +913,7 @@ QUESTION (42)
 ANSWER 
      A tags file is used by the  find-tag(2) command. This is used to hypertext
      to the tagged definition or variable. The standard ctags(1) format is used
-     by MicroEmacs. The  tags file  itself may  be generated  by MicroEmacs '00
+     by MicroEmacs. The  tags file  itself may  be generated  by MicroEmacs '02
      from the menu  (Tools->XX Tools->Create  Tags File).  Alternatively a tags
      file may be generated by the  ctags(1) utility. This is typically standard
      on UNIX platforms. For Windows and  DOS platforms then the Exuberant Ctags
@@ -922,7 +921,7 @@ ANSWER
 
           http://darren.hiebert.com 
 
-     A MicroEmacs '00 compatible  tags file may be  generated using the command
+     A MicroEmacs '02 compatible  tags file may be  generated using the command
      line "ctags -N --format=1 ." cataloging the current directory. To generate
      tags for a directory tree then use  "ctags -NR --format=1 .". Refer to the
      Exuberant Ctags  documentation  for  a more  detailed  description  of the

@@ -7,7 +7,7 @@
 #
 # Author      : Jon Green
 # Created     : 22nd February 1997
-# Last Edited : <011125.1449>
+# Last Edited : <011219.1957>
 #
 # History     : JG  220297 Original  Constructed from emacssrc
 #
@@ -584,5 +584,5 @@ mehtml.tgz: me.hts
 	copy mehtml.tar.gz ..\mehtml.tgz
 	cd ..
 	
-full:: mehtm.zip mehtml.tgz me.hlp me.ehf
+full:: mehtm.zip mehtml.tgz $(HLPS) me.ehf $(TXTS)
 

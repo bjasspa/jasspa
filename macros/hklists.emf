@@ -9,7 +9,7 @@ set-char-mask "2" "-$&#!%:@."
 
 define-macro fhook-lists
     set-variable $buffer-mask "luh12"
-    buffer-initialize
+    @# buffer-initialize "lists"
     set-variable :mouse-word-select ehf-process-link
     buffer-initialize-hooks
 !emacro

@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
 ;  Created       : Mon Dec 15 14:06:31 1997
-;  Last Modified : <010228.0945>
+;  Last Modified : <011219.2338>
 ;
 ;  Description
 ;      etfinsrt "etf-name"
@@ -20,12 +20,6 @@
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 0 define-macro etfinsrt
-    !if &exi &ind &spr ".%s.setup" $buffer-fhook
-        !if &not &sin "n" &ind &spr ".%s.setup" $buffer-fhook
-            ; header insertion has been disabled - do nothing 
-            !return
-        !endif
-    !endif
     ; Insert the template file
     !force insert-file &find @1 ".etf"
     !if &not $status
@@ -72,8 +66,13 @@
         -1 replace-string "<[0-9]+>" ""
         !goto again
     !endif
+    ; set the cursor position
+    beginning-of-buffer
+    !force 1 replace-string "\\$CURSOR\\$" ""
+    !if &not $status
+        end-of-buffer
+    !endif
     ; Reset magic mode if we added it, flag buffer as unedited and goto end
     &cond #l0 1 -1 buffer-mode "magic"
     -1 buffer-mode "edit"
-    end-of-buffer
 !emacro
