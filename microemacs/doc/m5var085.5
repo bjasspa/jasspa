@@ -1,0 +1,78 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m5var085.5,v 2.1 2004-01-11 01:11:17 jon Exp $
+.Im MicroEmacs variable|macrodevelop
+.so me.tni
+.TH $line-flags 5
+.XI $line-flags - "Current buffer line flags"
+.SH NAME
+$line-flags \- Current buffer line flags
+.Me $a
+.SH SYNOPSIS
+\fB$line-flags\fR \fIbitmask\fR; No default
+.SH DESCRIPTION
+The  \fB$line-flags\fR  variable is used to retrieve or define the  behavioral
+settings of the current  line in the buffer. This  variable is a bit flag, the
+length of the bit flag is variable. In smaller  builds of \*(mS where features
+have been  disabled then the field is only 8 bits wide, in a normal build then
+the full 16 bits are present.
+.IP \fB0x0001\fR
+The line has changed as a result of an edit and has not been re-displayed. The
+flag is cleared when the change has been displayed. This bit is read only.
+.IP \fB0x0002\fR
+The line contains an alpha mark defined by
+.Ht set-alpha-mark 2 .
+This bit is read only.
+.IP \fB0x0004\fR
+The line contains a narrow region, set by
+.Ht narrow-buffer 2 .
+This bit is read only.
+.IP \fB0x0008\fR
+The line contains some other type of anchor. This bit is read only.
+.IP \fB0x0010\fR
+The line should be saved without a new-line or nil termination character.
+.IP \fB0x0020\fR
+The line is a mark-up  line used for  annotation  and should not be saved on a
+write operation. This bit permits lines in a buffer to be inserted for display
+or annotation  purposes which are  automatically  discarded when the buffer is
+written to file. Mark-up lines are sometimes  used by the buffer folding and
+collapsing to annotate folds.
+.IP \fB0x0040\fR
+The line is protected. A protected line may be deleted or edited however it is
+not  possible  to split or join a protected  line with any other line. This is
+used by the folding or collapse mechanisms to protect
+.Hl "narrrow" narrow-buffer 2
+regions from editing operations.
+.IP \fB0x0080-0x0800\fR
+User defined. Users may use the upper most bits from left to right. JASSPA may
+use more bits in future  releases which shall be consumed from the lower bits,
+right to left.
+.IP \fB0xf000\fR
+The shifted
+.Ht $line-scheme 5
+setting. A value of zero indicates that there is no line scheme in effect
+on the line.
+.LP
+Where a bit flag is  defined as read only then an attempt by the user to set a
+read-only bit then the bit setting is ignored, any remaining writable bits are
+set as requested.
+.SH EXAMPLE
+Refer to the file
+.C fold.emf
+for examples of the use of \fB$line-flags\fR.
+.SH NOTES
+.B $line-flags
+was first introduced in \*(mS '04.
+.SH "SEE ALSO"
+.na
+.Ht narrow-buffer 2 ,
+.Ht set-alpha-mark 2 ,
+.Ht set-variable 2 ,
+.Ht $buffer-hilight 5 ,
+.Ht $buffer-scheme 5
+.Ht $line-scheme 5 .
+.ad
+.FH

@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd159.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd159.2,v 2.6 2004-01-11 01:11:18 jon Exp $
 .Im MicroEmacs command|delete|region
 .ds C0 "(\fB\*e\*cw\fR)\ \&
 .ds C1 "(\fB\*e\*cy\fR)\ \&
@@ -77,12 +77,13 @@ define-macro copy-rectangle
 .Me $ehf-scheme
 .SH "SEE ALSO"
 .na
-.Ht set-mark 2 ,
-.Ht kill-region 2 ,
-.Ht yank 2 ,
 .Ht copy-region 2 ,
+.Ht kill-region 2 ,
 .Ht reyank 2 ,
-.Ht undo 2 .
+.Ht set-mark 2 ,
+.Ht string-rectangle 3 , 
+.Ht undo 2 ,
+.Ht yank 2 .
 .ad
 .rm C0
 .rm C1

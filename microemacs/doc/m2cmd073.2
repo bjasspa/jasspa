@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd073.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd073.2,v 2.6 2004-01-11 01:11:18 jon Exp $
 .Im MicroEmacs command|file
 .ds C0 "(\fB\*(cX\*ci\fR)\ \&
 .so me.tni
@@ -16,18 +16,27 @@ insert-file \- Insert file into current buffer
 .na
 .I n
 .B insert-file
-"\fIfile-name\fR" \*(C0
+"\fIfile-name\fR" [ \fIbyte-offset\fR \fIbyte-length\fR ] \*(C0
 .ad
 .SH DESCRIPTION
 .B insert-file
 inserts the named file  \fIfile-name\fR  \fIn\fR times into the current buffer
 at the  beginning of the current  line. The buffer mark is set to the start of
-the insertion and the cursor is moved to the end.
+the insertion and the cursor is moved to the end. If the  \fIfile-name\fR is a
+directory then a directory listing is inserted into the buffer.
+.PP
+If the numeric argument \fIn\fR is negative (\-ve) then
+.B insert-file
+reads and inserts \fIbyte-length\fR bytes from the
+byte file offset \fIbyte-offset\fR.
 .SH "SEE ALSO"
 .na
-.Ht set-mark 2 ,
+.Ht find-bfile 3 ,
 .Ht find-file 2 ,
 .Ht insert-file-name 2 ,
+.Ht page-bfile 3 ,
+.Ht page-file 3 ,
+.Ht set-mark 2 ,
 .Ht view-file 2 .
 .ad
 .rm C0

@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac005.3,v 2.6 2004-01-05 00:19:24 jon Exp $
+.Id $Id: m3mac005.3,v 2.7 2004-01-11 01:11:18 jon Exp $
 .Im MicroEmacs command|delete
 .so me.tni
 .TH clean 3
@@ -26,9 +26,10 @@ empty line is not removed unless at the end of the buffer.
 .IP 2)
 Space  characters  are removed  when the next  character  is a tab, making the
 space  redundant,  e.g. the  strings  "\fC\tHello World\fR"  and
-"\fC \tHello World\fR"  will look  identical  because the tab character  ('\fI\t\fR')  will
-indent the text to the 8th column  with or without  the space so the space can
-be removed.
+.\"
+"\fC  \tHello  World\fR"  will  look  identical   because  the  tab  character
+('\fI\t\fR')  indents  the text to the 8th column with or without the space so
+the space can be removed.
 .IP 3)
 Superfluous empty lines at the end of the buffer are removed, leaving only one
 empty line.

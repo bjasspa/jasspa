@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1988-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1988-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd022.2,v 2.5 2002-01-11 21:58:41 jon Exp $
+.Id $Id: m2cmd022.2,v 2.6 2004-01-11 01:11:17 jon Exp $
 .Im MicroEmacs command|region
 .ds C0 "(\fB\*ew\fR)\ \&
 .so me.tni
@@ -14,6 +14,7 @@ copy-region \- Copy a region of the buffer
 .Me $a
 .SH SYNOPSIS
 .na
+.I n
 \fBcopy-region\fR \*(C0
 .ad
 .SH DESCRIPTION
@@ -28,6 +29,14 @@ If the last command also entered text into the kill buffer (or the
 .Ht @cl 4
 variable  is set to one of  these  commands)  the  \fBcopy-region\fR  text  is
 appended to the last kill.
+.PP
+The numeric argument \fIn\fR determines how the copy operates when a 
+narrow region, defined by 
+.Ht narrow-buffer 2 ,
+is encountered. The default operation, when the number argument is \fC1\fR, is
+to copy all of the text contained within the narrowed region. When the numeric
+argument is \fC0\fR then narrowed  region is NOT copied and the text is copied
+as it appears in the buffer. 
 .SH USAGE
 To copy text from one place to another, using the  \fBcopy-region\fR  command,
 the following operations are performed:
@@ -62,10 +71,13 @@ windowing kill buffer allowing data to be moved between windowing applications
 environments  \*(mE  automatically  interacts with the windowing  systems kill
 buffer, the last \*(mE \fBcopy-region\fR  entry is immediately available for a
 paste operation into another windowing application.
+.PP
+The numeric argument \fIn\fR was introduced in the '04 release.
 .SH "SEE ALSO"
 .na
 .Ht exchange-point-and-mark 2 ,
 .Ht kill-region 2 ,
+.Ht narrow-buffer 2 ,
 .Ht set-mark 2 ,
 .Ht yank 2 .
 .ad

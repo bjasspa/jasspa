@@ -1,12 +1,12 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jul 16 23:13:14 1998
 .\"
-.Id $Id: m2cmd066.2,v 2.7 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd066.2,v 2.8 2004-01-11 01:11:17 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH osd 2
@@ -230,7 +230,7 @@ until the  user selects \fCokay\fR by:
 define-macro test-osd
     save-buffer
     osd 200 2 "" "Save Complete"
-    osd 200 4 "BcfH" %osd-ebtt-scheme "  &Okay  " f void
+    osd 200 4 "BcfH" %osd-ebtt-scheme "  \\HOkay  " f void
     osd
 !emacro
 
@@ -249,9 +249,9 @@ The above mechanism is how
 .Ht spell-buffer 3
 operates.
 .IP \fBk\fR
-Disables  hot-keys for the dialog. All text strings are copied literally. This
-is useful for dialogs like the tags child dialog as many tags have  '\fC&\fR's
-in them.
+Disables hot-keys (\\H) for the dialog. All text strings are copied literally.
+This is  useful  for  dialogs  like the tags  child  dialog  as many tags have
+\'\fC&\fR's in them.
 .IP \fBB\fR
 Makes the mouse right  Button have the same  behaviour as the left, by default
 the right  mouse  button  simply  closes the  dialog.  This is useful for some
@@ -477,7 +477,7 @@ define-macro my-entry-set
     !endif
 !emacro
 
-osd 200 1  "S" " &Enter text" 2
+osd 200 1  "S" " \\HEnter text" 2
 osd 200 2  "ExHf" %osd-entry-scheme "########" 1 my-entry-set
 .CE 0
 .Me $ehf-scheme
@@ -513,11 +513,12 @@ string with a hot key, e.g.
 .RS
 .Me $emf-scheme
 .CS
-osd 200 1  "S" " &Enter text" 2
+osd 200 1  "S" " \\HEnter text" 2
 osd 200 2  "ExHf" %osd-entry-scheme "########" 1 my-entry-set
-.CE 0
+.CE 
 .Me $ehf-scheme
-will be drawn as "\fC[ Okay ]\fR"
+will be drawn as "\fC[ Okay  ]\fR". The  hot-key  is denoted by \\H so for osd
+item 1 then this is the \fBE\fR of \fIEnter\fR.
 .RE
 .IP
 Item 1 will have a hot-key which executes item 2 (as no command is given), but
@@ -540,9 +541,9 @@ define-macro my-entry-set
     !endif
 !emacro
 
-osd 200 1  "S" " &Enter text" 2
+osd 200 1  "S" " \\HEnter text" 2
 osd 200 2  "ExHf" %osd-entry-scheme "########" 1 my-entry-set
-osd 200 3  "BxHcfiR" %osd-ebtt-scheme  " &Reset " f "set-variable %entry-value\\"\\""
+osd 200 3  "BxHcfiR" %osd-ebtt-scheme  " \\HReset " f "set-variable %entry-value\\"\\""
 .CE 0
 .Me $ehf-scheme
 .RE

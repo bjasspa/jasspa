@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd081.2,v 2.6 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd081.2,v 2.7 2004-01-11 01:11:18 jon Exp $
 .Im MicroEmacs command|delete|region
 .ds C0 "(\fB\*cw\fR)\ \&
 .so me.tni
@@ -30,6 +30,13 @@ the text is effectively lost (this does not effect the
 operation).
 .PP
 The mark position may be ahead or behind the current cursor position.
+.PP
+Where the region contains a narrowed region, defined by
+.Ht narrow-buffer 2 ,
+then
+.B kill-region
+deletes all text  contained  within the narrow, this text is added to the kill
+buffer.
 .SH USAGE
 To move text from one place to another:
 .BS
@@ -68,6 +75,7 @@ paste operation into another windowing application.
 .na
 .Ht copy-region 2 ,
 .Ht kill-rectangle 2 ,
+.Ht narrow-buffer 2 ,
 .Ht reyank 2 ,
 .Ht set-mark 2 ,
 .Ht undo 2 ,

@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil015.4,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m4fil015.4,v 2.6 2004-01-11 01:11:18 jon Exp $
 .Im MicroEmacs macro;variable
 .so me.tni
 .TH "MessageLineVariables" 4
@@ -81,10 +81,11 @@ following values
 A default  value of 0 is used if no value is specified. At first glance type 1
 and 4 appear to be the same. They differ only when a non absolute file name is
 entered, such as "foobar".  Type 1 will turn this into an absolute  path, i.e.
-if the current directory is "/tmp" then it will return  "/tmp/foobar".  Type 4
-however will return just "foobar", this is particularly useful with the
+if   the   current   directory   is   "\fC/tmp\fR"   then   it   will   return
+"\fC/tmp/foobar\fR".  Type 4  however  will  return  just  "foobar",  this  is
+particularly useful with the
 .Ht &find 4
-directive to then find the file "foobar".
+function to then find the file "foobar".
 .PP
 When a value of  \fC9\fR  is used the  argument  \fIcom-list\fR  must be given
 which  specifies a list of completion  values in the form of a \*(mS list (see

@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil007.4,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m4fil007.4,v 2.6 2004-01-11 01:11:18 jon Exp $
 .Im MicroEmacs macro;directive|miscellaneousOperators
 .so me.tni
 .TH !force 4
@@ -28,10 +28,11 @@ may be used following \fB!force\fR to determine if the command failed or not.
 A double \fB!force\fR can be used to catch a user termination (via the
 .Ht abort-command 2
 bound to  \fCC-g\fR). A macro  command  aborted by the user will be terminated
-even with a single !force directive, but not with two. See the example below.
+even with a single  \fB!force\fR  directive, but not with two. See the example
+below.
 .PP
 When specifying a numerical  argument with a \fIcommand\fR, it is placed after
-the \fI!force\fR directive and before the \fIcommand\fR i.e.
+the \fB!force\fR directive and before the \fIcommand\fR i.e.
 .Me $emf-scheme
 .CS
 !force 1 forward-char

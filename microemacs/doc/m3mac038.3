@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac038.3,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m3mac038.3,v 2.6 2004-01-11 01:11:18 jon Exp $
 .Im MicroEmacs command
 .so me.tni
 .TH which 3
@@ -33,7 +33,9 @@ The  variable  \fB.which.result\fR  is set to the last  found  program  or the
 string "\fCERROR\fR" if the program was not found.
 .SH NOTES
 .B which
-is a macro defined in \fCtools.emf\fR, it used the &which macro directive.
+is a macro defined in \fCtools.emf\fR, it uses the 
+.Ht &which 4 
+macro function.
 .SH "SEE ALSO"
 .na
 .Ht &which 4 .
