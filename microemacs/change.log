@@ -4,8 +4,96 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <050210.2248>
+>  Last Modified : <050218.1834>
 >
+
+    [050218] Added site delete button to ftp-connect dialog.
+
+    [050218] Fixed abbreviation and exec-string "\\p" and "\\P" store and goto
+             position  problem  when  the C-x C-a or C-x a keys  are  rebound.
+             Fixed by replacing with 'esc x set-alpha-mark  P' (where esc x is
+             a safe internal special key).
+
+    [050218] Updated watch  interface and made public.  Created new watch-time
+             command and prompt user for watch type when no argument is given.
+    
+    [050218] Removed  the use of bit  0x1000 in ada string  hilight as this is
+             unlikely to be wanted (probably copied from Pascal).
+
+    [050218] Changed the registry  parser to abort on error rather than trying
+             to carry on (a very  painful  process for a badly  decrypted  reg
+             file)
+
+    [050218] Fixed  highlighting minor issues. Hilight scheme now returns back
+             to EOL  scheme  after a  bracket.  A  branch  tag on an EOL  line
+             removes  the EOL flag so it  hilights  correctly.  Branch tag now
+             supports the 0x1000  single line  hilight.  Lookback now supports
+             0x800 on a branch tag.
+
+    [050217] HTML  highlighting.  Fixed some really grizzly scripted html page
+             highlighting issues, predominantly with php.
+
+    [050217] Change  ftp so it opens  the  ftp-connect  dialog if the  current
+             buffer is *ftp-files*.
+
+    [050217] Fixed ftp dir list column  detection and highlighting  issue with
+             windows ftp servers (time given as 9:15 not 09:15)
+
+    [050217] Fixed bug in set-variable and unset-variable when &spr is used to
+             create a variable name.
+
+    [050217] Watch command  (watch.emf).  Improved the watch  command, made '0
+             watch' call watch-reset,  changed watch-reset so with an argument
+             of 0 it removes  all watches  otherwise  it resets the main watch
+             counter and reports to the user which buffers are watched.  Added
+             new '2 watch' & '3 watch' which compares the file size, doing the
+             following:
+
+                * file on disk is smaller than last watch - reloads whole file
+                * file size is the same - does nothing
+                * file on disk is  larger - appends  to the end of the  buffer
+                  the tail of the file (file_size - watch_file_size bytes)
+
+             This assumes that the files is always being appended  (reasonable
+             assumption in most cases. The only difference  between 2 and 3 is
+             that 2 forces a  complete  reread  of the file on the first  file
+             change  (ensuring the buffer is correct), 3 does not which allows
+             the  user to  trash  the  first  gigabyte  of the  buffer  before
+             starting the watch.
+
+    [050217] Shell  template - added local and  function  keywords and fixed a
+             few string highlighting problems.
+
+    [050216] Made  the  dir-listing's  (Filtered)  label  on line 2  pickable,
+             changing the filter status when picked Made CVS's CVS-Quick label
+             pickable doing a full reread when picked.
+
+    [050216] Fixed a  couple  of silly  register  bugs  introduced  with  last
+             find-reg  concatenate root and sub-key change. Improved  behavior
+             when ftp erf file is missing,  now create a new one in memory and
+             flags as changed so should be saved on exit.
+
+    [050216] Do not abort me.emf execution if ftp erf file is missing or bad.
+
+    [050216] Fixed by removing the 'startup'  function, the main init now uses
+             dofile  directly  and it  checks  for  either  a NULL  or "" as a
+             filname and replaces with "me" or ("ne" and does not complain) if
+             found to be empty.  This  means that give  execute-file  an empty
+             string  executes  either "me" or "ne", i.e. resets me - nice side
+             effect. Changed  'dofile()' to execFile() and changed  execFile()
+             to executeFile()  (as is function for command  execute-file)  and
+             change the other exec command function names for consistency.
+
+    [050216] Fixed an  annoyance  reported by Bruno, ne should not complain if
+             it fails to find ne.emf - fair enough.
+
+    [050215] Fixed  crash  caused  by using -c option  with all  files  hidden
+             (comment  when  browsing  ftp dirs as cache dir lists are hidden)
+             The startup  process  knows the history  created  buffers but the
+             replacement  was none of these and due to the  tool-bar  it was a
+             buffer without a file name and bang! Fixed in 2 ways, first check
+             the  replacement  has a file name, second do not put hidden files
+             into the history - they're hidden.
 
     [050210] Improved  movement  between  items using the cursor in the search
              dialog.
@@ -299,7 +387,7 @@
     [041119] Many   improvements  to  OSD  dialog  user  interface   following
              suggestions  for news group.  Updated  most of the osd dialogs to
              use the new [*] checkbox  chars. Fixed  tabbing  orders and moved
-             some  items  over  to  combo-boxes.  Added  osd-cursor  visibilty
+             some  items  over to  combo-boxes.  Added  osd-cursor  visibility
              support to  scheme-edit.  Made the displaying of the cursor in an
              osd dialog a $system bit set by the hilight  scheme and fixed the
              position when in a child dialog.
@@ -331,7 +419,7 @@
              maintain  its  required  behavior. A "kill-line"  with no numeric
              argument  kills  to the end of the line but  excludes  the end of
              line character (GNU Emacs  compatibility). The default binding is
-             the "1 kill-line"  form, rebind the key to "kill-line" if the end
+             the "1 kill-line" form, re-bind the key to "kill-line" if the end
              of line is not to be killed.
 
     [041104] Removed  line and letter  buffer modes as these can be done using
@@ -392,8 +480,8 @@
              keys. Search tools to determine current context.
 
     [041023] Extended  the  buffer  setup for the  indent  mechanism.  May now
-             specify the default buffer indent-width and tabsize in the buffer
-             setup dialog.
+             specify  the  default  buffer  indent-width  and  tab-size in the
+             buffer setup dialog.
 
     [041022] Revised  indentation  implementation.  The  templates  now define
              indent  width  independent  rules. The  indent  commend  'indent'
@@ -525,8 +613,8 @@ Minor Patch - July 2004
              reserved  fields  to sort.  BACKSPACE  now  moves up a  directory
              level.
 
-    [040322] Changed the interface to cvs, ftp and file-browser command so that
-             if a  numeric  argument  of 0 is given  then the  directory  tree
+    [040322] Changed the  interface  to cvs, ftp and  file-browser  command so
+             that if a numeric  argument of 0 is given then the directory tree
              window is not opened, just the *files* buffer.
 
     [040322] AutoIt hook. Thanks to Dr Detlef Groth.
@@ -631,8 +719,8 @@ Minor Patch - July 2004
 
     [040214] Recognize  -* makefile -*- and -* sh -*-
 
-    [040213] Fixed reframe  cvs-console better so the exit status can be easily seen
-             from a small window.
+    [040213] Fixed reframe cvs-console better so the exit status can be easily
+             seen from a small window.
 
     [040213] PHP script can be started with '<?' tag in a php file.
 
