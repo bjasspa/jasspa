@@ -1,0 +1,52 @@
+> -!- document; fill-column:65; fill-mode:both; -!-
+>
+>  Copyright 2003 Jon Green.
+>
+>  Created By    : Jon Green
+>  Created       : Sat Aug 9 23:47:20 2003
+>  Last Modified : <030809.2352>
+>
+
+The  following are benchmark  figures for  MicroEmacs  running on
+different machines with different compilers.
+
+Running me "@benchmrk" results.txt
+
+1.0  SunBlade 100 (SPARC IIi 500MHz) - Forte 8.0 Compiler (-xO3)
+
+    @      Get(sec) Set(sec)
+    Test1:     78       77
+    Test2:    103      118
+    Test3:    112      127
+    Test4:    119      129
+    Test5:    132      140
+    Test6:    114      141
+    Test7:    130      141
+    Test8:     87      104
+    Test9:     87      104
+
+1.1 SunBlade 100 (SPARC IIi 500MHz) - Forte 7.0 Compiler (-xO3)
+
+    @      Get(sec) Set(sec)
+    Test1:     78       83
+    Test2:    117      125
+    Test3:    128      145
+    Test4:    129      131
+    Test5:    130      139
+    Test6:    133      134
+    Test7:    132      150
+    Test8:     94      106
+    Test9:     93      112
+
+1.2 SunBlade 100 (SPARC IIi 500MHz) - GCC 3.2.2 Compiler (-O3)
+
+    @      Get(sec) Set(sec)
+    Test1:     99       97
+    Test2:    124      136
+    Test3:    142      154
+    Test4:    130      148
+    Test5:    140      163
+    Test6:    140      157
+    Test7:    147      164
+    Test8:    110      121
+    Test9:    108      127
