@@ -25,10 +25,10 @@
 
 set-variable .cvs.names   "|Add|Checkout|Commit|Diff|Graphical Diff|Log|Remove|State|Status|Tag|Update|Annotate|Resolve Conflicts|"
 set-variable .cvs.cmds    "|add|checkout|commit|diff|gdiff|log|remove|-n update|status|tag|update|annotate|res-conf|"
-set-variable .cvs.flags   "|kAS*|DfvRP*|mZRS*|OZRScw|OSs|ZR|*|ZSR|ZR|tZRbrF*|ZSdRPC*|vZR|Ss|"
+set-variable .cvs.flags   "|kAS*|DfvRPo*|mZRS*|OZRScw|OSs|ZR|*|ZSR|ZR|tZRbrF*|ZSdRPCo*|vZR|Ss|"
 set-variable .cvs.schemes "|0|0|0|0|0|0|0|0|0|0|0|0|0|"
-set-variable .cvs.options "mDftvOZkdRAPCcwbrF"
-set-variable .cvs.values  " 0  11100110011000"
+set-variable .cvs.options "mDftvOZkdRAPCcwbrFo"
+set-variable .cvs.values  " 0  111001100110000"
 set-variable .cvs.revs    "|||||"
 set-variable .cvs.tag     ""
 set-variable .cvs.message ""
@@ -1079,6 +1079,9 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
             !elif &seq #l1 "F"
                 osd .osd.cvsosd &inc #l2 1 "fh" "    "
                 osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HMove the tag if it exists" #l0 cvs-osd-cbc
+            !elif &seq #l1 "o"
+                osd .osd.cvsosd &inc #l2 1 "fh" "    "
+                osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Check-out read-only" #l0 cvs-osd-cbc
             !else
                 osd .osd.cvsosd &inc #l2 1 "" &cat "flag " #l1
             !endif
@@ -1101,6 +1104,7 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
     ; construct the base command-line
     set-variable #l8 ""
     set-variable #l7 ""
+    set-variable #l6 ""
     set-variable #l0 0
     !repeat
         set-variable #l1 &mid .cvs.options #l0 1
@@ -1153,12 +1157,16 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
                 !if #l2
                     set-variable #l8 &cat #l8 " -AR"
                 !endif
+            !elif &seq #l1 "o"
+                !if #l2
+                    set-variable #l6 &cat #l6 " -r"
+                !endif
             !elif #l2
                 set-variable #l8 &cat &cat #l8 " -" #l1
             !endif
         !endif
     !until &seq &mid .cvs.options &inc #l0 1 1 ""
-    set-variable #l8 &spr "%s %s%s%s" .cvs.com &lget .cvs.cmds @# #l8 #l7
+    set-variable #l8 &spr "%s%s %s%s%s" .cvs.com #l6 &lget .cvs.cmds @# #l8 #l7
     ; get the output buffer name
     set-variable #l2 0
     set-variable #l6 &spr "*cvs-%s*" &slow &lget .cvs.names @#
