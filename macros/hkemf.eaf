@@ -13,4 +13,8 @@
  "\Luncomment-line\N" "  Delete Comment"
  "\Lcomment-to-end-of-line\N" "  Comment to End of Line"
  "\Lcomment-restyle\N" "  Restyle Comment"
+ "" ""
+ "" "</FOLD><FOLD+> \ecCFolding\ecA"
+ "\Lfold-current\N" "  Open/Close Current Fold"
+ "\Lfold-all\N" "  Open/Close All Folds"
  "" "</FOLD>"

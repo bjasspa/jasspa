@@ -34,6 +34,9 @@
         !endif
         !return
     !elif &equ @# 3
+        set-variable .kill-list-mouse-drop-1.line $window-line
+        kill-list-mouse-drop-1
+        161 set-position "\x82"
         !return
     !elif &equ @# 4
         !force 0 delete-buffer &cat "*kill-list*" #l0
@@ -46,14 +49,14 @@
 !emacro
 
 0 define-macro kill-list-mouse-pick-1
-    set-variable .buffer-list-create.line $window-line
+    set-variable .kill-list-mouse-drop-1.line $window-line
     goto-position "\x82"
 !emacro
 
 0 define-macro kill-list-mouse-drop-1
     set-variable #l0 $window-line
     goto-position "\x82"
-    !if &equ .buffer-list-create.line #l0
+    !if &equ .line #l0
         set-position "\x86"
         !force 0 find-buffer &cat "*kill-list*" &sub #l0 1
         !if $status

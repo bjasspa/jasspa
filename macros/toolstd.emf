@@ -146,7 +146,6 @@
 !emacro
 
 0 define-macro buffer-list-command
-    set-variable #l9 &rig @wl 3
     !if &equ @# -2
         goto-position "\x82"
         set-variable $buffer-names ".*"
@@ -170,6 +169,8 @@
         !done
         ; force a toolbar update on buffers
         set-variable .toolbar-redraw.bn "\CH"
+    !elif &les $window-line 2
+    !elif &seq &set #l9 &rig @wl 3 ""
     !elif &equ @# -1
         !force !force delete-buffer #l9 @mna
         !if $status
