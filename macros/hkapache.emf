@@ -3,7 +3,8 @@
 ; Copyright (C) 1999-2004 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
-; Synopsis:   Samba hook - invoked when a Samba script file is loaded.
+; Synopsis:   Apache hook - invoked when a Apache script file is loaded,
+;                           typically "httpd.conf".
 ; Author:     Jon Green
 ;
 define-macro fhook-apache
