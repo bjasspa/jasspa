@@ -12,9 +12,11 @@ TARGETDIR   =   $(UNAME)
 # to use from the path of the compiler. If it
 # is "/usr/bin/cc" then this is the dummy one.
 #
-_USECC  = $(WHICHCC:/usr/bin/cc=gcc)
-__USECC  = $(_USECC:not found=gcc)
-USECC = $(_USECC:$(WHICHCC)=$(UNAME)-cc)
+_USECC	 =AaBb$(WHICHCC)
+__USECC  =$(_USECC:AaBb=gcc)
+___USECC =$(__USECC:AaBbno=gcc)
+____USECC=$(___USECC:AaBb/usr/ucb/cc=gcc)
+USECC    =$(____USECC:AaBb$(WHICHCC)=$(UNAME)-cc)
 include $(TOPDIR)/etc/makeinc.$(USECC)
 #
 # Platform specific defines.
