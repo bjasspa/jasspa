@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m8fil000.8,v 2.4 2001-12-18 16:52:53 jon Exp $
+.Id $Id: m8fil000.8,v 2.5 2001-12-20 18:55:09 jon Exp $
 .Im MicroEmacs files
 .so me.tni
 .TH eaf 8
@@ -63,21 +63,21 @@ and must be  contained  in double  quotes. When invoked the keyboard  macro is
 executed  and  the  appropriate  text  is  inserted  into a  buffer.  This  is
 typically only used for more complex operations.
 .TP
-\fB\\n\fR Newline
-.\"
-A newline in the replacement text. Note while
-.Ht indent 2m
-is  enabled a  sequence a single  "\\n"  retains  the indent on the next line,
-however a sequence of two "\\n\\n" characters does not retain the tab position
-and  returns  the cursor to the start of the second  line. If blank  lines are
-required retaining tab positioning then a keyboard macro string should be used
-instead. (see "\\m" below).
-.TP
 \fB\\p\fR Position
 .\"
 The resultant  position of the cursor  following the  expansion. If the cursor
 position is not  specified,  the cursor is placed at the end of the  expansion
 string by default.
+.TP
+\fB\\r\fR Carriage Return (Newline)
+.\"
+A newline in the replacement text. Note while
+.Ht indent 2m
+is  enabled a  sequence a single  "\\r"  retains  the indent on the next line,
+however a sequence of two "\\r\\r" characters does not retain the tab position
+and  returns  the cursor to the start of the second  line. If blank  lines are
+required retaining tab positioning then a keyboard macro string should be used
+instead. (see "\\m" above).
 .TP
 \fB\\t\fR Tab
 .\"
@@ -88,13 +88,13 @@ The following example provides abbreviations for the 'C' programming language,
 found in file  \fBc.eaf\fR. All cursor  positions in the examples are shown by
 \fB<@>\fR.
 .CS
-#i #include <\\p>\\n
+#i #include <\\p>\\r
 #d #define \\p
-if if(\\p)\\n{\\n\\n}\\n
-ef else if(\\p)\\n{\\n\\n}\\n
-el else\\n{\\n\\p\\n}\\n
-wh while(\\p)\\n{\\n\\n}\\n
-sw switch(\\p)\\n{\\ncase :\\ndefault :\\n}\\n
+if if(\\p)\\r{\\r\\r}\\r
+ef else if(\\p)\\r{\\r\\r}\\r
+el else\\r{\\r\\p\\r}\\r
+wh while(\\p)\\r{\\r\\r}\\r
+sw switch(\\p)\\r{\\rcase :\\rdefault :\\r}\\r
 .CE
 Given that the abbreviation file has been declared then expansion of:
 .CS
@@ -138,7 +138,7 @@ The  "\\b"  and  "\\d"  are  typically  used for  positioning  the  cursor  on
 subsequent lines. "\\d" is the inverse of "\\t". Consider the following Pascal
 definition for an \fIelse\fR, \fIbegin\fR and \fIend\fR sequence:-
 .CS
-el else\\nbegin\\n\\t\\p;\\n\\dend;
+el else\\rbegin\\r\\t\\p;\\r\\dend;
 .CE
 with
 .Ht indent 2m
@@ -156,7 +156,7 @@ used in the \*(mE  \fB.emf\fR  files to define a help  entry. In this case the
 indent is known to be 5 characters. Hence to move the cursor back 5 characters
 then a sequence of \fB\\b\fR's are used:-
 .CS
-!h def .. \\nSEE ALSO\\n     <cross references>\\n\\b\\b\\b\\b\\b!ehelp
+!h def .. \\rSEE ALSO\\r     <cross references>\\r\\b\\b\\b\\b\\b!ehelp
 .CE
 the expansion in this case is:-
 .CS
