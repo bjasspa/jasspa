@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2mod012.2,v 2.6 2004-01-05 00:19:23 jon Exp $
+.Id $Id: m2mod012.2,v 2.7 2005-01-15 18:29:43 jon Exp $
 .Im MicroEmacs modes
 .so me.tni
 .TH tab 2m
@@ -17,18 +17,17 @@ tab \- Tabulation mode
 .SH DESCRIPTION
 .B tab
 mode,  when  enabled,  simulates  all  tab  stops  with  spaces.  This  allows
-\'\fIvariable\fR' tab sizes (see variable
-.Ht $tabsize 5 )
-and fixes indentation. If \fBtab\fR mode is not enabled literal tab characters
-are inserted, their displayed width may be controlled with the variable
-.Ht $tabwidth 5 .
+\'\fIvariable\fR'  tab sizes and fixes  indentation.  If \fBtab\fR mode is not
+enabled  literal  tab  characters  are  inserted,  their  displayed  width  is
+controlled on a buffer basis with the variable
+.Ht $buffer-tab-width 5 .
 .SH "SEE ALSO"
 .na
 .Hl "Operating Modes" Modes - ,
 .Ht buffer-mode 2 ,
 .Ht global-mode 2 .
-.Ht $tabsize 5 ,
-.Ht $tabwidth 5 ,
+.Ht $buffer-tab-width 5 ,
+.Ht $tab-width 5 ,
 .Ht tabs-to-spaces 3 .
 .ad
 .FH

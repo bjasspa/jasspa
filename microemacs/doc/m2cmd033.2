@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Jul 25 00:00:27 1998
 .\"
-.Id $Id: m2cmd033.2,v 2.8 2004-03-24 00:21:22 jon Exp $
+.Id $Id: m2cmd033.2,v 2.9 2005-01-15 18:29:43 jon Exp $
 .Im MicroEmacs command|indent|scuts
 .so me.tni
 .TH indent 2
@@ -132,6 +132,18 @@ are the same as at used by hilight token creation, see
 .Ht hilight 2
 for more information.
 .PP
+The  \fIindent\fR  argument  specifies the indent to apply in characters.  The
+indent may be specified as a literal  integer value, a +ve value increases the
+indent a \-ve value reduces the indent. The  \fIindent\fR  may be specified in
+terms of buffer specific generic value 
+.Ht $buffer-indent-width 5 
+using the value  \fBt\fR,  indicating a tab width. The value of \fBt\fR may be
+prefixed with a signed  integer or vulgar  fraction  which adjusts the size of
+the indentation width by the appropriate amount. Modifying the value of 
+.Hl $buffer-indent-width $buffer-indent-width 5 
+modifies the indent width that is applied  allowing the indentation  method to
+be specified independently of the indentation width.
+.PP
 The  indent  tokens  may be  assigned  one of the  following  types,  using the
 \fItype\fR  argument.  If the type is  specified  in upper case then the token
 must be surrounded by non-alpha-numeric characters:
@@ -166,11 +178,12 @@ current line.  \fIindent\fR  is the only argument  specified. e.g. \*(mS macro
 .RS
 .Me $emf-scheme
 .CS
-indent .hilight.emf n "!if" 4
+indent .hilight.emf n "!if" t
 .CE
 .Me $ehf-scheme
 Keeps  the  indentation  of  the  \fC!if\fR  line  the  same  as the  previous
-indentation,  change  the  indentation  on the  following  lines by an extra 4
+indentation,  change  the  indentation  on the  following  lines by an extra 
+.Hl $buffer-indent-width $buffer-indent-width 5 
 characters, to produce:
 .CS
 .ne 3
@@ -187,11 +200,12 @@ Increment  the  current  and  following  lines  indentation  by  \fIindent\fR.
 .RS
 .Me $emf-scheme
 .CS
-indent .hilight.emf o "!endif" -4
+indent .hilight.emf o "!endif" -t
 .CE
 .Me $ehf-scheme
-decrement the indent of the \fC!endif\fR  line and following lines by 4 spaces
-producing:
+decrement the indent of the \fC!endif\fR  line and following lines by 
+.Hl $buffer-indent-width $buffer-indent-width 5 
+spaces producing:
 .CS
 .ne 3
     \....
@@ -207,11 +221,13 @@ Changes the  indentation  of the current  line  \s-1ONLY\s0  by  \fIindent\fR.
 .RS
 .Me $emf-scheme
 .CS
-indent .hilight.emf o "!elif" -4
+indent .hilight.emf o "!elif" -t
 .CE
 .Me $ehf-scheme
-decrements  the  indentation  of the  \fC!elif\fR  line by 4  characters,  but
-restores the previous indentation after the current line, producing:
+decrements  the  indentation  of the  \fC!elif\fR  line by 
+.Hl $buffer-indent-width $buffer-indent-width 5 
+characters,  but  restores the previous  indentation  after the current  line,
+producing:
 .CS
 .ne 3
     \....
@@ -264,7 +280,7 @@ indentation  of the  first  continuation  line  plus the  given  \fIindent\fR.
 .RS
 .Me $emf-scheme
 .CS
-indent .hilight.tcl c "\\\\" 10
+indent .hilight.tcl c "\\\\" 3/2t
 .CE
 .Me $ehf-scheme
 A simple example is
@@ -424,16 +440,16 @@ is taken from \fChkemf.emf\fR:-
 \...
 
 0 indent  .hilight.emf 0 10
-indent .hilight.emf N "define-macro" 4
-indent .hilight.emf n "!if" 4
-indent .hilight.emf s "!eli" -4
-indent .hilight.emf s "!els" -4
-indent .hilight.emf o "!end" -4
-indent .hilight.emf n "!whi" 4
-indent .hilight.emf o "!don" -4
-indent .hilight.emf n "!rep" 4
-indent .hilight.emf o "!until" -4
-indent .hilight.emf o "!ema" -4
+indent .hilight.emf N "define-macro" t
+indent .hilight.emf n "!if" t
+indent .hilight.emf s "!eli" -t
+indent .hilight.emf s "!els" -t
+indent .hilight.emf o "!end" -t
+indent .hilight.emf n "!whi" t
+indent .hilight.emf o "!don" -t
+indent .hilight.emf n "!rep" t
+indent .hilight.emf o "!until" -t
+indent .hilight.emf o "!ema" -t
 indent .hilight.emf e "\\"" "\\"" "\\\\"
 indent .hilight.emf i ";"
 indent .hilight.emf f "*" 0
@@ -443,10 +459,18 @@ indent .hilight.emf f "*" 0
 Note that a \fB.hilight\fR command variable is typically used as a buffer with
 indentation  rules will almost certainly have hilighting and the same variable
 is used to define the hilighting scheme.
+.SH NOTES
+The variables 
+.Ht $indent-width 5 ,
+.Ht $buffer-indent-width 5
+and the \fBt\fP indent  notation were  introduced in the November 2004 version
+of \*(mS.
 .SH "SEE ALSO"
 .na
 .Hl "File Language Templates" languageTemplates 2 ,
 .Ht $buffer-indent 5 ,
+.Ht $buffer-indent-width 5 ,
+.Ht $indent-width 5 ,
 .Ht add-file-hook 2 ,
 .Ht hilight 2 .
 .ad
