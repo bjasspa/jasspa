@@ -640,6 +640,11 @@ bufferInsertText(meUByte *str)
             ;
         ss-- ;
         len = (((size_t) ss) - ((size_t) str)) ;
+        if(len > 0x0fff0)
+        {
+            mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Line too long!]") ;
+            return tlen ;
+        }
         if(cc == '\0')
         {
             if(len && (lineInsertString(len,str) > 0))
