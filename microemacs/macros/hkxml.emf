@@ -58,10 +58,10 @@ set-variable .fhook-xml.exact -1
     hilight .hilight.xml 0 "&\\w\\w;"                   .scheme.operator
     hilight .hilight.xml 0 "&\\w\\w\\w;"                .scheme.operator
     hilight .hilight.xml 0 "&\\w\\w\\w\\w;"             .scheme.operator
-    hilight .hilight.xml 0x804 "\"" "\"" "\\"           .scheme.string
+    hilight .hilight.xml 0x804 "\"" "\"" ""             .scheme.string
     
     0 hilight .hilight.xmlT 0                           $global-scheme
-    hilight .hilight.xmlT 4  "\"" "\"" "\\"             .scheme.string
+    hilight .hilight.xmlT 4  "\"" "\"" ""               .scheme.string
     hilight .hilight.xmlT 0x80 ">" .hilight.xml         .scheme.keyword
     hilight .hilight.xmlT 0x80 "/>" .hilight.xml        .scheme.keyword
     hilight .hilight.xmlT 0x80 "\\?>" .hilight.xml      .scheme.keyword
@@ -101,7 +101,7 @@ set-variable .fhook-xml.exact -1
     indent .hilight.xml  o "</script>" -t
     ; Define the indentation tokens. XML is well defined so there are
     ; always opening and closing brackets.
-    indent .hilight.xml e "\"" "\"" "\\"
+    indent .hilight.xml e "\"" "\"" ""
     indent .hilight.xml b "<!--" "-->"
     indent .hilight.xml b "<\\?" "\\?>"
     indent .hilight.xml n "<[^/!]" t 
