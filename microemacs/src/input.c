@@ -852,6 +852,9 @@ meUByte *compSole     = (meUByte *)" [Sole completion]" ;
 meUByte *compNoMch    = (meUByte *)" [No match]" ;
 meUByte *compNoExp    = (meUByte *)" [No expansion]" ;
 meUByte *compFailComp = (meUByte *)" [Failed to create]" ;
+#if MEOPT_SOCKET
+meUByte *compFtpComp  = (meUByte *)" [FTP completion?]" ;
+#endif
 
 #if MEOPT_OSD
 #define mlgsDisp(prom,buf,contstr,ipos) \
@@ -1128,6 +1131,18 @@ input_expand:
                  * we want to list yyy/ so move the base for the case */
                 if(buf[ilen-1] != DIR_CHAR)
                     *base = '\0' ;
+#if MEOPT_SOCKET
+                if(isFtpLink(fname) &&
+                   ((curDirList.path == NULL) || meStrcmp(curDirList.path,fname)))
+                {
+                    changed ^= 1 ;
+                    if(!changed)
+                    {
+                        contstr = compFtpComp ;
+                        break ;
+                    }
+                }
+#endif
                 compOff = meStrlen(fname) ;
                 getDirectoryList(fname,&curDirList) ;
                 noStrs = curDirList.size ;

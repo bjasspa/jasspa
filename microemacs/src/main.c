@@ -587,7 +587,7 @@ exitEmacs(int f, int n)
         }
 #endif
 #if MEOPT_SOCKET
-        ffFileOp(NULL,NULL,meRWFLAG_FTPCLOSE|meRWFLAG_NOCONSOLE) ;
+        ffFileOp(NULL,NULL,meRWFLAG_FTPCLOSENC) ;
 #endif
         TTend();
 

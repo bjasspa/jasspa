@@ -367,23 +367,24 @@ extern  void    fileNameCorrect(meUByte *oldName, meUByte *newName, meUByte **ba
 extern  void    getDirectoryList(meUByte *pathName, meDirList *dirList) ;
 
 /* fileio.c externals */
-#define meRWFLAG_FMOD      0x0000ffff
-#define meRWFLAG_SILENT    0x00010000
-#define meRWFLAG_READ      0x00020000
-#define meRWFLAG_INSERT    0x00040000
-#define meRWFLAG_WRITE     0x00080000
-#define meRWFLAG_BACKUP    0x00100000
-#define meRWFLAG_OPENEND   0x00200000
-#define meRWFLAG_OPENTRUNC 0x00400000
-#define meRWFLAG_AUTOSAVE  0x00800000
-#define meRWFLAG_CHKBREAK  0x01000000
-#define meRWFLAG_IGNRNRRW  0x02000000
-#define meRWFLAG_CRYPT     0x04000000
+#define meRWFLAG_FMOD       0x0000ffff
+#define meRWFLAG_SILENT     0x00010000
+#define meRWFLAG_READ       0x00020000
+#define meRWFLAG_INSERT     0x00040000
+#define meRWFLAG_WRITE      0x00080000
+#define meRWFLAG_BACKUP     0x00100000
+#define meRWFLAG_OPENEND    0x00200000
+#define meRWFLAG_OPENTRUNC  0x00400000
+#define meRWFLAG_AUTOSAVE   0x00800000
+#define meRWFLAG_CHKBREAK   0x01000000
+#define meRWFLAG_IGNRNRRW   0x02000000
+#define meRWFLAG_CRYPT      0x04000000
 /* following using in ffCopyFile to remove the source file & create a dir */
-#define meRWFLAG_DELETE    0x08000000
-#define meRWFLAG_MKDIR     0x10000000
-#define meRWFLAG_FTPCLOSE  0x20000000
-#define meRWFLAG_NOCONSOLE 0x40000000
+#define meRWFLAG_DELETE     0x08000000
+#define meRWFLAG_MKDIR      0x10000000
+#define meRWFLAG_FTPCLOSE   0x20000000
+#define meRWFLAG_FTPCLOSENC 0x2001ffff
+#define meRWFLAG_FTPNLST    0x40000000
 
 extern int      ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
                            meInt offset, meInt length) ;

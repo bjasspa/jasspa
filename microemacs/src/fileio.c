@@ -281,6 +281,7 @@ static meHTONS          meHtons ;
 static meSOCKET ffccsk=meBadSocket ;
 static meSOCKET ffsock=meBadSocket ;
 static meUByte *ffsockAddr=NULL ;
+static meUByte *ffsockHome=NULL ;
 static meRegNode *ffpasswdReg=NULL ;
 
 /* Define the URL file types */
@@ -516,28 +517,27 @@ ffReadSocketLine(meSOCKET ss, meUByte *buff)
 static int
 ftpReadReply(void)
 {
-    meUByte buff[1024] ;
     int ret ;
     
     ffremain = 0 ;
-    if(ffReadSocketLine(ffccsk,buff) <= 0)
+    if(ffReadSocketLine(ffccsk,resultStr) <= 0)
         return meFALSE ;
-    if(meStrlen(buff) < 4)
+    if(meStrlen(resultStr) < 4)
         return ftpERROR ;
         
-    ret = buff[0] - '0' ;
-    if(buff[3] == '-')
+    ret = resultStr[0] - '0' ;
+    if(resultStr[3] == '-')
     {
         /* multi-line reply */
         meUByte c0, c1, c2 ;
-        c0 = buff[0] ;
-        c1 = buff[1] ;
-        c2 = buff[2] ;
+        c0 = resultStr[0] ;
+        c1 = resultStr[1] ;
+        c2 = resultStr[2] ;
         do {
-            if(ffReadSocketLine(ffccsk,buff) <= 0)
+            if(ffReadSocketLine(ffccsk,resultStr) <= 0)
                 return meFALSE ;
-        } while((buff[0] != c0) || (buff[1] != c1) ||
-                (buff[2] != c2) || (buff[3] != ' ')) ;
+        } while((resultStr[0] != c0) || (resultStr[1] != c1) ||
+                (resultStr[2] != c2) || (resultStr[3] != ' ')) ;
     }
     if(ret > ftpPOS_INTERMED)
         ret = ftpERROR ;
@@ -592,6 +592,8 @@ ffCloseSockets(int logoff)
         ffccsk = meBadSocket ;
         if(meNullFree(ffsockAddr))
             ffsockAddr = NULL ;
+        if(meNullFree(ffsockHome))
+            ffsockHome = NULL ;
     }
     ffremain = 0 ;
 }
@@ -628,7 +630,7 @@ ftpGetDataChannel(void)
     meUByte *ss ;
     
     if((ftpCommand(0,"PASV") != ftpPOS_COMPLETE) ||
-       ((ss=meStrchr(ffbuf,'(')) == NULL) || 
+       ((ss=meStrchr(resultStr,'(')) == NULL) || 
        (sscanf((char *)ss,"(%d,%d,%d,%d,%d,%d)",aai,aai+1,aai+2,aai+3,ppi,ppi+1) != 6))
         return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Failed to get PASSIVE address]") ;
     
@@ -763,7 +765,7 @@ static int ffUrlFileOpen(meUByte *urlName, meUByte *user, meUByte *pass, meUInt 
 int
 ffFtpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByte *file, meUInt rwflag)
 {
-    meUByte buff[meBUF_SIZE_MAX] ;
+    meUByte buff[meBUF_SIZE_MAX], *ss ;
     int dirlist, ll ;
     
     /* are we currently connected to this site?? */
@@ -796,19 +798,43 @@ ffFtpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByt
             return meFALSE ;
         }
         ffsockAddr = meStrdup(buff) ;
+        if((ftpCommand(0,"PWD") == ftpPOS_COMPLETE) &&
+           ((ss = meStrchr(resultStr,'"')) != NULL) &&
+           ((ffsockHome = meStrchr(ss+1,'"')) != NULL))
+        {
+            if(ffsockHome[-1] == '/')
+                ffsockHome[-1] = '\0' ;
+            else
+                ffsockHome[0] =  '\0' ;
+            ffsockHome = meStrdup(ss+1) ;
+        }
     }
     
+    if((file[1] == '~') && (file[2] == '/'))
+    {
+        if(ffsockHome != NULL)
+        {
+            meStrcpy(buff,ffsockHome) ;
+            if(((ll = meStrlen(buff)) > 0) && (buff[ll-1] == '/'))
+                ll-- ;
+        }
+        else
+            ll = 0 ;
+        meStrcpy(buff+ll,file+2) ;
+        file = buff ;
+    }
+            
     if(ffurlBp != NULL)
     {
-        meUByte buff[meBUF_SIZE_MAX] ;
+        meUByte lbuff[meBUF_SIZE_MAX] ;
         ffurlConsoleAddText((meUByte *)"",0x04) ;
         if(rwflag & meRWFLAG_WRITE)
-            meStrcpy(buff,"Writing: ");
+            meStrcpy(lbuff,"Writing: ");
         else if(rwflag & meRWFLAG_READ)
-            meStrcpy(buff,"Reading: ");
+            meStrcpy(lbuff,"Reading: ");
         else
-            meStrcpy(buff,"Deleting: ");
-        meStrcat(buff,file);
+            meStrcpy(lbuff,"Deleting: ");
+        meStrcat(lbuff,file);
         ffurlConsoleAddText(buff,0) ;
     }
     mlwrite(MWCURSOR,(meUByte *)"[Connected, %sing %s]",
@@ -853,7 +879,7 @@ ffFtpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByt
         {
             if(ftpCommand(0,"CWD %s",file) != ftpPOS_COMPLETE)
                 break ;
-            ftpCommand(1,"LIST",file) ;
+            ftpCommand(1,(rwflag & meRWFLAG_FTPNLST) ? "NLST":"LIST",file) ;
         }
         else
             ftpCommand(1,"RETR %s",file) ;
@@ -878,6 +904,8 @@ ffFtpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByt
         dirlist = 1 ;
     }
     ffCloseSockets(0) ;
+    if(rwflag & meRWFLAG_SILENT)
+        return meABORT ;
     return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Failed to %s file]",
                    (rwflag & meRWFLAG_WRITE) ? "write":"read");
 }
@@ -985,11 +1013,13 @@ ffHttpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUBy
         }
     }
     ffCloseSockets(1) ;
+    if(rwflag & meRWFLAG_SILENT)
+        return meABORT ;
     return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Failed to read header of %s]",ss) ;
 }
 
 static void
-ffUrlFileSetupFlags(int flag)
+ffUrlFileSetupFlags(meUInt rwflag)
 {
     meUByte *ss ;
     
@@ -1008,7 +1038,7 @@ ffUrlFileSetupFlags(int flag)
        ((ffurlBp=bfind(ffurlConsoleBName[fftype-meURLTYPE_HTTP],BFND_CREAT)) != NULL))
     {
         meModeClear(ffurlBp->mode,MDUNDO) ;
-        if((ffurlFlags & ffURL_SHOW_CONSOLE) && !(flag & 0x01))
+        if((ffurlFlags & ffURL_SHOW_CONSOLE) && !(rwflag & meRWFLAG_SILENT))
             meWindowPopup(ffurlConsoleBName[fftype-meURLTYPE_HTTP],0,NULL) ;
     }
 }
@@ -1067,7 +1097,7 @@ ffUrlFileOpen(meUByte *urlName, meUByte *user, meUByte *pass, meUInt rwflag)
     else if(rwflag & meRWFLAG_WRITE)
         ffwp = ffpInvalidVal ;
     
-    ffUrlFileSetupFlags(0) ;
+    ffUrlFileSetupFlags(rwflag) ;
     
     /* skip the http: or ftp: */
     ss = (fftype == meURLTYPE_FTP) ? urlName+6:urlName+7 ;
@@ -2437,8 +2467,8 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags)
 #ifdef _UNIX
         meSigHold() ;
 #endif
-        if(!(dFlags & meRWFLAG_NOCONSOLE))
-            ffUrlFileSetupFlags((dFlags & meRWFLAG_SILENT) ? 1:0) ;
+        if(dFlags != meRWFLAG_FTPCLOSENC)
+            ffUrlFileSetupFlags(dFlags) ;
         ffCloseSockets(1) ;
 #ifdef _UNIX
         meSigRelease() ;
