@@ -6,8 +6,8 @@ MKDIR=mkdir
 DIRECTORIES="company doc icons macros spelling src bin"
 SEARCH_PATH="/opt/jasspa/company:/opt/jasspa/macros:/opt/jasspa/spelling"
 BASEDIR=.
-METREE=jasspa-metree-20040206.tar.gz
-MEBIN=jasspa-me-sun-i386-58-20040206.gz
+METREE=jasspa-metree-20040301.tar.gz
+MEBIN=jasspa-me-sun-i386-58-20040301.gz
 BASEFILESET="${METREE} ${MEBIN}"
 
 #
@@ -43,11 +43,11 @@ find ${BASEDIR}/jasspa -print | pkgproto | sed -e "s/jon users/bin bin/g" >> pro
 echo 'PKG="jasspa-me"' > pkginfo
 echo 'NAME="JASSPA MicroEmacs"' >> pkginfo
 echo 'ARCH="i386"' >> pkginfo
-echo 'VERSION="04.02.06"'  >> pkginfo
+echo 'VERSION="04.03.01"'  >> pkginfo
 echo 'CATEGORY="application"' >> pkginfo
 echo 'VENDOR="www.jasspa.com"' >> pkginfo
 echo 'EMAIL="support@jasspa.com"' >> pkginfo
-echo 'PSTAMP=Jon Green"'  >> pkginfo
+echo 'PSTAMP="Jon Green"'  >> pkginfo
 echo 'BASEDIR="/opt"' >> pkginfo
 echo 'CLASSES="none"' >> pkginfo
 #
@@ -72,18 +72,18 @@ echo "  pkgtrans -s /var/spool/pkg /tmp/jasspa-me"
 echo "  rm -rf ./jasspa-me"
 echo "  cd /tmp"
 echo "  rm -rf ./jasspapkg"
-echo "  zip -9 jasspa-mepkg-sun-i386-58-20040206.zip jasspa-me"
+echo "  zip -9 jasspa-mepkg-sun-i386-58-20040301.zip jasspa-me"
 echo "To test:-"
 echo "  mkdir jasspa"
 echo "  cd ./jasspa"
-echo "  unzip ../jasspa-mepkg-sun-i386-58-20040206.zip"
+echo "  unzip ../jasspa-mepkg-sun-i386-58-20040301.zip"
 echo "  pkgadd -d jasspa-me"
 echo "To subsequently remove"
 echo "  pkgrm jasspa-me"
 echo ""
 #
 # Clean up
-# 
+#
 rm -f prototype
 rm -f pkginfo
 rm -rf ./jasspa
