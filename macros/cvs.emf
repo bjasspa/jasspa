@@ -1011,7 +1011,7 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
             set-variable #l2 &add &mul #l0 100 100
             osd .osd.cvsosd  &inc #l2 1 ""
             !if &seq #l1 "D"
-                osd .osd.cvsosd &inc #l2 1 "Sf" "    Root Directory:" &add #l2 2
+                osd .osd.cvsosd &inc #l2 1 "Sf" "    Root \HDirectory:" &add #l2 2
                 osd .osd.cvsosd &inc #l2 1 "fh" "    "
                 osd .osd.cvsosd &inc #l2 1 "EtxHfhz" .scheme.osd-entry 60 1 "" f cvs-osd-Dec
                 osd .osd.cvsosd &inc #l2 1 "f"  "    "
@@ -1081,7 +1081,7 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
                 osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HMove the tag if it exists" #l0 cvs-osd-cbc
             !elif &seq #l1 "o"
                 osd .osd.cvsosd &inc #l2 1 "fh" "    "
-                osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Check-out read-only" #l0 cvs-osd-cbc
+                osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Check-out re\Had-only" #l0 cvs-osd-cbc
             !else
                 osd .osd.cvsosd &inc #l2 1 "" &cat "flag " #l1
             !endif
@@ -1768,7 +1768,7 @@ osd .osd.cvsstp &inc #l2 1 "" ""
 osd .osd.cvsstp &inc #l2 1 "Sfh" "    CVS \HCommand: " &add #l2 2
 osd .osd.cvsstp &inc #l2 1 "EtxHfz" .scheme.osd-entry 50 1 "" 3 cvs-setup-entry
 osd .osd.cvsstp &inc #l2 1 "" ""
-osd .osd.cvsstp &inc #l2 1 "Sfh" "    C\Hompression: " &add #l2 1
+osd .osd.cvsstp &inc #l2 1 "Sfh" "    Compr\Hession: " &add #l2 1
 osd .osd.cvsstp &inc #l2 1 "OtxmsfhHzR" .scheme.osd-entry 16 1 "" .osd.tmp cvs-setup-compression
 osd .osd.cvsstp &inc #l2 1 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 &sub #l2 1
 osd .osd.cvsstp &inc #l2 1 "" ""
