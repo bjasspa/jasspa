@@ -397,6 +397,7 @@ extern meUByte    charCaseTbl[] ;
 extern meUByte    charLatinUserTbl[] ;
 extern meUByte    charUserLatinTbl[] ;
 extern meUByte    charMaskFlags[] ;
+extern meUByte   *charKeyboardMap ;
 extern meUByte    isWordMask ;
 
 /* the following are global variables but not defined in this file */

@@ -946,11 +946,11 @@ composePage (int f)
                         str = lp->text;
                         while ((cc = *str++) != '\0')
                         {
-                            if (cc == 255)
+                            if(cc == meCHAR_LEADER)
                             {
-                                if ((cc=*str++) == 0x01)
+                                if ((cc=*str++) == meCHAR_TRAIL_NULL)
                                     cc = 0;
-                                else if (cc == 0x02)
+                                else if (cc != meCHAR_TRAIL_LEADER)
                                     cc=*str++;
                             }
                             *p++ = cc;

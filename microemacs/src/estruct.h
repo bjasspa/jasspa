@@ -45,13 +45,13 @@
 #define meCHAR_BELL           0x07              /* the bell character           */
 #define meCHAR_TAB            0x09              /* the tab character            */
 #define meCHAR_NL             0x0a              /* the \n char ^J, not ^M       */
-#define meCHAR_LEADER         0xff              /* the special char leader flag */
+#define meCHAR_LEADER         0x1c              /* the special char leader flag */
 #define meCHAR_TRAIL_NULL     0x01              /* the trail byte of a '\0'     */
 #define meCHAR_TRAIL_SPECIAL  0x02              /* the trail byte of a \s??     */
 #define meCHAR_TRAIL_HOTKEY   0x03              /* trail of an osd hotkey (\H)  */
 #define meCHAR_TRAIL_HILSTART 0x04              /* trail of osd start hilight (\{) */
 #define meCHAR_TRAIL_HILSTOP  0x05              /* trail of osd stop hilight (\}) */
-#define meCHAR_TRAIL_LEADER   0xff              /* trail of a 0xff, must be 0xff */
+#define meCHAR_TRAIL_LEADER   meCHAR_LEADER     /* trail of a leader char (must be same char) */
 
 #define ME_SHIFT       0x0100                   /* special key shift            */
 #define ME_CONTROL     0x0200                   /* special key conrtol          */
