@@ -4,24 +4,58 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <040213.1040>
+>  Last Modified : <040213.1750>
 >
+
+    [040213] BS/0401-4 - Minor - TBD
+
+        Reframe  cvs-console better so the exit status can be easily seen from
+        a small window.
+
+    [040213] SP/0401-4 - Major - Target TBD
+    
+        CVS status of directories is not shown.
+        
+    [040212] SP/0401-4 - Major - Target TBD
+        
+        Executing 'me' (user-setup -> Current) breaks  auto-spell until a main
+        spell command (spell-word or spell-buffer) is executed.
+
+    [040212] SP/0401-4 - Enhancement - TBD
+        
+        Need some way of opening the right mouse button menu using a key. 'esc ='
+        
+    [040210] BS/0401-4 - Minor - TBD
+
+        ME build.bat -l options do not work in standard  cmd/command  as there
+        use 4DOS '>>&' extension. 
+
+    [040210] BS/0401-4 - Minor - TBD
+
+        ME can't load files within a directory with '[..]' in its name - win32
+        
 ___________________________________________________________________________
 
 0401-4 Release Fixes
 ___________________________________________________________________________
 
+    [040213] SP/0401-4 - Major - Target 0401-5
+    
+        Bottom  Toolbar  window grows when CVS is opened,  change-window-depth
+        does not respect bit 2 of $window-flags.
+        
+    [040210] BS/0401-4 - Major - Target 0401-5
+
+        There are  several  differences  between  running  'cvs' and using the
+        'cvs-*'  commands  that can lead to  unexpected  and unwanted  results
+        (e.g. use C-f10, select a couple of files and then execute cvs-commit,
+        this will commit  changes to all files as it does not respect the list
+        of selected  files).
+        
     [040129] JG/0401-1 - Major - Target 0401-5
     
         From  Organizer  -> Address,  do "Find" and search  "First" for a name
         that does not exist - Organiser locks up.
-
-    [040206] JG/0401-4 - Enhancement - Target 0401-5
-
-        Support to recognize GNU tags for makefile "-*- Makefile -*-" and UNIX
-        shell files "-*- sh -*-".
-        
-        Change already sent to SP
 
     [040203] Gabriel/0401-3 - Font selection under XP
 
@@ -42,6 +76,12 @@ ___________________________________________________________________________
 
 > FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED 
 
+    [040213] BS/0401-4 - Major - Target 0401-5
+    
+        PHP script can be started with '<?' tag in a php file.
+        
+        Fixed SP/0401-5 04/02/13: Macro change.
+        
     [040210] DG/0401-4 - Major - Target 0401-5
     
         Toolbar Directory File List does not contain "../" - UNIX only. 
@@ -51,8 +91,15 @@ ___________________________________________________________________________
     [040206] Th/0401-4 - Minor - Target 0401-5
 
         Document the create/delete/next-frame keys.
+
+        Fixed JG/0401-5 04/02/13: Docs change.
+
+    [040206] JG/0401-4 - Enhancement - Target 0401-5
+
+        Support to recognize GNU tags for makefile "-*- Makefile -*-" and UNIX
+        shell files "-*- sh -*-".
         
-        Fixed 0401-5 04/02/13: Updated documentation.
+        Fixed 0401-5 04/02/10: Macro change.
 
     [040206] JG/0401-4 - Critical - Target 0401-5
 
@@ -110,26 +157,15 @@ ___________________________________________________________________________
 
     [040211] SP/0401-4 - Enhancement - Target TBD
     
-        Would like a system bit flag which when set stops ME from just exiting
-        on C-x C-c. I  typically  have on main ME session and I do not want to
-        exit this session, but due to miss types this often happens.
-        
-        Jon: Just re-bind the key to "void" or some smarter macro ??
-
-    [040211] SP/0401-4 - Enhancement - Target TBD
-    
         evaluation  of ~fred/ on UNIX  should use the passwd file first to get
         the correct home directory of fred.
 
     [040210] BS/0401-4 - Minor - Not this release.
 
-        There are  several  differences  between  running  'cvs' and using the
-        'cvs-*'  commands  that can lead to  unexpected  and unwanted  results
-        (e.g. use C-f10, select a couple of files and then execute cvs-commit,
-        this will commit  changes to all files as it does not respect the list
-        of selected  files). Also the use of a  *cvs-console*  or *cvs-commit*
-        buffer. Should these differences be engineered out?    
-        
+        There are  differences  between  the output  buffer used when  running
+        'cvs'  and  using  the  'cvs-*'   commands,  e.g.   *cvs-console*   or
+        *cvs-commit* buffer. Should these differences be engineered out? 
+
     [040210] SP/0401-4 - Enhancement - Target TBD
     
         Add support for deleting  directories to file-op and to  file-browser.
@@ -180,6 +216,11 @@ ___________________________________________________________________________
     [040101] BS/0401-1 - Enhancement - Target TBD
     
         New work notepad/todo list feature.
+
+    [040101] JG/0401-1 - Minor - Target TBD
+    
+        Default  printer  selection  can be wrong on windows  unless the print
+        setup dialog is opened.
 
     [010101] JG/01 - Enhancement - Target TBD
 
