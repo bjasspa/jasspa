@@ -4,8 +4,37 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <050206.1229>
+>  Last Modified : <050210.2248>
 >
+
+    [050210] Improved  movement  between  items using the cursor in the search
+             dialog.
+
+    [050210] Fixed cvs dialog default settings
+
+    [050210] Corrected search path expansion, incorrectly handling a PATH_CHAR
+             at the start of the string.
+
+    [050209] Up-dated  user-setup  platform  page to new style and added  yank
+             rectangle binding.
+
+    [050209] Fixed no-color termcap $window-char variable setting
+
+    [050209] Fixed hot keys (were 3 'U's) in osdmisc.emf
+
+    [050209] Added  new   BraceStatement   indent   value  to  support  GNU  C
+             indentation style.
+
+    [050209] Fixed the osdDisp()  function  required a TTflush  otherwise  the
+             cursor is left in the wrong position on termcap systems.
+
+    [050209] Fixed the default $window-char variable setting.
+
+    [050209] Fixed the DOS home directory setting and compiler warnings.
+
+    [050208] Changed  the C indent  definition  to be the same  format  as the
+             existing indent  definitions  i.e. uses flag & indent value, this
+             makes it more flexible and extendible. Updated macro files.
 
     [050205] Password generation macros added to contrib directory.
 
