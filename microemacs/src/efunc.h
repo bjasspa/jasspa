@@ -1,7 +1,7 @@
 /*
  *      SCCS:           %W%             %G%             %U%
  *
- *      Last Modified : <010203.2001>
+ *      Last Modified : <010304.2356>
  *
  *      EFUNC.H:        MicroEMACS function declarations and names
  *
@@ -137,7 +137,7 @@ meCMD  *cmdHash[cmdHashSize] =
     &__meFunc_DELBAK,     NULL,                 NULL,                 &__meFunc_TRNLINE,    &__meFunc_STRREP,
     NULL,                 NULL,                 NULL,                 NULL,                 &__meFunc_DEFFMAC,
     NULL,                 NULL,                 &__meFunc_CHGFONT,    NULL,                 &__meFunc_NEWLIN,
-    NULL,                 NULL,                 NULL,                 NULL,                 NULL,
+    NULL,                 NULL,                 &__meFunc_FILEOP,     NULL,                 NULL,
     NULL,                 NULL,                 NULL,                 NULL,                 NULL,
     &__meFunc_UPDATE,     NULL,                 &__meFunc_WRTHIST,    NULL,                 NULL,
     NULL,                 &__meFunc_DELSBUF,    &__meFunc_UNDO,       NULL,                 NULL,

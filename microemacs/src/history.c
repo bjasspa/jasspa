@@ -5,7 +5,7 @@
  *  Synopsis      : ME histroy saving and re-loading routines
  *  Created By    : Steven Phillips
  *  Created       : 1995
- *  Last Modified : <000723.1940>
+ *  Last Modified : <010305.0749>
  *
  *  Description
  *     Saves the main registry configuration, with a history of currently
@@ -163,7 +163,7 @@ readHistory(int f, int n)
     }
     else
     {
-        if (mlreply((uint8 *)"Read history", MLFILECASE,0,filename,FILEBUF) != TRUE)
+        if (meGetString((uint8 *)"Read history", MLFILECASE,0,filename,FILEBUF) != TRUE)
             return ABORT ;
         fname = filename ;
     }
@@ -314,7 +314,7 @@ saveHistory(int f, int n)
     else
     {
         uint8 tmp[FILEBUF] ;	/* Filename */
-        if(mlreply((uint8 *)"Save history",MLFILECASE,0,tmp,FILEBUF) != TRUE)
+        if(meGetString((uint8 *)"Save history",MLFILECASE,0,tmp,FILEBUF) != TRUE)
             return FALSE ;
         if(!fileLookup(tmp,(uint8 *)".erf",meFL_CHECKDOT|meFL_USESRCHPATH,filename))
             meStrcpy(filename,tmp) ;

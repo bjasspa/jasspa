@@ -1,20 +1,38 @@
 .\" -*- nroff -*-
-.Id $Id: m4fil026.4,v 1.2 2000-10-21 17:10:40 jon Exp $
+.Id $Id: m4fil026.4,v 1.3 2001-03-05 21:39:41 jon Exp $
 .Im MicroEmacs macro;function;miscellaneous|bind
 .so me.tni
-.TH &kbind 4
-.XI &kbind - "Return command key binding"
+.TH &cbind 4
+.XI &cbind - "Return the command a key is bound to"
+.XI &kbind - "Return the key a command is bound to"
+.XI &nbind - "Return the numerial argument of a binding"
 .SH NAME
-&kbind \- Return command key binding
+&cbind, &kbind, &nkind \- Command/key binding operators
 .SH SYNOPSIS
 .na
+.B &cbind
+.I key
+.br
 .B &kbind
+.I n
+.I command
+.br
+.B &nbind
 .I key
 .ad
 .SH DESCRIPTION
-\fB&kbind\fR returns the command bound to the given key sequence, \fB&kbind\fR
+\fB&cbind\fR returns the command bound to the given key sequence, \fB&kbind\fR
 can be  abbreviated  to \fB&kbi\fR. If the key is not bound then  \fB&kbind\fR
 returns the string "\fIERROR\fR".
+.PP
+\fB&nbind\fR  returns the  numerical  argument  associated  with the given key
+binding,  \fB&nbind\fR  can be  abbreviated  to  \fB&nbi\fR. If the key is not
+bound then \fB&nbind\fR  returns the string  "\fIERROR\fR", if the binding has
+no argument then an empty string (\fC""\fR) is returned.
+.PP
+\fB&kbind\fR  returns a key sequence bound to the given \fIcommand\fR with the
+given numerical argument \fIn\fR. If no binding can be found then \fB&kbind\fR
+returns an empty string (\fC""\fR).
 .SH EXAMPLE
 The  following  example  waits for the user to press a key, then  prints  what
 command the key is bound to.
@@ -22,9 +40,12 @@ command the key is bound to.
 .CS
 ml-write "Enter key: "
 set-variable #l0 @cgk
-ml-write &spr "%s is bound to %s" #l0 &kbin #l0
+ml-write &spr "%s is bound to %s" #l0 &cbin #l0
 .CE 0
 .Me $ehf-scheme
+.SH NOTES
+In March 2001 \fB&kbind\fR was renamed \fB&ckind\fR and a new \fB&nkind\fR and
+\fB&kbind\fR added.
 .SH "SEE ALSO"
 .na
 .Hl "Variable Functions" Functions - ,

@@ -1,17 +1,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
-;  Author        : $Author: jon $
 ;  Created By    : Steven Phillips
 ;  Created       : Tue Jan 23 14:09:08 2001
-;  Last Modified : <010301.2209>
-;
-;  Description
-;
+;  Description   : CVS support macros for MicroEmacs
 ;  Notes
 ;
-;  History
-;
-;  Copyright (c) 2001 Parametric Technology Corporation.
+;  Copyright (c) 2001 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 0 exec-file "hkdirlst"
@@ -104,7 +97,7 @@ define-macro cvs-remove
         !abort
     !endif
     delete-buffer $buffer-bname @mna
-    4 copy-file #l1
+    0x20 file-op #l1
     set-variable #l2 &spr "cvs remove \"%s\"" #l1
     4 ipipe-shell-command #l2 "*cvs-remove*"
 !emacro
@@ -119,12 +112,12 @@ define-macro cvs-diff
 	shell-command &spr "cvs -n update -p %s > %s 2> /dev/null" #l0 #l1 "*cvs-diff*"
     !endif
     set-variable #l2 $temp-name
-    0 copy-file #l0 #l2
+    0x80 file-op #l0 #l2
     !force !force gdiff #l1 #l2 "*CVS-REP*" #l0
     set-variable #l3 $status
     ; Remove the temp files
-    !force 4 copy-file #l1
-    !force 4 copy-file #l2
+    !force 0x20 file-op #l1
+    !force 0x20 file-op #l2
     !return #l3
 !emacro
 
@@ -178,7 +171,7 @@ define-macro cvs-diff
             !endif
             !force 0 delete-buffer $buffer-bname
         !endif
-        !force 4 copy-file #p9
+        !force 0x20 file-op #p9
     !endif
     ml-write &spr "[Failed to generate %s version of file]" &cond @# "repository" "local"
     !abort
@@ -221,8 +214,8 @@ define-macro cvs-resolve-conflicts
     !force !force gdiff #l1 #l2 "*CVS-REP*" #l0
     set-variable #l3 $status
     ; Remove the temp files
-    !force 4 copy-file #l1
-    !force 4 copy-file #l2
+    !force 0x20 file-op #l1
+    !force 0x20 file-op #l2
     goto-position "\x82"
     !if #l3
         reread-file
@@ -521,8 +514,8 @@ define-macro cvs-resolve-conflicts
 !emacro
 
 define-macro cvs
-    osd .osd.dirlst  11 "Md" "C&VS" .osd.tmp osd-cvs-file-menu
     set-variable .fhook-dirlst.file-process "cvs-dir-conv"
+    osd .osd.dirlst  11 "Md" "C&VS" .osd.tmp osd-cvs-file-menu
     delete-other-windows
     2 split-window-vertically
     15 resize-window-vertically

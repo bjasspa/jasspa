@@ -8,7 +8,7 @@
  *  Object Name  : macro.c
  *  Created      : 1995
  *  Author       : Steve Philips
- *  Last Modified: <000814.0931> 
+ *  Last Modified: <010305.0801> 
  *
  *  Description	
  *
@@ -149,7 +149,7 @@ execString(int f, int n)
 {
     uint8 sbuf[MAXBUF] ;
     
-    if(mlreply((uint8 *)"Enter string", MLFFZERO, 0, sbuf, MAXBUF) != TRUE)
+    if(meGetString((uint8 *)"Enter string", MLFFZERO, 0, sbuf, MAXBUF) != TRUE)
         return 0 ;
     return stringExec(f,n,sbuf) ;
 }
@@ -197,7 +197,7 @@ createMacro(uint8 *name)
     
     /* If the macro name has not been give then try and get one */
     if((name == NULL) && 
-       (mlreply((uint8 *)"Enter macro name", MLCOMMAND, 0, buff, MAXBUF) == TRUE) && (buff[0] != '\0'))
+       (meGetString((uint8 *)"Enter macro name", MLCOMMAND, 0, buff, MAXBUF) == TRUE) && (buff[0] != '\0'))
         name = buff ;
     
     if((name == NULL) || ((hlp = lalloc(0)) == NULL))
@@ -499,7 +499,7 @@ try_again:
                             if(ktp->index == ii)
                             {
                                 *ss++ = '"' ;
-                                cmdstr(ktp->code,ss);
+                                meGetStringFromKey(ktp->code,ss);
                                 ss += meStrlen(ss) ;
                                 *ss++ = '"' ;
                                 *ss++ = ' ' ;
@@ -558,7 +558,7 @@ helpItem(int f, int n)
 {
     uint8 buf[MAXBUF] ;
     
-    if(mlreply((uint8 *)"Help on item", 0, 0, buf, MAXBUF-10) != TRUE)
+    if(meGetString((uint8 *)"Help on item", 0, 0, buf, MAXBUF-10) != TRUE)
         return FALSE ;
     return findHelpItem(buf,0) ;
 }
@@ -568,7 +568,7 @@ helpCommand(int f, int n)
 {
     uint8 *ss, buf[MAXBUF] ;
               
-    if(mlreply((uint8 *)"Help on command", MLCOMMAND, 0, buf, MAXBUF-10) != TRUE)
+    if(meGetString((uint8 *)"Help on command", MLCOMMAND, 0, buf, MAXBUF-10) != TRUE)
         return FALSE ;
     ss = buf + meStrlen(buf) ;
     meStrcpy(ss,"(2)") ;
@@ -583,7 +583,7 @@ helpVariable(int f, int n)
 {
     uint8 buf[MAXBUF] ;
 
-    if(mlreply((uint8 *)"Help on variable", MLVARBL, 0, buf, MAXBUF-10) != TRUE)
+    if(meGetString((uint8 *)"Help on variable", MLVARBL, 0, buf, MAXBUF-10) != TRUE)
         return FALSE ;
     meStrcat(buf,"(5)") ;
     return findHelpItem(buf,0) ;
@@ -600,10 +600,10 @@ macroHelpDefine(int f, int n)
     
     if((lpStoreBp=helpBufferFind()) == NULL)
         return ABORT ;
-    if(mlreply((uint8 *)"Enter name", MLCOMMAND, 0, name+4, MAXBUF-4) != TRUE)
+    if(meGetString((uint8 *)"Enter name", MLCOMMAND, 0, name+4, MAXBUF-4) != TRUE)
         return FALSE ;
     sect[0] = '\0' ;
-    if(mlreply((uint8 *)"Enter section", 0, 0, sect, 20) == ABORT)
+    if(meGetString((uint8 *)"Enter section", 0, 0, sect, 20) == ABORT)
         return FALSE ;
     /* and set the macro store pointers to it */
     lpStore = lforw(lpStoreBp->b_linep) ;
@@ -637,7 +637,7 @@ macroFileDefine(int f, int n)
     uint8 fname[MAXBUF] ;
     int ii=0 ;
     
-    if(mlreply((uint8 *)"Enter file", MLCOMMAND, 0, fname, MAXBUF) != TRUE)
+    if(meGetString((uint8 *)"Enter file", MLCOMMAND, 0, fname, MAXBUF) != TRUE)
         return FALSE ;
     while((mac=createMacro(NULL)) != NULL)
     {
@@ -686,7 +686,7 @@ userGetMacro(uint8 *buf, int len)
 {
     register int idx ;
     
-    if(mlreply((uint8 *)"Enter macro name ", MLCOMMAND,2,buf,len) == TRUE)
+    if(meGetString((uint8 *)"Enter macro name ", MLCOMMAND,2,buf,len) == TRUE)
     {        
         if((idx = decode_fncname(buf,0)) < 0)
             mlwrite(MWABORT,(uint8 *)"%s not defined",buf) ;

@@ -1,5 +1,5 @@
 /*
- * Last Modified : <010219.2045>
+ * Last Modified : <010305.0757>
  * 
  * The functions in this file implement commands that perform incremental
  * searches in the forward and backward directions.  This "ISearch" command
@@ -277,7 +277,7 @@ isearch(int flags)
 
 get_another_key:
     /* Get the first character   */
-    c = getkeycmd (FALSE, 0, meGETKEY_SILENT|meGETKEY_COMMAND);
+    c = meGetKeyFromUser (FALSE, 0, meGETKEY_SILENT|meGETKEY_COMMAND);
     switch(decode_key((uint16) c,&arg))
     {
     case CK_NEWLIN:                     /* ^M : New line. do other search */
@@ -293,7 +293,7 @@ get_another_key:
     case CK_BAKLIN:   /* C-p - previous match in complete list */
     case CK_YANK:     /* C-y - yank the contents of the kill buffer */
         mlfirst = c ;
-        if ((status = mlreply(isHeadStr, MLSEARCH|MLISEARCH, 0, srchPat, NPAT)) != TRUE)
+        if ((status = meGetString(isHeadStr, MLSEARCH|MLISEARCH, 0, srchPat, NPAT)) != TRUE)
         {
             useMlBinds = oldUseMlBinds ;
             return status ;
@@ -409,7 +409,7 @@ find_next:
             break ;                             /* Go continue with the srch */
 
         case CK_QUOTE:                          /* ^Q - quote next character */
-            if((c = quoteKeyToChar(getkeycmd(FALSE,0,meGETKEY_SILENT|meGETKEY_SINGLE))) < 0)
+            if((c = quoteKeyToChar(meGetKeyFromUser(FALSE,0,meGETKEY_SILENT|meGETKEY_SINGLE))) < 0)
             {
                 TTbell() ;
                 break ;
@@ -585,7 +585,7 @@ isAddChar:
         update(FALSE) ;
         mlisDisp(srchPat,status) ;
 input_cont:
-        c = getkeycmd(FALSE, 0, meGETKEY_SILENT|meGETKEY_COMMAND) ;
+        c = meGetKeyFromUser(FALSE, 0, meGETKEY_SILENT|meGETKEY_COMMAND) ;
     }
     
 good_finish:

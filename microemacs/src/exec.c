@@ -10,7 +10,7 @@
  *
  *       Author:                 Danial Lawrence
  *
- *       Creation Date:          14/05/86 12:37          <010219.2054>
+ *       Creation Date:          14/05/86 12:37          <010305.0801>
  *
  *       Modification date:      %G% : %U%
  *
@@ -299,14 +299,15 @@ quote_spec_key:
     
 }
 
-/*      mlreply:        get the next argument   */
-/* prompt  - prompt to use if we must be interactive */
-/* option  - options for getstring */
-/* defnum  - Default history number */
-/* buffer  - buffer to put token into */
-/* size    - size of the buffer */
+/* meGetString
+ * Get a string input, either from the macro line or from the user
+ * prompt  - prompt to use if we must be interactive
+ * option  - options for getstring
+ * defnum  - Default history number
+ * buffer  - buffer to put token into
+ * size    - size of the buffer */
 int
-mlreply(uint8 *prompt, int option, int defnum, uint8 *buffer, int size)
+meGetString(uint8 *prompt, int option, int defnum, uint8 *buffer, int size)
 {
     /* if we are not interactive, go get it! */
     if (clexec == TRUE)
@@ -362,7 +363,7 @@ mlreply(uint8 *prompt, int option, int defnum, uint8 *buffer, int size)
         if(buff[3] == 'a')
             execstr = ss ;
     }
-    return mlgetstring(prompt, option, defnum, buffer, size) ;
+    return meGetStringFromUser(prompt, option, defnum, buffer, size) ;
 }
 
 int
@@ -373,7 +374,7 @@ macarg(uint8 *tok)               /* get a macro line argument */
     
     savcle = clexec;            /* save execution mode */
     clexec = TRUE;              /* get the argument */
-    status = mlreply((uint8 *)"", MLNOHIST|MLFFZERO, 0, tok, MAXBUF) ;
+    status = meGetString((uint8 *)"", MLNOHIST|MLFFZERO, 0, tok, MAXBUF) ;
     clexec = savcle;            /* restore execution mode */
     
     return(status);
@@ -426,7 +427,7 @@ fnctest(void)
         if (ktp->code > ktp[1].code)
         {
             count++;
-            cmdstr(ktp->code, outseq);
+            meGetStringFromKey(ktp->code, outseq);
             printf("[%s] key out of place\n",outseq);
         }
     
@@ -867,7 +868,7 @@ loop_round2:
                 {
 loop_round:
                     /* and get the keystroke */
-                    switch ((cc=getkeycmd(FALSE,0,meGETKEY_SILENT|meGETKEY_SINGLE)))
+                    switch ((cc=meGetKeyFromUser(FALSE,0,meGETKEY_SILENT|meGETKEY_SINGLE)))
                     {
                     case '?':
                         mlwrite(MWSPEC,__dobufStr1) ;       /* Write out the debug line */
@@ -1465,7 +1466,7 @@ execFile(int f, int n)  /* execute a series of commands in a file */
     uint8 filename[MAXBUF];      /* Filename */
     int status;
     
-    if ((status=mlreply((uint8 *)"Execute File",MLFILECASE, 0, filename, 
+    if ((status=meGetString((uint8 *)"Execute File",MLFILECASE, 0, filename, 
                         MAXBUF)) != TRUE)
         return status ;
     
@@ -1503,7 +1504,7 @@ execCommand(int f, int n)
         meStrcpy(prm,"Command") ;
     
     /* if we are executing a command line get the next arg and match it */
-    if((idx = mlreply(prm, MLCOMMAND, 1, buf, MAXBUF)) != TRUE)
+    if((idx = meGetString(prm, MLCOMMAND, 1, buf, MAXBUF)) != TRUE)
         return idx ;
     
     /* decode the function name, if -ve then duff */
@@ -1563,7 +1564,7 @@ execLine(int f, int n)
     uint8 cmdstr[MAXBUF];               /* string holding command to execute */
     
     /* get the line wanted */
-    if ((status = mlreply((uint8 *)":", 0, 0, cmdstr, MAXBUF)) != TRUE)
+    if ((status = meGetString((uint8 *)":", 0, 0, cmdstr, MAXBUF)) != TRUE)
         return status ;
     
     return lineExec(f,n,cmdstr) ;

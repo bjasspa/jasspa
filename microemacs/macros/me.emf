@@ -50,7 +50,7 @@ define-macro-file schemosd scheme-editor
 define-macro-file printstp print-setup
 define-macro-file fattrib file-attrib
 define-macro-file organize organizer
-define-macro-file user user-setup
+define-macro-file userstp user-setup
 define-macro-file etfinsrt
 define-macro-file gdiff
 define-macro-file calc
@@ -211,7 +211,6 @@ add-file-hook ".diff .dif *diff*"                             fhook-diff
  1 add-file-hook "^#![ \t]*/.*env[ \t]+python"   fhook-python ; Python file
  1 add-file-hook "^#VRML"                        fhook-vrml   ; VRML or wrl files
  1 add-file-hook "^#Inventor"                    fhook-vrml   ; Use the VRML hook for iv files
- 1 add-file-hook "-!-[ \t]*jasspa.*-!-"          fhook-jasspa ; -!- jasspa -!-
 -2 add-file-hook "This is Info file"             fhook-info   ; GNU info file
 -4 add-file-hook "<html>"                        fhook-html   ; HTML files
 -1 add-file-hook "-[*!]-[ \t]*c.*-[*!]-"         fhook-c      ; -*- C -*-
@@ -231,7 +230,6 @@ add-file-hook ".diff .dif *diff*"                             fhook-diff
 -1 add-file-hook "-!-[ \t]*fold:.*-!-"           fhook-fold   ; -!- fold:... -!-
 -1 add-file-hook "-!-[ \t]*asn\\.1.*-!-"         fhook-asn1   ; -!- asn.1... -!-
 -1 add-file-hook "-!-[ \t]*asmx86.*-!-"          fhook-asmx86 ; -!- asmx86 -!-
-;-1 add-file-hook "-!-[ \t]*pseudo.*-!-"          fhook-pseudo ; -!- pseudo -!-
 -1 add-file-hook "-!-[ \t]*text.*-!-"            fhook-txt    ; -!- text -!-
 -1 add-file-hook "-!-[ \t]*msvb.*-!-"            fhook-vb     ; -!- msvb -!-
 ; Initialize the top menu line

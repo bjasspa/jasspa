@@ -5,7 +5,7 @@
  *  Synopsis      : Buffer printing routines
  *  Created By    : Jon Green & Steven Phillips
  *  Created       : 1996
- *  Last Modified : <000907.1418>
+ *  Last Modified : <010305.0749>
  *
  *  Description
  *     This file contains routines to format and print buffers
@@ -177,13 +177,13 @@ printColor (int f, int n)
         
     /* Get the color number and color */
     color = 0 ;
-    if ((mlreply((uint8 *)"Number", 0, 0, buf, 20) == ABORT) ||
+    if ((meGetString((uint8 *)"Number", 0, 0, buf, 20) == ABORT) ||
         ((colNo = meAtoi(buf)) < 0) || (colNo > 255) ||
-        (mlreply((uint8 *)"Red",0,0,buf,20) == ABORT) ||
+        (meGetString((uint8 *)"Red",0,0,buf,20) == ABORT) ||
         ((color = mePrintColorSetRed(color,meAtoi(buf))),
-         (mlreply((uint8 *)"Green",0,0,buf,20) == ABORT)) ||
+         (meGetString((uint8 *)"Green",0,0,buf,20) == ABORT)) ||
         ((color = mePrintColorSetGreen(color,meAtoi(buf))),
-         (mlreply((uint8 *)"Blue",0,0,buf,20) == ABORT)))
+         (meGetString((uint8 *)"Blue",0,0,buf,20) == ABORT)))
         return FALSE;
     color = mePrintColorSetBlue(color,meAtoi(buf)) ;
 
@@ -224,13 +224,13 @@ printScheme (int f, int n)
         
     /* Get the scheme number and scheme */
     scheme = 0 ;
-    if ((mlreply((uint8 *)"Number", 0, 0, buf, 10) == ABORT) ||
+    if ((meGetString((uint8 *)"Number", 0, 0, buf, 10) == ABORT) ||
         ((schmNo = meAtoi(buf)) < 0) || (schmNo > 255) ||
-        (mlreply((uint8 *)"Fore-col",0,0,buf,MAXBUF) == ABORT) ||
+        (meGetString((uint8 *)"Fore-col",0,0,buf,MAXBUF) == ABORT) ||
         ((fc = (uint8) meAtoi(buf)),
-         (mlreply((uint8 *)"Back-col",0,0,buf,MAXBUF) == ABORT)) ||
+         (meGetString((uint8 *)"Back-col",0,0,buf,MAXBUF) == ABORT)) ||
         ((bc = (uint8) meAtoi(buf)),
-         (mlreply((uint8 *)"Font",0,0,buf,MAXBUF) == ABORT)))
+         (meGetString((uint8 *)"Font",0,0,buf,MAXBUF) == ABORT)))
         return FALSE;
     ff = (uint8) meAtoi(buf) ;
     

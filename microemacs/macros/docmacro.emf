@@ -1,9 +1,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
 ;  Created By    : Jon Green
 ;  Created       : Mon Mar 20 22:36:48 2000
-;  Last Modified : <010228.1005>
-;
 ;  Description   : Common document macros. 
 ;
 ;  Notes         : These were removed from the hkdoc template to create
@@ -47,7 +44,7 @@
 ;         >
 ;         > Author:       My Self
 ;         > Created:      11/11/97
-;         > Modified:     <211197.1003>
+;         > Modified:     <010305.0811>
 ;         > Location:     /xx/yy/zz.doc
 ; *
 ;         All lines commencing with '*' are assumed to be bullet lists. Bullet
@@ -78,7 +75,7 @@
 ;
 ;         Add a nice big line to separate sections
 ;
-;  Copyright (c) 2000 Samsung (SERI) Ltd.
+;  Copyright (c) 2000-2001 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; arguments when executed must be the "extension"
 set-variable #l1 @1

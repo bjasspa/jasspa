@@ -10,7 +10,7 @@
 *
 *	Author:			Danial Lawrence
 *
-*	Creation Date:		14/05/91 12:37		<000723.1817>
+*	Creation Date:		14/05/91 12:37		<010305.0749>
 *
 *	Modification date:	%G% : %U%
 *
@@ -301,7 +301,7 @@ gotoLine(int f, int n)
     /* get an argument if one doesnt exist */
     if ((f == FALSE) || (n == 0))
     {
-        if ((status = mlreply((uint8 *)"Goto line", 0, 0, arg, NSTRING)) != TRUE) 
+        if ((status = meGetString((uint8 *)"Goto line", 0, 0, arg, NSTRING)) != TRUE) 
             return(status);
         
         /*---	Skip white space */

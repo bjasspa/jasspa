@@ -12,7 +12,7 @@
  *
  *	Creation Date:		07/05/85 08:19		
  *
- *	Modification date:	<000723.1906>
+ *	Modification date:	<010305.0749>
  *
  *	Current rev:		10.1
  *
@@ -1123,7 +1123,7 @@ readpattern(uint8 *prompt, int defnum)
      * Then, if it's the search string, make a reversed pattern.
      * *Then*, make the meta-pattern, if we are defined that way.
      */
-    if((status = mlreply(prompt,MLSEARCH,defnum,srchPat,NPAT)) == TRUE)
+    if((status = meGetString(prompt,MLSEARCH,defnum,srchPat,NPAT)) == TRUE)
     {
         exactFlag = (meModeTest(curbp->b_mode,MDEXACT) == 0);
 #if	MAGIC
@@ -1238,7 +1238,7 @@ replaces(int kind, int ff, int nn)
             i = expandexp(-1,srchPat, NPAT-17, 9, tpat, -1, NULL, 0) ;
             meStrcpy(tpat+i,"] with");
             
-            if ((status=mlreply(tpat,MLSEARCH,0,rpat,NPAT)) != TRUE)
+            if ((status=meGetString(tpat,MLSEARCH,0,rpat,NPAT)) != TRUE)
             {
                 lastReplace = 0 ;
                 return (status);

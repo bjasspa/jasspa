@@ -1,28 +1,28 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
 ;  Created By    : Steven Phillips
 ;  Created       : Wed Jan 12 16:37:22 2000
-;  Last Modified : <010301.1811>
-;
-;  Description
-;
+;  Description   : File-browser extensions to support ftp
 ;  Notes
 ;
-;  History
-;
-;  Copyright (c) 2000 Logica.
+;  Copyright (c) 2000-2001 JASSPA
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-0 exec-file "hkdir"
+0 exec-file "hkdirlst"
+
+define-macro ftp
+    set-variable .fhook-dirlst.file-process ""
+    osd .osd.dirlst 140 "" "FTP Logout" 0x10 file-op
+    ftp-create-layout
+    screen-update
+    ftp-data-entry-setup
+    .osd.ftp osd
+!emacro
 
 !if &not &exi .osd.ftp
     set-variable .osd.ftp &pinc .osd.next 1
     set-variable .ftp.name ""
-!endif
-!if &not &exi %ftp-flags
     set-variable %ftp-flags &reg  "/" "url/ftp-flags" "csp"
 !endif
-0 define-macro-file hkdir file-browser-close
 
 0 define-macro ftp-create-layout
     delete-other-windows
@@ -335,11 +335,3 @@ osd .osd.ftp 610 ""
 osd .osd.ftp 620 "BthcfH" 62 .scheme.osd-ebtt " &Connect " f ftp-connect
 osd .osd.ftp 630 "BtcfH"  63 .scheme.osd-ebtt " E&xit  "   f void
 ftp-site-name-set ""
-
-define-macro ftp
-    set-variable .fhook-dir.file-process ""
-    ftp-create-layout
-    screen-update
-    ftp-data-entry-setup
-    .osd.ftp osd
-!emacro

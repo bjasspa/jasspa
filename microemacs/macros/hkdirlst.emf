@@ -530,15 +530,30 @@ define-macro file-browser-swap-buffers
     ml-write "All done!"
 !emacro
 
+0 define-macro dirlst-pos
+    set-variable #l0 0
+    !force set-variable #l0 @2
+    set-variable .y &add $mouse-y #l0
+    !if &les .y 0
+        set-variable .y 0
+    !endif
+    !force set-variable #l0 @1
+    set-variable .x &add $mouse-x #l0
+    !if &les .x 0
+        set-variable .x 0
+    !endif
+!emacro
+
 0 define-macro dirlst-tag-delete
+    dirlst-pos -10 -4
     0 dirlst-tag-list "Delete Files"
-    osd-xdialog "Delete Files" &spr "  Delete %d files?  " .find-file.file-count 2 " &Yes " " &No "
+    2 osd-xdialog "Delete Files" &spr "  Delete %d files?  " .find-file.file-count 2 .dirlst-pos.x .dirlst-pos.y " &Yes " " &No "
     !if &equ $result 2
         !abort
     !endif
     set-variable #l0 0
     !while &les &pinc #l0 1 .find-file.file-count
-        4 copy-file &cat .find-file.file-dir &ind &cat ".find-file.file" #l0 @mna
+        0x20 file-op &cat .find-file.file-dir &ind &cat ".find-file.file" #l0 @mna
     !done
     !if &band .find-file.flags 1
         dirlst-refresh
@@ -548,23 +563,24 @@ define-macro file-browser-swap-buffers
 !emacro
 
 0 define-macro dirlst-tag-rename
+    dirlst-pos -10 -4
     0 dirlst-tag-list "Rename File"
     !if &not &equ .find-file.file-count 1
         ml-write "[Rename file: something strange happend - abort]"
         !abort
     !endif
     set-variable #l0 ""
-    osd-entry "Rename File" "&New Name : " #l0 20
+    2 osd-entry "Rename File" "&New Name : " #l0 20 .dirlst-pos.x .dirlst-pos.y
     !if &seq &set #l1 &stat "t" &cat .find-file.file-dir #l0 "R"
-        osd-xdialog "Rename File" &spr "  %s already exists, replace?  " #l0 2 " &Yes " " &No "
+        2 osd-xdialog "Rename File" &spr "  %s already exists, replace?  " #l0 2 .dirlst-pos.x .dirlst-pos.y " &Yes " " &No "
         !if &equ $result 2
             !abort
         !endif
     !elif &not &seq #l1 "X"
-        osd-dialog "Rename File" "  Illegal filename entered!  " " &Cancel "
+        2 osd-dialog "Rename File" "  Illegal filename entered!  " .dirlst-pos.x .dirlst-pos.y " &Cancel "
         !abort
     !endif
-    8 copy-file &cat .find-file.file-dir &ind &cat ".find-file.file" 1 &cat .find-file.file-dir #l0 @mna
+    0x40 file-op &cat .find-file.file-dir &ind &cat ".find-file.file" 1 &cat .find-file.file-dir #l0 @mna
     !if &band .find-file.flags 1
         dirlst-refresh
     !else
@@ -572,35 +588,59 @@ define-macro file-browser-swap-buffers
     !endif
 !emacro
 
+0 define-macro dirlst-tag-paste-prompt
+    !if &equ .dirlst-tag-paste.state 2
+        set-variable $result "y"
+        !return
+    !endif
+    set-variable #l0 &cat "  " $result
+    var-str-sub #l0 " [y/n]?" "?"
+    var-str-sub #l0 ", " "  \n\n          "
+    !force !force 2 osd-xdialog "Paste File" #l0 0 .dirlst-pos.x .dirlst-pos.y " &Yes " " Yes to &All" " &No " " &Abort "
+    !if &or &not $status &equ $result 4
+        set-variable .dirlst-tag-paste.state 0
+        !abort
+    !endif
+    !if &equ $result 2
+        set-variable .dirlst-tag-paste.state 2
+    !endif
+    set-variable $result &lget "|y|y|n|" $result
+!emacro
+
 0 define-macro dirlst-tag-paste
+    dirlst-pos -10 -4
     !if &seq .find-file.file-dir $buffer-fname
         !abort
     !endif
     !if &band .find-file.flags 4
         set-variable #l0 "Cut"
-        set-variable #l1 9
+        set-variable #l1 0x41
     !else
         set-variable #l0 "Copy"
-        set-variable #l1 1
+        set-variable #l1 0x81
     !endif
-    osd-xdialog "Paste Files" &spr "  %s %d files?  " #l0 .find-file.file-count 2 "&Yes" "&No"
+    2 osd-xdialog "Paste Files" &spr "  %s %d files?  " #l0 .find-file.file-count 2 .dirlst-pos.x .dirlst-pos.y "&Yes" "&No"
     !if &equ $result 2
         !abort
     !endif
+    set-variable .state 1
     set-variable #l0 0
-    !while &les &pinc #l0 1 .find-file.file-count
+    !while &and .state &les &pinc #l0 1 .find-file.file-count
         set-variable #l2 &ind &cat ".find-file.file" #l0
-        #l1 copy-file &spr "file:%s%s" .find-file.file-dir #l2 &spr "file:%s%s" $buffer-fname #l2 @mna
+        !force !force #l1 file-op &spr "file:%s%s" .find-file.file-dir #l2 &spr "file:%s%s" $buffer-fname #l2 @mxa dirlst-tag-paste-prompt
     !done
     !if &band .find-file.flags 1
         dirlst-refresh
+    !endif
+    !if &not .state
+        !abort
     !endif
 !emacro
 
 0 define-macro dirlst-new-folder
     set-variable #l0 ""
     osd-entry "New Folder" "Folder Name : " #l0 20
-    0x10 copy-file #l0
+    0x100 file-op #l0
     !if &band .find-file.flags 1
         dirlst-refresh
     !endif

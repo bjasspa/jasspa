@@ -1,16 +1,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
 ;  Created By    : Steven Phillips
 ;  Created       : Tue May 9 07:21:38 2000
-;  Last Modified : <000719.0013>
+;  Description   : Sets up a watch on the current buffer's file and auto-reloads
 ;
-;  Description
-;
-;  Notes
-;
-;  History
-;
-;  Copyright (c) 2000 Logica.
+;  Copyright (c) 2000-2001 JASSPA
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 0 define-macro watch-callback

@@ -1,7 +1,7 @@
 /*****************************************************************************
  *	SCCS:		%W%		%G%		%U%
  *
- *	Last Modified :	<010217.2053>
+ *	Last Modified :	<010305.0749>
  *
  *****************************************************************************
  * 
@@ -48,7 +48,7 @@
  * faster.
  * Added history to getstring with routines to mainulate it and save it.
  * made routines for getting strings, buffers, commands, files etc all use
- * getstring (via mlreply).
+ * getstring (via meGetString).
  * enhanced getstring including new file, buffer and command name completion
  * made mldisp use search.c's strexpend.
  * Added backup creation facility used by variable backups
@@ -80,7 +80,7 @@
  * now create kbd-macro functions.
  * Improved the new c-mode. Now seems to work.
  * Made all file names dynamically allocated. There is still a 1kb limitation
- * on input as mlgetstring etc, still use stack arrays, it is then dynamically
+ * on input as mlGetGtringFromUser etc, still use stack arrays, it is then dynamically
  * allocated.
  * Added better colour support with a hi-light colour support for the dot 
  * lines. Also added to the _TCAPFONT, the main window text font can be defined

@@ -18,6 +18,7 @@ define-macro fhook-m4
 ; buffer-initialize variables
 set-variable .fhook-m4.setup &reg "/history" "fhook/m4" "hinx"
 set-variable .fhook-m4.setup-mask "aehikmntux"
+set-variable .fhook-m4.comment "|#||#|"
 
 !if &and &sin "h" .fhook-m4.setup &band .hilight.flags 0x02 
     !if &not &exist .hilight.m4
@@ -25,14 +26,14 @@ set-variable .fhook-m4.setup-mask "aehikmntux"
     !endif
     ;
     ; Hi-light m4 Mode
-    0 hilight .hilight.m4  0                     $global-scheme
+    0 hilight .hilight.m4  0                      $global-scheme
     ; Variables
-    hilight .hilight.m4    0 "\\$[0-9\\*#@]"        .scheme.variable
+    hilight .hilight.m4    0 "\\$[0-9\\*#@]"      .scheme.variable
     ; comments, strings and quotes
     ;hilight .hilight.m4    4  "``" "''" "\\"     .scheme.string ; This is not good
     ;hilight .hilight.m4    4  "`" "'" "\\"       .scheme.string ; This is not good
-    hilight .hilight.m4    0 "^[space]*#[any]*"   .scheme.comment
-    hilight .hilight.m4    0 "[^$']*#[any]*"      .scheme.comment
+    hilight .hilight.m4    2 "^\\s *#"            .scheme.comment
+    hilight .hilight.m4    2 "[^$']*#"            .scheme.comment
     ; keywords
     hilight .hilight.m4    1 "builtin"            .scheme.keyword
     hilight .hilight.m4    1 "changecom"          .scheme.keyword

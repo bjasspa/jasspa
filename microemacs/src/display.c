@@ -12,7 +12,7 @@
 *
 *	Creation Date:		29/04/91 09:13
 *
-*	Modification date:	%G% : %U%	<010227.1955>
+*	Modification date:	%G% : %U%	<010305.0749>
 *
 *	Current rev:		%I%
 *
@@ -2571,10 +2571,10 @@ screenPoke(int f, int n)
     uint8 fbuf[MAXBUF] ;
     uint8 sbuf[MAXBUF] ;
 
-    if((mlreply((uint8 *)"row",0,0,fbuf,MAXBUF) != TRUE) ||
-       ((row = meAtoi(fbuf)),(mlreply((uint8 *)"col",0,0,fbuf,MAXBUF) != TRUE)) ||
-       ((col = meAtoi(fbuf)),(mlreply((uint8 *)"scheme",0,0,fbuf,MAXBUF) != TRUE)) ||
-       (mlreply((uint8 *)"string",0,0,sbuf,MAXBUF) != TRUE))
+    if((meGetString((uint8 *)"row",0,0,fbuf,MAXBUF) != TRUE) ||
+       ((row = meAtoi(fbuf)),(meGetString((uint8 *)"col",0,0,fbuf,MAXBUF) != TRUE)) ||
+       ((col = meAtoi(fbuf)),(meGetString((uint8 *)"scheme",0,0,fbuf,MAXBUF) != TRUE)) ||
+       (meGetString((uint8 *)"string",0,0,sbuf,MAXBUF) != TRUE))
         return FALSE ;
     if((n & POKE_COLORS) == 0)
         fbuf[0] = (uint8) meAtoi(fbuf) ;
@@ -2883,13 +2883,13 @@ addColor(int f, int n)
     uint8 r, g, b ;
     uint8 buff[MAXBUF] ;
 
-    if((mlreply((uint8 *)"Index",0,0,buff,MAXBUF) == ABORT) ||
+    if((meGetString((uint8 *)"Index",0,0,buff,MAXBUF) == ABORT) ||
        ((index = (meCOLOR) meAtoi(buff)) == meCOLOR_INVALID) ||
-       (mlreply((uint8 *)"Red",0,0,buff,MAXBUF) == ABORT) ||
+       (meGetString((uint8 *)"Red",0,0,buff,MAXBUF) == ABORT) ||
        ((r = (uint8) meAtoi(buff)),
-        (mlreply((uint8 *)"Green",0,0,buff,MAXBUF) == ABORT)) ||
+        (meGetString((uint8 *)"Green",0,0,buff,MAXBUF) == ABORT)) ||
        ((g = (uint8) meAtoi(buff)),
-        (mlreply((uint8 *)"Blue",0,0,buff,MAXBUF) == ABORT)))
+        (meGetString((uint8 *)"Blue",0,0,buff,MAXBUF) == ABORT)))
         return FALSE ;
     b = (uint8) meAtoi(buff) ;
 
@@ -2919,7 +2919,7 @@ addColorScheme(int f, int n)
     int index, ii, jj, col ;
 
     /* Get the hilight colour index */
-    if ((mlreply((uint8 *)"Color scheme index",0,0,buf,MAXBUF) != TRUE) ||
+    if ((meGetString((uint8 *)"Color scheme index",0,0,buf,MAXBUF) != TRUE) ||
         ((index = meAtoi(buf)) < 0))
         return mlwrite(MWABORT|MWPAUSE,(uint8 *)"Invalid scheme index number");
 
@@ -2954,7 +2954,7 @@ addColorScheme(int f, int n)
         {
             meStrcpy(prompt,schmPromptM[ii]) ;
             meStrcat(prompt,schmPromptP[jj]) ;
-            if((mlreply(prompt,0,0,buf,MAXBUF) != TRUE) ||
+            if((meGetString(prompt,0,0,buf,MAXBUF) != TRUE) ||
                ((col=meAtoi(buf)) < 0) || (col >= noColors))
                 return mlwrite(MWABORT|MWPAUSE,(uint8 *)"Invalid scheme entry");
             scheme[ii][jj] = col;
@@ -2968,7 +2968,7 @@ addColorScheme(int f, int n)
         {
             meStrcpy(prompt,schmPromptM[ii]) ;
             meStrcat(prompt,schmPromptP[jj]) ;
-            if(mlreply(prompt,0,0,buf,MAXBUF) != TRUE)
+            if(meGetString(prompt,0,0,buf,MAXBUF) != TRUE)
                 break;
             scheme[ii][jj] = ((uint8) meAtoi(buf)) & meFONT_MASK ;
         }

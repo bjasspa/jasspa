@@ -10,7 +10,7 @@
  *
  *	Author:			Danial Lawrence.
  *
- *	Creation Date:		07/05/91 08:19		<010227.0954>
+ *	Creation Date:		07/05/91 08:19		<010305.0749>
  *
  *	Modification date:	%G% : %U%
  *
@@ -1189,7 +1189,7 @@ mlWrite(int f, int n)
     register int status;
     uint8 buf[MAXBUF];	/* buffer to recieve message into */
     
-    if ((status = mlreply((uint8 *)"Message", 0, 0, buf, MAXBUF)) != TRUE)
+    if ((status = meGetString((uint8 *)"Message", 0, 0, buf, MAXBUF)) != TRUE)
         return(status);
     
     mlwrite(MWSPEC,buf);
@@ -2407,7 +2407,7 @@ insString(int f, int n)	/* ask for and insert a string into the current
     register int count=0;		/* char insert count */
     
     /* ask for string to insert */
-    if((status=mlreply((uint8 *)"String", 0, 0,tstring, MAXBUF)) != TRUE)
+    if((status=meGetString((uint8 *)"String", 0, 0,tstring, MAXBUF)) != TRUE)
         return status ;
     if((status=bchange()) != TRUE)               /* Check we can change the buffer */
         return status ;
