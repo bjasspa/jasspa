@@ -1,42 +1,66 @@
-> -!- document; fill-mode:both; fill-column:78 -!-
+> -!- jst; fill-mode:both; fill-column:78 -!-
 >
 >  Copyright 1998-2004 JASSPA (www.jasspa.com).
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <040209.2316>
+>  Last Modified : <040210.1700>
 >
 
-    [040206] SP/RC4 - Critical - To be fixed next release
+    [040210] BS/0401-4 - Major? - Target ?
+
+        There are  several  differences  between  running  'cvs' and using the
+        'cvs-*'  commands  that can lead to  unexpected  and unwanted  results
+        (e.g. use C-f10, select a couple of files and then execute cvs-commit,
+        this will commit  changes to all files as it does not respect the list
+        of selected  files). Also the use of a  *cvs-console*  or *cvs-commit*
+        buffer. Should these differences be engineered out?    
+
+    [040210] DG/0401-4 - Major - Target 0401-5
+    
+        Toolbar Directory File List does not contain "../" - UNIX only. 
+
+        Fixed 0401-5 04/02/10: Source change.
+
+    [040210] SP/0401-4 - Enhancement - Target TBD
+    
+        Add support for deleting  directories to file-op and to  file-browser.
+        This would also be used by upload's clean process. 
+
+    [040206] SP/0401-4 - Critical - Target 0401-5
 
         On unix the $progname may not be fully  expanded (has just "me") which
         may  lead  to a  ctags  generation  error  and  an  alternate  fix  to
         $search-path.
 
-    [040206] SP/RC4 - Major - To be fixed next release
+    [040206] SP/0401-4 - Major - Target 0401-5
 
         On unix,  find-file  of a symbolic  link which  points to a  directory
         results  in a bad dir  listing.  The list of files is correct  but the
         stats are all wrong (found on sunos 5.8).
 
-    [040206] Th/RC4 - Minor - To be fixed next release
+        Fixed 0401-5 04/02/10: Source change.
+
+    [040206] Th/0401-4 - Minor - Target 0401-5
 
         Document the create/delete/next-frame keys.
 
-    [040206] JG/RC4 - Critical - To be fixed next release
+    [040206] JG/0401-4 - Critical - Target 0401-5
 
         UNIX the Copy and Paste is not  working  correctly  between  X-Windows
         applications.  Data selected in Mozilla  copies into GNU Emacs OK, but
         not into ME.
         
-        Fixed 04/02/09: Build Solaris 8 image.
+        Fixed 0401-5 04/02/09: Build Solaris 8 image.
 
-    [040206] JG/RC4 - Minor - To be fixed next release
+    [040206] JG/0401-4 - Minor - Target 0401-5
 
         -n command line option to a console build causes a option  failure and
         the executable does not run.
 
-    [040206] SP/RC4 - Major - Ideally fixed next release.
+        Fixed 0401-5 04/02/08: Source change.
+
+    [040206] SP/0401-4 - Major - Target 0401-5
 
         Fix  subtle  ftp bug with  alias  ftp  addressed.  Create  an ftp site
         "ftp://test/"  say with user name foo and  passwd bar and then load in
@@ -52,51 +76,63 @@
         fix is to make  the  'Directory  listing  of:'  line  the  same,  i.e.
         "ftp://test/dir1/"
 
-    [040206] SP/RC4 - Minor - ?
+        Fixed 0401-5 04/02/10: Source change.
+
+    [040206] SP/0401-4 - Minor - Target TBD
     
         ME  does  not  work  on a  HP-UX  console  .Probably  because  termcap
         database is not being used and built in definitions are being used to 
         over-ride termcap. Need to revisit this.
 
-    [040206] JG/RC4 - Minor - ?
+    [040206] JG/0401-4 - Minor - Target TBD
 
         CVS fails to show sometimes. Typically when done FTP (sunos).
 
-    [040206] JG/RC4 - Minor - ?
+    [040206] JG/0401-4 - Minor - Target TBD
 
         CVS  directory  listing  looses  files  sometimes.  Deleted  files and
         sometimes new files fail to show in CVS directory  listing.  Unsure if
         it is CVS problem or ME problem. (sunos).
 
-    [040206] SP/RC4 - Enhancement
+    [040206] SP/0401-4 - Enhancement - Target TBD
 
         Would like a Select All and  Inverse  Selection  in the *files*  right
         mouse button menu to select all files/dirs in the listing
 
+    [040206] SP/0401-4 - Enhancement - Target TBD
+
         Add new narrow-search-forward and narrow-search-backward commands.
 
-    [040206] JG/RC4 - Enhancement
+    [040206] JG/0401-4 - Enhancement - Target TBD
 
         CVS has option not to open the dir-tree window, pain in butt.
 
-    [040206] JG/RC4 - Enhancement
+    [040206] JG/0401-4 - Enhancement - Target TBD
 
         Support to recognize GNU tags for makefile "-*- Makefile -*-" and UNIX
         shell files "-*- sh -*-".
 
-    [040206] JG/RC4 - Enhancement
+    [040206] JG/0401-4 - Enhancement - Target TBD
 
         Tags window in the tool-bar
 
-    [040206] Th/RC4 - Enhancement
+    [040206] Th/0401-4 - Enhancement - Target TBD
 
         Support for multiple  pre-configured  print-layouts without setting up
         the printer.
 
-    [010101] ??/RC4 - Enhancement
+    [040101] DG/0401-1 - Enhancement - Target TBD
+    
+        Support hierarchical favorites.
+
+    [040101] BS/0401-1 - Enhancement - Target TBD
+    
+        New work notepad/todo list feature.
+
+    [010101] JG/01 - Enhancement - Target TBD
 
         Native printer support for generation of postscript.
 
-    [010101] ??/RC4 - Enhancement
+    [010101] SP/01 - Enhancement - Target TBD
 
         GNU Emacs compatibility macro file (Key bindings).
