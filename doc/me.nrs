@@ -29,7 +29,7 @@
 .\"
 .\"***************************************************************************
 .\"
-.Id $Id: me.nrs,v 2.0 2001-03-08 21:31:25 jon Exp $
+.Id $Id: me.nrs,v 2.1 2001-04-30 07:39:04 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -1140,7 +1140,7 @@ HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 The  following  contact  point may be used to report all  problems and request
 information:-
 .IP
-\fBEmail:\fR\fC jasspa@geocities.com \fR
+\fCEmail:support@jasspa.com\fR
 .PP
 Also visit our web site's on the Internet:-
 .IP
@@ -1153,11 +1153,10 @@ Also visit our web site's on the Internet:-
 This page carries the latest information and patches on the distribution.
 .SS "E-Mail Reflector"
 A E-Mail  reflector is available onto which  questions,  suggestions  and code
-fragments may be posted. A number of people have requested this service, so we
-have initiated it recently (July 1999). This is an un-moderated  E-Mail group.
-The mailing list archives may be found at:-
+fragments  may be posted. This is an  un-moderated  E-Mail  group. The mailing
+list archives may be found at:-
 .IP
-\fChttp://www.egroups.com/list/jasspa/\fR
+\fChttp://groups.yahoo.com/group/jasspa/\fR
 .LP
 These should be referenced before posting any questions, as an answer may have
 already been given. This mailing list is likely to contain the most up-to-date
@@ -1166,25 +1165,26 @@ information available, as \s-1JASSPA\s0 will use this for any notifications.
 If you want to join the E-Mail  reflector  then mail a request,  with an empty
 message body to:-
 .IP
-\fCjasspa-subscribe@egroups.com\fR
+\fCjasspa-subscribe@yahoogroups.com\fR
 .LP
 This  should  add you to the  mailing  list.  If you  want to be  subsequently
 removed from the mailing list then mail an empty message to:-
 .IP
-\fCjasspa-unsubscribe@egroups.com\fR
+\fCjasspa-unsubscribe@yahoogroups.com\fR
 .LP
 and you will be removed  from the lists. There are  facilities  on the site to
 allow you to receive digests, rather than multiple posts to the group once you
 have subscribed.
 .PP
-The mailing list is hosted by  \fBeGroups\fR.  General help information on the
+The mailing list is hosted by  \fBYAHOO! Groups\fR.  General help information on the
 mailgroup is available at their site:-
 .IP
-\fChttp://www.egroups.com\fR
+\fChttp://groups.yahoo.com\fR
 .SS "Help, FAQ and other queries"
-Please use  \fBeGroup\fR  help  information  for any queries about the mailing
-lists,  \s-1JASSPA\s0  have simply registered and E-Mail group at the site and
-have not investigated fully all of the facilities that may be available.
+Please use \fBYAHOO!  Groups\fR  help  information  for any queries  about the
+mailing lists,  \s-1JASSPA\s0  have simply  registered and E-Mail group at the
+site  and  have  not  investigated  fully  all of the  facilities  that may be
+available.
 .PP
 Please check the  
 .Hl "Frequently Asked Questions" faq - .
@@ -1230,7 +1230,7 @@ The version of \*(mE. Use the  \fCesc x  info\fR to retrieve  the  information
 e.g.
 .RS
 .IP
-.C "MicroEmacs 98 - Date 01/01/98 - win32"
+.C "MicroEmacs 01 - Date 01/01/01 - win32"
 .RE
 .IP "\fBDescription\fR"
 A description of the problem. Try to include as much  information as possible.
@@ -1583,8 +1583,6 @@ Integrate  the mouse  interaction,  especially  the pop-up  menus of the right
 mouse to be buffer sensitive and to deal with regions. (Macro implementation).
 .BU
 Native printer support for the generation of postscript.
-.BU
-Box (or column) copy regions.
 .BU
 GNU Emacs compatibility macro file.
 .BE 0

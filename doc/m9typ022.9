@@ -29,7 +29,7 @@
 .\"
 .\"***************************************************************************
 .\"
-.Id $Id: m9typ022.9,v 2.0 2001-03-08 21:31:14 jon Exp $
+.Id $Id: m9typ022.9,v 2.1 2001-04-30 07:39:03 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH man 9
@@ -69,14 +69,16 @@ text and invokes
 to render the page. This  provides a crude hyper text  mechanism  simply using
 the manual page information itself.
 .RS
-.IP \fBman-clean\fR
-The local  buffer  macro  \fBman-clean\fR  takes the  current  manual page and
-removes  all of the  hilighting  characters.  This is the  typical  method  of
-reducing a manual page to plain text.
+The
+.Ht man-clean 3
+command  can be used to  remove  all of the  hilighting  characters  from  the
+current  manual page. This is the typical  method of reducing a manual page to
+plain text.
 .RE
 .SH "SEE ALSO"
 .na
 .Ht man 3 ,
+.Ht man-clean 3 ,
 .sp 1
 .Hl "Supported File Types" fileTypes -
 .ad

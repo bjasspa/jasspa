@@ -7,7 +7,7 @@
 #
 # Author      : Jon Green
 # Created     : 22nd February 1997
-# Last Edited : <001206.0034>
+# Last Edited : <010314.2303>
 #
 # History     : JG  220297 Original  Constructed from emacssrc
 #
@@ -137,6 +137,7 @@ CMD2_150=	$(DOCDIR)m2cmd150.2 $(DOCDIR)m2cmd151.2 $(DOCDIR)m2cmd152.2\
 		$(DOCDIR)m2cmd153.2 $(DOCDIR)m2cmd154.2 $(DOCDIR)m2cmd155.2\
 		$(DOCDIR)m2cmd156.2 $(DOCDIR)m2cmd157.2 $(DOCDIR)m2cmd158.2\
 		$(DOCDIR)m2cmd159.2
+CMD2_160=	$(DOCDIR)m2cmd160.2
 		
 
 CMD2_200=	$(DOCDIR)m2cmd200.2 $(DOCDIR)m2cmd201.2 $(DOCDIR)m2cmd202.2\
@@ -181,7 +182,8 @@ MAC3_040=	$(DOCDIR)m3mac040.3 $(DOCDIR)m3mac041.3 $(DOCDIR)m3mac042.3\
 		$(DOCDIR)m3mac046.3 $(DOCDIR)m3mac047.3 $(DOCDIR)m3mac048.3\
 		$(DOCDIR)m3mac049.3
 MAC3_050=	$(DOCDIR)m3mac050.3 $(DOCDIR)m3mac051.3 $(DOCDIR)m3mac052.3\
-		$(DOCDIR)m3mac053.3
+		$(DOCDIR)m3mac053.3 $(DOCDIR)m3mac054.3 $(DOCDIR)m3mac055.3\
+		$(DOCDIR)m3mac056.3
 		
 OSD3_000=	$(DOCDIR)m3osd000.3 $(DOCDIR)m3osd001.3 $(DOCDIR)m3osd002.3\
 		$(DOCDIR)m3osd003.3 $(DOCDIR)m3osd004.3 $(DOCDIR)m3osd005.3\
@@ -274,7 +276,7 @@ TEMPSMS	=	cmd2_000.sm	cmd2_010.sm	cmd2_020.sm	cmd2_030.sm \
 		cmd2_040.sm	cmd2_050.sm	cmd2_060.sm	cmd2_070.sm \
 		cmd2_080.sm	cmd2_090.sm	cmd2_100.sm	cmd2_110.sm \
 		cmd2_120.sm	cmd2_130.sm	cmd2_140.sm	cmd2_150.sm \
-		cmd2_200.sm \
+		cmd2_160.sm	cmd2_200.sm \
 		nar2_000.sm \
 		mod2_000.sm	mod2_010.sm	mod2_020.sm	mod2_030.sm \
 		mac3_000.sm	mac3_010.sm	mac3_020.sm	mac3_030.sm \
@@ -347,6 +349,8 @@ cmd2_140.sm:	$(CMD2_140)
 	$(SUPERMAN) -o $@ $(CMD2_140)
 cmd2_150.sm:	$(CMD2_150)
 	$(SUPERMAN) -o $@ $(CMD2_150)
+cmd2_160.sm:	$(CMD2_160)
+	$(SUPERMAN) -o $@ $(CMD2_160)
 cmd2_200.sm:	$(CMD2_200)
 	$(SUPERMAN) -o $@ $(CMD2_200)
 
