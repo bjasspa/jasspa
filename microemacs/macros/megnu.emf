@@ -1,15 +1,44 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 1998-2004 JASSPA (www.jasspa.com)
+; Copyright (C) 2004 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     Sun Oct 24 12:52:06 2004
 ; Synopsis:    MicroEmacs GNU Emacs emulation
-; Authors:     Jon Green
+; Authors:     Jon Green, Steven Phillips, Paul Boekholt
 ;
 ; Rebind the keys according to the GNU Emacs key binding. We cannot
 ; reproduced all of the bindings literally (obviously otherwise MicroEmacs
 ; will be huge) but retain the best compatibility that we can. 
+;
+; create wrapper macros for commands which are differently named and create
+; some missing commands, see GNU Emacs docs for help on these commands.
+define-macro revert-buffer
+    reread-file
+!emacro
+define-macro kill-word
+    @# forward-kill-word
+!emacro
+define-macro next-line
+    @# forward-line
+!emacro
+define-macro previous-line
+    @# previous-line
+!emacro
+; trim whitespace around point
+define-macro delete-horizontal-space
+    !while &sin @wc " \t"
+        forward-delete-char
+    !done   
+    !force backward-char
+    !if $status
+        !while &sin @wc " \t"
+            forward-delete-char
+            backward-char
+        !done
+        forward-char
+    !endif
+!emacro
 
 ; C-k kill-line binding should kill to the end of line only
 global-bind-key kill-line "C-k"
@@ -24,17 +53,12 @@ global-bind-key forward-paragraph "C-down"
 global-bind-key backward-word "A-left"
 global-bind-key forward-word "A-right"
 
-; create wrapper macros for commands which are differently named
-define-macro revert-buffer
-    reread-file
-!emacro
-define-macro kill-word
-    @# forward-kill-word
-!emacro
-define-macro next-line
-    @# forward-line
-!emacro
-define-macro previous-line
-    @# previous-line
-!emacro
+global-bind-key query-replace-string "esc %"
+global-bind-key expand-look-back "esc /"
+global-bind-key delete-horizontal-space "esc \\"
 
+; help
+global-bind-key buffer-help "C-h m"
+global-bind-key help-command "C-h f"
+global-bind-key info "C-h i"
+global-bind-key describe-variable "C-h v"
