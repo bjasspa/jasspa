@@ -17,6 +17,14 @@ define-macro expand-abbrev-handle
     !if &seq @cl expand-look-back
         !goto look-back
     !endif
+    ; Try abbrev files
+    !if &seq @p ""
+        ml-write "[Using expand-abbrev]"
+    !endif
+    !force expand-abbrev
+    !if $status
+        !return
+    !endif        
     ; if buffer has an fhook specific pre abbrev expander use that
     !if &exi &set #l0 &cat &rig $buffer-fhook 6 "-pre-expand-abbrev"
         !if &seq @p ""
@@ -27,14 +35,6 @@ define-macro expand-abbrev-handle
             !return
         !endif
     !endif
-    ; Try abbrev files
-    !if &seq @p ""
-        ml-write "[Using expand-abbrev]"
-    !endif
-    !force expand-abbrev
-    !if $status
-        !return
-    !endif        
     ; Try iso accents
     !if &or :iso-accents .expand-iso-accents.on
         !if &seq @p ""
