@@ -379,14 +379,16 @@ typedef struct meLine
 #define WCOSDTTLKLL  48                  /* Osd title bar kill char          */
 #define WCOSDRESIZE  49                  /* Osd resize char                  */
 #define WCOSDBTTOPN  50                  /* Osd button start char e.g. '['   */
-#define WCOSDBTTCLS  51                  /* Osd button close char e.g. ']'   */
-#define WCDISPTAB    52                  /* Display tab char                 */
-#define WCDISPCR     53                  /* Display new-line char            */
-#define WCDISPSPACE  54                  /* Display space char               */
-#define WCDISPTXTLFT 55                  /* Display text off to left         */
-#define WCDISPTXTRIG 56                  /* Display text off to right        */
-#define WCDISPSPLTLN 57                  /* Display split line char (ipipe)  */
-#define WCLEN        58                  /* Number of characters             */
+#define WCOSDDBTTOPN 51                  /* Osd default button start e.g. '>'*/
+#define WCOSDBTTCLS  52                  /* Osd button close char e.g. ']'   */
+#define WCOSDDBTTCLS 53                  /* Osd default button close e.g. '<'*/
+#define WCDISPTAB    54                  /* Display tab char                 */
+#define WCDISPCR     55                  /* Display new-line char            */
+#define WCDISPSPACE  56                  /* Display space char               */
+#define WCDISPTXTLFT 57                  /* Display text off to left         */
+#define WCDISPTXTRIG 58                  /* Display text off to right        */
+#define WCDISPSPLTLN 59                  /* Display split line char (ipipe)  */
+#define WCLEN        60                  /* Number of characters             */
 
 /* The box chars BC=Box Chars, N=North, E=East, S=South, W=West,
  * So BCNS = Box Char which has lines from North & South to centre, i.e. 

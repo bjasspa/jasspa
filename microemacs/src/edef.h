@@ -577,6 +577,8 @@ meUByte   windowChars[WCLEN+1] =        /* Set of window characters     */
     '*',                                /* OSD resize char */
     ' ',                                /* OSD button start char e.g. '['   */
     ' ',                                /* OSD button close char e.g. ']'   */
+    '>',                                /* OSD default button start char e.g. '['   */
+    '<',                                /* OSD default button close char e.g. ']'   */
     /* Display characters */
     '>',                                /* tab \t display character */
     '\\',                               /* new-line \n display character */
