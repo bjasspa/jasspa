@@ -398,6 +398,7 @@ extern	meFrame *meFrameInit(meFrame *sibling) ;
 extern	int     meFrameInitWindow(meFrame *frame, meBuffer *buffer) ;
 #if MEOPT_FRAME
 extern	int	meFrameDelete(meFrame *frame, int flags);
+extern	void	meFrameMakeCur(meFrame *frame, int quiet);
 extern	int	frameCreate(int f, int n);
 extern	int	frameDelete(int f, int n);
 extern	int	frameNext(int f, int n);
