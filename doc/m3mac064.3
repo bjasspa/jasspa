@@ -3,7 +3,7 @@
 .\" Copyright (c) 2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac064.3,v 1.2 2004-01-06 00:50:52 jon Exp $
+.Id $Id: m3mac064.3,v 1.3 2004-01-06 07:47:18 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH buffer-init 3
@@ -39,7 +39,7 @@ commands  prepare  the  operating  modes of a buffer for a language  template.
 These   commands   operate  with   variables   defined  in  the  template  and
 automatically  configure \*(mS to use the template. 
 .PP
-The commands are used in the hook files (hkxxx.emf - see 
+The commands are used in the hook files (hkXXX.emf - see 
 .Hl "File Hooks" fileHooks 2 )
 and simply the setting up of 
 .Hl "File Language Templates" languageTemplates 2 
@@ -52,76 +52,76 @@ a file extension or magic string association with the hook file. i.e.
 .RS
 .Me $emf-scheme
 .CS
--1 add-file-hook "-[*!]-[ \\t]*foo.*-[*!]-"    fhook-foo
- 1 add-file-hook "^#!/.*foo"                  fhook-foo
+-1 add-file-hook "-[*!]-[ \\t]*XXX.*-[*!]-"    fhook-XXX
+ 1 add-file-hook "^#!/.*XXX"                  fhook-XXX
 .CE 
 .Me $ehf-scheme
 .RE
 On loading a file which matches the 
 .Ht add-file-hook 2 
-definition  then the  \fChkxxx.emf\fR  file is  executed  and the  template is
+definition  then the  \fChkXXX.emf\fR  file is  executed  and the  template is
 applied to the file.
 .PP
 A basic template framework to be used with the \fBbuff-init\fR commands may be
-defined as follows for a language template called \fIfoo\fR:-
+defined as follows for a language template called \fIXXX\fR:-
 .Me $emf-scheme
 .CS
 ; File hook - initialize buffer on loading the file.
-define-macro fhook-foo
+define-macro fhook-XXX
     set-variable $buffer-mask "luh1"
-    @# buffer-init "foo"
+    @# buffer-init "XXX"
     buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-foo.name "foo Macro"
-set-variable .fhook-foo.setup &reg "/history" "fhook/foo" "bdfghnopx"
-set-variable .fhook-foo.setup-mask "abdefghikmnoptux"
+set-variable .fhook-XXX.name "XXX Macro"
+set-variable .fhook-XXX.setup &reg "/history" "fhook/XXX" "bdfghnopx"
+set-variable .fhook-XXX.setup-mask "abdefghikmnoptux"
 ; Commenting configuration -- omit if not defined.
-set-variable .fhook-foo.comment "|#||#|# | #||"
+set-variable .fhook-XXX.comment "|#||#|# | #||"
 ; Additional commands -- omit if not defined.
-set-variable .fhook-foo.command-flag  "||"
-set-variable .fhook-foo.command-name  "||"
-set-variable .fhook-foo.command-nbind "||"
-set-variable .fhook-foo.command-kbind "||"
-set-variable .fhook-foo.command-desc  "||"
-; Set up collapse or folding for foo -- omit if not defined
-set-variable .fhook-foo.collapse-open  "^{"
-set-variable .fhook-foo.collapse-close "^}"
-set-variable .fhook-foo.collapse-mopen  "-1"
-set-variable .fhook-foo.collapse-mclose "1"
-set-variable .fhook-foo.collapse-mnext "-1"
-; setup foo item-list -- omit if not defined 
-set-variable .fhook-foo.item-list-s1 "^[ \\t]*func\\\\(\\\\w+\\\\)"
-set-variable .fhook-foo.item-list-r1 "^[ \\t]*end"
+set-variable .fhook-XXX.command-flag  "||"
+set-variable .fhook-XXX.command-name  "||"
+set-variable .fhook-XXX.command-nbind "||"
+set-variable .fhook-XXX.command-kbind "||"
+set-variable .fhook-XXX.command-desc  "||"
+; Set up collapse or folding for XXX -- omit if not defined
+set-variable .fhook-XXX.collapse-open  "^{"
+set-variable .fhook-XXX.collapse-close "^}"
+set-variable .fhook-XXX.collapse-mopen  "-1"
+set-variable .fhook-XXX.collapse-mclose "1"
+set-variable .fhook-XXX.collapse-mnext "-1"
+; setup XXX item-list -- omit if not defined 
+set-variable .fhook-XXX.item-list-s1 "^[ \\t]*func\\\\(\\\\w+\\\\)"
+set-variable .fhook-XXX.item-list-r1 "^[ \\t]*end"
 ; Set up hilighting
-!if &and &sin "h" .fhook-foo.setup &band .hilight.flags 0x02 
-    ; Hi-light foo Mode
-    !if &not &exi .hilight.foo
-        set-variable .hilight.foo &pinc .hilight.next 1
+!if &and &sin "h" .fhook-XXX.setup &band .hilight.flags 0x02 
+    ; Hi-light XXX Mode
+    !if &not &exi .hilight.XXX
+        set-variable .hilight.XXX &pinc .hilight.next 1
     !endif
 
-    0 hilight .hilight.foo  2 50
-    hilight .hilight.foo 0 "#.*"          .scheme.comment
-    hilight .hilight.foo 1 "end"          .scheme.keyword
-    hilight .hilight.foo 1 "^[ \\t]*func" .scheme.function
+    0 hilight .hilight.XXX  2 50
+    hilight .hilight.XXX 0 "#.*"          .scheme.comment
+    hilight .hilight.XXX 1 "end"          .scheme.keyword
+    hilight .hilight.XXX 1 "^[ \\t]*func" .scheme.function
     ; ... more ...
 
     ; Hilight numbers.            
     !if &band .hilight.flags 0x08
         ; hilight constants, e.g. numbers
-        hilight .hilight.c 1 "[[:digit:]]+"       .scheme.constant
-        hilight .hilight.c 1 "-[[:digit:]]+"      .scheme.constant
-        hilight .hilight.c 1 "0[xX][[:xdigit:]]+" .scheme.constant
-        hilight .hilight.c 1 "[[:digit:]]+\\.[[:digit:]]+"  .scheme.constant
-        hilight .hilight.c 1 "-[[:digit:]]+\\.[[:digit:]]+" .scheme.constant
-        hilight .hilight.c 1 "[[:digit:]]+\\.[[:digit:]]+f"  .scheme.constant
-        hilight .hilight.c 1 "-[[:digit:]]+\\.[[:digit:]]+f" .scheme.constant
+        hilight .hilight.XXX 1 "[[:digit:]]+"       .scheme.constant
+        hilight .hilight.XXX 1 "-[[:digit:]]+"      .scheme.constant
+        hilight .hilight.XXX 1 "0[xX][[:xdigit:]]+" .scheme.constant
+        hilight .hilight.XXX 1 "[[:digit:]]+\\.[[:digit:]]+"  .scheme.constant
+        hilight .hilight.XXX 1 "-[[:digit:]]+\\.[[:digit:]]+" .scheme.constant
+        hilight .hilight.XXX 1 "[[:digit:]]+\\.[[:digit:]]+f"  .scheme.constant
+        hilight .hilight.XXX 1 "-[[:digit:]]+\\.[[:digit:]]+f" .scheme.constant
     !endif
 !endif
 
-; End the initialisation - call user extensions i.e. myfoo.emf
-buffer-init-fhook "foo"
+; End the initialisation - call user extensions i.e. myXXX.emf
+buffer-init-fhook "XXX"
 .CE
 .Me $ehf-scheme
 .B buffer-init
@@ -129,10 +129,10 @@ is invoked from the buffer file hook
 .Hl fhook fileHooks 2
 and is invoked with the numerical  argument  passed to the  \fIfhook\fR  macro
 (specified  as  \fC$#\fR).  The call  takes  two  arguments,  the first is the
-\fIname\fR  of the  template or hook, in the example  this is  \fIfoo\fR.  The
+\fIname\fR  of the  template or hook, in the example  this is  \fIXXX\fR.  The
 second argument is the \fIetf\fR template name (see 
 .Ht etf 8 ).
-The  command  initializes  the  buffer,  using the  \fI.fhook-xxx\fR  variable
+The  command  initializes  the  buffer,  using the  \fI.fhook-XXX\fR  variable
 information defined in the file. 
 .PP
 .B buffer-init-fhooks
@@ -141,37 +141,37 @@ is invoked from the buffer file hook
 typically following the 
 .B buffer-init
 call  this  macro   invokes   any  user   defined   file  hooks  of  the  form
-\fBmy-fhook-xx\fR. User defined  \fBmy-bhook-xxx\fR and \fBmy-ehook-xxx\fR are
+\fBmy-fhook-xx\fR. User defined  \fBmy-bhook-XXX\fR and \fBmy-ehook-XXX\fR are
 configured into the buffer space ready for execution. 
 .PP
 .B buffer-init-fhook
 is  placed at the end of the hook file  definition  and  retrieves  additional
 configuration  information  from the  registry and the user  settings, it will
 also locate and load any user additions to the template by loading the file 
-\fCmyxxx.emf\fR.
+\fCmyXXX.emf\fR.
 .SS "Execution Sequence"
 It is important to understand the execution sequence of the buffer hook files.
-On identifying a new file hook then the  \fChkxxx.emf\fR  file is fetched from
+On identifying a new file hook then the  \fChkXXX.emf\fR  file is fetched from
 the file system and  executed.  Execution  causes all of the  variables  to be
 defined and finally, when all definitions have been made,
 .B buffer-init-fhook 
 is executed to load in any user defined extensions. At this point then 
-the macro  \fBfhook-xxx\fR  (in our example  \fIfhook-foo\fR\|)  has ONLY been
+the macro  \fBfhook-XXX\fR  (in our example  \fIfhook-XXX\fR\|)  has ONLY been
 defined it has NOT been executed. This load  operation is performed  once only
 and is performed on demand.
 .PP
-The  \fBfhook-xxx\fR  macro  must  be  defined  BEFORE  any  of the  variables
+The  \fBfhook-XXX\fR  macro  must  be  defined  BEFORE  any  of the  variables
 associated with the hook as all subsequent variables are command variables and
 are defined in the context of the macro definition. See 
 .Ht Variables 4 
 for more information on macro variables.
 .PP
 Once  all  of  the  user   information   has  been   loaded   then  the  macro
-\fBfhook-xxx\fR  is invoked,  this applies  hilighting,  buffer key  bindings,
+\fBfhook-XXX\fR  is invoked,  this applies  hilighting,  buffer key  bindings,
 indentation etc. to the newly loaded buffer.
 .SS "Configuration Masks"
 Buffer   initialization  is  controlled  by  the  settings  of  the  variables
-\fB.fhook-xxx.setup\fR and \fBfhook-c.setup-mask\fR, for the 'C' language then
+\fB.fhook-XXX.setup\fR and \fBfhook-c.setup-mask\fR, for the 'C' language then
 this is defined as:-
 .Me $emf-scheme
 .CS
@@ -328,25 +328,251 @@ Special flag used to indicate commenting is supported. The comment format
 should be defined with the \fI.fhook-XXX.comment\fR variable within the
 template.
 .LP
-\fB.fhook-xxx.setup\fR is the default set-up, this is normally defined to take
+\fB.fhook-XXX.setup\fR is the default set-up, this is normally defined to take
 settings  from the  registry  and  provides  defaults  when not defined.  This
 is the only mask that is  allowed  to carry the  uppercase  flags. All  values
-defined in  \fB.fhook-xxx.setup\fR  are  explicitly  enabled  or disabled by
-default. 
+defined in  \fB.fhook-XXX.setup\fR  are  explicitly  enabled  or disabled by
+default.  The  setup set  should  contain  the  configuration  flags  that are
+required to make the template operate correctly, but should not include modes 
+that the user may set up i.e. \fIexact\fR or \fImagic\fR etc. 
 .PP
 \fB.fhook-xx.setup-mask\fR  defines the set of flags that are allowed  with the
 template. The configuration defined in  
 .Ht buffer-setup 3 
 is tested  against  the mask, if the mask  allows it then the mode is enabled.
-\fB.fhook-xxx.setup\fR  is  generally a subset of  \fB.fhook-xx.setup-mask\fR.
+\fB.fhook-XXX.setup\fR  is  generally a subset of  \fB.fhook-xx.setup-mask\fR.
 .PP
-The flags that are defined by 
+.Ht buffer-setup 3 
+operates    with   the   vales   defined   by    \fB.fhook-XXX.setup\fR    and
+\fB.fhook-xx.setup-mask\fR.  The initialization of  \fB.fhook-XXX.setup\fR  is
+performed using the registry as follows:-
+.Me $emf-scheme
+.CS
+set-variable .fhook-XXX.setup &reg "/history" "fhook/XXX" "bdfghnopx"
+.CE
+.Me $ehf-scheme
+This allows the user to configure over-ridding modes  via 
+.Ht buffer-setup 3 .
+The user configuration is saved to the
+.Hl "Registry" Registry -
+and restored using 
+.Ht &reg 4 ,
+when the variable is defined. The flags that are defined by 
 .Ht buffer-setup 3 
 include   \fCa\fR,  \fCb\fR,  \fCc\fR,  \fCd\fR,  \fCe\fR,  \fCf\fR,  \fCg\fR,
 \fCh\fR,  \fCi\fR,  \fCj\fR,  \fCk\fR,  \fCm\fR,  \fCn\fR,  \fCo\fR,  \fCp\fR,
 \fCs\fR, \fCt\fR, \fCu\fR, \fCw\fR, and \fCx\fR.
 .SS Tags
-To do.
+Some language templates include a \fItags\fR  facility to generate a tags file
+(See 
+.Ht emftags 3f 
+\- \fCemftags.emf\fR,
+.Ht ctags 3f 
+\- \fCctags.emf\fR,
+.Ht ntags 3f 
+\- \fCntags.emf\fR).
+The buffer setup may be configured to add a tags generator to the language
+template,this is added to the menu. A tag generator should be written for the
+given language template and is declared to the template by assignment of the
+\fB.fhook-XXX.tags\fR
+variable .i.e for the 'C' Programming Language:-
+.Me $emf-scheme
+.CS
+set-variable .fhook-c.tags "ctags"
+.CE 
+.Me $ehf-scheme
+The  presence  of a  tags  generator  is  not  flagged  in  the  setup  flags,
+declaration  of the  \fB.fhook-XXX.tags\fR  variable is  sufficient to declare
+that a tags generator exists.
+.SS Comments
+The  format  of   comments   may  be  defined  in  the   template   using  the
+\fB.fhook-XXX.comment\fR  variable.  Definition of the comment form allows the
+comment  formatting to be  automatically  set up. Where the comment  format is
+defined  then  the  following  key  bindings  are  automatically  added to the
+template:-
+.IP
+\fCC-c C-s\fR \fBcomment-start\fR \- start a new comment.
+.br
+\fCC-c C-c\fR \fBcomment-line\fR \- comment out the current line.
+.br
+\fCC-c C-d\fR \fBuncomment-line\fR \- remove commenting from current line.
+.br
+\fCC-c C-e\fR \fBcomment-to-end-of-line\fR \- comment to end of line.
+.br
+\fCC-c C-r\fR \fBcomment-restyle\fR \- format/re-style comment.
+.LP
+Help  information  is  automatically  added to the buffer to describe  the key
+bindings if help information is enabled.
+.PP
+The comment format is defined with the variable  \fB.fhook-XXX.comment\fR with
+an argument string in the form "\fB|\fR
+.I "<comment-start>"
+.B |
+.I "<comment-end>"
+.B |
+.I "<comment-pad>"
+.B |
+.I "<mid-box-left>"
+.B |
+.I "<mid-box-right>"
+.B |
+.I "<comment-flags>"
+\fB|\fR".
+Where the fields are defined as follows:-
+.IP "<comment-start>"
+The format of the start of the comment or comment open syntax.
+.IP "<comment-end>"
+The format of the closing  comment, where the comment exists to the end of the
+line then the field is defined as empty.
+.IP "<comment-pad>"
+The  character  to use to pad a comment  between the  \fIcomment-start\fR and
+\fI<comment-end>\fR characters when creating a line or a box formation.
+.IP "<mid-box-left>"
+The start of a comment continuation line when creating a box comment.
+.IP "<mid-box-right>"
+The end of a comment  continuation  line when  creating a box  comment and the
+comment is not closed and continues on the next line.
+.IP "<comment-flags>"
+The comment flags define how the comment  should be formatted when  re-styled.
+The flags are defined as single characters that describe the attributes.
+Re-styling may include the following attributes:-
+.RS
+.BP "b"
+Box format required, create a left and right edge for the comment.
+.BP "f"
+A footer line is required, a new line is created following the comment text to
+contain  the with a closing  comment  \fI<comment-end>\fR  string.  The end of
+comment is not padded.
+.BP "F"
+As \fBf\fR except the footer line is left padded with 
+\fI<comment-pad>\fR strings.
+.BP "h"
+A header line is required, a new line is created before the comment text to
+contain  the opening  comment  \fI<comment-start>\fR  string.  The end of
+comment is not padded.
+.BP "H"
+As \fBh\fR except the header line is right padded with 
+\fI<comment-pad>\fR strings.
+.BP "j"
+Enable justification mode in the *comment* buffer and re-style.
+.RE
+.PP
+Examples of the comments format are shown below.
+.BP "'C' Programming language"
+Format: \fC/* ... */\fR
+.LP
+.RS
+.Me $emf-scheme
+.CS 0
+set-variable .fhook-c.comment "|/*|*/|*| * | * |f|"
+.CE 0
+.RE
+.Me $ehf-scheme
+.IP
+The comment output is defined as:-
+.LP
+.RS
+.ne 6
+.CS 0
+/***************************************************************
+ * This is a box comment                                       *
+ ***************************************************************/
+
+/* Comment to end of line **************************************/
+.CE 0
+.RE
+.BP "C++ Programming language"
+Format: \fC// ... <EOL>\fR
+.LP
+.RS
+.Me $emf-scheme
+.CS 0
+set-variable .fhook-cpp.comment "|//||/|// | //||"
+.CE 0
+.Me $ehf-scheme
+.RE
+.IP
+The comment output is defined as:-
+.LP
+.RS
+.ne 6
+.CS 0
+/////////////////////////////////////////////////////////////////
+// This is a box comment                                       //
+/////////////////////////////////////////////////////////////////
+
+// Comment to end of line ///////////////////////////////////////
+.CE 0
+.RE
+.BP "MicroEmacs macro language"
+Format: \fC; ... <EOL>\fR
+.LP
+.RS
+.Me $emf-scheme
+.CS 0
+set-variable .fhook-emf.comment "|;||;|; | ;||"
+.CE 0
+.Me $ehf-scheme
+.RE
+.IP
+The comment output is defined as:-
+.LP
+.RS
+.ne 6
+.CS 0
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Box Comment                                                   ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; Comment to end of line ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+.CE 0
+.RE
+.BP "Shell script"
+Format: \fC# ... <EOL>\fR
+.LP
+.RS
+.Me $emf-scheme
+.CS 0
+set-variable .fhook-shell.comment "|#||#|# | #||"
+.CE 0
+.Me $ehf-scheme
+.RE
+.IP
+The comment output is defined as:-
+.LP
+.RS
+.ne 6
+.CS 0
+#################################################################
+# Box Comment                                                   #
+#################################################################
+
+# Comment to end of line ########################################
+.CE 0
+.RE
+.BP "MS-DOS Batch file"
+Format: \fCrem ... <EOL>\fR
+.LP
+.RS
+.Me $emf-scheme
+.CS 0
+set-variable .fhook-dos.comment "|rem |||rem |||"
+.CE 0
+.Me $ehf-scheme
+.RE
+.IP
+The comment output is defined as:-
+.LP
+.RS
+.ne 6
+.CS 0
+rem
+rem Box Comment                                                             
+rem                                                                           
+
+rem Comment to end of line
+.CE 0
+.RE
 .SH "SEE ALSO"
 .na
 .Ht add-file-hook 2 ,
