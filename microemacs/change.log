@@ -4,14 +4,43 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <040307.1443>
+>  Last Modified : <040311.0023>
 >
 
 7th Release - March 2004
 
-    [040226] Deleted cygnus.emf added cygwin.emf for cygwin BASH shell support
-             under Windows. Corrected the shell operation with macro layer for
-             echo and completion.
+    [040310] Fix to graphical diff ("gdiff").  Occasions where all changes had
+             been   accepted  and  the  changes  could  not  be  saved.  gdiff
+             incorrectly prompted user to accept all changes first.
+
+    [040310] Support  for  multiple   comment  styles  in  the  same  language
+             template.   Additional   comment   styles  are   defined  in  the
+             "hkXXX.emf" file with the syntax ".fhook-XXX.comment-N" where "N"
+             is an  integer  starting  for 1 to n,  the  number  of  different
+             comment styles. Templates  updated to use multiple comment styles
+             where appropriate (C, C++ and SQL).
+
+    [040310] Support the 'r' flag in  ".fhook-XXX.comment"  flag field. Causes
+             the key  binding to "esc-o" and "esc-q" to restyle  the  comment.
+             All templates updated to include the flag where appropriate.
+
+    [040310] CVS  operates   asynchronously  using  ipipes.  Refresh  problems
+             resolved.
+
+    [040310] narrow-search-forward  bound  to "C-c s",  narrow-search-backward
+             bound to "C-c r".
+
+    [040308] "ipipe-shell-command"  includes  additional  flag  to run in "raw
+             mode"  where the buffer is not  annotated  and wrap is  disabled.
+             Additional argument added to command to allow the "$buffer-ipipe"
+             macro to be defined when the pipe is defined. Corrected operation
+             of pipe-shell-command  where "ipipe" automatically  degrades to a
+             "pipe" (Windows only), if degraded then the "$buffer-ipipe" macro
+             is still invoked on completion.
+
+    [040226] Deleted  "cygnus.emf"  added  "cygwin.emf"  for cygwin BASH shell
+             support under Windows.  Corrected the shell  operation with macro
+             layer for echo and completion.
 
     [040224] Add new 'narrow out unhilighted lines' feature.
 
