@@ -714,18 +714,13 @@ meTab(int f, int n)
     if(n<=0)
         return meTRUE ;
     
-    if((meSystemCfg & meSYSTEM_TABINDANY) ||
-       ((meSystemCfg & meSYSTEM_TABINDFST) && (frameCur->windowCur->dotOffset == 0)))
-    {
 #if MEOPT_HILIGHT
-        if(frameCur->bufferCur->indent)
-            return indentLine() ;
+    if((frameCur->bufferCur->indent) &&
+       ((meSystemCfg & meSYSTEM_TABINDANY) ||
+        ((meSystemCfg & meSYSTEM_TABINDFST) && (frameCur->windowCur->dotOffset == 0))))
+        return indentLine(&ii) ;
 #endif
-#if MEOPT_CFENCE
-        if(meModeTest(frameCur->bufferCur->mode,MDCMOD))
-           return doCindent(&ii) ;
-#endif
-    }
+        
     if((ii=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
         return ii ;
     
@@ -886,10 +881,13 @@ winsert(void)	/* insert a newline and indentation for Wrap indent mode */
 
 #if MEOPT_HILIGHT
 /* insert a newline and indentation for current buffers indent scheme */
-static int
+int
 indentInsert(void)
 {
-    indentLine() ;
+    int inComment, doto ;
+    meUByte *str, *comCont ;
+    
+    indentLine(&inComment) ;
     
     /* put in the newline */
     if (lineInsertNewline(meFALSE) <= 0)
@@ -897,7 +895,34 @@ indentInsert(void)
 #if MEOPT_UNDO
     meUndoAddInsChar() ;
 #endif
-    return indentLine() ;
+    if(indentLine(&inComment) <= 0)
+        return meFALSE ;
+    
+    if(inComment && ((comCont=indents[frameCur->bufferCur->indent]->rtoken) != NULL))
+    {
+        doto = frameCur->windowCur->dotOffset ;
+        if(gotoFrstNonWhite() == 0)
+        {
+            int newInd ;
+            frameCur->windowCur->dotOffset = doto ;
+            if((newInd = getccol() - 3) < 0)
+                newInd = 0 ;
+            if(meLineSetIndent(doto,newInd,1) <= 0)
+                return meFALSE ;
+            str = comCont ;
+            while(*str != '\0')
+                lineInsertChar(1, *str++) ;
+            if((doto=((size_t) str) - ((size_t) comCont)) > 0)
+            {
+#if MEOPT_UNDO
+                meUndoAddInsChars(doto) ;
+#endif
+            }
+        }
+        else
+            frameCur->windowCur->dotOffset = doto ;
+    }
+    return meTRUE ;
 }
 #endif
 
@@ -967,11 +992,6 @@ meNewline(int f, int n)
 #if MEOPT_HILIGHT
         if(frameCur->bufferCur->indent)
             s = indentInsert() ;
-        else
-#endif
-#if MEOPT_CFENCE
-        if(meModeTest(frameCur->bufferCur->mode,MDCMOD))
-            s = cinsert() ;
         else
 #endif
 #if MEOPT_WORDPRO
@@ -1694,10 +1714,12 @@ findfence(meUByte ch, meUByte forwFlag)
         if(meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset) == '/')
             frameCur->windowCur->dotOffset += (forwFlag) ? 1:-1 ;
     }
-    else if(!meModeTest(frameCur->bufferCur->mode,MDCMOD))
-        inCom = MTNW_SIMPLE|MTNW_KNOWN ;
-    else
+#if MEOPT_HILIGHT
+    else if(frameCur->bufferCur->indent && (indents[frameCur->bufferCur->indent]->type & HICMODE))
         inCom = 0 ;
+#endif
+    else
+        inCom = MTNW_SIMPLE|MTNW_KNOWN ;
     
     for(;;)
     {
@@ -1881,6 +1903,9 @@ exit_fence:
     return ret ;
 }
 
+#endif /* MEOPT_CFENCE */
+
+#if MEOPT_HILIGHT
 
 static int
 prevCToken(meUByte *token, int size)
@@ -1894,7 +1919,7 @@ prevCToken(meUByte *token, int size)
 }
 
 static int
-getCoffset(int onBrace, int *inComment)
+getCoffset(meHilight *indentDef, int onBrace, int *inComment)
 {
     meLine *oldlp;    	        /* original line pointer */
     meUByte cc ;
@@ -1913,7 +1938,7 @@ getCoffset(int onBrace, int *inComment)
             if(brakCont < 0)
                 return -brakCont ;
             else if(onBrace < 0)
-                return statementIndent ;
+                return meIndentGetStatementIndent(indentDef) ;
             return 0 ;
             
         case ')':
@@ -1939,12 +1964,12 @@ find_bracket_fence:
                 if(cc == '{')
                 {
                     ret = getccol() ;
-                    if(ret <= statementIndent+braceIndent)
+                    if(ret <= meIndentGetStatementIndent(indentDef)+meIndentGetBraceIndent(indentDef))
                     {
                         if(brakCont < 0)
                             return -brakCont ;
                         else if(onBrace < 0)
-                            return statementIndent ;
+                            return meIndentGetStatementIndent(indentDef) ;
                         return 0 ;
                     }
                     if(!gotsome)
@@ -2047,18 +2072,18 @@ find_bracket_fence:
 		    else
 		    {
                         if((cc == '{') || (cc == '}'))
-                            brakCont = ii-braceIndent ;
+                            brakCont = ii - meIndentGetBraceIndent(indentDef) ;
                         else
-                            brakCont = ii+statementIndent ;
+                            brakCont = ii + meIndentGetStatementIndent(indentDef) ;
                         if(!onBrace && indent == -1)
-                            brakCont += switchIndent ;
+                            brakCont += meIndentGetSwitchIndent(indentDef) ;
                         
                         if(brakCont < 0)
                             brakCont = 0 ;
 		    }
                 }
                 frameCur->windowCur->dotOffset = off ;
-                if(ii <= statementIndent+braceIndent)
+                if(ii <= meIndentGetStatementIndent(indentDef) + meIndentGetBraceIndent(indentDef))
                     indent = 1 ;
 		else if(indent < 0)
                     indent = 0 ;
@@ -2085,7 +2110,7 @@ find_bracket_fence:
                 while(((ch=meLineGetChar(frameCur->windowCur->dotLine,++(frameCur->windowCur->dotOffset))) == ' ') || (ch == '\t'))
                     ;
 		brakCont = getccol() ;
-                if((continueMax > 0) && (brakCont > continueMax))
+                if((meIndentGetContinueMax(indentDef) > 0) && (brakCont > meIndentGetContinueMax(indentDef)))
 		{
                     meUShort off ;
                     int ii ;
@@ -2093,7 +2118,7 @@ find_bracket_fence:
                     off = frameCur->windowCur->dotOffset ;
                     frameCur->windowCur->dotOffset = 0 ;
                     gotoFrstNonWhite() ;
-                    ii = getccol() + continueMax ;
+                    ii = getccol() + meIndentGetContinueMax(indentDef) ;
                     if(ii < brakCont)
                         brakCont = ii ;
                     frameCur->windowCur->dotOffset = off ;
@@ -2165,39 +2190,39 @@ find_bracket_fence:
             {
                 frameCur->windowCur->dotOffset = 0 ;
                 gotoFrstNonWhite() ;
-                brakCont = getccol()+statementIndent ;
+                brakCont = getccol()+meIndentGetStatementIndent(indentDef) ;
             }
             else
             {
                 if(onBrace < 0)
-                    brakCont += statementIndent ;
+                    brakCont += meIndentGetStatementIndent(indentDef) ;
                 else if(brakCont)
-                    brakCont += continueIndent ;
+                    brakCont += meIndentGetContinueIndent(indentDef) ;
             }
         }
         else if(!prevCToken((meUByte *)"do",2) && !prevCToken((meUByte *)"else",4))
         {
             if(onBrace < 0)
-                brakCont += statementIndent ;
+                brakCont += meIndentGetStatementIndent(indentDef) ;
             else if(brakCont)
-                brakCont += continueIndent ;
+                brakCont += meIndentGetContinueIndent(indentDef) ;
         }
         else
         {
             frameCur->windowCur->dotOffset = 0 ;
             gotoFrstNonWhite() ;
-            brakCont = getccol()+statementIndent ;
+            brakCont = getccol()+meIndentGetStatementIndent(indentDef) ;
         }
     }
     else if(onBrace < 0)
-        brakCont += statementIndent ;
+        brakCont += meIndentGetStatementIndent(indentDef) ;
     return brakCont ;
 }
 
 
 /* do C indent, returns -ve if failed (god knows how) the indent on success. */
 int
-doCindent(int *inComment)
+doCindent(meHilight *indentDef, int *inComment)
 {
     meLine *oldlp;    	        /* original line pointer */
     int   ind=1, curOff, curInd, curPos, cc, ii ; 
@@ -2220,7 +2245,7 @@ doCindent(int *inComment)
         if((cc == 'c') &&
            !meStrncmp(frameCur->windowCur->dotLine->text+frameCur->windowCur->dotOffset,"case",4) &&
            !isAlpha(frameCur->windowCur->dotLine->text[frameCur->windowCur->dotOffset+4]))
-            addInd += caseIndent ;
+            addInd += meIndentGetCaseIndent(indentDef) ;
         else if((cc == 'e') &&
                 !meStrncmp(frameCur->windowCur->dotLine->text+frameCur->windowCur->dotOffset,"else",4) &&
                 (!isAlpha(frameCur->windowCur->dotLine->text[frameCur->windowCur->dotOffset+4]) ||
@@ -2229,7 +2254,7 @@ doCindent(int *inComment)
         else if((cc == 'd') &&
                 !meStrncmp(frameCur->windowCur->dotLine->text+frameCur->windowCur->dotOffset,"default",7) &&
                 !isAlpha(frameCur->windowCur->dotLine->text[frameCur->windowCur->dotOffset+7]))
-            addInd += caseIndent ;
+            addInd += meIndentGetCaseIndent(indentDef) ;
         else if((cc == 'p') && 
                 ((ii=7,!meStrncmp(frameCur->windowCur->dotLine->text+frameCur->windowCur->dotOffset,"private",ii)) ||
                  (ii=6,!meStrncmp(frameCur->windowCur->dotLine->text+frameCur->windowCur->dotOffset,"public",ii)) ||
@@ -2251,7 +2276,7 @@ doCindent(int *inComment)
                     cc = meLineGetChar(frameCur->windowCur->dotLine,ii++);
             }
             if(cc == ':')
-                addInd -= statementIndent ;
+                addInd -= meIndentGetStatementIndent(indentDef) ;
         }
         else
         {
@@ -2302,7 +2327,9 @@ use_prev_line:
             {
 use_contcomm:
                 if((meLineGetChar(frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset+1) == '*') &&
-                   (commentCont[0] == '*') && (commentCont[1] == '*'))
+                   (meIndentGetCommentContinue(indentDef) != NULL) &&
+                   (meIndentGetCommentContinue(indentDef)[0] == '*') &&
+                   (meIndentGetCommentContinue(indentDef)[1] == '*'))
                     comInd = 0 ;
             }
             frameCur->windowCur->dotLine = oldlp ;
@@ -2353,7 +2380,7 @@ use_contcomm:
             {
                 /* Matched our position with the current position, use this as
                  * the indent. */
-                addInd = curInd - getCoffset(onBrace,inComment);
+                addInd = curInd - getCoffset(indentDef,onBrace,inComment);
                 if (addInd < 0)
                     addInd = 0;         /* Correct bad return ! */
             }
@@ -2363,13 +2390,13 @@ use_contcomm:
     }
     else if(cc == '{')
     {
-        addInd += braceIndent ;
+        addInd += meIndentGetBraceIndent(indentDef) ;
         onBrace = -1 ;
     }
     else if(cc == '}')
     {
-	    addInd += braceIndent ;
-	    onBrace = 1 ;
+        addInd += meIndentGetBraceIndent(indentDef) ;
+        onBrace = 1 ;
     }
     else if (cc == ':')
     {
@@ -2382,11 +2409,11 @@ use_contcomm:
           *       ...
           *   }
           */
-         addInd += continueIndent ;
+         addInd += meIndentGetContinueIndent(indentDef) ;
     }
     if(ind)
     {
-        ind = getCoffset(onBrace,inComment) ;
+        ind = getCoffset(indentDef,onBrace,inComment) ;
         if(*inComment)
             ind += comInd ;
         else if((ind += addInd) < 0)
@@ -2401,50 +2428,7 @@ use_contcomm:
     return meLineSetIndent(curOff,ind,1) ;
 }
 
-/* insert a newline and indentation for C */
-int
-cinsert(void)
-{
-    int inComment, doto ;
-    meUByte *str ;
-    
-    doCindent(&inComment) ;
-    
-    /* put in the newline */
-    if (lineInsertNewline(meFALSE) <= 0)
-        return meFALSE ;
-#if MEOPT_UNDO
-    meUndoAddInsChar() ;
-#endif
-    doCindent(&inComment) ;
-    if(inComment && (commentCont[0] != '\0'))
-    {    
-        doto = frameCur->windowCur->dotOffset ;
-        if(gotoFrstNonWhite() == 0)
-        {
-            int newInd ;
-            frameCur->windowCur->dotOffset = doto ;
-            if((newInd = getccol() - 3) < 0)
-                newInd = 0 ;
-            if(meLineSetIndent(doto,newInd,1) <= 0)
-                return meFALSE ;
-            str = commentCont ;
-            while(*str != '\0')
-                lineInsertChar(1, *str++) ;
-            if((doto=((size_t) str) - ((size_t) commentCont)) > 0)
-            {
-#if MEOPT_UNDO
-                meUndoAddInsChars(doto) ;
-#endif
-            }
-        }
-        else
-            frameCur->windowCur->dotOffset = doto ;
-    }
-    return meTRUE ;
-}
-
-#endif /* MEOPT_CFENCE */
+#endif /* MEOPT_HILIGHT */
 
 int
 meAnchorDelete(meBuffer *bp, meInt name)

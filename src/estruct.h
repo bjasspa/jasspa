@@ -881,6 +881,20 @@ typedef struct meKill {
 /* indent init flags */
 #define HICASE     0x01
 #define HILOOKB    0x02   /* this indent has a lookback indent scheme */
+#define HICMODE    0x04   /* this indent uses the built in cmode      */
+#define HIGFBELL   0x08   /* Ring bell if gotoFence fails             */
+#define HICOMCONT  0x10   /* indent has a continue comment string     */
+
+#define meHICMODE_SIZE 8
+#define meIndentGetStatementIndent(ind) meIndentGetIndent(ind->token[0],frameCur->bufferCur->indentWidth)
+#define meIndentGetContinueIndent(ind)  meIndentGetIndent(ind->token[1],frameCur->bufferCur->indentWidth)
+#define meIndentGetContinueMax(ind)     meIndentGetIndent(ind->token[2],frameCur->bufferCur->indentWidth)
+#define meIndentGetBraceIndent(ind)     meIndentGetIndent(ind->token[3],frameCur->bufferCur->indentWidth)
+#define meIndentGetSwitchIndent(ind)    meIndentGetIndent(ind->token[4],frameCur->bufferCur->indentWidth)
+#define meIndentGetCaseIndent(ind)      meIndentGetIndent(ind->token[5],frameCur->bufferCur->indentWidth)
+#define meIndentGetCommentIndent(ind)   meIndentGetIndent(ind->token[6],frameCur->bufferCur->indentWidth)
+#define meIndentGetCommentMargin(ind)   meIndentGetIndent(ind->token[7],frameCur->bufferCur->indentWidth)
+#define meIndentGetCommentContinue(ind) ((ind)->rtoken)
 
 typedef struct meHilight {
     struct meHilight **list ;

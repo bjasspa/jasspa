@@ -280,19 +280,6 @@ extern  meUByte   truem[];              /* true literal         */
 extern  meUByte   falsem[];             /* false litereal               */
 extern  meVarList usrVarList;           /* user variables list          */
 
-#if MEOPT_CFENCE
-extern meShort    statementIndent ;
-extern meShort    continueIndent ;
-extern meShort    continueMax ;
-extern meShort    commentIndent ;
-extern meShort    switchIndent ;
-extern meShort    braceIndent ;
-extern meShort    caseIndent ;
-extern meShort    commentMargin ;
-extern meUByte    commentContOrg[] ;
-extern meUByte   *commentCont ;
-#endif
-
 /* global buffer names */
 extern meUByte    BvariablesN[];
 extern meUByte    BbindingsN[];
@@ -725,20 +712,6 @@ meUByte   abortm[]  = "ABORT";          /* abort literal                   */
 meUByte   truem[]   = "1";              /* true literal            */
 meUByte   falsem[]  = "0";              /* false litereal                  */
 meVarList usrVarList={NULL,0} ;         /* user variables list             */
-
-
-#if MEOPT_CFENCE
-meShort   statementIndent = 4 ;
-meShort   continueIndent  = 10 ;
-meShort   continueMax     = 0 ;
-meShort   commentIndent   = 1 ;
-meShort   switchIndent    = 0 ;
-meShort   braceIndent     = -4 ;
-meShort   caseIndent      = -4 ;
-meShort   commentMargin   = -1 ;
-meUByte   commentContOrg[]= " * " ;
-meUByte  *commentCont     = commentContOrg ;
-#endif
 
 /* global buffer names */
 meUByte   BvariablesN[] = "*variables*" ;

@@ -346,9 +346,10 @@ execute(register int c, register int f, register int n)
     if(insertChar(c,n) <= 0)
         return (cmdstatus = meFALSE) ;
 
-#if MEOPT_CFENCE
-    if(meModeTest(frameCur->bufferCur->mode,MDCMOD))
+#if MEOPT_HILIGHT
+    if(frameCur->bufferCur->indent && (indents[frameCur->bufferCur->indent]->type & HIGFBELL))
     {
+        meHilight *indent=indents[frameCur->bufferCur->indent] ;
         if((c == '}') || (c == '#'))
         {
             ii = frameCur->windowCur->dotOffset ;
@@ -356,12 +357,12 @@ execute(register int c, register int f, register int n)
             if(gotoFrstNonWhite() == c)
             {
                 frameCur->windowCur->dotOffset = ii ;
-                doCindent(&ii) ;
+                doCindent(indent,&ii) ;
             }
             else
                 frameCur->windowCur->dotOffset = ii ;
         }
-        else if((commentMargin >= 0) &&
+        else if((meIndentGetCommentMargin(indent) >= 0) &&
                 ((c == '*') || (c == '/')) && (frameCur->windowCur->dotOffset > 2) &&
                 (meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset-2) == '/') &&
                 (meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset-3) != '/'))
@@ -372,11 +373,11 @@ execute(register int c, register int f, register int n)
                (frameCur->windowCur->dotOffset < ii))
             {
                 frameCur->windowCur->dotOffset = ii ;
-                if(ii > commentMargin)
+                if(ii > meIndentGetCommentMargin(indent))
                     ii = (((int)(frameCur->bufferCur->indentWidth)-1) -
                           ((ii-1)%(int)(frameCur->bufferCur->indentWidth))) ;
                 else
-                    ii = commentMargin - ii ;
+                    ii = meIndentGetCommentMargin(indent) - ii ;
                 lineInsertChar(ii,' ') ;
 #if MEOPT_UNDO
                 meUndoAddInsChars(ii) ;
@@ -387,12 +388,14 @@ execute(register int c, register int f, register int n)
             frameCur->windowCur->dotOffset += 2 ;
         }
     }
+#endif
+#if MEOPT_CFENCE
     /* check for fence matching */
     if(meModeTest(frameCur->bufferCur->mode,MDFENCE) && ((c == '}') || (c == ')') || (c == ']')))
     {
         frameCur->windowCur->dotOffset-- ;
         /* flag for delay move and only bell in cmode */
-        gotoFence(meTRUE,(meModeTest(frameCur->bufferCur->mode,MDCMOD)) ? 3:2) ;
+        gotoFence(meTRUE,(frameCur->bufferCur->indent && (indents[frameCur->bufferCur->indent]->type & HIGFBELL)) ? 3:2) ;
         frameCur->windowCur->dotOffset++ ;
     }
 #endif
@@ -714,8 +717,6 @@ exitEmacs(int f, int n)
                 meNullFree(modeLineStr) ;
             meNullFree(flNextFileTemp) ;
             meNullFree(flNextLineTemp) ;
-            if(commentCont != commentContOrg)
-                meFree(commentCont) ;
             
             meNullFree(userName) ; 
             meNullFree(userPath) ;  
