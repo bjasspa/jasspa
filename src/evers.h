@@ -44,7 +44,7 @@
 #define meCENTURY       "20"          /* Current century. Y2 complient :-) */
 #define meYEAR          "05"          /* Current year */
 #define meMONTH         "02"          /* Current month */
-#define meDAY           "19"          /* Day of the month */
+#define meDAY           "24"          /* Day of the month */
 
 /* Version information - Date of build */
 #define	meDATE          meYEAR "/" meMONTH "/" meDAY 
