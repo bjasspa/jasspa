@@ -1047,6 +1047,10 @@ define-macro cvs-update
     !endif
     ; get the date in YYYY/MM/DD HH:MM form
     set-variable #p9 &spr "%s/%02d/%02d %s" @s6 &lfind "|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|" @s3 @s4 @s5
+    beginning-of-line
+    set-mark
+    forward-line
+    -1 kill-region
 !emacro
 
 0 define-macro cvs-get-status-info
@@ -1069,12 +1073,17 @@ define-macro cvs-update
     !endif
     set-position "\x83"
     set-variable #l1 $buffer-bname
-    !force 0 find-file "CVS/Entries"
+    set-variable #l2 $buffer-fname
+    !force 0 delete-buffer "*cvs-temp2*"
+    find-buffer "*cvs-temp2*"
+    !force insert-file &cat #l2 "CVS/Entries"
     !if &not $status
         ; not a cvs directory
+        !force 0 delete-buffer "*cvs-temp2*"
+        goto-position "\x83"
+        ml-write "Got here"
         !return
     !endif
-    set-variable #l2 $buffer-bname
     ; make sure that the main window is only displayed once
     -1 find-buffer #l1
     0x10 goto-position "\x83"
@@ -1105,7 +1114,7 @@ define-macro cvs-update
                     ; save the status
                     set-variable #l6 #l9
                 !endif
-                !force cvs-get-entries-info #l2 #l3
+                !force cvs-get-entries-info "*cvs-temp2*" #l3
                 set-variable #l5 $status
                 find-buffer #l1
                 !if #l4
@@ -1149,36 +1158,44 @@ define-macro cvs-update
         !endif
     !done
     ; find any cvs or locally deleted files and add these to the end of the list
-    find-buffer "*cvs-temp*"
+    find-buffer "*cvs-temp2*"
     beginning-of-buffer
-    !force search-forward "^\\(R \\(.*\\)\\|[cC][vV][sS].* update: warning: \\(.*\\) was lost\\)$"
+    !force search-forward "^/\\([^/\n]+\\)/"
     !while $status
-        !if &seq @s2 ""
-            set-variable #l3 @s3
-            set-variable #l6 "L"
-        !else
-            set-variable #l3 @s2
-            set-variable #l6 "R"
-        !endif
+        set-variable #l3 @s1
         set-variable #l4 #l3
         filemask-to-regex #l3
-        !force cvs-get-entries-info #l2 #l3
+        find-buffer "*cvs-temp*"
+        beginning-of-buffer
+        !force search-forward &spr "^\\(.\\) %s$" #l3
+        !if &not $status
+            set-variable #l6 "?"
+        !elif &seq @s1 "U"
+            set-variable #l6 "L"
+        !else
+            set-variable #l6 @s1
+        !endif
+        ; this really should work, if not then we are likely to spin!
+        !force cvs-get-entries-info "*cvs-temp2*" #l3
         set-variable #l5 $status
         find-buffer #l1
         !if #l5
             insert-string &spr " %s--- %s%n      -  %s                  %s" #l6 #l8 &sub 8 &len #l8 " " #l9 #l4
         !else
-            insert-string &spr " %s---               -                                    %s" #l6 #l4
+            insert-string &spr " %s--- CVS Error - status failure on this file:           %s" #l6 #l4
+            !goto del-break-out
         !endif
         beginning-of-line
         forward-line
-        find-buffer "*cvs-temp*"
-        !force search-forward "^\\(R \\(.*\\)\\|[cC][vV][sS].* update: warning: \\(.*\\) was lost\\)$"
+        find-buffer "*cvs-temp2*"
+        beginning-of-buffer
+        !force search-forward "^/\\([^/\n]+\\)/"
     !done
-    !force 0 delete-buffer #l2
+*del-break-out
     !force 0 delete-buffer "*cvs-temp*"
-    -1 buffer-mode "edit"
+    !force 0 delete-buffer "*cvs-temp2*"
     goto-position "\x83"
+    -1 buffer-mode "edit"
     set-variable :fmpf 57
 !emacro
 

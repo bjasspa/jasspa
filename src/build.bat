@@ -54,9 +54,8 @@ goto build_option
 
 if "%OPTIONS%." == "." set OPTIONS=%MAINTYPE%%MEDEBUG%%MEURL%%METYPE%
 
-if "%MAKEFILE%." == "." goto build_auto
-
 set MAKE=nmake
+if "%MAKEFILE%." == "." goto build_auto
 if "%MAKEFILE%" == "dosdj1.mak"  set MAKE=make
 if "%MAKEFILE%" == "dosdj2.mak"  set MAKE=make
 

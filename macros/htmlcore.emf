@@ -1,10 +1,10 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
+; Copyright (C) 1998-2003 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
-; Created:     Mon Sep 21 1998
-; Synopsis:    HTML Hook File
+; Created:     Wed Oct 15 2003
+; Synopsis:    HTML based file hook (broken out of hkhtml)
 ; Authors:     Steven Phillips
 ;
 set-variable #l0 @1
@@ -263,7 +263,7 @@ set-variable #l2 &ind &spr ".hilight.%stag" #l0
     !endif
 !endif
 !if &sin "d" &ind &cat #l9 ".setup"
-    0 indent #l2 1 255
+    0 indent #l2 1 500
     0 indent #l1 3 20 #l2
     !if &exist .indent.javascript
         indent #l2 t "<script>" .indent.javascript

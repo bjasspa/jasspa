@@ -2949,7 +2949,6 @@ WinMouse(HWND hwnd, UINT message, UINT wParam, LONG lParam)
 }
 #endif
 
-#define _WIN_KEY_DEBUGGING        
 /*
  * WinKeyboard
  * Handle keyboard message types.
@@ -2963,6 +2962,7 @@ WinKeyboard (HWND hwnd, UINT message, UINT wParam, LONG lParam)
     
     if((frame = meMessageGetFrame(hwnd)) == NULL)
         return meFALSE ;
+        
 #ifdef _WIN_KEY_DEBUGGING
     {
         FILE *fp = NULL;
@@ -3138,34 +3138,18 @@ test_do_keydown:
             cc = SKEY_f2;
             goto do_keydown;
         case VK_F3:
-            cc = SKEY_f3;
-            goto do_keydown;
         case VK_F4:
-            cc = SKEY_f4;
-            goto do_keydown;
         case VK_F5:
-            cc = SKEY_f5;
-            goto do_keydown;
         case VK_F6:
-            cc = SKEY_f6;
-            goto do_keydown;
         case VK_F7:
-            cc = SKEY_f7;
-            goto do_keydown;
         case VK_F8:
-            cc = SKEY_f8;
-            goto do_keydown;
         case VK_F9:
-            cc = SKEY_f9;
+            cc = SKEY_f3 + (wParam - VK_F3);
             goto do_keydown;
         case VK_F10:
-            cc = SKEY_f10;
-            goto do_keydown;
         case VK_F11:
-            cc = SKEY_f11;
-            goto do_keydown;
         case VK_F12:
-            cc = SKEY_f12;
+            cc = SKEY_f10 + (wParam - VK_F10);
 do_keydown:
             cc = (ME_SPECIAL | ttmodif | cc) ;
             /* Add the character to the typeahead buffer.

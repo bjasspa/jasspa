@@ -2462,8 +2462,8 @@ indent(int f, int n)
             return meABORT ;
         if((indents[indno] = createHilight(indno,&noIndents,&indents)) == NULL)
             return meFALSE ;
-        indents[indno]->ignore = (meUByte) meAtoi(buf) ;
-        indents[indno]->type   = itype ;
+        indents[indno]->close = (meUByte *) meAtoi(buf) ;
+        indents[indno]->type  = itype ;
         if(itype & HILOOKB)
         {
             if((meGetString((meUByte *)"Ind no",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
@@ -2489,7 +2489,7 @@ indent(int f, int n)
             lindno = indents[indno]->tknSttOff ;
             lp = frameCur->windowCur->dotLine ;
             htype = frameCur->windowCur->dotOffset ;
-            itype = indents[lindno]->ignore ;
+            itype = (int) indents[lindno]->close ;
             do {
                 if(((indno = indentLookBack(lp,htype)) != 0) ||
                    ((lp = meLineGetPrev(lp)) == frameCur->bufferCur->baseLine))
@@ -2597,7 +2597,7 @@ indentLine(void)
     {
         lindent = indents[indent]->tknSttOff ;
         lp = frameCur->windowCur->dotLine ;
-        for(lb = indents[lindent]->ignore ; --lb >= 0 ; )
+        for(lb = (int) indents[lindent]->close ; --lb >= 0 ; )
         {
             if(((lp = meLineGetPrev(lp)) == frameCur->bufferCur->baseLine) ||
                ((indent = indentLookBack(lp,0xffff)) != 0))
@@ -2644,7 +2644,7 @@ indentLine(void)
             aind = ((meByte) (fnoz & 0x0ff)) ;
         else
             aind = 0 ;
-        jj = indents[indent]->ignore ;
+        jj = (int) indents[indent]->close ;
         for(ind=0 ; (--jj >=0) ; )
         {
             if((lp = meLineGetPrev(lp)) == frameCur->bufferCur->baseLine)
@@ -2654,7 +2654,7 @@ indentLine(void)
             {
                 /* theres a file type change on this line, look back to what its changed from */
                 indent = 0 ;
-                for(lb = indents[lindent]->ignore ; --lb >= 0 ; )
+                for(lb = (int) indents[lindent]->close ; --lb >= 0 ; )
                 {
                     if(((lp = meLineGetPrev(lp)) == frameCur->bufferCur->baseLine) ||
                        ((indent = indentLookBack(lp,0xffff)) != 0))
