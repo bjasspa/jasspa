@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jul 16 23:13:14 1998
 .\"
-.Id $Id: m2cmd066.2,v 2.9 2004-11-26 23:49:21 bill Exp $
+.Id $Id: m2cmd066.2,v 2.10 2005-02-19 19:54:56 bill Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH osd 2
@@ -37,7 +37,8 @@ osd \- Manage the On-Screen Display
 "\fImin-depth\fR"
 "\fImax-wid\fR"
 "\fImax-dep\fR"]
-["\fIdefault\fR"]
+["\fIdefault-button\fR"]
+["\fIinitial-item\fR"]
 [["\fItitle-bar-scheme\fR"]
 ["\fIText\fR"]]
 ["\fIresize-command\fR"]
@@ -80,7 +81,8 @@ set by the argument \fIflag\fR defined as:-
 "\fImin-depth\fR"
 "\fImax-wid\fR"
 "\fImax-dep\fR"]
-["\fIdefault\fR"]
+["\fIdefault-button\fR"]
+["\fIinitial-item\fR"]
 [["\fItitle-bar-scheme\fR"]
 ["\fIText\fR"]]
 ["\fIresize-command\fR"]
@@ -167,10 +169,17 @@ unless  you have a large  amount  of memory to throw away).
 Sets the main  dialog  scheme,  The default  scheme  when not specified is
 .Ht $osd-scheme 5
 See macro file \fCfileopen.emf\fR for an example.
-.IP \fBd\fR
-Sets default item to select to "\fIdefault\fR". This item is selected when the
-dialog is first opened, if this item is an automatically  opened sub-menu then
-the child menu will also be opened.
+.IP \fBD\fR
+Sets  "\fIdefault-button\fR"  to be the button executed when the  \fCreturn\fR
+key is pressed and no other button has the focus. The current  default  button
+is  typically  denoted by "\fC>  Button  <\fR",  other  buttons are denoted by
+"\fC[ Button ]\fR" or have no denoting characters, this is configured via the
+.Ht $window-chars 5
+variable.
+.IP \fBI\fR
+Set  "\fIinitial-item\fR"  to be selected when the dialog first opens, if this
+item is an  automatically  opened  sub-menu  then the child  menu will also be
+opened.
 .IP \fBt\fR
 Title bar is present \- draws the title bar. The \fItext\fR argument is
 optional
@@ -432,7 +441,8 @@ Center the text for the item in the middle of the dialog.
 .IP \fBr\fR
 Right hand justify the text for the item.
 .IP \fBt\fR
-Set the item to be in the tab order in the dialog.
+Set the item to be in the tab order of the  dialog.  The order of tab items in
+the dialog is auto-generated, based on item \fIi\fR numbers. 
 .IP \fBb\fR
 Child inclusion is a scroll box type. By default a child inclusion
 simply draws the whole child dialog at the  position. If this flag
@@ -450,13 +460,13 @@ dump is not out of the question).
 Fix  the  item  size to the  given  "\fIsize\fR",  by  default  an item is
 expanded to the width of the dialog.
 .IP \fBE\fR
-Item  is an  entry  box  type.  Use a  string  of \fC#\fR's to set  the
-position and size of the entry text box. Similar to Check-boxes,  the command
-given must both return and set the value depending on value of the
+Item is an entry box type. Use the '\fBz\fR'  flog or set the text to a string
+of  \fC#\fR's  to set the size of the entry text box. Similar to  Check-boxes,
+the command given must both return and set the value depending on value of the
 argument given. The value must be returned in
 .Ht $result 5
-if the given argument  (or 1 for  '\fCf\fR') is  given,  and  the  value  must be set
-(usually  using
+if the given argument (or 1 for '\fCf\fR') is given, and the value must be
+set (usually using
 .Ht @ml 4
 or
 .Ht @mc 4 )
@@ -604,6 +614,11 @@ when only the osd dialogs need updating as it suffers less from flickering.
 .SH EXAMPLE
 Refer to \fCosd.emf\fR, \fCuserstp.emf\fR,  \fCsearch.emf\fR,  \fCspell.emf\fR
 and \fCorganize.emf\fR for examples of the OSD.
+.SH NOTES
+In December 2004 the \fBd\fR default item flag in dialog creation was replaced
+with two new flags, \fBD\fR and \fBI\fR. At the same time the dialog tab order
+was  changed to an  automated  calculation  so a tab index  value is no longer
+required with the item tab \fBt\fR flag.
 .SH "SEE ALSO"
 .na
 .Ht $osd-scheme 5 ,

@@ -434,7 +434,7 @@ author: bill
 Removed osd 0 'd' flag and added 'I' initial item and 'D' default button flags, existing osd dialogs which use 'd' will fail to load and need to migrate to D & I.
 Fixed some remaining cursor movement issues
 
-Steve to do.
+Done Doc [Steve 2005-02-19]
 ----------------------------
 date: 2004/12/10 23:21:13
 author: bill
@@ -472,7 +472,7 @@ date: 2004/11/20 11:14:05
 author: bill
 Removed the explicit tab order value as this was not constructively used and causes many item order problems.
 
-Steve
+Done doc [Steve 2005-02-19]
 ----------------------------
 date: 2004/11/19 21:59:18
 author: bill
