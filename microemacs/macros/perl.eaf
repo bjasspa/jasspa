@@ -1,0 +1,6 @@
+p "package \p;\r\P"
+s "sub \p {\r\r}\r\P 
+if "if (\p) {\r\r}\r\P"
+ef "elsif (\p) {\r\r}\r\P"
+el "else {\r\p\r}\r\P"
+wh "while (\p) {\r\r}\r\P"
