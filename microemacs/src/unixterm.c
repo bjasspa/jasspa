@@ -3007,14 +3007,44 @@ XTERMstart(void)
     char        *ss ;
 
     /* Copy the Terminal I/O. We may spawn a terminal in the window later and
-     * the termio structure must be initialised. */
+     * the termio structure must be initialised. The structure may be
+     * uninitialised if we have been launched off the desktop via an open
+     * action. */
 #ifdef _USG
 #ifdef _TERMIOS
-    tcgetattr (0, &otermio);
+    if (tcgetattr (0, &otermio) < 0)
 #else
-    ioctl(0, TCGETA, &otermio) ;
+    if (ioctl(0, TCGETA, &otermio) < 0)
 #endif
+    {
+        /* Input flag defaults */
+        otermio.c_iflag = BRKINT|ICRNL|IXANY;
+        /* Output flag defaults */
+        otermio.c_oflag = OPOST|ONLCR;
+        /* Control modes */
+        otermio.c_cflag = CS8|CREAD|HUPCL;
+        /* Local modes */
+        otermio.c_lflag = ISIG|ICANON|ECHO|ECHOE|ECHOK|ECHOCTL|ECHOKE;
+        
+        /* Terminal special characters */
+        otermio.c_cc [VINTR] = 'C' - '@';    /* C-c : CINTR */
+        otermio.c_cc [VQUIT] = CQUIT;        /* FS, cntl | */
+        otermio.c_cc [VERASE] = 'H' - '@';   /* Backspace or '#' 0x7f */
+        otermio.c_cc [VKILL] = 'K' - '@';    /* '@' */
+        otermio.c_cc [VEOF] = CEOF;          /* C-d */
+        otermio.c_cc [VEOL] = 'J' - '@';     /* C-j */
+        otermio.c_cc [VMIN] = 1;
+        otermio.c_cc [VTIME] = 0;
+#ifdef _TERMIOS
+        otermio.c_cc [VWERASE] = 'H' - '@';  /* '#' */
+        otermio.c_cc [VLNEXT] = CLNEXT;      /* C-v */
+        otermio.c_cc [VDSUSP] = CSUSP;       /* C-z */
+        otermio.c_cc [VSUSP] = CSUSP;        /* C-z */
+        otermio.c_cc [VSTART] = CSTART;      /* C-q */
+        otermio.c_cc [VSTOP]  = CSTOP;       /* C-s */
 #endif
+    }
+#endif /* _USG */
     
     /* Configure X-Windows */
     XSetLocaleModifiers ("");
