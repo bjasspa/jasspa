@@ -10,6 +10,11 @@
 !if &not &exi dirlst-sort-list
     0 exec-file "hkdirlst"
 !endif
+!if &not &sin "Revis'n" .fhook-dirlst.col-name
+    set-variable #l0 &lef .fhook-dirlst.col-name 1
+    set-variable .fhook-dirlst.col-name &spr "%sRevis'n%sTag / Date      %s" .fhook-dirlst.col-name #l0 #l0
+    set-variable .fhook-dirlst.col-flag &spr "%s1%1%s" .fhook-dirlst.col-flag #l0 #l0
+!endif
 
 !if &not &exi %cvs-com
     set-variable %cvs-com "cvs "
@@ -392,6 +397,56 @@ define-macro cvs-log-list
     !return #l4
 !emacro
 
+0 define-macro cvs-exec-cmd-complete
+    !if @#
+        !return
+    !endif
+    end-of-buffer
+    set-mark
+    backward-line
+    !tjump &seq &trb @wl "" -1
+    forward-line
+    -1 kill-region
+    backward-line
+    !if &xse @wl "\\[EXIT \\(.*\\)]"
+        set-variable #l0 @s1
+        set-mark
+        end-of-line
+        -1 kill-region
+        insert-string &spr "\n*****CVS exited with code %s*****" #l0
+        beginning-of-line
+    !endif
+    set-variable #l0 .cvs-osd.lock
+    !if &seq &set #l1 $buffer-bname "*cvs-console*" 
+        set-variable #l1 "*cvs-last-cmd*"
+        !force 0 delete-buffer #l1
+        change-buffer-name #l1
+        1 buffer-mode "hide" 
+        find-buffer "*cvs-console-safe*"
+        change-buffer-name "*cvs-console*" 
+        set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x080
+        find-buffer #l1
+        !jump 2
+    !elif &sin "*" &lget .cvs-osd.flags #l0
+        ; copy output to the console
+        beginning-of-buffer
+        set-mark
+        end-of-buffer
+        copy-region
+        find-buffer "*cvs-console*"
+        end-of-buffer
+        !if &gre $window-line 1
+            insert-newline
+        !endif
+        yank
+        -1 yank
+        find-buffer #l1
+        end-of-buffer
+        backward-line
+    !endif
+    !force unset-variable .cvs-osd.lock
+!emacro
+
 0 define-macro cvs-exec-add-recurse
     ; !force !force cvs-exec-add-recurse #l8 #l4 #l6 .cwd
     set-variable #l1 @2
@@ -459,13 +514,13 @@ define-macro cvs-log-list
     0x10 goto-position "\x82"
     !return #l0
 !emacro
-    
+
 0 define-macro cvs-exec-cmd
     set-variable #l0 $buffer-fname
     set-variable $buffer-fname @3
     !if &equ @# 4
         ; if this is the only exec line and its not to the *cvs-console* then use ipipe straight to the buffer
-        !force !force !force 6 ipipe-shell-command @1 @2
+        !force !force !force 0x86 ipipe-shell-command @1 @2 cvs-exec-cmd-complete
         set-variable #l1 $status
     !else
         !force !force !force 6 pipe-shell-command @1 "*cvs-temp*"
@@ -636,8 +691,12 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
 
 0 define-macro cvs-osd
     set-position "\x82"
+    !if &exi .lock
+        osd-dialog &cat "CVS - " &lget .names @# &spr "    CVS %s command currently in progress!    " &lget .names .lock "  \HAbort  "
+        !abort
+    !endif
     !if &seq $buffer-fname ""
-        osd-dialog &cat "CVS - " &lget .names #l9 "    Current buffer has no file name!    " "  \HAbort  "
+        osd-dialog &cat "CVS - " &lget .names @# "    Current buffer has no file name!    " "  \HAbort  "
         !abort
     !endif
     set-variable .cwd &lef $buffer-fname &rsin "/" $buffer-fname
@@ -850,13 +909,20 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
     set-variable #l8 &spr "%s %s%s%s" %cvs-com &lget .cmds @# #l8 #l7
     ; get the output buffer name
     set-variable #l2 0
-    !if &and #l9 &sin "*" &lget .flags @#
-        set-variable #l2 1
-        set-variable #l6 "*cvs-console*"
-    !else
-        set-variable #l6 &spr "*cvs-%s*" &slow &lget .names @#
-        !force 0 delete-buffer #l6
+    set-variable #l6 &spr "*cvs-%s*" &slow &lget .names @#
+    !if .toolbar.open
+        !if &sin "*" &lget .flags @#
+            !force toolbar-make-tool-visible "*cvs-console*"
+            !if $status
+                set-variable #l6 $buffer-bname
+                find-buffer "*cvs-console*"
+                change-buffer-name "*cvs-console-safe*"
+                set-variable #l6 "*cvs-console*"
+            !endif
+        !endif
     !endif
+    !force 0 delete-buffer #l6
+    set-variable .lock @#
     set-variable #l5 $mouse
     set-variable $mouse &bor 0x50000 &band 0xffff #l5
     !if &seq &lget .names @# "Add"
@@ -914,15 +980,17 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
     set-variable #l2 &bor #l2 4
     !force !force #l2 cvs-exec-cmd #l1 #l6 .cwd
 *recurse-add-complete
-    !if .toolbar.open
-        !if &seq #l6 "*cvs-console*"
-            !force toolbar-make-tool-visible "*cvs-console*"
+    !if &seq #l6 "*cvs-console*"
+        !force 0 popup-window  "*cvs-console-safe*"
+        !if $status
+            find-buffer #l6
         !endif
     !endif
     !force popup-window #l6
     !if &not &equ #l2 4
         end-of-buffer
-        insert-string &spr "\n*****CVS exited with code %d*****\n" #l7
+        insert-string &spr "\n*****CVS exited with code %d*****" #l7
+        0 cvs-exec-cmd-complete
         -1 recenter
     !endif
     !if &not &seq #l6 "*cvs-console*"
@@ -1102,34 +1170,55 @@ define-macro cvs-resolve-conflicts
     find-buffer @1
     set-variable #l2 @2
     beginning-of-buffer
-    search-forward &spr "^D/%s////" #l2
+    !force search-forward &spr "^D/%s////" #l2
+    !if $status
+        beginning-of-line
+        set-mark
+        forward-line
+        -1 kill-region
+    !endif
     set-variable #p8 "        "
-    set-variable #p9 "                "
-    beginning-of-line
-    set-mark
-    forward-line
-    -1 kill-region
+    set-variable #p9 "                 "
 !emacro
 
 0 define-macro cvs-get-file-entries-info
     find-buffer @1
     set-variable #l2 @2
     beginning-of-buffer
-    search-forward &spr "^/%s/\\([^/]*\\)/\\(\\(Result of merge\\+\\)?\\w+ +\\(\\w+\\) +\\([0-9]+\\) +\\([0-9]+:[0-9]+\\):[0-9]+ +\\([0-9]+\\)\\|Initial +%s\\|dummy timestamp\\)/\\([^/\n]*/\\)" #l2 #l2
+    search-forward &spr "^/%s/\\([^/]*\\)/\\(\\(Result of merge\\+\\)?\\w+ +\\(\\w+\\) +\\([0-9]+\\) +\\([0-9]+:[0-9]+\\):[0-9]+ +\\([0-9]+\\)\\|Initial +%s\\|dummy timestamp\\)/\\([^/\n]*\\)/\\(.*\\)$" #l2 #l2
     ; get the version
     !if &gre &len @s1 7
         set-variable #p8 &cat "<" &rig @s1 &sub &len @s1 6
     !else
         set-variable #p8 @s1
     !endif
-    !if &seq @s4 ""
-        ; initial version or dummy timestamp etc
-        set-variable #p9 @s2
-        set-variable #p9 &spr "%s%n " &lef #p9 15 &sub 15 &len #p9 " "
+    set-variable #p8 &spr "%s%n" #p8 &sub 8 &len #p8 " "
+    !if 1
+        ; return the tag
+        !if &seq @s9 ""
+            set-variable #p9 ""
+        !elif &seq &lef @s9 1 "D"
+            set-variable #p9 &mid @s9 1 16
+            set-variable #p9 &xrep #p9 "\\(....\\)\\.\\(..\\)\\.\\(..\\)\\.\\(..\\)\\.\\(..\\)" "\\1/\\2/\\3 \\4.\\5"
+        !elif &not &seq &lef @s9 1 "T"
+            set-variable #p9 "HEAD"
+        !elif &gre &len @s9 17
+            set-variable #p9 &cat "<" &rig @s9 &sub &len @s9 15
+        !else
+            set-variable #p9 &rig @s9 1
+        !endif
     !else
-        ; get the date in YYYY/MM/DD HH:MM form
-        set-variable #p9 &spr "%s/%02d/%02d %s" @s7 &lfind "|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|" @s4 @s5 @s6
+        ; return the repository date
+        !if &seq @s4 ""
+            ; initial version or dummy timestamp etc
+            set-variable #p9 @s2
+            set-variable #p9 &spr "%s%n " &lef #p9 15 &sub 15 &len #p9 " "
+        !else
+            ; get the date in YYYY/MM/DD HH:MM form
+            set-variable #p9 &spr "%s/%02d/%02d %s" @s7 &lfind "|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|" @s4 @s5 @s6
+        !endif
     !endif
+    set-variable #p9 &spr "%s%n" #p9 &sub 17 &len #p9 " "
     !if &set #l3 &sin "-k" @s8
         set-variable #p7 &cat &lef #p7 1 &mid @s8 &add #l3 1 1
     !endif
@@ -1151,11 +1240,6 @@ define-macro cvs-resolve-conflicts
 !emacro
 
 0 define-macro cvs-dir-conv
-    !if &not &sin "Revis'n" .fhook-dirlst.col-name
-        set-variable #l0 &lef .fhook-dirlst.col-name 1
-        set-variable .fhook-dirlst.col-name &spr "%sRevis'n%sRepository Date %s" .fhook-dirlst.col-name #l0 #l0
-        set-variable .fhook-dirlst.col-flag &spr "%s1%1%s" .fhook-dirlst.col-flag #l0 #l0
-    !endif
     !if &seq &lef $buffer-fname 6 "ftp://"
         ; ftp directories not supported
         !return
@@ -1169,21 +1253,32 @@ define-macro cvs-resolve-conflicts
         goto-position "\x83"
         !return
     !endif
+    !force 0 delete-buffer "*cvs-temp*"
+    find-buffer "*cvs-temp*"
+    !force insert-file &cat #l2 "CVS/Tag"
+    !if $status
+        beginning-of-buffer
+        set-variable #l7 &rig @wl 1
+    !else
+        set-variable #l7 "HEAD"
+    !endif
     ; make sure that the main window is only displayed once
     -1 find-buffer #l1
     0x10 goto-position "\x83"
     6 pipe-shell-command &cat %cvs-com " -nq update -l" "*cvs-temp*"
     -1 buffer-mode "view"
     !if .cvs.filter
-        2 goto-line
-        end-of-line
-        insert-string " (Filtered)"
+        !if &len #l7
+            set-variable #l7 &cat #l7 " - "
+        !endif
+        set-variable #l7 &cat #l7 "Filtered" 
     !endif
+    2 goto-line
+    end-of-line
+    insert-string &spr " (%s)" #l7
     4 goto-line
-    set-variable $window-col 15
-    insert-string "Repository Date  "
     set-variable $window-col 6
-    insert-string "  Revis'n "
+    insert-string "  Revis'n Tag / Date       "
     beginning-of-line
     forward-line
     !while &not &seq @wl ""
@@ -1213,10 +1308,9 @@ define-macro cvs-resolve-conflicts
         !if #l5
             2 forward-char
             insert-string #l7
-            set-variable $window-col 17
-            insert-string &cat #l9 " "
             set-variable $window-col 8
-            insert-string &spr "%s%n" #l8 &sub 8 &len #l8 " " 
+            insert-string #l8  
+            insert-string #l9
             beginning-of-line
             forward-line
         !elif &seq #l7 "--"
@@ -1232,10 +1326,8 @@ define-macro cvs-resolve-conflicts
 *pad-line
             2 forward-char
             insert-string #l7
-            set-variable $window-col 17
-            insert-string "                 "
             set-variable $window-col 8
-            insert-string "        "
+            insert-string "                         "
             beginning-of-line
             forward-line
         !endif
@@ -1264,7 +1356,7 @@ define-macro cvs-resolve-conflicts
         set-variable #l5 $status
         find-buffer #l1
         !if #l5
-            insert-string &spr " -%s--- %s%n      -  %s                  %s" #l7 #l8 &sub 8 &len #l8 " " #l9 #l4
+            insert-string &spr " -%s--- %s%s      -                   %s" #l7 #l8 #l9 #l4
         !else
             insert-string &spr " -%s--- CVS Error - status failure on this file:           %s" #l7 #l4
             !goto del-break-out
@@ -1301,7 +1393,7 @@ define-macro cvs-resolve-conflicts
         set-variable #l5 $status
         find-buffer #l1
         !if #l5
-            insert-string &spr " d%s--- %s%n      -  %s                  %s/\n" #l7 #l8 &sub 8 &len #l8 " " #l9 #l4
+            insert-string &spr " d%s--- %s%s      -                   %s/\n" #l7 #l8 #l9 #l4
         !else
             insert-string &spr " d%s--- CVS Error - status failure on this dir:            %s/\n" #l7 #l4
             !goto del-break-out

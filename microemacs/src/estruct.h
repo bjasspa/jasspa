@@ -1081,6 +1081,8 @@ typedef struct meFrame
 #define meIPIPE_OVERWRITE   0x01
 #define meIPIPE_NEXT_CHAR   0x02
 #define meIPIPE_CHILD_EXIT  0x04
+#define meIPIPE_RAW         0x40        /* No messing with pipe data ! */
+#define meIPIPE_BUFIPIPE    0x80        /* Forced ipipe buffer */
 
 typedef struct meIPipe {
     meBuffer          *bp ;
@@ -1196,7 +1198,7 @@ typedef struct {
     meUByte           *mask ;
     int                curr ;
     meUByte           *path ;
-    int                timeStamp ;
+    meFiletime         stmtime ;              /* modification time of dir */
 }  meDirList ;
 
 typedef struct {
