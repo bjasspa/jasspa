@@ -1256,7 +1256,7 @@ allocatePty(meUByte *ptyName)
     }
     return -1 ;
 #else
-#ifdef _SUNOS
+#if (defined _SUNOS) || (defined _LINUX26)
     int    fd ;
     /* Sun use their own proporiety PTY system. Refer to the AnswerBook
      * documentation for "Pseudo-TTY Drivers" - ptm(7) and pts(7) */
@@ -1352,7 +1352,7 @@ allocatePty(meUByte *ptyName)
         }
     }
     return -1;
-#endif /* _SUNOS */
+#endif /* _SUNOS or _LINUX26 */
 #endif /* _IRIX */
 }
 
