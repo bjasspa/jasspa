@@ -1275,13 +1275,14 @@ extern void exit(int i) ;
 /*
  * Terminal I/O file defintions
  */
+#if 0                                   /* These should not be required. */
 extern	char   *getenv(const char *);
 
 extern  void    free(void *block);
 extern  void   *malloc(size_t s);
 extern  void   *realloc(void *block, size_t s);
-extern	void   *memcpy(void *, const void *, size_t);
-extern	void   *memset(void *, int,    size_t);
+extern	void   *memcpy(void *d, const void *s, size_t n);
+extern	void   *memset(void *d, int c, size_t n);
 
 extern	size_t	strlen(const char *s);
 extern	int	strcmp(const char *s1, const char *s2);
@@ -1295,6 +1296,7 @@ extern	char   *strrchr(const char *, int);
 extern  long    strtol(const char*, char**, int);
 extern  int     abs(int);
 extern  int     system(const char*);
+#endif
 
 #ifdef _NOPUTENV
 #define meGetenv(s1)        ((void *) megetenv((const char *)(s1)))
