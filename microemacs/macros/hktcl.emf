@@ -21,28 +21,29 @@ set-variable .fhook-tcl.setup-mask "abdefghikmnoptux"
 set-variable .fhook-tcl.tags "tcltags"
 set-variable .fhook-tcl.comment "|#||#|# | #|r|"
 
-set-variable .fhook-tcl.collapse-open  "^\\(proc \\|snit::\\)"
+set-variable .fhook-tcl.collapse-open  "^[-A-Za-z:_][-0-9A-Z:a-z_.']*\\([\t ]+[-A-Za-z:_][-0-9A-Z:a-z_.']*\\)+[\t ]*\\({.*\\)?{[\t ]*\\(;?#.*\\)?$"
 set-variable .fhook-tcl.collapse-close "^}"
 set-variable .fhook-tcl.collapse-mclose "1"
 set-variable .fhook-tcl.collapse-mnext "-1"
 
 ; setup item-list
-set-variable .fhook-tcl.item-list-s1 "^\\s *proc\\s +\\(\\w[1-9A-Z:a-z_']*\\)\\s *{"
-set-variable .fhook-tcl.item-list-r1 "Proc \ecB\\1\ecA"
-set-variable .fhook-tcl.item-list-s2 "^\\s *class\\s +\\(\\w[1-9A-Za-z_']*\\)\\s *{"
-set-variable .fhook-tcl.item-list-r2 "Clss \ecB\\1\ecA"
-set-variable .fhook-tcl.item-list-s3 "^\\s *body\\s +\\(\\w[1-9A-Za-z_']*\\)\\s *{"
-set-variable .fhook-tcl.item-list-r3 "Body \ecB\\1\ecA"
-set-variable .fhook-tcl.item-list-s4 "^\\s *method\\s +\\(\\w[1-9A-Za-z_']*\\)\\s *{"
+set-variable .fhook-tcl.item-list-s1 "^[\t ]*\\(\\w+[\t ]+\\)?\\(inst\\)?proc[\t ]+\\([-A-Za-z:_][-0-9A-Z:a-z_.']*\\)[\t ]*{"
+set-variable .fhook-tcl.item-list-r1 "Proc \ecB\\1\\3\ecA"
+set-variable .fhook-tcl.item-list-s2 "^[\t ]*\\(itcl::\\|::itcl::\\)?class[\t ]+\\([-A-Za-z:_][-0-9A-Z:a-z_.']*\\)[\t ]*{"
+set-variable .fhook-tcl.item-list-r2 "Clss \ecB\\2\ecA"
+set-variable .fhook-tcl.item-list-s3 "^[\t ]*\\(itcl::\\)?body[\t ]+\\([-A-Za-z:_][-0-9A-Z:a-z_.']*\\)[\t ]*{"
+set-variable .fhook-tcl.item-list-r3 "Body \ecB\\2\ecA"
+set-variable .fhook-tcl.item-list-s4 "^[\t ]*method[\t ]+\\([-A-Za-z:_][-0-9A-Z:a-z_.']*\\)[\t ]*{"
 set-variable .fhook-tcl.item-list-r4 "Meth \ecB\\1\ecA"
-set-variable .fhook-tcl.item-list-s5 "^\\s *destructor\\s *{"
+set-variable .fhook-tcl.item-list-s5 "^[\t ]*destructor[\t ]*{"
 set-variable .fhook-tcl.item-list-r5 "Dest destructor "
-set-variable .fhook-tcl.item-list-s6 "^\\s *constructor\\s *{\\(.+\\)}"
+set-variable .fhook-tcl.item-list-s6 "^[\t ]*constructor[\t ]*{\\(.+\\)}"
 set-variable .fhook-tcl.item-list-r6 "Cnst \ecB\\1\ecA"
-set-variable .fhook-tcl.item-list-s7 "^\\s *snit::\\(.+\\) {"
+set-variable .fhook-tcl.item-list-s7 "^[\t ]*snit::\\(.+\\) {"
 set-variable .fhook-tcl.item-list-r7 "Snit \ecB\\1\ecA"
-set-variable .fhook-tcl.item-list-s8 "^itcl::body +\\(.+\\) {"
-set-variable .fhook-tcl.item-list-r8 "IBdy \ecB\\1\ecA"
+set-variable .fhook-tcl.item-list-s8 "^[\t ]*namespace[\t ]+eval[\t ]+\\([-A-Za-z:_][-0-9A-Z:a-z_.']*\\)[\t ]*{"
+set-variable .fhook-tcl.item-list-r8 "Nmsp \ecB\\1\ecA"
+
 
 !if &not &exist .hilight.tcl
     set-variable .hilight.tcl &pinc .hilight.next 1
@@ -56,6 +57,12 @@ set-variable .fhook-tcl.item-list-r8 "IBdy \ecB\\1\ecA"
     hilight .hilight.tcl 0 "\\\\."               $global-scheme
     hilight .hilight.tcl 4 "\"" "\"" "\\"        .scheme.string
     hilight .hilight.tcl 4 "\\$" "\\}\\W" ""     .scheme.variable
+    !if &band .hilight.flags 0x04
+        hilight .hilight.tcl 0x20 "proc\\s +[-A-Za-z:_][-0-9A-Z:a-z_.']*" .scheme.function
+        hilight .hilight.tcl 0x20 "namespace\\s +eval\\s +[-A-Za-z:_][-0-9A-Z:a-z_.']*" .scheme.function
+        hilight .hilight.tcl 0x20 "\\w+\\s +proc\\s +[-A-Za-z:_][-0-9A-Z:a-z_.']*" .scheme.function
+        hilight .hilight.tcl 0x20 "\\w+\\s +instproc\\s +[-A-Za-z:_][-0-9A-Z:a-z_.']*" .scheme.function
+    !endif
     !if &band .hilight.flags 0x04
         hilight .hilight.tcl 0 "^\\s *\\{proc\\s +\\w+" .scheme.function
     !endif
@@ -287,10 +294,67 @@ set-variable .fhook-tcl.item-list-r8 "IBdy \ecB\\1\ecA"
     hilight .hilight.tcl 1 "tixSetSilent"        .scheme.keyword
     hilight .hilight.tcl 1 "tixTList"            .scheme.keyword
     hilight .hilight.tcl 1 "tixTree"             .scheme.keyword
+    ; xotcl keywords
+    hilight .hilight.tcl 1 "Class"               .scheme.keyword
+    hilight .hilight.tcl 1 "Object"              .scheme.keyword
+    hilight .hilight.tcl 1 "abstract"            .scheme.keyword
+    hilight .hilight.tcl 1 "class"               .scheme.keyword
+    hilight .hilight.tcl 1 "create"              .scheme.keyword
+    hilight .hilight.tcl 1 "filter"              .scheme.keyword
+    hilight .hilight.tcl 1 "forward"             .scheme.keyword
+    hilight .hilight.tcl 1 "instfilter"          .scheme.keyword
+    hilight .hilight.tcl 1 "instforward"         .scheme.keyword
+    hilight .hilight.tcl 1 "instmixin"           .scheme.keyword
+    hilight .hilight.tcl 1 "instvar"             .scheme.keyword
+    hilight .hilight.tcl 1 "mixin"               .scheme.keyword
+    hilight .hilight.tcl 1 "my"                  .scheme.keyword
+    hilight .hilight.tcl 1 "next"                .scheme.keyword
+    hilight .hilight.tcl 1 "self"                .scheme.keyword
+    hilight .hilight.tcl 1 "-childof"            .scheme.type
+    hilight .hilight.tcl 1 "-default"            .scheme.type
+    hilight .hilight.tcl 1 "-getter"             .scheme.type
+    hilight .hilight.tcl 1 "-parameter"          .scheme.type
+    hilight .hilight.tcl 1 "-setter"             .scheme.type
+    ; thingy: one keyword for an onliner oo
+    hilight .hilight.tcl 1 "thingy"              .scheme.keyword
+    ; snit 
+    hilight .hilight.tcl 1 "as"                  .scheme.keyword
+    hilight .hilight.tcl 1 "component"           .scheme.keyword
+    hilight .hilight.tcl 1 "configurelist"       .scheme.keyword
+    hilight .hilight.tcl 1 "constructor"         .scheme.keyword
+    hilight .hilight.tcl 1 "delegate"            .scheme.keyword
+    hilight .hilight.tcl 1 "destructor"          .scheme.keyword
+    hilight .hilight.tcl 1 "except"              .scheme.keyword
+    hilight .hilight.tcl 1 "expose"              .scheme.keyword
+    hilight .hilight.tcl 1 "install"             .scheme.keyword
+    hilight .hilight.tcl 1 "installhull"         .scheme.keyword
+    hilight .hilight.tcl 1 "method"              .scheme.keyword
+    hilight .hilight.tcl 1 "mymethod"            .scheme.keyword
+    hilight .hilight.tcl 1 "myproc"              .scheme.keyword
+    hilight .hilight.tcl 1 "mytypemethod"        .scheme.keyword
+    hilight .hilight.tcl 1 "mytypevar"           .scheme.keyword
+    hilight .hilight.tcl 1 "myvar"               .scheme.keyword
+    hilight .hilight.tcl 1 "option"              .scheme.keyword
+    hilight .hilight.tcl 1 "pragma"              .scheme.keyword
+    hilight .hilight.tcl 1 "to"                  .scheme.keyword
+    hilight .hilight.tcl 1 "typecomponent"       .scheme.keyword
+    hilight .hilight.tcl 1 "typeconstructor"     .scheme.keyword
+    hilight .hilight.tcl 1 "typemethod"          .scheme.keyword
+    hilight .hilight.tcl 1 "typevariable"        .scheme.keyword
+    hilight .hilight.tcl 1 "using"               .scheme.keyword
+
+    hilight .hilight.tcl 1 "-cgetmethod"         .scheme.type
+    hilight .hilight.tcl 1 "-configuremethod"    .scheme.type
+    hilight .hilight.tcl 1 "-default"            .scheme.type
+    hilight .hilight.tcl 1 "-inherit"            .scheme.type
+    hilight .hilight.tcl 1 "-public"             .scheme.type
+    hilight .hilight.tcl 1 "-readonly"           .scheme.type
+    hilight .hilight.tcl 1 "-validatemethod"     .scheme.type
+
     !if &band .hilight.flags 0x08
         ; hilight constants, e.g. numbers
-        hilight .hilight.tcl 1 "[[:digit:]]+"       .scheme.constant
-        hilight .hilight.tcl 1 "-[[:digit:]]+"      .scheme.constant
+        hilight .hilight.tcl 1 "[[:digit:]]+"    .scheme.constant
+        hilight .hilight.tcl 1 "-[[:digit:]]+"   .scheme.constant
         hilight .hilight.tcl 1 "0[xX][[:xdigit:]]+" .scheme.constant
     !endif
 !endif
