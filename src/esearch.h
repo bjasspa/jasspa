@@ -124,9 +124,16 @@ int
 meRegexMatch(meRegex *regex, unsigned char *string, int len, 
 			 int offsetS, int offsetE, int flags) ;
 
-extern char *meRegexCompErrors[] ;
-extern meRegex mereRegex ;         /* meRegex used by main search */
-extern meRegex meRegexStrCmp ;     /* meRegex used meRegexStrCmp  */
+extern char    *meRegexCompErrors[] ;
+extern meRegex  mereRegex ;         /* meRegex used by main search */
+extern meRegex  meRegexStrCmp ;     /* meRegex used by meRegexStrCmp if main is not used  */
+extern int      mereNewlBufSz ;
+extern meUByte *mereNewlBuf ;
+
+#define meSEARCH_LAST_MAGIC_MAIN   0x01
+#define meSEARCH_LAST_MAGIC_STRCMP 0x02
+
+extern int      srchLastMagic;      /* last search was a magic        */
 
 #define mereRegexInvalidate()   (mereRegex.flags = 0)
 #define mereRegexClassChanged() (mereRegex.flags |= meREGEX_CLASSCHANGE)
@@ -161,9 +168,6 @@ extern meUByte  srchRPat[] ;            /* reverse current search string  */
 /* the following variables store info on the last match - for @s# support     */
 extern int      srchLastState;          /* status of last search          */
 extern meUByte *srchLastMatch;          /* pointer to the last match string */
-#if MEOPT_MAGIC
-extern int    srchLastMagic;            /* last search was a magic        */
-#endif
 
 /* Incremental search defines */
 #define ISCANNER_MAGIC   0x01           /* Require magical scanner */

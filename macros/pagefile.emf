@@ -418,6 +418,7 @@ define-macro page-file-search-backward
 
 0 define-macro page-file-isearch
     set-variable #l0 @#
+;    set-variable $debug 1
     !repeat
         !if &band #l0 2
             !if &band #l0 1
@@ -453,7 +454,8 @@ define-macro page-file-search-backward
         !else
             0 isearch-forward @mna
         !endif
-        !if &not &seq @cc "page-file-isearch-forward"
+        ; did the user break out of isearch via executing another command?
+        !if &not &xseq @cc "page-file-isearch.*"
             !return
         !endif
         set-variable #l1 @h4 0

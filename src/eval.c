@@ -122,9 +122,6 @@ regexStrCmp(meUByte *str, meUByte *reg, int flags)
     rr = meRegexMatch(rg,str,ii,0,ii,(flags & meRSTRCMP_WHOLE)) ;
     if((flags & meRSTRCMP_USEMAIN) && (rr > 0))
     {
-        extern meUByte *mereNewlBuf ;
-        extern int mereNewlBufSz ;
-        
         if(ii >= mereNewlBufSz)
         {
             if((mereNewlBuf = meRealloc(mereNewlBuf,ii+128)) == NULL)
@@ -137,6 +134,9 @@ regexStrCmp(meUByte *str, meUByte *reg, int flags)
         meStrcpy(mereNewlBuf,str) ;
         srchLastMatch = mereNewlBuf ;
         srchLastState = meTRUE ;
+        /* or in the STRCMP bit so that hunt-forw/backward can still determine
+         * whether the last main search was magic or not & @s1 also work correctly */ 
+        srchLastMagic |= meSEARCH_LAST_MAGIC_STRCMP ;
     }
     return rr ;
 }
@@ -1501,7 +1501,7 @@ getval(meUByte *tkn)   /* find the value of a token */
             while(ii && (killp != NULL))
             {
                 ss = killp->data ;
-                while(((cc=*ss++) != '\0') && (--ii))
+                while(((cc=*ss++) != '\0') && (--ii >= 0))
                     *dd++ = cc ;
                 killp = killp->next;
             }

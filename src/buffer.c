@@ -367,11 +367,20 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
 	{
 	    /* The buffer is linked to a file, load it in */
 	    lineno = bp->dotLineNo ;
+	    bp->dotLineNo = 0 ;
 	    readin(bp,bp->fileName);
             /* if this is also the current buffer then we have an out-of-date
              * buffer being reloaded. We must be careful of what hooks we
              * execute and the state stored */
-            reload = (wp->buffer == bp) ;
+            if((reload = (wp->buffer == bp)) != 0)
+            {
+               /* the buffer was empty, it now probably isn't and the window
+                * is wrong (dotLine is the base, lineNo is 0). Must correct this
+                * before the call to setBufferContext */
+                meAssert(wp->markLine == NULL) ;
+                meAssert(wp->dotLineNo == 0) ;
+                wp->dotLine = meLineGetNext(bp->baseLine) ;
+            }
 	}
 	meModeClear(bp->mode,MDNACT) ;
 #if MEOPT_FILEHOOK
@@ -1179,7 +1188,6 @@ makelist(meBuffer *blistp, int verb)
 	for( ; ii>0 ; ii--)
 	    *cp1++ = ' ';
 	
-#if MEOPT_EXTENDED
 	if(verb)
 	{
 #if MEOPT_UNDO
@@ -1217,7 +1225,7 @@ makelist(meBuffer *blistp, int verb)
 	    while(nn != NULL)
 	    {
 		if(meUndoIsLineSort(nn))
-                    ii += sizeof(meUndoNode) + (sizeof(meInt) * (nn->count + 1)) ;
+                    ii += sizeof(meUndoNarrow) + (sizeof(meInt) * (nn->count + 1)) ;
 #if MEOPT_NARROW
 		else if(meUndoIsNarrow(nn))
                     ii += sizeof(meUndoNarrow) ;
@@ -1237,10 +1245,8 @@ makelist(meBuffer *blistp, int verb)
 		*cp1++ = cc ;
 #endif
 	}
-	else
-#endif
-            if((bp->name[0] != '*') &&
-               ((cp2 = bp->fileName) != NULL))
+	else if((bp->name[0] != '*') &&
+	   ((cp2 = bp->fileName) != NULL))
 	{
 	    if((ii=meStrlen(cp2))+(cp1-line) > frameCur->width)
 	    {

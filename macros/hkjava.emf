@@ -35,93 +35,105 @@ set-variable .fhook-java.item-list-r1 "Func \ecB\\2\ecA"
 set-variable .fhook-java.item-list-s2 "^[ \t]*\\(public[ \t]+\\|private[ \t]+\\)?class[ \t]\\(\\w+\\)"
 set-variable .fhook-java.item-list-r2 "Clss \ecB\\2\ecA"
 
+!if &not &exist .hilight.java
+    set-variable .hilight.java &pinc .hilight.next 1
+!endif
 !if &and &sin "h" .fhook-java.setup &band .hilight.flags 0x02 
     ; High-light Java Mode
-    !if &not &exist .hilight.java
-        set-variable .hilight.java &pinc .hilight.next 1
-    !endif
-    0 hilight    .hilight.java 2 50             $global-scheme
-    hilight   .hilight.java 2  "//"            .scheme.comment
-    hilight   .hilight.java 20 "/\\*" "*/" ""  .scheme.comment
-    hilight   .hilight.java 4 "\"" "\"" "\\"   .scheme.string
-    hilight   .hilight.java 0 "'.'"            .scheme.quote
-    hilight   .hilight.java 0 "'\\\\.'"        .scheme.quote
-    hilight   .hilight.java 0 "'\\\\'"         .scheme.error
-    hilight   .hilight.java 0 "'\\\\''"        .scheme.quote
+    0 hilight .hilight.java 2 50            $global-scheme
+    hilight .hilight.java 2  "//"           .scheme.comment
+    hilight .hilight.java 20 "/\\*" "*/" "" .scheme.comment
+    hilight .hilight.java 4 "\"" "\"" "\\"  .scheme.string
+    hilight .hilight.java 0 "'.'"           .scheme.quote
+    hilight .hilight.java 0 "'\\\\.'"       .scheme.quote
+    hilight .hilight.java 0 "'\\\\'"        .scheme.error
+    hilight .hilight.java 0 "'\\\\''"       .scheme.quote
     ;
-    hilight   .hilight.java 0x12 "import"      .scheme.prepro
-    hilight   .hilight.java 0x12 "package"     .scheme.prepro
+    hilight .hilight.java 0x12 "import"    .scheme.prepro
+    hilight .hilight.java 0x12 "package"   .scheme.prepro
     ;
-    hilight   .hilight.java 1 "break"        .scheme.keyword
-    hilight   .hilight.java 1 "case"         .scheme.keyword
-    hilight   .hilight.java 1 "catch"        .scheme.keyword
-    hilight   .hilight.java 1 "continue"     .scheme.keyword
-    hilight   .hilight.java 1 "default"      .scheme.keyword
-    hilight   .hilight.java 1 "do"           .scheme.keyword
-    hilight   .hilight.java 1 "else"         .scheme.keyword
-    hilight   .hilight.java 1 "for"          .scheme.keyword
-    hilight   .hilight.java 1 "goto"         .scheme.keyword
-    hilight   .hilight.java 1 "if"           .scheme.keyword
-    hilight   .hilight.java 1 "return"       .scheme.keyword
-    hilight   .hilight.java 1 "super"        .scheme.keyword
-    hilight   .hilight.java 1 "switch"       .scheme.keyword
-    hilight   .hilight.java 1 "throw"        .scheme.keyword
-    hilight   .hilight.java 1 "try"          .scheme.keyword
-    hilight   .hilight.java 1 "while"        .scheme.keyword
+    hilight .hilight.java 1 "break"        .scheme.keyword
+    hilight .hilight.java 1 "case"         .scheme.keyword
+    hilight .hilight.java 1 "catch"        .scheme.keyword
+    hilight .hilight.java 1 "continue"     .scheme.keyword
+    hilight .hilight.java 1 "default"      .scheme.keyword
+    hilight .hilight.java 1 "do"           .scheme.keyword
+    hilight .hilight.java 1 "else"         .scheme.keyword
+    hilight .hilight.java 1 "for"          .scheme.keyword
+    hilight .hilight.java 1 "goto"         .scheme.keyword
+    hilight .hilight.java 1 "if"           .scheme.keyword
+    hilight .hilight.java 1 "return"       .scheme.keyword
+    hilight .hilight.java 1 "super"        .scheme.keyword
+    hilight .hilight.java 1 "switch"       .scheme.keyword
+    hilight .hilight.java 1 "throw"        .scheme.keyword
+    hilight .hilight.java 1 "try"          .scheme.keyword
+    hilight .hilight.java 1 "while"        .scheme.keyword
     ;
-    hilight   .hilight.java 1 "asm"          .scheme.type
-    hilight   .hilight.java 1 "char"         .scheme.type
-    hilight   .hilight.java 1 "const"        .scheme.type
-    hilight   .hilight.java 1 "double"       .scheme.type
-    hilight   .hilight.java 1 "enum"         .scheme.type
-    hilight   .hilight.java 1 "extends"      .scheme.type
-    hilight   .hilight.java 1 "extern"       .scheme.type
-    hilight   .hilight.java 1 "float"        .scheme.type
-    hilight   .hilight.java 1 "final"        .scheme.type
-    hilight   .hilight.java 1 "int"          .scheme.type
-    hilight   .hilight.java 1 "long"         .scheme.type
-    hilight   .hilight.java 1 "register"     .scheme.type
-    hilight   .hilight.java 1 "short"        .scheme.type
-    hilight   .hilight.java 1 "signed"       .scheme.type
-    hilight   .hilight.java 1 "size_t"       .scheme.type
-    hilight   .hilight.java 1 "static"       .scheme.type
-    hilight   .hilight.java 1 "struct"       .scheme.type
-    hilight   .hilight.java 1 "synchronized" .scheme.type
-    hilight   .hilight.java 1 "throws"       .scheme.type
-    hilight   .hilight.java 1 "typedef"      .scheme.type
-    hilight   .hilight.java 1 "unsigned"     .scheme.type
-    hilight   .hilight.java 1 "void"         .scheme.type
-    hilight   .hilight.java 1 "volatile"     .scheme.type
+    hilight .hilight.java 1 "asm"          .scheme.type
+    hilight .hilight.java 1 "char"         .scheme.type
+    hilight .hilight.java 1 "const"        .scheme.type
+    hilight .hilight.java 1 "double"       .scheme.type
+    hilight .hilight.java 1 "enum"         .scheme.type
+    hilight .hilight.java 1 "extends"      .scheme.type
+    hilight .hilight.java 1 "extern"       .scheme.type
+    hilight .hilight.java 1 "float"        .scheme.type
+    hilight .hilight.java 1 "final"        .scheme.type
+    hilight .hilight.java 1 "int"          .scheme.type
+    hilight .hilight.java 1 "long"         .scheme.type
+    hilight .hilight.java 1 "register"     .scheme.type
+    hilight .hilight.java 1 "short"        .scheme.type
+    hilight .hilight.java 1 "signed"       .scheme.type
+    hilight .hilight.java 1 "size_t"       .scheme.type
+    hilight .hilight.java 1 "static"       .scheme.type
+    hilight .hilight.java 1 "struct"       .scheme.type
+    hilight .hilight.java 1 "synchronized" .scheme.type
+    hilight .hilight.java 1 "throws"       .scheme.type
+    hilight .hilight.java 1 "typedef"      .scheme.type
+    hilight .hilight.java 1 "unsigned"     .scheme.type
+    hilight .hilight.java 1 "void"         .scheme.type
+    hilight .hilight.java 1 "volatile"     .scheme.type
     ; Add some system types
-    hilight   .hilight.java 1 "FILE"         .scheme.type
+    hilight .hilight.java 1 "FILE"         .scheme.type
     ; Pre-processor directives
-    hilight   .hilight.java 0 "__DATE__"     .scheme.prepro
-    hilight   .hilight.java 0 "__FILE__"     .scheme.prepro
-    hilight   .hilight.java 0 "__LINE__"     .scheme.prepro
-    hilight   .hilight.java 0 "__STDC__"     .scheme.prepro
-    hilight   .hilight.java 0 "__TIME__"     .scheme.prepro
+    hilight .hilight.java 1 "__DATE__"     .scheme.prepro
+    hilight .hilight.java 1 "__FILE__"     .scheme.prepro
+    hilight .hilight.java 1 "__LINE__"     .scheme.prepro
+    hilight .hilight.java 1 "__STDC__"     .scheme.prepro
+    hilight .hilight.java 1 "__TIME__"     .scheme.prepro
+    hilight .hilight.java 1 "null"         .scheme.prepro
     
-    hilight   .hilight.java 1 "Character"    .scheme.prepro
-    hilight   .hilight.java 1 "Color"        .scheme.prepro
-    hilight   .hilight.java 1 "Integer"      .scheme.prepro
-    hilight   .hilight.java 1 "Object"       .scheme.prepro
-    hilight   .hilight.java 1 "String"       .scheme.prepro
+    hilight .hilight.java 1 "Character"    .scheme.prepro
+    hilight .hilight.java 1 "Color"        .scheme.prepro
+    hilight .hilight.java 1 "Integer"      .scheme.prepro
+    hilight .hilight.java 1 "Object"       .scheme.prepro
+    hilight .hilight.java 1 "String"       .scheme.prepro
     
-    hilight   .hilight.java 1 "delete"       .scheme.keyword
-    hilight   .hilight.java 1 "new"          .scheme.keyword
+    hilight .hilight.java 1 "delete"       .scheme.keyword
+    hilight .hilight.java 1 "new"          .scheme.keyword
+    hilight .hilight.java 1 "this"         .scheme.keyword
     
-    hilight   .hilight.java 1 "this"         .scheme.variable
-    hilight   .hilight.java 1 "null"         .scheme.variable
-    
-    hilight   .hilight.java 1 "auto"         .scheme.type
-    hilight   .hilight.java 1 "class"        .scheme.type
-    hilight   .hilight.java 1 "friend"       .scheme.type
-    hilight   .hilight.java 1 "inline"       .scheme.type
-    hilight   .hilight.java 1 "operator"     .scheme.type
-    hilight   .hilight.java 1 "private"      .scheme.type
-    hilight   .hilight.java 1 "protected"    .scheme.type
-    hilight   .hilight.java 1 "public"       .scheme.type
-    hilight   .hilight.java 1 "virtual"      .scheme.type
+    hilight .hilight.java 1 "auto"         .scheme.type
+    hilight .hilight.java 1 "class"        .scheme.type
+    hilight .hilight.java 1 "friend"       .scheme.type
+    hilight .hilight.java 1 "inline"       .scheme.type
+    hilight .hilight.java 1 "operator"     .scheme.type
+    hilight .hilight.java 1 "private"      .scheme.type
+    hilight .hilight.java 1 "protected"    .scheme.type
+    hilight .hilight.java 1 "public"       .scheme.type
+    hilight .hilight.java 1 "virtual"      .scheme.type
+!endif
+!if &sin "d" .fhook-java.setup
+    ; create a simple indentation rule for javascript - real java files use the built in C indentation
+    0 indent .hilight.java 1 20
+    indent .hilight.java n "{"  4
+    indent .hilight.java o "}" -4
+    indent .hilight.java e "\"" "\"" "\\"
+    indent .hilight.java e "\'" "\'" "\\"
+    indent .hilight.java b "\\[" "]"
+    indent .hilight.java b "(" ")"
+    indent .hilight.java b "/\\*" "\\*/"
+    indent .hilight.java i "//"  
+    set-variable .indent.java .hilight.java
 !endif
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Begin hook - entering the buffer - save the current fill-ignore characters

@@ -1583,7 +1583,7 @@ reframe(meWindow *wp)
             {
                 wp->vertScroll = ii ;
                 /* Force the scroll box to be updated if present. */
-                wp->updateFlags |= WFSBOX ;
+                wp->updateFlags |= WFSBOX|WFLOOKBK ;
             }
             return ;
         }

@@ -61,8 +61,8 @@
     !if &band 0x10000 #l9
         !if &seq .toolbar-redraw.bt ""
             set-variable #l8 "Default"
-        !elif &seq &set #l8 &ind &spr ".%s.name" .toolbar-redraw.bt "ERROR"
-            set-variable #l8 &cat &sup &mid .toolbar-redraw.bt 6 1 &rig .toolbar-redraw.bt 7
+        !elif &seq &set #l8 &ind &spr ".fhook-%s.name" .toolbar-redraw.bt "ERROR"
+            set-variable #l8 &cat &sup &lef .toolbar-redraw.bt 1 &rig .toolbar-redraw.bt 1
         !endif
         set-variable #l1 &spr "%s %s" #l8 #l1
     !endif        
@@ -149,6 +149,9 @@
         @# screen-update
         !return
     !elif &seq @cl "recenter"
+        !if &exi &set #l0 &cat  "chook-" &rig $buffer-fhook 6
+            !force execute-named-command #l0
+        !endif
         set-variable .bc &bor .bc 0x080
     !elif &les @# 1
         @# screen-update
@@ -173,9 +176,14 @@
         @# screen-update
         !return
     !endif
-    !if &not &seq .bt $buffer-fhook
+    !if &exi :chook
+        set-variable #l0 :chook
+    !else
+        set-variable #l0 &rig $buffer-fhook 6
+    !endif
+    !if &not &seq .bt #l0
         set-variable .bc &bor .bc 0x004
-        set-variable .bt $buffer-fhook
+        set-variable .bt #l0
     !endif
     .bc toolbar-redraw-tools
     set-variable .bc 0

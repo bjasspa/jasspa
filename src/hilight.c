@@ -924,9 +924,9 @@ hilight(int f, int n)
     
     if(n == 0)
     {
-        if((meGetString((meUByte *)"Enter hi-light number",0,0,buf,meBUF_SIZE_MAX-1) <= 0) ||
+        if((meGetString((meUByte *)"Hi no",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
            ((hilno = (meUByte) meAtoi(buf)) == 0) || 
-           (meGetString((meUByte *)"Flags",0,0,buf,meBUF_SIZE_MAX-1) <= 0))
+           (meGetString((meUByte *)"Flags",0,0,buf,meBUF_SIZE_MAX) <= 0))
             return meABORT ;
         type = (meUShort) meAtoi(buf) ;
         
@@ -938,7 +938,7 @@ hilight(int f, int n)
         root->type = type ;
         if(type & HFLOOKB)
         {
-            if(meGetString((meUByte *)"lines",0,0,buf,meBUF_SIZE_MAX) <= 0)
+            if(meGetString((meUByte *)"Lines",0,0,buf,meBUF_SIZE_MAX) <= 0)
                 return meABORT ;
             root->ignore = (meUByte) meAtoi(buf) ;
         }
@@ -961,21 +961,21 @@ hilight(int f, int n)
     }
     n = (n < 0) ? ADDTOKEN_REMOVE:0 ;
     
-    if((meGetString((meUByte *)"Hi number",0,0,buf,meBUF_SIZE_MAX-1) <= 0) ||
+    if((meGetString((meUByte *)"Hi no",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
        ((hilno = (meUByte) meAtoi(buf)) == 0) ||
        (hilno >= noHilights) ||
        ((root  = hilights[hilno]) == NULL) ||
-       (meGetString((meUByte *)"Type",0,0,buf,meBUF_SIZE_MAX-1) <= 0))
+       (meGetString((meUByte *)"Type",0,0,buf,meBUF_SIZE_MAX) <= 0))
         return meFALSE ;
     type = (meUShort) meAtoi(buf) ;
     if(type & HLCOLUMN)
     {
         int fmCol, toCol ;
         
-        if((meGetString((meUByte *)"From",0,0,buf,meBUF_SIZE_MAX-1) <= 0) ||
+        if((meGetString((meUByte *)"From",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
            ((fmCol = (meUByte) meAtoi(buf)) < 0) ||
            (!(n & ADDTOKEN_REMOVE) &&
-            ((meGetString((meUByte *)"To",0,0,buf,meBUF_SIZE_MAX-1) <= 0) ||
+            ((meGetString((meUByte *)"To",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
              ((toCol = (meUByte) meAtoi(buf)) < fmCol))))
             return meFALSE ;
         while(((node = (meHilight *) root->rclose) != NULL) && (((int) node->close) < fmCol))
@@ -1005,7 +1005,7 @@ hilight(int f, int n)
         goto get_scheme ;
     }
     
-    if(meGetString((meUByte *)"Token",0,0,buf,meBUF_SIZE_MAX-1) <= 0)
+    if(meGetString((meUByte *)"Token",0,0,buf,meBUF_SIZE_MAX) <= 0)
         return meFALSE ;
     
     /* add the token */
@@ -1019,30 +1019,30 @@ hilight(int f, int n)
     if(!(type & HLVALID))
     {
         if(((type & HLREPLACE) && 
-            ((meGetString((meUByte *)"Replace",0,0,buf,meBUF_SIZE_MAX-1) <= 0) ||
+            ((meGetString((meUByte *)"Replace",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
              (meHiltTokenAddReplaceString(root,node,(meUByte *)buf,1) == NULL))) ||
            ((type & HLBRACKET) &&
-            ((meGetString((meUByte *)"Close",0,0,buf,meBUF_SIZE_MAX-1) <= 0) ||
+            ((meGetString((meUByte *)"Close",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
              (meHiltTokenAddSearchString(root,node,(meUByte *) buf,0) == NULL) ||
              ((type & HLREPLACE) && 
-              ((meGetString((meUByte *)"Replace",0,0,buf,meBUF_SIZE_MAX-1) <= 0) ||
+              ((meGetString((meUByte *)"Replace",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
                (meHiltTokenAddReplaceString(root,node,(meUByte *)buf,0) == NULL))) ||
-             (meGetString((meUByte *)"Ignore",0,0,buf,meBUF_SIZE_MAX-1) <= 0) ||
+             (meGetString((meUByte *)"Ignore",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
              ((node->ignore = buf[0]) > 255))) ||
            ((type & HLCONTIN) &&
-            ((meGetString((meUByte *)"Continue",0,0,buf,meBUF_SIZE_MAX-1) <= 0) ||
+            ((meGetString((meUByte *)"Continue",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
              ((node->close = (meUByte *) meStrdup(buf)) == NULL) ||
              ((type & HLREPLACE) && 
-              ((meGetString((meUByte *)"Replace",0,0,buf,meBUF_SIZE_MAX-1) <= 0) ||
+              ((meGetString((meUByte *)"Replace",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
                ((node->rclose = (meUByte *) meStrdup(buf)) == NULL))))) ||
            ((type & HLBRANCH) &&
-            ((meGetString((meUByte *)"hilno",0,0,buf,meBUF_SIZE_MAX-1) <= 0) ||
+            ((meGetString((meUByte *)"hilno",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
              ((node->ignore = (meUByte) meAtoi(buf)) > 255))))
             return meFALSE;
 get_scheme:        
         /* Get the colour index. This uses the root hilight 
          * colour if not specified. */
-        ii = meGetString((meUByte *)"Scheme",0,0,buf,meBUF_SIZE_MAX-1);
+        ii = meGetString((meUByte *)"Scheme",0,0,buf,meBUF_SIZE_MAX);
         if (ii < 0)
             return meFALSE ;
         
@@ -1061,8 +1061,8 @@ get_scheme:
 
 #define findTokenCharTest(ret,lastChar,srcText,tokTest,testStr)              \
 do {                                                                         \
-    meUByte *__ts, ftctcc ;                                                    \
-    if((ftctcc=*srcText++) == '\0') ftctcc=meCHAR_NL ;                        \
+    meUByte *__ts, ftctcc ;                                                  \
+    if((ftctcc=*srcText++) == '\0') ftctcc=meCHAR_NL ;                       \
                                                                              \
     switch(tokTest & meHIL_TEST_MASK)                                        \
     {                                                                        \
@@ -2403,45 +2403,115 @@ hiline_exit:
 #define INDNEXTONWARD    (INDINDONWARD|INDGOTIND)
 #define INDCURONWARD     (INDINDCURLINE|INDINDONWARD|INDGOTIND)
 #define INDSINGLE        (INDINDCURLINE|INDGOTIND)
+#define INDFILETYPE      (0x4000)
+#define INDFTNEXTONWARD  (INDINDONWARD|INDGOTIND)
+#define INDFTCURONWARD   (INDINDCURLINE|INDINDONWARD|INDGOTIND)
 
-#define noINDTYPES 8
+static meUByte
+indentLookBack(meLine *lp, meUShort offset)
+{
+    meVideoLine vps[2] ;
+    meUShort noColChng ;
+    meUByte lindent ;
+    
+    meAssert(hilights == indents) ;
+    lindent = indents[frameCur->bufferCur->indent]->tknSttOff ;
+    vps[0].hilno = lindent ;
+    vps[0].wind = frameCur->windowCur ;
+    vps[0].line = lp ;
+    vps[0].flag = 0 ;
+    vps[0].bracket = NULL ;
+    noColChng = hilightLine(vps) ;
+    while(noColChng > 0)
+    {
+        if((hilBlock[noColChng].scheme & INDFILETYPE) &&
+           (hilBlock[noColChng].column < offset))
+        {
+            lindent = (meByte) (hilBlock[noColChng].scheme & 0xff) ;
+            if(lindent == 0)
+                lindent = frameCur->bufferCur->indent ;
+            return lindent ;
+        }
+        noColChng-- ;
+    }
+    return 0 ;
+}
+
 int
 indent(int f, int n)
 {
-    static meUByte  typesChar[(noINDTYPES*2)+1]="bcefinosBCEFINOS" ;
-    static meUShort typesFlag[noINDTYPES]=
-    { INDBRACKETOPEN, INDCONTINUE, INDEXCLUSION, INDFIXED, INDIGNORE, INDNEXTONWARD, INDCURONWARD, INDSINGLE } ;
-    static meUShort typesType[noINDTYPES]=
-    { 0x00, 0x00, HLBRACKET, HLENDLINE|HLSTTLINE, HLENDLINE, 0x00, 0x00, 0x00 } ;
+#define noINDTYPES 11
+    static meUByte  typesChar[(noINDTYPES*2)+1]="bcefinostwxBCEFINOSTwx" ;
+    static meUShort typesFlag[noINDTYPES]= { 
+        INDBRACKETOPEN, INDCONTINUE, INDEXCLUSION, INDFIXED, INDIGNORE, INDNEXTONWARD, 
+        INDCURONWARD, INDSINGLE, INDFILETYPE, INDFTCURONWARD, INDFTNEXTONWARD } ;
+    static meUShort typesType[noINDTYPES]= {
+        0x00, 0x00, HLBRACKET, HLENDLINE|HLSTTLINE, HLENDLINE, 0x00, 0x00, 0x00, 0x00, HLBRANCH, HLBRANCH } ;
     meHilight *root, *node ;
     int itype ;
     meUShort htype ;
-    meUByte indno, buf[meBUF_SIZE_MAX] ;
+    meUByte indno, lindno, buf[meBUF_SIZE_MAX] ;
     
     if(n == 0)
     {
-        if((meGetString((meUByte *)"Enter indent no",0,0,buf,meBUF_SIZE_MAX-1) <= 0) ||
+        if((meGetString((meUByte *)"Ind no",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
            ((indno = (meUByte) meAtoi(buf)) == 0) || 
-           (meGetString((meUByte *)"Flags",0,0,buf,meBUF_SIZE_MAX-1) <= 0) ||
+           (meGetString((meUByte *)"Flags",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
            ((itype = meAtoi(buf)),
-            (meGetString((meUByte *)"look back",0,0,buf,meBUF_SIZE_MAX) <= 0)))
-            return mlwrite(MWABORT|MWPAUSE,(meUByte *)"Invalid init-indent entry") ;
+            (meGetString((meUByte *)"Lines",0,0,buf,meBUF_SIZE_MAX) <= 0)))
+            return meABORT ;
         if((indents[indno] = createHilight(indno,&noIndents,&indents)) == NULL)
             return meFALSE ;
         indents[indno]->ignore = (meUByte) meAtoi(buf) ;
         indents[indno]->type   = itype ;
-        
+        if(itype & HILOOKB)
+        {
+            if((meGetString((meUByte *)"Ind no",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
+               ((lindno = (meUByte) meAtoi(buf)) == 0) ||
+               (lindno >= noIndents) || (indents[lindno] == NULL))
+            {
+                indents[indno]->type ^= HILOOKB ;
+                return meABORT ;
+            }
+            indents[indno]->tknSttOff = lindno ;
+        }
+        return meTRUE ;
+    }
+    else if(n == 2)
+    {
+        if(((indno = frameCur->bufferCur->indent) != 0) &&
+           (indents[indno]->type & HILOOKB))
+        {
+            meHilight **bhis ;
+            meLine *lp ;
+            bhis = hilights ;
+            hilights = indents ;
+            lindno = indents[indno]->tknSttOff ;
+            lp = frameCur->windowCur->dotLine ;
+            htype = frameCur->windowCur->dotOffset ;
+            itype = indents[lindno]->ignore ;
+            do {
+                if(((indno = indentLookBack(lp,htype)) != 0) ||
+                   ((lp = meLineGetPrev(lp)) == frameCur->bufferCur->baseLine))
+                    break ;
+                htype = 0xffff ;
+            } while (--itype >= 0) ;
+            if(indno == 0)
+                indno = frameCur->bufferCur->indent ;
+            hilights = bhis ;
+        }
+        meStrcpy(resultStr,meItoa(indno)) ;
         return meTRUE ;
     }
     
     n = (n < 0) ? ADDTOKEN_REMOVE:0 ;
     
-    if((meGetString((meUByte *)"Ind no",0,0,buf,meBUF_SIZE_MAX-1) <= 0) ||
+    if((meGetString((meUByte *)"Ind no",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
        ((indno = (meUByte) meAtoi(buf)) == 0) ||
        (indno >= noIndents) ||
        ((root  = indents[indno]) == NULL) ||
        ((itype = mlCharReply((meUByte *)"Type: ",0,typesChar,NULL)) == -1) ||
-       (meGetString((meUByte *)"Token",0,0,buf,meBUF_SIZE_MAX-1) <= 0))
+       (meGetString((meUByte *)"Token",0,0,buf,meBUF_SIZE_MAX) <= 0))
         return meFALSE ;
     
     itype = (int) (((meUByte *)meStrchr(typesChar,itype)) - typesChar) ;
@@ -2459,7 +2529,7 @@ indent(int f, int n)
     {
         if(itype == 0)
         {
-            if(meGetString((meUByte *)"Close",0,0,buf,meBUF_SIZE_MAX-1) <= 0)
+            if(meGetString((meUByte *)"Close",0,0,buf,meBUF_SIZE_MAX) <= 0)
                 return meFALSE ;
             meHiltTokenAddSearchString(root,NULL,(meUByte *) buf,(htype|n)) ;
         }
@@ -2474,7 +2544,7 @@ indent(int f, int n)
         root->type |= HIGOTCONT ;
     else if(itype <= 2)
     {
-        if(meGetString((meUByte *)"Close",0,0,buf,meBUF_SIZE_MAX-1) <= 0)
+        if(meGetString((meUByte *)"Close",0,0,buf,meBUF_SIZE_MAX) <= 0)
             return meFALSE ;
         if(itype == 0)
         {
@@ -2485,16 +2555,24 @@ indent(int f, int n)
         else
         {
             if((meHiltTokenAddSearchString(root,node,(meUByte *) buf,0) == NULL) ||
-               (meGetString((meUByte *)"Ignore",0,0,buf,meBUF_SIZE_MAX-1) <= 0))
+               (meGetString((meUByte *)"Ignore",0,0,buf,meBUF_SIZE_MAX) <= 0))
                 return meFALSE;
             node->ignore = buf[0] ;
         }
     }
     if(typesFlag[itype] & INDGOTIND)
     {
-        if(meGetString((meUByte *)"Indent",0,0,buf,meBUF_SIZE_MAX-1) <= 0)
+        if(meGetString((meUByte *)"Indent",0,0,buf,meBUF_SIZE_MAX) <= 0)
             return meFALSE ;
         node->scheme |= ((meByte) meAtoi(buf)) & 0x00ff ;
+    }
+    if((typesFlag[itype] & INDFILETYPE) || (typesType[itype] & HLBRANCH))
+    {
+        if(meGetString((meUByte *)"Ind No",0,0,buf,meBUF_SIZE_MAX) <= 0)
+            return meFALSE ;
+        node->ignore = (meUByte) meAtoi(buf) ;
+        if(typesFlag[itype] & INDFILETYPE)
+            node->scheme |= node->ignore ;
     }
     return meTRUE ;
 }
@@ -2506,21 +2584,40 @@ indentLine(void)
     meHilight **bhis ;
     meVideoLine vps[2] ;
     meUShort noColChng, fnoz, ii ;
-    meUByte *ss ;
-    int ind, cind, coff ;
-    
-    vps[0].wind = frameCur->windowCur ;
-    vps[0].hilno = frameCur->bufferCur->indent ;
-    vps[1].hilno = frameCur->bufferCur->indent ;
-    vps[0].bracket = NULL ;
-    vps[1].bracket = NULL ;
-    vps[0].flag = 0 ;
-    vps[0].line = frameCur->windowCur->dotLine ;
+    meUByte *ss, indent, lindent ;
+    meLine *lp ;
+    int lb, ind, cind, coff ;
     
     bhis = hilights ;
     hilights = indents ;
+    indent = frameCur->bufferCur->indent ;
+    
+    lindent = 0 ;
+    if(indents[indent]->type & HILOOKB)
+    {
+        lindent = indents[indent]->tknSttOff ;
+        lp = frameCur->windowCur->dotLine ;
+        for(lb = indents[lindent]->ignore ; --lb >= 0 ; )
+        {
+            if(((lp = meLineGetPrev(lp)) == frameCur->bufferCur->baseLine) ||
+               ((indent = indentLookBack(lp,0xffff)) != 0))
+                break ;
+        }
+        if(indent == 0)
+            indent = frameCur->bufferCur->indent ;
+    }
+    
+    lp = frameCur->windowCur->dotLine ;
+    /* the flag is used only to set the current line, do the select hilighting
+     * and flag the next line as changed if in a bracket, therefore init to 
+     * 0 and forget about */
+    vps[0].wind = frameCur->windowCur ;
+    vps[0].line = lp ;
+    vps[0].hilno = indent ;
+    vps[0].bracket = NULL ;
+    vps[0].flag = 0 ;
+    
     noColChng = hilightLine(vps) ;
-    hilights = bhis ;
     blkp = hilBlock + 1 ;
     /*    printf("Got %d colour changes\n",noColChng) ;*/
     /*    for(ii=0 ; ii<noColChng ; ii++)*/
@@ -2540,20 +2637,37 @@ indentLine(void)
         ind = ((meByte) (fnoz & 0x0ff)) ;
     else
     {
-        int brace=0, jj, contFlag=0, aind, lind, nind ;
+        int jj, brace=0, contFlag=0, aind, lind, nind, bind=0 ;
         
         if((fnoz & INDINDCURLINE) &&
            ((fnoz == blkp[0].scheme) || (cind >= blkp[0].column)))
             aind = ((meByte) (fnoz & 0x0ff)) ;
         else
             aind = 0 ;
-        hilights = indents ;
-        jj = indents[frameCur->bufferCur->indent]->ignore ;
+        jj = indents[indent]->ignore ;
         for(ind=0 ; (--jj >=0) ; )
         {
-            if((vps[0].line = meLineGetPrev(vps[0].line)) == frameCur->bufferCur->baseLine)
+            if((lp = meLineGetPrev(lp)) == frameCur->bufferCur->baseLine)
                 break ;
+            vps[0].line = lp ;
+            if((lindent != 0) && (indentLookBack(lp,0xffff) != 0))
+            {
+                /* theres a file type change on this line, look back to what its changed from */
+                indent = 0 ;
+                for(lb = indents[lindent]->ignore ; --lb >= 0 ; )
+                {
+                    if(((lp = meLineGetPrev(lp)) == frameCur->bufferCur->baseLine) ||
+                       ((indent = indentLookBack(lp,0xffff)) != 0))
+                        break ;
+                }
+                if(indent == 0)
+                    indent = frameCur->bufferCur->indent ;
+                lp = vps[0].line ;
+            }
+            vps[0].hilno = indent ;
+            vps[0].bracket = NULL ;
             noColChng = hilightLine(vps) ;
+            blkp = hilBlock + 1 ;
             if((blkp[0].scheme & 0xff00) == INDFIXED)
                 continue ;
             ss = disLineBuff ;
@@ -2563,7 +2677,7 @@ indentLine(void)
             if(*ss == '\0')
                 continue ;
             /*            printf("Got prev line breakdown %d colour changes ind %d\n",noColChng,ind) ;*/
-            for(ii=0 ; ii<noColChng ; ii++)
+            for(ii=0, bind=0 ; ii<noColChng ; ii++)
             {
                 fnoz = (blkp[ii].scheme & 0xff00) ;
                 if(fnoz == INDNEXTONWARD)
@@ -2592,7 +2706,7 @@ indentLine(void)
             }
             if(brace < 0)
             {
-                if((contFlag == 0) && (indents[frameCur->bufferCur->indent]->type & HIGOTCONT))
+                if((contFlag == 0) && (indents[indent]->type & HIGOTCONT))
                     contFlag = 0x07 ;
                 nind = ind = 0 ;
                 continue ;
@@ -2607,7 +2721,7 @@ indentLine(void)
                     ind += nind ;
                 nind = ind ;
                 ind += ss - disLineBuff + aind ;
-                if((contFlag == 0) && (indents[frameCur->bufferCur->indent]->type & HIGOTCONT))
+                if((contFlag == 0) && (indents[indent]->type & HIGOTCONT))
                     contFlag = 0x07 ;
             }
             if(ind < 0)
@@ -2621,8 +2735,8 @@ indentLine(void)
             }
             break ;
         }
-        hilights = bhis ;
     }
+    hilights = bhis ;
     /*    printf("\nIndent line to %d\n\n",ind) ;*/
     /* Always do the doto change so the tab on the left hand edge moves
      * the cursor to the first non-white char

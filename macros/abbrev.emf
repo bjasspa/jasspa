@@ -13,13 +13,23 @@
 ;     and dictionary word expansion.
 ;
 define-macro expand-abbrev-handle
+    ; if the last command was expand-look-back call this again
+    !if &seq @cl expand-look-back
+        !goto look-back
+    !endif
     ; Try abbrev files
+    !if &seq @p ""
+        ml-write "[Using expand-abbrev]"
+    !endif
     !force expand-abbrev
     !if $status
         !return
     !endif        
     ; Try iso accents
     !if &or :iso-accents .expand-iso-accents.on
+        !if &seq @p ""
+            ml-write "[Using expand-iso-accents]"
+        !endif
         !force expand-iso-accents
         !if $status
             ; Quit - we found an expansion.
@@ -27,6 +37,10 @@ define-macro expand-abbrev-handle
         !endif
     !endif
     !if .expand-look-back.on
+*look-back
+        !if &seq @p ""
+            ml-write "[Using expand-look-back]"
+        !endif
         !force expand-look-back
         !if $status
             ; Quit - we found an expansion.
@@ -35,14 +49,32 @@ define-macro expand-abbrev-handle
     !endif
     !if &not &seq "ERROR" :expand-abbrev
         ; if buffer has a specific abbrev expander use that
-        execute-named-command :expand-abbrev
+        !if &seq @p ""
+            ml-write &spr "[Using %s]" :expand-abbrev
+        !endif
+        !force execute-named-command :expand-abbrev
     !elif &exi &set #l0 &cat &rig $buffer-fhook 6 "-expand-abbrev"
         ; if buffer has an fhook specific abbrev expander use that
-        execute-named-command #l0
+        !if &seq @p ""
+            ml-write &spr "[Using %s]" #l0
+        !endif
+        !force execute-named-command #l0
     !elif .expand-word.on
         ; else if enabled, use expand-word
-        expand-word
+        !if &seq @p ""
+            ml-write "[Using expand-word]"
+        !endif
+        !force expand-word
     !endif
+    !if $status
+        ; Quit - we found an expansion.
+        !return
+    !endif
+    !if &seq @p ""
+        ml-write "[Failed to find an expansion]"
+        !bell
+    !endif
+    !abort
 !emacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -79,26 +111,48 @@ define-macro iso-accents-mode
 define-macro expand-look-back
     set-position "\x81"
     backward-char
-    !if &inw @wc
-        forward-char
-        set-variable #l1 $window-col
-        backward-word
-        set-variable #l2 &sub #l1 $window-col
-        set-variable #l1 &mid @wl $window-col #l2
+    !if &not &inw @wc
+        goto-position "\x81"
+        !abort
+    !endif
+    forward-char
+    set-variable #l1 $window-col
+    backward-word
+    !if &seq @cl "expand-look-back"
+        .ilen forward-char
+        &sub #l1 $window-col forward-delete-char
+        -1 yank
+        goto-alpha-mark "\x84"
+    !else
+        set-variable .ilen &sub #l1 $window-col
+        set-variable #l1 &mid @wl $window-col .ilen
         str-to-regex #l1
-        set-variable #l1 &spr "\\<%s\\w*" #l1
-        set-variable #l0 &cond &bmod "magic" 1 -1
-        1 buffer-mode "magic"
-        !force -100 search-backward #l1
-        !if $status
+        set-variable .pat &spr "\\<%s\\w*" #l1
+        set-variable .list "\b"
+    !endif
+    set-variable #l0 &cond &bmod "magic" 1 -1
+    1 buffer-mode "magic"
+    !force -100 search-backward .pat
+    !while $status
+        set-variable #l1 &rig @s0 .ilen
+        !if &not &lfind .list #l1
+            set-alpha-mark "\x84"
             #l0 buffer-mode "magic"
             goto-position "\x81"
-            insert-string &rig @s0 #l2
+            insert-string #l1
+            set-variable .list &lins .list 0 #l1
+            ; if called from the abbrev-handler @cc wont be right
+            set-variable @cc expand-look-back
             !return
         !endif
-        #l0 buffer-mode "magic"
-    !endif
+        !force -100 search-backward .pat
+    !done
+    #l0 buffer-mode "magic"
     goto-position "\x81"
+    !if &seq @p ""
+        ml-write "[Failed to find another matching word]"
+        !bell
+    !endif
     !abort
 !emacro
 set-variable .expand-look-back.on 1

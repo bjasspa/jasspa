@@ -36,9 +36,12 @@ set-variable .fhook-perl.collapse-mnext "-1"
 set-variable .fhook-perl.item-list-s1 "^[ \t]*sub[ \t]+\\(\\w[1-9A-Za-z_']*\\)"
 set-variable .fhook-perl.item-list-r1 "Sub  \ecB\\1\ecA"
 
+!if &not &exist .hilight.perl
+    set-variable .hilight.perl  &pinc .hilight.next 1
+!endif
+
 !if &and &sin "h" .fhook-perl.setup &band .hilight.flags 0x02 
-    !if &not &exist .hilight.perl
-        set-variable .hilight.perl  &pinc .hilight.next 1
+    !if &not &exist .hilight.perlR
         set-variable .hilight.perlR &pinc .hilight.next 1
         set-variable .hilight.perlS &pinc .hilight.next 1
         set-variable .hilight.perlV &pinc .hilight.next 1
@@ -51,7 +54,8 @@ set-variable .fhook-perl.item-list-r1 "Sub  \ecB\\1\ecA"
     ; Strings and things
     hilight .hilight.perl 0 "\\\\'"                $global-scheme 
     hilight .hilight.perl 0 "\\\\`"                $global-scheme 
-    hilight .hilight.perl 0x804 "\\W\\{'" "'" "\\"       .scheme.string
+    hilight .hilight.perl 0x804 "\\W\\{'" "'" "\\" .scheme.string
+    hilight .hilight.perl 0x80 "\\W\\{\"" .hilight.perlS .scheme.string
     hilight .hilight.perl 0x80 "[^\\\\]\\{\"" .hilight.perlS .scheme.string
     ; Replace strings 
     hilight .hilight.perl 0 "=~\\{[ \t]*\\{s\\(.\\)\\S1*\\1\\S1*\\1" .scheme.string
@@ -281,6 +285,8 @@ set-variable .fhook-perl.item-list-r1 "Sub  \ecB\\1\ecA"
     hilight .hilight.perlR 0x80 "/" .hilight.perlX .scheme.string
     hilight .hilight.perlR 0x80 "\n" .hilight.perl .scheme.string
     hilight .hilight.perlR 0x80 ";" .hilight.perl  .scheme.string
+    ; let html based files use the perl hilight for any php scripts
+    set-variable .hilight.phpscript .hilight.perl
 !endif
 !if &sin "d" .fhook-perl.setup
     0 indent  .hilight.perl 0 10
@@ -303,6 +309,8 @@ set-variable .fhook-perl.item-list-r1 "Sub  \ecB\\1\ecA"
     indent .hilight.perl s "<[^ \t\n>]*>" 0
     indent .hilight.perl e "\\$#" "." ""
     indent .hilight.perl i "#"  
+    ; let html based files use the perl indent for any php scripts
+    set-variable .indent.phpscript .hilight.perl
 !endif
 
 ml-write "[Perl file hook loaded]"

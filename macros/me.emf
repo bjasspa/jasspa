@@ -57,7 +57,7 @@
 0 define-macro-file buffinit buffer-initialize buffer-bind-create
 0 define-macro-file utils ascii-time regex-forward regex-backward var-str-sub str-to-regex filemask-to-regex copy-registry create-file-path
 define-macro-file format clean sort-lines-ignore-case normal-tab tabs-to-spaces paragraph-to-line delete-indentation restyle-region restyle-buffer ifill-paragraph
-define-macro-file cvs cvs cvs-state cvs-update cvs-commit cvs-log cvs-diff cvs-gdiff cvs-add cvs-remove cvs-resolve-conflicts
+define-macro-file cvs cvs cvs-add cvs-checkout cvs-commit cvs-diff cvs-gdiff cvs-log cvs-remove cvs-resolve-conflicts cvs-state cvs-status cvs-tag cvs-update 
 define-macro-file tools compile grep rgrep which diff diff-changes execute-tool uniq reread-file find-bfile find-cfile
 define-macro-file abbrev expand-abbrev-handle expand-iso-accents expand-look-back expand-word iso-accents-mode
 define-macro-file comment comment-line uncomment-line comment-to-end-of-line comment-start comment-restyle
@@ -92,12 +92,12 @@ define-macro-file vm
 
 ; More useful than execute-file - helps in fixing problems.
 0 define-macro exec-file
-    set-variable #g0 1
+    set-variable .first 1
     !force @# execute-file @1
     !if $status
         !return
     !endif
-    !if &band #g0 1
+    !if .first
         !if &seq &set #l0 &find @1 ".emf" "ERROR"
             ml-write &spr "[Failed to find Macro file %s.emf]" @1
         !else
@@ -105,7 +105,7 @@ define-macro-file vm
             !force execute-buffer $buffer-bname
             ml-write &spr "[Error found in Macro file %s, line %d]" #l0 $window-line
         !endif
-        set-variable #g0 2
+        set-variable .first 0
     !endif
     !abort
 !emacro
@@ -229,18 +229,24 @@ add-file-hook "Makefile makefile .mak .mk .gmk"               fhook-make
 add-file-hook "Imakefile imakefile"                           fhook-imake
 add-file-hook ".sh .ksh .csh .login .cshrc .profile .tcshrc"  fhook-shell
 add-file-hook ".ini .hpj .reg .rgy"                           fhook-ini
-add-file-hook ".htm .html .asp .htp .hts"                     fhook-html  
+add-file-hook ".htm .html .htp .hts"                          fhook-html  
 add-file-hook ".bas .cls"                                     fhook-vb
+add-file-hook ".asp"                                          fhook-asp  
+add-file-hook ".java .jav"                                    fhook-java
+add-file-hook ".jsp"                                          fhook-jsp
+add-file-hook ".js"                                           fhook-js
+add-file-hook ".pl .pm .phps .inc"                            fhook-perl
+add-file-hook ".php .php3 .php4 .phtml"                       fhook-php
 add-file-hook ".cmd .bat .btm"                                fhook-dos
 add-file-hook ".tcl .tk"                                      fhook-tcl
 add-file-hook ".rul"                                          fhook-rul
 add-file-hook ".awk .nawk .gawk"                              fhook-awk
-add-file-hook ".p .pas"                                       fhook-pascal
+add-file-hook ".ada .adb .ads"                                fhook-ada
 add-file-hook ".f .f77 .f90"                                  fhook-f90
+add-file-hook ".p .pas"                                       fhook-pascal
 add-file-hook ".el"                                           fhook-lisp
 add-file-hook ".vhdl .vhd"                                    fhook-vhdl
 add-file-hook ".fvwm .fvwm2rc"                                fhook-fvwm
-add-file-hook ".java .jav"                                    fhook-java
 add-file-hook ".nsr"                                          fhook-nsr
 add-file-hook ".erf"                                          fhook-erf
 add-file-hook ".bnf"                                          fhook-bnf
@@ -252,7 +258,6 @@ add-file-hook ".x86"                                          fhook-asmx86
 add-file-hook ".py"                                           fhook-python
 add-file-hook ".scm .sch"                                     fhook-scheme
 add-file-hook ".mp .mf"                                       fhook-meta
-add-file-hook ".pl .pm"                                       fhook-perl
 add-file-hook ".m4"                                           fhook-m4
 add-file-hook ".texi"                                         fhook-texi
 add-file-hook ".idl"                                          fhook-idl
@@ -270,7 +275,7 @@ add-file-hook ".pls"                                          fhook-pls
  1 add-file-hook "^#VRML"                        fhook-vrml   ; VRML or wrl files
  1 add-file-hook "^#Inventor"                    fhook-vrml   ; Use the VRML hook for iv files
 -2 add-file-hook "This is Info file"             fhook-info   ; GNU info file
--4 add-file-hook "<html>"                        fhook-html   ; HTML files
+;-4 add-file-hook "<html>"                        fhook-html   ; HTML files
 -1 add-file-hook "<?xml"                         fhook-xml    ; <?xml version="1.0" standalone="no"?>
 -1 add-file-hook "-[*!]-[ \t]*c.*-[*!]-"         fhook-c      ; -*- C -*-
 -1 add-file-hook "-[*!]-[ \t]*c\\+\\+.*-[*!]-"   fhook-cpp    ; -*- C++ -*-

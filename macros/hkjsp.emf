@@ -1,0 +1,56 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created      Thu Oct 16 2003
+; Synopsis:    JSP Hook File
+; Authors:     Steven Phillips
+;
+define-macro fhook-jsp
+    set-variable $buffer-mask "luh1"
+    @# buffer-initialize "jsp"
+    buffer-initialize-hooks
+!emacro
+
+; buffer-initialize variables
+set-variable .fhook-jsp.name "JSP"
+set-variable .fhook-jsp.setup &reg "/history" "fhook/jsp" "cdghinopsx"
+set-variable .fhook-jsp.setup-mask "acdeghikmnopstux"
+set-variable .fhook-jsp.command-flag  "|"
+set-variable .fhook-jsp.command-name  "|"
+set-variable .fhook-jsp.command-nbind "|"
+set-variable .fhook-jsp.command-kbind "|"
+set-variable .fhook-jsp.command-desc  "|"
+
+; load in Java & the html core
+!if &not &exist fhook-java
+    !force exec-file "hkjava"
+!endif
+!force execute-file "htmlcore" "jsp" 
+
+; add the <% %> java script support
+!if &and &sin "h" .fhook-jsp.setup &band .hilight.flags 0x02 
+    ; add JSP html extensions
+    hilight .hilight.jsp 4 "<%--" "%>" ""     .scheme.comment
+    hilight .hilight.jsp 4 "<%@" "%>" ""      .scheme.prepro
+    !if &exist .hilight.javascript
+        hilight .hilight.jsp        0x80 "<%" .hilight.java .scheme.prepro
+        hilight .hilight.jsptag     0x80 "<%" .hilight.java .scheme.prepro
+        hilight .hilight.java       0x80 "%>" 0 .scheme.prepro
+    !endif
+!endif
+!if &sin "d" .fhook-jsp.setup
+    !if &exist .indent.java
+        indent .hilight.jsptag t "<%" .indent.java
+        indent .hilight.jsptag t "%>" .hilight.jsp
+        
+        indent .hilight.jsp x "<%" 2 .indent.java
+        indent .indent.java w "%>" -2 0
+    !endif
+!endif
+
+ml-write "[JSP file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "myjsp"

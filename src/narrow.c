@@ -141,7 +141,7 @@ meBufferCreateNarrow(meBuffer *bp, meLine *slp, meLine *elp, meInt sln, meInt el
             {
                 if(wp->dotLineNo >= eln)
                 {
-                    if ((wp->vertScroll -= nln) < 0)
+                    if((wp->vertScroll -= nln) < 0)
                         wp->vertScroll = 0;
                     wp->dotLineNo -= nln ;
                 }
@@ -163,7 +163,7 @@ meBufferCreateNarrow(meBuffer *bp, meLine *slp, meLine *elp, meInt sln, meInt el
                     wp->markLineNo = sln ;
                 }
             }
-            wp->updateFlags |= WFMAIN|WFMOVEL|WFSBOX ;
+            wp->updateFlags |= WFMAIN|WFMOVEL|WFSBOX|WFLOOKBK ;
         }
     }
     meFrameLoopEnd() ;
@@ -202,31 +202,6 @@ meBufferExpandNarrow(meBuffer *bp, register meNarrow *nrrw, int useDot, meUByte 
     lp2->prev = nrrw->elp ;
     bp->lineCount += noLines ;
     
-#if 0
-    /* The next bit is a bit grotty, a fudge and doesn't work properly
-     * in everycase, but is better than nothing.
-     * 
-     * If there are other narrows check to see if they are on the same
-     * line, if so, use the start-line (sln) to decide if they should
-     * go before or after this narrow, and do the right thing
-     */
-    nw = nrrw->next ;
-    while(nw != NULL)
-    {
-        meAnchor *p = bp->anchorList;
-        while(p->name != nw->name)
-            p = p->next ;
-        if((p->line == lp2) &&
-           (nw->sln < nrrw->sln))
-        {
-            /* Got one, set the narrow line to be the first line in this narrow */
-            p->line = nrrw->slp ;
-            /* mark the line as having an anchor */
-            p->line->flag |= meLINE_ANCHOR_NARROW ;
-        }
-        nw = nw->next ;
-    }
-#endif
     meFrameLoopBegin() ;
     for (wp=loopFrame->windowList; wp!=NULL; wp=wp->next)
     {
@@ -253,7 +228,7 @@ meBufferExpandNarrow(meBuffer *bp, register meNarrow *nrrw, int useDot, meUByte 
                 }
                 wp->markLineNo += noLines ;
             }
-            wp->updateFlags |= WFMAIN|WFMOVEL|WFSBOX ;
+            wp->updateFlags |= WFMAIN|WFMOVEL|WFSBOX|WFLOOKBK ;
         }
     }
     meFrameLoopEnd() ;
@@ -320,15 +295,6 @@ meBufferRemoveNarrow(meBuffer *bp, register meNarrow *nrrw, int useDot, meUByte 
             scheme = meSCHEME_INVALID ;
         meUndoAddUnnarrow(bp->dotLineNo,bp->dotLineNo+nrrw->noLines,
                           nrrw->name,scheme,nrrw->markupCmd,nrrw->markupLine) ;
-    }
-#endif
-#if 0
-    nn = frameCur->bufferCur->narrow ;
-    while(nn != nrrw)
-    {
-        if(nn->sln > nrrw->sln)
-            nn->sln += nrrw->noLines ;
-        nn = nn->next ;
     }
 #endif
     if(nrrw->next != NULL)

@@ -112,6 +112,8 @@ set-variable .fhook-vb.item-list-r3 "Prop \ecB\\2 \\3\ecA"
         hilight .hilight.vb 0 "\\s \\{Property\\s +Let\\s +\\w+\\}(" .scheme.function
         hilight .hilight.vb 1 "End\\s +Property" .scheme.function
     !endif
+    ; let html based files use the vb hilight for any VBScripts
+    set-variable .hilight.vbscript .hilight.vb
 !endif
 !if &sin "d" .fhook-vb.setup
     ; Define the indentation tokens
@@ -133,6 +135,8 @@ set-variable .fhook-vb.item-list-r3 "Prop \ecB\\2 \\3\ecA"
     indent .hilight.vb N "Select\\s +Case" 4
     indent .hilight.vb O "ElseIf" -2
     indent .hilight.vb O "End" -2
+    ; the end in 'response.end' (common in asp) throws thing out  
+    indent .hilight.vb o "\\.End\\s " 0
     indent .hilight.vb N "Type" 2
     indent .hilight.vb S "Resume\\s +Next" 0
     indent .hilight.vb O "End\\s +Select" -4
@@ -152,6 +156,8 @@ set-variable .fhook-vb.item-list-r3 "Prop \ecB\\2 \\3\ecA"
     ; ignore the rest of an open line as it may contain a For
     indent .hilight.vb I "Open" 2
     ;indent .hilight.vb c "\_" 2
+    ; let html based files use the vb indent for any VBScripts
+    set-variable .indent.vbscript .hilight.vb
 !endif
 
 ml-write "[VB file hook loaded]"

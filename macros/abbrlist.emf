@@ -110,8 +110,9 @@ define-macro eaf-list-execute
 
 0 define-macro eaf-list-create
     set-position "\x86"
-    set-variable #l9 &rig $buffer-fhook 6
-    !if &seq #l9 ""
+    !if &exi :chook
+        set-variable #l9 :chook
+    !elif &seq &set #l9 &rig $buffer-fhook 6 ""
         set-variable #l9 "default"
     !endif
     set-variable #l0 &cat "*eaf-list*" &cat @3 #l9
@@ -141,6 +142,18 @@ define-macro eaf-list-execute
         !force 0 delete-buffer #l1
         find-buffer #l1
         !force insert-file &find &cat @3 #l9 ".eaf"
+        ; process inserts first
+        beginning-of-buffer
+        !force search-forward " +<INCLUDE: *\\([^>\n]+\\)>"
+        !while $status
+            beginning-of-line
+            set-mark
+            forward-line
+            -1 kill-region
+            !force insert-file &find @s1 ".eaf"
+            exchange-point-and-mark
+            !force search-forward " +<INCLUDE: *\\([^>\n]+\\)>"
+        !done
         set-variable #l2 1
         beginning-of-buffer
         !while &not &seq @wc ""
