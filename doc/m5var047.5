@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var047.5,v 2.7 2004-11-26 23:53:22 bill Exp $
+.Id $Id: m5var047.5,v 2.8 2005-01-16 19:40:40 jon Exp $
 .Im MicroEmacs variable|hilight|macrodevelop
 .so me.tni
 .TH $system 5
@@ -83,9 +83,7 @@ ipipes, this bit can be cleared to disable their use.
 If this bit set, the then execution of the
 .Ht tab 2
 command (bound to \fCtab\fR)  always checks and adjusts the indentation of the
-current line when the current buffer is in
-.Ht cmode 2m
-or has an
+current line when the current buffer has an
 .Hl indentation indent 2
 method. If the bit is clear then the \fCtab\fR may only checks the indentation
 when  the  cursor  is  in  column  zero   depending  on  the  setting  of  bit
@@ -195,10 +193,8 @@ file name is prepended with a '\fC.\fR'.
 .IP \fB0x200000\fR
 If this bit set, the then execution of the
 .Ht tab 2
-command (bound to \fCtab\fR) checks and adjusts the indentation of the
-current line when the cursor is in column zero and current buffer is in
-.Ht cmode 2m
-or has an
+command (bound to \fCtab\fR) checks and adjusts the indentation of the current
+line when the cursor is in column zero and current buffer has an
 .Hl indentation indent 2
 method. The setting of this bit has no effect if bit  \fB0x1000\fR  is set. If
 this and bit  \fB0x1000\fR  are clear  then the  \fCtab\fR  will not check the

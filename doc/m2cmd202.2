@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd202.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd202.2,v 2.6 2005-01-16 19:40:40 jon Exp $
 .Im MicroEmacs macrodevelop
 .so me.tni
 .TH fileHooks 2
@@ -184,8 +184,8 @@ macros or highlights,  buffer  interaction  behaves in it's default state. The
 state of the buffer  interaction may be modified through the use of the buffer
 modes (see
 .Hl "Operating Modes" Modes - ),
-for   example   the  'C'   programming   language
-.Ht cmode 2m
+for   example   the  'C'   programming   language automatic indent
+.Ht indent 2 
 changes the  characteristics of the \fCtab\fR  character and performs language
 specific  indentation of statements.  When a text specific set of highlighting
 rules are applied to the buffer, the text becomes  emphasized  through the use
@@ -475,6 +475,6 @@ hilight .hilight.c 1 "meMODE"         .scheme.type
 .Hl "Operating Modes" Modes - ,
 .Hl "Language Templates" languageTemplates 2 ,
 .Ht add-file-hook 2 ,
-.Ht cmode 2m .
+.Ht indent 2 .
 .ad
 .FH
