@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m2mod001.2,v 1.2 2000-10-21 17:10:03 jon Exp $
+.Id $Id: m2mod001.2,v 1.3 2001-02-16 21:38:11 jon Exp $
 .Im MicroEmacs modes
 .so me.tni
 .TH backup 2m
@@ -14,7 +14,9 @@ backup \- Automatic file backup of last edit
 .B backup
 mode, when enabled,  performs an automatic backup of the last edit when a save
 file  operation  is  performed.  The backup file name is derived from the base
-file  name and is  written  into the same  directory  as the  source  file.
+file  name  and is  written  into  the  same  directory  as the  source  file,
+the backup file name can be obtained from the variable
+.Ht $buffer-backup 5 . 
 .PP
 On unlimited  file name length systems the naming  convention  used depends on
 bit \fB0x400\fR of variable
@@ -52,6 +54,12 @@ following file naming conventions are used:
 .C "xxxxxxxx.yyyy -> xxxxxxxx.yyy~"
 .fi
 .RE
+.PP
+The environment variables
+.Ht $MEBACKUPPATH 5
+and
+.Ht $MEBACKUPSUB 5
+can be used to modify this behaviour.
 .SH NOTES
 \fBbackup\fR is enabled by default.
 .PP
@@ -70,8 +78,11 @@ and auto-saving  (\fC$auto-time = 0\fR). The author denies all  responsibility
 (yet again) for any loss of data! Please be careful.
 .SH "SEE ALSO"
 .na
+.Ht $buffer-backup 5 .
 .Ht $system 5 ,
 .Ht $kept-versions 5 ,
+.Ht $MEBACKUPPATH 5 ,
+.Ht $MEBACKUPSUB 5 ,
 .Ht buffer-mode 2 ,
 .Ht global-mode 2 ,
 .Ht undo 2m ,

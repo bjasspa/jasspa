@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m2cmd158.2,v 1.3 2000-11-18 01:47:12 jon Exp $
+.Id $Id: m2cmd158.2,v 1.4 2001-02-16 21:38:10 jon Exp $
 .Im MicroEmacs command|file
 .so me.tni
 .TH copy-file 2
@@ -38,9 +38,14 @@ is not  required. If flag  \fB0x01\fR is set then the user is prompted  before
 the file is removed and if bit  \fB0x02\fR is set a backup of the file is made
 first. Bit \fB0x08\fR is ignored.    
 .IP \fB0x08\fR
-When this bit is set the command  functionality is changed to move-file, the
+When this bit is set the command  functionality  is changed to move-file,  the
 specified   \fIfrom-file-name\fR   is  moved  to  \fIto-file-name\fR.  If  bit
 \fB0x02\fR is set a backup of the source file is also made.
+.IP \fB0x10\fR
+When this bit is set the  command  functionality  is  changed  to making a new
+directory, the specified \fIfrom-file-name\fR is the name of the new directory
+and the  \fIto-file-name\fR  argument is not  required. A file or directory of
+the given name must not already exist.
 .SH NOTES
 \fBhttp\fR  files are not  supported  except as the source file when  copying.
 \fBftp\fR files are fully supported with the restriction  that the from and to

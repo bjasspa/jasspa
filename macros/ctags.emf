@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : 1998
-;  Last Modified : <010109.1545>
+;  Last Modified : <010208.1319>
 ;
 ;  Description   : Command-line macro for creating a C tags file
 ;
@@ -229,8 +229,10 @@ set-char-mask "1" ":~"
                 backward-char
             !endif
 *var-assign-skip
-            ctags-move-to-next "[,;({'\"]"
-            !if &sin @s0 "{("
+            !force ctags-move-to-next "[,;({'\"]"
+            !if &not $status
+                !return
+            !elif &sin @s0 "{("
                 backward-char
                 goto-matching-fence
                 !goto var-assign-skip

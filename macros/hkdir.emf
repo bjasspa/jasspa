@@ -4,7 +4,7 @@
 ;       Author          : Jon Green
 ;       Created         : 19th February 1997
 ;
-;       Last Modified   : <010205.1703>
+;       Last Modified   : <010214.1219>
 ;
 ;       Comment         :
 !if &not &exist .osd.dir-help
@@ -58,6 +58,7 @@
 ;
 0 define-macro file-browser-close
     1 set-position "\x81"
+    set-variable .fhook-dir.file-process ""
     !force 0 popup-window "*ftp-console*"
     !if $status
         next-window
@@ -76,7 +77,6 @@
         delete-other-windows
         -1 find-buffer "*cvs-console*"
         osd .osd.file-menu  11 "D"
-        set-variable .fhook-dir.file-process ""
     !endif
     !force 0 popup-window "*directory*"
     !if $status
@@ -130,38 +130,8 @@
     !endif
 !emacro
 
-define-macro file-browser
-    ; Close down file-browser if it is showing and the *directory* and *files*
-    ; windows are side by side.
-    1 set-position "\x81"            ; Save the window position
-    !force 1 next-window             ; Goto the top window.
-    set-variable #l0 TRUE            ; Assume a true status
-    !repeat
-        !if &seq $buffer-bname "*directory*"
-            ; Save the window size information and goto the next window.
-            set-variable #l0 $window-mode-line
-            set-variable #l1 $window-depth
-            !force 0 next-window
-            !if &not $status
-                !goto done-search
-            !endif
-            ; If it is the *files* window and the start positions
-            ; and window height are the same then close down file-browser
-            !if &and &and &seq $buffer-bname "*files*" &equ $window-mode-line #l0 &equ $window-depth #l1
-                file-browser-close
-                !return
-            !endif
-        !else
-            ; Advance to the next window for the search
-            !force 0 next-window
-            set-variable #l0 $status
-        !endif
-    !until &not #l0
-*done-search
-    ; Restore window position
-    goto-position "\x81"
+0 define-macro file-browser-init
     set-variable #l0 &lef $buffer-fname &rsin "/" $buffer-fname
-    ; file-browser is not showing. Bring up Explorer.
     !force 0 popup-window "*directory*"
     !if $status
         !force 0 popup-window "*files*"
@@ -182,6 +152,11 @@ define-macro file-browser
     !if &not &seq #l0 $buffer-fname
         0x0f directory-tree #l0
     !endif
+!emacro
+
+define-macro file-browser
+    set-variable .fhook-dir.file-process ""
+    file-browser-init
     ml-write "MicroEmacs file-browser <delete> to exit"
 !emacro
 
@@ -220,27 +195,47 @@ define-macro file-browser
         !endif
     !else
         file-browser-close
-        find-file #l0
+        ; pre-pend a file:/ to ensure we get the local file, not an ftp:/ file
+        find-file &cat "file:" #l0
     !endif
 !emacro
 
 0 define-macro files-mouse-drag-1
-    set-variable #l1 $window-line
-    !if &les #l1 :fmpl
-        beginning-of-line
-        -3 show-region
-        set-variable $window-line :fmpl
-        forward-line
-        3 show-region
-    !else
-        beginning-of-line
-        forward-line
-        -3 show-region
-        set-variable $window-line :fmpl
-        3 show-region
+    set-variable #l1 $mouse-y
+    ; go to the right line first
+    !if &not &equ .mouse-event.y #l1
+        !if &les #l1 $window-mode-line
+            set-variable #l3 &sub $window-mode-line $window-depth
+            !if &and #l1 &not &les #l1 #l3
+                set-variable .mouse-event.y #l1
+            !else
+                set-variable .mouse-event.y &add #l3 1
+                !force &sub .mouse-event.y #l1 scroll-up
+            !endif
+        !else
+            set-variable .mouse-event.y &sub $window-mode-line 1
+            !force &sub #l1 .mouse-event.y scroll-down
+        !endif
+        !force &sub $mouse-y $cursor-y forward-line
+        !if &les $window-line 5
+            set-variable $window-line 5
+        !endif
+        set-variable #l1 $window-line
+        !if &les #l1 :fmpl
+            beginning-of-line
+            -3 show-region
+            set-variable $window-line :fmpl
+            !force forward-line
+            3 show-region
+        !else
+            beginning-of-line
+            !force forward-line
+            -3 show-region
+            set-variable $window-line :fmpl
+            3 show-region
+        !endif
+        set-variable $window-line #l1
     !endif
-    set-cursor-to-mouse
-    show-region
 !emacro
 
 ; files-sort-list-section <init-sort-col> <start-col> <reverse-flag>
@@ -531,6 +526,10 @@ define-macro file-browser
     set-variable #l0 $buffer-bname
     read-file $buffer-fname
     change-buffer-name #l0
+    !if &seq #l0 "*files*"
+        buffer-bind-key dir-swap-buffers "tab"
+        buffer-bind-key file-browser-close "delete"
+    !endif
 !emacro
 0 define-macro files-auto-refresh
     set-variable .find-file.flags &bxor .find-file.flags 0x01
@@ -586,7 +585,7 @@ osd .osd.file-menu 130 ""  "&Auto-Refresh: on "   f files-auto-refresh
         !if &set :fmpt &les $window-col :fmpf
             beginning-of-line
             -3 show-region
-            forward-line
+            !force forward-line
             3 show-region
             set-variable $delay-time $repeat-time
             global-bind-key files-mouse-drag-1 &spr .mouse-event.mask "time"
@@ -617,7 +616,7 @@ osd .osd.file-menu 130 ""  "&Auto-Refresh: on "   f files-auto-refresh
             !endif
             !repeat
                 files-tag-toggle
-            !until &gre $window-line :fmpl
+            !until &or &gre $window-line :fmpl &seq @wl ""
             set-cursor-to-mouse
         !endif
     !elif &and &not :fmpt &equ :fmpl $window-line

@@ -3,7 +3,7 @@
 ;  Author        : $Author: jon $
 ;  Created By    : Steven Phillips
 ;  Created       : Tue Jan 23 14:09:08 2001
-;  Last Modified : <010206.1256>
+;  Last Modified : <010214.1219>
 ;
 ;  Description
 ;
@@ -16,15 +16,52 @@
 
 0 exec-file "hkdir"
 
+define-macro cvs
+!emacro
+set-variable .cvs.filter  1
+set-variable .cvs.console-hilight "|||||||"
+set-variable .cvs.message ""
+
 !if &band .hilight.flags 0x01
+    ; fix the *files* buffer hilighting for cvs additions
     hilight .hilight.file 0x012 "[0-9][0-9]:[0-9][0-9] [0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9] [0-9][0-9]:[0-9][0-9] \\{" .scheme.file
     hilight .hilight.file 0x112 "*[?AMCR]" .scheme.select
     hilight .hilight.file 0x112 " \\?"     .scheme.keyword
     hilight .hilight.file 0x112 " A"       .scheme.type
     hilight .hilight.file 0x112 " M"       .scheme.operator
     hilight .hilight.file 0x112 " C"       .scheme.error
-    hilight .hilight.file 0x112 " R"       .scheme.hide
+    hilight .hilight.file 0x112 " R"       .scheme.error
+    !if &not &exist .hilight.cvs
+        set-variable .hilight.cvs &pinc .hilight.next 1
+    !endif
+    0 hilight .hilight.cvs 2 100           $global-scheme
+    !if &not &exi .hilight.diff
+        !force execute-file "hkdiff"
+    !endif
+    ; If the hilighting mode is loaded then modify it.
+    !if &and &sin "h" .fhook-emf.setup &band .hilight.flags 0x02 
+        hilight .hilight.cvs  0xc0 "^>diff-" "" .hilight.diff $global-scheme
+        hilight .hilight.diff 0xc0 "^>cvs-"  "" .hilight.cvs  $global-scheme
+        set-variable .cvs.console-hilight &lset .cvs.console-hilight 3 ">diff-"
+    !endif
+    
 !endif
+
+0 define-macro cvs-command-init
+    !if &band @# 1
+        !if &seq $buffer-fname ""
+            ml-write "[Current buffer has no file name]"
+            !abort
+        !endif
+        !if &band @# 2
+            !if &bmod "edit"
+                !if &iseq @mc1 "Save buffer first [y/n]? " "nNyY" "y"
+                    save-buffer
+                !endif
+            !endif
+        !endif
+    !endif
+!emacro
 
 define-macro cvs-state
     4 ipipe-shell-command "cvs -nq update" "*cvs-state*"
@@ -34,16 +71,46 @@ define-macro cvs-update
     4 ipipe-shell-command "cvs update" "*cvs-update*"
 !emacro
 
-define-macro cvs-diff
-    !if &seq $buffer-fname ""
-        ml-write "[Current buffer has no file name]"
+define-macro cvs-commit
+    3 cvs-command-init
+    osd-entry "CVS - Commit" "&Log message:" .cvs.message "70x10"
+    set-variable #l2 .cvs.message
+    var-str-sub #l2 "\\" "\\\\" 
+    var-str-sub #l2 "\"" "\\\"" 
+    ;var-str-sub #l2 "\n" "\\n" 
+    set-variable #l2 &spr "cvs commit -m \"%s\" \"%s\"" #l2 &rig $buffer-fname &rsin "/" $buffer-fname
+    4 ipipe-shell-command #l2 "*cvs-commit*"
+!emacro
+
+define-macro cvs-log
+    1 cvs-command-init
+    set-variable #l2 &spr "cvs log \"%s\"" &rig $buffer-fname &rsin "/" $buffer-fname
+    4 ipipe-shell-command #l2 "*cvs-log*"
+!emacro
+
+define-macro cvs-add
+    3 cvs-command-init
+    set-variable #l2 &spr "cvs add \"%s\"" &rig $buffer-fname &rsin "/" $buffer-fname
+    4 ipipe-shell-command #l2 "*cvs-add*"
+!emacro
+
+define-macro cvs-remove
+    1 cvs-command-init
+    set-variable #l1 $buffer-fname
+    set-variable #l2 &rig $buffer-fname &rsin "/" $buffer-fname
+    set-variable #l0 &spr "  cvs-remove will first delete the file \"%s\"  \n     and then remove it from the repository.\n\n  Use commit in cvs browser to make removal permanent  \n\n                      Continue?" #l2
+    osd-xdialog "CVS - Remove" #l0 2 "  &Yes  " "  &No  "
+    !if &equ $result 2
         !abort
     !endif
-    !if &bmod "edit"
-        !if &iseq @mc1 "Save buffer first [y/n]? " "nNyY" "y"
-            save-buffer
-        !endif
-    !endif
+    delete-buffer $buffer-bname @mna
+    4 copy-file #l1
+    set-variable #l2 &spr "cvs remove \"%s\"" #l1
+    4 ipipe-shell-command #l2 "*cvs-remove*"
+!emacro
+
+define-macro cvs-diff
+    3 cvs-command-init
     set-variable #l0 $buffer-fname
     set-variable #l1 $temp-name
     !if &seq $platform "win32"
@@ -168,7 +235,11 @@ define-macro cvs-resolve-conflicts
     beginning-of-buffer
     search-forward &spr "^/%s/\\([^/]*\\)/\\(Result of merge\\+\\)?\\w+ +\\(\\w+\\) +\\([0-9]+\\) +\\([0-9]+:[0-9]+\\):[0-9]+ +\\([0-9]+\\)/" @2
     ; get the version
-    set-variable #p8 @s1
+    !if &gre &len @s1 7
+        set-variable #p8 &cat "<" &rig @s1 &sub &len @s1 6
+    !else
+        set-variable #p8 @s1
+    !endif
     ; get the date in YYYY/MM/DD HH:MM form
     set-variable #p9 &spr "%s/%02d/%02d %s" @s6 &lfind "|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|" @s3 @s4 @s5
 !emacro
@@ -182,9 +253,9 @@ define-macro cvs-resolve-conflicts
 !emacro
 
 0 define-macro cvs-dir-conv
-    !if &not &sin "Rev" .fhook-dir.col-name
+    !if &not &sin "Revis'n" .fhook-dir.col-name
         set-variable #l0 &lef .fhook-dir.col-name 1
-        set-variable .fhook-dir.col-name &spr "%sRev    %sRepository Date %s" .fhook-dir.col-name #l0 #l0
+        set-variable .fhook-dir.col-name &spr "%sRevis'n%sRepository Date %s" .fhook-dir.col-name #l0 #l0
         set-variable .fhook-dir.col-flag &spr "%s1%1%s" .fhook-dir.col-flag #l0 #l0
     !endif
     !if &seq &lef $buffer-fname 6 "ftp://"
@@ -213,7 +284,7 @@ define-macro cvs-resolve-conflicts
     set-variable $window-col 15
     insert-string "Repository Date  "
     set-variable $window-col 6
-    insert-string "Rev     "
+    insert-string "Revis'n "
     beginning-of-line
     forward-line
     !while &not &seq @wl ""
@@ -281,7 +352,6 @@ define-macro cvs-resolve-conflicts
         set-variable #l3 @s1
         filemask-to-regex #l3
         set-variable #l4 @s1
-        set-variable $debug 1
         !force cvs-get-entries-info #l2 #l3
         set-variable #l5 $status
         find-buffer #l1
@@ -290,6 +360,8 @@ define-macro cvs-resolve-conflicts
         !else
             insert-string &spr " R---               -                                    %s" #l4
         !endif
+        beginning-of-line
+        forward-line
         find-buffer "*cvs-temp*"
         !force search-forward "^R \\(.*\\)$"
     !done
@@ -300,10 +372,46 @@ define-macro cvs-resolve-conflicts
     set-variable :fmpf 57
 !emacro
 
+0 define-macro cvs-exec-file-menu-cmd
+    !force 6 pipe-shell-command @1 "*cvs-temp*"
+    !force find-buffer "*cvs-temp*"
+    beginning-of-buffer
+    forward-line
+    set-mark
+    end-of-buffer
+    copy-region
+    -1 find-buffer "*cvs-temp*"
+    find-buffer "*cvs-console*"
+    end-of-buffer
+    yank
+    -1 yank
+    exchange-point-and-mark
+    beginning-of-line
+    !repeat
+        !while &gre &len @wl $fill-col
+            set-variable $window-col $fill-col
+            !force search-backward " "
+            forward-char
+            insert-newline
+        !done
+        forward-line
+    !until &seq @wl ""
+    !if &not &seq &set #l0 &lget .cvs.console-hilight @2 ""
+        !repeat
+            insert-string #l0
+            beginning-of-line
+            !force 100 forward-line
+        !until &not $status
+        set-variable $buffer-hilight .hilight.cvs
+    !endif
+    -1 buffer-mode "edit"
+    0x10 goto-position "\x82"
+!emacro
+
 0 define-macro osd-cvs-file-menu-cmd
     set-position "\x82"
-    !if &gre @# 5
-        !if &equ @# 6
+    !if &gre @# 99
+        !if &equ @# 100
             find-buffer "*cvs-console*"
             beginning-of-buffer
             set-mark
@@ -316,7 +424,7 @@ define-macro cvs-resolve-conflicts
             ; load the file in
             files-tag-list
             find-file .find-file.file1
-            !if &equ @# 7
+            !if &equ @# 101
                 cvs-diff
             !else
                 cvs-resolve-conflicts
@@ -325,45 +433,53 @@ define-macro cvs-resolve-conflicts
         !endif
         !return
     !endif
-    !if &seq @# 2
-        osd-entry "CVS - Commit" "&Log message:" .cvs.message "60x10"
+    !if &seq @# 7
+        osd-dialog "CVS - Remove" "     Yikes! Too dangerous.\n\n  Use cvs-remove on each file.  " "  &Abort  "
+        !abort
+    !elif &seq @# 2
+        osd-entry "CVS - Commit" "&Log message:" .cvs.message "70x10"
         set-variable #l2 .cvs.message
         var-str-sub #l2 "\\" "\\\\" 
         var-str-sub #l2 "\"" "\\\"" 
-        var-str-sub #l2 "\n" "\\n" 
-        set-variable #l2 &spr "cvs commit -m \"%s\" " #l2
+        ;var-str-sub #l2 "\n" "\\n" 
+        set-variable #l2 &spr "cvs commit -m \"%s\"" #l2
     !else
-        set-variable #l2 &spr "cvs %s " &lget "|update|commit|diff|log|status -v|" @#
+        set-variable #l2 &spr "cvs %s" &lget "|update|commit|diff|log|status -v|add|" @#
     !endif
+    set-variable #l5 $mouse
+    set-variable $mouse &bor 0x50000 &band 0xffff #l5
     files-tag-list
     set-variable #l0 0
-    set-variable #l1 ""
+    set-variable #l1 #l2
+    set-variable #l3 &len #l2
     !while &les &pinc #l0 1 .find-file.file-count
         ; set-variable #l1 &spr "%s %s" #l1 &ind &cat ".find-file.file" #l0
         ; !if &or &not &band #l0 0x07 &equ #l0 .find-file.file-count
-        set-variable #l1 &ind &cat ".find-file.file" #l0
-        !force 6 pipe-shell-command &cat #l2 #l1 "*cvs-temp*"
-        !force find-buffer "*cvs-temp*"
-        beginning-of-buffer
-        forward-line
-        set-mark
-        end-of-buffer
-        copy-region
-        -1 find-buffer "*cvs-temp*"
-        find-buffer "*cvs-console*"
-        end-of-buffer
-        yank
-        -1 yank
-        -1 buffer-mode "edit"
-        0x10 goto-position "\x82"
+        set-variable #l4 &ind &cat ".find-file.file" #l0
+        !if &seq "/" &rig #l4 &sub &len #l4 1
+            set-variable #l4 &lef #l4 &sub &len #l4 1
+        !endif
+        !if &sin " " #l4
+            var-str-sub #l4 "\\" "\\\\" 
+            var-str-sub #l4 "\"" "\\\"" 
+            set-variable #l4 &cat &cat "\"" #l4 "\""
+        !endif
+        !if &gre &add #l3 &len #l4 1020
+            cvs-exec-file-menu-cmd #l1 @# 
+            set-variable #l1 #l2
+            set-variable #l3 &len #l2
+        !endif
+        set-variable #l1 &cat #l1 &cat " " #l4
     !done
+    cvs-exec-file-menu-cmd #l1 @# 
     !force 0 popup-window "*cvs-console*"
     !if $status
         end-of-buffer
     !endif
     goto-position "\x82"
-    !if &les @# 3
-        ; if update or commit then refresh or drop tags
+    set-variable $mouse #l5
+    !if &lfind "|1|2|6|" @#
+        ; if update, commit or add then refresh or drop tags
         !if &band .find-file.flags 1
             files-refresh
         !else
@@ -376,28 +492,32 @@ define-macro cvs-resolve-conflicts
     -1 osd .osd.tmp
     osd .osd.tmp 0 "b"
     !if :tag-count
-        osd .osd.tmp 10 "" "&Update files"    1 osd-cvs-file-menu-cmd
-        osd .osd.tmp 20 "" "&Commit files"    2 osd-cvs-file-menu-cmd
-        osd .osd.tmp 30 "" "&Diff files"      3 osd-cvs-file-menu-cmd
-        osd .osd.tmp 40 "" "&Log files"       4 osd-cvs-file-menu-cmd
-        osd .osd.tmp 50 "" "&Status files"    5 osd-cvs-file-menu-cmd
+        osd .osd.tmp 10 "" "&Update files"      1 osd-cvs-file-menu-cmd
+        osd .osd.tmp 20 "" "&Commit files"      2 osd-cvs-file-menu-cmd
+        osd .osd.tmp 30 "" "&Diff files"        3 osd-cvs-file-menu-cmd
+        osd .osd.tmp 40 "" "&Log files"         4 osd-cvs-file-menu-cmd
+        osd .osd.tmp 50 "" "&Status files"      5 osd-cvs-file-menu-cmd
+        osd .osd.tmp 54 "" "&Add files"         6 osd-cvs-file-menu-cmd
+        osd .osd.tmp 55 "" "Remove files"       7 osd-cvs-file-menu-cmd
     !else
         osd .osd.tmp 10 "" "Update files"
         osd .osd.tmp 20 "" "Commit files"
         osd .osd.tmp 30 "" "Diff files"
         osd .osd.tmp 40 "" "Log files"
         osd .osd.tmp 50 "" "Status files"
+        osd .osd.tmp 54 "" "Add files"
+        osd .osd.tmp 55 "" "Remove files"
     !endif
     osd .osd.tmp 60 "-"
     !if &equ :tag-count 1
-        osd .osd.tmp 70 "" "&Graphical diff"    7 osd-cvs-file-menu-cmd
-        osd .osd.tmp 80 "" "&Resolve conflicts" 8 osd-cvs-file-menu-cmd
+        osd .osd.tmp 70 "" "&Graphical diff"    101 osd-cvs-file-menu-cmd
+        osd .osd.tmp 80 "" "&Resolve conflicts" 102 osd-cvs-file-menu-cmd
     !else
         osd .osd.tmp 70 "" "Graphical diff"
         osd .osd.tmp 80 "" "Resolve conflicts"
     !endif
     osd .osd.tmp  90 "-"
-    osd .osd.tmp 100 "" "Clear cvs console"   6 osd-cvs-file-menu-cmd
+    osd .osd.tmp 100 "" "Clear c&vs console"    100 osd-cvs-file-menu-cmd
 !emacro
 
 define-macro cvs
@@ -409,7 +529,6 @@ define-macro cvs
     find-buffer "*cvs-console*"
     buffer-bind-key file-browser-close "delete"
     previous-window
-    file-browser
+    file-browser-init
 !emacro
-set-variable .cvs.filter  1
-set-variable .cvs.message ""
+

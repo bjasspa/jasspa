@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Wed Jan 12 16:37:22 2000
-;  Last Modified : <001108.2145>
+;  Last Modified : <010214.1230>
 ;
 ;  Description
 ;
@@ -64,6 +64,7 @@
         !force 0 delete-buffer "*files*"
         find-file &cat "file:" #l0 
         change-buffer-name "*files*"
+        buffer-bind-key file-browser-close "delete"
     !endif
     2 split-window-horizontally
     !if &seq #l1 ""
@@ -334,6 +335,7 @@ osd .osd.ftp 630 "BtcfH"  63 .scheme.osd-ebtt " E&xit  "   f void
 ftp-site-name-set ""
 
 define-macro ftp
+    set-variable .fhook-dir.file-process ""
     ftp-create-layout
     screen-update
     ftp-data-entry-setup
