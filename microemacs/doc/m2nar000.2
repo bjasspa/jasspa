@@ -29,7 +29,7 @@
 .\"
 .\"***************************************************************************
 .\"
-.Id $Id: m2nar000.2,v 2.0 2001-03-08 21:28:53 jon Exp $
+.Id $Id: m2nar000.2,v 2.1 2001-04-30 07:38:59 jon Exp $
 .Im MicroEmacs macrodevelop
 .so me.tni
 .TH languageTemplates 2
@@ -671,4 +671,87 @@ el "else\\r\\p\\P"
 .br
 .Hl "File Hooks" fileHooks 2 .
 .ad
+.SS "New Buffer Scheme"
+The new buffer  definition  scheme  allows  buffer hooks to be generated  with
+default  functionality,  that is add  help  pages,  key  bindings  etc.  These
+features  are  described  by a set of  flags  in the hook  file.
+.PP
+For the simplest  framework the hook file takes the following  form for a file
+name of type \fCfoo\fR:-
+.Me $emf-scheme
+.CS
+define-macro fhook-foo
+    buffer-initialize
+    ; execute user extensions if defined
+    !if &exist my-fhook-c
+        my-fhook-c
+    !endif
+!emacro
+
+; Buffer initialisation variables
+set-variable .fhook-foo.name "Foo"
+set-variable .fhook-foo.setup-mask "<mask>"
+set-variable .fhook-foo.tags "ctags"
+set-variable .fhook-foo.comment "|/*|*/|*|"
+set-variable .fhook-foo.command-flag  "|t|"
+set-variable .fhook-foo.command-name  "|normal-tab|"
+set-variable .fhook-foo.command-nbind "||"
+set-variable .fhook-foo.command-kbind "|A-tab|"
+set-variable .fhook-foo.command-desc  "|&Insert tab|"
+; Set up the folds for Foo
+set-variable .fhook-c.fold-open  "^BEGIN"
+set-variable .fhook-c.fold-close "^END"
+
+; Hilighting
+!if &and &sin "h" .fhook-c.setup &band .hilight.flags 0x02 
+    ; Hi-light C Mode
+    !if &not &exi .hilight.foo
+        set-variable .hilight.foo &pinc .hilight.next 1
+    !endif
+    0 hilight .hilight.foo  2 50
+    hilight .hilight.foo 0x3a "#" "\\"       .scheme.prepro
+!endif
+
+; Indentation configuration
+!if &sin "d" .fhook-foo.setup
+    0 indent  .hilight.foo 0 10
+    indent .hilight.emf n "BEGIN" 4
+    indent .hilight.emf o "END" -4
+    indent .hilight.emf i "#"
+!endif
+
+; Little message
+ml-write "[Foo file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "myfoo"
+.CS
+.Me $ehf-scheme
+The  user   controlled   features  of  the  buffer  are   controlled   by  the
+\fCfhook-XXX.setup\fR  variable. This  determines  which of the buffer
+features are required. The variable allows the user to turn on and off certain
+features through the \fBBuffer Setup\fR menu item.
+.PP
+The full set of features attributed to a buffer type is described by the 
+variable \fCfhook-XXX.setup-mask\fR, as defined by 
+.Ht buffer-initialize 3 
+within this section we discuss the common features that are typically used.
+.PP
+Associted with the 
+.Ht buffer-initialize 3 
+are a number of other buffer specific feature variables such as
+\fC.fhook-XXX.comment\fR,  \fC.fhook-XXX.command-desc\fR  etc.  These  contain
+information such as key bindings, names, character strings etc. which are used
+in the  automatically  generated  features. The character options specified in
+the  \fCfhook-XXX.setup-mask\fR  string  determines  the fields that are to be
+populated.
+.PP
+In the next section we consider each of the features in turn.
+
+
+
+
+
+
+
 .FH

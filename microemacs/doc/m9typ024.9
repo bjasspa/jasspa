@@ -29,7 +29,7 @@
 .\"
 .\"***************************************************************************
 .\"
-.Id $Id: m9typ024.9,v 2.0 2001-03-08 21:31:16 jon Exp $
+.Id $Id: m9typ024.9,v 2.1 2001-04-30 07:39:03 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH perl 9
@@ -109,6 +109,10 @@ The short cut keys used within the buffer are:-
 \fBf2\fR \- (un)fold the current region
 .br
 \fBf3\fR \- (un)fold all regions
+.IP \fBDebugging\fR
+Debugging a perl script can be done inside \*(mS by using the
+.Ht perldb 3
+command.
 .SH BUGS
 The flexibility of the perl language does cause some hilighting  anomalies from
 time to time, typically with unbalanced  quote  characters. Most of the common
@@ -116,6 +120,7 @@ exceptions  have been caught,  however there are a few syntax  sequences  that
 involve quotation marks that can cause problems.
 .SH "SEE ALSO"
 .na
+.Ht perldb 3 ,
 .Ht fold-all 3 ,
 .Ht fold-current 3 ,
 .Ht indent 2 ,

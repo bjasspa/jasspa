@@ -29,7 +29,7 @@
 .\"
 .\"***************************************************************************
 .\"
-.Id $Id: m3osd000.3,v 2.0 2001-03-08 21:29:38 jon Exp $
+.Id $Id: m3osd000.3,v 2.1 2001-04-30 07:39:01 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH user-setup 3
@@ -200,7 +200,10 @@ buffers  (including ones re-created using the \fC\-c\fR  command-line  option,
 see
 .Ht me 1 )
 will not be effect by the setting of these modes. For them to take effect, the
-buffers  should  be  reloaded.  Also some file  hooks  override  these  global
+buffers  should  be  reloaded.  These  modes can be changed on a per file type
+basis using the command
+.Ht buffer-setup 3 ,
+also some file  hooks  override  these  global
 settings, such as the
 .Ht makefile 9
 hook which overrides the \fBtab\fR mode. This indirectly executes
@@ -875,12 +878,13 @@ Sets up the auto-archive of messages in the current inbox to other mail boxes.
 .SH NOTES
 \fBuser-setup\fR is a macro using
 .Ht osd 2 ,
-defined in user.emf.
+defined in userstp.emf.
 .SH "SEE ALSO"
 .na
 .Hl "User Profiles" userProfiles 2 ,
 .Hl "Company Profiles" companyProfiles 2 ,
 .Hl "Installation" Installation 1 ,
+.Ht buffer-setup 3 ,
 .Ht scheme-editor 3 .
 .ad
 .FH

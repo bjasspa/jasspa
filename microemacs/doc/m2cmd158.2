@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m2cmd158.2,v 2.0 2001-03-08 21:28:30 jon Exp $
+.Id $Id: m2cmd158.2,v 2.1 2001-04-30 07:38:59 jon Exp $
 .Im MicroEmacs command|file|macrodevelop
 .so me.tni
 .TH file-op 2
@@ -19,37 +19,39 @@ file-op \- File system operations command
 .ad
 .SH DESCRIPTION
 .B file-op
-copies the source file  \fIfrom-file-name\fR to \fIto-file-name\fR, the source
-file  must be a  single  file,  i.e. no  wild-cards  and not a  directory.  If
-\fIto-file-name\fR  is a directory  the base name of  \fIfrom-file-name\fR  is
-automatically appended.
-.PP
-The  argument  \fIn\fR  can  be  used  to  change  the  default  behavior  of
-copy-file, \fIn\fR is a bit based flag where:-
-.IP \fB0x01\fR
-Enables  validity  checks  (default).  These include a check that the proposed
-file does not already exist, if so  confirmation  of writing is requested from
-the user.  Also  \*(mS  checks  all  other  current  buffers  for one with the
-proposed file name, if found, again  confirmation  is requested.  Without this
-flag the command will always succeed wherever possible.
-.IP \fB0x02\fR
-Creates a backup of the  \fIto-file-name\fR  if it already exists. When moving
-or deleting the source file, the source file is also backed-up.
-.IP \fB0x04\fR
+can  be  used  to  perform   numerous  file  system   operations.   The  given
+argument  \fIn\fR must be used to determine the required  operation, the value
+is a bit based flag denoting the operation as follows:
+.IP \fB0x010\fR
+Log-off  and close down the current ftp connect  (not a file system  operation
+but functionality was required and it had to go somewhere).
+.IP \fB0x020\fR
 When this bit is set the command  functionality is changed to delete-file, the
-specified  \fIfrom-file-name\fR is deleted and the \fIto-file-name\fR argument
-is not  required. If flag  \fB0x01\fR is set then the user is prompted  before
-the file is removed and if bit  \fB0x02\fR is set a backup of the file is made
-first. Bit \fB0x08\fR is ignored.    
-.IP \fB0x08\fR
+single argument  \fIdelete-file\fR  is deleted.
+.IP \fB0x040\fR
 When this bit is set the command  functionality  is changed to move-file,  the
-specified   \fIfrom-file-name\fR   is  moved  to  \fIto-file-name\fR.  If  bit
-\fB0x02\fR is set a backup of the source file is also made.
-.IP \fB0x10\fR
+specified   \fIfrom-file\fR   is  moved  to  \fIto-file\fR.
+.IP \fB0x080\fR
+When this bit is set the command  functionality  is changed to copy-file,  the
+specified   \fIfrom-file\fR   is  copied  to  \fIto-file\fR.
+.IP \fB0x100\fR
 When this bit is set the  command  functionality  is  changed  to making a new
-directory, the specified \fIfrom-file-name\fR is the name of the new directory
-and the  \fIto-file-name\fR  argument is not  required. A file or directory of
-the given name must not already exist.
+directory,  the specified  \fIdir-name\fR  is the name of the new directory. A
+file or directory of the given name must not already exist.
+.PP
+Only one operation can be performed per  invocation. The following bits in the
+given  argument  \fIn\fR  can  be  used  to  effect  the  behaviour  of  these
+operations:
+.IP \fB0x01\fR
+Enables validity checks, these include a check that the proposed file does not
+already exist, if so  confirmation of writing is requested from the user. Also
+\*(mS checks all other current buffers for one with the proposed file name, if
+found, again  confirmation  is  requested.  Without this flag the command will
+always succeed wherever possible.
+.IP \fB0x02\fR
+Creates a backup of any file about to be deleted or over-written. Set help on
+.Ht $buffer-backup 5
+for backup file-name generation.
 .SH NOTES
 \fBhttp\fR  files are not  supported  except as the source file when  copying.
 \fBftp\fR files are fully supported with the restriction  that the from and to

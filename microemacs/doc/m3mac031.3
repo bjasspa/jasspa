@@ -29,17 +29,21 @@
 .\"
 .\"***************************************************************************
 .\"
-.Id $Id: m3mac031.3,v 2.0 2001-03-08 21:29:23 jon Exp $
+.Id $Id: m3mac031.3,v 2.1 2001-04-30 07:39:00 jon Exp $
 .Im MicroEmacs command
 .so me.tni
 .TH man 3
 .XI man \- "UNIX manual page viewer"
+.XI man-clean \- "Clean UNIX manual page"
 .SH NAME
-man - UNIX manual page viewer.
+man \- UNIX manual page viewer.
+man-clean - Clean UNIX manual page.
 .Me $a
 .SH SYNOPSIS
 .na
 \fBman\fR
+.br
+\fBman-clean\fR
 .ad
 .SH DESCRIPTION
 \fBman\fR  provides  a  mechanism  to display a UNIX  manual  page  within the
@@ -53,11 +57,16 @@ The macro invokes the UNIX utility
 .Hr man 1
 to generate the page and displays the results in a window.
 .PP
-Selecting  another  manual  page, with the left  mouse within the manual page,
-then  MicroEmacs attempts to load the selected manual page.
+Another  manual  page can be selected by either  moving the cursor to the link
+and pressing return or double clicking on it with the left mouse button. \*(mS
+will then attempt to load and display the selected manual page.
+.PP
+\fBman-clean\fR  removes any man-page formatting codes from the current buffer
+reducing a manual page to plain text. The formatting  codes are used to create
+the bold and  underline  fonts. This allows the page to be treated as a normal
+buffer, i.e. string searches and other similar command will work as expected.
 .SH NOTES
-.B man
-is a macro defined in \fChkman.emf\fR.
+\fBman\fR and \fBman-clean\fR are macros defined in \fChkman.emf\fR.
 .PP
 .B man
 is only made available within \s-1UNIX\s0  environments, the \s-1UNIX\s0 start
@@ -71,6 +80,7 @@ define-macro-file hkman man
 .Me "$ehf-scheme"
 .SH "SEE ALSO"
 .na
+.Ht man 9 ,
 .Ht user-setup 3 ,
 .Ht spell-buffer 3 .
 .ad

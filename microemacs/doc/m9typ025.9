@@ -29,13 +29,12 @@
 .\"
 .\"***************************************************************************
 .\"
-.Id $Id: m9typ025.9,v 2.0 2001-03-08 21:31:16 jon Exp $
+.Id $Id: m9typ025.9,v 2.1 2001-04-30 07:39:03 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .TH html 9
 .XI html - "HyperText Markup Language File" filetype
 .XI htm - "HyperText Markup Language File" filetype
-.XI %html-author 5 "Edit mode of HTML files" variable
 .SH SYNOPSIS
 html \- HyperText Markup Language File.
 .SH FILES
@@ -64,10 +63,11 @@ content)  into the current  buffer and follow the hyper text links. The JASSPA
 HTML documentation may be viewed in this way.
 .IP "\fBGeneral Editing\fR"
 HTML files may be edited or processed and rendered into the buffer. The
-variable \fB%html-author\fR determines the edit mode on loading a HTML file;
-a value of \fB0\fR and the page is rendered,  \fB1\fR and the raw HTML file is
-presented. The default state is \fC1\fR. The author status is modified in
-.Ht user-setup 3 .
+\fBUse Author Mode\fR option in the
+.Ht buffer-setup 3
+dialog determines the edit mode on loading a HTML file;
+when set to '\fCN\fR' the page is rendered,  '\fCY\fR' and the raw HTML file is
+presented. The default state is '\fCY\fR'.
 .IP  \fBHilighting\fR
 The  hilighting  features allow  commands,  variables,  logical,  preprocessor
 definitions,   comments,   strings  and  characters  of  the  language  to  be
@@ -93,8 +93,10 @@ Toggling between rendered and authoring mode, then the buffer should be killed
 as the translation is only performed when the file is read.
 .IP
 The   non-author   mode   can  be   permanently   enabled   by   setting   the
-\fB%html-author\fR  variable to \fC0\fR.  When set to 0 any HTML files  loaded
-are automatically processed, and rendered according to their HTML content.
+\fBUse Author Mode\fR option in the
+.Ht buffer-setup 3
+dialog to  '\fCN\fR'.  When set to N any HTML files  loaded are  automatically
+processed, and rendered according to their HTML content.
 .SH NOTES
 The
 .Hl print print-buffer 2
@@ -109,7 +111,7 @@ None  reported.
 .SH "SEE ALSO"
 .na
 .Ht print-buffer 2 ,
-.Ht user-setup 3 .
+.Ht buffer-setup 3 .
 .sp 1
 .Hl "Supported File Types" FileTypes -
 .ad

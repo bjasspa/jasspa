@@ -1,4 +1,4 @@
-.Id $Id: m1cmd000.1,v 2.0 2001-03-08 21:26:45 jon Exp $
+.Id $Id: m1cmd000.1,v 2.1 2001-04-30 07:38:56 jon Exp $
 .Im MicroEmacs function
 .so me.tni
 .TH me 1
@@ -18,13 +18,14 @@ me - \*(mE text editor
 [\|\fB\-d\fR\|]
 [\|\fB\-h\fR\|]
 [\|\fB\-i\fR\|]
-[\|\fB\-l\|\fIlineNo\fR\|]
-[\|\fB\-m\|\fIcommand\fR\|]
+[\|\fB\-l\fR\|\fIlineNo\fR\|]
+[\|\fB\-m\fR\|\fIcommand\fR\|]
 [\|\fB\-n\fR\|]
 [\|\fB\-0\fR\|\fIfile\fR\|]
 [\|\fB\-p\fR\|]
 [\|\fB\-r\fR\|]
-[\|\fB\-s\|\fIstring\fR\|]
+[\|\fB\-s\fR\|\fIstring\fR\|]
+[\|\fB\-u\fR\|\fIusername\fR\|]
 [\|\fB\-v\fR\|\fIvariable=string\fR\|]
 [\|\fB\-x\fR\|]
 \fIfiles...\fR
@@ -159,6 +160,11 @@ Search for string "\fIstring\fR" in the current buffer. e.g.
 starts  \fB\*(mE\fR,  loads file  \fCbar\fR  and  initiates  a search for
 \fIfoo\fR.  The cursor is left at the end of the string if located,  otherwise
 at the top of the buffer.
+.IP \fB\-u\fR\|\fIusername\fR
+Set the current user name to \fIusername\fR before \*(mS is initialized. This
+is done by setting the environment variable
+.Ht MENAME 5
+to the given value.
 .IP \fB\-v\fR\|\fIvariable=string\fR
 Assign the  \*(mE  \fIvariable\fR  with  \fIstring\fR.  The assignment is
 performed before the buffers are loaded. Typically used to change the start-up
