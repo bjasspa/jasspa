@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20040206.1058>
+# Last Modified: <20040207.1410>
 #
 ##############################################################################
 
@@ -101,17 +101,18 @@ ls_enus.tar.gz:	$(LSENUS)
 #
 # Build Release
 #
-release: $(RELZIPS) $(RELTARS) $(RELTXTS)
+release:	$(RELWWWSPLDIR)  $(JASSPLDIR)	\
+		$(RELZIPS) $(RELTARS) $(RELTXTS)
 # Release target files
 $(RELWWWSPLDIR):
 	$(MKDIR) $@
 $(JASSPLDIR):
 	$(MKDIR) $@
-$(RELZIPS): $(ZIPOBJS) $(RELWWWSPLDIR)
+$(RELZIPS): $(ZIPOBJS)
 	$(INSTALL_FIL) $(@F) $(@D)
-$(RELTARS): $(TAROBJS) $(RELWWWSPLDIR)
+$(RELTARS): $(TAROBJS)
 	$(INSTALL_FIL) $(@F) $(@D)
-$(RELTXTS): $(TXTOBJS) $(JASSPLDIR)
+$(RELTXTS): $(TXTOBJS)
 	$(INSTALL_FIL) $(@F) $(@D)
 #
 # Clean area.
