@@ -256,8 +256,9 @@ TYP9_030=	$(DOCDIR)m9typ030.9 $(DOCDIR)m9typ031.9 $(DOCDIR)m9typ032.9\
 		$(DOCDIR)m9typ033.9 $(DOCDIR)m9typ034.9 $(DOCDIR)m9typ035.9\
 		$(DOCDIR)m9typ036.9 $(DOCDIR)m9typ037.9 $(DOCDIR)m9typ038.9\
 		$(DOCDIR)m9typ039.9
-TYP9_040=	$(DOCDIR)m9typ040.9 $(DOCDIR)m9typ041.9 $(DOCDIR)m9typ042.9
- #
+TYP9_040=	$(DOCDIR)m9typ040.9 $(DOCDIR)m9typ041.9 $(DOCDIR)m9typ042.9\
+		$(DOCDIR)m9typ043.9 $(DOCDIR)m9typ044.9 $(DOCDIR)m9typ045.9
+#
 TNIS	=	me.tni
 
 TEMPSMS	=	cmd2_000.sm	cmd2_010.sm	cmd2_020.sm	cmd2_030.sm \
