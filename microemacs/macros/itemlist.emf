@@ -46,12 +46,26 @@
 !if &band .hilight.flags 0x01 
     !if &not &exist .hilight.list-item
         set-variable .hilight.list-item &pinc .hilight.next 1
+        set-variable .hilight.list-item-f &pinc .hilight.next 1 
+        set-variable .hilight.list-item-t &pinc .hilight.next 1 
     !endif
     0 hilight .hilight.list-item 0 $global-scheme
     hilight .hilight.list-item 0x02 "Type Item"  .scheme.header
     hilight .hilight.list-item 0x40 "^[ 0-9][ 0-9][ 0-9][ 0-9][ 0-9][ 0-9] " "" $global-scheme
-    hilight .hilight.list-item 0x44 "\ecB" "" "\ecA" "" "" .scheme.function
-    hilight .hilight.list-item 0x44 "\ecC" "" "\ecA" "" "" .scheme.type
+    ; Branch to the function hilighting.
+    hilight .hilight.list-item 0x0c0 "\ecB" "" .hilight.list-item-f .scheme.function
+    ; Branch to the type hilighting.
+    hilight .hilight.list-item 0x0c0 "\ecC" "" .hilight.list-item-t .scheme.type
+    
+    ; Function hilighting - knock out the Man Page characters.
+    0 hilight .hilight.list-item-f 0 .scheme.function
+    hilight .hilight.list-item-f 64 "\\(.\\)\CH\\1\\}[^\CH]" "\\1"   .scheme.function
+    hilight .hilight.list-item-f 0x0c0 "\ecA" "" .hilight.list-item $global-scheme
+    
+    ; Type hilighting - knock out the Man Page characters.
+    0 hilight .hilight.list-item-t 0 .scheme.type
+    hilight .hilight.list-item-t 64 "\\(.\\)\CH\\1\\}[^\CH]" "\\1"   .scheme.type
+    hilight .hilight.list-item-t 0x0c0 "\ecA" "" .hilight.list-item $global-scheme
 !endif
 
 0 define-macro item-list-order
