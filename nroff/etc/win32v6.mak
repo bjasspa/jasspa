@@ -63,8 +63,8 @@ ARFLAGS		=	/SUBSYSTEM:console
 #
 # Tools
 #
-RM		=	erase
-RMDIR		=	rmdir
+RM		=	- erase
+RMDIR		=	- rmdir
 INSTALL		=	install
 MKDIR		=	mkdir
 CD		=	cd
