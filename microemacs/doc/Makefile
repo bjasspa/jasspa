@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20050308.2308>
+# Last Modified: <20050310.2353>
 #
 ##############################################################################
 
@@ -29,7 +29,7 @@ READTXT	=	readme.txt
 FAQTXT	=	faq.txt
 BUILDTXT=	build.txt
 PATCHTXT=	patch.txt
-CATMAN1=	me.1 ne.1
+CATMAN1=	me.1.gz ne.1.gz
 #
 # Define components
 #
@@ -505,13 +505,17 @@ clean::
 #
 # Build the catman pages
 #
-me.1: m1cmd000.1 $(TNIS)
-	    $(DROFF) -c JASSPA -o $@ m1cmd000.1
-ne.1: m1cmd002.1 $(TNIS)
-	    $(DROFF) -c JASSPA -o $@ m1cmd002.1
+me.1.gz: m1cmd000.1 $(TNIS)
+	    $(DROFF) -c JASSPA -o me.1 m1cmd000.1
+	    $(GZIP) me.1
+ne.1.gz: m1cmd002.1 $(TNIS)
+	    $(DROFF) -c JASSPA -o ne.1 m1cmd002.1
+	    $(GZIP) ne.1
 clean::
 	$(RM) me.1
 	$(RM) ne.1
+	$(RM) me.1.gz
+	$(RM) ne.1.gz
 $(BUILDTXT): m2nar007.2
 	    $(DROFF) -l10000 -c JASSPA -p -o $@ m2nar007.2
 clean::

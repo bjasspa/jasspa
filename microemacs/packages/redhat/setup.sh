@@ -5,7 +5,7 @@
 #
 #  Created By    : Jon Green
 #  Created       : Fri Feb 6 22:33:31 2004
-#  Last Modified : <050309.0007>
+#  Last Modified : <050310.2354>
 #  Description   : Creates the RedHat directory structure for building a RPM
 #                  file.
 #
@@ -55,9 +55,9 @@ if [ ! -f ${MESRC} ] ; then
         cp ${TOPDIR}/release/www/${MESRC} .
     fi
 fi
-if [ ! -f ./me.1 ] ; then
+if [ ! -f ./me.1.gz ] ; then
     if [ -f ${TOPDIR}/release/www/me.1 ] ; then
-        gzip -9 -c ${TOPDIR}/release/www/me.1 > me.1.gz
+        cp ${TOPDIR}/release/www/me.1.gz me.1.gz
     fi
 fi
 #
