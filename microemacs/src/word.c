@@ -896,13 +896,13 @@ fillPara(int f, int n)
 {
     meLine *eopline;		        /* ptr to line just past EOP	*/
     meInt eoplno;		        /* line no of line just past EOP*/
+    meInt ilength;			/* Initial line length          */
     meUByte ofillmode;                  /* Old justification mode       */
     register meInt fillState;           /* State of the fill            */
     int c, lastc;		        /* current char durring scan	*/
     int ccol;				/* position on line during fill	*/
     int newcol;			        /* tentative new line length	*/
     int wordlen;		        /* length of current word	*/
-    int ilength;			/* Initial line length          */
     int icol;				/* Initial line columns         */
     int fdoto;                          /* The left doto for 1st line   */
 
@@ -970,10 +970,16 @@ fillPara(int f, int n)
     
     /* If fill paragraph is called with no arguments then we must retain the
      * position of dot so that we can preserve the users position after we
-     * have filled the paragraph. */
-    if (!f)
+     * have filled the paragraph, but only if we are not at the top of the paragraph. */
+    if(f == 0)
+    {
         meAnchorSet(frameCur->bufferCur,meANCHOR_FILL_DOT,
                     frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset,1) ;
+        ilength = frameCur->windowCur->dotLineNo ;
+        icol = frameCur->windowCur->dotOffset ;
+    }
+    else
+        f = -1 ;
     
     /* Fill 'n' paragraphs */
     while (--n >= 0)
@@ -992,6 +998,10 @@ fillPara(int f, int n)
         eoplno = frameCur->windowCur->dotLineNo + 1 ;
 	windowBackwardParagraph(meFALSE, 1);
         
+        if(f == 0)
+            f = ((ilength > frameCur->windowCur->dotLineNo) ||
+                 ((ilength == frameCur->windowCur->dotLineNo) && icol)) ? 2:1 ;
+            
         /* Skip non-formatting paragraphs */
         if ((fillignore != NULL) &&
             (meStrchr (fillignore, meLineGetChar (frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset)) != NULL))
@@ -1217,10 +1227,10 @@ noIndent:
     }
     fillmode = ofillmode;
     
-    if (!f)
+    if(f >= 0)
     {
         /* Restore starting point */
-        if(meAnchorGet(frameCur->bufferCur,meANCHOR_FILL_DOT) > 0)
+        if((f == 2) && (meAnchorGet(frameCur->bufferCur,meANCHOR_FILL_DOT) > 0))
         {
             frameCur->windowCur->dotLine = frameCur->bufferCur->dotLine ;
             frameCur->windowCur->dotOffset = frameCur->bufferCur->dotOffset ;

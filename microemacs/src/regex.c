@@ -654,7 +654,7 @@ do {                                                                         \
                 ss++ ;                                                       \
             }                                                                \
             else                                                             \
-                cc = hexToNum(cc) ;                                          \
+                cc = 0 ;                                                     \
         }                                                                    \
         else                                                                 \
             cc = 0 ;                                                         \
@@ -662,7 +662,7 @@ do {                                                                         \
     }                                                                        \
     if(cc == '\0')                                                           \
     {                                                                        \
-        if(*rs == '\0')                                                      \
+        if(*ss == '\0')                                                      \
             return meREGEX_ERROR_TRAIL_BKSSH ;                               \
         return meREGEX_ERROR_BKSSH_CHAR ;                                    \
     }                                                                        \

@@ -311,8 +311,7 @@ set-variable .fhook-html.item-list-r4 "H4+  \ecB\\2\ecA"
     indent .hilight.html n "<td[^>]*>" 2 
     indent .hilight.html o "</select>" -2 
     indent .hilight.html n "<select[^>]*>" 2 
-    indent .hilight.html n "<%" 2 
-    indent .hilight.html o "%>" -2 
+    indent .hilight.html e "<%" "%>" ""
     
     !if &sin "d" .fhook-vb.setup
         indent .hilight.vb n "<%" 2 
@@ -660,6 +659,121 @@ define-macro html-backward-tag
         !endif
     !endif
     &cond #l9 1 -1 buffer-mode "magic"
+!emacro
+
+define-macro html-goto-matching-tag
+    set-position "\x81"
+    !if &seq @wc "<"
+        forward-char
+    !endif
+    forward-char
+    html-backward-tag
+    !if &not &seq @wc "<"
+        goto-position "\x81"
+        !abort
+    !endif
+    set-variable #l0 &add $window-col 1
+    !if &set #l1 &seq &mid @wl #l0 1 "/"
+        set-variable #l0 &add #l0 1
+    !else
+        forward-char
+    !endif
+    set-variable #l2 &rig @wl #l0
+    !if &set #l0 &sin ">" #l2
+        set-variable #l2 &lef #l2 &sub #l0 1
+    !endif
+    !if &set #l0 &sin " " #l2
+        set-variable #l2 &lef #l2 &sub #l0 1
+    !endif
+    set-variable #l2 &cat "<\\(/?\\)" #l2
+    set-variable #l9 &bmod "magic"
+    set-variable #l8 &bmod "exact"
+    1 buffer-mode "magic"
+    -1 buffer-mode "exact"
+    set-variable #l0 1
+    !repeat
+        !if #l1
+            !force search-backward #l2
+        !else
+            !force search-forward #l2
+        !endif
+        !if $status
+            set-variable #l0 &add #l0 &con &bxor #l1 &seq @s1 "/" -1 1
+        !else
+            set-variable #l0 -1
+        !endif
+    !until &les #l0 1
+    &cond #l9 1 -1 buffer-mode "magic"
+    &cond #l8 1 -1 buffer-mode "exact"
+    !if #l0
+        goto-position "\x81"
+        !if &seq @p ""
+            ml-write "[matching tag not found]"
+        !endif
+        !abort
+    !else
+        -2 show-region
+        -1 show-region
+    !endif
+!emacro
+
+0 define-macro html-collapse-tag-markup
+    !if &equ @# 1
+        set-variable $result &cat &lef @wl 40 " ..."
+    !else
+        !abort
+    !endif
+!emacro
+
+define-macro html-collapse-tag
+    set-position "\x83"
+    set-variable #l0 $window-line
+    !force html-goto-matching-tag
+    !if &not $status
+        ml-write "[Failed to find matching tag]"
+        !abort
+    !endif
+    set-variable #l1 $window-line
+    !if &equ #l0 #l1
+        goto-position "\x83"
+        ml-write "[tag is on one line - whats the point?]"
+        !abort
+    !endif
+    !if &gre #l1 #l0
+        html-forward-tag
+        set-variable #l5 &rig @wl $window-col
+        backward-char
+    !else
+        set-variable #l4 &lef @wl $window-col
+    !endif
+    !force html-goto-matching-tag
+    !if &not &and $status &equ $window-line #l0
+        goto-position "\x83"
+        ml-write "[Weird tag mismatch problem - abort]"
+        !abort
+    !endif
+    !if &gre #l0 #l1
+        html-forward-tag
+        set-variable #l5 &rig @wl $window-col
+        forward-line
+    !else
+        set-variable #l4 &lef @wl $window-col
+    !endif
+    !if &not &seq &trb #l4 ""
+        goto-position "\x83"
+        ml-write "[Extra text at the start of tag - abort]"
+        !abort
+    !elif &not &seq &trb #l5 ""
+        goto-position "\x83"
+        ml-write "[Extra text at the end of tag - abort]"
+        !abort
+    !endif
+    set-mark
+    set-variable $window-line #l1
+    !if &gre #l1 #l0
+        forward-line
+    !endif
+    0x34 narrow-buffer .scheme.fold-close html-collapse-tag-markup
 !emacro
 
 ; n html-find-tag "name"

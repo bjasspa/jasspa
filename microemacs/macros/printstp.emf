@@ -165,6 +165,11 @@
         set-registry "/print-history" &cat $platform "/page-y" &reg "/print" "page-y" ""
         set-registry "/print-history" &cat $platform "/specifier-x" &reg "/print" "specifier-x" ""
         set-registry "/print-history" &cat $platform "/specifier-y" &reg "/print" "specifier-y" ""
+        ; Windows specific ones
+        set-registry "/print-history" &cat $platform "/win-default" &reg "/print" "win-default" ""
+        set-registry "/print-history" &cat $platform "/win-device" &reg "/print" "win-device" ""
+        set-registry "/print-history" &cat $platform "/win-driver" &reg "/print" "win-driver" ""
+        set-registry "/print-history" &cat $platform "/win-port" &reg "/print" "win-port" ""
         mark-registry "/print-history" "u"
         !force delete-registry "/print/paper-x"
         !force delete-registry "/print/paper-y"

@@ -47,6 +47,7 @@ print-scheme .scheme.bold-italic 0 1 0
 print-scheme .scheme.bold-under 0 1 0
 print-scheme .scheme.italic-under 0 1 0
 print-scheme .scheme.bold-italic-under 0 1 0
+print-scheme .scheme.spell-error 0 1 0
 ; Directory Listings
 print-scheme .scheme.file 0 1 0
 print-scheme .scheme.select 0 1 0
@@ -59,7 +60,7 @@ print-scheme .scheme.dir-closed 0 1 0
 print-scheme .scheme.dir-uknown 0 1 0
 ; Line Schemes
 print-scheme .scheme.hide 0 1 0
-print-scheme .scheme.fold 0 1 0
+print-scheme .scheme.fold-close 0 1 0
 print-scheme .scheme.fold-open 0 1 0
 print-scheme .scheme.trace 0 1 0
 print-scheme .scheme.hlwhite 0 1 0

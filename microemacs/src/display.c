@@ -2266,7 +2266,12 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
     meUByte  cc, *ss ;
     meScheme *fssp;               /* Frame store scheme pointer */
     int len, schm, off ;
-
+#ifdef _UNIX
+#ifdef _ME_WINDOW
+    int drawCursor ;
+#endif /* _ME_WINDOW */
+#endif /* _UNIX */
+    
     /* Normalise to the screen rows */
     if((row < 0) || (row > frameCur->depth))     /* Off the screen in Y ?? */
         return ;                        /* Yes - quit */
@@ -2320,6 +2325,18 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
     memcpy(frameCur->store[row].text+col,str,len) ;      /* Write text in */
     fssp = frameCur->store[row].scheme + col ;           /* Get the scheme pointer */
     off  = (flags >> 4) & 0x07 ;
+    
+#ifdef _UNIX
+#ifdef _ME_WINDOW
+    /* Must redraw the cursor if we have zapped it */
+    drawCursor = ((cursorState >= 0) && blinkState &&
+#ifdef _ME_CONSOLE
+                  !(meSystemCfg & meSYSTEM_CONSOLE) &&
+#endif /* _ME_CONSOLE */
+                  (row == frameCur->cursorRow) && 
+                  (col <= frameCur->cursorColumn) && ((col+len) > frameCur->cursorColumn)) ;
+#endif /* _ME_WINDOW */
+#endif /* _UNIX */
 
 #ifdef _WIN32
 #ifdef _ME_WINDOW
@@ -2602,6 +2619,14 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
 #endif /* _WIN32 */
     
     }
+    
+#ifdef _UNIX
+#ifdef _ME_WINDOW
+    if(drawCursor)
+        meFrameXTermShowCursor(frameCur) ;
+#endif /* _ME_WINDOW */
+#endif /* _UNIX */
+    
     if((flags & POKE_NOFLUSH) == 0)
         TTflush() ;                         /* Force update of screen */
 }

@@ -24,7 +24,7 @@
     ; defined.
     ; Define the last color as a default color of white, the next macro
     ; to define a new color will trash this one !!
-    add-color-scheme &set .scheme.next 73 0 1 0 1 1 0 1 0
+    add-color-scheme &set .scheme.next 74 0 1 0 1 1 0 1 0
     set-variable .hilight.next 1
 !endif
 ; Hilight flags: 0x01=Reformating enabled, 0x2=hilighting enabled, 0x4=function name hilighting, 0x8=constants hilighting
@@ -50,7 +50,7 @@ set-variable .scheme.dir-uknown 14
 ; .scheme.hide -- Hidden color
 set-variable .scheme.hide       15
 ; .scheme.fold - Open & closed fold scheme
-set-variable .scheme.fold       16
+set-variable .scheme.fold-close 16
 set-variable .scheme.fold-open  17
 ; .scheme.trace -- Trace color.
 set-variable .scheme.trace      18
@@ -149,38 +149,35 @@ set-variable .scheme.select     56
 set-variable .scheme.header     57
 ; .scheme.link -- Scheme used for hyperlinks i.e. HTML and Help
 set-variable .scheme.link       58
-; .scheme.bold -- Bold scheme
+; Bold, Italic, Underline schemes & combinations of...
 set-variable .scheme.bold       59
-; .scheme.italic -- Italic scheme
 set-variable .scheme.italic     60
-; .scheme.under -- Underline scheme
 set-variable .scheme.under      61
-; .scheme.bold -- Bold italic scheme
 set-variable .scheme.bold-italic 62
-; .scheme.bold -- Bold italic scheme
 set-variable .scheme.bold-under  63
-; .scheme.bold -- Bold italic scheme
 set-variable .scheme.italic-under 64
-; .scheme.bold -- Bold italic scheme
 set-variable .scheme.bold-italic-under 65
+; .scheme.spell-error -- Auto spell check erroneous word hilight scheme - 
+;    hilight in ME as important but ignore when printing.
+set-variable .scheme.spell-error 66
 ;
 ; Gdiff line schemes
 ; ==================
 ;
 ; .scheme.gdfchange -- For ! lines
-set-variable .scheme.gdfchange  66
+set-variable .scheme.gdfchange  67
 ; .scheme.gdfadd -- For + lines
-set-variable .scheme.gdfadd     67
+set-variable .scheme.gdfadd     68
 ; .scheme.gdfpad -- For padded lines
-set-variable .scheme.gdfpad     68
+set-variable .scheme.gdfpad     69
 ; .scheme.gdfsel -- For selected ! or + lines
-set-variable .scheme.gdfsel     69
+set-variable .scheme.gdfsel     70
 ; .scheme.gdfselpad -- For selected padded lines
-set-variable .scheme.gdfselpad  70
+set-variable .scheme.gdfselpad  71
 ; .scheme.gdfrej -- For rejected ! or + lines
-set-variable .scheme.gdfrej     71
+set-variable .scheme.gdfrej     72
 ; .scheme.gdfrejpad -- For rejected padded lines
-set-variable .scheme.gdfrejpad  72
+set-variable .scheme.gdfrejpad  73
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;>>> NOTICE: Add your last color above this line and then go back and   <<<;
 ;>>>         change the .scheme.next variable to your "lastColorNumber+1".   <<<;

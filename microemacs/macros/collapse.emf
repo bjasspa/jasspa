@@ -1,0 +1,184 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     Thu Jan 14 1999
+; Synopsis:    Generic file folding.
+; Authors:     Steven Phillips & Jon Green
+;
+; History:
+;
+; Steven Phillips - 14th Jan 1999 - Generic file folding.
+; 
+; Took Jon's version and made it generic, also hacked at the notes below to
+; make them more applicable.
+;
+; Jon Green - 8th Jan 1999 - Folding a 'C' file.
+;
+; The following functions provide a generic folding function for files
+; with well defined sections (e.g. 'C' function etc). This code was based
+; on Steve's hkfold.emf which does a grand job. A foldable region is a
+; region that is enclosed within the predefined start and end search strings
+;
+; We relax the strict fold checking of hkfold.emf and provide little
+; or no error checking when we find the folds. This basically means
+; that if we find a valid enclosure (e.g. for C '^{' ... '^}')
+; then the region is eligible for folding. This technique allows most
+; 'c' files to be folded, there may be a few sections where the '{' is
+; on the end of the line and we have not identified it, but we will
+; skip this and find the next valid enclosure without aborting our search.
+; The user can elect to re-style their code if they want a unidentified
+; region to be correctly folded.
+;
+; By default we do not fold on loading the file, the user has to explicity
+; request the folds to be set up. We only export 2 macro functions into the
+; command space 'fold-current' and 'fold-all'. Both of these perform a toggle
+; function as follows:-
+;
+; fold-current - Acts as a toggle to fold/unfold a region.
+;
+;              If we are in a valid '^{...^}' enclosure then it is rolled
+;              up and the screen is marked with the start and end line
+;              hilighting.
+;
+;              If we are on (or within 3 lines of) a folded line then we
+;              unfold it and remove our fold hilighting markers.
+;
+;
+; fold-all   - Acts as a toggle to fold/unfold the whole file
+;
+;              If the file is already folded, then unfold it - all
+;              enclosures
+;
+;              If the file is unfolded, then fold it. All enclosures.
+;
+;
+; The key mappings that we have used in the context of the buffer are
+; defined as follows:-
+;
+;   'f2'        fold-current - Fold/Unfold the current section.
+;   'f3'        fold-all     - Fold/unfold the whole file.
+;   'C-mouse-1  fold-current - Fold/unfold the current section. 
+;
+; Steven Phillips - 31st Oct 2002 - Changed fold to collapse.
+;
+;       Greatly improved the narrowing capabilities within ME so a real folding
+;       editor interface can now be created. While this functionality is extremely
+;       useful it is not a folding editor so should not use this term. I have
+;       therefore changed it to collapse.
+;
+; Notes:
+;       The 'fold-current' and 'fold-all' have no equivelent macros in hkfold.emf
+;       so we map these to different keys. Probably the case that 'fold-current'
+;       and 'fold-all' should' be supported in hkfold.emf and be bound to the
+;       above keys for consistancy.
+;
+;       The mouse binding is useful because we can browse the file with 
+;       the mouse and open and close at our lesiure. I was considering 
+;       simply binding the left-mouse-drop to unfold - a simple check in the
+;       mouse code for $line-scheme being a fold scheme color would tell 
+;       us to unfold. Unfortunatly re-perfoming the fold is a little more
+;       difficult as there is nothing to tell us that the user was moving 
+;       the cursor to a new position or requesting a fold operation. 
+;       Hence for consistency I simply use C-mouse-1 which always means
+;       toggle the fold state.
+;
+0 define-macro collapse-get-vars
+    set-variable #l0 &spr ".%s." $buffer-fhook
+    set-variable #p9 &ind &cat #l0 "collapse-open"
+    set-variable #p8 &ind &cat #l0 "collapse-close"
+    set-variable #p7 &ind &cat #l0 "collapse-mopen"
+    set-variable #p6 &ind &cat #l0 "collapse-mclose"
+    set-variable #p5 &ind &cat #l0 "collapse-mnext"
+    !if &or &seq #p9 "ERROR" &seq #p8 "ERROR"
+        ml-write "[Collapse environment not setup]"
+        !abort
+    !endif
+!emacro
+
+0 define-macro collapse-markup
+    !if &les @# 0
+        ; no markup line modificaton
+        !abort
+    !endif
+    set-variable $result &cat &trr &lef @wl 40 " ..."
+!emacro
+
+; PUBLIC:: Toggle a collapse open/shut
+define-macro collapse-current
+    collapse-get-vars
+    set-variable #l0 $window-line
+    !force 2 narrow-buffer
+    !if $status
+        set-variable $window-line #l0
+        !return
+    !endif
+    #l7 backward-line
+    end-of-line
+    !force regex-backward #l9
+    !if &not $status
+        set-variable $window-line #l0
+        ml-write "[Collapse not found]"
+        !abort
+    !endif
+    #l7 forward-line
+    set-variable #l1 $window-line
+    end-of-line
+    !force regex-forward #l8
+    !if &or &not $status &les $window-line #l0
+        !force -1 show-region
+        set-variable $window-line #l0
+        ml-write "[Collapse not found]"
+        !abort
+    !endif
+    #l6 forward-line
+    set-mark
+    set-variable $window-line #l1
+    0x34 narrow-buffer .scheme.fold-close collapse-markup
+!emacro
+
+; PUBLIC:: Toggle all of the collapses open/shut
+define-macro collapse-all
+    collapse-get-vars
+    set-variable #l0 &sub $window-line $window-y-scroll
+    set-alpha-mark "\x81"
+    ; Must remove all narrows regardless
+    !if &bmod "narrow"
+        !force 1 narrow-buffer
+    !endif
+    !if &set :collapsed &not :collapsed
+        beginning-of-buffer
+        !force regex-forward #l9
+        !while $status
+            #l7 forward-line
+            end-of-line
+            set-mark
+            !force regex-forward #l8
+            !if $status
+                #l6 forward-line
+                0x34 narrow-buffer .scheme.fold-close collapse-markup 
+                #l5 forward-line
+                end-of-line
+                !force regex-forward #l9
+            !endif
+        !done
+        ; the start line could be the first line of a collapse that should
+        ; remain collapsed but as this is a markup line going to the amark
+        ; will expand it, try to handle this
+        goto-alpha-mark "\x81"
+        !if &not &band $line-flags 4
+            set-variable #l1 $window-line
+            !force collapse-current
+            !if &less $window-line #l1
+                ; the collapse must have worked but the start line was not the first in the collapse
+                goto-alpha-mark "\x81"
+            !endif
+        !endif
+        ml-write "[Collapsed all]"
+    !else
+        goto-alpha-mark "\x81"
+        ml-write "[Removed all collapses]"
+    !endif
+    set-variable $window-y-scroll &sub $window-line #l0
+!emacro

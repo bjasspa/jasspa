@@ -188,7 +188,8 @@ assignHooks (meBuffer *bp, meUByte *hooknm)
 	    bp->fhook = decode_fncname(hooknm,1) ;
 	}
     }
-    bp->fhook = decode_fncname(hooknm,1) ;
+    if((bp->fhook = decode_fncname(hooknm,1)) >= 0)
+        resultStr[0] = '\0' ;
     *hooknm   = 'b' ;
     bp->bhook = decode_fncname(hooknm,1) ;
     *hooknm   = 'd' ;
@@ -256,8 +257,17 @@ setBufferContext(meBuffer *bp)
                                                 meLineGetLength(tlp),0,meLineGetLength(tlp),0))
                                 {
                                     assignHooks(bp,fileHookFunc[ii]) ;
-                                    ii = 0 ;
-                                    break ;
+                                    if(bp->fhook >= 0)
+                                    {
+                                        ii = meRegexStrCmp.group[0].end - meRegexStrCmp.group[0].start ;
+                                        if(ii >= meBUF_SIZE_MAX)
+                                            ii = meBUF_SIZE_MAX - 1 ;
+                                        meStrncpy(resultStr,meLineGetText(tlp)+
+                                                  meRegexStrCmp.group[0].start,ii) ;
+                                        resultStr[ii] = '\0' ;
+                                        ii = 0 ;
+                                        break ;
+                                    }
                                 }
                             } while((--nn > 0) && ((tlp=meLineGetNext(tlp)) != bp->baseLine)) ; 
                         }

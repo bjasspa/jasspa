@@ -156,12 +156,14 @@ define-macro-file collapse collapse-current collapse-all
         buffer-bind-create "b" "C-c C-e" "" comment-to-end-of-line
         buffer-bind-create "b" "C-c C-r" "" comment-restyle
     !endif
-    !if &sin "f" #l0
-        !force 0 fold-setup
+    !if &or &exi &ind &spr ".%s.fold" $buffer-fhook &sin "fold-open:" $result
+        !force 0 fold-setup $result
         !if &not $status
-            buffer-bind-create "b" "f2" "" collapse-current 
-            buffer-bind-create "b" "f3" "" collapse-all 
+            !jump 3
         !endif
+    !elif &sin "f" #l0
+        buffer-bind-create "b" "f2" "" collapse-current 
+        buffer-bind-create "b" "f3" "" collapse-all 
     !endif
     !if &sin "s" #l0
         !if &not &seq %language "Default"
