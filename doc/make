@@ -48,6 +48,7 @@ GZIP	=	c:\cygwin\bin\gzip
 ZIP	=	c:\cygwin\bin\zip -9
 RELDIR	=	..\release
 DOS2UNIX=	c:\cygwin\bin\dos2unix -U
+MEEXE	=	"c:\Program Files\Jasspa\MicroEmacs\me32.exe"
 #
 # Documentation components
 #
@@ -577,7 +578,7 @@ me.ehf: meehf.hts
 	$(HTS2HTML) -l .htm ..\meehf.hts
 	$(CP) me.htm me\1.htm
 	$(CD) me
-	menu32 -n "@ehftools" *.htm
+	$(MEEXE) "@ehftools" *.htm
 	$(CP) me.ehf ..\..
 	$(CD) ..\..
  
