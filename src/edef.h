@@ -634,14 +634,16 @@ meUInt    meSYSTEM_MASK=                /* ME system mask - dependant on win32 f
 ) ;
 #endif
 
-meUInt    meMouseCfg=(3|meMOUSE_ENBLE); /* ME mouse config variable    */
+#if MEOPT_MOUSE
+meUInt    meMouseCfg=(3|meMOUSE_ENBLE); /* ME mouse config variable     */
+meShort   mouse_dX = 0;                 /* mouse delta X last event pos */
+meShort   mouse_dY = 0;                 /* mouse delta X last event pos */
+#else
+meUInt    meMouseCfg=3;                 /* ME mouse config variable - mouse not enabled */
+#endif
 meUByte   mouse_pos=0xff;               /* mouse virtual position       */
 meShort   mouse_X = 0;                  /* mouse X pos at last event    */
 meShort   mouse_Y = 0;                  /* mouse X pos at last event    */
-#if MEOPT_MOUSE
-meShort   mouse_dX = 0;                 /* mouse delta X last event pos */
-meShort   mouse_dY = 0;                 /* mouse delta X last event pos */
-#endif
 
 #if MEOPT_UNDO
 meUInt    undoContFlag=0;               /* continuation of an undo      */

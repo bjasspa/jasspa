@@ -150,6 +150,11 @@
 /**************************************************************************
 * UNIX : FreeBSD based OSs                                                *
 **************************************************************************/
+#ifdef _DARWIN
+#define meSYSTEM_NAME  "darwin"         /* Identity name of the system   */
+#define _FREEBSD_BASE  1                /* Uses FreeBSD as base          */
+#endif
+
 #ifdef _FREEBSD
 #define meSYSTEM_NAME  "freebsd"        /* Identity name of the system   */
 #define _FREEBSD_BASE  1                /* Uses FreeBSD as base          */

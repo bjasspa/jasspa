@@ -272,12 +272,24 @@ TTdump(meBuffer *bp)
 ** test file exists and return attributes
 */
 int
-meGetFileAttributes(meUByte *fn)
+meGetFileAttributes(meUByte *fname)
 {
     union REGS reg ;		/* cpu register for use of DOS calls */
-
+    meUByte fn[meBUF_SIZE_MAX] ;
+    meInt len ;
+    
     reg.x.ax = 0x4300 ;
-    reg.x.dx = ((unsigned long) fn) ;
+    len = strlen(fname) ;
+    if(fname[len-1] == DIR_CHAR)
+    {
+        strcpy(fn,fname) ;
+        fn[len] = '.' ;
+        fn[len+1] = '\0' ;
+        reg.x.dx = ((unsigned long) fn) ;
+    }
+    else
+        reg.x.dx = ((unsigned long) fname) ;
+
     intdos(&reg, &reg);
 
     if(reg.x.cflag)
