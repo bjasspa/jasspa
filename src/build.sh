@@ -81,7 +81,7 @@ if [ ".$MAKEFILE" = "." ] ; then
         MAKEBAS=cygwin
         # Check for an X11 install.
         if [ "$OPTIONS" = "" ] ; then
-            if [ ! -f /usr/X11R6/lib/libX11.a ] ; then
+            if [ ! -f /usr/X11R6/lib/libX11-6.dll.a ] ; then
                 echo "No X-11 support found, forcing terminal only."
                 METYPE=c
             else

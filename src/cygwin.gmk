@@ -51,7 +51,7 @@ CDEBUG        =	-g -Wall
 COPTIMISE     =	-O3 -DNDEBUG=1 -Wall
 # Change the default search path for /usr/share/jasspa with components.
 #CDEFS         = -D_CYGWIN -I.
-CDEFS         = -D_CYGWIN -I. -D_SEARCH_PATH="\"/usr/share/jasspa/company:/usr/share/jasspa/macros:/usr/share/jasspa/spelling\""
+CDEFS         = -D_CYGWIN -I.
 CONSOLE_DEFS  = -D_ME_CONSOLE
 WINDOW_DEFS   = -D_ME_WINDOW -I/usr/X11R6/include
 NANOEMACS_DEFS= -D_NANOEMACS
