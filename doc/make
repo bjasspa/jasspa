@@ -7,7 +7,7 @@
 #
 # Author      : Jon Green
 # Created     : 22nd February 1997
-# Last Edited : <011213.1907>
+# Last Edited : <011125.1449>
 #
 # History     : JG  220297 Original  Constructed from emacssrc
 #
@@ -25,15 +25,14 @@
 MEVER=		01
 
 RM	=	- erase
-RD	=	- rmdir /S /Q
 INSTALL	=	$(RUNBINDIR)\install
 MKDIR	=	mkdir
 COPY	=	copy
 #
 # Documentation components
 #
-DOCBIN	=
-DOCDIR	=
+DOCBIN	=	
+DOCDIR	=	
 
 SUPERMAN=	$(DOCBIN)superman -b
 DROFF	=	$(DOCBIN)droff
@@ -45,7 +44,6 @@ NRORDER	=	$(DOCBIN)nrorder
 NRSEARCH=	$(DOCBIN)nrsearch
 HTS	=	$(DOCBIN)hts
 HC31	=	hc31
-ME	=	menu32.exe
 #hc31
 
 # Standard File Extensions
@@ -140,6 +138,7 @@ CMD2_150=	$(DOCDIR)m2cmd150.2 $(DOCDIR)m2cmd151.2 $(DOCDIR)m2cmd152.2\
 		$(DOCDIR)m2cmd156.2 $(DOCDIR)m2cmd157.2 $(DOCDIR)m2cmd158.2\
 		$(DOCDIR)m2cmd159.2
 CMD2_160=	$(DOCDIR)m2cmd160.2
+		
 
 CMD2_200=	$(DOCDIR)m2cmd200.2 $(DOCDIR)m2cmd201.2 $(DOCDIR)m2cmd202.2\
 		$(DOCDIR)m2cmd203.2
@@ -186,7 +185,7 @@ MAC3_050=	$(DOCDIR)m3mac050.3 $(DOCDIR)m3mac051.3 $(DOCDIR)m3mac052.3\
 		$(DOCDIR)m3mac053.3 $(DOCDIR)m3mac054.3 $(DOCDIR)m3mac055.3\
 		$(DOCDIR)m3mac056.3 $(DOCDIR)m3mac057.3 $(DOCDIR)m3mac058.3\
 		$(DOCDIR)m3mac059.3
-
+		
 OSD3_000=	$(DOCDIR)m3osd000.3 $(DOCDIR)m3osd001.3 $(DOCDIR)m3osd002.3\
 		$(DOCDIR)m3osd003.3 $(DOCDIR)m3osd004.3 $(DOCDIR)m3osd005.3\
 		$(DOCDIR)m3osd006.3 $(DOCDIR)m3osd007.3 $(DOCDIR)m3osd008.3\
@@ -202,11 +201,11 @@ FCL3_010=	$(DOCDIR)m3fcl010.3 $(DOCDIR)m3fcl011.3
 FIL4_000=	$(DOCDIR)m4fil000.4 $(DOCDIR)m4fil001.4 $(DOCDIR)m4fil002.4\
 		$(DOCDIR)m4fil003.4 $(DOCDIR)m4fil004.4 $(DOCDIR)m4fil005.4\
 		$(DOCDIR)m4fil006.4 $(DOCDIR)m4fil007.4 $(DOCDIR)m4fil008.4\
-		$(DOCDIR)m4fil009.4
+		$(DOCDIR)m4fil009.4 
 FIL4_010=	$(DOCDIR)m4fil010.4 $(DOCDIR)m4fil011.4 $(DOCDIR)m4fil012.4\
 		$(DOCDIR)m4fil013.4 $(DOCDIR)m4fil014.4 $(DOCDIR)m4fil015.4\
 		$(DOCDIR)m4fil016.4 $(DOCDIR)m4fil017.4 $(DOCDIR)m4fil018.4\
-		$(DOCDIR)m4fil019.4
+		$(DOCDIR)m4fil019.4 
 
 FIL4_020=	$(DOCDIR)m4fil020.4 $(DOCDIR)m4fil021.4 $(DOCDIR)m4fil022.4\
 		$(DOCDIR)m4fil023.4 $(DOCDIR)m4fil024.4 $(DOCDIR)m4fil025.4\
@@ -268,7 +267,7 @@ TYP9_020=	$(DOCDIR)m9typ020.9 $(DOCDIR)m9typ021.9 $(DOCDIR)m9typ022.9\
 		$(DOCDIR)m9typ023.9 $(DOCDIR)m9typ024.9 $(DOCDIR)m9typ025.9\
 		$(DOCDIR)m9typ026.9 $(DOCDIR)m9typ027.9 $(DOCDIR)m9typ028.9\
 		$(DOCDIR)m9typ029.9
-
+		
 TYP9_030=	$(DOCDIR)m9typ030.9 $(DOCDIR)m9typ031.9 $(DOCDIR)m9typ032.9\
 		$(DOCDIR)m9typ033.9 $(DOCDIR)m9typ034.9 $(DOCDIR)m9typ035.9\
 		$(DOCDIR)m9typ036.9
@@ -293,6 +292,7 @@ TEMPSMS	=	cmd2_000.sm	cmd2_010.sm	cmd2_020.sm	cmd2_030.sm \
 		var5_080.sm	fil8_000.sm \
 		typ9_000.sm	typ9_010.sm	typ9_020.sm	typ9_030.sm \
 		faq.2
+		
 
 all:: $(HTSS) $(HLPS) $(SMS) $(EHFS) $(TXTS)
 #
@@ -303,7 +303,7 @@ $(BUILDTXT): m2nar007.2
 	    $(DROFF) -l10000 -c JASSPA -p -o $@ m2nar007.2
 $(FAQTXT):  faq.2
 	    $(DROFF) -l10000 -c JASSPA -p -o $@ faq.2
-
+		
 #
 # Build the local index page.
 #
@@ -438,7 +438,7 @@ me.sm: $(TEMPSMS) $(TNIS) $(MAN1)
 me.hts: me.sm me.0 me.lbn me.tni forward.lbn logo.gif
 	$(NR2HTML) -E $(MANLOG)			\
 		   -c JASSPA			\
-		   -x -M me me.sm me.0		\
+		   -x -M me me.sm me.0 		\
 		   -n me			\
 		   -H me			\
 		   -L. -lme -l$(DOCDIR)forward	\
@@ -452,7 +452,7 @@ me.hts: me.sm me.0 me.lbn me.tni forward.lbn logo.gif
 me.hlp: me.sm me.0 me.lbn me.tni forward.lbn me.hpj logo.bmp
 	$(NR2RTF)  -E $(MANLOG)			\
 		   -c JASSPA			\
-		   -x -M me me.sm me.0		\
+		   -x -M me me.sm me.0 		\
 		   -n me			\
 		   -H me			\
 		   -L. -lme -l$(DOCDIR)forward	\
@@ -471,7 +471,7 @@ me.hlp: me.sm me.0 me.lbn me.tni forward.lbn me.hpj logo.bmp
 meehf.hts: me.sm me.0 me.lbn me.tni forward.lbn logo.gif
 	$(NR2HTML) -E $(MANLOG)				\
 		   -b -c JASSPA				\
-		   -x -M me me.sm me.0			\
+		   -x -M me me.sm me.0 			\
 		   -n me -o meehf.hts			\
 		   -H me				\
 		   -L. -lme -l$(DOCDIR)forward		\
@@ -481,6 +481,7 @@ meehf.hts: me.sm me.0 me.lbn me.tni forward.lbn logo.gif
 		   -t Glossary:Glossary
 	$(HTS) -a $@ -E $(MANLOG) -b logo.gif
 	- $(RM) *.so
+
 
 #
 # Build the postscript print job ordering files.
@@ -536,15 +537,15 @@ clean::
 spotless:: clean
 	$(RM) *.??~
 	$(RM) tags
-	$(RD) ehf\me
-	$(RD) ehf
-	$(RD) htm\me
-	$(RD) htm
-	$(RD) html\me
-	$(RD) html
+	rd ehf\me
+	rd ehf
+	rd htm\me
+	rd htm
+	rd html\me
+	rd html
 
 me.ehf: meehf.hts
-	- md ehf
+	- md ehf 
 	- md ehf\me
 	cd ehf
 	$(RM) me\*.htm
@@ -552,12 +553,12 @@ me.ehf: meehf.hts
 	hts2html -l .htm ..\meehf.hts
 	copy me.htm me\1.htm
 	cd me
-	$(ME) -n "@ehftools" *.htm
+	menu32 -n "@ehftools" *.htm
 	copy me.ehf ..\..
 	cd ..\..
-
+ 
 mehtm.zip: me.hts
-	- md htm
+	- md htm 
 	- md htm\me
 	cd htm
 	$(RM) *.htm
@@ -568,7 +569,7 @@ mehtm.zip: me.hts
 	zip mehtm me.htm me/*
 	copy mehtm.zip ..
 	cd ..
-
+	
 mehtml.tgz: me.hts
 	- md html
 	- md html\me
@@ -582,5 +583,6 @@ mehtml.tgz: me.hts
 	gzip -9 mehtml.tar
 	copy mehtml.tar.gz ..\mehtml.tgz
 	cd ..
-
+	
 full:: mehtm.zip mehtml.tgz me.hlp me.ehf
+

@@ -1,5 +1,5 @@
 .\" Global abbreviations for MicroEmacs
-.ds mE "MicroEmacs '01
+.ds mE "MicroEmacs '02
 .ds mS "MicroEmacs
 .ds cX "C-x\ \&
 .ds cH "C-h\ \&
