@@ -46,7 +46,7 @@ LD            = $(CC)
 STRIP         =	strip
 INSTALL       =	install
 CDEBUG        =	-Wall -g
-COPTIMISE     =	-Wall -O3 -DNDEBUG=1
+COPTIMISE     =	-Wall -O3 -DNDEBUG=1 -Wno-uninitialized
 CDEFS         = -D_OPENBSD -I.
 CONSOLE_DEFS  = -D_ME_CONSOLE
 WINDOW_DEFS   = -D_ME_WINDOW -I/usr/X11R6/include

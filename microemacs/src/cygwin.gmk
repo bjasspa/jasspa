@@ -48,7 +48,7 @@ STRIP         =	strip
 EXE	      = .exe
 INSTALL       =	install
 CDEBUG        =	-g -Wall
-COPTIMISE     =	-O3 -DNDEBUG=1 -Wall
+COPTIMISE     =	-O3 -DNDEBUG=1 -Wall -Wno-uninitialized
 CDEFS         = -D_CYGWIN -I.
 CONSOLE_DEFS  = -D_ME_CONSOLE
 WINDOW_DEFS   = -D_ME_WINDOW -I/usr/X11R6/include
