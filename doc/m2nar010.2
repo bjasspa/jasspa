@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Fri Jan 9 00:04:42 2004
 .\"
-.Id $Id: m2nar010.2,v 2.5 2005-02-13 00:50:47 jon Exp $
+.Id $Id: m2nar010.2,v 2.6 2005-02-19 10:54:42 jon Exp $
 .Im MicroEmacs 
 .so me.tni
 .TH macroWriting 4
@@ -38,14 +38,13 @@ checker are difficult to get working and requires a greater  understanding  of
 .PP
 A good starting point is to try to write a macro to do something that you find
 yourself doing all the time, for example reread-file, write-region etc. 
-.PP
-.B TIP:
+.IP \fBTIP:\fR
 Remember  when you write a macro you are placing the editor in control of your
 macro,  when  testing a new macro then start a new \*(mS  session or make sure
 that if  things  go wrong  you will not  loose any work. If you loose  control
 of the editor then  \fBabort\fR  (\fCC-g\fR)  will  typically  regain  control
 again. 
-.SS "Developing you First Macro"
+.SS "Developing your First Macro"
 In the following example then we walk through the steps to create a macro that
 saves a  region  of text to a file  (i.e.  the text  between  \fBpoint\fR  and
 \fBmark\fR). The resultant macro will be called  \fBwrite-region\fR, note that
@@ -65,15 +64,15 @@ the following command sequence would be executed  (assuming a marked up region
 has been selected):-
 .ne 6
 .CS
-esc w                      ; Copy the region.
-C-x b "tmp-buffer"         ; Create a new temporary buffer.
-C-y                        ; Yank copied region into temporary buffer.
+esc w                       ; Copy the region.
+C-x b "tmp-buffer"          ; Create a new temporary buffer.
+C-y                         ; Yank copied region into temporary buffer.
 C-x C-w "write_region_file" ; Save the buffer to a file.
-C-x k RETURN               ; Kill the temporary buffer.
+C-x k RETURN                ; Kill the temporary buffer.
 .CE
 This is a fairly  easy  sequence  of steps, the  history of key presses can be
 viewed in the variable 
-.Ht $recent-keys 5
+.Ht $recent-keys 5 ,
 the command 
 .Ht list-variables 2 
 includes this variable in its output. 
@@ -87,8 +86,8 @@ Some command  bindings  include a numeric  argument,  the numeric  argument is
 important (both the value and absence/presence of the argument) and can change
 the behavior of the command.  \fCC-up\fR is not  '\fBbackward-line\fR',  it is
 \'\fB5\fR  \fBbackward-line\fR'  to go back 5 lines, if you supply a numerical
-value to the command as well, e.g. '\fCesc 3 C-up\fR' you must  multiply  that
-with the numerical argument of the binding:
+value to the command as well, e.g. '\fCesc 3 C-up\fR'  you must  multiply  the
+user argument with the numerical argument of the binding:
 .ne 3
 .CS
 3 up   -> 3   'backward-line' -> 3 * 1 backward-line ->  3 backward-line      
@@ -103,9 +102,9 @@ find-buffer "tmp-buffer"
 yank
 write-buffer "write_region_file"
 delete-buffer RETURN
-.CE
+.CE 0
 .Me $ehf-scheme
-.B TIP:
+.IP \fBTIP:\fR
 If  you  are  in  an  \*(mS  macro   buffer  (e.g.   \fCfoo.emf\fR)   use  the
 \fBemf-quote-command\fR  command  (bound to  \fCA-q\fR)  to make this  process
 trivial. This  converts the key binding into a command  which is inserted into
@@ -180,7 +179,7 @@ Handle errors
 Where appropriate handle an unexpected failure.
 .BE    
 The  last  one  is  really   reserved  for  low  level  drivers  (i.e.  mouse,
-directory listings etc.) which really must be bomb proof.
+directory listings etc.) which must be bomb proof.
 .SS "Generalising Macros"
 In the  previous  section  we have  created a basic  macro to save a region of
 text, in this  section  we look at that  macro  is  transformed  from a static

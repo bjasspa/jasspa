@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Fri Jan 9 00:04:42 2004
 .\"
-.Id $Id: m2nar011.2,v 2.1 2005-02-13 00:50:47 jon Exp $
+.Id $Id: m2nar011.2,v 2.2 2005-02-19 10:54:42 jon Exp $
 .Im MicroEmacs 
 .so me.tni
 .TH macroDebugging 4
@@ -77,6 +77,7 @@ define-macro write-region
     goto-position "\\x88"
 !emacro
 .CE 
+.Me $ehf-scheme
 so as soon as we  execute  \fBwrite-region\fR  then we drop into  debug  mode.
 The mode line appears as follows:-
 .CS
