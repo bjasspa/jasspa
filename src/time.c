@@ -98,7 +98,7 @@ set_timestamp(meBuffer *bp)
        (time_stamp[0] == '\0'))			/* No time stamp defined */
         return meTRUE ;				/* No - exit */
     
-    mlwrite(MWCURSOR,(meUByte *)"[Time stamping File]");
+    mlwrite(MWCURSOR,(meUByte *)"[Time stamping file]");
     
     /*---	Save current position in buffer and go to the start of the buffer. */
     
