@@ -55,7 +55,7 @@
 0 define-macro-file langutl spell-rules-init
 0 define-macro-file osd osd-main osd-dialog osd-xdialog osd-entry
 0 define-macro-file buffinit buffer-init buffer-init-fhook buffer-bind-create
-0 define-macro-file utils ascii-time regex-forward regex-backward var-str-sub str-to-regex filemask-to-regex copy-registry create-file-path
+0 define-macro-file utils frame-handle ascii-time regex-forward regex-backward var-str-sub str-to-regex filemask-to-regex copy-registry create-file-path
 define-macro-file format clean sort-lines-ignore-case normal-tab tabs-to-spaces paragraph-to-line delete-indentation restyle-region restyle-buffer ifill-paragraph
 define-macro-file cvs cvs cvs-add cvs-annotate cvs-checkout cvs-commit cvs-diff cvs-gdiff cvs-log cvs-remove cvs-resolve-conflicts cvs-state cvs-status cvs-tag cvs-update 
 define-macro-file misc save-all open-line symbol check-line-length alarm time compare-windows-exact display-white-chars
@@ -134,6 +134,7 @@ scheme
 ;
 ; key bindings
 0x1 global-bind-key spell-word           "esc $"
+global-bind-key frame-handle             "C-x 5" 
 4 global-bind-key prefix                 "C-c"
 global-bind-key set-position             "C-c C-a"
 global-bind-key goto-position            "C-c a"

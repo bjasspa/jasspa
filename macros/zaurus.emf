@@ -8,6 +8,33 @@
 ;
 ; Load up common unix stuff
 !force exec-file "unixterm"
+; redefine the main menu due to screen width problems
+osd 0  5   "D"
+osd 0  10  "Mdfsh" " \HFile "   1
+osd 0  15  "D"
+osd 0  20  "Mdfsh" " \HEdit "   2
+osd 0  25  "D"
+osd 0  30  "Mdfsh" " \HSearch "  3
+osd 0  35  "D"
+osd 0  40  "Mdfsh" " \HInsert "  4
+osd 0  45  "D"
+osd 0  50  "Mdfsh" " F\Hormat "  5
+osd 0  55  "D"
+osd 0  60  "Mdfsh" " E\Hxecute "  6
+osd 0  65  "D"
+osd 0  70  "Mdfsh" " \HTools "  7
+osd 0  75  "D"
+osd 0  80  "Mdfsh" " \HWindow "  8
+osd 0  85  "D"
+osd 0  90  "Mdfsr" " \HHelp "     9
+; shrink the default window size so it fits
+!if &not &set #l0 &reg "/history" &cat %platform "/frame-width" "0"
+    change-frame-width 71
+!endif
+!if &not &set #l0 &reg "/history" &cat %platform "/frame-depth" "0"
+    change-frame-depth 28
+!endif
+
 ; no vt100-nam on linux, this may cause problems in an ishell
 set-variable %ipipe-term "TERM=vt100"
 ;

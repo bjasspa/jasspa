@@ -103,7 +103,8 @@ define-macro c-hash-eval
                 !endif
             !endif
             !if &and @? &not #l0
-                exchange-point-and-mark
+                set-mark
+                set-variable $window-line #l1
                 0x34 narrow-buffer .scheme.hide &cat &lef @wl 60 " ..."
             !endif
         !else
@@ -120,7 +121,7 @@ define-macro c-hash-eval
                 !force search-forward "/\\*"
                 !if $status
                     2 backward-char
-                    set-mark
+                    set-variable #l1 $window-line
                     !force search-forward "*/"
                     !if $status
                         -1 kill-region
@@ -149,11 +150,11 @@ define-macro c-hash-eval
                 2 calc-buffer
                 -1 find-buffer $buffer-bname
                 set-variable #l0 &cond .calc.result 0 1
-                set-mark
+                set-variable #l1 $window-line
             !elif &seq &lef @wl 5 "#else"
                 set-variable $line-scheme .scheme.hide
                 set-variable #l0 1
-                set-mark
+                set-variable #l1 $window-line
             !elif &seq &lef @wl 6 "#endif"
                 set-variable $line-scheme .scheme.hide
             !elif &seq &lef @wl 7 "#define"
@@ -189,7 +190,6 @@ define-macro c-hash-eval
         !force forward-line
     !until &not $status
     beginning-of-buffer
-    !force -1 show-region
 !emacro
 
 define-macro c-hash-del

@@ -1,4 +1,3 @@
-; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
 ; Copyright (C) 1998-2004 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
@@ -483,10 +482,10 @@ set-variable %user-mouse-wheel "||1 scroll-up|5 scroll-up|10 scroll-up|scroll-up
             osd .osd.user-sub #l0 "i" #l1 #l0 "set-variable %user-mouse-but @#"
         !done
     !else
-        set-variable $result &rep &lget .bnames %user-mouse-but "&" ""
+        set-variable $result &rep &lget .bnames %user-mouse-but "\H" ""
     !endif
 !emacro
-set-variable .user-mouse-set-button.bnames "|&Left|&Middle|&Right|Wheel &Up|Wheel &Down|"
+set-variable .user-mouse-set-button.bnames "|\HLeft|\HMiddle|\HRight|Wheel \HUp|Wheel \HDown|"
 
 0 define-macro user-setup-mouse-bind-set
     !if &gre %user-mouse-but 3
@@ -600,7 +599,7 @@ osd .osd.user-mouse 28   "c" "Mouse Button Bindings"
 osd .osd.user-mouse 29  ""
 osd .osd.user-mouse 30  "Sfh" "             \HButton : " 25
 osd .osd.user-mouse 40  "OtxmsfhHzR" 5 .scheme.osd-entry 12 1 "" .osd.user-sub user-mouse-set-button
-osd .osd.user-mouse 41  "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 130
+osd .osd.user-mouse 41  "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 40
 osd .osd.user-mouse 50  "Sfh" "      S\Hhift Pressed : "  60
 osd .osd.user-mouse 60  "CtfxR" 6 "^^NY^^" 1 user-mouse-set-checkbox
 osd .osd.user-mouse 70  "Sfh" "    C\Hontrol Pressed : "  80
