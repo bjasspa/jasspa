@@ -1,0 +1,34 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil026.4,v 1.1.1.1 2000-07-25 22:04:03 jon Exp $
+.Im MicroEmacs macro;function;miscellaneous|bind
+.so me.tni
+.TH &kbind 4
+.XI &kbind - "Return command key binding"
+.SH NAME
+&kbind \- Return command key binding
+.SH SYNOPSIS
+.na
+.B &kbind
+.I key
+.ad
+.SH DESCRIPTION
+\fB&kbind\fR returns the command bound to the given key sequence, \fB&kbind\fR
+can be  abbreviated  to \fB&kbi\fR. If the key is not bound then  \fB&kbind\fR
+returns the string "\fIERROR\fR".
+.SH EXAMPLE
+The  following  example  waits for the user to press a key, then  prints  what
+command the key is bound to.
+.Me $emf-scheme
+.CS
+ml-write "Enter key: "
+set-variable #l0 @cgk
+ml-write &spr "%s is bound to %s" #l0 &kbin #l0
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Hl "Variable Functions" Functions - ,
+.Ht global-bind-key 2 .
+.ad
+.FH
+

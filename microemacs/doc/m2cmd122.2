@@ -1,0 +1,70 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd122.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|macrodevelop
+.ds C0 "(\fB\*(cXv\fR)\ \&
+.so me.tni
+.TH set-variable 2
+.XI set-variable - "\*(C0Assign a new value to a variable"
+.XI unset-variable - "Delete a variable"
+.SH NAME
+.Me "|set-variable"
+set-variable \- Assign a new value to a variable
+.br
+.Me "|unset-variable"
+unset-variable \- Delete a variable
+.Me $a
+.SH SYNOPSIS 
+.na
+.B set-variable
+"\fIvariable\fR"
+"\fIvalue\fR" \*(C0
+.br
+.B unset-variable
+"\fIvariable\fR"
+.ad
+.SH DESCRIPTION
+.B set-variable
+sets the given register (\fB#\fR name), system (\fB$\fR name), global (\fB%\fR
+name), buffer  (\fB:\fR name) or command  (\fB.\fR name) variable to the given
+value, erasing its current value. The returned value of an undefined  variable
+is the string  "\fCERROR\fR",  this maybe used to determine whether a variable
+has been set.
+.PP
+.B unset-variable
+unsets the given  variable so that it no longer exists. The variable must be a
+global  (\fB%\fR),  buffer  (\fB:\fR) or command  (\fB.\fR)  variable,  system
+(\fB$\fR) variables cannot be unset.
+.PP
+The  \fIvalue\fR  may be  quoted  or  unquoted,  if there are any white  space
+characters, or characters  open to other  interpretation  (e.g.  \fB@wc\fR) in
+\fIvalue\fR then quotes should be used.
+.PP
+\fIvalue\fR may contain control characters which are delimited by a back slash
+(\fB\\\fR) which include:-
+.IP
+.nf
+\fC\\n\fR newline
+\fC\\t\fR tab
+\fC\\\\\fR backslash
+.fi
+.LP
+Confusion  sometimes arises in macros with the back slash, as the back slashes
+are dereferenced when set. Commands such as
+.Ht replace-string 2
+where the command  itself  utilizes  back  slashes. In this case the number of
+back slashes should be doubled as the variable contents under go two stages of
+dereferencing.
+.SH "SEE ALSO"
+.na
+.Ht describe-variable 2 ,
+.Ht list-variables 2 ,
+.Ht &set 4 .
+.sp
+.nf
+.Hl "Variables" Variables 4
+.Hl "Introduction to Variable Functions" Functions -
+.Hl "Register Variables" RegisterVariables 4
+.fi
+.ad
+.rm C0
+.FH

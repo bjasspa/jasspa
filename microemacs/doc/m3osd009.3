@@ -1,0 +1,151 @@
+.\" -*- nroff -*-
+.Id $Id: m3osd009.3,v 1.1.1.1 2000-07-25 22:04:02 jon Exp $
+.Im MicroEmacs command|spell|osd
+.so me.tni
+.TH describe-word 3
+.XI describe-word - "Display a dictionary definition of a word"
+.SH NAME
+describe-word \- Display a dictionary definition of a word
+.Me $a
+.SH SYNOPSIS
+.na
+.B describe-word
+"\fIword\fR"
+.ad
+.SH DESCRIPTION
+.B describe-word
+can be used to interface to an external  dictionary  to get a definition  of a
+given  word. The  interface  has two  modes of  interface,  the  first  simply
+launches an external  program  which  provides the  definition in its own user
+interface,  e.g. MS  Bookshelf.  The second  interface  launches  an  external
+program which prints out the definition to  \fCstdout\fR,  \*(mS can then pull
+out the definition and display it in \fBdescribe-word\fR's own GUI.
+.PP
+When executed  \fBdescribe-word\fR  will use the current word under the cursor
+as the  initial  \fIword\fR  or will prompt the user if the cursor is not in a
+word.
+.PP
+When \fBdescribe-word\fR's dialog is used the information presented is defined
+as follows:
+.IP "\fBWord\fR"
+The word  being  defined,  the  entry  can be edited  and the new word will be
+automatically looked-up when the edit is completed.
+.IP "\fBInsert\fR"
+The effect of this button is dependent on where describe-word was executed. If
+executed from the \fBMeaning\fR button within the
+.Hl "spell checker" spell-buffer 3
+the Word entry is changed to the current word. When executed outside the spell
+checker  the  definition  of the  current  word is  inserted  into the current
+buffer.
+.IP "\fBExit\fR"
+Closes the dialog.
+.IP "Main definition box"
+Displays the definition of the current word. The user can select a new word to
+describe  by  clicking  the left mouse  button on any word  within the current
+definition.
+.SH NOTES
+\fBdescribe-word\fR is a macro implemented in \fCword.emf\fR.
+.PP
+Due to the  size and  availability  of  dictionaries  etc.  \*(mS is  released
+without  describe-word set up, the user must setup it up.
+.PP
+\fBdescribe-word\fR must be setup for each required language as follows:
+.IP \fB1)\fR
+A  command-line  interface to a dictionary  of the required  language  must be
+found. This could simply be a text file  containing  one word  definition  per
+line and using
+.Hr grep 1
+as the  command-line  interface.  In this example the text file could take the
+following form:
+.RS
+.CS
+A () The first letter of the English...
+Aam (n.) A Dutch and German measure of liquids...
+Aardvark (n.) An edentate mammal...
+\&.
+\&.
+.CE
+The   \fBgrep\fR   command-line   interface   required  to  look-up  the  word
+"\fCaardvark\fR" would be:
+.CS
+grep -i "^aardvark (" words.txt
+.CE
+The output  produced  from this will be the single  line  giving the  required
+definition.  A  second  common   interface  would  be  executing  an  external
+dictionary  program typically using a command-line  option to specify the word
+to define, e.g.:
+.CS
+mydict -d "aardvark"
+.CE 0
+.RE
+.IP \fB2)\fR
+The \*(mS language name must be found, this can be done by first using
+.Ht user-setup 3
+or
+.Ht spell-buffer 3
+to  ensure  that the  current  language  is set the the  require  one and then
+running  \fBdescribe-word\fR.  The command will  probably  fail, but before it
+does it will set the variable \fC.describe-word.lang\fR, use the command
+.Ht describe-variable 2
+to get the value of this  variable, this value is the internal  language name.
+For example, when the current language is \fBAmerican\fR or
+\fBAmerican  (Ext)\fR the language name is \fCamerican\fR.
+.IP \fB3)\fR
+To     execute     the      command-line      interface      the      variable
+\fC.describe-word.\fR\fI<language>\fR\fC-command\fR   must   be   set  to  the
+command-line  required to obtain a word definition with the string  "\fC%s\fR"
+used in place of the word and "\fC%%\fR" using in place of a single "\fC%\fR".
+For the first example in \fB(1)\fR above the following would be required:
+.RS
+.Me $emf-scheme
+.CS
+set-variable .describe-word.american-command ...
+        ... "grep -i \\"^%s (\\" /tmp/words.txt"
+.CE
+.Me $ehf-scheme
+For the second example:
+.Me $emf-scheme
+.CS
+set-variable .describe-word.american-command "mydict -d \\"%s (\\""
+.CE 0
+.Me $ehf-scheme
+.RE
+.IP \fB4)\fR
+Only required for the second mode, for use with \fBdescribe-word\fR's own GUI,
+the setting of another  variable is required,  the  presence of this  variable
+determines which mode is to be used.
+.IP
+The variable \fC.describe-word.\fR\fI<language>\fR\fC-search\fR must be set to
+a
+.Hl "regex search pattern" RegularExpressions 2
+which will match the required  definition(s) in the command out put, the first
+group   ("\fC\\(...\\)\fR")   must  enclose  the  required  definition,  again
+"\fC%s\fR"  can be used in  place  of the  word  and  "\fC%%\fR"  for a single
+"\fC%\fR". \fBdescribe-word\fR simply uses
+.Ht regex-forward 3
+repeatedly to find all definitions of the current word, it then uses the value
+of the variable
+.Ht @s1 4
+to get the  individual  definitions.  For  example  for the first  example the
+following is required:
+.RS
+.Me $emf-scheme
+.CS
+set-variable .describe-word.american-search  "^\\(%s (.*\\)\\n"
+.CE
+.Me $ehf-scheme
+Note that the word being defined  should be kept in the definition if possible
+as the
+.Hl "spell rules" add-spell-rule 2
+are used to  look-up  base  words  when a  derivitive  of a word is not found,
+therefore the word being defined may not be clear (e.g.  \fIdeactivate\fR  can
+be derived from  \fIactivate\fR  but their meanings are very  different). Also
+long text lines are automatically wrapped by the GUI.
+.RE
+.PP
+The required variables should be added to the user setup file.
+.SH "SEE ALSO"
+.na
+.Ht spell-buffer 3 .
+.ad
+.FH

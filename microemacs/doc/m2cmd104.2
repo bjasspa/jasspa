@@ -1,0 +1,30 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd104.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|insert
+.ds C0 "(\fB\*cq\fR)\ \&
+.so me.tni
+.TH quote-char 2
+.XI quote-char - "\*(C0Insert literal character"
+.SH NAME
+quote-char \- Insert literal character
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B quote-char
+"\fIkey\fR" \*(C0
+.ad
+.SH DESCRIPTION
+.B quote-char
+inserts the next typed  character  \fIn\fR  times,  default is 1, ignoring the
+fact that it may be a command  character.  \fBquote-char\fR  obeys the current
+buffer setting of
+.Ht over 2m
+mode.
+.SH "SEE ALSO"
+.na
+.Ht insert-string 2 ,
+.Ht Symbol 3 .
+.ad
+.rm C0
+.FH

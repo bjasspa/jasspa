@@ -1,0 +1,186 @@
+.\" -*- nroff -*-
+.Id $Id: m3mac040.3,v 1.1.1.1 2000-07-25 22:04:01 jon Exp $
+.Im MicroEmacs command|file
+.so me.tni
+.TH find-zfile 3
+.XI find-zfile - "Compressed file support"
+.XI zfile-setup - "Compressed file support setup"
+.SH NAME
+.Me "|find-zfile"
+find-zfile \- Compressed file support
+.br
+.Me "|auto-spell-reset"
+zfile-setup \- Compressed file support setup
+.Me $a
+.SH SYNOPSIS
+.na
+\fBfind-zfile\fR "\fIfile-name\fR"
+.br
+\fBzfile-setup\fR "\fIextension\fR" "\fIlist-command\fR" "\fIcut-to\fR"
+.br
+.RS
+"\fIcolumn\fR" "\fIfile-end\fR" "\fIextract-command\fR"
+.br
+"\fIremove-command\fR"
+.RE
+.ad
+.SH DESCRIPTION
+\fBfind-zfile\fR  provides  generic  support  for listing and  extracting  the
+contents of  compressed  files.  \fBfind-zfile\fR also supports the extraction
+of the internal files into another buffer.
+.PP
+\fBfind-zfile\fR   must  be  configured  for  each  compression  format  using
+\fBzfile-setup\fR.  It relies on  command-line  programs  to generate  content
+lists which are used to generate the main file listing, and  subsequently, the
+ability to extract individual files for file extraction support.
+.PP
+For basic  content  listing  support  the first 3  arguments  must be given to
+zfile-setup.  The first argument  "\fIextension\fR"  is used as the compressed
+file id string. The compressed  file type is derived from the file  extension,
+e.g. "\fCzip\fR" or "\fCZ\fR" for UNIX compressed files. The exact case of the
+extension is checked first, followed by the lower case and upper case string.
+.PP
+The  compressed  file  contents  list is  generated  from  executing  the user
+supplied "\fIlist-command\fR" and dumping the output into the list buffer. The
+command  is run from the  directory  containing  the  compressed  file and the
+following special tags may be used within the  "\fIlist-command\fR"  which get
+substituted as follows:-
+.IP \fB%zb\fR
+The token is replaced with the compressed  files base name, i.e. the file name
+without the path.
+.IP \fB%zf\fR
+The token is replaced with the  compressed  files absolute file name, i.e. the
+file complete with the path.
+.PP
+The head of the list output is often  unwanted  verbose  printout, this can be
+automatically  be  removed  by the  use of the  "\fIcut-to\fR"  argument.  The
+argument,  if supplied  (not an empty  string),  must be a
+.Hl "regex" RegularExpressions 2
+search  string  matching  the start of the  required  list. If found, all text
+before it is removed.
+.PP
+For single file  extraction  support the last 4 arguments must be specified by
+\fBzfile-setup\fR.  The file to extract is selected  either by  selecting  the
+file name  using the left  mouse  button or by moving  the  cursor to the line
+containing the file name and pressing the "\fCreturn\fR" key.
+.PP
+\fBfind-zfile\fR  assumes that the file name starts at a fixed column  number,
+specified  with  the  "\fIcolumn\fR"  argument.  The end of the  file  name is
+obtained by searching for the regular expression  "\fIfile-end\fR" string, the
+file name is assumed to end at the start of the search string match.
+.PP
+The file is then  extracted by executing the supplied  "\fIextract-command\fR"
+and then loading the extracted file into a new buffer. The command is run from
+the system temporary  directory (i.e.  "\fC/tmp/\fR" on UNIX or \fC$TEMP\fR on
+Windows   etc.).  The   following   special   tags  may  be  used  within  the
+"\fIextract-command\fR" which get substituted as follows:-
+.IP \fB%zb\fR
+The token is replaced with the compressed  files base name, i.e. the file name
+without the path.
+.IP \fB%zf\fR
+The token is replaced with the  compressed  files absolute file name, i.e. the
+file name complete with the path.
+.IP \fB%fb\fR
+The name of the file to be extracted.
+.PP
+The file is assumed to be  extracted to the temp  directory due to the way the
+command is run, this file is then loaded into a new buffer. The temporary file
+should then be removed using the supplied  "\fIremove-command\fR"  with is run
+from  the  temp  directory,   the  "\fB%fb\fR"  special  tag may be used in the
+command. This argument may be given as an empty string, thereby  disabling the
+removal.
+.SH EXAMPLE
+For zip file support the freely available
+.Hr unzip 1
+command can be used, following is the list of arguments with suitable entries:
+.CS
+extension           zip
+list-command        unzip -v %zb
+cut-to              ^ Length
+column              58
+file-end            $
+extract-command     unzip -o %zf %fb
+remove-command      rm %fb
+.CE
+For the zip file "\fI/usr/jasspa/memacros.zip\fR", after substitution the list
+command becomes  "\fCunzip -v  memacros.zip\fR"  which will be executed in the
+"\fI/usr/jasspa/\fR"  directory.  This  will  produce  the  following  form of
+output:
+.CS
+Archive:  memacros.zip
+ Length  Method   Size  Ratio   Date    Time   CRC-32     Name
+ ------  ------   ----  -----   ----    ----   ------     ----
+    565  Defl:N     258  54%  02-27-99  22:56  018a7f70   american.emf
+   3409  Defl:N     872  74%  02-28-99  01:37  6a6f9722   americar.emf
+   4201  Defl:N     772  82%  03-01-99  12:58  d4e3bc4a   benchmrk.emf
+    565  Defl:N     258  54%  02-27-99  22:56  dd394e24   british.emf
+   3408  Defl:N     872  74%  02-28-99  01:37  32f3eeca   britishr.emf
+   7239  Defl:N    1923  73%  02-28-99  15:13  d408f0da   calc.emf
+   7292  Defl:N    2072  72%  01-23-99  12:49  5979d6b2   cbox.emf
+   7104  Defl:N    1402  80%  02-28-99  15:13  6faf4fc5   cmacros.emf
+   5967  Defl:N    1239  79%  02-13-99  16:38  27601523   ctags.emf
+   1097  Defl:N     489  55%  02-16-99  10:58  53a55e36   dos.emf
+    562  Defl:N     310  45%  01-16-98  07:54  ec24f65e   dos2unix.emf
+\&\.
+\&\.
+\&\.
+.CE
+The top Archive line is not require, this is automatically  removed by setting
+the  "\fIcut-to\fR"  to "\fC^  Length\fR"  which matches the start of the next
+line.
+.PP
+For file extract,  consider the file  "\fCctags.emf\fR",  the first  character
+\'\fCc\fR' is at column 58 and the first  character  after the end of the file
+name is the end-of-line character ('\fC\\n\fR')  which is matched by the
+.Hl "regex" RegularExpressions 2
+string "$", hence the settings on "\fIcolumn\fR"  and  "\fIfile-end\fR".  When
+this  and the zip  file  name are  substituted  into the  extract-command,  it
+becomes "\fCunzip -o /usr/jasspa/memacros.zip calc.emf\fR" and is run from the
+"\fI/tmp.\fR"   directory.  Note  that  the  "\fC-o\fR"  option  disables  any
+overwrite prompts, these are not required as tests and prompting have already
+been performed by \fBfind-zfile\fR.  The extracted file  "\fI/tmp/calc.emf\fR"
+is then loaded into a new buffer.
+.PP
+The  temporary  file is removed by executing  the  substituted  remove-command
+which becomes "\fCrm calc.emf\fR" from the "\fC/tmp/\fR" directory.
+.PP
+For gzipped tar files,  extension  "\fBtgz\fR" the following setup can be used
+on UNIX platforms:
+.CS
+extension           tgz
+list-command        unzip -v %zb
+cut-to
+column              43
+file-end            $
+extract-command     gunzip -c %zf | tar xof - %fb
+remove-command      rm %fb
+.CE
+For the tgz  file  "\fI/usr/jasspa/memacros.tgz\fR",  this  will  produce  the
+following listing:
+.CS
+tgz file: /usr/jasspa/memacros.tgz
+
+
+rw-rw-r-- 211/200    565 Feb 27 22:56 1999 american.emf
+rw-rw-r-- 211/200   3409 Feb 28 01:37 1999 americar.emf
+rw-rw-r-- 211/200   4201 Mar  1 12:58 1999 benchmrk.emf
+rw-rw-r-- 211/200    565 Feb 27 22:56 1999 british.emf
+rw-rw-r-- 211/200   3408 Feb 28 01:37 1999 britishr.emf
+rw-rw-r-- 211/200   7239 Feb 28 15:13 1999 calc.emf
+rw-rw-r-- 211/200   7292 Jan 23 12:49 1999 cbox.emf
+rw-rw-r-- 211/200   7104 Feb 28 15:13 1999 cmacros.emf
+rw-rw-r-- 211/200   5967 Feb 13 16:38 1999 ctags.emf
+rw-rw-r-- 211/200   1097 Feb 16 10:58 1999 dos.emf
+rw-rw-r-- 211/200    562 Jan 16 07:54 1998 dos2unix.emf
+\&\.
+\&\.
+\&\.
+.CE 0
+.SH NOTES
+\fBfind-zfile\fR and \fBzfile-setup\fR are
+macros defined in \fCzfile.emf\fR.
+.SH "SEE ALSO"
+.na
+.Ht find-file 2 .
+.ad
+.FH

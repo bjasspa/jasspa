@@ -1,0 +1,63 @@
+.Id $Id: m3mac022.3,v 1.1.1.1 2000-07-25 22:04:00 jon Exp $
+.Im MicroEmacs command|spell
+.so me.tni
+.TH edit-dictionary 3
+.XI edit-dictionary - "Insert a dictionary in a buffer"
+.XI restore-dictionary - "Save dictionary user changes"
+.SH NAME
+.Me "|edit-dictionary"
+edit-dictionary \- Insert a dictionary in a buffer
+.br
+.Me "|restore-dictionary"
+restore-dictionary \- Save dictionary user changes
+.Me $a
+.SH SYNOPSIS
+.na
+.B edit-dictionary
+"\fIdictionary\fR"
+.br
+.B restore-dictionary
+.ad
+.SH DESCRIPTION
+.B edit-dictionary
+dumps  the  contents  of   "\fIdictionary\fR"   into  the   temporary   buffer
+"*\fIdictionary\fR*", if this buffer already exists then \fBedit-dictionary\fR
+simply  swaps to this  buffer. This  enables the user to correct and prune the
+words in any dictionary. The given  dictionary must have already been added as
+a main dictionary using
+.Ht add-dictionary 2 .
+.PP
+The format of the created buffer is one word on each line, each word takes one
+of the following 3 forms:
+.sp
+.RS
+.nf
+\fCxxxx\fR \- Good word \fCxxxx\fR with no spell rules allowed
+\fCxxxx/abc\fR \- Good word \fCxxxx\fR with spell rules \fCabc\fR allowed
+\fCxxxx>yyyy\fR \- Erroneous word with an auto-replace to \fCyyyy\fR
+.fi
+.RE
+.PP
+Executing     \fBrestore-dictionary\fR     in    a    buffer     created    by
+\fBedit-dictionary\fR will first call
+.Ht delete-dictionary 2
+to remove the original dictionary from memory. It then uses
+.Ht add-dictionary 2
+to create a new dictionary with the same name and then uses
+.Ht spell-add-word 3
+to add all the words in the current buffer into the new dictionary.
+.PP
+\fBrestore-dictionary\fR does not save the new dictionary.
+.SH NOTES
+\fBedit-dictionary\fR and  \fBrestore-dictionary\fR are macros defined in file
+\fCspellutl.emf\fR. They are not defined by default so \fIspellutl.emf\fR must
+be executed first using
+.Ht execute-file 2 .
+.SH "SEE ALSO"
+.na
+.Ht spell-add-word 3 ,
+.Ht add-dictionary 2 ,
+.Ht save-dictionary 2 ,
+.Ht delete-dictionary 2 .
+.ad
+.FH

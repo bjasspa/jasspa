@@ -1,0 +1,82 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd124.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|transposition
+.so me.tni
+.TH sort-lines 2
+.XI sort-lines - "Alphabetically sort lines"
+.\".if !"\n(.I"nr2ehf" .XI sort-lines-ignore-case 3 "Alphabetically sort lines case insensitively"
+.SH NAME
+sort-lines \- Alphabetically sort lines
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B sort-lines
+.ad
+.SH DESCRIPTION
+.B sort-lines
+alphabetically  sorts lines of text in the  current  buffer from the
+.Hl mark set-mark 2
+position to the current  cursor  position. If the buffer mode
+.Ht exact 2m
+is  enabled  then  the  sort is case  sensitive,  otherwise  the  sort is case
+insensitive.  By default the text is compared from left to right from column 0
+(the left hand edge), if a positive argument \fIn\fR is given then the text is
+compared  left to right from the  \fIn\fRth  column,  any lines  shorter  than
+\fIn\fR characters are moved to the top and sorted from column 0.
+.PP
+If a  negative  argument  \fIn\fR is given  then the text is sorted in reverse
+order. The  comparison  starts at column  \fC-1-n\fR,  i.e. an  argument of -1
+sorts in reverse order from column 0.
+.SH EXAMPLE
+The following table gives the results of \fBsort-lines\fR for different
+exact modes and values of \fIn\fR.
+.CS
+___________________________________________________________
+
+         Original        Sorted Lines
+___________________________________________________________
+
+  exact     -      n      n      y      y      n      n
+    n       -      -      1      -      1      -1     -2
+___________________________________________________________
+
+            B      a2     B      Aa     B      CA     Aa
+            CA     Aa     c      B      c      c      CA
+            b1     B      b1     CA     b1     b1     a2
+            Aa     b1     a2     a2     a2     B      b1
+            c      c      CA     b1     CA     Aa     c
+            a2     CA     Aa     c      Aa     a2     B
+___________________________________________________________
+.CE 0
+.SH NOTES
+Typically \*(mS is executed with
+.Ht exact 2m
+mode  enabled,  the macro  command  \fBsort-lines-ignore-case\fR  provides  a
+command to sort lines case insensitively  while \fBexact\fR mode is enabled.
+The macro is defined as follows:-
+.Me $emf-scheme
+.CS
+define-macro sort-lines-ignore-case
+    set-variable #l0 &bmod exact
+    -1 buffer-mode "exact"
+    !if @?
+        @# sort-lines
+    !else
+        sort-lines
+    !endif
+    &cond #l0 1 -1 buffer-mode "exact"
+!emacro
+.CE
+.Me $ehf-scheme
+.Ht sort-lines-ignore-case 3
+is a macro defined in format.emf.
+.SH "SEE ALSO"
+.na
+.Ht buffer-mode 2 ,
+.Ht exact 2m ,
+.Ht sort-lines-ignore-case 3 ,
+.Ht transpose-lines 2 ,
+.Ht uniq 3 .
+.ad
+.FH

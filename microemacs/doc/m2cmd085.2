@@ -1,0 +1,197 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd085.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|bind|message
+.so me.tni
+.TH ml-bind-key 2
+.XI ml-bind-key - "Create key binding for message line"
+.XI ml-unbind-key - "Remove key binding from message line"
+.SH NAME
+.Me "|ml-bind-key"
+ml-bind-key \- Create key binding for message line
+.br
+.Me "|ml-unbind-key"
+ml-unbind-key \- Remove key binding from message line
+.Me $a
+.SH SYNOPSIS
+.na
+.B ml-bind-key
+"\fIcommand\fR"
+"\fIkey\fR"
+.br
+.B ml-unbind-key
+"\fIkey\fR"
+.ad
+.SH DESCRIPTION
+.B ml-bind-key
+creates a key  binding  local to the  message  line  input  buffer.  There are
+several  commands  that can be used in message  line input, each  command is
+associated with a main buffer editing command and inherits all that commands
+global  bindings,  i.e. moving  forward 1  character  is  associated  with the
+command
+.Ht forward-char 2
+and thus inherits the binding  \fC\*cf\fR (as well as any other like the right
+cursor key). The following is a list of available  commands, what they do and
+their associated commands
+.SS "Cursor Movement"
+.BS
+move backwards 1 character, command:
+.Hl backward-char backward-char 2
+(\fB\*cb\fR)
+.BU
+move forwards 1 character, command:
+.Hl forward-char forward-char 2
+(\fB\*cf\fR)
+.BU
+move backwards 1 word, command:
+.Hl backward-word backward-word 2
+.BU
+move forwards 1 word, command:
+.Hl forward-word forward-word 2
+.BU
+move to the beginning of buffer, command:
+.Hl beginning-of-line beginning-of-line 2
+(\fB\*ca\fR)
+.BU
+move to the end of buffer, command:
+.Hl end-of-line end-of-line 2
+(\fB\*ce\fR)
+.BE 0
+.SS Input
+.BS
+Quote a character, command:
+.Hl quote-char quote-char 2
+(\fB\*cq\fR)
+.BU
+Yank kill buffer into message line, command:
+.Hl yank yank 2
+(\fB\*cy\fR)
+.BU
+insert current buffers current line into the buffer, command:
+.Hl insert-newline insert-newline 2
+(\fB\*co\fR)
+.BU
+insert current buffers file name into the buffer, command:
+.Hl insert-file-name insert-file-name 2
+(\fB\*(cX\*cy\fR).
+.BU
+insert current buffers buffer name into the buffer, command:
+.Hl reyank reyank 2
+(\fB\*ey\fR)
+.BE 0
+.SS Deletion
+.BS
+delete backward 1 character, command:
+.Hl backward-delete-char backward-delete-char 2
+(\fB\*ch\fR)
+.BU
+delete forward 1 character, command:
+.Hl forward-delete-char forward-delete-char 2
+.BU
+kill text from current position to end of line, command:
+.Hl kill-line kill-line 2
+(\fB\*ck\fR).
+.BU
+erase whole line, command
+.Hl kill-region kill-region 2
+(\fB\*cw\fR).  Note  that  in  incremental  searches  this  is used to add the
+current word to the search string.
+.BE 0
+.SS History
+\*(mE stores the last 20 entries of each kind  (command,  buffer, file, search
+and  general  which  is also  saved in the  history  file so the  state of the
+history is retained  when next loaded. The  following  commands can be used to
+manipulate the history.
+.BS
+next history list entry (loop through history), command:
+.Hl forward-paragraph forward-paragraph 2
+(\fB\*en\fR)
+.BU
+previous history list entry, command:
+.Hl forward-paragraph forward-paragraph 2
+(\fB\*ep\fR)
+.BE 0
+.SS Completion
+When  entering a command,  file, buffer or a mode name \*(mE creates a list of
+possible completions the following operations can be performed on this list.
+.BS
+expand. This  completes the given input until the first  ambiguous  character,
+command: a space (' ') or
+.Hl tab tab 2
+(\fB\*ci\fR).
+.BU
+expand  to  the  previous  completion  (loops  through  the  completion  list,
+command:
+.Hl backward-line backward-line 2
+(\fB\*cp\fR)
+.BU
+expand to the next completion (loops through the completion list, command:
+.Hl forward-line forward-line 2
+(\fB\*cn\fR)
+.BU
+create a listing of all  completions,  command:  a double  expansion,  i.e. 2
+spaces or
+.Hl tabs tab 2 .
+The first expands and the second creates the list.
+.BU
+page up the completion list buffer,
+.Hl scroll-up scroll-up 2
+(\fB\*cz\fR)
+.BU
+page down the completion list buffer,
+.Hl scroll-down scroll-down 2
+(\fB\*cv\fR)
+.BE 0
+.SS Miscellaneous
+.BS
+abort input, returning failure to the input,
+.Hl abort-command abort-command 2
+(\fB\*cg\fR)
+.BU
+re-fresh the message line, command:
+.Hl recenter recenter 2
+(\fB\*cl\fR)
+.BU
+finish input, command
+.Hl newline newline 2
+(\fB\*cm\fR, return)
+.BU
+transpose previous character with current character, command:
+.Hl transpose-chars transpose-chars 2
+(\fB\*ct\fR)
+.BU
+capitalize the next word, command:
+.Hl capitalize-word capitalize-word 2
+(\fB\*ec\fR)
+.BU
+Turn the whole of the next word to lower case letters, command:
+.Hl upper-case-word upper-case-word 2
+(\fB\*eu\fR)
+.BU
+Turn the whole of the next word to upper case letters, command:
+.Hl lower-case-word lower-case-word 2
+(\fB\*el\fR)
+.BE
+.B ml-unbind-key
+unbinds a user created  message line key binding, this  command  effects only
+the message line key bindings.
+.SH EXAMPLE
+If  expansion  was  required on the  \fB\*e\*(eS\fR  key binding  then use the
+following:-
+.Me $emf-scheme
+.CS
+ml-bind-key tab \*e\*e
+.CE 0
+.Me $ehf-scheme
+.SH NOTES
+The prefix commands cannot be rebound with this command.
+.PP
+Command key response time will linearly increase with each local binding.
+.SH "SEE ALSO"
+.na
+.Ht global-bind-key 2 ,
+.Ht buffer-bind-key 2 ,
+.Ht describe-bindings 2 ,
+.Ht osd-bind-key 2 ,
+.Ht global-unbind-key 2 .
+.ad
+.FH

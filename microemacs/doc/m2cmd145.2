@@ -1,0 +1,31 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd145.2,v 1.1.1.1 2000-07-25 22:03:57 jon Exp $
+.Im MicroEmacs command|message
+.so me.tni
+.TH ml-write 2
+.XI ml-write - "Write message on message line"
+.SH NAME
+ml-write \- Write message on message line
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B ml-write
+"\fImessage\fR"
+.ad
+.SH DESCRIPTION
+.B ml-write
+writes the given  \fImessage\fR  to the message  line. If a positive  argument
+\fIn\fR is given then there will be an \fIn\fR second  uninterruptible  delay,
+giving the user time to see the message.
+.PP
+A call to \fBml-write\fR  from a callback macro can erase a message line which
+is currently being used (to enter a buffer name say). A call to
+.Ht ml-clear 2
+restores the previous message-line.
+.SH "SEE ALSO"
+.na
+.Ht ml-clear 2 ,
+.Ht create-callback 2 .
+.ad
+.FH

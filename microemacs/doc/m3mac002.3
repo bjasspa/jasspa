@@ -1,0 +1,37 @@
+.Id $Id: m3mac002.3,v 1.1.1.1 2000-07-25 22:03:59 jon Exp $
+.Im MicroEmacs command|file|buffer
+.so me.tni
+.TH save-all 3
+.XI save-all - "Save all modified files (with query)"
+.SH NAME
+save-all \- Save all modified files (with query)
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B save-all
+.ad
+.SH DESCRIPTION
+\fBsave-all\fR  cycles  through all buffers,  dictionaries  and registry files
+writing back any changes made. For each buffer,  dictionary  or registry  file
+which has been  modified the user is prompted  before the changes are saved, a
+value of \fBy\fR initiates the save, \fBn\fR skips the save.
+.PP
+The  argument  \fIn\fR  can  be  used  to  change  the  default  behavior  of
+save-all described above, \fIn\fR is a bit based flag where:-
+.IP \fB0x01\fR
+Enables the user prompt before the file is saved  (default). If this flag is
+not supplied then all modified files will automatically be written.
+.SH NOTES
+\fBsave-all\fR is a macro defined in \fCosd.emf\fR, using commands
+.Ht save-some-buffers 2 ,
+.Ht save-dictionary 2
+and
+.Ht save-registry 2 .
+.SH "SEE ALSO"
+.na
+.Ht save-some-buffers 2 ,
+.Ht save-dictionary 2 ,
+.Ht save-registry 2 .
+.ad
+.FH

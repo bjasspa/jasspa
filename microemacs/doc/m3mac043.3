@@ -1,0 +1,113 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"  			Copyright 1999 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        : 
+.\"  Module        : 
+.\"  Object Name   : m3mac043.3
+.\"  Created By    : Jon Green
+.\"  Created       : Sun May 9 11:55:47 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description	
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"	
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1999 JASSPA.
+.\" 
+.\"  All Rights Reserved.
+.\" 
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied, 
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.Id $Id: m3mac043.3,v 1.1.1.1 2000-07-25 22:04:01 jon Exp $
+.Im MicroEmacs help
+.so me.tni
+.TH info 3
+.XI info - "Display a GNU Info database" command|help
+.XI info-on - "Display Info on a given topic" command|help
+.XI info-goto-link - "Display Info on a given link" command|help
+.XI $INFOPATH 5 "GNU info files base directory" variable|help
+.\".XI .info.path 5 "Cached info search path" variable|help
+.SH NAME
+.Me "|info"
+info \- Display a GNU Info database
+.br
+.Me "|info-on"
+info-on \- Display Info on a given topic
+.br
+.Me "|info-goto-link"
+info-goto-link \- Display Info on a given link
+.br
+.Me "|$INFOPATH"
+\s-1$INFOPATH\s0 \- GNU info files base directory
+.br
+.Me "|.info.path"
+\&.info.path \- Cached info search path
+.Me $a
+.SH SYNOPSIS
+.na
+.B info
+.sp 1
+.B info-on
+.I topic-str
+.sp 1
+.B info-goto-link
+.I link-str
+.sp 1
+.B $INFOPATH
+.I string
+.sp 1
+.B .info.path
+.I string
+.ad
+.SH DESCRIPTION
+\fBinfo\fR
+interprets the GNU \fIinfo\fR pages, and presents the info file information
+within a buffer window called \fC*info\ XXXXX\fR, where \fCXXXXX\fR is the
+name of the info file. The root of the info page is displayed and may be
+traversed by selecting the links with the mouse, or by using the standard
+\fIinfo\fR traversal keys.
+.PP
+The root of the \fIinfo\fR tree is, by default, a file called \fBdir\fR, which
+points to the other  information  sources.  The default  search  paths for the
+\fIinfo\fR directories are:-
+.IP
+\fCc:/info\fR \- \s-1MS-DOS\s0 and MS-Windows (all).
+.br
+\fC/usr/local/info\fR \- All \s-1UNIX\s0 platforms.
+.LP
+The root directory may also be specified with the \fC$INFOPATH\fR  environment
+variable. This is a colon (\fC:\fR) or semi-colon  (\fC;\fR) separated list of
+directory paths which specify the locations of the info files, for \s-1UNIX\s0
+and Microsoft \s-1DOS\s0/Windows environment's, respectively.
+.PP
+\fBinfo-on\fR gets info on a user specified top level topic, e.g. "\fCgcc\fR",
+the info file  "\fItopic-str\fR\fC.info\fR"  must be found in the info  search
+path.
+.PP
+\fBinfo-goto-link\fR  gets  and  displays  info  on a user  specified  link or
+subject.  The  link  may  be  within  the  currently   displayed   topic  (the
+\fIlink-str\fR  need only  specify the subject node name) or a subject  within
+another  topic (in which  case the  \fIlink-str\fR  takes the  following  form
+"\fC(\fR\fItopic\fR\fC)\fR \fIsubject\fR").
+.SH NOTES
+\fBinfo\fR is a macro implemented in file \fCinfo.emf\fR.
+.PP
+When an \fBinfo\fR  command is run for the first time, the info search path is
+constructed and stored locally in the command variable  \fB.info.path\fR. This
+variable  must be  directly  changed by the user if changes to the info search
+path are required.
+.SH "SEE ALSO"
+.na
+.Ht info 9 .
+.ad
+.FH

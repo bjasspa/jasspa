@@ -1,0 +1,70 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil024.4,v 1.1.1.1 2000-07-25 22:04:03 jon Exp $
+.Im MicroEmacs macro;function;miscellaneous
+.so me.tni
+.TH &find 4
+.XI &find - "Find a file on the search path"
+.XI &which - "Find a program on the path"
+.SH NAME
+.Me "|&find"
+&find \- Find a file on the search path
+.br
+.Me "&which"
+&which \- Find a program on the path
+.Me $a
+.SH SYNOPSIS
+.na
+.B &find
+.I <basename>
+.I <extension>
+.br
+.B &which
+.I <progname>
+.ad
+.SH DESCRIPTION
+.B &find
+searches for a named file \fI<basename><extension>\fR on the \*(mE search path
+defined by the variable
+.Ht $search-path 5
+(initialized from the environment variable
+.Ht $MEPATH 5 ).
+Each  path  component  defined  in  \fB$search-path\fR  is  prepended  to  the
+constructed  file name and it's  existence is tested. If the file exists, then
+the  \s-1FULL\s0  path name of the file is  returned to the caller,  otherwise
+\fCERROR\fR.
+.IP "\fI<basename>\fR"
+The base name of the file, excluding any extension.
+.IP "\fI<extension>\fR"
+The  extension  of the file name, this must be  specified  with the  extension
+delimiter,  typically dot  ('\fC.\fR'). A \fCNULL\fR  string (e.g. '\fC""\fR')
+may be specified if no extension is required.
+.PP
+.B &which
+searches  for the given  executable  program  \fI<progname>\fR  on the  system
+program search path defined the the environment variable \fB$PATH\fR.
+.SH USAGE
+.B &find
+is typically used with
+.Ht insert-file 2
+and
+.Ht find-file 2 
+within macro scripts, and is used to locate user specific files.
+.SH EXAMPLE
+The following  example uses  \fB&find\fR to locate the uses 'C' template file.
+Given           a           \fB$search-path\fR            setting           of
+\fC/usr/bob/emacs:/usr/local/microemacs\fR:-
+.Me $emf-scheme
+.CS
+insert-file &find "c" ".etf"
+.CE
+.Me $ehf-scheme
+Would insert the file \fC/usr/bob/emacs/c.etf\fR if it existed, else the file
+\fC/usr/local/microemacs/c.etf\fR if it exists.
+.SH "SEE ALSO"
+.na
+.Hl "Variable Functions" Functions - ,
+.Ht find-file 2 ,
+.Ht $search-path 5 ,
+.Ht insert-file 2 .
+.ad
+.FH

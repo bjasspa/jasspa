@@ -1,0 +1,69 @@
+.\" -*- nroff -*-
+.Id $Id: m2mod019.2,v 1.1.1.1 2000-07-25 22:03:58 jon Exp $
+.Im MicroEmacs modes
+.so me.tni
+.TH autosv 2m
+.XI autosv - "Automatic file save"
+.SH NAME
+autosv \- Automatic file save
+.SH SYNOPSIS
+.B "autosv Mode"
+.sp
+\fBa\fR \- mode line letter.
+.SH DESCRIPTION
+When this mode is enabled when the buffer is changed it will be  automatically
+saved to a temporary file
+.Ht $auto-time 5 
+later.
+.PP
+Automatic saving for a buffer will not occur if
+.IP
+The buffer  name  starts  with a '*', this is  considered  a temporary  system
+buffer.
+.IP
+.Ht $auto-time 5 
+is set to 0, this disables auto-saving for all buffers.
+.IP
+The buffer does not a file name from which to generate a temporary  file name.
+When this occurs the error message:
+.IP
+.C "[Auto-writeout failure for buffer xxxxx]"  
+.IP
+\*(mE can not write to the generated temporary file name. When this occurs the
+error message:
+.IP
+.C "[Auto-writeout failure for file xxxxx#]"  
+.PP
+On unlimited  length file name systems  (\s-1UNIX\s0),  the temporary file
+naming convention used for file \fCxxxxx\fR:
+.IP
+.C "xxxxx -> xxxxx#"
+.LP
+On  systems  with  an  \fCxxxxxxxx.yyy\fR  file  name  (\s-1DOS\s0  etc),  the
+following file naming convention is used:
+.IP
+.nf
+.C "xxxxxxxx     -> xxxxxxxx.###"
+.C "xxxxxxxx.y   -> xxxxxxxx.y##"
+.C "xxxxxxxx.yy  -> xxxxxxxx.yy#"
+.C "xxxxxxxx.yyy -> xxxxxxxx.yy#"
+.fi
+.SH NOTES
+This mode \s-1MUST\s0 be enabled globally when the file is loaded for the file
+style to be correctly detected.
+.PP
+It is \fBstrongly advised\fR that \s-1autosv\s0 mode is permanently enabled.
+.PP
+Auto-save files of URL files (i.e.  "\fCftp://...\fR" and  "\fChttp://...\fR")
+are written to the system's temporary  directory. This avoids potentially slow
+auto-saves. This can however lead to recovery problems as the buffer name must
+be used to avoid  auto-saving  conflict  with other buffers with the same base
+file name but different paths.
+.SH "SEE ALSO"
+.na
+.Ht $auto-time 5 ,
+.Ht backup 2m ,
+.Ht find-file 2 ,
+.Ht ftp 3 .
+.ad
+.FH

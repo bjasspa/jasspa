@@ -1,0 +1,77 @@
+.\" -*- nroff -*-
+.Id $Id: m2mod000.2,v 1.1.1.1 2000-07-25 22:03:57 jon Exp $
+.Im MicroEmacs modes
+.so me.tni
+.TH auto 2m
+.XI auto - "Automatic source file line type detection"
+.SH NAME
+auto \- Automatic source file line type detection
+.SH SYNOPSIS
+.B "auto Mode"
+.sp
+\fBA\fR \- mode line letter.
+.SH DESCRIPTION
+When this mode is enabled the line style of the source  file, with  respect to
+\fCCR/LF/CTRL-Z\fR  characters,  are  automatically  detected and the file (if
+saved)  is  written  out in the  same  style  as it was read in. This  mode is
+designed to solve the problems of \s-1MS-DOS\s0 which utilize a '\fB\\r\\n\fR'
+with  every  new  line and a  \fBctrl-Z\fR  as a file  terminator,  conversely
+\s-1UNIX\s0 utilizes only '\fB\\n\fR' as a line terminator.
+.PP
+\fBauto\fR  mode therefore  allows files to be edited across file system types
+without corrupting the line style of the native platform.
+.PP
+At load time, if \fBauto\fR detects CR/LF style line feeds then it enables the
+buffer mode
+.Ht crlf 2m ,
+and if a CTRL-Z is found at the end of the file then mode
+.Ht ctrlz 2m
+is enabled. Otherwise these modes are cleared. 
+.PP
+At write time, if \fBauto\fR mode is enabled then the file is written out is a
+style determined by modes \fBcrlf\fR and \fBctrlz\fR. For example, if crlf was
+enabled and ctrlz  disabled  then the file would be written out with new lines
+as '\fB\\r\\n\fR' and with no ending ctrl-z.
+.PP
+If auto is not  enabled  then  the  file is  written  out in the  style of the
+current  platform,  regardless of the current settings on modes \fBcrlf\fR and
+\fBctrlz\fR.
+.SH SUMMARY
+The operation on the modes may be summarized as follows:-
+.SS "UNIX Systems"
+.BS
+\fBauto Enabled\fR \s-1UNIX\s0 and \s-1MS-DOS\s0 files may be edited normally,
+edits are saved in the format read by the system.
+.BU
+\fBauto  Disabled\fR  \s-1UNIX\s0 files may be edited normally, files saved as
+\s-1UNIX\s0 files. \s-1MS-DOS\s0 files show a \fC^M\fR character at the end of
+each line (editing is not advised if the purity of the  \s-1MS-DOS\s0 is to be
+maintained), any edits are written back as displayed on the screen.
+.BE 0
+.SS "MS-DOS Systems"
+.BS
+\fBauto Enabled\fR \s-1UNIX\s0 and \s-1MS-DOS\s0 files may be edited normally,
+edits are saved in the format read by the system.
+.BU
+\fBauto  Disabled\fR  on  reading  all  files  are  read  and  editing  may be
+undertaken   normally.  On  writing,   '\fB\\r\fR's  and  a  \fBctrl-Z\fR  are
+automatically  added. The act of reading a \s-1UNIX\s0  file and re-writing it
+translates it to an \s-1MS-DOS\s0 file.
+.BE 0
+.SH NOTES
+This mode \s-1MUST\s0 be enabled globally when the file is loaded for the file
+style to be correctly detected.
+.PP
+It is \fBstrongly advised\fR that \s-1auto\s0 mode is permanently enabled.
+.PP
+Windows  systems  tend to use a  '\fB\\r\\n\fR'  style  line  feed but with no
+trailing ctrl-z.
+.SH "SEE ALSO"
+.na
+.Ht global-mode 2 ,
+.Ht buffer-mode 2 ,
+.Ht crlf 2m ,
+.Ht ctrlz 2m ,
+.Ht $buffer-fmod 5 .
+.ad
+.FH

@@ -1,0 +1,52 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd105.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|shell
+.ds C0 "(\fB\*(cX\*cq\fR)\ \&
+.so me.tni
+.TH rcs-file 2
+.XI rcs-file - "\*(C0Handle Revision Control System (RCS) files"
+.SH NAME
+rcs-file \- Handle Revision Control System (RCS) files
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+\fBrcs-file\fR \*(C0
+.ad
+.SH DESCRIPTION
+\*(mE \s-1RCS\s0  support command. The action of this command depends on the
+current buffer
+.Ht view 2m
+mode state, the argument \fIn\fR, and the existence of an \s-1RCS\s0 file.
+.IP "\fBview-mode ON; RCS file does not exist\fR"
+Removes buffer view mode to enable the user to edit the file.
+.IP "\fBview-mode ON; RCS file exists\fR"
+\*(mS  attempts  to check out the file  using the  command  line  given by the
+variable
+.Ht $rcs-cou-com 5
+(co unlock). The file is then reloaded and the view mode status re-evaluated.
+.IP "\fBview-mode OFF; RCS file does not exist\fR"
+\*(mS  attempts  to  check-in  the file into RCS for the first  time using the
+command-line given by the variable
+.Ht $rcs-cif-com 5
+(ci first). The file is then reload.
+.IP "\fBview-mode OFF; RCS file exists\fR"
+\*(mS attempts to check-in the file into RCS using the  command-line  given by
+the variable
+.Ht $rcs-ci-com 5 .
+The file is then reload.
+.IP "\fB\-ve argument given\fR"
+\*(mS  attempts to unedit any changes made to the file using the  command-line
+given by the variable
+.Ht $rcs-ue-com 5 .
+The file is then reload.
+.SH "SEE ALSO"
+.na
+.Hr rcs 1 .
+.Ht $rcs-file 5 ,
+.Ht buffer-mode 2 ,
+.Ht find-file 2 ,
+.Ht view 2m .
+.ad
+.rm C0
+.FH

@@ -1,0 +1,35 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil020.4,v 1.1.1.1 2000-07-25 22:04:03 jon Exp $
+.Im MicroEmacs macro;variable
+.so me.tni
+.TH "@y" 4
+.XI "@y" - "Yank buffer variable"
+.SH NAME
+@y \- Yank buffer variable
+.SH SYNOPSIS
+\fB@y\fR \- Yank buffer variable
+.SH DESCRIPTION
+The \fIYank Buffer Variable\fR \fB@y\fR  retrieves the current 
+.Ht yank 2
+string from the kill buffer and returns it to the caller.
+.SH EXAMPLE
+The current  contents of the yank buffer can be obtained using \fB@y\fR, so to
+set  variable \fC#l1\fR to the  current or last word if the cursor is not in a
+word, simply use:
+.Me $emf-scheme
+.CS        
+    forward-char
+    backward-word
+    set-mark
+    forward-word
+    copy-region
+    set-variable #l1 @y
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Hl MacroArguments MacroArguments 4 ,
+.Hl MacroNumericArguments MacroNumericArguments 4 ,
+.Ht define-macro 2 .
+.ad
+.FH

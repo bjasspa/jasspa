@@ -1,0 +1,41 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd139.2,v 1.1.1.1 2000-07-25 22:03:57 jon Exp $
+.Im MicroEmacs command|macrodevelop
+.ds C0 "(\fB\*(rD\fR)\ \&
+.so me.tni
+.TH screen-update 2
+.XI screen-update - "\*(C0Force screen update"
+.SH NAME
+screen-update \- Force screen update
+.Me $a
+.SH SYNOPSIS
+.na
+\fIn\fR \fBscreen-update\fR \*(C0
+.ad
+.SH DESCRIPTION
+.B screen-update
+updates the current screen, usually used in macros. If the argument \fIn\fR is
+0 then only the parts of the screen which  require  updating are redrawn, else
+the screen is completely cleared and redrawn (as if garbled).
+.PP
+Every time the screen requires  updating, \*(mE executes the \fIredraw\fR key,
+it is similar in  mechanism  to the user  pressing  \fIC-l\fR  to refresh  the
+screen. Also the user can re-bind the  \fIredraw\fR  key to another command or
+macro, there by allowing the user complete  control of what is displayed.  For
+example if \fIredraw\fR was bound to
+.Ht void 2
+the screen  would not be up-dated,  this is  difficult  to get out of and many
+require \*(mE to be killed.
+.PP
+This feature is often  exploited by macros which take control of the input and
+output, such macros include 
+.Ht Metris 3 ,
+and
+.Ht Mahjongg 3 .
+.SH "SEE ALSO"
+.na
+.Ht recenter 2 ,
+.Ht screen-poke 2 .
+.ad
+.rm C0
+.FH

@@ -1,0 +1,24 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd097.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|insert
+.ds C0 "(\fB\*co\fR)\ \&
+.so me.tni
+.TH insert-newline 2
+.XI insert-newline - "\*(C0Insert new line at cursor position"
+.SH NAME
+insert-newline \- Move the cursor to the next word
+.Me $a
+.SH SYNOPSIS
+.na
+\fIn\fR \fBinsert-newline\fR \*(C0
+.ad
+.SH DESCRIPTION
+.B insert-newline
+inserts  \fIn\fR new lines at the current  cursor  position, but does not move
+the cursor. Any text following the cursor is moved to the newly created line.
+.SH "SEE ALSO"
+.na
+.Ht newline 2 .
+.ad
+.rm C0
+.FH

@@ -1,0 +1,40 @@
+.\" -*- nroff -*-
+.Id $Id: m2mod017.2,v 1.1.1.1 2000-07-25 22:03:58 jon Exp $
+.Im MicroEmacs modes
+.so me.tni
+.TH wrap 2m
+.XI wrap - "Line wrap entered text"
+.SH NAME
+wrap \- Line wrap entered text
+.SH SYNOPSIS
+.B "wrap Mode"
+.sp
+\fB\&W\fR\& \- mode line letters.
+.SH DESCRIPTION
+.B wrap
+mode causes automatic text wrapping when text passes then fill column (see
+.Ht $fill-col 5 ),
+allowing text to be entered non-stop on a standard screen without bothering to
+use the \fCRETURN\fR key.
+.PP
+.B wrap
+mode is usually used in conjunction with the
+.Ht justify 2m
+and
+.Ht indent 2m
+modes for editing text documents.
+.PP
+.B wrap
+mode also automatically wraps long lines in the output of an
+.Ht ipipe-shell-command 2 
+to the width of the \*(mE window.
+.SH "SEE ALSO"
+.na
+.Ht buffer-mode 2 ,
+.Ht global-mode 2 ,
+.Ht ipipe-shell-command 2 
+.Ht justify 2m ,
+.Ht indent 2m ,
+.Ht pipe 2m .
+.ad
+.FH

@@ -1,0 +1,246 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"  			Copyright 1998 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        : 
+.\"  Module        : 
+.\"  Object Name   : m3mac028.3
+.\"  Created By    : Steven Phillips
+.\"  Created       : Fri Aug 7 07:32:59 1998
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description	
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"	
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1998 JASSPA.
+.\" 
+.\"  All Rights Reserved.
+.\" 
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied, 
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m3mac028.3,v 1.1.1.1 2000-07-25 22:04:00 jon Exp $
+.Im MicroEmacs command
+.so me.tni
+.TH vm 3
+.XI vm \- "Email viewer"
+.XI mail-check \- "Check for new email"
+.XI stop-mail-check \- "Disable the check for new email"
+.XI mail \- "Compose and send an email"
+.SH NAME
+.Me "|vm"
+vm - Email viewer
+.br
+.Me "|mail-check"
+mail-check - Check for new email
+.br
+.Me "|stop-mail-check"
+stop-mail-check - Disable the check for new email
+.br
+.Me "|mail"
+mail - Compose and send an email
+.Me $a
+.SH SYNOPSIS
+.na
+.B vm
+.br
+.B mail-check
+.br
+.B stop-mail-check
+.br
+.B mail
+.ad
+.SH DESCRIPTION
+\fBvm\fR  is a simple  email  manager, it is  configured  to send and  receive
+emails using the
+.Ht user-setup 3
+Mail dialog.
+.PP
+\fBmail-check\fR  tests the size of this incoming mail box, a non-zero  length
+indicates that new mail has arrived and  \fBmail-check\fR  informs the user by
+inserting  a  '\fCM\fR'  in the  mode-line  (2nd  character  for the left) and
+ringing the system bell. \fBmail-check\fR uses
+.Ht create-callback 2
+to check for new mail every 10  minutes,  this can be  disabled  by  executing
+\fBstop-mail-check\fR.
+.PP
+When \fBvm\fR is executed it checks for new mail, if found it first copies the
+new mail to a file called  "\fCnew_mail\fR"  in the users mail  directory. The
+incoming box is then emptied by truncating  the file to zero length. The users
+main mail box is then loaded and the new mail (if any) is  appended.  The mail
+box is then  processed  after  which 2 windows  are created the bottom  window
+listing all messages in the box and the top displaying the current message.
+.PP
+\fBvm\fR is capable of:
+.BS
+Scrolling  through the mail box displaying  each message  (\fCup\fR,  \fCp\fR,
+\fCdown\fR, \fCn\fR, \fCreturn\fR, \fCspace\fR).
+.BU
+Check and get new mail messages (\fCg\fR).
+.BU
+Extract and cut embedded data files (\fCx\fR, \fCC\fR, \fCc\fR).
+.BU
+Reply to and forward mail messages (\fCR\fR, \fCr\fR, \fCz\fR).
+.BU
+Delete mail messages (\fCd\fR, \fCu\fR).
+.BU
+Archive messages to other mail boxes (\fCA\fR, \fCa\fR).
+.BU
+Save changes to the current mail box (\fCS\fR, \fCs\fR).
+.BU
+Delete the current mail box (\fCD\fR).
+.BU
+Visit another mail box (\fCv\fR).
+.BU
+Send a mail message (\fCm\fR).
+.BU
+Hide vm windows (\fCdelete\fR).
+.BE
+Use the vm help page (bound to "\fCesc h\fR") for further information.
+.PP
+\fBvm\fR  supports two types of embedded  data, uuencode and mime encoding and
+uses
+.Ht ipipe-shell-command 2
+to extract the data, the  commanding to use must be supplied by the user using
+the setup dialog, which can contain the following special tokens:
+.IP \fC%i\fR
+Temporary  file name, if used, the  embedded  data is written to the this file
+first.
+.IP \fC%o\fR
+User supplied  output file name, if \fC%i\fR is not used, the embedded data is
+written to this file first.
+.IP \fC%b\fR
+The output base name, i.e. \fC%o\fR without the path.
+.PP
+If no command line is supplied  then the embedded  data is written to the user
+supplied file name as a text file in the form found in the mail message.
+.PP
+\fBmail\fR  can be used to compose and send an email, it can insert  embedded
+data in a similar way to \fBvm\fR's  data  extraction,  the following  special
+tokens can be used:
+.IP \fC%i\fR
+The user supplied data file to be embedded.
+.IP \fC%b\fR
+The input base name, i.e. \fC%i\fR without the path.
+.IP \fC%o\fR
+Temporary  file name used to output  the  processed  data  file,  this file is
+inserted into the mail message using
+.Ht insert-file 2 .
+.PP
+\fBmail\fR  also uses  \fBipipe-shell-command\fR to send the mail message, the
+following special tokens can be used:
+.IP \fC%f\fR
+The from user name.
+.IP \fC%s\fR
+The email subject.
+.IP \fC%t\fR
+A comma separated list of 'To' recipients.
+.IP \fC%c\fR
+A comma separated list of 'Cc' recipients.
+.IP \fC%o\fR
+A file name of the mail message.
+.PP
+Any field not used in the command-line is left at the head of the mail message.
+.SH "EXAMPLE - UNIX"
+The  following  command-line  can be  used on most  UNIX  systems  to  extract
+uuencoded data:
+.CS
+rm -f %o ; uudecode %i ; rm -f %i
+.CE
+The  following  command-line  can be  used on most  UNIX  systems  to  extract
+mime encoded data:
+.CS
+rm -f /tmp/%b ; metamail -B -d -q -w -x -z %i ; mv -f /tmp/%b %o
+.CE
+The following command-line can be used on most UNIX systems to uuencode a data
+file ready for it to be embedded, the original file is not changed:
+.CS
+uuencode %b < %i > %o
+.CE
+The following command-line can be used on most UNIX systems to send an email:
+.CS
+/usr/lib/sendmail -oi -oem -odi -t < %o
+.CE 0
+.SH "EXAMPLE - WIN32"
+Typically the
+.Hr cygnus 1
+utilities  can be used  for data  insertion  and  extraction.  These  have the
+advantage  of being very  similar to the unix ones so only minor  changes  are
+required,  i.e. try the  following  for  data  insertion  and mime &  uuencode
+extraction respectively:
+.CS
+del %o ^ uudecode %i ^ del %i
+del c:\\tmp\\%b ^ metamail -B -d -q -w -x -z %i ^ move c:\\tmp\\%b %o
+uuencode %b < %i > %o
+.CE
+This assumes that the shell you are using  supports the '\fC^\fR' multiple  commands
+on a single line feature, this is supported by
+.Hr 4dos 1
+and
+.Hr 4nt 1 .
+If your shell does not support this feature a simple batch file command  could
+be used instead.
+.PP
+.Hr postie 1
+is a freely available  pop3/smpt e-mail support program, available on the net,
+which can be used to provide a fully working  \fBvm\fR on windows  systems. As
+it is typically used in a dial-up connect  environment,  the  \fBuser-setup\fR
+\'Queue  Outgoing  Mail' option will be enabled while the 'Check Mail' and 'VM
+Gets Mail' will be disabled.  This ensures that a connection is only made when
+the \fBvm\fR '\fCg\fR' command is used which sets all queued outgoing mail and
+gets any incoming mail.
+.PP
+The following  command-line can be used to get mail from your pop server using
+postie:
+.CS
+postie -host:pop-mail-addr -user:user-addr -pass:password -file:inbox
+        "-sep:From root Mon Jan 11 20:02:02 1999" -raw -rm
+.CE
+Where the \fCinbox\fR is the 'Incoming Mail Box' file specified in user-setup.
+The \fC-sep\fR option is used to partition each mail message from the previous
+message, this string is used as it is in a unix standard form so the resulting
+mail box could be understood by unix mail systems such as netscape etc.
+.PP
+NOTE: The \fB-rm\fR  option is used to remove the incoming  mail messages from
+the server. It is strongly  recommended  that the system is thoroughly  tested
+without this option first.
+.PP
+The following  command-line can be used to send mail to your smtp server using
+postie:
+.CS
+postie -host:smtp-mail-addr "-from:user@mail-addr" -use_mime:0
+        "-to:%t" "-s:%s" "-cc:%c" "-file:%o"
+.CE
+.Hr blat 1
+is another  freely  available  windows  program which can be used to send mail
+with the following command-line:
+.CS
+blat %o -f %f -s \\"%s\\" -t \\"%t\\" -c \\"%c\\"
+.CE 0
+.SH NOTES
+\fBvm\fR   is   a   macro   defined   in    \fCvm.emf\fR,    \fBmail-check\fR,
+\fBstop-mail-check\fR and \fBmail\fR are macros defined in \fCmail.emf\fR.
+.PP
+\fBvm\fR has only been tested in a couple of environments, the author will not
+except  any  responsibility  for any loss of data, i.e. use at your own peril.
+You have been  warned!  Back-up  all data files and test  \fBvm\fR  THOROUGHLY
+before using it.
+.SH "SEE ALSO"
+.na
+.Ht user-setup 3 ,
+.Ht ipipe-shell-command 2 ,
+.Ht create-callback 2 ,
+.Hr sendmail 1 .
+.ad
+.FH
+

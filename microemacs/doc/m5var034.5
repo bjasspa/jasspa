@@ -1,0 +1,108 @@
+.\" -*- nroff -*-
+.Id $Id: m5var034.5,v 1.1.1.1 2000-07-25 22:04:05 jon Exp $
+.Im MicroEmacs variable|macrodevelop
+.so me.tni
+.TH $platform 5
+.XI $platform - "\\*(mS host platform identifier"
+.\".XI %platform - "\\*(mS host platform type identifier"
+.SH NAME
+.br
+.Me "|$platform"
+$platform \- \*(mS host platform identifier
+.br
+.Me "|%platform"
+%platform \- \*(mS host platform type identifier
+.Me $a
+.SH SYNOPSIS
+.na
+\fB$platform\fR "\fIstring\fR"; Default is platform specific
+.br
+\fB%platform\fR "\fIstring\fR"; Default is platform specific
+.ad
+.SH DESCRIPTION
+The
+.B $platform
+variable  is a  fixed  ASCII  string  used to  identify  the  current  working
+platform,  attempts  to set this  variable  result in an error  returned  from
+.Ht set-variable 2 .
+.PP
+Possible values are:
+.TP
+"\fBaix\fR"
+All IBM \s-1AIX\s0 \s-1O/S\s0.
+.TP
+"\fBdos\fR"
+All \s-1IBM-PC\s0s and compatibles running \s-1MS-DOS\s0.
+.TP
+"\fBfreebsd\fR"
+All \s-1FreeBSD\s0 \s-1O/S\s0.
+.TP
+"\fBhpux\fR"
+All Hewlett Packard's with \s-1HP-UX\s0 \s-1O/S\s0.
+.TP
+"\fBirix\fR"
+All Silicon Graphics (\s-1SGI\s0) \s-1IRIX\s0 platforms 4.x, 5.x, 6.x.
+.TP
+"\fBlinux\fR"
+All \s-1LINUX\s0 \s-1O/S\s0.
+.TP
+"\fBsunos\fR"
+All Sun's with \s-1SUNOS\s0 \s-1O/S\s0.
+.TP
+"\fBunixwr1\fR"
+\s-1PC\s0 based \s-1UNIX\s0 platform (Consensus and Unixware).
+.TP
+"\fBwin32\fR"
+Microsoft Windows based systems including \s-1Windows 3.x\s0 (with Win32s),
+\s-1Windows \'95\s0 and \s-1NT\s0.
+.LP
+.B  $platform
+is often used in \fB.emf\fR  files to allow  portability  of macro files across
+platforms, allowing macro files to perform platform specific operations.
+.Ht $system 5
+is also often used for this purpose as its value is easier to assess.
+.PP
+\fB%platform\fR  is created at start-up  when  \fCme.emf\fR  is executed,  its
+value is identical to \fB$platform\fR except when the platform is a console in
+which case a '\fCc\fR'  is  appended  to the  $platform  value, e.g. for \*(mS
+running a termcap  version on \s-1LINUX\s0  the value will be  "\fClinuxc\fR".
+The  variable is used when the console and window  based  versions  need to be
+distinguish, e.g. some of the
+.Hl "user-setup" user-setup 3
+settings.  
+.SH EXAMPLE
+The following example is taken from the \fBme.emf\fR file which uses the 
+.B $platform
+variable to load the platform specific initialization files.
+.Me $emf-scheme
+.CS
+;
+; load in the platform specific stuff
+execute-file $platform
+.CE
+.Me $ehf-scheme
+This could be more explicitly done by:
+.Me $emf-scheme
+.CS
+;
+; load in the platform specific stuff
+!if   &seq $platform "dos"            ; is it an IBM-PC running dos ?
+    execute-file "dos"
+!elif &seq $platform "irix"           ; is it an sgi ?
+    execute-file "irix"
+!elif &seq $platform "hpux"           ; is it an hp ?
+    execute-file "hpux"
+    .
+    .
+!endif
+.CE 0
+.Me $ehf-scheme
+.SH NOTES
+The \fB$platform\fR variable can not be set. Any attempt to set it will result
+in an error.
+.SH "SEE ALSO"
+.na
+.Ht $system 5 ,
+.Ht set-variable 2 .
+.ad
+.FH

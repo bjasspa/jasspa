@@ -1,0 +1,56 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil025.4,v 1.1.1.1 2000-07-25 22:04:03 jon Exp $
+.Im MicroEmacs macro;directive|miscellaneousOperators
+.so me.tni
+.TH !nmacro 4
+.XI !nmacro - "Ignore command or macro status"
+.SH NAME
+!nmacro \- Execute line as if not in a macro
+.SH SYNOPSIS
+.na
+.B !nmacro
+.I command
+.ad
+.SH DESCRIPTION
+.B !nmacro
+causes  \fIcommand\fR  to be executed as if it were initiated from the command
+line by the user, rather than from the macro  context.  When \*(mE  executes a
+macro, by default any input the command  requires is expected on the same line
+immediately following the command. If a line is preceded by a \fB!nmacro\fR (or
+\fB!nma\fR)  directive,  the command is executed as if it was invoked from the
+command  line by the  user, as such, the rest of the line is  ignored  and all
+input is obtained directly from the user, as per normal command interaction.
+.SH EXAMPLE
+The following example is taken from macro file  \fCme3_8.emf\fR  and shows how
+to add a buffer mode.
+.Me $emf-scheme
+.CS
+; Add a buffer mode
+define-macro add-mode
+    ; Has the require mode been given as an argument, if so add it
+    !force 1 buffer-mode @1
+    !if &not $status
+        ; No - use 1 buffer-mode to add a mode
+        !nma 1 buffer-mode
+    !endif
+!emacro
+.CE
+.Me $ehf-scheme
+The first line  checks  that the mode to add has not  already  been given as a
+macro argument, e.g. by executing the following line
+.Me $emf-scheme
+.CS
+buffer-add-mode "view"
+.CE
+.Me $ehf-scheme
+If this line fails then the  argument was not  specified  and must be obtained
+from the user as normal.
+.SH NOTES
+Individual arguments may be obtained from the user using the
+.Ht @mn 4
+interactive macro variables.
+.SH "SEE ALSO"
+.na
+.Ht @mn 4 .
+.ad
+.FH

@@ -1,0 +1,41 @@
+.\" -*- nroff -*-
+.Id $Id: m5var079.5,v 1.1.1.1 2000-07-25 22:04:07 jon Exp $
+.Im MicroEmacs variable|file
+.so me.tni
+.TH %http-proxy-addr 5
+.XI %http-proxy-addr - "Set HTTP proxy server address"
+.XI %http-proxy-port - "Set HTTP proxy server port"
+.SH NAME
+.Me "|%http-proxy-addr"
+%http-proxy-addr \- Set HTTP proxy server address
+.br
+.Me "|%http-proxy-port"
+%http-proxy-port \- Set HTTP proxy server port
+.Me $a
+.SH SYNOPSIS
+\fB%http-proxy-addr\fR "\fIproxy-addr\fR" 
+.br
+\fB%http-proxy-port\fR "\fIport-number\fR"; Default is \fC80\fR
+.SH DESCRIPTION
+If the \fB%http-proxy-addr\fR  variable is set all HTTP file loading requests,
+using commands like
+.Ht find-file 2 ,
+are sent via the given proxy server.  \fB%http-proxy-port\fR  should be set to
+the proxy  servers  port  number,  defaulting  to  \fC80\fR  if not set. These
+variables are typically set in your \fC<user>.emf\fR setup file, e.g.:
+.Me $emf-scheme
+.CS
+set-variable %http-proxy-addr "proxy.foobar.com"
+set-variable %http-proxy-port "8080"
+.CE 0
+.Me $ehf-scheme
+.SH NOTES
+Note that http is available on \s-1UNIX\s0 by default, but must be compiled in
+for win32 versions.
+.SH "SEE ALSO"
+.na
+.Ht %http-flags 5 ,
+.Ht find-file 2 ,
+.Ht ftp 3 .
+.ad
+.FH

@@ -1,0 +1,47 @@
+.\" -*- nroff -*-
+.Id $Id: m5var011.5,v 1.1.1.1 2000-07-25 22:04:04 jon Exp $
+.Im MicroEmacs variable|macrodevelop|macro
+.so me.tni
+.TH $debug 5
+.XI $debug - "Macro debugging flag"
+.SH NAME
+$debug \- Macro debugging flag
+.Me $a
+.SH SYNOPSIS
+\fB$debug\fR \fIdebugLevel\fR; Default is \fC0\fR
+.sp
+-2 <= \fIdebugLevel\fR <= 2
+.SH DESCRIPTION
+.B $debug
+is a flag to trigger macro debugging. A setting of 1 or 2 enables debugging, 0
+disables  debugging  (default). A  \fB$debug\fR  setting of 2 debugs all macro
+lines encountered, whereas a setting of 1 debugs only the lines executed, i.e.
+if a false \fB!if\fR was  encountered the lines within the \fB!if\fR would not
+be  printed.   Problems  arise  with   \fB!elif\fR   and   \fB!else\fR  and  a
+\fIdebugLevel\fR  setting of 1 as the  \fB!elif\fR  and \fB!else\fR  lines are
+never printed.
+.PP
+A \-ve setting disables debugging and has no immediate effect. However as soon
+as the  bell is rung  the  value  is  inverted  (\-1 to 1, \-2 to 2)  enabling
+debugging.  This can be  invaluable  when tracing  problems,  for example the
+following macro code will loop infinitely:-
+.Me $emf-scheme
+.CS
+!repeat
+    beginning-of-line
+    backward-char
+    !force forward-line
+!until &not $status
+.CE
+.Me $ehf-scheme
+This is a fairly  obvious bug, but if buried in a thousand lines of macro code
+it could be very  difficult to spot and to find it during  execution  would be
+very tedious if not  impossible. But by setting  \fB$debug\fR to \-1 the macro
+can be  executed  as  normal  and as soon as the  macro is stuck  the user can
+simply press "\fCC-g\fR" (\fBabort-command\fR) which rings the bell and starts
+macro debugging at the current execution point.
+.SH "SEE ALSO"
+.na
+.Ht execute-file 2 .
+.ad
+.FH

@@ -1,0 +1,116 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil032.4,v 1.1.1.1 2000-07-25 22:04:03 jon Exp $
+.Im MicroEmacs macro;directive|miscellaneousOperators
+.so me.tni
+.TH !jump 4
+.XI !jump - "Unconditional jump"
+.XI !tjump - "Unconditional relative branch"
+.SH NAME
+.Me "|!jump"
+!jump \- Unconditional relative branch
+.br
+.Me "|!tjump"
+!tjump \- conditional relative branch
+.SH SYNOPSIS
+.na
+.nf
+\fB!jump\fR \fIoffset\fR
+\fB!tjump\fR \fIcondition\fR \fIoffset\fR 
+.fi
+.ad
+.SH DESCRIPTION
+Flow can be controlled  within a \*(mE macro using the \fB!jump\fR  directive.
+It takes as a numerical  argument  \fIoffset\fR.  The \fIoffset\fR is a signed
+relative  displacement,  it may be a literal  numeric  value, a variable or an
+evaluated expression (see
+.Hl "Variable Functions"  Functions - ).
+The displacement to jump starts from the current \fB!jump\fR line. (i.e.
+.BR "0 goto" )
+would loop  forever as it jumps to  itself).  Negative  \fIoffset\fR  branches
+backwards, positive \fIoffset\fR forwards.
+.PP
+A  conditional  relative  branch, with a numerical  displacement  is specified
+using \fB!tjump\fR. This has an additional argument  \fIcondition\fR  which is
+evaluated  and if  \s-1TRUE\s0  (Non-zero)  then  the  branch  is  taken.  The
+\fIcondition\fR may be a variable or an evaluated expression.
+.PP
+\fB!jump\fR and \fB!tjump\fR are fast equivalents of 
+.Ht !goto 4 
+and 
+.Ht !tgoto 4 ,
+respectively.  \fB!jump\fR should be used with care as these calls are source
+sensitive and  unexpected  results may be obtained if the  \fIoffset\fR's  are
+specified incorrectly.
+.SH WARNING
+Comments  are not  counted as valid lines  within the  relative  displacement,
+these are stripped out when the macro is loaded. When using a relative  branch
+ensure that \s-1ONLY\s0 the \fIcode\fR lines are counted.
+.SH EXAMPLE
+For some seriously dirty macro tricks then the \fB!jump\fR  directive  becomes
+very useful. The following example is taken from the \fBMetris\fR macro (which
+is packed with  goodies if you can find time to work out what it does !!). The
+following example uses the random number generator
+.Ht $random 5
+to generate a random  number  which scaled and used as a  \fB!jump\fR  offset,
+thereby creating a \fIswitch\fR type statement.
+.Me $emf-scheme
+.CS
+0 define-macro met-select-piece
+    !jump &mul 5 &add 1 &div &mod $random 71 10
+    set-variable :met-np1 " X "  ; 1st 3 lines are dummies to get offset right
+    set-variable :met-np1 " X "
+    set-variable :met-np1 " X "
+    set-variable :met-np1 " X "
+    set-variable :met-np1 " X "
+    set-variable :met-np2 "XX "
+    set-variable :met-np3 " X "
+    set-variable :met-ncol %lyellow
+    !return
+    set-variable :met-np1 "XX "
+    set-variable :met-np2 "XX "
+    set-variable :met-np3 "   "
+    set-variable :met-ncol %yellow
+    !return
+    set-variable :met-np1 "X  "
+    set-variable :met-np2 "XX "
+    set-variable :met-np3 " X "
+    set-variable :met-ncol %lmagenta
+    !return
+    set-variable :met-np1 "  X"
+    set-variable :met-np2 " XX"
+    set-variable :met-np3 " X "
+    set-variable :met-ncol %lgreen
+    !return
+    set-variable :met-np1 " X "
+    set-variable :met-np2 " X "
+    set-variable :met-np3 " XX"
+    set-variable :met-ncol %magenta
+    !return
+    set-variable :met-np1 " X "
+    set-variable :met-np2 " X "
+    set-variable :met-np3 "XX "
+    set-variable :met-ncol %green
+    !return
+    set-variable :met-np1 " X "
+    set-variable :met-np2 " X "
+    set-variable :met-np3 " X "
+    set-variable :met-ncol %lblue
+    !return
+    set-variable :met-np1 " X "
+    set-variable :met-np2 " X "
+    set-variable :met-np3 "X X"
+    set-variable :met-ncol %lred
+!emacro
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Hl "Variable Fuctions" Functions - ,
+.Ht !goto 4 ,
+.Ht !if 4 ,
+.Ht !repeat 4 ,
+.Ht !return 4 ,
+.Ht !tgoto 4 ,
+.Ht !while 4 .
+.ad
+.FH

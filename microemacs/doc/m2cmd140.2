@@ -1,0 +1,32 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd140.2,v 1.1.1.1 2000-07-25 22:03:57 jon Exp $
+.Im MicroEmacs command|file
+.ds C0 "(\fB\*(cX\*cv\fR)\ \&
+.so me.tni
+.TH view-file 2
+.XI view-file - "\*(C0Load a file read only"
+.SH NAME
+view-file \- Load a file read only
+.Me $a
+.SH SYNOPSIS
+.na
+.B view-file
+"\fIfile-name\fR" \*(C0
+.ad
+.SH DESCRIPTION
+.B view-file
+is like
+.Ht find-file 2 ,
+and  either  finds the file in a buffer, or creates a new buffer and reads the
+file in. A new file is left in
+.Ht view 2m
+mode if the file was found (i.e. cannot be edited).
+.SH "SEE ALSO"
+.na
+.Ht buffer-mode 2 ,
+.Ht find-file 2 ,
+.Ht read-file 2 ,
+.Ht view 2m .
+.ad
+.rm C0
+.FH

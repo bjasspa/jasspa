@@ -1,0 +1,29 @@
+.\" -*- nroff -*-
+.Id $Id: m2mod030.2,v 1.1.1.1 2000-07-25 22:03:59 jon Exp $
+.Im MicroEmacs modes
+.so me.tni
+.TH ctrlz 2m
+.XI ctrlz - "File's termination style"
+.SH NAME
+ctrlz \- File's termination style
+.SH SYNOPSIS
+.B "ctrlz Mode"
+.sp
+\fBz\fR \- mode line letter.
+.SH DESCRIPTION
+When enabled \fBctrlz\fR  indicates that an \s-1MS-DOS\s0 style '\fBctrl-z\fR'
+file  termination  character  should be written out. When clear, a \s-1UNIX\s0
+style of no termination character should be used.
+.SH NOTES
+This mode only effects the style in which the buffer is written if
+.Ht auto 2m
+mode is enabled.
+.SH "SEE ALSO"
+.na
+.Ht auto 2m ,
+.Ht crlf 2m ,
+.Ht save-buffer 2 ,
+.Ht find-file 2 ,
+.Ht $buffer-fmod 5 .
+.ad
+.FH

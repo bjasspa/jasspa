@@ -1,0 +1,30 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd047.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|macro
+.ds C0 "\*ex\&
+.so me.tni
+.TH execute-named-command 2
+.XI execute-named-command \- "[\\fB\*(C0\\fR] Execute a named command"
+.SH NAME
+execute-named-command \- Execute a named command 
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B execute-named-command
+"\fIcommand-string\fR" \*(C0
+.ad
+.SH DESCRIPTION
+.B execute-named-command
+command  prompts  the  user  for the name of a  command  to  execute  and then
+executes  the command  \fIn\fR  times. \*(mE  offers  command  completion  and
+history facilities, see
+.Ht ml-bind-key 2 . 
+.SH "SEE ALSO"
+.na
+.Ht execute-buffer 2 ,
+.Ht describe-bindings 2 ,
+.Ht ml-bind-key 2 .
+.ad
+.rm C0
+.FH

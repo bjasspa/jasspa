@@ -1,0 +1,104 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil019.4,v 1.1.1.1 2000-07-25 22:04:03 jon Exp $
+.Im MicroEmacs macro;variable
+.so me.tni
+.TH "MacroNumericArguments" 4
+.XI "MacroNumericArguments" - "Numeric arguments to macros"
+.SH NAME
+@#, @? \- Macro numeric arguments
+.SH SYNOPSIS
+\fB@#\fR \- The numerical argument to a macro
+.br
+\fB@?\fR \- The truth of the numerical argument to a macro
+.SH DESCRIPTION
+All built-in  commands and macros are invoked with a numerical  argument.  The
+argument  is  obtained  from either the command  line when the user  invokes a
+command line such as:
+.IP
+.B "esc 5 esc x forward-char"
+.LP
+where the argument is entered after
+.Hl "prefix 1" prefix 2
+(\fBesc\fR).  In  this  case,  causing  the  cursor  to  be  moved  forward  5
+characters. Within a macro file the same operation is defined as:-
+.IP
+.B "5 forward-char"
+.LP
+In both cases the  numerical  argument 5 is passed to the  command  requesting
+that  the  resultant  operation  is  performed  5 times in  succession  before
+returning. The command itself is invoked once, it is the responsibility of the
+command to iterate if requested.
+.PP
+The command  determines how the numerical argument is interpreted, in the case
+of
+.Hl spell-word spell-word 3
+the argument  identifies the type of word that is being spelled and \s-1NOT\s0
+the number of words to spell.
+.PP
+The  invocation of named macros operate in the same way, the macro may use the
+variables  \fB@?\fR  and  \fB@#\fR to  determine  the status of the  numerical
+argument passed to it. The variables are interpreted as follows:
+.IP \fB@?\fR
+A logical  value  defined as  \fCTRUE\fR (1) if a numerical  argument has been
+specified, otherwise \fCFALSE\fR (0).
+.IP \fB@#\fR
+A signed  integer  value of the supplied  numeric  argument. If no argument is
+supplied (i.e. \fB@?\fR==\fCFALSE\fR) then \fB@#\fR is set to 1.
+.LP
+The  \fB@?\fR  and \fB@#\fR are only valid for the current  macro  invocation.
+Other  macros or commands  that are invoked  have their own values of \fB@?\fR
+and \fB@#\fR.
+.SH EXAMPLE
+Consider the  following  example,  which sorts lines into  alphabetical  order
+using the
+.Ht sort-lines 2
+function. A new command  \fBsort-lines-ignore-case\fR is created using a macro
+to sort lines case  insensitively  regardless of the current  buffer mode. The
+command  \fBsort-lines\fR  takes an optional  argument which  determines which
+column should be used to perform the sort.
+.Me $emf-scheme
+.CS
+.ne 20
+;
+; sort-lines-ignore-case
+; Sort lines case insensitively regardless of the current 'exact' mode
+; setting.
+define-macro sort-lines-ignore-case
+    set-variable #l0 &bmod exact
+    -1 buffer-mode "exact"
+    !if @?
+        @# sort-lines
+    !else
+        sort-lines
+    !endif
+    &cond #l0 1 -1 buffer-mode "exact"
+!emacro
+.CE
+.Me $ehf-scheme
+\fB@?\fR  is  used  to test  the  presence  of the  argument,  if it is  false
+\fBsort-lines\fR  is  invoked  without  an  argument.  When  true the  numeric
+argument is propagated e.g. \fB@# sort-lines\fR.
+.PP
+This particular macro highlights an important  consideration  when passing the
+numerical argument to other functions, had the macro been implemented as:
+.Me $emf-scheme
+.CS
+.ne 11
+; INCORRECT IMPLEMENTATION
+define-macro sort-lines-ignore-case
+    set-variable #l0 &bmod exact
+    -1 buffer-mode "exact"
+    @# sort-lines
+    &cond #l0 1 -1 buffer-mode "exact"
+!emacro
+.CE
+.Me $ehf-scheme
+then when  \fBsort-lines-ignore-case\fR  is invoked with no arguments \fB@#\fR
+is defined as 1, this is would be incorrectly  propagated to  \fBsort-lines\fR
+causing it to sort on column 1 rather than column 0 as expected.
+.SH "SEE ALSO"
+.na
+.Hl MacroArguments MacroArguments 4 ,
+.Ht define-macro 2 .
+.ad
+.FH

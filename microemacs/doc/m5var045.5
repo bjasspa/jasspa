@@ -1,0 +1,83 @@
+.\" -*- nroff -*-
+.Id $Id: m5var045.5,v 1.1.1.1 2000-07-25 22:04:05 jon Exp $
+.Im MicroEmacs variable|file
+.so me.tni
+.TH $timestamp 5
+.XI $timestamp - "Time stamp string"
+.SH NAME
+$timestamp \- Time stamp string
+.Me $a
+.SH SYNOPSIS
+\fB$timestamp\fR "\fIstring\fR"; Default is "\fC<%Y%M%D.%h%m>\fR"
+.SH DESCRIPTION
+.B $timestamp
+defines the file  time-stamping  string. \*(mE searches for, and modifies, the
+string to the current  time and date  whenever  the file is saved  (written to
+disk) and 
+.Ht time 2m 
+mode is enabled.
+.PP
+Time stamp string is defined, by default, as "\fC<%Y%M%D.%h%m>\fR".  The first
+occurrence  of the  string  in the  file is  up-dated  with  the time and date
+information when the buffer is written. The
+.B $timestamp
+string may contain any text, and  includes  the  following,  magic  characters
+escaped by a percentage (`\fC%\fR') character:-
+.sp
+.RS
+.nf
+\fCD\fR \- Day.
+\fCM\fR \- Month.
+\fCY\fR \- Year.
+\fCh\fR \- Hour.
+\fCm\fR \- Minute.
+\fCs\fR \- Second.
+.fi
+.RE
+.PP
+The format  string may be redefined  into any format. The '\fC%\fR'  character
+has to be delimited by another '\fC%\fR' if it is to be used in the text (i.e.
+"\fC%%\fR").
+.PP
+The year component  (\fC%Y\fR) may be a 2 or 4 digit string, depending whether
+it includes  the century.  When the time  stamping  searches  for the  \fC%Y\fR
+component it searches for either variant and replaces appropriately.
+.SH EXAMPLE
+The startup file may define the time stamp required as follows:-
+.Me $emf-scheme
+.CS
+set-variable $timestamp "Last Modified : %Y/%M/%D %h:%m:%s"
+.CE
+.Me $ehf-scheme
+Time stamping is performed on the string :-
+.CS
+Last Modified : 90/11/23 10:12:01
+.CE
+Where the time stamp is modified according to the file (buffer) type then the 
+time  stamp  string  may be  modified  within the buffer  hooks.  This  allows
+different  files to utilize  different  time  stamping  strings. The following
+example  shows how the entry and exit  buffer  hooks are defined to modify the
+string:
+.Me $emf-scheme
+.CS
+0 define-macro bhook-nroff
+    set-variable .timestamp $timestamp
+    ; Buffer specific time stamp string.
+    set-variable $timestamp "[%Y/%M/%D %h:%m:%s]"
+!emacro
+0 define-macro ehook-nroff
+    ; Restore the existing time stamp.
+    set-variable $timestamp .bhook-nroff.timestamp
+!emacro
+.CE
+.Me $ehf-scheme
+On  entry  to  the  buffer   (buffer   becomes   current)   the  buffer   hook
+\fBbhook-nroff\fR  is  executed  which  stores the  current  setting  and then
+modifies  the time  stamp  string. On exit from the  buffer  the  buffer  hook
+\fBehook-nroff\fR is executed restoring the time stamp string.
+.SH "SEE ALSO"
+.na
+.Ht buffer-mode 2 
+.Ht time 2m .
+.ad
+.FH

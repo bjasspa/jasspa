@@ -1,0 +1,29 @@
+.\" -*- nroff -*-
+.Id $Id: m2mod012.2,v 1.1.1.1 2000-07-25 22:03:58 jon Exp $
+.Im MicroEmacs modes
+.so me.tni
+.TH tab 2m
+.XI tab - "Tabulation mode"
+.SH NAME
+tab \- Tabulation mode
+.SH SYNOPSIS
+.B "tab Mode"
+.sp
+\fBT\fR \- mode line letter.
+.SH DESCRIPTION
+.B tab
+mode,  when  enabled,  simulates  all  tab  stops  with  spaces.  This  allows
+\'\fIvariable\fR' tab sizes (see variable
+.Ht $tabsize 5 ) 
+and fixes indentation. If \fBtab\fR mode is not enabled literal tab characters
+are inserted, their displayed width may be controlled with the variable
+.Ht $tabwidth 5 .
+.SH "SEE ALSO"
+.na
+.Ht buffer-mode 2 ,
+.Ht global-mode 2 .
+.Ht $tabsize 5 , 
+.Ht $tabwidth 5 ,
+.Ht tabs-to-spaces 3 .
+.ad
+.FH

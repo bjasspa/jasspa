@@ -1,0 +1,71 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd021.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|macrodevelop
+.so me.tni
+.TH set-scroll-with-mouse 2
+.XI set-scroll-with-mouse - "Scroll the window with the mouse"
+.SH NAME
+set-scroll-with-mouse \- Scroll the window with the mouse
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B set-scroll-with-mouse
+.ad
+.SH DESCRIPTION
+The
+.B set-scroll-with-mouse
+command  controls the  scrolling of a window by the mouse. This is a two stage
+process,  the first  stage  locks the  cursor to the mouse, the  second  stage
+scrolls the screen.
+.PP
+The first  stage  (locking)  is  performed  when the mouse is  located  on the
+scroll-box    (typically    when   the   left   button   is   depressed   i.e.
+\fBpick-mouse-1\fR).  \fBset-scroll-with-mouse\fR  is invoked with an argument
+\fIn\fR,  this  causes the mouse  position to be recorded  ready for a scroll.
+Depending  on the scroll  method,  the blank  lines  present at the end of the
+buffer are scrolled off the screen.
+.PP
+Subsequent calls to the \fBset-scroll-with-mouse\fR are made with no argument,
+the window is  scrolled by the  relative  displacement  of the mouse from it's
+locked  position,  motion  is  limited  at the  end of the  scrolling  region.
+Scrolling is proportional to the buffer length. The command is typically bound
+to  \fBmove-mouse-1\fR  which results in an update whenever the mouse is moved
+by the user.
+.PP
+When the button is released  \fBdrop-mouse-1\fR  then the scrolling is stopped
+by  unbinding  \fBmove-mouse-1\fR,  thereby  breaking the binding  between the
+mouse moving and the scroll command.
+.PP
+The scrolling  utilizes  fractional  mouse positional  information (i.e. units
+smaller  than  a  character  cell),  if  available,  resulting  in a  smoother
+scrolling motion.
+.SH EXAMPLE
+The following example shows how the command is used. 
+.Me $emf-scheme
+.CS
+0 define-macro mouse-scroll-pick
+    1 set-scroll-with-mouse         ; Lock mouse position to scroller
+    global-bind-key set-scroll-with-mouse "mouse-move-1"
+!emacro
+
+0 define-macro mouse-scroll-drop
+    global-unbind-key "mouse-move-1"
+!emacro
+
+global-bind-key mouse-scroll-pick "mouse-pick-1"
+global-bind-key mouse-scroll-drop "mouse-drop-1"
+.CE
+.Me $ehf-scheme
+When the left button is 'picked',  \fBmouse-scroll-pick\fR  lock the cursor to
+the mouse and binds  mouse  movement  to  \fBset-scroll-with-mouse\fR  so that
+whenever  the mouse is moved the cursor  will be  repositioned  appropriately.
+When the button is 'dropped', the mouse movement is unbound so that the cursor
+will no longer be locked to the mouse.
+.SH "SEE ALSO"
+.na
+.Ht $mouse-pos 5 ,
+.Ht $scroll-bar 5 ,
+.Ht set-cursor-to-mouse 2 .
+.ad
+.FH

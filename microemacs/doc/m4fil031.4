@@ -1,0 +1,103 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil031.4,v 1.1.1.1 2000-07-25 22:04:03 jon Exp $
+.Im MicroEmacs macro;function;miscellaneous
+.so me.tni
+.TH &sin 4
+.XI &sin - "Test for string in string"
+.XI &isin - "Case insensitive test for string in string"
+.XI &rsin - "Recursively test for string in string"
+.XI &risin - "Recursive case insensitive test for string in string"
+.SH NAME
+&sin, &isin, &rsin, &risin \- String in string test functions
+.SH SYNOPSIS
+.na
+.B &sin
+.I str1
+.I str2
+.br
+.B &isin
+.I str1
+.I str2
+.br
+.B &rsin
+.I str1
+.I str2
+.br
+.B &risin
+.I str1
+.I str2
+.ad
+.SH DESCRIPTION
+These functions test for the existence of \fIstr1\fR in \fIstr2\fR,  returning
+the position of the string in \fIstr2\fR or 0 if not found.
+.PP
+The functions may all be abbreviated to their three letter  abbreviation (i.e.
+\fB&risin\fR  may be  expressed  as  \fB&ris\fR).  In all  cases  the first
+argument is completely evaluated before the second argument.
+.IP "\fB&sin\fR \fIstr1\fR \fIstr2\fR"
+Returns  \fC0\fR if string  \fIstr1\fR  does not exists in string  \fIstr2\fR.
+Otherwise the function  returns the character  position + 1 of the location of
+the first character of the first occurrence of \fIstr1\fR.
+.IP "\fB&isin\fR \fIstr1\fR \fIstr2\fR"
+Returns  \fC0\fR if case  insensitive  string  \fIstr1\fR  does not  exists in
+string \fIstr2\fR.  Otherwise the function returns the character  position + 1
+of the location of the first character of the first occurrence of \fIstr1\fR.
+.IP "\fB&rsin\fR \fIstr1\fR \fIstr2\fR"
+Returns  \fC0\fR if string  \fIstr1\fR  does not exists in string  \fIstr2\fR.
+Otherwise the function  returns the character  position + 1 of the location of
+the first character of the last occurrence of \fIstr1\fR.
+.IP "\fB&risin\fR \fIstr1\fR \fIstr2\fR"
+Returns  \fC0\fR if case  insensitive  string  \fIstr1\fR  does not  exists in
+string \fIstr2\fR.  Otherwise the function returns the character  position + 1
+of the location of the first character of the last occurrence of \fIstr1\fR.
+.SH EXAMPLE
+The  \fB&sin\fR and similar  functions are useful for two different  purposes.
+Consider the  following  example, this  utilizes  \fB&sin\fR in two  different
+contexts.  \fC!while  &not &sin @wc " \\t\\n"\fR  is a test for the end of the
+number,  i.e.  a  white  space  character   (\fC<tab>\fR,   \fC<SPACE>\fR   or
+\fC<NL>\fR).
+.PP
+The invocation  \fCset-variable #l1 &isin @wc  "0123456789abcdef"\fR is subtly
+different.  In this case the return value is used to convert the  character to
+it's integer hex value by using the value returned by \fB&isin\fR.
+.Me $emf-scheme
+.CS
+;
+; calc-hexnum
+; Convert the sting from the current position in the buffer
+; to a hexadecimal number.
+define-macro calc-hexnum
+    forward-delete-char
+    forward-delete-char
+    set-variable #l0 0
+    !while &not &sin @wc " \\t\\n"
+        set-variable #l1 &isin @wc "0123456789abcdef"
+        !if &not #l1
+            ml-write "Bad Hex number found"
+            !abort
+        !endif
+        set-variable #l0 &mul #l0 16
+        set-variable #l0 &add #l0 &sub #l1 1
+        forward-delete-char
+    !done
+    insert-string #l0
+!emacro
+.CE
+.Me $ehf-scheme
+The  \fB&rsin\fR  function is very  similar to sin except the value return is
+the position of the last  occurrence of the string in the given string instead
+of the first. This is  particularly  useful when  extracting  the path or file
+name from a complete file name. For example, given a UNIX style file name such
+as \fC"/usr/local/bin/me"\fR the path can be obtained using
+.C "set-variable %path &lef %pathfile &rsin"
+\fC"/" %pathfile\fR
+and the file name by using
+.C "set-variable %file &rig %pathfile &rsin"
+\fC"/" %pathfile\fR
+.SH "SEE ALSO"
+.na
+.Hl "Operating Modes" Modes - ,
+.Hl "Variable Functions" Functions - ,
+.Ht &sequal 4 .
+.ad
+.FH

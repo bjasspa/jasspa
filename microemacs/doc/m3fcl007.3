@@ -1,0 +1,112 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1999 Samsung (SERI) Ltd.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m3fcl007.3
+.\"  Created By    : Jon Green
+.\"  Created       : Mon Jul 5 21:40:07 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1999 Samsung (SERI) Ltd.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from Samsung (SERI) Ltd.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m3fcl007.3,v 1.1.1.1 2000-07-25 22:03:59 jon Exp $
+.Im MicroEmacs filter
+.so me.tni
+.TH ntags 3f
+.XI ntags - "Generate a nroff tags file"
+.SH NAME
+ntags \- Generate a nroff tags file
+.Me $a
+.SH SYNOPSIS
+.na
+\fBme\fR "@ntags" \fI<files>\fR
+.ad
+.SH DESCRIPTION
+The start-up file  \fCntags.emf\fR  may be invoked from the command line to
+generate a \fBtags\fR file for nroff files.
+.PP
+Given a list of  \fIfiles\fR  a tags file  \fCtags\fR  is  generated  in the
+current directory, which may be used by the 
+.Ht find-tag 2
+command. If no \fIfiles\fR  are specified the default file list is "\fC./\fR",
+i.e. process the current  directory. If a directory name is given (such as the
+default "\fC./\fR") all nroff files within the directory will be processed.
+.PP
+The value of variable  \fB%tag-option\fR is used to control the tag generation
+process,  its value  \fI<flags>\fR  can  contain  any number of the  following
+flags:
+.IP \fCa\fR
+Append  new tags to the  existing  tag  file,  note  that if also  using  flag
+\&'\fCm\fR' multiple 'tags' to the same item may be created.
+.IP \fCm\fR
+Enable  multiple  tags. This enables the existence of 2 tags with the same tag
+name, but typically with different locations. See help on
+.Ht find-tag 2
+for more information on multiple tag support.
+.IP \fCr\fR
+Enables  recursive mode, any sub-directory  found within any given directories
+will also be processed.  
+.SH NOTES
+This function is invoked from menu 
+.IP
+.B "Tools -> Nroff Tools -> Create Tags File"
+.LP
+when the user requests a tags file to be generated.
+.PP
+The tags are generated from the nroff macro:-
+.CS
+\.XI <name> ......
+.CE
+which  indicates  an  index  entry,  where   \fI<name>\fR  is  the  tag  name.
+\fI<name>\fR  may be delimited by double  quotes if any whitespace is present
+in the string.
+.PP
+This is the  macro  definition  used in the \*(mS  documentation  system.  The
+\fCntags.emf\fR  file should be edited and  shadowed in the user  directory if
+some other  search  criteria  is used for nroff  files. This macro file should
+provide a good starting point for any other search.
+.PP
+The user setup file  "\fCmyntags.emf\fR" is executed by ntags during start-up,
+this file can be used to over-ride  any of the ntags  configuration  variables
+(see below).
+.PP
+The  following  variables are set within  "\fCntags.emf\fR"  and are used to
+control the process:-
+.IP \fB%tag-option\fR
+Tags options flag, default value is "". See above for more information.
+.IP \fB%tag-filemask\fR
+A list of source file masks to be processed when a directory is given, default
+value is "\fC:*.nrs:*.[1-9]:*.n:\fR".
+.IP \fB%tag-ignoredir\fR
+A list of  directories  to be ignored when  recursive  option is used, default
+value is "\fC:SCCS/:CVS/:\fR".
+.PP
+These  variables  can be changed using the -v  command-line  option or via the
+"\fCmyntags.emf\fR" file
+.SH "SEE ALSO"
+.na
+.Ht find-tag 2 ,
+.Ht start-up 3 ,
+.Ht nroff 9 .
+.ad
+.FH

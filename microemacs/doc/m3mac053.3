@@ -1,0 +1,30 @@
+.\" -*- nroff -*-
+.Id $Id: m3mac053.3,v 1.1.1.1 2000-07-25 22:04:01 jon Exp $
+.Im MicroEmacs command|file
+.so me.tni
+.TH reread-file 3
+.XI reread-file - "Reload the current buffer's file"
+.SH NAME
+reread-file \- Reload the current buffer's file
+.Me $a
+.SH SYNOPSIS
+.na
+.B reread-file
+.ad
+.SH DESCRIPTION
+.B reread-file
+reloads from disk the file associated with the current buffer, this command is
+particularly  useful  when  the file is  continually  updated  by an  external
+program.  If the  buffer  has been  edited  and its name does not start with a
+\&'\fC*\fR'  then the user is  prompted  as to whether  the changes  should be
+discarded.  Also  if the  buffer  has an  active  process  running  in it then
+confirmation is sort from the user before the process is killed.
+.SH NOTES
+\fBreread-file\fR is a macro implemented in \fCtool.emf\fR.
+.SH "SEE ALSO"
+.na
+.Ht find-file 2 ,
+.Ht read-file 2 ,
+.Ht view-file 2 .
+.ad
+.FH

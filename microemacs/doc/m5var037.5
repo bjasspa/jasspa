@@ -1,0 +1,40 @@
+.\" -*- nroff -*-
+.Id $Id: m5var037.5,v 1.1.1.1 2000-07-25 22:04:05 jon Exp $
+.Im MicroEmacs variable|hilight
+.so me.tni
+.TH $screen-depth 5 
+.XI $screen-depth - "Number of character lines on the screen canvas"
+.XI $screen-width - "Number of character columns on the screen canvas"
+.SH NAME
+.Me "|$screen-depth"
+$screen-depth \- Number of character lines on the screen canvas
+.br
+.Me "|$screen-width"
+$screen-width \- Number of character columns on the screen canvas
+.Me $a
+.SH SYNOPSIS
+\fB$screen-depth\fR \fIinteger\fR
+.sp
+3 <= \fIinteger\fR <= 400
+.sp
+\fB$screen-width\fR \fIinteger\fR
+.sp
+8 <= \fIinteger\fR <= 400
+.SH DESCRIPTION
+These variables allow the viewable size of the screen canvas to be determined.
+.PP
+.B $screen-depth
+identifies number of screen lines currently used. This is the whole screen not
+the window length. The value returned is in the range 3 - \fIn\fR,  \fIn\fR is
+system dependent but no greater than 400.
+.PP
+.B $screen-width
+identifies  the number of screen  columns  currently  used (whole screen). The
+value returned is in the range 8 - \fIn\fR, \fIn\fR is system dependent but no
+greater than 400.
+.SH "SEE ALSO"
+.na
+.Ht change-screen-depth 2 ,
+.Ht change-screen-width 2 .
+.ad
+.FH

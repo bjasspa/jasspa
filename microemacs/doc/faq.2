@@ -1,0 +1,1345 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1999 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : faq.2
+.\"  Created By    : Jon Green
+.\"  Created       : Thu May 27 15:30:14 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1999 JASSPA.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: faq.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs faq
+.so me.tni
+.TH "FAQs" 0f
+.XI "FAQs" - "FAQ Contact information"
+.Me "!3  faqs - FAQ Contact information"
+.SH "FREQUENTLY ASKED QUESTIONS - Contact Information"
+This document contains frequently asked questions submitted to JASSPA. Use the
+E-Mail reflector and associated logs, described in the
+.Hl "Contact Information" Contact - 
+section, alternatively questions may be submitted to:-
+.IP
+\fBMailto:jasspa@geocities.com\fR
+.LP
+We cannot  promise to resolve all questions, but will endeavor to answer most.
+We would also  appreciate  comments on how to improve the  readability  of the
+documentation   or   suggestions   for   improvements   where  you  think  the
+documentation is deficient.
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.ds Qu "New functionality; what is useful to me as an old MicroEmacs user ??
+.ds Qn 00
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+There are a lot of new features in this  distribution.  Assuming that you just
+want to use the  editor  (and have  cottoned  onto the fact that there are now
+scroll bars etc.) then the most frequent commands that we use are:-
+.BS
+.Ht grep 3
+\- May need to set up in \fI<user>.emf\fR.
+.BU
+.Ht diff 3
+\- May need to set up in \fI<user>.emf\fR.
+.BU
+.Ht compile 3
+\- May need to set up in \fI<user>.emf\fR.
+.BU
+.Ht clean 3
+\- cleans a buffer, removing spaces etc.
+.BU
+.Ht restyle-buffer 3
+\- Reformats 'C' + known languages.
+.BU
+.Ht spell-buffer 3
+\- For documentation work, spells the buffer.
+.BU
+\fBC-s\fR \-
+.Ht isearch-forward 2
+incremental search.
+.BU
+\fBC-x u\fR or \fCC-_\fR \-
+.Ht undo 2
+undoes edits.
+.BU
+\fBF10\fR \-
+.Ht file-browser 3
+allows the file system to be browsed
+.BE
+Other useful macros include:-
+.BS
+.Ht tabs-to-spaces 3
+\- Good for sorting out the mess made by Microsoft Developer Studio.
+.BU
+.Ht sort-lines 2
+\- Two versions of this, allows marked lines to be sorted alphabetically.
+.BE
+Be wary of:-
+.BS
+\fBesc-o\fR
+\-
+.Ht fill-paragraph 2 .
+The  default  mode is an  automatic
+mode which attempts to guess at the format required.
+It works most of the time. Also works in 'C'.
+.BE
+Most of the other new  features are in the  background,  such as the macro
+processor,  indentation  control, color hilighting,  indentation control,
+auto-saving etc.
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "Languages;  Are any  foreign  languages  supported  other than English ??
+.ds Qn 01
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+Unfortunately  as we started with V3.8 as a base many years ago, we missed the
+distribution  with foreign language  extensions. We have not incorporated them
+into the release.
+.PP
+The May 1999 release improves the language support by supporting the ISO-Latin
+character sets.
+.PP
+We do have spelling  dictionaries for French, Spanish,  Portuguese and German.
+Other languages may be supported by transforming native
+.Hr ispell 1
+dictionaries.
+.PP
+If there is enough interest in this release from people with foreign languages
+then we may consider  including  support for foreign  language(s).  However we
+would be very much reliant on external help for local testing and translation.
+We would be open to suggestions.
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "C++ is not default, C is - how do I change this ??
+.ds Qn 02
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+If your main programming language is C++, then you will require the \fC.def\fR
+and \fC\.h\fR  files to be loaded in C++ mode by default,  rather than 'C'. To
+modify this hen the order of the file hooks has to be re-defined.
+.PP
+Within your  \fI<user>.emf\fR,  over-ride the default  ordering by including the
+line:-
+.Me $emf-scheme
+.CS
+add-file-hook ".h .def"                                     fhook-cpp
+.CE
+.Me $ehf-scheme
+This adds a newer binding for "\fC.h\fR" and "\fC.def\fR" to C++,  over-riding
+the existing 'C' binding.
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "GNU Emacs; are there any GNU Emacs bindings. ?
+.ds Qn 03
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+No not at the moment. The GNU Emacs bindings would be added as a compatibility
+file  (gnu.emf)  in much the same way that the me3.8  bindings  are added, see
+me3_8.emf.
+.PP
+From the user-setup(3), the user would then ask for "gnu" compatibility.
+.PP
+We would welcome  submissions for a gnu compatibility file, gnu.emf, to add to
+the release.
+.PP
+The  \fBMeta\fR  key  (typically  \fCAlt\fR)  may be bound to key  strokes, as
+opposed to the menu short-cut from the
+.Ht user-setup 3
+as follows:-
+.IP
+\fBHelp\fR -> \fBUser Setup\fR -> \fBGeneral\fR -> \fBAlt -> Main Menu\fR = N
+.br
+\fBHelp\fR -> \fBUser Setup\fR -> \fBGeneral\fR -> \fBAlt -> Esc Prefix\fR = Y
+.LP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "Icons are not displayed correctly in Microsoft Windows environments !!
+.ds Qn 04
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+After installing on Microsoft  platforms, the Icons in the Explorer window may
+not be showing correctly. To remedy the situation then the following steps may
+be taken.
+.IP "\fBWindows '95\fR"
+Try  re-starting  the  system  first. If the  icons are still  incorrect  then
+re-start in Safe mode and delete the file:
+.IP
+\fCc:\\windows\\ShellIconCache\fR
+.IP
+Restart and the Icons should be correct.
+.IP "\fBWindow '98\fR"
+Try  re-starting  the  system  first. If the  Icons are still  incorrect  then
+re-start  in Safe  mode,  this  should  re-generate  the Icon  cache.  Restart
+windows.
+.IP "\fBNT\fR"
+Restart the system.
+.LP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "ipipes not working on Microsoft Windows network drives ?
+.ds Qn 05
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+We are aware of a problem  with the ipipe  commands  with '95 and '98 (not
+sure about NT) when the current drive is a Novel network drive.
+.PP
+Although  we have not been ably to fully  characterize  the  problem,  we know
+that:-
+.BS
+Old Novel Clients prior to 2.2 - Does not work
+.BU
+Novel Intranetware Client 2.2 - Does not work.
+.BU
+Novel Network Client 2.5 - Does work.
+.BU
+Novel Client 3.01 - Does work.
+.BE
+Any  other  information  in  this  area  would  be  appreciated  to  fully
+characterize the problem.
+.PP
+To get around the problem then disable ipipes using
+.Ht $system 5 .
+From within your \fI<user>.emf\fR knock off bit 0x800 from
+.Ht $system 5 .
+This will enable regular pipes, which will work, albeit not in the background.
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "Language not supported - will it be ??
+.ds Qn 06
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+We only  support the  (programming)  languages  that we have come into contact
+with. If you are using a  language  that we are not  supporting  then you will
+need to write a new \fChk<language>.emf\fR file. See
+.Hl "Language Templates" languageTemplates 2
+on how to map a new programming language. The list of currently supported file
+types is defined in
+.Hl "Supported File Types" FileTypes - .
+.PP
+Jasspa would appreciate any new templates that people define for standard file
+types so that we can add them to the distribution.
+.PP
+For  Microsoft  Windows,  any  associated  "me"  icons  types  would  also  be
+appreciated.
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "Language file is incomplete
+.ds Qn 07
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+For a number of the (programming)  language  templates we have only provided a
+sub-set  of the  commands,  this is  typically  because  we only use a sub-set
+ourselves.
+.PP
+For a number of templates, there is no indent support (see
+.Ht indent 2
+and
+.Hl "Supported File Types" FileTypes - ).
+.PP
+Note that when  extending  the  template  then only  standard  words should be
+added. Words which are local extensions should be added to a \fCmyXXX.emf\fR.
+.PP
+Jasspa would appreciate completed template definitions.
+.SH "SEE ALSO"
+.Hl FAQ06 faq06 0f
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "Input locked up and not accepting keys; how do I unlock ?
+.ds Qn 08
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+This  sometimes  happens if a macro has been  aborted  badly.  Typically a few
+"Ctrl-G"s (see
+.Ht abort-command 2 )
+will terminate the macro and return control back to the caller.
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "MicroEmacs Bindings; How do I get the original MicroEmacs bindings ?
+.ds Qn 09
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+From
+.Ht user-setup 3
+set the  Compatibility to "\fCme3_8\fR". On re-starting (or
+current) the macro file \fCme3_8.emf\fR is executed and the bindings loaded.
+This file should restore your familiar execution set.
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "Microsoft Windows Locks up after killing an ipipe.
+.ds Qn 10
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+This is a known  problem for '95/'98 (not NT), on killing an ipipe.  Sometimes
+the "Winoldapp"  locks up, if this is the case use  "Alt-Ctrl-Del" to bring up
+the "\fBClose  Program\fR"  dialogue, kill off the  "\fCWinOldApp\fR" if it is
+not responding.
+.PP
+MicroEmacs will then come back. We are looking for ways around this problem at
+the moment. From the  programming  perspective  Windows is just not as nice as
+UNIX - which just works !!
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "Mouse support under Microsoft windows is strange !!
+.ds Qn 11
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+The mouse  operation  under  Microsoft  windows (and DOS) is biased  towards a
+3-button mouse operation (Logitech is ideal !!), operating in a similar way to
+UNIX. i.e. <select> operation gets text <Middle button> yanks text back.
+.PP
+This stems from the fact that we all came from UNIX backgrounds. We have had a
+number of comments about this already and do plan to address this issue.
+.PP
+\fBNote:-\fR  Those  of you  that  have  already  had a  little  dip  into the
+operation  of the mouse  will have  probably  worked out that the whole of the
+visible   mouse/screen   interaction   is  driven  through   macros,  so  this
+functionality is actually a macro change.
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "Scroll bars too narrow !!
+.ds Qn 12
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+You  can  change  the  width  of the  scroll  bars to  double  width  from
+.Ht user-setup 3
+"Wide Scroll Bars".  Alternatively, you may do this yourself
+from \fC<user>.emf\fR by:-
+.Me $emf-scheme
+.CS
+set-variable $scroll-bar &bor $scroll-bar 1
+.CE
+.Me $ehf-scheme
+See
+.Ht $scroll-bar 5 .
+.PP
+Remember if you have  enabled wide scroll bars, under  windows, or  X-Windows,
+you may want to change  your  start-up  screen  width to  \fC82\fR  characters
+rather than \fC80\fR - see
+.Ht change-screen-width 2 .
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "Tab key; Why does the tab key not operate in some windows ??
+.ds Qn 13
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+In  buffers  with   indentation   information  the  tab  key  re-computes  the
+indentation of the line. This behavior may be changed from the user-setup.
+.PP
+Refer to documentation for
+.Ht $system 5
+and
+.Ht user-setup 3 .
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "Termcap; On a color terminal why is there no color ??
+.ds Qn 14
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+MicroEmacs has to be enabled to show color by default. From
+.Ht user-setup 3
+enable "Termcap Color". This will give you basic colors.
+.PP
+You may also try  enabling  "With Bold" - this may  increase  the range of
+colors.
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "Termcap; Some of the keys do not work - how can I bind them ?
+.ds Qn 15
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+In your user setup  <user>.emf  add the new keys. You have to be careful as to
+the environment and probably need to do something like the following:-
+.Me $emf-scheme
+.CS
+; First check we are not an Xterm
+!if &not $use-x
+    ; Quick check on the terminal type. We probably need to
+    ; distinguish between terminal types for different bindings
+    !if &seq $TERM "myterm"
+        translate-key "<from>" "<to>"
+        ...
+        translate-key "<from>" "<to>"
+    !endif
+!endif
+.CE
+.Me $ehf-scheme
+See
+.Ht translate-key 2
+for details of  translating  termcap keys. See
+.Ht describe-key 2
+to help identify the key.
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "Timestamp; Format incorrect, how can I change to MMDDYY.hhmm ?
+.ds Qn 16
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+From within your \fI<user.emf>\fR set the time stamp default format i.e.
+.Me $emf-scheme
+.CS
+set-variable $timestamp "<%M%D%Y.%h%m>"
+.CE
+.Me $ehf-scheme
+See
+.Ht $timestamp 5 .
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "Windows; Component characters rendered incorrectly, how do I fix ?
+.ds Qn 17
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+If  some  of the  components  of the  windows  are  rendered  incorrectly,
+typically  caused by local  variations of character  sets, then new window
+component  characters may be defined. See
+.Ht $window-chars 5
+for details on how to define new character replacements.
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "Windows Autosave and Backup files; are these potentially a problem ?
+.ds Qn 18
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+For  windows  '95 up  until  OEM  service  release  2, the  OS  could  not
+distinguish the difference between the files:-
+.CS
+\.xxx
+\.xxx~
+.CE
+on a read, we have  managed to find a work  around for this,  however we would
+advise  that the 3 letter  extension  is  adhered to for these  releases.  For
+releases  of '95 OEM  service  release 2 and  greater,  '98 and NT we have not
+found a problem with any of the auto save and backup naming.
+.PP
+Obviously,  the backup  naming  will  depend on the native  file  system.  For
+instance if your system  administrator has not enabled long file names on your
+Novel server.
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "Printing; Why in Windows does the output come out in a buffer ??
+.ds Qn 19
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+Use the \fBFile\fR -> \fBPrinter Setup\fR dialog and change the destination to
+the "\fBDirect to printer\fR".
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "Printing; On Windows which font should I use ??
+.ds Qn 20
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+We suggest that  "\fBCourier New\fR" is used as the print font. This scales well
+and supports the full  character  set. Problems  have been  reported  with
+networked postscript printers when used in conjunction with fixed fonts.
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "Printing; My printer is not supported ?
+.ds Qn 21
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+We are in the process of  providing  native  postscript  generation - UNIX
+users can stream their output  through "a2ps" and then into their standard
+printer  queues.
+.PP
+Windows, the support is already built in.
+.PP
+For DOS then you need to get your  printer  manual out and sort out how to
+map the  printer  codes  onto  fonts.  The  printer  codes  are  added  to
+"\fCprinter.erf\fR". We have already provided support for the HP DeskJet printer
+(PCL),  look at this  printer  definition  for some help as to the type of
+information that you need to set up. It's all a bit fiddley, but you do not
+get much choice if you want more than plain ASCII out.
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "Alt key maps to the Menu, how do I change ?
+.ds Qn 22
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.PP
+A-f opens the main File menu  instead of executing  forward-word  (esc f).
+How do I make the Alt key act like the Meta key all the time?
+.SH ANSWER
+The  \fBMeta\fR  key  (typically  \fCAlt\fR)  may be bound to key  strokes, as
+opposed to the menu short-cut from the
+.Ht user-setup 3
+as follows:-
+.IP
+\fBHelp\fR -> \fBUser Setup\fR -> \fBGeneral\fR -> \fBAlt -> Main Menu\fR = N
+.br
+\fBHelp\fR -> \fBUser Setup\fR -> \fBGeneral\fR -> \fBAlt -> Esc Prefix\fR = Y
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "me32.ini - Where does it go, how do I know it's being processed ??
+.ds Qn 23
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+Question posed as:-
+.CS
+> 1)  Am I right in assuming that for NT the file me32.ini goes
+>     into  %windir%, i.e. into c:\winnt ?
+.CE
+Yes, this is where the other .ini files are.
+.CS
+> 2)  How do I know me32.ini is being processed?  Creating one,
+>     as described in the readme.txt file doesn't seem to have
+>     any visible effect.
+.CE
+From within the editor, if you show the variable
+.Ht $MEPATH 5 ,
+then it should echo the paths that you have defined in the me32.ini file.
+.CS
+esc-x describe-variable
+$MEPATH
+.CE
+See:
+.Ht me32.ini 8 ,
+.Hl "Installation Information" Installation 1 ,
+.Hl "Setting Up A User Profile" UserProfiles 2 .
+.CS
+> 3) What does the "fontfile" statement do ?
+.CE
+For releases after May 1999 then the  \fIfontfile\fR  statement may be omitted
+as typically \fBLucida Console\fR or \fBCourier New\fR is used. If you want to
+use  the  fixed  OEM  fonts   then   \fIfontfile\fR   should  be   defined  as
+\fBapp860.fon\fR  (or local language  equivalent),  this forces the font to be
+loaded as a resource, prior to use.
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "Windows - Where is app850.fon ?
+.ds Qn 24
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+"app850.fon"  is the font file used for the DOS window  under  '95/'95/NT.
+You should find it in your  c:\windows\fonts  directory.  Be-warned  it is
+hidden.  If you  search  from the  Explorer->Tools->Find  "app850.fon"  it
+should be found in the fonts  directory. There is nothing to be done - the
+file exists and is in the correct location.
+.PP
+If you do not have this file then, you might  have  "appXXX.fon",  or some
+other fixed font. You can locate the file that you want as follows:-
+.IP
+Start->Settings->Control Panel->Fonts
+.LP
+Display  the font list as  'details'.  Within  that list you should find a
+"MS-DOS CPXXX" entry. It will be a red font (if you are in monochrome then
+it will have a 'A' in the box  rather  than a 'Tt').  This is a fixed font
+and  will be a good  alternative  to  "app850.fon",  you can  also try the
+"Fixedsys" font file which has some weird name.
+.PP
+To be honest I do not know what Microsoft are currently  shipping. Most of
+the Windows  platforms  that I have used have been upgrades or been abused
+by so many people you never know what is original !!
+.PP
+We would be  interested in any details of other fixed fonts, which support
+the full OEM character set that are better alternatives to the DOS ones.
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "Time; mode line is showing the date in DD/MM/YY format how do I change ?
+.ds Qn 25
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+From within your user setup,  over-ride the default mode line setting with
+the  modifications you require. i.e. to change the date format to MM/DD/YY
+use:-
+.Me $emf-scheme
+.CS
+set-variable $mode-line "%s%r%u%k %b %l - %h:%m %M/%D/%Y (%e) - (%f) "
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.Ht $mode-line 5 .
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "C or C++ indentation and effects; how can I turn off ?
+.ds Qn 26
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+The
+.Ht cmode 2m
+is supposed to make  editing 'C' easier, by forcing the user to
+follow  a  preset  editing  convection.  The  layout  is  pretty  standard,
+following a 4 space indent,  writing  either K&R or standard  'Pascal' type
+layout, with braces aligning vertically.
+.PP
+The problem  most new users have is the  inability of the tab key to function,
+or more simply do not want to be 'forced' to write in a particular  style (GNU
+writers will probably not like this either - conversely they will be using GNU
+emacs !!). However the  constrained  layout can be  configured  to create most
+styles and does help in a project situation, whereby most of the authored code
+roughly  adheres  to the same sort of layout  conventions.  For C++ users then
+edit "\fChkcpp.emf\fR" rather than "\fChkc.emf\fR".
+.SS "To turn off all automatic 'C' layout"
+To disable ALL  automatic  layout then edit "hkc.emf" and turn "cmode" off.
+It is probably  quite useful to apply "indent", this will return the cursor
+to the same  indentation  column  whenever a new line is inserted.  i.e. in
+"fhook-c" of hkc.emf:-
+.Me $emf-scheme
+.CS
+0 buffer-mode "cmode"
+1 buffer-mode "indent"
+.CE
+.Me $ehf-scheme
+If you want proper tabs then you may also want to add:-
+.Me $emf-scheme
+.CS
+0 buffer-mode "tab"
+.CE
+.Me $ehf-scheme
+This inserts the <tab> character into the text, rather than  translating to
+spaces. Alternatively disable \fBtab\fR mode for all file type using
+.Ht user-setup 3
+i.e.
+.IP
+\fBHelp\fR -> \fBUser Setup\fR -> \fBGeneral\fR -> \fBTab\fR
+.SS "To re-enable the <tab> key"
+To  retain  the 'C'  layout  aid, but  re-enable  the tab key  operation  then
+disable the \fBTab To Indent\fR option in
+.Ht user-setup 3
+i.e.
+.IP
+\fBHelp\fR -> \fBUser Setup\fR -> \fBGeneral\fR -> \fBTab To Indent\fR
+.LP
+This  enables  the  use of the TAB key in all  column  positions  with  the
+exception of column 0. A <tab> in Column 0 will still enable the  automatic
+line re-formatting.
+.PP
+If you want real <Tabs> then disable the \fBtab\fR mode using
+.Ht user-setup 3
+i.e.
+.IP
+\fBHelp\fR -> \fBUser Setup\fR -> \fBGeneral\fR -> \fBTab\fR
+.SS "To change the 'C' Indentation Layout"
+The 'C' layout indentation is controlled from the system variables:-
+.IP
+.Ht $c-case 5 ,
+.Ht $c-contcomm 5 ,
+.Ht $c-continue 5 ,
+.Ht $c-margin 5 ,
+.Ht $c-brace 5 ,
+.Ht $c-statement 5 .
+.LP
+These settings may be defined in your <user>.emf to change the default
+layout. Refer to the on-line documentation for details.
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "fill-paragraph  function  does not fill ??
+.ds Qn 27
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.PP
+I can't  seem to get the  fill-paragraph  function  to fill the  following
+paragraph:
+.CS
+This is a very
+poorly formed paragraph
+which refuses to fill
+properly!
+.CE 0
+.SH ANSWER
+The  default  justification  mode is Auto which tries to work out the mode
+required for each  paragraph. Its fairly smart at  maintaining a documents
+indentation, e.g. consider the example right hand justified:
+.CS
+                                                    This is a very
+                                           poorly formed paragraph
+                                             which refuses to fill
+                                                         properly!
+.CE
+It  will   maintain   this   indentation.   The  problem  comes  when  the
+detected  form is not the  required  form as in the example. The  detected
+paragraph  justification  to be used is "none" because the lines are short.
+There are 2 ways to solve this problem:
+.BS
+You can change the
+.Ht $fill-mode 5
+to left or both (in fhook-doc  mode use C-c l or C-c b) and then use fill-paragraph as normal.
+.BU
+Manually  concatenate the first few lines into one to create a longer first
+line  and  then use the  fill-paragraph  a  normal,  i.e.  change  the
+paragraph to:
+.sp 1
+.C "This is a very poorly formed paragraph which refuses to fill"
+.C "properly !"
+.sp 1
+and then fill. This  works  because  the  longer  line  will lead to a
+different assessment of what's required.
+.BE
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "Key modifier which acts as the ESC key; what is it ?
+.ds Qn 28
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.PP
+What is the modifier key which acts as the ESC key ? Having to type ESCAPE
+and then f to move one word forward is very boring.
+.PP
+With Gnu Emacs (on Unix systems), there is a "meta" modifier key which
+is a shortcut for pressing ESCAPE followed by the command key.
+The "meta" key should be the "Alt" key.
+.SH ANSWER
+The "meta" key is the "Alt" key. But 'F' is the Main menu  hot-key for the
+\'File'  sub-menu so by default 'A-f' will open the File sub-menu. This can
+be disabled by clearing  bit 0x2000 in the $system  variable.  This option
+can now be set using user-setup (Alt -> Main Menu).
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "find-file start location; where is it ?
+.ds Qn 29
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+The
+.Ht find-file 2
+start location is defined as follows:-
+.BS
+\fC*scratch*\fR is current buffer; the current working directory.
+.BU
+\fCfile\fR is current buffer; the directory location containing \fIfile\fR.
+.BE
+Running  under  Microsoft  Windows or UNIX, using an icon  launch, then it may
+become  frustrating  that  the  start  location  is  always  \fCC:\\Program\fR
+\fCFiles\\JASSPA\\MicroEmacs\fR  (Microsoft  windows) or  \fC/usr/local/bin\fR
+(\s-1UNIX\s0)  this is simply  resolved by starting  the  executable  with the
+\fB-c\fR option, as defined by
+.Ht me 1 .
+The \fB-c\fR  option starts the editor with the last editing  session, this is
+typically where a user will want to commence an editing session.
+.PP
+If the \fB-c\fR approach is not acceptable, then it is worth defining the
+environment  variable  \fC$HOME\fR within the start up script, or in the users
+environment.  Using  \fBfind-file\fR  with tilde  (\fC~\fR)  implies  that the
+directory start path is \fC$HOME\fR.
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "Re-using a MicroEmacs session; how to ??
+.ds Qn 30
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+A MicroEmacs  editing  session may be re-used, such that the current editor is
+prompted to load a new file externally. This is typically invoked from a
+short-cut launch from a file manager i.e.
+.Hr Explorer 1 ,
+.Hr Tkdesk 1
+etc.
+.PP
+In order to facilitate the re-use of the session, then
+.Ht me 1
+is invoked with the \fB-o\fR  option, this locates the active  editor  session
+and passes the file load request. If an existing session does not exist then a
+new session is started.
+.PP
+In order for this mechanism to operate, then the
+.Hl "Client-Server Interface" Client-Server 2
+must be enabled from the
+.Ht user-setup 3
+i.e.
+.IP
+[\fBHelp\fR -> \fBUser Setup\fR -> \fBPlatform\fR -> \fBClient  Server\fR =
+\fCY\fR]
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "Microsoft Drag and Drop; is it supported ??
+.ds Qn 31
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+\*(mE supports Microsoft \fIdrag and drop\fR  interaction.  Multiple files and
+directories may be dragged from Microsoft  Explorer (or other application) and
+dropped into a buffer window. The  destination  buffer window is the window in
+which the dropped file(s) are displayed.
+.PP
+\fBNote\fR if the user is currently on the command line, then the command line
+operation is aborted in order to facilitate the \fIdropped\fR files.
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "Cut and Paste to/from other applications; is it supported ??
+.ds Qn 32
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+\*(mE  supports  \fIcut and paste\fR  operations  on all  platforms.
+.IP "To copy a region from \*(mE to another application"
+Select a region  (with the mouse or keys) \- there is no need to invoke a copy
+operation. All selected text is immediately available to other applications.
+.IP
+Move to the new application and paste, as dictated by the platform.
+.IP "To copy a region from another application to \*(mE"
+Select the region in the  application  into the  clipboard, as dictated by the
+platform.
+.IP
+Move to \*(mE, position the cursor and
+.Ht yank 2
+(\fCC-y\fR or typically the middle mouse button) the clipboard text.
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "Fonts; how can I change the font ??
+.ds Qn 33
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+The currently selected font may be modified from the
+.Ht user-setup 3 .
+.IP
+\fBHelp\fR -> \fBUser Setup\fR -> \fBPlatform\fR
+.LP
+The font selection depends upon the platform, in all cases a fixed font should
+be selected, otherwise rendering anomalies will result.
+.PP
+If you are running on Microsoft platforms ensure that the
+.B "OEM/ANSI"
+flag matches the settings of the
+.B "Display Font Set"
+entry.
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "Colors; how can I change screen colors ??
+.ds Qn 34
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+The screen colors are selected from the
+.Ht user-setup 3 .
+.IP
+\fBHelp\fR -> \fBUser Setup\fR -> \fBPlatform\fR -> \fBColor Scheme\fR
+.LP
+The default  setting is \fIWhite on Black\fR,  the \fIBlack on Cream\fR is the
+most popular setting.
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "File Types; how do I interchange between UNIX, Windows and DOS files ??
+.ds Qn 35
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+\*(mE  facilitates  the editing of the standard  file types on all  platforms.
+All files  retain their line ending type through  edits. i.e. if a DOS file is
+edited on a UNIX  system,  the file is still  written as a DOS file. When new
+files are created, they are created with the standard  attributes  of the host
+O/S.
+.PP
+The line ending of the file may be modified from the menu
+.IP
+\fBfile\fR -> \fBattributes\fR
+.LP
+This  brings  up a dialog  that  allows  the file  type and  attributes  to be
+modified.
+.PP
+Note that the only ending that is NOT preserved are files whose lines end in
+\fC<CR>\fR's only. The line format is correctly interpreted on reading, but is
+not retained on the write.
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "Non-English Languages; What font should I select ??
+.ds Qn 36
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+\*(mE has only been tested with Western  Lanuguages only. Within the Microsoft
+Windows  environment an ANSI type font should be selected,  assuming of course
+that the characters  required are in the ISO-Latin  character set. \s-1UNIX\s0
+typically supports ISO-Latin character sets.
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "MicroEmacs '99; How do I up-grade from MicroEmacs'98 ??
+.ds Qn 37
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+Backup your current version!
+.PP
+Follow  the   MicroEmacs'99   installation   procedure   to  install  and  get
+MicroEmacs'99 running.
+.PP
+Due to the great improvement to
+.Ht user-setup 3
+it is advised  that the user  creates a new setup using  \fBuser-setup\fR  and
+then migrates required macro code changes from the old release into the new.
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "Some keys on my foreign keyboard do not work properly, how do I get them working ??
+.ds Qn 38
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+The most common  problem are with foreign  keyboards  where the <AltGr> key is
+used to generate some  characters in a similar fashion to the <Shift> key. For
+example, on a Belgian  keyboard the '9' key produces a '{' character  when the
+<AltGr> key is also pressed.
+.PP
+The  quickest  and best  solution  is to use the  \fBKeyboard\fR  setup on the
+Start-Up page of
+.Ht user-setup 3 .
+This  however  may not  provide  the  solution a this is a new  feature  (post
+99Beta1)  and few  keyboards  are  currently  supported.  If you are  using an
+unsupported keyboard please send configuration  information back to JASSPA for
+inclusion in the next  release. Also  keyboard  configuration  information  is
+stored in the macro file \fCkeyboard.emf\fR.
+.PP
+If \fBuser-setup\fR  does not currently support your keyboard, or you which to
+remap some keys, then the command
+.Ht translate-key 2
+should  be used.  \fBtranslate-key\fR  remaps  generated  key  stroke(s)  into
+another  key at a low level so the  mapping  is  supported  in all areas. If a
+macro and key  binding  were used  instead,  while they would work in the main
+text  windows,  they  would  not  work  in  the  message  line.  See  help  on
+\fBtranslate-key\fR for more information.
+.PP
+Note  that some  <AltGr>  keys can  produce 2 keys, for  example  on a Belgian
+keyboard  '<AltGr>-9' produces the key 'A-C-9' first, immediately  followed by
+\'A-C-{'. This is an  unfortunate  side effect of windows, it is better to have
+two keys rather than none. But this does add confusion to the problem!  Again,
+see \fBtranslate-key\fR for more information.
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "Tabs; How to change the tab width ??
+.ds Qn 39
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+There are two variables that change the width of the tab
+.Ht $tabwidth 5
+and
+.Ht $tabsize 5
+they control the size of a displayed tab character  (number of spaces) and the
+simulated tab character size, where the user entered tab character is replaced
+by a number of space characters. The latter is only used when
+.Ht tab 2m
+mode is enabled (it is typically enabled by default).
+.PP
+To change the tab character width then the
+.Ht set-variable 2
+command is used:
+.CS
+esc x set-variable
+.CE
+You will then be prompted for the remaining  arguments. \fC<TAB>\fR is the completion
+so:-
+.CS
+esc x set-v<TAB>
+$tabw<TAB>
+2
+.CE
+If this is the  setting  that you always  want to use then it is easier if you
+put this in your <user.emf> as:-
+.Me $emf-scheme
+.CS
+set-variable $tabwidth 2
+.CE
+.Me $emf-scheme
+then  whenever  you start a new  session  you will  always have the  $tabwidth
+defined as you want it.
+.PP
+We would  recommend that
+.Ht $tabwidth 5
+is not modified because it turns the all tab's to 2 so when you read it into  something like Microsoft  notepad
+the  indentation  is  not  as you  like  it  because  it  displays  tabs  as 8
+characters.
+.PP
+Instead,  set the  \fB$tabsize\fR to 2, and run with
+.Ht tab 2m
+enabled  (this is the default).  This turns  \fC<TAB>\fR's to spaces,  hence the layout is retained.  This
+makes the file slightly larger, but the presentation is maintained.
+.PP
+If you are reading in a file with TAB's  embedded  then you can convert all of
+the <TAB>'s to spaces using
+.Ht tabs-to-spaces 3 :
+.CS
+esc x tabs-to-spaces
+.CE
+If these TAB's are 8 characters, and they should be displayed as 2, then prior
+to conversion change the tabwidth, convert and then restore.
+.BS
+Change the $tabwidth to 2
+.BU
+tabs-to-spaces
+.BU
+Restore the $tabwidth to 8
+.BE 0
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "Windows/DOS; Where do I get grep/diff etc. ??
+.ds Qn 40
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+For windows and DOS users the UNIX tools may be obtained from:-
+.CS
+ftp://ftp.cdrom.com/pub/garbo/garbo_pc/unix/uxutl23a.zip (238 Kb) 
+ftp://ftp.cdrom.com/pub/garbo/garbo_pc/unix/uxutl23b.zip (227 Kb) 
+ftp://ftp.cdrom.com/pub/garbo/garbo_pc/unix/uxutl23c.zip (221 Kb) 
+ftp://ftp.cdrom.com/pub/garbo/garbo_pc/unix/uxutl23d.zip (160 Kb) 
+.CE
+comments for this at:
+.CS
+http://www.geocities.com/SiliconValley/Lakes/1401/softlib1.htm
+.CE
+One awk-port; the Gnuish project has 16 bit and 32 bit versions of 
+.Hr gawk 1
+in:
+.CS
+ftp://mirrors.aol.com/pub/simtelnet/gnu/gnuish/gawk303x.zip (1997, 495K) 
+.CE 
+Acknowledgment: 
+.B DG
+\- 99/07/02
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "Home/End Keys; How do I change the default bindings ??
+.ds Qn 41
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+Some users prefer the  \fCHOME\fR  and \fCEND\fR  keys to map to the beginning
+and end of the line, rather than  beginning/end of the buffer,  respectively.
+Within  the  \fI<user>.emf\fR  the  following  global  bindings  may  be
+applied to re-assign the key mappings:-
+.Me $emf-scheme
+.CS
+global-bind-key "beginning-of-buffer" "C-home"  
+global-bind-key "end-of-buffer"       "C-end"
+global-bind-key "end-of-line"         "end"
+global-bind-key "beginning-of-line"   "home"
+.CE
+.Me $ehf-scheme
+Acknowledgment: 
+.B DG
+\- 99/07/02
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "tags; How do I generate a MicroEmacs compatible tags file ??
+.ds Qn 42
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+A  \fBtags\fR file is used by the 
+.Ht find-tag 2 
+command. This is used to hypertext to the \fItagged\fR definition or variable.
+The standard
+.Hr ctags 1 
+format is used by MicroEmacs.  The \fBtags\fR  file itself may be generated by
+\*(mE from the menu (\fITools->XX Tools->Create Tags File\fR). Alternatively a
+\fBtags\fR file may be generated by the 
+.Hr ctags 1 
+utility.  This is typically  standard on  \s-1UNIX\s0  platforms.  For Windows
+and \s-1DOS\s0  platforms then the \fBExuberant  Ctags\fR is recommended, this
+is available from:-
+.IP
+.C "http://darren.hiebert.com"
+.LP
+A \*(mE compatible tags file may be generated using the command line
+.\"
+"\fCctags -N --format=1 ."\fR  cataloging the current  directory. To generate
+\fBtags\fR for a directory tree then use
+.\"
+"\fCctags -NR --format=1 .\fR".  Refer  to  the   \fBExuberant   Ctags\fR
+documentation for a more detailed description of the utility.
+.PP
+The user variable 
+.Ht %tag-option 5
+may be used to enable 
+.Ht find-tag 2 
+to locate a recursivelly generated \fBtags\fR file from a parent directory.
+.PP
+.Hl "[FAQ Index]" faq - .
+.FH

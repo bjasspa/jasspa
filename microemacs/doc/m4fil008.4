@@ -1,0 +1,103 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil008.4,v 1.1.1.1 2000-07-25 22:04:02 jon Exp $
+.Im MicroEmacs macro;directive|miscellaneousOperators
+.so me.tni
+.TH !if 4
+.XI !if - "Conditional test statement"
+.XI !else - "Conditional alternative statement"
+.XI !elif - "Conditional test statement, continuation"
+.XI !endif - "Conditional test termination"
+.SH NAME
+!if, !elif, !else, !endif \- Conditional statements
+.SH SYNOPSIS
+.na
+.nf
+\fB!if\fR \fIcondition\fR
+.RS
+\fI... condition body ...\fR
+.RE
+[\fB!elif\fR \fIcondition\fR
+.RS
+\fI... condition body ...\fR
+.RE
+]
+[\fB!else\fR
+.RS
+\fI... condition body ...\fR
+.RE
+]
+\fB!endif\fR
+.fi
+.ad
+.SH DESCRIPTION
+The conditional directives
+allow statements  to be  executed only if a condition
+specified in  the  directive is  met, as follows:-
+.BS 1 1
+Every line  following  the \fB!if\fR
+directive, until the first  \fB!elif\fR, \fB!else\fR or  \fB!endif\fR directive, is only
+executed if the expression following  the \fB!if\fR directive evaluates to a
+\fCTRUE\fR value (non-zero).
+.BU
+If the \fB!if\fR evaluates to \fCFALSE\fR and a \fB!elif\fR  directive is next
+then the  expression  following  the  \fB!if\fR  is  evaluated  and  following
+statements are executed if \fCTRUE\fR.
+.BU
+If no  \fB!if\fR or \fB!elif\fR  is found to be
+\fCTRUE\fR and  a  \fB!else\fR  is  found then  the  statements  following  it are
+executed.
+.BE
+The \fIcondition\fR may be any logical condition as evaluated by the
+.Hl "variable functions" Functions -
+(e.g.
+.Ht &equal 4 )
+returning  \fCTRUE\fR or  \fCFALSE\fR.  An integer value,  non-zero  evaluates
+\fCTRUE\fR, zero evaluates to \fCFALSE\fR. A non-numerical argument, such as a
+string is always \fCFALSE\fR.
+.PP
+The  \fIconditional  body\fR may be any  \fB\*(mE\fR  function,  macro or
+directive  with the exception of  \fBdefine-macro\fR  and  \fB!emacro\fR.  All
+directives that alter the execution of the macro are handled  correctly within
+the \fB!if\fR statement (e.g.
+.Hl !goto !goto 4 ,
+.Hl !return !return 4
+etc.
+.SH EXAMPLE
+The  following  macro  segment  creates the
+portion of a text  file automatically.  (yes believe  me, this will be
+easier to understand then that last explanation....)
+.Me $emf-scheme
+.CS
+!if &sequal %curplace "timespace vortex"
+    insert-string "First, rematerialize\\n"
+!endif
+!if &sequal %planet "earth"	;If we have landed on earth...
+    !if &sequal %time "late 20th century"  ;and we are then
+        ml-write "Contact U.N.I.T."
+    !elif &sequal %time "pre 20th century"
+        ml-write "start praying for a miracle"
+    !else
+        insert-string "Investigate the situation....\\n"
+        insert-string "(SAY 'stay here Sara')\\n"
+    !endif
+!else
+    set-variable %conditions @ml"Atmosphere conditions outside? "
+    !if &sequal %conditions "safe"
+        insert-string &cat "Go outside......" "\\n"
+        insert-string "lock the door\\n"
+    !else
+        insert-string "Dematerialize..try somewhere else"
+        newline
+    !endif
+!endif
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Hl "Variable Fuctions" Functions - ,
+.Ht !goto 4 ,
+.Ht &equal 4 ,
+.Ht !return 4 ,
+.Ht $status 5 .
+.ad
+.FH

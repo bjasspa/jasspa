@@ -1,0 +1,100 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd125.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|spell|macrodevelop
+.so me.tni
+.TH spell 2
+.XI spell - "Spell checker service provider"
+.SH NAME
+spell \- Spell checker service provider
+.Me $a
+.SH SYNOPSIS
+.na
+\fIn\fR \fBspell\fR ["\fIword\fR"] ["\fIrules\fR"] ["\fIcorrection\fR"] ["\fIrule\fR"]
+.ad
+.SH DESCRIPTION
+\fBspell\fR is a low level command which provides spell checking  capabilities
+for \*(mE, it is not designed to be used  directly. The action of  \fBspell\fR
+depends on the argument given, which is a bitwise flag defined as follows:-
+.IP \fB0x001\fR
+If set then  gets the  input  word  from the user, i.e.  "\fIword\fR"  must be
+supplied. Otherwise the word input is taken from the current buffer.
+.IP \fB0x002\fR
+If set then keeps  getting words from the current  buffer until either the end
+of the  buffer is  reached  or an error is found. If the end of the  buffer is
+reached then the command succeeds setting
+.Ht $result 5
+to the value  "\fIF\fR". This bit is ignored if bit 0x001 is set.  \fBspell\fR
+sets the current show-region to enclose the problematical word and the command
+.Ht show-region 2
+can be used to move around the word.
+.IP \fB0x004\fR
+Adds the given word to a dictionary  determined  by the state of bit 0x008. If
+the word is flagged as  erroneous  (see bit 0x010)  then a  "\fIcorrection\fR"
+word must be supplied,  otherwise a list of "\fIrules\fR" which can be applied
+to the word  must be given,  this list can be empty.  Note that if the word is
+not flagged as erroneous and it already exists in the  dictionary, the word is
+not removed, instead a combined rule list is created.
+.IP \fB0x008\fR
+When set flags  that word  additions  (bit  0x004) and  deletions  (bit 0x200)
+should be made to the ignore dictionary. Otherwise word additions are made the
+last added dictionary and deletions are made to all main dictionaries.
+.IP \fB0x010\fR
+When set flags that the given word is erroneous, used solely by word additions
+to create auto-corrections.
+.IP \fB0x020\fR
+Returns  a  '\fI|\fR'  separated  guest  guess  list  for  the  given  word in
+\fB$result\fR.
+.IP \fB0x040\fR
+If bit  \fB0x100\fR is also set a complete list of valid words  derivable from
+the given word are inserted into the current buffer. Otherwise spell returns
+.Ht $result 5
+set to the derivative  word created when the given  "\fIrule\fR" is applied to
+"\fIword\fR".  The rule  applied is the first  found of the given rule  letter
+with a matching base ending (see
+.Ht add-spell-rule 2 ).
+The word need not exist as not tests for the legality of the resultant word is
+used, for example in American, executing
+.CS
+65 spell "spelling" "V"
+.CE 0
+.IP
+returns  "\fCspellingive\fR"  in \fB$result\fR. Returns the empty string if no
+rule could be applied.
+.IP \fB0x080\fR
+Used with bit 0x002 to enable double word checking.
+.IP \fB0x100\fR
+Return information in \fB$result\fR about the given word, or the word which is
+used to derive the given word. The  information  consists of the spell status,
+the word as stored in the  dictionary,  and either the list of valid rules, or
+the correction word. See also bit \fB0x040\fR.
+.IP \fB0x200\fR
+Delete the given word from a dictionary determined by bit 0x008
+.PP
+If none of the main functions are used (bits 0x004, 0x020, 0x040 & 0x200) then
+the status flag is returned in the first  column of  \fB$result\fR.  These are
+defined as follows:-
+.IP \fBA\fR
+Auto-replace. The word was found and flagged as erroneous. The correction word
+is given in  \fB$result\fR,  either  next to the flag, or if bit  0x100 is set
+then after the '\fI>\fR' character.
+.IP \fBD\fR
+Double word. Indicates that the first problem found is a double  occurrence of
+the same word one after the other.
+.IP \fBE\fR
+Erroneous. The word was not found, so is Erroneous
+.IP \fBN\fR
+Not a word. The current word found contains no alphabetic characters so is not
+deemed to be a word, e.g. 3.141593. 
+.IP \fBO\fR
+Okay. The word was found and is not an erroneous word.
+.SH "SEE ALSO"
+.na
+.Ht add-dictionary 2 ,
+.Ht add-spell-rule 2 ,
+.Ht delete-dictionary 2 ,
+.Ht save-dictionary 2 ,
+.Ht show-region 2 ,
+.Ht spell-buffer 3 ,
+.Ht spell-word 3 .
+.ad
+.FH

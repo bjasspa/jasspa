@@ -1,0 +1,225 @@
+.\" -*- nroff -*-
+.Id $Id: m8fil005.8,v 1.1.1.1 2000-07-25 22:04:08 jon Exp $
+.Im MicroEmacs files
+.so me.tni
+.TH ehf 8
+.XI ehf - "MicroEmacs help file"
+.SH NAME
+ehf \- MicroEmacs help file
+.SH SYNOPSIS
+.na
+.nf
+\fB!\fR\|\fI<helpTag>\fR
+\fI<Text Description>\fR
+\.\.\.
+\fB|\fR\|\fI<helpId>\fR
+\fI<Text Description Line>\fR
+\.\.\.
+\fB$\fR\|\fI?\fR
+\.\.\.
+\fI<Text Description>\fR
+\fB!\fR\|\fI<helpTag>\fR
+\fB!\fR\|\fI<helpTag>\fR
+\fI<Text Description>\fR
+\.\.\.
+.fi
+.ad
+.SH DESCRIPTION
+The on-line help information is retained in the file  \fBme.ehf\fR, this is an
+ASCII text file which holds all of the on-line help information. The help file
+comprises  of  formatted  text  \fI<Text  Description>\fR  which is  literally
+displayed  to  the  user  when  help   information  is  requested.  Each  text
+description  is  delimited into  pages with a  \fB!\fR\|\fI<helpTag>\fR  which
+identifies the block of text with a help label.
+.PP
+The  \fB!\fR\|\fI<helpTag>\fR  is placed  before the text  description  and is
+identified by a exclamation  mark  (`\fB!\fR')  placed at the beginning of the
+line. The  \fI<helpTag>\fR is the identifying name used by the help system and
+takes the following form:
+.IP
+.C "LSSNNNN..."
+.PP
+Where:
+.IP \fBL\fR
+Is the length of the  "\fCNNNN...\fR"  name which must be  matched, a value of
+\&'\fC \fR' indicates that the whole name must be matched, otherwise the value
+must be in the range '\fC1\fR' - '\fC9\fR' indicating the number of characters
+to be match.
+.IP \fBSS\fR
+Is the section  number of the page, the first  character  should be a numeric
+(i.e. '\fC3\fR' for a macro) and the second is an optional  section  letter. A
+value of '\fC \fR' indicates no section number and/or letter.
+.IP \fBNNNN...\fR
+The page name, the length is unlimited but must be on one line.
+.PP
+Multiple \fI<helpTag>\fR's may be associated with a common text description by
+proceeding a block of text with multiple  tags, each on a separate  line, with
+no intervening non-tag lines (i.e. lines that do not commence with \fB!\fR).
+.PP
+The \fI<Text Description>\fR that follows is the text associated with the tag.
+When the help system is invoked with the tag then the text is displayed. There
+are 2 types  of  internal  command  lines,  lines  starting  with a  '\fC|\fR'
+indicate  that the  following  line should only be displayed if the  requested
+help page is \fI<helpId>\fR,  where \fI<helpId>\fR is the the name used in the
+\fI<helpTag>\fR.   This  is  a  useful   mechanism  for  pages  with  multiple
+\fI<helpTag>\fRs.
+.PP
+Lines which contain just  "\fC$?\fR" are \*(mS command lines where \fC?\fR can
+be:
+.IP \fCa\fR
+For a command help page display any global key bindings, for variables display
+its current value.
+.PP
+\*(mS uses a special hilighting scheme to control color schemes and hyper-text
+links, the special  embedded tags all start with and escape character (0x1b or
+\&'\fC^[\fR') and are defined as follows:
+.IP \fC^[c?\fR
+Tag used to change color where \fC?\fR can be:
+.RS
+.nf
+\fCA  \fRwhite, used for main text.
+\fCB  \fRred, used for underlining.
+\fCC  \fRgreen, used for italic font.
+\fCD  \fRcyan, used for bold font.
+\fCE  \fRlight yellow, used for a header.
+\fCF  \fRlight red, used for and image link.
+.fi
+.RE
+.IP \fC^[s?\fR
+Tag used to change hilighting scheme where \fC?\fR can be:
+.RS
+.nf
+\fCA  \fRNormal ehf hilight.
+\fCB  \fR\*(mS macro (or emf) hilighting.
+.fi
+.RE
+Note that other tags can only be used in the normal ehf hilighting scheme.
+.IP \fC^[ls<link>^[lm<name>^[le\fR
+Used to create  hyper-links,  \fC<link>\fR  is the help link name which can be
+omitted if it is the same as \fC<name>\fR. \fC<name>\fR should not contain any
+other tags, it is automatically displayed in the magenta color scheme.
+.SH NOTES
+When the help  system is invoked  for the first time,  \fBme.ehf\fR  is loaded
+into   internal   memory  and   fragmented   into  labeled   pages  using  the
+\fI<helpTag>\fR  information.  Hence, any edits made to  \fBme.emf\fR  are not
+visible in the help system until the next session.
+.PP
+Macros and alike may add  additional  help  information  to the internal  help
+database at run-time using the 
+.Ht define-help 2 
+command.
+.PP
+The help hilighting is applied to the help buffer from the hilighting  macro's
+defined in  \fBhkhelp.emf\fR.  The  hilighting is \s-1NOT\s0  part of the help
+file.
+.PP
+Special hilighting keys may be included in \fBme.ehf\fR provided that they are
+interpreted by the help hilighting defined in \fBhkehf.emf\fR.
+.PP
+.I "<Text Description>"
+lines cannot commence with \fB!\fR,  \fB|\fR or  \fB$\fR in the first column.
+.SH EXAMPLE
+The following help entry defines the help for
+.Ht global-mode 2 ,
+.Ht add-global-mode 3
+and
+.Ht delete-global-mode 3 .
+It uses most features  mentioned, namely multiple link names, color and scheme
+changes and several hyper-text links:
+.CS
+! 2 global-mode
+! 3 add-global-mode
+! 3 delete-global-mode
+^[cE^[cENAME ^[cE^[cA
+
+
+|global-mode
+    global-mode - Change a global buffer mode 
+|add-global-mode
+    add-global-mode - Set a global buffer mode 
+|delete-global-mode
+    delete-global-mode - Remove a global buffer mode 
+$a
+
+
+^[cE^[cESYNOPSIS ^[cE^[cA
+
+
+    ^[cCn^[cA ^[cDglobal-mode^[cA "^[cCmode^[cA" (^[cDesc m^[cA) 
+    ^[cDadd-global-mode^[cA "^[cCmode^[cA" 
+    ^[cDdelete-global-mode^[cA "^[cCmode^[cA" 
+
+
+^[cE^[cEDESCRIPTION ^[cE^[cA
+
+
+    ^[cDglobal-mode^[cA changes the state of one of the hereditary
+    global modes. A buffer's modes are initialized to the global
+    modes when first created. This command is very useful in changing
+    some of the default behavior such as case sensitive searching (see
+    the example below). See ^[ls^[lmOperating Modes^[le for a full list
+    and description of modes. Also see ^[ls^[lmbuffer-mode(2)^[le for a 
+    full description of the use of the argument ^[cCn^[cA. 
+
+    The ^[ls^[lminfo(2)^[le command gives a list of the current global
+    and buffer modes. 
+
+    ^[cDadd-global-mode^[cA and ^[cDdelete-global-mode^[cA are macros
+    defined in me3_8.emf which use global-mode to add or remove a global
+    mode. They are defined for backward compatibility and for ease of
+    use; they are simple macros, add-global-mode is defined as follows: 
+^[sB
+        define-macro add-global-mode 
+            ; Has the require mode been given as an argument, if so add it 
+            !force 1 global-mode @1 
+            !if &not $status 
+                ; No - use 1 global-mode to add a mode 
+                !nma 1 global-mode 
+            !endif 
+        !emacro 
+
+^[sA
+
+^[cE^[cEEXAMPLE ^[cE^[cA
+
+
+    The following example globally disables ^[ls^[lmexact(2m)^[le and
+    ^[ls^[lmmagic(2m)^[le modes, if these lines are copied to the user
+    setup file then are searches will be simple and case insensitive by
+    default: 
+^[sB
+        -1 global-mode "exact" 
+        -1 global-mode "magic" 
+
+^[sA
+
+^[cE^[cENOTES ^[cE^[cA
+
+
+    Globally adding ^[ls^[lmbinary(2m)^[le and ^[ls^[lmcrypt(2m)^[le
+    modes is strongly discouraged as any file loaded would be assigned 
+    these modes. Instead the use of commands ^[ls^[lmfind-bfile(2)^[le
+    and ^[ls^[lmfind-cfile(2)^[le are recommended. 
+
+    ^[ls^[lmauto(2m)^[le, ^[ls^[lmautosv(2m)^[le, ^[ls^[lmbackup(2m)^[le,
+    ^[ls^[lmexact(2m)^[le, ^[ls^[lmmagic(2m)^[le, ^[ls^[lmquiet(2m)^[le,
+    ^[ls^[lmtab(2m)^[le and ^[ls^[lmundo(2m)^[le modes are present on all
+    platforms by default. On Windows and DOS platforms ^[ls^[lmcrlf(2m)^[le
+    is also present and on DOS ^[ls^[lmctrlz(2m)^[le is also present. 
+
+
+^[cE^[cESEE ALSO ^[cE^[cA
+
+
+    ^[ls^[lmOperating Modes^[le, ^[ls^[lmbuffer-mode(2)^[le, 
+    ^[ls^[lmfind-bfile(2)^[le, ^[ls^[lmfind-cfile(2)^[le,
+    ^[ls^[lminfo(2)^[le. 
+.CE 0
+.SH FILES
+The help file \fBme.ehf\fR is located in the \*(mE \fIhome\fR directory.
+.SH "SEE ALSO"
+.na
+.Ht define-help 2 ,
+.Ht $MEPATH 5 .
+.ad
+.FH

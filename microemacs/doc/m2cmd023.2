@@ -1,0 +1,35 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd023.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|region
+.ds C0 "(\fB\*e\*cc\fR)\ \&
+.so me.tni
+.TH count-words 2
+.XI count-words - "\*(C0Count the number of words in a region"
+.SH NAME
+count-words \- Count the number of words in a region
+.Me $a
+.SH SYNOPSIS
+.na
+.B count-words
+(\fB\*e\*cc\fR)
+.ad
+.SH DESCRIPTION
+.B count-words
+Counts the  number of  words  between the
+.Ht set-mark 2
+position and the current cursor position. The command also gives statistics on
+the  number of  characters  and the  average  characters  per word. The output
+appears on the message line in a format such as:-
+.IP
+.C "54 Words, 345 Chars, 8 Lines"
+.PP
+.Ht $result 5
+is set to the same output string.
+.SH "SEE ALSO"
+.na
+.Ht $result 5 ,
+.Ht buffer-info 2 ,
+.Ht set-mark 2 .
+.ad
+.rm C0
+.FH

@@ -1,0 +1,30 @@
+.\" -*- nroff -*-
+.Id $Id: m2mod005.2,v 1.1.1.1 2000-07-25 22:03:58 jon Exp $
+.Im MicroEmacs modes
+.so me.tni
+.TH indent 2m
+.XI indent - "Automatic indentation"
+.SH NAME
+indent \- Automatic indentation
+.SH SYNOPSIS
+.B "indent Mode"
+.sp
+\fBI\fR \- mode line letter.
+.SH DESCRIPTION
+.B indent
+mode, when enabled, ensures that a new text line is automatically  indented to
+the same left hand column as the previous  line's first  non-white  character.
+If the previous line contains no non-white  characters  then the line will not
+be indented.  Automatic  indentation  is disabled when using  \fIcenter\fR  or
+\fIright\fR justification. \fBIndent\fR is usually used in conjunction with
+.Ht wrap 2m 
+and
+.Ht justify 2m .
+.SH "SEE ALSO"
+.na
+.Ht buffer-mode 2 ,
+.Ht global-mode 2 ,
+.Ht wrap 2m 
+.Ht justify 2m .
+.ad
+.FH

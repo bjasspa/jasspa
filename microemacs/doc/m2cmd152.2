@@ -1,0 +1,57 @@
+.Id $Id: m2cmd152.2,v 1.1.1.1 2000-07-25 22:03:57 jon Exp $
+.Im MicroEmacs command|window
+.so me.tni
+.TH grow-window-horizontally 2
+.XI grow-window-horizontally \- "Enlarge current window horizontally (relative)"
+.XI shrink-window-horizontally \- "Shrink current window horizontally (relative)"
+.XI resize-window-horizontally \- "Resize current window horizontally (absolute)"
+.SH NAME
+.Me "|grow-window-horizontally"
+grow-window-horizontally \- Enlarge current window horizontally (relative)
+.br
+.Me "|shrink-window-horizontally"
+shrink-window-horizontally \- Shrink current window horizontally (relative)
+.br
+.Me "|resize-window-horizontally"
+resize-window-horizontally \- Resize current window horizontally (absolute)
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B grow-window-horizontally
+.br
+.I n
+.B shrink-window-horizontally
+.br
+.I n
+.B resize-window-horizontally
+.ad
+.SH DESCRIPTION
+.B grow-window-horizontally
+enlarges  the current  window by \fIn\fR  number of columns (1 by default). If
+\fIn\fR is negative then the window is shrunk.
+.PP
+.B shrink-window-horizontally
+shrinks the current  window by \fIn\fR  number of columns (1 by  default).  If
+\fIn\fR is negative then the window is enlarged.
+.PP
+.B resize-window-horizontally
+change the size of the current  window to \fIn\fR  columns, if possible.  i.e.
+resize window is not a relative displacement.
+.PP
+Growth is performed by consuming space from the next horizontal  window to the
+right of the current window, except when the window is on the right-hand  edge
+of the screen when space is consumed from the left.
+.SH EXAMPLE
+Refer to  \fCmouse.ehf\fR  for an example of window  growth using the mouse to
+manipulate the size of the windows.
+.SH "SEE ALSO"
+.na
+.Ht $mouse-pos 5 ,
+.Ht $scroll-bar 5 ,
+.Ht $window-chars 5 ,
+.Ht grow-window-vertically 2 ,
+.Ht resize-all-windows 2 ,
+.Ht split-window-horizontally 2 .
+.ad
+.FH

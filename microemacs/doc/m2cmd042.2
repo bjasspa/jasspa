@@ -1,0 +1,110 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1998 Jon Green.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m2cmd042.2
+.\"  Created By    : Jon Green
+.\"  Created       : Thu Jul 16 23:13:14 1998
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1998 Jon Green.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from Jon Green.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m2cmd042.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|registry
+.so me.tni
+.TH get-registry 2
+.XI get-registry - "Retrieve a node value from the registry"
+.XI set-registry - "Modify a node value in the registry"
+.SH NAME
+.Me "|get-registry"
+get-registry \- Retrieve a node value from the registry.
+.br
+.Me "|set-registry"
+set-registry \- Modify a node value in the registry.
+.Me $a
+.SH SYNOPSIS
+.na
+.B get-registry
+"\fIroot\fR" "\fIsubkey\fR"
+.br
+.B set-registry
+"\fIroot\fR"
+\fI"subkey\fR"
+\fI"value\fR"
+.ad
+.SH DESCRIPTION
+.B get-registry
+retrieves  the value of a node  defined  by  \fIroot\fR/\fIsubkey\fR  from the
+registry into the variable
+.Ht $result 5 .
+.PP
+The  node  name  is  specified  in two  components,  typically  required  when
+iterating  over a registry tree, where the \fIroot\fR  component is static and
+the \fIsubkey\fR is dynamic,  \fIsubkey\fR may be specified as the null string
+(\fC""\fR) if an absolute registry path is specified.
+.PP
+.B set-registry
+adds (or modifies) a new value to the registry.  \fIroot\fR is the root of the
+new entry and  \s-1MUST\s0  exist or the call fails.  \fIsubkey\fR is the node
+name (or path) if the path does not exist then it is created.  \fIvalue\fR  is
+the value to assign to the node.
+.SH DIAGNOSTICS
+.B get-registry
+fails if the node does not exist, otherwise the registry string is returned in
+.Ht $result 5 .
+.PP
+.B set-registry
+fails if the \fIroot\fR node does not exist.
+.SH EXAMPLE
+The following call
+.Me $emf-scheme
+.CS
+set-registry "/history" "foo/win32/printer" "foo-bar"
+.CE
+.Me $ehf-scheme
+constructs a registry hierarchy of the form:-
+.CS
+"history" {
+  "foo" {
+    "win32" {
+      "printer"="foo-bar";
+    }
+  }
+}
+.CE
+The value of the registry node may be retrieved using:-
+.Me $emf-scheme
+.CS
+get-registry "/history" "foo/win32/printer"
+.CE
+.Me $ehf-scheme
+which would return "\fCfoo-bar\fR".
+.SH "SEE ALSO"
+.na
+.Ht find-registry 2 ,
+.Ht list-registry 2 ,
+.Ht read-registry 2 ,
+.Ht &reg 4 ,
+.Ht erf 8 .
+.ad
+.FH

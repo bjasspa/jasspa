@@ -1,0 +1,49 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd041.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|spell
+.so me.tni
+.TH delete-dictionary 2
+.XI delete-dictionary - "Remove a spelling dictionary from memory"
+.SH NAME
+delete-dictionary \- Remove a spelling dictionary from memory
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B delete-dictionary
+["\fIdictionary\fR"]
+.ad
+.SH DESCRIPTION
+.B delete-dictionary
+removes the given  \fIdictionary\fR  from memory,  where  \fIn\fR is a bitwise
+flag determining the removal mode, defined as follows:-
+.IP \fB0x01\fR
+Prompt the user before loosing any changes (except to the ignore dictionary).
+.IP \fB0x02\fR
+Delete all the dictionaries other than the ignore dictionary.
+.IP \fB0x04\fR
+Delete the ignore dictionary.
+.PP
+If the  argument  does  not  have  bit 0x02 or 0x04  set,  which  specify  the
+dictionaries  to be deleted, the user is prompted for the  "\fIdictionary\fR".
+The default argument is 1.
+.SH NOTES
+The ignore  dictionary  is a  temporary  dictionary  that exists in memory for
+duration  of the \*(mS  session;  the  dictionary  holds  words that have been
+ignored during any previous spell checks (see
+.Ht spell 2 ).
+All of the words that have been ignored may be discarded with:-
+.Me $emf-scheme
+.CS
+4 delete-dictionary
+.CE
+.Me $ehf-scheme
+i.e. \fB\*(eS 4 \*ex\ delete-dictionary\fR.
+.SH "SEE ALSO"
+.na
+.Ht spell-buffer 3 ,
+.Ht add-dictionary 2 ,
+.Ht save-dictionary 2 ,
+.Ht spell 2 .
+.ad
+.FH

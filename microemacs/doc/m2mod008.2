@@ -1,0 +1,25 @@
+.\" -*- nroff -*-
+.Id $Id: m2mod008.2,v 1.1.1.1 2000-07-25 22:03:58 jon Exp $
+.Im MicroEmacs modes
+.so me.tni
+.TH line 2m
+.XI line - "Line kill policy"
+.SH NAME
+line \- Line kill policy
+.SH SYNOPSIS
+.B "line Mode"
+.sp
+\fBL\fR \- mode line letter.
+.SH DESCRIPTION
+By default an invocation of
+.Ht kill-line 2
+at the  left-hand  margin  will  kill the whole  line. If  \fBline\fR  mode is
+enabled and the line  contains  text then only the text is killed,  leaving an
+empty line. If the line is empty then it is removed.
+.SH "SEE ALSO"
+.na
+.Ht buffer-mode 2 ,
+.Ht global-mode 2 ,
+.Ht letter 2m .
+.ad
+.FH

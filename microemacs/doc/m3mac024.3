@@ -1,0 +1,48 @@
+.\" -*- nroff -*-
+.Id $Id: m3mac024.3,v 1.1.1.1 2000-07-25 22:04:00 jon Exp $
+.Im MicroEmacs macrodevelop|filter
+.so me.tni
+.TH start-up 3
+.XI start-up - "Editor startup callback command" command
+.XI shut-down - "Editor exit callback command" command
+.SH NAME
+.br
+.Me "|start-up"
+start-up \- Editor startup callback command
+.br
+.Me "|shut-down"
+shut-down \- Editor exit callback command
+.Me $a
+.SH SYNOPSIS
+.na
+.B start-up 
+.br
+.B shut-down
+.ad
+.SH DESCRIPTION
+By default  
+.B start-up
+is not defined, if the  command is defined  (via a
+user macro) then it is executed immediately after \*(mE has completed its
+initialization. 
+.PP
+This command may initially  seem redundant as the user may execute any command
+at  start-up  by  editing  the  "\fCme.emf\fR"  file or  using  the  '\fB@\fR'
+command-line  argument. At the point of "\fCme.emf\fR"  file execution none of
+the files  specified  on the  command-line  will be loaded,  thus any  actions
+required  on the  given  command-line  files  will not work  (the only  buffer
+present will be the "\fB*scratch*\fR" buffer).
+.PP
+The  \fBstart-up\fR   command  is  executed   \s-1AFTER\s0  the  execution  of
+"\fCme.emf\fR" and  initialization of buffers, but before \*(mE waits for user
+input.
+.PP
+The  \fBshut-down\fR  command  is also not  defined by  default,  but if it is
+defined  during the  running of \*(mS the  command  will be called  when \*(mS
+exits. The  command  is not called if \*(mS has to perform an  emergency  exit
+(due to the system being shut down or process being killed etc).
+.SH "SEE ALSO"
+.na
+.Ht me 1 .
+.ad
+.FH

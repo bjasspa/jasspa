@@ -1,0 +1,186 @@
+.Id $Id: m2cmd203.2,v 1.1.1.1 2000-07-25 22:03:57 jon Exp $
+.Im MicroEmacs bindings
+.so me.tni
+.TH keyNames 2
+.XI keyNames - "Key Binding Names"
+.SH "KEY BINDING NAMES"
+Every  key  which can be  generated  in \*(mE has a  character  string or name
+representation  which can be used to bind and unbind the key to a command. The
+name of simple keys like "\fCa\fR" or "\fC$\fR" is simply the character,  i.e.
+"\fCa\fR" and "\fC$\fR". Following is a list of other parts to a key name.
+.SS "Modify Keys"
+There are 3 modifying  keys, Shift, Control and Alt, these are  represented as
+"\fCS-\fR",   "\fCC-\fR",   "\fCA-\fR"   respectively.  For  example  the  key
+"\fCA-C-S-up\fR"  is  generated  when the up cursor key is pressed when Shift,
+Control and Alt keys where also pressed.
+.PP
+The Control and Alt  modifiers are case  insensitive so \fCC-a\fR is the same as
+\fCC-A\fR and \fCC-S-a\fR.
+.SS "Prefix Keys"
+Many  binding  are  single   stroke  key   sequences   (e.g.   "\fCC-a\fR"  =>
+beginning-of-line). However \*(mE has a
+.Ht prefix 2
+command  which can be used to bind up to 8 single  stroke keys,  turning  them
+into two stroke keys; this greatly increasing the number of available bindable
+key  sequences.  For example  \fBprefix 1\fR is bound to the escape  character
+(\fC\*(eS\fR),  this  allows  key  sequences  like  "\fCesc  a\fR" to be used.
+Following is a list of prefixes and their default bindings
+.RS
+.sp
+.Hl "prefix 1" prefix 2
+=> \fC\*(eS\fP
+.br
+.Hl "prefix 2" prefix 2
+=> \fC\*cx\fP
+.br
+.Hl "prefix 3" prefix 2
+=> \fC\*ch\fP
+.br
+.Hl "prefix 4" prefix 2
+=> \fC\*cc\fP
+.RE
+.SS "Special Keys"
+Following  is a complete  list of  recognized  keyboard key names, not all are
+able to be generated on every platform:-
+.na
+.RS
+.PP
+\fCbackspace\fR,  \fCdelete\fR,  \fCdown\fR,  \fCend\fR,  \fCesc\fR, \fCf1\fR,
+\fCf2\fR,   \fCf3\fR,   \fCf4\fR,   \fCf5\fR,  \fCf6\fR,  \fCf7\fR,  \fCf8\fR,
+\fCf9\fR, \fCf10\fR,  \fCf11\fR,  \fCf12\fR,  \fCf13\fR, \fCf14\fR, \fCf15\fR,
+\fCf16\fR,    \fCf17\fR,   \fCf18\fR,   \fCf19\fR,   \fCf20\fR,    \fChome\fR,
+\fCinsert\fR,  \fCkp-0\fR,  \fCkp-1\fR,  \fCkp-2\fR,  \fCkp-3\fR,  \fCkp-4\fR,
+\fCkp-5\fR,  \fCkp-6\fR,  \fCkp-7\fR,  \fCkp-8\fR,  \fCkp-9\fR,  \fCkp-add\fR,
+\fCkp-begin\fR,     \fCkp-decimal\fR,     \fCkp-delete\fR,    \fCkp-divide\fR,
+\fCkp-down\fR, \fCkp-end\fR, \fCkp-enter\fR,  \fCkp-home\fR,  \fCkp-insert\fR,
+\fCkp-left\fR,   \fCkp-multiply\fR,    \fCkp-page-down\fR,   \fCkp-page-up\fR,
+\fCkp-right\fR,  \fCkp-subtract\fR,  \fCkp-up\fR, \fCleft\fR, \fCpage-down\fR,
+\fCpage-up\fR, \fCreturn\fR, \fCright\fR, \fCspace\fR, \fCtab\fR, \fCup\fR
+.RE
+.PP
+.ad
+The name of any key can be obtained by using
+.Ht describe-key 2 .
+.SS "Mouse Keys"
+Following is a list of mouse related keys:-
+.IP "\fBmouse-pick-1\fR, \fBmouse-pick-2\fR, \fBmouse-pick-3\fR, \fBmouse-pick-4\fR, \fBmouse-pick-5\fR"
+These  keys are  generated  when the user  presses a mouse  button,  these key
+events are always  created. On most systems button 1 is the left, 2 the middle
+and 3 the right mouse  button. If the system only has a 2 button  mouse then a
+\fCmouse-pick-2\fR  cannot  be  generated.  The  order of the  buttons  can be
+revered (i.e. 1 becomes right) and the number of buttons can be set using the
+.Ht $system 5 
+variable.  Note that  X-servers  support up to 5 buttons  and with the growing
+popularity  of pilot  'wheel'  mice, the 4th and 5th  button are often used to
+report wheel spin up and down events. The
+.Ht translate-key 2
+command can be used to translate these buttons to the mouse wheel keys.
+.IP "\fBmouse-drop-1\fR, \fBmouse-drop-2\fR, \fBmouse-drop-3\fR, \fBmouse-drop-4\fR, \fBmouse-drop-5\fR"
+These  keys are  generated  when the user  release a mouse  button,  these key
+events are always created.
+.IP "\fBmouse-move-1\fR, \fBmouse-move-2\fR, \fBmouse-move-3\fR, \fBmouse-move-4\fR, \fBmouse-move-5\fR, \fBmouse-move\fR"
+These key events are  generated  when the user moves the mouse and are only if
+they are bound to a command. The key generated  depends on whether a button is
+being  held  down  by the  user,  if the  user  is  pressing  button  1 then a
+\fCmouse-move-1\fR key is created etc.
+.IP "\fBmouse-time-1\fR, \fBmouse-time-2\fR, \fBmouse-time-3\fR, \fBmouse-time-5\fR, \fBmouse-time-5\fR, \fBmouse-time\fR"
+These key events are generated only when they are bound to a command. They are
+pseudo keys created when the user hold the mouse  buttons done for a period of
+time, see \fBPseudo Keys\fR below for more information.
+.IP "\fBmouse-wheel-up\fR, \fBmouse-wheel-down\fR"
+Pilot  mouse  wheel  events,  generated  when  the  wheel  is  spun up or down
+respectively.
+.SS "Modifier Keys"
+The Shift, Control and Alt modifier keys will also generate key input whenever
+pressed or released. The keys are however only  generated if they are bound to
+a command. The key names are as follows:
+.IP "\fBS-pick\fR, \fBS-drop\fR"
+Shift modifier.
+.IP "\fBC-pick\fR, \fBC-drop\fR"
+Control modifier.
+.IP "\fBA-pick\fR, \fBA-drop\fR"
+Alt modifier.
+.PP
+Note that the keys are only generated when another key is pressed, i.e. if the
+user  presses  and holds  only the shift  key, no  "\fCS-pick\fR"  key will be
+generated until another key, such as \fCdown\fR, is also pressed. If the shift
+key is released before another key is pressed the event will not be reported.
+.SS "Pseudo Keys"
+Pseudo  keys events  cannot be directly  created by the user, they are created
+internally  by \*(mS. They are  treated  like normal keys to allow the user to
+handle the events  properly  themselves.  Following is a complete  list of the
+system generated pseudo keys:- 
+.IP \fBbell\fR
+The pseudo key is generated when the bell is rung.
+.IP \fBcallback\fR
+The pseudo key when a
+.Ht create-callback 2
+macro is executed, this allows the executed  macro to know it was executed via
+a create-callback as
+.Ht @cck 4
+will be set to this. 
+.IP "\fBidle-pick\fR, \fBidle-drop\fR, \fBidle-time\fR"
+The commands  bound to these keys are  executed  when the system  becomes idle
+for a period of time. See help on
+.Ht $idle-time 5
+for more information.
+.IP "\fBmouse-time-1\fR, \fBmouse-time-2\fR, \fBmouse-time-3\fR, \fBmouse-time-4\fR, \fBmouse-time-5\fR, \fBmouse-time\fR"
+The command  bound to these keys are executed  when mouse button 1, 2, 3, 4, 5
+or a combination are held bound for a period of time. See help on
+.Ht $delay-time 5
+for more information.
+.br
+.IP \fBredraw\fR
+The command  bound to this pseudo key is executed  whenever  the screen needs
+redrawing, by default it is bound to
+.Ht screen-update 2 .
+If the user unbinds this key then  \fBscreen-update\fR is still called, but if
+the user binds it to a function which does not redraw the screen, such as
+.Ht void 2 ,
+then the screen will not be up-dated.
+.PP
+The  command  executed  is  always  given an  argument,  a  non-zero  argument
+indicates a forced complete redraw, an argument of zero indicates that just an
+up-date is required.
+.SS "Alt Key"
+The
+.B "Alt Key"
+has special binding priorities defined as follows:-
+.BS
+Direct key binding (e.g. \fBA\-b\fR executes 
+.Hl file-browser file-browser 3 )
+.BU
+Main menu hot key (e.g. \fBA\-f\fR opens the File menu)
+.BU
+Meta key binding (e.g. \fBA\-space\fR \-> \fBesc\ space\fR -> 
+.Hl set-mark set-mark 2 )
+.BE
+If the  \fCALT\fR  key is to be used  strictly  as the Emacs Meta key then the
+bindings for the menu should be over-ridden by \fIDirect Key Bindings\fR  from
+the user  configuration  file i.e. to re-map the default MicroEmacs Alt key to
+equivalent \fCesc\fR keys then the following keys should be re-bound.
+.Me emf-scheme
+.CS
+global-bind-key forward-word "A-f"      ; Over-ride File menu binding
+:                                       ; For all of the other menu items.
+:
+global-bind-key backward-word "A-b"     ; Over-ride the file browser.
+global-bind-key replace-string "A-r"    ; Over-ride tools binding.
+.CE
+.Me ehf-scheme
+This  creates a higher  priority  binding  which  overrides  the  underlying
+default.  The  commands  that  are  displaced  would  have to be  re-bound  to
+different keys if required.
+.SH "KEYBOARD MACROS"
+Keyboard  macros  do not  store  the  name of  keys,  instead  a more  machine
+oriented format is used (usually in the form "\fC\\s??\fR")  these will work
+across  platforms  (assuming  the key  bindings are the same) but they may not
+work across  different  releases.
+.PP
+As a result it is advised  that any long term macro  should  avoid  named keys
+like \fCup\fR in favor of using a standard key binding such as \fCC-p\fR. See
+help on
+.Ht execute-string 2
+for more information.
+.FH
+

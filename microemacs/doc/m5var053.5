@@ -1,0 +1,63 @@
+.\" -*- nroff -*-
+.Id $Id: m5var053.5,v 1.1.1.1 2000-07-25 22:04:06 jon Exp $
+.Im MicroEmacs variable|paragraph
+.so me.tni
+.TH $fill-bullet 5
+.XI $fill-bullet - "Paragraph filling bullet character set"
+.XI $fill-bullet-len - "Paragraph filling bullet search depth"
+.SH NAME
+.Me "|$fill-bullet"
+$fill-bullet \- Paragraph filling bullet character set
+.br
+.Me "|$fill-bullet-len"
+$fill-bullet-len \- Paragraph filling bullet search depth
+.Me $a
+.SH SYNOPSIS
+\fB$fill-bullet\fR "\fIstring\fR"; Default is "\fC*)].\-\fR"
+.br
+\fB$fill-bullet-len\fR \fIlength\fR; Default is \fC5\fR
+.sp
+0 <= \fIlength\fR <=
+.Hl $fill-col $fill-col 5
+.SH DESCRIPTION
+.B $fill-bullet
+contains the set of characters which are classified as bullet markers for
+.Ht fill-paragraph 2 .
+If these characters are encountered in the first
+.B $fill-bullet-len
+characters  of  the  paragraph  \s-1AND\s0  the  character  is  followed  by a
+\fCSPACE\fR  or a  \fCtab\fR  character  then the user is given the  option to
+indent to the right of the bullet.
+.PP
+.B $fill-bullet-len
+determines  the maximum depth into the paragraph (in  characters)  the filling
+routines  should search for a bullet  character. The default value is 15. Note
+that the paragraph  starts at the first  non-white  space  character.  e.g. to
+detect  "\fCxviii)\ \fR" as a bullet then the bullet  length must be set to at
+least 6 to detect the bullet character "\fC)\fR".
+.SH EXAMPLE
+Examples of filled bullet paragraphs are shown as follows, based on the default
+.B $fill-bullet
+character set.
+.CS
+a) This is an  example of a  fill-paragraph.  The  closing
+   bracket is classified as a bullet character and filling
+   optionally takes place to the right of the bullet.
+
+a] Another paragraph
+
+*  A bullet paragraph
+
+1. A numbered paragraph.
+
+item - A dashed bullet.
+.CE 0
+.SH "SEE ALSO"
+.na
+.Ht $fill-col 5 ,
+.Ht $fill-ignore 5 ,
+.Ht $fill-mode 5 ,
+.Ht fill-paragraph 2 ,
+.Ht justify 2m .
+.ad
+.FH

@@ -1,0 +1,124 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd007.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|shell
+.so me.tni
+.TH add-next-line 2
+.XI add-next-line - "Define the searching behavior of command output"
+.SH NAME
+add-next-line \- Define the searching behavior of command output
+.Me $a
+.SH SYNOPSIS
+.na
+.B add-next-line
+"\fIbuffer-name\fR" "\fIstring\fR"
+.ad
+.SH DESCRIPTION
+.B add-next-line
+is used to set up the
+.I next-line
+functionality  which is used by the
+.Ht get-next-line 2
+command. The  \fInext-line\fR  feature is aimed at giving the user easy access
+to file  locations  which  are  stored in  another  buffer.  This  buffer  may
+typically be the output from the
+.Hr grep 1
+command or a compiler (e.g.
+.Hr cc 1 )
+and needs to contain the file name and line number of the required location.
+.PP
+As long as the  format of the buffer is  consistent  and there is a maximum of
+one  location  per  line,  the  \fInext-line\fR  feature  can be  successfully
+configured.
+.PP
+The first  argument,  "\fIbuffer-name\fR",  gives the name the  aforementioned
+buffer, this is "\fB*grep*\fR" for the
+.Ht grep 3
+command etc. There is no limit on the number of next-line  formats, nor on the
+number of \fBadd-next-line\fR  strings which are given. While there is no real
+need  to   initialize   each  new  type,  it  is   advised   that  the   first
+\fBadd-next-line\fR is called with an empty string, e.g.:
+.Me $emf-scheme
+.CS
+add-next-line "*grep*" ""
+add-next-line "*grep*" "....."
+.CE
+.Me $ehf-scheme
+This tells \*(mE to reinitialize the type by freeing off any strings currently
+stored. This safe guards against duplicate strings being added due to it being
+set up more than once.
+.PP
+Following is a typical output from grep:
+.CS
+foo.c: 45:      printf("hello world\\n") ;
+foo.c: 46:      printf("hello again\\n") ;
+.CE
+If we  replace  the  file  name  with  "\fC%f\fR"  and the  line  number  with
+"\fC%l\fR", this becomes:
+.CS
+%f: %l:      printf("hello world\\n") ;
+.CE
+.Hl get-next-line get-next-line 2
+works on a left to right basis, as soon as it has enough  information from the
+line it does not need to  continue.  Therefore  the  previous  example  can be
+reduced to just "\fC%f:  %l:\fR". This is the string  argument  that should be
+given for the above example, i.e.:
+.Me $emf-scheme
+.CS
+add-next-line "*grep*" "%f: %l:"
+.CE
+.Me $ehf-scheme
+.Hl get-next-line get-next-line 2
+takes the given string and replaces the "\fC%f\fR" with
+.Ht $file-template 5
+and the "\fC%l\fR" with the
+.Ht $line-template 5
+and then uses the resultant  string as a regular  expression  search string to
+find  the next  location.  Crudely  these  could be set to  "\fCfoo.c\fR"  and
+"\fC45\fR" respectively to find the first example, but this would fail to find
+any other. As a result the  templates  are usually magic search  strings which
+will match any file and line number.
+.PP
+Similarly, following is an example output of the
+.Hr gcc 1
+compiler:
+.CS
+basic.c:522: warning: `jj' might be used uninitialized in this command
+display.c:833: warning: implicit declaration of function `ScreenPutChar'
+.CE
+In this case the \fBadd-next-line\fR given needs to be:
+.Me $emf-scheme
+.CS
+add-next-line "*compile*" "%f:%l:"
+.CE
+.Me $ehf-scheme
+Some  versions  of
+.Hr grep  1
+give the file name first and then the lines on the  following  lines.  This is
+not a major problem as  \fBget-next-line\fR  remembers the last file name. The
+only problem  occurs when  skipping  some parts of the list at which point the
+last file name  parsed may not be the current  file.  Following  is an example
+output of such a \fBgrep\fR and the setup required:
+.CS
+File foo.c:
+Line 45:      printf("hello world\\n") ;
+Line 46:      printf("hello again\\n") ;
+.CE
+The configuration to locate the lines is defined as:
+.Me $emf-scheme
+.CS
+add-next-line "*grep*" ""
+add-next-line "*grep*" "File %f:"
+add-next-line "*grep*" "Line %l:"
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Ht $file-template 5 ,
+.Ht $line-template 5 ,
+.Hr cc 1 ,
+.Ht compile 3 ,
+.Ht get-next-line 2 ,
+.Hr grep 1 ,
+.Ht grep 3 .
+.ad
+.FH

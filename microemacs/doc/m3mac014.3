@@ -1,0 +1,51 @@
+.\" -*- nroff -*-
+.Id $Id: m3mac014.3,v 1.1.1.1 2000-07-25 22:04:00 jon Exp $
+.Im MicroEmacs command|games
+.so me.tni
+.TH Metris 3
+.XI Metris - "\*(mE version of the falling blocks game"
+.SH NAME
+Metris \- \*(mE version of the falling blocks game
+.Me $a
+.SH SYNOPSIS
+.na
+\fBMetris\fR
+.ad
+.SH DESCRIPTION
+Traditional  falling  blocks  game,  make  solid  horizontal  lines out of the
+falling  blocks. The blocks can be rotated and moved left or right by the user
+as they fall. Once a horizontal line is completely solid it will disappear and
+everything  above it will drop down. A bonus is given if 3 solid rows are made
+at the same time, i.e. using one block.
+.PP
+Every line you make the game  speeds up until it gets too fast!! The game ends
+when there is no more room to put a block.
+.PP
+The keys used to control Metris are:
+.IP "\fBleft\fR or \fBj\fR"
+Move the block left one character.
+.IP "\fBright\fR or \fBl\fR"
+Move the block right one character.
+.IP "\fBdown\fR or \fBk\fR"
+Rotate the block counter-clockwise 90 degrees.
+.IP \fBspace\fR
+Drop the current block.
+.IP \fBp\fR
+Pause the current game.
+.IP \fBq\fR
+Quit the current game.
+.IP \fBC-l\fR
+Redraw the display.
+.IP \fBreturn\fR
+Start a new game.
+.IP "\fBesc h\fR"
+View this help page.
+.SH NOTES
+\fBMetris\fR is a macro defined in \fCmetris.emf\fR.
+.SH "SEE ALSO"
+.na
+.Hl Games Games - ,
+.Ht Match-It 3 ,
+.Ht Patience 3 .
+.ad
+.FH

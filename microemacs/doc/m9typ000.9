@@ -1,0 +1,208 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1999 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m9typ000.9
+.\"  Created By    : Jon Green
+.\"  Created       : Sat Feb 6 14:22:09 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1999 JASSPA.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m9typ000.9,v 1.1.1.1 2000-07-25 22:04:08 jon Exp $
+.Im MicroEmacs filetype
+.so me.tni
+.TH c 9
+.XI c - "C programming language"
+.XI cc - "C++ programming language"
+.XI h - "C programming language header"
+.XI cpp - "C++ programming language"
+.XI def - "C or C++ definition file"
+.XI l - "LEX programming language"
+.XI y - "YACC programming language"
+.XI i - "C/C++ preprocessor outpuit file"
+.XI rc - "Microsoft Developer resource file"
+.SH SYNOPSIS
+C, C++ \- C and C++ programming language templates
+.SH FILES
+.na
+.B hkc.emf
+\- C programming language hook definition
+.br
+.B hkcpp.emf
+\- C++ programming language hook definition
+.sp 1
+.B c.etf
+\- C programming language template file
+.br
+.B h.etf
+\- C programming language header template file
+.br
+.B cpp.etf
+\- C++ programming language template file
+.br
+.B hpp.etf
+\- C++ programming language header template file
+.ad
+.SH EXTENSIONS
+.na
+\fB.c\fR, \fB.h\fR, \fB.def\fR \- ANSI C
+.br
+\fB.cpp\fR, \fB.cc\fR, \fB.hpp\fR, \fB.rc\fR \fB.C\fR \fI(UNIX only)\fR \- C++
+programming language
+.br
+\fB.l\fR \- LEX
+.br
+\fB.y\fR \- YACC
+.br 
+\fB.i\fR \- C (or C++) pre-processed file (i.e. output from pre-processor).
+.br
+\fB.rc\fR \- Microsoft Developer resource file.
+.ad
+.SH "MAGIC STRINGS"
+.IP "\fB-*- c -*-\fR"
+Recognized by GNU and MicroEmacs.  Denotes a 'C' programming  type file, may be
+used in \fB.c\fR, \fB.def\fR and \fB.h\fR files.
+.IP "\fB-*- c++ -*-\fR"
+Recognized by GNU and MicroEmacs.  Denotes a C++ programming  type file, may be
+used in \fB.c\fR, \fB.def\fR and \fB.h\fR files.
+.SH DESCRIPTION
+The \fBC\fR and \fBC++\fR  file type  templates  offer the most  sophisticated
+editing features within the \*(mE environment.
+.IP "\fBGeneral Editing\fR"
+On creating a new file, a new header is automatically included into the file.
+.Ht time 2m
+is by default enabled, allowing the modification time-stamp to be maintained in
+the header.
+.IP \fBHilighting\fR
+The  hilighting  features allow  commands,  variables,  logical,  preprocessor
+definitions,   comments,   strings  and  characters  of  the  language  to  be
+differentiated and rendered in different colors.
+.IP "\fBAuto Layout\fR"
+The electric C-Mode
+.Ht cmode 2m
+performs automatic layout of the text, variables such as
+.Ht c-brace 5
+allow the brace position and text formation to be modified.
+.IP
+.Ht restyle-region 3
+and
+.Ht restyle-buffer 3
+are available to reformat  (re-layout) selected sections of the buffer, or the
+whole buffer, respectively.
+.IP
+Comments  may be formatted  using  \fC\*eo\fR,  which  reformats  the  comments
+according  to  the  current  fill  paragraph.  If  a  comment  commences  with
+\fC/***...\fR then the comment is automatically formatted to a box.
+.IP "\fBTags\fR"
+A C-tags file may be generated within the editor using the \fBTools\fR \->
+\fBC-Tools\fR \-> \fBCreate Tag File\fR.
+.Ht find-tag 2
+takes the user to the file using the tag information.
+.IP "\fBFolding and Information Hiding\fR"
+Generic  folding is enabled  within the C and C++ files. The folds occur about
+braces \fB{\fR...\fB}\fR located on the left-hand margin.
+.Ht fold-all 3
+(un)folds all regions in the file,
+.Ht fold-current 3
+(un)folds the current region.
+Note that folding does not operate on K&R style code.
+.IP
+The \fBTools\fR -> \fBC-Tools\fR  menu allows  \fC#define\fR's to be evaluated
+within the buffer. Where the state of a \fC#if\fR is  established  to be false
+(using the  \fC#define\fR  information)  then the  disabled  region of code is
+grayed out indicating which regions of the code are active.
+.IP "\fBWorking Environment\fR"
+.Ht compile 3
+may be invoked to rebuild the source, the user is prompted to save any files.
+.IP
+.Ht rcs-file 2
+is automatically  invoked if an RCS file is detected, the normal  check-in/out
+operations may be performed through the editor.
+.IP "\fBShort Cuts\fR"
+The short cut keys used within the buffer are:-
+.IP
+\fB\*cc \*cc\fR \- Comment out the current line.
+.br
+\fB\*cc \*cd\fR \- Uncomment the current line.
+.br
+\fB\*cc \*ce\fR \- Comment to the end of the line with stars (*).
+.br
+\fB\*a\*ci\fR \- Restyle the current region.
+.br
+\fB\*eq\fR \- Format a comment.
+.br
+\fB\*eo\fR \- Format a comment.
+.br
+\fBf2\fR \- (un)fold the current region
+.br
+\fBf3\fR \- (un)fold all regions
+.SH NOTES
+If the  default  language  is C++, rather than 'C' the order of the file hooks
+should be over-ridden in the users local setup, using:-
+.Me $emf-scheme
+.CS
+add-file-hook ".c "                                  fhook-c
+add-file-hook ".cc .cpp .hpp .rc .h .def .l .y .i"   fhook-cpp
+.CE 
+.Me $ehf-scheme
+This defaults all \fB.h\fR and \fB.def\fR files etc. to be C++ rather than C.
+.PP
+The  hilighting  is  typically   extended  using  a  file   \fBmyc.emf\fR  (or
+\fBmycpp.emf\fR)  i.e. to include the usual extended types of \fBint32\fR etc,
+\fBmyc.emf\fR might be defined as:-
+.Me $emf-scheme
+.CS
+hilight .hilight.c 1 "uint8"    .scheme.type
+hilight .hilight.c 1 "int8"     .scheme.type
+hilight .hilight.c 1 "uint16"   .scheme.type
+hilight .hilight.c 1 "int16"    .scheme.type
+hilight .hilight.c 1 "uint32"   .scheme.type
+hilight .hilight.c 1 "int32"    .scheme.type
+hilight .hilight.c 1 "float32"  .scheme.type
+hilight .hilight.c 1 "float64"  .scheme.type
+.CE 0
+.Me $ehf-scheme
+.SH BUGS
+The 'C' and 'C++' templates have been throughly used, there are no known issues
+with the templates.
+.PP
+The  \fB.rc\fR  hilighting  is a little  bogus and should not really be mapped
+onto \fB.cpp\fR. Do not attept to re-style.
+.SH "SEE ALSO"
+.na
+.Ht c-brace 5 ,
+.Ht cmode 2m ,
+.Ht compile 3 ,
+.Ht ctags 3f ,
+.Ht find-tag 2 ,
+.Ht fold-all 3 ,
+.Ht fold-current 3 ,
+.Ht rcs-file 2 ,
+.Ht restyle-buffer 3 ,
+.Ht restyle-region 3 ,
+.Ht time 2m .
+.sp 1
+.Hl "Supported File Types" FileTypes -
+.ad
+.FH

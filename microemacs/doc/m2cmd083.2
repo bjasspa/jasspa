@@ -1,0 +1,55 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd083.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|help|buffer
+.ds C0 "(\fB\*(cX\*cb\fR)\ \&
+.so me.tni
+.TH list-buffers 2
+.XI list-buffers - "\*(C0List all buffers and show their status"
+.SH NAME
+list-buffers \- List all buffers and show their status
+.Me $a
+.SH SYNOPSIS
+.na
+\fBlist-buffers\fR \*(C0
+.ad
+.SH DESCRIPTION
+.B list-buffers
+splits the current  window and in one half brings up a list of all the buffers
+currently  existing in the editor. The active  modes,  change flag, and active
+flag for each buffer is displayed. (The change flag is a \fB*\fR  character if
+the buffer has been  changed  and not  written  out. The active flag is not an
+\fB@\fR if the file had been  specified on the command  line, but has not been
+read in yet since nothing has switched to that buffer.)
+.PP
+The buffer list has some special  command keys  associated with it which allow
+the state of the  buffers  to be edited  from the buffer  list, the  editing
+allows  buffers  to be killed and saved to disk. The key codes are  defined as
+follows:-
+.IP "\fB1\fR - Switch to buffer"
+Switch to that buffer and make it the only buffer.
+.IP "\fB2\fR - Move to buffer"
+Switch the buffer list window to that buffer.
+.IP "\fBD\fR - delete buffer"
+Flag buffer for  deletion. A buffer  scheduled  for  deletion is marked with a
+\'\fBD\fR'  in first  column.  The delete  status is enacted by the  '\fBX\fR'
+command, or may be removed with the '\fBU\fR' command.
+.IP "\fBS\fR - save buffer"
+Flag  buffer  for  saving. A buffer  scheduled  from  saving is marked  with a
+\'\fBS\fR'  in the second  column. Note that a buffer may be marked for saving
+and deletion, the save operation is performed before the delete.
+.IP "\fBU\fR - unmark buffer"
+Unmark the '\fBD\fR' and '\fBS\fR' flags on current line.
+.IP "\fBX\fR - execute"
+Execute all the '\fBD\fR' and '\fBS\fR' flags currently set. The \fBS\fRave is
+enacted first.
+.LP
+For all but '\fBX\fR', the buffer  selected is the buffer noted on the current
+cursor line. These keys are not remappable.
+.SH "SEE ALSO"
+.na
+.Ht list-variables 2 ,
+.Ht list-commands 2 ,
+.Ht split-window-horizontally 2 .
+.ad
+.rm C0
+.FH

@@ -1,0 +1,40 @@
+.\" -*- nroff -*-
+.Id $Id: m8fil002.8,v 1.1.1.1 2000-07-25 22:04:08 jon Exp $
+.Im MicroEmacs files
+.so me.tni
+.TH edf 8
+.XI edf - "MicroEmacs spelling dictionary file"
+.SH NAME
+edf \- MicroEmacs spelling dictionary file
+.SH SYNOPSIS
+.na
+.sp
+.B american.edf
+.br
+\fIuser\fR\|\fB.edf\fR
+.ad
+.SH DESCRIPTION
+The spelling  dictionary  files are given the extension  \fB.edf\fR. These are
+binary files read by \*(mE and cannot be edited directly.
+.PP
+\*(mE is supplied with a dictionaries  for American and British English. It is
+recommended that these dictionaries are not modified, a personal dictionary is
+used and modified instead.
+.PP
+A  personal  dictionary,  \fIuser\fR\|\fB.edf\fR,  may be created in the users
+directory for additional spelling information.
+.SH FILES
+The  standard  dictionary  files  \fIlanguage\fR\fB.edf\fR  are located in the
+\*(mE \fIhome\fR directory.
+.PP
+User's may create  their own  dictionary  files by  shadowing  the  \fIhome\fR
+directory  file with their  local  dictionary(s)  located in a personal  \*(mE
+directory. See
+.Ht $search-path 5 .
+.SH "SEE ALSO"
+.na
+.Ht spell 2 ,
+.Ht add-dictionary 2 ,
+.Ht $search-path 5 .
+.ad
+.FH

@@ -1,0 +1,373 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd201.2,v 1.1.1.1 2000-07-25 22:03:57 jon Exp $
+.Im MicroEmacs bindings
+.so me.tni
+.TH Compatibility 2
+.XI Compatibility - "Compatibility with the original MicroEmacs"
+.SH "COMPATIBILITY"
+\*(mE is based on the original version of \fBMicroEmacs\fR  produced by Danial
+Lawrence at revision  3.8, the source files were  obtained  approximately  8-9
+years ago. The exact  origin of the files is  unknown. In that  period of time
+the source files have undergone an awful lot of change,  without  reference to
+the  subsequent  releases  made of  MicroEmacs  by Danial  Lawrence (due to no
+network access). As a result this version of \fBMicroEmacs\fR does not include
+any  modifications  or  features  that may have been  implemented  since. This
+version of  \fBMicroEmacs\fR  has been tailored to suite the requirements of a
+small group of individuals  who have used the editor on a daily basis across a
+limited  number  of  platforms,  for a  variety  of very  different  tasks and
+operating requirements.
+.PP
+This   version   of  \*(mS  is  biased   towards   \s-1UNIX\s0   environments,
+\s-1MS-DOS\s0 and Microsoft Windows ports have been performed however they are
+heavily  influenced by  \s-1UNIX\s0  and inherit  \s-1UNIX\s0  characteristics
+wherever  possible.  The  intention is that  programmers,  and alike, may move
+across platforms using a common editor environment without being frustrated by
+the idiosyncrasies of different platforms. The most noticeable platform is the
+Microsoft  Windows platform which mimics the X-Windows cut and paste mechanism
+within the \*(mE environment. If you want a Windows style environment then use
+.Hr Notepad 1
+or
+.Hr Wordpad 1 ,
+this editor is not for you !!
+.PP
+The gross changes to \fB\*(mE\fR are summarized as follows:-
+.BS 1 1
+Macro language  interpreter  re-written  allowing an unlimited number of named
+macros to be  supported.  The macro  implementation  allows new commands to be
+created  by the user, as  opposed  to  continually  extending  the  underlying
+command set. The named macros are  transparent to the user, appearing as built
+in commands on the command line. Macro  command set  significantly  increased.
+Support for global, buffer and register variables within the macro language.
+.BU
+Display  drivers  re-written   providing  color  hilighting  support  on  most
+platforms. A macro interface allows  information to be written directly to the
+display canvas  allowing the screen to be annotated with additional  transient
+information.
+.BU
+Support for  X-Window  screen type in UNIX  environments.  Microsoft  Window's
+environments (3.x, '95, NT) treated in the same was as X-Windows - this may be
+unorthodox  for  existing  Window's  users,  UNIX  users  will  find  it  more
+comfortable.
+.BU
+Introduction of integrated  spell checker.  Support  includes  correction word
+guessing, word  auto-correction and double word detection. Ignore and personal
+dictionaries supported.
+.BU
+Horizontal window splitting.
+.BU
+Introduction  of scroll bars on all platforms that support a mouse. The scroll
+bar implementation is platform independent.
+.BU
+Command and file completion  available on all platforms. Most commands support
+a command history allowing previous command invocations to be recalled.
+.BU
+Session   history  file  kept,  allowing  the  previous  edit  session  to  be
+reinstated.
+.BU
+Undo capability, allows previous edits to be undone when mistakes are made.
+.BU
+Backup  capability,  Includes a periodic timed backup while an editing session
+is in  progress.  The  timed  backup is  automatically  recovered  by the next
+session in situations where the system (or editor) crashes.
+.BU
+A regular  expression  incremental  search  becomes the default search forward
+mechanism.
+.BU
+Support for  abbreviation  files  allowing  frequently  used  constructs to be
+automatically expanded.
+.BU
+Automatic time stamping of files,  allowing the edit time to be  automatically
+maintained in the source file(s).
+.BU
+Introduction of an electric 'C' mode. Editor intelligently  handles the layout
+of 'C' files (under user control).
+.BU
+Improved   documentation  text  mode  providing   left/right/center  and  both
+justification   methods   with   inclusion   for  bullet   points.   Automatic
+justification  may be  continually  performed  as  text  is  entered,  thereby
+maintaining the paragraph in the correct format.
+.BU
+Integrated  on-line help facilities. All commands are documented  on-line. New
+macros may be  documented  within the macro  files and become part of the help
+system.
+.BU
+File type determination system, based on either the file name or embedded file
+text  allows  file  type  specific  macros  (hooks)  to  be  applied,  thereby
+configuring the editor into the correct mode for the file type.
+.BU
+Introduction  of  special  \*(mE  search  path  allowing  all of the  standard
+configuration files to be utilized from a shared directory.
+.BE
+.\".BS "\&"
+.\"The  macro  lanugage  includes  a number of new
+.\".Hl "command  functions" ,
+.\".Hl "register variables"
+The name space of \*(mE  differs from the original  MicroEMACS  and has become
+more  compliant with the GNU  implementation  of Emacs. A list of the original
+MicroEMACS  verses  the new  command  name set is as  follows,  executing  the
+compatibility macro file  \fCme3_8.emf\fR  will create macro versions of these
+commands:
+.RS
+.PP
+.B add-global-mode
+=>
+.Hl global-mode global-mode 2
+.br
+.B add-mode
+=>
+.Hl buffer-mode buffer-mode 2
+.br
+.B apropos
+=>
+.Hl command-apropos command-apropos 2
+.br
+.B backward-character
+=>
+.Hl backward-char backward-char 2
+.br
+.B begin-macro
+=>
+.Hl start-kbd-macro start-kbd-macro 2
+.br
+.B beginning-of-file
+=>
+.Hl beginning-of-buffer beginning-of-buffer 2
+.br
+.B bind-to-key
+=>
+.Hl global-bind-key global-bind-key 2
+.br
+.B buffer-position
+=>
+.Hl buffer-info buffer-info 2
+.br
+.B case-region-lower
+=>
+.Hl lower-case-region lower-case-region 2
+.br
+.B case-region-upper
+=>
+.Hl upper-case-region upper-case-region 2
+.br
+.B case-word-capitalize
+=>
+.Hl capitalize-word capitalize-word 2
+.br
+.B case-word-lower
+=>
+.Hl lower-case-word lower-case-word 2
+.br
+.B case-word-upper
+=>
+.Hl upper-case-word upper-case-word 2
+.br
+.B clear-message-line
+=>
+.Hl ml-clear ml-clear 2
+.br
+.B ctlx-prefix
+=>
+.Hl "prefix 2" prefix 2
+.br
+.B delete-global-mode
+=>
+.Hl global-mode global-mode 2
+.br
+.B delete-mode
+=>
+.Hl buffer-mode buffer-mode 2
+.br
+.B delete-next-character
+=>
+.Hl forward-delete-char forward-delete-char 2
+.br
+.B delete-next-word
+=>
+.Hl forward-kill-word forward-kill-word 2
+.br
+.B delete-previous-character
+=>
+.Hl backward-delete-char backward-delete-char 2
+.br
+.B delete-previous-word
+=>
+.Hl backward-kill-word backward-kill-word 2
+.br
+.B end-macro
+=>
+.Hl end-kbd-macro end-kbd-macro 2
+.br
+.B end-of-file
+=>
+.Hl end-of-buffer end-of-buffer 2
+.br
+.B execute-command-line
+=>
+.Hl execute-line execute-line 2
+.br
+.B execute-macro
+=>
+.Hl execute-kbd-macro execute-kbd-macro 2
+.br
+.B execute-macro-#
+=>
+.I "Deleted"
+.br
+.B file-name-insert
+=>
+.Hl insert-file-name insert-file-name 2
+.br
+.B forward-character
+=>
+.Hl forward-char forward-char 2
+.br
+.B grow-window
+=>
+.Hl grow-window-horizontally grow-window-horizontally 2
+.br
+.B handle-tab
+=>
+.Hl tab tab 2
+.br
+.B i-shell
+=>
+.Hl shell shell 2
+.br
+.B incremental-search
+=>
+.Hl isearch-forward isearch-forward 2
+.br
+.B kill-to-end-of-line
+=>
+.Hl kill-line kill-line 2
+.br
+.B meta-prefix
+=>
+.Hl "prefix 1" prefix 2
+.br
+.B move-window-down
+=>
+.Hl scroll-down scroll-down 2
+.br
+.B move-window-up
+=>
+.Hl scroll-up scroll-up 2
+.br
+.B name-buffer
+=>
+.Hl change-buffer-name change-buffer-name 2
+.br
+.B next-line
+=>
+.Hl forward-line forward-line 2
+.br
+.B next-page
+=>
+.Hl scroll-down scroll-down 2
+.br
+.B next-paragraph
+=>
+.Hl forward-paragraph forward-paragraph 2
+.br
+.B next-word
+=>
+.Hl forward-word forward-word 2
+.br
+.B open-line
+=>
+.Hl insert-newline insert-newline 2
+.br
+.B pipe-command
+=>
+.Hl pipe-shell-command pipe-shell-command 2
+.br
+.B previous-line
+=>
+.Hl backward-line backward-line 2
+.br
+.B previous-page
+=>
+.Hl scroll-up scroll-up 2
+.br
+.B previous-paragraph
+=>
+.Hl backward-paragraph backward-paragraph 2
+.br
+.B previous-word
+=>
+.Hl backward-word backward-word 2
+.br
+.B quote-character
+=>
+.Hl quote-char quote-char 2
+.br
+.B redraw-display
+=>
+.Hl recenter recenter 2
+.br
+.B restore-window
+=>
+.Hl goto-window goto-window 2
+.br
+.B reverse-incremental-search
+=>
+.Hl isearch-backward isearch-backward 2
+.br
+.B save-file
+=>
+.Hl save-buffer save-buffer 2
+.br
+.B save-window
+=>
+.Hl set-window set-window 2
+.br
+.B scroll-next-down
+=>
+.Hl scroll-next-window-down scroll-next-window-down 2
+.br
+.B scroll-next-up
+=>
+.Hl scroll-next-window-up scroll-next-window-up 2
+.br
+.B search-reverse
+=>
+.Hl search-backward search-backward 2
+.br
+.B select-buffer
+=>
+.Hl find-buffer find-buffer 2
+.br
+.B set
+=>
+.Hl set-variable set-variable 2
+.br
+.B shrink-window
+=>
+.Hl shrink-window-vertically shrink-window-vertically 2
+.br
+.B split-current-window
+=>
+.Hl split-window-vertically split-window-vertically 2
+.br
+.B top-bottom-switch
+=>
+.I "Deleted"
+.br
+.B transpose-characters
+=>
+.Hl transpose-chars transpose-chars 2
+.br
+.B unbind-key
+=>
+.Hl global-unbind-key global-unbind-key 2
+.br
+.B update-screen
+=>
+.Hl screen-update screen-update 2
+.br
+.B write-message
+=>
+.Hl ml-write ml-write 2
+.RE
+.sp
+.FH

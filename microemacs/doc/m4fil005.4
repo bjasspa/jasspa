@@ -1,0 +1,176 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil005.4,v 1.1.1.1 2000-07-25 22:04:02 jon Exp $
+.Im MicroEmacs macro;function;miscellaneous
+.so me.tni
+.TH &atoi 4
+.XI &atoi - "ASCII to integer conversion"
+.XI &itoa - "Integer to ASCII conversion"
+.XI &gmode - "Determine global mode"
+.XI &bmode - "Determine buffer mode"
+.XI &nbmode - "Determine named buffer mode"
+.XI &inword - "Test for a word character"
+.XI &indirect - "Evaluate a string as a variable"
+.XI &exist - "Test if a variable or command exists"
+.SH NAME
+&ato, &gmod, &bmo, &ind, &inw, &exi \- Miscellaneous functions
+.SH SYNOPSIS
+.na
+.B &atoi
+.I char
+.br
+.B &itoa
+.I num
+.sp
+.B &gmode
+.I mode
+.br
+.B &bmode
+.I mode
+.br
+.B &nbmode
+.I buffer
+.I mode
+.br
+.B &inword
+.I char
+.sp
+.B &indirect
+.I str
+.sp
+.B &exist
+.I str
+.ad
+.SH DESCRIPTION
+These are a selection of miscellaneous functions providing tests and exchanging
+of information.
+.PP
+The functions may all be abbreviated to their three letter  abbreviation (i.e.
+\fB&indirect\fR  may be  expressed  as  \fB&ind\fR).  In all  cases  the first
+argument is completely evaluated before the second argument.
+.IP "\fB&atoi\fR \fIchar\fR"
+Converts the given character  \fIchar\fR to it's \s-1ASCII\s0  number which is
+returned. (see \fB&itoa\fR). Abbreviated command is \fB&ato\fR.
+.IP "\fB&itoa\fR \fInum\fR"
+Converts an integer \fInum\fR to it's ASCII character  representation which is
+returned to the caller. Abbreviated command is \fB&ito\fR.
+.IP "\fB&gmode\fR \fImode\fR"
+Returns \fC1\fR if the given mode  \fImode\fR is globally enabled. Allows
+macros to test the global mode state (see
+.Hl "Operating Modes" Modes - ).
+Abbreviated command is \fB&gmo\fR.
+.IP "\fB&bmode\fR \fImode\fR"
+Returns \fC1\fR if the mode  \fImode\fR is enabled in the current  buffer. Allows
+macros to test the state of the buffer mode. Abbreviated command is \fB&bmo\fR.
+.IP "\fB&nbmode\fR \fIbuffer\fR \fImode\fR"
+Returns  \fC1\fR if the mode  \fImode\fR  is enabled in buffer  \fIbuffer\fR .
+Allows  macros  to test the state of a buffer  mode  other  than the  current.
+Abbreviated command is \fB&nbm\fR.
+.IP "\fB&inword\fR \fIchar\fR"
+\fCTRUE\fR. If the given character \fIchar\fR is a 'word' character, see
+.Ht forward-word 2
+for a description of a 'word' character. Abbreviated command is \fB&inw\fR.
+.IP "\fB&indirect\fR \fIstr\fR"
+Evaluate  \fIstr\fR as a variable.  The  \fIstr\fR  argument is evaluated  and
+takes  the  resulting  string,  and then  uses it as a  variable  name. i.e. a
+variable  may  reference  another  variable  which  contains  the  data  to be
+referenced. Abbreviated command is \fB&ind\fR.
+.IP "\fB&exist\fR \fIstr\fR"
+Tests  for  the  existance  of  \fIstr\fR   which  may  be  a  variable  or  a
+command/macro  name,  returning  \fCTRUE\fR  if the  variable or command  does
+currently exist. Abbreviated command is \fB&exi\fR.
+.SH EXAMPLE
+The \fB&exi\fR function is etremely useful in initializing, for example:
+.Me $emf-scheme
+.CS
+!if &not &exi %my-init
+    ; %my-init is not yet defined so this is the first call
+    set-variable %my-init 1
+    .
+    .
+.CE
+.Me $ehf-scheme
+Or in all the
+.Hl "file hooks" fileHooks 2
+a user defined extension is checked for and executed if defined:
+.Me $emf-scheme
+.CS
+define-macro fhook-c
+    .
+    .
+    ; execute user extensions if macro is defined
+    !if &exi my-fhook-c
+        my-fhook-c
+    !endif
+!emacro
+.CE
+.Me $ehf-scheme
+The \fB&ind\fR  function deserves more explanation.  \fB&ind\fR  evaluates its
+string  argument  \fIstr\fR, takes the resulting  string and then uses it as a
+variable name. For example, given the following code sequence:
+.Me $emf-scheme
+.CS
+; set up reference table
+
+set-variable  %one	"elephant"
+set-variable  %two	"giraffe"
+set-variable  %three	"donkey"
+
+set-variable  %index "%two"
+insert-string &ind %index
+.CE
+.Me $ehf-scheme
+the  string  "\fCgiraffe\fR"  would  have  been  inserted  at the point in the
+current buffer.
+.PP
+The  \fB&bmode\fR  invocation  allows a calling  macro to determine the buffer
+mode state (see
+.Hl "Operating Modes" Modes - ).
+Consider the following  example which is a macro to perform a case insensitive
+alphabetic sort using the
+.Ht sort-lines 2
+function.  \fBsort-list\fR  sorts  according  to the state of the
+.Ht exact 2m
+mode, hence the macro has to determine the buffer state in order to be able to
+do the sort.
+.Me $emf-scheme
+.CS
+define-macro sort-lines-ignore-case
+    set-variable #l0 &bmod exact
+    -1 buffer-mode "exact"
+    !if @?
+        @# sort-lines
+    !else
+        sort-lines
+    !endif
+    &cond #l0 1 -1 buffer-mode "exact"
+!emacro
+.CE
+.Me $ehf-scheme
+The \fB&inword\fR function is shown in the following example. In this case the
+mouse  is  positioned  over a word.  The  \fB&inword\fR  function  is  used to
+determine  if the  cursor is on a valid  word  character,  if so the cursor is
+placed at the start of the word.
+.Me $emf-scheme
+.CS
+define-macro mouse-control-drop-left
+    set-cursor-to-mouse
+    !if &inword @wc
+        backward-word
+        set-mark
+        forward-word
+    !else
+        ...
+    !endif
+    copy-region
+    set-cursor-to-mouse
+!emacro
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Hl "Operating Modes" Modes - ,
+.Hl "Variable Functions" Functions - ,
+.Ht &sprintf 4 ,
+.Ht &equal 4 .
+.ad
+.FH

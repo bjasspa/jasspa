@@ -1,0 +1,56 @@
+.\" -*- nroff -*-
+.Id $Id: m8fil003.8,v 1.1.1.1 2000-07-25 22:04:08 jon Exp $
+.Im MicroEmacs files
+.so me.tni
+.TH emf 8
+.XI emf - "MicroEmacs macro file"
+.SH NAME
+emf \- MicroEmacs macro file
+.SH SYNOPSIS
+.na
+.ad
+.SH DESCRIPTION
+The  \*(mE  macro  files  are  ASCII  text  files,  given  the file  extension
+\fB.emf\fR. A number of special macro files exist as follows:-
+.TP 
+\fBme.emf\fR
+.\"
+The  start-up  macro file. This file is the first macro file to be invoked and
+is used to bootstrap \*(mE into the correct configuration.
+.TP 
+\fBhk\fR\|\fI<name>\fR\|\fB.emf\fR
+.\"
+Macro files prefixed with \fBhk\fR generally denote
+.Hl "File Hook" fileHooks 2 
+macro files which are automatically invoked when known file types are loaded.
+.TP
+\fI<logname>\fR\|\fB.emf\fR
+.\"
+The  users  start-up  configuration  file,  typically  used to  configure  the
+environment with the users preferences.
+.IP "\fI*\fR\|\fBterm.emf\fR"
+Platform specific configuration files, used to configure the environment for a
+specific platform.
+.LP
+Macro files may be any name, the more prominent macro files are:-
+.IP \fBcolor.emf\fR
+Color definitions for the buffers.
+.IP \fBmouse.emf\fR
+Mouse interaction macros.
+.IP "\fBosd.emf\fR"
+OSD Menu configuration file.
+.SH FILES
+The default  start-up  file  \fBme.emf\fR  is located in the \*(mE  \fIhome\fR
+directory.
+.PP
+User's may create their own start-up and files in their local \*(mE directory.
+The users start-up file is called  \fI$LOGNAME\|\fB.emf\fR, and may be used to
+execute other macro files defined by the user.
+.SH "SEE ALSO"
+.na
+.Hl "File Hooks" fileHooks 2 ,
+.Ht emftags 3f ,
+.Ht $MEPATH 5 ,
+.Ht execute-file 2 .
+.ad
+.FH

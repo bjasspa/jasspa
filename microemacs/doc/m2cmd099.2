@@ -1,0 +1,69 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd099.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|macrodevelop
+.so me.tni
+.TH screen-poke 2
+.XI screen-poke - "Immediate write string to the screen"
+.SH NAME
+screen-poke \- Immediate write string to the screen
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B screen-poke
+\fIrow\fR
+\fIcolumn\fR
+\fIcolorScheme\fR
+"\fIstring\fR"
+.ad
+.SH DESCRIPTION
+.B screen-poke
+writes a  \fIstring\fR  to the screen at  position  (\fIrow\fR,  \fIcolumn\fR)
+using the given color scheme. The screen  coordinates  are defined with (0,0)
+at the top left of the screen.
+.PP
+.B screen-poke
+by-passes  the  conventional  buffer update and writes  directly to the screen
+buffer. The command has no effect on buffers already showing on the screen and
+is erased on the next screen update. The \fIstring\fR is clipped to the screen
+area  hence the caller  need not  continually  check on the size of the client
+area.
+.PP
+The numeric argument \fIn\fR is a bitwise flag which has the following meaning
+.nf
+.na
+\fC0x01\fR Don't mark the poke area for update.
+\fC0x02\fR Don't flush poke to screen.
+\fC0x04\fR colorScheme is an array of values, one for each letter.
+\fC0xf0\fR colorScheme pair offset to use.
+.fi
+.ad
+.LP
+If the \fB0x01\fR  flag is absent then the parts of the screen over written by
+\fBscreen-poke\fR  are marked and  refreshed  on the next  \fBscreen-update\fR
+operation,  thereby erasing the poked  information. If the flag is present the
+poked  information  remains on the screen until a forced  refresh is performed
+(i.e. \fB1\ screen-update\fR) or the window information under the poked screen
+data is modified.
+.PP
+In macros using many consecutive screen-pokes (e.g. 
+.Ht Patience 3
+to  display a pack of cards)  most  pokes use the 'No flush'  flag to  improve
+performance and look on some platforms.
+.PP
+The use of \fBscreen-poke\fR has largely been reduced to games such as
+.Ht Metris 3
+since the introduction of
+.Ht osd 2
+to create dialogs.
+.SH NOTES
+Some platforms  do not  allow all  character values  to be  poked, illegal
+characters are replaced with a '\fC.\fR'.
+.SH "SEE ALSO"
+.na
+.Ht osd 2 ,
+.Ht screen-update 2 ,
+.Ht Mahjongg 3 ,
+.Ht Metris 3 .
+.ad
+.FH

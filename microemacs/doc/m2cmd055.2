@@ -1,0 +1,37 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd055.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|file
+.so me.tni
+.TH find-cfile 2
+.XI find-cfile \- "Load a crypted file"
+.SH NAME
+find-cfile \- Load a crypted file
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B find-cfile
+"\fIfile-name\fR"
+.ad
+.SH DESCRIPTION
+.B find-cfile
+loads an encrypted file.
+.PP
+The command operates as
+.Ht find-file 2
+except  that it loads the given  file with
+.Ht crypt 2m
+mode set. \s-1crypt\s0 mode prompts the user for a crypt key, the file is then
+loaded  decrypting  the file using the given key. When writing out a file with
+\s-1crypt\s0  mode, if the key has not yet been set then the user is  prompted
+and the file is written out with the same algorithm. While the crypting method
+is  crackable,  it should be enough to deter most prying eyes. The  encryption
+string can be set at any time using the command
+.Ht set-encryption-key 2 .
+.SH "SEE ALSO"
+.na
+.Ht crypt 2m ,
+.Ht find-file 2 ,
+.Ht set-encryption-key 2 .
+.ad
+.FH

@@ -1,0 +1,33 @@
+.\" -*- nroff -*-
+.Id $Id: m5var001.5,v 1.1.1.1 2000-07-25 22:04:04 jon Exp $
+.Im MicroEmacs variable|hilight
+.so me.tni
+.TH $buffer-scheme 5
+.XI $buffer-scheme - "Buffer color scheme"
+.SH NAME
+$buffer-scheme \- Buffer color scheme.
+.Me $a
+.SH SYNOPSIS
+\fB$buffer-scheme\fR \fIschemeNum\fR; Default is \fC0\fR
+.SH DESCRIPTION
+.B $buffer-scheme
+sets  the   current   buffer's   color   scheme  to   \fIschemeNum\fR,   where
+\fIschemeNum\fR is a color scheme defined with
+.Ht add-color-scheme 2 ,
+which identifies the foreground and background color schemes of the buffer.
+The color scheme is initialized to the
+global color scheme settings (see
+.Ht $global-scheme 5 )
+when the buffer is created.
+.SH "SEE ALSO"
+.na
+.Ht $buffer-hilight 5 ,
+.Ht $cursor-color 5 ,
+.Ht $trunc-scheme 5 ,
+.Ht $global-scheme 5 ,
+.Ht $ml-scheme 5 ,
+.Ht $mode-line-scheme 5 ,
+.Ht $scroll-bar-scheme 5 ,
+.Ht $system 5 .
+.ad
+.FH

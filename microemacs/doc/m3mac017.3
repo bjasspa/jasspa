@@ -1,0 +1,83 @@
+.\" -*- nroff -*-
+.Id $Id: m3mac017.3,v 1.1.1.1 2000-07-25 22:04:00 jon Exp $
+.Im MicroEmacs command
+.so me.tni
+.TH c-hash-eval 3
+.XI c-hash-eval - "Evaluate C/C++ #defines"
+.XI c-hash-del - "Remove C/C++ #define evaluation"
+.XI c-hash-set-define - "Set a C/C++ #define"
+.XI c-hash-unset-define - "Unset a C/C++ #define"
+.SH NAME
+.Me "|c-hash-eval"
+c-hash-eval \- Evaluate C/C++ #defines
+.br
+.Me "|c-hash-del"
+c-hash-del \- Remove C/C++ #define evaluation
+.br
+.Me "|c-hash-set-define"
+c-hash-set-define \- Set a C/C++ #define
+.br
+.Me "|c-hash-unset-define"
+c-hash-unset-define \- Unset a C/C++ #define
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+\fBc-hash-eval\fR
+.br
+\fBc-hash-del\fR
+.br
+\fBc-hash-set-define\fR
+"\fIvariable\fR" "\fIvalue\fR"
+.br
+\fBc-hash-unset-define\fR
+"\fIvariable\fR"
+.ad
+.SH DESCRIPTION
+\fBc-hash-eval\fR evaluates C/C++ '#' lines, hiding sections of code which have
+been 'hashed' out. \fBc-hash-eval\fR evaluates the following '#' lines:-
+.IP
+.nf
+#define <variable> ....
+#ifdef <variable>
+#if ...
+#else
+#endif
+.fi
+.PP
+For    \fC#define\fRs    \fBc-hash-eval\fR    creates    a   user    variable
+"\fC%cd<variable>\fR",  setting  it to the value  found.  For  \fC#ifdef\fR  a
+simple check for the existence of variable  "\fC%cd<variable>\fR"  is made. If
+defined  then code  between  the  \fC#ifdef\fR  and  either its  matching
+\fC#else\fR or  \fC#endif\fR is displayed and code between the \fC#else\fR and
+\fC#endif\fR is hidden. If it is not defined then the reverse happens.
+.PP
+The state of \fC#if\fR's are evaluated using
+.Ht calc 3 ,
+the following code is then displayed as for \fC#ifdef\fR.
+.PP
+Code is hidden by setting the
+.Ht $line-scheme 5
+to a color similar to the  back-ground. If an argument is given to the command
+the code is also narrowed out using
+.Ht narrow-buffer 2 .
+.PP
+\fBc-hash-del\fR  undoes the effect of  \fBc-hash-eval\fR  by  restores  hidden
+code.
+.PP
+\fBc-hash-set-define\fR and  \fBc-hash-unset-define\fR can be used to manually
+set and unset \fC#define\fR variables. 
+.SH NOTES
+\fBc-hash-eval\fR,      \fBc-hash-del\fR,      \fBc-hash-set-define\fR     and
+\fBc-hash-unset-define\fR are macros defined in \fCcmacros.emf\fR.
+.PP
+Executing  \fBc-hash-eval\fR  in a project header file (h file) which contains
+all used  \fC#define\fR  definitions will set up all  \fC#define\fR  variables
+ready for the main C files.
+.SH "SEE ALSO"
+.na
+.Ht calc 3 ,
+.Ht $line-scheme 5 ,
+.Ht narrow-buffer 2 .
+.ad
+.FH

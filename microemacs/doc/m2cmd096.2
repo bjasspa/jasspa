@@ -1,0 +1,53 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd096.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|cursor
+.ds C0 "(\fB\*ef\fR)\ \&
+.ds C1 "(\fB\*eb\fR)\ \&
+.so me.tni
+.TH forward-word 2
+.XI forward-word - "\*(C0Move the cursor to the next word"
+.XI backward-word - "\*(C1Move the cursor to the previous word"
+.SH NAME
+.Me |forward-word
+forward-word \- Move the cursor to the next word
+.br
+.Me |backward-word
+backward-word \- Move the cursor to the previous word
+.Me $a
+.SH SYNOPSIS
+.na
+\fIn\fR \fBforward-word\fR \*(C0
+.br
+\fIn\fR \fBbackward-word\fR \*(C1
+.ad
+.SH DESCRIPTION
+.B forward-word
+places the cursor at the end of the \fIn\fRth word from the current  position;
+the default is 1.
+.PP
+.B backward-word
+places the cursor at the beginning of the \fIn\fRth previous word, default 1.
+.SH NOTES
+Words are distinguished by  non-alphanumeric  characters and need not be white
+space such as spaces and tabs.
+.PP
+A character is  considered  to be part of a word if it is in the
+.Ht $buffer-mask 5
+character set. The default setting for \fB$buffer-mask\fR is "\fCluh\fR" which
+gives   a  word   character   set  of  the   alphanumeric   characters,   i.e.
+\fC0\fR-\fC9\fR,  \fCA\fR-\fCZ\fR,  \fCa\fR-\fCz\fR, this  may be  changed  by
+setting the \fB$buffer-mask\fR  variable. The character sets (including 4 user
+character sets \fC1\fR-\fC4\fR) may be altered by using the command
+.Ht set-char-mask 2 .
+.SH "SEE ALSO"
+.na
+.Ht backward-line 2 ,
+.Ht backward-paragraph 2 ,
+.Ht forward-line 2 ,
+.Ht forward-paragraph 2 ,
+.Ht $buffer-mask 5 ,
+.Ht set-char-mask 2 .
+.ad
+.rm C0
+.rm C1
+.FH

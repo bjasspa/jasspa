@@ -1,0 +1,81 @@
+.\" -*- nroff -*-
+.Id $Id: m2mod001.2,v 1.1.1.1 2000-07-25 22:03:57 jon Exp $
+.Im MicroEmacs modes
+.so me.tni
+.TH backup 2m
+.XI backup - "Automatic file backup of last edit"
+.SH NAME
+backup \- Automatic file backup of last edit
+.SH SYNOPSIS
+.B "backup Mode"
+.sp
+\fBB\fR \- mode line letter.
+.SH DESCRIPTION
+.B backup
+mode, when enabled,  performs an automatic backup of the last edit when a save
+file  operation  is  performed.  The backup file name is derived from the base
+file  name and is  written  into the same  directory  as the  source  file.
+.PP
+On unlimited  file name length systems the naming  convention  used depends on
+bit \fB0x400\fR of variable
+.Ht $system 5 ,
+if this bit is set then the  system  simulates  a DOS  style  8.3 file  naming
+convention. If this bit is clear then variable
+.Ht $kept-versions 5
+can be used to create multiple backup files.
+.PP
+Where an  existing  backup file  already  exists,  then the old backup file is
+removed  and  replaced by the newer  backup  file. The naming  convention  for
+backup files is defined as follows:-
+.PP
+.RS
+On unlimited  length file name systems  (\s-1UNIX\s0 and some Windows systems)
+with a single backup file, the following file naming  conventions are used for
+file \fCxxxxx\fR:
+.IP
+.C "xxxxx -> xxxxx~"
+.LP
+On  unlimited  length  file name  systems  with  multiple  backup  files,  the
+following file naming conventions are used for file \fCxxxxx\fR:
+.IP
+.C "xxxxx -> xxxxx.~?~"
+.LP
+Where  \fC?\fR is the backup  number, the most  recent  backup  file is always
+"\fC.~0~\fR".
+.PP
+On  systems  with an  \fCxxxxxxxx.yyy\fR  file name  (\s-1MS-DOS\s0  etc), the
+following file naming conventions are used:
+.IP
+.nf
+.C "xxxxxxxx      -> xxxxxxxx.~~~"
+.C "xxxxxxxx.yyy  -> xxxxxxxx.yy~"
+.C "xxxxxxxx.yyyy -> xxxxxxxx.yyy~"
+.fi
+.RE
+.SH NOTES
+\fBbackup\fR is enabled by default.
+.PP
+Reference should also be made to
+.Ht undo 2
+which allows previous edits to be removed. Also see
+.Ht $auto-time 5
+and
+.Ht autosv 2m
+which allows a timed backup of a running edit to be periodically performed.
+.PP
+The user is warned to be extra  careful if files ending in '\fC~\fR' or
+\&'\fC#\fR's are used, it is advisable to disable backup creation (see
+.Ht global-mode 2 )
+and auto-saving  (\fC$auto-time = 0\fR). The author denies all  responsibility
+(yet again) for any loss of data! Please be careful.
+.SH "SEE ALSO"
+.na
+.Ht $system 5 ,
+.Ht $kept-versions 5 ,
+.Ht buffer-mode 2 ,
+.Ht global-mode 2 ,
+.Ht undo 2m ,
+.Ht autosv 2m ,
+.Ht $auto-time 5 .
+.ad
+.FH

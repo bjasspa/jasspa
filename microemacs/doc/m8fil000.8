@@ -1,0 +1,184 @@
+.\" -*- nroff -*-
+.Id $Id: m8fil000.8,v 1.1.1.1 2000-07-25 22:04:08 jon Exp $
+.Im MicroEmacs files
+.so me.tni
+.TH eaf 8
+.XI eaf - "MicroEmacs abbreviation file format"
+.SH NAME
+eaf \- MicroEmacs abbreviation file format
+.SH SYNOPSIS
+.na
+.nf
+.I "<pattern> <insertionString>"
+.I "<pattern> <insertionString>"
+.I "<pattern> <insertionString>"
+.I "<pattern> <insertionString>"
+.fi
+.ad
+.SH DESCRIPTION
+The \*(mE abbreviation file, typically given the extension \fB.eaf\fR, defines
+a set of shorthand expansion strings which are used by the command
+.Ht expand-abbrev 2 .
+.Ht buffer-abbrev-file 2
+defines the abbreviation file.
+.PP
+The  abbreviation  file line  based, with one  abbreviation  per line, with no
+intervening  blank lines. Each line comprises of two columns, the first column
+\fI<pattern>\fR  identifies  the  source  pattern to be  expanded,  the second
+column  \fI<insertionString>\fR  defines  the  replacement  text. The two text
+columns are separated by a space character.
+.PP
+When
+.Ht expand-abbrev 2
+is  invoked   and  the   expansion   \fI<pattern>\fR   is   recognized,   then
+\fI<pattern>\fR    is   deleted   from   the   buffer   and   replaced    with
+\fI<insertionString>\fR.
+.PP
+The fields are defined as follows:-
+.IP \fI<pattern>\fR
+The source  pattern to be expanded.  The data  commences  in text column 0 and
+spans to the first  white space  character  (\fCSPACE\fR  or  \fCtab\fR).  The
+pattern may not include any white space characters.
+.IP  \fI<insertionString>\fR
+The  replacement  string  exists  from the  first  non-white  space  character
+following the  \fI<pattern>\fR to the end of the line. The replacement  string
+may include special tokens,  delimited by a backslash  ('\fC\\\fR')  character
+which are interpreted as follows:-
+.RS
+.TP
+\fB\\b\fR Move cursor backwards
+.\"
+A positioning control. Allows the cursor to be moved backwards 1 character.
+.TP
+\fB\\d\fR Delete \fCtab\fR backwards
+.\"
+Back tab. Deletes a tab character backwards.
+.TP
+\fB\\m"\fR\|\fI<string>\fR\|\fB"\fR Macro execution
+.\"
+Takes the  remainder  of the line as a keyboard  macro  definition.  The macro
+\fIstring\fR is generated using
+.Ht insert-macro 2
+and must be  contained  in double  quotes. When invoked the keyboard  macro is
+executed  and  the  appropriate  text  is  inserted  into a  buffer.  This  is
+typically only used for more complex operations.
+.TP
+\fB\\n\fR Newline
+.\"
+A newline in the replacement text. Note while
+.Ht indent 2m
+is  enabled a  sequence a single  "\\n"  retains  the indent on the next line,
+however a sequence of two "\\n\\n" characters does not retain the tab position
+and  returns  the cursor to the start of the second  line. If blank  lines are
+required retaining tab positioning then a keyboard macro string should be used
+instead. (see "\\m" below).
+.TP
+\fB\\p\fR Position
+.\"
+The resultant  position of the cursor  following the  expansion. If the cursor
+position is not  specified,  the cursor is placed at the end of the  expansion
+string by default.
+.TP
+\fB\\t\fR Tab
+.\"
+A \fCtab\fR character in the replacement text.
+.RE
+.SH EXAMPLE
+The following example provides abbreviations for the 'C' programming language,
+found in file  \fBc.eaf\fR. All cursor  positions in the examples are shown by
+\fB<@>\fR.
+.CS
+#i #include <\\p>\\n
+#d #define \\p
+if if(\\p)\\n{\\n\\n}\\n
+ef else if(\\p)\\n{\\n\\n}\\n
+el else\\n{\\n\\p\\n}\\n
+wh while(\\p)\\n{\\n\\n}\\n
+sw switch(\\p)\\n{\\ncase :\\ndefault :\\n}\\n
+.CE
+Given that the abbreviation file has been declared then expansion of:
+.CS
+#d<@>       =>      #define <@>
+
+if<@>       =>      if(<@>)
+                    {
+
+                    }
+
+sw<@>       =>      switch(<@>)
+                    {
+                    case :
+                    default :
+                    }
+.CE
+Note, in all of the examples, the abbreviation  replacement  strings specify a
+resultant cursor position, typically where the next edit will take place.
+.PP
+The  macros  may   alternatively   be  defined  using  keyboard   macros.  The
+aforementioned   macros  could  have  been   re-written   with  the  following
+definitions which are equivalent:-
+.CS
+#i \\m"#include <\\CX\\CAP>\\CM\\CXaP\\CX)"
+#d \\m"#define \\CX)"
+if \\m"if(\\CX\\CAP)\\CM{\\CM}\\CXaP\\CX)"
+ef \\m"else if(\\CX\\CAP)\\CM{\\CM\\CM}\\CM\\CXaP\\CX)"
+el \\m"else\\CM{\\CM\\CX\\CAP\\CM}\\CM\\CXaP\\CX)"
+wh \\m"while(\\CX\\CAP)\\CM{\\CM\\CM}\\CM\\CXaP\\CX)"
+sw \\m"switch(\\CX\\CAP)\\CM{\\CMcase :\\CMdefault:\\CM}\\CM\\CXaP\\CX)"
+.CE
+Within a macro, the cursor positioning is generally achieved by setting a mark
+where the resultant cursor is to be positioned (see
+.Ht set-mark 2 ),
+when the macro is finished then an
+.Ht exchange-point-and-mark 2
+is  initiated  to move the cursor to the  correct  position;  alternatively  a
+sequence of cursor  movements  may be used.
+.PP
+The  "\\b"  and  "\\d"  are  typically  used for  positioning  the  cursor  on
+subsequent lines. "\\d" is the inverse of "\\t". Consider the following Pascal
+definition for an \fIelse\fR, \fIbegin\fR and \fIend\fR sequence:-
+.CS
+el else\\nbegin\\n\\t\\p;\\n\\dend;
+.CE
+with
+.Ht indent 2m
+mode enabled generates:-
+.CS
+        else
+        begin
+            <@>;
+        end;
+.CE
+Similarly the "\\b" is typically used when
+.Ht indent 2m
+is enabled, but when the tab spacing is known. Consider the following  example
+used in the \*(mE  \fB.emf\fR  files to define a help  entry. In this case the
+indent is known to be 5 characters. Hence to move the cursor back 5 characters
+then a sequence of \fB\\b\fR's are used:-
+.CS
+!h def .. \\nSEE ALSO\\n     <cross references>\\n\\b\\b\\b\\b\\b!ehelp
+.CE
+the expansion in this case is:-
+.CS
+define-help "<@>"
+
+\&...
+
+SEE ALSO
+     <cross references>
+!ehelp
+.CE 0
+.SH FILES
+The default abbreviation files are located in the \*(mE \fIhome\fR directory.
+.PP
+User's may specify their own  abbreviation  files by shadowing the \fIhome\fR
+directory file with their own file located in a personal \*(mE directory. See
+.Ht $MEPATH 5 .
+.SH "SEE ALSO"
+.na
+.Ht expand-abbrev 2 ,
+.Ht buffer-abbrev-file 2 ,
+.Ht global-abbrev-file 2 ,
+.Ht iso-accents-mode 3 .
+.ad
+.FH

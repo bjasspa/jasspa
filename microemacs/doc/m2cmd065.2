@@ -1,0 +1,94 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd065.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|help
+.ds C0 "(\fB\*e?\fR)\ \&
+.ds C1 "(\fB\*(cH\*cc\fR)\ \&
+.ds C2 "(\fB\*(cH\*cv\fR)\ \&
+.ds C3 "(\fB\*(cH\*ci\fR)\ \&
+.so me.tni
+.TH help 2
+.XI help \- "\*(C0Help; high level introduction to help"
+.XI help-command \- "\*(C1Help; command information"
+.XI help-variable \- "\*(C2Help; variable information"
+.XI help-item \- "\*(C3Help; item information"
+.SH NAME
+.Me "|help"
+help \- Help; high level introduction to help
+.br
+.Me "|help-command"
+help-command \- Help; command information
+.br
+.Me "|help-variable"
+help-variable \- Help; variable information
+.br
+.Me "|help-item"
+help-item \- Help; item information
+.Me $a
+.SH SYNOPSIS
+.na
+\fIn\fR \fBhelp\fR \*(C0
+.br
+.B help-command
+"\fIcommand\fR" \*(C1
+.br
+.B help-variable
+"\fIvariable\fR" \*(C2
+.br
+\fBhelp-item\fR
+"\fIitem\fR" \*(C3
+.ad
+.SH DESCRIPTION
+The help commands  provide a quick on-line help facility  within \*(mE without
+invoking a third party documentation system (e.g. a browser such as
+.Hr Netscape 1
+or
+.Hr winhelp 1 ).
+.PP
+The on-line  help is assisted by a set of macros which enable key words within
+the help buffers to be located by either tagging  (\fC\*et\fR) or by selection
+with the left mouse button. The tag mechanism supports command completion.
+.PP
+.B help
+provides  general help on the  philosophy  and  functionality  of \*(mE, if an
+argument \fIn\fR of 0 is given to the command it changes the current buffer to
+the internal help buffer, typically named "\fC*on-line help*\fR". This is a
+.Hl hidden hide 2m
+system buffer used to store all the on-line help and can be used for a variety
+of things. Note that access to this buffer must be via the \fBhelp\fR command,
+not  \fBfind-buffer\fR  and the help  command will also ensure the system help
+file is loaded first.
+.PP
+.B help-command
+describes the purpose of the given \fIcommand\fR.
+.PP
+.B help-variable
+Describes   the   purpose   of   the   given   \fIvariable\fR,    similar   to
+\fBhelp-command\fR, only for variables.
+.PP
+.B help-item
+Describes  the  purpose  of any given  item,  where  item  could be a command,
+variable or any aspect of \*(mE.
+.SH FILES
+The help files are ASCII text files located in the \*(mE  home directory.
+The files are defined as follows:-
+.sp
+.na
+.nf
+\fCme.ehf\fR \- Help text file.
+\fChkehf.emf\fR \- Help macros.
+.ad
+.fi
+.SH "SEE ALSO"
+.na
+.Ht osd-help 3 ,
+.Ht command-apropos 2 ,
+.Ht describe-bindings 2 ,
+.Ht describe-key 2 ,
+.Ht list-commands 2 ,
+.Ht list-variables 2 .
+.ad
+.rm C0
+.rm C1
+.rm C2
+.rm C3
+.FH

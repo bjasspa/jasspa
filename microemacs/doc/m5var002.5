@@ -1,0 +1,74 @@
+.\" -*- nroff -*-
+.Id $Id: m5var002.5,v 1.1.1.1 2000-07-25 22:04:04 jon Exp $
+.Im MicroEmacs variable|macrodevelop
+.so me.tni
+.TH $buffer-fhook 5
+.XI $buffer-fhook - "Buffer macro hook command name (buffer creation)"
+.XI $buffer-dhook - "Buffer macro hook command name (buffer deletion)"
+.XI $buffer-bhook - "Buffer macro hook command name (buffer current)"
+.XI $buffer-ehook - "Buffer macro hook command name (buffer swapped)"
+.SH NAME
+.Me "|$buffer-fhook"
+$buffer-fhook - Buffer macro hook command name (buffer creation)
+.br
+.Me "|$buffer-dhook"
+$buffer-dhook - Buffer macro hook command name (buffer deletion)
+.br
+.Me "|$buffer-bhook"
+$buffer-bhook - Buffer macro hook command name (buffer current)
+.br
+.Me "|$buffer-ehook"
+$buffer-ehook - Buffer macro hook command name (buffer swapped)
+.Me $a
+.SH SYNOPSIS
+.B $buffer-fhook
+.I FunctionName
+.br
+.B $buffer-dhook
+.I FunctionName
+.br
+.B $buffer-bhook
+.I FunctionName
+.br
+.B $buffer-ehook
+.I FunctionName
+.SH DESCRIPTION
+Sets the buffer create, delete, begin and end hook command which are executed:
+.IP \fBbuffer-fhook\fR
+When the buffer is created.
+.IP \fBbuffer-dhook\fR
+When the buffer is deleted.
+.IP \fBbuffer-bhook\fR
+When the buffer becomes the current buffer.
+.IP \fBbuffer-ehook\fR
+When the buffer is swapped out from being the current buffer.
+.LP
+The  variable  \fB$buffer-fhook\fR  is largely  redundant  as the file hook is
+executed  only once and  before it can be sent. Its main use is within  macros
+which  wish to  ascertain  what type of buffer it is  executing  on, i.e. if a
+command was to be executed only on c file then the follow ensures that this is
+the case:
+.Me $emf-scheme
+.CS
+!if &not &seq $buffer-fhook "fhook-cmode"
+    !abort
+!endif
+.CE
+.Me $ehf-scheme
+Where the command \fIfhook-cmode\fR is the c file hook.
+.PP
+\fBdhooks\fR are executed when a buffer is deleted, but before the contents of
+the buffer are lost. Note that  dhooks will not be called if the buffer  never
+becomes  active, or if \*(mE quits due to the receipt of a panic signal.
+.PP
+\fBbhooks\fR  and  \fBehooks\fR  are  usually  used to set and restore  global
+variables which require different setting in the current buffer.
+.PP
+The order of 
+The  default  settings  of  these  variable  are  determined  by  the command
+.Ht add-file-hook 2 .
+.SH "SEE ALSO"
+.na
+.Ht add-file-hook 2 .
+.ad
+.FH

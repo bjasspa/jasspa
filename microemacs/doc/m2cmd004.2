@@ -1,0 +1,60 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd004.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|bind|message
+.so me.tni
+.TH osd-bind-key 2
+.XI osd-bind-key - "Create key binding for OSD dialog"
+.XI osd-unbind-key - "Remove key binding from OSD dialog"
+.SH NAME
+.Me "|osd-bind-key"
+osd-bind-key \- Create key binding for OSD dialog
+.br
+.Me "|osd-unbind-key"
+osd-unbind-key \- Remove key binding from OSD dialog
+.Me $a
+.SH SYNOPSIS
+.na
+.B osd-bind-key
+\fIn\fR
+"\fIcommand\fR"
+"\fIkey\fR"
+.br
+.B osd-unbind-key
+\fIn\fR
+"\fIkey\fR"
+.ad
+.SH DESCRIPTION
+.B osd-bind-key
+creates a local key  binding for a given
+.Hl "osd dialog" osd 2 ,
+binding  the  command  \fIcommand\fR  to the keyboard  input  \fIkey\fR.  Only
+the current root dialog's  local bindings are used, local bindings of included
+dialogs or other root dialogs currently  displayed are ignored.
+.PP
+Osd local  bindings  take priority over default osd bindings,  local  bindings
+created using
+.Ht ml-bind-key 2
+are also used, but any current  buffer local  bindings created using
+.Ht buffer-bind-key 2
+are ignored.
+.SH NOTES
+The prefix commands cannot be rebound with this command.
+.PP
+Key response time linearly increases with each osd binding added.
+.PP
+As only the root dialog's bindings are used, creating  note-book page specific
+bindings  can be awkward.  Typically  all required  keys are bound to the same
+command which, depending on the page that is currently being displayed, checks
+if the key pressed is bound on the current  page and if so calls the  required
+command. See
+.Ht organizer 3 ,
+defined in \fCorganize.emf\fR for an example of this operation.
+.SH "SEE ALSO"
+.na
+.Ht osd 2 ,
+.Ht global-bind-key 2 ,
+.Ht ml-bind-key 2 ,
+.Ht buffer-bind-key 2 ,
+.Ht global-unbind-key 2 .
+.ad
+.FH

@@ -1,0 +1,33 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd019.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|message
+.so me.tni
+.TH ml-clear 2
+.XI ml-clear - "Clear the message line"
+.SH NAME
+ml-clear \- Clear the message line
+.Me $a
+.SH SYNOPSIS
+.na
+.B ml-clear
+.ad
+.SH DESCRIPTION
+.B ml-clear
+clears the message line during  script execution. This is  useful so as not to
+leave a confusing message from the last command(s) in a script.
+.PP
+Callback  macros which may interrupt the user at any point in time are handled
+by  \fBml-clear\fR.  The callback  macro for instance may  interrupt  the user
+while entering a new file name, and any
+.Ht ml-write 2
+erases the message-line which may currently be in use.
+\*(mE stores the line and when
+.Ht ml-clear 2
+is invoked,  instead of clearing  the message  line the current  input line is
+restored.
+.SH "SEE ALSO"
+.na
+.Ht create-callback 2 ,
+.Ht ml-write 2 .
+.ad
+.FH

@@ -1,0 +1,44 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd092.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|cursor|essential
+.ds C0 "(\fB\*cn\fR)\ \&
+.ds C1 "(\fB\*cp\fR)\ \&
+.so me.tni
+.TH forward-line 2
+.XI forward-line - "\*(C0Move the cursor to the next line"
+.XI backward-line - "\*(C1Move the cursor to the previous line"
+.SH NAME
+.Me |forward-line
+forward-line \- Move the cursor to the next line
+.br
+.Me |backward-line
+backward-line \- Move the cursor to the previous line
+.Me $a
+.SH SYNOPSIS
+.na
+.nf
+\fIn\fR \fBforward-line\fR \*(C0
+\fIn\fR \fBbackward-line\fR \*(C1
+.fi
+.ad
+.SH DESCRIPTION
+.B forward-line
+moves the  cursor  down  \fIn\fR  lines,  default 1. If the line is not on the
+current screen then display the next page and move to the line.
+.PP
+.B backward-line
+moves the cursor up \fIn\fR  lines, if the line is not on the  current  screen
+then display the previous page and move to the line.
+.PP
+For both  invocations  a negative  value  reverses  the sense of  movement  as
+expected.
+.SH "SEE ALSO"
+.na
+.Ht backward-word 2 ,
+.Ht forward-word 2 ,
+.Ht scroll-down 2 ,
+.Ht scroll-up 2 .
+.ad
+.rm C0
+.rm C1
+.FH

@@ -1,0 +1,39 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd040.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|help
+.ds C0 "(\fB\*(cHv\fR)\ \&
+.so me.tni
+.TH describe-variable 2
+.XI describe-variable - "\*(C0Describe current setting of a variable"
+.SH NAME
+describe-variable \- Describe current setting of a variable
+.Me $a
+.SH SYNOPSIS
+.na
+\fBdescribe-variable\fR \*(C0
+.ad
+.SH DESCRIPTION
+.B describe-variable
+describes  the current  setting of the given  variable  (\fB%\fR,  \fB:\fR and
+\fB$\fR variables),  returning  \fCERROR\fR if the variable is undefined. If a
+\fC$\fR  variable is not found then it is tested for an environment  variable,
+i.e.
+.Me $emf-scheme
+.CS
+describe-variable $PATH
+.CE
+.Me $ehf-scheme
+returns your environment \fC$PATH\fR setting. This is the easiest and best way
+of determining the current platform from within a Macro file.
+.PP
+The returned value of any undefined variable is the string \fCERROR\fR.
+.SH NOTES
+Completion is enabled on the command line for variable names.
+.SH "SEE ALSO"
+.na
+.Ht describe-key 2 ,
+.Ht help-variable 2 ,
+.Ht set-variable 2 .
+.ad
+.rm C0
+.FH

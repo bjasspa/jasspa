@@ -1,0 +1,104 @@
+.\" -*- nroff -*-
+.Id $Id: m8fil001.8,v 1.1.1.1 2000-07-25 22:04:08 jon Exp $
+.Im MicroEmacs files
+.so me.tni
+.TH etf 8
+.XI etf - "MicroEmacs template file format"
+.SH NAME
+etf \- MicroEmacs template file format
+.SH SYNOPSIS
+.na
+.sp
+.I "<Free Form Text>"
+.ad
+.SH DESCRIPTION
+The \*(mE template file, typically  given the extension  \fB.etf\fR, is a file
+template for a new file and defines common text that is automatically included
+when a new file is created.
+.PP
+The file inclusion is usually performed by macro
+.Ht etfinsrt 3 ,
+called from the
+.Hl "File Hooks" fileHooks 2 .
+The  template  file has no specific  format, although \fBetfinsrt\fR replaces
+key strings with relevant information.
+.SH EXAMPLE
+The  template  file is inserted  with the file hooks. If a file hook is called
+with an argument of \fC0\fR then the  buffer has been created and the template
+file is inserted.
+.Me $emf-scheme
+.CS
+define-macro fhook-c
+    ; if arg is 0 this is a new file so add template 
+    !if &not @#
+        ; Is it an include h file or a c file?
+        !if &seq &mid $buffer-bname &rsin "." $buffer-bname 1 "h"
+            etfinsrt "h"
+        !else
+            etfinsrt "c"
+        !endif
+    !endif
+    1 buffer-mode "cmode"
+    1 buffer-mode "time"
+    .
+    .
+!emacro
+.CE
+.Me $ehf-scheme
+See
+.Ht etfinsrt 3
+for more information on how the template file is located and inserted into the
+buffer.
+.PP
+The default \*(mE 'C' mode template is defined as follows, but may be replaced
+with any other text:-
+.CS
+.ne 23
+/* -*- C -*- ****************************************************************
+ *
+ *  			Copyright $YEAR$ $COMPANY_NAME$.
+ *			      All Rights Reserved
+ *
+ *
+ *  System        : 
+ *  Module        : 
+ *  Object Name   : m8fil001.8
+ *  Created By    : $USER_NAME$
+ *  Created       : $ASCII_TIME$
+ *  Last Modified : <000719.1013>
+ *
+ *  Description	
+ *
+ *  Notes
+ *
+ *  History
+ *	
+ ****************************************************************************
+ *
+ *  Copyright (c) $YEAR$ $COMPANY_NAME$.
+ * 
+ *  All Rights Reserved.
+ * 
+ * This  document  may  not, in  whole  or in  part, be  copied,  photocopied,
+ * reproduced,  translated,  or  reduced to any  electronic  medium or machine
+ * readable form without prior written consent from $COMPANY_NAME$.
+ *
+ ****************************************************************************/
+
+static const char rcsid[] = "@(#) : $\&Id$";
+
+.CE 0
+.SH FILES
+The default template files are located in the \*(mE \fIhome\fR directory.
+.PP
+User's may  specify  their own  template  files by  shadowing  the  \fIhome\fR
+directory file with their own file located in a personal \*(mE directory. See
+.Ht $MEPATH 5 .
+.SH "SEE ALSO"
+.na
+.Hl "File Hooks" fileHooks 2 .
+.br
+.Ht etfinsrt 3 ,
+.Ht &find 4 .
+.ad
+.FH

@@ -1,0 +1,62 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil021.4,v 1.1.1.1 2000-07-25 22:04:03 jon Exp $
+.Im MicroEmacs macro;function;bitwise
+.so me.tni
+.TH &band 4
+.XI &band - "Bitwise AND operator"
+.XI &bor  - "Bitwise OR operator"
+.XI &bxor  - "Bitwise XOR operator"
+.XI &bnot - "Bitwise NOT operator"
+.SH NAME
+&band, &bor, &bnot, &bxor \- Bitwise macro operators
+.SH SYNOPSIS
+.na
+.B &band
+.I num1
+.I num2
+.br
+.B &bor
+.I num1
+.I num2
+.br
+.B &bxor
+.I num1
+.I num2
+.br
+.B &bnot
+.I num
+.ad
+.SH DESCRIPTION
+The bitwise  operators  perform bit  operations on numeric values  returning a
+numerical result of the operation.
+.PP
+The functions may all be abbreviated to their three letter  abbreviation (i.e.
+\fB&band\fR  may be expressed as  \fB&ban\fR). In all cases the first argument
+is completely evaluated before the second argument.
+.IP "\fB&band \fInum1\fR \fInum2\fR"
+Bitwise AND of \fInum1\fR and \fInum2\fR i.e. \fInum1\fR & \fInum2\fR.
+.IP "\fB&bor\fR \fInum1\fR \fInum2\fR"
+Bitwise  (inclusive)  OR  of  \fInum1\fR  and  \fInum2\fR  i.e.  \fInum1\fR  |
+\fInum2\fR.
+.IP "\fB&bxor\fR \fInum1\fR \fInum2\fR"
+Bitwise  (exclusive OR) XOR of \fInum1\fR  and  \fInum2\fR  i.e.  \fInum1\fR ^
+\fInum2\fR.
+.IP "\fB&not\fR \fInum\fR"
+Bitwise  NOT  operator  of  \fInum\fR,  inverts  the  state  of all bits  i.e.
+~\fInum\fR.
+.LP
+Evaluation of the bitwise  operators are left to right, the leftmost  argument
+is fully evaluated  before the next argument. The operator  ordering is prefix
+notation (see
+.Ht &add 4
+for an example of prefix ordering).
+.SH "SEE ALSO"
+.na
+.Hl "Variable Functions" Functions - ,
+.Ht &add 4 ,
+.Ht &and 4 ,
+.Ht &negate 4 ,
+.Ht &or 4 .
+.ad
+.FH
+

@@ -1,0 +1,52 @@
+.\" -*- nroff -*-
+.Id $Id: m3mac039.3,v 1.1.1.1 2000-07-25 22:04:01 jon Exp $
+.Im MicroEmacs command|spell
+.so me.tni
+.TH auto-spell 3
+.XI auto-spell - "Auto-spell support"
+.XI auto-spell-buffer - "Auto-spell whole buffer"
+.XI auto-spell-reset - "Auto-spell hilight reset"
+.SH NAME
+.Me "|auto-spell"
+auto-spell \- Auto-spell support
+.br
+.Me "|auto-spell-buffer"
+auto-spell-buffer \- Auto-spell whole buffer
+.br
+.Me "|auto-spell-reset"
+auto-spell-reset \- Auto-spell hilight reset
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+\fBauto-spell\fR 
+.br
+\fBauto-spell-buffer\fR
+.br
+\fBauto-spell-reset\fR
+.ad
+.SH DESCRIPTION
+\fBauto-spell\fR  enables and disables the auto spell  checking of the current
+buffer. Auto spell  detects word breaks as you type and checks the spelling of
+every  completed word hilighting any erroneous words in the error color scheme
+(usually red).
+.PP
+The argument \fIn\fR determines  whether  auto-spell is enabled or disabled, a
++ve argument  enables and a \-ve argument  disables. If no argument or \fI0\fR
+is supplied the auto-spell state is toggled.
+.PP
+\fBauto-spell-buffer\fR  checks  all  words  within  the  current  buffer  for
+spell, hilighting any unknown or miss-spelled words found.
+.PP
+\fBauto-spell-reset\fR resets the buffer hilighting scheme, removing any added
+erroneous words.
+.SH NOTES
+\fBauto-spell\fR and \fBauto-spell-reset\fR are
+macros defined in \fCspellaut.emf\fR.
+.SH "SEE ALSO"
+.na
+.Ht user-setup 3 ,
+.Ht spell-buffer 3 ,
+.Ht spell 2 .
+.ad
+.FH

@@ -1,0 +1,32 @@
+.\" -*- nroff -*-
+.Id $Id: m3mac008.3,v 1.1.1.1 2000-07-25 22:04:00 jon Exp $
+.Im MicroEmacs command
+.so me.tni
+.TH tabs-to-spaces 3
+.XI tabs-to-spaces - "Converts all tabs to spaces"
+.SH NAME
+tabs-to-spaces \- Converts all tabs to spaces
+.Me $a
+.SH SYNOPSIS
+.na
+\fBtabs-to-spaces\fR
+.ad
+.SH DESCRIPTION
+.B tabs-to-spaces
+converts  all tab  characters  found in the  current  buffer with  spaces. The
+number  of spaces a tab is  replaced  with  depends  on the  column of the tab
+character and the setting of
+.Ht $tabwidth 5 .
+.PP
+The cursor is restored to the start of the current line after completion.
+.SH NOTES
+.B tabs-to-spaces
+is a macro defined in \fCformat.emf\fR.
+.SH "SEE ALSO"
+.na
+.Ht $tabwidth 5 ,
+.Ht tab 2 ,
+.Ht tab 2m ,
+.Ht clean 3 .
+.ad
+.FH

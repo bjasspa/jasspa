@@ -1,0 +1,28 @@
+.\" -*- nroff -*-
+.Id $Id: m5var066.5,v 1.1.1.1 2000-07-25 22:04:06 jon Exp $
+.Im MicroEmacs variable|macrodevelop
+.so me.tni
+.TH $progname 5
+.XI $progname - "Program file name"
+.SH NAME
+$progname \- Program file name
+.Me $a
+.SH SYNOPSIS
+.B $progname
+.I string
+.SH DESCRIPTION
+.B $progname 
+is set the the \*(mE program file name  currently  being run. This can be used
+by macros for many  purposes,  from spawning  another \*(mE session to working
+out where \*(mE is running from.
+.SH EXAMPLE
+The following  example is used to spawn of another \*(mE command to create a C
+tags file:-
+.CS
+shell-command &cat $progname " \\"@ctags\\" *.c *.h" 
+.CE 0
+.SH "SEE ALSO"
+.na
+.Ht me 1 .
+.ad
+.FH

@@ -1,0 +1,41 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd012.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|cursor
+.ds C0 "(\fB\*e<\fR)\ \&
+.ds C1 "(\fB\*e>\fR)\ \&
+.so me.tni
+.TH beginning-of-buffer 2
+.XI beginning-of-buffer - "\*(C0Move to beginning of buffer/file"
+.XI end-of-buffer - "\*(C1Move to end of buffer/file"
+.SH NAME
+.Me "|beginning-of-buffer"
+beginning-of-buffer  \- Move to beginning of buffer/file
+.Me "|end-of-buffer"
+end-of-buffer \- Move to beginning/end of buffer/file
+.Me $a
+.SH SYNOPSIS
+.na
+\fBbeginning-of-buffer\fR \*(C0
+.br
+\fBend-of-buffer\fR \*(C1
+.ad
+.SH DESCRIPTION
+.B beginning-of-buffer
+places the cursor at the beginning of the buffer/file.
+.PP
+.B end-of-buffer
+places the cursor at the end of the buffer/file.
+.SH NOTES
+.B beginning-of-buffer
+is typically bound to \fB\*(hO\fR.
+.br
+.B end-of-buffer
+is typically bound to \fB\*(eN\fR.
+.SH "SEE ALSO"
+.na
+.Ht beginning-of-line 2 ,
+.Ht end-of-line 2 .
+.ad
+.rm C0
+.rm C1
+.FH

@@ -1,0 +1,73 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd101.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|print
+.so me.tni
+.TH print-buffer 2
+.XI print-buffer - "Print buffer, with formatting"
+.XI print-region - "Print region, with formatting"
+.SH NAME
+.Me "|print-buffer"
+print-buffer \- Print buffer, with formatting
+.br
+.Me "|print-region"
+print-region \- Print region, with formatting
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B print-buffer
+.br
+.I n
+.B print-region
+.ad
+.SH DESCRIPTION
+.B print-buffer
+and
+.B print-region
+print the current buffer or region,  respectively, using  high-lighting  where
+appropriate. The hilighting assigned to a buffer is defined by the variable
+.Ht $buffer-hilight 5
+the print scheme is defined with
+.Ht print-scheme 2 ,
+the
+.Ht scheme-editor 3
+should be used to create printer schemes.
+.PP
+The numerical argument \fIn\fR determines the number of copies required.
+.PP
+The printer is set up from the \fBFile->Printer Setup\fR menu.
+.SS "Printing Under Microsoft Windows Environments"
+Printing under Microsoft Windows Environments  automatically  invokes a dialog
+box to assign and configure the printer page  characteristics.  The dialog box
+allows  the  printer to be  selected,  enables  line  numbering,  headers  and
+footers.
+.PP
+The dialog  allows the user to select the font size, by defining the number of
+characters that appear on a logical page, and the number of logical pages that
+appear  on  a  physical   page.   Selecting  the  logical  and  physical  page
+characteristics  determine  the size of the font. For dense pages with a small
+typeface then a point size of 6 is appropriate. For clarity, a larger typeface
+of 10 or 12 points is advised.
+.SH NOTES
+If the current buffer has no specific  hilight-print  scheme then the default,
+hilight-print scheme \fC0\fR, is used.
+.PP
+The last  printer  configuration  selected by the user is held in the registry
+file in the \fIhistory\fR section.
+.SH BUGS
+Landscape printing under Microsoft Windows environments is temperamental.
+.PP
+Font selection under Microsoft Windows  environments does not always determine
+the most appropriate font size.
+.PP
+The printer  interface  does not support  native  postscript  generation.  (In
+progress).
+.SH "SEE ALSO"
+.na
+.Ht scheme-editor 3 ,
+.Ht print-scheme 2 ,
+.Ht hilight 2 ,
+.Ht printall 3f ,
+.Ht $buffer-hilight 5 .
+.ad
+.FH

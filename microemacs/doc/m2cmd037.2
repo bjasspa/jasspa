@@ -1,0 +1,26 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd037.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|delete
+.ds C0 "(\fB\*s\*(tA\fR)\ \&
+.so me.tni
+.TH backward-delete-tab 2
+.XI backward-delete-tab - "\*(C0Delete white space to previous tab-stop"
+.SH NAME
+backward-delete-tab \- Delete white space to previous tab-stop
+.Me $a
+.SH SYNOPSIS
+.na
+\fBbackward-delete-tab\fR \*(C0
+.ad
+.SH DESCRIPTION
+.B backward-delete-tab
+deletes all white characters left of the  cursor back to the previous tab stop
+or non-white space, the deleted text is not added to the kill buffer.
+.SH "SEE ALSO"
+.na
+.Ht tab 2 ,
+.Ht $tabsize 5 ,
+.Ht $tabwidth 5 .
+.ad
+.rm C0
+.FH

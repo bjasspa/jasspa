@@ -1,0 +1,89 @@
+.\" -*- nroff -*-
+.Id $Id: m5var046.5,v 1.1.1.1 2000-07-25 22:04:05 jon Exp $
+.Im MicroEmacs variable|window|macrodevelop|modeline
+.so me.tni
+.TH $window-mode-line 5
+.XI $window-mode-line - "Window mode line position"
+.XI $window-scroll-bar 5 "Window scroll bar (or separator) position"
+.SH NAME
+.Me "|$window-mode-line"
+$window-mode-line \- Window mode line position
+.br
+.Me "|$window-scroll-bar"
+$window-scroll-bar \- Window scroll bar (or separator) position
+.Me $a
+.SH SYNOPSIS
+.B $window-mode-line
+.I integer
+.sp
+1 <= \fIinteger\fR <=
+.Hl $screen-depth $screen-depth 5
+\- 2
+.sp 2
+.B $window-scroll-bar
+.I integer
+.sp
+0 <= \fIinteger\fR <=
+.Hl "$screen-width" $screen-width 5
+\- 1
+.SH DESCRIPTION
+.B $window-mode-line
+stores the screen  line of the  current windows mode-line,  where screen lines
+are counted from  0 at the  top of the  screen. Often used  in conjunction with
+.Ht set-cursor-to-mouse 2
+and
+.Ht $mouse-y 5
+to add more complex mouse functionality.
+.PP
+.B $window-scroll-bar
+stores the screen  position  of the  right-hand  horizontal  window  separator
+line or scroll-bar
+(see
+.Ht split-window-horizontally 2
+and
+.Ht $scroll-bar 5 ).
+A value of greater than
+.Ht $screen-width 5
+indicates that there is no right-hand  separator column or scroll bar present.
+Often used in conjunction with
+.Ht $mouse-x 5 .
+.SH EXAMPLE
+In the following example the position of the mouse is checked to see if it is
+on the mode line of the window, if so then a different action is taken.
+.Me $emf-scheme
+.CS
+set-cursor-to-mouse
+;   If we are on the mode line then interpret position of
+;   the cursor on line to control the screen.
+!if &equal $window-mode-line $mouse-y
+    !if &less $mouse-x "2"
+        menu-main     ; Inform buffer to pop up menu.
+    !elif &equal $mouse-x "2"
+        delete-window
+    !elif &equal $mouse-x "3"
+        delete-other-windows
+    !elif &equal $mouse-x "4"
+        backward-page
+    !elif &equal $mouse-x "5"
+        forward-page
+    !elif &equal $mouse-x "6"
+        recenter
+    !elif &equal $mouse-x "7"
+        undo
+    !endif
+!else
+    \&.....
+!endif
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Ht $mode-line 5 ,
+.Ht $mouse-x 5 ,
+.Ht $mouse-y 5 ,
+.Ht $scroll-bar 5 ,
+.Ht $mouse-pos 5 ,
+.Ht set-cursor-to-mouse 2 ,
+.Ht split-window-horizontally 2 .
+.ad
+.FH

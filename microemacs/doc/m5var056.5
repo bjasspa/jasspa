@@ -1,0 +1,62 @@
+.\" -*- nroff -*-
+.Id $Id: m5var056.5,v 1.1.1.1 2000-07-25 22:04:06 jon Exp $
+.Im MicroEmacs variable|hilight
+.so me.tni
+.TH $line-scheme 5
+.XI $line-scheme - "Set the current line color scheme"
+.SH NAME
+$line-scheme \- Set the current line color scheme
+.Me $a
+.SH SYNOPSIS
+\fB$line-scheme\fR \fIschemeNum\fR; Default is \fC-1\fR
+.SH DESCRIPTION
+.B $line-scheme
+sets the color  scheme to be used for the current line of the current  window.
+The given  \fIschemeNum\fR  can be any scheme number previously defined by the
+function
+.Ht add-color-scheme 2 .
+.PP
+A line's $line-scheme setting is removed by setting the variable to -1.
+.PP
+A $line-scheme setting takes precedence over the buffer's color scheme (
+.Ht $buffer-scheme 5 )
+and the buffer's hilighting scheme (
+.Ht $buffer-hilight 5 ).
+.SH EXAMPLE
+.Ht c-hash-eval 3
+greys out lines of text by doing:
+.Me $emf-scheme
+.CS
+set-variable $line-scheme %lblack
+.CE
+.Me $ehf-scheme
+The lines are rest by doing
+.Me $emf-scheme
+.CS
+set-variable $line-scheme -1
+.CE
+.Me $ehf-scheme
+The
+.Ht gdb 3
+interface hilights the current line of source by doing:
+.Me $emf-scheme
+.CS
+set-variable $line-scheme %yellow-lblack
+.CE 0
+.Me $ehf-scheme
+.SH NOTES
+Due to line storage  restrictions, only 15 different color schemes can be used
+in a buffer at any one time. When the 16th  color  scheme is used it  replaces
+the first color scheme, all lines using the first color scheme will be colored
+using the new color scheme.
+.SH "SEE ALSO"
+.na
+.Ht add-color-scheme 2 ,
+.Ht c-hash-eval 3 ,
+.Ht $buffer-scheme 5 ,
+.Ht $buffer-hilight 5 ,
+.Ht $mode-line-scheme 5 ,
+.Ht $scroll-bar-scheme 5 ,
+.Ht $system 5 .
+.ad
+.FH

@@ -1,0 +1,209 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"		           Copyright 1998 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m2cmd138.2
+.\"  Created By    : Jon Green
+.\"  Created       : Mon Jun 22 21:35:58 1998
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1998 JASSPA.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m2cmd138.2,v 1.1.1.1 2000-07-25 22:03:57 jon Exp $
+.Im MicroEmacs command|spell
+.so me.tni
+.TH add-spell-rule 2
+.XI add-spell-rule - "Add a new spelling rule to the dictionary"
+.SH NAME
+add-spell-rule \- Add a new spelling rule to the dictionary
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B add-spell-rule
+[\ "\fI\|rule-letter\fR\|"
+"\fI\|base-ending\fR\|"
+"\fI\|remove\|\fR"
+"\fI\|derive-ending\|\fR"\ ]
+.ad
+.SH DESCRIPTION
+.B add-spell-rule
+adds a new  spelling  rule to the speller. The rules  effectively  define the
+prefix  and  suffix  character  replacements  of  words,  which  is given an
+alphabetical  identifier  used  within the speller , in  conjunction  with the
+language dictionary. The letter conventions are defined by the
+.B "Free Software Foundation"
+GNU
+.Hr ispell 1
+package.
+.PP
+.B add-spell-rule
+is   used   in   the   \*(mE    dictionary    initialization    files   called
+\fI<language>\fRr.emf, e.g. \fCamericar.erf\fR, \fCbritishr.erf\fR supplied in
+the \*(mS macros directory.
+.PP
+The command takes a single numeric argument \fIn\fR to control the addition of
+a rule to the speller, as follows:-
+.TP
+\fC0\fR \fBadd-spell-rule\fR
+.\"
+Removes  all  existing  rules  and  re-initializes.  This  is, by  convention,
+explicitly called before instantiating a new set of rules.
+.TP
+\fC\-1\fR \fBadd-spell-rule\fR "\|\fIrule-letter\fR\|" "\|\fIbase-ending\|\fR" "" "\|\fIderiv-ending\fR\|"
+.\"
+.PD 0
+.TP
+\fC\-2\fR \fBadd-spell-rule\fR "\|\fIrule-letter\fR\|" "\|\fIbase-ending\|\fR" "" "\|\fIderiv-ending\fR\|"
+.\"
+Adds a prefix rule, an argument of \-1 indicates  that this prefix rule cannot
+be used with a suffix  rule. An  argument of \-2  indicates  it can be matched
+with any suffix  rule which can be used with a prefix  rule (e.g.  argument of
+2).
+.PD 1
+.IP
+"\fIrule-letter\fR"
+is any character in the range \fCA\fR-\fCz\fR except '\fC_\fR', all rules of
+the given letter must be a prefix rule of the same type (i.e. same argument).
+The start of a base word must match the given "\fIbase-ending\fR" regular
+expression string for the rule to be applied, the "\fIremove\fR" string must
+be empty for a prefix and the "\fIderiv-ending\fR" is the prefix string.
+Example, for the American language;-
+.IP
+.na
+\fC\-2 add-spell-rule "I" "" "" "in"\fR   ; As in disposed > indisposed
+.ad
+.IP
+A prefix  rule of type '\fCI\fR' can be  applied  to any base word which has
+rule '\fCI\fR' enabled, and it prefixes "\fCin\fR" to the word.
+.TP
+\fC1\fR \fBadd-spell-rule\fR "\|\fIrule-letter\fR\|" "\|\fIbase-ending\fR\|" "\|\fIremove\fR\|" "\fI\|deriv-ending\fR\|"
+.PD 0
+.TP
+\fC2\fR \fBadd-spell-rule\fR "\|\fIrule-letter\fR\|" "\fI\|base-ending\fR\|" "\fI\|remove\fR\|" "\fI\|deriv-ending\fR\|"
+.\"
+Add suffix  rules. An argument of 1 indicates  that this prefix rule cannot be
+used with a prefix rule. An argument of 2 indicates it can be matched with any
+prefix rule which can be used with a suffix rule (i.e. argument of \-2).
+.PD 1
+.IP
+"\fIrule-letter\fR"  is any character in the range  \fCA\fR-\fCz\fR, all rules
+of the  given  letter  must be a  suffix  rule of the  same  type  (i.e.  same
+argument).  The end of a base  word must  match the given  "\fIbase-ending\fR"
+regular  expression  string  for the rule to be  applied,  the  "\fIremove\fR"
+string  must be a fixed  string  and the  "\fIderiv-ending\fR"  must also be a
+fixed string which is appended to the base-word after  "\fIremove\fR" has been
+removed. Example, for the American language;-
+.RS
+.Me $emf-scheme
+.CS
+2 add-spell-rule "N" "e" "e" "ion"     ; As in create > creation
+2 add-spell-rule "N" "y" "y" "ication" ; As in multiply > multiplication
+2 add-spell-rule "N" "[^ey]" "" "en"   ; As in fall > fallen
+.CE
+.Me $ehf-scheme
+A suffix rule of type '\fCN\fR' can be  applied  to any base word which has
+rule '\fCN\fR' enabled, and it can be used with prefixes, e.g. with rule;-
+.Me $emf-scheme
+.CS
+-2 add-spell-rule "A" "" "" "re"       ; As in enter > reenter
+.CE
+.Me $ehf-scheme
+to derive  "\fIrecreation\fR" from "\fIcreate\fR". A rule which cannot be used
+with prefixes, i.e.:
+.Me $emf-scheme
+.CS
+1 add-spell-rule "V" "e" "e" "ive"     ; As in create > creative
+1 add-spell-rule "V" "[^e]" "" "ive"   ; As in prevent > preventive
+.CE
+.Me $ehf-scheme
+While some  prefix  words are legal, such as  "\fIrecreative\fR"  but some are
+not,  such  as  "\fIcollect\fR"  where  "\fIrecollect\fR"  is  correct,  so is
+"\fIcollective\fR" but "\fIrecollective\fR" is not.
+.RE
+.SS "SPECIAL RULES"
+Following  are  special  forms of  add-spell-rule  used for  tuning  the spell
+support, note that an argument can not be given:-
+.PP
+\fBadd-spell-rule\fR "\fI-\fR" "<\fIy\fR|\fIn\fR>"
+.IP
+Enables and  disables the  acceptance  of hyphens  joining  correct  words. By
+default  the phrase  "\fCout-of-date\fR"  would be  accepted  in American even
+though the phrase does not exist in the American  dictionary.  This is because
+the three  words  making up the  phrase  are  correct  and by default  hyphens
+joining words are allowed. Some Latin language such as Spanish do not use this
+concept so this feature can be disable.
+.PP
+\fBadd-spell-rule\fR "\fI#\fR" "\fIscore\fR"
+.IP
+Sets the maximum allowed error score when creating a spelling guess list. When
+comparing a dictionary  word with the user supplied word,  \fBspell\fR  checks
+for  differences,  each difference or error is scored in the range of 20 to 27
+points, once the maximum  allowed score has been exceeded the word is ignored.
+The default guess error score is 60, allowing for 2 errors.
+.PP
+\fBadd-spell-rule\fR "\fI*\fR" "\fIregex\fR"
+.IP
+Adds a correct word in the form of a
+.Hl "regex" RegularExpressions 2
+if a word being spell  checked is completely  matched by the  \fBregex\fR  the
+word is deemed to be correct. For example, the  following  rule can be used to
+make the spell-checker allow all hex numbers:
+.Me $emf-scheme
+.CS
+add-spell-rule "*" "0[xX][[:xdigit:]]+"
+.CE
+.Me $ehf-scheme
+This will  completely  match the words  "\fC0x0\fR",  "\fC0xff\fR" etc but not
+"\fC0x00z\fR" as the whole word is not matched, only the first 4 letters.
+.SH NOTES
+The format of the dictionary is a list of base words with each word having
+a list of rules which can be applied to that word.  Therefore  the list of
+words and the rules used for them are linked e.g.
+.CS
+aback
+abaft
+abandon/DGRS
+abandonment/S
+abase/DGRS
+abasement/S
+abash/DGS
+abashed/U
+abate/DGRS
+.CE
+where the "\fC/...\fR" is the valid list of rules for that word.
+.PP
+The '_' character is used to separate different rule lists for a single word.
+.PP
+The  format of the  dictionary  word list and the rule list is  compatible
+with
+.Hr ispell 1 .
+.SH "SEE ALSO"
+.na
+.Ht add-dictionary 2 ,
+.Ht spell 2
+.Ht spell-buffer 3 ,
+.Ht spell-word 3 ,
+.Hr ispell 1 .
+.ad
+.FH

@@ -1,0 +1,38 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd079.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|macro
+.ds C0 "(\fB\*(cXq\fR)\ \&
+.so me.tni
+.TH kbd-macro-query 2
+.XI kbd-macro-query - "\*(C0Query termination of keyboard macro"
+.SH NAME
+kbd-macro-query \- Query termination of keyboard macro
+.Me $a
+.SH SYNOPSIS
+.na
+.I "[Definition]"
+.br
+\fBkbd-macro-query\fR \*(C0
+.sp
+.I "[Execution]"
+.br
+.B kbd-macro-query
+"\fBy\fR"|"\fBn\fR"|"\fB\*cg\fR"
+.ad
+.SH DESCRIPTION
+.B kbd-macro-query
+queries the termination  state of keyboard macro  recording. If the command is
+executed  during  a  keyboard  macro  definition,  at that  point  during  its
+execution the user is prompted as to whether to continue the macro  execution.
+A reply of  "\fBy\fR"  continues  the  execution  as normal,  "\fBn\fR"  stops
+execution at that point once, if executing  the macro  \fIn\fR times the macro
+will  still  executed a further  \fIn-1\fR  times. If the  "\fC\*cg\fR"  abort
+command is entered then all keyboard macro execution is aborted, regardless of
+the number of repetitions.
+.SH "SEE ALSO"
+.na
+.Ht start-kbd-macro 2 ,
+.Ht execute-kbd-macro 2 .
+.ad
+.rm C0
+.FH

@@ -1,0 +1,31 @@
+.\" -*- nroff -*-
+.Id $Id: m2mod016.2,v 1.1.1.1 2000-07-25 22:03:58 jon Exp $
+.Im MicroEmacs modes
+.so me.tni
+.TH view 2m
+.XI view - "Read only"
+.SH NAME
+view \- Read only
+.SH SYNOPSIS
+.B "view Mode"
+.sp
+\fB\&V\fR\& \- mode line letters.
+.SH DESCRIPTION
+.B view
+mode sets the buffer to read-only, disabling the ability to alter the contents
+of the buffer. This mode is automatically  set for any files attributed with a
+read-only status on the file system when read into \*(mE. Files loaded via
+.Ht view-file 2
+are also assigned \fB\&view\fR\& mode.
+.PP
+While in \fB\&view\fR\& mode, any attempt to alter the buffer contents  results in
+the following message:-
+.IP
+.C "[Key Illegal in view Mode]"
+.SH "SEE ALSO"
+.na
+.Ht buffer-mode 2 ,
+.Ht global-mode 2 ,
+.Ht view-file 2 .
+.ad
+.FH

@@ -1,0 +1,78 @@
+.\" -*- nroff -*-
+.Id $Id: m5var057.5,v 1.1.1.1 2000-07-25 22:04:06 jon Exp $
+.Im MicroEmacs variable;environment
+.so me.tni
+.TH $search-path 5
+.XI $search-path - "MicroEmacs search path"
+.XI $MEPATH - "MicroEmacs search path"
+.SH NAME
+.Me "|$seach-path"
+$search-path \- MicroEmacs search path
+.Me "|$MEPATH"
+$MEPATH \- MicroEmacs search path
+.Me $a
+.SH SYNOPSIS
+.na
+.B $search-path
+.I string
+.sp
+.I "[Microsoft Windows/MS-DOS]"
+.br
+.B MEPATH=
+\fI<path1>\fR\|\fB;\fR\|\fI<path2>\fR\fB;\fR....\fB;\fR\|\fI<pathn>\fR
+.sp
+.I "[UNIX]"
+.br
+.B MEPATH=
+\fI<path1>\fR\|\fB:\fR\|\fI<path2>\fR\fB:\fR....\fB:\fR\|\fI<pathn>\fR
+.ad
+.SH DESCRIPTION
+.B $search-path
+is initialized to the environment variable
+.BR $MEPATH ,
+and  identifies the search paths which are searched to locate editor  specific
+files. Multiple search paths may be specified,  separated by the platform path
+separator  (semi-colon  ('\fB;\fR')  on  Microsoft  Windows  or  \s-1MS-DOS\s0
+environments  and a colon  ('\fB:\fR')  on  \s-1UNIX\s0  environments).  Where
+multiple search paths are defined then they are search left to right.
+.PP
+The search  paths are  generally  ordered  from  highest  priority  to lowest
+priority and might be arranged such as:-
+.IP
+\fBMEPATH=\fR\|\fI<user>\fR:\fI<company>\fR:\fI<me>\fR
+.LP
+where \fI<user>\fR  represents the users path;  \fI<company>\fR is the company
+file path (e.g. template files) and \fI<me>\fR are the standard \*(mE files.
+.PP
+This would correspond to a directory installation, of user \fBfoo\fR such as:-
+.CS
+/usr/foo/microemacs   - User files.
+/usr/group/microemacs - Company wide files
+/usr/local/microemacs - MicroEmacs installation directory
+.CE
+and a \fB$MEPATH\fR such as:-
+.CS
+MEPATH=/usr/foo/microemacs:/usr/group/microemacs:/usr/local/microemacs
+.CE 0
+.SH USAGE
+The current working directory is checked first for the location of a file.
+.PP
+.B $search-path
+is used to locate all macro files, and other files located with operators such
+as
+.Ht &find 4 .
+.SH NOTES
+If  \fB$MEPATH\fR  is not set then  \fB$search-path\fR  is  initialized to the
+environment variable \fB$PATH\fR.
+.PP
+On \s-1UNIX\s0 systems the path  \fI/usr/local/microemacs\fR  is automatically
+added to the end of  \fB$MEPATH\fR,  or if not  defined, to the  beginning  of
+\fB$PATH\fR.
+.SH "SEE ALSO"
+.na
+.Hl "Variable Functions" Functions - ,
+.Ht execute-file 2 ,
+.Ht $MENAME 5 ,
+.Ht &find 4 .
+.ad
+.FH

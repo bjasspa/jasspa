@@ -1,0 +1,56 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1999 Samsung (SERI) Ltd.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m5var077.5
+.\"  Created By    : Jon Green
+.\"  Created       : Mon Jul 5 17:44:15 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1999 Samsung (SERI) Ltd.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from Samsung (SERI) Ltd.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m5var077.5,v 1.1.1.1 2000-07-25 22:04:07 jon Exp $
+.Im MicroEmacs variable;environment|bind
+.so me.tni
+.TH $recent-keys 5
+.XI $recent-keys - "Recent key history"
+.SH NAME
+$recent-keys \- Recent key history.
+.Me $a
+.SH SYNOPSIS
+.na
+\fB$recent-keys\fR \fIstring\fR
+.ad
+.SH DESCRIPTION
+.B $recent-keys
+is a system  variable  that displays the last 100 keys entered into the system
+in reverse order. This variable is typically  used to solve  keyboard  mapping
+problems  when keys are not bound etc.  allowing  a visual  inspection  of the
+input into the editor.
+.SH "SEE ALSO"
+.na
+.Ht buffer-bind-key 2 ,
+.Ht global-bind-key 2 ,
+.Ht translate-key 2 .
+.ad
+.FH

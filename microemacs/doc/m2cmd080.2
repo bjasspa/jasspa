@@ -1,0 +1,47 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd080.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|paragraph|delete
+.so me.tni
+.TH kill-paragraph 2
+.XI kill-paragraph - "Delete a paragraph"
+.SH NAME
+kill-paragraph \- Delete a paragraph
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+\fBkill-paragraph\fR
+.ad
+.SH DESCRIPTION
+.B kill-paragraph
+deletes the next \fIn\fR  paragraphs, if \fIn\fR is +ve then the paragraph the
+cursor is  currently  in and the next  \fIn\fR-1  paragraphs  are  killed.  If
+\fIn\fR  is  -ve  then  the  current  paragraph  and  the  previous  \fIn\fR-1
+paragraphs  are killed. If \fIn\fR is zero the  command  simply  returns.  The
+default value for \fIn\fR is 1.
+.SH DIAGNOSTICS
+.PP
+The  following  errors can be  generated,  in each case the command  returns a
+FALSE status:
+.IP "\fB[end of buffer]\fR"
+The  given  argument   \fIn\fR  was  greater  that  the  number  of  remaining
+paragraphs, all the remaining paragraphs are still removed.
+.IP "\fB[top of buffer]\fR"
+A negative  argument \fIn\fR was given requesting more paragraphs to be killed
+then are present  before the cursor. All the paragraphs  before the cursor are
+still removed.
+.SH NOTES
+A paragraph is terminated by a blank line. All text residing between two blank
+lines is considered to be a paragraph - regardless of the text layout.
+.PP
+The  distinction  between  killed text and deleted  text is that text which is
+killed is placed into the yank buffer so that it can be pasted into any buffer
+using
+.Ht yank 2 .
+.SH "SEE ALSO"
+.na
+.Ht backward-paragraph 2 ,
+.Ht forward-paragraph 2 ,
+.Ht kill-region 2 .
+.ad
+.FH

@@ -1,0 +1,114 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1998 Jon Green.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m2cmd154.2
+.\"  Created By    : Jon Green
+.\"  Created       : Thu Jul 16 23:13:14 1998
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1998 Jon Green.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from Jon Green.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m2cmd154.2,v 1.1.1.1 2000-07-25 22:03:57 jon Exp $
+.Im MicroEmacs command|registry
+.so me.tni
+.TH mark-registry 2
+.XI mark-registry - "Modify the operating mode of a registry node"
+.SH NAME
+mark-registry \- Modify the operating mode of a registry node
+.SH SYNOPSIS
+.na
+.I n
+.B mark-registry
+"\fIroot\fR"
+"\fImode\fR"
+.ad
+.SH DESCRIPTION
+.B mark-registry
+modifies the \fImode\fR of a registry node \fIroot\fR. If an argument  \fIn\fR
+is supplied then the \fIn\fRth  register node down from  \fBroot\fR (as viewed
+from
+.Ht list-registry 2
+output) is modified  instead. The \fImode\fR is string  specifying  the modes,
+each mode is  represented  by a character.  Lower case  characters add a mode,
+upper case characters delete a mode. The modes are defined as:-
+.IP "\fB?\fR \- Query Name"
+Returns  the full  name,  including  path, of the given  registry  node in the
+variable
+.Ht $result 5 .
+This does not alter the registry.
+.IP "\fBa\fR \- Autosave"
+Automatically  saves the  registry  when it is  deleted or  unloaded  from the
+registry. The user is not prompted for a save.
+.IP "\fBb\fR \- Backup"
+Automatically performs a backup of the registry file whenever a save operation
+is performed.
+.IP "\fBc\fR \- Create"
+If the registry file cannot be loaded then the \fIroot\fR  node is created and
+the  invocation  succeeds.  If this mode is omitted  then the call fails if the
+\fIfile\fR cannot be found.
+.IP "\fBd\fR \- Discard"
+Marks the registry as discardable.  This is typically used for registries that
+are not saved.
+.IP "\fBf\fR \- File"
+The  registry  node is  marked  as a file  root, the value  must be set to the
+registry file name.
+.IP "\fBh\fR \- Hidden"
+The registry  node is created in the  \fIHidden\fR  state. (i.e. children will
+not be shown in
+.Ht list-registry 2
+output).
+.IP "\fBu\fR \- Updated"
+Marks the registry as modified.  The modified bit is removed when the registry
+file is saved. If the  modified  bit is  applied  to a registry  node the user
+will be  prompted  to save  the  registry  when it is  deleted  (or it will be
+automatically saved when the \fIAutosave\fR mode is used).
+.PP
+Multiple modes may be applied.
+.SH EXAMPLE
+A history registry can be hidden with the following invocation:-
+.Me $emf-scheme
+.CS
+mark-registry "/history" "h"
+.CE
+.Me $ehf-scheme
+It could then be made visible again using:-
+.Me $emf-scheme
+.CS
+mark-registry "/history" "H"
+.CE 0
+.Me $ehf-scheme
+.SH BUGS
+At exit only registry nodes attached to the root are saved.
+.SH DIAGNOSTICS
+.B mark-registry
+fails if \fIroot\fR does not exist.
+.SH "SEE ALSO"
+.na
+.Ht get-registry 2 ,
+.Ht list-registry 2 ,
+.Ht read-registry 2 ,
+.Ht set-registry 2 ,
+.Ht erf 8 .
+.ad
+.FH

@@ -1,0 +1,58 @@
+.\" -*- nroff -*-
+.Id $Id: m5var031.5,v 1.1.1.1 2000-07-25 22:04:05 jon Exp $
+.Im MicroEmacs variable|buffer|modeline;variable|hilight
+.so me.tni
+.TH $mode-line 5
+.XI $mode-line - "Mode line format"
+.SH NAME
+$mode-line \- Mode line format
+.Me $a
+.SH SYNOPSIS
+\fB$mode-line\fR "\fIstring\fR"; Default is "\fC%s%r%u me (%e) - %l %b (%f) \fR"
+.SH DESCRIPTION
+.B $mode-line
+defines  the  format  of the mode line  printed  for every  window,  where the
+character following a percent ('\fC%\fR') has the following effect:-
+.sp
+.RS
+.nf
+\fCD\fR Prints the current day.
+\fCM\fR Prints the current month.
+\fCY\fR Prints the current year (2 digits).
+\fCy\fR Prints the current year (4 digits).
+\fCb\fR Prints the current buffer's name.
+\fCc\fR Prints the current buffer's column number.
+\fCe\fR Prints the current buffer's editing modes.
+\fCf\fR Prints the current buffer's file name.
+\fCh\fR Prints the current hour of the day.
+\fCk\fR Prints the current keyboard macro status.
+\fCl\fR Prints the current buffer's line number.
+\fCm\fR Prints the current minute of the hour.
+\fCn\fR Prints the current buffer's total number of lines.
+\fCr\fR Prints the current root user status (UNIX only).
+\fCs\fR Prints the horizontal window split character.
+\fCu\fR Prints the current buffer's (un)changed or view mode flag.
+\fC%\fR Prints a percentage escape character.
+\fC\-\fR Prints a literal minus character ('\fC\-\fR') - see \s-1NOTES\s0.
+\fC*\fR All other characters are printed literally.
+.fi
+.RE
+.SH NOTES
+.BS
+Refer to 
+.Ht $window-chars 5 
+for the  characters  utilized  in the mode  line.  Typically  a the  '\fC-\fR'
+character  is  changed  to a  '\fC=\fR'  if it is  the  current  window.  If a
+\&'\fC-\fR' is always required, use "\fC%-\fR".
+.BU
+A buffer can have its own  mode-line, and be uneffected be the global mode
+line, see
+.Ht $buffer-mode-line 5 .
+.BE 0
+.SH "SEE ALSO"
+.na
+.Ht $buffer-mode-line 5 ,
+.Ht $mode-line-scheme 5 ,
+.Ht $window-chars 5 .
+.ad
+.FH

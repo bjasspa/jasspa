@@ -1,0 +1,43 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd137.2,v 1.1.1.1 2000-07-25 22:03:57 jon Exp $
+.Im MicroEmacs command|cursor
+.ds C0 "(\fB\*cu\fR)\ \&
+.so me.tni
+.TH universal-argument 2
+.XI universal-argument - "\*(C0Set the command argument count"
+.SH NAME
+universal-argument \- Set the command argument count
+.Me $a
+.SH SYNOPSIS
+.na
+\fBuniversal-argument\fR \*(C0
+.ad
+.SH DESCRIPTION
+.B universal-argument
+sets the argument  number passed to a command to 4^\fIn\fR (4 to the power of
+\fIn\fR)  where  \fIn\fR is the  number of calls to  \fBuniversal-argument\fR,
+e.g.   the   key    sequence    "\fC\*cu\*cn\fR"    moves    down   4   lines,
+"\fC\*cu\*cu\*cu\*cn\fR" moves down 4*4*4 = 64 lines.
+.PP
+After  invoking  the  \fBuniversal-command\fR  a  '\fI-\fR'  character  can be
+pressed to negate the argument value, and an alternative  numeric argument can
+be entered using the '\fI0\fR' to '\fI9\fR' keys.
+.PP 
+Invoking this command via
+.Ht execute-named-command  2
+or by a macro has no effect. The  command  should be treated as a command  key
+prefix (like
+.Ht prefix 2 )
+in that it may be bound to only one key  sequence  which  must be a single key
+stroke.  Re-binding  this  command to another key unbinds the new key and also
+the current \fBuniversal-argument\fR key.
+.PP
+The  \fBprefix 1\fR  key (by default  bound to \fCesc\fR)  may also be used to
+enter a numeric  argument at the message  line, e.g. "\fCesc 1 0 C-f\fR"  will
+move forward 10 characters.
+.SH "SEE ALSO"
+.na
+.Ht prefix 2 .
+.ad
+.rm C0
+.FH

@@ -1,0 +1,88 @@
+.\" -*- nroff -*-
+.Id $Id: m3mac020.3,v 1.1.1.1 2000-07-25 22:04:00 jon Exp $
+.Im MicroEmacs command|search
+.so me.tni
+.TH replace-all-pairs 3
+.XI replace-all-pairs - "Replace string pairs in a list of files"
+.SH NAME
+replace-all-pairs \- Replace string pairs in a list of files
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+\fBreplace-all-pairs\fR
+"\fIfiles\fR"
+.ad
+.SH DESCRIPTION
+\fBreplace-all-pairs\fR  uses the current buffer to extract  "\fIfrom\fR"  and
+"\fIto\fR"  pairs  and  then  replaces  all  occurrences  of  "\fIfrom\fR"  to
+"\fIto\fR" in the given list of files  without  prompting the user. The format
+of the current buffer must be:
+.CS
+/from1/to1/
+Xfrom2Xto2X
+?from3?to3?
+  .
+  .
+/fromN/toN/
+.CE
+For each pair the command finds all occurrences of "\fIfrom\fR" by calling the
+command
+.Ht grep 3
+to search for string  "\fIfrom\fR" in files  "\fIfiles\fR".  Thus all relevant
+edited files must be saved or  \fBgrep\fR  may return the wrong line  numbers.
+This is achieved by a call to
+.Ht save-some-buffers 2 
+between  each replace  pair, it is called with an argument of 0 to ensure that
+any changed buffers are automatically saved.
+.PP
+Each occurrence of "\fIfrom\fR" is jumped to using
+.Ht get-next-line 2
+and the string is replaced by the call:
+.Me "$emf-scheme"
+.CS
+-1 replace-string "from" "to"
+.CE
+.Me "$ehf-scheme"
+This replaces all  occurrences  of  "\fIfrom\fR"  to "\fIto\fR" on the current
+line only, hence the line  numbers  must be correct.  This also means that the
+"\fIfrom\fR"  search  string  must be  correctly  formatted  for both grep and
+replace-string.
+.PP
+The given  argument  \fIn\fR is a bit based  flag which  changes  the  default
+behavior described above. The bits have the following effect:-
+.IP \fB0x01\fR
+Prompt  before  saving  any  changed  buffers  FIRST  time  ONLY,  enabled  by
+default. If set then the user is also prompted to continue  before any changes
+are made. If this bit is not set then the  command  executes  without any user
+input.
+.SH NOTES
+\fBreplace-all-pairs\fR is a macro defined in \fCsearch.emf\fR.
+.PP
+The  \fBgrep\fR  command  must be working  before  this  command can  function
+properly.
+.PP
+It is not  recommended to use a "from" or "to" string which uses more that one
+line as the results may be unpredictable.
+.PP
+As the change is likely to be several  pair  strings with each changed  buffer
+being saved between pairs
+.Ht undo 2
+cannot be used to undo the changes.  Neither can the backups be relied on as a
+buffer may be saved more than once in this  process,  therefore it is strongly
+recommend  that a backup  of the  files is made  before  commencing  with this
+command.
+.SH "SEE ALSO"
+.na
+.Ht replace-all-string 3 ,
+.Ht replace-string 2 ,
+.Ht save-some-buffers 2 ,
+.Ht grep 3 ,
+.Ht get-next-line 2 ,
+.Ht undo 2 ,
+.Ht query-replace-all-string 3 ,
+.Ht search-forward 2 .
+.br
+.Hl "Regular Expressions" RegularExpressions 2
+.ad
+.FH

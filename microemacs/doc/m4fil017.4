@@ -1,0 +1,198 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil017.4,v 1.1.1.1 2000-07-25 22:04:03 jon Exp $
+.Im MicroEmacs macro;variable
+.so me.tni
+.TH "CommandVariables" 4
+.XI "CommandVariables" - "Last, current and get a command key/name"
+.XI @clk - "Last command key"
+.XI @cl - "Last command name"
+.XI @cck - "Current command key"
+.XI @cc - "Current command name"
+.XI @cgk - "Get a key from the user"
+.XI @cg - "Get a command name from the user"
+.XI @cqk - "Get a quoted key from the user"
+.XI @cq - "Get a quoted command name from the user"
+.SH NAME
+.na
+.nf
+@clk, @cl \- Last key or command name
+@cck, @cc \- Current key or command name
+@cgk, @cg \- Get a key or command name from the user
+@cqk, @cq \- Get a quoted key or command name from the user
+.fi
+.ad
+.SH SYNOPSIS
+.na
+.nf
+\fB@clk\fR
+\fB@cl\fR
+\fB@cck\fR
+\fB@cc\fR
+\fB@cgk\fR
+\fB@cg\fR
+\fB@cqk\fR
+\fB@cq\fR
+.fi
+.ad
+.SH DESCRIPTION
+The  Command  Variables  allow  macros  to obtain  \*(mE  input  commands  and
+keystrokes from the user. The general format of the command is:-
+.IP 
+\fB@c\fR\fIi\fR[\fBk\fR]
+.LP
+Where,
+.IP \fIi\fR
+Determines the source of the input as follows:-
+.RS
+.IP \fBl\fR 
+The last input entered.
+.IP \fBc\fR
+The current input entered.
+.IP \fBq\fR
+Provides  a low  level  character  input  mechanism,  obtaining  a single  raw
+character  input  from the user. The input  fetch does not  interact  with the
+message line and the user is \s-1NOT\s0 prompted for input (use
+.Ht ml-write 2
+to create  your own  message).  \fB@cq\fR  is very low level, it is  generally
+preferable to use \fB@cg\fR which provides a more intelligent binding.
+.IP \fBg\fR
+Like \fB@cq\fR,  \fB@cg\fR[\fBk\fR]  gets a single character input, however if
+the input is bound to a function then the function name is returned instead of
+the  character  e.g. if  \fC^F\fR  or  \fC<left-arrow>\fR  is  depressed  then
+\fBforward-char\fR is returned. This has distinct advantages over \fB@cq\fR as
+the binding  becomes  device  independent  and executes on all  platforms.  In
+addition, it honors the users bindings, however bizarre.
+.RE
+.IP \fBk\fR
+When,  omitted  command  input is returned to the caller (i.e. the name of the
+command,  such as  "\fCforward-char\fR").  When present, the raw  keystroke is
+returned to the caller, i.e. "\fC^F\fR (control-F).
+.PP
+The \fB@cl\fR, \fB@clk\fR, \fB@cc\fR and \fB@cck\fR variables can also be set,
+this  feature  can be used by  macros to change  the  command  history.  While
+setting the current command is limited in use, setting the last command can be
+immensely useful, consider the following macro code:-
+.Me $emf-scheme
+.CS
+kill-line
+forward-line
+set-variable @cl kill-line
+kill-line
+.CE
+.Me $ehf-scheme
+Without the setting of the  \fB@cl\fR  variable,  the current kill buffer will
+contain  only the last line. But the setting of \fB@cl\fR to  kill-line  fools
+\*(mS into  thinking the last command was a kill command so the last kill line
+as  appended to the current  yank  buffer, i.e. the kill buffer will have both
+lines in it.
+.PP
+This feature can be used for any command whose effect  depends on the previous
+command. Such commands include
+.Ht forward-line 2 ,
+.Ht kill-region 2 ,
+.Ht reyank 2
+and
+.Ht undo 2 .
+This feature should not be abused as unexpected things may happen.
+.SS Summary
+.IP "\fB@cl\fR"
+Get or set the last command.
+.IP "\fB@clk\fR"
+Get or set the last key stroke.
+.IP "\fB@cc\fR"
+Get or set the current command.
+.IP "\fB@cck\fR"
+Get or set the current keystroke.
+.IP "\fB@cg\fR"
+Get a command name from the user.
+.IP "\fB@cgk\fR"
+Get a keystroke from the user.
+.IP "\fB@cq\fR"
+Get a quoted command name from the user.
+.IP "\fB@cqk\fR"
+Get a quoted keystroke from the user.
+.SH EXAMPLE
+The  following  example  shows how the  \fB@cc\fR  and \fB@cl\fR  commands are
+used:-
+.Me $emf-scheme
+.CS
+define-macro current-last-command
+    insert-string &spr "Last key [%s] name [%s]\\n" @clk @cl
+    insert-string &spr "Current key [%s] name [%s]\\n" @cck @cc
+!emacro
+.CE
+.Me $ehf-scheme
+Pressing the up key and then executing this macro using  execute-named-command
+(esc x) will insert the lines:-
+.CS
+Last key [up] name [backward-line]
+Current key [esc x] name [execute-named-command]
+.CE
+.B "@cg"
+like \fB@cq\fR gets a single character input, however if the keyboard input is
+bound  to a  function  then  the  function  name is  returned  instead  of the
+character   e.g.  if  \fC^F\fR  or   \fC<left-arrow>\fR   is  depressed   then
+\fBforward-char\fR is returned. This has distinct advantages over \fB@cq\fR as
+the  binding  becomes  device  independent  and  executes  on  all  platforms,
+additionally it honors the users bindings, however bizarre.
+.PP
+.B @cq
+provides  a low  level  character  input  mechanism,  obtaining  a single  raw
+character  input from the user. This does not  interact  with the message line
+and the user is not prompted for input (use
+.Ht ml-write 2
+to create  your own  message).  \fB@cq\fR  is very low level, it is  generally
+preferable to use \fB@cg\fR which provides a more intelligent binding.
+.SH EXAMPLE
+The following  example is taken from  \fCdraw.emf\fR  which uses  \fB@cg\fR to
+obtain  cursor  movements  from the user.  Note how the input  from  \fB@cg\fR
+(stored in variable  \fB%dw-comm\fR)  is compared with the binding name rather
+than any keyboard characters.
+.Me $emf-scheme
+.CS
+    !repeat
+        0 screen-update
+        !force set-variable #l0 @cg
+        !if &seq #l0 "abort-command"
+            !if &iseq @mc1 "Really quit [y/n]? " "nNyY" "y"
+                find-buffer :dw-buf
+                0 delete-buffer "*draw*"
+                -1 buffer-mode "view"
+                !abort
+            !endif
+        !elif &seq #l0 "newline"
+            \.
+            \.
+        !elif &seq #l0 "forward-line"
+            1 draw-vert
+        !elif &seq #l0 "backward-line"
+            -1 draw-vert
+        !elif &seq #l0 "forward-char"
+            1 draw-horz
+        !elif &seq #l0 "backward-char"
+            -1 draw-horz
+        !elif &seq #l0 "osd"
+            .osd.draw-help osd
+        !elif &set #l1 &sin #l0 "mdeu-="
+            !if &les #l1 5
+                set-variable :dw-mode &sub #l1 1
+                set-variable :dw-modes #l0
+                draw-setmode-line
+            !elif &sin #l0 "-="
+                set-variable :dw-char #l0
+                draw-setmode-line
+            !endif
+        !else
+            ml-write "[Invalid command]"
+        !endif
+    !until 0
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Ht @wc 4 ,
+.Ht &kbind 4 ,
+.Ht define-macro 2 .
+.ad
+.FH
+

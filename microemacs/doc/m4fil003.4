@@ -1,0 +1,118 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil003.4,v 1.1.1.1 2000-07-25 22:04:02 jon Exp $
+.Im MicroEmacs macro;function;logical
+.so me.tni
+.TH &and 4
+.XI &and - "Logical AND operator"
+.XI &or  - "Logical OR operator"
+.XI &not - "Logical NOT operator"
+.XI &equal - "Numerical equivalence operator"
+.XI &great - "Numerical greater than operator"
+.XI &less  - "Numerical less than operator"
+.SH NAME
+&and, &or, &not, &equal, &sequal \- Logical macro operators
+.SH SYNOPSIS
+.na
+.B &and
+.I log1
+.I log2
+.br
+.B &or
+.I log1
+.I log2
+.br
+.B &not
+.I log
+.sp
+.B &equal
+.I num1
+.I num2
+.br
+.B &great
+.I num1
+.I num2
+.br
+.B &less
+.I num1
+.I num2
+.ad
+.SH DESCRIPTION
+The logical testing  operators  perform  comparison tests, returning a boolean
+value of  \fCTRUE\fR  (1) or  \fCFALSE\fR  (0).
+.PP
+The functions may all be abbreviated to their three letter  abbreviation (i.e.
+\fB&great\fR may be expressed as \fB&gre\fR). In all cases the first argument
+is  completely   evaluated  before  the  second  argument.  Logical  operators
+include:-
+.IP "\fB&and \fIlog1\fR \fIlog2\fR"
+\fCTRUE\fR  if the  logical  arguments  \fIlog1\fR  and  \fIlog2\fR  are  both
+\fCTRUE\fR.
+.IP "\fB&or\fR \fIlog1\fR \fIlog2\fR"
+\fCTRUE\fR if either one of the logical  arguments  \fIlog1\fR  and \fIlog2\fR
+are \fCTRUE\fR.
+.IP "\fB&not\fR \fIlog\fR"
+Logical NOT. Returns the opposite logical value to \fIlog\fR.
+.LP
+The numerical logical functions operate with integer arguments:
+.IP "\fB&equal\fR \fInum1\fR \fInum2\fR"
+\fCTRUE\fR.  If numerical  arguments  \fInum1\fR  and  \fInum2\fR  numerically
+equal. Abbreviated form of the function is \fB&equ\fR.
+.IP "\fBgreat\fR \fInum1\fR \fInum2\fR"
+\fCTRUE\fR.  If  numerical  argument  \fInum1\fR  is greater than  \fInum2\fR.
+Abbreviated form of the function is \fB&gre\fR.
+.IP "\fB&less\fR \fInum1\fR \fInum2\fR"
+\fCTRUE\fR.  If  numerical   argument   \fInum1\fR  is  less  than  \fInum2\fR
+Abbreviated form of the function is \fB&les\fR.
+.LP
+Evaluation of the logical  operators are left to right, the leftmost  argument
+is fully evaluated  before the next argument. The operator  ordering is prefix
+notation (see
+.Ht &add 4
+for an example of prefix ordering).
+.SH EXAMPLE
+Test for integers in the range greater than 12:
+.Me $emf-scheme
+.CS
+!if &great %i 12
+    ...
+.CE
+.Me $ehf-scheme
+Test for integers in the range 8-12, inclusive
+.Me $emf-scheme
+.CS
+!if &and &great 7 &less 13
+    ...
+.CE 0
+.Me $ehf-scheme
+.SH NOTES
+\*(mS always evaluates all arguments  operators BEFORE the result is obtained,
+this differs from most programming languages. Consider the following example:
+.Me $emf-scheme
+.CS
+!if &and &bmod "edit" &iseq @mc1 "Save buffer first [y/n]? " "nNyY" "y"
+    save-buffer
+!endif
+.CE
+.Me $ehf-scheme
+This would not not work as the user may expect, the user would be  prompted to
+save every time regardless of whether the buffer has been changed. Instead the
+following should be used:
+.Me $emf-scheme
+.CS
+!if &bmod "edit"
+    !if &iseq @mc1 "Save buffer first [y/n]? " "nNyY" "y"
+        save-buffer
+    !endif
+!endif
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Hl "Variable Functions" Functions - ,
+.Ht &add 4 ,
+.Ht &sequal 4 ,
+.Ht &sin 4 ,
+.Ht &cond 4 .
+.ad
+.FH
+

@@ -1,0 +1,72 @@
+.\" -*- nroff -*-
+.Id $Id: m5var070.5,v 1.1.1.1 2000-07-25 22:04:07 jon Exp $
+.Im MicroEmacs variable|buffer|macrodevelop
+.so me.tni
+.TH $buffer-fmod 5
+.XI $buffer-fmod - "Buffer file modes (or attributes)"
+.XI $global-fmod - "Global file modes (or attributes)"
+.SH NAME
+.br
+.Me "|$buffer-fmod"
+$buffer-fmod \- Buffer file modes (or attributes)
+.br
+.Me "|$global-fmod"
+$global-fmod \- Global file modes (or attributes)
+.Me $a
+.SH SYNOPSIS
+.na
+.B $buffer-fmod
+.I FileMode
+.br
+.B $global-fmod
+.I FileMode
+.ad
+.SH DESCRIPTION
+.B $buffer-fmod
+is bit based variable  setting the buffers file system modes or attributes. If
+the   buffer   was   loaded   from  an   existing   file  then  the  value  of
+\fB$buffer-fmod\fR  is taken  directly  from the file. But if the  buffer  was
+created then the buffer  inherits the default file modes,  \fB$global-fmod\fR,
+which is  determined  from the  users  umask on  \s-1UNIX\s0  or a default  on
+others.
+.PP
+The definition of the file mode bits are platform  specific and are considered
+independently, as follows:
+.SS "UNIX"
+The file modes of Unix are the  standard  read, write and execute  permissions
+for user, group and global. See
+.Hr chmod 1
+for a full description of their use and effect. 
+.PP
+The variable is displayed in octal.
+.SS "Microsoft Windows and DOS"
+On Microsoft platforms each file attribute (see 
+.Hr attrib 1 )
+is  assigned  a bit, on  windows  95 and NT the new  file  attributes  such as
+compressed are also represented. The bits are assigned as follows
+.CS
+Bit     Attrib Flag     Attribute
+0x001       R           Rad Only
+0x002       H           Hidden
+0x004       S           System
+0x010                   Directory
+0x020       A           Archive
+0x080                   Normal
+0x100                   Temporary
+0x800                   Compressed
+.CE 0
+.SH EXAMPLE
+The  following  example  changes  the  $buffer-fmod  so that the file  will be
+executable (UNIX only), useful when writing a shell script.
+.Me $emf-scheme
+.CS
+set-variable $buffer-fmod 0775
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Ht crlf 2m ,
+.Ht ctrlz 2m ,
+.Ht auto 2m .
+.ad
+.FH

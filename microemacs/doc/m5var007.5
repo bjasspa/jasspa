@@ -1,0 +1,49 @@
+.\" -*- nroff -*-
+.Id $Id: m5var007.5,v 1.1.1.1 2000-07-25 22:04:04 jon Exp $
+.Im MicroEmacs variable|buffer
+.so me.tni
+.TH $buffer-mask 5
+.XI $buffer-mask - "Current buffer word class mask"
+.SH NAME
+$buffer-mask \- Current buffer word class mask.
+.Me $a
+.SH SYNOPSIS
+\fB$buffer-mask\fR \fBstring\fR; Default is \fCluh\fR
+.SH DESCRIPTION
+.B $buffer-mask
+sets the  current  buffer  word class mask. \*(mE has an internal  word lookup
+table which defines whether a given letter is considered to be part of a word.
+This functionality is used in many areas such as
+.Ht forward-word 2 ,
+.Ht forward-kill-word 2
+hilighting  etc. The mask is composed  with any  combination  of the following
+flags, the order in which the flags are specified is not important:
+.IP \fBl\fR
+All lower case letters.
+.IP \fBu\fR
+All upper case letters.
+.IP \fBh\fR
+All hexadecimal characters (used to include numerical digits).
+.IP \fBs\fR
+Spell  extended   characters,   typically  set  to  accent (\fC'\fR), 
+hyphen (\fC-\fR)  and period (\fC.\fR).
+.IP \fB1\fR
+User set \fB1\fR, usually set to just underscore (\fC_\fR) for many system and
+programming files such as 'C'.
+.IP \fB2\fR
+User  set   \fB2\fR,   usually  set  to   '\fC-\fR',   '\fC$\fR',   '\fC&\fR',
+\&'\fC#\fR', '\fC!\fR', '\fC%\fR', '\fC:\fR' and '\fC@\fR' for \*(mS files.
+.IP \fB3\fR
+User set \fB3\fR, not usually defined.
+.IP \fB4\fR
+User set \fB4\fR, not usually defined.
+.PP
+The character sets may be modified using the 
+.Ht set-char-mask 2 
+command.
+.SH "SEE ALSO"
+.na
+.Ht set-char-mask 2 ,
+.Ht forward-word 2 .
+.ad
+.FH

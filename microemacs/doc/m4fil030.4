@@ -1,0 +1,135 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil030.4,v 1.1.1.1 2000-07-25 22:04:03 jon Exp $
+.Im MicroEmacs macro;function;logical
+.so me.tni
+.TH &sequal 4
+.XI &sequal - "String equivalence operator"
+.XI &isequal - "Case insensitive String equivalence operator"
+.XI &sless - "String less than operator"
+.XI &sgreat - "String greater than operator"
+.XI &xsequal - "Regex string equivalence operator"
+.XI &xisequal - "Case insensitive regex String equivalence operator"
+.SH NAME
+&seq, &iseq, &sle, &sgre, &xseq, &xiseq \- String logical macro operators
+.SH SYNOPSIS
+.na
+.B &sequal
+.I str1
+.I str2
+.br
+.B &isequal
+.I str1
+.I str2
+.br
+.B &sless
+.I str1
+.I str2
+.br
+.B &sgreat
+.I str1
+.I str2
+.sp
+.B &xsequal
+.I str1
+.I regex
+.br
+.B &xisequal
+.I str1
+.I regex
+.ad
+.SH DESCRIPTION
+The  string  logical  testing   operators  perform  string  comparison  tests,
+returning a boolean value of \fCTRUE\fR (1) or \fCFALSE\fR (0).
+.PP
+The  functions may all be shortened to their three letter  abbreviation  (i.e.
+\fB&sequal\fR may be expressed as \fB&seq\fR). In all cases the first argument
+is completely  evaluated before the second argument. String logical  operators
+include:-
+.IP "\fB&sequal\fR \fIstr1\fR \fIstr2\fR"
+\fCTRUE\fR  if the  two  strings  \fIstr1\fR  and  \fIstr2\fR  are  the  same.
+Abbreviated form of the function is \fB&seq\fR.
+.IP "\fB&sless\fR \fIstr1\fR \fIstr2\fR"
+\fCTRUE\fR  if  string   \fIstr1\fR   alphabetically   less  than  \fIstr2\fR.
+Abbreviated form of the function is \fB&sle\fR.
+.IP "\fB&sgreat\fR \fIstr1\fR \fIstr2\fR"
+\fCTRUE\fR  if  string  \fIstr1\fR   alphabetically  larger  than  \fIstr2\fR.
+Abbreviated form of the function is \fB&sgr\fR.
+.IP "\fB&isequal\fR \fIstr1\fR \fIstr2\fR"
+\fCTRUE\fR if the two strings  \fIstr1\fR and \fIstr2\fR are the same ignoring
+letter case. Abbreviated form of the function is \fB&ise\fR.
+.IP "\fB&xsequal\fR \fIstr1\fR \fIregex\fR"
+\fCTRUE\fR if the string \fIstr1\fR matches the \fIregex\fR (case sensitive).
+Abbreviated form of the function is \fB&xse\fR. See
+.Hl "Regular Expressions" RegularExpressions 2
+for information on the \fIregex\fR format.
+.IP "\fB&xisequal\fR \fIstr1\fR \fIregex\fR"
+\fCTRUE\fR  if  the  string   \fIstr1\fR   matches  the   \fIregex\fR   (case
+insensitive).  Abbreviated  form of the function is \fB&xis\fR. See
+.Hl "Regular Expressions" RegularExpressions 2
+for information on the \fIregex\fR format.
+.LP
+Evaluation  of the string  logical  operators  are left to right, the leftmost
+argument is fully evaluated before the next argument. The operator ordering is
+prefix notation (see
+.Ht &add 4
+for an example of prefix ordering).
+.SH EXAMPLE
+Test for variable
+.Ht $buffer-bname 5
+is equal to \fC*scratch*\fR:
+.Me $emf-scheme
+.CS
+!if &seq $buffer-bname "*scratch*"
+    ...
+.CE
+.Me $ehf-scheme
+The following example tests a character is in the range \fCa\fR\-\fCz\fR:
+.Me $emf-scheme
+.CS
+!if &not &and &sle %c "a" &sgr %c "z"
+    ...
+.CE
+.Me $ehf-scheme
+The following  example  inserts the string  "\fCc\fR" into the  alphabetically
+order string list \fB%test-list\fR:
+.Me $emf-scheme
+.CS
+set-variable %test-list "|a|b|d|e|"
+set-variable %test-insert "c"
+
+set-variable #l0 1
+!while &and &not &seq &lget %test-list #l0 "" ...
+        ... &sle &lget %test-list #l0 %test-insert
+    set-variable #l0 &add #l0 1
+!done
+set-variable %test-list &lins %test-list #l0 %test-insert
+.CE
+.Me $ehf-scheme
+The first test on the \fB!while  &and\fR  conditional  checks that the current
+item in the list is not an empty string (""). If it is the end of the list has
+been reached.
+.PP
+The  following  example  tests  the  current  buffers  file  name  for  a ".c"
+extension:
+.Me $emf-scheme
+.CS
+!if &xse $buffer-fname ".*\\\\.c"
+    ...
+.CE
+.Me $ehf-scheme
+Note the '\fC\\\fR'  character is needed to protect the second '\fC.\fR', i.e.
+so that it does not match any character and the second  '\fC\\\fR' is required
+as the string is first  parsed by the macro  interpreter  which  changes it to
+"\fC.*\\.c\fR" which is then interpreted as a regex.
+.SH "SEE ALSO"
+.na
+.Hl "Variable Functions" Functions - ,
+.Ht &sin 4 ,
+.Ht &slower 4 ,
+.Ht &add 4 ,
+.Ht &equal 4 ,
+.Ht &cond 4 ,
+.Hl "Regular Expressions" RegularExpressions 2 .
+.ad
+.FH
+

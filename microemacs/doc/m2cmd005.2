@@ -1,0 +1,111 @@
+.Id $Id: m2cmd005.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|modes
+.ds C0 "(\fB\*em\fR)\ \&
+.so me.tni
+.TH global-mode 2
+.XI global-mode - "\*(C0Change a global buffer mode"
+.XI add-global-mode 3 "Set a global buffer mode"
+.XI delete-global-mode 3 "Remove a global buffer mode"
+.SH NAME
+.br
+.Me "|global-mode"
+global-mode \- Change a global buffer mode
+.br
+.Me "|add-global-mode"
+add-global-mode \- Set a global buffer mode
+.br
+.Me "|delete-global-mode"
+delete-global-mode \- Remove a global buffer mode
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B global-mode
+"\fImode\fR" \*(C0
+.br
+.B add-global-mode
+"\fImode\fR"
+.br
+.B delete-global-mode
+"\fImode\fR"
+.ad
+.SH DESCRIPTION
+.B global-mode
+changes the state of one of the hereditary  global modes. A buffer's modes are
+initialized  to the  global  modes when first  created.  This  command is very
+useful  in  changing  some of the  default  behavior  such as case  sensitive
+searching (see the example below). See
+.Hl "Operating Modes" Modes -
+for a full list and description of modes. Also see
+.Ht buffer-mode 2
+for a full description of the use of the argument \fIn\fR.
+.PP
+The
+.Ht about 2
+command gives a list of the current global and buffer modes.
+.PP
+\fBadd-global-mode\fR  and  \fBdelete-global-mode\fR  are  macros  defined  in
+me3_8.emf  which  use  global-mode  to add or remove a global  mode.  They are
+defined for backward  compatibility  with MicroEMACS v3.8 and for ease of use;
+they are simple macros, add-global-mode is defined as follows:
+.Me $emf-scheme
+.CS
+define-macro add-global-mode
+    ; Has the require mode been given as an argument, if so add it
+    !force 1 global-mode @1
+    !if &not $status
+        ; No - use 1 global-mode to add a mode
+        !nma 1 global-mode
+    !endif
+!emacro
+.CE 0
+.Me $ehf-scheme
+.SH EXAMPLE
+The following example globally disables
+.Ht exact 2m
+and 
+.Ht magic 2m
+modes, if these lines are copied to the user setup file then are searches will
+be simple and case insensitive by default:
+.Me $emf-scheme
+.CS
+-1 global-mode "exact"
+-1 global-mode "magic"
+.CE 0
+.Me $ehf-scheme
+.SH NOTES
+Globally adding
+.Ht binary 2m
+and
+.Ht crypt 2m
+modes is  strongly  discouraged  as any file  loaded  would be assigned  these
+modes. Instead the use of commands
+.Ht find-bfile 2
+and
+.Ht find-cfile 2
+are recommended.
+.PP
+.Ht auto 2m ,
+.Ht autosv 2m ,
+.Ht backup 2m ,
+.Ht exact 2m ,
+.Ht magic 2m ,
+.Ht quiet 2m ,
+.Ht tab 2m
+and
+.Ht undo 2m
+modes are present on all platforms by default. On Windows and DOS platforms
+.Ht crlf 2m
+is also present and on DOS
+.Ht ctrlz 2m
+is also present.
+.SH "SEE ALSO"
+.na
+.Hl "Operating Modes" Modes - ,
+.Ht buffer-mode 2 ,
+.Ht find-bfile 2 ,
+.Ht find-cfile 2 ,
+.Ht about 2 .
+.ad
+.rm C0
+.FH

@@ -1,0 +1,35 @@
+.\" -*- nroff -*-
+.Id $Id: m5var054.5,v 1.1.1.1 2000-07-25 22:04:06 jon Exp $
+.Im MicroEmacs variable|paragraph
+.so me.tni
+.TH $fill-ignore 5
+.XI $fill-ignore - "Ignore paragraph filling character(s)"
+.SH NAME
+$fill-ignore \- Ignore paragraph filling character(s)
+.Me $a
+.SH SYNOPSIS
+\fB$fill-ignore\fR "\fIstring\fR"; Default is "\fC>_@\fR"
+.SH DESCRIPTION
+.B $fill-ignore
+describes  a set of  characters  used  by
+.Ht fill-paragraph 2
+which disable  paragraph filling when they appear at the start of a paragraph.
+An obvious  example is an inserted  mail message which is usually  quoted with
+"\fC>\fR"   characters.   Any   attempt   to   fill   the   paragraph   causes
+\fBfill-paragraph\fR to skip to the end of it.
+.SH EXAMPLE
+This  is  an   example   of  an  ignored   paragraph   when   encountered   by
+\fBfill-paragraph\fR with the default ignore character set.
+.CS
+> This is an example of a paragraph that
+> is ignored.
+.CE 0
+.SH "SEE ALSO"
+.na
+.Ht $fill-col 5 ,
+.Ht $fill-bullet 5 ,
+.Ht $fill-mode 5 ,
+.Ht fill-paragraph 2 ,
+.Ht justify 2m .
+.ad
+.FH

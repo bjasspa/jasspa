@@ -1,0 +1,176 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil002.4,v 1.1.1.1 2000-07-25 22:04:02 jon Exp $
+.Im MicroEmacs macro;function;string
+.so me.tni
+.TH &cat 4
+.XI &cat - "Concatenate two strings together"
+.XI &left - "Return the left most characters from a string"
+.XI &right - "Return the right most characters from a string"
+.XI &mid - "Return a portion (middle) of a string"
+.XI &len - "Return the length of a string"
+.XI &slower - "Return the string converted to lower case"
+.XI &supper - "Return the string converted to upper case"
+.XI &trboth - "Return string trimmed of white chars on both sides"
+.XI &trleft - "Return string trimmed of white chars on left side"
+.XI &trright - "Return string trimmed of white chars on right side"
+.SH NAME
+&cat, &lef, &rig, &mid, &len, &slo, &trb \- String macro operators
+.SH SYNOPSIS
+.na
+.B &cat
+.I str1
+.I str2
+.br
+.B &lef
+.I str
+.I len
+.br
+.B &right
+.I str
+.I index
+.br
+.B &mid
+.I str
+.I index
+.I len
+.sp
+.B &len
+.I str
+.sp
+.B &slower
+.I str
+.br
+.B &supper
+.I str
+.sp
+.B &trboth
+.I str
+.br
+.B &trleft
+.I str
+.br
+.B &trright
+.I str
+.ad
+.SH DESCRIPTION
+The  string  operators  operate  on  character  strings  (\fB%\fR  or  \fB$\fR
+variables), performing general string manipulation, returning a string result.
+.PP
+The operators may all be abbreviated to their three letter  abbreviation (i.e.
+\fB&right\fR  may be expressed as \fB&rig\fR). In all cases the first argument
+is completely evaluated before the second argument.
+.IP "\fB&cat\fR \fIstr1\fR \fIstr2\fR"
+Concatenate  two string  \fIstr1\fR with \fIstr2\fR to form a new string. i.e.
+\fIstr1str2\fR
+.IP "\fB&lef\fR \fIstr\fR \fIlen\fR"
+Return  \fIlen\fR  leftmost  characters from \fIstr\fR. If \fIstr\fR length is
+shorter than \fIlen\fR then the string itself is returned. A \fIlen\fR of zero
+returns the empty string.
+.IP "\fB&rig\fR \fIstr\fR \fIindex\fR"
+Returns the rightmost  characters of string \fIstr\fR from index  \fIindex\fR.
+This function causes some confusion,  consider \fB&lef\fR and \fB&rig\fR to be
+the string equivalents of their integer counterparts
+.Hl &div &divide 4
+and
+.Hl &mod &mod 4 ;
+\fB&rig\fR  returns  the  remainder  of the  equivalent  \fB&lef\fR  function.
+Invocation with \fIindex\fR set to zero returns \fIstr\fR.
+.IP "\fB&mid\fR \fIindex\fR \fIlen\fR"
+Extracts a sub-string from string \fIstr\fR, starting at position  \fIindex\fR
+of length \fIlen\fR.
+.IP "\fB&len\fR \fIstr\fR"
+Returns the integer length of the string (number of characters).
+.IP "\fB&slower\fR \fIstr\fR"
+Returns  the given  string with all upper case  characters  converted to lower
+case.
+.IP "\fB&supper\fR \fIstr\fR"
+Returns  the given  string with all lower case  characters  converted to upper
+case.
+.IP "\fB&trboth\fR \fIstr\fR"
+Returns the given string trimmed of white spaces (i.e. '\fC \fR', '\fC\\t\fR',
+\&'\fC\\r\fR',  '\fC\\n\fR', '\fC\\Cl\fR' and '\fC\\Ck\fR') from both sides of
+the string.
+.IP "\fB&trleft\fR \fIstr\fR"
+Returns  the given  string  trimmed of white  spaces from the left side of the
+string only.
+.IP "\fB&trright\fR \fIstr\fR"
+Returns the given string  trimmed of white spaces from the right side, or end,
+of the string only.
+.LP
+Evaluation  of the  strings is left to right, the  leftmost  argument is fully
+evaluated  before the next argument. The operator  ordering is prefix notation
+(see
+.Ht &add 4
+for an example of prefix ordering).
+.SH EXAMPLE
+Concatenate two strings \fCabc\fR and \fCdef\fR together:-
+.Me $emf-scheme
+.CS
+set-variable %result &cat "abc" "def"
+.CE
+.Me $ehf-scheme
+To concatenate three strings \fCabc\fR, \fCdef\fR \fCghi\fR together:
+.Me $emf-scheme
+.CS
+set-variable %result &cat "abc" &cat "def" "ghi"
+.CE
+.Me $ehf-scheme
+or, a slightly different ordering:
+.Me $emf-scheme
+.CS
+set-variable %result &cat &cat "abc" "def" "ghi"
+.CE
+.Me $ehf-scheme
+Retrieve the leftmost  character of a string  variable, modify the variable to
+contain the remainder.
+.Me $emf-scheme
+.CS
+set-variable %foo "abcdef"
+set-variable %c   &lef %foo 1
+set-variable %foo &rig %foo 1
+.CE
+.Me $ehf-scheme
+Where \fC%c\fR = "\fCa\fR"; \fC%foo\fR = "\fCbcdef\fR" following evaluation.
+.PP
+To retrieve the  characters  \fCcde\fR  into variable  \fC%result\fR  from the
+string "\fCabcdef\fR" use:
+.Me $emf-scheme
+.CS
+set-variable %result &mid "abcdef" 2 3
+.CE
+.Me $ehf-scheme
+To retrieve the rightmost character from the string:
+.Me $emf-scheme
+.CS
+set-variable %foo "abcdef"
+set-variable %result &rig %foo &sub &len %foo 1
+.CE
+.Me $ehf-scheme
+or the same result could be achieved using \fB&mid\fR:
+.Me $emf-scheme
+.CS
+set-variable %result &mid %foo &sub &len %foo 1 1
+.CE
+.Me $ehf-scheme
+To get an input  string from the user which is free of spaces at the start and
+end:
+.Me $emf-scheme
+.CS
+set-variable %result &trb @ml "Enter string"
+.CE 0
+.Me $ehf-scheme
+.SH NOTES
+The original \fBMicroEMACS\fR  "\fB&rig\fR \fIstr\fR \fIn\fR" function returns
+the last \fIn\fR  characters  from the string  \fIstr\fR this differs from the
+definition of \fB&rig\fR in this implementation. As most string  decomposition
+is performed  left to right, and to make  \fB&lef\fR and \fB&rig\fR complement
+each other, the indexing of the function has been modified.
+.SH "SEE ALSO"
+.na
+.Hl "Variable Functions" Functions - ,
+.Ht &sin 4 ,
+.Ht &sequal 4 ,
+.Ht &lget 4 ,
+.Ht &sprintf 4 .
+.ad
+.FH

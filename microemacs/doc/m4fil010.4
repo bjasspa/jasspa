@@ -1,0 +1,88 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil010.4,v 1.1.1.1 2000-07-25 22:04:02 jon Exp $
+.Im MicroEmacs macro;directive|miscellaneousOperators
+.so me.tni
+.TH !return 4
+.XI !return - "Exit macro with a TRUE status"
+.XI !abort  - "Exit macro with a FALSE status"
+.SH NAME
+!return, !abort \- Exit macro
+.SH SYNOPSIS
+.na
+.nf
+\fB!return\fR [\fIn\fR]
+\fB!abort\fR
+.fi
+.ad
+.SH DESCRIPTION
+The \fB!return\fR directive causes the current macro to exit with a \fCTRUE\fR
+status, either returning to the caller (if any) or to interactive  mode. If an
+argument  \fIn\fR is specified  then the return  status is  determined  by the
+value of \fIn\fR.
+.PP
+\fB!abort\fR has the same effect as \fB!return\fR only returning a \fCFALSE\fR
+status,  this halts the  execution  of any  calling  macros.  \fB!abort\fR  is
+generally used in conjunction with
+.Ht !bell 4
+to sound an audio alarm if the user has performed an invalid action.
+.SH EXAMPLE
+The  following  example  checks the monitor type. If the monitor is monochrome
+then the message is  displayed.  If the monitor type is not mono no message is
+displayed.
+.Me $emf-scheme
+.CS
+;	Check the monitor type and set %mtyp
+
+!if &not &seq $TERM "MONO"
+    set-variable %mtyp 1
+    !return
+!else
+    set-variable %mtyp 2
+!endif
+ml-write "You are on a MONOCHROME machine (if you are color blind)"
+.CE
+.Me $ehf-scheme
+The following example is shows the logic of the \fB!return\fR directive:-
+.CS
+.Me $emf-scheme
+; !return example
+define-macro i-will-return
+    ml-write "you will see me"
+    !return
+    ml-write "you wont see me"
+!emacro
+
+define-macro test-return
+    ml-write "you will see me"
+    i-will-return
+    ml-write "you will see me"
+!emacro
+.CE
+.Me $ehf-scheme
+Similarly, for the \fB!abort\fR directive
+.Me $emf-scheme
+.CS
+; !abort example
+define-macro i-will-abort
+    ml-write "you will see me"
+    !abort
+    ml-write "you wont see me"
+!emacro
+
+define-macro test-abort
+    ml-write "you will see me"
+    i-will-abort
+    ml-write "you wont see me"
+!emacro
+.CE
+.Me $ehf-scheme
+For the last two examples above, all the  "\fBwill\fR"s are displayed and none
+of the "\fBwont\fR"s are.
+.SH "SEE ALSO"
+.na
+.Ht define-macro 2 ,
+.Ht !bell 4 ,
+.Ht !if 4 ,
+.Ht !goto 4 .
+.ad
+.FH

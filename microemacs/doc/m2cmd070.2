@@ -1,0 +1,59 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd070.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|search
+.ds C0 "(\fB\*(cXh\fR)\ \&
+.ds C1 "(\fB\*(cX\*ch\fR)\ \&
+.so me.tni
+.TH hunt-forward 2
+.XI hunt-forward - "\*(C0Resume previous search in forward direction"
+.XI hunt-backward - "\*(C1Resume previous search in backward direction"
+.SH NAME
+.Me "|hunt-forward"
+hunt-forward \- Resume previous search in forward direction
+.Me "|hunt-backward"
+hunt-backward \- Resume previous search in backward direction
+.Me $a
+.SH SYNOPSIS
+.na
+\fIn\fR \fBhunt-forward\fR \*(C0
+.br
+\fIn\fR \fBhunt-backward\fR \*(C1
+.ad
+.SH DESCRIPTION
+.B hunt-forward
+repeats the last search with the last search  string in a forwards  direction,
+from the  current  cursor  position.
+.Ht magic 2m
+and
+.Ht exact 2m
+modes are operational.
+.PP
+.B hunt-backward
+repeats the last search with the last search string in a backwards  direction,
+as per \fBhunt-forward\fR.
+.PP
+The numeric argument
+.I n
+is interpreted as follows:-
+.IP "\fBn > 0\fR"
+The \fIn\fRth occurrence of the pattern is located.
+.IP "\fBn < 0\fR"
+The first occurrence of the pattern is located in the next \fIn\fR lines.
+.SH DIAGNOSTICS
+The command  returns a status of \fCFALSE\fR if no previous  search string has
+been established, or if the pattern could not be located (or \fIn\fRth pattern
+where \fIn\fR  occurrences  are requested). If the pattern is found within the
+given search criteria the return status is \fCTRUE\fR.
+.SH "SEE ALSO"
+.na
+.Ht exact 2m ,
+.Ht isearch-forward 2 ,
+.Ht magic 2m ,
+.Ht search-backward 2 ,
+.Ht search-forward 2 ,
+.br
+.Hl "Regular Expressions" RegularExpressions 2
+.ad
+.rm C0
+.rm C1
+.FH

@@ -1,0 +1,53 @@
+.\" -*- nroff -*-
+.Id $Id: m5var052.5,v 1.1.1.1 2000-07-25 22:04:06 jon Exp $
+.Im MicroEmacs variable|window
+.so me.tni
+.TH $window-depth 5
+.XI $window-depth - "Number of text lines in a window"
+.XI $window-width - "Number of character columns in a window"
+.SH NAME
+.Me "|$window-depth"
+$window-depth \- Number of text lines in a window
+.br
+.Me "|$window-width"
+$window-width \- Number of character columns in a window
+.Me $a
+.SH SYNOPSIS
+\fB$window-depth\fR \fIinteger\fR
+.sp
+1 <= \fIinteger\fR <=
+.Hl $screen-depth $screen-depth 5
+.sp 2
+\fB$window-width\fR \fIinteger\fR
+.sp
+0 <= \fIinteger\fR <=
+.Hl $screen-width $screen-width 5
+\- 1
+.SH DESCRIPTION
+.B $window-depth
+returns the depth  (height) of the current  window,  excluding  the mode line,
+specified  in text  lines.  (i.e. the number of lines of text in the  window).
+The returned value is an integer in the range:
+.IP
+\fB0\fR - (
+.Hl $screen-depth $screen-depth 5
+\- \fB3\fR )
+.PP
+.B $window-width
+returns the width, in  characters,  of the current  window.
+The  returned
+value is an integer in the range:
+.IP
+.B 0
+\-
+.Hl $screen-width $screen-width 5 .
+.SH NOTES
+These variables can not be set, any attempt to set them results in an error.
+.SH "SEE ALSO"
+.na
+.Ht $screen-depth 5 ,
+.Ht $screen-width 5 ,
+.Ht $window-scroll-bar 5 ,
+.Ht $window-mode-line 5 ,
+.ad
+.FH

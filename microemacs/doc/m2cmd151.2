@@ -1,0 +1,33 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd151.2,v 1.1.1.1 2000-07-25 22:03:57 jon Exp $
+.Im MicroEmacs command|window
+.ds C0 "(\fB\*(cX5\fR)\ \&
+.so me.tni
+.TH split-window-horizontally 2
+.XI split-window-horizontally - "\*(C0Split current window into two (horizontally)"
+.SH NAME
+split-window-horizontally \- Split current window into two (horizontally)
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+\fBsplit-window-horizontally\fR \*(C0
+.ad
+.SH DESCRIPTION
+.B split-window-horizontally
+splits the  current  window  horizontally  into two near equal  windows,  each
+displaying the buffer displayed by the original window.
+.PP
+A numeric  argument  \fIn\fR of 1 forces the left window to be the new current
+window, and an  argument  of 2 forces the right  window to be the new  current
+window. The default when omitted is the left window.
+.SH "SEE ALSO"
+.na
+.Ht $scroll-bar 5 ,
+.Ht $scroll-bar-scheme 5 ,
+.Ht $window-chars 5 ,
+.Ht grow-window-horizontally 2 ,
+.Ht split-window-vertically 2 .
+.ad
+.rm C0
+.FH

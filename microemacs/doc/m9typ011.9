@@ -1,0 +1,98 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1999 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m9typ011.9
+.\"  Created By    : Jon Green
+.\"  Created       : Sat Feb 6 14:22:09 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1999 JASSPA.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m9typ011.9,v 1.1.1.1 2000-07-25 22:04:09 jon Exp $
+.Im MicroEmacs filetype
+.so me.tni
+.TH rul 9
+.XI rul - "Install Shield Rules"
+.SH SYNOPSIS
+rul \- Install Shield Rules
+.SH FILES
+.na
+.B hkrul.emf
+\- Install Shield hook definition
+.br
+.B rul.etf
+\- Install Shield template file.
+.ad
+.SH EXTENSIONS
+.na
+\fB.rul\fR \- Install Shield Rules file
+.ad
+.SH DESCRIPTION
+The  \fBrul\fR  file type  template  provides  simple  hilighting of Install Shield Rules
+files.
+.IP \fBHilighting\fR
+The hilighting  features allow commands, variables, logical, comments, strings
+and characters of the language to be differentiated  and rendered in different
+colors.
+.IP "\fBAuto Layout\fR"
+The 
+.Hl "indentation mechanism" indent 2 
+is enabled which performs automatic layout of the text.
+.Ht restyle-region 3
+and
+.Ht restyle-buffer 3
+are available to reformat  (re-layout) selected sections of the buffer, or the
+whole buffer, respectively.
+.IP "\fBFolding and Information Hiding\fR"
+Generic  folding  is enabled  within the rul file. The folds  occur  about the
+keywords \fBfunction\fR...\fBend\fR located on the left-hand margin.
+.Ht fold-all 3
+(un)folds all regions in the file,
+.Ht fold-current 3
+(un)folds the current region.
+.IP "\fBShort Cuts\fR"
+The short cut keys used within the buffer are:-
+.IP
+\fB\*cc \*cc\fR \- Comment out the current line.
+.br
+\fB\*cc \*cd\fR \- Uncomment the current line.
+.br
+\fB\*cc \*ce\fR \- Comment to the end of the line with stars (*).
+.br
+\fBf2\fR \- (un)fold the current region
+.br
+\fBf3\fR \- (un)fold all regions
+.SH BUGS
+None reported.
+.SH "SEE ALSO"
+.na
+.Ht fold-current 3 ,
+.Ht fold-all 3 ,
+.Ht indent 2 ,
+.Ht restyle-region 3
+.Ht restyle-buffer 3
+.sp 1
+.Hl "Supported File Types" FileTypes -
+.ad
+.FH

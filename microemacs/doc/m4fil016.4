@@ -1,0 +1,94 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil016.4,v 1.1.1.1 2000-07-25 22:04:03 jon Exp $
+.Im MicroEmacs macro;variable
+.so me.tni
+.TH "CurrentBufferVariables" 4
+.XI "CurrentBufferVariables" - "Extract information from the current buffer"
+.XI @wc - "Extract character from the current buffer"
+.XI @wl - "Extract a line from the current buffer"
+.SH NAME
+@wc, @wl \- Extract characters from the current buffer
+.SH SYNOPSIS
+.na
+.nf
+\fB@wl\fR
+\fB@wc\fR
+.fi
+.ad
+.SH DESCRIPTION
+Buffer  variables  are  special in that they can only be queried and cannot be
+set.  Buffer  variables  allow  text to be taken from the  current  buffer and
+placed  into a  variable.  Two  types of  extraction  are  provided  \fB@wl\fR
+provides a line extraction  method, \fB@wc\fR provides a character  extraction
+method.
+.PP
+For  example, if the current buffer contains the following text:
+.CS
+Richmond
+Lafayette
+<*>Bloomington                (where <*> is the current point)
+Indianapolis
+Gary
+=* me (BE..) == rigel2 == (c:/data/rigel2.txt) ===================
+.CE
+The \fB@wl\fR variable allows text from the current buffer to be accessed, a
+command such as:-
+.Me $emf-scheme
+.CS
+set-variable %line @wl
+.CE
+.Me $ehf-scheme
+would start at the current  point in the current  buffer and grab all the text
+up to the end of that line and pass that back. Then it would advance the point
+to the beginning of the next line. Thus, after the
+.Hl set-variable set-variable 2
+command  executes,  the string  "\fCBloomington\fR"  is placed in the variable
+\fB%line\fR and the buffer \s-1rigel2\s0 now looks like this:
+.CS
+Richmond
+Lafayette
+Bloomington
+<*>Indianapolis               (where <*> is the current point)
+Gary
+=* me (BE..) == rigel2 == (c:/data/rigel2.txt) ===================
+.CE
+The buffer command \fB@wc\fR gets the current character in the buffer, it does
+not change the buffer  position.  It is  important  to stress  that the cursor
+position is not modified, in general a macro will  interrogate  the  character
+under the  cursor  and then  affect  the  buffer  (i.e. by moving the  cursor,
+deleting  the  character  etc.)  dependent  upon  the  value of the  character
+returned.
+.SH EXAMPLE
+The  \fB@wc\fR  variable  provides  the most  useful  mechanism  to modify the
+current  buffer. The  following  example is a macro called  \fBsuper-delete\fR
+which is bound to  \fC<CTRL-del>\fR.  The macro deletes  characters  under the
+cursor in blocks. If a white  space  character  is under the  cursor  then all
+characters  up until the next  non-white  space  character  are  deleted. If a
+non-white  space  character  is under  the  cursor  then all  non-white  space
+characters up until the next white space character are deleted, then the white
+space is deleted.  White space in this context is a \fCSPACE\fR,  \fCtab\fR or
+\fCCR\fR character.
+.Me $emf-scheme
+.CS
+;
+;---    Macro to delete the white space, or if an a word all of the
+;       word until the next word is reached.
+;
+define-macro super-delete
+    !while &not &sin @wc " \\t\\n"
+        forward-delete-char
+    !done
+    !repeat
+        forward-delete-char
+    !until &or &seq @wc "" &not &sin @wc " \\t\\n"
+    !return
+!emacro
+
+global-bind-key super-delete "C-delete"
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Ht define-macro 2 .
+.ad
+.FH

@@ -1,0 +1,58 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd060.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|cursor
+.ds C0 "(\fB\*eg\fR)\ \&
+.so me.tni
+.TH goto-line 2
+.XI goto-line \- "\*(C0Move the cursor to specified line"
+.SH NAME
+goto-line \- Move the cursor to specified line
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+\fBgoto-line\fR \*(C0
+.br
+.B goto-line
+"\fInum\fR"
+.ad
+.SH DESCRIPTION
+.B goto-line
+moves the cursor to the specified line in the buffer. The user is prompted for
+the new line  number on the  command  line, which may be entered as a relative
+displacement ([\fC+\fR|\fC\-\fR]\fInumber\fR) from the current position, or as
+an absolute line number  (\fInumber\fR).  If the number is preceded by \fC+\fR
+or \fC\-\fR then this is treated as a relative  displacement  from the current
+line, otherwise it is an absolute line number.
+.PP
+If a +ve  argument  \fIn\fR is supplied,  \fBgoto-line\fR  moves to this line,
+e.g. to move the cursor to line 240:
+.Me $emf-scheme
+.CS
+240 goto-line
+.CE
+.Me $ehf-scheme
+A special  case of  \fBgoto-line\fR  is operative if an argument of \fC0\fR is
+supplied,   argument   "\fInum\fR"   must  also  be  given  as  above   except
+\fBgoto-line\fR  treats the line number or  displacement  as an absolute move,
+i.e. includes  \fInarrowed  out\fR sections when calculating the new position.
+If the new line lies within a narrowed  out section  (i.e. a section  that has
+been  hidden and is not  visible on the  screen)  the narrow is  automatically
+expanded. See
+.Ht narrow-buffer 2
+for more information on narrowing.
+.PP
+Supplying a \-ve argument to goto-line results in an error.
+.SH NOTES
+After successfully calling goto-line, variable
+.Ht $window-line 5
+is set to the required  line number.
+.SH "SEE ALSO"
+.na
+.Ht goto-alpha-mark 2 ,
+.Ht goto-matching-fence 2 ,
+.Ht narrow-buffer 2 ,
+.Ht $window-line 5 .
+.ad
+.rm C0
+.FH

@@ -1,0 +1,57 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd107.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|scuts
+.so me.tni
+.TH read-history 2
+.XI read-history - "Read in session history information"
+.SH NAME
+read-history \- Read in session history information
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B read-history
+[ "\fIhist-file\fR" ]
+.ad
+.SH DESCRIPTION
+.B read-history
+reads in a \*(mE  history file, setting the current  history  information.  If
+argument \fBn\fR is not given then the given  "\fIhist-file\fR" is simply read
+in. If a non-zero  argument is  specified  then default  history is set to the
+given file-name and the file is read. If an argument of zero is given then the
+default history is re-read.  Information  read in (and saved) from the history
+file includes:-
+.BS
+Searching and replacing history.
+.BU
+Buffer name history.
+.BU
+Command name history.
+.BU
+File name history.
+.BU
+General (all the rest) history.
+.BU
+Buffer and file list with line numbers.
+.BE
+\*(mE's  environment  may be retained  almost intact by the use of the default
+history and using the \fB-c\fR (continue)  command-line  option to re-load all
+files that were being edited in a previous session.
+.SH NOTES
+When running  multiple \*(mE sessions on the same  work-station  (or different
+workstations  sharing the same home  directory), the default  history is saved
+when \*(mE exits. As a result the last \*(mE sessions that  terminates  writes
+the history information used next time.
+.PP
+The history information is saved in a registry format file (see
+.Ht erf 8 ).
+Reference should be made to the notes included in
+.Ht erf 8
+as to how the  history  file may be  edited  and  effected  in the same  \*(mE
+session.
+.SH "SEE ALSO"
+.na
+.Ht erf 8 ,
+.Ht save-history 2 .
+.ad
+.FH

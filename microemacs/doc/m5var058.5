@@ -1,0 +1,65 @@
+.\" -*- nroff -*-
+.Id $Id: m5var058.5,v 1.1.1.1 2000-07-25 22:04:06 jon Exp $
+.Im MicroEmacs variable|file
+.so me.tni
+.TH $file-ignore 5
+.XI $file-ignore - "File extensions to ignore"
+.SH NAME
+$file-ignore \- File extensions to ignore
+.Me $a
+.SH SYNOPSIS
+\fB$file-ignore\fR "\fIstring\fR"; Default is ""
+.SH DESCRIPTION
+.B $file-ignore
+specifies a space  separated list of file endings which the file completion is
+to ignore.  This is used by any  function  which  prompts  the user for a file
+name, such as
+.Ht find-file 2 .
+A file ending in this case is \s-1NOT\s0  the  extension  but the last \fIn\fR
+characters  where \fIn\fR is the number of characters in the specified  ignore
+file.
+.SH EXAMPLE
+To ignore all files which have the extension "\fCo\fR", using:
+.Me $emf-scheme
+.CS
+set-variable $file-ignore "o"
+.CE
+.Me $ehf-scheme
+would not only ignore  "\fCfoo.o\fR", but also "\fCfoo.oo\fR",  "\fCfoo.po\fR"
+and  "\fCfoo\fR" as well as any file that ends in an "\fCo\fR". What is really
+required is
+.Me $emf-scheme
+.CS
+set-variable $file-ignore ".o"
+.CE
+.Me $ehf-scheme
+It is useful to ignore the  "\fC./\fR"  and  "\fC../\fR"  directories  so that a
+directory  containing  one file  will  auto-complete  to that one  file.  This
+is achieved by using:
+.Me $emf-scheme
+.CS
+set-variable $file-ignore "./"
+.CE
+.Me $ehf-scheme
+To  ignore  \*(mE  backup  files  ("\fC~\fR"),  C object  files  ("\fC.o\fR"),
+"\fC./\fR" and "\fC../\fR" directories try using:
+.Me $emf-scheme
+.CS
+set-variable $file-ignore "~ .o ./"
+.CE 0
+.Me $ehf-scheme
+.SH NOTES
+The file  completion only completes further than the first non-unique point in
+the current  list of  possibles if and only if it can ignore all but one file,
+so if the current directory contains:
+.CS
+\&./ ../ foo foo.c foo.c~ foo.o
+.CE
+using the above ignore list,  completing  with "" has no effect as "\fCfoo\fR"
+and  "\fCfoo.c\fR"  cannot  be  ignored;  completing  with  "\fCfoo.\fR"  will
+however complete to "\fCfoo.c\fR".
+.SH "SEE ALSO"
+.na
+.Ht find-file 2 .
+.ad
+.FH

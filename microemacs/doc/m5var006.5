@@ -1,0 +1,27 @@
+.\" -*- nroff -*-
+.Id $Id: m5var006.5,v 1.1.1.1 2000-07-25 22:04:04 jon Exp $
+.Im MicroEmacs variable|shell|macrodevelop
+.so me.tni
+.TH $buffer-ipipe 5
+.XI $buffer-ipipe - "Divert buffer incremental pipe input through macro"
+.SH NAME
+$buffer-input \- Divert buffer incremental pipe input through macro.
+.Me $a
+.SH SYNOPSIS
+.B $buffer-ipipe
+.I commandName
+.SH DESCRIPTION
+.B $buffer-ipipe
+allows the buffer  incremental  pipe input mechanism to be diverted  through a
+command macro defined by \fIcommandName\fR. On a buffer running an
+.Ht ipipe-shell-command 2
+the command, set by this  variable, will be called  whenever new text has been
+inserted by the executing  process. Two  \fIalpha-marks\fR  will be set in the
+buffer, '\fCi\fR'  denotes the start of the newly inserted text and \'\fCI\fR'
+denotes the end.
+.SH "SEE ALSO"
+.na
+.Ht goto-alpha-mark 2 ,
+.Ht ipipe-shell-command 2 .
+.ad
+.FH

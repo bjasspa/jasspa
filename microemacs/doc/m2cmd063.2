@@ -1,0 +1,55 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd063.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|window
+.ds C0 "(\fB\*(cXz\fR)\ \&
+.ds C1 "(\fB\*(cX\*cz\fR)\ \&
+.ds C2 "(\fB\*(cXw\fR)\ \&
+.so me.tni
+.TH grow-window-vertically 2
+.XI grow-window-vertically \- "\*(C0Enlarge the current window (relative change)"
+.XI shrink-window-vertically \- "\*(C1Shrink the current window (relative change)"
+.XI resize-window-vertically \- "\*(C2Resize the current window (absolute change)"
+.SH NAME
+.Me "|grow-window-vertically"
+grow-window-vertically \- Enlarge the current window (relative change)
+.br
+.Me "|shrink-window-vertically"
+shrink-window-vertically \- Shrink the current window (relative change)
+.br
+.Me "|resize-window-vertically"
+resize-window-vertically \- Resize the current window (absolute change)
+.Me $a
+.SH SYNOPSIS
+.na
+\fIn\fR \fBgrow-window-vertically\fR \*(C0
+.br
+\fIn\fR \fBshrink-window-vertically\fR \*(C1
+.br
+\fIn\fR \fBresize-window-vertically\fR \*(C2
+.ad
+.SH DESCRIPTION
+.B grow-window-vertically
+enlarges  the current  window by \fIn\fR  number of lines (1 by  default).  If
+\fIn\fR is negative then the window is shrunk.
+.PP
+.B shrink-window-vertically
+shrinks  the  current  window by \fIn\fR  number of lines (1 by  default).  If
+\fIn\fR is negative then the window is enlarged.
+.PP
+.B resize-window-vertically
+change the size of the  current  window to \fIn\fR  lines, if  possible.  i.e.
+resize window is not a relative displacement.
+.PP
+Growth is performed by consuming space from the next vertical window below the
+current  window, except at the bottom of the screen where the previous  window
+is consumed.
+.SH "SEE ALSO"
+.na
+.Ht grow-window-horizontally 2 ,
+.Ht resize-all-windows 2 ,
+.Ht split-window-vertically 2 .
+.ad
+.rm C0
+.rm C1
+.rm C2
+.FH

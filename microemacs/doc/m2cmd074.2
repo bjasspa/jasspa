@@ -1,0 +1,37 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd074.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|macro
+.so me.tni
+.TH insert-macro 2
+.XI insert-macro \- "Insert keyboard macro into buffer"
+.SH NAME
+insert-macro \- Insert keyboard macro into buffer
+.Me $a
+.SH SYNOPSIS
+.na
+.B insert-macro
+"\fIcommand\fR"
+.ad
+.SH DESCRIPTION
+.B insert-macro
+inserts  the named  \fIcommand\fR  into the current  buffer in the \*(mE macro
+language,  thus  enables it to be saved,  re-load and  therefore  re-used at a
+later date. This is often used in conjunction with
+.Ht start-kbd-macro 2 ,
+.Ht end-kbd-macro 2
+and
+.Ht name-kbd-macro 2 .
+The given  \fIcommand\fR  must have been defined either by a keyboard macro or
+in \*(mE macro code.
+.SH NOTES
+The \fBinsert-macro\fR provides a good method of identifying unknown low level
+key codes. Simply  record the unknown key as a macro and insert the macro into
+the scratch buffer. The low level key code appears within the string.
+.SH "SEE ALSO"
+.na
+.Ht start-kbd-macro 2 ,
+.Ht name-kbd-macro 2 ,
+.Ht define-macro 2 ,
+.Ht execute-file 2 .
+.ad
+.FH

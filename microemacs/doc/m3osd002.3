@@ -1,0 +1,261 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			     Copyright 1999 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m3osd002.3
+.\"  Created By    : Jon Green
+.\"  Created       : Tue Feb 2 21:10:34 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1999 JASSPA.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m3osd002.3,v 1.1.1.1 2000-07-25 22:04:01 jon Exp $
+.Im MicroEmacs command|spell|osd
+.ds C0 "(\fB\*e$\fR)\ \&
+.so me.tni
+.TH spell-buffer 3
+.XI spell-buffer 3 "Spell check the current buffer"
+.XI spell-word 3 "\*(C0Spell check a single word"
+.XI spell-edit-word 3 "Edits a spell word entry"
+.XI find-word 3 "Find a using spelling dictionaries"
+.SH NAME
+.Me "|spell-buffer"
+spell-buffer \- Spell check the current buffer
+.br
+.Me "|spell-word"
+spell-word \- Spell check a single word
+.br
+.Me "|spell-edit-word"
+spell-edit-word \- Edits a spell word entry
+.br
+.Me "|find-word"
+find-word \- Find a using spelling dictionaries
+.Me $a
+.SH SYNOPSIS
+.na
+\fBspell-buffer\fR
+.br
+\fIn\fR \fBspell-word\fR ["\fIword\fR"] \*(C0
+.br
+\fBspell-edit-word\fR ["\fIword\fR"]
+.br
+\fBfind-word\fR ["\fIword\fR"]
+.ad
+.SH DESCRIPTION
+\*(mE provides an integrated spell checker with the following features:-
+.BS
+Different languages.
+.BU
+Dialog control of the speller.
+.BU
+Best guess capability.
+.BU
+\fIReplace\fR and \fIReplace all\fR, \fIIgnore\fR and \fIIgnore All\fR
+.BU
+Undo capability.
+.BU
+Adding new words and endings to speller.
+.BU
+Auto correct of commonly occurring mistakes.
+.BU
+Word finder, allows words to be searched with wild cards.
+.BE
+.B spell-buffer
+spell checks the current buffer, from the current  position, to the end of the
+buffer. On invocation, an
+.Ht osd 2
+dialog is opened and any corrections are made through this interface.
+.PP
+The dialog  provides the user with an interface  from which a new spelling may
+be selected, in addition  new words may be added to the  spelling  dictionary.
+The dialog entries are defined as follows:-
+.IP \fBWord\fR
+The \fBword\fR  entry contains the erroneous word, this is presented in a text
+dialog box which may be  manually  edited to correct. If the word is  manually
+corrected,  then it is spell checked prior to insertion,  and a new guess list
+is  created.  The  user  may  elect  to  replace  the  word,  take  one of the
+suggestions or re-edit the misspelled word.
+.IP \fBMeaning\fR
+The meaning button provides a convenient interface to
+.Ht describe-word 3
+for looking up the meaning of the current word. The \fBInsert\fR button within
+the describe-word dialog will replace the current word in the spell-buffer.
+.IP \fBSuggestions\fR
+The  suggestions  entry  contains  a list  of  suggestions  as to the  correct
+spelling of the word. The list is ranked in order of the best match, typically
+the misspelled  word appears at (or near) the top of the list, unless the word
+is unknown or there are gross errors in the  spelling.  Selecting  the word in
+the list with a single click of the mouse selects the word as the replacement,
+the actual  replacement is performed by the \fBReplace\fR or \fBReplace All\fR
+buttons. Alternatively, double selecting a guess word replaces the word.
+.IP \fBLanguage\fR
+The  \fBlanguage\fR  entry  allows  the user to select  the  current  spelling
+language.  The new language is chosen from the dialog box. The language may be
+changed at any time during the spell  operation  and is effective  immediately.
+The \fBExt\fR  languages  are extended  dictionaries  that contain  additional
+words, it is  recommended  that all  spelling is  performed  with the extended
+dictionaries (where available).
+.IP \fBReplace\fR
+The  \fBreplace\fR  button  is  activated  when a new word has been  edited or
+selected as a candidate for replacement. Selecting  \fBreplace\fR modifies the
+erroneous word in the buffer with the newly selected word.
+.IP "\fBReplace All\fR"
+The \fBReplace  All\fR button is similar to the  \fBReplace\fR  button, except
+that it  automatically  replaces any  subsequent  occurrences of the erroneous
+word with the newly selected word. The replacement  words are retained for the
+\*(mS edit session and are lost when the editor is closed.
+.IP \fBIgnore\fR
+The  \fBignore\fR  button  requests that the speller ignore the erroneous word
+and continue to spell the buffer.
+.IP "\fBIgnore All\fR"
+The \fBIgnore All\fR button is similar to the \fBIngore\fR button, except that
+it  automatically  ignores the erroneous word thereafter. The ignore words are
+retained for the \*(mS edit session and are lost when the editor is closed.
+.IP \fBAdd\fR
+\fBAdd\fR adds the current  erroneous word to the  dictionary,  thereafter the
+word is  recognized as a valid word.  \fBAdd\fR  should only be used for words
+which have no  derivatives,  it is generally  better to add a new word through
+the \fBEdit\fR  interface  where a new \fIbase\fR  word may be specified  with
+it's derivatives.
+.IP \fBEdit\fR
+The  \fBEdit\fR  button  executes  \fBspell-edit-word\fR  giving  the  current
+erroneous  word. This allows new words and  auto-corrections  to be defined as
+well as existing words to be altered, see full description below.
+.IP \fBFind\fR
+The  \fBFind\fR  button executes  \fBfind-word\fR giving the current word as a
+starting  seed. This  allows  the user to search  for the word  using a simple
+search  criteria, see full description below.
+.IP "\fBUndo Last\fR"
+The \fBundo Last\fR button restores the user to the previous  spelling so that
+it may be re-entered, any  replacement  text that was made is restored to it's
+original spelling.
+.IP \fBExit\fR
+Exits the speller and returns the user to the buffer.
+.PP
+.B spell-word
+checks a single  word which is either  supplied by the user, or if an argument
+is given, the word under (or to the left of) the cursor  position. If the word
+is correct, a simple  message-line  print-out  is given,  otherwise  the main
+spell  \fBosd\fR  dialog is opened and the user may check the spelling  within
+the context of the spell dialog as described above.
+.PP
+The  default  key  binding  of "\fCesc  $\fR"  supplies  an  argument  forcing
+\fBspell-word\fR to check the current buffer word.
+.B spell-word
+is often used to check the  spelling  of a word  outside of the context of the
+editor (i.e. when working on paper, or when doing at that prize crossword !!).
+.PP
+\fBspell-edit-word\fR  allows words in  dictionaries  to be altered as well as
+new words and  auto-corrections  to be defined. On  invocation,  an  \fBosd\fR
+dialog is opened and  changes  are made  through  this  interface,  defined as
+follows:-
+.IP \fBWord\fR
+The  \fBword\fR  entry to be  changed or added. If  \fBspell-edit-word\fR  was
+executed via spell-buffer  \fBEdit\fR  button, this will be set to the current
+word.
+.IP "\fBNo word set\fR"
+The word  entry is empty,  most of the  functionallity  will not be  available
+until a word is entered.
+.IP "\fBNew Word\fR"
+To add a new word, the  derivatives  of the new word should be selected  using
+the prefix and suffix options. Note that not all  derivatives are listed, only
+one example derivative  of each
+.Hl "spell rule" add-spell-rule 2
+is given.
+.IP
+\fBBE  CAREFUL  WITH THE CASE OF THE BASE  WORD:\fR new words that are entered
+are case  sensitive, as a general rule the  \fIword\fR in the \fBWord\fR  text
+box should be edited to it's base form and should be  presented  in lower case
+characters  (unless  it  is  a  proper  name,  in  which  case  it  should  be
+capitalized, or is an abbreviation or acronym when it might be upper case).
+.IP
+When the appropriate derivatives of the new word have been selected, it may be
+added to the dictionary  using the \fBAdd\fR button. This adds the word to the
+users  personal  dictionary.  Please note that if there are numerous  standard
+words  missing then check that an  \fIextended\fR  dictionary  (designated  by
+\fBExt\fR in the language) is being used, the extended  dictionaries more than
+double the repertoire of words available.
+.IP
+Words  added  to  the  dictionary  may  be  subsequently   removed  using  the
+\fBDelete\fR  button,  typing the existing  word in the  \fBWord\fR  entry and
+selecting \fBDelete\fR button removes the existing word.
+.IP "\fBAuto-Correct\fR"
+Selection of the  \fBAuto-Correct\fR  button  allows a replacement  word to be
+entered in the \fBTo\fR text entry.  Selecting  \fBAdd\fR  adds the  automatic
+correction  to  the  speller.  Thereafter,  whenever  the  erroneous  word  is
+encountered  the  replacement  word is always used to replace it, without user
+intervention.
+.IP
+Entering  an  exiting  \fIauto-correct\fR  word into the dialog and  selecting
+\fBDelete\fR removes an existing auto-correct entry.
+.IP \fBExit\fR
+Exits the \fBEdit\fR dialog.
+.PP
+\fBfind-word\fR  opens the word finder  dialog. This allows the user to search
+for a word using a simple  search  criteria.  (This is ideal for  cheating  at
+crosswords  !!). The word to be searched  for is entered  into the  \fBWord\fR
+\fBMask\fR  and  may use  wild  cards  \fB*\fR  to  represent  any  number  of
+characters, \fB?\fR to represent an unknown character and \fB[\fR..\fB]\fR for
+a range of characters.
+.PP
+For  example,  searching  for  \fCt?e?e\fR   presents  the  list  \fItheme\fR,
+\fIthere\fR  and  \fIthese\fR.  Searching for \fCt*n\fR lists all of the words
+beginning with \fCt\fR and ending in \fCn\fR. See
+.Ht $find-words 5
+for a full discription of the format used by search engine. 
+.PP
+The words that match are returned in the scrolling dialog, and may be selected
+with the mouse (or cursor keys). The \fBInsert\fR  button inserts the selected
+word into the current buffer or into the \fBWord\fR entry if executed from the
+\fBspell-buffer\fR  dialog.  Note that the list  presented  is  limited to 200
+words, selecting \fBnext\fR gets the next 200 words, and so on. The \fBExit\fR
+button exits the dialog.
+.SH NOTES
+The words added to the speller during a MicroEmacs  session are saved when the
+editor  is  closed.  The  user is  prompted  to save  the  dictionary,  if the
+dictionary is not saved then any words added are lost.
+.PP
+All \fIignore\fR  words  accumulated  during a spell session are lost when the
+editor is closed. In order to retain  \fIignore\fR words, it is suggested that
+they are added to the personal dictionary rather than be ignored.
+.PP
+The     personal      spelling      dictionary     is     typically     called
+\fI<user>\fR\fI<type>\fR.edf,  and is stored in the default user location. The
+dictionary names are specified in the
+.Ht user-setup 3
+dialog.
+.PP
+\fBfind-word\fR  may claim to have found more words than are actually  listed.
+The use of  derivatives  in the  spell  algorithm  allows a single  word to be
+present several times.  \fBfind-word\fR  counts each occurrence but it is only
+listed once.
+.SH "SEE ALSO"
+.na
+.Ht osd 2 ,
+.Ht spell 2 ,
+.Ht user-setup 3 ,
+.Ht describe-word 3 ,
+.Ht $find-words 5 .
+.ad
+.rm C0
+.FH

@@ -1,0 +1,108 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd132.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|hilight
+.so me.tni
+.TH show-region 2
+.XI show-region - "Show the current copy region"
+.SH NAME
+show-region \- Show the current copy region
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B show-region
+.ad
+.SH DESCRIPTION
+.B show-region
+manipulates  the  currently  defined  region,  it can be used to  inquire  the
+state  of the  current  region,  if any. It can  also  be  used  to  define  a
+region, enable and disable the region  hilighting, as well as move the
+cursor to the start or end of the region.
+.PP
+Region hilighting occurs between the \fImark\fR (see
+.Ht set-mark 2 )
+and  \fIpoint\fR  (current  cursor)  positions  within the  current  buffer. A
+region is defined  when  text is copied to the kill  buffer, by using any of
+the kill commands such as
+.Ht kill-region 2 ,
+or
+.Ht copy-region 2 .
+However, the kill region is only visible after a
+.Ht copy-region 2 
+or a
+.Ht yank 2
+operation.  A hilight  region is also  created on a  successful  search using
+commands like
+.Ht search-forward 2 ,
+the  region encloses the search matching string.
+.Ht Spell 2
+also creates a hilight region around the current spell word. The user can also
+define their own region using the numeric argument to \fBshow-region\fR.
+.PP
+The  argument   \fIn\fR   supplied  to  the  command   indicates   the  require
+functionality and can take the following values:-
+.sp
+.RS
+.nf
+\fC-3\fR \- Set the start position of the region.
+\fC-2\fR \- Move the cursor the  Mark position.
+\fC-1\fR \- Disable the hilighting of the current region.
+\fC 0\fR \- Return the current status of the region in
+.Ht $result 5 .
+\fC 1\fR \- Enable the hilighting of the current region.
+\fC 2\fR \- Move the cursor the  Dot position.
+\fC 3\fR \- Set the end position of the region.
+.fi
+.RE
+.PP
+Where an  argument  of 0 is used to  return  the  current  state  the value of
+$result is a bit based flag where:-
+.IP \fB0x01\fR
+Indicates a region is currently active (visible).
+.IP \fB0x02\fR
+Indicates a region has been fixed (may not visible).
+.IP \fB0x04\fR
+Indicates the region is in the current buffer.
+.IP \fB0x08\fR
+Indicates the cursor is in the current region.
+.PP
+The color of the selection hilight is defined by
+.Ht add-color-scheme 2
+and is determined by
+.Ht $buffer-scheme 5 ,
+.Ht $global-scheme 5
+or
+.Ht $buffer-hilight 5 .
+.SH DIAGNOSTICS
+.PP
+The  following  errors can be  generated,  in each case the command  returns a
+FALSE status:
+.IP "\fB[No current region]\fR"
+There is no current defined region on which to operate.
+.IP "\fB[Current region not in this buffer]\fR"
+An  argument of 2 or -2 was used and the defined  region  isn't in the current
+window so the cursor can not be moved to it.
+.SH NOTES
+.PP
+If no argument is given to the command it hilights the current region, similar
+to an argument of 1. But the  properties  of the  hilight,  namely how long it
+will be hilighted for, are inherited from the setting of
+.Ht $show-region 5 ,
+whereas if an argument of 1 is passed in then the hilighting is set to be kept
+until the region becomes invalid (i.e. as if
+.Ht $show-region 5
+is set to 3).
+.SH "SEE ALSO"
+.na
+.Ht $show-region 5 ,
+.Ht $buffer-hilight 5 ,
+.Ht $buffer-scheme 5 ,
+.Ht $global-scheme 5 ,
+.Ht add-color-scheme 2 ,
+.Ht copy-region 2 ,
+.Ht yank 2 ,
+.Ht search-forward 2 ,
+.Ht spell 2 ,
+.Ht set-mark 2 .
+.ad
+.FH

@@ -1,0 +1,476 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd202.2,v 1.1.1.1 2000-07-25 22:03:57 jon Exp $
+.Im MicroEmacs macrodevelop
+.so me.tni
+.TH fileHooks 2
+.XI fileHooks - "File Hooks"
+.SH "FILE HOOKS"
+File hooks provide a mechanism to  automatically  invoke a set of macros for a
+given buffer type when the following events occur:
+.BS
+Loading of a file into a buffer
+.BU
+Moving into a buffer (i.e. making a buffer current)
+.BU
+Moving out of a buffer (i.e. making another buffer current)
+.BU
+Deleting an active buffer
+.BE
+The file hook  selection (see below) is performed on the file name / extension
+and on the textual content of the buffer using
+.Hl add-file-hook add-file-hook 2 .
+.PP
+Refer to 
+.Hl "Language Templates" languageTemplates 2 
+for a description  of how the file hooks are used to define a new template for
+a new text format.
+.PP
+The hook macros allow buffer modes and  highlighting,  applicable  to the text
+type of the file, to be applied to the  buffer. In  addition,  the  associated
+hook  macros may be located in a separate  file and are loaded on demand  when
+the file reading determines that a set of hook macros are required.
+.PP
+Consider a file hook definition of the form;
+.Me $emf-scheme
+.CS
+add-file-hook ".c .h" "fhook-c"
+.CE
+.Me $ehf-scheme
+which binds the file hook  \fBfhook-c\fR to any files that are loaded with the
+extension  \fB.c\fR  and  \fB.h\fR.  The  operations  undertaken  by \*(mE are
+defined as follows when a file \fCfoo.c\fR is loaded:-
+.BS 1 1
+Attempt to load file  \fCfoo.c\fR,  if  \fCfoo.c\fR is not found then create a
+new buffer and assign file name \fCfoo.c\fR.
+.BU
+If  \fCfoo.c\fR  is found then load file into buffer. Search the first line(s)
+of the buffer for magic hook text (\fIadd-file-hook\fR with argument).
+.BU
+If magic hook was not found then  determine  hook name from the file  extension
+(\fIadd-file-hook\fR information).
+.BU
+If a hook  command  is  located,  assign  the file hook  \fBfhook-c\fR  to the
+buffer, assign the buffer entry (begin) hook macro of \fBbhook-c\fR;  assign a
+buffer exit hook of \fBehook-c\fR.
+.BU
+If  the  macro   \fBfhook-c\fR  is  undefined  then  execute  the  macro  file
+\fBhkc.emf\fR  from the \*(mS home  directory in an attempt to load the macro.
+If the file  \fBmyc.emf\fR is defined, then the  modifications to the language
+template are applied after \fBhkc.emf\fR is loaded.
+.BU
+If  the  macro   \fBfhook-c\fR   is  (now)   defined   then   \fCfoo.c\fR   is
+\s-1TEMPORARILY\s0   made  the   current   buffer  and  the  file  hook  macro
+\fBfhook-c\fR is executed to completion and the previous current buffer is
+restored.  [\fITEMPORARY\fR  here implies that no buffer hooks are executed on
+the flip in/out of \fCfoo.c\fR].
+.BU
+The current  buffer is officially  swapped to  \fCfoo.c\fR.  At this point the
+\fIehook\fR  of the old current  buffer is executed  (while its still current)
+and then  \fCfoo.c\fR  is swapped in to become the  current  buffer; the begin
+buffer hook \fIbhook-cmode\fR is then executed for \fCfoo.c\fR (if it exists).
+.BU
+If  the  user   moves  to   another   buffer   execute   the  end  hook  macro
+\fBehook-cmode\fR  (if it exists) and move to the new buffer,  executing  it's
+begin hook.
+.BU
+If the user subsequently  returns to buffer  \fCfoo.c\fR  execute the previous
+buffers end hook macro, set the current buffer to \fIfoo.c\fR  and execute the
+begin hook macro \fBbhook-c\fR (if it exists).
+.BU
+If the user kills buffer  \fCfoo.c\fR,  if  \fCfoo.c\fR is the current  buffer
+then an  alternative  buffer  is made  current,  \fCehook\fR  and  \fCbhook\fR
+executed as normal. If macro  \fBdhook-c\fR  is defined  then  \fCfoo.c\fR  is
+\s-1TEMPORARILY\s0   made  the  current  buffer  and  the  delete  hook  macro
+\fBdhook-c\fR  is executed to completion  and the previous  current  buffer is
+restored.
+.BE
+The name of the file hook macro name is important, hook commands must commence
+with the text \fBfhook-\fR\fImode\fR where \fImode\fR is an identifier for the
+operating mode. The name space is decomposed as follows:-
+.BS 1 1
+The initial  \fBf\fR is removed and  replaced  with \fBb\fR for the begin hook
+macro and \fBe\fR for the end hook macro.
+.BU
+When the  \fBfhook\fR  macro is undefined the \fImode\fR  component is removed
+and the file  \fBhk\fImode\fB.emf\fR is executed from the \*(mS home directory
+in an attempt to define the macro.
+.BE
+The  \fBfhook\-\fR  nomenclature may be omitted  provided that the name is less
+than 6  characters,  however  the file, begin and end hook macros  \s-1MUST\s0
+commence  with  \fBf\fR,  \fBb\fR and \fBe\fR  respectively.  In addition the
+macros must be defined as no auto file loading is performed.
+.SS "Buffer Hook Variables"
+The macros bound to a buffer may be interrogated, the variables
+.Ht $buffer-fhook 5 ,
+.Ht $buffer-bhook 5 ,
+.Ht $buffer-ehook 5
+and
+.Ht $buffer-dhook 5
+contain the names of any associated  macro attached as a macro hooks, defining
+the \fIfile\fR,  \fIbegin\fR,  \fIend\fR and \fIdelete\fR hooks  respectively.
+If a macro is not  bound  then the  empty  string  \fC""\fR  is  returned.
+Setting the  variables  has the effect of defining the hook and is a method by
+which the buffer hooks may be affected after the buffer has been loaded.
+.SS "Determination of a new file"
+The \fIfile\fR hook \fBfhook-XXX\fR  numeric argument may be used to determine
+if the file  associated with a buffer is a new file created by the user, or an
+existing file. Typically this distinction is used to determine whether a boiler
+template is added to the file or not. The macro  argument  \fB@#\fR is defined
+as  zero  (0) if  this is a new  file  that  has  been  created,  or  non-zero
+otherwise.
+.PP
+The  macro  argument  status  is  typically  tested  on entry to the  macro as
+follows:-
+.Me $emf-scheme
+.CS
+define-macro fhook-mode
+    !if &not @#
+        ; This is a new file. Do new file things
+    !else
+        ; This is an existing file
+    !endif
+    ; Set up bindings
+!emacro
+.CE
+.Me $ehf-scheme
+An example of a generic  \fBhook\fR  file is given at the end of this  section
+which elaborates on the file hooks.
+.SS "Begin and End hooks"
+The  \fIbegin\fR  and  \fIend\fR  hooks are  usually  used to save and restore
+global  states which require  special  settings for a particular  buffer type.
+This typically  involves saving and restoring  global variables which are used
+by other  buffers in a different  configuration.  For example the following is
+used to reformat the time stamp string; the time stamp is a global variable
+.Ht $timestamp 5
+and if it is changed in one buffer, it must be restored  ready for another. In
+this case the old time stamp is retained in a local buffer  variable  whenever
+the  buffer  is  entered,  the time  stamp is then  modified  for the  buffers
+requirements. On exit from the buffer the old time stamp format is restored to
+it's former state.
+.Me $emf-scheme
+.CS
+0 define-macro bhook-foo
+    set-variable .timestamp $timestamp      ; Save old time stamp.
+    set-variable $timestamp "19%Y/%M/%D %h:%m:%s"
+!emacro
+
+0 define-macro ehook-foo
+    set-variable $timestamp .bhook-foo.timestamp
+!emacro
+.CE
+.Me $ehf-scheme
+Note that in both cases the
+.Ht define-macro 2
+invocation  is defined as zero, this  merely  hides the macro from the command
+line since both are private macros not normally invoked by the user.
+.SH "FILE HOOK SELECTION"
+\*(mE may be reconfigured to operate in different modes (referred to a
+.I "Major Modes"
+in GNU
+.Hr emacs 1 )
+using the
+.Hl "macro file hooks" add-file-hook 2 .
+The file hooks allow the working  environment to be customized for the editing
+of text of a particular sort, by importing text specific macros, key rebinding
+and highlighting.
+.PP
+\*(mE, by default,  loads a file into a buffer with default  global modes with
+no highlighting.  There are no mode specific key bindings,  variable settings,
+macros or highlights,  buffer  interaction  behaves in it's default state. The
+state of the buffer  interaction may be modified through the use of the buffer
+modes (see
+.Hl "Operating Modes" Modes - ),
+for   example   the  'C'   programming   language
+.Ht cmode 2m
+changes the  characteristics of the \fCtab\fR  character and performs language
+specific  indentation of statements.  When a text specific set of highlighting
+rules are applied to the buffer, the text becomes  emphasized  through the use
+of color applied  selectively to the text i.e. comments, keywords, strings are
+shown  in  different  colors,  allowing  them  to be  differentiated  without
+studying the content.
+.PP
+Setting the operating  mode of the buffer would be tedious to perform from the
+command  line,  instead  \*(mE uses three  different  prioritized  criteria to
+endeavor to select the correct  operating  mode. The operating mode is applied
+to the buffer by  execution of a set of file  specific  macros,  referred to a
+hook  commands. The selection  criteria of the hook  commands is performed as
+follows, ordered in lowest to highest priority:-
+.IP "\fBFile Name\fR"
+\*(mE uses the filename  and/or the file  extension to select a start-up  hook
+command.  File names and  extensions  are bound to a set of macro  hooks in a
+space separated list e.g.
+.RS
+.IP
+.Hl "add-file-hook" add-file-hook 2
+"\fBc cpp\fR" "\fBfhook-cmode\fR"
+.br
+.Hl "add-file-hook" add-file-hook 2
+"\fBdoc txt README\fR" "\fBfhook-doc\fR"
+.RE
+.IP
+The space separated list of names are interpreted as either file extensions or
+filenames. In this case any file with the  extension  \fB.c\fR,  \fB.cpp\fR is
+bound to a file hook  called  \fBfhook-cmode\fR  e.g.  \fCfoo.c\fR.  Similarly
+files with the extension \fB.doc\fR or \fB.txt\fR are interpreted as plain text
+documents  and are bound to  \fBfhook-doc\fR.  e.g.  \fCfoo.txt\fR.  The entry
+\fBREADME\fR  that exists in the  documentation  hook list may refer to a file
+\fCREADME\fR and also \fCfoo.README\fR, both cases invoke the document hook.
+.IP
+The file  selection  is the lowest  priority  selection  criteria  but usually
+satisfies most mode selection requirements.
+.IP "\fBMagic Strings\fR"
+There are cases when file  extensions  may be omitted  from  files,  typically
+these files include an  identifier,  or magic string, on the first line of the
+file which is used to identify the file to the operating system or application
+e.g. shell scripts under \s-1UNIX\s0. \*(mE automatically interrogates the top
+of every file that is loaded to locate some form of identification string. The
+identification  strings  are  defined in a similar way to the file name hooks,
+except  instead of defining a file  extension the location and text content of
+the identifier is defined:
+.RS
+.IP
+\&1
+.Hl "add-file-hook" add-file-hook 2
+"\fB#!/bin/sh\fR" "\fBfhook-shell\fR"
+.br
+\&1
+.Hl "add-file-hook" add-file-hook 2
+"\fB#!/usr/local/bin/wish\fR" "\fBfhook-tcl\fR"
+.RE
+.IP
+In this case, any file that commences with "\fB#!/bin/sh\fR" is interpreted as
+a shell  script  and  invokes  the  shell  hook  \fBfhook-shell\fR.  Where the
+identifier  does not  appear on the first non-blank line, the  argument  may be
+increased  to the  number  of lines to be  searched.  Also it the magic  sting
+should be search for without
+.Ht exact 2m
+mode then the argument should be negated, e.g.
+.RS
+.IP
+\&-4
+.B add-file-hook
+"<html>" "\fBfhook-html\fR"
+.RE
+.IP
+invokes \fBfhook-html\fR whenever "\fC<html>\fR", "\fC<HTML>\fR" etc. is found
+in the first 4 lines of a file header, e.g.:
+.RS
+.CS
+<!-- Comment line -->
+<HtMl>
+.CE 0
+.RE
+.IP
+A match on a string  identifier  is assigned a higher  priority  than the file
+extension. It is recommended  that magic strings are only used where there are
+no predefined  file extensions, or conflicts  exist between files with the same
+extension containing data interpreted in a different context.
+.IP "\fBExplicit Strings\fR"
+The last method allows an explicit  identifier  string to be embedded into the
+text of the file  informing  \*(mE  which  mode it  should  adopt.
+GNU  Emacs
+supports this (see \fBMajor  Mode\fR in the GNU Emacs  documentation)  type of
+operation by insertion of strings of the form:
+.RS
+.IP
+\fB-*-\fR \fImode\fR \fB-*-\fR
+.RE
+.IP
+Where  \fImode\fR  represents the major mode within GNU Emacs. The same format
+as used by \fBMagic Strings\fR can be used to find and extract the \fImode\fR,
+e.g.:
+.RS
+.IP
+\fB-1\fR
+.Hl "add-file-hook" add-file-hook 2
+"\fB-[*!]-[ \\t]nroff.*-[*!]-\fR" "\fBfhook-nroff\fR"
+.RE
+.IP
+The definition  would detect the GNU Emacs mode defined in an Nroff file e.g.
+.RS
+.IP
+.nf
+\&.\\" -*- nroff -*- "
+\&.TH man 1
+\&.SH NAME
+\&...
+.fi
+.RE
+.IP
+It should be  stressed  that the  \fB-*-\fR  syntax  belongs  to GNU Emacs and
+\s-1NOT\s0  \*(mE, \*(mE provides a mechanism to locate, extract and interpret
+the  string. The  \fB-*-\fR  syntax  should  only be applied to files if it is
+known that the \fImode\fR is a GNU mode.
+.IP
+A \*(mE  specific  string is also provided,  defined as:
+.RS
+.IP
+\fB-!-\fR\ \fImode\fR\ \fB-!-\fR
+.RE
+.IP
+where \fImode\fR is an arbitrary string defined by  \fIadd-file-hook\fR.  User
+defined modes may be created and assigned to files with this syntax, this does
+not  conflict  with the GNU Emacs  command.  For  example to assign a new mode
+\fImymode\fR to a file we would define the following:-
+.RS
+.IP
+\fB-1\fR
+.Hl "add-file-hook" add-file-hook 2
+"\fB-!-[ \\t]mymode.*-!-\fR" "\fBfhook-mymode\fR"
+.RE
+.IP
+Files containing a the following identifier would be loaded with \fImymode\fR
+hook:
+.RS
+.IP
+.nf
+# -!- mymode -!-
+#
+# Last Modified:  <120683.1014>
+.fi
+.RE
+.SH "FILE HOOK SCRIPTS"
+The  buffer  hook files  \fBhk\fR\|\fIname\fR\|\fB.emf\fR  typically  follow a
+standard  layout, and are  generally  associated  with  hi-lighting as follows,
+\fBmode\fR in this case is the name of the file mode associated with the file:-
+.Me $emf-scheme
+.CS
+!if &seq .hilight.mode "ERROR"
+    set-variable .hilight.mode &pinc .hilight.next 1
+!endif
+;
+; Define the hilighting
+;
+0 hilight .hilight.mode 1                $global-scheme
+hilight .hilight.mode 2 "\\*\\*"           .scheme.comment
+hilight .hilight.mode 4 "\\"" "\\"" "\\\\"   .scheme.string
+hilight .hilight.mode 0 "'.'"            .scheme.quote
+
+hilight .hilight.mode 1 "if"             .scheme.keyword
+hilight .hilight.mode 1 "elif"           .scheme.keyword
+hilight .hilight.mode 1 "else"           .scheme.keyword
+\&...
+
+; Reset the hilighting printer format and define the color bindings.
+0 hilight-print .hilight.mode
+hilight-print .hilight.mode "i"  .scheme.comment
+hilight-print .hilight.mode "b"  .scheme.keyword .scheme.variable
+hilight-print .hilight.mode "bi" .scheme.string .scheme.quote
+\&...
+
+; Define the indentation tokens
+0 indent  .hilight.mode 2 10
+indent .hilight.mode n "if" 4
+indent .hilight.mode s "elif" -4
+indent .hilight.mode s "else" -4
+indent .hilight.mode o "endif" -4
+indent .hilight.mode n "while" 4
+\&...
+
+define-macro fhook-mode
+    ; if arg is 0 this is a new file so add template
+    !if &not @#
+        etfinsrt "mode"
+    !endif
+    set-variable $buffer-hilight .hilight.mode
+    set-variable $buffer-indent .hilight.mode
+    1 buffer-mode "time"
+    1 buffer-mode "indent"
+    buffer-abbrev-file "mode"
+!emacro
+.CE
+.Me $ehf-scheme
+The previous example shows how the  \fBfhook-mode\fR  numeric argument is used
+to determine if this is a new file. If the argument \fB@#\fR is zero then this
+is  interpreted  as a new file, in this case a standard  template  is inserted
+(from  file  \fBmode.etf\fR)  and the  generic  strings  such as  \fC$YEAR$\fR
+replaced with  construction  information.  The template is generally  used for
+standard headers and skeleton text body.
+.PP
+In addition an abbreviation file \fBmode.eaf\fR (see
+.Ht eaf 8 )
+is bound to the buffer using the
+.Ht buffer-abbrev-file 2
+command and the buffer hi-lighting enabled by assignment of the
+.Ht $buffer-hilight 5
+variable.
+.SH "MODIFYING FILE HOOKS"
+The standard hook files supplied with \*(mE should not be modified, changes to
+the  file  hooks  may  be  applied   using  a  separate   macro  file   called
+\fBmy\fR\fIXXX.emf\fR,    this   is    automatically    executed   after   the
+\fBhk\fR\fIXXX.emf\fR file is executed. 
+.PP
+The extended  hook  functions may be defined  company wide, or by the user, to
+over-ride some of the standard hook  functions, or to extend the syntax of the
+base files with  locally  defined  extensions.  As an  example,  consider  the
+following file  \fBmyc.emf\fR  which  extends the basic  \fBhkc.emf\fR  file
+set of hi-lighting tokens for the 'C' Language.
+.Me $emf-scheme
+.CS
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Thu Jun 18 15:34:05 1998
+;  Last Modified : <230798.0854>
+;
+;  Description   Extension hilighting for the 'C' language.
+;
+;  Notes         Define the locally defined 'C' library types and definitions
+;                as extensions to the 'C' programming language.
+;
+;  History
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; MicroEmacs specific tokens
+hilight .hilight.c 1 "LINE"           .scheme.type
+hilight .hilight.c 1 "BUFFER"         .scheme.type
+hilight .hilight.c 1 "WINDOW"         .scheme.type
+hilight .hilight.c 1 "REGION"         .scheme.type
+hilight .hilight.c 1 "KEYTAB"         .scheme.type
+hilight .hilight.c 1 "KILL"           .scheme.type
+hilight .hilight.c 1 "KLIST"          .scheme.type
+hilight .hilight.c 1 "HILNODE"        .scheme.type
+hilight .hilight.c 1 "HILNODEPTR"     .scheme.type
+hilight .hilight.c 1 "HILCOLOR"       .scheme.type
+hilight .hilight.c 1 "SELHILIGHT"     .scheme.type
+hilight .hilight.c 1 "VIDEO"          .scheme.type
+hilight .hilight.c 1 "VVIDEO"         .scheme.type
+hilight .hilight.c 1 "FRAMELINE"      .scheme.type
+hilight .hilight.c 1 "IPIPEBUF"       .scheme.type
+hilight .hilight.c 1 "DIRNODE"        .scheme.type
+hilight .hilight.c 1 "UNDOND"         .scheme.type
+hilight .hilight.c 1 "meVARLIST"      .scheme.type
+hilight .hilight.c 1 "meVARIABLE"     .scheme.type
+hilight .hilight.c 1 "meCMD"          .scheme.type
+hilight .hilight.c 1 "meAMARK"        .scheme.type
+hilight .hilight.c 1 "meABREV"        .scheme.type
+hilight .hilight.c 1 "meMACRO"        .scheme.type
+hilight .hilight.c 1 "meNARROW"       .scheme.type
+hilight .hilight.c 1 "meREGISTERS"    .scheme.type
+hilight .hilight.c 1 "meSTAT"         .scheme.type
+hilight .hilight.c 1 "osdITEM"        .scheme.type
+hilight .hilight.c 1 "osdDIALOG"      .scheme.type
+hilight .hilight.c 1 "osdCHILD"       .scheme.type
+hilight .hilight.c 1 "meSCROLLBAR"    .scheme.type
+hilight .hilight.c 1 "osdCONTEXT"     .scheme.type
+hilight .hilight.c 1 "osdDISPLAY"     .scheme.type
+hilight .hilight.c 1 "RNODE"          .scheme.type
+hilight .hilight.c 1 "REGHANDLE"      .scheme.type
+hilight .hilight.c 1 "meDIRLIST"      .scheme.type
+hilight .hilight.c 1 "meNAMESVAR"     .scheme.type
+hilight .hilight.c 1 "meDICTADDR"     .scheme.type
+hilight .hilight.c 1 "meSPELLRULE"    .scheme.type
+hilight .hilight.c 1 "meDICTWORD"     .scheme.type
+hilight .hilight.c 1 "meDICTIONARY"   .scheme.type
+hilight .hilight.c 1 "meMODE"         .scheme.type
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Hl "Operating Modes" Modes - ,
+.Hl "Language Templates" languageTemplates 2 ,
+.Ht add-file-hook 2 ,
+.Ht cmode 2m .
+.ad
+.FH

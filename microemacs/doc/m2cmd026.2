@@ -1,0 +1,37 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd026.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|cursor
+.ds C0 "(\fB\*ca\fR)\ \&
+.ds C1 "(\fB\*ce\fR)\ \&
+.so me.tni
+.TH beginning-of-line 2
+.XI beginning-of-line - "\*(C0Move to beginning of line"
+.XI end-of-line - "\*(C1Move to end of line"
+.SH NAME
+.nf
+.Me "|beginning-of-line"
+beginning-of-line \- Move to beginning of line
+.Me "|end-of-line"
+end-of-line \- Move to end of line
+.fi
+.Me $a
+.SH SYNOPSIS
+.na
+\fBbeginning-of-line\fR \*(C0
+.br
+\fBend-of-line\fR \*(C1
+.ad
+.SH DESCRIPTION
+.B beginning-of-line
+places the cursor at the beginning of the line.
+.PP
+.B end-of-line
+places the cursor at the end of the line.
+.SH "SEE ALSO"
+.na
+.Ht beginning-of-buffer 2 ,
+.Ht end-of-buffer 2 .
+.ad
+.rm C0
+.rm C1
+.FH

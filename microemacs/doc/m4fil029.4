@@ -1,0 +1,117 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil029.4,v 1.1.1.1 2000-07-25 22:04:03 jon Exp $
+.Im MicroEmacs macro;function;list
+.so me.tni
+.TH &ldel 4
+.XI &ldel - "Delete list item"
+.XI &lfind  - "Find list item"
+.XI &lget - "Get list item"
+.XI &linsert - "Insert list item"
+.XI &lset - "Set list item"
+.SH NAME
+&ldel, &lfind, &lget, &linsert, &lset \- List manipulation functions
+.SH SYNOPSIS
+.na
+.B &ldel
+.I list
+.I index
+.br
+.B &lfind
+.I list
+.I value
+.br
+.B &lget
+.I list
+.I index
+.br
+.B &linsert
+.I list
+.I index
+.I value
+.br
+.B &lset
+.I list
+.I index
+.I value
+.ad
+.SH DESCRIPTION
+The list  manipulation  functions  perform  operations on specially  formatted
+strings called lists. A list is defined as:
+.CS
+"|value1|value2|.....|valueN|"
+.CE
+Where '\fC|\fR' is the dividing  character,  this is not fixed to a '\fC|\fR',
+but is defined by the first  character of the string.  Following are all valid
+lists.
+.IP
+.nf
+"\fC|1|2|3|4|5|\fR"
+"\fCX1X2X3X4X5X\fR"
+"\fC\\CAHello\\CAWorld\\CA\fR"
+"\fC??\fR"
+.fi
+.PP
+The functions may all be abbreviated to their three letter  abbreviation (i.e.
+\fB&linsert\fR  may be  expressed  as  \fB&lin\fR).  In all  cases  the  first
+argument is completely evaluated before the second or third argument.
+.IP "\fB&ldel\fR \fIlist\fR \fIindex\fR"
+Creates  a new  list  from  deleting  item  \fIindex\fR  from  \fIlist\fR.  If
+\fIindex\fR  is out of  \fIlist\fR's range (0 < index <= # items in list) then
+\fIlist\fR is returned unchanged.
+.IP "\fB&lfind\fR \fIlist\fR \fIvalue\fR"
+Returns  the index whose item is the same as  \fIvalue\fR  in  \fIlist\fR.  If
+\fIvalue\fR is not found in \fIlist\fR then "\fC0\fR" is returned.
+.IP "\fB&lget\fR \fIlist\fR \fIindex\fR"
+Returns the value of item \fIindex\fR in \fIlist\fR.  If
+\fIindex\fR  is out of  \fIlist\fR's  range (0 < index <= # items in list) then
+an empty string is returned.
+.IP "\fB&linsert\fR \fIlist\fR \fIindex\fR \fIvalue\fR"
+Creates  a new  list  from  inserting  \fIvalue\fR  into  \fIlist\fR  at point
+\fIindex\fR,  thereby  pushing  item  \fIindex\fR  to  \fIindex\fR+1  etc.  If
+\fIindex\fR is 0 the  \fIvalue\fR is inserted at the beginning of the list, if
+\fIindex\fR  is less than 0 or greater that the number of items in  \fIlist\fR
+then \fIvalue\fR is inserted at the end of the list.
+.IP "\fB&lset\fR \fIlist\fR \fIindex\fR \fIvalue\fR"
+Creates a new list from setting  \fIindex\fR of \fIlist\fR to  \fIvalue\fR. If
+\fIindex\fR is out of  \fIlist\fR's  range (0 < index <= # items in list) then
+\fB&lset\fR behaves like \fB&linsert\fR.
+.SH EXAMPLE
+The following example moves item 4 in a list to position 2:
+.Me $emf-scheme
+.CS
+set-variable #l0 &lget %list 4
+set-variable #l1 &ldel %list 4
+set-variable %list &lins #l1 2 #l0
+.CE
+.Me $ehf-scheme
+The following  example is taken from vm.emf, it firstly  checks where the user
+has entered a vm command, if not then the key is execute as normal,  otherwise
+the appropriate vm command is executed.
+.Me $emf-scheme
+.CS
+define-macro vm-input
+    set-variable #l2 @cck
+    set-variable #l3 @cc
+    !if &not &set #l0 &lfi "|esc h|delete|space|return|A|a|C|c|....|z|" #l2
+        !if &not &seq #l3 "ERROR"
+            execute-line &spr "!nma %s %s" &cond @? @# "" #l3
+            !return
+        !endif
+        ml-write &spr "[Key \\"%s\\" not bound - \\"esc h\\" to view help]" #l2
+        !abort
+    !endif
+    set-variable #l1 &lget "|%osd-vm-help osd|vm-del-windows|scroll-down|....
+                       ....vm-goto-list|vm-Archive-box|vm-archive-box|....
+                       vm-cut-all-data|0 vm-extract-data|...|vm-forward|" #l0
+    execute-line #l1
+!emacro
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Hl "Variable Functions" Functions - ,
+.Ht &mid 4 ,
+.Ht &cat 4 .
+.ad
+.FH
+

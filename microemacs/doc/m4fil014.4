@@ -1,0 +1,127 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil014.4,v 1.1.1.1 2000-07-25 22:04:03 jon Exp $
+.Im MicroEmacs macro;variable
+.so me.tni
+.TH "MacroArguments" 4
+.XI "MacroArguments" - "Arguments to macros"
+.XI "@?" - "Macro arguments (numeric argument given)"
+.XI "@hash" - "Macro arguments (numeric argument value)"
+.XI "@0" - "Macro arguments (macro name)"
+.XI "@1" - "Macro arguments (first argument)"
+.XI "@2" - "Macro arguments (second argument)"
+.SH NAME
+@?, @#, @0, @1, @2, @3, ... \- Macro arguments
+.SH SYNOPSIS
+\fB@\fR\fIn\fR
+.sp
+\fB@?\fR \- Boolean flagging if a numeric argument was supplied
+.br
+\fB@#\fR \- The value of the numeric argument
+.br
+\fB@0\fR \- The name of the macro
+.br
+\fB@1\fR \- The first argument of macro
+.br
+\fB@2\fR \- The second argument of macro
+.br
+\fB@3\fR ...
+.SH DESCRIPTION
+Macros may be passed  arguments,  allowing a macro to be used by other macros.
+The \fB@?\fR and \fB@#\fR are used to determine the numeric  argument given to
+the command. The  \fB@\fIn\fR  variable  (where \fIn\fR is an integer) used in
+the context of a macro allows the macro body to determine it's arguments.
+.PP
+From a macro all commands are called in the following form
+.CS
+[num] <macro-name> "arg1" "arg2" ....
+.CE
+When  executed  macros  do not  have to be  given an  argument,  in this  case
+\fB@?\fR will be \fI0\fR and \fB@#\fR will be \fI1\fR (the default  argument).
+If an argument is given then \fB@?\fR will be \fI1\fR and \fB@#\fR will be set
+to the numeric argument given.
+.PP
+The current macro command name  \fI<macro-name>\fR  can be obtain by using the
+\fB@0\fR variable, e.g.
+.Me $emf-scheme
+.CS
+define-macro Test-it
+    ml-write @0
+!emacro
+.CE
+.Me $ehf-scheme
+When  executed,  writes the message  "\fCTest-it\fR"  which is the name of the
+macro.
+.PP
+Arguments  may be  passed  into  macro  commands  in the same way as  standard
+commands are given  arguments.  The macro being called can access these by the
+\fB@1\fR  to \fB@n\fR  variables,  where  \fIn\fR is a positive  integer.  Any
+variables given as arguments are evaluated so if the variable name is required
+then enclose it in quotes, e.g.
+.Me $emf-scheme
+.CS
+set-variable %test-var "Hello World"
+
+efine-macro Test-it
+    ml-write &cat &cat &cat &cat @0 " " @1 " = " &ind @1
+    set-variable  @1 @2
+!emacro
+
+Test-it "%test-var" "Goodbye World"
+.CE
+.Me $ehf-scheme
+On  execution  the macro  writes  the  message
+.IP
+"\fCTest-it %test-var = Hello World\fR"
+.LP
+and will set variable \fC%test-var\fR to "\fCGoodbye World\fR".
+.SH DIAGNOSTICS
+If an  attempt is made to access an  argument  which has not been given then a
+error occurs. This error can be trapped using the
+.Ht !force 4 
+directive,  enabling  the  macro  to take  appropriate  action, see example.
+.SH EXAMPLE
+Consider  the implementation of
+.Ht replace-all-string 3
+macro defined in search.emf:
+.Me $emf-scheme
+.CS
+define-macro replace-all-string
+    !force set-variable #l0 @3
+    !if &not $status
+        set-variable #l1 @ml05 "Replace all"
+        set-variable #l2 @ml05 &spr "Replace [%s] with" #l1
+        set-variable #l0 @ml00 "In files"
+    !else
+        set-variable #l1 @1
+        set-variable #l2 @2
+    !endif
+    .
+    .
+    .
+!emacro
+.CE
+.Me $ehf-scheme
+In this  example  if the 3rd  argument  is not given  then the macro  gets all
+arguments  from the user.
+.SH NOTES
+The parsing of arguments can be  inefficient  because of the way the arguments
+have to be parsed; to get the 4th argument the 1st, 2nd and 3rd arguments must
+be evaluated.  This is because each argument is not  guaranteed to be only one
+element, it could be an expression  which needs to be evaluated.  Consider the
+following invocation of our Test-it macro
+.Me $emf-scheme
+.CS
+Test-it &cat "%test" "-var" "Goodbye World"
+.CE
+.Me $ehf-scheme
+The 2nd argument is not  \fI"%test"\fR  as this is part of the first argument,
+the 2nd argument is in fact the 4th element and the  invocation  will have the
+same effect except slower.
+.SH "SEE ALSO"
+.na
+.Hl MacroNumericArguments MacroNumericArguments 4 ,
+.Ht define-macro 2 ,
+.Ht replace-all-string 3 ,
+.Ht !force 4 .
+.ad
+.FH

@@ -1,0 +1,162 @@
+.\" -*- nroff -*-
+.Id $Id: m8fil006.8,v 1.1.1.1 2000-07-25 22:04:08 jon Exp $
+.Im MicroEmacs
+.so me.tni
+.TH me32.ini 8
+.XI me32.ini - "Microsoft Window's Initialization (ini) File"
+.SH NAME
+me32.ini \- Microsoft Window's Initialization (ini) File
+.SH SYNOPSIS
+.na
+.nf
+.sp
+.B "[Location]"
+\fBexe\fR=\|\fI<executablePathname>\fR
+.sp
+.B "[Defaults]"
+\fBmepath=\fR\|\fI<directoryPath>\fR
+\fBuserpath=\fR\|\fI<directoryPath>\fR
+\fBfontfile=\fR\|\fI<fontFileName>\fR
+.sp
+\fB[\fR\|\fI<userName>\fR\|\fB]\fR
+\fI<environmentVariable>\fR\|\fB=\fR\|\fI<value>\fR
+\fI<environmentVariable>\fR\|\fB=\fR\|\fI<value>\fR
+.sp
+\fB[\fR\|\fI<userName>\fR\|\fB]\fR
+\fI<environmentVariable>\fR\|\fB=\fR\|\fI<value>\fR
+\fI<environmentVariable>\fR\|\fB=\fR\|\fI<value>\fR
+.sp
+\fB;\fR \fIComments commence with a semi-colon\fR
+.fi
+.ad
+.SH PLATFORM
+.B "Microsoft Windows environments only"
+.SH DESCRIPTION
+.B me32.ini
+is the Microsoft Windows  configuration file, located in the windows directory
+(typically
+\fBC:\\Windows\fR\|),
+the
+.B me32.ini
+file is  primarily  used to  counteract  the  deficiencies  of  Windows  shell
+environment (as compared with \s-1UNIX\s0) with respect to the  initialization
+of environment variables.
+.PP
+The  configuration  file may be  considered  to be split into two  sections, a
+\fBDefaults\fR section, which defines system settings and a \fBUser\fR section
+which allows environment variables to be defined.
+.SS "User Section"
+The \fBUser  Section\fR is executed prior to the  \fBDefaults  Section\fR. The
+\fBUser Section\fR uses the user name which is defined as follows:-
+.BS
+The  environment  variable
+.Ht $MENAME 5 .
+.BU
+The \fIlogin\  name\fR under Windows '95 or NT if \fB$MENAME\fR is not set. If
+the \fIlogin\  name\fR is defined then environment  variable  \fB$MENAME\fR is
+set to this value.
+.BU
+The  environment  variable
+.Ht $LOGNAME 5
+if the \fIlogin\ name\fR cannot be located.
+.BU
+\fBguest\fR if none of the above are defined.
+.BE
+A section  \fB[\fR\|\fIuserName\fR\|\fB]\fR  is looked up, and if located each
+of the entries  \fI<environmentVariable>\fR \fB=\fR \fI<value>\fR is extracted
+and pushed into the execution environment. The  \fB<environmentVariable>\fR is
+automatically  promoted to upper case if  specified as a lower case entry. The
+environment  variables may be  subsequently  used within the \fB.emf\fR macro
+files to configure \*(mE at start up.
+.PP
+Any value may be inserted  into the  environment  including the  \fC$MENAME\fR
+environment variable which is used in the next section.
+.SS "Defaults Section"
+The defaults section, labeled \fB[Defaults]\fR includes the following keys:-
+.IP "\fBmepath\fR"
+The directory (or folder) location of the \*(mE default configuration files.
+.IP "\fBuserpath\fR"
+The directory (or folder)  location of the user(s)  directories.
+.IP
+Given that the \fBuserpath\fR is specified as \fCc:\\me98.5\fR  and the user is
+called \fCfoo\fR, then the directory location  \fCc:\\me98.5\\foo\fR  is considered to
+be the user path.
+.IP
+If the  \fBuserpath\fR  is omitted then the \fBmepath\fR  entry is used as the
+user path.
+.LP
+The \fBuserpath\fR and \fBmepath\fR entries are concatenated  together to form
+the environment  variable
+.Ht $MEPATH 5 ,
+e.g. \fIuserpath\|\fB\\\|\fIlogname\fR\|\fB;\fR\|\fImepath\fR.
+If the entries are omitted the then
+environment variable \fC$MEPATH\fR is used as defined. The \fBmepath\fR and
+\fBuserpath\fR are configured initialy by the
+.B InstallShield
+installation process.
+.IP "\fBfontfile\fR"
+The name of the font file used to render the text to the  screen. The  default
+font file is \fBdosapp.fon\fR, this is a fixed mono font as used in the MS-DOS
+windows.
+.SS "Location Section"
+The location  section,  labeled  \fB[Location]\fR,  identifies the location of
+\*(mE,  and  is  typically  used  by  other  components  to  find  and  launch
+MicroEmacs. The section includes the following keys:-
+.IP \fBexe\fR
+The absolute pathname to the \*(mE executable image.
+.ne 20
+.SH EXAMPLE
+The following is an example of the \fBme32.ini\fR file:-
+.CS
+; External locater for the executable 
+[Location]
+exe=c:\\Program Files\\JASSPA\\MicroEmacs\\me32.exe
+;
+[Defaults]
+; mepath
+; The location of the MicroEmacs common files.
+;
+mepath=d:/me98.4/common
+;
+; userpath - The location of the users MicroEmacs directory.
+; The $MENAME is appended as a directory to userpath
+;
+userpath=d:/me98.4/common
+;
+; fontfile - The name of the font file used as default.
+fontfile=dosapp.fon
+.ne 22
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+; Environment settings for a user.
+; All settings are pushed into the environment.
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+[guest]
+term=8x12
+;
+[jon]
+MENAME=jon
+FOO=bar
+;
+[jnaught]
+MENAME=jon
+FOO=bar
+;
+[bill]
+\.\.\.\.
+.CE
+Note that  multiple  users share the same  \fBme32.ini\fR  file, each user may
+include their own  configuration  settings  which may be  interrogated  in the
+configuration  files (e.g. \fC$FOO\fR is assigned the value  \fCbar\fR,  which
+may be extracted from the environment context).
+.SH "SEE ALSO"
+.na
+.Ht $MENAME 5 ,
+.Ht $MEPATH 5 ,
+.Ht user-setup 3 ,
+.Ht emf 8 .
+.ad
+.FH

@@ -1,0 +1,133 @@
+.Id $Id: m2cmd006.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|modes
+.ds C0 "(\fB\*(cXm\fR)\ \&
+.so me.tni
+.TH buffer-mode 2
+.XI buffer-mode - "\*(C0Change a local buffer mode"
+.XI named-buffer-mode - "Change a named buffer mode"
+.XI add-mode 3 "Set a local buffer mode"
+.XI delete-mode 3 "Remove a local buffer mode"
+.XI unmark-buffer 3 "Remove buffer edited flag"
+.SH NAME
+.br
+.Me "|buffer-mode"
+buffer-mode \- Change a local buffer mode
+.br
+.Me "|named-buffer-mode"
+named-buffer-mode \- Change a named buffer mode
+.br
+.Me "|add-mode"
+add-mode \- Set a local buffer mode
+.br
+.Me "|delete-mode"
+delete-mode \- Remove a local buffer mode
+.br
+.Me "|unmark-buffer"
+unmark-buffer \- Remove buffer change flag
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B buffer-mode
+"\fImode\fR" \*(C0
+.br
+.I n
+.B named-buffer-mode
+"\fIbuffer-name\fR"
+"\fImode\fR"
+.br
+.B add-mode
+"\fImode\fR"
+.br
+.B delete-mode
+"\fImode\fR"
+.br
+\fBunmark-buffer\fR
+.ad
+.SH DESCRIPTION
+.B buffer-mode
+changes the state of a given buffer mode, affecting only the current buffer. A
+buffer's mode affects the behavior of \*(mE. The
+.Ht about  2
+command  gives a list of the current  global and buffer modes. Refer to
+.Hl "Operating Modes" Modes -
+for a description of the buffer modes.
+.PP
+The argument \fIn\fR when given, has the following meaning:
+.CS
+Delete    Add    toggle    Mode
+
+  -1       1         0     Use "mode"
+  -2       2       130     auto
+  -3       3       131     autosv
+  -4       4       132     backup
+  -5       5       133     binary
+  -6       6       134     cmode
+  -7       7       135     crlf
+  -8       8       136     crypt
+  -9       9       137     ctrlz
+  -10      10      138     del
+  -11      11      139     dir
+  -12      12      140     edit
+  -13      13      141     exact
+  -14      14      142     hide
+  -15      15      143     indent
+  -16      16      144     justify
+  -17      17      145     letter
+  -18      18      146     line
+  -19      19      147     lock
+  -20      10      148     magic
+  -21      21      149     nact
+  -22      22      150     narrow
+  -23      23      151     over
+  -24      24      152     pipe
+  -25      25      153     quiet
+  -26      26      154     save
+  -27      27      155     tab
+  -28      28      156     time
+  -29      29      157     undo
+  -30      30      158     usr1
+  -31      31      159     usr2
+  -32      32      160     usr3
+  -33      33      161     usr4
+  -34      34      162     usr5
+  -35      35      163     usr6
+  -36      36      164     usr7
+  -37      37      165     usr8
+  -38      38      166     view
+  -39      39      167     wrap
+.CE
+Note that when omitted the default  argument is 0, i.e. prompt for and toggle a
+mode.
+.PP
+\fBnamed-buffer-mode\fR  changes the state of a given  buffer mode for a given
+buffer which may not be the current buffer.
+.PP
+\fBadd-mode\fR  and   \fBdelete-mode\fR  are  macros  which  use
+buffer-mode  to add and remove a buffer  mode.  \fBunmark-buffer\fR  is also a
+macro which  removes the edit flag from the current  buffer.  They are defined
+for backward compatibility with MicroEMACS v3.8 and can be found in me3_8.emf;
+add-mode is defined as follows:
+.Me $emf-scheme
+.CS
+define-macro add-mode
+    ; Has the require mode been given as an argument, if so add it
+    !force 1 buffer-mode @1
+    !if &not $status
+        ; No - use 1 buffer-mode to add a mode
+        !nma 1 buffer-mode
+    !endif
+!emacro
+.CE 0
+.Me $ehf-scheme
+.SH NOTES
+When a buffer is created it inherits the current global mode state.
+.SH "SEE ALSO"
+.na
+.Hl "Operating Modes" Modes - ,
+.Ht global-mode 2 ,
+.Ht about 2 ,
+.Ht &bmode 4 .
+.ad
+.rm C0
+.FH

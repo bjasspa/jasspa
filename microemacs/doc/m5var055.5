@@ -1,0 +1,69 @@
+.\" -*- nroff -*-
+.Id $Id: m5var055.5,v 1.1.1.1 2000-07-25 22:04:06 jon Exp $
+.Im MicroEmacs variable|window|hilight
+.so me.tni
+.TH $scroll-bar 5
+.XI $scroll-bar - "Scroll bar configuration"
+.SH NAME
+$scroll-bar \- Scroll bar configuration
+.Me $a
+.SH SYNOPSIS
+\fB$scroll-bar\fR "\fIbitmask\fR"; Default is platform specific
+.SH DESCRIPTION
+.B $scroll-bar
+defines  the  configuration  of the  scroll bar and/or the  horizontal  window
+separator for both main text windows and
+.Ht osd 2
+dialogs.  The  variable  is  interpreted  as a  bit  mask  and  defines  which
+components  of the scroll bar (or  separator)  should be rendered in a window.
+The characters used to render the scroll bar or separator are defined by
+.Ht $window-chars 5 .
+The bit mask is defined as follows:-
+.IP "\fB0x001\fR - Vertical Scroll Bar Width"
+Bit 0 controls the width of the vertical scroll bar (or separator). A value of
+0 corresponds to a single column width, a value of 1 is a double column width.
+.IP "\fB0x002\fR - Upper end cap"
+Bit 1 set  indicates  that the scroll bar has an upper end cap. This is the up
+arrow character at the top of a scroll bar.
+.IP "\fB0x004\fR - Lower end cap"
+Bit 2 set indicates  that the scroll bar has a lower end cap. This is the down
+arrow character at the bottom of a scroll bar.
+.IP "\fB0x008\fR - Corner"
+Bit 3 set indicates that separate corner character is used at the intersection
+of the mode line and the separator.
+.IP "\fB0x010\fR - Scroll Box Enable"
+Bit 4  determines  if the scroll bar has a scrolling  box, when the bit is set
+each scroll bar will have a scroll box. When clear,  scroll bars are  rendered
+according to bits 0-3 & 7 only and the main area of the bar is left empty.
+.IP "\fB0x020\fR - Reverse Video Box"
+Bit 5 when set enables the scroll box to be rendered in reverse video, that is
+the background and foreground/hilight scroll colors are interchanged. This bit
+is typically set on X-Window  platforms allowing the scroll box to comprise of
+\fCSPACE\fR  characters  allowing a solid box to be rendered in the foreground
+color.
+.IP
+Bit 5 is only enacted if scroll boxes are enabled.
+.IP "\fB0x040\fR - Horizontal Scroll Bar Width"
+Bit 6 controls the width of the horizontal scroll bar, used only by
+.Ht osd 2 .
+A value of 0  corresponds  to a single  column width, a value of 1 is a double
+column width.
+.IP "\fB0x080\fR - Splitter"
+Bit 7 set indicates  that the scroll bar has a splitter. This is the split bar
+character at the top of a scroll bar.
+.IP "\fB0x100\fR - Enable window Scroll Bars"
+When Bit 8 is clear,  scroll bars are not present on windows. If a  horizontal
+split has been  performed  then the window  separator is rendered  plain. This
+is useful  when  performance  is  important,  as scroll bars  require constant
+up-date. 
+.IP "\fB0x200\fR - Horizontal Scroll Bar Width"
+Bit 9 enables  scroll  bars,  when the bit is set each  window is  assigned  a
+scroll bar in the right-hand column(s) of the window with a scroll box.
+.SH "SEE ALSO"
+.na
+.Ht $mouse-pos 5 ,
+.Ht $scroll-bar-scheme 5 ,
+.Ht set-scroll-with-mouse 2 ,
+.Ht $window-chars 5 .
+.ad
+.FH

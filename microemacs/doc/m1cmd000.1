@@ -1,0 +1,343 @@
+.Id $Id: m1cmd000.1,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs function
+.so me.tni
+.TH me 1
+.XI me - "\*(mE text editor"
+.SH NAME
+me - \*(mE text editor
+.SH SYNOPSIS
+.na
+.B me
+[\fIoptions\fR]
+[\fIfiles ...\fR]
+.sp
+.B me
+[\|\fB@\fR\|\fIstartupFile\fR\|]
+[\|\fB\-b\fR\|]
+[\|\fB\-c\fR\|]
+[\|\fB\-d\fR\|]
+[\|\fB\-h\fR\|]
+[\|\fB\-i\fR\|]
+[\|\fB\-l\|\fIlineNo\fR\|]
+[\|\fB\-m\|\fIcommand\fR\|]
+[\|\fB\-n\fR\|]
+[\|\fB\-0\fR\|\fIfile\fR\|]
+[\|\fB\-p\fR\|]
+[\|\fB\-r\fR\|]
+[\|\fB\-s\|\fIstring\fR\|]
+[\|\fB\-v\fR\|\fIvariable=string\fR\|]
+[\|\fB\-x\fR\|]
+\fIfiles...\fR
+.ad
+.SH DESCRIPTION
+.B "\*(mE"
+is a cut  down  version  of the  \s-1EMACS\s0  text  editor,  based on  Danial
+Lawrences MicroEmacs.
+.B "\*(mE"
+is a tool for creating and changing documents,  programs, and other text files.
+It is both  relatively  easy for the novice to use, but also very  powerful in
+the hands of an expert. \*(mE can be extensively customized for the needs
+of the individual user.
+.PP
+.B "\*(mE"
+allows  multiple  files to be edited at the same time. The screen may be split
+into  different  windows and  screens,  and text may be moved  freely from one
+window on any screen to the next. Depending on the type of file being edited,
+.B "\*(mE"
+can change how it behaves to make editing simple. Editing standard text files,
+program files and word processing documents are all possible at the same time.
+.PP
+There are extensive  capabilities  to make word processing and editing easier.
+These  include   commands  for  string  searching  and  replacing,   paragraph
+reformatting  and deleting,  automatic  word  wrapping, word move and deletes,
+easy case controlling, and automatic word counts.
+.PP
+For complex and repetitive  editing tasks editing macros can be written. These
+macros  allow  the user a great  degree  of  flexibility  in  determining  how
+\fB\*(mE\fR  behaves.  Also, any and all the  commands can be used by any
+key stroke by changing, or rebinding, what commands various keys invoke.
+.PP
+Special  features  are also  available to perform a diverse set of  operations
+such as file  encryption,  automatic  backup file  generation,  entabbing  and
+detabbing  lines,  executing  operating  system commands and filtering of text
+through other programs.
+.PP
+The command line options to
+.B "\*(mE"
+are defined as follows:-
+.IP "\fB@\fR\|\fIstartFile\fR"
+Initialize  \*(mE using  \fIstartFile\fR\|[\fB.emf\fR].  The default when
+omitted is \fBme.emf\fR. See 
+.Ht start-up 3 
+and 
+.Hl "Command Line Filters" filters - 
+for more information.
+.IP \fB\-b\fR
+Load next file as a binary file (binary editor mode).
+.IP \fB\-c\fR
+Continuation  mode. Load  \fB\*(mE\fR  last edit session,  restoring  the
+buffers to their  previous  loaded state and position.  Note that history mode
+must be  enabled.  The  \fB\-c\fR  option  is  generally  used with  windowing
+interfaces (X-Windows/Microsoft Windows) as the shortcut icon invocation.
+.IP \fB\-d\fR
+Enable debug mode (for macro files).
+.IP \fB\-h\fR
+Show the help page (does not start the editor).
+.IP \fB\-i\fR
+\s-1MS-DOS\s0  versions of  \fB\*(mE\fR  only. Insert the contents of the
+current screen into the \fB*scratch*\fR buffer
+.IP \fB\-l\fR\|\fIlineNo\fR
+Go to line  \fIlineNo\fR in the next given file. Typically used with utilities
+such a
+.Hr more 1
+where an external editor may be invoked from other viewer.
+.IP "\fB\-m\fR\|\fIcommand\fR"
+Sends a  
+.Hl client-server client-server 2
+command  to an  existing  MicroEmacs  session.  The  command  takes  the  form
+"\fBC:\fR\|\fI<client>\fR\|\fB:\fR\|\fI<command>\fR"     i.e.     to     write
+"\fCHello\fR  \fCWorld\fR"  on the  message  line then a client  may issue the
+command:-
+.RS
+.CS
+; launch server
+me &
+; send message
+me -m "C:ME:ml-write \\"Hello world\\"
+.CE 0
+.RE
+.IP 
+Note that the  \fI<command>\fR  is a  MicroEmacs  macro  command,  the  escape
+sequences must be adhered to. The \fIclient-server\fR interface is typically used to
+load a file, this may be performed as follows:-
+.RS
+.CS
+me -m "C:myutility:find-file \\"/path/foo.bar\\""
+.CE 0
+.RE
+.IP
+The  absolute  path is  specified in this type of  transaction  as the current
+working  directory of the active MicroEmacs  session is unknown. The \fB\-m\fR
+option   de-iconize's  the  existing  editor  session  and  bring  it  to  the
+foreground.
+.IP \fB\-n\fR
+\s-1UNIX\s0  X-Windows  environments  only and  MicroSoft  Windows  NT console
+versions.  Execute   \fB\*(mE\fR  using  termcap  rather  than  X-Windows  for
+\s-1UNIX\s0; typically used within an \fBxterm\fR shell to fire up \fB\*(mE\fR
+for a quick  edit. For  Microsoft  Windows,  a console  window is  started  as
+opposed to a GUI window.
+.IP "\fB\-o\fR\|\fI<file>\fR"
+Use already  running version of \*(mE to load the  \fI<file>\fR, if it exists,
+otherwise  start a new  editor  session.  This  uses  the  \fIclient-server\fR
+interface to push the new file into the existing editor session. Refer to the 
+.Hl "Client-Server Interface" client-server 2
+for details.
+.IP \fB\-p\fR
+Pipe \fIstdin\fR into buffer \fB*stdin*\fR, when saved output to \fIstdout\fR,
+following is a simple example which changes '\fCa\fR's to '\fCb\fR's:
+.Me $emf-scheme
+.CS
+        define-macro start-up
+            find-buffer "*stdin*"
+            beginning-of-buffer
+            replace-string "a" "b"
+            save-buffer
+            quick-exit
+        !emacro
+.CE 0
+.Me $ehf-scheme
+.IP
+This can be used in the following manner:
+.CS
+        me "@testpipe.emf" < foo.a > foo.b
+.CE 0
+.IP \fB\-r\fR
+Read-only, all buffers will be in view mode
+.IP \fB\-s\fR\|\fIstring\fR
+Search for string "\fIstring\fR" in the current buffer. e.g.
+.C "me -sfoo bar"
+starts  \fB\*(mE\fR,  loads file  \fCbar\fR  and  initiates  a search for
+\fIfoo\fR.  The cursor is left at the end of the string if located,  otherwise
+at the top of the buffer.
+.IP \fB\-v\fR\|\fIvariable=string\fR
+Assign the  \*(mE  \fIvariable\fR  with  \fIstring\fR.  The assignment is
+performed before the buffers are loaded. Typically used to change the start-up
+characteristics of the startup file(s).
+.IP \fB\-x\fR
+\s-1UNIX\s0  environments. Disable the capture of signals. \fB\*(mE\fR by
+default  captures  an handles  all illicit  signal  interrupts.  The option is
+enabled when  debugging  the source code allowing  exception  conditions to be
+trapped within the debugger.
+.SH ENVIRONMENT
+The following environment variables are used by \fB\*(mE\fR.
+.IP \fBDISPLAY\fR
+\s-1UNIX\s0 environments running X-Windows only. The identity of the X-Windows
+server. Typically set to \fBunix:0.0\fR, refer to the X-Windows  documentation
+for details of this environment variable.
+.IP "\fBMENAME\fR and \fBLOGNAME\fR"
+The identity of the user, \fB$MENAME\fR takes precedence over  \fB$LOGNAME\fR.
+\fB$LOGNAME\fR variable is generally defined within \s-1UNIX\s0 as part of the
+login script. The variables are used to determine which start-up configuration
+to use in the initialization of \fB\*(mE\fR (\fI$MENAME\fR.erf).
+.IP
+Non-\s-1UNIX\s0  platforms  usually need to explicitly  set the  \fB$MENAME\fR
+environment  variable to identify the aforementioned  files. for \s-1MS-DOS\s0
+and Microsoft  Windows this is typically  performed in the  \fCAUTOEXEC.BAT\fR
+file.
+.IP \fBPATH\fR
+The \fB$PATH\fR  environment  variable is used on most operating  systems as a
+search path for executable files. This \fB$PATH\fR  environment  variable must
+be defined with \fB\*(mE\fR on the search path. Under \s-1UNIX\s0 this is
+set in the \fC.login\fR, \fC.cshrc\fR or \fC.profile\fR file i.e.
+.RS
+.IP
+export PATH $PATH:/usr/name/me
+.RE
+.IP
+Within  \s-1MS-DOS\s0 or Microsoft  Windows  environments it is defined in the
+\fCAUTOEXEC.BAT\fR file. e.g.
+.RS
+.IP
+set PATH=%PATH%;c:\\me
+.RE
+.IP
+\fB\*(mE\fR  utilizes information in the \fB$PATH\fR environment variable
+to locate the start-up files, dictionaries etc.
+.IP \fBTERM\fR
+The terminal identification sting. In \s-1UNIX\s0 environments the environment
+variable  \fB$TERM\fR is set to "\fCvt...\fR", in this case it is assumed that
+the  machine is a server,  and the host  cannot  support X (see  command  line
+option \fB\-n\fR).
+.IP
+In  \s-1MS-DOS\s0  the  environment  variable  is  usually  set to define  the
+graphics  adapter mode.  \fB%TERM\fR  is assigned a string,  understood by the
+\fCme.emf\fR  start-up  file, to set the  graphics  mode.  Predefined  strings
+include:-
+.RS
+.IP \fBE80x50\fR
+Initiates an 80 column by 50 line screen.
+.IP \fBE80x25\fR
+Initiates an 80 column by 25 line screen.
+.IP \fIuserDefined\fR
+A user defined string to set an explicit  graphics card mode. The operation is
+dependent upon the support offered by the graphics adapter.
+.RE
+.IP \fBMEPATH\fR
+\*(mE uses the environment variable  \fC$MEPATH\fR as the directory(s) used to
+search for the macro files (see
+.Ht emf 8 ).
+Within  the  \s-1UNIX\s0  \fC$MEPATH\fR  is a  semi-colon  separated  list  of
+directories  which are used to search for the \*(mE  macro  files. The path is
+searched from left to right. The environment  variable is typically defined in
+the in the \fC.login\fR, \fC.cshrc\fR or \fC.profile\fR file i.e.
+.RS
+.IP
+export MEPATH /usr/name/me/macros:/usr/local/microemacs
+.RE
+.IP
+The default when omitted is \fC/usr/local/microemacs\fR.
+.IP
+Within  \s-1MS-DOS\s0 or Microsoft  Windows  environments it is defined in the
+\fCAUTOEXEC.BAT\fR file. e.g.
+.RS
+.IP
+set MEPATH=c:\\me\\username;\\me\\macros
+.RE
+.IP
+There is no default  location in these  environments.  For  Microsoft  Windows
+environments refer to 
+.Ht me32.ini 8
+for a method of setting up the  \fC$MEPATH\fR  from the windows  configuration
+file.
+.IP \fBINFOPATH\fR
+\*(mE uses the environment  variable  \fC$INFOPATH\fR as the directory(s) used
+to search for GNU \fBInfo\fR files. Within the \s-1UNIX\s0  \fC$INFOPATH\fR is
+a semi-colon  separated  list of directories  which are used to search for the
+\*(mE macro  files. The path is searched  from left to right. The  environment
+variable is  typically  defined in the in the  \fC.login\fR,  \fC.cshrc\fR  or
+\fC.profile\fR file i.e.
+.RS
+.IP
+export INFOPATH /usr/local/info:$HOME/info
+.RE
+.IP
+The default when omitted is \fC/usr/local/info\fR.
+.IP
+Within  \s-1MS-DOS\s0 or Microsoft  Windows  environments it is defined in the
+\fCAUTOEXEC.BAT\fR file. e.g.
+.RS
+.IP
+set MEPATH=c:\\usr\\local\\info
+.RE
+.IP
+There is no default  location in these  environments.  For  Microsoft  Windows
+environments refer to 
+.Ht me32.ini 8
+for a method of setting up the \fC$INFOPATH\fR from the windows  configuration
+file.
+.SH FILES
+All of the macro files and  dictionaries  are located in the  \fB\*(mS\fR
+home directory. The standard file extensions that are utilized are:-
+.TP
+.Hl ".eaf" eaf 8
+.\"
+\fB\*(mE\fR  abbreviation file, defines completion definitions for buffer
+dependent text expansion.
+.TP
+.Hl ".edf" edf 8
+.\"
+A \fB\*(mE\fR spelling dictionary. \fI<language>\fR\fB.edf\fR provide language
+specific   dictionaries;   \fI$LOGNAME\fR\fB.edf\fR   is   personal   spelling
+dictionary.
+.TP
+.Hl ".ehf" ehf 8
+.\"
+\fB\*(mE\fR  help file  information.  On-line help information for emacs,
+the main file is \fCme.ehf\fR.
+.TP
+.Hl ".emf" emf 8
+.\"
+A \fB\*(mE\fR macro file. The following classes of macro file exist:
+.RS
+.IP \fBme.emf\fR
+The default startup file.
+.IP \fI<platform>.emf\fR
+A  platform   specify   startup  file,  these  include   \s-1UNIX   generic\s0
+(\fCunixterm.emf\fR),  \s-1UNIX\s0 specific  (\fCirix.emf\fR,  \fChpux.emf\fR,
+\fCunixwr1.emf\fR,  \fClinux.emf\fR,  \fCsunos.emf\fR  etc), Microsoft Windows
+(\fCwin32.emf\fR), \s-1MS-DOS\s0 (\fCdos.emf\fR).
+.IP "\fBhk\fR\fIxxxxxx\fR\fB.emf\fR"
+Buffer  context  specific  hook files to  initialize  a buffer with macros and
+highlighting  appropriate  to the contents of the file type. e.g. 'C' language
+editing  (\fChkc.emf\fR),  N/Troff typesetting  (\fChknroff.emf\fR),  UNIX
+Manual page display (\fChkman.emf\fR), Makefiles (\fChkmake.emf\fR), etc.
+.RE
+.TP
+.Hl ".erf" erf 8
+.\"
+Registry files, used to retain personal information, users history in the file
+etc.
+.TP
+.Hl ".etf" etf 8
+.\"
+Template  files used to seed new files.  Typically  contains  standard  header
+information,  copyright notices etc. that are placed at the head of files. The
+\'C' programming language is called \fCc.etf\fR
+.SH "MICROSOFT WINDOWS"
+Microsoft  Windows environments should refer to 
+.Ht me32.ini 8
+for a method of  setting up the  environment  variables  without  editing  the
+\fCAUTOEXEC.BAT\fR configuration file.
+.SH "SEE ALSO"
+.na
+.Ht emf 8 ,
+.Ht erf 8 ,
+.Hr emacs 1 " [GNU],"
+.Hr more 1 ,
+.Hr vi 1 .
+.br
+.Hl "Client-Server Interface" client-server 2 .
+.br
+.Hl "Command Line Filters" filters - .
+.ad
+.FH

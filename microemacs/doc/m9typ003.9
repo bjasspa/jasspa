@@ -1,0 +1,225 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1999 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m9typ003.9
+.\"  Created By    : Jon Green
+.\"  Created       : Sat Feb 6 14:22:09 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1999 JASSPA.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m9typ003.9,v 1.1.1.1 2000-07-25 22:04:08 jon Exp $
+.Im MicroEmacs filetype
+.so me.tni
+.TH txt 9
+.XI txt - "ASCII plain text file"
+.XI doc - "ASCII plain text document file"
+.SH SYNOPSIS
+txt, doc \- Plain text document file
+.SH FILES
+.na
+.B hkdoc.emf
+\- Plain text hook definition
+.ad
+.SH EXTENSIONS
+.na
+\fB.txt\fR \- ASCII plain text file
+.br
+\fB.doc\fR \- ASCII plain text document file
+.ad
+.SH DESCRIPTION
+The \fBdoc\fR  file type  template  handles the  hilighting and text formating
+of a plain  text  file.  Within  the  text  document  justification  and  word
+wrapping are typically enabled. The template allows the user to format text as
+left, right, center or no justification.
+.IP "\fBAuto Layout\fR"
+The automatic layout of the text is restricted to justification and wrapping
+and the detection of bulleted lists.
+.Ht fill-bullet 5
+may be used to  determine  the  character  set  used  for  bullet  points,  on
+encountering a bullet the left-hand justification might be modified.
+.IP "\fBFormatting rules\fR"
+The default mode of operation is automatic  mode which  attempts to retain the
+document style whenever a paragraph is re-formatted. This allows rapid entry of
+text into a reasonable format with no special formating character embedded in
+the text.
+.IP
+The automatic formatting rules used by
+.Ht fill-paragraph 2
+in an automatic text mode are defined as follows:-
+.RS
+.IP "Text on column 0"
+Text appearing in the first column is always assumed to be left  justified, and
+non-wrapping, provided that the text does not extend to the
+.Hl "fill column" fill-col 5 .
+This is typically used for headers and addresses.
+.IP "Text on right edge"
+Text ending at the right edge (the
+.Ht fill-col 5 ),
+which  commences  from more that 50% of the page  width is assumed to be right
+justified, non-wrapping. Typically used for addresses.
+.IP "Text centered"
+Text  which  is  centered  on the  page  is  assumed  to be  centered,  this  is
+non-wrapping.
+.IP "Indented"
+All other text, not covered by the cases above is assumed to be available  for
+filling.  In this  case the text is  filled by the  paragraph  and  left/right
+justification is applied.
+.RE
+.IP "\fBShort Cuts\fR"
+The short cut keys used within the buffer are:-
+.IP
+\fB\*cc \*ch\fR \- Help information on current mode.
+.br
+\fB\*cc \*cs\fR \- Spell the buffer.
+.br
+\fB\*cc \*cb\fR \- Fill both;  perform  left and right  justification  on the
+margins.
+.br
+\fB\*cc \*cb\fR \- Fill center; center the text on the current line.
+.br
+\fB\*cc  \*cl\fR \- Fill left; fill the text on the  paragraph  (ragged  right
+edge).
+.br
+\fB\*cc  \*cr\fR \- Fill right; place text on right margin.
+.br
+\fB\*cc \*co\fR \- Reduce a paragraph to a single line.
+.br
+\fB\*cc a\fR \- Move to automatic formatting mode (default).
+.br
+\fB\*cc l\fR \- Change mode to left formating
+.br
+\fB\*cc r\fR \- Change mode to right formating
+.br
+\fB\*cc r\fR \- Change mode to both formating
+.br
+\fB\*cc c\fR \- Change mode to center formating
+.br
+\fB\*cc n\fR \- Change mode to no formating
+.SH NOTES
+To move text to a word  processor  then it is advised that all  paragraphs are
+reduced to single lines,  leading  white space should be deleted (any possibly
+blank lines) and then import to the word  processor.  This saves  considerable
+time as the word processor  styles may be applied without  handling spaces and
+band end of line characters.
+.SH "MAGIC STRINGS"
+.IP "\fB-!- document -!-\fR"
+MicroEmacs  specific  tag,  recognizes  the file as a plain text  document. No
+hilighting of the document is performed.
+.IP "\fB-!- document; sectioned -!-\fR"
+MicroEmacs  specific  tag,  recognizes  the file as a document  that  contains
+sections. A crude section hilighting is enabled as follows:-
+.IP
+Lines  commencing  with \fB>\fR are assumed to be comments,  typically used at
+the head of the document .
+.RS
+.CS
+> -!- document; sectioned -!-
+>
+> Author:       My Self
+> Created:      11/11/97
+> Modified:     <211197.1003>
+> Location:     /xx/yy/zz.doc
+.CE 0
+.RE
+.IP
+All lines commencing with start (\fC*\fR) are assumed to be bullet lists. Bullet
+is hilighted.
+.IP
+All lines commencing with \fC[a-zA-Z])\fR or \fC[0-9])\fR are assumed to be
+minor sections. The section number is hilighted. e.g.:
+.RS
+.CS
+a) text
+1) text
+.CE 0
+.RE
+.IP
+All text in single or double quotes is hilighted, assumed to be
+literal  text.  and are  hilighted  i.e.  This is a  \fB"double  quote"\fR  or
+\fB'a'\fR single quote.
+.IP
+Lines commencing with underscore (\fC_\fR) are hilighted to the end.
+typically used as demarcation breaks or for section underlining
+.IP "\fB-!- Document; pseudo-code -!-\fR"
+The  document  contains  pseudo  code, and the pseudo code is  hilighted.  The
+pseudo-code tokens are defined as follows:-
+.IP
+\fB//\fR introduces a comment to the end of the line.
+.RS
+.IP "Command words comprise:-"
+\fCBEGIN\fR,
+\fCBREAK\fR,
+\fCCASE\fR,
+\fCCLEAR\fR,
+\fCCONTINUE\fR,
+\fCDO\fR,
+\fCDONE\fR,
+\fCELIF\fR,
+\fCELSE\fR,
+\fCEND\fR,
+\fCENDIF\fR,
+\fCFOR\fR,
+\fCFUNCTION\fR,
+\fCGOTO\fR,
+\fCIF\fR,
+\fCONEVENT\fR,
+\fCONINTERRUPT\fR,
+\fCPROCEDURE\fR,
+\fCREPEAT\fR,
+\fCRETURN\fR,
+\fCSET\fR,
+\fCSWITCH\fR,
+\fCTHEN\fR,
+\fCTO\fR,
+\fCUNTIL\fR,
+\fCWHILE\fR,
+.IP "Pseudo logical operators include"
+\fCAND\fR,
+\fCFALSE\fR,
+\fCMOD\fR,
+\fCNOT\fR,
+\fCOR\fR,
+\fCTRUE\fR,
+\fCXOR\fR,
+.RE
+.IP "\fB-!- document; sectioned; pseudo-code -!-\fR"
+A combination of both of the above.
+.SH BUGS
+The  automatic  mode  sometimes  mistakes an indented  paragraph for a centered
+paragraph. This only typically  occurs when the first line of the paragraph is
+not filled to the right. When the formatting error occurs,  simply pad the line
+out so that it extends past the fill column and re-apply the formatting.
+.PP
+Unfortunately  there is nothing that can be done to alleviate this problem, but
+it occurs infrequently.
+.SH "SEE ALSO"
+.na
+.Ht fill-col 5 ,
+.Ht fill-paragraph 2 ,
+.Ht spell-buffer 3 .
+.sp 1
+.Hl "Supported File Types" FileTypes -
+.ad
+.FH

@@ -1,0 +1,194 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd029.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|macrodevelopment
+.so me.tni
+.TH define-macro 2
+.XI define-macro - "Define a new macro"
+.SH NAME
+define-macro \- Define a new macro
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+\fBdefine-macro\fR \fImacro-name\fR
+.nf
+.RS
+.I "Macro body"
+.RE
+.B !emacro
+.fi
+.ad
+.SH DESCRIPTION
+.B define-macro
+starts the  definition  of an macro named  \fImacro-name\fR,  only used within
+macro files or buffers.  After the above header line, the body of the macro is
+added, one command or expression on a line. The macro definition is completed
+by the
+.Hl !emacro !emacro 4
+directive.
+.PP
+The numeric argument \fIn\fR,  specified as zero, defines the macro as private
+such that it does not appear on a command  completion list. A zero argument is
+generally  used on  helper  macro's  that form part of a larger  macro. If the
+argument  is  omitted,  or  non-zero,  then the macro  appears in the  command
+completion list.
+.PP
+See
+.Ht execute-file 2
+for a complete definition and examples of the \*(mE macro language.
+.PP
+Once the macro has been defined, it becomes  indistinguishable from a standard
+\*(mE command, i.e.
+.Ht execute-named-command 2
+(\fC\*ex\fR) can be used to execute the macro and
+.Ht global-bind-key 2
+can be used to globally bind the command to a key combination.
+.PP
+There  are no  restrictions  on the  number  of  macros  that may be  defined,
+provided that the name space is managed properly.  Consideration must be given
+as to when any  additional  macros  that are created are loaded into \*(mE. We
+usually like start-up to be rapid and macros are loaded as and when  requested
+by the user, or by the buffer hooks as new files are loaded (see
+.Ht add-file-hook 2
+and
+.Ht define-macro-file 2 ).
+.PP
+User defined macros may be documented with on-line help by including a
+.Ht define-help 2
+construct within the macro file.
+.SH EXAMPLE
+The  following  are two standard  macros  provided  with \*(mE. The first is a
+macro called  \fBclean\fR,  this strips  trailing white space from the ends of
+lines in a file and removes blank lines from the end of the file.
+.Me $emf-scheme
+.CS
+define-macro clean
+    ;
+    ; Prepare to clean up file.
+    ; Remember line & magic mode
+    set-variable #l0 $window-line
+    set-variable #l1 &not &bmod magic
+    !if #l1
+        1 buffer-mode "magic"
+    !endif
+    ;
+    ; Get rid of trailing white space on EOL
+    beginning-of-buffer
+    replace-string "[\\t ]+$" "\\\\0"
+    beginning-of-buffer
+    replace-string "[ ]+\\t" "\\t"
+    ;
+    ; Strip trailing blank lines.
+    end-of-buffer
+    backward-line
+    !while &and &gre $window-line 1 &sequal @wc "\\n"
+        kill-line
+        backward-line
+    !done
+    ;
+    ; Clean up - restore buffer modes etc.
+    ; Move back to starting line & restore original magic mode
+    !force goto-line #l0
+    !if #l1
+        -1 buffer-mode "magic"
+    !endif
+    screen-update
+    ml-write "Cleaned up file."
+!emacro
+.CE
+.Me $ehf-scheme
+The second example  converts all of the \fC<tab>\fR  characters in the file to
+their \fC<SPACE>\fR character equivalent.
+.Me $emf-scheme
+.CS
+;
+; tabs-to-spaces.
+; Convert all of the tabs to spaces.
+define-macro tabs-to-spaces
+    ; Remember line
+    set-variable #l0 $window-line
+    beginning-of-buffer
+    !force search-forward "\\t"
+    !while $status
+        set-variable #l1 $window-acol
+        backward-delete-char
+        &sub #l1 $window-acol insert-space
+        !force search-forward "\\t"
+    !done
+    goto-line #l0
+    screen-update
+    ml-write "[Converted tabs]"
+!emacro
+.CE
+.Me $ehf-scheme
+Both of  these  commands  are  available  from  the  command  line,  they  are
+indistinguishable from the built in commands.
+.PP
+Macros may also be nested, as shown in the next example, this macro contains a
+\fBdefine-macro\fR  within  itself, when  executed the macro  creates  another
+macro dynamically - dynamic macros are generally given a prefix of \fB%\fR and
+are highlighted differently in
+.Ht describe-bindings 2 .
+.PP
+The  following  example is taken from the
+.Ht alarm 3
+macro, executing  \fBalarm\fR the user is prompted for a message, and the time
+interval  before the alarm expires in hours and minutes. It then creates a new
+macro  with a  callback  so that the new macro  will be called at the  correct
+time.
+.Me $emf-scheme
+.CS
+!if &seq %alarm-numb "ERROR"
+    set-variable %alarm-numb 0
+    set-variable %osd-alarm &pinc %osd 1
+!endif
+
+define-macro alarm
+    set-variable %alarm-numb &add %alarm-numb 1
+    set-variable #l0 &cat "%alarm-" %alarm-numb
+    !force set-variable #l2 @3
+    !if &not $status
+        set-variable &ind #l0 @ml "Message"
+        set-variable #l1 @ml "Hours"
+        set-variable #l2 @ml "Minutes"
+    !else
+        set-variable &ind #l0 @1
+        set-variable #l1 @2
+    !endif
+    set-variable #l1 &mul 60000 &add &mul 60 #l1 #l2
+    define-macro #l0
+        !bell
+        set-variable #l0 &add &len &ind @0 10
+        osd %osd-alarm 0 "bat" 9 3
+        osd %osd-alarm 1 ""
+        osd %osd-alarm 2 "c" "ALARM"
+        osd %osd-alarm 3 ""
+        osd %osd-alarm 4 "" &ind @0
+        osd %osd-alarm 5 ""
+        osd %osd-alarm 6 "Bcf" " OK " f void 
+        %osd-alarm osd
+    !emacro
+    #l1 create-callback #l0
+!emacro
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+Refer to
+.Ht !return 4
+and
+.Ht !abort 4
+for details macro termination.
+.PP
+.na
+.Ht !emacro 4 ,
+.Ht add-file-hook 2 ,
+.Ht define-macro-file 2 ,
+.Ht define-help 2 ,
+.Ht describe-bindings 2 ,
+.Ht execute-file 2 ,
+.Ht execute-named-command 2 ,
+.Ht global-bind-key 2 ,
+.Ht insert-macro 2 ,
+.Ht start-kbd-macro 2 .
+.ad
+.FH

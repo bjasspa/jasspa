@@ -1,0 +1,110 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd093.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|macrodevelopment
+.so me.tni
+.TH define-help 2
+.XI define-help - "Define help information"
+.SH NAME
+define-help \- Define help information
+.Me $a
+.SH SYNOPSIS
+.na
+.B define-help
+"\fIstring\fR"
+["\fIsection\fR"]
+.IP
+.I "Free form text"
+.LP
+.B "!ehelp"
+.ad
+.SH DESCRIPTION
+.B define-help
+provides a mechanism  to define help  information  for commands and  variables
+within macro files. The command  allows user defined  macros to be  documented
+with help  information that is accessible from the command line via the normal
+help commands such as
+.Ht help-item 2 .
+.PP
+The help  information  is typically  embedded in the macro file with the macro
+command  that it is  documenting.  When the macro file is loaded then the help
+information is loaded and integrated into the existing help database.
+.PP
+\fIstring\fR  is the  name of the item  that is being  defined,  \fIsection\fR
+defines  what  section the item  belongs to.  Following is a table of standard
+\*(mE sections:
+.RS
+.PP 
+\fC1 \fR \*(mS command line arguments. 
+.br
+\fC2 \fR Built-in commands. 
+.br
+\fC2m\fR \*(mS buffer modes. 
+.br
+\fC3 \fR Macro commands. 
+.br
+\fC4 \fR Macro language commands. 
+.br
+\fC5 \fR \*(mS variables.
+.br
+\fC8 \fR \*(mS file formats.
+.PP
+.RE
+When  \fIsection\fR  is omitted is  defaults to the general  section  which is
+usually used for the higher level help pages.
+.PP
+Text following the \fBdefine-help\fR  line contains the help information, this
+is a free  form  text area that is  reproduced  when the help  information  is
+requested. The end of the text area is delimited by a \fB!ehelp\fR  construct.
+The help text is usually displayed using a special
+.Hl "hilighting scheme" hilight 2
+to control  the colors and  hyper-text  links to other help pages. As a result
+the text may contain escape ('\fC^[\fR') key sequences, see
+.Ht ehf 8
+for more information on the format.
+.SH EXAMPLE
+The following  example is a define-help representation for the
+.Ht paragraph-to-line 3
+macro.
+.Me $emf-scheme
+.CS
+define-help "paragraph-to-line" "3"
+
+^[cENAME^[cA
+
+     paragraph-to-line - Convert a paragraph to a single line
+$a
+
+
+^[cESYNOPSIS^[cA
+
+     n paragraph-to-line
+
+
+^[cEDESCRIPTION^[cA
+
+     paragraph-to-line  reduces  each of the  next n  paragraphs  of text to a
+     single  line.  This  is  used to  prepare  a  document  to go into a word
+     processor environment where end of line marks represent paragraph marks.
+
+
+^[cENOTES^[cA
+
+     This command is a macro defined in format.emf.
+
+
+^[cESEE ALSO^[cA
+
+     ^[ls^[lm^[cGfill-paragraph(2)^[cA^[le.
+
+!emacro
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Ht ehf 8 ,
+.Ht help-item 2 ,
+.Ht define-macro 2 ,
+.Ht help-command 2 ,
+.Ht help-variable 2 .
+.ad
+.FH

@@ -1,0 +1,43 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd109.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|search
+.ds C0 "(\fB\*er\fR)\ \&
+.so me.tni
+.TH replace-string 2
+.XI replace-string - "\*(C0Replace string with new string"
+.SH NAME
+replace-string \- Replace string with new string
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+\fBreplace-string\fR \*(C0
+.ad
+.SH DESCRIPTION
+.B replace-string
+replaces all  occurrences of one string with another  string. The  replacement
+starts  at the  current  location  of the  cursor  and  goes to the end of the
+current buffer.
+.PP
+A numeric  argument  positive \fIn\fR limits the number of strings replaced to
+\fIn\fR. A negative  argument  \fIn\fR limits the number of lines in which the
+replacement  may take place, e.g. a value of -15 restricts the  replacement of
+the string to the next 15 lines from the current cursor position.
+.SH "SEE ALSO"
+See
+.Hl "Operating Modes" Modes -
+for a description of the
+.Ht magic 2m
+and
+.Ht exact 2m
+modes which change the search space.
+.PP
+.na
+.Ht buffer-mode 2 ,
+.Ht query-replace-string 2 ,
+.Ht search-forward 2 .
+.br
+.Hl "Regular Expressions" RegularExpressions 2
+.ad
+.rm C0
+.FH

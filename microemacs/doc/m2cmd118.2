@@ -1,0 +1,29 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd118.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|region
+.ds C0 "(\fB\*(cX\*ca\fR)\ \&
+.so me.tni
+.TH set-alpha-mark 2
+.XI set-alpha-mark - "\*(C0Place an alphabetic marker in the buffer"
+.SH NAME
+set-alpha-mark \- Place an alphabetic marker in the buffer
+.Me $a
+.SH SYNOPSIS
+.na
+.B set-alpha-mark
+"\fI?\fR"
+(\fB\*(cX\*ca\fR)
+.ad
+.SH DESCRIPTION
+.B set-alpha-mark
+places  an alpha  mark at the  current  location  in the  buffer  which can be
+returned to from anywhere in the buffer using the command
+.Ht goto-alpha-mark 2 .
+The user is prompted  for a mark name which can be any  alphabetic  character.
+the mark is destroyed if the line is deleted.
+.SH "SEE ALSO"
+.na
+.Ht goto-alpha-mark 2 .
+.ad
+.rm C0
+.FH

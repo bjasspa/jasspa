@@ -1,0 +1,42 @@
+.\" -*- nroff -*-
+.Id $Id: m5var020.5,v 1.1.1.1 2000-07-25 22:04:04 jon Exp $
+.Im MicroEmacs variable|shell
+.so me.tni
+.TH $file-template 5
+.XI $file-template - "Regular expression file search string" 
+.SH NAME
+$file-template \- Regular expression file search string
+.Me $a
+.SH SYNOPSIS
+\fB$file-template\fR "\fIstring\fR"; Default is ""
+.SH DESCRIPTION
+.B $file-template
+defines a regular expression search string used to identify a file in the
+.Ht grep 3
+and 
+.Ht compile 3
+buffers. The format of the string is the same as magic mode search
+strings (see 
+.Ht search-forward 2 ).
+.SH EXAMPLE
+A  \s-1UNIX\s0  file name may be  considered  to contain  any ASCII  character
+except a space or a  '\fC:\fR'  (used as a  divider  in many  programs).  Thus
+\fB$file-template\fR should be:
+.Me $emf-scheme
+.CS
+set-variable $file-template "[!-9;-z]+"
+.CE
+.Me $ehf-scheme
+This will correctly identify "\fCfoo.c\fR" in the following example.
+.CS
+foo.c: 45:      printf("hello world\\n") ;
+.CE 0
+.SH "SEE ALSO"
+.na
+.Ht $line-template 5 ,
+.Ht compile 3 ,
+.Ht get-next-line 2 ,
+.Ht grep 3 ,
+.Ht search-forward 2 .
+.ad
+.FH

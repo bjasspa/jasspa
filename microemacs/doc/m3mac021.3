@@ -1,0 +1,31 @@
+.\" -*- nroff -*-
+.Id $Id: m3mac021.3,v 1.1.1.1 2000-07-25 22:04:00 jon Exp $
+.Im MicroEmacs command|delete
+.so me.tni
+.TH delete-indentation 3
+.XI delete-indentation - "Join 2 lines deleting white spaces"
+.SH NAME
+delete-indentation \- Join 2 lines deleting white spaces
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+\fBdelete-indentation\fR
+.ad
+.SH DESCRIPTION
+.B delete-indentation
+deletes  all white  characters  between the  beginning of the current line and
+the end of the previous line,  including the line-feed. If the current line is
+not empty then a space is inserted to divide the two lines now joined.
+.PP
+If a positive  argument  \fIn\fR is given then the process is repeated \fIn\fR
+times. Note that the deleted characters are not added to a kill buffer.
+.SH NOTES
+\fBdelete-indentation\fR is a macro defined in \fCformat.emf\fR.
+.SH "SEE ALSO"
+.na
+.Ht delete-blank-lines 2 ,
+.Ht clean 3 ,
+.Ht kill-line 2 .
+.ad
+.FH

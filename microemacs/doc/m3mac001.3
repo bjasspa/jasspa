@@ -1,0 +1,79 @@
+.Id $Id: m3mac001.3,v 1.1.1.1 2000-07-25 22:03:59 jon Exp $
+.Im MicroEmacs command|shell
+.so me.tni
+.TH grep 3
+.XI grep - "Execute grep command"
+.XI rgrep - "Execute recursive grep command"
+.SH NAME
+grep \- Execute grep command
+rgrep \- Execute recursive grep command
+.Me $a
+.SH SYNOPSIS
+.na
+.Me "|grep"
+.B grep
+"\fIexpression files...\fR"
+.Me "|rgrep"
+.B rgrep
+"\fIexpression\fR" "\fIbase-path\fR" "\fIfile-mask\fR"
+.ad
+.SH DESCRIPTION
+.B grep
+executes the
+.Hr grep 1
+command with the  command line set by the
+.Ht %grep-com 5
+variable and the user supplied  \fIexpression\fR and file list \fIfiles...\fR.
+The output of the command is piped into the \fB*grep*\fR buffer ready for the
+.Ht get-next-line 2
+command to step through all matched lines. The syntax from
+the   grep   output   must  be   setup   using   
+.Ht add-next-line 2 .
+.PP
+If an argument is given then a
+.Ht pipe-shell-command 2
+is used instead of
+.Ht ipipe-shell-command 2 ,
+this is useful when used in macros as it ensures that  \fBgrep\fR has finished
+before the command returns.
+.PP
+.B rgrep
+is simpler to \fBgrep\fR in that it uses
+.Hr grep 1
+to search for all occurrences of \fIexpression\fR, but \fBrgrep\fR also uses
+.Hr find 1
+to search for  \fIexpression\fR  in all files matching the  \fIfile-mask\fR in
+all directories from \fIbase-path\fR down.
+.SH NOTES
+\fBgrep\fR is a macro defined in \fCtools.emf\fR.
+.PP
+.Hr grep 1 
+must be executable on the system before grep or rgrep can function,
+.Hr find 1 
+must also be available for rgrep to work.
+.SH EXAMPLE
+The \fBgrep\fR command is generally set up in the startup files as follows:-
+.Me $emf-scheme
+.CS
+;
+; setup the next-error stuff including grep and compiling
+;
+set-variable $line-template "[0-9]+"
+set-variable $file-template "[a-zA-Z:]*[0-9a-zA-Z\\_.]+"
+;
+; Definitions for GNU grep utility.
+;
+set-variable %grep-com "grep -n "
+add-next-line "*grep*" ""
+add-next-line "*grep*" "%f:%l:"
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Hr grep 1 ,
+.Ht %grep-com 5 ,
+.Ht add-next-line 2 ,
+.Ht get-next-line 2 ,
+.Ht compile 3 .
+.ad
+.FH

@@ -1,0 +1,64 @@
+.\" -*- nroff -*-
+.Id $Id: m5var067.5,v 1.1.1.1 2000-07-25 22:04:06 jon Exp $
+.Im MicroEmacs variable|spell|macrodevelop
+.so me.tni
+.TH $find-words 5
+.XI $find-words - "Filtered word list"
+.SH NAME
+$find-words \- Filtered word list
+.SH SYNOPSIS
+.B $find-words
+.I word
+.SH DESCRIPTION
+.B $find-words 
+must first be  initialized  to the required  filter string, if the variable is
+evaluated  before it is initialized the value will be set to "\fIABORT\fR" and
+the command will fail.
+.PP
+The filter string can contain wild-card  characters  compatible with most file
+systems, namely:-
+.IP \fB?\fR
+Match any character.
+.IP \fB[abc]\fR
+Match character only if it is \fIa\fR, \fIb\fR or \fIc\fR.
+.IP \fB[a-d]\fR
+Match character only if it is \fIa\fR, \fIb\fR, \fIc\fR or \fId\fR.
+.IP \fB[^abc]\fR
+Match character only if it is not \fIa\fR, \fIb\fR or \fIc\fR.
+.IP \fB*\fR
+Match any number of characters.
+.PP
+Note that these are not the same characters used by
+.Ht exact 2m
+mode.
+.PP
+Once initialized, evaluating  \fB$find-words\fR  returns the next word found in
+the main spell  dictionaries  which matches the filter until no more words are
+found, in which case an empty string is returned.
+.SH EXAMPLE
+The  following  example  finds  all the  words  with  "\fIfoo\fR"  in it (e.g.
+"\fIfootnote\fR"), printing them to the massage line
+one at a time. Note that 
+.Ht &set 4
+is used on the
+.Ht !while 4
+statement to avoid evaluating \fB$find-words\fR twice per loop.
+.Me "$emf-scheme"
+.CS
+set-variable $find-words "*foo*"
+!while &not &seq &set #l0 $find-words ""
+    100 ml-write &cat "Word: " #l0
+!done
+.CE 0
+.Me "$ehf-scheme"
+.SH NOTES
+The order of the words is undefined.
+.PP
+Due to the way words are derived, it is possible to have two or more copies of
+a word in the  dictionary. If this is a matching word  \fB$find-words\fR  will
+return the word two or more times.
+.SH "SEE ALSO"
+.na
+.Ht spell 2 .
+.ad
+.FH

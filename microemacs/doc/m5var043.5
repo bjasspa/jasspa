@@ -1,0 +1,28 @@
+.\" -*- nroff -*-
+.Id $Id: m5var043.5,v 1.1.1.1 2000-07-25 22:04:05 jon Exp $
+.Im MicroEmacs variable|insert
+.so me.tni
+.TH $tabwidth 5
+.XI $tabwidth - "Tab character interval"
+.SH NAME
+$tabwidth \- Tab character interval
+.Me $a
+.SH SYNOPSIS
+\fB$tabwidth\fR \fCinteger\fR; Default is \fC8\fR
+.sp
+\-0 < \fIinteger\fR <= \fIn\fR
+.SH DESCRIPTION
+.B $tabwidth
+defines the interval of a tab character.
+.PP
+The tab interval is set to the  given numeric argument. As always, the numeric
+argument precedes the command. Hence to get  tabs every 4 spaces you would set
+the \fB$tabwidth\fR to 4.
+.SH "SEE ALSO"
+.na
+.Ht buffer-mode 2 
+.Ht tab 2m ,
+.Ht $tabsize 5 .
+.Ht tabs-to-spaces 3 .
+.ad
+.FH

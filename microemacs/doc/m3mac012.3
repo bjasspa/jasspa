@@ -1,0 +1,78 @@
+.\" -*- nroff -*-
+.Id $Id: m3mac012.3,v 1.1.1.1 2000-07-25 22:04:00 jon Exp $
+.Im MicroEmacs command|games
+.so me.tni
+.TH Mahjongg 3
+.XI Mahjongg - "\*(mE version of the solitaire Mah Jongg game"
+.SH NAME
+Mahjongg \- \*(mE version of the solitaire Mah Jongg game
+.Me $a
+.SH SYNOPSIS
+.na
+\fBMahjongg\fR
+.ad
+.SH DESCRIPTION
+Mah Jongg is an ancient Chinese game usually played by four players with tiles
+similar  to  dominos.  This  is a \*(mE  version  which  was  inspired  by the
+\s-1X-Windows\s0  version of the same game. The  \s-1X-Windows\s0  version for
+the  solitaire  game  originally  seen on the  \s-1PC\s0  and later  ported to
+\s-1SunView\s0.
+.SS "Theory Of Play"
+The  object of the game is to remove  all the tiles from the board.  Tiles are
+removed by matching two identical tiles which have either an open left edge or
+open  right  edge.  The  only   exception  to  this  rule  is  that  any  open
+"\fIflower\fR"   tile  (bamboo   \fC[BAMB]\fR,   orchid   \fC[ORCH]\fR,   plum
+\fC[PLUM]\fR,   or   chrysanthemum   \fC[CHRY]\fR)   matches  any  other  open
+"\fIflower\fR"  tile and any open "\fIseason\fR" tile (spring, summer, autumn,
+or winter) matches any other open "\fIseason\fR" tile.
+.PP
+Tiles are  stacked  on the board, the height of the tile is  indicated  by the
+color coding as follows:-
+.IP
+.nf
+\fCLevel 5\fR - White
+\fCLevel 4\fR - Red
+\fCLevel 3\fR - Yellow
+\fCLevel 2\fR - Green
+\fCLevel 1\fR - Cyan
+.fi
+.PP
+To remove a pair of tiles,  click the left mouse  button on a tile (which will
+show in the  selection  color)  and then  click the left  mouse  button on the
+matching  tile. At this  point, both tiles will  disappear  from the board. If
+after  selecting  the first tile, you decide  that you don't wish to play that
+tile, simply reclick the left button on the selected tile, alternatively click
+the right button to deselect any selected tile.
+.PP
+To the  right of the  board  are a number  of  control  buttons.  To select an
+option, click the left mouse button on it.
+.IP \fBNEW\fR
+Start a new game (keyboard n).
+.IP \fBSAME\fR
+Start the same game again (keyboard s).
+.IP \fBQUIT\fR
+Exit the game (keyboard q).
+.IP \fBHELP\fR
+This help page (keyboard esc h).
+.PP
+The counter shows the number of remaining  tiles on the board, at the start of
+the game there are 144 tiles.
+.SH NOTES
+Mahjongg is a macro defined in \fCmahjongg.emf\fR.
+.PP
+Mah Jongg may only be played with a mouse, there is no keyboard  support, with
+the exception of the re-start keys.
+.SH ACKNOWLEDGEMENT
+Thanks to Jeff S. Young who (I think) wrote the  original  X-Windows  version,
+and whose manual page formed the basis of this page.
+.PP
+The  tile  patterns  were  inspired  from the  X-Windows  tile  patterns.  The
+X-Windows  tile  patterns  themselves  are  copyright  1988  by  Mark  A. Holm
+<tektronix!tessi!exc!markh>.
+.SH "SEE ALSO"
+.na
+.Hl Games Games - ,
+.Ht Match-It 3 ,
+.Ht Patience 3 .
+.ad
+.FH

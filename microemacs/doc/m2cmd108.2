@@ -1,0 +1,31 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd108.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|cursor
+.ds C0 "(\fB\*cl\fR)\ \&
+.so me.tni
+.TH recenter 2
+.XI recenter - "\*(C0Recenter the window (refresh the screen)"
+.SH NAME
+recenter \- Recenter the window (refresh the screen)
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+\fBrecenter\fR \*(C0
+.ad
+.SH DESCRIPTION
+.B recenter
+scrolls the current window so that the cursor position is at the center of the
+window and  redraws  the whole  screen. If \fIn\fR is given then  scrolls  the
+window so that the cursor is \fIn\fR lines from the top if \fIn\fR is positive
+or from the bottom if negative.
+.PP
+.B recenter
+is typically used to refresh the screen if it is out of date (i.e. needs to be
+redrawn).
+.SH "SEE ALSO"
+.na
+.Ht screen-update 2 .
+.ad
+.rm C0
+.FH

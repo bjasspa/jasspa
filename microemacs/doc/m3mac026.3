@@ -1,0 +1,95 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"  			Copyright 1998 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        : 
+.\"  Module        : 
+.\"  Object Name   : m3mac026.3
+.\"  Created By    : Steven Phillips
+.\"  Created       : Fri Aug 7 07:32:59 1998
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description	
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"	
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1998 JASSPA.
+.\" 
+.\"  All Rights Reserved.
+.\" 
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied, 
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m3mac026.3,v 1.1.1.1 2000-07-25 22:04:00 jon Exp $
+.Im MicroEmacs command|paragraph
+.ds C0 "(\fB\*eq\fR)\ \&
+.so me.tni
+.TH ifill-paragraph 3
+.XI ifill-paragraph \- "\*(C0Format a paragraph"
+.SH NAME
+ifill-paragraph \- Format a paragraph
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+\fBifill-paragraph\fR \*(C0
+.ad
+.SH DESCRIPTION
+\fBifill-paragraph\fR,  like \fBfill-paragraph\fR,  fills the current paragraph from the
+left  margin to the current  fill  column. In addition  ifill-paragraph  also
+recognizes joined bullet lists and fills each bullet paragraph separately.
+.PP
+See
+.Ht fill-paragraph 2
+for more information on the process of filling paragraphs.
+.SH EXAMPLE
+Following are 2 copies of the same  paragraph, the first has been filled using
+\fBifill-paragraph\fR:
+.CS
+This  is the  main  paragraph  which  can be as long as  required,
+following is a list of bullets, some with a sub-bullet  list. Here
+is the list:
+    a) The bullet paragraph can also be as long as required and it
+       also can have a bullet  list  following  (sub-bullet  list)
+       which will also be filled correctly. Here is the sub-bullet
+       list:
+       1. First  sub-bullet - again no length  restrictions,  this
+          will be filled correctly.
+       2. second sub-bullet - no problems.
+       3. Third sub-bullet - again no length restrictions, this is
+          getting boring.
+    b) This is the second  major bullet and this can just carry on
+       for ever, but all things must come to an
+.CE
+The following version has been filled using the normal \fBfill-paragraph\fR:
+.CS
+This  is the  main  paragraph  which  can be as long as  required,
+following is a list of bullets, some with a sub-bullet  list. Here
+is the  list:  a) The  bullet  paragraph  can  also  be as long as
+required and it also can have a bullet list following  (sub-bullet
+list) which will also be filled  correctly. Here is the sub-bullet
+list: 1. First  sub-bullet  - again no length  restrictions,  this
+will be filled  correctly. 2. second  sub-bullet - no problems. 3.
+Third sub-bullet - again no length  restrictions,  this is getting
+boring. b) This is the second major bullet and this can just carry
+on for ever, but all things must come to an
+.CE 0                  
+.SH NOTES
+\fBifill-paragraph\fR is a macro defined in \fCformat.emf\fR.
+.SH "SEE ALSO"
+.na
+.Ht fill-paragraph 2 ,
+.Ht paragraph-to-line 3 .
+.ad
+.rm C0
+.FH
+

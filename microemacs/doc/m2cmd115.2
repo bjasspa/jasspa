@@ -1,0 +1,43 @@
+.\" -*- nroff-*-
+.Id $Id: m2cmd115.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|window
+.ds C0 "(\fB\*e\*cv\fR)\ \&
+.ds C1 "(\fB\*e\*cz\fR)\ \&
+.so me.tni
+.TH scroll-next-window-down 2
+.XI scroll-next-window-down - "\*(C0Scroll next window down"
+.XI scroll-next-window-up - "\*(C1Scroll next window up"
+.SH NAME
+.Me "|scroll-next-window-down"
+scroll-next-window-down \- Scroll next window down
+.br
+.Me "|scroll-next-window-up"
+scroll-next-window-up \- Scroll next window up
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+\fBscroll-next-window-down\fR \*(C0
+.br
+.I n
+\fBscroll-next-window-up\fR \*(C1
+.ad
+.SH DESCRIPTION
+.B scroll-next-window-down
+scrolls  the next window down  \fIn\fR  lines, if \fIn\fR is omitted  then the
+next  window is  scrolled  by  \fIwindow\fR  number of lines (i.e. next screen
+page).
+.PP
+.B scroll-next-window-up
+scrolls the next window up \fIn\fR lines, as
+.BR scroll-next-window-down .
+.PP
+These commands are useful in macros to control other windows.
+.SH "SEE ALSO"
+.na
+.Ht scroll-up 2 ,
+.Ht scroll-down 2 .
+.ad
+.rm C0
+.rm C1
+.FH

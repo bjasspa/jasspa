@@ -1,0 +1,58 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd094.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|cursor|paragraph
+.ds C0 "(\fB\*en\fR)\ \&
+.ds C1 "(\fB\*ep\fR)\ \&
+.so me.tni
+.TH forward-paragraph 2
+.XI forward-paragraph - "\*(C0Move the cursor to the next paragraph"
+.XI backward-paragraph - "\*(C1Move the cursor to the previous paragraph"
+.SH NAME
+.Me |forward-paragraph
+forward-paragraph \- Move the cursor to the next paragraph
+.br
+.Me |backward-paragraph
+backward-paragraph \- Move the cursor to the previous paragraph
+.Me $a
+.SH SYNOPSIS
+.na
+\fIn\fR \fBforward-paragraph\fR \*(C0
+.br
+\fIn\fR \fBbackward-paragraph\fR \*(C1
+.ad
+.SH DESCRIPTION
+.B forward-paragraph
+puts the  cursor  at the end of the  \fIn\fRth  paragraph  after  the  cursor,
+default is 1.
+.PP
+.B backward-paragraph
+puts the cursor at the beginning of the \fIn\fRth paragraph before the cursor,
+default is 1.
+.SH DIAGNOSTICS
+.PP
+The  following  errors can be  generated,  in each case the command  returns a
+FALSE status:
+.IP "\fB[end of buffer]\fR"
+When moving  forwards, the given argument  \fIn\fR was greater that the number
+of remaining paragraphs, the cursor is left at the end of the buffer.
+.IP "\fB[top of buffer]\fR"
+When moving  backwards, the given argument \fIn\fR was greater than the number
+of  paragraphs  before the cursor, the cursor is left at the  beginning of the
+buffer.
+.SH NOTES
+.BS
+For both  invocations  a negative  value  reverses  the sense of  movement  as
+expected.
+.BU
+A paragraph break is defined as a blank line.
+.BE 0
+.SH "SEE ALSO"
+.na
+.Ht backward-line 2 ,
+.Ht forward-line 2 ,
+.Ht scroll-down 2 ,
+.Ht scroll-up 2 .
+.ad
+.rm C0
+.rm C1
+.FH

@@ -1,0 +1,26 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd067.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|macrodevelop
+.so me.tni
+.TH show-cursor 2
+.XI show-cursor \- "Change the visibility of the cursor"
+.SH NAME
+show-cursor \- Change the visibility of the cursor
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B show-cursor
+.ad
+.SH DESCRIPTION
+.B show-cursor
+hides the cursor if a negative argument is given and restores it if a positive
+or no argument is given. Note that this is not supported on all platforms.
+.PP
+.B show-cursor
+internally  performs  a counting  operation,  if the cursor is hidden  \fIm\fR
+times  then it must also be shown  \fIm\fR  times  before  the cursor  becomes
+visible  again,  giving no  argument  will  restore  the count  ensuring it is
+visible.
+.FH
+

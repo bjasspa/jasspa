@@ -1,0 +1,111 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1998 Jon Green.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m2cmd129.2
+.\"  Created By    : Jon Green
+.\"  Created       : Thu Jul 16 23:13:14 1998
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1998 Jon Green.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from Jon Green.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m2cmd129.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|print|hilight
+.so me.tni
+.TH print-color 2
+.XI print-color - "Create a new printer color"
+.XI print-scheme - "Create a new printer color and font scheme"
+.SH NAME
+.br
+.Me "|print-color"
+print-color \- Create a new printer color
+.br
+.Me "|print-scheme"
+print-scheme \- Create a new printer color and font scheme
+.Me $a
+.SH SYNOPSIS
+.na
+.B print-color 
+"\fIcol-no\fR"
+"\fIred\fR"
+"\fIgreen\fR"
+"\fIblue\fR"
+.br
+.I n
+.B print-scheme
+"\fIschemeNum\fR"
+"\fIfore\fR"
+"\fIback\fR"
+"\fIfont-mask\fR"
+.ad
+.SH DESCRIPTION
+.B print-color
+and
+.B print-scheme
+are similar to
+.Ht add-color 2
+and
+.Ht add-color-scheme 2
+except they configure \*(mS's printer scheme.
+.PP
+\fBprint-color\fR  creates a new printer color and inserts it into the printer
+color  table,  where  \fIred\fR,  \fIgreen\fR  and  \fIblue\fR  are the  color
+components  and  \fIcol-no\fR  is the printer  color index. The printer  color
+table  contains  256  entries  indexed  by  \fIcol-no\fR  in the range  0-255.
+\fBprint-color\fR may also be used to modify an existing \fIcol-no\fR index by
+re-assignment,  the existing  color  definition is  over-written  with the new
+color definition.
+.PP
+print-scheme creates a new printer scheme which defines how schemes, used by
+.Ht hilight 2
+when rendering a buffer's text, are to be printed. For example key words could
+be  printed  in bold or in blue  etc. It  takes an  identifying  index  number
+"\fIschemeNum\fR", two color values, "\fIfore\fR" and "\fIback\fR" (defined by
+\fBprint-color\fR)  and a font setting  "\fIfont-mask\fR". The \fIfont-mask\fR
+is a bit mask where each bit is defined as follows:
+.sp
+.RS
+\fC0x01\fR Enable bold font.
+.br
+\fC0x02\fR Enable italic font.
+.br
+\fC0x04\fR Enable light font.
+.br
+\fC0x08\fR Enable reverse font.
+.br
+\fC0x10\fR Enable underlining.
+.RE
+.SH NOTES
+Printer schemes can be created and altered using the
+.Ht scheme-editor 3
+dialog, the created printer scheme can then the used directly in the
+.Ht print-setup 3
+dialog. Therefore direct use of these commands is largely redundant.
+.SH "SEE ALSO"
+.na
+.Ht scheme-editor 3 ,
+.Ht print-buffer 2 ,
+.Ht hilight 2 ,
+.Ht $buffer-hilight 5 .
+.ad
+.FH

@@ -1,0 +1,78 @@
+.\" -*- nroff -*-
+.Id $Id: m5var060.5,v 1.1.1.1 2000-07-25 22:04:06 jon Exp $
+.Im MicroEmacs variable
+.so me.tni
+.TH $time 5
+.XI $time - "The current system time"
+.SH NAME
+$time \- The current system time
+.Me $a
+.SH SYNOPSIS
+.B $time
+"\fIstring\fR" 
+.SH DESCRIPTION
+.B $time
+is a constantly changing variable which is set to the current system time. The
+format of \fB$time\fR is "\fCYYYYCCCMMDDWhhmmssSSS\fR", where:-
+.IP \fBYYYY\fR
+The current year (full 4 digits so should be millennium bug free).
+.IP \fBCCC\fR
+Day of the year (0-366).
+.IP \fBMM\fR
+The month of the year (1-12).
+.IP \fBDD\fR
+The day of the month (1-31).
+.IP \fBW\fR
+The day of the week (0-6 Sunday=0).
+.IP \fBhh\fR
+The hour (0-23).
+.IP \fBmm\fR
+The minute (0-59).
+.IP \fBss\fR
+The second (0-59).
+.IP \fBSSS\fR
+The millisecond (0-999).
+.PP
+\fB$time\fR  can be set to an integer value which is a time offset in seconds,
+for example if the following was executed;-
+.Me $emf-scheme
+.CS
+set-variable $time "3600"
+ml-write &cat "$time is " $time
+set-variable $time "0"
+.CE
+.Me $ehf-scheme
+The written time would one hour ahead of the system time.
+.SH EXAMPLE
+The following macro times the time taken to execute a user command:-
+.Me $emf-scheme
+.CS
+define-macro time
+    !force set-variable #l2 @1
+    !if &not $status
+        set-variable #l2 @ml00 "Time command"
+    !endif
+    set-variable #l0 $time
+    !force execute-line #l2
+    set-variable #l1 $time
+    set-variable #l2 &add &mid #l0 16 2 &mul 60 &add &mid #l0 14 2 &mul 60 &mid #l0 12 2 
+    set-variable #l3 &add &mid #l1 16 2 &mul 60 &add &mid #l1 14 2 &mul 60 &mid #l1 12 2 
+    !if &les &set #l4 &sub &rig #l1 18 &rig #l0 18 0
+        set-variable #l2 &add #l2 1
+        set-variable #l4 &add 1000 #l4
+    !endif
+    ml-write &spr "Command took %d sec %d msec" &sub #l3 #l2 #l4
+!emacro
+.CE
+.Me $ehf-scheme
+.Ht time 3
+is a macro defined in misc.emf.
+.PP
+.Ht organizer 3
+uses \fB$time\fR to work out the current month.
+.SH "SEE ALSO"
+.na
+.Ht time 3 , 
+.Ht organizer 3 .
+.ad
+.FH

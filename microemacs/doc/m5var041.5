@@ -1,0 +1,106 @@
+.\" -*- nroff -*-
+.Id $Id: m5var041.5,v 1.1.1.1 2000-07-25 22:04:05 jon Exp $
+.Im MicroEmacs variable|shell|macrodevelop
+.so me.tni
+.TH $result 5
+.XI $result - "Various command return values"
+.SH NAME
+$result \- Various command return values
+.Me $a
+.SH SYNOPSIS
+.B $result
+.I returnValue
+.SH DESCRIPTION
+.B $result
+is used to return the results of several commands:
+.PP
+.Ht buffer-info 2 
+\fB$result\fR  is set to the same output string as printed to the message-line
+by this command.
+.TP
+.Ht change-font 2 
+\fB$result\fR  is used to return the user  select  font when hte windows  font
+selection dialog is used (Windows systems only).
+.TP
+.Ht count-words 2 
+\fB$result\fR  is set to the same output string as printed to the message-line
+by this command.
+.TP
+.Ht find-registry 2 
+\fB$result\fR  is used to return  the name of a registry  child node given the
+parent and index from the user.
+.TP
+.Ht get-registry 2
+\fB$result\fR is used to return the current value of a user supplied  registry
+entry.
+.TP
+.Ht mark-registry 2
+\fB$result\fR is used to return the full name of the given registry node.
+.TP
+.Ht osd 2 
+.IP
+\fB$result\fR  is used to give and return  information  to osd item  commands,
+information depends on the type of \fBosd\fR item.
+.TP
+.Ht osd-dialog 3
+.Ht osd-xdialog 3
+.IP
+\fB$result\fR  is used to return the button pressed by the user.
+.TP
+.Ht shell-command 2 
+.IP
+\fB$result\fR  is  set  to the  exit  status  of the  \fBsystem\fR  call.  The
+combination of \fBshell-command\fR calls and return value checking can be used
+in a variety of ways, for example, to test the existence of a file:
+.Me $emf-scheme
+.CS
+set-variable %filename @ml"Enter file name"
+shell-command &cat "test -f " %filename
+!if &equ $result 0
+    ml-write "file exists"
+!else
+    ml-write "file does not exists"
+!endif
+.CE 0
+.Me $ehf-scheme
+.TP
+.Ht show-region 2 
+.IP
+\fB$result\fR  is set to the current  status of the region when an argument of
+\fI0\fR is given to \fBshow-region\fR.
+.TP
+.Ht spell 2
+.IP
+\fB$result\fR  is  used  to  return  information  on  the  current  word,  the
+information depends on the argument given to \fBspell\fR.
+.TP
+.Ht $file-names 5
+.IP
+\fB$result\fR  is set to the  absolute  path  of the  \fB$file-names\fR  query
+directory when the variable is set.
+.PP
+For more information see the help pages on referenced commands and variables.
+.SH NOTES
+The current value of \fB$result\fR is lost on the next command call which uses
+it. As a call to
+.Ht create-callback 2
+can cause the  execution of a macro to interrupt  another which is waiting for
+user input, the value of  \fB$result\fR  should be copied before  getting user
+input.
+.SH "SEE ALSO"
+.na
+.Ht buffer-info 2 ,
+.Ht change-font 2 ,
+.Ht count-words 2 ,
+.Ht find-registry 2 ,
+.Ht get-registry 2 ,
+.Ht mark-registry 2 ,
+.Ht osd 2 ,
+.Ht shell-command 2 ,
+.Ht show-region 2 ,
+.Ht spell 2 ,
+.Ht $file-names 5 .
+.Ht create-callback 2 ,
+.Ht $status 5 .
+.ad
+.FH

@@ -1,0 +1,26 @@
+.\" -*- nroff -*-
+.Id $Id: m2mod026.2,v 1.1.1.1 2000-07-25 22:03:59 jon Exp $
+.Im MicroEmacs modes
+.so me.tni
+.TH del 2m
+.XI del - "Flag buffer to be deleted"
+.SH NAME
+del \- Flag buffer to be deleted
+.SH SYNOPSIS
+.B "del Mode"
+.sp
+\fBd\fR \- mode line letter.
+.SH DESCRIPTION
+This mode cannot be set  globally and is used to flag that the buffer is to be
+deleted. The state of the mode is displayed in the output of
+.Ht list-buffers 2 ,
+if the first  column is a 'D' the mode is set,  otherwise  it is not. Only the
+execute command in 
+.Ht list-buffers 2
+(bound to 'x') uses this flag to actually delete the buffer.
+.SH "SEE ALSO"
+.na
+.Ht list-buffers 2 ,
+.Ht save 2m .
+.ad
+.FH

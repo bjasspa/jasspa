@@ -1,0 +1,47 @@
+.\" -*- nroff -*-
+.Id $Id: m5var074.5,v 1.1.1.1 2000-07-25 22:04:07 jon Exp $
+.Im MicroEmacs variable|file
+.so me.tni
+.TH $kept-versions 5
+.XI $kept-versions - "Number of backups to be kept"
+.SH NAME
+$kept-versions \- Number of backups to be kept
+.Me $a
+.SH SYNOPSIS
+.na
+\fB$kept-versions\fR \fIinteger\fR; Default is 0
+.ad
+.sp
+0 <= \fIinteger\fR <= n
+.SH DESCRIPTION
+\fB$kept-versions\fR  allows the user to specify the number of backup versions
+that are required for each file. For file "\fCXXXX\fR", each backup version is
+renamed  to   "\fCXXXX.~?~\fR",   where  \fC?\fR  is  the  backup  number.  If
+\fB$kept-versions\fR  is set to 0 this  feature is  disabled  and the  default
+single backup file is created.
+.PP
+The most recent backup will always be \fC.~0~\fR  and the last version will be
+\fC.~n~\fR where \fCn\fR is  \fB$kept-versions\fR  \- 1. when the file is next
+saved  the  \fC.~0~\fR  backup  file is  moved to  \fC.~1~\fR,  \fC.~1~\fR  to
+\fC.~2~\fR    etc,    backup    \fC.~n~\fR    is   removed.    Evidently    if
+\fB$kept-versions\fR it set to a large number this can effect performance.
+.SH RESTRICTIONS
+\fB$kept-versions\fR  may only be used when \s-1DOS\s0 file name  restrictions
+are not enabled.  This means that some  systems  (such as DOS) cannot use this
+functionality, see
+.Ht $system 5
+for more information. Backup files are only created when buffer mode
+.Ht backup 2m
+is enabled.
+.SH NOTES
+This feature is not supported  when writing ftp files, a single backup file is
+created when backup files are enabled.
+.SH "SEE ALSO"
+.na
+.Ht $system 5 ,
+.Ht autosv 2m ,
+.Ht backup 2m ,
+.Ht ftp 3 ,
+.Ht save-buffer 2 .
+.ad
+.FH

@@ -1,0 +1,88 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"  			Copyright 1999 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        : 
+.\"  Module        : 
+.\"  Object Name   : m9typ029.9
+.\"  Created By    : Jon Green
+.\"  Created       : Mon May 24 17:38:35 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description	
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"	
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1999 JASSPA.
+.\" 
+.\"  All Rights Reserved.
+.\" 
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied, 
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m9typ029.9,v 1.1.1.1 2000-07-25 22:04:10 jon Exp $
+.Im MicroEmacs filetype
+.so me.tni
+.TH x86 9
+.XI x86 - "Intel .x86 Assembler File"
+.SH SYNOPSIS
+x86 \- Intel .x86 Assembler File
+.SH FILES
+.na
+.B hkasmx86.emf
+\- Intel .x86 Assembler hook definition
+.br
+.B asmx86.etf
+\-  Intel .x86 Assembler template file.
+.ad
+.SH EXTENSIONS
+.na
+\fB.x86\fR \- Intel .x86 Assembler File
+.ad
+.SH "MAGIC STRINGS"
+.IP "\fB-!- asmx86 -!-\fR"
+Recognized by MicroEmacs only, defines the file to be a Intel x86 assembler file.
+.SH DESCRIPTION
+The  \fBx86\fR  file type  template  provides  simple  hilighting of Intel x86
+assembler files.
+.IP \fBHilighting\fR
+The hilighting  features allow commands, variables, logical, comments, strings
+and characters of the language to be differentiated  and rendered in different
+colors.
+.IP "\fBAuto Layout\fR"
+The 
+.Hl "indentation mechanism" indent 2 
+is enabled which performs automatic layout of the text.
+.Ht restyle-region 3
+and
+.Ht restyle-buffer 3
+are available to reformat  (re-layout) selected sections of the buffer, or the
+whole buffer, respectively.
+.IP "\fBShort Cuts\fR"
+The short cut keys used within the buffer are:-
+.IP
+\fB\*cc \*cc\fR \- Comment out the current line.
+.br
+\fB\*cc \*cd\fR \- Uncomment the current line.
+.SH BUGS
+None reported.
+.SH "SEE ALSO"
+.na
+.Ht indent 2 ,
+.Ht restyle-region 3
+.Ht restyle-buffer 3
+.Ht asm 9
+.sp 1
+.Hl "Supported File Types" FileTypes -
+.ad
+.FH
+

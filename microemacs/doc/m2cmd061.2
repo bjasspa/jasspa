@@ -1,0 +1,32 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd061.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|cursor
+.ds C0 "(\fB\*e\*cf\fR)\ \&
+.so me.tni
+.TH goto-matching-fence 2
+.XI goto-matching-fence \- "\*(C0Move the cursor to matching fence"
+.SH NAME
+goto-matching-fence \- Move the cursor to specified line
+.Me $a
+.SH SYNOPSIS
+.na
+\fBgoto-matching-fence\fR \*(C0
+.ad
+.SH DESCRIPTION
+.B goto-matching-fence
+moves the cursor to the opposing  fence  character of the character  currently
+under the cursor. The set of fence characters  include \fC[]\fR,  \fC{}\fR and
+\fC()\fR.   i.e.  if  the  character   under  the  cursor  is  `\fC{\fR'  then
+\fBgoto-matching-fence\fR moves the cursor to the opening fence `\fC}\fR', and
+visa versa.
+.PP
+.B goto-matching-fence
+can also be used to move the cursor to matching C/C++ \fC#if\fR,  \fC#elif\fR,
+\fC#else\fR  and  \fC#endif\fR  constructs,  cycling through them in the given
+order.
+.SH "SEE ALSO"
+.na
+.Ht goto-line 2 .
+.ad
+.rm C0
+.FH

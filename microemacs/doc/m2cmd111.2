@@ -1,0 +1,33 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd111.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|insert
+.ds C0 "(\fB\*ey\fR)\ \&
+.so me.tni
+.TH reyank 2
+.XI reyank - "\*(C0Restore next yank buffer"
+.SH NAME
+reyank \- Restore next yank buffer
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+\fBreyank\fR \*(C0
+.ad
+.SH DESCRIPTION
+Every  region  killed  goes  onto a stack,  with the most  recent  at the top.
+Immediately after yanking text out into the current buffer using
+.Ht yank 2 ,
+the user may \fBreyank\fR which deletes the region just yanked and replaces it
+with \fIn\fR  insertions of the next region on the kill stack. Another call to
+reyank deletes that region and replaces it with the next in the stack etc.
+.PP
+The last 15 kills are stored.
+.SH "SEE ALSO"
+.na
+.Ht copy-region 2 ,
+.Ht kill-region 2 ,
+.Ht set-mark 2 ,
+.Ht yank 2 .
+.ad
+.rm C0
+.FH

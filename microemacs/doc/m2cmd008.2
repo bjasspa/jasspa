@@ -1,0 +1,72 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1998 Jon Green.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m2cmd008.2
+.\"  Created By    : Jon Green
+.\"  Created       : Thu Jul 16 23:13:14 1998
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1998 Jon Green.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from Jon Green.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m2cmd008.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|registry
+.so me.tni
+.TH save-registry 2
+.XI save-registry - "Write a registry definition file"
+.SH NAME
+save-registry \- Write a registry definition file
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B save-registry
+["\|\fIroot\fR\|" "\|\fIfile\fR\|"]
+.ad
+.SH DESCRIPTION
+.B save-registry
+saves a registry tree, defined by \fIroot\fR, to a registry file \fIfile\fR in
+the
+.Ht erf 8
+format. By default the user is prompted for the registry  \fIroot\fR  to save,
+which  must  already  exist.  If the  \fIfile\fR  given  is the  empty  string
+\fC""\fR, the registry node  \fIroot\fR must be a root node with an associated
+file name stored, this file name is used.
+.PP
+The argument \fIn\fR may be used to control the effect of the command, \fIn\fR
+is a bit based flag defined as follows:-
+.IP \fB0x01\fR
+Enables  prompting  before saving, only used when saving all registries.
+.IP \fB0x02\fR
+Save all  changed  registries  except the history  node which  should be saved
+using the command
+.Ht save-history 2 .
+.SH NOTES
+This command is called to save all registry changes whenever \*(mS is exited.
+.SH "SEE ALSO"
+.na
+.Ht read-registry 2 ,
+.Ht save-history 2 ,
+.Ht erf 8 .
+.ad
+.FH

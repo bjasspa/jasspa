@@ -1,0 +1,391 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd003.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|macrodevelop
+.so me.tni
+.TH add-file-hook 2
+.XI add-file-hook - "Declare file name context dependent configuration"
+.SH NAME
+add-file-hook \- Declare file name context dependent configuration
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B add-file-hook
+"\fIextensions\fR"
+"\fIfhook-name\fR"
+.ad
+.SH DESCRIPTION
+.B add-file-hook
+defines a macro binding  between a file name or file type and a set of macros.
+This binding enables file type dependent screen  highlighting and key bindings
+to be performed. For a higher level introduction refer to
+.Hl "File Hooks" fileHooks 2 .
+.PP
+.B add-file-hook
+operates in two different modes to establish the type of file:-
+.BS 
+Content recognition, by examination of the contents of the file.
+.BU
+File extension recognition.
+.BE
+Content  recognition has the highest priority and is used in preference to the
+file extension.
+.PP
+.B add-file-hook
+is  called  multiple  times  to add  new  recognition  rules.  The  rules  are
+interrogated  in  last-in-first-out  (\s-1LIFO\s0)  order, hence the extension
+added last has a greater  precedence  than those  added  first. This  ordering
+allows default rules to be over-ridden.
+.SS "Initialization"
+.B add-file-hook
+must be initialized prior to the first call, using an invocation of the form:-
+.Me $emf-scheme
+.CS
+0 add-file-hook
+.CE
+.Me $ehf-scheme
+with a numeric argument \fIn\fR of 0, and no arguments. This invocation resets
+the file hooks by deleting all of the installed hooks. 
+.SS "File Extension Recognition"
+.B add-file-hook 
+with no numerical argument \fIn\fR allows the extension of a file (or the base
+file name if there is no extension) to be used to determine which user defined
+setup  macro  is to be  executed.  The  \fIextensions\fR  argument  is a space
+separated list of \fIfile  endings\fR (as opposed to true  extensions)  and is
+usually  specified  with the extension  separator.  For example, the extension
+"\fC.doc\fR" may indicate that the file is a document and therefore the
+.Hl indent indent 2m ,  
+.Hl wrap wrap 2m 
+and 
+.Hl justify justify 2m 
+buffer modes are required. This may be performed  automatically  by defining a
+macro which adds these modes and adding a file hook to  automatically  execute
+this macro whenever a file "\fC*.doc\fR" is loaded.
+.PP
+The command arguments are defined as follows:-
+.IP \fIextensions\fR
+A space separated list of file extensions,  which are to be checked, this list
+includes the extension  separator  (typically  dot  ('\fC.\fR').  It should be
+noted that the  extension  search is actually a comparison  of the tail of the
+string, as such files such as \fImakefile\fR,  which do not have an extension,
+are specified literally.
+.IP \fIfhook-name\fR
+The name of the file hook to execute. This is the name of the macro to execute
+that initializes the buffer. 
+.LP
+As an example:-
+.Me $emf-scheme
+.CS
+define-macro fhook-doc
+    1 buffer-mode "indent"
+    1 buffer-mode "wrap"
+    1 buffer-mode "justify"
+!emacro
+
+add-file-hook ".doc" "fhook-doc"
+.CE
+.Me $ehf-scheme
+It is quite  possible  that the same macro should be executed for a text file,
+i.e.  "\fC*.txt\fR"  this is achieved by a single  \fBadd-file-hook\fR  as the
+space (' ') character is used as an extension separator, e.g.
+.Me $emf-scheme
+.CS
+add-file-hook ".doc .txt" "fhook-doc"
+.CE
+.Me $ehf-scheme
+There  are  two  special   file  hooks,  which  are   \fBfhook-binary\fR   and
+\fBfhook-default\fR,  these are not  predefined,  but if the user defines them
+then they are executed whenever a file is loaded in binary mode (see
+.Ht buffer-mode 2 )
+or the extension does not match any of those defined.
+.PP
+Considering the  \fCfhook-XXX\fR  prefix, the initial '\fBf\fR' character must
+be present as this is changed to a \'\fBb\fR'  and an '\fBe\fR'  when  looking
+for the enter (begin)  buffer and exit buffer  hooks. These hooks are executed
+whenever the user swaps to or from a buffer (including creating and deleting).
+So for the given example, if the tab size of 8 is required in a document (but 4
+elsewhere)   then  this   operation   this  is   performed   by  defining  the
+\fCbhook-XXX\fR and \fCehook-XXX\fR macros, e.g.:-
+.Me $emf-scheme
+.CS
+define-macro bhook-doc
+    set-variable $tabsize 8
+!emacro
+
+define-macro ehook-doc
+    set-variable $tabsize 4
+!emacro
+.CE
+.Me $ehf-scheme
+File  hooks  are  often  used  to  setup  the  desired
+.IR "buffer modes" ,
+.IR hilighting ,
+.IR "local key bindings" ,
+.IR "abbreviation  file" ,
+etc.
+.PP
+Buffer hooks are usually used to set and restore conflicting global variables.
+.SS "File Content Recognition"
+.B add-file-hook
+with a non-zero numerical argument \fIn\fR defines a macro binding between the
+content  in a  file  and a set of  macros.  This  binding  enables  file  type
+dependent  screen  hi-lighting  and  key  binding  to be  performed.  For a full
+description of file hooks refer to
+.Hl "File Hooks" fileHooks 2 ,
+for file extension dependent hooking refer to
+.Ht add-file-hook 2 .
+.PP
+The content  defined file hooks  interrogate the contents of a file on loading
+and search for a  \fImagic\fR  string  identifier  embedded  in the text which
+uniquely identifies the file type.
+.PP
+The  recognition  process  performs a search of the first  \fIn\fR  (numerical
+argument)  non-blank  lines of the file, searching for the regular  expression
+specified by the \fIextensions\fR argument. The sign of the numerical argument
+\fIn\fR is interpreted as follows:-
+.BS
+\fB\-ve\fR \- Case insensitive search
+.BU
+\fB+ve\fR \- Case sensitive search
+.BE
+The command arguments are defined as follows:-
+.IP \fIextensions\fR
+A regular expression string defining the text to be searched for. 
+.IP \fIfhook-name\fR
+The name of the file hook to execute. This is the name of the macro to execute
+that will initialize the buffer. 
+.LP
+The search commences from the first non-blank line in the file, if the regular
+expression,  defined  by  \fIextensions\fR  is  located  then  the  file  hook
+\fIfhook-name\fR is invoked. This is typically used to identify files which do
+not have file  extensions i.e.  \s-1UNIX\s0  shell script files. To identify a
+shell script file which commences with:-
+.LP
+.CS 0
+#!/bin/sh
+.CE
+The  following file hook is used:-
+.IP
+.B "1 add-file-hook"
+"\fB#!/.*sh\fR" "\fBfhook-shell\fR"
+.LP
+Note that "\fC.*sh\fR" also matches  \fC/bin/csh\fR,  \fC/usr/local/bin/zsh\fR
+etc, so care should be taken to ensure that the regular  expression  string is
+sufficiently well specified to recognize the file type.
+.PP
+The second class of embedded text are explicit  identifiers  embedded into the
+text. The embedded strings take the form:
+.IP
+\fC-*-\fR \fImode\fR \fC-*\fR
+.br
+\fC-*-\fR \fBMode:\fR \fImode\fR; ... \fC-*-\fR
+.br
+\fC-!-\fR \fImode\fR \fC-!-\fR
+.LP
+The  \fC-*-\fR  notation  belongs  to GNU  Emacs,  but  \*(mE  recognizes  the
+construct and extracts the string  correctly. The \fC-!-\fR  notation is \*(mE
+specific  and is  provided so as not to cause  conflict  with GNU Emacs. \*(mE
+searches for either construct on the first non-blank line of the file.
+.PP
+The explicit strings are defined with a negative  numerical  argument \fIn\fR,
+which identifies them as \fBexplicit\fR  rather than \fBmagic\fR text strings.
+The  \fIstring\fR  should  be  defined  in  lower  case  and  matches  a  case
+insensitive  string  take from the file. e.g. to define a file hook for a make
+file:
+.CS
+.ne 9
+#_____________________________-!-Makefile-!-________________________________
+#
+# Make file for MicroEmacs using the Microsoft MSCV 2.0/4.0 development kit.
+#
+# Author      : Jon Green
+# Created     :  020197.1002
+# Last Edited : <150297.1942>
+# File        : makefile.w32
+\....
+.CE
+might be defined as:
+.IP
+-1 
+\fBadd-file-hook\fR
+"-!-[ \\t]*makefile.*-!-"
+fhook-make
+.SH NOTES
+.SS "Automatic Macro File Loading"
+.B add-file-hook
+performs an  automatic  load of a macro file if the  \fBfhook\fR  macro is not
+present in memory. The file name of the command file  containing  the macro is
+automatically  derived from the \fIname\fR  component of the \fBfhook\fR macro
+name. The  \fBfhook-\fR  part of the name is stripped off and  prepended  with
+\fBhk\fR and suffixed with \fB.emf\fR. Hence, macro  \fBfhook-doc\fR  would be
+searched for in file  \fChkdoc.emf\fR  within the  \*(mE  directory.  The
+command file is automatically loaded and executed.
+.PP
+In cases where the fhook macro is not located in an equivalent  hook file, the
+file location of the macro may be explicitly defined for auto loading via a
+.Ht define-macro-file 2
+invocation.
+.PP
+As an example,  consider  the C-mode file hook, used to load  \fC.c\fR  files.
+The  loading of a C header  file  (\fC.h\fR)  utilizes  the same  highlighting
+modes, but it's  startup  sequence is slightly  different  when  handling  new
+files. In this case the  \fBfhook-cmode\fR  for \fC.c\fR and \fBfhook-hmode\fR
+for \fC.h\fR files are located in the same hook file namely \fChkcmode.emf\fR.
+.Me $emf-scheme
+.CS
+define-macro-file hkcmode fhook-hmode
+
+add-file-hook ".c .cc .cpp .def .l .y .i .ac"   "fhook-cmode"
+add-file-hook ".h .hpp"                         "fhook-hmode"
+.CE
+.Me $ehf-scheme
+In this case the
+.Hl define-macro-file define-macro-file 2
+has been used to inform  \*(mE  of the location of the  \fBfhook-hmode\fR
+macro   thereby   overriding   the   automatic   load   of   a   file   called
+\fBhkhmode.emf\fR. The \fBfhook-cmode\fR  macro requires no such definition as
+it is located in a hook file that matches the mode name, \fChkcmode.emf\fR.
+.SS "Extending a standard hook definition"
+The  standard  file  hook  files  \fBhk\fR\fIXXX\fR\fB.emf\fR  should  not  be
+modified. The standard  file hooks may be extended with local  definitions  by
+defining a file \fBmy\fR\fIXXX\fR\fB.emf\fR, which is an extension to the hook
+file   \fBhk\fR\fIXXX\fR\fB.emf\fR.   This  is  automatically  executed  after
+\fBhk\fR\fIXXX\fR\fB.emf\fR. Refer to sections
+.Hl "Language Templates" languageTemplates 2 
+and
+.Hl "File Hooks" fileHooks 2 
+for details.
+.SS "File Extensions"
+The file  extensions  are  specified  as a space  separated  list of file name
+endings.  Back-up  file  endings  such as tilde  (\fC~\fR)  are not classed as
+correct  file  endings and are skipped by the file hook  search,  hence a file
+ending "\fC.c~\fR"  invokes the same hook function as a "\fC.c\fR" file. It is
+therefore  not  necessary  to add the backup and auto-save endings to the file
+hook definition.
+.PP 
+The  extension  separator,  usually dot  (\fC.\fR), is typically  added to the
+\fIextensions\fR  list, they may be omitted  with  effect  where a file always
+ends in the same set of  characters.  A notable  example  is  "\fCmakefile\fR"
+which  includes no extension, as such, \*(mE applies the same hook function to
+a file called \fCImakefile\fR as the endings are the same.
+.SS "Binary Files"
+It is sometimes  useful to associate  file types as binary files, so that they
+are immediately loaded in binary. In this case, both file extension and content
+recognition  methods (i.e. of a magic string) are applicable. In both cases the
+file is bound to the well known hook  \fCfhook-binary\fR  which  automatically
+loads the file in a binary mode. 
+.PP
+Note, that for the  content  recognition  process for a binary  hook, the load
+time is doubled as the file is initially  loaded in the default text mode, the
+binary hook function forces a second load operation in binary.
+.SH SUMMARY
+.B add-file-hook
+is summarized as follows:-
+.BS
+Binds one or more extensions to a macro called fhook-\fIxxxx\fR.
+.BU
+Extensions are typically specified with the dot (\fC.\fR) separator.
+.BU
+Multiple extensions are specified as a space separated list.
+.BU
+Binds a regular expression search string to a macro called fhook-\fIxxxx\fR.
+.BU
+The absolute value of the numerical argument determines the number of lines in
+the file over which the regular expression search is made.
+.BU
+The sign of the numerical argument determines if the regular expression search
+is case (in)sensitive.
+.BU
+When one of the files with a known file  extension, or recognized  content, is
+loaded macro \fBfhook-xxxx\fR is executed.
+.BU
+\fBfhook-xxxx\fR, if undefined, is automatically searched for in file 
+\fBhk\fIxxxx\fB.emf\fR.
+.BU
+When the buffer  containing the known file is entered (i.e. gains focus), then
+entry macro \fBbhook-xxxx\fR is executed.
+.BU
+When the buffer  containing the known file is exited (i.e. looses focus), then
+the exit macro \fBehook-xxxx\fR is executed.
+.BE 0
+.SH EXAMPLE
+The standard set of supported  file types by \*(mE, at the time of writing, is
+defined as:-
+.Me $emf-scheme
+.CS
+; reset the file hook list
+0 add-file-hook
+; Add file extension hooks.
+; Files loaded in binary mode do not need hook as fixed
+add-file-hook "*help* *info* .ehf"                            fhook-ehf
+add-file-hook "*bindings* *commands* *variables*"             fhook-lists
+add-file-hook "*buffers*"                                     fhook-blist
+add-file-hook "/ *directory* *files*"                         fhook-dir
+add-file-hook "*registry*"                                    fhook-reg
+add-file-hook "*icommand* *shell* *gdb* *dbx*"                fhook-ipipe
+add-file-hook ".emf"                                          fhook-emf
+add-file-hook ".doc .txt"                                     fhook-doc
+add-file-hook ".1 .2 .3 .4 .5 .6 .7 .8 .9 .so .tni .sm"       fhook-nroff
+add-file-hook ".c .h .def .l .y .i"                           fhook-c
+add-file-hook ".cc .cpp .hpp .rc"                             fhook-cpp
+add-file-hook "Makefile makefile .mak"                        fhook-make
+add-file-hook "Imakefile imakefile"                           fhook-imake
+add-file-hook ".sh .ksh .csh .login .cshrc .profile .tcshrc"  fhook-shell
+add-file-hook ".bat .btm"                                     fhook-dos
+add-file-hook ".man"                                          fhook-man
+add-file-hook ".dmn"                                          fhook-dman
+add-file-hook ".ini .hpj .reg .rgy"                           fhook-ini
+add-file-hook ".htm .html"                                    fhook-html  
+add-file-hook ".htp .hts"                                     fhook-hts
+add-file-hook ".tcl"                                          fhook-tcl
+add-file-hook ".rul"                                          fhook-rul
+add-file-hook ".awk .nawk .gawk"                              fhook-awk
+add-file-hook ".p .pas"                                       fhook-pascal
+add-file-hook ".vhdl .vhd"                                    fhook-vhdl
+add-file-hook ".fvwm .fvwm2rc"                                fhook-fvwm
+add-file-hook ".java .jav"                                    fhook-java
+add-file-hook ".nsr"                                          fhook-nsr
+add-file-hook ".erf"                                          fhook-erf
+; Add magic hooks
+ 1 add-file-hook "^#!/.*sh"               fhook-shell ; UNIX shell files
+ 1 add-file-hook "^#!/.*wish"             fhook-tcl
+ 1 add-file-hook "^#!/.*awk"              fhook-awk
+ 1 add-file-hook "^#VRML"                 fhook-vrml
+-4 add-file-hook "<html>"                 fhook-html
+-1 add-file-hook "-[*!]-[ \\t]*c.*-[*!]-"         fhook-c     ; -*- C -*-
+-1 add-file-hook "-[*!]-[ \\t]*c\\\\+\\\\+.*-[*!]-"   fhook-cpp   ; -*- C++ -*-
+-1 add-file-hook "-[*!]-[ \\t]nroff.*-[*!]-"      fhook-nroff ; -*- nroff -*-
+-1 add-file-hook "-!-[ \\t]*shell.*-!-"           fhook-shell ; -!- shell -!-
+-1 add-file-hook "-!-[ \\t]*msdos.*-!-"           fhook-dos   ; -!- msdos -!-
+-1 add-file-hook "-!-[ \\t]*makefile.*-!-"        fhook-make  ; -!- makefile -!-
+-1 add-file-hook "-!-[ \\t]*document.*-!-"        fhook-doc   ; -!- document -!-
+-1 add-file-hook "-!-[ \\t]*fvwm.*-!-"            fhook-fvwm  ; -!- fvwm -!-
+-1 add-file-hook "-!-[ \\t]*erf.*-!-"             fhook-erf   ; -!- erf -!-
+-1 add-file-hook "-!-[ \\t]*fold:.*-!-"           fhook-fold  ; -!- fold:... -!-
+.CE 0
+.Me $ehf-scheme
+.SH "OBSCURE INFORMATION"
+This section includes some low-level information which is so obscure it is not
+relevant to the typical user.
+.SS "Resolving Loading Order Problems"
+There is a potential  loading  order problem  involving  auto-loading  of file
+libraries  and  the  setting  up  of  \fBbhook\fR  and  \fBehook\fR.  E.g.  if
+the main fhook function has been defined as a
+.Ht define-macro-file 2 ,
+but the  bhook or  ehooks  have not the when a buffer is  created  as only the
+fhook is define, only the fhook is set, the rest remain  disabled  even though
+the  execution  of the macro file will define these extra hooks.
+.PP
+To solve  this  problem  simply  define  the  bhook/ehooks  as well. Note that
+automatically  loaded  hooks do not suffer from this problem as the macro file
+is executed before the hooks are assigned,  thereby ensuring the all the hooks
+are defined.
+.SH "SEE ALSO"
+.na
+.Hl "File Hooks" fileHooks 2 ,
+.Hl "Language Templates" languageTemplates 2 ,
+.Ht $buffer-bhook 5 ,
+.Ht $buffer-ehook 5 ,
+.Ht $buffer-fhook 5 .
+.ad
+.FH

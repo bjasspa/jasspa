@@ -1,0 +1,24 @@
+.\" -*- nroff -*-
+.Id $Id: m5var026.5,v 1.1.1.1 2000-07-25 22:04:05 jon Exp $
+.Im MicroEmacs variable|file
+.so me.tni
+.TH $home 5
+.XI $home - "Users `home' directory location"
+.SH NAME
+$home \- Users `home' directory location
+.Me $a
+.SH SYNOPSIS
+.B $home
+\fIdirectory\fR
+.SH DESCRIPTION
+The file naming  convention  utilizes tilde  ('\fC~\fR') to identify the users
+home directory (\fC$HOME\fR). When entering a file name:
+.CS
+~/xxx    -> $home/xxx
+~yyy/xxx -> $home/../yyy/xxx
+.CE    
+On  most  systems  this  is  automatically  set  to the  environment  variable
+"\s-1HOME\s0"  if it is defined or may be defined  explicitly  in the start-up
+file. '\fC~\fR' may be used in the \fCme.emf\fR files but must be specified as
+\'\fC~\fR'. It may be picked up in command files as \fB$home\fR.
+.FH

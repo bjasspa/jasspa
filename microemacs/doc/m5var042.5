@@ -1,0 +1,42 @@
+.\" -*- nroff -*-
+.Id $Id: m5var042.5,v 1.1.1.1 2000-07-25 22:04:05 jon Exp $
+.Im MicroEmacs variable|insert
+.so me.tni
+.TH $tabsize 5
+.XI $tabsize - "Tab character width"
+.SH NAME
+$tabsize \- Tab character width
+.Me $a
+.SH SYNOPSIS
+\fB$tabsize\fR \fIinteger\fR; Default is \fC4\fR
+.sp
+\-0 < \fIinteger\fR <= \fIn\fR
+.SH DESCRIPTION
+.B $tabsize
+defines the width of a tab character.
+.PP
+Setting  tabs to arbitrary  widths is possible in  \*(mE  but you must be
+aware  of a subtle  difference  that it makes to your  file and  hence to your
+editing.  When  you  start  \*(mE,  the tab  width is set to the  default
+(usually  every 8th column) for the tab character  (\fCCTRL-I\fR).  As long as
+you stay with the default,  every time you insert the tab  character, a CTRL-I
+get inserted. Hence, you logically have a single  character which might appear
+to be several  spaces on the screen (or the output)  depending upon the column
+location of the tab character.  This means that to remove the spacing you have
+to delete a \fIsingle\fR character \-\- the tab character.
+.PP
+On the other hand, the moment you  explicitly set the tab interval (even if it
+is to the default  value),  \*(mE  handles the tab character by expanding
+the  character  into  the  required  number  of  spaces  to  move  you  to the
+appropriate column. In this case, to remove the spacing you have to delete the
+appropriate number of spaces inserted by \*me to get you to the right column.
+.PP
+The operating mode of the tab expansion is controlled by the 
+.Ht tab 2m  mode.
+.SH "SEE ALSO"
+.na
+.Ht buffer-mode 2 
+.Ht tab 2m ,
+.Ht $tabwidth 5 .
+.ad
+.FH

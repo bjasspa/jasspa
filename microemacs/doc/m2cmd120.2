@@ -1,0 +1,30 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd120.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|file
+.ds C0 "(\fB\*ee\fR)\ \&
+.so me.tni
+.TH set-encryption-key 2
+.XI set-encryption-key - "\*(C0Define the encryption key"
+.SH NAME
+set-encryption-key \- Define the encryption key
+.Me $a
+.SH SYNOPSIS
+.na
+\fBset-encryption-key\fR \*(C0
+.ad
+.SH DESCRIPTION
+.B set-encryption-key
+sets the  encryption  key for files loaded or saved with
+.Ht crypt 2m
+mode  enabled.  This must be performed  for each file, key is not entered into
+the  history.  The key can be set for each file on the command  line using the
+\fB\-k\fR  flag.  When  saving  a buffer  in  encryption  mode the key will be
+prompted for if not already set.
+.SH "SEE ALSO"
+.na
+.Ht buffer-mode 2 ,
+.Ht crypt 2m ,
+.Ht find-cfile 2 .
+.ad
+.rm C0
+.FH

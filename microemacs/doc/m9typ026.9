@@ -1,0 +1,187 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1999 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m9typ026.9
+.\"  Created By    : Jon Green
+.\"  Created       : Sat Feb 6 14:22:09 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1999 JASSPA.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m9typ026.9,v 1.1.1.1 2000-07-25 22:04:09 jon Exp $
+.Im MicroEmacs
+.so me.tni
+.TH nroff 9
+.XI "nroff" - "UNIX nroff file" filetype
+.XI "troff" - "UNIX troff file" filetype
+.XI "0-9" - "UNIX t/nroff file" filetype
+.XI "tni" - "UNIX t/nroff include file" filetype
+.XI "so" - "UNIX t/nroff include file" filetype
+.XI "tex2nr" 3 "Convert a Latex file into nroff" command
+.XI "aman" 3 "Compile an nroff file into a buffer (UNIX)" command
+.SH SYNOPSIS
+0-9, tni, so \- UNIX t/nroff file.
+.SH FILES
+.na
+.B hknroff.emf
+\- UNIX t/nroff file.
+.br
+.B nroff.etf
+\- UNIX t/nroff template file
+.br
+.B ntags.emf
+\- t/nroff tags generator macro definition.
+.ad
+.SH EXTENSIONS
+.na
+.BR 1 ,
+.BR 2 ,
+.BR 3 ,
+.BR 4 ,
+.BR 5 ,
+.BR 6 ,
+.BR 7 ,
+.BR 8 ,
+.B  9
+\- UNIX t/nroff files.
+.br
+.BR tni ,
+.B  so
+\- UNIX t/nroff include files.
+.br
+.B sm
+\- \fI[Special]\fR Superman t/nroff file.
+.ad
+.SH "MAGIC STRINGS"
+.IP "\fB-*- nroff -*-\fR"
+Recognized by GNU and MicroEmacs.  Denotes a t/nroff type file, may be
+used in \fB.1\fR/\fB.9\fR, \fB.tni\fR and \fB.so\fR files.
+.SH DESCRIPTION
+The \fBnroff\fR file type  templates  handle UNIX n/troff type files.
+.IP "\fBGeneral Editing\fR"
+On creating a new file, a new header is automatically included into the file.
+.Ht time 2m
+is by default enabled, allowing the modification time-stamp to be maintained in
+the header.
+.IP \fBHilighting\fR
+The  hilighting  features allow  commands,  variables,  logical,  preprocessor
+definitions,   comments,   strings  and  characters  of  the  language  to  be
+differentiated and rendered in different colors.
+.IP "\fBTags\fR"
+A C-tags file may be generated within the editor using the \fBTools\fR \->
+\fBNroff-Tools\fR \-> \fBCreate Tag File\fR.
+.Ht find-tag 2
+takes the user to the file using the tag  information.  The tags are generated
+using the
+.B ".XI"
+keyword, this may not be standard for all nroff pages.
+.IP "\fBFolding and Information Hiding\fR"
+Generic  folding is enabled  within the C and C++ files. The folds occur about
+sections \fB.S\fR[\fBHS\fR]...\fB.S\fR[\fBHS\fR] located on the left-hand margin.
+.Ht fold-all 3
+(un)folds all regions in the file,
+.Ht fold-current 3
+(un)folds the current region.
+Note that folding does not operate on K&R style code.
+.IP "\fBTools\fR"
+The nroff buffer provides a facility to toggle the hilighting of the buffer on
+and off. If font change inserts are used  (\fB\efB\fR,  \fB\efR\fR, etc), then
+the enclosed \fBbold\fR and \fIitalic\fR regions are hilighted, hiding the
+escape  sequences.  This  allows  the  nroff  text  to  be  viewed  in a  more
+representative rendered format.
+.IP
+The local buffer command \fBaman\fR invokes, the following command sequence
+(defined  in  \fChkman\fR)  to  render a nroff  \fBman\fR  file  into a buffer
+window;-
+.RS
+.CS
+soelim <file> | tbl -TX | neqn | nroff -man | col -x
+.CE 0
+.RE
+.IP
+The command \fBtex2nr\fR attempts to convert a
+.Ht latex 9
+file into an nroff file. The \fIlatex\fR  escape  sequences are converted into
+their nroff equivalents. The command is only made available when an Nroff file
+is loaded (as the command is defined in the \fChknroff.emf\fR file).
+.IP "\fBShort Cuts\fR"
+The short cut keys used within the buffer are:-
+.IP
+\fB\*cc \*cs\fR \- Insert a font size escape character \fB\\S0\fR.
+.br
+\fB\*cc \*cr\fR \- Insert a roman font escape character \fB\efR\fR.
+.br
+\fB\*cc \*cb\fR \- Insert a bold font escape character \fB\efB\fR.
+.br
+\fB\*cc \*ci\fR \- Insert a italic font escape character \fB\efI\fR.
+.br
+\fB\*cc \*cc\fR \- Insert a courier font escape character \fB\efC\fR.
+.br
+\fB\*cc \*cp\fR \- Insert a previous font escape character \fB\efP\fR.
+.br
+\fB\*eo\fR, \fB\*eq\fR \-
+.Ht fill-paragraph 2
+fills paragraph to next \fC\.XX\fR command.
+.br
+\fB\*cc b\fR \- Bold region by inserting \fB\efB\fR .. \fB\efR\fR.
+.br
+\fB\*cc c\fR \- Courier region by inserting \fB\efC\fR .. \fB\efR\fR.
+.br
+\fB\*cc c\fR \- Italic region by inserting \fB\efI\fR .. \fB\efR\fR.
+.br
+\fB\*cc \*ch\fR \- Toggle hilighting on/off.
+.br
+\fB\*cc \*c&\fR \- Adds nroff padding \fB\ef&\fR about words.
+.br
+\fB\*cx \*c&\fR \- Removes nroff padding \fB\ef&\fR about words.
+.br
+\fB\*eh\fR \- Nroff help.
+.sp 1
+\fBf2\fR \- (un)fold the current region
+.br
+\fBf3\fR \- (un)fold all regions
+.SH BUGS
+The nroff  language  template is heavily  biased towards the \fBman\fR  macros
+only and includes all of the extension  macros used for generating the JASSPA
+hypertext documentation.
+.PP
+The  template  in the  current  form  has been  used  entirely  by  JASSPA  in
+generating all of the  documentation  (\fBHTML\fR,  \fBWinhelp\fR,  \fBehf\fR,
+\fBPostScript\fR)  used by \*(mE. It does not  include all of the  troff/nroff
+keywords, or keywords for any of the standard macro packages.
+.PP
+The JASSPA  documentation  preparation  tools are proprietary and have not been
+made publicly available.
+.SH "SEE ALSO"
+.na
+.Ht fill-paragraph 2 ,
+.Ht find-tag 2 ,
+.Ht fold-all 3 ,
+.Ht fold-current 3 ,
+.Ht ntags 3f ,
+.Ht time 2m .
+.sp 1
+.Hl "Supported File Types" FileTypes -
+.ad
+.FH

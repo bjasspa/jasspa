@@ -1,0 +1,88 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1999 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m9typ017.9
+.\"  Created By    : Jon Green
+.\"  Created       : Sat Feb 6 14:22:09 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1999 JASSPA.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m9typ017.9,v 1.1.1.1 2000-07-25 22:04:09 jon Exp $
+.Im MicroEmacs filetype
+.so me.tni
+.TH sh 9
+.XI sh - "Bourne shell file"
+.XI ksh - "Korn shell file"
+.XI csh - "C-Shell file"
+.XI zsh - "Z-Shell file"
+.XI login - "Shell user login file"
+.XI profile - "Shell user profile"
+.XI tcshrc - "T-Shell start up file"
+.SH SYNOPSIS
+*sh \- UNIX shell files
+.SH FILES
+.na
+.B hkshell.emf
+\- UNIX shell file hook definition
+.ad
+.SH EXTENSIONS
+.na
+\fB.sh\fR \- Bourne shell file
+.br
+\fB.ksh\fR \- Korn shell file
+.br
+\fB.csh\fR \- C-Shell file
+.br
+\fB.zsh\fR \- Z-Shell file
+.br
+\fB.login\fR \- Shell user login file
+.br
+\fB.profile\fR \- Shell user profile
+.br
+\fB.tcshrc\fR \- T-Shell start up file
+.ad
+.SH "MAGIC STRINGS"
+.TP 
+\fB#![ \\t]*/.*sh\fR
+.\"
+\*(mE recognizes the magic string on the first line of the file used to locate
+the  executable.  The  shell  files  may  be  extension  less  and  are  still
+recognized.  Note that this is the typical  method of identifying  shell files
+and will recognize other files not mentioned above i.e. \fBbash\fR shells.
+.SH DESCRIPTION
+The \fBshell\fR  file type template  provides  simple  hilighting of the shell
+files.
+.SH BUGS
+None reported.
+.PP
+There is a heavy bias towards Bourne, Korn and Zsh shells. The author is not a
+csh shell user so has probably missed a lot of csh features.
+.SH "SEE ALSO"
+.na
+.Ht fvwm 9 .
+.sp 1
+.Hl "Supported File Types" FileTypes -
+.ad
+.FH

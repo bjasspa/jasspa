@@ -1,0 +1,70 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1999 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m9typ027.9
+.\"  Created By    : Jon Green
+.\"  Created       : Sat Feb 6 14:22:09 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1999 JASSPA.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m9typ027.9,v 1.1.1.1 2000-07-25 22:04:09 jon Exp $
+.Im MicroEmacs
+.so me.tni
+.TH info 9
+.XI info - "GNU Info file" filetype
+.SH SYNOPSIS
+info \- GNU Info File.
+.SH FILES
+.na
+.B info.emf
+\- Info macro file.
+.ad
+.SH EXTENSIONS
+No  fixed  extension,  the  root  of  the  \fIinfo\fR  tree  is  specified  by
+\fC$INFOPATH\fR/dir. The default search paths on different platforms are:-
+.IP
+\fCc:/info\fR \- \s-1MS-DOS\s0 and MS-Windows (all).
+.br
+\fC/usr/local/info\fR \- All \s-1UNIX\s0 platforms.
+.SH DESCRIPTION
+The \s-1GNU\s0 \fIinfo\fR files are handled by the command
+.Ht info 3
+which starts the info reader. This reads the initial info file  \fCdir\fR  and
+initializes the \fIinfo\fR file traversal.  Where the \fIinfo\fR  directory is
+not in the  aforementioned  locations  then  the  \fC$INFOPATH\fR  environment
+variable should specify the base directory.
+.PP
+The standard  \fIinfo\fR  navigation  keys are in effect within the \fIinfo\fR
+buffers. The \fImouse\fR may also be used to select the next info page.
+.SH "BUGS"
+There  is no  support  within  \*(mE to  regenerate  the  \fIinfo\fR  tags and
+indexes.
+.SH "SEE ALSO"
+.na
+.Ht info 3 .
+.sp 1
+.Hl "Supported File Types" FileTypes -
+.ad
+.FH

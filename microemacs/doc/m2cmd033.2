@@ -1,0 +1,374 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1998 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m2cmd033.2
+.\"  Created By    : Jon Green
+.\"  Created       : Sat Jul 25 00:00:27 1998
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes          Taken from Steve's notes 12/06/98 and refined.
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1998 JASSPA.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m2cmd033.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|indent|scuts
+.so me.tni
+.TH indent 2
+.XI indent - "Manage the auto-indentation methods"
+.SH NAME
+indent \- Manage the auto-indentation methods
+.Me $a
+.SH SYNOPSIS
+.na
+.I 0
+.B indent
+"\|\fIind-no\fR\|"
+"\|\fIflags\fR\|"
+"\|\fIlook-back\fR\|"
+.sp
+.B indent
+"\|\fIind-no\fR\|"
+"\|\fItype\fR\|"
+"\|\fItoken\fR\|"
+[ "\|\fIclose\fR\|"
+[ "\|\fIignore\fR\|" ]]
+[ "\|\fIindent\fR\|" ]
+.ad
+.SH DESCRIPTION
+The \fBindent\fR  command creates and manages the auto-indenting  methods, the
+process of creating a new indentation method is best described in
+.Hl "File Language Templates" languageTemplates 2 .
+The  command  takes  various  forms as defined by the  arguments.  Each of the
+argument configurations is defined as follows:-
+.SS "Indentation Method Creation"
+.na
+.I 0
+.B indent
+"\|\fIind-no\fR\|"
+"\|\fIflags\fR\|"
+"\|\fIlook-back\fR\|"
+.ad
+.PP
+With an argument of \fC0\fR,  \fBindent\fR  creates a new  indentation  method
+with the integer handle  \fIind-no\fR. The indentation method is assigned to a
+buffer by setting
+.Ht $buffer-indent 5
+to \fIind-no\fR. \fIind-no\fR cannot be 0 as setting
+.B $buffer-indent
+to zero disables indentation.
+If the indentation method with the same \fIind-no\fR already exists, then the
+existing method is deleted and a new method may be created.
+.PP
+.I flags
+Sets the indent bit flags where:-
+.IP \fC0x01\fR
+Indent  method is case  insensitive.  Note that  \fBindent\fR  tokens  must be
+specified in lower case.
+.LP
+.I look-back
+specifies the maximum  number of lines, prior to the current line,  considered
+when calculating the indentation of a line, i.e. if there are  \fIlook-back\fR
+number of lines  between the line to be indented  and the  previous  non-blank
+line then the current indentation is lost.
+.PP
+If \fIlook-back\fR is set to 0 then the indentation is effectively disabled as
+the current  indentation can never be found. The value may be specified in the
+range 0-255, a value of 10 is typically sufficient.
+.SS "Indentation Rule Creation"
+.na
+.B indent
+"\|\fIind-no\fR\|"
+"\|\fItype\fR\|"
+"\|\fItoken\fR\|"
+[ "\|\fIclose\fR\|"
+[ "\|\fIignore\fR\|" ]]
+[ "\|\fIindent\fR\|" ]
+.ad
+.PP
+With the default argument of \fC1\fR,  \fBindent\fR creates a new rule for the
+indentation  method  \fIind-no\fR  which must have previously been defined and
+initialized.
+.PP
+The  indentation of a line in a buffer, which is using an indentation  method,
+is  affected  by the token  types  matched  on the line  (\fItype\fR  \fCf\fR,
+\fCo\fR,  \fCs\fR)  and  the  current  indentation  (if  line  is not of  type
+\fCf\fR).
+.PP
+The  current  indentation  is  determined  by  searching  the  previous  lines
+(look-back) for the indentation of the last indented line. This may not simply
+be the  indentation  of the last  non-blank  line, the  exact  indentation  is
+determined  by searching for tokens in the line and assessing  their effect on
+the indentation of the current line.
+.PP
+The format of the regex valid in the "\fItoken\fR" and "\fIclose\fR" arguments
+are the same as at used by hilight token creation, see
+.Ht hilight 2
+for more information.
+.PP
+The  indent  tokens  may be  assigned  one of the  following  types,  using the
+\fItype\fR  argument.  If the type is  specified  in upper case then the token
+must be surrounded by non-alpha-numeric characters:
+.TP
+\fBFixed\fR (\fI\|type\fR = '\fCf\fR' or '\fCF\fR')
+.\"
+A line  containing  a  fixed  indent  token  will  be  indented  to the  given
+\fIindent\fR column from the left-hand edge. \fIindent\fR is the only argument
+specified. e.g. \*(mS macro \fC!goto\fR labels:-
+.RS
+.Me $emf-scheme
+.CS
+indent .hilight.emf f "*" 0
+.CE
+.Me $ehf-scheme
+producing
+.CS
+.ne 3
+    \.....
+*label
+    \.....
+.CE
+The fixed token must be the first non-white character on the line, the rest of
+the line is ignored. The indentation of the previous line has no effect.
+.RE
+.TP
+\fBIndent-from-next-line-onward\fR (\|\fItype\fR = '\fCn\fR' or '\fCN\fR')
+.\"
+The  indentation  changes by \fIindent\fR  from the next line onwards from the
+current line.  \fIindent\fR  is the only argument  specified. e.g. \*(mS macro
+\fC!if\fR:-
+.RS
+.Me $emf-scheme
+.CS
+indent .hilight.emf n "!if" 4
+.CE
+.Me $ehf-scheme
+Keeps  the  indentation  of  the  \fC!if\fR  line  the  same  as the  previous
+indentation,  change  the  indentation  on the  following  lines by an extra 4
+characters, to produce:
+.CS
+.ne 3
+\....
+!if
+    \....
+.CE 0
+.RE
+.TP
+\fBIndent-from-current-line-onward\fR (\|\fItype\fR = '\fCo\fR' or '\fCO\fR')
+.\"
+Increment  the  current  and  following  lines  indentation  by  \fIindent\fR.
+\fIindent\fR is the only argument specified. e.g. \*(mS macro \fC!endif\fR
+.RS
+.Me $emf-scheme
+.CS
+indent .hilight.emf o "!endif" -4
+.CE
+.Me $ehf-scheme
+decrement the indent of the \fC!endif\fR  line and following lines by 4 spaces
+producing:
+.CS
+.ne 3
+    \....
+!endif
+\....
+.CE 0
+.RE
+.TP
+\fBIndent-single\fR (\fI\|type\|\fR = '\fCs\fR' or '\fCS\fR')
+.\"
+Changes the  indentation  of the current  line  \s-1ONLY\s0  by  \fIindent\fR.
+\fIindent\fR is the only argument specified. e.g. \*(mS macro \fC!elif\fR:-
+.RS
+.Me $emf-scheme
+.CS
+indent .hilight.emf o "!elif" -4
+.CE
+.Me $ehf-scheme
+decrements  the  indentation  of the  \fC!elif\fR  line by 4  characters,  but
+restores the previous indentation after the current line, producing:
+.CS
+.ne 3
+    \....
+!elif
+    \....
+.CE 0
+.RE
+.TP
+\fBBracket\fR (\fI\|type\|\fR = '\fCb\fR' or '\fCB\fR')
+.\"
+A bracket  should be used when a  starting  token  pairs with a closing  token
+which may span  multiple  lines.  i.e. the  opening  and  closing  braces of a
+programming  language.  Note  that the  opening  and  closing  tokens  must be
+different  otherwise  they  cannot be  differentiated.  A bracket has two main
+effects:
+.RS
+.IP "When the previous line has an unmatched open bracket"
+In this  situation the current line is indented to the right of the mismatched
+bracket.
+.IP "When the previous line has an unmatched close bracket"
+In this  situation  the matching open bracket is hunted for in previous  lines
+until either the \fIlook-back\fR limit (See \fBIndentation Method Creation\fR) 
+is  exhausted or the bracket is matched, in which case the indent of that line
+is used.
+.LP
+For a bracket the only other  argument  given is the  \fIclose\fR.  e.g. tcl's
+\'\fC(\fR' and '\fC)\fR' brackets
+.Me $emf-scheme
+.CS
+indent .hilight.tcl b "(" ")"
+.CE
+.Me $ehf-scheme
+Which produces:
+.CS
+.ne 5
+\....
+\.... (....
+      \....
+      \....)
+\....
+.CE 0
+.RE
+.TP
+\fBContinue\fR (\|\fItype\fR\| = '\fCc\fR' or '\fCC\fR')
+.\"
+Indicates that when \fItoken\fR is found on the current line, the next line is
+a  continuation  of the current line. The  indentation of the next line is the
+indentation  of the  first  continuation  line  plus the  given  \fIindent\fR.
+\fIindent\fR is the only argument specified. e.g. tcl's '\\'
+.RS
+.Me $emf-scheme
+.CS
+indent .hilight.tcl c "\\\\" 10
+.CE
+.Me $ehf-scheme
+A simple example is
+.CS
+.ne 4
+\....
+12345678901234567890      \\
+         \....
+\....
+.CE
+When used in conjunction with brackets, the following effect is observed:
+.CS
+.ne 7
+\....
+12345678901234567890      \\
+          \....(....       \\
+               \....)      \\
+          \....            \\
+          \....
+\....
+.CE
+This shows why the first continuation line (the \fC123456...\fR  line) must be
+located and used as the base line from which the indentation is derived; again
+the \fIlook-back\fR limits the search for this line.
+.RE
+.TP
+\fBExclusion\fR (\fI\|type\|\fR = '\fCe\fR' or '\fCE\fR')
+.\"
+Used to exclude text between start  \fItoken\fR and \fIclose\fR token from the
+indentation  calculation, typically used for quotes. The \fIignore\fR argument
+is also specified (see
+.Ht hilight 2
+\fCtype 0x004\fR type bracket)
+e.g. \*(mS macro quotes:-
+.RS
+.Me $emf-scheme
+.CS
+indent .hilight.emf e "\\"" "\\"" "\\\\"
+.CE
+.Me $ehf-scheme
+e.g. tcl's quotes
+.Me $emf-scheme
+.CS
+indent .hilight.tcl e "\\"" "\\"" "\\\\"
+.CE
+.Me $ehf-scheme
+producing:-
+.CS
+\....
+".... ignore { ... \\" ... ignore another { token ... "
+\....
+.CE 0
+.RE
+.TP
+\fBIgnore\fR (\fI\|type\|\fR = '\fCi\fR' or '\fCI\fR')
+.\"
+Text to the right of a line containing \fItoken\fR is to be ignored; typically
+used for comments. e.g. \*(mS macro '\fC;\fR' comment:-
+.RS
+.Me $emf-scheme
+.CS
+indent .hilight.emf i ";"
+.CE
+.Me $ehf-scheme
+Or tcl's '\fC#\fR' comment
+.Me $emf-scheme
+.CS
+indent .hilight.tcl i "#"
+.CE
+.Me $ehf-scheme
+producing
+.CS
+.ne 3
+\....
+# ... ignore this { indent token
+\....
+.CE 0
+.RE
+.SH EXAMPLE
+Examples  of  indentation  method  creations  can  be  found  in  macro  files
+\fChkemf.emf\fR,  \fChktcl.emf\fR and  \fChkvrml.emf\fR. The following example
+is taken from \fChkemf.emf\fR:-
+.Me $emf-scheme
+.CS
+!if &sequal .hilight.emf "ERROR"
+    set-variable .hilight.emf &pinc .hilight.next 1
+!endif
+
+\...
+
+0 indent  .hilight.emf 0 10
+indent .hilight.emf N "define-macro" 4
+indent .hilight.emf n "!if" 4
+indent .hilight.emf s "!eli" -4
+indent .hilight.emf s "!els" -4
+indent .hilight.emf o "!end" -4
+indent .hilight.emf n "!whi" 4
+indent .hilight.emf o "!don" -4
+indent .hilight.emf n "!rep" 4
+indent .hilight.emf o "!until" -4
+indent .hilight.emf o "!ema" -4
+indent .hilight.emf e "\\"" "\\"" "\\\\"
+indent .hilight.emf i ";"
+indent .hilight.emf f "*" 0
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Hl "File Language Templates" languageTemplates 2 ,
+.Ht $buffer-indent 5 ,
+.Ht add-file-hook 2 ,
+.Ht hilight 2 .
+.ad
+.FH
+

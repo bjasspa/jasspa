@@ -1,0 +1,84 @@
+.\" -*- nroff -*-
+.Id $Id: m5var081.5,v 1.1.1.1 2000-07-25 22:04:07 jon Exp $
+.Im MicroEmacs variable|window
+.so me.tni
+.TH $window-x-scroll 5
+.XI $window-x-scroll - "Current window X scroll"
+.XI $window-xcl-scroll - "Current window current line X scroll"
+.XI $window-y-scroll - "Current window Y scroll"
+.SH NAME
+.Me "|$window-x-scroll"
+$window-x-sroll \- Current window X scroll
+.br
+.Me "|$window-xcl-scroll"
+$window-xcl-sroll \- Current window current line X scroll
+.br
+.Me "|$window-y-scroll"
+$window-y-sroll \- Current window Y scroll
+.Me $a
+.SH SYNOPSIS
+\fB$window-x-sroll\fR \fIinteger\fR
+.br
+\fB$window-xcl-sroll\fR \fIinteger\fR
+.sp
+0 <= \fIinteger\fR <= 65535
+.sp 2
+\fB$window-y-sroll\fR \fIinteger\fR
+.sp
+0 <= \fIinteger\fR <= n
+.SH DESCRIPTION
+\fB$window-x-sroll\fR  defines the horizontal  scroll  position in the current
+window for all lines except the current line, \fB$window-xcl-sroll\fR  defines
+the  scroll  position  for  the  current  line.  The  variables  set how  many
+characters  are  scrolled  off the left hand edge of the  current  window, the
+variables are indirectly set by commands such as
+.Ht scroll-left 2 ,
+.Ht forward-char 2
+etc.
+.PP
+\fB$window-y-sroll\fR  defines  the  vertical  scroll  position in the current
+window. It sets the  number of lines are scroll up off the top of the  current
+window, it is indirectly set by commands such as
+.Ht scroll-up 2 ,
+.Ht forward-line 2
+etc.
+.SH EXAMPLE
+The following  example first stores the current  window's  buffer position and
+the window layout. The middle '\fC...\fR' section could be replaced with macro
+code  performing  any  number of  operations  before  the last  section  which
+restores the initial position:
+.Me $emf-scheme
+.CS
+    set-variable #l0 $window-line
+    set-variable #l1 $window-col
+    set-variable #l2 $window-xcl-scroll
+    set-variable #l3 $window-x-scroll
+    set-variable #l4 $window-y-scroll
+        .
+        .
+        .
+    set-variable $window-line #l0
+    set-variable $window-col #l1
+    set-variable $window-xcl-scroll #l2
+    set-variable $window-x-scroll #l3
+    set-variable $window-y-scroll #l4
+.CE 0
+.Me $ehf-scheme
+.SH NOTES
+If  these  variables  are set by the user or a macro  the  value is  validated
+against the
+.Ht $scroll 5
+method and the current  cursor  position  which may lead to the variable being
+reset if found to be invalid. For example, if the current  line is 10 when the
+\fB$window-y-scroll\fR is set to 20 the variable will be reset to 0 as a value
+of 20 will mean the current line is not displayed in the current window.
+.SH "SEE ALSO"
+.na
+.Ht scroll-left 2 ,
+.Ht scroll-up 2 ,
+.Ht $scroll 5 ,
+.Ht $window-line 5 ,
+.Ht $window-col 5 ,
+.Ht $window-acol 5 .
+.ad
+.FH

@@ -1,0 +1,72 @@
+.\" -*- nroff -*-
+.Id $Id: m5var071.5,v 1.1.1.1 2000-07-25 22:04:07 jon Exp $
+.Im MicroEmacs variable
+.so me.tni
+.TH $delay-time 5
+.XI $delay-time - "Mouse time event delay time"
+.XI $repeat-time - "Mouse time event repeat time"
+.SH NAME
+.br
+.Me "|$delay-time"
+$delay-time \- Mouse time event delay time
+.br
+.Me "|$repeat-time"
+$repeat-time \- Mouse time event repeat time
+.Me $a
+.SH SYNOPSIS
+.na
+\fB$delay-time\fR \fImilliseconds\fR; Default is \fC500\fR
+.br
+\fB$repeat-time\fR \fImilliseconds\fR; Default is \fC25\fR
+.ad
+.sp
+10 <= \fImilliseconds\fR <= t
+.SH DESCRIPTION
+\fB$delay-time\fR sets the time waited between the user picking a mouse button
+and the  generation of a  \fCmouse-time-?\fR  key event.
+.PP
+When user  presses  the left  button (say) a  \fCmouse-pick-1\fR  key event is
+generated,  If this key is bound then the command it is bound to is  executed.
+If the  user  then  holds  down  the  button  for  \fB$delay-time\fR  or  more
+milliseconds  then \*(mS checks the binding of the special  \fCmouse-time-1\fR
+key, if this  pseudo  key is  bound  then the  command  it is bound to will be
+executed.
+.PP
+If the user continues to hold down the button for a further \fB$repeat-time\fR
+milliseconds  another  \fBmouse-time-1\fR  key  event  will  be  generated.  A
+\fBmouse-time-1\fR key event will be generated after every  \fB$repeat-time\fR
+milliseconds   until  the  user   releases   the  button,  at  which  point  a
+\fCmouse-drop-1\fR key event is generated.
+.SH EXAMPLE
+The following example implements the vertical scroll-bar up and down scrolling
+arrows for a buffer window:-
+.Me $emf-scheme
+.CS
+define-macro mouse-pick-command
+    set-cursor-to-mouse
+    !if &equ &band $mouse-pos 15 5
+        ml-write "Mouse on up-arrow"
+        1 scroll-up
+        1 global-bind-key scroll-up "mouse-time-1"
+    !elif &equ &band $mouse-pos 15 9
+        ml-write "Mouse on down-arrow"
+        1 scroll-down
+        1 global-bind-key scroll-down "mouse-time-1"
+    !endif
+!emacro
+
+define-macro mouse-drop-command
+    !force global-unbind-key "mouse-time-1"
+!emacro
+
+global-bind-key mouse-pick-command "mouse-pick-1"
+global-bind-key mouse-drop-command "mouse-drop-1"
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Ht $idle-time 5 ,
+.Ht set-cursor-to-mouse 2 ,
+.Ht $mouse-pos 5 .
+.ad
+.FH

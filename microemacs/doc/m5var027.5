@@ -1,0 +1,72 @@
+.\" -*- nroff -*-
+.Id $Id: m5var027.5,v 1.1.1.1 2000-07-25 22:04:05 jon Exp $
+.Im MicroEmacs variable|window
+.so me.tni
+.TH $scroll 5
+.XI $scroll - "Screen scroll control"
+.SH NAME
+$scroll \- Screen scroll control
+.Me $a
+.SH SYNOPSIS
+\fC$scroll\fR \fIscrollNum\fR; Default is \fC1\fR
+.sp
+0 <= \fIscrollNum\fR <= n
+.SH DESCRIPTION
+.B $scroll
+controls the  horizontal  and vertical  scrolling  method used to display long
+lines and buffers. The variable is split into two componants, the first nibble
+(\fC0x0f\fR)  sets the horizontal  scroll, and the second nibble  (\fC0xf0\fR)
+sets the  vertical.  For the  purpose of  documentation  these  parts are kept
+separate, but when setting the variable a single combined value must be given.
+.PP
+The horizontal settings are defined as follows:
+.IP \fC0x00\fR
+Scroll method 0 will only scroll the current line, this is the fastest  method
+in execution time.
+.IP \fC0x01\fR
+Scroll method 1 (the default) will scroll the whole page horizontally when the
+.Ht scroll-left 2 
+and
+.Ht scroll-right 2
+commands are used.  However, when the current line must be scrolled to display
+the cursor due to a
+.Ht forward-char 2
+type cursor movement, only the current line is scrolled and the rest are reset.
+.IP \fC0x02\fR
+Scroll method 2 always scrolls the whole page horizontally, keeping the cursor
+in the current  column  range. If the cursor  moves out of this range then all
+the page is scrolled to the new  position.  This is  particularly  useful when
+editing long lined tables.
+.IP \fC0x03\fR
+Scroll  method 3 fixes  the  scroll  column  using the  \fBscroll-left\fR  and
+\fBscroll-right\fR functions. If the current cursor position is not visible in
+the column range then only the current line is scrolled to the new position.
+.PP
+The vertical settings are defined as follows:
+.IP \fC0x00\fR
+Scroll  method 0 (the  default)  will scroll the current line to the middle of
+the current  window whenver it is moved off screen, this is the fastest method
+in execution time.
+.IP \fC0x10\fR
+Scroll  method 1 will  scroll  the  current  line to the the top of the window
+whenver the current line is moved off the screen using
+.Ht backward-line 2
+and to the bottom of the window when
+.Ht forward-line 2
+is used. This creates the effect of a smooth scroll.
+.SH EXAMPLE
+The following example sets the scrolling method to be the default horizontally
+(\fC0x01\fR) and smooth method (\fC0x10\fR) vertically :
+.Me $emf-scheme
+.CS
+set-variable $scroll 0x11
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Ht scroll-left 2 ,
+.Ht forward-line 2 ,
+.Ht $window-x-scroll 5 ,
+.Ht $window-y-scroll 5 .
+.ad
+.FH

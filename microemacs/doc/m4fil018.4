@@ -1,0 +1,266 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil018.4,v 1.1.1.1 2000-07-25 22:04:03 jon Exp $
+.Im MicroEmacs macro;variable
+.so me.tni
+.TH "Variables" 4
+.XI "Variables" - "User defined macro variables"
+.XI "RegisterVariables" - "Register variables"
+.XI "BufferVariables" - "Buffer variables"
+.XI "CmdVariables" - "Command variables"
+.Me "!24 #g0..#g9 - Global register variables"
+.Me "!24 #p0..#p9 - Parent register variables"
+.Me "!24 #l0..#l9 - Local register variables"
+.SH NAME
+Variables \- Macro variables
+.SH SYNOPSIS
+.na
+.nf
+\fB#\fR\fItn\fR
+\fB$\fR\fIvariableName\fR
+\fB%\fR\fIvariableName\fR
+\fB:\fR\fIvariableName\fR
+\fB.\fR\fIvariableName\fR
+\fB.\fR\fIcommandName\fR\fB.\fR\fIvariableName\fR
+.fi
+.ad
+.SH DESCRIPTION
+Variables  are  part of \*(mS  macro  language  and may be used  wherever  an
+argument is required. The variable space comprises:-
+.IP
+\fB#\fR \- Register Variable
+.br
+\fB$\fR \- System Variable
+.br
+\fB%\fR \- Global Variable
+.br
+\fB:\fR \- Buffer Variable
+.br
+\fB.\fR \- Command Variable
+.br
+.LP
+All  variables  hold  string  information,  the  interpretation  of the string
+(numeric,  string or boolean) is  determined  when the variable is used within
+the context of the command.  There are five types of variable,  \fBRegister\fR
+\fBVariables\fR   (prefixed  with  a  hash  \fB#\fR),  \fBSystem  Variables\fR
+(prefixed  with a dollar  \fB$\fR),  \fBGlobal  Variables\fR  (prefixed with a
+percentage  \fB%\fR), \fBBuffer  Variables\fR  (prefixed with a colon \fB:\fR)
+and \fBCommand Variables\fR (prefixed with a period \fB.\fR).
+.SS "Register Variables"
+Register  Variables  provide  a  set  of  10  prefixed  global  (\fB#g0\fR  ..
+\fB#g9\fR), parent (\fB#p0\fR .. \fB#p9\fR) and local (\fB#l0\fR .. \fB#l9\fR)
+register  variables. The interpreted  decode time of the register variables is
+significantly  smaller  than other  variable  types as no name space search is
+performed.
+.PP
+Register variables are assigned using
+.Ht set-variable 2 ,
+their value may be queried with
+.Ht describe-variable 2 ,
+unlike Global Buffer or Command variables they cannot be deleted.
+.PP
+Register  variables are implemented  like a stack, where the global  registers
+are  the top of the  stack  and  every  executing  macro  gets  its own set of
+resister  variables  (\fB#l?\fR).  The  macro  also has  access to the  global
+registers  (\fB#g?\fR)  and its calling, or parent macro  (\fB#p?\fR).  If the
+macro  has no parent  macro  then the  global  registers  are also the  parent
+registers. Outside macros, i.e. using \fBset-variable\fR  manually, the global
+parent and local registers are the same.
+.PP
+Register  variables  are  typically  used  for  retaining  short  term  state,
+computation  steps  etc. As with  the  User  Variables,  the  global  register
+variables are global and care must be taken with nested macro  invocations  to
+ensure that the register usage does not conflict.
+.SS "System Variables"
+\*(mS defines many System  variables  which are used to configure many aspects
+of the editors  environment.  The  functionality  of each system  variable has
+been  documented,  they can be set and  described  but cannot be unset. If the
+user  attempts  to  set or  describe  a  non-existent  \*(mS  system  variable
+(e.g.  \fB$PATH\fR) the system  environment is used instead, allowing the user
+to query and alter the system environment.  
+.SS "Global Buffer and Command Variables"
+The  Global  and Buffer  variables  are  denoted by the  \fB%\fR  and  \fB:\fR
+characters    respectively,   followed   by   the   name   of   the   variable
+\fIvariableName\fR.  The  \fIvariableName\fR may be any ASCII character string
+up to 127  characters in length, all  characters of the name are  significant.
+Shorter names are preferred as this speeds up execution. Global Variables exist
+in a global context which all macros have access to. Buffer Variables exist in
+a local context to a buffer and are not visible outside of the buffer.
+.PP
+Command variables exist within the scope of a command, they are denoted by the
+period  (\fB.\fR)  character. They can be accessed by one of two forms, either
+\fB.\fR\fIvariableName\fR                                                   or
+\fB.\fR\fIcommandName\fR\fB.\fR\fIvariableName\fR. The first form, without the
+command name, assumes the scope to be the current command, as such may only be
+used to access  internal  variables.  The second form  qualifies  the scope by
+specifying  the command, this form is much more  versatile  and may be used to
+access any command variable from any other command, e.g.
+.Me $emf-scheme
+.CS
+define-macro foo
+    set-variable .foo "Hello world"
+    1000 ml-write &cat "foo1: " .foo
+    1000 ml-write &cat "foo2: " .foo.foo
+!emacro
+define-macro bar
+    foo
+    1000 ml-write &cat "bar1: " .foo
+    1000 ml-write &cat "bar2: " .foo.foo
+!emacro
+
+bar
+.CE
+.Me $ehf-scheme
+When \fBbar\fR is executed the following messages may be observed:-
+.CS
+foo1: Hello World
+foo2: Hello World
+bar1: ERROR
+bar2: Hello World
+.CE
+When a macro file or buffer is executed,  they are  executed  within their own
+scope so local  scope  command  variables  (form 1) may be created and used in
+that scope. Any such variables created are automatically deleted at the end of
+execution.  For  example,  the  default  color  scheme  generator  macro file,
+\fCschemed.emf\fR,  creates  command  variables for the created  colors to aid
+readability:-
+.Me $emf-scheme
+.CS
+add-color &set .green     3 0   200 0
+a0dd-color &set .lgreen   11 0   255 0
+
+\...
+
+add-color-scheme .scheme.cardback   .lgreen   .green   .lgreen ...
+.CE
+.Me $ehf-scheme
+The variables  only exist as a file or buffer is being  executed, they are not
+accessible  by  another  command  once the  command  or buffer  execution  has
+finished.
+.PP
+Global, Buffer and Command  variables are automatically  defined when they are
+used. A variable is assigned with
+.Ht set-variable 2
+and may be subsequently deleted with
+.Ht unset-variable 2 .
+The current  assignment  of a variable  may be queried  from the command  line
+using
+.Ht describe-variable 2 .
+e.g.
+.Me $emf-scheme
+.CS
+define-macro foo
+!emacro
+set-variable %foo "Some string"
+set-variable :bar "Some string"
+set-variable .foo.bar "Some string"
+
+\&...
+
+ml-write &spr "%s %s %s" %foo :bar .foo.bar
+
+\&...
+
+unset-variable :bar
+unset-variable %foo
+unset-variable .foo.bar
+.CE
+.Me $ehf-scheme
+An undefined variable returns the string \fCERROR\fR, this known state is used
+to advantage with the
+.Hl hilighting hilight 2
+initialization, e.g.
+.Me $emf-scheme
+.CS
+!if &sequal .hilight.c "ERROR"
+    set-variable .hilight.c &pinc .hilight.next 1
+!endif
+;
+; Hi-light C Mode
+;
+0 hilight .hilight.c  2 50             $global-scheme
+.CE
+.Me $ehf-scheme
+In  this  case  the  variable   \fB.hilight.c\fR   is  explicitly  tested  for
+definition, if it is undefined then it is assigned a new value.
+.PP
+Conventionally,  names are separated  with a minus sign  character  (\fB\-\fR)
+e.g.  \fCfoo-bar\fR.  It is  strongly  advised  that  the  name  space is kept
+reasonably clean, since there are no restrictions on the number of macros that
+may be defined, problems will arise if different macros use the same variables
+in  different  contexts.  Where  possible,  Command  or Buffer  Variables  are
+preferable to Global Variables since they have no side effects on other macros
+or buffers. It is advised that all variable names associated with a particular
+macro set are prefixed  with short  identifier to make the variable name space
+unique. e.g. the \fBMetris\fR  macro prefixes all variables with  \fB:met-\fR;
+the \fBdraw\fR  macro uses \fB:dw-\fR, the  \fBpatience\fR  macro  \fB:pat-\fR
+etc.
+.PP
+Macro  writers  should  endeavor  to use  the  minimal  number  of  variables,
+obviously the more  variables that exist in the system, the greater the lookup
+time to find a variable.  Use  Register  Variables in  preference  to Command,
+Global or Buffer variables for intimidate  computation  steps, temporary state
+etc.
+.PP
+Note that  Buffer  Variables  are  automatically  deleted  when the  buffer is
+deleted.
+.SH EXAMPLE
+The  following  example is the macro to convert tabs to spaces, it is shown in
+two forms, with User  Variables  and with  Register  Variables,  the  register
+variable  implementation  is obviously  preferable since no new variables have
+been defined.
+.SS "User Variable Implementation"
+.Me $emf-scheme
+.CS
+;
+; tabs-to-spaces.
+; Convert all of the tabs to spaces.
+define-macro tabs-to-spaces
+    set-variable %curline $window-line        ; Remember line
+    beginning-of-buffer
+    !force search-forward "\\t"
+    !while $status
+        3 drop-history
+        set-variable %curcol $window-acol
+        backward-delete-char
+        &sub %curcol $window-acol insert-space
+        !force search-forward "\\t"
+    !done
+    3 drop-history
+    goto-line %curline
+    update-screen
+    ml-write "Converted tabs!"
+!emacro
+.CE 0
+.Me $ehf-scheme
+.SS "Register Variable Implementation"
+.Me $emf-scheme
+.CS
+;
+; tabs-to-spaces.
+; Convert all of the tabs to spaces.
+define-macro tabs-to-spaces
+    ; Remember line
+    set-variable #l0 $window-line
+    beginning-of-buffer
+    !force search-forward "\\t"
+    !while $status
+        set-variable #l1 $window-acol
+        backward-delete-char
+        &sub #l1 $window-acol insert-space
+        !force search-forward "\\t"
+    !done
+    goto-line #l0
+    screen-update
+    ml-write "[Converted tabs]"
+!emacro
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Ht @wc 4 ,
+.Ht define-macro 2 ,
+.Ht describe-variable 2 ,
+.Ht set-variable 2 ,
+.Ht unset-variable 2 .
+.ad
+.FH

@@ -1,0 +1,69 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil022.4,v 1.1.1.1 2000-07-25 22:04:03 jon Exp $
+.Im MicroEmacs macro;function;miscellaneous
+.so me.tni
+.TH &cond 4
+.XI &cond - "Conditional expression operator"
+.SH NAME
+&cond \- Conditional expression operator
+.SH SYNOPSIS
+.na
+.B &cond
+.I log
+.I expr1
+.I expr2
+.ad
+.SH DESCRIPTION
+The
+conditional expression
+.B &cond
+provides an alternative way to write
+.Hl "!if-!else-!endif" !if 4
+constructs, e.g.:-
+.Me $emf-scheme
+.CS
+!if &gre %a %b
+    set-variable %z %a
+!else
+    set-variable %z %b
+!endif
+.CE
+.Me $ehf-scheme
+may be replaced with a conditional expression, breaking down the components
+then
+.IP
+\fIlog\fR is \fB&gre %a %b\fR
+.br
+\fIexpr1\fR is \fB%a\fR
+.br
+\fIexpr2\fR is \fB%b\fR
+.LP
+rewriting the expression we get:
+.Me $emf-scheme
+.CS
+set-variable %z &cond &gre %a %b %a %b
+.CE
+.Me $ehf-scheme
+This is far more concise,  albeit a little less readable, but does improve the
+performance of macros as there is less information to interpret.
+.PP
+The \fB&cond\fR operator accepts three fields, \s-1ALL\s0 fields are evaluated
+although  only one of the  results  \fIexpr1\fR  or  \fIexpr2\fR  is used. The
+\fIlog\fR  field is a logical value, if it is non-zero  (\fCTRUE\fR)  then the
+result  of the  \fIexpr1\fR  evaluation  is  used,  otherwise  the  result  of
+\fIexpr2\fR is used.
+.PP
+It  should  be  noted  that  the  conditional  expression  may be  used in any
+construct i.e.
+.Ht &add 4 ,
+.Ht &cat 4 ,
+etc.  the  \fIexpr\fR  arguments  may be  strings,  numbers  or  booleans  the
+resultant  value of the \fIexpr\fR  arguments is simply returned to the calling
+expression.
+.SH "SEE ALSO"
+.na
+.Hl "Variable Functions" Functions - ,
+.Ht &add 4 ,
+.Ht &great 4 .
+.ad
+.FH

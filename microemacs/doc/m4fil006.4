@@ -1,0 +1,78 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil006.4,v 1.1.1.1 2000-07-25 22:04:02 jon Exp $
+.Im MicroEmacs macro;directive|miscellaneousOperators
+.so me.tni
+.TH !emacro 4
+.XI !emacro - "Terminate a macro definition"
+.XI !ehelp - "Terminate a help definition"
+.SH NAME
+.Me "|!emacro"
+!emacro \- Terminate a macro definition
+.br
+.Me "|!ehelp"
+!ehelp \- Terminate a help definition
+.SH SYNOPSIS
+.na
+.Hl define-macro define-macro 2 
+.I macro-name
+.IP
+.I "... macro body ..."
+.LP
+.B !emacro
+.br
+.Hl define-help define-help 2 
+.I item-name
+.IP
+.I "... help body ..."
+.LP
+.B !ehelp
+.ad
+.SH DESCRIPTION
+.B !emacro
+terminates the storage of an open macro, (opened with 
+.Ht  define-macro  2  ).
+Only the lines  between  \fBdefine-macro\fR  and the  \fB!emacro\fR  directive
+comprise the new macro \fImacro-name\fR.
+.PP
+Similarly
+.B !ehelp
+terminates the storage of an open help definition, (opened with 
+.Ht  define-help 2 ).
+Only  the  lines  between  \fBdefine-help\fR  and the  \fB!ehelp\fR  directive
+comprise the new help text for item \fIitem-name\fR.
+.PP
+\fB!emacro\fR and \fB!ehelp\fR may not be used in any other context.
+.SH EXAMPLE
+For example if a file is being executed contains the text:
+.Me $emf-scheme
+.CS
+;
+; Read in a file in view mode, and make the window red
+;
+define-macro view-a-file
+    find-file @ml"File to view: "
+    1 buffer-mode "view"
+    set-variable $buffer-bcol %red
+!emacro
+
+define-help view-a-file
+    This is the help text for the macro view-a-file.
+!ehelp
+
+ml-write "[view-a-file macro has been loaded]"
+.CE
+.Me $ehf-scheme
+then  only  the  lines   between  the   \fBdefine-macro\fR   command  and  the
+\fB!emacro\fR  directive are stored in macro  \fIview-a-file\fR  and the lines
+between the  \fBdefine-help\fR  command and the  \fB!ehelp\fR  directive are
+stored as help for \fIview-a-file\fR. The
+.Hl ml-write ml-write 2 
+line is executed  when the file is loaded, and the message  will appear on the
+message line, this does not however form part of the macro or help.
+.SH "SEE ALSO"
+.na
+.Hl "Operating Modes" Modes - ,
+.Ht  define-macro 2 ,
+.Ht  define-help 2 .
+.ad
+.FH

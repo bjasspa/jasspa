@@ -1,0 +1,47 @@
+.\" -*- nroff -*-
+.Id $Id: m5var035.5,v 1.1.1.1 2000-07-25 22:04:05 jon Exp $
+.Im MicroEmacs variable|macrodevelop
+.so me.tni
+.TH $random 5 
+.XI $random - "Generate a random number"
+.SH NAME
+$random \- Generate a random number
+.Me $a
+.SH SYNOPSIS
+\fC$random\fR \fIinteger\fR
+.sp
+0 <= \fIinteger\fR <= 65535
+.SH DESCRIPTION
+The
+.B $random
+variable  returns a unique random number in the range 0 - \fIn\fR on reference
+to the variable.
+.PP
+The random number is derived from the system's  random number  generator  (the
+quality  of which is often  dubious  so try to avoid  using the bottom  bits).
+Setting  this  variable with any value  resets the random  sequence  using the
+system time as the seed.
+.PP
+The range of the random  number  generator is system  dependent.  The value is
+typically capped using the
+.Ht &mod 4 
+arithmetic operator.
+.SH EXAMPLE
+The variable may be assigned to generate a new seed as follows:-
+.Me $emf-scheme
+.CS
+set-variable $random 0        ; Set it so we get a new seed
+.CE
+.Me $ehf-scheme
+The returned value is used with the \fB&mod\fR  operator to limit the value to
+a desired range:-
+.Me $emf-scheme
+.CS
+set-variable %random0to9 &mod $random 10
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Ht &mod 4 .
+.ad
+.FH

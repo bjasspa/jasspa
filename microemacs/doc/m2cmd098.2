@@ -1,0 +1,75 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd098.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs shell
+.ds C0 "(\fB\*e@\fR)\ \&
+.so me.tni
+.TH pipe-shell-command 2
+.XI pipe-shell-command - "\*(C0Execute a single operating system command" command|shell
+.XI $ME_PIPE_STDERR 5 "Command line diversion to stderr symbol" variable|shell
+.SH NAME
+pipe-shell-command \- Execute a single operating system command
+.br
+$ME_PIPE_STDERR \- Command line diversion to stderr symbol
+.Me $a
+.SH SYNOPSIS
+.na
+.Me "|pipe-shell-command"
+.I n
+.B pipe-shell-command
+"\fIcommand\fR"
+["\fIbuffer-name\fR"] \*(C0
+.sp 1
+.Me "|$ME_PIPE_STDERR"
+.I "[MS-DOS and Win32s Only]"
+.br
+.Me "|$ME_PIPE_STDERR"
+.B $ME_PIPE_STDERR 
+"\fIstring\fR"; Default is undefined.
+.ad
+.SH DESCRIPTION
+.B pipe-shell-command
+executes one operating  system command  \fIcommand\fR  and pipes the resulting
+output into a buffer with the name of \fB*command*\fR.
+.PP
+The  argument  \fIn\fR  can  be  used  to  change  the  default   behavior  of
+pipe-shell-command described above, \fIn\fR is a bit based flag where:-
+.IP \fB0x01\fR
+Enables the use of the default buffer name \fB*command*\fR  (default). If this
+bit is clear the user must supply a buffer name. This enables  another command
+to be started without effecting any other command buffer.
+.IP \fB0x02\fR
+Hides the output  buffer,  default  action pops up a window and  displays  the
+output buffer in the new window.
+.IP \fB0x04\fR
+Disable the use of the  command-line  processor  to launch the program  (win32
+versions  only). By default the  "\fBcommand\fR"  is launched by executing the
+command:
+.CS
+    %COMSPEC% /c command 
+.CE 0
+.IP
+Where  \fC%COMSPEC%\fR  is  typically  command.com.  If this  bit is set,  the
+"\fBcommand\fR" is launched directly.
+.IP \fB0x08\fR
+Detach the launched  process from \*(mS (win32  versions only). By default the
+command is launched as a child  process of \*(mS with a new console. With this
+bit set the process is completely detached from \*(mS instead.
+.IP \fB0x10\fR
+Disable  the  command  name  mangling  (win32  versions  only). By default any
+\&'\fC/\fR' characters found in the command name (the first argument only) are
+converted to '\fC\\\fR' characters to make it Windows compliant.
+.SH NOTES
+On \s-1MS-DOS\s0 and \fIWin32s\fR the standard shell
+.Hr command.com 1
+does not support the piping of \fIstderr\fR to a file. Other shells, such as
+.Hr 4Dos.com 1 ,
+do, using the command-line  argument  "\fC>&\fR". If the environment  variable
+"\fCME_PIPE_STDERR\fR"  is defined (the value is not used) then \*(mS  assumes
+that the current shell supports piping of stderr.
+.SH "SEE ALSO"
+.na
+.Ht ipipe-shell-command 2 ,
+.Ht shell-command 2 .
+.ad
+.rm C0
+.FH

@@ -1,0 +1,94 @@
+.\" -*- nroff -*-
+.Id $Id: m3mac015.3,v 1.1.1.1 2000-07-25 22:04:00 jon Exp $
+.Im MicroEmacs command|games
+.so me.tni
+.TH Patience 3
+.XI Patience - "\*(mE version of Patience (or Solitaire)"
+.SH NAME
+Patience \- \*(mE version of Patience (or Solitaire)
+.Me $a
+.SH SYNOPSIS
+.na
+\fBPatience\fR
+.ad
+.SH DESCRIPTION
+Patience (or  Solitaire)  is a solitaire  game using a standard set of playing
+cards. The  object of the game is to use all of the cards in the deck to build
+up four suit stacks from Ace to King.
+.PP
+The board is laid out with the  dealer  pile at the top right hand  corner, to
+the left are four suit stacks onto which cards of the same suit are placed, in
+ascending order from the Ace. Below these two areas of the board are seven row
+stacks,  organized  in a  triangular  shape with zero to six  downward  facing
+cards.
+.PP
+Cards may be moved  around the playing  area by stacking  alternative  red and
+black  cards in  descending  order on the row stacks.  When a row stack has no
+upturned  cards on the stack  then the top card may be turned  over and may be
+played. If a stack becomes empty then only a King may be moved into the vacant
+position.  Cards may be removed from the dealer, they are  over-turned in sets
+of three cards, the  underlying  2 cards are visible, but are not  accessible,
+only the top card may be removed and played from the dealer.
+.PP
+Cards are moved  around the board using the mouse. Cards may be moved from the
+dealer or  between  the row  stacks by  placing  the mouse over the card to be
+moved and  pressing  the left  mouse  button.  Move the cursor to the new card
+position  and  release  the left  mouse  button. If the move is legal then the
+card(s) are moved to the new stack.  Multiple  cards may be moved from the row
+stacks, the appropriate card(s) to be moved is automatically determined.
+.PP
+Cards  may be moved  onto the suit  stacks by a single  left  mouse  press and
+release on the same card, the card is moved to the appropriate suit stack. The
+same  technique is used to turn cards over in the suit stacks, and to deal the
+next set of cards by the dealer. To deal, then click on the  down-turned  card
+stack, if there are no  further  cards at the  dealer  then click on the empty
+position  and the dealer will turn over the dealer stack and deal from the top
+again.
+.PP
+Note  that  once a card is  played  onto the suit  stacks  then it  cannot  be
+removed.
+.PP
+To the  right of the  board  are a number  of  control  buttons.  To select an
+option, click the left mouse button on it, the buttons are labeled:
+.IP \fBDEAL\fR
+Start a new game by dealing new cards.
+.IP \fBQUIT\fR
+Exit the game
+.IP \fBHELP\fR
+This help page
+.PP
+Note that the screen may be updated at any time using "\fIC-l\fR".
+.SH NOTES
+\fBPatience\fR is a macro defined in \fCpatience.emf\fR.
+.PP
+The  game is best  played  with a  mouse,  it is  possible  to play  with  the
+keyboard, as follows:-
+.IP
+"\fIesc h\fR" for help
+.IP
+To move a card between stacks enter the source and  destination  column number
+("\fI1\fR","\fI2\fR",.."\fI7\fR").  To move  from  the  dealer  pile  then the
+source is the "\fIspace\fR" key.
+.IP
+"\fItab\fR" deals the next cards.
+.IP
+To  overturn a card on the row stacks  then enter the card  column  twice i.e.
+source and destination are the same.
+.IP
+To move a card  from the row to the suit  stacks  then  either  enter the card
+column       twice,       or       enter       the        destination       as
+"\fIh\fR","\fId\fR","\fIc\fR","\fIs\fR"  (i.e. "\fI2  2\fR" or "\fI2  s\fR" to
+move the card in column 2 to the spades stack).
+.IP
+"\fIC-c C-c\fR" to deal the cards again.
+.IP
+"\fIC-l\fR" redraw the screen.
+.IP
+"\fIq\fR" to quit the game.
+.SH "SEE ALSO"
+.na
+.Hl Games Games - ,
+.Ht Triangle 3 ,
+.Ht Mahjongg 3 .
+.ad
+.FH

@@ -1,0 +1,22 @@
+.\" -*- nroff -*-
+.Id $Id: m5var023.5,v 1.1.1.1 2000-07-25 22:04:04 jon Exp $
+.Im MicroEmacs variable|cursor
+.so me.tni
+.TH $fmatchdelay 5
+.XI $fmatchdelay - "Fence matching delay time"
+.SH NAME
+$fmatchdelay\- Fence matching delay time
+.Me $a
+.SH SYNOPSIS
+\fB$fmatchdelay\fR \fIdelayTime\fR; Default is \fC2\fR
+.sp
+0 <= \fIdelayTime\fR <= \fIn\fR
+.SH DESCRIPTION
+The number of seconds to wait in a fence match operation. When a closing fence
+\'\fC)\fR'  '\fC]\fR'  or  '\fC}\fR' is added in  \fCcmode\fR  then the opening
+fence is searched for,  scrolling the screen up where  necessary,  this is the
+time that the opening fence is displayed, interruptible by typing any key.
+.PP
+.I delayTime
+is specified in seconds.
+.FH

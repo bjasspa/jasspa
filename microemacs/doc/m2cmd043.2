@@ -1,0 +1,30 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd043.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|region
+.ds C0 "(\fB\*(cX\*cx\fR)\ \&
+.so me.tni
+.TH exchange-point-and-mark 2
+.XI exchange-point-and-mark - "\*(C0Exchange the cursor and marked position"
+.SH NAME
+exchange-point-and-mark \- Exchange the cursor and marked position
+.Me $a
+.SH SYNOPSIS
+.na
+.B exchange-point-and-mark
+(\fB\*(cX\*cx\fR)
+.ad
+.SH DESCRIPTION
+.B exchange-point-and-mark
+moves  the cursor to  the current marked  position
+(see
+.Ht set-mark 2 )
+in the current window and moves the mark to where the cursor was. This is very
+useful in finding  where a mark was, or in returning to a position  previously
+marked.
+.SH "SEE ALSO"
+.na
+.Ht set-mark 2 ,
+.Ht copy-region 2 .
+.ad
+.rm C0
+.FH

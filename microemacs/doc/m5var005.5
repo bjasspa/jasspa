@@ -1,0 +1,47 @@
+.\" -*- nroff -*-
+.Id $Id: m5var005.5,v 1.1.1.1 2000-07-25 22:04:04 jon Exp $
+.Im MicroEmacs variable|macrodevelop
+.so me.tni
+.TH $buffer-input 5
+.XI $buffer-input - "Divert buffer input through macro"
+.SH NAME
+$buffer-input \- Divert buffer input through macro.
+.Me $a
+.SH SYNOPSIS
+.B $buffer-input
+.I commandName
+.SH DESCRIPTION
+.B $buffer-input
+allows the buffer  input  mechanism  to be diverted  through a command  macro
+defined by  \fIcommandName\fR.  If this variable is set to a valid  command,
+which may be a user defined  macro, this command will be called  instead. The
+command  can  access the actual  key-code  typed by the user via the  command
+variable  
+.Ht @cc 4 ,
+e.g. the  following  macro  prints out the name of the command
+that the user presses until the
+.Ht abort-command 2
+is executed.
+.Me $emf-scheme
+.CS
+define-macro test-input
+    ml-write &spr "Current command: %s" @cc
+    !if &seq @cc "abort-command"
+        set-variable $buffer-input ""
+    !endif
+!emacro
+
+set-variable $buffer-input test-input
+.CE  0
+.Me $ehf-scheme
+.SH WARNING
+Caution  is  advised  when  using  this, if  there is no way of  reseting  the
+variable then 
+.B "\*(mE"
+must be killed.
+.SH "SEE ALSO"
+.na
+.Ht abort-command 2 ,
+.Ht @cc 4 .
+.ad
+.FH

@@ -1,0 +1,29 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd051.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|scuts
+.so me.tni
+.TH expand-abbrev 2
+.XI expand-abbrev \- "Expand an abbreviation"
+.SH NAME
+expand-abbrev \- Expand an abbreviation
+.Me $a
+.SH SYNOPSIS
+.na
+\fBexpand-abbrev\fR
+.ad
+.SH DESCRIPTION
+.B expand-abbrev
+expands an  abbreviation  to an alternate  form. The  abbreviation  must be an
+alpha-numeric  string and the cursor must be one  position to the right of the
+abbreviation  (which must not be alpha-numeric)  when this command is called.
+If the abbreviation is found, it is deleted and the alternate form is inserted
+leaving the cursor at the end of the insertion  unless  \fC\&\\p\fR\& is used.
+If not found, a space is inserted.
+.SH "SEE ALSO"
+.na
+.Ht buffer-abbrev-file 2 ,
+.Ht global-abbrev-file 2 ,
+.Ht expand-abbrev-handle 3 ,
+.Ht eaf 8 .
+.ad
+.FH

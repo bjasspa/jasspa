@@ -1,0 +1,36 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd136.2,v 1.1.1.1 2000-07-25 22:03:57 jon Exp $
+.Im MicroEmacs command|essential
+.ds C0 "(\fB\*(cXu\fR)\ \&
+.so me.tni
+.TH undo 2
+.XI undo - "\*(C0Undo the last edit"
+.SH NAME
+undo \- Undo the last edit
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+\fBundo\fR \*(C0
+.ad
+.SH DESCRIPTION
+.B undo
+removes the last  \fIn\fR  edits made to the  current  buffer.  The
+.Ht undo 2m
+buffer mode must be enabled for this command to operate.
+.PP
+The undo  information  is retained up until the next save  operation, at which
+point the undo  information is discarded.  When editing large files with gross
+changes then it is advisable to either  disable undo mode, or save  frequently
+to flush the undo buffer, thereby keeping \*(mE memory requirements reasonable
+(most \s-1UNIX\s0 users have  restrictions on the amount of memory that may be
+consumed by a single  process.  Windows is restricted by the amount of virtual
+memory (or swap space)).
+.SH "SEE ALSO"
+.na
+.Ht buffer-mode 2 ,
+.Ht save-buffer 2 ,
+.Ht undo 2m .
+.ad
+.rm C0
+.FH

@@ -1,0 +1,66 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1999 Samsung (SERI) Ltd.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m3fcl003.3
+.\"  Created By    : Jon Green
+.\"  Created       : Mon Jul 5 21:40:07 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1999 Samsung (SERI) Ltd.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from Samsung (SERI) Ltd.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m3fcl003.3,v 1.1.1.1 2000-07-25 22:03:59 jon Exp $
+.Im MicroEmacs filter
+.so me.tni
+.TH benchmrk 3f
+.XI benchmrk - "Benchmark \*(mS macro processor speed"
+.SH NAME
+benchmrk \-  Benchmark \*(mS macro processor speed
+.Me $a
+.SH SYNOPSIS
+.na
+\fBme\fR "@benchmrk"
+.ad
+.SH DESCRIPTION
+The start-up file  \fCbenchmrk.emf\fR  may be invoked from the command line to
+time the macro processor variable manipulation times.
+.PP
+This macro suite was  developed to optimize the macro  processor  performance,
+and allows comparable  analysis of various macro variable  manipulations.  The
+macro is not  important  in it's own  right  and is not  likely to be  useful.
+Running it will  provide an in-site  into the speed of the macro  language and
+should indicate to the user what are good and bad things to be doing.
+.PP
+As an aside, as \*(mS  interprets  the macro code the it is important that the
+processing operates at a reasonable speed. Most extensions offering additional
+functionality are likely to be added to \*(mS by way of a macro implementation
+- this allows speedy  development  of new features.  Obviously core changes do
+occur when we find that we cannot support  certain new  requirements,  or when
+the macro code becomes too  convoluted. In these cases, new commands are added
+to help us  solve  the  problem.  However,  recent  evolution  of the code has
+indicated that the core set is now reasonably complete.
+.SH "SEE ALSO"
+.na
+.Ht start-up 3 .
+.ad
+.FH

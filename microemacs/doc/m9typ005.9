@@ -1,0 +1,79 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1999 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m9typ005.9
+.\"  Created By    : Jon Green
+.\"  Created       : Sat Feb 6 14:22:09 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1999 JASSPA.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m9typ005.9,v 1.1.1.1 2000-07-25 22:04:08 jon Exp $
+.Im MicroEmacs filetype
+.so me.tni
+.TH makefile 9
+.XI makefile - "Make file"
+.SH SYNOPSIS
+makefile \- Make file
+.SH FILES
+.na
+.B hkmake.emf
+\- Make file hook definition
+.br
+.B make.etf
+\- Template file
+.ad
+.SH EXTENSIONS
+.na
+\fBMakefile\fR, \fBmakefile\fR, \fB.mak\fR \- Makefiles.
+.ad
+.SH "MAGIC STRINGS"
+.IP "\fB-!- makefile -!-\fR"
+Recognized by MicroEmacs only, defines the file to be a makefile.
+.SH DESCRIPTION
+The   \fBmake\fR   file  type   template   handles  the   hilighting   of  the
+makefile files. 
+.IP "\fBGeneral Editing\fR"
+On creating a new file, a new header is automatically included into the file.
+.Ht time 2m
+is by default enabled, allowing the modification time-stamp to be maintained in
+the header.
+.IP
+By default,  \fCTAB\fR's are enabled as this is the syntactical feature of the
+file.
+.IP \fBHilighting\fR
+The  hilighting  emphasizes the keywords and comments  within the makefile. No
+special support for Microsoft
+.Hr nmake 1
+is provided because of the number of oddities in their implementation of make.
+.SH BUGS
+No attempt is made to hilight any embedded shell commands.
+.SH "SEE ALSO"
+.na
+.Ht imakefile 9 ,
+.Ht time 2m .
+.sp 1
+.Hl "Supported File Types" FileTypes -
+.ad
+.FH

@@ -1,0 +1,227 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd001.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|hilight
+.so me.tni
+.TH add-color 2
+.XI add-color - "Create a new color"
+.XI add-color-scheme - "Create a new color scheme"
+.SH NAME
+.br
+.Me "|add-color"
+add-color \- Create a new color
+.br
+.Me "|add-color-scheme"
+add-color-scheme \- Create a new color scheme
+.Me $a
+.SH SYNOPSIS
+.na
+.B add-color 
+"\fIcol-no\fR"
+"\fIred\fR"
+"\fIgreen\fR"
+"\fIblue\fR"
+.br
+.I n
+.B add-color-scheme
+"\fIschemeNum\fR"
+"\fIfore\fR"
+"\fIback\fR"
+"\fIcurrent-fore\fR"
+"\fIcurrent-back\fR"
+.br
+.RS
+.RS
+"\fIselected-fore\fR"
+"\fIselected-back\fR"
+.br
+"\fIcurrent-selected-fore\fR"
+"\fIcurrent-selected-back\fR"
+.br
+[ "\fIfm-fore\fR"
+"\fIfm-back\fR"
+"\fIfm-cur-fore\fR"
+"\fIfm-cur-back\fR"
+.br
+"\fIfm-sel-fore\fR"
+"\fIfm-sel-back\fR"
+.br
+"\fIfm-cur-sel-fore\fR"
+"\fIfm-cur-sel-back\fR" ]
+.RE
+.RE
+.ad
+.SH DESCRIPTION
+.B add-color 
+creates a new color and inserts it into \*(mE colors  table, where  \fIred\fR,
+\fIgreen\fR  and \fIblue\fR are the color  components and  \fIcol-no\fR is the
+\*(mE  color table  number. The color table  contains  256 entries  indexed by
+\fIcol-no\fR in the range 0-255.
+.PP
+On some  platforms  (DOS and UNIX termcap) the number of colors is  physically
+limited by the hardware to less than 256 (typically  16), in this case all 256
+colors can be defined and for each created  color the closest  system color is
+used.
+.PP
+By default, only color 0 (white) and 1 (black) are defined. Once created, the
+colors may be used to create color schemes, this is the sole use of colors.
+.PP
+.B add-color
+may be used to modify an existing  \fIcol-no\fR  index by  re-assignment,  the
+existing color definition is over-written with the new color definition.
+.B add-color-scheme
+creates a color scheme entry used by
+.Ht hilight 2 ,
+.Ht screen-poke 2 ,
+.Ht osd 2
+and variables such as
+.Ht $global-scheme 5 ,
+.Ht $buffer-scheme 5 ,
+.Ht $ml-scheme 5 .
+.PP
+The command  takes an index  number  "\fIschemeNum\fR"  and eight color values
+(defined by \fBadd-color\fR)
+alternating  between  foreground and background colors. The 8 colors represent
+the 4 color paired states of foreground  and  background  that may appear in a
+text buffer. The paired  states  correspond to current and selected  lines (or
+permutations  thereof).  If an argument  \fIn\fR is given to the command  then
+\fIschemeNum\fR  is set to a  duplicate  of the  \fIn\fRth  scheme,  no  other
+arguments are required.
+.PP
+\fIschemeNum\fR is the identifying index that is used to recognize the scheme.
+By default only two color  schemes are defined at  initialization,  they are a
+monochrome  scheme and  inverse  scheme  with  indices 0 and 1 using  white as
+foreground and black as background, selected text is inverted. When defining a
+color scheme, if an existing \fIschemeNum\fR index is used then that scheme is
+modified.
+.PP
+The next eight arguments must be given, they specify foreground and background
+color pairs for the four different situations, as follows:-
+.IP Default
+Color combination used when none of the following three are applicable.
+.IP Current
+Color  combination used when the text is on the same line as the cursor. It is
+also used by the
+.Ht $mode-line-scheme 5
+for the current window's mode line and for the current selection on an
+.Ht osd 2
+dialog.
+.IP Selected
+Color  combination  used when the text is in the current  selected region, but
+is not on the current  line. Also used by \fBosd\fR for  non-current  item Hot
+keys.
+.IP "Current-selected"
+Color combination used when the text is on the current line and in the current
+selected region. Also used by \fBosd\fR for the current item's Hot key.
+.PP
+The following 8 arguments set up fonts and are optional, any missing arguments
+are defaulted to 0. Each argument is a bitmask indicating which font should be
+enabled, where each bit is as follows:
+.sp
+.RS
+\fC0x01\fR Enable bold font.
+.br
+\fC0x02\fR Enable italic font.
+.br
+\fC0x04\fR Enable light font.
+.br
+\fC0x08\fR Enable reverse font.
+.br
+\fC0x10\fR Enable underlining.
+.RE
+.PP
+Normally only the  foreground  value is used, i.e. the first, third, fifth and
+seventh values. But
+.Ht screen-poke 2
+can be used to draw reversed color scheme in which case the background  values
+are used.
+.SH EXAMPLE
+The color palette is typically created at start-up via the configuration  file
+\fBscheme\fR\|\fIX\fR\|\fB.emf\fR. These files are not easily read as they are
+automatically generated via the
+.Ht scheme-editor 3
+dialog. A more readable form of "\fCschemed.emf\fR" would be as follows:-
+.Me $emf-scheme
+.CS
+; Standard colors
+add-color &set .white     0 200 200 200
+add-color &set .black     1 0   0   0
+add-color &set .red       2 200 0   0
+add-color &set .green     3 0   200 0
+add-color &set .yellow    4 200 200 0
+add-color &set .blue      5 0   0   200
+add-color &set .magenta   6 200 0   200
+add-color &set .cyan      7 0   200 200
+; Light colors
+add-color &set .lwhite    8 255 255 255
+add-color &set .lblack    9 75  75  75
+add-color &set .lred     10 255 0   0
+add-color &set .lgreen   11 0   255 0
+add-color &set .lyellow  12 255 255 0
+add-color &set .lblue    13 0   0   255
+add-color &set .lmagenta 14 255 0   255
+add-color &set .lcyan    15 0   255 255
+; Selection color
+add-color &set .sel-col  16 91  78  131
+; Set the required cursor-color
+set-variable $cursor-color .col12
+; Set up the standard schemes for the text, mode line message line, scroll bar and osd.
+add-color-scheme $global-scheme  .white .black .lwhite .black ...
+    ... .white .sel-col .lwhite .sel-col 0 8 1 9 8 0 9 1
+add-color-scheme $ml-scheme  .white .black .lwhite .black ...
+    ... .white .sel-col .lwhite .sel-col 0 8 1 9 8 0 9 1
+add-color-scheme $mode-line-scheme  .white .red .lwhite .lred ...
+    ... .white .red .lwhite .red 8 0 9 1 0 8 1 9
+add-color-scheme $scroll-bar-scheme .white .lblack .lwhite .lblack ...
+    ...  .lblack .white .lblack .lwhite 8 0 9 1 0 8 1 9
+    .
+    .
+.CE 0
+.Me $ehf-scheme
+.SH NOTES
+Color  schemes  can be created and altered using the
+.Ht scheme-editor 3
+dialog, the created color scheme can then the used from start-up by using the
+.Ht user-setup 3
+dialog. Therefore direct use of these commands is largely redundant.
+.PP
+The  existence  of a color  or  scheme  index  is  checked  as each  entry  is
+submitted,  therefore any color or scheme used must have been  previously been
+created, otherwise a default value is substituted.
+.PP 
+Changing any existing  color  definitions  causes all  references to the color
+from a scheme to adopt the new color.
+.PP
+Changing any existing  color-scheme  definitions changes the rendered color of
+any
+.Ht hilight 2
+etc., that was using that color-scheme.
+.PP
+A \-ve color scheme value (i.e. \fI\-n\fR) uses the previous '\fIn\fR'th entry
+that is defined in the color block. i.e. if  \fIcurrent-fore\fR  was specified
+as -2 then it would inherit the \fIfore\fR field color.
+.PP
+Not all UNIX terminals support all the above fonts.
+.PP
+On some  telnet  packages  color  is not  directly  supported  and some of the
+termcap display  attributes such as bold and italic are represented by a color
+(e.g. italic text is shown in green). Using this translation it is possible to
+achieve  reasonable color support on a VT100 terminal - it is a little awkward
+but is worth while if you have to use this type of connection frequently.
+.SH "SEE ALSO"
+.na
+.Ht scheme-editor 3 ,
+.Ht user-setup 3 ,
+.Ht change-font 2 ,
+.Ht hilight 2 ,
+.Ht screen-poke 2 ,
+.Ht $buffer-hilight 5 ,
+.Ht $cursor-color 5 ,
+.Ht $global-scheme 5 ,
+.Ht $trunc-scheme 5 ,
+.Ht $ml-scheme 5 ,
+.Ht $osd-scheme 5 ,
+.Ht $mode-line-scheme 5 ,
+.Ht $scroll-bar-scheme 5 ,
+.Ht $system 5 .
+.ad
+.FH
