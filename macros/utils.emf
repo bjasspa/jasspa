@@ -104,7 +104,7 @@ set-variable .frame-handle.cmd "|delete-frame|create-frame|create-frame|next-fra
     mark-registry #l1 $result
     set-variable #l3 0
     !while 1
-        !force find-registry "" #l0 &pinc #l3 1
+        !force find-registry #l0 &pinc #l3 1
         !if &not $status
             !return
         !endif

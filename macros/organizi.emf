@@ -117,7 +117,7 @@
         set-variable .org.naddr &add #l0 1
         set-registry "/org" "addr/naddr" .org.naddr
     !endif
-    !force find-registry "/org" &spr "addr/%d" #l0 0
+    !force find-registry &spr "/org/addr/%d" #l0 0
     !if $status
         delete-registry &spr "/org/addr/%d" #l0
     !endif

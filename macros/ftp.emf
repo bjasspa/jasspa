@@ -252,11 +252,11 @@ define-macro ftp-connect
     set-variable #l0 @1
     set-variable .ftp.name #l0
     !if &not &seq #l0 ""
-        !force find-registry "/" "url/ftp" 0
+        !force find-registry "/url/ftp" 0
         !if &not $status
             set-registry "/" "url/ftp" ""
         !endif
-        !force find-registry "/url/ftp" #l0 0
+        !force find-registry &cat "/url/ftp" #l0 0
         !if &not $status
             set-registry "/url/ftp" #l0 ""
             set-registry "/url/ftp" &cat #l0 "/path" "/"
@@ -290,7 +290,7 @@ define-macro ftp-connect
     osd .osd.tmp 0 "bso" -28 0 30 0 -1 -1
     set-variable #l0 0
     !while 1
-        !force find-registry "/url" "ftp" &pinc #l0 1
+        !force find-registry "/url/ftp" &pinc #l0 1
         !if &not $status
             !if &equ #l0 1
                 osd .osd.tmp 1 "" "<None Defined>"
@@ -329,7 +329,7 @@ define-macro ftp-connect
             !if &seq #l0 ""
                 !return
             !endif
-            !force find-registry "/url/ftp" #l0 0
+            !force find-registry &cat "/url/ftp" #l0 0
             !if $status
                 ; if we already have an ftp entry of this name, simply change to it
             !elif &not &or &seq .ftp.name "" &seq .ftp.name #l0

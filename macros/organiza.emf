@@ -140,7 +140,7 @@ set-variable .org.addr-lbl  "|Record No|First Name|Surname|Nick Name|Selected|No
                 set-variable .org.addr .org.naddr
             !endif
             !while &dec .org.addr 1
-                !force find-registry "/org" &spr "addr/%d" .org.addr 0
+                !force find-registry &spr "/org/addr/%d" .org.addr 0
                 !if $status
                     !return
                 !endif
@@ -161,7 +161,7 @@ set-variable .org.addr-lbl  "|Record No|First Name|Surname|Nick Name|Selected|No
             set-variable .org.iaddr .org.naddr
         !else
             !while &les &inc .org.addr 1 .org.naddr
-                !force find-registry "/org" &spr "addr/%d" .org.addr 0
+                !force find-registry &spr "/org/addr/%d" .org.addr 0
                 !if $status
                     !return
                 !endif
@@ -222,7 +222,7 @@ set-variable .org.addr-lbl  "|Record No|First Name|Surname|Nick Name|Selected|No
     find-buffer "*org-index-tmp*"
     set-variable #l0 0
     !while &les &inc #l0 1 .org.naddr
-        !force find-registry "/org" &spr "addr/%d" #l0 0
+        !force find-registry &spr "/org/addr/%d" #l0 0
         !if $status
             !if .org.addr-index1
                 set-variable #l1 &reg "/org" &spr "addr/%d/%s" #l0 &lget .org.addr-reg .org.addr-index1 ""
@@ -494,7 +494,7 @@ osd .osd.orga-f 660 "f" " "
             !endif
             insert-newline
         !endif
-        !force find-registry "/org" &cat #l0 "home" 0
+        !force find-registry &spr "/org/%s/home" #l0 0
         !if $status
             insert-string &spr "\nHome:\n"
             !if &not &seq &set #l1 &reg "/org" &cat #l0 "home/addr" "" ""
@@ -527,7 +527,7 @@ osd .osd.orga-f 660 "f" " "
                 insert-newline
             !endif
         !endif
-        !force find-registry "/org" &cat #l0 "work" 0
+        !force find-registry &spr "/org/%s/work" #l0 0
         !if $status
             insert-string &spr "\nWork:\n  Company: %s\n" &reg "/org" &cat #l0 "work/comp" ""
             !if &not &seq &set #l1 &reg "/org" &cat #l0 "work/addr" "" ""

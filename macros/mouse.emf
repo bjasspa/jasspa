@@ -724,7 +724,7 @@ set-variable .mouse-event.mask "mouse-%s-1"
 
 set-variable #l0 0
 set-variable #l9 &reg "/history" &cat $platform "/mouse2to3" 0
-!force find-registry "history" "mouse" &pinc #l0 1
+!force find-registry "/history/mouse" &pinc #l0 1
 !while $status
     !if &sin "-auto" $result
     !elif &set #l2 &sin "-wup" $result
@@ -779,5 +779,5 @@ set-variable #l9 &reg "/history" &cat $platform "/mouse2to3" 0
             !endif
         !endif
     !endif
-    !force find-registry "history" "mouse" &pinc #l0 1
+    !force find-registry "/history/mouse" &pinc #l0 1
 !done
