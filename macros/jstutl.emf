@@ -31,27 +31,56 @@ define-macro jst-prepare-header
     !endif        
 !emacro
 
+define-macro jst-insert-bullet-string
+    set-variable #l0 &add @1 1
+    set-variable @1 #l0
+    set-variable #l1 @2
+    !if &seq &lef #l1 1 "D"
+        insert-string &cat "\bB" #l1
+    !elif &seq &lef #l1 1 "N"
+        insert-string &spr "\bB%s%d\bB)" #l1 #l0
+    !elif &iseq &lef #l1 1 "R"
+        ; roman numberals
+        set-variable #l2 &spr "%n%s" &div #l0 10 "X" &lget "|I|II|III|IV|V|VI|VII|VIII|IX|" &mod #l0 10
+        !if &sgr &lef #l1 1 "Z"
+            set-variable #l2 &slo #l2
+        !endif
+        insert-string &spr "\bB%s%s\bB)" #l1 #l2
+    !else
+        set-variable #l2 &itoa &add #l0 64
+        !if &sgr &lef #l1 1 "Z"
+            set-variable #l2 &slo #l2
+        !endif
+        insert-string &spr "\bB%s%s\bB)" #l1 #l2 
+    !endif
+!emacro
+
 define-macro jst-prepare-section
     ; Identify bullet lists
     ; indent tolerance
     set-variable #l9 &div $tabsize 2
     set-variable $window-line #p0
-    !force &sub $window-line #p1 search-forward "^\n[ \t]*\\(\\*\\|[0-9]+)\\|[a-zA-Z][).]\\|[ivxlc]+[).]\\)[ \t]+\\S "
+    !force &sub $window-line #p1 search-forward "^\n[ \t]*\\(\\*\\|[0-9]+[]).]\\|[a-zA-Z][]).]\\|[ivxlc]+[]).]\\)[ \t]+\\S "
     !while $status
-        !if &seq &lef @s1 1 "*"
+        set-variable #l3 @s1
+        !if &seq &lef #l3 1 "*"
+            set-variable #l4 "D" 
             set-variable #l3 "^[ \t]*\\*[ \t]+\\S "
-            set-variable #l4 "\bD"
-        !elif &xse &lef @s1 1 "[0-9]"
-            set-variable #l3 "^[ \t]*[0-9]+)[ \t]+\\S "
-            set-variable #l4 "\bN"
+        !elif &xse &lef #l3 1 "[0-9]"
+            set-variable #l4 &cat "N" &xir #l3 "[0-9]+\\(.\\).*" "\\1"
+            set-variable #l3 "^[ \t]*[0-9]+[]).][ \t]+\\S "
         !else
-            set-variable #l3 "^[ \t]*[A-Za-z]+[).][ \t]+\\S "
-            !if &isin "i" @s1
+            !if &isin "i" #l3
                 ; roman numberals?
-                set-variable #l4 "\bR"
+                set-variable #l4 "R"
             !else
-                set-variable #l4 "\bA"
+                set-variable #l4 "A"
             !endif
+            !if &sgr &lef #l3 1 "Z"
+                set-variable #l4 &slo #l4
+            !endif
+            set-variable #l4 &cat #l4 &xir #l3 "[A-Za-z]+\\(.\\).*" "\\1"
+            set-variable #l3 "^[ \t]*[A-Za-z]+[]).][ \t]+\\S "
         !endif
         set-variable #l0 $window-line
         backward-char
@@ -61,7 +90,9 @@ define-macro jst-prepare-section
         set-variable #l1 $window-acol
         &sub #l5 $window-col forward-delete-char
         -1 yank
-        insert-string &cat "\bE" #l4
+        set-variable #l7 0
+        insert-string "\bBE"
+        jst-insert-bullet-string #l7 #l4
         set-variable #l2 0
         !repeat
             forward-line
@@ -85,12 +116,12 @@ define-macro jst-prepare-section
                     !else
                         &sub #l5 $window-col forward-delete-char
                         -1 yank
-                        insert-string #l4
+                        jst-insert-bullet-string #l7 #l4
                         set-variable #l6 $window-line
                         beginning-of-line
                         search-backward "\\S "
                         forward-char
-                        insert-string &slo #l4
+                        insert-string &cat "\bb" &lef #l4 1
                         set-variable $window-line #l6
                     !endif
                 !elif &les &sub $window-acol #l1 2
@@ -105,11 +136,11 @@ define-macro jst-prepare-section
         beginning-of-line
         search-backward "\\S "
         forward-char
-        insert-string &cat &slo #l4 "\be"
+        insert-string &spr "\bb%s\bbE" &lef #l4 1
         ; find the next set of bullets
         set-variable $window-line #l0
         end-of-line
-        !force &sub $window-line #p1 search-forward "^\n[ \t]*\\(\\*\\|[0-9]+)\\|[a-zA-Z][).]\\|[ivxlc]+[).]\\)[ \t]+\\S "
+        !force &sub $window-line #p1 search-forward "^\n[ \t]*\\(\\*\\|[0-9]+[]).]\\|[a-zA-Z][]).]\\|[ivxlc]+[]).]\\)[ \t]+\\S "
     !done
     
     ; find the indent of the first non-blank line (possibly a header) and use
@@ -128,9 +159,34 @@ define-macro jst-prepare-section
         search-forward "^[ \t]*"
         $window-col backward-delete-char
         -1 yank
-        insert-string "\bS"
-        end-of-line
-        insert-string "\bs"
+        search-forward "^[0-9.]*"
+        set-variable #l2 @s0
+        !if &seq &rig #l2 &sub &len #l2 2 ".0"
+            backward-delete-char
+            backward-delete-char
+            set-variable #l2 &lef #l2 &sub &len #l2 2
+            !if &seq #l2 "0"
+                ; === header line 
+                backward-delete-char
+                forward-delete-char
+            !elif &seq #l2 "0.0"
+                ; --- header line 
+                backward-delete-char
+                backward-delete-char
+                backward-delete-char
+                forward-delete-char
+            !endif
+        !endif
+        beginning-of-line
+        !if &gre &len #l2 &len &rep #l2 "." ""
+            insert-string "\bS3"
+            end-of-line
+            insert-string "\bs3"
+        !else
+            insert-string "\bS2"
+            end-of-line
+            insert-string "\bs2"
+        !endif
         forward-line
     !endif
     set-variable #l2 0
@@ -145,7 +201,7 @@ define-macro jst-prepare-section
             !if &not &les &sub #l5 #l4 $tabsize
                 set-variable #l4 #l5
                 set-variable #l2 &add #l2 1
-                insert-string "\bT"
+                insert-string "\bLT"
             !elif &not #l2
                 ; can't negative indent
             !elif &not &less &sub #l4 #l5 $tabsize
@@ -153,7 +209,7 @@ define-macro jst-prepare-section
                 set-variable #l6 $window-line
                 search-backward "\\S "
                 forward-char
-                insert-string "\bt"
+                insert-string "\blT"
                 set-variable $window-line #l6
                 set-variable #l2 &sub #l2 1
             !endif
@@ -162,16 +218,16 @@ define-macro jst-prepare-section
                 ; a one line paragraph
                 backward-line
                 beginning-of-line
-                search-forward "^\\(\bT\\)*"
-                insert-string "\bP"
+                search-forward "^\\(\bLT\\)*"
+                insert-string "\bLP"
                 end-of-line
-                insert-string "\bp"
+                insert-string "\blP"
             !else
                 ; a no-format paragraph
                 backward-line
                 beginning-of-line
-                search-forward "^\\(\b.\\)*"
-                insert-string "\bC"
+                search-forward "^\\(\b..\\)*"
+                insert-string "\bLC"
                 !repeat
                     search-forward "^[ \t]*"
                     !if &gre $window-acol #l5
@@ -183,7 +239,7 @@ define-macro jst-prepare-section
                 !until &seq @wl ""
                 search-backward "\\S "
                 forward-char
-                insert-string "\bc"
+                insert-string "\blC"
             !endif
             forward-line
         !endif
@@ -194,7 +250,7 @@ define-macro jst-prepare-section
         beginning-of-line
         search-backward "\\S "
         forward-char
-        #l2 insert-string "\bt"
+        #l2 insert-string "\blT"
     !endif
 !emacro
 
@@ -208,19 +264,26 @@ define-macro jst-prepare-doc
     1 buffer-mode "exact"
     ; Find any dividing lines
     beginning-of-buffer
-    replace-string "^\n___+\n\n?" "\n\bL\n\n"
+    replace-string "^\n___+\n\n?" "\n\bLL\n\n"
+    beginning-of-buffer
+    replace-string "^\n---+\n\n?" "\n\bLL\n\n"
+    ; replace any === & --- header lines with 0.0 & 0.0.0 sections
+    beginning-of-buffer
+    replace-string "^\\(.*\\S .*\\)\n===+\n\n?" "0.0 \\1\n\n"
+    beginning-of-buffer
+    replace-string "^\\(.*\\S .*\\)\n---+\n\n?" "0.0.0 \\1\n\n"
     ; change bold *....* to easily found labels
     beginning-of-buffer
-    replace-string "\\([^*]\\)\\*\\([^ \t*]\\([^*\n]\\|\\*\\*\\)*\\)\\*" "\\1\bB\\2\bb"
+    replace-string "\\([^*]\\)\\*\\([^ \t*]\\([^*\n]\\|\\*\\*\\)*\\)\\*" "\\1\bFB\\2\bfB"
     ; change italic ~....~ to easily found labels
     beginning-of-buffer
-    replace-string "\\([^~]\\)~\\([^ \t~]\\([^~\n]\\|~~\\)*\\)~" "\\1\bI\\2\bi"
+    replace-string "\\([^~]\\)~\\([^ \t~]\\([^~\n]\\|~~\\)*\\)~" "\\1\bFI\\2\bfI"
     ; change underline _...._ to easily found labels
     beginning-of-buffer
-    replace-string "\\([^_]\\)_\\([^ \t_]\\([^_\n]\\|__\\)*\\)_" "\\1\bU\\2\bu"
+    replace-string "\\([^_]\\)_\\([^ \t_]\\([^_\n]\\|__\\)*\\)_" "\\1\bFU\\2\bfU"
     ; change hilight `....' to easily found labels
     beginning-of-buffer
-    replace-string "\\([^`]\\)`\\(\\([^']\\|''\\)*\\)'" "\\1\bH\\2\bh"
+    replace-string "\\([^`]\\)`\\(\\([^']\\|''\\)*\\)'" "\\1\bFH\\2\bfH"
     ; format all paragraphs to a single line
     beginning-of-buffer
     65536 paragraph-to-line
@@ -244,10 +307,10 @@ define-macro jst-prepare-doc
     -1 yank
     ; is the first line a section or normal line
     set-variable #l0 1
-    set-variable #l2 &xse @wl "^[ \t]*[0-9]+\\.[0-9.]*[ \t]+\\w.*"
+    set-variable #l2 &xse @wl "^[ \t]*[0-9]+\\.[0-9.]*[ \t]+\\S .*"
     !repeat
         end-of-line
-        !force search-forward "^\n[ \t]*[0-9]+\\.[0-9.]*[ \t]+\\w"
+        !force search-forward "^\n[ \t]*[0-9]+\\.[0-9.]*[ \t]+\\S "
         !if $status
             beginning-of-line
         !else
@@ -280,71 +343,91 @@ define-macro jst-to-html
     beginning-of-buffer
     replace-string ">" "&gt;"
     beginning-of-buffer
-    replace-string "\bL" "<HR>"
+    replace-string "\bLL" "<HR>"
     beginning-of-buffer
-    replace-string "\bB" "<B>"
+    replace-string "\bFB" "<B>"
     beginning-of-buffer
-    replace-string "\bb" "</B>"
+    replace-string "\bfB" "</B>"
     beginning-of-buffer
-    replace-string "\bI" "<I>"
+    replace-string "\bFI" "<I>"
     beginning-of-buffer
-    replace-string "\bi" "</I>"
+    replace-string "\bfI" "</I>"
     beginning-of-buffer
-    replace-string "\bU" "<U>"
+    replace-string "\bFU" "<U>"
     beginning-of-buffer
-    replace-string "\bu" "</U>"
+    replace-string "\bfU" "</U>"
     beginning-of-buffer
-    replace-string "\bH" "<B><I>"
+    replace-string "\bFH" "<B><I>"
     beginning-of-buffer
-    replace-string "\bh" "</I></B>"
+    replace-string "\bfH" "</I></B>"
     beginning-of-buffer
-    replace-string "\bT" "<DIR>"
+    replace-string "\bLT" "<DIR>"
     beginning-of-buffer
-    replace-string "\bt" "</DIR>"
+    replace-string "\blT" "</DIR>"
     beginning-of-buffer
-    replace-string "\bP" "<P>"
+    replace-string "\bLP" "<P>"
     beginning-of-buffer
-    replace-string "\bp" "</P>"
+    replace-string "\blP" "</P>"
     beginning-of-buffer
-    replace-string "\bC" "<PRE>"
+    replace-string "\bLC" "<PRE>"
     beginning-of-buffer
-    replace-string "\bc" "</PRE>"
+    replace-string "\blC" "</PRE>"
     beginning-of-buffer
-    replace-string "\bE\bD" "<UL><LI>"
+    replace-string "\bBE\bBD" "<UL>\bBD"
     beginning-of-buffer
-    replace-string "\bd\be" "</LI></UL>"
+    replace-string "\bbD\bbE" "\bbD</UL>"
     beginning-of-buffer
-    replace-string "\bD" "<LI>"
+    replace-string "\bBD" "<LI>"
     beginning-of-buffer
-    replace-string "\bd" "</LI>"
+    replace-string "\bbD" "</LI>"
     beginning-of-buffer
-    replace-string "\bE\bA" "<OL TYPE=\"a\"><LI>"
+    replace-string "\bBE\bBA" "<OL TYPE=\"A\">\bBA"
     beginning-of-buffer
-    replace-string "\ba\be" "</LI></OL>"
+    replace-string "\bbA\bbE" "\bbA</OL>"
     beginning-of-buffer
-    replace-string "\bA" "<LI>"
+    replace-string "\bBA[^\b]*\bB)" "<LI>"
     beginning-of-buffer
-    replace-string "\ba" "</LI>"
+    replace-string "\bbA" "</LI>"
     beginning-of-buffer
-    replace-string "\bE\bR" "<OL TYPE=\"i\"><LI>"
+    replace-string "\bBE\bBa" "<OL TYPE=\"a\">\bBa"
     beginning-of-buffer
-    replace-string "\br\be" "</LI></OL>"
+    replace-string "\bba\bbE" "\bba</OL>"
     beginning-of-buffer
-    replace-string "\bR" "<LI>"
+    replace-string "\bBa[^\b]*\bB)" "<LI>"
     beginning-of-buffer
-    replace-string "\br" "</LI>"
+    replace-string "\bba" "</LI>"
     beginning-of-buffer
-    replace-string "\bE\bN" "<OL><LI>"
+    replace-string "\bBE\bBR" "<OL TYPE=\"I\">\bBR"
     beginning-of-buffer
-    replace-string "\bn\be" "</LI></OL>"
+    replace-string "\bbR\bbE" "\bbR</OL>"
     beginning-of-buffer
-    replace-string "\bN" "<LI>"
+    replace-string "\bBR[^\b]*\bB)" "<LI>"
     beginning-of-buffer
-    replace-string "\bn" "</LI>"
+    replace-string "\bbR" "</LI>"
     beginning-of-buffer
-    replace-string "\bS" "<H2><P>"
+    replace-string "\bBE\bBr" "<OL TYPE=\"i\">\bBr"
     beginning-of-buffer
-    replace-string "\bs" "</P></H2>"
+    replace-string "\bbr\bbE" "\bbr</OL>"
+    beginning-of-buffer
+    replace-string "\bBr[^\b]*\bB)" "<LI>"
+    beginning-of-buffer
+    replace-string "\bbr" "</LI>"
+    beginning-of-buffer
+    replace-string "\bBE\bBN" "<OL>\bBN"
+    beginning-of-buffer
+    replace-string "\bbN\bbE" "\bbN</OL>"
+    beginning-of-buffer
+    replace-string "\bBN[^\b]*\bB)" "<LI>"
+    beginning-of-buffer
+    replace-string "\bbN" "</LI>"
+    beginning-of-buffer
+    replace-string "\bS2" "<H2><P>"
+    beginning-of-buffer
+    replace-string "\bs2" "</P></H2>"
+    beginning-of-buffer
+    replace-string "\bS3" "<H3><P>"
+    beginning-of-buffer
+    replace-string "\bs3" "</P></H3>"
     beginning-of-buffer
     insert-string "<HTML>\n<HEAD>\n"
     !if &exi :title
@@ -389,6 +472,8 @@ define-macro jst-to-text
     ; Find any dividing lines
     beginning-of-buffer
     replace-string "^\n___+\n\n?" &spr "\n%n\n\n" $fill-col "_"
+    beginning-of-buffer
+    replace-string "^\n---+\n\n?" &spr "\n%n\n\n" $fill-col "_"
     ; remove bold *....* labels
     beginning-of-buffer
     replace-string "\\([^*]\\)\\*\\([^ \t*]\\([^*\n]\\|\\*\\*\\)*\\)\\*" "\\1\\2"
