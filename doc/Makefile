@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20050123.1827>
+# Last Modified: <20050206.1848>
 #
 ##############################################################################
 
@@ -169,7 +169,7 @@ OSD3_000=	$(DOCDIR)m3osd000.3 $(DOCDIR)m3osd001.3 $(DOCDIR)m3osd002.3\
 		$(DOCDIR)m3osd006.3 $(DOCDIR)m3osd007.3 $(DOCDIR)m3osd008.3\
 		$(DOCDIR)m3osd009.3
 OSD3_010=	$(DOCDIR)m3osd010.3 $(DOCDIR)m3osd011.3 $(DOCDIR)m3osd012.3\
-		$(DOCDIR)m3osd013.3
+		$(DOCDIR)m3osd013.3 $(DOCDIR)m3osd014.3
 #
 FCL3_000=	$(DOCDIR)m3fcl001.3 $(DOCDIR)m3fcl002.3 $(DOCDIR)m3fcl003.3\
 		$(DOCDIR)m3fcl004.3 $(DOCDIR)m3fcl005.3 $(DOCDIR)m3fcl006.3\

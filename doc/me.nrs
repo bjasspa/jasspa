@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.28 2005-02-06 13:55:52 jon Exp $
+.Id $Id: me.nrs,v 2.29 2005-02-06 18:51:52 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -2303,7 +2303,8 @@ interface.
 .BU
 [041210]  Created  new osd  file  "\fCosdmisc.emf\fR"  for  miscellaneous  OSD
 macros, this removes the OSD  dependency  when the  MicroEmacs  is executed in
-special start up modes with startup  files. Moved search and new  indent-setup
+special start up modes with startup files. Moved search and new 
+.Ht indent-setup 3 
 commands  out  of  "\fCsearch.emf\fR"   and  "\fCformat.emf\fR"   into  a  new
 "\fCosdmisc.emf\fR"  as  they  cause  problems  with  utils  that  do not  run
 "\fCme.emf\fR" (e.g. "\fCehftools.emf\fR")
@@ -2497,7 +2498,9 @@ file selection.  Keyboard file section enabled within the  "\fC*grep*\fR"  and
 [041026] Spruced up old  "\fCsmb.conf\fR"  highlighting rules, brought them up
 to date with latest keywords and added to release.
 .BU
-[041026] Fixed indent-setup osd dialog.
+[041026] Fixed 
+.Ht indent-setup 3
+osd dialog.
 .BU
 [041024] Macro/source  compatibility  macro and source versions updated to
 "\fC20041001\fR".
