@@ -2654,19 +2654,29 @@ makestrlow(meUByte *str)
 int
 insFileName(int f, int n)
 {
-    register meUByte *p, cc ;
-    register int s, count=0 ;
+    meUByte *name, *p, cc ;
+    int s, count=0 ;
     
-    if((n <= 0) || (frameCur->bufferCur->fileName == NULL))
+    if(n < 0)
+    {
+        name = frameCur->bufferCur->name ;
+        n = 0 - n ;
+    }
+    else if(n > 0)
+        name = frameCur->bufferCur->fileName ;
+    else
         return meTRUE ;
+    if(name == NULL)
+        return ctrlg(meFALSE,1) ;
+    
     if((s=bufferSetEdit()) > 0)               /* Check we can change the buffer */
     {
-        while(n--)
+        do
         {
-            p=frameCur->bufferCur->fileName ;
+            p = name ;
             while(((cc = *p++) != 0) && ((s = lineInsertChar(1,cc)) > 0))
                 count++ ;
-        }
+        } while((s > 0) && (--n > 0)) ;
 #if MEOPT_UNDO
         meUndoAddInsChars(count) ;
 #endif
