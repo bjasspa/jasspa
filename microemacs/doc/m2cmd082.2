@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd082.2,v 2.6 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd082.2,v 2.7 2005-01-16 16:47:35 jon Exp $
 .Im MicroEmacs command|delete
 .ds C0 "(\fB\*ck\fR)\ \&
 .so me.tni
@@ -20,33 +20,54 @@ kill-line \- Delete all characters to the end of the line
 .SH DESCRIPTION
 .BR kill-line ,
 when used with no  argument  \fIn\fR,  deletes all text from the cursor to the
-end of a line, the end of line  character is also deleted if the  cursor  is in the  first
-column and the
-.Ht line 2m
-mode is disabled. The deleted text is placed in the kill buffer, see
+end of a line, the end of line  character  is NOT deleted. The deleted text is
+placed in the kill buffer, see
 .Ht yank 2
-for more information on the kill buffer. When used on a blank  line, it always
-deletes it.
+for more  information  on the kill buffer. If the line is blank then the whole
+line is deleted, including the end of line character.
 .PP
-If a +ve  argument  \fIn\fR  is  supplied  the  specified  number  of lines is
-deleted, the setting of the  \fBline\fR  mode is ignore. If \fIn\fR is \fC0\fR
-the  command has no effect. If a \-ve  argument is given,  +\fIn\fR  lines are
-deleted but the text is NOT added to the kill buffer.
+If a +ve  argument  \fIn\fR  is  supplied  the  specified  number of lines are
+deleted. If a \-ve  argument is  specified  the  previous  -\fIn\fR  lines are
+deleted. If \fIn\fR is \fC0\fR the command has no effect.
 .SH NOTES
-If a line is accidentally removed then
+If a line is accidentally removed then use
 .Hl yank yank 2
-the text back immediately or use
+to restore the text or use
 .Ht undo 2 .
 .PP
-The \-ve argument is typically used in macro scripts where the yank buffer
-is more precisely controlled by the script.
+The Emacs Key  binding  for kill line  (\*(C0) may be  re-bound  to affect the
+behavior of the command.
+.Me $emf-scheme
+.CS
+; MicroEmacs binding. Bind to kill the end of line character
+1 global-bind-key kill-line "C-k"
+
+; GNU Emacs binding. Bind to leave the end of line character
+  global-bind-key kill-line "C-k"
+.CE 0
+.Me $ehf-scheme
+.SH HISTORY
+The behavior of \fBkill-line\fR was modified in November 2004. \fBkill-line\fR
+now interprets the numeric  argument  \fIn\fR in both a +ve and -ve direction.
+The  existing  implementation  did not  operated in a -ve  direction,  the -ve
+argument controlled the kill buffer behavior of the line. The kill behavior is
+no longer an option to \fBkill-line\fR and the line(s) are always added to the
+kill buffer,  control of the kill buffer is required  then deletion  should be
+performed with
+.Ht kill-region 2 .
+.PP
+The behavior of the end of line kill used to be controlled by a
+.Hr line 2m
+mode, this  behavior  may be  replicated  by  modification  of the  binding as
+described in the previous section.
 .SH "SEE ALSO"
 .na
+.Ht forward-kill-word 2 ,
+.Ht global-bind-key 2 ,
+.Ht kill-paragraph 2 ,
 .Ht kill-region 2 ,
-.Ht line 2m ,
 .Ht undo 2 ,
-.Ht yank 2 ,
-.Ht forward-kill-word 2 .
+.Ht yank 2 .
 .ad
 .rm C0
 .FH
