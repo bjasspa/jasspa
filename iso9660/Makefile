@@ -7,12 +7,12 @@
 #  System        :
 #  Module        :
 #  Object Name   : $RCSfile: Makefile,v $
-#  Revision      : $Revision: 1.1 $
-#  Date          : $Date: 2003-08-10 22:49:11 $
+#  Revision      : $Revision: 1.2 $
+#  Date          : $Date: 2003-08-14 17:09:31 $
 #  Author        : $Author: jon $
 #  Created By    : Jon Green
 #  Created       : Sun Aug 10 11:57:07 2003
-#  Last Modified : <030810.2344>
+#  Last Modified : <030814.1653>
 #
 #  Description
 #
@@ -21,6 +21,9 @@
 #  History
 #
 #  $Log: not supported by cvs2svn $
+#  Revision 1.1  2003/08/10 22:49:11  jon
+#  CD ISO9660 Image build directory
+#
 #
 ##############################################################################
 #
@@ -43,8 +46,8 @@ EXPDIR=/home/jon/www.jasspa.com/experimental
 MISDIR=/home/jon/www.jasspa.com/misc
 SUBDIR=/home/jon/www.jasspa.com/subs
 
-FLABEL="jasspa0308f01"
-ELABEL="jasspa0308e01"
+FLABEL="jasspa0308f11"
+ELABEL="jasspa0308e11"
 FDISK=jasspafull.iso
 EDISK=jasspaexec.iso
 FZIP =jasspafull.zip
@@ -195,7 +198,9 @@ clean:
 spotless: clean
 	rm -f $(FZIP) $(EZIP)
 	rm -f *.iso
-
+#
+# Root directory readme's
+# 
 $(FDIR) $(EDIR):
 	mkdir -p $@
 	cp $(RELDIR)/faq.txt $@/faq.unix
@@ -216,17 +221,21 @@ $(FDIR) $(EDIR):
 	cp cdrom.txt $@/cdrom.unix
 	unix2dos cdrom.txt $@/cdrom.joliet
 	unix2mac cdrom.txt $@/cdrom.hfs
-
+#
+# Nano Emacs excecutable directory.
+# 
 $(FDIR)/ne $(EDIR)/ne:	ne.txt
 	mkdir -p $@
 	gunzip -c $(RELDIR)/nelinux24.gz > $@/nelinux24
 	chmod a+rx $@/nelinux24
 	gunzip -c $(RELDIR)/nesunos56.gz > $@/nesunos56
 	chmod a+rx $@/nesunos56
+	unzip -o $(RELDIR)/nesunos58.zip -d $@
+	chmod a+rx $@/nesunos58
 	unzip -o $(RELDIR)/nesunos59.zip -d $@
 	chmod a+rx $@/nesunos59
-	gunzip -c $(RELDIR)/neirix6.gz > $@/neirix6
-	chmod a+rx $@/neirix6
+	unzip -o $(RELDIR)/nesunx86_58.zip -d $@
+	chmod a+rx $@/nesunx86_58
 	gunzip -c $(RELDIR)/neirix6.gz > $@/neirix6
 	chmod a+rx $@/neirix6
 	gunzip -c $(RELDIR)/nehpux10.gz > $@/nehpux10
@@ -243,7 +252,9 @@ $(FDIR)/ne $(EDIR)/ne:	ne.txt
 	cp ne.txt $@/readme.unix
 	unix2dos ne.txt $@/readme.joliet
 	unix2mac ne.txt $@/readme.hfs
-
+#
+# Spelling dictionaries.
+# 
 $(FDIR)/archive/spelling: spell.txt
 	mkdir -p $@
 	cp $(SPLDIR)/ls_dede.tar.gz $(SPLDIR)/ls_dede.zip $@
@@ -258,7 +269,9 @@ $(FDIR)/archive/spelling: spell.txt
 	cp spell.txt $@/readme.unix
 	unix2dos spell.txt $@/readme.joliet
 	unix2mac spell.txt $@/readme.hfs
-
+#
+# Documentation directories.
+#
 $(FDIR)/doc: doc.txt
 	mkdir -p $@
 	(cd $@; gunzip -c $(RELDIR)/mehtml.tar.gz | tar xvf -)
@@ -269,7 +282,9 @@ $(FDIR)/doc: doc.txt
 	cp doc.txt $@/readme.unix
 	unix2dos doc.txt $@/readme.joliet
 	unix2mac doc.txt $@/readme.hfs
-
+#
+# Packages.
+# 
 $(FDIR)/packages:
 	mkdir -p $@/cygwin
 	cp $(RELDIR)/jasspa-20021216-src.tar.bz2 $@/cygwin
@@ -277,23 +292,33 @@ $(FDIR)/packages:
 	cp $(RELDIR)/jasspa-20021216.tar.bz2 $@/cygwin
 	mkdir -p $@/windows
 	cp $(RELDIR)/jasspame.exe $@/windows
-	mkdir -p $@/sun_sol9
-	unzip -o $(RELDIR)/sun-sparc-9-studio7-jasspame-20021216.zip -d  $@/sun_sol9
-	mv $@/sun_sol9/jasspame-20021216 $@/sun_sol9/jasspa.pkg
+	mkdir -p $@/sun
+	unzip -o $(RELDIR)/sun-sparc-9-studio7-jasspame-20021216.zip -d  $@/sun
+	mv $@/sun/jasspame-20021216 $@/sun/jasspa-sparc-sol9.pkg
+	unzip -o $(RELDIR)/sun-sparc-8-jasspame-20021216.zip -d  $@/sun
+	mv $@/sun/jasspame-20021216 $@/sun/jasspa-sparc-sol8.pkg
+	unzip -o $(RELDIR)/sun-i386-8-jasspame-20021216.zip -d  $@/sun
+	mv $@/sun/jasspame-20021216 $@/sun/jasspa-i386-sol8.pkg
 	mkdir -p $@/linux
 	cp microemacs-jasspa-2002_12-1.i386.rpm $@/linux
 	cp package.txt $@/readme.unix
 	unix2dos package.txt $@/readme.joliet
 	unix2mac package.txt $@/readme.hfs
-
+#
+# Source directory
+#
 $(FDIR)/src:
 	mkdir -p $@
 	(cd $@; gunzip -c $(RELDIR)/mesrc.tar.gz | tar xvf -)
-
+#
+# Macros directory.
+#
 $(FDIR)/macros:
 	mkdir -p $@
 	(cd $@; gunzip -c $(RELDIR)/memacros.tar.gz | tar xvf -)
-
+#
+# Executable direcotory.
+# 
 $(FDIR)/me $(EDIR)/me:
 	mkdir -p $@
 	(cd $@; gunzip -c $(RELDIR)/memacros.tar.gz | tar xvf -)
@@ -304,6 +329,10 @@ $(FDIR)/me $(EDIR)/me:
 	chmod a+rx $@/mesunos56
 	unzip -o $(RELDIR)/mesunos59.zip -d $@
 	chmod a+rx $@/mesunos59
+	unzip -o $(RELDIR)/mesunos58.zip -d $@
+	chmod a+rx $@/mesunos58
+	unzip -o $(RELDIR)/mesunx86_58.zip -d $@
+	chmod a+rx $@/mesunx86_58
 	gunzip -c $(RELDIR)/meirix6.gz > $@/meirix6
 	chmod a+rx $@/meirix6
 	gunzip -c $(RELDIR)/mehpux10.gz > $@/mehpux10
@@ -314,12 +343,18 @@ $(FDIR)/me $(EDIR)/me:
 	chmod a+rx $@/meaix4
 	unzip -o $(RELDIR)/mewin32.zip -d $@
 	unzip -o $(RELDIR)/mecwin32.zip -d $@
-
+#
+# Executable directory.
+# 
 $(FDIR)/bin:
 	gunzip -c $(RELDIR)/melinux24.gz > $@/melinux24
 	chmod a+rx $@/melinux24
 	gunzip -c $(RELDIR)/mesunos56.gz > $@/mesunos56
 	chmod a+rx $@/mesunos56
+	unzip -o $(RELDIR)/mesunos58.zip -d $@
+	chmod a+rx $@/mesunos58
+	unzip -o $(RELDIR)/mesunx86_58.zip -d $@
+	chmod a+rx $@/mesunx86_58
 	unzip -o $(RELDIR)/mesunos59.zip -d $@
 	chmod a+rx $@/mesunos59
 	gunzip -c $(RELDIR)/meirix6.gz > $@/meirix6
@@ -332,7 +367,9 @@ $(FDIR)/bin:
 	chmod a+rx $@/meaix4
 	unzip -o $(RELDIR)/mewin32.zip -d $@
 	unzip -o $(RELDIR)/mecwin32.zip -d $@
-
+#
+# Archive directories.
+#
 $(FDIR)/archive:
 	mkdir -p $@
 	mkdir -p $@/src
@@ -340,7 +377,8 @@ $(FDIR)/archive:
 	cp $(RELDIR)/mesrc.zip $@/src
 	mkdir -p $@/bin
 	cp $(RELDIR)/mesunos56.gz $@/bin
-	cp $(RELDIR)/mesunos59.gz $@/bin
+	cp $(RELDIR)/mesunos58.zip $@/bin
+	cp $(RELDIR)/mesunx86_58.zip $@/bin
 	cp $(RELDIR)/mesunos59.zip $@/bin
 	cp $(RELDIR)/meuwin32.zip $@/bin
 	cp $(RELDIR)/mewin32.zip $@/bin
@@ -356,6 +394,8 @@ $(FDIR)/archive:
 	cp $(RELDIR)/nelinux24.gz $@/bin
 	cp $(RELDIR)/mehpux11.gz $@/bin
 	cp $(RELDIR)/nesunos56.gz $@/bin
+	cp $(RELDIR)/nesunos58.zip $@/bin
+	cp $(RELDIR)/nesunx86_58.zip $@/bin
 	cp $(RELDIR)/nesunos59.zip $@/bin
 	cp $(RELDIR)/newin32.zip $@/bin
 	cp $(RELDIR)/meirix6.gz $@/bin
@@ -376,13 +416,19 @@ $(FDIR)/archive:
 	cp $(RELDIR)/jasspa_gnome.tar.zip $@/icons
 	cp $(RELDIR)/meicons-extra.tar.gz $@/icons
 	cp $(RELDIR)/meicons-extra.tar.zip $@/icons
-
+	cp $(RELDIR)/meicons_pm.tar.gz $@/icons
+#
+# Limited archive.
+# 
 $(EDIR)/archive:
 	mkdir -p $@
 	cp $(RELDIR)/mesrc.tar.gz $@
 	cp $(RELDIR)/memacros.tar.gz $@
 	cp $(RELDIR)/me.ehf.gz $@
-
+	cp $(RELDIR)/meicons.tar.gz $@
+#
+# Any experimental.
+# 
 $(FDIR)/experimental:
 	mkdir -p $@/bin
 	cp $(EXPDIR)/medevbin_sparc_sol9.zip $@/bin
@@ -392,11 +438,15 @@ $(FDIR)/experimental:
 	cp $(EXPDIR)/medevsrc.tar.gz         $@/src
 	mkdir -p $@/macros
 	cp $(EXPDIR)/medevmac.tar.gz         $@/macros
-
+#
+# User submissions.
+#
 $(FDIR)/submissions:
 	mkdir -p $@
 	cp $(SUBDIR)/*.txt $@
-
+#
+# CD Labels.
+#
 $(FDIR)/cdlabels $(EDIR)/cdlabels:
 	mkdir -p $@
 	cp a4_neto_0308.pdf $@
@@ -407,14 +457,18 @@ $(FDIR)/cdlabels $(EDIR)/cdlabels:
 	cp cdfull.png $@
 	cp cdexec.png $@
 	cp label0308.std $@
-
+#
+# Icons.
+#
 $(FDIR)/icons:
 	mkdir -p $@/windows
 	unzip -o $(RELDIR)/../release_020105/meicons.zip  -d $@/windows
-	rm -rf $@/pngicons
+	rm -rf $@/png
 	(cd $@; gunzip -c $(RELDIR)/meicons-extra.tar.gz | tar xvf -)
-	mv $@/icons $@/pngicons
+	mv $@/icons $@/png
 	(cd $@; gunzip -c $(RELDIR)/meicons.tar.gz | tar xvf -)
+	mkdir -p $@/pm
+	(cd $@/pm; gunzip -c $(RELDIR)/meicons_pm.tar.gz | tar xvf -)
 	cp $(RELDIR)/../images/nlogo.png $@
 	cp $(RELDIR)/../images/logo.bmp $@
 	cp $(RELDIR)/../images/logo.png $@
