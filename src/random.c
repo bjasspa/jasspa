@@ -600,22 +600,24 @@ transLines(int f, int n)
     if(i > 0)
     {
         meInt *undoInfo ;
-        undoInfo = meUndoAddLineSort(i+1) ;
-        j = 0 ;
-        if(n < 0)
+        if((undoInfo = meUndoAddLineSort(i+1)) != NULL)
         {
-            j=0 ;
-            *undoInfo++ = i-- ;
+            j = 0 ;
+            if(n < 0)
+            {
+                j=0 ;
+                *undoInfo++ = i-- ;
+            }
+            else
+            {
+                j=1 ;
+                undoInfo[-1] -= i ;
+                undoInfo[i] = 0 ;
+            }
+            do
+                *undoInfo++ = j++ ;
+            while(j<=i) ;
         }
-        else
-        {
-            j=1 ;
-            undoInfo[-1] -= i ;
-            undoInfo[i] = 0 ;
-        }
-        do
-            *undoInfo++ = j++ ;
-        while(j<=i) ;
     }
 #endif
     update(meFALSE) ;
