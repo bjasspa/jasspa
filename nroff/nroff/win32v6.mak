@@ -7,10 +7,10 @@
 #  System        : Nroff
 #  Module        : All
 #  Object Name   : $RCSfile: win32v6.mak,v $
-#  Revision      : $Revision: 1.1 $
-#  Date	         : $Date: 2000-10-21 14:31:32 $
+#  Revision      : $Revision: 1.2 $
+#  Date	         : $Date: 2002-03-10 18:36:43 $
 #  Author        : $Author: jon $
-#  Last Modified : <001021.1331>
+#  Last Modified : <020310.1432>
 #
 #  Description
 #
@@ -47,6 +47,7 @@ HEADERS	=	nroff.def	_nroff.h	nroff.h
 UTILS_H		= $(INSTINCDIR)\utils.h
 
 RTFEXES	=	nr2rtf$(EXE)
+TEXEXES	=	nr2tex$(EXE)
 HTMEXES	=	nr2html$(EXE)	htmlc$(EXE)
 MANEXES	=	superman$(EXE)	droff$(EXE)
 TOLEXES	=	nrsearch$(EXE)	nrinfo$(EXE)	nrcheck$(EXE)	ntags$(EXE) \
@@ -55,7 +56,7 @@ TOLEXES	=	nrsearch$(EXE)	nrinfo$(EXE)	nrcheck$(EXE)	ntags$(EXE) \
 LOCLEXES=
 #	table$(EXE)
 MODULES =	$(RTFEXES) $(HTMEXES) $(MANEXES) $(TOLEXES) \
-		$(CANEXES) $(LOCLEXES)
+		$(CANEXES) $(TEXEXES) $(LOCLEXES)
 
 EXEOBJ	=	nr2rtf.$O	nr2html.$O	htmlc.$O	superman.$O \
 		droff.$O	nrsearch.$O	nrinfo.$O	nrcheck.$O \
