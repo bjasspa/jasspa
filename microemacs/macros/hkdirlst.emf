@@ -454,7 +454,7 @@ define-macro file-browser-swap-buffers
         buffer-bind-create "bio" "delete" "" file-browser-close
         buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
     !elif &seq &rig #l0 &rsin "/" #l0 ""
-        read-file #l0
+        read-file #l0 @mna
         !if &not &seq .fhook-dirlst.mode :dirlst-mode
             ; old buffer with the wrong processing - refresh
             !force 0 delete-buffer $buffer-bname
@@ -953,9 +953,9 @@ define-macro file-browser-swap-buffers
 0 define-macro dirlst-refresh
     set-variable #l0 $buffer-bname
     !if @#
-        read-file $buffer-fname
+        read-file $buffer-fname @mna
     !else
-        find-file $buffer-fname "y" @nma
+        find-file $buffer-fname "y" @mna
         !if &not &seq #l0 $buffer-bname
             !force 0 delete-buffer #l0
         !endif
@@ -1324,4 +1324,3 @@ osd .osd.dirlst 99  ""  "\HInvert Selection"      f dirlst-tag-invert
 !emacro
 set-variable .toolbar-file-list-create.filter 1
 buffer-init-fhook "dirlst"
-
