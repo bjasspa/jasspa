@@ -4,7 +4,6 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <041029.2329>
 >
 
     [040210] BS/0401-4 - Minor - TBD
@@ -15,18 +14,6 @@
      
         Change find-zfile file name location to use a regex and insert markers
         into the line to aid support of hilight and selection.
-
-    [040928] Salman Khilji
-    
-        Like XEmacs and GNU Emacs, I would like the  "restyle-buffer"  command
-        to be bound to "esc C-\". 
-        
-        JG  suggest  that this  ought to be bound  like this as default as the
-        key binding is not used. 
-
-    [040805] Pierre Gaston
-    
-        Change SHGetSpecialFolderPath function call.
 
 ___________________________________________________________________________
 
@@ -39,13 +26,44 @@ ___________________________________________________________________________
 
 > FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED 
 
+    [041209] SP - Minor - TBD
+    
+        Remove  change-directory,  replace  ml-clear  with 0 ml-write,  rename
+        megnu.emf?
+        
+        Fixed SP/041210 
+
+    [041102] P de.Reus
+
+        As  default  user on Zaurus is zaurus  having a machine  macro file of
+        zaurus.emf  conflicts with the default user setup file. Change machine
+        files to "p$platform.emf", e.g. "pzaurus.emf" 
+        
+        Fixed SP/041209: prepend digit if already exists.
+        
+    [040928] Salman Khilji
+    
+        Like XEmacs and GNU Emacs, I would like the  "restyle-buffer"  command
+        to be bound to "esc C-\". 
+        
+        JG  suggest  that this  ought to be bound  like this as default as the
+        key binding is not used. 
+
+        Fixed SP/041209: binding added to me.emf
+        
+    [040805] Pierre Gaston
+    
+        Change SHGetSpecialFolderPath function call.
+        
+        Fixed SP/041030: changed to use SHGetSpecialFolderLocation.
+
     [041029] Klaus Kusche
     
         Fix kill-paragraph -ve docs.
 
         Fixed JG/041029: Document update.
 
-     [040303] SP/0401-4 - Major - Target 0401-5
+    [040303] SP/0401-4 - Major - Target 0401-5
      
         Change  CVS  support so only one tool can be run at a time and all use
         ipipe copying the output into the cvs-console when appropriate.
@@ -103,6 +121,12 @@ ___________________________________________________________________________
         Using the replace-all-strings command crashes ME.
         
         Fixed SP/0401-5 04/02/24: Source change.
+
+    [040206] SP/0401-4 - Enhancement - Target TBD
+
+        Add new narrow-search-forward and narrow-search-backward commands.
+
+        Fixed SP/0401-5 04/02/23: added to narrow.emf
 
      [040220] SP/0401-4 - Minor - TBD
 
@@ -328,10 +352,6 @@ ___________________________________________________________________________
         sometimes new files fail to show in CVS directory  listing.  Unsure if
         it is CVS problem or ME problem. (sunos).
 
-    [040206] SP/0401-4 - Enhancement - Target TBD
-
-        Add new narrow-search-forward and narrow-search-backward commands.
-
     [040206] JG/0401-4 - Enhancement - Target TBD
 
         CVS has option not to open the dir-tree window, pain in butt.
@@ -365,3 +385,146 @@ ___________________________________________________________________________
     [010101] SP/01 - Enhancement - Target TBD
 
         GNU Emacs compatibility macro file (Key bindings).
+
+
+Documentation To-Do
+===================
+
+List generated via src CVS commit
+
+----------------------------
+date: 2004/12/31 20:58:50
+author: bill
+Changed $fmatchdelay to $pause-time, MEOPT_CFENCE to FENCE ('cfe' -> 'fen')
+Made the time vatiables consistent in case, i.e. changed autotime -> autoTime.
+
+DONE
+----------------------------
+date: 2004/12/24 12:29:15
+author: bill
+Don't prompt 'File change, reload' if its a directory, just do it.
+
+Do we need to doc this?
+----------------------------
+date: 2004/12/21 23:49:18
+author: bill
+Added support for proper kill buffer use in message line, i.e. set-mark, kill/copy-region, yank & reyank all work as they should.
+
+affects ml bindings, documented in ml-bind-key (?)
+----------------------------
+date: 2004/12/21 18:10:18
+author: bill
+Removed osd 0 'd' flag and added 'I' initial item and 'D' default button flags, existing osd dialogs which use 'd' will fail to load and need to migrate to D & I.
+Fixed some remaining cursor movement issues
+
+Steve to do.
+----------------------------
+date: 2004/12/10 23:21:13
+author: bill
+Removed ml-clear and change-directory commands. Fix a few minor warnings.
+
+DONE
+----------------------------
+date: 2004/12/02 22:32:14
+author: bill
+Removed CMODE by create an new special 'cmode' type of indent, this helps in lots of things
+(C & C++ indent styles can be different, can also have a GNU C style etc, can change the indent width as new indent rule supports 't', consistent $buffer-indent interface)
+
+Change most refs to cmode to $buffer-indent or indent, doc new 'C' indent type. 
+----------------------------
+date: 2004/11/28 22:46:41
+author: jon
+Added MinGW makefile posted to jasspa group.
+
+Added new platform?
+----------------------------
+date: 2004/11/26 22:46:55
+author: bill
+Added 'k' keyboard setup to set-char-mask which is used to translates foreign keys to a latin char.
+Changed the LEADER byte to 0x1c as 0xff is a russian char and it badly breaks $vars and macros.
+
+Steve: Doc new 'k' flag. 
+----------------------------
+date: 2004/11/20 11:14:05
+author: bill
+Removed the explicit tab order value as this was not constructively used and causes many item order problems.
+
+Steve
+----------------------------
+date: 2004/11/19 21:59:18
+author: bill
+Made many improvements to OSD dialog user interface following suggestions for news group
+Made the displaying of the cursor in an osd dialog a $system bit set by the hilight scheme and fixed the position when in a child dialog
+
+DONE
+----------------------------
+date: 2004/11/18 00:02:33
+author: bill
+Added a macro recursion depth limit of 20 to avoid blowing ME
+
+Do we need to doc this? May need to as someone may get the error on a legit macro of their own. 
+----------------------------
+date: 2004/11/07 23:25:29
+author: jon
+New paragraph definition.
+Paragraph movement now defined blank-line to blank-line.
+fill/kill/back/forward paragraph operations redefined.
+
+Todo
+----------------------------
+date: 2004/11/05 23:00:27
+author: bill
+Fixed kill-lines and kill-word numerical argument implementation.
+
+Todo
+----------------------------
+date: 2004/11/04 20:17:32
+author: bill
+Removed line and letter buffer modes as these can be done using numerical arguments to bindings.
+Changed the kill-word commands to be more consistent with GNU Emacs.
+Added now search-buffer command which will be used by macros in place of regex-forward and backward.
+Incremented history version number due to the removal of buffer modes.
+Need to finalise kill-line's numeric argument behaviour, GNUs is inconsistent and not very good.
+
+remove line and letter mode docs, add reference to them in kill-line & forward-delete-char (and
+backward-delete-char ?) outlining the alternative new way. 
+----------------------------
+date: 2004/10/23 21:06:24
+author: bill
+Changed tabsize -> indentWidth, $tabsize to $indent-width & tabwidth -> tabWidth
+
+Todo
+----------------------------
+date: 2004/10/22 16:17:48
+author: jon
+Indentation prototype implementation.
+
+Todo (with new 'C' style indent form)
+----------------------------
+date: 2004/10/02 10:39:39
+author: jon
+branches:  2.19.2;
+Added UNIX drag and drop (XDND)
+
+Do we need to doc this?
+----------------------------
+date: 2004/08/28 08:06:33
+author: jon
+Added century to the "about" page following comments from Thomas Hundt
+
+Update examples etc.
+----------------------------
+date: 2004/06/30 23:26:26
+author: bill
+branches:  2.29.2;
+Added the ability to empty $recent-keys
+
+DONE
+----------------------------
+date: 2004/06/27 16:45:08
+author: bill
+Big shack-up of -p pipe interface, introduced -P for debugging and broken stdin reading to separate - option/file.
+Added -1 & -2 ml-write support for writing to stdout & stderr and inproved command-wait so it can be used with ipipe commands (waiting for the process to complete)
+
+Todo
+----------------------------
