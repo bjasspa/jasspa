@@ -2,7 +2,7 @@
 #
 # GCC Compiler.
 #
-CC          =       cc
+# CC          =       cc
 CPP         =       $(CC) -E
 CPPFLAGS    =       $(CPP_PLATDEFS) $(LOCALDEFS) $(INCLUDES)
 CDEBUGFLAGS =	    -g

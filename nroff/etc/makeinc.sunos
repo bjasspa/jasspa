@@ -22,3 +22,4 @@ include $(TOPDIR)/etc/makeinc.$(USECC)
 # Platform specific defines.
 #
 CPP_PLATDEFS=   -D_SUNOS -D_UNIX
+INSTALL=	ginstall
