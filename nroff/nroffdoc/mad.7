@@ -1,4 +1,4 @@
-.Id $Id: mad.7,v 1.1 2000-10-21 14:31:34 jon Exp $
+.Id $Id: mad.7,v 1.2 2002-03-10 18:38:14 jon Exp $
 .Im mantools file
 .TH mad 7
 .XI mad - "Nroff/Troff hypertext template"
@@ -58,7 +58,7 @@ and
 compliant files.
 .SS "Starting and Ending the File"
 The following keywords are used at the start or end of the file.
-.IP "\fB\.Id\fR $Id: mad.7,v 1.1 2000-10-21 14:31:34 jon Exp $"
+.IP "\fB\.Id\fR $Id: mad.7,v 1.2 2002-03-10 18:38:14 jon Exp $"
 This is an
 .Hr RCS 1
 identity  string and should be located on the very first line of the file. The
@@ -194,7 +194,7 @@ and
 .BR tmac.ad (7).
 .RS
 .CS
-\.Id $Id: mad.7,v 1.1 2000-10-21 14:31:34 jon Exp $
+\.Id $Id: mad.7,v 1.2 2002-03-10 18:38:14 jon Exp $
 \.Im manual 
 \.TH mad 7
 \.XI mad
@@ -724,7 +724,7 @@ Converts the nroff pages to HTML format used by
 .Hr Mosaic 1 .
 The output is an intermediate format (.htp) which is used as
 input into 
-.Hr htmlc 1 .
+.Hl htmlc htmlc 1 .
 .TP 
 .Hl htmlc htmlc 1 
 The HTML help page compiler that munges the HTML files and resolves all of the
@@ -733,7 +733,8 @@ references.
 .Hl nrcheck nrcheck 1 
 A simple utility that is used to check the nroff pages for consistency,
 determining illegal constructs etc.
-.IP "\fBnrinfo\fR"
+.TP
+.Hl nrinfo nrinfo 1 .
 Utility to display the hypertext links and definitions defined in a set of
 nroff pages.
 .TP
