@@ -90,11 +90,15 @@ blocks  that  are  not  required.  Extract  the  code  body  to a file  called
      ; Detect a for loop with no body - put semi-colon on next line, i.e.
      ; for (i = 1; i < 10; i++);
      ; { ... }
-     hilight .hilight.cpp  2 "for[ \t]*([^()]*)[ \t]*;" .scheme.hlred
+     hilight .hilight.cpp  2 "\\s \\{for[ \t]*([^()]*)[ \t]*;" .scheme.hlred
+     ; Detect a for loop with no body - put semi-colon on next line, i.e.
+     ; while (i == 1);
+     ; { ... }
+     hilight .hilight.cpp  2 "\\s \\{while[ \t]*([^()]*)[ \t]*;" .scheme.hlred
      ; Detect a bad 'if' statement that is terminated with ';' e.g.
      ; if (i < x);
      ; { ... }
-     hilight .hilight.cpp  2 "if[ \t]*([^()]*)[ \t]*;"  .scheme.hlred
+     hilight .hilight.cpp  2 "\\s \\{if[ \t]*([^()]*)[ \t]*;"  .scheme.hlred
      ; Detect a spurious '\' at the end of the line that is
      ; not a string or #define. i.e.
      ; char *d = "This is a " \
