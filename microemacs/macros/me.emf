@@ -1,6 +1,6 @@
 ;  Startup file for MicroEmacs '99 JASSPA Distribution
 ;
-;  Last Modified :  <001002.2300>
+;  Last Modified :  <001009.2248>
 ;  Copyright (c) 1999 JASSPA
 ;
 ; If mename isn't set or registry file isn't found then set it to guest
@@ -225,6 +225,7 @@ add-file-hook ".diff .dif *diff*"                             fhook-diff
 -1 add-file-hook "-[*!]-[ \t]*c.*-[*!]-"         fhook-c      ; -*- C -*-
 -1 add-file-hook "-[*!]-[ \t]*c\\+\\+.*-[*!]-"   fhook-cpp    ; -*- C++ -*-
 -1 add-file-hook "-[*!]-[ \t]*f.*-[*!]-"         fhook-f90    ; -*- f -*-
+-1 add-file-hook "-[*!]-[ \t]*perl.*-[*!]-"      fhook-perl   ; -*- perl -*-
 -1 add-file-hook "-[*]-[ \t]*texinfo.*-[*]-"     fhook-texi   ; -*- texinfo -*-
 -1 add-file-hook "-[*!]-[ \t]*nroff.*-[*!]-"     fhook-nroff  ; -*- nroff -*-
 -1 add-file-hook "-[*!]-[ \t]*cobol.*-[*!]-"     fhook-cobol  ; -*- cobol -*-
