@@ -5,7 +5,7 @@
  *  Synopsis      : Token based hilighting routines
  *  Created By    : Steven Phillips
  *  Created       : 21/12/94
- *  Last Modified : <010810.1440>
+ *  Last Modified : <011029.1037>
  *
  *  Description
  *
@@ -110,11 +110,13 @@ static uint8 *meHilTestNames[meHIL_TEST_NOCLASS]={
     (uint8 *)"alpha",(uint8 *)"alnum",(uint8 *)"sword",(uint8 *)"word",(uint8 *)"any", 
 } ;
 
-#define meHIL_MODECASE  0x01
-#define meHIL_MODESTART 0x02
-#define meHIL_MODESTTLN 0x04
-#define meHIL_MODETOEOL 0x08
-#define meHIL_MODEMOVE  0x10
+#define meHIL_MODECASE   0x001
+#define meHIL_MODETOKEWS 0x004
+#define meHIL_MODESTART  0x008
+#define meHIL_MODESTTLN  0x010
+#define meHIL_MODETOEOL  0x020
+#define meHIL_MODEMOVE   0x040
+#define meHIL_MODETOKEND 0x080
 
 static uint8 varTable[11] ;
 
@@ -1227,7 +1229,9 @@ findToken(HILNODEPTR root, uint8 *text, uint8 mode,
                (!(mode & meHIL_MODETOEOL) || (type & HLBRINEOL)) &&
                (!(type & HLSTTLINE) || (mode & meHIL_MODESTTLN)) &&
                (!(type & HLSOL) || (mode & meHIL_MODESTART)) &&
-               findTokenSingleCharTest(lastChar,nn->tknSttTst))
+               (findTokenSingleCharTest(lastChar,nn->tknSttTst) ||
+                ((mode & meHIL_MODETOKEWS) && (mode & meHIL_MODETOKEND) &&
+                 findTokenSingleCharTest(' ',nn->tknSttTst))))
             {
                 *len = (nn->tknEndOff) ? 1:0 ;
                 return nn ;
@@ -1243,7 +1247,9 @@ findToken(HILNODEPTR root, uint8 *text, uint8 mode,
                    (((mode & meHIL_MODETOEOL) == 0) || (type & HLBRINEOL)) &&
                    (!(type & HLSTTLINE) || (mode & meHIL_MODESTTLN)) &&
                    (!(type & HLSOL) || (mode & meHIL_MODESTART)) &&
-                   findTokenSingleCharTest(lastChar,nn->tknSttTst))
+                   (findTokenSingleCharTest(lastChar,nn->tknSttTst) ||
+                    ((mode & meHIL_MODETOKEWS) && (mode & meHIL_MODETOKEND) &&
+                     findTokenSingleCharTest(' ',nn->tknSttTst))))
                 {
                     uint8 rr, tt, lstc=1 ;
                     s2 = nn->token ;
@@ -1354,7 +1360,9 @@ findToken(HILNODEPTR root, uint8 *text, uint8 mode,
                (!(mode & meHIL_MODETOEOL) || (type & HLBRINEOL)) &&
                (!(type & HLSTTLINE) || (mode & meHIL_MODESTTLN)) &&
                (!(type & HLSOL) || (mode & meHIL_MODESTART)) &&
-               findTokenSingleCharTest(lastChar,nn->tknSttTst) &&
+               (findTokenSingleCharTest(lastChar,nn->tknSttTst) ||
+                ((mode & meHIL_MODETOKEWS) && (mode & meHIL_MODETOKEND) &&
+                 findTokenSingleCharTest(' ',nn->tknSttTst))) &&
                findTokenSingleCharTest(*s1,nn->tknEndTst))
             {
                 *len = s1-text ;
@@ -1428,8 +1436,10 @@ findToken(HILNODEPTR root, uint8 *text, uint8 mode,
                        (!(mode & meHIL_MODETOEOL) || (type & HLBRINEOL)) &&
                        (!(type & HLSTTLINE) || (mode & meHIL_MODESTTLN)) &&
                        (!(type & HLSOL) || (mode & meHIL_MODESTART)) &&
-                       findTokenSingleCharTest(lastChar,nn->tknSttTst) &&
-                       findTokenSingleCharTest(*s1,nn->tknEndTst))
+                       (findTokenSingleCharTest(lastChar,nn->tknSttTst) ||
+                        ((mode & meHIL_MODETOKEWS) && (mode & meHIL_MODETOKEND) &&
+                         findTokenSingleCharTest(' ',nn->tknSttTst))) &&
+                        findTokenSingleCharTest(*s1,nn->tknEndTst))
                     {
                         *len = s1-text ;
                         return nn ;
@@ -1746,7 +1756,7 @@ hilightLine(VIDEO *vp1)
         }
     }
     
-    mode = (meHIL_MODESTTLN|meHIL_MODESTART|(hd.root->type&HFCASE)) ;
+    mode = (meHIL_MODESTTLN|meHIL_MODESTART|(hd.root->type&(HFCASE|HFTOKEWS))) ;
     if(vp1->bracket != NULL)
     {
         node = vp1->bracket ;
@@ -1966,13 +1976,14 @@ BracketJump:
                 cc = disLineBuff[dstPos-1] ;
                 mode &= ~(meHIL_MODESTTLN|meHIL_MODESTART) ;
             }
+            mode |= meHIL_MODETOKEND ;
         }
         else
         {
 advance_char:
             if((cc=srcText[hd.srcPos]) == 0)
                 break ;
-            mode &= ~(meHIL_MODEMOVE|meHIL_MODESTART) ;
+            mode &= ~(meHIL_MODEMOVE|meHIL_MODESTART|meHIL_MODETOKEND) ;
             if((mode & meHIL_MODESTTLN) && !isSpace(cc))
                 mode &= ~meHIL_MODESTTLN ;
             dstPos = hilCopyChar(dstPos,cc, &hd) ;

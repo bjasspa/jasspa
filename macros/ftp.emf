@@ -241,11 +241,10 @@ define-macro ftp
     !endif
     !if &les @# 0
         !if &equ @# -4
-            set-variable #l0 ""
+            set-variable #l0 @ml8 ""
         !else
-            set-variable #l0 #l1
+            set-variable #l0 @ml2 "" #l1
         !endif
-        set-variable #l0 @ml2 "" #l0
         !if &seq #l0 #l1
             !return
         !endif

@@ -65,7 +65,7 @@ set-variable .fhook-nroff.fold-mnext "-1"
         hilight #l1 0     "\\\\\\*\\w"              .scheme.variable
         hilight #l1 0     "\\\\\\*(\\w\\w"          .scheme.variable
     !emacro
-    0 hilight  .hilight.nroff 0                        $global-scheme
+    0 hilight  .hilight.nroff 4                        $global-scheme
     hilight .hilight.nroff 0   "\\\\s0"                .scheme.variable
     hilight .hilight.nroff 0   "\\\\s[-+][[:digit:]]"  .scheme.variable
     hilight .hilight.nroff 0   "\\\\fP"                .scheme.variable
@@ -145,6 +145,7 @@ set-variable .fhook-nroff.fold-mnext "-1"
     hilight .hilight.nroff 3   "^[.']SS"               .scheme.header
     hilight .hilight.nroff 3   "^[.']Me"               .scheme.prepro
     hilight .hilight.nroff 3   "^[.']vs"               .scheme.keyword
+    hilight .hilight.nroff 1   "them"               .scheme.keyword
     
     0 hilight  .hilight.roffR 2 40                     $global-scheme
     hilight-nroff-common                    .hilight.roffR $global-scheme

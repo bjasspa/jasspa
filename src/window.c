@@ -10,7 +10,7 @@
 *
 *       Author:                 Danial Lawrence
 *
-*       Creation Date:          10/05/91 08:27          <011024.0802>
+*       Creation Date:          10/05/91 08:27          <011027.0005>
 *
 *       Modification date:      %G% : %U%
 *
@@ -2081,7 +2081,7 @@ setPosition(int f, int n)		/* save ptr to current window */
     while((pos != NULL) && (cc != (int) pos->name))
     {
         pos = pos->next ;
-        mark++ ;
+        mark += 2 ;
     }
     if(pos == NULL)
     {
@@ -2095,6 +2095,9 @@ setPosition(int f, int n)		/* save ptr to current window */
     }
     if(f == FALSE)
         n = mePOS_DEFAULT ;
+    if(curwp->w_markp == NULL)
+        n &= ~(mePOS_MLINEMRK|mePOS_MLINENO|mePOS_MLINEOFF) ;
+    
     pos->flags = n ;
     
     if(n & mePOS_WINDOW)
@@ -2120,6 +2123,18 @@ setPosition(int f, int n)		/* save ptr to current window */
         pos->line_no = curwp->line_no ;
     if(n & mePOS_LINEOFF)
         pos->w_doto = curwp->w_doto ;
+    if(n & mePOS_MLINEMRK)
+    {
+        if(alphaMarkSet(curbp,(uint16) (pos->line_amark+1),curwp->w_markp,0,1) != TRUE)
+        {
+            pos->flags = 0 ;
+            return ABORT ;
+        }
+    }
+    if(n & mePOS_MLINENO)
+        pos->mlineno = curwp->mlineno ;
+    if(n & mePOS_MLINEOFF)
+        pos->w_marko = curwp->w_marko ;
     if(n & mePOS_WINYSCRL)
         pos->topLineNo = curwp->topLineNo ;
     if(n & mePOS_WINXCSCRL)
@@ -2247,6 +2262,45 @@ gotoPosition(int f, int n)		/* restore the saved screen */
             n &= mePOS_WINDOW ;
         }
     }
+    /* restore the mark first */
+    if(n & mePOS_MLINEMRK)
+    {
+        if((ret = alphaMarkGet(curbp,(uint16) (pos->line_amark+1))) == TRUE)
+        {
+            curwp->w_markp = curbp->b_dotp ;
+            curwp->mlineno = curbp->line_no ;
+            curwp->w_marko = 0 ;
+        }
+    }
+    else if(n & mePOS_MLINENO)
+    {
+        LINE *dotp=curwp->w_dotp ;
+        int32 line_no=curwp->line_no ;
+        uint16 doto=curwp->w_doto ;
+        
+        if((ret = gotoLine(1,pos->mlineno+1)) == TRUE)
+        {
+            curwp->w_markp = curwp->w_dotp ;
+            curwp->mlineno = curwp->line_no ;
+            curwp->w_marko = 0 ;
+        }
+        curwp->w_dotp = dotp ;
+        curwp->line_no = line_no ;
+        curwp->w_doto = doto ;
+    }
+    if(n & mePOS_MLINEOFF)
+    {
+        if(curwp->w_markp == NULL)
+            ret = FALSE ;
+        else if(pos->w_marko > llength(curwp->w_markp))
+        {
+            curwp->w_marko = llength(curwp->w_markp) ;
+            ret = FALSE ;
+        }
+        else
+            curwp->w_marko = pos->w_marko ;
+    }
+    
     if(n & mePOS_LINEMRK)
     {
         if((ret = alphaMarkGet(curbp,pos->line_amark)) == TRUE)

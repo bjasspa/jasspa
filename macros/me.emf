@@ -99,8 +99,8 @@ define-macro save-all
 !emacro
 ;
 set-variable %platform &cat $platform &cond &band $system 0x01 "c" ""
-set-variable $system &bor &band $system &bnot 0x10f000 &reg "/history" "system" 0x007000
-set-variable $system &bor &band $system &bnot 0x0e041c &reg "/history" &cat %platform "/system" 0x040010
+set-variable $system &bor &band $system &bnot 0x30f000 &band 0x30f000 &reg "/history" "system" 0x007000
+set-variable $system &bor &band $system &bnot 0x0e0414 &band 0x0e0414 &reg "/history" &cat %platform "/system" 0x040010
 set-variable $mouse &reg "/history" &cat %platform "/mouse" $mouse
 set-variable $scroll &reg "/history" &cat %platform "/scroll" $scroll
 set-variable $show-modes &reg "/history" "show-modes" $show-modes

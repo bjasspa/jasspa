@@ -10,7 +10,7 @@
  *
  *	Author:			Danial Lawrence.
  *
- *	Creation Date:		07/05/91 08:19		<011011.0758>
+ *	Creation Date:		07/05/91 08:19		<011029.1145>
  *
  *	Modification date:	%G% : %U%
  *
@@ -699,17 +699,18 @@ meTab(int f, int n)
     if(n<=0)
         return TRUE ;
     
+    if((meSystemCfg & meSYSTEM_TABINDANY) ||
+       ((meSystemCfg & meSYSTEM_TABINDFST) && (curwp->w_doto == 0)))
+    {
 #if HILIGHT
-    if(curbp->indent &&
-       (!(indents[curbp->indent]->type & HITABANY) ||
-        (!(indents[curbp->indent]->type & HITABFST) && (curwp->w_doto == 0))))
-        return indentLine() ;
+        if(curbp->indent)
+            return indentLine() ;
 #endif
 #if CFENCE
-    if(meModeTest(curbp->b_mode,MDCMOD) &&
-       ((meSystemCfg & meSYSTEM_TABINDALW) || (curwp->w_doto == 0)))
-        return doCindent(&ii) ;
+        if(meModeTest(curbp->b_mode,MDCMOD))
+           return doCindent(&ii) ;
 #endif
+    }
     if((ii=bchange()) != TRUE)               /* Check we can change the buffer */
         return ii ;
     
@@ -979,7 +980,7 @@ meNewline(int f, int n)
     while (n--)
     {
 #if HILIGHT
-        if(curbp->indent && !(indents[curbp->indent]->type & HINEWLINE))
+        if(curbp->indent)
             s = indentInsert() ;
         else
 #endif

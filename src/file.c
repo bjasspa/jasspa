@@ -10,7 +10,7 @@
 *
 *	Author:			Danial Lawrence
 *
-*	Creation Date:		14/05/86 12:37		<010915.2110>
+*	Creation Date:		14/05/86 12:37		<011026.2339>
 *
 *	Modification date:	%G% : %U%
 *
@@ -1045,6 +1045,7 @@ readDirectory(BUFFER *bp, uint8 *fname)
 #endif
 #ifdef _WIN32
     SYSTEMTIME tmp;
+    FILETIME ftmp ;
 #endif
     uint8 buf[MAXBUF];                  /* Working line buffer */
     int32 totSize=0 ;
@@ -1106,7 +1107,8 @@ readDirectory(BUFFER *bp, uint8 *fname)
         else
 #endif
 #ifdef _WIN32
-        if(FileTimeToSystemTime(&fnode->mtime,&tmp))
+        if(FileTimeToLocalFileTime(&fnode->mtime,&ftmp) &&
+           FileTimeToSystemTime(&ftmp,&tmp))
             len += sprintf(buf+len, "%4d/%02d/%02d %02d:%02d ",
                            tmp.wYear,tmp.wMonth,tmp.wDay,tmp.wHour,tmp.wMinute) ;
         else

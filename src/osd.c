@@ -5,7 +5,7 @@
  *  Synopsis      : On-Screen Display routines
  *  Created By    : Jon Green & Steven Phillips
  *  Created       : 26/07/97
- *  Last Modified : <010823.1242>
+ *  Last Modified : <011025.2311>
  *
  *  Description
  *     This file contains the on screen display routines that

@@ -12,7 +12,7 @@
  *
  *	Creation Date:		29/04/91 09:13
  *
- *	Modification date:	%G% : %U%	<000107.1959>
+ *	Modification date:	%G% : %U%	<011031.1810>
  *
  *	Current rev:		%I%
  *
@@ -662,8 +662,7 @@ int
 mldelete(int32 noChrs, uint8 *kstring)
 {
     LINE   *slp, *elp, *fslp, *felp ;
-    int32   slno, elno, nn=noChrs, ii ;
-    uint16  soff, eoff ;
+    int32   slno, elno, nn=noChrs, ii, soff, eoff ;
     uint8  *ks, *ss ;
     WINDOW *wp ;
     
@@ -707,17 +706,17 @@ mldelete(int32 noChrs, uint8 *kstring)
         {
             if(wp->w_bufp == curbp)
             {
-                if((wp->w_dotp == slp) && (wp->w_doto > soff))
+                if((wp->w_dotp == slp) && (((int32) wp->w_doto) > soff))
                 {
                     if((ii=wp->w_doto - nn) < soff)
-                        wp->w_doto = soff ;
+                        wp->w_doto = (uint16) soff ;
                     else
                         wp->w_doto = (uint16) ii ;
                 }
-                if((wp->w_markp == slp) && (wp->w_marko > soff))
+                if((wp->w_markp == slp) && (((int32) wp->w_marko) > soff))
                 {
                     if((ii=wp->w_marko - nn) < soff)
-                        wp->w_marko = soff ;
+                        wp->w_marko = (uint16) soff ;
                     else
                         wp->w_marko = (uint16) ii ;
                 }
@@ -784,7 +783,7 @@ mldelete(int32 noChrs, uint8 *kstring)
             s2 = s1+eoff ;
             while((*s1++ = *s2++) != '\0')
                 ;
-            elp->l_used -= eoff ;
+            elp->l_used -= (uint16) eoff ;
         }
         fslp = slp ;
         felp = elp ;
@@ -803,7 +802,10 @@ mldelete(int32 noChrs, uint8 *kstring)
          */
         int newl ;
         ii = llength(elp) - eoff ;
-        newl = ii + ((int) soff) ;
+        newl = ii + soff ;
+        if(newl > 0x0fff0)
+            /* this deletion will leave the joined line too long, abort */
+            return noChrs ;
         if(slp->l_size >= newl)
         {
             /* here we have got to test for one special case, if the elp is
@@ -814,7 +816,7 @@ mldelete(int32 noChrs, uint8 *kstring)
             if(elp == curbp->b_linep)
             {
                 slp->l_text[soff] = '\0' ;
-                slp->l_used = soff ;
+                slp->l_used = (uint16) soff ;
                 felp = elp ;
                 /* increment the no-lines cause we're only pretending we've
                  * removed the last line
@@ -936,9 +938,9 @@ mldelete(int32 noChrs, uint8 *kstring)
                 else
                 {
                     if((wp->line_no == elno) && (wp->w_doto > eoff))
-                        wp->w_doto = soff + (wp->w_doto - eoff) ;
+                        wp->w_doto = (uint16) (soff + wp->w_doto - eoff) ;
                     else if((wp->line_no != slno) || (wp->w_doto > soff))
-                        wp->w_doto = soff ;
+                        wp->w_doto = (uint16) soff ;
                     wp->w_dotp = slp ;
                     wp->line_no = slno ;
                 }
@@ -950,9 +952,9 @@ mldelete(int32 noChrs, uint8 *kstring)
                 else
                 {
                     if((wp->mlineno == elno) && (wp->w_marko > eoff))
-                        wp->w_marko = soff + (wp->w_marko - eoff) ;
+                        wp->w_marko = (uint16) (soff + wp->w_marko - eoff) ;
                     else if((wp->mlineno != slno) || (wp->w_marko > soff))
-                        wp->w_marko = soff ;
+                        wp->w_marko = (uint16) soff ;
                     wp->w_markp = slp ;
                     wp->mlineno = slno ;
                 }

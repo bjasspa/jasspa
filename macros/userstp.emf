@@ -226,6 +226,7 @@ set-variable .user-setup.path ""
     user-setup-vscroll
     user-setup-scrollb
     0 user-tool-setup
+    0 user-set-tab-indent
 !emacro
 
 0 define-macro user-set-logname
@@ -339,7 +340,7 @@ set-variable .user-setup.path ""
 !emacro
 
 0 define-macro user-set-system
-    !if &band 0x10f000 &abs @#
+    !if &band 0x30f000 &abs @#
         set-variable #l2 "system"
     !else
         set-variable #l2 &cat %platform "/system"
@@ -1131,6 +1132,30 @@ set-variable $mode-names ".*"
 !done
 
 ; The General menu ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+0 define-macro user-setup-tab-indent
+    -1 osd .osd.tmp
+    osd .osd.tmp 0 "bs" 10 0 0 0
+    osd .osd.tmp 1 "" "&Always Indent"     1 user-set-tab-indent
+    osd .osd.tmp 2 "" "&First Column Only" 2 user-set-tab-indent
+    osd .osd.tmp 3 "" "&Never Indent"      3 user-set-tab-indent
+!emacro
+0 define-macro user-set-tab-indent
+    set-variable #l1 $system 
+    set-variable #l0 &reg "/history" "system" #l1
+    !if &gre @# 0
+        set-variable #l0 &band #l0 &bnot 0x201000 
+        set-variable #l0 &bor #l0 &lget "|0x1000|0x200000|0|" @#
+        set-registry "/history" "system" #l0
+    !elif &band #l0 0x1000
+        set-variable @# 1
+    !elif &band #l0 0x200000
+        set-variable @# 2
+    !else
+        set-variable @# 3
+    !endif
+    osd .osd.user-gener 340 "MtmsxHRf" 340 .scheme.osd-entry &lget "|Always Indent    |First Column Only|Never Indent     |" @# .osd.tmp user-setup-tab-indent
+!emacro
+
 osd .osd.user-gener 0   "s" 55 18 -1 -1
 osd .osd.user-gener 10  ""
 osd .osd.user-gener 20  "c"  "General Setup"
@@ -1167,7 +1192,6 @@ osd .osd.user-gener 300 "Ctfx" 300 "^^NY^^" 0x2000 user-set-system
 osd .osd.user-gener 310 "Sfh" "   Alt -&> Esc Prefx : " 320
 osd .osd.user-gener 320 "Ctfx" 320 "^^NY^^" 0x4000 user-set-system
 osd .osd.user-gener 330 "Sfh" "      Tab To &Indent : " 340
-osd .osd.user-gener 340 "Ctfx" 340 "^^NY^^" 0x1000 user-set-system
 osd .osd.user-gener 370 ""
 osd .osd.user-gener 380 "fh"  "                      "
 osd .osd.user-gener 390 "MtxmfH" 390 .scheme.osd-ebtt " Sho&w Modes " .osd.user-modes
