@@ -378,7 +378,7 @@ set_subdirs (int index, meUByte *path_name, meUByte *base_name)
              * then do not add it as we do not want to search any
              * directory unecessarily. */
             pathtype = getFileStats(&path_name[path_index],0,NULL,NULL);
-            /* printf ("Testing %s : %d\n",  &path_name[path_index], pathtype);*/
+             printf ("Testing %s : %d\n",  &path_name[path_index], pathtype);
             if(pathtype != meFILETYPE_DIRECTORY)
                 index = last_index;     /* Skip this path. */
         }
@@ -420,7 +420,9 @@ set_dirs(meUByte *argv)
     {
 #ifdef _UNIX
         /* MicroEmacs '04 and later distributions standard macro locations */
+#if (!defined _LINUX)
         "/opt/jasspa",
+#endif
         "/usr/share/jasspa",
         "/usr/local/jasspa",
         /* Historical locations */
@@ -605,31 +607,36 @@ set_dirs(meUByte *argv)
 
     /* If we need to append the executable directory to the end of the search
      * path then do so now. if the $MEPATH is not defined then the concatinate
-     * the Microemacs executable location to the path. */
+     * the Microemacs executable location to the path. This is especially
+     * important for Windows and DOS where we can find the macro directory
+     * from the executable location. */
     if ((mepath == NULL) && (progName != NULL))
     {
-        /* Get the search path out */
-        if (searchPath != NULL)
-        {
-            /* Copy the search path and append a path separtor */
-            meStrcpy (evalResult, searchPath);
-            ll = meStrlen (evalResult);
-            evalResult [ll++] = mePATH_CHAR;
-        }
-        else
-            ll = 0;
-
         /* Find the last path separator in the executable path */
         s1 = meStrrchr (progName, DIR_CHAR);
         if (s1 != NULL)
         {
-            /* Concatinate the executable path to end of string */
-            meStrcpy (&evalResult[ll], progName);
-            if (s1 == progName)
-                s1++;                   /* Must be a '/' */
-            evalResult [ll + (s1-progName)] = '\0';
-
-            /* Make this our new search path */
+            /* Get the executable path to end of string */
+            ll = s1 - progName;
+            if (ll <= _ROOT_DIR_LEN)
+                ll++;                   /* Must be a '/' */
+            meStrcpy (resultStr, progName);
+            resultStr[ll] = '\0';
+            
+            /* Get the search path into a working area. */
+            if (searchPath == NULL)
+            {
+                evalResult[0] = '\0';
+                ll = 0;
+            }
+            else
+            {
+                meStrcpy (evalResult, searchPath);
+                ll = meStrlen(evalResult);
+            }
+            
+            /* Find the sub-directories and add them */
+            set_subdirs (ll, evalResult, resultStr);
             meStrrep (&searchPath, evalResult);
         }
     }
@@ -637,10 +644,10 @@ set_dirs(meUByte *argv)
     /* Release the mepath */
     meNullFree (mepath);
 
-    /* printf ("Search path = %s\n", searchPath);*/
-    /* printf ("Prog name   = %s\n", progName);*/
-    /* printf ("Home dir    = %s\n", homedir);*/
-    /* fflush (stdout);*/
+     printf ("Search path = %s\n", searchPath);
+     printf ("Prog name   = %s\n", progName);
+     printf ("Home dir    = %s\n", homedir);
+     fflush (stdout);
 }   /* End of "set_dirs" () */
 
 /* Look up the existance of a file along the normal or PATH
