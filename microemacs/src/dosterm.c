@@ -130,7 +130,7 @@ meSetupPathsAndUser(char *progname)
     /* get the users home directory, user path and search path */
     if(((ss = meGetenv("HOME")) == NULL) || (ss[0] == '\0'))
         ss = "c:/" ;
-    meHomedirSet(ss) ;
+    fileNameSetHome(ss) ;
 
     if(((ss = meGetenv ("MEUSERPATH")) != NULL) && (ss[0] != '\0'))
         meUserPath = meStrdup(ss) ;
@@ -871,7 +871,9 @@ TTaddColor(meColor index, meUByte r, meUByte g, meUByte b)
     ss = dosColors ;
     for(ii=0 ; ii<dosNumColors ; ii++)
     {
-        idif = abs(r - *ss++) + abs(g - *ss++) + abs(b - *ss++) ;
+        idif  = abs(r - *ss++) ;
+        idif += abs(g - *ss++) ;
+        idif += abs(b - *ss++) ;
         if(idif < jdif)
         {
             jdif = idif ;
