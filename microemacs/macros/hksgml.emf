@@ -24,7 +24,7 @@ set-variable .fhook-sgml.exact -1
 ;set-variable .fhook-sgml.command-kbind "|||||||C-c C-h|C-c C-i|"
 ;set-variable .fhook-sgml.command-desc  "|Html Browser Mode||&Goto Link||Html Author Mode||Process Current Buffer|Toggle Indent To VB Mode|"
 
-!if &and &sin "h" .fhook-sgml.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-sgml.setup &band .hilight.flags 0x02
     !if &not &exist .hilight.sgml
         set-variable .hilight.sgml   &pinc .hilight.next 1
         set-variable .hilight.sgmlT  &pinc .hilight.next 1
@@ -40,63 +40,65 @@ set-variable .fhook-sgml.exact -1
     hilight .hilight.sgmlT 4  "=\\{\"" "\"" "\\"       .scheme.string
     hilight .hilight.sgmlT 4  "=\\{" "\\}[ \t\n>]" ""  .scheme.string
     hilight .hilight.sgmlT 0x80 ">" .hilight.sgml      .scheme.keyword
-    
+
 !endif
 
 !if &sin "d" .fhook-sgml.setup
     !if &not &exist .hilight.sgml
         set-variable .hilight.sgml   &pinc .hilight.next 1
     !endif
-    ; Define the indentation tokens 
-    0 indent .hilight.sgml 1 20 
+    ; Define the indentation tokens
+    0 indent .hilight.sgml 1 20
     indent .hilight.sgml e "\"" "\"" "\\"
     indent .hilight.sgml b "<" ">"
-    indent .hilight.sgml n "<variablelist>" 2 
-    indent .hilight.sgml o "</variablelist>" -2 
-    indent .hilight.sgml n "<orderedlist[^>]*>" 2 
-    indent .hilight.sgml o "</orderedlist>" -2 
-    indent .hilight.sgml n "<varlistentry>" 2 
-    indent .hilight.sgml o "</varlistentry>" -2 
-    indent .hilight.sgml n "<listitem>" 2 
-    indent .hilight.sgml o "</listitem>" -2 
-    indent .hilight.sgml n "<refsect1>" 2 
-    indent .hilight.sgml o "</refsect1>" -2 
-    indent .hilight.sgml n "<refsect2>" 2 
-    indent .hilight.sgml o "</refsect2>" -2 
-    indent .hilight.sgml n "<refmeta>" 2 
-    indent .hilight.sgml o "</refmeta>" -2 
-    indent .hilight.sgml n "<refnamediv>" 2 
-    indent .hilight.sgml o "</refnamediv>" -2 
-    indent .hilight.sgml n "<indexterm>" 2 
-    indent .hilight.sgml o "</indexterm>" -2 
-    indent .hilight.sgml n "<cmdsynopsis[^>]*>" 2 
-    indent .hilight.sgml o "</cmdsynopsis>" -2 
-    indent .hilight.sgml n "<refsynopsisdiv>" 2 
-    indent .hilight.sgml o "</refsynopsisdiv>" -2 
-    indent .hilight.sgml n "<table[^>]*>" 2 
-    indent .hilight.sgml o "</table>" -2 
-    indent .hilight.sgml n "<refentry [^>]*>" 2 
-    indent .hilight.sgml o "</refentry>" -2 
+    indent .hilight.sgml n "<variablelist[^>]*>"   2
+    indent .hilight.sgml o "</variablelist>"      -2
+    indent .hilight.sgml n "<orderedlist[^>]*>"    2
+    indent .hilight.sgml o "</orderedlist>"       -2
+    indent .hilight.sgml n "<varlistentry[^>]*>"   2
+    indent .hilight.sgml o "</varlistentry>"      -2
+    indent .hilight.sgml n "<listitem[^>]*>"       2
+    indent .hilight.sgml o "</listitem>"          -2
+    indent .hilight.sgml n "<refsect1[^>]*>"       2
+    indent .hilight.sgml o "</refsect1>"          -2
+    indent .hilight.sgml n "<refsect2[^>]*>"       2
+    indent .hilight.sgml o "</refsect2>"          -2
+    indent .hilight.sgml n "<refmeta[^>]*>"        2
+    indent .hilight.sgml o "</refmeta>"           -2
+    indent .hilight.sgml n "<refnamediv[^>]*>"     2
+    indent .hilight.sgml o "</refnamediv>"        -2
+    indent .hilight.sgml n "<indexterm[^>]*>"      2
+    indent .hilight.sgml o "</indexterm>"         -2
+    indent .hilight.sgml n "<cmdsynopsis[^>]*>"    2
+    indent .hilight.sgml o "</cmdsynopsis>"       -2
+    indent .hilight.sgml n "<refsynopsisdiv[^>]*>" 2
+    indent .hilight.sgml o "</refsynopsisdiv>"    -2
+    indent .hilight.sgml n "<table[^>]*>"          2
+    indent .hilight.sgml o "</table>"             -2
+    indent .hilight.sgml n "<refentry [^>]*>"      2
+    indent .hilight.sgml o "</refentry>"          -2
+    indent .hilight.sgml n "<term[^>]*>"           2
+    indent .hilight.sgml o "</term>"              -2
     ; Tables
-    indent .hilight.sgml n "<table[^>]*>" 2 
-    indent .hilight.sgml o "</table>" -2 
-    indent .hilight.sgml n "<tfoot[^>]*>" 2 
-    indent .hilight.sgml o "</tfoot>" -2 
-    indent .hilight.sgml n "<thead[^>]*>" 2 
-    indent .hilight.sgml o "</tbody>" -2 
-    indent .hilight.sgml n "<tbody[^>]*>" 2 
-    indent .hilight.sgml o "</thead>" -2 
-    indent .hilight.sgml n "<tgroup[^>]*>" 2 
-    indent .hilight.sgml o "</tgroup>" -2 
-    indent .hilight.sgml n "<row[^>]*>" 2 
-    indent .hilight.sgml o "</row>" -2 
-    
-    indent .hilight.sgml o "</td>" -2 
-    indent .hilight.sgml n "<td[^>]*>" 2 
-    indent .hilight.sgml o "</select>" -2 
-    indent .hilight.sgml n "<select[^>]*>" 2 
-    indent .hilight.sgml n "<%" 2 
-    indent .hilight.sgml o "%>" -2 
+    indent .hilight.sgml n "<table[^>]*>"          2
+    indent .hilight.sgml o "</table>"             -2
+    indent .hilight.sgml n "<tfoot[^>]*>"          2
+    indent .hilight.sgml o "</tfoot>"             -2
+    indent .hilight.sgml n "<thead[^>]*>"          2
+    indent .hilight.sgml o "</tbody>"             -2
+    indent .hilight.sgml n "<tbody[^>]*>"          2
+    indent .hilight.sgml o "</thead>"             -2
+    indent .hilight.sgml n "<tgroup[^>]*>"         2
+    indent .hilight.sgml o "</tgroup>"            -2
+    indent .hilight.sgml n "<row[^>]*>"            2
+    indent .hilight.sgml o "</row>"               -2
+
+    indent .hilight.sgml o "</td>"                -2
+    indent .hilight.sgml n "<td[^>]*>"             2
+    indent .hilight.sgml o "</select>"            -2
+    indent .hilight.sgml n "<select[^>]*>"         2
+    indent .hilight.sgml n "<%"                    2
+    indent .hilight.sgml o "%>"                   -2
 !endif
 
 0 define-macro sgml-spell-word
@@ -314,5 +316,3 @@ ml-write "[SGML file hook loaded]"
 
 ; load in user extensions if found
 !force execute-file "mysgml"
-    
-
