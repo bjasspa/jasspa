@@ -176,6 +176,7 @@ define-macro-file collapse collapse-current collapse-all beginning-of-function e
         buffer-bind-create "b" "f3" "" collapse-all 
         buffer-bind-create "b" "esc C-a" "" beginning-of-function
         buffer-bind-create "b" "esc C-e" "" end-of-function
+        buffer-bind-create "b" "esc C-h" "" mark-function
     !endif
     !if &sin "s" #l0
         !if &not &seq %language "Default"
