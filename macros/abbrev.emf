@@ -104,6 +104,7 @@ define-macro iso-accents-mode
         ml-write &spr "[Buffer iso-accents-mode is now %s]" &cond :iso-accents "on" "off"
     !endif
 !emacro
+set-variable .expand-iso-accents.on &cond &exi .expand-iso-accents.on .expand-iso-accents.on 0
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; expand-look-back routine
@@ -155,10 +156,10 @@ define-macro expand-look-back
     !endif
     !abort
 !emacro
-set-variable .expand-look-back.on 1
+set-variable .expand-look-back.on &cond &exi .expand-look-back.on .expand-look-back.on 1
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; expand-word routines
-
 define-macro expand-word
     backward-char
     !if &inw @wc
@@ -203,4 +204,5 @@ define-macro expand-word
         !abort
     !endif
 !emacro
+set-variable .expand-word.on &cond &exi .expand-word.on .expand-word.on 0
 

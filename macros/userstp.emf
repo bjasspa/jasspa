@@ -204,7 +204,7 @@ set-variable .user-setup.path ""
 
 0 define-macro user-set-checkbox
     set-variable #l2 &lget "|main-menu|spell/autosave|html-author|exact|magic|auto|backup|quiet|tab|undo|spell/autospell|msshift|edituser|expaccent|explookbk|expword|find-buffer|mskeys|" &abs @#
-    set-variable #l0 &lget "|1|0|1|1|1|1|1|1|1|1|0|0|1|0|0|0|0|0|" &abs @#
+    set-variable #l0 &lget "|1|0|1|1|1|1|1|1|1|1|0|0|1|0|1|0|0|0|" &abs @#
     set-variable #l0 &reg "/history" #l2 #l0
     !if &les @# 0
         set-variable #l0 &bxor #l0 1
@@ -1130,19 +1130,19 @@ osd .osd.user-gener 80 ""
 osd .osd.user-gener 90 "Sfh" "     Auto-Sa\Hve Time : " 100
 osd .osd.user-gener 100 "EtxHf" 100 .scheme.osd-entry "############" 10 user-set-entry
 osd .osd.user-gener 110 "Sfh" "       Global Modes : "
-osd .osd.user-gener 120 "Ctfx"  120 " [ *]^\HQuiet" 8 user-set-checkbox
+osd .osd.user-gener 120 "Ctfxp"  120 &cat .osd.checkbox-chars "\}\HQuiet" 8 user-set-checkbox
 osd .osd.user-gener 130 "fh"  "       Search Modes : "
-osd .osd.user-gener 140 "Ctfxh" 140 " [ *]^\HExact"  4 user-set-checkbox
+osd .osd.user-gener 140 "Ctfxph" 140 &cat .osd.checkbox-chars "\}\HExact" 4 user-set-checkbox
 osd .osd.user-gener 150 "fh"  "  "
-osd .osd.user-gener 160 "Ctfx"  160 " [ *]^\HMagic " 5 user-set-checkbox
+osd .osd.user-gener 160 "Ctfxp"  160 &cat .osd.checkbox-chars "\}\HMagic " 5 user-set-checkbox
 osd .osd.user-gener 170 "Sfh" "       Buffer Modes : "
-osd .osd.user-gener 180 "Ctfxh" 180 " [ *]^\HAuto "  6 user-set-checkbox
+osd .osd.user-gener 180 "Ctfxph" 180 &cat .osd.checkbox-chars "\}\HAuto "  6 user-set-checkbox
 osd .osd.user-gener 190 "fh"  "  "
-osd .osd.user-gener 200 "Ctfx"  200 " [ *]^\HBackup" 7 user-set-checkbox
+osd .osd.user-gener 200 "Ctfxp"  200 &cat .osd.checkbox-chars "\}\HBackup" 7 user-set-checkbox
 osd .osd.user-gener 210 "fh"  "                      "
-osd .osd.user-gener 220 "Ctfxh" 220 " [ *]^\HTab  " 9 user-set-checkbox
+osd .osd.user-gener 220 "Ctfxph" 220 &cat .osd.checkbox-chars "\}\HTab  " 9 user-set-checkbox
 osd .osd.user-gener 230 "fh"  "  "
-osd .osd.user-gener 240 "Ctfx"  240 " [ *]^\HUndo  " 10 user-set-checkbox
+osd .osd.user-gener 240 "Ctfxp"  240 &cat .osd.checkbox-chars "\}\HUndo " 10 user-set-checkbox
 osd .osd.user-gener 245 ""
 osd .osd.user-gener 250 "Sfh" "  \HKeep Undo History : " 260
 osd .osd.user-gener 260 "Ctfhx" 260 "^^NY^^" 0x8000 user-set-system
@@ -1158,11 +1158,11 @@ osd .osd.user-gener 310 "Sfh" "      Alt -\H> Esc Prefx : " 320
 osd .osd.user-gener 320 "Ctfx" 320 "^^NY^^" 0x4000 user-set-system
 osd .osd.user-gener 321 ""
 osd .osd.user-gener 322 "Sfh" "   Abbrev Expansion : "
-osd .osd.user-gener 323 "Ctfxh" 323 "^[ *]^Accent " 14 user-set-checkbox
+osd .osd.user-gener 323 "Ctfxhp" 323 &cat .osd.checkbox-chars "\}Accent" 14 user-set-checkbox
 osd .osd.user-gener 324 "fh"  " "
-osd .osd.user-gener 325 "Ctfxh" 325 "^[ *]^Lookbk " 15 user-set-checkbox
+osd .osd.user-gener 325 "Ctfxhp" 325 &cat .osd.checkbox-chars "\}Lookbk" 15 user-set-checkbox
 osd .osd.user-gener 326 "fh"  " "
-osd .osd.user-gener 327 "Ctfx"  327 "^[ *]^Dict'n"  16 user-set-checkbox
+osd .osd.user-gener 327 "Ctfxp"  327 &cat .osd.checkbox-chars "\}Dict'n"  16 user-set-checkbox
 osd .osd.user-gener 330 "Sfh" "      Tab To \HIndent : " 340
 osd .osd.user-gener 340 "OtxmsfhHzR" 340 .scheme.osd-entry 18 1 "" .osd.user-sub user-setup-tab-indent
 osd .osd.user-gener 341 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 340

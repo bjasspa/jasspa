@@ -141,6 +141,19 @@ define-macro mouse-osd-multi
         0 show-region
         set-variable #l2 $result
         goto-position "\x82"
+        osd 27 5  "D"
+        !if &seq $buffer-input "auto-spell-input"
+            !if &equ @fss $cursor-y $cursor-x .scheme.spell-error
+                !jump 3
+            !elif &inw @wc
+            !elif &equ @fss $cursor-y &sub $cursor-x 1 .scheme.spell-error
+                auto-spell-test
+                !if &seq &lef $result 1 "E"
+                    set-variable .auto-spell-osd.word &rig $result 1
+                    osd 27 5  "M" "Auto Spell" .osd.spell-auto auto-spell-osd
+                !endif
+            !endif
+        !endif
         osd 27 70 "M" "Sort \HLines"      28
         osd 27 90 "M" "H\Hilight Line"    .osd.tmp osd-line-scheme
         !if &reg "/history" "find-buffer" "0"
