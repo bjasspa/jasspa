@@ -104,8 +104,13 @@ __mkTempName (meUByte *buf, meUByte *name)
         sprintf((char *)buf, "/tmp/me%d%s",(int) getpid(),name);
     else
     {
-        strcpy((char *)buf, "/tmp/meXXXXXX") ;
-        mktemp((char *)buf) ;
+        static int index = 0;
+        /* mktemp() is unsafe, mkstemp() is an alternative, but this opens the
+         * file. We can better generate a unique name by using the PID and a
+         * static index. */
+        /* strcpy((char *)buf, "/tmp/meXXXXXX") ;*/
+        /* mktemp((char *)buf) ;*/
+        sprintf ((char *)buf, "/tmp/me%d_%d",(int) getpid(),index);
     }
 }
 
