@@ -5,7 +5,7 @@
  *  Synopsis      : Next file/line goto routines
  *  Created By    : Steven Phillips
  *  Created       : 01/06/1994
- *  Last Modified : <010305.0749>
+ *  Last Modified : <010820.2225>
  *
  *  Description
  *
@@ -54,7 +54,7 @@ flNextFind(uint8 *str, uint8 **curFilePtr, int32 *curLine)
 {
     uint8   pat[MAXBUF], *ss, cc ;
     uint8  *n=NULL ;
-    int     fileRpt=-1, lineRpt=-1, onRpt=0 ;
+    int     buffRpt=-1, fileRpt=-1, lineRpt=-1, onRpt=0 ;
     int     soff, len ;
     
     ss = str+1 ;
@@ -65,6 +65,10 @@ flNextFind(uint8 *str, uint8 **curFilePtr, int32 *curLine)
         {
             switch((cc=*ss++))
             {
+            case 'b':
+                buffRpt = onRpt++ ;
+                n = ".*" ;
+                break ;
             case 'f':
                 fileRpt = onRpt++ ;
                 n = flNextFileTemp ;
@@ -109,6 +113,17 @@ flNextFind(uint8 *str, uint8 **curFilePtr, int32 *curLine)
         meStrncpy(*curFilePtr,curwp->w_dotp->l_text+soff+mereRegexGroupStart(fileRpt+1),len) ;
         (*curFilePtr)[len] = '\0' ;
     }
+    else if(buffRpt >= 0)
+    {
+        len = mereRegexGroupEnd(buffRpt+1) - mereRegexGroupStart(buffRpt+1) ;
+        meNullFree(*curFilePtr) ;
+        if((*curFilePtr = meMalloc(len+3)) == NULL)
+            return FALSE ;
+        (*curFilePtr)[0] = '*' ;
+        meStrncpy((*curFilePtr)+1,curwp->w_dotp->l_text+soff+mereRegexGroupStart(fileRpt+1),len) ;
+        (*curFilePtr)[len+1] = '*' ;
+        (*curFilePtr)[len+2] = '\0' ;
+    }
     if(lineRpt >= 0)
         *curLine = meAtoi(curwp->w_dotp->l_text+soff+mereRegexGroupStart(lineRpt+1)) ;
 
@@ -120,7 +135,7 @@ getNextLine(int f,int n)
 {
     int     noNextLines, ii, no, rr ;
     uint8 **nextLines ;
-    uint8  *newName=NULL ;
+    uint8  *nextFile=NULL ;
     int32   curLine=-1 ;
     BUFFER *bp=NULL, *tbp ;
     
@@ -164,7 +179,7 @@ getNextLine(int f,int n)
         while(--ii >= 0)
         {
             curwp->w_doto = 0 ;
-            if((rr=flNextFind(nextLines[ii],&newName,&curLine)) == ABORT)
+            if((rr=flNextFind(nextLines[ii],&nextFile,&curLine)) == ABORT)
             {
                 curwp->w_doto = 0 ;
                 curwp->w_flag |= WFMOVEL ;
@@ -176,30 +191,57 @@ getNextLine(int f,int n)
             else if(rr == 1)
             {
                 /* matched a line */
-                if(newName != NULL)
-                {
-                    uint8 fname[FILEBUF] ;
-                    
-                    meNullFree(bp->nextFile) ;
-                    if(bp->b_fname != NULL)
-                    {
-                        uint8 tmp[FILEBUF] ;
-                        getFilePath(bp->b_fname,tmp) ;
-                        meStrcat(tmp,newName) ;
-                        fileNameCorrect(tmp,fname,NULL) ;
-                    }
-                    else
-                        fileNameCorrect(newName,fname,NULL) ;
-                    bp->nextFile = meStrdup(fname) ;
-                    meFree(newName) ;
-                }
                 curwp->w_doto = 0 ;
                 curwp->w_flag |= WFMOVEL ;
-                if(bp->nextFile == NULL)
+                if(nextFile != NULL)
+                {
+                    uint8 fname[FILEBUF], *value ;
+                    meVARIABLE *var ;
+                    
+                    ii = strlen(nextFile) ;
+                    if((nextFile[0] != '*') || (nextFile[ii-1] != '*'))
+                    {
+                        if(bp->b_fname != NULL)
+                        {
+                            uint8 tmp[FILEBUF] ;
+                            getFilePath(bp->b_fname,tmp) ;
+                            meStrcat(tmp,nextFile) ;
+                            fileNameCorrect(tmp,fname,NULL) ;
+                        }
+                        else
+                            fileNameCorrect(nextFile,fname,NULL) ;
+                        value = fname ;
+                    }
+                    else
+                        value = nextFile ;
+                    
+                    var = SetUsrLclCmdVar((uint8 *)"next-file",value,&(bp->varList)) ;
+                    meFree(nextFile) ;
+                    if(var == NULL)
+                        return FALSE ;
+                    nextFile = var->value ;
+                }
+                else if((nextFile = getUsrLclCmdVar((uint8 *)"next-file",&(bp->varList))) == errorm)
                     return mlwrite(MWABORT,(uint8 *)"[No File name]") ;
+                else
+                    ii = strlen(nextFile) ;
                 if(wpopup(NULL,WPOP_MKCURR) == NULL)
                     return FALSE ;
-                if(findSwapFileList(bp->nextFile,(BFND_CREAT|BFND_MKNAM),0) != TRUE)
+                if((nextFile[0] == '*') && (nextFile[ii-1] == '*'))
+                {
+                    BUFFER *bp ;
+                    nextFile[ii-1] = '\0' ;
+                    if((bp = bfind(nextFile+1,0)) == NULL)
+                    {
+                        mlwrite(MWABORT,(uint8 *)"[Buffer \"%s\" no longer exists]",nextFile+1) ;
+                        nextFile[ii-1] = '*' ;
+                        return FALSE ;
+                    }
+                    nextFile[ii-1] = '*' ;
+                    if(swbuffer(curwp,bp) != TRUE)
+                        return FALSE ;
+                }
+                else if(findSwapFileList(nextFile,(BFND_CREAT|BFND_MKNAM),0) != TRUE)
                     return FALSE ;
                 if(curLine < 0)
                     return mlwrite(MWABORT,(uint8 *)"[No Line number]") ;

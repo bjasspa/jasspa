@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips & Jon Green
 ;  Created       : Thu Jan 14 02:13:44 1999
-;  Last Modified : <000919.1627>
+;  Last Modified : <010817.2344>
 ;
 ;  Description
 ;
@@ -158,3 +158,17 @@
     !done
 !emacro
 
+; create-file-path <file>
+; given a file name <path>/<basename> create the <path>
+0 define-macro create-file-path
+    set-variable #l0 @1
+    set-variable #l1 0
+    !while &set #l2 &sin "/" &rig #l0 #l1
+        set-variable #l1 &add #l1 #l2
+        set-variable #l2 &lef #l0 &sub #l1 1
+        !if &and &band $system 0x100 &les #l1 4 
+        !elif &seq &stat "t" #l2 "X"
+            !force 0x100 file-op &cat "file:" #l2
+        !endif
+    !done
+!emacro

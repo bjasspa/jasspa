@@ -11,15 +11,15 @@
 ;  Copyright (c) 1999-2001 JASSPA
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-set-variable %keyboard-names "|Default|American|British|Francais|Belgian|Deutsch|Portugues|"
+set-variable %keyboard-names "|Default|American|British|Francais|Belgian|Deutsch|Portugues|Espanol|"
 
 !if &les @# 1
     ; if executed with an argument of 0 or less, return the list
     !return
 !endif
 
-; get the users keyboard - currently only French, Belgian and German on win32 do anything
-set-variable #l0 &lget "||us|uk|be|be|gr|po|" &lfind %keyboard-names &reg "/history" "keyboard" ""
+; get the users keyboard - currently only French, Belgian, German and Spanish on win32 do anything.
+set-variable #l0 &lget "||us|uk|be|be|gr|po|es|" &lfind %keyboard-names &reg "/history" "keyboard" ""
 
 !if &seq #l0 "us"
     !if &seq $platform "win32"
@@ -92,5 +92,18 @@ set-variable #l0 &lget "||us|uk|be|be|gr|po|" &lfind %keyboard-names &reg "/hist
         translate-key "A-C-q A-C-@" "\x40"
         translate-key "A-C-2 A-C-²" "\xb2"
         translate-key "A-C-b A-C-|" "\x7c"
+    !endif
+!elif &seq #l0 "es"
+    !if &seq $platform "win32"
+        ; Spanish support - Thanks to Rodolfo Valeiras
+        translate-key "A-C-# A-C-{" "{"
+        translate-key "A-C-/ A-C-}" "}"
+        translate-key "A-C-; A-C-[" "["
+        translate-key "A-C-= A-C-]" "]"
+        translate-key "A-C-\\ A-C-\\" "\\"
+        translate-key "A-C-1 A-C-|" "|"
+        translate-key "A-C-2 A-C-@" "@"
+        translate-key "A-C-3 A-C-#" "#"
+        translate-key "A-C-6 A-C-¬" "¬"
     !endif
 !endif
