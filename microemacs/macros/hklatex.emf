@@ -44,7 +44,8 @@ set-variable .fhook-latex.setup-mask "aefhijkmnopstuwx"
 set-variable .fhook-latex.tags "textags"
 set-variable .fhook-latex.comment "|%||%|% | %||"
 set-variable .fhook-latex.command-flag  "|bo|bo|bo|bo|thb|thb|thb|thb|th|thb|th|th|thbH|"
-set-variable .fhook-latex.command-name  "|latex-para|latex-para|latex-backward-paragraph|latex-forward-paragraph|latex-ref-goto-label|latex-ref-go-back|latex-list-section|latex-list-label||latex-popup|latex-compile|latex-view|latex-swap-hilight|"
+;set-variable .fhook-latex.command-name  "|latex-para|latex-para|latex-backward-paragraph|latex-forward-paragraph|latex-ref-goto-label|latex-ref-go-back|latex-list-section|latex-list-label||latex-popup|latex-compile|latex-view|latex-swap-hilight|"
+set-variable .fhook-latex.command-name  "|latex-para|latex-para|latex-backward-paragraph|latex-forward-paragraph|comment-restyle|latex-ref-go-back|latex-list-section|latex-list-label||latex-popup|latex-compile|latex-view|latex-swap-hilight|"
 set-variable .fhook-latex.command-nbind "||||||||||||||"
 set-variable .fhook-latex.command-kbind "|esc o|esc q|esc p|esc n|C-c r|C-c C-r|f7|f8||C-6|||C-c C-h|"
 set-variable .fhook-latex.command-desc  "|||||&Goto Reference Label|&Return to Reference|List &Sections|List &Labels||&Insert Token|Com&pile Buffer|&View Buffer|T&oggle hilighting|"
@@ -800,6 +801,9 @@ define-macro latex-popup
     set-variable $fill-mode  :fill-mode
     set-variable :ofill-col  $fill-col
     set-variable $fill-col   :fill-col
+    !if &exist my-bhook-latex
+        my-bhook-latex
+    !endif
 !emacro
 ;
 0 define-macro ehook-latex
@@ -808,6 +812,9 @@ define-macro latex-popup
     set-variable $fill-mode :ofill-mode
     set-variable :fill-col $fill-col
     set-variable $fill-col :ofill-col
+    !if &exist my-ehook-latex
+        my-ehook-latex
+    !endif
 !emacro
 
 ml-write "[LaTeX file hook loaded]"
