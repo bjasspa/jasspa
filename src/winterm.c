@@ -5523,7 +5523,7 @@ meIniFileEntry (meUByte *label, meUByte *value)
          /* it is not a msdevxxxx keyword so convert environment name to
           * uppercase and then push into the environment. */
          meUByte buf[meBUF_SIZE_MAX];
-         meUByte *p ;
+         meUByte *p = buf;
 
          while ((*p = *label++) != '\0')
              p++;
