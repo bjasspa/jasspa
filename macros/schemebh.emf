@@ -78,6 +78,7 @@ add-color-scheme .scheme.bold-italic .col1 .col22 .col1 .col21 .col1 .col23 .col
 add-color-scheme .scheme.bold-under .col1 .col22 .col1 .col21 .col1 .col23 .col1 .col23 17 25 17 25 17 25 17 25
 add-color-scheme .scheme.italic-under .col1 .col22 .col1 .col21 .col1 .col23 .col1 .col23 18 26 18 26 18 26 18 26
 add-color-scheme .scheme.bold-italic-under .col1 .col22 .col1 .col21 .col1 .col23 .col1 .col23 19 27 19 27 19 27 19 27
+add-color-scheme .scheme.spell-error .col2 .col22 .col2 .col21 .col2 .col23 .col2 .col23 0 8 0 8 0 8 0 8
 ; Directory Listings
 add-color-scheme .scheme.file .col5 .col22 .col5 .col21 .col5 .col23 .col5 .col23 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.select .col18 .col22 .col18 .col21 .col5 .col23 .col5 .col23 0 8 0 8 0 8 0 8
@@ -90,7 +91,7 @@ add-color-scheme .scheme.dir-closed .col0 .col2 .col0 .col2 .col0 .col2 .col0 .c
 add-color-scheme .scheme.dir-uknown .col0 .col12 .col0 .col16 .col0 .col16 .col0 .col16 0 8 0 8 0 8 0 8
 ; Line Schemes
 add-color-scheme .scheme.hide .col23 .col22 .col23 .col21 .col22 .col23 .col21 .col23 0 8 0 8 0 8 0 8
-add-color-scheme .scheme.fold .col1 .col25 .col1 .col26 .col1 .col25 .col1 .col26 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.fold-close .col1 .col25 .col1 .col26 .col1 .col25 .col1 .col26 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.fold-open .col1 .col28 .col7 .col28 .col1 .col3 .col7 .col3 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.trace .col1 .col28 .col7 .col28 .col1 .col3 .col7 .col3 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.hlwhite .col1 .col6 .col7 .col6 .col1 .col23 .col7 .col23 0 8 0 8 0 8 0 8

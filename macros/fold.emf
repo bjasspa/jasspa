@@ -1,19 +1,13 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2000-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     Wed Oct 30 2002
+; Synopsis:    Folding editor support macros
+; Authors:     Steven Phillips
+;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
-;  Author        : $Author: jon $
-;  Created By    : Steven Phillips
-;  Created       : Wed Oct 30 10:02:33 2002
-;  Last Modified : <021121.2319>
-;
-;  Description
-;
-;  Notes
-;
-;  History
-;
-;  Copyright (c) 2002 PTC.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 
 0 define-macro fold-init
     !if &exi :fold
@@ -21,28 +15,22 @@
     !elif &not @#
         ml-write "[Folding editor has not been configured]"
         !abort
-    !elif &not &exi &spr ".%s.fold" $buffer-fhook
-        !if &seq &set #l2 &reg "/history" &spr "fhook/%s-fomark" &rig $buffer-fhook 6 "" ""
-            set-variable &ind &spr ".%s.fold" $buffer-fhook ""
-            !abort
+    !elif &not &exi &ind &spr ".%s.fold" $buffer-fhook
+        set-variable &ind &spr ".%s.fold" $buffer-fhook ""
+        !if &not &seq &set #l2 &reg "/history" &spr "fhook/%s-fomark" &rig $buffer-fhook 6 "" ""
+            set-variable #l3 &reg "/history" &spr "fhook/%s-fcmark" &rig $buffer-fhook 6 ""
+            !if &not &seq &set #l1 &lget &ind &spr ".%s.comment" $buffer-fhook 1 ""
+                set-variable #l0 &spr "\b%s %s\b%s %s\b%s\b" #l1 #l2 #l1 #l3 &lget &ind &spr ".%s.comment" $buffer-fhook 2
+                str-to-regex #l1
+                str-to-regex #l2
+                str-to-regex #l3
+                set-variable #l0 &spr "%s%s[ \t]*%s\b%s[ \t]*%s\b" #l0 #l1 #l2 #l1 #l3
+                set-variable &ind &spr ".%s.fold" $buffer-fhook #l0
+            !endif
         !endif
-        set-variable #l3 &reg "/history" &spr "fhook/%s-fcmark" &rig $buffer-fhook 6 ""
-        !if &seq &set #l1 &lget &ind &spr ".%s.comment" $buffer-fhook 1 ""
-            set-variable &ind &spr ".%s.fold" $buffer-fhook ""
-            !abort
-        !endif
-        set-variable #l0 &spr "\b%s %s\b%s %s\b%s\b" #l1 #l2 #l1 #l3 &lget &ind &spr ".%s.comment" $buffer-fhook 2
-        str-to-regex #l1
-        str-to-regex #l2
-        str-to-regex #l3
-        set-variable #l0 &spr "%s%s[ \t]*%s\b%s[ \t]*%s\b" #l0 #l1 #l2 #l1 #l3
-        set-variable &ind &spr ".%s.fold" $buffer-fhook #l0
-    !elif &seq &set #l0 &ind &spr ".%s.fold" $buffer-fhook ""
-        !abort
     !endif
     ; check for a buffer override
-    beginning-of-buffer
-    !if &xse @wl ".*-!-.*fold-open:[ \t]*\\(\"[^\"]*\"\\|[^ \t;]*\\)[ \\t]*;[ \\t]*fold-close:[ \t]*\\(\"[^\"]*\"\\|[^ \t;]*\\)[ \\t]*;.*-!-.*"
+    !if &xse @1 ".*fold-open:[ \t]*\\(\"[^\"]*\"\\|[^ \t;]*\\)[ \\t]*;[ \\t]*fold-close:[ \t]*\\(\"[^\"]*\"\\|[^ \t;]*\\)[ \\t]*;.*"
         set-variable #l2 @s1
         set-variable #l3 @s2
         !if &seq &lef #l2 1 "\""
@@ -51,12 +39,12 @@
         !if &seq &lef #l3 1 "\""
             execute-line &cat "set-variable #l3 " #l3
         !endif
-        set-variable #l0 &lset #l0 1 #l2
-        set-variable #l0 &lset #l0 2 #l3
+        set-variable #l0 &spr "\b%s\b%s\b%s\b" #l2 #l3 &lget &ind &spr ".%s.comment" $buffer-fhook 2
         str-to-regex #l2
         str-to-regex #l3
-        set-variable #l0 &lset #l0 4 #l2
-        set-variable #l0 &lset #l0 5 #l3
+        set-variable #l0 &spr "%s%s\b%s\b" #l0 #l2 #l3
+    !elif &seq &set #l0 &ind &spr ".%s.fold" $buffer-fhook ""
+        !abort
     !endif
     set-variable :fold #l0
 !emacro
@@ -118,7 +106,7 @@ define-macro fold-open
     0 fold-init
     ; init didn't abort - setup
     !if &equ &band $line-flags 0x44 0x44
-        !if &equ $line-scheme .scheme.fold
+        !if &equ $line-scheme .scheme.fold-close
             set-variable #l0 $window-line
             !force 2 narrow-buffer
             backward-line
@@ -150,7 +138,7 @@ define-macro fold-close
         !if $status 
             forward-line
             !if &gre $window-line #l2
-                0x34 narrow-buffer .scheme.fold fold-markup
+                0x34 narrow-buffer .scheme.fold-close fold-markup
                 backward-line
                 &cond #l0 1 -1 buffer-mode "magic"
                 !return
@@ -166,7 +154,7 @@ define-macro fold-enter
     0 fold-init
     ; init didn't abort - setup
     !if &equ &band $line-flags 0x44 0x44
-        !if &equ $line-scheme .scheme.fold
+        !if &equ $line-scheme .scheme.fold-close
             set-variable #l0 $window-line
             !force 2 narrow-buffer
             !if $status
@@ -242,7 +230,7 @@ define-macro fold-kill
     0 fold-init
     ; init didn't abort - setup
     !if &equ &band $line-flags 0x44 0x44
-        !if &equ $line-scheme .scheme.fold
+        !if &equ $line-scheme .scheme.fold-close
             beginning-of-line
             set-mark
             forward-line
@@ -289,7 +277,7 @@ define-macro fold-remove
     0 fold-init
     ; init didn't abort - setup
     !if &equ &band $line-flags 0x44 0x44
-        !if &equ $line-scheme .scheme.fold
+        !if &equ $line-scheme .scheme.fold-close
             set-variable #l0 $window-line
             !force 2 narrow-buffer
             set-mark
@@ -335,7 +323,7 @@ define-macro fold-remove
             set-variable $line-flags &bor $line-flags 0x40
             set-variable $line-scheme .scheme.fold-open
             forward-line
-            0x34 narrow-buffer .scheme.fold fold-markup
+            0x34 narrow-buffer .scheme.fold-close fold-markup
             backward-line
         !endif
         !force &sub #l1 $window-line search-backward &cat "^[ \t]*" &lget :fold 4
@@ -372,7 +360,7 @@ define-macro fold-remove
 !emacro
 
 0 define-macro fold-setup
-    fold-init
+    fold-init @1
     ; init didn't abort - if given an argument of 0 then only setup if a fold exists in the 1st 200 lines
     set-position "\x89"
     set-variable #l0 &bmod "magic"
@@ -400,7 +388,7 @@ define-macro fold-remove
             set-variable $line-flags &bor $line-flags 0x40
             set-variable $line-scheme .scheme.fold-open
             forward-line
-            0x34 narrow-buffer .scheme.fold fold-markup
+            0x34 narrow-buffer .scheme.fold-close fold-markup
             backward-line
         !endif
         !force search-backward &cat "^[ \t]*" &lget :fold 4
@@ -423,7 +411,9 @@ define-macro fold-remove
     buffer-bind-create "bo" "esc C-f3" "" fold-exit-all
     buffer-bind-create "bo" "C-x C-k"  "" fold-kill
     !if &not &seq &cbin "idle-pick" "ERROR"
-        set-variable :fold-idle &spr "%s %s" &nbin "idle-pick" &cbin "idle-pick"
+        !if &not &seq &cbin "idle-pick" "fold-idle"
+            set-variable :fold-idle &spr "%s %s" &nbin "idle-pick" &cbin "idle-pick"
+        !endif
     !endif
     buffer-bind-key fold-idle "idle-pick"
 !emacro

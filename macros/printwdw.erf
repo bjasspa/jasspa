@@ -1,14 +1,16 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
 ;  Author        : Steven Phillips
-;  Last Modified : <000607.1949>
+;  Last Modified : <030515.1333>
 ;
 ;  Description   : Windows printer driver.
 ;
 ;  Notes
 ; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-"internal" = "1"
+"internal" = "1"              ;; Windows internal printer driver
+"win-default" = "1"           ;; Use the defult printer by default
+
 ; Separator characters
 "econt" = "\\"                ;; Print continuation character.
 "scont" = ">"                 ;; Print start continuation character

@@ -50,13 +50,15 @@ set-variable .org.addr-lbl  "|Record No|First Name|Surname|Nick Name|Selected|No
                 set-registry "/org" &spr "addr/%d/%s" .org.addr #l2 #l1
             !endif
             mark-registry "/org" "u"
-            !if &not &les .org.iaddr .org.naddr
-                set-variable #l3 &lset &reg "/org" &spr "addr/i%d" &div .org.iaddr 128 "|" &band .org.iaddr 127 .org.addr
-                set-registry "/org" &spr "addr/i%d" &div .org.iaddr 128 #l3
-            !endif
-            !if &not &les .org.addr .org.naddr
+            !if &equ .org.addr .org.naddr
                 set-variable .org.naddr &add .org.addr 1
                 set-registry "/org" "addr/naddr" .org.naddr
+                !if &gre .org.iaddr -1
+                    set-variable #l3 &lset &reg "/org" &spr "addr/i%d" &div .org.addr 128 "|" &band .org.addr 127 .org.addr
+                    set-registry "/org" &spr "addr/i%d" &div .org.addr 128 #l3
+                    set-variable .org.iaddr .org.naddr
+                    org-addr-dec-recno
+                !endif
             !endif
         !endif
     !else
@@ -68,19 +70,24 @@ set-variable .org.addr-lbl  "|Record No|First Name|Surname|Nick Name|Selected|No
     set-variable #l2 &lget .org.addr-reg &abs @#
     set-variable #l0 &reg "/org" &spr "addr/%d/%s" .org.addr #l2 ""
     !if &les @# 0
+        !if &seq .org.addr "*"
+            set-variable .org.addr .org.naddr
+        !endif
         !if &seq #l0 ""
             set-registry "/org" &spr "addr/%d/%s" .org.addr #l2 "*"
         !else
             delete-registry &spr "/org/addr/%d/%s" .org.addr #l2
         !endif
         mark-registry "/org" "u"
-        !if &not &les .org.iaddr .org.naddr
-            set-variable #l3 &lset &reg "/org" &spr "addr/i%d" &div .org.iaddr 128 "|" &band .org.iaddr 127 .org.addr
-            set-registry "/org" &spr "addr/i%d" &div .org.iaddr 128 #l3
-        !endif
-        !if &not &les .org.addr .org.naddr
+        !if &equ .org.addr .org.naddr
             set-variable .org.naddr &add .org.addr 1
             set-registry "/org" "addr/naddr" .org.naddr
+            !if &gre .org.iaddr -1
+                set-variable #l3 &lset &reg "/org" &spr "addr/i%d" &div .org.addr 128 "|" &band .org.addr 127 .org.addr
+                set-registry "/org" &spr "addr/i%d" &div .org.addr 128 #l3
+                set-variable .org.iaddr .org.naddr
+                org-addr-dec-recno
+            !endif
         !endif
     !elif &seq #l0 ""
         !abort
@@ -118,13 +125,13 @@ set-variable .org.addr-lbl  "|Record No|First Name|Surname|Nick Name|Selected|No
         org-addr-inc-recno
     !else
         set-variable #l0 .org.addr
-        set-variable #l1 .org.iaddr
-        !if &gre #l1 -1
+        !if &gre &set #l1 .org.iaddr -1
             !while &dec .org.iaddr 1
-                !if &set .org.addr &lget &reg "/org" &spr "addr/i%d" &div .org.iaddr 128 "" &band .org.iaddr 127
+                !if &set .org.addr &lget &reg "/org" &spr "addr/i%d" &div .org.iaddr 128 "|" &band .org.iaddr 127
                     !return
                 !endif
             !done
+            set-variable .org.iaddr #l1
         !else
             !if &seq .org.addr "*"
                 set-variable .org.addr .org.naddr
@@ -137,7 +144,6 @@ set-variable .org.addr-lbl  "|Record No|First Name|Surname|Nick Name|Selected|No
             !done
         !endif
         set-variable .org.addr #l0
-        set-variable .org.iaddr #l1
     !endif
 !emacro
 
@@ -145,10 +151,11 @@ set-variable .org.addr-lbl  "|Record No|First Name|Surname|Nick Name|Selected|No
     !if &not @?
         !if &gre .org.iaddr -1
             !while &les &inc .org.iaddr 1 .org.naddr
-                !if &set .org.addr &lget &reg "/org" &spr "addr/i%d" &div .org.iaddr 128 "" &band .org.iaddr 127
+                !if &set .org.addr &lget &reg "/org" &spr "addr/i%d" &div .org.iaddr 128 "|" &band .org.iaddr 127
                     !return
                 !endif
             !done
+            set-variable .org.iaddr .org.naddr
         !else
             !while &les &inc .org.addr 1 .org.naddr
                 !force find-registry "/org" &spr "addr/%d" .org.addr 0
@@ -159,7 +166,6 @@ set-variable .org.addr-lbl  "|Record No|First Name|Surname|Nick Name|Selected|No
         !endif
     !endif
     set-variable .org.addr "*"
-    set-variable .org.iaddr &cond &gre .org.iaddr -1 .org.naddr -1
 !emacro
 
 0 define-macro org-addr-del

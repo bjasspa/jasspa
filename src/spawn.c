@@ -1437,9 +1437,9 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
          * controlling tty. This prevents an application from unintentionally
          * aquiring the controlling terminal as a side effect of the open. */
 #if (defined O_NOCTTY)
-        fds[1] = outFds[0] = open(line,O_RDWR|O_NOCTTY,0) ;
+        fds[1] = outFds[0] = open((char *) line,O_RDWR|O_NOCTTY,0) ;
 #else
-        fds[1] = outFds[0] = open(line,O_RDWR,0) ;
+        fds[1] = outFds[0] = open((char *) line,O_RDWR,0) ;
 #endif /* O_NOCTTY */
 #else
         fds[1] = outFds[0] = -1 ;
@@ -1583,11 +1583,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
         /* Some systems the tty is opened late as here */
         if(ptyFp >= 0)
         {
-#ifdef O_NOCTTY
-            fds[1] = outFds[0] = open((const char *)line,O_RDWR|O_NOCTTY,0) ;
-#else
             fds[1] = outFds[0] = open((const char *)line,O_RDWR,0) ;
-#endif /* O_NOCTTY */
         }
 #endif /* !_LINUX/_FREEBSD/_SUNOS/_BSD */
 
@@ -1624,8 +1620,8 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
         /* Set up the arguments for the pipe */
         if((ss=getUsrVar((meUByte *)"ipipe-term")) != NULL)
             mePutenv(meStrdup(ss)) ;
+        
         ss = getShellCmd() ;
-
         args[0] = (char *) ss ;
         if(meStrcmp(ss,comStr))
         {

@@ -95,9 +95,9 @@
                             set-variable #l2 &cat &rig $result 1 "\\}[^[:alnum:]]"
                         !endif
                         !if &inw #l2
-                            !force hilight $buffer-hilight 0 &cat "[^[:word:]]\\{" #l2  .scheme.error
+                            !force hilight $buffer-hilight 0 &cat "[^[:word:]]\\{" #l2  .scheme.spell-error
                         !else
-                            !force hilight $buffer-hilight 0 &cat "[^[:alnum:]]\\{" #l2  .scheme.error
+                            !force hilight $buffer-hilight 0 &cat "[^[:alnum:]]\\{" #l2  .scheme.spell-error
                         !endif
                         ; force this line to be redrawn
                         set-variable $line-scheme $line-scheme

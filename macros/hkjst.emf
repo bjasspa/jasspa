@@ -10,24 +10,18 @@
 ; Notes:       broken out of hkdoc.emf and docmacro.emf
 ;
 define-macro fhook-jst
+    set-variable #l1 $result
     @# buffer-initialize "jst"
     doc-buffer-context-init
     ; Over-ride any special document modes
     ; Search for additional modes in a:
-    ;     -!- jst; fill-column: <digit> fill-mode: <mode> -!-
+    ;     -!- jst; fill-column: <digit> ; fill-mode: <mode> -!-
     ;
-    beginning-of-buffer
-    !force -20 regex-forward &spr "-[*!]-[ \t]*jst[ \t]*"
-    !if $status
-        ; Search for fill-column: <var>;
-        !force -1 regex-forward "fill-column[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;]"
-        !if $status
+    !if &not &seq #l1 ""
+        !if &xseq #l1 ".*fill-column:[ \t]*\\([0-9]+\\)[ \t]*;.*"
             set-variable :fill-col @s1
-            beginning-of-line
         !endif
-        ; Search for fill-mode: <string>
-        !force -1 regex-forward "fill-mode[ \t]*:[ \t]*\\([a-zA-Z]+\\)[ \t]*[-;]"            
-        !if $status
+        !if &xseq #l1 ".*fill-mode:[ \t]*\\([a-zA-Z]+\\)[ \t]*;.*"
             set-variable #l0 @s1
             !if &iseq #l0 "left"
                 set-variable :fill-mode "L"

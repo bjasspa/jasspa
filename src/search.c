@@ -1251,9 +1251,41 @@ replaces(int kind, int ff, int nn)
 #if MEOPT_UNDO
             undoContFlag++ ;
 #endif
-            cc = mlCharReply(tpat,mlCR_LOWER_CASE|mlCR_UPDATE_ON_USER|mlCR_CURSOR_IN_MAIN,(meUByte *)"y nil!u.",
-                             (meUByte *)"(Y)es (N)o (I)nc (L)ast (!)Do rest (U)ndo (^G)Abort (.)Abort back ? ");
-            
+            /* SWP 2003-05-10 - Found nasty problem using toolbar with query-replace-all-strings,
+             * the command can lead to changing buffer, the prompt can lead to the idle macro
+             * being executed with in this case was the toolbar, and as the buffer had changed
+             * it refreshed the tool buffers which use the search command, this changes the
+             * regex info as this is stored in a global. This leads to a crash!
+             * As a fix cash the info now and restore after mlCharReply returns, as this is
+             * a query call this is not likely to be a macro so not really a performance issue,
+             *  just make it work!
+             */
+            {
+                meUByte srchPatStore[mePATBUF_SIZE_MAX];	/* replacement pattern		*/
+#if MEOPT_MAGIC
+                meRegexGroup groupStore[10] ;
+                int ii, srchLastMagicStore ;
+                
+                if((srchLastMagicStore = srchLastMagic) != 0)
+                {
+                    ii = mereRegex.groupNo + 1 ;
+                    if(ii > 10)
+                        ii = 10 ;
+                    memcpy(groupStore,mereRegex.group,ii*sizeof(meRegexGroup)) ;
+                }
+#endif
+                meStrcpy(srchPatStore,srchPat) ;
+                cc = mlCharReply(tpat,mlCR_LOWER_CASE|mlCR_UPDATE_ON_USER|mlCR_CURSOR_IN_MAIN,(meUByte *)"y nil!u.",
+                                 (meUByte *)"(Y)es (N)o (I)nc (L)ast (!)Do rest (U)ndo (^G)Abort (.)Abort back ? ");
+                meStrcpy(srchPat,srchPatStore) ;
+#if MEOPT_MAGIC
+                if((srchLastMagic = srchLastMagicStore) != 0)
+                {
+                    mere_compile_pattern(srchPat) ;
+                    memcpy(mereRegex.group,groupStore,ii*sizeof(meRegexGroup)) ;
+                }
+#endif
+            }            
             switch (cc)			/* And respond appropriately. */
             {
             case -1:
