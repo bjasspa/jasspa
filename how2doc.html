@@ -1,934 +1,933 @@
 <html>
-<head>
-   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="description" content="Jasspa Home">
-   <meta name="resource-type" content="document">
-   <meta name="distribution" content="global">
-   <meta name="keywords" content="jasspa microemacs, microemacs, emacs, uemacs, free, text, editor, JASSPA, me">
-   <meta name="authors" content="JASSPA">
-   <meta name="GENERATOR" content="MicroEmacs">
-   <title>MicroEmacs JASSPA Distribution</title>
-   <!-- BASE HREF="http://www.jasspa.com" -->
-
-<!--JASSPA - common from this point -->
-<!-- BACKGROUND="meback.png"  -->
-</head>
-<body bgcolor="white">
-<!-- Banner across the top of the page -->
-</head>
-<table WIDTH="100%" HEIGHT="95" BORDER=0 CELLSPACING=0 CELLPADDING=0 >
-<tr>
-  <td BACKGROUND="images/backgrd.jpg"><center><img SRC="images/header.jpg" alt="jasspa.com"></center></td>
-</tr>
-</table>
-<!-- width="100%"  -->
-<table border=0 cellpadding=3 cellspacing=1 bgcolor="yellow">
-  <tr bgcolor="#0000ff">
-    <td align=center width="100"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
-      <b><a href="index.html" style="COLOR: yellow" >Home</a></b></font></td>
-    <td align=center width="100"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
-      <b><a href="overview.html" style="COLOR: yellow">Overview</a></b></font></td>
-    <td align=center width="100"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
-      <b><a href="whatsnew.html" style="COLOR: yellow">What's New</a></b></font></td>
-    <td align=center width="100" bgcolor="#0080ff"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
-      <b><a href="support.html" style="COLOR: yellow">Support</a></b></font></td>
-    <td align=center width="100" ><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
-      <b><a href="download.html" style="COLOR: yellow">Download</a></b></font></td>
-    <td align=center width="100"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
-      <b><a href="about.html" style="COLOR: yellow">About</a></b></font></td>
-  </tr>
-</table>
-<!-- Section selection -->
-<p><font size="+3" color="#0000ff"><b>Support</b></font>
-<br>
-<font size="+1"><a href="links.html" style="COLOR: black">overview</a>&nbsp;&nbsp;</font>
-<font size="+1"><a href="faq.html" style="COLOR: black">faq</a>&nbsp;&nbsp;</font>
-<font size="+1"><a href="maillist.html" style="COLOR: black">mailing lists</a>&nbsp;&nbsp;</font>
-<font size="+1"><a href="email.html" style="COLOR: black">email support</a>&nbsp;&nbsp;</font>
-<font size="+1"><a href="links.html" style="COLOR: black">links</a>&nbsp;&nbsp;</font>
-<font size="+1"><a href="howto.html" style="COLOR: black">how to</a>&nbsp;&nbsp;</font>
-</p>
-<HR color=#cccccc noShade SIZE=1>
-<p><font size="+2" color="#0000ff"><b>Documentation Modes</b></font>
-<p>The following document explains the documentation modes of JASSPA's MicroEmacs.
-The information is presented as is appears within the editor window. This was 
-reproduced by MicroEmacs by printing to the HTML device, this converts
-the ASCII text (with hilighting) into an HTML document.</p>
-
-<p>The original document <a href="misc/docmode.txt">docmode.txt</a> may
-be downloaded and viewed in the editor.</p>
-
-<p><font size="+1">Return to <a href="howto.html">how to</a></font>
-<HR color=#cccccc noShade SIZE=1>
-<PRE>
-<I>&gt; -!- document; fill-column: 65; fill-mode: full -!-</I>
-<I>&gt; Author:   </I>
-<I>&gt; Created:  Wed Feb 2 20:23:35 2000</I>
-<I>&gt; Modified: &lt;20000323.0006&gt;</I>
-
-<B><U>1.0 Overview of the Documentation Modes</U></B>
-
-    This is the 2nd revision of this  document  that outlines the
-    documentation  mode  supported by JASSPA's  MicroEmacs.  This
-    document   has  been  revised  from  the  previous   document
-    following  a  number  changes  in the  way  that  other  code
-    fragments  may be included  into the document and  hilighted.
-    These  changes are  effective  from releases made after March
-    2000.
-
-    Primarily the original <B><I>&quot;sectioned&quot;</I></B> and <B><I>&quot;pseudo-code&quot;</I></B> document
-    types have been  replaced by the <B><I>&quot;-!-  document  -!-&quot;</I></B> type. A
-    new  document  type  called <B><I>&quot;-!- text -!-&quot;</I></B> has been  created,
-    this is the default for all files with  extension  <B><I>&quot;.txt&quot;</I></B> and
-    has no hilighting.
-
-    <B><I>&quot;psuedo-code&quot;</I></B> is now performed by surrounding the pseudo code
-    block with document markers:-
-
-&gt;pseudo&gt;
-    <I>// Function to do something</I>
-    <B>FUNCTION</B> myFunction
-    <B>BEGIN</B>
-        <B>IF</B> condition
-        <B>THEN</B>
-            do something
-        <B>ENDIF</B>
-    <B>END</B>
-&gt;doc&gt;
-
-    This technique of inclusion allows other scheme inserts to be
-    included   into  the  document   i.e.  <B><I>'C'</I></B>,  BNF  etc.  These
-    techniques are discussed later.
-
-    <B><U>1.1 Background</U></B>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta name="description" content="Jasspa Home">
+    <meta name="resource-type" content="document">
+    <meta name="distribution" content="global">
+    <meta name="keywords" content="jasspa microemacs, microemacs, emacs, uemacs, free, text, editor, JASSPA, me">
+    <meta name="authors" content="JASSPA">
+    <meta name="GENERATOR" content="MicroEmacs">
+    <title>MicroEmacs JASSPA Distribution</title>
+    <!-- BASE HREF="http://www.jasspa.com" -->
+
+    <!--JASSPA - common from this point -->
+    <!-- BACKGROUND="meback.png"  -->
+  </head>
+  <body bgcolor="white">
+  <!-- Banner across the top of the page -->
+  <table WIDTH="100%" HEIGHT="95" BORDER=0 CELLSPACING=0 CELLPADDING=0 >
+    <tr>
+      <td BACKGROUND="images/backgrd.jpg"><center><img SRC="images/header.jpg" alt="jasspa.com"></center></td>
+    </tr>
+  </table>
+  <!-- width="100%"  -->
+  <table border=0 cellpadding=3 cellspacing=1 bgcolor="yellow">
+    <tr bgcolor="#0000ff">
+      <td align=center width="100"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
+        <b><a href="index.html" style="COLOR: yellow" >Home</a></b></font></td>
+      <td align=center width="100"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
+        <b><a href="overview.html" style="COLOR: yellow">Overview</a></b></font></td>
+      <td align=center width="100"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
+        <b><a href="whatsnew.html" style="COLOR: yellow">What's New</a></b></font></td>
+      <td align=center width="100" bgcolor="#0080ff"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
+        <b><a href="support.html" style="COLOR: yellow">Support</a></b></font></td>
+      <td align=center width="100" ><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
+        <b><a href="download.html" style="COLOR: yellow">Download</a></b></font></td>
+      <td align=center width="100"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
+        <b><a href="about.html" style="COLOR: yellow">About</a></b></font></td>
+    </tr>
+  </table>
+  <!-- Section selection -->
+  <p><font size="+3" color="#0000ff"><b>Support</b></font>
+  <br>
+  <font size="+1"><a href="links.html" style="COLOR: black">overview</a>&nbsp;&nbsp;</font>
+  <font size="+1"><a href="faq.html" style="COLOR: black">faq</a>&nbsp;&nbsp;</font>
+  <font size="+1"><a href="maillist.html" style="COLOR: black">mailing lists</a>&nbsp;&nbsp;</font>
+  <font size="+1"><a href="email.html" style="COLOR: black">email support</a>&nbsp;&nbsp;</font>
+  <font size="+1"><a href="links.html" style="COLOR: black">links</a>&nbsp;&nbsp;</font>
+  <font size="+1"><a href="howto.html" style="COLOR: black">how to</a>&nbsp;&nbsp;</font>
+  </p>
+  <HR color=#cccccc noShade SIZE=1>
+  <p><font size="+2" color="#0000ff"><b>Documentation Modes</b></font>
+  <p>The following document explains the documentation modes of JASSPA's MicroEmacs.
+  The information is presented as is appears within the editor window. This was
+  reproduced by MicroEmacs by printing to the HTML device, this converts
+  the ASCII text (with hilighting) into an HTML document.</p>
+
+  <p>The original document <a href="misc/docmode.txt">docmode.txt</a> may
+  be downloaded and viewed in the editor.</p>
+
+  <p><font size="+1">Return to <a href="howto.html">how to</a></font>
+  <HR color=#cccccc noShade SIZE=1>
+  <PRE>
+  <I>&gt; -!- document; fill-column: 65; fill-mode: full -!-</I>
+  <I>&gt; Author:   </I>
+  <I>&gt; Created:  Wed Feb 2 20:23:35 2000</I>
+  <I>&gt; Modified: &lt;20000323.0006&gt;</I>
+
+  <B><U>1.0 Overview of the Documentation Modes</U></B>
+
+  This is the 2nd revision of this  document  that outlines the
+  documentation  mode  supported by JASSPA's  MicroEmacs.  This
+  document   has  been  revised  from  the  previous   document
+  following  a  number  changes  in the  way  that  other  code
+  fragments  may be included  into the document and  hilighted.
+  These  changes are  effective  from releases made after March
+  2000.
+
+  Primarily the original <B><I>&quot;sectioned&quot;</I></B> and <B><I>&quot;pseudo-code&quot;</I></B> document
+  types have been  replaced by the <B><I>&quot;-!-  document  -!-&quot;</I></B> type. A
+  new  document  type  called <B><I>&quot;-!- text -!-&quot;</I></B> has been  created,
+  this is the default for all files with  extension  <B><I>&quot;.txt&quot;</I></B> and
+  has no hilighting.
+
+  <B><I>&quot;psuedo-code&quot;</I></B> is now performed by surrounding the pseudo code
+  block with document markers:-
+
+  &gt;pseudo&gt;
+  <I>// Function to do something</I>
+  <B>FUNCTION</B> myFunction
+  <B>BEGIN</B>
+  <B>IF</B> condition
+  <B>THEN</B>
+  do something
+  <B>ENDIF</B>
+  <B>END</B>
+  &gt;doc&gt;
+
+  This technique of inclusion allows other scheme inserts to be
+  included   into  the  document   i.e.  <B><I>'C'</I></B>,  BNF  etc.  These
+  techniques are discussed later.
+
+  <B><U>1.1 Background</U></B>
 
-    The document mode (enabled on files with extensions of <B><I>&quot;.doc&quot;</I></B>
-    or  <B><I>&quot;.txt&quot;</I></B>),  is a  manual  text  layout  mode  that  retains
-    formatting.  What  that  basically  means  is that  you do an
-    initial  layout  and  there  after the  editor  endeavors  to
-    preserve it when you make changes.
+  The document mode (enabled on files with extensions of <B><I>&quot;.doc&quot;</I></B>
+  or  <B><I>&quot;.txt&quot;</I></B>),  is a  manual  text  layout  mode  that  retains
+  formatting.  What  that  basically  means  is that  you do an
+  initial  layout  and  there  after the  editor  endeavors  to
+  preserve it when you make changes.
 
-    When  you  run  in  document  mode  we  typically  run  in  a
-    $fill-mode  <B><I>&quot;B&quot;</I></B>. This is the automatic mode (Both  Automatic)
-    that  attempts  to  identify  the format of the text, this is
-    based on the word(s)  position on the line and adjacent text.
-    As this mode is automatic  mistakes are sometimes  made (i.e.
-    it drops to center rather than justified).
+  When  you  run  in  document  mode  we  typically  run  in  a
+  $fill-mode  <B><I>&quot;B&quot;</I></B>. This is the automatic mode (Both  Automatic)
+  that  attempts  to  identify  the format of the text, this is
+  based on the word(s)  position on the line and adjacent text.
+  As this mode is automatic  mistakes are sometimes  made (i.e.
+  it drops to center rather than justified).
 
-    The  advantage  of  running  like  this is once  the  text is
-    reasonably   formatted  you  can  then  re-format  the  whole
-    document as you make changes (i.e. add and delete things).
+  The  advantage  of  running  like  this is once  the  text is
+  reasonably   formatted  you  can  then  re-format  the  whole
+  document as you make changes (i.e. add and delete things).
 
-    There is a quick  pop-up  help  page  that  shows you the key
-    bindings. (I was  planning on putting  these on the mouse but
-    never got round to it). Get the help using:-
+  There is a quick  pop-up  help  page  that  shows you the key
+  bindings. (I was  planning on putting  these on the mouse but
+  never got round to it). Get the help using:-
 
-                          M-h or Esc-h
+  M-h or Esc-h
 
-    <B><U>1.2 Cursor Position</U></B>
+  <B><U>1.2 Cursor Position</U></B>
 
-    The  cursor  position  is  always  left,  this  is  a  little
-    unfamiliar  when  you are  used to  center  or  right  cursor
-    positions. This is what happens next
+  The  cursor  position  is  always  left,  this  is  a  little
+  unfamiliar  when  you are  used to  center  or  right  cursor
+  positions. This is what happens next
 
-    The general rule is you enter a paragraph and then format the
-    paragraph  to the  appropriate  position.  Generally  we edit
-    justified  left or  justified  both, it is rare  that we edit
-    center or right. Hence left or both is always on.
+  The general rule is you enter a paragraph and then format the
+  paragraph  to the  appropriate  position.  Generally  we edit
+  justified  left or  justified  both, it is rare  that we edit
+  center or right. Hence left or both is always on.
 
-    <B><U>1.3 Quick Summary</U></B>
+  <B><U>1.3 Quick Summary</U></B>
 
-<B>     @  C-c C-b Justify about both margins</B>
-<B>        C-C C-c Justify center</B>
-<B>        C-C C-l Justify left</B>
-<B>        C-c C-r Justify right</B>
+  <B>     @  C-c C-b Justify about both margins</B>
+  <B>        C-C C-c Justify center</B>
+  <B>        C-C C-l Justify left</B>
+  <B>        C-c C-r Justify right</B>
 
-<B>     @  M-o to fill the paragraph</B>
+  <B>     @  M-o to fill the paragraph</B>
 
-        If you fill in the middle of a paragraph the cursor stays
-        where  it is. If you  fill on a blank  line it fills  the
-        next paragraph and advances to the next.
+  If you fill in the middle of a paragraph the cursor stays
+  where  it is. If you  fill on a blank  line it fills  the
+  next paragraph and advances to the next.
 
-    There  are other  keys to change  the  justification  mode as
-    indicated  on the help pop-up.  Paragraph  formatting  may be
-    performed from the menu.
+  There  are other  keys to change  the  justification  mode as
+  indicated  on the help pop-up.  Paragraph  formatting  may be
+  performed from the menu.
 
-    <B><U>1.4 Types of document modes</U></B>
+  <B><U>1.4 Types of document modes</U></B>
 
-    MicroEmacs  is  currently  shipped with two types of document
-    mode:-
+  MicroEmacs  is  currently  shipped with two types of document
+  mode:-
 
-    <B><U>1.4.1 Text</U></B>
+  <B><U>1.4.1 Text</U></B>
 
-        Standard  plain  text or no  fixed  format.  No,  colored
-        syntax  hilighting  is  applied to the text. A plain text
-        file is assumed for files  ending in <B><I>&quot;.txt&quot;</I></B> or those that
-        include the magic string <B><I>&quot;-!- text -!-&quot;</I></B>.
+  Standard  plain  text or no  fixed  format.  No,  colored
+  syntax  hilighting  is  applied to the text. A plain text
+  file is assumed for files  ending in <B><I>&quot;.txt&quot;</I></B> or those that
+  include the magic string <B><I>&quot;-!- text -!-&quot;</I></B>.
 
-    <B><U>1.4.2 Document</U></B>
+  <B><U>1.4.2 Document</U></B>
 
-        Document mode is a more  sophisticated  text mode. Within
-        documentation  mode  hilighting  is  applied  to the text
-        which  is  assumed  to fit a  loose  set of  rules  which
-        designate  the text as a  document.  This may be  section
-        numbers, literal paragraphs, bullets etc.
+  Document mode is a more  sophisticated  text mode. Within
+  documentation  mode  hilighting  is  applied  to the text
+  which  is  assumed  to fit a  loose  set of  rules  which
+  designate  the text as a  document.  This may be  section
+  numbers, literal paragraphs, bullets etc.
 
-        The  text  must fit  these  loose  constraints  otherwise
-        anomalies   occur   with   the   hilighting   which   may
-        misrepresent the information.
+  The  text  must fit  these  loose  constraints  otherwise
+  anomalies   occur   with   the   hilighting   which   may
+  misrepresent the information.
 
-        A document  file is a file that ends in <B><I>&quot;.doc&quot;</I></B> or include
-        the magic string <B><I>&quot;-!- document -!-&quot;</I></B>.
+  A document  file is a file that ends in <B><I>&quot;.doc&quot;</I></B> or include
+  the magic string <B><I>&quot;-!- document -!-&quot;</I></B>.
 
-<B><U>2.0 Working In The Text Modes</U></B>
+  <B><U>2.0 Working In The Text Modes</U></B>
 
-    This  section   describes   the  basics  of  working  in  the
-    documentation mode.
+  This  section   describes   the  basics  of  working  in  the
+  documentation mode.
 
-    <B><U>2.1 Whats a paragraph ??</U></B>
+  <B><U>2.1 Whats a paragraph ??</U></B>
 
-        A paragraph in  MicroEmacs  is anything that is separated
-        by a blank line. There are no control  characters  in the
-        text so this really is WYSIWYG !!
+  A paragraph in  MicroEmacs  is anything that is separated
+  by a blank line. There are no control  characters  in the
+  text so this really is WYSIWYG !!
 
-        This is the next  paragraph.  So in any of the  automatic
-        modes (i.e. <B><I>&quot;N&quot;</I></B>), the context of the surrounding  text is
-        used  to  determine  the  paragraph  formatting.  This is
-        crude, but operates correctly 95% of the time.
-        
-        The layout of any existing  text allows the  formatter to
-        work out where things should go.
+  This is the next  paragraph.  So in any of the  automatic
+  modes (i.e. <B><I>&quot;N&quot;</I></B>), the context of the surrounding  text is
+  used  to  determine  the  paragraph  formatting.  This is
+  crude, but operates correctly 95% of the time.
 
-        <B><U>2.1.1 The Fill Column</U></B>
+  The layout of any existing  text allows the  formatter to
+  work out where things should go.
 
-        There is a fill column on the right which  determines how
-        long the paragraph is. I'm using a short one so this does
-        not get wrapped by the mailer, the typical value is 78.
+  <B><U>2.1.1 The Fill Column</U></B>
 
-            $fill-col ..................... <B><I>&quot;65&quot;</I></B>
+  There is a fill column on the right which  determines how
+  long the paragraph is. I'm using a short one so this does
+  not get wrapped by the mailer, the typical value is 78.
 
-        Documents  may use  predefined  fill  columns by adding a
-        magic  header  to the top of the  file.  i.e. for a plain
-        text document:-
+  $fill-col ..................... <B><I>&quot;65&quot;</I></B>
 
-            -!- text; fill-column: 65 -!-
+  Documents  may use  predefined  fill  columns by adding a
+  magic  header  to the top of the  file.  i.e. for a plain
+  text document:-
 
-        For a document (i.e. with headings and hilighting),  then
-        the following header is used:-
+  -!- text; fill-column: 65 -!-
 
-            -!- document; fill-column: 65 -!-
+  For a document (i.e. with headings and hilighting),  then
+  the following header is used:-
 
-        Note  that  the  $fill-column  within  the  documentation
-        buffers  is private to that  buffer.  Modifying  the fill
-        column affects the current buffer only.
+  -!- document; fill-column: 65 -!-
 
-        <B><U>2.2.2 The Fill Mode</U></B>
+  Note  that  the  $fill-column  within  the  documentation
+  buffers  is private to that  buffer.  Modifying  the fill
+  column affects the current buffer only.
 
-        The fill mode determines how paragraphs are filled. These
-        are   detailed   in  the  on-line   documentation   under
-        $fill-mode. The most commonly used settings are:-
+  <B><U>2.2.2 The Fill Mode</U></B>
 
-            Justify left and right (both or full  justification).
-            This  gives neat line  endings on both the  left-hand
-            and right-hand sides of the text.
+  The fill mode determines how paragraphs are filled. These
+  are   detailed   in  the  on-line   documentation   under
+  $fill-mode. The most commonly used settings are:-
 
-                $fill-mode .................... <B><I>&quot;B&quot;</I></B>
+  Justify left and right (both or full  justification).
+  This  gives neat line  endings on both the  left-hand
+  and right-hand sides of the text.
 
-            Justify  left,  produces  a neat  left-hand  edge and
-            ragged right-hand edge.
+  $fill-mode .................... <B><I>&quot;B&quot;</I></B>
 
-                $fill-mode .................... <B><I>&quot;L&quot;</I></B>
+  Justify  left,  produces  a neat  left-hand  edge and
+  ragged right-hand edge.
 
-            Justify none, Turns off all justification,  lines are
-            not wrapped, what you type is what you get.
+  $fill-mode .................... <B><I>&quot;L&quot;</I></B>
 
-                $fill-mode .................... <B><I>&quot;n&quot;</I></B>
+  Justify none, Turns off all justification,  lines are
+  not wrapped, what you type is what you get.
 
-        Documents may use predefined  fill mode by adding a magic
-        header  to the top of the  file.  i.e.  for a plain  text
-        document:-
+  $fill-mode .................... <B><I>&quot;n&quot;</I></B>
 
-            -!- text; fill-mode: left -!-
+  Documents may use predefined  fill mode by adding a magic
+  header  to the top of the  file.  i.e.  for a plain  text
+  document:-
 
-        For a document (i.e. with headings and hilighting),  then
-        the following header is used:-
+  -!- text; fill-mode: left -!-
 
-            -!- document; fill-mode: left -!-
+  For a document (i.e. with headings and hilighting),  then
+  the following header is used:-
 
-        The recognized keywords are:-
+  -!- document; fill-mode: left -!-
 
-<B>        @   full   - Justified left and right margins.</B>
-<B>            both   - Justified left and right margins.</B>
-<B>            left   - Justified left only</B>
-<B>            right  - Justified right only</B>
-<B>            center - Justified center text</B>
-<B>            none   - Disable all justification</B>
+  The recognized keywords are:-
 
-        All modes, with the  exception of none, are assumed to be
-        automatic  in  that  they  recognize  pre-formatted  left
-        (column 0), right and centered text.
+  <B>        @   full   - Justified left and right margins.</B>
+  <B>            both   - Justified left and right margins.</B>
+  <B>            left   - Justified left only</B>
+  <B>            right  - Justified right only</B>
+  <B>            center - Justified center text</B>
+  <B>            none   - Disable all justification</B>
 
-        Where both the fill  column and fill mode  required  then
-        they may be specified as:-
+  All modes, with the  exception of none, are assumed to be
+  automatic  in  that  they  recognize  pre-formatted  left
+  (column 0), right and centered text.
 
-            -!- document; fill-column: 65; fill-mode: full -!-
+  Where both the fill  column and fill mode  required  then
+  they may be specified as:-
 
-        Note that the $fill-mode within the documentation buffers
-        is  private  to that  buffer.  Modifying  the  fill  mode
-        affects the current buffer only.
+  -!- document; fill-column: 65; fill-mode: full -!-
 
-    <B><U>2.2 Left Text (Work off the margin or column 0)</U></B>
+  Note that the $fill-mode within the documentation buffers
+  is  private  to that  buffer.  Modifying  the  fill  mode
+  affects the current buffer only.
 
-        The margin is magic,  anything  on column 0 is assumed to
-        be hard left justified text i.e.
+  <B><U>2.2 Left Text (Work off the margin or column 0)</U></B>
 
-This should not
-format because it is
-hard left
+  The margin is magic,  anything  on column 0 is assumed to
+  be hard left justified text i.e.
 
-        Most text in the  document  should be off the  margin (or
-        gutter).  Text on the  gutter  should  be  restricted  to
-        titles for it to work correctly. Gutter text only remains
-        untouched in the $fill-mode automatic modes (L/R/C/B).
+  This should not
+  format because it is
+  hard left
 
-        Text  may be  moved  to the  gutter  using  <B><I>&quot;C-c  C-g&quot;</I></B> to
-        reformat the paragraph.
+  Most text in the  document  should be off the  margin (or
+  gutter).  Text on the  gutter  should  be  restricted  to
+  titles for it to work correctly. Gutter text only remains
+  untouched in the $fill-mode automatic modes (L/R/C/B).
 
-        <B><U>2.2.1 On a re-format</U></B>
+  Text  may be  moved  to the  gutter  using  <B><I>&quot;C-c  C-g&quot;</I></B> to
+  reformat the paragraph.
 
-            Left  justified  text is  assumed  to exist at column
-            zero  and  does  not  extend  beyond  50% of the fill
-            column.
+  <B><U>2.2.1 On a re-format</U></B>
 
-    <B><U>2.3 Right Text (Work to right margin or $fill-col)</U></B>
+  Left  justified  text is  assumed  to exist at column
+  zero  and  does  not  extend  beyond  50% of the fill
+  column.
 
-        Right text is not as you  normally  expected  because the
-        cursor is on the left. Enter the text on the left  margin
-        and then format it to the right i.e.
+  <B><U>2.3 Right Text (Work to right margin or $fill-col)</U></B>
 
-My Address
-My Street
-My County
-My Country
-My Zip code
+  Right text is not as you  normally  expected  because the
+  cursor is on the left. Enter the text on the left  margin
+  and then format it to the right i.e.
 
-        Perform a right paragraph operation on the text i.e. <B><I>&quot;C-c</I></B>
-<B><I>        C-r&quot;</I></B>  and  it  appears  on  the  right  at the  $fill-col
-        position i.e.
+  My Address
+  My Street
+  My County
+  My Country
+  My Zip code
 
-                                                       My Address
-                                                        My Street
-                                                        My County
-                                                       My Country
-                                                      My Zip code
+  Perform a right paragraph operation on the text i.e. <B><I>&quot;C-c</I></B>
+  <B><I>        C-r&quot;</I></B>  and  it  appears  on  the  right  at the  $fill-col
+  position i.e.
 
-        <B><U>2.3.1 On a re-format</U></B>
+  My Address
+  My Street
+  My County
+  My Country
+  My Zip code
 
-            With right  text, when you format it lines  extending
-            from 50% of the  fill  column  to the end of the line
-            are considered to be right justified.
+  <B><U>2.3.1 On a re-format</U></B>
 
-    <B><U>2.4 Center Text</U></B>
+  With right  text, when you format it lines  extending
+  from 50% of the  fill  column  to the end of the line
+  are considered to be right justified.
 
-        Center  is   similar   to  the  above,  but  a  bit  more
-        manageable,  again enter in on the left and then use <B><I>&quot;C-c</I></B>
-<B><I>        C-c&quot;</I></B> to center justify. Lines are preserved.
+  <B><U>2.4 Center Text</U></B>
 
-                      This is in the center
-                       This is a bit more
+  Center  is   similar   to  the  above,  but  a  bit  more
+  manageable,  again enter in on the left and then use <B><I>&quot;C-c</I></B>
+  <B><I>        C-c&quot;</I></B> to center justify. Lines are preserved.
 
-        <B><U>2.3.1 On a re-format</U></B>
+  This is in the center
+  This is a bit more
 
-            If the number of spaces either side of the margins is
-            the same (+/-1) then the text is assumed to be center
-            justified.  This sometimes  causes  problems when you
-            require  justified lines and centering is assumed; in
-            this  instance  simply delete the end of the line and
-            re-format.
+  <B><U>2.3.1 On a re-format</U></B>
 
-    <B><U>2.5 Justified Text</U></B>
+  If the number of spaces either side of the margins is
+  the same (+/-1) then the text is assumed to be center
+  justified.  This sometimes  causes  problems when you
+  require  justified lines and centering is assumed; in
+  this  instance  simply delete the end of the line and
+  re-format.
 
-        Any  other  text  that  does  not fit the  aforementioned
-        criteria  is  assumed  to be  justified  to  the  current
-        setting of $fill-col.
+  <B><U>2.5 Justified Text</U></B>
 
-            Indentation  commences  from the first column where a
-            text character appears so this line will wrap in line
-            with the first.
+  Any  other  text  that  does  not fit the  aforementioned
+  criteria  is  assumed  to be  justified  to  the  current
+  setting of $fill-col.
 
-                Indent again and the same thing happens, this bit
-                of text (when I write enough) will keep in line.
+  Indentation  commences  from the first column where a
+  text character appears so this line will wrap in line
+  with the first.
 
-    <B><U>2.6 Literal Text</U></B>
+  Indent again and the same thing happens, this bit
+  of text (when I write enough) will keep in line.
 
-        Often  you want to put text in the  document  that is not
-        subject  to  justification.  This  is  controlled  by the
-        <B><I>&quot;$fill-ignore&quot;</I></B>  variable (use <B><I>&quot;M-x list-variables&quot;</I></B> to see
-        them all).
+  <B><U>2.6 Literal Text</U></B>
 
-        The default is:-
+  Often  you want to put text in the  document  that is not
+  subject  to  justification.  This  is  controlled  by the
+  <B><I>&quot;$fill-ignore&quot;</I></B>  variable (use <B><I>&quot;M-x list-variables&quot;</I></B> to see
+  them all).
 
-              $fill-ignore .................. <B><I>&quot;&gt;_@&quot;</I></B>
+  The default is:-
 
-        Any paragraph that commences with the above characters is
-        not filled so:-
+  $fill-ignore .................. <B><I>&quot;&gt;_@&quot;</I></B>
 
-        <I>&gt; This is a paragraph</I>
-        <I>&gt; that is not subject to re-formatting</I>
-        <I>&gt;      spaces</I>
-        <I>&gt;          are</I>
-        <I>&gt;            retained.</I>
+  Any paragraph that commences with the above characters is
+  not filled so:-
 
-<B>        @ This is another</B>
-<B>             note that only the first character</B>
-<B>       of the</B>
-<B>             paragraph</B>
-<B>                is marked</B>
-<B>        when you re-format</B>
-<B>                             this should be still as you left it.</B>
+  <I>&gt; This is a paragraph</I>
+  <I>&gt; that is not subject to re-formatting</I>
+  <I>&gt;      spaces</I>
+  <I>&gt;          are</I>
+  <I>&gt;            retained.</I>
 
-       <I>_ And</I>
-           another - I think this is enough !!
+  <B>        @ This is another</B>
+  <B>             note that only the first character</B>
+  <B>       of the</B>
+  <B>             paragraph</B>
+  <B>                is marked</B>
+  <B>        when you re-format</B>
+  <B>                             this should be still as you left it.</B>
 
-    <B><U>2.7 Bullets</U></B>
+  <I>_ And</I>
+  another - I think this is enough !!
 
-        Bullets  are  useful  for  lists  and  alike. As with the
-        absolute  text  there are a few of  characters  which are
-        recognized as bullet characters. These are defined with:-
+  <B><U>2.7 Bullets</U></B>
 
-<B>        @    $fill-bullet .................. &quot;*)].-&quot;</B>
-<B>             $fill-bullet-len .............. &quot;15&quot;</B>
+  Bullets  are  useful  for  lists  and  alike. As with the
+  absolute  text  there are a few of  characters  which are
+  recognized as bullet characters. These are defined with:-
 
-        The   <B><I>&quot;$fill-bullet&quot;</I></B>   characters   are   obviously   the
-        characters  recognized as bullets.  <B><I>&quot;$fill-bullet-len&quot;</I></B> is
-        the number of  characters  into the paragraph to look for
-        bullets. Examples include:-
+  <B>        @    $fill-bullet .................. &quot;*)].-&quot;</B>
+  <B>             $fill-bullet-len .............. &quot;15&quot;</B>
 
-        <B>*</B> Simple bullet
+  The   <B><I>&quot;$fill-bullet&quot;</I></B>   characters   are   obviously   the
+  characters  recognized as bullets.  <B><I>&quot;$fill-bullet-len&quot;</I></B> is
+  the number of  characters  into the paragraph to look for
+  bullets. Examples include:-
 
-        <B>*</B> Note that there is a paragraph space between them, also
-          note that  bullets  should be  aligned  to the left and
-          right. You get prompted to do this when you  re-format.
-          If you re-format again you will not be prompted because
-          it works  out that the  first 2 lines of the  paragraph
-          text are in alignment.
+  <B>*</B> Simple bullet
 
-        <B>a)</B> Can have  letters,  the <B><I>&quot;)&quot;</I></B> is the  bullet  character,
-           again we should be aligned.
+  <B>*</B> Note that there is a paragraph space between them, also
+  note that  bullets  should be  aligned  to the left and
+  right. You get prompted to do this when you  re-format.
+  If you re-format again you will not be prompted because
+  it works  out that the  first 2 lines of the  paragraph
+  text are in alignment.
 
-        12345] Can have digits, the <B><I>&quot;]&quot;</I></B> is the bullet  character,
-               again we should be aligned.
+  <B>a)</B> Can have  letters,  the <B><I>&quot;)&quot;</I></B> is the  bullet  character,
+  again we should be aligned.
 
-        Note - This time the  bullet  character  is <B><I>'-'</I></B>, again we
-               wrap and square up after the bullet.
+  12345] Can have digits, the <B><I>&quot;]&quot;</I></B> is the bullet  character,
+  again we should be aligned.
 
-               This one sometime  gives me problems when I forget
-               it's a bullet so I tend to use a 'soft'  character
-               when I do not want the indent i.e.
+  Note - This time the  bullet  character  is <B><I>'-'</I></B>, again we
+  wrap and square up after the bullet.
 
-               Note:  This is what I call a soft  bullet, ME does
-               not recognize this one so it wraps OK.
+  This one sometime  gives me problems when I forget
+  it's a bullet so I tend to use a 'soft'  character
+  when I do not want the indent i.e.
 
-        ix. Maybe a few  Roman  numerals,  it's nice to see these
-            from time to time. The bullet here is <B><I>'.'</I></B>.
+  Note:  This is what I call a soft  bullet, ME does
+  not recognize this one so it wraps OK.
 
-    <B><U>2.8 Editing the Document</U></B>
+  ix. Maybe a few  Roman  numerals,  it's nice to see these
+  from time to time. The bullet here is <B><I>'.'</I></B>.
 
-        So now you have a text  document and you start to edit it
-        and make  changes or run the speller over it. The columns
-        go out of alignment.
+  <B><U>2.8 Editing the Document</U></B>
 
-        If you have  obeyed  all of the above  then you should be
-        able to fill all of the  paragraphs  and get them looking
-        nice again. you can do this by:-
+  So now you have a text  document and you start to edit it
+  and make  changes or run the speller over it. The columns
+  go out of alignment.
 
-              Menu -&gt; Format -&gt; Fill all Paragraphs
+  If you have  obeyed  all of the above  then you should be
+  able to fill all of the  paragraphs  and get them looking
+  nice again. you can do this by:-
 
-        Or if you do not  like  the  menu  goto  the top line and
-        perform a
+  Menu -&gt; Format -&gt; Fill all Paragraphs
 
-                    Esc 10000 M-x fill-paragraph
+  Or if you do not  like  the  menu  goto  the top line and
+  perform a
 
-        then all paragraphs are reformatted.
+  Esc 10000 M-x fill-paragraph
 
-        <B><U>2.8.1 What is IQ Fill paragraph ??</U></B>
+  then all paragraphs are reformatted.
 
-        IQ  Fill   paragraph  as  shown  in  the  menus,  or  the
-        <B><I>&quot;ifill-paragraph&quot;</I></B>  command is a macro  alternative to the
-        built in  <B><I>&quot;fill-paragraph&quot;</I></B>.  This deals with bullets that
-        are  adjacent  (i.e. no  intervening  blank  lines). This
-        makes for better presentation but you have to be a little
-        careful  that  you  always  use   <B><I>&quot;ifill-paragraph&quot;</I></B>   for
-        formatting. i.e.
+  <B><U>2.8.1 What is IQ Fill paragraph ??</U></B>
 
-<B>                 @  * ifill-paragraph  can cope with bullets that</B>
-<B>                      are tightly packed.</B>
-<B>                    * ifill-paragraph  can cope with bullets that</B>
-<B>                      are tightly packed.</B>
+  IQ  Fill   paragraph  as  shown  in  the  menus,  or  the
+  <B><I>&quot;ifill-paragraph&quot;</I></B>  command is a macro  alternative to the
+  built in  <B><I>&quot;fill-paragraph&quot;</I></B>.  This deals with bullets that
+  are  adjacent  (i.e. no  intervening  blank  lines). This
+  makes for better presentation but you have to be a little
+  careful  that  you  always  use   <B><I>&quot;ifill-paragraph&quot;</I></B>   for
+  formatting. i.e.
 
-        This    document    has   not   been    authored    using
-        <B><I>&quot;ifill-paragraph&quot;</I></B> and is escaped the above.
+  <B>                 @  * ifill-paragraph  can cope with bullets that</B>
+  <B>                      are tightly packed.</B>
+  <B>                    * ifill-paragraph  can cope with bullets that</B>
+  <B>                      are tightly packed.</B>
 
-    <B><U>2.9 Whats the advantage of the above</U></B>
+  This    document    has   not   been    authored    using
+  <B><I>&quot;ifill-paragraph&quot;</I></B> and is escaped the above.
 
-        The advantage of doing  everything  above is primarily to
-        get a reasonable  looking document for the minimum amount
-        of work on behalf of the author.
+  <B><U>2.9 Whats the advantage of the above</U></B>
 
-        Maybe I'm not familiar enough with Word Processors, but I
-        can do a document  in double time like this  because I do
-        not get distracted  with my styles blowing up, fontifying
-        things  and  everything  else  going  wrong.  You tend to
-        concentrate  on the text and not all the pretty bits that
-        are not really  important until you have actually created
-        the appropriate words for your masterpiece.
+  The advantage of doing  everything  above is primarily to
+  get a reasonable  looking document for the minimum amount
+  of work on behalf of the author.
 
-<B><U>3.0 Going Back To The Word Processor</U></B>
+  Maybe I'm not familiar enough with Word Processors, but I
+  can do a document  in double time like this  because I do
+  not get distracted  with my styles blowing up, fontifying
+  things  and  everything  else  going  wrong.  You tend to
+  concentrate  on the text and not all the pretty bits that
+  are not really  important until you have actually created
+  the appropriate words for your masterpiece.
 
-    With a finished masterpiece of literature, in plain text then
-    it is often desirable to move the text into the  presentation
-    engine i.e. the Word Processor.
+  <B><U>3.0 Going Back To The Word Processor</U></B>
 
-    Word  processors  tend to put paragraphs on one line. Cutting
-    and pasting the  document as it stands does not make for good
-    WP text unless the paste  target is a fixed font  destination
-    (i.e.  Netscape for mail - not sure about  Microsoft  Outlook
-    that probably wants pretty fonts everywhere !!)
+  With a finished masterpiece of literature, in plain text then
+  it is often desirable to move the text into the  presentation
+  engine i.e. the Word Processor.
 
-    So to prepare, the following operations should be performed.
+  Word  processors  tend to put paragraphs on one line. Cutting
+  and pasting the  document as it stands does not make for good
+  WP text unless the paste  target is a fixed font  destination
+  (i.e.  Netscape for mail - not sure about  Microsoft  Outlook
+  that probably wants pretty fonts everywhere !!)
 
-    <B>a)</B> Reformat your document for single line paragraphs. Do this
-       like:-
+  So to prepare, the following operations should be performed.
 
-            Menu -&gt; Format -&gt; All Paragraphs to Lines
+  <B>a)</B> Reformat your document for single line paragraphs. Do this
+  like:-
 
-       or on the command line.
+  Menu -&gt; Format -&gt; All Paragraphs to Lines
 
-<B>       @    top of buffer</B>
-<B>            Esc 100000 M-x paragraph-to-line</B>
+  or on the command line.
 
-       The paragraph-to-line  operation reduces the paragraphs to
-       a single line,  removing any leading  spaces.  These lines
-       may be  copied  into  the  word  processor,  resulting  in
-       paragraphs.
+  <B>       @    top of buffer</B>
+  <B>            Esc 100000 M-x paragraph-to-line</B>
 
-    <B>b)</B> Format away ....
+  The paragraph-to-line  operation reduces the paragraphs to
+  a single line,  removing any leading  spaces.  These lines
+  may be  copied  into  the  word  processor,  resulting  in
+  paragraphs.
 
-       You  now  have a bit of work to do  re-formatting  you new
-       document  text in your word  processor.  This can be a bit
-       tedious but it's simply adding emboldening and italicizing
-       here and there  with a few tables and  pictures  thrown in
-       for good  measure. You know the text is good so this makes
-       for a relaxing brain dead afternoon !!
+  <B>b)</B> Format away ....
 
-<B><U>4.0 Extensions</U></B>
+  You  now  have a bit of work to do  re-formatting  you new
+  document  text in your word  processor.  This can be a bit
+  tedious but it's simply adding emboldening and italicizing
+  here and there  with a few tables and  pictures  thrown in
+  for good  measure. You know the text is good so this makes
+  for a relaxing brain dead afternoon !!
 
-    There  are a  number  of  extensions  on the  standard  theme
-    outlined above.
+  <B><U>4.0 Extensions</U></B>
 
-    <B><U>4.1 Documents</U></B>
+  There  are a  number  of  extensions  on the  standard  theme
+  outlined above.
 
-        The document  mode <B><I>&quot;-!- document -!-&quot;</I></B> are text files with
-        hilighting   applied.  These   documents  are  tagged  as
-        follows:-
+  <B><U>4.1 Documents</U></B>
 
-        <I>&gt; -!- document -!-</I>
-        <I>&gt; Author:   Jon Green</I>
-        <I>&gt; Created:  Wed Feb 2 20:23:35 2000</I>
-        <I>&gt; Modified: &lt;20000202.2100&gt;</I>
+  The document  mode <B><I>&quot;-!- document -!-&quot;</I></B> are text files with
+  hilighting   applied.  These   documents  are  tagged  as
+  follows:-
 
-        <B><U>4.1.1 Hilighting Token Summary</U></B>
+  <I>&gt; -!- document -!-</I>
+  <I>&gt; Author:   Jon Green</I>
+  <I>&gt; Created:  Wed Feb 2 20:23:35 2000</I>
+  <I>&gt; Modified: &lt;20000202.2100&gt;</I>
 
-        The hilighting is kept to a reasonable minimum, including
-        the following:-
+  <B><U>4.1.1 Hilighting Token Summary</U></B>
 
-        Start/End markers
+  The hilighting is kept to a reasonable minimum, including
+  the following:-
 
-            <I>_</I>
-            <B><I>&quot;`..'&quot;</I></B>  <B>`single acute/grave pair'</B>
-            <B><I>&quot;*..*&quot;</I></B>  <B>*AnyAlphabeticSurroundedByAsterisks*</B>
-            <B><I>&quot;&lt;..&gt;&quot;</I></B>  <I>&lt;AnyAlphabeticSurroundedByGreaterOrLessThan&gt;</I>
-            <B><I>&quot;_.._&quot;</I></B>  <U>_AnyAlphabeticSurroundedByUnderScore_</U>
+  Start/End markers
 
-        Literal Text Regions
+  <I>_</I>
+  <B><I>&quot;`..'&quot;</I></B>  <B>`single acute/grave pair'</B>
+  <B><I>&quot;*..*&quot;</I></B>  <B>*AnyAlphabeticSurroundedByAsterisks*</B>
+  <B><I>&quot;&lt;..&gt;&quot;</I></B>  <I>&lt;AnyAlphabeticSurroundedByGreaterOrLessThan&gt;</I>
+  <B><I>&quot;_.._&quot;</I></B>  <U>_AnyAlphabeticSurroundedByUnderScore_</U>
 
-            <I>&gt; This is a literal text region</I>
-            <I>&gt; Hilighting to end of line only.</I>
+  Literal Text Regions
 
-<B>            @ This is a literal</B>
-<B>              region. It hilights</B>
-<B>              to the next blank line.</B>
+  <I>&gt; This is a literal text region</I>
+  <I>&gt; Hilighting to end of line only.</I>
 
-            <I>_ First Line. This is also</I>
-              a literal region, no hilighting
-              on this one after the first line.
+  <B>            @ This is a literal</B>
+  <B>              region. It hilights</B>
+  <B>              to the next blank line.</B>
 
-        Strings and quoted characters
+  <I>_ First Line. This is also</I>
+  a literal region, no hilighting
+  on this one after the first line.
 
-            <B><I>&quot;string&quot;</I></B> and quoted <B><I>'q'</I></B> <B><I>'\0'</I></B>
+  Strings and quoted characters
 
-        Headings,  lines  that are  classed  as  <B>`heading'</B>  lines
-        commence with the following text sequences:-
+  <B><I>&quot;string&quot;</I></B> and quoted <B><I>'q'</I></B> <B><I>'\0'</I></B>
 
-            <I>&gt; 4.0 Section Header</I>
-            <I>&gt; 4.1.1 Sub-Section header</I>
-            <I>&gt; Appendix A</I>
-            <I>&gt; Appendix A.1</I>
+  Headings,  lines  that are  classed  as  <B>`heading'</B>  lines
+  commence with the following text sequences:-
 
-        Bullets of the * or ) variety
+  <I>&gt; 4.0 Section Header</I>
+  <I>&gt; 4.1.1 Sub-Section header</I>
+  <I>&gt; Appendix A</I>
+  <I>&gt; Appendix A.1</I>
 
-            <B>* </B> Bullet
+  Bullets of the * or ) variety
 
-            <B>1)</B> Bullet
+  <B>* </B> Bullet
 
-        Note that any bullet-ed  sections with numbers  should be
-        defined as:-
+  <B>1)</B> Bullet
 
-            <I>&gt; 1) bullet 1</I>
-            <I>&gt; 2) bullet 2</I>
+  Note that any bullet-ed  sections with numbers  should be
+  defined as:-
 
-        rather than
+  <I>&gt; 1) bullet 1</I>
+  <I>&gt; 2) bullet 2</I>
 
-            <I>&gt; 1. bullet 1</I>
-            <I>&gt; 2. bullet 2</I>
+  rather than
 
-        otherwise the incorrect hilighting will be applied.
+  <I>&gt; 1. bullet 1</I>
+  <I>&gt; 2. bullet 2</I>
 
-    <B><U>4.2 Code Inserts</U></B>
+  otherwise the incorrect hilighting will be applied.
 
-        As  of  the  beginning  of Q2  2000,  then  the  original
-        document modes of <B>`sectioned'</B> and <B>`pseudo-code'</B> have been
-        removed.  These methods have been replaced by the ability
-        to  insert   literal   fragments   of  other   coding  or
-        documentation  schemes  into the text and signal a change
-        in hilighting.
+  <B><U>4.2 Code Inserts</U></B>
 
-        Hooks for the code inserts are only supported as standard
-        in the <B><I>&quot;-!-  document  -!-&quot;</I></B> mode,  details on  performing
-        this type of operation is provided in the next section.
+  As  of  the  beginning  of Q2  2000,  then  the  original
+  document modes of <B>`sectioned'</B> and <B>`pseudo-code'</B> have been
+  removed.  These methods have been replaced by the ability
+  to  insert   literal   fragments   of  other   coding  or
+  documentation  schemes  into the text and signal a change
+  in hilighting.
 
-        The new scheme is introduced with a <B><I>&quot;&gt;scheme&gt;&quot;</I></B>  marker on
-        the left margin  (gutter),  where <B>`scheme'</B> is the name of
-        the scheme that you want to include i.e. the standard set
-        includes:-
+  Hooks for the code inserts are only supported as standard
+  in the <B><I>&quot;-!-  document  -!-&quot;</I></B> mode,  details on  performing
+  this type of operation is provided in the next section.
 
-            <I>_</I>
-            <B><I>&quot;&gt;bnf&gt;&quot;</I></B> ............... Backus-Naur Form
-            <B><I>&quot;&gt;c&gt;&quot;</I></B> ................. ANSI <B><I>'C'</I></B>
-            <B><I>&quot;&gt;cpp&gt;&quot;</I></B>, <B><I>&quot;&gt;c++&gt;&quot;</I></B> ...... C++
-            <B><I>&quot;&gt;emf&gt;&quot;</I></B> ............... MicroEmacs macro format
-            <B><I>&quot;&gt;pseudo&gt;&quot;</I></B> ............ Pseudo code
+  The new scheme is introduced with a <B><I>&quot;&gt;scheme&gt;&quot;</I></B>  marker on
+  the left margin  (gutter),  where <B>`scheme'</B> is the name of
+  the scheme that you want to include i.e. the standard set
+  includes:-
 
-        The code statement is terminated with a <B><I>&quot;&gt;doc&gt;&quot;</I></B> statement
-        which returns the hilighting  mode to document mode. Note
-        that the <B><I>&quot;&gt;&quot;</I></B>  character  has been  selected  as the token
-        leader.  Provided that the insert block includes no blank
-        lines  then the block is treated as a literal  text block
-        and  formatting  the  paragraph  does not affect the code
-        block. Here are some examples:-
+  <I>_</I>
+  <B><I>&quot;&gt;bnf&gt;&quot;</I></B> ............... Backus-Naur Form
+  <B><I>&quot;&gt;c&gt;&quot;</I></B> ................. ANSI <B><I>'C'</I></B>
+  <B><I>&quot;&gt;cpp&gt;&quot;</I></B>, <B><I>&quot;&gt;c++&gt;&quot;</I></B> ...... C++
+  <B><I>&quot;&gt;emf&gt;&quot;</I></B> ............... MicroEmacs macro format
+  <B><I>&quot;&gt;pseudo&gt;&quot;</I></B> ............ Pseudo code
 
-        <B><U>4.2.1 Pseudo Code Example</U></B>
+  The code statement is terminated with a <B><I>&quot;&gt;doc&gt;&quot;</I></B> statement
+  which returns the hilighting  mode to document mode. Note
+  that the <B><I>&quot;&gt;&quot;</I></B>  character  has been  selected  as the token
+  leader.  Provided that the insert block includes no blank
+  lines  then the block is treated as a literal  text block
+  and  formatting  the  paragraph  does not affect the code
+  block. Here are some examples:-
 
-        Include a pseudo code block:-
+  <B><U>4.2.1 Pseudo Code Example</U></B>
 
-&gt;pseudo&gt;
-        <I>// A days work</I>
-        <B>FUNCTION</B> a days work
-        <B>BEGIN</B>
-            <I>// A comment for my pseudo code.</I>
-            <B>WHILE</B> (<B>NOT</B> bored)
-            <B>DO</B>
-                <B>IF</B> (this condition is true)
-                <B>THEN</B>
-                    do something
-                <B>ELSE</B>
-                    do something else
-                <B>ENDIF</B>
-            <B>DONE</B>
-            <B>RETURN</B> home
-        <B>END</B>
-&gt;doc&gt;
+  Include a pseudo code block:-
 
-        The  leading <B><I>'&gt;'</I></B> protects  the text from  formatting.  Be
-        careful  not to leave  blank  lines in your  pseudo  code
-        because  this is a new  paragraph,  these  are  typically
-        plugged with comments.
+  &gt;pseudo&gt;
+  <I>// A days work</I>
+  <B>FUNCTION</B> a days work
+  <B>BEGIN</B>
+  <I>// A comment for my pseudo code.</I>
+  <B>WHILE</B> (<B>NOT</B> bored)
+  <B>DO</B>
+  <B>IF</B> (this condition is true)
+  <B>THEN</B>
+  do something
+  <B>ELSE</B>
+  do something else
+  <B>ENDIF</B>
+  <B>DONE</B>
+  <B>RETURN</B> home
+  <B>END</B>
+  &gt;doc&gt;
 
-        <B><U>4.2.2 C Code Example</U></B>
+  The  leading <B><I>'&gt;'</I></B> protects  the text from  formatting.  Be
+  careful  not to leave  blank  lines in your  pseudo  code
+  because  this is a new  paragraph,  these  are  typically
+  plugged with comments.
 
-        The classic Hello World program
+  <B><U>4.2.2 C Code Example</U></B>
 
-&gt;c&gt;
-        <B>#include &lt;stdio.h&gt;</B>
-        <B>#include &lt;stdlib.h&gt;</B>
-        <I>/* Entry point */</I>
-        <B>int</B>
-        main (<B>int</B> argc, <B>char</B> *argv[])
-        {
-            printf (<B><I>&quot;Hello World\n&quot;</I></B>);
-            <B>return</B> 0;
-        }
-&gt;doc&gt;
+  The classic Hello World program
 
-        <B><U>4.2.3 Backus-Naur Form</U></B>
+  &gt;c&gt;
+  <B>#include &lt;stdio.h&gt;</B>
+  <B>#include &lt;stdlib.h&gt;</B>
+  <I>/* Entry point */</I>
+  <B>int</B>
+  main (<B>int</B> argc, <B>char</B> *argv[])
+  {
+  printf (<B><I>&quot;Hello World\n&quot;</I></B>);
+  <B>return</B> 0;
+  }
+  &gt;doc&gt;
 
-        This  one is  included  as  standard  as it is  typically
-        included  in  technical   documentation.  Follows  is  an
-        example  of  BNF  for  the  Pascal  programming  language
-        decimal notation:-
+  <B><U>4.2.3 Backus-Naur Form</U></B>
 
-&gt;bnf&gt;
-        <I>!! Pascal decimal notation.</I>
-        <B>&lt;digit sequence&gt;</B> <B>::=</B> <B>&lt;digit&gt;</B> <B>{</B> <B>&lt;digit&gt;</B> <B>}</B>
-        <B>&lt;unsigned integer&gt;</B> <B>::=</B> <B>&lt;digit sequence&gt;</B>
-        <B>&lt;unsigned real&gt;</B> <B>::=</B>
-            <B>&lt;unsigned integer&gt;</B>.<B>&lt;digit sequence&gt;</B> <B>|</B>
-            <B>&lt;unsigned integer&gt;</B>.<B>&lt;digit sequence&gt;</B>E<B>&lt;scale factor&gt;</B> <B>|</B>
-            <B>&lt;unsigned integer&gt;</B> E <B>&lt;scale factor&gt;</B>
-        <B>&lt;unsigned number&gt;</B> <B>::=</B>
-            <B>&lt;unsigned integer&gt;</B> <B>|</B> <B>&lt;unsigned real&gt;</B>
-        <B>&lt;scale factor&gt;</B> <B>::=</B>
-            <B>&lt;unsigned integer&gt;</B> <B>|</B> <B>&lt;sign&gt;&lt;unsigned integer&gt;</B>
-        <B>&lt;sign&gt;</B> <B>::=</B> + <B>|</B> -
-&gt;doc&gt;
+  This  one is  included  as  standard  as it is  typically
+  included  in  technical   documentation.  Follows  is  an
+  example  of  BNF  for  the  Pascal  programming  language
+  decimal notation:-
 
-    <B><U>4.3 Extending the Code Inserts</U></B>
+  &gt;bnf&gt;
+  <I>!! Pascal decimal notation.</I>
+  <B>&lt;digit sequence&gt;</B> <B>::=</B> <B>&lt;digit&gt;</B> <B>{</B> <B>&lt;digit&gt;</B> <B>}</B>
+  <B>&lt;unsigned integer&gt;</B> <B>::=</B> <B>&lt;digit sequence&gt;</B>
+  <B>&lt;unsigned real&gt;</B> <B>::=</B>
+  <B>&lt;unsigned integer&gt;</B>.<B>&lt;digit sequence&gt;</B> <B>|</B>
+  <B>&lt;unsigned integer&gt;</B>.<B>&lt;digit sequence&gt;</B>E<B>&lt;scale factor&gt;</B> <B>|</B>
+  <B>&lt;unsigned integer&gt;</B> E <B>&lt;scale factor&gt;</B>
+  <B>&lt;unsigned number&gt;</B> <B>::=</B>
+  <B>&lt;unsigned integer&gt;</B> <B>|</B> <B>&lt;unsigned real&gt;</B>
+  <B>&lt;scale factor&gt;</B> <B>::=</B>
+  <B>&lt;unsigned integer&gt;</B> <B>|</B> <B>&lt;sign&gt;&lt;unsigned integer&gt;</B>
+  <B>&lt;sign&gt;</B> <B>::=</B> + <B>|</B> -
+  &gt;doc&gt;
 
-        The number code insert types that may be supported may be
-        increased  by defining  other code types within the local
-        users extension file <B><I>&quot;mydoc.emf&quot;</I></B>. i.e. to add the HTML to
-        the supported set then the following would be defined.
+  <B><U>4.3 Extending the Code Inserts</U></B>
 
-&gt;emf&gt;
-    <I>; Allow HTML Code inserts</I>
-    <I>; Force the &quot;.html&quot; scheme to be loaded into the context of</I>
-    <I>; the document scheme. We delimit the .html scheme with a</I>
-    <I>; pair of markers &quot;&gt;html&gt;&quot; and &quot;&gt;doc&gt;&quot;</I>
-    <I>;</I>
-    <I>; Force the hilighting mode to load if not already loaded.</I>
-    <B>!if</B> <B>&amp;seq</B> <B>.hilight.html</B> <B><I>&quot;ERROR&quot;</I></B>
-        <B>!force</B> execute-file <B><I>&quot;hkhtml&quot;</I></B>
-    <B>!endif</B>
-    <I>; If the hilighting mode is loaded then modify it.</I>
-    <B>!if</B> <B>&amp;not</B> <B>&amp;seq</B> <B>.hilight.html</B> <B><I>&quot;ERROR&quot;</I></B>
-        hilight <B>.hilight.doc</B> 0xc0 <B><I>&quot;^&gt;html&gt;&quot;</I></B> <B><I>&quot;&gt;html&gt;&quot;</I></B> <B>.hilight.html</B> <B>.scheme.hide</B>
-        hilight <B>.hilight.html</B> 0xc0 <B><I>&quot;^&gt;doc&gt;&quot;</I></B> <B><I>&quot;&gt;doc&gt;&quot;</I></B> <B>.hilight.doc</B> <B>.scheme.hide</B>
-    <B>!endif</B>
-&gt;doc&gt;
+  The number code insert types that may be supported may be
+  increased  by defining  other code types within the local
+  users extension file <B><I>&quot;mydoc.emf&quot;</I></B>. i.e. to add the HTML to
+  the supported set then the following would be defined.
 
-        The  macro  fragment  is simply  executed  when the first
-        document  is  loaded.  There  is no need to  include  any
-        additional  code in the hook  commands. The  operation of
-        the code is defined as follows:-
+  &gt;emf&gt;
+  <I>; Allow HTML Code inserts</I>
+  <I>; Force the &quot;.html&quot; scheme to be loaded into the context of</I>
+  <I>; the document scheme. We delimit the .html scheme with a</I>
+  <I>; pair of markers &quot;&gt;html&gt;&quot; and &quot;&gt;doc&gt;&quot;</I>
+  <I>;</I>
+  <I>; Force the hilighting mode to load if not already loaded.</I>
+  <B>!if</B> <B>&amp;seq</B> <B>.hilight.html</B> <B><I>&quot;ERROR&quot;</I></B>
+  <B>!force</B> execute-file <B><I>&quot;hkhtml&quot;</I></B>
+  <B>!endif</B>
+  <I>; If the hilighting mode is loaded then modify it.</I>
+  <B>!if</B> <B>&amp;not</B> <B>&amp;seq</B> <B>.hilight.html</B> <B><I>&quot;ERROR&quot;</I></B>
+  hilight <B>.hilight.doc</B> 0xc0 <B><I>&quot;^&gt;html&gt;&quot;</I></B> <B><I>&quot;&gt;html&gt;&quot;</I></B> <B>.hilight.html</B> <B>.scheme.hide</B>
+  hilight <B>.hilight.html</B> 0xc0 <B><I>&quot;^&gt;doc&gt;&quot;</I></B> <B><I>&quot;&gt;doc&gt;&quot;</I></B> <B>.hilight.doc</B> <B>.scheme.hide</B>
+  <B>!endif</B>
+  &gt;doc&gt;
 
-&gt;emf&gt;
-        <B>!if</B> <B>&amp;seq</B> <B>.hilight.html</B> <B><I>&quot;ERROR&quot;</I></B>
-            <B>!force</B> execute-file <B><I>&quot;hkhtml&quot;</I></B>
-        <B>!endif</B>
-&gt;doc&gt;
+  The  macro  fragment  is simply  executed  when the first
+  document  is  loaded.  There  is no need to  include  any
+  additional  code in the hook  commands. The  operation of
+  the code is defined as follows:-
 
-        The  first  set of  commands  make  sure that the  target
-        hilighting  scheme  is  loaded,  if they  are not then an
-        explicit load is forced.
-
-&gt;emf&gt;
-        <B>!if</B> <B>&amp;not</B> <B>&amp;seq</B> <B>.hilight.html</B> <B><I>&quot;ERROR&quot;</I></B>
-&gt;doc&gt;
-
-        Check that the hilighting  scheme is loaded, if it is not
-        then the scheme modifications are not applied.
-
-&gt;emf&gt;
-        hilight <B>.hilight.doc</B> 0xc0 <B><I>&quot;^&gt;html&gt;&quot;</I></B> <B><I>&quot;&gt;html&gt;&quot;</I></B> <B>.hilight.html</B> <B>.scheme.hide</B>
-&gt;doc&gt;
-
-        Declare a hilighting token in the documentation scheme to
-        jump to the HTML hilighting scheme. The token that we use
-        is <B><I>&quot;&gt;html&gt;&quot;</I></B>  which must  appear at the start of the line,
-        hence is defined  <B><I>&quot;^&gt;html&gt;&quot;</I></B>. The second  <B><I>&quot;&gt;html&gt;&quot;</I></B>  string
-        defines  what appears on the screen. This may be modified
-        if the screen  appearance is different  from the tag that
-        appears  in  the  text.  <B>`.hilight.html'</B>  is  the  scheme
-        identifier  of the  target  scheme  to which a branch  is
-        being taken. <B>`.scheme.hide'</B> is the color in which the tag
-        is rendered, the hidden scheme is selected here to reduce
-        the prominence of the tag (it is still visible).
-
-&gt;emf&gt;
-        hilight <B>.hilight.html</B> 0xc0 <B><I>&quot;^&gt;doc&gt;&quot;</I></B> <B><I>&quot;&gt;doc&gt;&quot;</I></B> <B>.hilight.doc</B> <B>.scheme.hide</B>
-&gt;doc&gt;
-
-        The next  statement  defines  the  hilighting  token that
-        returns the hilighting back to the documentation hilight.
-        This is the same as the  previous  statement  except that
-        the  hilight  token is  placed in the  target  hilighting
-        scheme to return the hilight to the  documentation  mode.
-        Typically <B><I>&quot;&gt;doc&gt;&quot;</I></B> may be used unless it conflicts with an
-        existing hilighting token in the target scheme.
-
-        <B><U>4.3.1 Important Note on Code Inserts</U></B>
-
-            In order for the code  inserts  to operate  correctly
-            then the  hilighting  schemes  must enable look back.
-            This is defined when the scheme is initialized,  with
-            a statement like:-
-
-&gt;emf&gt;
-            0 hilight  <B>.hilight.doc</B> 2 50  <B>$global</B>-scheme
-&gt;doc&gt;
-
-            Typically a look back value of 50 lines is specified,
-            this restricts the insert blocks to 50 lines of text.
-            These   values   may  be   extended   if   they   are
-            insufficient, by may reduce the rendering speed.
-
-    <B><U>4.4 Folding</U></B>
-
-        The  folding  feature  of ME using  narrowing  allows  an
-        overview  of  the  document  to be  created.  Folding  is
-        supported  as standard in the <B><I>&quot;-!- document -!-&quot;</I></B> template
-        where the folds are performed on the section numbers. The
-        function  keys  <B><I>&quot;F2&quot;</I></B> and <B><I>&quot;F3&quot;</I></B>, by  default,  control  the
-        folding.  In  addition   &lt;S-Left-Mouse&gt;  folds  a  single
-        section.
-
-        The whole  document may be folded with <B><I>&quot;f3&quot;</I></B> the resultant
-        output of this document looks exactly like this:
-
-        <I>&gt; &gt; -!- document; fill-column: 65; fill-mode: full -!-</I>
-        <I>&gt; &gt; Author:   Jon Green</I>
-        <I>&gt; &gt; Created:  Wed Feb 2 20:23:35 2000</I>
-        <I>&gt; &gt; Modified: &lt;20000322.2157&gt;</I>
-        <I>&gt;</I>
-        <I>&gt; 1.0 Overview of the Documentation Modes</I>
-        <I>&gt;     1.1 Background</I>
-        <I>&gt;     1.2 Cursor Position</I>
-        <I>&gt;     1.3 Quick Summary</I>
-        <I>&gt;     1.4 Types of document modes</I>
-        <I>&gt;     1.4.1 Text</I>
-        <I>&gt;     1.4.2 Document</I>
-        <I>&gt; 2.0 Working In The Text Modes</I>
-        <I>&gt;     2.1 Whats a paragraph ??</I>
-        <I>&gt;         2.1.1 The Fill Column</I>
-        <I>&gt;         2.2.2 The Fill Mode</I>
-        <I>&gt;     2.2 Left Text (Work off the margin or column 0)</I>
-        <I>&gt;         2.2.1 On a re-format</I>
-        <I>&gt;     2.3 Right Text (Work to right margin or $fill-col)</I>
-        <I>&gt;         2.3.1 On a re-format</I>
-        <I>&gt;     2.4 Center Text</I>
-        <I>&gt;         2.3.1 On a re-format</I>
-        <I>&gt;     2.5 Justified Text</I>
-        <I>&gt;     2.6 Literal Text</I>
-        <I>&gt;     2.7 Bullets</I>
-        <I>&gt;     2.8 Editing the Document</I>
-        <I>&gt;         2.8.1 What is IQ Fill paragraph ??</I>
-        <I>&gt;     2.9 Whats the advantage of the above</I>
-        <I>&gt; 3.0 Going Back To The Word Processor</I>
-        <I>&gt; 4.0 Extensions</I>
-        <I>&gt;     4.1 Documents</I>
-        <I>&gt;     4.2 Code Inserts</I>
-        <I>&gt;         4.2.1 Pseudo Code Example</I>
-        <I>&gt;         4.2.2 C Code Example</I>
-        <I>&gt;         4.2.3 Backus-Naur Form</I>
-        <I>&gt;     4.3 Extending the Code Inserts</I>
-        <I>&gt;         4.3.1 Important Note on Code Inserts</I>
-        <I>&gt;     4.4 Folding</I>
-        <I>&gt;         4.3.2 Hilighting</I>
-        <I>&gt;         4.3.3 Section Renumbering</I>
-        <I>&gt;     4.5 Other Tools</I>
-        <I>&gt; 5.0 Did you get this far ??</I>
-        <I>&gt; 6.0 End</I>
+  &gt;emf&gt;
+  <B>!if</B> <B>&amp;seq</B> <B>.hilight.html</B> <B><I>&quot;ERROR&quot;</I></B>
+  <B>!force</B> execute-file <B><I>&quot;hkhtml&quot;</I></B>
+  <B>!endif</B>
+  &gt;doc&gt;
 
-        This  makes  it  easy to  edit.  Note  that a dummy  last
-        section is added to make  everything  fold nicely. Single
-        sections may be unfolded with <B><I>&quot;f2&quot;</I></B>.
+  The  first  set of  commands  make  sure that the  target
+  hilighting  scheme  is  loaded,  if they  are not then an
+  explicit load is forced.
+
+  &gt;emf&gt;
+  <B>!if</B> <B>&amp;not</B> <B>&amp;seq</B> <B>.hilight.html</B> <B><I>&quot;ERROR&quot;</I></B>
+  &gt;doc&gt;
+
+  Check that the hilighting  scheme is loaded, if it is not
+  then the scheme modifications are not applied.
+
+  &gt;emf&gt;
+  hilight <B>.hilight.doc</B> 0xc0 <B><I>&quot;^&gt;html&gt;&quot;</I></B> <B><I>&quot;&gt;html&gt;&quot;</I></B> <B>.hilight.html</B> <B>.scheme.hide</B>
+  &gt;doc&gt;
+
+  Declare a hilighting token in the documentation scheme to
+  jump to the HTML hilighting scheme. The token that we use
+  is <B><I>&quot;&gt;html&gt;&quot;</I></B>  which must  appear at the start of the line,
+  hence is defined  <B><I>&quot;^&gt;html&gt;&quot;</I></B>. The second  <B><I>&quot;&gt;html&gt;&quot;</I></B>  string
+  defines  what appears on the screen. This may be modified
+  if the screen  appearance is different  from the tag that
+  appears  in  the  text.  <B>`.hilight.html'</B>  is  the  scheme
+  identifier  of the  target  scheme  to which a branch  is
+  being taken. <B>`.scheme.hide'</B> is the color in which the tag
+  is rendered, the hidden scheme is selected here to reduce
+  the prominence of the tag (it is still visible).
+
+  &gt;emf&gt;
+  hilight <B>.hilight.html</B> 0xc0 <B><I>&quot;^&gt;doc&gt;&quot;</I></B> <B><I>&quot;&gt;doc&gt;&quot;</I></B> <B>.hilight.doc</B> <B>.scheme.hide</B>
+  &gt;doc&gt;
+
+  The next  statement  defines  the  hilighting  token that
+  returns the hilighting back to the documentation hilight.
+  This is the same as the  previous  statement  except that
+  the  hilight  token is  placed in the  target  hilighting
+  scheme to return the hilight to the  documentation  mode.
+  Typically <B><I>&quot;&gt;doc&gt;&quot;</I></B> may be used unless it conflicts with an
+  existing hilighting token in the target scheme.
+
+  <B><U>4.3.1 Important Note on Code Inserts</U></B>
+
+  In order for the code  inserts  to operate  correctly
+  then the  hilighting  schemes  must enable look back.
+  This is defined when the scheme is initialized,  with
+  a statement like:-
+
+  &gt;emf&gt;
+  0 hilight  <B>.hilight.doc</B> 2 50  <B>$global</B>-scheme
+  &gt;doc&gt;
+
+  Typically a look back value of 50 lines is specified,
+  this restricts the insert blocks to 50 lines of text.
+  These   values   may  be   extended   if   they   are
+  insufficient, by may reduce the rendering speed.
+
+  <B><U>4.4 Folding</U></B>
+
+  The  folding  feature  of ME using  narrowing  allows  an
+  overview  of  the  document  to be  created.  Folding  is
+  supported  as standard in the <B><I>&quot;-!- document -!-&quot;</I></B> template
+  where the folds are performed on the section numbers. The
+  function  keys  <B><I>&quot;F2&quot;</I></B> and <B><I>&quot;F3&quot;</I></B>, by  default,  control  the
+  folding.  In  addition   &lt;S-Left-Mouse&gt;  folds  a  single
+  section.
+
+  The whole  document may be folded with <B><I>&quot;f3&quot;</I></B> the resultant
+  output of this document looks exactly like this:
+
+  <I>&gt; &gt; -!- document; fill-column: 65; fill-mode: full -!-</I>
+  <I>&gt; &gt; Author:   Jon Green</I>
+  <I>&gt; &gt; Created:  Wed Feb 2 20:23:35 2000</I>
+  <I>&gt; &gt; Modified: &lt;20000322.2157&gt;</I>
+  <I>&gt;</I>
+  <I>&gt; 1.0 Overview of the Documentation Modes</I>
+  <I>&gt;     1.1 Background</I>
+  <I>&gt;     1.2 Cursor Position</I>
+  <I>&gt;     1.3 Quick Summary</I>
+  <I>&gt;     1.4 Types of document modes</I>
+  <I>&gt;     1.4.1 Text</I>
+  <I>&gt;     1.4.2 Document</I>
+  <I>&gt; 2.0 Working In The Text Modes</I>
+  <I>&gt;     2.1 Whats a paragraph ??</I>
+  <I>&gt;         2.1.1 The Fill Column</I>
+  <I>&gt;         2.2.2 The Fill Mode</I>
+  <I>&gt;     2.2 Left Text (Work off the margin or column 0)</I>
+  <I>&gt;         2.2.1 On a re-format</I>
+  <I>&gt;     2.3 Right Text (Work to right margin or $fill-col)</I>
+  <I>&gt;         2.3.1 On a re-format</I>
+  <I>&gt;     2.4 Center Text</I>
+  <I>&gt;         2.3.1 On a re-format</I>
+  <I>&gt;     2.5 Justified Text</I>
+  <I>&gt;     2.6 Literal Text</I>
+  <I>&gt;     2.7 Bullets</I>
+  <I>&gt;     2.8 Editing the Document</I>
+  <I>&gt;         2.8.1 What is IQ Fill paragraph ??</I>
+  <I>&gt;     2.9 Whats the advantage of the above</I>
+  <I>&gt; 3.0 Going Back To The Word Processor</I>
+  <I>&gt; 4.0 Extensions</I>
+  <I>&gt;     4.1 Documents</I>
+  <I>&gt;     4.2 Code Inserts</I>
+  <I>&gt;         4.2.1 Pseudo Code Example</I>
+  <I>&gt;         4.2.2 C Code Example</I>
+  <I>&gt;         4.2.3 Backus-Naur Form</I>
+  <I>&gt;     4.3 Extending the Code Inserts</I>
+  <I>&gt;         4.3.1 Important Note on Code Inserts</I>
+  <I>&gt;     4.4 Folding</I>
+  <I>&gt;         4.3.2 Hilighting</I>
+  <I>&gt;         4.3.3 Section Renumbering</I>
+  <I>&gt;     4.5 Other Tools</I>
+  <I>&gt; 5.0 Did you get this far ??</I>
+  <I>&gt; 6.0 End</I>
 
-        With  folding  enabled  then  one has to be a little  bit
-        careful not to edit over a folded section.
+  This  makes  it  easy to  edit.  Note  that a dummy  last
+  section is added to make  everything  fold nicely. Single
+  sections may be unfolded with <B><I>&quot;f2&quot;</I></B>.
 
-        <B><U>4.4.1 Redefining the Folding</U></B>
+  With  folding  enabled  then  one has to be a little  bit
+  careful not to edit over a folded section.
 
-        The  definition of the folds may be redefined by the user
-        by extending the macro template  through  <B><I>&quot;mydoc.emf&quot;</I></B>. As
-        an example of folding about section  numbers (i.e. <B><I>&quot;1.2.3</I></B>
-<B><I>        title&quot;</I></B>) then the following extension is sufficient:-
+  <B><U>4.4.1 Redefining the Folding</U></B>
 
-&gt;emf&gt;
-<I>; my-fhook-doc; Extend the document bindings</I>
-0 <B><U>define-macro my</U></B>-fhook-doc
-    <I>; setup doc buffer folding support used in section</I>
-    <I>; and pseudo code modes.</I>
-    buffer-bind-unbound-key fold-current <B><I>&quot;f2&quot;</I></B>
-    buffer-bind-unbound-key fold-all     <B><I>&quot;f3&quot;</I></B>
-<B>!emacro</B>
-<I>; Define the folding definitions.</I>
-set-variable <B>.fhook</B>-doc<B>.fold</B>-open  <B><I>&quot;^ *[0-9]\\(\\.[0-9.]\\)*\\.? +\\w&quot;</I></B>
-set-variable <B>.fhook</B>-doc<B>.fold</B>-close <B><I>&quot;^ *[0-9]\\(\\.[0-9.]\\)*\\.? +\\w&quot;</I></B>
-set-variable <B>.fhook</B>-doc<B>.fold</B>-mopen <B><I>&quot;1&quot;</I></B>
-set-variable <B>.fhook</B>-doc<B>.fold</B>-mnext <B><I>&quot;-1&quot;</I></B>
-<I>;</I>
-ml-write <B><I>&quot;[My document file extensions loaded]&quot;</I></B>
-&gt;doc&gt;
+  The  definition of the folds may be redefined by the user
+  by extending the macro template  through  <B><I>&quot;mydoc.emf&quot;</I></B>. As
+  an example of folding about section  numbers (i.e. <B><I>&quot;1.2.3</I></B>
+  <B><I>        title&quot;</I></B>) then the following extension is sufficient:-
 
-        Note that  these  extensions  are not  necessary  for the
-        current  <B><I>&quot;-!-  document  -!-&quot;</I></B>  hook as they  are  already
-        defined.
+  &gt;emf&gt;
+  <I>; my-fhook-doc; Extend the document bindings</I>
+  0 <B><U>define-macro my</U></B>-fhook-doc
+  <I>; setup doc buffer folding support used in section</I>
+  <I>; and pseudo code modes.</I>
+  buffer-bind-unbound-key fold-current <B><I>&quot;f2&quot;</I></B>
+  buffer-bind-unbound-key fold-all     <B><I>&quot;f3&quot;</I></B>
+  <B>!emacro</B>
+  <I>; Define the folding definitions.</I>
+  set-variable <B>.fhook</B>-doc<B>.fold</B>-open  <B><I>&quot;^ *[0-9]\\(\\.[0-9.]\\)*\\.? +\\w&quot;</I></B>
+  set-variable <B>.fhook</B>-doc<B>.fold</B>-close <B><I>&quot;^ *[0-9]\\(\\.[0-9.]\\)*\\.? +\\w&quot;</I></B>
+  set-variable <B>.fhook</B>-doc<B>.fold</B>-mopen <B><I>&quot;1&quot;</I></B>
+  set-variable <B>.fhook</B>-doc<B>.fold</B>-mnext <B><I>&quot;-1&quot;</I></B>
+  <I>;</I>
+  ml-write <B><I>&quot;[My document file extensions loaded]&quot;</I></B>
+  &gt;doc&gt;
 
-        <B><U>4.5 Extending the Hilighting</U></B>
+  Note that  these  extensions  are not  necessary  for the
+  current  <B><I>&quot;-!-  document  -!-&quot;</I></B>  hook as they  are  already
+  defined.
 
-        The  <B><I>&quot;mydoc.emf&quot;</I></B>  may be used to extend  the  hilighting.
-        These are  usually  tailored  to the kind of text that is
-        worked  with. For  example  ~word~ may be added as a bold
-        token,  and  %word%  as  italic.  This  could be added to
-        <B><I>&quot;mydoc.emf&quot;</I></B> as follows:-
+  <B><U>4.5 Extending the Hilighting</U></B>
 
-&gt;emf&gt;
-        hilight <B>.hilight.doc</B> 0 <B><I>&quot;~[A-Za-z_]+~&quot;</I></B> <B>.scheme.bold</B>
-        hilight <B>.hilight.doc</B> 0 <B><I>&quot;%[A-Za-z_]+%&quot;</I></B> <B>.scheme.italic</B>
-&gt;doc&gt;
+  The  <B><I>&quot;mydoc.emf&quot;</I></B>  may be used to extend  the  hilighting.
+  These are  usually  tailored  to the kind of text that is
+  worked  with. For  example  ~word~ may be added as a bold
+  token,  and  %word%  as  italic.  This  could be added to
+  <B><I>&quot;mydoc.emf&quot;</I></B> as follows:-
 
-        <B><U>4.6 Section Renumbering</U></B>
+  &gt;emf&gt;
+  hilight <B>.hilight.doc</B> 0 <B><I>&quot;~[A-Za-z_]+~&quot;</I></B> <B>.scheme.bold</B>
+  hilight <B>.hilight.doc</B> 0 <B><I>&quot;%[A-Za-z_]+%&quot;</I></B> <B>.scheme.italic</B>
+  &gt;doc&gt;
 
-        A number of macro  solutions have been posted to the mail
-        reflector  on this  subject. I suggest that you look over
-        these.
+  <B><U>4.6 Section Renumbering</U></B>
 
-    <B><U>4.5 Other Tools</U></B>
+  A number of macro  solutions have been posted to the mail
+  reflector  on this  subject. I suggest that you look over
+  these.
 
-        Other tools used with the documentation include:-
+  <B><U>4.5 Other Tools</U></B>
 
-        <B>*</B> spell-buffer (Command line or menu)
+  Other tools used with the documentation include:-
 
-            Spell checker.
+  <B>*</B> spell-buffer (Command line or menu)
 
-        <B>*</B> clean (command line or menu)
+  Spell checker.
 
-            Removes all of the trailing spaces.
+  <B>*</B> clean (command line or menu)
 
-        <B>*</B> count-words
+  Removes all of the trailing spaces.
 
-            Counts all the words.
+  <B>*</B> count-words
 
-        <B>*</B> print-buffer
+  Counts all the words.
 
-            From the print dialog, an HTML  rendering of the page
-            may  be  printed  to  a  buffer.  This   inserts  the
-            appropriate  HTML hilighting into the page, retaining
-            the layout.
+  <B>*</B> print-buffer
 
-<B><U>5.0 Did you get this far ??</U></B>
+  From the print dialog, an HTML  rendering of the page
+  may  be  printed  to  a  buffer.  This   inserts  the
+  appropriate  HTML hilighting into the page, retaining
+  the layout.
 
-    If you got this far well done !!
+  <B><U>5.0 Did you get this far ??</U></B>
 
-    Exercise.
+  If you got this far well done !!
 
-            Cut and paste  this into a document  and have a go !!
-            You should be able to reformat the whole document and
-            nothing will change.
+  Exercise.
 
-<B><U>6.0 End</U></B>
-</PRE>
-<HR color=#cccccc noShade SIZE=1>
-<p><font size="-2"><i>Copyright &copy; 2000-2002 Jasspa</i></font></p>
-</body>
+  Cut and paste  this into a document  and have a go !!
+  You should be able to reformat the whole document and
+  nothing will change.
+
+  <B><U>6.0 End</U></B>
+  </PRE>
+  <HR color=#cccccc noShade SIZE=1>
+  <p><font size="-2"><i>Copyright &copy; 2000-2002 Jasspa</i></font></p>
+  </body>
 </html>
