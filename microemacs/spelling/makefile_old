@@ -1,0 +1,131 @@
+# -!- makefile -!-
+#
+# JASSPA MicroEmacs - www.jasspa.com
+# makefile - Makefile for building the spelling packages.
+#
+# Copyright (C) 2001-2002 JASSPA (www.jasspa.com)
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation; either version 2 of the License, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+# more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+##############################################################################
+#
+# Created:     Sat Jan 24 1998
+# Synopsis:    Make file for spelling files release.
+# Notes:
+#
+#	Run "make release"  builds the release files
+#	Run "make clean"    to clean source directory
+#	Run "make spotless" to clean source directory even more
+#
+##############################################################################
+#
+RM	= rm -f
+TAR	= tar
+ZIP	= zip -9 -q
+GZIP	= gzip -9
+TAR	= tar
+MKDIR	= mkdir -p
+INSTALL	= install
+INSTDIR	= ../release
+
+ZIPOBJS	=	ls_dede.zip	ls_engb.zip	ls_enus.zip	\
+		ls_eses.zip	ls_frfr.zip	ls_itit.zip	\
+		ls_plpl.zip	ls_ptpt.zip
+TAROBJS	=	$(ZIPOBJS:.zip=.tar.gz)
+
+LSDEDE	=	lsrdede.emf	lsdmdede.edf	lsdxdede.edf
+LSENGB	=	lsrengb.emf	lsdmengb.edf	lsdxengb.edf
+LSENUS	=	lsrenus.emf	lsdmenus.edf	lsdxenus.edf
+LSITIT	=	lsritit.emf	lsdmitit.edf	COPYING
+LSFRFR	=	lsrfrfr.emf	lsdmfrfr.edf	COPYING
+LSPLPL	=	lsrplpl.emf	lsdmplpl.edf
+LSPTPT	=	lsrptpt.emf	lsdmptpt.edf	COPYING
+LSESES	=	lsreses.emf	lsdmeses.edf	COPYING
+
+all:	$(TAROBJS) $(ZIPOBJS)
+
+# German dictionary.
+ls_dede.zip:	$(LSDEDE)
+	dos2unix -U lsrdede.emf
+	$(ZIP) $@ $(LSDEDE)
+ls_dede.tar.gz:	$(LSDEDE)
+	dos2unix -U lsrdede.emf
+	$(TAR) cf - $(LSDEDE) | $(GZIP) -c > $@
+
+# French
+ls_frfr.zip:	$(LSFRFR)
+	dos2unix -U lsrfrfr.emf COPYING
+	$(ZIP) $@ $(LSFRFR)
+ls_frfr.tar.gz:	$(LSFRFR)
+	dos2unix -U lsrfrfr.emf COPYING
+	$(TAR) cf - $(LSFRFR) | $(GZIP) -c > $@
+
+# Italian
+ls_itit.zip:	$(LSITIT)
+	dos2unix -U lsritit.emf COPYING
+	$(ZIP) $@ $(LSITIT)
+ls_itit.tar.gz:	$(LSITIT)
+	dos2unix -U lsritit.emf COPYING
+	$(TAR) cf - $(LSITIT) | $(GZIP) -c > $@
+
+# Spanish
+ls_eses.zip:	$(LSESES)
+	dos2unix -U lsreses.emf COPYING
+	$(ZIP) $@ $(LSESES)
+ls_eses.tar.gz:	$(LSESES)
+	dos2unix -U lsreses.emf COPYING
+	$(TAR) cf - $(LSESES) | $(GZIP) -c > $@
+
+# Polish
+ls_plpl.zip:	$(LSPLPL)
+	dos2unix -U lsrplpl.emf
+	$(ZIP) $@ $(LSPLPL)
+ls_plpl.tar.gz:	$(LSPLPL)
+	dos2unix -U lsrplpl.emf
+	$(TAR) cf - $(LSPLPL) | $(GZIP) -c > $@
+
+# Portuguese
+ls_ptpt.zip:	$(LSPTPT)
+	dos2unix -U lsrptpt.emf COPYING
+	$(ZIP) $@ $(LSPTPT)
+ls_ptpt.tar.gz:	$(LSPTPT)
+	dos2unix -U lsrptpt.emf COPYING
+	$(TAR) cf - $(LSPTPT) | $(GZIP) -c > $@
+
+# British
+ls_engb.zip:	$(LSENGB)
+	dos2unix -U lsrengb.emf
+	$(ZIP) $@ $(LSENGB)
+ls_engb.tar.gz:	$(LSENGB)
+	dos2unix -U lsrengb.emf
+	$(TAR) cf - $(LSENGB) | $(GZIP) -c > $@
+
+# American
+ls_enus.zip:	$(LSENUS)
+	dos2unix -U lsrenus.emf
+	$(ZIP) $@ $(LSENUS)
+ls_enus.tar.gz:	$(LSENUS)
+	dos2unix -U lsrenus.emf
+	$(TAR) cf - $(LSENUS) | $(GZIP) -c > $@
+
+release: $(ZIPOBJS) $(TAROBJS)
+	$(MKDIR) $(INSTDIR)
+	$(INSTALL) -p $(ZIPOBJS) $(TAROBJS) $(INSTDIR)
+
+clean:
+	$(RM) $(ZIPOBJS) $(TAROBJS)
+
+spotless: clean
+	$(RM) *~
