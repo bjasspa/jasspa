@@ -34,13 +34,13 @@
         !else
             ; on the file type
             !if &bmod "crlf"
-                buffer-mode "ctrlz"
+                0 buffer-mode "ctrlz"
                 !if &bmod "ctrlz"
                     ; dont go to the weird ??? mode
                     -1 buffer-mode "crlf"
                 !endif
             !endif
-            buffer-mode "crlf"
+            0 buffer-mode "crlf"
         !endif
         ; 1 buffer-mode "edit"
         buffer-info-create

@@ -38,7 +38,7 @@ define-macro c-slashify
         !until &gre $window-acol 76
         insert-string "\\"
         !if &not &seq @wc "\n"
-            kill-line
+            1 kill-line
         !endif
         forward-line
     !done
@@ -64,7 +64,7 @@ define-macro c-deslashify
         !until &not &sin @wc " \t"
         forward-char
         !if &not &seq @wc "\n"
-            kill-line
+            1 kill-line
         !endif
         forward-line
     !done
@@ -127,14 +127,14 @@ define-macro c-hash-eval
                         -1 kill-region
                         !jump -7
                     !endif
-                    kill-line
+                    1 kill-line
                     -1 yank
                 !endif
                 beginning-of-buffer
                 !force search-forward "//"
                 !if $status
                     2 backward-char
-                    kill-line
+                    1 kill-line
                     -1 yank
                 !endif
                 beginning-of-buffer

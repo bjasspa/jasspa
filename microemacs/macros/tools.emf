@@ -247,7 +247,7 @@ define-macro uniq
     ; Check the remaining lines.
     !while &less $window-line #l0
         !if &seq #l1 @wl
-            kill-line
+            1 kill-line
             set-variable #l0 &sub #l0 1
         !else
             set-variable #l1 @wl

@@ -311,7 +311,7 @@ set-variable %met-level   6
         beginning-of-buffer
         !force search-forward "%met-hiscore"
         !if $status
-            kill-line
+            1 kill-line
             insert-string &spr " \"%s\"" #l0
             0 save-buffer
         !else

@@ -150,7 +150,7 @@ set-variable #l0 0
         insert-newline
         search-forward ";"
         backward-char
-        kill-line
+        1 kill-line
         -1 yank
         search-forward "^\\(----\\|====\\)"
         beginning-of-line

@@ -399,7 +399,7 @@ define-macro tex2nr
     end-of-buffer
     backward-line
     !while &and &gre $window-line 1 &sequal @wc "\n"
-        kill-line
+        1 kill-line
         backward-line
     !done
     ;

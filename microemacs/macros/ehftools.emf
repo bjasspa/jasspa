@@ -46,7 +46,7 @@ define-macro ehf-process-buffer
                 backward-char
             !until &seq @wc "("
             forward-delete-char
-            kill-line
+            1 kill-line
             set-variable #l0 @y
             -1 yank
         !else
@@ -134,7 +134,7 @@ define-macro ehf-process-buffer
     end-of-buffer
     backward-line
     !while &seq @wc "\n"
-        kill-line
+        1 kill-line
         -1 yank
         backward-line
     !done
@@ -142,7 +142,7 @@ define-macro ehf-process-buffer
     search-forward "^[^!#]"
     backward-char
     !while &seq @wc "\n"
-        kill-line
+        1 kill-line
         -1 yank
     !done
 !emacro

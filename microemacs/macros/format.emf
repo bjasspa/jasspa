@@ -169,7 +169,7 @@ define-macro delete-indentation
                         ifill-para2
                         !if #l3
                             search-forward "^$"
-                            kill-line
+                            1 kill-line
                             -1 yank
                         !endif
                         #l4 goto-line
@@ -182,7 +182,7 @@ define-macro delete-indentation
                 !endif
                 !if #l3
                     search-forward "^$"
-                    kill-line
+                    1 kill-line
                     -1 yank
                 !endif
                 forward-paragraph
@@ -231,14 +231,14 @@ define-macro delete-indentation
                 insert-newline
                 2 backward-line
                 @# ifill-para2
-                kill-line
+                1 kill-line
                 -1 yank
                 set-variable #l0 &add #l0 &sub $window-line #l3
             !endif
             !if #l2
                 set-variable #l3 &sub $window-line 1
                 #l2 goto-line
-                kill-line
+                1 kill-line
                 -1 yank
                 #l3 goto-line
             !else
