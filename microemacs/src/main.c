@@ -1554,16 +1554,15 @@ missing_arg:
         {
             if(bp->b_fname != NULL)
             {
-                uint8 buff[MAXBUF+30], *ss ;
+                uint8 buff[MAXBUF+32] ;
+                int nn=1 ;
                 if(meModeTest(bp->b_mode,MDBINRY))
-                    ss = "b" ;
-                else if(meModeTest(bp->b_mode,MDRBIN))
-                    ss = "r" ;
-                else if(meModeTest(bp->b_mode,MDCRYPT))
-                    ss = "c" ;
-                else
-                    ss = "" ;
-                sprintf((char *)buff,"C:ME:find-%sfile \"%s\"\n",ss,bp->b_fname) ;
+                    nn |= BFND_BINARY ;
+                if(meModeTest(bp->b_mode,MDCRYPT))
+                    nn |= BFND_CRYPT ;
+                if(meModeTest(bp->b_mode,MDRBIN))
+                    nn |= BFND_RBIN ;
+                sprintf((char *)buff,"C:ME:%d find-file \"%s\"\n",nn,bp->b_fname) ;
                 TTsendClientServer(buff) ;
                 if(bp->line_no != 0)
                 {

@@ -1043,7 +1043,7 @@ meGetStringFromUser(uint8 *prompt, int option, int defnum, uint8 *buf, int nbuf)
         if(option & MLHIDEVAL)
         {
             uint8 hbuf[MAXBUF] ;
-            ff = strlen(buf) ;
+            ff = meStrlen(buf) ;
             meAssert(ff < MAXBUF) ;
             memset(hbuf,'*',ff) ;
             hbuf[ff] = '\0' ;

@@ -1160,7 +1160,7 @@ handle_namesvar:
         }
         return emptym ;
     case EVVERSION:
-        return meVERSION_CODE ;
+        return (uint8 *) meVERSION_CODE ;
     case EVTEMPNAME:
         mkTempName (evalResult, NULL,NULL);
         return evalResult ;
@@ -1487,7 +1487,7 @@ getval(uint8 *tkn)   /* find the value of a token */
             {
                 ss = meRegCurr->commandName ;
                 if(ss == NULL)
-                    return "" ;
+                    return (uint8 *) "" ;
             }
             else if((ss = getMacroArg(index)) == NULL)
                 return abortm ;
@@ -1841,7 +1841,7 @@ getval(uint8 *tkn)   /* find the value of a token */
         {
             /* parent command name */
             if(meRegCurr->prev->commandName == NULL)
-                return "" ;
+                return (uint8 *) "" ;
             return meRegCurr->prev->commandName ;
         }
         else if((tkn[1] == 'f') && (tkn[2] == 's'))
@@ -2354,7 +2354,7 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
                 ii = cmpIFunc((char *)arg2,(char *)ss,mlen) ;
                 if(!ii)
                 {
-                    strcpy(evalResult+dlen,arg3) ;
+                    meStrcpy(evalResult+dlen,arg3) ;
                     dlen += rlen ;
                     ss += mlen ;
                 }
@@ -2393,7 +2393,7 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
                     mlen = meRegexStrCmp.group[0].start - soff ;
                     if(dlen+mlen >= MAXBUF)
                         break ;
-                    strncpy(evalResult+dlen,arg1+soff,mlen) ;
+                    meStrncpy(evalResult+dlen,arg1+soff,mlen) ;
                     dlen += mlen ;
                     rr = arg3 ;
                     while((cc=*rr++) != '\0')
@@ -2415,7 +2415,7 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
                                         break ;
                                     if(cc)
                                         soff += meRegexStrCmp.group[0].start ;
-                                    strncpy(evalResult+dlen,arg1+soff,mlen) ;
+                                    meStrncpy(evalResult+dlen,arg1+soff,mlen) ;
                                     dlen += mlen ;
                                 }
                             }
