@@ -289,3 +289,15 @@ define-macro-file collapse collapse-current collapse-all
         my-dhook-always
     !endif
 !emacro
+
+; define the default hook
+define-macro fhook-default
+    @# buffer-init "default"
+    buffer-init-hooks
+!emacro
+
+; buffer-init variables
+set-variable .fhook-default.setup &reg "/history/fhook/default" "bgiopx"
+set-variable .fhook-default.setup-mask "abegikmoptux"
+
+buffer-init-fhook "default"
