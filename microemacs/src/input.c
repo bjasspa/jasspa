@@ -880,8 +880,11 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
     meUByte   prom[meBUF_SIZE_MAX] ;
     meUByte   ch, **strList ;
     meUByte  *contstr=NULL ;
-    int     gotPos=1, fstPos, lstPos, curPos, mrkPos=0, noStrs ;
+    int     gotPos=1, fstPos, lstPos, mrkPos=0, noStrs ;
     int     changed=1, compOff=0 ;
+#if MEOPT_EXTENDED
+    int     curPos ;
+#endif
     
     if((mlgsStoreBuf = meMalloc(nbuf)) == NULL)
        return meABORT ;
@@ -1146,7 +1149,9 @@ input_expand:
                     TTbell();
                     break ;
                 }
+#if MEOPT_EXTENDED
                 curPos = fstPos-1 ;
+#endif
                 if(fstPos == lstPos)
                 {
                     meStrcpy(buf+compOff,(strList[lstPos])) ;
@@ -1618,12 +1623,12 @@ ml_yank:
             
         case CK_INSFLNM:    /* insert file name */
             {
-                register meUByte ch, *p = frameCur->bufferCur->fileName;
+                register meUByte ch, *p ;
                 
+                p = (ii < 0) ? frameCur->bufferCur->name:frameCur->bufferCur->fileName ;
                 if(p != NULL)
-                    while(ii--)
-                        while((ch=*p++) && mlInsertChar(ch, buf, &ipos, &ilen, nbuf))
-                            ;
+                    while(((ch=*p++) != '\0') && mlInsertChar(ch, buf, &ipos, &ilen, nbuf))
+                        ;
                 break ;
             }
             
@@ -1736,7 +1741,10 @@ ml_yank:
                 if(frameCur->mlStatus & MLSTATUS_POSOSD)
                 {
                     if(osdDisplayMouseLocate(1) > 0)
+                    {
+                        mlfirst = cc ;
                         cont_flag = 0;
+                    }
                 }
                 else
 #endif
