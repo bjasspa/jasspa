@@ -1,0 +1,4 @@
+if "if \p then\rend if\r\P"
+wh "while \p do\rend while\r\P"
+fu "function \p\rend function\r\P"
+

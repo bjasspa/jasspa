@@ -12,7 +12,7 @@
 //  Author        : $Author$
 //  Created By    : $USER_NAME$
 //  Created       : $ASCII_TIME$
-//  Last Modified : <191297.1109>
+//  Last Modified : <011230.2158>
 //
 //  Description	
 //
@@ -36,7 +36,7 @@
 
 #ifndef __$BUFFER_NAME$
 #define __$BUFFER_NAME$
-
+$CURSOR$
 
 #endif // __$BUFFER_NAME$
 
