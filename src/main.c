@@ -1760,7 +1760,7 @@ handle_stdin:
     
     if(noFiles > 0)
     {
-        if((frameCur->bufferCur == mainbp) && ((bp = replacebuffer(NULL)) != mainbp))
+        if((frameCur->bufferCur == mainbp) && ((bp = replacebuffer(NULL)) != mainbp) && (bp->fileName != NULL))
         {
             if(HistNoFilesLoaded && isUrlLink(bp->fileName))
             {
