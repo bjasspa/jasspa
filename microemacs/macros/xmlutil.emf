@@ -242,7 +242,7 @@ define-macro xml-backward-tag
     !repeat
         !force search-backward "<"
         !if &not $status
-            ml-write &spr "[failed to find openning <%s> for tag on line %d]" &lget #p9 6 &lget #p9 2
+            ml-write &spr "[failed to find opening <%s> for tag on line %d]" &lget #p9 6 &lget #p9 2
             !abort
         !endif
         !force @# xml-get-tag-info
@@ -255,7 +255,7 @@ define-macro xml-backward-tag
             !if &xise &rig @wl $window-col #l2
                 !return
             !endif
-            ml-write &spr "[failed to find openning <%s> for tag on line %d]" &lget #p9 6 &lget #p9 2
+            ml-write &spr "[failed to find opening <%s> for tag on line %d]" &lget #p9 6 &lget #p9 2
             !abort
         !elif &equ #l0 7
             @# xml-goto-matching-tag-b
