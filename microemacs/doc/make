@@ -7,7 +7,7 @@
 #
 # Author      : Jon Green
 # Created     : 22nd February 1997
-# Last Edited : <011212.2316>
+# Last Edited : <011213.1850>
 #
 # History     : JG  220297 Original  Constructed from emacssrc
 #
@@ -44,6 +44,7 @@ NRORDER	=	$(DOCBIN)nrorder
 NRSEARCH=	$(DOCBIN)nrsearch
 HTS	=	$(DOCBIN)hts
 HC31	=	hc31
+ME	=	menu32.exe
 #hc31
 
 # Standard File Extensions
@@ -550,7 +551,7 @@ me.ehf: meehf.hts
 	hts2html -l .htm ..\meehf.hts
 	copy me.htm me\1.htm
 	cd me
-	menu32 -n "@ehftools" *.htm
+	$(ME) -n "@ehftools" *.htm
 	copy me.ehf ..\..
 	cd ..\..
 
