@@ -30,11 +30,11 @@
 !emacro
 
 0 define-macro osd-help-get-scope
-    set-variable @1 &lget "\b^!.\\(..\\)\\(.*\\)\b^!.\\(2m\\)\\(.*\\)\b^!.\\([23].\\)\\(.*\\)\b^!.\\(5.\\)\\(.*\\)\b^!.\\(4.\\)\\(@.*\\)\b^!.\\(4.\\)\\(!.*\\)\b^!.\\(4.\\)\\(&.*\\)\b^!.\\(9.\\)\\(.*\\)\b" @2
+    set-variable @1 &lget "\b^!.\\(..\\)\\(.*\\)\b^!.\\(2m\\)\\(.*\\)\b^!.\\([23].\\)\\(.*\\)\b^!.\\(5.\\)\\(.*\\)\b^!.\\(4.\\)\\(@.*\\)\b^!.\\(4.\\)\\(!.*\\)\b^!.\\(4.\\)\\(&.*\\)\b^!.\\(9.\\)\\(.*\\)\b" .osd-help.scope
 !emacro
 
 0 define-macro osd-help-create-list
-    osd-help-get-scope #l9 @2
+    osd-help-get-scope #l9
     set-variable #l8 @1
     set-variable #l0 $buffer-bname
     set-variable #l1 $window-line
@@ -149,8 +149,8 @@
 !emacro
 
 0 define-macro osd-help-create-slist
-    osd-help-get-scope #l9 @2
-    @# osd-help-create-slist-setup @3
+    osd-help-get-scope #l9
+    @# osd-help-create-slist-setup @2
     set-variable .bb $buffer-bname
     set-variable .wl $window-line
     set-variable .wy $window-y-scroll
@@ -233,18 +233,18 @@
 !emacro
 
 0 define-macro osd-help-set-size
-    osd .osd.ohlp   0 "batcHdsR" 9 3 .w .d -1 -1 630 .scheme.osd-title "MicroEmacs Help" osd-help-resize
-    osd .osd.ohlpn  0 "Ns" &sub .w 2 &sub .d 2 -1 -1
-    osd .osd.ohlpc  0 "s"  &sub .w 4 &sub .d 6 -1 -1 osd-help-cont-list-crt
-    osd .osd.ohlpi  0 "s"  &sub .w 4 &sub .d 6 -1 -1 osd-help-index-list-crt
-    osd .osd.ohlps  0 "s"  &sub .w 4 &sub .d 6 -1 -1
+    osd .osd.ohlp   0 "batcHdsR" 9 3 .w .d -1 -1 100 .scheme.osd-title "MicroEmacs Help" osd-help-resize
+    osd .osd.ohlpn  0 "Nsd" &sub .w 2 &sub .d 2 -1 -1 10
+    osd .osd.ohlpc  0 "sd"  &sub .w 4 &sub .d 6 -1 -1 20 osd-help-cont-list-crt
+    osd .osd.ohlpi  0 "sd"  &sub .w 4 &sub .d 6 -1 -1 60 osd-help-index-crt
+    osd .osd.ohlps  0 "sd"  &sub .w 4 &sub .d 6 -1 -1 40
     osd .osd.ohlpcl 0 "sSf"  .scheme.osd-child &sub .w 8 &sub .d 10 0 -1 
     osd .osd.ohlpil 0 "AfsS" .scheme.osd-child &sub .w 8 &sub .d 10 0 -1 
     osd .osd.ohlpsl 0 "sSf"  .scheme.osd-child &sub .w 8 &sub .d 14 0 -1 
-    osd .osd.ohlpc 20 "IbHct" .scheme.osd-sbar &sub .w 8 &sub .d 10  .osd.ohlpcl
+    osd .osd.ohlpc 20 "IbHct" .scheme.osd-sbar &sub .w 8 &sub .d 10 .osd.ohlpcl
     osd .osd.ohlpi 60 "IbHct" .scheme.osd-sbar &sub .w 8 &sub .d 10 .osd.ohlpil
     osd .osd.ohlps 90 "IbHct" .scheme.osd-sbar &sub .w 8 &sub .d 14 .osd.ohlpsl
-    osd .osd.ohlps 40 "ExHftz" .scheme.osd-entry &sub .w 19 1 "" f osd-help-search-entry
+    osd .osd.ohlps 40 "ExHftz" .scheme.osd-entry &sub .w 20 1 "" f osd-help-search-entry
 !emacro
 0 define-macro osd-help-resize
     set-variable #l0 &lef $result 4
@@ -263,11 +263,24 @@
     osd-help-set-size
 !emacro
 
-; The Search page ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-0 define-macro osd-help-search-scope
-    set-variable .osd-help-search-list-crt.scope @#
-    osd .osd.ohlps 15  "Mdtmsxfh" $result .osd.ohlpss
+0 define-macro osd-help-scope
+    !if &les @# 0
+        -1 osd .osd.tmp
+        osd .osd.tmp 0 "b"
+        set-variable #l0 0
+        !while &not &seq "" &set #l1 &lget .list &inc #l0 1
+            osd .osd.tmp #l0 "" &cat #l1 " " #l0 osd-help-scope-set
+        !done
+    !else
+        set-variable $result &rep &lget .list .osd-help.scope "\H" ""
+    !endif
 !emacro
+set-variable .osd-help-scope.list "|\HAll|\HModes|\HCommands|\HVariables|Mac\Hro Variables|\HDirectives|\HFunctions|File \HTypes|"
+0 define-macro osd-help-scope-set
+    set-variable .osd-help.scope @#
+!emacro
+
+; The Search page ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 0 define-macro osd-help-search-entry
     !if &les @# 0
         set-variable .osd-help-search-list-crt.search &trb @ml20 "" .osd-help-search-list-crt.search
@@ -288,77 +301,57 @@
     !endif
 !emacro
 0 define-macro osd-help-search-list-crt
-    .flag osd-help-create-slist .osd.ohlpsl .osd-help-search-list-crt.scope .osd-help-search-list-crt.search
+    .flag osd-help-create-slist .osd.ohlpsl .osd-help-search-list-crt.search
     osd .osd.ohlpsl 0 "sSf" .scheme.osd-child &sub .osd-help-set-size.w 8 &sub .osd-help-set-size.d 14 0 -1 
 !emacro
 set-variable .osd-help-search-list-crt.flag   0
-set-variable .osd-help-search-list-crt.scope  1
 set-variable .osd-help-search-list-crt.search ""
 
-osd .osd.ohlpss 0 "b"
-osd .osd.ohlpss 1 "" "\HAll"              1 osd-help-search-scope
-osd .osd.ohlpss 2 "" "\HModes"            2 osd-help-search-scope
-osd .osd.ohlpss 3 "" "\HCommands"         3 osd-help-search-scope
-osd .osd.ohlpss 4 "" "\HVariables"        4 osd-help-search-scope
-osd .osd.ohlpss 5 "" "Ma\Hcro Variables"  5 osd-help-search-scope
-osd .osd.ohlpss 6 "" "\HDirectives"       6 osd-help-search-scope
-osd .osd.ohlpss 7 "" "\HFunctions"        7 osd-help-search-scope
-osd .osd.ohlpss 8 "" "File \HTypes"       8 osd-help-search-scope
 
 -1 osd .osd.ohlpsl
 osd .osd.ohlpsl 0 "Sf" .scheme.osd-child
 osd .osd.ohlpsl 1 "" ""
 
--1 osd .osd.ohlps
 osd .osd.ohlps 0   ""
 osd .osd.ohlps 5   ""
-osd .osd.ohlps 10  "Sfh" "      S\Hcope : " 15
-osd .osd.ohlps 15  "Mdtmsxfh" "All" .osd.ohlpss
+osd .osd.ohlps 10  "Sfh" "  S\Hcope:      " 15
+osd .osd.ohlps 15  "OtxmsfhHR" .scheme.osd-entry "################" .osd.tmp osd-help-scope
+osd .osd.ohlps 16  "BdxfHhR" .scheme.osd-ebtt &mid $window-chars 10 1 15
 osd .osd.ohlps 20  "BtfHhr" .scheme.osd-ebtt " E\Hxit "  f void
-osd .osd.ohlps 25  "fr" " "
+osd .osd.ohlps 25  "fr" "  "
 osd .osd.ohlps 30  ""
-osd .osd.ohlps 35  "Sfh" " \HSearch For : " 30
+osd .osd.ohlps 35  "Sfh" "  \HSearch For: " 40
 osd .osd.ohlps 45  ""
-osd .osd.ohlps 50  "fh" " "
+osd .osd.ohlps 50  "fh" "  "
 osd .osd.ohlps 55  "BfSHh"  .scheme.osd-dbtt " Search "
 osd .osd.ohlps 60  "hf" "  "
-osd .osd.ohlps 65  "Cfxph" "^[ *] \HExact" 1 osd-help-search-flag
+osd .osd.ohlps 65  "Ctfxph" &cat .osd.checkbox-chars "\} \HExact" 1 osd-help-search-flag
 osd .osd.ohlps 70  "hf" " "
-osd .osd.ohlps 75  "Cfxp" "^[ *] \HMagic" 2 osd-help-search-flag
+osd .osd.ohlps 75  "Ctfxp" &cat .osd.checkbox-chars "\} \HMagic" 2 osd-help-search-flag
 osd .osd.ohlps 80  ""
 osd .osd.ohlps 100 ""
 
 ; The Index page ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-0 define-macro osd-help-index-list-crt
-    !if @?
-        set-variable .scope @#
-    !elif .scope
-        !return
-    !else
-        set-variable .scope 1
-        set-variable $result "All"
+0 define-macro osd-help-index-crt
+    !if &sub .osd-help-index-crt.scope .osd-help.scope
+        osd-help-create-list .osd.ohlpil
+        osd .osd.ohlpil 0 "AfsS" .scheme.osd-child &sub .osd-help-set-size.w 8 &sub .osd-help-set-size.d 10 0 -1 
+        set-variable .scope .osd-help.scope
     !endif
-    osd .osd.ohlpi 30  "MdtmsxRfh" $result .osd.ohlpis
-    osd-help-create-list .osd.ohlpil .osd-help-index-list-crt.scope
-    osd .osd.ohlpil 0 "AfsS" .scheme.osd-child &sub .osd-help-set-size.w 8 &sub .osd-help-set-size.d 10 0 -1 
+!emacro    
+set-variable .osd-help-index-crt.scope 0
+0 define-macro osd-help-index-scope
+    @# osd-help-scope
+    osd-help-index-crt
 !emacro
-set-variable .osd-help-index-list-crt.scope 0
-
-osd .osd.ohlpis 0 "b"
-osd .osd.ohlpis 1 "" "\HAll"              1 osd-help-index-list-crt
-osd .osd.ohlpis 2 "" "\HModes"            2 osd-help-index-list-crt
-osd .osd.ohlpis 3 "" "\HCommands"         3 osd-help-index-list-crt
-osd .osd.ohlpis 4 "" "\HVariables"        4 osd-help-index-list-crt
-osd .osd.ohlpis 5 "" "Ma\Hcro Variables"  5 osd-help-index-list-crt
-osd .osd.ohlpis 6 "" "\HDirectives"       6 osd-help-index-list-crt
-osd .osd.ohlpis 7 "" "\HFunctions"        7 osd-help-index-list-crt
-osd .osd.ohlpis 8 "" "File \HTypes"       8 osd-help-index-list-crt
 
 osd .osd.ohlpi 0   ""
 osd .osd.ohlpi 10  ""
-osd .osd.ohlpi 20  "Sfh" " \HScope : " 30
+osd .osd.ohlpi 20  "Sfh" "  \HScope: " 30
+osd .osd.ohlpi 30  "OtxmsfhHR" .scheme.osd-entry "################" .osd.tmp osd-help-index-scope
+osd .osd.ohlpi 31  "BdxfHhR" .scheme.osd-ebtt &mid $window-chars 10 1 30
 osd .osd.ohlpi 40  "BtrfHh" .scheme.osd-ebtt " E\Hxit " f void
-osd .osd.ohlpi 45  "rf" " "
+osd .osd.ohlpi 45  "rf" "  "
 osd .osd.ohlpi 50  ""
 osd .osd.ohlpi 70  ""
 
@@ -425,7 +418,7 @@ osd .osd.ohlpc 10  ""
 osd .osd.ohlpc 30  ""
 
 ; The note-book ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-osd .osd.ohlpn 0  "N"
+osd .osd.ohlpn 0  "Nd" 10
 osd .osd.ohlpn 1  "Pft" "Contents" .osd.ohlpc
 osd .osd.ohlpn 2  "Pft" "Index"    .osd.ohlpi
 osd .osd.ohlpn 3  "Pft" "Search"   .osd.ohlps
@@ -442,3 +435,4 @@ osd-help-set-size
 define-macro osd-help
     .osd.ohlp osd
 !emacro
+set-variable .osd-help.scope  1
