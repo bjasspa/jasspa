@@ -98,6 +98,20 @@
                 !if &not &band #l2 0x400
                     !force 0 popup-window &lget .toolbar.tool-buff #l1
                     !if $status
+                        !if &not &exi :tool-width
+                            ; this buffer has not been used by the toolbar before,
+                            ; install dummy mouse handler to avoid modifying problems
+                            ; and ensure that the tool-cmd is called if required on create
+                            set-variable :mouse-pick-all "toolbar-mouse-void"
+                            set-variable :mouse-drop-all "toolbar-mouse-void"
+                            1 buffer-mode "hide"
+                            !if &band #l2 0x001
+                                0xdf set-position "\x85"
+                                1 goto-position "\x84"
+                                !force !force execute-line &lget .toolbar.tool-cmd #l1
+                                !force &cond &band #l2 0x100000 0xdf 1 goto-position "\x85"
+                            !endif
+                        !endif
                         !if &sub :tool-width $window-width
                             ; the width of the tool window has changed - update modeline
                             #l1 toolbar-redraw-mode
@@ -200,8 +214,10 @@
         popup-window &lget .toolbar.tool-buff #l1
         set-variable .toolbar.tool-flag &lset .toolbar.tool-flag #l1 &bxor &lget .toolbar.tool-flag #l1 0x400
         set-variable .toolbar.tool-flag &lset .toolbar.tool-flag #l0 &bxor &lget .toolbar.tool-flag #l0 0x400
-        set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x002
+        set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x008
         find-buffer &lget .toolbar.tool-buff #l0
+        ; unsetting the :tool-width variable will force a tool update
+        !force unset-variable :tool-width
         goto-position "\x84"
     !endif
 !emacro
@@ -228,8 +244,9 @@
 *page-tool
                 set-variable .toolbar.tool-flag &lset .toolbar.tool-flag #l1 &bxor &lget .toolbar.tool-flag #l1 0x400
                 set-variable .toolbar.tool-flag &lset .toolbar.tool-flag #l2 &bxor &lget .toolbar.tool-flag #l2 0x400
-                set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x002
+                set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x008
                 find-buffer &lget .toolbar.tool-buff #l2
+                !force unset-variable :tool-width
                 1 goto-position "\x82"
                 ; fully handled this event, abort
                 !abort
