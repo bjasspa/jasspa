@@ -6,7 +6,7 @@
  *  Object Name   : emain.h
  *  Author        : Steve Philips
  *  Created       : Thu Nov 27 19:17:17 1997
- *  Last Modified : <011218.0739>
+ *  Last Modified : <011217.1315>
  *
  *  Description 
  *       Encapsulate all of the platform definitions into a sigle file
@@ -247,7 +247,6 @@
 #undef  _WIN32                          /* This is not win32             */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
 #define _USEPOLL       1                /* use poll() for stdin polling  */
-#define _USETPARM      1                /* Use tparm for termcap entries */
 #ifndef _NO_XTERM
 #define _XTERM         1                /* Use Xlib                      */
 #endif
