@@ -21,7 +21,7 @@ set-variable .cvs.message ""
 
 !if &band .hilight.flags 0x02
     ; fix the *files* buffer hilighting for cvs additions
-    hilight .hilight.dirlst 0x012 "[0-9][0-9]:[0-9][0-9] [0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9] [0-9][0-9]:[0-9][0-9] \\{" .scheme.file
+    hilight .hilight.dirlst 0x012 "[0-9][0-9]:[0-9][0-9] [0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9] [0-9][0-9]:[0-9][0-9] \\{" ..scheme.file
     hilight .hilight.dirlst 0x112 "*[?AMCR]" .scheme.select
     hilight .hilight.dirlst 0x112 " \\?"     .scheme.keyword
     hilight .hilight.dirlst 0x112 " A"       .scheme.type
@@ -331,7 +331,7 @@ define-macro cvs-resolve-conflicts
     !if &not &sin "Revis'n" .fhook-dirlst.col-name
         set-variable #l0 &lef .fhook-dirlst.col-name 1
         set-variable .fhook-dirlst.col-name &spr "%sRevis'n%sRepository Date %s" .fhook-dirlst.col-name #l0 #l0
-        set-variable .fhook-dirlst.col-flag &spr "%s1%1%s" .fhook-dirlst.col-flag #l0 #l0
+        set-variable .fhook-dirlst.col-flag &spr "%s1%1%s" ..fhook-dirlst.col-flag #l0 #l0
     !endif
     !if &seq &lef $buffer-fname 6 "ftp://"
         ; ftp directories not supported
@@ -524,7 +524,7 @@ define-macro cvs-resolve-conflicts
     !elif &seq @# 3
         set-variable #l2 &spr "cvs diff %s%s" &cond .cvs.diff-c "-c " "" &cond .cvs.diff-w "-w " ""
     !else
-        set-variable #l2 &spr "cvs %s" &lget "|update|commit|diff|log|status -v|add|" @#
+        set-variable #l2 &spr "cvs %s" &lget "|update|commit|diff|log|status -v|add|||add -kb|" @#
     !endif
     set-variable #l5 $mouse
     set-variable $mouse &bor 0x50000 &band 0xffff #l5
@@ -576,6 +576,7 @@ define-macro cvs-resolve-conflicts
         osd .osd.tmp 40 "" "&Log files"         4 osd-cvs-file-menu-cmd
         osd .osd.tmp 50 "" "&Status files"      5 osd-cvs-file-menu-cmd
         osd .osd.tmp 54 "" "&Add files"         6 osd-cvs-file-menu-cmd
+        osd .osd.tmp 54 "" "&Add binary files"  9 osd-cvs-file-menu-cmd
         osd .osd.tmp 55 "" "Remove files"       7 osd-cvs-file-menu-cmd
     !else
         osd .osd.tmp 10 "" "Update files"
