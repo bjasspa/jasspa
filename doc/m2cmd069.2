@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd069.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd069.2,v 2.6 2005-03-06 08:48:14 jon Exp $
 .Im MicroEmacs command|hilight|macrodevelop
 .so me.tni
 .TH hilight 2
@@ -390,6 +390,10 @@ out of synch.  This test can reset  this if further  down the file an open and
 close  bracket  is found on the same  line. For this to have any  effect,  the
 hilighting scheme must use look-back (flag \fC0x02\fR of
 \fBHilight Creation\fR).
+.IP \fB0x1000\fR
+Flag is typically used with a branch token (\fC0x04\fR) and indicates that the
+hilight  exists to the end of the line or is  terminated by the new line (i.e.
+encountering the end of line will removes the branch hilight).
 .LP
 Note that \fC0x004\fR,  \fC0x008\fR and \fC0x080\fR are mutually exclusive and
 more than 1 should not be set in any one  hilight  token, if 2 or more are set
@@ -418,6 +422,12 @@ use is different from regex.
 Groups  are  supported  in  hilighting,  but they  must only  enclose a single
 character,  closures  ('*', '?' and '+') must come after the closure, i.e. use
 "\\(.\\)*", not "\\(.*\\)". Alternatives ("\fC\\|\fR") are not supported.  
+.IP
+Groups are used to capture a single, this single character may be tested again
+within  the  string  using the  syntax  \fC\\1\fR..\fC\\9\fR  as with  regular
+expressions.   Where  the  inverse  character  is  required  then  the  syntax
+\fC\\!1\fR..\fC\\!9\fR  may be used.  This  \s-1NOT\s0  syntax is  special  to
+highlighting and is not present in the regular expression general syntax.
 .IP "\fB.\fR"
 Matches any character.
 .IP "\fB[...]\fR"
@@ -490,6 +500,7 @@ A spell word character.
 .IP "\fB[^...]\fR"
 Matches  all   characters   except  the  given  range  of   characters,   e.g.
 "\fC[^[:space:]]\fR".
+.RE
 .IP \fC\\\\#\fR
 The same character which matched the #th group token. This functionality
 is best explained using UNIX
@@ -502,16 +513,26 @@ checked for and simulated in \*(mS using the following:
 .RS
 .CS
 hilight 1 64 "\\\\(.\\\\)\\CH\\\\1" "\\\\1" .scheme.bold
-.CE
+.CE 0
 .RE
 .Me $ehf-scheme
+.IP
 The use of "\fC\\1\fR" in the search string ensures that the second  character
 is the same as the first. This is replace by a single  character  drawn in the
 bold scheme.
-.RE
+.IP \fC\\\\!#\fR
+The  inverse  character  that  matched  the #th group  token, i.e.  \s-1NOT\s0
+\fC\\1\fR.
 .IP "\fB?\fR \fB+\fR \fB*\fR"
 Matches  0 or 1, 1 or  more  and  0 or  more  of  the  previous  character  or
 character range respectively.
+.TP 
+\fC\\w \\W \\l \\L \\u \\U \\d \\D \\x \\X \\s \\S\fR
+.\"
+Marches   the   special   word   characters    (\fCw\fR)ord,    (\fCl\fR)ower,
+(\fCu\fR)pper,   (\fCd\fR)igit,   (\fCx\fR)digit,    white(\fCs\fR)pace.   The
+uppercase letters are the inverse. (see 
+.Hl "Regular Expressions" RegularExpressions 2 ).
 .PP
 Following is a list of hilighting regular expression restrictions:
 .IP
@@ -525,7 +546,7 @@ as it is to the right of the \fB\\}\fR:
 .Me $emf-scheme
 .RS
 .CS
-hilight 1 0 "^\\\\w+\\\\}\\\\s-*(" .scheme.function
+hilight 1 0 "^\\\\w+\\\\}\\\\s*(" .scheme.function
 .CE
 .Me $ehf-scheme
 Instead  either  the  space  match  must  be  include  in the  function  token
@@ -534,10 +555,10 @@ underlining) or by fixing the number of spaces as follows:
 .Me $emf-scheme
 .CS
 ; include the spaces in the function hilighting
-hilight 1 0 "^\\\\w+\\\\s-*\\\\}(" .scheme.function
+hilight 1 0 "^\\\\w+\\\\s*\\\\}(" .scheme.function
 ; or fix the number of spaces to 0, 1 ...
 hilight .hilight.c    0 "^\\\\w+\\\\}(" .scheme.function
-hilight .hilight.c    0 "^\\\\w+\\}\\\\s-(" .scheme.function
+hilight .hilight.c    0 "^\\\\w+\\}\\\\s(" .scheme.function
 .CE 0
 .RE
 .Me $ehf-scheme
@@ -561,8 +582,8 @@ Following is a list of hilight type bit / token regex equivalents:
 .IP \fB0x02\fR
 "\fC????.*\fR"
 .IP \fB0x20\fR
-"\fC^\\s-*\\{????\fR"  - (note  that  this  is  strictly  incorrect  as the
-\fC\\s-*\fR  is to the left of the  \fC\\{\fR, it is correctly  handled for
+"\fC^\\s*\\{????\fR"  - (note  that  this  is  strictly  incorrect  as the
+\fC\\s*\fR  is to the left of the  \fC\\{\fR, it is correctly  handled for
 the ease of use).
 .IP \fB0x100\fR
 "\fC^????\fR"
@@ -635,12 +656,28 @@ hilight .hilight.man 64 "_\\CH\\\\(.\\\\)\\CH\\\\1\\CH\\\\1\\CH\\\\1\\\\}[^\\CH]
 .CE
 .Me $ehf-scheme
 This  replaces the complex  nroff  character  string with a single  hi-lighted
-character (don't believe me, try it!).
+character (if you do not believe me then try it!).
 .SH NOTES
 \*(mS hilight was written with speed and  flexibility in mind, as a result the
-user is assumed to know what they are doing, if not the effects can be fatal.
+user is assumed to know what they are doing, if not the effects can  sometimes
+be fatal.
+.PP
+Within \*(mS macro language then a single  backslash  "\fC\\\fR" is the escape
+character of the macro pre-processor. When writing a regular expression search
+string in the macro language then search string backslashes should be escaped.
+Hence a regular  expression defined as  "\fC\\x41\\\\x41\fR"  searches for the
+character   '\fCA\fR'  ('\fCA\fR'  is  hexadecimal  0x41  i.e.  "\fC\\x41\fR")
+followed  by a single  hexadecimal  character  ("\fC\\\\x\fR)  followed by the
+literal string "\fC41\fR".
+.SH HISTORY
+The March 2005  release  modified  the  \s-1NOT\s0  replacement  pattern  with
+"\fC\\s!D\fR" where \fCD\fR is the numeric group identifier \fC1..9\fR.
+.PP
+The token  \fC0x1000\fR was undocumented  before March 2005 and is now a fully
+supported hilight mode.
 .SH "SEE ALSO"
 .na
+.Hl "Regular Expressions" RegularExpressions 2 ,
 .Hl "File Language Templates" languageTemplates 2 ,
 .Ht $buffer-hilight 5 ,
 .Ht add-file-hook 2 ,
