@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.26 2005-01-16 19:49:05 jon Exp $
+.Id $Id: me.nrs,v 2.27 2005-01-23 12:26:16 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -378,7 +378,7 @@ output * "%N
 .Se
 .NH Abbreviations - "Short Cuts and Abbreviations"
 .SH "SHORT CUTS"
-Automatic commands, history and automatic formatting modes such as 
+Automatic commands, history and automatic formatting modes such as
 .Ht indent 2 .
 .SS Commands
 .Ss
@@ -1091,7 +1091,7 @@ Answers to those burning questions that people ask from time to time \...
 .SS "Where does the name JASSPA come from ?"
 The current  maintainers  initials  mixed up, padded out to make words,  short
 listed  and  searched  on the WWW to find a unique  name.  This  process  took
-approximately two months. 
+approximately two months.
 .SS "How was the JASSPA logo derived ?"
 The logo was derived from the program initials Me. Given the limited number of
 pixels available in an icon then the 'e' was superimposed in the center of the
@@ -2047,26 +2047,555 @@ etc. are not as slick as they  could be,  certainly  under  Microsoft  Windows
 common editor across all working platforms has been achieved!
 .SS "Development History"
 .\"
+.B "8th Release - March 2005"
+.BS
+[050122]  Fixed
+.Ht dir 2m
+mode  loss on a  directory  re-read,  this  caused  a number  of side  effects
+including loss of highlighting and user prompt to reload the directory when it
+had changed.
+.BU
+[050119] Removed the "\fIsub-key\fR"  argument  from all registry  related calls
+(see
+.Ht &reg 4
+and
+.Ht set-registry 2 ).
+The registry calls used to comprise
+two arguments "\fIroot\fR" and "\fIsub-key\fR", the "\fIsub-key\fR" is really
+redundant and the same effect may be achieved by a simple string
+concatenation of the "\fIsub-key\fR" to the "\fIroot\fR".
+.BU
+[050119]  Added  "\fCmy-*hook-always\fR"  macro  checks  in  the  buffer  hook
+switching of
+.Ht buffer-init 3
+to permit  global file hooks to be defined, this allows a file hook to operate
+on all buffers.  "\fCmy-*hook-always\fR"  is executed  after the language file
+hooks of "\fC*hook-XXX\fR" and "\fCmy-*hook-XXX\fR".
+.BU
+[050116] Added "\fCTODO\fR" highlighting rule for Makefile comments.
+.BU
+[050114] Fixed
+.Ht narrow-buffer 2
+type numeric argument not processed correctly.
+.BU
+[050113] Added toolbar tool mouse select region command.
+.BU
+[050113] Added bindings for the cvs and ftp console tools.
+.BU
+[050113] Fixed
+.Ht organizer 3
+duplicate index bug.
+.BU
+[050111] Deleted the
+.Hr get-registry 2
+command, this has been  depreciated and
+.Ht &reg 4
+should be used instead.
+.BU
+[050111] Extended the
+.Ht read-registry 2
+and
+.Ht save-registry 2
+commands to permit  reading and writing from a buffer based  registry  (rather
+than file).
+.BU
+[050111] Extended
+.Ht list-registry 2
+to permit listing of specific nodes, the output buffer of the registry listing
+may be specified.  Added a invisible  flag to a registry  node which hides the
+node completely (but can be toggled).
+.BU
+[050111]  Fixed windows  server cmd file polling of up to 60 times a second by
+making the adder of the command  responsible  for 'waking'  \*(mS by sending a
+\fCWM_USER\fR message. This is not a problem for \s-1UNIX\s0 as it is possible
+to wait on file input and \fCEOF\fR is not reported.
+.BU
+[050105] Fixed several  narrow-to
+.Ht narrow-buffer 2
+usability issues, with these fixes the top and bottom narrow cannot be removed
+without a markup line and the order cannot get muddled.
+.BU
+[050105] Fixed a problem with the anchor position up-date when inserting a
+whole line.
+.BU
+[050105]  Changed the osd entry mouse handling to always  refocus, this allows
+the user to change location in the current entry using the mouse.
+.BU
+[050105] Fixed.
+.Ht insert-macro 2
+undo location was incorrect causing a crash.
+.BU
+[050103]  Spelling  dialog.  Changed  the Ignore  button to  Continue  if word
+becomes correct without changing (word added or language changed).
+.BU
+[050103] Fixed. CVS osd dialog with bad hot-key.
+.BU
+[050102] Added setting of
+.Ht $recent-keys 5
+variable.
+.BU
+[041231] Variable
+.Hr $fmatchdelay 5
+renamed   to
+.Ht $pause-time 5 .
+\fI$pause-time\fR  is now used for other  \*(mS  delay  times when the user is
+prompted for information.
+.BU
+[041224] Fixed several usability issues in the search replace dialog.
+.BU
+[041224] Up-graded printer-setup dialog to new style OSD.
+.BU
+[041224] CVS dialog - added read-only option to checkout and update.
+.BU
+[041224] Fixed
+.Ht goto-line 2
+offset which as always going to the previous line (one out).
+.Bu
+[041221] Added  support  for proper kill buffer use in message  line, i.e.
+.Ht set-mark 2 ,
+.Ht kill-region 2 ,
+.Ht copy-region 2 ,
+.Ht yank 2
+and
+.Ht  reyank 2
+all work in the same way as a normal buffer.
+.BU
+[041221] Fixed registry node deletion when the node is modified.
+.BU
+[041221] Removed
+.Ht osd 2
+\fCosd 0\fR  '\fId\fR'  flag and added  '\fII\fR'  initial  item and '\fID\fR'
+default  button flags,  existing osd dialogs  which use '\fId\fR' will fail to
+load and need are migrated to use the \fID\fR and \fII\fR flags.
+.BU
+[041218]
+.Ht auto-spell 3
+key  bindings  are  promoted to global so its easy to enable in any buffer.
+.BU
+[041218]  Corrected  setting of the
+.Ht $home 5
+environment variable to handle MS-Windows  \'\fC\\\\\fR's, auto terminate with
+\'\fC/\fR'.
+.BU
+[041210] Added Enable/Disable Auto-Spell to the context menu.
+.BU
+[041210] Rearranged the
+.Ht organizer 3
+dialog to be a little easier to navigate through.
+.BU
+[041210] Fixed nedit emulation insert binding.
+.BU
+[041210] Removed
+.Hr ml-clear 2
+command, replaced with
+.Ht ml-write 2
+option "\fC0 ml-write\fR".
+.BU
+[041210] Removed the
+.Hr change-directory 2
+command, a change in directory is achieved by changing the
+.Ht $buffer-fname 5
+value such that the path  defines  the  location  of the  command.  All macros
+operated  relative to the buffer  location  and never  explicitly  changed the
+directory location.
+.BU
+[041210] Fixed CUA emulation insert binding.
+.BU
+[041210] Deleted
+.Hr letter 2m
+mode. Use the default binding of
+.Ht forward-delete-char 2
+for letter mode off, where single  deleted  characters  are to be added to the
+kill buffer then the existing
+.Hr letter 2m
+mode may be  achieved by binding as "\fC1  forward-delete-char\fR".  Similarly
+for backspace,
+.Ht backward-delete-char 2 .
+.BU
+[041210] Deleted
+.Hr line 2m
+mode. Use a binding with
+.Ht kill-line 2
+of "\fC1  kill-line\fR"  to mimic the line mode enabled and  "\fCkill-line\fR"
+for line mode disabled.
+.BU
+[041210] Deleted
+.Hr cmode 2m .
+Electric-c is now configured with
+.Ht indent 2 .
+C and C++ indent  styles can be different,  can also have a \s-1GNU\s0 C style
+etc, can  change  the  indent  width as new indent  rule  supports  '\fIt\fR',
+consistent
+.Ht $buffer-indent 5
+interface.
+.BU
+[041210]  Created  new osd  file  "\fCosdmisc.emf\fR"  for  miscellaneous  OSD
+macros, this removes the OSD  dependency  when the  MicroEmacs  is executed in
+special start up modes with startup  files. Moved search and new  indent-setup
+commands  out  of  "\fCsearch.emf\fR"   and  "\fCformat.emf\fR"   into  a  new
+"\fCosdmisc.emf\fR"  as  they  cause  problems  with  utils  that  do not  run
+"\fCme.emf\fR" (e.g. "\fCehftools.emf\fR")
+.BU
+[041210]  Introduced a \s-1GNU\s0  emacs  emulation  mode,  emulation  file is
+"\fCmeemacs.emf\fR".
+.BU
+[041209] Fixed  \fBnewuser\fR  "\fC$user-name.emf\fR"  conflict  issue with an
+existing macro (e.g. \fCzaurus.emf\fR) by testing for it and prefixing a digit
+to make the file unique.
+.BU
+[041209] Added \fCesc C-\\\fR binding to
+.Ht restyle-buffer 3 .
+.BU
+[041209] Fixed some issues with the Tools user-setup dialog.
+.BU
+[041128]  Added MinGW  makefile  posted to JASSPA  group by Patrick  Anderson,
+forms part of the release makefiles.
+.BU
+[041126] Added  '\fCk\fR'  keyboard  setup  to
+.Ht set-char-mask 2
+which is used to translates foreign keys to a latin char.
+.BU
+[041126] Changed the internal  \s-1LEADER\s0  byte to \fC0x1c\fR as \fC0xff\fR
+is a valid Russian char and it badly breaks \fI$vars\fR and \fImacros\fR.
+.BU
+[041126]  Fixed  spell  dump word which was not  translating  the words to the
+users char-set.
+.BU
+[041126] Added support for Russian language.
+.BU
+[041126]   Improved  the  aff  ispell   conversion   routines   (almost  works
+automatically).
+.BU
+[041126] Stopped
+.Ht auto-spell 3
+from triggering the no dictionaries error, leave it to
+.Ht spell-buffer  3
+etc.
+.BU
+[041125]  Fixed  OSD  multi-line   \fCC-k\fR   \fBkill-line\fR   behavior  and
+implemented "\fC-1\fR \fCkill-line\fR" support.
+.BU
+[041125] Added basic support for Verilog programming language.
+.BU
+[041123] Fixed ftp OSD (auto  entering  entries broke the password  field)
+and modernized.
+.BU
+[041028] Fixed. \fC*find*\fR buffer exhibits the same behavior as \fC*grep*\fR
+buffer. i.e. the \fC*find*\fR  buffer remains on screen and a pop-up window is
+used to show the file.
+.BU
+[041028]  Fixed.  \fC*grep*\fR  buffer does not load file when  selected  with
+\fC<RETURN>\fR.
+.BU
+[041027] Spruced up old  "\fCapache.conf\fR"  highlighting  rules and added to
+release.
+.BU
+[041022] Fixed very obscure cvs load-up bug.
+.BU
+[041122]  Updated  schemes to set '\fIShow  cursor in osd\fR'  suitably and to
+make  sure  the  cursor  is not red as this  conflicts  with the  match  fence
+display.
+.BU
+[041120] Fixed
+.Ht transpose-lines 2
+crash when
+.Ht undo 2m
+mode is disabled.
+.BU
+[041120]   Removed  the  OSD   explicit  tab  order  value  as  this  was  not
+constructively used and causes many item order problems.
+.BU
+[041119] Many improvements to OSD dialog user interface following  suggestions
+for news  group.  Updated  most of the osd  dialogs  to use the new  \fC[*]\fR
+checkbox chars. Fixed tabbing orders and moved some items over to combo-boxes.
+Added osd-cursor  visibilty support to scheme-edit. Made the displaying of the
+cursor in an osd dialog a
+.Ht $system 5
+bit set by the hilight scheme and fixed the position when in a child dialog.
+.BU
+[041118] Added a macro  recursion  depth limit of 20 to avoid blowing up \*(mS
+when the user has created an infinitely recursive macro.
+.BU
+[041112] Added Paul Boekholt's suggested GNU Emacs key bindings.
+.BU
+[041107]
+.Ht kill-paragraph 2 ,
+.Ht fill-paragraph 2 ,
+.Ht forward-paragraph 2
+and
+.Ht backward-paragraph 2
+commands redefined. \fBkill-paragraph\fR now kills forward and backward rather
+than control the kill buffer.  Paragraph  movement now defined  blank-line  to
+blank-line rather than the first/last paragraph line.
+.BU
+[041105] Fixed
+.Ht kill-line 2 ,
+.Ht forward-kill-word 2
+and
+.Ht backward-kill-word 2
+numerical argument implementation.
+.BU
+[041104] Removed
+.Hr regex-forward 3
+and
+.Hr regex-backward 3
+macros and moved uses of them over to
+.Ht search-buffer 2 .
+.BU
+[041104] Added
+.Ht search-buffer 2
+command which replaces the macro commands
+.Hr regex-forward 3
+and
+.Hr regex-backward 3 .
+Simplifies macro processing of searching by providing a search that explicitly
+sets the
+.Ht exact 2m
+and
+.Ht magic 2m
+modes. The  default is to repect  buffers  exact and magic mode and flags must
+have \fCE\fR or \fCM\fR to ensure they are disabled.
+.BU
+[041104] Changed any use of
+.Ht kill-line 2
+to "\fC1\fR  \fCkill-line\fR" as this should maintain its required behavior. A
+\fBkill-line\fR  with no  numeric  argument  kills  to the end of the line but
+excludes  the end of line  character  (\s-1GNU\s0  Emacs  compatibility).  The
+default  binding  is the  "\fC1\fR  \fCkill-line\fR"  form,  rebind the key to
+"\fCkill-line\fR" if the end of line is not to be killed.
+.BU
+[041104] Removed
+.Hr line 2m
+and
+.Hr letter 2m
+buffer modes as these can be done using  numerical  arguments to bindings. See
+the the
+.Ht kill-line 2
+binding which   replaces   \fIline\fR  mode.  See
+.Ht forward-delete-char 2
+and
+.Ht backward-delete-char 2
+binding which replaces \fIletter\fR mode.
+.BU
+[041104] Changed the
+.Ht forward-kill-word 2
+and
+.Ht backward-kill-word 2
+commands to be more  consistent with \s-1GNU\s0 Emacs.
+.BU
+[041102] Moved winterm over to using \fCaddKeyToBufferOnce()\fR for mouse move
+and time, also done same for \s-1UNIX\s0  mouse time event. This minimizes the
+number of mouse moved events that are processed by the system.
+.BU
+[041101] MS Windows. Fixed mouse cursor disappearing after using a \fIShift\fR
+or \fIControl\fR mouse button event.
+.BU
+[041101] Auto reload the directory even if it is changed (\fChkdirlst.emf\fR).
+.BU
+[041030] MS-Windows. Removed the "\fCWM_INPUTLANGCHANGE\fR" message handler as
+this did the wrong thing (use  \fCAlt-Shift\fR to change between two different
+keyboards e.g. US and Russian)
+.BU
+[041030] MS-Windows. Changed the method used to get the \s-1APPDATA\s0 path to
+use \fCSHGetSpecialFolderLocation()\fR as this is available in all versions of
+Windows.
+.BU
+[041030]  \s-1UNIX\s0.  Fixed  the mouse  movement  which  caused a  rendering
+anomaly.  Mouse moved  commands are only added to the key buffer if the key is
+not  already  present in the key queue. This  alleviates  a large  build up of
+redundant    mouse    move    keys    on   the    queue.    (Added    function
+\fCaddKeyToBufferOnce()\fR),
+.BU
+[041030] Added mouse rectangle  region selection  methods,
+.Ht copy-rectangle 3
+and
+.Ht kill-rectangle 2 .
+.BU
+[041029] Hardened
+.Ht cpp 9
+C++  commenting  on  \fC//\fR  alignment  when  the  previous  line is a solid
+\fC//////////\fR when re-styling buffer.
+.BU
+[041029] Fixed
+.Ht find 3
+"\fC*find*\fR"  buffer  operation so that it operates like  "\fC*grep*\fR"  on
+file selection.  Keyboard file section enabled within the  "\fC*grep*\fR"  and
+"\fC*find*\fR" buffer.
+.BU
+[041026] Spruced up old  "\fCsmb.conf\fR"  highlighting rules, brought them up
+to date with latest keywords and added to release.
+.BU
+[041026] Fixed indent-setup osd dialog.
+.BU
+[041024] Macro/source  compatibility  macro and source versions updated to
+"\fC20041001\fR".
+.BU
+[041024] Fixed the
+.Ht cvs-diff 3
+options, local with \s-1HEAD\s0 was not correct.
+.BU
+[041024]
+.Ht latex 9
+template extended. Buffer bindings for underscore and quote keys. Search tools
+to determine current context.
+.BU
+[041023] Extended  the  buffer  setup for the
+.Ht indent 2
+mechanism.   May  now   specify  the  default   buffer   \fIindent-width\fRand
+\fItabsize\fR in the
+.Ht buffer-setup 3
+dialog.
+.BU
+[041022] Revised  indentation  implementation. The templates now define indent
+width independent rules. The
+.Ht indent 2
+command \'\fIindent\fR' parameter may be defined as an absolute indentation or
+using a  \'\fCt\fR'  notation.  The syntax is  "\fC[-][[indent][/indent]]t\fR"
+which  defines a vulgar  fration of  \'\fCt\fR'  which is the indent width (or
+tabsize) as specified by
+.Ht $buffer-indent-width 5
+defined below.
+.sp 1
+The global variables
+.Hr $tabsize 5
+renamed
+.Ht $indent-width 5
+and controls the global indentation size.
+.Hr $tabwidth 5
+renamed
+.Ht $tab-width 5
+and controls the display size of a literal \s-1TAB\s0 character.
+.sp 1
+The indentation is now specified on a buffer basis, the variables
+.Ht $buffer-indent-width 5
+and
+.Ht $buffer-tab-width 5
+define the
+indentation and \s-1TAB\s0 width on a per buffer basis. These are seeded
+from the aforementioned global variables.
+.BU
+[041022] Fixed spelling mistake in user interface of XML macros.
+.BU
+[041022]  Removed  CVS  "\fCLog:\fR"  field from all of the  template  files -
+undesirable.
+.BU
+[041022] Added HTTP highlighting to the text document template.
+.BU
+[041021] Enhanced Wiki language template.
+.BU
+[041021] Added Windows CUA emulation mode.
+.BU
+[041019] Fixed insert binding for Nedit emulation mode
+.BU
+[041019] Fixed
+.Ht perl 9
+highlighting rules. Using incorrect syntax.
+.BU
+[041016] Fixed \s-1UNIX\s0 make files for building \s-1NE\s0 in debug mode.
+.BU
+[041016] Fixed termcap entry for \fB^@\fR key (\fCC-space\fR).  (Thanks to Bob
+Paddock for noting ommission)
+.BU
+[041016] Added \fBM-%\fR binding to
+.Ht query-replace-string 2
+as built in binding. (Thanks to Bob Paddock)
+.BU
+[041016] Added Ruby programming language support.
+.BU
+[041015] Corrected  problem with directory  listing  loosing  highlighting
+(a
+.Ht @mna 4
+problem).
+.BU
+[041014] Within OSD, fixed spelling mistake. \fILoose\fR -> \fILose\fR.
+.BU
+[041014] Fixed
+.Ht delete-hilight-lines 3
+failure when buffer file has changed.
+.BU
+[041009] Fixed  osd  entry  scheme as the  cursor  was not  visible  in MS
+Dev-Studio Colors.
+.BU
+[041009] Added Wiki language template
+.BU
+[041003] Wheel mouse binding added as default.
+.BU
+[041003] Catch long lines from cut and paste, resolve crash.
+.BU
+[041002] Added X-Windows drag and drop support using \fBxdnd\fR.
+.BU
+[040930] Added HTML, XML and SGML close bracket auto expansion.
+.BU
+[040930] Added XML and HTML verification  macro. Added XML utilities macros to
+allow next and previous tag to be matched. The XML  utilities are also used by
+SGML.
+.BU
+[040930] Added  \fCxxxx-pre-expand-abbrev\fR hook so that macros may add their
+own expansion methods.
+.BU
+[040917] Added \fC<...>\fR as supported fences.
+.BU
+[040917] Fixed the \fC-1\fR
+.Ht add-next-line 2
+ignore line feature.
+.BU
+[040915]
+.Ht cvs-add 3
+looks  for  a  Tags  file  in  the  CVS  directory  and  sets  the  GUI  state
+appropriately. Added server to the
+.Ht cvs-state  3
+line mangling.
+.BU
+[040909]
+.Ht cvs 3
+GUI updated with new features. Added repository set up to the UI. Reduced wait
+time on long commands by using ipipe. Allowed  \fC-z\fR option to be used with
+.Ht %cvs-com 5 .
+.BU
+[040828]
+.Hl About about 2
+page includes the century in the date (suggested by -Th).
+.BU
+[040824] Fix for man page hyper-link when includes \fC-/./_\fR characters.
+.BU
+[040814] Linux manual page formatting fixes.
+.BE
+.\"
+.B "Minor Patch - July 2004"
+.BS
+[040728] Released patches.
+.BU
+[040728] Corrected Linux kernel 2.6 pty allocation.
+.BU
+[040630] Linux manual page formatting fixes.
+.BU
+[040518] Comment  definition  corrections for C, C++ and java, notable doxygen
+comment formation omitted.
+.BU
+[040518] Corrected block comment  formatting, adding an extra space at the end
+of the comment.
+.BE
+.\"
 .B "7th Release - March 2004"
 .BS
 [040326] Release wrapped - public release tag is \fB20040301\fR for executable
-and macros. 
-.BU    
+and macros.
+.BU
 [040326]  Support for  \s-1MAC\s0  O/S Darwin  image.  Console  only (no build
 machine available for X-11 version).
 .BU
 [040326] Introduction of \s-1UPX\s0 on Windows and \s-1DOS\s0  executables for
 \fBne\fR only.
-.BU    
+.BU
 [040326]  Support for  \s-1MS-DOS\s0  long name under  \s-1DJGPP\s0  v2.0. For
 version 2.0 then the  \s-1DJGPP\s0  functions  must be invoked rather than the
 \s-1MS-DOS\s0 \s-1BIOS\s0 calls otherwise the modified short name is returned.
 \s-1DJGPP\s0 v1 is still supported original definitions maintained.
 .BU
-[040326] Added  
+[040326] Added
 .Ht filetype 3f
 macro to determine the file type of \s-1MS-DOS\s0, Windows or \s-1UNIX\s0.
-.BU    
+.BU
 [040322] \fI$mouse\fR variables configured under console modes to allow pseudo
 mouse operations to be performed.
 .BU
@@ -2088,15 +2617,15 @@ tree window is not opened, just the \fC*files*\fR buffer.
 .BU
 [040317] Macro and source release set to "\fC20040301\fR".
 .BU
-[040317] Added 
+[040317] Added
 .Ht find 3
 command to macro set.
 .BU
-[040317] Corrected  
+[040317] Corrected
 .Ht rgrep 3
-to use the  
-.Ht %find-com 5 
-to specify the 
+to use the
+.Ht %find-com 5
+to specify the
 .Hr find 1
 command.
 .BU
@@ -2115,31 +2644,31 @@ to use multiple comment styles where appropriate (C, C++ and SQL).
 Causes the key  binding to  "\fCesc-o\fR"  and  "\fCesc-q\fR"  to restyle  the
 comment. All templates updated to include the flag where appropriate.
 .BU
-[040310] 
+[040310]
 .Ht cvs 3
 operates asynchronously using ipipes. Refresh problems resolved.
 .BU
-[040310] 
+[040310]
 .Ht narrow-search-forward 3
-bound  to "\fCC-c s\fR",  
-.Ht narrow-search-backward 3 
+bound  to "\fCC-c s\fR",
+.Ht narrow-search-backward 3
 bound to "\fCC-c r\fR".
 .BU
-[040308] 
+[040308]
 .Ht ipipe-shell-command 2
 includes  additional  flag to run in "\fIraw  mode\fR" where the buffer is not
 annotated and wrap is disabled.  Additional argument added to command to allow
-the 
+the
 .Ht $buffer-ipipe 5
-macro to be defined when the pipe is defined. Corrected operation of 
-.Ht pipe-shell-command 2 
+macro to be defined when the pipe is defined. Corrected operation of
+.Ht pipe-shell-command 2
 where \fIipipe\fR  automatically  degrades to a \fIpipe\fR  (Windows only), if
-degraded then the 
-.Ht $buffer-ipipe 5 
+degraded then the
+.Ht $buffer-ipipe 5
 macro is still invoked on completion.
 .BU
-[040226] Deleted  "\fCcygnus.emf\fR"  added "\fCcygwin.emf\fR" for 
-.Ht cygwin 3 
+[040226] Deleted  "\fCcygnus.emf\fR"  added "\fCcygwin.emf\fR" for
+.Ht cygwin 3
 BASH shell support under  Windows.  Corrected the shell  operation  with macro
 layer for echo and completion.
 .BU
@@ -2154,15 +2683,15 @@ a top or bottom toolbar.
 2004.
 .BU
 [040223]  Fixed.  Executing  'me'  (\fBuser-setup\fR  \fB->\fR  \fBCurrent\fR)
-breaks  
-.Ht auto-spell 3 
-until a main spell command , 
-.Ht spell-word 3 
-or 
-.Ht spell-buffer 3 
+breaks
+.Ht auto-spell 3
+until a main spell command ,
+.Ht spell-word 3
+or
+.Ht spell-buffer 3
 is executed.
 .BU
-[040223] 
+[040223]
 .Ht cvs 3
 directory  listing  file loss  solved.  Differences  between CVS command  line
 operations and directory list  operations  resolved, both now produce the same
@@ -2171,10 +2700,10 @@ results.
 [040229]  Fixed UNIX signal lock  synchronization,  solves  problems with read
 failing following FTP or HTTP command.
 .BU
-[040223] Add   new   
+[040223] Add   new
 .Ht narrow-search-forward 3
-and    
-.Ht narrow-search-backward 3 
+and
+.Ht narrow-search-backward 3
 commands.
 .BU
 [040220]  Mouse  wheel  operation  fixed.  Added  new   \fBmouse-wup-scroll\fR
@@ -2204,7 +2733,7 @@ cmd/command  as  there  use  4DOS  '\fC>>&\fR'  extension.  Changed  to  using
 .BU
 [040216] Fixed   bottom   Toolbar   window   grows  when  CVS  is  opened,
 .Ht change-window-depth 2
-does not respect bit 2 of 
+does not respect bit 2 of
 .Ht $window-flags 5 .
 .BU
 [040214] Added \fB.spec\fR template for RedHat RPM package file specification.
@@ -2227,13 +2756,13 @@ all \s-1UNIX\s0 platforms.
 [040210]  Fixed  toolbar  Directory  File List does not contain  "\fC../\fR" -
 \s-1UNIX\s0 only.
 .BU
-[040210] Fixed. On UNIX only the 
-.Ht $progname 5 
+[040210] Fixed. On UNIX only the
+.Ht $progname 5
 may not be fully expanded (has just "me") which may lead to a ctags generation
-error and an alternate fix to 
+error and an alternate fix to
 .Ht $search-path 5 .
 .BU
-[040210] Fixed. On \s-1UNIX\s0, 
+[040210] Fixed. On \s-1UNIX\s0,
 .Ht find-file 2
 of a symbolic  link which points to a directory  results in a bad dir listing.
 The list of files is correct but the stats are all wrong (found on sunos 5.8).
@@ -2265,7 +2794,7 @@ Detlef Groth.
 .BU
 [040206] Added template support for XML. Thanks to Dr. Detlef Groth.
 .BU
-[040204]  Re-worked  Microsoft  Windows 
+[040204]  Re-worked  Microsoft  Windows
 .Ht me32.ini 8
 file specification. Order revised and lookup simplified.
 .BU
@@ -2278,7 +2807,7 @@ spell, etc..
 .BU
 [040203] Corrected osf1, openBSD and zaraus emf files.
 .BU
-[040203] Added 
+[040203] Added
 .Ht %cvs-com 5
 variable to define the CVS command.
 .BU
@@ -2300,7 +2829,7 @@ The net result of these changes should significantly simplify installation and
 setup as follows:
 .BE 0
 .RS
-.BS 
+.BS
 All  platforms  will be able to run  without  any  manual  user  setup  or the
 requirement for specific MicroEmacs environment variables.
 .BU
@@ -2316,11 +2845,11 @@ to the Windows  Install Shield  installation  but has been extended across all
 platforms.
 .BU
 Two new  environment  variables are provided for user or system  administrator
-use.  
+use.
 .Ht $MEINSTALLPATH 5
 defines the location of the MicroEmacs standard macros and allows the built in
-search path to be overridden.  
-.Ht $MEUSERPATH 5 
+search path to be overridden.
+.Ht $MEUSERPATH 5
 defines the location of the user private  configuration  directory  and allows
 the user to  locate  their  private  directory  in  different  location.  In a
 standard install neither of these variables will be required.
@@ -2344,25 +2873,25 @@ configuration   files.  Optionally  the  \fBcompany\fR,   \fBspelling\fR   and
 the system directory locations by the user is not permitted.
 .BU
 Concept of guest has been removed. \fCguest.emf\fR and \fCguest.erf\fR removed
-replaced with \fInewuser\fR. 
+replaced with \fInewuser\fR.
 .Ht user-setup 3
 no longer supports setting of name.
 .BU
-Internal variables 
+Internal variables
 .Ht $user-name 5
-and 
+and
 .Ht $user-path 5
 are defined.
 .BE 0
-.RE 
+.RE
 .BS
 [040128] Fixed re-style for C/C++ comments in vertical alignment.
 .BU
 [040123] "\fIuser-setup\fR" mouse button selection fixed.
 .BU
-[040123] \fCC-x 3\fR mapped to 
+[040123] \fCC-x 3\fR mapped to
 .Ht split-window-horizontally 2 ,
-\fCC-x 5\fR mapped to 
+\fCC-x 5\fR mapped to
 .Ht create-frame 2 .
 .BU
 [040122] Added support for Zaurus, thanks to Pierre Gaston
@@ -2374,28 +2903,28 @@ and Dr. Detlef Groth
 .BU
 [040122] Added support for OpenBSD
 .BU
-[040122] 
+[040122]
 .Ht ml-bind-key 2
 supports   new   binding  for   next/previous   file,   history   search  uses
 \fCup\fR/\fCdown\fR \fCC-p\fR/\fCC-n\fR, prompted by Gabriel.
 .BU
-[040122] New key bindings for 
+[040122] New key bindings for
 .Ht create-frame 2 .
 .BU
 [040119] \fBRC3 - Release Candidate 3 - MicroEmacs '04\fR
 .BU
 [040119] Fast exit out of fold fixed.
 .BU
-[040119] Added 
+[040119] Added
 .Ht copy-rectangle 3
-and 
+and
 .Ht yank-rectangle-overwrite 3
 commands.
 .BU
 [040119]  Collapse  line  format  now  includes  the end token so that  indent
 operates correctly following a fold.
 .BU
-[040119] 
+[040119]
 .Ht narrow-buffer 2
 numeric argument and command line options extended for mark-up lines.
 .BU
@@ -2415,15 +2944,15 @@ for diagnosing problems
 .BU
 [040116] Perl and TCL abbreviation files - thanks to Dr. Detlef Groth
 .BU
-[040115] 
+[040115]
 .Ht open-line 3
 added for correct binding of "\fCC-o\fR".
 .BU
-[040113] 
+[040113]
 .Ht restyle-buffer 3
 fix when mode defined - thanks to Pedro Gomes.
 .BU
-[040113] 
+[040113]
 .Ht create-frame 2
 canvas size fix on creating internal frame
 .BU
@@ -2451,7 +2980,7 @@ ClearType when anti-aliasing is enabled.
 .BU
 [040104] SGML language template.
 .BU
-[040104] 
+[040104]
 .Ht string-rectangle 3
 command added - Suggested by Salman.
 .BU
@@ -2474,7 +3003,7 @@ missing and added files.
 select  hidden or  verbose  etc. Added  check  after  exec of "ehook" to catch
 nasties, not fool proof but catches attempts to close tool bar etc.
 .BU
-[031120] Fixed a  
+[031120] Fixed a
 .Ht goto-line 2
 bug shown when using grep on a single lined file (like CVS/Root).
 .BU
@@ -2486,7 +3015,7 @@ movement across lines.
 .BU
 [031026] Fixed -ve re-center bug found by Alexander Doktorovich.
 .BU
-[031026]  Last commit to search  fixed a 
+[031026]  Last commit to search  fixed a
 .Ht &xsequal 4
 failure on start-up, was not setting the internal  flags  correctly.  Fix go a
 little messy as it should not affect the hunt commands.
@@ -2523,7 +3052,7 @@ variable  and got  toolbar  and  buffer  tool menu to call the update  command
 .BU
 [031026] CVS. Fixed \s-1UNIX\s0 checkout path and implemented cvs remove.
 .BU
-[031026] 
+[031026]
 .Ht page-file 3 .
 Fixed backward isearch blow out.
 .BU
@@ -2558,7 +3087,7 @@ protected token  indentation.  Added new Check-box chars to the extended chars
 .BU
 [030827] Added use default printer setting.
 .BU
-[030827] 
+[030827]
 .Ht page-file 3 .
 Fixed header and added isearch support.
 .BU
@@ -2575,21 +3104,21 @@ behaviour and changed the items with drop down menus to use the new combo-box.
 .Ht @h0 4
 history variable.
 .BU
-[030710] Added support to 
+[030710] Added support to
 .Ht @mn 4
-and 
+and
 .Ht @mna 4
 in the "\fCmeGetKey\fR" routine
 .BU
 [030710] Added  new  undo  type  for  line  reordering   undo's,  used  by
 .Ht sort-lines 2
-and 
+and
 .Ht transpose-lines 2 .
 .BU
 [030710] Changed some define names to make them compatible.  Changed the calls
 to "meGetUserKey" to "meGetKey" so a macro can give a list of keys Added new 0
 argument which quits at the EOB rather than going to the top of the buffer etc
-(used in 
+(used in
 .Ht page-file 3
 "isearch").
 .BU
@@ -2609,7 +3138,7 @@ is shown - obscure!
 .BU
 [030625] MicroEmacs 3.8 compatibility. Fixed isearch emulation.
 .BU
-[030625] First revision of 
+[030625] First revision of
 .Ht page-file 3 .
 .BU
 [030625] CVS. Removed debug line.
@@ -2627,14 +3156,14 @@ words, this also help preserve the position of anchors.
 [030608]  Toolbar. Only update the toolbar if its the top level  command, i.e.
 the screen-update is not required due to spell-buffer (say).
 .BU
-[030608]  MS-Shift region. Check for  
+[030608]  MS-Shift region. Check for
 .Ht kill-rectangle 2
 and treat like we do the
 .Ht kill-region 2 .
 .BU
 [030608] Added  new -ve  argument  to
 .Ht insert-file 2
-which  inserts only a section of the file.  Optimized the 
+which  inserts only a section of the file.  Optimized the
 .Ht file-op 2
 move command to try just moving the file first.
 .BU
@@ -2651,7 +3180,7 @@ the ignore white-space buffer compare.
 .BU
 [030608] Changed the history so it always removes any duplicate entries.
 .BU
-[030608] Added 
+[030608] Added
 .Ht $window-eline 5
 and moved the aline into extended version.
 .BU
@@ -2699,7 +3228,7 @@ buffer-fhook
 .Ht $result 5
 setting.
 .BU
-[030514] Set  
+[030514] Set
 .Ht $result 5
 to the magic  fhook  string so the fhook  macro does not have to search for it
 again in buffer.c.
@@ -2819,7 +3348,7 @@ me.m.pm, me.l.pm)
 .BU
 [021013] Updated mode change to use just a buffer type change flag.
 .BU
-[021013] Added 
+[021013] Added
 .Ht @mna 4
 to all find-files incase there are problems.
 .BU
@@ -2861,7 +3390,7 @@ the mode change to be toolbar aware.
 [020912]  Changed  the  "msshift"  key list to a macro  list which  checks the
 non-shifted key is bound first. Added "\fCC-home\fR" and "\fCC-end\fR".
 .BU
-[020912] Added 
+[020912] Added
 .Ht $window-id 5 .
 .BU
 [020912]   Added   crypting   support  to  registry   files  -  crypt  key  is
@@ -2886,7 +3415,7 @@ which loads the \fChk???.eaf\fR  file so that the abrev \fC???.eaf\fR file can
 be left as solely an abbrev file.
 .BU
 [020723]  Changed the interface to  regexStrcmp to give better  control. Added
-support  for the  "\fC@s#\fR"  variables  after a 
+support  for the  "\fC@s#\fR"  variables  after a
 .Ht &xsequal 4 ,
 re-implemented the buffer context  initialization to not use iscanner so it no
 longer need to swap  buffers  also  changed the  location of the fhook exec to
@@ -2903,12 +3432,12 @@ in CVS mode).
 [020723] Added new "\fC\\\\L\fR" -> x-line, "\fC\\\\X\fR" -> x-command special
 keys to improve eaf file read and portability.
 .BU
-[020711] Added a system clipboard interaction disable flag to 
+[020711] Added a system clipboard interaction disable flag to
 .Ht $system 5
 so the toolbar can stop messing up the clipboard whenever it updates.
 .BU
 [020711] Fixed an  uninitialized  variable  bug  breaking  the FTP  logoff
-operation of 
+operation of
 .Ht file-op 2 .
 .BU
 [020629] HTML Added table creation and external preview commands.
@@ -2953,11 +3482,11 @@ dubious mouse move events.
 .BU
 [020523] CVS - added 'U'pdate file flag support.
 .BU
-[020523] Modified to support 
+[020523] Modified to support
 .Ht $window-flags 5
 and window resize changes.
 .BU
-[020523] Added new "\fC<-\fR" and "\fC->\fR" truncate chars to 
+[020523] Added new "\fC<-\fR" and "\fC->\fR" truncate chars to
 .Ht $window-chars 5 .
 .BU
 [020523] Fixed mutli-frame  console crash, window depth resize jump bug. Fixed
@@ -2972,19 +3501,19 @@ problem.
 .BU
 [020523]  Combined  the  shrink  and  enlarge  window  commands  into a single
 .Ht change-window-width 2
-and 
+and
 .Ht change-window-depth 2
 command.
 .BU
 [020523] Changed interface to frame resizing functions, numerical arg is now a
 delta change.
 .BU
-[020523]  Added  left and right  truncate  chars to  
+[020523]  Added  left and right  truncate  chars to
 .Ht $window-chars 5 ,
 fix ABORT string value.
 .BU
 [020523]  Added extra  parameter to  HideBuffer  flagging  whether to hide the
-buffer if the window buffer lock is set. Changed 
+buffer if the window buffer lock is set. Changed
 .Ht find-buffer 2
 numerical arg so -1 hides all but lock windows, -2 or less hides all.
 .BU
@@ -2995,12 +3524,12 @@ window!
 font setup (frameCur == NULL for first call).
 .BU
 [020428]  Name  changes  (screen -> frame) due to frame  support,  new toolbar
-support, new 
+support, new
 .Ht abbrev-list 3
-and  
+and
 .Ht expand-look-back 3 ,
 new filter on normal browser,  auto-spell  ignore, perldb sub-func fix, tables
-added to jst, fixes to bullet list in 
+added to jst, fixes to bullet list in
 .Ht ifill-paragraph 3 .
 .BU
 [020428]  Changed the ipipe wrap line length to be the 'term-size',  using the
@@ -3226,13 +3755,13 @@ all help files).
 comments now used by most of the file hooks.
 .BU
 [010412]  Added new generic  buffer setup, menu and help macros,  creating the
-new 
+new
 .Ht buffer-setup 3
 command. Ported all existing file hooks to this new interface greatly reducing
 the buffer hook size while increasing its functionality and consistency.
 .BU
-[010402]  Added  support for new  
-.Ht $buffer-backup 5 
+[010402]  Added  support for new
+.Ht $buffer-backup 5
 variable  for setting the back-up file location.
 .BU
 [010312] Support for new key bindings  allowing CU emulations.  Nedit bindings
@@ -3252,7 +3781,7 @@ exorcized and add new macro functions.
 [010210]  Revised  programming  language  templates;   simplified  the  common
 elements used in configuring the templates.
 .BU
-[010202] Added new  
+[010202] Added new
 .Ht command-wait 2
 command  to  enable  macros  to wait for user  dependent  completion,  used in
 "gdiff".
@@ -3267,21 +3796,21 @@ to access variable not defined in the current buffer.
 .BU
 [001005] Improved and  increased  the file system  operations  via the new
 .Ht file-op 2
-command, created better menus in the 
+command, created better menus in the
 .Ht file-browser 3 .
 .BU
 [001010] Revamped the main ftp GUI to make it work much more rationally.
 .BU
-[001010] Improved  
+[001010] Improved
 .Ht ipipe-shell-command 2
 efficiency  on  Windows by  introducing  a new thread  approach  to listen for
 activity.  Implemented  a  shell  command-line  in an  ipiped  environment  so
 .Ht ishell 3
 command is now usable on Windows platforms.
 .BU
-[001010] Added  new  
+[001010] Added  new
 .Ht set-position 2
-which can be used to store all information about the current window and 
+which can be used to store all information about the current window and
 .Ht goto-position 2
 which will then restore them. Allowed macros to use non-letter  characters for
 alpha marks and positions so they no longer need to clobber user ones.
@@ -3308,10 +3837,10 @@ the binary size by up to 37%.
 [000503] Revised printer support.
 .BU
 [000503] Color printer support (Lexmark).
-.BE 
+.BE
 .\"
 .B "2nd Release - Alpha patch - March 2000"
-.BS 
+.BS
 [000322] FIRST PUBLIC RELEASE OF RENDERED FONT SUPPORT .
 .BU
 [000322] Alpha build revision contains version information for 2000/03/22
@@ -3350,7 +3879,7 @@ the host  connection  information  in a registry  file. Note that the password
 information  is exposed so be careful  where this is used - if in doubt do not
 enter the password and you will be prompted.
 .BU
-[000126] New  command  
+[000126] New  command
 .Ht uniq 3
 operates as the  \s-1UNIX\s0  of the same name. used with sort, and reduces to
 unique lines.
@@ -3370,7 +3899,7 @@ how the line hilighting  scheme is to be applied. The following rules apply to
 the mouse selection:-
 .BE 0
 .RS
-.BS 
+.BS
 Point in line selected (i.e. mark == point) Hilight the line only.
 .BU
 Region in the line selected. Both point and mark are on the same line. Extract
@@ -3570,19 +4099,19 @@ paragraph when invoked without arguments.
 .BU
 [990501]  gdiff  macro  implementation  of a  graphical  diff to  allow  color
 annotation  of  differences  and  difference  selection.  Uses the output of a
-standard 
+standard
 .Hr diff 1
 utility.
 .BU
 [990501] 2nd port to IBM AIX.
 .BE
-.\" 
+.\"
 .B 1999
 .BS
 [990101]  Introduction  of the  address  and  date  organizer  (replacing  the
 existing cal interface).
 .BU
-[990101] Generic buffer folding using 
+[990101] Generic buffer folding using
 .Ht narrow-buffer 2  .
 .BU
 [990101] Rendered cursor support on all platforms. Smooth scrolling mode.
@@ -3628,7 +4157,7 @@ Win32 and Xterm platforms.
 [981001] Enhanced user setup using OSD.
 .BE
 .B "1st Release - September 1998"
-.BS 
+.BS
 [980901] Support True-type fonts under windows, font selection dialog.
 .BE
 .\"
@@ -3727,10 +4256,10 @@ dialogues.
 [951231] Mouse support.
 .BU
 [951231] Initial printer support.
-.BE 
+.BE
 .\"
 .B 1994
-.BS 
+.BS
 [941231] DOS built with djgpp, allowed large files to be edited.
 .BU
 [941231] Color hi-lighting.
@@ -3747,7 +4276,7 @@ dialogues.
 .BU
 [941231] Re-implemented backups and auto-saves.
 .BU
-[941231] Re-implemented 
+[941231] Re-implemented
 .Hl isearch isearch-forward 2 .
 .BU
 [941231] Re-implemented of keyboard macros.
@@ -3756,11 +4285,11 @@ dialogues.
 .BE
 .\"
 .B "1992-1993"
-.BS 
+.BS
 [921231] Ported to IBM AIX.
 .BU
 [921231] Ported to Silicon Graphics
-.BE 
+.BE
 .\"
 .B "1988-1999"
 .BS
@@ -3777,7 +4306,7 @@ Daniel  Lawrence  turned  MicroEmacs  into an editor for the masses, it is his
 work that  ultimately  made  MicroEmacs  so popular.  Daniel did a  tremendous
 amount of work, both adding features and supporting other platforms  resulting
 in the MicroEmacs v3.8 release on which JASSPA's MicroEmacs is based.
-.BE 
+.BE
 .\"
 .B "Late 1985/early 1986"
 .BS
@@ -3785,7 +4314,7 @@ Dave Conroy, the original  author, first  developed the original code base for
 private  use. Various  people  asked Dave for a copy of the program and it was
 distributed  without  concern for copyrights or ownership as was the custom of
 that era.
-.BE 0    
+.BE 0
 .SS "Work In Progress or Planned"
 Development  of  \*(mE  is an  on-going  process,  follows  is a list  of work
 items which is currently  being undertaken or planned:-
