@@ -181,7 +181,7 @@ DEFFUNC ("global-mode",			0x00, globalMode,	CK_GLOBMOD, &__cmdArray[CK_GLOBMOD+1
 DEFFUNC ("global-unbind-key",		0x00, globalUnbindKey,	CK_UBNDKEY, &__cmdArray[CK_UBNDKEY+1], 0)
 DEFFUNC	("goto-alpha-mark",		0x42, gotoAlphaMark,	CK_GOAMRK, &__cmdArray[CK_GOAMRK+1], 0)
 DEFFUNC ("goto-line",			0x42, windowGotoLine,	CK_GOLIN, &__cmdArray[CK_GOLIN+1], 0)
-#if MEOPT_CMDHASH || MEOPT_CFENCE
+#if MEOPT_CMDHASH || MEOPT_FENCE
 DEFFUNC ("goto-matching-fence",		0x48, gotoFence,	CK_GOFNC, &__cmdArray[CK_GOFNC+1], 0)
 #endif
 #if MEOPT_CMDHASH || MEOPT_POSITION

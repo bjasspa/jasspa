@@ -489,8 +489,8 @@ TTwaitForChar(void)
             {
                 /* Start a timer and move to timed state 1 */
                 /* Start a new timer to clock in at 'delay' intervals */
-                /* printf("Setting mouse timer for delay  %1x %1x %d\n",TTallKeys,meTimerState[MOUSE_TIMER_ID],delaytime) ;*/
-                timerSet(MOUSE_TIMER_ID,-1,delaytime);
+                /* printf("Setting mouse timer for delay  %1x %1x %d\n",TTallKeys,meTimerState[MOUSE_TIMER_ID],delayTime) ;*/
+                timerSet(MOUSE_TIMER_ID,-1,delayTime);
             }
         }
     }
@@ -949,7 +949,7 @@ TTahead(void)
         meUShort mc ;
         union REGS rg ;
         
-        /* printf("Clering mouse timer for repeat %1x %1x %d\n",TTallKeys,meTimerState[MOUSE_TIMER_ID],repeattime) ;*/
+        /* printf("Clering mouse timer for repeat %1x %1x %d\n",TTallKeys,meTimerState[MOUSE_TIMER_ID],repeatTime) ;*/
         timerClearExpired(MOUSE_TIMER_ID) ;
         /* must check that the same mouse button is still pressed  */
         rg.x.ax = 0x0003 ;
@@ -967,8 +967,8 @@ TTahead(void)
                 addKeyToBuffer(mc) ;
                 /* Set the new timer and state */
                 /* Start a new timer to clock in at 'repeat' intervals */
-                /* printf("Setting mouse timer for repeat %1x %1x %d\n",TTallKeys,meTimerState[MOUSE_TIMER_ID],repeattime) ;*/
-                timerSet(MOUSE_TIMER_ID,-1,repeattime);
+                /* printf("Setting mouse timer for repeat %1x %1x %d\n",TTallKeys,meTimerState[MOUSE_TIMER_ID],repeatTime) ;*/
+                timerSet(MOUSE_TIMER_ID,-1,repeatTime);
             }
         }
     }
@@ -985,7 +985,7 @@ TTahead(void)
             execFuncHidden(ME_SPECIAL|SKEY_idle_time,index,arg) ;
             
             /* Now set the timer for the next */
-            timerSet(IDLE_TIMER_ID,-1,idletime);
+            timerSet(IDLE_TIMER_ID,-1,idleTime);
         }
         else if(decode_key(ME_SPECIAL|SKEY_idle_drop,&arg) != -1)
             meTimerState[IDLE_TIMER_ID] = IDLE_STATE_DROP ;

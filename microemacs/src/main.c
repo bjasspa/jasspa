@@ -389,7 +389,7 @@ execute(register int c, register int f, register int n)
         }
     }
 #endif
-#if MEOPT_CFENCE
+#if MEOPT_FENCE
     /* check for fence matching */
     if(meModeTest(frameCur->bufferCur->mode,MDFENCE) && ((c == '}') || (c == ')') || (c == ']')))
     {
@@ -1052,12 +1052,12 @@ autoSaveHandler(void)
     bp  = bheadp;
     while (bp != NULL)
     {
-        if(bp->autotime >= 0)
+        if(bp->autoTime >= 0)
         {
-            if(bp->autotime <= tim)
+            if(bp->autoTime <= tim)
                 autowriteout(bp) ;
-            else if(bp->autotime < next)
-                next = bp->autotime ;
+            else if(bp->autoTime < next)
+                next = bp->autoTime ;
         }
         bp = bp->next ;
     }

@@ -1174,7 +1174,7 @@ mlWrite(int f, int n)
     return meTRUE ;
 }
 
-#if MEOPT_CFENCE
+#if MEOPT_FENCE
 
 /* List of fense id chars, close (or move backward) first then open */
 meUByte fenceString[] = "##/*><)(}{][" ; /* */
@@ -1879,7 +1879,7 @@ gotoFence(int f, int n)
              * then move back
              */
             update(meFALSE);
-            TTsleep(matchlen,1,NULL) ;
+            TTsleep(pauseTime,1,NULL) ;
             frameCur->windowCur->updateFlags |= WFMOVEL;
             if(frameCur->windowCur->vertScroll != oldtln)
                 /* the redraw has changed the top line - must do a major update */
@@ -1899,7 +1899,7 @@ exit_fence:
     return ret ;
 }
 
-#endif /* MEOPT_CFENCE */
+#endif /* MEOPT_FENCE */
 
 #if MEOPT_HILIGHT
 

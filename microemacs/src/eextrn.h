@@ -741,7 +741,7 @@ extern	int	backDelChar(int f, int n);
 extern	int	killLine(int f, int n);
 extern	int	mlWrite(int f, int n);
 extern  void    makestrlow(meUByte *str);
-#if MEOPT_CFENCE
+#if MEOPT_FENCE
 extern  meUByte gotoFrstNonWhite(void) ;
 extern	int	gotoFence(int f, int n);
 #else

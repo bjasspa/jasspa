@@ -703,7 +703,7 @@ typedef struct  meBuffer {
     struct meUndoNode *undoTail ;               /* Last undo node               */
     meUInt             undoContFlag ;           /* Was the last undo this com'd?*/ 
 #endif
-    meInt              autotime;                /* auto-save time for file      */
+    meInt              autoTime;                /* auto-save time for file      */
     meInt              vertScroll ;             /* Windows top line number      */
     meInt              dotLineNo;               /* current line number          */
     meInt              markLineNo;              /* current mark line number     */
