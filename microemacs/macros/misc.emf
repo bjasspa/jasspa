@@ -67,3 +67,30 @@ define-macro display-white-chars
     set-variable $system &bxor $system 0x80000
     screen-update
 !emacro
+
+; Steve Philips - mailed to Jasspa group on 28th Sept 2004.
+; Writes a region to a file. If invoked from another macro then a string
+; paramter specifies the name of the file to write, if the name is not
+; specified then the user is prompted for the name. 
+define-macro write-region
+    copy-region
+    set-variable #l0 $buffer-fname
+    set-position "P"
+    !force delete-buffer "*write-region-tmp*"
+    find-buffer "*write-region-tmp*"
+    yank
+    set-variable $buffer-fname #l0
+    !force set-variable #l1 @1
+    !if $status
+        !force !force @# write-buffer #l1 @mna
+    !else
+        !force !force @# write-buffer @mna
+    !endif
+    !if &not $status
+        !force delete-buffer $buffer-bname
+        goto-position "P"
+        !abort
+    !endif        
+    delete-buffer $buffer-bname
+    goto-position "P"
+!emacro
