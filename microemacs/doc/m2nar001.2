@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Aug 20 22:34:10 1998
 .\"
-.Id $Id: m2nar001.2,v 2.6 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2nar001.2,v 2.7 2004-01-18 15:23:58 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .TH Installation 1
@@ -276,10 +276,10 @@ specific problems have been reported with this release.
 .RE
 .PP
 .ne 5
-.B "Windows '95/'98/NT"
+.B "Windows '95/'98/NT/2K/XP"
 .RS
 .IP Executable:
-Compiled with Microsoft Developer 5.0
+Compiled with Microsoft Developer 6.x
 .IP "Install Shield"
 An \fBInstall Shield\fR version of \*(mS is available which includes all
 of the distribution components.
@@ -292,25 +292,31 @@ of the distribution components.
 .br
 \fCmewinhlp.zip\fR (optional)
 .IP "Recommended installed components:"
-\fC4dos\fR or \fC4nt\fR \- command shell
-.br
 \fCgrep\fR \- Version of grep (GNU port of grep recommended)
 .br
 \fCdiff\fR \- Version of diff (GNU port of grep recommended)
 .br
 \fCmake\fR \- use nmake or GNU port of make.
+.IP
+A good source of \s-1UNIX\s0 native tools is 
+.IP
+.C http://unxutils.sourceforge.net/
+\- for native windows grep, diff, zip etc.
+.br
+.C http://www.cygwin.com
+\- for a shell environment.
 .IP "Installation:"
 Create the directory "\fCC:\\Program\ Files\\Jasspa\\MicroEmacs\fR" (or other location)
 .IP
 Unzip the MicroEmacs components into "\fCC:\\Program Files\\Jasspa\\MicroEmacs\fR"
 .IP
-Create the file "\fCc:\\windows\\me32.ini\fR" and add the following lines:-
+Create the file "\fCc:\\windows\\me32.ini\fR" or 
+"\fCc:\\WINNT\\me32.ini\fR" and add the following lines:-
 .RS
 .CS
 [Defaults]
 mepath=C:\\Program Files\\Jasspa\\MicroEmacs
 userPath=C:\\Program Files\\Jasspa\\MicroEmacs
-fontfile=dosapp.fon
 .CE
 Create a short cut to MicroEmacs for the Desktop
 .PP
