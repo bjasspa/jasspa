@@ -36,7 +36,7 @@
 void
 count_key_table(void)
 {
-    register KEYTAB *ktp;		/* Keyboard character array */
+    register meBind *ktp;		/* Keyboard character array */
     register int     ii;		/* Index counter */
 
 /*---	Find end of table, incrementing i. */
@@ -73,14 +73,14 @@ count_key_table(void)
 int
 decode_key(register meUShort code, meUInt *arg)
 {
-    register KEYTAB  *ktp;			/* Keyboard character array */
+    register meBind  *ktp;			/* Keyboard character array */
     register int      low;			/* Lowest index in table. */
     register int      hi;			/* Hightest index in table. */
     register int      mid;			/* Mid value. */
     register int      status;			/* Status of comparison. */
     
 try_again:
-#if LCLBIND
+#if MEOPT_LOCALBIND
     if(useMlBinds)
     {
         ktp = mlBinds ;
@@ -88,8 +88,8 @@ try_again:
     }
     else
     {
-        mid = curbp->nobbinds ;
-        ktp = curbp->bbinds ;
+        mid = frameCur->bufferCur->bindCount ;
+        ktp = frameCur->bufferCur->bindList ;
     }
     while(mid>0)
         if(ktp[--mid].code == code)
@@ -127,7 +127,7 @@ try_again:
      */
     if(code & ME_ALT)
     {
-#if MEOSD
+#if MEOPT_OSD
         if((meSystemCfg & meSYSTEM_ALTMENU) &&
            ((code & (ME_SPECIAL|ME_PREFIX_MASK)) == 0) &&
            ((status = osdMainMenuCheckKey(code & 0xff)) != 0))
@@ -171,7 +171,7 @@ try_again:
 int
 delete_key(register meUShort code)
 {
-    register KEYTAB	*ktp;			/* Keyboard character array */
+    register meBind	*ktp;			/* Keyboard character array */
     register int	ii ;			/* Index counter */
 
     /* move to the right part of the table */
@@ -184,15 +184,15 @@ delete_key(register meUShort code)
         ktp++ ;
     }
     if(ii < 0)
-        return FALSE ;
+        return meFALSE ;
     keyTableSize-- ;
     /* move all infront back one */
     while(--ii >= 0)
     {
-        memcpy(ktp,ktp+1,sizeof(KEYTAB)) ;
+        memcpy(ktp,ktp+1,sizeof(meBind)) ;
         ktp++ ;
     }
-    return TRUE ;
+    return meTRUE ;
 }	/* End of "delete_key" () */
 
 /*****************************************************************************
@@ -223,18 +223,18 @@ insert_key (register meUShort code, meUShort index, meUInt arg)
 /*  code - Code to add to key table. */
 /* index - Index for the code. */
 {
-    register KEYTAB	*ktp;			/* Keyboard character array */
+    register meBind	*ktp;			/* Keyboard character array */
     register int	i;			/* Index counter */
 
     /* Is there room in the table */
-    if(keyTableSize >= NBINDS-1)		/* No space in table ?? */
-        return FALSE ;                          /* No - return error. */
+    if(keyTableSize >= meBIND_MAX-1)		/* No space in table ?? */
+        return meFALSE ;                          /* No - return error. */
 
 /*--- Go backwards down table finding place in table and moving rest back. */
     i = keyTableSize++ ;
     ktp=&keytab[i] ;
     do {
-        memcpy(ktp+1,ktp,sizeof(KEYTAB)) ;
+        memcpy(ktp+1,ktp,sizeof(meBind)) ;
         if((--ktp)->code <= code)
             break ;
     } while(--i > 0) ;
@@ -245,7 +245,7 @@ insert_key (register meUShort code, meUShort index, meUInt arg)
     ktp->code  = code ;		/* Add new function code */
     ktp->arg   = arg ;		/* Add new argument */
 
-    return TRUE ;
+    return meTRUE ;
 }	/* End of "insert_key" () */
 
 

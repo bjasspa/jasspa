@@ -33,47 +33,47 @@
 #include "eskeys.h"
 
 /*
- * Ask a yes or no question in the message line. Return either TRUE, FALSE, or
- * ABORT. The ABORT status is returned if the user bumps out of the question
+ * Ask a yes or no question in the message line. Return either meTRUE, meFALSE, or
+ * meABORT. The meABORT status is returned if the user bumps out of the question
  * with a ^G. Used any time a confirmation is required.
  */
 int
 mlCharReply(meUByte *prompt, int mask, meUByte *validList, meUByte *helpStr)
 {
     int   inpType=0, cc ;
-    meUByte buff[TOKENBUF] ;
+    meUByte buff[meTOKENBUF_SIZE_MAX] ;
     meUByte *pp=prompt ;
     
     for(;;)
     {
-        if((clexec == FALSE) || inpType)
+        if((clexec == meFALSE) || inpType)
         {
-            if((kbdmode != PLAY) || (kbdoff >= kbdlen))
+            if((kbdmode != mePLAY) || (kbdoff >= kbdlen))
             {
                 /* We are going to get a key of the user!! */
                 if(mask & mlCR_QUIT_ON_USER)
                     return -2 ;
                 if(mask & mlCR_UPDATE_ON_USER)
-                    update(TRUE) ;
+                    update(meTRUE) ;
                 
-                if(mlStatus & MLSTATUS_POSOSD)
+                if(frameCur->mlStatus & MLSTATUS_POSOSD)
                 {
-                    mlStatus = MLSTATUS_POSOSD ;
+                    frameCur->mlStatus = MLSTATUS_POSOSD ;
                     mlResetCursor() ;
                 }
                 else
                 {
                     /* switch off the status cause we are replacing it */
-                    mlStatus = 0 ;
+                    frameCur->mlStatus = 0 ;
                     mlwrite(((mask & mlCR_CURSOR_IN_MAIN) ? 0:MWCURSOR)|MWSPEC,pp) ;
                     pp = prompt ;
                     /* switch on the status so we save it */
-                    mlStatus = (mask & mlCR_CURSOR_IN_MAIN) ? MLSTATUS_KEEP:(MLSTATUS_KEEP|MLSTATUS_POSML) ;
+                    frameCur->mlStatus = (mask & mlCR_CURSOR_IN_MAIN) ? MLSTATUS_KEEP:(MLSTATUS_KEEP|MLSTATUS_POSML) ;
                     inpType = 2 ;
                 }
             }
-            cc = meGetKeyFromUser(FALSE,0,meGETKEY_SILENT|meGETKEY_SINGLE) ;
-            mlStatus &= ~(MLSTATUS_KEEP|MLSTATUS_RESTORE|MLSTATUS_POSML) ;
+            cc = meGetKeyFromUser(meFALSE,0,meGETKEY_SILENT|meGETKEY_SINGLE) ;
+            frameCur->mlStatus &= ~(MLSTATUS_KEEP|MLSTATUS_RESTORE|MLSTATUS_POSML) ;
             if((cc == breakc) && !(mask & mlCR_QUOTE_CHAR))
                 return -1 ;
         }
@@ -88,7 +88,7 @@ mlCharReply(meUByte *prompt, int mask, meUByte *validList, meUByte *helpStr)
                 if(cc == 'a')
                     execstr = ss ;
                 meStrcpy(resultStr,prompt) ;
-                if(lineExec (0, 1, buff) != TRUE)
+                if(lineExec (0, 1, buff) != meTRUE)
                     return -1 ;
                 cc = resultStr[0] ;
             }
@@ -142,7 +142,7 @@ mlCharReply(meUByte *prompt, int mask, meUByte *validList, meUByte *helpStr)
 int
 mlyesno(meUByte *prompt)
 {
-    meUByte buf[MAXBUF] ;    /* prompt to user */
+    meUByte buf[meBUF_SIZE_MAX] ;    /* prompt to user */
     int ret ;
     
     /* build and prompt the user */
@@ -152,10 +152,10 @@ mlyesno(meUByte *prompt)
     ret = mlCharReply(buf,mlCR_LOWER_CASE,(meUByte *)"yn",NULL) ;
     
     if(ret == -1)
-        return ctrlg(FALSE,1) ;
+        return ctrlg(meFALSE,1) ;
     else if(ret == 'n')
-        return FALSE ;
-    return TRUE ;
+        return meFALSE ;
+    return meTRUE ;
 }
 
 /*
@@ -172,13 +172,13 @@ cins(meUByte cc, meUByte *buf, int *pos, int *len, int max)
      * position pos (which we update), if the length len (which we
      * also update) is less than the maximum length "max".
      *
-     * Return:  TRUE    if the character will fit
-     *          FALSE   otherwise
+     * Return:  meTRUE    if the character will fit
+     *          meFALSE   otherwise
      */
     int ll ;
     ll = meStrlen(buf);
     if(ll + 1 >= max)
-        return FALSE ;
+        return meFALSE ;
     
     if(*pos == ll)
     {
@@ -206,7 +206,7 @@ cins(meUByte cc, meUByte *buf, int *pos, int *len, int max)
         *len = ll+1;
         (*pos)++ ;
     }
-    return TRUE ;
+    return meTRUE ;
 }
 
 static void
@@ -390,8 +390,8 @@ mlDisp(meUByte *prompt, meUByte *buf, meUByte *cont, int cpos)
         len += strlen(expbuf+len) ;
     }
     /* switch off the status cause we are replacing it */
-    mlStatus = 0 ;
-    maxCol = TTncol ;
+    frameCur->mlStatus = 0 ;
+    maxCol = frameCur->width ;
     promsiz = meStrlen(prompt) ;
     col += promsiz ;
     len += promsiz ;
@@ -426,14 +426,14 @@ mlDisp(meUByte *prompt, meUByte *buf, meUByte *cont, int cpos)
         expbuf[start+maxCol-promsiz-1] = '$';
         expbuf[start+maxCol-promsiz] = '\0';
     }
-    mlCol = col ;
+    frameCur->mlColumn = col ;
     if(start >= promsiz)
         mlwrite(MWUSEMLCOL|MWCURSOR,(meUByte *)"%s%s",(start) ? "$":"",expbuf+start-promsiz) ;
     else
         mlwrite(MWUSEMLCOL|MWCURSOR,(meUByte *)"%s%s%s",(start) ? "$":"",prompt+start,expbuf) ;
     
     /* switch on the status so we save it */
-    mlStatus = MLSTATUS_KEEP|MLSTATUS_POSML ;
+    frameCur->mlStatus = MLSTATUS_KEEP|MLSTATUS_POSML ;
 }
 
 
@@ -447,7 +447,7 @@ tgetc(void)
     meUShort cc ;    /* fetched character */
 
     /* if we are playing a keyboard macro back, */
-    if (kbdmode == PLAY)
+    if (kbdmode == mePLAY)
     {
 kbd_rep:
         /* if there is some left... */
@@ -477,28 +477,32 @@ kbd_rep:
             kbdoff = 0 ;
             goto kbd_rep ;
         }
-        kbdmode = STOP;
-#if MEUNDO
+        kbdmode = meSTOP;
+#if MEOPT_UNDO
         undoContFlag++ ;
 #endif
         /* force a screen update after all is done */
-        update(FALSE);
+        update(meFALSE);
     }
 
-    if(kbdmode == RECORD)
+    if(kbdmode == meRECORD)
     {
+#if MEOPT_MOUSE
         /* get and save a key */
+        /* ignore mouse keys while recording a macro - get another */
         do {
             /* fetch a character from the terminal driver */
             cc = TTgetc();
-            /* if this is a mouse key, ignored while recording a macro - get another */
         } while(((cc & (ME_SPECIAL|0x00ff)) >= (ME_SPECIAL|SKEY_mouse_drop_1))  &&
                 ((cc & (ME_SPECIAL|0x00ff)) <= (ME_SPECIAL|SKEY_mouse_time_3))) ;
+#else
+        cc = TTgetc();
+#endif
         /* Each 'key' could take 5 chars to store - if we haven't got room
          * stop so we don't overrun the buffer */
-        if(kbdlen > NKBDM - 5)
+        if(kbdlen > meKBDMACRO_SIZE_MAX - 5)
         {
-            kbdmode = STOP;
+            kbdmode = meSTOP;
             TTbell();
         }
         else
@@ -546,7 +550,7 @@ getprefixchar(int f, int n, int ctlc, int flag)
     if(!(flag & meGETKEY_SILENT))
     {
         buf[meGetStringFromChar((meUShort) ctlc,buf)] = '\0' ;
-        if(f==TRUE)
+        if(f==meTRUE)
             mlwrite(MWCURSOR,(meUByte *)"Arg %d: %s", n, buf);
         else
             mlwrite(MWCURSOR,(meUByte *)"%s", buf);
@@ -566,12 +570,12 @@ meGetKeyFromUser(int f, int n, int flag)
     meUShort cc ;        /* fetched keystroke */
     int ii ;
     
-    if(kbdmode == PLAY)
+    if(kbdmode == mePLAY)
     {
         if(TTbreakTest(0))
         {
-            ctrlg(FALSE,1) ;
-#if MEUNDO
+            ctrlg(meFALSE,1) ;
+#if MEOPT_UNDO
             undoContFlag++ ;
 #endif
             /* force a screen update */
@@ -587,8 +591,8 @@ meGetKeyFromUser(int f, int n, int flag)
     cc = tgetc();
     
     /* If we are in idle mode then disable now */
-    if (kbdmode == KBD_IDLE)            /* In the idle state */
-        kbdmode = STOP;                 /* Restore old state */
+    if (kbdmode == meIDLE)            /* In the idle state */
+        kbdmode = meSTOP;                 /* Restore old state */
 
     if(!(flag & meGETKEY_SINGLE))
     {
@@ -607,8 +611,8 @@ meGetKeyFromUser(int f, int n, int flag)
     return cc ;
 }
 
-static Fintssi curCmpIFunc ;
-static Fintss  curCmpFunc ;
+static meIFuncSSI curCmpIFunc ;
+static meIFuncSS  curCmpFunc ;
 
 static int
 getFirstLastPos(int noStr,meUByte **strs, meUByte *str, int option,
@@ -642,6 +646,7 @@ getFirstLastPos(int noStr,meUByte **strs, meUByte *str, int option,
                 break ;
         *lstPos = ii - 1 ;
     }
+#if MEOPT_EXTENDED
     if((option & MLFILE) && (fileIgnore != NULL))
     {
         /* try to eat away at the number of possible completions
@@ -687,31 +692,32 @@ getFirstLastPos(int noStr,meUByte **strs, meUByte *str, int option,
         if(ff == ll)
             *fstPos = *lstPos = ff ;
     }
+#endif
     return 1 ;
 }
 
 int
 createBuffList(meUByte ***listPtr, int noHidden)
 {
-    register BUFFER *bp = bheadp ;    /* index buffer pointer    */
+    register meBuffer *bp = bheadp ;    /* index buffer pointer    */
     register int     i, n ;
     register meUByte **list ;
 
     n = 0 ;
     while(bp != NULL)
     {
-        if(!noHidden || !meModeTest(bp->b_mode,MDHIDE))
+        if(!noHidden || !meModeTest(bp->mode,MDHIDE))
             n++;
-        bp = bp->b_bufp ;
+        bp = bp->next ;
     }
     if((list = (meUByte **) meMalloc(sizeof(meUByte *) * n)) == NULL)
         return 0 ;
     bp = bheadp ;
     for(i=0 ; i<n ; )
     {
-        if(!noHidden || !meModeTest(bp->b_mode,MDHIDE))
-            list[i++] = bp->b_bname ;
-        bp = bp->b_bufp ;
+        if(!noHidden || !meModeTest(bp->mode,MDHIDE))
+            list[i++] = bp->name ;
+        bp = bp->next ;
     }
     *listPtr = list ;
     return i ;
@@ -720,11 +726,11 @@ createBuffList(meUByte ***listPtr, int noHidden)
 int
 createVarList(meUByte ***listPtr)
 {
-    meVARIABLE *vptr;     	/* User variable pointer */
+    meVariable *vptr;     	/* User variable pointer */
     int     ii, nn ;
     meUByte  **list ;
 
-    nn = NEVARS + usrVarList.count + curbp->varList.count ;
+    nn = NEVARS + usrVarList.count + frameCur->bufferCur->varList.count ;
     
     if((list = (meUByte **) meMalloc(sizeof(meUByte *) * nn)) == NULL)
         return 0 ;
@@ -744,7 +750,7 @@ createVarList(meUByte ***listPtr)
         list[ii][0] = '%' ;
         meStrcpy(list[ii]+1,vptr->name) ;
     }
-    for(vptr=curbp->varList.head ; vptr != NULL ; vptr = vptr->next,ii++)
+    for(vptr=frameCur->bufferCur->varList.head ; vptr != NULL ; vptr = vptr->next,ii++)
     {
         if((list[ii] = meMalloc(meStrlen(vptr->name)+2)) == NULL)
             return 0 ;
@@ -757,7 +763,7 @@ createVarList(meUByte ***listPtr)
 int
 createCommList(meUByte ***listPtr, int noHidden)
 {
-    meCMD *cmd ;
+    meCommand *cmd ;
     register int ii ;
     register meUByte **list ;
     
@@ -768,7 +774,7 @@ createCommList(meUByte ***listPtr, int noHidden)
     while(cmd != NULL)
     {
         if(!noHidden || (cmd->id < CK_MAX) ||
-           !(((meMACRO *) cmd)->hlp->l_flag & MACHIDE))
+           !(((meMacro *) cmd)->hlp->flag & meMACRO_HIDE))
             list[ii++] = cmd->name ;
         cmd = cmd->anext ;
     }
@@ -777,21 +783,23 @@ createCommList(meUByte ***listPtr, int noHidden)
 }
 
 
-#if LCLBIND
+#if MEOPT_LOCALBIND
 meUByte oldUseMlBinds ;
 #endif
 meUByte **mlgsStrList ;
 int    mlgsStrListSize ;
-static WINDOW *mlgsOldCwp=NULL ;
-static meInt   mlgsSingWind=0 ;
-static int     mlgsCursorState=0 ;
-static meUByte  *mlgsStoreBuf=NULL ;
+static meWindow  *mlgsOldCwp=NULL ;
+static meUByte *mlgsStoreBuf=NULL ;
+static meInt    mlgsSingWind=0 ;
+#if MEOPT_EXTENDED
+static int      mlgsCursorState=0 ;
+#endif
 
 static void
 mlfreeList(int option, int noStrs, meUByte **strList)
 {
-    mlStatus = MLSTATUS_CLEAR ;
-#if LCLBIND
+    frameCur->mlStatus = MLSTATUS_CLEAR ;
+#if MEOPT_LOCALBIND
     useMlBinds = oldUseMlBinds ;
 #endif
     if(mlgsStoreBuf != NULL)
@@ -808,48 +816,51 @@ mlfreeList(int option, int noStrs, meUByte **strList)
     }
     if(mlgsOldCwp != NULL)
     {
-        BUFFER *bp=curbp ;
+        meBuffer *bp=frameCur->bufferCur ;
         if(mlgsSingWind)
         {
-            delwind(FALSE,FALSE) ;
-            curwp->topLineNo = mlgsSingWind-1 ;
+            delwind(meFALSE,meFALSE) ;
+            frameCur->windowCur->vertScroll = mlgsSingWind-1 ;
         }
         else
         {
-            BUFFER *rbp=NULL, *tbp=bheadp ;
+            meBuffer *rbp=NULL, *tbp=bheadp ;
             while(tbp != NULL)
             {
                 if((tbp != bp) && ((rbp == NULL) || (rbp->histNo < tbp->histNo)))
                     rbp = tbp ;
-                tbp = tbp->b_bufp ;
+                tbp = tbp->next ;
             }
-            swbuffer(curwp,rbp) ;
+            swbuffer(frameCur->windowCur,rbp) ;
             makeCurWind(mlgsOldCwp) ;
         }
         zotbuf(bp,1) ;
         mlgsOldCwp = NULL ;
     }
+#if MEOPT_EXTENDED
     if(mlgsCursorState < 0)
-        showCursor(TRUE,mlgsCursorState) ;
+        showCursor(meTRUE,mlgsCursorState) ;
+#endif
 }
 
+#if MEOPT_MOUSE
 static int
 mlHandleMouse(meUByte *inpBuf, int inpBufSz, int compOff)
 {
     int row, col ;
     
     if((mlgsOldCwp != NULL) &&
-       ((row=mouse_Y-curwp->firstRow) >= 0) && (row < curwp->numRows-1) &&
-       ((col=mouse_X-curwp->firstCol) >= 0) && (col < curwp->numCols))
+       ((row=mouse_Y-frameCur->windowCur->frameRow) >= 0) && (row < frameCur->windowCur->depth-1) &&
+       ((col=mouse_X-frameCur->windowCur->frameColumn) >= 0) && (col < frameCur->windowCur->width))
     {
-        if (col >= curwp->numTxtCols)
+        if (col >= frameCur->windowCur->textWidth)
         {
             /* only do scroll bar if on pick and bars are enabled */
-            if((inpBuf == NULL) && (curwp->w_mode & WMSCROL))
+            if((inpBuf == NULL) && (frameCur->windowCur->vertScrollBarMode & WMSCROL))
             {
                 int ii ;
                 for (ii = 0; ii <= (WCVSBML-WCVSBSPLIT); ii++)
-                    if (mouse_Y < (meShort) curwp->w_sbpos[ii])
+                    if (mouse_Y < (meShort) frameCur->windowCur->vertScrollBarPos[ii])
                         break;
                 if(ii == (WCVSBUP-WCVSBSPLIT))
                     scrollUp(1,1) ;
@@ -859,38 +870,38 @@ mlHandleMouse(meUByte *inpBuf, int inpBufSz, int compOff)
                     scrollDown(1,1) ;
                 else if(ii == (WCVSBDSHAFT-WCVSBSPLIT))
                     scrollDown(0,1) ;
-                update(TRUE) ;
+                update(meTRUE) ;
             }
         }
         else
         {
-            LINE *lp ;
+            meLine *lp ;
             int ii, jj, lineNo ;
             
-            row += curwp->topLineNo ;
+            row += frameCur->windowCur->vertScroll ;
             lineNo = row ;
-            lp = curbp->b_linep->l_fp ;
+            lp = frameCur->bufferCur->baseLine->next ;
             while(--row >= 0)
-                lp = lforw(lp) ;
-            if((lp->l_flag & LNNEOL) && (col >= curwp->w_marko))
-                ii = curwp->w_marko ;
+                lp = meLineGetNext(lp) ;
+            if((lp->flag & meLINE_NOEOL) && (col >= frameCur->windowCur->markOffset))
+                ii = frameCur->windowCur->markOffset ;
             else
                 ii = 0 ;
-            if((ii == 0) && (lp->l_flag & LNNEOL))
+            if((ii == 0) && (lp->flag & meLINE_NOEOL))
             {
                 jj = 1 ;
-                while((lgetc(lp,jj) != ' ') || (lgetc(lp,jj+1) != ' '))
+                while((meLineGetChar(lp,jj) != ' ') || (meLineGetChar(lp,jj+1) != ' '))
                     jj++ ;
             }
             else
-                jj = llength(lp) ;
+                jj = meLineGetLength(lp) ;
             if(jj > col)
             {
-                curwp->w_dotp = lp ;
-                curwp->w_doto = ii ;
-                curwp->line_no = lineNo ;
-                setShowRegion(curbp,lineNo,ii,lineNo,jj) ;
-                curwp->w_flag |= WFMOVEL|WFSELHIL ;
+                frameCur->windowCur->dotLine = lp ;
+                frameCur->windowCur->dotOffset = ii ;
+                frameCur->windowCur->dotLineNo = lineNo ;
+                setShowRegion(frameCur->bufferCur,lineNo,ii,lineNo,jj) ;
+                frameCur->windowCur->flag |= WFMOVEL|WFSELHIL ;
                 if(inpBuf != NULL)
                 {
                     if((jj -= ii) >= (inpBufSz-compOff))
@@ -898,27 +909,28 @@ mlHandleMouse(meUByte *inpBuf, int inpBufSz, int compOff)
                     /* if we already have this, assume the user has double clicked
                      * to 'select', so return 2 to exit */
                     if((inpBuf[compOff+jj] == '\0') && 
-                       !meStrncmp(inpBuf+compOff,ltext(lp)+ii,jj))
+                       !meStrncmp(inpBuf+compOff,meLineGetText(lp)+ii,jj))
                         return 2 ;
-                    meStrncpy(inpBuf+compOff,ltext(lp)+ii,jj) ;
+                    meStrncpy(inpBuf+compOff,meLineGetText(lp)+ii,jj) ;
                     inpBuf[compOff+jj] = '\0' ;
                 }
-                update(TRUE) ;
+                update(meTRUE) ;
                 return 1 ;
             }
         }
     }
     return 0 ;
 }
+#endif
 
 meUByte *compSole     = (meUByte *)" [Sole completion]" ;
 meUByte *compNoMch    = (meUByte *)" [No match]" ;
 meUByte *compNoExp    = (meUByte *)" [No expansion]" ;
 meUByte *compFailComp = (meUByte *)" [Failed to create]" ;
 
-#if MEOSD
+#if MEOPT_OSD
 #define mlgsDisp(prom,buf,contstr,ipos) \
-((mlStatus & MLSTATUS_POSOSD) ? osdDisp(buf,contstr,ipos):mlDisp(prom,buf,contstr,ipos))
+((frameCur->mlStatus & MLSTATUS_POSOSD) ? osdDisp(buf,contstr,ipos):mlDisp(prom,buf,contstr,ipos))
 #else
 #define mlgsDisp(prom,buf,contstr,ipos) \
 (mlDisp(prom,buf,contstr,ipos))
@@ -939,14 +951,14 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
     meUByte **history ;
     meUByte   onHist, numHist, *numPtr ;
     meUByte  *defaultStr ;
-    meUByte   prom[MAXBUF] ;
+    meUByte   prom[meBUF_SIZE_MAX] ;
     meUByte   ch, **strList ;
     meUByte  *contstr=NULL ;
     int     gotPos=1, fstPos, lstPos, curPos, noStrs ;
     int     changed=1, compOff=0 ;
     
     if((mlgsStoreBuf = meMalloc(nbuf)) == NULL)
-       return ABORT ;
+       return meABORT ;
 
     mlerase(0);            /* Blank line to force update */
 
@@ -990,7 +1002,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
     {
         defaultStr = history[defnum-1] ;
         meStrncpy(prom+ii," (default [",11) ;
-        ii = expandexp(-1,defaultStr,MAXBUF-5,ii+11,prom,-1,NULL,0) ;
+        ii = expandexp(-1,defaultStr,meBUF_SIZE_MAX-5,ii+11,prom,-1,NULL,0) ;
         meStrcpy(prom+ii,"]): ") ;
     }
     else
@@ -1002,7 +1014,8 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
     if(option & MLNORESET)
     {
         ilen = meStrlen(buf) ;
-        if(mlStatus & MLSTATUS_OSDPOS)
+#if MEOPT_OSD
+        if(frameCur->mlStatus & MLSTATUS_OSDPOS)
         {
             meUByte *s1, *s2 ;
             s1 = buf ;
@@ -1021,6 +1034,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
             }
         }
         else
+#endif
             ipos = ilen ;
     }
     else
@@ -1028,12 +1042,14 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
         ipos = ilen = 0 ;
         buf[0] = '\0' ;
     }
-#if LCLBIND
+#if MEOPT_LOCALBIND
     oldUseMlBinds = useMlBinds ;
     useMlBinds = 1 ;
 #endif
+#if MEOPT_EXTENDED
     if((mlgsCursorState=cursorState) < 0)
-        showCursor(FALSE,1) ;
+        showCursor(meFALSE,1) ;
+#endif
     for (cont_flag = 1; cont_flag != 0;)
     {
         meUInt arg ;
@@ -1042,9 +1058,9 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
         
         if(option & MLHIDEVAL)
         {
-            meUByte hbuf[MAXBUF] ;
+            meUByte hbuf[meBUF_SIZE_MAX] ;
             ff = meStrlen(buf) ;
-            meAssert(ff < MAXBUF) ;
+            meAssert(ff < meBUF_SIZE_MAX) ;
             memset(hbuf,'*',ff) ;
             hbuf[ff] = '\0' ;
             mlgsDisp(prom,hbuf,contstr,ipos) ;
@@ -1064,7 +1080,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
             mlfirst = -1;
         }
         else
-            cc = meGetKeyFromUser(FALSE,0,meGETKEY_SILENT) ;
+            cc = meGetKeyFromUser(meFALSE,0,meGETKEY_SILENT) ;
         
         idx = decode_key((meUShort) cc,&arg) ;
         if(arg)
@@ -1080,7 +1096,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
         switch(idx)
         {
         case CK_GOBOL:          /* ^A : Move to start of buffer */
-            if(mlStatus & MLSTATUS_NINPUT)
+            if(frameCur->mlStatus & MLSTATUS_NINPUT)
             {
                 while(ipos && (buf[ipos-1] != meNLCHAR))
                     ipos-- ;
@@ -1105,7 +1121,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
             break;
             
         case CK_GOEOL:    /* ^E : Move to end of buffer */
-            if(mlStatus & MLSTATUS_NINPUT)
+            if(frameCur->mlStatus & MLSTATUS_NINPUT)
             {
                 while((ipos < ilen) && (buf[ipos] != meNLCHAR))
                     ipos++ ;
@@ -1121,7 +1137,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
             
         case CK_ABTCMD: /* ^G : Abort input and return */
             mlfreeList(option,noStrs,strList) ;
-            return ctrlg(FALSE,1);
+            return ctrlg(meFALSE,1);
             
         case CK_DELBAK:    /* ^H : backwards delete. */
             while(ipos && ii--)
@@ -1133,7 +1149,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
             break;
             
         case CK_DOTAB:    /* ^I : Tab character */
-            if(mlStatus & MLSTATUS_NINPUT)
+            if(frameCur->mlStatus & MLSTATUS_NINPUT)
             {
                 cont_flag = 0;
                 break;
@@ -1144,7 +1160,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
 input_expand:
             if(option & MLFILE)
             {
-                meUByte fname[FILEBUF], *base ;
+                meUByte fname[meFILEBUF_SIZE_MAX], *base ;
                 
                 pathNameCorrect(buf,PATHNAME_PARTIAL,fname,&base) ;
                 meStrcpy(buf,fname) ;
@@ -1224,11 +1240,11 @@ input_expand:
                         goto input_addexpand ;
                 if(mlgsOldCwp == NULL)
                 {
-                    if(wheadp->w_wndp == NULL)
-                        mlgsSingWind = curwp->topLineNo+1 ;
+                    if(frameCur->windowList->next == NULL)
+                        mlgsSingWind = frameCur->windowCur->vertScroll+1 ;
                     else
                         mlgsSingWind = 0 ;
-                    mlgsOldCwp = curwp ;
+                    mlgsOldCwp = frameCur->windowCur ;
                 }
                 
                 if(wpopup(BcompleteN,BFND_CREAT|BFND_CLEAR|WPOP_MKCURR) == NULL)
@@ -1237,14 +1253,14 @@ input_expand:
                     break ;
                 }
                 /* remove any completion list selection hilighting */
-                if(selhilight.bp == curbp)
+                if(selhilight.bp == frameCur->bufferCur)
                     selhilight.flags &= ~SELHIL_ACTIVE ;
                 
                 /* Compute the widths available from the window width */
-                lwidth = curwp->numTxtCols >> 1;
+                lwidth = frameCur->windowCur->textWidth >> 1;
                 if (lwidth > 75)
                     lwidth = 75 ;
-                curwp->w_marko = lwidth ;
+                frameCur->windowCur->markOffset = lwidth ;
                 for(ii=fstPos ; ii<=lstPos ; ii++)
                 {
                     meUByte flag ;
@@ -1255,7 +1271,7 @@ input_expand:
                         meStrcpy(line,strList[ii++]) ;
                         memset(line+len,' ',lwidth-len) ;
                         meStrcpy(line+lwidth,strList[ii]) ;
-                        flag = LNNEOL ;
+                        flag = meLINE_NOEOL ;
                     }
                     else
                     {
@@ -1263,11 +1279,11 @@ input_expand:
                         line[149] = '\0' ;
                         flag = 0 ;
                     }
-                    addLineToEob(curbp,line) ;
-                    curbp->b_linep->l_bp->l_flag |= flag ;
+                    addLineToEob(frameCur->bufferCur,line) ;
+                    frameCur->bufferCur->baseLine->prev->flag |= flag ;
                 }
-                gotobob(FALSE,FALSE) ;
-                update(TRUE) ;
+                gotobob(meFALSE,meFALSE) ;
+                update(meTRUE) ;
             }
             break ;
             
@@ -1275,7 +1291,7 @@ input_expand:
             if(mlgsOldCwp != NULL)
             {
                 scrollUp(ff,ii) ;
-                update(TRUE) ;
+                update(meTRUE) ;
             }
             break ;
             
@@ -1283,12 +1299,12 @@ input_expand:
             if(mlgsOldCwp != NULL)
             {
                 scrollDown(ff,ii) ;
-                update(TRUE) ;
+                update(meTRUE) ;
             }
             break ;
             
         case CK_BAKLIN: /* M-P - previous match in complete list */
-            if(mlStatus & MLSTATUS_NINPUT)
+            if(frameCur->mlStatus & MLSTATUS_NINPUT)
             {
                 ii = ipos ;
                 while((--ii >= 0) && (buf[ii] != meNLCHAR))
@@ -1326,7 +1342,7 @@ input_expand:
             break ;
             
         case CK_FORLIN: /* ^N - next match in complete list */
-            if(mlStatus & MLSTATUS_NINPUT)
+            if(frameCur->mlStatus & MLSTATUS_NINPUT)
             {
                 ii = ipos ;
                 while((ii < ilen) && (buf[ii] != meNLCHAR))
@@ -1366,7 +1382,7 @@ input_expand:
         case CK_KILEOL:    /* ^K : Kill to end of line */
             if(ipos < ilen)
             {
-                if(mlStatus & MLSTATUS_NINPUT)
+                if(frameCur->mlStatus & MLSTATUS_NINPUT)
                 {
                     ii = ilen ;
                     while((ipos < ilen) && (buf[ipos] != meNLCHAR))
@@ -1387,13 +1403,13 @@ input_expand:
             break;
             
         case CK_RECENT:  /* ^L : Redraw the screen */
-            sgarbf = TRUE;
-            update(TRUE) ;
+            sgarbf = meTRUE;
+            update(meTRUE) ;
             mlerase(0);
             break;
             
         case CK_NEWLIN:  /* ^J : New line. Finish processing */
-            if(mlStatus & MLSTATUS_NINPUT)
+            if(frameCur->mlStatus & MLSTATUS_NINPUT)
             {
                 cc = meNLCHAR ;
                 goto input_addexpand ;
@@ -1401,7 +1417,9 @@ input_expand:
             cont_flag = 0;
             break;
             
+#if MEOPT_WORDPRO
         case CK_GOEOP:    /* M-N : Got to next in history list */
+#endif
             /* Note the history list is reversed, ie 0 most recent,
             ** (numHist-1) the oldest. However if numHist then its
             ** the current one (wierd but easiest to implement
@@ -1434,7 +1452,9 @@ mlgs_nexthist:
             }
             break;
             
+#if MEOPT_WORDPRO
         case CK_GOBOP:    /* M-P : Got to previous in history list */
+#endif
 mlgs_prevhist:
             if(!(option & MLNOHIST) && (numHist > 0))
             {
@@ -1490,15 +1510,15 @@ mlgs_prevhist:
                 break ;
             }
             while(ii--)
-                if(cins((meUByte) cc, buf, &ipos, &ilen, nbuf) == FALSE)
+                if(cins((meUByte) cc, buf, &ipos, &ilen, nbuf) == meFALSE)
                     TTbell();
             changed=1 ;
             break;
             
         case CK_OPNLIN:    /* ^O : Insert current line into buffer */
             {
-                register meUByte *p = curwp->w_dotp->l_text;
-                register int count = curwp->w_dotp->l_used;
+                register meUByte *p = frameCur->windowCur->dotLine->text;
+                register int count = frameCur->windowCur->dotLine->length;
                 
                 while(*p && count--)
                     cins(*p++, buf, &ipos, &ilen, nbuf);
@@ -1508,13 +1528,13 @@ mlgs_prevhist:
         case CK_YANK:    /* ^Y : insert yank buffer */
             {
                 register meUByte *pp, cy ;
-                KILL *killp;
+                meKillNode *killp;
                 
 #ifdef _CLIPBRD
-                if((clipState & CLIP_TRY_GET) || (kbdmode != PLAY))
+                if((clipState & CLIP_TRY_GET) || (kbdmode != mePLAY))
                     TTgetClipboard() ;
 #endif
-                if(klhead == (KLIST*) NULL)
+                if(klhead == (meKill*) NULL)
                 {
                     TTbell() ;
                     break ;
@@ -1525,7 +1545,7 @@ mlgs_prevhist:
                 {
                     pp = killp->data ;
                     while((cy=*pp++))
-                        if(cins(cy, buf, &ipos, &ilen, nbuf) == FALSE)
+                        if(cins(cy, buf, &ipos, &ilen, nbuf) == meFALSE)
                         {
                             TTbell() ;
                             break ;
@@ -1538,7 +1558,7 @@ mlgs_prevhist:
             
         case CK_INSFLNM:    /* insert file name */
             {
-                register meUByte ch, *p = curbp->b_fname;
+                register meUByte ch, *p = frameCur->bufferCur->fileName;
                 
                 if(p != NULL)
                     while(ii--)
@@ -1642,7 +1662,7 @@ mlgs_prevhist:
             
         case CK_REYANK:    /* M-Y or M-^Y : Yank the current buffername. */
             {
-                register meUByte *p = curbp->b_bname;
+                register meUByte *p = frameCur->bufferCur->name;
                 
                 while(*p && cins(*p++, buf, &ipos, &ilen, nbuf))
                     ;
@@ -1658,11 +1678,11 @@ mlgs_prevhist:
             {
                 mlfirst = cc ;
                 mlfreeList(option,noStrs,strList) ;
-                return TRUE ;
+                return meTRUE ;
             }
             TTbell() ;
             break ;
-#if MOUSE            
+#if MEOPT_MOUSE            
         case CK_CTOMOUSE:
             /* a binding to set-cursor-to-mouse is used to handle mouse
              * events, needs to handle osd pick and normal completion lists */
@@ -1671,8 +1691,8 @@ mlgs_prevhist:
                (cc == (ME_SPECIAL|SKEY_mouse_pick_2)) ||
                (cc == (ME_SPECIAL|SKEY_mouse_pick_3)) )
             {
-#if MEOSD
-                if(mlStatus & MLSTATUS_POSOSD)
+#if MEOPT_OSD
+                if(frameCur->mlStatus & MLSTATUS_POSOSD)
                 {
                     if(osdMouseContextChange(1))
                         cont_flag = 0;
@@ -1682,7 +1702,7 @@ mlgs_prevhist:
                     mlHandleMouse(NULL,0,0) ;
             }
             /* a drop event */
-            else if(!(mlStatus & MLSTATUS_POSOSD) && ((cc=mlHandleMouse(buf,nbuf,compOff)) != 0))
+            else if(!(frameCur->mlStatus & MLSTATUS_POSOSD) && ((cc=mlHandleMouse(buf,nbuf,compOff)) != 0))
             {
                 ipos = ilen = meStrlen(buf) ;
                 if(cc == 2)
@@ -1698,7 +1718,7 @@ mlgs_prevhist:
         case -1:
             if(cc & 0xff00)    /* if control, meta or prefix then scrap */
             {
-#if MOUSE
+#if MEOPT_MOUSE
                 /* ignore mouse move events - these are sometimes generated
                  * when executing a command from osd */
                 if((cc & 0x00ff) != SKEY_mouse_move)
@@ -1727,7 +1747,7 @@ input_addexpand:
             /*
              * And insert it ....
              */
-            if(cins((meUByte) cc, buf, &ipos, &ilen, nbuf) == FALSE)
+            if(cins((meUByte) cc, buf, &ipos, &ilen, nbuf) == meFALSE)
                 TTbell();
             changed=1 ;
             break;
@@ -1757,9 +1777,9 @@ input_addexpand:
          * deleted soon), otherwise the slot will be NULL and
          * nothing will get freed
          */
-        mlgsStoreBuf = history[MLHISTSIZE-1] ;
+        mlgsStoreBuf = history[meHISTORY_SIZE-1] ;
         meStrcpy(ss,buf) ;
-        if(numHist < MLHISTSIZE)
+        if(numHist < meHISTORY_SIZE)
         {
             numHist++ ;
             (*numPtr)++ ;
@@ -1770,6 +1790,6 @@ input_addexpand:
     }
     mlfreeList(option,noStrs,strList) ;
 
-    return TRUE;
+    return meTRUE;
 }
 

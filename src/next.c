@@ -35,19 +35,19 @@
 #include "emain.h"
 #include "esearch.h"
 
-#if FLNEXT
+#if MEOPT_FILENEXT
 
 static int
 flNextFind(meUByte *str, meUByte **curFilePtr, meInt *curLine)
 {
-    meUByte   pat[MAXBUF], *ss, cc ;
+    meUByte   pat[meBUF_SIZE_MAX], *ss, cc ;
     meUByte  *n=NULL ;
     int     buffRpt=-1, fileRpt=-1, lineRpt=-1, onRpt=0 ;
     int     soff, len ;
     
     ss = str+1 ;
     soff = 0 ;
-    while((soff < NPAT) && ((cc=*ss++) != '\0'))
+    while((soff < mePATBUF_SIZE_MAX) && ((cc=*ss++) != '\0'))
     {
         if(cc == '%')
         {
@@ -80,25 +80,25 @@ flNextFind(meUByte *str, meUByte **curFilePtr, meInt *curLine)
         else
             pat[soff++] = cc ;
     }
-    if(soff >= NPAT)
+    if(soff >= mePATBUF_SIZE_MAX)
         return mlwrite(MWABORT,(meUByte *)"[Search string to long]") ;
     pat[soff] = '\0' ;
 
-    if(iscanner(pat,1,ISCANNER_PTBEG|ISCANNER_MAGIC|ISCANNER_EXACT,NULL) != TRUE)
+    if(iscanner(pat,1,ISCANNER_PTBEG|ISCANNER_MAGIC|ISCANNER_EXACT,NULL) != meTRUE)
         return 0 ;
 
     /* Found it, is it an ignore line? if so return -1 else fill in the slots and return 1. */
     if(*str == '0')
         return -1 ;
     
-    soff = curwp->w_doto ;
+    soff = frameCur->windowCur->dotOffset ;
     if(fileRpt >= 0)
     {
         len = mereRegexGroupEnd(fileRpt+1) - mereRegexGroupStart(fileRpt+1) ;
         meNullFree(*curFilePtr) ;
         if((*curFilePtr = meMalloc(len+1)) == NULL)
-            return FALSE ;
-        meStrncpy(*curFilePtr,curwp->w_dotp->l_text+soff+mereRegexGroupStart(fileRpt+1),len) ;
+            return meFALSE ;
+        meStrncpy(*curFilePtr,frameCur->windowCur->dotLine->text+soff+mereRegexGroupStart(fileRpt+1),len) ;
         (*curFilePtr)[len] = '\0' ;
     }
     else if(buffRpt >= 0)
@@ -106,14 +106,14 @@ flNextFind(meUByte *str, meUByte **curFilePtr, meInt *curLine)
         len = mereRegexGroupEnd(buffRpt+1) - mereRegexGroupStart(buffRpt+1) ;
         meNullFree(*curFilePtr) ;
         if((*curFilePtr = meMalloc(len+3)) == NULL)
-            return FALSE ;
+            return meFALSE ;
         (*curFilePtr)[0] = '*' ;
-        meStrncpy((*curFilePtr)+1,curwp->w_dotp->l_text+soff+mereRegexGroupStart(fileRpt+1),len) ;
+        meStrncpy((*curFilePtr)+1,frameCur->windowCur->dotLine->text+soff+mereRegexGroupStart(fileRpt+1),len) ;
         (*curFilePtr)[len+1] = '*' ;
         (*curFilePtr)[len+2] = '\0' ;
     }
     if(lineRpt >= 0)
-        *curLine = meAtoi(curwp->w_dotp->l_text+soff+mereRegexGroupStart(lineRpt+1)) ;
+        *curLine = meAtoi(frameCur->windowCur->dotLine->text+soff+mereRegexGroupStart(lineRpt+1)) ;
 
     return 1 ;
 }
@@ -125,19 +125,19 @@ getNextLine(int f,int n)
     meUByte **nextLines ;
     meUByte  *nextFile=NULL ;
     meInt   curLine=-1 ;
-    BUFFER *bp=NULL, *tbp ;
+    meBuffer *bp=NULL, *tbp ;
     
     for(ii=0 ; ii<noNextLine ; ii++)
     {
         if((tbp = bfind(nextName[ii],0)) != NULL)
         {
-            if(tbp == curbp)
+            if(tbp == frameCur->bufferCur)
             {
                 bp = tbp ;
                 no = ii ;
                 break ;
             }
-            if((bp == NULL) || (bp->b_nwnd < tbp->b_nwnd))
+            if((bp == NULL) || (bp->windowCount < tbp->windowCount))
             {
                 bp = tbp ;
                 no = ii ;
@@ -147,31 +147,31 @@ getNextLine(int f,int n)
     if(bp == NULL)
         return mlwrite(MWABORT,(meUByte *)"[No next buffer found]") ;
     if((noNextLines = nextLineCnt[no]) == 0)
-        return mlwrite(MWABORT,(meUByte *)"[No lines for next buffer %s]",bp->b_bname) ;
+        return mlwrite(MWABORT,(meUByte *)"[No lines for next buffer %s]",bp->name) ;
     nextLines = nextLineStr[no] ;
     
-    wpopup(bp->b_bname,WPOP_MKCURR) ;
+    wpopup(bp->name,WPOP_MKCURR) ;
 
-    if((curwp->w_dotp == bp->b_linep) ||
-       ((curwp->w_dotp == lback(bp->b_linep)) &&
-        (curwp->w_doto == llength(curwp->w_dotp))))
+    if((frameCur->windowCur->dotLine == bp->baseLine) ||
+       ((frameCur->windowCur->dotLine == meLineGetPrev(bp->baseLine)) &&
+        (frameCur->windowCur->dotOffset == meLineGetLength(frameCur->windowCur->dotLine))))
     {
-        curwp->w_dotp = lforw(bp->b_linep) ;
-        curwp->w_doto = 0 ;
-        curwp->line_no = 0 ;
+        frameCur->windowCur->dotLine = meLineGetNext(bp->baseLine) ;
+        frameCur->windowCur->dotOffset = 0 ;
+        frameCur->windowCur->dotLineNo = 0 ;
     }
-    while((curwp->line_no)++,
-          (curwp->w_dotp = lforw(curwp->w_dotp)) != bp->b_linep)
+    while((frameCur->windowCur->dotLineNo)++,
+          (frameCur->windowCur->dotLine = meLineGetNext(frameCur->windowCur->dotLine)) != bp->baseLine)
     {
         ii = noNextLines ;
         while(--ii >= 0)
         {
-            curwp->w_doto = 0 ;
-            if((rr=flNextFind(nextLines[ii],&nextFile,&curLine)) == ABORT)
+            frameCur->windowCur->dotOffset = 0 ;
+            if((rr=flNextFind(nextLines[ii],&nextFile,&curLine)) == meABORT)
             {
-                curwp->w_doto = 0 ;
-                curwp->w_flag |= WFMOVEL ;
-                return ABORT ;
+                frameCur->windowCur->dotOffset = 0 ;
+                frameCur->windowCur->flag |= WFMOVEL ;
+                return meABORT ;
             }
             if(rr == -1)
                 /* ignore the line */
@@ -179,20 +179,20 @@ getNextLine(int f,int n)
             else if(rr == 1)
             {
                 /* matched a line */
-                curwp->w_doto = 0 ;
-                curwp->w_flag |= WFMOVEL ;
+                frameCur->windowCur->dotOffset = 0 ;
+                frameCur->windowCur->flag |= WFMOVEL ;
                 if(nextFile != NULL)
                 {
-                    meUByte fname[FILEBUF], *value ;
-                    meVARIABLE *var ;
+                    meUByte fname[meFILEBUF_SIZE_MAX], *value ;
+                    meVariable *var ;
                     
                     ii = meStrlen(nextFile) ;
                     if((nextFile[0] != '*') || (nextFile[ii-1] != '*'))
                     {
-                        if(bp->b_fname != NULL)
+                        if(bp->fileName != NULL)
                         {
-                            meUByte tmp[FILEBUF] ;
-                            getFilePath(bp->b_fname,tmp) ;
+                            meUByte tmp[meFILEBUF_SIZE_MAX] ;
+                            getFilePath(bp->fileName,tmp) ;
                             meStrcat(tmp,nextFile) ;
                             fileNameCorrect(tmp,fname,NULL) ;
                         }
@@ -206,7 +206,7 @@ getNextLine(int f,int n)
                     var = SetUsrLclCmdVar((meUByte *)"next-file",value,&(bp->varList)) ;
                     meFree(nextFile) ;
                     if(var == NULL)
-                        return FALSE ;
+                        return meFALSE ;
                     nextFile = var->value ;
                 }
                 else if((nextFile = getUsrLclCmdVar((meUByte *)"next-file",&(bp->varList))) == errorm)
@@ -214,31 +214,31 @@ getNextLine(int f,int n)
                 else
                     ii = meStrlen(nextFile) ;
                 if(wpopup(NULL,WPOP_MKCURR) == NULL)
-                    return FALSE ;
+                    return meFALSE ;
                 if((nextFile[0] == '*') && (nextFile[ii-1] == '*'))
                 {
-                    BUFFER *bp ;
+                    meBuffer *bp ;
                     nextFile[ii-1] = '\0' ;
                     if((bp = bfind(nextFile+1,0)) == NULL)
                     {
                         mlwrite(MWABORT,(meUByte *)"[Buffer \"%s\" no longer exists]",nextFile+1) ;
                         nextFile[ii-1] = '*' ;
-                        return FALSE ;
+                        return meFALSE ;
                     }
                     nextFile[ii-1] = '*' ;
-                    if(swbuffer(curwp,bp) != TRUE)
-                        return FALSE ;
+                    if(swbuffer(frameCur->windowCur,bp) != meTRUE)
+                        return meFALSE ;
                 }
-                else if(findSwapFileList(nextFile,(BFND_CREAT|BFND_MKNAM),0) != TRUE)
-                    return FALSE ;
+                else if(findSwapFileList(nextFile,(BFND_CREAT|BFND_MKNAM),0) != meTRUE)
+                    return meFALSE ;
                 if(curLine < 0)
                     return mlwrite(MWABORT,(meUByte *)"[No Line number]") ;
                 /* if for some strange reason the file wasn't found, but the directory
                  * was and its read only, the findSwapFileList will succeed (new buffer)
                  * BUT the file name will be null! catch this and just use the buffer name */ 
                 mlwrite(0,(meUByte *)"File %s, line %d",
-                        (curbp->b_fname == NULL) ? curbp->b_bname:curbp->b_fname,curLine) ;
-#if NARROW
+                        (frameCur->bufferCur->fileName == NULL) ? frameCur->bufferCur->name:frameCur->bufferCur->fileName,curLine) ;
+#if MEOPT_NARROW
                 return gotoAbsLine(curLine) ;
 #else
                 return gotoLine(1,curLine) ;
@@ -246,19 +246,19 @@ getNextLine(int f,int n)
             }
         }
     }
-    curwp->w_doto = 0 ;
-    curwp->w_flag |= WFMOVEL ;
+    frameCur->windowCur->dotOffset = 0 ;
+    frameCur->windowCur->flag |= WFMOVEL ;
     return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[No more lines found]") ;
 }
 
 int
 addNextLine(int f, int n)
 {
-    meUByte name[MAXBUF], line[MAXBUF] ;
+    meUByte name[meBUF_SIZE_MAX], line[meBUF_SIZE_MAX] ;
     int no, cnt ;
     
-    if(meGetString((meUByte *)"next name",0,0,name,MAXBUF) != TRUE)
-        return FALSE ;
+    if(meGetString((meUByte *)"next name",0,0,name,meBUF_SIZE_MAX) != meTRUE)
+        return meFALSE ;
     for(no=0 ; no<noNextLine ; no++)
         if(!meStrcmp(nextName[no],name))
             break ;
@@ -271,11 +271,11 @@ addNextLine(int f, int n)
                 meFree(nextLineStr[no][cnt]) ;
             nextLineCnt[no] = 0 ;
         }
-        return TRUE ;
+        return meTRUE ;
     }
     line[0] = (n < 0) ? '0':'1' ;
-    if(meGetString((meUByte *)"next line",0,0,line+1,MAXBUF) != TRUE)
-        return FALSE ;
+    if(meGetString((meUByte *)"next line",0,0,line+1,meBUF_SIZE_MAX) != meTRUE)
+        return meFALSE ;
     if(no == noNextLine)
     {
         noNextLine++ ;
@@ -285,7 +285,7 @@ addNextLine(int f, int n)
            ((nextLineStr=meRealloc(nextLineStr,noNextLine*sizeof(meUByte **))) == NULL))
         {
             noNextLine = 0 ;
-            return FALSE ;
+            return meFALSE ;
         }
         nextLineCnt[no] = 0 ;
         nextLineStr[no] = NULL ;
@@ -296,74 +296,24 @@ addNextLine(int f, int n)
        ((nextLineStr[no][cnt]=meStrdup(line)) == NULL))
     {
         nextLineCnt[no] = 0 ;
-        return FALSE ;
+        return meFALSE ;
     }
     nextLineCnt[no]++ ;
-    return TRUE ;
+    return meTRUE ;
 }
 
 #endif
 
-int
-addFileHook(int f, int n)
-{
-    if(n == 0)
-    {
-        /* arg of 0 frees all hooks off */
-        if(fileHookCount)
-        {
-            n = fileHookCount ;
-            while(--n >= 0)
-            {
-                free(fileHookExt[n]) ;
-                free(fileHookFunc[n]) ;
-            }
-            free(fileHookExt) ;
-            free(fileHookFunc) ;
-            free(fileHookArg) ;
-            fileHookCount=0 ;
-            fileHookExt=NULL ;
-            fileHookFunc=NULL ;
-            fileHookArg=NULL ;
-        }
-    }
-    else
-    {
-        meUByte buff[MAXBUF] ;
-    
-        if(((fileHookExt = meRealloc(fileHookExt,(fileHookCount+1)*sizeof(char *))) == NULL) ||
-           ((fileHookFunc = meRealloc(fileHookFunc,(fileHookCount+1)*sizeof(char *))) == NULL) ||
-           ((fileHookArg = meRealloc(fileHookArg,(fileHookCount+1)*sizeof(short))) == NULL))
-        {
-            fileHookCount=0 ;
-            return FALSE ;
-        }
-        if((meGetString((meUByte *)"File id",0,0,buff,MAXBUF) != TRUE) ||
-           ((fileHookExt[fileHookCount] = meStrdup(buff)) == NULL) ||
-           (meGetString((meUByte *)"Hook func",0,0,buff,MAXBUF) != TRUE) ||
-           ((fileHookFunc[fileHookCount] = meStrdup(buff)) == NULL))
-            return FALSE ;
-        if(f == FALSE)
-            fileHookArg[fileHookCount] = 0 ;
-        else
-            fileHookArg[fileHookCount] = n ;
-        fileHookCount++ ;
-    }
-    return TRUE ;
-}
-
-
-
-#if DORCS
+#if MEOPT_RCS
 
 int
 rcsFilePresent(meUByte *fname)
 {
-    meUByte tname[MAXBUF] ;
+    meUByte tname[meBUF_SIZE_MAX] ;
     register meUByte *fn, *ld, *tn=tname ;
 
     if(rcsFile == NULL)
-        return FALSE ;
+        return meFALSE ;
 
     fn = fname ;
     if((ld = meStrrchr(fname,DIR_CHAR)) != NULL)
@@ -392,8 +342,8 @@ rcsFilePresent(meUByte *fname)
 int
 doRcsCommand(meUByte *fname, register meUByte *comStr)
 {
-    meUByte  pat[MAXBUF+1], cc ;
-    meUByte  path[FILEBUF] ;
+    meUByte  pat[meBUF_SIZE_MAX+1], cc ;
+    meUByte  path[meFILEBUF_SIZE_MAX] ;
     meUByte *bname ;
     register int ii, len ;
     
@@ -409,21 +359,21 @@ doRcsCommand(meUByte *fname, register meUByte *comStr)
             if(cc == 'f')
             {
                 len = meStrlen(bname) ;
-                if((ii + len) > MAXBUF)
+                if((ii + len) > meBUF_SIZE_MAX)
                     break ;
                 meStrcpy(pat+ii,bname) ;
                 ii += len ;
             }
             else
             {
-                if(meGetString((meUByte *)"Enter message",0,0,pat+ii,MAXBUF-ii) != TRUE)
-                    return FALSE ;
+                if(meGetString((meUByte *)"Enter message",0,0,pat+ii,meBUF_SIZE_MAX-ii) != meTRUE)
+                    return meFALSE ;
                 ii = meStrlen(pat) ;
             }
         }
         else
         {
-            if(ii >= MAXBUF)
+            if(ii >= meBUF_SIZE_MAX)
                 break ;
             pat[ii++] = cc ;
         }
@@ -444,29 +394,29 @@ rcsCiCoFile(int f, int n)
     register meUByte *str ;
     register int lineno, curcol, ss ;
 
-    if(curbp->b_fname == NULL)
+    if(frameCur->bufferCur->fileName == NULL)
         return mlwrite(MWABORT,(meUByte *)"No file name!") ;
-    ss = rcsFilePresent(curbp->b_fname) ;
-    if(meModeTest(curbp->b_mode,MDVIEW))	/* if read-only then unlock */
+    ss = rcsFilePresent(frameCur->bufferCur->fileName) ;
+    if(meModeTest(frameCur->bufferCur->mode,MDVIEW))	/* if read-only then unlock */
     {
         if(n < 0)
             /* already read-only, no changes to undo, return */
-            return TRUE ;
+            return meTRUE ;
             
-        if(ss != TRUE)
+        if(ss != meTRUE)
         {
 #ifdef _DOS
-            curbp->stats.stmode &= ~0x01 ;
+            frameCur->bufferCur->stats.stmode &= ~0x01 ;
 #endif
 #ifdef _WIN32
-            curbp->stats.stmode &= ~FILE_ATTRIBUTE_READONLY;/* Write permission for owner */
+            frameCur->bufferCur->stats.stmode &= ~FILE_ATTRIBUTE_READONLY;/* Write permission for owner */
 #endif
 #ifdef _UNIX
-            curbp->stats.stmode |= 00200 ;
+            frameCur->bufferCur->stats.stmode |= 00200 ;
 #endif
-            meModeClear(curbp->b_mode,MDVIEW) ;
-            curwp->w_flag |= WFMODE ;
-            return TRUE ;
+            meModeClear(frameCur->bufferCur->mode,MDVIEW) ;
+            frameCur->windowCur->flag |= WFMODE ;
+            return meTRUE ;
         }
         if((str = rcsCoUStr) == NULL)
             return mlwrite(MWABORT,(meUByte *)"[rcs cou command not set]") ;
@@ -476,37 +426,37 @@ rcsCiCoFile(int f, int n)
         if(n < 0)
         {
             /* unedit changes */
-            if(ss != TRUE)
+            if(ss != meTRUE)
                 return mlwrite(MWABORT,(meUByte *)"[rcs file not found - cannot unedit]") ;
             str = rcsUeStr ;
         }
         else
         {
-            if(ss == TRUE)
+            if(ss == meTRUE)
                 str = rcsCiStr ;
             else
                 str = rcsCiFStr ;
         }
         if(str == NULL)
             return mlwrite(MWABORT,(meUByte *)"[rcs ci or cif command not set]") ;
-        if((n >= 0) && meModeTest(curbp->b_mode,MDEDIT) &&
-           ((ss=saveBuffer(TRUE,TRUE)) != TRUE))
+        if((n >= 0) && meModeTest(frameCur->bufferCur->mode,MDEDIT) &&
+           ((ss=saveBuffer(meTRUE,meTRUE)) != meTRUE))
             return ss ;
     }
-    lineno = curwp->line_no ;
-    curcol = curwp->w_doto ;
+    lineno = frameCur->windowCur->dotLineNo ;
+    curcol = frameCur->windowCur->dotOffset ;
     /* must execute the command and then reload, reload taken from swbuffer */
-    if((doRcsCommand(curbp->b_fname,str) != TRUE) ||
-       (bclear(curbp) != TRUE) ||
-       ((curbp->intFlag |= BIFFILE),(curbp->line_no = lineno+1),
-        (swbuffer(curwp,curbp) != TRUE)))
-        return FALSE ;
-    if(curcol > llength(curwp->w_dotp))
-        curwp->w_doto = llength(curwp->w_dotp) ;
+    if((doRcsCommand(frameCur->bufferCur->fileName,str) != meTRUE) ||
+       (bclear(frameCur->bufferCur) != meTRUE) ||
+       ((frameCur->bufferCur->intFlag |= BIFFILE),(frameCur->bufferCur->dotLineNo = lineno+1),
+        (swbuffer(frameCur->windowCur,frameCur->bufferCur) != meTRUE)))
+        return meFALSE ;
+    if(curcol > meLineGetLength(frameCur->windowCur->dotLine))
+        frameCur->windowCur->dotOffset = meLineGetLength(frameCur->windowCur->dotLine) ;
     else
-        curwp->w_doto = curcol ;
+        frameCur->windowCur->dotOffset = curcol ;
 
-    return TRUE ;
+    return meTRUE ;
 }
 
 #endif

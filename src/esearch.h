@@ -29,13 +29,13 @@
  */
 
 /*
- * PTBEG, PTEND, FORWARD, and REVERSE are all toggle-able values for
+ * PTBEG, PTEND, meFORWARD, and meREVERSE are all toggle-able values for
  * the scan routines.
  */
 #define	PTBEG	0	/* Leave the point at the beginning on search.*/
 #define	PTEND	1	/* Leave the point at the end on search.*/
 
-#if	MAGIC
+#if MEOPT_MAGIC
 
 #ifdef _GNU_REGEX
 
@@ -163,17 +163,17 @@ extern meRegex mereRegex ;
 #endif
 
 typedef struct {                       
-    LINE *startline;                    /* Pattern start position */
+    meLine *startline;                    /* Pattern start position */
     int   startoff;                     /* Pattern start line offset */
     int   startline_no;                 /* Pattern start line number */
-    LINE *endline;                      /* Pattern end position */
+    meLine *endline;                      /* Pattern end position */
     int   endoffset;                    /* Pattern end offset */
     int   endline_no;                   /* Pattern end line number */
 } SCANNERPOS;
 
 /* iscanner - external front end to buffer searching
- * returns TRUE (1)  if the search was successful
- *         FALSE (0) if the search failed
+ * returns meTRUE (1)  if the search was successful
+ *         meFALSE (0) if the search failed
  *         -1        if the regex apat failed to compile (error)
  *         -2        if the regex apat failed to compile (incomplete?)
  */
@@ -187,7 +187,7 @@ extern meUByte  srchRPat[] ;                   /* reverse current search string 
 /* the following variables store info on the last match - for @s# support     */
 extern int    srchLastState;                 /* status of last search          */
 extern meUByte *srchLastMatch;                 /* pointer to the last match string */
-#if	MAGIC
+#if MEOPT_MAGIC
 extern int    srchLastMagic;                 /* last search was a magic        */
 #endif
 
@@ -198,10 +198,10 @@ extern int    srchLastMagic;                 /* last search was a magic        *
 #define ISCANNER_EXACT  0x08            /* Exact pattern matching */
 #define ISCANNER_BACKW  0x10            /* Search backwards */
 #define ISEARCH_SCANMR  0x20            /* Isearch flag to scan more */
-#ifdef _IPIPES
+#if MEOPT_IPIPES
 #define ISEARCH_PIPE    0x40            /* Isearch performed in ipipe buffer */
 #endif
 
-#if	ISRCH
+#if MEOPT_ISEARCH
 #define	HISTBUFSIZ	256	        /* Length of our command buffer */
 #endif

@@ -36,17 +36,17 @@
 int
 startKbdMacro(int f, int n)
 {
-    if (kbdmode != STOP)
+    if (kbdmode != meSTOP)
     {
         mlwrite(0,(meUByte *)"Macro already active");
-        return FALSE ;
+        return meFALSE ;
     }
     mlwrite(0,(meUByte *)"[Start macro]");
     kbdptr = &lkbdptr[0];
     kbdlen = 0 ;
-    kbdmode = RECORD;
+    kbdmode = meRECORD;
     addModeToWindows(WFMODE) ;  /* and update ALL mode lines */
-    return TRUE ;
+    return meTRUE ;
 }
 
 /*
@@ -56,16 +56,16 @@ startKbdMacro(int f, int n)
 int
 endKbdMacro(int f, int n)
 {
-    if (kbdmode == PLAY)
-        return TRUE ;
-    if (kbdmode == RECORD)
+    if (kbdmode == mePLAY)
+        return meTRUE ;
+    if (kbdmode == meRECORD)
     {
         addModeToWindows(WFMODE) ;  /* and update ALL mode lines */
         mlwrite(0,(meUByte *)"[End macro]");
-        kbdmode = STOP;
+        kbdmode = meSTOP;
 
         lkbdlen = kbdlen ;
-        return TRUE ;
+        return meTRUE ;
     }
     return mlwrite(MWABORT,(meUByte *)"Macro not active");
 }
@@ -73,21 +73,21 @@ endKbdMacro(int f, int n)
 /*
  * Execute a macro.
  * The command argument is the number of times to loop. Quit as soon as a
- * command gets an error. Return TRUE if all ok, else FALSE.
+ * command gets an error. Return meTRUE if all ok, else meFALSE.
  */
 int
 execKbdMacro(int f, int n)
 {
-    if (kbdmode != STOP)
+    if (kbdmode != meSTOP)
         return mlwrite(MWABORT,(meUByte *)"Macro already active!");
     if (n <= 0)
-        return TRUE ;
+        return meTRUE ;
     kbdptr = lkbdptr ;
     kbdlen = lkbdlen ;
     kbdoff = 0 ;
     kbdrep = n;         /* remember how many times to execute */
-    kbdmode = PLAY;     /* start us in play mode */
-    return TRUE ;
+    kbdmode = mePLAY;     /* start us in play mode */
+    return meTRUE ;
 }
 
 int
@@ -105,7 +105,7 @@ stringExec(int f, int n, meUByte *macro)
     okbdrep = kbdrep ;
     okbdmode = kbdmode ;
     oldcle = clexec;			/* save old clexec flag */
-    clexec = FALSE;			/* in cline execution */
+    clexec = meFALSE;			/* in cline execution */
     oldestr = execstr;	/* save last ptr to string to execute */
     execstr = NULL ;
     oldexec = execlevel ;
@@ -115,13 +115,13 @@ stringExec(int f, int n, meUByte *macro)
     kbdoff = 0 ;
     kbdlen = meStrlen(macro) ;
     kbdrep = n ;
-    kbdmode = PLAY;     /* start us in play mode */
-    ii = TRUE ;
+    kbdmode = mePLAY;     /* start us in play mode */
+    ii = meTRUE ;
     while((kbdrep > 1) || (kbdoff < kbdlen))
     {
-        if(TTbreakFlag || (kbdmode != PLAY))
+        if(TTbreakFlag || (kbdmode != mePLAY))
         {
-            ii = ABORT ;
+            ii = meABORT ;
             break ;
         }
         doOneKey() ;
@@ -141,57 +141,24 @@ stringExec(int f, int n, meUByte *macro)
 int
 execString(int f, int n)
 {
-    meUByte sbuf[MAXBUF] ;
+    meUByte sbuf[meBUF_SIZE_MAX] ;
     
-    if(meGetString((meUByte *)"Enter string", MLFFZERO, 0, sbuf, MAXBUF) != TRUE)
+    if(meGetString((meUByte *)"Enter string", MLFFZERO, 0, sbuf, meBUF_SIZE_MAX) != meTRUE)
         return 0 ;
     return stringExec(f,n,sbuf) ;
 }
 
-/*
- * Asks the user if they wish to continue macro execution.
- * does nothing when recording, must STOP the macro execution so 
- * mlyesno goes to the keyboard.
- */
-int
-macroQuery(int f, int n)
-{
-    if(kbdmode == PLAY)
-    {
-        int   rr ;
-        
-        /* force a screen update */
-        update(TRUE);
-        kbdmode = STOP ;
-        if((rr = mlyesno((meUByte *)"Continue macro")) == ABORT)
-            return ABORT ;
-        if(rr == FALSE)
-        {
-            kbdrep-- ;
-            kbdoff = 0 ;
-        }
-        if(kbdrep)
-            kbdmode = PLAY ;
-        else
-            return FALSE ;
-    }
-    else if(kbdmode != RECORD)
-        return mlwrite(MWABORT,(meUByte *)"Not defining macro") ;
-    return TRUE ;
-}
-    
-
-static meMACRO *
+static meMacro *
 createMacro(meUByte *name)
 {
-    meUByte buff[MAXBUF] ;
-    register meMACRO *mac ;
-    register LINE *hlp ;
+    meUByte buff[meBUF_SIZE_MAX] ;
+    register meMacro *mac ;
+    register meLine *hlp ;
     register int idx ;
     
     /* If the macro name has not been give then try and get one */
     if((name == NULL) && 
-       (meGetString((meUByte *)"Enter macro name", MLCOMMAND, 0, buff, MAXBUF) == TRUE) && (buff[0] != '\0'))
+       (meGetString((meUByte *)"Enter macro name", MLCOMMAND, 0, buff, meBUF_SIZE_MAX) == meTRUE) && (buff[0] != '\0'))
         name = buff ;
     
     if((name == NULL) || ((hlp = lalloc(0)) == NULL))
@@ -208,9 +175,9 @@ createMacro(meUByte *name)
             return NULL ;
         }
         mac = getMacro(idx) ;
-        if(!(mac->hlp->l_flag & MACEXEC))
+        if(!(mac->hlp->flag & meMACRO_EXEC))
         {
-            if(mac->hlp->l_flag & MACFILE)
+            if(mac->hlp->flag & meMACRO_FILE)
             {
                 if(meNullFree(mac->fname))
                     mac->fname = NULL ;
@@ -220,18 +187,19 @@ createMacro(meUByte *name)
     }
     else
     {
-        if(!(cmdTableSize & 0x1f))
+        meCommand **cmd ;
+        if((cmdTableSize & 0x1f) == 0)
         {
             /* run out of room in hte command table, malloc more */
-            meCMD **nt ;
-            if((nt = (meCMD **) meMalloc((cmdTableSize+0x20)*sizeof(meCMD *))) == NULL)
+            meCommand **nt ;
+            if((nt = (meCommand **) meMalloc((cmdTableSize+0x20)*sizeof(meCommand *))) == NULL)
                 return NULL ;
-            memcpy(nt,cmdTable,cmdTableSize*sizeof(meCMD *)) ;
+            memcpy(nt,cmdTable,cmdTableSize*sizeof(meCommand *)) ;
             if(cmdTable != __cmdTable)
                 free(cmdTable) ;
             cmdTable = nt ;
         }
-        if(((mac = (meMACRO *) meMalloc(sizeof(meMACRO))) == NULL) ||
+        if(((mac = (meMacro *) meMalloc(sizeof(meMacro))) == NULL) ||
            ((mac->name = meStrdup(name)) == NULL))
         {
             meFree(hlp) ;
@@ -242,28 +210,30 @@ createMacro(meUByte *name)
         mac->id = cmdTableSize ;
         mac->fname = NULL ;
         mac->callback = -1 ;
-        cmdTable[cmdTableSize++] = (meCMD *) mac ;
-        mac->hnext = NULL ;
-        /* insert macro into the hash table and alphabetic list */
+        cmdTable[cmdTableSize++] = (meCommand *) mac ;
+        /* insert macro into the alphabetic list */
+        cmd = &(cmdHead) ;
+        while((*cmd != NULL) && (meStrcmp((*cmd)->name,name) < 0))
+            cmd = &((*cmd)->anext) ;
+        mac->anext = *cmd ;
+        *cmd = (meCommand *) mac ;
+#if MEOPT_CMDHASH
+        /* insert macro into the hash table */
         {
             meUInt key ;
-            meCMD **cmd ;
             
+            mac->hnext = NULL ;
             key = cmdHashFunc(name) ;
             cmd = &(cmdHash[key]) ;
             while(*cmd != NULL)
                 cmd = &((*cmd)->hnext) ;
-            *cmd = (meCMD *) mac ;
-            cmd = &(cmdHead) ;
-            while((*cmd != NULL) && (meStrcmp((*cmd)->name,name) < 0))
-                cmd = &((*cmd)->anext) ;
-            mac->anext = *cmd ;
-            *cmd = (meCMD *) mac ;
+            *cmd = (meCommand *) mac ;
         }
+#endif
     }
     mac->hlp = hlp ;
-    hlp->l_fp = hlp ;
-    hlp->l_bp = hlp ;
+    hlp->next = hlp ;
+    hlp->prev = hlp ;
     return mac ;
 }
 /* macroDefine:	Set up a macro buffer and flag to store all
@@ -272,78 +242,140 @@ createMacro(meUByte *name)
 int
 macroDefine(int f, int n)
 {
-    register meMACRO *mac ;	/* pointer to macro */
+    register meMacro *mac ;	/* pointer to macro */
     
     if((mac=createMacro(NULL)) == NULL)
-        return FALSE ;
+        return meFALSE ;
     if(n == 0)
-        mac->hlp->l_flag |= MACHIDE ;
+        mac->hlp->flag |= meMACRO_HIDE ;
     
     /* and set the macro store pointers to it */
     mcStore = 1 ;
     lpStore = mac->hlp ;
-    return TRUE ;
+    return meTRUE ;
 }
 
+/* macroFileDefine:
+ * Set up a macro buffer and flag to store all
+ * executed command lines there			*/
+
+int
+macroFileDefine(int f, int n)
+{
+    register meMacro *mac ;	/* pointer to macro */
+    meUByte fname[meBUF_SIZE_MAX] ;
+    int ii=0 ;
+    
+    if(meGetString((meUByte *)"Enter file", MLCOMMAND, 0, fname, meBUF_SIZE_MAX) != meTRUE)
+        return meFALSE ;
+    while((mac=createMacro(NULL)) != NULL)
+    {
+        if(n == 0)
+            mac->hlp->flag |= meMACRO_HIDE ;
+        mac->hlp->flag |= meMACRO_FILE ;
+        mac->fname = meStrdup(fname) ;
+        ii++ ;
+    }
+    if(ii == 0)
+    {
+        if((mac=createMacro(fname)) == NULL)
+            return meFALSE ;
+        if(n == 0)
+            mac->hlp->flag |= meMACRO_HIDE ;
+        mac->hlp->flag |= meMACRO_FILE ;
+    }
+    return meTRUE ;
+}
+
+
+#if MEOPT_EXTENDED
+
+/*
+ * Asks the user if they wish to continue macro execution.
+ * does nothing when recording, must meSTOP the macro execution so 
+ * mlyesno goes to the keyboard.
+ */
+int
+macroQuery(int f, int n)
+{
+    if(kbdmode == mePLAY)
+    {
+        int   rr ;
+        
+        /* force a screen update */
+        update(meTRUE);
+        kbdmode = meSTOP ;
+        if((rr = mlyesno((meUByte *)"Continue macro")) == meABORT)
+            return meABORT ;
+        if(rr == meFALSE)
+        {
+            kbdrep-- ;
+            kbdoff = 0 ;
+        }
+        if(kbdrep)
+            kbdmode = mePLAY ;
+        else
+            return meFALSE ;
+    }
+    else if(kbdmode != meRECORD)
+        return mlwrite(MWABORT,(meUByte *)"Not defining macro") ;
+    return meTRUE ;
+}
+    
 static meUByte helpFileName[] = "me.ehf" ;
 
-static BUFFER *
+static meBuffer *
 helpBufferFind(void)
 {
-    BUFFER *hbp ;
+    meBuffer *hbp ;
     if((hbp=bfind(BolhelpN,BFND_CREAT)) == NULL)
         return NULL ;
-    meModeClear(hbp->b_mode,MDUNDO) ;
-    meModeClear(hbp->b_mode,MDCRYPT) ;
-    meModeClear(hbp->b_mode,MDBINRY) ;
-    meModeClear(hbp->b_mode,MDRBIN) ;
-    meModeClear(hbp->b_mode,MDNACT) ;
-    meModeSet(hbp->b_mode,MDHIDE) ;
+    meModeClear(hbp->mode,MDUNDO) ;
+    meModeClear(hbp->mode,MDCRYPT) ;
+    meModeClear(hbp->mode,MDBINRY) ;
+    meModeClear(hbp->mode,MDRBIN) ;
+    meModeClear(hbp->mode,MDNACT) ;
+    meModeSet(hbp->mode,MDHIDE) ;
     return hbp ;
 }
 
 void 
-helpBufferReset(BUFFER *bp)
+helpBufferReset(meBuffer *bp)
 {
-    WINDOW *wp ;
-    meModeClear(bp->b_mode,MDEDIT) ;
-    meModeSet(bp->b_mode,MDVIEW) ;
-    bp->b_dotp = lforw(bp->b_linep) ;
-    bp->b_doto = 0 ;
-    bp->line_no = 0 ;
-    bp->topLineNo = 0 ;
-    bp->b_markp = NULL ;
-    for (wp=wheadp; wp!=NULL; wp=wp->w_wndp)
-        if (wp->w_bufp == bp)
-        {
-            restoreWindBSet(wp,bp) ;
-        }
+    meModeClear(bp->mode,MDEDIT) ;
+    meModeSet(bp->mode,MDVIEW) ;
+    bp->dotLine = meLineGetNext(bp->baseLine) ;
+    bp->dotOffset = 0 ;
+    bp->dotLineNo = 0 ;
+    bp->vertScroll = 0 ;
+    bp->markLine = NULL ;
+    resetBufferWindows(bp) ;
 }
 
 static int
-helpBufferLoad(BUFFER *hbp)
+helpBufferLoad(meBuffer *hbp)
 {
-    if(!meModeTest(hbp->b_mode,MDUSR1))
+    if(!meModeTest(hbp->mode,MDUSR1))
     {
-        meUByte fname[FILEBUF] ;
+        meUByte fname[meFILEBUF_SIZE_MAX] ;
     
-        meModeSet(hbp->b_mode,MDUSR1) ;
+        meModeSet(hbp->mode,MDUSR1) ;
         if(!fileLookup(helpFileName,NULL,meFL_CHECKDOT|meFL_USESRCHPATH,fname))
             return mlwrite(MWABORT,(meUByte *)"[Help file \"%s\" is not on-line]",helpFileName);
         /* and read the stuff in */
-        meModeClear(hbp->b_mode,MDVIEW) ;
-        ffReadFile(fname,meRWFLAG_SILENT,hbp,hbp->b_linep) ;
+        meModeClear(hbp->mode,MDVIEW) ;
+        ffReadFile(fname,meRWFLAG_SILENT,hbp,hbp->baseLine) ;
         helpBufferReset(hbp) ;
     }
-    return TRUE ;
+    return meTRUE ;
 }
 
 static int
 findHelpItem(meUByte *item, int silent)
 {
-    WINDOW *wp ;
-    BUFFER *bp, *hbp ;
-    LINE   *lp, *elp ;
+    meWindow *wp ;
+    meBuffer *bp, *hbp ;
+    meLine   *lp, *elp ;
     int     sectLen, itemLen, ii ;
     meUByte  *ss, cc, sect[5] ;
     
@@ -365,21 +397,21 @@ findHelpItem(meUByte *item, int silent)
     }
 	
     if((hbp=helpBufferFind()) == NULL)
-        return ABORT ;
-    elp = hbp->b_linep ;
+        return meABORT ;
+    elp = hbp->baseLine ;
 try_again:
-    lp = lforw(elp) ;
+    lp = meLineGetNext(elp) ;
     while(lp != elp)
     {
-        if((lp->l_text[0] == '!') &&
+        if((lp->text[0] == '!') &&
            (!sectLen || 
-            ((sect[1] == lp->l_text[2]) &&
-             (((sectLen == 1) && (lp->l_text[3] == ' ')) || 
-              (sect[2] == lp->l_text[3])))))
+            ((sect[1] == lp->text[2]) &&
+             (((sectLen == 1) && (lp->text[3] == ' ')) || 
+              (sect[2] == lp->text[3])))))
         {
-            if((cc=lp->l_text[1]) == ' ')
+            if((cc=lp->text[1]) == ' ')
             {
-                ii = llength(lp) - 4 ;
+                ii = meLineGetLength(lp) - 4 ;
                 if(ii != itemLen)
                     ii = -1 ;
             }
@@ -389,57 +421,57 @@ try_again:
                 if(ii > itemLen)
                     ii = -1 ;
             }
-            if((ii > 0) && !meStrncmp(item,lp->l_text+4,ii))
+            if((ii > 0) && !meStrncmp(item,lp->text+4,ii))
                 break ;
         }
-        lp = lforw(lp) ;
+        lp = meLineGetNext(lp) ;
     }
         
     if(lp == elp)
     {
-        meMACRO *mac ;
-        if(!meModeTest(hbp->b_mode,MDUSR1))
+        meMacro *mac ;
+        if(!meModeTest(hbp->mode,MDUSR1))
         {
-            if(helpBufferLoad(hbp) == ABORT)
-                return ABORT ;
+            if(helpBufferLoad(hbp) == meABORT)
+                return meABORT ;
             goto try_again ;
         }
         if((getMacroTypeS(item) == TKCMD) &&
            ((ii = decode_fncname(item,1)) >= CK_MAX) &&
            ((mac = getMacro(ii)) != NULL) &&
-           (mac->hlp->l_flag & MACFILE))
+           (mac->hlp->flag & meMACRO_FILE))
         {
-            meModeClear(hbp->b_mode,MDVIEW) ;
+            meModeClear(hbp->mode,MDVIEW) ;
             if(mac->fname != NULL)
                 dofile(mac->fname,0,1) ;
             else
                 dofile(mac->name,0,1) ;
             helpBufferReset(hbp) ;
-            if(!(mac->hlp->l_flag & MACFILE))
+            if(!(mac->hlp->flag & meMACRO_FILE))
                 goto try_again ;
         }
         if(!silent)
             mlwrite(MWABORT,(meUByte *)"[Can't find help on %s%s]",item,sect);
-        return ABORT ;
+        return meABORT ;
     }
     if((wp = wpopup(BhelpN,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR))) == NULL)
-        return FALSE ;
-    if((sectLen == 0) && (lp->l_text[2] != ' '))
+        return meFALSE ;
+    if((sectLen == 0) && (lp->text[2] != ' '))
     {
         ss = sect ;
         *ss++ = '(' ;
-        *ss++ = lp->l_text[2] ;
-        if(lp->l_text[3] != ' ')
-            *ss++ = lp->l_text[3] ;
+        *ss++ = lp->text[2] ;
+        if(lp->text[3] != ' ')
+            *ss++ = lp->text[3] ;
         *ss++ = ')' ;
         *ss = '\0' ;
     }
     
-    bp = wp->w_bufp ;
+    bp = wp->buffer ;
     /* Add the header */
     {
-        meUByte buff[MAXBUF] ;
-        sprintf((char *)buff,"\033cD%s%s\033cA",lp->l_text+4,sect) ;
+        meUByte buff[meBUF_SIZE_MAX] ;
+        sprintf((char *)buff,"\033cD%s%s\033cA",lp->text+4,sect) ;
         addLineToEob(bp,buff) ;
         addLineToEob(bp,(meUByte *)"") ;
         addLineToEob(bp,(meUByte *)"\033lsMicroEmacs\033lm[Home]\033le \033lsCommand G\033lm[Commands]\033le \033lsVariable \033lm[Variables]\033le \033lsMacro Lan\033lm[Macro-Dev]\033le \033lsGlobal G\033lm[Glossary]\033le") ;
@@ -448,22 +480,22 @@ try_again:
         addLineToEob(bp,buff) ;
         addLineToEob(bp,(meUByte *)"") ;
     }
-    while(((lp=lforw(lp)) != elp) && (lp->l_text[0] == '!'))
+    while(((lp=meLineGetNext(lp)) != elp) && (lp->text[0] == '!'))
         ;
-    while((lp != elp) && ((cc=lp->l_text[0]) != '!'))
+    while((lp != elp) && ((cc=lp->text[0]) != '!'))
     {
         if(cc == '|')
         {
-            if(meStrcmp(item,lp->l_text+1))
-                lp = lforw(lp) ;
+            if(meStrcmp(item,lp->text+1))
+                lp = meLineGetNext(lp) ;
         }
         else if(cc == '$')
         {
-            if(lp->l_text[1] == 'a')
+            if(lp->text[1] == 'a')
             {
                 if(sect[1] == '5')
                 {
-                    meUByte line[MAXBUF], *ss ;
+                    meUByte line[meBUF_SIZE_MAX], *ss ;
                     if((ss = getval(item)) != NULL)
                     {
                         addLineToEob(bp,(meUByte *)"") ;
@@ -471,8 +503,8 @@ try_again:
                         addLineToEob(bp,(meUByte *)"\033cEVALUE\033cA") ;
                         addLineToEob(bp,(meUByte *)"") ;
                         meStrcpy(line,"    \"") ;
-                        meStrncpy(line+5,ss,MAXBUF-13) ;
-                        line[MAXBUF-2] = '\0' ;
+                        meStrncpy(line+5,ss,meBUF_SIZE_MAX-13) ;
+                        line[meBUF_SIZE_MAX-2] = '\0' ;
                         meStrcat(line,"\"") ;
                         addLineToEob(bp,line) ;
                     }
@@ -481,8 +513,8 @@ try_again:
                 {
                     if((ii = decode_fncname(item,1)) >= 0)
                     {
-                        KEYTAB *ktp ;
-                        meUByte line[MAXBUF], *ss ;
+                        meBind *ktp ;
+                        meUByte line[meBUF_SIZE_MAX], *ss ;
                         addLineToEob(bp,(meUByte *)"") ;
                         addLineToEob(bp,(meUByte *)"") ;
                         addLineToEob(bp,(meUByte *)"\033cEBINDINGS\033cA") ;
@@ -510,12 +542,12 @@ try_again:
             }
         }
         else
-            addLineToEob(bp,lp->l_text) ;
-        lp = lforw(lp) ;
+            addLineToEob(bp,lp->text) ;
+        lp = meLineGetNext(lp) ;
     }
     /* Add the footer */
     {
-        meUByte buff[MAXBUF] ;
+        meUByte buff[meBUF_SIZE_MAX] ;
         addLineToEob(bp,(meUByte *)"") ;
         memset(buff,boxChars[BCEW],78) ;
         buff[78] = '\0' ;
@@ -524,14 +556,14 @@ try_again:
         sprintf((char *)buff,"\033lsCopyright\033lm%s\033le",meCopyright) ;
         addLineToEob(bp,buff) ;
     }
-    bp->b_dotp = lforw(bp->b_linep);
-    bp->b_doto = 0 ;
-    bp->line_no = 0 ;
-    meModeClear(bp->b_mode,MDEDIT) ;    /* don't flag this as a change */
-    meModeSet(bp->b_mode,MDVIEW) ;      /* put this buffer view mode */
+    bp->dotLine = meLineGetNext(bp->baseLine);
+    bp->dotOffset = 0 ;
+    bp->dotLineNo = 0 ;
+    meModeClear(bp->mode,MDEDIT) ;    /* don't flag this as a change */
+    meModeSet(bp->mode,MDVIEW) ;      /* put this buffer view mode */
     resetBufferWindows(bp) ;            /* Update the window */
     mlerase(MWCLEXEC);	                /* clear the mode line */
-    return TRUE ;
+    return meTRUE ;
 }
 
 int
@@ -539,11 +571,11 @@ help(int f, int n)
 {
     if(n == 0)
     {
-        BUFFER *hbp ;
+        meBuffer *hbp ;
         if(((hbp=helpBufferFind()) == NULL) ||
-           (helpBufferLoad(hbp) != TRUE))
-            return ABORT ;
-        return swbuffer(curwp,hbp);
+           (helpBufferLoad(hbp) != meTRUE))
+            return meABORT ;
+        return swbuffer(frameCur->windowCur,hbp);
     }
     return findHelpItem((meUByte *)"MicroEmacs",0) ;
 }
@@ -551,24 +583,24 @@ help(int f, int n)
 int	
 helpItem(int f, int n)
 {
-    meUByte buf[MAXBUF] ;
+    meUByte buf[meBUF_SIZE_MAX] ;
     
-    if(meGetString((meUByte *)"Help on item", 0, 0, buf, MAXBUF-10) != TRUE)
-        return FALSE ;
+    if(meGetString((meUByte *)"Help on item", 0, 0, buf, meBUF_SIZE_MAX-10) != meTRUE)
+        return meFALSE ;
     return findHelpItem(buf,0) ;
 }
 
 int	
 helpCommand(int f, int n)
 {
-    meUByte *ss, buf[MAXBUF] ;
+    meUByte *ss, buf[meBUF_SIZE_MAX] ;
               
-    if(meGetString((meUByte *)"Help on command", MLCOMMAND, 0, buf, MAXBUF-10) != TRUE)
-        return FALSE ;
+    if(meGetString((meUByte *)"Help on command", MLCOMMAND, 0, buf, meBUF_SIZE_MAX-10) != meTRUE)
+        return meFALSE ;
     ss = buf + meStrlen(buf) ;
     meStrcpy(ss,"(2)") ;
-    if(findHelpItem(buf,1) == TRUE)
-        return TRUE ;
+    if(findHelpItem(buf,1) == meTRUE)
+        return meTRUE ;
     meStrcpy(ss,"(3)") ;
     return findHelpItem(buf,0) ;
 }
@@ -576,10 +608,10 @@ helpCommand(int f, int n)
 int	
 helpVariable(int f, int n)
 {
-    meUByte buf[MAXBUF] ;
+    meUByte buf[meBUF_SIZE_MAX] ;
 
-    if(meGetString((meUByte *)"Help on variable", MLVARBL, 0, buf, MAXBUF-10) != TRUE)
-        return FALSE ;
+    if(meGetString((meUByte *)"Help on variable", MLVARBL, 0, buf, meBUF_SIZE_MAX-10) != meTRUE)
+        return meFALSE ;
     meStrcat(buf,"(5)") ;
     return findHelpItem(buf,0) ;
 }
@@ -590,18 +622,18 @@ helpVariable(int f, int n)
 int
 macroHelpDefine(int f, int n)
 {
-    meUByte name[MAXBUF] ;
+    meUByte name[meBUF_SIZE_MAX] ;
     meUByte sect[20] ;
     
     if((lpStoreBp=helpBufferFind()) == NULL)
-        return ABORT ;
-    if(meGetString((meUByte *)"Enter name", MLCOMMAND, 0, name+4, MAXBUF-4) != TRUE)
-        return FALSE ;
+        return meABORT ;
+    if(meGetString((meUByte *)"Enter name", MLCOMMAND, 0, name+4, meBUF_SIZE_MAX-4) != meTRUE)
+        return meFALSE ;
     sect[0] = '\0' ;
-    if(meGetString((meUByte *)"Enter section", 0, 0, sect, 20) == ABORT)
-        return FALSE ;
+    if(meGetString((meUByte *)"Enter section", 0, 0, sect, 20) == meABORT)
+        return meFALSE ;
     /* and set the macro store pointers to it */
-    lpStore = lforw(lpStoreBp->b_linep) ;
+    lpStore = meLineGetNext(lpStoreBp->baseLine) ;
     name[0] = '!' ;
     name[1] = (f) ? '0'+n:' ' ;
     if(sect[0] == '\0')
@@ -615,59 +647,25 @@ macroHelpDefine(int f, int n)
         name[3] = (sect[1] == '\0') ? ' ':sect[1] ;
     }
     addLine(lpStore,name) ;
-    lpStoreBp->elineno++ ;
+    lpStoreBp->lineCount++ ;
     mcStore = 2 ;
-    return TRUE ;
+    return meTRUE ;
 }
-
-
-/* macroFileDefine:
- * Set up a macro buffer and flag to store all
- * executed command lines there			*/
-
-int
-macroFileDefine(int f, int n)
-{
-    register meMACRO *mac ;	/* pointer to macro */
-    meUByte fname[MAXBUF] ;
-    int ii=0 ;
-    
-    if(meGetString((meUByte *)"Enter file", MLCOMMAND, 0, fname, MAXBUF) != TRUE)
-        return FALSE ;
-    while((mac=createMacro(NULL)) != NULL)
-    {
-        if(n == 0)
-            mac->hlp->l_flag |= MACHIDE ;
-        mac->hlp->l_flag |= MACFILE ;
-        mac->fname = meStrdup(fname) ;
-        ii++ ;
-    }
-    if(ii == 0)
-    {
-        if((mac=createMacro(fname)) == NULL)
-            return FALSE ;
-        if(n == 0)
-            mac->hlp->l_flag |= MACHIDE ;
-        mac->hlp->l_flag |= MACFILE ;
-    }
-    return TRUE ;
-}
-
 
 int
 nameKbdMacro(int f, int n)
 {
-    meUByte buf[MAXBUF] ;
+    meUByte buf[meBUF_SIZE_MAX] ;
     int ss ;
     
-    if (kbdmode != STOP)
+    if (kbdmode != meSTOP)
         return mlwrite(MWABORT,(meUByte *)"Macro already active!");
     if(lkbdlen <= 0)
         return mlwrite(MWABORT,(meUByte *)"No macro defined!") ;
-    if((ss=macroDefine(FALSE, TRUE)) == TRUE)
+    if((ss=macroDefine(meFALSE, meTRUE)) == meTRUE)
     {
         meStrcpy(buf,"execute-string \"") ;
-        n = expandexp(lkbdlen,lkbdptr,MAXBUF-2,16,buf,-1,NULL,meEXPAND_BACKSLASH|meEXPAND_FFZERO|meEXPAND_PRINTABLE) ;
+        n = expandexp(lkbdlen,lkbdptr,meBUF_SIZE_MAX-2,16,buf,-1,NULL,meEXPAND_BACKSLASH|meEXPAND_FFZERO|meEXPAND_PRINTABLE) ;
         meStrcpy(buf+n,"\"") ;
         addLine(lpStore,buf) ;
     }
@@ -676,12 +674,12 @@ nameKbdMacro(int f, int n)
     return ss ;
 }
 
-meMACRO *
+meMacro *
 userGetMacro(meUByte *buf, int len)
 {
     register int idx ;
     
-    if(meGetString((meUByte *)"Enter macro name ", MLCOMMAND,2,buf,len) == TRUE)
+    if(meGetString((meUByte *)"Enter macro name ", MLCOMMAND,2,buf,len) == meTRUE)
     {        
         if((idx = decode_fncname(buf,0)) < 0)
             mlwrite(MWABORT,(meUByte *)"%s not defined",buf) ;
@@ -696,47 +694,52 @@ userGetMacro(meUByte *buf, int len)
 int
 insMacro(int f, int n)
 {
-    WINDOW          *wp ;
-    register LINE   *lp, *slp ;
-    meMACRO         *mac ;
-    meUByte            buf[MAXBUF] ;
+    meWindow          *wp ;
+    register meLine   *lp, *slp ;
+    meMacro         *mac ;
+    meUByte            buf[meBUF_SIZE_MAX] ;
     meInt            nol, lineNo, len ;
     int              ii ;
     
     meStrcpy(buf,"define-macro ") ;
-    if((mac=userGetMacro(buf+13, MAXBUF-13)) == NULL)
-        return FALSE ;
+    if((mac=userGetMacro(buf+13, meBUF_SIZE_MAX-13)) == NULL)
+        return meFALSE ;
     
-    if((ii=bchange()) != TRUE)               /* Check we can change the buffer */
+    if((ii=bchange()) != meTRUE)               /* Check we can change the buffer */
         return ii ;
-    curwp->w_doto = 0 ;
-    slp = curwp->w_dotp ;
-    lineNo = curwp->line_no ;
+    frameCur->windowCur->dotOffset = 0 ;
+    slp = frameCur->windowCur->dotLine ;
+    lineNo = frameCur->windowCur->dotLineNo ;
     nol = addLine(slp,buf) ;
     len = meStrlen(buf) + 9 ;
-    lp = lforw(mac->hlp);            /* First line.          */
+    lp = meLineGetNext(mac->hlp);            /* First line.          */
     while (lp != mac->hlp)
     {
-        nol += addLine(slp,lp->l_text) ;
-        len += llength(lp) + 1 ;
-        lp = lforw(lp);
+        nol += addLine(slp,lp->text) ;
+        len += meLineGetLength(lp) + 1 ;
+        lp = meLineGetNext(lp);
     }
     nol += addLine(slp,(meUByte *)"!emacro") ;
-    curbp->elineno += nol ;
-    for (wp=wheadp; wp!=NULL; wp=wp->w_wndp)
-        if (wp->w_bufp == curbp)
-        {
-            if(wp->line_no >= lineNo)
-                wp->line_no += nol ;
-            if(wp->mlineno >= lineNo)
-                wp->mlineno += nol ;
-            wp->w_flag |= WFMAIN|WFMOVEL ;
-        }
-#if MEUNDO
-    if(meModeTest(curbp->b_mode,MDUNDO))
+    frameCur->bufferCur->lineCount += nol ;
+#if MEOPT_UNDO
+    if(meModeTest(frameCur->bufferCur->mode,MDUNDO))
         meUndoAddInsChars(len) ;
 #endif
-    return TRUE ;
+    meFrameLoopBegin() ;
+    for (wp=loopFrame->windowList; wp!=NULL; wp=wp->next)
+    {
+        if (wp->buffer == frameCur->bufferCur)
+        {
+            if(wp->dotLineNo >= lineNo)
+                wp->dotLineNo += nol ;
+            if(wp->markLineNo >= lineNo)
+                wp->markLineNo += nol ;
+            wp->flag |= WFMAIN|WFMOVEL ;
+        }
+    }
+    meFrameLoopEnd() ;
+    return meTRUE ;
 }
+#endif
   
 

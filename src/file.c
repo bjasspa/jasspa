@@ -71,14 +71,14 @@
 
 
 int
-getFileStats(meUByte *file, int flag, meSTAT *stats, meUByte *lname)
+getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
 {
     if(lname != NULL)
         *lname = '\0' ;
     /* setup the default stat values */
     if(stats != NULL)
     {
-        stats->stmtime= -1 ;
+        meFiletimeInit(stats->stmtime) ;
         stats->stsize = 0 ;
 #ifdef _UNIX
         stats->stuid  = meUid ;
@@ -162,8 +162,8 @@ gft_directory:
             status = fd.dwFileAttributes ;
             /* Dangerously ingoring the nFileSizeHigh for now */
             stats->stsize = fd.nFileSizeLow ;
-            stats->stmtime = ((fd.ftLastWriteTime.dwLowDateTime  >> 24) & 0x000000ff) |
-                      ((fd.ftLastWriteTime.dwHighDateTime <<  8) & 0x7fffff00) ;
+            stats->stmtime.dwHighDateTime = fd.ftLastWriteTime.dwHighDateTime ;
+            stats->stmtime.dwLowDateTime = fd.ftLastWriteTime.dwLowDateTime ;
             FindClose(fh) ;
             stats->stmode = (meUShort) status | FILE_ATTRIBUTE_ARCHIVE ;
         }
@@ -224,7 +224,7 @@ gft_directory:
             return meFILETYPE_NOTEXIST ;
         else if(S_ISLNK(statbuf.st_mode))
         {
-            meUByte lbuf[FILEBUF], buf[FILEBUF], *ss ;
+            meUByte lbuf[meFILEBUF_SIZE_MAX], buf[meFILEBUF_SIZE_MAX], *ss ;
             int ii, jj ;
             
             ii = meStrlen(file) ;
@@ -235,7 +235,7 @@ gft_directory:
                 lbuf[ii] = '\0' ;
                 if(statbuf.st_mtime > stmtime)
                     stmtime = statbuf.st_mtime ;
-                if((jj=readlink((char *)lbuf,(char *)buf, FILEBUF)) <= 0)
+                if((jj=readlink((char *)lbuf,(char *)buf, meFILEBUF_SIZE_MAX)) <= 0)
                 {
                     if(flag & 1)
                         mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s symbolic link problems]", file);
@@ -374,7 +374,7 @@ set_dirs(void)
         if(s2 != NULL)
         {
             ll = meStrlen(s1) ;
-            searchPath[ll++] = PATHCHR ;
+            searchPath[ll++] = mePATH_CHAR ;
             meStrcpy(searchPath+ll,s2) ;
         }
     }
@@ -439,8 +439,8 @@ fileLookup(meUByte *fname, meUByte *ext, meUByte flags, meUByte *outName)
     register meUByte *path;  /* environmental PATH variable */
     register meUByte *sp;    /* pointer into path spec */
     register int   ii;     /* index */
-    meUByte nname[FILEBUF] ;
-    meUByte buf[FILEBUF] ;
+    meUByte nname[meFILEBUF_SIZE_MAX] ;
+    meUByte buf[meFILEBUF_SIZE_MAX] ;
  
     if(ext != NULL)
     {
@@ -488,7 +488,7 @@ fileLookup(meUByte *fname, meUByte *ext, meUByte flags, meUByte *outName)
     {
         /* build next possible file spec */
         sp = path ;
-        if((path = meStrchr(++path,PATHCHR)) != NULL)
+        if((path = meStrchr(++path,mePATH_CHAR)) != NULL)
         {
             ii = path++ - sp ;
             meStrncpy(buf,sp,ii) ;
@@ -565,13 +565,13 @@ executableLookup(meUByte *fname, meUByte *outName)
 }
 
 int
-bufferOutOfDate(BUFFER *bp)
+bufferOutOfDate(meBuffer *bp)
 {
-    meSTAT stats ;
-    if((bp->b_fname != NULL) && getFileStats(bp->b_fname,0,&stats,NULL) &&
-       (stats.stmtime > bp->stats.stmtime))
-        return TRUE ;
-    return FALSE ;
+    meStat stats ;
+    if((bp->fileName != NULL) && getFileStats(bp->fileName,0,&stats,NULL) &&
+       meFiletimeIsModified(stats.stmtime,bp->stats.stmtime))
+        return meTRUE ;
+    return meFALSE ;
 }
 
 /* get current working directory
@@ -591,11 +591,11 @@ gwd(meUByte drive)
      */
 #if (defined _UNIX) || (defined _DOS) || (defined _WIN32)
 
-    meUByte dir[MAXBUF] ;
+    meUByte dir[meBUF_SIZE_MAX] ;
     register int ll ;
 
 #ifdef _UNIX
-    meGetcwd(dir,MAXBUF-2) ;
+    meGetcwd(dir,meBUF_SIZE_MAX-2) ;
 #endif  /* _UNIX */
 
 #ifdef _WIN32
@@ -617,7 +617,7 @@ gwd(meUByte drive)
     }
 
     /* Pick up the directory information */
-    GetCurrentDirectory (MAXBUF, dir);
+    GetCurrentDirectory (meBUF_SIZE_MAX, dir);
     if (meStrlen(dir) > 2)
     {
         meUByte *p;                   /* Local character pointer */
@@ -710,39 +710,62 @@ getFilePath(meUByte *fname, meUByte *path)
 int
 inputFileName(meUByte *prompt, meUByte *fn, int corFlag)
 {
-    meUByte tmp[FILEBUF], *buf ;
+    meUByte tmp[meFILEBUF_SIZE_MAX], *buf ;
     int  s ;
     
     buf = (corFlag) ? tmp:fn ;
 
-    getFilePath(curbp->b_fname,buf) ;
-    s = meGetString(prompt,(MLFILECASE|MLNORESET|MLMACNORT), 0, buf, FILEBUF) ;
-    if(corFlag && (s == TRUE))
+    getFilePath(frameCur->bufferCur->fileName,buf) ;
+    s = meGetString(prompt,(MLFILECASE|MLNORESET|MLMACNORT), 0, buf, meFILEBUF_SIZE_MAX) ;
+    if(corFlag && (s == meTRUE))
         fileNameCorrect(tmp,fn,NULL) ;
     return s ;
 }
 
 
-#if CRYPT
+#if MEOPT_CRYPT
 int
-resetkey(BUFFER *bp) /* reset the encryption key if needed */
+resetkey(meBuffer *bp) /* reset the encryption key if needed */
 {
     /* if we are in crypt mode */
-    if(meModeTest(bp->b_mode,MDCRYPT))
+    if(meModeTest(bp->mode,MDCRYPT))
     {
-        if((bp->b_key == NULL) &&
-           (setBufferCryptKey(bp,NULL) != TRUE))
-            return FALSE ;
+        if((bp->cryptKey == NULL) &&
+           (setBufferCryptKey(bp,NULL) != meTRUE))
+            return meFALSE ;
 
         /* and set up the key to be used! */
         meCrypt(NULL, 0);
-        meCrypt(bp->b_key, meStrlen(bp->b_key));
+        meCrypt(bp->cryptKey, meStrlen(bp->cryptKey));
 
     }
-    return TRUE ;
+    return meTRUE ;
 }
 #endif
 
+#if (defined _WIN32) || (defined _DOS)
+int
+meTestExecutable(meUByte *fileName)
+{
+    int ii ;
+    if((ii = strlen(fileName)) > 4)
+    {
+        meUByte *ee ;
+        ee = fileName+ii-4 ;
+        ii = noExecExtensions ;
+        while(--ii >= 0)
+#ifdef _INSENSE_CASE
+            if(!meStrnicmp(ee,execExtensions[ii],4))
+#else
+            if(!meStrncmp(ee,execExtensions[ii],4))
+#endif
+                return 1 ;
+    }
+    return 0 ;
+}
+#endif
+
+#if MEOPT_DIRLIST
 #define FILENODE_ATTRIBLEN 4
 
 typedef struct FILENODE {
@@ -807,28 +830,6 @@ addFileNode(FILENODE *cfh, FILENODE *cf)
     return cfh ;
 }
 
-#if (defined _WIN32) || (defined _DOS)
-int
-meTestExecutable(meUByte *fileName)
-{
-    int ii ;
-    if((ii = strlen(fileName)) > 4)
-    {
-        meUByte *ee ;
-        ee = fileName+ii-4 ;
-        ii = noExecExtensions ;
-        while(--ii >= 0)
-#ifdef _INSENSE_CASE
-            if(!meStrnicmp(ee,execExtensions[ii],4))
-#else
-            if(!meStrncmp(ee,execExtensions[ii],4))
-#endif
-                return 1 ;
-    }
-    return 0 ;
-}
-#endif
-
 #ifdef _UNIX
 #define statTestRead(st)                                                   \
 ((((st).st_uid == meUid) && ((st).st_mode & S_IRUSR)) ||                   \
@@ -850,7 +851,7 @@ meTestExecutable(meUByte *fileName)
 static FILENODE *
 getDirectoryInfo(meUByte *fname)
 {
-    meUByte bfname[MAXBUF];                 /* Working file name buffer */
+    meUByte bfname[meBUF_SIZE_MAX];                 /* Working file name buffer */
     meUByte *fn;
     FILENODE *curFile ;
     FILENODE *cfh=NULL ;
@@ -1022,7 +1023,7 @@ getDirectoryInfo(meUByte *fname)
 }
 
 static int
-readDirectory(BUFFER *bp, meUByte *fname)
+readDirectory(meBuffer *bp, meUByte *fname)
 {
     FILENODE *fnode, *fn ;
 #ifdef _UNIX
@@ -1032,12 +1033,12 @@ readDirectory(BUFFER *bp, meUByte *fname)
     SYSTEMTIME tmp;
     FILETIME ftmp ;
 #endif
-    meUByte buf[MAXBUF];                  /* Working line buffer */
+    meUByte buf[meBUF_SIZE_MAX];                  /* Working line buffer */
     meInt totSize=0 ;
     int len, dirs=0, files=0 ;
 
     if((fnode=getDirectoryInfo(fname)) == NULL)
-        return ABORT ;
+        return meABORT ;
     sprintf ((char *)buf, "Directory listing of: %s", fname);
     addLineToEob(bp,buf);
     fn = fnode ;
@@ -1117,13 +1118,13 @@ readDirectory(BUFFER *bp, meUByte *fname)
         fnode = fnode->next ;
     }
     free(curHead) ;
-    meModeSet(bp->b_mode,MDVIEW) ;
-    meModeClear(bp->b_mode,MDATSV) ;
-    meModeClear(bp->b_mode,MDUNDO) ;
-    return TRUE ;
+    meModeSet(bp->mode,MDVIEW) ;
+    meModeClear(bp->mode,MDATSV) ;
+    meModeClear(bp->mode,MDUNDO) ;
+    return meTRUE ;
 }
 
-
+#endif
 
 /*
  * Read file "fname" into the current
@@ -1136,7 +1137,7 @@ readDirectory(BUFFER *bp, meUByte *fname)
  */
 /* Note for Dynamic file names
  * readin sets the buffer file name to point to fname (freeing old if not
- * NULL and bp->b_fname != fname) so fname should be dynamically allocated
+ * NULL and bp->fileName != fname) so fname should be dynamically allocated
  * or the file name reset after readin.
  */
 /* bp        buffer to load into */
@@ -1144,26 +1145,26 @@ readDirectory(BUFFER *bp, meUByte *fname)
 /* lockfl    check for file locks? */
 /* frompipe  input coming from pipe. Dont open file */
 int
-readin(register BUFFER *bp, meUByte *fname)
+readin(register meBuffer *bp, meUByte *fname)
 {
-    int   ss=ABORT ;
-    meUByte lfn[FILEBUF], afn[FILEBUF], *fn=fname ;
+    int   ss=meABORT ;
+    meUByte lfn[meFILEBUF_SIZE_MAX], afn[meFILEBUF_SIZE_MAX], *fn=fname ;
     
-#if CRYPT
-    if(resetkey(bp) != TRUE)
-        return ABORT ;
+#if MEOPT_CRYPT
+    if(resetkey(bp) != meTRUE)
+        return meABORT ;
 #endif
-    if(bp->b_fname != fname)
+    if(bp->fileName != fname)
     {
-        meNullFree(bp->b_fname) ;
-        bp->b_fname = fname ;
+        meNullFree(bp->fileName) ;
+        bp->fileName = fname ;
     }
     if(fn != NULL)
     {
-        meSTAT stats ;
+        meStat stats ;
         int ft ;
         if((ft=getFileStats(fn,1,&(bp->stats),lfn)) == meFILETYPE_HTTP)
-            meModeSet(bp->b_mode,MDVIEW) ;
+            meModeSet(bp->mode,MDVIEW) ;
         else if(ft != meFILETYPE_FTP)
         {
             if(ft == meFILETYPE_NASTY)
@@ -1172,40 +1173,45 @@ readin(register BUFFER *bp, meUByte *fname)
                 /* something was found, don't want to do RCS on this,
                  * the link may be dangling which returns 3 */
                 fn = lfn ;
-#if DORCS
+#if MEOPT_RCS
             else if((ft == meFILETYPE_NOTEXIST) &&       /* file not found */
-               (rcsFilePresent(fn) == TRUE))
+               (rcsFilePresent(fn) == meTRUE))
             {
-                if(doRcsCommand(fn,rcsCoStr) != TRUE)
+                if(doRcsCommand(fn,rcsCoStr) != meTRUE)
                     goto error_end ;
                 if((ft=getFileStats(fn,1,&(bp->stats),lfn)) == meFILETYPE_NASTY)
                     goto error_end ;
             }
 #endif
             if((autotime > 0) && !createBackupName(afn,fn,'#',0) &&
-               (getFileStats(afn,0,&stats,NULL) == meFILETYPE_REGULAR) && (stats.stmtime > bp->stats.stmtime))
+               (getFileStats(afn,0,&stats,NULL) == meFILETYPE_REGULAR) &&
+               meFiletimeIsModified(stats.stmtime,bp->stats.stmtime))
             {
                 meUByte prompt[200] ;
                 meUByte *tt ;
                 tt = getFileBaseName(afn) ;
                 sprintf((char *)prompt,"Recover newer %s",tt) ;
-                if(mlyesno(prompt) == TRUE)
+                if(mlyesno(prompt) == meTRUE)
                 {
                     fn = afn ;
                     ft = meFILETYPE_REGULAR ;
-                    memcpy(&bp->stats,&stats,sizeof(meSTAT)) ;
+                    memcpy(&bp->stats,&stats,sizeof(meStat)) ;
                 }
             }
             if(ft == meFILETYPE_DIRECTORY)
             {
-                if(readDirectory(bp,fn) != TRUE)
+#if MEOPT_DIRLIST
+                if(readDirectory(bp,fn) != meTRUE)
                     goto error_end ;
-                ss = TRUE ;
+                ss = meTRUE ;
                 goto newfile_end;
+#else
+                goto error_end ;
+#endif
             }
             if(ft == meFILETYPE_NOTEXIST)
             {   /* File not found.      */
-                meUByte dirbuf [FILEBUF];
+                meUByte dirbuf [meFILEBUF_SIZE_MAX];
 
                 /* See if we can write to the directory. */
                 getFilePath (fn, dirbuf);
@@ -1220,14 +1226,14 @@ readin(register BUFFER *bp, meUByte *fname)
                     /* Zap the filename - it is invalid.
                        We only want a buffer */
                     mlwrite (0,(meUByte *)"[New buffer %s]", getFileBaseName(fname));
-                    meNullFree(bp->b_fname) ;
-                    bp->b_fname = NULL;
-                    ss = ABORT;
+                    meNullFree(bp->fileName) ;
+                    bp->fileName = NULL;
+                    ss = meABORT;
                 }
                 else
                 {
                     mlwrite(0,(meUByte *)"[New file %s]", fname);
-                    ss = TRUE ;
+                    ss = meTRUE ;
                 }
                 /* its not linked to a file so change the flag */
                 bp->intFlag &= ~BIFFILE ;
@@ -1252,8 +1258,8 @@ readin(register BUFFER *bp, meUByte *fname)
 #endif
                 /* Zap the filename - it is invalid.
                    We only want a buffer */
-                meNullFree(bp->b_fname) ;
-                bp->b_fname = NULL;
+                meNullFree(bp->fileName) ;
+                bp->fileName = NULL;
                 /* its not linked to a file so change the flag */
                 bp->intFlag &= ~BIFFILE ;
                 goto newfile_end;
@@ -1262,7 +1268,7 @@ readin(register BUFFER *bp, meUByte *fname)
             if(!meStatTestSystem(bp->stats))
             {
                 /* if windows system file read in a readonly */
-                meModeSet(bp->b_mode,MDVIEW) ;
+                meModeSet(bp->mode,MDVIEW) ;
                 mlwrite(MWCURSOR|MWCLEXEC,"[Reading %s (system file)]", fn);
             }
             else
@@ -1276,34 +1282,34 @@ readin(register BUFFER *bp, meUByte *fname)
                  (meUid != 0) &&
 #endif
                  (!meStatTestWrite(bp->stats))))
-                meModeSet(bp->b_mode,MDVIEW) ;
+                meModeSet(bp->mode,MDVIEW) ;
         }
-        if(meModeTest(bp->b_mode,MDVIEW))
+        if(meModeTest(bp->mode,MDVIEW))
             mlwrite(MWCURSOR|MWCLEXEC,(meUByte *)"[Reading %s (readonly)]", fn);
         else
             mlwrite(MWCURSOR|MWCLEXEC,(meUByte *)"[Reading %s]", fn);
     }
-    ss = ffReadFile(fn,0,bp,bp->b_linep) ;
+    ss = ffReadFile(fn,0,bp,bp->baseLine) ;
     
     /*
     ** Set up the modification time field of the buffer structure.
     */
-    if(ss != ABORT)
+    if(ss != meABORT)
     {
-        mlwrite(MWCLEXEC,(meUByte *)"[Read %d line%s]",bp->elineno,(bp->elineno==1) ? "":"s") ;
+        mlwrite(MWCLEXEC,(meUByte *)"[Read %d line%s]",bp->lineCount,(bp->lineCount==1) ? "":"s") ;
         if(fn == afn)
             /* this is a recovered file so flag the buffer as changed */
-            meModeSet(bp->b_mode,MDEDIT) ;
-        ss = TRUE ;
+            meModeSet(bp->mode,MDEDIT) ;
+        ss = meTRUE ;
     }
     else
-        meModeSet(bp->b_mode,MDVIEW) ;
+        meModeSet(bp->mode,MDVIEW) ;
 
 newfile_end:
 
-    bp->b_dotp = lforw(bp->b_linep);
-    bp->line_no = 0 ;
-    bp->b_doto = 0 ;
+    bp->dotLine = meLineGetNext(bp->baseLine);
+    bp->dotLineNo = 0 ;
+    bp->dotOffset = 0 ;
     
 error_end:
     return ss ;
@@ -1316,55 +1322,59 @@ error_end:
  */
 /* must have the buffer line no. correct */
 int
-ifile(BUFFER *bp, meUByte *fname, meUInt flags)
+ifile(meBuffer *bp, meUByte *fname, meUInt flags)
 {
-    register WINDOW *wp ;
-    register LINE   *lp ;
+    register meWindow *wp ;
+    register meLine   *lp ;
     register int     ss ;
     register long    nline ;
-    meMODE md ;
+    meMode md ;
     
-    meModeSet(bp->b_mode,MDEDIT) ;              /* we have changed	*/
-    meModeCopy(md,bp->b_mode) ;
+    meModeSet(bp->mode,MDEDIT) ;              /* we have changed	*/
+    meModeCopy(md,bp->mode) ;
               
-#if CRYPT
-    if(resetkey(bp) != TRUE)
-        return FALSE ;
+#if MEOPT_CRYPT
+    if(resetkey(bp) != meTRUE)
+        return meFALSE ;
 #endif
     if(!(flags & meRWFLAG_SILENT))
         mlwrite(MWCURSOR|MWCLEXEC,(meUByte *)"[Inserting file]");
     
-    nline = bp->elineno ;
-    lp = bp->b_dotp ;
+    nline = bp->lineCount ;
+    lp = bp->dotLine ;
     ss = ffReadFile(fname,flags|meRWFLAG_INSERT,bp,lp) ;
-    nline = bp->elineno-nline ;
+    nline = bp->lineCount-nline ;
     /* restore the mode */
-    meModeCopy(bp->b_mode,md) ;
+    meModeCopy(bp->mode,md) ;
 
-    if(ss != ABORT)
+    if(ss != meABORT)
     {
-        ss = TRUE ;
+        ss = meTRUE ;
         if(!(flags & meRWFLAG_SILENT))
            mlwrite(MWCLEXEC,(meUByte *)"[inserted %d line%s]",nline,(nline==1) ? "":"s") ;
     }
-    for (wp=wheadp; wp!=NULL; wp=wp->w_wndp)
-        if (wp->w_bufp == bp)
+    meFrameLoopBegin() ;
+    for (wp=loopFrame->windowList; wp!=NULL; wp=wp->next)
+    {
+        if (wp->buffer == bp)
         {
-            if(wp->line_no >= bp->line_no)
-                wp->line_no += nline ;
-            if(wp->mlineno >= bp->line_no)
-                wp->mlineno += nline ;
-            wp->w_flag |= WFMAIN|WFMOVEL ;
+            if(wp->dotLineNo >= bp->dotLineNo)
+                wp->dotLineNo += nline ;
+            if(wp->markLineNo >= bp->dotLineNo)
+                wp->markLineNo += nline ;
+            wp->flag |= WFMAIN|WFMOVEL ;
         }
-#if MEUNDO
-    if((bp == curbp) && meModeTest(bp->b_mode,MDUNDO))
+    }
+    meFrameLoopEnd() ;
+#if MEOPT_UNDO
+    if((bp == frameCur->bufferCur) && meModeTest(bp->mode,MDUNDO))
     {
         int ii = 0 ;
-        curwp->w_doto = 0 ;
+        frameCur->windowCur->dotOffset = 0 ;
         while(nline--)
         {
-            lp = lback(lp) ;
-            ii += llength(lp) + 1 ;
+            lp = meLineGetPrev(lp) ;
+            ii += meLineGetLength(lp) + 1 ;
         }
         meUndoAddInsChars(ii) ;
     }
@@ -1383,32 +1393,32 @@ int
 insFile(int f, int n)
 {
     register int s;
-    meUByte fname[FILEBUF] ;
+    meUByte fname[meFILEBUF_SIZE_MAX] ;
 
-    if((s=inputFileName((meUByte *)"Insert file",fname,1)) != TRUE)
+    if((s=inputFileName((meUByte *)"Insert file",fname,1)) != meTRUE)
         return s ;
     /* Allow existing or url files */
     if(((s=getFileStats(fname,3,NULL,NULL)) != meFILETYPE_REGULAR) &&
        (s != meFILETYPE_HTTP) && (s != meFILETYPE_FTP))
-        return ABORT ;
-    if((s=bchange()) != TRUE)               /* Check we can change the buffer */
+        return meABORT ;
+    if((s=bchange()) != meTRUE)               /* Check we can change the buffer */
         return s ;
     /* set mark to previous line so it doesnt get moved down */
-    curwp->w_markp = lback(curwp->w_dotp) ;
-    curwp->w_marko = 0 ;
-    curwp->mlineno = curwp->line_no-1 ;
+    frameCur->windowCur->markLine = meLineGetPrev(frameCur->windowCur->dotLine) ;
+    frameCur->windowCur->markOffset = 0 ;
+    frameCur->windowCur->markLineNo = frameCur->windowCur->dotLineNo-1 ;
 
     /* store current line in buffer */
-    curbp->b_dotp = curwp->w_dotp ;
-    curbp->line_no = curwp->line_no ;   /* must have the line no. correct */
+    frameCur->bufferCur->dotLine = frameCur->windowCur->dotLine ;
+    frameCur->bufferCur->dotLineNo = frameCur->windowCur->dotLineNo ;   /* must have the line no. correct */
     
     for(; n>0 ; n--)
-        if((s = ifile(curbp,fname,0)) != TRUE)
+        if((s = ifile(frameCur->bufferCur,fname,0)) != meTRUE)
             break ;
 
     /* move the mark down 1 line into the correct place */
-    curwp->w_markp = lforw(curwp->w_markp);
-    curwp->mlineno++ ;
+    frameCur->windowCur->markLine = meLineGetNext(frameCur->windowCur->markLine);
+    frameCur->windowCur->markLineNo++ ;
     return s ;
 }
 
@@ -1454,20 +1464,30 @@ static int
 findFileSingle(meUByte *fname, int bflag, meInt lineno)
 {
 #ifdef _UNIX
-    meSTAT  stats ;
+    meStat  stats ;
 #endif
-    BUFFER *bp ;
+    meBuffer *bp ;
     int   gft ;
-#ifdef _URLSUPP
+#if MEOPT_SOCKET
     int fnlen ;
 #endif
-#ifdef _UNIX
-    gft = getFileStats(fname,1,&stats,NULL) ;
+#if MEOPT_DIRLIST
+#define FINDFILESINGLE_GFS_OPT 1
 #else
-    gft = getFileStats(fname,1,NULL,NULL) ;
+#define FINDFILESINGLE_GFS_OPT 3
+#endif    
+#ifdef _UNIX
+    gft = getFileStats(fname,FINDFILESINGLE_GFS_OPT,&stats,NULL) ;
+#else
+    gft = getFileStats(fname,FINDFILESINGLE_GFS_OPT,NULL,NULL) ;
 #endif
-    if((gft == meFILETYPE_NASTY) || ((gft == meFILETYPE_NOTEXIST) && !(bflag & BFND_CREAT)))
+    if((gft == meFILETYPE_NASTY) ||
+#if (MEOPT_DIRLIST == 0)
+       (gft == meFILETYPE_DIRECTORY) ||
+#endif
+       ((gft == meFILETYPE_NOTEXIST) && !(bflag & BFND_CREAT)))
         return 0 ;
+    
     bflag |= BFND_CREAT ;
     
     /* if this is a directory then add the '/' */
@@ -1480,32 +1500,32 @@ findFileSingle(meUByte *fname, int bflag, meInt lineno)
             ss[1] = '\0' ;
         }
     }
-#ifdef _URLSUPP
+#if MEOPT_SOCKET
     if((gft != meFILETYPE_FTP) ||
        ((fnlen = meStrlen(fname)),(fname[fnlen-1] == DIR_CHAR)))
         fnlen = 0 ;
 #endif
-    for (bp=bheadp; bp!=NULL; bp=bp->b_bufp)
+    for (bp=bheadp; bp!=NULL; bp=bp->next)
     {
-        if((bp->b_fname != NULL) && (bp->b_bname != NULL) && (bp->b_bname[0] != '*'))
+        if((bp->fileName != NULL) && (bp->name != NULL) && (bp->name[0] != '*'))
         {
             if(
 #ifdef _UNIX
-               !fnamecmp(bp->b_fname,fname) || 
+               !fnamecmp(bp->fileName,fname) || 
                ((stats.stdev != (dev_t)(-1)) &&
                 (bp->stats.stdev == stats.stdev) && 
                 (bp->stats.stino == stats.stino) &&
                 (bp->stats.stsize == stats.stsize)))
 #else
-               !fnamecmp(bp->b_fname,fname))
+               !fnamecmp(bp->fileName,fname))
 #endif
                 break ;
-#ifdef _URLSUPP
+#if MEOPT_SOCKET
             /* at this point the type of an ftp file (i.e. reg of dir)
              * is unknown, the filename will be changed,but the comparison
              * of ftp: file names must allow for this */
-            if(fnlen && !meStrncmp(bp->b_fname,fname,fnlen) && 
-               (bp->b_fname[fnlen] == DIR_CHAR) && (bp->b_fname[fnlen+1] == '\0'))
+            if(fnlen && !meStrncmp(bp->fileName,fname,fnlen) && 
+               (bp->fileName[fnlen] == DIR_CHAR) && (bp->fileName[fnlen+1] == '\0'))
                 break ;
 #endif
         }
@@ -1513,21 +1533,21 @@ findFileSingle(meUByte *fname, int bflag, meInt lineno)
     if(bp == NULL)
     {
         bp = bfind(fname,bflag);
-        bp->b_fname = meStrdup(fname) ;
+        bp->fileName = meStrdup(fname) ;
         bp->intFlag |= BIFFILE ;
         if(gft == meFILETYPE_DIRECTORY)
         {
             /* if its a directory then add dir mode and remove binary */
-            meModeSet(bp->b_mode,MDDIR) ;
-            meModeClear(bp->b_mode,MDBINRY) ;
-            meModeClear(bp->b_mode,MDRBIN) ;
+            meModeSet(bp->mode,MDDIR) ;
+            meModeClear(bp->mode,MDBINRY) ;
+            meModeClear(bp->mode,MDRBIN) ;
         }
-        bp->line_no = lineno ;
+        bp->dotLineNo = lineno ;
         bp->histNo = bufHistNo ;
     }
     else
     {
-        if(!meModeTest(bp->b_mode,MDNACT))
+        if(!meModeTest(bp->mode,MDNACT))
             bp->intFlag |= BIFLOAD ;
         bp->histNo = bufHistNo ;
     }
@@ -1577,22 +1597,19 @@ int
 findFileList(meUByte *fname, int bflag, meInt lineno)
 {
     register int nofiles=0, ii ;
-    meUByte fileName[FILEBUF], *baseName ;
+    meUByte fileName[meFILEBUF_SIZE_MAX], *baseName ;
     
     bufHistNo++ ;
     fileNameCorrect(fname,fileName,&baseName) ;
               
-#if URLAWAR
     if(isUrlLink(fileName))
         nofiles += findFileSingle(fileName,bflag,lineno) ;
-    else
-#endif
+    else if(fileNameWild(baseName) && meTestRead(fileName))
+    {
         /* if the base name has a wild card letter (i.e. *, ? '[')
          * and a file with that exact name does not exist then load
          * any files which match the wild card mask */
-        if(fileNameWild(baseName) && meTestRead(fileName))
-    {
-        meUByte mask[FILEBUF] ;
+        meUByte mask[meFILEBUF_SIZE_MAX] ;
         
         fileMaskToRegex(mask,baseName) ;
         *baseName = '\0' ;
@@ -1621,16 +1638,16 @@ findFileList(meUByte *fname, int bflag, meInt lineno)
 int
 findSwapFileList(meUByte *fname, int bflag, meInt lineno)
 {
-    BUFFER *bp ;
+    meBuffer *bp ;
     int     ret ;
 
     bufHistNo++ ;
     if(!findFileList(fname,bflag,lineno))
         return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[Failed to find file %s]",fname);
-    for(bp=bheadp ; bp->histNo!=bufHistNo ; bp=bp->b_bufp)
+    for(bp=bheadp ; bp->histNo!=bufHistNo ; bp=bp->next)
         ;
     bufHistNo-=2 ;
-    ret = swbuffer(curwp,bp) ;  /* make buffer BP current */
+    ret = swbuffer(frameCur->windowCur,bp) ;  /* make buffer BP current */
     bufHistNo++ ;
     return ret ;
 }
@@ -1647,7 +1664,7 @@ findSwapFileList(meUByte *fname, int bflag, meInt lineno)
 int
 findFile(int f, int n)
 {
-    meUByte fname[FILEBUF], prompt[16], *ss ;
+    meUByte fname[meFILEBUF_SIZE_MAX], prompt[16], *ss ;
     
     ss = prompt ;
     *ss++ = 'f' ;
@@ -1666,12 +1683,13 @@ findFile(int f, int n)
     *ss++ = 'l' ;
     *ss++ = 'e' ;
     *ss   = '\0' ;
-    if(inputFileName(prompt,fname,0) != TRUE)
-        return ABORT ;
+    if(inputFileName(prompt,fname,0) != meTRUE)
+        return meABORT ;
     n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN)) | BFND_MKNAM ;
     return findSwapFileList(fname,n,0) ;
 }
 
+#if MEOPT_EXTENDED
 /*
  * Find file into other window. This is trivial since all the hard stuff is
  * done by the routines splitWindVert() and filefind().
@@ -1683,26 +1701,27 @@ findFile(int f, int n)
 int
 nextWndFindFile(int f, int n)
 {
-    meUByte fname[FILEBUF];	/* file user wishes to find */
+    meUByte fname[meFILEBUF_SIZE_MAX];	/* file user wishes to find */
 
-    if(inputFileName((meUByte *)"Find file",fname,0) != TRUE)
-        return ABORT ;
+    if(inputFileName((meUByte *)"Find file",fname,0) != meTRUE)
+        return meABORT ;
     if(wpopup(NULL,WPOP_MKCURR) == NULL)
-        return FALSE ;
+        return meFALSE ;
     n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN)) | BFND_MKNAM ;
     return findSwapFileList(fname,n,0) ;
 }
+#endif
 
 int
 readFile(int f, int n)
 {
-    meUByte fname[FILEBUF];	/* file user wishes to find */
+    meUByte fname[meFILEBUF_SIZE_MAX];	/* file user wishes to find */
     register int s;		/* status return */
 
-    if(inputFileName((meUByte *)"Read file", fname,0) != TRUE)
-        return ABORT ;
+    if(inputFileName((meUByte *)"Read file", fname,0) != meTRUE)
+        return meABORT ;
     n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN)) | BFND_MKNAM ;
-    if((s=zotbuf(curbp,clexec)) == TRUE)
+    if((s=zotbuf(frameCur->bufferCur,clexec)) == meTRUE)
         s = findSwapFileList(fname,n,0) ;
     return s ;
 }
@@ -1710,11 +1729,11 @@ readFile(int f, int n)
 int
 viewFile(int f, int n)	/* visit a file in VIEW mode */
 {
-    meUByte fname[FILEBUF];	/* file user wishes to find */
+    meUByte fname[meFILEBUF_SIZE_MAX];	/* file user wishes to find */
     register int ss, vv;	/* status return */
 
-    if (inputFileName((meUByte *)"View file", fname,0) != TRUE)
-        return ABORT ;
+    if (inputFileName((meUByte *)"View file", fname,0) != meTRUE)
+        return meABORT ;
     n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN)) | BFND_MKNAM ;
     /* Add view mode globally so any new buffers will be created
      * with view mode */
@@ -1733,51 +1752,44 @@ viewFile(int f, int n)	/* visit a file in VIEW mode */
  * can write the file.
  */
 static int 
-writeCheck (meUByte *pathname, int flags, meSTAT *statp)
+writeCheck (meUByte *pathname, int flags, meStat *statp)
 {
-    meUByte dirbuf [FILEBUF];
-#ifdef _URLSUPP
+    meUByte dirbuf [meFILEBUF_SIZE_MAX];
+#if MEOPT_SOCKET
     if(isFtpLink(pathname))
-        return TRUE ;
-    else if(isHttpLink(pathname))
-        return mlwrite (MWABORT,(meUByte *)"Cannot write to: %s",pathname);
-    else
+        return meTRUE ;
 #endif        
-#if URLAWAR
     if(isUrlLink(pathname))
         return mlwrite (MWABORT,(meUByte *)"Cannot write to: %s",pathname);
-    else
-#endif        
-    {
-        /* Quick test for read only. */
+    
+    /* Quick test for read only. */
 #ifdef _UNIX
-        /* READ ONLY directory test
-           See if we can write to the directory. */
-        getFilePath (pathname, dirbuf);
-        if (meTestWrite (dirbuf))
-            return mlwrite (MWABORT,(meUByte *)"Read Only Directory: %s", dirbuf);
+    /* READ ONLY directory test
+       See if we can write to the directory. */
+    getFilePath (pathname, dirbuf);
+    if (meTestWrite (dirbuf))
+        return mlwrite (MWABORT,(meUByte *)"Read Only Directory: %s", dirbuf);
 #endif        
-        /* See if there is an existing file */
-        if ((flags & 1) == 0)           /* Validity check enabled ?? */
-            return TRUE;                /* No - quit. */
-        if (meTestExist (pathname))     /* Does it exist ?? */
-            return TRUE;                /* No - quit */
-        if ((statp != NULL) && !meStatTestWrite(*statp))
-        {
-            /* No - advised read only - see if the users wants to write */
-            sprintf((char *)dirbuf, "%s is read only. Try anyway", pathname);
-            if(mlyesno(dirbuf) != TRUE)
-                return mlwrite (MWABORT,(meUByte *)"File not written.");
-        }
-    }   
-    return TRUE;
+    /* See if there is an existing file */
+    if ((flags & 1) == 0)           /* Validity check enabled ?? */
+        return meTRUE;                /* No - quit. */
+    if (meTestExist (pathname))     /* Does it exist ?? */
+        return meTRUE;                /* No - quit */
+    if ((statp != NULL) && !meStatTestWrite(*statp))
+    {
+        /* No - advised read only - see if the users wants to write */
+        sprintf((char *)dirbuf, "%s is read only. Try anyway", pathname);
+        if(mlyesno(dirbuf) != meTRUE)
+            return mlwrite (MWABORT,(meUByte *)"File not written.");
+    }
+    return meTRUE;
 }
 
 static meUByte *
 writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
 {
     register int s;
-    meSTAT stats ;
+    meStat stats ;
     meUByte *fn ;
     
     if((sfname != NULL) &&
@@ -1789,7 +1801,7 @@ writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
         meStrcpy(dfname+s,getFileBaseName(sfname)) ;
     }
     if (((s=getFileStats(dfname,3,&stats,lfname)) != meFILETYPE_REGULAR) && (s != meFILETYPE_NOTEXIST)
-#ifdef _URLSUPP
+#if MEOPT_SOCKET
         && (s != meFILETYPE_FTP)
 #endif
         )
@@ -1797,21 +1809,21 @@ writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
     fn = (lfname[0] == '\0') ? dfname:lfname ;
     if(flags & 0x01)
     {
-        meUByte prompt[MAXBUF+48];
-        BUFFER *bp ;
+        meUByte prompt[meBUF_SIZE_MAX+48];
+        meBuffer *bp ;
         
         /* Check for write-out filename problems */
         if(s == meFILETYPE_REGULAR)
         {
             sprintf((char *)prompt,"File %s already exists, overwrite",fn) ;
-            if(mlyesno(prompt) != TRUE)
+            if(mlyesno(prompt) != meTRUE)
             {
-                ctrlg(FALSE,1);
+                ctrlg(meFALSE,1);
                 return NULL ;
             }
         }
         /* Quick check on the file write condition */
-        if(writeCheck (fn, flags, &stats) != TRUE)
+        if(writeCheck (fn, flags, &stats) != meTRUE)
             return NULL ;
         /*
          * Check to see if the new filename conflicts with the filenames for any
@@ -1820,29 +1832,31 @@ writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
         bp=bheadp ;
         while(bp != NULL)
         {
-            if((bp != curbp) &&
+            if((bp != frameCur->bufferCur) &&
 #ifdef _UNIX
-               (!fnamecmp(bp->b_fname,fn) || 
+               (!fnamecmp(bp->fileName,fn) || 
                 ((stats.stdev != (dev_t)(-1)) &&
                  (bp->stats.stdev == stats.stdev) &&
                  (bp->stats.stino == stats.stino) &&
                  (bp->stats.stsize == stats.stsize))))
 #else
-               !fnamecmp(bp->b_fname,fn))
+               !fnamecmp(bp->fileName,fn))
 #endif
             {
-                sprintf((char *)prompt, "Buffer %s is the same file, overwrite",bp->b_bname) ;
-                if(mlyesno(prompt) != TRUE)
+                sprintf((char *)prompt, "Buffer %s is the same file, overwrite",bp->name) ;
+                if(mlyesno(prompt) != meTRUE)
                 {
-                    ctrlg(FALSE,1);
+                    ctrlg(meFALSE,1);
                     return NULL ;
                 }
             }
-            bp = bp->b_bufp ;
+            bp = bp->next ;
         }
     }
     return fn ;
 }
+
+#if MEOPT_EXTENDED
 
 #define meFILEOP_CHECK    0x001
 #define meFILEOP_BACKUP   0x002
@@ -1854,7 +1868,7 @@ writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
 int
 fileOp(int f, int n)
 {
-    meUByte sfname[FILEBUF], dfname[FILEBUF], lfname[FILEBUF], *fn ;
+    meUByte sfname[meFILEBUF_SIZE_MAX], dfname[meFILEBUF_SIZE_MAX], lfname[meFILEBUF_SIZE_MAX], *fn ;
     int dFlags=0 ;
 	
     if((n & (meFILEOP_FTPCLOSE|meFILEOP_DELETE|meFILEOP_MOVE|meFILEOP_COPY|meFILEOP_MKDIR)) == 0)
@@ -1862,14 +1876,14 @@ fileOp(int f, int n)
        
     if(n & meFILEOP_DELETE)
     {
-        if (inputFileName((meUByte *)"Delete file", sfname,1) != TRUE)
-            return ABORT ;
+        if (inputFileName((meUByte *)"Delete file", sfname,1) != meTRUE)
+            return meABORT ;
         if(n & meFILEOP_CHECK)
         {        
-            meUByte prompt[MAXBUF];
+            meUByte prompt[meBUF_SIZE_MAX];
             sprintf((char *)prompt, "%s: Delete file",sfname) ;
-            if(mlyesno(prompt) != TRUE)
-                return ctrlg(FALSE,1);
+            if(mlyesno(prompt) != meTRUE)
+                return ctrlg(meFALSE,1);
         }
         fn = NULL ;
         dFlags = meRWFLAG_DELETE ;
@@ -1892,29 +1906,29 @@ fileOp(int f, int n)
             dFlags = 0 ;
         }
         prompt[9] = '\0' ;
-        if (inputFileName(prompt, sfname,1) != TRUE)
-            return ABORT ;
+        if (inputFileName(prompt, sfname,1) != meTRUE)
+            return meABORT ;
         prompt[9] = ' ' ;
-        if (inputFileName(prompt, dfname,1) != TRUE)
-            return ABORT ;
-#ifdef _URLSUPP
+        if (inputFileName(prompt, dfname,1) != meTRUE)
+            return meABORT ;
+#if MEOPT_SOCKET
         if(isUrlLink(sfname) && isUrlLink(dfname))
             return mlwrite (MWABORT,(meUByte *)"[Cannot read and write to URL at the same time]") ;
 #endif
         if((fn=writeFileChecks(dfname,sfname,lfname,n)) == NULL)
-            return ABORT ;
+            return meABORT ;
         /* can this be done by a simple rename? */
         if(((n & (meFILEOP_BACKUP|meFILEOP_MOVE)) == meFILEOP_MOVE) && !meRename(sfname,fn))
-            return TRUE ;
+            return meTRUE ;
     }
     else if(n & meFILEOP_MKDIR)
     {
         int s ;
-        if (inputFileName((meUByte *)"Create dir", sfname,1) != TRUE)
-            return ABORT ;
+        if (inputFileName((meUByte *)"Create dir", sfname,1) != meTRUE)
+            return meABORT ;
         /* check that nothing of that name currently exists */
         if (((s=getFileStats(sfname,0,NULL,NULL)) != meFILETYPE_NOTEXIST)
-#ifdef _URLSUPP
+#if MEOPT_SOCKET
             && (s != meFILETYPE_FTP)
 #endif
             )
@@ -1928,61 +1942,62 @@ fileOp(int f, int n)
         dFlags |= meRWFLAG_FTPCLOSE ;
     return ffFileOp(sfname,fn,dFlags) ;
 }
+#endif
 
 /*
  * This function performs an auto writeout to disk for the given buffer
  */
 void
-autowriteout(register BUFFER *bp)
+autowriteout(register meBuffer *bp)
 {
-    meUByte fn[FILEBUF], lname[FILEBUF], *ff ;
+    meUByte fn[meFILEBUF_SIZE_MAX], lname[meFILEBUF_SIZE_MAX], *ff ;
     int ss ;
     
     bp->autotime = -1 ;
     
-    if(bp->b_fname == NULL)
-        ss = ABORT ;
+    if(bp->fileName == NULL)
+        ss = meABORT ;
     else
     {
-        getFileStats(bp->b_fname,0,NULL,lname) ;
-        ff = (lname[0] == '\0') ? bp->b_fname:lname ;
+        getFileStats(bp->fileName,0,NULL,lname) ;
+        ff = (lname[0] == '\0') ? bp->fileName:lname ;
         if(createBackupName(fn,ff,'#',1))
-            ss = ABORT ;
-        else if((ss=ffWriteFileOpen(fn,meRWFLAG_WRITE|meRWFLAG_AUTOSAVE,bp)) == TRUE)
+            ss = meABORT ;
+        else if((ss=ffWriteFileOpen(fn,meRWFLAG_WRITE|meRWFLAG_AUTOSAVE,bp)) == meTRUE)
         {    
-            LINE *lp ;
+            meLine *lp ;
             
-            lp = lforw(bp->b_linep);            /* First line.          */
-            while((lp != bp->b_linep) &&
-                  ((ss=ffWriteFileWrite(llength(lp),ltext(lp),
-                                    !(lp->l_flag & LNNEOL))) == TRUE))
+            lp = meLineGetNext(bp->baseLine);            /* First line.          */
+            while((lp != bp->baseLine) &&
+                  ((ss=ffWriteFileWrite(meLineGetLength(lp),meLineGetText(lp),
+                                    !(lp->flag & meLINE_NOEOL))) == meTRUE))
             {
-                lp = lforw(lp) ;
+                lp = meLineGetNext(lp) ;
                 if(TTbreakTest(1))
                 {
-                    ss = ABORT ;
+                    ss = meABORT ;
                     break ;
                 }
             }
             ffWriteFileClose(fn,meRWFLAG_WRITE|meRWFLAG_AUTOSAVE,bp) ;
         }
     }
-    if(ss == TRUE)
+    if(ss == meTRUE)
         mlerase(MWCLEXEC) ;
     else
-        mlwrite(0,(meUByte *)"[Auto-writeout failure for buffer %s]",bp->b_bname) ;
+        mlwrite(0,(meUByte *)"[Auto-writeout failure for buffer %s]",bp->name) ;
 }
 
 /*
  * This function removes an auto writeout file for the given buffer
  */
 void
-autowriteremove(register BUFFER *bp)
+autowriteremove(register meBuffer *bp)
 {
-    meUByte fn[FILEBUF] ;
+    meUByte fn[meFILEBUF_SIZE_MAX] ;
 
     if((autotime > 0) && bufferNeedSaving(bp) &&
-       !createBackupName(fn,bp->b_fname,'#',0) &&
+       !createBackupName(fn,bp->fileName,'#',0) &&
        !meTestExist(fn))
         /* get rid of any tempory file */
         meUnlink(fn) ;
@@ -1993,16 +2008,16 @@ autowriteremove(register BUFFER *bp)
  * This function performs the details of file
  * writing. Uses the file management routines in the
  * "fileio.c" package. The number of lines written is
- * displayed. Sadly, it looks inside a LINE; provide
+ * displayed. Sadly, it looks inside a meLine; provide
  * a macro for this. Most of the grief is error
  * checking of some sort.
  */
-static int
-writeOut(register BUFFER *bp, meUInt flags, meUByte *fn)
+int
+writeOut(register meBuffer *bp, meUInt flags, meUByte *fn)
 {
 #if (defined _UNIX) || (defined _DOS) || (defined _WIN32)
     /* Add write permission to backup file. */
-    if(meModeTest(bp->b_mode,MDBACK))
+    if(meModeTest(bp->mode,MDBACK))
     {
         register meUInt ss;
         
@@ -2024,23 +2039,23 @@ writeOut(register BUFFER *bp, meUInt flags, meUByte *fn)
         flags |= meRWFLAG_BACKUP | ss ;
     }
 #endif
-#if	TIMSTMP
+#if MEOPT_TIMSTMP
     set_timestamp(bp);			/* Perform time stamping */
 #endif
-    if(ffWriteFile(fn,flags,bp) != TRUE)
-        return FALSE ;
+    if(ffWriteFile(fn,flags,bp) != meTRUE)
+        return meFALSE ;
     /* No write error.      */
     /* must be done before buffer is flagged as not changed */
-#if MEUNDO
+#if MEOPT_UNDO
     if(meSystemCfg & meSYSTEM_KEEPUNDO)
     {
         /* go through undo list removing any unedited flags */
-        UNDOND *nn ;
-        nn = bp->fUndo ;
+        meUndoNode *nn ;
+        nn = bp->undoHead ;
         while(nn != NULL)
         {
-            if(nn->type & MEUNDO_FRST)
-                nn->type |= MEUNDO_MDEL ;
+            if(nn->type & meUNDO_FRST)
+                nn->type |= meUNDO_MDEL ;
             nn = nn->next ;
         }
     }
@@ -2048,8 +2063,8 @@ writeOut(register BUFFER *bp, meUInt flags, meUByte *fn)
         meUndoRemove(bp) ;
 #endif
     autowriteremove(bp) ;
-    meModeClear(bp->b_mode,MDEDIT) ;
-    meModeClear(bp->b_mode,MDSAVE) ;
+    meModeClear(bp->mode,MDEDIT) ;
+    meModeClear(bp->mode,MDSAVE) ;
 
     if(fn != NULL)
     {
@@ -2081,30 +2096,30 @@ writeOut(register BUFFER *bp, meUInt flags, meUByte *fn)
            (meUid != 0) &&
 #endif
            (!meStatTestWrite(bp->stats)))
-            meModeSet(curbp->b_mode,MDVIEW) ;
+            meModeSet(frameCur->bufferCur->mode,MDVIEW) ;
         else
-            meModeClear(curbp->b_mode,MDVIEW) ;
+            meModeClear(frameCur->bufferCur->mode,MDVIEW) ;
     }
-    return TRUE ;
+    return meTRUE ;
 }
 
 /*
  * This function performs the details of file writing. Uses the file
  * management routines in the "fileio.c" package. The number of lines written
- * is displayed. Sadly, it looks inside a LINE; provide a macro for this. Most
+ * is displayed. Sadly, it looks inside a meLine; provide a macro for this. Most
  * of the grief is error checking of some sort.
  */
 int
-writeout(register BUFFER *bp, int flags, meUByte *fname)
+writeout(register meBuffer *bp, int flags, meUByte *fname)
 {
-    meUByte lname[FILEBUF], *fn ;
-    if(!meStrcmp(bp->b_bname,"*stdin*"))
+    meUByte lname[meFILEBUF_SIZE_MAX], *fn ;
+    if(!meStrcmp(bp->name,"*stdin*"))
         fn = NULL ;
-    else if((bp->b_bname[0] == '*') || (fname == NULL))
-        return mlwrite(MWABORT,(meUByte *)"[No file name set for buffer %s]",bp->b_bname);
+    else if((bp->name[0] == '*') || (fname == NULL))
+        return mlwrite(MWABORT,(meUByte *)"[No file name set for buffer %s]",bp->name);
     else
     {
-        meSTAT stats ;
+        meStat stats ;
         /*
          * Check that the file has not been modified since it was read it in. This
          * is a bit of a problem since the info we require is hidden in a buffer
@@ -2112,37 +2127,37 @@ writeout(register BUFFER *bp, int flags, meUByte *fname)
          * in the current buffer then dont bother to look for it.
          */
         getFileStats(fname,0,&stats,lname) ;
-        if((flags & 1) && (stats.stmtime > bp->stats.stmtime))
+        if((flags & 1) && meFiletimeIsModified(stats.stmtime,bp->stats.stmtime))
         {
-            meUByte prompt[MAXBUF];
+            meUByte prompt[meBUF_SIZE_MAX];
             sprintf((char *)prompt, "%s modified, write", fname);
-            if(mlyesno(prompt) != TRUE)
-                return ctrlg(FALSE,1);
+            if(mlyesno(prompt) != meTRUE)
+                return ctrlg(meFALSE,1);
         }
         fn = (lname[0] == '\0') ? fname:lname ;
         /* Quick check on the file write condition */
-        if (writeCheck (fn, flags, &stats) != TRUE)
-            return ABORT;
+        if (writeCheck (fn, flags, &stats) != meTRUE)
+            return meABORT;
     }
     
     return writeOut(bp,((flags & 0x02) ? meRWFLAG_IGNRNRRW:0),fn) ;
 }
 
 void
-resetBufferNames(BUFFER *bp, meUByte *fname)
+resetBufferNames(meBuffer *bp, meUByte *fname)
 {
-    if(fnamecmp(bp->b_fname,fname))
+    if(fnamecmp(bp->fileName,fname))
     {
-        meUByte buf[MAXBUF], *bb ;
-        meNullFree(bp->b_fname) ;
-        bp->b_fname = meStrdup(fname) ;
+        meUByte buf[meBUF_SIZE_MAX], *bb ;
+        meNullFree(bp->fileName) ;
+        bp->fileName = meStrdup(fname) ;
         unlinkBuffer(bp) ;
         bp->intFlag = (bp->intFlag & ~BIFNAME) | makename(buf, fname) ;
         if((bb = meMalloc(meStrlen(buf)+1)) != NULL)
         {
-            meFree(bp->b_bname) ;
+            meFree(bp->name) ;
             meStrcpy(bb,buf) ;
-            bp->b_bname = bb ;
+            bp->name = bb ;
         }
         linkBuffer(bp) ;
     }
@@ -2157,28 +2172,28 @@ resetBufferNames(BUFFER *bp, meUByte *fname)
 int
 writeBuffer(int f, int n)
 {
-    meUByte fname[FILEBUF], lname[FILEBUF], *fn ;
+    meUByte fname[meFILEBUF_SIZE_MAX], lname[meFILEBUF_SIZE_MAX], *fn ;
     
-    if(inputFileName((meUByte *)"Write file",fname,1) != TRUE)
-        return ABORT ;
+    if(inputFileName((meUByte *)"Write file",fname,1) != meTRUE)
+        return meABORT ;
 
-    if(curbp->b_fname != NULL)
-        fn = curbp->b_fname ;
-    else if(curbp->b_bname[0] != '*')
-        fn = curbp->b_bname ;
+    if(frameCur->bufferCur->fileName != NULL)
+        fn = frameCur->bufferCur->fileName ;
+    else if(frameCur->bufferCur->name[0] != '*')
+        fn = frameCur->bufferCur->name ;
     else
         fn = NULL ;
     
     if((fn=writeFileChecks(fname,fn,lname,n)) == NULL)
-        return ABORT ;
+        return meABORT ;
     
-    if(!writeOut(curbp,((n & 0x02) ? meRWFLAG_IGNRNRRW:0),fn))
-        return FALSE ;
+    if(!writeOut(frameCur->bufferCur,((n & 0x02) ? meRWFLAG_IGNRNRRW:0),fn))
+        return meFALSE ;
     
-    resetBufferNames(curbp,fname) ;
+    resetBufferNames(frameCur->bufferCur,fname) ;
     addModeToWindows(WFMODE) ; /* and update ALL mode lines */
 
-    return TRUE ;
+    return meTRUE ;
 }
 
 /*
@@ -2198,39 +2213,40 @@ saveBuffer(int f, int n)
     /* Further note: the file name can be NULL, e.g. theres no file name
      * so this must be tested before meTestExist, BUT the file name can be
      * NULL and still be saved, e.g. the buffer name is *stdin* - so be careful */
-    if((n & 0x01) && (curbp->b_fname != NULL) &&  /* Are we Checking ?? */
-       (meTestExist (curbp->b_fname) == 0) &&     /* Does file actually exist ? */
-       !meModeTest(curbp->b_mode,MDEDIT))         /* Have we edited buffer ? */
+    if((n & 0x01) && (frameCur->bufferCur->fileName != NULL) &&  /* Are we Checking ?? */
+       (meTestExist (frameCur->bufferCur->fileName) == 0) &&     /* Does file actually exist ? */
+       !meModeTest(frameCur->bufferCur->mode,MDEDIT))         /* Have we edited buffer ? */
         /* Return, no changes.  */
         return mlwrite(0,(meUByte *)"[No changes made]") ;
-    if((s=writeout(curbp,n,curbp->b_fname)) == TRUE)
+    if((s=writeout(frameCur->bufferCur,n,frameCur->bufferCur->fileName)) == meTRUE)
         addModeToWindows(WFMODE) ;  /* and update ALL mode lines */
     return (s);
 }
 
 
+#if MEOPT_EXTENDED
 
 int
 appendBuffer(int f, int n)
 {
     register meUInt flags ;
     register int ss ;
-    meUByte fname[FILEBUF], lname[FILEBUF], *fn ;
+    meUByte fname[meFILEBUF_SIZE_MAX], lname[meFILEBUF_SIZE_MAX], *fn ;
 
-    if(inputFileName((meUByte *)"Append to file",fname,1) != TRUE)
-        return ABORT ;
+    if(inputFileName((meUByte *)"Append to file",fname,1) != meTRUE)
+        return meABORT ;
 
     if(((ss=getFileStats(fname,3,NULL,lname)) != meFILETYPE_REGULAR) && (ss != meFILETYPE_NOTEXIST))
-        return ABORT ;
+        return meABORT ;
     fn = (lname[0] == '\0') ? fname:lname ;
     if(ss == meFILETYPE_NOTEXIST)
     {
         if(n & 0x01)
         {
-            meUByte prompt[MAXBUF];
+            meUByte prompt[meBUF_SIZE_MAX];
             sprintf((char *)prompt, "%s does not exist, create",fn) ;
-            if(mlyesno(prompt) != TRUE)
-                return ctrlg(FALSE,1);
+            if(mlyesno(prompt) != meTRUE)
+                return ctrlg(meFALSE,1);
         }
         ss = 0 ;
     }
@@ -2240,18 +2256,20 @@ appendBuffer(int f, int n)
         flags = meRWFLAG_OPENEND ;
     if(n & 0x02)
         flags |= meRWFLAG_IGNRNRRW ;
-    return ffWriteFile(fname,flags,curbp) ;
+    return ffWriteFile(fname,flags,frameCur->bufferCur) ;
 }
-    
+
+#endif
+
 /*
  * save-some-buffers, query saves all modified buffers
  */
 int
 saveSomeBuffers(int f, int n)
 {
-    register BUFFER *bp;    /* scanning pointer to buffers */
-    register int status=TRUE ;
-    meUByte prompt[MAXBUF] ;
+    register meBuffer *bp;    /* scanning pointer to buffers */
+    register int status=meTRUE ;
+    meUByte prompt[meBUF_SIZE_MAX] ;
 
     bp = bheadp;
     while (bp != NULL)
@@ -2260,21 +2278,21 @@ saveSomeBuffers(int f, int n)
         {
             if(n & 1)
             {
-                if(bp->b_fname != NULL)
-                    sprintf((char *)prompt, "Save file %s", bp->b_fname) ;
+                if(bp->fileName != NULL)
+                    sprintf((char *)prompt, "Save file %s", bp->fileName) ;
                 else
-                    sprintf((char *)prompt, "Save buffer %s", bp->b_bname) ;
-                if((status = mlyesno(prompt)) == ABORT)
-                    return ABORT ;
+                    sprintf((char *)prompt, "Save buffer %s", bp->name) ;
+                if((status = mlyesno(prompt)) == meABORT)
+                    return meABORT ;
             }
-            if((status == TRUE) &&
-               (writeout(bp, 0, bp->b_fname) != TRUE))
-                return ABORT ;
+            if((status == meTRUE) &&
+               (writeout(bp, 0, bp->fileName) != meTRUE))
+                return meABORT ;
         }
-        bp = bp->b_bufp;            /* on to the next buffer */
+        bp = bp->next;            /* on to the next buffer */
     }
     addModeToWindows(WFMODE) ;  /* and update ALL mode lines */
-    return TRUE ;
+    return meTRUE ;
 }
 
 /*
@@ -2282,7 +2300,7 @@ saveSomeBuffers(int f, int n)
  * to modify the file name associated with
  * the current buffer. It is like the "f" command
  * in UNIX "ed". The operation is simple; just zap
- * the name in the BUFFER structure, and mark the windows
+ * the name in the meBuffer structure, and mark the windows
  * as needing an update. You can type a blank line at the
  * prompt if you wish.
  */
@@ -2290,34 +2308,34 @@ int
 changeFileName(int f, int n)
 {
     register int s, ft ;
-    meUByte fname[FILEBUF], lname[FILEBUF], *fn ;
+    meUByte fname[meFILEBUF_SIZE_MAX], lname[meFILEBUF_SIZE_MAX], *fn ;
 
-    if ((s=inputFileName((meUByte *)"New file name",fname,1)) == ABORT)
+    if ((s=inputFileName((meUByte *)"New file name",fname,1)) == meABORT)
         return s ;
 
     if(((ft=getFileStats(fname,3,NULL,lname)) != meFILETYPE_REGULAR) && (ft != meFILETYPE_NOTEXIST)
-#ifdef _URLSUPP
+#if MEOPT_SOCKET
         && (ft != meFILETYPE_FTP)
 #endif
        )
-        return ABORT ;
+        return meABORT ;
     fn = (lname[0] == '\0') ? fname:lname ;
-    meNullFree(curbp->b_fname) ;
+    meNullFree(frameCur->bufferCur->fileName) ;
 
-    if (s == FALSE)
-        curbp->b_fname = NULL ;
+    if (s == meFALSE)
+        frameCur->bufferCur->fileName = NULL ;
     else
-        curbp->b_fname = meStrdup(fname) ;
+        frameCur->bufferCur->fileName = meStrdup(fname) ;
 
 #if (defined _UNIX) || (defined _DOS) || (defined _WIN32)
     if(meTestWrite(fn))
-        meModeSet(curbp->b_mode,MDVIEW) ;
+        meModeSet(frameCur->bufferCur->mode,MDVIEW) ;
     else
-        meModeClear(curbp->b_mode,MDVIEW) ;	/* no longer read only mode */
+        meModeClear(frameCur->bufferCur->mode,MDVIEW) ;	/* no longer read only mode */
 #endif
     addModeToWindows(WFMODE) ;  /* and update ALL mode lines */
 
-    return (TRUE);
+    return (meTRUE);
 }
 
 #ifdef _DOS
@@ -2365,9 +2383,9 @@ changeDir(int f, int n)
      */
 #if (defined _UNIX) || (defined _DOS) || (defined _WIN32)
     register int    s;
-    meUByte *dd, dname[FILEBUF];		/* directory to change to   */
+    meUByte *dd, dname[meFILEBUF_SIZE_MAX];		/* directory to change to   */
 
-    if((s = inputFileName((meUByte *)"Directory Name ",dname,1)) != TRUE)
+    if((s = inputFileName((meUByte *)"Directory Name ",dname,1)) != meTRUE)
         return(s);
 
     if(meChdir(dname) == -1)
@@ -2377,7 +2395,7 @@ changeDir(int f, int n)
         meFree(curdir) ;
         curdir = dd ;
     }
-    return(TRUE);
+    return(meTRUE);
 #else
     return mlwrite(MWABORT,(meUByte *)"Cant change directory as cant get absolute path") ;
 #endif
@@ -2419,7 +2437,6 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
      */
     for(;;)
     {
-#if URLAWAR
         if(isHttpLink(p1))
         {
             flag = 2 ;
@@ -2446,9 +2463,7 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
              * is so it handles "file:ftp://..." correctly */
             continue ;
         }
-        else
-#endif
-            if(flag != 2)
+        else if(flag != 2)
         {
             /* note that ftp://... names are still processed, ftp://.../xxx//yyy -> ftp://.../yyy etc */
             if(p1[0] == DIR_CHAR)
@@ -2634,10 +2649,10 @@ fileNameCorrect(meUByte *oldName, meUByte *newName, meUByte **baseName)
     pathNameCorrect(oldName,PATHNAME_COMPLETE,newName,&bn) ;
     if(baseName != NULL)
         *baseName = bn ;
-#if URLAWAR
+    
     if(isUrlLink(newName))
         return ;
-#endif
+    
     /* ensure the drive letter is stable, make it lower case */
     if((newName[1] == _DRV_CHAR) && isUpper(newName[0]))
         newName[0] = toLower(newName[0]) ;
@@ -2665,7 +2680,7 @@ fileNameCorrect(meUByte *oldName, meUByte *newName, meUByte **baseName)
 #endif
 
 void
-getDirectoryList(meUByte *pathName, meDIRLIST *dirList)
+getDirectoryList(meUByte *pathName, meDirList *dirList)
 {
     meUByte **fls ;
     int    noFiles ;
@@ -2867,7 +2882,7 @@ getDirectoryList(meUByte *pathName, meDIRLIST *dirList)
             struct  direct *dp ;
 #endif
             struct stat statbuf;
-            meUByte *ff, *bb, fname[FILEBUF] ;
+            meUByte *ff, *bb, fname[meFILEBUF_SIZE_MAX] ;
             
             meStrcpy(fname,pathName) ;
             bb = fname + meStrlen(fname) ;

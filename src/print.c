@@ -30,7 +30,7 @@
 
 #include "emain.h"
 
-#if PRINT
+#if MEOPT_PRINT
 
 #if (defined _UNIX) || (defined _DOS) || (defined _WIN32)
 #include <sys/types.h>
@@ -57,10 +57,10 @@ meUByte printTypes[] =
 };
 
 PRINTER printer;
-static BUFFER *gbp;                     /* Source of print buffer */
-static BUFFER *gpbp;                    /* Composition print buffer */
+static meBuffer *gbp;                     /* Source of print buffer */
+static meBuffer *gpbp;                    /* Composition print buffer */
 
-#if HILIGHT
+#if MEOPT_HILIGHT
 #define mePRINT_FONT      0x00ff
 #define mePRINT_COLOR     0xff00
 
@@ -73,7 +73,7 @@ static BUFFER *gpbp;                    /* Composition print buffer */
 #define mePRINTSTYLE_SIZE   (meFONT_COUNT+2)
 
 static int     fontCount ;
-static meSTYLE fontMasks[2][mePRINTSTYLE_SIZE] ;
+static meStyle fontMasks[2][mePRINTSTYLE_SIZE] ;
 static meShort   fontStrlen[2][mePRINTSTYLE_SIZE] ;
 static meUByte  *fontStrings[2][mePRINTSTYLE_SIZE] ;
 static meUByte  *fontPaths[2] = {(meUByte *)"start",(meUByte *)"end"} ;
@@ -81,8 +81,8 @@ static meUByte  *fontOrder = (meUByte *)"biu" ;
 
 /* The hilighting characters */
 static meUByte hilchars[mePRINTSTYLE_SIZE] = {'b', 'i', 'l', 'r', 'u', 'F', 'B'};
-meSCHEME printTextScheme=meSCHEME_INVALID ;
-meSCHEME printCurrScheme=meSCHEME_INVALID ;
+meScheme printTextScheme=meSCHEME_INVALID ;
+meScheme printCurrScheme=meSCHEME_INVALID ;
 
 #endif
 
@@ -160,19 +160,19 @@ printColor (int f, int n)
         meNullFree(printer.color) ;
         printer.color = NULL ;
         printer.colorNum = 0;
-        return TRUE ;
+        return meTRUE ;
     }
         
     /* Get the color number and color */
     color = 0 ;
-    if ((meGetString((meUByte *)"Number", 0, 0, buf, 20) == ABORT) ||
+    if ((meGetString((meUByte *)"Number", 0, 0, buf, 20) == meABORT) ||
         ((colNo = meAtoi(buf)) < 0) || (colNo > 255) ||
-        (meGetString((meUByte *)"Red",0,0,buf,20) == ABORT) ||
+        (meGetString((meUByte *)"Red",0,0,buf,20) == meABORT) ||
         ((color = mePrintColorSetRed(color,meAtoi(buf))),
-         (meGetString((meUByte *)"Green",0,0,buf,20) == ABORT)) ||
+         (meGetString((meUByte *)"Green",0,0,buf,20) == meABORT)) ||
         ((color = mePrintColorSetGreen(color,meAtoi(buf))),
-         (meGetString((meUByte *)"Blue",0,0,buf,20) == ABORT)))
-        return FALSE;
+         (meGetString((meUByte *)"Blue",0,0,buf,20) == meABORT)))
+        return meFALSE;
     color = mePrintColorSetBlue(color,meAtoi(buf)) ;
 
     /* Add a new entry to the printer color table */
@@ -183,7 +183,7 @@ printColor (int f, int n)
         {
             /* Make safe */
             printer.colorNum = 0;
-            return ABORT ;
+            return meABORT ;
         }
         /* Fill the memory with zero's */
         memset (&printer.color[printer.colorNum], 0,
@@ -191,7 +191,7 @@ printColor (int f, int n)
         printer.colorNum = colNo+1;
     }
     printer.color[colNo] = color ;
-    return TRUE ;
+    return meTRUE ;
 }
 int
 printScheme (int f, int n)
@@ -199,7 +199,7 @@ printScheme (int f, int n)
     meUByte buf[20];              /* Local character buffer */
     int schmNo;                 /* color number to add */
     meUByte fc, bc, ff ;          /* temporary fore, back & font */
-    meSTYLE scheme;             /* the scheme */
+    meStyle scheme;             /* the scheme */
     
     if(n == 0)
     {
@@ -207,19 +207,19 @@ printScheme (int f, int n)
         meNullFree(printer.scheme) ;
         printer.scheme = NULL ;
         printer.schemeNum = 0;
-        return TRUE ;
+        return meTRUE ;
     }
         
     /* Get the scheme number and scheme */
     scheme = 0 ;
-    if ((meGetString((meUByte *)"Number", 0, 0, buf, 10) == ABORT) ||
+    if ((meGetString((meUByte *)"Number", 0, 0, buf, 10) == meABORT) ||
         ((schmNo = meAtoi(buf)) < 0) || (schmNo > 255) ||
-        (meGetString((meUByte *)"Fore-col",0,0,buf,MAXBUF) == ABORT) ||
+        (meGetString((meUByte *)"Fore-col",0,0,buf,meBUF_SIZE_MAX) == meABORT) ||
         ((fc = (meUByte) meAtoi(buf)),
-         (meGetString((meUByte *)"Back-col",0,0,buf,MAXBUF) == ABORT)) ||
+         (meGetString((meUByte *)"Back-col",0,0,buf,meBUF_SIZE_MAX) == meABORT)) ||
         ((bc = (meUByte) meAtoi(buf)),
-         (meGetString((meUByte *)"Font",0,0,buf,MAXBUF) == ABORT)))
-        return FALSE;
+         (meGetString((meUByte *)"Font",0,0,buf,meBUF_SIZE_MAX) == meABORT)))
+        return meFALSE;
     ff = (meUByte) meAtoi(buf) ;
     
     /* create the scheme */
@@ -228,42 +228,43 @@ printScheme (int f, int n)
     /* Add a new entry to the printer color table */
     if (printer.schemeNum <= schmNo)
     {
-        printer.scheme = meRealloc (printer.scheme, sizeof(meSTYLE) * (schmNo+1));
+        printer.scheme = meRealloc (printer.scheme, sizeof(meStyle) * (schmNo+1));
         if (printer.scheme == NULL)
         {
             /* Make safe */
             printer.schemeNum = 0;
-            return ABORT ;
+            return meABORT ;
         }
         /* Fill the memory with zero's */
         memset (&printer.scheme[printer.schemeNum], 0,
-                ((schmNo+1) - printer.schemeNum) * sizeof(meSTYLE));
+                ((schmNo+1) - printer.schemeNum) * sizeof(meStyle));
         printer.schemeNum = schmNo+1;
     }
     printer.scheme[schmNo] = scheme ;
-    return TRUE ;
+    return meTRUE ;
 }
 
 static int
 printGetParams (void)
 {
-    REGHANDLE regPrint;              /* /print registry pointer */
-    REGHANDLE regData;               /* Temporary data */
+    meRegNode *regPrint;              /* /print registry pointer */
+    meRegNode *regData;               /* Temporary data */
     meUByte *order, *ss ;
     int ii, jj, kk, option;
 #if TESTPRINT 
     FILE *fp;
 #endif
-    mlwrite (0,(meUByte *)"[Configuring printer ...]");
+    /* silent printing may be required, don't know yet - so don't mlwrite yet */
+    /* mlwrite(0,(meUByte *)"[Configuring printer ...]");*/
 	
-    if(dofile((meUByte *)"print",0,1) != TRUE)
-        return ABORT ;
+    if(dofile((meUByte *)"print",0,1) != meTRUE)
+        return meABORT ;
     
     /* Get the registry directory & the name of the driver out of the registry */
     if(((regPrint = regFind (NULL,(meUByte *)"/print")) == NULL) ||
        ((regData = regFind (regPrint,(meUByte *)"setup")) == NULL) ||
        ((ss = regGetString(regData,NULL)) == NULL) || !meAtoi(ss))
-        return mlwrite (MWABORT|MWPAUSE,(meUByte *)"[Printer driver not setup]");
+        return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Printer driver not setup]");
 
 #ifdef WIN32
     if(((regData = regFind (regPrint,(meUByte *)"internal")) != NULL) &&
@@ -424,7 +425,9 @@ printGetParams (void)
     if (fp)
         fclose (fp);
 #endif
-    mlwrite (0,(meUByte *)"[Printer read the registry ...]");
+    if((printer.param[mePI_FLAGS].l & PFLAG_SILENT) == 0)
+        mlwrite(0,(meUByte *)"[Printer read the registry ...]");
+    
     /* Add a few defaults */
     if (printer.param[mePI_COLS].l < 1)
         printer.param[mePI_COLS].l = 1;
@@ -459,7 +462,7 @@ printGetParams (void)
     /* Default the output states */
     if (printer.param[mePS_BUFFER].p == NULL)
         printer.param[mePS_BUFFER].p = (meUByte *)"*printer*";
-    return TRUE;
+    return meTRUE;
 }
 
 /*
@@ -507,20 +510,20 @@ printComputePageSetup (int f)
     /* Check to ensure that the page request is legal. */
     if ((printer.param[mePI_PAPERX].l < (printer.param[mePI_PAGEX].l * printer.param[mePI_COLS].l + xtraWidth)) ||
         (printer.param[mePI_PAPERY].l < (printer.param[mePI_PAGEY].l * printer.param[mePI_ROWS].l + xtraDepth)))
-        return mlwrite (MWABORT|MWPAUSE,(meUByte *)"Invalid paper size %d x %d. Page requirements %d x %d",
-                        printer.param[mePI_PAPERX].l,
-                        printer.param[mePI_PAPERY].l,
-                        printer.param[mePI_PAGEX].l * printer.param[mePI_COLS].l + xtraWidth,
-                        (printer.param[mePI_PAGEY].l * printer.param[mePI_ROWS].l + xtraDepth));
-    else if (!f)
-        mlwrite (0,(meUByte *)"Valid paper size %d x %d. Page requirements %d x %d of %d x %d",
-                 printer.param[mePI_PAPERX].l,
-                 printer.param[mePI_PAPERY].l,
-                 printer.param[mePI_PAGEX].l,
-                 printer.param[mePI_PAGEY].l,
-                 printer.param[mePI_COLS],
-                 printer.param[mePI_ROWS]);
-    return TRUE;
+        return mlwrite(MWABORT|MWPAUSE,(meUByte *)"Invalid paper size %d x %d. Page requirements %d x %d",
+                       printer.param[mePI_PAPERX].l,
+                       printer.param[mePI_PAPERY].l,
+                       printer.param[mePI_PAGEX].l * printer.param[mePI_COLS].l + xtraWidth,
+                       (printer.param[mePI_PAGEY].l * printer.param[mePI_ROWS].l + xtraDepth));
+    else if (!f && ((printer.param[mePI_FLAGS].l & PFLAG_SILENT) == 0))
+        mlwrite(0,(meUByte *)"Valid paper size %d x %d. Page requirements %d x %d of %d x %d",
+                printer.param[mePI_PAPERX].l,
+                printer.param[mePI_PAPERY].l,
+                printer.param[mePI_PAGEX].l,
+                printer.param[mePI_PAGEY].l,
+                printer.param[mePI_COLS],
+                printer.param[mePI_ROWS]);
+    return meTRUE;
 }
 
 /*
@@ -534,8 +537,8 @@ printInit (int f, int n)
     extern int printSetup(int n);
 #endif
     /* Get the parameters out of the registry. */
-    if (printGetParams () != TRUE)
-        return FALSE;
+    if (printGetParams () != meTRUE)
+        return meFALSE;
     
     /* if the line numbers aren't required then set printer.pLineNumDigits to zero
      * so we only have to check that value */
@@ -546,16 +549,16 @@ printInit (int f, int n)
     /* On windows call printSetup to handle the windows printer initialization
      * and the setup dialog if required.
      */
-    if (printer.pInternal && (printSetup(n) != TRUE))
-        return FALSE;
+    if (printer.pInternal && (printSetup(n) != meTRUE))
+        return meFALSE;
 #endif
     
-    if (printComputePageSetup (f) != TRUE)
-        return FALSE;
+    if (printComputePageSetup (f) != meTRUE)
+        return meFALSE;
     
     if(n < 0)
     {
-        REGHANDLE regPrint;  
+        meRegNode *regPrint;  
         
         regPrint = regFind (NULL,(meUByte *)"/print") ;
         regSet(regPrint, printNames[mePI_PAPERX], meItoa(printer.param[mePI_PAPERX].l));
@@ -563,7 +566,7 @@ printInit (int f, int n)
         regSet(regPrint, printNames[mePI_PAGEX], meItoa(printer.param[mePI_PAGEX].l));
         regSet(regPrint, printNames[mePI_PAGEY], meItoa(printer.param[mePI_PAGEY].l));
     }
-    return TRUE;
+    return meTRUE;
 }
 
 /*
@@ -571,19 +574,19 @@ printInit (int f, int n)
  * Add a composed line to the lpage line list
  */
 static void
-addComposedLine (LINE **head, LINE **tail, meUByte *buf, int len)
+addComposedLine (meLine **head, meLine **tail, meUByte *buf, int len)
 {
-    LINE *nline;                        /* New line */
+    meLine *nline;                        /* New line */
 
     nline = lalloc (len);               /* Get the new line */
     if (len > 0)                        /* Copy in the data */
-        memcpy (nline->l_text, buf, len);
-    lforw (nline) = NULL;
-    if ((lback (nline) = *tail) == NULL)
+        memcpy (nline->text, buf, len);
+    meLineGetNext (nline) = NULL;
+    if ((meLineGetPrev (nline) = *tail) == NULL)
         *tail = (*head = nline);
     else
     {
-        lforw (*tail) = nline;
+        meLineGetNext (*tail) = nline;
         *tail = nline;
     }
 }
@@ -640,13 +643,13 @@ expandText (meUByte *buf, meUByte *strp, int level)
                 buf += sprintf ((char *) buf, "%d", printer.ptime->tm_year + 1900);
                 break;
             case 'f':
-                if ((gpbp->b_bname[0] == '*') || (gpbp->b_fname == NULL))
-                    ss = (meUByte *) gpbp->b_bname;
+                if ((gpbp->name[0] == '*') || (gpbp->fileName == NULL))
+                    ss = (meUByte *) gpbp->name;
                 else
-                    ss = (meUByte *) gpbp->b_fname;
+                    ss = (meUByte *) gpbp->fileName;
                 goto cat_string;
             case 'b':
-                ss = (meUByte *) gbp->b_bname;
+                ss = (meUByte *) gbp->name;
 cat_string:
                 if (ss != NULL)
                     buf += sprintf ((char *) buf, "%s", ss);
@@ -697,7 +700,7 @@ cat_string:
  * Expand the title text into the appropriate form
  */
 static void
-addFormatedLine (LINE **head, LINE **tail,
+addFormatedLine (meLine **head, meLine **tail,
                  meUByte *buf, int noLines, meUByte *strp, int filter)
 {
     meUByte *bhead = buf;
@@ -707,7 +710,7 @@ addFormatedLine (LINE **head, LINE **tail,
     {
         int ii;
         meUByte cc;
-        meUByte tbuf [MAXBUF];
+        meUByte tbuf [meBUF_SIZE_MAX];
 
         /* Get the new lines out */
         if (strp != NULL)
@@ -741,12 +744,12 @@ addFormatedLine (LINE **head, LINE **tail,
     }
 }
 
-#if HILIGHT
+#if MEOPT_HILIGHT
 static int
-printSetScheme(meSCHEME col, meUByte *buff)
+printSetScheme(meScheme col, meUByte *buff)
 {
-    meSCHEME ts ;
-    meSTYLE ss, cs ;
+    meScheme ts ;
+    meStyle ss, cs ;
     int sore, ii, fstDiff, len=0 ;
     
     /* If the scheme is not registered then there is no colour change
@@ -824,18 +827,18 @@ printSetScheme(meSCHEME col, meUByte *buff)
 /*
  * Render the page into a line store list
  */
-static LINE *
+static meLine *
 composePage (int f)
 {
-    LINE *head = NULL;
-    LINE *tail = NULL;
+    meLine *head = NULL;
+    meLine *tail = NULL;
     meUByte buf [1024*5];                 /* Heafty line store !! */
     meUByte *p;                           /* Pointer to the buffer */
     int xx;                             /* Page column iterator */
     int yy;                             /* Page row iterator */
     int ll;                             /* Lines on page iterator */
     int ii;
-    LINE *lp;                           /* Pointer to the line */
+    meLine *lp;                           /* Pointer to the line */
 
     /* Handle the end of file case */
     if (f)
@@ -858,7 +861,7 @@ composePage (int f)
             {
                 p += expandText (p, printer.param [mePS_SOF].p, 1);
             }
-#if HILIGHT
+#if MEOPT_HILIGHT
             /* set the default bg-color */
             if(printer.param[mePS_BGCOL].p != NULL)
             {
@@ -916,10 +919,10 @@ composePage (int f)
             {
                 /* Go to the start of the line in the buffer */
                 ii = ((yy * printer.param [mePI_COLS].l + xx) * printer.param [mePI_PAGEY].l) + ll;
-                lp = lforw (gbp->b_linep);
+                lp = meLineGetNext (gbp->baseLine);
                 while (--ii >= 0)
                 {
-                    if ((lp = lforw (lp)) == gbp->b_linep)
+                    if ((lp = meLineGetNext (lp)) == gbp->baseLine)
                     {
                         lp = NULL;
                         break;
@@ -930,7 +933,7 @@ composePage (int f)
                 if (lp != NULL)
                 {
                     /* Add the continuation marker - we have already done the line numbers */
-                    if (((lp->l_flag & LNCHNG) == 0) && (printer.pLineNumDigits > 0))
+                    if (((lp->flag & meLINE_CHANGED) == 0) && (printer.pLineNumDigits > 0))
                     {
                         for (ii = printer.pLineNumDigits-2; --ii >= 0; *p++ = ' ')
                             /* NULL */;
@@ -943,7 +946,7 @@ composePage (int f)
                         meUByte cc;
                         meUByte *str;
 
-                        str = lp->l_text;
+                        str = lp->text;
                         while ((cc = *str++) != '\0')
                         {
                             if (cc == 255)
@@ -1041,7 +1044,7 @@ composePage (int f)
  * Write the line into the iternal line list
  */
 static void
-dumpToInternal (LINE **headp, LINE **tailp, LINE *lp)
+dumpToInternal (meLine **headp, meLine **tailp, meLine *lp)
 {
     /* Check for NULL case - this should not happen */
     if (lp == NULL)
@@ -1052,13 +1055,13 @@ dumpToInternal (LINE **headp, LINE **tailp, LINE *lp)
         *headp = lp;
     else
     {
-        lforw(*tailp) = lp;             /* Attach head to end of list */
-        lback(lp) = *tailp;
+        meLineGetNext(*tailp) = lp;             /* Attach head to end of list */
+        meLineGetPrev(lp) = *tailp;
     }
 
     /* Fix up the tail */
-    while (lforw(lp) != NULL)
-        lp = lforw(lp);
+    while (meLineGetNext(lp) != NULL)
+        lp = meLineGetNext(lp);
     *tailp = lp;
 }
 
@@ -1067,23 +1070,23 @@ dumpToInternal (LINE **headp, LINE **tailp, LINE *lp)
  * Write the composed lines into the file
  */
 static void
-dumpToFile (FILE *fp, LINE *lp)
+dumpToFile (FILE *fp, meLine *lp)
 {
     /* Dump the line to file */
     while (lp != NULL)
     {
-        LINE *tlp;                      /* Temp line store */
+        meLine *tlp;                      /* Temp line store */
 
         tlp = lp;
-        lp = lforw (lp);
+        lp = meLineGetNext (lp);
 
-        fwrite (tlp->l_text, 1, (int)(tlp->l_used), fp);
+        fwrite (tlp->text, 1, (int)(tlp->length), fp);
 #if TESTPRINT
         {
             FILE *fp2;
             if ((fp2 = fopen ("spool2.out","ab")) != NULL)
             {
-                fwrite (tlp->l_text, 1, (int)(tlp->l_used), fp2);
+                fwrite (tlp->text, 1, (int)(tlp->length), fp2);
                 fclose (fp2);
             }
         }
@@ -1100,30 +1103,30 @@ dumpToFile (FILE *fp, LINE *lp)
  * However this is not really a problem, just a bit of a pain !!.
  */
 static void
-dumpToBuffer (BUFFER *bp, LINE *lp)
+dumpToBuffer (meBuffer *bp, meLine *lp)
 {
     int ii;
     char *p;
 
     while (lp != NULL)
     {
-        LINE *tlp;                      /* Temp line store */
+        meLine *tlp;                      /* Temp line store */
         char cc;
         int len;
         int jj, kk;
 
         /* Advance the line pointer */
         tlp = lp;
-        lp = lforw (lp);
+        lp = meLineGetNext (lp);
 
         /* Determine how many '\0's are in the string */
         jj = 0;
-        while (jj != tlp->l_used)
+        while (jj != tlp->length)
         {
-            LINE *nlp;
+            meLine *nlp;
             char *q;
             
-            for (kk = jj, ii = tlp->l_used - jj, len = 0, p = (char *) &tlp->l_text [jj]; --ii >= 0; /* NULL */)
+            for (kk = jj, ii = tlp->length - jj, len = 0, p = (char *) &tlp->text [jj]; --ii >= 0; /* NULL */)
             {
                 jj++;
                 if ((cc = *p++) == '\0')
@@ -1136,7 +1139,7 @@ dumpToBuffer (BUFFER *bp, LINE *lp)
             
             /* Construct a new line for the buffer and translate out any 0's */
             nlp = lalloc (len);
-            for (p = (char *) &tlp->l_text[kk], q = (char *) nlp->l_text; --len >= 0; /* NULL */)
+            for (p = (char *) &tlp->text[kk], q = (char *) nlp->text; --len >= 0; /* NULL */)
             {
                 if ((cc = *p++) == '\0')
                 {
@@ -1150,11 +1153,11 @@ dumpToBuffer (BUFFER *bp, LINE *lp)
             }
                 
             /* Link the new line to the end of the buffer. */
-            lforw(lback(bp->b_linep)) = nlp;
-            lback(nlp) = lback(bp->b_linep);
-            lback(bp->b_linep) = nlp;
-            lforw(nlp) = bp->b_linep;
-            bp->elineno += 1;
+            meLineGetNext(meLineGetPrev(bp->baseLine)) = nlp;
+            meLineGetPrev(nlp) = meLineGetPrev(bp->baseLine);
+            meLineGetPrev(bp->baseLine) = nlp;
+            meLineGetNext(nlp) = bp->baseLine;
+            bp->lineCount += 1;
         }
         /* Free off the old line and assign the converted line. */
         meFree (tlp);
@@ -1162,37 +1165,37 @@ dumpToBuffer (BUFFER *bp, LINE *lp)
 }
 
 static void
-printLinkLine (BUFFER *bp, LINE *nlp, meUShort lno)
+printLinkLine (meBuffer *bp, meLine *nlp, meUShort lno)
 {
-    bp->b_linep->l_bp->l_fp = nlp;
-    nlp->l_bp = bp->b_linep->l_bp;
-    bp->b_linep->l_bp = nlp;
-    nlp->l_fp = bp->b_linep;
+    bp->baseLine->prev->next = nlp;
+    nlp->prev = bp->baseLine->prev;
+    bp->baseLine->prev = nlp;
+    nlp->next = bp->baseLine;
     if (lno)
-        nlp->l_flag &= ~LNCHNG;
+        nlp->flag &= ~meLINE_CHANGED;
     else
         printer.pLineNo++;              /* Next line */
 }
 
 #define PRTSIZ 2048
-#if HILIGHT
+#if MEOPT_HILIGHT
 static int
-printAddLine (BUFFER *bp, LINE *lp, VIDEO *vps)
+printAddLine (meBuffer *bp, meLine *lp, meVideoLine *vps)
 #else
 static int
-printAddLine (BUFFER *bp, LINE *lp)
+printAddLine (meBuffer *bp, meLine *lp)
 #endif
 {
-#if HILIGHT
-    meSCHEME  scheme ;
+#if MEOPT_HILIGHT
+    meScheme  scheme ;
 #endif
     meUShort    noColChng ;
-    HILBLOCK *blkp;
-    LINE     *nlp;
+    meSchemeSet *blkp;
+    meLine     *nlp;
     meUShort    len, wid, ii, jj, kk, ll;
 
     /* Render the line to get the colour information */
-#if HILIGHT
+#if MEOPT_HILIGHT
     if (vps[0].hilno)
     {
         noColChng = hilightLine (vps);
@@ -1202,7 +1205,7 @@ printAddLine (BUFFER *bp, LINE *lp)
     else
 #endif
     {
-        wid = renderLine (lp->l_text,lp->l_used,0);
+        wid = renderLine (lp->text,lp->length,0);
         noColChng = 0;
     }
 
@@ -1227,14 +1230,14 @@ printAddLine (BUFFER *bp, LINE *lp)
          * of storage of each to our line total (ll) */
         for (jj=0; jj<noColChng; jj++)
         {
-#if HILIGHT
+#if MEOPT_HILIGHT
             scheme = blkp[jj].scheme ;
             ll += printSetScheme(scheme,NULL) ;
 #endif
             if (blkp[jj].column > len+kk)
                 break;
         }
-#if HILIGHT
+#if MEOPT_HILIGHT
         /* add the reseting of the current scheme */
         ll += printSetScheme(printTextScheme,NULL) ;
 #endif
@@ -1249,16 +1252,16 @@ printAddLine (BUFFER *bp, LINE *lp)
 
         /* Construct a new composition line */
         if ((nlp=lalloc (ll)) == NULL)
-            return (FALSE);
+            return (meFALSE);
         printLinkLine (bp,nlp,ii++);
 
         /* Write the line numbers into the buffer if required */
-        if ((nlp->l_flag & LNCHNG) && (printer.pLineNumDigits > 0))
+        if ((nlp->flag & meLINE_CHANGED) && (printer.pLineNumDigits > 0))
         {
             char lnobuf [40];
             ll = (meUShort) printer.pLineNumDigits ;
             sprintf (lnobuf, "% 20d ", printer.pLineNo);
-            memcpy (nlp->l_text, &lnobuf [21-printer.pLineNumDigits], ll);
+            memcpy (nlp->text, &lnobuf [21-printer.pLineNumDigits], ll);
         }
         else
             ll = 0;
@@ -1267,7 +1270,7 @@ printAddLine (BUFFER *bp, LINE *lp)
         if (noColChng == 0)
         {
             /* No colour changes - simply copy the line */
-            ll += doTranslation (nlp->l_text+ll, disLineBuff+len, kk);
+            ll += doTranslation (nlp->text+ll, disLineBuff+len, kk);
         }
         else
         {
@@ -1275,14 +1278,14 @@ printAddLine (BUFFER *bp, LINE *lp)
              * whenever the colour changes. */
             for (jj = 0; jj < kk; /* NULL*/)
             {
-#if HILIGHT
+#if MEOPT_HILIGHT
                 /* Get the colour change string */
-                ll += printSetScheme(blkp->scheme,nlp->l_text+ll) ;
+                ll += printSetScheme(blkp->scheme,nlp->text+ll) ;
 #endif
                 if (blkp->column > len+kk)
                 {
                     /* Off the end of the line !! */
-                    ll += doTranslation (nlp->l_text+ll,
+                    ll += doTranslation (nlp->text+ll,
                                          disLineBuff+len+jj,
                                          kk-jj);
                     jj = kk;
@@ -1290,16 +1293,16 @@ printAddLine (BUFFER *bp, LINE *lp)
                 else
                 {
                     /* All fits !! */
-                    ll += doTranslation (nlp->l_text+ll,
+                    ll += doTranslation (nlp->text+ll,
                                          disLineBuff+len+jj,
                                          blkp->column-len-jj);
                     jj = blkp->column-len;
                     blkp++;
                 }
             }
-#if HILIGHT
+#if MEOPT_HILIGHT
             /* add the reseting of the current scheme */
-            ll += printSetScheme(printTextScheme,nlp->l_text+ll) ;
+            ll += printSetScheme(printTextScheme,nlp->text+ll) ;
 #endif
         }
         len += kk ;
@@ -1308,17 +1311,17 @@ printAddLine (BUFFER *bp, LINE *lp)
         {
             /* Pad the end of the line with spaces. */
             len = printer.param[mePI_PAGEX].l-kk ;
-            memset(nlp->l_text+ll,' ',len);
-            nlp->l_text[ll+len] = '\0';
+            memset(nlp->text+ll,' ',len);
+            nlp->text[ll+len] = '\0';
             break ;
         }
         if ((printer.param [mePI_FLAGS].l & PFLAG_ENBLTRUNCC))
             /* Line continues - add the line continuation character */
-            ll += expandText (nlp->l_text+ll, printer.param [mePS_ECONT].p, 1);
-        nlp->l_text[ll] = '\0';
+            ll += expandText (nlp->text+ll, printer.param [mePS_ECONT].p, 1);
+        nlp->text[ll] = '\0';
     }
     printer.pNoLines += ii;
-    return (TRUE);
+    return (meTRUE);
 }
 
 /*
@@ -1327,33 +1330,33 @@ printAddLine (BUFFER *bp, LINE *lp)
  */
 
 static int
-printSection (WINDOW *wp, long sLineNo, long numLines, LINE *sLine, LINE *eLine, int nn)
+printSection (meWindow *wp, long sLineNo, long numLines, meLine *sLine, meLine *eLine, int nn)
 {
     time_t clock;                       /* Time in machine format. */
-    BUFFER *bp;                         /* Composition buffer */
-    WINDOW *dwp;                        /* Destination window */
-    BUFFER *dbp = NULL;                 /* Destination buffer */
+    meBuffer *bp;                         /* Composition buffer */
+    meWindow *dwp;                        /* Destination window */
+    meBuffer *dbp = NULL;                 /* Destination buffer */
     FILE *fp = NULL;                    /* Output file stream */
-    LINE *lp, *nlp;                     /* Local line pointers */
-    LINE *clp;                          /* Composed page list */
-    LINE *ihead = NULL;                 /* Internal destination header */
-    LINE *itail = NULL;                 /* Internal destination trailer */
-    int status = TRUE;                  /* Return status */
-    meUByte fname [MAXBUF];               /* File name buffer */
+    meLine *lp, *nlp;                     /* Local line pointers */
+    meLine *clp;                          /* Composed page list */
+    meLine *ihead = NULL;                 /* Internal destination header */
+    meLine *itail = NULL;                 /* Internal destination trailer */
+    int status = meTRUE;                  /* Return status */
+    meUByte fname [meBUF_SIZE_MAX];               /* File name buffer */
     int ii;                             /* Local loop counter. */
 
-#if HILIGHT
-    VIDEO          vps[2];
+#if MEOPT_HILIGHT
+    meVideoLine          vps[2];
 #endif
     /* Work out the line number range. */
     for (numLines += sLineNo, printer.pLineNumDigits = 1; numLines > 0; printer.pLineNumDigits++)
         numLines /= 10;
 
     /* Initialise the printer. */
-    if (printInit (TRUE, nn) != TRUE)
-        return ABORT;
+    if (printInit (meTRUE, nn) != meTRUE)
+        return meABORT;
     if(nn < 0)
-        return TRUE ;
+        return meTRUE ;
         
     /* Get the clock out and initialise */
     clock = time (0);	                 /* Get system time */
@@ -1368,9 +1371,10 @@ printSection (WINDOW *wp, long sLineNo, long numLines, LINE *sLine, LINE *eLine,
     case PDEST_INTERNAL:
         break;
     case PDEST_BUFFER:
-        if ((dwp = wpopup (printer.param [mePS_BUFFER].p,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR))) == NULL)
+        if(((dbp=bfind(printer.param [mePS_BUFFER].p,BFND_CREAT|BFND_CLEAR)) == meFALSE) ||
+           (((printer.param [mePI_FLAGS].l & PFLAG_SILENT) == 0) &&
+            ((dwp = wpopup (dbp->name,WPOP_USESTR)) == NULL)))
             return mlwrite(MWABORT,(meUByte *)"[Failed to create print buffer]") ;
-        dbp = dwp->w_bufp;
         break;
     case PDEST_COMLINE:
     case PDEST_FILE:
@@ -1381,7 +1385,7 @@ printSection (WINDOW *wp, long sLineNo, long numLines, LINE *sLine, LINE *eLine,
 
         /* Endevour to open the file */
         if ((fp = fopen ((char *)fname, "wb")) == NULL)
-            return mlwrite (MWABORT,(meUByte *)"Unable to open printer spool file %s", fname);
+            return mlwrite(MWABORT,(meUByte *)"Unable to open printer spool file %s", fname);
         break;
     }
     
@@ -1393,26 +1397,26 @@ printSection (WINDOW *wp, long sLineNo, long numLines, LINE *sLine, LINE *eLine,
     /* Initialise the printer */
     if ((bp = createBuffer((meUByte *)"")) == NULL)
     {
-        status = mlwrite (MWABORT,(meUByte *)"Unable to setup Printer");
+        status = mlwrite(MWABORT,(meUByte *)"Unable to setup Printer");
         goto quitEarly;
     }
     /* Set up the buffer modes correctly so that we save the codes correctly */
-    meModeSet (bp->b_mode,MDAUTO);
-    meModeClear (bp->b_mode,MDCRLF);
-    meModeClear (bp->b_mode,MDCTRLZ);
+    meModeSet (bp->mode,MDAUTO);
+    meModeClear (bp->mode,MDCRLF);
+    meModeClear (bp->mode,MDCTRLZ);
     
-#if HILIGHT
+#if MEOPT_HILIGHT
     /* Clear the 2nd entry just in case the hilighting is not defined.
      * The 2nd entry is used as a continuation when hilighting is active. */
     vps[1].wind = vps[0].wind = wp ;
-    vps[1].hilno = vps[0].hilno = wp->w_bufp->hiLight ;
+    vps[1].hilno = vps[0].hilno = wp->buffer->hilight ;
     vps[1].bracket = vps[0].bracket = NULL ;
     vps[1].flag = vps[0].flag = 0 ;
     /* get the default text scheme */
     if (vps[0].hilno)
         printTextScheme = hilights[vps[0].hilno]->scheme ;
     else
-        printTextScheme = wp->w_bufp->scheme ;
+        printTextScheme = wp->buffer->scheme ;
     printCurrScheme = meSCHEME_INVALID ;
 #endif
     printer.pLinesPerPage = (printer.param[mePI_PAGEY].l *
@@ -1431,23 +1435,25 @@ printSection (WINDOW *wp, long sLineNo, long numLines, LINE *sLine, LINE *eLine,
 
     do {
         printer.pPageNo++;              /* Next page */
-        mlwrite (0,(meUByte *)"Printing page %d ..", printer.pPageNo);
+        
+        if((printer.param [mePI_FLAGS].l & PFLAG_SILENT) == 0)
+            mlwrite(0,(meUByte *)"Printing page %d ..", printer.pPageNo);
 
         /* Construcr a page worth of formatted data */
         while ((sLine != eLine) && (printer.pNoLines < printer.pLinesPerPage))
         {
-#if HILIGHT
+#if MEOPT_HILIGHT
             vps[0].line = sLine;
-            if (printAddLine (bp,sLine,vps) != TRUE)
+            if (printAddLine (bp,sLine,vps) != meTRUE)
 #else
-            if (printAddLine (bp,sLine) != TRUE)
+            if (printAddLine (bp,sLine) != meTRUE)
 #endif
             {
-                status = mlwrite (MWABORT,(meUByte *)"Internal error: Cannot add new prin line");
+                status = mlwrite(MWABORT,(meUByte *)"Internal error: Cannot add new prin line");
                 goto quitEarly;
             }
-            sLine = lforw (sLine);
-#if HILIGHT
+            sLine = meLineGetNext (sLine);
+#if MEOPT_HILIGHT
             /* Propogate the next line information back into the
              * current line */
             vps[0].flag = vps[1].flag;
@@ -1458,10 +1464,10 @@ printSection (WINDOW *wp, long sLineNo, long numLines, LINE *sLine, LINE *eLine,
 
         /* Compose the formatted data into a page */
         gbp = bp;
-        gpbp = wp->w_bufp;
+        gpbp = wp->buffer;
         if ((clp = composePage (0)) == NULL)
         {
-            status = mlwrite (MWABORT,(meUByte *)"Internal error: Cannot compose printer page");
+            status = mlwrite(MWABORT,(meUByte *)"Internal error: Cannot compose printer page");
             goto quitEarly;
         }
 
@@ -1476,18 +1482,18 @@ printSection (WINDOW *wp, long sLineNo, long numLines, LINE *sLine, LINE *eLine,
         /* Delete the formatted page data */
         if(printer.pNoLines)
         {
-            lp = lforw (bp->b_linep);
+            lp = meLineGetNext (bp->baseLine);
             for (ii = 0; ii < printer.pLinesPerPage; ii++)
             {
-                nlp = lforw (lp);
+                nlp = meLineGetNext (lp);
                 meFree (lp);
                 lp = nlp;
                 if (--printer.pNoLines == 0)
                     break;
             }
             /* Fix up the pointers */
-            lforw (bp->b_linep) = lp;
-            lback (lp) = bp->b_linep;
+            meLineGetNext (bp->baseLine) = lp;
+            meLineGetPrev (lp) = bp->baseLine;
         }
     } while (sLine != eLine);
 
@@ -1514,7 +1520,7 @@ printSection (WINDOW *wp, long sLineNo, long numLines, LINE *sLine, LINE *eLine,
     {
     case PDEST_COMLINE:
         {
-            meUByte cmdLine [MAXBUF+20];
+            meUByte cmdLine [meBUF_SIZE_MAX+20];
             meUByte *p, *q;
             meUByte cc;
             
@@ -1523,7 +1529,7 @@ printSection (WINDOW *wp, long sLineNo, long numLines, LINE *sLine, LINE *eLine,
             q = cmdLine;
             if ((p == NULL) || (*p == '\0'))
             {
-                mlwrite (MWPAUSE|MWABORT,(meUByte *)"No command line specified. Print file %s", fname);
+                mlwrite(MWPAUSE|MWABORT,(meUByte *)"No command line specified. Print file %s", fname);
                 goto quitEarly;
             }
             
@@ -1558,25 +1564,25 @@ printSection (WINDOW *wp, long sLineNo, long numLines, LINE *sLine, LINE *eLine,
              * used cause its return value is correctly evaluated and
              * on unix a " </dev/null" safety arg is added to the cmdLine
              */
-            if((status=doShellCommand(cmdLine)) == TRUE)
-                status = (resultStr[0] == '0') ? TRUE:FALSE ;
-            if(status != TRUE)
+            if((status=doShellCommand(cmdLine)) == meTRUE)
+                status = (resultStr[0] == '0') ? meTRUE:meFALSE ;
+            if(status != meTRUE)
                 mlwrite(MWABORT,(meUByte *)"[Failed to print file %s]",fname);
             break;
         
         case PDEST_INTERNAL:
 #ifdef _WIN32
-            status = WinPrint ((curbp->b_fname != NULL) ? curbp->b_fname
-                               : (curbp->b_bname != NULL) ? curbp->b_bname
+            status = WinPrint ((frameCur->bufferCur->fileName != NULL) ? frameCur->bufferCur->fileName
+                               : (frameCur->bufferCur->name != NULL) ? frameCur->bufferCur->name
                                :(meUByte *)"UNKNOWN source",
                                ihead);
             ihead = NULL;               /* Reset - never returned */
             break;
 #endif
         case PDEST_BUFFER:
-            dbp->b_dotp = lforw (dbp->b_linep);
-            dbp->b_doto = 0;
-            dbp->line_no = 0;
+            dbp->dotLine = meLineGetNext (dbp->baseLine);
+            dbp->dotOffset = 0;
+            dbp->dotLineNo = 0;
             resetBufferWindows (dbp);
             break;
         }
@@ -1589,12 +1595,12 @@ quitEarly:
         fclose (fp);
     /* Kill off the buffer */
     if (bp)
-        zotbuf (bp, TRUE);
+        zotbuf (bp, meTRUE);
     /* Free off internal list */
     while (ihead != NULL)
     {
         itail = ihead;
-        ihead = lforw (ihead);
+        ihead = meLineGetNext (ihead);
         meFree (itail);
     }
     /* Reshuffle the isDisplayable test back again */
@@ -1604,8 +1610,9 @@ quitEarly:
               ((charMaskTbl1[ii] & CHRMSK_PRINTABLE) ? CHRMSK_DISPLAYABLE:0) ;
 
     /* Put out end of file indicator. */
-    if (status == TRUE)
-        mlwrite (0,(meUByte *)"Printing - Done. %d page(s).", printer.pPageNo);
+    if ((status == meTRUE) &&
+        ((printer.param [mePI_FLAGS].l & PFLAG_SILENT) == 0))
+        mlwrite(0,(meUByte *)"Printing - Done. %d page(s).", printer.pPageNo);
     return status;
 
 
@@ -1614,36 +1621,36 @@ quitEarly:
 int
 printRegion (int f, int n)
 {
-    LINE *startLine, *endLine;
+    meLine *startLine, *endLine;
     long startLineNo;
     long numLines;
 
-    if (curwp->w_markp == NULL)
+    if (frameCur->windowCur->markLine == NULL)
         return noMarkSet ();
 
-    if ((startLineNo=curwp->line_no-curwp->mlineno) == 0)
-        return TRUE;
+    if ((startLineNo=frameCur->windowCur->dotLineNo-frameCur->windowCur->markLineNo) == 0)
+        return meTRUE;
     numLines = abs (startLineNo);
     if (startLineNo < 0)
     {
-        startLineNo = curwp->line_no;
-        startLine = curwp->w_dotp;
-        endLine = curwp->w_markp;
+        startLineNo = frameCur->windowCur->dotLineNo;
+        startLine = frameCur->windowCur->dotLine;
+        endLine = frameCur->windowCur->markLine;
     }
     else
     {
-        startLineNo = curwp->mlineno;
-        startLine = curwp->w_markp;
-        endLine = curwp->w_dotp;
+        startLineNo = frameCur->windowCur->markLineNo;
+        startLine = frameCur->windowCur->markLine;
+        endLine = frameCur->windowCur->dotLine;
     }
-    return printSection (curwp, startLineNo, numLines, startLine, endLine, n);
+    return printSection (frameCur->windowCur, startLineNo, numLines, startLine, endLine, n);
 }
 
 int
 printBuffer (int f, int n)
 {
-    return printSection (curwp, 0, curbp->elineno,
-                         lforw (curbp->b_linep), curbp->b_linep,n);
+    return printSection (frameCur->windowCur, 0, frameCur->bufferCur->lineCount,
+                         meLineGetNext (frameCur->bufferCur->baseLine), frameCur->bufferCur->baseLine,n);
 }
 
 #endif

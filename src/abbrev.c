@@ -42,15 +42,15 @@
 
 #define __ABBREVC
 
-#if ABBREV
+#if MEOPT_ABBREV
 
 
 static int
-setAbbrev(int f, int n, meABBREV **abrevPtr)
+setAbbrev(int f, int n, meAbbrev **abrevPtr)
 {
-    register meABBREV *abrev ;
+    register meAbbrev *abrev ;
     register int status;        /* return status of name query */
-    meUByte buf[MAXBUF];          /* name of file to execute */
+    meUByte buf[meBUF_SIZE_MAX];          /* name of file to execute */
     
     if(n == 0)
     {
@@ -59,10 +59,10 @@ setAbbrev(int f, int n, meABBREV **abrevPtr)
             abrev->loaded = 0 ;
             freeLineLoop(&(abrev->hlp),0) ;
         }
-        return TRUE ;
+        return meTRUE ;
     }
         
-    if((status=meGetString((meUByte *)"Abbrev file",MLFILECASE,0,buf,MAXBUF)) != TRUE)
+    if((status=meGetString((meUByte *)"Abbrev file",MLFILECASE,0,buf,meBUF_SIZE_MAX)) != meTRUE)
         return status ;
     
     if(buf[0] == '\0')
@@ -77,25 +77,25 @@ setAbbrev(int f, int n, meABBREV **abrevPtr)
             abrev = abrev->next ;
         }
         if((abrev == NULL) &&
-           ((abrev = meMalloc(sizeof(meABBREV)+meStrlen((char *) buf))) != NULL))
+           ((abrev = meMalloc(sizeof(meAbbrev)+meStrlen((char *) buf))) != NULL))
         {
             meStrcpy(abrev->fname,buf) ;
             abrev->loaded = 0 ;
             abrev->next = aheadp ;
             aheadp = abrev ;
-            abrev->hlp.l_fp = &(abrev->hlp) ;
-            abrev->hlp.l_bp = &(abrev->hlp) ;
+            abrev->hlp.next = &(abrev->hlp) ;
+            abrev->hlp.prev = &(abrev->hlp) ;
         }
     }
     *abrevPtr = abrev ;
     
-    return TRUE ;
+    return meTRUE ;
 }
 
 int
 bufferAbbrev(int f, int n)
 {
-    return setAbbrev(f,n,&(curbp->abrevFile)) ;
+    return setAbbrev(f,n,&(frameCur->bufferCur->abrevFile)) ;
 }
 int
 globalAbbrev(int f, int n)
@@ -105,57 +105,57 @@ globalAbbrev(int f, int n)
 
 
 static int
-doExpandAbbrev(meUByte *abName, int abLen, meABBREV *abrev)
+doExpandAbbrev(meUByte *abName, int abLen, meAbbrev *abrev)
 {
-    register LINE *lp, *hlp ;
+    register meLine *lp, *hlp ;
     
     hlp = &abrev->hlp ;
     if(!abrev->loaded)
     {
-        meUByte fname[FILEBUF] ;
+        meUByte fname[meFILEBUF_SIZE_MAX] ;
         
         if(!fileLookup(abrev->fname,(meUByte *)".eaf",meFL_CHECKDOT|meFL_USESRCHPATH,fname) ||
-           (ffReadFile(fname,meRWFLAG_SILENT,NULL,hlp) == ABORT))
+           (ffReadFile(fname,meRWFLAG_SILENT,NULL,hlp) == meABORT))
             return mlwrite(MWABORT,(meUByte *)"[Failed to abbrev file %s]",abrev->fname);
         abrev->loaded = 1 ;
     }
-    lp = lforw(hlp) ;
+    lp = meLineGetNext(hlp) ;
     while(lp != hlp)
     {
-        if((lp->l_used > abLen) &&
-           !strncmp((char *) lp->l_text,(char *) abName,abLen) &&
-           (lp->l_text[abLen] == ' '))
+        if((lp->length > abLen) &&
+           !strncmp((char *) lp->text,(char *) abName,abLen) &&
+           (lp->text[abLen] == ' '))
         {
-            meUByte buf[TOKENBUF] ;
-            curwp->w_doto -= abLen ;
+            meUByte buf[meTOKENBUF_SIZE_MAX] ;
+            frameCur->windowCur->dotOffset -= abLen ;
             ldelete(abLen,2) ;
             /* grab token */
-            token(lp->l_text+abLen,buf);
-            return stringExec(FALSE,1,buf+1) ;
+            token(lp->text+abLen,buf);
+            return stringExec(meFALSE,1,buf+1) ;
         }
-        lp = lforw(lp) ;
+        lp = meLineGetNext(lp) ;
     }
-    return FALSE ;
+    return meFALSE ;
 }
 
 int
 expandAbbrev(int f, int n)
 {
     register int len, ii ;
-    meUByte buf[MAXBUF] ;
+    meUByte buf[meBUF_SIZE_MAX] ;
     
-    if(bchange() != TRUE)               /* Check we can change the buffer */
-        return ABORT ;
-    ii = curwp->w_doto ;
-    if(((curbp->abrevFile != NULL) || (globalAbrev != NULL)) &&
-       (--ii >= 0) && (!isSpace(curwp->w_dotp->l_text[ii])))
+    if(bchange() != meTRUE)               /* Check we can change the buffer */
+        return meABORT ;
+    ii = frameCur->windowCur->dotOffset ;
+    if(((frameCur->bufferCur->abrevFile != NULL) || (globalAbrev != NULL)) &&
+       (--ii >= 0) && (!isSpace(frameCur->windowCur->dotLine->text[ii])))
     {
         len = 1 ;
-        while((--ii >= 0) && !isSpace(curwp->w_dotp->l_text[ii]))
+        while((--ii >= 0) && !isSpace(frameCur->windowCur->dotLine->text[ii]))
             len++ ;
-        strncpy((char *) buf,(char *) &(curwp->w_dotp->l_text[++ii]),len) ;
-        if(((curbp->abrevFile != NULL) && ((ii=doExpandAbbrev(buf,len,curbp->abrevFile)) != FALSE)) ||
-           ((globalAbrev != NULL)      && ((ii=doExpandAbbrev(buf,len,globalAbrev)) != FALSE)))
+        strncpy((char *) buf,(char *) &(frameCur->windowCur->dotLine->text[++ii]),len) ;
+        if(((frameCur->bufferCur->abrevFile != NULL) && ((ii=doExpandAbbrev(buf,len,frameCur->bufferCur->abrevFile)) != meFALSE)) ||
+           ((globalAbrev != NULL)      && ((ii=doExpandAbbrev(buf,len,globalAbrev)) != meFALSE)))
             return ii ;
     }
     /* We used to insert a space if the expansion was not defined
@@ -163,7 +163,7 @@ expandAbbrev(int f, int n)
      * if we are not in a macro and return a false condition. The
      * error is not serious enough to abort */
     mlwrite (MWCLEXEC,(meUByte *)"[No abbrev expansion defined]"); 
-    return FALSE;
+    return meFALSE;
     
 }
 #endif

@@ -88,7 +88,7 @@ TCAP_STRING(TCAPsmul, 'u','s','\0')
 TCAP_STRING(TCAPrmul, 'u','e','\0')
 #endif
 
-#if COLOR
+#if MEOPT_COLOR
 /* set_a_background/setab/AB/Set background color using ANSI escape */
 TCAP_STRING(TCAPsetab, 'A','B','\0')
 

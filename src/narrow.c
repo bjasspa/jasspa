@@ -41,16 +41,16 @@
 /*---	Include files */
 #include "emain.h"
 
-#if NARROW
+#if MEOPT_NARROW
 
 void
-createNarrow(BUFFER *bp, LINE *slp, LINE *elp, meInt sln, meInt eln, meUShort name)
+createNarrow(meBuffer *bp, meLine *slp, meLine *elp, meInt sln, meInt eln, meUShort name)
 {
-    WINDOW   *wp ;
-    meNARROW *nrrw, *cn, *pn ;
+    meWindow   *wp ;
+    meNarrow *nrrw, *cn, *pn ;
     meInt     nln ;
     
-    if((nrrw = meMalloc(sizeof(meNARROW))) == NULL)
+    if((nrrw = meMalloc(sizeof(meNarrow))) == NULL)
         return ;
     
     pn = NULL ;
@@ -75,77 +75,81 @@ createNarrow(BUFFER *bp, LINE *slp, LINE *elp, meInt sln, meInt eln, meUShort na
         pn->next = nrrw ;
     else
         bp->narrow = nrrw ;
-    if(alphaMarkSet(bp,name,elp,0,1) != TRUE)
+    if(alphaMarkSet(bp,name,elp,0,1) != meTRUE)
     {
         meFree(nrrw) ;
         return ;
     }
     nln = eln - sln ;
     nrrw->slp = slp ;
-    nrrw->elp = lback(elp) ;
+    nrrw->elp = meLineGetPrev(elp) ;
     nrrw->sln = sln ;
     nrrw->noLines = nln ;
-    slp->l_bp->l_fp = elp ;
-    elp->l_bp = slp->l_bp ;
-    bp->elineno -= nln ;
-    meModeSet(bp->b_mode,MDNRRW) ;
-#if MEUNDO
+    slp->prev->next = elp ;
+    elp->prev = slp->prev ;
+    bp->lineCount -= nln ;
+    meModeSet(bp->mode,MDNRRW) ;
+#if MEOPT_UNDO
     meUndoAddNarrow(sln,name) ;
 #endif
-    for (wp=wheadp; wp!=NULL; wp=wp->w_wndp)
-        if (wp->w_bufp == bp)
+    meFrameLoopBegin() ;
+    for (wp=loopFrame->windowList; wp!=NULL; wp=wp->next)
+    {
+        if (wp->buffer == bp)
         {
-            if(wp->line_no >= sln)
+            if(wp->dotLineNo >= sln)
             {
-                if(wp->line_no >= eln)
+                if(wp->dotLineNo >= eln)
                 {
-                    if ((wp->topLineNo -= nln) < 0)
-                        wp->topLineNo = 0;
-                    wp->line_no -= nln ;
+                    if ((wp->vertScroll -= nln) < 0)
+                        wp->vertScroll = 0;
+                    wp->dotLineNo -= nln ;
                 }
                 else
                 {
-                    wp->w_dotp  = elp ;
-                    wp->w_doto  = 0 ;
-                    wp->line_no = sln ;
+                    wp->dotLine  = elp ;
+                    wp->dotOffset  = 0 ;
+                    wp->dotLineNo = sln ;
                 }
             }
-            if(wp->mlineno >= sln)
+            if(wp->markLineNo >= sln)
             {
-                if(wp->mlineno >= eln)
-                    wp->mlineno -= nln ;
+                if(wp->markLineNo >= eln)
+                    wp->markLineNo -= nln ;
                 else
                 {
-                    wp->w_markp = elp ;
-                    wp->w_marko = 0 ;
-                    wp->mlineno = sln ;
+                    wp->markLine = elp ;
+                    wp->markOffset = 0 ;
+                    wp->markLineNo = sln ;
                 }
             }
-            wp->w_flag |= WFMAIN|WFMOVEL|WFSBOX ;
+            wp->flag |= WFMAIN|WFMOVEL|WFSBOX ;
         }
+    }
+    meFrameLoopEnd() ;
 }
 
 
 static void
-singleUnnarrow(BUFFER *bp, register meNARROW *nrrw, int useDot)
+singleUnnarrow(meBuffer *bp, register meNarrow *nrrw, int useDot)
 {
-    meNARROW *nw ;
-    WINDOW   *wp ;
-    LINE *lp1, *lp2 ;
+    meNarrow *nw ;
+    meWindow   *wp ;
+    meLine *lp1, *lp2 ;
     
     if(!useDot)
         alphaMarkGet(bp,nrrw->name) ;
 
-    /* Note that bp->line_no is used outside this function
+    /* Note that bp->dotLineNo is used outside this function
      * to setup the undo
      */
-    lp2 = bp->b_dotp ;
-    lp1 = lback(lp2) ;
-    nrrw->slp->l_bp = lp1 ;
-    lp1->l_fp = nrrw->slp ;
-    nrrw->elp->l_fp = lp2 ;
-    lp2->l_bp = nrrw->elp ;
-    bp->elineno += nrrw->noLines ;
+    lp2 = bp->dotLine ;
+    lp1 = meLineGetPrev(lp2) ;
+    nrrw->slp->prev = lp1 ;
+    lp1->next = nrrw->slp ;
+    nrrw->elp->next = lp2 ;
+    lp2->prev = nrrw->elp ;
+    bp->lineCount += nrrw->noLines ;
     /* The next bit is a bit grotty, a fudge and doesn't work properly
      * in everycase, but is better than nothing.
      * 
@@ -156,7 +160,7 @@ singleUnnarrow(BUFFER *bp, register meNARROW *nrrw, int useDot)
     nw = nrrw->next ;
     while(nw != NULL)
     {
-        meAMARK *p = bp->b_amark;
+        meAMark *p = bp->amarkList;
         while(p->name != nw->name)
             p = p->next ;
         if((p->line == lp2) &&
@@ -164,34 +168,38 @@ singleUnnarrow(BUFFER *bp, register meNARROW *nrrw, int useDot)
         {
             /* Got one, set the narrow line to be the first line in this narrow */
             p->line = nrrw->slp ;
-            p->line->l_flag |= LNMARK ;		/* mark the line as marked */
+            p->line->flag |= meLINE_AMARK ;		/* mark the line as marked */
         }
         nw = nw->next ;
     }        
-    for (wp=wheadp; wp!=NULL; wp=wp->w_wndp)
-        if (wp->w_bufp == bp)
+    meFrameLoopBegin() ;
+    for (wp=loopFrame->windowList; wp!=NULL; wp=wp->next)
+    {
+        if (wp->buffer == bp)
         {
-            if(wp->line_no >= bp->line_no)
+            if(wp->dotLineNo >= bp->dotLineNo)
             {
-                wp->topLineNo += nrrw->noLines ;
-                wp->line_no += nrrw->noLines ;
+                wp->vertScroll += nrrw->noLines ;
+                wp->dotLineNo += nrrw->noLines ;
             }
-            if(wp->mlineno >= bp->line_no)
-                wp->mlineno += nrrw->noLines ;
-            wp->w_flag |= WFMAIN|WFMOVEL|WFSBOX ;
+            if(wp->markLineNo >= bp->dotLineNo)
+                wp->markLineNo += nrrw->noLines ;
+            wp->flag |= WFMAIN|WFMOVEL|WFSBOX ;
         }
+    }
+    meFrameLoopEnd() ;
 }
 
 void
-removeNarrow(BUFFER *bp, register meNARROW *nrrw, int useDot)
+removeNarrow(meBuffer *bp, register meNarrow *nrrw, int useDot)
 {
-    meNARROW *nn ;
+    meNarrow *nn ;
     
     singleUnnarrow(bp,nrrw,useDot) ;
-#if MEUNDO
-    meUndoAddUnnarrow(bp->line_no,bp->line_no+nrrw->noLines,nrrw->name) ;
+#if MEOPT_UNDO
+    meUndoAddUnnarrow(bp->dotLineNo,bp->dotLineNo+nrrw->noLines,nrrw->name) ;
 #endif
-    nn = curbp->narrow ;
+    nn = frameCur->bufferCur->narrow ;
     while(nn != nrrw)
     {
         if(nn->sln > nrrw->sln)
@@ -203,14 +211,14 @@ removeNarrow(BUFFER *bp, register meNARROW *nrrw, int useDot)
     if(nrrw->prev != NULL)
         nrrw->prev->next = nrrw->next ;
     else if((bp->narrow = nrrw->next) == NULL)
-        meModeClear(bp->b_mode,MDNRRW) ;
+        meModeClear(bp->mode,MDNRRW) ;
     meFree(nrrw) ;
 }
 
 void
-unnarrowBuffer(BUFFER *bp)
+unnarrowBuffer(meBuffer *bp)
 {
-    meNARROW *nrrw ;
+    meNarrow *nrrw ;
     
     nrrw = bp->narrow ;
     while(nrrw != NULL)
@@ -221,9 +229,9 @@ unnarrowBuffer(BUFFER *bp)
 }
 
 void
-delSingleNarrow(BUFFER *bp, int useDot)
+delSingleNarrow(meBuffer *bp, int useDot)
 {
-    meNARROW *nrrw, *nn ;
+    meNarrow *nrrw, *nn ;
     
     if((nrrw = bp->narrow) != NULL)
     {
@@ -231,7 +239,7 @@ delSingleNarrow(BUFFER *bp, int useDot)
         if((nn = nrrw->next) == NULL)
         {
             bp->narrow = NULL ;
-            meModeClear(bp->b_mode,MDNRRW) ;
+            meModeClear(bp->mode,MDNRRW) ;
         }
         else
         {
@@ -243,10 +251,10 @@ delSingleNarrow(BUFFER *bp, int useDot)
 }
 
 void
-redoNarrowInfo(BUFFER *bp)
+redoNarrowInfo(meBuffer *bp)
 {
-    meNARROW *nrrw ;
-    WINDOW   *wp ;
+    meNarrow *nrrw ;
+    meWindow   *wp ;
     
     /* redoing the narrows must be done in the right order,
      * i.e. last in the list first! So go to the last and
@@ -260,21 +268,25 @@ redoNarrowInfo(BUFFER *bp)
     do
     {
         alphaMarkGet(bp,nrrw->name) ;
-        nrrw->slp->l_bp->l_fp = nrrw->elp->l_fp ;
-        nrrw->elp->l_fp->l_bp = nrrw->slp->l_bp ;
-        bp->elineno -= nrrw->noLines ;
-        for (wp=wheadp; wp!=NULL; wp=wp->w_wndp)
-            if (wp->w_bufp == bp)
+        nrrw->slp->prev->next = nrrw->elp->next ;
+        nrrw->elp->next->prev = nrrw->slp->prev ;
+        bp->lineCount -= nrrw->noLines ;
+        meFrameLoopBegin() ;
+        for (wp=loopFrame->windowList; wp!=NULL; wp=wp->next)
+        {
+            if (wp->buffer == bp)
             {
-                if(wp->line_no >= bp->line_no)
+                if(wp->dotLineNo >= bp->dotLineNo)
                 {
-                    wp->topLineNo -= nrrw->noLines ;
-                    wp->line_no -= nrrw->noLines ;
+                    wp->vertScroll -= nrrw->noLines ;
+                    wp->dotLineNo -= nrrw->noLines ;
                 }
-                if(wp->mlineno >= bp->line_no)
-                    wp->mlineno -= nrrw->noLines ;
-                wp->w_flag |= WFMAIN|WFMOVEL ;
+                if(wp->markLineNo >= bp->dotLineNo)
+                    wp->markLineNo -= nrrw->noLines ;
+                wp->flag |= WFMAIN|WFMOVEL ;
             }
+        }
+        meFrameLoopEnd() ;
         nrrw = nrrw->prev ;
     } while(nrrw != NULL) ;
 }
@@ -284,42 +296,42 @@ narrowBuffer(int f, int n)
 {
     if(n == 1)
     {
-        meNARROW *nrrw, *nn ;
+        meNarrow *nrrw, *nn ;
         
-        if((nrrw=curbp->narrow) == NULL)
+        if((nrrw=frameCur->bufferCur->narrow) == NULL)
             return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[Current buffer not narrowed]") ;
     
         while(nrrw != NULL)
         {
             nn = nrrw->next ;
-            singleUnnarrow(curbp,nrrw,0) ;
-#if MEUNDO
-            meUndoAddUnnarrow(curbp->line_no,curbp->line_no+nrrw->noLines,nrrw->name) ;
+            singleUnnarrow(frameCur->bufferCur,nrrw,0) ;
+#if MEOPT_UNDO
+            meUndoAddUnnarrow(frameCur->bufferCur->dotLineNo,frameCur->bufferCur->dotLineNo+nrrw->noLines,nrrw->name) ;
 #endif
             meFree(nrrw) ;
             nrrw = nn ;
         }
-        meModeClear(curbp->b_mode,MDNRRW) ;
-        curbp->narrow = NULL ;
+        meModeClear(frameCur->bufferCur->mode,MDNRRW) ;
+        frameCur->bufferCur->narrow = NULL ;
     }
     else if(n == 2)
     {
-        if(curwp->w_dotp->l_flag & LNMARK)
+        if(frameCur->windowCur->dotLine->flag & meLINE_AMARK)
         {
-            meNARROW *nrrw ;
-            meAMARK  *am ;
+            meNarrow *nrrw ;
+            meAMark  *am ;
             
-            nrrw = curbp->narrow ;
+            nrrw = frameCur->bufferCur->narrow ;
             while(nrrw != NULL)
             {
-                am = curbp->b_amark;
+                am = frameCur->bufferCur->amarkList;
                 while(am != NULL)
                 {
                     if((nrrw->name == am->name) &&
-                       (am->line == curwp->w_dotp))
+                       (am->line == frameCur->windowCur->dotLine))
                     {
-                        removeNarrow(curbp,nrrw,0) ;
-                        return TRUE ;
+                        removeNarrow(frameCur->bufferCur,nrrw,0) ;
+                        return meTRUE ;
                     }
                     am = am->next;
                 }
@@ -330,38 +342,38 @@ narrowBuffer(int f, int n)
     }
     else
     {
-        LINE   *slp, *elp ;
+        meLine   *slp, *elp ;
         meInt   sln,  eln ;
-        if(curwp->w_markp == NULL)
+        if(frameCur->windowCur->markLine == NULL)
             return noMarkSet() ;
-        if(curwp->line_no == curwp->mlineno)
+        if(frameCur->windowCur->dotLineNo == frameCur->windowCur->markLineNo)
             return mlwrite(MWABORT,(meUByte *)"[Illegal narrow]") ;
-        if(curwp->line_no < curwp->mlineno)
+        if(frameCur->windowCur->dotLineNo < frameCur->windowCur->markLineNo)
         {
-            slp = curwp->w_dotp ;
-            elp = curwp->w_markp ;
-            sln = curwp->line_no ;
-            eln = curwp->mlineno ;
+            slp = frameCur->windowCur->dotLine ;
+            elp = frameCur->windowCur->markLine ;
+            sln = frameCur->windowCur->dotLineNo ;
+            eln = frameCur->windowCur->markLineNo ;
         }
         else
         {
-            slp = curwp->w_markp ;
-            elp = curwp->w_dotp ;
-            sln = curwp->mlineno ;
-            eln = curwp->line_no ;
+            slp = frameCur->windowCur->markLine ;
+            elp = frameCur->windowCur->dotLine ;
+            sln = frameCur->windowCur->markLineNo ;
+            eln = frameCur->windowCur->dotLineNo ;
         }
         if(n == 4)
-            createNarrow(curbp,slp,elp,sln,eln,0) ;
+            createNarrow(frameCur->bufferCur,slp,elp,sln,eln,0) ;
         else if(n == 3)
         {
-            if(elp != curbp->b_linep)
-                createNarrow(curbp,elp,curbp->b_linep,eln,curbp->elineno,0) ;
+            if(elp != frameCur->bufferCur->baseLine)
+                createNarrow(frameCur->bufferCur,elp,frameCur->bufferCur->baseLine,eln,frameCur->bufferCur->lineCount,0) ;
             if(sln != 0)
-                createNarrow(curbp,lforw(curbp->b_linep),slp,0,sln,0) ;
+                createNarrow(frameCur->bufferCur,meLineGetNext(frameCur->bufferCur->baseLine),slp,0,sln,0) ;
         }
         else
             return mlwrite(MWABORT,(meUByte *)"[Illegal narrow argument]") ;
     }
-    return TRUE ;
+    return meTRUE ;
 }
 #endif

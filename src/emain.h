@@ -57,36 +57,10 @@
 #define _STDARG 1       /* Use <stdarg.h> in defintions                 */
 #define _ANSI_C 1       /* ANSI_C to be used                            */
 
-/* MicroEmacs Configuration options */
-#define TYPEAH  1       /* type ahead causes update to be skipped       */
-#define DEBUGM  1       /* enable macro debugging $debug                */
-#define TIMSTMP 1       /* Enable time stamping of files on write.      */
-
-#define COLOR   1       /* color commands and windows                   */
-#define HILIGHT 1       /* color hilighting                             */
-
-#define ISRCH   1       /* Incremental searches like ITS EMACS          */
-#define WORDPRO 1       /* Advanced word processing features            */
-#define CFENCE  1       /* fench matching in CMODE                      */
-#define CRYPT   1       /* file encryption enabled?                     */
-#define MAGIC   1       /* include regular expression matching?         */
-#define ABBREV  1       /* Abbreviated files                            */
-#define FLNEXT  1       /* include the file next buffer stuff           */
-#define DORCS   1       /* do rcs check ins and outs                    */
-#define MOUSE   1       /* do mouse pointer stuff                       */
-#define LCLBIND 1       /* do local key binding (buffer)                */
-#define PRINT   1       /* do printing of buffers and regions           */
-#define SPELL   1       /* do spelling of words and buffers             */
-#define MEUNDO  1       /* undo capability                              */
-#define URLAWAR 1       /* understands url file names (may not read em) */
-#define NARROW  1       /* enable narrowing functionality               */
-#define REGSTRY 1       /* enable registry functionality                */
-#define MEOSD   1       /* enable OSD functionality                     */
-
 /* One may think that this should be platform dependant, BUT time and
  * experience has shown that it is best to always use a '/' in the body
  * of MicroEmacs (simplifies everything) and convert to or from the
- * system DIR Cchar if required. No system yet needs this but
+ * system DIR char if required. No system yet needs this but
  * as some need to check and convert to a '/' they define a CONVDIR_CHAR
  */
 #define DIR_CHAR  '/'   /* directory divide char, ie /bin/ */
@@ -111,11 +85,9 @@
 #define _TCAP          1                /* Use TERMCAP                   */
 #define _TCAPFONT      1                /* Use TERMCAP fonts to color    */
 #define _CLIENTSERVER  1                /* Client server support         */
-#define _URLSUPP       1                /* Supports url reading          */
+#define _SOCKET        1                /* Supports url reading          */
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
-/* WE DO YET NOT KNOW IF THIS IS PRESENT SO DISABLE */
-#define _NOTPARM       1                /* No tparm (termcap) support    */
 #endif
 
 /**************************************************************************
@@ -131,12 +103,10 @@
 #define _TCAP          1                /* Use TERMCAP                   */
 #define _TCAPFONT      1                /* Use TERMCAP fonts to color    */
 #define _CLIENTSERVER  1                /* Client server support         */
-#define _URLSUPP       1                /* Supports url reading          */
+#define _SOCKET        1                /* Supports url reading          */
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
 #define _meDEF_SYS_ERRLIST              /* errno.h not def sys_errlist   */
-/* WE DO YET NOT KNOW IF THIS IS PRESENT SO DISABLE */
-#define _NOTPARM       1                /* No tparm (termcap) support    */
 #endif
 
 /**************************************************************************
@@ -152,11 +122,9 @@
 #define _TCAP          1                /* Use TERMCAP                   */
 #define _TCAPFONT      1                /* Use TERMCAP fonts to color    */
 #define _CLIENTSERVER  1                /* Client server support         */
-#define _URLSUPP       1                /* Supports url reading          */
+#define _SOCKET        1                /* Supports url reading          */
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
-/* WE DO YET NOT KNOW IF THIS IS PRESENT SO DISABLE */
-#define _NOTPARM       1                /* No tparm (termcap) support    */
 #endif
 
 /**************************************************************************
@@ -174,7 +142,7 @@
 #define _TCAP          1                /* Use TERMCAP                   */
 #define _TCAPFONT      1                /* Use TERMCAP fonts to color    */
 #define _CLIENTSERVER  1                /* Client server support         */
-#define _URLSUPP       1                /* Supports url reading          */
+#define _SOCKET        1                /* Supports url reading          */
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
 #define _meDEF_SYS_ERRLIST              /* errno.h not def sys_errlist   */
@@ -193,7 +161,7 @@
 #define _TCAP          1                /* Use TERMCAP                   */
 #define _TCAPFONT      1                /* Use TERMCAP fonts to color    */
 #define _CLIENTSERVER  1                /* Client server support         */
-#define _URLSUPP       1                /* Supports url reading          */
+#define _SOCKET        1                /* Supports url reading          */
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
 #endif
@@ -211,12 +179,10 @@
 #define _TCAP          1                /* Use TERMCAP                   */
 #define _TCAPFONT      1                /* Use TERMCAP fonts to color    */
 #define _CLIENTSERVER  1                /* Client server support         */
-#define _URLSUPP       1                /* Supports url reading          */
+#define _SOCKET        1                /* Supports url reading          */
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
 #define _meDEF_SYS_ERRLIST              /* errno.h doesnt def sys_errlist*/
-/* WE DO YET NOT KNOW IF THIS IS PRESENT SO DISABLE */
-#define _NOTPARM       1                /* No tparm (termcap) support    */
 #endif
 
 /**************************************************************************
@@ -232,7 +198,7 @@
 #define _TCAP          1                /* Use TERMCAP                   */
 #define _TCAPFONT      1                /* Use TERMCAP fonts to color    */
 #define _CLIENTSERVER  1                /* Client server support         */
-#define _URLSUPP       1                /* Supports url reading          */
+#define _SOCKET        1                /* Supports url reading          */
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
 #endif
@@ -251,12 +217,10 @@
 #undef  _WIN32                          /* This is not win32             */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
 #define _USEPOLL       1                /* use poll() for stdin polling  */
-#ifndef _NO_XTERM
 #define _XTERM         1                /* Use Xlib                      */
-#endif
 #if 0
 #define _CLIENTSERVER  1                /* Client server support         */
-#define _URLSUPP       1                /* Supports url reading          */
+#define _SOCKET        1                /* Supports url reading          */
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #endif
 /* Under cygwin sys_errlist is defined slightly differently - redefine   */
@@ -275,11 +239,10 @@
 #define _BSD_CBREAK    1                /* Use CBREAK or RAW settings    */
 #define _TCAP          1                /* Use TERMCAP                   */
 #define _TCAPFONT      1                /* Use TERMCAP fonts to color    */
-#define _URLSUPP       1                /* Supports url reading          */
+#define _SOCKET        1                /* Supports url reading          */
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _NOSTRDUP      1                /* No strdup                     */
 #define _NOPUTENV      1                /* No putenv support             */
-#define _NOTPARM       1                /* No tparm (termcap) support    */
 
 /* NeXT provides us with libc.h this includes all of the API definitions for
  * the standard 'C' library calls. Nice touch !! */
@@ -294,6 +257,7 @@
 #define _CTRLZ         1                /* ^Z at end of files (MSDOS)    */
 #define _CTRLM         1                /* ^M at end of lines (MSDOS)    */
 #define _SINGLE_CASE   1                /* Files only have single case   */
+#define _MOUSE         1                /* Mouse supported               */
 #define _DRV_CHAR     ':'               /* drive divide letter, C:\dos   */
 #define _CONVDIR_CHAR '\\'              /* Filename convert '\\' => '/'  */
 #endif /* _DOS */
@@ -302,57 +266,208 @@
 * Microsoft : 32s/'95/'98/NT                                              *
 **************************************************************************/
 #ifdef _WIN32s
-#define _WIN32         1                /* Use win32                    */
+#define _WIN32         1                /* Use win32                     */
 #endif
 #ifdef _WIN32
-#define meSYSTEM_NAME  "win32"          /* Identity name of the system  */
-#define WIN32          1                /* Standard win32 definition    */
-#define _CTRLZ         1                /* ^Z at end of files (MSDOS)   */
-#define _CTRLM         1                /* ^M at end of lines (MSDOS)   */
+#define meSYSTEM_NAME  "win32"          /* Identity name of the system   */
+#define WIN32          1                /* Standard win32 definition     */
+#define _CTRLZ         1                /* ^Z at end of files (MSDOS)    */
+#define _CTRLM         1                /* ^M at end of lines (MSDOS)    */
 #if (_MSC_VER != 900)
 /* MSVC Not version 2 - win32s */
-#define _IPIPES        1                /* platform supports Inc. pipes */
-#define _CLIENTSERVER  1                /* Client server support        */
+#define _IPIPES        1                /* platform supports Inc. pipes  */
+#define _MOUSE         1                /* Mouse supported               */
+#define _CLIENTSERVER  1                /* Client server support         */
 #endif
-/*#define _URLSUPP  1*/                 /* Supports url reading         */
-#define _CLIPBRD       1                /* Inter window clip board supp */
-#define _WINDOW        1                /* Windowed, resizing & title   */
-#define _INSENSE_CASE  1                /* File names case insensitive  */
-#define _DRAGNDROP     1                /* Drag and drop supported.     */
-#define _DRV_CHAR     ':'               /* drive divide letter, C:\dos  */
-#define _CONVDIR_CHAR '\\'              /* Filename convert '\\' => '/' */
+/* The next option is commented out as the win32*.mak file define it when required */
+/*#define _SOCKET     1*/                /* Supports url reading          */
+#define _CLIPBRD       1                /* Inter window clip board supp  */
+#define _WINDOW        1                /* Windowed, resizing & title    */
+#define _INSENSE_CASE  1                /* File names case insensitive   */
+#define _DRAGNDROP     1                /* Drag and drop supported.      */
+#define _DRV_CHAR     ':'               /* drive divide letter, C:\dos   */
+#define _CONVDIR_CHAR '\\'              /* Filename convert '\\' => '/'  */
+#ifdef _ME_WINDOW                       /* windowing mode?               */
+#define _MULTI_WINDOW  1                /* can support multiple window frames    */
+#endif
 #ifndef _WIN32_FULL_INC
 #define WIN32_LEAN_AND_MEAN
 #endif
-#include <windows.h>                    /* Standard windows API         */
+#include <windows.h>                    /* Standard windows API          */
 #ifdef _DRAGNDROP
 #include <shellapi.h>                   /* Drag and drop API             */
 #endif /* _DRAGNDROP */
 #endif /* _WIN32 */
 
-/**************************************************************************
-* X-Windows Setup - Definitions required for X-Lib support                *
- **************************************************************************/
-#ifdef _NO_XTERM                        /* console only mode?            */
-#undef _XTERM                           /* Do not want X-Windows         */
+/*************************************************************************
+ * X-Windows Setup - Definitions required for X-Lib support              *
+ *************************************************************************/
+#ifndef _ME_WINDOW              /* console only mode?                    */
+#undef _XTERM                   /* Do not want X-Windows                 */
 #endif
 #ifdef _XTERM
-#define _CLIPBRD  1             /* Inter window clip board supp          */
-#define _WINDOW   1             /* Window, need resizing & title code    */
+#define _MOUSE          1       /* Mouse supported on XTERM              */
+#define _CLIPBRD        1       /* Inter window clip board supp          */
+#define _WINDOW         1       /* Window, need resizing & title code    */
+#define _MULTI_WINDOW   1       /* can support multiple window frames    */
 #include <X11/Intrinsic.h>      /* Intrinsics Definitions                */
 #include <X11/StringDefs.h>     /* Standard Name-String definitions      */
 #include <X11/Xutil.h>
-#else
-/* If this is a UNIX terminal then there is no mouse support */
-#ifdef _UNIX
-#undef  MOUSE
-#define MOUSE     0             /* cannot support mouse on termcap       */
-#endif /* _UNIX */
 #endif /* _XTERM */
 
-/**************************************************************************
-* ALL: Standard microemacs includes                                       *
-**************************************************************************/
+#ifndef _ME_CONSOLE             /* window only mode?                     */
+#undef _TCAP                    /* Do not want Termcap                   */
+#endif
+
+#ifndef _NANOEMACS
+/*************************************************************************
+ * MicroEmacs Configuration options - all feature version                *
+ *************************************************************************/
+#define MEOPT_TYPEAH    1       /* type ahead causes update to be skipped*/
+#define MEOPT_DEBUGM    1       /* enable macro debugging $debug         */
+#define MEOPT_TIMSTMP   1       /* Enable time stamping of files on write*/
+#define MEOPT_COLOR     1       /* color commands and windows            */
+#define MEOPT_HILIGHT   1       /* color hilighting                      */
+#define MEOPT_ISEARCH   1       /* Incremental searches like ITS EMACS   */
+#define MEOPT_WORDPRO   1       /* Advanced word processing features     */
+#define MEOPT_CFENCE    1       /* fench matching in CMODE               */
+#define MEOPT_CRYPT     1       /* file encryption enabled?              */
+#define MEOPT_MAGIC     1       /* include regular expression matching?  */
+#define MEOPT_ABBREV    1       /* Abbreviated files                     */
+#define MEOPT_FILENEXT  1       /* include the file next buffer stuff    */
+#define MEOPT_RCS       1       /* do rcs check ins and outs             */
+#define MEOPT_LOCALBIND 1       /* do local key binding (buffer)         */
+#define MEOPT_PRINT     1       /* do printing of buffers and regions    */
+#define MEOPT_SPELL     1       /* do spelling of words and buffers      */
+#define MEOPT_UNDO      1       /* undo capability                       */
+#define MEOPT_NARROW    1       /* enable narrowing functionality        */
+#define MEOPT_REGISTRY  1       /* enable registry functionality         */
+#define MEOPT_OSD       1       /* enable OSD functionality              */
+#define MEOPT_DIRLIST   1       /* enable Directory tree and listing     */
+#define MEOPT_FILEHOOK  1       /* enable File hook assigning            */
+#define MEOPT_TAGS      1       /* enable TAGS support                   */
+#define MEOPT_CMDHASH   1       /* use a hash table for command lookup   */
+#define MEOPT_POSITION  1       /* enable set & goto position            */
+#define MEOPT_EXTENDED  1       /* enable miscellaneous extended features*/
+#define MEOPT_CALLBACK  1       /* enable macro callbacks                */
+#define MEOPT_SPAWN     1       /* enable spawning                       */
+#define MEOPT_SCROLL    1       /* enable scroll bars                    */
+#define MEOPT_HSPLIT    1       /* enable vertical window                */ 
+#define MEOPT_POKE      1       /* enable poke screen                    */
+#define MEOPT_FRAME     1       /* enable multiple frames                */
+#if MEOPT_FRAME && (defined _MULTI_WINDOW)
+#define MEOPT_MWFRAME   1       /* enable multiple window frames         */
+#else
+/* DO NOT CHANGE THIS VALUE */
+#define MEOPT_MWFRAME   0
+#endif
+
+#ifdef _MOUSE
+#define MEOPT_MOUSE     1       /* do mouse pointer stuff                */
+#else
+/* DO NOT CHANGE THIS VALUE */
+#define MEOPT_MOUSE     0
+#endif
+#if MEOPT_SPAWN && (defined _IPIPES)
+#define MEOPT_IPIPES    1       /* use incremental pipes                 */
+#else
+/* DO NOT CHANGE THIS VALUE */
+#define MEOPT_IPIPES    0
+#endif
+#if MEOPT_IPIPES && (defined _CLIENTSERVER)
+#define MEOPT_CLIENTSERVER 1    /* enable the client server              */
+#else
+/* DO NOT CHANGE THIS VALUE */
+#define MEOPT_CLIENTSERVER 0
+#endif
+#ifdef _SOCKET
+#define MEOPT_SOCKET    1       /* Supports sockets - can read urls      */
+#else
+/* DO NOT CHANGE THIS VALUE */
+#define MEOPT_SOCKET    0
+#endif
+
+/* the name used on about etc           */
+#define ME_FULLNAME  ME_MICROEMACS_FULLNAME
+#define ME_SHORTNAME ME_MICROEMACS_SHORTNAME
+
+#else
+/*************************************************************************
+ * NanoEmacs Configuration options - Cut down version                    *
+ *************************************************************************/
+#define MEOPT_TYPEAH    1       /* type ahead causes update to be skipped*/
+#define MEOPT_DEBUGM    0       /* enable macro debugging $debug         */
+#define MEOPT_TIMSTMP   1       /* Enable time stamping of files on write*/
+#define MEOPT_COLOR     1       /* color commands and windows            */
+#define MEOPT_HILIGHT   0       /* color hilighting                      */
+#define MEOPT_ISEARCH   1       /* Incremental searches like ITS EMACS   */
+#define MEOPT_WORDPRO   0       /* Advanced word processing features     */
+#define MEOPT_CFENCE    0       /* fench matching in CMODE               */
+#define MEOPT_CRYPT     0       /* file encryption enabled?              */
+#define MEOPT_MAGIC     1       /* include regular expression matching?  */
+#define MEOPT_ABBREV    0       /* Abbreviated files                     */
+#define MEOPT_FILENEXT  0       /* include the file next buffer stuff    */
+#define MEOPT_RCS       0       /* do rcs check ins and outs             */
+#define MEOPT_LOCALBIND 0       /* do local key binding (buffer)         */
+#define MEOPT_PRINT     0       /* do printing of buffers and regions    */
+#define MEOPT_SPELL     0       /* do spelling of words and buffers      */
+#define MEOPT_UNDO      1       /* undo capability                       */
+#define MEOPT_NARROW    0       /* enable narrowing functionality        */
+#define MEOPT_REGISTRY  0       /* enable registry functionality         */
+#define MEOPT_OSD       0       /* enable OSD functionality              */
+#define MEOPT_DIRLIST   0       /* enable Directory tree and listing     */
+#define MEOPT_FILEHOOK  0       /* enable File hook assigning            */
+#define MEOPT_TAGS      0       /* enable TAGS support                   */
+#define MEOPT_CMDHASH   0       /* use a hash table for command lookup   */
+#define MEOPT_POSITION  0       /* enable set & goto position            */
+#define MEOPT_EXTENDED  0       /* enable miscellaneous extended features*/
+#define MEOPT_CALLBACK  0       /* enable macro callbacks                */
+#define MEOPT_SPAWN     0       /* enable spawning                       */
+#define MEOPT_SCROLL    0       /* enable scroll bars                    */
+#define MEOPT_HSPLIT    0       /* enable vertical window                */ 
+#define MEOPT_POKE      0       /* enable poke screen                    */
+#define MEOPT_FRAME     0       /* enable multiple frames                */
+#if MEOPT_FRAME && (defined _MULTI_WINDOW)
+#define MEOPT_MWFRAME   0       /* enable multiple window frames         */
+#else
+/* DO NOT CHANGE THIS VALUE */
+#define MEOPT_MWFRAME   0
+#endif
+
+#ifdef _MOUSE
+#define MEOPT_MOUSE     0       /* do mouse pointer stuff                */
+#else
+/* DO NOT CHANGE THIS VALUE */
+#define MEOPT_MOUSE     0
+#endif
+#if MEOPT_SPAWN && (defined _IPIPES)
+#define MEOPT_IPIPES    0       /* use incremental pipes                 */
+#else
+/* DO NOT CHANGE THIS VALUE */
+#define MEOPT_IPIPES    0
+#endif
+#if MEOPT_IPIPES && (defined _CLIENTSERVER)
+#define MEOPT_CLIENTSERVER 0    /* enable the client server              */
+#else
+/* DO NOT CHANGE THIS VALUE */
+#define MEOPT_CLIENTSERVER 0
+#endif
+#ifdef _SOCKET
+#define MEOPT_SOCKET    0       /* Supports sockets - can read urls      */
+#else
+/* DO NOT CHANGE THIS VALUE */
+#define MEOPT_SOCKET    0
+#endif
+
+/* the name used on about etc */
+#define ME_FULLNAME  ME_NANOEMACS_FULLNAME
+#define ME_SHORTNAME ME_NANOEMACS_SHORTNAME
+
+#endif /* _NANOEMACS */
+
+/*************************************************************************
+ * ALL: Standard microemacs includes                                     *
+ *************************************************************************/
 #include <stdio.h>                      /* Always need this              */
 #include <stdlib.h>                     /* Usually need this             */
 #include <errno.h>                      /* Need errno and sys_errlist    */

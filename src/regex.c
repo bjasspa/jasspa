@@ -155,7 +155,7 @@ meRegexFree(meRegex *regex) ;
 #define hexToNum(c)      ((c <= '9') ? (c^0x30)   : \
                           (c >= 'a') ? (c-'a'+10) : \
                                        (c-'A'+10))
-#define MAGIC 1
+#define MEOPT_MAGIC 1
 
 #else
 
@@ -168,7 +168,7 @@ meRegexFree(meRegex *regex) ;
 
 #endif
 
-#if MAGIC
+#if MEOPT_MAGIC
 
 /* NOTE - order of the items in meREGEXITEM is important,
  * meREGEXITEM_BEGBUFF must be the first non-closure appending item
@@ -1207,7 +1207,7 @@ meRegexComp(meRegex *regex, unsigned char *regStr, int flags)
         matchIOff = (int *) (matchAlt+128+4) ;
         matchIMNo = (int *) (matchIOff+128+4) ;
     }
-    if((ii=strlen((char *) regStr)) > regex->regexSz)
+    if(((ii=strlen((char *) regStr)) > regex->regexSz) || (regex->regex == NULL))
     {
         if((regex->regex = realloc(regex->regex,ii+1)) == NULL)
         {
