@@ -33,8 +33,9 @@ define-macro clean
     end-of-buffer
     backward-line
     !while &and &gre $window-line 1 &sequal @wc "\n"
-        kill-line
-        -1 yank
+        set-mark
+        forward-line
+        -1 kill-region
         backward-line
     !done
     ;
