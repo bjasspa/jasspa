@@ -359,7 +359,7 @@ osd -1 &cond &reg "/history/main-menu" "1" "1" "-1"
 !endif
 ; load ftp/http registry file
 !if &not &seq &set #l0 &reg "/history/url-file" "" ""
-    read-registry "/url" #l0 "y" 
+    !force read-registry "/url" #l0 "y" 
 !endif
 ; execute company setup
 !if &not &seq &set #l0 &reg "/history/company" "" ""
