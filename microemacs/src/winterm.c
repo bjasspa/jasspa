@@ -3368,8 +3368,22 @@ done_syschar:
         switch (wParam)
         {
         case VK_RETURN:
-            /* Distinguish between the Number Pad and standard enter */
+#ifdef _WINCON
+            if (meSystemCfg & meSYSTEM_CONSOLE)
+            {
+                /* For the console check the control flag. A control flag will
+                 * indicate that the control C-m has been pressed as opposed
+                 * to <RETURN> */
+                if ((ttmodif & ME_CONTROL) == 0)
+                {
+                    cc = SKEY_return;
+                    goto return_spec;
+                }
+                break;                    /* This is C-m */
+            }
+#else
 #if 0
+            /* Distinguish between the Number Pad and standard enter */
             cc = ((lParam & 0x01000000) ? SKEY_kp_enter : SKEY_return) ;
             goto return_spec;
 #else
@@ -3383,8 +3397,8 @@ done_syschar:
                 goto return_spec;
             }
 #endif
+#endif
         }
-
         cc = wParam;
         if (cc == 0x20)
         {
