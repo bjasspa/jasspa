@@ -368,6 +368,7 @@ backDelWord(int f, int n)
 #define FILL_MARGIN  0x2000             /* Fill to margin (AUTO+LINE)   */
 #define FILL_INDALL  0x4000             /* Indent all                   */
 #define FILL_INDNVR  0x8000             /* Never indent                 */
+#define FILL_SPACE  0x10000             /* Kept one space               */
 
 /* Word wrap on n-spaces. Back-over whatever precedes the point on the current
  * line and stop on the first word-break or the beginning of the line. If we
@@ -1112,7 +1113,7 @@ noIndent:
             /* get the next character in the paragraph */
             if((c = meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset)) == '\0')
             {
-                c = ' ';
+                c = meTABCHAR ;
                 if (meLineGetNext(frameCur->windowCur->dotLine) == eopline)
                     fillState |= FILL_EOP;  /* End of paragraph */
                 
@@ -1121,14 +1122,15 @@ noIndent:
             }
             
             /* if not a separator, just add it in */
-            if (c == ' ' || c == TAB)
+            if ((c == ' ') || (c == meTABCHAR))
             {
-                /* delete the space */
-                ldelete(1L,0);
                 if (wordlen)
                 {
                     /* at a word break with a word waiting - reset offset to start of word */
-                    frameCur->windowCur->dotOffset -= wordlen ;                    
+                    frameCur->windowCur->dotOffset -= wordlen ;
+                    if(fillState & FILL_SPACE)
+                        frameCur->windowCur->dotOffset-- ;
+                    
                     /* calculate tantitive new length with word added */
                     newcol = ccol + 1 + wordlen;
                     if (fillState & FILL_DOT)
@@ -1136,36 +1138,34 @@ noIndent:
                     if ((newcol <= fillcol) || (fillState & FILL_LINE))
                     {
                         /* add word to current line */
-                        if ((fillState & FILL_FIRST) == 0)
+                        if((fillState & FILL_FIRST) == 0)
                         {
-                            if (fillState & FILL_DOT)
+                            int nosp = (fillState & FILL_DOT) ? filleoslen:1 ;
+                            ccol += nosp ;
+                            if(fillState & FILL_SPACE)
                             {
-                                lineInsertChar(filleoslen, ' ') ; /* the space */
-                                ccol += filleoslen ;
+                                frameCur->windowCur->dotOffset++ ;
+                                nosp-- ;
                             }
-                            else
-                            {
-                                lineInsertChar(1,' '); /* the space */
-                                ccol++;
-                            }
+                            if(nosp)
+                                lineInsertChar(nosp, ' ') ; /* the space */
                         }
                         fillState &= ~(FILL_FIRST|FILL_DOT);
                     }
                     else
                     {
+                        ccol = frameCur->windowCur->dotOffset;
+                        if(fillState & FILL_SPACE)
+                            /* the saved space is not required, delete it */
+                            ldelete(1L,0);
+                        lineInsertNewline(meTRUE);
                         if (fillState & FILL_JUSTIFY)
                         {
-                            lineInsertNewline(meTRUE);
                             ccol = justify (icol,fdoto);
                             /* reset the indent offset as following lines will not
                              * have the bullet text to the left of the indent
                              * column */
                             fdoto = -1 ;
-                        }
-                        else
-                        {
-                            ccol = frameCur->windowCur->dotOffset;
-                            lineInsertNewline(meTRUE);
                         }
 #if MEOPT_UNDO
                         paralen += ccol + 1;
@@ -1180,6 +1180,7 @@ noIndent:
                     frameCur->windowCur->dotOffset += wordlen;
                     if(meStrchr(filleos,lastc) != NULL)
                         fillState |= FILL_DOT;
+                    fillState &= ~FILL_SPACE ;
                     wordlen = 0;
                 }
                 
@@ -1205,6 +1206,14 @@ noIndent:
                         fillState = ((fillState & ~(FILL_DOT|FILL_FORCE)) |
                                      FILL_FIRST);
                 }
+                /* delete the space */
+                if((c == ' ') && ((fillState & (FILL_FIRST|FILL_SPACE)) == 0))
+                {
+                    frameCur->windowCur->dotOffset++ ;
+                    fillState |= FILL_SPACE ;
+                }
+                else
+                    ldelete(1L,0);
             }
             else
             {
