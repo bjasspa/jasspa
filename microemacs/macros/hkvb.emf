@@ -15,8 +15,8 @@ define-macro fhook-vb
 
 ; buffer-init variables
 set-variable .fhook-vb.name "Visual Basic"
-set-variable .fhook-vb.setup &reg "/history/fhook/vb" "dghiopx"
-set-variable .fhook-vb.setup-mask "adeghikmoptux"
+set-variable .fhook-vb.setup &reg "/history/fhook/vb" "dfghiopx"
+set-variable .fhook-vb.setup-mask "adefghikmoptux"
 set-variable .fhook-vb.tags "vbtags"
 set-variable .fhook-vb.comment "|'||'|' | '|r|"
 set-variable .fhook-vb.indent-width 2
@@ -29,6 +29,11 @@ set-variable .fhook-vb.item-list-s2 "^[ \t]*\\(Private[ \t]+\\|Public[ \t]+\\)?S
 set-variable .fhook-vb.item-list-r2 "Sub  \ecB\\2\ecA"
 set-variable .fhook-vb.item-list-s3 "^[ \t]*\\(Private[ \t]+\\|Public[ \t]+\\)?Property[ \t]+\\(Get\\|Let\\)[ \t]+\\(\\w+\\)[ \t]*("
 set-variable .fhook-vb.item-list-r3 "Prop \ecB\\2 \\3\ecA"
+
+set-variable .fhook-vb.collapse-open  "^\\(Private[ \t]+\\|Public[ \t]+\\)?\\(Function\\|Sub\\|Property\\)"
+set-variable .fhook-vb.collapse-close "^End[ \t]+\\(Function\\|Sub\\|Property\\)"
+set-variable .fhook-vb.collapse-mclose "1"
+set-variable .fhook-vb.collapse-mnext "-1"
 
 !if &not &exist .hilight.vb
     set-variable .hilight.vb &pinc .hilight.next 1
