@@ -105,6 +105,7 @@ static char meHelpPage[]=
 "  -P      : Piped with debugging (see -p)\n"
 "  -p      : Piped mode, no user interactivity\n"
 #endif
+"  -R      : Reverse the default color scheme\n"
 "  -r      : Read-only, all buffers will be in view mode\n"
 "  -s <s>  : Search for string <s> in the next given file\n"
 "  -u <n>  : Set user name to <n> (sets $user-name)\n"
@@ -1429,6 +1430,23 @@ missing_arg:
                 meModeToggle(globMode,MDVIEW) ;
                 break ;
 
+            /* Reverse the video, simply exchange the forward and reverse
+             * schemes with each other. Note that this affects the internal
+             * default scheme only and is over-ridden by any other schemes
+             * that are installed. */
+            case 'R':
+                {
+                    int ii;
+                    for (ii = 0; ii < meSCHEME_STYLES*2; ii++)
+                    {
+                        if (defaultScheme[ii] == meSTYLE_NDEFAULT)
+                            defaultScheme[ii] = meSTYLE_RDEFAULT;
+                        else
+                            defaultScheme[ii] = meSTYLE_NDEFAULT;
+                    }
+                }
+                break;
+            
             case 's':    /* -s for initial search string */
                 argv[rarg++] = argv[carg] ;
                 if(argv[carg][2] == '\0')
