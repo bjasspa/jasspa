@@ -330,8 +330,8 @@ osd .osd.prtstp-nb 2 "Ptf" "Page Setup" .osd.prtstp-pag
 osd .osd.prtstp-nb 3 "Ptf" "Layout"     .osd.prtstp-lyt
 osd .osd.prtstp-nb 100 "It"             .osd.prtstp-prt
 
-osd .osd.prtstp  00 "batcdHs" 6 3 56 19 -1 -1 120 .scheme.osd-title "Printer Setup"
-osd .osd.prtstp  10 "It" .osd.prtstp-nb
+osd .osd.prtstp 0 "batcdHs" 6 3 56 19 -1 -1 120 .scheme.osd-title "Printer Setup"
+osd .osd.prtstp 10 "It" .osd.prtstp-nb
 osd .osd.prtstp 100 ""
 osd .osd.prtstp 110 "BtHhcf" .scheme.osd-ebtt " \HPrint " f print-buffer
 osd .osd.prtstp 120 "BtHcf"  .scheme.osd-ebtt " E\Hxit "  1 void

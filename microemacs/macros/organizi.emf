@@ -222,18 +222,18 @@
     mark-registry "/org" "u"
 !emacro
 
-osd .osd.org-aieo 00  "batcdHs" 3 6 36 0 -1 -1 160 .scheme.osd-title "Options"
-osd .osd.org-aieo 10  ""
+osd .osd.org-aieo 0 "batcdHs" 3 6 36 0 -1 -1 160 .scheme.osd-title "Options"
+osd .osd.org-aieo 10 ""
 osd .osd.org-aieo 30 "Cfx" "^^NY^^" 5 org-aie-options-set
-osd .osd.org-aieo 40  ""
-osd .osd.org-aieo 50  "Shf" "   Record Delimiter Char  " 30
-osd .osd.org-aieo 60  "ExfH" .scheme.osd-entry "####" 1 org-aie-options-set
-osd .osd.org-aieo 70  "Shf" "    Field Delimiter Char  " 50
-osd .osd.org-aieo 80  "ExfH" .scheme.osd-entry "####" 2 org-aie-options-set
-osd .osd.org-aieo 90  "Shf" "        Field Quote Char  " 70
+osd .osd.org-aieo 40 ""
+osd .osd.org-aieo 50 "Shf" "   Record Delimiter Char  " 30
+osd .osd.org-aieo 60 "ExfH" .scheme.osd-entry "####" 1 org-aie-options-set
+osd .osd.org-aieo 70 "Shf" "    Field Delimiter Char  " 50
+osd .osd.org-aieo 80 "ExfH" .scheme.osd-entry "####" 2 org-aie-options-set
+osd .osd.org-aieo 90 "Shf" "        Field Quote Char  " 70
 osd .osd.org-aieo 100 "ExfH" .scheme.osd-entry "####" 3 org-aie-options-set
 osd .osd.org-aieo 110 ""
-osd .osd.org-aieo 140  ""
+osd .osd.org-aieo 140 ""
 osd .osd.org-aieo 150 "BhcfxH" .scheme.osd-ebtt " \HStore " f org-aie-store
 osd .osd.org-aieo 160 "BcfH"   .scheme.osd-ebtt "  \HOk  "  1 void
 

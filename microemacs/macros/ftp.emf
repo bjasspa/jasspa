@@ -393,7 +393,7 @@ define-macro ftp-connect
 !emacro
 
 -1 osd .osd.ftp
-osd .osd.ftp 00  "batcdHs" 3 6 36 0 -1 -1 630 .scheme.osd-title "FTP Connection"
+osd .osd.ftp 0   "batcdHs" 3 6 36 0 -1 -1 630 .scheme.osd-title "FTP Connection"
 osd .osd.ftp 10  ""
 osd .osd.ftp 20  "Sf" "  \HRegistry File" 30
 osd .osd.ftp 25  "hf" "  "

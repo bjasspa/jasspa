@@ -309,7 +309,7 @@ osd .osd.org-n 5 "Ptf" "Address" .osd.orga
 osd .osd.org-n 6 "Ptf" "Setup"   .osd.orgt
 osd .osd.org-n 100 "It"          .osd.orgm
 
-osd .osd.org 00 "batcdHs" 6 3 68 41 -1 -1 630 .scheme.osd-title "Organizer"
+osd .osd.org 0 "batcdHs" 6 3 68 41 -1 -1 630 .scheme.osd-title "Organizer"
 osd .osd.org 10 "It" .osd.org-n
 
 osd-bind-key .osd.org org-key-bind "C-left"
