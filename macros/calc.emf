@@ -240,5 +240,5 @@ define-macro calc
     1 buffer-mode "magic"
     insert-string #l0
     @# calc-buffer
-    goto-position "\x81"
+    !force goto-position "\x81"
 !emacro
