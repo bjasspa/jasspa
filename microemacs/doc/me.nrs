@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.20 2004-02-04 22:54:22 jon Exp $
+.Id $Id: me.nrs,v 2.21 2004-03-01 21:12:07 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -2252,8 +2252,6 @@ Fixed
 .Ht fill-paragraph 2
 such that it retains the cursor position in the paragraph when invoked without
 arguments.
-.BU
-Moved to GNU regex for search/replace engine.
 .BU
 Enhanced \fIisearch\fR such that it operates in \fI*shell*\fR buffers (again).
 .BU
