@@ -411,7 +411,7 @@ set-variable %gdiff-com &cond &seq %gdiff-com "ERROR" "diff -c -w" %gdiff-com
         1 scroll-left
     !elif &lfi "|forward-char|" @cc
         1 scroll-right
-    !elif &lfi "|backward-line|forward-line|scroll-down|scroll-up|beginning-of-buffer|end-of-buffer|goto-line|backward-paragraph|forward-paragraph|next-window|previous-window|recenter|set-scroll-with-mouse|isearch-forward|isearch-backward|search-forward|search-backward|hunt-forward|hunt-backward|scroll-left|scroll-right|" @cc
+    !elif &lfi "|backward-line|forward-line|scroll-down|scroll-up|beginning-of-buffer|end-of-buffer|goto-line|backward-paragraph|forward-paragraph|next-window|previous-window|recenter|set-scroll-with-mouse|isearch-forward|isearch-backward|search-forward|search-backward|hunt-forward|hunt-backward|scroll-left|scroll-right|display-white-chars|" @cc
         execute-line &spr "!nma %s %s" &cond @? @# "" @cc
     !endif
 !emacro

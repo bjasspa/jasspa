@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
 ;  Author        : Steven Phillips
-;  Last Modified : <000602.1014>
+;  Last Modified : <040202.1224>
 ;
 ;  Description   : Default user printer configuration file.
 ;
@@ -19,29 +19,39 @@
 {
  "command-line" = "copy %f prn"
 }
-"win32"
+"freebsd"
 {
- "command-line" = "copy %f prn"
+ "command-line" = "lp -s %f"
 }
 "hpux"
 {
  "command-line" = "lp -s %f"
 }
-"sgi"
+"irix"
 {
  "command-line" = "lpr -s %f"
-}
-"sunos"
-{
- "command-line" = "lpr -s %f"
-}
-"sysv42"
-{
- "command-line" = "lp -s %f"
 }
 "linux"
 {
  "command-line" = "lp -s %f"
 }
-
-
+"openbsd"
+{
+ "command-line" = "lp -s %f"
+}
+"osf1"
+{
+ "command-line" = "lp -s %f"
+}
+"sunos"
+{
+ "command-line" = "lpr -s %f"
+}
+"zaurus"
+{
+ "command-line" = "lp -s %f"
+}
+"win32"
+{
+ "command-line" = "copy %f prn"
+}
