@@ -3,36 +3,42 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd116.2,v 2.6 2004-03-10 20:44:02 jon Exp $
+.Id $Id: m3mac074.3,v 1.1 2004-03-10 20:44:44 jon Exp $
 .Im MicroEmacs command|search
-.ds C0 "(\fB\*(cXs\fR)\ \&
-.ds C1 "(\fB\*(cXr\fR)\ \&
+.ds C0 "\&
+.\""(\fB\*(cXs\fR)\ \&
+.ds C1 "\&
+.\" "(\fB\*(cXr\fR)\ \&
 .so me.tni
-.TH search-forward 2
-.XI search-forward - "\*(C0Search for a string in the forward direction"
-.XI search-backward - "\*(C1Search for a string in the backward direction"
+.TH narrow-search-forward 3
+.XI narrow-search-forward - "\*(C0Search for a string in the forward direction"
+.XI narrow-search-backward - "\*(C1Search for a string in the backward direction"
 .SH NAME
-.Me "|search-forward"
-search-forward \- Search for a string in the forward direction
+.Me "|narrow-search-forward"
+narrow-search-forward \- Search for a string in the forward direction
 .br
-.Me "|search-backward"
-search-backward \- Search for a string in the backward direction
+.Me "|narrow-search-backward"
+narrow-search-backward \- Search for a string in the backward direction
 .Me $a
 .SH SYNOPSIS
 .na
 .I n
-.B search-forward
-"\fIstring\fR"
-(\fB\*(cXs\fR)
+.B narrow-search-forward
+"\fIstring\fR" \*(C0
 .br
 .I n
-.B search-backward
-"\fIstring\fR"
-(\fB\*(cXr\fR)
+.B narrow-search-backward
+"\fIstring\fR" \*(C1
 .ad
 .SH DESCRIPTION
-.B search-forward
-searches for a string from the current cursor position to the end of the file.
+.B narrow-search-forward
+searches for a string from the current cursor  position to the end of the file
+and will open up and search through
+.Ht narrow 2m 
+regions to search for the string. This differs from the 
+.Ht search-forward 2 
+command that does not search through narrow regions.
+.PP
 The string is typed on the bottom line of the screen, and terminated  with the
 \fC<ESC>\fR  key. Special  characters can be typed in by preceding them with a
 \fC^Q\fR. A single \fC^Q\fR  indicates a null string. On successive  searches,
@@ -53,16 +59,9 @@ The \fIn\fRth occurrence of the \fIstring\fR is located.
 .IP "\fBn < 0\fR"
 The first occurrence of the \fIstring\fR is located in the next \fIn\fR lines.
 .PP
-.B search-forward 
-does not search through text that is hidden with 
-.Ht narrow-buffer 2 .
-Where a search through hidden regions is required then 
-.Ht narrow-search-forward 3 
-should be used instead.
-.PP
-.B search-backward
+.B narrow-search-backward
 searches  backwards in  the file.  In all  other ways  it is like
-.BR search-forward .
+.BR narrow-search-forward .
 .SH DIAGNOSTICS
 The command returns a status of \fCFALSE\fR if the  \fIstring\fR  could not be
 located (or \fIn\fRth  \fIstring\fR where \fIn\fR  occurrences are requested).
@@ -75,9 +74,9 @@ status is \fCTRUE\fR.
 .Ht hunt-backward 2 ,
 .Ht hunt-forward 2 ,
 .Ht isearch-forward 2 ,
-.Ht narrow-search-forward 3 ,
 .Ht magic 2m ,
 .Ht replace-string 2 .
+.Ht search-forward 2 ,
 .br
 .Hl "Regular Expressions" RegularExpressions 2
 .ad
