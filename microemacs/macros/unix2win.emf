@@ -12,8 +12,8 @@
 define-macro start-up
     delete-other-windows
     !while &not &seq $buffer-bname "*scratch*"
-        ml-write &spr "Processing [%s]" $buffer-fname
-        ; flag as a unix file and as edited, then save
+        ml-write &cat &cat "[Processing \"" $buffer-fname "\"]"
+        ; flag as a windows file and as edited, then save
         1 buffer-mode "crlf"
         -1 buffer-mode "ctrlz"
         1 buffer-mode "auto"
