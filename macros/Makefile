@@ -1,6 +1,6 @@
 ##############################################################################
 # This is part of the JASSPA MicroEmacs.
-# Copyright (C) 2004 JASSPA (www.jasspa.com)
+# Copyright (C) 2005 JASSPA (www.jasspa.com)
 # See the file COPYING for copying and conditions.
 #
 # Created:       Thu Feb 5 21:36:24 2004
@@ -79,8 +79,9 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		au3.eaf		\
 	scheme.emf	schemeb.emf	schemebc.emf	\
 	schemebh.emf	schemed.emf	schemej.emf	schemel.emf	\
 	schemelj.emf	schememd.emf	schemepd.emf	schemepl.emf	\
-	schemes.emf	schemesf.emf	schemetb.emf	schemevi.emf	\
-	schemosd.emf	search.emf	spell.emf	spellaut.emf	\
+	schemes.emf	schemesf.emf	schemetb.emf	schemetw.emf	\
+	schemevi.emf	schemosd.emf	\
+	search.emf	spell.emf	spellaut.emf	\
 	spellutl.emf	ssaver.emf	sunos.emf	\
 	tcltags.emf	textags.emf	toolbar.emf	tooldef.emf	\
 	toollist.emf	tools.emf	toolstd.emf	toolstp.emf	\
