@@ -7,12 +7,12 @@
 %  System        : MicroEmacs
 %  Module        : user Manual
 %  Object Name   : $RCSfile: jasspame.tex,v $
-%  Revision      : $Revision: 1.2 $
-%  Date          : $Date: 2005-03-11 01:35:24 $
+%  Revision      : $Revision: 1.3 $
+%  Date          : $Date: 2005-03-11 21:12:42 $
 %  Author        : $Author: jon $
 %  Created By    : Jon Green
 %  Created       : Mon Oct 25 21:36:13 2004
-%  Last Modified : <050311.0132>
+%  Last Modified : <050311.2110>
 %
 %  Description
 %
@@ -21,6 +21,9 @@
 %  History
 %
 %  $Log: not supported by cvs2svn $
+%  Revision 1.2  2005/03/11 01:35:24  jon
+%  Added User Setup information.
+%
 %  Revision 1.1  2005/03/10 01:00:55  jon
 %  First draft of quick start document.
 %
@@ -40,8 +43,8 @@
 \documentclass[11pt,a4paper,pdftex]{article}
 % Bring in the CVS information.
 \def\CVS$#1: #2 ${\expandafter\def\csname CVS#1\endcsname{#2}}
-\CVS$Revision: 1.2 $ % or any CVS keyword
-\CVS$Date: 2005-03-11 01:35:24 $
+\CVS$Revision: 1.3 $ % or any CVS keyword
+\CVS$Date: 2005-03-11 21:12:42 $
 
 \usepackage{ifthen}                     % Conditional processing.
 
@@ -58,11 +61,12 @@
 \newcommand{\docReference}{jasspame}
 
 % Import the font packages.
-%\usepackage[latin1]{inputenc}          % We do not seem to need this
-\usepackage{eurosym}                    % Use the Euro symbol for "\euro"
-\usepackage[T1]{fontenc}                % Refer to TeX psnfss2e.pdf
-\usepackage{textcomp}                   % Refer to TeX psnfss2e.pdf
-\usepackage{aecompl}                    % AE complement to T1 for "\NG" and "\ng"
+%\usepackage[latin1]{inputenc}  % We do not seem to need this
+\usepackage{eurosym}            % Use the Euro symbol for "\euro"
+\usepackage[T1]{fontenc}        % Refer to TeX psnfss2e.pdf
+\usepackage{textcomp}           % Refer to TeX psnfss2e.pdf
+\usepackage{aecompl}            % AE complement to T1 for "\NG" and "\ng"
+\usepackage{color}
 %
 % FONTS: The document is typeset in the following fonts:-
 % roman:      Times-Roman
@@ -211,6 +215,15 @@
 \pagenumbering{roman}           %%% Roman page numbers for ToC
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% New commands
+\definecolor{CodeColor}{rgb}{0.95,0.95,0.95}
+\newcommand{\CodeInsert}[1]{%
+\vspace{3pt}
+\colorbox{CodeColor}{\parbox{\textwidth}{\texttt{#1}}}
+\vspace{3pt}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  Title Page                                                                %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \thispagestyle{plain}
@@ -309,11 +322,11 @@ Typeset with the TexLive 2004 \LaTeX\ Documentation System under Sun Solaris 9.
 \section*{Preface}
 %\addcontentsline{toc}{section}{\numberline{}Preface}
 
-Time is short, and armed with a reasonable \LaTeX\ boiler plate it is time to
-put down some usable notes on getting up and running with JASSPA MicroEmacs.
-The on-line help that comes with JASSPA MicroEmacs details every public
-function and variable in the editor however it is not that accessible and
-certainly does not help the new user.
+Time is short, armed with a reasonable \LaTeX\ boiler plate it is time to put
+down some usable notes on getting up and running with JASSPA MicroEmacs. The
+on-line help that comes with JASSPA MicroEmacs details every public function
+and variable in the editor however it is not that accessible and certainly
+does not help the new user.
 
 In this first draft, that will undoubtedly grow over time, we simply present
 the post installation configuration to help the new user get up and running
@@ -359,76 +372,66 @@ Jon Green\newline
 
 To install JASSPA MicroEmacs then download the appropriate bundle from
 \href{http://www.jasspa.com}{www.jasspa.com}. Most of the common platforms
-include packages to simplify the installation on each platform.
+include packages to simplify installation.
 
 \subsubsection{Packaged Sun Solaris}
 
   As root install the package.
 
-\begin{verbatim}
-cd /tmp
-unzip jasspa-mepkg-sun-sparc-59-20040301.zip
-pkgadd -d jasspa-me
-\end{verbatim}
+\CodeInsert{%
+cd /tmp\newline
+unzip jasspa-mepkg-sun-sparc-59-\textit{yyyymmdd}.zip\newline
+pkgadd -d jasspa-me}
 
-  The package is installed in \texttt{/opt/jasspa}. Edit your local shell file
-  to include the executable on your local path.
+  The package is installed in \texttt{/opt/jasspa}. Edit your local login
+  script file to include the executable on your local path e.g.
+  \texttt{.cshrc} or \texttt{.profile} -- the syntax depends on the shell type
+  that you use.
 
-\begin{verbatim}
-#
-# Set up Microemacs
-#
-if [ -d /opt/jasspa ] ; then
-    PATH=$PATH:/opt/jasspa/bin
-    MANPATH=$MANPATH:/opt/jasspa/man
-fi
-...
-export PATH
-\end{verbatim}
+\CodeInsert{%
+\#\newline
+\# Set up Microemacs\newline
+\#\newline
+if [ -d /opt/jasspa ] ; then\newline
+\hspace*{2em}PATH=\$PATH:/opt/jasspa/bin\newline
+\hspace*{2em}MANPATH=\$MANPATH:/opt/jasspa/man\newline
+fi\newline
+...\newline
+export PATH}
 
-  The package may be subsequently removed using:-
+  The package may be subsequently removed using:
 
-\begin{verbatim}
-pkgrm jasspa-me
-\end{verbatim}
+\CodeInsert{pkgrm jasspa-me}
 
 \subsubsection{Packaged Red Hat Linux/Fedore Core}
 
   As root install the package.
 
-\begin{verbatim}
-rpm -i jasspa-me-20040301-1.i386.rpm
-\end{verbatim}
+\CodeInsert{rpm -i jasspa-me-\textit{yyyymmdd}-1.i386.rpm}
 
   The package is installed in directory \texttt{/usr/share/jasspa}, the
   executable is installed in \texttt{/usr/bin} and requires no additional
   setup.
 
-  The package may be subsequently removed using:-
+  The package may be subsequently removed using:
 
-\begin{verbatim}
-rpm -e jasspa-me
-\end{verbatim}
+\CodeInsert{rpm -e jasspa-me}
 
 \subsubsection{Packaged HP-UX}
 
   For HP-UX then the package may be installed via SAM, but is easier to
   install using the command line:
 
-\begin{verbatim}
-/usr/sbin/swinstall -s `pwd`/jasspa-mepkg-hpux-pa-10.20-20040301.depot jasspa-me
-\end{verbatim}
+\CodeInsert{/usr/sbin/swinstall -s `pwd`/jasspa-mepkg-hpux-pa-10.20-\textit{yyyymmdd}.depot jasspa-me}
 
   The package is installed in \texttt{/opt/jasspa}. The executable is
   automatically added to the shell profile environment. The user should log
   out and log back in again to pick up the new environment settings which are
   added to \texttt{/etc/profile}.
 
-  The package may be subsequently removed using:-
+  The package may be subsequently removed using:
 
-\begin{verbatim}
-swremove jasspa-me
-\end{verbatim}
+\CodeInsert{swremove jasspa-me}
 
 \subsubsection{Packaged Microsoft Windows}
 
@@ -437,32 +440,29 @@ swremove jasspa-me
   software is installed into \texttt{c:$\backslash$Program
   Files\-$\backslash$JASSPA\-$\backslash$MicroEmacs}.
 
+  Unpack the \textit{zip} file, run \textbf{setup.exe} and follow the
+  installation procedure.
+
 \subsubsection{Non-packaged UNIX/Linux/BSD - System wide}
 
   For other UNIX/BSD environments where no package is provided then a manual
   installation is performed. Select the installation directory i.e.
   \texttt{/usr/local}.
 
-\begin{verbatim}
-cd /usr/local
-gunzip -c /path-to-tarball/jasspa-metree-yyyymmdd.tar.gz | tar xvf -
-\end{verbatim}
+\CodeInsert{cd /usr/local\newline
+gunzip -c /\textit{path-to}/jasspa-metree-\textit{yyyymmdd}.tar.gz | tar xvf -}
 
     or using GNU tar
 
-\begin{verbatim}
-cd /usr/local
-gtar zxvf /path-to-tarball/jasspa-metree-yyyymmdd.tar.gz
-\end{verbatim}
+\CodeInsert{cd /usr/local\newline
+gtar zxvf /\textit{path-to}/jasspa-metree-\textit{yyyymmdd}.tar.gz}
 
   The directory \texttt{/usr/local/jasspa} should now exist. Unpack the binary
   into the new directory and make it executable.
 
-\begin{verbatim}
-cd /usr/local/bin
-gunzip -c /path-to-tarball/jasspa-me-linux_2.x-yyyymmdd.gz > me
-chmod a+rx me
-\end{verbatim}
+\CodeInsert{cd /usr/local/bin\newline
+gunzip -c /\textit{path-to}/jasspa-me-linux-2.\textit{x}-\textit{yyyymmdd}.gz > me\newline
+chmod a rx me}
 
   The installation is complete and you may now execute your favorite editor
   me.
@@ -477,21 +477,17 @@ chmod a+rx me
   called \textbf{jasspa}, once unpacked then rename the directory to
   \textbf{.jasspa}.
 
-\begin{verbatim}
-cd ~
-gunzip -c /path-to-tarball/jasspa-metree-yyyymmdd.tar.gz | tar xvf -
-mv jasspa .jasspa
-\end{verbatim}
+\CodeInsert{cd $\sim$\newline
+gunzip -c /\textit{path-to}/jasspa-metree-\textit{yyyymmdd}.tar.gz | tar xvf -\newline
+mv jasspa .jasspa}
 
   Add downloaded spelling dictionaries by unpacking them into the
-  \texttt{~/.jasspa/spell} subdirectory. Install the binary into your local
-  binary directory - we assume \texttt{~/bin} e.g.
+  \texttt{$\sim$/.jasspa/spell} subdirectory. Install the binary into your local
+  binary directory - we assume \texttt{$\sim$/bin} e.g.
 
-\begin{verbatim}
-cd ~/bin
-gunzip -c /path-to-tarball/jasspa-me-linux-2.x-yyyymmdd.gz > me
-chmod a+rx me
-\end{verbatim}
+\CodeInsert{cd $\sim$/bin\newline
+gunzip -c /\textit{path-to}/jasspa-me-linux-2.\textit{x}-\textit{yyyymmdd}.gz > me\newline
+chmod a+rx me}
 
   Assuming that the binary directory is already on the users path then the
   installation is complete.
@@ -505,11 +501,9 @@ chmod a+rx me
   Unpack the \texttt{metree} zip package to form the macro tree, this creates
   the directory \textit{jasspa}.
 
-\begin{verbatim}
-c:
-cd \
-unzip jasspa-metree-yyyymmdd.zip
-\end{verbatim}
+\CodeInsert{c:\newline
+cd $\backslash$\newline
+unzip jasspa-metree-\textit{yyyymmdd}.zip}
 
   The binary is placed in the \texttt{c:$\backslash$jasspa} directory. It is
   important that the binary is placed in the JASSPA tree as this allows the
@@ -523,17 +517,13 @@ unzip jasspa-metree-yyyymmdd.zip
   binary, otherwise install the V1.0 binary (as this is a self contained
   executable and has no run-time library dependencies).
 
-\begin{verbatim}
-cd \jasspa
-unzip jasspa-me-msdos-djgpp1-yyyymmdd.zip
-\end{verbatim}
+\CodeInsert{cd $\backslash$jasspa\newline
+unzip jasspa-me-msdos-djgpp1-\textit{yyyymmdd}.zip}
 
   The location of the executable should be added to the \texttt{autoexec.bat}
   file e.g.
 
-\begin{verbatim}
-SET PATH=%PATH%;c:\jasspa
-\end{verbatim}
+\CodeInsert{SET PATH=\%PATH\%;c:$\backslash$jasspa}
 
   The system may be re-booted and the editor should be available on the
   command line \texttt{me}.
@@ -549,18 +539,15 @@ SET PATH=%PATH%;c:\jasspa
   \textit{c:$\backslash$Program Files} (\textbf{Win32s} may use
   \textit{c:$\backslash$me}).
 
-\begin{verbatim}
-c:
-cd "\Program Files"
-unzip jasspa-metree-yyyymmdd.zip
-\end{verbatim}
+\CodeInsert{c:\newline
+cd "$\backslash$Program Files"\newline
+unzip jasspa-metree-\textit{yyyymmdd}.zip}
 
   The executable is placed in the \textit{jasspa} directory:
 
-\begin{verbatim}
-cd "\Program Files\jasspa"
-unzip jasspa-me-win32-yyyymmdd.zip
-\end{verbatim}
+\CodeInsert{cd "$\backslash$Program Files$\backslash$jasspa"\newline
+unzip jasspa-me-win32-\textit{yyyymmdd}.zip
+}
 
   Unlike \textbf{MS-DOS} then short cuts are typically used to launch the
   editor. The editor short-cut is typically edited with command line option
@@ -586,10 +573,8 @@ unzip jasspa-me-win32-yyyymmdd.zip
   directory that was created when \textit{metree} was unpacked. Simply unpack
   the contents of the archive into this directory.
 
-\begin{verbatim}
-cd /<pathto>/jasspa/spelling
-unzip enus.zip
-\end{verbatim}
+\CodeInsert{cd /\textit{path-to}/jasspa/spelling\newline
+unzip enus.zip}
 
   With the directory installed then set up MicroEmacs using \textbf{Help
   $\rightarrow$ User Setup} or from the command line \textbf{M-x user-setup}.
@@ -616,26 +601,22 @@ unzip enus.zip
 
   A simple build script is provided for both UNIX and DOS/Windows systems
   called \textbf{build}. Download the source bundle
-  \texttt{jasspa-mesrc-yyyymmdd} and unpack, this will create a directory
-  \textbf{meYYMMDD}. Change directory to \textbf{src} and issue a build
-  command:
+  \texttt{jasspa-mesrc-\textit{yyyymmdd}} and unpack, this will create a
+  directory \textbf{meYYMMDD}. Change directory to \textbf{src} and issue a
+  build command:
 
-\begin{verbatim}
-# DOS
-c:> build
+\CodeInsert{\# DOS\newline
+c:> build}
 
-# UNIX
->sh> ./build
-\end{verbatim}
+\CodeInsert{\# UNIX\newline
+>sh> ./build}
 
   On most systems then the \textbf{build} will be performed, alternatively
   explicit make may be performed. A selection of make files exist for the
-  different platforms \textbf{.mak} indicates the native platform compiler,
-  \textbf{.gmk} indicates a GNU CC build.
+  different platforms \textbf{.mak} indicates the native platform compiler and
+  \textbf{.gmk} indicates a GNU compiler.
 
-\begin{verbatim}
-make -f platform.gmk
-\end{verbatim}
+\CodeInsert{make -f \textit{platform}.mak}
 
   The platform specific makefiles may be modified with compiler specific
   options for the target platform to produce a optimal executable.
@@ -656,7 +637,7 @@ make -f platform.gmk
 
   \begin{itemize}
 
-    \item \textbf{Enter you full name ?}. This is \textit{your} name that is
+    \item \textbf{Enter you full name ?} This is \textit{your} name that is
     inserted in the header files that identify you as the author.
 
     \item \textbf{Set up the company file (y/n) ?} If you are working in a
@@ -665,7 +646,7 @@ make -f platform.gmk
     headers etc.
 
     \item \textbf{Name the company file ?} This is the name of the macro file
-    that stores company wide company information. The default id dimply called
+    that stores company wide company information. The default is simply called
     \textbf{company} and is typically accepted. If you are using a site wide
     installation then your system administrator may set up a specifically
     named file which should be entered here.
@@ -720,7 +701,7 @@ make -f platform.gmk
   down dialog. The configuration may be saved permanently using \textbf{Save}
   and installed into the current session using \textbf{Current}.
 
-\subsubsection{Quick Setup}
+\subsubsection{Common Options}
 
   For a quick setup then the \textit{User Setup} dialog is traversed by pane,
   the most common options are described below, other options may be ignored.
@@ -858,8 +839,71 @@ make -f platform.gmk
       \item \textbf{Mouse Button Bindings} control the action on pressing a
       button, optionally in conjunction with the \texttt{SHIFT},
       \texttt{CONTROL} and \texttt{ALT} modifier keys. The wheel mouse setting
-      is bound here. \end{itemize}
+      is bound here.
+
+    \end{itemize}
 
   \end{itemize}
+  
+\subsection{MicroEmacs Integration}
 
+  This section discusses how MicroEmacs may be integrated with the desktop 
+  environment and other tools.
+
+\subsubsection{Desktop Integration}    
+
+  Integration of MicroEmacs with the Window Manager desktop environment.
+
+  \begin{itemize}
+
+    \item Drag and Drop is supported. When a file(s) is dragged over a buffer
+    window and released then the file(s) is opened in the drop window. 
+    
+    \textbf{UNIX} environments support \textit{Xdnd}. Under X-Windows the
+    MicroEmacs window is not raised following the drop.
+    
+    \textbf{Microsoft Windows} the MicroEmacs window is raised following
+    a drop operation.
+
+    \item Different size bitmaps are provided for the desktop. 
+    
+    \textbf{UNIX} icons are provided in
+    \texttt{\textit{/path-to}/jasspa/pixmaps} in both \textbf{png} and
+    \textbf{pixmap} format. A set of additional file type MicroEmacs icons may
+    be downloaded for use with Gnome, KDE and CDE.
+
+    \textbf{Microsoft Windows}  different size bitmaps are provided in the icon executable file
+    \textbf{meicons.exe}. This executable contains the standard JASSPA icon in
+    addition to the file type icons. Select icons from this executable when 
+    assigning MicroEmacs to specific file extensions. 
+
+    \item When assigning MicroEmacs to a desktop icon then it is advisable to
+    start MicroEmacs with the command line option \textbf{-c}. This option
+    restores the editor to the previously loaded state of the last saved
+    session.
+
+    \item Where MicroEmacs is assigned as an open action for a given file type
+    or extension then an existing editor session may be used rather than
+    opening a new editor. To enable MicroEmacs reuse and existing session then
+    invoke \textbf{me} with the \textbf{-o} command line option and enable the
+    \textbf{Client-Server} configuration option (\textbf{Help $\rightarrow$
+    User Setup $\rightarrow$ Platform $\rightarrow$ Client Server}). 
+    
+  \end{itemize}
+
+\subsubsection{Tools Integration}
+    
+  MicroEmacs may be invoked from other tools as the selected text editor (i.e.
+  \textbf{WinZip}). Multiple files may be specified on the command line for
+  opening. Where a specific line number is required then the command line
+  option \textbf{-l \textit{lineNo}} may be used to open the next file and
+  move to the given line number. The \textbf{-l} must always precede the file
+  name, but may appear multiple times in the command line before  each file 
+  to be open. e.g.
+  
+  \CodeInsert{me -l 20 foo.c -l 902 bar.c}
+
+  which opens file \texttt{foo.c} displaying line 20 and opens \texttt{bar.c} 
+  displaying line 902.
+     
 \end{document}
