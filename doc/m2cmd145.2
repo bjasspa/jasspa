@@ -3,12 +3,11 @@
 .\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd145.2,v 2.9 2005-01-02 23:21:28 bill Exp $
+.Id $Id: m2cmd145.2,v 2.10 2005-01-15 14:37:43 jon Exp $
 .Im MicroEmacs command|message
 .so me.tni
 .TH ml-write 2
 .XI ml-write - "Write message on message line"
-.XI ml-clear - "Clear the message line"
 .SH NAME
 ml-write \- Write message on message line
 .Me $a
@@ -22,39 +21,48 @@ ml-write \- Write message on message line
 .B ml-write
 writes the  argument  "\|\fImessage\fR\|"  to the message  line. If a positive
 numeric  argument  \fIn\fR is specified  then the message is displayed  with a
-\fIn\fR  milliseconds  uninterruptible  delay  giving the user time to see the
+\fIn\fR milliseconds  uninterruptible  delay allowing the user time to see the
 message.
 .PP
-With a numeric argument of \fC0\fR the \fImessage\fR  argument is not required
-and the command  clears the message  line. This is used to clear any  previous
-message from the last  command(s) in a script. As an example, a callback macro
-may interrupt the user while they are using the message-line  (entering a file
-name or searching a buffer etc.),  executing  \fC0\  ml-write\fR at the end of
-the callback  macro ensures that the  message-line  is restored.  With numeric
-argument \fC2\fR the previous message is restored.
-.PP
-.B ml-write
-may be used to write  lines to  \fIstandard  out\fR and  \fIstandard  error\fR
-using a numeric  argument  of  \fI-1\fR or \fI-2\fR  respectively.  A carriage
-return (\fC'\\n'\fR) is automatically added to the end of the \fImessage\fR to
-create a line.
+The arguments to \fBml-write\fR are defined as follows:-
+.IP "\fINo argument\fR"
+The default form, writes a \fImessage\fR to the command line with no delay.
+.IP "\fI+ve\fR"
+Displays the \fImessage\fR on the message line and waits \fIn\fR  milliseconds
+before proceeding with the next command.
+.IP \fC0\fR
+the \fImessage\fR  argument is not required and the command clears the message
+line. This may be used to clear any previous  message from the last command(s)
+in a script and is equivalent to the old \*(mS command \fBml-clear\fR.
+.\"The previous message is restored. As an  example,  a
+.\"callback macro may interrupt the user while using the message-line (entering a
+.\"file name or searching a buffer etc.), executing \fC2\  ml-write\fR at the end
+.\"of the callback macro ensures that the  message-line is restored.
+.IP \fC\-1\fR
+Writes  the   \fImessage\fR   to   \fIstandard   out\fR.  A  carriage   return
+(\fC'\\n'\fR) is automatically added to the end of the \fImessage\fR to create
+a line on the given stream.
+.IP \fC\-2\fR
+Writes the    \fImessage\fR   to   \fIstandard   error\fR,  the  behaviour  is
+the same as standard output (\fC\-1\fR option)
 .SH NOTES
-A call to \fBml-write\fR  from a callback macro can erase a message line which
-is currently being used (to enter a buffer name say). A call to
-.Ht ml-clear 2
-restores the previous message-line.
-.PP
-If the argument  given is not \fC\-1\fR or \fC\-2\fR  calls to  \fBml-write\fR
+.\"A call to \fBml-write\fR  from a callback macro can erase a message line which
+.\"is currently being used (to enter a buffer name say). A call to
+.\"".C "2 ml-clear"
+.\"restores the previous message-line.
+.\".PP
+If the argument  value is not \fC\-1\fR or \fC\-2\fR  calls to  \fBml-write\fR
 are ignored in standard \*(mS piped mode (command-line  option \fB-p\fR). They
 are  printed  to   \fIstandard   error\fR   when  debug  piped  mode  is  used
-(command-line  option \fB-P\fR), making the debugging and maintenance of macro
-based piped processing easier. 
+(command-line  option \fB-P\fR, see
+.Ht me 1 ),
+making the debugging and maintenance of macro based piped processing easier.
 .PP
 In previous releases the command  \fBml-clear\fR was used to clear the message
 line, this command was replaced by \fC0 ml-write\fR in December 2004.
 .SH EXAMPLE
-The  following  call  displays  a message on the  message-line  with a fixed 2
-second pause:
+The  following  call  displays a message on the  message-line  with a 2 second
+pause:
 .Me $emf-scheme
 .CS
 2000 ml-write "Hello World!"
@@ -62,7 +70,7 @@ second pause:
 .Me $ehf-scheme
 The following
 .Ht start-up 3
-macro  can be  used to add a  header  and  footer  line to a file  piped  into
+macro  may be  used  to add a  header  and  footer  line  to a file  piped  to
 \fIstandard in\fR, writing the output to \fIstandard out\fR.
 .Me $emf-scheme
 .CS
@@ -89,6 +97,7 @@ Note the \fCDEBUG\fR lines will be printed if \fB-P\fR option is used.
 .SH "SEE ALSO"
 .na
 .Ht command-wait 2 ,
-.Ht create-callback 2 .
+.Ht create-callback 2 ,
+.Ht me 1 .
 .ad
 .FH
