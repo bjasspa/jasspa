@@ -44,7 +44,7 @@
 ;         >
 ;         > Author:       My Self
 ;         > Created:      11/11/97
-;         > Modified:     <010305.0811>
+;         > Modified:     <010924.0057>
 ;         > Location:     /xx/yy/zz.doc
 ; *
 ;         All lines commencing with '*' are assumed to be bullet lists. Bullet
@@ -100,7 +100,7 @@ set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
     hilight .hilight.doc 1 "<[A-Za-z_]+>"                       .scheme.italic
     hilight .hilight.doc 1 "_[A-Za-z0-9]+_"                     .scheme.under
     hilight .hilight.doc 0 "^\\s *\\[\\w*\\]"                   .scheme.no1
-    hilight .hilight.doc 0x22 "[0-9]\\.[0-9.]*[ \t]+\\w"        .scheme.header
+    hilight .hilight.doc 0x22 "[0-9]+\\.[0-9.]*[ \t]+\\w"       .scheme.header
     hilight .hilight.doc 0x804 "\"" "\"" "\\"                   .scheme.string
     hilight .hilight.doc 0x804 "`" "'" ""                       .scheme.no1
     hilight .hilight.doc 0    "'.'"                             .scheme.quote
