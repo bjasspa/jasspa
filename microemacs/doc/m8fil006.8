@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m8fil006.8,v 2.6 2004-02-01 23:36:27 jon Exp $
+.Id $Id: m8fil006.8,v 2.7 2004-02-04 22:54:22 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .TH me32.ini 8
@@ -13,25 +13,37 @@ me32.ini \- Microsoft Window's Initialization (ini) File
 .SH SYNOPSIS
 .na
 .nf
+\fB;\fR \fIComments commence with a semi-colon\fR
 .sp
 .B "[Location]"
 \fBexe\fR=\|\fI<executablePathname>\fR
 .sp
 .B "[Defaults]"
-\fBmepath=\fR\|\fI<directoryPath>\fR
-\fBmeinstallpath=\fR\|\fI<directoryPath>\fR
+\fBmeinstallpath=\fR\|\fI<directoryPath>\fR\|;\|\fI<directoryPath>\fR\|;\|\ ...\ ;\|\fI<directoryPath>\fR
+\fBmepath=\fR\|\fI<directoryPath>\fR\|;\|\fI<directoryPath>\fR\|;\|\ ...\ ;\|\fI<directoryPath>\fR
+\fBmeuserpath=\fR\|\fI<directoryPath>\fR
+\fBmename=\fR\|\fI<username>\fR
 \fBgeometry=\fR\|\fI<width>\fR\|\fBx\fR\|\fI<depth>\fR+\|\fI<xoffset>\fR+\|\fI<yoffset>\fR
-\fBfontfile=\fR\|\fI<fontFileName>\fR
+\fBenvironmentVariable=\fR\|\fI<value>\fR
+\fBenvironmentVariable=\fR\|\fI<value>\fR
+\...
+\fBenvironmentVariable=\fR\|\fI<value>\fR
 .sp
 \fB[\fR\|\fI<userName>\fR\|\fB]\fR
-\fBmename\fR\|\fB=\fR\|\fI<value>\fR
-\fBmeuserpath\fR\|\fB=\fR\|\fI<value>\fR
+\fBmeinstallpath=\fR\|\fI<directoryPath>\fR\|;\|\fI<directoryPath>\fR\|;\|\ ...\ ;\|\fI<directoryPath>\fR
+\fBmepath=\fR\|\fI<directoryPath>\fR\|;\|\fI<directoryPath>\fR\|;\|\ ...\ ;\|\fI<directoryPath>\fR
+\fBmeuserpath=\fR\|\fI<directoryPath>\fR
+\fBgeometry=\fR\|\fI<width>\fR\|\fBx\fR\|\fI<depth>\fR+\|\fI<xoffset>\fR+\|\fI<yoffset>\fR
+\fBmename=\fR\|\fI<username>\fR
+\fBenvironmentVariable=\fR\|\fI<value>\fR
+\fBenvironmentVariable=\fR\|\fI<value>\fR
+\...
+\fBenvironmentVariable=\fR\|\fI<value>\fR
 .sp
 \fB[\fR\|\fI<userName>\fR\|\fB]\fR
-\fBmename\fR\|\fB=\fR\|\fI<value>\fR
-\fBmeuserpath\fR\|\fB=\fR\|\fI<value>\fR
-.sp
-\fB;\fR \fIComments commence with a semi-colon\fR
+\fBmeinstallpath=\fR\|\fI<directoryPath>\fR\|;\|\fI<directoryPath>\fR\|;\|\ ...\ ;\|\fI<directoryPath>\fR
+\fBmepath=\fR\|\fI<directoryPath>\fR\|;\|\fI<directoryPath>\fR\|;\|\ ...\ ;\|\fI<directoryPath>\fR
+\...
 .fi
 .ad
 .SH PLATFORM
@@ -39,19 +51,73 @@ me32.ini \- Microsoft Window's Initialization (ini) File
 .SH DESCRIPTION
 .B me32.ini
 is the Microsoft Windows  configuration file, located in the windows directory
-(typically
-\fBC:\\Windows\fR\|),
-the
+(typically \fBC:\\Windows\fR or \fBC:\\WINNT\fR), the
 .B me32.ini
 file is  primarily  used to  counteract  the  deficiencies  of  Windows  shell
 environment (as compared with \s-1UNIX\s0) with respect to the  initialization
-of environment variables.
+of environment variables. The
+.B me32.ini
+file is  comparable to the  \s-1UNIX\s0  \fI.Xdefaults\fR  and  \fI.profile\fR
+files.
 .PP
-The  configuration  file may be  considered  to be split into two  sections, a
-\fBDefaults\fR section, which defines system settings and a \fBUser\fR section
-which allows environment variables to be defined.
+The configuration  file is split into two sections, a \fBDefaults\fR  section,
+which defines system  settings and a \fBUser\fR  section which define settings
+on a per user basis. Both sections allow  environment  variables to be defined
+for  export.  The  \fIdefaults\fR  section  is  executed  first  and  then the
+\fIuser\fR  section  which matches the users name. The format of both sections
+is identical.
+.SS "Section Keywords"
+The keywords identified in each section are defined as follows:-
+.IP "\fBmepath\fR"
+Equivalent to the setting of the variable
+.Ht $MEPATH 5 
+to  define  the   directory   (or  folder)   location  of  the  \*(mE  default
+configuration  files. If the  assignment  string  is empty  then any  previous
+value is removed.
+.IP "\fBmeinstallpath\fR"
+Equivalent of setting the environment variable
+.Ht $MEINSTALLPATH 5 
+to define the directory (or folder)  location of the macros  directory. If the
+assignment string is empty then any previous value is removed.
+.IP "\fBmename\fR"
+The \*(mS 
+.Ht $user-name 5
+to use rather than the login name.  If the
+assignment string is empty then any previous value is removed.
+.IP \fBmeuserpath\fR
+The value of 
+.Ht $user-path 5 .
+If the assignment string is empty then any previous value is removed.
+.TP
+\fBgeometry\fR=\|\fI<width>\fR\|\fBx\fR\|\fI<depth>\fR+\|\fI<xoffset>\fR+\|\fI<yoffset>\fR
+.\"
+The  geometry of the window the width and height are  specified in  character,
+the position of the window is specified as an offset. If the assignment string
+is empty then any previous preset value is removed.
+.LP
+All other  variables  (except  those  commencing  with  \fCmsdev\fR  which are
+reserved for 
+.Ht memsdev 1 )
+are pushed into the environment as environment variables which are made during
+the editing session.
+.SS "Location Section"
+The location  section,  labeled  \fB[Location]\fR,  identifies the location of
+\*(mE,  and  is  typically  used  by  other  components  to  find  and  launch
+MicroEmacs. The section includes the following keys:-
+.IP \fBexe\fR
+The absolute pathname to the \*(mE executable image. External programs such as 
+.Ht memsdev 1
+may use this entry to find the executable. This section may be omitted.
+.SS "Defaults Section"
+The default section, labeled  \fB[MeYYMMDD]\fR or \fB[Defaults]\fR  define the
+global variable  settings for all users. The dated form is searched for first,
+the date corresponds to the specific version of \*(mS as displayed by 
+.Ht about 2 . 
+When omitted then the 
+\fB[Defaults]\fR
+section is used. Either, or both sections may be omitted.
 .SS "User Section"
-The \fBUser  Section\fR is executed prior to the  \fBDefaults  Section\fR. The
+The \fBUser  Section\fR is executed after the  \fBDefaults  Section\fR. The
 \fBUser Section\fR uses the 
 .Ht $user-name 5
 which is defined as follows:-
@@ -68,61 +134,69 @@ The  environment  variable
 .Ht $LOGNAME 5
 if the \fIlogin\ name\fR cannot be located.
 .BE
-A section  \fB[\fR\|\fIuserName\fR\|\fB]\fR  is looked up, and if located each
-of the entries is used to set up the editor.
-.IP "\fBmename\fR"
-The \*(mS 
-.Ht $user-name 5
-to use rather than the login name.
-.IP \fBmeuserpath\fR
-The value of 
-.Ht $user-path 5 .
-.SS "Defaults Section"
-The defaults section, labeled \fB[Defaults]\fR includes the following keys:-
-.IP "\fBmepath\fR"
-Sets the environment variable
-.Ht $MEPATH 5 
-to the  specified  value. This is the  directory  (or folder)  location of the
-\*(mE default configuration files.
-.IP "\fBmeinstallpath\fR"
-Equivalent of setting the environment variable
-.Ht $MEINSTALLPATH 5 
-to define the directory (or folder)  location of the macros  directory.
-.IP "\fBgeometry\fR"
-The  geometry of the window the width and height are  specified in  character,
-the position of the window is specified as an offset.
-.IP \fBfontfile\fR
-A default font file to use to render the font. This is not really required.
-.SS "Location Section"
-The location  section,  labeled  \fB[Location]\fR,  identifies the location of
-\*(mE,  and  is  typically  used  by  other  components  to  find  and  launch
-MicroEmacs. The section includes the following keys:-
-.IP \fBexe\fR
-The absolute pathname to the \*(mE executable image.
-.ne 20
+A single user section is executed that  corresponds to the user. If the system
+does not use a login  system  then a  \fBmename\fR  entry may be placed in the
+defaults section to force a name.
+.PP
+A \fBmename\fR entry appearing in the \fIuser\fR section is used to change the
+login  name to a more  sensible  name when the user login and \*(mS user files
+use different names.
 .SH EXAMPLE
-The following is an example of the \fBme32.ini\fR file:-
+The following is an example of the \fBme32.ini\fR  file, there is no login and
+a user \fIJohn Doe\fR defines his \*(mS user name:
 .CS
 ; External locater for the executable 
 [Location]
 exe=c:\\Program Files\\JASSPA\\MicroEmacs\\me32.exe
 ;
+; Default global section
 [Defaults]
 ; mepath
 ; The location of the MicroEmacs common files.
+meinstallpath=d:\\jasspa
+mename=john
 ;
-meinstallpath=d:/jasspa
-;
-; userpath - The location of the users MicroEmacs directory.
-;
-meuserpath=d:/jasspa/user
+; User John Doe
+[john]
+; meuserpath - The location of the users MicroEmacs directory.
+meuserpath=d:\\jasspa\\john
+; Define some environment variables.
+INFOPATH=c:\\info
 .CE
 Note that  multiple  users share the same  \fBme32.ini\fR  file, each user may
 include their own  configuration  settings  which may be  interrogated  in the
-configuration files.
-.SH NOTES
-As of \*(mS 2004 then the \fBme32.ini\fR  file is depreciated and not normally
-used.
+configuration files. In the following example a user \fIJohn Doe\fR with login
+name of \fIjohndoe\fR uses private configuration files called \fIjohn\fR:
+.CS
+; External locater for the executable 
+[Location]
+exe=c:\\Program Files\\JASSPA\\MicroEmacs\\me32.exe
+;
+; Defaults for RC4 Release
+[Me040201]
+meinstallpath=d:\\jasspa_rc4
+;
+; Default global section
+[Defaults]
+; mepath
+; The location of the MicroEmacs common files.
+meinstallpath=d:\\jasspa
+; Define some environment variables.
+INFOPATH=c:\\info
+;
+; User John Doe
+[johndoe]
+; meuserpath - The location of the users MicroEmacs directory.
+meuserpath=d:\\jasspa\\john
+; mename - Use "john" instead of "johndoe"
+mename=john
+; Define startup screen size.
+geometry=110x50+70+30
+;
+; User Jane Doe
+[janedoe]
+meuserpath=d:\\jasspa\\janedoe
+.CE 0
 .SH "SEE ALSO"
 .na
 .Ht user-setup 3 ,

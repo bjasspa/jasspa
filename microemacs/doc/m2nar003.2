@@ -1,12 +1,12 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Jon Green
 .\"  Created       : Sun Aug 23 15:42:05 1998
 .\"
-.Id $Id: m2nar003.2,v 2.7 2002-10-16 22:28:04 jon Exp $
+.Id $Id: m2nar003.2,v 2.8 2004-02-04 22:54:22 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .TH "User Profiles" 2
@@ -19,32 +19,38 @@ settings which are used by an individual user.
 The user profile allows:-
 .BS
 Saving of the last session (history), allowing the next invocation of \*(mE to
-restore your previous session.
+restore your previous session. The \fB\-c\fR option to
+.Ht me 1
+restores a previous  sessions  buffers to the same state  prior to exiting the
+editor.
 .BU
 Personalized spelling dictionaries.
 .BU
-Redefinition  of \*(mE,  allowing the editor to be tailored to an  individual's
-requirements.  Including  the  re-binding of keys,  modification  of the screen
-colors. Definition of personal macros etc.
+Redefinition  of \*(mE  operation,  allowing  the editor to be  tailored to an
+individual's  requirements.  Including the re-binding of keys, modification of
+the screen colors. Definition of personal macros etc.
 .BE 0
 .SS "Identification"
 In order to identify a user \*(mE uses  information in the system to determine
 the name of the user, and in turn the configuration to use. On all systems the
 value of the environment variable
 .Ht $MENAME 5
-takes priority over any other means of user  identification. If this variable
+takes priority over any other means of user  identification.  If this variable
 is not  defined  then  the host  system  typically  provides  a  mechanism  to
-determine  the current user.  \s-1DOS\s0  and  \fIWindows\fR  systems  present
-problems where a login prompt is not supplied.
+determine  the current  user.  \s-1MS-DOS\s0  and  Microsoft  Windows  systems
+present problems where a login prompt is not used.
 .PP
 Each of the supported platforms are now described.
 .BP UNIX
-The environment variable \fC$LOGNAME\fR is defined. This is the user name used
-by the system.
+The login name is determined from the \fC/etc/passwd\fR file and defines
+.Ht $user-name 5 .
+The environment variable
+.Ht $MENAME 5
+may be defined alter the default user configuration file name.
 .BP DOS
-\s-1MS\-DOS\s0  typically has no concept of the user name. The user name should
-be defined in the  \fCautoexec.bat\fR  file, choose a name of 8 characters  or
-less, i.e. to fix the user name to \fCfred\fR then add the following line:-
+\s-1MS\-DOS\s0 typically has no concept of the user name. The user name may be
+defined in the \fCautoexec.bat\fR file, choose a name of 8 characters or less,
+i.e. to fix the user name to \fCfred\fR then add the following line:-
 .RS
 .CS
 SET MENAME=fred
@@ -53,138 +59,113 @@ Remember to re-boot the system  before the new command  takes effect. (see the
 next step, there is another change to \fCautoexec.bat\fR).
 .RE
 .BP "Microsoft Windows"
-Microsoft  windows  environments  may, or may not, have  logging  enabled.  If
-you  have  to log  into  your  system  then a login  identification  has  been
-supplied  and  will be  recognized  by  MicroEmacs,  setting  the  environment
-variable
+Microsoft  windows  environments may, or may not, have login enabled. If login
+is enabled then
+.Ht $user-name 5
+is set to the login user name. The login name may be overridden by setting the
+environment variable
 .Ht $MENAME 5
-to this value.
-.IP
-If login is not enabled then the
+this may be performed in the environment or through the
 .Ht me32.ini 8
-file  may be  modified  to  provide  a  default  login  name. To add the  user
-\fBfred\fR then add the following lines to the \fIini\fR file:-
-.RS
-.CS
-[guest]
-MENAME=fred
-.CE
-If login is  subsequently  enabled on the system  then these  lines  should be
-removed. These lines force the user identification to be \fBfred\fR.
-.PP
-The above technique may be used within the windows  environment to modify your
-login name. Assuming that the system  administrator has assigned  \fBfred\fR a
-user  login  name  of  \fBfwhite\fR,  and  \fIfred\fR   requires  all  of  his
-configuration  files to be the same  name as his  \s-1UNIX\s0  login  which is
-\fBfred\fR.  Then  \fIfred\fR  may force his user name to \fIfred\fR  from the
-\fCme32.ini\fR file as follows:-
-.CS
-[fwhite]
-MENAME=fred
-.CE
-Once \fIfred\fR has entered  MicroEmacs he will adopt his new login name which
-will be used to identify his own files etc. The action of this statement is to
-force  the  environment  variable  \fC$MENAME\fR  to a new  value.  Any  other
-environment variables may be forced in this way i.e. \fC$HOSTNAME\fR is a good
-candidate here as the \fCme32.ini\fR is local to the machine.
-.RE
-.BP "Shared Platforms"
+file.
+.SS "Shared Platforms"
 Platforms  may share the same set of  configuration  files.  Consider a system
-which may boot under  MS-DOS,  Windows  '98, NT and Linux.  Provided  that the
-macro  files are  located on a file  system  that may be mounted by all of the
-other operating  systems and the $MEPATH is set  appropriately,  then a single
-set of MicroEmacs macro files may be shared across all platforms.
+which may boot under  \s-1MS-DOS\s0,  Windows '98, NT and Linux. Provided that
+the macro files are located on a file system that may be mounted by all of the
+other operating systems and the
+.Ht $MEUSERPATH 5
+and
+.Ht $MEPATH 5
+are  set  appropriately  to  point  to the  users  private  \*(mS  and  system
+directories,  then a  single  set of macro  files  may be  shared  across  all
+platforms.
 .SS "Personal MicroEmacs Directory"
 The private user profile is stored in a separate directory. The directory that
-MicroEmacs  uses must be  created by the user,  create the  directory  in your
-local file system. In addition, the MicroEmacs search path
-.Ht $MEPATH 5
-should be modified to include your new MicroEmacs personal directory.
+\*(mS uses is typically  automatically created at start up, but may be created
+manually by the user. If the  directory is to be placed in a special  location
+then the
+.Ht $MEUSERPATH 5
+environment  variable  should be  defined  and set to point at this  directory
+location.
 .BP UNIX
-Create  in  your  local  directory,   typically  called   \fCmicroemacs\fR  or
-\fC.microemacs\fR (if it is to be hidden).
-.IP
-Add/modify the
-.Ht $MEPATH 5
-environment  variable to include your personal directory in your \fC.login\fR,
-\fC.chsrc\fR  or  \fC.profile\fR  file, the file and exact  syntax will depend
-upon your  shell. For a Korn  shell the  following  line would be added to the
-\fC.profile\fR file:-
-.RS
-.CS
-export MEPATH=$HOME/.microemacs:/usr/local/microemacs
-.CE
-Where  \fC$HOME\fR is assumed to be the users login home directory, or use the
-directory location of your new directory.
-.RE
+In the \s-1UNIX\s0  environment then the local directory is typically  created
+in the users home directory  obtained from the  \fC/etc/passwd\fR  file and is
+called  \fC~/.jasspa\fR.  \*(mS will automatically look for this directory and
+set the
+.Ht $user-path 5
+variable  to this  value.  The  location  may be  overridden  by  setting  the
+environment variable
+.Ht $MEUSERPATH 5
+to reference a different directory location.
 .BP DOS
 For MS-DOS environments, there is typically no user directory, it is suggested
 that the user  directory  is  created  in the  MicroEmacs  directory,  use the
 \fC$MENAME\fR defined in the previous step i.e.
 .RS
 .CS
-mkdir c:\\me\\fred
+mkdir c:\\jasspa\\fred
 .CE
-Change the
-.Ht $MEPATH 5
+Change or add the environment variable
+.Ht $MEUSERPATH 5
 in the \fBautoexec.bat\fR to include the new directory i.e.
 .CS
-SET MEPATH=c:\\me\\fred;c:\\me
+SET MEUSERPATH=c:\\jasspa\\fred
 .CE 0
 .RE
 .BP "Windows"
-Windows environments, the
+In  Microsoft  Windows  environment  using  Explorer  4.0 or later then a user
+application  data directory  exists  (\fC$APPDATA\fR)  and \*(mS will create a
+directory  \fCjasspa\fR  in this  directory  location to hold private data. If
+there is no such  data  area  then all user  configuration  is  stored  in the
+executable directory location (or a sub-directory called
+.Ht $user-name 5 ).
+.IP
+The user data area
+.Ht $user-path 5
+may be  modified  by  creating a new  directory  and  setting the  environment
+variable
+.Ht $MEUSERPATH 5
+to point to this new directory location. The location be specified by a
+\fBmeuserpath\fR entry in the
 .Ht me32.ini 8
-\fBuserPath\fR  entry  defines the  location of the user profile  directories,
-within the  \fBInstall\fR  \fBShield\fR  installation,  the  \fCme32.ini\fR is
-typically defined as:-
-.RS
-.CS
-userPath=C:\\Program Files\\JASSPA\\MicroEmacs
-.CE
-Create your  MicroEmacs  personal  directory  in this  folder, the name of the
-folder  should  be your  login  name or  \fC$MENAME\fR,  depending  upon  how
-your name is identified.
-.RE
+file rather than setting the environment variable
+.Ht $MEUSERPATH 5 .
 .SS "Creating Your Profile"
-Once you have created a new directory to store your user profile,
-create a default  profile for yourself  from  MicroEmacs  using the
+On  starting  \*(mS for the  first  time then the user is guided  through  the
+configuration file setup to create any local configuration  files. Once set up
+then \*(mS may be configured using the
 .Ht user-setup 3
 dialog:-
 .CS
 Help => User Setup
-.CE
-Fill in the entries in the dialog, and ensure that  \fBSave\fR is depressed on
-exit to write the files.
-.PP
-The dictionaries  often present  difficulties the first time, a prompt to save
-the  dictionary  requires  the full  pathname  and the name of the  file,  the
-pathname is the path to your personal  folder, the filename is typically  your
-\fIusername\fR.edf.  Once the file is  created  you will not have a problem in
-the future.
+.CE 0
 .SS "The User Profile"
 Files created in the user directory include:-
 .BS
-Setup registry and previous session history \fIusername\fR.erf,
-see
+Setup registry and previous session history
+.Hl $user-name $user-name 5 .erf
+(see
 .Ht erf 8 ).
-This  stores the  \fBuser-setup\fR  settings  and also the  context  from your
-previous edit session.
+This stores the  \fBuser-setup\fR  settings and the context from previous edit
+sessions.
 .BU
-Users start-up file \fIusername\fR.emf, see
-.Ht emf 8
-the user may make local  changes to  MicroEmacs in this file, this may include
-changing key bindings,  defining new hook functions etc. You should  over-ride
-the standard MicroEmacs settings from your start-up file rather than modifying
-the standard MicroEmacs files.
+Users start-up file
+.Hl $user-name $user-name 5 .emf
+(see
+.Ht emf 8 ).
+This is typically referred to as "\|\fIuser.emf\fR\|" in the documentation and
+means the users  private \*(mS macro file. The user may make local  changes to
+\*(mS in this file, this may include  definition of new key bindings, defining
+new hook  functions etc. You should  override the standard \*(mS settings from
+your start-up file rather than modifying the standard \*(mS files.
 .BU
-Personal spelling dictionary \fIusername.edf\fR, see
-.Ht edf 8 .
-This file contains your personal  spelling  modifications,  any words that are
-added to the spelling dictionary are added to this file.
+Personal spelling dictionary \fBlsdp\fR\|\fIlang\fR\|.edf (see
+.Ht edf 8 ).
+Multiple  spelling  dictionaries  may be created, one for each  language.  Any
+words that are added to the spelling dictionary are stored in these files.
 .BE
-In  addition  to the above, if new file hooks are defined  then they should be
-added to this directory (if they are not global to the company).
+In addition to the above, if new private macro files are constructed then they
+should be added to this directory (if they are not global to the company).
 .SH EXAMPLE
 The following are examples of some individuals start-up files:-
 .Me $emf-scheme
@@ -226,9 +207,9 @@ define-macro spotless
     !while &sin @wc " \\t"
         forward-delete-char
     !done
-    ; Fill the line to the current $c-margin. We use this as 
+    ; Fill the line to the current $c-margin. We use this as
     ; this is the only variable that tells us where the margin
-    ; should be. 
+    ; should be.
     !if &gre $window-acol 0
         backward-char
         !if &sin @wc " \\t"
@@ -254,8 +235,8 @@ global-bind-key beginning-of-line       "home"
 global-bind-key end-of-line             "end"
 global-bind-key undo                    "f4"
 !if &seq %emulate "ERROR"
-    global-bind-key comment-adjust      "esc tab" 
-    global-bind-key comment-adjust      "C-insert" 
+    global-bind-key comment-adjust      "esc tab"
+    global-bind-key comment-adjust      "C-insert"
     ; Like a korn shell please.
     ml-bind-key tab "esc esc"
 !endif
@@ -267,11 +248,6 @@ global-bind-key undo                    "f4"
     !if &not &seq $platform "win32"
         ; Small bold font is better for me.
         change-font "-*-clean-medium-r-*-*-*-130-*-*-*-*-*-*"
-        ; Small non-bold font.
-        ; change-font "-misc-fixed-medium-r-normal--13-*-*-*-c-70-iso8859-1"
-        ; Change the size of the screen 
-        82 change-frame-width
-        50 change-frame-depth
     !endif
 !endif
 ; Change the default diff command-line for GNU diff utility all platforms
@@ -282,7 +258,7 @@ set-variable %gdiff-com "diff --context --ignore-space-change -w"
     set-variable %cygnus-bin-path "c:/cygwin/bin"
     set-variable %cygnus-hilight 1
     set-variable %cygnus-prompt "$"
-!endif    
+!endif
 ; Set up the ftp flags. The letters have the following meaning:
 ; c   - Create a console (*ftp-console* for ftp, *http-console* for http)
 ; s   - Show the console
@@ -291,7 +267,7 @@ set-variable %ftp-flags "csp"
 ; Info files
 ;To hilight the .info and also the dir file
 add-file-hook ".info dir"                                   fhook-info   ; Info-files
-;To hilight all info files without the extension .info 
+;To hilight all info files without the extension .info
 ;but starting with the text "This is info file..
 -2 add-file-hook "This is Info file"                        fhook-info
 
@@ -301,9 +277,15 @@ ml-write "Configured to Jon's requirements"
 .Me $ehf-scheme
 .SH "SEE ALSO"
 .na
-.Ht $MEPATH 5 ,
-.Ht $MENAME 5 ,
 .Ht user-setup 3 ,
+.Ht $search-path 5 ,
+.Ht $user-name 5 ,
+.Ht $user-path 5 ,
+.Ht $MEINSTALLPATH 5 ,
+.Ht $MENAME 5 ,
+.Ht $MEPATH 5 ,
+.Ht $MEUSERPATH 5 ,
+.Ht me32.ini 8 ,
 .Hl "Company Profiles" companyProfiles 2 ,
 .Hl "File Hooks" fileHooks 2 ,
 .Hl "File Language Templates" languageTemplates 2 ,

@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Fri Jan 9 00:04:42 2004
 .\"
-.Id $Id: m2nar009.2,v 1.2 2004-01-09 00:50:06 jon Exp $
+.Id $Id: m2nar009.2,v 1.3 2004-02-04 22:54:22 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .TH Patching 1
@@ -32,7 +32,7 @@ copy me32.exe me32_2002_12.exe
 Save the macros directory, these may be moved i.e.
 .RS
 .CS
-move macros macros_2002_12
+rename macros macros_2002_12
 .CE
 .RE
 .BU
@@ -105,13 +105,13 @@ unzip /path-to/memacros-20040108-rc1.zip
 Installed  packages are built with the install path built into the executable,
 this  may be  different  from  the  patch  version  of the  executable  so the
 environment variable
-.Ht $MEPATH 5
-must be defined in the environment with the macro installation search paths.
+.Ht $MEINSTALLPATH 5
+may be defined in the environment with the macro installation search paths.
 .BE 0
 .SH "SEE ALSO"
 .na
 .Ht $MENAME 5 ,
-.Ht $MEPATH 5 ,
+.Ht $MEINSTALLPATH 5 ,
 .Hl "Company Profiles" CompanyProfiles 2 ,
 .Hl "Installation" Installation 1 ,
 .Hl "File Hooks" fileHooks 2 ,

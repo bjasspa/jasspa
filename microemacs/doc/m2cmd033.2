@@ -1,12 +1,12 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Jul 25 00:00:27 1998
 .\"
-.Id $Id: m2cmd033.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd033.2,v 2.6 2004-02-04 22:54:22 jon Exp $
 .Im MicroEmacs command|indent|scuts
 .so me.tni
 .TH indent 2
@@ -21,6 +21,7 @@ indent \- Manage the auto-indentation methods
 "\|\fIind-no\fR\|"
 "\|\fIflags\fR\|"
 "\|\fIlook-back\fR\|"
+[ "\|\fIindent-scheme\fR\|" ]
 .sp
 .B indent
 "\|\fIind-no\fR\|"
@@ -29,6 +30,19 @@ indent \- Manage the auto-indentation methods
 [ "\|\fIclose\fR\|"
 [ "\|\fIignore\fR\|" ]]
 [ "\|\fIindent\fR\|" ]
+.br
+.B indent
+"\|\fIind-no\fR\|"
+\fBt\fR
+"\|\fItoken\fR\|"
+"\|\fIindent-scheme\fR\|"
+.br
+.B indent
+"\|\fIind-no\fR\|"
+\fBx\fR | \fBw\fR
+"\|\fItoken\fR\|"
+"\|\fIindent\fR\|"
+"\|\fIindent-scheme\fR\|"
 .ad
 .SH DESCRIPTION
 The \fBindent\fR  command creates and manages the auto-indenting  methods, the
@@ -43,6 +57,7 @@ argument configurations is defined as follows:-
 "\|\fIind-no\fR\|"
 "\|\fIflags\fR\|"
 "\|\fIlook-back\fR\|"
+[ "\|\fIindent-scheme\fR\|" ]
 .ad
 .PP
 With an argument of \fC0\fR,  \fBindent\fR  creates a new  indentation  method
@@ -60,6 +75,19 @@ Sets the indent bit flags where:-
 .IP \fC0x01\fR
 Indent  method is case  insensitive.  Note that  \fBindent\fR  tokens  must be
 specified in lower case.
+.IP \fC0x02\fR
+Defines a \fBfast look-back\fR  indentation scheme that is associated with the
+current  indentation  scheme. The fast  look-back  scheme locates the start of
+indentation tokens in the buffer. The \fIindent-scheme\fR argument is required
+when  the flag bit is set and  identifies  the  handle  of the fast  look-back
+indentation scheme that is used to locate the indentation style of the current
+block.
+.IP
+This flag is only  defined  where the buffer is  required to support  multiple
+complex  indentation  schemes.  When defined the  \fIlook-back\fR  argument is
+typically  set to look  back a long  way i.e. 500  lines,  the fast  look-back
+\fIindent-scheme\fR   should   contain   few  tokens  to  ensure  that  system
+performance is maintained.
 .LP
 .I look-back
 specifies the maximum  number of lines, prior to the current line,  considered
@@ -202,7 +230,7 @@ In this  situation the current line is indented to the right of the mismatched
 bracket.
 .IP "When the previous line has an unmatched close bracket"
 In this  situation  the matching open bracket is hunted for in previous  lines
-until either the \fIlook-back\fR limit (See \fBIndentation Method Creation\fR) 
+until either the \fIlook-back\fR limit (See \fBIndentation Method Creation\fR)
 is  exhausted or the bracket is matched, in which case the indent of that line
 is used.
 .LP
@@ -312,6 +340,73 @@ producing
 \....
 .CE 0
 .RE
+.TP
+\fBType\fR (\fI\|type\|\fR =  '\fCt\fR' or '\fCT\fR')
+.\"
+Used in conjunction with the \fBfast look-back\fR indentation scheme to define
+the look back  indentation  start token(s). The fast look-back token typically
+shadows the \fCx\fR  type and  identifies  the  indentation  scheme. The token
+itself does not change the  indentation, it simply  identifies the indentation
+scheme.  The  '\fCx\fR'  or  '\fCw\fR'  types are used to  perform  the actual
+indentation of the line if required.
+.IP
+If the  \fIindent-scheme\fR  is defined as zero (\fC0\fR) then the indentation
+scheme is set to the same value as the
+.Ht hilight 2
+scheme handle.
+.IP
+The following example is taken from the XML language  definition . A fast-look
+back  scheme  is  used  (\fChilight.xmlT\fR)  to  search  for the  alternative
+indentation  schemes  for  \fIjavascript\fR  and  \fIvbscript\fR.  The \fCt\fR
+indent type defines the start of script  tokens and to switch the  indentation
+to the new indent type.
+.RS
+.Me $emf-scheme
+.CS
+; Fast look-back indentation scheme
+0 indent .hilight.xmlT 1 500
+; Indentation scheme
+0 indent .hilight.xml 3 20 .hilight.xmlT
+
+!if &exist .indent.javascript
+    indent .hilight.xmlT t "<script ... javascript>"   .indent.javascript
+    indent .hilight.xml  x "<script ... javascript>" 2 .indent.javascript
+    indent .indent.javascript w "</script>" -2 0
+!endif
+!if &exist .indent.vbscript
+    indent .hilight.xmlT t "<script ... vbscript>"   .indent.vbscript
+    indent .hilight.xml  x "<script ... vbscript>" 2 .indent.vbscript
+    indent .indent.vbscript w "</script>" -2 0
+!endif
+indent .hilight.xmlT t "</script>" 0
+indent .hilight.xml  o "</script>" -2
+; Define the indentation tokens. XML is well defined so there are
+; always opening and closing brackets.
+indent .hilight.xml e "\\"" "\\"" "\\\\"
+indent .hilight.xml b "<!--" "-->"
+indent .hilight.xml b "<\\\\?" "\\\\?>"
+indent .hilight.xml n "<[^/!]" 2
+indent .hilight.xml o "</"    -2
+indent .hilight.xml o "/>"    -2
+.CE 0
+.Me $ehf-scheme
+.RE
+.TP
+\fBChange\fR (\fI\|type\|\fR = '\fCx\fR' or '\fCX\fR' or '\fCw\fR' or '\fCW\fR')
+.\"
+Change the indentation scheme from the current scheme to the new
+.IR indent-scheme .
+If the
+.I indent-scheme
+is specified as zero  (\fC0\fR) then the indentation scheme is set to the same
+handle value as the current
+.Ht hilight 2
+scheme.
+.I ind-no
+specifies  the indent  value, when the  \fItype\fR is \fCx\fR then the current
+line is indented, a \fItype\fR of \fCw\fR indents the next line.
+.IP
+Refer the the \fItype\fR\|=\fCx\fR for an example of indentation switching.
 .SH EXAMPLE
 Examples  of  indentation  method  creations  can  be  found  in  macro  files
 \fChkemf.emf\fR,  \fChktcl.emf\fR and  \fChkvrml.emf\fR. The following example
@@ -348,4 +443,3 @@ indent .hilight.emf f "*" 0
 .Ht hilight 2 .
 .ad
 .FH
-

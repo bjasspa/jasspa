@@ -1,12 +1,12 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Jul 11 13:30:15 1998
 .\"
-.Id $Id: m2nar008.2,v 1.3 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2nar008.2,v 1.4 2004-02-04 22:54:22 jon Exp $
 .Im MicroEmacs macrodevelop
 .so me.tni
 .TH localeSupport 2
@@ -237,7 +237,7 @@ rules  and  dictionaries  have  not been  downloaded.  You  should  be able to
 download them from the JASSPA website, see
 .Hl "Contact Information" Contact - .
 Once downloaded they must be placed in the \*(mS
-.Hl "search path" $MEPATH 5 ,
+.Hl "search path" $search-path 5 ,
 i.e. where the other macro files (like \fCme.emf\fR) are located.
 .RE
 .PP
@@ -291,17 +291,19 @@ dictionary containing obscure words  "\fClsdx\fR\fI<lang-id>\fR\fC.edf\fR" and
 the other as above.
 .PP
 Once the generated word and dictionary files have been place in the \*(mS
-.Hl "search path" $MEPATH 5 ,
+.Hl "search path" $search-path 5 ,
 the spelling  checker  should find and use them. Please submit your  generated
 support to \*(mS for others to benefit.
 .SH "SEE ALSO"
 .na
-.Ht user-setup 3 ,
-.Ht charset-change 3 ,
 .Ht set-char-mask 2 ,
 .Ht translate-key 2 ,
+.Ht charset-change 3 ,
+.Ht user-setup 3 ,
 .Ht $box-chars 5 ,
-.Ht $window-chars 5 ,
 .Ht $recent-keys 5 .
+.Ht $search-path 5 ,
+.Ht $user-path 5 ,
+.Ht $window-chars 5 .
 .ad
 .FH

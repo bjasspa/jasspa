@@ -1,12 +1,12 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Jon Green
 .\"  Created       : Sun Aug 23 15:42:05 1998
 .\"
-.Id $Id: m2nar002.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2nar002.2,v 2.6 2004-02-04 22:54:22 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .TH CompanyProfiles 2
@@ -32,48 +32,9 @@ performed  in a separate  directory  location  which  shadows  the  MicroEmacs
 standard macro file  directory.  This enables the original files to be sourced
 if a user does not want to include the company  files. This method also allows
 MicroEmacs to be updated in the future,  whilst  retaining the company  files.
-For our  example,  we shall  use a company  called  \fBJASSPA\fR,  you  should
-replace  references  to  \fIjasspa\fR  with your own  company  name. The steps
-involved are laid out as follows:-
-.BP "Create a new company directory"
-You may skip this step if you are going to modify the standard installation.
-.IP
-Create a new directory to hold the company information. i.e.
-.RS
-.IP
-\fC/usr/local/microemacs/jasspa\fR \- \s-1UNIX\s0
-.br
-\fCc:\\Program\ Files\\JASSPA\\MicroEmacs\\jasspa\fR \- Microsoft
-.RE
-.IP
-Modify the
-.Ht $MEPATH 5
-of the (of all users) to include the company directory on the search path i.e.
-.RS
-.IP "\s-1UNIX\s0"
-Users edit their local  \fC$MEPATH\fR or a base $MEPATH is added to the system
-\fC.login\fR or \fC.profile\fR scripts.
-.RS
-.IP
-\fCMEPATH=/usr/local/microemacs\fR
-.br
-\fCMEPATH=/usr/local/microemacs/jasspa:$MEPATH\fR
-.RE
-.IP "Microsoft Windows Platforms"
-Edit the \fCme32.ini\fR  file and modify the \fCmepath\fR entry to reflect the
-location of the company directory:-
-.RS
-.IP
-.C "mepath=C:\\\\Prog....\\\\Mic...\\\\macros\\\\jasspa;C:\\\\Prog...\\\\Mic...\\\\macros"
-.RE
-.IP "DOS Platforms"
-Edit the  \fBautoexec.bat\fR  file and  modify  \fCMEPATH\fR  to  include  the
-company directory location.
-.RS
-.IP
-.C "SET MEPATH=c:\\\\me\\\\jasspa;c:\\\\me"
-.RE
-.RE
+.PP
+The company  files are  generally  placed in the  \fCcompany\fR  sub-directory
+described in the installation notes.
 .SS "Content Of The Company Information"
 .BP "Company macro file"
 The   company   file  is   typically   called  by  the   company   name  (i.e.
@@ -129,6 +90,7 @@ and
 .RE
 .SH "SEE ALSO"
 .na
+.Ht $MEINSTALLPATH 5 ,
 .Ht $MENAME 5 ,
 .Ht $MEPATH 5 ,
 .Hl "File Hooks" fileHooks 2 ,

@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd125.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd125.2,v 2.6 2004-02-04 22:54:22 jon Exp $
 .Im MicroEmacs command|spell|macrodevelop
 .so me.tni
 .TH spell 2
@@ -46,8 +46,7 @@ last added dictionary and deletions are made to all main dictionaries.
 When set flags that the given word is erroneous, used solely by word additions
 to create auto-corrections.
 .IP \fB0x020\fR
-Returns  a  '\fI|\fR'  separated  guest  guess  list  for  the  given  word in
-\fB$result\fR.
+Returns a '\fI|\fR' separated guess list for the given word in \fB$result\fR.
 .IP \fB0x040\fR
 If bit  \fB0x100\fR is also set a complete list of valid words  derivable from
 the given word are inserted into the current buffer. Otherwise spell returns
