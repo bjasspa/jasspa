@@ -5,7 +5,7 @@
  *  Synopsis      : Generic terminal support routines
  *  Created By    : Steven Phillips
  *  Created       : 1993
- *  Last Modified : <011115.0002>
+ *  Last Modified : <011218.1158>
  *
  *  Description
  *     Many generic routines to support timers, key input and some output.
@@ -1108,7 +1108,22 @@ arg_print:
                     str[-1] = 'd' ;
                 cc = *str ;
                 *str = '\0' ;
-                stackDep-- ;
+                if(!stackDep)
+                {
+                    /* an argument has not been loaded into the stack yet -
+                     * occurs with cygwin color terminal. assume the first arg
+                     * is required */
+#ifdef _STDARG
+                    va_list ap;
+                    va_start(ap,str);
+                    stack[0] = va_arg(ap, int32) ;
+                    va_end (ap);
+#else
+                    stack[0] = ((int32 *)&arg)[0] ;
+#endif
+                }
+                else
+                    stackDep-- ;
                 sprintf(tbuff+len,ss,stack[stackDep]) ;
                 len += strlen(tbuff+len) ;
                 *str = cc ;

@@ -5,7 +5,7 @@
  *  Synopsis      : Unix X-Term and Termcap support routines
  *  Created By    : Steven Phillips
  *  Created       : 1993
- *  Last Modified : <011217.1312>
+ *  Last Modified : <011218.1140>
  *
  *  Description
  *    This implementation of unix support currently only supports Unix v5 (_USG),
@@ -101,10 +101,13 @@ extern int      tgetent(char *,char *);
 extern char *   tgetstr(char *,char **);
 extern int      tputs(char *,int, int (*)(int));
 extern int      tgetflag(char *);
-#ifdef _USETPARM
-extern char *   tparm(char *, int p1);
-#endif
 #endif /* _CYGWIN */
+#ifdef _USETPARM
+extern char *   tparm(const char *, ...);
+#define meTCAPParm tparm
+#else
+#define meTCAPParm meTParm
+#endif
 
 #define putpad(s)  tputs(s, 1, putchar)
 #define TCAPSLEN 512
@@ -2428,11 +2431,7 @@ TCAPschemeSet(meSCHEME scheme)
             if (tcaptab[TCAPsetaf].code.str != NULL)
             {
                 /* Have a termcap entry for color ?? */
-#ifdef _USETPARM
-                putpad (tparm (tcaptab[TCAPsetaf].code.str, col));
-#else
-                putpad (meTParm (tcaptab[TCAPsetaf].code.str, col));
-#endif /* _USETPARM */
+                putpad (meTCAPParm(tcaptab[TCAPsetaf].code.str, col));
             }
             else
             {
@@ -2450,11 +2449,7 @@ TCAPschemeSet(meSCHEME scheme)
             if (tcaptab[TCAPsetab].code.str != NULL)
             {
                 /* Have a termcap entry for color ?? */
-#ifdef _USETPARM
-                putpad (tparm (tcaptab[TCAPsetab].code.str, col));
-#else
-                putpad (meTParm (tcaptab[TCAPsetab].code.str, col));
-#endif /* _USETPARM */
+                putpad(meTCAPParm(tcaptab[TCAPsetab].code.str, col));
             }
             else
             {

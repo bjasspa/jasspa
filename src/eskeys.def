@@ -6,7 +6,7 @@
  *  Object Name   : eskeys.def
  *  Author        : Steve Philips
  *  Created       : Thu Sep 18 15:32:46 1997
- *  Last Modified : <011015.0923>
+ *  Last Modified : <011218.0909>
  *
  *  Description	
  *       Extended key definitions.
@@ -106,5 +106,5 @@ DEFSKEY ("return",       NULL, "\015",    SKEY_return )
 DEFSKEY ("right",        "kr", "\033[C",  SKEY_right )
 DEFSKEY ("scroll-lock",  NULL, NULL,      SKEY_scroll_lock )
 DEFSKEY ("space",        NULL, NULL,      SKEY_space )
-DEFSKEY ("tab",          NULL, NULL,      SKEY_tab )
+DEFSKEY ("tab",          NULL, "\011",     SKEY_tab )
 DEFSKEY ("up",           "ku", "\033[A",  SKEY_up )
