@@ -111,7 +111,7 @@ define-macro-file collapse collapse-current collapse-all
 0 define-macro buffer-init
     set-variable $buffer-fhook &cat "fhook-" @1
     set-variable #l0 &ind &spr ".%s.setup" $buffer-fhook
-    !if &not @#
+    !if &and &not @# &not &bmod "pipe"
         !if &sin "n" #l0
             !force set-variable #l1 @2
             set-variable #l1 &cond $status #l1 @1
