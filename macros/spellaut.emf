@@ -349,6 +349,7 @@ define-macro auto-spell-menu
         set-variable $mouse-y $cursor-y
     !endif
     0 auto-spell-test
+    set-position "\x82"
     set-position "\x83"
     set-variable .auto-spell-osd.word $result
     .osd.spell-auto auto-spell-osd
