@@ -171,15 +171,20 @@ define-macro item-list-create
     set-variable $buffer-mask #l3
     find-buffer #l1
     !force set-variable #l5 @3
-    !if &set #l8 $status
+    !if &set @# $status
         set-variable #l0 @2
     !else
-        !if &not &exi &ind &spr ".%s.item-list-s1" $buffer-fhook
+        !if &exi :chook
+            set-variable #l8 :chook
+        !elif &seq &set #l8 &rig $buffer-fhook 6 ""
+            set-variable #l8 "default"
+        !endif
+        !if &not &exi &ind &spr ".fhook-%s.item-list-s1" #l8
             goto-position "\x86"
             !return
         !endif
-        set-variable #l0 &ind &spr ".%s.item-list-s1" $buffer-fhook
-        set-variable #l5 &ind &spr ".%s.item-list-r1" $buffer-fhook
+        set-variable #l0 &ind &spr ".fhook-%s.item-list-s1" #l8
+        set-variable #l5 &ind &spr ".fhook-%s.item-list-r1" #l8
     !endif
     set-variable #l2 &bmod "magic"
     1 buffer-mode "magic"
@@ -214,11 +219,11 @@ define-macro item-list-create
             set-variable $window-col #l7
             !force search-forward #l0
         !done
-        !if #l8
+        !if @#
             set-variable #l0 "ERROR"
         !else
-            set-variable #l0 &ind &spr ".%s.item-list-s%d" $buffer-fhook &inc #l9 1
-            set-variable #l5 &ind &spr ".%s.item-list-r%d" $buffer-fhook #l9
+            set-variable #l0 &ind &spr ".fhook-%s.item-list-s%d" #l8 &inc #l9 1
+            set-variable #l5 &ind &spr ".fhook-%s.item-list-r%d" #l8 #l9
         !endif
     !until &seq #l0 "ERROR"
     find-buffer #l6

@@ -23,8 +23,8 @@ define-macro fhook-xml
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-xml.setup &reg "/history" "fhook/xml" "cdghiopsx"
-set-variable .fhook-xml.setup-mask "acdeghikmopstux"
+set-variable .fhook-xml.setup &reg "/history" "fhook/xml" "cdghinopsx"
+set-variable .fhook-xml.setup-mask "acdeghikmnopstux"
 set-variable .fhook-xml.comment  "|<!--|-->|--|  -- | -- |f|"
 
 !if &not &exist fhook-vb
