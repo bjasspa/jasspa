@@ -554,7 +554,9 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             break ;
 #endif
         case EVFRMDPTH:
-            return frameChangeDepth(meTRUE,frameCur->depth+1-meAtoi(vvalue));
+            return frameChangeDepth(meTRUE,meAtoi(vvalue)-(frameCur->depth+1));
+        case EVFRMWDTH:
+            return frameChangeWidth(meTRUE,meAtoi(vvalue)-frameCur->width);
         case EVABSCOL:
             return setcwcol(meAtoi(vvalue));
         case EVABSLINE:
@@ -638,8 +640,6 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             }
             return meTRUE ;
 #endif
-        case EVFRMWDTH:
-            return frameChangeWidth(meTRUE,frameCur->width-meAtoi(vvalue));
         case EVCBUFNAME:
             unlinkBuffer(frameCur->bufferCur) ;
             if((vvalue[0] == '\0') || (bfind(vvalue,0) != NULL))
