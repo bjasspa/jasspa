@@ -4,7 +4,7 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <040927.2331>
+>  Last Modified : <041029.2250>
 >
 
     [040210] BS/0401-4 - Minor - TBD
@@ -23,7 +23,15 @@
         
         JG  suggest  that this  ought to be bound  like this as default as the
         key binding is not used. 
+
+    [041029] Klaus Kusche
+    
+        Fix kill-paragraph -ve docs.
         
+    [040805] Pierre Gaston
+    
+        Change SHGetSpecialFolderPath function call.
+
 ___________________________________________________________________________
 
 0401-4 Release Fixes
