@@ -1,4 +1,3 @@
-; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
 ; Copyright (C) 1997-2002 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
@@ -68,7 +67,7 @@ define-macro fhook-dirlst
             !endif
         !endif
         goto-line 4
-        insert-string &spr " Attr%nSize     Modified Name\n" &sub :fmpf 23 " "
+        insert-string &spr " Attr%nSize     Modified Name  <Order by Extension>\n" &sub :fmpf 23 " "
         backward-word
         ; current sort column supported in ftp dir-listings?
         !if &band 1 &lget .fhook-dirlst.col-flag &lget .fhook-dirlst.sort 1
@@ -78,7 +77,7 @@ define-macro fhook-dirlst
     !else
         3 forward-line
         set-variable :fmpf 32
-        insert-string " Attr    Size          Modified Name\n"
+        insert-string " Attr    Size          Modified Name  <Order by Extension>\n"
         !if &exi .fhook-dirlst.file-process
             !force !force execute-line .fhook-dirlst.file-process
             set-variable :file-process .fhook-dirlst.file-process
@@ -105,8 +104,8 @@ set-variable .fhook-dirlst.command-nbind "|||||||||||"
 set-variable .fhook-dirlst.command-kbind "|tab|delete||return|space|d|D|x|X||"
 set-variable .fhook-dirlst.command-desc  "|Swap Browser \HWindows|\HClose File Browser||\HOpen File|Toggle \HSelection|\HDelete All Selections||E\Hxecute Shell Command on Selected||            (%p for path, %f for file & %% for %)|"
 
-set-variable .fhook-dirlst.col-name "|Name|Attr|    Size|        Modified|"
-set-variable .fhook-dirlst.col-flag "|0|4|2|1|"
+set-variable .fhook-dirlst.col-name "|Name|Attr|    Size|        Modified|<Order by Extension>|"
+set-variable .fhook-dirlst.col-flag "|0|4|2|1|8|"
 set-variable .fhook-dirlst.sort     "|1|0|"
 set-variable .fhook-dirlst.browser-lock 0
 set-variable .fhook-dirlst.file-process ""
@@ -552,6 +551,32 @@ define-macro file-browser-swap-buffers
         !force #l1 sort-lines "y"
     !endif
 !emacro
+0 define-macro dirlst-sort-list-add-ext
+    set-variable #l0 &sub &sin "Name" @wl 1
+    forward-line
+    !while &not &seq @wc ""
+        set-variable #l1 " "
+        !if &xseq @wl  ".*[ .]\\([^. ]*\\)"
+            set-variable #l1 &cat @s1 #l1
+        !endif
+        set-variable $window-col #l0
+        insert-string #l1
+        forward-line
+    !done
+    4 goto-line
+!emacro
+0 define-macro dirlst-sort-list-del-ext
+    4 goto-line
+    set-variable #l0 &sub &sin "Name" @wl 1
+    forward-line
+    !while &not &seq @wc ""
+        set-variable $window-col #l0
+        set-variable #l1 &sin " " &rig @wl #l0
+        #l1 forward-delete-char
+        -1 yank
+        forward-line
+    !done
+!emacro
 0 define-macro dirlst-sort-list
     set-variable #l0 &sub $window-line $window-y-scroll
     set-alpha-mark "T"
@@ -559,6 +584,10 @@ define-macro file-browser-swap-buffers
     4 goto-line
     set-variable #l1 &lget .fhook-dirlst.sort 1
     set-variable #l2 &lget .fhook-dirlst.col-flag #l1
+    !if &band #l2 8
+        dirlst-sort-list-add-ext
+        set-variable #l1 1
+    !endif
     set-variable #l3 &lget .fhook-dirlst.col-name #l1
     set-variable #l4 &sub &sin #l3 @wl 1
     !if &band #l2 4
@@ -580,6 +609,9 @@ define-macro file-browser-swap-buffers
     set-mark
     end-of-buffer
     dirlst-sort-list-section #l5 #l4 #l6
+    !if &band #l2 8
+        dirlst-sort-list-del-ext
+    !endif
     -1 buffer-mode "edit"
     1 buffer-mode "view"
     goto-alpha-mark "T"
