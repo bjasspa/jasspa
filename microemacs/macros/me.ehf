@@ -1235,6 +1235,7 @@ Miscellaneous Information
     lslm$rcs-ue-com(5)le RCS (and SCCS) unedit file command 
     lslm$result(5)le Various command return values 
     lslm%compile-com(5)le Default system compile command line 
+    lslm%cvs-com(5)le CVS Command line 
     lslm%cygnus-bin-path(5)le Cygwin BASH directory 
     lslm%cygnus-hilight(5)le Cygwin shell hilight enable flag 
     lslm%cygnus-prompt(5)le Cygwin shell prompt 
@@ -2613,6 +2614,7 @@ Miscellaneous Information
     lslm$window-xcl-scroll(5)le Current window current line X scroll 
     lslm$window-y-scroll(5)le Current window Y scroll 
     lslm%compile-com(5)le Default system compile command line 
+    lslm%cvs-com(5)le CVS Command line 
     lslm%cygnus-bin-path(5)le Cygwin BASH directory 
     lslm%cygnus-hilight(5)le Cygwin shell hilight enable flag 
     lslm%cygnus-prompt(5)le Cygwin shell prompt 
@@ -2942,6 +2944,7 @@ Miscellaneous Information
     lslm$window-y-scroll(5)le Current window Y scroll 
     lslm%company-name(5)le Name of company for template 
     lslm%compile-com(5)le Default system compile command line 
+    lslm%cvs-com(5)le CVS Command line 
     lslm%cygnus-bin-path(5)le Cygwin BASH directory 
     lslm%cygnus-hilight(5)le Cygwin shell hilight enable flag 
     lslm%cygnus-prompt(5)le Cygwin shell prompt 
@@ -6950,18 +6953,18 @@ Miscellaneous Information
             operation is dependent upon the support offered by the graphics 
             adapter. 
 
-    cDMEUSERPATHcA 
-        lslm$MEINSTALLPATH(5)le is an environment variable that overrides any 
-        internally defined search path for MicroEmacs system macros and 
-        defines the root directory(s) of the MicroEmacs system macros. The 
-        presence of the environment variable affects lslm$search-path(5)le. 
+    lslm$MEINSTALLPATH(5)le 
+        is an environment variable that overrides any internally defined 
+        search path for MicroEmacs system macros and defines the root 
+        directory(s) of the MicroEmacs system macros. The presence of the 
+        environment variable affects lslm$search-path(5)le. 
 
     lslm$MEUSERPATH(5)le 
         is an environment variable that defines the users private directory 
         where user configuration files such as ls$user-name(5)lm$user-namelecD.emfcA, ls$user-name(5)lm$user-namelecD.erfcA 
         and personal spelling dictionaries are stored. This is an absolute 
         directory path. The environment variable sets the MicroEmacs variable 
-        lslm$user-name(5)le. 
+        lslm$user-path(5)le. 
 
     cDMEPATHcA 
         lslm$MEPATH(5)le is an environment variable that may be used to define the 
@@ -6971,8 +6974,8 @@ Miscellaneous Information
         lslm$user-path(5)le as the first path when the environment variable 
         lslm$MEUSERPATH(5)le is not defined. If cD$MEUSERPATHcA is defined then this 
         path name appears before the cD$MEPATHcA variable to define the user 
-        directory location. cD$MEPATHcA is not searching, so ALL all directories 
-        to be searched must be included in the path specification. 
+        directory location. cD$MEPATHcA is not searching, so ALL directories to be 
+        searched must be included in the path specification. 
 
         lslm$MEUSERPATH(5)le is the preferred method used to defined the user 
         directory. 
@@ -9984,9 +9987,11 @@ $a
 cEcESYNOPSIS cEcA
 
 
-    cC0cA cDindentcA "cCind-nocA" "cCflagscA" "cClook-backcA" 
+    cC0cA cDindentcA "cCind-nocA" "cCflagscA" "cClook-backcA" [ "cCindent-schemecA" ] 
 
     cDindentcA "cCind-nocA" "cCtypecA" "cCtokencA" [ "cCclosecA" [ "cCignorecA" ]] [ "cCindentcA" ] 
+    cDindentcA "cCind-nocA" cDtcA "cCtokencA" "cCindent-schemecA" 
+    cDindentcA "cCind-nocA" cDxcA | cDwcA "cCtokencA" "cCindentcA" "cCindent-schemecA" 
 
 
 cEcEDESCRIPTION cEcA
@@ -10001,7 +10006,7 @@ $a
 cEIndentation Method Creation cA
 
 
-    cC0cA cDindentcA "cCind-nocA" "cCflagscA" "cClook-backcA" 
+    cC0cA cDindentcA "cCind-nocA" "cCflagscA" "cClook-backcA" [ "cCindent-schemecA" ] 
 
     With an argument of cG0cA, cDindentcA creates a new indentation method with the 
     integer handle cCind-nocA. The indentation method is assigned to a buffer by 
@@ -10015,6 +10020,20 @@ $a
     cG0x01cA 
         Indent method is case insensitive. Note that cDindentcA tokens must be 
         specified in lower case. 
+
+    cG0x02cA 
+        Defines a cDfast look-backcA indentation scheme that is associated with 
+        the current indentation scheme. The fast look-back scheme locates the 
+        start of indentation tokens in the buffer. The cCindent-schemecA argument 
+        is required when the flag bit is set and identifies the handle of the 
+        fast look-back indentation scheme that is used to locate the 
+        indentation style of the current block. 
+
+        This flag is only defined where the buffer is required to support 
+        multiple complex indentation schemes. When defined the cClook-backcA 
+        argument is typically set to look back a long way i.e. 500 lines, the 
+        fast look-back cCindent-schemecA should contain few tokens to ensure that 
+        system performance is maintained. 
 
     cClook-backcA specifies the maximum number of lines, prior to the current 
     line, considered when calculating the indentation of a line, i.e. if there 
@@ -10222,6 +10241,61 @@ $a
             .... 
             # ... ignore this { indent token 
             .... 
+
+
+    cDTypecA (cCtypecA = 'cGtcA' or 'cGTcA') 
+        Used in conjunction with the cDfast look-backcA indentation scheme to 
+        define the look back indentation start token(s). The fast look-back 
+        token typically shadows the cGxcA type and identifies the indentation 
+        scheme. The token itself does not change the indentation, it simply 
+        identifies the indentation scheme. The 'cGxcA' or 'cGwcA' types are used to 
+        perform the actual indentation of the line if required. 
+
+        If the cCindent-schemecA is defined as zero (cG0cA) then the indentation 
+        scheme is set to the same value as the lslmhilight(2)le scheme handle. 
+
+        The following example is taken from the XML language definition . A 
+        fast-look back scheme is used (cGhilight.xmlTcA) to search for the 
+        alternative indentation schemes for cCjavascriptcA and cCvbscriptcA. The cGtcA 
+        indent type defines the start of script tokens and to switch the 
+        indentation to the new indent type. 
+sB
+            ; Fast look-back indentation scheme 
+            0 indent .hilight.xmlT 1 500 
+            ; Indentation scheme 
+            0 indent .hilight.xml 3 20 .hilight.xmlT 
+
+            !if &exist .indent.javascript 
+                indent .hilight.xmlT t "<script ... javascript>"   .indent.javascript 
+                indent .hilight.xml  x "<script ... javascript>" 2 .indent.javascript 
+                indent .indent.javascript w "</script>" -2 0 
+            !endif 
+            !if &exist .indent.vbscript 
+                indent .hilight.xmlT t "<script ... vbscript>"   .indent.vbscript 
+                indent .hilight.xml  x "<script ... vbscript>" 2 .indent.vbscript 
+                indent .indent.vbscript w "</script>" -2 0 
+            !endif 
+            indent .hilight.xmlT t "</script>" 0 
+            indent .hilight.xml  o "</script>" -2 
+            ; Define the indentation tokens. XML is well defined so there are 
+            ; always opening and closing brackets. 
+            indent .hilight.xml e "\"" "\"" "\\" 
+            indent .hilight.xml b "<!--" "-->" 
+            indent .hilight.xml b "<\\?" "\\?>" 
+            indent .hilight.xml n "<[^/!]" 2 
+            indent .hilight.xml o "</"    -2 
+            indent .hilight.xml o "/>"    -2 
+
+sA
+    cDChangecA (cCtypecA = 'cGxcA' or 'cGXcA' or 'cGwcA' or 'cGWcA') 
+        Change the indentation scheme from the current scheme to the new 
+        cCindent-schemecA. If the cCindent-schemecA is specified as zero (cG0cA) then the 
+        indentation scheme is set to the same handle value as the current 
+        lslmhilight(2)le scheme. cCind-nocA specifies the indent value, when the cCtypecA is 
+        cGxcA then the current line is indented, a cCtypecA of cGwcA indents the next 
+        line. 
+
+        Refer the the cCtypecA=cGxcA for an example of indentation switching. 
 
 
 cEcEEXAMPLE cEcA
@@ -14212,11 +14286,11 @@ $a
     flag is not an cD@cA if the file had been specified on the command line, but 
     has not been read in yet since nothing has switched to that buffer.) 
 
-    The numerical argument cCncA determines the information that is displayed by 
-    the command and is interpreted follows:- 
+    The numerical argument cCncA is a bitwise flag which determines the 
+    information that is displayed by the command, it is interpreted follows:- 
 
     cG  1cA - The default, when the bit is set displays visible buffers only. When 
-    clear displays both visible and invisible buffers. 
+    clear displays both visible and lshide(2m)lmhiddenle buffers. 
     cG  2cA - When set shows buffer size information, including file size, memory 
     size and undo size in bytes. 
 
@@ -16838,8 +16912,7 @@ $a
         additions to create auto-corrections. 
 
     cD0x020cA 
-        Returns a 'cC|cA' separated guest guess list for the given word in 
-        cD$resultcA. 
+        Returns a 'cC|cA' separated guess list for the given word in cD$resultcA. 
 
     cD0x040cA 
         If bit cD0x100cA is also set a complete list of valid words derivable from 
@@ -22677,16 +22750,16 @@ $a
 cEQuick Install cA
 
 
-    The quickest way to install MicroEmacs without reading the rest of this 
-    document is to:- 
+    The quickest way to install MicroEmacs for testing without reading the 
+    rest of this document is to:- 
 
-        * Create a new directory i.e. cGmecA or cGmicroemacscA. 
+        * Create a new directory i.e. cGjasspacA. 
         * Unpack the macros archive into this directory. 
-        * Unpack any spelling dictionaries into this directory. 
         * Unpack the executable into this directory. 
         * Run cGmecA from this directory. 
 
-    On starting, use the mouse and configure the user from the menu bar:- 
+    On starting, you will be prompted for a default directory, accept the 
+    defaults. Use the mouse and configure the user from the menu bar:- 
 
         Help->User Setup 
 
@@ -22725,9 +22798,9 @@ $a
 
     cDExecutable Source Code cA
         The source code release for MicroEmacs '04 contains makefiles (cG*.makcA) 
-        for all supported platforms. Microsoft '95/'98/NT makefiles contain 
-        options at the top of the makefile to enable/disable console and URL 
-        support. cGmesrc.zipcA - Source code for all platforms 
+        for all supported platforms. Microsoft '95/'98/NT/2K/XP makefiles 
+        contain options at the top of the makefile to enable/disable console 
+        and URL support. cGmesrc.zipcA - Source code for all platforms 
         cGmesrc.tar.gzcA - Source code 
 
     cDExecutable Images cA
@@ -22743,6 +22816,9 @@ $a
         cGmesolx86.gzcA - Sun Solaris 2.6 Intel Platform Executable 
         cGmelinux20.gzcA - Linux 2.0.0 Executable 
         cGmefreebsd.gzcA - Free BSD Executable 
+        cGmepenbsd.gzcA - Open BSD Executable 
+        cGmeosf1.gzcA - OSF1 Executable 
+        cGmezaraus.gzcA - Zauraus Palm Executable 
 
     cDHelp File ImagescA (all platforms) 
         cGmewinhlp.zipcA - Windows Help file 
@@ -22792,375 +22868,342 @@ $a
         directory and not be confused with each other. 
 
 
-cEQuick Start Guild For All Platforms cA
+cEInstallation Directories cA
 
 
-    Simply create a directory, down-load the files required (see list for each 
-    platform below) and extract into this directory. From a shell or command 
-    prompt, change to the directory, making it the current one (i.e. cDcdcA to 
-    it), and run the executable. MicroEmacs '04 should open with the on-line 
-    help page visible. 
+    The suggested installation structure for all platforms is defined as:- 
 
-    On Windows based systems this can also be achieved by creating a short-cut 
-    and setting the Working Directory in Properties to this path. 
-
-    To enable MicroEmacs to be run from any directory, simply include this 
-    directory in you cDPATHcA environment variable. Alternatively, copy the 
-    executable to somewhere in your PATH and set the environment variable 
-    ls$MEINSTALLPATH(5)lmMEPATHle to point to this directory. 
-
-    MicroEmacs '04 will function normally in this environment, but in 
-    multi-user environments and for up-dating purposes, it is strongly 
-    recommended that a proper installation is used, see below. 
+                  jasspa 
+                  / | \ 
+                 /  |  \ 
+                /   |   \ 
+         spelling macros company 
 
 
-cEInstallation cA
+    This directory structure is suggested to facilitate upgrades in the future 
+    and to keep user data separate from the system macros. MicroEmacs 
+    understands this directory structure. 
+
+    The directory structures are defined as: 
+
+    cDmacroscA 
+        The standard macro distribution, as supplied by JASSPA. 
+
+    cDspellingcA 
+        Spelling dictionaries. 
+
+    cDcompanycA 
+        Company wide local definitions for the local site. This directory may 
+        be omitted if not applicable. Header templates (cG.etfcA are typically 
+        copied from the cGmacrocA directory to the cGcompanycA directory and modified 
+        for the local site. 
+
+    The search order is defined as cGrootcA, cGcompanycA, cGmacroscA, cGspellingcA. 
 
 
-    cDDOScA 
-
-        Executable: 
-            Compiled with DJGPP V1.0 
-
-        Distribution components required: 
-            cGmedos.zipcA 
-            cGmemacros.zipcA 
-            cC<spelling>cAcG.zipcA 
-
-            cGmewinhlp.zipcA if you are using windows 3.1/3.11 
-
-        Recommended installed components: 
-            cG4doscA - Command shell (giving cCstderrcA redirection). 
-            cGgrepcA - Version of grep (djgpp recommended) 
-            cGmakecA - Version of make (djgpp recommended) 
-            cGdiffcA - Version of diff (djgpp recommended) 
-
-        Installation: 
-            Create the directory cGc:\mecA (or other location) 
-
-            Unzip the MicroEmacs components into cGc:\mecA 
-
-            Edit "cGc:\autoexec.batcA" and add the following lines:- 
-
-                SET MENAME=<name> 
-                SET PATH=%PATH%;c:\me 
-                SET MEPATH="c:\me" 
+cEUNIX Installation (System Wide) cA
 
 
-            Reboot the system. 
+    A system wide installation on UNIX for multiple users adheres to 
+    conventional package installation methods. 
 
-                MicroEmacs may be run from the command line using 
+    cDDistribution Components Required:cA 
+    cGmecAcC<unix>cAcG.gzcA 
+    cGmemacros.tar.gzcA 
+    cC<spelling>cAcG.gzcA 
+    cGhtml.tar.gzcA (optional) 
 
-                me 
+    cDInstallation:cA 
+    It is recommended that the macro files are placed in a standard shared 
+    system directory. The standard directory locations searched by MicroEmacs 
+    are defined on a per-platform basis, only one of the directory locates is 
+    selected, as follows: 
+
+                                    HP-UX     SunOS      AIX      Cygwin 
+                               IRIX     UnixWare   ***BSD    Linux      NeXT 
+        /opt/jasspa:             y    y    y    y    y    y    n    n    n 
+        /usr/share/jasspa:       y    y    y    y    y    y    y    n    n 
+        /usr/local/jasspa:       y    y    y    y    y    y    y    y    y 
+        /usr/local/share/jasspa: n    n    n    n    y    n    n    n    n 
 
 
-        Graphics Cards: 
-            MicroEmacs may be configured to the text modes of your graphics 
-            card. Refer to you graphics card DOS text modes to identify the 
-            text modes supported by your monitor. The text mode number may be 
-            entered into the user monitor configuration, defined in cDHelpcA->cDUser 
-            SetupcA. 
+        * Create the directory cG/usr/local/jasspacA. 
+        * Create the sub-directory cG/usr/local/jasspa/macroscA. Unpack and 
+          install the cGmemacros.tar.gzcA into this directory 
+        * If spelling dictionaries are required then create the directory 
+          cG/usr/local/jasspa/spellingcA. Unpack and install the cGspellingcA into 
+          this directory. 
+        * If the standard icons are required for Gnome, KDE or some other 
+          window manager then create the sub-directory cG/usr/local/jasspa/iconscA 
+          and unpack and install the icons into the new directory. 
+        * Unpack (or build) the executable and place in "cG/usr/local/bincA" 
 
-        Running From Windows (3.x) 
-            The DOS version of MicroEmacs may be executed from a cD.pifcA file. 
-            Use the pif editor to create a new cD.pifcA file to launch MicroEmacs. 
-            The size of the DOS window may be configured from the command 
-            line, set the terminal size using one of the following command 
-            lines:- 
+    The executable may now be run by all users. If the macros are placed in a 
+    non-standard directory location then the environment variable 
+    ls$MEINSTALLPATH(5)lmMEINSTALLPATH(5)le to define the root jasspa tree. 
+
+    For cDcsh(1)cA users execute a "cGrehashcA" command and then lslmme(1)le can be executed 
+    from the command line. 
+
+    By default a X-Windows terminal is displayed, ensure that cG$DISPLAYcA and 
+    cG$TERMcA are correctly configured. To execute a terminal emulation then 
+    execute cDmecA with the cG-ncA option i.e. "cGme -ncA". Note that this is not required 
+    if you are using a cGvt100cA emulation. 
+
+    When MicroEmacs is executed the local directory cG~/.jasspacA is created for 
+    the user settings. The user home directory may be changed by setting the 
+    environment variable lslm$MEPATH(5)le. 
+
+
+cEUNIX Installation (Single User) cA
+
+
+    Where the user is not permitted to install 3rd party applications in the 
+    system directories then MicroEmacs may be installed locally as follows:- 
+
+        * Create the directory cG~/.jasspacA. 
+        * Create the sub-directory cG~.jasspa/macroscA. Unpack and install the 
+          cGmemacros.tar.gzcA into this directory 
+        * If spelling dictionaries are required then create the directory 
+          cG~/.jasspa/spellingcA. Unpack and install the cGspellingcA into this 
+          directory. 
+        * If the standard icons are required for Gnome, KDE or some other 
+          window manager then create the sub-directory cG~/.jasspa/iconscA and 
+          unpack and install the icons into the new directory. 
+        * The user files will be placed in the cG~/.jasspacA directory by default. 
+          To keep the user macros separate then the directory 
+          cG~/.jasspa/$LOGNAMEcA may be created and will identified as the users 
+          home directory. 
+        * Unpack (or build) the executable and place in "cG~/bincA" 
+
+    MicroEmacs may be executed after it has been re-hashed (depending on the 
+    shell). 
+
+
+cEDOS Installation cA
+
+
+    MS-DOS has no concept of a standard installation directory. The location 
+    of the MicroEmacs macros is generally determined from the directory 
+    location of the executable. 
+
+    cDExecutable:cA 
+    Compiled with DJGPP V1.0 
+
+    Distribution components required: 
+        cGmedos.zipcA 
+        cGmemacros.zipcA 
+        cC<spelling>cAcG.zipcA 
+
+        cGmewinhlp.zipcA if you are using windows 3.1/3.11 
+
+    Recommended installed components: 
+        cGgrepcA - Version of grep (djgpp recommended) 
+        cGmakecA - Version of make (djgpp recommended) 
+        cGdiffcA - Version of diff (djgpp recommended) 
+
+    cDInstallation:cA 
+    This installation relies on the executable position. 
+
+        * Create the directory cGc:\jasspacA (or other location) 
+        * Create the sub-directory cGc:\jasspa\macroscA. Unpack and install the 
+          cGmemacros.zipcA into this directory 
+        * If spelling dictionaries are required then create the directory 
+          cGc:\jasspa\spellingcA. Unpack and install the cGspellingcA into this 
+          directory. 
+        * Unzip the executable and place it in the jasspa root directory 
+          cGc:\jasspacA. 
+        * Edit "cGc:\autoexec.batcA" and add the following lines:- 
+
+
+            SET PATH=%PATH%;c:\jasspa 
+
+
+        * Reboot the system. 
+        * MicroEmacs may be run from the command line using cDmecA. 
+
+    cDGraphics Cards:cA 
+    MicroEmacs may be configured to the text modes of your graphics card. 
+    Refer to you graphics card DOS text modes to identify the text modes 
+    supported by your monitor. The text mode number may be entered into the 
+    user monitor configuration, defined in cDHelpcA->cDUser SetupcA. 
+
+    Running DOS Version From Windows (3.x) 
+        The MS-DOS version of MicroEmacs may be executed from a cD.pifcA file. Use 
+        the pif editor to create a new cD.pifcA file to launch MicroEmacs. The 
+        size of the DOS window may be configured from the command line, set 
+        the terminal size using one of the following command lines:- 
 
                 me -c -v$TERM=E80x50        - 80 x 50 window 
                 me -c -v$TERM=E80x25        - 80 x 25 window. 
 
 
-            We usually add the cG-ccA option so that MicroEmacs is executed with 
-            history information. This may be omitted if required. 
-
-    cDWindows 3.1/3.11cA 
-
-        Executable: 
-            Compiled with Microsoft Developer 2.0 
-
-        Helper DLL: 
-            Under cDWin32scA a helper DLL cDmethnk16.dllcA is required to perform the 
-            lslmpipe-shell-command(2)le in a synchronous manner. This should be 
-            installed into the cGC:\WINDOWS\SHELLcA directory. This (rather 
-            inelegantly) gets around the problems of spawning a process under 
-            cDwin32scA due to a number of Microsoft bugs in the operating system. 
-            Note: that on a spawn operation a cGMS-DOScA window is visible, this 
-            is due to the nature of the command shell on this platform which 
-            has a tendency to prompt the user at every opportunity, hence a 
-            certain amount of interaction (which is out of our control) is 
-            necessary. 
-
-            The helper DLL is compiled with a 16-bit Windows compiler - MSVC 
-            1.5. 
-
-        Distribution components required: 
-            cGmewin32s.zipcA 
-            cGmemacros.zipcA 
-            cGmewinhlp.zipcA 
-            cC<spelling>cAcG.zipcA 
-
-        Recommended installed components: 
-            cG4doscA - command shell (giving cCstderrcA redirection) 
-            cGgrepcA - Version of grep (GNU port of grep recommended) 
-            cGdiffcA - Version of diff (GNU port of grep recommended) 
-            cGmakecA - use nmake or GNU port of make. 
-
-        win32s 
-            cDwin32scA is a requirement on this platform, typically taken from 
-            cDpw1118.execA which freely available on the Internet. 
-
-        Installation: 
-            This version of Windows does not have a cCinstallcA directory as 
-            '95/'98 and it is expected that the cGMS-DOScA version will coexist. 
-            No cCInstallcA cCShieldcA installation is provided. Install in a directory 
-            structure similar to cGMS-DOScA. Install the helper DLL cDmethnk16.dllcA 
-            in the cGC:\WINDOWS\SHELLcA directory. Create a lslmme32.ini(8)le file in 
-            the cGC:\WINDOWScA directory to identify the location of the 
-            MicroEmacs '04 components, this much the same as the '95/'98 file, 
-            change the directory paths to suite the install base. 
-
-        Support Status: 
-            The cDwin32scA release has not been used with vengeance, although no 
-            specific problems have been reported with this release. 
-
-    cDWindows '95/'98/NT/2K/XPcA 
-
-        Executable: 
-            Compiled with Microsoft Developer 6.x 
-
-        Install Shield 
-            An cDInstall ShieldcA version of MicroEmacs is available which 
-            includes all of the distribution components. 
-
-        Distribution components required: 
-            cGmewin32.zipcA 
-            cGmemacros.zipcA 
-            cC<spelling>cAcG.zipcA 
-            cGmewinhlp.zipcA (optional) 
-
-        Recommended installed components: 
-            cGgrepcA - Version of grep (GNU port of grep recommended) 
-            cGdiffcA - Version of diff (GNU port of grep recommended) 
-            cGmakecA - use nmake or GNU port of make. 
-
-            A good source of UNIX native tools is 
-
-           cG http://unxutils.sourceforge.net/cA - for native windows grep, diff, 
-            zip etc. 
-           cG http://www.cygwin.comcA - for a shell environment. 
-
-        Installation: 
-            Create the directory "cGC:\Program Files\Jasspa\MicroEmacscA" (or 
-            other location) 
-
-            Unzip the MicroEmacs components into "cGC:\Program 
-            Files\Jasspa\MicroEmacscA" 
-
-            Create the file "cGc:\windows\me32.inicA" or "cGc:\WINNT\me32.inicA" and 
-            add the following lines:- 
-
-                [Defaults] 
-                mepath=C:\Program Files\Jasspa\MicroEmacs 
-                userPath=C:\Program Files\Jasspa\MicroEmacs 
+        We usually add the cG-ccA option so that MicroEmacs is executed with 
+        history information. This may be omitted if required. 
 
 
-            Create a short cut to MicroEmacs for the Desktop 
-
-            Right click on the desk top 
-
-                => New 
-                => Short 
-                => Command Line: "c:\Program Files\Jasspa\MicroEmacs\me.exe -c" 
-                => Short Cut Name: "MicroEmacs" 
+cEMicrosoft Windows 3.1/3.11 cA
 
 
-            MicroEmacs may be executed from the shortcut. 
+    cDExecutable:cA 
+    Compiled with Microsoft Developer 2.0 
 
-        Open Actions 
-            Microsoft Windows 95/98/NT provide short cut actions, assigning an 
-            open action to a file. The short cuts may be installed from the 
-            cDInstall ShieledcA installation, but may alternativelly be explictly 
-            defined by editing the registry file with cDregedit(1)cA. 
+    cDHelper DLL:cA 
+    Under cDWin32scA a helper DLL cDmethnk16.dllcA is required to perform the 
+    lslmpipe-shell-command(2)le in a synchronous manner. This should be installed 
+    into the cGC:\WINDOWS\SHELLcA directory. This (rather inelegantly) gets around 
+    the problems of spawning a process under cDwin32scA due to a number of 
+    Microsoft bugs in the operating system. Note: that on a spawn operation a 
+    cGMS-DOScA window is visible, this is due to the nature of the command shell 
+    on this platform which has a tendency to prompt the user at every 
+    opportunity, hence a certain amount of interaction (which is out of our 
+    control) is necessary. 
 
-            A file open action in the registry is bound to the file file 
-            extension, to bind a file extension cC.foocA to the editor then the 
-            following registry entries should be defined:- 
+    The helper DLL is compiled with a 16-bit Windows compiler - MSVC 1.5. 
 
-                [HKEY_CLASSES_ROOT\.foo] 
-                "MicroEmacs_foo" 
-                [HKEY_CLASSES_ROOT\MicroEmacs_foo\DefaultIcon] 
-                "C:\Program File\JASSPA\MicroEmacs\meicons,23" 
-                [HKEY_CLASSES_ROOT\MicroEmacs_foo\Shell\open] 
-                "&Open" 
-                [HKEY_CLASSES_ROOT\MicroEmacs_foo\Shell\open\command] 
-                "C:\Program File\JASSPA\MicroEmacs\me32.exe -o "%1"" 
+    cDDistribution components required:cA 
 
+        cGmewin32s.zipcA 
+        cGmemacros.zipcA 
+        cGmewinhlp.zipcA 
+        cC<spelling>cAcG.zipcA 
 
-            In the previous exaple the cCDefaultIconcA entry is the icon assigned 
-            to the file. This may be an icon taken from cGmeicons.execA (in this 
-            case icon number 23), or may be some other icon. The open action 
-            in the example uses the cD-ocA option of the cCclient-servercA, which 
-            loads the file into the current MicroEmacs '04 session, 
-            alternatively the cD-ccA option may be used to retain the previous 
-            context, or no option if a new session with no other files loaded 
-            is started. 
+    cDRecommended installed components:cA 
 
-            A generic open for ALL files may be defined using a wildcard, this 
-            may be used to place a cCMicroEmacscA edit entry in the right-click 
-            popup menu, as follows:- 
+        cG4doscA - command shell (giving cCstderrcA redirection) 
+        cGgrepcA - Version of grep (GNU port of grep recommended) 
+        cGdiffcA - Version of diff (GNU port of grep recommended) 
+        cGmakecA - use nmake or GNU port of make. 
 
-                [HKEY_CLASSES_ROOT\*\shell] 
-                [HKEY_CLASSES_ROOT\*\shell\MicroEmacs] 
-                "&MicroEmacs" 
-                [HKEY_CLASSES_ROOT\*\shell\MicroEmacs\command] 
-                "C:\Program File\JASSPA\MicroEmacs\me32.exe -o "%1"" 
+        IfcDwin32scA is a requirement on this platform, typically taken from 
+        cDpw1118.execA which freely available on the Internet. 
 
+    cDInstallation:cA 
+    This version of Windows does not have a cCinstallcA directory as '95/'98 and 
+    it is expected that the cGMS-DOScA version will coexist. No cCInstallcA cCShieldcA 
+    installation is provided. Install in a directory structure similar to 
+    cGMS-DOScA. Install the helper DLL cDmethnk16.dllcA in the cGC:\WINDOWS\SHELLcA 
+    directory. Create a lslmme32.ini(8)le file in the cGC:\WINDOWScA directory to 
+    identify the location of the MicroEmacs '04 components, this much the same 
+    as the '95/'98 file, change the directory paths to suite the install base. 
 
-    cDUNIXcA 
-
-        Executable: 
-            Compiled with native compilers. 
-
-        Distribution Components Required: 
-            cGmecAcC<unix>cAcG.gzcA 
-            cGmemacros.tar.gzcA 
-            cC<spelling>cAcG.gzcA 
-            cGhtml.tar.gzcA (optional) 
-
-        Installation: 
-            It is recommended that all files are placed in cG/usr/localcA, 
-            although they may be installed locally. 
-
-            Unpack the executable and placed in "cG/usr/local/bincA" 
-
-            Create the new directory "cG/usr/local/microemacscA", unpack and 
-            install the cGmemacros.tar.gzcA into this directory. 
-
-            For cDcsh(1)cA users execute a "cGrehashcA" command and then lslmme(1)le can be 
-            executed from the command line. 
-
-            By default a X-Windows terminal is displayed, ensure that cG$DISPLAYcA 
-            and cG$TERMcA are correctly configured. To execute a terminal 
-            emulation then execute cDmecA with the cG-ncA option i.e. "cGme -ncA". Note 
-            that this is not required if you are using a cGvt100cA emulation. 
+    cDSupport Status:cA 
+    The cDwin32scA release has not been used with vengeance, although no specific 
+    problems have been reported with this release. 
 
 
-cEOrganizing a local user profile cA
+cEWindows '95/'98/NT/2K/XP cA
+
+
+    cDExecutable:cA 
+
+        Compiled with Microsoft Developer 6.x 
+
+    cDInstall ShieldcA 
+
+        An cDInstall ShieldcA version of MicroEmacs is available which includes 
+        all of the distribution components. 
+
+    cDDistribution components required:cA 
+
+        cGmewin32.zipcA 
+        cGmemacros.zipcA 
+        cC<spelling>cAcG.zipcA 
+        cGmewinhlp.zipcA (optional) 
+
+    cDRecommended installed components:cA 
+
+        cGgrepcA - Version of grep (GNU port of grep recommended) 
+        cGdiffcA - Version of diff (GNU port of grep recommended) 
+        cGmakecA - use nmake or GNU port of make. 
+
+        A good source of UNIX native tools is 
+
+       cG http://unxutils.sourceforge.net/cA - for native windows grep, diff, zip 
+        etc. 
+       cG http://www.cygwin.comcA - for a shell environment. 
+
+    cDInstallation:cA 
+
+        * Create the directory "cGc:\Program Files\Jasspa\MicroEmacscA" (or other 
+          location) 
+        * Create the sub-directory cGc:\Program Files\Jasspa\MicroEmacs\macroscA. 
+          Unpack and install the cGmemacros.zipcA into this directory 
+        * If spelling dictionaries are required then create the directory 
+          cGc:\Program Files\Jasspa\MicroEmacs\spellingcA. Unpack and install the 
+          cGspellingcA into this directory. 
+        * Unzip the executable components into "cGC:\Program 
+          Files\Jasspa\MicroEmacscA" 
+        * Create a short cut to MicroEmacs for the Desktop 
+
+        Right click on the desk top 
+
+        cG=> NewcA 
+        cG=> ShortcA 
+        cG=> Command Line: "c:\Program Files\Jasspa\MicroEmacs\me.exe -c"cA 
+        cG=> Short Cut Name: "MicroEmacs"cA 
+
+        MicroEmacs may be executed from the shortcut. 
+
+    cDOpen ActionscA Microsoft Windows 95/98/NT provide short cut actions, 
+    assigning an open action to a file. The short cuts may be installed from 
+    the cDInstall ShieldcA installation, but may alternatively be explicitly 
+    defined by editing the registry file with cDregedit(1)cA. 
+
+    A file open action in the registry is bound to the file file extension, to 
+    bind a file extension cC.foocA to the editor then the following registry 
+    entries should be defined:- 
+
+        [HKEY_CLASSES_ROOT\.foo] 
+        "MicroEmacs_foo" 
+        [HKEY_CLASSES_ROOT\MicroEmacs_foo\DefaultIcon] 
+        "C:\Program File\JASSPA\MicroEmacs\meicons,23" 
+        [HKEY_CLASSES_ROOT\MicroEmacs_foo\Shell\open] 
+        "&Open" 
+        [HKEY_CLASSES_ROOT\MicroEmacs_foo\Shell\open\command] 
+        "C:\Program File\JASSPA\MicroEmacs\me32.exe -o "%1"" 
+
+
+    In the previous example the cCDefaultIconcA entry is the icon assigned to the 
+    file. This may be an icon taken from cGmeicons.execA (in this case icon number 
+    23), or may be some other icon. The open action in the example uses the cD-ocA 
+    option of the cCclient-servercA, which loads the file into the current 
+    MicroEmacs '04 session, alternatively the cD-ccA option may be used to retain 
+    the previous context, or no option if a new session with no other files 
+    loaded is started. 
+
+    A generic open for ALL files may be defined using a wild-card, this may be 
+    used to place a cCMicroEmacscA edit entry in the right-click pop-up menu, as 
+    follows:- 
+
+        [HKEY_CLASSES_ROOT\*\shell] 
+        [HKEY_CLASSES_ROOT\*\shell\MicroEmacs] 
+        "&MicroEmacs" 
+        [HKEY_CLASSES_ROOT\*\shell\MicroEmacs\command] 
+        "C:\Program File\JASSPA\MicroEmacs\me32.exe -o "%1"" 
+
+
+cEcEORGANIZING A LOCAL USER PROFILE cEcA
 
 
     MicroEmacs uses local user configuration profiles to store user specific 
     information. The user information may be stored in the MicroEmacs 
-    directory, or more typically in a users private directory. The environment 
-    variable cG$MENAMEcA is typically used to determine the identity of the user. 
+    directory, or more typically in a users private directory. On login 
+    systems then the user name and user private directory location is 
+    automatically determined from the system. 
 
-    The location of the user profile will depend upon your installation 
-    configuration. 
+    The user name identified by MicroEmacs is lslm$user-name(5)le this value may be 
+    set or re-defined using the environment variable lslm$MENAME(5)le. On MS-DOS and 
+    early windows systems where there is no user login then then lslm$MENAME(5)le 
+    may be defined in the environment. 
 
-    cDSingle Machine cA
-        For a single user machine it is typically easiest to use the installed 
-        MicroEmacs directory where user specific files are placed. This 
-        method, although not recommended, is simple as all files that are 
-        executed are in the same location. The cG$MEPATHcA is not changed. 
+    The location of the user information depends upon your platform and 
+    installation configuration. The private directory identified by MicroEmacs 
+    is lslm$user-path(5)le this location may be changed by defining the environment 
+    variable lslm$MEUSERPATH(5)le. 
 
-    cDUNIX cA
-        The UNIX environment is fairly easy and operates as most other UNIX 
-        applications. The user should create a MicroEmacs directory in their 
-        home directory for their own local configuration. Assigning a suitable 
-        name such as "cGmicroemacscA", or if the file is to be hidden 
-        "cG.microemacscA". 
-
-        The cG$MEPATHcA environment variable of the user should be modified to 
-        include the users MicroEmacs path BEFORE the default macros MicroEmacs 
-        path i.e. 
-
-        Ksh/Zsh: 
-            cGexport MEPATH=$HOME/microemacs:/usr/local/bincA 
-
-        Csh/Bash: 
-            cGsetenv MEPATH $HOME/microemacs:/usr/local/bincA 
-
-        Where cG$HOMEcA is defined as "cG/usr/<name>cA" (typically by default). 
-
-    cDDOS/Windows cA
-        DOS and Windows are a little more tricky as numerous directories at 
-        the root level are more than a little annoying. It is suggested that 
-        the user directory is created as a sub-directory of the MicroEmacs 
-        directory. i.e. 
-
-            "cGc:\me\cAcC<user>cA" for DOS 
-
-        or 
-            "cGc:\Program Files\Jasspa\MicroEmacs\cAcC<user>cA" for Windows 
-
-        The cG$MEPATHcA environment variable (see lslmme32.ini(8)le for Windows) is 
-        modified to include the user component before the MicroEmacs component 
-        where cG$MEPATHcA is defined i.e. 
-
-            SET MEPATH=c:\me\<user>;c:\me 
-
-
-        where cG<user>cA is the user name (or cG$MENAMEcA). 
-
-
-cEAlternative Directory Configurations cA
-
-
-    Numerous other configurations exist to organize the macro directories, to 
-    take the directory organization to the extreme then it is sometimes 
-    easiest to keep all of the macro components separate. An installation 
-    layout which encompasses different macro directories for:- 
-
-        * User profiles - 1 per user. 
-        * Shared company profiles - 1 per organization. 
-        * MicroEmacs macros which are updated from time to time. 
-
-    The configuration on different systems may be defined as follows:- 
-
-    cDUNIX cA
-        The shared files are placed in cG/usr/localcA 
-
-            /usr 
-               \ 
-              local 
-                 \ 
-              microemacs   - Spelling + standard macros 
-                   \ 
-                 company   - Company specific files 
-
-
-        The user profile is stored in the users directory 
-
-            /usr 
-              \ 
-            <name> 
-                \ 
-             microemacs    - User specific files 
-
-
-        The user should configure the cG$MEPATHcA as: 
-
-            MEPATH=$(HOME)/microemacs:/usr/local/microemacs/company:/usr/local/microemacs 
-
-
-    cDDOS/WINDOWS cA
-        For DOS and MS-Windows environments, bearing in mind the problem of 
-        the root directory, then it is easier to use the "cGmecA" directory as a 
-        place holder for a number of sub-directories, using a configuration 
-        such as:- 
-
-                        c: 
-                        | 
-                        me      - Place holder directory 
-                      / | \ 
-                    /   |   \ 
-               <name> macros company 
-
-
-        The user should configure the cG$MEPATHcA as:- 
-
-            SET MEPATH=c:\me\<name>;c:\me\company;c:\me\macros 
+    Microsoft Windows users may use the lslmme32.ini(8)le file to define MicroEmacs 
+    configuration path and name information. 
 
 
 cEUser Profile Files cA
@@ -23168,13 +23211,14 @@ $a
 
     Files contained in the user profiles typically include:- 
 
-    cC<name>cAcG.emfcA - The users start up profile. 
+    cC<name>cAcG.emfcA - The users start up profile - cC<user>cA.emf. 
     cC<name>cAcG.edfcA - The users spelling dictionary. 
     cC<name>cAcG.erfcA - The users registry configuration file. 
 
-    These files are established from the menu "cDHelp->User SetupcA". The "cDSetup 
-    PathcA" item defines the location of the files, but must be MANUALLY 
-    included in the cG$MEPATHcA environment. 
+    These files are automatically set up by MicroEmacs. These files are 
+    established from the menu "cDHelp->User SetupcA". The "cDSetup PathcA" item 
+    defines the location of the files, but must be MANUALLY included in the 
+    cG$MEPATHcA environment. 
 
 
 cECompany Profiles cA
@@ -23188,14 +23232,12 @@ $a
     the standard header template used in the files. Files in the "cGcompanycA" 
     directory would over-ride the standard template files. 
 
-    The company directory should be added to the cG$MEPATHcA after the user 
-    profile and before the MicroEmacs standard macro directory. 
-
 
 cEcESEE ALSO cEcA
 
 
-    lslm$MENAME(5)le, lslm$MEPATH(5)le, lsCompanyProfiles(2)lmCompany Profilesle, lsfileHooks(2)lmFile Hooksle, lslanguageTemplates(2)lmFile Languageln
+    lslm$user-name(5)le, lslm$user-path(5)le, lslm$MEINSTALLPATH(5)le, lslm$MENAME(5)le, lslm$MENAME(5)le, 
+    lslm$MEPATH(5)le, lslm$MEUSERPATH(5)le, lsCompanyProfiles(2)lmCompany Profilesle, lsfileHooks(2)lmFile Hooksle, lslanguageTemplates(2)lmFile Languageln
     lnTemplatesle, lsUserProfiles(2)lmUser Profilesle. 
 ! 2 CompanyProfiles
 cEcECOMPANY PROFILES cEcA
@@ -23221,41 +23263,10 @@ $a
     MicroEmacs standard macro file directory. This enables the original files 
     to be sourced if a user does not want to include the company files. This 
     method also allows MicroEmacs to be updated in the future, whilst 
-    retaining the company files. For our example, we shall use a company 
-    called cDJASSPAcA, you should replace references to cCjasspacA with your own 
-    company name. The steps involved are laid out as follows:- 
+    retaining the company files. 
 
-    cDCreate a new company directory cA
-        You may skip this step if you are going to modify the standard 
-        installation. 
-
-        Create a new directory to hold the company information. i.e. 
-
-            cG/usr/local/microemacs/jasspacA - UNIX 
-            cGc:\Program Files\JASSPA\MicroEmacs\jasspacA - Microsoft 
-
-        Modify the lslm$MEPATH(5)le of the (of all users) to include the company 
-        directory on the search path i.e. 
-
-        UNIX 
-            Users edit their local cG$MEPATHcA or a base $MEPATH is added to the 
-            system cG.logincA or cG.profilecA scripts. 
-
-                cGMEPATH=/usr/local/microemacscA 
-                cGMEPATH=/usr/local/microemacs/jasspa:$MEPATHcA 
-
-        Microsoft Windows Platforms 
-            Edit the cGme32.inicA file and modify the cGmepathcA entry to reflect the 
-            location of the company directory:- 
-
-                cGmepath=C:\Prog....\Mic...\macros\
-                jasspa;C:\Prog...\Mic...\macroscA 
-
-        DOS Platforms 
-            Edit the cDautoexec.batcA file and modify cGMEPATHcA to include the 
-            company directory location. 
-
-                cGSET MEPATH=c:\me\jasspa;c:\mecA 
+    The company files are generally placed in the cGcompanycA sub-directory 
+    described in the installation notes. 
 
 
 cEContent Of The Company Information cA
@@ -23309,8 +23320,8 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslm$MENAME(5)le, lslm$MEPATH(5)le, lsfileHooks(2)lmFile Hooksle, lslanguageTemplates(2)lmFile Language Templatesle, lsInstallation(1)lmInstallationle, 
-    lslmuser-setup(3)le, lsUserProfiles(2)lmUser Profilesle. 
+    lslm$MEINSTALLPATH(5)le, lslm$MENAME(5)le, lslm$MEPATH(5)le, lsfileHooks(2)lmFile Hooksle, lslanguageTemplates(2)lmFile Languageln
+    lnTemplatesle, lsInstallation(1)lmInstallationle, lslmuser-setup(3)le, lsUserProfiles(2)lmUser Profilesle. 
 ! 2 UserProfiles
 cEcEUSER PROFILES cEcA
 
@@ -23322,12 +23333,14 @@ $a
     The user profile allows:- 
 
         * Saving of the last session (history), allowing the next invocation 
-          of MicroEmacs '04 to restore your previous session. 
+          of MicroEmacs '04 to restore your previous session. The cD-ccA option to 
+          lslmme(1)le restores a previous sessions buffers to the same state prior 
+          to exiting the editor. 
         * Personalized spelling dictionaries. 
-        * Redefinition of MicroEmacs '04, allowing the editor to be tailored 
-          to an individual's requirements. Including the re-binding of keys, 
-          modification of the screen colors. Definition of personal macros 
-          etc. 
+        * Redefinition of MicroEmacs '04 operation, allowing the editor to be 
+          tailored to an individual's requirements. Including the re-binding 
+          of keys, modification of the screen colors. Definition of personal 
+          macros etc. 
 
 
 cEIdentification cA
@@ -23338,18 +23351,19 @@ $a
     On all systems the value of the environment variable lslm$MENAME(5)le takes 
     priority over any other means of user identification. If this variable is 
     not defined then the host system typically provides a mechanism to 
-    determine the current user. DOS and cCWindowscA systems present problems where 
-    a login prompt is not supplied. 
+    determine the current user. MS-DOS and Microsoft Windows systems present 
+    problems where a login prompt is not used. 
 
     Each of the supported platforms are now described. 
 
     cDUNIX cA
-        The environment variable cG$LOGNAMEcA is defined. This is the user name 
-        used by the system. 
+        The login name is determined from the cG/etc/passwdcA file and defines 
+        lslm$user-name(5)le. The environment variable lslm$MENAME(5)le may be defined 
+        alter the default user configuration file name. 
 
     cDDOS cA
-        MS-DOS typically has no concept of the user name. The user name should 
-        be defined in the cGautoexec.batcA file, choose a name of 8 characters or 
+        MS-DOS typically has no concept of the user name. The user name may be 
+        defined in the cGautoexec.batcA file, choose a name of 8 characters or 
         less, i.e. to fix the user name to cGfredcA then add the following line:- 
 
             SET MENAME=fred 
@@ -23359,117 +23373,79 @@ $a
         (see the next step, there is another change to cGautoexec.batcA). 
 
     cDMicrosoft Windows cA
-        Microsoft windows environments may, or may not, have logging enabled. 
-        If you have to log into your system then a login identification has 
-        been supplied and will be recognized by MicroEmacs, setting the 
-        environment variable lslm$MENAME(5)le to this value. 
-
-        If login is not enabled then the lslmme32.ini(8)le file may be modified to 
-        provide a default login name. To add the user cDfredcA then add the 
-        following lines to the cCinicA file:- 
-
-            [guest] 
-            MENAME=fred 
+        Microsoft windows environments may, or may not, have login enabled. If 
+        login is enabled then lslm$user-name(5)le is set to the login user name. The 
+        login name may be overridden by setting the environment variable 
+        lslm$MENAME(5)le this may be performed in the environment or through the 
+        lslmme32.ini(8)le file. 
 
 
-        If login is subsequently enabled on the system then these lines should 
-        be removed. These lines force the user identification to be cDfredcA. 
-
-        The above technique may be used within the windows environment to 
-        modify your login name. Assuming that the system administrator has 
-        assigned cDfredcA a user login name of cDfwhitecA, and cCfredcA requires all of 
-        his configuration files to be the same name as his UNIX login which is 
-        cDfredcA. Then cCfredcA may force his user name to cCfredcA from the cGme32.inicA file 
-        as follows:- 
-
-            [fwhite] 
-            MENAME=fred 
+cEShared Platforms cA
 
 
-        Once cCfredcA has entered MicroEmacs he will adopt his new login name 
-        which will be used to identify his own files etc. The action of this 
-        statement is to force the environment variable cG$MENAMEcA to a new value. 
-        Any other environment variables may be forced in this way i.e. 
-        cG$HOSTNAMEcA is a good candidate here as the cGme32.inicA is local to the 
-        machine. 
-
-    cDShared Platforms cA
-        Platforms may share the same set of configuration files. Consider a 
-        system which may boot under MS-DOS, Windows '98, NT and Linux. 
-        Provided that the macro files are located on a file system that may be 
-        mounted by all of the other operating systems and the $MEPATH is set 
-        appropriately, then a single set of MicroEmacs macro files may be 
-        shared across all platforms. 
+    Platforms may share the same set of configuration files. Consider a system 
+    which may boot under MS-DOS, Windows '98, NT and Linux. Provided that the 
+    macro files are located on a file system that may be mounted by all of the 
+    other operating systems and the lslm$MEUSERPATH(5)le and lslm$MEPATH(5)le are set 
+    appropriately to point to the users private MicroEmacs and system 
+    directories, then a single set of macro files may be shared across all 
+    platforms. 
 
 
 cEPersonal MicroEmacs Directory cA
 
 
     The private user profile is stored in a separate directory. The directory 
-    that MicroEmacs uses must be created by the user, create the directory in 
-    your local file system. In addition, the MicroEmacs search path lslm$MEPATH(5)le 
-    should be modified to include your new MicroEmacs personal directory. 
+    that MicroEmacs uses is typically automatically created at start up, but 
+    may be created manually by the user. If the directory is to be placed in a 
+    special location then the lslm$MEUSERPATH(5)le environment variable should be 
+    defined and set to point at this directory location. 
 
     cDUNIX cA
-        Create in your local directory, typically called cGmicroemacscA or 
-        cG.microemacscA (if it is to be hidden). 
-
-        Add/modify the lslm$MEPATH(5)le environment variable to include your 
-        personal directory in your cG.logincA, cG.chsrccA or cG.profilecA file, the file 
-        and exact syntax will depend upon your shell. For a Korn shell the 
-        following line would be added to the cG.profilecA file:- 
-
-            export MEPATH=$HOME/.microemacs:/usr/local/microemacs 
-
-
-        Where cG$HOMEcA is assumed to be the users login home directory, or use 
-        the directory location of your new directory. 
+        In the UNIX environment then the local directory is typically created 
+        in the users home directory obtained from the cG/etc/passwdcA file and is 
+        called cG~/.jasspacA. MicroEmacs will automatically look for this 
+        directory and set the lslm$user-path(5)le variable to this value. The 
+        location may be overridden by setting the environment variable 
+        lslm$MEUSERPATH(5)le to reference a different directory location. 
 
     cDDOS cA
         For MS-DOS environments, there is typically no user directory, it is 
         suggested that the user directory is created in the MicroEmacs 
         directory, use the cG$MENAMEcA defined in the previous step i.e. 
 
-            mkdir c:\me\fred 
+            mkdir c:\jasspa\fred 
 
 
-        Change the lslm$MEPATH(5)le in the cDautoexec.batcA to include the new directory 
-        i.e. 
+        Change or add the environment variable lslm$MEUSERPATH(5)le in the 
+        cDautoexec.batcA to include the new directory i.e. 
 
-            SET MEPATH=c:\me\fred;c:\me 
+            SET MEUSERPATH=c:\jasspa\fred 
 
 
     cDWindows cA
-        Windows environments, the lslmme32.ini(8)le cDuserPathcA entry defines the 
-        location of the user profile directories, within the cDInstallcA cDShieldcA 
-        installation, the cGme32.inicA is typically defined as:- 
+        In Microsoft Windows environment using Explorer 4.0 or later then a 
+        user application data directory exists (cG$APPDATAcA) and MicroEmacs will 
+        create a directory cGjasspacA in this directory location to hold private 
+        data. If there is no such data area then all user configuration is 
+        stored in the executable directory location (or a sub-directory called 
+        lslm$user-name(5)le). 
 
-            userPath=C:\Program Files\JASSPA\MicroEmacs 
-
-
-        Create your MicroEmacs personal directory in this folder, the name of 
-        the folder should be your login name or cG$MENAMEcA, depending upon how 
-        your name is identified. 
+        The user data area lslm$user-path(5)le may be modified by creating a new 
+        directory and setting the environment variable lslm$MEUSERPATH(5)le to point 
+        to this new directory location. The location be specified by a 
+        cDmeuserpathcA entry in the lslmme32.ini(8)le file rather than setting the 
+        environment variable lslm$MEUSERPATH(5)le. 
 
 
 cECreating Your Profile cA
 
 
-    Once you have created a new directory to store your user profile, create a 
-    default profile for yourself from MicroEmacs using the lslmuser-setup(3)le 
-    dialog:- 
+    On starting MicroEmacs for the first time then the user is guided through 
+    the configuration file setup to create any local configuration files. Once 
+    set up then MicroEmacs may be configured using the lslmuser-setup(3)le dialog:- 
 
         Help => User Setup 
-
-
-    Fill in the entries in the dialog, and ensure that cDSavecA is depressed on 
-    exit to write the files. 
-
-    The dictionaries often present difficulties the first time, a prompt to 
-    save the dictionary requires the full pathname and the name of the file, 
-    the pathname is the path to your personal folder, the filename is 
-    typically your cCusernamecA.edf. Once the file is created you will not have a 
-    problem in the future. 
 
 
 cEThe User Profile cA
@@ -23477,20 +23453,24 @@ $a
 
     Files created in the user directory include:- 
 
-        * Setup registry and previous session history cCusernamecA.erf, see 
-          lslmerf(8)le). This stores the cDuser-setupcA settings and also the context 
-          from your previous edit session. 
-        * Users start-up file cCusernamecA.emf, see lslmemf(8)le the user may make local 
-          changes to MicroEmacs in this file, this may include changing key 
-          bindings, defining new hook functions etc. You should over-ride the 
+        * Setup registry and previous session history ls$user-name(5)lm$user-namele.erf (see 
+          lslmerf(8)le). This stores the cDuser-setupcA settings and the context from 
+          previous edit sessions. 
+        * Users start-up file ls$user-name(5)lm$user-namele.emf (see lslmemf(8)le). This is typically 
+          referred to as "cCuser.emfcA" in the documentation and means the users 
+          private MicroEmacs macro file. The user may make local changes to 
+          MicroEmacs in this file, this may include definition of new key 
+          bindings, defining new hook functions etc. You should override the 
           standard MicroEmacs settings from your start-up file rather than 
           modifying the standard MicroEmacs files. 
-        * Personal spelling dictionary cCusername.edfcA, see lslmedf(8)le. This file 
-          contains your personal spelling modifications, any words that are 
-          added to the spelling dictionary are added to this file. 
+        * Personal spelling dictionary cDlsdpcAcClangcA.edf (see lslmedf(8)le). Multiple 
+          spelling dictionaries may be created, one for each language. Any 
+          words that are added to the spelling dictionary are stored in these 
+          files. 
 
-    In addition to the above, if new file hooks are defined then they should 
-    be added to this directory (if they are not global to the company). 
+    In addition to the above, if new private macro files are constructed then 
+    they should be added to this directory (if they are not global to the 
+    company). 
 
 
 cEcEEXAMPLE cEcA
@@ -23576,11 +23556,6 @@ $a
             !if &not &seq $platform "win32" 
                 ; Small bold font is better for me. 
                 change-font "-*-clean-medium-r-*-*-*-130-*-*-*-*-*-*" 
-                ; Small non-bold font. 
-                ; change-font "-misc-fixed-medium-r-normal--13-*-*-*-c-70-iso8859-1" 
-                ; Change the size of the screen 
-                82 change-frame-width 
-                50 change-frame-depth 
             !endif 
         !endif 
         ; Change the default diff command-line for GNU diff utility all platforms 
@@ -23612,8 +23587,9 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslm$MEPATH(5)le, lslm$MENAME(5)le, lslmuser-setup(3)le, lsCompanyProfiles(2)lmCompany Profilesle, lsfileHooks(2)lmFile Hooksle, lslanguageTemplates(2)lmFileln
-    lnLanguage Templatesle, lsInstallation(1)lmInstallationle. 
+    lslmuser-setup(3)le, lslm$search-path(5)le, lslm$user-name(5)le, lslm$user-path(5)le, 
+    lslm$MEINSTALLPATH(5)le, lslm$MENAME(5)le, lslm$MEPATH(5)le, lslm$MEUSERPATH(5)le, lslmme32.ini(8)le, 
+    lsCompanyProfiles(2)lmCompany Profilesle, lsfileHooks(2)lmFile Hooksle, lslanguageTemplates(2)lmFile Language Templatesle, lsInstallation(1)lmInstallationle. 
 ! 2 Interfacing
 cEcEINTERFACING cEcA
 
@@ -24711,7 +24687,7 @@ $a
         required rules and dictionaries have not been downloaded. You should 
         be able to download them from the JASSPA website, see lsMicroEmacs '04 - Contact InformationlmContactln
         lnInformationle. Once downloaded they must be placed in the MicroEmacs 
-        ls$MEINSTALLPATH(5)lmsearch pathle, i.e. where the other macro files (like cGme.emfcA) are 
+        ls$search-path(5)lmsearch pathle, i.e. where the other macro files (like cGme.emfcA) are 
         located. 
 
     Dialog opens with the following error message: 
@@ -24760,15 +24736,16 @@ $a
     obscure words "cGlsdxcAcC<lang-id>cAcG.edfcA" and the other as above. 
 
     Once the generated word and dictionary files have been place in the 
-    MicroEmacs ls$MEINSTALLPATH(5)lmsearch pathle, the spelling checker should find and use them. 
+    MicroEmacs ls$search-path(5)lmsearch pathle, the spelling checker should find and use them. 
     Please submit your generated support to MicroEmacs for others to benefit. 
 
 
 cEcESEE ALSO cEcA
 
 
-    lslmuser-setup(3)le, lslmcharset-change(3)le, lslmset-char-mask(2)le, lslmtranslate-key(2)le, 
-    lslm$box-chars(5)le, lslm$window-chars(5)le, lslm$recent-keys(5)le. 
+    lslmset-char-mask(2)le, lslmtranslate-key(2)le, lslmcharset-change(3)le, lslmuser-setup(3)le, 
+    lslm$box-chars(5)le, lslm$recent-keys(5)le. lslm$search-path(5)le, lslm$user-path(5)le, 
+    lslm$window-chars(5)le. 
 ! 1 Patching
 cEcEPATCHING cEcA
 
@@ -24792,7 +24769,7 @@ $a
         * 
         Save the macros directory, these may be moved i.e. 
 
-                move macros macros_2002_12 
+                rename macros macros_2002_12 
 
         * 
         Unpack and install the new Windows executable and COPY over the 
@@ -24852,15 +24829,15 @@ $a
         * 
         Installed packages are built with the install path built into the 
         executable, this may be different from the patch version of the 
-        executable so the environment variable lslm$MEPATH(5)le must be defined in 
-        the environment with the macro installation search paths. 
+        executable so the environment variable lslm$MEINSTALLPATH(5)le may be 
+        defined in the environment with the macro installation search paths. 
 
 
 cEcESEE ALSO cEcA
 
 
-    lslm$MENAME(5)le, lslm$MEPATH(5)le, lsCompanyProfiles(2)lmCompany Profilesle, lsInstallation(1)lmInstallationle, lsfileHooks(2)lmFile Hooksle, lslanguageTemplates(2)lmFileln
-    lnLanguage Templatesle, lsUserProfiles(2)lmUser Profilesle. 
+    lslm$MENAME(5)le, lslm$MEINSTALLPATH(5)le, lsCompanyProfiles(2)lmCompany Profilesle, lsInstallation(1)lmInstallationle, lsfileHooks(2)lmFile Hooksle, 
+    lslanguageTemplates(2)lmFile Language Templatesle, lsUserProfiles(2)lmUser Profilesle. 
 ! 3fgdiff
 cEcENAME cEcA
 
@@ -29695,8 +29672,8 @@ $a
         or a DNS name (i.e. cGftp.mysite.comcA). 
 
     cDUser NamecA 
-        The login name for the site. If this is omitted then cGguestcA is used by 
-        default. 
+        The login name for the site. If this is omitted then lslm$user-name(5)le is 
+        used by default. 
 
     cDPasswordcA 
         The password used to enter the site for the given login name. If the 
@@ -29779,7 +29756,8 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslm%ftp-flags(5)le, lslmerf(8)le, lslmfind-file(2)le, lslmfile-op(2)le, lslmlist-registry(2)le. 
+    lslm%ftp-flags(5)le, lslm$user-name(5)le, lslmerf(8)le, lslmfind-file(2)le, lslmfile-op(2)le, 
+    lslmlist-registry(2)le. 
 ! 3 display-white-chars
 cEcENAME cEcA
 
@@ -30064,11 +30042,14 @@ $a
 ! 3 cvs-status
 ! 3 cvs-tag
 ! 3 cvs-update
+! 5 %cvs-com
 cEcENAME cEcA
 
 
 |cvs
     cvs - MicroEmacs CVS interface 
+|%cvs-com
+    %cvs-com - CVS Command line 
 |cvs-add
     cvs-add - MicroEmacs CVS interface - add file 
 |cvs-checkout
@@ -30100,6 +30081,7 @@ $a
 
 
     cDcvscA 
+    cD%cvs-comcA 
 
     cDcvs-addcA 
     cDcvs-checkoutcA 
@@ -30257,6 +30239,14 @@ $a
     cvs sub commands this command executes over all files in the current 
     buffer's file directory. 
 
+    cD%cvs-comcA defines the command line used to execute a cDcvs(1)cA system command. 
+    The default when not defined is cDcvscA. The cD%cvs-comcA variable is typically 
+    re-defined in the user configuration file to add other common options i.e. 
+    cD-zcA for compression etc. i.e. 
+sB
+        set-variable %cvs-com "cvs -z" 
+
+sA
 
 cEcENOTES cEcA
 
@@ -32386,9 +32376,9 @@ $a
         information) and NEdit v5 which is at best a demonstration of what can 
         be achieved, this executes macro file cGmenedit.emfcA. 
 
-    cGMS Friendly KeyscA 
+    cGRebind Home KeyscA 
         When enabled the following key bindings are created to ease 
-        frustration for MS users: 
+        frustration, particularly for MS users: 
 
         cGhomecA 
             Bound to beginning-of-line instead of beginning-of-buffer. 
@@ -32401,15 +32391,6 @@ $a
 
         cGC-endcA 
             Bound to end-of-buffer. 
-
-        cGC-vcA 
-            Bound to yank (paste). 
-
-        cGesc-vcA 
-            Bound to reyank. 
-
-        Note that the "cGC-xcA" and "cGC-ccA" keys are just to intrinsic to MicroEmacs 
-        to rebind (sorry). 
 
     cGMS Shift RegioncA 
         Enables/disables cursor key manipulation with the shift key similar to 
@@ -43015,9 +42996,8 @@ $a
           installation directory of the standard macros overriding any built 
           in search path(s). 
         * The environment variable lslm$MEPATH(5)le which absolutely overrides any 
-          search paths with a user defined path. Use of this variable is 
-          depreciated, a combination of ls$MEINSTALLPATH(5)lmMEINSTALLPATH(5)le and ls$MEINSTALLPATH(5)lmMEUSERPATH(5)le is 
-          preferred. 
+          search paths with a user defined path where lslm$MEUSERPATH(5)le is not 
+          defined. 
         * The command line option cD-ucA cCuser-namecA to lslmme(1)le which overrides the 
           user name found by the system. 
         * The environment variable lslm$MENAME(5)le which overrides the user name 
@@ -44282,7 +44262,7 @@ $a
 cEcESYNOPSIS cEcA
 
 
-    cD$MENAMEcA cCstringcA; Default is cGguestcA 
+    cD$MENAMEcA cCstringcA; 
 
     cD$LOGNAMEcA cCstringcA 
 
@@ -45018,10 +44998,7 @@ $a
           without a trailing 'cG/cA' then it is automatically added. 
         * The environment variable lslm$MEPATH(5)le is defined and lslm$MEUSERPATH(5)le is 
           undefined. The first directory in the cD$MEPATHcA variable is used as 
-          the cD$user-pathcA directory. The use of cD$MEPATHcA is discouraged as it is 
-          less specific than cD$MEUSERPATHcA and my potentially not be what the 
-          user intended. This variable is retained for backwards compatibility 
-          with earlier releases of MicroEmacs. 
+          the cD$user-pathcA directory. 
         * The directory is determined from the system: 
         cDUNIXcA: the home directory from cG/etc/passwdcA entry is used and appended 
         with cG.jasspacA i.e. cG$HOME/.jasspacA, if the sub-directory ls$user-name(5)lm$user-namele is 
@@ -45997,24 +45974,37 @@ $a
 cEcESYNOPSIS cEcA
 
 
+    cD;cA cCComments commence with a semi-coloncA 
+
     cD[Location]cA 
     cDexecA=cC<executablePathname>cA 
 
     cD[Defaults]cA 
-    cDmepath=cAcC<directoryPath>cA 
-    cDmeinstallpath=cAcC<directoryPath>cA 
+    cDmeinstallpath=cAcC<directoryPath>cA;cC<directoryPath>cA; ... ;cC<directoryPath>cA 
+    cDmepath=cAcC<directoryPath>cA;cC<directoryPath>cA; ... ;cC<directoryPath>cA 
+    cDmeuserpath=cAcC<directoryPath>cA 
+    cDmename=cAcC<username>cA 
     cDgeometry=cAcC<width>cAcDxcAcC<depth>cA+cC<xoffset>cA+cC<yoffset>cA 
-    cDfontfile=cAcC<fontFileName>cA 
+    cDenvironmentVariable=cAcC<value>cA 
+    cDenvironmentVariable=cAcC<value>cA 
+    ... 
+    cDenvironmentVariable=cAcC<value>cA 
 
     cD[cAcC<userName>cAcD]cA 
-    cDmenamecAcD=cAcC<value>cA 
-    cDmeuserpathcAcD=cAcC<value>cA 
+    cDmeinstallpath=cAcC<directoryPath>cA;cC<directoryPath>cA; ... ;cC<directoryPath>cA 
+    cDmepath=cAcC<directoryPath>cA;cC<directoryPath>cA; ... ;cC<directoryPath>cA 
+    cDmeuserpath=cAcC<directoryPath>cA 
+    cDgeometry=cAcC<width>cAcDxcAcC<depth>cA+cC<xoffset>cA+cC<yoffset>cA 
+    cDmename=cAcC<username>cA 
+    cDenvironmentVariable=cAcC<value>cA 
+    cDenvironmentVariable=cAcC<value>cA 
+    ... 
+    cDenvironmentVariable=cAcC<value>cA 
 
     cD[cAcC<userName>cAcD]cA 
-    cDmenamecAcD=cAcC<value>cA 
-    cDmeuserpathcAcD=cAcC<value>cA 
-
-    cD;cA cCComments commence with a semi-coloncA 
+    cDmeinstallpath=cAcC<directoryPath>cA;cC<directoryPath>cA; ... ;cC<directoryPath>cA 
+    cDmepath=cAcC<directoryPath>cA;cC<directoryPath>cA; ... ;cC<directoryPath>cA 
+    ... 
 
 
 cEcEPLATFORM cEcA
@@ -46027,59 +46017,53 @@ $a
 
 
     cDme32.inicA is the Microsoft Windows configuration file, located in the 
-    windows directory (typically cDC:\WindowscA), the cDme32.inicA file is primarily 
-    used to counteract the deficiencies of Windows shell environment (as 
-    compared with UNIX) with respect to the initialization of environment 
-    variables. 
+    windows directory (typically cDC:\WindowscA or cDC:\WINNTcA), the cDme32.inicA file is 
+    primarily used to counteract the deficiencies of Windows shell environment 
+    (as compared with UNIX) with respect to the initialization of environment 
+    variables. The cDme32.inicA file is comparable to the UNIX cC.XdefaultscA and 
+    cC.profilecA files. 
 
-    The configuration file may be considered to be split into two sections, a 
-    cDDefaultscA section, which defines system settings and a cDUsercA section which 
-    allows environment variables to be defined. 
-
-
-cEUser Section cA
-
-
-    The cDUser SectioncA is executed prior to the cDDefaults SectioncA. The cDUser 
-    SectioncA uses the lslm$user-name(5)le which is defined as follows:- 
-
-        * The environment variable lslm$MENAME(5)le 
-        * The cClogin namecA under Windows '95 or NT. If the cClogin namecA is defined 
-          then the variable lslm$user-name(5)le is set to this value. 
-        * The environment variable lslm$LOGNAME(5)le if the cClogin namecA cannot be 
-          located. 
-
-    A section cD[cAcCuserNamecAcD]cA is looked up, and if located each of the entries is 
-    used to set up the editor. 
-
-    cDmenamecA 
-        The MicroEmacs lslm$user-name(5)le to use rather than the login name. 
-
-    cDmeuserpathcA 
-        The value of lslm$user-path(5)le. 
+    The configuration file is split into two sections, a cDDefaultscA section, 
+    which defines system settings and a cDUsercA section which define settings on 
+    a per user basis. Both sections allow environment variables to be defined 
+    for export. The cCdefaultscA section is executed first and then the cCusercA 
+    section which matches the users name. The format of both sections is 
+    identical. 
 
 
-cEDefaults Section cA
+cESection Keywords cA
 
 
-    The defaults section, labeled cD[Defaults]cA includes the following keys:- 
+    The keywords identified in each section are defined as follows:- 
 
     cDmepathcA 
-        Sets the environment variable lslm$MEPATH(5)le to the specified value. This 
-        is the directory (or folder) location of the MicroEmacs '04 default 
-        configuration files. 
+        Equivalent to the setting of the variable lslm$MEPATH(5)le to define the 
+        directory (or folder) location of the MicroEmacs '04 default 
+        configuration files. If the assignment string is empty then any 
+        previous value is removed. 
 
     cDmeinstallpathcA 
         Equivalent of setting the environment variable lslm$MEINSTALLPATH(5)le to 
-        define the directory (or folder) location of the macros directory. 
+        define the directory (or folder) location of the macros directory. If 
+        the assignment string is empty then any previous value is removed. 
 
-    cDgeometrycA 
+    cDmenamecA 
+        The MicroEmacs lslm$user-name(5)le to use rather than the login name. If the 
+        assignment string is empty then any previous value is removed. 
+
+    cDmeuserpathcA 
+        The value of lslm$user-path(5)le. If the assignment string is empty then any 
+        previous value is removed. 
+
+    cDgeometrycA=cC<width>cAcDxcAcC<depth>cA+cC<xoffset>cA+cC<yoffset>cA 
         The geometry of the window the width and height are specified in 
-        character, the position of the window is specified as an offset. 
+        character, the position of the window is specified as an offset. If 
+        the assignment string is empty then any previous preset value is 
+        removed. 
 
-    cDfontfilecA 
-        A default font file to use to render the font. This is not really 
-        required. 
+    All other variables (except those commencing with cGmsdevcA which are reserved 
+    for lslmmemsdev(1)le) are pushed into the environment as environment variables 
+    which are made during the editing session. 
 
 
 cELocation Section cA
@@ -46090,39 +46074,100 @@ $a
     launch MicroEmacs. The section includes the following keys:- 
 
     cDexecA 
-        The absolute pathname to the MicroEmacs '04 executable image. 
+        The absolute pathname to the MicroEmacs '04 executable image. External 
+        programs such as lslmmemsdev(1)le may use this entry to find the executable. 
+        This section may be omitted. 
+
+
+cEDefaults Section cA
+
+
+    The default section, labeled cD[MeYYMMDD]cA or cD[Defaults]cA define the global 
+    variable settings for all users. The dated form is searched for first, the 
+    date corresponds to the specific version of MicroEmacs as displayed by 
+    lslmabout(2)le. When omitted then the cD[Defaults]cA section is used. Either, or 
+    both sections may be omitted. 
+
+
+cEUser Section cA
+
+
+    The cDUser SectioncA is executed after the cDDefaults SectioncA. The cDUser SectioncA 
+    uses the lslm$user-name(5)le which is defined as follows:- 
+
+        * The environment variable lslm$MENAME(5)le 
+        * The cClogin namecA under Windows '95 or NT. If the cClogin namecA is defined 
+          then the variable lslm$user-name(5)le is set to this value. 
+        * The environment variable lslm$LOGNAME(5)le if the cClogin namecA cannot be 
+          located. 
+
+    A single user section is executed that corresponds to the user. If the 
+    system does not use a login system then a cDmenamecA entry may be placed in 
+    the defaults section to force a name. 
+
+    A cDmenamecA entry appearing in the cCusercA section is used to change the login 
+    name to a more sensible name when the user login and MicroEmacs user files 
+    use different names. 
 
 
 cEcEEXAMPLE cEcA
 
 
-    The following is an example of the cDme32.inicA file:- 
+    The following is an example of the cDme32.inicA file, there is no login and a 
+    user cCJohn DoecA defines his MicroEmacs user name: 
 
         ; External locater for the executable 
         [Location] 
         exe=c:\Program Files\JASSPA\MicroEmacs\me32.exe 
         ; 
+        ; Default global section 
         [Defaults] 
         ; mepath 
         ; The location of the MicroEmacs common files. 
+        meinstallpath=d:\jasspa 
+        mename=john 
         ; 
-        meinstallpath=d:/jasspa 
-        ; 
-        ; userpath - The location of the users MicroEmacs directory. 
-        ; 
-        meuserpath=d:/jasspa/user 
+        ; User John Doe 
+        [john] 
+        ; meuserpath - The location of the users MicroEmacs directory. 
+        meuserpath=d:\jasspa\john 
+        ; Define some environment variables. 
+        INFOPATH=c:\info 
 
 
     Note that multiple users share the same cDme32.inicA file, each user may 
     include their own configuration settings which may be interrogated in the 
-    configuration files. 
+    configuration files. In the following example a user cCJohn DoecA with login 
+    name of cCjohndoecA uses private configuration files called cCjohncA: 
 
-
-cEcENOTES cEcA
-
-
-    As of MicroEmacs 2004 then the cDme32.inicA file is depreciated and not 
-    normally used. 
+        ; External locater for the executable 
+        [Location] 
+        exe=c:\Program Files\JASSPA\MicroEmacs\me32.exe 
+        ; 
+        ; Defaults for RC4 Release 
+        [Me040201] 
+        meinstallpath=d:\jasspa_rc4 
+        ; 
+        ; Default global section 
+        [Defaults] 
+        ; mepath 
+        ; The location of the MicroEmacs common files. 
+        meinstallpath=d:\jasspa 
+        ; Define some environment variables. 
+        INFOPATH=c:\info 
+        ; 
+        ; User John Doe 
+        [johndoe] 
+        ; meuserpath - The location of the users MicroEmacs directory. 
+        meuserpath=d:\jasspa\john 
+        ; mename - Use "john" instead of "johndoe" 
+        mename=john 
+        ; Define startup screen size. 
+        geometry=110x50+70+30 
+        ; 
+        ; User Jane Doe 
+        [janedoe] 
+        meuserpath=d:\jasspa\janedoe 
 
 
 cEcESEE ALSO cEcA
