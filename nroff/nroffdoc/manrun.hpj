@@ -1,0 +1,18 @@
+; This help project requires hc 3.1
+[OPTIONS]
+errorlog = manrun.err
+title = Manual Build System Documentation
+contents = manrun
+compress = medium
+warning = 3
+report = 1
+
+[FILES]
+manrun.rtf
+[BITMAPS]
+toollogo.bmp
+[WINDOWS]
+main = "Manual Build System Documentation",,,, (192,192,192 )
+
+[CONFIG]
+BrowseButtons()

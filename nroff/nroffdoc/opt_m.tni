@@ -1,0 +1,3 @@
+.IP "\fB\-M\fR\ \fI<module>\fR"
+This option specifies the \fI<module>\fR identity that is generated.
+.\" End of file. No text beyond this point.

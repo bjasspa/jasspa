@@ -1,0 +1,7 @@
+.\" Build system
+.Ls build
+.Li build build
+.Le
+.Ls madrun
+.Le
+

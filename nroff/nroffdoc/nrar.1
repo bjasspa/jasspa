@@ -1,0 +1,255 @@
+.Id $Id: nrar.1,v 1.1 2000-10-21 14:31:35 jon Exp $
+.Im mantools utility
+.TH nrar 1
+.XI nrar - "Nroff symbol archiving utility"
+.SH NAME
+nrar \- Nroff symbol archiving utility.
+.SH SYNOPSIS
+.sp 1
+.na
+\fBnrar\fR
+\fC[\fB\-?\fC|\fB\-h\fC]\fR
+\fC[\fB\-A\fR\ \fI<module>\fC]\fR
+\fC[\fB\-E\fR\ \fI<file>\fC]\fR
+\fC[\fB\-e\fR\ \fI<file>\fC]\fR
+\fC[\fB\-I\fC]\fR
+\fC[\fB\-l\fR\ \fI<library>\fC]\fR
+\fC[\fB\-L\fR\ \fI<path>\fC]\fR
+\fB\-M\fR\ \fI<module>\fR
+\fC[\fB\-o\fR\ \fI<file>\fC]\fR
+\fC[\fB\-q\fC]\fR
+\fIfiles \.\.\.\fR
+.ad
+.SH DESCRIPTION
+The Nroff Library archiving utility, \fBnrar\fR,  catalogues the contents of a
+set of Nroff (or
+.Ht sm 4 )
+files, constructing a library file
+.Ht lbn 4 .
+The library  file retains  information  about all of the external  definitions
+made in an Nroff file,  providing a binding  between the external  definition,
+the  containment  file  and the  \fImodule\fR.  The  \fImodule\fR  is  logical
+collection of manual pages which collectively describe an interface.
+.PP
+The resultant library file produced by \fBnrar\fR is used by the
+.Ht nr2html 1
+and
+.Ht nr2rtf 1
+converters for the  compilation  process. The converters  reference  their own
+local archive library, in addition to other  \fImodules\fR,  thereby  enabling
+them to fully resolve both local and external references.
+.SS "Archiving"
+The archiving mechanism is based on \fImodules\fR, a \fImodule\fR, as produced
+by the  conversion  process,  results  in single  Microsoft  Help file or HTML
+directory.  The labels  present  within that module are defined by the library
+file
+.Ht lbn 4 .
+The  \fImodule\fR  name  is  important,  this  identifies  where a  particular
+\fIlabel\fR  is  located  within  the  help  system.  External  references  to
+\fIlabels\fR    from   other    modules    reference   a    \fImodule\fR    by
+\fI<label>@<module>\fR. Typically, \fIlabels\fR in the Nroff files, as denoted
+by the \fC.Ht\fR, \fC.Hl\fR macros, only make a reference by \fIlabel\fR name.
+When the converter  locates the reference it looks up the label and determines
+the sourcing  \fImodule\fR  (and \fIfile\fR)  constructing a hypertext link of
+the correct form \fI<label>@<module>\fR.
+.IP
+.B Note:
+A HTML reference to a \fIlabel\fR typically resolves to  \fC../module/file\fR,
+where \fImodule\fR  denotes a directory name and \fIfile\fR is the name of the
+file  containing a  definition  of the  \fIlabel\fR.  The library  (\fBlbn\fR)
+provides  enough  information  to convert a \fIlabel\fR to a \fImodule\fR  and
+\fIfile\fR reference.
+.IP
+A Windows  help file  reference  resolves to a  \fClabel@module\fR  reference,
+where \fIlabel\fR is the actual label and \fImodule\fR  denotes a windows help
+file \fCmodule.hlp\fR.
+.SS "Sub-modules or Aliasing"
+We have  already  discussed  the  grouping of data in terms of  \fImodules\fR.
+Cases arise where a \fImodule\fR  (or interface  description)  is small and is
+required to be logically  contained as such, but does not warrant packaging in
+it's own right. Where a large number of such \fImodules\fR exist then we could
+potentially  generate a large  number of very small help  components - this is
+not  required.  We shall  refer to these  small  modules as  \fIsub-modules\fR
+allowing  them  to  be  distinguished  from  our  previous   definition  of  a
+\fImodule\fR. To counter this problem, the library  archiving  allows a larger
+single  \fImodule\fR  to be defined  which is comprised of a number of smaller
+\fIsub-modules\fR, this is technique is called \fIaliasing\fR.
+.PP
+Given  \fIsub-modules\fR  \fBa\fR and \fBb\fR,  forming  part of  \fImodule\fR
+\fBm\fR,  then when the  archive  is  constructed,  a alias is  defined to map
+\fBa\fR to \fBm\fR  and \fBb\fR to \fBm\fR.  This  information  is used by the
+converters, such that when a reference to a \fIsub-module\fR  is made (e.g. to
+\fBa\fR or \fBb\fR) then the alias  \fImodule\fR  name \fBm\fR is used instead
+of \fBa\fR or \fBb\fR. Hence, any reference to any of the  \fIlabels\fR of the
+\fIsub-modules\fR  are redirected to the single larger \fImodule\fR, where the
+\fIlabel\fR may be resolved.
+.SH USAGE
+The library  archiving  utility  \fBnrar\fR  is invoked from the command line,
+taking as arguments Nroff, superman
+.Ht sm 4 
+and other  library  archive  files. The  command  line  options are defined as
+follows:
+.\" -?/-h help option
+.so opt_h.tni
+.IP "\fB\-A\fR\ \fI<module>\fR"
+The  Alias  option  allows a  library  archive  to  contain  sub-modules,  the
+\fImodule\fR as defined by the \fB\-M\fR option, is added to the library
+and given an alias \fI<module>\fR. e.g. given a command line of
+.B "\-A\ foo"
+.B "\-M\ bar"
+then \fImodule\fR \fBbar\fR is added to the \fCbar.lbn\fR archive and given an
+alias name of \fCfoo\fR.
+.IP
+The alias option is generally used for many small  interface  modules that are
+grouped together into one miscellaneous  topic. e.g. a utilities library. Each
+of the sub-module  interfaces  generally  have their own entry points (or home
+pages) but are accessed through a single 'umbrella' module.
+.\" -e -E : Error options.
+.so opt_e.tni
+.\" -I : Information.
+.so opt_i.tni
+.\" -l <library> : Library search.
+.so opt_l.tni
+.IP
+The \fI\-l\fR option is generally used to coerce multiple  sub-module  library
+files into one  larger  library.  The  sub-module  libraries  typically  being
+generated with the \fB\-A\fR option.
+.\" -L <path> : Library search path.
+.so opt_ll.tni
+.\" -M <module> : Module name
+.so opt_m.tni
+.IP
+The archive  utility  resolves all \fIlabel\fR  references to exist within the
+module  called  \fI<module>\fR.  If no  output  file is  specified,  using the
+\fB\-o\fR   option,   then  the   archive   output   is   generated   in  file
+\fImodule.lbn\fR. See also the \fB\-A\fR option.
+.IP
+This option MUST always be specified.
+.\" -o <file> : Output file name.
+.so opt_o.tni
+.IP
+If  the   \fB\-o\fR   option  is  omitted,   the   default   output   file  is
+\fImodule\fR.lbn, as defined by the \fB\-M\fR option.
+.\" -q : Quiet mode.
+.so opt_q.tni
+.SH EXAMPLE
+The  following  example shows the typical  makefile  steps used to construct a
+single  module,  whereby the makefile uses the \fBnrar\fR  utility to generate
+the  library. In this case, the  library is  generated  from all of the source
+files, which have been packaged into a
+.Ht sm 4
+file. The resultant library is then used by the compilation utility.
+.CS
+.ne 2
+manrun.sm:: $(MANRUN)
+        superman -o $@ $(MANRUN)
+
+.ne 2
+manrun.1:: manrun.sm manrun.1s
+        nrsearch -o $@ -n manrun.1s manrun.sm
+
+.ne 2
+manrun.lbn: manrun.sm manrun.1
+        nrar -M manrun manrun.1 manrun.sm
+
+.ne 6
+manrun.hts: manrun.sm manrun.1 manrun.lbn forward.lbn
+        nr2html -x -M manrun manrun.sm manrun.1 \e
+                   -H jasspa                    \e
+                   -L. -lmanrun -lforward       \e
+                   -thome:manrun                \e
+                   -tbuild:build
+.CE
+In this  example,  \fC$(MANRUN)\fR  defines all of the Nroff  pages; these are
+passed into
+.Ht superman 1
+to generate  \fCmanrun.sm\fR,  all of the individual  manual pages in a single
+file. The superman file is then used by
+.Ht nrsearch 1
+to build the index tables defined in \fCmanrun.1s\fR, generating the resultant
+file \fCmanrun.1\fR. Both \fCmanrun.1\fR and \fCmanrun.sm\fR are then archived
+using \fBnrar\fR,  generating a new module called  \fCmanrun\fRin  the library
+file \fCmanrun.lbn\fR. The library file, and the \fCmanrun.1/sm\fR are used by
+the compiler to compile the Nroff pages into set of HTML files. Notice in this
+example that we have made reference to  \fCforward.lbn\fR.  This is a manually
+constructed  archive  that  references  labels that have not been defined yet.
+The contents of \fCforward.lbn\fR are defined as:-
+.CS
+.ne 5
+\.\\" Build system
+\.Ls build
+\.Li build build
+\.Le
+.CE
+Here  we  are  forward  referning  a  \fIlabel\fR  called   \fCbuild\fR  in  a
+\fImodule\fR called \fCbuild\fR.
+.SS "Sub-Module Example"
+The  following  example  is a little  more  complex;  in this  example  we are
+creating  a  library   \fCutilsrun.lbn\fR   which  is  constructed   from  two
+sub-modules  \fCdrvdev\fR,  \fCdivutils\fR.  Notice that the  sub-modules  are
+constructed  first using  \fBnrar\fR with the aliasing  enabled. The resultant
+library,  \fCutilsrun\fR,  is finally  constructed  using \fBnrar\fR taking as
+arguments the sub-module  libraries  (which are then discarded) and additional
+references from Nroff files.
+.CS
+.ne 2
+drvrun.7: drvrun.sm drvrun.7s
+        nrsearch -o $@ -n drvrun.7s drvrun.sm
+.ne 2
+divutils.1: divutils.sm divutils.1s
+        nrsearch -o $@ -n divutils.1s divutils.sm
+.ne 5
+#
+# Build the files.
+#
+divutils.sm: $(DIVUTILS1)
+        superman -o $@ $(DIVUTILS1)
+.ne 2
+divutils.lbn: divutils.sm divutils.1
+        nrar -M divutils -A utilsrun divutils.sm divutils.1
+
+.ne 2
+drvrun.sm: $(DRVRUN7)
+        superman -o $@ $(DRVRUN7)
+.ne 2
+drvrun.lbn: drvrun.sm drvrun.7
+        nrar -M drvrun -A utilsrun drvrun.sm drvrun.7
+.ne 5
+#
+# Build the library.
+#
+utilsrun.lbn: divutils.lbn drvrun.lbn utilsrun.1
+        nrar -o $@ -M utilsrun -L. -ldivutils -ldrvrun utilsrun.1
+.ne 5
+#
+# Build the superman file.
+#
+utilsrun.sm:    divutils.sm drvrun.sm
+        superman -o $@ divutils.sm drvrun.sm
+.ne 3
+#
+# Build the windows help files.
+#
+
+.ne 3
+NROPTIONS =     -x -M utilsrun -H jasspa   \e
+                -tdiagnostics:divutils     \e
+                -tdriver:drvrun            \e
+.ne 2
+NRLIBS    =     -L. -lutilsrun -lforward
+
+.ne 5
+utilsrun.hts: utilsrun.lbn forward.lbn
+        nr2html $(NROPTIONS) $(NRLIBS)     \e
+                divutils.1 divutils.sm     \e
+                drvrun.7 drvrun.sm         \e
+                utilsrun.1
+.CE 0
+.SH "SEE ALSO"
+.na
+.Ht lbn 4 ,
+.Ht nr2html 1 ,
+.Ht nr2rtf 1 ,
+.Ht sm 4 .
+.ad
+.FH

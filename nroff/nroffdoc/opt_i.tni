@@ -1,0 +1,4 @@
+.IP "\fB\-I\fR"
+Display  version  information  about the  executable.  The  version  number is
+displayed and execution terminates.
+.\" End of file. No text beyond this point.

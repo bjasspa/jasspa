@@ -1,0 +1,188 @@
+.Id $Id: lbn.4,v 1.1 2000-10-21 14:31:33 jon Exp $
+.Im mantools file
+.TH lbn 4
+.XI lbn - "Nroff/Troff hypertext library file format"
+.Kw "JASSPA Document Formating"
+.SH NAME
+lbn \- Nroff/Troff hypertext library file format.
+.SH SYNOPSIS
+.na
+.nf
+\&\fB.Ls\fR \fImoduleName\fR [\fIaliasName\fR]
+\&\fB.Li\fR \fIitemName\fR \fIfileName\fR
+\&\fB.Li\fR ...
+\&\fB.Le\fR
+.fi
+.ad
+.SH OVERVIEW
+The hypertext  library files define  external  references to other manual page
+modules.  The  library is an ASCII  text file which  actually  contains  valid
+Nroff/Troff tags which defines an externally defined label (\fB.XI\fR tag) and
+it's associated  module name and file name where the definition of the tag was
+made.
+.PP
+The library file is typically constructed using the
+.Ht nrar 1
+Nroff archiving utility, however the library files may be constructed manually
+to forward  reference  labels in other  modules that have not  exported  their
+symbol library for some reason (e.g. appears later in the build process).
+.PP
+The hypertext library files are used by the
+.Ht nr2rtf 1
+and
+.Ht nr2html 1
+conversion  utilities when  operating in a single pass  compilation  mode. The
+libraries  define all of the  external  references  used by the  manual  pages
+undergoing compilation, this is a similar process used by a standard compiler.
+.PP
+The  library is  composed  of a single, or multiple  modules  introduced  by a
+library  start  marker  (\fB.Ls\fR)  and  terminated  by a library  end marker
+(\fB.Le\fR) which denotes the end of the module  definition. The library items
+are defined using the \fB.Li\fR  marker which defines a single  exported label
+(corresponding to an \fB.XI\fR tag in the source file).
+.PP
+A \fImodule\fR defines a group of manual pages corresponding to a single topic
+which are dealt with as a whole. e.g. all of the documentation on the document
+processing tools is bundled into a single module. Within a module their may be
+sub-modules, these are effectively modules that exist in their own right, but,
+typically because they are small, or related, they are joined together to form
+a composite  module which  comprises a number of  sub-modules.  The  \fB.Ls\fR
+command  allows an alias name to be defined  allowing  the  sub-modules  to be
+uniquely named but are components of a module.
+.SH DESCRIPTION
+The Nroff/Troff library comprises of one, or a number, of modules which define
+their  external  symbols.  The syntax of the library  commands  are defined as
+follows:-
+.IP "\fB.Ls\fR \fImoduleName\fR [\fIaliasName\fR]"
+Defines the start of a library module, the  \fImoduleName\fR  defines the name
+of  the  module   containing  the  external   references.  All  library  items
+(\fB.Li\fR) up to the next library end marker  (\fB.Le\fR)  are  components of
+the module. The  \fIaliasName\fR  is an optional  argument,  and if  supplied,
+identifies the name of the module and the \fImoduleName\fR defines the name of
+the sub-module.
+.IP "\fB.Li\fR \fIitemName\fR \fIfileName\fR"
+Defines an external  reference. The  \fIitemName\fR is the referencing name of
+the item  appearing  in the module.  The  \fIitemName\fR  is derived  from the
+\fB.XI\fR entry in the file sourcing the label. The  \fIitemName\fR  is ALWAYS
+specified  in lower  case and  comprises  alpha-numeric  characters  only, any
+section number  associated with the reference is concatenated  onto the end of
+the name. For example consider the following label definition:-
+.IP
+.C ".XI FooBar3.name 3"
+"Some arbitrary label"
+.IP
+This external reference is represented in the library file as:-
+.IP
+.C ".Li foobar3name3"
+.IP
+Note that the  conversion  process has modified all  characters to lower case,
+removed any  non-alphanumeric  characters and concatenated  the section number
+onto the end of the name.
+.IP
+The  \fIfileName\fR  argument  identifies the base name of the file (e.g. with
+the extension removed) that contains the definition of the item label.
+.IP "\fB.Le\fR"
+The library end marked closes the module defined by \fB.Ls\fR.
+.SH NOTES
+It is important to  understand  how external  links are made in the  different
+hypertext systems. The following sections provide a description of the linkage
+used.
+.SS "Nroff/Troff"
+No hypertext support, linkage information is ignored.
+.SS "Microsoft Help Files"
+Using windows help files the help compiler
+.Ht hc 1
+is used to construct a single help file called  \fImodule\fR.hlp.  Within this
+file all of the definitions made by the \fB.XI\fR entries are held in a symbol
+table which is used by the
+.Hr winhelp 1
+driver.  When an external  reference  is made from  another  module,  using an
+\fB.Ht\fR\   \fIitem\fR  or  \fB.Hl\fR\   \fIitem\fR   invocation,   then  the
+\fImodule\fR  information  is used only,  generating a cross  reference of the
+form  \fIitem@module.hlp\fR.  Which automatically loads the named windows help
+file \fImodule\fR.hlp and finds the named tag.
+.SS "HTML"
+HTML is  different  from the Windows  help system in that the file  linkage is
+performed by file name, hence a reference has to invoke a file containing that
+item label, the item label itself is not used directly as with
+.Hr winhelp 1 .
+The  \fIitem\fR is looked up in the library and results in a \fImodule\fR  and
+\fIfile\fR  cross  reference.  The  \fImodule\fR  name is used to  identify  a
+directory holding the named \fIfile\fR. This generates a file reference in the
+form of \fImodule/file\fR.html thereby resolving the required link.
+.PP
+A side effect of the absolute file  referencing  is that linkages that operate
+correctly under Windows may operate  incorrectly  with a WWW browser if module
+is referencing an old library definition and files have been modified.
+.SH EXAMPLE
+The following example shows a library for a module called \fBdsdev\fR:-
+.CS
+\&.Ls dsdev
+\&.Li ds3 dsm3n2
+\&.Li dsdev dsdev
+\&.Li dstringfirststring3 dsm3n1
+\&.Li dstringfromoptions3 dsm3n0
+\&.Li dstringnextoption3 dsm3n1
+\&.Li libdsa4 dsm3n2
+\&.Le
+.CE
+Where the labels are defined by the following files as follows:-
+.IP "File \fIdsdev\fR"
+dsdev
+.IP "File \fIdsm3n0\fR"
+dstringfromoptions3
+.IP "File \fIdsm3n1\fR"
+dstringnextoption3
+.br
+dstringfirststring3
+.IP "File \fIdsm3n2\fR"
+ds3
+.br
+libdsa4
+.PP
+A composite  library may be defined from  multiple  sub-modules.  Consider the
+following library definition for a module called  \fButilsdev\fR. It comprises
+a number of sub-modules \fBdmdev\fR, \fBdudev\fR,  \fBdsdev\fR,  \fBdrvdev\fR,
+\fBdivdev\fR.
+.CS
+\&.Ls dmdev utilsdev
+\&.Li dm3 dmm3n018
+\&.Li dmadd33 dmm3n020
+\&...
+\&.Li libdma4 dmm3n018
+\&.Le
+\&.Ls dudev utilsdev
+\&.Li du3 dum3n0
+\&.Li duaddpathtotable3 dum3n1
+\&...
+\&.Li libdua4 dum3n0
+\&.Le
+\&.Ls dsdev utilsdev
+\&.Li ds3 dsm3n2
+\&...
+\&.Li libdsa4 dsm3n2
+\&.Le
+\&.Ls drvdev utilsdev
+\&.Li dbi7 drv7dbi
+\&...
+\&.Li m3d7 drv7m3d
+\&.Le
+\&.Ls divdev utilsdev
+\&.Li div3rdpartyversion3 divm3n00
+\&..
+\&.Li divversion3 divm3n00
+\&.Le
+\&.Ls utilsdev
+\&.Li utilsdev utilsdev
+\&.Le
+.CE 0
+.SH "SEE ALSO"
+.na
+.Ht hc 1 ,
+.Ht mad 7 ,
+.Ht nr2html 1 ,
+.Ht nr2rtf 1 ,
+.Ht nrar 1 ,
+.Hr winhelp 1 .
+.ad
+.FH

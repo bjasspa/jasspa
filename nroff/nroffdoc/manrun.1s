@@ -1,0 +1,66 @@
+.Id $Id: manrun.1s,v 1.1 2000-10-21 14:31:34 jon Exp $
+.Im mantools
+.TH manrun - - - "Manual Tools"
+.XI manrun - -
+.Ss
+.\" Run in description mode for the searches.
+.\" Description mode includes the descriptions when generating indexes
+description
+.Se
+.SH Overview
+The 
+.B "Manual Tools"
+describe the manual page  building  utilities,  which run under DOS, which are
+used to contruct on-line hypertext documentation (\fBHTML\fR and \fIWindows\fR \fIHelp\fR files)
+and the more  traditional  UNIX  \fIcatman\fR  and  postscript  printed manual
+documentation. All of the source data is defined in 
+.Hr nroff 1 
+text processing  format which provides simple (but sometimes  cumbersome) data
+input   format.  The  nroff   source   data  is  based  on  the   conventional
+\fBman\fRmacro package, whose extensions are defined as 
+.Ht mad 7 .
+.PP
+The global operation of the tools are described by the introduction page 
+.Ht mantools 1 
+which  describes how the  documentation  system is constructed  using the base
+utility set.
+.SS "Manual Tools Converters"
+The following are a list of converters used to convert raw data:-
+.IP
+.Ss
+search mantools 1 converters
+output * "%N
+.Se
+.SS "Manual Tools Utilities"
+The following are a list of utility functions to coalate data:-
+.IP
+.Ss
+search mantools 1 utility
+output * "%N
+.Se
+.SS "Manual Tools File Formats"
+The various intemediatry file formats used by the converters are:-
+.IP
+.Ss
+search mantools 4 *
+search mantools 7 *
+output * "%N
+.Se
+.PP
+For a full list of all of the modules refer to the 
+.Hl gloassary mantoolsXglossary -
+.NH mantoolsXglossary - "Manual Tools Keywords"
+.SH Overview
+The following is a list of all keywords defined within the 
+.B "Manual Tools"
+build system.
+.SH Index
+.Ss
+search mantools * *
+output * "%N
+.Se
+.FH
+
+
+
+

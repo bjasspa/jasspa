@@ -1,0 +1,5 @@
+.IP "\fB\-o\fR\ \fI<file>\fR"
+Specifies the name of the output file to be \fI<file>\fR.  \fI<file>\fR may be
+specified  as an  absolute  or  relative  file name; a  relative  file name is
+created with respect to the current working directory.
+.\" End of File. Do not add text below this point

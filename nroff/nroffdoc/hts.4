@@ -1,0 +1,93 @@
+.Id $Id: hts.4,v 1.1 2000-10-21 14:31:33 jon Exp $
+.Im mantools file
+.TH hts 4
+.XI hts - "Super HTML file format extensions"
+.Kw "Document Formating"
+.SH NAME
+hts \- Super HTML file format extensions
+.SH SYNOPSIS
+.na
+.nf
+\fB<<SUBDIRECTORY> \fIdirectory \fB>\fR
+\fB<<FILE> "\fR\|\fIfilename\|\fB&HTML&\fR[\fB#\fR\|\fIlabel\fR\|]\fB" >\fR
+.ad
+.fi
+.SH OVERVIEW
+The \fBhts\fR file format (file extension is \fI.hts\fR) defines extensions to
+HTML that are used by the
+.Ht htmlc 1
+HTML compiler and
+.Ht nr2html 1
+to generate a single file containing multiple HTML pages. The extensions allow
+simple scripts to be written in
+.Hr awk 1
+to extract the files. The utility
+.Ht hts2html 1 
+also  extracts  the  contained  HTML  pages  from an hts file.  \fBhts2html\fR
+provides a better extraction.
+.PP
+The motivation for creating a number of HTML files within a single file is for
+ease of data movement, additionally it simplifies and speeds up the generation
+process.
+.PP
+The extension tags are defined as follows. Note that a tag is the first and
+only item on a line:-
+.IP "\fB<<SUBDIRECTORY> \fIdirectory \fB>\fR"
+Identifies the name of a sub-directory which is used by the file. Any data
+extraction utility processing an \fBhts\fR file should create the named
+sub-directory. The sub-directory definition should appear before any
+\fB<<FILE>..>\fR references that use the sub-directory.
+.TP 
+\fB<<FILE> "\fR\|\fIfilename\|\fB&HTML&\fR[\fB#\fR\|\fIlabel\fR\|]\fB" >\fR
+.\"
+Identifies a new HTML file, the file exists up until the next file marker or
+the end of the file. The filename may include a directory component. The
+directory should be defined using the \fB<<SUBDIRECTORY>..>\fR tag prior to
+use.
+.IP
+The tag  \fB&HTML&\fR may be encountered in the filename, this is repaced with
+the required file extension, typically \fB.html\fR or \fB.htm\fR.  Optionally,
+jump tags may  include a local  label  denoted by  \fB#\fR\|\fIlabel\fR.  This
+forms part of the link name.
+.SH EXAMPLE
+The following fragment shows how a \fB.hts\fR file is structured. The code
+fragment creates a subdirectory called \fCjasspa\fR and two files
+\fCjasspa.html\fR and \fCjasspa/adivi000.html\fR:-
+.CS
+\&<<SUBDIRECTORY> jasspa >
+\&<<FILE> jasspa.html >
+\&<HTML>
+\&<HEAD><TITLE>JASSPA On-Line</TITLE></HEAD>
+\&<BODY>
+\&<H2><B><A HREF="jasppa.html">
+\&<IMG SRC="jasppa/logo.gif" ALIGN=BOTTOM ALT="[jasppa]"></A>
+\&Jasspa On-Line</B></H2>
+\&<FONT SIZE=2>
+\&<A HREF="jasppa.html">[Home]</A>
+\&</FONT>
+\&<HR>
+\&<H4><B>Overview </B></H4>
+\&...
+\&<P>
+\&<HR>
+\&</BODY></HMTL>
+\&<<FILE> jasppa/adivi000.html >
+\&<HTML>
+\&<HEAD><TITLE>Help!</TITLE></HEAD>
+\&<BODY>
+\&<H2><B><A HREF="../jasppa.html">
+\&<IMG SRC="../jasppa/logo.gif" ALIGN=BOTTOM ALT="[jasppa]"></A>
+\&Help!</B></H2>
+\&...
+\&<HR>
+\&</BODY></HMTL>
+.CE 0
+.SH "SEE ALSO"
+.na
+.Hr awk 1 ,
+.Ht htmlc 1 ,
+.Ht htp 4 ,
+.Ht hts2html 1 ,
+.Ht nr2html 1 .
+.ad
+.FH

@@ -1,0 +1,54 @@
+.Id $Id: sm.4,v 1.1 2000-10-21 14:31:38 jon Exp $
+.Im mantools file
+.TH sm 4
+.XI sm - "Nroff/Troff super man file format"
+.Kw "JASSPA Document Formating"
+.SH NAME
+sm \- Nroff/Troff super man file format.
+.SH SYNOPSIS
+.na
+.nf
+\fB.SUPERMANINC\fR \fIfilename\fR
+\fI<nroff include file body>\fR
+\fB.SUPERMANEND\fR \fIfilename\fR
+\fB.SUPERMANFILE\fR \fIfilename\fR
+\fI<nroff file body>\fR
+\fB.SUPERMANEND\fR \fIfilename\fR
+.fi
+.ad
+.SH DESCRIPTION
+The superman file format is used by the Nroff converters and processing tools.
+The file contains a concatenation of nroff files which are brought together
+into one large file. The file format is used as a preprocessing stage for the
+converters, accumulating all of the nroff files into a single file to present
+to the converter. This significantly speeds up the conversion process as where
+several hundred files source are presented to the converter in a single file.
+The super man file is also used as the preferred transfer unit between DOS and
+UNIX, enabling all of the nroff source files to be concatenated into a simple
+easy to transfer file.
+.PP
+The file format is actually an extension to nroff, catering for include files
+(e.g. those files referenced via the \fB.so\fR command, usually given the
+\fB.tni\fR extension), and for individual manual pages.
+.PP
+The super man files are constructed by the
+.Ht superman 1
+document processing utility.
+.PP
+The file format is extremely simple, any include files are ALWAYS included at
+the head of the file and are delimited by a \fB.SUPERMANINC\fR and
+\fB.SUPERMANEND\fR markers, both of which are followed by the name of the
+file. Similarly the main pages are delimited by a \fB.SUPERMANFILE\fR and
+\fB.SUPERMANEND\fR marker.
+.PP
+The simplicity of the file format allows utilities such as
+.Hr awk 1
+to reconstruct the individual files for presentation to
+.Hr groff 1 .
+.SH "SEE ALSO"
+.na
+.Hr awk 1 ,
+.Hr groff 1 ,
+.Ht superman 1 .
+.ad
+.FH

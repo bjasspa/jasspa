@@ -1,0 +1,4 @@
+.IP "\fB\-q\fR"
+Disable  interactive  mode reporting. When omitted the progress of the utility
+is displayed in the command shell.
+.\" End of file. Do not add text below this point.

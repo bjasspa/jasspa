@@ -1,0 +1,105 @@
+.Id $Id: droff.1,v 1.1 2000-10-21 14:31:32 jon Exp $
+.Im mantools converter
+.TH droff 1
+.XI droff - "DOS Nroff utility"
+.SH NAME
+droff \- DOS Nroff utility
+nroff \- DOS Nroff viewer
+.SH SYNOPSIS
+.sp 1
+.na
+\fBdroff\fR
+\fC[\fB\-?\fC|\fB\-h\fC]\fR
+\fC[\fB\-a\fC]\fR
+\fC[\fB\-E\fR\ \fI<file>\fC]\fR
+\fC[\fB\-e\fR\ \fI<file>\fC]\fR
+\fC[\fB\-I\fC]\fR
+\fC[\fB\-l\fR\ \fI<len>\fC]\fR
+\fC[\fB\-o\fR\ \fI<file>\fC]\fR
+\fC[\fB\-q\fC]\fR
+\fC[\fB\-s\fC]\fR
+\fInroff\ files\ \.\.\.\fR
+
+\fBnroff\fR \fInroff\ file\fR
+.ad
+.SH DESCRIPTION
+\fBdroff\fR  was  developed  for  the  Microsoft  DOS  environment  to  enable
+\fInroff\fR
+.Ht mad 7
+files to be  converted  and  viewed.  It has  since  been  converted  for UNIX
+environments. The converter takes as input nroff files written against the
+.Ht mad 7
+format  specification  only. The  converter  has several  advantages  over the
+standard general purpose
+.Hr nroff 1
+converter in that it performs  syntax  checking of the input file which is far
+stricter that can be achieved by using the standard  converter.  The converter
+includes a subset of the
+.Hr troff 1
+commands and is not extensible without re-compilation.
+.PP
+The options to the converter are as follows:-
+.\" -?/-h help option
+.so opt_h.tni
+.\" -a : ASCII option.
+.IP "\fB\-a\fR"
+Generate ANSI graphics  control codes for highlighting  (the escape codes sent
+to a  PC  screen  for  highlighting),  rather  than  standard  UNIX  man  type
+highlighting  which uses  over-striking.  The \fB\-a\fR  option may be used in
+conjunction with Mortice Kern's
+.Hr more 1
+in DOS  environments  to view the  formated  output.  This format also used by
+MicroEmacs  to determine  the on screen  formating as used by the  \fIadman\fR
+macro.
+.IP
+The default, when omitted, is to generate UNIX catman style output  comprising
+three  overstrikes  for  \fBbold\fR  font  and an  underscore  overstrike  for
+\fIitalic\fR
+.\" -e -E : Error options.
+.so opt_e.tni
+.\" -I : Information.
+.so opt_i.tni
+.\" -l <length> : Page length.
+.IP "\fB\-l\fR\ \fI<len>\fR"
+Modify the page length to \fI<len>\fR, the default when omitted is 66 lines.
+.\" -o : Output file
+.so opt_o.tni
+.IP
+The default when omitted is "\fIinput filename\fR.out". See also the \fB\-s\fR
+option.
+.\" -q : Quiet mode.
+.so opt_q.tni
+.\" -s : Standard output.
+.so opt_s.tni
+Typically used in conjunction with the \fB\-a\fR option.
+.PP
+\fBnroff\fR  is a DOS batch file which  enables the user to view the  formated
+output under DOS. See the example below.
+.SH EXAMPLE
+\fBdroff\fR  is  usually  used  from the DOS  command  line  via a batch  file
+\fBnroff.bat\fR. This uses the Mortice Kern
+.Hr more 1
+utility to display the page. e.g. \fCnroff\ myfile.1\fR.
+.CS
+@echo off
+droff.exe \-a \-s %1|c:\\mksrcs\\bin\\more \-s \-A
+.CE
+To generate a standard \fIcatman\fR manual page then use:-
+.CS
+droff -o myfile.man myfile.1
+.CE
+Within the  \fBMicroEmacs\fR  environment,  the template file  \fChkdman\fR is
+used to display a formated ANSI manual page using the \fCemc\fR command:
+.CS
+pipe-command &cat "droff -a -s " @ml"dMan on"
+.CE 0
+.SH BUGS
+\fBdroff\fR does not cater for multiple file input correctly.
+.SH "SEE ALSO"
+.na
+.Ht nrcheck 1 ,
+.Ht nrinfo 1 ,
+.Ht sm 4 ,
+.Ht mad 7 .
+.ad
+.FH

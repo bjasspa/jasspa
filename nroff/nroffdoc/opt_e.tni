@@ -1,0 +1,17 @@
+.IP "\fB-e\fR \fI<file>\fR"
+Specify an error file, any errors or  warnings  generated  by the utility  are
+written to the error logging file \fI<file>\fR. The \fB\-e\fR option creates a
+new error logging file, if an existing file already  exists then it is deleted
+and a new error  logging file is created. For  appending to an existing  error
+logging  file see the  \fB\-E\fR  option.  If the  error  logging  file is not
+specified then the errors are written on \fIstderr\fR.
+.IP "\fB\-E\fR\ \fI<file>\fR"
+Specify an error file, any errors or  warnings  generated  by the utility  are
+appended to the end of the error logging file  \fI<file>\fR.  If the file does
+not already exist then it is created,  otherwise error reports are appended to
+the existing file.
+.IP
+The \fB\-E\fR  option is generally used in a system build  environment so that
+all errors and  warnings  from the build may be collected  and  corrected at a
+later date.
+.\" End of file. Do not add text beyond this point.

@@ -1,0 +1,599 @@
+.Id $Id: nrsearch.1,v 1.1 2000-10-21 14:31:35 jon Exp $
+.Im mantools preprocessor
+.TH nrsearch 1
+.XI nrsearch - "Nroff search for symbols and generate an index"
+.SH NAME
+nrsearch \- Nroff search for symbols and generate a list
+.SH SYNOPSIS
+.sp 1
+.na
+\fBnrsearch\fR
+\fC[\fB\-a\fC]\fR
+\fC[\fB\-c\fR\ \fI<component>\fC]\fR
+\fC[\fB\-d\fC]\fR
+\fC[\fB\-E\fR\ \fI<file>\fC]\fR
+\fC[\fB\-e\fR\ \fI<file>\fC]\fR
+\fC[\fB\-I\fC]\fR
+\fC[\fB\-i\fR\ \fI<id>\fC]\fR
+\fC[\fB\-m\fR\ \fI<module>\fC]\fR
+\fC[\fB\-n\fR\ \fI<file>\fC]\fR
+\fC[\fB\-o\fR\ \fI<file>\fC]\fR
+\fC[\fB\-q\fC]\fR
+\fC[\fB\-r\fR\ \fI<file>\fC]\fR
+\fInroff\ files...\fR
+.ad
+.SH DESCRIPTION
+\fBnrsearch\fR  is a preprocessor for constructing  indexes in nroff/troff, it
+takes as input a list of Nroff/Files  from which extracts  symbol  information
+and generates an  alphabetically  sorted index.  \fBnrsearch\fR  uses embedded
+nroff commands which are substituted for the generated nroff/troff commands.
+.PP
+The search utility operates in one of three modes:-
+.BS
+From the command line.
+.BU
+From a response file.
+.BU
+From embedded commands in an Nroff file.
+.BE
+\fInrsearch\fR  collects all of the symbols from the specified input files and
+then process a set of search blocks  embedded in the input file, expanding the
+embedded  commands  into a list of  character  strings  specified by an output
+block  configuration. The list of character strings are alphabetically  sorted
+and may optionally include an index alphabetic marker.
+.PP
+The search utility collects symbol information from Nroff/Files using the
+following nroff tags:-
+.PP
+.RS
+\fB.Im\fR \fI<module>\fR \fI<component>\fR
+.br
+\fB.TH\fR \fI<section>\fR
+.br
+\fB.XI\fR \fI<name>\fR \fC[\fI<section>\fC]\fR \fC[\fR"\fI<description>\fR"\fC]\fR
+\fC[\fI<component>\fR\fC]\fR
+.RE
+.PP
+Where:
+.IP \fI<Module>\fR
+Identifies the name of the module. This is a single string.
+.IP \fI<Component>\fR
+Identifies  the  component, or category of the manual page. When placed in the
+\fB.Im\fR  statement  the  category  applies  to ALL  labels in the file. When
+placed  on a  \fB.XI\fR  entry,  then  the  component  label  applies  to  the
+\fI<name>\fR  tag only. Note that if a \fB.Im\fR  statement  has  omitted  the
+\fI<component>\fR  then it is placed in the default  \fI<component>\fR  called
+\fCmisc\fR.
+.IP
+The component  string  comprises of named  components into which the module is
+assigned. Multiple components may be specified using the pipe (\fC|\fR) symbol
+which represents an logical  \fBAND\fR  operator,  placing any assigned labels
+into BOTH  components.  The component  string itself may be  sub-divided  into
+sub-categories using a semi-colon. e.g.
+.IP
+.RS
+\fIMajor1;Minor1;SubMinor1|Major2;Minor2|Major3\fR
+.RE
+.IP
+The  previous   example   would  place  a  label(s)   into  three   categories
+\fIMajor1;Minor1;SubMinor1\fR,  \fIMajor2;Minor2\fR and \fIMajor3\fR. A search
+for \fIMajor2\fR and  \fIMajor1;Minor1\fR  would select any \fI<name>\fR  tags
+assigned with this string. However a search for  \fIMajor2;Minor2;SubMinor1\fR
+would not select the tags as the  category  label is not specific  enough. The
+number of  sub-categories  (\fC;\fR  depth) and assigned  categories  (\fC|\fR
+count) is not limited.
+.IP  \fI<section>\fR
+Identities the section number of the page. The section is derived in the first
+instance  from the  \fB.TH\fR  statement  which is inherited by the  \fI.XI\fR
+tags, if defaulted (e.g. specified as \fC\-\fR),  otherwise the section number
+is  overridden  explicitly  by the  \fB.XI\fR  \fI<section>\fR.  Note that the
+section is treated as an ASCII  string,  rather  than a number  although it is
+most typically a single digit.
+.IP \fI<description>\fR
+This is an ASCII  description  of the label, usually  containing a text string
+that will  appear in the  indices.  The  description  is  specified  in double
+quotes.
+.PP
+The search component  generates a sorted list of \fI<name>\fR  entries that it
+has generated. An index marker may be included into the text typically used to
+split alphabetic  sections - this is called  \fIalphabetic\fR  \fImode\fR. The
+indices may also be constructed with their description files, typically called
+\fIdescription\fR \fImode\fR.
+.PP
+The command line options are defined as follows:-
+.IP \fB\-a\fR
+Operate in alphabetic mode.
+.IP "\fB-c\fR\ \fI<component>\fR"
+Command  line  initiated  search  option.  Initiate  a  search  for the  named
+\fI<component>\fR.
+.IP "\fB-d\fR"
+Command line initiated search option.  Configure the output to be generated in
+\fIdescription\fR \fImode\fR.
+.\" -e -E : Error options.
+.so opt_e.tni
+.\" -I : Information.
+.so opt_i.tni
+.IP "\fB-i\fR\ \fI<id>\fR"
+Command line initiated search option. Initiate a search for \fI<name>\fR  tags
+that exist in the \fI<section>\fR identified by \fI<id>\fR.
+.IP "\fB-m\fR\ \fI<module>\fR"
+Command line initiated search option. Initiate a search for \fI<name>\fR  tags
+that are assigned to \fI<module>\fR only.
+.IP "\fB-n\fR\ \fI<file>\fR"
+Nroff  initiated   search.  Process  the  named  nroff  file  and  expand  all
+\fBnrsearch\fR preprocessing blocks with the generated index.
+.IP "\fB-o\fR\ \fI<file>\fR"
+Generate the output to the named file  \fI<file>\fR.  The default is the input
+file basename\fI.out\fR.
+.\" -q : Quiet mode.
+.so opt_q.tni
+.IP "\fB-r\fR\ \fI<file>\fR"
+Response  file  search.  Initiate  a search  from a  specified  response  file
+\fI<file>\fR.
+.SS "General Coding Scheme"
+The general  coding scheme of the response  file and nroff files is defined as
+follows, all commands MUST appear in column 1 i.e. at the start of the line:-
+.PP
+.RS
+\fB.\\"\fR \fIComment string to end of line.\fR
+.br
+\fBalphabetic\fR
+.br
+\fBnon-alphabetic\fR
+.br
+\fBdescription\fR
+.br
+\fBno-description\fR
+.br
+\fBsearch\fR \fI<module>\fR \fI<section>\fR \fI<component>\fR 
+.br
+\fBoutput\fR \fB<file>\fR \fB"\fI<format>\fR
+.RE
+.PP
+When the response  file is embedded in an  Nroff/Troff  file then the commands
+must be delimited by a search start/search end marker defined as \fB.Ss\fR and
+\fB.Se\fR,  respectively. In a nroff file the coding for \fInrsearch\fR  might
+look like this:-
+.PP
+.RS
+.nf
+\fB.Ss\fR
+\fCalphabetic\fR
+\fCdescription\fR
+\fCsearch module 3 component\fR
+\fCoutput * "%N\fR
+\fB.Se\fR
+.fi
+.RE
+.PP
+Successful  processing of the index and the generated  output depends  largely
+upon the successful tagging of the input data.
+.SS Options
+The options  affect the entire table, and are placed one per line (blank lines
+are ignored). The command options are defined as:-
+.PP
+\fB.\\"\fR
+.br
+.RS
+The \fB.\\"\fR symbol introduces a comment that exists to the end of the line.
+.RE
+.BP .Ss
+Start the search block in an Nroff file, this is not used for a general
+response file.
+.BP .Se
+End the search block in an Nroff file, this is not used for a general response
+file.
+.BP alphabetic
+Produce Nroff alphabetic  markers whenever the initial character changes. This
+is  used  for   generating   indexes.  It  generates   the  string   \fC.SS\fR
+\fI<alphabetic\fR  \fIcharacter>\fB\\n\fR. Alphabetic mode is globally enabled
+until a  \fBnon-alphabetic\fR  command is  encountered.  The  default  mode of
+operation is alphabetic mode disabled.
+.BP non-alphabetic
+Disables alphabetic mode, see \fBalphabetic\fR.
+.BP description
+Enables  \fIdescription  mode\fR for the default Nroff \fI<format>\fR  string.
+Description mode includes the  \fI<description>\fR  information as well as the
+\fI<name>\fR information.  \fIdescription\fR  \fImode\fR may be disbaled using
+the   \fBno-description\fR   command.  The  default   mode  of   operation  is
+\fIdescription\fR \fImode\fR disabled.
+.BP no-description
+Disables \fIdescription mode\fR, see \fBdescription\fR.
+.IP "\fBsearch\fR \fI<module>\fR \fI<section>\fR \fI<component>\fR"
+Search   initiates  a  search  for  the  named  symbols,   searching  for  all
+\fI<name>\fR  items which match the named search  criteria.  Wild cards may be
+specified  as with a star  (\fC*\fR)  symbol. Any of the fields  accept a wild
+card. The action of the  \fBsearch\fR  is to tag any  \fI<name>\fR  tags which
+match the search  criteria  as  candidates  for  \fBoutput\fR.  Any  number of
+searches may be initiated and the symbols gathered are accumulated to the next
+\fBoutput\fR  statement.  When they have been output no \fI<name>\fR  tags are
+selected.
+.IP "\fBoutput\fR \fI<file>\fR \fI<format>\fR"
+The \fBoutput\fR  statement  prints all of the \fI<name>\fR  tags collected by
+the \fBsearch\fR  command(s). The first option \fI<file>\fR specifies the name
+of the output file into which the  generated  list is placed. If the option is
+defaulted  with a star (\fC*\fR) the then the output is generated  in-line for
+Nroff, or on the current output stream.
+.IP
+The \fI<format>\fR  specifies the format of the output data that is generated.
+The  string  to  print  is  introduced  with  a  double-quote  (\fC"\fR).  The
+\fI<format>\fR  string  exits  until the end of the line and may  include  any
+ASCII characters. A set of command  characters allow the search information to
+be included in the generated text, the command  characters are introduced with
+the percentage (\fC%\fR) symbol as follows:-
+.RS
+.IP \fB%%\fR
+A percentage symbol.
+.IP \fB%N\fR
+The default nroff string, when \fIdescription\fR \fImode\fR is enabled this is
+defined as:-
+.RS
+.IP
+\fC.Ht %i %s\\n.br\\n\fR
+.RE
+.IP
+When \fIdescription\fR \fImode\fR is disabled it is defined as:-
+.RS
+.IP
+\fC.Ht %i %s\\n%d%n.br\\n\fR
+.RE
+.IP \fB%c\fR
+The \fI<component>\fR name located in the search.
+.IP \fB%d\fR
+The \fI<description>\fR string located in the search.
+.IP \fB%f\fR
+The name of the source file containing the \fB.XI\fR definition.
+.IP \fB%i\fR
+The item or tag \fI<name>\fR of the symbol.
+.IP \fB%l\fR
+The line number of the \fB.XI\fR definition.
+.IP \fB%m\fR
+The \fI<module>\fR name associated with the \fI<name>\fR.
+.IP \fB%n\fR
+A conditional  new line character if the current  output line is not empty. If
+the output line is empty then no newline character is generated.
+.IP \fB%s\fR
+The \fI<section>\fR name of the \fI<name>\fR.
+.RE
+.IP
+In addition  to the command  characters,  the  following  special  characters,
+introduced by a backward slash (\fC\\\fR) are recognised:-
+.IP
+\fC\\n\fR - A newline character.
+.br
+\fC\\r\fR - Ignored.
+.br
+\fC\\t\fR - A tab character.
+.br
+\fC\\\\\fR - backslash character ('\\');
+.br
+\fC\\\fIx\fR - Literal character. Where \fIx\fR is any character not specified
+above.
+.SS NOTES
+Nroff/Troff  files to be  searched  are  generally  given  the file  extension
+\fB.Xs\fR  where \fIX\fR  denotes the section  number. Hence a file  \fCfoo\fR
+containing  \fBnrsearch\fR  options in section 1 would be called \fCfoo.1s\fR,
+after running through the utility a file called \fCfoo.1\fR is generated which
+contains Nroff commands.
+.PP
+For speed of  processing it is strongly  recommended  that the input files are
+composed into a superman file
+.Ht sm 4 
+using the
+.Ht superman 1
+utility. This  significantly  increases the speed of processing  where a large
+number of files are being processed and multiple searches are being initiated.
+.PP
+When constructing index pages, it is recommended that the utility
+.Ht nrinfo 1 
+is used to  determine  the  categories  that have been  defined in the  manual
+pages. This enables the user top determine  what indexes need to be generated,
+and is also useful for determining if the data has been partitioned properly.
+.SS EXAMPLE
+The following  examples show how the  \fBnrsearch\fR  utility operates. All of
+the examples consider 3 files as follows:-
+.PP
+File \fCf1.1\fR
+.\" IGNORE-WARNING
+.CS 0
+\.Id $Id: nrsearch.1,v 1.1 2000-10-21 14:31:35 jon Exp $
+\.Im ffiles f;f1
+\.TH f1 1
+\.XI f1 - "File 1"
+\.XI f1componant - "File 1 with component" component
+\.XI f1format 4 "f1 File format"
+\.SH NAME
+f1 \- File 1
+\.SH SYNOPSIS
+\...
+\.FH
+.CE
+File \fCf2.1\fR
+.\" IGNORE-WARNING
+.CS 0
+\.Id $Id: nrsearch.1,v 1.1 2000-10-21 14:31:35 jon Exp $
+\.Im ffiles f;f2
+\.TH f2 1
+\.XI f2 - "File 2"
+\.XI f2componant - "File 2 with component" component
+\.XI f2format 4 "f2 File format"
+\.SH NAME
+f2 \- File 2
+\.SH SYNOPSIS
+\...
+\.FH
+.CE
+File \fCf3.1\fR
+.\" IGNORE-WARNING
+.CS 0
+\.Id $Id: nrsearch.1,v 1.1 2000-10-21 14:31:35 jon Exp $
+\.Im ffiles f;f3
+\.TH f3 1
+\.XI f3 - "File 3"
+\.XI f3componant - "File 3 with component" component
+\.XI f3format 4 "f3 File format"
+\.SH NAME
+f3 \- File 3
+\.SH SYNOPSIS
+\...
+\.FH
+.CE 0
+.SS "Example 1"
+To initiate a search for all section 4 files from the command line then we may
+issue a command such as:-
+.CS
+nrsearch -m ffiles -s 4 -o f.out f1.1 f2.1 f3.1
+.CE
+This generates a file called \fCf.out\fR as follows:-
+.CS
+.ne 6
+\.Ht f1format 4
+\.br
+\.Ht f2format 4
+\.br
+\.Ht f3format 4
+\.br
+.CE
+This output would correspond to a \fBnrsearch\fR description of:-
+.CS
+search ffiles 4 *
+output * "%N
+.CE 0
+.SS "Example 2"
+Adding the description option
+.CS
+nrsearch -d -m ffiles -s 4 -o f.out f1.1 f2.1 f3.1
+.CE
+This generates a file called \fCf.out\fR as follows:-
+.CS
+\.Ht f1format 4
+f1 File format
+\.br
+\.Ht f2format 4
+f2 File format
+\.br
+\.Ht f3format 4
+f3 File format
+\.br
+.CE
+This output would correspond to a \fBnrsearch\fR description of:-
+.CS
+.ne 3
+description
+search ffiles 4 *
+output * "%N
+.CE 0
+.SS "Example 3"
+Generating an index title using \fIalphabetic mode\fR generates more
+information as follows:-
+.CS
+nrsearch -a -d -m ffiles -s 4 -o f.out f1.1 f2.1 f3.1
+.CE
+This generates a file called \fCf.out\fR as follows:-
+.CS
+\.SS F
+\.Ht f1format 4
+f1 File format
+\.br
+\.Ht f2format 4
+f2 File format
+\.br
+\.Ht f3format 4
+f3 File format
+\.br
+.CE
+This output would correspond to a \fBnrsearch\fR description of:-
+.CS
+.ne 3
+alphabetic
+description
+search ffiles 4 *
+output * "%N
+.CE 0
+.SS "Example 4"
+Alternatively, we may search for a named component called \fCcomponent\fR, in
+this case we are not interested in the section level, only the labels which
+are generated.
+.CS
+nrsearch -a -d -m ffiles -c component -o f.out f1.1 f2.1 f3.1
+.CE
+The generated output would be:-
+.CS
+\.SS F
+\.Ht f1componant 1
+File 1 with component
+\.br
+\.Ht f2componant 1
+File 2 with component
+\.br
+\.Ht f3componant 1
+File 3 with component
+\.br
+.CE
+This output would correspond to a \fBnrsearch\fR description of:-
+.CS
+.ne 4
+alphabetic
+description
+search ffiles * component
+output * "%N
+.CE 0
+.SS "Example 5"
+Using a file description, the format of the generated output may be modified.
+Considering a command line description of:-
+.CS
+.ne 3
+description
+search ffiles 4 *
+output * "%i(%s) - %d\\n
+.CE
+This generates an output:-
+.CS
+.ne 3
+f1format(4) - f1 File format
+f2format(4) - f2 File format
+f3format(4) - f3 File format
+.CE 0
+.SS "Example 6"
+Typically the search utility is used to process an nroff file, where we
+generate multiple indexes in a single invocation. Consider the following Nroff
+file \fCfdev.1s\fR to generate a set of indexes:-
+.CS
+\.Id $Id: nrsearch.1,v 1.1 2000-10-21 14:31:35 jon Exp $
+\.Im ffiles
+\.TH f
+\.XI f - "f Index"
+\.Ss
+\.\\" Force the search to run in description mode.
+description
+\.Se
+\.SH NAME
+f \- Cross references
+\.SH SYNOPSIS
+List of all of the f1 functions:-
+\.Ss
+search ffiles 1 f;f1
+output * "%N
+\.Se
+List of the f2 functions:-
+\.Ss
+search ffiles 1 f;f2
+output * "%N
+\.Se
+List of the components:-
+\.Ss
+search ffiles * component
+output * "%N
+\.Se
+List of all the section 4 references.
+\.Ss
+search ffiles 4 *
+output * "%N
+\.Se
+List of all references
+\.Ss
+search ffiles * *
+output * "%N
+\.Se
+\.FH
+.CE
+Given a command line of:-
+.CS
+nrsearch -n fdev.1s -o fdev.1 f1.1 f2.1 f3.1
+.CE
+the search utility executes:-
+.CS
+Output in file [fdev.1].
+nrsearch : Processing file [f1.1]
+nrsearch : Processing file [f2.1]
+nrsearch : Processing file [f3.1]
+Searching for [ffiles (1) : f;f1] .... Found 2 entries
+Searching for [ffiles (1) : f;f2] .... Found 2 entries
+Searching for [ffiles (*) : component] .... Found 3 entries
+Searching for [ffiles (4) : *] .... Found 3 entries
+Searching for [ffiles (*) : *] .... Found 9 entries
+.CE
+producing an output in \fCfdev.1\fR:-
+.CS
+\.Id $Id: nrsearch.1,v 1.1 2000-10-21 14:31:35 jon Exp $
+\.Im ffiles
+\.TH f
+\.XI f - "f Index"
+\.SH NAME
+f \- Cross references
+\.SH SYNOPSIS
+List of all of the f1 functions:-
+\.Ht f1 1
+File 1
+\.br
+\.Ht f1componant 1
+File 1 with component
+\.br
+List of the f2 functions:-
+\.Ht f2 1
+File 2
+\.br
+\.Ht f2componant 1
+File 2 with component
+\.br
+List of the components:-
+\.Ht f1componant 1
+File 1 with component
+\.br
+\.Ht f2componant 1
+File 2 with component
+\.br
+\.Ht f3componant 1
+File 3 with component
+\.br
+List of all the section 4 references.
+\.Ht f1format 4
+f1 File format
+\.br
+\.Ht f2format 4
+f2 File format
+\.br
+\.Ht f3format 4
+f3 File format
+\.br
+List of all references
+\.Ht f1 1
+File 1
+\.br
+\.Ht f1componant 1
+File 1 with component
+\.br
+\.Ht f1format 4
+f1 File format
+\.br
+\.Ht f2 1
+File 2
+\.br
+\.Ht f2componant 1
+File 2 with component
+\.br
+\.Ht f2format 4
+f2 File format
+\.br
+\.Ht f3 1
+File 3
+\.br
+\.Ht f3componant 1
+File 3 with component
+\.br
+\.Ht f3format 4
+f3 File format
+\.br
+\.FH
+.CE 0
+.SH "SEE ALSO"
+.na
+.Ht mad 7 ,
+.Ht nr2html 1 ,
+.Ht nr2rtf 1 ,
+.Ht nrinfo 1 ,
+.Ht nrinfo 1 ,
+.Ht sm 4 ,
+.Ht superman 1 .
+.ad
+.FH

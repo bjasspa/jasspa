@@ -1,0 +1,65 @@
+.Id $Id: hts2html.1,v 1.1 2000-10-21 14:31:33 jon Exp $
+.Im mantools converters
+.TH hts2html 1
+.XI hts2html - "Super HTML (hts) file expansion utility"
+.SH NAME
+hts2html \- Super HTML (hts) file expansion utility
+.SH SYNOPSIS
+.sp 1
+.na
+\fBhts2html\fR
+\fC[\fB\-?\fC|\fB\-h\fC]\fR
+\fC[\fB\-E\fR\ \fI<file>\fC]\fR
+\fC[\fB\-e\fR\ \fI<file>\fC]\fR
+\fC[\fB\-I\fC]\fR
+\fC[\fB\-q\fC]\fR
+\fC[\fB\-v\fR\ \fI<level>\fC]\fR
+\fIhts\ files\fR
+.ad
+.SH DESCRIPTION
+\fBhts2html\fR is a utility for expanding
+.Ht hts 4
+files into
+.Hr html 4
+files. The utility reads the source \fIhts\fR file and extracts the HTML files
+embedded in the file into the current directory,  creating  sub-directories as
+directed by the file. The processing on each of the
+.Ht hts 4
+tags is defined as follows:-
+.IP "<<SUBDIRECTORY> \fIdirectoryName\fR >"
+The directory \fIdirectoryName\fR is created in the current working directory.
+.IP "<<FILE> \fIfileName\fR >"
+The file  \fIfileName\fR is opened in the current working directory (note that
+this name may include a  sub-directory  path  component).  The contents of the
+file following the \fIfile\fR  \fImarker\fR  are written to the opened file up
+until the next \fIfile\fR \fImarker\fR or the end of the file is reached.
+.PP
+The command line options of the utility enable the error and verbose reporting
+to be modified as follows:-
+.\" -?/-h help option
+.so opt_h.tni
+.\" -e -E : Error options.
+.so opt_e.tni
+.\" -I : Information.
+.so opt_i.tni
+.\" -q : Quiet mode.
+.so opt_q.tni
+.IP "\fB-v\fR \fI<level>\fR"
+Specify the  verbosity  level of the utility.  \fI<level>\fR  is the verbosity
+level which is specified  as a single digit and ranges from 0 through 9, where
+0 is least  verbose.  Typically  level 1 is used to monitor the files that are
+appended to the archive.
+.SH EXAMPLE
+The following example expands a group of \fIhts\fR files:-
+.CS
+hts2html *.hts
+.CE 0
+.SH "SEE ALSO"
+.na
+.Hr html 4 ,
+.Ht htmlc 1 ,
+.Ht htp 4 ,
+.Ht hts 4 ,
+.Ht nr2html 1 .
+.ad
+.FH

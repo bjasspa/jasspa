@@ -1,0 +1,406 @@
+.Id $Id: sm2cat.1,v 1.1 2000-10-21 14:31:38 jon Exp $
+.Im mantools converters
+.TH sm2catman.nawk 1
+.XI sm2catman.nawk - "Convert a superman file to UNIX catman pages"
+.XI sm2ps.nawk - "Convert a superman + pso file into postscript manual"
+.XI hts2html.nawk - "Convert a hts file set to html file set"
+.SH NAME
+sm2catman \- Convert a superman file to UNIX catman pages
+.SH SYNOPSIS
+.sp 1
+.na
+\fBnawk\fR \-f \fBsm2catman.nawk\fR
+\fC[\fB\-v\fR\ \fBcompextension=\fIstring\fC]\fR
+\fC[\fB\-v\fR\ \fBcompressor=\fC[\fRpack\fC|\fRcompress\fC]]\fR
+\fC[\fB\-v\fR\ \fBdirhead=\fIdirectory\fC]\fR
+\fC[\fB\-v\fR\ \fBdirtail=\fIstring\fC]\fR
+\fC[\fB\-v\fR\ \fBnroffpath=\fIpath\fC]\fR
+\fC[\fB\-v\fR\ \fBoname=\fIname\fC]\fR
+\fC[\fB\-v\fR\ \fBsuffix1=\fC[\fRSN\fC|\fIstring\fC]]\fR
+\fC[\fB\-v\fR\ \fBsuffix2=\fC[\fRSN\fC|\fIstring\fC]]\fR
+\fC[\fB\-v\fR\ \fBtmpdir=\fIpath\fC]\fR
+\fIfile.sm\fR
+
+\fBnawk\fR \-f \fBsm2ps.nawk\fR
+\fB\-v\fR\ \fBbasename=\fIname\fR
+\fC[\fB\-v\fR\ \fBnroffpath=\fIpath\fC]\fR
+\fC[\fB\-v\fR\ \fBpsoname=\fIname\fC]\fR
+\fC[\fB\-v\fR\ \fBsrcdir=\fIdirectory\fC]\fR
+\fC[\fB\-v\fR\ \fBtmpdir=\fIpath\fC]\fR
+
+\fBnawk\fR \-f \fBhts2html.nawk\fR
+\fC[\fB\-v\fR\ \fBtmpdir=\fIpath\fC]\fR
+\fIfile.hts\fR
+.ad
+.SH DESCRIPTION
+These
+.Hr nawk 1
+scripts  process the resultant DOS generated  manual page  information for the
+Superman files
+.Ht sm 4 ,
+Postscript ordering files
+.Ht pso 4
+and
+Super HTML files
+.Ht hts 4 ;
+preparing  the manual pages for release in their  required  formats. The pages
+are  constructed in the UNIX  environment; a summary of the  conversions  that
+take place are defined as follows:-
+.RS
+.na
+.PP
+.ne 5
+.B "catman files (Man/Xman)"
+.BS
+The normal manual pages.
+.BU
+Generated using nawk.
+.BU
+nawk template: \fBsm2catman.nawk\fR
+.BU
+Source data from the superman files.
+.Hl "(*.sm)" sm 4 .
+.BU
+Generates all of the manual pages in their correct directories within a single
+.Hr tar 1
+file.
+.BE
+.ne 5
+.B "HTML files (Mosaic/netscape)"
+.BS
+Hypertext manual pages.
+.BU
+Generated using nawk.
+.BU
+nawk template: \fBhts2html.nawk\fR
+.BU
+Source data from super HTML files.
+.Hl "(*.hts)" hts 4 .
+.BU
+Generates  all of the pages into an html  directory  and then  combined into a
+single tar file.
+.BE
+.ne 5
+.B "ps files (psview/ghostview/lpr)"
+.BS
+Paper copies of the manual pages.
+.BU
+Generated using nawk.
+.BU
+nawk template: \fBsm2ps.nawk\fR
+.BU
+Source data from the superman files.
+.Hl "(*.sm)" sm 4 .
+.BU
+Ordering of files from postscript order files
+.Hl "(*.pso)" pso 4 .
+.BU
+Extracts  all of the nroff  pages from the  superman  files,  sorts  pages and
+enters  into groff.  Groff is invoked  with option to  generate  index.  Index
+composed   and  pushed   back  into   nroff.   Generates   \fIname.ps\fR   and
+\fIname.idx.ps\fR.
+.BE
+.ne 5
+.B "winhelp files (Microsoft Help)"
+.BS
+Generated in DOS world.
+.BU
+Only released in the UNIX domain.
+.BE 0
+.RE
+.ad
+.SS sm2catman.nawk
+The
+.B sm2catman
+nawk script takes a SuperMan block
+.Ht sm 4 ,
+extracting  all of the include  files and  followed by each  individual  nroff
+file. For each Nroff file extracted the external name definitions  exported by
+the file are determined  (Nroff tag \fC.XI\fR) which are retained. The file is
+then converted to a \fIcatman\fR file using
+.Hr groff 1
+and typically a compressor,  to generate the resultant  page. Using the export
+information  collated  earlier,  the  script  determines  the  section  of the
+document  and  copies the  generated  output to the  appropriate  \fIcatman\fR
+directory.  Where  multiple  labels  are  exported  each  individual  label is
+explicitly created as a symbolic link to the generated file in the appropriate
+section \fIcatman\fR directory; only one catman file is generated source Nroff
+file, symbolic links form the remaining references.
+.PP
+The resultant \fIcatman\fR directories are then
+.Hr tar 1 'ed
+into a platform specific tar file and compressed for release.
+.PP
+The \fIcatman\fR requirements for file naming and compression are different on
+each platform, they are defined as follows:
+.RS
+.PP
+.na
+.B "HP-UX"
+.BS
+Compressed using
+.Hr compress 1 .
+.BU
+File extension is "\fI<manPageName>\fR.\fI<sectionNumber>\fR"
+.BU
+Reside in directory "cat\fI<sectionNumber>\fR.Z"
+.BE
+.B IRIX
+.BS
+Compressed using
+.Hr pack 1 .
+.BU
+File extension is "\fI<manPageName>\fR.z"
+.BU
+Reside in directory "cat\fI<sectionNumber>\fR"
+.BE
+.B "SYSV42"
+.BS
+Not compressed at all.
+.BU
+File extension is \fI<manPageName>\fR.\fI<sectionNumber>\fR.
+.BU
+Reside in directory "cat\fI<sectionNumber>\fR"
+.BE
+.ad
+.RE
+The target catman file name is determined  from the options as follows,  items
+shown as \fB<bold>\fR are option derived; items in  \fI<italic>\fR  are script
+derived:
+.IP
+\fI<manPageNameBody>\fB<suffix1><suffix2>\fR
+.LP
+In addition to the different naming conventions and compression  requirements,
+the name of the catman section directories changes between platforms. The name
+of the  \fIcatman\fR  section  directories  is  defined,  via the  options, as
+follows:-
+.IP
+\fB<dirhead>\fRcat\fI<sectionNo>\fB<dirtail>\fR
+.LP
+The
+.B sm2catman.nawk
+processes a single Superman file per invocation, the options to the script are
+defined as follows:
+.IP "\fB\-v\fR\ \fBcompextension=\fIstring\fR"
+The generated extension of the compressor to be appended to the file.
+.IP "\fB\-v\fR\ \fBcompressor=\fC[\fRpack\fC|\fRcompress\fC]\fR"
+The UNIX  compression  utility to be invoked, this the executable  name of the
+compressor and is typically either
+.Hr pack 1
+or
+.Hr compress 1 .
+If no compression is required then the option is not specified.
+.IP "\fB\-v\fR\ \fBdirhead=\fIdirectory\fR"
+Insert string at head of the catman directory name, as defined above.
+.IP "\fB\-v\fR\ \fBdirtail=\fIstring\fR"
+Insert string at tail of the catman directory name, as defined above.
+.IP "\fB\-v\fR\ \fBnroffpath=\fIpath\fR"
+The \fBnroffpath\fR option specifies the absolute or relative path to the
+.Ht mad 7
+template file, defined as
+.Ht tmac.ad 7 .
+The \fIpath\fR is specified to
+.Hr groff 1
+using the  \fB\-M\fR  option. If the  \fItmac.ad\fR  file is  installed in the
+\fBgroff\fR \fItmac\fR system directories then this option may be omitted.
+.IP "\fB\-v\fR\ \fBoname=\fIname\fR"
+.B oname
+specifies  the name of the output file that is generated  is a compressed  tar
+file image of the resultant  \fIcatman\fR  directory. If the option is omitted
+then a default name is generated in the form of:-
+.RS
+.IP
+\fI<baseName>\fR.catman.tar.Z
+.RE
+.IP
+Where  \fI<baseName>\fR is the name of the input \fC.sm\fR file, excluding the
+file extension.
+.IP "\fB\-v\fR\ \fBsuffix1=\fC[\fRSN\fC|\fIstring\fC]\fR"
+\fBsuffix1\fR  defines the first component of the generated  catman file. This
+may be specified as an explicit  \fIstring\fR,  a value of \fCSN\fR  specifies
+that the manual page section  number  should be used. If the option is omitted
+\fBsuffix1\fR is defined to be the empty string.
+.IP "\fB\-v\fR\ \fBsuffix2=\fC[\fRSN\fC|\fIstring\fC]\fR"
+As \fBsuffix1\fR, \fBsuffix2\fR follows \fBsuffix1\fR.
+.IP "\fB\-v\fR\ \fBtmpdir=\fIpath\fR"
+The  temporary  working  directory for the tool. Local disk access is high and
+this should be specified  as  \fC/tmp\fR  or some other local drive.  Building
+across a network can slow the build times considerably.
+.SS sm2ps.nawk
+The
+.B sm2ps.nawk
+script takes a Superman block
+.Ht sm 4
+and Postscript ordering file
+.Ht pso 4
+extracting  all of the include  files and  followed by each  individual  nroff
+file. All of the files are then passed to
+.Hr groff 1
+with the
+.Hr troff 1
+post-script option enabled, the order of the files presented to \fBgroff\fR is
+determined  by  the  post-script   ordering  file  (\fB.pso\fR).   During  the
+formatting  conversion a sorted  index is  automatically  generated
+into the intermediate file \fIgroff.index\fR which is presented to \fBgroff\fR
+for conversion.
+.PP
+The nawk  script  generates  as  output  both the  index  page  and  which  is
+compressed using
+.Hr compress 1 .
+The resultant output files are named according to the
+.B basename
+option as follows
+.IP
+\fIbasename\fR.man.ps.Z \- Manual pages.
+.br
+\fIbasename\fR.idx.ps.Z \- Index pages.
+.LP
+The nawk  script  takes as an argument  the  superman  file and  options;  the
+options are defined as follows:
+.IP "\fB\-v\fR\ \fBbasename=\fIname\fR"
+The basename (or module name) of the manual page set to process.
+.IP "\fB\-v\fR\ \fBnroffpath=\fIpath\fR"
+The \fBnroffpath\fR option specifies the absolute or relative path to the
+.Ht mad 7
+template file, defined as
+.Ht tmac.ad 7 .
+The \fIpath\fR is specified to
+.Hr groff 1
+using the  \fB\-M\fR  option. If the  \fItmac.ad\fR  file is  installed in the
+\fBgroff\fR \fItmac\fR system directories then this option may be omitted.
+.IP "\fB\-v\fR\ \fBpsoname=\fIname\fR"
+The  \fIname\fR  (including a path if  required) of the  post-script  ordering
+file.
+.IP "\fB\-v\fR\ \fBpsoname=\fIname\fR"
+The  \fBpsoname\fR  specifies the name of the \fB.pso\fR  file to use to order
+the    manual     pages.    If     omitted,     the     default     name    is
+\fBsrcdir\fR/\fBbasename\fR.pso.
+.IP "\fB\-v\fR\ \fBsrcdir=\fIdirectory\fR"
+The directory containing the source files (\fC.sm\fR,  \fC.pso\fR), if omitted
+the default is the current working directory (\fC./\fR).
+.IP "\fB\-v\fR\ \fBtmpdir=\fIpath\fR"
+The  temporary  working  directory for the tool. Local disk access is high and
+this should be specified  as  \fC/tmp\fR  or some other local drive.  Building
+across a network can slow the build times considerably.
+.SS hts2html.nawk
+The \fBhts2html.nawk\fR nawk script takes a Super HTML file
+.Ht hts 4 ,
+extracts all of the files into a html directory and then creates a tar file of
+the    contents,    finally    compressing    the   tar    file   to    create
+"\fIname\fR.html.tar.Z". The \fIname\fR is generated from the basename of the
+input \fC.hts\fR file (\fIname\fR.hts). This script is similar in operation to
+the program
+.Ht hts2html 1 .
+.PP
+The script recognises the following arguments:
+.IP "\fB\-v\fR\ \fBtmpdir=\fIpath\fR"
+The  temporary  working  directory for the tool. Local disk access is high and
+this should be specified  as  \fC/tmp\fR  or some other local drive.  Building
+across a network can slow the build times considerably.
+.SH EXAMPLE
+The  following  are  examples  of  different  build  scenarios  using the nawk
+scripts. All have been defined in terms of a make file with all files  present
+in the directory.
+.SS sm2catman.nawk
+The
+.Hr make 1
+rules for a number of different targets are defined as follows:-
+.PP
+.RS
+.ne 8
+\fIname\fR.irix.catman.tar.Z: \fIname\fR.sm sm2catman.nawk tmac.ad
+.br
+.RS
+.nf
+$(NAWK) -f sm2catman.nawk \e
+-v compressor=pack \e
+-v suffix1=.z \e
+-v oname=$@ \e
+-v tmpdir=$(TEMP) \e
+-v nroffpath=. \e
+\fIname\fR.sm
+.fi
+.RE
+.PP
+.ne 7
+\fIname\fR.s42.catman.tar.Z: \fIname\fR.sm sm2catman.nawk tmac.ad
+.br
+.RS
+.nf
+$(NAWK) -f sm2catman.nawk \e
+-v suffix1=SN \e
+-v oname=$@ \e
+-v tmpdir=$(TEMP) \e
+-v nroffpath=. \e
+\fIname\fR.sm
+.fi
+.RE
+.PP
+.ne 8
+\fIname\fR.hpux.catman.tar.Z: \fIname\fR.sm sm2catman.nawk tmac.ad
+.br
+.RS
+.nf
+$(NAWK) -f sm2catman.nawk \e
+-v suffix1=SN \e
+-v compressor=compress \e
+-v dirtail=.Z \e
+-v oname=$@ \e
+-v tmpdir=$(TEMP) \e
+-v nroffpath=. \e
+\fIname\fR.sm
+.fi
+.RE
+.RE
+.ne 12
+.SS sm2ps.nawk
+The
+.Hr make 1
+rules for the postscript files are defined as:
+.PP
+.RS
+\fIname\fR.idx.ps.Z \
+.br
+\fIname\fR.man.ps.Z: \fIname\fR.sm \fIname\fR.pso \e
+.br
+.RS
+.nf
+sm2ps.nawk tmac.ad
+$(NAWK) -f sm2ps.nawk \e
+-v srcdir=. \e
+-v basename=\fIname\fR \e
+-v tmpdir=$(TEMP) \e
+-v nroffpath=./ \e
+-v psoname=\fIname\fR.pso \e
+\fIname\fR.sm
+.fi
+.RE
+.RE
+.SS hts2html.nawk
+The
+.Hr make 1
+rules for the html files are defined as:
+.PP
+.RS
+\fIname\fR.html.tar.Z: \fIname\fR.hts hts2html.nawk
+.br
+.RS
+.nf
+$(NAWK) -f hts2html.nawk \e
+-v tmpdir=$(TEMP) \e
+\fIname\fR.hts
+.fi
+.RE
+.RE
+.SH "SEE ALSO"
+.na
+.Hr groff 1 ,
+.Ht hts 4 ,
+.Ht hts2html 1 ,
+.Ht mad 7 ,
+.Ht pso 4 ,
+.Ht sm 4 ,
+.Hr tar 1 ,
+.Ht tmac.ad 7 .
+.ad
+.FH

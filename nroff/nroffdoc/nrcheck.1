@@ -1,0 +1,63 @@
+.Id $Id: nrcheck.1,v 1.1 2000-10-21 14:31:35 jon Exp $
+.Im mantools utility
+.TH nrcheck 1
+.XI nrcheck - "Nroff/Troff syntax checking utility"
+.SH NAME
+nrcheck \- Nroff/Troff syntax checking utility
+.SH SYNOPSIS
+.sp 1
+.na
+\fBnrcheck\fR
+\fC[\fB\-?\fC|\fB\-h\fC]\fR
+\fC[\fB\-E\fR\ \fI<file>\fC]\fR
+\fC[\fB\-e\fR\ \fI<file>\fC]\fR
+\fC[\fB\-I\fC]\fR
+\fC[\fB\-q\fC]\fR
+\fInroff\ files\ \.\.\.\fR
+.ad
+.SH DESCRIPTION
+The
+.B nrcheck
+utility is provided to syntax error check Nroff files, or superman files
+.Ht sm 4 .
+The check tests the consistency of the page against the criteria laid down by
+.Ht mad 7 .
+The checking utility is quite unforgiving, the intention is to force different
+authors  to adopt the same  style and to try and get rid of  inconsistency  in
+pages. \fBnrcheck\fR is generally used in conjunction with
+.Ht nrinfo 1
+to confirm that the manual pages have been assinged to the corrected  category
+fields.
+.PP
+The utility operates from the command line, and is typically invoked following
+an edit  session to confirm that the manual pages are  syntactically  correct.
+The options to the utility are defined as follows:
+.\" -?/-h help option
+.so opt_h.tni
+.\" -e -E : Error options.
+.so opt_e.tni
+.\" -I : Information.
+.so opt_i.tni
+.\" -q : Quiet mode.
+.so opt_q.tni
+.SH EXAMPLE
+The following example shows how the error checking is used, in this case these
+manual pages on the manual tools are checked,  redirecting  the errors located
+to the file \fCmantools.err\fR.
+.CS
+nrcheck -e mantools.err *.1 *.4
+.CE
+The resultant output in the error file was:-
+.CS
+WARN: mantools.1: 112: In-line [need to finish]
+ERROR: nrcheck.1: 47: .CS Block remains open. Require .CE statement.
+WARN: nrcheck.1: 47: Double space condition detected.
+.CE
+Which I now need to fix !!
+.SH "SEE ALSO"
+.na
+.Hr nroff 1 ,
+.Ht nrinfo 1 ,
+.Ht sm 4 .
+.ad
+.FH

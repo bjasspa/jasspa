@@ -1,0 +1,61 @@
+.Id $Id: ntags.1,v 1.1 2000-10-21 14:31:36 jon Exp $
+.Im mantools utility
+.TH ntags 1
+.XI ntags - "Nroff/Troff file vi tag generation utility"
+.SH NAME
+ntags \- Nroff/Troff file vi tag generation utility"
+.SH SYNOPSIS
+.sp 1
+.na
+\fBntags\fR
+\fC[\fB-I\fC]\fR
+\fC[\fB-o\fR \fI<file>\fC]\fR
+\fInroff\ files...\fR
+.ad
+.SH DESCRIPTION
+\fBntags\fR is a Nroff/Troff utility used to generate a
+.Hr vi 1
+editor tags format file to be used with a text editor (Nroff equivalent of
+.Hr ctags 1
+for 'C' files).
+.PP
+The utility creates a tagged entry for each \fB.XI\fR statement encountered of
+the form:-
+.PP
+.RS
+\fI<labelName>\fR\\t\fI<FileName>\fR\\t/^\fI<TextLine>\fR"/
+.RE
+.PP
+Where \fI<labelName>\fR is the name of the nroff cross reference item.
+\fI<fileName>\fR is the name of the Nroff source file. \fI<TextLine>\fR is the
+contents of the line, used by the editors tag command to locate the symbol in
+the file.
+.PP
+The tags information is, by default, generated into a file called \fBtags\fR.
+The default output file may be explicitly defined using the \fB-o\fR option.
+.PP
+The \fB-I\fR option provides revision information about the utility.
+.PP
+The generated file may be used by the
+.Ht difftags 1
+utility during manual page construction to ensure that all of the functions
+have been documented.
+.SH EXAMPLE
+The following example generates a tags file called \fBtags\fR for all Nroff
+files:-
+.CS
+ntags *.1 *.3
+.CE
+The output \fBtags\fR file may be modified, e.g. if the sections are to be
+placed into different files. e.g.
+.CS
+ntags -o tags.1 f*.1
+ntags -o tags.3 f*.3
+.CE 0
+.SH "SEE ALSO"
+.na
+.Hr ctags 1 ,
+.Ht difftags 1 .
+.Hr vi 1 .
+.ad
+.FH

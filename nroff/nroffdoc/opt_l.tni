@@ -1,0 +1,8 @@
+.IP "\fB\&\-l\fR\&\ \fI\&<library>\fR\&"
+The library  option  specifies the name of a library from which symbols may be
+resolved.  The  library  may be  specified  with  an  absolute  path  name  or
+as relative file name. When a relative  file name is specified,  the \fB\&\-L\fR\&
+option  is  generally  used to  specify  the  search  path for the  libraries.
+\fI\&<library>\fR\&   is  the  name  of  the  library   WITHOUT  the  file  suffix
+(\fC\&.lbn\fR\&). Libraries are loaded in the order that they are specified in.
+.\" Keep the file clean after this point.

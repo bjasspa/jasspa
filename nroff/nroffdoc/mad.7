@@ -1,0 +1,820 @@
+.Id $Id: mad.7,v 1.1 2000-10-21 14:31:34 jon Exp $
+.Im mantools file
+.TH mad 7
+.XI mad - "Nroff/Troff hypertext template"
+.XI tmac.ad - "Nroff/Troff hypertext template"
+.Kw "JASSPA Document Formating"
+.SH NAME
+mad \- JASSPA manual page formating extensions.
+.SH SYNOPSIS
+.na
+\fBgroff\fR
+[\fBT\fR\fIname\fR]
+[\fB-rT1\fR]
+\fB-mad\fR
+[\fIfiles...\fR]
+.ad
+.SH DESCRIPTION
+This manual pages describes the JASSPA  \fBmad\fR  macro  interface used in
+conjunction with
+.Hr groff 1 ,
+the GNU version of
+.Hr troff 1 ,
+which is part of the groff document formating system.
+.SH OPTIONS
+The \fBgroff\fR options are defined as follows:-
+.BP -mad
+Inform the converter to use the JASSAP document formating macros.
+.IP "\fB-T\fR\fIname\fR"
+Prepare output for the named device. The devices  usually used are \fBASCII\fR
+which  generates  an ASCII output for use as a  \fIcatman\fR  page or \fIps\fR
+which  generates a postscript  output. If the \fB-T\fR  option is omitted then
+the default is postscript.
+.IP "\fB-rT1\fR"
+This is a special  flag used by the  \fBmad\fR  macros. This enables text mode
+processing for  \fIcatman\fR  pages and should be used with the  \fB-Tascii\fR
+device.
+.SH "USAGE"
+Two types of command line are typically used as follows:-
+.IP "ASCII catman manual pages"
+\fBgroff\ -rT1\ -Tascii\ -mad\fR \fIfiles...\fR
+.IP "Postscript Printer Pages"
+\fBgroff\ -mad\fR \fIfiles...\fR
+.SH "MACRO DEFINITIONS"
+The following is list of the most  frequently  used  commands.  They have been
+segmented into groups on  functionality.  They are shown here for  information
+only,  reference  should  be  made  to  the  official  manual  pages  if  more
+information is required, however the use of complex n/troff formating commands
+is  discouraged as the not all converters  support these features (e.g. HTML &
+RTF converters).
+.PP
+The  documented  subset of commands has been selected to enable  converters to
+\fBHTML\fR and
+.B  "Rich Text"
+(rtf) to be constructed that will generate
+.Hr Mosaic 1
+and
+.I "Microsoft Windows Help"
+compliant files.
+.SS "Starting and Ending the File"
+The following keywords are used at the start or end of the file.
+.IP "\fB\.Id\fR $Id: mad.7,v 1.1 2000-10-21 14:31:34 jon Exp $"
+This is an
+.Hr RCS 1
+identity  string and should be located on the very first line of the file. The
+information   in  the  string  is  added  to  the  manual   page   footer  and
+\fBIDENTIFICATION\fR  section.  The fields  within the \fB$ID\ ..\ $\fR string
+are defined by
+.Hr RCS 1 .
+The special string  \fB\\\&*\&(Dt\fR  is extracted from the \fB\.Id\fR  string
+which contains the date, extracted from the RCS string (\fI1994/04/27\fR).
+.IP "\fB\.Im\fR \fIsoftware-module\fR [\fIcategory\fR]"
+Module  identity  string. This is an extension  macro. This defines the module
+and component of the manual page. The \fIsoftware-module\fR is the name of the
+software  package to which the manual page  belongs.  This is  specified  as a
+lower case string. 
+.IP
+The  \fIsoftware-module\fR  string is used to automatically generate the title
+heading. This ensures that all documents are consistent.
+.IP
+The \fIcategory\fR field is an optional field which is additional  information
+used to construct groups of commands. The
+.Ht nrsearch 1
+utility uses this field to construct  category indexes for higher level manual
+pages. Hence  manual  pages should be assigned a category  for this search. If
+the  field  is  omitted  then  the  default  is  \fImisc\fR  which  represents
+miscellaneous  information that cannot be grouped sensibly. As an example, the
+\fIdvstools\fR  are  divided  up into  two  categories,  \fIconverters\fR  and
+\fIoptimisers\fR. A utility such as
+.Hr 3ds2vdi 1
+is a converter, as is
+.Hr dxf2vdi 1 ,
+.Hr bizreduce 1 
+is a optimiser, where as
+.Hr bizscale 1
+is classed as miscellaneous and the  \fIcategory\fR  field is undefined. Hence
+the definition for
+.Hr 3ds2vdi 1
+is defined as:-
+.RS
+.CS
+\.Im dvstools converters
+.CE 0
+.RE
+.IP
+where as 
+.Hr bizscale 1
+is defined as:-
+.RS
+.CS
+\.Im dvstools
+.CE 0
+.RE
+.IP
+The  \fIcategory\fR  may be  composed  of  sub-categories  using a  semi-colon
+\fC;\fR to separate the  sub-component.  Components  may be sub-divided to any
+depth. Where a manual page exists in multiple  categories  then the categories
+may be sub-divided by a \fC|\fR. e.g.
+.RS
+.CS
+\.Im vc category1;foos|category2;bars
+.CE 0
+.RE
+.IP 
+Defines a manual  page that  exists  in two  categories;  \fIcategory1\fR  and
+\fIcategory2\fR.
+.IP "\fB\.TH\fR \fImodule\ section\ left\ centre-footer\ left-footer\ heading\fR"
+Title header  definition,  this  immediately  follows the \fB\.Id\fR  line and
+defines  the  title  blocks  to be used on the  page. The  \fIsection-left\fR,
+\fIcentre-footer\fR and \fIheading\fR should be omitted as this information is
+filled in automatically  using  information  collected from the \fB\.Id\fR and
+\fB\.Im\fR fields. This manual page was defined with the following  \fB\.TH\fR
+line.
+.RS
+.CS
+\.TH mad 7
+.CE 0
+.RE 
+.IP
+The  \fIsection\fR  field identifies the information in the file. The standard
+extensions are defined as follows:-
+.PP
+.RS
+.RS
+.nf
+\fB1\fR - A executable module.
+\fB3\fR - A function interface.
+\fB4\fR - A file definition.
+\fB5\fR - A data structure definition.
+.fi
+.RE
+.RE
+.BP .FH
+Footer  heading.  This  appears at the end of the file and defines  additional
+information automatically when required. This must be present.
+.IP "\fB\.XI\fR \fIname\fR [\fIsection\fR] [\fIdescription\fR] [\fIcategory\fR]"
+Define  a  cross  index  entry  of  \fIname\fR.  This is  used  for  automatic
+generation of the manual pages, and for construction of the permutated  index.
+The first  \fB\.XI\fR entry  encountered  MUST be the name of the manual page.
+Subsequent  \fB\.XI\fR  entries  encountered  generate a symbolic  link to the
+first  manual  page  and the  entry is made  available  from the  \fBman\fR(1)
+command.
+.IP
+The \fIsection\fR field, generally omitted, defines the section in which cross
+reference is made. This is supported  so that data  structures  may be defined
+within a \fB\.3\fR manual page but may be given the correct  referencing  name
+(e.g.  \fB\.5\fR).  When  omitted, or  specified as \fC\-\fR  then the section
+number defaults to the section specified in \fB\.TH\fR. The \fB\.XI\fR entries
+are used by the manual  generation tools which uses the first \fB\.XI\fR entry
+and renames  the files to  \fIname.x\fR  where  \fIx\fR is the section  number
+defined  in the  \fB\.TH\fR  macro.  Hence  the  name of the  source  file  is
+irrelevant to the final generation of the manual page.
+.IP
+The \fB\.XI\fR must follow immediately after the \fB\.TH\fR section.
+.IP
+The \fIdescrption\fR field contains a description of the entry. This should be
+a concise description of the entry which is used in the index generation by
+.Ht nrsearch 1 .
+The description must be quoted with double qoutes (\fB"\fR).
+.IP
+The \fIcategory\fR  field defines the category of the manual page entry, which
+is used in addition to the \fB\.Im\fR  \fIcategory\fR field. This is typically
+used to bind  specific  manual  page  entries to a category.  The field may be
+considered to be an alturnative category entry.
+.IP "\fB\.Kw\fR \fIstrings..\fR" 
+This field enables key words to be defined for hyper-text systems that support
+topic indexs (e.g.  Windows). This  generates an entry in the topic index that
+refers to this page. The stings must be  specified  in quotes and may  include
+white space.
+.BP Examples
+The  heading  of a  document  file may be defined as  follows.  Note that this
+document has two references
+.BR mad (7)
+and
+.BR tmac.ad (7).
+.RS
+.CS
+\.Id $Id: mad.7,v 1.1 2000-10-21 14:31:34 jon Exp $
+\.Im manual 
+\.TH mad 7
+\.XI mad
+\.XI tmac.mad
+\.Kw "JASSPA Document Formating"
+\.SH NAME
+mad - JASSPA manual page formating extensions.
+\.SH SYNOPSIS
+\.na
+\\\&fBgroff\\\&fR
+[\\\&fBT\\\&fR\\\&fIname\\\&fR]
+[\\\&fB-rT1\\\&fR]
+\\\&fB-mad\\\&fR
+[\\\&fIfiles...\\\&fR]
+\.ad
+\.SH DESCRIPTION
+This manual pages describes the JASSPA 
+\.B mad
+macro interface used in conjunction with
+.CE 0
+.RE
+.SS "Hyper-text Links"
+In order  to make  hyper-text  links  to  other  documents  then a  number  of
+additional  constructs  have been added to the nroff marco set to describe the
+association.  When building  Windows Help or Mosaic HTML pages a Help Compiler
+is used to  resolve  all of the  references  and link the  pages  together.  A
+definition is declared as \fB\.XI\fR as described in the previous section, the
+references are defined as follows:-
+.IP "\fB\.Ht\fR \fIname\fR \fIsection\fR [\fIconcat\fR] [\fImodule\fR \fIfile\fR]"
+This macro  defines a Hyper-text  link to another  definition  that is defined
+within the JASSPA  Manual page set. The \fIname\fR  field is the name of the
+reference,  \fIsection\fR  is the section number as assigned in the \fB\.TH\fR
+or \fB\.XI\fR macros. The \fIname\fR field is displayed in a bold or hypertext
+font, the  \fIsection\fR  number is  displayed in the normal font and inserted
+into a bracket. The  \fIconcat\fR  field is text that abuts the  reference, if
+this  field  is  omitted  than a single  space  follows  the  reference.  e.g.
+Consider the reference to
+.Ht mad 7 
+and
+.Ht tmac.ad 7 ,
+this would be entered as:-
+.RS
+.CS
+.ne 4
+\.Ht mad 7 
+and
+\.Ht tmac.ad 7 ,
+this would be entered as:-
+.CE 0
+.RE
+.IP
+Note the  positioning  of the comma in the text  (\fIconcat\fR  field) and the
+resultant output (what you are reading !!).
+.IP
+The optional \fImodule\fR and \fIfile\fR arguments are used by the compilation
+options of
+.Ht nr2html 1
+and
+.Ht nr2rtf 1
+and allow an  explicit  external  reference  to be made to a named  label in a
+different module. The arguments provide the explicit linkage  information that
+enables the hypertext  modules to resolve the reference  without  knowledge of
+the label. The  linkage  options  are ONLY used for menu type  pages that only
+appear  in  the  hypertext  environment.  If  the  labels  are  used  and  the
+\fIconcat\fR field is not required then it may be specified as \fC-\fR.
+.IP "\fB\.Hl\fR \fItext\fR \fIname\fR \fIsection\fR [\fIconcat\fR] [\fImodule\fR \fIfile\fR]"
+This macro  defines a hyper-text  link to another  definition  that is defined
+within the JASSPA manual pages. This differs from the \fB\.Ht\fR in that the
+text that is displayed by the link is  specified  separatly by the  \fItext\fR
+field.  The  \fItext\fR  field  should be  specified  in  double  quotes if it
+includes any white space  characters. The remaining  arguments are the same as
+\fB\.Ht\fR.
+.IP
+The \fB\.Hl\fR  linakge is generally used for hyper-text menu construction and
+for accessing pages defined with the \fB\.NH\fR command.
+.IP
+Consider a reference to
+.Ht mad 7 
+with an alternative  text label of "\fCNroff  Hypertext  Extensions\fR",  this
+would be specified as:-
+.IP
+.RS
+.C 
+\.Hl "Nroff Hypertet Extensions" mad 7 
+.RE
+.IP
+Which generates a label of:
+.IP
+.RS
+.Hl "Nroff Hypertet Extensions" mad 7 
+.RE
+.IP "\fB\.Hr\fR \fIname\fR [\fIsection\fR] [\fIconcat\fR]"
+The  hyper   reference   makes  a  reference  to  something   outside  of  our
+documentation system e.g. the 'C' Compiler which is referenced as
+.Hr cc 1 .
+This is the same  format as the  \fB\.Ht\fR  macro  except  that a hyper  text
+reference is not normally generated. Hence the compiler reference shown in the
+previous sentence is generated as:-
+.RS
+.CS
+\.Hr cc 1 .
+.CE 0
+.RE
+.IP "\fB\.NH\fR \fIname\fR \fIsection\fR \fItitle\fR [\fIfile\fR]"
+The  \fB\.NH\fR  macro is  similar  to  \fB\.TH\fR  in that it  defines  a new
+hypertext  page. The macro is  ignored  by  Nroff/Troff  formaters,  hypertext
+formaters  generate a new page with the specified  \fItitle\fR. The \fIname\fR
+and \fIsection\fR  arguments  provides the name of the page which is generally
+cross referenced by a \fB\.Hl\fR reference. The \fIsection\fR may be defaulted
+by a \fC-\fR passed as an argument. The \fIfile\fR optional argument specifies
+the named of the generated hypertext file under
+.Ht nr2html 1 ,
+when omitted then an automatic name is assigned.
+.SS "Character Fonts"
+This section  defines the character font changes that may be used in the text.
+There are two methods of introducing a font change, either by embedding  codes
+directly  in the text, or by using  commands.  The  embedded  codes begin with
+\fB\\\&f\fR\fIX\fR  while  the  commands  must  appear at the  start of a line
+denoted by a \fB\.\fR\fIXX\fR.
+.IP "\fB\.B\fR [\fIbarg\fR] [\fIparg\fR]"
+Set \fIbarg\fR in bold and \fIparg\fR in the previous font; up to 6 arguments.
+.IP "\fB\.BI\fR [\fIbarg\fR] [\fIiarg\fR]"
+Set  \fIbarg\fR  in  bold  and  \fIiarg\fR  in  italics;  up  to  6  arguments
+alternating between the fonts.
+.IP "\fB\.BR\fR [\fIbarg\fR] [\fIrarg\fR]"
+Set \fIbarg\fR in bold and \fIrarg\fR in Roman; up to 6 arguments  alternating
+between the fonts.
+.IP "\fB\.I\fR [\fIiarg\fR] [\fIparg\fR]"
+Set  \fIiarg\fR  in  italic  and  \fIparg\fR  in the  previous  font;  up to 6
+arguments.
+.IP "\fB\.IB\fR [\fIiarg\fR] [\fIbarg\fR]"
+Set \fIiarg\fR in italic and \fIbarg\fR in bold; up to 6 arguments alternating
+between the fonts.
+.IP "\fB\.IR\fR [\fIiarg\fR] [\fIrarg\fR]"
+Set  \fIiarg\fR  in  italic  and  \fIrarg\fR  in  roman;  up  to  6  arguments
+alternating between the fonts.
+.IP "\fB\.R\fR"
+Return to roman font.
+.IP "\fB\.RB\fR [\fIrarg\fR] [\fIbarg\fR]"
+Set \fIrarg\fR in Roman and \fIbarg\fR in bold; up to 6 arguments  alternating
+between the fonts.
+.IP "\fB\.RI\fR [\fIrarg\fR] [\fIiarg\fR]"
+Set  \fIrarg\fR  in  Roman  and  \fIiarg\fR  in  italic;  up  to  6  arguments
+alternating between the fonts.
+.IP "\fB\.CS\fR [\fIcount\fR]"
+Start of a code  section, the code section is used for inserts  such as source
+code examples. This forces a blank line, advances the  indentation  margin and
+changes  the font to 8 point fixed  space  courier.  \fB\.CS\fR  mode  remains
+active until a closing \fB\.CE\fR is encountered. While the \fB\.CS\fR section
+is  active  justification  and  line  wrapping  is  disabled  and all  text is
+propagated  from the \fBroff\fR file as laid out. No embedded font changes may
+be defined in this section. \fIcount\fR specifies the number of blank lines to
+leave  between the  previous  paragraph  and the text code, the  default  when
+omitted is one blank line.
+.IP "\fB\.CE\fR [\fIcount\fR]"
+End  of  code   section,   returns   the  text   style   back  into  10  point
+Roman.\fIcount\fR  specifies  the number of blank  lines to leave  between the
+text code and the next paragraph, the default when omitted is one blank line.
+.IP "\fB\\\\\&f\&B\fR"
+Embedded change to bold font. e.g., Hello\\\&f\&BWorld\\\&f\&RHello  generates
+Hello\fBWorld\fRHello.
+.IP "\fB\\\\\&f\&C\fR"
+Embedded change to Mono [Teletype] font.
+.IP "\fB\\\\\&f\&I\fR"
+Embedded change to italic font.
+.IP "\fB\\\\\&f\&P\fR"
+Embedded change to previous font.
+.IP "\fB\\\\\&f\&R\fR"
+Embedded change to Roman font.
+.SS "Sections and Paragraphs"
+This section describes the line and paragraph formating commands.
+.IP "\fB\.SH\fR \fItitle\fR"
+Section  heading,  denoting  the start of a new section with  associated  text
+defined by \fItitle\fR. The \fItitle\fR may only be a single  parameter, hence
+if the title contains any spaces it should be  encapsulated  in double quotes.
+The new  section  resets the margins to their  defaults  sets the text back to
+Roman,  produces  a blank  line  followed  by the  \fItitle\fR  in bold in the
+margin. Typically the
+.B .SH
+titles are specified in capital letters in a manual page.
+.IP "\fB\.SS\fR \fItitle\fR"
+Sub\-section heading, denoting the start of a new sub\-section with associated
+text  defined  by  \fItitle\fR.  The  \fB\.SS\fR  command  is the  same as the
+\fB\.SH\fR  command,  except the  \fItitle\fR  is  indented  by 1/2 the margin
+width. Typically the \fB\.SH\fR  titles are capitalised in a manual page (e.g.
+capital letter then lower case on each word).
+.IP "\fB\.IP\fR \fIlabel\fR"
+Indent  paragraph with hanging  \fIlabel\fR.  \fB\.RS\fR and \fB\.RE\fR can be
+used for nested indents.
+.IP "\fB\.BP\fR \fIlabel\fR"
+Bold  indented  paragraph  as per  \fB\.IP\fR  and is used as a shorthand  for
+\fB\.IP\fR\   \\\&fB\fItitle\fR\\\&fR.  This  is  generally  used  for  option
+definition.
+.IP "\fB\.LP\fR"
+Start block paragraph. Interparagraph spacing is typically 1 line.
+.IP "\fB\.PP\fR"
+Start of a new paragraph. A blank line is generated and the margins are reset.
+.BP .RS
+Right Shift.  Increase  the  relative  indent one level. End with  \fB\.RE\fR.
+often used with \fB\.IP\fR.
+.BP .RE
+End one level of relative indent started with \fB\.RS\fR.
+.SS "Comment Commands"
+The comments may be used to convey  information  to the nroff  converter.  The
+syntax is defined as follows:-
+.PP
+.RS
+\fC.\\" \fIcommand-word\fR \fIdata\fR
+.RE
+.PP
+The commands are defined as follows:-
+.IP "\fCIGNORE\fR \fIany-text\fR"
+Ignores errors and warnings generated by the next command only.
+.IP "\fCIGNORE-ERROR\fR \fIany-text\fR"
+Ignores any errors generated by the next command only.
+.IP "\fCIGNORE-WARNING\fR \fIany-text\fR"
+Ignores any warnings generated by the next command only.
+.IP "\fCERROR\fR \fIerror-text\fR"
+Generates an error message using the rest of the line  \fIerror-text\fR as the
+message.
+.IP "\fCWARNING\fR \fIwarning-text\fR"
+Generates a warning message using the rest of the line  \fIwarning-text\fR  as
+the message.
+.PP
+As an example, the following command generates a used defined error, typically
+used to mark a manual page with information that is missing.
+.CS
+\.\\" ERROR Need to add some text here.
+.CE
+This would generate:
+.CS
+ERROR: mad.7: 484: In-line [Need to add some text here.]
+.CE 0
+.SS "Useful nroff/troff commands"
+The following is an abridged list of useful nroff commands.
+.IP "\fB\.ad\fR [\fIc\fR]"
+Adjust  output  lines  according to format  \fIc\fR. Fill mode must be on (see
+\fB\.fi\fR).  With no  argument,  return to previous  adjustment.  The current
+adjustment mode is stored in register  \fB\.j\fR with the following  values:\-
+\fI0=l\fR, \fI1=b\fR, \fI3=c\fR, \fI5=r\fR (see \fB\.na\fR).
+.IP
+Values of \fIc\fR are defined as follows:\-
+.IP
+.RS
+\fBb\fR Lines are justified.
+.br
+\fBnb\fR Lines are not justified.
+.br
+\fBc\fR Lines are centered.
+.br
+\fBl\fR Lines are flush left.
+.br
+\fBrb\fR Lines are flush right.
+.br
+.RE
+.BP .bp
+Begin new page.
+.BP .br
+Break to a new line (output partial line).
+.\".IP "\fB\.ce\fR [\fIn\fR]" 
+.\"Centre the next \fIn\fR lines (default is 1); if \fIn\fR is 0, stop
+.\"centering. \fIn\fR applies only to lines containing output text, blank lines
+.\"do not count.
+.BP .fi
+Turn on fill mode, the inverse of \fB\.nf\fR. Default is \fIon\fR.
+.IP "\fB\.in\fR [\fI+\\-\fR][\fIn\fR]"
+Set the indent to \fIn\fR or increment by \fI+/-n\fR. If no argument,  restore
+previous indent. Current indent is stored in register \fB\.i\fR. Default scale
+is ems.
+.BP .na
+Do not  adjust the  margins.  Current  adjustment  mode is stored in  register
+\fB\.j\fR. See also \fB\.ad\fR.
+.IP "\fB\.ne\fR \fIn\fR" 
+If \fIn\fR lines do not remain on this page, start a new page.
+.BP .nf
+Do not fill or adjust the output lines. See also \fB\.ad\fR and \fB\.fi\fR.
+.IP "\fB\.ps\fR \fIn\fR"
+Set point size to \fIn\fR  (troff/rtf only, restricted use with HTML). Typical
+value is 10 point. Code blocks are 8 point. See also \fB\.vs\fR.
+.\".IP "\fB\.nx\fR \fIfile\fR"
+.\"Switch to \fIfile\fR and do not return to the current file. See also
+.\"\&\fB\.so\fR. 
+.IP "\fB\.so\fR \fIfile\fR"
+Switch  out to  \fIfile\fR,  then  return to  current  file. That is, read the
+contents of another \fIfile\fR into the current file. See also \fB\.nx\fR.
+.IP "\fB\.sp\fR \fIn\fR"
+Leave \fIn\fR blank lines. Default is 1.
+.IP "\fB\.vs\fR [\fIn\fR]"
+Set  vertical  line  spacing  to \fIn\fR.  If no  argument,  restore  previous
+spacing.  Default  is 1/6 inch in nroff, 12 points in troff.  Usually  used in
+conjunction  with  \fB\.ps\fR,  the  \fIn\fR is  typically  set to be 2 points
+larger than the font size defined by \fB\.ps\fR.
+.SS "Escape seqences"
+The standard escape sequences are defined as follows:\-
+.br
+.BP "\\\\\\\\"
+Prevent or delay the interpretation of \\.
+.BP "\\\\\\-"
+Minus sign (\fC\-\fR) in the current font.
+.IP "\fB\\\\\fR\fI<space>\fR"
+Unpaddable space\-size space character.
+.IP "\fB\\\\\fR\fI<newline>\fR"
+Concealed (ignored) newline.
+.BP "\\\\&"
+Non-printing zero\-width character.
+.IP "\\\\\&\fI<double-quote>\fR"
+Double quote (\fC"\fR) beginning of a comment.
+.BP "\\\\\&*\&(Co"
+A copyright notice defined as \fI(c)\ JASSPA\fR.
+.BP "\\\\\&*\&(Dt"
+The date extracted from the \fB\.Id\fR field.
+.SS "Macro Variables"
+Macro variables may be defined as a short hand to continually  reproducing the
+same text. Macros are defined using the following syntax:-
+.CS
+\.ds X Text is here
+.CE 0
+.\" IGNORE-WARNING A .CE 0 causes a warning here - ignore it !!
+or
+.\" IGNORE-WARNING A .CS 0 causes a warning here - ignore it !!
+.CS 0
+\.ds YY Text is here 
+.CE
+When  starting  with white space use a  double-quote  (\fC"\fR),  not that the
+quote is NOT terinated with an ending quote. e.g.
+.CS
+\.ds X "  Text is here starting with 2x white space
+.CE
+The variable is referenced as \fB\\*X\fR or \fB\\*(YY\fR  depending on whether
+it is a one or two letter macro name.
+.PP
+Defined names may be subsequently removed using with:-
+.CS
+\.rm X
+.CE 0
+.\" IGNORE-WARNING A .CE 0 causes a warning here - ignore it !!
+or
+.\" IGNORE-WARNING A .CS 0 causes a warning here - ignore it !!
+.CS 0
+\.rm YY
+.CE
+If  you  are  using  two  letter  names,  the  standard  Nroff  convention  is
+capitalised so as to avoid conflict with the internal register names etc.
+.PP
+Consider the following example:-
+.CS
+\.ds Hw Hello World
+This [\\*(Hw] is in Bold [\\fB\\*(Hw\\fR] or italic [\\fI\\*(Hw\\fR].
+\.rm Hw
+.CE
+This generates :-
+.PP
+.RS
+This [Hello World] is in Bold [\fBHello World\fR] or italic
+[\fIHello\ World\fR].
+.RE
+.SH "CONVENTIONS"
+The conventions used in the manual pages are defined as follows:-
+.SS "Standard Sections"
+The \fINAME\fR section contains the name of the utility and a single
+line description.
+.PP
+The  \fISYNOPSIS\fR  section  describes the  interface. For an executable  the
+command is specified in bold face, any associated  options are bold face while
+parameter names are shown in italic. For 'C' function prototypes and structure
+definitions,  the name of the subject is bold face,  parameters are defined in
+italic. Other text not in these categories is Roman face.
+.PP
+For both types of definition  unpaddable spaces should be placed between items
+which  cannot be split  across  lines. e.g. in a 'C'  function  definition  an
+unpaddable  space should be placed  between the parameter  type and  parameter
+name. This ensures that the text always appears on the same line.
+.PP
+The  \fIDESCRIPTION\fR  section  describes  the operation of the subject, this
+should  describe  both the  operation  and  parameter  and/or  options  of the
+subject(s).  References to other tools should be made in bold font  indicating
+the  existing  manual  page  section  number  e.g.   \fBman\fR(1).   The  font
+conventions used in the \fISYNOPSIS\fR section are used.
+.PP
+The  \fIDIAGNOSTICS\fR  section describes any return or result values produced
+by the subject(s).
+.PP
+The \fIEXAMPLE\fR section comprises a number of examples  highlighting the use
+of the subject. This  comprises a narrative  description  and a worked example
+perhaps  including the results of the operation. The example  itself should be
+placed in a  \fB\.CS\fR/.\fBCE\fR  pairing to highlight the example text. When
+doing code  inserts etc ensure that the line  lengths do not exceed  column 70
+otherwise wrapping will occur on the generated output.
+.PP
+The \fISEE\  ALSO\fR  section is a cross  reference  to other  related  manual
+pages.  There  are  defined  as a comma  separated  list in  italic  font e.g.
+\fIman\fR(1), \fIgroff\fR(1).
+.PP
+Additional  sections  may  be  added  such  as  \fINOTES\fR  where  additional
+information  relevant to the reader may be placed. A section  call  \fIBUGS\fR
+may be included if a subject behaves badly under certain conditions, typically
+this  exception  conditions  and side  effects are  described.  A  \fIUSAGE\fR
+section may be used to describe the specific usage of a subject.
+.SH "Standard Techniques for defining components"
+There are a number of standard  techniques for defining  pieces of text in the
+document. The main text pieces are discussed in the following sections:-
+.SS "Function Invocations"
+Within the  \fISYOPSIS\fR  section the function  calls and/or data is defined.
+The function  name is  specified in bold font, the  parameters  are defined in
+italic font. A function definition would be defined as follows:-
+.PP
+.RS
+.na
+#include <\fIincludeName\fR>
+
+char\ *\fBMyFunction1\fR
+(int\ \fIparameter1\fR,
+char\ *\fIparameter2\fR,
+void\ *\fIparameter3\fR,
+struct myStruct\ *\fIparameter3\fR)
+.br
+char\ *\fBMyFunction2\fR
+(int\ \fIparameter1\fR,
+char\ *\fIparameter2\fR,
+void\ *\fIparameter3\fR,
+struct\ myStruct\ *\fIparameter3\fR)
+.ad
+.RE
+.PP
+This is defined as:-
+.CS
+\.na
+#include <\\\&fIinclude Name\\\&fR>
+
+char\\ *\\\&fBMyFunction1\\\&fR
+(int\\ \\\&fIparameter1\\\&fR,
+char\\ *\\\&fIparameter2\\\&fR,
+void\\ *\\\&fIparameter3\\\&fR,
+struct\\ myStruct\\ *\\\&fIparameter3\\\&fR)
+\.br
+char\\ *\\\&fBMyFunction2\\\&fR
+(int\\ \\\&fIparameter1\\\&fR,
+char\\ *\\\&fIparameter2\\\&fR,
+void\\ *\\\&fIparameter3\\\&fR,
+struct\\ myStruct\\ *\\\&fIparameter3\\\&fR)
+\.ad
+.CE 0
+.SS "Data Structure Definitions"
+Within the \fISYOPSIS\fR section the data definitions are defined. Type
+definitions are defined with a bold font, the contents are in a normal font.
+A data definition would be defined as follows (extract from VC):-
+.PP
+.na
+.nf
+#include <dvs/vc.h>
+
+typedef\ struct {
+.RS
+InstanceNo  user;
+int32  verbose;
+int32  enable;
+char8  log [4];
+char8  config [1];
+.RE
+} \fBVCConfigReply\fR, *\fBVCConfigReply_Ptr\fR;
+
+const ElementHandle\ \fBel_VCConfigReply\fR;
+.fi
+.ad
+.PP
+This is defined in nroff as follows:-
+.CS
+\.na
+\.nf
+#include <dvs/vc.h>
+
+typedef struct {
+\.RS
+InstanceNo  user;
+int32  verbose;
+int32  enable;
+char8  log [4];
+char8  config [1];
+\.RE
+} \\\&fBVCConfigReply\\\&fR, *\\\&fBVCConfigReply_Ptr\\\&fR;
+
+const ElementHandle\ \\\&fBel_VCConfigReply\\\&fR;
+\.fi
+\.ad
+.CE 0
+.SS "SEE ALSO section"
+The \fISEE\ ALSO\fR section is generally defined as a set of hyper-text links
+which are not right justified. Hence a see also section of:-
+.PP
+.RS
+.B "SEE ALSO"
+.br
+.RS
+.na
+.Hr VCActorInit 3 ,
+.Hr VCApplicationInit  3 ,
+.Hr VCDebug  3 ,
+.Hr VCVerbose  3 ,
+.Hr vcrun 1 .
+.ad
+.RE
+.RE
+.PP
+would be defined as:-
+.CS
+\.SH "SEE ALSO"
+\.na
+\.Ht VCActorInit 3 ,
+\.Ht VCApplicationInit  3 ,
+\.Ht VCDebug  3 ,
+\.Ht VCVerbose  3 ,
+\.Ht vcrun 1 .
+\.ad
+\.FH
+.CE 0
+.SH "Converter Tools"
+The following converter tools have been developed, or are available, to process the NROFF files,
+all of the utilities mentioned are currently residing in DOS world.
+.TP
+.Hl nr2rtf nr2rtf 1   
+Converts the nroff pages described to Rich Text Format (RTF) for use by the
+Windows help compiler 
+.Hr hc31 1 .
+.TP
+.Hl nr2html nr2html 1
+Converts the nroff pages to HTML format used by
+.Hr Mosaic 1 .
+The output is an intermediate format (.htp) which is used as
+input into 
+.Hr htmlc 1 .
+.TP 
+.Hl htmlc htmlc 1 
+The HTML help page compiler that munges the HTML files and resolves all of the
+references.
+.TP
+.Hl nrcheck nrcheck 1 
+A simple utility that is used to check the nroff pages for consistency,
+determining illegal constructs etc.
+.IP "\fBnrinfo\fR"
+Utility to display the hypertext links and definitions defined in a set of
+nroff pages.
+.TP
+.Hl nrsearch nrsearch 1 
+Utility to generate indexes using a search criteria on the module name and
+component information. This generates a hyper-text index in nroff format.
+.IP "\fBdroff\fR"
+A DOS version of nroff/groff which converts nroff files to formated ASCII
+text. This is displayed in DOS using 
+.Hr pg 1 .
+.TP 
+.Hl ntags ntags 1 
+Generates a tags file used by EMACS to find functions in the nroff files.
+.TP
+.Hl superman superman 1 
+Generates a concatenated manual page block that is transported to the UNIX
+system for generating the manual pages. The resultant block is processed using
+a 
+.Hr nawk 1 
+script  which  converts  all of the manual  pages into  \fBcatman\fR  pages or
+post-script.
+.IP "\fBhc31\fR"
+Microsoft help compiler. Takes rtf files and generates a help file (.hlp).
+.SH "FILES"
+.SS "File Extensions"
+The standard file extensions are defined as follows:-
+.IP "\fB\.1\fR/\fB\.3\fR/\fB\.4\fR/\fB\.5\fR"
+The raw nroff file.
+.IP "\fB\.tni\fR"
+An nroff include file containing common text.
+.IP "\fB\.so\fR"
+An automatically generated index file.
+.TP
+.Hl .sm sm 4 
+A superman file containing concatenated manual pages. Include files always
+appear before the manual pages themselves. Generated by 
+.Ht superman 1 .
+.IP "\fB\.rtf\fR"
+Microsoft Rich Text Format file, typically generated by 
+.Ht nr2rtf 1 .
+.IP "\fB\.hlp\fR"
+Microsoft Help File.
+.IP "\fB\.hpj\fR"
+Microsoft Help Project File, used by
+.Hr hc31 1 
+to describe how the help file is constructed.
+.IP "\fB\.html\fR"
+A Mosaic HTML file.
+.TP
+.Hl \.htp htp 4 
+An intermediate HTML file with unresolved hyper-text links.
+.TP
+.Hl \.hts hts 4 
+A resolved hyper-text link HTML file, superman version, containing multiple 
+HTML files - unpacked by \fInawk\fR script \fBhts2html\fR.
+.TP 
+.Hl \.lbn lbn 4
+A cross reference Nroff Archive file, generated by 
+.Ht nrar 1 .
+.SS "File Naming"
+The standard manual page file naming convention is defined as:-
+.CS
+<module>m<sectionNum>n<digit>.[1345]
+.CE
+where the fields are defined as follows:-
+.IP "\fI<module>\fR"
+A two letter sequence identifying the module e.g. vc, vl, dm etc.
+.IP "\fI<sectionNum>\fR"
+The section number of the document e.g. functions = 3, data = 5 etc.
+.IP "\fI<digit>\fR"
+A digit sequence (max. 3 digits) uniquely identifying the page.
+.SH "SEE ALSO"
+.na
+.Hr Mosaic 1 .
+.Hr groff 1 ,
+.Hr nroff 1 ,
+.Hr tmac 7 ,
+.Hr troff 1 ,
+.Ht nr2html 1 ,
+.Ht nr2rtf 1 ,
+.Ht nrar 1 ,
+.Ht nrsearch 1 .
+.ad
+.FH

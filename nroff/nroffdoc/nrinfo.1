@@ -1,0 +1,124 @@
+.Id $Id: nrinfo.1,v 1.1 2000-10-21 14:31:35 jon Exp $
+.Im mantools utility
+.TH nrinfo 1
+.XI nrinfo - "Nroff/Troff subject category extraction utility"
+.SH NAME
+nrinfo \- Nroff/Troff subject category extraction utility
+.SH SYNOPSIS
+.sp 1
+.na
+\fBnrinfo\fR
+\fC[\fB\-?\fC|\fB\-h\fC]\fR
+\fC[\fB\-E\fR\ \fI<file>\fC]\fR
+\fC[\fB\-e\fR\ \fI<file>\fC]\fR
+\fC[\fB\-I\fC]\fR
+\fC[\fB\-o\fR\ \fI<file>\fC]\fR
+\fC[\fB\-q\fC]\fR
+\fInroff\ files...\fR
+.ad
+.SH DESCRIPTION
+\fBnrinfo\fR  is a Nroff/Troff  utility used to determine all of the component
+tags in the nroff files supplied on the command line. The utility  generates a
+list of all  component  names that have been assigned and is used to check for
+consistency.  A single line of output is produced for each  component tag that
+has been  encountered,  where  multiple tags of the same name are defined then
+only the first entry that is  encountered  is reported. A typical  output line
+would appear as follows:
+.PP
+.na
+.RS
+Module [\fI<moduleName>\fR].
+Component [\fI<componentName>\fR]:
+\fI<fileName>\fR
+.PP
+.RE
+.ad
+The fields are defined as follows:
+.IP "\fI<moduleName>\fR"
+The  name of the  module  this is  determined  from  the  first  field  of the
+\fB\.Im\fR field defined by
+.Ht mad 7 .
+.IP "\fI<componentName>\fR"
+The name of the  component.  This is  determined  by the  second  field of the
+\fB\.Im\fR field in addition to the \fB\.XI\fR files, as defined by
+.Ht mad 7 .
+.IP "\fI<fileName>\fR"
+The name of the first file  encountered  that  contained  a  reference  to the
+specified tag.
+.PP
+The utility also detects tags that have been assigned  incorrectly and reports
+an error if any NULL tags are encountered. A NULL tag is only reported when an
+\fIor\fR  option  (denoted  by a  \fC|\fR)  has been  assigned  and one of the
+entries is  undefined.  Component  names  which are omitted in the  \fB\.Im\fR
+field  default  to  the  \fImisc\fR  component.   Components  omitted  in  the
+\fB\.XI\fR field are optional and are not assigned a default component.
+.PP
+The utility by default  generates  output on  \fIstdout\fR.  The output may be
+diverted to a \fIfile\fR  using the \fB-o\fR  option on the command  line. The
+command line options are defined as follows:-
+.\" -?/-h help option
+.so opt_h.tni
+.\" -e -E : Error options.
+.so opt_e.tni
+.\" -I : Information.
+.so opt_i.tni
+.\" -o <file> : Output file name.
+.so opt_o.tni
+.\" -q : Quiet mode.
+.so opt_q.tni
+.SH EXAMPLE
+The  following  output  (partial) was  generated  using the following  command
+line:-
+.CS
+nrinfo -o vc.nri vcm3n*.3
+.CE
+The output has been reduced for the purposes of this manual page.
+.CS
+.ne 6
+\&ERROR: vcm3n108.3: 14: Null tag
+\&ERROR: vcm3n108.3: 15: Null tag
+Module [vc]. Component [actor;init]: vcm3n006.3
+Module [vc]. Component [attribute;callback]: vcm3n012.3
+Module [vc]. Component [attribute;construct]: vcm3n020.3
+Module [vc]. Component [attribute;misc]: vcm3n049.3
+Module [vc]. Component [attribute;traverse]: vcm3n042.3  <<< ERROR
+Module [vc]. Component [attribute;userdata]: vcm3n049.3
+Module [vc]. Component [attributeitem]: vcm3n002.3
+Module [vc]. Component [attributel;traverse]: vcm3n048.3 <<< ERROR
+Module [vc]. Component [attributritem]: vcm3n062.3
+Module [vc]. Component [audio;attribute]: vcm3n002.3
+Module [vc]. Component [audio;radiator]: vcm3n089.3
+Module [vc]. Component [audio;resource;applic]: vcm3n038.3
+Module [vc]. Component [audio;resource;server]: vcm3n039.3
+Module [vc]. Component [body;attribute]: vcm3n040.3
+Module [vc]. Component [body;collide]: vcm3n102.3
+Module [vc]. Component [body;constraints]: vcm3n034.3
+Module [vc]. Component [body;flying]: vcm3n032.3
+:::
+Module [vc]. Component [visual;resource;server]: vcm3n135.3
+Module [vc]. Component [visual;resource;view]: vcm3n094.3
+Module [vc]. Component [xwindowid]: vcm3n088.3
+Module [vc]. Component [zone]: vcm3n062.3
+.CE
+The \fCERROR\fR  lines indicate that a tag has been incorrectly  assigned, and
+is generally an indication  that an \fIor\fR option (denoted by a \fC|\fR) has
+been assigned and one of the entries is undefined.
+.PP
+The  output is used may be used to detect  inconsistent  or  misspelled  tags.
+Consider the previous example at lines 11 and 14 marked with
+.C "<<<\ ERROR"
+The tags are  quite  obviously  are  supposed  to be the  same but  line 14 is
+spelled  incorrectly.  The first  occurrence of this  mis-spelling is the file
+\fIvcm3n048.3\fR.
+.SH "SEE ALSO"
+.na
+.Hr groff 1 ,
+.Hr nawk 1 ,
+.Hr nroff 1 ,
+.Ht nr2html 1 ,
+.Ht nr2rtf 1 ,
+.Ht nrcheck 1 ,
+.Ht nrsearch 1 ,
+.Ht sm 4 .
+.ad
+.FH

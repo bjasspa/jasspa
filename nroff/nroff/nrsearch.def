@@ -1,0 +1,55 @@
+/****************************************************************************
+ *
+ *			    Copyright 1995 Jon Green
+ *			      All Rights Reserved
+ *
+ *
+ *  System        :
+ *  Module        :
+ *  Object Name   : $RCSfile: nrsearch.def,v $
+ *  Revision      : $Revision: 1.1 $
+ *  Date          : $Date: 2000-10-21 14:31:30 $
+ *  Author        : $Author: jon $
+ *  Last Modified : <030597.1431>
+ *
+ *  Description
+ *
+ *  Notes
+ *
+ *  History
+ *
+ *  $Log: not supported by cvs2svn $
+ *
+ ****************************************************************************
+ *
+ *  Copyright (c) 1995 Jon Green
+ *
+ *  All Rights Reserved.
+ *
+ *  This Document may not, in whole or in part, be copied,
+ *  photocopied, reproduced, translated, or reduced to any
+ *  electronic medium or machine readable form without prior
+ *  written consent from Jon Green.
+ ****************************************************************************/
+
+DEF_KW (".Se", KW_Se)                   /* End search */
+DEF_KW (".Ss", KW_Ss)                   /* Start search */
+DEF_KW (".\\\"", KW_comment)            /* Comment */
+DEF_KW ("alphabetic", KW_alpha)         /* Alphabetic Mode */
+DEF_KW ("and", KW_and)                  /* And command */
+DEF_KW ("description", KW_desc)         /* Standard nroff string with description */
+DEF_KW ("echo", KW_echo)                /* Echo command */
+DEF_KW ("flush", KW_flush)              /* flush command */
+DEF_KW ("include", KW_include)          /* Include command */
+DEF_KW ("item", KW_item)                /* Item command */
+DEF_KW ("nand", KW_nand)                /* Nand command */
+DEF_KW ("no-description", KW_nodesc)    /* Standard nroff string with no description */
+DEF_KW ("non-alphabetic", KW_nonalpha)  /* Non-alphabetic mode */
+DEF_KW ("or", KW_or)                    /* Or command */
+DEF_KW ("output", KW_output)            /* Output index */
+DEF_KW ("package", KW_package)          /* Package command */
+DEF_KW ("pop", KW_pop)                  /* Pop command */
+DEF_KW ("push", KW_push)                /* Push command */
+DEF_KW ("remove", KW_remove)            /* Remove command */
+DEF_KW ("search", KW_search)            /* Search command */
+DEF_KW ("xor", KW_xor)                  /* Xor command */

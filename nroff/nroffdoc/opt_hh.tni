@@ -1,0 +1,6 @@
+.IP "\fB\-H\ \fI<home>\fR"
+The home option  specifies the name of the \fIhome\fR page. The home page link
+is located on the icon in the header bar. The \fIhome\fR  page is  effectively
+the master page from which all of the links are accessible, either directly or
+indirectly.
+.\" End of the File. Do not add text below this point.

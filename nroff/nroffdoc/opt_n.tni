@@ -1,0 +1,5 @@
+.IP "\fB\-n\fR\ \fI<name>\fR"
+The  name  option  allows  the  module  name  (see  \fB\-M\fR  option)  to  be
+over-ridden.  This is useful for  forcing  the  contents  page to a  different
+reference name.
+.\" End of File. No text beyond this point.

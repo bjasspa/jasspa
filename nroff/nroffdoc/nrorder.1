@@ -1,0 +1,153 @@
+.Id $Id: nrorder.1,v 1.1 2000-10-21 14:31:35 jon Exp $
+.Im mantools utility
+.TH nrorder 1
+.XI nrorder - "Nroff/Troff postscript ordering utility"
+.XI pso 4 "Nroff/Troff postscript ordering file"
+.SH NAME
+nrorder \- Nroff/Troff postscript ordering utility
+.SH SYNOPSIS
+.sp 1
+.na
+\fBnrorder\fR
+\fC[\fB\-?\fC|\fB\-h\fC]\fR
+\fC[\fB\-1\fC]\fR
+\fC[\fB\-a\fC]\fR
+\fC[\fB\-c\fC]\fR
+\fC[\fB\-E\fR\ \fI<file>\fC]\fR
+\fC[\fB\-e\fR\ \fI<file>\fC]\fR
+\fC[\fB\-f\fC]\fR
+\fC[\fB\-I\fC]\fR
+\fC[\fB\-i\fR\ \fI<name>\fC]\fR
+\fC[\fB\-o\fR\ \fI<file>\fC]\fR
+\fC[\fB\-q\fC]\fR
+\fC[\fB\-s\fC]\fR
+\fC[\fB\-z\fC]\fR
+\fInroff\ files\ \.\.\.\fR
+.ad
+.SH DESCRIPTION
+\fBnrorder\fR is a Nroff/Troff utility used to generate a ordering file used
+by the
+.Hr groff 1
+converter  to generate a printable  post-script  version of the manual  pages.
+The utility interrogates the source files to inspect the \fB.TH\fR header name
+and sorts  the files  into an  alphabetic  sequence  ready for  printing.  The
+generated result is a post-script ordering file \fC.pso\fR.
+.PP
+The utility provides various command line options for sorting, and may also be
+configured  to  concatenate  onto the end of an existing  ordering  file which
+enables a file to be  constructed  by  multiple  passes  of the  utility.  The
+utility accepts a list of Nroff files on the command line,
+.Ht sm 4
+files are handled  correctly, the contained nroff files are determined and are
+inserted into the nroff file assuming the \fIsm\fR file is expanded. Note that
+only \fCSUPERMANFILE\fR  entries are processed,  \fCSUPERMANINC\fR entries are
+ignored.
+.PP
+The command line options are defined as follows:-
+.\" -?/-h help option
+.so opt_h.tni
+.IP \fB-1\fR
+Generate  the output file with one file name per line, by default  the utility
+creates a single line of output where each file name is separated by a space.
+.IP "\fB-a\fR"
+Open the output  file in append  mode, hence the output is added to the end of
+an  existing  \fBpso\fR(4)  file. The  \fB-o\fR  option  must be used when the
+\fB-a\fR option is specified.
+.IP \fB-c\fR
+Perform the sort case insensitively, by default the sort distinguishes between
+upper and lower case characters.
+.\" -e -E : Error options.
+.so opt_e.tni
+.IP \fB-f\fR
+Generate an output for each input file,  \fIfileName.pso\fR  is generated  for
+each file. Typically used with
+.Ht sm 4
+files.
+.\" -I : Information.
+.so opt_i.tni
+.IP "\fB-i\fR\ \fI<name>\fR"
+Tag the file  containing the name  \fI<name>\fR  as the first page that should
+appear in the postscript file. This option enables the introduction page to be
+selected as the first page when other pages are  alphabetically  smaller  than
+the introduction page.
+.IP "\fB-o\fR\ \fI<file>\fR"
+Force the output to be  generated  to the output  file  \fI<file>\fR.  Used in
+conjunction with the \fB-a\fR option.
+.\" -q : Quiet mode.
+.so opt_q.tni
+.IP \fB-s\fR
+Force the  ordering to be performed  in sections.  This will groups the output
+files by their  section  numbers,  hence all  section 3's will  appear  before
+section  5's,  regardless  of the title name space. This  option is  generally
+applied. By default, pages are sorted without regard for the section number.
+.IP \fB-z\fR
+When  the  utility  is  operated  in a DOS  environment  the  file  should  be
+terminated  with a \fCctrl-Z\fR  character. This option appends a \fCctrl-Z\fR
+to the end of the file. If the  generated  output file is to be appended  with
+the \fB-a\fR  option then \fB-z\fR  option  should not be used, until the last
+appendage.
+.SS "PSO File Format"
+The \fBpso\fR file format is extremely simple, it is a space separated list of
+file names,  existing on a single line. The \fBpso\fR file is used as the file
+list passed into
+.Hr groff 1
+defining the order in which the files are processed. The  postscript  ordering
+file for these pages is defined as follows (this is contained on a single line
+remember):
+.IP
+.ps 8
+.vs 10
+.na
+mantools.1 difftags.1 droff.1 hc.1 htmlc.1 hts2html.1 idc.1 nr2html.1 nr2rtf.1
+nrar.1 nrcheck.1  nrinfo.1  nrorder.1  nrsearch.1 ntags.1 sm2cat.1  superman.1
+htp.4 hts.4 idc.4 lbn.4 sm.4 mad.7
+.ad
+.ps 10
+.vs 12
+.SS "Using the PSO File"
+The \fBpso\fR file is used by 
+.Hr groff 1
+to define a list of files to  process,  it is simply  used to define the order
+that the files are processed and is used as follows:-
+.CS
+groff -mad `head -1 file.pso`
+.CE
+The \fBpso\fR entries are contained on a single line, using 
+.Hr head 1
+then the first line of the file is returned  on the command  line that is used
+by 
+.Hr groff 1 .
+.SH EXAMPLE
+The following example determines the case insensitive alphabetical sequence of
+the input files, generating an output file \fCexample.pso\fR:-
+.CS
+nrorder -o example.pso -z -s *.3 *.5
+.CE
+If the sequence of the files does not place the introduction  page at the head
+of the file list then this may be forced. Assuming that the introduction  page
+is called \fBintro\fR then the utility may be invoked as:-
+.CS
+nrorder -o example.pso -i intro -z -s *.3 *.5
+.CE
+If section 3 and section 5 had their own introduction  pages that should be at
+their  respective  section starts then two  invocations of  \fBnrorder\fR  are
+required e.g.:-
+.CS
+nrorder -o example.pso -i intro -s *.3
+nrorder -o example.pso -i intro -a -z -s *.5
+.CE
+In this case the first  invocation  creates  the file, the  second  invocation
+appends  with the \fB-a\fR  option,  since it is also the last  invocation  to
+construct  the file it must also  specify  a  \fB-z\fR  to mark the end of the
+file.
+.SH "SEE ALSO"
+.na
+.Hr groff 1
+.Hr nawk 1
+.Ht nr2html 1 ,
+.Ht nr2rtf 1 ,
+.Hr nroff 1 ,
+.Ht nrsearch 1 ,
+.Ht sm 4 .
+.ad
+.FH

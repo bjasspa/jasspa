@@ -1,0 +1,5 @@
+.IP "\fB-v\fR \fI<level>\fR"
+Specify the  verbosity  level of the utility.  \fI<level>\fR  is the verbosity
+level which is specified  as a single digit and ranges from 0 through 9, where
+0 is least verbose.
+.\" No white space here please.

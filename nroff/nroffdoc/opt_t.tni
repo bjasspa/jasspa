@@ -1,0 +1,18 @@
+.IP "\fB\-t\fR\ \fI<name:link\fC[\fI:section\fC]\fI>\fR"
+The title link line option specifies the \fB[link]\fR items that appear in the
+title header of each page.  Multiple  options may be  specified on the command
+line, on \fB\-t\fR option per title link. The title link options appear on the
+help page in the order  specified on the command line (reading left to right).
+The option data  associated  with the link is a colon  separated  list with no
+spaced, the field components are:
+.RS
+.IP \fIname\fR
+The ASCII text that appears in the header.
+.IP \fIlink\fR
+The label link name  identifying  the link that is to be resolved to  identify
+the target page to which the hypertext jump is to be made.
+.IP \fIsection\fR
+An optional  argument that  identifies the section number,  specified when the
+\fIlink\fR field is not unique.
+.RE
+.\" End of File. No text beyond this point.

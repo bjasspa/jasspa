@@ -1,0 +1,108 @@
+.Id $Id: superman.1,v 1.1 2000-10-21 14:31:38 jon Exp $
+.Im mantools utility
+.TH superman 1
+.XI superman - "Nroff/Troff file concatenation utility"
+.SH NAME
+superman \- Nroff/Troff file concatenation utility
+.SH SYNOPSIS
+.sp 1
+.na
+\fBsuperman\fR
+\fC[\fB\-?\fC|\fB\-h\fC]\fR
+\fC[\fB\-E\fR\ \fI<file>\fC]\fR
+\fC[\fB\-e\fR\ \fI<file>\fC]\fR
+\fC[\fB\-I\fC]\fR
+\fC[\fB\-o\fR\ \fI<file>\fC]\fR
+\fC[\fB\-q\fC]\fR
+\fC[\fB\-v\fR\ \fI<level>\fC]\fR
+\fInroff\ files\ \.\.\.\fR
+.ad
+.SH DESCRIPTION
+\fBsuperman\fR  is a  Nroff/Troff  utility  used to  concatenate  source files
+together  into a single file ready for  processing  by the other Nroff  tools.
+The utility takes as input a list of Nroff files and generates a single output
+file which contains all of the input files in a format described by
+.Ht sm 4 .
+.PP
+The process of  constructing  a "Super Man" page, which  comprises a number of
+individual manual pages enables the processing of the information by the other
+tools to be significantly  increased as there is not a continual  accessing of
+the disk to locate the files. During the build  process, a single  manual page
+will be accessed  multiple  times by  different  utilities  (e.g. symbol table
+building, library  construction and the conversion  process itself). The super
+manual  page also makes it  extremely  easy to move a modules  pages round the
+system during the build process as a single file large only needs to be moved,
+rather than a lot of small individual files.
+.PP
+The utility  guarantees  to place all of the include files at the start of the
+file,  provided that they have a \fB.tni\fR  extension to identify  them as an
+Nroff include file.
+.PP
+The \fBsuperman\fR  utility also recognises other superman files, and performs
+the necessary file  extraction  from other superman files when  constructing a
+larger superman file.
+.PP
+The superman  process is a two pass  operation, the first pass collects all of
+the include files  (\fB.tni\fR) and adds them to the superman file. The second
+pass collects the main pages and adds them to the superman file.
+.PP
+The command options are defined as follows:-
+.\" -?/-h help option
+.so opt_h.tni
+.\" -e -E : Error options.
+.so opt_e.tni
+.\" -I : Information.
+.so opt_i.tni
+.IP "\fB-o\fR \fI<file>\fR"
+Specifies the name of the output file  \fI<file>\fR, if the output file is not
+specified then the data is written to \fIstdout\fR.
+.\" -q : Quiet mode.
+.so opt_q.tni
+.IP "\fB-v\fR \fI<level>\fR"
+Specify the  verbosity  level of the utility.  \fI<level>\fR  is the verbosity
+level which is specified  as a single digit and ranges from 0 through 9, where
+0 is least  verbose.  Typically  level 1 is used to monitor the files that are
+appended to the archive.
+.SH EXAMPLE
+The following example concatenates a group of Nroff manual pages into a single
+file called \fCf.sm\fR:-
+.CS
+superman -o f.sm option.tni f1.1 f2.1 f3.1
+.CE
+Multiple superman files may be concatinated together as follows:-
+.CS
+superman -o foobar.sm foo.sm bar.sm
+.CE
+Alternatively, a composite  command line may be specified with different types
+of source data, the utility will still operate correctly and generate a single
+output file \fCcomposite.sm\fR, note that verbose is enabled:-
+.CS
+superman -v 1 -o composite.sm foo.sm bar.sm option.tni f1.1 f2.1 *.4
+.CE 0
+.SH NOTES
+The Nroff tools described by this package suite all recognise superman files
+.Ht sm 4 .
+The UNIX  N/Troff  utilities  do not  understand  the file  format,  hence the
+individual files should be extracted prior to submission to
+.Hr groff 1
+using a simple
+.Hr nawk 1
+script or program.
+.SH BUGS
+The utility does not recognise that a file has been  submitted  multiple times
+if it is  submitted  via  another  superman  file,  hence the output  file may
+contain  duplicate  copies of the same file. It is  considered to be the users
+responsibility  to ensure that the input file stream is  submitted  correctly,
+without duplicates.
+.SH "SEE ALSO"
+.na
+.Hr groff 1
+.Hr nawk 1
+.Ht nr2html 1 ,
+.Ht nr2rtf 1 ,
+.Ht nrinfo 1 ,
+.Hr nroff 1 ,
+.Ht nrsearch 1 ,
+.Ht sm 4 .
+.ad
+.FH

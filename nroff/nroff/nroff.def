@@ -1,0 +1,158 @@
+/****************************************************************************
+ *
+ *			  Copyright 1995 Jon Green.
+ *			    All Rights Reserved
+ *
+ *
+ *  System        : nroff tools
+ *  Module        : nroff definitions
+ *  Object Name   : $RCSfile: nroff.def,v $
+ *  Revision      : $Revision: 1.1 $
+ *  Date          : $Date: 2000-10-21 14:31:29 $
+ *  Author        : $Author: jon $
+ *  Last Modified : <240398.1255>
+ *
+ *  Description
+ *                This file describes the nroff keys that are recognised by
+ *                the nroff preparation tools. The definition file binds the
+ *                ASCII representation of the nroff command with a constant
+ *                identifier and associated function that is invoked to process
+ *                the command.
+ *  Notes
+ *
+ *  History
+ *
+ *  $Log: not supported by cvs2svn $
+ *
+ ****************************************************************************
+ *
+ *  Copyright (c) 1995 Jon Green
+ *
+ *  All Rights Reserved.
+ *
+ *  This Document may not, in whole or in part, be copied,
+ *  photocopied, reproduced, translated, or reduced to any
+ *  electronic medium or machine readable form without prior
+ *  written consent from Jon Green
+ ****************************************************************************/
+
+/*
+ * DEF_KW defines the nroff keywords. The fields are defined as follows:-
+ * DEF_KW (<String Name>,
+ *         <Numeric identifier>,
+ *         <Function>,
+ *         <Prototype>,
+ *         <flags>)
+ */
+
+#ifndef KNULL
+#define KNULL "\0ff\0ff"
+#endif
+
+EXT_KW(".NH", KW_NH, NH_func, v_cccc,   CMD_SEC)            /* New Header */
+EXT_KW(".GH", KW_GH, GH_func, v_c,      CMD_SEC)            /* Glossary Term Header */
+EXT_KW(".TH", KW_TH, TH_func, v_ccccc,  CMD_SEC)            /* Title Header */
+EXT_KW(".FH", KW_FH, FH_func, v_v,      CMD_SEC)            /* Footer Header */
+EXT_KW(".SH", KW_SH, SH_func, v_c,      CMD_PAR|CMD_PRE)    /* Section Header */
+EXT_KW(".SS", KW_SS, SS_func, v_c,      CMD_PAR|CMD_PRE)    /* Sub-Section */
+EXT_KW(".PD", KW_PD, PD_func, v_i,      CMD_INV)            /* Prevailing offset */
+EXT_KW(".PP", KW_PP, PP_func, v_v,      CMD_SPA|CMD_PPO)    /* New paragraph */
+EXT_KW(".Id", KW_Id, Id_func, v_c,      CMD_INV)            /* Identity of file (RCS header) */
+EXT_KW(".Im", KW_Im, Im_func, v_cc,     CMD_INV)            /* Identity of module */
+EXT_KW(".Kw", KW_kw, Kw_func, v_cp,     CMD_INV)            /* Key Words for searching */
+EXT_KW(".Hg", KW_Hg, Hg_func, v_cc,     CMD_TXT)            /* Hyper link to glossary item (pop up) */
+EXT_KW(".Hl", KW_Hl, Hl_func, v_cccccci,CMD_TXT)            /* Hyper link to named label */
+EXT_KW(".Hh", KW_Hh, Hh_func, v_cccccci,CMD_TXT)            /* Hyper link (plane) to named label */
+EXT_KW(".Ht", KW_Ht, Ht_func, v_ccccci, CMD_TXT)            /* Hyper link to name - auto link */
+INT_KW(".Hp", KW_Hp, Hp_func,           CMD_TXT)            /* Hyper link to package - auto link */
+EXT_KW(".Hr", KW_Hr, Hr_func, v_ccc,    CMD_TXT)            /* Hyper reference (e.g. cannot resolve) */
+EXT_KW(".Gr", KW_Gr, Gr_func, v_cc,     CMD_INV)            /* Graphic function */
+EXT_KW(".ig", KW_ig, ig_func, v_v,      CMD_INV)            /* Ignore function */
+EXT_KW(".na", KW_na, na_func, v_v,      CMD_INV)            /* Disable margin adjust */
+EXT_KW(".nf", KW_nf, nf_func, v_v,      CMD_INV)            /* Disable margin fill */
+EXT_KW(".fi", KW_fi, fi_func, v_v,      CMD_INV)            /* Enable margin fill */
+EXT_KW(".ad", KW_ad, ad_func, v_v,      CMD_INV)            /* Enable margin adjust */
+EXT_KW(".br", KW_br, br_func, v_v,      CMD_INV)            /* Break line */
+EXT_KW(".ft", KW_ft, ft_func, v_i,      CMD_INV)            /* Font function */
+EXT_KW(".ds", KW_ds, ds_func, v_v,      CMD_INV)            /* Define String */
+EXT_KW(".rm", KW_rm, rm_func, v_v,      CMD_INV)            /* Remove string */
+EXT_KW(".ne", KW_ne, ne_func, v_i,      CMD_INV)            /* Define number line required */
+EXT_KW(".sp", KW_sp, sp_func, v_i,      CMD_TXT)            /* Blank lines required */
+EXT_KW(".bp", KW_bp, bp_func, v_v,      CMD_PRE)            /* Begin new page */
+EXT_KW(".vs", KW_vs, vs_func, v_i,      CMD_INV)            /* Vertical spacing */
+EXT_KW(".ps", KW_ps, ps_func, v_i,      CMD_INV)            /* Point Size */
+EXT_KW(".ll", KW_ll, ll_func, v_i,      CMD_INV)            /* Line length */
+EXT_KW(".hy", KW_hy, hy_func, v_i,      CMD_INV)            /* Hyphenate */
+EXT_KW(".pl", KW_pl, pl_func, v_i,      CMD_INV)            /* Page length */
+EXT_KW(".XI", KW_XI, XI_func, v_cccc,   CMD_INV)            /* Index entry */
+EXT_KW(".XJ", KW_XJ, XJ_func, v_cccc,   CMD_INV)            /* Jump entry */
+EXT_KW(".XP", KW_XP, XP_func, v_cccc,   CMD_INV)            /* Package entry */
+EXT_KW(".CS", KW_CS, CS_func, v_i,      CMD_PRE)            /* Code section start */
+EXT_KW(".CE", KW_CE, CE_func, v_i,      CMD_PST)            /* Code section end */
+EXT_KW(".BS", KW_BS, BS_func, v_iic,    CMD_PPO)            /* Bullet section start */
+EXT_KW(".BU", KW_BU, BU_func, v_ic,     CMD_INV)            /* Bullet section separator */
+EXT_KW(".BE", KW_BE, BE_func, v_i,      CMD_PPO)            /* Bullet section end */
+EXT_KW(".RS", KW_RS, RS_func, v_v,      CMD_INV)            /* Increase left margin */
+EXT_KW(".RE", KW_RE, RE_func, v_v,      CMD_INV)            /* Reduce left margin */
+EXT_KW(".TP", KW_TP, TP_func, v_i,      CMD_SPA|CMD_PPO)    /* Indented paragraph */
+EXT_KW(".IP", KW_IP, IP_func, v_c,      CMD_SPA|CMD_PPO)    /* Indented paragraph */
+EXT_KW(".LP", KW_LP, LP_func, v_v,      CMD_SPA|CMD_PPO)    /* End paragraph */
+EXT_KW(".BP", KW_BP, BP_func, v_c,      CMD_SPA|CMD_PPO)    /* Bold indented paragraph */
+INT_KW(".IR", KW_IR, IR_func,           CMD_TXT)            /* Alternate italic/roman */
+INT_KW(".RI", KW_RI, RI_func,           CMD_TXT)            /* Alternate roman/italic */
+INT_KW(".IB", KW_IB, IB_func,           CMD_TXT)            /* Alternate italic/bold */
+INT_KW(".BI", KW_BI, BI_func,           CMD_TXT)            /* Alternate bold/italic */
+INT_KW(".SB", KW_SB, SB_func,           CMD_TXT)            /* Alternate Small.bold text */
+INT_KW(".BR", KW_BR, BR_func,           CMD_TXT)            /* Alternate bold/roman */
+INT_KW(".RB", KW_RB, RB_func,           CMD_TXT)            /* Alternate roman/bold */
+INT_KW(".BC", KW_BC, BC_func,           CMD_TXT)            /* Alternate bold/mono */
+INT_KW(".CB", KW_CB, CB_func,           CMD_TXT)            /* Alternate mono/bold */
+INT_KW(".IC", KW_IC, IC_func,           CMD_TXT)            /* Alternate italic/mono */
+INT_KW(".CI", KW_CI, CI_func,           CMD_TXT)            /* Alternate mono/italic */
+INT_KW(".RC", KW_RC, RC_func,           CMD_TXT)            /* Alternate roman/mono */
+INT_KW(".CR", KW_CR, CR_func,           CMD_TXT)            /* Alternate mono/roman */
+INT_KW(".IX", KW_IX, igl_func,          CMD_INV)            /* Ignore line */
+INT_KW(".SM", KW_SM, SM_func,           CMD_TXT)            /* Small text */
+EXT_KW(".so", KW_SO, so_func, v_c,      CMD_INV)            /* Include file */
+EXT_KW(".Ss", KW_Ss, Ss_func, v_v,      CMD_INV)            /* Search start (nrsearch) */
+EXT_KW(".Se", KW_Se, Se_func, v_v,      CMD_INV)            /* Search end (nrsearch) */
+EXT_KW(".Ls", KW_Ls, Ls_func, v_cc,     CMD_INV)            /* Library start */
+EXT_KW(".Li", KW_Li, Li_func, v_cccc,   CMD_INV)            /* Library item */
+EXT_KW(".Lj", KW_Lj, Lj_func, v_cccc,   CMD_INV)            /* Library jump */
+EXT_KW(".Lp", KW_Lp, Lp_func, v_cccc,   CMD_INV)            /* Library package */
+EXT_KW(".Me", KW_Me, Me_func, v_c,      CMD_INV)            /* MicroEmacs macro */
+EXT_KW(".if", KW_if, if_func, v_v,      CMD_INV)            /* If item */
+EXT_KW(".ie", KW_ie, ie_func, v_v,      CMD_INV)            /* Ie item */
+EXT_KW(".el", KW_el, el_func, v_v,      CMD_INV)            /* el item */
+EXT_KW(".Le", KW_Le, Le_func, v_c,      CMD_INV)            /* Library end */
+INT_KW(".B",  KW_B,  B_func,            CMD_TXT)            /* Bold */
+INT_KW(".I",  KW_I,  I_func,            CMD_TXT)            /* Italic */
+INT_KW(".R",  KW_R,  R_func,            CMD_TXT)            /* Roman */
+INT_KW(".C",  KW_C,  C_func,            CMD_TXT)            /* Mono */
+EXT_KW(".\\\"", KW_COMMENT,
+       comment_func, v_ci, CMD_INV)                         /* Comment */
+/*
+ * These are extensions to the superman file nroff format.
+ * The superman file is effectivelly nroff files concatinated together
+ * to form a large file. These file markers delimit the different files
+ * that compose the superman file.
+ */
+
+EXT_KW(".SUPERMANFILE",                 /* Start of an nroff file */
+       KW_SUPERMANFILE,
+       startFile_func, v_ci, CMD_INV)
+EXT_KW(".SUPERMANINC",                  /* Start of an nroff include file */
+       KW_SUPERMANINC,
+       includeFile_func, v_cip, CMD_INV)
+EXT_KW(".SUPERMANEND",                  /* End of an nroff file */
+       KW_SUPERMANEND,
+       endFile_func, v_cii, CMD_INV)
+/*
+ * Place the text at the end.
+ */
+
+EXT_KW("", KW_TEXT,
+       textline_func, v_c, CMD_INV)                        /* TextLine */
+
+
+#undef KNULL

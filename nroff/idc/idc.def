@@ -1,0 +1,326 @@
+/****************************************************************************
+ *
+ *  			Copyright 1996 Jon Green.
+ *                         All Rights Reserved
+ *
+ *
+ *  System        : 
+ *  Module        : 
+ *  Object Name   : $RCSfile: idc.def,v $
+ *  Revision      : $Revision: 1.1 $
+ *  Date          : $Date: 2000-10-21 14:31:23 $
+ *  Author        : $Author: jon $
+ *  Last Modified : <990831.2210>
+ *
+ *  Description	
+ *
+ *  Notes
+ *
+ *  History
+ *	
+ *  $Log: not supported by cvs2svn $
+ *
+ ****************************************************************************
+ *
+ *  Copyright (c) 1996 Jon Green.
+ * 
+ *  All Rights Reserved.
+ * 
+ * This  Document  may  not, in  whole  or in  part, be  copied,  photocopied,
+ * reproduced,  translated,  or  reduced to any  electronic  medium or machine
+ * readable form without prior written consent from Jon Green.
+ *
+ ****************************************************************************/
+
+/*
+ * KEYWORD defines the report keywords. The fields are defined as follows:-
+ * DEF_KW (<String Name>, <Numeric identifier>, <Function>, <flag>)
+ */
+
+KEYWORD ("Name:",
+         KW_NAME,
+         name_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+KEYWORD ("Project:",
+         KW_PROJECT,
+         swproject_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+KEYWORD ("wwwroot:",
+         KW_WWWROOT,
+         wwwroot_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+KEYWORD ("DefModule:",
+         KW_SWMODULE,
+         swmodule_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+KEYWORD ("End:",
+         KW_END,
+         end_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+KEYWORD ("Bug Number:",
+         KW_BUGNO,
+         bugNumber_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+KEYWORD ("Local Id:",
+         KW_LOCALID,
+         localId_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+KEYWORD ("Date:",
+         KW_DATEID,
+         date_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+KEYWORD ("Module:",
+         KW_MODULE,
+         module_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+KEYWORD ("Component:",
+         KW_COMPONENT,
+         component_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+KEYWORD ("Release:",
+         KW_RELEASE,
+         release_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+KEYWORD ("Patch:",
+         KW_PATCH,
+         patch_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+KEYWORD ("Report By:",
+         KW_REPORT,
+         reportBy_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+KEYWORD ("Report For:",
+         KW_REPORTFOR,
+         reportFor_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+KEYWORD ("Status:",
+         KW_STATUS,
+         status_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+KEYWORD ("Engineer:",
+         KW_ENGINEER,
+         engineer_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+KEYWORD ("Severity:",
+         KW_SEVERITY,
+         severity_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+KEYWORD ("Summary:",
+         KW_SUMMARY,
+         summary_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+KEYWORD ("System:",
+         KW_SYSTEM,
+         system_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+KEYWORD ("System Spec:",
+         KW_SSPEC,
+         systemSpec_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+KEYWORD ("Description:",
+         KW_DESCRIP,
+         description_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_BLKACCUM)
+KEYWORD ("Fix By:",
+         KW_FIXBY,
+         fixedBy_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+KEYWORD ("Fix Date:",
+         KW_FIXDATE,
+         fixedDate_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+KEYWORD ("Fix Desc:",
+         KW_FIXDESC,
+         fixedDescription_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_BLKACCUM)
+KEYWORD ("Suspend By:",
+         KW_SUSPENDBY,
+         suspendBy_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+KEYWORD ("Unsuspend By:",
+         KW_UNSUSPENDBY,
+         unsuspendBy_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+KEYWORD ("Suspend Date:",
+         KW_SUSPENDDATE,
+         suspendDate_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+KEYWORD ("Unsuspend Date:",
+         KW_UNSUSPENDDATE,
+         unsuspendDate_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+KEYWORD ("Suspend Desc:",
+         KW_SUSPENDDESC,
+         suspendDescription_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_BLKACCUM)
+KEYWORD ("Notes:",
+         KW_NOTES,
+         notes_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_BLKACCUM)
+KEYWORD ("See Also:",
+         KW_SEEALSO,
+         seeAlso_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+KEYWORD ("Workaround:",
+         KW_WORKAROUND,
+         workaround_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_BLKACCUM)
+/*
+ * Release field infomation. 
+ */
+
+KEYWORD ("Release No:",
+         KW_RELEASENO,
+         releaseNo_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+
+KEYWORD ("State:",
+         KW_RELEASESTATE,
+         releaseState_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+
+/*
+ * Technical Note field keywords
+ */
+
+KEYWORD ("TechNote No:",
+         KW_TEKNUMBER,
+         tekNumber_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+/*
+ * Patch field keywords
+ */
+
+KEYWORD ("Patch No:",
+         KW_PATCHNUMBER,
+         patchNo_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+
+KEYWORD ("Affecting:",
+         KW_AFFECTING,
+         affecting_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_BLKACCUM)
+/*
+ * Frequently asked questions.
+ */
+
+KEYWORDF("Question:",
+         KW_QUESTION,
+         summary_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+KEYWORDF("Answer:",
+         KW_ANSWER,
+         description_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_BLKACCUM)
+KEYWORD ("Faq No:",
+         KW_FAQNO,
+         faqNo_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+/*
+ * News items
+ */
+
+KEYWORD ("News No:",
+         KW_NEWNUMBER,
+         newsNumber_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+/*
+ * Information items
+ */
+
+KEYWORD ("Info No:",
+         KW_INFONUMBER,
+         infoNumber_func,
+         KWF_TERMINAL|KWF_SAVELAST|KWF_ACCUMULATE)
+/*
+ * Description field keywords.
+ */
+
+KEYWORD ("code:",
+         KW_CODE,
+         code_func,
+         0)
+KEYWORD ("ecode:",
+         KW_ECODE,
+         ecode_func,
+         0)
+KEYWORD ("indent:",
+         KW_INDENT,
+         indent_func,
+         0)
+KEYWORD ("eindent:",
+         KW_EINDENT,
+         eindent_func,
+         0)
+KEYWORD ("literal:",
+         KW_LITERAL,
+         literal_func,
+         0)
+KEYWORD ("eliteral:",
+         KW_ELITERAL,
+         eliteral_func,
+         0)
+KEYWORD ("bullet:",
+         KW_BULLET,
+         bullet_func,
+         0)
+KEYWORD ("ebullet:",
+         KW_EBULLET,
+         ebullet_func,
+         0)
+/*
+ * Description formatting
+ */
+
+KEYWORD ("ftp:",
+         KW_FTP,
+         ftp_func,
+         0)
+KEYWORD ("mailto:",
+         KW_MAILTO,
+         mailto_func,
+         0)
+KEYWORD ("http:",
+         KW_HTTP,
+         http_func,
+         0)
+KEYWORD ("file:",
+         KW_FILE,
+         file_func,
+         0)
+KEYWORD ("title:",
+         KW_TITLE,
+         title_func,
+         0)
+KEYWORD ("etitle:",
+         KW_ETITLE,
+         etitle_func,
+         0)
+KEYWORD ("b:",
+         KW_BOLD,
+         bold_func,
+         0)
+KEYWORD ("i:",
+         KW_ITALIC,
+         italic_func,
+         0)
+KEYWORD ("c:",
+         KW_MONO,
+         mono_func,
+         0)
+
+/*
+ * Comment markers. 
+ */
+
+KEYWORD_NULL ("Rem:",
+              KW_REMARK,
+              KWF_COMMENT)
+KEYWORD_NULL ("Comment:",
+              KW_COMMENT,
+              KWF_COMMENT)
+KEYWORD_NULL ("#:",
+              KW_C,
+              KWF_COMMENT)
+
+

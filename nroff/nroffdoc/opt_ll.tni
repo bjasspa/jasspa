@@ -1,0 +1,12 @@
+.IP "\fB\-L\fR\ \fI<path>\fR"
+Used in conjunction  with the \fB\-l\fR  option to specify the library  search
+path  \fI<path>\fR.  The \fI<path>\fR is the file path and may be specified as
+an absolute or relative  path, if no \fB\-L\fR  option is  specified  then the
+current working directory is assumed. If a library path is specified, then the
+current working directory is not  automatically  searched, hence \fC-L./\fR is
+typically the first directory path to be added explicitly.
+.IP
+The \fB\-L\fR option should appear before the \fB\-l\fR  option if the library
+is found on the  specified  search  path. The search  order for  libraries  is
+defined by the order of definition on the command line (left to right).
+.\" Last line of file. Keep rest of file clean.

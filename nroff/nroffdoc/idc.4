@@ -1,0 +1,1980 @@
+.Id $Id: idc.4,v 1.1 2000-10-21 14:31:33 jon Exp $
+.Im mantools file
+.TH idc 4
+.XI idc - "Information Database Compiler File Format"
+.SH NAME
+idc \- Information Database Compiler File Format.
+.SH SYNOPSIS
+.sp 1
+.na
+.ps 8
+.vs 10
+#: Comment to the end of the line.
+.sp 1
+.Hl "<Global Definitions>" idcGlobal 4
+.br
+.Hl "<Release Definitions>" idcREL 4
+.br
+.Hl "<Patch Report Definitions>" idcPAT 4
+.br
+.Hl "<Information Definitions>" idcINF 4
+.br
+.Hl "<Technical Notes Definitions>" idcTEK 4
+.br
+.Hl "<News Definitions>" idcNEW 4
+.br
+.Hl "<Frequently Asked Questions>" idcFAQ 4
+.br
+.Hl "<Bug Definitions>" idcBUG 4
+.sp 1
+See
+.Hl "Formatted Text Description" idcFormat 4
+for a description of the free format text fields.
+.br
+.vs 12
+.ps 10
+.ad
+.SH DESCRIPTION
+The  \fIInformation  Database  Compiler\fR  file format is an ASCII based file
+format designed for the rapid entry of text from mail messages for use with
+.Ht idc 1 .
+Input to the  compiler  is line based and is divided  into  sections  as shown
+above.  Typically the input data spans  multiple  files, a single file is used
+for each section. The sections may appear in any order, with the  exception of
+the
+.Hl "Global Definitions" idcGlobal 4
+which MUST be presented to
+.Ht idc 1
+before any of the other sections. This is necessary as the
+.I "Global Definitions"
+include short-hand name alias definitions used by the other sections.
+.SS "General Syntax"
+The file format  utilises  keywords  that must appear in the left hand margin,
+utilising the format:-
+.IP
+\fI<Key Word>\fB:\fR \fI<Text>\fR
+.LP
+The
+.I "<Key\ Word>"
+is one of the reserved  words  specified in the sections  below  followed by a
+colon (\fC:\fR). There may be no intervening space between the end of the
+.I "<Key\ Word>"
+and the colon.
+.IR "<Key\ Word>" 's
+are  case-insensitive  and  may  include  an  intervening  white  space  (e.g.
+\fC<space>\fR),  however  the command  translation  performs a literal  string
+comparison  so the white  space  must  match.  The  following  are  recognised
+commands, with and without white space:-
+.IP
+.C "Name:"
+.br
+.C "Date:"
+.br
+.C "Bug No:"
+.br
+.C "Suspend Date:"
+.LP
+The  \fI<Text>\fR may appear on the same or next line(s). The end of the entry
+is  delimited by the next  keyword, the end of files are  therefore  typically
+delimited by an \fBEnd:\fR marker which terminates the previous field. e.g.
+.IP
+.B "Bug No:"
+852
+.sp
+.B "Module:"
+driver
+.br
+.B Date:
+26/07/96
+.br
+.B Name:
+Jon Green
+.br
+.B "Release:"
+Production-1.1
+.br
+.B "Summary:"
+.br
+.RS
+Driver does not initialise properly.
+.RE
+.sp 1
+.B "Description:"
+.br
+.RS
+The Driver ....
+.RE
+.br
+.B End:
+.LP
+The
+.I "<Key\ Word>"
+determines  the  format of the  \fI<Text>\fR  entry. A number of  \fI<Text>\fR
+entries are denoted as
+.Hl "Formatted Text Description" idcFormat 4
+fields.  These  entries  allow  paragraphs  of text  which  may be  formatted.
+Individual paragraphs are delimited by a blank line(s).  Special
+.I "<Key\ Words>"
+are used to apply limited set of
+.Hl "formatting" idcFormat 4
+characteristics to the generated pages.
+.PP
+The \fI<Text>\fR entries are free format and do not honour white space (except
+for preformatted \fBcode:\fR blocks). White space appearing in the input
+is generally used for input file  formatting and will not affect the resultant
+output.  The  \fI<Text>\fR  entries  typically  commence  in column 4, so that
+their  content  is not  interpreted  as a  command.  The  \fI<Text>\fR  may be
+defined in the first  column, but ensure  that there are no colons  within the
+line  otherwise they may be interpreted as
+.IR "<key\ Word>" 's.
+When a white  space  character  appears at the start of the line then the line
+is assumed to be a  \fI<Text>\fR  line and the command  parser does not search
+for a keyword.
+.PP
+Comments  may be  included  in the files,  typically  used for headers and for
+breaking  up  entries  on the page. A comment may only be defined on a line of
+it's own, it may not appear on the end of a \fI<Text>\fR or
+.I "<Key\ Word>"
+line. The comment exists to the end of the line. Comment keywords are:-
+.IP
+\fB#:\fR \fIComment to end of line.\fR
+.br
+\fBRem:\fR \fIComment to end of line.\fR
+.br
+\fBComment:\fR \fIComment to end of line.\fR
+.SS "Sections"
+The input to
+.Ht idc 1
+is  typically  presented  in  sections,  one (or more) files are used for each
+section and are presented to the converter in the desired  order. The sections
+are defined as:
+.TP
+.Hl "<Global Definitions>" idcGlobal 4
+.\"
+Definition of names and module components which may appear in reports. The
+.B "Global Definitions"
+MUST be the first type of entry presented to the converter.
+.TP
+.Hl "<Release Definitions>" idcREL 4
+.\"
+Describes  the releases of software that have been made. These may be internal
+development releases in addition to external product releases.
+.TP
+.Hl "<Information Definitions>" idcINF 4
+.\"
+Provides general information, e.g. working practices, contact information etc.
+.TP
+.Hl "<Technical Notes Definitions>" idcTEK 4
+.\"
+Detailed information  about an aspect of the system which
+is deficient in the manuals, or requires further explanation
+.TP
+.Hl "<News Definitions>" idcNEW 4
+.\"
+New features of the system that are appearing that should be brought
+to your  attention,  or  non-technical  reports  e.g. sales,  marketing,  trip
+reports etc.
+.TP
+.Hl "<Frequently Asked Questions>" idcFAQ 4
+.\"
+Questions  and  answers  posed  both internally and by customers
+about any aspect of the system.
+.TP
+.Hl "<Patch Report Definitions>" idcPAT 4
+.\"
+Information  on the latest patches  available for the system, this may include
+new software  modules or drivers fixing existing  modules but may also include
+other software  components e.g. manuals, drivers for specific hardware provided
+by a 3rd party etc.
+.TP
+.Hl "<Bug Definitions>" idcBUG 4
+.\"
+The fault reports and suggestions arising from the system.
+.SH "SEE ALSO"
+.na
+.Ht hc 1 ,
+.Ht htmlc 1 ,
+.Ht htp 4 ,
+.Ht hts 4 .
+.ad
+.NH idcGlobal 4 "idc(4) - Global Definitions"
+.SH "GLOBAL DEFINITIONS"
+.sp
+.ps 8
+.vs 10
+.na
+\fBName:\fR \fI<name>\fR\fC[\fR|\fI<alias>\fC]*\fR
+.br
+\fBDefModule:\fR \fI<name>\fR\fC[\fR|\fI<alias>\fC]*\fR
+.br
+\fBEnd:\fR
+.ad
+.ps 10
+.vs 12
+.PP
+The global  definitions  define the  context  for the other  pages in terms of
+modules and engineer names. The definitions are defined as follows:
+.IP "\fBName:\fR \fI<name>\fR\fC[\fR|\fI<alias>\fC]*\fR"
+Defines the name of a person  entitled to submit a report  into the bug system.
+One  \fBName:\fR  entry is made  for each  individual.  The  keyword  supports
+multiple  alias's,  each alias is separated by a vertical bar  (\fC|\fR).  The
+first  name  appearing  in the  list is the  displayed  name in the  generated
+reports,  the  alias'es  are  usually  initials  or pseudo  names  used by the
+individuals making reports.
+.IP
+The name field,  combined  with the alias  definitions  enable  reports to be
+submitted  with  initials,  speeding up data entry, these are then expanded to
+the full name.
+.RS
+.PP
+Consider the following example:
+.CS
+Name: Arnold Schwartzeneggar|AS|Arnie
+Name: William Shakespear|Wil|WS|Shakey
+.CE
+Any subsequent  \fBName:\fR reference may use any of the defined name aliases.
+.RE
+.IP "\fBDefModule:\fR \fI<name>\fR\fC[\fR|\fI<alias>\fC]*\fR"
+Defines the name of a component in the system, as with the  \fBName:\fR  field,
+the first field  identifies  the module name that is displayed, the subsequent
+aliases are used for short-hand data entry.
+.IP \fBEnd:\fR
+Denotes the end of the definitions section.
+.NH idcREL 4 "idc(4) - Release Definitions"
+.SH "RELEASE DEFINITIONS"
+The release  section  (\fBrel\fR)  lists the releases of the product that have
+been made,  either  internally  or  externally.  The  release is named and the
+\fIname\fR  of the release may be  referenced  by other fields, which  enables
+checking to be performed on the date of report submission etc.
+.PP
+The release reports that are generated show the status of all of the bugs in a
+release.
+.PP
+The format of the \fBRelease Definition\fR is defined as follows:
+.PP
+.RS
+.ps 8
+.vs 10
+\fBRelease No:\fR \fI<identity>\fR
+.br
+\fBDate:\fR \fI<Date>\fR
+.br
+\fBName:\fR  \fI<name>\fR\fC[\fR|\fI<alias>\fC]*\fR
+.br
+\fBState:\fR \fC[\fRfull\fC|\fRspecified\fC|\fRpatched\fC]\fR
+.sp 1
+\fBDescription:\fR
+.br
+.RS
+.Hl "<Formatted Text Description>" idcFormat 4
+.sp 1
+.RE
+\fBSee Also:\fR \fIitem\fB(\fI<Id Number>\fB)\fR
+\fC[\fR, \fIitem\fB(\fI<Id Number>\fB)\fR\fC]\fR.
+.br
+\fBEnd:\fR
+.RE
+.vs 12
+.ps 10
+.PP
+The fields are defined as follows:
+.IP "\fBRelease No:\fR \fI<identity>\fR"
+A unique number assigned to the report. Starting from 1 and incremented on
+each report.  The identity  is only  used so  that the  page can  be cross
+referenced from \fBSee Also:\fR fields. An example is:-
+.LP
+.RS
+.CS 0
+Release No:    1
+.CE 0
+.RE
+.IP "\fBDate:\fR \fI<Date>\fR"
+The date of the release,  specified  in the form  \fCdd/mm/yy\fR.  This is the
+date that the release was made. For a release assigned a \fBState:  patched\fR
+the date is specified as \fC'*'\fR, which means the current date.
+.IP "\fBName:\fR \fI<name>\fR\fC[\fR|\fI<alias>\fC]*\fR"
+Defines the name of the release; the keyword supports  multiple  alias's, each
+alias is separated by a vertical bar  (\fC|\fR).  The first name  appearing in
+the list is the  displayed  name in the  generated  reports,  the  aliases are
+usually  short pseudo names for the release, and may be used when  referencing
+the release.
+.IP
+The name  field,  combined  with the alias  definitions  enable  reports to be
+submitted with the aliases, speeding up data entry, these are then expanded to
+the full name when referenced.
+.RS
+.PP
+Consider the following example:
+.CS
+Name: Widget Product Release V1.0|P1|Widget1|Prod1|Rel-1
+.CE
+Any subsequent  \fBName:\fR reference may use any of the defined name aliases.
+The release name may be used in the
+.Hh "Bugs Section" idcBUG 4
+\fBFix Date:\fR field instead of a date, identifying a bug as being fixed in a
+specified release.
+.RE
+.IP "\fBState:\fR \fC[\fRfull\fC|\fRspecified\fC|\fRpatched\fC]\fR"
+The  \fBState:\fR  field  indicates  the status of a release,  there are three
+different  states as follows which  determine when bugs are closed down and no
+longer appear in releases:
+.RS
+.IP \fBfull\fR
+Indicates a full  release of the product. The release  report lists all of the
+bugs that are open  through  the  release  as well as those bugs  closed by the
+release.  Bugs closed by a full  release do not appear in  subsequent  release
+reports. The bugs that are closed are assumed to be all of those bugs whose
+\fBFix  Date:\fR is less than the release  date; or whose  \fBFix  Date:\fR is
+explicitly specified as the release name.
+.IP \fBspecified\fR
+A  specified  release  represents  a  release  of a  product,  it is  subtlely
+different  from the  \fIfull\fR  release as bugs that appear in the release
+are not  automatically  removed unless they are explicitly  identified as being
+fixed bugs of the release. e.g. in the
+.Hh "Bugs Section" idcBUG 4
+the  bug  is  closed  with  a  \fBFix  Date:\fR   \fI<release   Name>\fR.  The
+\fBspecified\fR release is generally used as a minor release update where only
+a number of selected bugs have been fixed.
+.IP \fBpatched\fR
+The  patched  status is a special  status  assigned to a release,  this is not
+officially  a release; but shows the current  state of the bugs in the release
+including  patches that have been made. (i.e. it shows the current  state of a
+given  release  once any patches  related to that  release have been made. The
+\fBpatched\fR  release  is  generally  given  a  \fBDate:\fR  field  value  of
+\'\fC*\fR' which indicates that the release extends to the current day.
+.RE
+.IP "\fBDescription\fR \fI<Formatted Text Description>\fR"
+The  description  field  is  used  to  describe  the  release.  This is a text
+narrative detailing the content of the release. See
+.Hl "Formatted Text Description" idcFormat 4
+for a description of the text formatting.
+.IP "\fBSee Also:\fR"
+Provides a cross  referencing  facility to other  items in the  database  e.g.
+previous fault reports or technical notes etc. The items are cross  referenced
+as "\fIname\fR(\fIid\fR)" hence to reference fault report 23 then the entry is
+specified as \fCbug(23)\fR.
+.IP
+The other reports are identified as follows:-
+.RS
+.IP
+\fBbug\fR \- Other fault reports.
+.br
+\fBfaq\fR \- Reference to a Frequently asked question.
+.br
+\fBtek\fR \- Reference to a Technical Report.
+.br
+\fBpat\fR \- Reference to a Patch.
+.br
+\fBnew\fR \- Refence to a News item.
+.RE
+.IP
+As an exmple, consider the following cross reference list:-
+.RS
+.CS
+See Also: bug(23), bug(345), pat(1),
+          new(2), new(4), tek(1),
+          faq(23).
+.CE
+.RE
+This would generate hypertext links to the specified pages in the document.
+.SS "Example"
+The following  example shows how the release  section should be defined in the
+system:
+.CS
+#:_____________________________________________________________________________
+#:
+Release No:     1
+Date:           10/01/94
+Name:           Beta Release V1.0|Beta1.0
+State:          full
+Description:
+
+    A description of our first beta release of our product.
+
+#:_____________________________________________________________________________
+#:
+Release No:     2
+Date:           01/06/94
+Name:           Product Release V1.0|V1.0
+State:          full
+Description:
+
+    A description of our first release of our product.
+
+#:_____________________________________________________________________________
+#:
+Release No:     3
+Date:           17/07/95
+Name:           Product Release V1.0a|V1.0a
+State:          specified
+Description:
+
+    Major packaging problem. New packaging.
+
+#:_____________________________________________________________________________
+#:
+Release No:     4
+Date:           23/09/95
+Name:           Product Release V1.1|V1.1
+State:          full
+Description:
+
+    Ops !! Our product had a few problems but now we have fixed them.
+
+#:_____________________________________________________________________________
+#:
+#: These last two releases are special. The first is the patched version.
+#: This is the current release with ALL of the patches applied. The second
+#: is an end stop and represents work towards the next release.
+#:
+Release No:     5
+Date:           *
+Name:           Product V1.1 + Patches
+State:          patched
+Description:
+
+    The current  state of our product once you have applied all of the patches
+    to fix it.
+
+#:_____________________________________________________________________________
+#:
+Release No:     6
+Date:           12/12/99
+Name:           Product V2.0 Internal Not Released|V1.2
+State:          full
+Description:
+
+    Current internal development of our product.
+.CE
+Considering all of the release entries we have made.
+.IP "\fBBeta Release V1.0\fR"
+The first  release,  specified as full since when the release is made any bugs
+should be cleared down and not show in subsequent releases.
+.IP "\fBProduct Release V1.0\fR"
+As \fBBeta Release V1.0\fR.
+.IP "\fBProduct Release V1.0a\fR"
+This release is slightly different in that it is specified. In this case the a
+release  is made,  but it may  only  have  fixed a small  number  of  specific
+problems,  other  problems in the product may exist and may have  already been
+fixed  internally  but they are NOT  included in the release. In this case the
+faults (bugs) must reference the release  explicitly (not by date). Those bugs
+that  are  explicitly  marked  for the  release  are not  propagated  past the
+release. Those that are not show in the release report and are propagated into
+the next release report.
+.IP "\fBProduct Release V1.1\fR"
+As \fBBeta  Release  V1.0\fR.  Note that bugs that were  closed by
+.BR "Product Release V1.0a" ,
+but  were NOT  specified  in that  release,  will  appear  in this  report  as
+\'closed'.  i.e. this is the first  release where that problem was  officially
+fixed.
+.IP "\fBProduct V1.1 + Patches\fR"
+This release is marked as  \fIpatched\fR,  this is an open ended release (i.e.
+it is not really a release)  and it shows the current bug state of the release
+when all patches have been applied to the release.
+.IP "\fBProduct V2.0 Internal Not Released\fR"
+This  again  is a  special  entry,  it  indicates  when  the next  release  is
+scheduled.  The bugs showing in this release are  propagations  of faults from
+previous  releases and new development  problems (i.e. bugs that do not appear
+in the product but do currently exist in the development environment).
+.NH idcINF 4 "idc(4) - Information Definitions"
+.SH "INFORMATION DEFINITIONS"
+The  information   section   (\fBinf\fR)  is  provided  for  general  purpose,
+non-technical  information; typically used to hold the format of the IDC pages
+themselves,  also used for a  database  of  contact  information  and  company
+practices. The format for the information section is limited and is defined as
+follows:
+.PP
+.RS
+.ps 8
+.vs 10
+\fBInfo No:\fR  \fI<identity>\fR
+.br
+\fBSummary:\fR \fI<Text Line>\fR
+.sp 1
+\fBDescription:\fR
+.br
+.RS
+.Hl "<Formatted Text Description>" idcFormat 4
+.br
+.RE
+\fBEnd:\fR
+.RE
+.vs 12
+.ps 10
+.PP
+The information fields are defined as follows:
+.IP "\fBInfo No:\fR \fI<identity>\fR"
+A unique number  assigned to the report.  Starting from 1 and  incremented  on
+each  report. The  identity  is used so that the page can be cross  referenced
+from \fBSee Also:\fR fields. An example is:-
+.LP
+.RS
+.CS 0
+Info No:    1
+.CE 0
+.RE
+.IP "\fBSummary:\fR \fI<Text Line>\fR"
+The title of  the information page,  used as  the main title  of the page,
+also used  as  the index  entry  identifier.  Keep the  summary  short and
+concise as it is used in the title and menu. e.g.
+.LP
+.RS
+.CS 0
+Summary:
+    Information Report Format
+.CE 0
+.RE
+.IP "\fBDescription:\fR \fI<Formatted Text Description>\fR"
+The  description  field is used to describe  the  information.  This is a text
+narrative that may be interspersed with code fragments as examples.
+.IP
+Write your text in terms of  paragraphs,  separate  each  paragraph by a blank
+line. The text may be written  against  the left  margin or  indented by white
+space  (e.g.  tab/spaces).  Note if you have a colon on the line  ensure  that
+white  space  exists  at the  start  of the  line  to  ensure  that  it is not
+interpreted as a command.
+.IP
+See
+.Hl "Formatted Text Description" idcFormat 4
+.NH idcTEK 4 "idc(4) - Technical Notes Definitions"
+.SH "TECHNICAL NOTES DEFINITIONS"
+The Technical Notes (\fBtek\fR)  definition  provides a repository for lengthy
+reports on the product. This might include an in depth technical discussion on
+a  specific  part of the  system  that  requires  further  explanation  Short
+reports, and answers to specific questions are made in the
+.Hl "Frequently Asked Questions" idcFAQ 4
+reports. The  technical  notes are  generally  detailed  explanations  of new
+features that are not covered in the manuals. The general  syntax of the field
+is defined as follows:
+.sp
+.RS
+.ps 8
+.vs 10
+.na
+\fBTechNote No:\fR \fI<identity>\fR
+.br
+\fBDate:\fR \fI<date>\fR
+.br
+\fBReport By:\fR \fI<name>\fR
+.br
+\fC[\fBModule:\fR \fI<Module Name>\fC]\fR
+.br
+\fBSummary:\fR \fI<Text>\fR
+.br
+\fBDescription:\fR
+.br
+.RS
+.Hl "<Formatted Text Description>" idcFormat 4
+.RE
+.sp 1
+.br
+\fC[\fBNotes:\fR
+.br
+.RS
+.Hl "<Formatted Text Description>" idcFormat 4
+.RE
+.br
+\fC]\fR
+.sp 1
+\fBSee Also:\fR \fIitem\fB(\fI<Id Number>\fB)\fR
+\fC[\fR, \fIitem\fB(\fI<Id Number>\fB)\fR\fC]\fR.
+.vs 12
+.ps 10
+.ad
+.RE
+.PP
+The fields are defined as follows:
+.IP "\fBTechNote No:\fR \fI<identity>\fR"
+A unique number assigned to the report. Starting from 1 and incremented on
+each report.  The identity  is only  used so  that the  page can  be cross
+referenced from \fBSee Also:\fR fields. An example is:-
+.LP
+.RS
+.CS 0
+Faq No:    1
+.CE 0
+.RE
+.IP "\fBDate:\fR \fI<date>\fR"
+The date that the technical note was submitted, the date format is \fCdd/mm/yy\fR. e.g.
+.LP
+.RS
+.CS 0
+Date:   14/9/95
+.CE 0
+.RE
+.IP "\fBReport By:\fR \fI<name>\fR"
+The name of the person  submitting the technical note. This must be one of the
+names listed in the
+.Hl global idcGlobal 4
+section. An example is:-
+.LP
+.RS
+.CS 0
+Report By:   Jon Green
+.CE 0
+.RE
+.IP "\fBModule:\fR \fI<Module Name>\fR"
+An optional field, identifies the module being addressed
+.I "<Module\ Name>"
+must have been previously defined in the
+.Hl global idcGlobal 4
+section. An example is:-
+.LP
+.RS
+.CS 0
+Module: Driver
+.CE 0
+.RE
+.IP "\fBSummary:\fR \fI<Text>\fR"
+The title of the technical note, used as the main title of the page, also used as
+the index entry  identifier.  Keep the summary short and concise as it is used
+in the title and menu. e.g.
+.LP
+.RS
+.CS 0
+Summary:
+    Networking across a Wide Area Network
+.CE 0
+.RE
+.IP "\fBDescription:\fR \fI<Formatted Text Description>\fR"
+A
+.Hl "formatted text description" idcFormat 4
+that  contains the body of the technical report.
+.IP "\fBNotes:\fR \fI<Formatted Text Description>\fR"
+An optional
+.Hl "formatted text description" idcFormat 4
+field that allows other information to be tagged into the report.
+.IP "\fBSee Also:\fR"
+Provides a cross  referencing  facility  to other items in the  database  e.g.
+previous fault reports or frequently  asked questions etc. The items are cross
+referenced as  "\fIname\fR(\fIid\fR)"  hence to reference fault report 23 then
+the entry is specified as \fCbug(23)\fR.
+.IP
+The other reports are identified as follows:-
+.RS
+.IP
+.nf
+.na
+\fBbug\fR \- Reference to fault reports.
+\fBfaq\fR \- Reference to a Frequently asked question.
+\fBinf\fR \- Reference to a Release.
+\fBnew\fR \- Refence to a News item.
+\fBpat\fR \- Reference to a Patch Report.
+\fBrel\fR \- Reference to a Release.
+\fBtek\fR \- Reference to a Technical Report.
+.ad
+.fi
+.RE
+.IP
+As an exmple, consider the following cross reference list:-
+.RS
+.CS
+See Also: bug(23), bug(345), pat(1),
+          new(2), new(4), tek(1),
+          faq(23).
+.CE
+This would generate hypertext links to the specified pages in the document.
+.RE
+.IP "\fBEnd:\fR"
+Terminates the page. Typically only used at the end of a file, technical notes
+are automatically  terminated when the next "\fBTechNote  No:\fR" statement is
+encountered.
+.NH idcFAQ 4 "idc(4) - Frequently Asked Questions"
+.SH "FREQUENTLY ASKED QUESTIONS"
+The Frequently Asked  Questions (FAQ) is  used to keep  track of questions
+asked  internally and by customers  alike. The frequently  asked  questions are
+presented in two formats:
+.BS 1
+Sorted alphabetically by the \fBQuestion:\fR text.
+.BU
+Sorted numerically by \fBFaq No:\fR.
+.BE
+The default is the alphabetical search. The format of the entry is defined as:-
+.sp
+.RS
+.ps 8
+.vs 10
+.na
+\fBFaq No:\fR \fI<identity>\fR
+.br
+\fBName:\fR \fI<name>\fR
+.br
+\fBDate:\fR \fI<date>\fR
+.br
+\fC[\fBModule:\fR \fI<Module Name>\fC]\fR
+.br
+\fBQuestion:\fR \fI<Text>\fR
+.br
+\fBAnswer:\fR
+.br
+.RS
+.Hl "<Formatted Text Description>" idcFormat 4
+.sp 1
+.RE
+\fC[\fBNotes:\fR
+.br
+.RS
+.Hl "<Formatted Text Description>" idcFormat 4
+.RE
+.br
+\fC]\fR
+.sp 1
+\fBSee Also:\fR \fIitem\fB(\fI<Id Number>\fB)\fR
+\fC[\fR, \fIitem\fB(\fI<Id Number>\fB)\fR\fC]\fR.
+.vs 12
+.ps 10
+.ad
+.RE
+.PP
+The fields are defined as follows:
+.IP "\fBFaq No:\fR \fI<identity>\fR"
+A unique number assigned to the report. Starting from 1 and incremented on
+each report.  The identity  is only  used so  that the  page can  be cross
+referenced from \fBSee Also:\fR fields. An example is:-
+.LP
+.RS
+.CS 0
+Faq No:    1
+.CE 0
+.RE
+.IP "\fBName:\fR \fI<name>\fR"
+The name of the  person  submitting  the FAQ.  This  must be one of the  names
+listed in the
+.Hl global idcGlobal 4
+section. An example is:-
+.LP
+.RS
+.CS 0
+Name:   Jon Green
+.CE 0
+.RE
+.IP "\fBDate:\fR \fI<date>\fR"
+The date that the FAQ was submitted, the date format is \fCdd/mm/yy\fR. e.g.
+.LP
+.RS
+.CS 0
+Date:   14/9/95
+.CE 0
+.RE
+.IP "\fBModule:\fR \fI<Module Name>\fR"
+An optional field, identifies the module being addressed
+.I "<Module\ Name>"
+must have been previously defined in the
+.Hl global idcGlobal 4
+section. An example is:-
+.LP
+.RS
+.CS 0
+Module: Driver
+.CE 0
+.RE
+.IP "\fBQuestion:\fR \fI<Text>\fR"
+The question being asked. Keep the question concise and to the point. When the
+FAQ are  presented in the selection  menu they are shown in an  alphabetically
+sorted  list. To enable the  question to be looked up then try to start with a
+keyword that is most relevant to the question e.g. given a question such as:-
+.LP
+.RS
+.CS 0
+"How do I increase the system memory size ??"
+.CE 0
+.RE
+.IP
+To enable the question to be found then it should be phrased as:-
+.LP
+.RS
+.CS 0
+Memory - How do I increase the system memory size ??
+.CE 0
+.RE
+.IP
+This is entered into the field as:-
+.LP
+.RS
+.CS 0
+Question:
+    Memory - how do I increase the system memory size ??
+.CE 0
+.RE
+.IP "\fBAnswer:\fR \fI<Formatted Text Description>\fR"
+The answer field is a text description field with the standard
+.Hl "description field formatting" idcFormat 4
+attributes which answers the question e.g.
+.LP
+.RS
+.CS 0
+Answer:
+
+    Edit the file memory.ini; find the field
+code:
+    Size=
+ecode:
+    and change the entry to the appropriate size.
+.CE 0
+.RE
+.IP
+This would generate the following answer:-
+.LP
+.RS
+.RS
+Edit the file memory.ini; find the field
+.CS
+Size=
+.CE
+and change the entry to the appropriate size.
+.RE
+.RE
+.IP "\fBNotes:\fR \fI<Formatted Text Description>\fR"
+The notes provide an additional annotation entry for extra information. See
+.Hl "description field formatting" idcFormat 4 .
+.IP "\fBEnd:\fR"
+Terminates  the report. This is generally  omitted and allowed to run into the
+next report unless it is the end of the file.
+.PP
+A boiler template for the frequently asked questions is defined as:-
+.CS
+#:__________________________________________________________________
+#:
+Faq No:
+Name:
+Date:
+Module:
+
+Question:
+
+Answer:
+
+End:
+.CE 0
+.\"
+.NH idcNEW 4 "idc(4) - News Definitions"
+.SH "NEWS DEFINITIONS"
+News  items  related  to the  product  that  might be of  interest.  These are
+generally technical snippets of information to keep the engineers abreast
+with the  latest  information.  E.g. site  trip  reports;  technical  feedback;
+postings by development on the state of the product etc.
+.PP
+The news items are  displayed  in a menu with the news  number and the summary
+information. The report is defined as follows:
+.sp
+.RS
+.ps 8
+.vs 10
+.na
+\fBNews No:\fR \fI<identity>\fR
+.br
+\fBReport By:\fR \fI<name>\fR
+.br
+\fBDate:\fR \fI<date>\fR
+.br
+\fC[\fBRelease:\fR \fI<Release Name>\fC]\fR
+.br
+\fBSummary:\fR \fI<Text>\fR
+.br
+.sp 1
+.ne 2
+\fBDescription:\fR
+.br
+.RS
+.Hl "<Formatted Text Description>" idcFormat 4
+.sp 1
+.ne 3
+.RE
+\fC[\fBNotes:\fR
+.br
+.RS
+.Hl "<Formatted Text Description>" idcFormat 4
+.RE
+.br
+\fC]\fR
+.sp 1
+\fBSee Also:\fR \fIitem\fB(\fI<Id Number>\fB)\fR
+\fC[\fR, \fIitem\fB(\fI<Id Number>\fB)\fR\fC]\fR.
+.vs 12
+.ps 10
+.ad
+.RE
+.PP
+The fields are defined as follows:
+.IP "\fBNews No:\fR \fI<identity>\fR"
+A unique number assigned to the report. Starting from 1 and incremented on
+each report.  The identity  is only  used so  that the  page can  be cross
+referenced from \fBSee Also:\fR fields. An example is:-
+.LP
+.RS
+.CS 0
+Patch No:    1
+.CE 0
+.RE
+.IP "\fBReport By:\fR \fI<name>\fR"
+The name of the person  submitting the technical note. This must be one of the
+names listed in the
+.Hl global idcGlobal 4
+section. An example is:-
+.LP
+.RS
+.CS 0
+Report By:   Jon Green
+.CE 0
+.RE
+.IP "\fBDate:\fR \fI<Date>\fR"
+The date of the report,  specified  in the form  \fCdd/mm/yy\fR.
+.IP "\fBRelease:\fR \fI<Release Name>\fR"
+A optional field, this identifies the name of the release to
+which the news item has been written against.
+The
+.I "<Release\ Name>"
+must be a name or alias defined in the
+.Hl release idcREL 4
+section
+.B Name:
+component.
+.IP "\fBSummary:\fR \fI<Text>\fR"
+The title of the news  page, used as the main title of the page, also used as
+the index entry  identifier.  Keep the summary short and concise as it is used
+in the title and menu. e.g.
+.LP
+.RS
+.CS 0
+Summary:
+    Feature list of the product is increased
+.CE 0
+.RE
+.IP "\fBDescription:\fR \fI<Formatted Text Description>\fR"
+A
+.Hl "formatted text description" idcFormat 4
+that  contains the text of the report.
+.IP "\fBSee Also:\fR"
+Provides a cross  referencing  facility  to other items in the  database  e.g.
+previous fault reports or frequently  asked questions etc. The items are cross
+referenced as  "\fIname\fR(\fIid\fR)"  hence to reference fault report 23 then
+the entry is specified as \fCbug(23)\fR.
+.IP
+The other reports are identified as follows:-
+.RS
+.IP
+.nf
+.na
+\fBbug\fR \- Reference to fault reports.
+\fBfaq\fR \- Reference to a Frequently asked question.
+\fBinf\fR \- Reference to a Release.
+\fBnew\fR \- Refence to a News item.
+\fBpat\fR \- Reference to a Patch Report.
+\fBrel\fR \- Reference to a Release.
+\fBtek\fR \- Reference to a Technical Report.
+.ad
+.fi
+.RE
+.IP
+As an exmple, consider the following cross reference list:-
+.RS
+.CS
+See Also: bug(23), bug(345), pat(1),
+          new(2), new(4), tek(1),
+          faq(23).
+.CE
+This would generate hypertext links to the specified pages in the document.
+.RE
+.IP "\fBEnd:\fR"
+Terminates  the page.  Typically  only used at the end of a file, news reports
+are  automatically  terminated  when the next "\fBNews\  No:\fR"  statement is
+encountered.
+.NH idcPAT 4 "idc(4) - Patch Definitions"
+.SH "PATCH DEFINITIONS"
+The Patch data entry  identifies  a patch to a released  product  that is made
+available to fix a number of problems. A patch is subtly different from a
+.Hl release idcREL 4
+in  that it is only a small  component(s)  of a  release  and  cannot  be used
+without the base release.
+.PP
+The  resultant  output from the patch  report is a list of patches  indexed by
+patch number showing the  \fISummary\fR  line of the report. The format of the
+patch entries are defined as:-
+.sp
+.RS
+.ps 8
+.vs 10
+.na
+\fBPatch No:\fR \fI<identity>\fR
+.br
+\fBName:\fR \fI<name>\fR
+.br
+\fBDate:\fR \fI<date>\fR
+.br
+\fBRelease:\fR \fI<Release Name>\fC]\fR
+.br
+\fBSummary:\fR \fI<Text>\fR
+.br
+.ne 2
+\fBAffecting:\fR
+.br
+.RS
+.Hl "<Formatted Text Description>" idcFormat 4
+.sp 1
+.RE
+.ne 3
+\fC[\fBWorkaround:\fR
+.br
+.RS
+.Hl "<Formatted Text Description>" idcFormat 4
+.RE
+.br
+\fC]\fR
+.sp 1
+.ne 2
+\fBDescription:\fR
+.br
+.RS
+.Hl "<Formatted Text Description>" idcFormat 4
+.sp 1
+.ne 3
+.RE
+\fC[\fBNotes:\fR
+.br
+.RS
+.Hl "<Formatted Text Description>" idcFormat 4
+.RE
+.br
+\fC]\fR
+.sp 1
+\fBSee Also:\fR \fIitem\fB(\fI<Id Number>\fB)\fR
+\fC[\fR, \fIitem\fB(\fI<Id Number>\fB)\fR\fC]\fR.
+.vs 12
+.ps 10
+.ad
+.RE
+.PP
+The fields are defined as follows:
+.IP "\fBPatch No:\fR \fI<identity>\fR"
+A unique number assigned to the report. Starting from 1 and incremented on
+each report.  The identity  is only  used so  that the  page can  be cross
+referenced from \fBSee Also:\fR fields. An example is:-
+.LP
+.RS
+.CS 0
+Patch No:    1
+.CE 0
+.RE
+.IP "\fBName:\fR \fI<name>\fR"
+The name of the  individual  making  the patch. The name  should  match a name
+defined in the
+.Hl "Global Definitions" idcGlobal 4
+section.
+.IP "\fBDate:\fR \fI<Date>\fR"
+The date of the patch,  specified  in the form  \fCdd/mm/yy\fR.  This is the
+date that the patch was made.
+.IP "\fBRelease:\fR \fI<Release Name>\fR"
+The name of the release to which the patch may be applied. The
+.I "<Release\ Name>"
+must be a name or alias defined in the
+.Hl release idcREL 4
+section, by component
+.BR Name: .
+.IP "\fBSummary:\fR \fI<Text>\fR"
+The title of the patch  page, used as the main title of the page, also used as
+the index entry  identifier.  Keep the summary short and concise as it is used
+in the title and menu. e.g. (although a little more descriptive)
+.LP
+.RS
+.CS 0
+Summary:
+    Fix the widget handle problem
+.CE 0
+.RE
+.IP "\fBAffecting:\fR \fI<Formatted Text Description>\fR"
+A
+.Hl "formatted text description" idcFormat 4
+that   summarises  what  part  of  the  product  is  affected.  The  product(s)
+affected should be listed here, usually in terms of their product codes.
+.IP "\fBWorkaround:\fR \fI<Formatted Text Description>\fR"
+This is an optional  field, containing a
+.Hl "formatted text description" idcFormat 4 .
+If a work-around,  or alternative  method of fixing the problem exists then it
+should be specified in this section.
+.IP "\fBDescription:\fR \fI<Formatted Text Description>\fR"
+A
+.Hl "formatted text description" idcFormat 4
+that  describes  the contents of the patch,  installation  and any  additional
+usage information. The description  section typically includes a reference
+to a location where the patch may be obtained (e.g. a
+.Hl "ftp:" idcFormat 4
+reference).
+.IP "\fBNotes:\fR \fI<Formatted Text Description>\fR"
+An optional
+.Hl "formatted text description" idcFormat 4
+field that allows other information to be tagged into the report.
+.IP "\fBSee Also:\fR"
+Provides a cross  referencing  facility to other  items in the  database  e.g.
+previous fault reports or technical notes etc. The items are cross  referenced
+as "\fIname\fR(\fIid\fR)" hence to reference fault report 23 then the entry is
+specified as \fCbug(23)\fR.
+.IP
+The other reports are identified as follows:-
+.RS
+.IP
+.nf
+.na
+\fBbug\fR \- Reference to fault reports.
+\fBfaq\fR \- Reference to a Frequently asked question.
+\fBinf\fR \- Reference to a Release.
+\fBnew\fR \- Refence to a News item.
+\fBpat\fR \- Reference to a Patch Report.
+\fBrel\fR \- Reference to a Release.
+\fBtek\fR \- Reference to a Technical Report.
+.ad
+.fi
+.RE
+.IP
+As an exmple, consider the following cross reference list:-
+.RS
+.CS
+See Also: bug(23), bug(345), pat(1),
+          new(2), new(4), tek(1),
+          faq(23).
+.CE
+This would generate hypertext links to the specified pages in the document.
+.RE
+.IP "\fBEnd:\fR"
+Terminates the page. Typically only used at the end of a file, patch reports are
+automatically  terminated  when  the next  "\fBPatch No:\fR"  statement  is
+encountered.
+.NH idcBUG 4 "idc(4) - Bug Definitions"
+.SH "BUG DEFINITIONS"
+The bugs data entry format for
+.Ht idc 1
+comprises a set of fixed data fields which allow a fault to be specified  with
+a current  state and assinged to an individual to rectify.
+The bug list forms the  largest  part of the  database  and is  presented  in a
+number of different formats as follows:-
+.IP "\fBCurrent Status\fR"
+A list of all of the bugs  reported  in the  system.  All  bugs are  shown  in
+ascending  order. The  \fIOpen\fR  bugs are sorted by severity,  class \fIA\fR
+bugs appearing first. This is followed by \fISuspended\fR,  \fIRejected\fR and
+\fIClosed\fR listings.
+.IP "\fBReported By\fR"
+A list of all of the bugs reported by an  individual,  ordering is the same as
+the \fBCurrent Status\fR.
+.IP "\fBModule\fR"
+A list of all of the bugs reported on a single module, ordering is the same as
+the \fBCurrent Status\fR.
+.IP "\fBEngineering\fR"
+A list of all of the bugs reported  assigned to single  individual for repair,
+ordering is the same as the \fBCurrent Status\fR.
+.IP "\fBNumeric List\fR"
+A list of bugs, ordered chronologically by bug identification number.
+.IP "\fBChronological Reported On\fR"
+A list of bugs  ordered by  descending  date when the  report was made.  Items
+shown in  \fBbold\fR  are "Open",  \fIitalic\fR  are rejected and regular text
+items are "Closed".
+.IP "\fBChronological Movement\fR"
+A list of bugs  ordered by  descending  date when the bug changed  status. The
+list is intended to show items that have been  modified over time. Items shown
+in \fBbold\fR are "Open", \fIitalic\fR are rejected and regular text items are
+"Closed".
+.LP
+The general syntax is defined as follows:-
+.PP
+.RS
+.ps 8
+.vs 10
+\fBBug Number:\fR \fI<identity>\fR
+.br
+\fBLocal Id:\fR \fI<identity>\fR
+.sp 1
+\fBModule:\fR \fI<moduleName>\fR
+.br
+\fBComponent:\fR \fI<moduleName>\fR
+.br
+\fBDate:\fR \fI<dd/mm/yy>\fR
+.br
+\fBRelease:\fR \fI<Release\ Identification>\fR
+.br
+\fBReport By:\fR \fI<Name>\fR
+.br
+\fBReport For:\fR \fI<Name>\fR
+.sp 1
+\fBStatus:\fR \fC[\fBOpen\fC|\fRClosed\fC|\fRRejected\fC|\fRSuspended\fC]\fR
+.br
+\fBEngineer:\fR \fI<Name>\fR
+.br
+\fBSeverity:\fR \fC[\fRA\fC|\fRB\fC|\fRC\fC|\fRD\fC|\fRE\fC]\fR
+.sp 1
+\fBSummary:\fR \fI<1 Text Line>\fR
+.sp 1
+\fBSystem:\fR \fC[\fI<System\ Id>\fC|\fBAll\fC]\fR
+.br
+\fBSystem Spec:\fR \fI<Text Description>\fR
+.sp 1
+\fBDescription:\fR
+.br
+.RS
+.Hl "<Formatted Text Description>" idcFormat 4
+.RE
+.sp 1
+\fBWorkaround:\fR
+.br
+.RS
+.Hl "<Formatted Text Description>" idcFormat 4
+.RE
+.sp 1
+\fC[\fBNotes:\fR
+.br
+.RS
+.Hl "<Formatted Text Description>" idcFormat 4
+.RE
+.br
+\fC]\fR
+.sp 1
+\fBSuspend By:\fR \fI<Name>\fR
+.br
+\fBSuspend Date:\fR \fI<dd/mm/yy>\fR
+.br
+\fBSuspend Desc:\fR
+.br
+.RS
+.Hl "Formatted Text Description" idcFormat 4
+.RE
+.sp 1
+\fC[\fBPatch:\fR \fI<Patch No>\fC]\fR
+.br
+\fBFix By:\fR \fI<Name>\fR
+.br
+\fBFix Date:\fR \fI<dd/mm/yy>\fR
+.br
+\fBFix Desc:\fR
+.br
+.RS
+.Hl "<Formatted Text Description>" idcFormat 4
+.sp 1
+.RE
+\fBSee Also:\fR \fIitem\fB(\fI<Id Number>\fB)\fR
+\fC[\fR, \fIitem\fB(\fI<Id Number>\fB)\fR\fC]\fR.
+.RE
+.vs 12
+.ps 10
+.PP
+The bug report  fields are defined as follows; note that some of the allowable
+fields of the bug report form are missing, these are generally added after the
+bug has been progressed by development e.g. patch and suspension information.
+.IP "\fBBug Number:\fR \fI<identity>\fR"
+A unique number assigned to the bug report. Starting from 1 and incremented on
+each report. The bug number is allocated after the bug has been submitted e.g.
+.RS
+.CS
+Bug Number:   723
+.CE 0
+.RE
+.IP
+which is reporting bug number 723.
+.IP "\fBLocal\ Id:\ \fI<identity>\fR"
+The Local  Identity  field is an optional  field that enables the submitter of
+the bug to assign their own identity tag to the fault  report. The  submission
+of a bug report  with an  identity  number is  propagated  into the report for
+traceability. This enables the submitting person to identify bugs that have been
+reported and cross reference back to their own internal lists.
+.IP
+This field may be omitted if not required. An example may be:-
+.RS
+.CS
+Local Id:   Dobbrow27
+.CE 0
+.RE
+.IP "\fBModule:\ \fI<moduleName>\fR"
+The  identity of the module  causing a problem,  the  \fI<moduleName>\fR  must
+have been previously defined by a
+.Hl "DefModule:" idcFormat 4
+reference. See also the \fBCategory:\fR field which identifies a component
+of the module.
+An
+example module would be defined as:-
+.RS
+.CS
+Module:     converters
+Component:  widget2bidget
+.CE 0
+.RE
+.IP
+This would identify a problem with  the "widget2bidget" tool, a component of the
+"converters" module.
+.IP "\fBComponent:\ \fI<Component\ Name>\fR"
+A  component  of the module, the  example  above for the  \fBModule:\fR  field
+identified  the  component as a tool. The  component  is a literal  text field
+which is not  interpreted  like the  "Module:"  field. Use this to pin-point a
+source of an error. e.g. if  reporting  an error in VC in the  VC_InitActor(3)
+function then report as follows:-
+.RS
+.CS
+Module:     vc
+Component:  VC_InitActor(3)
+.CE 0
+.RE
+.IP
+Similarly  for   documentation   errors,   reporting   an   error   in the
+on-line manual page documentation for "vcm3n012.html" then report as:-
+.RS
+.CS
+Module:     doc
+Component:  On line - vcm3n012.html
+.CE 0
+.RE
+.IP "\fBDate:\ \fIdd/mm/yy\fR"
+The date that the fault report was submitted.
+.RS
+.CS
+Date:   28/10/95
+.CE 0
+.RE
+.IP "\fBRelease:\ \fI<Release\ Identification>\fR"
+Identification  of the release against which the fault was logged.
+.RS
+.CS
+Release:    Production V1.0
+.CE 0
+.RE
+.IP "\fBReport\ By:\fR\ \fI<Name of person reporting bug>\fR"
+The  name, or  initials  of the  person  reporting  the bug. This is  always a
+employee  and NOT the  customer,  a fault  from a customer  will  normally  be
+reported through a Technical Support engineer and it is their name that should
+appear here.
+.IP
+You may use your initials or full name but BE CONSISTENT.  The converter has a
+dictionary  of aliases for names and converts  initials or shortened  forms of
+names to their full name,  consistency is required to ensure the lookup always
+succeeds.
+.RS
+.CS
+Report By:  Jon Green
+.CE 0
+.RE
+.IP "\fBReport\ For:\ \fI<Details of customer>\fR"
+The \fBReport\  For:\fR field is an optional field that enables details of the
+customer to be appended to the report form if required. The field may take any
+amount of text e.g.
+.RS
+.CS
+Report By:  Jon Green
+Report For: Baldrick Stonehouse,
+            Baldrick Systems Inc,
+            597 Elwood Drive, MA.
+            Tel: 927-939-3838.
+            Fax: 393-393-3833.
+            E-Mail: baldrick@baldrick.com
+.CE 0
+.RE
+.IP "\fBStatus:\ \fI<State of fault>\fR"
+The status of the fault  report. All faults  should be logged as  "\fBopen\fR"
+and will be re-assinged as they are closed. Valid statuses include:-
+.RS
+.IP \fBOpen\fR
+Fault report is outstanding and has not been corrected.
+.IP \fBClosed\fR
+The fault has been rectified.
+.IP \fBSuspended\fR
+The  fault has  not been  corrected and  will not  be for some    time.
+.IP \fBRejected\fR
+The  fault  is  deemed  not to be a fault  and has  been  rejected.  It may be
+rejected on the grounds of a user error or the fault has already been reported
+and will not be resubmitted.
+.RE
+.IP
+For example
+.RS
+.CS
+Status: Open
+.CE 0
+.RE
+.IP "\fBEngineer:\ \fI<Name>\fR"
+Field  should be left  blank on  submission.  This holds the  identity  of the
+Engineer  assigned to the fault  report.  Queries  regarding  the fault report
+should be directed towards this engineer.
+.RS
+.CS
+Engineer:   Jon Green
+.CE 0
+.RE
+.IP "\fBSeverity:\ \fI<Fault Severity>\fR"
+The severity of the fault. The fault categories are defined as follows:-
+.RS
+.IP
+\fBA\fR \- Critical error.
+.br
+\fBB\fR \- System is deficient in some way & no work around.
+.br
+\fBC\fR \- System deficient work around.
+.br
+\fBD\fR \- Desirable feature omitted
+.br
+\fBE\fR \- Suggestion - not for near future.
+.RE
+.IP "\fBSummary:\fR \fI<Summary of fault>\fR"
+A short  concise  description  of the  fault.  The  text is used in the  index
+therefore the  description  should be meaningful to all readers. It should not
+be unduly long  otherwise it will wrap on the screen making it more  difficult
+to identity.
+.IP
+The summary does not need to include the module name as defined by the
+\fBModule:\fR"  field, this is automatically included in the index.
+.IP
+An example would be:-
+.RS
+.CS
+Module:     device
+Component:  flange whopper
+\.\.\.
+
+Summary:
+        "flange whopper" configuration not understood.
+.CE
+Using the  \fBModule:\fR  and  \fBComponent:\fR  information  the  summary  is
+understandable in the context of the \fIdevice\fR  without using words such as
+\fIdevice\fR.
+.PP
+In the menu for bugs the item is presented as:-
+.CS
+\.\.\.\.
+#1234 [device] "flange whopper" configuration not understood.
+#1235 [system] Occasional crashes on initialisation
+\.\.\.\.
+.CE 0
+.RE
+.IP "\fBDescription:\ \fI<Description Text>\fR"
+The  description  field  is used  to  describe  the  problem.  This  is a text
+narrative that may be interspersed with code fragments as examples.
+.IP
+Write your text in terms of  paragraphs,  separate  each  paragraph by a blank
+line. The text may be written  against the left margin or indented by white
+space  (e.g.  tab/spaces).  Note if you have a colon on the line  ensure  that
+white  space  exists  at the  start  of the  line  to  ensure  that  it is not
+interpreted as a command.
+.IP
+See
+.Hl "Formatted Text Description" idcFormat 4
+.IP "\fBNotes:\fR \fI<Text Description>\fR"
+The "\fBNotes:\fR"  section is used to append notes to an existing report, the
+\fI<Text  Description>\fR  supports all of the text formatting modes. This may
+be used to provide more  information to the existing report. This is generally
+used as a clip board for more information. e.g.
+.RS
+.CS
+Notes:
+    A bit more information for the error.
+
+    Noted that failed on IRIX5 as well as HP.
+.CE 0
+.RE
+.IP "\fBWorkaround:\fR \fI<Text Description>\fR"
+The  "\fBWorkaround:\fR"  field is  generally  submitted  by the  Engineer and
+describes alternative action that may be taken to overcome the reported fault.
+The \fI<Text  Description>\fR  supports all of the text  formatting  modes. An
+example of a work around would be:-
+.RS
+.CS
+Workaround:
+    Use this instead of that.
+.CE 0
+.RE
+.IP "\fBPatch:\fR \fI<Patch No>\fR"
+The patch component binds a bug with a
+.Hl "patch report" idcPAT 4 .
+The specified bug appears in the patch report as fixed.
+.IP "\fBFix By:\fR \fI<Name>\fR"
+The engineer identified as fixing the fault.
+.IP "\fBFix Date:\fR \fI<dd/mm/yy>\fR"
+The date that the fault was fixed,  typically  specified as a date in the form
+of  "\fIdd/mm/yy\fR",  may also be specified as a release  name, in which case
+the date of the release is taken as the fix date.
+.IP "\fBFix Desc:\fR \fI<Text Description>\fR"
+A description of how the fault was fixed. This  information  is generally only
+used as a reminder of what was wrong. This is useful where  provided as the
+Technical  Support team can relay the  information to the customer if they ask
+for it.
+.IP
+The field supports the standard description formatting constructs.
+.IP "\fBSee Also:\fR"
+Provides a cross  referencing  facility to other  items in the  database  e.g.
+previous fault reports or technical notes etc. The items are cross  referenced
+as "\fIname\fR(\fIid\fR)" hence to reference fault report 23 then the entry is
+specified as \fCbug(23)\fR.
+.IP
+The other reports are identified as follows:-
+.RS
+.IP
+\fBbug\fR \- Other fault reports.
+.br
+\fBfaq\fR \- Reference to a Frequently asked question.
+.br
+\fBtek\fR \- Reference to a Technical Report.
+.br
+\fBpat\fR \- Reference to a Patch.
+.br
+\fBnew\fR \- Refence to a News item.
+.RE
+.IP
+As an exmple, consider the following cross reference list:-
+.RS
+.CS
+See Also: bug(23), bug(345), pat(1),
+          new(2), new(4), tek(1),
+          faq(23).
+.CE
+This would generate hypertext links to the specified pages in the document.
+.RE
+.IP "\fBEnd:\fR"
+Terminates the page. Typically only used at the end of a file, bug reports are
+automatically  terminated  when  the next  "\fBBug  Number:\fR"  statement  is
+encountered.
+.LP
+Other fields used by engineering include:-
+.IP "\fBSuspend By:\fR \fI<Name>\fR"
+When a fault is  suspended,  this field  identifies  the name of the  engineer
+suspending the fault.
+.IP "\fBSuspend Date:\fR \fI<dd/mm/yy>\fR"
+The date the fault was suspended.
+.IP "\fBSuspend Desc:\fR \fI<Description Text>\fR"
+A description  as to why a fault was  suspended.  This conforms to a standard
+descriptive field entry.
+.IP "\fBUnsuspend By:\fR \fI<Name>\fR"
+Name of engineer moving the fault from the suspended list back onto the active
+fault list.
+.IP "\fBUnsuspend Date:\fR \fI<dd/mm/yy>\fR"
+The date when the fault was unsuspended.
+.SH EXAMPLE
+.SS "Bug Report"
+The following example shows a compleated fault report submission:-
+.CS
+#:________________________________________________________________________
+#:
+Bug Number: 774
+Local Id:   Help Desk 017723
+
+Module:     xyz
+Date:       11/04/95
+Release:    beta1
+Report by:  JZ
+
+Status:     Open
+Engineer:   KY
+Severity:   D
+
+Summary:
+    Cannot cope with typedef construct.
+
+System:
+    All systems
+
+Description:
+
+    JG - 25/10/95.  This is an  old bug  found in old  mail box.
+         do not know status.
+
+    XYZ can't cope with the following typedef:-
+
+code:
+    typedef struct
+    {
+        uint32 dummy;
+    } foo;
+
+    typdef foo foo1;
+ecode:
+    and then in the epp file do:-
+code:
+    element foo1;
+ecode:
+
+Fix By:
+Fix Date:
+Fix Desc:
+.CE 0
+.NH idcFormat 4 "idc(4) - Formatted Text Description"
+.SH "FORMATTED TEXT DESCRIPTION"
+The  free  form  text  entries  allow  a  limited  capability  to  format  the
+presentation of the text. The input language to \fBidc\fR is very crude and is
+designed for rapid text entry from E-Mail  messages,  typically  submitted  by
+engineers.  Text  is  typically  full  of  spelling  mistakes,  typographical
+errors  and bad  grammar,  fragments  of code are  typically  included.  Given
+the  quality  of input data that is  provided  there  seems  little  point in
+providing a  comprehensive  set of formatting  features.  Therefore the basic
+constructs are provided:
+.BS
+Paragraph control
+.BU
+Code enclosures (raw text / program listings).
+.BU
+Literal text
+.BU
+Bulleted lists
+.BU
+Text indentation control
+.BU
+Titles
+.BE
+In addition a small set of in-line formatting constructs are provided that may
+be used in a subset of the sections.
+.PP
+The general  rules for all text items are that they start in at least column 1,
+if they start in column 0 then they should not contain a colon  otherwise they
+are interpreted as directives.
+.PP
+Horizontal  and  excess  vertical  white  space is  ignored  unless  otherwise
+stated, text is displayed in a proportional font.
+.PP
+Of the basic  primitives,  only the indentation  may be nested or used within
+other primitives.
+.SS "Paragraph Control"
+A paragraph is defined as consecutive  lines of text  terminating with either a
+control  word or blank line. All lines in the  paragraph  should  start with a
+space or not include a colon character (\fC:\fR).
+All  of  the  text   comprising  the  paragraph  is  left   justified  to  the
+current   indentation   level  and  text   adjustment  is  applied  (i.e.  the
+white space  intervals are ignored).
+.PP
+Paragraphs are displayed in a proportional font.
+.SS "Code Enclosure"
+Code  Enclosure's  enable literal, space formatted text, to be retained in the
+resultant  output  display.  Typically  used  for  code  fragments  where  the
+formatting of a line has to be retained.
+.PP
+Code  segments  are  delimited  by  use of  the  "\fBcode:\fR"  "\fBecode:\fR"
+primitives   that  appear  in  the  margin.  All   vertical   white  space  is
+preserved.  Horizontal  white space is  honoured,  with the  exception  of the
+leading  indent, the  minimum  leading  indent (for all lines) is  stripped  off
+the lines thereby controlling the left indent.
+.PP
+Code enclosures are displayed in a mono-spaced font, an indentation is applied.
+Consider the following example:
+.CS
+    According to the customer, they all fail the same way.
+
+    Any other ideas? Can someone  over there verify parsing
+    error with the keyword?
+
+    I got the same error:
+
+code:
+    vcrun -D DVS_TRACKER=glove dvise vdifiles/gallery.vdi
+
+    ERROR   [foo-bar:input] ParseTrackerConfig
+            : file glove.inp, line 22 :
+    Tracker Name "isotrack" not recognised
+    ERROR   [:VCRUN] local actor vcinput exited with code 0
+ecode:
+
+    Here's my glove.inp:
+
+code:
+
+    #####
+    #
+    # Glove input configuration file
+    #
+    #####
+    \.\.\.\.
+ecode:
+.CE
+This generates the following:-
+.PP
+.RS
+According to the customer, they all fail the same way.
+
+Any other  ideas? Can  someone over  there verify  parsing error  with the
+keyword?
+
+I got the same error:
+.CS
+vcrun -D DVS_TRACKER=glove dvise vdifiles/gallery.vdi
+
+ERROR   [foo-bar:input] ParseTrackerConfig
+        : file glove.inp, line 22 :
+Tracker Name "isotrack" not recognised
+ERROR   [:VCRUN] local actor vcinput exited with code 0
+.CE
+Here's my glove.inp:
+.CS
+#####
+#
+# Glove input configuration file
+#
+#####
+\.\.\.\.
+.CE 0
+.RE
+.SS "Literal Text"
+Where you have a list of items that are short then you can use  literal  text,
+this preserves the vertical line spacing, but not the horizontal  white space.
+Typically  used for address fields etc.  Literal text  lines are displayed in a
+proportional font.
+.CS
+literal:
+    Acme Ltd,
+    Acme House,
+    Mayfair,
+    LONDON.
+eliteral:
+.CE
+This generates:-
+.IP
+.nf
+Acme Ltd,
+Acme House,
+Mayfair,
+LONDON.
+.fi
+.SS "Bulleted Lists"
+Bulleted  lists  provide an effective  mechanism for itemised text lists. Data
+entry is similar to a paragraph, Each bullet item is
+separated   by  a  single   line,  the   bulleted   lines  are  encased  in  a
+"\fBbullet:\fR" "\fBebullet:\fR" construct.
+.PP
+Bullet lists are indented and displayed in a proportional font. e.g.
+.CS
+bullet:
+    Item A - This is some text
+             can occupy many
+             lines, so long as the next line
+             is blank.
+
+    Item B - This is the next item
+
+    Item C - This is                the following item.
+ebullet:
+.CE
+This generates:
+.BS 1
+Item A - This is some text can occupy  many lines, so long as the next line is
+blank.
+.BU
+Item B - This is the next item
+.BU
+Item C - This is                the following item.
+.BE 0
+.SS "Indentation"
+The  indentation  structure  provides a mechanism to adjust the left margin of
+displayed text. The syntax uses keywords  "\fBindent:\fR"  "\fBeindent:\fR" to
+indent a block of text between the opening and closing indent  statements. The
+indentations  may be nested and may  additionally  include the  "\fBcode:\fR",
+"\fBbullet:\fR", "\fBliteral:\fR" and "\fBtitle:\fR" fields.
+.PP
+As an example of the indented text consider the following:-
+.CS
+    Not indented.
+indent:
+    This is indented.
+indent:
+        Indented some more.
+code:
+        Bit of code.
+ecode:
+eindent:
+eindent:
+    Not indented.
+.CE
+This generates:-
+.PP
+.RS
+Not indented.
+.PP
+.RS
+This is indented.
+.PP
+.RS
+Indented some more.
+.CS
+Bit of code.
+.CE
+.RE
+.RE
+Not indented.
+.RE
+.SS "Title"
+Title lines,  displayed in a \fBbold\fR text font may be specified,  using the
+enclosure \fBtitle:\fR \fBetitle:\fR enclosure. All paragraphs contained within
+the title  enclosure  are  displayed in bold. This is typically  used with the
+\fBindent:\fR statement.
+.PP
+As an example consider the following:
+.CS
+title:
+    Title Level 0
+etitle:
+indent:
+    Level 0 text.
+title:
+    Title Level 1
+etitle:
+indent:
+    Level 1 text.
+eindent:
+eindent:
+title:
+    Title Level 0
+etitle:
+.CE
+This generates the following:-
+.PP
+.RS
+.B "Title Level 0"
+.RS
+.PP
+Level 0 text.
+.PP
+.B "Title Level 1"
+.RS
+.PP
+Level 1 text.
+.RE
+.PP
+.B "Title Level 0"
+.RE
+.RE
+.SH "IN-LINE FORMATTING CONSTRUCTS"
+The In-line formatting  constructs provide methods to change the font type and
+to  include  special  hyper-text  references  which  may be  used  within  the
+generated HTML (as opposed to RTF). The basic constructs are defined as:-
+.BS
+Bold \- embolden font.
+.BU
+Italic \- italicise font.
+.BU
+Courier \- monospaced font (Courier).
+.BE
+The set of hypertext extensions include:
+.BS
+Mailto \- Mail reference to named recipient(s).
+.BU
+Ftp \- FTP reference to a file for download.
+.BU
+Http \- Hypertext reference, typically to a network \fIhtml\fR file.
+.BU
+File \- Hypertext reference, typically to a local \fIhtml\fR file.
+.BE
+The general syntax is defined as:-
+.PP
+.RS
+.na
+.nf
+.ps 8
+.vs 10
+\fBb:\fR \fI<text>\fR
+\fBi:\fR \fI<text>\fR
+\fBc:\fR \fI<text>\fR
+.sp
+\fBmailto:\fR \fI<mail address>\fR \fC[\fI<label text>\fC]\fR
+\fBftp:\fR \fI<ftp address>\fR \fC[\fI<label text>\fC]\fR
+\fBfile:\fR \fI<file address\fR \fC[\fI<label text>\fC]\fR
+\fBhttp:\fR \fI<http address>\fR \fC[\fI<label text>\fC]\fR
+.fi
+.ad
+.vs 12
+.ps 10
+.RE
+.PP
+The  font  specifiers   \fBb:\fR,   \fBi:\fR  and  \fBc:\fR  change  the  font
+characteristics of all of the \fI<text>\fR on the line.
+.PP
+The hypertext specifiers  optionally take two arguments, the first is the name
+of the  hypertext  link this is  specified  as a standard WWW browser  address
+(without  the \fC//\fR  delimiters).  The optional  \fI<label  text>\fR  field
+specifies  the text to be used to hide the link. If omitted then the line name
+is used. The Windows Help File  generation  shows the \fI<label  text>\fR with
+the regular text if included, the \fI<* address>\fR  field is always displayed
+in red.
+.PP
+The field specifiers may be used in the following fields only, their effect is
+defined as follows:
+.PP
+\fBRegular Paragraph\fR
+.br
+.RS
+There are three cases as follows, in each case the bold \fBb:\fR  attribute is
+used, but the same applies for any of the font change attributes:-
+.IP "\fBEmbedded Text\fR"
+.RS
+.nf
+.C text
+.C "b: Bold Text"
+.C text
+.fi
+.RE
+.sp
+Output:
+.br
+.RS
+text \fBBold Text\fR text
+.RE
+.IP "\fBLeading Text\fR"
+.RS
+.nf
+.C "text"
+.sp
+.C "b: Bold text"
+.C "text"
+.fi
+.RE
+.sp
+Output:
+.br
+.RS
+.nf
+text
+.sp
+\fBBold Text\fR text
+.fi
+.RE
+.IP "\fBTrailing Text\fR"
+.RS
+.nf
+.C "text"
+.C "b: Bold text"
+.sp
+.C "text"
+.fi
+.RE
+.sp
+Output:
+.br
+.RS
+.nf
+text \fBBold Text\fR
+.sp
+text
+.fi
+.RE
+.IP "\fBDisjoint Text\fR"
+.RS
+.nf
+.C text
+.sp
+.C "b: Bold Text"
+.sp
+.C text
+.fi
+.RE
+.sp
+Output:
+.br
+.RS
+.nf
+text
+.sp
+\fBBold Text\fR
+.sp
+text
+.fi
+.RE
+.RE
+.IP "\fBBullet List\fR"
+The same as \fBRegular Paragraph\fR with the exception that the
+.I "Leading Text"
+and
+.I "Disjoint Text"
+start a new bullet point.
+.IP "\fBLiteral List\fR"
+Within a literal list the attribute  item is considered to be a single literal
+line. No combination is performed between adjacent abutting lines.
+.IP "\fBTitle Paragraph\fR"
+No \fIIn-Line formatting\fR constructs are valid.
+.IP "\fBCode Paragraph\fR"
+No \fIIn-Line formatting\fR constructs are valid.
+.LP
+.FH

@@ -1,0 +1,379 @@
+.Id $Id: mantools.1,v 1.1 2000-10-21 14:31:34 jon Exp $
+.Im mantools
+.TH mantools 1
+.XI mantools 1 "Introduction to the Manual Tools"
+.Kw "JASSPA Document Formatting"
+.SH NAME
+intro \- Introduction to the Manual Tools.
+.SH OVERVIEW
+The
+.B "Manual Tools"
+describe the manual page building utilities, which take as input,
+.B nroff
+source files, utilising a hypertext nroff library defined by
+.Ht mad 7 ,
+generating outputs in:
+.BS 1 0
+Hypertext Mark Up Language (HTML)
+.BU
+Microsoft Rich Text (RTF) with Windows Help (HLP) extensions.
+.BU
+Concatenated N/Troff source files \-
+.Ht sm 4 .
+.BU
+Postscript ordering file for generating a printed copy \-
+.Ht pso 4 .
+.BE 
+In addition, the \fIInformation Database Compiler\fR 
+.Ht idc 1 
+provides a facility to track  development fault reports, release and technical
+information.  The  output  from  this  utility  may be  incorporated  into the
+standard manual pages for in-house development
+.SS "Selection of a Macro package"
+Nroff was selected in the first instance for two reasons.  Firstly, all of the
+UNIX on-line  documentation is prepared using this format, secondly,  provided
+that the syntax is reasonably well  constrainted then the format is relatively
+easy to convert into another form.
+.PP
+The first  converter  that was  produced  was the RTF  converter  to  generate
+Microsoft Help pages. This performed a simple translation to RTF, the nroff
+.Hr man 7
+macros were extended to include hypertext references (i.e.
+.Ht mad 7 ),
+which  allowed  the   preparation  of   \fIcatman\fR   and   \fIpost-script\fR
+documentation.  When HTML  appeared  the HTML  converter  was  quickly  added,
+providing an on-line hypertext documentation system.
+.PP
+As the number of manual pages increased, the build times of the system were in
+the region of 8-10  hours.  Initially  a single  Help file, or HTML  directory
+would be generated  for each module type e.g. runtime,  developer,  etc. Minor
+updates  required  the whole  system to be re-built,  and the shear  volume of
+pages was causing the Microsoft help compiler to crash.
+.PP
+By October  1995, the manual page  building was  regularly  failing due to the
+demands  placed on the system. Time did not permit a fix until  December  1995
+when the  concept of modules was  introduced  whereby new  functional  modules
+could be added or removed  from the system.  This led to the  introduction  of
+library files
+.Ht lbn 4
+which  enabled  references  to be shared by modules, and a (semi)  single pass
+compilation  that would convert and resolve the  references of a module at the
+same time. This significantly  reduced the build time as only small components
+were  compiled  at  any  one  time  that  could  externally   reference  other
+components. Correcting problems became a simple case of replacing that modules
+help file or HTML directory. At the same time the concept of superman files
+.Ht sm 4
+was added to reduce the  handling of data, and reduce disk access  times which
+were hurting.
+.PP
+The system  that is  currently  running,  is  essentially  the  December  1995
+product.  During the first part of 1996, engineers were beginning to write new
+manual pages, which  introduced  subtly new styles of manual page layout which
+introduced a new set of problems  where by the manual text was not uniform. To
+counter this the nroff parser syntax checking was then significantly increased
+to  complain  about  style and  erroneous  input,  forcing  the new writers to
+constrain their styles and conform to the existing layout constraints  already
+in-force in other documents.
+.PP
+The documentation system is currently being enhanced further, the introduction
+and  acceptance  of the  HTML 2.0  format  specification  now  supports  table
+constructs, which makes it possible to convert
+.Hr tbl 1
+constructs to both RTF and HTML which are really  required. This work has been
+prototyped, but has not been integrated into the current system.
+.SH "BUILD PROCESS"
+The  build  process  of the  manual  page  system  is  shown in the  following
+schematic,  which  describes how the data flows through the system to generate
+the output:
+.CS
+.ne 14
+superman
+|   *.[1-9] *.tni => module.sm
+|
++-> nrsearch
+|   |  module.[0-9]s + module.sm => module.3
+|   |
++-> nrar
+|   |   module.sm module.3 => module.lbn
+|   |
++---+-> nr2html
+|   |       module.sm + module.3 + module.lbn [+ *.lbn] => module.hts
+|   |
++---+-> nr2rtf
+            module.sm + module.3 + module.lbn [+ *.lbn] => module.rtf
+.CE 0
+.SS "Hyper Text Markup Language (HTML)"
+The HTML  pages  are  generated  on a  per-module  basis,  where a module is a
+standalone  software  interface,  suite of software tools etc. which are dealt
+with as a single entity. These generally correspond to the software modules of
+individual  developers. In addition to software  modules, the software is also
+segmented by the  requirements  of a runtime  and/or  developers  release. The
+runtime release does not generally comprise of software programming interfaces
+etc., which are also present in the developer release.
+.PP
+The  generation  of HTML modules are mapped onto  separate  directories,  each
+directory is compleatly  self contained  which enables it to be swapped out at
+any time.  Directories  are typically  named  according to the module name and
+type  e.g.  \fIModule\fBrun\fR  and  \fIModule\fBdev\fR  which  represent  the
+runtime  and  development  components  of a single  module. All of the modules
+reference  a  \fIhome\fR  page,  which  provides a global  index to all of the
+modules in the system.  Hence, the structure of the HTML  directory is defined
+as:-
+.CS
+.ne 4
+root ----+---- mod1run
+         +---- mod1dev
+         +---- mod2run
+         +---- mod2dev
+.CE
+The \fIroot\fR  directory  contains the \fIhome\fR page, which references each
+of the  modules  own  \fIhome\fR  pages  (a  modules  home  page is  typically
+generated with
+.Ht nrsearch 1
+which  contains a local  index to the  modules  home  pages).  Retaining  this
+directory structure ensures that HTML references are kept simple as follows:-
+.BS
+\fBHome to Module\fR - a link defined as \fI<ModuleName>/<PageName>\fR.
+.BU
+\fBModule to Home\fR - a link defined as \fI../<HomeName>\fR.
+.BU
+\fBModule to Module\fR - a link defined as \fI../<ModuleName>/<PageName>\fR.
+.BU
+\fBLocal Module Links\fR - a link defined a \fI<PageName>\fR.
+.BE
+The library
+.Hl .lbn lbn 4
+file  enables  the  references  to be  determined  from  a  label  name  as it
+identifies both the module name and the page name. The resultant links between
+the \fIHome\fR page and the \fIModules\fR is defined as:-
+.CS
+.ne 10
+              home.html
+               ||||
+   +-----------+||+-----------+
+   |        +---++---+        |    Home Page Forward/Backward Links
+   |        |        |        |
+mod1run  mod1dev  mod2run  mod2dev
+  |||       |        |        |
+  ||+-------+        |        |    Inter-Module Forward/Backward Links
+  |+-----------------+        |
+  +---------------------------+
+.CE
+In summary, the HTML pages are generated as:
+.IP
+.na
+.Hl superman superman 1
+\->
+.Hl nrsearch nrsearch 1
+\->
+.Hl nrar nrar 1
+\->
+.Hl nr2html nr2html 1
+.ad
+.PP
+Generation of the HTML pages is performed by a single compilation pass of the
+.Ht nr2html 1
+converter,  utilising the library symbol information  generated by the library
+archiving utility
+.Ht nrar 1 .
+The resultant output, a
+.Ht hts 4
+file, may be unpacked using the program
+.Ht hts2html 1
+which unpacks individual HTML pages into there respective sub-directorys.
+.SS "Microsoft Windows Help Files (HLP)"
+The Microsoft  Windows Help pages are generated on a per-module basis, where a
+module is a standalone  software interface, suite of software tools etc. which
+are dealt with as a single entity. These generally  correspond to the software
+modules of  individual  developers.  In  addition  to  software  modules,  the
+software is also segmented by the requirements of a runtine and/or  developers
+release.  The  runtime  release  does  not  generally   comprise  of  software
+programming interfaces etc., which are also present in the developer release.
+.PP
+The generation of Windows modules are mapped onto separate Windows Help files,
+each help is compleatly  self contained  which enables it to be swapped out at
+any time. Help files are typically named according to the module name and type
+e.g. \fIModule\fBrun\fR and \fIModule\fBdev\fR which represent the runtime and
+development components of a single module - the naming convention is identical
+to the HTML directory naming. All of the modules  reference a \fIhome\fR page,
+which  provides a global  index to all of the  modules in the system. The home
+pages is a separate help file.
+.PP
+The  windows  help files  assume  that all of the help files exist in the same
+directory,  a  directory  of a number  of  modules  with a home page  might be
+defined as:-
+.CS
+.ne 5
+home.hlp
+mod1run.hlp
+mod1dev.hlp
+mod2run.hlp
+mod2dev.hlp
+.CE
+The \fIhome.hlp\fR file contains the \fIhome\fR page, which references each of
+the modules own \fIhome\fR  pages (a modules home page is typically  generated
+with
+.Ht nrsearch 1
+which contains a local index to the modules home pages). Note that the Windows
+Help  compiler  uses  \fIlabel\fR  names rather than page names as is the case
+with the HTML conversion.  Retaining this modular  structure ensures that help
+file references are kept simple as follows:-
+.BS
+\fBHome to Module\fR - a link defined as \fI<Label>@<ModuleName>.hlp\fR.
+.BU
+\fBModule to Home\fR - a link defined as \fI<Label>@<HomeName>.hlp\fR.
+.BU
+\fBModule to Module\fR - a link defined as \fI<Label>@<ModuleName>.hlp\fR.
+.BU
+\fBLocal Module Links\fR - a link defined a \fI<Label>\fR.
+.BE
+The library
+.Hl .lbn lbn 4
+file  enables  the  references  to be  determined  from  a  label  name  as it
+identifies  both the  module  name and the  label  name. The  resultant  links
+between the \fIHome\fR page and the \fIModules\fR is defined as:-
+.CS
+.ne 11
+                   home.hlp
+                     ||||       Home Page Forward/Backward Links
+   +-----------------+||+-----------------+
+   |            +-----++-----+            |
+   |            |            |            |
+mod1run.hlp  mod1dev.hlp  mod2run.hlp  mod2dev.hlp
+  |||           |            |            |
+  ||+-----------+            |            |
+  |+-------------------------+            |
+  +---------------------------------------+
+                                Inter-Module Forward/Backward Links
+.CE
+In summary, the Windows Help pages are generated as:
+.IP
+.na
+.Hl superman superman 1
+\->
+.Hl nrsearch nrsearch 1
+\->
+.Hl nrar nrar 1
+\->
+.Hl nr2rtf nr2rtf 1
+\->
+.Hl hc hc 1
+.ad
+.PP
+Generation of the Windows Help files is performed by a single compilation pass
+of the
+.Ht nr2rtf 1
+converter,  utilising the library symbol information  generated by the library
+archiving utility
+.Ht nrar 1 .
+The resultant output, a
+.Hr rtf 4
+file is then compiled into a help page using the Microsoft Help Compiler
+.Ht hc 1 .
+.SS "Postscript Files (PS)"
+The postscript files are generated by the UNIX
+.Hr groff 1 
+utility under control of the
+.Ht sm2ps.nawk 1 
+script which directs the  conversion. The postscript  conversion  generates an
+alphabetically sported list of modules whose order is defined by a
+.Ht pso 4 
+file. As a  by-product  the script  generates an  alphabetically  sorted index
+listing  all of the module  entry  points  with page  number  references.  The
+postscript files additionally require a header file which is constructed under
+control of the Makefile.
+.PP
+The  information  required  for this  process is prepared by the manual  build
+system in the form of
+.Hl superman superman 1 
+.Ht sm 4
+files and the post-script ordering
+.Ht pso 4 
+files generated by
+.Ht nrorder 1 .
+.PP
+In summary, the Postscript pages are generated as:
+.IP
+.na
+.Hl superman superman 1
+\->
+.Hl nrorder nrorder 1
+\->
+.Hl sm2ps.nawk sm2ps.nawk 1
+.ad
+.PP
+.B Note:
+The  \fIsuperman\fR  utility  is  expected  to include  ALL of the pages to be
+printed in a single file. Where  generated  lists (i.e.  \fC.[0-9]s\fR  source
+files) are required as part of the printed page set then
+.Hl nrsearch nrsearch 1 
+may need to be  invoked  twice,  in the fist  instance  all of the  pages  are
+collected  together  and  presented to  \fInrsearch\fR  to generate the index.
+\fInrsearch\fR  is invoked a second time with the previous  \fC.sm\fR file and
+the \fC.[0-9]\fR  page(s)  generated by  \fInrsearch\fR to package them into a
+single \fC.sm\fR file e.g.
+.IP
+.na
+.Hl superman superman 1
+\->
+.Hl nrseach nrsearch 1 
+\->
+.Hl superman superman 1 
+\->
+.Hl nrorder nrorder 1
+\->
+.Hl sm2ps.nawk sm2ps.nawk 1
+.ad
+.SS "UNIX Catman Files (Catman)"
+The UNIX \fIcatman\fR files are 
+.Hr groff 1 
+rendered images of the manual pages, which are generated into a
+.Hr compress 1 'ed
+.Hr tar 1 
+file. The generation of the \fIcatman\fR pages takes as input the
+.Ht sm 4 
+file created by the build and constructs a local \fIcatman\fR  directory using
+the
+.Hr nawk 1 
+script
+.Ht sm2catman.nawk 1 .
+The script  controls  the  conversion  of pages, in  addition,  it creates the
+\fIcatman\fR  directory  and  makes  an  entry  for  each  manual  page in the
+appropriate \fIcatman\fR directory using symbolic links (see
+.Hr ln 1 ).
+.PP
+The build process for the \fIcatman\fR pages is defined as:-
+.IP
+.na
+.Hl superman superman 1
+\->
+.Hl sm2catman.nawk sm2catman.nawk 1
+.ad
+.PP
+Where  inclusion of indexes  appear in the  \fC.sm\fR  file, refer to the note
+given in the \fBPostscript\fR section.
+.SH "SEE ALSO"
+.na
+.Hr groff 1 ,
+.Hr ln 1 ,
+.Hr man 7 ,
+.Hr nawk 1 ,
+.Hr rtf 4 ,
+.Hr tbl 1 ,
+.Ht hc 1 ,
+.Ht hts 4 ,
+.Ht hts2html 1 ,
+.Ht lbn 4 ,
+.Ht mad 7 ,
+.Ht nr2html 1 ,
+.Ht nr2rtf 1 ,
+.Ht nrar 1 ,
+.Ht nrsearch 1 ,
+.Ht pso 4 ,
+.Ht sm 4 ,
+.Ht sm 4 ,
+.Ht sm2catman.nawk 1 ,
+.Ht sm2ps.nawk 1 .
+.ad
+.FH
+

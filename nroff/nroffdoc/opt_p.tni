@@ -1,0 +1,5 @@
+.IP "\fB\-p\fR\ \fI<file>\fR"
+Specifies  the name of the file to use as the logo  appearing in the top left
+of the manual page. The  filename  \fI<file>\fR  must  include the file
+extension.
+.\" End of file - no text to follow

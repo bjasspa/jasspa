@@ -1,0 +1,112 @@
+.Id $Id: htp.4,v 1.1 2000-10-21 14:31:33 jon Exp $
+.Im mantools
+.TH htp 4
+.XI htp - "HTML hypertext pre-compiled file format extensions"
+.Kw "JASSPA Document Formating"
+.SH NAME
+htp \- HTML hypertext pre-compiled file format extensions
+.SH SYNOPSIS
+.na
+.nf
+\fB<<A\fI.html\fB<\fR
+\fB<<D\fIitem\fR\fB<\fR
+\fB<<F\fIfilename\fB<\fR
+\fB<<P<\fR
+\fB<<R\fIitem\fB<\fR
+.ad
+.fi
+.SH OVERVIEW
+The \fBhtp\fR file format defines extensions to HTML that are used by the
+.Ht htmlc 1
+HTML compiler to resolve external references between different pages. The file
+format supports multiple HTML file definitions within a single file and has
+provision to generate automatic file names. The HTP tags are embedded into
+standard HTML as required.
+.PP
+The tags are defined as follows:-
+.IP "\fB<<A\fI.html\fB<\fR"
+The \fBA\fRutomatic file name. This tag introduces a new HTML file, the file
+is automatically allocated a unique name by the compiling process. The
+component should include the file extension e.g. \fC.html\fR, and any other
+text to be added to the end of the generated file name. The automatic file
+exits up until the next \fBA\fR or \fBF\fR tag.
+.IP
+The \fBA\fR tag is converted by
+.Ht htmlc 1
+to a
+.Ht hts 4
+file marker with a name \fCautoNNNN.html\fR where \fCNNNN\fR is a four digit
+number starting from zero.
+.IP "\fB<<D\fItag\fR\fB<\fR"
+The \fBD\fRefine tag, binds a name \fIitem\fR to the enclosing file. The
+definition is referred to by the \fBR\fR tag. The
+.Ht htmlc 1
+compiler removes all \fBD\fR tags during the compilation process.
+.IP "\fB<<F\fIfilename\fB<\fR"
+The \fBF\fRile tag, identifies a named HTML file. This is the name of the HTML
+file to generate. The file exits up until the next \fBA\fR or \fBF\fR tag.
+.IP "\fB<<P<\fR"
+The \fBP\fRath tag is used as a path substitution string. The
+.Ht htmlc 1
+compiler will replace the tag with the generated path offset. This is
+typically used by HTML HREF tags as follows:-
+.RS
+.CS
+\&<A HREF="<<P<file.html">Some reference</A>
+.CE 0
+.RE
+.IP
+If the compiler relocated the file to a sub-directory then the \fBP\fR tag
+will define the relative movement to take the path back to the root level e.g.
+\fC../\fR. Hence, if the file is pushed into a subdirectory the compiler will
+generate:-
+.RS
+.CS
+\&<A HREF="../file.html">Some reference</A>
+.CE 0
+.RE
+.IP "\fB<<R\fIitem\fB<\fR"
+The \fBR\fReference tag identifies a reference to another \fIitem\fR, by name.
+The \fIitem\fR should be defined by the \fBD\fRefintion tag.
+.SH EXAMPLE
+The following example shows how references are resolved. Consider an item
+called \fCfoolabel\fR defined in file \fIfoo.html\fR, then a reference to
+\fCfoolabel\fR from file \fIbar.html\fR would me defined as follows:-
+.CS
+\&<<Ffoo.html<
+\&<HEAD><TITLE>JASSPA On-Line</TITLE></HEAD>
+\&<BODY>
+\&<<Dfoolabel<
+\&...
+\&</BODY></HTML>
+
+\&<<Fbar.html>
+\&<HEAD><TITLE>JASSPA On-Line</TITLE></HEAD>
+\&<BODY>
+\&<A HREF="<<Rfoolabel<">foo label text string</A>
+\&...
+\&</BODY></HTML>
+.CE 
+When passed through the HTML complier then the following information is
+generated:-
+.CS
+\&<<FILE> foo.html >
+\&<HEAD><TITLE>JASSPA On-Line</TITLE></HEAD>
+\&<BODY>
+\&...
+\&</BODY></HTML>
+
+\&<<FILE> bar.html >
+\&<HEAD><TITLE>JASSPA On-Line</TITLE></HEAD>
+\&<BODY>
+\&<A HREF="foo.html">foo label text string</A>
+\&...
+\&</BODY></HTML>
+.CE 0
+.SH "SEE ALSO"
+.na
+.Ht htmlc 1 ,
+.Ht hts 4 ,
+.Ht nr2html 1 .
+.ad
+.FH

@@ -1,0 +1,3 @@
+.IP "\fB\-s\fR"
+Generate the formated text on \fIstdout\fR.
+.\" End of file. No text beyond this point.

@@ -1,0 +1,5 @@
+.IP \fB\-x\fR
+Run the converter in  compilation  mode. This is the usual mode of conversion,
+whereby symbolic references are predefined using the library options \fB\-L\fR
+and \fB\-l\fR.
+.\" End of file. No text following this point.

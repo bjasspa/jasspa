@@ -1,0 +1,292 @@
+.Id $Id: hc.1,v 1.1 2000-10-21 14:31:32 jon Exp $
+.Im mantools converters
+.TH hc 1
+.XI hc - "Microsoft Windows Help Compiler"
+.XI hc31 - "Microsoft Windows Help Compiler (DMPI)"
+.XI hpj.awk 4 "Microsoft Help Project File awk construction script"
+.XI hpj 4 "Microsoft Help Project File"
+.SH NAME
+hc \- Microsoft Windows Help Compiler
+.SH SYNOPSIS
+.sp 1
+.na
+\fBhc\fR \fIprojectFile\fR
+.br
+\fBhc31\fR \fIprojectFile\fR
+
+\fBgawk\fR \-f \fBhpj.awk\fR
+\fC[\fR\fB\-v\fR\ \fIarg=value\fR\fC]\fR
+\fC[\fIrtfFiles\ \.\.\.\fR\fC]\fR
+.ad
+.SH DESCRIPTION
+.B hc
+and
+.B hc31
+are Windows Help Compilers, as supplied by Microsoft.  \fBhc\fR operates under
+Microsoft  DOS with no  memory  managers  present,  \fBhc31\fR  operates  in a
+Windows  environment  and DOS  environment  provided  that the  EMM386  memory
+manager is present. Both converters  perform the same operation, the choice of
+converter will be determined by the build environment.
+.PP
+The converters  take as a single argument a Microsoft  Project file, which has
+the suffix  \fB.prj\fR, the project file defines the source files (\fC.bmp\fR,
+\fC.rtf\fR)  that compose the Windows Help file in addition to the  attributes
+of the Help file.  Documentation  for both the Help  Compiler and Project File
+may be found as part of a good Windows 'C' compiler package.
+.PP
+Unfortunately,  the Windows Help Compiler  cannot be directed from the command
+line,  it  relies  solely  on  the  Project  file  to  provide  the  necessary
+information to perform the  compilation.  To direct the Help Compiler from the
+Makefile then an awk script  \fBhpj.awk\fR  is passed  arguments  from make to
+construct  the \fBhpj\fR  file. The options to awk, using  \fBhpj.awk\fR  are,
+specified using the \fB\-v\fR option are:
+.IP \fBtitle=\fItitleName\fR
+The text that  appears on the title of the help window. Use '_' in the text to
+represent spaces. e.g. "Module Development Help" would be defined as:-
+.LP
+.RS
+.CS 0
+\-v title=Module_Development_Help
+.CE 0
+.RE
+.IP
+If omitted the title defaults to a suitable name.
+.IP "\fBerrorLog=\fIfilename\fR"
+The name of the  output  \fIfilename\fR  to be used for  logging  errors.  The
+default if omitted is to use `\fBbase\fR.err'.
+.IP "\fBcontents=\fIname\fR"
+The  \fIname\fR  string of the entry point of the  contents  in the help page.
+The default if omitted is '\fBbase\fR'.
+.IP "\fBbase=\fIname\fR"
+The  base  name of the  help  page. If  specified  then is used as a seed  for
+generating the rest of the information.
+.SH EXAMPLE
+.SS "Running the Help Compiler"
+The help compiler is very simply run using the command line
+.CS
+hc xxxxx.hpj
+.CE
+The  compilation  process is  controlled  entirely  by the Help  Project  File
+\fC.prj\fR. Correct construction of the project file determines the success of
+the compilation.
+.SS "Building a typical .hpj file"
+The Windows  Project file is typically  constructed  using only the \fBbase\fR
+option, this  assumes a single RTF file as input,  which is the module name. A
+command line for this manual module would be:-
+.CS
+gawk -f ..../hpj.awk -v base=manrun -v title=Manual_Build_System
+.CE
+This generates a project file of:
+.CS
+; This help project requires hc 3.1
+[OPTIONS]
+errorlog = manrun.err
+title = Manual Build System
+contents = manrun
+compress = medium
+warning = 3
+report = 1
+
+[FILES]
+manrun.rtf
+[BITMAPS]
+logo.bmp
+[WINDOWS]
+main = "Manual Build System",,,, (192,192,192 )
+
+[CONFIG]
+BrowseButtons()
+.CE 0
+.SS "Constructing a .hpj file with a different entry point"
+Where  the  Contents  page  is NOT  the  same  as the  module  name  then  the
+\fBcontents\fR  option is specified to override the default name  specified by
+the \fBbase\fR option:-
+.CS
+gawk ..../hpj.awk -v base=vdirun -v contents=vdi4 \e
+        -v title=Virtual_Data_Interchange vdirun.rtf
+.CE
+This generates a Project file:
+.CS
+; This help project requires hc 3.1
+[OPTIONS]
+errorlog = vdi4.err
+title = Virtual Data Interchange
+contents = vdi4
+compress = medium
+warning = 3
+report = 1
+
+[FILES]
+vdirun.rtf
+[BITMAPS]
+logo.bmp
+[WINDOWS]
+main = "Virtual Data Interchange",,,, (192,192,192 )
+
+[CONFIG]
+BrowseButtons()
+.CE 0
+.SS "Constructing a sub-module .hpj file"
+Where  multiple  sub-modules  are  constructed  into a single  module then the
+additional  RTF  files  are  specified  on  the  command  line,  consider  the
+following:-
+.CS
+gawk -f hpj.awk -v base=utilsdev -v title=Utilities_API  \e
+     dmdev.rtf dudev.rtf dsdev.rtf drvdev.rtf divdev.rtf \e
+     serdev.rtf dlddev.rtf utilsdev.rtf
+.CE
+which generates:
+.CS
+; This help project requires hc 3.1
+[OPTIONS]
+errorlog = utilsdev.err
+title = Utilities API
+contents = utilsdev
+compress = medium
+warning = 3
+report = 1
+
+[FILES]
+dmdev.rtf
+dudev.rtf
+dsdev.rtf
+drvdev.rtf
+divdev.rtf
+serdev.rtf
+dlddev.rtf
+utilsdev.rtf
+[BITMAPS]
+logo.bmp
+[WINDOWS]
+main = "Utilities API",,,, (192,192,192 )
+
+[CONFIG]
+BrowseButtons()
+.CE 0
+.SH SCRIPTS
+The awk script defined by \fBhpj.awk\fR is included below:
+.CS
+BEGIN {
+
+    #
+    # If no base name is specified then use a default. Output on stdout
+    #
+
+    if (base == "") {
+        fp = "/dev/stdout"
+        base = "hc31";
+    }
+    else
+        fp = sprintf ("%s.hpj", base);
+
+    #
+    # Process any of the standard variable assignments
+    #
+
+    if (errorLog == "")
+        errorLog = sprintf ("%s.err", base);
+    if (contents == "")
+        contents = base;
+    if (title == "")
+        title = sprintf ("Undefined Title [%s]", base);
+    else
+        gsub ("_"," ",title);
+
+    #
+    # Generate the junk at the top of the hpj file.
+    #
+
+    printf ("; This help project requires hc 3.1\\n") >fp ;
+    printf ("[OPTIONS]\\n") >fp ;
+    printf ("errorlog = %s\\n", errorLog) >fp ;
+    printf ("title = %s\\n", title) >fp ;
+    printf ("contents = %s\\n", contents) >fp ;
+    printf ("compress = medium\\n") >fp ;
+    printf ("warning = 3\\n") >fp ;
+    printf ("report = 1\\n") >fp ;
+    printf ("\\n") >fp ;
+    printf ("[FILES]\\n") >fp ;
+
+    #
+    # Add the RTF files to the file list. If no files are specified
+    # on the command line then use 'base'.rtf, otherwise use the list
+    # supplied.
+    #
+
+    if (ARGC == 1)
+        printf ("%s.rtf\\n", base) >fp;
+    else {
+        bcount = 0;
+        for (i = 1; i < ARGC; i++) {
+            #
+            # Filter out names that are the same.
+            #
+            found = 0
+            for (k = 0; k < bcount; k++) {
+                if (ARGV [i] == barray [k])
+                    found = 1;
+            }
+            if (found == 0)
+            {
+                barry [bcount] = ARGV [i];
+                bount++;
+                printf ("%s\\n", ARGV [i]) >fp ;
+            }
+        }
+    }
+
+    #
+    # Add the tail of the hpj file. We have all the information
+    # to do this. Note title must be quoted.
+    #
+
+    printf ("[BITMAPS]\\n") >fp ;
+    printf ("logo.bmp\\n") >fp ;
+    printf ("[WINDOWS]\\n") >fp ;
+    printf ("main = \\"%s\\",,,, (192,192,192 )\\n", title) >fp ;
+    printf ("\\n") >fp ;
+    printf ("[CONFIG]\\n") >fp ;
+    printf ("BrowseButtons()\\n") >fp ;
+
+    #
+    # Exit ok always - we can always generate something it might be
+    # wrong but who cares !
+
+    exit (0);
+}
+.CE 0
+.SH BUGS
+The Windows Help Compiler  operates fairly slowly, when compared with the HTML
+compilation performed by
+.Ht htmlc 1 .
+The compiler does not cause problems  provided that the input  presented to it
+is 100%. The most common problems include:-
+.BS 1 1
+\fBhc31\fR only, reporting an error
+.C "run-time error R6921 \- DOSX16 : no expanded memory under VCPI host"
+requires  that  EMM386 is enabled  and present in the system. Try  re-building
+from a DOS shell in the Windows environment, otherwise install the driver.
+.BU
+\fBhc\fR only reporting  insufficient  memory.  Increase  systems lower memory
+free space, or move to \fBhc31\fR.
+.BU
+\fBhc\fR and \fBhc31\fR terminate with a fatal error such as
+.C "Error 4639: Error in file 'xxxxx.rtf' at byte offset 0x33E06."
+if an  illegal  character  appears  in the RTF file. This is  indicative  of a
+severe error in the source file, or a problem with the  converter.  It is most
+likely to be a source file  problem. To locate the origin of the problem  then
+the RTF file must be inspected to determine  where the error occurred. Using a
+binary editor, or hex/octal  dump of the file, locate the byte offset which is
+causing the error in the RTF file, the offset is  specified  as a  hexadecimal
+offset from the start of the file. When the byte has been  located,  determine
+the source file  causing the error by matching the  generated  text around the
+erroneous byte with the source file. Correct the source and retry. This is can
+be a extremely laborious and long process.
+.BE 0
+.SH "SEE ALSO"
+.na
+.Hr awk 1 ,
+.Ht htmlc 1 ,
+.Ht nr2rtf 1 .
+.ad
+.FH

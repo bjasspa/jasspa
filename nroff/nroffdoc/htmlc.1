@@ -1,0 +1,118 @@
+.Id $Id: htmlc.1,v 1.1 2000-10-21 14:31:32 jon Exp $
+.Im mantools utility
+.TH htmlc 1
+.XI htmlc - "Hyper Text Markup Language (HTML) reference compiler"
+.SH NAME
+htmlc \- Hyper Text Markup Language (HTML) reference compiler.
+.SH SYNOPSIS
+.sp 1
+.na
+\fBhtmlc\fR
+\fC[\fB\-c\fR\ \fI<name>\fC]\fR
+\fC[\fB\-C\fR\ \fI<name>\fC]\fR
+\fC[\fB\-e\fR\ \fI<file>\fC]\fR
+\fC[\fB\-E\fR\ \fI<file>\fC]\fR
+\fC[\fB\-l\fR\ \fI<path>\fC]\fR
+\fC[\fB\-o\fR\ \fI<file>\fC]\fR
+\fC[\fB\-p\fR\ \fI<path>\fC]\fR
+\fC[\fB\-s\fR\ \fI<path>\fC]\fR
+\fC[\fB\-S\fR\ \fI<name>\fC]\fR
+\fC[\fB\-v\fR\ \fI<level>\fC]\fR
+\fIhtp\ files\ ...\fR
+.ad
+.SH DESCRIPTION
+\fBhtmlc\fR is a two pass compilation  utility that takes as input HTML files,
+with
+.Ht htp 4
+syntax extensions. The compiler resolves the linkage references, and generates
+a set of HTML pages (typically concatenated via
+.Ht hts 4 ),
+generating unique automatic names if required.
+.PP
+The use of the
+.Ht htp 4
+syntax  allows  cross  references  to be defined in terms of an ASCII name (or
+label)  rather than a file name,  sources of labels  effectively  export their
+ASCII labels, sinks reference those labels. \fBhtmlc\fR  determines the source
+file where a label was defined and then  replaces  any ASCII label  references
+with the appropriate file name reference.
+.PP
+The compiler reports errors for duplicate and missing hypertext references.
+.PP
+The
+.B htmlc
+compiler has been made somewhat redundant with the advent of the
+.Ht nr2html 1
+single compilation process which generates
+.Ht hts 4
+files in a single pass, although it is still used by the Information  Database
+Compiler
+.Ht idc 1 .
+.PP
+The options to
+.B htmlc
+are defined as follows:-
+.IP "\fB\-c\fR\ \fI<name>\fR"
+Define an alternative replacement name for \fCcontents\fR. Given the
+.Ht htp 4
+reference  tag  \fC<<Rcontents<\fR   then  the  reference   \fIcontents\fR  is
+substituted  for  \fI<name>\fR.  This is typically  used as a reference to the
+contents page, which may not be known when the original page was generated
+.IP "\fB\-C\fR\ \fI<name>\fR"
+See option \fB\-S\fR.
+.\" -e and -E options.
+.so opt_e.tni
+.IP "\fB\-l\fR\ \fI<path>\fR"
+The \fIlink-path\fR option specifies a path to pre-pend for the
+.Ht htp 4
+\fC<<P<\fR  construct. The  \fIlink-path\fR is generally used to take the page
+back to the base directory when constructing sub-directories, the default when
+omitted is "\fC\.\./\fR", which returns the linkage path to the root.
+.IP "\fB\-o\fR\ \fI<file>\fR"
+Specifies the output file name to be \fI<file>\fR,  the output is generated as
+a
+.Ht hts 4
+file, \fI<file>\fR must include the file extension. See also option \fB\-p\fR.
+.IP "\fB\-p\fR\ \fI<path>\fR"
+Specifies the output path name, used in conjunction  with the \fB\-o\fR option
+to generate  the output  into a different  directory.  \fI<path>\fR  may be an
+absolute or relative  path name. Note that this only  directs the  location of
+the output, it does not get used in the hypertext reference links.
+.IP "\fB\-s\fR\ \fI<path>\fR"
+Specifies a sub-directory path name called  \fI<path>\fR, all of the output is
+generated for a sub-directory  called  \fIpath\fR. All references are resolved
+in the context if the \fI<path>\fR.
+.IP "\fB\-S\fR\ \fI<name>\fR"
+A short hand option for the usual mode of operation, this is equivalent to the
+options "\fB\-c\ \fI<name>\fR\ \fB\-s\fR\  \fI<name>\fR". Whereby the contests
+page is defined as a named module, and all subsequent pages of that module are
+placed in the named  sub-directory.  e.g. consider a module called  \fIfoo\fR,
+then \fI./foo.html\fR will be the contents page, all other pages for \fIfoo\fR
+are placed in sub-directory \fIfoo\fR.
+.\" -v verbose
+.IP
+The verbosity is generally set to level 1 for large files so that the user can
+follow the progress of the compilation.
+.so opt_v.tni
+.SH EXAMPLE
+The following example is generally used to process a \fC.htp\fR file
+.CS
+htmlc -v 1 -s buglist -o buglist.hts buglist.htp
+.CE
+This runs the \fBhtmlc\fR compiler, generating a single \fC.hts\fR output file
+with an embedded  sub-directory into which the resultant  \fBhtml\fR files are
+placed.
+.SH NOTES
+The  \fBhtmlc\fR  compiler  accepts  any HTML  format  page,  they need not be
+generated using any of the standard manual tools. Using the syntax  extensions
+defined by
+.Ht htp 4
+then  manually  generated  HTML files may be linked to other  files  using the
+\fBhtp\fR extensions.
+.SH "SEE ALSO"
+.na
+.Ht htp 4 ,
+.Ht hts 4 ,
+.Ht nr2html 1 .
+.ad
+.FH
