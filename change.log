@@ -4,27 +4,79 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <050124.2216>
+>  Last Modified : <050206.1038>
 >
-    
+
+    [050205] Password generation macros added to contrib directory.
+
+    [050205] Added  JavaDoc  highlighting  to Java  template.  Enablement  via
+             buffer-setup. Removed the existing "my" extensions from contrib.
+
+    [050205] Added  Doxygen,  <stdint.h>  and  error   highlighting  to  C/C++
+             templates. Enablement via buffer-setup. Removed the existing "my"
+             extensions from contrib.
+
+    [050204] osd - Fixed problems with the 'cursor shows current item' feature
+             of osd caused by the cursor position going outside of the window.
+
+    [050202] Added an initial item number to the favorite and buffer menus.
+
+    [050203] Standardized  narrow anchor and line flag movement behaviors with
+             respect to deleting and inserting  text. Enforced to  effectively
+             exist at character column -1 and been strict about  maintaining a
+             protected  line. Made undo cope with markup  lines that are lost.
+             These changes may be a little to severe - we'll see.
+
+    [050202] Fixed C-g close osd dialog crash.
+
+    [050202] Directory  listing  - fixed  nasty  bug  cause  by the  directory
+             changing  on disk  before  the hook has  managed  to do  anything
+             leading to a failure - this has been annoying Jon for some time!
+
+    [050127] hkemf.emf - Fixed !until indent rule
+
+    [050127] First revision of "notes".
+
+    [050127] Fixed positional  problems with mouse rectangle regions and added
+             a mouse rectangle yank to user-setup.
+
+    [050127] CVS - Set the initial osd dialog item to be the first item rather
+             than the Okay button (with is still the default button).
+
+    [050127] Fixed *scratch* hook  assignment  issues, initial  startup buffer
+             and only buffer delete problem.
+
+    [050127] Added process tree killing for windows, tested on win98, 2k & XP,
+             would be good to test on win95  (which  should work) and NT which
+             should  not  work but  hopefully  will be no worse  than  current
+             version.
+
+    [050126] Changed  the  location  of the  fhook-default  macro  so its only
+             defined if using buffinit (i.e. if running main me.emf)
+
+    [050126] Fixed osd button repeat issue when current focus is an entry.
+
+    [050126] Changed  "insert-file-name" to insert buffer name if a -ve arg is
+             given, bound to C-x y, this replaces ml-lines esc y feature.
+
     [050123] Fixed a crash  caused by too many  closed  fences, the  recursive
              nature of the  findfence()  function  triggers  a stack  crash at
              around 22000 on windows. Set limit to 256 nested fences.
-    
+
     [050122] Fixed  "dir"  mode loss on a  directory  re-read,  this  caused a
              number of side effects  including loss of  highlighting  and user
              prompt to reload the directory when it had changed.
-        
+
     [050119] Removed the "sub-key"  argument  from all registry  related calls
              ("&reg" and  "set-registry"). The registry calls used to comprise
              two  arguments  "root" and  "sub-key",  the  "sub-key"  is really
              redundant  and the same effect may be achieved by a simple string
-             concatenation of the "sub-key" to the "root". 
+             concatenation of the "sub-key" to the "root".
 
     [050119] Added "my-*hook-always" macro checks in the buffer hook switching
              to permit  global  file hooks to be defined,  this  allows a file
              hook to operate on all  buffers.  "my-*hook-always"  is  executed
-             after the language file hooks of "*hook-XXX" and "my-*hook-XXX". 
+             after the language file hooks of "*hook-XXX" and "my-*hook-XXX".
 
     [050116] Added "TODO" highlighting rule for Makefile comments.
 
