@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac064.3,v 1.11 2005-01-23 11:20:44 jon Exp $
+.Id $Id: m3mac064.3,v 1.12 2005-01-23 15:28:55 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH buffer-init 3
@@ -75,7 +75,7 @@ define-macro fhook-XXX
 
 ; buffer-init variables
 set-variable .fhook-XXX.name "XXX Macro"
-set-variable .fhook-XXX.setup &reg "/history" "fhook/XXX" "bdfghnopx"
+set-variable .fhook-XXX.setup &reg "/history/fhook/XXX" "bdfghnopx"
 set-variable .fhook-XXX.setup-mask "abdefghikmnoptux"
 ; Commenting configuration -- omit if not defined.
 set-variable .fhook-XXX.comment "|#||#|# | #||"
@@ -200,7 +200,7 @@ Buffer   initialization  is  controlled  by  the  settings  of  the  variables
 \fB.fhook-XXX.setup\fR and \fBfhook-XXX.setup-mask\fR:-
 .Me $emf-scheme
 .CS
-set-variable .fhook-XXX.setup &reg "/history" "fhook/XXX" "bdfghnopx"
+set-variable .fhook-XXX.setup &reg "/history/fhook/XXX" "bdfghnopx"
 set-variable .fhook-XXX.setup-mask "abdefghikmnoptux"
 .CE
 .Me $ehf-scheme
@@ -362,7 +362,7 @@ operates   with   the   values   defined   by    \fB.fhook-XXX.setup\fR    and
 performed using the registry as follows:-
 .Me $emf-scheme
 .CS
-set-variable .fhook-XXX.setup &reg "/history" "fhook/XXX" "bdfghnopx"
+set-variable .fhook-XXX.setup &reg "/history/fhook/XXX" "bdfghnopx"
 .CE
 .Me $ehf-scheme
 This allows the user to configure over-ridding modes  via

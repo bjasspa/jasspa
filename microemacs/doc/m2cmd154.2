@@ -1,12 +1,12 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jul 16 23:13:14 1998
 .\"
-.Id $Id: m2cmd154.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd154.2,v 2.6 2005-01-23 15:28:55 jon Exp $
 .Im MicroEmacs command|registry
 .so me.tni
 .TH mark-registry 2
@@ -35,8 +35,8 @@ variable
 .Ht $result 5 .
 This does not alter the registry.
 .IP "\fB!\fR \- Hide Value"
-Hides  the  value of the  given  registry  node,  i.e. its  value  will not be
-displayed in the output of
+Hides  the  value  of the  given  registry  node,  i.e. the node is  displayed
+but its  value  will not be displayed in the output of
 .Ht list-registry 2 .
 Once set, this mode cannot be removed.
 .IP "\fBa\fR \- Autosave"
@@ -60,16 +60,32 @@ Returns  the list of modes  currently  set on the given  registry  node in the
 variable
 .Ht $result 5 .
 This does not alter the registry.
-.IP "\fBh\fR \- Hidden"
+.IP "\fBh\fR \- Hierarchy Hidden"
 The registry  node is marked as  \fIHidden\fR,  i.e. its children  will not be
 shown in
 .Ht list-registry 2
+output. A node is marked has hidden when it is folded up.
+.IP "\fBi\fR \- Invisible"
+The registry node is not displayed in the 
+.Ht list-registry 2 
 output.
+.IP "\fBm\fR \- Merge"
+Marks the  registry  to enable  merging, see
+.Ht read-registry 2 .
+.IP "\fBr\fR \- Reload"
+Marks the registry to enable reload, see
+.Ht read-registry 2 . 
 .IP "\fBu\fR \- Updated"
 Marks the registry as modified.  The modified bit is removed when the registry
 file is saved. If the  modified  bit is  applied  to a registry  node the user
 will be  prompted  to save  the  registry  when it is  deleted  (or it will be
 automatically saved when the \fIAutosave\fR mode is used).
+.IP "\fBy\fR \- Encryption"
+Marks the  registry  node for  encryption.  The value of the registry  node is
+encrypted using the internal  encryption  algorithm. The value will not appear
+in plain text when using
+.Ht save-registry 2 .
+This is typically used for password information etc.
 .PP
 Multiple modes may be applied.
 .SH EXAMPLE
@@ -92,10 +108,14 @@ At exit only registry nodes attached to the root are saved.
 fails if \fIroot\fR does not exist.
 .SH "SEE ALSO"
 .na
-.Ht get-registry 2 ,
+.Ht copy-registry 3 ,
+.Ht delete-registry 2 ,
+.Ht find-registry 2 ,
 .Ht list-registry 2 ,
 .Ht read-registry 2 ,
+.Ht save-registry 2 ,
 .Ht set-registry 2 ,
+.Ht &reg 4 ,
 .Ht erf 8 .
 .ad
 .FH

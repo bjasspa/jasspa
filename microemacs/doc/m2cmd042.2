@@ -6,18 +6,17 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jul 16 23:13:14 1998
 .\"
-.Id $Id: m2cmd042.2,v 2.7 2005-01-15 13:35:45 jon Exp $
+.Id $Id: m2cmd042.2,v 2.8 2005-01-23 15:28:55 jon Exp $
 .Im MicroEmacs command|registry
 .so me.tni
-.TH get-registry 2
-.XI get-registry - "Retrieve a node value from the registry"
+.TH set-registry 2
 .XI set-registry - "Modify a node value in the registry"
 .SH NAME
 set-registry \- Modify a node value in the registry.
 .Me $a
 .SH SYNOPSIS
 .na
-\fBset-registry\fR "\fIroot\fR" \fI"subkey\fR" \fI"value\fR"
+\fBset-registry\fR "\fIroot\fR" \fI"value\fR"
 .br
 \fI2\fR \fBset-registry\fR "\fIroot\fR" \fI"new-name\fR"
 .ad
@@ -29,21 +28,26 @@ information between sessions.
 .SH DESCRIPTION
 .B set-registry
 adds a new value or modifies an existing value in the registry.  \fIroot\fR is
-the  root  of  the  new  entry  and  \s-1MUST\s0  exist  or  the  call  fails.
-\fIsubkey\fR  is the node name (or `\fC/\fR'  separated  path) if the nodes in
-the path do not  exist  then  they are  created.  \fIvalue\fR  is the value to
-assign to the node.
+an  absolute  path  node  name to the new  entry.  The  first  path  component
+\s-1MUST\s0  exist or the call fails,  subsequent path components (a `\fC/\fR'
+separated  path) are created if they do not already exist.  \fIvalue\fR is the
+value to assign to the node.
 .PP
 If  a  numeric  argument  of 2 is  specified  the  \fIroot\fR  is  renamed  to
 \fInew-name\fR,   the  \fIroot\fR  must  exist  or  the  call  fails.  If  the
 \fInew-name\fR contains a path (i.e.  "\fCnew/path/name\fR") the registry node
 is moved to the new path  which must be an  existing  absolute  path, i.e. not
 relative to its current location.
+.PP
+The value assigned to a node with
+.B set-registry
+may be retrieved using
+.Ht &reg 4 .
 .SH EXAMPLE
-The following call
+The following call (where the registry node \fC/history\fR already exists):
 .Me $emf-scheme
 .CS
-set-registry "/history" "foo/win32/printer" "foo-bar"
+set-registry "/history/foo/win32/printer" "foo-bar"
 .CE
 .Me $ehf-scheme
 constructs a registry hierarchy of the form:-
@@ -59,19 +63,23 @@ constructs a registry hierarchy of the form:-
 The value of the registry node may be retrieved using:-
 .Me $emf-scheme
 .CS
-&reg "/history" "foo/win32/printer"
+&reg "/history/foo/win32/printer"
 .CE
 .Me $ehf-scheme
 which would return the value "\fCfoo-bar\fR".
-.SH NOTES
-The  \fBget-registry\fR  command  was  removed in January  2005 in  preference
-to the  
+.SH HISTORY
+The
+.Hr get-registry 2
+command was removed in January 2005 in  preference to the
 .Ht &reg 4
 function, the existing get command was never used.
 .SH "SEE ALSO"
 .na
+.Ht copy-registry 3 ,
+.Ht delete-registry 2 ,
 .Ht find-registry 2 ,
 .Ht list-registry 2 ,
+.Ht mark-registry 2 ,
 .Ht read-registry 2 ,
 .Ht &reg 4 ,
 .Ht erf 8 .

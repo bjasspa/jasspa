@@ -1,12 +1,12 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jul 30 21:34:44 1998
 .\"
-.Id $Id: m4fil028.4,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m4fil028.4,v 2.6 2005-01-23 15:28:54 jon Exp $
 .Im MicroEmacs macro;function;misc|registry
 .so me.tni
 .TH &reg 4
@@ -17,16 +17,12 @@
 .na
 .B &reg
 .I root
-.I subkey
 .I default
 .ad
 .SH DESCRIPTION
 .B &reg
-retrieves  the value of a node  defined  by  \fIroot\fR/\fIsubkey\fR  from the
-registry. The  node  name  is  specified  in two  components,  typically  required  when
-iterating  over a registry tree, where the \fIroot\fR  component is static and
-the \fIsubkey\fR is dynamic,  \fIsubkey\fR may be specified as the null string
-(\fC""\fR) if an absolute registry path is specified.
+retrieves the value of a node defined by \fIroot\fR from the registry, this is
+an absolute path.
 .PP
 The  \fIdefault\fR  value is the  value of the node to return if the  registry
 node does not exist.
@@ -36,16 +32,22 @@ retrieve some of the default configuration files:
 .Me $emf-scheme
 .CS
 ; Load in the color setup
-!force execute-file &reg "/history" &cat $platform "/color" "color"
+!force execute-file &reg &spr "/history/%s/color" $platform "color"
 ; execute company setup
-!if &not &seq &set #l0 &reg "/history" "company" "" ""
+!if &not &seq &set #l0 &reg "/history/company" ""
     !force execute-file #l0
 !endif
 .CE 0
 .Me $ehf-scheme
 .SH "SEE ALSO"
 .na
-.Ht get-registry 2 ,
+.Ht copy-registry 3 ,
+.Ht delete-registry 2 ,
+.Ht find-registry 2 ,
+.Ht list-registry 2 ,
+.Ht mark-registry 2 ,
+.Ht read-registry 2 ,
 .Ht set-registry 2 .
+.Ht erf 8 .
 .ad
 .FH

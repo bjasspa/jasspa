@@ -1,12 +1,12 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jul 16 23:13:14 1998
 .\"
-.Id $Id: m2cmd025.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd025.2,v 2.6 2005-01-23 15:28:55 jon Exp $
 .Im MicroEmacs command|registry
 .so me.tni
 .TH list-registry 2
@@ -16,17 +16,48 @@ list-registry \- Display the registry in a buffer
 .Me $a
 .SH SYNOPSIS
 .na
+.I n
 .B list-registry
+["\|\fIpath\fR\|"] 
+["\|\fIbuffer\fR\|"] 
 .ad
 .SH DESCRIPTION
 .B list-registry
 lists the contents of the registry in the a buffer in a hierarchical format.
-The key name and any associated string is shown as a hierarchical tree.
+The key name and any associated  string is optionally  shown as a hierarchical
+tree, the resultant information that is displayed is controlled by the numeric
+argument \fIn\fR and mode of the registry node. 
 .PP
-The registry listing is generated in the buffer "\fC*registry*\fR".
+The registry listing is generated in the buffer "\fC*registry*\fR" by default,
+the buffer may be modified with the \fIbuffer\fR argument.
+.PP
+The numerical argument \fIn\fR is interpreted as a bit-mask as follows:-
+.IP \fI1\fR
+If bit  \fC0x1\fR  is clear  then the  listing  buffer  is  specified  by the
+argument \fIbuffer\fR. The default (when set) used buffer \fC*registry*\fR.
+.IP \fI2\fR
+If bit  \fC0x2\fR  is set the path of the root of the  registry  is defined by
+argument \fIpath\fR. The default when clear is to list the whole registry.
+.PP
+The visibility of the node is controlled by the attributes assigned by
+.Ht  mark-registry  2 .
+The node value may be hidden (modes \fC!\fR,  \fCi\fR and \fCh\fR) and are not
+displayed in the resultant listing.
+.SH HISTORY
+The numeric argument to 
+.B list-registry 
+with  associated  parameters  and extended  hidden modes were added in January
+2005.
 .SH "SEE ALSO"
 .na
+.Ht copy-registry 3 ,
+.Ht delete-registry 2 ,
+.Ht mark-registry 2 ,
 .Ht read-registry 2 ,
+.Ht save-history 2 ,
+.Ht save-registry 2 ,
+.Ht set-registry 2 ,
+.Ht &reg 4 ,
 .Ht erf 8 .
 .ad
 .FH
