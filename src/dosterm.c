@@ -130,15 +130,7 @@ meSetupPathsAndUser(char *progname)
     /* get the users home directory, user path and search path */
     if(((ss = meGetenv("HOME")) == NULL) || (ss[0] == '\0'))
         ss = "c:/" ;
-    ll = meStrlen(ss) ;
-    homedir = meMalloc(ll+2) ;
-    meStrcpy(homedir,ss) ;
-    fileNameConvertDirChar(homedir) ;
-    if(homedir[ll-1] != DIR_CHAR)
-    {
-        homedir[ll++] = DIR_CHAR ;
-        homedir[ll] = '\0' ;
-    }
+    meHomedirSet(ss) ;
 
     if(((ss = meGetenv ("MEUSERPATH")) != NULL) && (ss[0] != '\0'))
         meUserPath = meStrdup(ss) ;

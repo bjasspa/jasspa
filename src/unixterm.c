@@ -478,7 +478,7 @@ meSetupPathsAndUser(char *progname)
         /* Copy out the string information we need and initialise the
          * string variables. */
         if(pwdp->pw_dir != NULL)
-            homedir = meStrdup((meUByte *) pwdp->pw_dir) ;
+            fileNameSetHome((meUByte *) pwdp->pw_dir) ;
         if((pwdp->pw_name != NULL) && (meUserName == NULL))
             meUserName = meStrdup((meUByte *) pwdp->pw_name) ;
         /* Shut down the password retrieval and allow system to relinquish
@@ -493,18 +493,7 @@ meSetupPathsAndUser(char *progname)
     /* get the users home directory, user path and search path */
     if((homedir == NULL) &&
        (((ss = meGetenv("HOME")) != NULL) && (ss[0] != '\0')))
-        homedir = meStrdup(ss) ;
-    if(homedir != NULL)
-    {
-        fileNameConvertDirChar(meUserPath) ;
-        ll = meStrlen(homedir) ;
-        if(homedir[ll-1] != DIR_CHAR)
-        {
-            homedir = meRealloc(homedir,ll+2) ;
-            homedir[ll++] = DIR_CHAR ;
-            homedir[ll] = '\0' ;
-        }
-    }
+        fileNameSetHome(ss) ;
 
     if(((ss = meGetenv ("MEUSERPATH")) != NULL) && (ss[0] != '\0'))
         meUserPath = meStrdup(ss) ;

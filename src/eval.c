@@ -700,8 +700,13 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             meStrrep(&searchPath,vvalue) ;
             break;
         case EVHOMEDIR:
-            meStrrep(&homedir,vvalue) ;
+            fileNameSetHome(vvalue) ;
             break;
+#if MEOPT_CFENCE
+        case EVMATCHLEN:
+            matchlen = (meShort) meAtoi (vvalue);
+            break;
+#endif
 #if MEOPT_EXTENDED
         case EVSHWMDS:
             {
@@ -1203,6 +1208,9 @@ handle_namesvar:
     case EVBUFTABWIDTH: return meItoa(frameCur->bufferCur->tabWidth);
     case EVSRCHPATH:    return mePtos(searchPath) ;
     case EVHOMEDIR:     return mePtos(homedir) ;
+#if MEOPT_CFENCE
+    case EVMATCHLEN:    return meItoa(matchlen);
+#endif
 #if MEOPT_EXTENDED
     case EVSHWMDS:
         {

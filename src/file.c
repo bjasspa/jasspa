@@ -2442,6 +2442,21 @@ fileNameConvertDirChar(meUByte *fname)
 #endif
 
 void
+fileNameSetHome(meUByte *ss)
+{
+    int ll = meStrlen(ss) ;
+    meNullFree(homedir) ;
+    homedir = meMalloc(ll+2) ;
+    meStrcpy(homedir,ss) ;
+    fileNameConvertDirChar(homedir) ;
+    if(homedir[ll-1] != DIR_CHAR)
+    {
+        homedir[ll++] = DIR_CHAR ;
+        homedir[ll] = '\0' ;
+    }
+}
+
+void
 pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **baseName)
 {
     register meUByte *p, *p1 ;

@@ -345,6 +345,7 @@ extern  void    fileNameConvertDirChar(meUByte *fname) ;
 #else
 #define fileNameConvertDirChar(ff)
 #endif
+extern  void    fileNameSetHome(meUByte *ss) ;
 #define PATHNAME_COMPLETE 0
 #define PATHNAME_PARTIAL  1
 extern  void    pathNameCorrect(meUByte *oldName, int nameType, 
