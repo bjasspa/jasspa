@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Apr 25 18:12:30 1998
-;  Last Modified : <000719.1218>
+;  Last Modified : <010307.1136>
 ;
 ;  Description   : spell-buffer, spell-word, spell-edit-word and find-word
 ;                  osd based interface to spell and $find-words.
@@ -201,15 +201,15 @@ define-macro spell-edit-word
     .osd.spell-edit osd
 !emacro
 
-set-variable %find-word-width 20
-set-variable %find-word-depth 10
+set-variable .find-word.width 20
+set-variable .find-word.depth 10
 
 0 define-macro find-word-set-list
     osd .osd.spell-fndl 40  ""  " Searching..."
     screen-update
     -1 osd .osd.spell-fndc
     set-variable #l0 0
-    osd .osd.spell-fndc 0 "AsS" .scheme.osd-child %find-word-width %find-word-depth -1 -1
+    osd .osd.spell-fndc 0 "AsS" .scheme.osd-child .find-word.width .find-word.depth -1 -1
     !if &not &seq .spell.find-last ""
         osd .osd.spell-fndc 1 "" .spell.find-last
         set-variable #l0 &add #l0 1
@@ -283,31 +283,12 @@ set-variable %find-word-depth 10
     !if &band $scroll-bar 0x40
         set-variable #l1 &sub #l1 1
     !endif
-    set-variable %find-word-width #l0
-    set-variable %find-word-depth #l1
+    set-variable .find-word.width #l0
+    set-variable .find-word.depth #l1
     osd .osd.spell-fndc 0 "sS" .scheme.osd-child #l0 #l1 -1 -1
-    osd .osd.spell-fndl 30 "ExHfc" .scheme.osd-entry &spr "%n" %find-word-width "#" f find-word-set
+    osd .osd.spell-fndl 30 "ExHfc" .scheme.osd-entry &spr "%n" .find-word.width "#" f find-word-set
     osd .osd.spell-fndl 50 "IbH" .scheme.osd-sbar #l0 #l1 .osd.spell-fndc
 !emacro
-
-osd .osd.spell-find 0  "batcHR" 9 3 .scheme.osd-title "Find Word" find-word-resize
-osd .osd.spell-find 10 "Ih" .osd.spell-fndl
-osd .osd.spell-find 15 "h"  "  "
-osd .osd.spell-find 20 "I"  .osd.spell-fndr
-
-osd .osd.spell-fndl 0   ""
-osd .osd.spell-fndl 5   ""
-osd .osd.spell-fndl 10  "S"  " &Word Mask :" 30
-osd .osd.spell-fndl 30 "ExHfc" .scheme.osd-entry &spr "%n" %find-word-width "#" f find-word-set
-osd .osd.spell-fndl 50  "IbH" .scheme.osd-sbar %find-word-width %find-word-depth .osd.spell-fndc
-
-osd .osd.spell-fndr 0  ""
-osd .osd.spell-fndr 5  ""
-osd .osd.spell-fndr 10 "BHcf" .scheme.osd-dbtt " &Insert " f void
-osd .osd.spell-fndr 15 ""
-osd .osd.spell-fndr 20 "BHSc" .scheme.osd-dbtt " Next   "
-osd .osd.spell-fndr 25 ""
-osd .osd.spell-fndr 30 "BHcf" .scheme.osd-ebtt " E&xit   " 0 abort-command
 
 define-macro find-word
     spell-rules-init
@@ -322,7 +303,7 @@ define-macro find-word
     !endif
     set-variable #l3 0
     -1 osd .osd.spell-fndc
-    osd .osd.spell-fndc 0 "sS" .scheme.osd-child %find-word-width %find-word-depth -1 -1
+    osd .osd.spell-fndc 0 "sS" .scheme.osd-child .find-word.width .find-word.depth -1 -1
     osd .osd.spell-fndc 1 ""
     osd .osd.spell-fndr 10 "BHcf" .scheme.osd-dbtt " &Insert " f void
     osd .osd.spell-fndr 20 "BHSc" .scheme.osd-dbtt " Next   "
@@ -334,6 +315,25 @@ define-macro find-word
         insert-string .spell.find-mask
     !endif
 !emacro
+
+osd .osd.spell-find 0  "batcHR" 9 3 .scheme.osd-title "Find Word" find-word-resize
+osd .osd.spell-find 10 "Ih" .osd.spell-fndl
+osd .osd.spell-find 15 "h"  "  "
+osd .osd.spell-find 20 "I"  .osd.spell-fndr
+
+osd .osd.spell-fndl 0   ""
+osd .osd.spell-fndl 5   ""
+osd .osd.spell-fndl 10  "S"  " &Word Mask :" 30
+osd .osd.spell-fndl 30 "ExHfc" .scheme.osd-entry &spr "%n" .find-word.width "#" f find-word-set
+osd .osd.spell-fndl 50  "IbH" .scheme.osd-sbar .find-word.width .find-word.depth .osd.spell-fndc
+
+osd .osd.spell-fndr 0  ""
+osd .osd.spell-fndr 5  ""
+osd .osd.spell-fndr 10 "BHcf" .scheme.osd-dbtt " &Insert " f void
+osd .osd.spell-fndr 15 ""
+osd .osd.spell-fndr 20 "BHSc" .scheme.osd-dbtt " Next   "
+osd .osd.spell-fndr 25 ""
+osd .osd.spell-fndr 30 "BHcf" .scheme.osd-ebtt " E&xit   " 0 abort-command
 
 set-variable .spell.check-wordo ""
 

@@ -7,7 +7,9 @@
 ;  Copyright (c) 2000-2001 JASSPA
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-0 exec-file "hkdirlst"
+!if &not &exi dirlst-sort-list
+    0 exec-file "hkdirlst"
+!endif
 
 define-macro ftp
     set-variable .fhook-dirlst.file-process ""

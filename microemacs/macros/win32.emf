@@ -1,7 +1,7 @@
 ;       Setup file for Microsoft Windows.
 ;
 ;       Author:         Jon Green
-;   Last Modified : <010124.1636>
+;   Last Modified : <010307.1601>
 ;
 ; Notes on the standard configuration
 ; ===================================
@@ -59,6 +59,12 @@ add-next-line "*compile*" "%f(%l) : warning"
 add-next-line "*compile*" "%f:%l:"
 ; Load additional hooks required for win32.
 define-macro-file hkipipe ishell perldb
+; As command.com's prompt echoing is broken ishell is useless without
+; the following 2 variables which enable ME's command-line support
+; NOTE - if you use a different prompt (i.e. not "PATH>") then you
+; must configure .ishell.prompt appropriately 
+set-variable .ishell.prompt "^[^>\n]*>"
+set-variable .ishell.noecho "1"
 ; Define the cygwin dummy macro. This reports an error if the cygwin environment
 ; has not been defined in the user start-up file.
 define-macro cygnus

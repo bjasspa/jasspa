@@ -6,10 +6,10 @@
 #
 #  System        : 
 #  Module        : 
-#  Object Name   : $RCSfile$
-#  Revision      : $Revision$
-#  Date          : $Date$
-#  Author        : $Author$
+#  Object Name   : $RCSfile: perl.etf,v $
+#  Revision      : $Revision: 1.1 $
+#  Date          : $Date: 2000/10/09 19:35:50 $
+#  Author        : $Author: jon $
 #  Created By    : $USER_NAME$
 #  Created       : $ASCII_TIME$
 #  Last Modified : <160495.1521>
@@ -20,7 +20,10 @@
 #
 #  History
 #	
-#  $Log$
+#  $Log: perl.etf,v $
+#  Revision 1.1  2000/10/09 19:35:50  jon
+#  Updated perl with standard tools
+#
 #
 ##############################################################################
 #

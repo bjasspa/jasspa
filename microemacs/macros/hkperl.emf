@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Perl hook - This file is invoked when a Perl script file is loaded.
 ;
-; Last Modified : <010302.0808>
+; Last Modified : <010308.0944>
 ; Copyright (c) 1999-2000 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -24,6 +24,13 @@ set-variable .fhook-perl.setup-mask "abdefhikmnoptux"
 set-variable .fhook-perl.tags "perltags"
 set-variable .fhook-perl.comment "|#||#|"
 
+!if &exist perldb
+    set-variable .fhook-perl.command-flag  "|t|h|"
+    set-variable .fhook-perl.command-name  "|perldb|"
+    set-variable .fhook-perl.command-nbind "|2|"
+    set-variable .fhook-perl.command-kbind "||"
+    set-variable .fhook-perl.command-desc  "|&Debug Current Script|See tool menu to debug current script|"
+!endif
 ; Folding variables
 set-variable .fhook-perl.fold-open  "^sub"
 set-variable .fhook-perl.fold-close "^}"

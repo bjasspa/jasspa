@@ -706,8 +706,15 @@ define-macro perldb
         !endif
         screen-update
     !endif
-    set-variable #l0 @ml01 "perldb: script file"
-    set-variable #l1 @ml "perldb: script args"
+    !if &not &band @# 2
+        set-variable #l0 @ml01 "perldb - script file"
+    !elif &seq $buffer-fname ""
+        ml-write "[Current buffer has no file name]"
+        !abort
+    !else
+        set-variable #l0 $buffer-fname
+    !endif
+    set-variable #l1 @ml "perldb - script args"
     !if &band $system 0x100
         12 ipipe-shell-command &spr "perl -d %s %s" #l0 #l1 "*perldb*"
     !else
