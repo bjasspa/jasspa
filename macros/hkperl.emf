@@ -300,6 +300,16 @@ set-variable .fhook-perl.item-list-r1 "Sub  \ecB\\1\ecA"
     indent .hilight.perl e "\\w'" "\\w" ""
     indent .hilight.perl e "'" "'" "\\"
     indent .hilight.perl e "`" "`" "\\"
+    indent .hilight.perl e "=~\\s*/" "/" "\\"
+    indent .hilight.perl e "=~\\s*m/" "/" "\\"
+    indent .hilight.perl e "=~\\s*s/" "/" "\\"
+    indent .hilight.perl e "=~\\s*tr/" "/" "\\"
+    indent .hilight.perl e "=~\\s*y/" "/" "\\"
+    indent .hilight.perl e "!~\\s*/" "/" "\\"
+    indent .hilight.perl e "!~\\s*m/" "/" "\\"
+    indent .hilight.perl e "!~\\s*s/" "/" "\\"
+    indent .hilight.perl e "!~\\s*tr/" "/" "\\"
+    indent .hilight.perl e "!~\\s*y/" "/" "\\"
     ; The following causes problems for the search /'s
     ; printf LOGFILE "Average = %f\n", ($Total / $Count); 
     ; return;   # This line formats wrongly!
