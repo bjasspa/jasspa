@@ -79,7 +79,7 @@ set-variable .fhook-emf.fold-mopen "1"
     indent .hilight.emf f "*" 0
 !endif
 
-define-macro emf-expand-abbrev
+0 define-macro emf-expand-abbrev
     set-variable #l0 $window-col
     backward-char
     !if &inw @wc
