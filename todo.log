@@ -4,7 +4,7 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <041029.2250>
+>  Last Modified : <041029.2329>
 >
 
     [040210] BS/0401-4 - Minor - TBD
@@ -24,10 +24,6 @@
         JG  suggest  that this  ought to be bound  like this as default as the
         key binding is not used. 
 
-    [041029] Klaus Kusche
-    
-        Fix kill-paragraph -ve docs.
-        
     [040805] Pierre Gaston
     
         Change SHGetSpecialFolderPath function call.
@@ -42,6 +38,12 @@ ___________________________________________________________________________
         Doc changes to set-cursor-to-mouse command.
 
 > FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED 
+
+    [041029] Klaus Kusche
+    
+        Fix kill-paragraph -ve docs.
+
+        Fixed JG/041029: Document update.
 
      [040303] SP/0401-4 - Major - Target 0401-5
      
