@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20040205.2239>
+# Last Modified: <20040206.1058>
 #
 ##############################################################################
 
@@ -28,7 +28,7 @@ release: $(RELTXTS)
 $(JASCOMDIR):
 	$(MKDIR) $@
 $(RELTXTS): $(TXTOBJS) $(JASCOMDIR)
-	$(INSTALL) $(@F) $(@D)
+	$(INSTALL_FIL) $(@F) $(@D)
 #
 # Clean area.
 #

@@ -1,0 +1,1465 @@
+> -!- document; fill-mode:both; fill-column:78 -!-
+>
+>  Copyright 1998-2004 JASSPA (www.jasspa.com).
+>
+>  Created By    : Jon Green
+>  Created       : Fri Feb 6 11:13:34 2004
+>  Last Modified : <040206.1246>
+>
+
+7th Release - February 2004
+
+    [040206] RC4 - Release Candidate 4 - MicroEmacs '04
+
+    [040204] Re-worked Microsoft Windows "me32.ini" file specification.  Order
+             revised and lookup simplified.
+
+    [040203] "user-setup"  changed name to "Rebind Home Keys" for rebinding of
+             home and end keys to  start/end  of line.  Removed  "C-v" binding
+             that existed with old "MS keys" label.
+
+    [040203] Reworked all user defined defined  directory save locations, ftp,
+             spell, etc..
+
+    [040203] Corrected osf1, openBSD and zaraus emf files.
+
+    [040203] Added "%cvs-com" variable to define the CVS command.
+
+    [040203] XML template extended to include javascript.
+
+    [040130] 2nd  iteration of prototype  and near final  revision of new user
+             setup.
+
+             Following  an internal  review of RC3 then it has been decided to
+             address the issues of user configuration prior to a full release.
+             This  specifically  addresses  the  location  of user  MicroEmacs
+             configuration  directories  and search paths. User  configuration
+             has  traditionally  required the setting of external  environment
+             variables  such as "$MEPATH" and for the user to create a private
+             directory to store user  settings. This is proving  difficult for
+             new  users who just want to run the  editor.  RC4 and  subsequent
+             releases will address these  problems by determining  the correct
+             location for configuration files and create the appropriate files
+             and directories under user control.
+
+             The net result of these  changes  should  significantly  simplify
+             installation and setup as follows:
+
+             * All platforms will be able to run without any manual user setup
+               or  the   requirement  for  specific   MicroEmacs   environment
+               variables.
+
+             * User  defined  directories  and  configuration  files  will  be
+               created under editor control on detecting a new user.
+
+             * Existing   installations   using   $MEPATH  will  be  backwards
+               compatible with the new build.
+
+             * All  platforms  now  support a searching  jasspa  sub-directory
+               structure   of   company  /   spelling   /  macros.   This  was
+               traditionally   limited   to   the   Windows   Install   Shield
+               installation but has been extended across all platforms.
+
+             * Two new  environment  variables are provided for user or system
+               administrator use. "$MEINSTALLPATH" defines the location of the
+               MicroEmacs  standard macros and allows the built in search path
+               to be  overridden.  "$MEUSERPATH"  defines the  location of the
+               user  private  configuration  directory  and allows the user to
+               locate  their  private  directory  in different  location. In a
+               standard install neither of these variables will be required.
+
+             * The Microsoft  Windows system defined  application path will be
+               used  for user  configuration  files.  This is  applicable  for
+               roaming  users where the  application  directory is stored on a
+               server.
+
+             * The use of the me32.ini file on MicroSoft Windows  environments
+               is not required, but is still supported.
+
+             * The UNIX path searching is improved. /usr/local/microemacs will
+               be depreciated and replaced with  /usr/local/jasspa in addition
+               other  standard path  locations are supported on a per-platform
+               basis.
+
+             * On UNIX then the directory  "~/.jasspa"  shall contain the user
+               configuration  files.  Optionally  the "company" / "spelling" /
+               "macros"  sub-directories  may be  included  in this  directory
+               where access to the system  directory  locations by the user is
+               not permitted.
+
+             * Concept of guest has been removed.  "guest.emf" and "guest.erf"
+               removed   replaced  with  "newuser".   "user-setup"  no  longer
+               supports setting of name.
+
+             * Internal variables "$user-name" and "$user-path" are defined.
+
+    [040128] Fixed re-style for C/C++ comments in vertical alignment.
+
+    [040123] "user-setup"mouse button selection fixed.
+
+    [040123] "C-x 3" mapped to "split-window-horizontally" , "C-x 5" mapped to
+             "create-frame".
+
+    [040122] Added support for Zaurus, thanks to Pierre Gaston
+
+    [040122] Fixes for  non-US  keyboards  under  X-Windows,  thanks to Pierre
+             Gaston and Dr. Detlef Groth
+
+    [040122] Added support for OSF1, thanks to Dr. Detlef Groth
+
+    [040122] Added support for OpenBSD
+
+    [040122] ml-bind-key  supports new binding for next/previous file, history
+             search uses "up"/"down" "C-p"/"C-n", prompted by Gabriel.
+
+    [040122] New key bindings for create-frame.
+
+    [040119] RC3 - Release Candidate 3 - MicroEmacs '04
+
+    [040119] Fast exit out of fold fixed.
+
+    [040119] Added "copy-rectangle" and "yank-rectangle-overwrite" commands.
+
+    [040119] Collapse  line format now  includes  the end token so that indent
+             operates correctly following a fold.
+
+    [040119] "narrow-buffer"   numeric   argument  and  command  line  options
+             extended for mark-up lines.
+
+    [040119] spawn.c compilation warnings removed.
+
+    [040119] Updated templates for Python and AsmX86 - thanks to Pedro Gomes.
+
+    [040119] Added  "*compile*"  hilighting  and ENTER  selects error file and
+             line - prompted by Salman Khilji.
+
+    [040119] Fixed the "c-eval-defines" region hilighting problem.
+
+    [040119] Updated the Lau HTML processing tags - thanks to Jeremy Cowgar.
+
+    [040116] Latex  "item-list" and "template"  updated - thanks to Dr. Detlef
+             Groth for diagnosing problems
+
+    [040116] Perl and TCL abbreviation files - thanks to Dr. Detlef Groth
+
+    [040115] "open-line" added for correct binding of "C-o".
+
+    [040113] "restyle-buffer" fix when mode defined - thanks to Pedro Gomes.
+
+    [040113] "create-frame" canvas size fix on creating internal frame
+
+    [040112] Hilighting fix for toolbar Dir Files list with symbolic links
+
+    [040109] RC2 - Release Candidate 2 - MicroEmacs '04
+
+    [040109] PHP template added.
+
+    [040108] RC1 - Release candidate 1 - MicroEmacs '04
+
+    [040108] Shrink line crash on SunOS and IRIX fixed
+
+    [040108] Fixed  rendering  anomalies  of menus and  pop-ups  on Windows XP
+             ClearType when anti-aliasing is enabled.
+
+    [040106] Fixed comment  re-styling  for single start of line comments (REM
+             in MS-DOS)
+
+    [040104] Macro execution speed-ups - Thanks Hops for analysis.
+
+    [040104] Code optimizations and extensions - Thanks Peter Smith.
+
+    [040104] Lua language template - Thanks Jeremy Cowgar.
+
+    [040104] SGML language template.
+
+    [040104] string-rectangle command added - Suggested by Salman.
+
+    [040104] C++ re-style fixes - Problems reported by Salman.
+
+    [031221] X-Window fixes - Thanks Jeremy Cowgar.
+
+    [031120] Added new highlight schemes "Lemon Jelly" and "Brownie".
+
+    [031120] CVS. Fixed several issues with the why the cvs dir list processed
+             the missing and added files.
+
+    [031120] HTML Template. Improved indentation.
+
+    [031120] Toolbar. Added "trunc-sheme" reset to force a redraw if required.
+
+    [031120] Fixed the games to cope with the toolbar by closing it.
+
+    [031120] buffer.c.  Changed  the 'n' arg to list buffer so user can select
+             hidden or verbose etc. Added check after exec of "ehook" to catch
+             nasties,  not full proof but  catches  attempts to close tool bar
+             etc.
+
+    [031120] Fixed a  "goto-line"  bug shown when using grep on a single lined
+             file (like CVS/Root).
+
+    [031120] hilight.c.  Changed  indent line count to use the close so values
+             of greater that 256 can be used.
+
+    [031120] input.c  Added  support for EOB & BOB keys & fixed  fwd/bck  word
+             movement across lines.
+
+    [031026] Fixed -ve re-center bug found by Alexander Doktorovich.
+
+    [031026] Last commit to search fixed a "&xse" failure on start-up, was not
+             setting the internal flags correctly. Fix go a little messy as it
+             should not affect the hunt commands.
+
+    [031026] Minor restyle.
+
+    [031026] Fixed a nasty buffer reload bug.
+
+    [031026] Fixed lookback highlight bug.
+
+    [031026] Fix for Sunos Xterm function keys.
+
+    [031026] Added support for a look-back  indent scheme which can be used to
+             get the correct indent scheme to use.
+
+    [031026] Fixed  history  line numbers  (were one line out for  non-current
+             buffers).
+
+    [031026] Changed the  "mldelete" to respect the  "scrollFlag"  setting, if
+             smooth scroll enabled then delete text smoothly.
+
+    [031026] Fixed narrow look back highlight bug.
+
+    [031026] Added ADA file hook - thanks to Gabriel Tabares-Barreiro.
+
+    [031026] Nroff template. Removed unused variable.
+
+    [031026] HTML Template. Major shake-up for HTML base files including major
+             enhancements to indentation and current script auto-detection.
+
+    [031026] Toolbar.  Added  support for the new ":chook"  current  file type
+             variable  and got toolbar and buffer tool menu to call the update
+             command (toolbar only on a "C-l").
+
+    [031026] CVS. Fixed Unix checkout path and implemented cvs remove.
+
+    [031026] Page-file. Fixed backward isearch blow out.
+
+    [031026] Perl Template. Updated the perl.eaf to <FOLD>.
+
+    [031026] Abbreviations.  Added  support for the new ":chook"  current file
+             type variable and added support for an INCLUDE tag.
+
+    [031026] Abbreviations.  Improved  the  look-back  abbrev to expand to one
+             before if exec'd again.
+
+    [030917] HTML Template.  Fixed a hilighting  and indent  problem caused by
+             embedded script.
+
+    [030917] OSD.  Changed  OSD  hot-key  '&'  to  new  style  '\H'.   Changed
+             user-setup dialog to use new Combo-box.
+
+    [030917] CVS. Major revamp of CVS support including an OSD dialog for each
+             tool.
+
+    [030917] Changed the CHAR defines and add defines for the LEADER and TRAIL
+             bytes used for special chars.  Re-implemented OSD hot-keys to use
+             "\\H"  instead  of "&" and  added new "\\{" and "\\}" to stop and
+             start  current  item  hilighting.  Added  support for C++ private
+             public and protected token indentation. Added new Check-box chars
+             to the extended chars  (1,2,3,4,19 & 20) and improved the drawing
+             of some of the others Fixed windows "close while  minimized" test
+             so only prompted if something has changed.
+
+    [030917] Fixed a build.bat not setting MAKE to nmake problem.
+
+    [030917] Added support for new Check-box chars in extended chars.
+
+    [030827] Added use default printer setting.
+
+    [030827] Page-file. Fixed header and added isearch support.
+
+    [030821] Rationalized  the buffer sizes,  increased the keyboard macro and
+             search string buffer sizes. Removed the GNU regex code - not used
+             or tested in years. Part one of Jon's Xterm key lookup fix to get
+             the key pad working.
+
+    [030710] User  setup.  Updated  osd  calls  due to the  change in 'd' flag
+             behaviour  and  changed the items with drop down menus to use the
+             new combo-box.
+
+    [030710] ODS. Updated osd calls due to the change in 'd' flag behavior.
+
+    [030710] Added new  define  for the number of history  types and added new
+             "@h" history variable.
+
+    [030710] Added support to "@mn" and "@mna" in the "meGetKey" routine
+
+    [030710] Added  new  undo  type  for  line  reordering   undo's,  used  by
+             "sort-lines" and "transpose-line".
+
+    [030710] Changed  some define names to make them  compatible.  Changed the
+             calls to  "meGetUserKey" to "meGetKey" so a macro can give a list
+             of keys Added new 0 argument  which  quits at the EOB rather than
+             going to the top of the buffer etc (used in page-file "isearch").
+
+    [030710] Changed  the  logic  of the 'd'  flag  so  that it  disables  the
+             displaying of the item type, changed button  rendering so that it
+             adheres to this so a single char button can be created  Added new
+             'O' combo box item type  which is a mixture  between an entry box
+             and a sub-menu item.
+
+    [030710] Improved  the special  char drawing  routines so that they remain
+             inside the char space and triangles look good regardless of size.
+
+    [030710] Fixed a nasty bug to do with file hooks that load other files and
+             the find-file command manipulating the buffHistNo  incorrectly so
+             the wrong buffer is shown - obscure!
+
+    [030625] Added macro release makefile.
+
+    [030625] MicroEmacs 3.8 compatibility. Fixed isearch emulation.
+
+    [030625] First revision of page-file.
+
+    [030625] CVS. Removed debug line.
+
+    [030610] Changed TAB and BELL to safer  defines.  Optimized  the fill-para
+             function so that it keeps one of the existing  spaces between the
+             words, this also help preserve the position of anchors.
+
+    [030610] Package making files for SunOS.
+
+    [030608] Changed the mouse default behavior to do a move yank.
+
+    [030608] Tools. Removed superfluous endif.
+
+    [030608] Toolbar.  Only  update the toolbar if its the top level  command,
+             i.e. the screen-update is not required due to spell-buffer (say).
+
+    [030608] MS-Shift  region. Check for  kill-rectangle  and treat like we do
+             the kill-region.
+
+    [030608] Added  new -ve  argument  to  insert-file  which  inserts  only a
+             section of the file.  Optimized  the file-op  move command to try
+             just moving the file first.
+
+    [030608] Changed  the  addLine  function  so it  always  flags the line as
+             changed,  this avoids some bizarre  issues when macros  delete an
+             insert  lines  of text  (best  shown by the  buffer-info  toolbar
+             tool).
+
+    [030608] Added new macro oriented  buffer-info numeric argument. Fixed bug
+             in the ignore white-space buffer compare.
+
+    [030608] Fixed default printer selection issues - not complete.
+
+    [030608] Fixed a minor debug build issue in undo.c.
+
+    [030608] Changed the history so it always removes any duplicate entries.
+
+    [030608] Added "$window-eline" and moved the aline into extended version.
+
+    [030608] Changing  the  addLine  function  to always set the changed  flag
+             meant all macros became hidden, use different bits.
+
+    [030608] Fixed a minor compile warnings.
+
+    [030608] Fixed  buffer  reload a file while  displayed  in another  window
+             problems.
+
+    [030519] Fixed minor  compiler  warning in search.c by removing  pointless
+             static initialization.
+
+    [030519] Fixed poke over-writing cursor on win32 console.
+
+    [030516] C Template.  Changed C #define  evaluation  to use new  protected
+             narrows.
+
+    [030516] Stopped the Organizer Find exit quitting the organizer itself.
+
+    [030516] VM Mail. Fixes from Tom Hundt fixes message separator problem.
+
+    [030516] Made MS-DOS redraw the cursor on a poke as well.
+
+    [030515] Organizer.  Fixed bugs with  creating new  addresses and indexing
+             etc.
+
+    [030515] Printer.   Store   the   windows   device   information   in  the
+             print-history as well.
+
+    [030514] JST  Template.  Fixed  jst magic  hook and added  Imakefile  one.
+             Changed  jst magic  hook  variable  setting  setup to use the new
+             $result variable.
+
+    [030514] HTML   Template.   Changed   html-fold   ->  collapse,   reported
+             goto-matching-tag failure.
+
+    [030514] Buffer  initialization.  Changed the  fold-setup  call so that it
+             gets  called if likely to be required - use the new  buffer-fhook
+             $result setting to help in determining this.
+
+    [030514] Folding.  Changed the  fold-setup so a setup string can be passed
+             in  rather  than  searching  for  one  in the  buffer,  aimed  at
+             utilizing the new buffer-fhook "$result" setting.
+
+    [030514] Set  "$result" to the magic fhook  string so the fhook macro does
+             not have to search for it again in buffer.c.
+
+    [030514] Fixed "\xb" bad regex bug.
+
+    [030513] Search. Added region line hilighting support.
+
+    [030513] Changed auto-spell  hilighting scheme to a new spell-error scheme
+             to avoid printing issues.
+
+    [030513] Removed old  hkfold.emf  fold  implementation.  Moved fold.emf to
+             collapse.emf  and added a real folding editor support macros to a
+             new fold.emf, based loosely on "fue".
+
+    [030513] Abbreviation, Changed copy-region call to not expand the narrows.
+
+    [030513] Latex Template. Added latex chars etc to the .eaf file.
+
+    [030513] Search. Changed to handle the fold-open and fold-close split.
+
+    [030513] OSD. Improved the Edit narrow  commands to take  advantage of the
+             new protected narrow support.
+
+    [030513] Tools. Fixed dummy tool removal and changed  position  setting to
+             use alpha mark.
+
+    [030513] VM Mail. Regex protected the boundary id string.
+
+    [030513] Utils. simplified the str-to-regex by using &xrep.
+
+    [030513] User setup. Changed fold -> collapse.
+
+    [030513] HTML Template.  Fixed script indent  problem,  improved the fence
+             matching and added close tag feature.
+
+    [030513] Buffer setup.  Changed fold -> collapse and added proper  folding
+             setup entries.
+
+    [030513] Commenting. Fixed silly "\\x80" alpha char label bug.
+
+    [030513] File Dialogue. Added tab ordering to dialog.
+
+    [030513] Folding all templates.  Changed the function  folding commands to
+             collapse to avoid confusion with real folding.
+
+    [030513] XML Template, Added indent rules for "<? ... ?>".
+
+    [030513] Mouse. Changed the column setting to use alpha marks.
+
+    [030513] Color  Schemes.  Split  the  fold  scheme  into   fold-close  and
+             fold-open.
+
+    [030512] Fixed  display  matching  fence issue with poke screen hiding the
+             cursor on Unix X-Windows. May need to be done on MS-DOS as well.
+
+    [030512] Fixed  horrid crash caused in search.c by buffer  change in macro
+             followed by query replace and toolbar up-date  changing the regex
+             variables.
+
+    [030512] Fixed fill-paragraph when no arg is given but at the beginning of
+             para still move forward.
+
+    [030512] Fixed compiler warning in spawn.c.
+
+    [030512] Latest versions of build.txt, cygwin.txt, faq.txt and readme.txt.
+
+    [030512] Build fix for SunOS.
+
+    [030512] Ipipe fix for SunOS. Big  return  value  change to get  functions
+             consistent  - found  that the  return  values  of low level  line
+             functions where different to high level functions making the code
+             hard to read and dangerous. Also needed a consistent triple value
+             return (true false and error) so change  meABORT to -1 across the
+             board. changed the line flag  implementation  to be more flexible
+             and variable in size so UE has a smaller  memory usage and ME has
+             line flags  available.  Improved the AMark  setting and deleting.
+             Added a Protected  Line flag and vastly  improved the  narrowing.
+             Renamed most function in line.c to make them more readable.
+
+    [030512] Big return value change to get functions  consistent - found that
+             the return values of low level line functions  where different to
+             high level functions  making the code hard to read and dangerous.
+             Also needed a  consistent  triple  value  return  (true false and
+             error) so change meABORT to -1 across the board.
+
+6th Release - December 2002
+
+    [021216] Removed .cvsignore from source release.
+
+    [021216] Fixed "ne" Unix build for a window build
+
+    [021216] Fixed Perl abbreviations - Thanks to Dr. Detlef Groth.
+
+    [021216] Fixed  "$frame-width"/"depth" macro operation on the set - Thanks
+             to Th.
+
+    [021216] Confirmed Sun Solaris 2.6 PTY operation OK.
+
+    [021208] Filed  build  file  for  cygwin,   pushed  cygwin   binaries  and
+             re-released source.
+
+    [021208] Added UNIX icons for CDE  environment  to  meicons.tgz  (me.t.pm,
+             me.m.pm, me.l.pm)
+
+    [021204] Fix for UNIX terminal resize with frames.
+
+    [021204] Fix for Sun Solaris PTY creation and setup.
+
+    [021204] Fix for VM mail searching - Thanks to Th.
+
+    [021204] Fix for XML macros - Thanks to Th.
+
+    [021203] Fix for frame resize crash.
+
+    [021013] Fix for printing of *printer* buffer crash.
+
+    [021013] Added PL/SQL file support.
+
+    [021013] Updated mode change to use just a buffer type change flag.
+
+    [021013] Added "@mna" to all find-files incase there are problems.
+
+    [021013] Broke the toolbar tools out of the abbrev eaf file into there own
+             tool eaf file.
+
+    [021013] Added  item-list  and tag  generation  support to VB, fixed a few
+             hilight issues.
+
+    [021013] Shrunk the combo button size now that osd works better.
+
+    [021013] Added "!force"s to all "unbind"'s to avoid bells.
+
+    [021013] Made manual  sub-menus  have the .. And added  Occurrences to the
+             right button mouse menu.
+
+    [021013] Updated macros for osd sub-menu position changes.
+
+    [021013] Added new find and refresh tool toolbar options.
+
+    [021013] Added Hot key for Microsoft friendly keys option.
+
+    [021013] Added Finnish support - thanks to Sebastian Bojers.
+
+    [021012] Fixed new frame ml junk text - new problem with line changes.
+
+    [021006] Saved 3 bytes per line by using the  rounded  bytes and  changing
+             the  length to an unused  size.  Fixed  some  minor Unix  compile
+             warnings.
+
+    [020919] Changed the way manual sub-menus are opened and closed to improve
+             usability  (particularly  for the  combo  box).  Added  auto side
+             placement of sub-menus remove the 'e' 'w' and 'n' flags.
+
+    [020912] Added  crypting  of registry  files and  Microsoft  friendly  key
+             bindings.
+
+    [020912] Fixed   several   html  ->  vb   indent   and   hilight   issues,
+             re-implemented the mode change to be toolbar aware.
+
+    [020912] Changed the  "msshift"  key list to a macro list which checks the
+             non-shifted key is bound first. Added "C-home" and "C-end".
+
+    [020912] Added "$window-id".
+
+    [020912] Added  crypting   support  to  registry  files  -  crypt  key  is
+             auto-generated.
+
+    [020912] Fixed an odd win98  shell-command  start-up  dir bug and  handled
+             bogus consol sizes being returned (running "me -n" in me).
+
+    [020912] Fixed a reload  fhook  bug and  added  code to  handle  the fhook
+             deleting the buffer!
+
+    [020912] Fixed windows -p lock-up bug caused by reading from stdin fp when
+             no file is piped.
+
+    [020830] VM Added code to handle empty multi message end section.
+
+    [020723] New revamped Html support with toolbar support.
+
+    [020723] Added right and bottom  toolbars, and a paged tool concept, fixed
+             quite a few problems  found with the toolbar.  Added a new Buffer
+             Tools  tool  which  loads  the  hk???.eaf  file so that the abrev
+             ???.eaf file can be left as solely an abbrev file.
+
+    [020723] Changed the  interface  to  regexStrcmp  to give better  control.
+             Added   support  for  the  "@s#"   variables   after  a  "&xseq",
+             reimplemented  the  buffer  context  initialization  to  not  use
+             iscanner so it no longer need to swap  buffers  also  changed the
+             location  of the fhook exec to  earlier,  where it was the window
+             count was  incorrect  for the old  current  buffer and this could
+             lead to a crash if the fhook  deletes  this buffer  (found in CVS
+             mode).
+
+    [020723] Fixed a couple of goto-position problems.
+
+    [020723] Fixed item-list search strings.
+
+    [020723] Directory list - check for and fail on urls!
+
+    [020723] Added new "\\L" -> x-line,  "\\X" ->  x-command  special  keys to
+             improve eaf file read and portability.
+
+    [020711] Added a system clipboard interaction disable flag to "$system" so
+             the  toolbar  can  stop  messing  up the  clipboard  whenever  it
+             updates.
+
+    [020711] Fixed an  uninitialized  variable  bug  breaking  the FTP  logoff
+             operation of file-op.
+
+    [020629] HTML Added table creation and external preview commands.
+
+    [020629] Fixed  system   clipboard  being  trashed  problem  by  disabling
+             interaction with it during toolbar updates.
+
+    [020629] Changed the List Functions to List Items in buffer setup.
+
+    [020629] Added new kill list tool to the toolbar.
+
+    [020629] Added drag and drop  support to directory  view. Can now use this
+             to load and copy/move files.
+
+    [020629] Changed the FOLDER tags to FOLD and improved the eaf files.
+
+    [020629] Added support for item-lists to C++ and added support for classes
+             to C as the header is commonly used.
+
+    [020629] Fixed nasty pick -> drop local buffer override problem.
+
+    [020605] Added  support  for the toolbar and the initial  frame size being
+             set in the history.
+
+    [020605] Pascal. Added "(* .. *)" and "//" comment hilighting.
+
+    [020605] Macros - broke the setup default and standard tools into separate
+             files. Improved the update flags for better control.
+
+    [020605] New  osd-find-buffer  popup menu using the user-setup file types,
+             based on Dr. Detlef Groth's.
+
+    [020605] Fixed minor bug in file handling found by BC compiler.
+
+    [020605] Fixed isearch so the next command will be executed in the correct
+             frame.
+
+    [020605] Updated makefile to new style which supports NE.
+
+    [020605] Fixed NT & win2000  mouse  cursor not staying  hidden,  caused by
+             dubious mouse move events.
+
+    [020523] CVS - added 'U'pdate file flag support.
+
+    [020523] Modified to support "$window-flags" and window resize changes.
+
+    [020523] Added new "<-" and "->" truncate chars to "$window-chars".
+
+    [020523] Fixed  mutli-frame  console  crash, window depth resize jump bug.
+             Fixed  drag-n-drop so it won't use a locked window. Fixed a nasty
+             no-update bug involving the ERASEBKGND message. Added the drawing
+             of a "<-" char to "0x08" (Backspace).
+
+    [020523] Fixed a nasty  multi-line  regex search  failing at end of buffer
+             problem.
+
+    [020523] Removed the ANSI and APRAM macros - redundant.
+
+    [020523] Combined  the shrink and enlarge  window  commands  into a single
+             change-window-width/depth command.
+
+    [020523] Changed interface to frame resizing  functions,  numerical arg is
+             now a delta change.
+
+    [020523] Added left and right truncate chars to  $window-chars,  fix ABORT
+             string value.
+
+    [020523] Added extra parameter to HideBuffer  flagging whether to hide the
+             buffer if the  window  buffer  lock is set.  Changed  find-buffer
+             numerical  arg so -1 hides all but lock windows, -2 or less hides
+             all.
+
+    [020430] Improved  the 'closest  window  match'  algorithm  so it gets the
+             closest window!
+
+    [020430] Windows - fixed an new  compile  problem  and a frame loop bug in
+             the font setup (frameCur == NULL for first call).
+
+    [020428] Name changes  (screen -> frame) due to frame support, new toolbar
+             support,  new  abbrev-list  and  expand-look-back,  new filter on
+             normal browser,  auto-spell  ignore, perldb  sub-func fix, tables
+             added to jst, fixes to bullet list in "ifill-paragraph".
+
+    [020428] Changed the ipipe wrap line length to be the  'term-size',  using
+             the frame size causes problems, particularly with the toolbar.
+
+    [020427] Major  edit!  Added  frame  support,  standardized  many  of  the
+             structure and function names, introduced  $window-flags  (not the
+             size lock yet). Also fixed abbrev word boundary bug.
+
+    [020427] US Letter support added by Th.
+
+    [020301] CVS - added support for adding binary files.
+
+    [020301] Added new JST support.
+
+    [020301] Minor fix to the html processing and link following.
+
+    [020301] Added latex template file.
+
+    [020301] Mouse - changes required for changes to scroll commands which now
+             abort at the top and bottom.
+
+    [020301] Minor  search fix to handle  get-next-line  requiring  user input
+             (out-of-date buffer etc).
+
+    [020301] Major changes to create NanoEmacs! Made macro getting of keys for
+             binding very strict, no superfluous chars allowed Changed mlwrite
+             so that when aborting and no !force is used it will write message
+             even  with a  MWEXCEL.  Made  printing  optionally  quiet for JST
+             insert  printing. Minor changes to scroll  commands to abort when
+             at the top or bottom.  Small  change to  numerical  interface  to
+             suspend-emacs.
+
+Experimental Release - January 2002
+
+    [020124] Split source code with  conditional  compilation  into functional
+             blocks.
+
+    [020124] Added  LATEX  abbreviation  file  and  updated  template  to load
+             abbreviation file.
+
+    [020124] JASSPA  Structured  Text  (still  prototyping  - jst).  Macros to
+             convert structured text into other formats.
+
+    [020124] Reworked the build files to build the multitude of debug, console
+             and window variants.
+
+    [020124] Added binary add mode to the CVS menu.
+
+5th Release - January 2002
+
+    [011230] Applied  GPL License to code base.  Transition  to GPL  following
+             permission from Daniel M Lawrence.
+
+    [011220] Fix to comment-restyle in comment.emf - stops a spin.
+
+    [011220] nroff makefile full target building the txt files. (internal).
+
+    [011220] Added  support for a $CURSOR$ tag to the etf files which sets the
+             initial cursor  position, and included h.etf as an example (thats
+             been annoying me for some time).
+
+    [011220] Moved the  template  etfinsrt  calls  into the  buffer-initialize
+             macro .
+
+    [011220] Fixed the exec fhook-cpp not working .
+
+    [011220] Fixes to ctags for C++ function call initializers.
+
+    [011220] Fixed Windows  Console <RETURN> key keyboard  mapping,  returning
+             incorrect binding.
+
+    [011219] Fixed Termcap <TAB> key translation.
+
+    [011219] Fixed  Termcap  tparm() to use a default  stack  argument  if not
+             specified by default.
+
+    [011219] Added cygwin support to the build file.
+
+    [011219] Added extra argument to buffer-initialise.
+
+    [011218] Added support for Euphoria language.
+
+    [011217] Italian spelling dictionary.
+
+    [011217] Added scheme support for fence matching colors.
+
+    [011217] Removed global binding of TAB key from  unixterm.emf and build in
+             translation.
+
+    [011215] Fixed cygwin makefile for latest version, added cygwin macros.
+
+    [011215] Fixed remaining termcap crash under cygwin.
+
+    [011214] Merged  prototype  cygwin  code  base into  release,  use  poll()
+             following select().
+
+    [011123] Fence  matching  added to user sertup  (user-setup -> Platform ->
+             Fence Display).
+
+    [011115] Reworked  the  buffer  hooks  such  that  mybhook/myehook  can be
+             defined.
+
+    [011031] Fixed a corking crash! (load random.c and do 2222  replace-string
+             "\n" "").
+
+    [011029] hklatex.emf item-list support (hit "f7").
+
+    [011028] hklatex.emf has a greatly improved pseudo hilighting.
+
+    [011028] Tweaked the "@fs" variable to improve its usability.
+
+    [011028] set-position can now store the mark position.
+
+    [011028] Fixes to windows file times.
+
+    [011016] New caps-lock,  num-lock,  scroll-lock  and pause key support for
+             win32  &  unix.  The  "*-lock"  implementation  to be  more  like
+             "S-pick"  and  "C-pick" as the keys are  automatically  supported
+             (like the shift) so there are no default  binds to void, the keys
+             are only  generated if there are bound. Could not implement  this
+             on MS-DOS.
+
+    [011016] which  command  built  in i.e.  "M-x  which".  Used  for  command
+             utilities.
+
+    [011026] A new Hide value feature when inputting strings, this is now used
+             be the crypt and ftp Password entry. The string is shown as '*'s.
+
+    [011025] Utilized the latest screen-update  improvements to make the gdiff
+             screen update rock solid.
+
+    [011025] mlGetChar  fix. The key "return" was the 78th special  char, i.e.
+             "SKEY_SPEC"|'N'   and  as  the   mlGetChar   did  not  check  the
+             "SKEY_SPEC"  bits, pressing  return was like pressing 'N' so on a
+             "Y/N" prompt try pressing return, its like saying No! .
+
+    [011016] Spelling  dictionaries renamed with ISO naming scheme. Because of
+             the language changes, you need to rename your personal dictionary
+             to lsdpengb.edf for British and lsdpenus.edf for American.
+
+    [011016] Hilighting  brackets/braces  as  requested  from  user  base. The
+             hilight   braces   required   some   other   subtle   changes  to
+             screen-update and show-region and the addition of the "rbin" mode
+             means that this version is incompatible  with the last in quite a
+             few areas.
+
+    [011016] Fixed  mouse  handler  (turns out that if the pick event was lost
+             (use "@cg" or an error) then me would lock!).
+
+    [011016] Extended  control on indent tab and return  behavior (can disable
+             the tab behavior).
+
+    [011016] C++ name space indentation support.
+
+    [011016] New language support  interface so spelling is not required for a
+             language to be supported (may only want the basic  alphabet setup
+             etc).
+
+    [011016] Changed file loading  interface so all commands (like  view-file)
+             can load in "bin", "crypt" or "rbin" mode.
+
+    [010123] Reduced binary mode added (rbin).
+
+4th Release - August 2001
+
+    [010813] OSD bug fix for fixed size dialog boxes.
+
+    [010812] Inclusion of occur regexp function.
+
+    [010812] List function for  summarizing  file contents ("F7" / "Esc-F7" to
+             close).
+
+    [010810] Rendered character for the scroll bar - improves clarity.
+
+    [010810] Modified the printer registry file location.
+
+    [010801] New Guest default color scheme.
+
+3rd Release - Minor Updates July 14th 2001 onwards
+
+    [010718] LaTeX template includes incorrect bindings - fixed.
+
+    [010716] Corrected  Windows  Install  Shield  "Company  Entry" + "Registry
+             entry fields".
+
+    [010716] Minor macros  modification to font selection for schemes. Default
+             guest setup font selection for cleaner 'first' page.
+
+    [010716] CVS  macro  update.   Changed   "cvs-diff"  to  "cvs-gdiff"   and
+             introduced  a new  "cvs-diff"  which just gives the "diff" output
+             and fixed several bugs when running with a CVS server. Also added
+             support for the CVS/Template file when committing.
+
+    [010716] Minor  update  to  the  CVS  help  page  for  the  aforementioned
+             (Affected all help files).
+
+3rd Release - July 2001
+
+    [010713] New style WWW JASSPA Pages.
+
+    [010712] Added    comment   and   menu   support   for   MS-DOS   and   M4
+             (hkdos.emf/hkm4.emf).
+
+    [010711] Added hpux11 support.
+
+    [010711] Fixed windows erase when file doesn't exist problems.
+
+    [010710] Removed  cbox  -  replaced  by  generic  comment   implementation
+             (cbox.emf/me.ehf).
+
+    [010710] Added a 'Plain  Text'  char set  which  only uses  plain  letters
+             (charset.emf).
+
+    [010710] Fixed  many  little  comment   formatting   bugs  and  annoyances
+             (comment.emf).
+
+    [010710] Changes required to build on MS-DOS using DJGPP v1.
+
+    [010705] Bug fix for windows rendering crash.
+
+    [010630] Minor reorder to X-Windows initialization for cygwin X-Server.
+
+    [010507] Added   generic   commands   for  the   creation,   deletion  and
+             reformatting of comments now used by most of the file hooks.
+
+    [010412] Added new generic  buffer  setup, menu and help macros,  creating
+             the new  buffer-setup(3)  command. Ported all existing file hooks
+             to this new interface greatly reducing the buffer hook size while
+             increasing its functionality and consistency.
+
+    [010402] Added support for new $buffer-backup(5)  variable for setting the
+             back-up file location.
+
+    [010312] Support  for  new key  bindings  allowing  CU  emulations.  Nedit
+             bindings  provided as example.  Major work to enable the complete
+             re-binding of all keys so the user interface to MicroEmacs can be
+             completely  changed, this allows for example a Windows feel to be
+             created. This  required many internal  ghosts to be exorcized and
+             add new macro functions.
+
+    [010308] User buffer configuration menu added.
+
+    [010308] Improved Python support (Contribution PG).
+
+    [010304] Bug fixes to hilighting logic.
+
+    [010228] Improved dialog box for search/replace.
+
+    [010210] Revised  programming  language  templates;  simplified the common
+             elements used in configuring the templates.
+
+    [010202] Added new  command-wait(2)  command to enable  macros to wait for
+             user dependent completion, used in "gdiff".
+
+    [010202] Changed     buffer     variables     to    except     the    form
+             ":<buffer-name>:<variable>",  like command variables. This allows
+             macros to access variable not defined in the current buffer.
+
+    [010126] File "autosave" location changes. Control save name and location.
+
+    [001005] OSD speedups.
+
+    [001005] Improved and  increased  the file system  operations  via the new
+             file-op(2) command, created better menus in the file-browser(3).
+
+    [001010] Revamped the main ftp GUI to make it work much more rationally.
+
+    [001010] Improved ipipe-shell-command efficiency on Windows by introducing
+             a new thread approach to listen for activity. Implemented a shell
+             command-line in an ipiped environment so ishell(3) command is now
+             usable on Windows platforms.
+
+    [001010] Added  new  set-position(2)  which  can  be  used  to  store  all
+             information about the current window and  goto-position(2)  which
+             will  then  restore  them.  Allowed   macros  to  use  non-letter
+             characters  for alpha marks and  positions so they no longer need
+             to clobber user ones.
+
+    [001010] Added new "-k" and "-u"  command-line  options and  improved "-s"
+             option.
+
+    [000922] Added GUI for tag dialogue for tags generation.
+
+    [000922] Recursive tags support (i.e. nested directory tag traversal).
+
+    [000810] emain.h "#define"'s properly supported again so MicroEmacs can be
+             successfully  compiled  without  options  like SPELL and OSD etc.
+             This can reduce the binary size by up to 37%.
+
+    [000718] Source trees now maintained under CVS.
+
+    [000719] Improved TCL/TK and Perl template support.
+
+    [000704] Improved FTP and HTTP support.
+
+    [000620] Java tags support.
+
+    [000503] Revised printer support.
+
+    [000503] Color printer support (Lexmark).
+
+2nd Release - Alpha patch - March 2000
+
+    [000322] FIRST PUBLIC RELEASE OF RENDERED FONT SUPPORT .
+
+    [000322] Alpha build revision contains version information for 2000/03/22
+
+    [000322] Internal re-organisation of platform option selection.
+
+    [000322] Minor fixes X-Windows color selection.
+
+    [000322] Minor fixes in the OSD.
+
+    [000322] Reviewed the documentation  mode. A text description of the using
+             the  documentation  modes is included in the  distribution in the
+             text directory.
+
+    [000322] Minor    modifications    to   support   Borland   5.5   compiler
+             (win32b55.mak).
+
+    [000322] Support for Openstep 4.2 / NeXT Motorola 040 (Termcap only).
+
+    [000322] Support for BSD 4.2/4.3.
+
+    [000322] Revised UNIX Termcap support.
+
+    [000322] New font rendering,  supporting bold, italic,  underline etc. All
+             platforms   modified  to  cope  with  font  scheme   definitions.
+             Platforms optimized for speed.
+
+    [000126] Beta build revision contains version information for 2000/01/26.
+
+    [000126] Directory  file copy. Within this release  files in the directory
+             listings  may be selected for copy and pasting from the menu. Use
+             the right mouse button to pop-up a menu in the directory buffers.
+             Copy and paste  to/from a ftp  directory  buffer to a local drive
+             buffer  may be used to  initiate  an ftp  transfer.  (This is how
+             these pages are uploaded).
+
+    [000126] New  command ftp opens a ftp  connection  using a dialog. Use may
+             save the host  connection  information  in a registry  file. Note
+             that the password information is exposed so be careful where this
+             is used - if in doubt do not enter the  password  and you will be
+             prompted.
+
+    [000126] New  command  "uniq"  operates as the UNIX of the same name. used
+             with sort, and reduces to unique lines.
+
+    [000126] Character  translation; addition of character  translation macros
+             when  moving  between  character  sets.  Accessible  from Menu ->
+             Format -> Change Buffer Char Set.
+
+    [000126] Support for  additional  character  sets, Windows  GREEK, Windows
+             TURKISH.
+
+    [000126] Line  hilighting  selection  with the use of the  mouse  and auto
+             search.  When  using  the  mouse  selection  to  set up the  line
+             hilighting when invoked from a
+
+             > right-mouse -> Hilight Line -> color/remove
+
+             selection; the macro  determines  the mouse  selected  region and
+             makes  an  appropriate  decision  as to how the  line  hilighting
+             scheme is to be applied. The  following  rules apply to the mouse
+             selection:-
+
+             * Point in line  selected  (i.e. mark == point)  Hilight the line
+               only.
+
+             * Region  in the line  selected.  Both  point and mark are on the
+               same line. Extract the selected text and hilight all lines that
+               match the search  pattern. The color  "remove" is also  pattern
+               matched to selectively remove lines.
+
+             * Region  selected  mark & point on different  lines Block up the
+               region with appropriate hilight.
+
+             Notethat line hilighting may be safely used in a folded buffer.
+
+    [000126] Addition of special rendered space character. You may toggle this
+             from the keyboard using a macro in your user.emf as follows:-
+
+             > ; Macro to enable the display of TAB/CR. Note that we
+             > ; force the screen to be updated.
+             > define-macro tab-display
+             > set-variable $system &bxor $system 0x80000
+             > screen-update
+             > !emacro
+             > global-bind-key "tab-display" "f11"
+
+    [000126] Documentation update on new features (contained in me.ehf).
+
+    [000114] Fixed font selection bug in 000112 beta.
+
+    [000112] Revised color hilighting schemes, reduced the number of colors in
+             a number of schemes.  Introduction  of the Sherwood  Forest color
+             scheme (green theme obviously !!).
+
+    [000112] Small  revision  to the  user  interface  with  respect  to  font
+             selection. In order to make  character set selection  easier then
+             the  multiple  choices for the box  characters  have been removed
+             from Menu -> Help -> User Setup. These have been  replaced with a
+             new check box  Extended  Char Set. This box  should be checked to
+             enable  the  special  rendering  characters  and  enable  the box
+             characters  -  this  is  typically   enabled  on  X-Windows   and
+             MS-Windows.
+
+    [000112] Provision for directory list sorting on name,  modification  time
+             and size. Selecting the directory column title performs a re-sort
+             based on the selection, a further selection reverses the order of
+             the list.
+
+    [000112] Addition of ftp support (meu build on Windows, enabled by default
+             on UNIX).  Enables  files to be  edited  via ftp, (read and write
+             supported).      Transfer     to     another     system     using
+             ftp://[<user>[:<password]@]><host>[:<port>]/<pathname>.
+
+    [000112] Improved  source code  provision for foreign  languages,  various
+             internal  problems.  Support for Russian  (Windows  and  Cyrillic
+             koi8-r).
+
+    [000112] Y2K problems with time stamping and mode line date.
+
+    [000112] New spelling rules for number sequences and specialized wild card
+             sequences. Within the rule file (i.e. americar.emf, britishr.emf,
+             etc.) then the following spelling rules may be added to cope with
+             numeric  sequences.  The addition of these rules will spell check
+             hexadecimal sequences and validate numeric sequences such as 1st,
+             2nd, 3rd etc. A  spelling  of "1nd"  would  generate  a  spelling
+             error.  This  has not  been  performed  for  other  languages  so
+             submissions for other language equivalents would be appreciated.
+
+             > ; Add some special word rules to make life easier.
+             > ; These are for 1st, 2nd 3rd etc.
+             > add-spell-rule "*" "\\([0-9]*[02-9]\\)?1\\(st\\|ST\\)"
+             > add-spell-rule "*" "\\([0-9]*[02-9]\\)?2\\(nd\\|ND\\)"
+             > add-spell-rule "*" "\\([0-9]*[02-9]\\)?3\\(rd\\|RD\\)"
+             > add-spell-rule "*" "[0-9]*1[0-9]\\(th\\|TH\\)"
+             > add-spell-rule "*" "[0-9]*[04-9]\\(th\\|TH\\)"
+             > add-spell-rule "*" "0[xX][[:xdigit:]]+"
+             > ; Spell rules for unit definitions.
+             > ; These are for 50Mb, 10Kg, -45.56cm 12ft 10.00am 16.00pm etc.
+             > add-spell-rule "*" "-?\\([0-9]*.\\)?[0-9]+\\(Kg\\|Kb\\|Gb\\|Tb\\|Mb\\|mm\\|cm\\|m\\|Km\\|ft\\|inch\\|mph\\|lb\\|am\\|pm\\)"
+
+    [000112] Box selection copy and paste. Bindings are defined as:-
+
+             > Esc C-w kill-rectangle
+             > Esc C-y yank-rectangle
+
+    [000112] Enhanced  info file  hilighting  (Thanks to Dr. Detlef  Groth for
+             this).
+
+    [000112] New copy-file  command,  typically used by the macro language for
+             moving files around.
+
+    [000112] Error  reporting  of bad  command  line  arguments  in  Microsoft
+             Windows environment (Thanks to Pedro Gomes for this).
+
+2nd Release - November 1999
+
+    [991101] Enhanced the latex support macros following various contributions
+             from users.
+
+    [991101] Added  Favorites  to the File  pull down  menu.  This is a simple
+             mechanism to allow the user to add a file to a favorites list.
+
+    [991101] Ground  up  implementation  of  the  regular  expression  pattern
+             matcher,  following  licensing  problems  with the GNU regex. The
+             resultant  pattern  matcher is now a little faster than GNU regex
+             and is capable of all of the standard regular  expression pattern
+             matches. The pattern matcher has diverged from GNU in that double
+             backslashes  are required in the character  classes [..] to allow
+             for escape sequence short cuts such as '\n' (newline), '\t' (tab)
+             etc. It was felt that this  compromise  was better than having to
+             quote the more obscure search characters.
+
+    [991101] Changed  the  hilighting  and  indenting  syntax  to be GNU regex
+             compliant.
+
+    [991101] Modified  compare-windows  to  ignore  white  space  by  default,
+             compare-windows-exact  performs an exact  character for character
+             comparison.
+
+    [991101] Enhanced the tags support to handle  multiple  tags and recursive
+             directory tree searching.
+
+    [991101] Implemented  osd-help,  a gui  front  end  to the  on-line  help.
+             Required  changes to the help system which gives macros access to
+             the on-line help buffer, needed for the index and search.
+
+    [991101] Over-hauled the hilighting scheme files and editor to support the
+             disabling of buffer hilighting.
+
+    [991101] Many bugs fixed on all platforms, in particular  unix cutting and
+             pasting (crashes exceed) and focus problems and NT exit delay.
+
+    [991101] Added tab and newline character printing in buffers.
+
+    [991101] Introduced message line variables "@mx" and "@mxa".
+
+    [991101] New  Games  -  Crossword  cracker.  The  ideal  way to  cheat  at
+             crosswords.  Uses the spelling  dictionary  to guess at the word,
+             given a number of known letters.
+
+    [991101] Hook  file  protection  against  globally  bound  keys - prevents
+             re-binding of user defined keys within the macro.
+
+    [991101] Search/Replace  fix for exact mode.  Environment  variable search
+             path fix.
+
+    [991101] hkm4.emf  added  back  into  the  release  (seemed  to have  gone
+             missing).
+
+    [991101] Cut and  paste  fix when  running  the UNIX  version  through  an
+             X-Server such as Exceed in the Windows environment.
+
+    [991101] Plain text printer device added.
+
+    [991101] Obscure OSD fix.
+
+    [991101] New OSD help search facility Menu->Help->General Help.
+
+    [991101] Fix for NT  hang-up  on shut  down  (typically  encountered  when
+             running a source debugger).
+
+    [991101] Fix for NT process spawning with spaces in the names.
+
+    [991101] Metris macro fix, OSD bug fix, NT display fix.
+
+    [991101] New - color scheme, GVim look.
+
+    [991101] New - Unix/Linux support for Wheel Mouse (mouse.emf).
+
+    [991101] New - Color  schemes,  Plain;  for those  that do not care for an
+             abundance of colors.
+
+    [991101] Modified the numeric  key-pad  behavior to be  consistent  on all
+             platforms.   Problems  were  noted  with  the  UNIX  number  lock
+             orientation which was reversed.
+
+    [991101] New - Color  scheme  variables  which  allow  the hkXXX  files to
+             determine the level of hilighting to apply to their templates.
+
+    [991101] Line  length fix; more  graceful  behavior  (i.e. does not crash)
+             when the line length exceeds 64K.
+
+    [991101] Intercept  the windows 105 keyboard  application  key  (typically
+             right hand side of keyboard  next to the control key). The key is
+             called  "menu". By default  this is bound in  win32.emf,  however
+             users may bind it as a prefix for their own key  combinations  in
+             much the same way as "Alt" or "C-x" if required.
+
+    [991101] New; OMG's IDL language template added.
+
+    [991101] Fix for windows short name in next-buffer.
+
+2nd Release - Beta #1 - May 1999.
+
+    [990501] Bug fixes with multi-language support and spelling dictionaries.
+
+    [990501] Fixed  fill-paragraph such that it retains the cursor position in
+             the paragraph when invoked without arguments.
+
+    [990501] Moved to GNU regex for search/replace engine.
+
+    [990501] Enhanced  isearch such that it operates in *shell[990501  buffers
+             (again).
+
+    [990501] gdiff  macro  implementation  of a graphical  diff to allow color
+             annotation of  differences  and  difference  selection.  Uses the
+             output of a standard diff(1) utility.
+
+    [990501] 2nd port to IBM AIX.
+
+1999
+
+    [990101] Introduction  of the address and date  organizer  (replacing  the
+             existing cal interface).
+
+    [990101] Generic buffer folding using narrow-buffer .
+
+    [990101] Rendered cursor support on all platforms. Smooth scrolling mode.
+
+    [990101] Win32s port, for Microsoft 3.1/3.11 O/S.
+
+    [990101] Re-worked  "translate-tcap-key"  to  generic  "translate-key"  to
+             solve many of the foreign language problems.
+
+    [990101] Re-worked  the ALT key mapping to allow  conventional  Emacs meta
+             key bindings.
+
+    [990101] Implemented Auto-Spell utility.
+
+    [990101] Introduction  of private macro  variables of the form ".name" and
+             ".macro.name".
+
+    [990101] Port to Sun Solaris Intel platform (2.6).
+
+    [990101] Merged the init-hilight and hilight-token into the single hilight
+             command. Similarly for indent.
+
+    [990101] Enhanced the regexp support in hilight  tokens, vastly  improving
+             it capability and usability. Similarly for indent tokens.
+
+    [990101] Reorganized   the   hilighting   files.   Introduction   of   the
+             scheme-editor and Hilight Search OSD's.
+
+    [990101] Implemented box character  override support ($system bit 0x10000)
+             on Win32 and Xterm platforms.
+
+    [990101] Microsoft Windows native console support.
+
+Minor Patch - October 1998
+
+    [981001] Enhanced the operation of the Window pipes.
+
+    [981001] Undo past the last save operation.
+
+    [981001] Added Tabbed entries to OSD.
+
+    [981001] Enhanced user setup using OSD.
+
+1st Release - September 1998
+
+    [980901] Support True-type fonts under windows, font selection dialog.
+
+1998
+
+    [981231] Registry features for configuration.
+
+    [981231] Re-implementation of OSD.
+
+    [981231] Re-implementation of termcap extended key support.
+
+    [981231] Narrow support.
+
+    [981231] Re-implementation of the session history.
+
+    [981231] Re-implemented the speller based on ispell dictionaries.
+
+    [981231] Re-worked the printer interface for Windows.
+
+    [981231] Rationalized mouse key bindings.
+
+    [981231] Added $system variable to configure \*(mS.
+
+    [981231] Added random hilight-token addition and removal support.
+
+1997
+
+    [971231] Re-implementation of ipipes to enable terminal support.
+
+    [971231] Initial Directory-Tree support.
+
+    [971231] First  implementation  of the On Screen  Display  (OSD) menus and
+             dialogues.
+
+    [971231] Horizontal split window support.
+
+    [971231] Scroll bar support.
+
+    [971231] Added menu bar.
+
+    [971231] Cursor position correction for hilights with invisible character.
+
+    [971231] Indentation scheme support.
+
+    [971231] Ported to Microsoft NT.
+
+    [971231] Ipipes supported on NT.
+
+1996
+
+    [961231] Ported to Slackware Linux.
+
+    [961231] First menu system (implemented in macros).
+
+    [961231] Undo support.
+
+    [961231] First ported to Microsoft Windows 95.
+
+    [961231] Re-implementation of get-next-line.
+
+    [961231] Auto mode support.
+
+    [961231] Magic file hooks added.
+
+    [961231] Proper key name support.
+
+    [961231] Key bindings support numeric arguments.
+
+1995
+
+    [951231] Integral speller.
+
+    [951231] Ported to HP-UX.
+
+    [951231] Multiple ipipes supported on Unix.
+
+    [951231] Poke-screen support.
+
+    [951231] Call-back macro support.
+
+    [951231] Metris created.
+
+    [951231] Abbreviation and completion.
+
+    [951231] First implementation of mailing and View Mail.
+
+    [951231] Isearch expanded to support magic mode.
+
+    [951231] Session history support.
+
+    [951231] First ported to X-Terminal.
+
+    [951231] Mouse support.
+
+    [951231] Initial printer support.
+
+1994
+
+    [941231] DOS built with djgpp, allowed large files to be edited.
+
+    [941231] Color hi-lighting.
+
+    [941231] Re-implemented  the  macro  language.  Allowed  separately  named
+             macros.
+
+    [941231] Get-next-line support.
+
+    [941231] File hooks added.
+
+    [941231] Implemented Electric C.
+
+    [941231] RCS support.
+
+    [941231] Re-implemented backups and auto-saves.
+
+    [941231] Re-implemented isearch.
+
+    [941231] Re-implemented of keyboard macros.
+
+    [941231] Binary file reading support.
+
+1992-1993
+
+    [921231] Ported to IBM AIX.
+
+    [921231] Ported to Silicon Graphics
+
+1988-199
+
+    [881231] Ported to MVME147, UNIX using curses.
+
+    [881231] Fire fighting to get a stable version.
+
+    [881231] Expanded regular expression syntax.
+
+Daniel M. Lawrence - Microemacs V3.8 distribution.
+
+    Daniel Lawrence turned MicroEmacs into an editor for the masses, it is his
+    work that  ultimately  made MicroEmacs so popular. Daniel did a tremendous
+    amount of work,  both  adding  features  and  supporting  other  platforms
+    resulting in the MicroEmacs  v3.8 release on which JASSPA's  MicroEmacs is
+    based.
+
+Late 1985/early 1986
+
+    Dave Conroy, the original  author, first  developed the original code base
+    for private use. Various  people  asked Dave for a copy of the program and
+    it was distributed  without concern for copyrights or ownership as was the
+    custom of that era.

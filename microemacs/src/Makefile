@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20040206.0015>
+# Last Modified: <20040206.1105>
 #
 ##############################################################################
 
@@ -43,7 +43,8 @@ ICOSRC	=	icon_ne.ico	icon_me.ico	me32.bmp	ne32.bmp
 
 TXTSRC	=	cygwin.txt	infolist.txt
 
-MAKSRC	=	build		build.bat	\
+MAKEXE	=	build
+MAKSRC	=	build.bat	\
 		aix43.gmk	aix43.mak	\
 		cygwin.gmk	\
 		dosdj1.mak	dosdj2.mak	\
@@ -67,23 +68,6 @@ MAKSRC	=	build		build.bat	\
 		win32v6.mak	\
 		zaurus.gmk
 
-MEMSDEV	=	memsdev/stdafx.h		memsdev/stdafx.cpp		\
-		memsdev/response.h		memsdev/response.cpp		\
-		memsdev/resource.h		memsdev/readme.txt		\
-		memsdev/memsdev.txt		memsdev/memsdev.rc		\
-		memsdev/memsdev.odl		memsdev/memsdev.h		\
-		memsdev/memsdev.dsw		memsdev/memsdev.dsp		\
-		memsdev/memsdev.def		memsdev/memsdev.cpp		\
-		memsdev/memsdev.clw		memsdev/memsdev.aps		\
-		memsdev/maindialog.h		memsdev/maindialog.cpp		\
-		memsdev/dsaddin.h		memsdev/dsaddin.cpp		\
-		memsdev/commands.h		memsdev/commands.cpp
-
-MEMSDEVRES =	memsdev/res/tbarmedm.bmp	memsdev/res/tbarlrge.bmp	\
-		memsdev/res/memsdev.rc2		memsdev/res/bitmap1.bmp
-
-MSDEV6	=	msdev6/memsdev6.dsw		msdev6/memsdev6.dsp
-
 WIN32S=		win32s/win16.mak		win32s/w32sut32.lib		\
 		win32s/w32sut16.lib		win32s/w32sut.h			\
 		win32s/readme.txt		win32s/methnk16.dll		\
@@ -97,17 +81,14 @@ RELSTDSRC	=	$(STDSRC:%=$(SRCRELDIR)/%)
 RELPLTSRC	=	$(PLTSRC:%=$(SRCRELDIR)/%)
 RELPLTHDR	=	$(PLTHDR:%=$(SRCRELDIR)/%)
 RELICOSRC	=	$(ICOSRC:%=$(SRCRELDIR)/%)
-RELTXTSRC	=	$(TXTSRC:%=$(SRCRELDIR)/%)
+RELTXTSRC	=	$(TXTSRC:%=$(MERELDIR)/%)
 RELMAKSRC	=	$(MAKSRC:%=$(SRCRELDIR)/%)
-RELMEMSDEV	=	$(MEMSDEV:%=$(SRCRELDIR)/%)
-RELMEMSDEVRES	=	$(MEMSDEVRES:%=$(SRCRELDIR)/%)
-RELMSDEV6	=	$(MSDEV6:%=$(SRCRELDIR)/%)
+RELMAKEXE	=	$(MAKEXE:%=$(SRCRELDIR)/%)
 RELWIN32S	=	$(WIN32S:%=$(SRCRELDIR)/%)
 
 RELEASES	=	$(RELSTDHDR)	$(RELSTDDEF)	$(RELSTDSRC)	\
 			$(RELPLTSRC)	$(RELPLTHDR)	$(RELICOSRC)	\
-			$(RELTXTSRC)	$(RELMAKSRC)	$(RELMEMSDEV)	\
-			$(RELMSDEV6)	$(RELWIN32S)	$(RELMEMSDEVRES)
+			$(RELTXTSRC)	$(RELMAKSRC)	$(RELWIN32S)
 #
 # Local rules.
 #
@@ -124,33 +105,26 @@ release:	$(RELEASES)
 $(SRCRELDIR):
 	$(MKDIR) $@
 $(RELSTDHDR): $(STDHDR) $(SRCRELDIR)
-	$(INSTALL) $(@F) $(@D)
+	$(INSTALL_FIL) $(@F) $(@D)
 $(RELSTDDEF): $(STDDEF) $(SRCRELDIR)
-	$(INSTALL) $(@F) $(@D)
+	$(INSTALL_FIL) $(@F) $(@D)
 $(RELSTDSRC): $(STDSRC) $(SRCRELDIR)
-	$(INSTALL) $(@F) $(@D)
+	$(INSTALL_FIL) $(@F) $(@D)
 $(RELPLTSRC): $(PLTSRC) $(SRCRELDIR)
-	$(INSTALL) $(@F) $(@D)
+	$(INSTALL_FIL) $(@F) $(@D)
 $(RELPLTHDR): $(PLTHDR) $(SRCRELDIR)
-	$(INSTALL) $(@F) $(@D)
+	$(INSTALL_FIL) $(@F) $(@D)
 $(RELICOSRC): $(ICOSRC) $(SRCRELDIR)
-	$(INSTALL) $(@F) $(@D)
+	$(INSTALL_FIL) $(@F) $(@D)
 $(RELTXTSRC): $(TXTSRC) $(SRCRELDIR)
-	$(INSTALL) $(@F) $(@D)
+	$(INSTALL_FIL) $(@F) $(@D)
 $(RELMAKSRC): $(MAKSRC) $(SRCRELDIR)
-	$(INSTALL) $(@F) $(@D)
-$(RELMEMSDEV): $(MEMSDEV)
-	$(MKDIR) $(@D)
-	$(INSTALL) memsdev/$(@F) $(@D)
-$(RELMEMSDEVRES): $(MEMSDEVRES)
-	$(MKDIR) $(@D)
-	$(INSTALL) memsdev/res/$(@F) $(@D)
-$(RELMSDEV6): $(MSDEV6)
-	$(MKDIR) $(@D)
-	$(INSTALL) msdev6/$(@F) $(@D)
+	$(INSTALL_FIL) $(@F) $(@D)
+$(RELMAKEXE): $(MAKEXE) $(SRCRELDIR)
+	$(INSTALL_EXE) $(@F) $(@D)
 $(RELWIN32S): $(WIN32S)
 	$(MKDIR) $(@D)
-	$(INSTALL) win32s/$(@F) $(@D)
+	$(INSTALL_FIL) win32s/$(@F) $(@D)
 #
 # Clean area.
 #
