@@ -39,8 +39,8 @@ set-variable %scrollb-value "|0|0x13e|0x1be|0x13f|0x1bf|"
 ; Get a list of schemes
 0 exec-file "schemes"
 ; Implemented Emulation modes
-set-variable %emulate-names "|<No Emulation>|MicroEmacs v3.8|NEdit v5|CUA|"
-set-variable %emulate-value "||me3_8|nedit|cua|"
+set-variable %emulate-names "|<No Emulation>|MicroEmacs v3.8|NEdit v5|CUA|GNU Emacs|"
+set-variable %emulate-value "||me3_8|nedit|cua|gnu|"
 
 ; general macros ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
