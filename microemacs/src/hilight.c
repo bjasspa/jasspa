@@ -2542,7 +2542,7 @@ int
 indent(int f, int n)
 {
 #define noINDTYPES 11
-    static meUByte  ctypesChar[meHICMODE_SIZE+2]="scxbwamu" ;
+    static meUByte  ctypesChar[meHICMODE_SIZE+2]="sbecxwamu" ;
     static meUByte  typesChar[(noINDTYPES*2)+1]="bcefinostwxBCEFINOSTWX" ;
     static meUShort typesFlag[noINDTYPES]= { 
         INDBRACKETOPEN, INDCONTINUE, INDEXCLUSION, INDFIXED, INDIGNORE, INDNEXTONWARD, 
@@ -2568,13 +2568,14 @@ indent(int f, int n)
         root->type = itype ;
         if(itype & HICMODE)
         {
-            /* Initialise to t 3/2t 0 -t 0 -t -1 and no CommentContinue */
+            /* Initialise to t 0 t 3/2t 0 0 -t -1 and no CommentContinue */
             root->token[0] = (meUByte) 0x84 ;
-            root->token[1] = (meUByte) 0x86 ;
-            root->token[2] = (meUByte) 0x00 ;
-            root->token[3] = (meUByte) 0xc4 ;
+            root->token[1] = (meUByte) 0x00 ;
+            root->token[2] = (meUByte) 0x84 ;
+            root->token[3] = (meUByte) 0x86 ;
             root->token[4] = (meUByte) 0x00 ;
-            root->token[5] = (meUByte) 0xc4 ;
+            root->token[5] = (meUByte) 0x00 ;
+            root->token[6] = (meUByte) 0xc4 ;
             root->token[7] = (meUByte) 0x41 ;
         }
         else
