@@ -16,7 +16,7 @@ add-file-hook ".C" fhook-cpp
     ; Not using X
     !if &not &band $system 0x02
         ; no color - change the window chars so osd is more usable
-        set-variable $window-chars &cat &lef $window-chars 47 "=x*[]"
+        set-variable $window-chars &spr "%s=x*[>]<%s" &lef $window-chars 47 &rig $window-chars 54
     !endif
     ; create bindings to open the osd menus as 'f1' is likely to not work
     0xa0000 global-bind-key osd "esc ="
