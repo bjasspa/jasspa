@@ -305,6 +305,7 @@
 #define _MULTI_WINDOW   1       /* can support multiple window frames    */
 #include <X11/Intrinsic.h>      /* Intrinsics Definitions                */
 #include <X11/StringDefs.h>     /* Standard Name-String definitions      */
+#include <X11/keysym.h>         /* Keyboard symbols                      */
 #include <X11/Xutil.h>
 #endif /* _XTERM */
 
