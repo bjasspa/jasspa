@@ -5,7 +5,7 @@
  *  Synopsis      : Unix X-Term and Termcap support routines
  *  Created By    : Steven Phillips
  *  Created       : 1993
- *  Last Modified : <000629.0810>
+ *  Last Modified : <000907.1406>
  *
  *  Description
  *    This implementation of unix support currently only supports Unix v5 (_USG),
@@ -1231,7 +1231,7 @@ meXEventHandler(void)
                 {
                     reply.property = event.xselectionrequest.property ;
                     XChangeProperty(mecm.xdisplay,reply.requestor,reply.property,reply.target,
-                                    32,PropModeReplace,(char *) (meAtoms+meATOM_TARGETS),2);
+                                    32,PropModeReplace,(unsigned char *) (meAtoms+meATOM_TARGETS),2);
                 }
             }
             XSendEvent(mecm.xdisplay,reply.requestor,False,0,(XEvent *) &reply) ;
@@ -2316,9 +2316,6 @@ TCAPaddColor(uint8 index, uint8 r, uint8 g, uint8 b)
 
 #endif
 
-#ifndef _USETPARM
-#endif
-	
 static uint8 oschemeFcol=meCOLOR_INVALID ;
 static uint8 oschemeBcol=meCOLOR_INVALID ;
 static uint8 oschemeFont=0 ;
@@ -2748,7 +2745,7 @@ changeFont(int f, int n)
 	
     if(meSystemCfg & meSYSTEM_CONSOLE)
         /* change-font not supported on termcap */
-        return TRUE ;
+        return notAvailable(f,n) ;
     
     /* Get the name of the font. If it is specified as default then
      * do not collect the remaining arguments */
@@ -2928,6 +2925,8 @@ TTtitleText (uint8 *str)
     }
 }
 
+#endif	/* _XTERM */
+
 #ifdef _CLIENTSERVER
 
 #include <sys/socket.h>
@@ -3105,8 +3104,7 @@ TTsendClientServer(uint8 *line)
         }
     }
 }
-#endif
-#endif	/* _XTERM */
+#endif /* _CLIENTSERVER */
 
 /**************************************************************************
 * MISCELEANEOUS FUNCTIONS                                                 *

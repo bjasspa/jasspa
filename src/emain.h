@@ -6,7 +6,7 @@
  *  Object Name   : emain.h
  *  Author        : Steve Philips
  *  Created       : Thu Nov 27 19:17:17 1997
- *  Last Modified : <000718.2342>
+ *  Last Modified : <000822.1932>
  *
  *  Description 
  *       Encapsulate all of the platform definitions into a sigle file
@@ -47,9 +47,8 @@
 #define _ANSI_C 1       /* ANSI_C to be used                            */
 
 /* MicroEmacs Configuration options */
-#define CFENCE  1       /* fench matching in CMODE                      */
 #define TYPEAH  1       /* type ahead causes update to be skipped       */
-#define DEBUGM  1       /* Global SPELL mode triggers macro debugging   */
+#define DEBUGM  1       /* enable macro debugging $debug                */
 #define TIMSTMP 1       /* Enable time stamping of files on write.      */
 
 #define COLOR   1       /* color commands and windows                   */
@@ -57,6 +56,7 @@
 
 #define ISRCH   1       /* Incremental searches like ITS EMACS          */
 #define WORDPRO 1       /* Advanced word processing features            */
+#define CFENCE  1       /* fench matching in CMODE                      */
 #define CRYPT   1       /* file encryption enabled?                     */
 #define MAGIC   1       /* include regular expression matching?         */
 #define ABREV   1       /* Abreviated files                             */
@@ -70,6 +70,7 @@
 #define URLAWAR 1       /* understands url file names (may not read em) */
 #define NARROW  1       /* enable narrowing functionality               */
 #define REGSTRY 1       /* enable registry functionality                */
+#define MEOSD   1       /* enable OSD functionality                     */
 
 /* One may think that this should be platform dependant, BUT time and
  * experience has shown that it is best to always use a '/' in the body
@@ -237,7 +238,7 @@
 #define _TCAP          1                /* Use TERMCAP                   */
 #define _TCAPFONT      1                /* Use TERMCAP fonts to color    */
 #undef  _WIN32                          /* This is not win32             */
-#undef  _XTERM                          /* Do not want X-Windows         */
+#define _NO_XTERM      1                /* Do not want X-Windows         */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
 #define _meDEF_SYS_ERRLIST              /* errno.h not def sys_errlist   */
 #endif /* _CYGWIN */
@@ -311,7 +312,10 @@
 
 /**************************************************************************
 * X-Windows Setup - Definitions required for X-Lib support                *
-**************************************************************************/
+ **************************************************************************/
+#ifdef _NO_XTERM                        /* console only mode?            */
+#undef _XTERM                           /* Do not want X-Windows         */
+#endif
 #ifdef _XTERM
 #define _CLIPBRD  1             /* Inter window clip board supp          */
 #define _WINDOW   1             /* Window, need resizing & title code    */

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips & Jon Green
 ;  Created       : Thu Jan 14 02:13:44 1999
-;  Last Modified : <000719.0013>
+;  Last Modified : <000919.1627>
 ;
 ;  Description
 ;
@@ -156,16 +156,5 @@
         set-variable #l2 $result
         copy-registry &spr "%s/%s" #l0 #l2 &spr "%s/%s" #l1 #l2
     !done
-!emacro
-
-; generate-tags-file "<tagtype>"
-; runs ME @<tagtype> -v%tags-option=...
-0 define-macro generate-tags-file
-    set-variable #l0 @1
-    !if &band $system 0x080
-        exec-me &spr "\"@%s\" \"-v%%tag-option=%s\"" #l0 %tag-option
-    !else
-        exec-me &spr "\"@%s\" \"-v%%%%tag-option=%s\"" #l0 %tag-option
-    !endif
 !emacro
 

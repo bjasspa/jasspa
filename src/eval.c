@@ -10,7 +10,7 @@
  *
  *  Author:         Danial Lawrence
  *
- *  Creation Date:      14/05/86 12:37      <000702.1904>
+ *  Creation Date:      14/05/86 12:37      <000825.1840>
  *
  *  Modification date:  %G% : %U%
  *
@@ -121,7 +121,24 @@ meNAMESVAR varbNames={1,0} ;
  */
 static meREGISTERS *gmaLocalRegPtr=NULL ;
 
-#ifndef MAGIC
+#if MAGIC
+/* Quick and easy interface to regex compare
+ * 
+ * return -1 on error, 0 on no match 1 if matched
+ */
+int
+regexStrCmp(uint8 *str, uint8 *reg, int exact)
+{
+    static meRegex regex={0} ;
+    int ii ;
+    
+    if(meRegexComp(&regex,reg,(exact) ? 0:meREGEX_ICASE) != meREGEX_OKAY)
+        return -1 ;
+    
+    ii = meStrlen(str) ;
+    return meRegexMatch(&regex,str,ii,0,ii,(meREGEX_BEGBUFF|meREGEX_ENDBUFF|meREGEX_MATCHWHOLE)) ;
+}
+#else
 /* Cheesy regular expression comparer
  * 
  * reg is the regular expersion which is matched against str
@@ -269,25 +286,6 @@ regexStrCmp(uint8 *str, uint8 *reg, int exact)
         }
     }
 }
-#else
-
-/* not so cheesy version
- * 
- * return -1 on error, 0 on no match 1 if matched
- */
-int
-regexStrCmp(uint8 *str, uint8 *reg, int exact)
-{
-    static meRegex regex={0} ;
-    int ii ;
-    
-    if(meRegexComp(&regex,reg,(exact) ? 0:meREGEX_ICASE) != meREGEX_OKAY)
-        return -1 ;
-    
-    ii = meStrlen(str) ;
-    return meRegexMatch(&regex,str,ii,0,ii,(meREGEX_BEGBUFF|meREGEX_ENDBUFF|meREGEX_MATCHWHOLE)) ;
-}
-
 #endif
 
 /* meItoa
@@ -526,9 +524,9 @@ found_ulcvar:
             }
         }
         else if(*nn == '?')
-            thisF = meAtoi(vvalue) ;
+            meRegCurr->f = meAtoi(vvalue) ;
         else if(*nn == '#')
-            thisN = meAtoi(vvalue) ;
+            meRegCurr->n = meAtoi(vvalue) ;
         else
             return mlwrite(MWABORT,(uint8 *)"[Cannot set variable %s]",vname);
         break ;
@@ -734,8 +732,8 @@ found_ulcvar:
         case EVWYSCROLL:
             if((status=meAtoi(vvalue)) < 0)
                 status = 0 ;
-            else if(curwp->w_bufp->elineno && (status >= curwp->w_bufp->elineno))
-                status = curwp->w_bufp->elineno-1 ;
+            else if(curbp->elineno && (status >= curbp->elineno))
+                status = curbp->elineno-1 ;
             if(curwp->topLineNo != status)
             {
                 curwp->topLineNo = status ;
@@ -952,7 +950,9 @@ found_ulcvar:
                 if(curbp->isWordMask != isWordMask)
                 {
                     curbp->isWordMask = isWordMask ;
+#if MAGIC
                     mereRegexClassChanged() ;
+#endif
                 }
                 break ;
             }
@@ -1067,9 +1067,11 @@ found_ulcvar:
                 varbNames.size = createVarList(&varbNames.list) ;
             varbNames.curr = 0 ;
             break ;
+#if SPELL
         case EVFINDWORDS:
             findWordsInit(vvalue) ;
             break ;
+#endif
         case EVRESULT:                      /* Result string - assignable */
             meStrcpy (resultStr, vvalue);
             break;
@@ -1166,7 +1168,9 @@ handle_namesvar:
     case EVTEMPNAME:
         mkTempName (evalResult, NULL,NULL);
         return evalResult ;
+#if SPELL
     case EVFINDWORDS:   return findWordsNext() ;
+#endif
     case EVRECENTKEYS:
         {
             int ii, jj, kk ;
@@ -1404,7 +1408,6 @@ getMacroArg(int index)
 {
     meREGISTERS *crp ;
     uint8 *oldestr, *ss ;
-    int oldF, oldN ;
     
     /* move the register pointer to the parent as any # reference
      * will be w.r.t the parent
@@ -1413,11 +1416,7 @@ getMacroArg(int index)
     if((ss=crp->execstr) == NULL)
         return NULL ;
     oldestr = execstr ;
-    oldF    = thisF ;
-    oldN    = thisN ;
     execstr = ss ;
-    thisF = crp->f ;
-    thisN = crp->n ;
     meRegCurr = crp->prev ;
     if(alarmState & meALARM_VARIABLE)
         gmaLocalRegPtr = meRegCurr ;
@@ -1427,8 +1426,6 @@ getMacroArg(int index)
         ss = getval(evalResult) ;
     }
     execstr   = oldestr ;
-    thisF     = oldF ;
-    thisN     = oldN ;
     meRegCurr = crp ;
     return ss ;
 }
@@ -1469,13 +1466,13 @@ getval(uint8 *tkn)   /* find the value of a token */
         {
             if(alarmState & meALARM_VARIABLE)
                 return tkn ;
-            return meItoa(thisN) ;
+            return meItoa(meRegCurr->n) ;
         }
         else if(tkn[1] == '?')
         {
             if(alarmState & meALARM_VARIABLE)
                 return tkn ;
-            return meItoa(thisF) ;
+            return meItoa(meRegCurr->f) ;
         }
         else if(isDigit(tkn[1]))
         {
@@ -1493,7 +1490,7 @@ getval(uint8 *tkn)   /* find the value of a token */
         }
         else if((tkn[1] == 's') && isDigit(tkn[2]))
         {
-            int ii, jj ;
+            int ii ;
             
             if(srchLastState != TRUE)
                 return abortm ;
@@ -1502,6 +1499,7 @@ getval(uint8 *tkn)   /* find the value of a token */
 #if MAGIC
             if(srchLastMagic && (ii <= mereRegexGroupNo()))
             {
+                int jj ;
                 if((jj=mereRegexGroupStart(ii)) >= 0)
                 {
                     ii=mereRegexGroupEnd(ii) - jj ;
@@ -2494,6 +2492,7 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
             meStrcpy(evalResult,arg3) ;
             return evalResult ;
         }
+#if REGSTRY
     case UFREGISTRY:
         {
             REGHANDLE reg;
@@ -2517,6 +2516,7 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
                 meStrcpy (evalResult, p);
             return evalResult;
         }
+#endif
     case UFSPRINT:                         /* Monamic function !! */
         {
             /*
@@ -2638,6 +2638,16 @@ get_flag:
                 /* absolute name - check for symbolic link */
                 if(*evalResult == '\0')
                     fileNameCorrect(arg2,evalResult,NULL) ;
+                /* if its a directory check there's an ending '/' */
+                if(ftype == meFILETYPE_DIRECTORY)
+                {
+                    uint8 *ss=evalResult+meStrlen(evalResult) ;
+                    if(ss[-1] != DIR_CHAR)
+                    {
+                        ss[0] = DIR_CHAR ;
+                        ss[1] = '\0' ;
+                    }
+                }
                 return evalResult ;
                 
             case 'd':

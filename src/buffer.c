@@ -10,7 +10,7 @@
 *
 *       Author:                 Danial Lawrence
 *
-*       Creation Date:          14/05/86 12:37          <000217.2255>
+*       Creation Date:          14/05/86 12:37          <000823.1637>
 *
 *       Modification date:      %G% : %U%
 *
@@ -380,7 +380,9 @@ swbuffer(WINDOW *wp, BUFFER *bp)        /* make buffer BP current */
         if(isWordMask != curbp->isWordMask)
         {
             isWordMask = curbp->isWordMask ;
+#if MAGIC
             mereRegexClassChanged() ;
+#endif
         }
     }
     if(bp->b_nwnd++ == 0)
@@ -737,8 +739,10 @@ bclear(register BUFFER *bp)
 #if MEUNDO
     meUndoRemove(bp) ;
 #endif
+#if FLNEXT
     meNullFree(bp->nextFile) ;
     bp->nextFile = NULL ;
+#endif
     /* Clean out the local buffer variables */
     if (bp->varList.head != NULL)
     {
@@ -762,10 +766,12 @@ bclear(register BUFFER *bp)
 	mk = nmk ;
     }
     bp->b_amark = NULL ;
+#if LCLBIND
     if(bp->bbinds != NULL)
 	meFree(bp->bbinds) ;
     bp->bbinds = NULL ;
     bp->nobbinds = 0 ;
+#endif
 #if NARROW
     if(bp->narrow != NULL)
     {
@@ -866,7 +872,9 @@ zotbuf(register BUFFER *bp, int silent) /* kill the buffer pointed to by bp */
     meFree(bp->b_linep);             /* Release header line. */
     unlinkBuffer(bp) ;
     meNullFree(bp->b_fname) ;
+#if CRYPT
     meNullFree(bp->b_key) ;
+#endif
     meNullFree(bp->modeLineStr) ;
     if(!silent)
 	/* say it went ok       */
@@ -1501,16 +1509,19 @@ invalid_global:
     }
     else if(bp != NULL)
     {
+#if MEUNDO
 	if(nn == MDUNDO)
 	    meUndoRemove(bp) ;
-	else if(nn == MDATSV)
+	else
+#endif
+            if(nn == MDATSV)
 	    bp->autotime = -1 ;
     }
     /* display new mode line */
     if(bp != NULL)
-	addModeToWindows(WFMODE) ;  /* and update ALL mode lines */
-    /* erase the junk */
-    /* mlerase(MWCLEXEC);*/
+        /* and update all buffer window mode lines */
+        addModeToBufferWindows(bp,WFMODE) ;
+    
     return TRUE ;
 }
    

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Wed Jun 23 19:56:49 1999
-;  Last Modified : <000719.0012>
+;  Last Modified : <000731.2239>
 ;
 ;  Description
 ;
@@ -375,17 +375,9 @@ set-variable %gdiff-com &cond &seq %gdiff-com "ERROR" "diff -c -w" %gdiff-com
 0 define-macro gdiff-input
     !if &seq @cck "redraw"
         @# screen-update
-        set-variable #l0 $window-line
-        set-variable #l1 $window-col
-        set-variable #l2 $window-xcl-scroll
-        set-variable #l3 $window-x-scroll
-        set-variable #l4 $window-y-scroll
+        0xce push-position
         next-window
-        set-variable $window-line #l0
-        set-variable $window-col #l1
-        set-variable $window-xcl-scroll #l2
-        set-variable $window-x-scroll #l3
-        set-variable $window-y-scroll #l4
+        pop-position
         previous-window
         0 screen-update
         !return

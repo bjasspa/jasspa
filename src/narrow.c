@@ -5,7 +5,7 @@
  *  Synopsis      : Narrow out regions of a buffer
  *  Created By    : Steven Phillips
  *  Created       : 01/01/99
- *  Last Modified : <000221.0801>
+ *  Last Modified : <000723.2038>
  *
  *  Description
  *     Narrow can narrow out or narrow to a region of text, a buffer can have
@@ -50,6 +50,8 @@
 /*---	Include files */
 #include "emain.h"
 
+#if NARROW
+
 void
 createNarrow(BUFFER *bp, LINE *slp, LINE *elp, int32 sln, int32 eln, uint16 name)
 {
@@ -82,7 +84,7 @@ createNarrow(BUFFER *bp, LINE *slp, LINE *elp, int32 sln, int32 eln, uint16 name
         pn->next = nrrw ;
     else
         bp->narrow = nrrw ;
-    if(alphaMarkSet(bp,(uint16) name,elp,0,1) != TRUE)
+    if(alphaMarkSet(bp,name,elp,0,1) != TRUE)
     {
         meFree(nrrw) ;
         return ;
@@ -373,3 +375,4 @@ narrowBuffer(int f, int n)
     }
     return TRUE ;
 }
+#endif

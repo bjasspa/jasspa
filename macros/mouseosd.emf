@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Jun 13 18:01:56 1998
-;  Last Modified : <000719.1219>
+;  Last Modified : <000730.1718>
 ;
 ;  Description     Defines mouse opened dialogs
 ;
@@ -132,10 +132,11 @@ osd 28 2  "" "&Ignore Case"          f sort-lines-ignore-case
 define-macro mouse-osd-multi
     set-variable #l0 &band $mouse-pos 15
     !if &equ #l0   0
-        ; Text window - must restore the original window
-        ; and cursor position or cut etc wont work
-        goto-window
-        goto-alpha-mark "T"
+        ; Text window - must goto the original position or cut etc wont work - must dup the position
+        0 show-region
+        set-variable #l2 $result
+        -1 push-position
+        pop-position
         !if &and &gre $mouse-x 20 &les &sub $screen-width $mouse-x 33 
             osd 27 7  "Mdw" "Sort &Lines"      28
             osd 27 9  "Mdw" "H&ilight Line"    29
@@ -146,6 +147,9 @@ define-macro mouse-osd-multi
             osd 27 9  "Md"  "H&ilight Line"    29
             osd 27 14 "Md"  "&Buffer"          20 osd-1-buffer
             osd 27 15 "Md"  "&Quick Open"      19
+        !endif
+        !if &band #l2 1
+            !force show-region
         !endif
         27 osd
     !elif &equ #l0 1
@@ -164,7 +168,9 @@ define-macro mouse-osd-multi
         ; menu line
         0 osd
     !endif
-    goto-window
+    ; goto the original window - must dup the position
+    -1 push-position
+    1 pop-position
 !emacro
 ;
 ; Menu 29 - Hilight Line
@@ -184,8 +190,9 @@ osd 29 9  ""             "&Remove " f          line-scheme
 osd 29 10 ""             "Remove &All" f       line-scheme-all
 osd 29 11 ""             "&Search " f          line-scheme-search
 define-macro mouse-osd
-    goto-window
-    goto-alpha-mark "T"
+    ; goto the original position - must dup the position
+    -1 push-position
+    pop-position
     0 osd
 !emacro
 

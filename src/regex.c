@@ -5,7 +5,7 @@
  *  Synopsis      : regex compiler and matcher.
  *  Created By    : Steven Phillips
  *  Created       : Wed Aug 11 11:35:51 1999
- *  Last Modified : <000223.1121>
+ *  Last Modified : <000723.1904>
  *
  *  Description
  *
@@ -166,6 +166,7 @@ meRegexFree(meRegex *regex) ;
 #define hexToNum(c)      ((c <= '9') ? (c^0x30)   : \
                           (c >= 'a') ? (c-'a'+10) : \
                                        (c-'A'+10))
+#define MAGIC 1
 
 #else
 
@@ -177,6 +178,8 @@ meRegexFree(meRegex *regex) ;
 #define isGraph(c)       (isPrint(c) && ((c) != ' '))
 
 #endif
+
+#if MAGIC
 
 /* NOTE - order of the items in meREGEXITEM is important,
  * meREGEXITEM_BEGBUFF must be the first non-closure appending item
@@ -1463,5 +1466,6 @@ main(int argc, char *argv[])
 }
 
 
+#endif
 #endif
 

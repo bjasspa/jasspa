@@ -10,7 +10,7 @@
  *
  *	Author:			Danial Lawrence
  *
- *	Creation Date:		10/05/91 08:27		<000322.0044>
+ *	Creation Date:		10/05/91 08:27		<000723.1839>
  *
  *	Modification date:	%G% : %U%
  *
@@ -94,6 +94,327 @@
 
 /*---	Local macro definitions */
 
+/*
+ * Move the cursor backward by "n" words. All of the details of motion are
+ * performed by the "backChar" and "forwChar" routines. Error if you try to
+ * move beyond the buffers.
+ */
+int
+backWord(int f, int n)
+{
+    if (n < 0)
+        return (forwWord(f, -n));
+    if (WbackChar(curwp, 1) == FALSE)
+        return (FALSE);
+    while (n--)
+    {
+        while (inWord() == FALSE)
+        {
+            if (WbackChar(curwp, 1) == FALSE)
+                return (FALSE);
+        }
+        while (inWord() != FALSE)
+        {
+            if (WbackChar(curwp, 1) == FALSE)
+                /* We can't move back any more cos we're at the start,
+                 * BUT as we have moved and we are in the buffers first word, 
+                 * we should succeed */
+                return TRUE ;
+        }
+    }
+    return (WforwChar(curwp, 1));
+}
+
+/*
+ * Move the cursor forward by the specified number of words. All of the motion
+ * is done by "forwChar". Error if you try and move beyond the buffer's end.
+ */
+int
+forwWord(int f, int n)
+{
+    if (n < 0)
+        return (backWord(f, -n));
+    while (n--)
+    {
+#ifdef _NFWORD
+        while (inWord() != FALSE)
+        {
+            if (WforwChar(curwp, 1) == FALSE)
+                return (FALSE);
+        }
+#endif
+        while (inWord() == FALSE)
+        {
+            if (WforwChar(curwp, 1) == FALSE)
+                return (FALSE);
+        }
+#ifndef _NFWORD
+        while (inWord() != FALSE)
+        {
+            if (WforwChar(curwp, 1) == FALSE)
+                return (FALSE);
+        }
+#endif
+    }
+    return(TRUE);
+}
+
+/*
+ * Move the cursor forward by the specified number of words. As you move,
+ * convert any characters to upper case. Error if you try and move beyond the
+ * end of the buffer. Bound to "M-U".
+ */
+int
+upperWord(int f, int n)
+{
+    register int    c;
+    
+    if (n < 0)
+        return (FALSE);
+    if((c=bchange()) != TRUE)               /* Check we can change the buffer */
+        return c ;
+    while (n--)
+    {
+        while (inWord() == FALSE) 
+        {
+            if(WforwChar(curwp, 1) == FALSE)
+                return (FALSE);
+        }
+        while (inWord() != FALSE)
+        {
+            c = lgetc(curwp->w_dotp, curwp->w_doto);
+            if (isLower(c))
+            {
+                lchange(WFMAIN);
+#if MEUNDO
+                meUndoAddRepChar() ;
+#endif
+                c = toggleCase(c) ;
+                lputc(curwp->w_dotp, curwp->w_doto, c);
+            }
+            if (WforwChar(curwp, 1) == FALSE)
+                return (FALSE);
+        }
+    }
+    return (TRUE);
+}
+
+/*
+ * Move the cursor forward by the specified number of words. As you move
+ * convert characters to lower case. Error if you try and move over the end of
+ * the buffer. Bound to "M-L".
+ */
+int
+lowerWord(int f, int n)
+{
+    register int    c;
+    
+    if (n < 0)
+        return (FALSE);
+    if((c=bchange()) != TRUE)               /* Check we can change the buffer */
+        return c ;
+    while (n--)
+    {
+        while (inWord() == FALSE) 
+        {
+            if (WforwChar(curwp, 1) == FALSE)
+                return (FALSE);
+        }
+        while (inWord() != FALSE)
+        {
+            c = lgetc(curwp->w_dotp, curwp->w_doto);
+            if (isUpper(c))
+            {
+                lchange(WFMAIN);
+#if MEUNDO
+                meUndoAddRepChar() ;
+#endif
+                c = toggleCase(c) ;
+                lputc(curwp->w_dotp, curwp->w_doto, c);
+            }
+            if (WforwChar(curwp, 1) == FALSE)
+                return (FALSE);
+        }
+    }
+    return (TRUE);
+}
+
+/*
+ * Move the cursor forward by the specified number of words. As you move
+ * convert the first character of the word to upper case, and subsequent
+ * characters to lower case. Error if you try and move past the end of the
+ * buffer. Bound to "M-C".
+ */
+int
+capWord(int f, int n)
+{
+    register int    c;
+    
+    if(n < 0)
+        return (FALSE);
+    if((c=bchange()) != TRUE)               /* Check we can change the buffer */
+        return c ;
+    while (n--)
+    {
+        while (inWord() == FALSE)
+        {
+            if (WforwChar(curwp, 1) == FALSE)
+                return (FALSE);
+        }
+        if (inWord() != FALSE) {
+            c = lgetc(curwp->w_dotp, curwp->w_doto);
+            if (isLower(c))
+            {
+                lchange(WFMAIN);
+#if MEUNDO
+                meUndoAddRepChar() ;
+#endif
+                c = toggleCase(c) ;
+                lputc(curwp->w_dotp, curwp->w_doto,c);
+            }
+            if (WforwChar(curwp, 1) == FALSE)
+                return (FALSE);
+            while (inWord() != FALSE)
+            {
+                c = lgetc(curwp->w_dotp, curwp->w_doto);
+                if (isUpper(c))
+                {
+                    lchange(WFMAIN);
+#if MEUNDO
+                    meUndoAddRepChar() ;
+#endif
+                    c = toggleCase(c) ;
+                    lputc(curwp->w_dotp, curwp->w_doto,c);
+                }
+                if (WforwChar(curwp, 1) == FALSE)
+                    return (FALSE);
+            }
+        }
+    }
+    return (TRUE);
+}
+
+/*
+ * Kill forward by "n" words. Remember the location of dot. Move forward by
+ * the right number of words. Put dot back where it was and issue the kill
+ * command for the right number of characters. Bound to "M-D".
+ */
+int
+forwDelWord(int f, int n)
+{
+    register LINE   *dotp;
+    register int    doto, delType ;
+    int32           size, lineno ;
+    
+    if(n == 0)
+        return TRUE ;
+    if (n < 0)
+        return FALSE ;
+    if(bchange() != TRUE)               /* Check we can change the buffer */
+        return ABORT ;
+    dotp   = curwp->w_dotp;
+    doto   = curwp->w_doto;
+    lineno = curwp->line_no ;
+    size = 0;
+    while (n--)
+    {
+#ifdef _NFWORD
+        if (curwp->w_doto == llength(curwp->w_dotp))
+        {
+            if (WforwChar(curwp,1) == FALSE)
+                return(FALSE);
+            ++size;
+        }
+        
+        while (inWord() != FALSE)
+        {
+            if (WforwChar(curwp,1) == FALSE)
+                return(FALSE);
+            ++size;
+        }
+        
+        while ((inWord() == FALSE) &&
+               (curwp->w_doto != llength(curwp->w_dotp)))
+        {
+            if (WforwChar(curwp, 1) == FALSE)
+                return (FALSE);
+            ++size;
+        }
+#else
+        /* inWord returns 0 if not in word - BUT if in word its return
+         * value is only defined as non-zero, so must test if 0
+         */
+        delType = (inWord() == 0) ;
+        while ((inWord() == 0) == delType) 
+        {
+            if (WforwChar(curwp, 1) == FALSE)
+                break ;
+/* return (FALSE);*/
+            ++size;
+        }
+
+#endif
+     }
+     curwp->w_dotp = dotp;
+     curwp->w_doto = doto;
+     curwp->line_no = lineno ;
+     return (ldelete(size,3));
+}
+
+/*
+ * Kill backwards by "n" words. Move backwards by the desired number of words,
+ * counting the characters. When dot is finally moved to its resting place,
+ * fire off the kill command. Bound to "M-Rubout" and to "M-Backspace".
+ */
+int
+backDelWord(int f, int n)
+{
+    uint8 delType ;
+    int32 size;
+    
+    if(n == 0)
+        return TRUE ;
+    if (n < 0)
+        return FALSE ;
+    if(bchange() != TRUE)               /* Check we can change the buffer */
+        return ABORT ;
+    if (WbackChar(curwp, 1) == FALSE)
+        return (FALSE);
+    size = 0;
+    while (n--)
+    {
+#ifdef _NFWORD
+        while (inWord() == FALSE)
+        {
+            if (WbackChar(curwp, 1) == FALSE)
+                return (FALSE);
+            ++size;
+        }
+        while (inWord() != FALSE)
+        {
+            if (WbackChar(curwp, 1) == FALSE)
+                return (FALSE);
+            ++size;
+        }
+#else
+        /* inWord returns 0 if not in word - BUT if in word its return
+         * value is only defined as non-zero, so must test if 0
+         */
+        delType = (inWord() == 0) ;
+        while ((inWord() == 0) == delType) 
+        {
+            if (WbackChar(curwp, 1) == FALSE)
+                break ;
+            ++size;
+        }
+#endif
+    }
+    if (WforwChar(curwp, 1) == FALSE)
+        return (FALSE);
+    return (ldelete(size,3));
+}
+
+#if WORDPRO
 /* Definitions for the anchor types */
 #define ANCHOR_CLEAR      0x00          /* Clear anchors */
 #define ANCHOR_POINT      0x01          /* Remember point */
@@ -494,9 +815,12 @@ wrapWord(int f, int n)
             return TRUE ;
     }
     off = llength(curwp->w_dotp) - off ;
+#if CFENCE
     if(meModeTest(curwp->w_bufp->b_mode,MDCMOD))
         cnt = cinsert() ;
-    else if(meModeTest(curwp->w_bufp->b_mode,MDINDEN))
+    else
+#endif
+    if(meModeTest(curwp->w_bufp->b_mode,MDINDEN))
         cnt = winsert() ;
     else
     {
@@ -513,327 +837,6 @@ wrapWord(int f, int n)
     return cnt ;
 }
 
-
-/*
- * Move the cursor backward by "n" words. All of the details of motion are
- * performed by the "backChar" and "forwChar" routines. Error if you try to
- * move beyond the buffers.
- */
-int
-backWord(int f, int n)
-{
-    if (n < 0)
-        return (forwWord(f, -n));
-    if (WbackChar(curwp, 1) == FALSE)
-        return (FALSE);
-    while (n--)
-    {
-        while (inWord() == FALSE)
-        {
-            if (WbackChar(curwp, 1) == FALSE)
-                return (FALSE);
-        }
-        while (inWord() != FALSE)
-        {
-            if (WbackChar(curwp, 1) == FALSE)
-                /* We can't move back any more cos we're at the start,
-                 * BUT as we have moved and we are in the buffers first word, 
-                 * we should succeed */
-                return TRUE ;
-        }
-    }
-    return (WforwChar(curwp, 1));
-}
-
-/*
- * Move the cursor forward by the specified number of words. All of the motion
- * is done by "forwChar". Error if you try and move beyond the buffer's end.
- */
-int
-forwWord(int f, int n)
-{
-    if (n < 0)
-        return (backWord(f, -n));
-    while (n--)
-    {
-#ifdef _NFWORD
-        while (inWord() != FALSE)
-        {
-            if (WforwChar(curwp, 1) == FALSE)
-                return (FALSE);
-        }
-#endif
-        while (inWord() == FALSE)
-        {
-            if (WforwChar(curwp, 1) == FALSE)
-                return (FALSE);
-        }
-#ifndef _NFWORD
-        while (inWord() != FALSE)
-        {
-            if (WforwChar(curwp, 1) == FALSE)
-                return (FALSE);
-        }
-#endif
-    }
-    return(TRUE);
-}
-
-/*
- * Move the cursor forward by the specified number of words. As you move,
- * convert any characters to upper case. Error if you try and move beyond the
- * end of the buffer. Bound to "M-U".
- */
-int
-upperWord(int f, int n)
-{
-    register int    c;
-    
-    if (n < 0)
-        return (FALSE);
-    if((c=bchange()) != TRUE)               /* Check we can change the buffer */
-        return c ;
-    while (n--)
-    {
-        while (inWord() == FALSE) 
-        {
-            if(WforwChar(curwp, 1) == FALSE)
-                return (FALSE);
-        }
-        while (inWord() != FALSE)
-        {
-            c = lgetc(curwp->w_dotp, curwp->w_doto);
-            if (isLower(c))
-            {
-                lchange(WFMAIN);
-#if MEUNDO
-                meUndoAddRepChar() ;
-#endif
-                c = toggleCase(c) ;
-                lputc(curwp->w_dotp, curwp->w_doto, c);
-            }
-            if (WforwChar(curwp, 1) == FALSE)
-                return (FALSE);
-        }
-    }
-    return (TRUE);
-}
-
-/*
- * Move the cursor forward by the specified number of words. As you move
- * convert characters to lower case. Error if you try and move over the end of
- * the buffer. Bound to "M-L".
- */
-int
-lowerWord(int f, int n)
-{
-    register int    c;
-    
-    if (n < 0)
-        return (FALSE);
-    if((c=bchange()) != TRUE)               /* Check we can change the buffer */
-        return c ;
-    while (n--)
-    {
-        while (inWord() == FALSE) 
-        {
-            if (WforwChar(curwp, 1) == FALSE)
-                return (FALSE);
-        }
-        while (inWord() != FALSE)
-        {
-            c = lgetc(curwp->w_dotp, curwp->w_doto);
-            if (isUpper(c))
-            {
-                lchange(WFMAIN);
-#if MEUNDO
-                meUndoAddRepChar() ;
-#endif
-                c = toggleCase(c) ;
-                lputc(curwp->w_dotp, curwp->w_doto, c);
-            }
-            if (WforwChar(curwp, 1) == FALSE)
-                return (FALSE);
-        }
-    }
-    return (TRUE);
-}
-
-/*
- * Move the cursor forward by the specified number of words. As you move
- * convert the first character of the word to upper case, and subsequent
- * characters to lower case. Error if you try and move past the end of the
- * buffer. Bound to "M-C".
- */
-int
-capWord(int f, int n)
-{
-    register int    c;
-    
-    if(n < 0)
-        return (FALSE);
-    if((c=bchange()) != TRUE)               /* Check we can change the buffer */
-        return c ;
-    while (n--)
-    {
-        while (inWord() == FALSE)
-        {
-            if (WforwChar(curwp, 1) == FALSE)
-                return (FALSE);
-        }
-        if (inWord() != FALSE) {
-            c = lgetc(curwp->w_dotp, curwp->w_doto);
-            if (isLower(c))
-            {
-                lchange(WFMAIN);
-#if MEUNDO
-                meUndoAddRepChar() ;
-#endif
-                c = toggleCase(c) ;
-                lputc(curwp->w_dotp, curwp->w_doto,c);
-            }
-            if (WforwChar(curwp, 1) == FALSE)
-                return (FALSE);
-            while (inWord() != FALSE)
-            {
-                c = lgetc(curwp->w_dotp, curwp->w_doto);
-                if (isUpper(c))
-                {
-                    lchange(WFMAIN);
-#if MEUNDO
-                    meUndoAddRepChar() ;
-#endif
-                    c = toggleCase(c) ;
-                    lputc(curwp->w_dotp, curwp->w_doto,c);
-                }
-                if (WforwChar(curwp, 1) == FALSE)
-                    return (FALSE);
-            }
-        }
-    }
-    return (TRUE);
-}
-
-/*
- * Kill forward by "n" words. Remember the location of dot. Move forward by
- * the right number of words. Put dot back where it was and issue the kill
- * command for the right number of characters. Bound to "M-D".
- */
-int
-forwDelWord(int f, int n)
-{
-    register LINE   *dotp;
-    register int    doto, delType ;
-    int32           size, lineno ;
-    
-    if(n == 0)
-        return TRUE ;
-    if (n < 0)
-        return FALSE ;
-    if(bchange() != TRUE)               /* Check we can change the buffer */
-        return ABORT ;
-    dotp   = curwp->w_dotp;
-    doto   = curwp->w_doto;
-    lineno = curwp->line_no ;
-    size = 0;
-    while (n--)
-    {
-#ifdef _NFWORD
-        if (curwp->w_doto == llength(curwp->w_dotp))
-        {
-            if (WforwChar(curwp,1) == FALSE)
-                return(FALSE);
-            ++size;
-        }
-        
-        while (inWord() != FALSE)
-        {
-            if (WforwChar(curwp,1) == FALSE)
-                return(FALSE);
-            ++size;
-        }
-        
-        while ((inWord() == FALSE) &&
-               (curwp->w_doto != llength(curwp->w_dotp)))
-        {
-            if (WforwChar(curwp, 1) == FALSE)
-                return (FALSE);
-            ++size;
-        }
-#else
-        /* inWord returns 0 if not in word - BUT if in word its return
-         * value is only defined as non-zero, so must test if 0
-         */
-        delType = (inWord() == 0) ;
-        while ((inWord() == 0) == delType) 
-        {
-            if (WforwChar(curwp, 1) == FALSE)
-                break ;
-/* return (FALSE);*/
-            ++size;
-        }
-
-#endif
-     }
-     curwp->w_dotp = dotp;
-     curwp->w_doto = doto;
-     curwp->line_no = lineno ;
-     return (ldelete(size,3));
-}
-
-/*
- * Kill backwards by "n" words. Move backwards by the desired number of words,
- * counting the characters. When dot is finally moved to its resting place,
- * fire off the kill command. Bound to "M-Rubout" and to "M-Backspace".
- */
-int
-backDelWord(int f, int n)
-{
-    uint8 delType ;
-    int32 size;
-    
-    if(n == 0)
-        return TRUE ;
-    if (n < 0)
-        return FALSE ;
-    if(bchange() != TRUE)               /* Check we can change the buffer */
-        return ABORT ;
-    if (WbackChar(curwp, 1) == FALSE)
-        return (FALSE);
-    size = 0;
-    while (n--)
-    {
-#ifdef _NFWORD
-        while (inWord() == FALSE)
-        {
-            if (WbackChar(curwp, 1) == FALSE)
-                return (FALSE);
-            ++size;
-        }
-        while (inWord() != FALSE)
-        {
-            if (WbackChar(curwp, 1) == FALSE)
-                return (FALSE);
-            ++size;
-        }
-#else
-        /* inWord returns 0 if not in word - BUT if in word its return
-         * value is only defined as non-zero, so must test if 0
-         */
-        delType = (inWord() == 0) ;
-        while ((inWord() == 0) == delType) 
-        {
-            if (WbackChar(curwp, 1) == FALSE)
-                break ;
-            ++size;
-        }
-#endif
-    }
-    if (WforwChar(curwp, 1) == FALSE)
-        return (FALSE);
-    return (ldelete(size,3));
-}
-#if	WORDPRO
 
 /* 
  * removeTabs

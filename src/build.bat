@@ -8,9 +8,9 @@ if "%1" == "-m"    goto build_mkfl
 if "%1" == "-h"    goto build_help
 if "%1" == "-C"    set OPTIONS=clean
 if "%1" == "-d"    set OPTIONS=med
-if "%1" == "-n"    set OPTIONS=mec
+if "%1" == "-n"    set OPTIONS=men
 if "%1" == "-u"    set OPTIONS=meu
-if "%1" == "-nu"   set OPTIONS=mecu
+if "%1" == "-nu"   set OPTIONS=menu
 if "%1" == "-S"    set OPTIONS=spotless
 shift
 goto build_option
@@ -102,8 +102,8 @@ echo            win32v5.mak  Win32 build using MS VC version 5
 echo            win32v6.mak  Win32 build using MS VC version 6 (or 98)
 echo            win32sv2.mak Win32s build (for Win 3.xx) using MS VC version 2
 echo            win32sv4.mak Win32s build (for Win 3.xx) using MS VC version 4
-echo     -n   : Build win32 console version (produces mec32.exe)
-echo     -nu  : Build win32 console and url version (produces mecu32.exe)
+echo     -n   : Build win32 console version (produces men32.exe)
+echo     -nu  : Build win32 console and url version (produces menu32.exe)
 echo     -S   : Build clean spotless.
 echo     -u   : Build win32 url version (produces meu32.exe)
 

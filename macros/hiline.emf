@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Jon Green
 ;  Created       : Thu Feb 11 01:51:42 1999
-;  Last Modified : <000719.0012>
+;  Last Modified : <000730.1425>
 ;
 ;  Description   : Hilighting line functions.
 ;
@@ -53,7 +53,7 @@
     !endif
     ; Determine the markup region on the screen
     0 show-region
-    !if &equ &band $result 0x6 0x6
+    !if &equ &band $result 0x7 0x7
         set-alpha-mark "."
         ; Goto start of region and get the extents.
         -2 show-region

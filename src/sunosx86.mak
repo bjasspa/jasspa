@@ -6,7 +6,7 @@
 #  Description	 : Make file for Sunos on x86
 #  Created       : Sat Jan 24 00:01:40 1998
 #
-#  Last Modified : <000309.2227>
+#  Last Modified : <000822.2102>
 #
 #  Notes
 #	Run "make -f sunosx86.mak"      for optimised build produces ./me
@@ -27,19 +27,26 @@ INSTPROGFLAGS =	-n -o root -g users -m 0775
 RM            = rm -f
 CC            = gcc
 LD            = $(CC)
-STRIP		  =	strip
+STRIP         =	strip
 CDEBUG        =	-g  -Wall
 COPTIMISE     =	-O3 -DNDEBUG=1 -Wall
 CDEFS         = -D_JASSPA_ME -D_SUNOS_X86 -D_UNIX -I.
-LIBS          = -lX11 -ltermcap -lxnet
-LDFLAGS       =	-L /usr/X11R6/lib
+LIBS          = -ltermcap -lxnet
+LDFLAGS       =	
 INSTALL       =	install
+XLIBS         = -L /usr/X11R6/lib -lX11
+# definition for the console only build
+CCONSOLE      = -D_NO_XTERM
 #
 # Rules
-.SUFFIXES: .c .o .od
+.SUFFIXES: .c .o .on .od
 
 .c.o:	
 	$(CC) $(COPTIMISE) $(CDEFS) -c $<
+
+.c.on:
+	$(CC) $(COPTIMISE) $(CDEFS) $(CCONSOLE) $(MAKECDEFS) -o _$*.o -c $<
+	@mv _$*.o $@
 
 .c.od:	
 	$(CC) $(CDEBUG) $(CDEFS) -o _$*.o -c $<
@@ -63,6 +70,10 @@ STDOBJ	= $(STDSRC:.c=.o)
 PLTOBJ  = $(PLTSRC:.c=.o)
 OBJ	= $(STDOBJ) $(PLTOBJ)
 
+NSTDOBJ	= $(STDSRC:.c=.on)
+NPLTOBJ = $(PLTSRC:.c=.on)
+NOBJ	= $(NSTDOBJ) $(NPLTOBJ)
+
 DSTDOBJ	= $(STDSRC:.c=.od)	
 DPLTOBJ = $(PLTSRC:.c=.od)
 DOBJ	= $(DSTDOBJ) $(DPLTOBJ)
@@ -75,24 +86,30 @@ install: me
 	@echo "install done"
 
 clean:
-	$(RM) me *.o *.od core
+	$(RM) me *.o *.on *.od core
 
 spotless: clean
 	$(RM) tags *~
 
 me:	$(OBJ)
 	$(RM) $@
-	$(LD) $(LDFLAGS) -o $@ $(OBJ) $(LIBS)
+	$(LD) $(LDFLAGS) -o $@ $(OBJ) $(XLIBS) $(LIBS)
 	$(STRIP) $@
 
+men:	$(NOBJ)
+	$(RM) $@
+	$(LD) $(LDFLAGS) -o $@ $(NOBJ) $(LIBS)
 
 med:	$(DOBJ)
 	$(RM) $@
-	$(LD) $(LDFLAGS) -o $@ $(DOBJ) $(LIBS)
+	$(LD) $(LDFLAGS) -o $@ $(DOBJ) $(XLIBS) $(LIBS)
 #
 # Dependancies
 $(STDOBJ): $(STDHDR)
 $(PLTOBJ): $(STDHDR) $(PLTHDR)
+
+$(NSTDOBJ): $(STDHDR)
+$(NPLTOBJ): $(STDHDR) $(PLTHDR)
 
 $(DSTDOBJ): $(STDHDR)
 $(DPLTOBJ): $(STDHDR) $(PLTHDR)

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : 1998
-;  Last Modified : <991109.1610>
+;  Last Modified : <000824.2156>
 ;
 ;  Description   : Command-line macro for creating a macros (emf) tags file
 ;
@@ -17,9 +17,9 @@
 ;  Copyright (c) 1998-99 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; options r - recurse, a - append, m - multiple links to a tag
-set-variable %tag-option    &cond &exi %tag-option    %tag-option    ""
-set-variable %tag-filemask  &cond &exi %tag-filemask  %tag-filemask  ":*.emf:"
-set-variable %tag-ignoredir &cond &exi %tag-ignoredir %tag-ignoredir ":SCCS/:CVS/:"
+set-variable %tag-option   &cond &exi %tag-option   %tag-option   ""
+set-variable %tag-filemask &cond &exi %tag-filemask %tag-filemask ":*.emf:"
+set-variable %tag-ignore   &cond &exi %tag-ignore   %tag-ignore   ":SCCS/:CVS/:"
 
 set-char-mask "2" "-$&#!%:@"
 
@@ -70,31 +70,34 @@ define-macro emftags-parse-tags
 !emacro
     
 define-macro emftags-process-buffers
-    !while &not &iseq $buffer-bname "tags"
-        !if &bmod "dir"
-            set-variable #l0 $buffer-bname
-            set-variable #l1 $buffer-fname
-            0 delete-buffer #l0
-            !if &not &lfind %tag-ignoredir #l0
-                emftags-process-directory #l1
-            !endif
+    !repeat
+        set-variable #l0 $buffer-bname
+        !if &xse #l0 "^.*<[0-9]*>$"
+            set-variable #l1 &lef #l0 &sub &rsin "<" #l0 1
+        !else
+            set-variable #l1 #l0
+        !endif
+        !if &iseq #l1 "tags"
+            !return
+        !elif &lfind %tag-ignore #l1
+        !elif &bmod "dir"
+            set-variable #l2 $buffer-fname
+            set-variable #l3 0
+            !while &not &seq &set #l4 &lget %tag-filemask &inc #l3 1 ""
+                !force find-file &cat #l2 #l4 
+            !done
         !else
             beginning-of-buffer
-            emftags-add-file
-            0 delete-buffer $buffer-bname
+            !force emftags-add-file
+            !if &not $status
+                ml-write &spr "[Warning: emftags-add-file failed on \"%s\"]" $buffer-fname
+                !bell
+                ;set-variable #l9 @cq
+            !endif
         !endif
-    !done
+        0 delete-buffer #l0
+    !until 0
 !emacro
-
-define-macro emftags-process-directory
-    set-variable #l0 @1
-    set-variable #l1 0
-    !while &not &seq &set #l2 &lget %tag-filemask &inc #l1 1 ""
-        !force find-file &cat #l0 #l2 
-        emftags-process-buffers
-    !done
-!emacro
-
 
 define-macro emftags
     !if &seq &lget %tag-filemask 1 ""
@@ -124,10 +127,9 @@ define-macro emftags
     1 buffer-mode "exact"
     next-window
     !if &iseq $buffer-bname "tags"
-        emftags-process-directory #g2
-    !else
-        emftags-process-buffers
+        !force find-file "."
     !endif
+    emftags-process-buffers
     emftags-parse-tags
 !emacro
   

@@ -1,7 +1,7 @@
 /*
  *	SCCS:		%W%		%G%		%U%
  *
- *	Last Modified :	<000630.2045>
+ *	Last Modified :	<000723.1931>
  *
  *	INPUT:	Various input routines for MicroEMACS 3.7
  *		written by Daniel Lawrence
@@ -769,7 +769,9 @@ createCommList(uint8 ***listPtr, int noHidden)
 }
 
 
+#if LCLBIND
 uint8 oldUseMlBinds ;
+#endif
 uint8 **mlgsStrList ;
 int    mlgsStrListSize ;
 static WINDOW *mlgsOldCwp=NULL ;
@@ -781,7 +783,9 @@ static void
 mlfreeList(int option, int noStrs, uint8 **strList)
 {
     mlStatus = MLSTATUS_CLEAR ;
+#if LCLBIND
     useMlBinds = oldUseMlBinds ;
+#endif
     if(mlgsStoreBuf != NULL)
     {
         meFree(mlgsStoreBuf) ;
@@ -904,9 +908,13 @@ uint8 *compNoMch    = (uint8 *)" [No match]" ;
 uint8 *compNoExp    = (uint8 *)" [No expansion]" ;
 uint8 *compFailComp = (uint8 *)" [Failed to create]" ;
 
+#if MEOSD
 #define mlgsDisp(prom,buf,contstr,ipos) \
 ((mlStatus & MLSTATUS_POSOSD) ? osdDisp(buf,contstr,ipos):mlDisp(prom,buf,contstr,ipos))
-
+#else
+#define mlgsDisp(prom,buf,contstr,ipos) \
+(mlDisp(prom,buf,contstr,ipos))
+#endif
 /* prompt - prompt associated with what we're typing         */
 /* option - bit field which modifies our behaviour slightly  */
 /* defnum - the default no. in history (0 = no default)      */
@@ -1012,8 +1020,10 @@ mlgetstring(uint8 *prompt, int option, int defnum, uint8 *buf, int nbuf)
         ipos = ilen = 0 ;
         buf[0] = '\0' ;
     }
+#if LCLBIND
     oldUseMlBinds = useMlBinds ;
     useMlBinds = 1 ;
+#endif
     if((mlgsCursorState=cursorState) < 0)
         showCursor(FALSE,1) ;
     for (cont_flag = 1; cont_flag != 0;)
@@ -1263,14 +1273,15 @@ input_expand:
             if(mlStatus & MLSTATUS_NINPUT)
             {
                 ii = ipos ;
-                while(ii && (buf[ii] != meNLCHAR))
-                    ii-- ;
-                if(ii)
+                while((--ii >= 0) && (buf[ii] != meNLCHAR))
+                    ;
+                if(ii >= 0)
                 {
                     int jj ;
                     jj = ipos - ii ;
                     ipos = ii ;
-                    while(ii-- && (buf[ii] != meNLCHAR))
+                    /* work out the new line offset */
+                    while((--ii >= 0) && (buf[ii] != meNLCHAR))
                         ;
                     if((ii+jj) < ipos)
                         ipos = ii+jj ;
@@ -1642,12 +1653,14 @@ mlgs_prevhist:
                (cc == (ME_SPECIAL|SKEY_mouse_pick_2)) ||
                (cc == (ME_SPECIAL|SKEY_mouse_pick_3)) )
             {
+#if MEOSD
                 if(mlStatus & MLSTATUS_POSOSD)
                 {
                     if(osdMouseContextChange(1))
                         cont_flag = 0;
                 }
                 else
+#endif
                     mlHandleMouse(NULL,0,0) ;
             }
             /* a drop event */

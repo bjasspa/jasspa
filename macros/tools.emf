@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips & Jon Green
 ;  Created       : Sat Jul 18 14:58:08 1998
-;  Last Modified : <000719.0013>
+;  Last Modified : <000825.0723>
 ;
 ;  Description   : Compile, grep and macro to wrap the diff utility.
 ;
@@ -12,40 +12,24 @@
 ;
 ;  Copyright (c) 1998 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-!if &seqal .hilight.diff "ERROR"
-    set-variable .hilight.diff  &pinc .hilight.next 1
-    set-variable .hilight.gdiff &pinc .hilight.next 1
-    ; Once only. Add the default diff command line.
-    !if &seq %diff-com "ERROR"
-        ; Assume GNU diff utility - probably the best under all platforms !!.
-        ;set-variable %diff-com "diff -c -w"
-        ; Standard diff utility 
-        set-variable %diff-com "diff"
-    !endif
+
+; One off set up of tools variables.
+!if &seq %tool-null-file "ERROR"
     !if &band $system 0x080
         set-variable %tool-null-file "/dev/null"
     !else
         set-variable %tool-null-file &spr "\"%s\"" &find "null" ""
     !endif
+    ; Once only. Add the default diff command line.
+    !if &seq %diff-com "ERROR"
+        ; Assume GNU diff utility - probably the best under all platforms !!.
+        ;set-variable %diff-com "diff -c -w"
+        ; Standard diff utility
+        set-variable %diff-com "diff"
+    !endif
 !endif
 
-add-file-hook "*compile* *grep* *diff*" fhook-ipipe
-
-; Gnu diff utility, uses --context
-0 hilight .hilight.gdiff 0                $global-scheme
-hilight .hilight.gdiff 0x102 "!"          .scheme.no1
-hilight .hilight.gdiff 0x102 "+"          .scheme.no1
-hilight .hilight.gdiff 0x102 "-"          .scheme.no1
-hilight .hilight.gdiff 0x102 "*\\*\\*\\*" .scheme.no2
-hilight .hilight.gdiff 0x102 "*\\*\\* "   .scheme.no2
-hilight .hilight.gdiff 0x102 "----"       .scheme.prepro
-hilight .hilight.gdiff 0x102 "--- "       .scheme.prepro
-; Regular diff utility. May be a bit too colored !!
-0 hilight .hilight.diff 0                 $global-scheme
-hilight .hilight.diff 0x102 "<"           .scheme.no2
-hilight .hilight.diff 0x102 ">"           .scheme.no1
-hilight .hilight.diff 0x102 "-"           .scheme.prepro
-hilight .hilight.diff 0x102 "[[:digit:]]" .scheme.no1
+add-file-hook "*compile* *grep*" fhook-ipipe
 
 0 define-macro mouse-get-next-line
     set-cursor-to-mouse
@@ -131,14 +115,7 @@ define-macro diff
         set-variable #l1 @ml04 "New File"
     !endif
     4 ipipe-shell-command &spr "%s \"%s\" \"%s\"" %diff-com #l0 #l1 "*diff*"
-    popup-window  "*diff*"
-    !if &sin " --context" %diff-com
-        set-variable $buffer-hilight .hilight.gdiff
-    !elif &sin " -c" %diff-com
-        set-variable $buffer-hilight .hilight.gdiff
-    !else
-        set-variable $buffer-hilight .hilight.diff
-    !endif
+    !force popup-window  "*diff*"
 !emacro
 
 define-macro diff-changes
@@ -256,9 +233,9 @@ define-macro execute-tool
     !endif
 !emacro
 
-; uniq - As per the unix command, removes duplicated lines in a 
-; sorted region. Operates about point and mark. 
-; Jon. Added 99/12/11; missing from our toolset. 
+; uniq - As per the unix command, removes duplicated lines in a
+; sorted region. Operates about point and mark.
+; Jon. Added 99/12/11; missing from our toolset.
 define-macro uniq
     set-variable #l0 $window-line
     set-alpha-mark "t"
@@ -270,11 +247,11 @@ define-macro uniq
     !endif
     beginning-of-line
     set-variable #l1 @wl
-    !force forward-line 
+    !force forward-line
     ; Check for end of buffer.
     !if &not $status
         goto-alpha-mark "t"
-        !return 
+        !return
     !endif
     ; Check the remaining lines.
     !while &less $window-line #l0
@@ -283,10 +260,10 @@ define-macro uniq
             set-variable #l0 &sub #l0 1
         !else
             set-variable #l1 @wl
-            !force forward-line 
+            !force forward-line
             !if &not $status
                 goto-alpha-mark "t"
-                !return 
+                !return
             !endif
         !endif
     !done
@@ -300,20 +277,12 @@ define-macro reread-file
         !bell
         !abort
     !endif
-    set-variable #l7 $window-line
-    set-variable #l8 $window-col
-    set-variable #l9 &sub $window-line $window-y-scroll
-    end-of-buffer
-    !if &equ #l7 $window-line
-        set-variable #l7 0
-    !endif
+    0xce push-position
+    ; are we at the end of the buffer?
+    set-variable #l7 &seq @wc ""
     read-file $buffer-fname @mna
+    pop-position
     !if #l7
-        !force #l7 goto-line
-        set-variable $window-col #l8
-    !else
         end-of-buffer
     !endif
-    set-variable $window-y-scroll &sub $window-line #l9
 !emacro
-

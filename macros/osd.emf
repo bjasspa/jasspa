@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Jon Green
 ;  Created       : Sat Jul 26 10:23:04 1997
-;  Last Modified : <000719.0012>
+;  Last Modified : <000826.1122>
 ;
 ;  Description   : OSD - On Screen Display macros.
 ;                  Controls the set up of the menus and screen overlays.
@@ -311,7 +311,7 @@ osd 3  0  "b"
 osd 3  10 ""  "&Search         C-s"      1 osd-sar
 osd 3  20 ""  "&Replace        esc C-r"  2 osd-sar
 osd 3  30 "-"
-osd 3  35 ""  "&Hilight Search"          f line-scheme-search
+osd 3  35 ""  "&Hilight Search"          3 osd-sar
 osd 3  40 ""  "Goto &Line      esc g"    f osd-goto-line
 osd 3  50 ""  "Goto &Fence     esc C-i"  f goto-matching-fence
 osd 3  60 ""  "Set &Bookmark   C-x C-a"  f set-alpha-mark

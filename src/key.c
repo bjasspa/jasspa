@@ -12,7 +12,7 @@
 *
 *	Creation Date:		02/12/91
 *
-*	Modification date:	%G%		<000107.1959>
+*	Modification date:	%G%		<000723.1912>
 *
 *	Current rev:		%I%
 *
@@ -134,6 +134,7 @@ try_again:
      */
     if(code & ME_ALT)
     {
+#if MEOSD
         if((meSystemCfg & meSYSTEM_ALTMENU) &&
            ((code & (ME_SPECIAL|ME_PREFIX_MASK)) == 0) &&
            ((status = osdMainMenuCheckKey(code & 0xff)) != 0))
@@ -142,6 +143,7 @@ try_again:
             *arg = (uint32) (status+0x80000000) ;
             return CK_OSD ;
         }
+#endif
         if((meSystemCfg & meSYSTEM_ALTPRFX1) &&
            ((code & ME_PREFIX_MASK) == 0))
         {

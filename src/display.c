@@ -12,7 +12,7 @@
 *
 *	Creation Date:		29/04/91 09:13
 *
-*	Modification date:	%G% : %U%	<000625.1430>
+*	Modification date:	%G% : %U%	<000723.2038>
 *
 *	Current rev:		%I%
 *
@@ -469,10 +469,12 @@ windCurLineOffsetEval(WINDOW *wp)
     }
     /* store dotp as the last line done */
     wp->curLineOff->l_fp = wp->w_dotp ;
+#if HILIGHT
     if((wp->w_bufp->hiLight != 0) &&
        (hilights[wp->w_bufp->hiLight]->type & HFRPLCDIFF))
         hilightCurLineOffsetEval(wp) ;
     else
+#endif
     {
         register uint8 cc, *ss, *off ;
         register int pos, ii ;
@@ -567,7 +569,6 @@ updCursor(register WINDOW *wp)
         }
     }
 
-    wp->w_sccol = (uint16) ii;             /* Set the cursor column */
     mwRow = wp->firstRow + (wp->line_no - wp->topLineNo) ;
     mwCol = wp->firstCol + ii ;
     if(wp->w_scscroll != (int) jj)         /* Screen scroll correct ?? */
@@ -701,6 +702,7 @@ updateline(register int row, register VIDEO *vp1, WINDOW *window)
         if(vp1->line->l_flag & LNSMASK)
         {
             scheme = window->w_bufp->lscheme[vp1->line->l_flag & LNSMASK] ;
+#if HILIGHT
             /* We have to assume this line is an exception and the hilno & bracket
              * for the next line should be what this line would have been */
             if(window->w_bufp->hiLight &&
@@ -710,6 +712,7 @@ updateline(register int row, register VIDEO *vp1, WINDOW *window)
                 vp1[1].hilno = vp1[0].hilno ;
                 vp1[1].bracket = vp1[0].bracket ;
             }
+#endif
             goto hideLineJump ;
         }
 #if HILIGHT
@@ -1332,8 +1335,10 @@ updateWindow(WINDOW *wp)
                 vptr->endp = wp->numTxtCols ;
             vptr->wind = wp ;
             vptr->line = lp ;
+#if HILIGHT
             vptr[1].hilno = bp->hiLight ;
             vptr[1].bracket = NULL ;
+#endif
         }
         else if((lp->l_flag & LNCHNG) ||
                 (vptr->line != lp))
@@ -2073,10 +2078,12 @@ screenUpdate(int f, int n)
     }
     else
     {
+#if MEOSD
         if(osdDisplayHd != NULL)
             /* else we must store any osd dialogs */
             osdStoreAll() ;
-
+#endif
+        
         /* if the screen has been poked then fix it */
         if (poke_flag)                      /* Screen been poked ??           */
             pokeUpdate();                   /* Yes - determine screen changes */
@@ -2094,10 +2101,11 @@ screenUpdate(int f, int n)
         }
     }
 #endif
+#if MEOSD
     /* Does the menu line need updating? if so do it! */
     if((TTsrow > 0) && (vvideo.video[0].flag & VFCHNGD))
         osdMainMenuUpdate(n) ;
-
+#endif
     /* update any windows that need refreshing */
     for (wp = wheadp; wp != NULL; wp = wp->w_wndp)
     {
@@ -2148,10 +2156,11 @@ screenUpdate(int f, int n)
         updateline(TTnrow,vvideo.video+TTnrow,NULL) ;
         vvideo.video[TTnrow].flag &= ~VFCHNGD ;
     }
+#if MEOSD
     /* If we are in osd then update the osd menus */
     if(osdDisplayHd != NULL)
         osdRestoreAll(n) ;
-
+#endif
     /* update the cursor and flush the buffers */
     resetCursor() ;
 

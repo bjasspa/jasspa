@@ -12,7 +12,7 @@
  *
  *	Creation Date:		07/05/85 08:19		
  *
- *	Modification date:	<000112.1831>
+ *	Modification date:	<000723.1906>
  *
  *	Current rev:		10.1
  *
@@ -1682,14 +1682,16 @@ huntForw(int f, int n)
     if(srchPat[0] == '\0')
         return mlwrite(MWABORT,(uint8 *)"[No pattern set]");
     
+#if MAGIC
     /* if magic the recompile the search string */
     if(srchLastMagic && (mere_compile_pattern(srchPat) != meREGEX_OKAY))
         return ABORT ;
+#endif
     
     /* Search for the pattern... */
     do
     {
-#if	MAGIC
+#if MAGIC
         if(srchLastMagic)
             status = mere_scanner(FORWARD, PTEND, &n, NULL);
         else
@@ -1732,11 +1734,16 @@ huntBack(int f, int n)
     if(srchPat[0] == '\0')
         return mlwrite(MWABORT,(uint8 *)"[No pattern set]");
     
-    /* if magic the recompile the search string */
-    if(!srchLastMagic)
+#if MAGIC
+    if(srchLastMagic)
+    {
+        /* if magic then recompile the search string */
+        if(mere_compile_pattern(srchPat) != meREGEX_OKAY)
+            return ABORT ;
+    }
+    else
+#endif
         rvstrcpy(srchPat);
-    else if(mere_compile_pattern(srchPat) != meREGEX_OKAY)
-        return ABORT ;
     
     /* Go search for it... */
     do

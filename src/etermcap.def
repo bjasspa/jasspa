@@ -9,7 +9,7 @@
  *  Object Name   : etermcap.h
  *  Created By    : Jon Green
  *  Create Date   : Mon Mar 6 21:19:27 2000
- *  Last Modified : <20000718.2345>
+ *  Last Modified : <20000822.2108>
  *
  *  Description   : Define all of the TERMCAP codes that we use in the 
  *                  system in the following table. We retreive the codes
@@ -109,13 +109,12 @@ TCAP_STRING(TCAPrmul, 'u','e','\0')
 #endif
 
 #if COLOR
-#ifndef _NOTPARM
 /* set_a_background/setab/AB/Set background color using ANSI escape */
 TCAP_STRING(TCAPsetab, 'A','B','\0')
 
 /* set_a_foreground/setaf/AF/Set foreground color using ANSI escape */
 TCAP_STRING(TCAPsetaf, 'A','F','\0')
-#endif
+
 /* orig_pair/op/op/Set default color-pair to the original one */
 TCAP_STRING(TCAPop, 'o','p','\0')
 

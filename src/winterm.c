@@ -5,7 +5,7 @@
  * Synopsis      : Win32 platform support
  * Created By    : Jon Green
  * Created       : 21/12/1996
- * Last Modified : <000625.1423>
+ * Last Modified : <000723.2004>
  *
  * Description
  *
@@ -146,20 +146,6 @@ extern LINE   *mline;                   /* Pointer to the message line */
 #define colToClient(x) ((eCellMetrics.cell.sizeX * (x))+eCellMetrics.offsetX)
 #define clientToRow(y) (((y) - eCellMetrics.offsetY) / eCellMetrics.cell.sizeY)
 #define clientToCol(x) (((x) - eCellMetrics.offsetX) / eCellMetrics.cell.sizeX)
-
-/* Cursor definitions  */
-static uint8 meCurCursor=0 ;
-static HCURSOR meCursors[meCURSOR_COUNT]={NULL,NULL,NULL,NULL,NULL,NULL,NULL} ;
-static LPCTSTR meCursorName[meCURSOR_COUNT]=
-{
-    IDC_ARROW,
-    IDC_ARROW,
-    IDC_IBEAM,
-    IDC_CROSS,
-    IDC_UPARROW,
-    IDC_WAIT,
-    IDC_NO
-} ;
 
 /* Define the default search sections in the .ini file */
 static char *iniSections [] =
@@ -336,6 +322,20 @@ static uint16 mouseKeys[8] = { 0, 1, 2, 0, 3, 0, 0, 0 } ;
 
 #define mouseHide() ((mouseState & MOUSE_STATE_VISIBLE) ? (SetCursor(NULL),(mouseState &= ~MOUSE_STATE_VISIBLE)):0)
 #define mouseShow() ((mouseState & MOUSE_STATE_VISIBLE) ? 0:(SetCursor(meCursors[meCurCursor]),(mouseState |= MOUSE_STATE_VISIBLE)))
+
+/* Cursor definitions  */
+static uint8 meCurCursor=0 ;
+static HCURSOR meCursors[meCURSOR_COUNT]={NULL,NULL,NULL,NULL,NULL,NULL,NULL} ;
+static LPCTSTR meCursorName[meCURSOR_COUNT]=
+{
+    IDC_ARROW,
+    IDC_ARROW,
+    IDC_IBEAM,
+    IDC_CROSS,
+    IDC_UPARROW,
+    IDC_WAIT,
+    IDC_NO
+} ;
 
 /* Convert the mouse coordinates to cell space. Compute the fractional bits
  * which are 1/128ths. Because we lock the mouse into the window then cater
@@ -2587,6 +2587,7 @@ WinShutdown (void)
 #endif
 }
 
+#if MOUSE
 /*
  * TTinitMouse
  * Sort out what to do with the mouse buttons.
@@ -2775,6 +2776,7 @@ WinMouse (UINT message, UINT wParam, LONG lParam)
 
     return (TRUE);
 }
+#endif
 
 /*
  * WinKeyboard
@@ -3731,7 +3733,7 @@ changeFont(int f, int n)
 #ifdef _WINCON
     /* Ignore this function for console mode */
     if (meSystemCfg & meSYSTEM_CONSOLE)
-        return TRUE ;
+        return notAvailable(f,n) ;
 #endif
 
     /* Call up the dialog if no argument is supplied */
@@ -4117,6 +4119,7 @@ TTwaitForChar(void)
                 continue;
             }
         }
+#if MOUSE
         /* Mouse movement or button press */
         else if ((msg.message >= WM_MOUSEFIRST) &&
                  (msg.message <= WM_MOUSELAST))
@@ -4124,7 +4127,7 @@ TTwaitForChar(void)
             if (WinMouse (msg.message, msg.wParam, msg.lParam))
                 continue;
         }
-
+#endif
         /* Keyboard message */
         else if ((msg.message >= WM_KEYFIRST) &&
                  (msg.message <= WM_KEYLAST))
@@ -4387,12 +4390,14 @@ TTahead (void)
                 if (!WinKeyboard (msg.message, msg.wParam, msg.lParam))
                     meMessageHandler(&msg) ;
             }
+#if MOUSE
             /* Check out the mouse. */
             else if (PeekMessage (&msg, ttHwndNull, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE) != FALSE)
             {
                 if (WinMouse (msg.message, msg.wParam, msg.lParam) == FALSE)
                     meMessageHandler(&msg) ;
             }
+#endif
             else if (PeekMessage (&msg, ttHwndNull, WM_TIMER, WM_TIMER, PM_REMOVE) != FALSE)
             {
                 /* Check out the timers */
@@ -4517,12 +4522,14 @@ TTaheadFlush (void)
                     if (!WinKeyboard (msg.message, msg.wParam, msg.lParam))
                         meMessageHandler(&msg) ;
                 }
+#if MOUSE
                 /* Check out the mouse. */
                 else if ((msg.message >= WM_MOUSEFIRST) && (msg.message <= WM_MOUSELAST))
                 {
                     if (WinMouse (msg.message, msg.wParam, msg.lParam) == FALSE)
                         meMessageHandler(&msg) ;
                 }
+#endif
                 else if (msg.message == WM_TIMER)
                 {
                     /* Check out the timers */
@@ -5125,8 +5132,9 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmd
             /* Disable the cursor to allow the mouse position to be
              * artificially moved */
             macbug = 0;                 /* Force macro debugging off */
+#if MOUSE
             mouseHide();                /* Hide the cursor */
-
+#endif
             /* Iterate down the list and get the files. */
             while ((dadp = dadHead) != NULL)
             {
@@ -5223,10 +5231,11 @@ MainWndProc (HWND hWnd, UINT message, UINT wParam, LONG lParam)
                 ttmodif |= ME_ALT;
             if (keyBuf [VK_CONTROL] & 0x80)
                 ttmodif |= ME_CONTROL;
-
+#if MOUSE
             /* Make sure the cursor is ok */
             SetCursor (meCursors[meCurCursor]);
             mouseState |= MOUSE_STATE_VISIBLE ;
+#endif
         }
         break;
 
@@ -5242,14 +5251,17 @@ MainWndProc (HWND hWnd, UINT message, UINT wParam, LONG lParam)
             blinkState = 1 ;
             TTshowCur() ;
         }
+#if MOUSE
         /* Relinquish control of the mouse */
         if (mouseState & MOUSE_STATE_LOCKED)
         {
             ReleaseCapture ();          /* Relinquish the mouse */
             mouseState &= ~MOUSE_STATE_LOCKED;
         }
+#endif
         break;
 
+#if MOUSE
     case WM_SETCURSOR:
         /* If we have not got the focus or this is not the main window cursor
          * then we dont handle it, use the default Proc handle */
@@ -5269,7 +5281,8 @@ MainWndProc (HWND hWnd, UINT message, UINT wParam, LONG lParam)
             }
         }
         break ;
-
+#endif
+        
     case WM_QUERYNEWPALETTE:
         /* About to get focus, realise our palette */
         if (eCellMetrics.pInfo.hPal != NULL)
@@ -5370,6 +5383,7 @@ MainWndProc (HWND hWnd, UINT message, UINT wParam, LONG lParam)
         }
         break;
 #endif
+#if MOUSE
      /************************************************************************
      * MOUSE Handling
      ************************************************************************/
@@ -5386,7 +5400,8 @@ MainWndProc (HWND hWnd, UINT message, UINT wParam, LONG lParam)
         if (WinMouse (message, wParam, lParam) == FALSE)
             goto unhandled_message;
         break;
-
+#endif
+        
      /************************************************************************
      * KEYBOARD Handling
      ************************************************************************/

@@ -5,7 +5,7 @@
  *  Synopsis      : Internal registry support routines
  *  Created By    : Jon Green
  *  Created       : 26/03/1998
- *  Last Modified : <000615.2131>
+ *  Last Modified : <000814.0942>
  *
  *  Description
  *
@@ -41,6 +41,9 @@
 #define __REGISTRYC                     /* Define the name of the file */
 
 #include "emain.h"
+
+#if REGSTRY
+
 #ifdef _STDARG
 #include <stdarg.h>		/* Variable Arguments */
 #endif
@@ -355,7 +358,7 @@ regSave (RNODE *rnp, uint8 *fname)
     }
 
     /* Open the file */
-    if((ss=ffWriteFileOpen(fname,(rnp->mode & REGMODE_BACKUP) ? WRITE_BACKUP:0,NULL)) == TRUE)
+    if((ss=ffWriteFileOpen(fname,(rnp->mode & REGMODE_BACKUP) ? (meRWFLAG_WRITE|meRWFLAG_BACKUP):meRWFLAG_WRITE,NULL)) == TRUE)
     {
         RNODE *rr ;
         
@@ -431,7 +434,7 @@ regSave (RNODE *rnp, uint8 *fname)
                 }
             }
         }
-        ffWriteFileClose(fname,0,NULL) ;
+        ffWriteFileClose(fname,meRWFLAG_WRITE,NULL) ;
         if(ss == TRUE)
         {
             rnp->mode &= ~REGMODE_CHANGE;
@@ -640,7 +643,7 @@ regRead (uint8 *rname, uint8 *fname, int mode)
     /* Load in the registry file */
     hlp.l_fp = &hlp ;
     hlp.l_bp = &hlp ;
-    if((ffReadFile(fn,READ_SILENT,NULL,&hlp) == ABORT) &&
+    if((ffReadFile(fn,meRWFLAG_SILENT,NULL,&hlp) == ABORT) &&
        !(mode & REGMODE_CREATE))
     {
         mlwrite (MWABORT|MWWAIT,(uint8 *)"[Cannot load registry file %s]", fname);
@@ -1117,3 +1120,4 @@ listRegistry (int f, int n)
     resetBufferWindows(bp) ;
     return TRUE;
 }
+#endif

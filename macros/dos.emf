@@ -1,9 +1,9 @@
 ;       Setup file for ibm pcs
 ;
-;   Last Modified : <990824.1052>
+;   Last Modified : <000825.1824>
 ;
 0 define-macro exec-me
-    pipe-shell-command &spr "%s %s" $progname @1
+    pipe-shell-command &spr "%s %s" $progname @1 @mna
 !emacro
 ; Setup the screen resolution
 define-macro reset-25

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Mar 13 14:31:05 1999
-;  Last Modified : <000719.0012>
+;  Last Modified : <000723.1631>
 ;
 ;  Description
 ;
@@ -127,7 +127,7 @@ set-variable .schm-osd.sectv8 "|.scheme.cardback|.scheme.cardfore|.scheme.mjg1|.
 0 define-macro schm-osd-set-flags
     !if .schm-osd.type
         set-variable .schm-osd.print-option @#
-        osd .osd.schm 60  "Sfh" "    &print option : " 70
+        osd .osd.schm 60  "Sfh" "    &Print Option : " 70
         osd .osd.schm 70  "MtmsxRf" 70 &lget .schm-osd-setup-flags.options &add @# 1 .osd.tmp schm-osd-setup-flags
     !else
         set-variable .schm-osd.hilight-flags @#

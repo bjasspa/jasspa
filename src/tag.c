@@ -10,7 +10,7 @@
 *
 *	Author:			Mike Rendell of ROOT Computers Ltd.
 *
-*	Creation Date:		10/05/91 08:27		<000107.1959>
+*	Creation Date:		10/05/91 08:27		<000907.1420>
 *
 *	Modification date:	%G% : %U%
 *
@@ -43,6 +43,7 @@
 #include "emain.h"
 #include "esearch.h"
 
+#define TAG_MIN_LINE 6
 static uint8 *tagLastFile=NULL ;
 static int32  tagLastPos=-1 ;
 
@@ -61,31 +62,33 @@ findTagInFile(uint8 *file, uint8 *baseName, uint8 *tagTemp,
 {
     FILE  *fp ;
     uint8  function[MAXBUF] ;
-    int32  pos, start, end, End, found=-1;
+    int32  opos, pos, start, end, found=-1;
     int    tmp ;
     
-    if ((fp = fopen((char *)file, "r")) == (FILE *) NULL)
+    if ((fp = fopen((char *)file, "rb")) == (FILE *) NULL)
         return 2 ;
     
     /* Read in the tags file */
-    start = 0;
     fseek(fp, 0L, 2);
-    end = End = ftell(fp);
+    start = 0;
+    end = ftell(fp) - TAG_MIN_LINE;
+    pos = end >> 1;
     for(;;)
     {
-        pos = (start+end) >> 1;
+        opos = pos ;
         fseek(fp, pos, 0);
-        if(end || start)
+        if(pos)
         {
             do
                 pos++ ;
-            while((pos < end) && (fgetc(fp) != meNLCHAR)) ;
+            while((pos <= end) && (fgetc(fp) != meNLCHAR)) ;
         }
-        if(pos >= end)
+        if(pos > end)
         {
-            if(end == 0)
+            if(opos == start)
                 break ;
-            end = ((start+end) >> 1) + 1 ;
+            end = opos ;
+            pos = start ;
         }   
         else
         {
@@ -97,33 +100,13 @@ findTagInFile(uint8 *file, uint8 *baseName, uint8 *tagTemp,
                 /* found */
                 if(((found = pos) == 0) || !(tagOption & 0x04))
                     break ;
-                end = pos ;
+                end = opos ;
             }
             else if (tmp < 0)	/* back */
-                end = pos;
+                end = opos;
             else			/* foward */
-                start = pos;
-        }
-        if (end - start < 9)
-        {   /* minimium number of chars per line */
-            if (!start && end)
-                end = 0;
-            else if (end == End)
-            {
-                uint8 buf[1024];
-                int i;
-
-                fseek(fp, 1024 > End ? -End : -1024L, 1);
-                i = fread(buf, 1, 1024, fp);
-                if (i > 2)
-                    i -= 2;
-                while ( buf[i] != meNLCHAR && i)
-                    i--;
-                start -= 2*(1024 > End ? End - i : 1024 - i);
-                End++;
-            }
-            else
-                break;
+                start = ftell(fp) - 1 ;
+            pos = ((start+end) >> 1) ;
         }
     }
     if((found >= 0) && (tagOption & 0x04))
@@ -236,7 +219,7 @@ findTagSearchNext(uint8 *key, uint8 *file, uint8 *patt)
        ((tagTemp = getUsrVar((uint8 *)"tag-template")) == errorm))
         return mlwrite(MWABORT,(uint8 *)"[No last tag]") ;
     
-    if (((fp = fopen((char *)tagLastFile, "r")) == NULL) ||
+    if (((fp = fopen((char *)tagLastFile, "rb")) == NULL) ||
         (fseek(fp, tagLastPos, SEEK_SET) != 0))
         return mlwrite(MWABORT,(uint8 *)"[Failed to reload tag]") ;
     
@@ -284,7 +267,6 @@ findTagExec(int nn, uint8 tag[])
     {
         uint8 cc, *ss, *dd, ee ;
         ss = fpatt ;
-        dd = mpatt ;
         
         /* if the first char is a '/' then search forwards, '?' for backwards */
         ee = *ss++ ;
@@ -298,15 +280,31 @@ findTagExec(int nn, uint8 tag[])
             flags = ISCANNER_PTBEG|ISCANNER_MAGIC|ISCANNER_EXACT ;
             gotobob(TRUE, 0);
             if(ee != '/')
+            {
+                ee = '\0' ;
                 ss-- ;
+            }
         }
+        if(ee != '\0')
+        {
+            /* look for the end '/' or '?' - start at the end and look backwards */
+            dd = ss + meStrlen(ss) ;
+            while(dd != ss)
+                if(*--dd == ee)
+                {
+                    *dd = '\0' ;
+                    break ;
+                }
+        }
+            
+        dd = mpatt ;
         if(*ss == '^')
         {
             *dd++ = '^' ;
             ss++ ;
         }
         
-        while(((cc=*ss++) != '\0') && (cc != ee))
+        while((cc=*ss++) != '\0')
         {
             if(cc == '\\')
             {

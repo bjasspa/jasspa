@@ -10,7 +10,7 @@
  *
  *	Author:			Danial Lawrence.
  *
- *	Creation Date:		07/05/91 08:19		<000720.1645>
+ *	Creation Date:		07/05/91 08:19		<000723.1902>
  *
  *	Modification date:	%G% : %U%
  *
@@ -701,10 +701,14 @@ meTab(int f, int n)
     
     if((meSystemCfg & meSYSTEM_TABINDALW) || (curwp->w_doto == 0))
     {
+#if HILIGHT
         if(curbp->indent)
             return indentLine() ;
+#endif
+#if CFENCE
         if(meModeTest(curbp->b_mode,MDCMOD))
             return doCindent(&ii) ;
+#endif
     }
     if((ii=bchange()) != TRUE)               /* Check we can change the buffer */
         return ii ;
@@ -728,9 +732,11 @@ meTab(int f, int n)
          * The extra spaces required are inserted next */
         if(((ii = insertChar(' ',n)) == TRUE) && ss &&
            ((ii = linsert(ss,' ')) == TRUE))
+        {
 #if MEUNDO
             meUndoAddInsChars(ss) ;
 #endif
+        }
     }
     return ii ;
 }
@@ -840,6 +846,7 @@ insLine(int f, int n)
     return (s);
 }
 
+#if WORDPRO
 int
 winsert(void)	/* insert a newline and indentation for Wrap indent mode */
 {
@@ -886,7 +893,9 @@ winsert(void)	/* insert a newline and indentation for Wrap indent mode */
 #endif
     return(TRUE);
 }
+#endif
 
+#if HILIGHT
 static int
 indentInsert(void)
 /* insert a newline and indentation for C */
@@ -900,6 +909,7 @@ indentInsert(void)
         return FALSE ;
     return indentLine() ;
 }
+#endif
 
 int
 meLineSetIndent(int curInd, int newInd)
@@ -934,47 +944,6 @@ meLineSetIndent(int curInd, int newInd)
     return TRUE ;
 }
 
-int
-cinsert(void)
-/* insert a newline and indentation for C */
-{
-    int inComment, doto ;
-    uint8 *str ;
-    
-    doCindent(&inComment) ;
-    
-    /* put in the newline */
-#if MEUNDO
-    meUndoAddInsChar() ;
-#endif
-    if (lnewline() == FALSE)
-        return FALSE ;
-    doCindent(&inComment) ;
-    if(inComment && (commentCont != NULL))
-    {    
-        doto = curwp->w_doto ;
-        if(gotoFrstNonWhite() == 0)
-        {
-            int newInd ;
-            curwp->w_doto = doto ;
-            if((newInd = getccol() - 3) < 0)
-                newInd = 0 ;
-            if(meLineSetIndent(doto,newInd) != TRUE)
-                return FALSE ;
-            str = commentCont ;
-            while(*str != '\0')
-                linsert(1, *str++) ;
-            if((doto=((size_t) str) - ((size_t) commentCont)) > 0)
-#if MEUNDO
-                meUndoAddInsChars(doto) ;
-#endif
-        }
-        else
-            curwp->w_doto = doto ;
-    }
-    return TRUE ;
-}
-
 /*
  * Insert a newline. Bound to "C-M". If we are in CMODE, do automatic
  * indentation as specified.
@@ -991,6 +960,7 @@ meNewline(int f, int n)
     if((s=bchange()) != TRUE)               /* Check we can change the buffer */
         return s ;
     
+#if WORDPRO
     /* If a newline was typed, fill column is defined, the argument is non-
      * negative, wrap mode is enabled, and we are now past fill column,
      * and we are not read-only, perform word wrap.
@@ -1004,15 +974,24 @@ meNewline(int f, int n)
         f = 1 ;
     else
         f = 0 ;
+#endif
     while (n--)
     {
+#if HILIGHT
         if(curbp->indent)
             s = indentInsert() ;
-        else if(meModeTest(curbp->b_mode,MDCMOD))
+        else
+#endif
+#if CFENCE
+        if(meModeTest(curbp->b_mode,MDCMOD))
             s = cinsert() ;
-        else if(meModeTest(curbp->b_mode,MDINDEN))
+        else
+#endif
+#if WORDPRO
+        if(meModeTest(curbp->b_mode,MDINDEN))
             s = winsert() ;
         else
+#endif
         {
 #if MEUNDO
             meUndoAddInsChar() ;
@@ -1021,11 +1000,13 @@ meNewline(int f, int n)
         }
         if (s != TRUE)
             return s ;
+#if WORDPRO
         if(f)
         {
             f = 0 ;
             justify(-1) ;
         }
+#endif
     }
     
     return TRUE ;
@@ -1217,7 +1198,7 @@ mlWrite(int f, int n)
     return(TRUE);
 }
 
-#if	CFENCE
+#if CFENCE
 
 /* List of fense id chars, close (or move backward) first then open */
 uint8 fenceString[] = "##/*)(}{][" ; /* */
@@ -2368,6 +2349,49 @@ use_contcomm:
     if(curInd == ind)
         return TRUE ;
     return meLineSetIndent(curOff,ind) ;
+}
+
+int
+cinsert(void)
+/* insert a newline and indentation for C */
+{
+    int inComment, doto ;
+    uint8 *str ;
+    
+    doCindent(&inComment) ;
+    
+    /* put in the newline */
+#if MEUNDO
+    meUndoAddInsChar() ;
+#endif
+    if (lnewline() == FALSE)
+        return FALSE ;
+    doCindent(&inComment) ;
+    if(inComment && (commentCont != NULL))
+    {    
+        doto = curwp->w_doto ;
+        if(gotoFrstNonWhite() == 0)
+        {
+            int newInd ;
+            curwp->w_doto = doto ;
+            if((newInd = getccol() - 3) < 0)
+                newInd = 0 ;
+            if(meLineSetIndent(doto,newInd) != TRUE)
+                return FALSE ;
+            str = commentCont ;
+            while(*str != '\0')
+                linsert(1, *str++) ;
+            if((doto=((size_t) str) - ((size_t) commentCont)) > 0)
+            {
+#if MEUNDO
+                meUndoAddInsChars(doto) ;
+#endif
+            }
+        }
+        else
+            curwp->w_doto = doto ;
+    }
+    return TRUE ;
 }
 
 #endif /* CFENCE */
