@@ -1,11 +1,11 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1988-2004 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1988-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\" Created By: Jon Green
 .\"
-.Id $Id: m1cmd000.1,v 2.9 2004-02-03 19:59:40 jon Exp $
+.Id $Id: m1cmd000.1,v 2.10 2005-01-16 18:46:30 jon Exp $
 .Im MicroEmacs function
 .so me.tni
 .TH me 1
@@ -370,6 +370,13 @@ Microsoft  Windows environments should refer to
 .Ht me32.ini 8
 for a method of  setting up the  environment  variables  without  editing  the
 \fCAUTOEXEC.BAT\fR configuration file.
+.PP
+Drag and drop support is provided in the Windowing  version of MicroEmacs. The
+editor window is brought into focus following the drop.
+.SH UNIX
+Xdnd drag and drop support is provided in the X-Windows version of MicroEmacs.
+The editor  window is not raised or brought into focus  following  the drop as
+expected in the \s-1UNIX\s0 environment. 
 .SH "SEE ALSO"
 .na
 .Ht $MEINSTALLPATH 5 ,
