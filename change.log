@@ -4,8 +4,113 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <050220.2120>
+>  Last Modified : <050226.0013>
 >
+
+    [050225] HTML  template  - fixed an  indent  which was fixed at "2" rather
+             than "t" and added comment skipping indent rules
+
+    [050225] dos2unix,  unix2dos  and unix2win - Removed use of &spr in favour
+             of &cat so dos2unix etc work in ne.
+
+    [050225] Tracing a problem  with  hilighting  a token of the form  "AB*$",
+             works if there is a B but  fails if there  are no 'B's, i.e. only
+             matches  "AB+$". Found that removing the end of line special case
+             code fixes the  problem. I believe  the rest of the code has been
+             improved to handle any end-of-line quirks - I hope so!
+
+    [050225] Removed  the  'start-up'  macro  function  compile  option so all
+             versions support this - "ne" can now do a "@dos2unix"
+
+    [050225] Regular  expressions - extended  replacement string syntax. Added
+             support  for "\c#" "\l#" and "\u#" to change  the case of groups,
+             where "\c#" is capitalise,  "\l#" is lower "\u#" is upper and "#"
+             is the group number (0-9, &)
+
+    [050225] Regular expressions - changed syntax of "\s?" and "\S?" in favour
+             of perl's  simpler  "\s" and "\S" for a  whitespace  char  class.
+             Added new character  classes "\d" = digits, "\D" != digits "\h" =
+             hexdigits  "\H" != hexdigits  "\l" = lowercase  "\L" != lowercase
+             "\u" = uppercase  and "\U" != uppercase.  These changes were made
+             to both the main regex  search  engine and the  hilight(2)  token
+             matching  engine. Added support for char classes  within the main
+             regex  [...]  character  class,  i.e. now  supports  regexs  like
+             "[\l\u_]" for any lower, upper or '_' char. This is not supported
+             in the hilight which currently has a more simplistic "[...]" char
+             class support.
+
+    [050225] Regular  expressions  -  changed  use of "\s ", "\s-",  "\S " and
+             "\S-"  classes  to  simply  "\s"  and "\S"  which  is perl  regex
+             compliant (ditching Emacs "\s" syntax as it is cumbersome and not
+             very useful). The only nasty side effect is hilight's miss-use of
+             "\S1" - "\S9" to mean  not "\1" - "\9"  group  char,  changed  to
+             "\!1" - "\!9"
+
+    [050224] NE set to not auto-save or create backups by default.
+
+    [050224] Added "-a" and "-B"  command  line  options to enable and disable
+             auto-save and backup modes.
+
+    [050224] Tcl template - some more fixes to the item list from Detlef
+
+    [050224] watch -  improved  the  refresh  rate  of a type 2 or 3 watch  by
+             ignoring the :watch time and just look at the :watch-size.  Fixed
+             the split  line  issue  with type 2 of 3 watching  caused by last
+             line not being complete.
+
+    [050224] M-x ftp - stripped  'ftp://'  and any  trailing  '/' of the users
+             entered  host name as these  break  ftp.  Improved  the  dialog's
+             handling of  passwords,  the user can now tell if a password  has
+             been set.
+
+    [050224] Added standard binding for mark-function
+
+    [050224] Fixed the ME token hilighting in the C hook
+
+    [050224] Removed  recently  added  %no_backup  variable to disable  backup
+             create as new -B option is a much better way of doing it.
+
+    [050224] edef.h - Removed definition of non-existant variable
+
+    [050224] Fixed failure when trying to load "http://www.jasspa.com",  there
+             is an implicit trailing '/' which MicroEmacs now adds.
+
+    [050224] Tcl template - major improvement - courtesy of Detlef.
+
+    [050224] Fixed  collapse to support the file hooks .exact  setting (set to
+             -1 means case insensitive)
+
+    [050224] Added      new      beginning-of-function,       end-of-function,
+             goto-function-line and mark-function macros - thanks to Detlef.
+
+    [050223] Windows  MS-dev  6  project  -  corrected  project  settings  for
+             _URLSUPP => _SOCKET in keeping  with the socket  dynamic  library
+             loading.
+
+    [050223] Added exec of wish to the tcl magic hook
+
+    [050223] Fixed $window-chars - added OSD default button chars.
+
+    [050222] Fixed $user-path being more that 35 chars breaking the user-setup
+             dialog.
+
+    [050222] Directory listing - call fhook-html when file is a http:// file -
+             this is never a directory listing.
+
+    [050222] Stopped  loading of files in dir listing when clicking way to the
+             right,  must click on the name (ME kept  loading  files when just
+             trying to raise the window to the front - annoying).
+
+    [050222] If 0 given  to watch  call  watch-time,  this  preserves  the old
+             interface.
+
+    [050222] Added   backup  file   disabling   for   "dos2unix"   macros  via
+             command line defineable variable.
+
+    [050221] Changed the new Windows process tree killing to use LoadLibrary()
+             to detect whether the OS supports this feature (and NT does not).
+             Also moved the URL support over to LoadLibrary() so we can remove
+             the -u builds.
 
     [050220] Added UNIX Shell and Makefile hilighting to notes(2).
 
@@ -46,7 +151,7 @@
              supports the 0x1000  single line  hilight.  Lookback now supports
              0x800 on a branch tag.
 
-    [050217] HTML  highlighting.  Fixed some really grizzly scripted html page
+    [050217] HTML  highlighting.  Fixed some really grizzly scripted HTML page
              highlighting issues, predominantly with php.
 
     [050217] Change  ftp so it opens  the  ftp-connect  dialog if the  current
@@ -1478,7 +1583,7 @@ Minor Patch - July 2004
 
     [020301] Added new JST support.
 
-    [020301] Minor fix to the html processing and link following.
+    [020301] Minor fix to the HTML processing and link following.
 
     [020301] Added latex template file.
 
