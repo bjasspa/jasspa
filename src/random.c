@@ -1192,7 +1192,7 @@ gotoFrstNonWhite(void)
 }
 
 static int
-findfence(meUByte ch, meUByte forwFlag) ;
+findfence(meUByte ch, meUByte forwFlag, meInt depth) ;
 
 /* move forward of backward the the next non-white char
  * skipping '#' lines and comments
@@ -1210,7 +1210,7 @@ findfence(meUByte ch, meUByte forwFlag) ;
 #define MTNW_SIMPLE    0x10
 
 static int
-moveToNonWhite(meUByte forwFlag, meUByte *flags)
+moveToNonWhite(meUByte forwFlag, meUByte *flags, meInt depth)
 {
     register meUByte ch ;
     register meLine *lp ;
@@ -1253,7 +1253,7 @@ moveToNonWhite(meUByte forwFlag, meUByte *flags)
                              */
                             frameCur->windowCur->dotOffset = ((size_t) ss - (size_t) lp->text) - 1 ;
                             do {
-                                if(findfence('#',forwFlag) <= 0)
+                                if(findfence('#',forwFlag,depth) <= 0)
                                     return 0 ;
                             } while(meLineGetChar(frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset+2) != 'n') ;
                         }
@@ -1349,7 +1349,7 @@ hash_skip:
                             if((ss[0] == 'e') && (ss[1] == 'l'))
                             {
                                 frameCur->windowCur->dotOffset = ((size_t) ss - (size_t) lp->text) - 1 ;
-                                if(findfence('#',forwFlag) <= 0)
+                                if(findfence('#',forwFlag,depth) <= 0)
                                     return 0 ;
                             }
                             /* skip the hash line itself */
@@ -1442,7 +1442,7 @@ hash_skip:
                         
                         frameCur->windowCur->dotOffset = 0 ;
                         tflags = *flags | MTNW_SKIPHASH ;
-                        if(((ch=moveToNonWhite(forwFlag,&tflags)) != 0) &&
+                        if(((ch=moveToNonWhite(forwFlag,&tflags,depth)) != 0) &&
                            !(tflags & MTNW_SKIPHASH))
                             return ch ;
                         frameCur->windowCur->dotLine = lp ;
@@ -1468,7 +1468,7 @@ hash_skip:
                     register meUByte c2 = meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset+1) ;
                     if(c2 == '*')
                     {   /* c comment, go to the end of it */
-                        if(findfence('*',forwFlag) <= 0)
+                        if(findfence('*',forwFlag,depth) <= 0)
                             return 0 ;
                         frameCur->windowCur->dotOffset++ ;
                         continue ;
@@ -1490,7 +1490,7 @@ hash_skip:
                     {
                         /* must move back one into the comment */
                         frameCur->windowCur->dotOffset-- ;
-                        if(findfence('/',forwFlag) <= 0)
+                        if(findfence('/',forwFlag,depth) <= 0)
                             return 0 ;
                         /* ZZZZ - note that at this point we should check for
                          * a # at the start of the line and do the right
@@ -1618,12 +1618,15 @@ findQuoteFence(meUByte qtype, meUByte forwFlag)
  * movenext is the function used to move, sets direction.
  */
 static int
-findfence(meUByte ch, meUByte forwFlag)
+findfence(meUByte ch, meUByte forwFlag, meInt depth)
 {
     meUByte inCom ;
     register meUByte cc ;
     register int  inAps ;
     
+    /* safe-guard ME crash caused by too many fences creating recursion nightmare */ 
+    if(++depth > 255)
+        return mlwrite(MWABORT,(meUByte *)"[Too many nested fences]") ;
     /* Separate hash case as we can really optimise this */
     if(ch == '#')
     {
@@ -1652,7 +1655,7 @@ findfence(meUByte ch, meUByte forwFlag)
                     else if((ss[0] == 'i') && (ss[1] == 'f'))
                     {
                         do {
-                            if(findfence('#',forwFlag) <= 0)
+                            if(findfence('#',forwFlag,depth) <= 0)
                                 return meFALSE ;
                             /* findfence can only succeed with a line containing
                              * #e[nl]
@@ -1689,7 +1692,7 @@ findfence(meUByte ch, meUByte forwFlag)
                     if((ss[0] == 'i') && (ss[1] == 'f'))
                         break ;
                     else if((ss[0] == 'e') && (ss[1] == 'n') &&
-                            (findfence('#',forwFlag) <= 0))
+                            (findfence('#',forwFlag,depth) <= 0))
                         return meFALSE ;
                     lp = frameCur->windowCur->dotLine ;
                     ii = 0 ;
@@ -1719,7 +1722,7 @@ findfence(meUByte ch, meUByte forwFlag)
     
     for(;;)
     {
-        if((cc=moveToNonWhite(forwFlag,&inCom)) == 0)
+        if((cc=moveToNonWhite(forwFlag,&inCom,depth)) == 0)
             break ;
         if(cc == '/')
         {
@@ -1733,7 +1736,7 @@ findfence(meUByte ch, meUByte forwFlag)
                  * assume the latter.
                  */
                 return 2 ;
-            if(findfence('*',forwFlag) <= 0)
+            if(findfence('*',forwFlag,depth) <= 0)
                 break ;
         }
         else if(cc == '*')
@@ -1748,7 +1751,7 @@ findfence(meUByte ch, meUByte forwFlag)
             if(forwFlag)
                 /* we've found a double comment, try to report the error */
                 break ;
-            if(findfence('/',forwFlag) <= 0)
+            if(findfence('/',forwFlag,depth) <= 0)
                 break ;
         }
         else if(ch == cc)
@@ -1777,7 +1780,7 @@ findfence(meUByte ch, meUByte forwFlag)
                 /* This is a same direction bracket - i.e. a '(' when going forward
                  * If so find the other side of the bracket (using findfence)
                  */
-                if((ii=findfence(fenceString[ii^1],forwFlag)) <= 0)
+                if((ii=findfence(fenceString[ii^1],forwFlag,depth)) <= 0)
                 {
                     if(!inAps)
                         inAps = ii ;
@@ -1867,7 +1870,7 @@ gotoFence(int f, int n)
             ch = fenceString[forwFlag^1] ;
             forwFlag &= 1 ;
         }
-        if((ret = findfence(ch,forwFlag)) > 0)
+        if((ret = findfence(ch,forwFlag,0)) > 0)
         {
             frameCur->windowCur->updateFlags |= WFMOVEL;
             /* if 2nd bit not set then we want to stay here so simply
@@ -1928,7 +1931,7 @@ getCoffset(meHilight *indentDef, int onBrace, int *inComment)
     /* scan until we find it, or reach the end of file */
     while(!indent)
     {
-        switch((cc=moveToNonWhite(0,&mtnwFlag)))
+        switch((cc=moveToNonWhite(0,&mtnwFlag,0)))
         {
         case 0:
             if(brakCont < 0)
@@ -1949,7 +1952,7 @@ find_bracket_fence:
             {
                 int ret ;
                 
-                if((ret=findfence(cc,0)) <= 0)
+                if((ret=findfence(cc,0,0)) <= 0)
                     return 0 ;
                 if(ret == 2)
                 {
@@ -1984,14 +1987,14 @@ find_bracket_fence:
                 lp = frameCur->windowCur->dotLine ;
                 off = frameCur->windowCur->dotOffset ;
                 lno = frameCur->windowCur->dotLineNo ;
-                if((cc=moveToNonWhite(0,&mtnwFlag)) != 0)
+                if((cc=moveToNonWhite(0,&mtnwFlag,0)) != 0)
                 {
                     if(cc == ')')
                     {
                         int foundFence=-999 ;
                         if(frameCur->windowCur->dotLine == lp)
                         {
-                            if((foundFence=findfence('(',0)) == 1)
+                            if((foundFence=findfence('(',0,0)) == 1)
                             {
                                 lp  = frameCur->windowCur->dotLine ;
                                 off = frameCur->windowCur->dotOffset ;
@@ -2002,9 +2005,9 @@ find_bracket_fence:
                         {
                             /* have we found a switch? */
                             if(foundFence == -999) 
-                                foundFence = findfence('(',0) ;
+                                foundFence = findfence('(',0,0) ;
                             if((foundFence == 1) &&
-                               (moveToNonWhite(0,&mtnwFlag) != 0) &&
+                               (moveToNonWhite(0,&mtnwFlag,0) != 0) &&
                                prevCToken((meUByte *)"switch",6))
                                 indent = -1 ;
                         }
@@ -2176,11 +2179,11 @@ find_bracket_fence:
     {
         frameCur->windowCur->dotLine =	oldlp ;
         frameCur->windowCur->dotOffset = 0 ;
-        if(moveToNonWhite(0,&mtnwFlag) == ')')
+        if(moveToNonWhite(0,&mtnwFlag,0) == ')')
         {
-            if(findfence('(',0) <= 0)
+            if(findfence('(',0,0) <= 0)
                 return 0 ;
-            moveToNonWhite(0,&mtnwFlag) ;
+            moveToNonWhite(0,&mtnwFlag,0) ;
             if(prevCToken((meUByte *)"if",2) || prevCToken((meUByte *)"for",3) ||
                prevCToken((meUByte *)"while",5) || prevCToken((meUByte *)"switch",6))
             {
