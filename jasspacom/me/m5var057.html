@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>$search-path(5)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 $search-path(5)</H1>
@@ -13,41 +13,59 @@ $search-path(5)</H1>
 </FONT>
 <HR>
 <H2><B>NAME </B></H2>
-<UL><P>$search-path - MicroEmacs search path $MEPATH - MicroEmacs search path </UL>
+<UL><P>$search-path - MicroEmacs search path </UL>
 <H2><B>SYNOPSIS </B></H2>
 <UL><P><B>$search-path</B> <I>string</I> 
 <P><I>[Microsoft Windows/MS-DOS]</I> 
-<BR><B>MEPATH=</B> <I>&lt;path1&gt;</I><B>;</B><I>&lt;path2&gt;</I><B>;</B>....<B>;</B><I>&lt;pathn&gt;</I> 
+<BR><B>$search-path</B> <I>&lt;path1&gt;</I><B>;</B><I>&lt;path2&gt;</I><B>;</B>....<B>;</B><I>&lt;pathn&gt;</I> 
 <P><I>[UNIX]</I> 
-<BR><B>MEPATH=</B> <I>&lt;path1&gt;</I><B>:</B><I>&lt;path2&gt;</I><B>:</B>....<B>:</B><I>&lt;pathn&gt;</I> </UL>
+<BR><B>$search-path</B> <I>&lt;path1&gt;</I><B>:</B><I>&lt;path2&gt;</I><B>:</B>....<B>:</B><I>&lt;pathn&gt;</I> </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P><B>$search-path</B> is initialized to the environment variable <B>$MEPATH</B>, and identifies the search paths which are searched to locate editor specific files. Multiple search paths may be specified, separated by the platform path separator (semi-colon ('<B>;</B>') on Microsoft Windows or MS-DOS environments and a colon ('<B>:</B>') on UNIX environments). Where multiple search paths are defined then they are search left to right. 
-<P>The search paths are generally ordered from highest priority to lowest priority and might be arranged such as:- 
-<UL><P><B>MEPATH=</B><I>&lt;user&gt;</I>:<I>&lt;company&gt;</I>:<I>&lt;me&gt;</I> </UL>
-<P>where <I>&lt;user&gt;</I> represents the users path; <I>&lt;company&gt;</I> is the company file path (e.g. template files) and <I>&lt;me&gt;</I> are the standard MicroEmacs '04 files. 
-<P>This would correspond to a directory installation, of user <B>foo</B> such as:- <UL>
-<PRE>/usr/foo/microemacs&nbsp;&nbsp;&nbsp;-&nbsp;User&nbsp;files. 
-/usr/group/microemacs&nbsp;-&nbsp;Company&nbsp;wide&nbsp;files 
-/usr/local/microemacs&nbsp;-&nbsp;MicroEmacs&nbsp;installation&nbsp;directory 
-</PRE></UL>
-<P>and a <B>$MEPATH</B> such as:- <UL>
-<PRE>MEPATH=/usr/foo/microemacs:/usr/group/microemacs:/usr/local/microemacs 
-</PRE></UL>
-</UL><H2><B>USAGE </B></H2>
-<UL><P>The current working directory is checked first for the location of a file. 
+<UL><P><B>$search-path</B> is automatically determined by MicroEmacs when it initializes. The variable identifies the directory paths which are searched to locate editor specific files. The variable may contain multiple search paths each separated by the platform path separator (semi-colon ('<B>;</B>') on Microsoft Windows or MS-DOS environments and a colon ('<B>:</B>') on UNIX environments). Where multiple search paths are defined then they are searched in a left to right order. 
+<P><B>$search-path</B> is determined at run-time and is fixed once the editor starts. The value of the search path is determined from a number of different sources in a platform specific manner as follows:- <UL><P>
+<LI>Built in pathnames - On UNIX platforms then preset search paths are built into the executable i.e. <TT>/opt/jasspa</TT>, <TT>/usr/local/jasspa</TT> etc. 
+<LI>The users home directory, taken from the <TT>/etc/passwd</TT> under UNIX and from the shell environment under Microsoft Windows. 
+<LI>The location of the executable, typically only used under Microsoft Windows and MS-DOS environments where the concept of standard installation locations is vague. 
+<LI>The environment variable 
+<A HREF="m5var090.html">$MEUSERPATH(5)</A> which identifies the preferred user directory location, overriding any home directory location specified by the system. 
+<LI>The environment variable 
+<A HREF="m5var090.html">$MEINSTALLPATH(5)</A> which identifies the installation directory of the standard macros overriding any built in search path(s). 
+<LI>The environment variable 
+<A HREF="m5var090.html">$MEPATH(5)</A> which absolutely overrides any search paths with a user defined path where 
+<A HREF="m5var090.html">$MEUSERPATH(5)</A> is not defined. 
+<LI>The command line option <B>-u</B> <I>user-name</I> to 
+<A HREF="m1cmd000.html">me(1)</A> which overrides the user name found by the system. 
+<LI>The environment variable 
+<A HREF="m5var076.html">$MENAME(5)</A> which overrides the user name found by the system. </UL><P>The search paths are generally ordered from highest priority to lowest priority and typically arranged in the order:- 
+<UL><P><B>$search-path=</B><I>&lt;user&gt;</I>:<I>&lt;company&gt;</I>:<I>&lt;me&gt;</I> </UL>
+<P>where <I>&lt;user&gt;</I> represents the users path(s); <I>&lt;company&gt;</I> is the company file path(s) (e.g. company wide template files) and <I>&lt;me&gt;</I> path(s) which contain the standard MicroEmacs '04 files. 
+<P>This would correspond to a typical directory installation, of user <B>foo</B> on UNIX such as: 
+<P><TT>/usr/foo/.jassa&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TT> - User files. 
+<BR><TT>/usr/local/jasspa/company</TT> - Company wide files 
+<BR><TT>/usr/local/jasspa/macros&nbsp;</TT> - MicroEmacs installation directory </UL>
+<H2><B>USAGE </B></H2>
+<UL><P>The current working directory is always checked first for the location of any file. 
 <P><B>$search-path</B> is used to locate all macro files, and other files located with operators such as 
-<A HREF="m4fil024.html">&amp;find(4)</A>. </UL>
+<A HREF="m4fil024.html">&amp;find(4)</A>. 
+<P>Users should not modify this variable directly, the external aforementioned environment variables should be used to affect any desired changes. </UL>
 <H2><B>NOTES </B></H2>
-<UL><P>If <B>$MEPATH</B> is not set then <B>$search-path</B> is initialized to the environment variable <B>$PATH</B>. 
-<P>On UNIX systems the path <I>/usr/local/microemacs</I> is automatically added to the end of <B>$MEPATH</B>, or if not defined, to the beginning of <B>$PATH</B>. </UL>
+<UL><P>The search path operation was revised in the MicroEmacs 2004 release and operates differently from earlier releases. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
-<A HREF="amicr026.html">Variable Functions</A>, 
+<A HREF="m1cmd000.html">me(1)</A>, 
 <A HREF="m2cmd045.html">execute-file(2)</A>, 
+<A HREF="m4fil024.html">&amp;find(4)</A>. 
+<A HREF="m5var026.html">$home(5)</A>, 
+<A HREF="m5var066.html">$progname(5)</A>, 
+<A HREF="m5var088.html">$user-name(5)</A>, 
+<A HREF="m5var089.html">$user-path(5)</A>, 
+<A HREF="m5var090.html">$MEINSTALLPATH(5)</A>, 
 <A HREF="m5var076.html">$MENAME(5)</A>, 
-<A HREF="m4fil024.html">&amp;find(4)</A>. </UL>
+<A HREF="m5var090.html">$MEPATH(5)</A>, 
+<A HREF="m5var090.html">$MEUSERPATH(5)</A>, 
+<A HREF="amicr026.html">Variable Functions</A>. </UL>
 <HR>
 <P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2004/01/11</I>
+<BR><I>Last Modified: 2004/02/04</I>
+<BR><I>Generated On: 2004/02/06</I>
 </BODY></HMTL>

@@ -1,0 +1,105 @@
+<HTML>
+<HEAD><TITLE>toolbar(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
+toolbar(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>toolbar - Open the tool bar. 
+<BR>toolbar-close - Close the tool bar 
+<BR>toolbar-refresh - Update the tool bar </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>toolbar</B> 
+<BR><B>toolbar-close</B> 
+<BR><B>toolbar-refresh</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The toolbar is one or more fixed buffers that typically appear at the left-hand edge of the window that contains different tools that assist in editing the buffer. The toolbar is really a container for tools and short cuts which are configured by the user depending on the tool that has been loaded. The tools themselves are buffer context sensitive, the 
+<A HREF="m3mac064.html">buffer-init(3)</A> command automatically re-configures the toolbar for the buffer at run time. 
+<P>The configuration of the toolbar is stored in command variables <TT>.toolvar.*</TT> which are used to control the toolbar. The tools that are available in toolbar are determined from the file <TT>toollist.emf</TT> which is loaded when the toolbar is started. User defined toolbars may be added by redefinging the toolbar variables at runtime. 
+<P><B>toolbar</B> initializes and starts the toolbar if it is not already running. The toolbar is loaded and instantiated in the system. The toolbar may be subsequently closed using <B>toolbar-close</B>. Whilst the toolbar is running then the content of the tollbar may become out of date, the command 
+<A HREF="m3mac066.html">toolbar-refresh(3)</A> forces the toolbar to be re-evaluated and the content is updated. </UL>
+<H2><B>CONFIGURATION </B></H2>
+<UL><P>The toolbar is configured with command variables <B>.toolbar.*</B>. The size information of the toolbar is defined with the following variables:- 
+<P><I>.toolbar.width</I> 
+<BR><UL>Defines the default width of the left-hand vertical toolbar. </UL>
+<P><I>.toolbar.depth</I> 
+<BR><UL>Defines the default depth of the top horizontal toolbar. </UL>
+<P>The tools within the toolbar are configured with the following variables. Each variable is divided into fields, each field represents a single tool. The fields are separated with the <TT>\CH</TT> character. The order of the fields MUST be the same in each of the variables such that the field content matches the tool that is being defined. 
+<P><I>.tool-flag</I> 
+<BR><UL>The <B>.tool-flag</B> variable describes the behaviour of the tool, this is defined as a bitmask as follows:- 
+<P><TT>0x000001</TT> - Update on creation 
+<BR><UL>Call the tool update command when the tool is created, this is typically required when the content of the toolbar is generated. </UL>
+<P><TT>0x000002</TT> - Update on redraw 
+<BR><UL>Call the tool update command when a 
+<A HREF="m2cmd108.html">redraw</A> operation has been performed. </UL>
+<P><TT>0x000004</TT> - Buffer type changed 
+<BR><UL>Call the tool update command when the buffer type has changed, a change of buffer type requires that a buffer specific tool is reconfigured. </UL>
+<P><TT>0x000008</TT> - Current buffer changed 
+<BR><UL>Call the tool update command when the current buffer is changed, a change of buffer buffer requires that a buffer content specific tool is reconfigured. </UL>
+<P><TT>0x000010</TT> - Current buffer modified or saved 
+<BR><UL>Call the tool update command when the current buffer is modified or saved. </UL>
+<P><TT>0x000080</TT> - Perform update checks 
+<BR><UL>On an update check the toolbar for changes in content. </UL>
+<P><TT>0x000100</TT> - Lock depth and width 
+<BR><UL>Lock the depth and width of the tool. </UL>
+<P><TT>0x000200</TT> - Tool uses a paged window 
+<BR><UL>The tool uses a paged window in the toolbar (i.e. only one tool has focus). </UL>
+<P><TT>0x000400</TT> - Tool is hidden 
+<BR><UL>The tool is currently hidden. When in this state the not active sub-page <TT>0x200</TT> will also be set. </UL>
+<P><TT>0x000800</TT> - Tool paged window, not first user. 
+<BR><UL>The tool is part of a paged window and is not the first tool. </UL>
+<P><TT>0x001000</TT> - position in the left toolbar 
+<BR><UL>The tool is present in the left toolbar, on toolbar creation the tool is automatically loaded into the toolbar. </UL>
+<P><TT>0x002000</TT> - position in the top toolbar 
+<BR><UL>The tool is present in the top toolbar, on toolbar creation the tool is automatically loaded into the toolbar. </UL>
+<P><TT>0x004000</TT> - position in the right toolbar 
+<BR><UL>The tool is present in the right toolbar, on toolbar creation the tool is automatically loaded into the toolbar. </UL>
+<P><TT>0x008000</TT> - position in the bottom toolbar 
+<BR><UL>The tool is present in the bottom toolbar, on toolbar creation the tool is automatically loaded into the toolbar. </UL>
+<P><TT>0x010000</TT> - Include buffer type in mode-line (Prefix) 
+<BR><UL>The buffer type is included in the toolbar mode line as a prefix. </UL>
+<P><TT>0x020000</TT> - Include buffer name in mode-line (suffix) 
+<BR><UL>The buffer name is included in the toolbar mode line as a suffix. </UL>
+<P><TT>0x040000</TT> - Include buffer filename in mode-line (suffix) 
+<BR><UL>The buffer file name is included in the toolbar mode line as a suffix. </UL>
+<P><TT>0x100000</TT> - Restore window location after an update 
+<BR><UL>The position of the hilighted line in the toolbar is restored after an update. </UL>
+<P><TT>0x200000</TT> - Move position to beginning of buffer after an update 
+<BR><UL>The position of the hilighted line is restored to the top of the buffer following an update. </UL></UL>
+<P><I>.toolbar.tool-name</I> 
+<BR><UL>The name of the tool that is displayed to the user. </UL>
+<P><I>.toolbar.tool-descs</I> 
+<BR><UL>A short description of the tool which is used in the tool selection dialog. </UL>
+<P><I>.toolbar.tool-buffs</I> 
+<BR><UL>The name of the buffer which is used to store toolbar information. The names are usually <B>*name*</B> so that they are not saved. </UL>
+<P><I>.toolbar.tool-files</I> 
+<BR><UL>The macro file to load when the tool is loaded, if a tool is not used then the macros that define the tool are not loaded. </UL>
+<P><I>.toolbar.tool-cmds</I> 
+<BR><UL>The creation and update commands to run when the command is created. </UL></UL>
+<H2><B>FILES </B></H2>
+<UL><P>Notable toolbox macro files:- <UL><P>
+<LI><TT>toolbar.emf</TT> - The main toolbar file. 
+<LI><TT>toolstp.emf</TT> - The toolbar setup menu i.e. the right click of the mouse on the toolbar mode line. 
+<LI><TT>toollist.emf</TT> - List off tools available in the toolbar. 
+<LI><TT>bookmark.emf</TT> - The bookmark tool. 
+<LI><TT>toolstd.emf</TT> - Basic tools (Info, Buffer list) 
+<LI><TT>abbrlist.emf</TT> - The buffer tools and buffer abbreviation tools. 
+<LI><TT>itemlist.emf</TT> - Buffer item list tool. 
+<LI><TT>killlist.emf</TT> - The kill list tool. </UL></UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd066.html">osd(2)</A>, 
+<A HREF="m2cmd108.html">recenter(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2004/01/22</I>
+<BR><I>Generated On: 2004/02/06</I>
+</BODY></HMTL>

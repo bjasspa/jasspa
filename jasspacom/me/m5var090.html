@@ -1,0 +1,119 @@
+<HTML>
+<HEAD><TITLE>$MEINSTALLPATH(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
+$MEINSTALLPATH(5)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>$MEINSTALLPATH - MicroEmacs system macros search path 
+<BR>$MEPATH - MicroEmacs search path 
+<BR>$MEUSERPATH - MicroEmacs user directory </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>[Microsoft Windows/MS-DOS]</I> 
+<BR><B>$MEINSTALLPATH</B> <I>&lt;path1&gt;</I><B>;</B><I>&lt;path2&gt;</I><B>;</B>....<B>;</B><I>&lt;pathn&gt;</I> 
+<BR><B>$MEPATH=</B> <I>&lt;path1&gt;</I><B>;</B><I>&lt;path2&gt;</I><B>;</B>....<B>;</B><I>&lt;pathn&gt;</I> 
+<BR><B>$MEUSERPATH</B> <I>&lt;path&gt;</I> 
+<P><I>[UNIX]</I> 
+<BR><B>$MEINSTALLPATH</B> <I>&lt;path1&gt;</I><B>:</B><I>&lt;path2&gt;</I><B>:</B>....<B>:</B><I>&lt;pathn&gt;</I> 
+<BR><B>$MEPATH=</B> <I>&lt;path1&gt;</I><B>:</B><I>&lt;path2&gt;</I><B>:</B>....<B>:</B><I>&lt;pathn&gt;</I> 
+<BR><B>$MEUSERPATH</B> <I>&lt;path&gt;</I> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>These environment variables control the run-time search paths for MicroEmacs and affect the operation of 
+<A HREF="m5var057.html">$search-path(5)</A> and 
+<A HREF="m5var089.html">$user-path(5)</A>, the macro search path and user macro directory respectively. 
+<P><B>$MEINSTALLPATH</B> is an environment variable that overrides any internally defined search path for MicroEmacs system macros and defines the root directory(s) of the MicroEmacs system macros. The presence of the environment variable affects 
+<A HREF="m5var057.html">$search-path(5)</A>. 
+<P>The environment variable <B>$MEINSTALLPATH</B> is ignored if <B>$MEPATH</B> is defined. The search path is always included after any user path defined by 
+<A HREF="m5var088.html">$user-name(5)</A>. 
+<P><B>$MEUSERPATH</B> is an environment variable that defines the users private directory where user configuration files such as 
+<A HREF="m5var088.html">$user-name</A><B>.emf</B>, 
+<A HREF="m5var088.html">$user-name</A><B>.erf</B> and personal spelling dictionaries are stored. This is an absolute directory path. The environment variable sets the MicroEmacs variable 
+<A HREF="m5var088.html">$user-name(5)</A>. 
+<P><B>$MEPATH</B> is an environment variable that may be used to define the absolute search path for MicroEmacs macro files and affects the setting of <B>$search-path</B>. The path should include the system macros location(s) and should include the user directory location 
+<A HREF="m5var089.html">$user-path(5)</A> as the first path when the environment variable 
+<A HREF="m5var090.html">$MEUSERPATH(5)</A> is not defined. If <B>$MEUSERPATH</B> is defined then this path name appears before the <B>$MEPATH</B> variable to define the user directory location. <B>$MEPATH</B> is not searching, so ALL all directories to be searched must be included in the path specification. 
+<P>
+<A HREF="m5var090.html">$MEUSERPATH(5)</A> is the preferred method used to defined the user directory. </UL>
+<H2>Search Paths </H2>
+<UL><P>MicroEmacs needs to know the installation directory location(s) of its macro files when it executes, this includes both user defined and system macros. MicroEmacs performs a searching operation of well-known directory locations where it may expect to find these macros at start up, the locations that it has found are saved in macro variables 
+<A HREF="m5var089.html">$user-path(5)</A> and 
+<A HREF="m5var057.html">$search-path(5)</A> and are used to subsequently locate files thereafter. The environment variables defined here allow that default search process to be modified by the user or system administrator. 
+<P>Directories are specified as <I>searching</I> if a search operation is performed. The following sub-directories of a base directory are searched for the existence of subdirectories: 
+<UL><P><I>.</I> - root directory. 
+<BR>
+<A HREF="m5var088.html">$user-name</A> - private user directory. 
+<BR><I>company</I> - company files. 
+<BR><I>macros</I> - JASSPA standard macros. 
+<BR><I>spelling</I> - spelling dictionaries. </UL>
+<P>MicroEmacs performs a searching operation on some directories to locate information. Generally, if the directory exists then it is included in the search path, otherwise it is excluded. Any subdirectories that are found are added in the order presented above. The 
+<A HREF="m5var057.html">$search-path</A> is ONLY evaluated at start-up therefore directories created after MicroEmacs is running are not detected until the editor is closed down and re-started. </UL>
+<H2>UNIX </H2>
+<UL><P>The defined search paths for UNIX are defined as follows:- 
+<P>Default install directories:- 
+<UL><P><I>/opt/jasspa</I> - searching (SunOS, HP-UX, AIX and IRIX only) 
+<BR><I>/usr/share/jasspa</I> - searching 
+<BR><I>/usr/local/share/jasspa</I> - searching (BSD systems only) 
+<BR><I>/usr/local/jasspa</I> - searching </UL>
+<P>The default user location is defined as follows. 
+<UL><P><I>$(passwd-home)/.jasspa</I> - searching 
+</UL><P>MicroEmacs searches for user defined configuration files in this directory and will write new user configuration files to this directory. The behaviour of the search may be over-ridden by setting some environment variables. 
+<P><TT>$MEUSERPATH</TT> - not searching 
+<BR><UL>Specified as a single pathname and redefines the <I>$user-path</I> where user macros are placed, this overrides the <I>$(passwd-home)/.jasspa</I> directory location. </UL>
+<P><TT>$MEINSTALLPATH</TT> - searching 
+<BR><UL>Specified as multiple pathname components and overrides the default install directory location (i.e. <TT>/usr/local/jasspa</TT>, etc. Typically used when the system macro directory has been install in another location that is not included in the default search path. This does not affect the user directory location. </UL>
+<P><TT>$MEPATH</TT> - not searching 
+<BR><UL>Overrides the <I>$(passwd-home)/.jasspa</I> and default search paths (including <TT>$MEINSTALLPATH</TT>), MicroEmacs will use this directory as the search path. The user directory is assumed to be the FIRST directory path in the string unless the <TT>$MEUSERPATH</TT> environment variable is defined which specifies the user path. </UL></UL>
+<H2>Microsoft Windows </H2>
+<UL><P>he defined search paths for WINDOWS are defined as follows:- 
+<UL><P>Default search locations:- </UL>
+<UL><P><I>Executable directory location</I> - searching </UL>
+<P>The default user location is defined as follows. MicroEmacs searches for user defined configuration files in this directory and will write new user configuration files to this directory. 
+<UL><P><I>$APPDATA\jasspa</I> - not searching </UL>
+<P>If the system does not define a user application data location (<B>Win95</B> and <B>Win32s</B>) then a directory 
+<A HREF="m5var088.html">$user-name</A> or the executable location is used. 
+<P>The behaviour may be over-ridden by setting the environment variables as follows: 
+<P><TT>$MEUSERPATH</TT> - not searching 
+<BR><UL>Specified as a single pathname and redefines the users home directory, this overrides the <I>$APPDATA\jasspa</I> directory location. </UL>
+<P><TT>$MEINSTALLPATH</TT> - searching 
+<BR><UL>Specified as multiple pathname components and overrides the default install directory location. Typically used when the macro directory has been install in another location that is not in the same directory as the executable. This does not affect the user directory location. </UL>
+<P><TT>$MEPATH</TT> - not searching 
+<BR><UL>Overrides the <I>$APPDATA\jasspa</I> and default search paths. MicroEmacs will use the FIRST directory path as the 
+<A HREF="m5var089.html">$user-path</A> unless <TT>$MEUSERPATH</TT> is defined. </UL></UL>
+<H2>MS-DOS </H2>
+<UL><P>MS-DOS does not include a concept of a user name or user directory. 
+<UL><P>Default search locations:- </UL>
+<UL><P><I>Executable directory location</I> - searching </UL>
+<P>If a sub-directory exists at the executable location with name 
+<A HREF="m5var088.html">$user-name</A> then this is used as 
+<A HREF="m5var089.html">$user-path</A>, otherwise the execution directory location is used. 
+<P>The behaviour may be over-ridden using the environment variables. 
+<P><TT>$MEUSERPATH</TT> - not searching 
+<BR><UL>Specified as a single pathname and redefines the 
+<A HREF="m5var089.html">$user-path</A> overriding the <I>executable</I> directory location. </UL>
+<P><TT>$MEINSTALLPATH</TT> - searching 
+<BR><UL>Specified as multiple pathname components and overrides the default executable directory location. Typically used when the macro directory has been installed at a different location that is not in the same directory as the executable. This does not affect the user directory location. </UL>
+<P><TT>$MEPATH</TT> - not searching 
+<BR><UL>Overrides the <I>Executable...</I> and default search paths (including <TT>$MEINSTALLPATH</TT>). MicroEmacs will use FIRST directory path as the 
+<A HREF="m5var089.html">$user-path</A> unless <TT>$MEUSERPATH</TT> is defined. </UL></UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m1cmd000.html">me(1)</A>, 
+<A HREF="m5var026.html">$home(5)</A>, 
+<A HREF="m5var066.html">$progname(5)</A> 
+<A HREF="m5var057.html">$search-path(5)</A>, 
+<A HREF="m5var088.html">$user-name(5)</A>, 
+<A HREF="m8fil003.html">emf(8)</A>, 
+<A HREF="m8fil004.html">erf(8)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2004/02/01</I>
+<BR><I>Generated On: 2004/02/06</I>
+</BODY></HMTL>

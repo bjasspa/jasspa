@@ -1,0 +1,57 @@
+<HTML>
+<HEAD><TITLE>$user-path(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
+$user-path(5)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>$user-path - MicroEmacs user directory </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>$user-path</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>$user-path</B> is the name of the MicroEmacs user directory where user configuration files such as 
+<A HREF="m5var088.html">$user-name</A><B>.emf</B>, 
+<A HREF="m5var088.html">$user-name</A><B>.erf</B> and personal spelling dictionaries are stored. This is an absolute directory path and is always terminated with a directory separator character '<TT>/</TT>'. 
+<P>The value of the variable is determined when the editor is started as follows: <UL><P>
+<LI>The environment variable 
+<A HREF="m5var090.html">$MEUSERPATH(5)</A> is defined, the <B>$user-path</B> is set to this value. If the environment <B>$MEUSERPATH</B> is defined without a trailing '<TT>/</TT>' then it is automatically added. 
+<LI>The environment variable 
+<A HREF="m5var090.html">$MEPATH(5)</A> is defined and 
+<A HREF="m5var090.html">$MEUSERPATH(5)</A> is undefined. The first directory in the <B>$MEPATH</B> variable is used as the <B>$user-path</B> directory. 
+<LI>The directory is determined from the system: 
+<BR><B>UNIX</B>: the home directory from <TT>/etc/passwd</TT> entry is used and appended with <TT>.jasspa</TT> i.e. <TT>$HOME/.jasspa</TT>, if the sub-directory 
+<A HREF="m5var088.html">$user-name</A> is detected in this directory then it is used instead (<TT>$HOME/.jasspa/$user-name</TT>). 
+<BR><B>Microsoft Windows</B>: the user application data directory is obtained from the system and appended with <TT>jasspa</TT> i.e. <TT>$APPDATA/jasspa</TT>. If the sub-directory 
+<A HREF="m5var088.html">$user-name</A> is detected in this directory then it is used instead (<TT>$APPDATA/jasspa/$user-name</TT>). 
+<BR><B>MS-DOS</B> and older versions of <B>Microsoft</B> <B>Windows</B> without <I>Internet</I> <I>Explorer</I> <I>4.0</I> then a sub-directory 
+<A HREF="m5var088.html">$user-name</A> of the program directory 
+<A HREF="m5var066.html">$progname(5)</A> is used. </UL><P>For most conventional <I>login</I> systems then the correct user path is retrieved and it is not necessary to over-ride the pathname, unless a special configuration of MicroEmacs is being used. Where the user directory is to be manually specified then 
+<A HREF="m5var090.html">$MEUSERPATH(5)</A> is the preferred method. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P>The user should not attempt to write to <B>$user-path</B>, the variable should be controlled through the aforementioned techniques. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m1cmd000.html">me(1)</A>, 
+<A HREF="m5var026.html">$home(5)</A>, 
+<A HREF="m5var066.html">$progname(5)</A> 
+<A HREF="m5var057.html">$search-path(5)</A>, 
+<A HREF="m5var088.html">$user-name(5)</A>, 
+<A HREF="m5var090.html">$MEINSTALLPATH(5)</A>, 
+<A HREF="m5var076.html">$MENAME(5)</A>, 
+<A HREF="m5var090.html">$MEPATH(5)</A>, 
+<A HREF="m5var090.html">$MEUSERPATH(5)</A>, 
+<A HREF="m8fil003.html">emf(8)</A>, 
+<A HREF="m8fil004.html">erf(8)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2004/02/04</I>
+<BR><I>Generated On: 2004/02/06</I>
+</BODY></HMTL>

@@ -1,0 +1,92 @@
+<HTML>
+<HEAD><TITLE>comment-line(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
+comment-line(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>comment-line - Comment out the current line 
+<BR>uncomment-line - Uncomment current line 
+<P>comment-to-end-of-line - Extend comment to end of line 
+<BR>comment-restyle - Reformat the current comment 
+<P>comment-start - Start a new comment 
+<BR>comment-end - End the current comment </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>comment-line</B> 
+<BR><I>n</I> <B>uncomment-line</B> 
+<P><B>comment-to-end-of-line</B> 
+<BR><B>comment-restyle</B> 
+<P><B>comment-start</B> 
+<BR><B>comment-end</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The action of the <B>comment</B> commands are file type specific (comments in <B>C</B> are <TT>/* ... to ... */</TT> where as MicroEmacs macro file comments are <TT>; ... to the end of line</TT>) so the commands must be configured for each file type (see the NOTES section below). The configuration is automatically performed by almost all the standard file hooks released with MicroEmacs by the file hook so these commands should be fully functional. 
+<P><B>comment-line</B> comments out the current and next <I>n</I>-1 lines (default when <I>n</I> is omitted is to comment out just the current line). The cursor is then moved to the start of the next line. <B>uncomment-line</B> behaves differently depending on whether the file type terminates a comment with an end token or simply by the end of the line. If an end token is used then <B>uncomment-line</B> removes the current and next <I>n</I> comments. If the end of line is used <B>uncomment-line</B> removes the first comment on the current and next <I>n-1</I> lines. 
+<P><B>comment-to-end-of-line</B> inserts <I>comment-pad</I>s (see NOTES) up-to the 
+<A HREF="m5var021.html">$fill-col(5)</A> and then terminates the comment with the <I>comment-end</I> string. <B>comment-restyle</B> reformats the text within the comment, filling text lines to the <B>$fill-col</B> and regenerating any boxing and divide lines. 
+<P><B>comment-start</B> opens a new &quot;<B>*comment*</B>&quot; buffer which is configured for writing a text comment, the user can then type in the comment with all the benefits of MicroEmacs in a plain text editor. Once the comment is complete use the <B>comment-end</B> command to insert the comment into the source file, this comment is locally bounded to &quot;<B>C-c C-c</B>&quot;. The styling of the comment is controlled by the <I>comment-flag</I> setting (see NOTES). </UL>
+<H2><B>NOTES </B></H2>
+<UL><P>Consider the structure of a box comment to be as follows: <UL>
+<PRE>&lt;comment-start&gt;&lt;comment-pad&gt;&lt;comment-pad&gt;&lt;comment-pad&gt;&lt;comment-box-right&gt; 
+&lt;comment-box-left&gt;&nbsp;COMMENT&nbsp;TEXT&nbsp;...&nbsp;COMMENT&nbsp;TEXT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;comment-box-right&gt; 
+&lt;comment-box-left&gt;&nbsp;COMMENT&nbsp;TEXT&nbsp;...&nbsp;COMMENT&nbsp;TEXT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;comment-box-right&gt; 
+&lt;comment-box-left&gt;&lt;comment-pad&gt;&lt;comment-pad&gt;&lt;comment-pad&gt;&lt;comment-end&gt; 
+</PRE></UL>
+<P>The comment commands are configured by the single file hook command variable <B>.fhook-</B><I>&lt;type&gt;</I><B>.comment</B> where <I>&lt;type&gt;</I> is the file type label. The structure of the variable is a 
+<A HREF="m4fil029.html">list</A> with the following format: <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;|&lt;comment-start&gt;|&lt;comment-end&gt;|&lt;comment-pad&gt;|&lt;comment-box-left&gt;|... 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...&lt;comment-box-right&gt;|&lt;comment-flags&gt;| 
+</PRE></UL>
+<P>Where <TT>|</TT> is the list divide character. The <I>&lt;comment-flags&gt;</I> are a list of character flags which are defined as follows: 
+<P><TT>b</TT> 
+<BR><UL>Box format required, i.e. create right edge using <I>&lt;comment-box-right&gt;</I>. </UL>
+<P><TT>f</TT> 
+<BR><UL>Footer line required. </UL>
+<P><TT>F</TT> 
+<BR><UL>Fill footer line with <I>&lt;comment-pad&gt;</I> strings. </UL>
+<P><TT>h</TT> 
+<BR><UL>Header line required. </UL>
+<P><TT>H</TT> 
+<BR><UL>Fill header line with <I>&lt;comment-pad&gt;</I> strings. </UL>
+<P><TT>j</TT> 
+<BR><UL>Enable Justify mode in *comment* buffer. </UL></UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following <B>comment</B> is the standard <B>C</B> setting: <UL>
+<PRE>set-variable&nbsp;.fhook-c.comment&nbsp;&quot;|/*|*/|*|&nbsp;*&nbsp;|&nbsp;*&nbsp;|f|&quot; 
+</PRE></UL>
+<P>This can be used to create comments of the form: <UL>
+<PRE>/*&nbsp;comment-line&nbsp;comments&nbsp;out&nbsp;the&nbsp;current&nbsp;and&nbsp;next&nbsp;n-1&nbsp;lines&nbsp;(default 
+&nbsp;*&nbsp;when&nbsp;n&nbsp;is&nbsp;omitted&nbsp;is&nbsp;to&nbsp;comment&nbsp;out&nbsp;just&nbsp;the&nbsp;current&nbsp;line).&nbsp;The 
+&nbsp;*&nbsp;cursor&nbsp;is&nbsp;then&nbsp;moved&nbsp;to&nbsp;the&nbsp;start&nbsp;of&nbsp;the&nbsp;next&nbsp;line. 
+&nbsp;* 
+&nbsp;*&nbsp;uncomment-line&nbsp;behaves&nbsp;differently&nbsp;depending&nbsp;on&nbsp;whether&nbsp;the&nbsp;file 
+&nbsp;*&nbsp;type&nbsp;terminates&nbsp;a&nbsp;comment&nbsp;with&nbsp;an&nbsp;end&nbsp;token&nbsp;or&nbsp;simply&nbsp;by&nbsp;the&nbsp;end 
+&nbsp;*&nbsp;of&nbsp;the&nbsp;line. 
+&nbsp;*/ 
+</PRE></UL>
+<P>A box style comment can be generated by changing the <I>&lt;comment-flags&gt;</I> form <TT>f</TT> to <TT>bfFhH</TT>, producing: <UL>
+<PRE>/********************************************************************* 
+&nbsp;*&nbsp;comment-line&nbsp;comments&nbsp;out&nbsp;the&nbsp;current&nbsp;and&nbsp;next&nbsp;n-1&nbsp;lines&nbsp;(default&nbsp;* 
+&nbsp;*&nbsp;when&nbsp;n&nbsp;is&nbsp;omitted&nbsp;is&nbsp;to&nbsp;comment&nbsp;out&nbsp;just&nbsp;the&nbsp;current&nbsp;line).&nbsp;The&nbsp;&nbsp;&nbsp;* 
+&nbsp;*&nbsp;cursor&nbsp;is&nbsp;then&nbsp;moved&nbsp;to&nbsp;the&nbsp;start&nbsp;of&nbsp;the&nbsp;next&nbsp;line.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* 
+&nbsp;*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* 
+&nbsp;*&nbsp;uncomment-line&nbsp;behaves&nbsp;differently&nbsp;depending&nbsp;on&nbsp;whether&nbsp;the&nbsp;file&nbsp;&nbsp;* 
+&nbsp;*&nbsp;type&nbsp;terminates&nbsp;a&nbsp;comment&nbsp;with&nbsp;an&nbsp;end&nbsp;token&nbsp;or&nbsp;simply&nbsp;by&nbsp;the&nbsp;end&nbsp;&nbsp;* 
+&nbsp;*&nbsp;of&nbsp;the&nbsp;line.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* 
+&nbsp;*********************************************************************/ 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd202.html">File Hooks</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2002/10/16</I>
+<BR><I>Generated On: 2004/02/06</I>
+</BODY></HMTL>

@@ -1,0 +1,52 @@
+<HTML>
+<HEAD><TITLE>display-matching-fence(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
+display-matching-fence(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>display-matching-fence - Display the matching bracket </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>display-matching-fence</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>display-matching-fence</B> draws the fence (or bracket) pairing the one the cursor is currently over. A fence is considered to be one of the following: <UL>
+<PRE>{...}&nbsp;&nbsp;&nbsp;(...)&nbsp;&nbsp;&nbsp;[...] 
+</PRE></UL>
+<P>If the matching fence is currently being drawn (i.e. it is visible) both fences are drawn in the '<I>Normal</I>' Matching Fence scheme (see 
+<A HREF="m3osd005.html">scheme-editor(3)</A>). If the matching fence is not currently visible the cursor is temporarily moved to the match fence for 
+<A HREF="m5var023.html">$fmatchdelay(5)</A> milliseconds before returning to the starting position, the fences are hilighted using the Matching Fence 'Current' scheme. The matching fence delay can be interrupted by pressing any key. If the fence cannot be matched the fence is hilighted using the 'Select' scheme which is usually a bold red color. 
+<P>The numeric argument <B>n</B> passed to the command is a bitwise flag where each bit is defined as follows: 
+<P><B>0x01</B> 
+<BR><UL>Display fence (if not set nothing is done). </UL>
+<P><B>0x02</B> 
+<BR><UL>Use set-position id '<TT>\x85</TT>' instead of '<TT>\x84</TT>' (for internal use). </UL>
+<P><B>0x04</B> 
+<BR><UL>Don't Jump when matching fence is off screen. </UL>
+<P><B>0x08</B> 
+<BR><UL>Jump when closing a fence and its pair is off screen (for internal use). </UL>
+<P><B>0x10</B> 
+<BR><UL>Always jump to matching fence when closing a fence (for internal use). </UL>
+<P><B>0x20</B> 
+<BR><UL>Give preference to closing fence to left of cursor rather than character under the cursor (for internal use). </UL></UL>
+<H2><B>NOTES </B></H2>
+<UL><P>This macro is used by the <B>Fence Display</B> setting of 
+<A HREF="m3osd000.html">user-setup(3)</A>, the macro is bound to the <TT>idle-pick</TT> event using some of the more obscure numeric argument flags. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd061.html">goto-matching-fence(2)</A>, 
+<A HREF="m3osd000.html">user-setup(3)</A>, 
+<A HREF="m3osd005.html">scheme-editor(3)</A>, 
+<A HREF="m5var023.html">$fmatchdelay(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2002/10/16</I>
+<BR><I>Generated On: 2004/02/06</I>
+</BODY></HMTL>

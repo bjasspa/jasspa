@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>CompanyProfiles(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 CompanyProfiles(2)</H1>
@@ -19,24 +19,8 @@ CompanyProfiles(2)</H1>
 <LI>Standard file layouts 
 <LI>Company defined language extensions. </UL></UL>
 <H2>Location Of The Company Information </H2>
-<UL><P>It is suggested that all of the company extensions applied to MicroEmacs '04 are performed in a separate directory location which shadows the MicroEmacs standard macro file directory. This enables the original files to be sourced if a user does not want to include the company files. This method also allows MicroEmacs to be updated in the future, whilst retaining the company files. For our example, we shall use a company called <B>JASSPA</B>, you should replace references to <I>jasspa</I> with your own company name. The steps involved are laid out as follows:- 
-<P><B>Create a new company directory </B>
-<BR><UL>You may skip this step if you are going to modify the standard installation. </UL>
-<UL><P>Create a new directory to hold the company information. i.e. 
-<UL><P><TT>/usr/local/microemacs/jasspa</TT> - UNIX 
-<BR><TT>c:\Program&nbsp;Files\JASSPA\MicroEmacs\jasspa</TT> - Microsoft </UL></UL>
-<UL><P>Modify the 
-<A HREF="m5var057.html">$MEPATH(5)</A> of the (of all users) to include the company directory on the search path i.e. 
-<P>UNIX 
-<BR><UL>Users edit their local <TT>$MEPATH</TT> or a base $MEPATH is added to the system <TT>.login</TT> or <TT>.profile</TT> scripts. 
-<UL><P><TT>MEPATH=/usr/local/microemacs</TT> 
-<BR><TT>MEPATH=/usr/local/microemacs/jasspa:$MEPATH</TT> </UL></UL>
-<P>Microsoft Windows Platforms 
-<BR><UL>Edit the <TT>me32.ini</TT> file and modify the <TT>mepath</TT> entry to reflect the location of the company directory:- 
-<UL><P><TT>mepath=C:\Prog....\Mic...\macros\jasspa;C:\Prog...\Mic...\macros</TT> </UL></UL>
-<P>DOS Platforms 
-<BR><UL>Edit the <B>autoexec.bat</B> file and modify <TT>MEPATH</TT> to include the company directory location. 
-<UL><P><TT>SET MEPATH=c:\me\jasspa;c:\me</TT> </UL></UL></UL></UL>
+<UL><P>It is suggested that all of the company extensions applied to MicroEmacs '04 are performed in a separate directory location which shadows the MicroEmacs standard macro file directory. This enables the original files to be sourced if a user does not want to include the company files. This method also allows MicroEmacs to be updated in the future, whilst retaining the company files. 
+<P>The company files are generally placed in the <TT>company</TT> sub-directory described in the installation notes. </UL>
 <H2>Content Of The Company Information </H2>
 <UL><P><B>Company macro file </B>
 <BR><UL>The company file is typically called by the company name (i.e. <TT>jasspa.emf</TT>) create a new company file. The file includes your company name and hook functions for any new file types that have been defined for the company, an example company file for <B>Jasspa</B> might be defined as:- <UL>
@@ -74,8 +58,9 @@ set-variable&nbsp;%compile-com&nbsp;&quot;build&quot;
 <A HREF="m2nar000.html">File Language Templates</A>. </UL></UL></UL></UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
+<A HREF="m5var090.html">$MEINSTALLPATH(5)</A>, 
 <A HREF="m5var076.html">$MENAME(5)</A>, 
-<A HREF="m5var057.html">$MEPATH(5)</A>, 
+<A HREF="m5var090.html">$MEPATH(5)</A>, 
 <A HREF="m2cmd202.html">File Hooks</A>, 
 <A HREF="m2nar000.html">File Language Templates</A>, 
 <A HREF="m2nar001.html">Installation</A>, 
@@ -83,6 +68,6 @@ set-variable&nbsp;%compile-com&nbsp;&quot;build&quot;
 <A HREF="m2nar003.html">User Profiles</A>. </UL>
 <HR>
 <P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2004/01/11</I>
+<BR><I>Last Modified: 2004/02/04</I>
+<BR><I>Generated On: 2004/02/06</I>
 </BODY></HMTL>

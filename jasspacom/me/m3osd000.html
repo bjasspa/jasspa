@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>user-setup(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 user-setup(3)</H1>
@@ -32,12 +32,11 @@ user-setup(3)</H1>
 <UL><P><TT>Log Name</TT> 
 <BR><UL>Sets the name of the current user to setup, this can be set to any valid file base name (no extension) which need not be the current user. The rest of the <B>user-setup</B> entries are then initialized to the settings defined for the given user (or standard defaults if not defined). </UL>
 <P><TT>Default User</TT> 
-<BR><UL>Creates a small macro file, &quot;<TT>default.emf</TT>&quot;, setting 
-<A HREF="m5var076.html">$MENAME(5)</A> to the current setting of <B>Log Name</B>. This may be executed at start-up to determine the current user. See 
-<A HREF="m5var076.html">$MENAME(5)</A> for more information. </UL>
+<BR><UL>The name or profile of the current user, the value is defined by the MicroEmacs variable 
+<A HREF="m5var088.html">$user-name(5)</A>. This field may not be altered. </UL>
 <P><TT>Setup Path</TT> 
-<BR><UL>Sets the location of the user files, the files are searched for and created in this directory. 
-<A HREF="m5var057.html">$MEPATH(5)</A> should be defined to include this path. </UL>
+<BR><UL>The location of the user defined macro files, the value is defined by the MicroEmacs variable 
+<A HREF="m5var089.html">$user-path(5)</A>. This field may not be altered. </UL>
 <P><TT>Setup File</TT> 
 <BR><UL>Sets the personal user setup macro file name which is executed at start-up. A user macro file should contain all personal settings such as preferred key bindings etc. See 
 <A HREF="m2nar003.html">Setting Up A User Profile</A> for more information. The <B>Edit</B> check box can be used to enable/disable the automatic loading of the setup file ready for editing when the <B>Current</B> button is used. </UL>
@@ -47,8 +46,8 @@ user-setup(3)</H1>
 <P><TT>Emulate</TT> 
 <BR><UL>Sets an emulation mode which changes the behaviour on MicroEmacs to emulate another editor/program; this is done by executing a macro file at start-up. An emulation macro file should contain the macro code required to simulate the environment of the other editor. MicroEmacs '04 is released with two emulation modes, MicroEmacs v3.8 which executes macro file <TT>meme3_8.emf</TT> (See 
 <A HREF="m2cmd201.html">Compatibility</A> for more information) and NEdit v5 which is at best a demonstration of what can be achieved, this executes macro file <TT>menedit.emf</TT>. </UL>
-<P><TT>MS Friendly Keys</TT> 
-<BR><UL>When enabled the following key bindings are created to ease frustration for MS users: 
+<P><TT>Rebind Home Keys</TT> 
+<BR><UL>When enabled the following key bindings are created to ease frustration, particularly for MS users: 
 <P><TT>home</TT> 
 <BR><UL>Bound to beginning-of-line instead of beginning-of-buffer. </UL>
 <P><TT>end</TT> 
@@ -56,12 +55,7 @@ user-setup(3)</H1>
 <P><TT>C-home</TT> 
 <BR><UL>Bound to beginning-of-buffer. </UL>
 <P><TT>C-end</TT> 
-<BR><UL>Bound to end-of-buffer. </UL>
-<P><TT>C-v</TT> 
-<BR><UL>Bound to yank (paste). </UL>
-<P><TT>esc-v</TT> 
-<BR><UL>Bound to reyank. </UL></UL>
-<UL><P>Note that the &quot;<TT>C-x</TT>&quot; and &quot;<TT>C-c</TT>&quot; keys are just to intrinsic to MicroEmacs to rebind (sorry). </UL>
+<BR><UL>Bound to end-of-buffer. </UL></UL>
 <P><TT>MS Shift Region</TT> 
 <BR><UL>Enables/disables cursor key manipulation with the shift key similar to the conventional Microsoft region selection. When enabled, pressing the shift key in conjunction with the cursor movement keys selects a region which is hilighted. Once the region is selected then the <TT>&lt;DELETE&gt;</TT> or <TT>&lt;BACKSPACE&gt;</TT> key erases the selected region. This also enables a similar behaviour with the Mouse <B>Drag region</B> driver, see below. </UL></UL>
 <H2>Locale Setup </H2>
@@ -151,7 +145,7 @@ user-setup(3)</H1>
 <P><TT>Font</TT> 
 <BR><UL>Sets the X font name to be used. This indirectly executes 
 <A HREF="m2cmd027.html">change-font(2)</A> with the given font name. e.g. </UL>
-<UL><P><TT>&quot;-misc-fixed-bold-r-normal--13-*-*-*-c-70-iso8859-1&quot;</TT> </UL>
+<UL><P><TT>&quot;-*-fixed-medium-r-normal--15-*-*-*-c-90-*&quot;</TT> </UL>
 <P><TT>Display Char Set</TT> 
 <BR><UL>Selects the display character set being used by the system to render the MicroEmacs window, dependent on the <B>Font</B> being used. The setting of this option effects the configuration of MicroEmacs's internal character maps (using command 
 <A HREF="m2cmd134.html">set-char-mask(2)</A>) enabling the character sets of foreign languages to be correctly supported. It also changes the definition of variables 
@@ -191,8 +185,8 @@ user-setup(3)</H1>
 <BR><UL>Sets the preferred method of displaying a matching fence, a fence is one of the following brackets: 
 <PRE>{...}&nbsp;&nbsp;&nbsp;(...)&nbsp;&nbsp;&nbsp;[...] 
 </PRE></UL>
-<P>Jumping to the opening fence only occurs when the closing brace is typed, whereas the drawing of matching fences occurs whenever the cursor is on an open fence or one character past the close fence. When this option is set to &quot;<TT>Never Display</TT>&quot; the 
-<A HREF="m3osd010.html">buffer-setup(3)</A> setting is ignored. 
+<UL><P>Jumping to the opening fence only occurs when the closing brace is typed, whereas the drawing of matching fences occurs whenever the cursor is on an open fence or one character past the close fence. When this option is set to &quot;<TT>Never Display</TT>&quot; the 
+<A HREF="m3osd010.html">buffer-setup(3)</A> setting is ignored. </UL>
 <P><TT>Scroll Bars</TT> 
 <BR><UL>Selects the scroll bar support required. When Splitter is enabled, the first character of the scroll bar and mode-line is a split character used for splitting the window into two using the mouse. This indirectly sets the 
 <A HREF="m5var055.html">$scroll-bar(5)</A> variable. </UL>
@@ -503,9 +497,11 @@ user-setup(3)</H1>
 <A HREF="m2nar002.html">Company Profiles</A>, 
 <A HREF="m2nar001.html">Installation</A>, 
 <A HREF="m3osd010.html">buffer-setup(3)</A>, 
-<A HREF="m3osd005.html">scheme-editor(3)</A>. </UL>
+<A HREF="m3osd005.html">scheme-editor(3)</A>, 
+<A HREF="m5var088.html">$user-name(5)</A>, 
+<A HREF="m5var089.html">$user-path(5)</A>. </UL>
 <HR>
 <P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2004/01/06</I>
-<BR><I>Generated On: 2004/01/11</I>
+<BR><I>Last Modified: 2004/02/03</I>
+<BR><I>Generated On: 2004/02/06</I>
 </BODY></HMTL>

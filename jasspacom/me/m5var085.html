@@ -1,0 +1,60 @@
+<HTML>
+<HEAD><TITLE>$line-flags(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
+$line-flags(5)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>$line-flags - Current buffer line flags </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>$line-flags</B> <I>bitmask</I>; No default </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The <B>$line-flags</B> variable is used to retrieve or define the behavioral settings of the current line in the buffer. This variable is a bit flag, the length of the bit flag is variable. In smaller builds of MicroEmacs where features have been disabled then the field is only 8 bits wide, in a normal build then the full 16 bits are present. 
+<P><B>0x0001</B> 
+<BR><UL>The line has changed as a result of an edit and has not been re-displayed. The flag is cleared when the change has been displayed. This bit is read only. </UL>
+<P><B>0x0002</B> 
+<BR><UL>The line contains an alpha mark defined by 
+<A HREF="m2cmd118.html">set-alpha-mark(2)</A>. This bit is read only. </UL>
+<P><B>0x0004</B> 
+<BR><UL>The line contains a narrow region, set by 
+<A HREF="m2cmd068.html">narrow-buffer(2)</A>. This bit is read only. </UL>
+<P><B>0x0008</B> 
+<BR><UL>The line contains some other type of anchor. This bit is read only. </UL>
+<P><B>0x0010</B> 
+<BR><UL>The line should be saved without a new-line or nil termination character. </UL>
+<P><B>0x0020</B> 
+<BR><UL>The line is a mark-up line used for annotation and should not be saved on a write operation. This bit permits lines in a buffer to be inserted for display or annotation purposes which are automatically discarded when the buffer is written to file. Mark-up lines are sometimes used by the buffer folding and collapsing to annotate folds. </UL>
+<P><B>0x0040</B> 
+<BR><UL>The line is protected. A protected line may be deleted or edited however it is not possible to split or join a protected line with any other line. This is used by the folding or collapse mechanisms to protect 
+<A HREF="m2cmd068.html">narrrow</A> regions from editing operations. </UL>
+<P><B>0x0080-0x0800</B> 
+<BR><UL>User defined. Users may use the upper most bits from left to right. JASSPA may use more bits in future releases which shall be consumed from the lower bits, right to left. </UL>
+<P><B>0xf000</B> 
+<BR><UL>The shifted 
+<A HREF="m5var056.html">$line-scheme(5)</A> setting. A value of zero indicates that there is no line scheme in effect on the line. </UL>
+<P>Where a bit flag is defined as read only then an attempt by the user to set a read-only bit then the bit setting is ignored, any remaining writable bits are set as requested. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>Refer to the file <TT>fold.emf</TT> for examples of the use of <B>$line-flags</B>. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P><B>$line-flags</B> was first introduced in MicroEmacs '04. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd068.html">narrow-buffer(2)</A>, 
+<A HREF="m2cmd118.html">set-alpha-mark(2)</A>, 
+<A HREF="m2cmd122.html">set-variable(2)</A>, 
+<A HREF="m5var004.html">$buffer-hilight(5)</A>, 
+<A HREF="m5var001.html">$buffer-scheme(5)</A> 
+<A HREF="m5var056.html">$line-scheme(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2004/01/11</I>
+<BR><I>Generated On: 2004/02/06</I>
+</BODY></HMTL>

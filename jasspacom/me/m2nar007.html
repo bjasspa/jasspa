@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>Build(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 Build(2)</H1>
@@ -83,11 +83,58 @@ Build(2)</H1>
 <LI><B>men</B> - Builds console version (Windows only). 
 <LI><B>men</B> - Builds a URL version (Windows only). 
 <LI><B>menu</B> - Builds console and URL version (Windows only). </UL></UL>
+<H2><B>WINDOWS ENVIRONMENT </B></H2>
+<UL><P>The Windows environment is a little more difficult than UNIX because it does not have a good native command line environment. There are two Microsoft Developer options for building. If you have not purchased MS-DEV then use the FREE Borland compiler which runs on the command line. </UL>
+<H2>MS-Dev GUI Build </H2>
+<UL><P>MicroEmacs is supplied with a MS-Dev 6.x project for building. This has only been set up for debugging and has limited build options, it will also produce a large executable image. The MS-Windows images shipped by JASSPA are built using the command line build environment which is detailed in a later section. </UL>
+<H2>MS-Dev Command Line Build </H2>
+<UL><P>The command line build with MS-Dev is a little messy to set up, in the following sections we discuss MS-Dev 6.x under Windows 2000. There will be differences with different operating systems versions, different install paths and different versions of the MS-Dev toolkit. Use the following information as an outline ONLY, JASSPA will not take responsibility for the configuration of the command line environment, if in doubt then use the GUI builder. 
+<P>To run <B>nmake(1)</B> from a DOS box then the MS-Dev compiler tools must be available in the command path. The MS-Dev kit V6.x is supplied with the necessary file to set up the path which is called <TT>VCVARS32.BAT</TT> and is typically located in directory: <UL>
+<PRE>C:\Program&nbsp;Files\Microsoft&nbsp;Visual&nbsp;Studio\VC98\Bin 
+</PRE></UL>
+<P>This should be run first and then the command line make files may be run using nmake i.e. to build ME:- <UL>
+<PRE>nmake&nbsp;-f&nbsp;win32v6.mak&nbsp;me 
+</PRE></UL>
+<P>To build NE:- <UL>
+<PRE>nmake&nbsp;-f&nbsp;win32v6.mak&nbsp;ne 
+</PRE></UL>
+<P>To clean up after:- <UL>
+<PRE>nmake&nbsp;-f&nbsp;spotless 
+</PRE></UL>
+<P>If you are going to perform a lot of command line building then it is easier to set up the environment and not have to run <TT>VCVARS32.BAT</TT> every time you compile. 
+<P>You can add the variables to your environment, you will need to expand the <TT>VCVARS32.BAT</TT> script and then add the results. The following example is for MS-Dev 6.0 under W2K, the settings will differ depending on what O/S variant you are running and where you have installed software. The following ONLY serves as an example, you need to tailor for your installation. <UL><P>
+<LI>To set up the variables then <B>Start</B> -&gt; <B>Settings</B> -&gt; <B>Control</B> <B>Panel</B> which displays the Control Panel items. 
+<LI>Select <B>System</B> -&gt; <B>Advanced</B> -&gt; <B>Environment variables</B> 
+<LI>In <B>User Variables for</B> <I>&lt;User&gt;</I> then <B>New...</B> or <B>Edit...</B> the <TT>PATH</TT> variable. Add the command line tools execution paths to the environment variable, this will be something like the following (but without newlines):- <UL><UL>
+<PRE>Variable&nbsp;Name:&nbsp;&nbsp;PATH 
+Variable&nbsp;Value:&nbsp;%PATH%; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C:\PROGRA~1\MICROS~3\Common\msdev98\BIN; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C:\PROGRA~1\MICROS~3\VC98\BIN; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C:\PROGRA~1\MICROS~3\Common\TOOLS\WINNT; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C:\PROGRA~1\MICROS~3\Common\TOOLS; 
+</PRE></UL>
+
+<LI></UL><P>Similarly add the <TT>INCLUDE</TT> variable:- <UL><UL>
+<PRE>Variable&nbsp;Name:&nbsp;&nbsp;INCLUDE 
+Variable&nbsp;Value:&nbsp;C:\PROGRA~1\MICROS~3\VC98\ATL\INCLUDE; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C:\PROGRA~1\MICROS~3\VC98\INCLUDE; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C:\PROGRA~1\MICROS~3\VC98\MFC\INCLUDE; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%INCLUDE% 
+</PRE></UL>
+
+<LI></UL><P>Similarly add the <TT>LIB</TT> variable:- <UL><UL>
+<PRE>Variable&nbsp;Name:&nbsp;&nbsp;LIB 
+Variable&nbsp;Value:&nbsp;C:\PROGRA~1\MICROS~3\VC98\LIB; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C:\PROGRA~1\MICROS~3\VC98\MFC\LIB; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%LIB% 
+</PRE></UL>
+
+<LI></UL><P>Accept the entries and close down the dialog. Start a new DOS command line and the variables should be set up ready for the build. </UL></UL>
 <H2><B>NOTES </B></H2>
 <UL><P>Other UNIX ports should be fairly easy from the base set of ported platforms. If any new platform ports are performed by individuals then please submit the makefiles and any source changes back to JASSPA - see 
 <A HREF="amicr038.html">Contact Information</A>. </UL>
 <HR>
 <P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2004/01/10</I>
-<BR><I>Generated On: 2004/01/11</I>
+<BR><I>Last Modified: 2004/01/18</I>
+<BR><I>Generated On: 2004/02/06</I>
 </BODY></HMTL>

@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>kill-rectangle(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 kill-rectangle(2)</H1>
@@ -19,42 +19,25 @@ kill-rectangle(2)</H1>
 <UL><P><B>kill-rectangle</B> (<B>esc C-w</B>)&nbsp; 
 <BR><I>n</I> <B>yank-rectangle</B> (<B>esc C-y</B>)&nbsp; </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P><B>kill-rectangle</B> deletes a rectangle (or column) of text defined be the cursor and the 
+<UL><P><B>kill-rectangle</B> deletes a rectangle (or column) of text defined between the cursor and the 
 <A HREF="m2cmd121.html">set-mark</A> position. The text between the mark column and the cursor column is removed from every line between the mark line and the cursor line inclusive and copied to the kill buffer. The delete text may then be extracted from the kill buffer using 
-<A HREF="m2cmd146.html">yank(2)</A> or <B>yank-rectangle</B>. 
-<P>The mark position may be ahead or behind the current cursor position. If the rectangle column boundary divides a tab character which spans multiple columns, the tab character is replaces with the equivalent number of spaces. Similarly if the boundary divides an unprintable character which is displayed using multiple characters (e.g. '<TT>^A</TT>' for character 0x01) then spaces are inserted before the character to move it to the right of the boundary. 
+<A HREF="m2cmd146.html">yank(2)</A>, <B>yank-rectangle</B> or 
+<A HREF="m3mac072.html">yank-rectangle-overwrite(3)</A>. 
+<P>The mark position may be ahead or behind the current cursor position. If the rectangle column boundary divides a tab character which spans multiple columns, the tab character is replaced with the equivalent number of spaces. Similarly if the boundary divides an unprintable character which is displayed using multiple characters (e.g. '<TT>^A</TT>' for character 0x01) then spaces are inserted before the character to move it to the right of the boundary. 
 <P><B>yank-rectangle</B> inserts the current kill buffer (which may or may not have been generated using <B>kill-rectangle</B>) into the current buffer in a column fashion. That is to say that the first line of text in the kill buffer is inserted into the current line of text in the current buffer from the current cursor column, the cursor is then moved the the next line and placed at the same column. The process is then repeated for the second line of text in the kill buffer etc. </UL>
-<H2><B>NOTES </B></H2>
-<UL><P>The command copy-rectangle is not provided by default as this command is rarely required. If this command is required, the following macro definition can be used: <UL>
-<PRE>define-macro&nbsp;copy-rectangle 
-&nbsp;&nbsp;&nbsp;&nbsp;set-alpha-mark&nbsp;&quot;T&quot; 
-&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;&amp;bmod&nbsp;&quot;view&quot; 
-&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l1&nbsp;&amp;bmod&nbsp;&quot;edit&quot; 
-&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l2&nbsp;&amp;bmod&nbsp;&quot;undo&quot; 
-&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;buffer-mode&nbsp;view 
-&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;buffer-mode&nbsp;undo 
-&nbsp;&nbsp;&nbsp;&nbsp;kill-rectangle 
-&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;undo&nbsp;the&nbsp;kill&nbsp;and&nbsp;restore&nbsp;the&nbsp;buffer&nbsp;state 
-&nbsp;&nbsp;&nbsp;&nbsp;undo 
-&nbsp;&nbsp;&nbsp;&nbsp;&amp;cond&nbsp;#l2&nbsp;1&nbsp;-1&nbsp;buffer-mode&nbsp;&quot;undo&quot; 
-&nbsp;&nbsp;&nbsp;&nbsp;&amp;cond&nbsp;#l1&nbsp;1&nbsp;-1&nbsp;buffer-mode&nbsp;&quot;edit&quot; 
-&nbsp;&nbsp;&nbsp;&nbsp;&amp;cond&nbsp;#l0&nbsp;1&nbsp;-1&nbsp;buffer-mode&nbsp;&quot;view&quot; 
-&nbsp;&nbsp;&nbsp;&nbsp;goto-alpha-mark&nbsp;&quot;T&quot; 
-&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;flag&nbsp;the&nbsp;command&nbsp;to&nbsp;be&nbsp;a&nbsp;copy-region&nbsp;type&nbsp;command 
-&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;@cl&nbsp;copy-region 
-!emacro 
-</PRE></UL>
-</UL><H2><B>SEE ALSO </B></H2>
+<H2><B>SEE ALSO </B></H2>
 <UL><P>
+<A HREF="m3mac072.html">copy-rectangle(3)</A>, 
 <A HREF="m2cmd022.html">copy-region(2)</A>, 
 <A HREF="m2cmd081.html">kill-region(2)</A>, 
 <A HREF="m2cmd111.html">reyank(2)</A>, 
 <A HREF="m2cmd121.html">set-mark(2)</A>, 
 <A HREF="m3mac063.html">string-rectangle(3)</A>, 
 <A HREF="m2cmd136.html">undo(2)</A>, 
-<A HREF="m2cmd146.html">yank(2)</A>. </UL>
+<A HREF="m2cmd146.html">yank(2)</A>, 
+<A HREF="m3mac072.html">yank-rectangle-overwrite(3)</A>. </UL>
 <HR>
 <P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2004/01/11</I>
-<BR><I>Generated On: 2004/01/11</I>
+<BR><I>Last Modified: 2004/01/17</I>
+<BR><I>Generated On: 2004/02/06</I>
 </BODY></HMTL>

@@ -1,0 +1,41 @@
+<HTML>
+<HEAD><TITLE>line-scheme(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
+line-scheme(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>line-scheme - Apply line annotation in current buffer </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>line-scheme</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>line-scheme</B> applies or removes line hilighting by assignment of the buffer line variable 
+<A HREF="m5var056.html">$line-scheme(5)</A>. The numerical argument <I>n</I> is the line scheme number to apply to the line or region when omitted (or specified as 1) then any line hilighting is removed. 
+<P>If a region is defined then the command operates as follows:- 
+<P>Region contained on a single line 
+<BR><UL>When the region is contained on a single line then this is assumed to be a search string and all lines in the buffer that match the region text are hilighted with the color scheme <I>n</I>. </UL>
+<P>Region spans multiple lines 
+<BR><UL>When the region spans multiple lines then all of the lines of the region are hilighted with the color scheme <I>n</I>. 
+</UL><P><B>line-scheme</B> is typically invoked from the pop-up menu (mouse right) to apply line hilighting annotation to a line or region. The user may select to apply a region hilight, remove the region hilight, remove all hilighting or perform a search using 
+<A HREF="m3osd004.html">line-scheme-search(3)</A>. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P><B>line-scheme</B> is a macro implemented in <TT>search.emf</TT>. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m3mac070.html">delete-hilight-lines(3)</A>, 
+<A HREF="m3osd004.html">line-scheme-search(3)</A>, 
+<A HREF="m2cmd066.html">osd(2)</A>, 
+<A HREF="m5var056.html">$line-scheme(5)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2004/01/17</I>
+<BR><I>Generated On: 2004/02/06</I>
+</BODY></HMTL>

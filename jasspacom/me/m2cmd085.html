@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>ml-bind-key(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 ml-bind-key(2)</H1>
@@ -24,17 +24,17 @@ ml-bind-key(2)</H1>
 <H2>Cursor Movement </H2>
 <UL><UL><P>
 <LI>move backwards 1 character, command: 
-<A HREF="m2cmd010.html">backward-char</A> (<B>C-b</B>) 
+<A HREF="m2cmd010.html">backward-char</A> (<B>C-b</B>, <B>left</B>) 
 <LI>move forwards 1 character, command: 
-<A HREF="m2cmd010.html">forward-char</A> (<B>C-f</B>) 
+<A HREF="m2cmd010.html">forward-char</A> (<B>C-f</B>, <B>right</B>) 
 <LI>move backwards 1 word, command: 
-<A HREF="m2cmd096.html">backward-word</A> 
+<A HREF="m2cmd096.html">backward-word</A> (<B>esc b</B>) 
 <LI>move forwards 1 word, command: 
-<A HREF="m2cmd096.html">forward-word</A> 
-<LI>move to the beginning of buffer, command: 
-<A HREF="m2cmd026.html">beginning-of-line</A> (<B>C-a</B>) 
+<A HREF="m2cmd096.html">forward-word</A> (<B>esc f</B>) 
+<LI>move to beginning of buffer, command: 
+<A HREF="m2cmd026.html">beginning-of-line</A> (<B>C-a</B>, <B>home</B>) 
 <LI>move to the end of buffer, command: 
-<A HREF="m2cmd026.html">end-of-line</A> (<B>C-e</B>) </UL></UL>
+<A HREF="m2cmd026.html">end-of-line</A> (<B>C-e</B>, <B>end</B>) </UL></UL>
 <H2>Input </H2>
 <UL><UL><P>
 <LI>Quote a character, command: 
@@ -50,9 +50,9 @@ ml-bind-key(2)</H1>
 <H2>Deletion </H2>
 <UL><UL><P>
 <LI>delete backward 1 character, command: 
-<A HREF="m2cmd034.html">backward-delete-char</A> (<B>C-h</B>) 
+<A HREF="m2cmd034.html">backward-delete-char</A> (<B>C-h</B>, <B>backspace</B>) 
 <LI>delete forward 1 character, command: 
-<A HREF="m2cmd034.html">forward-delete-char</A> 
+<A HREF="m2cmd034.html">forward-delete-char</A> (<B>C-d</B>, <B>delete</B>) 
 <LI>kill text from current position to end of line, command: 
 <A HREF="m2cmd082.html">kill-line</A> (<B>C-k</B>). 
 <LI>erase whole line, command 
@@ -60,23 +60,23 @@ ml-bind-key(2)</H1>
 <H2>History </H2>
 <UL><P>MicroEmacs '04 stores the last 20 entries of each kind (command, buffer, file, search and general which is also saved in the history file so the state of the history is retained when next loaded. The following commands can be used to manipulate the history. <UL><P>
 <LI>next history list entry (loop through history), command: 
-<A HREF="m2cmd094.html">forward-paragraph</A> (<B>esc n</B>) 
+<A HREF="m2cmd094.html">forward-paragraph</A> (<B>esc n</B>, <B>C-n</B>, <B>down</B>) 
 <LI>previous history list entry, command: 
-<A HREF="m2cmd094.html">forward-paragraph</A> (<B>esc p</B>) </UL></UL>
+<A HREF="m2cmd094.html">backward-paragraph</A> (<B>esc p</B>, <B>C-p</B>, <B>up</B>) </UL></UL>
 <H2>Completion </H2>
 <UL><P>When entering a command, file, buffer or a mode name MicroEmacs '04 creates a list of possible completions the following operations can be performed on this list. <UL><P>
 <LI>expand. This completes the given input until the first ambiguous character, command: a space (' ') or 
 <A HREF="m2cmd064.html">tab</A> (<B>C-i</B>). 
-<LI>expand to the previous completion (loops through the completion list, command: 
-<A HREF="m2cmd092.html">backward-line</A> (<B>C-p</B>) 
-<LI>expand to the next completion (loops through the completion list, command: 
-<A HREF="m2cmd092.html">forward-line</A> (<B>C-n</B>) 
+<LI>expand to the previous completion (loops through the completion list), command: 
+<A HREF="m2cmd115.html">scroll-next-window-up</A> (<B>esc C-z</B>) 
+<LI>expand to the next completion (loops through the completion list), command: 
+<A HREF="m2cmd115.html">scroll-next-window-down</A> (<B>esc C-v</B>) 
 <LI>create a listing of all completions, command: a double expansion, i.e. 2 spaces or 
 <A HREF="m2cmd064.html">tabs</A>. The first expands and the second creates the list. 
 <LI>page up the completion list buffer, 
-<A HREF="m2cmd087.html">scroll-up</A> (<B>C-z</B>) 
+<A HREF="m2cmd087.html">scroll-up</A> (<B>C-z</B>, <B>page-up</B>) 
 <LI>page down the completion list buffer, 
-<A HREF="m2cmd087.html">scroll-down</A> (<B>C-v</B>) </UL></UL>
+<A HREF="m2cmd087.html">scroll-down</A> (<B>C-v</B>, <B>page-down</B>) </UL></UL>
 <H2>Miscellaneous </H2>
 <UL><UL><P>
 <LI>abort input, returning failure to the input, 
@@ -84,7 +84,7 @@ ml-bind-key(2)</H1>
 <LI>re-fresh the message line, command: 
 <A HREF="m2cmd108.html">recenter</A> (<B>C-l</B>) 
 <LI>finish input, command 
-<A HREF="m2cmd090.html">newline</A> (<B>C-m</B>, return) 
+<A HREF="m2cmd090.html">newline</A> (<B>C-m</B>, <B>return</B>) 
 <LI>transpose previous character with current character, command: 
 <A HREF="m2cmd135.html">transpose-chars</A> (<B>C-t</B>) 
 <LI>capitalize the next word, command: 
@@ -109,6 +109,6 @@ ml-bind-key(2)</H1>
 <A HREF="m2cmd013.html">global-unbind-key(2)</A>. </UL>
 <HR>
 <P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2004/01/11</I>
+<BR><I>Last Modified: 2004/01/22</I>
+<BR><I>Generated On: 2004/02/06</I>
 </BODY></HMTL>
