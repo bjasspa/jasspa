@@ -99,11 +99,19 @@ osd 27 40  "-"
 osd 27 45  "i" "\HOccurrences"      f "2 occur @y"
 osd 27 50  "i" "\HFind tag"         1 "3 find-tag @y"
 osd 27 60  ""  "Find \Hhelp"        f osd-find-help
+osd 27 70  "M" "Sort \HLines"      28
 osd 27 80  ""  "Restyle \HRegion "  f restyle-region
+osd 27 90  "M" "H\Hilight Line"     .osd.tmp osd-line-scheme
 osd 27 100 "-"
-osd 27 120 ""  "Spell Buffer"      f spell-buffer
+osd 27 120 ""  "Spell Buffer"       f spell-buffer
 osd 27 130 ""  "\HSave Buffer"      f save-buffer    ; Save the buffer
 osd 27 140 ""  "\HClose Buffer"     f osd-close      ; close the buffer
+!if &reg "/history/find-buffer" "0"
+    osd 27 150 "M" "\HBuffer"      .osd.find-buffer osd-find-buffer
+!else    
+    osd 27 150 "M" "\HBuffer"      20 osd-1-buffer   ; Set up the buffers
+!endif
+osd 27 160 "M" "\HQuick Open"      19
 ;
 ; MENU 28 - Sort lines.
 ; Simple menu for options for the sort lines item. Used in the Pop-up menus.
@@ -140,14 +148,6 @@ define-macro context-menu
     !endif
     ; must goto the original position or cut etc wont work - must dup the position
     goto-position "\x82"
-    osd 27 70 "M" "Sort \HLines"      28
-    osd 27 90 "M" "H\Hilight Line"    .osd.tmp osd-line-scheme
-    !if &reg "/history/find-buffer" "0"
-        osd 27 150 "M" "\HBuffer"      .osd.find-buffer osd-find-buffer
-    !else    
-        osd 27 150 "M" "\HBuffer"      20 osd-1-buffer   ; Set up the buffers
-    !endif
-    osd 27 160 "M" "\HQuick Open"      19
     osd 27 110 "i" &cond &band $window-flags 4 "Unloc\Hk Window" "Loc\Hk Window" f "set-variable $window-flags &bxor $window-flags 4"
     !if &band #l2 1
         !force show-region
