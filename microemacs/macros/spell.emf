@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Apr 25 18:12:30 1998
-;  Last Modified : <000719.0012>
+;  Last Modified : <000719.1218>
 ;
 ;  Description   : spell-buffer, spell-word, spell-edit-word and find-word
 ;                  osd based interface to spell and $find-words.
@@ -11,7 +11,7 @@
 ;
 ;  History
 ;
-;  Copyright (c) 1998-99 JASSPA.
+;  Copyright (c) 1998-2000 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 !if &seq .osd.spell-edit "ERROR"
