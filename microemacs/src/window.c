@@ -1791,9 +1791,9 @@ meWindowPopup(meUByte *name, int flags, meBuffer **bufferReplaced)
                 swbuffer(frameCur->windowCur,frameCur->bufferCur);
             return frameCur->windowCur ;
         }
-        /* ZZZZ - pop-up on this frame */
         if(bp->windowCount > 0)
         {
+            /* buffer is visible, but in this frame? */
             for(wp=frameCur->windowList ; (wp != NULL) && (wp->buffer != bp) ; wp=wp->next)
                 ;
         }

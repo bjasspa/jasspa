@@ -842,6 +842,7 @@ extern	int	searchBack(int f, int n);
 extern	int	huntBack(int f, int n);
 extern	int	replaceStr(int f, int n);
 extern	int	queryReplaceStr(int f, int n);
+extern	int	searchBuffer(int f, int n);
 
 /* spawn.c externals */
 #ifdef _UNIX

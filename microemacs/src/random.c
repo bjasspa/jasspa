@@ -1051,7 +1051,7 @@ forwDelChar(int f, int n)
     if((s = bufferSetEdit()) <= 0)             /* Check we can change the buffer */
         return s ;
     
-    if((f != meFALSE) || meModeTest(frameCur->bufferCur->mode,MDLETTR))
+    if(f != meFALSE)
         keep = 3 ;                      /* Save in kill */
     else
         keep = 2 ;
@@ -1091,9 +1091,6 @@ killLine(int f, int n)
         chunk = meLineGetLength(frameCur->windowCur->dotLine)-frameCur->windowCur->dotOffset;
         if (chunk == 0)
             chunk = 1;
-        else if(!meModeTest(frameCur->bufferCur->mode,MDLINE) &&   /* if line kill mode    */
-                (frameCur->windowCur->dotOffset == 0) )                 /* whole line           */
-            chunk++ ;
     }
     else
     {

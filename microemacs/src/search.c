@@ -1048,7 +1048,6 @@ replaces(int kind, int ff, int nn)
                     return meFALSE ;
                 }
             }
-            /* ZZZZ - protected line & narrow? */
             if(mldelete(slength,dpat) != 0)
                 return mlwrite(MWABORT,(meUByte *)"[ERROR while deleting]") ;
             ilength = 0 ;
@@ -1434,6 +1433,38 @@ iscanner(meUByte *apat, int n, int flags, SCANNERPOS *sp)
         rvstrcpy(apat);
     
     return scanner (((direct == meFORWARD) ? apat : srchRPat),direct, beg_or_end, &n, sp);
+}
+
+int
+searchBuffer(int f, int n)
+{
+    char flagsStr[20] ;
+    int flags, rr ;
+    
+    if(((rr=meGetString((meUByte *)"Search Flags",0,0,flagsStr,20)) > 0) &&
+       ((rr=readpattern((meUByte *)"Search String",1+lastReplace)) > 0))
+    {
+        flags = 0 ;
+        if(meStrchr(flagsStr,'b'))
+            flags |= ISCANNER_BACKW ;
+        if(meStrchr(flagsStr,'e'))
+            flags |= ISCANNER_EXACT ;
+#if MEOPT_MAGIC
+        if(meStrchr(flagsStr,'m'))
+            flags |= ISCANNER_MAGIC ;
+#endif
+        if(n <= 0)
+        {
+            f = -n;
+            n = 1;
+        }
+        else
+            f = 0;
+        do
+            rr = iscanner(srchPat,f,flags,NULL) ;
+        while ((rr > 0) && (--n > 0)) ;
+    }
+    return rr ;
 }
 
 #ifdef _ME_FREE_ALL_MEMORY
