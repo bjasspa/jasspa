@@ -101,7 +101,8 @@ set-variable .fhook-idl.collapse-mnext "-1"
     hilight .hilight.idl    0 "FALSE"        .scheme.prepro
 !endif
 !if &sin "d" .fhook-idl.setup
-    0 indent .hilight.idl 28 t 3/2t 0 -t 0 -t 1 -1 " * "
+    0 indent .hilight.idl 12
+    indent .hilight.idl "u" " * "
 !endif
 
 buffer-init-fhook "idl"

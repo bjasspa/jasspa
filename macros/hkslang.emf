@@ -102,7 +102,8 @@ set-variable .fhook-slang.collapse-mnext "-1"
     !endif
 !endif
 !if &sin "d" .fhook-slang.setup
-    0 indent .hilight.slang 28 t 3/2t 0 -t 0 -t 1 -1 " * "
+    0 indent .hilight.slang 12
+    indent .hilight.slang "u" " * "
 !endif
 
 ; setup fuctions to auto-load from cmacros

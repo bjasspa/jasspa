@@ -25,7 +25,7 @@ set-char-mask "1" ":_~"
 !else
     set-variable .hilight.java 1
 !endif
-0 indent .hilight.java 28 t 3/2t 0 -t 0 -t 1 -1 " * "
+0 indent .hilight.java 12
 
 0 define-macro javatags-add-tag
     forward-word
@@ -352,6 +352,7 @@ define-macro javatags
     split-window-vertically
     find-buffer "*scratch*"
     find-file "tags"
+    -1 buffer-mode "view"
     !force 0 delete-buffer "*scratch*"
     set-variable #g1 &rsin "/" $buffer-fname
     set-variable #g2 &lef $buffer-fname #g1
