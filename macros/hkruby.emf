@@ -196,8 +196,8 @@ set-variable .fhook-ruby.item-list-r3 "Def \ecB\\1\ecA"
     ; Continue lines
     indent .hilight.ruby c "\\\\" 4
     ; Expressions at the end of a line - try with these
-    indent .hilight.ruby c "[-+=*/,<>]$" 4
-    indent .hilight.ruby c "[-+=*/,<>][ \t]+$" 4
+    indent .hilight.ruby c "[-+=*/<>]$" 4
+    indent .hilight.ruby c "[-+=*/<>][ \t]+$" 4
     ; Ignore comments.
     indent .hilight.ruby i "#"
 !endif
