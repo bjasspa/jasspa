@@ -4496,7 +4496,6 @@ Miscellaneous Information
     Also visit our web site's on the Internet:- 
 
        cG http://www.jasspa.comcA 
-       cG http://www.geocities.com/jasspacA 
 
     This page carries the latest information and patches on the distribution. 
 
@@ -6528,7 +6527,7 @@ Miscellaneous Information
 sB
         set-variable $tabwidth 2 
 
-sB
+sA
     then whenever you start a new session you will always have the $tabwidth 
     defined as you want it. 
 
@@ -8262,6 +8261,7 @@ $a
 sB
         add-next-line "*grep*" "" 
 
+sA
 
 cEcESEE ALSO cEcA
 
@@ -11381,7 +11381,7 @@ $a
     Only thecG http://cA, cGaddresscA and cG/filecA components are mandatory, the rest can 
     usually be omitted. e.g.: 
 
-        find-file "http://members.xoom.com/jasspa/index.html" 
+        find-file "http://www.jasspa.com/index.html" 
 
 
     See help page on lslm%http-proxy-addr(5)le for information on HTTP proxy server 
@@ -22846,10 +22846,10 @@ $a
             The cDwin32scA release has not been used with vengeance, although no 
             specific problems have been reported with this release. 
 
-    cDWindows '95/'98/NTcA 
+    cDWindows '95/'98/NT/2K/XPcA 
 
         Executable: 
-            Compiled with Microsoft Developer 5.0 
+            Compiled with Microsoft Developer 6.x 
 
         Install Shield 
             An cDInstall ShieldcA version of MicroEmacs is available which 
@@ -22862,10 +22862,15 @@ $a
             cGmewinhlp.zipcA (optional) 
 
         Recommended installed components: 
-            cG4doscA or cG4ntcA - command shell 
             cGgrepcA - Version of grep (GNU port of grep recommended) 
             cGdiffcA - Version of diff (GNU port of grep recommended) 
             cGmakecA - use nmake or GNU port of make. 
+
+            A good source of UNIX native tools is 
+
+           cG http://unxutils.sourceforge.net/cA - for native windows grep, diff, 
+            zip etc. 
+           cG http://www.cygwin.comcA - for a shell environment. 
 
         Installation: 
             Create the directory "cGC:\Program Files\Jasspa\MicroEmacscA" (or 
@@ -22874,13 +22879,12 @@ $a
             Unzip the MicroEmacs components into "cGC:\Program 
             Files\Jasspa\MicroEmacscA" 
 
-            Create the file "cGc:\windows\me32.inicA" and add the following 
-            lines:- 
+            Create the file "cGc:\windows\me32.inicA" or "cGc:\WINNT\me32.inicA" and 
+            add the following lines:- 
 
                 [Defaults] 
                 mepath=C:\Program Files\Jasspa\MicroEmacs 
                 userPath=C:\Program Files\Jasspa\MicroEmacs 
-                fontfile=dosapp.fon 
 
 
             Create a short cut to MicroEmacs for the Desktop 
@@ -24303,6 +24307,108 @@ $a
         * cDmencA - Builds console version (Windows only). 
         * cDmencA - Builds a URL version (Windows only). 
         * cDmenucA - Builds console and URL version (Windows only). 
+
+
+cEcEWINDOWS ENVIRONMENT cEcA
+
+
+    The Windows environment is a little more difficult than UNIX because it 
+    does not have a good native command line environment. There are two 
+    Microsoft Developer options for building. If you have not purchased MS-DEV 
+    then use the FREE Borland compiler which runs on the command line. 
+
+
+cEMS-Dev GUI Build cA
+
+
+    MicroEmacs is supplied with a MS-Dev 6.x project for building. This has 
+    only been set up for debugging and has limited build options, it will also 
+    produce a large executable image. The MS-Windows images shipped by JASSPA 
+    are built using the command line build environment which is detailed in a 
+    later section. 
+
+
+cEMS-Dev Command Line Build cA
+
+
+    The command line build with MS-Dev is a little messy to set up, in the 
+    following sections we discuss MS-Dev 6.x under Windows 2000. There will be 
+    differences with different operating systems versions, different install 
+    paths and different versions of the MS-Dev toolkit. Use the following 
+    information as an outline ONLY, JASSPA will not take responsibility for 
+    the configuration of the command line environment, if in doubt then use 
+    the GUI builder. 
+
+    To run cDnmake(1)cA from a DOS box then the MS-Dev compiler tools must be 
+    available in the command path. The MS-Dev kit V6.x is supplied with the 
+    necessary file to set up the path which is called cGVCVARS32.BATcA and is 
+    typically located in directory: 
+
+        C:\Program Files\Microsoft Visual Studio\VC98\Bin 
+
+
+    This should be run first and then the command line make files may be run 
+    using nmake i.e. to build ME:- 
+
+        nmake -f win32v6.mak me 
+
+
+    To build NE:- 
+
+        nmake -f win32v6.mak ne 
+
+
+    To clean up after:- 
+
+        nmake -f spotless 
+
+
+    If you are going to perform a lot of command line building then it is 
+    easier to set up the environment and not have to run cGVCVARS32.BATcA every 
+    time you compile. 
+
+    You can add the variables to your environment, you will need to expand the 
+    cGVCVARS32.BATcA script and then add the results. The following example is for 
+    MS-Dev 6.0 under W2K, the settings will differ depending on what O/S 
+    variant you are running and where you have installed software. The 
+    following ONLY serves as an example, you need to tailor for your 
+    installation. 
+
+        * To set up the variables then cDStartcA -> cDSettingscA -> cDControlcA cDPanelcA 
+          which displays the Control Panel items. 
+        * Select cDSystemcA -> cDAdvancedcA -> cDEnvironment variablescA 
+        * In cDUser Variables forcA cC<User>cA then cDNew...cA or cDEdit...cA the cGPATHcA 
+          variable. Add the command line tools execution paths to the 
+          environment variable, this will be something like the following (but 
+          without newlines):- 
+
+                Variable Name:  PATH 
+                Variable Value: %PATH%; 
+                                C:\PROGRA~1\MICROS~3\Common\msdev98\BIN; 
+                                C:\PROGRA~1\MICROS~3\VC98\BIN; 
+                                C:\PROGRA~1\MICROS~3\Common\TOOLS\WINNT; 
+                                C:\PROGRA~1\MICROS~3\Common\TOOLS; 
+
+        * 
+        Similarly add the cGINCLUDEcA variable:- 
+
+                Variable Name:  INCLUDE 
+                Variable Value: C:\PROGRA~1\MICROS~3\VC98\ATL\INCLUDE; 
+                                C:\PROGRA~1\MICROS~3\VC98\INCLUDE; 
+                                C:\PROGRA~1\MICROS~3\VC98\MFC\INCLUDE; 
+                                %INCLUDE% 
+
+        * 
+        Similarly add the cGLIBcA variable:- 
+
+                Variable Name:  LIB 
+                Variable Value: C:\PROGRA~1\MICROS~3\VC98\LIB; 
+                                C:\PROGRA~1\MICROS~3\VC98\MFC\LIB; 
+                                %LIB% 
+
+        * 
+        Accept the entries and close down the dialog. Start a new DOS command 
+        line and the variables should be set up ready for the build. 
 
 
 cEcENOTES cEcA
@@ -36967,7 +37073,7 @@ $a
 sB
         save-some-buffers @mna 
 
-
+sA
     The following example sets cG%languagecA to a language supplied by the user 
     from a given list, giving the current setting as a default 
 sB
@@ -38739,12 +38845,11 @@ $a
 
 
     The following macro code gives a simple example of their potential use: 
-$emf-scheme
-
+sB
         forward-search "Token *{\\(Start\\|End\\)}" 
         !if $status 
             ml-write "[found \"%s\"]" @s0 
-            if &seq @s1 "Start" 
+            !if &seq @s1 "Start" 
                . 
                . 
 

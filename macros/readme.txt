@@ -247,10 +247,10 @@ INSTALLATION
                The win32s release has not been used with vengeance, although no
                specific problems have been reported with this release. 
 
-     Windows '95/'98/NT 
+     Windows '95/'98/NT/2K/XP 
 
           Executable: 
-               Compiled with Microsoft Developer 5.0 
+               Compiled with Microsoft Developer 6.x 
 
           Install Shield 
                An Install  Shield  version  of  MicroEmacs  is  available which
@@ -263,10 +263,15 @@ INSTALLATION
                mewinhlp.zip (optional) 
 
           Recommended installed components: 
-               4dos or 4nt - command shell 
                grep - Version of grep (GNU port of grep recommended) 
                diff - Version of diff (GNU port of grep recommended) 
                make - use nmake or GNU port of make. 
+
+               A good source of UNIX native tools is 
+
+               http://unxutils.sourceforge.net/  -  for  native  windows  grep,
+               diff, zip etc. 
+               http://www.cygwin.com - for a shell environment. 
 
           Installation: 
                Create  the  directory  "C:\Program Files\Jasspa\MicroEmacs" (or
@@ -275,13 +280,12 @@ INSTALLATION
                Unzip    the    MicroEmacs     components    into    "C:\Program
                Files\Jasspa\MicroEmacs" 
 
-               Create the  file  "c:\windows\me32.ini"  and  add  the following
-               lines:- 
+               Create the file "c:\windows\me32.ini" or "c:\WINNT\me32.ini" and
+               add the following lines:- 
 
                  [Defaults] 
                  mepath=C:\Program Files\Jasspa\MicroEmacs 
                  userPath=C:\Program Files\Jasspa\MicroEmacs 
-                 fontfile=dosapp.fon 
 
                Create a short cut to MicroEmacs for the Desktop 
 

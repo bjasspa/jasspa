@@ -105,6 +105,92 @@ BUILD
        *  men - Builds a URL version (Windows only). 
        *  menu - Builds console and URL version (Windows only). 
 
+WINDOWS ENVIRONMENT 
+     The Windows environment  is a little  more difficult than  UNIX because it
+     does not  have  a good  native  command  line environment.  There  are two
+     Microsoft Developer options for building. If you have not purchased MS-DEV
+     then use the FREE Borland compiler which runs on the command line. 
+
+  MS-Dev GUI Build 
+     MicroEmacs is supplied  with a MS-Dev  6.x project for  building. This has
+     only been set up for debugging and has limited build options, it will also
+     produce a large executable image.  The MS-Windows images shipped by JASSPA
+     are built using the command line  build environment which is detailed in a
+     later section. 
+
+  MS-Dev Command Line Build 
+     The command line  build with MS-Dev  is a little  messy to set  up, in the
+     following sections we discuss MS-Dev 6.x under Windows 2000. There will be
+     differences with different  operating systems  versions, different install
+     paths and  different versions  of  the MS-Dev  toolkit. Use  the following
+     information as an  outline ONLY,  JASSPA will not  take responsibility for
+     the configuration of  the command line  environment, if in  doubt then use
+     the GUI builder. 
+
+     To run nmake(1)  from a  DOS box  then the  MS-Dev compiler  tools must be
+     available in the  command path. The  MS-Dev kit V6.x  is supplied with the
+     necessary file  to set  up the  path which  is called  VCVARS32.BAT and is
+     typically located in directory: 
+
+       C:\Program Files\Microsoft Visual Studio\VC98\Bin 
+
+     This should be run first  and then the command line  make files may be run
+     using nmake i.e. to build ME:- 
+
+       nmake -f win32v6.mak me 
+
+     To build NE:- 
+
+       nmake -f win32v6.mak ne 
+
+     To clean up after:- 
+
+       nmake -f spotless 
+
+     If you are  going to  perform a  lot of command  line building  then it is
+     easier to set  up the environment  and not have  to run VCVARS32.BAT every
+     time you compile. 
+
+     You can add the variables to your environment, you will need to expand the
+     VCVARS32.BAT script and then add the results. The following example is for
+     MS-Dev 6.0  under W2K,  the  settings will  differ  depending on  what O/S
+     variant you  are  running  and  where  you  have  installed  software. The
+     following  ONLY  serves  as  an  example,  you  need  to  tailor  for your
+     installation. 
+
+       *  To set up the variables then Start -> Settings -> Control Panel which
+          displays the Control Panel items. 
+       *  Select System -> Advanced -> Environment variables 
+       *  In  User  Variables  for  <User>  then  New...  or  Edit...  the PATH
+          variable.  Add  the  command  line   tools  execution  paths  to  the
+          environment variable, this will be  something like the following (but
+          without newlines):- 
+
+            Variable Name:  PATH 
+            Variable Value: %PATH%; 
+                            C:\PROGRA~1\MICROS~3\Common\msdev98\BIN; 
+                            C:\PROGRA~1\MICROS~3\VC98\BIN; 
+                            C:\PROGRA~1\MICROS~3\Common\TOOLS\WINNT; 
+                            C:\PROGRA~1\MICROS~3\Common\TOOLS; 
+
+       *  Similarly add the INCLUDE variable:- 
+
+            Variable Name:  INCLUDE 
+            Variable Value: C:\PROGRA~1\MICROS~3\VC98\ATL\INCLUDE; 
+                            C:\PROGRA~1\MICROS~3\VC98\INCLUDE; 
+                            C:\PROGRA~1\MICROS~3\VC98\MFC\INCLUDE; 
+                            %INCLUDE% 
+
+       *  Similarly add the LIB variable:- 
+
+            Variable Name:  LIB 
+            Variable Value: C:\PROGRA~1\MICROS~3\VC98\LIB; 
+                            C:\PROGRA~1\MICROS~3\VC98\MFC\LIB; 
+                            %LIB% 
+
+       *  Accept the entries and close down the dialog. Start a new DOS command
+          line and the variables should be set up ready for the build. 
+
 NOTES 
      Other UNIX  ports  should  be fairly  easy  from  the base  set  of ported
      platforms. If  any new  platform ports  are performed  by individuals then
