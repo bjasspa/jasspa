@@ -280,12 +280,11 @@ extern	int	macarg(meUByte *tok);
 extern  int     meGetString(meUByte *prompt, int option, int defnum,
                                meUByte *buffer, int size);
 extern	int	storemac(int f, int n);
-extern	int	dofile(meUByte *fname, int f, int n);
-extern	int	execCommand(int f, int n);
-extern	int	execLine(int f, int n);
-extern	int	execBuffer(int f, int n);
-extern	int	execFile(int f, int n);
-extern	int	startup(meUByte *sfname);
+extern	int	execFile(meUByte *fname, int f, int n);
+extern	int	executeNamedCommand(int f, int n);
+extern	int	executeLine(int f, int n);
+extern	int	executeBuffer(int f, int n);
+extern	int	executeFile(int f, int n);
 
 /* file.c externals */
 extern  int fnamecmp(meUByte *f1, meUByte *f2) ;
@@ -596,9 +595,9 @@ extern  int     insMacro(int f, int n) ;
 #endif
 extern	int	startKbdMacro(int f, int n);
 extern	int	endKbdMacro(int f, int n);
-extern	int	execKbdMacro(int f, int n);
+extern	int	executeKbdMacro(int f, int n);
 extern	int	stringExec(int f, int n, meUByte *macro) ;
-extern	int	execString(int f, int n);
+extern	int	executeString(int f, int n);
 
 /* main.c externals */
 extern  int     insertChar(register int c, register int n) ;

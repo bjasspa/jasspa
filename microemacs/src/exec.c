@@ -1190,9 +1190,9 @@ execFunc(int index, int f, int n)
             if(hlp->flag & meMACRO_FILE)
             {
                 if(mac->fname != NULL)
-                    dofile(mac->fname,0,1) ;
+                    execFile(mac->fname,0,1) ;
                 else
-                    dofile(mac->name,0,1) ;
+                    execFile(mac->name,0,1) ;
                 hlp = mac->hlp ;
                 if(hlp->flag & meMACRO_FILE)
                     return mlwrite(MWABORT,(meUByte *)"[file-macro %s not defined]",mac->name);
@@ -1368,9 +1368,9 @@ macroPrintError(meLine *hlp, meUByte *macName)
     return ln ;
 }
 
-/*      execBuffer:     Execute the contents of a buffer of commands    */
+/* executeBuffer:     Execute the contents of a buffer of commands    */
 int
-execBuffer(int f, int n)
+executeBuffer(int f, int n)
 {
     register meBuffer *bp;                /* ptr to buffer to execute */
     register int s;                     /* status return */
@@ -1431,26 +1431,37 @@ execBuffer(int f, int n)
     return s ;
 }
 
-/*      dofile: yank a file into a buffer and execute it
+/* execFile: yank a file into a buffer and execute it
    if there are no errors, delete the buffer on exit */
 /* Note for Dynamic file names
  * This ensures that nothing is done to fname
  */
 int
-dofile(meUByte *fname, int f, int n)
+execFile(meUByte *fname, int f, int n)
 {
     meVarList     varList={NULL,0} ;
-    meUByte         fn[meBUF_SIZE_MAX] ;
-    meLine          hlp ;
-    register int  status ;      /* results of various calls */
+    meUByte       fn[meBUF_SIZE_MAX] ;
+    meLine        hlp ;
+    register int  status=0 ;
     
+    if((fname == NULL) || (fname[0] == '\0'))
+    {
+        fname = (meUByte *) ME_SHORTNAME ;
+#ifdef _NANOEMACS
+        /* don't print-out the '[Failed to load file ne.emf]' error for ne - who cares */ 
+        status = 1 ;
+#endif
+    }
     hlp.next = &hlp ;
     hlp.prev = &hlp ;
     /* use a new buffer to ensure it doesn't mess with any loaded files */
     if(!fileLookup(fname,(meUByte *)".emf",meFL_CHECKDOT|meFL_USESRCHPATH,fn) ||
        (ffReadFile(fn,meRWFLAG_SILENT,NULL,&hlp,0,0) == meABORT))
+    {
+        if(status)
+            return meABORT ;
         return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[Failed to load file %s]", fname);
-    
+    }
     /* go execute it! */
     if((status = donbuf(&hlp,&varList,fn,f,n)) <= 0)
         /* the execution failed lets go to the line that caused the grief */
@@ -1473,7 +1484,7 @@ dofile(meUByte *fname, int f, int n)
 }
 
 int
-execFile(int f, int n)  /* execute a series of commands in a file */
+executeFile(int f, int n)  /* execute a series of commands in a file */
 {
     meUByte filename[meBUF_SIZE_MAX];      /* Filename */
     int status;
@@ -1483,27 +1494,12 @@ execFile(int f, int n)  /* execute a series of commands in a file */
         return status ;
     
     /* otherwise, execute it */
-    return dofile(filename,f,n) ;
+    return execFile(filename,f,n) ;
 }
 
-/* execute the startup file */
-/* sfname       name of startup file (null if default) */
-
+/* executeNamedCommand: execute a named command even if it is not bound */
 int
-startup(meUByte *sfname)
-{
-    /* look up the startup file */
-    if(sfname == NULL)
-        sfname = (meUByte *) ME_SHORTNAME ;
-    
-    return dofile(sfname,0,1) ;
-}
-
-
-/* execCommand: execute a named command even if it is not bound */
-
-int
-execCommand(int f, int n)
+executeNamedCommand(int f, int n)
 {
     register int idx ;       /* index to the requested function */
     meUByte buf[meBUF_SIZE_MAX];       /* buffer to hold tentative command name */
@@ -1528,10 +1524,6 @@ execCommand(int f, int n)
 }
 
 
-/*      execLine:       Execute a command line command to be typed in
-   by the user                                     */
-
-/*ARGSUSED*/
 int
 lineExec (int f, int n, meUByte *cmdstr)
 {
@@ -1569,8 +1561,9 @@ lineExec (int f, int n, meUByte *cmdstr)
 }    
 
 
+/* executeLine: Execute a command line command to be typed in by the user */
 int
-execLine(int f, int n)
+executeLine(int f, int n)
 {
     register int status;                /* status return */
     meUByte cmdstr[meBUF_SIZE_MAX];               /* string holding command to execute */

@@ -76,7 +76,7 @@ endKbdMacro(int f, int n)
  * command gets an error. Return meTRUE if all ok, else meFALSE.
  */
 int
-execKbdMacro(int f, int n)
+executeKbdMacro(int f, int n)
 {
     if (kbdmode != meSTOP)
         return mlwrite(MWABORT,(meUByte *)"Macro already active!");
@@ -139,7 +139,7 @@ stringExec(int f, int n, meUByte *macro)
 }
 
 int
-execString(int f, int n)
+executeString(int f, int n)
 {
     meUByte sbuf[meBUF_SIZE_MAX] ;
     
@@ -443,9 +443,9 @@ try_again:
         {
             meModeClear(hbp->mode,MDVIEW) ;
             if(mac->fname != NULL)
-                dofile(mac->fname,0,1) ;
+                execFile(mac->fname,0,1) ;
             else
-                dofile(mac->name,0,1) ;
+                execFile(mac->name,0,1) ;
             helpBufferReset(hbp) ;
             if(!(mac->hlp->flag & meMACRO_FILE))
                 goto try_again ;

@@ -183,7 +183,7 @@ assignHooks (meBuffer *bp, meUByte *hooknm)
 	}
 	else
 	{
-	    dofile(fn,0,1) ;
+	    execFile(fn,0,1) ;
 	    bp->fhook = decode_fncname(hooknm,1) ;
 	}
     }
