@@ -146,7 +146,7 @@ gft_directory:
     {
         DWORD status;
         int   len ;
-
+        
         if(((len = meStrlen(file)) == 0) ||
            (strchr(file,'*') != NULL) || (strchr(file,'?') != NULL))
         {
@@ -154,17 +154,27 @@ gft_directory:
                 mlwrite(MWABORT|MWPAUSE,"[%s illegal name]", file);
             return meFILETYPE_NASTY ;
         }
-        if((file[len-1] == DIR_CHAR) || ((len == 2) && (file[1] == _DRV_CHAR)))
-            goto gft_directory ;
-
         if(stats != NULL)
         {
             HANDLE          *fh ;
             WIN32_FIND_DATA  fd ;
-
-            fh = FindFirstFile(file,&fd) ;
+            
+            if(file[len-1] == DIR_CHAR)
+            {
+                meUByte fn[meBUF_SIZE_MAX] ;
+                strcpy(fn,file) ;
+                fn[len] = '.' ;
+                fn[len+1] = '\0' ;
+                fh = FindFirstFile(fn,&fd) ;
+            }
+            else
+                fh = FindFirstFile(file,&fd) ;
             if(fh == INVALID_HANDLE_VALUE)
+            {
+                if((file[len-1] == DIR_CHAR) || ((len == 2) && (file[1] == _DRV_CHAR)))
+                    goto gft_directory ;
                 return meFILETYPE_NOTEXIST ;
+            }
             status = fd.dwFileAttributes ;
             /* Dangerously ingoring the nFileSizeHigh for now */
             stats->stsize = fd.nFileSizeLow ;
@@ -173,6 +183,8 @@ gft_directory:
             FindClose(fh) ;
             stats->stmode = (meUShort) status | FILE_ATTRIBUTE_ARCHIVE ;
         }
+        else if((file[len-1] == DIR_CHAR) || ((len == 2) && (file[1] == _DRV_CHAR)))
+            goto gft_directory ;
         else if((status = GetFileAttributes(file)) == 0xFFFFFFFF)
             return meFILETYPE_NOTEXIST ;
         if (status & FILE_ATTRIBUTE_DIRECTORY)
@@ -331,360 +343,108 @@ fnamecmp(meUByte *f1, meUByte *f2)
 #endif
 }
 
-/*#if (defined _UNIX)*/
 /* Search the directory and subdirectories for MicroEmacs macro directories */
-static int
-set_subdirs (int index, meUByte *path_name, meUByte *path_base)
+int
+mePathAddSearchPath(int index, meUByte *path_name, meUByte *path_base, int *gotUserPath)
 {
-    meUByte base_name [meTOKENBUF_SIZE_MAX] ;
-    
     /* Common sub-directories of JASSPAs MicroEmacs */
-    static char *subdirs[] =
+    static meUByte *subdirs[] =
     {
-        "",                             /* Include the root directory first */
-        "company",                      /* Company wide files */
-        "macros",                       /* Standard distribution macros */
-        "spelling",                     /* Spelling dictionaries */
+        (meUByte *) "",                 /* Include the root directory first */
+        (meUByte *) "company",          /* Company wide files */
+        (meUByte *) "macros",           /* Standard distribution macros */
+        (meUByte *) "spelling",         /* Spelling dictionaries */
         NULL
     } ;
+    meUByte *pp, *ss, base_name[meBUF_SIZE_MAX] ;
+    int ii, ll ;
     
     /* Iterate over all of the paths */
-    while (*path_base != '\0')
+    while(*path_base != '\0')
     {
-        meUByte *p ;
-        int ii ;
-                
         /* Construct the base name */
-        p = base_name ;
-        while ((*p = *path_base) != '\0')
+        pp = base_name ;
+        while((*pp = *path_base) != '\0')
         {
             path_base++ ;
-            if (*p == mePATH_CHAR)
+            if (*pp == mePATH_CHAR)
             {
-                *p = '\0' ;
+                *pp = '\0' ;
                 break;
             }
-            p++;
+            pp++;
         }
         
         /* Clean up any trailing directory characters */
-        ii = meStrlen (base_name) ;
-        if (ii < _ROOT_DIR_LEN)
+        if((ll = meStrlen(base_name)) < _ROOT_DIR_LEN)
             continue;
-        if (ii > _ROOT_DIR_LEN)
+        if(base_name[ll-1] == DIR_CHAR)
+            ll-- ;
+        
+        /* check for base_name/$user-name first */
+        if(meUserName != NULL)
         {
-            if (base_name[--ii] == DIR_CHAR)
-                base_name[ii] = '\0';
+            base_name[ll] = DIR_CHAR ;
+            meStrcpy(base_name+ll+1,meUserName) ;
+            if(getFileStats(base_name,0,NULL,NULL) == meFILETYPE_DIRECTORY)
+            {
+                /* it exists, add it to the front if we haven't got a user
+                 * path yet or to the end otherwise */
+                ii = meStrlen(base_name) ;
+                if(*gotUserPath <= 0)
+                {
+                    *gotUserPath = 1 ;
+                    if(index)
+                    {
+                        base_name[ii++] = mePATH_CHAR ;
+                        meStrcpy(base_name+ii,path_name) ;
+                    }
+                    meStrcpy(path_name,base_name) ;
+                }
+                else
+                {
+                    if(index)
+                        path_name[index++] = mePATH_CHAR ;
+                    meStrcpy(path_name+index,base_name) ;
+                }
+                index += ii ;
+            }
         }
-    
+        
         /* Append the search paths if necessary. We construct the standard
          * JASSPA MicroEmacs paths and then test for the existance of the
          * directory. If the directory exists then we add it to the search
          * path. We do not add any directories to the search path that do not
          * exist. */
-        if (subdirs != NULL)
+        for(ii=0; (ss = subdirs[ii]) != NULL; ii++)
         {
-            char *s ;
-            
-            /* Build up strings ":<s1>/<jdirs[ii]>" */
-            for (ii = 0; (s = subdirs[ii]) != NULL; ii++)
+            if(*ss != '\0')
             {
-                int last_index = index ;    /* Save the position */
-                int path_index ;            /* Start of path position */ 
-                int pathtype ;              /* Path file type */
-                
-                if (index > 0)
-                    path_name[index++] = mePATH_CHAR ;
-                path_index = index ;        /* Save start of path */
-                
-                meStrcpy (&path_name[index], base_name) ;
-                index += meStrlen (base_name) ;
-                if (*s != '\0')     /* Special case of the empty string */
-                    path_name[index++] = DIR_CHAR ;
-                meStrcpy (&path_name[index], s) ;
-                index += meStrlen (s) ;
-                path_name[index] = '\0' ;
-                
-                /* Test the directory for existance, if it does not exist
-                 * then do not add it as we do not want to search any
-                 * directory unecessarily. */
-                pathtype = getFileStats(&path_name[path_index],0,NULL,NULL) ;
-/*              printf ("Testing %s : %d\n", &path_name[path_index], pathtype); */
-                if(pathtype != meFILETYPE_DIRECTORY)
-                {
-                    index = last_index ;      /* Skip this path. */
-                    path_name[index] = '\0';  /* Remove path. */
-                    
-                    /* If this is the NIL path then do not do any more as no
-                     * sub-directories will exist here. */
-                    if (*s == '\0')
-                        break;
-                }
+                base_name[ll] = DIR_CHAR ;
+                meStrcpy(base_name+ll+1,ss) ;
             }
+            else
+                base_name[ll] = '\0' ;
+            
+            /* Test the directory for existance, if it does not exist
+             * then do not add it as we do not want to search any
+             * directory unecessarily. */
+            if(getFileStats(base_name,0,NULL,NULL) == meFILETYPE_DIRECTORY)
+            {
+                /* it exists, add it */
+                if(index)
+                    path_name[index++] = mePATH_CHAR ;
+                meStrcpy(path_name+index,base_name) ;
+                index += meStrlen(base_name) ;
+            }
+            else if(*ss == '\0')
+                /* if the root dir does not exist there's no point continuing */
+                break;
         }
     }
     return index;
 }
-/*#endif*/
 
-/* Set up directories. */
-void
-set_dirs(meUByte *argv)
-{
-    int ll ;                            /* Line length */
-    int nohome = 1;                     /* No home directory */
-    meUByte *s1 ;                       /* Search word */
-    meUByte *mepath = NULL;             /* $MEPATH */
-    
-    /* The Hidden directory, by default this is the <logpath>/.jasspa */
-#if (!defined _HIDDEN_DIR) 
-#if (defined _UNIX) || (defined _WIN32)
-#define _HIDDEN_DIR ".jasspa"
-#else
-#define _HIDDEN_DIR ""
-#endif /* _UNIX + _WIN32 */
-#endif /* _HIDDEN_DIR */
-    static meUByte hdir[] = _HIDDEN_DIR ;
-    
-    /* Pre-built search path, this is a path built into the executable. The
-     * installation root path of the installation macros searched in the order
-     * specified. Once a directory has been located then it is used as the
-     * default path. */
-#ifndef _SEARCH_PATH
-#define _SEARCH_PATH _DEFAULT_SEARCH_PATH
-#endif
-    static meUByte lpath[] = _SEARCH_PATH ;
-    
-    /* Use $HOME if the loginHome is not defined. */
-    s1 = meGetenv("MEHOME");            /* Use $MEHOME by default */
-    if (s1 == NULL)
-        s1 = loginHome;                 /* Try $login-home - ME internal */
-    if (s1 == NULL)
-        s1 = meGetenv("HOME");          /* Otherwise $HOME */
-    if (s1 != NULL)
-    {
-        homedir = meStrdup(s1) ;
-        fileNameConvertDirChar(homedir) ;
-        ll = meStrlen(homedir) ;
-        if (ll > _ROOT_DIR_LEN)         /* Not root '/' or 'c:/' */
-        {
-            /* Knock off trailing '/' */
-            ll -= 1;
-            if(homedir[ll] == DIR_CHAR)
-                homedir[ll] = '\0' ;
-        }
-    }
-    else
-        homedir = NULL ;                /* Set to NULL */
-
-    /* Get $MEPATH, this over-rides everything */
-    s1 = meGetenv("MEPATH") ;
-    if (s1 != NULL)
-        meStrrep (&mepath, s1) ;
-
-    ll = 0 ;                            /* Line length */
-
-    /* First set up the location of the users home directory, MEPATH
-     * over-rides everything when defined. */
-    if (mepath == NULL)
-    {
-        meUByte loghome [meBUF_SIZE_MAX] ;
-        int ii;
-        
-        s1 = meGetenv ("MEUSERPATH") ;
-        if ((s1 != NULL) && (*s1 != '\0'))
-        {
-            /* Use $MEUSERPATH as the home directory */
-            meStrcpy(loghome, s1) ;
-#ifdef _CONVDIR_CHAR
-            fileNameConvertDirChar (loghome) ;
-#endif
-        }
-        else if ((loginHome != NULL) && (hdir[0] != '\0'))
-        {
-            /* Use "$login-home/.jasspa" */
-            meStrcpy(loghome, loginHome) ;
-            ii = meStrlen (loghome) ;
-            if (loghome[ii-1] != DIR_CHAR)
-                loghome[ii++] = DIR_CHAR ;
-            meStrcpy (&loghome[ii], hdir) ;
-        }
-        else
-            loghome[0] = '\0';
-        
-        /* Append and search any sub-directories */
-        if (loghome[0] != '\0')
-        {
-            ii = set_subdirs (ll, evalResult, loghome) ;
-            if (ii == ll)
-            {
-                /* We have not added the home directory, force it so the
-                 * macros can save to the directory location if they need to. */
-                if (ll > 0)
-                    evalResult[ll++] = mePATH_CHAR ;
-                meStrcpy (&evalResult[ll], loghome) ;
-                ll += meStrlen(loghome) ;
-            }
-            else
-                ll = ii ;
-            nohome = 0;
-        }
-        
-        /* Get the system path of the installed macros. Use $MEINSTPATH as the
-         * MicroEmacs standard macros */
-        s1 = meGetenv ("MEINSTALLPATH") ;
-        if ((s1 == NULL) && ((lpath != NULL) && (lpath[0] != '\0')))
-            s1 = lpath;                 /* Use the built in path 'lpath' */
-        if (s1 != NULL)
-            ll = set_subdirs (ll, evalResult, s1);
-    }
-    else if (mepath[0] != '\0')
-    {
-        if (ll > 0)
-            evalResult[ll++] = mePATH_CHAR ;
-        meStrcpy (&evalResult[ll], mepath) ;
-        ll += meStrlen(mepath) ;
-    }
-
-    /* Make this our new search path */
-    if (ll > 0)
-        meStrrep (&searchPath, evalResult) ;
-    
-#ifdef _UNIX
-    {
-        meUByte *pwd;
-        struct stat dotstat, pwdstat;
-
-        /* If PWD is accurate, use it instead of calling gwd.
-         * This solves problems with bad ~/ as the shell will
-         * store as /user/.... etc.
-         */
-        if(((pwd = meGetenv("PWD")) != NULL) &&
-           (pwd[0] == DIR_CHAR) && (stat((char *)pwd,&pwdstat) == 0) &&
-           (stat(".", &dotstat) == 0) && (dotstat.st_ino == pwdstat.st_ino) &&
-           (dotstat.st_dev == pwdstat.st_dev))
-        {
-            meUByte cc, *dd ;
-
-            ll = meStrlen(pwd) ;
-            curdir = dd = meMalloc(ll+2) ;
-            while((cc=*pwd++) != '\0')
-                *dd++ = cc ;
-            if(dd[-1] != DIR_CHAR)
-                *dd++ = DIR_CHAR ;
-            *dd = 0 ;
-        }
-        else
-            curdir = gwd(0) ;
-    }
-#else
-    curdir = gwd(0) ;
-#endif
-
-    if(curdir == NULL)
-    {
-        printf("Failed to get cwd\n") ;
-        meExit(1);
-    }
-
-    /* setup the $progname make it an absolute path. */
-    if(executableLookup(argv,evalResult))
-        progName = meStrdup(evalResult) ;
-    else
-    {
-#ifdef _ME_FREE_ALL_MEMORY
-        /* stops problems on exit */
-        progName = meStrdup(argv) ;
-#else
-        progName = (meUByte *)argv ;
-#endif
-    }
-
-    /* If we need to append the executable directory to the end of the search
-     * path then do so now. if the $MEPATH is not defined then the concatinate
-     * the Microemacs executable location to the path. This is especially
-     * important for Windows and DOS where we can find the macro directory
-     * from the executable location. */
-    if ((mepath == NULL) && (progName != NULL))
-    {
-        /* Find the last path separator in the executable path */
-        s1 = meStrrchr (progName, DIR_CHAR);
-        if (s1 != NULL)
-        {
-            /* Get the executable path to end of string */
-            ll = s1 - progName;
-            if (ll <= _ROOT_DIR_LEN)
-                ll++;                   /* Must be a '/' */
-            meStrcpy (resultStr, progName);
-            resultStr[ll] = '\0';
-            
-            /* Get the search path into a working area. */
-            if (searchPath == NULL)
-            {
-                evalResult[0] = '\0';
-                ll = 0;
-            }
-            else
-            {
-                meStrcpy (evalResult, searchPath);
-                ll = meStrlen(evalResult);
-            }
-            
-            /* Find the sub-directories and add them */
-            set_subdirs (ll, evalResult, resultStr);
-            meStrrep (&searchPath, evalResult);
-
-#if (defined _WIN32) || (defined _DOS)            
-            /* On Windows and MS-DOS then we can be in the situation where
-             * there is no home directory. We allow the user to create a home
-             * directory in the sub-directory containing the executable. This
-             * can then have the normal sub-directories */
-            if (nohome)
-            {
-                /* Get the user name out */
-                s1 = meGetenv ("MENAME") ;
-                if ((s1 == NULL) || (*s1 == '\0'))
-                    s1 = loginName ;
-                if ((s1 == NULL) || (*s1 == '\0'))
-                    s1 = meGetenv ("LOGNAME") ;
-                if ((s1 == NULL) || (*s1 == '\0'))
-                    s1 = meGetenv ("USER") ;
-                if ((s1 == NULL) || (*s1 == '\0'))
-                    s1 = "default" ;       /* For default user */
-                
-                /* Create a path that exists below the executable. */
-                ll = meStrlen (resultStr) ;
-                if (resultStr[ll-1] != DIR_CHAR)
-                    resultStr[ll++] = DIR_CHAR ;
-                meStrcpy (&resultStr[ll], s1);
-                
-                /* Evaluate sub-directories */
-                evalResult[0] = '\0';
-                ll = set_subdirs (0, evalResult, resultStr);
-                if (ll > 0)
-                {
-                    /* Pre-pend the search string */
-                    evalResult[ll++] = mePATH_CHAR ;
-                    meStrcpy (&evalResult[ll], searchPath) ;
-                    meStrrep (&searchPath, evalResult);
-                }
-            }
-#endif
-        }
-    }
-    
-    /* Release the mepath */
-    meNullFree (mepath);
-
-    /* Use a default if none available */
-    if ((searchPath == NULL) && ((s1 = meGetenv("PATH")) != NULL))
-        searchPath = meStrdup(s1) ;
-
-/*     printf ("Search path = %s\n", searchPath);*/
-/*     printf ("Prog name   = %s\n", progName);*/
-/*     printf ("Home dir    = %s\n", homedir);*/
-/*     fflush (stdout);*/
-}   /* End of "set_dirs" () */
 
 /* Look up the existance of a file along the normal or PATH
  * environment variable. Look first in the HOME directory if
@@ -2811,7 +2571,7 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
                 /* file name is /yyyyyy, convert to D:/yyyyyy */
                 p1[0] = curdir[0] ;
             p1[1] = _DRV_CHAR ;
-            strcpy(p1+2,p) ;
+            meStrcpy(p1+2,p) ;
         }
         /* case for xxxx... */
         else if(p[1] != _DRV_CHAR)

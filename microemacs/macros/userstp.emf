@@ -1,3 +1,4 @@
+; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
 ; Copyright (C) 1998-2004 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
@@ -41,79 +42,26 @@ set-variable %scrollb-value "|0|0x13e|0x1be|0x13f|0x1bf|"
 set-variable %emulate-names "|<No Emulation>|MicroEmacs v3.8|NEdit v5|"
 set-variable %emulate-value "||me3_8|nedit|"
 
-set-variable .user-setup.name $MENAME
-set-variable .user-setup.path ""
-
 ; general macros ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-0 define-macro user-setup-init
-    !if &equ @# 2
-        ; Set the user name
-        set-variable .user-setup.name @1
-        !if &not &seq &set #l0 &find @1 ".erf" "ERROR"
-            set-variable .user-setup.path &lef #l0 &rsin "/" #l0
-        !endif
-    !endif
-    !if &seq &set #l0 &find &cat .user-setup.path .user-setup.name ".erf" "ERROR"
-        delete-registry "/history"
-        set-registry "" "history" &cat &cat .user-setup.path .user-setup.name ".erf"
-        read-history "guest"
-    !else
-        read-history #l0
-    !endif
-    set-variable %user-fnumbo "-"
-    user-setup-backups
-    0 user-tool-setup
-!emacro
 
 0 define-macro user-set-logname
     !if &les @# 0
-        set-variable #l0 @ml2 "" .user-setup.name
-        !if &not &seq #l0 .user-setup.name
-            2 user-setup-init #l0
-        !endif
+        osd-dialog "User Setup" "  The User Name cannot be change by user-setup\n\n  See help page for $user-name for information  \n        on how to change your user name" "  \HOK  "
     !else
-        set-variable $result .user-setup.name
+        set-variable $result $user-name
     !endif
-!emacro
-0 define-macro user-set-default
-    !force 0 delete-buffer "*user-setup-tmp*"
-    find-buffer "*user-setup-tmp*"
-    insert-string &spr "set-variable $MENAME \"%s\"" .user-setup.name
-    !force 0 write-buffer &cat .user-setup.path "default.emf"
-    delete-buffer $buffer-bname
 !emacro
 0 define-macro user-set-path
     !if &les @# 0
-        set-variable #l0 .user-setup.path
-        set-variable .user-setup.path @ml21 "" .user-setup.path
-        !if &not &seq .user-setup.path ""
-            !if &not &sin &rig .user-setup.path &sub &len .user-setup.path 1 "/\\"
-                set-variable .user-setup.path &cat .user-setup.path "/"
-            !endif
-            set-variable #l1 &stat "a" &lef .user-setup.path &sub &len .user-setup.path 1
-            !if &seq &stat "t" #l1 "X"
-                set-variable #l1 &cat #l1 "/"
-                set-variable #l2 &spr "\"%s\" does not exist, create?" #l1
-                !force !force osd-xdialog "User Setup" #l2 1 "  \HYes  " "  \HNo  "
-                !if &not $status
-                    set-variable .user-setup.path #l0
-                    -1 osd
-                    !return
-                !elif &equ $result 1
-                    create-file-path #l1
-                !endif
-            !endif
-            user-setup-init
-        !endif
+        osd-dialog "User Setup" "  The User Path cannot be change by user-setup\n\n  See help page for $user-path for information  \n        on how to change your user path" "  \HOK  "
     !else
-        set-variable $result .user-setup.path
+        set-variable $result $user-path
     !endif
 !emacro
 0 define-macro user-set-entry
     set-variable #l2 &lget "|user-name|company|emulate|setup-file|organizer|spell/default|mail/sig|mail/fcc|mail/box|autosv|" &abs @#
     set-variable #l0 &lget "|-1||||-1|-1||||300|" &abs @#
-    set-variable #l0 &cond &equ #l0 -1 .user-setup.name #l0
+    set-variable #l0 &cond &equ #l0 -1 $user-name #l0
     !if &les @# 0
         set-variable #l0 &reg "/history" #l2 #l0
         set-variable #l0 @ml2 "" #l0
@@ -213,17 +161,17 @@ set-variable .user-setup.path ""
     !endif
 !emacro
 0 define-macro user-set-save
-    !if &seq .user-setup.name ""
+    !if &seq $user-name ""
         ml-write "[No user-name!]"
         !return
     !endif
-    save-history &cat &cat .user-setup.path .user-setup.name ".erf"
+    save-history &spr "%s/%s.erf" $user-path $user-name
     !if &not &seq &set #l0 &reg "/history" "company" "" ""
         ; Must use &find first for the company as this could be anywhere
         !if &seq &find #l0 ".emf" "ERROR"
-            !force 0 find-file &spr "file:%s%s.emf" .user-setup.path #l0
+            !force 0 find-file &spr "file:%s/%s.emf" $user-path #l0
             !if &not $status
-                find-file &spr "file:%s%s.emf" .user-setup.path #l0
+                find-file &spr "file:%s/%s.emf" $user-path #l0
                 beginning-of-buffer
                 set-mark
                 end-of-buffer
@@ -240,7 +188,7 @@ set-variable .user-setup.path ""
         !endif
     !endif
     !if &not &seq &set #l0 &reg "/history" "setup-file" "" ""
-        set-variable #l0 &cat &cat .user-setup.path #l0 ".emf"
+        set-variable #l0 "%s/%s.emf" $user-path #l0
         !if &sequ &stat "t" #l0 "R"
             !if &reg "/history" "edituser" "1"
                 !force 0 find-file &cat "file:" #l0
@@ -261,12 +209,11 @@ set-variable .user-setup.path ""
 !emacro
 
 0 define-macro user-set-current
-    !if &seq .user-setup.name ""
+    !if &seq $user-name ""
         ml-write "[No user-name!]"
         !return
     !endif
     user-set-save
-    set-variable $MENAME .user-setup.name
     exec-file "me"
 !emacro
 
@@ -1220,11 +1167,9 @@ osd .osd.user-gener 390 "MdtxmfH" 390 .scheme.osd-ebtt " Sho\Hw Modes " .osd.use
 
 osd .osd.user-start 0   "s" 55 18 -1 -1
 osd .osd.user-start 10  ""
-osd .osd.user-start 40  "Sfh" "           Log \HName : " 50
-osd .osd.user-start 50  "EtRxHfh" 50 .scheme.osd-entry "##############" f user-set-logname
-osd .osd.user-start 53  "hf" "   "
-osd .osd.user-start 57  "BdfxH"  .scheme.osd-ebtt "Default \HUser" f user-set-default
-osd .osd.user-start 60  "Sfh" "         Setup \HPath : " 70
+osd .osd.user-start 40  "Sfh" "          User \HName : " 50
+osd .osd.user-start 50  "EtRxHf" 50 .scheme.osd-entry "##############" f user-set-logname
+osd .osd.user-start 60  "Sfh" "          User \HPath : " 70
 osd .osd.user-start 70  "EtRxHf" 70 .scheme.osd-entry "#########################" f user-set-path
 osd .osd.user-start 80  ""
 osd .osd.user-start 90  "Sfh" "         Setup \HFile : " 100
@@ -1275,7 +1220,9 @@ osd .osd.user 630 "BdtcfH"   4 .scheme.osd-ebtt " E\Hxit " f void
 
 define-macro user-setup
     !force 0 save-history
-    2 user-setup-init .name
+    set-variable %user-fnumbo "-"
+    user-setup-backups
+    0 user-tool-setup
     !force .osd.user osd
     !force 0 read-history
 !emacro

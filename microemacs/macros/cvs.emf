@@ -1109,7 +1109,6 @@ define-macro cvs-annotate
         ; not a cvs directory
         !force 0 delete-buffer "*cvs-temp2*"
         goto-position "\x83"
-        ml-write "Got here"
         !return
     !endif
     ; make sure that the main window is only displayed once

@@ -122,8 +122,8 @@ static char *iniSections [] =
     "Defaults",                             /* [Defaults] */
     NULL
 };
-/* define the user-name, used for the server file names */
-static char *meUserName="guest" ;
+/* store the meinstallpath found in the ini file */
+static meUByte *meInstallPath=NULL ;
 HWND baseHwnd = meHWndNull;                 /* Handle to base hidden window */
 
 #ifdef _ME_WINDOW
@@ -3583,7 +3583,7 @@ TTaddColor(meColor index, meUByte r, meUByte g, meUByte b)
 
         if(noColors <= index)
         {
-            colTable = realloc(colTable, (index+1)*sizeof(meUInt)) ;
+            colTable = meRealloc(colTable, (index+1)*sizeof(meUInt)) ;
             memset(colTable+noColors,0,(index-noColors+1)*sizeof(meUInt)) ;
             noColors = index+1 ;
         }
@@ -3694,8 +3694,8 @@ TTaddColor(meColor index, meUByte r, meUByte g, meUByte b)
                         SetPaletteEntries (eCellMetrics.pInfo.hPal, closeIndex, 1, &closeEntry);
 
                         /* Resize the pallete reference table */
-                        eCellMetrics.pInfo.hPalRefCount = (int *) realloc (eCellMetrics.pInfo.hPalRefCount,
-                                                                           (sizeof (int) * eCellMetrics.pInfo.hPalSize));
+                        eCellMetrics.pInfo.hPalRefCount = (int *) meRealloc(eCellMetrics.pInfo.hPalRefCount,
+                                                                            (sizeof (int) * eCellMetrics.pInfo.hPalSize));
                         eCellMetrics.pInfo.hPalRefCount [closeIndex] = 1;
                     }
                 }
@@ -3723,8 +3723,8 @@ TTaddColor(meColor index, meUByte r, meUByte g, meUByte b)
                 eCellMetrics.pInfo.hPalSize = 1;
 
                 /* Create the reference count */
-                eCellMetrics.pInfo.hPalRefCount = (int *) malloc (sizeof (int));
-                eCellMetrics.pInfo.hPalRefCount [0] = 1;
+                eCellMetrics.pInfo.hPalRefCount = meMalloc(sizeof(int)) ;
+                eCellMetrics.pInfo.hPalRefCount[0] = 1;
             }
 
             /* Save the assigned colour */
@@ -3743,8 +3743,8 @@ TTaddColor(meColor index, meUByte r, meUByte g, meUByte b)
         {
             int ii;
 
-            eCellMetrics.pInfo.cPal = (PaletteItem *) realloc ((void *) eCellMetrics.pInfo.cPal,
-                                                               sizeof (PaletteItem) * (index+1));
+            eCellMetrics.pInfo.cPal = meRealloc((void *) eCellMetrics.pInfo.cPal,
+                                                sizeof (PaletteItem) * (index+1));
             /* Set to black */
             for (ii = noColors; ii <= index; ii++)
             {
@@ -4613,8 +4613,9 @@ meFrameTermInit(meFrame *frame, meFrame *sibling)
         {
             meFrameData *frameData ;
             
-            if((frameData = calloc(1,sizeof(meFrameData))) == NULL)
+            if((frameData = meMalloc(sizeof(meFrameData))) == NULL)
                 return meFALSE ;
+            memset(frameData,0,sizeof(meFrameData)) ;
             frame->termData = frameData ;
             frameData->hwnd = CreateWindow ("MicroEmacsClass",
                                             ME_FULLNAME " " meVERSION,
@@ -5144,7 +5145,7 @@ meFrameSetWindowSize(meFrame *frame)
         {
             if (ciScreenBuffer != NULL)
                 free(ciScreenBuffer) ;
-            ciScreenBuffer = (CHAR_INFO *)malloc (sizeof (CHAR_INFO) * width * depth);
+            ciScreenBuffer = (CHAR_INFO *) meMalloc(sizeof (CHAR_INFO) * width * depth);
             memset ((void *)ciScreenBuffer, 0, sizeof (CHAR_INFO) * width * depth);
         }
     }
@@ -5238,13 +5239,13 @@ meFrameSetWindowSize(meFrame *frame)
         {
             /* Set up the column cell LUT positions. Note allocate a single
              * array and split into two for re-use */
-            eCellMetrics.cellColPos = realloc (eCellMetrics.cellColPos,
-                                                   sizeof (meShort) * (width + 1));
+            eCellMetrics.cellColPos = meRealloc(eCellMetrics.cellColPos,
+                                                sizeof (meShort) * (width + 1));
             /* Construct the cell spacing. This is the  width of the characters. */
-            eCellMetrics.cellSpacing = (INT *) realloc (eCellMetrics.cellSpacing,
-                                                        sizeof (INT) * (width + 1));
+            eCellMetrics.cellSpacing = meRealloc(eCellMetrics.cellSpacing,
+                                                 sizeof (INT) * (width + 1));
             /* Construct the temporary rendering buffer */
-            eCellMetrics.cellColTmpPos = realloc (eCellMetrics.cellColTmpPos, width+1);
+            eCellMetrics.cellColTmpPos = meRealloc(eCellMetrics.cellColTmpPos, width+1);
             eCellMetrics.cellWidthCount = width ;
         }
         /* Initialise the column cell LUT tables - this must always be done as only the font may have changed. */
@@ -5259,7 +5260,7 @@ meFrameSetWindowSize(meFrame *frame)
         {
             /* Set up the row cell LUT positions. Note allocate a single
              * array and split into 4 for re-use. */
-            eCellMetrics.cellRowPos = realloc (eCellMetrics.cellRowPos, sizeof (meShort) * 2 * (depth + 1));
+            eCellMetrics.cellRowPos = meRealloc(eCellMetrics.cellRowPos, sizeof (meShort) * 2 * (depth + 1));
             eCellMetrics.cellDepthCount = depth;
         }
         /* Initialise the row cell LUT tables - this must always be done as only the font may have changed. */
@@ -5269,7 +5270,7 @@ meFrameSetWindowSize(meFrame *frame)
         /* resize the frame specific data */
         if(depth > meFrameGetWinPaintDepth(frame))
         {
-            meFrameGetWinPaintStartCol(frame) = realloc(meFrameGetWinPaintStartCol(frame), sizeof (meShort) * 2 * (depth + 1));
+            meFrameGetWinPaintStartCol(frame) = meRealloc(meFrameGetWinPaintStartCol(frame), sizeof (meShort) * 2 * (depth + 1));
             meFrameGetWinPaintEndCol(frame)   = &(meFrameGetWinPaintStartCol(frame)[depth+1]) ;
             meFrameGetWinPaintDepth(frame)    = depth ;
         }
@@ -5277,79 +5278,200 @@ meFrameSetWindowSize(meFrame *frame)
 #endif /* _ME_WINDOW */
 }
 
-#ifndef _NANOEMACS
 static void
-winPutenv (char *label, char *value, int ispath)
+meSetupUserName(void)
 {
-    char  buf [meBUF_SIZE_MAX];
-    int ii;
+    char *nn, buff[128] ;
+    int ii ;
     
-    /* Push into the environment. Note that we strdup the name since it MUST
-     * exist for the duration of the program life. */
-    strcpy (buf, label);
-    strcat (buf, "=");
-    ii = strlen (buf);
-       
-    /* If it is a path then convert directory characters */
-    if (ispath)
+    /* Decide on a name. */
+    if(((nn = meGetenv ("MENAME")) == NULL) || (nn[0] == '\0'))
     {
-        while (*value != '\0')
-        {
-#if (DIR_CHAR == '/')
-            if (*value == '\\')
-                buf[ii] = DIR_CHAR;
+        ii = 128 ;
+        if((GetUserName(buff,&ii) == meTRUE) && (buff[0] != '\0'))
+            nn = buff ;
+        else if(((nn = meGetenv("LOGNAME")) != NULL) && (nn[0] == '\0'))
+            nn = NULL ;
+    }
+    if(nn == NULL)
+        nn = "user" ;
+    meUserName = meStrdup(nn) ;
+}
+
+/* meSetupPathsAndUser
+ * 
+ * On windows the user name has already been setup - required for ini file reading
+ * The ini file may also have found an mepath or meinstallpath setting */
+void
+meSetupPathsAndUser(char *progname)
+{
+    char *ss, *appData, buff[meBUF_SIZE_MAX], appDataBuff[meBUF_SIZE_MAX] ;
+    int ii, ll, gotUserPath ;
+    
+    curdir = gwd(0) ;
+    if(curdir == NULL)
+        /* not yet initialised so mlwrite will exit */
+        mlwrite(MWCURSOR|MWABORT|MWWAIT,(meUByte *)"Failed to get cwd\n") ;
+    
+    /* setup the $progname make it an absolute path. */
+    if(executableLookup(progname,evalResult))
+        meProgName = meStrdup(evalResult) ;
+    else
+    {
+#ifdef _ME_FREE_ALL_MEMORY
+        /* stops problems on exit */
+        meProgName = meStrdup(progname) ;
 #else
-            if (*value == '/')
-                buf[ii] = DIR_CHAR;
+        meProgName = (meUByte *)progname ;
 #endif
-            else
-                buf[ii] = *value;
-            ii++;
-            value++;
-        }
-        buf[ii] = '\0';
+    }
+    
+#if (defined CSIDL_APPDATA)
+    /* Get a pointer to an item ID list that represents the path of a
+     * special folder */
+    appDataBuff[0] = '\0' ;
+    if((SHGetSpecialFolderPath(NULL,appDataBuff,CSIDL_APPDATA,FALSE) != NOERROR) &&
+       (appDataBuff[0] != '\0'))
+        appData = appDataBuff ;
+    else
+#endif    
+        /* get the windows user application data path */
+        if(((ss = meGetenv ("APPDATA")) != NULL) && (ss[0] != '\0'))
+    {
+        strcpy(appDataBuff,ss) ;
+        appData = appDataBuff ;
     }
     else
-        strcpy (&buf[ii], value);
+        appData = NULL ;
     
-    /* Push into the environment */
-    mePutenv(meStrdup(buf)) ;
-}    
+    if((meUserPath == NULL) &&
+       ((ss = meGetenv ("MEUSERPATH")) != NULL) && (ss[0] != '\0'))
+        meUserPath = meStrdup(ss) ;
+    
+    if((searchPath == NULL) &&
+       ((ss = meGetenv ("MEPATH")) != NULL) && (ss[0] != '\0'))
+        searchPath = meStrdup(ss) ;
+    
+    if(searchPath != NULL)
+    {
+        /* explicit path set by the user, don't need to look at anything else */
+        /* we just need to add the $user-path to the front */
+        if(meUserPath != NULL)
+        {
+            /* check that the user path is first in the search path, if not add it */
+            ll = strlen(meUserPath) ;
+            if(strncmp(searchPath,meUserPath,ll) ||
+               ((searchPath[ll] != '\0') && (searchPath[ll] != mePATH_CHAR)))
+            {
+                /* meMalloc will exit if it fails as ME has not finished initialising */
+                ss = meMalloc(ll + strlen(searchPath) + 2) ;
+                strcpy(ss,meUserPath) ;
+                ss[ll] = mePATH_CHAR ;
+                strcpy(ss+ll+1,searchPath) ;
+                meFree(searchPath) ;
+                searchPath = ss ;
+            }
+        }
+    }
+    else
+    {
+        /* construct the search-path */
+        /* put the $user-path first */
+        if((gotUserPath = (meUserPath != NULL)))
+            strcpy(evalResult,meUserPath) ;
+        else
+            evalResult[0] = '\0' ;
+        ll = strlen(evalResult) ;
+        
+        /* look for the $APPDATA/jasspa directory */
+        if(appData != NULL)
+        {
+            strcpy(buff,appData) ;
+            strcat(buff,"/jasspa") ;
+            if(((ll = mePathAddSearchPath(ll,evalResult,buff,&gotUserPath)) > 0) &&
+               !gotUserPath)
+                /* as this is the user's area, use this directory unless we find
+                 * a .../<$user-name>/ directory */
+                gotUserPath = -1 ;
+        }
+        
+        /* Get the system path of the installed macros. Use $MEINSTPATH as the
+         * MicroEmacs standard macros */
+        if(meInstallPath != NULL)
+        {
+            ll = mePathAddSearchPath(ll,evalResult,meInstallPath,&gotUserPath) ;
+            meFree(meInstallPath) ;
+        }
+        else if(((ss = meGetenv ("MEINSTALLPATH")) != NULL) && (ss[0] != '\0'))
+        {
+            strcpy(buff,ss) ;
+            ll = mePathAddSearchPath(ll,evalResult,buff,&gotUserPath) ;
+        }
+        
+        /* also check for directories in the same location as the binary */
+        if((meProgName != NULL) && ((ss=meStrrchr(meProgName,DIR_CHAR)) != NULL))
+        {
+            ii = (((size_t) ss) - ((size_t) meProgName)) ;
+            strncpy(buff,meProgName,ii) ;
+            buff[ii] = '\0' ;
+            ll = mePathAddSearchPath(ll,evalResult,buff,&gotUserPath) ;
+        }
+        if(!gotUserPath && (appData != NULL))
+        {
+            /* We have not found a user path so add the $APPDATA as the user-path
+             * as this is the best place for macros to write to etc. */
+            strcpy(buff,appData) ;
+            if(ll)
+            {
+                ii = strlen(buff) ;
+                buff[ii++] = mePATH_CHAR ;
+                meStrcpy(buff+ii,evalResult) ;
+            }
+            searchPath = meStrdup(buff) ;
+        }
+        else if(ll > 0)
+            searchPath = meStrdup(evalResult) ;
+    }
+    if(searchPath != NULL)
+    {
+        fileNameConvertDirChar(searchPath) ;
+        if(meUserPath == NULL)
+        {
+            /* no user path yet, take the first path from the search-path, this
+             * should be a sensible directory to use */
+            if((ss = meStrchr(searchPath,mePATH_CHAR)) != NULL)
+                *ss = '\0' ;
+            meUserPath = meStrdup(searchPath) ;
+            if(ss != NULL)
+                *ss = mePATH_CHAR ;
+        }
+    }
+    if(meUserPath != NULL)
+        fileNameConvertDirChar(meUserPath) ;
+    
+    if((((ss = meGetenv ("HOME")) != NULL) && (ss[0] != '\0')) ||
+       ((ss = appData) != NULL))
+    {
+        homedir = meStrdup(ss) ;
+        fileNameConvertDirChar(homedir) ;
+    }
+}
 
+#ifndef _NANOEMACS
 /****************************************************************************
  *
  * Read me32.ini
  *
  ****************************************************************************/
-void
-readIniFile (void)
+static void
+meIniFileRead(void)
 {
-    DWORD status;
-    char  buf1 [meBUF_SIZE_MAX];
-    char  buf2 [meBUF_SIZE_MAX];
-    char  buf3 [meBUF_SIZE_MAX];
-    char  logname [meBUF_SIZE_MAX];
-    int   len;
-    char  *p;
+    char  buf1[meBUF_SIZE_MAX];
     LPTSTR lpSectionNames;
     LPTSTR lpTemp;
     int ii;
-    
-    /* Get the default login name */
-    status = meBUF_SIZE_MAX;                    /* Size of the retrieve buffer */
-    if ((GetUserName (logname, &status) == meTRUE) && (logname[0] != '\0'))
-        meStrrep(&loginName,(meUByte *)(logname)) ; 
-    
-    /* Decide on a name. */
-    if (((p = meGetenv ("MENAME")) != NULL) && (*p != '\0'))
-        strcpy (logname, p);
-    else if ((loginName != NULL) && (logname[0] != '\0'))
-        strcpy (logname, loginName);
-    else if (((p = meGetenv ("LOGNAME")) != NULL) && (*p != '\0'))
-        strcpy (logname, p);
-    else
-        strcpy (logname, meUserName);
-    
+
+#if 0    
     /* Get the default application data folder */
 #if (defined CSIDL_APPDATA)
     {
@@ -5364,57 +5486,50 @@ readIniFile (void)
         }
     }
 #endif    
-        
+#endif    
+    
     /* Get the user defaults and push them into the environment. */
-    /* copy logname to a different buffer so we can change logname if required */
-    strcpy (buf2, logname);
     lpSectionNames = HeapAlloc (GetProcessHeap(), HEAP_ZERO_MEMORY, 0x7fff);
-    GetPrivateProfileString (buf2, NULL, "", lpSectionNames,
+    GetPrivateProfileString(meUserName,NULL,"",lpSectionNames,
                              0x7fff, ME_INI_FILE);
     for (lpTemp = lpSectionNames; *lpTemp; lpTemp += lstrlen(lpTemp) + 1)
     {
-        GetPrivateProfileString (buf2,lpTemp,"",buf1,meBUF_SIZE_MAX,ME_INI_FILE);
-        /* Get the environment name and make upper case. */
-        strcpy (buf3, lpTemp);
-        for (p = buf3; *p != '\0'; p++)
-            *p = toUpper (*p);
+        GetPrivateProfileString(meUserName,lpTemp,"",buf1,meBUF_SIZE_MAX,ME_INI_FILE);
         /* If the user has chaged their MENAME then remember the new name. */
-        if ((strcmp(buf3, "MENAME") == 0) && (buf1[0] != '\0'))
-            strcpy (logname, buf1);
-        else if ((strcmp(buf3, "MEUSERPATH") == 0) && (buf1[0] != '\0'))
-            winPutenv (buf3, buf1, 1);
+        if ((meStricmp(lpTemp,"mename") == 0) && (buf1[0] != '\0'))
+            meStrrep(&meUserName,(meUByte *)buf1) ;
+        else if ((meStricmp(lpTemp,"meuserpath") == 0) && (buf1[0] != '\0'))
+            meUserPath = meStrdup((meUByte *)buf1) ;
     }
     HeapFree (GetProcessHeap(), 0L, lpSectionNames);
     
-    /* set the $MENAME env to logname */
-    winPutenv ("MENAME", logname, 0);
-
     /*
      * [Defaults] mepath=pathname
      *
      * Get MicroEmacs path next. We look in "MeYYMMDD" for the profile string,
      * or the default directory */
-    buf1[0] = buf2[0] = '\0';
-
     /* Search for the default search path */
     for (ii = 0; iniSections [ii] != NULL; ii++)
     {
         GetPrivateProfileString (iniSections [ii],"mepath","",buf1,meBUF_SIZE_MAX,ME_INI_FILE);
         if (buf1[0] != '\0')
         {
-            winPutenv ("MEPATH", buf1, 1);
+            searchPath = meStrdup(buf1) ;
             break;
         }
     }
-
-    /* Search for the default install path */
-    for (ii = 0; iniSections [ii] != NULL; ii++)
+    
+    if(searchPath == NULL)
     {
-        GetPrivateProfileString (iniSections [ii],"meinstallpath","",buf1,meBUF_SIZE_MAX,ME_INI_FILE);
-        if (buf1[0] != '\0')
+        /* Search for the default install path */
+        for (ii = 0; iniSections [ii] != NULL; ii++)
         {
-            winPutenv ("MEINSTALLPATH", buf1, 1);
-            break;
+            GetPrivateProfileString(iniSections [ii],"meinstallpath","",buf1,meBUF_SIZE_MAX,ME_INI_FILE);
+            if (buf1[0] != '\0')
+            {
+                meInstallPath = meStrdup(buf1) ;
+                break;
+            }
         }
     }
 
@@ -5429,9 +5544,9 @@ readIniFile (void)
          *
          * Get the initial window size and position */
         buf1[0] = '\0';
-        for (ii = 0; iniSections [ii] != NULL; ii++)
+        for (ii = 0; iniSections[ii] != NULL; ii++)
         {
-            GetPrivateProfileString (iniSections [ii],"geometry","",buf1,meBUF_SIZE_MAX,ME_INI_FILE);
+            GetPrivateProfileString(iniSections[ii],"geometry","",buf1,meBUF_SIZE_MAX,ME_INI_FILE);
             if (buf1[0] != '\0')
                 break;
         }
@@ -5449,9 +5564,9 @@ readIniFile (void)
          * Get the font file resources into memory */
         buf1[0] = '\0';
         GetPrivateProfileString (iniSections [0],fontId,"",buf1,meBUF_SIZE_MAX,ME_INI_FILE);
-        if (buf1[0] == '\0')
+        if(buf1[0] == '\0')
             GetPrivateProfileString (iniSections [1],fontId,"",buf1,meBUF_SIZE_MAX,ME_INI_FILE);
-        if (((len = strlen (buf1)) > 0) && (strcmp (buf1, "none") != 0))
+        if((strlen(buf1) > 0) && (strcmp(buf1, "none") != 0))
             fontFile = meStrdup (buf1);
     }
 #endif /* _ME_WINDOW */
@@ -5544,8 +5659,9 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmd
     }
     TTwidthDefault=80 ;
     TTdepthDefault=50 ;
+    meSetupUserName() ;
 #ifndef _NANOEMACS
-    readIniFile();
+    meIniFileRead();
 #endif /*  _NANOEMACS */
     ttThreadId = GetCurrentThreadId ();
 
@@ -5623,7 +5739,7 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmd
         while (*lpbuf != '\0')
         {
             /* Construct larger argv container */
-            argv = realloc (argv, (sizeof (char *) * (argc+2)));
+            argv = meRealloc(argv, (sizeof (char *) * (argc+2)));
             argv [argc+1] = NULL;
 
             /* Determine the end of option. This may be a quoted string

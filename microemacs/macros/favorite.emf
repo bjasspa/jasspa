@@ -62,14 +62,14 @@
 
 0 define-macro favorites-load
     !if &not &exi .osd-favorites.fname
-        !if &seq &set .osd-favorites.fname &find $MENAME ".eff" "ERROR"
+        !if &seq &set .osd-favorites.fname &find $user-name ".eff" "ERROR"
             set-variable #l0 &sin &cond &band $system 0x200 ";" ":" $search-path
             !if #l0
                 set-variable #l0 &lef $search-path &sub #l0 1
             !else
                 set-variable #l0 $search-path
             !endif
-            set-variable .osd-favorites.fname &spr "%s/%s.eff" #l0 $MENAME
+            set-variable .osd-favorites.fname &spr "%s/%s.eff" #l0 $user-name
         !endif
         set-variable .osd-favorites.fname &cat "file:" .osd-favorites.fname
     !endif

@@ -353,6 +353,8 @@ set-variable .file-browser-close.bn "\CH*directory*\CH*files*\CH*ftp-files*\CH*f
             find-file #l0 @mna
         !endif
         change-buffer-name "*files*"
+    !elif &band .find-file.flags 1
+        0 dirlst-refresh
     !endif
     buffer-bind-create "bio" "delete" "" file-browser-close
     buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
@@ -906,7 +908,14 @@ define-macro file-browser-swap-buffers
 !emacro
 0 define-macro dirlst-refresh
     set-variable #l0 $buffer-bname
-    read-file $buffer-fname
+    !if @#
+        read-file $buffer-fname
+    !else
+        find-file $buffer-fname "y" @nma
+        !if &not &seq #l0 $buffer-bname
+            !force 0 delete-buffer #l0
+        !endif
+    !endif
     change-buffer-name #l0
     !if &seq #l0 "*files*"
         buffer-bind-create "bio" "delete" "" file-browser-close

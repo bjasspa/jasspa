@@ -614,7 +614,7 @@ translateKeyAdd(meTRANSKEY *tcapKeys, int count,int time, meUShort *key, meUShor
                 break ;
         if(ii == tcapKeys->count)
         {
-            tcapKeys->child = realloc(tcapKeys->child,(ii+1)*sizeof(meTRANSKEY)) ;
+            tcapKeys->child = meRealloc(tcapKeys->child,(ii+1)*sizeof(meTRANSKEY)) ;
             (tcapKeys->count)++ ;
             tcapKeys->child[ii].key   = cc ;
             tcapKeys->child[ii].count = 0 ;
@@ -962,7 +962,7 @@ meTParm(char *str, meInt arg)
     {
         if(len >= tbuffLen)
         {
-            tbuff = realloc(tbuff,tbuffLen+32) ;
+            tbuff = meRealloc(tbuff,tbuffLen+32) ;
             if(tbuff == NULL)
             {
                 tbuffLen = 0 ;

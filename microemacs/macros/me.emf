@@ -21,40 +21,23 @@
 ; Authors:     Steven Phillips & Jon Green
 ;
 ; Is this macro release compatible with the binary?
-!if &les $version "20040101"
+!if &les $version "20040201"
     5000 ml-write "[Warning: The MicroEmacs executable is not compatible with this macro release]"
 !endif
-; If mename isn't set or registry file isn't found then set it to guest
-!if &seq $MENAME "ERROR"
-    !if &not &seq &cat $login-name "ERROR" "ERROR"
-        set-variable $MENAME $login-name
-    !elif &not &seq $LOGNAME "ERROR"
-        set-variable $MENAME $LOGNAME
-    !elif &not &seq $USER "ERROR"
-        set-variable $MENAME $USER
-    !else
-        !force execute-file "default"
-    !endif
-!endif
-!if &seq &find $MENAME ".erf" "ERROR"
-    ; Save the old user name for newuser setup.
-    set-variable %mename $MENAME 
-    set-variable $MENAME "guest"
-    read-history $MENAME
+; If <$user-name>.erf registry file isn't found then this is a new user
+!if &seq &find $user-name ".erf" "ERROR"
+    read-history "newuser"
     ml-write "Welcome to MicroEmacs. ESC ? for help."
+    0 define-macro-file newuser
     define-macro start-up
         !if &seq $buffer-bname "*scratch*"
-            help
-            delete-window
             ; Startup for a new user. 
-            !if &and &not &seq $login-home ERROR &seq $MEUSERPATH ERROR
-                newuser
-            !endif
+            newuser
         !endif
     !emacro
 !else
-    1 read-history $MENAME
-    ml-write &cat "Setting up for user " $MENAME
+    1 read-history $user-name
+    ml-write &cat "Setting up for user " $user-name
 !endif
 ;
 ; Define extern file macros first
@@ -93,7 +76,6 @@ define-macro-file fattrib file-attrib
 define-macro-file organize organizer
 define-macro-file userstp user-setup
 define-macro-file word describe-word
-define-macro-file newuser
 define-macro-file gdiff
 define-macro-file calc
 define-macro-file draw

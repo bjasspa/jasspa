@@ -283,7 +283,7 @@
     set-variable #g0 1
     !repeat
         !if &gre #g1 &lef @wl 7
-            !force set-variable #g3 @ml10 "Please Enter your name" $MENAME
+            !force set-variable #g3 @ml10 "Please Enter your name" $user-name
             insert-string &spr "%7d%5d%s\n" #g1 #g2 #g3
             !force 140 goto-line
             !if $status

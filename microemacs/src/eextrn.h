@@ -248,6 +248,7 @@ extern	int	setVar(meUByte *vname, meUByte *vvalue, meRegister *regs) ;
 extern	int	setVariable(int f, int n);
 extern	int	unsetVariable(int f, int n);
 extern	meUByte *meItoa(int i);
+#define mePtos(pp) (((pp) == NULL) ? emptym:(pp))
 extern	meUByte *getval(meUByte *token);
 extern	int	descVariable(int f, int n);
 #if MEOPT_EXTENDED
@@ -291,7 +292,8 @@ extern  int fnamecmp(meUByte *f1, meUByte *f2) ;
 #define meFILETYPE_HTTP       4
 #define meFILETYPE_FTP        5
 extern  int getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname) ;
-extern  void set_dirs(meUByte *argv) ;
+extern  int mePathAddSearchPath(int index, meUByte *path_name,
+                                meUByte *path_base, int *gotUserPath) ;
 #define meFL_CHECKDOT    0x01
 #define meFL_USESRCHPATH 0x02
 #define meFL_USEPATH     0x04

@@ -102,7 +102,7 @@ static char meHelpPage[]=
 #endif
 "  -r      : Read-only, all buffers will be in view mode\n"
 "  -s <s>  : Search for string <s> in the next given file\n"
-"  -u <n>  : Set user name to <n> (sets $MENAME)\n"
+"  -u <n>  : Set user name to <n> (sets $user-name)\n"
 "  -V      : Display Version info and exit\n"
 "  -v <v=s>: Set variable <v> to string <s>\n"
 #ifdef _UNIX
@@ -137,13 +137,14 @@ meInit(meUByte *bname)
     meBuffer *bp;
     
     if (TTstart() == meFALSE)             /* Started ?? */
-        meExit (1);                     /* No quit */
+        meExit(1) ;
     
-    /* add 2 to hilBlockS to allow for a double trunc-scheme change */
-    if(((styleTable = malloc(2*meSCHEME_STYLES*sizeof(meStyle))) == NULL) ||
-       ((hilBlock = malloc((hilBlockS+2)*sizeof(meSchemeSet))) == NULL) ||
-       ((disLineBuff = malloc((disLineSize+32)*sizeof(meUByte))) == NULL))
-        meExit(1);
+    /* add 2 to hilBlockS to allow for a double trunc-scheme change 
+     * Note: ME is not yet 'initialised' so any meMalloc failure will
+     * lead to exit in mlwrite so we don't need to check */
+    styleTable = meMalloc(2*meSCHEME_STYLES*sizeof(meStyle)) ;
+    hilBlock = meMalloc((hilBlockS+2)*sizeof(meSchemeSet)) ;
+    disLineBuff = meMalloc((disLineSize+32)*sizeof(meUByte)) ;
 
     memcpy(styleTable,defaultScheme,2*meSCHEME_STYLES*sizeof(meStyle));
     /* Set the fore and back colours */
@@ -151,7 +152,7 @@ meInit(meUByte *bname)
     TTaddColor(meCOLOR_BDEFAULT,0,0,0) ;
     
     if((frameCur=meFrameInit(NULL)) == NULL)
-        meExit(1);
+        meExit(1) ;
 #if MEOPT_FRAME
     frameList = frameCur ;
 #endif
@@ -159,6 +160,7 @@ meInit(meUByte *bname)
     if(((bp = bfind(bname,BFND_CREAT)) == NULL) ||
        (meFrameInitWindow(frameCur,bp) <= 0))
         meExit(1);    
+    alarmState |= meALARM_INITIALIZED ;
 }
 
 /*
@@ -713,7 +715,7 @@ exitEmacs(int f, int n)
                 cuv = nuv ;
             }
             meFree(meRegHead) ;
-            meFree(progName) ;
+            meFree(meProgName) ;
             if(modeLineStr != orgModeLineStr)
                 meNullFree(modeLineStr) ;
             meNullFree(flNextFileTemp) ;
@@ -721,8 +723,8 @@ exitEmacs(int f, int n)
             if(commentCont != commentContOrg)
                 meFree(commentCont) ;
             
-            meNullFree(loginHome) ; 
-            meNullFree(loginName) ;  
+            meNullFree(userName) ; 
+            meNullFree(userPath) ;  
 
             meNullFree(rcsFile) ;
             meNullFree(rcsCiStr) ;
@@ -1229,33 +1231,13 @@ mesetup(int argc, char *argv[])
     meGid = getgid();
     /* get a list of groups the user belongs to */
     meGidSize = getgroups(0,NULL) ;
-    if((meGidSize > 1) &&
-       ((meGidList = malloc(meGidSize*sizeof(gid_t))) != NULL))
+    if(meGidSize > 1)
+    {
+        meGidList = meMalloc(meGidSize*sizeof(gid_t)) ;
         meGidSize = getgroups(meGidSize,meGidList) ;
+    }
     else
         meGidSize = 0 ;
-    
-#ifdef _UNIX
-    /* Get the login name and login home directory from the password file. */
-    {
-        struct passwd *pwdp;            /* Password structure entry */
-        
-        pwdp = getpwuid (meUid);        /* Get the password entry */
-        if (pwdp != NULL)
-        {
-            /* Copy out the string information we need and initialise the
-             * string variables. */
-            if (pwdp->pw_dir != NULL)
-                meStrrep(&loginHome,(meUByte *)(pwdp->pw_dir)) ; 
-            if (pwdp->pw_name != NULL)
-                meStrrep(&loginName,(meUByte *)(pwdp->pw_name)) ;  
-        }
-        
-        /* Shut down the password retrieval and allow system to relinquish
-         * any resource it may have cached. */
-        endpwent() ;
-    }
-#endif    
     
     /* Set the required alarms first so we always have them */
     /* setup alarm process for timers */
@@ -1306,7 +1288,6 @@ mesetup(int argc, char *argv[])
 
     /* initialize the editor and process the command line arguments */
     initHistory() ;                     /* allocate history space */
-    set_dirs((meUByte *)argv[0]) ;      /* setup directories */
 
     /* scan through the command line and get all global options */
     carg = rarg = 1 ;
@@ -1419,10 +1400,7 @@ missing_arg:
                     }
                     else
                         un = argv[carg] + 2 ;
-                    meStrcpy(evalResult,"MENAME=") ;
-                    meStrcpy(evalResult+7,un) ;
-                    if((un=meStrdup(evalResult)) != NULL)
-                        mePutenv(un) ;
+                    meStrrep(&meUserName,(meUByte *) un) ;
                     break;
                 }
 
@@ -1498,6 +1476,7 @@ missing_arg:
         else
             argv[rarg++] = argv[carg] ;
     }
+    meSetupPathsAndUser(argv[0]) ;
 #if MEOPT_CLIENTSERVER
     if(userClientServer && TTconnectClientServer())
     {

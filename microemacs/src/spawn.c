@@ -127,7 +127,7 @@ __mkTempName (meUByte *buf, meUByte *name, meUByte *ext)
     {
         /* Get location of the temporary directory from the environment $TEMP */
         if ((pp = (meUByte *) meGetenv ("TEMP")) != NULL)
-            tmpDir = malloc((ii=meStrlen(pp))+2) ;
+            tmpDir = meMalloc((ii=meStrlen(pp))+2) ;
         if(tmpDir != NULL)
         {
             meStrcpy(tmpDir,pp) ;

@@ -29,7 +29,7 @@
     set-variable .org.days   "|Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|"
     set-variable .org.dinm   "|31|28|31|30|31|30|31|31|30|31|30|31|"
     ; Try and find the organizer file
-    set-variable #l1 &reg "/history" "organizer" $MENAME
+    set-variable #l1 &reg "/history" "organizer" $user-name
     !if &seq &set .org.dfile &find #l1 ".eof" "ERROR"
         set-variable #l0 &reg "/" "history" ""
         set-variable .org.dfile &spr "%s%s.eof" &lef #l0 &rsin "/" #l0 #l1
