@@ -2514,7 +2514,7 @@ menuRender (osdDISPLAY *md)
 static void
 osdDisplayUpdate(osdDISPLAY *md, int flags)
 {
-    int ii=0 ;
+    int ii=0, ff ;
     
     for(ii = 0; ii < md->numContexts; ii++)
     {
@@ -2522,7 +2522,13 @@ osdDisplayUpdate(osdDISPLAY *md, int flags)
         if(md->context[ii].mcflags & CF_UPDATE)
         {
             if(md->context[ii].menu->flags & MF_CHILD)
-                osdDisplayUpdate(md->context[ii].child->display,flags & ~osdRENDITEM_DRAW) ;
+            {
+                ff = flags & ~osdRENDITEM_DRAW ;
+                if(ii != md->curContext)
+                    /* only refocus the current context */
+                    ff = ff & ~osdRENDITEM_REFOCUS ;
+                osdDisplayUpdate(md->context[ii].child->display,ff) ;
+            }
             menuRenderItem(md,ii,flags) ;
         }
     }
@@ -3376,8 +3382,9 @@ osdDisplayPush(int id, int flags)
                 }
             }
         }
-        else if((flags & meOSD_ENTER_MENU) && (md->curContext < 0))
-            md->curContext = osdDisplayFindFirst(md);
+        else if((flags & meOSD_ENTER_MENU) && (md->curContext < 0) &&
+                ((md->curContext = osdDisplayFindFirst(md)) >= 0))
+            md->context[md->curContext].mcflags |= CF_UPDATE ;
     }
     
     osdDisplaySetDefaultContext(md) ;
@@ -3515,7 +3522,7 @@ osdDisplaySub(osdDISPLAY *md, int flags)
     int index;
 
     if(((index = md->curContext) == -1) ||
-       ((mp = md->context [index].menu) == NULL) ||
+       ((mp = md->context[index].menu) == NULL) ||
        !(mp->flags & (MF_SUBMNU|MF_COMBO)) ||
        ((mp->flags & MF_MANUAL) && !(flags & meOSD_OPEN_MENU)))
         return ;
@@ -3533,9 +3540,8 @@ osdDisplaySub(osdDISPLAY *md, int flags)
         /* This may have reset this menu item, so get it again */
         
         /* Find the root of the sub-menu */
-        if((dialogFind(mp->argc & 0x0ffff) == NULL) ||
-           ((md = osdDisplayPush(mp->argc,flags)) == NULL))
-            return ;           
+        if(dialogFind(mp->argc & 0x0ffff) != NULL)
+            osdDisplayPush(mp->argc,flags) ;
     }
     else if(flags & meOSD_FOCUS_MENU)
     {
@@ -4021,7 +4027,6 @@ handleScrollBarEvent(meSCROLLBAR *sb)
             return ;
         }
     }
-    return ;
 }
 
 /*
@@ -4996,13 +5001,9 @@ menuInteraction (int *retState)
                 else
                 {
                     osdNewChild = osdNewMd = osdCurMd->prev ;
-                    for(;;)
-                    {
-                        osdNewChild->newContext = osdNewChild->curContext ;
-                        if(osdNewChild == osdCurChild)
-                            break ;
+                    while(((osdNewChild->newContext = osdNewChild->curContext) >= 0) &&
+                          (osdNewChild->context[osdNewChild->newContext].menu->flags & MF_CHILD))
                         osdNewChild = osdNewChild->context[osdNewChild->newContext].child->display ;
-                    }
                     nit = 1 ;
                 }
                 break;
