@@ -50,6 +50,7 @@ DEFVAR ("buffer-fname",        EVCFNAME)        /* current file name */
 DEFVAR ("buffer-hilight",      EVBUFHIL)        /* Buffers hilight scheme */
 DEFVAR ("buffer-indent",       EVBUFIND)        /* Buffers indent scheme */
 #endif
+DEFVAR ("buffer-indent-width", EVBUFINDWIDTH)   /* Buffer indent width */
 DEFVAR ("buffer-input",        EVBUFINP)        /* buffer input handler */
 #if MEOPT_IPIPES
 DEFVAR ("buffer-ipipe",        EVBUFIPIPE)      /* buffer ipipe input handler */
@@ -62,6 +63,7 @@ DEFVAR ("buffer-names",        EVBNAMES)        /* buffer names access variable 
 #if MEOPT_COLOR
 DEFVAR ("buffer-scheme",       EVBUFSCHM)       /* Window colour  */
 #endif
+DEFVAR ("buffer-tab-width",    EVBUFTABWIDTH)   /* Buffer literal tab width */
 #if MEOPT_CFENCE
 DEFVAR ("c-brace",             EVCBRACE)        /* c-mode brace indent   */
 DEFVAR ("c-case",              EVCCASE)         /* c-mode case indent    */
@@ -122,6 +124,7 @@ DEFVAR ("home",                EVHOMEDIR)       /* Home directory */
 #if MEOPT_CALLBACK
 DEFVAR ("idle-time",           EVIDLETIME)      /* idle-time time period (msec)*/
 #endif
+DEFVAR ("indent-width",        EVINDWIDTH)      /* Indent Width - space substitution */
 DEFVAR ("kept-versions",       EVKEPTVERS)      /* Number of backup files */
 #if MEOPT_EXTENDED
 DEFVAR ("line-flags",          EVLINEFLAGS)     /* current line flags */
@@ -179,8 +182,7 @@ DEFVAR ("show-region",         EVSHWRGN)        /* selection hilighting flag */
 #endif
 DEFVAR ("status",              EVSTATUS)        /* returns the status of the last command */
 DEFVAR ("system",              EVSYSTEM)        /* System config variable  */
-DEFVAR ("tabsize",             EVTABSIZE)       /* TAB size - space substitution */
-DEFVAR ("tabwidth",            EVTABWIDTH)      /* TAB width in spaces */
+DEFVAR ("tab-width",           EVTABWIDTH)      /* TAB width in spaces */
 #if MEOPT_EXTENDED
 DEFVAR ("temp-name",           EVTEMPNAME)      /* Temporary file name */
 DEFVAR ("time",                EVTIME)          /* Current time */

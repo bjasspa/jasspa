@@ -19,7 +19,6 @@
 0 define-macro-file favorite osd-favorites
 0 define-macro-file insdate  osd-insert-date
 define-macro-file osdhelp  osd-help
-define-macro-file crosswd  cross-word
 ;
 ; define a main menu initialisation macro - main use of this is to insert the
 ; find tag if a tags file exists & call specific file type open and close
@@ -375,6 +374,7 @@ osd 4  70  ""  "Macro..."               f insert-macro
 osd 5  0   "b"
 osd 5  10  ""  "Restyle \HBuffer"                  f restyle-buffer
 osd 5  20  ""  "Restyle \HRegion"                  f restyle-region
+osd 5  21  ""  "I\Hndentation Setup"               f indent-setup
 osd 5  23  ""  "\HClean Buffer"                    f clean
 osd 5  25  ""  "C\Hhange Buffer Char Set"          f charset-change
 osd 5  30  "-"

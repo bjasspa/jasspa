@@ -516,7 +516,7 @@
 0 define-macro jst-prepare-bullets
     ; Identify bullet lists
     ; indent tolerance
-    set-variable #l9 &div $tabsize 2
+    set-variable #l9 &div $buffer-indent-width 2
     set-variable $window-line #p0
     !force &sub $window-line #p1 search-forward "^\n[ \t]*\\(\\*\\|[0-9]+[]).]\\|[a-zA-Z][]).]\\|[ivxlc]+[]).]\\)[ \t]+\\S "
     !while $status
@@ -626,13 +626,13 @@
             set-variable #l5 $window-acol
             $window-col backward-delete-char
             -1 yank
-            !if &not &les &sub #l5 #l4 $tabsize
+            !if &not &les &sub #l5 #l4 $buffer-indent-width
                 set-variable #l4 #l5
                 set-variable #l2 &add #l2 1
                 insert-string "\bLT"
             !elif &not #l2
                 ; can't negative indent
-            !elif &not &less &sub #l4 #l5 $tabsize
+            !elif &not &less &sub #l4 #l5 $buffer-indent-width
                 set-variable #l4 #l5
                 set-variable #l6 $window-line
                 search-backward "\\S "

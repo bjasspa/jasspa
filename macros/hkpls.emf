@@ -22,38 +22,21 @@
 ;    ^proceedure[ \t\n]+[a-zA-Z0-9_]+[ \t]*([^)]*)[ \t\n]*;
 
 define-macro fhook-pls
+    set-variable #l1 $result
     set-variable $buffer-mask "luh1"
     @# buffer-init "pls"
     buffer-init-hooks
-    ;
-    ; Set up the indentation. We use 3 spaces unless explicitly
-    ; over-ridden.
-    set-variable :tabsize  3
-    set-variable :tabwidth $tabwidth
     ; Search for additional modes in a -!- pl/sql -!-
     ;
-    ; -!- pls; tabsize:<digit>; -!-
+    ; -!- pls; tabwidth:<digit>; -!-
     ;
-    ;
-    beginning-of-buffer
-    !force -20 regex-forward &spr "-[*!]-"
-    !if $status
-        ; Search for tabsize: <var>;
-        !force -1 regex-forward "tabsize[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;]"
-        !if $status
-            set-variable :tabsize @s1
-            beginning-of-line
+    !if &not &seq #l1 ""
+        !if &xseq #l9 ".*tabsize[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;].*"
+            set-variable $buffer-indent-width @s1
         !endif
-        ; Search for tabwidth: <var>;
-        !force -1 regex-forward "tabwidth[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;]"
-        !if $status
-            set-variable :tabwidth @s1
-            beginning-of-line
+        !if &xseq #l9 ".*tabwidth[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;].*"
+            set-variable $buffer-tab-width @s1
         !endif
-        ; Add any others in here.
-
-        ; Back to the start of the buffer
-        beginning-of-buffer
     !endif
 !emacro
 
@@ -63,6 +46,7 @@ set-variable .fhook-pls.setup &reg "/history" "fhook/pls" "bfhnopx"
 set-variable .fhook-pls.setup-mask "abefghikmtux"
 set-variable .fhook-pls.comment "|/*| */|*| * | * |fr|"
 set-variable .fhook-pls.comment-1 "|rem|||rem |||"
+set-variable .fhook-pls.indent-width 3
 set-variable .fhook-pls.exact -1
 
 ; Set up the folds for PL/SQL
@@ -597,32 +581,5 @@ set-variable .fhook-pls.fold-mopen "1"
         hilight .hilight.c 1 "-[[:digit:]]+\\.[[:digit:]]+"  .scheme.constant
     !endif
 !endif
-
-;
-; Buffer hook. Modify the fill mode to left only. This ensures that we
-; always fill the line correctly irrespective of the mode of the caller.
-; The likes of centre and justified are not warrented in a TeX buffer.
-;
-0 define-macro bhook-pls
-    ; Save the other context. Restore local context
-    set-variable :otabwidth $tabwidth
-    set-variable $tabwidth  :tabwidth
-    set-variable :otabsize  $tabsize
-    set-variable $tabsize   :tabsize
-    !if &exist my-bhook-pls
-        my-bhook-pls
-    !endif
-!emacro
-;
-0 define-macro ehook-pls
-    ; Restore existing context
-    set-variable :tabwidth $tabwidth
-    set-variable $tabwidth :otabwidth
-    set-variable :tabsize $tabsize
-    set-variable $tabsize :otabsize
-    !if &exist my-ehook-pls
-        my-ehook-pls
-    !endif
-!emacro
 
 buffer-init-fhook "pls"

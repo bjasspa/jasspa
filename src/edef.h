@@ -75,8 +75,8 @@ extern  meShort    filleoslen;          /* Fill E-O-S ' ' insert len    */
 extern  meUByte    fillignore[];        /* Fill Ignore character class  */
 extern  meUByte    fillmode;            /* Justify mode                 */
 #endif
-extern  meUShort   tabsize;             /* Virtual Tab size             */
-extern  meUShort   tabwidth;            /* Real TAB size                */
+extern  meUByte    indentWidth;             /* Virtual Tab size             */
+extern  meUByte    tabWidth;            /* Real TAB size                */
 extern  meShort    matchlen;            /* Fence matching delay length  */
 extern  meUByte   *homedir;             /* Home directory               */
 extern  meUByte   *searchPath;          /* emf search path              */
@@ -490,8 +490,8 @@ meShort   filleoslen=1;                 /* Fill E-O-S ' ' insert len    */
 meUByte   fillignore[16]=">_@";         /* Fill Ignore character class  */
 meUByte   fillmode='B';                 /* Justification mode           */
 #endif
-meUShort  tabsize  = 4;                 /* Virtual Tab size             */
-meUShort  tabwidth = 8;                 /* Real TAB size                */
+meUByte   indentWidth  = 4;                 /* Virtual Tab size             */
+meUByte   tabWidth = 8;                 /* Real TAB size                */
 meShort   matchlen = 2000;              /* Fence matching sleep length  */
 meUByte  *searchPath=NULL;              /* emf search path              */
 meUByte  *homedir=NULL;                 /* Home directory               */

@@ -242,12 +242,12 @@ set-variable .fhook-asmx86.collapse-mnext "-1"
 
 !if &sin "d" .fhook-asmx86.setup
     0 indent  .hilight.asmx86 0 10
-    indent .hilight.asmx86 n "{"  4
-    indent .hilight.asmx86 o "}" -4
+    indent .hilight.asmx86 n "{"  t
+    indent .hilight.asmx86 o "}" -t
     indent .hilight.asmx86 e "\"" "\"" "\\"
     indent .hilight.asmx86 b "\\[" "]"
     indent .hilight.asmx86 b "(" ")"
-    indent .hilight.asmx86 c "\\\\\\s " 10
+    indent .hilight.asmx86 c "\\\\\\s " 5/2t
     indent .hilight.asmx86 i ";"
 !endif
 

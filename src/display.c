@@ -386,7 +386,7 @@ windCurLineOffsetEval(meWindow *wp)
             if(isDisplayable(cc))
                 ii = 1 ;
             else if(cc == meCHAR_TAB)
-                ii = get_tab_pos(pos) + 1;
+                ii = get_tab_pos(pos,wp->buffer->tabWidth) + 1;
             else if (cc < 0x20)
                 ii = 2 ;
             else
@@ -508,7 +508,7 @@ static char drawno = 'A' ;
  * This function renders a non-hilighted text line.
  */
 int
-renderLine (meUByte *s1, int len, int wid)
+renderLine (meUByte *s1, int len, int wid, meBuffer *bp)
 {
     register meUByte cc;
     register meUByte *s2 ;
@@ -536,7 +536,7 @@ renderLine (meUByte *s1, int len, int wid)
         }
         else if(cc == meCHAR_TAB)
         {
-            int ii=get_tab_pos(wid) ;
+            int ii=get_tab_pos(wid,bp->tabWidth) ;
 
             wid += ii+1 ;
             *s2++ = displayTab ;
@@ -649,7 +649,7 @@ hideLineJump:
                 if (flag & VFSHALL)
                 {
                     if(lineLen > 0)
-                        blkp[0].column = renderLine(s1,lineLen,0) ;
+                        blkp[0].column = renderLine(s1,lineLen,0,window->buffer) ;
                     else
                         blkp[0].column = 0 ;
                     blkp[0].scheme = scheme + meSCHEME_SELECT;
@@ -663,7 +663,7 @@ hideLineJump:
                     if((flag & VFSHBEG) && (selhilight.soff > 0))
                     {
                         len = selhilight.soff ;
-                        wid = renderLine (s1, len, 0) ;
+                        wid = renderLine (s1, len, 0, window->buffer) ;
                         blkp[0].scheme = scheme ;
                         blkp[0].column = wid ;
                         noColChng = 1 ;
@@ -681,7 +681,7 @@ hideLineJump:
                         if (selhilight.eoff > len)
                         {
                             /* Set up the colour change */
-                            wid = renderLine(s1+len,selhilight.eoff-len,wid) ;
+                            wid = renderLine(s1+len,selhilight.eoff-len,wid,window->buffer) ;
                             blkp[noColChng].scheme = scheme + meSCHEME_SELECT;
                             blkp[noColChng++].column = wid ;
                             len = selhilight.eoff ;
@@ -694,7 +694,7 @@ hideLineJump:
 
                     /* Render the rest of the line in the standard colour */
                     if (lineLen > len)
-                        wid = renderLine(s1+len, lineLen-len,wid) ;
+                        wid = renderLine(s1+len, lineLen-len,wid,window->buffer) ;
                     blkp[noColChng].column = wid ;
                     noColChng += 1 ;
                 }
@@ -703,7 +703,7 @@ hideLineJump:
             {
                 /* Render the rest of the line in the standard colour */
                 if (lineLen > 0)
-                    blkp[0].column = renderLine(s1,lineLen,0) ;
+                    blkp[0].column = renderLine(s1,lineLen,0,window->buffer) ;
                 else
                     blkp[0].column = 0 ;
                 blkp[0].scheme = scheme ;
@@ -2011,14 +2011,14 @@ screenUpdate(int f, int n)
     if(n == 3)
     {
         /* only update the screen enough to get the $window vars correct */
-        if(frameCur->windowCur->bufferLast != frameCur->windowCur->buffer)
+        if(frameCur->windowCur->bufferLast != frameCur->bufferCur)
         {
-            frameCur->windowCur->bufferLast = frameCur->windowCur->buffer ;
+            frameCur->windowCur->bufferLast = frameCur->bufferCur ;
             frameCur->windowCur->updateFlags |= WFMODE|WFREDRAW|WFMOVEL|WFSBOX ;
         }
         /* if top of window is the last line and there's more than
          * one, force refame and draw */
-        if((frameCur->windowCur->vertScroll == frameCur->windowCur->buffer->lineCount) && frameCur->windowCur->vertScroll)
+        if((frameCur->windowCur->vertScroll == frameCur->bufferCur->lineCount) && frameCur->windowCur->vertScroll)
             frameCur->windowCur->updateFlags |= WFFORCE ;
 
         /* if the window has changed, service it */

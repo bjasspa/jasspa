@@ -871,7 +871,7 @@ windowSetScrollWithMouse (int f, int n)
         long bufferLength;               /* Length of the buffer */
         
         /* Get the buffer length */
-        bufferLength = (long)(frameCur->windowCur->buffer->lineCount) + 1;
+        bufferLength = (long)(frameCur->bufferCur->lineCount) + 1;
         
         /* If the buffer is wholly contained in the window then there is nothing
          * to do - quit now. Make sure that the top line is showing */

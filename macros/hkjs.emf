@@ -231,8 +231,8 @@ set-variable .fhook-js.item-list-r3 "Meth \ecB\\1\ecA"
 !if &sin "d" .fhook-js.setup
     ; create a simple indentation rule for javascript - real java files use the built in C indentation
     0 indent .hilight.js 1 20
-    indent .hilight.js n "{"  4
-    indent .hilight.js o "}" -4
+    indent .hilight.js n "{"  t
+    indent .hilight.js o "}" -t
     indent .hilight.js e "\"" "\"" "\\"
     indent .hilight.js e "\'" "\'" "\\"
     indent .hilight.js b "\\[" "]"

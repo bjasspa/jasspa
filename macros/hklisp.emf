@@ -18,6 +18,7 @@ define-macro fhook-lisp
 set-variable .fhook-lisp.setup &reg "/history" "fhook/lisp" "dghiopx"
 set-variable .fhook-lisp.setup-mask "adeghikmoptux"
 set-variable .fhook-lisp.comment "|;||;|; | ;|r|"
+set-variable .fhook-lisp.indent-width 2
 
 !if &not &exist .hilight.lisp
     set-variable .hilight.lisp &pinc .hilight.next 1
@@ -35,8 +36,8 @@ set-variable .fhook-lisp.comment "|;||;|; | ;|r|"
 
 !if &sin "d" .fhook-lisp.setup
     0 indent  .hilight.lisp 0 10
-    indent .hilight.lisp n "(" 2
-    indent .hilight.lisp o ")" -2
+    indent .hilight.lisp n "(" t
+    indent .hilight.lisp o ")" -t
     indent .hilight.lisp i ";"
     indent .hilight.lisp e "\"" "\"" "\\"
     indent .hilight.lisp e "#|" "|#" ""

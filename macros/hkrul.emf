@@ -115,22 +115,22 @@ set-variable .fhook-rul.collapse-mnext "-1"
 !if &sin "d" .fhook-rul.setup
     ; Initialise the indentation
     0 indent  .hilight.rul 1 30
-    indent .hilight.rul N "then"       4
-    indent .hilight.rul S "else"      -4
-    indent .hilight.rul O "elseif"    -4
-    indent .hilight.rul O "end"       -4
-    indent .hilight.rul O "endif"     -4
-    indent .hilight.rul N "begin"      4
-    indent .hilight.rul N "repeat"     4
-    indent .hilight.rul O "until"     -4
-    indent .hilight.rul N "for"        4
-    indent .hilight.rul O "endfor"    -4
-    indent .hilight.rul N "while"      4
-    indent .hilight.rul O "endwhile"  -4
-    indent .hilight.rul N "switch"     4
-    indent .hilight.rul S "case"      -4
-    indent .hilight.rul S "default"   -4
-    indent .hilight.rul O "endswitch" -4
+    indent .hilight.rul N "then"       t
+    indent .hilight.rul S "else"      -t
+    indent .hilight.rul O "elseif"    -t
+    indent .hilight.rul O "end"       -t
+    indent .hilight.rul O "endif"     -t
+    indent .hilight.rul N "begin"      t
+    indent .hilight.rul N "repeat"     t
+    indent .hilight.rul O "until"     -t
+    indent .hilight.rul N "for"        t
+    indent .hilight.rul O "endfor"    -t
+    indent .hilight.rul N "while"      t
+    indent .hilight.rul O "endwhile"  -t
+    indent .hilight.rul N "switch"     t
+    indent .hilight.rul S "case"      -t
+    indent .hilight.rul S "default"   -t
+    indent .hilight.rul O "endswitch" -t
     indent .hilight.rul b "(" ")"
     indent .hilight.rul i "//"
     indent .hilight.rul e "\"" "\"" "\\"

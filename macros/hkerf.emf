@@ -17,6 +17,7 @@ set-variable .fhook-erf.name "ME Registry"
 set-variable .fhook-erf.setup &reg "/history" "fhook/erf" "dfghiopx"
 set-variable .fhook-erf.setup-mask "adefghikmoptux"
 set-variable .fhook-erf.comment "|;||;|; | ;|r|"
+set-variable .fhook-erf.indent-width 1
 
 ; setup erf collapse support
 set-variable .fhook-erf.collapse-open  "^\".*{$"
@@ -37,8 +38,8 @@ set-variable .fhook-erf.collapse-mnext "-1"
 
 !if &sin "d" .fhook-erf.setup
     0 indent .hilight.erf 0 10
-    indent .hilight.erf n "{"  1
-    indent .hilight.erf o "}" -1
+    indent .hilight.erf n "{"  t
+    indent .hilight.erf o "}" -t
     indent .hilight.erf e "\"" "\"" "\\"
     indent .hilight.erf i ";"  
 !endif

@@ -1202,7 +1202,7 @@ printAddLine (meBuffer *bp, meLine *lp)
     else
 #endif
     {
-        wid = renderLine (lp->text,lp->length,0);
+        wid = renderLine (lp->text,lp->length,0,bp);
         noColChng = 0;
     }
 

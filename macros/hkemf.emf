@@ -66,16 +66,16 @@ set-variable .fhook-emf.item-list-r1 "Macr \ecB\\1\ecA"
 !endif
 !if &sin "d" .fhook-emf.setup
     0 indent  .hilight.emf 0 10
-    indent .hilight.emf N "define-macro" 4
-    indent .hilight.emf n "!if" 4
-    indent .hilight.emf s "!eli" -4
-    indent .hilight.emf s "!els" -4
-    indent .hilight.emf o "!end" -4
-    indent .hilight.emf n "!whi" 4
-    indent .hilight.emf o "!don" -4
-    indent .hilight.emf n "!rep" 4
-    indent .hilight.emf o "!until" -4
-    indent .hilight.emf o "!ema" -4
+    indent .hilight.emf N "define-macro" t
+    indent .hilight.emf n "!if" t
+    indent .hilight.emf s "!eli" -t
+    indent .hilight.emf s "!els" -t
+    indent .hilight.emf o "!end" -t
+    indent .hilight.emf n "!whi" t
+    indent .hilight.emf o "!don" -t
+    indent .hilight.emf n "!rep" t
+    indent .hilight.emf o "!until" -t
+    indent .hilight.emf o "!ema" -t
     indent .hilight.emf e "\"" "\"" "\\"
     indent .hilight.emf i ";"
     indent .hilight.emf f "*" 0

@@ -179,7 +179,7 @@ insertChar(register int c, register int n)
         for(index=0,n=0 ; (ii>0) && (frameCur->windowCur->dotOffset < frameCur->windowCur->dotLine->length) ; ii--)
         {
             if((meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset) != meCHAR_TAB) ||
-               (at_tab_pos(getccol()+index+1) == 0))
+               (at_tab_pos(getccol()+index+1,frameCur->bufferCur->tabWidth) == 0))
             {
                 lineSetChanged(WFMAIN);
 #if MEOPT_UNDO
@@ -373,7 +373,8 @@ execute(register int c, register int f, register int n)
             {
                 frameCur->windowCur->dotOffset = ii ;
                 if(ii > commentMargin)
-                    ii = (tabsize-1) - ((ii-1)%tabsize) ;
+                    ii = (((int)(frameCur->bufferCur->indentWidth)-1) -
+                          ((ii-1)%(int)(frameCur->bufferCur->indentWidth))) ;
                 else
                     ii = commentMargin - ii ;
                 lineInsertChar(ii,' ') ;

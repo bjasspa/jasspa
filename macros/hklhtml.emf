@@ -22,6 +22,7 @@ set-variable .fhook-lhtml.command-name  "|"
 set-variable .fhook-lhtml.command-nbind "|"
 set-variable .fhook-lhtml.command-kbind "|"
 set-variable .fhook-lhtml.command-desc  "|"
+set-variable .fhook-lhtml.indent-width 2
 
 ; load in lua script & the html core
 !if &not &exist fhook-lua
@@ -47,10 +48,10 @@ set-variable .fhook-lhtml.command-desc  "|"
         indent .hilight.lhtmltag t "<%" .indent.luascript
         indent .hilight.lhtmltag t "%>" .hilight.lhtml
         
-        indent .hilight.lhtml x "<\\?lua" 2 .indent.luascript
-        indent .hilight.lhtml x "<%" 2 .indent.luascript
-        indent .indent.luascript w "\\?>" -2 0
-        indent .indent.luascript w "%>" -2 0
+        indent .hilight.lhtml x "<\\?lua" t .indent.luascript
+        indent .hilight.lhtml x "<%" t .indent.luascript
+        indent .indent.luascript w "\\?>" -t 0
+        indent .indent.luascript w "%>" -t 0
     !endif
 !endif
 

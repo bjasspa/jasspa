@@ -22,6 +22,7 @@ set-variable .fhook-asp.command-name  "|"
 set-variable .fhook-asp.command-nbind "|"
 set-variable .fhook-asp.command-kbind "|"
 set-variable .fhook-asp.command-desc  "|"
+set-variable .fhook-asp.indent-width 2
 
 ; load in the html core
 !force execute-file "htmlcore" "asp" 
@@ -39,8 +40,8 @@ set-variable .fhook-asp.command-desc  "|"
         indent .hilight.asptag t "<%" .indent.vbscript
         indent .hilight.asptag t "%>" .hilight.asp
         
-        indent .hilight.asp x "<%" 2 .indent.vbscript
-        indent .indent.vbscript w "%>" -2 0
+        indent .hilight.asp x "<%" t .indent.vbscript
+        indent .indent.vbscript w "%>" -t 0
     !endif
 !endif
 

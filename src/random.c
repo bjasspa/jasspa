@@ -436,7 +436,7 @@ getcline(meWindow *wp)	/* get the current line number */
 }
 
 int
-getcol(meUByte *ss, int off)
+getcol(meUByte *ss, int off, int tabWidth)
 {
     register int c, col=0 ;
     
@@ -446,7 +446,7 @@ getcol(meUByte *ss, int off)
         if(isDisplayable(c))
             col++ ;
         else if(c == meCHAR_TAB)
-            col += get_tab_pos(col) + 1 ;
+            col += get_tab_pos(col, tabWidth) + 1 ;
         else if (c  < 0x20)
             col += 2 ;
         else
@@ -477,7 +477,7 @@ setccol(int pos)
         if(isDisplayable(c))
             col++ ;
         else if(c == meCHAR_TAB)
-            col += get_tab_pos(col) + 1 ;
+            col += get_tab_pos(col, frameCur->bufferCur->tabWidth) + 1 ;
         else if (c  < 0x20)
             col += 2 ;
         else
@@ -749,7 +749,7 @@ meTab(int f, int n)
      * negative, wrap mode is enabled, and we are now past fill column,
      * and we are not read-only, perform word wrap.
      */
-    if(meModeTest(frameCur->windowCur->buffer->mode,MDWRAP) && (fillcol > 0) &&
+    if(meModeTest(frameCur->bufferCur->mode,MDWRAP) && (fillcol > 0) &&
        (getccol() > fillcol))
         wrapWord(meFALSE, 1);
 #endif
@@ -760,7 +760,8 @@ meTab(int f, int n)
     }
     else
     {
-        int ss = (tabsize*(n-1)) + (tabsize - (getccol()%tabsize)) - n ;
+        int bufIndentWidth = (int)(frameCur->bufferCur->indentWidth);
+        int ss = (bufIndentWidth*(n-1)) + (bufIndentWidth - (getccol()%bufIndentWidth)) - n ;
         /* insert the required number of TABs as spaces first - this handles over mode
          * The extra spaces required are inserted next */
         if(((ii = insertChar(' ',n)) > 0) && ss &&
@@ -805,9 +806,9 @@ meBacktab(int f, int n)
     {
         /*---	Forced tab spacing is in operation.
            Get the tabular spacing from our current position */
-        
-        if ((tabspace = (getccol() % tabsize)) == 0)
-            tabspace = tabsize;
+        int bufIndentWidth = (int) frameCur->bufferCur->indentWidth;
+        if ((tabspace = (getccol() % bufIndentWidth)) == 0)
+            tabspace = bufIndentWidth;
         
         /*---	Scan back through the characters in the line and determine the 
            number of characters to remove */	
@@ -933,8 +934,8 @@ meLineSetIndent(int curInd, int newInd, int undo)
         ss = 0 ;
     else
     {
-        ss = newInd / tabwidth ;
-        newInd -= ss * tabwidth ;
+        ss = newInd / frameCur->bufferCur->tabWidth ;
+        newInd -= ss * frameCur->bufferCur->tabWidth ;
         lineInsertChar(ss,'\t') ;
     }
     lineInsertChar(newInd,' ') ;
@@ -972,11 +973,11 @@ meNewline(int f, int n)
      * negative, wrap mode is enabled, and we are now past fill column,
      * and we are not read-only, perform word wrap.
      */
-    if(meModeTest(frameCur->windowCur->buffer->mode,MDWRAP) && (fillcol > 0) &&
+    if(meModeTest(frameCur->bufferCur->mode,MDWRAP) && (fillcol > 0) &&
        (getccol() > fillcol))
         wrapWord(meFALSE, 1);
     
-    if(meModeTest(frameCur->windowCur->buffer->mode,MDJUST) &&
+    if(meModeTest(frameCur->bufferCur->mode,MDJUST) &&
        ((fillmode == 'c') || (fillmode == 'r')))
         f = 1 ;
     else

@@ -420,11 +420,11 @@ wrapWord(int f, int n)
     }
     off = meLineGetLength(frameCur->windowCur->dotLine) - off ;
 #if MEOPT_CFENCE
-    if(meModeTest(frameCur->windowCur->buffer->mode,MDCMOD))
+    if(meModeTest(frameCur->bufferCur->mode,MDCMOD))
         cnt = cinsert() ;
     else
 #endif
-    if(meModeTest(frameCur->windowCur->buffer->mode,MDINDEN))
+    if(meModeTest(frameCur->bufferCur->mode,MDINDEN))
         cnt = winsert() ;
     else
     {
@@ -434,7 +434,7 @@ wrapWord(int f, int n)
             meUndoAddInsChars(n) ;
 #endif
     }    
-    if(meModeTest(frameCur->windowCur->buffer->mode,MDJUST))
+    if(meModeTest(frameCur->bufferCur->mode,MDJUST))
         justify(-1,-1) ;
     
     frameCur->windowCur->dotOffset = meLineGetLength(frameCur->windowCur->dotLine) - off ;
@@ -602,7 +602,7 @@ justify(int leftMargin, int leftDoto)
 	if (cc == meCHAR_TAB)
 	{
 	    /* Get expansion width of TAB */ 
-	    int jj = next_tab_pos(getccol());
+	    int jj = next_tab_pos(getccol(), frameCur->bufferCur->tabWidth);
 	    /* Replace the TAB with equivelent SPACE's */
 	    ldelete (1L,undoMode);
 	    lineInsertChar (jj, ' ');

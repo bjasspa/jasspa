@@ -18,6 +18,7 @@ set-variable .fhook-euphor.name "Euphoria"
 set-variable .fhook-euphor.setup &reg "/history" "fhook/euphor" "bdghinopx"
 set-variable .fhook-euphor.setup-mask "abdeghikmnoptux"
 set-variable .fhook-euphor.comment "|--||--|-- | --|r|"
+set-variable .fhook-euphor.indent-width 3
 set-variable .fhook-euphor.exact -1
 
 ; setup item-list
@@ -76,18 +77,18 @@ set-variable .fhook-euphor.item-list-r4 "Proc \ecB\\2\ecA"
 !if &sin "d" .fhook-euphor.setup
     0 indent .hilight.euphor 1 10
 
-    indent .hilight.euphor N "function"      3
-    indent .hilight.euphor O "end function" -3
-    indent .hilight.euphor N "type"          3
-    indent .hilight.euphor O "end type"     -3
-    indent .hilight.euphor N "for"           3
-    indent .hilight.euphor O "end for"      -3
-    indent .hilight.euphor N "while"         3
-    indent .hilight.euphor O "end while"    -3
-    indent .hilight.euphor N "if"            3
-    indent .hilight.euphor S "else"         -3
-    indent .hilight.euphor S "elsif"        -3
-    indent .hilight.euphor O "end if"       -3
+    indent .hilight.euphor N "function"      t
+    indent .hilight.euphor O "end function" -t
+    indent .hilight.euphor N "type"          t
+    indent .hilight.euphor O "end type"     -t
+    indent .hilight.euphor N "for"           t
+    indent .hilight.euphor O "end for"      -t
+    indent .hilight.euphor N "while"         t
+    indent .hilight.euphor O "end while"    -t
+    indent .hilight.euphor N "if"            t
+    indent .hilight.euphor S "else"         -t
+    indent .hilight.euphor S "elsif"        -t
+    indent .hilight.euphor O "end if"       -t
     indent .hilight.euphor i "--"
 !endif
 
