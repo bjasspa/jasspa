@@ -96,7 +96,7 @@ meNamesList varbNames={1,0,NULL,NULL,0} ;
 static meRegister *gmaLocalRegPtr=NULL ;
 
 #if MEOPT_MAGIC
-meRegex meRegexStrCmp={0} ;
+meRegex meRegexStrCmp ;
 /* Quick and easy interface to regex compare
  * 
  * return -1 on error, 0 on no match 1 if matched
@@ -134,7 +134,7 @@ regexStrCmp(meUByte *str, meUByte *reg, int flags)
             }
             mereNewlBufSz = ii+127 ;
         }
-        strcpy(mereNewlBuf,str) ;
+        meStrcpy(mereNewlBuf,str) ;
         srchLastState = meTRUE ;
     }
     return rr ;
@@ -991,9 +991,10 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
         case -1:
             {
                 /* unknown so set an environment variable */
-                char buff[meBUF_SIZE_MAX+meSBUF_SIZE_MAX] ;
+                char buff[meBUF_SIZE_MAX+meSBUF_SIZE_MAX], *ss ;
                 sprintf(buff,"%s=%s",nn,vvalue) ;
-                mePutenv(meStrdup(buff)) ;
+                if((ss=meStrdup(buff)) != NULL)
+                    mePutenv(ss) ;
                 break ;
             }
         default:

@@ -1371,7 +1371,13 @@ printSection (meWindow *wp, long sLineNo, long numLines, meLine *sLine, meLine *
     case PDEST_INTERNAL:
         break;
     case PDEST_BUFFER:
-        if(((dbp=bfind(printer.param [mePS_BUFFER].p,BFND_CREAT|BFND_CLEAR)) == meFALSE) ||
+#ifdef _INSENSE_CASE
+        if(meStricmp(wp->buffer->name,printer.param[mePS_BUFFER].p) == 0)
+#else
+        if(meStrcmp(wp->buffer->name,printer.param[mePS_BUFFER].p) == 0)
+#endif
+            return mlwrite(MWABORT,(meUByte *)"[Cannot print \"%s\" buffer]",printer.param[mePS_BUFFER].p) ;
+        if(((dbp=bfind(printer.param[mePS_BUFFER].p,BFND_CREAT|BFND_CLEAR)) == meFALSE) ||
            (((printer.param [mePI_FLAGS].l & PFLAG_SILENT) == 0) &&
             ((dwp = meWindowPopup(dbp->name,WPOP_USESTR,NULL)) == NULL)))
             return mlwrite(MWABORT,(meUByte *)"[Failed to create print buffer]") ;

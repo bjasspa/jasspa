@@ -17,6 +17,7 @@ define-macro fhook-vb
 set-variable .fhook-vb.name "Visual Basic"
 set-variable .fhook-vb.setup &reg "/history" "fhook/vb" "dghiopx"
 set-variable .fhook-vb.setup-mask "adeghikmoptux"
+set-variable .fhook-vb.tags "vbtags"
 set-variable .fhook-vb.comment "|'||'|' | '||"
 
 ; setup item-list
@@ -26,6 +27,9 @@ set-variable .fhook-vb.item-list-s2 "^[ \t]*\\(Private[ \t]+\\|Public[ \t]+\\)?S
 set-variable .fhook-vb.item-list-r2 "Sub  \ecB\\2\ecA"
 set-variable .fhook-vb.item-list-s3 "^[ \t]*\\(Private[ \t]+\\|Public[ \t]+\\)?Property[ \t]+\\(Get\\|Let\\)[ \t]+\\(\\w+\\)[ \t]*("
 set-variable .fhook-vb.item-list-r3 "Prop \ecB\\2 \\3\ecA"
+; Listing variables is a bit of an over-kill?
+;set-variable .fhook-vb.item-list-s4 "^[ \t]*\\(Private\\|Public\\)[ \t]+\\(\\w+\\)[ \t]+As[ \t]"
+;set-variable .fhook-vb.item-list-r4 "Var  \ecB\\2\ecA"
 
 !if &not &exist .hilight.vb
     set-variable .hilight.vb &pinc .hilight.next 1
@@ -37,25 +41,25 @@ set-variable .fhook-vb.item-list-r3 "Prop \ecB\\2 \\3\ecA"
     hilight .hilight.vb 2 "^#"           .scheme.prepro
     hilight .hilight.vb 2 "'"            .scheme.comment
     hilight .hilight.vb 0 "^\\w+:"       .scheme.link
-    hilight .hilight.vb 1 "GoTo \\w+"    .scheme.link
-    
+    ; Operators
     hilight .hilight.vb 0 "<>"           .scheme.operator
-    ; Constants
-    hilight .hilight.vb 1 "True"         .scheme.operator
-    hilight .hilight.vb 1 "False"        .scheme.operator
-    hilight .hilight.vb 1 "Nothing"      .scheme.operator
-    hilight .hilight.vb 1 "Binary"       .scheme.operator
-    hilight .hilight.vb 1 "Access"       .scheme.operator
-    hilight .hilight.vb 1 "Read"         .scheme.operator
-    hilight .hilight.vb 1 "Write"        .scheme.operator
     hilight .hilight.vb 1 "Not"          .scheme.operator
     hilight .hilight.vb 1 "Is"           .scheme.operator
+    ; Constants
+    hilight .hilight.vb 1 "True"         .scheme.prepro
+    hilight .hilight.vb 1 "False"        .scheme.prepro
+    hilight .hilight.vb 1 "Nothing"      .scheme.prepro
+    hilight .hilight.vb 1 "Binary"       .scheme.prepro
+    hilight .hilight.vb 1 "Access"       .scheme.prepro
+    hilight .hilight.vb 1 "Read"         .scheme.prepro
+    hilight .hilight.vb 1 "Write"        .scheme.prepro
     ; Keywords
     hilight .hilight.vb 1 "As"           .scheme.keyword
     hilight .hilight.vb 1 "Option"       .scheme.keyword
     hilight .hilight.vb 1 "If"           .scheme.keyword
     hilight .hilight.vb 1 "Else"         .scheme.keyword
     hilight .hilight.vb 1 "ElseIf"       .scheme.keyword
+    hilight .hilight.vb 1 "GoTo"         .scheme.keyword
     hilight .hilight.vb 1 "Then"         .scheme.keyword
     hilight .hilight.vb 1 "Case"         .scheme.keyword
     hilight .hilight.vb 1 "LCase"        .scheme.keyword

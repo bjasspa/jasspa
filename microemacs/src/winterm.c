@@ -69,7 +69,6 @@
  * Unless you know what you are doing DO NOT MESS with the event mechanism.
  * It might work but it may not be correct.
  */
-
 #include <string.h>                     /* String functions */
 #include <time.h>                       /* Time definitions */
 
@@ -4449,7 +4448,7 @@ TTputs (int row, int col, int len)
     if(!meFrameGetWinPaintAll(frameCur))
     {
         RECT rect;                          /* Area of screen to update */
-
+        
         if(meFrameGetWinPaintStartCol(frameCur)[row] > col)
             meFrameGetWinPaintStartCol(frameCur)[row] = col ;
         if(meFrameGetWinPaintEndCol(frameCur)[row] < (col+len))

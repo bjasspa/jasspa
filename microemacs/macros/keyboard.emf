@@ -14,7 +14,7 @@
 ;
 !if &les @# 1
     ; if executed with an argument of 0 or less, return the list
-    set-variable %keyboard-names "|Default|American|Belgian|British|Deutsch|Espanol|Francais|Polish|Portugues|"
+    set-variable %keyboard-names "|Default|American|Belgian|British|Deutsch|Espanol|Finnish|Francais|Polish|Portugues|"
     !return
 !endif
 
@@ -65,6 +65,19 @@ set-variable #l0 &reg "/history" "keyboard" ""
         translate-key "A-C-2 A-C-@" "@"
         translate-key "A-C-3 A-C-#" "#"
         translate-key "A-C-6 A-C-¬" "¬"
+    !endif
+!elif &seq #l0 "Finnish"
+    !if &seq $platform "win32"
+        ; Thanks to Sebastian Bojers
+        translate-key "A-C-2 A-C-@" "@"
+        translate-key "A-C-3 A-C-£" "£"
+        translate-key "A-C-4 A-C-$" "$"
+        translate-key "A-C-7 A-C-{" "{"
+        translate-key "A-C-8 A-C-[" "["
+        translate-key "A-C-9 A-C-]" "]"
+        translate-key "A-C-0 A-C-}" "}"
+        translate-key "A-C-= A-C-\\" "\\"
+        translate-key "A-C-b A-C-|" "|"
     !endif
 !elif &seq #l0 "Francais"
     !if &seq $platform "win32"

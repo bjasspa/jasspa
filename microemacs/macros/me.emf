@@ -259,6 +259,7 @@ add-file-hook ".info dir"                                     fhook-info
 add-file-hook ".diff .dif *diff*"                             fhook-diff
 add-file-hook ".xml"                                          fhook-xml
 add-file-hook ".ex .exw .exu .e .ew .eu"                      fhook-euphor
+add-file-hook ".pls"                                          fhook-pls
 ; Add magic hooks
  1 add-file-hook "^#![ \t]*/.*sh"                fhook-shell  ; UNIX shell files
  1 add-file-hook "^#![ \t]*/.*perl"              fhook-perl   ; UNIX perl script
@@ -274,9 +275,10 @@ add-file-hook ".ex .exw .exu .e .ew .eu"                      fhook-euphor
 -1 add-file-hook "-[*!]-[ \t]*c\\+\\+.*-[*!]-"   fhook-cpp    ; -*- C++ -*-
 -1 add-file-hook "-[*!]-[ \t]*f.*-[*!]-"         fhook-f90    ; -*- f -*-
 -1 add-file-hook "-[*!]-[ \t]*perl.*-[*!]-"      fhook-perl   ; -*- perl -*-
--1 add-file-hook "-[*]-[ \t]*texinfo.*-[*]-"     fhook-texi   ; -*- texinfo -*-
+-1 add-file-hook "-[*!]-[ \t]*texinfo.*-[*!]-"   fhook-texi   ; -*- texinfo -*-
 -1 add-file-hook "-[*!]-[ \t]*nroff.*-[*!]-"     fhook-nroff  ; -*- nroff -*-
 -1 add-file-hook "-[*!]-[ \t]*cobol.*-[*!]-"     fhook-cobol  ; -*- cobol -*-
+-1 add-file-hook "-[*!]-[ \t]*pl/?sq?l?.*-[*!]-" fhook-pls    ; -*- pl/sql -*- or -*- pls -*-
 -1 add-file-hook "-!-[ \t]*mhg.*-!-"             fhook-mhg    ; -!- mhg -!-
 -1 add-file-hook "-!-[ \t]*shell.*-!-"           fhook-shell  ; -!- shell -!-
 -1 add-file-hook "-!-[ \t]*msdos.*-!-"           fhook-dos    ; -!- msdos -!-
