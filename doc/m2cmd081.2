@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m2cmd081.2,v 2.2 2001-07-14 10:10:28 jon Exp $
+.Id $Id: m2cmd081.2,v 2.3 2001-08-12 14:42:20 jon Exp $
 .Im MicroEmacs command|delete|region
 .ds C0 "(\fB\*cw\fR)\ \&
 .so me.tni
@@ -10,7 +10,7 @@ kill-region \- Delete all characters in the marked region
 .Me $a
 .SH SYNOPSIS
 .na
-\fBkill-region\fR \*(C0
+\fIn\fR \fBkill-region\fR \*(C0
 .ad
 .SH DESCRIPTION
 .B kill-region
@@ -19,6 +19,11 @@ deletes all characters from the cursor  to the mark set with the
 command.  The  characters  removed  are copied into the kill buffer and may be
 extracted using
 .Ht yank 2 .
+If a numeric argument of \fC0\fR is given the command has no effect. If a \-ve
+argument is given the characters are not placed in the kill buffer,  therefore
+the text is effectively lost (this does not effect the
+.Ht undo 2
+operation).
 .PP
 The mark position may be ahead or behind the current cursor position.
 .SH USAGE

@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m2cmd035.2,v 2.2 2001-07-14 10:10:15 jon Exp $
+.Id $Id: m2cmd035.2,v 2.3 2001-08-12 14:42:20 jon Exp $
 .Im MicroEmacs command|delete
 .ds C0 "(\fB\*ed\fR)\ \&
 .ds C1 "(\fB\*e\*(bS\fR)\ \&
@@ -28,14 +28,20 @@ backward-kill-word \- Delete previous word at the cursor position
 deletes the next \fIn\fR words  starting at the current  cursor  position, the
 deleted text is added to the kill buffer. See
 .Ht forward-word  2
-for a description of word boundaries.
+for a description of word  boundaries. If the argument  \fIn\fR is \fC0\fR the
+command has no effect. If a \-ve  argument is  specified,  +\fIn\fR  words are
+deleted and the text is not added to the kill buffer.
 .PP
 .B backward-kill-word
 deletes the  previous  \fIn\fR  words  before the cursor, the deleted  text is
-added to the kill buffer.
+added to the kill  buffer. The  numeric  argument has the same  effect as with
+\fBforward-kill-word\fR.
 .SH NOTES
 .B backward-kill-word
 is also bound to \fB\*e\*(bS\fR.
+.PP
+The \-ve argument is typically  used from macro  scripts where the kill buffer
+is more precisely controlled.
 .SH "SEE ALSO"
 .na
 .Ht backward-delete-char 2 ,
