@@ -5447,13 +5447,29 @@ meSetupPathsAndUser(char *progname)
         }
     }
     if(meUserPath != NULL)
+    {
         fileNameConvertDirChar(meUserPath) ;
+        ll = meStrlen(meUserPath) ;
+        if(meUserPath[ll-1] != DIR_CHAR)
+        {
+            meUserPath = meRealloc(meUserPath,ll+2) ;
+            meUserPath[ll++] = DIR_CHAR ;
+            meUserPath[ll] = '\0' ;
+        }
+    }
     
     if((((ss = meGetenv ("HOME")) != NULL) && (ss[0] != '\0')) ||
        ((ss = appData) != NULL))
     {
-        homedir = meStrdup(ss) ;
+        ll = meStrlen(ss) ;
+        homedir = meMalloc(ll+2) ;
+        meStrcpy(homedir,ss) ;
         fileNameConvertDirChar(homedir) ;
+        if(homedir[ll-1] != DIR_CHAR)
+        {
+            homedir[ll++] = DIR_CHAR ;
+            homedir[ll] = '\0' ;
+        }
     }
 }
 

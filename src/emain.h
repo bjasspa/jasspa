@@ -81,7 +81,7 @@
 #define _SOCKET        1                /* Supports url reading          */
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
-#define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa:/usr/local/microemacs"
+#define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa"
 #endif
 
 /**************************************************************************
@@ -101,7 +101,7 @@
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
 #define _meDEF_SYS_ERRLIST              /* errno.h not def sys_errlist   */
-#define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa:/usr/local/microemacs"
+#define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa"
 #endif
 
 /**************************************************************************
@@ -120,7 +120,7 @@
 #define _SOCKET        1                /* Supports url reading          */
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
-#define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa:/usr/local/microemacs"
+#define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa"
 #endif
 
 /**************************************************************************
@@ -142,7 +142,7 @@
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
 #define _meDEF_SYS_ERRLIST              /* errno.h not def sys_errlist   */
-#define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa:/usr/local/microemacs"
+#define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa"
 #endif
 
 /**************************************************************************
@@ -175,7 +175,7 @@
 #define _SOCKET        1                /* Supports url reading          */
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
-#define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa:/usr/local/share/jasspa:/usr/local/microemacs"
+#define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa:/usr/local/share/jasspa"
 #endif
 
 /**************************************************************************
@@ -195,7 +195,7 @@
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
 #define _meDEF_SYS_ERRLIST              /* errno.h doesnt def sys_errlist*/
-#define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa:/usr/local/microemacs"
+#define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa"
 #endif
 
 /**************************************************************************
@@ -223,7 +223,7 @@
 #define _SOCKET        1                /* Supports url reading          */
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
-#define _DEFAULT_SEARCH_PATH "/usr/share/jasspa:/usr/local/jasspa:/usr/local/microemacs"
+#define _DEFAULT_SEARCH_PATH "/usr/share/jasspa:/usr/local/jasspa"
 #endif
 
 /**************************************************************************
@@ -246,7 +246,7 @@
 #define _SOCKET        1                /* Supports url reading          */
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #endif
-#define _DEFAULT_SEARCH_PATH "/usr/local/jasspa:/usr/local/microemacs"
+#define _DEFAULT_SEARCH_PATH "/usr/local/jasspa"
 /* Under cygwin sys_errlist is defined slightly differently - redefine   */
 #define sys_errlist _sys_errlist        /* sys_errlist specially defined */
 #endif /* _CYGWIN */
@@ -271,7 +271,7 @@
 /* NeXT provides us with libc.h this includes all of the API definitions for
  * the standard 'C' library calls. Nice touch !! */
 #include <libc.h>
-#define _DEFAULT_SEARCH_PATH "/usr/local/jasspa:/usr/local/microemacs"
+#define _DEFAULT_SEARCH_PATH "/usr/local/jasspa"
 #endif /* _NEXT */
 
 /**************************************************************************

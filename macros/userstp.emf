@@ -165,30 +165,35 @@ set-variable %emulate-value "||me3_8|nedit|"
         ml-write "[No user-name!]"
         !return
     !endif
-    save-history &spr "%s/%s.erf" $user-path $user-name
+    save-history &spr "%s%s.erf" $user-path $user-name
     !if &not &seq &set #l0 &reg "/history" "company" "" ""
         ; Must use &find first for the company as this could be anywhere
         !if &seq &find #l0 ".emf" "ERROR"
-            !force 0 find-file &spr "file:%s/%s.emf" $user-path #l0
+            !force 0 find-file &spr "file:%s%s.emf" $user-path #l0
             !if &not $status
-                find-file &spr "file:%s/%s.emf" $user-path #l0
+                find-file &spr "file:%s%s.emf" $user-path #l0
                 beginning-of-buffer
                 set-mark
                 end-of-buffer
                 -1 kill-region
-                insert-string ";   My company setup\n"
-                insert-string ";\n"
-                insert-string ";   Last Modified :  <999999.9999>\n"
-                insert-string ";\n"
-                insert-string "set-variable %company-name \""
-                insert-string #l0
-                insert-string "\"\n"
+                !force insert-file &find "newcomp" ".etf"
+                !if &not $status
+                    insert-string "; -!- emf -!-\n"
+                    insert-string "; This is part of the JASSPA MicroEmacs macro files\n"
+                    insert-string "; Copyright (C) 1999-2004 JASSPA (www.jasspa.com)\n"
+                    insert-string "; See the file me.emf for copying and conditions.\n"
+                    insert-string ";\n"
+                    insert-string "; Add your company macros and definitions to this file.\n"
+                    insert-string "; This is usually called \"<company>.emf\".\n"
+                    insert-string ";\n"
+                !endif
+                insert-string &spr "set-variable %%company-name \"%s\"" #l0
                 save-buffer
             !endif
         !endif
     !endif
     !if &not &seq &set #l0 &reg "/history" "setup-file" "" ""
-        set-variable #l0 &spr "%s/%s.emf" $user-path #l0
+        set-variable #l0 &spr "%s%s.emf" $user-path #l0
         !if &sequ &stat "t" #l0 "R"
             !if &reg "/history" "edituser" "1"
                 !force 0 find-file &cat "file:" #l0
@@ -199,10 +204,17 @@ set-variable %emulate-value "||me3_8|nedit|"
             set-mark
             end-of-buffer
             -1 kill-region
-            insert-string ";   My own setup\n"
-            insert-string ";\n"
-            insert-string ";   Last Modified :  <999999.9999>\n"
-            insert-string ";\n"
+            !force insert-file &find "newuser" ".etf"
+            !if &not $status
+                insert-string "; -!- emf -!-\n"
+                insert-string "; This is part of the JASSPA MicroEmacs macro files\n"
+                insert-string "; Copyright (C) 1999-2004 JASSPA (www.jasspa.com)\n"
+                insert-string "; See the file me.emf for copying and conditions.\n"
+                insert-string ";\n"
+                insert-string "; Add your private macros and definitions to this file.\n"
+                insert-string "; This is usually called \"<user>.emf\".\n"
+                insert-string ";"
+            !endif
             save-buffer
         !endif
     !endif
@@ -1174,16 +1186,16 @@ osd .osd.user-start 70  "EtRxHf" 70 .scheme.osd-entry "#########################
 osd .osd.user-start 80  ""
 osd .osd.user-start 90  "Sfh" "         Setup \HFile : " 100
 osd .osd.user-start 100 "EtxHfh" 100 .scheme.osd-entry "##############" 4 user-set-entry
-osd .osd.user-start 103 "Sfh" "   Edit : " 107
+osd .osd.user-start 103 "Sfh" "   E\Hdit : " 107
 osd .osd.user-start 107 "Ctfx" 107 "^^NY^^" 13 user-set-checkbox
 osd .osd.user-start 110 "Sfh" "       C\Hompany File : " 120
 osd .osd.user-start 120 "EtxHf" 120 .scheme.osd-entry "##############" 2 user-set-entry
 osd .osd.user-start 130 "Sfh" "            \HEmulate : " 140
 osd .osd.user-start 140 "OtxmsfhHzR" 140 .scheme.osd-entry 24 1 "" .osd.user-sub user-setup-emulate
 osd .osd.user-start 141 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 140
-osd .osd.user-start 150 "Sfh" "   \HMS Friendly Keys : "  160
+osd .osd.user-start 150 "Sfh" "   \HRebind Home Keys : "  160
 osd .osd.user-start 160 "Ctfhx" 160 "^^NY^^" 18 user-set-checkbox
-osd .osd.user-start 170 "Sfh" "     MS Shift Region : "  180
+osd .osd.user-start 170 "Sfh" "     \HMS Shift Region : "  180
 osd .osd.user-start 180 "Ctfx" 180 "^^NY^^" 12 user-set-checkbox
 osd .osd.user-start 500 ""
 osd .osd.user-start 510 "c"  "Locale Setup"

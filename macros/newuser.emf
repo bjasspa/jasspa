@@ -41,7 +41,7 @@
 ; Create the file user.erf
 0 define-macro newuser-makeerf
     insert-string &spr "Creating user registry file \"%s.erf\" ... " $user-name
-    set-variable #l1 &spr "%s/%s.erf" $user-path $user-name
+    set-variable #l1 &spr "%s%s.erf" $user-path $user-name
     set-variable #l0 &stat "t" #l1
     !if &not &seq #l0 "X"
         insert-string &spr "[ERROR]\n"
@@ -72,7 +72,7 @@
 ; Create the file user.emf
 0 define-macro newuser-makeemf
     insert-string &spr "Creating user setup file \"%s.emf\" ... " $user-name
-    set-variable #l1 &spr "%s/%s.emf" $user-path $user-name
+    set-variable #l1 &spr "%s%s.emf" $user-path $user-name
     set-variable #l0 &stat "t" #l1
     !if &not &seq #l0 "X"
         insert-string &spr "[ERROR]\n"
@@ -126,7 +126,7 @@
         !return
     !endif
     insert-string &spr "Creating company setup file \"%s.emf\" ... " .newuser.company
-    set-variable #l1 &spr "%s/%s.emf" $user-path .newuser.company
+    set-variable #l1 &spr "%s%s.emf" $user-path .newuser.company
     set-variable #l0 &stat "t" #l1
     !if &not &seq #l0 "X"
         insert-string &spr "[ERROR]\n"
@@ -243,19 +243,19 @@
         ; user has not fixed the environment, searching paths are being used.
         ; Therefore if the current $user-path is not a jasspa path we can
         ; create one and ME will automatically find one.
-        set-variable #l0 &cat "/" .newuser.jasspa
+        set-variable #l0 &spr "/%s/" .newuser.jasspa
         !if &seq &rig $user-path &sub &len $user-path &len #l0 #l0
             ; ends in "/.jaspa" or "/jasspa", this is okay as ME will ensure that
             ; the $user-path points to a user area if possible (i.e. ~/ or $APPDATA/)
             set-variable .newuser.user-path $user-path
         !else
-            set-variable #l0 &cat &cat #l0 "/" $user-name
+            set-variable #l0 &spr "/%s/%s/" .newuser.jasspa $user-name
             !if &seq &rig $user-path &sub &len $user-path &len #l0 #l0
                 ; ends in "/<user>/.jaspa" or "/<user>/jasspa", again this is okay
                 set-variable .newuser.user-path $user-path
             !else
                 ; add a .jasspa to the current $user-path and we will need to create it
-                set-variable .newuser.user-path &cat &cat $user-path "/" .newuser.jasspa
+                set-variable .newuser.user-path &spr "%s%s/" $user-path .newuser.jasspa
                 set-variable #l0 &stat "t" .newuser.user-path
                 !if &seq #l0 "X"
                     ; we will create this path which should mean that ME will ignore the current $user-path 
@@ -278,7 +278,6 @@
     insert-string &spr "\n  User Name:   %s\n  User Path:   %s\n" $user-name .newuser.user-path
     !if &exi .newuser.create-path
         insert-string "               *** This directory will be created ***\n"
-        set-variable #l1 &cat .newuser.create-path .newuser.pathdiv
     !endif
     set-variable #l0 &rep .newuser.search-path .newuser.pathdiv "\n               "
     insert-string &cat &cat "  Search Path: " #l0 "\n\nIs this correct? "
@@ -345,7 +344,7 @@
     ; create the user-path if required
     !if &exi .newuser.create-path
         insert-string &spr "Creating User Path: %s ... " .newuser.create-path
-        !force !force 0x100 file-op .newuser.create-path
+        !force !force 0x100 file-op &lef .newuser.create-path &sub &len .newuser.create-path 1
         !if &not $status
             insert-string "[ERROR]\n"
             insert-string "ERROR: Cannot create the directory - resolve problem and re-start\n"

@@ -2548,7 +2548,7 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
         else if((homedir != NULL) && (p[0] == '~'))
         {
             meStrcpy(p1,homedir) ;
-            p1 += meStrlen(p1) ;
+            p1 += meStrlen(p1) - 1 ;
             if(p[1] != DIR_CHAR)
             {
                 *p1++ = DIR_CHAR ;
