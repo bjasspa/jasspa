@@ -73,7 +73,9 @@ define-macro symbol
 !emacro
 
 0 define-macro indent-setup-exec
-    !if &equ @# 4
+    !if &equ @# 5
+        !return $buffer-hilight
+    !elif &equ @# 4
         !return $buffer-indent
     !elif &equ @# 3
         !return &not &bmod "tab"
@@ -94,9 +96,17 @@ define-macro symbol
         !else
             set-variable $buffer-indent :buffer-indent
         !endif
+    !elif &equ @# -5
+        !if $buffer-hilight
+            set-variable :buffer-hilight $buffer-hilight
+            set-variable $buffer-hilight 0
+        !else
+            set-variable $buffer-hilight :buffer-hilight
+        !endif
     !endif
 !emacro
-osd .osd.indstp  0 "batcDIHs" 9 3 30 10 -1 -1 110 30 .scheme.osd-title "Indentation Setup"
+-1 osd .osd.indstp
+osd .osd.indstp  0 "batcDIHs" 9 3 30 10 -1 -1 150 30 .scheme.osd-title "Indentation Setup"
 osd .osd.indstp 10 ""
 osd .osd.indstp 20 "Sfh" "  \HTab Width:    " 30
 osd .osd.indstp 30 "EtRxHf" .scheme.osd-entry "##########" 1 indent-setup-exec
@@ -104,17 +114,24 @@ osd .osd.indstp 40 ""
 osd .osd.indstp 50 "Sfh" "  \HIndent Width: " 60
 osd .osd.indstp 60 "EtRxHf" .scheme.osd-entry "##########" 2 indent-setup-exec
 osd .osd.indstp 70 ""
-osd .osd.indstp 85 "fh" "  "
+osd .osd.indstp 80 "fh" "  "
 osd .osd.indstp 90 "Cptfx" &cat .osd.checkbox-chars "\} \HUse tab characters" 3 indent-setup-exec
-osd .osd.indstp 100 ""
-osd .osd.indstp 110 "BtcfHh" .scheme.osd-ebtt " \HOkay "  f void
+osd .osd.indstp 140 ""
+osd .osd.indstp 150 "BtcfHh" .scheme.osd-ebtt " \HOkay "  f void
 define-macro indent-setup
     !if &or $buffer-indent &exi :buffer-indent
-        osd .osd.indstp 75 "fh" "  "
-        osd .osd.indstp 80 "Cptfx" &cat .osd.checkbox-chars "\} \HUse auto-indentation" 4 indent-setup-exec
+        osd .osd.indstp 100 "fh" "  "
+        osd .osd.indstp 110 "Cptfx" &cat .osd.checkbox-chars "\} \HUse auto-indentation" 4 indent-setup-exec
     !else
-        osd .osd.indstp 75 "D"
-        osd .osd.indstp 80 "D"
+        osd .osd.indstp 100 "D"
+        osd .osd.indstp 110 "D"
+    !endif
+    !if &or $buffer-hilight &exi :buffer-hilight
+        osd .osd.indstp 120 "fh" "  "
+        osd .osd.indstp 130 "Cptfx" &cat .osd.checkbox-chars "\} \HUse hilighting" 5 indent-setup-exec
+    !else
+        osd .osd.indstp 120 "D"
+        osd .osd.indstp 130 "D"
     !endif
     .osd.indstp osd
 !emacro
