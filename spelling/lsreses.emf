@@ -1,17 +1,21 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
 ;
-;  Created By    : Steven Phillips
-;  Created       : Fri May 8 11:16:13 1998
-;  Description   : Spell checker rules for Espanol
+; Created:     Fri May 8 1998
+; Authors:     Steven Phillips
+; Synopsis:    Spell checker rules for Espanol
+; Description:
+;     This file "lsreses.emf" and "lsdmeses.edf" are derived from the
+;     Spanish ispell dictionary by Santiago Rodr'iguez and Jes'us Carretero.
+;     The spell rules and word derivations have been repackaged in
+;     a proprietary format for use with JASSPA's MicroEmacs.
+;     The following copyright applies to these files:-
 ;
-;  Notes
-;
-;  The following copyright apply to the rules and dictionary
-;
-;      espa~nol.dicc Release 1.5-- A Spanish (Espa~nol) dictionary for using
-;      with ispell 3.1.13 or later
+;       espa~nol.dicc Release 1.5-- A Spanish (Espa~nol) dictionary for using
+;       with ispell 3.1.13 or later
 ;      
-;        Copyright (c) 1994 1995 1996 Santiago Rodr'iguez and Jes'us Carretero
+;       Copyright (c) 1994 1995 1996 Santiago Rodr'iguez and Jes'us Carretero
 ;      
 ;          This program is free software; you can redistribute it and/or modify
 ;          it under the terms of the GNU General Public License as published by
@@ -23,12 +27,11 @@
 ;          GNU General Public License for more details. This software  can be
 ;          obtained in ftp.fi.upm.es in /pub/unix/espa~nol.tar.gz
 ;
-;      This set of data files implements a Spanish (castellano) dictionary to
-;      be used with the international ispell program, version 3.1.13 or
-;      further. The dictionary contains 51,000 roots (aprox.).
+; Notes:
+;      This set of data files implements a Spanish (castellano) dictionary
+;      containing 51,000 root words (aprox.).
 ;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+; Rules used - list used by spell-edit-word
 set-variable .spell.rules "HIJLMNOPQRSTUVWXYZ"
 
 ; reset the spell rules
