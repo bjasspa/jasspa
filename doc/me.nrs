@@ -29,7 +29,7 @@
 .\"
 .\"***************************************************************************
 .\"
-.Id $Id: me.nrs,v 2.4 2001-07-14 10:12:13 jon Exp $
+.Id $Id: me.nrs,v 2.5 2001-12-06 00:04:32 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -1222,11 +1222,11 @@ Mail as:-
 .ad
 .LP
 Problems should be reported such that they may be reproduced,  this may not be
-that easy.  The information that is required is:-
+that easy. The information that is required is:-
 .IP "\fBPlatform\fR"
 The host platform which is exhibiting a problem
 .IP "\fBVersion\fR"
-The version of \*(mE. Use the  \fCesc x  info\fR to retrieve  the  information
+The  version of \*(mE. Use the \fCesc x about\fR to retrieve  the  information
 e.g.
 .RS
 .IP

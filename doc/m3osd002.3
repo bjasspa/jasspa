@@ -29,7 +29,7 @@
 .\"
 .\"***************************************************************************
 .\"
-.Id $Id: m3osd002.3,v 2.2 2001-07-14 10:11:24 jon Exp $
+.Id $Id: m3osd002.3,v 2.3 2001-12-06 00:04:32 jon Exp $
 .Im MicroEmacs command|spell|osd
 .ds C0 "(\fB\*e$\fR)\ \&
 .so me.tni
@@ -84,7 +84,12 @@ Word finder, allows words to be searched with wild cards.
 spell checks the current buffer, from the current  position, to the end of the
 buffer. On invocation, an
 .Ht osd 2
-dialog is opened and any corrections are made through this interface.
+dialog is opened and any  corrections  are made through this  interface. If an
+error dialog opens  instead the current  language is not setup, please see the
+Language setting in
+.Ht user-setup 3
+and
+.Hl "Locale Support" localeSupport 2 .
 .PP
 The dialog  provides the user with an interface  from which a new spelling may
 be selected, in addition  new words may be added to the  spelling  dictionary.
@@ -251,9 +256,10 @@ present several times.  \fBfind-word\fR  counts each occurrence but it is only
 listed once.
 .SH "SEE ALSO"
 .na
+.Ht user-setup 3 ,
+.Hl "Locale Support" localeSupport 2 ,
 .Ht osd 2 ,
 .Ht spell 2 ,
-.Ht user-setup 3 ,
 .Ht describe-word 3 ,
 .Ht $find-words 5 .
 .ad

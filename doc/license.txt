@@ -1,4 +1,4 @@
-COPYRIGHT MicroEmacs '01
+COPYRIGHT MicroEmacs '00
 
     JASSPA Distribution - www.jasspa.com
 
@@ -15,7 +15,7 @@ COPYRIGHT MicroEmacs '01
 
     The following notices apply after 1988.
 
-        Copyright (C) 1988 - 2001, JASSPA
+        Copyright (C) 1988 - 2000, JASSPA
         MicroEmacs  '00  can  be  copied  and   distributed   freely  for  any
         non-commercial  purposes.  Commercial  users  may use  MicroEmacs  '00
         inhouse.  Shareware  distributors may redistribute  MicroEmacs '00 for

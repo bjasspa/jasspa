@@ -29,8 +29,8 @@
 .\"
 .\"***************************************************************************
 .\"
-.Id $Id: m2nar007.2,v 2.2 2001-07-14 10:11:03 jon Exp $
-.Im MicroEmacs search
+.Id $Id: m2nar007.2,v 2.3 2001-12-06 00:04:32 jon Exp $
+.Im MicroEmacs
 .so me.tni
 .TH "Build" 2
 .XI "Build" - "Build"
@@ -47,12 +47,6 @@ available compiler and build the editor.
 The build script recognizes the following options:-
 .IP \fB\-C\fR
 Build clean. Delete all of the object files.
-.IP \fB\-n\fR
-Build a console version (i.e. no window support).  Constructs the executable
-\fCmen32.exe\fR on Windows, \fCmen\fR on Linux.
-.IP \fB-nu\fR
-Build a console version with URL support (Windows '95/'98/NT only),  constructs the executable
-\fCmenu32.exe\fR.
 .IP \fB-d\fR
 Build a debugging  version, the output is \fCmed\fR (or \fCmed32\fR for 32-bit
 Windows versions)
@@ -124,6 +118,12 @@ supplied makefiles include:-
 \fCwin32v6.mak\fR Microsoft Developer v6.x, 32-bit Windows.
 .BE 0
 .RE
+.IP \fB\-n\fR
+Build a console version (i.e. no window support).  Constructs the executable
+\fCmen32.exe\fR on Windows, \fCmen\fR on Linux.
+.IP \fB-nu\fR
+Build a console version with URL support (Windows '95/'98/NT only),  constructs the executable
+\fCmenu32.exe\fR.
 .IP \fB-S\fR
 Build  spotless.  Deletes  all of the object  files and any backup  files, tag
 files etc.

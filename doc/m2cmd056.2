@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m2cmd056.2,v 2.4 2001-07-14 10:10:21 jon Exp $
+.Id $Id: m2cmd056.2,v 2.5 2001-12-06 00:04:31 jon Exp $
 .Im MicroEmacs command|file
 .ds C0 "(\fB\*(cX\*cf\fR)\ \&
 .so me.tni
@@ -20,18 +20,29 @@ finds the named file  \fIfile-name\fR. If it is already in a buffer, make that
 buffer active in the current window, otherwise  attempt to create a new buffer
 and read the file into it.
 .PP
-If the file does not exist and the variable
-.Ht $rcs-file 5
-is set then the  existence of the  \s-1RCS\s0  file is tested. If the rcs file
-exists  then it will be  checked  out using a  command-line  created  from the
-variable
-.Ht $rcs-co-com 5 .
-If the check-out is successful then this file is loaded.
-.PP
-If the file does not exist and an argument  \fIn\fR of 0 is  specified  the
-command  fails at this point. If the file does not exist and a non-zero  or no
-argument is  specified  then a new empty buffer is created with the given file
-name, saving the buffer subsequently creates a new file.
+The numeric  argument  \fIn\fR can be used to modify the default  behaviour of
+the command, where the bits are defined as follows:
+.IP \fB0x01\fR
+If the file does not exist and this bit is not set the  command  fails at this
+point.  If the file  does not  exist  and this bit is set (or no  argument  is
+specified  as the  default  argument  is \fC1\fR)  then a new empty  buffer is
+created with the given file name, saving the buffer subsequently creates a new
+file.
+.IP \fB0x02\fR
+If this bit is set the file will be loaded with
+.Ht binary 2m
+mode enabled. See help on  \fBbinary\fR  mode for more  information on editing
+binary data files.
+.IP \fB0x04\fR
+If this bit is set the file will be loaded with
+.Ht crypt 2m
+mode enabled. See help on  \fBcrypt\fR  mode for more  information  on editing
+encrypted files.
+.IP \fB0x08\fR
+If this bit is set the file will be loaded with
+.Ht rbin 2m
+mode enabled. See help on \fBrbin\fR  mode for more  information  on efficient
+editing of binary data files.
 .PP
 Text files are  usually thought  of as named  collections of  text residing on
 disk (or some other storage medium).  In \*(mE the disk based versions of
@@ -72,6 +83,18 @@ If you do not wish to perform any edits but merely browse the file(s), add the
 mode to the buffer or ask for the file to be read in for
 .Hl viewing view-file 2
 only.
+.SS "RCS Support"
+If the file does not exist and the variable
+.Ht $rcs-file 5
+is set then the  existence of the  \s-1RCS\s0  file is tested. If the rcs file
+exists  then it will be  checked  out using a  command-line  created  from the
+variable
+.Ht $rcs-co-com 5 .
+If the check-out is successful then this file is loaded.
+.PP
+This raw  interface  for  supporting  file revision  control  systems has been
+adapted  to  support  SCCS  and  Visual  Source  Safe  see  help  on  variable
+\fB$rcs-file\fR for more information and examples.   
 .SS "HTTP Support"
 \*(mS  supports http file loading, this is available by default on \s-1UNIX\s0
 systems  but must be  compiled in on win32  platforms  (socket  libraries  not
@@ -101,9 +124,9 @@ find-file "ftp://<me>:<password>@members.xoom.com/jasspa/index.html"
 See also 
 .Ht ftp 3 .
 .PP
-The progress of the FTP transer, and the FTP commands issued, may be viewed in
-the \fC*ftp-console*\fR  buffer. This is popped up depending on the setting of
-the
+The progress of the FTP  transfer, and the FTP commands  issued, may be viewed
+in the \fC*ftp-console*\fR  buffer. This is popped up depending on the setting
+of the
 .Ht %ftp-flags 5 
 variable.
 .SH NOTES
@@ -129,19 +152,22 @@ the progress of the transfer (when configured), this is described in
 .Ht ftp 3 .
 .SH "SEE ALSO"
 .na
+.Ht auto 2m ,
+.Ht binary 2m ,
+.Ht crypt 2m ,
+.Ht rbin 2m ,
+.Ht time 2m ,
+.Ht view 2m ,
+.Ht buffer-mode 2 ,
+.Ht find-bfile 3 ,
+.Ht ftp 3 ,
 .Ht $rcs-file 5 ,
 .Ht %ftp-flags 5 ,
 .Ht %http-flags 5 ,
 .Ht %http-proxy-addr 5 ,
-.Ht auto 2m ,
-.Ht buffer-mode 2 ,
-.Ht find-bfile 2 ,
-.Ht ftp 3 ,
 .Ht next-window-find-file 2 ,
 .Ht read-file 2 ,
 .Ht save-buffer 2 ,
-.Ht time 2m ,
-.Ht view 2m ,
 .Ht view-file 2 ,
 .Ht write-buffer 2 ,
 .Ht file-op 2 ,

@@ -1,4 +1,4 @@
-.Id $Id: m2cmd005.2,v 2.2 2001-07-14 10:10:07 jon Exp $
+.Id $Id: m2cmd005.2,v 2.3 2001-12-06 00:04:31 jon Exp $
 .Im MicroEmacs command|modes
 .ds C0 "(\fB\*em\fR)\ \&
 .so me.tni
@@ -45,7 +45,7 @@ The
 command gives a list of the current global and buffer modes.
 .PP
 \fBadd-global-mode\fR  and  \fBdelete-global-mode\fR  are  macros  defined  in
-me3_8.emf  which  use  global-mode  to add or remove a global  mode.  They are
+meme3_8.emf  which use  global-mode  to add or remove a global  mode. They are
 defined for backward  compatibility  with MicroEMACS v3.8 and for ease of use;
 they are simple macros, add-global-mode is defined as follows:
 .Me $emf-scheme
@@ -75,15 +75,17 @@ be simple and case insensitive by default:
 .Me $ehf-scheme
 .SH NOTES
 Globally adding
-.Ht binary 2m
-and
+.Ht binary 2m ,
 .Ht crypt 2m
-modes is  strongly  discouraged  as any file  loaded  would be assigned  these
-modes. Instead the use of commands
-.Ht find-bfile 2
 and
-.Ht find-cfile 2
-are recommended.
+.Ht rbin 2m
+modes is  strongly  discouraged  as any file  loaded  would be assigned  these
+modes. Instead use the numeric argument of command
+.Ht find-file 2 
+or commands
+.Ht find-bfile 3
+and
+.Ht find-cfile 3 .
 .PP
 .Ht auto 2m ,
 .Ht autosv 2m ,
@@ -103,8 +105,8 @@ is also present.
 .na
 .Hl "Operating Modes" Modes - ,
 .Ht buffer-mode 2 ,
-.Ht find-bfile 2 ,
-.Ht find-cfile 2 ,
+.Ht find-bfile 3 ,
+.Ht find-cfile 3 ,
 .Ht about 2 .
 .ad
 .rm C0

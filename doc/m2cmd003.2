@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m2cmd003.2,v 2.2 2001-07-14 10:10:06 jon Exp $
+.Id $Id: m2cmd003.2,v 2.3 2001-12-06 00:04:31 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH add-file-hook 2
@@ -93,9 +93,13 @@ space (' ') character is used as an extension separator, e.g.
 add-file-hook ".doc .txt" "fhook-doc"
 .CE
 .Me $ehf-scheme
-There  are  two  special   file  hooks,  which  are   \fBfhook-binary\fR   and
-\fBfhook-default\fR,  these are not  predefined,  but if the user defines them
-then they are executed whenever a file is loaded in binary mode (see
+There  are  three   special   file   hooks,   which  are   \fBfhook-binary\fR,
+\fBfhook-rbin\fR and \fBfhook-default\fR, these are not predefined, but if the
+user  defines them then they are executed  whenever a file is loaded in
+.Hl binary binary 2m
+or
+.Hl "reduced binary" rbin 2m
+mode (see
 .Ht buffer-mode 2 )
 or the extension does not match any of those defined.
 .PP

@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m5var047.5,v 2.2 2001-07-14 10:11:50 jon Exp $
+.Id $Id: m5var047.5,v 2.3 2001-12-06 00:04:32 jon Exp $
 .Im MicroEmacs variable|hilight|macrodevelop
 .so me.tni
 .TH $system 5
@@ -39,10 +39,16 @@ If this bit is set then the current  system  supports  Extended  ANSI  colors,
 brighter versions of the 8 ANSI colors doubling the number of colors available
 to 16. On UNIX  systems if the TERMCAP  interface  is being used then this bit
 can be  changed  to  (de)select  the used of bold  with  color to create  this
-extended  color set for  foreground  colors.  But many unix  terminals  do not
+extended  color set for  foreground  colors.  But many UNIX  terminals  do not
 support  this  use  of  color  with  the  bold  font  so  this  should  be set
 appropriately.  On all other  systems this bit cannot be changed and MS-DOS is
 currently the only other system to support this.
+.IP \fB0x010\fR
+If  this  bit is set  then  the  current  system  supports  the  use of  fonts
+(bold, italic, light and underline).  Whether these fonts can be  successfully
+utilized  depends  upon the  platform and the system font being used, for UNIX
+TERMCAP systems it will also depend on the terminal being used. This option is
+not supported on MS_DOS.
 .IP \fB0x080\fR
 This  bit  is  set if the  current  system  is a UNIX  based  system  such  as
 \s-1LINUX\s0  or  \s-1HPUX\s0.  This bit cannot be altered,  its use is within
@@ -74,14 +80,15 @@ current line when the current buffer is in
 .Ht cmode 2m
 or has an
 .Hl indentation indent 2
-method. If the bit is clear then  \fCtab\fR only checks the  indentation  when
-the cursor is in column zero.
+method. If the bit is clear then the \fCtab\fR may only checks the indentation
+when  the  cursor  is  in  column  zero   depending  on  the  setting  of  bit
+\fB0x200000\fR.
 .IP \fB0x2000\fR
 If this bit is set the main menu Alt hot-key  bindings are enabled. These are
 dynamic  bindings  automatically  generated from the main menu.  Typically the
 first item in the main menu is "\fCFile\fR"  with a hot key of '\fBF\fR', with
 this bit set '\fCA-f\fR'  will open this menu item. Note that global and local
-key bindings override these. Also see bit 0x4000.
+key bindings override these. Also see bit \fB0x4000\fR.
 .IP \fB0x4000\fR
 If this bit is set the Alt key acts as a
 .Hl "prefix 1" prefix 2
@@ -119,7 +126,7 @@ Box Character; Top left
 .IP \fC0x0e\fR
 Box Character; Bottom left
 .IP \fC0x0f\fR
-Box Character; Centre cross
+Box Character; Center cross
 .IP \fC0x10\fR
 Arrows; Right
 .IP \fC0x11\fR
@@ -176,6 +183,17 @@ characters used are set with the variable
 Enables hiding \*(mS generated  backup files. On Windows and Dos platforms the
 Hidden  file  attribute  is used to hide the file,  whereas on UNIX the backup
 file name is prepended with a '\fC.\fR'.
+.IP \fB0x200000\fR
+If this bit set, the then execution of the
+.Ht tab 2
+command (bound to \fCtab\fR) checks and adjusts the indentation of the
+current line when the cursor is in column zero and current buffer is in
+.Ht cmode 2m
+or has an
+.Hl indentation indent 2
+method. The setting of this bit has no effect if bit  \fB0x1000\fR  is set. If
+this and bit  \fB0x1000\fR  are clear  then the  \fCtab\fR  will not check the
+indentation.
 .SH EXAMPLE
 The follow  example  works out the  current  buffer's  backup  file name using
 \fB$system\fR to determine the naming system being used by \*(mS:-

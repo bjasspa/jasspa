@@ -7,7 +7,7 @@
 #
 # Author      : Jon Green
 # Created     : 22nd February 1997
-# Last Edited : <010815.2055>
+# Last Edited : <011125.1449>
 #
 # History     : JG  220297 Original  Constructed from emacssrc
 #
@@ -94,7 +94,7 @@ CMD2_040=	$(DOCDIR)m2cmd040.2 $(DOCDIR)m2cmd041.2 $(DOCDIR)m2cmd042.2\
 		$(DOCDIR)m2cmd046.2 $(DOCDIR)m2cmd047.2 $(DOCDIR)m2cmd048.2\
 		$(DOCDIR)m2cmd049.2
 CMD2_050=	$(DOCDIR)m2cmd050.2 $(DOCDIR)m2cmd051.2 $(DOCDIR)m2cmd052.2\
-		$(DOCDIR)m2cmd053.2 $(DOCDIR)m2cmd054.2 $(DOCDIR)m2cmd055.2\
+		$(DOCDIR)m2cmd053.2 \
 		$(DOCDIR)m2cmd056.2 $(DOCDIR)m2cmd057.2 $(DOCDIR)m2cmd058.2\
 		$(DOCDIR)m2cmd059.2
 CMD2_060=	$(DOCDIR)m2cmd060.2 $(DOCDIR)m2cmd061.2 $(DOCDIR)m2cmd062.2\
@@ -145,7 +145,7 @@ CMD2_200=	$(DOCDIR)m2cmd200.2 $(DOCDIR)m2cmd201.2 $(DOCDIR)m2cmd202.2\
 
 NAR2_000=	$(DOCDIR)m2nar000.2 $(DOCDIR)m2nar001.2	$(DOCDIR)m2nar002.2 \
 		$(DOCDIR)m2nar003.2 $(DOCDIR)m2nar004.2 $(DOCDIR)m2nar005.2 \
-		$(DOCDIR)m2nar006.2 $(DOCDIR)m2nar007.2
+		$(DOCDIR)m2nar006.2 $(DOCDIR)m2nar007.2 $(DOCDIR)m2nar008.2
 
 MOD2_000=	$(DOCDIR)m2mod000.2 $(DOCDIR)m2mod001.2 $(DOCDIR)m2mod002.2\
 		$(DOCDIR)m2mod003.2 $(DOCDIR)m2mod004.2 $(DOCDIR)m2mod005.2\
@@ -159,7 +159,7 @@ MOD2_020=	$(DOCDIR)m2mod020.2 $(DOCDIR)m2mod021.2 $(DOCDIR)m2mod022.2\
 		$(DOCDIR)m2mod023.2 $(DOCDIR)m2mod024.2 $(DOCDIR)m2mod025.2\
 		$(DOCDIR)m2mod026.2 $(DOCDIR)m2mod027.2 $(DOCDIR)m2mod028.2\
 		$(DOCDIR)m2mod029.2
-MOD2_030=	$(DOCDIR)m2mod030.2
+MOD2_030=	$(DOCDIR)m2mod030.2 $(DOCDIR)m2mod031.2 $(DOCDIR)m2mod032.2
 
 MAC3_000=	$(DOCDIR)m3mac000.3 $(DOCDIR)m3mac001.3 $(DOCDIR)m3mac002.3\
 		$(DOCDIR)m3mac003.3 $(DOCDIR)m3mac004.3 $(DOCDIR)m3mac005.3\
@@ -198,9 +198,10 @@ FCL3_000=	$(DOCDIR)m3fcl001.3 $(DOCDIR)m3fcl002.3 $(DOCDIR)m3fcl003.3\
 
 FCL3_010=	$(DOCDIR)m3fcl010.3 $(DOCDIR)m3fcl011.3
 
-FIL4_000=	$(DOCDIR)m4fil001.4 $(DOCDIR)m4fil002.4 $(DOCDIR)m4fil003.4\
-		$(DOCDIR)m4fil004.4 $(DOCDIR)m4fil005.4 $(DOCDIR)m4fil006.4\
-		$(DOCDIR)m4fil007.4 $(DOCDIR)m4fil008.4 $(DOCDIR)m4fil009.4
+FIL4_000=	$(DOCDIR)m4fil000.4 $(DOCDIR)m4fil001.4 $(DOCDIR)m4fil002.4\
+		$(DOCDIR)m4fil003.4 $(DOCDIR)m4fil004.4 $(DOCDIR)m4fil005.4\
+		$(DOCDIR)m4fil006.4 $(DOCDIR)m4fil007.4 $(DOCDIR)m4fil008.4\
+		$(DOCDIR)m4fil009.4 
 FIL4_010=	$(DOCDIR)m4fil010.4 $(DOCDIR)m4fil011.4 $(DOCDIR)m4fil012.4\
 		$(DOCDIR)m4fil013.4 $(DOCDIR)m4fil014.4 $(DOCDIR)m4fil015.4\
 		$(DOCDIR)m4fil016.4 $(DOCDIR)m4fil017.4 $(DOCDIR)m4fil018.4\
@@ -211,7 +212,7 @@ FIL4_020=	$(DOCDIR)m4fil020.4 $(DOCDIR)m4fil021.4 $(DOCDIR)m4fil022.4\
 		$(DOCDIR)m4fil026.4 $(DOCDIR)m4fil027.4 $(DOCDIR)m4fil028.4\
 		$(DOCDIR)m4fil029.4
 FIL4_030=	$(DOCDIR)m4fil030.4 $(DOCDIR)m4fil031.4 $(DOCDIR)m4fil032.4\
-		$(DOCDIR)m4fil033.4
+		$(DOCDIR)m4fil033.4 $(DOCDIR)m4fil034.4
 
 VAR5_000=	$(DOCDIR)m5var000.5 $(DOCDIR)m5var001.5 $(DOCDIR)m5var002.5\
 		$(DOCDIR)m5var003.5 $(DOCDIR)m5var004.5 $(DOCDIR)m5var005.5\
@@ -311,10 +312,10 @@ me.0: me.sm me.nrs
 me.lbn: me.sm me.0
 	$(NRAR) -E $(MANLOG) -M me me.0 me.sm
 clean::
-	- $(RM) me.0
-	- $(RM) me.lbn
-	- $(RM) me.err
-	- $(RM) me.hlp
+	$(RM) me.0
+	$(RM) me.lbn
+	$(RM) me.err
+	$(RM) me.hlp
 
 #
 # Build the main components.
@@ -505,21 +506,83 @@ $(MERELDIR)\readme.txt: readme.txt
 		$(INSTALL) $(@F) $(@D)
 		crlf32 -po $@
 clean::
-	- $(RM) *.sm
-	- $(RM) $(MANLOG)
-	- $(RM) *.hts
-	- $(RM) *.pso
-	- $(RM) me.lbn
-	- $(RM) me.fts
-	- $(RM) me.ehf
-	- $(RM) me.rtf
+	$(RM) *.sm
+	$(RM) $(MANLOG)
+	$(RM) *.hts
+	$(RM) *.pso
+	$(RM) ehf\me\*.htm
+	$(RM) ehf\me\*.ehf
+	$(RM) ehf\*.htm
+	$(RM) ehf\*.gif
+	$(RM) htm\me\*.htm
+	$(RM) htm\me\*.gif
+	$(RM) htm\*.htm
+	$(RM) htm\*.zip
+	$(RM) html\me\*.html
+	$(RM) html\me\*.gif
+	$(RM) html\*.html
+	$(RM) html\*.tar.gz
+	$(RM) me.lbn
+	$(RM) me.fts
+	$(RM) me.ehf
+	$(RM) mehtm.zip
+	$(RM) mehtml.tgz
+	$(RM) me.rtf
 	- attrib -H me.gid
-	- $(RM) me.gid
-	- $(RM) $(READTXT)
-	- $(RM) $(BUILDTXT)
-	- $(RM) $(FAQTXT)
+	$(RM) me.gid
+	$(RM) $(READTXT)
+	$(RM) $(BUILDTXT)
+	$(RM) $(FAQTXT)
 
 spotless:: clean
-	- $(RM) *.??~
-	- $(RM) tags
+	$(RM) *.??~
+	$(RM) tags
+	rd ehf\me
+	rd ehf
+	rd htm\me
+	rd htm
+	rd html\me
+	rd html
+
+me.ehf: meehf.hts
+	- md ehf 
+	- md ehf\me
+	cd ehf
+	$(RM) me\*.htm
+	$(RM) me\me.ehf
+	hts2html -l .htm ..\meehf.hts
+	copy me.htm me\1.htm
+	cd me
+	menu32 -n "@ehftools" *.htm
+	copy me.ehf ..\..
+	cd ..\..
+ 
+mehtm.zip: me.hts
+	- md htm 
+	- md htm\me
+	cd htm
+	$(RM) *.htm
+	$(RM) *.zip
+	$(RM) me\*.gif
+	$(RM) me\*.htm
+	hts2html -l .htm ..\me.hts
+	zip mehtm me.htm me/*
+	copy mehtm.zip ..
+	cd ..
+	
+mehtml.tgz: me.hts
+	- md html
+	- md html\me
+	cd html
+	$(RM) *.html
+	$(RM) *.tar.gz
+	$(RM) me\*.gif
+	$(RM) me\*.html
+	hts2html -l .html ..\me.hts
+	tar cvf mehtml.tar me.html me
+	gzip -9 mehtml.tar
+	copy mehtml.tar.gz ..\mehtml.tgz
+	cd ..
+	
+full:: mehtm.zip mehtml.tgz me.hlp me.ehf
 

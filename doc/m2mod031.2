@@ -1,41 +1,53 @@
 .\" -*- nroff -*-
-.Id $Id: m2mod031.2,v 2.2 2001-07-14 10:11:01 jon Exp $
+.Id $Id: m2mod031.2,v 2.3 2001-12-06 00:04:32 jon Exp $
 .Im MicroEmacs modes
 .so me.tni
-.TH edit 2m
-.XI edit - "Buffer has be changed"
+.TH rbin 2m
+.XI rbin - "Reduced binary editor mode"
 .SH NAME
-edit \- Buffer has be changed
+rbin \- Reduced binary editor mode
 .SH SYNOPSIS
-.B "edit Mode"
+.B "rbin Mode"
 .sp
-\fB\&e\fR\& \- mode line letters.
+\fBr\fR \- mode line letter.
 .SH DESCRIPTION
-.B edit
-mode  indicated  that the buffer has been  edited.  Many  commands  and typing
-\&'edit' the current  buffer,  automatically  setting this mode. Commands  which
-save these edits, such as
-.Ht save-buffer 2 ,
-automatically remove this mode.
+.B rbin
+mode is  enabled  when a file is edited in  reduced  binary  mode. The mode is
+automatically enabled when a file is loaded as a binary data file via
+.Ht find-file 2 .
 .PP
-A '*'  character,  3  characters  from  the  left on the mode  line is used to
-indicate that this mode is set, see
-.Ht $mode-line 5 .
-.Ht list-buffers 2
-also  displays  the state of this mode in its  output, as a '*' in the  second
-column.
+When a file is loaded using \fBrbin\fR mode, every 256 bytes is converted into
+a line of text, the line is a single list of hex numbers 512 characters  long,
+2 bytes for each character. This format is not very user friend unlike
+.Ht binary 2m
+mode, but is much more memory efficient (requiring  approximately 2 times more
+memory than the file size).
 .PP
-When this mode is set and
-.Ht undo 2m
-mode is enabled, the
-.Ht undo 2
-command can be used to undo all edits and the removal of this mode.
+When  writing  out a file which has rbin mode  enabled the format of each line
+must  be  correct,  namely  an  even  number  of hex  numbers  with  no  other
+characters.
+.SH EXAMPLE
+Given a single line \s-1MSDOS\s0 file:-
+.CS
+Live long and prosper.
+.CE
+When  loaded in using  \fBbinary\fR  mode the  following 2 line buffer will be
+produced:-
+.CS
+4C697665206C6F6E6720616E642070726F737065722E0D0A1A
+.CE
+Note  the  "\fC0D  0A  1A\fR"  at  the  end,  this  is  due to  \s-1MSDOS\s0's
+"\fC\\n\\r\fR"  carriage returns and \fC^Z\fR file termination. The given file
+could be made \s-1UNIX\s0 compatible by editing the buffer to:-
+.CS
+4C697665206C6F6E6720616E642070726F737065722E0D
+.CE 0
+.SH NOTES
+\fBrbin\fR  and  \fBbinary\fR  modes are mutually  exclusive, i.e. they cannot
+both be enabled at the same time.
 .SH "SEE ALSO"
 .na
-.Ht save-buffer 2 ,
-.Ht undo 2 ,
-.Ht list-buffers 2 ,
-.Ht $mode-line 5 ,
-.Ht undo 2m .
+.Ht find-file 2 ,
+.Ht binary 2m .
 .ad
 .FH

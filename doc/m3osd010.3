@@ -29,7 +29,7 @@
 .\"
 .\"***************************************************************************
 .\"
-.Id $Id: m3osd010.3,v 2.1 2001-07-14 10:11:26 jon Exp $
+.Id $Id: m3osd010.3,v 2.2 2001-12-06 00:04:32 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH buffer-setup 3
@@ -87,6 +87,13 @@ giving a more readable 'formatted' representation.
 .IP "Insert New Template"
 When  creating  a new  buffer/file  of this type, a default  template  will be
 inserted if this is enabled. When disabled the buffer will remain empty.
+.IP "Fence Display"
+Enables or disables the displaying of matching fences for this file type. Note
+that the way in which the matching fence is display is determined by the 
+\fBFence Display\fR option on the Platform page of
+.Ht user-setup 3 ;
+the \fBbuffer-setup\fR option is ignored if this option is set to
+"\fCNever Display\fR".
 .IP "Setup Hilighting"
 Creates and enables the token
 .Hl hilighting hilight 2
@@ -128,6 +135,14 @@ mode over-riding the setting within the
 .Ht user-setup 3
 dialog. If this  setting is changed  the  setting  within  user-setup  will be
 ignored for the current file type.
+.IP "Buffer Modes: Auto"
+Enables/disables the
+.Ht auto 2m
+mode. 
+.IP "Buffer Modes: Backup"
+Enables/disables the
+.Ht backup 2m
+mode. 
 .IP "Buffer Modes: Indent"
 Enables/disables the
 .Ht indent 2m

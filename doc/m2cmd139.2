@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m2cmd139.2,v 2.2 2001-07-14 10:10:44 jon Exp $
+.Id $Id: m2cmd139.2,v 2.3 2001-12-06 00:04:31 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .ds C0 "(\fB\*(rD\fR)\ \&
 .so me.tni
@@ -14,21 +14,64 @@ screen-update \- Force screen update
 .ad
 .SH DESCRIPTION
 .B screen-update
-updates the current screen, usually used in macros. If the argument \fIn\fR is
-0 then only the parts of the screen which  require  updating are redrawn, else
-the screen is completely cleared and redrawn (as if garbled).
-.PP
-Every time the screen requires  updating, \*(mE executes the \fIredraw\fR key,
+updates the current  screen,  usually used in macros. The argument  \fIn\fR
+can be used to change the behaviour of this command as follows:
+.IP \fC-ve\fR
+Disables the next  -\fIn\fR  screen  updates, i.e. if \fIn\fR is \fC-1\fR then
+the next time the screen needs to be redrawn nothing will happen.
+.IP \fC0\fR
+Resets the screen  update  disable  count to zero, useful to remember when the
+the disable feature has been used incorrectly.
+.IP \fC1\fR
+Full screen update (default), the screen is completely cleared and redrawn (as
+if garbled).
+.IP \fC2\fR
+Partial  screen  update, only the parts of the screen which  require  updating
+are redrawn.
+.IP \fC3\fR
+No screen redraw, only window variables are up-dated. This feature is provided
+for macros which  manipulate the screen view and need to know where the cursor
+is in the  window  without  redrawing  the  screen  (which may cause  unwanted
+flickering). Note that as the screen is not redrawn not all variables may have
+the correct value, for example the frame store variable
+.Ht @fs 4
+could be out of date.
+.SH EXAMPLES
+The following macro  demonstrates the problems  encountered when trying to use
+screen  variables in macros after the current  position has changed. The first
+value  printed is the starting  cursor Y position and the next value should be
+one less than the first value due to the call to
+.Ht backward-line 2 .
+But it is the same as the first  because the screen (and its  variables)  have
+not been updated. The subsequent call to screen-update  ensures that the third
+value is the correct one  although by giving it an argument of 3 the screen is
+not visibly updated thus avoiding any annoying screen flicker:
+.Me $emf-scheme
+.CS
+define-macro test-screen-update
+    set-variable #l0 $cursor-y
+    backward-line
+    set-variable #l1 $cursor-y
+    3 screen-update
+    set-variable #l2 $cursor-y
+    forward-line
+    ml-write &spr "%d %d %d" #l0 #l1 #l2
+!emacro
+.CE 0
+.Me $ehf-scheme
+.SH NOTES
+Every time the screen requires  updating, \*(mS executes the \fIredraw\fR key,
 it is similar in  mechanism  to the user  pressing  \fIC-l\fR  to refresh  the
-screen. Also the user can re-bind the  \fIredraw\fR  key to another command or
-macro, there by allowing the user complete  control of what is displayed.  For
+screen. The user can therefore re-bind the \fIredraw\fR key to another command
+or macro, thereby allowing the user complete control of what is displayed. For
 example if \fIredraw\fR was bound to
 .Ht void 2
-the screen  would not be up-dated,  this is  difficult  to get out of and many
-require \*(mE to be killed.
+the screen would not be up-dated  (\fBNote\fR: this is difficult to get out of
+and may require \*(mS to be killed).
 .PP
 This feature is often  exploited by macros which take control of the input and
 output, such macros include 
+.Ht gdiff 3 ,
 .Ht Metris 3 ,
 and
 .Ht Mahjongg 3 .

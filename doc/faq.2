@@ -9,7 +9,7 @@
 .\"  Object Name   : faq.2
 .\"  Created By    : Jon Green
 .\"  Created       : Thu May 27 15:30:14 1999
-.\"  Last Modified : <000719.1013>
+.\"  Last Modified : <011126.2158>
 .\"
 .\"  Description
 .\"
@@ -29,7 +29,7 @@
 .\"
 .\"***************************************************************************
 .\"
-.Id $Id: faq.2,v 2.4 2001-07-14 10:10:04 jon Exp $
+.Id $Id: faq.2,v 2.5 2001-12-06 00:04:31 jon Exp $
 .Im MicroEmacs faq
 .so me.tni
 .TH "FAQs" 0f
@@ -181,8 +181,8 @@ the existing 'C' binding.
 \*(Qu
 .SH ANSWER
 No not at the moment. The GNU Emacs bindings would be added as a compatibility
-file  (gnu.emf)  in much the same way that the me3.8  bindings  are added, see
-me3_8.emf.
+file  (meemacs.emf)  in much the same way that the me3.8  bindings  are added, see
+meme3_8.emf.
 .PP
 From the user-setup(3), the user would then ask for "gnu" compatibility.
 .PP
@@ -347,9 +347,9 @@ will terminate the macro and return control back to the caller.
 .SH ANSWER
 From
 .Ht user-setup 3
-set the  Compatibility to "\fCme3_8\fR". On re-starting (or
-current) the macro file \fCme3_8.emf\fR is executed and the bindings loaded.
-This file should restore your familiar execution set.
+set the Emulation to "\fCMicroEmacs  v3.8\fR". On re-starting (or Current) the
+macro file  \fCmeme3_8.emf\fR  is executed and the bindings  loaded. This file
+should restore your familiar execution set.
 .PP
 .Hl "[FAQ Index]" faq - .
 .\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1146,13 +1146,12 @@ example, on a Belgian  keyboard the '9' key produces a '{' character  when the
 The  quickest  and best  solution  is to use the  \fBKeyboard\fR  setup on the
 Start-Up page of
 .Ht user-setup 3 .
-This  however  may not  provide  the  solution a this is a new  feature  (post
-99Beta1)  and few  keyboards  are  currently  supported.  If you are  using an
-unsupported keyboard please send configuration  information back to JASSPA for
-inclusion in the next  release. Also  keyboard  configuration  information  is
-stored in the macro file \fCkeyboard.emf\fR.
+This however may not provide the solution as not all  keyboards  are currently
+supported. If you are using an unsupported  keyboard please send configuration
+information  back to JASSPA for  inclusion  in the next  release. The keyboard
+configuration information is stored in the macro file \fCkeyboard.emf\fR.
 .PP
-If \fBuser-setup\fR  does not currently support your keyboard, or you which to
+If \fBuser-setup\fR  does not currently support your keyboard, or you wish to
 remap some keys, then the command
 .Ht translate-key 2
 should  be used.  \fBtranslate-key\fR  remaps  generated  key  stroke(s)  into

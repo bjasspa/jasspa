@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m5var023.5,v 2.2 2001-07-14 10:11:43 jon Exp $
+.Id $Id: m5var023.5,v 2.3 2001-12-06 00:04:32 jon Exp $
 .Im MicroEmacs variable|cursor
 .so me.tni
 .TH $fmatchdelay 5
@@ -8,15 +8,30 @@
 $fmatchdelay\- Fence matching delay time
 .Me $a
 .SH SYNOPSIS
-\fB$fmatchdelay\fR \fIdelayTime\fR; Default is \fC2\fR
+\fB$fmatchdelay\fR \fIdelayTime\fR; Default is \fC2000\fR
 .sp
 0 <= \fIdelayTime\fR <= \fIn\fR
 .SH DESCRIPTION
-The number of seconds to wait in a fence match operation. When a closing fence
-\'\fC)\fR'  '\fC]\fR'  or  '\fC}\fR' is added in  \fCcmode\fR  then the opening
-fence is searched for,  scrolling the screen up where  necessary,  this is the
-time that the opening fence is displayed, interruptible by typing any key.
+The number of milliseconds to wait in a fence match  operation. When a closing
+fence \'\fC)\fR' '\fC]\fR' or '\fC}\fR' is added the opening fence is searched
+for,  scrolling  the  screen  up where  necessary,  this is the time  that the
+opening fence is displayed, interruptible by typing any key.
 .PP
-.I delayTime
-is specified in seconds.
+When
+.Ht cmode 2m
+is enable the search algorithm used is '\fIC\fR' aware and if a matching fence
+is not found then the bell is rung as a warning.  The  automatic  matching  of
+fences can be enabled/disabled via the
+.Ht fence 2m
+mode.
+.PP
+A cursor can be moved to the matching fence using the
+.Ht goto-matching-fence 2
+command. 
+.SH "SEE ALSO"
+.na
+.Ht fence 2m ,
+.Ht cmode 2m ,
+.Ht goto-matching-fence 2 .
+.ad
 .FH
