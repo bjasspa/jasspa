@@ -1,8 +1,11 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;       TCL mode hook
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1996-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;   Last Modified : <011219.2333>
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Synopsis:    TCL mode hook
+; Authors:     Steven Phillips
+;
 set-char-mask "3" "-$."
 
 define-macro fhook-tcl

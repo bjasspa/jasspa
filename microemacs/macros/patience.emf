@@ -1,22 +1,14 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1995-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Jon Green
-;  Created       : 24th November 1995
-;  Last Modified : <011216.1312>
-;
-;  Description   : Patience playing card patience game
-;
-;  Notes
-;
-;  History:
-;   97/04/30 JG Moved to local buffer variables.
-;
-;  Copyright (c) 1998 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Created:     24th November 1995
+; Synopsis:    Patience playing card patience game
+; Authors:     Jon Green
 ;
 ; void pat-decode-char (char card)
 ; Decode the character
-;
 0 define-macro pat-decode-char
     set-variable :pat-char @1
     set-variable :pat-num &add &atoi :pat-char 1

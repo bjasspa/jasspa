@@ -1,6 +1,10 @@
-;       Box drawer : draws boxes around text for tables etc.
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1994-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;   Last Modified : <011010.0756>
+; Synopsis:    Box drawer - draws boxes around text for tables etc.
+; Authors:     Unknown, Jon Green & Steven Phillips
 ;
 !if &seq .hilight.draw "ERROR"
     set-variable .hilight.draw &pinc .hilight.next 1

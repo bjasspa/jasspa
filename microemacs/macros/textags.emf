@@ -1,26 +1,27 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Detlef Groth, Steven Phillips
-;  Created       : 1999
-;  Last Modified : <010805.0021>
+; Created:     1999
+; Synopsis:    Command-line macro for creating a tex tags file
+; Authors:     Detlef Groth, Steven Phillips
 ;
-;  Description   : Command-line macro for creating a tex tags file
+; Notes:
 ;     Extracts the labels and the bibitems into an tag-file which can be
 ;     used for jumping from ref to label between documents in one directory
 ;     or from \\\\cite in the tex file to \\\\bibitem in the bbl or in the
 ;     texfile.
 ;
-;  Usage
+; Usage:
 ;      me "@textags"
 ;      me "@textags" <files> <dirs>
 ;      me "@textags" "-v%tag-option=rm"
 ;      me "@textags" "-v%tag-option=r" <files> <dirs>
 ;
-;  History
+; Options:
+;      r - recurse, a - append, m - multiple links to a tag
 ;
-;  Copyright (c) 1999 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; options r - recurse, a - append, m - multiple links to a tag
 set-variable %tag-option   &cond &exi %tag-option   %tag-option   ""
 set-variable %tag-filemask &cond &exi %tag-filemask %tag-filemask ":*.tex:*.bib:"
 set-variable %tag-ignore   &cond &exi %tag-ignore   %tag-ignore   ":SCCS/:CVS/:"

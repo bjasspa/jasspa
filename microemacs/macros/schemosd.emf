@@ -1,18 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips
-;  Created       : Sat Mar 13 14:31:05 1999
-;  Last Modified : <011216.1326>
+; Created:     Sat Mar 13 1999
+; Synopsis:    OSD based Scheme editor macros.
+; Authors:     Steven Phillips
 ;
-;  Description
-;
-;  Notes
-;
-;  History
-;
-;  Copyright (c) 1999 JASSPA Ltd.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 !if &seq .osd.schm "ERROR"
     0 define-macro schm-osd
     !emacro
@@ -488,11 +482,10 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
 
 0 define-macro schm-osd-store-screen-scheme
     ; create the header
-    insert-string "; Auto-created color scheme file for MicroEmacs\n"
-    insert-string "; Description: "
-    insert-string .schm-osd.desc
-    insert-string "\n; Last Modified : <999999.9999>\n"
-    insert-string "; Copyright (c) 1999 JASSPA Ltd.\n"
+    insert-string "; Generated color scheme file for JASSPA MicroEmacs\n"
+    insert-string "; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)\n"
+    insert-string "; See the file me.emf for copying and conditions.\n"
+    insert-string &spr "; Description: %s\n" .schm-osd.desc
     ; Setup the schemes hilight flags
     set-variable #l0 .schm-osd.hilight-flags
     schm-osd-cmp-schm $global-scheme .scheme.function
@@ -537,11 +530,10 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
 !emacro
 0 define-macro schm-osd-store-print-scheme
     ; create the header
-    insert-string "; Auto-created printer scheme file for MicroEmacs\n"
-    insert-string "; Description: "
-    insert-string .schm-osd.desc
-    insert-string "\n; Last Modified : <999999.9999>\n"
-    insert-string "; Copyright (c) 1999 JASSPA Ltd.\n"
+    insert-string "; Generated printer scheme file for JASSPA MicroEmacs\n"
+    insert-string "; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)\n"
+    insert-string "; See the file me.emf for copying and conditions.\n"
+    insert-string &spr "; Description: %s\n" .schm-osd.desc
     ; Setup the printer options
     insert-string &spr "set-registry \"/\" \"print/scheme-flags\" %d\n" .schm-osd.print-option
     ; write-out all the color definitions

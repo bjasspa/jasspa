@@ -1,17 +1,18 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  Author        : Jon Green
-;  Created       : Thu Jul 24 18:56:17 1997
-;  Description   : VHDL - a hardware simulation language. 
-;  Notes
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1997-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     Thu Jul 24 1997
+; Synopsis:    VHDL - a hardware simulation language. 
+; Authors:     Jon Green
+; Notes:
 ;               Keywords taken from 
 ;                   A VHDL Primer - Revised Edition
 ;                   J. Bhasker
 ;                   Prentice Hall
 ;                   ISBN 0-13-181447-8
 ;
-;  Copyright (c) 1997-2001 JASSPA
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 define-macro fhook-vhdl
     set-variable $buffer-mask "luh1"
     @# buffer-initialize "vhdl"

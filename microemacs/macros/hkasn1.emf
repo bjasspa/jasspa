@@ -1,22 +1,17 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Jon Green
-;  Created       : Thu Sep 10 12:41:38 1998
-;  Last Modified : <011219.2333>
+; Created:     Thu Sep 10 1998
+; Synopsis:    Hilighting for ISO 7498 ASN.1. 
+; Authors:     Jon Green
 ;
-;  Description
-;            Hilighting for ISO 7498 ASN.1. 
-;  Notes
-;            The hilight tokens in this document were derived from the 
-;            ITU-T Recommendation X.208 - Specification of Abstract Syntax
-;            Notation One (ASN.1) (Extract from the Blue Book).
-;  History
+; Notes:
+;     The hilight tokens in this document were derived from the 
+;     ITU-T Recommendation X.208 - Specification of Abstract Syntax
+;     Notation One (ASN.1) (Extract from the Blue Book).
 ;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  Copyright (c) 1998 Jasspa.
-;  This template exists in the public domain.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 define-macro fhook-asn1
     @# buffer-initialize "asn1"
     buffer-initialize-hooks

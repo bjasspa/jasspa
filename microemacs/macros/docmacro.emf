@@ -1,13 +1,15 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  Created By    : Jon Green
-;  Created       : Mon Mar 20 22:36:48 2000
-;  Description   : Common document macros. 
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2000-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Notes         : These were removed from the hkdoc template to create
-;                  a set of common macros which may be invoked from 
-;                  other templates rather than simply the doc one. 
+; Created:     Mon Mar 20 2000
+; Synopsis:    Common document macros. 
+; Authors:     Jon Green
 ;
-; The Document template undersatnds magic tokens as follows:-
+; Notes:
+;
+; The Document template understands magic tokens as follows:-
 ;
 ; -!- Document -!-
 ;
@@ -44,7 +46,7 @@
 ;         >
 ;         > Author:       My Self
 ;         > Created:      11/11/97
-;         > Modified:     <011219.2324>
+;         > Modified:     <011228.2341>
 ;         > Location:     /xx/yy/zz.doc
 ; *
 ;         All lines commencing with '*' are assumed to be bullet lists. Bullet
@@ -75,8 +77,6 @@
 ;
 ;         Add a nice big line to separate sections
 ;
-;  Copyright (c) 2000-2001 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; arguments when executed must be the "extension"
 set-variable #l1 @1
 set-variable #l0 &ind &spr ".fhook-%s.setup" #l1

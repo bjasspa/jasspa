@@ -1,43 +1,43 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Jon Green
-;  Created       : Wed Sep 30 23:16:34 1998
-;  Last Modified : <011116.2227>
-;
-;  Description   : This file contains the necessary hooks to run a Cygnus
-;                  window inside the MicroEmacs editor. The user variable
-;                  %cygnus-bin-path must be set to the cygnus bin directory,
-;                  this should be saved in the user setup file ($MENAME.emf),
-;                  this will typically be:
+; Created:     Wed Sep 30 1998
+; Synopsis:    Cygnus shell hook
+; Authors:     Jon Green
+; Description:
+;     This file contains the necessary hooks to run a Cygnus
+;     window inside the MicroEmacs editor. The user variable
+;     %cygnus-bin-path must be set to the cygnus bin directory,
+;     this should be saved in the user setup file ($MENAME.emf),
+;     this will typically be:
 ;                  
-;                      set-variable %cygnus-bin-path "c:/cygnus/b19/H-i386-cygwin32/bin"
-;                  or
-;                      set-variable %cygnus-bin-path "c:/cygnus/cygwin-b20/H-i586-cygwin32/bin"
+;         set-variable %cygnus-bin-path "c:/cygnus/b19/H-i386-cygwin32/bin"
+;     or
+;         set-variable %cygnus-bin-path "c:/cygnus/cygwin-b20/H-i586-cygwin32/bin"
 ;
-;                  This file assumes that a standard cygnus install has
-;                  been performed and the cygnus variables are *NOT* 
-;                  defined in the DOS environment space. If they are then
-;                  you do not need to push the cygnus environment variables
-;                  within the "cygnus" macro.
+;     This file assumes that a standard cygnus install has
+;     been performed and the cygnus variables are *NOT* 
+;     defined in the DOS environment space. If they are then
+;     you do not need to push the cygnus environment variables
+;     within the "cygnus" macro.
 ;
-;                  To run a shell then "esc-x cygnus"
+;     To run a shell then "esc-x cygnus"
 ;
-;                  To run with a hilighting within the shell window then define
-;                  the environment variable %cygnus-hilight i.e.
+;     To run with a hilighting within the shell window then define
+;     the environment variable %cygnus-hilight i.e.
 ;
-;                      set-variable %cygnus-hilight 1
+;         set-variable %cygnus-hilight 1
 ;
-;                  Set the variable %cygnus-prompt the the hilight regexp string
-;                  to hilight the prompt line if required, i.e.
+;     Set the variable %cygnus-prompt the the hilight regexp string
+;     to hilight the prompt line if required, i.e.
 ;
-;                      set-variable %cygnus-prompt "^[a-z]*@[^>]*>"
+;         set-variable %cygnus-prompt "^[a-z]*@[^>]*>"
 ;
-;  Notes           Cygnus is at "www.cygnus.com"
+;  Notes:
+;      Cygnus is at "www.cygnus.com"
 ;
-;  History
-;
-;  Copyright (c) 1998 JASSPA
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; convert any '\\'s to '/'s
 set-variable #l0 &rep %cygnus-bin-path "\\" "/"
 ; ditch the end /bin/

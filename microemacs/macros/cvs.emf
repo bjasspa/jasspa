@@ -1,12 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  Created By    : Steven Phillips
-;  Created       : Tue Jan 23 14:09:08 2001
-;  Description   : CVS support macros for MicroEmacs
-;  Notes
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2001-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Copyright (c) 2001 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+; Created:     Tue Jan 23 2001
+; Synopsis:    CVS support macros for MicroEmacs
+; Authors:     Steven Phillips
+;
 !if &not &exi dirlst-sort-list
     0 exec-file "hkdirlst"
 !endif

@@ -1,12 +1,14 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Highlight mode NROFF
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1993-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-; Note that this file contains some JASSPA extensions for their Nroff
-; documentation.
+; Synopsis:    Highlight mode NROFF
+; Authors:     Jon Green & Steven Phillips
 ;
-; Copyright (c) 1993-2001 JASSPA
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+; Notes:
+;     This file contains some JASSPA extensions for their Nroff documentation.
+;
 define-macro fhook-nroff
     @# buffer-initialize "nroff"
     buffer-initialize-hooks

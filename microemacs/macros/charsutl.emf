@@ -1,14 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips
-;  Created       : Sat Feb 13 14:11:21 1999
-;  Description   : Buffer character set changing utility
+; Created:     Sat Feb 13 1999
+; Synopsis:    Buffer character set changing utility
+; Authors:     Steven Phillips
 ;
-;  Notes
-;
-;  Copyright (c) 1999 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 !if &not &exi .osd.charset
     set-variable .osd.charset &pinc .osd.next 1
 !endif

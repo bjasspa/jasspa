@@ -1,8 +1,14 @@
-;  Dos to unix text file convertion routine. Run:
-;     me "@dos2unix" <files>
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Author        : Steven Phillips
-;  Last Modified : <001005.1422>
+; Synopsis:    Unix to dos text file convertion routine.
+; Authors:     Steven Phillips
+;
+; Usage:
+;     me "@unix2dos" <files>
+;
 ;
 define-macro start-up
     delete-other-windows

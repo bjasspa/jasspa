@@ -1,22 +1,19 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2000-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips
-;  Created       : Tue Sep 19 10:10:01 2000
-;  Last Modified : <011116.2227>
+; Created:     Tue Sep 19 2000
+; Synopsis:    Generic tags generator
+; Authors:     Steven Phillips
 ;
-;  Description   : Generic tags generator
-;
-;  Notes
-;
+; Notes:
 ;      Launchs ME with a tags generation macro file and %tag-option variable
 ;      setting to generate the tags file, typical command-line is:
 ;               me "@ntags" "-v%tag-option=mrcsev"
 ;      Also provides a GUI front end for setting the flags and starting path,
 ;      the gui can be disabled by passing an argument of -1.
 ;
-;  Copyright (c) 2000 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 !if &not &exi .osd.gtf
     set-variable .osd.gtf &pinc .osd.next 1
 !endif

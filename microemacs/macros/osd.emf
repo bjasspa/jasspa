@@ -1,25 +1,18 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  Created By    : Jon Green
-;  Created       : Sat Jul 26 10:23:04 1997
-;  Description   : OSD - On Screen Display macros.
-;                  Controls the set up of the menus and screen overlays.
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1997-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Notes         : Menus derrived from the original menu macro definitions
-;                  as defined by Steve Phillips. Macros subsequently displaced
-;                  by the built in function 'osd'. 'osd' encompasses all of
-;                  the menu handling macro requirements. The intention of the
-;                  osd functions is to simplify the menu management. In
-;                  addition provides better handling of the mouse which was
-;                  difficult in the macro environment (but not impossible !).
+; Created:     Sat Jul 26 1997
+; Synopsis:    OSD - On Screen Display main menu macros.
+; Authors:     Jon Green & Steven Phillips
 ;
-;  Copyright (c) 1997-2001 JASSPA
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
-; NOTE:- The numbering of menus is crucial, osd uses 0 for the top-level-menu
-;        Then 1-9 for the subsequent submenus. It then uses an undefied number
-;        of menus. It sets .osd.next to the next available menu number.
-;        Anyone intending to use osd should defined menu number .osd.next and then
-;        increment the value of .osd.next
+; Notes:
+;     The numbering of menus is crucial, osd uses 0 for the top-level-menu
+;     Then 1-9 for the subsequent submenus. It then uses an undefied number
+;     of menus. It sets .osd.next to the next available menu number.
+;     Anyone intending to use osd should defined menu number .osd.next and then
+;     increment the value of .osd.next
 ;
 ; define some external macros which are used first.
 0 define-macro-file search   osd-find-tag osd-search osd-goto-line

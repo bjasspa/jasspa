@@ -1,11 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  Created By    : Steven Phillips
-;  Created       : Thu May 14 12:53:29 1998
-;  Description   : User-setup gui
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Copyright (c) 1998-2001 JASSPA
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+; Created:     Thu May 14 1998
+; Synopsis:    OSD based User-setup routines
+; Authors:     Steven Phillips
+;
 !if &not &exi .osd.user
     set-variable .osd.user &pinc .osd.next 1
     set-variable .osd.user-nb &pinc .osd.next 1

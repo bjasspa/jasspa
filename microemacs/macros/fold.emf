@@ -1,17 +1,13 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips & Jon Green
-;  Created       : Thu Jan 14 00:51:27 1999
-;  Last Modified : <000719.0012>
+; Created:     Thu Jan 14 1999
+; Synopsis:    Generic file folding.
+; Authors:     Steven Phillips & Jon Green
 ;
-;  Description
-;
-;  Notes
-;
-;  History
-;
-;  Copyright (c) 1999 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; History:
 ;
 ; Steven Phillips - 14th Jan 1999 - Generic file folding.
 ; 
@@ -61,11 +57,12 @@
 ; The key mappings that we have used in the context of the buffer are
 ; defined as follows:-
 ;
-; 'f2'        fold-current - Fold/Unfold the current section.
-; 'f3'        fold-all     - Fold/unfold the whole file.
-; 'C-mouse-1  fold-current - Fold/unfold the current section. 
+;   'f2'        fold-current - Fold/Unfold the current section.
+;   'f3'        fold-all     - Fold/unfold the whole file.
+;   'C-mouse-1  fold-current - Fold/unfold the current section. 
 ;
-; Note: The 'fold-current' and 'fold-all' have no equivelent macros in hkfold.emf
+; Notes:
+;       The 'fold-current' and 'fold-all' have no equivelent macros in hkfold.emf
 ;       so we map these to different keys. Probably the case that 'fold-current'
 ;       and 'fold-all' should' be supported in hkfold.emf and be bound to the
 ;       above keys for consistancy.
@@ -80,8 +77,6 @@
 ;       Hence for consistency I simply use C-mouse-1 which always means
 ;       toggle the fold state.
 ;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 0 define-macro fold-get-vars
     set-variable #l0 &spr ".%s." $buffer-fhook
     set-variable #p9 &ind &cat #l0 "fold-open"

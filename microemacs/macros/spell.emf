@@ -1,19 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips
-;  Created       : Sat Apr 25 18:12:30 1998
-;  Last Modified : <011203.2144>
+; Created:     Sat Apr 25 1998
+; Synopsis:    Main OSD based spell checker commands.
+; Authors:     Steven Phillips
 ;
-;  Description   : spell-buffer, spell-word, spell-edit-word and find-word
-;                  osd based interface to spell and $find-words.
-;
-;  Notes
-;
-;  History
-;
-;  Copyright (c) 1998-2000 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 !if &seq .osd.spell-edit "ERROR"
     set-variable .osd.spell-edit  &pinc .osd.next 1
     set-variable .osd.spell-editl &pinc .osd.next 1

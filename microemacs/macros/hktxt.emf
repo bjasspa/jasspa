@@ -1,13 +1,14 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  Created By    : Jon Green
-;  Created       : Mon Mar 20 22:46:08 2000
-;  Description   : text file hook
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2000-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Comment       : See docmacro.emf for documentation
+; Created:     Mon Mar 20 2000
+; Synopsis:    text file hook
+; Authors:     Jon Green
 ;
-;  Copyright (c) 2000-2001 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+; Notes:       See docmacro.emf for documentation
+;
 define-macro fhook-txt
     ; use the document fhook in docmacro
     @# doc-fhook-body "txt" "text"

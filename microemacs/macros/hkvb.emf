@@ -1,11 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  Created By   : Dave Yip & Steven Phillips
-;  Created      : Mon Sep 21 18:10:34 1998
-;  Description  : Visual Basic Hook File
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Copyright (c) 1998-2001 JASSPA
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+; Created:     Mon Sep 21 1998
+; Synopsis:    Visual Basic Hook File
+; Authors:     Dave Yip & Steven Phillips
+;
 define-macro fhook-vb
     set-variable $buffer-mask "luh1"
     @# buffer-initialize "vb"

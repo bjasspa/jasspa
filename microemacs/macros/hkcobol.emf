@@ -1,11 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  Created By    : Pedro Miguel Gomes
-;  Created       : Mon March 30 19:41:00 1999
-;  Description   : COBOL-85 Hook
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Notes         : Starting template for COBOL-85
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+; Created:     Mon March 30 1999
+; Synopsis:    COBOL-85 Hook
+; Authors:     Pedro Miguel Gomes
+;
 define-macro fhook-cobol
     set-variable $buffer-mask "luh1"
     @# buffer-initialize "cobol"

@@ -1,14 +1,16 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  Created By    : Steven Phillips
-;  Created       : Sat Sep 15 22:33:16 2001
-;  Description   : Language setup routines
-;  Notes
-;    Originally part of language.emf but broken out to keep language.emf
-;    clean and speed up start-up
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2001-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Copyright (c) 2001 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+; Created:     Sat Sep 15 2001
+; Synopsis:    Language setup routines
+; Authors:     Steven Phillips
+;
+; Notes:
+;     Originally part of language.emf but broken out to keep language.emf
+;     clean and speed up start-up
+;
 0 define-macro spell-rules-init
     !if &not &exi .spell.language
         set-variable #l0 &spr "  Language \"%s\" not supported!  " &reg "/history" "language" "Default"

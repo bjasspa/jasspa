@@ -1,7 +1,7 @@
-; Auto-created printer scheme file for MicroEmacs
+; Generated printer scheme file for JASSPA MicroEmacs
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ; Description: Use fonts
-; Last Modified : <000529.0736>
-; Copyright (c) 1999 JASSPA Ltd.
 set-registry "/" "print/scheme-flags" 1
 ; Create the colors first
 print-color 0 0 0 0

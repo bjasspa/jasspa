@@ -1,28 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  Created By    : Steve Philip
-;  Created       : Jan 26 21:56:01 1998
-;  Description   : MicroEmacs LaTeX file hook
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  History
-;  
-;  Jan 2000 Jon Green
+; Created:     Jan 26 1998
+; Synopsis:    MicroEmacs LaTeX file hook
+; Authors:     Detlef Groth, Steve Phillips & Jon Green
 ;
-;      Tidied up whilst documenting. 
-;      Fixed a number of problems with the hilighting
-;      Fixed paragraph filling problems.
-;
-;  June 1999  Detlef Groth & Steve Philips
-;
-;      Pseudo hilighting. 
-;      Section searching 
-;
-;  Jan 1998   Steve Philips 
-; 
-;      Original.
-;
-;  Copyright (c) 1998-2001 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 define-macro fhook-latex
     @# buffer-initialize "latex"
     ; Set up the default constants
@@ -417,7 +401,7 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|se
 ; our selected paragraph and then performing a fill operation on it. The blank
 ; lines are then removed leaving the formated paragraph.
 ;
-; Note. If no arguments are supplied then the current position is retained
+; Note: If no arguments are supplied then the current position is retained
 ; in the paragraph. This position is saved as 'mark'.
 0 define-macro latex-para
     ; Save mark at point.

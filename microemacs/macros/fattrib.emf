@@ -1,3 +1,11 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1997-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Synopsis:    OSD based file system file attribute setter.
+; Authors:     Steven Phillips
+;
 !if &seq .osd.fattr "ERROR"
     set-variable .osd.fattr &pinc .osd.next 1
 !endif

@@ -1,11 +1,16 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  Created By    : Steven Phillips
-;  Created       : Wed Feb 21 08:30:22 2001
-;  Description   : NEdit v5 Emulation
-;  Notes
-;      This is currently only a partical implementation created for proof
-;      of concept, please feel free to improve and submit correction.
-;      An emulation requires: 
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2001-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     Wed Feb 21 2001
+; Synopsis:    NEdit v5 Emulation
+; Authors:     Steven Phillips
+;
+; Notes:
+;     This is currently only a partical implementation created for proof
+;     of concept, please feel free to improve and submit correction.
+;     An emulation requires: 
 ;        * Additional entries added to %emulate-names ("The full name")
 ;          and %emulate-value ("label" - should be 5 or less chars).
 ;        * An "melabel.emf" macro file like this one. This is executed
@@ -19,9 +24,6 @@
 ;          the menu is dynamically changed so the osd-main macro may need
 ;          replacing).
 ;
-;  Copyright (c) 2001 JASSPA
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 define-macro-file osd osd-new-buffer osd-save osd-save-as osd-close osd-undo osd-redo
 define-macro-file search osd-find-tag osd-search osd-goto-line
 define-macro-file osdhelp osd-help

@@ -1,18 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips
-;  Created       : Sat Jul 18 14:55:16 1998
-;  Last Modified : <011116.2227>
+; Created:     Sat Jul 18 1998
+; Synopsis:    Macros used for searching and replacing 
+; Authors:     Steven Phillips
 ;
-;  Description   : Macros used for searching and replacing 
-;
-;  Notes
-;
-;  History
-;
-;  Copyright (c) 1998 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;x;;;;;;;;;;;;;;;;;;;;;;;
-
 define-macro osd-search
 !emacro
 !if &seq .osd.ftag "ERROR"

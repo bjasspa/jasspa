@@ -1,22 +1,21 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips
-;  Created       : 1998
-;  Last Modified : <010805.0021>
+; Created:     1998
+; Synopsis:    Command-line macro for creating a perl tags file
+; Authors:     Steven Phillips
 ;
-;  Description   : Command-line macro for creating a perl tags file
-;
-;  Usage
+; Usage:
 ;      me "@perltags"
 ;      me "@perltags" <files> <dirs>
 ;      me "@perltags" "-v%tag-option=rm"
 ;      me "@perltags" "-v%tag-option=r" <files> <dirs>
 ;
-;  History
+; Options:
+;      r - recurse, a - append, m - multiple links to a tag
 ;
-;  Copyright (c) 1998-99 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; options r - recurse, a - append, m - multiple links to a tag
 set-variable %tag-option   &cond &exi %tag-option   %tag-option   ""
 set-variable %tag-filemask &cond &exi %tag-filemask %tag-filemask ":*.pl:*.pm:"
 set-variable %tag-ignore   &cond &exi %tag-ignore   %tag-ignore   ":SCCS/:CVS/:"

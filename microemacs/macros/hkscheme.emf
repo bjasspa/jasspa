@@ -1,9 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;       Scheme and (probably!) Lisp File Hook
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;       Created by Pedro Gomes 99-06-15
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+; Created:     99-06-15
+; Synopsis:    Scheme and (probably!) Lisp File Hook
+; Authors:     Pedro Gomes
+;
 define-macro fhook-scheme
     set-variable $buffer-mask "luh1"
     @# buffer-initialize "scheme"

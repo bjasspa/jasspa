@@ -1,7 +1,7 @@
-; Auto-created color scheme file for MicroEmacs
+; Generated color scheme file for JASSPA MicroEmacs
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ; Description: Default White on Black
-; Last Modified : <011216.2238>
-; Copyright (c) 1999 JASSPA Ltd.
 set-variable .hilight.flags 7
 ; Create the colors first
 add-color &set .col0 0 200 200 200

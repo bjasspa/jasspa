@@ -1,15 +1,15 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  Created By    : Jon Green
-;  Created       : Fri Oct 22 16:44:08 1999
-;  Description   : OMG IDL Syntax hilighting.
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Notes         : This is based on the C++ template to perform
-;                  hilighting of OMG's IDL. Restyle and folding
-;                  are enabled.
+; Created:     Fri Oct 22 1999
+; Synopsis:    OMG IDL Syntax hilighting.
+; Authors:     Jon Green
+; Notes:
+;     This is based on the C++ template to perform hilighting of OMG's IDL.
+;     Restyle and folding are enabled.
 ;
-;  Copyright (c) 1999-2001 JASSPA
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 define-macro fhook-idl
     set-variable $buffer-mask "luh1"
     @# buffer-initialize "idl"

@@ -1,23 +1,20 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips
-;  Created       : 1998
-;  Last Modified : <011219.2036>
+; Created:     1998
+; Synopsis:    Command-line macro for creating a C tags file
+; Authors:     Steven Phillips
 ;
-;  Description   : Command-line macro for creating a C tags file
-;
-;  Usage
+; Usage:
 ;      me "@ctags"
 ;      me "@ctags" <files> <dirs>
 ;      me "@ctags" "-v%tag-option=rm"
 ;      me "@ctags" "-v%tag-option=r" <files> <dirs>
 ;
-;  History
-;
-;  Copyright (c) 1998-99 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; options r - recurse, a - append, m - multiple links to a tag, e - enum,
-;         s - struct, v - static variables, p - prototypes
+; options: r - recurse, a - append, m - multiple links to a tag, e - enum,
+;          s - struct, v - static variables, p - prototypes
 set-variable %tag-option   &cond &exi %tag-option   %tag-option   ""
 set-variable %tag-filemask &cond &exi %tag-filemask %tag-filemask ":*.h:*.hpp:*.[cC]:*.cpp:*.cc:"
 set-variable %tag-ignore   &cond &exi %tag-ignore   %tag-ignore   ":SCCS/:CVS/:"

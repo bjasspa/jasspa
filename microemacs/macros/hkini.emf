@@ -1,16 +1,19 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Comments:         Typically used for Microsoft Windows environments
-;                   primarily for the initalisation files. The syntax is
-;                   slightly more liberal that a true .ini file but allows
-;                   the template to be used by slightly different file
-;                   formats.
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1997-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-; Usage:            .ini - Microsoft Windows initialisation files
-;                   .hpj - Microsoft help project files.
+; Synopsis:    Microsoft Windows initalisation file hook.
+; Authors:     Jon Green
 ;
-;  Copyright (c) 1997-2001 JASSPA
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+; Notes:       Typically used for Microsoft Windows environments
+;              primarily for the initalisation files. The syntax is
+;              slightly more liberal that a true .ini file but allows
+;              the template to be used by slightly different file formats.
+;
+; Usage:       .ini - Microsoft Windows initialisation files
+;              .hpj - Microsoft help project files.
+;
 define-macro fhook-ini
     set-variable $buffer-mask "luh1"
     @# buffer-initialize "ini"

@@ -1,12 +1,15 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  Created By    : Steven Phillips
-;  Created       : Tue Aug 28 23:10:38 2001
-;  Description   ; Display matching brackets emacs style
-;  Notes         : Uses idle-pick event - may cause some issues
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2001-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Copyright (c) 2001 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+; Created:     Tue Aug 28 2001
+; Synopsis:    Display matching brackets emacs style
+; Authors:     Steven Phillips
+;
+; Notes:
+;  user-setup may bind this to idle-pick event, this may cause some issues
+;
 ;  Bits in arg n have the following meaning
 ;
 ;      0x01 Display fence (if not set nothing is done)

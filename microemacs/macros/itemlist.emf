@@ -1,50 +1,48 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2001-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Detlef Groth & Steven Phillips
-;  Created       : Sat Aug 4 16:50:33 2001
-;  Last Modified : <011118.2242>
-;  Description   : Generic macros for creating a list of items defined
-;                  in current buffer
+; Created:     Sat Aug 4 2001
+; Synopsis:    Generic macros for creating a list of items defined in current buffer
+; Authors:     Detlef Groth & Steven Phillips
 ;
-;  Notes
+; Notes:
+;     To add support for a new buffer type a list of search/replace strings must
+;     be created. The search strings must use regex (magic mode) and groups \(..\)
+;     to get the found function name into the replace string, e.g. given the ME
+;     macro definition is:
 ;
-; To add support for a new buffer type a list of search/replace strings must
-; be created. The search strings must use regex (magic mode) and groups \(..\)
-; to get the found function name into the replace string, e.g. given the ME
-; macro definition is:
+;         define-macro macro-name
 ;
-;    define-macro macro-name
+;     Searching for "define-macro \([a-z-]+\)" and replacing with "Macro \1" will
+;     work... most of the time. The space between define-macro and the name does
+;     not have to be a single space and the name does not have to contain just
+;     lower case latters, so these search strings should be a flexible as 
+;     possible, try "define-macro\s +\(\w+\)".
 ;
-; Searching for "define-macro \([a-z-]+\)" and replacing with "Macro \1" will
-; work... most of the time. The space between define-macro and the name does
-; not have to be a single space and the name does not have to contain just
-; lower case latters, so these search strings should be a flexible as 
-; possible, try "define-macro\s +\(\w+\)".
+;     This however is not as optimal as it could be and if you have large files
+;     this could become slow. Performance can be greatly increased if it can be
+;     anchored to the start of the line, e.g. "^define-macro\s +\(\w+\)", but to
+;     allow for intial white spaces and the optional numeric argument, you really
+;     need "^\s *[0-9]*\s *define-macro\s +\(\w+\)".
 ;
-; This however is not as optimal as it could be and if you have large files
-; this could become slow. Performance can be greatly increased if it can be
-; anchored to the start of the line, e.g. "^define-macro\s +\(\w+\)", but to
-; allow for intial white spaces and the optional numeric argument, you really
-; need "^\s *[0-9]*\s *define-macro\s +\(\w+\)".
+;     To hilight the function name you need the name encased the name in a magic
+;     hilighting string, "\ecBmacro-name\ecA" where \e is an escape char, so the
+;     replace string should be "Macro \ecB\1\ecA".
 ;
-; To hilight the function name you need the name encased the name in a magic
-; hilighting string, "\ecBmacro-name\ecA" where \e is an escape char, so the
-; replace string should be "Macro \ecB\1\ecA".
-;
-; Now all thats needed is to set these variables as fhook command variables,
-; for macro files, the file hook command is fhook-emf, therefore the
-; following is required:
+;     Now all thats needed is to set these variables as fhook command variables,
+;     for macro files, the file hook command is fhook-emf, therefore the
+;     following is required:
 ;
 ;    set-variable .fhook-emf.item-list-s1 "^\\s *[0-9]*\\s *define-macro\\s +\\(\\w+\\)"
 ;    set-variable .fhook-emf.item-list-r1 "Macro \ecB\\1\ecA"
 ;
-; Note that you can have as many of these search and replace variables as you
-; require, i.e. .item-list-s1, .item-list-s2, .item-list-s3, ...
-; but the more you have the slower it will be, often a good regex can do the
-; job of 2 or 3.
+;    Also note that you can have as many of these search and replace variables as you
+;    require, i.e. .item-list-s1, .item-list-s2, .item-list-s3, ...
+;    but the more you have the slower it will be, often a good regex can do the
+;    job of 2 or 3.
 ;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 !if &band .hilight.flags 0x01 
     !if &not &exist .hilight.list-item
         set-variable .hilight.list-item &pinc .hilight.next 1

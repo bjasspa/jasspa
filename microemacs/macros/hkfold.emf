@@ -1,22 +1,18 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips
-;  Created       : Sat Jun 6 14:43:33 1998
-;  Last Modified : <010228.0758>
+; Created:     Sat Jun 6 1998
+; Synopsis:    Folding editor proof of concept.
+; Authors:     Steven Phillips
 ;
-;  Description
-;
-;  Notes
-;  Use:-
+; Usage:
 ;    f2   - open fold
 ;    S-f2 - close fold
 ;    f3   - create fold around a region
 ;    S-f3 - delete fold
 ;
-;  History
-;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 define-macro hkfold-section
     set-variable #l0 0
     set-variable #l1 $window-line
