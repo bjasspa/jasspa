@@ -6,10 +6,33 @@ MKDIR=mkdir
 DIRECTORIES="company doc icons macros spelling src bin"
 SEARCH_PATH="/opt/jasspa/company:/opt/jasspa/macros:/opt/jasspa/spelling"
 BASEDIR=.
-METREE=jasspa-metree-20050219.tar.gz
-MEBIN=jasspa-me-sun-sparc-56-20050219.gz
-BASEFILESET="${METREE} ${MEBIN}"
+TOPDIR=../..
+VER_YEAR="05"
+VER_MONTH="02"
+VER_DAY="19"
+VERSION="20${VER_YEAR}${VER_MONTH}${VER_DAY}"
+METREE=jasspa-metree-${VERSION}.tar.gz
+MEBIN=jasspa-me-sun-sparc-56-${VERSION}.gz
+BASEFILESET="${METREE} ${MEBIN} me.1"
 
+#
+# Pull the files over from the release and source areas.
+#
+if [ ! -f ${METREE} ] ; then
+    if [ -f ${TOPDIR}/release/www/${METREE} ] ; then
+        cp ${TOPDIR}/release/www/${METREE} .
+    fi
+fi
+if [ ! -f me.1 ] ; then
+    if [ -f ${TOPDIR}/release/www/me.1 ] ; then
+        cp ${TOPDIR}/release/www/me.1 .
+    fi
+fi
+if [ ! -f ${MEBIN} ] ; then
+    if [ -f ${TOPDIR}/src/me ] ; then
+        gzip -9 -c ${TOPDIR}/src/me > ${MEBIN}
+    fi
+fi
 #
 # Test for the starting files.
 #
@@ -57,6 +80,9 @@ gunzip -c ${METREE} | tar xf -
 mkdir -p ${BASEDIR}/jasspa/bin
 gunzip -v -c ${MEBIN} > ${BASEDIR}/jasspa/bin/me
 chmod a+rx ${BASEDIR}/jasspa/bin/me
+mkdir -p ${BASEDIR}/jasspa/man/cat1
+cp me.1 ${BASEDIR}/jasspa/man/cat1
+chmod a-wx ${BASEDIR}/jasspa/man/cat1/me.1
 #
 # Build the proto file
 #
@@ -70,7 +96,7 @@ find ${BASEDIR}/jasspa -print | pkgproto | sed -e "s/jon users/bin bin/g" >> pro
 echo 'PKG="jasspa-me"' > pkginfo
 echo 'NAME="JASSPA MicroEmacs"' >> pkginfo
 echo 'ARCH="sparc"' >> pkginfo
-echo 'VERSION="05.02.19"'  >> pkginfo
+echo 'VERSION="'${VER_YEAR}.${VER_MONTH}.${VER_DAY}'"'  >> pkginfo
 echo 'SUNW_PKGVERS="1.0"' >> pkginfo
 echo 'CATEGORY="application"' >> pkginfo
 echo 'VENDOR="www.jasspa.com"' >> pkginfo
@@ -100,18 +126,18 @@ echo "  pkgtrans -s /var/spool/pkg /tmp/jasspa-me"
 echo "  rm -rf ./jasspa-me"
 echo "  cd /tmp"
 echo "  rm -rf ./jasspapkg"
-echo "  zip -9 jasspa-mepkg-sun-sparc-56-20050219.zip jasspa-me"
+echo "  zip -9 jasspa-mepkg-sun-sparc-56-${VERSION}.zip jasspa-me"
 echo "To test:-"
 echo "  mkdir jasspa"
 echo "  cd ./jasspa"
-echo "  unzip ../jasspa-mepkg-sun-sparc-56-20050219.zip"
+echo "  unzip ../jasspa-mepkg-sun-sparc-56-${VERSION}.zip"
 echo "  pkgadd -d jasspa-me"
 echo "To subsequently remove"
 echo "  pkgrm jasspa-me"
 echo ""
 #
 # Clean up
-# 
+#
 rm -f prototype
 rm -f pkginfo
 rm -rf ./jasspa
