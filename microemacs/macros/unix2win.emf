@@ -8,7 +8,10 @@
 ;
 ; Usage:
 ;     me "@unix2win" <files>
+;   or for no back files
+;     me "@unix2win" -v%no_backup=1 <files>
 ;
+set-variable %backup &cond &exi %no_backup "-1" "1"
 define-macro start-up
     delete-other-windows
     !while &not &seq $buffer-bname "*scratch*"
@@ -16,6 +19,7 @@ define-macro start-up
         ; flag as a unix file and as edited, then save
         1 buffer-mode "crlf"
         -1 buffer-mode "ctrlz"
+        %backup buffer-mode "backup"
         1 buffer-mode "auto"
         1 buffer-mode "edit"
         save-buffer
