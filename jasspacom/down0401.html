@@ -54,7 +54,7 @@
 
   <HR color=#cccccc noShade SIZE=1>
 
-  <p><font size="+1"><b>Last Upload: 19th January 2004</b></font></p>
+  <p><font size="+1"><b>Last Upload: 1st February 2004</b></font></p>
 
   <h1>JASSPA's MicroEmacs '04<br>Release Candidate 1 (20040108-rc1)</h1>
   
@@ -138,7 +138,71 @@
   <ul>
     <li><a href="release_040108/jasspa-me-win32-20040119-rc3.zip">jasspa-me-win32-20040119-rc3.zip</a> Windows executable</li>
   </ul>
-  
+  <h1>Release Candidate 4 (TBD)</h1>
+  <ul>
+    <p>
+    1st February 2004. A further Release Candidate of JASSPAs MicroEmacs
+    shall be made in the very near future.</p>
+    
+    <p>Following an internal review of RC3 then it has been decided to
+    address the issues of user configuration prior to a full release. This
+    specifically addresses the location of user MicroEmacs configuration
+    directories and search paths. User configuration has traditionally
+    required the setting of external environment variables such as $MEPATH and
+    for the user to create a private directory to store user settings. This is
+    proving difficult for new users who just want to run the editor. RC4 and
+    subsequent releases will address these problems by determining the correct
+    location for configuration files and create the appropriate files and
+    directories under user control.</p>
+    
+    <p>The net result of these changes should significantly simplify
+    installation and setup as follows:</p>
+    
+    <p>
+    <ul>
+      <li>All platforms will be able to run without any manual user setup or
+      the requirement for specific MicroEmacs environment variables.</li>
+      
+      <li>User defined directories and configuration files will be created 
+      under editor control on detecting a new user.</li>
+      
+      <li>Existing installations using $MEPATH will be backwards compatible
+      with the new build, although users are discouraged from continuing to
+      use this variable.</li>
+      
+      <li>All platforms now support a searching <tt>jasspa</tt> sub-directory
+      structure of <tt>company</tt> / <tt>spelling</tt> / <tt>macros</tt>.
+      This was traditionally limited to the Windows Install Shield
+      installation but has been extended across all platforms.</li>
+    
+      <li>Two new environment variables are provided for user or system
+      administrator use. $MEINSTALLPATH defines the location of the MicroEmacs
+      standard macros and allows the built in search path to be overridden.
+      $MEUSERPATH defines the location of the user private configuration
+      directory and allows the user to locate their private directory in
+      different location. In a standard install neither of these variables
+      will be required.</li>
+      
+      <li>The Microsoft Windows system defined application path will be used
+      for user configuration files. This is applicable for roaming users where
+      the application directory is stored on a server.</li> 
+      
+      <li>The use of the me32.ini file on MicroSoft Windows environments will
+      become depreciated and is no longer really required.</li>
+      
+      <li>The UNIX path searching is improved. <tt>/usr/local/microemacs</tt>
+      will be depreciated and replaced with <tt>/usr/local/jasspa</tt> in
+      addition other standard path locations are supported on a per-platform
+      basis.</li>
+      
+      <li>On UNIX then the directory $HOME/.jasspa shall contain the user
+      configuration files. Optionally the <tt>company</tt> / <tt>spelling</tt>
+      / <tt>macros</tt> sub-directories may be included in this directory
+      where access to the system directory locations by the user is not
+      permitted.</li>
+      
+    </ul>
+    </p>
   <h1>NO WARRANTY</h1>
 
   <p>This program is licensed free of charge, there is no warranty for the
