@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu May 27 15:30:14 1999
 .\"
-.Id $Id: faq.2,v 2.10 2005-01-15 18:29:43 jon Exp $
+.Id $Id: faq.2,v 2.11 2005-01-16 13:24:01 jon Exp $
 .Im MicroEmacs faq
 .so me.tni
 .TH "FAQs" 0f
@@ -790,16 +790,15 @@ i.e.
 .IP
 \fBHelp\fR -> \fBUser Setup\fR -> \fBGeneral\fR -> \fBTab\fR
 .SS "To change the 'C' Indentation Layout"
-The 'C' layout indentation is controlled from the system variables:-
-.IP
-.Ht $c-case 5 ,
-.Ht $c-contcomm 5 ,
-.Ht $c-continue 5 ,
-.Ht $c-margin 5 ,
-.Ht $c-brace 5 ,
-.Ht $c-statement 5 .
+The 'C' layout indentation is controlled from the 
+.Ht indent 2 
+command  (see  \fChkc.emf\fR),  the  indentation  level is  controlled  by the
+variables 
+.Ht $buffer-indent-width 5 
+and
+.Ht $buffer-indent 5 .
 .LP
-These settings may be defined in your <user>.emf to change the default
+These settings may be defined in your \fCmyc.emf\fR to change the default
 layout. Refer to the on-line documentation for details.
 .PP
 .Hl "[FAQ Index]" faq - .
