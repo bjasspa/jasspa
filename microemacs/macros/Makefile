@@ -28,8 +28,8 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		au3.eaf		\
 	findbuff.emf	fold.emf	format.emf	freebsd.emf	\
 	ftp.emf		\
 	games.emf	gdiff.emf	gentags.emf	\
-	hkada.emf	hkasmx86.emf	hkasn1.emf	hkasp.emf	\
-	hkau3.emf	hkawk.emf	\
+	hkada.emf	hkapache.emf	hkasmx86.emf	hkasn1.emf	\
+	hkasp.emf	hkau3.emf	hkawk.emf	\
 	hkbibtex.emf	hkbinary.emf	hkblist.emf	hkbnf.emf	\
 	hkc.emf		hkcobol.emf	hkcpp.emf	hkcss.emf	\
 	hkcygwin.emf	\
@@ -49,8 +49,8 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		au3.eaf		\
 	hkpascal.emf	hkperl.emf	hkphp.emf	hkphps.emf	\
 	hkpls.emf	hkpseudo.emf	hkpsf.emf	hkpython.emf	\
 	hkreg.emf	hkruby.emf	hkrul.emf	\
-	hkscheme.emf	hksgml.emf	hkshell.emf	hkslang.emf	\
-	hkspec.emf	hksql.emf	\
+	hksamba.emf	hkscheme.emf	hksgml.emf	hkshell.emf	\
+	hkslang.emf	hkspec.emf	hksql.emf	\
 	hktcl.emf	hktexi.emf	hktxt.emf	\
 	hkvb.emf	hkvhdl.emf	hkvrml.emf	\
 	hkwiki.emf	\
