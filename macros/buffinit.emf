@@ -1,0 +1,100 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : $Author: jon $
+;  Created By    : Steven Phillips
+;  Created       : Fri Nov 24 00:09:57 2000
+;  Last Modified : <001127.1129>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 2000 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro-file spellaut auto-spell auto-spell-buffer auto-spell-reset
+define-macro-file fold fold-current fold-all
+
+define-macro buffer-modes-init
+    set-variable #l1 @1
+    ; setup buffer modes
+    !if &sin "e" #l1
+        1 buffer-mode "exact"
+    !elif &sin "E" #l1
+        -1 buffer-mode "exact"
+    !endif
+    !if &sin "m" #l1
+        1 buffer-mode "magic"
+    !elif &sin "M" #l1
+        -1 buffer-mode "magic"
+    !endif
+    !if &sin "a" #l1
+        ; if auto-indent enabled don't enable indent mode
+    !elif &sin "i" #l1
+        1 buffer-mode "indent"
+    !elif &sin "I" #l1
+        -1 buffer-mode "indent"
+    !endif
+    !if &sin "j" #l1
+        1 buffer-mode "justify"
+    !elif &sin "J" #l1
+        -1 buffer-mode "justify"
+    !endif
+    !if &sin "w" #l1
+        1 buffer-mode "wrap"
+    !elif &sin "W" #l1
+        -1 buffer-mode "wrap"
+    !endif
+    !if &sin "t" #l1
+        1 buffer-mode "tab"
+    !elif &sin "T" #l1
+        -1 buffer-mode "tab"
+    !endif
+    !if &sin "x" #l1
+        1 buffer-mode "time"
+    !elif &sin "X" #l1
+        -1 buffer-mode "time"
+    !endif
+    !if &sin "u" #l1
+        1 buffer-mode "undo"
+    !elif &sin "U" #l1
+        -1 buffer-mode "undo"
+    !endif
+!emacro
+
+; setup the auto-spell
+0 define-macro auto-spell-init
+    !force set-variable #l0 @1
+    !if $status
+        !if &not &sin "s" #l0
+            ; auto-spell has been disabled - do nothing 
+            !return
+        !endif
+    !endif
+    ; dont do anything if the current language is default
+    !if &not &seq %language "Default"
+        0 buffer-bind-unbound-key auto-spell      "f5"
+        buffer-bind-unbound-key auto-spell-buffer "S-f5"
+        buffer-bind-unbound-key auto-spell-reset  "f6"
+        !if &reg "/history" "spell/autospell" "0"
+            1 auto-spell
+        !endif
+    !endif
+!emacro
+
+; setup the folding functions.
+define-macro fold-init
+    !force set-variable #l0 @1
+    !if $status
+        !if &not &sin "f" #l0
+            ; folding has been disabled - do nothing 
+            !return
+        !endif
+    !endif
+    ; Set up folding
+    buffer-bind-unbound-key fold-current "f2"
+    buffer-bind-unbound-key fold-all     "f3"
+!emacro
+
