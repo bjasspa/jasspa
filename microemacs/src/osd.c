@@ -103,9 +103,8 @@ static meUByte osdItemFlags[]="DdmM-CxishctbrfEBpSRHIGPzNTuO" ;
 #define RF_FRSTLET  0x00010000          /* f - Use first letter as hotkey */
 #define RF_INSENSE  0x00020000          /* i - Case insensitive (Alpha lists) */
 #define RF_OFFSTPOS 0x00040000          /* o - Dialog Offset position */
-#define RF_FOCALITM 0x00080000          /* F - Set the item to focus on - temporary */
-#define RF_RISLBUT  0x00100000          /* B - Right is list button */
-#define RF_DEFITEM  0x00200000          /* D - Default button to select */
+#define RF_RISLBUT  0x00080000          /* B - Right is list button */
+#define RF_DEFITEM  0x00100000          /* D - Default button to select */
 
 #define RF_CONFIG   0x08000000          /* The display is currently being configured */
 #define RF_REDRAW   0x10000000          /* The menu has been changed - redraw */
@@ -113,7 +112,7 @@ static meUByte osdItemFlags[]="DdmM-CxishctbrfEBpSRHIGPzNTuO" ;
 #define RF_DISABLE  0x40000000          /* This is a temporarily disabled */
 #define RF_NOPOP    0x80000000          /* Flag to stop the pop with a control */
 
-static meUByte osdMenuFlags[]="baAtIcrHsSRMCNGnfioFBD" ;
+static meUByte osdMenuFlags[]="baAtIcrHsSRMCNGnfioBD" ;
 
 
 #define CF_HORZADD  0x0001              /* Add to the next menu line */
@@ -182,7 +181,6 @@ typedef struct osdDIALOG
     meShort  rszIndex;                  /* Command to resize the dialog */
     meShort  initItem;                  /* initial item number */
     meShort  defItem;                   /* default button number */
-    meShort  focalItem ;                /* item to focus on next redraw - temporary */
     meShort  x;                         /* Absolute Position x of menu */
     meShort  y;                         /* Absolute Position y of menu */
     meShort  width[2];                  /* width of menu (min/max) */
@@ -1853,16 +1851,13 @@ menuRenderItem (osdDISPLAY *md, int offset, int flags)
         maxx = mcp->width;
         curx = 0 ;
         
-        if((offset == md->curContext) ||
-           ((md->dialog->focalItem == mp->item) && (md->curContext < 0)))
+        if(offset == md->curContext)
         {
             /* Set the focal point */
             md->focalX[0] = mcp->x ;
             md->focalX[1] = mcp->x + maxx - 1 ;
             md->focalY[0] = mcp->y ;
             md->focalY[1] = mcp->y + mcp->depth - 1 ;
-            if(md->curContext < 0)
-                md->dialog->focalItem = 0 ;
         }
         /* Copy in the default colpair right across, only the hilight char need to be changed */
         {
@@ -4988,7 +4983,7 @@ menuInteraction (int *retState)
                 }
                 else if(osdCurMd->flags & (RF_TITLE|RF_BOARDER))
                     /* Allow the menu to move if it has a title bar or a boarder
-                     * This is different to hte mouse as for the mouse to be
+                     * This is different to the mouse as for the mouse to be
                      * able to move the menu it must have a title bar */
                     osdDisplayMove(osdCurMd,0,-1) ;
                 break ;
@@ -5021,14 +5016,18 @@ menuInteraction (int *retState)
                 break ;
             case CK_DELFOR:                 /* Del - Delete */
             case CK_ABTCMD:                 /* ^G  - Abort */
-                /* only close current sub-menu if one is open,
-                 * otherwise follow through and close whole dialog */
-                if((osdCurMd->prev == NULL) ||
-                   (osdCurMd->prev->flags & RF_DISABLE))
+                /* Close current sub-menu's up to the first real dialog (one
+                 * with a title bar) if one is open, otherwise follow through
+                 * and close whole dialog */
+                osdNewMd = osdCurMd ;
+                while(((osdNewMd = osdNewMd->prev) != NULL) &&
+                      ((osdNewMd->flags & RF_TITLE) == 0))
+                    ;
+                if((osdNewMd == NULL) || (osdNewMd->flags & RF_DISABLE))
                     state = meOSD_QUIT_MENU ;
                 else
                 {
-                    osdNewChild = osdNewMd = osdCurMd->prev ;
+                    osdNewChild = osdNewMd ;
                     while(((osdNewChild->newContext = osdNewChild->curContext) >= 0) &&
                           (osdNewChild->context[osdNewChild->newContext].menu->flags & MF_CHILD))
                         osdNewChild = osdNewChild->context[osdNewChild->newContext].child->display ;
@@ -5440,12 +5439,6 @@ osd (int f, int n)
                 if(meGetString((meUByte *)"Initial", 0, 0, buf, 16) <= 0)
                     return meABORT ;
                 rp->initItem = (meShort) meAtoi(buf) ;
-            }
-            if(rp->flags & RF_FOCALITM)
-            {
-                if(meGetString((meUByte *)"Focus", 0, 0, buf, 16) <= 0)
-                    return meABORT ;
-                rp->focalItem = (meShort) meAtoi(buf) ;
             }
             if(rp->flags & RF_TITLE)
             {
