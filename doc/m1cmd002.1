@@ -5,7 +5,7 @@
 .\"
 .\" Created By: Jon Green
 .\"
-.Id $Id: m1cmd002.1,v 1.1 2005-03-06 08:40:59 jon Exp $
+.Id $Id: m1cmd002.1,v 1.2 2005-03-19 17:47:49 jon Exp $
 .Im MicroEmacs function
 .so me.tni
 .TH ne 1
@@ -27,6 +27,7 @@ ne - \*(nE text editor
 [\|\fB\-h\fR\|]
 [\|\fB\-k\fR[\|\fIkey\fR\|]\ \|\fIfile\fR\|]
 [\|\fB\-l\fR\|\fIlineNo\fR\|]
+[\|\fB\-R\fR\|]
 [\|\fB\-r\fR\|]
 [\|\fB\-s\fR\|\fIstring\fR\|]
 [\|\fB\-u\fR\|\fIusername\fR\|]
@@ -108,6 +109,10 @@ versions.  Execute   \fB\*(mE\fR  using  termcap  rather  than  X-Windows  for
 for a quick  edit. For  Microsoft  Windows,  a console  window is  started  as
 opposed to a GUI window.  This  option is not present if a console  version of
 the application has been built.
+.IP \fB\-R\fR
+Reverse the default video color scheme. The default  foreground  color becomes
+the background color and vice versa. This only affects the built in scheme and
+not any schemes defined in any start-up file.
 .IP \fB\-r\fR
 Read-only, all buffers will be in view mode
 .IP \fB\-s\fR\|\fIstring\fR
