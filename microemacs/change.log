@@ -4,8 +4,14 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <041024.1217>
+>  Last Modified : <041027.0120>
 >
+
+    [041027] Spruced  up old  "apache.conf"  highlighting  rules  and added to
+             release.
+
+    [041026] Spruced up old "smb.conf"  highlighting rules, brought them up to
+             date with latest keywords and added to release.
 
     [041024] Macro/source  compatibility  macro and source versions updated to
              "20041001".
