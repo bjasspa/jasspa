@@ -170,8 +170,16 @@ token(meUByte *src, meUByte *tok)
                     goto quote_spec_key1 ;
                 case 'P':
                     /* Go to set position, defined by \p - replace with \CXAP */
-                    *dd++ = 'X' - '@';
-                    *dd++ = 'A' ;
+                    *dd++ = meCHAR_LEADER ;
+                    *dd++ = meCHAR_TRAIL_SPECIAL ;
+                    *dd++ = (ME_SPECIAL|SKEY_x_command) >> 8 ;
+                    *dd++ = (ME_SPECIAL|SKEY_x_command) & 0xff ;
+                    meStrcpy(dd,__cmdArray[CK_GOAMRK].name) ;
+                    dd += meStrlen(__cmdArray[CK_GOAMRK].name) ;
+                    *dd++ = meCHAR_LEADER ;
+                    *dd++ = meCHAR_TRAIL_SPECIAL ;
+                    *dd++ = (ME_SPECIAL|SKEY_return) >> 8 ;
+                    *dd++ = (ME_SPECIAL|SKEY_return) & 0xff ;
                     *dd++ = meANCHOR_EXSTRPOS ;
                     break;
                 case 'T':
@@ -200,8 +208,16 @@ quote_spec_key1:
                     break;
                 case 'n':   *dd++ = 0x0a; break;
                 case 'p':
-                    *dd++ = 'X' - '@';
-                    *dd++ = 'A' - '@';
+                    *dd++ = meCHAR_LEADER ;
+                    *dd++ = meCHAR_TRAIL_SPECIAL ;
+                    *dd++ = (ME_SPECIAL|SKEY_x_command) >> 8 ;
+                    *dd++ = (ME_SPECIAL|SKEY_x_command) & 0xff ;
+                    meStrcpy(dd,__cmdArray[CK_SETAMRK].name) ;
+                    dd += meStrlen(__cmdArray[CK_SETAMRK].name) ;
+                    *dd++ = meCHAR_LEADER ;
+                    *dd++ = meCHAR_TRAIL_SPECIAL ;
+                    *dd++ = (ME_SPECIAL|SKEY_return) >> 8 ;
+                    *dd++ = (ME_SPECIAL|SKEY_return) & 0xff ;
                     *dd++ = meANCHOR_EXSTRPOS ;
                     break;
                 case 'r':   *dd++ = 0x0d; break;
