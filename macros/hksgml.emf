@@ -18,7 +18,7 @@ set-variable .fhook-sgml.setup &reg "/history" "fhook/sgml" "cdghinopsx"
 set-variable .fhook-sgml.setup-mask "acdeghikmnopstux"
 set-variable .fhook-sgml.comment  "|<!--|-->|--| -- | -- ||"
 set-variable .fhook-sgml.command-flag  "|thb|thb|b|b|thb|th|th|th|"
-set-variable .fhook-sgml.command-name  "|xml-forward-tag|xml-backward-tag|xml-forward-tag|xml-backward-tag|xml-goto-matching-tag|xml-find-tag|xml-collapse-tag|xml-verify|"
+set-variable .fhook-sgml.command-name  "|xml-forward-tag|xml-backward-tag|xml-forward-tag|xml-backward-tag|xml-goto-matching-tag|xml-find-tag|xml-collapse-tag|sgml-verify|"
 set-variable .fhook-sgml.command-nbind "|||||||||"
 set-variable .fhook-sgml.command-kbind "|S-right|S-left|esc C-f|esc C-b|C-]||||"
 set-variable .fhook-sgml.command-desc  "|Forward Tag|Backward Tag|||Goto Matching Tag|Find Tag|Collapse/Uncollapse Tag|Verify the current buffer|"
@@ -111,6 +111,11 @@ set-variable .fhook-sgml.exact -1
 
 0 define-macro sgml-pre-expand-abbrev
     @# xml-pre-expand-abbrev
+!emacro
+
+; Use name space of sgml.
+define-macro sgml-verify
+    @# xml-verify
 !emacro
 
 buffer-init-fhook "sgml"
