@@ -60,9 +60,9 @@
 #include <assert.h>
 
 static char meHelpPage[]=
-"usage     : me [options] [files]\n\n"
-"where options can be:-\n"
-"  @<file> : Setup using <file>[.emf], default is me.emf\n"
+"Usage     : " ME_SHORTNAME " [options] [files]\n\n"
+"Where options are:-\n"
+"  @<file> : Setup using <file>[.emf], default is " ME_SHORTNAME ".emf\n"
 #if MEOPT_EXTENDED
 "  -       : Read input from stdin into *stdin* buffer\n"
 #endif
@@ -86,7 +86,7 @@ static char meHelpPage[]=
 "  +<n> or\n"
 "  -l <n>  : Go to line <n> in the next given file\n"
 #if MEOPT_CLIENTSERVER
-"  -m <msg>: Post message <msg> to MicroEmacs server\n"
+"  -m <msg>: Post message <msg> to " ME_FULLNAME " server\n"
 #endif
 #ifdef _ME_WINDOW
 #ifdef _ME_CONSOLE
@@ -99,7 +99,7 @@ static char meHelpPage[]=
 #endif /* _ME_CONSOLE */
 #endif /* _ME_WINDOW */
 #if MEOPT_CLIENTSERVER
-"  -o      : One MicroEmacs, use ME server if available\n"
+"  -o      : One " ME_FULLNAME ", use " ME_SHORTNAME " server if available\n"
 #endif
 #if MEOPT_EXTENDED
 "  -P      : Piped with debugging (see -p)\n"
@@ -1448,13 +1448,8 @@ missing_arg:
                 }
 
              case 'V':
-                sprintf((char *)evalResult,"%s %s - Date %s - %s\n", 
-#ifndef _NANOEMACS
-                         ME_MICROEMACS_FULLNAME,
-#else
-                         ME_NANOEMACS_FULLNAME,
-#endif                         
-                         meVERSION, meDATE, meSYSTEM_NAME) ;
+                sprintf((char *)evalResult,"%s %s - Date %s%s - %s\n", 
+                        ME_FULLNAME, meVERSION, meCENTURY, meDATE, meSYSTEM_NAME) ;
                 mePrintMessage(evalResult,argc) ;
                 meExit(0) ;
                 
