@@ -2375,8 +2375,13 @@ use_contcomm:
         frameCur->windowCur->dotOffset = 0 ;
         if (setccol(curInd))             /* Move to position on prev line */
         {
-            /* Checkout the character. */
-            if ((meLineGetChar(frameCur->windowCur->dotLine,
+            /* Checkout the character. Note that we chack the previous
+             * character to ensure that this is not some sort of block
+             * comment which tend to mess things up. */
+            if (((frameCur->windowCur->dotOffset == 0) ||
+                 (meLineGetChar(frameCur->windowCur->dotLine,
+                                frameCur->windowCur->dotOffset-1) != '/')) &&
+                (meLineGetChar(frameCur->windowCur->dotLine,
                                frameCur->windowCur->dotOffset+0) == '/') &&
                 (meLineGetChar(frameCur->windowCur->dotLine,
                                frameCur->windowCur->dotOffset+1) == ii))
@@ -2413,7 +2418,7 @@ use_contcomm:
           *   }
           */
          addInd += continueIndent ;
-     }
+    }
     if(ind)
     {
         ind = getCoffset(onBrace,inComment) ;
