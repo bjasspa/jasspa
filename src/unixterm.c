@@ -2211,7 +2211,9 @@ TCAPgetattr (meTermio p, int isX)
         p->c_cc [VMIN] = 1;
         p->c_cc [VTIME] = 0;
 #ifdef _TERMIOS
+#ifdef VWERASE
         p->c_cc [VWERASE] = 'W' - '@';  /* C-w */
+#endif
         p->c_cc [VLNEXT] = CLNEXT;      /* C-v */
 #ifdef VDSUSP
         p->c_cc [VDSUSP] = CDSUSP;      /* C-y */
