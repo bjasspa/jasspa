@@ -42,7 +42,7 @@ INSTDIR	= ../release
 
 ZIPOBJS	=	ls_dede.zip	ls_engb.zip	ls_enus.zip	\
 		ls_eses.zip	ls_frfr.zip	ls_itit.zip	\
-		ls_plpl.zip	ls_ptpt.zip
+		ls_plpl.zip	ls_ptpt.zip	ls_fifi.zip
 TAROBJS	=	$(ZIPOBJS:.zip=.tar.gz)
 
 LSDEDE	=	lsrdede.emf	lsdmdede.edf	lsdxdede.edf
@@ -53,6 +53,7 @@ LSFRFR	=	lsrfrfr.emf	lsdmfrfr.edf	COPYING
 LSPLPL	=	lsrplpl.emf	lsdmplpl.edf
 LSPTPT	=	lsrptpt.emf	lsdmptpt.edf	COPYING
 LSESES	=	lsreses.emf	lsdmeses.edf	COPYING
+LSFIFI	=	lsrfifi.emf	lsdmfifi.edf
 
 all:	$(TAROBJS) $(ZIPOBJS)
 
@@ -71,6 +72,14 @@ ls_frfr.zip:	$(LSFRFR)
 ls_frfr.tar.gz:	$(LSFRFR)
 	dos2unix -U lsrfrfr.emf COPYING
 	$(TAR) cf - $(LSFRFR) | $(GZIP) -c > $@
+
+# Finnish
+ls_fifi.zip:	$(LSFIFI)
+	dos2unix -U lsrfifi.emf
+	$(ZIP) $@ $(LSFIFI)
+ls_fifi.tar.gz:	$(LSFIFI)
+	dos2unix -U lsrfifi.emf
+	$(TAR) cf - $(LSFIFI) | $(GZIP) -c > $@
 
 # Italian
 ls_itit.zip:	$(LSITIT)
