@@ -26,7 +26,7 @@ set-variable .fhook-f90.comment "|!||!|! | !||"
         set-variable .hilight.f90 &pinc .hilight.next 1
     !endif
     ; High-light Fortran 90
-    0 hilight  .hilight.f90 1 50               $global-scheme
+    0 hilight  .hilight.f90 1               $global-scheme
     hilight .hilight.f90 4 "'" "'" ""       .scheme.string
     hilight .hilight.f90 4 "\"" "\"" ""     .scheme.string
     hilight .hilight.f90 2 "!"              .scheme.comment
