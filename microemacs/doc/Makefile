@@ -1,6 +1,6 @@
 ##############################################################################
 # This is part of the JASSPA MicroEmacs.
-# Copyright (C) 1997-2004 JASSPA (www.jasspa.com)
+# Copyright (C) 1997-2005 JASSPA (www.jasspa.com)
 # See the file COPYING for copying and conditions.
 #
 # Created:       Thu Feb 5 21:36:24 2004
@@ -29,6 +29,7 @@ READTXT	=	readme.txt
 FAQTXT	=	faq.txt
 BUILDTXT=	build.txt
 PATCHTXT=	patch.txt
+CATMAN1=	me.1 ne.1
 #
 # Define components
 #
@@ -39,7 +40,7 @@ RTFS	=	me.rtf me.hpj logo.bmp
 MEHTMZIP=	jasspa-mehtm-20$(MEYY)$(MEMM)$(MEDD).zip
 MEHTMLTGZ=	jasspa-mehtml-20$(MEYY)$(MEMM)$(MEDD).tar.gz
 #
-MAN1	=	$(DOCDIR)m1cmd000.1 $(DOCDIR)m1cmd001.1
+MAN1	=	$(DOCDIR)m1cmd000.1 $(DOCDIR)m1cmd001.1 $(DOCDIR)m1cmd002.1
 #
 CMD2_000=	$(DOCDIR)m2cmd000.2 $(DOCDIR)m2cmd001.2 $(DOCDIR)m2cmd002.2\
 		$(DOCDIR)m2cmd003.2 $(DOCDIR)m2cmd004.2 $(DOCDIR)m2cmd005.2\
@@ -283,7 +284,7 @@ TEMPSMS	=	cmd2_000.sm	cmd2_010.sm	cmd2_020.sm	cmd2_030.sm \
 		typ9_040.sm \
 		faq.2
 
-all:	$(HTSS) $(HLPS) $(SMS) $(EHFS) $(TXTS)
+all:	$(HTSS) $(HLPS) $(SMS) $(EHFS) $(TXTS) $(CATMAN1)
 #
 # Release
 # 
@@ -294,7 +295,9 @@ RELTARS=	$(MEHTMLTGZ:%=$(WWWRELDIR)/%)
 RELTXTS=	$(TXTS:%=$(RELWWWDOCDIR)/%) $(TXTS:%=$(MERELDIR)/%) \
 		$(TXTS:%=$(SRCRELDIR)/%)
 RELEHF=		$(JASMACDIR)/me.ehf
-RELEASE=	$(RELRTFS) $(RELZIPS) $(RELTARS) $(RELTXTS) $(RELEHF)
+RELCAT1=	$(CATMAN1:%=$(WWWRELDIR)/%)
+RELEASE=	$(RELRTFS) 	$(RELZIPS) 	$(RELTARS) 	$(RELTXTS) \
+		$(RELEHF)	$(RELCAT1)
 
 release: 	$(RELEASE)
 
@@ -318,6 +321,10 @@ $(RELTXTS):	$(TXTS)
 $(RELEHF):	me.ehf
 		$(MKDIR) $(@D)
 		$(INSTALL_FIL) $(@F) $(@D)
+# Catman pages
+$(RELCAT1):	$(CATMAN1)
+		$(MKDIR) $(@D)
+		$(INSTALL_FIL) $(@F) $(@D)		
 #
 clean::
 	$(RM) *.sm
@@ -495,6 +502,16 @@ $(READTXT): m2nar001.2 m2nar003.2 m2nar002.2
 	    $(DROFF) -l10000 -c JASSPA -p -o $@ m2nar001.2 m2nar003.2 m2nar002.2
 clean::
 	$(RM) $(READTXT)
+#
+# Build the catman pages
+#
+me.1: m1cmd000.1 $(TNIS)
+	    $(DROFF) -c JASSPA -p -o $@ m1cmd000.1
+ne.1: m1cmd002.1 $(TNIS)
+	    $(DROFF) -c JASSPA -p -o $@ m1cmd002.1
+clean::
+	$(RM) me.1
+	$(RM) ne.1
 $(BUILDTXT): m2nar007.2
 	    $(DROFF) -l10000 -c JASSPA -p -o $@ m2nar007.2
 clean::
