@@ -25,9 +25,9 @@
 
 set-variable .cvs.names   "|Add|Checkout|Commit|Diff|Graphical Diff|Log|Remove|State|Status|Tag|Update|Annotate|Resolve Conflicts|"
 set-variable .cvs.cmds    "|add|checkout|commit|diff|gdiff|log|remove|-n update|status|tag|update|annotate|res-conf|"
-set-variable .cvs.flags   "|kAS*|DfvRPo*|mZRS*|OZRScw|OSs|ZR|*|ZSR|ZR|tZRbrF*|ZSdRPCo*|vZR|Ss|"
+set-variable .cvs.flags   "|kAS*|fDvRPo*|mZRS*|OZRScw|OSs|ZR|*|ZSR|ZR|tZRbrF*|ZSRdPCo*|vZR|Ss|"
 set-variable .cvs.schemes "|0|0|0|0|0|0|0|0|0|0|0|0|0|"
-set-variable .cvs.options "mDftvOZkdRAPCcwbrFo"
+set-variable .cvs.options "mfDtvOZkRdAPCcwbrFo"
 set-variable .cvs.values  " 0  111001100110000"
 set-variable .cvs.revs    "|||||"
 set-variable .cvs.tag     ""
@@ -880,11 +880,12 @@ set-variable .cvs-osd-compare.values "|Local with Local BASE|Local BASE with CVS
     set-variable #l0 &sub &sin "v" .cvs.options 1
     set-variable #l1 &mid .cvs.values #l0 1
     set-variable #l2 &add &mul #l0 100 110
+    osd .osd.cvsosd &inc #l2 1 "" ""
     !if &equ #l1 3
-        osd .osd.cvsosd &inc #l2 1 "Shf" "    D\Hate (yyyy-mm-dd): " &add #l2 1
+        osd .osd.cvsosd &inc #l2 1 "Shf" "        D\Hate (yyyy-mm-dd): " &add #l2 1
         osd .osd.cvsosd &inc #l2 1 "EtxHf" .scheme.osd-entry "yyyy-mm-dd   " 2 cvs-osd-rec
     !elif &equ #l1 2
-        osd .osd.cvsosd &inc #l2 1 "Shf" "    Revision/T\Hag: " &add #l2 1
+        osd .osd.cvsosd &inc #l2 1 "Shf" "        Revision/T\Hag: " &add #l2 1
         osd .osd.cvsosd &inc #l2 1 "EtxHf" .scheme.osd-entry "##################" 1 cvs-osd-rec
     !else
         osd .osd.cvsosd &inc #l2 1 "" ""
@@ -1003,8 +1004,9 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
         !goto no-gui
     !endif
     -1 osd .osd.cvsosd
-    osd .osd.cvsosd 0 "batcDHs" 9 3 47 4 -1 -1 2020 .scheme.osd-title &cat "CVS " &lget .cvs.names @#
+    osd .osd.cvsosd 0 ""
     set-variable #l0 0
+    set-variable #l3 0
     !repeat
         set-variable #l1 &mid .cvs.options #l0 1
         !if &sin #l1 &lget .cvs.flags @#
@@ -1020,41 +1022,49 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
                 osd .osd.cvsosd &inc #l2 1 "Sf" "    \HFile, Directory or Module:" &add #l2 2
                 osd .osd.cvsosd &inc #l2 1 "fh" "    "
                 osd .osd.cvsosd &inc #l2 1 "EtxHfhz" .scheme.osd-entry 60 1 "" f cvs-osd-fec
+                set-variable #l3 &con #l3 #l3 #l2
                 osd .osd.cvsosd &inc #l2 1 "f"  "    "
             !elif &seq #l1 "t"
                 osd .osd.cvsosd &inc #l2 1 "Sfh" "    \HTag Name: " &add #l2 1
                 osd .osd.cvsosd &inc #l2 1 "EtxHfz" .scheme.osd-entry 20 1 "" f cvs-osd-tec
+                set-variable #l3 &con #l3 #l3 #l2
             !elif &seq #l1 "m"
                 cvs-get-message-template
                 osd .osd.cvsosd &inc #l2 1 "Sf" "    \HLog message:" &add #l2 2
                 osd .osd.cvsosd &inc #l2 1 "fh" "    "
                 osd .osd.cvsosd &inc #l2 1 "EtNxHfhz" .scheme.osd-entry 60 10 "" f cvs-osd-mec
+                set-variable #l3 &con #l3 #l3 #l2
                 osd .osd.cvsosd &inc #l2 1 "f"  "    "
             !elif &seq #l1 "v"
-                osd .osd.cvsosd &inc #l2 1 "Sfh" "    \HVersion : " &add #l2 1
+                osd .osd.cvsosd &inc #l2 1 "Sfh" "    \HVersion: " &add #l2 1
                 osd .osd.cvsosd &inc #l2 1 "OtxmsfhHzR" .scheme.osd-entry 13 1 "" .osd.tmp cvs-osd-version
-                osd .osd.cvsosd &inc #l2 1 "BdxfhHR" .scheme.osd-ebtt &mid $window-chars 10 1 &sub #l2 1
+                set-variable #l3 &con #l3 #l3 #l2
+                osd .osd.cvsosd &inc #l2 1 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 &sub #l2 1
                 cvs-osd-version-setup
             !elif &seq #l1 "O"
-                osd .osd.cvsosd &inc #l2 1 "Sfh" "    Compare : " &add #l2 1
+                osd .osd.cvsosd &inc #l2 1 "Sfh" "    Co\Hmpare: " &add #l2 1
                 osd .osd.cvsosd &inc #l2 1 "OtxmsfhHzR" .scheme.osd-entry 28 1 "" .osd.tmp cvs-osd-compare
+                set-variable #l3 &con #l3 #l3 #l2
                 osd .osd.cvsosd &inc #l2 1 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 &sub #l2 1
                 cvs-osd-crev-setup
             !elif &seq #l1 "Z"
                 !if .find-file.file-count
                     osd .osd.cvsosd &inc #l2 1 "fh" "    "
                     osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Operate on current \Hdirectory" #l0 cvs-osd-cbc
+                    set-variable #l3 &con #l3 #l3 #l2
                     set-variable .cvs.values &cat &cat &lef .cvs.values #l0 0 &rig .cvs.values &add #l0 1
                 !endif
             !elif &seq #l1 "k"
                 osd .osd.cvsosd &inc #l2 1 "fh" "    "
                 osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Add as \HBinary Files" #l0 cvs-osd-cbc
-            !elif &seq #l1 "d"
-                osd .osd.cvsosd &inc #l2 1 "fh" "    "
-                osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Check-out \Hmissing directories" #l0 cvs-osd-cbc
+                set-variable #l3 &con #l3 #l3 #l2
             !elif &seq #l1 "R"
                 osd .osd.cvsosd &inc #l2 1 "fh" "    "
                 osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HRecurse into sub-directories" #l0 cvs-osd-cbc
+                set-variable #l3 &con #l3 #l3 #l2
+            !elif &seq #l1 "d"
+                osd .osd.cvsosd &inc #l2 1 "fh" "    "
+                osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Check-out \Hmissing directories" #l0 cvs-osd-cbc
             !elif &seq #l1 "A"
                 osd .osd.cvsosd &inc #l2 1 "fh" "    "
                 osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HRecursively add sub-directory files" #l0 cvs-osd-cbc
@@ -1090,7 +1100,9 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
     osd .osd.cvsosd 2000 ""
     osd .osd.cvsosd 2010 ""
     osd .osd.cvsosd 2020 "BtcfHh" .scheme.osd-ebtt " \HOkay " f void
+    set-variable #l3 &con #l3 #l3 #l2
     osd .osd.cvsosd 2030 "BtcfH"  .scheme.osd-ebtt " \HCancel " 0 void
+    osd .osd.cvsosd 0 "batcDIHs" 9 3 47 4 -1 -1 2020 #l3 .scheme.osd-title &cat "CVS " &lget .cvs.names @#
     !force !force .osd.cvsosd osd
     !if &not $status
         !abort
