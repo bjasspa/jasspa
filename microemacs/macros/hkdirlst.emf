@@ -953,7 +953,7 @@ define-macro file-browser-swap-buffers
 0 define-macro dirlst-refresh
     set-variable #l0 $buffer-bname
     !if @#
-        read-file $buffer-fname @mna
+        read-file $buffer-fname "y" @mna
     !else
         find-file $buffer-fname "y" @mna
         !if &not &seq #l0 $buffer-bname
