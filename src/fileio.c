@@ -1,7 +1,7 @@
 /*
  *	SCCS:		%W%		%G%		%U%
  *
- *	Last Modified :	<000907.1414>
+ *	Last Modified :	<010124.1613>
  * 
  *****************************************************************************
  * 
@@ -753,7 +753,7 @@ ffFtpFileOpen(uint8 *host, uint8 *port, uint8 *user, uint8 *pass, uint8 *file, u
         /* try to back-up the existing file - no error checking! */
         uint8 filename[FILEBUF] ;
         
-        if(!createBackupName(filename,file,'~') &&
+        if(!createBackupName(filename,file,'~',1) &&
            (ftpCommand(0,"RNFR %s",file) == ftpPOS_INTERMED))
             ftpCommand(0,"RNTO %s",filename) ;
     }
@@ -1101,6 +1101,43 @@ ffUrlFileClose(uint8 *fname, uint32 rwflag)
 
 #endif
 
+uint8 *
+createBackupNameStrcpySub(uint8 *dd, uint8 *ss, int subCount, uint8 **subFrom, uint8 **subTo)
+{
+    dd += meStrlen(dd) ;
+    if(subCount != 0)
+    {
+        uint8 cc ;
+        int ii, ll ;
+        while((cc=*ss) != '\0')
+        {
+            for(ii=0 ; ii<subCount ; ii++)
+            {
+                ll = meStrlen(subFrom[ii]) ;
+                if(!meStrncmp(ss,subFrom[ii],ll))
+                {
+                    meStrcpy(dd,subTo[ii]) ;
+                    dd += meStrlen(dd) ;
+                    ss += ll ;
+                    break ;
+                }
+            }
+            if((ii == subCount) || (ll == 0))
+            {
+                *dd++ = cc ;
+                ss++ ;
+            }
+        }
+        *dd = '\0' ;
+    }
+    else
+    {
+        meStrcpy(dd,ss) ;
+        dd += meStrlen(dd) ;
+    }
+    return dd ;
+}
+
 /*
  * creates the standard bckup name with the extra
  * character(s) being backl, where a '~' is used
@@ -1108,10 +1145,72 @@ ffUrlFileClose(uint8 *fname, uint32 rwflag)
  * returns 1 if fails, else 0 and name in filename buffer
  */
 int
-createBackupName(uint8 *filename, uint8 *fn, uint8 backl)
+createBackupName(uint8 *filename, uint8 *fn, uint8 backl, int flag)
 {
     uint8 *s, *t ;
-    
+#ifndef _DOS
+    static int     backupPathFlag=0 ;
+    static uint8  *backupPath=NULL ;
+    static int     backupSubCount=0 ;
+    static uint8  *backupSub=NULL ;
+    static uint8 **backupSubFrom=NULL ;
+    static uint8 **backupSubTo=NULL ;
+    if(!backupPathFlag)
+    {
+	if(((s=meGetenv("MEBACKUPPATH")) != NULL) && (meStrlen(s) > 0) &&
+	   ((backupPath=meStrdup(s)) != NULL))
+        {
+            fileNameConvertDirChar(backupPath) ;
+            if((backupPath[0] == DIR_CHAR)
+#ifdef _DRV_CHAR
+               || (isAlpha(backupPath[0]) && (backupPath[1] == _DRV_CHAR))
+#endif
+               )
+                backupPathFlag = 1 ;
+            else
+                backupPathFlag = 2 ;
+        }
+	else
+	    backupPathFlag = -1 ;
+	if(((s=meGetenv("MEBACKUPSUB")) != NULL) && (meStrlen(s) > 0) &&
+           ((backupSub=meStrdup(s)) != NULL))
+        {
+            uint8 cc, dd ;
+            int ii ;
+            
+            while((dd=*s++) != '\0')
+            {
+                if(dd == 's')
+                {
+                    ii=backupSubCount++ ;
+                    if(((dd = *s++) == '\0') ||
+                       ((backupSubFrom=meRealloc(backupSubFrom,backupSubCount*sizeof(uint8 *))) == NULL) ||
+                       ((backupSubTo  =meRealloc(backupSubTo  ,backupSubCount*sizeof(uint8 *))) == NULL))
+                    {
+                        backupSubCount = 0 ;
+                        break ;
+                    }
+                    backupSubFrom[ii] = s ;
+                    while(((cc=*s) != '\0') && (cc != dd))
+                        s++ ;
+                    if(cc != '\0')
+                    {
+                        *s++ = '\0' ;
+                        backupSubTo[ii] = s ;
+                        while(((cc=*s) != '\0') && (cc != dd))
+                            s++ ;
+                        *s++ = '\0' ;
+                    }
+                    if(cc == '\0')
+                    {
+                        backupSubCount = 0 ;
+                        break ;
+                    }
+                }
+            }
+        }
+    }
+#endif
     if(fn == NULL)
         return 1 ;
 #ifdef _URLSUPP
@@ -1127,21 +1226,73 @@ createBackupName(uint8 *filename, uint8 *fn, uint8 backl)
     }
     else
 #endif
+    if((backupPathFlag > 0) && !isUrlLink(fn))
     {
-        meStrcpy(filename,fn) ;
-#ifdef _UNIX
-        if((backl == '~') && ((meSystemCfg & (meSYSTEM_DOSFNAMES|meSYSTEM_HIDEBCKUP)) == meSYSTEM_HIDEBCKUP))
+        if(backupPathFlag == 1)
         {
-            if((t=meStrrchr(fn,DIR_CHAR)) == NULL)
-                t = fn ;
-            else
-                t++ ;
-            s = filename + ((size_t) t - (size_t) fn) ;
-            *s++ = '.' ;
-            meStrcpy(s,t) ;
+            meStrcpy(filename,backupPath) ;
+            t = filename + meStrlen(backupPath) ;
+            s = fn ;
+            if(s[0] == DIR_CHAR)
+                s++ ;
+            createBackupNameStrcpySub(t,s,backupSubCount,backupSubFrom,backupSubTo) ;
         }
-#endif            
+        else
+        {
+            int ll ;
+            s = getFileBaseName(fn) ;
+            ll = ((size_t)s - (size_t)fn) ;
+            meStrncpy(filename,fn,ll) ;
+            t = filename+ll ;
+            t = createBackupNameStrcpySub(t,backupPath,backupSubCount,
+                                          backupSubFrom,backupSubTo) ;
+            createBackupNameStrcpySub(t,s,backupSubCount,backupSubFrom,backupSubTo) ;
+        }
+#ifdef _WIN32
+        /* ensure the path has no ':' in it - breaks every thing, change to a / */
+        while((t=meStrchr(t,_DRV_CHAR)) != NULL)
+            *t++ = DIR_CHAR ;
+#endif
+        if(flag & meBACKUP_CREATE_PATH)
+        {
+            int ii=0 ;
+            while(((t=meStrrchr(filename,DIR_CHAR)) != NULL) && (t != filename))
+            {
+                *t = '\0' ;
+                if(!meTestExist(filename))
+                {
+                    if(meTestDir(filename))
+                        return 1 ;
+                    *t = DIR_CHAR ;
+                    break ;
+                }
+                ii++ ;
+            }
+            while(--ii >= 0)
+            {
+                if(ffWriteFileOpen(filename,meRWFLAG_MKDIR,NULL) != TRUE)
+                    return 1 ;
+                filename[meStrlen(filename)] = DIR_CHAR ;
+            }
+        }
     }
+    else
+        meStrcpy(filename,fn) ;
+    
+#ifdef _UNIX
+    if((backl == '~') && ((meSystemCfg & (meSYSTEM_DOSFNAMES|meSYSTEM_HIDEBCKUP)) == meSYSTEM_HIDEBCKUP))
+    {
+        if((t=meStrrchr(filename,DIR_CHAR)) == NULL)
+            t = filename ;
+        else
+            t++ ;
+        s = filename + meStrlen(filename) + 1 ;
+        do
+            s[0] = s[-1] ;
+        while(--s != t) ;
+        s[0] = '.' ;
+    }
+#endif            
     t = filename + meStrlen(filename) ;
 #ifndef _DOS
     if(meSystemCfg & meSYSTEM_DOSFNAMES)
@@ -1699,96 +1850,98 @@ ffWriteFileOpen(uint8 *fname, uint32 flags, BUFFER *bp)
                 uint8 filename[FILEBUF] ;
                 int ii ;
                 
-#ifdef _WIN32
-                /* Win95 first version has nasty bug in MoveFile, doing
-                 * 
-                 * MoveFile("a.bbb","a.bbb~")
-                 * CreateFile("a.bbb",..)
-                 * 
-                 * Resulted in a.bbb backing up to a.bbb~ and then for some unknown bloody
-                 * reason opening a.bbb opens a.bbb~ instead of creating a new file.
-                 * 
-                 * So alternatively do:
-                 *
-                 * MoveFile("a.bbb","a.bbb~.~_~")
-                 * MoveFile("a.bbb~.~_~","a.bbb~")
-                 * CreateFile("a.bbb",..)
-                 * 
-                 * Which sadly works (we love you bill!)
-                 * 
-                 * This is done for all flavours of windows as these drives can be networked
-                 */
-                extern int platformId;
-                uint8 filenameOldB[FILEBUF], *filenameOld ;
-                
-                if(!(meSystemCfg & meSYSTEM_DOSFNAMES))
+                ii = createBackupName(filename,fname,'~',1) ;
+                if(!ii)
                 {
-                    strcpy(filenameOldB,fname) ;
-                    strcat(filenameOldB,".~a~") ;
-                    filenameOld = filenameOldB ;
-                    if(!meTestExist(filenameOld) && meUnlink(filenameOld))
-                        mlwrite(MWABORT|MWPAUSE,"[Unable to remove backup file %s]", filenameOld) ;
-                    else if(meRename(fname,filenameOld))
-                        mlwrite(MWABORT|MWPAUSE,"[Unable to backup file to %s]",filenameOld) ;
-                }
-                else
-                    filenameOld = fname ;
+#ifdef _WIN32
+                    /* Win95 first version has nasty bug in MoveFile, doing
+                     * 
+                     * MoveFile("a.bbb","a.bbb~")
+                     * CreateFile("a.bbb",..)
+                     * 
+                     * Resulted in a.bbb backing up to a.bbb~ and then for some unknown bloody
+                     * reason opening a.bbb opens a.bbb~ instead of creating a new file.
+                     * 
+                     * So alternatively do:
+                     *
+                     * MoveFile("a.bbb","a.bbb~.~_~")
+                     * MoveFile("a.bbb~.~_~","a.bbb~")
+                     * CreateFile("a.bbb",..)
+                     * 
+                     * Which sadly works (we love you bill!)
+                     * 
+                     * This is done for all flavours of windows as these drives can be networked
+                     */
+                    extern int platformId;
+                    uint8 filenameOldB[FILEBUF], *filenameOld ;
+                    
+                    if(!(meSystemCfg & meSYSTEM_DOSFNAMES))
+                    {
+                        strcpy(filenameOldB,fname) ;
+                        strcat(filenameOldB,".~a~") ;
+                        filenameOld = filenameOldB ;
+                        if(!meTestExist(filenameOld) && meUnlink(filenameOld))
+                            mlwrite(MWABORT|MWPAUSE,"[Unable to remove backup file %s]", filenameOld) ;
+                        else if(meRename(fname,filenameOld) && (ffCopyFile(fname,filenameOld,meRWFLAG_DELETE) != TRUE))
+                            mlwrite(MWABORT|MWPAUSE,"[Unable to backup file to %s]",filenameOld) ;
+                    }
+                    else
+                        filenameOld = fname ;
 #else
 #define filenameOld fname
 #endif
-                ii = createBackupName(filename,fname,'~') ;
 #ifndef _DOS
-                if(!(meSystemCfg & meSYSTEM_DOSFNAMES) && (keptVersions > 0))
-                {
-                    int ll ;
-                    
-                    ll = meStrlen(filename)-1 ;
-                    filename[ll++] = '.' ;
-                    filename[ll++] = '~' ;
-                    for(ii=0 ; ii<keptVersions ; ii++)
+                    if(!(meSystemCfg & meSYSTEM_DOSFNAMES) && (keptVersions > 0))
                     {
-                        sprintf((char *)filename+ll,"%d~",ii) ;
-                        if(meTestExist(filename))
-                            break ;
-                    }
-                    if(ii == keptVersions)
-                    {
-                        if(meUnlink(filename))
-                            mlwrite(MWABORT|MWPAUSE,(uint8 *)"[Unable to remove backup file %s]", filename) ;
-                        ii-- ;
-                    }
-                    if(ii)
-                    {
-                        uint8 filename2[FILEBUF] ;
-                        meStrcpy(filename2,filename) ;
-                        while(ii > 0)
+                        int ll ;
+                        
+                        ll = meStrlen(filename)-1 ;
+                        filename[ll++] = '.' ;
+                        filename[ll++] = '~' ;
+                        for(ii=0 ; ii<keptVersions ; ii++)
                         {
-                            sprintf((char *)filename2+ll,"%d~",ii--) ;
                             sprintf((char *)filename+ll,"%d~",ii) ;
-                            if(meRename(filename,filename2))
+                            if(meTestExist(filename))
+                                break ;
+                        }
+                        if(ii == keptVersions)
+                        {
+                            if(meUnlink(filename))
+                                mlwrite(MWABORT|MWPAUSE,(uint8 *)"[Unable to remove backup file %s]", filename) ;
+                            ii-- ;
+                        }
+                        if(ii)
+                        {
+                            uint8 filename2[FILEBUF] ;
+                            meStrcpy(filename2,filename) ;
+                            while(ii > 0)
                             {
-                                mlwrite(MWABORT|MWPAUSE,(uint8 *)"[Unable to backup file to %s (%d - %s)]", 
-                                        filename2,errno,sys_errlist[errno]) ;
-                                if(meUnlink(filename))
+                                sprintf((char *)filename2+ll,"%d~",ii--) ;
+                                sprintf((char *)filename+ll,"%d~",ii) ;
+                                if(meRename(filename,filename2) && (ffCopyFile(filename,filename2,meRWFLAG_DELETE) != TRUE))
                                 {
-                                    mlwrite(MWABORT|MWPAUSE,(uint8 *)"[Unable to remove backup file %s]", filename) ;
-                                    break ;
+                                    mlwrite(MWABORT|MWPAUSE,(uint8 *)"[Unable to backup file to %s (%d - %s)]", 
+                                            filename2,errno,sys_errlist[errno]) ;
+                                    if(meUnlink(filename))
+                                    {
+                                        mlwrite(MWABORT|MWPAUSE,(uint8 *)"[Unable to remove backup file %s]", filename) ;
+                                        break ;
+                                    }
                                 }
                             }
                         }
                     }
-                }
 #endif
-                if(!ii)
-                {
                     if(!meTestExist(filename) && meUnlink(filename))
                         mlwrite(MWABORT|MWPAUSE,(uint8 *)"[Unable to remove backup file %s]", filename) ;
-                    else if(meRename(filenameOld,filename))
+                    else if(meRename(filenameOld,filename) && (ffCopyFile(filenameOld,filename,meRWFLAG_DELETE) != TRUE))
                         mlwrite(MWABORT|MWPAUSE,(uint8 *)"[Unable to backup file to %s (%d - %s)]", 
                                 filename,errno,sys_errlist[errno]) ;
                     else if(flags & 0xffff)
                         meChmod(filename,(flags & 0xffff)) ;
                 }
+                else
+                    mlwrite(MWABORT|MWPAUSE,(uint8 *)"[Unable to backup file %s]",fname) ;
             }
             else if(flags & meRWFLAG_DELETE)
             {

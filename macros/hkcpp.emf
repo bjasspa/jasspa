@@ -1,6 +1,6 @@
 ; C mode hook
 ;
-; Last Modified : <000623.2120>
+; Last Modified : <010119.1516>
 ;
 ; Notes:
 ;       There is a distinction between C++ and C because of problems with
@@ -9,8 +9,8 @@
 ;       the first line.
 ;
 ; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/cpp" "abfhnopx"
-set-variable #l1 "abefhimnoptux"
+set-variable #l0 &reg "/history" "fhook/cpp" "bdfhnopx"
+set-variable #l1 "abdefhikmnoptux"
 
 !if &not &exist .hilight.cpp
     set-variable .hilight.cpp &pinc .hilight.next 1
@@ -216,6 +216,9 @@ define-macro fhook-cpp
     ; Set up the hilight mode
     !if &and &sin "h" .fhook-cpp.setup &band .hilight.flags 0x02 
         set-variable $buffer-hilight .hilight.cpp
+    !endif
+    !if &sin "d" .fhook-emf.setup
+	1 buffer-mode "cmode"
     !endif
     !if &sin "b" .fhook-cpp.setup
         buffer-abbrev-file "c"

@@ -1,7 +1,7 @@
 /*
  * Define the string name / internal variable name binding
  *
- * Last Modified:         <000723.1842>
+ * Last Modified:         <010122.1542>
  * 
  ****************************************************************************
  *
@@ -16,6 +16,7 @@
  ****************************************************************************/
 DEFVAR ("auto-time",           EVAUTOTIME)      /* auto save buffer time */
 DEFVAR ("box-chars",           EVBOXCHRS)       /* Box character set */
+DEFVAR ("buffer-backup",       EVCBUFBACKUP)    /* current buffer backup name */
 DEFVAR ("buffer-bhook",        EVBUFBHK)        /* Buffer bhook  */
 DEFVAR ("buffer-bname",        EVCBUFNAME)      /* current buffer name */
 DEFVAR ("buffer-dhook",        EVBUFDHK)        /* Buffer dhook  */

@@ -10,7 +10,7 @@
  *
  *  Author:         Danial Lawrence
  *
- *  Creation Date:      14/05/86 12:37      <001210.0918>
+ *  Creation Date:      14/05/86 12:37      <010122.1542>
  *
  *  Modification date:  %G% : %U%
  *
@@ -348,14 +348,28 @@ setVar(uint8 *vname, uint8 *vvalue, meREGISTERS *regs)
         varList = &usrVarList ;
         goto setUsrLclCmdVar ;
     case TKLVR:
-        varList = &(curbp->varList) ;
-        goto setUsrLclCmdVar ;
+        {
+            uint8 *ss ;
+            BUFFER *bp ;
+            if((ss=meStrrchr(nn,':')) != NULL)
+            {
+                *ss = '\0' ;
+                bp = bfind(nn,0) ;
+                *ss++ = ':' ;
+                if(bp == NULL)
+                    /* not a buffer - abort */
+                    return mlwrite(MWABORT,(uint8 *)"[No such variable]");
+                nn = ss ;
+            }
+            else
+                bp = curbp ;
+            varList = &(bp->varList) ;
+            goto setUsrLclCmdVar ;
+        }
     case TKCVR:
         {
-            uint8 *ss, cc ;
-            for(ss=nn ; (((cc=*++ss) != '\0') && (cc != '.')) ; )
-                ;
-            if(cc == '.')
+            uint8 *ss ;
+            if((ss=meStrrchr(nn,'.')) != NULL)
             {
                 int ii ;
                 
@@ -1084,7 +1098,7 @@ found_ulcvar:
                 break ;
             }
         default:
-            /* default includes EVMOUSEX EVMOUSEY EVSTATUS EVMACHINE 
+            /* default includes EVCBUFBACKUP EVMOUSEX EVMOUSEY EVSTATUS EVMACHINE 
              * EVSYSRET EVUSEX, EVWMDLINE or system dependant vars
              * where this isn't the system (e.g. use-x) which cant be set
              */
@@ -1248,6 +1262,14 @@ handle_namesvar:
     case EVWDEPTH:      return (meItoa(curwp->numTxtRows));
     case EVWWIDTH:      return (meItoa(curwp->numTxtCols));
     case EVCURWIDTH:    return (meItoa(TTncol));
+    case EVCBUFBACKUP:
+        if((curbp->b_fname == NULL) || createBackupName(evalResult,curbp->b_fname,'~',0))
+            return (uint8 *) "" ;
+#ifndef _DOS
+        if(!(meSystemCfg & meSYSTEM_DOSFNAMES) && (keptVersions > 0))
+            meStrcpy(evalResult+meStrlen(evalResult)-1,".~0~") ;
+#endif
+        return evalResult ;
     case EVCBUFNAME:    return (curbp->b_bname);
 #ifdef _UNIX
     case EVBUFFMOD:
@@ -1880,33 +1902,47 @@ getval(uint8 *tkn)   /* find the value of a token */
         return getUsrVar(tkn+1) ;
     
     case TKLVR:
-        if(alarmState & meALARM_VARIABLE)
-            return tkn ;
-        return getUsrLclCmdVar(tkn+1,&(curbp->varList)) ;
-        
-    case TKCVR:
         {
-            uint8 *ss, *tt, cc ;
+            uint8 *ss, *tt ;
+            BUFFER *bp ;
             if(alarmState & meALARM_VARIABLE)
                 return tkn ;
             tt = tkn+1 ;
-            for(ss=tt ; (cc=*++ss) != '\0' ; )
+            if((ss=meStrrchr(tt,':')) != NULL)
             {
-                if(cc == '.')
-                {
-                    int ii ;
-                    *ss = '\0' ;
-                    ii = decode_fncname(tt,1) ;
-                    *ss++ = '.' ;
-                    if(ii < 0)
-                        /* not a command - error */
-                        return errorm ;
-                    return getUsrLclCmdVar(ss,&(cmdTable[ii]->varList)) ;
-                }
+                *ss = '\0' ;
+                bp = bfind(tt,0) ;
+                *ss++ = ':' ;
+                if(bp == NULL)
+                    /* not a buffer - abort */
+                    return errorm ;
+                tt = ss ;
+            }
+            else
+                bp = curbp ;
+            return getUsrLclCmdVar(tt,&(bp->varList)) ;
+        }
+        
+    case TKCVR:
+        {
+            uint8 *ss, *tt ;
+            if(alarmState & meALARM_VARIABLE)
+                return tkn ;
+            tt = tkn+1 ;
+            if((ss=meStrrchr(tt,'.')) != NULL)
+            {
+                int ii ;
+                *ss = '\0' ;
+                ii = decode_fncname(tt,1) ;
+                *ss++ = '.' ;
+                if(ii < 0)
+                    /* not a command - error */
+                    return errorm ;
+                return getUsrLclCmdVar(ss,&(cmdTable[ii]->varList)) ;
             }
             if(meRegCurr->varList == NULL)
                 return abortm ;
-            return getUsrLclCmdVar(tkn+1,meRegCurr->varList) ;
+            return getUsrLclCmdVar(tt,meRegCurr->varList) ;
         }
     case TKENV:
         if(alarmState & meALARM_VARIABLE)
@@ -2768,27 +2804,42 @@ unsetVariable(int f, int n)     /* Delete a variable */
     vnum = getMacroTypeS(var) ; 
     if(vnum == TKVAR) 
         varList = &usrVarList ;
-    else if(vnum == TKLVR) 
-        varList = &curbp->varList ;
+    else if(vnum == TKLVR)
+    {        
+        uint8 *ss ;
+        BUFFER *bp ;
+        
+        if((ss=meStrrchr(vv,':')) != NULL)
+        {
+            *ss = '\0' ;
+            bp = bfind(vv,0) ;
+            *ss++ = ':' ;
+            if(bp == NULL)
+                /* not a command - abort */
+                return mlwrite(MWABORT,(uint8 *)"[No such variable]");
+            vv = ss ;
+        }
+        else
+            bp = curbp ;
+        varList = &(bp->varList) ;
+    }
     else if(vnum == TKCVR)
     {
-        if((vv=meStrchr(vv,'.')) != NULL)
+        uint8 *ss ;
+        if((ss=meStrrchr(vv,'.')) != NULL)
         {
             int idx ;
             
-            *vv = '\0' ;
+            *ss = '\0' ;
             idx = decode_fncname(var+1,0) ;
-            *vv++ = '.' ;
+            *ss++ = '.' ;
             if(idx < 0)
                 return mlwrite(MWABORT,(uint8 *)"[No such variable]");
             varList = &(cmdTable[idx]->varList) ;
+            vv = ss ;
         }
-        else
-        {
-            if((varList = regs->varList) == NULL)
-                return mlwrite(MWABORT,(uint8 *)"[No such variable]");
-            vv = var+1 ;
-        }
+        else if((varList = regs->varList) == NULL)
+            return mlwrite(MWABORT,(uint8 *)"[No such variable]");
     }
     else
         return mlwrite(MWABORT,(uint8 *)"[User variable required]");

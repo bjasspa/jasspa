@@ -14,7 +14,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; buffer-setup flags
 set-variable #l0 &reg "/history" "fhook/f90" "bhinx"
-set-variable #l1 "ebhimntux"
+set-variable #l1 "aebhikmntux"
 
 !if &and &sin "h" #l0 &band .hilight.flags 0x02 
     !if &not &exist .hilight.f90

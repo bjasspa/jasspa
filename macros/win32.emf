@@ -1,7 +1,7 @@
 ;       Setup file for Microsoft Windows.
 ;
 ;       Author:         Jon Green
-;   Last Modified : <000825.1824>
+;   Last Modified : <010124.1636>
 ;
 ; Notes on the standard configuration
 ; ===================================
@@ -58,7 +58,7 @@ add-next-line "*compile*" "%f(%l) : error"
 add-next-line "*compile*" "%f(%l) : warning"
 add-next-line "*compile*" "%f:%l:"
 ; Load additional hooks required for win32.
-define-macro-file hkipipe ishell
+define-macro-file hkipipe ishell perldb
 ; Define the cygwin dummy macro. This reports an error if the cygwin environment
 ; has not been defined in the user start-up file.
 define-macro cygnus

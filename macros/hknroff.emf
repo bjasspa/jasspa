@@ -7,7 +7,7 @@
 ; Note that this file contains some JASSPA extensions for their Nroff
 ; documentation.
 set-variable #l0 &reg "/history" "fhook/nroff" "bfhijnopswx"
-set-variable #l1 "befhijmnopstuwx"
+set-variable #l1 "abefhijkmnopstuwx"
 
 !if &not &exist .osd.nroff-help
     ; set up the osd tool menu & help dialog

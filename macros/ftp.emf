@@ -113,7 +113,8 @@
         ; we now have #l0 = new base, #l1 new file name, #l2 old file name, #l3 new file exist?
         !if #l3
             ; has the current url file been changed
-            mark-registry "/url" "g"
+            set-variable $result ""
+            !force mark-registry "/url" "g"
             !if &sin "u" $result
                 ; file changed, confirm action
                 osd-xdialog "FTP" "Current URL registry file has been changed" 1 " &Save " " &Discard " " Cancel "

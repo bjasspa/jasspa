@@ -29,7 +29,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; buffer-setup flags
 set-variable #l0 &reg "/history" "fhook/latex" "fhinopsx"
-set-variable #l1 "efhijmnopstuwx"
+set-variable #l1 "aefhijkmnopstuwx"
 
 !if &not &exist .osd.latex-help
     ; set up the osd tool menu & help dialog

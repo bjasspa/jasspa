@@ -10,7 +10,7 @@
 *
 *       Author:                 Danial Lawrence
 *
-*       Creation Date:          10/05/91 08:27          <001005.1226>
+*       Creation Date:          10/05/91 08:27          <010119.1603>
 *
 *       Modification date:      %G% : %U%
 *

@@ -1,12 +1,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Perl hook - This file is invoked when a Perl script file is loaded.
 ;
-; Last Modified : <001009.2022>
+; Last Modified : <010119.1520>
 ; Copyright (c) 1999-2000 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/perl" "abfhinx"
-set-variable #l1 "abefhimntux"
+set-variable #l0 &reg "/history" "fhook/perl" "bdfhinx"
+set-variable #l1 "abdefhikmntux"
 
 !if &and &sin "h" #l0 &band .hilight.flags 0x02 
     !if &not &exist .hilight.perl
@@ -251,7 +251,7 @@ set-variable #l1 "abefhimntux"
     hilight .hilight.perlR 0x80 "\n" .hilight.perl .scheme.string
     hilight .hilight.perlR 0x80 ";" .hilight.perl  .scheme.string
 !endif
-!if &sin "a" #l0
+!if &sin "d" #l0
     0 indent  .hilight.perl 0 10
     indent .hilight.perl n "{"  4
     indent .hilight.perl o "}" -4
@@ -298,7 +298,7 @@ define-macro fhook-perl
     !if &and &sin "h" .fhook-perl.setup &band .hilight.flags 0x02 
         set-variable $buffer-hilight .hilight.perl
     !endif
-    !if &sin "a" .fhook-perl.setup
+    !if &sin "d" .fhook-perl.setup
         set-variable $buffer-indent .hilight.perl
     !endif
     !if &sin "b" .fhook-perl.setup

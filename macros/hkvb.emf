@@ -2,15 +2,15 @@
 ;
 ;  Created By    : Dave Yip & Steven Phillips
 ;  Created       : Mon Sep 21 18:10:34 1998
-;  Last Modified : <000719.0012>
+;  Last Modified : <010119.1520>
 ;
 ;  Description : Visual Basic Hook File
 ;
 ;  Copyright (c) 2000 JASSPA
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/vb" "ahix"
-set-variable #l1 "aehimtux"
+set-variable #l0 &reg "/history" "fhook/vb" "dhix"
+set-variable #l1 "adehikmtux"
 
 !if &not &exist .hilight.vb
     set-variable .hilight.vb &pinc .hilight.next 1
@@ -93,7 +93,7 @@ set-variable #l1 "aehimtux"
         hilight .hilight.vb 1 "End\\s +Property" .scheme.function
     !endif
 !endif
-!if &sin "a" #l0
+!if &sin "d" #l0
     ; Define the indentation tokens
     0 indent .hilight.vb 1 20
     indent .hilight.vb i "'"
@@ -141,7 +141,7 @@ define-macro fhook-vb
     !if &and &sin "h" .fhook-vb.setup &band .hilight.flags 0x02 
         set-variable $buffer-hilight .hilight.vb
     !endif
-    !if &sin "a" .fhook-vb.setup
+    !if &sin "d" .fhook-vb.setup
         set-variable $buffer-indent  .hilight.vb
     !endif
     buffer-bind-unbound-key restyle-region "A-C-i"
