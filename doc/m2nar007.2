@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jun 17 22:26:42 1999
 .\"
-.Id $Id: m2nar007.2,v 2.9 2004-01-10 13:46:37 jon Exp $
+.Id $Id: m2nar007.2,v 2.10 2004-01-18 14:17:15 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .TH "Build" 2
@@ -148,6 +148,100 @@ The makefiles are supplied with the following targets:-
 \fBmen\fR \- Builds a URL version (Windows only).
 .BU
 \fBmenu\fR \- Builds console and URL version (Windows only).
+.BE 0
+.SH "WINDOWS ENVIRONMENT"
+The Windows environment is a little more difficult than \s-1UNIX\s0 because it
+does not have a good native command line environment.  There are two Microsoft
+Developer  options for building. If you have not purchased MS-DEV then use the
+FREE Borland compiler which runs on the command line.
+.SS "MS-Dev GUI Build"
+\*(mS is supplied  with a MS-Dev 6.x project for building.  This has only been
+set up for  debugging  and has limited  build  options, it will also produce a
+large  executable  image. The MS-Windows  images shipped by \s-1JASSPA\s0  are
+built using the command  line build  environment  which is detailed in a later
+section.
+.SS "MS-Dev Command Line Build"
+The  command  line  build  with  MS-Dev  is a  little  messy to set up, in the
+following  sections we discuss  MS-Dev 6.x under  Windows  2000. There will be
+differences with different operating systems versions, different install paths
+and different versions of the MS-Dev toolkit. Use the following information as
+an outline ONLY, JASSPA will not take  responsibility for the configuration of
+the command line environment, if in doubt then use the GUI builder.
+.PP
+To run
+.Hr nmake 1
+from a DOS box then the MS-Dev compiler tools must be available in the command
+path. The MS-Dev kit V6.x is supplied  with the  necessary  file to set up the
+path which is called \fCVCVARS32.BAT\fR and is typically located in directory:
+.CS
+C:\\Program\ Files\\Microsoft\ Visual\ Studio\\VC98\\Bin
+.CE
+This should be run first and then the command line make files may be run using
+nmake i.e. to build ME:-
+.CS
+nmake -f win32v6.mak me
+.CE
+To build NE:-
+.CS
+nmake -f win32v6.mak ne
+.CE
+To clean up after:-
+.CS
+nmake -f spotless
+.CE
+If you are going to perform a lot of command line  building  then it is easier
+to set up the  environment and not have to run  \fCVCVARS32.BAT\fR  every time
+you compile.
+.PP
+You can add the variables to your environment, you will need to expand the 
+\fCVCVARS32.BAT\fR script and then add the results. The following example is 
+for  MS-Dev 6.0 under W2K, the  settings  will  differ  depending  on what O/S
+variant you are running and where you have installed software. The following 
+ONLY serves as an example, you need to tailor for your installation.
+.BS
+To set up the variables then  \fBStart\fR ->  \fBSettings\fR  -> \fBControl\fR
+\fBPanel\fR which displays the Control Panel items.
+.BU
+Select \fBSystem\fR -> \fBAdvanced\fR -> \fBEnvironment variables\fR
+.BU
+In \fBUser  Variables for\fR  \fI<User>\fR  then \fBNew...\fR or \fBEdit...\fR
+the  \fCPATH\fR  variable. Add the command line tools  execution  paths to the
+environment  variable, this will be something  like the following (but without
+newlines):-
+.RS
+.CS
+Variable Name:  PATH
+Variable Value: %PATH%;
+                C:\\PROGRA~1\\MICROS~3\\Common\\msdev98\\BIN;
+                C:\\PROGRA~1\\MICROS~3\\VC98\\BIN;
+                C:\\PROGRA~1\\MICROS~3\\Common\\TOOLS\\WINNT;
+                C:\\PROGRA~1\\MICROS~3\\Common\\TOOLS;
+.CE 
+.RE
+.BU
+Similarly add the \fCINCLUDE\fR variable:-
+.RS
+.CS
+Variable Name:  INCLUDE
+Variable Value: C:\\PROGRA~1\\MICROS~3\\VC98\\ATL\\INCLUDE;
+                C:\\PROGRA~1\\MICROS~3\\VC98\\INCLUDE;
+                C:\\PROGRA~1\\MICROS~3\\VC98\\MFC\\INCLUDE;
+                %INCLUDE%
+.CE 
+.RE
+.BU
+Similarly add the \fCLIB\fR variable:-
+.RS
+.CS
+Variable Name:  LIB
+Variable Value: C:\\PROGRA~1\\MICROS~3\\VC98\\LIB;
+                C:\\PROGRA~1\\MICROS~3\\VC98\\MFC\\LIB;
+                %LIB%
+.CE
+.RE
+.BU
+Accept the entries and close down the dialog. Start a new DOS command line and
+the variables should be set up ready for the build.
 .BE 0
 .SH NOTES
 Other  \s-1UNIX\s0  ports  should  be fairly  easy from the base set of ported
