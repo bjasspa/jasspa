@@ -93,6 +93,19 @@ Exec Disk Contents
              nanoEmacs   to  be  run  from  the  CD-ROM   without
              installation.
 
+Revision History
+
+    Version 1.1
+    
+        Added Sun Solaris 8 (Sparc) binaries + package
+        Added Sun Solaris 8 (i386)  binaries + package
+
+    Version 1.0
+
+        Original
+        
 Prepared by JASSPA
 Copyright (c) 2003 JASSPA
 10th August 2003
+
+
