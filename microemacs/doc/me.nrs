@@ -11,18 +11,18 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.7 2001-12-31 09:56:00 jon Exp $
+.Id $Id: me.nrs,v 2.8 2002-01-06 19:22:16 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
-.TH me - - - "MicroEmacs '01"
+.TH me - - - "MicroEmacs '02"
 .XI me - -
 .XI home - -
 .XI MicroEmacs - -
 .\" Next section (until .Ss) is for the osd-help contents page
 .Me "!   Contents"
 .Me "| home"
-.Me "MicroEmacs '01"
+.Me "MicroEmacs '02"
 .Me "|"
 .Me " "
 .Me "| osd-help(3)"
@@ -97,7 +97,7 @@
 .Me "    Registry"
 .Me "| Command Line Filters"
 .Me "    Command Line Filters"
-.Me "| MicroEmacs '01 - Games"
+.Me "| MicroEmacs '02 - Games"
 .Me "    Games"
 .Me "|"
 .Me " "
@@ -129,7 +129,7 @@
 .Me "    Compatibility"
 .Me "| Interfacing(2)"
 .Me "    Interfacing to external components"
-.Me "| MicroEmacs '01 - Supported File Types"
+.Me "| MicroEmacs '02 - Supported File Types"
 .Me "    Supported File Types"
 .Me "| Client-Server(2)"
 .Me "    Client-Server Interface"
@@ -1812,13 +1812,16 @@ purposes.  Commercial  users  may use  JASSPA  MicroEmacs  inhouse.  Shareware
 distributors may redistribute  JASSPA  MicroEmacs for media costs only. JASSPA
 MicroEmacs can only be  incorporated  into commercial  software or resold with
 the permission of the current author.
+.SS "License Terms 2002 and subsequent years"
+GNU Public  License  (GPL) for all source  material.  GNU Free
+Documentation License (GFDL) for all documentation material.
+.NH Contact - "\*(mE \- Contact Information"
+.\" "Contact" is a link burnt into executable (bind.c)
 .SS "Spelling Dictionary Copyrights"
 The  spelling  dictionaries  are  converted  from  \fIispell\fR  dictionaries,
 each spelling dictionary has it's own copyright which is reproduced within the
 appropriate language spelling macro file.
-.PP
-.B "NO WARRANTY"
-.PP
+.SS "NO WARRANTY"
 THIS PROGRAM IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY FOR THE PROGRAM,
 TO THE EXTENT  PERMITTED BY APPLICABLE  LAW. EXCEPT WHEN  OTHERWISE  STATED IN
 WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS IS"
@@ -1838,11 +1841,6 @@ A FAILURE OF THE  PROGRAM TO OPERATE  WITH ANY OTHER  PROGRAMS),  EVEN IF SUCH
 HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 .PP
 .B "THIS NOTICE MUST BE CARRIED IN ALL COPIES OF THE DISTRIBUTION"
-.SS "License Terms 2002 and subsequent years"
-GNU Public  License  (GPL) for all source  material.  GNU Free
-Documentation License (GFDL) for all documentation material.
-.NH Contact - "\*(mE \- Contact Information"
-.\" "Contact" is a link burnt into executable (bind.c)
 .Me "!7  Contact Information - \*(mE"
 .SH "CONTACT INFORMATION"
 The  following  contact  point may be used to report all  problems and request
