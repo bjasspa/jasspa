@@ -1118,26 +1118,23 @@ findRegistry (int f, int n)
 {
     meUByte rootbuf [meBUF_SIZE_MAX];
     meUByte valbuf [12];
-    meUByte skeybuf [meBUF_SIZE_MAX];
     int index;
     meRegNode *rnp ;
 
     /* Get the arguments */
-    if ((meGetString((meUByte *)"Registry Path", 0, 0, rootbuf, meBUF_SIZE_MAX) == meABORT) ||
-        (meGetString((meUByte *)"Sub key", 0, 0, skeybuf, meBUF_SIZE_MAX) == meABORT) ||
-        (meGetString((meUByte *)"Index", 0, 0, valbuf, 12) == meABORT))
+    if((meGetString((meUByte *)"Registry Path", 0, 0, rootbuf, meBUF_SIZE_MAX) == meABORT) ||
+       (meGetString((meUByte *)"Index", 0, 0, valbuf, 12) == meABORT))
         return meABORT;
     index = meAtoi (valbuf);
 
     /* Assigns the new value */
-    if (((rnp = regFind (&root, rootbuf)) == NULL) ||
-        ((rnp = regFind (rnp, skeybuf)) == NULL))
-        return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Cannot find node %s/%s]",rootbuf,skeybuf);
+    if((rnp = regFind (&root, rootbuf)) == NULL)
+        return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Cannot find node %s]",rootbuf);
     /* Find the node that is indexed */
     rnp = rnp->child;
-    while ((--index >= 0) && rnp)
+    while((--index >= 0) && rnp)
         rnp = rnp->next;
-    if (rnp == NULL)
+    if(rnp == NULL)
     {
         resultStr [0] ='\0';
         return mlwrite (MWCLEXEC|MWABORT,(meUByte *)"Cannot find node at index %d", index);
@@ -1165,7 +1162,7 @@ listRegistry (int f, int n)
     rnp = &root;
     if((n & 0x02) != 0)
     {
-        if(meGetString((meUByte *)"Registry node",0, 0, buf, meBUF_SIZE_MAX) == meABORT)
+        if(meGetString((meUByte *)"Registry Path",0, 0, buf, meBUF_SIZE_MAX) == meABORT)
             return meABORT;
 
         /* Find the node */

@@ -179,7 +179,7 @@
 
 0 define-macro print-setup-set-page-size
     !if @?
-        find-registry "/print" "layout" &sub &abs @# 1
+        find-registry "/print/layout" &sub &abs @# 1
         set-variable #l1 $result
         set-registry "/print-history" &cat $platform "/page-size" #l1
         set-registry "/print" "setup" 0
@@ -199,7 +199,7 @@
     osd .osd.tmp 0 "bs" 22 0 0 0
     set-variable #l0 0
     !repeat
-        !force find-registry "/print" "layout" &pinc #l0 1
+        !force find-registry "/print/layout" &pinc #l0 1
         !if &not $status
             !if &equ #l0 1
                 osd .osd.tmp #l0 "" "<error>"
@@ -213,7 +213,7 @@
 
 0 define-macro print-setup-set-char-size
     !if @?
-        find-registry "/print" &cat "layout/" &reg "/print-history" &cat $platform "/page-size" "" &sub &abs @# 1
+        find-registry &cat "/print/layout/" &reg "/print-history" &cat $platform "/page-size" "" &sub &abs @# 1
         set-variable #l1 $result
         set-registry "/print-history" &cat $platform "/char-size" #l1
         !if &not .print-setup.inter
@@ -233,10 +233,10 @@
 0 define-macro print-setup-setup-char-size
     -1 osd .osd.tmp
     osd .osd.tmp 0 "bs" 22 0 0 0
-    set-variable #l2 &cat "layout/" &reg "/print-history" &cat $platform "/page-size" ""
+    set-variable #l2 &cat "/print/layout/" &reg "/print-history" &cat $platform "/page-size" ""
     set-variable #l0 0
     !repeat
-        !force find-registry "/print" #l2 &pinc #l0 1
+        !force find-registry #l2 &pinc #l0 1
         !if &not $status
             !if &equ #l0 1
                 osd .osd.tmp #l0 "" "<error>"
