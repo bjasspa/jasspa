@@ -175,7 +175,7 @@
 #define _SOCKET        1                /* Supports url reading          */
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
-#define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa:/usr/local/microemacs"
+#define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa:/usr/local/share/jasspa:/usr/local/microemacs"
 #endif
 
 /**************************************************************************
