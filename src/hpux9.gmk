@@ -6,7 +6,7 @@
 #  Description	 : Make file for HP Hpux v9
 #  Created       : Sat Jan 24 00:01:40 1998
 #
-#  Last Modified : <000823.1754>
+#  Last Modified : <010207.2035>
 #
 #  Notes
 #	Run "make -f hpux9.mak"      for optimised build produces ./me
@@ -32,7 +32,7 @@ CDEBUG        = -W -g
 COPTIMISE     = -W -O3 -DNDEBUG=1
 CDEFS         = -D_HPUX9 -I/usr/include/X11R5 -I.
 LIBS          = -ltermcap -ldld -lV3
-LDFLAGS       = 
+LDFLAGS       =
 INSTALL       =	install
 XLIBS         = -L/usr/lib/X11R5 -lX11
 # definition for the console only build
@@ -41,13 +41,13 @@ CCONSOLE      = -D_NO_XTERM
 # Rules
 .SUFFIXES: .c .o .on .od
 
-.c.o:	
+.c.o:
 	$(CC) $(COPTIMISE) $(CDEFS) $(MAKECDEFS) -c $<
 
 .c.on:
 	$(CC) $(COPTIMISE) $(CDEFS) $(CCONSOLE) $(MAKECDEFS) -o $@ -c $<
 
-.c.od:	
+.c.od:
 	$(CC) $(CDEBUG) $(CDEFS) $(MAKECDEFS) -o $@ -c $<
 #
 # Source files
@@ -60,11 +60,11 @@ STDSRC	= abbrev.c basic.c bind.c buffer.c crypt.c dirlist.c display.c \
 	  print.c random.c regex.c region.c registry.c search.c spawn.c \
 	  spell.c tag.c termio.c time.c undo.c window.c word.c
 
-PLTHDR  = 
+PLTHDR  =
 PLTSRC  = unixterm.c
 #
 # Object files
-STDOBJ	= $(STDSRC:.c=.o)	
+STDOBJ	= $(STDSRC:.c=.o)
 PLTOBJ  = $(PLTSRC:.c=.o)
 OBJ	= $(STDOBJ) $(PLTOBJ)
 
@@ -72,7 +72,7 @@ NSTDOBJ	= $(STDSRC:.c=.on)
 NPLTOBJ = $(PLTSRC:.c=.on)
 NOBJ	= $(NSTDOBJ) $(NPLTOBJ)
 
-DSTDOBJ	= $(STDSRC:.c=.od)	
+DSTDOBJ	= $(STDSRC:.c=.od)
 DPLTOBJ = $(PLTSRC:.c=.od)
 DOBJ	= $(DSTDOBJ) $(DPLTOBJ)
 #
@@ -111,4 +111,3 @@ $(NPLTOBJ): $(STDHDR) $(PLTHDR)
 
 $(DSTDOBJ): $(STDHDR)
 $(DPLTOBJ): $(STDHDR) $(PLTHDR)
-
