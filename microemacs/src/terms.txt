@@ -1,0 +1,348 @@
+> -!- document; fill-mode:both; fill-column:70; -!-
+>
+>  Copyright 2001 JASSPA.
+>
+>  Created By    : Jon Green
+>  Created       : Sat Dec 22 09:09:48 2001
+>  Last Modified : <020106.1133>
+>
+
+This  document  describes  how the GPL  licence  has been  applied  to
+JASSPA's  MicroEmacs.  In  addition  contains  notes about the license
+history and application.
+
+1.0 License History
+
+    JASSPA  MicroEmacs is derived from the  MicroEmacs 3.8 source base
+    of  1998.  As  such,  all  of  the   software  has  been  under  a
+    commercially  restrictive  license. JASSPA has upheld the original
+    license  terms  laid down my the  original  author  and  copyright
+    holder Danial M Lawrence.
+
+    JASSPA is the collective  name given to the  maintainers of JASSPA
+    MicroEmacs.  The current  maintainers  at the 1st January 2002 are
+    Steven Phillips and Jon Green.
+
+    On  Wednesday  19th  January  2001  JASSPA  applied  for,  and was
+    granted,  permission  by  Danial  M  Lawrence  to move to the less
+    restrictive  licensing  terms of GPL. As of 1st  January  2002 the
+    JASSPA  distribution  of MicroEmacs  shall be supplied  under this
+    licensing  arrangement. The licence is not transferable to earlier
+    versions of the distribution or to the original program from which
+    is was derived known as MicroEmacs.
+
+    1.1 License terms to 1988
+
+        The following  copyrights  apply from the original source code
+        of version  3.8. No  explicit  copyrights  were found with the
+        original  distribution  apart from the following  found in the
+        main source code,
+
+        (C)opyright 1987-1998 by Daniel M. Lawrence
+        MicroEMACS  can be  copied  and  distributed  freely  for  any
+        non-commercial  purposes.  Commercial users may use MicroEMACS
+        inhouse.  Shareware  distributors may redistribute  MicroEMACS
+        for media costs only. MicroEMACS can only be incorporated into
+        commercial  software  or  resold  with the  permission  of the
+        current author.
+
+    1.1 License terms 1988 to 2001
+
+        Copyright (C) 1988-2001, JASSPA.
+        JASSPA MicroEmacs can be copied and distributed freely for any
+        non-commercial  purposes.  Commercial  users  may  use  JASSPA
+        MicroEmacs  inhouse.  Shareware  distributors may redistribute
+        JASSPA  MicroEmacs for media costs only. JASSPA MicroEmacs can
+        only be incorporated  into commercial  software or resold with
+        the permission of the current author.
+
+        THIS PROGRAM IS LICENSED  FREE OF CHARGE, THERE IS NO WARRANTY
+        FOR THE PROGRAM, TO THE EXTENT  PERMITTED BY  APPLICABLE  LAW.
+        EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT  HOLDERS
+        AND/OR  OTHER  PARTIES  PROVIDE  THE  PROGRAM  "AS IS" WITHOUT
+        WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED,  INCLUDING,
+        BUT NOT LIMITED TO, THE IMPLIED  WARRANTIES OF MERCHANTABILITY
+        AND FITNESS FOR A  PARTICULAR  PURPOSE.  THE ENTIRE RISK AS TO
+        THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD
+        THE  PROGRAM  PROVE  DEFECTIVE,  YOU  ASSUME  THE  COST OF ALL
+        NECESSARY SERVICING, REPAIR OR CORRECTION.
+
+        IN NO EVENT UNLESS  REQUIRED BY APPLICABLE LAW OR AGREED TO IN
+        WRITING WILL ANY COPYRIGHT  HOLDER, OR ANY OTHER PARTY WHO MAY
+        MODIFY AND/OR  REDISTRIBUTE THE PROGRAM AS PERMITTED ABOVE, BE
+        LIABLE TO YOU FOR  DAMAGES,  INCLUDING  ANY GENERAL,  SPECIAL,
+        INCIDENTAL OR CONSEQUENTIAL  DAMAGES ARISING OUT OF THE USE OR
+        INABILITY  TO USE THE  PROGRAM  (INCLUDING  BUT NOT LIMITED TO
+        LOSS  OF DATA OR DATA  BEING  RENDERED  INACCURATE  OR  LOSSES
+        SUSTAINED BY YOU OR THIRD  PARTIES OR A FAILURE OF THE PROGRAM
+        TO OPERATE  WITH ANY OTHER  PROGRAMS),  EVEN IF SUCH HOLDER OR
+        OTHER  PARTY  HAS  BEEN  ADVISED  OF THE  POSSIBILITY  OF SUCH
+        DAMAGES.
+
+        THIS NOTICE MUST BE CARRIED IN ALL COPIES OF THE DISTRIBUTION
+
+    1.2 License terms 2002 onwards
+
+        GNU Public  License  (GPL) for all source  material.  GNU Free
+        Documentation License (GFDL) for all documentation material.
+
+2.0 Source Code (.c/.h/.def)
+
+    The  following  notice is  attached  to the top of each .c, .h and
+    .def file.  Information that may have been contained in the header
+    i.e.  history  and  notes  is moved to a 2nd  comment  block  that
+    follows the GPL licence.
+
+    > <One line to give the programs name and idea of what it does>
+    > Copyright (C) yyyy name of author
+    >
+    > This  program  is free  software;  you can  redistribute  it and/or
+    > modify  it under the terms of the GNU  General  Public  License  as
+    > published by the Free Software  Foundation; either version 2 of the
+    > License, or (at your option) any later version.
+
+    > This program is distributed in the hope that it will be useful, but
+    > WITHOUT  ANY  WARRANTY;   without  even  the  implied  warranty  of
+    > MERCHANTABILITY  or FITNESS FOR A  PARTICULAR  PURPOSE. See the GNU
+    > General Public License for more details.
+
+    > You should have received a copy of the GNU General  Public  License
+    > along  with  this  program;  if not,  write  to the  Free  Software
+    > Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+    >
+
+    The original  copyrights are applied in ascending order to the GPL
+    license and strictly honour the copyright forms presented below:-
+
+ @      Copyright (C) 1988 Reginald Smith     [Single year]
+        Copyright (C) 1987, 1989 Jom Barr     [Multiple years]
+        Copyright (C) 1990-1995 Foo Bar       [Consecutive years]
+        Copyright (C) 1996, 1998-2002 JASSPA  [Mult+Consecutive years]
+
+    Where  the  original  author  has not  copyrighted,  then this may
+    appear as the first entry  preceeding the copyrights with words to
+    the effect 'Originally written by XXXX YYYYYY'.
+
+    In  all  cases  the  original   copyright  should  be  maintained,
+    authoring  history etc. must always be maintained but can be added
+    to the 2nd comment block.
+
+    The source  directory MUST include the file COPYING which contains
+    the GPL license.
+
+    So for example in main.c the existing header is defined as:-
+
+>c>
+    /*****************************************************************************
+    *
+    *       Title:          %M%
+    *
+    *       Synopsis:       Emacs Main.
+    *
+    ******************************************************************************
+    *
+    *       Filename:               %P%
+    *
+    *       Author:                 Jon Green
+    *
+    *       Creation Date:          03/05/91 17:19          <010807.1414>
+    *
+    *       Modification date:      %G% : %U%
+    *
+    *       Current rev:            %I%
+    *
+    *       Special Comments:
+    *
+    *       Contents Description:
+    *
+    *       MicroEMACS 3.8
+    *                       written by Dave G. Conroy.
+    *                       greatly modified by Daniel M. Lawrence
+    *
+    *       (C)opyright 1987 by Daniel M. Lawrence
+    *       MicroEMACS 3.8 can be copied and distributed freely for any
+    *       non-commercial purposes. MicroEMACS 3.8 can only be incorporated
+    *       into commercial software with the permission of the current author.
+    *
+    *****************************************************************************
+    *
+    * Modifications to the original file by Jasspa.
+    *
+    * Copyright (C) 1988 - 1999, JASSPA
+    * The MicroEmacs Jasspa distribution can be copied and distributed freely for
+    * any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
+    * incorporated into commercial software with the expressed permission of
+    * JASSPA.
+    *
+    ****************************************************************************/
+>doc>
+
+    The new header is thus defined as:-
+
+>c>
+    /* -*- c -*-
+     *
+     * JASSPA MicroEmacs - www.jasspa.com
+     * main.c - Main Entry point.
+     *
+     * Originally written by Dave G. Conroy for MicroEmacs
+     * Copyright (C) Daniel M. Lawrence 1987-1988
+     * Copyright (C) JASSPA 1988-2002
+     *
+     * This program is free software; you can redistribute it and/or modify it
+     * under the terms of the GNU General Public License as published by the Free
+     * Software Foundation; either version 2 of the License, or (at your option)
+     * any later version.
+     *
+     * This program is distributed in the hope that it will be useful, but WITHOUT
+     * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+     * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+     * more details.
+     *
+     * You should have received a copy of the GNU General Public License along
+     * with this program; if not, write to the Free Software Foundation, Inc.,
+     * 675 Mass Ave, Cambridge, MA 02139, USA.
+     */
+
+    /*
+      Comments & notes about the rest of the code.
+      Any history etc. about the file can go in here.
+    */
+>doc>
+
+3.0 Macro Files (.emf)
+
+    Macro files are handled slightly  differently from the source code
+    files. As the  files are  processed  at  runtime  then  there is a
+    requirement to minimise the  information  that is contained in the
+    file. In this case we make  reference to macro file that  contains
+    the fuller  license,  i.e. me.emf  which is always  required.  The
+    copyrights  are  maintained  as per the original  file in the form
+    laid out in section 1.0.
+
+    In addition, the creator and create date and additional  notes may
+    be included following the short header.
+
+    The  macros  directory  must  contain  the  file  "COPYING"  which
+    contains the GNU license.
+
+>emf>
+    ; -!- emf -!-
+    ; This is part of the JASSPA MicroEmacs macro files
+    ; Copyright (C) JASSPA 1999-2002
+    ; See the file me.emf for copying and conditions.
+    ;
+    ; Created By: Steven Philips
+    ; Created   : Wed Jul 7 13:22:00 1999
+>doc>
+
+    The original file may have been defined as:-
+
+>emf>
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;
+    ;  Created By    : Steven Phillips
+    ;  Created       : Wed Jul 7 13:22:00 1999
+    ;  Last Modified : <011010.0756>
+    ;
+    ;  Description
+    ;
+    ;  Notes
+    ;
+    ;  History
+    ;
+    ;  Copyright (c) 1999 JASSPA.
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+>doc>
+
+    Within  me.emf we carry a larger  notice,  this is the only  macro
+    file that carries the large notice. This file is always required.
+
+>emf>
+    ; -!- emf -!-
+    ; JASSPA MicroEmacs - www.jasspa.com
+    ; me.emf - Startup file for MicroEmacs '99 JASSPA Distribution
+    ;
+    ; Copyright (C) JASSPA 1988-2002
+    ;
+    ; This program is free software; you can redistribute it and/or modify it
+    ; under the terms of the GNU General Public License as published by the Free
+    ; Software Foundation; either version 2 of the License, or (at your option)
+    ; any later version.
+    ;
+    ; This program is distributed in the hope that it will be useful, but WITHOUT
+    ; ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+    ; FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+    ; more details.
+    ;
+    ; You should have received a copy of the GNU General Public License along
+    ; with this program; if not, write to the Free Software Foundation, Inc.,
+    ; 675 Mass Ave, Cambridge, MA 02139, USA.
+
+    ; Additional comments & notes about the rest of the code.
+    ; Any history etc. about the file can go in here.
+>doc>
+
+4.0 Documentation Files
+
+    The  documentation  files, i.e. nroff  files, shall fall under the
+    GNU Free Documentation  License (GFDL). This shall be applied with
+    no Front Cover or Back Cover  Texts. The license  shall be applied
+    as follows:-
+
+ @  .\"*-*- nroff -*-
+    .\" Copyright (c) 1999-2002 JASSPA.
+    .\"
+    .\" Permission is granted to copy, distribute and/or modify this document
+    .\" under the terms of the GNU Free Documentation License, Version 1.1
+    .\" or any later version published by the Free Software Foundation;
+    .\" with no Invariant  Sections, with no  Front-Cover  Texts,
+    .\" and no Back-Cover Texts. A copy of the license is included in
+    .\" the section entitled "GNU Free Documentation License".
+    .\"
+    .\" Created By: Jon Green
+    .\" Created   : Mon May 24 17:48:03 1999
+    .\"
+
+    This may replace an existing header such as:-
+
+ @  .\"*-*- nroff -*-*************************************************************
+    .\"
+    .\"			Copyright 1999 JASSPA.
+    .\"			      All Rights Reserved
+    .\"
+    .\"
+    .\"  System        :
+    .\"  Module        :
+    .\"  Object Name   : me.nrs
+    .\"  Created By    : Jon Green
+    .\"  Created       : Mon May 24 17:48:03 1999
+    .\"  Last Modified : <000719.1013>
+    .\"
+    .\"  Description
+    .\"
+    .\"  Notes
+    .\"
+    .\"  History
+    .\"
+    .\"***************************************************************************
+    .\"
+    .\"  Copyright (c) 1999 JASSPA.
+    .\"
+    .\"  All Rights Reserved.
+    .\"
+    .\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+    .\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+    .\"  readable form without prior written consent from JASSPA.
+    .\"
+    .\"***************************************************************************
+    .\"
+
+    The  documentation  directory  MUST include the file COPYING which
+    contains the GFDL license.
+
+5.0 Makefiles
+
+    All  makefiles  and build scripts shall include the GPL license as
+    defined by the source files  (.c/.h/.def) and these are considered
+    'programs'.
