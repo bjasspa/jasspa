@@ -1,10 +1,10 @@
 > -!- document; fill-mode:both; fill-column:78 -!-
 >
->  Copyright 1998-2004 JASSPA (www.jasspa.com).
+>  Copyright 1998-2005 JASSPA (www.jasspa.com).
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <050116.1646>
+>  Last Modified : <050118.2338>
 >
 
     [050116] Added "TODO" highlighting rule for Makefile comments.
@@ -101,7 +101,12 @@
 
     [041210] Fixed CUA emulation insert binding.
 
-    [041210] Deleted letter(2m) mode.
+    [041210] Deleted   letter(2m)   mode.   Use   the   default   binding   of
+             "forward-delete-char"  for letter mode off, where single  deleted
+             characters  are to be added to the kill buffer then the  existing
+             letter(2m)    mode   may   be   achieved   by   binding   as   "1
+             forward-delete-char".        Similarly       for       backspace,
+             "backward-delete-char".
 
     [041210] Deleted  line(2m)  mode. Use a binding of "1 kill-line"  to mimic
              the  line(2m)  mode  enabled and  "kill-line"  for line(2m)  mode
@@ -218,10 +223,11 @@
              of line is not to be killed.
 
     [041104] Removed  line and letter  buffer modes as these can be done using
-             numerical arguments to bindings. See the kill-line which replaces
-             line mode. See
+             numerical  arguments to bindings. See the the "kill-line" binding
+             which   replaces   line  mode.  See   "forward-delete-char"   and
+             "backward-delete-char" binding which replaces letter mode.
 
-    [041104] Changed the  kill-word  commands to be more  consistent  with GNU
+    [041104] Changed the "kill-word"  commands to be more  consistent with GNU
              Emacs.
 
     [041102] Moved winterm over to using  addKeyToBufferOnce()  for mouse move
