@@ -35,8 +35,8 @@ define-macro find
         !if &xis #l0 "[a-z]:/"
             set-variable #l0 &cat #l0 "."
         !endif
-        set-variable #l0 &xrep #l0 "/$" ""
         set-variable #l0 &rep #l0 "/" "\\"
+        set-variable #l0 &xrep #l0 "\\\\$" ""
         !if @?
             0x4 pipe-shell-command &spr "%s \"%s\" -name \"%s\" -print" %find-com #l0 #l1 "*find*" @mna
         !else
