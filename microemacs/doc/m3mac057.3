@@ -6,11 +6,12 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Jul 5 18:16:21 1999
 .\"
-.Id $Id: m3mac057.3,v 2.8 2004-02-04 22:54:22 jon Exp $
+.Id $Id: m3mac057.3,v 2.9 2004-12-08 23:40:17 bill Exp $
 .Im MicroEmacs shell|command
 .so me.tni
 .TH cvs 3
 .XI cvs - "\*(mS CVS interface"
+.XI cvs-setup - "\*(mS CVS interface setup"
 .XI cvs-add - "\*(mS CVS interface - add file"
 .XI cvs-checkout - "\*(mS CVS interface - checkout files"
 .XI cvs-commit - "\*(mS CVS interface - commit changes"
@@ -29,7 +30,7 @@
 cvs \- \*(mS CVS interface
 .br
 .Me "|%cvs-com"
-%cvs-com \- CVS Command line
+cvs-setup \- \*(mS CVS interface setup
 .br
 .Me "|cvs-add"
 cvs-add \- \*(mS CVS interface - add file
@@ -71,7 +72,7 @@ cvs-update \- \*(mS CVS interface - update directory files
 .na
 .B cvs
 .br
-.B %cvs-com
+.B cvs-setup
 .sp 1
 .B cvs-add
 .br
@@ -118,8 +119,13 @@ which allows options to be selected for the command.
 .IP "\fBCurrent State\fR"
 Checks the state of  selected  file(s) or  directory  against the  repository.
 Differences detected are shown in the \fC*cvs-state*\fR  window. This provides
-a quick method of determining the working directory state.
-This runs the command
+a  quick   method  of   determining   the   working   directory   state.
+.IP
+The \fC*cvs-state*\fR buffer supports some of the same features as a directory
+listing, the files can be loaded (using \fCreturn\fR or left click on the file
+name),  selected  (using space or left mouse button on the left hand edge) and
+CVS commands  executed from the window operate either on the selected files or
+the listed files if no files are selected. This runs the command
 .\"
 "\fCcvs\ -nq\ update <files>\fR".
 .IP "\fBCheckout files\fR"
@@ -233,26 +239,58 @@ The  \fBcvs-update\fR  command updates all files in the current directory, the
 output  being  reported to a new  \fI*cvs-update*\fR  window. Note that unlike
 most cvs sub  commands  this  command  executes  over all files in the current
 buffer's file directory.
+.SS SETUP
+.B cvs-setup
+provides a dialog  interface  to  configure  the \*(mS CVS  interface,  on the
+dialog the following items are available:
 .PP
-.B %cvs-com
-defines the command line used to execute a 
+\fBCVS Command Setup\fR
+.RS
+.IP "\fCCVSROOT\fR"
+If set, overrides the CVS \fB$CVSROOT\fR environment variable.
+.IP "\fCCVS_RSH\fR"
+If set, overrides the CVS \fB$CVS_RSH\fR environment variable.
+rsh.
+.IP "\fCCVS Command\fR"
+Defines the
 .Hr cvs 1 
-system command. The default when not defined is \fBcvs\fR.  The 
-.B %cvs-com
-variable is typically re-defined in the user configuration file to add 
-other common options i.e. \fB-z\fR for compression etc. i.e.
-.Me $emf-scheme
-.CS
-set-variable %cvs-com "cvs -z"
-.CE 0
-.Me $ehf-scheme
+system command. The default when not defined is \fBcvs\fR.
+.IP "\fCCompression\fR"
+Sets the compression level to use with all CVS commands.
+.IP "\fCQuieter CVS output\fR"
+When enabled the \fC-q\fR CVS command-line  option is used to suppress some of
+the more verbose print-out. 
+.RE
+.PP
+\fBCVS File Browser\fR
+.RS
+.IP "\fCQuick browser mode\fR"
+When  enabled the CVS file  browser does not launch a cvs command to determine
+the current state of all files in the  directory,  instead it extracts as much
+information  as it can from the local file system,  inserting  '\fCQ\fR's  for
+information  it cannot  determine.  This is useful when the  connection to the
+server is slow. The full CVS  information  can be  obtained by  executing  the
+command \fBcvs-full-reread\fR, typically bound to \fCC-f5\fR.
+.RE
+.IP "\fBTool Defaults\fR"
+The  following  define the default  settings  for options  used in various CVS
+commands:   
+.IP
+\fCRecurse into sub-directories\fR
+.IP
+\fCCheck-out missing directories\fR
+.IP
+\fCPrune empty directories\fR
 .SH NOTES
 \fBcvs\fR and sub-commands are macros defined in file \fCcvs.emf\fR.
 .PP
-By default \*(mS's \fBcvs\fR commands skip all files ignored by
-.Hr cvs 1 .
-This is configured by the variable  \fB.cvs.filter\fR,  defining this variable
-to \fC0\fR disables this special filtering.
+When  filtering  is  enabled in the file  browser  the filter  used by the CVS
+interface  depends on the file browser  mode, if \fBQuick  browser  mode\fR is
+enabled the same filter is used, but when disabled all files ignored by
+.Hr cvs 1
+are also removed by the filter. Use
+.Ht buffer-setup 3
+in the buffer to enable/disable the filter.
 .SH "SEE ALSO"
 .na
 .Ht file-browser 3 .
