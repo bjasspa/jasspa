@@ -417,12 +417,17 @@ author: bill
 Don't prompt 'File change, reload' if its a directory, just do it.
 
 Do we need to doc this?
+
+DONE[Jon 2005/01/16] No, it is in the change log.
+
 ----------------------------
 date: 2004/12/21 23:49:18
 author: bill
 Added support for proper kill buffer use in message line, i.e. set-mark, kill/copy-region, yank & reyank all work as they should.
 
 affects ml bindings, documented in ml-bind-key (?)
+
+Done Doc [Jon 2005/01/16] 
 ----------------------------
 date: 2004/12/21 18:10:18
 author: bill
@@ -436,19 +441,25 @@ author: bill
 Removed ml-clear and change-directory commands. Fix a few minor warnings.
 
 DONE
+Done Doc [Jon 2005/01/16] for ml-clear, change-directory done already.
 ----------------------------
 date: 2004/12/02 22:32:14
 author: bill
 Removed CMODE by create an new special 'cmode' type of indent, this helps in lots of things
 (C & C++ indent styles can be different, can also have a GNU C style etc, can change the indent width as new indent rule supports 't', consistent $buffer-indent interface)
 
-Change most refs to cmode to $buffer-indent or indent, doc new 'C' indent type. 
+Change  most refs to cmode to  $buffer-indent  or  indent,  doc new 'C' indent
+type. 
+
+Done Doc [Jon  2005/01/16] for indent(2) and removed  cmode(2m) and c-xxx(5)
+                           variables.
 ----------------------------
 date: 2004/11/28 22:46:41
 author: jon
 Added MinGW makefile posted to jasspa group.
 
 Added new platform?
+Done Doc [Jon  2005/01/16]
 ----------------------------
 date: 2004/11/26 22:46:55
 author: bill
@@ -488,6 +499,7 @@ date: 2004/11/05 23:00:27
 author: bill
 Fixed kill-lines and kill-word numerical argument implementation.
 
+Done Doc [Jon  2005/01/16] kill-line only
 Todo
 ----------------------------
 date: 2004/11/04 20:17:32
@@ -505,7 +517,7 @@ date: 2004/10/23 21:06:24
 author: bill
 Changed tabsize -> indentWidth, $tabsize to $indent-width & tabwidth -> tabWidth
 
-Todo
+Done Doc [Jon  2005/01/16]
 ----------------------------
 date: 2004/10/22 16:17:48
 author: jon
@@ -518,13 +530,13 @@ author: jon
 branches:  2.19.2;
 Added UNIX drag and drop (XDND)
 
-Do we need to doc this?
+Done Doc [Jon  2005/01/16]
 ----------------------------
 date: 2004/08/28 08:06:33
 author: jon
 Added century to the "about" page following comments from Thomas Hundt
 
-Update examples etc.
+Done Doc [Jon  2005/01/16]
 ----------------------------
 date: 2004/06/30 23:26:26
 author: bill
@@ -594,7 +606,7 @@ date: 2004/11/26 22:35:24
 author: bill
 Added support for Russian language
 
-Do we list supported languages in docs?
+Done Doc [Jon  2005/01/16]
 ----------------------------
 date: 2004/11/24 00:25:32
 author: bill
@@ -632,7 +644,7 @@ date: 2004/10/23 21:16:34
 author: bill
 Changed $tabsize to $indent-width and implemented tab & indent width setting in buffer-setup and magic hook
 
-Doc buffer-setup changes
+Done Doc [Jon  2005/01/16]
 ----------------------------
 date: 2004/10/21 21:11:01
 author: bill
