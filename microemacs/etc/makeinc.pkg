@@ -1,0 +1,40 @@
+# Package specific tools
+#
+# MicroEmacs date
+#
+MEYY=04
+MEMM=02
+MEDD=06
+MEVERS=20$(MEYY)$(MEMM)$(MEDD)
+#
+# Documentation tools
+#
+SUPERMAN=	superman -b
+DROFF	=	droff
+NR2RTF	=	nr2rtf
+NRAR	=	nrar
+NR2HTML	=	nr2html
+NR2EHF	=	nr2ehf
+NRORDER	=	nrorder
+NRSEARCH=	nrsearch
+HTS	=	hts
+HTS2HTML=	hts2html
+HC31	=	hc31
+#
+# Package specific directories.
+# 
+DOSRELDIR=	$(RELDIR)/dos
+UNXRELDI=	$(RELDIR)/unix
+DOCRELDIR=	$(RELDIR)/doc
+RTFRELDIR=	$(RELDIR)/rtf
+WWWRELDIR=	$(RELDIR)/www
+#
+MERELDIR=	$(RELDIR)/me$(MEYY)$(MEMM)$(MEDD)
+SRCRELDIR=	$(MERELDIR)/src
+#
+#
+#
+JASSPADIR=	$(RELDIR)/jasspa
+JASSPLDIR=	$(JASSPADIR)/spelling
+JASMACDIR=	$(JASSPADIR)/macros
+JASCOMDIR=	$(JASSPADIR)/company
