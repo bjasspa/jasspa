@@ -277,6 +277,7 @@ Miscellaneous Information
     lslmbackward-word(2)le (cDesc bcA) Move the cursor to the previous word 
     lslmbeginning-of-buffer(2)le (cDesc <cA) Move to beginning of buffer/file 
     lslmbeginning-of-line(2)le (cDC-acA) Move to beginning of line 
+    lslmdisplay-matching-fence(3)le Display the matching bracket 
     lslmend-of-buffer(2)le (cDesc >cA) Move to end of buffer/file 
     lslmend-of-line(2)le (cDC-ecA) Move to end of line 
     lslmforward-char(2)le (cDC-fcA) Move the cursor right 
@@ -410,17 +411,24 @@ Miscellaneous Information
 
 
     lslmbuffer-abbrev-file(2)le Set buffers' abbreviation file 
+    lslmcomment-end(3)le End the current comment 
+    lslmcomment-line(3)le Comment out the current line 
+    lslmcomment-restyle(3)le Reformat the current comment 
+    lslmcomment-start(3)le Start a new comment 
+    lslmcomment-to-end-of-line(3)le Extend comment to end of line 
     lslmexpand-abbrev(2)le Expand an abbreviation 
     lslmexpand-abbrev-handle(3)le (cDesc esccA) Expand an abbreviation handler 
+    lslmexpand-iso-accents(3)le Expand an ISO accent 
+    lslmexpand-look-back(3)le Complete a word by looking back for a similar word 
+    lslmexpand-word(3)le Complete a word by invocation of the speller 
     lslmfind-tag(2)le (cDesc tcA) Find tag, auto-load file and move to tag position 
     lslmgenerate-tags-file(3)le Generate a tags file 
     lslmglobal-abbrev-file(2)le Set global abbreviation file 
     lslmindent(2)le Manage the auto-indentation methods 
-    lslmiso-accents-expand(3)le Expand an ISO accent 
     lslmiso-accents-mode(3)le ISO accent expansion short-cut mode 
     lslmread-history(2)le Read in session history information 
     lslmsave-history(2)le Write history information to history file 
-    lslmspell-complete-word(3)le Complete a word by invocation of the speller 
+    lslmuncomment-line(3)le Uncomment current line 
 
 
 cEVariables cA
@@ -570,6 +578,8 @@ Miscellaneous Information
     lslmadd-color(2)le Create a new color 
     lslmadd-color-scheme(2)le Create a new color scheme 
     lslmchange-font(2)le Change the screen font 
+    lslmchange-frame-depth(2)le Change the number of lines on the current frame 
+    lslmchange-frame-width(2)le Change the number of columns on the current frame 
     lslmchange-screen-depth(2)le Change the number of lines on the screen 
     lslmchange-screen-width(2)le Change the number of columns on the screen 
     lslmhilight(2)le Manage the buffer hilighting schemes 
@@ -591,6 +601,8 @@ Miscellaneous Information
     lslm$buffer-scheme(5)le Buffer color scheme 
     lslm$cursor-blink(5)le Cursor blink rate 
     lslm$cursor-color(5)le Cursor foreground color 
+    lslm$frame-depth(5)le Number of lines on the current frame canvas 
+    lslm$frame-width(5)le Number of columns on the current frame canvas 
     lslm$global-scheme(5)le Global buffer color scheme 
     lslm$line-scheme(5)le Set the current line color scheme 
     lslm$mode-line(5)le Mode line format 
@@ -647,9 +659,9 @@ Miscellaneous Information
     lslmcommand-apropos(2)le (cDC-h acA) List commands involving a concept 
     lslmdescribe-bindings(2)le (cDC-h bcA) Show current command/key binding 
     lslmdescribe-key(2)le (cDC-x ?cA) Report keyboard key name and binding 
+    lslmexpand-iso-accents(3)le Expand an ISO accent 
     lslmglobal-bind-key(2)le (cDesc kcA) Bind a key to a named command or macro 
     lslmglobal-unbind-key(2)le (cDesc C-kcA) Unbind a key from a named command or macro 
-    lslmiso-accents-expand(3)le Expand an ISO accent 
     lslmiso-accents-mode(3)le ISO accent expansion short-cut mode 
     lslmml-bind-key(2)le Create key binding for message line 
     lslmml-unbind-key(2)le Remove key binding from message line 
@@ -871,17 +883,18 @@ ehf-scheme
     lslmadd-spell-rule(2)le Add a new spelling rule to the dictionary 
     lslmauto-spell(3)le Auto-spell support 
     lslmauto-spell-buffer(3)le Auto-spell whole buffer 
+    lslmauto-spell-ignore(3)le Auto-spell ignore current word 
     lslmauto-spell-reset(3)le Auto-spell hilight reset 
     lslmdelete-dictionary(2)le Remove a spelling dictionary from memory 
     lslmdescribe-word(3)le Display a dictionary definition of a word 
     lslmedit-dictionary(3)le Insert a dictionary in a buffer 
+    lslmexpand-word(3)le Complete a word by invocation of the speller 
     lslmfind-word(3)le Find a using spelling dictionaries 
     lslmrestore-dictionary(3)le Save dictionary user changes 
     lslmsave-dictionary(2)le Save changed spelling dictionaries 
     lslmspell(2)le Spell checker service provider 
     lslmspell-add-word(3)le Add a word to the main dictionary 
     lslmspell-buffer(3)le Spell check the current buffer 
-    lslmspell-complete-word(3)le Complete a word by invocation of the speller 
     lslmspell-edit-word(3)le Edits a spell word entry 
     lslmspell-word(3)le (cDesc $cA) Spell check a single word 
 
@@ -939,7 +952,9 @@ ehf-scheme
     lslmascii-time(3)le Return the current time as a string 
     lslmcommand-wait(2)le Conditional wait command 
     lslmcreate-callback(2)le Create a timer callback 
+    lslmcreate-frame(2)le Create a new frame 
     lslmdefine-macro-file(2)le Define macro file location 
+    lslmdelete-frame(2)le Delete the current frame 
     lslmdirectory-tree(2)le Draw the file directory tree 
     lslmetfinsrt(3)le Insert template file into current buffer 
     lslmexecute-string(2)le Execute a string as a command 
@@ -953,6 +968,7 @@ ehf-scheme
     lslmlanguageTemplates(2)le File Language Templates 
     lslmlocaleSupport(2)le Locale Support 
     lslmnewline(2)le (cDreturncA) Insert a new line 
+    lslmnext-frame(2)le Change the focus to the next frame 
     lslmosd-dialog(3)le OSD dialog box 
     lslmosd-entry(3)le OSD entry dialog box 
     lslmosd-xdialog(3)le OSD Extended dialog box 
@@ -1009,8 +1025,10 @@ ehf-scheme
     lslm$temp-name(5)le Temporary file name 
     lslm$variable-names(5)le Filtered variable name list 
     lslm$version(5)le MicroEmacs version date-code 
+    lslm$window-flags(5)le Current window setup flags 
     lslm$window-mode-line(5)le Window mode line position 
     lslm$window-scroll-bar(5)le Window scroll bar (or separator) position 
+    lslm%company-name(5)le Name of company for template 
     lslm.calc.result(5)le Last calc calculation result 
 
 !   Help Information
@@ -1226,13 +1244,17 @@ ehf-scheme
 cECommands cA
 
 
+    lslmchange-window-depth(2)le Change the depth of the current window 
+    lslmchange-window-width(2)le Change the width of the current window 
     lslmcompare-windows(2)le Compare buffer windows, ignore whitespace 
     lslmcompare-windows-exact(3)le Compare buffer windows, with whitespace 
+    lslmcreate-frame(2)le Create a new frame 
+    lslmdelete-frame(2)le Delete the current frame 
     lslmdelete-other-windows(2)le (cDC-x 1cA) Delete other windows 
     lslmdelete-window(2)le (cDC-x 0cA) Delete current window 
     lslmgrow-window-horizontally(2)le Enlarge current window horizontally (relative) 
-    lslmgrow-window-vertically(2)le (cDC-x zcA) Enlarge the current window (relative 
-    change) 
+    lslmgrow-window-vertically(2)le Enlarge the current window (relative change) 
+    lslmnext-frame(2)le Change the focus to the next frame 
     lslmnext-window(2)le (cDC-x ocA) Move the cursor to the next window 
     lslmnext-window-find-buffer(2)le [cDcA] Split the current window and show new buffer 
     lslmnext-window-find-file(2)le (cDC-x 4cA) Split the current window and find file 
@@ -1240,8 +1262,7 @@ ehf-scheme
     lslmresize-all-windows(2)le Resize all windows (automatic change) 
     lslmresize-window-horizontally(2)le Resize current window horizontally 
     (absolute) 
-    lslmresize-window-vertically(2)le (cDC-x wcA) Resize the current window (absolute 
-    change) 
+    lslmresize-window-vertically(2)le Resize the current window (absolute change) 
     lslmscroll-down(2)le (cDC-ncA) Move the window down (scrolling) 
     lslmscroll-left(2)le (cDC-x <cA) Move the window left (scrolling) 
     lslmscroll-next-window-down(2)le (cDesc C-vcA) Scroll next window down 
@@ -1250,8 +1271,7 @@ ehf-scheme
     lslmscroll-up(2)le (cDC-pcA) Move the window up (scrolling) 
     lslmshrink-window-horizontally(2)le Shrink current window horizontally 
     (relative) 
-    lslmshrink-window-vertically(2)le (cDC-x C-zcA) Shrink the current window (relative 
-    change) 
+    lslmshrink-window-vertically(2)le Shrink the current window (relative change) 
     lslmsplit-window-horizontally(2)le (cDC-x 5cA) Split current window into two 
     (horizontally) 
     lslmsplit-window-vertically(2)le (cDC-x 2cA) Split the current window into two 
@@ -1404,6 +1424,7 @@ ehf-scheme
         lslm&kbind(4)le Return the key a command is bound to 
         lslm&nbind(4)le Return the numerial argument of a binding 
         lslm&nbmode(4)le Determine named buffer mode 
+        lslm&opt(4)le MicroEmacs optional feature test 
         lslm&rep(4)le Replace string in string 
         lslm&risin(4)le Recursive case insensitive test for string in string 
         lslm&rsin(4)le Recursively test for string in string 
@@ -1632,6 +1653,7 @@ ehf-scheme
     lslmascii-time(3)le Return the current time as a string 
     lslmauto-spell(3)le Auto-spell support 
     lslmauto-spell-buffer(3)le Auto-spell whole buffer 
+    lslmauto-spell-ignore(3)le Auto-spell ignore current word 
     lslmauto-spell-reset(3)le Auto-spell hilight reset 
     lslmbackward-char(2)le (cDC-bcA) Move the cursor left 
     lslmbackward-delete-char(2)le (cDbackspacecA) Delete the previous character at the 
@@ -1661,8 +1683,12 @@ ehf-scheme
     lslmchange-directory(2)le [cDC-x C-dcA] Change the current working directory 
     lslmchange-file-name(2)le (cDC-x ncA) Change the file name of the current buffer 
     lslmchange-font(2)le Change the screen font 
+    lslmchange-frame-depth(2)le Change the number of lines on the current frame 
+    lslmchange-frame-width(2)le Change the number of columns on the current frame 
     lslmchange-screen-depth(2)le Change the number of lines on the screen 
     lslmchange-screen-width(2)le Change the number of columns on the screen 
+    lslmchange-window-depth(2)le Change the depth of the current window 
+    lslmchange-window-width(2)le Change the width of the current window 
     lslmcharset-change(3)le Convert buffer between two character sets 
     lslmcharset-iso-to-user(3)le Convert buffer from ISO standard to user character 
     set 
@@ -1678,6 +1704,7 @@ ehf-scheme
     lslmcopy-region(2)le (cDesc wcA) Copy a region of the buffer 
     lslmcount-words(2)le (cDesc C-ccA) Count the number of words in a region 
     lslmcreate-callback(2)le Create a timer callback 
+    lslmcreate-frame(2)le Create a new frame 
     lslmcvs(3)le MicroEmacs CVS interface 
     lslmcvs-add(3)le MicroEmacs CVS interface - add file 
     lslmcvs-checkout(3)le MicroEmacs CVS interface - checkout files 
@@ -1696,6 +1723,7 @@ ehf-scheme
     lslmdelete-blank-lines(2)le (cDC-x C-ocA) Delete blank lines about cursor 
     lslmdelete-buffer(2)le (cDC-x kcA) Delete a buffer 
     lslmdelete-dictionary(2)le Remove a spelling dictionary from memory 
+    lslmdelete-frame(2)le Delete the current frame 
     lslmdelete-global-mode(3)le Remove a global buffer mode 
     lslmdelete-indentation(3)le Join 2 lines deleting white spaces 
     lslmdelete-mode(3)le Remove a local buffer mode 
@@ -1729,6 +1757,8 @@ ehf-scheme
     lslmexit-emacs(2)le Exit MicroEmacs 
     lslmexpand-abbrev(2)le Expand an abbreviation 
     lslmexpand-abbrev-handle(3)le (cDesc esccA) Expand an abbreviation handler 
+    lslmexpand-look-back(3)le Complete a word by looking back for a similar word 
+    lslmexpand-word(3)le Complete a word by invocation of the speller 
     lslmfile-attrib(3)le Set the current buffers system file attributes 
     lslmfile-browser(3)le (cDf10cA) Browse the file system 
     lslmfile-browser-close(3)le Close the file-browser 
@@ -1769,8 +1799,7 @@ ehf-scheme
     lslmgoto-window(2)le Restore a saved window to the current window (historic) 
     lslmgrep(3)le Execute grep command 
     lslmgrow-window-horizontally(2)le Enlarge current window horizontally (relative) 
-    lslmgrow-window-vertically(2)le (cDC-x zcA) Enlarge the current window (relative 
-    change) 
+    lslmgrow-window-vertically(2)le Enlarge the current window (relative change) 
     lslmhelp(2)le (cDesc ?cA) Help; high level introduction to help 
     lslmhelp-command(2)le (cDC-h C-ccA) Help; command information 
     lslmhelp-item(2)le (cDC-h C-icA) Help; item information 
@@ -1827,6 +1856,7 @@ ehf-scheme
     lslmnarrow-buffer(2)le Hide buffer lines 
     lslmnewline(2)le (cDreturncA) Insert a new line 
     lslmnext-buffer(2)le (cDC-x xcA) Switch to the next buffer 
+    lslmnext-frame(2)le Change the focus to the next frame 
     lslmnext-window(2)le (cDC-x ocA) Move the cursor to the next window 
     lslmnext-window-find-buffer(2)le [cDcA] Split the current window and show new buffer 
     lslmnext-window-find-file(2)le (cDC-x 4cA) Split the current window and find file 
@@ -1868,8 +1898,7 @@ ehf-scheme
     lslmresize-all-windows(2)le Resize all windows (automatic change) 
     lslmresize-window-horizontally(2)le Resize current window horizontally 
     (absolute) 
-    lslmresize-window-vertically(2)le (cDC-x wcA) Resize the current window (absolute 
-    change) 
+    lslmresize-window-vertically(2)le Resize the current window (absolute change) 
     lslmrestore-dictionary(3)le Save dictionary user changes 
     lslmrestyle-buffer(3)le Automatically reformat a buffer's indentation 
     lslmrestyle-region(3)le Automatically reformat a regions indentation 
@@ -1911,15 +1940,13 @@ ehf-scheme
     lslmshow-region(2)le Show the current copy region 
     lslmshrink-window-horizontally(2)le Shrink current window horizontally 
     (relative) 
-    lslmshrink-window-vertically(2)le (cDC-x C-zcA) Shrink the current window (relative 
-    change) 
+    lslmshrink-window-vertically(2)le Shrink the current window (relative change) 
     lslmshut-down(3)le Editor exit callback command 
     lslmsort-lines(2)le Alphabetically sort lines 
     lslmsort-lines-ignore-case(3)le Alphabetically sort lines ignoring case 
     lslmspell(2)le Spell checker service provider 
     lslmspell-add-word(3)le Add a word to the main dictionary 
     lslmspell-buffer(3)le Spell check the current buffer 
-    lslmspell-complete-word(3)le Complete a word by invocation of the speller 
     lslmspell-edit-word(3)le Edits a spell word entry 
     lslmspell-word(3)le (cDesc $cA) Spell check a single word 
     lslmsplit-window-horizontally(2)le (cDC-x 5cA) Split current window into two 
@@ -1993,20 +2020,26 @@ ehf-scheme
     lslmchange-directory(2)le [cDC-x C-dcA] Change the current working directory 
     lslmchange-file-name(2)le (cDC-x ncA) Change the file name of the current buffer 
     lslmchange-font(2)le Change the screen font 
+    lslmchange-frame-depth(2)le Change the number of lines on the current frame 
+    lslmchange-frame-width(2)le Change the number of columns on the current frame 
     lslmchange-screen-depth(2)le Change the number of lines on the screen 
     lslmchange-screen-width(2)le Change the number of columns on the screen 
+    lslmchange-window-depth(2)le Change the depth of the current window 
+    lslmchange-window-width(2)le Change the width of the current window 
     lslmcommand-apropos(2)le (cDC-h acA) List commands involving a concept 
     lslmcommand-wait(2)le Conditional wait command 
     lslmcompare-windows(2)le Compare buffer windows, ignore whitespace 
     lslmcopy-region(2)le (cDesc wcA) Copy a region of the buffer 
     lslmcount-words(2)le (cDesc C-ccA) Count the number of words in a region 
     lslmcreate-callback(2)le Create a timer callback 
+    lslmcreate-frame(2)le Create a new frame 
     lslmdefine-help(2)le Define help information 
     lslmdefine-macro(2)le Define a new macro 
     lslmdefine-macro-file(2)le Define macro file location 
     lslmdelete-blank-lines(2)le (cDC-x C-ocA) Delete blank lines about cursor 
     lslmdelete-buffer(2)le (cDC-x kcA) Delete a buffer 
     lslmdelete-dictionary(2)le Remove a spelling dictionary from memory 
+    lslmdelete-frame(2)le Delete the current frame 
     lslmdelete-other-windows(2)le (cDC-x 1cA) Delete other windows 
     lslmdelete-registry(2)le Delete a registry tree 
     lslmdelete-some-buffers(2)le Delete buffers with query 
@@ -2054,8 +2087,7 @@ ehf-scheme
     lslmgoto-position(2)le Restore a stored position 
     lslmgoto-window(2)le Restore a saved window to the current window (historic) 
     lslmgrow-window-horizontally(2)le Enlarge current window horizontally (relative) 
-    lslmgrow-window-vertically(2)le (cDC-x zcA) Enlarge the current window (relative 
-    change) 
+    lslmgrow-window-vertically(2)le Enlarge the current window (relative change) 
     lslmhelp(2)le (cDesc ?cA) Help; high level introduction to help 
     lslmhelp-command(2)le (cDC-h C-ccA) Help; command information 
     lslmhelp-item(2)le (cDC-h C-icA) Help; item information 
@@ -2098,6 +2130,7 @@ ehf-scheme
     lslmnarrow-buffer(2)le Hide buffer lines 
     lslmnewline(2)le (cDreturncA) Insert a new line 
     lslmnext-buffer(2)le (cDC-x xcA) Switch to the next buffer 
+    lslmnext-frame(2)le Change the focus to the next frame 
     lslmnext-window(2)le (cDC-x ocA) Move the cursor to the next window 
     lslmnext-window-find-buffer(2)le [cDcA] Split the current window and show new buffer 
     lslmnext-window-find-file(2)le (cDC-x 4cA) Split the current window and find file 
@@ -2124,8 +2157,7 @@ ehf-scheme
     lslmresize-all-windows(2)le Resize all windows (automatic change) 
     lslmresize-window-horizontally(2)le Resize current window horizontally 
     (absolute) 
-    lslmresize-window-vertically(2)le (cDC-x wcA) Resize the current window (absolute 
-    change) 
+    lslmresize-window-vertically(2)le Resize the current window (absolute change) 
     lslmreyank(2)le (cDesc ycA) Restore next yank buffer 
     lslmsave-buffer(2)le (cDC-x C-scA) Save contents of changed buffer to file 
     lslmsave-buffers-exit-emacs(2)le (cDesc zcA) Exit the editor prompt user to write 
@@ -2161,8 +2193,7 @@ ehf-scheme
     lslmshow-region(2)le Show the current copy region 
     lslmshrink-window-horizontally(2)le Shrink current window horizontally 
     (relative) 
-    lslmshrink-window-vertically(2)le (cDC-x C-zcA) Shrink the current window (relative 
-    change) 
+    lslmshrink-window-vertically(2)le Shrink the current window (relative change) 
     lslmsort-lines(2)le Alphabetically sort lines 
     lslmspell(2)le Spell checker service provider 
     lslmsplit-window-horizontally(2)le (cDC-x 5cA) Split current window into two 
@@ -2196,6 +2227,7 @@ ehf-scheme
     lslmascii-time(3)le Return the current time as a string 
     lslmauto-spell(3)le Auto-spell support 
     lslmauto-spell-buffer(3)le Auto-spell whole buffer 
+    lslmauto-spell-ignore(3)le Auto-spell ignore current word 
     lslmauto-spell-reset(3)le Auto-spell hilight reset 
     lslmbuffer-help(3)le Displays help page for current buffer 
     lslmbuffer-setup(3)le Configures the current buffer settings 
@@ -2237,6 +2269,8 @@ ehf-scheme
     lslmetfinsrt(3)le Insert template file into current buffer 
     lslmexecute-tool(3)le Execute a user defined shell tool 
     lslmexpand-abbrev-handle(3)le (cDesc esccA) Expand an abbreviation handler 
+    lslmexpand-look-back(3)le Complete a word by looking back for a similar word 
+    lslmexpand-word(3)le Complete a word by invocation of the speller 
     lslmfile-attrib(3)le Set the current buffers system file attributes 
     lslmfile-browser(3)le (cDf10cA) Browse the file system 
     lslmfile-browser-close(3)le Close the file-browser 
@@ -2290,7 +2324,6 @@ ehf-scheme
     lslmsort-lines-ignore-case(3)le Alphabetically sort lines ignoring case 
     lslmspell-add-word(3)le Add a word to the main dictionary 
     lslmspell-buffer(3)le Spell check the current buffer 
-    lslmspell-complete-word(3)le Complete a word by invocation of the speller 
     lslmspell-edit-word(3)le Edits a spell word entry 
     lslmspell-word(3)le (cDesc $cA) Spell check a single word 
     lslmstart-up(3)le Editor startup callback command 
@@ -2367,6 +2400,8 @@ ehf-scheme
     lslm$fill-mode(5)le Paragraph mode; justification method 
     lslm$find-words(5)le Filtered word list 
     lslm$fmatchdelay(5)le Fence matching delay time 
+    lslm$frame-depth(5)le Number of lines on the current frame canvas 
+    lslm$frame-width(5)le Number of columns on the current frame canvas 
     lslm$global-fmod(5)le Global file modes (or attributes) 
     lslm$global-scheme(5)le Global buffer color scheme 
     lslm$home(5)le Users `home' directory location 
@@ -2418,6 +2453,7 @@ ehf-scheme
     lslm$window-chars(5)le Character set used to render the windows 
     lslm$window-col(5)le Window cursor column (no expansion) 
     lslm$window-depth(5)le Number of text lines in a window 
+    lslm$window-flags(5)le Current window setup flags 
     lslm$window-line(5)le Window cursor line 
     lslm$window-mode-line(5)le Window mode line position 
     lslm$window-scroll-bar(5)le Window scroll bar (or separator) position 
@@ -2499,6 +2535,7 @@ ehf-scheme
     lslm&nbmode(4)le Determine named buffer mode 
     lslm&negate(4)le Negation of two numbers 
     lslm&not(4)le Logical NOT operator 
+    lslm&opt(4)le MicroEmacs optional feature test 
     lslm&or(4)le Logical OR operator 
     lslm&pdec(4)le Post-decrement variable 
     lslm&pinc(4)le Post-increment variable 
@@ -2678,6 +2715,8 @@ ehf-scheme
     lslm$fill-mode(5)le Paragraph mode; justification method 
     lslm$find-words(5)le Filtered word list 
     lslm$fmatchdelay(5)le Fence matching delay time 
+    lslm$frame-depth(5)le Number of lines on the current frame canvas 
+    lslm$frame-width(5)le Number of columns on the current frame canvas 
     lslm$global-fmod(5)le Global file modes (or attributes) 
     lslm$global-scheme(5)le Global buffer color scheme 
     lslm$home(5)le Users `home' directory location 
@@ -2729,6 +2768,7 @@ ehf-scheme
     lslm$window-chars(5)le Character set used to render the windows 
     lslm$window-col(5)le Window cursor column (no expansion) 
     lslm$window-depth(5)le Number of text lines in a window 
+    lslm$window-flags(5)le Current window setup flags 
     lslm$window-line(5)le Window cursor line 
     lslm$window-mode-line(5)le Window mode line position 
     lslm$window-scroll-bar(5)le Window scroll bar (or separator) position 
@@ -2738,6 +2778,7 @@ ehf-scheme
     lslm$window-x-scroll(5)le Current window X scroll 
     lslm$window-xcl-scroll(5)le Current window current line X scroll 
     lslm$window-y-scroll(5)le Current window Y scroll 
+    lslm%company-name(5)le Name of company for template 
     lslm%compile-com(5)le Default system compile command line 
     lslm%cygnus-bin-path(5)le Cygwin BASH directory 
     lslm%cygnus-hilight(5)le Cygwin shell hilight enable flag 
@@ -2794,6 +2835,7 @@ ehf-scheme
     lslm&nbmode(4)le Determine named buffer mode 
     lslm&negate(4)le Negation of two numbers 
     lslm&not(4)le Logical NOT operator 
+    lslm&opt(4)le MicroEmacs optional feature test 
     lslm&or(4)le Logical OR operator 
     lslm&pdec(4)le Post-decrement variable 
     lslm&pinc(4)le Post-increment variable 
@@ -2869,6 +2911,7 @@ ehf-scheme
     lslmauto(2m)le Automatic source file line type detection 
     lslmauto-spell(3)le Auto-spell support 
     lslmauto-spell-buffer(3)le Auto-spell whole buffer 
+    lslmauto-spell-ignore(3)le Auto-spell ignore current word 
     lslmauto-spell-reset(3)le Auto-spell hilight reset 
     lslmautosv(2m)le Automatic file save 
     lslmawk(9)le AWK File 
@@ -2919,8 +2962,12 @@ ehf-scheme
     lslmchange-directory(2)le [cDC-x C-dcA] Change the current working directory 
     lslmchange-file-name(2)le (cDC-x ncA) Change the file name of the current buffer 
     lslmchange-font(2)le Change the screen font 
+    lslmchange-frame-depth(2)le Change the number of lines on the current frame 
+    lslmchange-frame-width(2)le Change the number of columns on the current frame 
     lslmchange-screen-depth(2)le Change the number of lines on the screen 
     lslmchange-screen-width(2)le Change the number of columns on the screen 
+    lslmchange-window-depth(2)le Change the depth of the current window 
+    lslmchange-window-width(2)le Change the width of the current window 
     lslmcharset-change(3)le Convert buffer between two character sets 
     lslmcharset-iso-to-user(3)le Convert buffer from ISO standard to user character 
     set 
@@ -2932,6 +2979,11 @@ ehf-scheme
     lslmcmode(2m)le C Programming language mode 
     lslmcommand-apropos(2)le (cDC-h acA) List commands involving a concept 
     lslmcommand-wait(2)le Conditional wait command 
+    lslmcomment-end(3)le End the current comment 
+    lslmcomment-line(3)le Comment out the current line 
+    lslmcomment-restyle(3)le Reformat the current comment 
+    lslmcomment-start(3)le Start a new comment 
+    lslmcomment-to-end-of-line(3)le Extend comment to end of line 
     lslmcompare-windows(2)le Compare buffer windows, ignore whitespace 
     lslmcompare-windows-exact(3)le Compare buffer windows, with whitespace 
     lslmcompile(3)le Start a compilation process 
@@ -2939,6 +2991,7 @@ ehf-scheme
     lslmcount-words(2)le (cDesc C-ccA) Count the number of words in a region 
     lslmcpp(9)le C++ programming language 
     lslmcreate-callback(2)le Create a timer callback 
+    lslmcreate-frame(2)le Create a new frame 
     lslmcrlf(2m)le File's line feed style 
     lslmcrypt(2m)le Encrypted file mode 
     lslmcsh(9)le C-Shell file 
@@ -2965,6 +3018,7 @@ ehf-scheme
     lslmdelete-blank-lines(2)le (cDC-x C-ocA) Delete blank lines about cursor 
     lslmdelete-buffer(2)le (cDC-x kcA) Delete a buffer 
     lslmdelete-dictionary(2)le Remove a spelling dictionary from memory 
+    lslmdelete-frame(2)le Delete the current frame 
     lslmdelete-global-mode(3)le Remove a global buffer mode 
     lslmdelete-indentation(3)le Join 2 lines deleting white spaces 
     lslmdelete-mode(3)le Remove a local buffer mode 
@@ -2980,6 +3034,7 @@ ehf-scheme
     lslmdiff-changes(3)le Find the differences from a previous edit session 
     lslmdir(2m)le Buffer is a directory listing 
     lslmdirectory-tree(2)le Draw the file directory tree 
+    lslmdisplay-matching-fence(3)le Display the matching bracket 
     lslmdisplay-white-chars(3)le Toggle the displaying of white characters 
     lslmdoc(9)le ASCII plain text document file 
     lslmdos2unix(3f)le Convert DOS format files to UNIX format files 
@@ -3014,6 +3069,9 @@ ehf-scheme
     lslmexit-emacs(2)le Exit MicroEmacs 
     lslmexpand-abbrev(2)le Expand an abbreviation 
     lslmexpand-abbrev-handle(3)le (cDesc esccA) Expand an abbreviation handler 
+    lslmexpand-iso-accents(3)le Expand an ISO accent 
+    lslmexpand-look-back(3)le Complete a word by looking back for a similar word 
+    lslmexpand-word(3)le Complete a word by invocation of the speller 
     lslmf(9)le Fortran File 
     lslmf77(9)le Fortran 77 File 
     lslmf90(9)le Fortran 90 File 
@@ -3064,8 +3122,7 @@ ehf-scheme
     lslmgoto-window(2)le Restore a saved window to the current window (historic) 
     lslmgrep(3)le Execute grep command 
     lslmgrow-window-horizontally(2)le Enlarge current window horizontally (relative) 
-    lslmgrow-window-vertically(2)le (cDC-x zcA) Enlarge the current window (relative 
-    change) 
+    lslmgrow-window-vertically(2)le Enlarge the current window (relative change) 
     lslmh(9)le C programming language header 
     lslmhelp(2)le (cDesc ?cA) Help; high level introduction to help 
     lslmhelp-command(2)le (cDC-h C-ccA) Help; command information 
@@ -3104,7 +3161,6 @@ ehf-scheme
     lslmisearch-backward(2)le (cDC-rcA) Search backwards incrementally (interactive) 
     lslmisearch-forward(2)le (cDC-scA) Search forward incrementally (interactive) 
     lslmishell(3)le Open a Cygwin BASH window 
-    lslmiso-accents-expand(3)le Expand an ISO accent 
     lslmiso-accents-mode(3)le ISO accent expansion short-cut mode 
     lslmitem-list(3)le (cDF7cA) Abbreviated search and list buffer contents 
     lslmitem-list-close(3)le (cDesc F7cA) Close the item list 
@@ -3169,6 +3225,7 @@ ehf-scheme
     lslmnawk(9)le New AWK File 
     lslmnewline(2)le (cDreturncA) Insert a new line 
     lslmnext-buffer(2)le (cDC-x xcA) Switch to the next buffer 
+    lslmnext-frame(2)le Change the focus to the next frame 
     lslmnext-window(2)le (cDC-x ocA) Move the cursor to the next window 
     lslmnext-window-find-buffer(2)le [cDcA] Split the current window and show new buffer 
     lslmnext-window-find-file(2)le (cDC-x 4cA) Split the current window and find file 
@@ -3231,8 +3288,7 @@ ehf-scheme
     lslmresize-all-windows(2)le Resize all windows (automatic change) 
     lslmresize-window-horizontally(2)le Resize current window horizontally 
     (absolute) 
-    lslmresize-window-vertically(2)le (cDC-x wcA) Resize the current window (absolute 
-    change) 
+    lslmresize-window-vertically(2)le Resize the current window (absolute change) 
     lslmrestore-dictionary(3)le Save dictionary user changes 
     lslmrestyle-buffer(3)le Automatically reformat a buffer's indentation 
     lslmrestyle-region(3)le Automatically reformat a regions indentation 
@@ -3283,8 +3339,7 @@ ehf-scheme
     lslmshow-region(2)le Show the current copy region 
     lslmshrink-window-horizontally(2)le Shrink current window horizontally 
     (relative) 
-    lslmshrink-window-vertically(2)le (cDC-x C-zcA) Shrink the current window (relative 
-    change) 
+    lslmshrink-window-vertically(2)le Shrink the current window (relative change) 
     lslmshut-down(3)le Editor exit callback command 
     lslmso(9)le UNIX t/nroff include file 
     lslmsort-lines(2)le Alphabetically sort lines 
@@ -3292,7 +3347,6 @@ ehf-scheme
     lslmspell(2)le Spell checker service provider 
     lslmspell-add-word(3)le Add a word to the main dictionary 
     lslmspell-buffer(3)le Spell check the current buffer 
-    lslmspell-complete-word(3)le Complete a word by invocation of the speller 
     lslmspell-edit-word(3)le Edits a spell word entry 
     lslmspell-word(3)le (cDesc $cA) Spell check a single word 
     lslmsplit-window-horizontally(2)le (cDC-x 5cA) Split current window into two 
@@ -3326,6 +3380,7 @@ ehf-scheme
     lslmtroff(9)le UNIX troff file 
     lslmtxt(9)le ASCII plain text file 
     lslmUserProfiles(2)le Defining a user profile 
+    lslmuncomment-line(3)le Uncomment current line 
     lslmundo(2)le (cDC-x ucA) Undo the last edit 
     lslmundo(2m)le Retain edit modifications 
     lslmuniq(3)le Make lines in a sorted list unique 
@@ -4593,9 +4648,9 @@ ehf-scheme
     Development of MicroEmacs '02 is an on-going process, follows is a list of 
     work items which is currently being undertaken or planned:- 
 
-        * Integrate the mouse interaction, especially the pop-up menus of the 
-          right mouse to be buffer sensitive and to deal with regions. (Macro 
-          implementation). 
+        * Support for multiple frames. 
+        * Horizontal scroll bars. 
+        * On-line tutorial to help beginners get up and running. 
         * Native printer support for the generation of postscript. 
         * GNU Emacs compatibility macro file. 
 
@@ -5019,7 +5074,7 @@ ehf-scheme
 
     Remember if you have enabled wide scroll bars, under windows, or 
     X-Windows, you may want to change your start-up screen width to cG82cA 
-    characters rather than cG80cA - see lslmchange-screen-width(2)le. 
+    characters rather than cG80cA - see lslmchange-frame-width(2)le. 
 
     lsFrequently Asked Questionslm[FAQ Index]le. 
 
@@ -8023,42 +8078,50 @@ $a
 
     lslmchange-buffer-name(2)le, lslmchange-directory(2)le, lslmwrite-buffer(2)le. 
 
+! 2 change-frame-depth
+! 2 change-frame-width
 ! 2 change-screen-depth
 ! 2 change-screen-width
 cEcENAME cEcA
 
 
-|change-screen-depth
-    change-screen-depth - Change the number of lines of the screen 
-|change-screen-width
-    change-screen-width - Change the number of columns on the screen 
+|change-frame-depth
+    change-frame-depth - Change the number of lines on the current frame 
+|change-frame-width
+    change-frame-width - Change the number of columns on the current frame 
 $a
 
 
 cEcESYNOPSIS cEcA
 
 
-    cCncA cDchange-screen-depthcA 
-    cCncA cDchange-screen-widthcA 
+    cCncA cDchange-frame-depthcA [ "cCdepthcA" ] 
+    cCncA cDchange-frame-widthcA [ "cCwidthcA" ] 
 
 
 cEcEDESCRIPTION cEcA
 
 
-    cDchange-screen-depthcA changes the size of the screen to cCncA lines deep. It is 
-    assumed that the screen is cCncA lines deep and MicroEmacs '02 draws cCncA lines 
-    at the users peril. A change in depth causes all of the windows currently 
-    displayed on the screen to be re-sized, the vertical position of the 
-    windows is modified to match the new screen dimension, the horizontal 
-    position of the windows remains unaltered. If the window is down-sized and 
-    the currently displayed windows are not able to fit into the new screen 
-    space then all windows are deleted with the exception of the current 
-    window. 
+    cDchange-frame-depthcA changes the depth of the current frame, if the numeric 
+    argument cCncA is given then the frame depth is changed by cCncA lines. If cCncA is 
+    not specified the user is prompted for the new cCdepthcA and the frame depth 
+    will be changed to this value. It is assumed that the screen can draw the 
+    requested cCncA lines and MicroEmacs draws the lines at the users peril. 
 
-    cDchange-screen-widthcA changes the size of the screen to cCncA characters wide. 
-    It is assumed that the screen is cCncA columns wide and MicroEmacs '02 draws cCncA 
-    columns at the users peril. The windows are reorganized as 
-    cDchange-screen-depthcA working horizontally rather than vertically. 
+    A change in depth causes all of the internal windows currently displayed 
+    in the frame to be re-sized, the vertical position of the windows are 
+    modified to match the new screen dimension, the horizontal position of the 
+    windows remains unaltered. If the window is down-sized and the currently 
+    displayed windows are not able to fit into the new screen space then all 
+    windows are deleted with the exception of the current window. 
+
+    cDchange-frame-widthcA changes the width of the current frame, if the numeric 
+    argument cCncA is given then the frame width is changed by cCncA characters. If cCncA 
+    is not specified the user is prompted for the new cCwidthcA and the frame 
+    width will be changed to this value. It is assumed that the screen can 
+    draw the requested cCncA columns and MicroEmacs draws them at the users peril. 
+    The windows are reorganized as cDchange-frame-depthcA working horizontally 
+    rather than vertically. 
 
 
 cEcENOTES cEcA
@@ -8068,19 +8131,19 @@ $a
     these commands cause the canvas window to be re-sized to accommodate the 
     change in screen size. 
 
-    In MS-DOS environments the physical size of the screen is determined by 
-    the characteristics of the display adapter. cDchange-screen-depthcA may be 
-    used to correct anomalies (usually on portables) in the displayable screen 
-    area and the graphics mode. e.g. the graphics mode utilizes 50 lines, and 
-    only 47 lines are viewable. In this case change the screen depth to 47 and 
-    MicroEmacs '02 will not utilize the remaining lines which are not 
-    viewable. 
+    In MS-DOS and UNIX Termcap environments the physical size of the screen is 
+    determined by the characteristics of the display adapter. 
+    cDchange-frame-depthcA may be used to correct anomalies (usually on portables) 
+    in the displayable screen area and the graphics mode. e.g. In DOS the 
+    graphics mode utilizes 50 lines, and only 47 lines are viewable. In this 
+    case change the screen depth to 47 and MicroEmacs will not utilize the 
+    remaining lines which are not viewable. 
 
 
 cEcESEE ALSO cEcA
 
 
-    lslm$screen-depth(5)le, lslm$screen-width(5)le. 
+    lslm$frame-depth(5)le, lslm$frame-width(5)le. 
 
 ! 2 ml-clear
 cEcENAME cEcA
@@ -8586,8 +8649,8 @@ $a
     else. 
 
     MicroEmacs '02 attempts to determine the new screen width and depth 
-    itself, in case this fails the commands lslmchange-screen-width(2)le and 
-    lslmchange-screen-depth(2)le may be used to correct the problem. 
+    itself, in case this fails the commands lslmchange-frame-width(2)le and 
+    lslmchange-frame-depth(2)le may be used to correct the problem. 
 
     Following are the standard MS-DOS text modes: 
 sB
@@ -8760,7 +8823,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmchange-screen-width(2)le, lslmchange-screen-depth(2)le, lslm$result(5)le, lslmuser-setup(3)le. 
+    lslmchange-frame-width(2)le, lslmchange-frame-depth(2)le, lslm$result(5)le, lslmuser-setup(3)le. 
 
 ! 2 prefix
 cEcENAME cEcA
@@ -9564,8 +9627,8 @@ $a
 cEcESYNOPSIS cEcA
 
 
-    cDdelete-windowcA (cDC-x 0cA) 
-    cDdelete-other-windowscA (cDC-x 1cA) 
+    cCncA cDdelete-windowcA (cDC-x 0cA) 
+    cCncA cDdelete-other-windowscA (cDC-x 1cA) 
 
 
 cEcEDESCRIPTION cEcA
@@ -9573,6 +9636,9 @@ $a
 
     cDdelete-windowcA attempts to delete the current window (remove window from 
     the screen), retrieving the lines for use in the window adjacent to it. 
+    The command fails if there is no other window or if the current window is 
+    protected from deletion (see lslm$window-flags(5)le). The deletion protection 
+    can be overridden by giving the command a numerical argument cCncA of 2. 
 
     The window deletion policy is determined by the formation of the windows 
     displayed on the screen. The bias is for the cCpreviouscA window (above) the 
@@ -9580,14 +9646,17 @@ $a
     to be merged when split horizontally. 
 
     cDdelete-other-windowscA deletes all of the other windows, the current window 
-    becomes the only window, using the entire available screen area. 
+    becomes the only window, using the entire available screen area. Windows 
+    can be protected from deletion by using the ls$window-flags(5)lm$window-flagsle variable, giving 
+    the command a numerical argument cCncA of 2 overrides this protection. 
 
 
 cEcESEE ALSO cEcA
 
 
     lslmset-position(2)le, lslmgrow-window-vertically(2)le, lslmresize-window-vertically(2)le, 
-    lslmsplit-window-horizontally(2)le, lslmsplit-window-vertically(2)le. 
+    lslmsplit-window-horizontally(2)le, lslmsplit-window-vertically(2)le, 
+    lslm$window-flags(5)le. 
 
 ! 2 backward-delete-tab
 cEcENAME cEcA
@@ -10349,10 +10418,10 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    Exit MicroEmacs '02 back to the operating system. If no argument cCncA is 
-    given and there are any unwritten, changed buffers, the editor prompts the 
-    user to discard changes. If an argument is specified then MicroEmacs '02 
-    exits immediately. 
+    Exit MicroEmacs back to the operating system. If no argument cCncA is given 
+    and there are any unwritten, changed buffers, the editor prompts the user 
+    to discard changes. If an argument is specified then MicroEmacs exits 
+    immediately. 
 
 
 cEcENOTES cEcA
@@ -11035,12 +11104,15 @@ $a
 
     lslmdescribe-bindings(2)le, lslmlist-variables(2)le. 
 
+! 2 change-window-depth
 ! 2 grow-window-vertically
 ! 2 shrink-window-vertically
 ! 2 resize-window-vertically
 cEcENAME cEcA
 
 
+|change-window-depth
+    change-window-depth - Change the depth of the current window 
 |grow-window-vertically
     grow-window-vertically - Enlarge the current window (relative change) 
 |shrink-window-vertically
@@ -11053,33 +11125,53 @@ $a
 cEcESYNOPSIS cEcA
 
 
-    cCncA cDgrow-window-verticallycA (cDC-x zcA) 
-    cCncA cDshrink-window-verticallycA (cDC-x C-zcA) 
-    cCncA cDresize-window-verticallycA (cDC-x wcA) 
+    cCncA cDchange-window-depthcA [ "cCdepthcA" ] 
+
+    cCncA cDgrow-window-verticallycA 
+    cCncA cDshrink-window-verticallycA 
+    cCncA cDresize-window-verticallycA 
 
 
 cEcEDESCRIPTION cEcA
 
 
-    cDgrow-window-verticallycA enlarges the current window by cCncA number of lines (1 
-    by default). If cCncA is negative then the window is shrunk. 
+    cDchange-window-depthcA changes the depth of the current window, if the 
+    numeric argument cCncA is given then the window depth is changed by cCncA lines. 
+    If cCncA is not specified the user is prompted for the new cCdepthcA and the 
+    window depth will be changed to this value. The command aborts if the 
+    requested size cannot be achieved (the window becomes too small or a 
+    neighbouring one does). 
 
-    cDshrink-window-verticallycA shrinks the current window by cCncA number of lines 
-    (1 by default). If cCncA is negative then the window is enlarged. 
 
-    cDresize-window-verticallycA change the size of the current window to cCncA lines, 
-    if possible. i.e. resize window is not a relative displacement. 
+cEcENOTES cEcA
 
-    Growth is performed by consuming space from the next vertical window below 
-    the current window, except at the bottom of the screen where the previous 
-    window is consumed. 
 
+    Commands cDgrow-window-verticallycA, cDshrink-window-verticallycA and 
+    cDresize-window-verticallycA were replaced by the new cDchange-window-depthcA 
+    command in April 2002. Following are macro implementations of the old 
+    commands: 
+sB
+        define-macro grow-window-vertically 
+            @# change-window-depth 
+        !emacro 
+
+        define-macro shrink-window-vertically 
+            &neg @# change-window-depth 
+        !emacro 
+
+        define-macro resize-window-vertically 
+            !if &not @? 
+                !abort 
+            !endif 
+            change-window-depth @# 
+        !emacro 
+
+sA
 
 cEcESEE ALSO cEcA
 
 
-    lslmgrow-window-horizontally(2)le, lslmresize-all-windows(2)le, 
-    lslmsplit-window-vertically(2)le. 
+    lslmchange-window-width(2)le, lslmresize-all-windows(2)le, lslmsplit-window-vertically(2)le. 
 
 ! 2 tab
 cEcENAME cEcA
@@ -13751,6 +13843,9 @@ $a
     If a -ve argument cCncA is given to cDfind-buffercA then the buffer will be 
     hidden. Any window displaying "cCbuffer-namecA" will find another buffer to 
     display. This functionality is often used with the lslmhide(2m)le buffer mode. 
+    If a value of -1 is given then the buffer will not be hidden in a window 
+    whose lslm$window-flags(5)le are set to lock the buffer to the window. If a 
+    value of less than -1 is given then the buffer is hidden from all windows. 
 
     If the current buffer has an cC$buffer-ehookcA command set then this command 
     is executed before the new buffer is switched in. If the new buffer has a 
@@ -13980,36 +14075,64 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    cDnext-windowcA makes the next window down the current window. A +ve argument 
-    cCncA, makes the cCncAth window from the top current, where 1 is the first window. 
-    A -ve argument cCncA specifies the cCnthcA window from the bottom current. An 
-    argument cCncA of 0, makes the next window down current, if this is the last 
-    window then the command fails. 
+    cDnext-windowcA makes the next window down the current window, if the current 
+    window is the last one in the frame the first one is selected. The numeric 
+    argument cCncA can be used to modify this default behaviour, it is a bitwise 
+    flag where the bits are defined as follows: 
 
-    cDprevious-windowcA makes the next window up the current window. A +ve 
-    argument cCncA, this makes the cCncAth window from the bottom the current window. 
-    A -ve argument cCncA makes the cCnthcA window from the top current. An argument cCncA 
-    of zero makes the previous window current, if this is the first window 
-    then the command fails. 
+    cD0x01cA 
+        If there is no 'next' window because this is the last then if this bit 
+        is set the search for the next window is allow to continue with the 
+        first window of the frame. As the default argument cCncA is cG1cA this is the 
+        default behaviour. 
 
-    When no argument is supplied then the next (or previous) window becomes 
-    the current window. Wrapping occurs from bottom to top on cDnext-windowcA, and 
-    top to bottom on cDprevious-windowcA. 
+    cD0x02cA 
+        When this bit is set windows whose lslm$window-flags(5)le are set to be 
+        ignored by this command are not skipped. The setting of bit cG0x010cA of a 
+        windows cD$window-flagscA will make the default action of this command 
+        skip it which means the the command may not simply select the next 
+        window but the next window without this flag set. Setting this bit of 
+        the numeric argument will force the command to always select the next 
+        window. 
 
+    cD0x04cA 
+        When set the search for the next window starts at the first window 
+        instead of the current window, this can be used to find the first 
+        window in the current frame. 
+
+    cDprevious-windowcA makes the next window up the current window. The numeric 
+    argument cCncA has the same effect on this command as for cDnext-windowcA except 
+    bit cD0x04cA starts the search at the last window of the frame. 
+
+
+cEcEEXAMPLE cEcA
+
+
+    The following example visits every window in the current frame printing 
+    the buffer it displays with a second pause between each one: 
+sB
+        ; go to the first window 
+        !force 6 next-window 
+        !while $status 
+            1000 ml-write $buffer-bname 
+            ; go to the next window - fail if this is the last 
+            !force 2 next-window 
+        !done 
+
+sA
 
 cEcENOTES cEcA
 
 
-    The cCn=0cA argument is typically used to traverse the window list from top to 
-    bottom, where the cGFALSEcA status may be trapped and used as an indicator 
-    that end of the windows list has been reached. 
+    Both commands fail if a suitable window cannot be for, see the example on 
+    how this can be used. 
 
 
 cEcESEE ALSO cEcA
 
 
     lslmnext-window-find-buffer(2)le, lslmnext-window-find-file(2)le, lslmset-position(2)le, 
-    lslmgoto-position(2)le. 
+    lslmgoto-position(2)le, lslm$window-flags(5)le. 
 
 ! 2 forward-word
 ! 2 backward-word
@@ -14304,12 +14427,13 @@ $a
         Configures the printer, the configuration is stored in the "cG/printcA" 
         registry. 
 
-cDcA
-        Configures the printer and, on win32 platforms, opens a Windows 
-        printing dialog box enabling the user to configure the printer, font 
-        and page layout. The required printing is then performed. 
+    cD0cA 
+        Configures the printer and, on win32 platforms, using the Windows 
+        printer, opens a Windows printing dialog box enabling the user to 
+        configure the printer, font and page layout. The required printing is 
+        then performed. 
 
-cDcA
+    cD1cA 
         Configures the printer and performs the required printing. 
 
 
@@ -14330,10 +14454,10 @@ $a
             cG0x01cA - Internal queue. 
             cG0x02cA - To file only. 
             cG0x03cA - To file and command line. 
-        cG0x01cA - Bit set, header enabled. 
+        cG0x10cA - Bit set, header enabled. 
         cG0x20cA - Bit set, footer 
-        cG0x04cA - Bit set, enable line numbers. 
-        cG0x08cA - Bit set, Enable truncated line character (typically \). 
+        cG0x40cA - Bit set, enable line numbers. 
+        cG0x80cA - Bit set, Enable truncated line character (typically \). 
 
     cDpaper-xcA (cCintegercA) 
         Paper page width in character cells. 
@@ -16133,7 +16257,7 @@ $a
 cEcESYNOPSIS cEcA
 
 
-    cDsuspend-emacscA 
+    cCncA cDsuspend-emacscA 
 
 
 cEcEPLATFORM cEcA
@@ -16146,7 +16270,8 @@ $a
 
 
     cDsuspend-emacscA suspends the editing processor and puts it into the 
-    background. The "cCfgcA" command restarts MicroEmacs '02. 
+    background. The "cCfgcA" command restarts MicroEmacs. The prompt to suspend is 
+    disabled if a cG0cA numeric argument cCncA is given to the command. 
 
 
 cEcESEE ALSO cEcA
@@ -16467,7 +16592,7 @@ $a
 
     The +ve numeric argument can be very useful for delaying MicroEmacs as 
     well, for example, the character string "cG'ecA" can be converted to e-accute 
-    using lslmiso-accents-expand(3)le. This could be performed automatically using 
+    using lslmexpand-iso-accents(3)le. This could be performed automatically using 
     translate-key as follows: 
 sB
         1000 translate-key "' e" "\xE9" 
@@ -16537,8 +16662,8 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmuser-setup(3)le, lslmdescribe-key(2)le, lslmglobal-bind-key(2)le, lslmstart-kbd-macro(2)le, 
-    cDxterm(1)cA, cDsh(1)cA. 
+    lslmexpand-iso-accents(3)le, lslmuser-setup(3)le, lslmdescribe-key(2)le, lslmglobal-bind-key(2)le, 
+    lslmstart-kbd-macro(2)le, cDxterm(1)cA, cDsh(1)cA. 
 
 ! 2 set-char-mask
 cEcENAME cEcA
@@ -17557,7 +17682,7 @@ $a
         0 define-macro-file utils ascii-time regex-forward regex-backward 
         define-macro-file format clean sort-lines-ignore-case tabs-to-spaces ... 
         define-macro-file cvs cvs cvs-state cvs-update cvs-commit cvs-log ... 
-        define-macro-file abbrev expand-abbrev-handle spell-complete-word ... 
+        define-macro-file abbrev expand-abbrev-handle expand-iso-accents ... 
         define-macro-file misc symbol check-line-length alarm time 
         define-macro-file search replace-all-string query-replace-all-string 
         define-macro-file tools compile grep rgrep which diff diff-changes 
@@ -17778,7 +17903,7 @@ $a
     is inherited is when a window is split (see lslmsplit-window-vertically(2)le). 
 
     When binding cDscroll-leftcA to the keyboard then it is important to note that 
-    when no argument is specified the resolution is cCscreen-widthcA's. A key 
+    when no argument is specified the resolution is cCframe-widthcA's. A key 
     binding would operate on character multiples, hence the command should be 
     bound with a numeric argument to perform the perform the keyboard action. 
     e.g. 
@@ -17870,12 +17995,15 @@ $a
     lslm$scroll-bar(5)le, lslm$scroll-bar-scheme(5)le, lslm$window-chars(5)le, 
     lslmgrow-window-horizontally(2)le, lslmsplit-window-vertically(2)le. 
 
+! 2 change-window-width
 ! 2 grow-window-horizontally
 ! 2 shrink-window-horizontally
 ! 2 resize-window-horizontally
 cEcENAME cEcA
 
 
+|change-window-width
+    change-window-width - Change the width of the current window 
 |grow-window-horizontally
     grow-window-horizontally - Enlarge current window horizontally (relative) 
 |shrink-window-horizontally
@@ -17888,6 +18016,8 @@ $a
 cEcESYNOPSIS cEcA
 
 
+    cCncA cDchange-window-widthcA [ "cCwidthcA" ] 
+
     cCncA cDgrow-window-horizontallycA 
     cCncA cDshrink-window-horizontallycA 
     cCncA cDresize-window-horizontallycA 
@@ -17896,32 +18026,50 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    cDgrow-window-horizontallycA enlarges the current window by cCncA number of 
-    columns (1 by default). If cCncA is negative then the window is shrunk. 
-
-    cDshrink-window-horizontallycA shrinks the current window by cCncA number of 
-    columns (1 by default). If cCncA is negative then the window is enlarged. 
-
-    cDresize-window-horizontallycA change the size of the current window to cCncA 
-    columns, if possible. i.e. resize window is not a relative displacement. 
-
-    Growth is performed by consuming space from the next horizontal window to 
-    the right of the current window, except when the window is on the 
-    right-hand edge of the screen when space is consumed from the left. 
+    cDchange-window-widthcA changes the width of the current window, if the 
+    numeric argument cCncA is given then the window width is changed by cCncA 
+    characters. If cCncA is not specified the user is prompted for the new cCwidthcA 
+    and the window width will be changed to this value. The command aborts if 
+    the requested size cannot be achieved (the window becomes too small or a 
+    neighbouring does). 
 
 
 cEcEEXAMPLE cEcA
 
 
-    Refer to cGmouse.ehfcA for an example of window growth using the mouse to 
+    Refer to cGmouse.emfcA for an example of window growth using the mouse to 
     manipulate the size of the windows. 
 
+
+cEcENOTES cEcA
+
+
+    Commands cDgrow-window-horizontallycA, cDshrink-window-horizontallycA and 
+    cDresize-window-horizontallycA were replaced by the new cDchange-window-widthcA 
+    command in April 2002. Following are macro implementations of the old 
+    commands: 
+sB
+        define-macro grow-window-horizontally 
+            @# change-window-width 
+        !emacro 
+
+        define-macro shrink-window-horizontally 
+            &neg @# change-window-width 
+        !emacro 
+
+        define-macro resize-window-horizontally 
+            !if &not @? 
+                !abort 
+            !endif 
+            change-window-width @# 
+        !emacro 
+
+sA
 
 cEcESEE ALSO cEcA
 
 
-    lslm$mouse-pos(5)le, lslm$scroll-bar(5)le, lslm$window-chars(5)le, 
-    lslmgrow-window-vertically(2)le, lslmresize-all-windows(2)le, 
+    lslmchange-window-depth(2)le, lslmresize-all-windows(2)le, 
     lslmsplit-window-horizontally(2)le. 
 
 ! 2 resize-all-windows
@@ -18451,6 +18599,121 @@ $a
 
     lslmml-write(2)le, lslm$buffer-input(5)le. 
 
+! 2 create-frame
+cEcENAME cEcA
+
+
+    create-frame - Create a new frame 
+$a
+
+
+cEcESYNOPSIS cEcA
+
+
+    cCncA cDcreate-framecA 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    cDcreate-framecA creates a new frame for the current MicroEmacs session. 
+    MicroEmacs support the creation of 'internal' multiple frames on all 
+    platforms and 'external' frames on windowing platforms (such as Windows 
+    and XTerm). An external frame creates a new OS window so both the existing 
+    frame and the new frame are visible, whereas an internal frame uses the 
+    same OS window or console which means that the existing frame is hidden 
+    and the new frame takes its place. 
+
+    The numeric argument cCncA can be used to define which type of frame is to be 
+    created. If an argument of cG1cA is given (the default argument) an external 
+    frame will be created, whereas an internal frame will be created if an 
+    argument of cG0cA is given. 
+
+
+cEcENOTES cEcA
+
+
+    Internal frames can only be accessed via the lslmnext-frame(2)le command, 
+    external frames can usually be accessed via the OS as well. 
+
+    MicroEmacs is not multi-threaded in that only one frame can be active at 
+    any one time (the complexity of being able to run a command in one frame 
+    while editing in another would rapidly lead it away from the 'Micro' 
+    status). This means that if a command is left active (such as a search) in 
+    one frame and the focus is changed to another the input is 'sent' to the 
+    frame with the active command and the message '[NOT FOCUS]' will appear in 
+    the message-line of the frame with the OS focus. 
+
+    cDcreate-framecA may be useful in macros that rely on a window layout, this is 
+    because they can preserve the users current window layout by creating and 
+    new internal frame in which to run. 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmdelete-frame(2)le, lslmnext-frame(2)le. 
+
+! 2 delete-frame
+cEcENAME cEcA
+
+
+    delete-frame - Delete the current frame 
+$a
+
+
+cEcESYNOPSIS cEcA
+
+
+    cCncA cDdelete-framecA 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    cDdelete-framecA deletes the current frame. 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmcreate-frame(2)le, lslmnext-frame(2)le. 
+
+! 2 next-frame
+cEcENAME cEcA
+
+
+    next-frame - Change the focus to the next frame 
+$a
+
+
+cEcESYNOPSIS cEcA
+
+
+    cCncA cDnext-framecA 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    cDnext-framecA changes the focus to the next frame. The numerical argument cCncA 
+    can be used to select the type of frame to change to, it is a bit based 
+    flag defined as follows: 
+
+    cD0x01cA 
+        Allow the selection of an external frame. 
+
+    cD0x02cA 
+        Allow the selection of an internal frame. The default operation when cCncA 
+        is omitted is to allow the selection of either type of frame 
+        (equivalent to an argument of cG3cA). 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmcreate-frame(2)le, lslmdelete-frame(2)le. 
+
 ! 2 Bindings
 cEcEDEFAULT KEY BINDINGS cEcA
 
@@ -18605,7 +18868,7 @@ $a
     cGC-x @cA lspipe-shell-command(2)lmpipe-shell-commandle Pipe a shell command to buffer. 
     cGC-x [cA lsscroll-down(2)lmscroll-uple Move backward by one screen. 
     cGC-x ]cA lsscroll-down(2)lmscroll-downle Move forward by one screen. 
-    cGC-x ^cA lsgrow-window-vertically(2)lmgrow-window-verticallyle Enlarge the current window by a line. 
+    cGC-x ^cA lschange-window-depth(2)lmgrow-window-verticallyle Enlarge the current window by a line. 
     cGC-x `cA lsget-next-line(2)lmget-next-linele Find the next command line. 
     cGC-x acA lsgoto-alpha-mark(2)lmgoto-alpha-markle Move the cursor to an alphabetic mark. 
     cGC-x bcA lsnext-buffer(2)lmfind-bufferle Switch window to a buffer. 
@@ -18622,11 +18885,11 @@ $a
     cGC-x scA lssearch-forward(2)lmsearch-forwardle Search in a forward direction. 
     cGC-x ucA lsundo(2)lmundole Undo the previous edit. 
     cGC-x vcA lsset-variable(2)lmset-variablele Assign a new value to a variable. 
-    cGC-x wcA lsgrow-window-vertically(2)lmresize-window-verticallyle Resize the window. 
+    cGC-x wcA lschange-window-depth(2)lmresize-window-verticallyle Resize the window. 
     cGC-x xcA lsnext-buffer(2)lmnext-bufferle Switch to the next buffer. 
-    cGC-x zcA lsgrow-window-vertically(2)lmgrow-window-verticallyle Enlarge the current window. 
-    cGC-x {cA lsgrow-window-horizontally(2)lmshrink-window-horizontallyle Shrink current window horizontally. 
-    cGC-x }cA lsgrow-window-horizontally(2)lmgrow-window-horizontallyle Enlarge current window horizontally. 
+    cGC-x zcA lschange-window-depth(2)lmgrow-window-verticallyle Enlarge the current window. 
+    cGC-x {cA lschange-window-width(2)lmshrink-window-horizontallyle Shrink current window horizontally. 
+    cGC-x }cA lschange-window-width(2)lmgrow-window-horizontallyle Enlarge current window horizontally. 
 
     cGC-x C-acA lsset-alpha-mark(2)lmset-alpha-markle Mark the current position with an alphabetic mark. 
     cGC-x C-bcA lslist-buffers(2)lmlist-buffersle Display buffer list. 
@@ -18650,7 +18913,7 @@ $a
     cGC-x C-wcA lswrite-buffer(2)lmwrite-bufferle Write a file to disk witn new name. 
     cGC-x C-xcA lsexchange-point-and-mark(2)lmexchange-point-and-markle Exchange cursor with mark position. 
     cGC-x C-ycA lsinsert-file-name(2)lminsert-file-namele Insert filename into current buffer. 
-    cGC-x C-zcA lsgrow-window-vertically(2)lmshrink-window-verticallyle Reduce size of current window. 
+    cGC-x C-zcA lschange-window-depth(2)lmshrink-window-verticallyle Reduce size of current window. 
 
 
 cEC-h Prefix Sequences cA
@@ -18785,6 +19048,8 @@ $a
         cDcase-word-capitalizecA => lscapitalize-word(2)lmcapitalize-wordle 
         cDcase-word-lowercA => lscapitalize-word(2)lmlower-case-wordle 
         cDcase-word-uppercA => lscapitalize-word(2)lmupper-case-wordle 
+        cDchange-screen-depthcA => lschange-frame-depth(2)lmchange-frame-depthle 
+        cDchange-screen-widthcA => lschange-frame-depth(2)lmchange-frame-widthle 
         cDclear-message-linecA => lsml-clear(2)lmml-clearle 
         cDctlx-prefixcA => lsprefix(2)lmprefix 2le 
         cDdelete-global-modecA => lsglobal-mode(2)lmglobal-modele 
@@ -18800,7 +19065,7 @@ $a
         cDexecute-macro-#cA => cCDeletedcA 
         cDfile-name-insertcA => lsinsert-file-name(2)lminsert-file-namele 
         cDforward-charactercA => lsforward-char(2)lmforward-charle 
-        cDgrow-windowcA => lsgrow-window-horizontally(2)lmgrow-window-horizontallyle 
+        cDgrow-windowcA => lschange-window-width(2)lmgrow-window-horizontallyle 
         cDhandle-tabcA => lstab(2)lmtable 
         cDi-shellcA => lsshell(2)lmshellle 
         cDincremental-searchcA => lsisearch-forward(2)lmisearch-forwardle 
@@ -18830,7 +19095,7 @@ $a
         cDsearch-reversecA => lssearch-forward(2)lmsearch-backwardle 
         cDselect-buffercA => lsnext-buffer(2)lmfind-bufferle 
         cDsetcA => lsset-variable(2)lmset-variablele 
-        cDshrink-windowcA => lsgrow-window-vertically(2)lmshrink-window-verticallyle 
+        cDshrink-windowcA => lschange-window-depth(2)lmshrink-window-verticallyle 
         cDsplit-current-windowcA => lssplit-window-vertically(2)lmsplit-window-verticallyle 
         cDtop-bottom-switchcA => cCDeletedcA 
         cDtranspose-characterscA => lstranspose-chars(2)lmtranspose-charsle 
@@ -20239,6 +20504,13 @@ ehf-scheme
     is currently active. 
 
 
+cEcENOTES cEcA
+
+
+    The toolbar 'Buffer File Info' tool uses cDusr8cA mode to track the status of 
+    the buffer, when using this tool the mode should not be used. 
+
+
 cEcESEE ALSO cEcA
 
 
@@ -20304,7 +20576,7 @@ ehf-scheme
     lslmindent(2m)le modes for editing text documents. 
 
     cDwrapcA mode also automatically wraps long lines in the output of an 
-    lslmipipe-shell-command(2)le to the width of the MicroEmacs '02 window. 
+    lslmipipe-shell-command(2)le to the width of the MicroEmacs window. 
 
 
 cEcESEE ALSO cEcA
@@ -21663,7 +21935,7 @@ ehf-scheme
         cGmehpux10.gzcA - Hewlett Packard HP-UX 10 Executable 
         cGmehpux11.gzcA - Hewlett Packard HP-UX 11 Executable 
         cGmesunos55.gzcA - Sun OS 5.5 Executable 
-        cGmesunos56.gzcA - Sun OS 5.5 Executable 
+        cGmesunos56.gzcA - Sun OS 5.6 Executable 
         cGmesolx86.gzcA - Sun Solaris 2.6 Intel Platform Executable 
         cGmelinux20.gzcA - Linux 2.0.0 Executable 
         cGmefreebsd.gzcA - Free BSD Executable 
@@ -21686,6 +21958,7 @@ ehf-scheme
         cGlsdxenus.zipcA - American extended dictionary. 
         cGlsdmengb.zipcA - British rules and base dictionary. 
         cGlsdxengb.zipcA - British extended dictionary. 
+        cGlsdmfifi.zipcA - Finnish rules and dictionary. 
         cGlsdmfrfr.zipcA - French rules and dictionary. 
         cGlsdmdede.zipcA - German rules and base dictionary. 
         cGlsdxdede.zipcA - German extended dictionary. 
@@ -21698,6 +21971,7 @@ ehf-scheme
         cGlsdxenus.gzcA - American extended dictionary. 
         cGlsdmengb.tar.gzcA - British rules and base dictionary. 
         cGlsdxengb.gzcA - British extended dictionary. 
+        cGlsdmfifi.tar.gzcA - Finnish rules and dictionary. 
         cGlsdmfrfr.tar.gzcA - French rules and dictionary. 
         cGlsdmdede.tar.gzcA - German rules and base dictionary. 
         cGlsdxdede.gzcA - German extended dictionary. 
@@ -22501,8 +22775,8 @@ ehf-scheme
                 ; Small non-bold font. 
                 ; change-font "-misc-fixed-medium-r-normal--13-*-*-*-c-70-iso8859-1" 
                 ; Change the size of the screen 
-                82 change-screen-width 
-                50 change-screen-depth 
+                82 change-frame-width 
+                50 change-frame-depth 
             !endif 
         !endif 
         ; Change the default diff command-line for GNU diff utility all platforms 
@@ -23222,14 +23496,18 @@ ehf-scheme
 
     cD-dcA 
         Build a debugging version, the output is cGmedcA (or cGmed32cA for 32-bit 
-        Windows versions) 
-
-    cD-gcA 
-        UNIX only. Builds using GNU compiler and tools as opposed to native 
-        tools. 
+        Windows versions). 
 
     cD-hcA 
         Display a simple help page 
+
+    cD-lcA cClogfilecA 
+        Redirect all compilation output to the cClogfilecA, this may not work on 
+        DOS or Windows systems. 
+
+    cD-lacA cClogfilecA 
+        Append all compilation output to the end of cClogfilecA, this may not work 
+        on DOS or Windows systems. 
 
     cD-mcA cCmakefilecA 
         Build using the specified makefile. over-riding the auto system 
@@ -23266,21 +23544,23 @@ ehf-scheme
                 * cGwin32v5.makcA Microsoft Developer v5.x, 32-bit Windows. 
                 * cGwin32v6.makcA Microsoft Developer v6.x, 32-bit Windows. 
 
-    cD-ncA 
-        Build a console version (i.e. no window support). Constructs the 
-        executable cGmen32.execA on Windows, cGmencA on Linux. 
-
-    cD-nucA 
-        Build a console version with URL support (Windows '95/'98/NT only), 
-        constructs the executable cGmenu32.execA. 
-
-    cD-pcA cC<searchpath>cA 
-        Sets the default system search path to cC<searchpath>cA, the default is 
-        cG/usr/local/microemacscA. Sets the default system search path to 
+    cD-necA 
+        Build NanoEmacs (a cut down version aimed as a vi replacement), the 
+        output is cGnecA (or cGned32cA for 32-bit Windows versions). 
 
     cD-ScA 
         Build spotless. Deletes all of the object files and any backup files, 
         tag files etc. 
+
+    cD-tcA cCtypecA 
+        Set the build type, where cCtypecA can be one of the following: 
+
+                * cGccA Build a console only version (i.e. no window support), the 
+                  output is cGmeccA (or cGmec32cA on Windows). 
+                * cGwcA Build a windows only version (i.e. no console support), 
+                  the output is cGmewcA (or cGmew32cA on Windows). 
+                * cGcwcA Build a version which supports both console and windows, 
+                  the output is cGmecwcA (or cGmecw32cA on Windows). 
 
     cD-ucA 
         Build a URL version (Windows '95/'98/NT only), constructs the 
@@ -23313,25 +23593,6 @@ ehf-scheme
     platforms. If any new platform ports are performed by individuals then 
     please submit the makefiles and any source changes back to JASSPA - see 
     lslmContact Informationle. 
-
-
-cESearch Path cA
-
-
-    The default search path is defined as "cC/usr/local/microemacscA" for all UNIX 
-    type environments. Recently there has been a move to use the "cC/usr/sharecA" 
-    directory. The search path may be re-defined through the macro definition 
-    "cG_SEARCH_PATHcA". Change the C pre-processor to include the macro 
-    definition. For example, to use "cC/usr/share/jasspacA" with multiple 
-    sub-directories for each of the components:- 
-
-        -D_SEARCH_PATH="\"/usr/share/jasspa/company:\ 
-        /usr/share/jasspa/macros:\ 
-        /usr/share/jasspa/spelling\"" 
-
-
-    Note due to the line length then the cCbackslashcA (\) has been used to 
-    continue the lines. 
 
 ! 2 localeSupport
 cEcELOCALE SUPPORT cEcA
@@ -25539,6 +25800,7 @@ $a
     lslmcalc(3)le, lslm$line-scheme(5)le, lslmnarrow-buffer(2)le. 
 
 ! 3 etfinsrt
+! 5 %company-name
 cEcENAME cEcA
 
 
@@ -25582,6 +25844,10 @@ $a
 
     cG$YEAR$cA 
         To the current year (4 digit number). 
+
+    cG$CURSOR$cA 
+        To leave the cursor at this point, only one of these tokens should be 
+        used in the template and the token is removed. 
 
 
 cEcEEXAMPLE cEcA
@@ -27237,7 +27503,7 @@ $a
 
 |regex-forward
     regex-forward - Search for a magic string in the forward direction 
-|refex-backward
+|regex-backward
     regex-backward - Search for a magic string in the backward direction 
 $a
 
@@ -27468,6 +27734,7 @@ $a
 ! 3 auto-spell
 ! 3 auto-spell-buffer
 ! 3 auto-spell-reset
+! 3 auto-spell-ignore
 cEcENAME cEcA
 
 
@@ -27477,6 +27744,8 @@ $a
     auto-spell-buffer - Auto-spell whole buffer 
 |auto-spell-reset
     auto-spell-reset - Auto-spell hilight reset 
+|auto-spell-ignore
+    auto-spell-ignore - Auto-spell ignore current word 
 $a
 
 
@@ -27486,6 +27755,7 @@ $a
     cCncA cDauto-spellcA 
     cDauto-spell-buffercA 
     cDauto-spell-resetcA 
+    cCncA cDauto-spell-ignorecA 
 
 
 cEcEDESCRIPTION cEcA
@@ -27506,11 +27776,19 @@ $a
     cDauto-spell-resetcA resets the buffer hilighting scheme, removing any added 
     erroneous words. 
 
+    cDauto-spell-ignorecA gets the current word and deletes the erroneous 
+    hilighting and adds the word to the current temporary ignore dictionary, 
+    auto-spell and the spelling-checker will now ignore the word. If an 
+    argument cDncA of 2 is given to the command the word is added to the users 
+    personal dictionary instead of the temporary ignore dictionary so the word 
+    is 'ignored' in all future sessions of MicroEmacs as well. 
+
 
 cEcENOTES cEcA
 
 
-    cDauto-spellcA and cDauto-spell-resetcA are macros defined in cGspellaut.emfcA. 
+    cDauto-spellcA, cDauto-spell-buffercA, cDauto-spell-resetcA and cDauto-spell-ignorecA are 
+    macros defined in cGspellaut.emfcA. 
 
 
 cEcESEE ALSO cEcA
@@ -28116,31 +28394,31 @@ $a
 
     lslmcompare-windows(2)le, lslmcompile(3)le, cDdiff(1)cA, lslmgdiff(3f)le, lslmgrep(3)le, lslm%grep-com(5)le. 
 
+! 3 expand-iso-accents
 ! 3 iso-accents-mode
-! 3 iso-accents-expand
 cEcENAME cEcA
 
 
+|expand-iso-accents
+    expand-iso-accents - Expand an ISO accent 
 |iso-accents-mode
     iso-accents-mode - Enable/disable ISO accent expansion short-cut mode 
-|iso-accents-expand
-    iso-accents-expand - Expand an ISO accent 
 $a
 
 
 cEcESYNOPSIS cEcA
 
 
+    cDexpand-iso-accentscA 
     cCncA cDiso-accents-modecA 
-    cCncA cDiso-accents-expandcA 
 
 
 cEcEDESCRIPTION cEcA
 
 
-    cDiso-accents-modecA provides a facility to enter a plain text representation 
-    of an ISO accent and then to expand it into a proper ISO accented 
-    character. For example:- 
+    cDexpand-iso-accentscA provides a facility to enter a plain text 
+    representation of an ISO accent and then to expand it into a proper ISO 
+    accented character. For example:- 
 
         cG`acA => small a, grave accent 
         cG^acA => small a, circumflex accent 
@@ -28160,36 +28438,47 @@ $a
         cGoecA => small oe ligature 
         cG/ocA => small o, slash 
 
-    In order to use the ISO accent expansion then it must be installed, either 
-    from the command line or, for a more permanent installation, from the 
-    cCusercA.emf file. Installation is performed using the command 
-    cDiso-accents-modecA, if cCncA is specified (any non-zero numeric value) then the 
-    ISO accent expansion is installed locally into the current buffer. If cCncA is 
-    omitted then expansion is available globally (across all buffers). An 
-    argument of 0 and the cDiso-accents-modecA is un-installed. 
+    The cDexpand-iso-accentscA can be called directly to expands the ISO 
+    abbreviated character sequence into it's ISO ASCII character equivalent. 
+    The command looks at the 2 characters to the left of the cursor and tries 
+    to find a matching abbreviation, if found the 2 characters are removed, 
+    replaced by the single ISO character. 
 
-    cDiso-accents-expandcA is the macro command that expands the ISO abbreviated 
-    character sequence into it's ISO ASCII character equivalent. This is by 
-    default bound to cGESCcA cGESCcA. If an ISO character is not located then 
-    lslmexpand-abbrev(2)le is invoked to try a standard abbreviation. 
+    The more typical way of using this feature is by enabling its use in the 
+    lsexpand-abbrev-handle(3)lmabbreviation handlerle which is usually bound to "cGesc esc cA". It can be 
+    enabled by either by using the cDiso-accents-modecA command or, for a more 
+    permanent installation, from the lslmuser-setup(3)le => General => Abbrev 
+    Expansion settings. 
+
+    When using the cDiso-accents-modecA command, if a numeric argument cCncA is given 
+    (the value is not used) then the ISO accent expansion is installed locally 
+    into the current buffer. If cCncA is omitted then expansion is 
+    enabled/disabled globally (across all buffers). 
+
+    cDexpand-iso-accentscA is the macro command that This is by default bound to . 
+    If an ISO character is not located then lslmexpand-abbrev(2)le is invoked to try 
+    a standard abbreviation. 
 
 
 cEcENOTES cEcA
 
 
-    cDiso-accents-modecA and cDiso-accents-expandcA are implemented as macros in the 
-    file cGlangutl.emfcA, the repertoire of expansions may be enhanced by editing 
+    cDiso-accents-modecA and cDexpand-iso-accentscA are implemented as macros in the 
+    file cGabbrev.emfcA, the repertoire of expansions may be enhanced by editing 
     this file. 
 
-    The operation of the cDiso-accents-modecA could equally as well be implemented 
-    with the appropriate definitions in a lslmglobal-abbrev-file(2)le. 
+    Unlike the general lslmexpand-abbrev(2)le command which attempts to expand the 
+    current word, cDexpand-iso-accentscA only considers the last two characters 
+    regardless of whether they are word characters or start a word. Therefore 
+    the general cDexpand-abbrevcA command cannot be used to implement a similar 
+    feature. 
 
 
 cEcESEE ALSO cEcA
 
 
-    lslmbuffer-abbrev-file(2)le, lslmexpand-abbrev(2)le, lslmglobal-abbrev-file(2)le, 
-    lslmglobal-abbrev-file(2)le. 
+    lslmexpand-abbrev-handle(3)le, lslmbuffer-abbrev-file(2)le, lslmexpand-abbrev(2)le, 
+    lslmexpand-look-back(3)le, lslmexpand-word(3)le. 
 
 ! 3 gdb
 ! 3 dbx
@@ -28262,11 +28551,19 @@ $a
     lslmexpand-abbrev(2)le 
 
         Uses a buffer specific and global abbreviation files, if set, to look 
-        up the abbreviation. 
+        up the abbreviation. The use of the abbreviation file can be disabled 
+        using lslmbuffer-setup(3)le. 
 
-    lslmiso-accents-expand(3)le 
+    lslmexpand-iso-accents(3)le 
 
-        Expands ISO accent letter if the expansion mode is enabled. 
+        Expands ISO accent letter if the expansion mode is enabled via either 
+        the lslmuser-setup(3)le General Page or by using the lslmiso-accents-mode(3)le 
+        command. 
+
+    lslmexpand-look-back(3)le 
+
+        Looks for a word starting the same in the current buffer's last 100 
+        lines, this can be enabled in the lslmuser-setup(3)le General page. 
 
     cDBuffer specific expansioncA 
 
@@ -28276,9 +28573,10 @@ $a
     cDWord expansioncA 
 
         If the current buffer does not support file type specific expansion 
-        and the variable cD.spell-complete-word.oncA is set to cG1cA the abbreviation 
-        is assumed to be the start of a word and completed against the 
-        dictionary of the user's current language. 
+        and Word Expansion is enabled via the lslmuser-setup(3)le General page 
+        (cGDict'ncA setting) expansion is attempted using the lslmexpand-word(3)le 
+        command which expands the current partial word using the dictionary of 
+        the user's current language; warning - this can be slow! 
 
     The command exits after first command to successfully expand or if none 
     expand the command fails. See the help in the individual expansion 
@@ -28288,48 +28586,51 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmexpand-abbrev(2)le, lslmiso-accents-expand(3)le. 
+    lslmuser-setup(3)le, lslmexpand-abbrev(2)le, lslmexpand-iso-accents(3)le, 
+    lslmexpand-look-back(3)le, lslmexpand-word(3)le. 
 
-! 3 spell-complete-word
+! 3 expand-word
 cEcENAME cEcA
 
 
-    spell-complete-word - Complete a word by invocation of the speller 
+    expand-word - Complete a word by invocation of the speller 
 $a
 
 
 cEcESYNOPSIS cEcA
 
 
-    cDspell-complete-wordcA 
+    cDexpand-wordcA 
 
 
 cEcEDESCRIPTION cEcA
 
 
-    cDspell-complete-wordcA presents attempts to complete the word at the current 
-    position through the use of the current language dictionary. The user is 
-    presented with a list of endings for the given word portion. These may be 
-    selected with the cursor or mouse. 
+    cDexpand-wordcA attempts to complete the word at the current position through 
+    the use of the current language dictionary. The user is presented with a 
+    list of endings for the given word portion. These may be selected with the 
+    cursor or mouse. 
 
-    cDspell-complete-wordcA is automatically invoked from the 
-    lslmexpand-abbrev-handle(3)le macro in response to an expansion command, it is 
-    only invoked if the macro variable cG.spell-complete-word.oncA is defined to 
-    be cGTRUEcA. Spelling expansion is enabled by enabling within the cCusercA.emf as 
-    follows:- 
-emf-scheme
-
-        set-variable .spell-complete-word.on 1 
-
-ehf-scheme
-
-    It may be subsequently disabled by setting the variable back to 0. 
+    cDexpand-wordcA is automatically invoked from the lslmexpand-abbrev-handle(3)le 
+    macro in response to an expansion command, it is only invoked if enabled 
+    in the lslmuser-setup(3)le => General => Abbrev Expansion => Dict'n setting is 
+    enabled. 
 
 
 cEcENOTES cEcA
 
 
-    cDspell-complete-wordcA is a macro implemented in cGattrib.emfcA. 
+    cDexpand-wordcA is a macro implemented in cGabbrev.emfcA. 
+
+    The cDuser-setupcA configuration simply sets the macro variable 
+    cG.expand-word.oncA to TRUE, i.e.: 
+emf-scheme
+
+        set-variable .expand-word.on 1 
+
+ehf-scheme
+
+    It may be subsequently disabled by setting the variable back to 0. 
 
 
 cEcESEE ALSO cEcA
@@ -29151,6 +29452,275 @@ $a
 
     lslmoccur(3)le, lslmsearch-forward(2)le, lsRegularExpressions(2)lmRegular Expressionsle 
 
+! 3 comment-line
+! 3 uncomment-line
+! 3 comment-to-end-of-line
+! 3 comment-restyle
+! 3 comment-start
+! 3 comment-end
+cEcENAME cEcA
+
+
+|comment-line
+    comment-line - Comment out the current line 
+|uncomment-line
+    uncomment-line - Uncomment current line 
+|comment-to-end-of-line
+    comment-to-end-of-line - Extend comment to end of line 
+|comment-restyle
+    comment-restyle - Reformat the current comment 
+|comment-start
+    comment-start - Start a new comment 
+|comment-end
+    comment-end - End the current comment 
+$a
+
+
+cEcESYNOPSIS cEcA
+
+
+    cCncA cDcomment-linecA 
+    cCncA cDuncomment-linecA 
+
+    cDcomment-to-end-of-linecA 
+    cDcomment-restylecA 
+
+    cDcomment-startcA 
+    cDcomment-endcA 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    The action of the cDcommentcA commands are file type specific (comments in cDCcA 
+    are cG/* ... to ... */cA where as MicroEmacs macro file comments are cG; ... to 
+    the end of linecA) so the commands must be configured for each file type 
+    (see the NOTES section below). The configuration is automatically 
+    performed by almost all the standard file hooks released with MicroEmacs 
+    by the file hook so these commands should be fully functional. 
+
+    cDcomment-linecA comments out the current and next cCncA-1 lines (default when cCncA 
+    is omitted is to comment out just the current line). The cursor is then 
+    moved to the start of the next line. cDuncomment-linecA behaves differently 
+    depending on whether the file type terminates a comment with an end token 
+    or simply by the end of the line. If an end token is used then 
+    cDuncomment-linecA removes the current and next cCncA comments. If the end of line 
+    is used cDuncomment-linecA removes the first comment on the current and next 
+    cCn-1cA lines. 
+
+    cDcomment-to-end-of-linecA inserts cCcomment-padcAs (see NOTES) up-to the 
+    lslm$fill-col(5)le and then terminates the comment with the cCcomment-endcA string. 
+    cDcomment-restylecA reformats the text within the comment, filling text lines 
+    to the cD$fill-colcA and regenerating any boxing and divide lines. 
+
+    cDcomment-startcA opens a new "cD*comment*cA" buffer which is configured for 
+    writing a text comment, the user can then type in the comment with all the 
+    benefits of MicroEmacs in a plain text editor. Once the comment is 
+    complete use the cDcomment-endcA command to insert the comment into the source 
+    file, this comment is locally bounded to "cDC-c C-ccA". The styling of the 
+    comment is controlled by the cCcomment-flagcA setting (see NOTES). 
+
+
+cEcENOTES cEcA
+
+
+    Consider the structure of a box comment to be as follows: 
+
+        <comment-start><comment-pad><comment-pad><comment-pad><comment-box-right> 
+        <comment-box-left> COMMENT TEXT ... COMMENT TEXT      <comment-box-right> 
+        <comment-box-left> COMMENT TEXT ... COMMENT TEXT      <comment-box-right> 
+        <comment-box-left><comment-pad><comment-pad><comment-pad><comment-end> 
+
+
+    The comment commands are configured by the single file hook command 
+    variable cD.fhook-cAcC<type>cAcD.commentcA where cC<type>cA is the file type label. The 
+    structure of the variable is a ls&ldel(4)lmlistle with the following format: 
+
+            |<comment-start>|<comment-end>|<comment-pad>|<comment-box-left>|... 
+                ...<comment-box-right>|<comment-flags>| 
+
+
+    Where cG|cA is the list divide character. The cC<comment-flags>cA are a list of 
+    character flags which are defined as follows: 
+
+    cGbcA 
+        Box format required, i.e. create right edge using cC<comment-box-right>cA. 
+
+    cGfcA 
+        Footer line required. 
+
+    cGFcA 
+        Fill footer line with cC<comment-pad>cA strings. 
+
+    cGhcA 
+        Header line required. 
+
+    cGHcA 
+        Fill header line with cC<comment-pad>cA strings. 
+
+    cGjcA 
+        Enable Justify mode in *comment* buffer. 
+
+
+cEcEEXAMPLE cEcA
+
+
+    The following cDcommentcA is the standard cDCcA setting: 
+sB
+        set-variable .fhook-c.comment "|/*|*/|*| * | * |f|" 
+
+sA
+    This can be used to create comments of the form: 
+
+        /* comment-line comments out the current and next n-1 lines (default 
+         * when n is omitted is to comment out just the current line). The 
+         * cursor is then moved to the start of the next line. 
+         * 
+         * uncomment-line behaves differently depending on whether the file 
+         * type terminates a comment with an end token or simply by the end 
+         * of the line. 
+         */ 
+
+
+    A box style comment can be generated by changing the cC<comment-flags>cA form 
+    cGfcA to cGbfFhHcA, producing: 
+
+        /********************************************************************* 
+         * comment-line comments out the current and next n-1 lines (default * 
+         * when n is omitted is to comment out just the current line). The   * 
+         * cursor is then moved to the start of the next line.               * 
+         *                                                                   * 
+         * uncomment-line behaves differently depending on whether the file  * 
+         * type terminates a comment with an end token or simply by the end  * 
+         * of the line.                                                      * 
+         *********************************************************************/ 
+
+
+cEcESEE ALSO cEcA
+
+
+    lsfileHooks(2)lmFile Hooksle. 
+
+! 3 display-matching-fence
+cEcENAME cEcA
+
+
+    display-matching-fence - Display the matching bracket 
+$a
+
+
+cEcESYNOPSIS cEcA
+
+
+    cCncA cDdisplay-matching-fencecA 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    cDdisplay-matching-fencecA draws the fence (or bracket) pairing the one the 
+    cursor is currently over. A fence is considered to be one of the 
+    following: 
+
+        {...}   (...)   [...] 
+
+
+    If the matching fence is currently being drawn (i.e. it is visible) both 
+    fences are drawn in the 'cCNormalcA' Matching Fence scheme (see 
+    lslmscheme-editor(3)le). If the matching fence is not currently visible the 
+    cursor is temporarily moved to the match fence for lslm$fmatchdelay(5)le 
+    milliseconds before returning to the starting position, the fences are 
+    hilighted using the Matching Fence 'Current' scheme. The matching fence 
+    delay can be interrupted by pressing any key. If the fence cannot be 
+    matched the fence is hilighted using the 'Select' scheme which is usually 
+    a bold red color. 
+
+    The numeric argument cDncA passed to the command is a bitwise flag where each 
+    bit is defined as follows: 
+
+    cD0x01cA 
+        Display fence (if not set nothing is done). 
+
+    cD0x02cA 
+        Use set-position id 'cG\x85cA' instead of 'cG\x84cA' (for internal use). 
+
+    cD0x04cA 
+        Don't Jump when matching fence is off screen. 
+
+    cD0x08cA 
+        Jump when closing a fence and its pair is off screen (for internal 
+        use). 
+
+    cD0x10cA 
+        Always jump to matching fence when closing a fence (for internal use). 
+
+    cD0x20cA 
+        Give preference to closing fence to left of cursor rather than 
+        character under the cursor (for internal use). 
+
+
+cEcENOTES cEcA
+
+
+    This macro is used by the cDFence DisplaycA setting of lslmuser-setup(3)le, the 
+    macro is bound to the cGidle-pickcA event using some of the more obscure 
+    numeric argument flags. 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmgoto-matching-fence(2)le, lslmuser-setup(3)le, lslmscheme-editor(3)le, lslm$fmatchdelay(5)le. 
+
+! 3 expand-look-back
+cEcENAME cEcA
+
+
+    expand-look-back - Complete a word by looking back for a similar word 
+$a
+
+
+cEcESYNOPSIS cEcA
+
+
+    cDexpand-look-backcA 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    cDexpand-look-backcA attempts to complete the word at the current position by 
+    looking backward for another word which starts the same. If such a word is 
+    found within 100 lines of the current cursor position the current partial 
+    word is replaced with the word found. 
+
+    cDexpand-look-backcA is automatically invoked from the lslmexpand-abbrev-handle(3)le 
+    macro in response to an expansion command, it is only invoked if enabled 
+    in the lslmuser-setup(3)le => General => Abbrev Expansion => Lookbk setting is 
+    enabled. 
+
+
+cEcENOTES cEcA
+
+
+    cDexpand-look-backcA is a macro implemented in cGabbrev.emfcA. 
+
+    The cDuser-setupcA configuration simply sets the macro variable 
+    cG.expand-look-back.oncA to TRUE, i.e.: 
+emf-scheme
+
+        set-variable .expand-look-back.on 1 
+
+ehf-scheme
+
+    It may be subsequently disabled by setting the variable back to 0. 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmexpand-abbrev-handle(3)le, lslmuser-setup(3)le. 
+
 ! 3 user-setup
 cEcENAME cEcA
 
@@ -29243,6 +29813,31 @@ $a
         executes macro file cGmeme3_8.emfcA (See lsCompatibility(2)lmCompatibilityle for more 
         information) and NEdit v5 which is at best a demonstration of what can 
         be achieved, this executes macro file cGmenedit.emfcA. 
+
+    cGMS Friendly KeyscA 
+        When enabled the following key bindings are created to ease 
+        frustration for MS users: 
+
+        cGhomecA 
+            Bound to beginning-of-line instead of beginning-of-buffer. 
+
+        cGendcA 
+            Bound to end-of-line instead of end-of-buffer. 
+
+        cGC-homecA 
+            Bound to beginning-of-buffer. 
+
+        cGC-endcA 
+            Bound to end-of-buffer. 
+
+        cGC-vcA 
+            Bound to yank (paste). 
+
+        cGesc-vcA 
+            Bound to reyank. 
+
+        Note that the "cGC-xcA" and "cGC-ccA" keys are just to intrinsic to MicroEmacs 
+        to rebind (sorry). 
 
     cGMS Shift RegioncA 
         Enables/disables cursor key manipulation with the shift key similar to 
@@ -29369,6 +29964,12 @@ $a
         hot-key bindings override these. This indirectly sets bit 0x4000 of 
         the lslm$system(5)le variable. 
 
+    cGAbbrev ExpansioncA 
+        Configures which expansion methods are enabled by default when the 
+        lslmexpand-abbrev-handle(3)le is executed. cDAccentcA enables 
+        lslmexpand-iso-accents(3)le, cDLookbkcA enables lslmexpand-look-back(3)le and cDDict'ncA 
+        enables lslmexpand-word(3)le. 
+
     cGTab To IndentcA 
         Sets the lslmtab(2)le behavior in a buffer which has lslmcmode(2m)le enabled or an 
         lsindent(2)lmindentationle method. This indirectly sets bits cG0x1000cA and cG0x200000cA of 
@@ -29417,6 +30018,10 @@ $a
         Enables the drawing of visible white spaces, i.e. space, tab and 
         new-line characters. This indirectly sets bit cG0x80000cA of the 
         lslm$system(5)le variable. 
+
+    cGEnable ToolbarcA 
+        Enables the Toolbar - configurable, managed windows giving easy access 
+        to many features and tools. 
 
     cGClient ServercA 
         The client/server enables the file based external macro command driver 
@@ -31434,7 +32039,7 @@ $a
     cGWord CompletecA 
         Takes the incomplete word to the left of the cursor and attempts to 
         complete the word by using the users current language dictionary. 
-        Executes command lslmspell-complete-word(3)le. 
+        Executes command lslmexpand-word(3)le. 
 
     cGCompare WindowscA 
         Executes command lslmcompare-windows(2)le. 
@@ -31475,19 +32080,19 @@ $a
         Executes command lslmsplit-window-vertically(2)le. 
 
     cGGrow Window VcA 
-        Executes command lslmgrow-window-vertically(2)le. 
+        Executes command lslmchange-window-depth(2)le with an argument of 1. 
 
     cGShrink Window VcA 
-        Executes command lslmshrink-window-vertically(2)le. 
+        Executes command lslmchange-window-depth(2)le with an argument of -1. 
 
     cGSplit Window HcA 
         Executes command lslmsplit-window-horizontally(2)le. 
 
     cGGrow Window HcA 
-        Executes command lslmgrow-window-horizontally(2)le. 
+        Executes command lslmchange-window-width(2)le with an argument of 1. 
 
     cGShrink Window HcA 
-        Executes command lslmshrink-window-horizontally(2)le. 
+        Executes command lslmchange-window-width(2)le with an argument of -1. 
 
     cGOne WindowcA 
         Executes command lslmdelete-other-windows(2)le. 
@@ -31500,6 +32105,16 @@ $a
 
     cGNext WindowcA 
         Executes command lslmnext-window(2)le. 
+
+    cGCreate New FramecA 
+        Create an new external frame, only available on version which support 
+        multiple-window frames. Executes command lslmcreate-frame(2)le. 
+
+    cGCreate New FramecA 
+        Closes the current frame, only available on version which support 
+        multiple-window frames. The command will fail if this is the only 
+        frame, use File -> Exit to exit MicroEmacs, executes command 
+        lslmdelete-frame(2)le. 
 
 
 cEHelp Menu cA
@@ -35735,7 +36350,7 @@ $emf-scheme
     The frame store variable cD@fscA gives macros a way of obtaining the character 
     currently being drawn on the screen at the given location. If the given 
     value of cCrowcA or cCcolumncA is out range, i.e. less than zero or greater than 
-    or equal to the screen size (see lslm$screen-width(5)le) then the value returned 
+    or equal to the screen size (see lslm$frame-width(5)le) then the value returned 
     is the empty string (i.e. cG""cA). 
 
     This variable cannot be set and is only updated during a screen update, 
@@ -35776,8 +36391,179 @@ $emf-scheme
 cEcESEE ALSO cEcA
 
 
-    lslm$screen-width(5)le, lslmscreen-update(2)le, lsMacroArguments(4)lmMacroArgumentsle, lsMacroNumericArguments(4)lmMacroNumericArgumentsle, 
+    lslm$frame-width(5)le, lslmscreen-update(2)le, lsMacroArguments(4)lmMacroArgumentsle, lsMacroNumericArguments(4)lmMacroNumericArgumentsle, 
     lslmdefine-macro(2)le. 
+
+! 4 &opt
+cEcENAME cEcA
+
+
+    &opt - MicroEmacs optional feature test 
+
+
+cEcESYNOPSIS cEcA
+
+
+    cD&optcA cCstrcA 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    This function can be used to test the availability of optional features in 
+    the current session of MicroEmacs. Some features, like spelling checker 
+    support, are a compilation option, other options like mouse support may 
+    also be unavailable on some platforms. The cD&optcA function can be used by 
+    macros to check that required base functionality is available. 
+
+    The function returns cG1cA in the given feature "cCstrcA" is supported, otherwise 
+    it returns cG0cA if the feature is unknown or not supported in the running 
+    version. 
+
+
+cEcENOTES cEcA
+
+
+    Optional components of MicroEmacs '02 are enabled/disabled at compile 
+    time, most options are configured by cGMEOPT_cAcC<NAME>cA cG#definecA's within the 
+    source file cGemain.hcA. Following is a complete list of options, giving the 
+    cDoptcA string and cG#definecA label: 
+
+    abb - MEOPT_ABBREV 
+        Abbreviation functionality (see lslmexpand-abbrev(2)le). 
+
+    cal - MEOPT_CALLBACK 
+        Callback and idle event handling (see lslmcreate-callback(2)le). 
+
+    cfe - MEOPT_CFENCE 
+        Fence matching (see lslm$fmatchdelay(5)le). 
+
+    cli - MEOPT_CLIENTSERVER 
+        Client/server support (see lsClient-Server(2)lmClient-Serverle). 
+
+    col - MEOPT_COLOR 
+        All color support (making hilighting redundent etc, see lslmadd-color(2)le). 
+
+    cry - MEOPT_CRYPT 
+        File encryption (see lslmcrypt(2m)le mode). 
+
+    deb - MEOPT_DEBUGM 
+        Macro debugging (see lslm$debug(5)le). 
+
+    dir - MEOPT_DIRLIST 
+        Directory listing when loading a directory (see lslmfile-browser(3)le and 
+        lslmdir(2m)le mode ). 
+
+    ext - MEOPT_EXTENDED 
+        Miscellaneous more advanced commands and features such as 
+        lslmappend-buffer(2)le. 
+
+    fho - MEOPT_FILEHOOK 
+        File type auto-detection and configuration (see lslmadd-file-hook(2)le). 
+
+    fra - MEOPT_FRAME 
+        Multiple frames (Internal or external, see opt "cDmwfcA" and command 
+        lslmcreate-frame(2)le). 
+
+    has - MEOPT_CMDHASH 
+        Use a hash table for rapid command name lookup. 
+
+    hil - MEOPT_HILIGHT 
+        Hilight and user definable indentation rules (see lslmhilight(2)le and 
+        lslmindent(2)le). 
+
+    hsp - MEOPT_HSPLIT 
+        Horizontal window splitting (see lslmsplit-window-horizontally(2)le). 
+
+    ipi - MEOPT_IPIPES 
+        Interactive pipes (see lslmipipe-shell-command(2)le). 
+
+    ise - MEOPT_ISEARCH 
+        Incremental search (see lslmisearch-forward(2)le). 
+
+    lbi - MEOPT_LOCALBIND 
+        Buffer, message-line and OSD local binding overrides (see 
+        lslmbuffer-bind-key(2)le). 
+
+    mag - MEOPT_MAGIC 
+        Regular expression search engine (see lslmmagic(2m)le mode). 
+
+    mou - MEOPT_MOUSE 
+        Mouse support (see lslm$mouse(5)le). 
+
+    mwf - MEOPT_MWFRAME 
+        Multiple window frame support (see opt "cDfracA"). 
+
+    nar - MEOPT_NARROW 
+        Buffer narrowing (see lslmnarrow-buffer(2)le). 
+
+    nex - MEOPT_FILENEXT 
+        Location list stepping (see lslmget-next-line(2)le). 
+
+    osd - MEOPT_OSD 
+        On Screen Display GUI support (see lslmosd(2)le). 
+
+    pok - MEOPT_POKE 
+        Direct screen poking (see lslmscreen-poke(2)le). 
+
+    pos - MEOPT_POSITION 
+        Position storing and returning (see lslmset-position(2)le). 
+
+    pri - MEOPT_PRINT 
+        Printing support (see lslmprint-buffer(2)le). 
+
+    rcs - MEOPT_RCS 
+        File Revision Control Support (see lslm$rcs-co-com(5)le). 
+
+    reg - MEOPT_REGISTRY 
+        Internal registry and history support (see lslmread-registry(2)le and 
+        lslmread-history(2)le). 
+
+    scr - MEOPT_SCROLL 
+        Window scroll-bar support. 
+
+    soc - MEOPT_SOCKET 
+        URL support, FTP and HTTP via sockets (see lslmfind-file(2)le). 
+
+    spa - MEOPT_SPAWN 
+        External process launching (see lslmshell-command(2)le). 
+
+    spe - MEOPT_SPELL 
+        Spelling checker support (see lslmspell(2)le). 
+
+    tag - MEOPT_TAGS 
+        Tags support (see lslmfind-tag(2)le). 
+
+    tim - MEOPT_TIMSTMP 
+        File timestamping on save (see lslmtime(2m)le mode). 
+
+    typ - MEOPT_TYPEAH 
+        Input detect or 'type-ahead' for background processing support. 
+
+    und - MEOPT_UNDO 
+        Undo support (see lslmundo(2)le). 
+
+    wor - MEOPT_WORDPRO 
+        Word-processor style commands like lslmfill-paragraph(2)le (see 
+        lslmforward-paragraph(2)le). 
+
+
+cEcEEXAMPLE cEcA
+
+
+    The following example checks for URL support and if not available it pops 
+    up an error: 
+sB
+        !if &not &opt "soc" 
+            osd-dialog "Opt Test" "Error: No URL support!" "  &OK  " 
+        !endif 
+
+sA
+
+cEcESEE ALSO cEcA
+
+
+    lsBuild(2)lmBuilding MicroEmacsle. 
 
 ! 5 $auto-time
 cEcENAME cEcA
@@ -37438,11 +38224,11 @@ $a
 
     cD$mouse-xcA cCintegercA 
 
-    0 <= cCintegercA <= ls$screen-depth(5)lm$screen-widthle - 1 
+    0 <= cCintegercA <= ls$frame-depth(5)lm$frame-widthle - 1 
 
     cD$mouse-ycA cCintegercA 
 
-    0 <= cCintegercA <= ls$screen-depth(5)lm$screen-depthle - 1 
+    0 <= cCintegercA <= ls$frame-depth(5)lm$frame-depthle - 1 
 
 
 cEcEDESCRIPTION cEcA
@@ -37451,7 +38237,7 @@ $a
     cD$mouse-xcA and cD$mouse-ycA are automatically set to the position of the mouse 
     at the last mouse event, where an event is a button press or release. 
     Initialized to 0,0. The top left character of the screen is coordinate 0,0 
-    bottom right is ls$screen-depth(5)lm$screen-widthle, ls$screen-depth(5)lm$screen-depthle. 
+    bottom right is ls$frame-depth(5)lm$frame-widthle, ls$frame-depth(5)lm$frame-depthle. 
 
 
 cEcENOTES cEcA
@@ -37464,8 +38250,8 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmset-cursor-to-mouse(2)le, lslm$mouse-pos(5)le, lslm$cursor-x(5)le, lslm$screen-depth(5)le, 
-    lslm$screen-width(5)le. 
+    lslmset-cursor-to-mouse(2)le, lslm$mouse-pos(5)le, lslm$cursor-x(5)le, lslm$frame-depth(5)le, 
+    lslm$frame-width(5)le. 
 
 ! 5 $platform
 cEcENAME cEcA
@@ -37766,26 +38552,28 @@ $a
 
     lslmfind-file(2)le, lslmrcs-file(2)le. 
 
+! 5 $frame-depth
+! 5 $frame-width
 ! 5 $screen-depth
 ! 5 $screen-width
 cEcENAME cEcA
 
 
-|$screen-depth
-    $screen-depth - Number of character lines on the screen canvas 
-|$screen-width
-    $screen-width - Number of character columns on the screen canvas 
+|$frame-depth
+    $frame-depth - Number of lines on the current frame canvas 
+|$frame-width
+    $frame-width - Number of columns on the current frame canvas 
 $a
 
 
 cEcESYNOPSIS cEcA
 
 
-    cD$screen-depthcA cCintegercA 
+    cD$frame-depthcA cCintegercA 
 
     3 <= cCintegercA <= 400 
 
-    cD$screen-widthcA cCintegercA 
+    cD$frame-widthcA cCintegercA 
 
     8 <= cCintegercA <= 400 
 
@@ -37793,22 +38581,30 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    These variables allow the viewable size of the screen canvas to be 
+    These variables allow the viewable size of the current frame canvas to be 
     determined. 
 
-    cD$screen-depthcA identifies number of screen lines currently used. This is 
-    the whole screen not the window length. The value returned is in the range 
-    3 - cCncA, cCncA is system dependent but no greater than 400. 
+    cD$frame-depthcA identifies depth of the current frame given as the number of 
+    character lines. This is the whole frame width, not just what is currently 
+    visible. The value returned is in the range 3 - cCncA, cCncA is system dependent 
+    but no greater than 400. 
 
-    cD$screen-widthcA identifies the number of screen columns currently used 
-    (whole screen). The value returned is in the range 8 - cCncA, cCncA is system 
+    cD$frame-widthcA identifies the width of the current frame as the number of 
+    character columns. The value returned is in the range 8 - cCncA, cCncA is system 
     dependent but no greater than 400. 
+
+
+cEcENOTES cEcA
+
+
+    The name of these variables changed from cD$screen-depthcA and cD$screen-widthcA 
+    due to the support for multiple frames introduced in April 2002. 
 
 
 cEcESEE ALSO cEcA
 
 
-    lslmchange-screen-depth(2)le, lslmchange-screen-width(2)le. 
+    lslmchange-frame-depth(2)le, lslmchange-frame-width(2)le. 
 
 ! 5 $mouse-pos
 cEcENAME cEcA
@@ -38399,11 +39195,11 @@ $a
 
     cD$window-mode-linecA cCintegercA 
 
-    1 <= cCintegercA <= ls$screen-depth(5)lm$screen-depthle - 2 
+    1 <= cCintegercA <= ls$frame-depth(5)lm$frame-depthle - 2 
 
     cD$window-scroll-barcA cCintegercA 
 
-    0 <= cCintegercA <= ls$screen-depth(5)lm$screen-widthle - 1 
+    0 <= cCintegercA <= ls$frame-depth(5)lm$frame-widthle - 1 
 
 
 cEcEDESCRIPTION cEcA
@@ -38416,7 +39212,7 @@ $a
 
     cD$window-scroll-barcA stores the screen position of the right-hand horizontal 
     window separator line or scroll-bar (see lslmsplit-window-horizontally(2)le and 
-    lslm$scroll-bar(5)le). A value of greater than lslm$screen-width(5)le indicates that 
+    lslm$scroll-bar(5)le). A value of greater than lslm$frame-width(5)le indicates that 
     there is no right-hand separator column or scroll bar present. Often used 
     in conjunction with lslm$mouse-x(5)le. 
 
@@ -38581,6 +39377,9 @@ $a
         of supported characters, other characters in the range of cG0x00cA to cG0x1fcA 
         not listed are rendered as a space: 
 
+            cG0x08cA 
+                Special Character; Backspace 
+
             cG0x09cA 
                 Special Character; Tab 
 
@@ -38671,11 +39470,16 @@ $a
         check the indentation. 
 
     cD0x400000cA 
-        When this bit is set the external cut buffer (Windows & XTerm 
+        When this bit is set the external clipboard (Windows & XTerm 
         platforms) will never be set to empty, if the current yank buffer is 
         the empty string the cut buffer will be set to a space (i.e. " "). 
         This feature has been added to avoid problems with other software 
         (e.g. cDexceed(1)cA which can crash if given an empty cut buffer). 
+
+    cD0x800000cA 
+        When this bit is set all use of the external clipboard (Windows & 
+        XTerm platforms) is disabled, this means that MicroEmacs will not 
+        attempt to retrieve or set the content of the system clipboard. 
 
 
 cEcEEXAMPLE cEcA
@@ -38831,7 +39635,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslm$screen-depth(5)le, lslm$window-depth(5)le, lslm$window-width(5)le, lslm$window-y-scroll(5)le, 
+    lslm$frame-depth(5)le, lslm$window-depth(5)le, lslm$window-width(5)le, lslm$window-y-scroll(5)le, 
     lslmnarrow-buffer(2)le. 
 
 ! 5 %ftp-flags
@@ -38956,7 +39760,7 @@ $a
 
 
     cD$window-charscA "cCstingcA"; Default is 
-    "cG=-#*%=^|#|v*==^^||##||vv**|<-#->*||<<--##-->>** x*[]>\.cA" 
+    "cG=-#*%=^|#|v*==^^||##||vv**|<-#->*||<<--##-->>** x*[]>\.$$\cA" 
 
 
 cEcEDESCRIPTION cEcA
@@ -39050,22 +39854,37 @@ $a
         Osd title bar right corner kill character. Default is 'cDxcA'. 
 
     Index 49 
+        Osd dialog bottom right corner resize character. Default is 'cD*cA'. 
+
+    Index 50 
         Osd open button character. Default is 'cD cA'. 
 
-    Index 48 
+    Index 51 
         Osd close button character. Default is 'cD cA'. 
 
-    Index 49 
+    Index 52 
         Displayed tab character (used when lslm$system(5)le bit 0x80000 is set). 
         Default is 'cD>cA'. 
 
-    Index 50 
+    Index 53 
         Displayed new-line character (used when lslm$system(5)le bit 0x80000 is 
         set). Default is 'cD\cA'. 
 
-    Index 51 
+    Index 54 
         Displayed space character (used when lslm$system(5)le bit 0x80000 is set). 
         Default is 'cD.cA'. 
+
+    Index 55 
+        Displayed truncated text to left character (used when the current line 
+        is scrolled to the right). Default is 'cD$cA'. 
+
+    Index 56 
+        Displayed truncated text to right character (used when the current 
+        line is longer than the window width). Default is 'cD$cA'. 
+
+    Index 57 
+        Inserted end of wrapped line character in an lslmipipe-shell-command(2)le 
+        buffer. Default is 'cD\cA'. 
 
 
 cEcEEXAMPLE cEcA
@@ -39073,19 +39892,16 @@ $a
 
     The cD$window-charscA is typically platform dependent, it's setting is 
     determined by the characters available in character set of the hosting 
-    platform. MS-DOS and Microsoft Windows environments might use a string 
-    such as:- 
+    platform. MS-DOS and Microsoft Windows use an OEM font might use the 
+    following value: 
 
-        "=-#*%\x1E\xB1\xDB\xB1\x1F\x04 \x1E\xB1\xB1\xDB\xDB\xB1\xB1 \x1F\x1B\x1A\xaf\xfb\xfa" 
-
-
-    X-Windows environments might use a string such as:- 
-
-        "=-#*%^\x02 \x02v\x01 ^\x02\x02  \x02\x02 v\xAB\xBB>\\." 
+        "=-#*%=\C^\xB1 \xB1\C_\CD==\C^\C^\xB1\xB1  \xB1\xB1\C_\C_\C[ 
+        \CZ|\CQ\xB1 \xB1\CP\CD||\CQ\CQ\xB1\xB1  \xB1\xB1\CP\CP\C[ 
+        \CZ x*  >\\.$$\\" 
 
 
-    Both utilize platform specific characters to render some of the window 
-    components. 
+    This utilizes character-set specific characters to render some of the 
+    window components. 
 
 
 cEcENOTES cEcA
@@ -39095,6 +39911,10 @@ $a
           allowing a space to be used for the scroll box. 
         * Use lslmsymbol(3)le to determine the displayable characters on the host 
           platform. 
+        * The use of MicroEmacs's extended character set on Windows and XTerm 
+          platforms can greatly improve the look and usability of MicroEmacs, 
+          see the Extend Char Set option in the Platform page of lslmuser-setup(3)le 
+          and bit cG0x10000cA of variable lslm$system(5)le. 
 
 
 cEcESEE ALSO cEcA
@@ -39121,11 +39941,11 @@ $a
 
     cD$window-depthcA cCintegercA 
 
-    1 <= cCintegercA <= ls$screen-depth(5)lm$screen-depthle 
+    1 <= cCintegercA <= ls$frame-depth(5)lm$frame-depthle 
 
     cD$window-widthcA cCintegercA 
 
-    0 <= cCintegercA <= ls$screen-depth(5)lm$screen-widthle - 1 
+    0 <= cCintegercA <= ls$frame-depth(5)lm$frame-widthle - 1 
 
 
 cEcEDESCRIPTION cEcA
@@ -39135,12 +39955,12 @@ $a
     the mode line, specified in text lines. (i.e. the number of lines of text 
     in the window). The returned value is an integer in the range: 
 
-        cD0cA - ( ls$screen-depth(5)lm$screen-depthle - cD3cA ) 
+        cD0cA - ( ls$frame-depth(5)lm$frame-depthle - cD3cA ) 
 
     cD$window-widthcA returns the width, in characters, of the current window. The 
     returned value is an integer in the range: 
 
-        cD0cA - ls$screen-depth(5)lm$screen-widthle. 
+        cD0cA - ls$frame-depth(5)lm$frame-widthle. 
 
 
 cEcENOTES cEcA
@@ -39153,7 +39973,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslm$screen-depth(5)le, lslm$screen-width(5)le, lslm$window-scroll-bar(5)le, 
+    lslm$frame-depth(5)le, lslm$frame-width(5)le, lslm$window-scroll-bar(5)le, 
     lslm$window-mode-line(5)le, 
 
 ! 5 $fill-bullet
@@ -40256,7 +41076,7 @@ $a
     also represented. The bits are assigned as follows 
 
         Bit     Attrib Flag     Attribute 
-        0x001       R           Rad Only 
+        0x001       R           Read Only 
         0x002       H           Hidden 
         0x004       S           System 
         0x010                   Directory 
@@ -40411,11 +41231,11 @@ $a
                         set-variable %screen-saver &sub %screen-saver 1 
                         !return 
                     !endif 
-                    set-variable @# $screen-depth 
+                    set-variable @# $frame-depth 
                     !while &dec @# 1 
-                        2 screen-poke @# 0 $global-scheme &spr "%n" $screen-width " " 
+                        2 screen-poke @# 0 $global-scheme &spr "%n" $frame-width " " 
                     !done 
-                    0 screen-poke 0 0 $global-scheme &spr "%n" $screen-width " " 
+                    0 screen-poke 0 0 $global-scheme &spr "%n" $frame-width " " 
                     -1 show-cursor 
                     ; must set this to stop recursion when waiting for a key! 
                     set-variable %screen-saver 0 
@@ -40813,11 +41633,11 @@ $a
 
     cD$cursor-xcA cCintegercA 
 
-    0 <= cCintegercA <= ls$screen-depth(5)lm$screen-widthle - 1 
+    0 <= cCintegercA <= ls$frame-depth(5)lm$frame-widthle - 1 
 
     cD$cursor-ycA cCintegercA 
 
-    0 <= cCintegercA <= ls$screen-depth(5)lm$screen-depthle - 1 
+    0 <= cCintegercA <= ls$frame-depth(5)lm$frame-depthle - 1 
 
 
 cEcEDESCRIPTION cEcA
@@ -40826,7 +41646,7 @@ $a
     cD$cursor-xcA and cD$cursor-ycA are automatically set to the position of the 
     cursor at the last screen update (i.e. the variables are not updated 
     between screen updates). The top left character of the screen is 
-    coordinate 0,0 bottom right is ls$screen-depth(5)lm$screen-widthle, ls$screen-depth(5)lm$screen-depthle. 
+    coordinate 0,0 bottom right is ls$frame-depth(5)lm$frame-widthle, ls$frame-depth(5)lm$frame-depthle. 
 
 
 cEcENOTES cEcA
@@ -40839,7 +41659,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslm$mouse-x(5)le, lslm$screen-depth(5)le, lslm$screen-width(5)le. 
+    lslm$mouse-x(5)le, lslm$frame-depth(5)le, lslm$frame-width(5)le. 
 
 ! 5 %http-proxy-addr
 ! 5 %http-proxy-port
@@ -40904,11 +41724,12 @@ $a
 
 
     cD$trunc-schemecA sets the color scheme used when drawing a line truncation 
-    indicator (a 'cG$cA' character). A '$' character drawn at the start of the 
-    line indicates that the line has been scrolled to the right and therefore 
-    the start of the line has been truncated. A '$' at the end of the line 
-    indicates the remainder of the line is too long to fit onto the width of 
-    the window so the end has been truncated and the indicator drawn. 
+    indicator. The left truncation character (usually a 'cG$cA' char) drawn at the 
+    start of the line indicates that the line has been scrolled to the right 
+    and therefore the start of the line has been truncated. A right truncation 
+    char (also usually a 'cG$cA') drawn at the end of the line indicates the 
+    remainder of the line is too long to fit onto the width of the window so 
+    the end has been truncated and the indicator drawn. 
 
     The cCschemeNumcA selected must be a color scheme defined with 
     lslmadd-color-scheme(2)le, which identifies the foreground and background color 
@@ -40916,10 +41737,17 @@ $a
     lslmhilight(2)le for more information. 
 
 
+cEcENOTES cEcA
+
+
+    The truncation characters used are set by the lslm$window-chars(5)le variable. 
+
+
 cEcESEE ALSO cEcA
 
 
-    lslm$buffer-scheme(5)le, lslm$global-scheme(5)le, lslmadd-color-scheme(2)le, lslmhilight(2)le. 
+    lslm$buffer-scheme(5)le, lslm$global-scheme(5)le, lslmadd-color-scheme(2)le, lslmhilight(2)le, 
+    lslm$window-chars(5)le. 
 
 ! 5 $window-x-scroll
 ! 5 $window-xcl-scroll
@@ -41148,6 +41976,89 @@ $a
 
     This variable is used in the macro file cGme.emfcA to check for any macro - 
     executable incompatibility issues. 
+
+! 5 $window-flags
+cEcENAME cEcA
+
+
+    $window-flags - Current window setup flags 
+$a
+
+
+cEcESYNOPSIS cEcA
+
+
+    cD$window-flagscA cCbitmaskcA; Default is cG0cA 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    The cD$window-flagscA variable is used to set or get various behavioural 
+    characteristic settings of the current window, it is a bit based flag 
+    where: 
+
+    cD0x001cA 
+        If set the width of the window is locked, calls to 
+        lslmresize-all-windows(2)le will maintained the width of this window 
+        whenever possible. 
+
+    cD0x002cA 
+        If set the depth of the window is locked, calls to 
+        lslmresize-all-windows(2)le will maintained the depth of this window 
+        whenever possible. 
+
+    cD0x004cA 
+        If set the buffer being displayed by the window is locked, the user 
+        can still manually change the buffer being displayed (by using 
+        commands like lslmfind-buffer(2)le) but commands that pop-up buffers (such 
+        as lslmhelp(2)le or lslmfind-tag(2)le) will not use this window. 
+
+    cD0x008cA 
+        When set the command lslmcompare-windows(2)le will ignore this window. 
+
+    cD0x010cA 
+        When set the commands like lslmprevious-window(2)le and lslmnext-window(2)le will 
+        skip this window unless the numeric argument given to the command is 
+        used to override the flag setting. 
+
+    cD0x020cA 
+        When set the command lslmdelete-other-windows(2)le will not delete this 
+        window unless the numeric argument given to the command is used to 
+        override the flag setting. 
+
+    cD0x040cA 
+        When set the command lslmdelete-window(2)le will not delete this window 
+        unless the numeric argument given to the command is used to override 
+        the flag setting. 
+
+    cD0x080cA 
+        When set the window cannot be split using either the 
+        lslmsplit-window-horizontally(2)le or lslmsplit-window-vertically(2)le commands. 
+
+    cD0x100cA 
+        If not set the window cannot be deleted if it is the only window 
+        without this bit set. This more esoteric feature is utilized by the 
+        toolbar, all toolbar windows have this bit set which means that the 
+        main user window cannot be delete. 
+
+
+cEcENOTES cEcA
+
+
+    The $window-flags setting is not preserved during a window splitting 
+    operation (i.e. using a command like lslmsplit-window-vertically(2)le) as the 
+    persistence of these settings can lead to unexpected behaviour. 
+
+    The toolbar uses bit 0x1000 to indicate that the window is displaying a 
+    toolbar tool, this bit should not be used by users and its value should be 
+    maintained. 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmnext-window(2)le, lslmdelete-other-windows(2)le, lslmcompare-windows(2)le. 
 
 ! 8 eaf
 cEcENAME cEcA
