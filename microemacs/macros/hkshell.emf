@@ -98,6 +98,9 @@ set-variable .fhook-shell.comment "|#||#|# | #|r|"
     hilight .hilight.shell 1     "unset"           .scheme.keyword
     hilight .hilight.shell 1     "wait"            .scheme.keyword
     ; Shell commands
+    !if &band .hilight.flags 0x04
+        hilight .hilight.shell 0 "^\\s *\\{function\\s +\\w+" .scheme.function
+    !endif
     hilight .hilight.shell 1     "alias"           .scheme.keyword
     hilight .hilight.shell 1     "break"           .scheme.keyword
     hilight .hilight.shell 1     "breaksw"         .scheme.keyword
@@ -117,6 +120,7 @@ set-variable .fhook-shell.comment "|#||#|# | #|r|"
     hilight .hilight.shell 1     "fi"              .scheme.keyword
     hilight .hilight.shell 1     "for"             .scheme.keyword
     hilight .hilight.shell 1     "foreach"         .scheme.keyword
+    hilight .hilight.shell 1     "function"        .scheme.keyword
     hilight .hilight.shell 1     "glob"            .scheme.keyword
     hilight .hilight.shell 1     "goto"            .scheme.keyword
     hilight .hilight.shell 1     "hash"            .scheme.keyword
@@ -125,6 +129,7 @@ set-variable .fhook-shell.comment "|#||#|# | #|r|"
     hilight .hilight.shell 1     "if"              .scheme.keyword
     hilight .hilight.shell 1     "in"              .scheme.keyword
     hilight .hilight.shell 1     "limit"           .scheme.keyword
+    hilight .hilight.shell 1     "local"           .scheme.keyword
     hilight .hilight.shell 1     "onintr"          .scheme.keyword
     hilight .hilight.shell 1     "popd"            .scheme.keyword
     hilight .hilight.shell 1     "pushd"           .scheme.keyword
@@ -145,7 +150,10 @@ set-variable .fhook-shell.comment "|#||#|# | #|r|"
     0 hilight .hilight.shellS 0                    .scheme.string
     hilight .hilight.shellS 4    "\\$" "\\}\\W" "" .scheme.variable
     hilight .hilight.shellS 4    "\\${" "}" ""     .scheme.variable
+    hilight .hilight.shellS 4    "\\${([^)]*)\"" "\"}" "" .scheme.variable
     hilight .hilight.shellS 4    "\\$(" ")" ""     .scheme.variable
+    hilight .hilight.shellS 4    "`" "`" ""        .scheme.operator
+    hilight .hilight.shellS 0    "\\\\."           .scheme.string
     hilight .hilight.shellS 0x80 "\"" .hilight.shell .scheme.string
     ; Shell variable hilighting
     0 hilight  .hilight.shellV 0                   .scheme.variable
