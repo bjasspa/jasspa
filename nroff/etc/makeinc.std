@@ -1,6 +1,7 @@
+# -*- Makefile -*-
 #
 # Standard definitions for things.
-#  
+#
 # Remove unconditionally + copy
 RM	= rm -f
 CP	= cp
@@ -8,18 +9,18 @@ CP	= cp
 # Directory stuff
 #
 MKDIR	= mkdir -p
-RMDIR 	= rm -rf 
+RMDIR	= rm -rf
 #
 # Archives - always full compression.
-# 
+#
 TAR	= tar
-ZIP	= zip -9 
-GZIP	= gzip -9 
+ZIP	= zip -9
+GZIP	= gzip -9
 #
 # Install
 #
-INSTALL_FIL	= ginstall -m 0666  
-INSTALL_DIR	= ginstall -m 0755 
+INSTALL_FIL	= ginstall -m 0666
+INSTALL_DIR	= ginstall -m 0755
 INSTALL_EXE	= ginstall -m 0777
 #
 # Use microemacs for conversions.

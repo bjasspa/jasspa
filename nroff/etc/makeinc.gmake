@@ -1,3 +1,4 @@
+# -*- Makefile -*-
 #
 # Get the platform name
 #
@@ -11,5 +12,3 @@ UNAME=$(__UNAME)
 # Find out the compiler.
 #
 WHICHCC:=$(shell echo `which cc`)
-
-

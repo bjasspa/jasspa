@@ -1,3 +1,4 @@
+# -*- Makefile -*-
 #
 # Get the platform name
 #
