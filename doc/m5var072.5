@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var072.5,v 2.6 2002-10-16 22:28:04 jon Exp $
+.Id $Id: m5var072.5,v 2.7 2004-12-10 00:57:34 bill Exp $
 .Im MicroEmacs variable
 .so me.tni
 .TH $idle-time 5
@@ -64,7 +64,7 @@ define-macro screen-saver
             set-variable %screen-saver 1
             1 show-cursor
             screen-update
-            ml-clear
+            0 ml-write
         !endif
     !endif
     set-variable %screen-saver &sub %screen-saver 1

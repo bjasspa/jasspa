@@ -3,35 +3,24 @@
 .\" Copyright (c) 1988-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd019.2,v 2.5 2002-01-11 21:58:41 jon Exp $
-.Im MicroEmacs command|message
+.Id $Id: m2cmd019.2,v 2.6 2004-12-10 00:57:33 bill Exp $
+.Im MicroEmacs command|search
 .so me.tni
-.TH ml-clear 2
-.XI ml-clear - "Clear the message line"
+.TH search-buffer 2
+.XI search-buffer - "Search the current buffer for a string"
 .SH NAME
-ml-clear \- Clear the message line
+search-buffer \- Search the current buffer for a string
 .Me $a
 .SH SYNOPSIS
 .na
-.B ml-clear
+\fIn\fR \fBsearch-buffer\fR "\fIflags\fR" "\fIstring\fR"
 .ad
 .SH DESCRIPTION
-.B ml-clear
-clears the message line during  script execution. This is  useful so as not to
-leave a confusing message from the last command(s) in a script.
-.PP
-Callback  macros which may interrupt the user at any point in time are handled
-by  \fBml-clear\fR.  The callback  macro for instance may  interrupt  the user
-while entering a new file name, and any
-.Ht ml-write 2
-erases the message-line which may currently be in use.
-\*(mE stores the line and when
-.Ht ml-clear 2
-is invoked,  instead of clearing  the message  line the current  input line is
-restored.
+Search the current buffer for a string...ZZZZ
 .SH "SEE ALSO"
 .na
-.Ht create-callback 2 ,
-.Ht ml-write 2 .
+.Ht search-forward 2 ,
+.Ht exact 2m ,
+.Ht magic 2m .
 .ad
 .FH
