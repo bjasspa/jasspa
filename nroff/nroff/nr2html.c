@@ -7,10 +7,10 @@
  *  System        : 
  *  Module        : 
  *  Object Name   : $RCSfile: nr2html.c,v $
- *  Revision      : $Revision: 1.4 $
- *  Date          : $Date: 2004-01-12 00:27:57 $
+ *  Revision      : $Revision: 1.5 $
+ *  Date          : $Date: 2004-01-12 00:28:59 $
  *  Author        : $Author: jon $
- *  Last Modified : <040112.0026>
+ *  Last Modified : <040112.0028>
  *
  *  Description	
  *
@@ -18,6 +18,7 @@
  *
  *  History
  *
+ * 1.0.1j - JG 12/01/04 Corrected the generated date.
  * 1.0.1i - JG 05/01/04 Changed logo image to .png.
  * 1.0.1h - JG 05/01/04 Corrected the HTML logo reference.
  * 1.0.1g - JG 21/10/00 Set the image border attribute to 0
@@ -66,7 +67,7 @@
 #include "html.h"
 
 /* Macro Definitions */
-#define MODULE_VERSION  "1.0.1i"
+#define MODULE_VERSION  "1.0.1j"
 #define MODULE_NAME     "nr2html"
 
 #define NORMAL_MODE 0x0000
