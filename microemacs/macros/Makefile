@@ -76,7 +76,7 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		au3.eaf		\
 	printall.emf	printd.emf	printepc.emf	printers.emf	\
 	printf.emf	printstp.emf	\
 	rect.emf	\
-	scheme.emf	schemeb.emf	schemebc.emf	schemebd.emf	\
+	scheme.emf	schemeb.emf	schemebc.emf	\
 	schemebh.emf	schemed.emf	schemej.emf	schemel.emf	\
 	schemelj.emf	schememd.emf	schemepd.emf	schemepl.emf	\
 	schemes.emf	schemesf.emf	schemetb.emf	schemevi.emf	\
