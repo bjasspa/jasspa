@@ -47,7 +47,7 @@ define-macro osd-search
     insert-string &itoa @#
 !emacro
 
-osd .osd.symbol 0 "bnatcHsd" 2 3 75 0 -1 -1 620 .scheme.osd-title "Insert Symbol"
+osd .osd.symbol 0 "bnatcHsI" 2 3 75 0 -1 -1 620 .scheme.osd-title "Insert Symbol"
 osd .osd.symbol 1 ""
 osd .osd.symbol 2 "" "   D  X C   D  X C   D  X C   D  X C   D  X C   D  X C   D  X C   D  X C"
 osd .osd.symbol 3 ""
@@ -73,7 +73,9 @@ define-macro symbol
 !emacro
 
 0 define-macro indent-setup-exec
-    !if &equ @# 3
+    !if &equ @# 4
+        !return $buffer-indent
+    !elif &equ @# 3
         !return &not &bmod "tab"
     !elif &equ @# 2
         set-variable $result $buffer-indent-width
@@ -85,9 +87,16 @@ define-macro symbol
         set-variable $buffer-indent-width @ml2 "" $buffer-indent-width
     !elif &equ @# -3
         0 buffer-mode "tab"
+    !elif &equ @# -4
+        !if $buffer-indent
+            set-variable :buffer-indent $buffer-indent
+            set-variable $buffer-indent 0
+        !else
+            set-variable $buffer-indent :buffer-indent
+        !endif
     !endif
 !emacro
-osd .osd.indstp  0 "batcdHs" 9 3 30 10 -1 -1 110 .scheme.osd-title "Indentation Setup"
+osd .osd.indstp  0 "batcDIHs" 9 3 30 10 -1 -1 110 30 .scheme.osd-title "Indentation Setup"
 osd .osd.indstp 10 ""
 osd .osd.indstp 20 "Sfh" "  \HTab Width:    " 30
 osd .osd.indstp 30 "EtRxHf" .scheme.osd-entry "##########" 1 indent-setup-exec
@@ -95,11 +104,18 @@ osd .osd.indstp 40 ""
 osd .osd.indstp 50 "Sfh" "  \HIndent Width: " 60
 osd .osd.indstp 60 "EtRxHf" .scheme.osd-entry "##########" 2 indent-setup-exec
 osd .osd.indstp 70 ""
-osd .osd.indstp 80 "fh" "  "
-osd .osd.indstp 90 "Cptfx" &spr "%s\} \HUse tab characters" .osd.checkbox-chars 3 indent-setup-exec
+osd .osd.indstp 85 "fh" "  "
+osd .osd.indstp 90 "Cptfx" &cat .osd.checkbox-chars "\} \HUse tab characters" 3 indent-setup-exec
 osd .osd.indstp 100 ""
 osd .osd.indstp 110 "BtcfHh" .scheme.osd-ebtt " \HOkay "  f void
 define-macro indent-setup
+    !if &or $buffer-indent &exi :buffer-indent
+        osd .osd.indstp 75 "fh" "  "
+        osd .osd.indstp 80 "Cptfx" &cat .osd.checkbox-chars "\} \HUse auto-indentation" 4 indent-setup-exec
+    !else
+        osd .osd.indstp 75 "D"
+        osd .osd.indstp 80 "D"
+    !endif
     .osd.indstp osd
 !emacro
 
@@ -161,7 +177,7 @@ set-variable .osd.ftagd 16
     !force search-forward #l9
     !while $status
         set-variable #l2 &lef @wl &sub &sin "\t" @wl 1
-        osd .osd.ftagc &inc #l0 1 "Rx" #l2 1 "osd-find-tag-goto"
+        osd .osd.ftagc &inc #l0 1 "RxBd" #l2 1 "osd-find-tag-goto"
         !force search-forward #l9
     !done
     !if &not #l0
@@ -192,7 +208,7 @@ set-variable .osd.ftagd 16
     beginning-of-buffer
     !while &not &seq @wc ""
         set-variable #l2 &lef @wl &sub &sin "\t" @wl 1
-        osd .osd.ftagc &inc #l0 1 "Rx" #l2 1 "osd-find-tag-goto"
+        osd .osd.ftagc &inc #l0 1 "RxBd" #l2 1 "osd-find-tag-goto"
         forward-line
     !done
     !if &not #l0
@@ -231,23 +247,23 @@ set-variable .osd.ftagd 16
     osd .osd.ftagl 40 "IbHt" .scheme.osd-sbar #l0 #l1 .osd.ftagc
 !emacro
 
-osd .osd.ftagl 0   "d" 20
+osd .osd.ftagl 0   "I" 20
 osd .osd.ftagl 10  "S" " \HTag or Filter" 20
 osd .osd.ftagl 20  "ExHcfzt" .scheme.osd-entry .osd.ftagw 1 "" 1 osd-find-tag-set
 osd .osd.ftagl 30  ""
 osd .osd.ftagl 40  "IbHt" .scheme.osd-sbar .osd.ftagw .osd.ftagd .osd.ftagc
 osd .osd.ftagl 50  ""
 
-osd .osd.ftagr 0   ""
+osd .osd.ftagr 0   "D" 30
 osd .osd.ftagr 5   ""
 osd .osd.ftagr 10  "BHRxt" .scheme.osd-ebtt " \HFilter " f osd-find-tag-find
 osd .osd.ftagr 20  ""
-osd .osd.ftagr 30  "BHt" .scheme.osd-ebtt " \HGoto   "   f osd-find-tag-goto
+osd .osd.ftagr 30  "BHt" .scheme.osd-ebtt   " \HGoto   " f osd-find-tag-goto
 osd .osd.ftagr 40  ""
-osd .osd.ftagr 50  "BHt"  .scheme.osd-ebtt " \HCancel "  f void
+osd .osd.ftagr 50  "BHt"  .scheme.osd-ebtt  " \HCancel " f void
 
 -1 osd .osd.ftag
-osd .osd.ftag 0  "batcdHR" 3 6 30 .scheme.osd-title "Find Tag" osd-find-tag-resize
+osd .osd.ftag 0  "batcDIHR" 3 6 50 30 .scheme.osd-title "Find Tag" osd-find-tag-resize
 osd .osd.ftag 10  ""
 osd .osd.ftag 20  "h" " "
 osd .osd.ftag 30  "Iht" .osd.ftagl
@@ -603,7 +619,7 @@ osd .osd.ftag 60  "" " "
 !emacro
 
 
-osd .osd.sar-srl 0   "sd" 30 11 -1 -1 20
+osd .osd.sar-srl 0   "sI" 20 11 -1 -1 20
 osd .osd.sar-srl 10  "Sf" "\HSearch for" 20
 osd .osd.sar-srl 20  "ExfHt" .scheme.osd-entry "##############################" 1 osd-search-set
 osd .osd.sar-srl 40  ""
@@ -626,7 +642,7 @@ osd .osd.sar-srr 90 ""
 osd .osd.sar-srr 100 ""
 osd .osd.sar-srr 110 "BcfHt" .scheme.osd-ebtt " E\Hxit        "   1 void
 
-osd .osd.sar-src 0 "sd" 49 13 -1 -1 30
+osd .osd.sar-src 0 "sI" 49 13 -1 -1 30
 osd .osd.sar-src 10 ""
 osd .osd.sar-src 20 "h" "  "
 osd .osd.sar-src 30 "Iht" .osd.sar-srl
@@ -635,7 +651,7 @@ osd .osd.sar-src 50 "Iht" .osd.sar-srr
 osd .osd.sar-src 60 "" " "
 osd .osd.sar-src 70 ""
 
-osd .osd.sar-rpl 0 "sd" 30 11 -1 -1 20
+osd .osd.sar-rpl 0 "sI" 20 11 -1 -1 20
 osd .osd.sar-rpl 10 "Sf" "\HSearch for" 20
 osd .osd.sar-rpl 20 "ExfHt" .scheme.osd-entry "##############################" 1 osd-search-set
 osd .osd.sar-rpl 40 "Sf" "\HReplace with" 50
@@ -657,7 +673,7 @@ osd .osd.sar-rpr 90 "BcfHt" .scheme.osd-ebtt " \HUndo Last   "  0 osd-search-rep
 osd .osd.sar-rpr 100 ""
 osd .osd.sar-rpr 110 "BcfHt" .scheme.osd-ebtt " E\Hxit        "  1 void
 
-osd .osd.sar-rpc 0 "sd" 49 13 -1 -1 30
+osd .osd.sar-rpc 0 "sI" 49 13 -1 -1 30
 osd .osd.sar-rpc 10 ""
 osd .osd.sar-rpc 20 "h" "  "
 osd .osd.sar-rpc 30 "Iht" .osd.sar-rpl
@@ -666,7 +682,7 @@ osd .osd.sar-rpc 50 "Iht" .osd.sar-rpr
 osd .osd.sar-rpc 60 "" " "
 osd .osd.sar-rpc 70 ""
 
-osd .osd.sar-hll 0 "sd" 30 11 -1 -1 20
+osd .osd.sar-hll 0 "sI" 30 11 -1 -1 20
 osd .osd.sar-hll 10 "Sf" "\HSearch for" 20
 osd .osd.sar-hll 20 "ExfHt" .scheme.osd-entry "##############################" 1 osd-search-set
 osd .osd.sar-hll 40 "Sf" "\HHilight" 50
@@ -692,7 +708,7 @@ osd .osd.sar-hlr 90 "BcfHxt" .scheme.osd-ebtt " \HRemove All  "   f osd-search-h
 osd .osd.sar-hlr 100 ""
 osd .osd.sar-hlr 110 "BcfHt" .scheme.osd-ebtt " E\Hxit        "   1 void
 
-osd .osd.sar-hlt 0 "sd" 49 13 -1 -1 30
+osd .osd.sar-hlt 0 "sI" 49 13 -1 -1 30
 osd .osd.sar-hlt 10 ""
 osd .osd.sar-hlt 20 "h" "  "
 osd .osd.sar-hlt 30 "Iht" .osd.sar-hll
@@ -701,7 +717,7 @@ osd .osd.sar-hlt 50 "Iht" .osd.sar-hlr
 osd .osd.sar-hlt 60 "" " "
 osd .osd.sar-hlt 70 ""
 
-osd .osd.sar-nb 0 "Nsd" 51 14 -1 -1 100
+osd .osd.sar-nb 0 "NsDI" 51 14 -1 -1 100 100
 osd .osd.sar-nb 1 "Ptf" "Search"  .osd.sar-src
 osd .osd.sar-nb 2 "Ptf" "Replace" .osd.sar-rpc
 osd .osd.sar-nb 3 "Ptf" "Hilight" .osd.sar-hlt
@@ -736,7 +752,7 @@ osd .osd.sar  10 "It" .osd.sar-nb
             set-variable #l0 &sub $frame-depth 15
         !endif
     !endif
-    osd .osd.sar 0 "batcdHs" 6 #l0 53 15 -1 -1 10 .scheme.osd-title "Search and Replace"
+    osd .osd.sar 0 "batcDIHs" 6 #l0 53 15 -1 -1 10 10 .scheme.osd-title "Search and Replace"
     osd .osd.sar-rpr 90 "BcfH" .scheme.osd-dbtt " Undo Last   "
     !if &or &les &dec @# 1 0 &gre @# 2
         set-variable @# 0
@@ -853,7 +869,7 @@ define-macro delete-hilight-lines
     !endif
 !emacro
 ;
-osd .osd.gline 0  "batcdHs" 10 3 44 0 -1 -1 11 .scheme.osd-title "Goto Line"
+osd .osd.gline 0  "batcDIHs" 10 3 44 0 -1 -1 8 4 .scheme.osd-title "Goto Line"
 osd .osd.gline 2  ""
 osd .osd.gline 3  "Shf"  "  Line \HNumber : " 4
 osd .osd.gline 4  "ExfH" .scheme.osd-entry "#########" f "osd-goto-set"
