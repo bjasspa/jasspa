@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20050213.1918>
+# Last Modified: <20050308.2308>
 #
 ##############################################################################
 
@@ -506,9 +506,9 @@ clean::
 # Build the catman pages
 #
 me.1: m1cmd000.1 $(TNIS)
-	    $(DROFF) -c JASSPA -p -o $@ m1cmd000.1
+	    $(DROFF) -c JASSPA -o $@ m1cmd000.1
 ne.1: m1cmd002.1 $(TNIS)
-	    $(DROFF) -c JASSPA -p -o $@ m1cmd002.1
+	    $(DROFF) -c JASSPA -o $@ m1cmd002.1
 clean::
 	$(RM) me.1
 	$(RM) ne.1
