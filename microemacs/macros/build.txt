@@ -37,7 +37,8 @@ BUILD
           Build using  the  specified  makefile.  over-riding  the  auto system
           detect. The supplied makefiles include:- 
 
-            *  aix43.mak IBM AIX 4.3 native 
+            *  aix43.mak IBM AIX 4.3 native. 
+            *  aix43.gmk IBM AIX 4.3 using GNU tools. 
             *  cygwin.gmk Cygwin using GNU tools under Windows. 
             *  dosdj1.mak Microsoft DOS build using djgpp version 1. 
             *  dosdj2.mak Microsoft DOS build using djgpp version 2. 
@@ -53,6 +54,7 @@ BUILD
             *  irix6.gmk Silicon Graphics IRIX 6.x using GNU tools 
             *  irix6.mak Silicon Graphics IRIX 6.x native 
             *  linux2.gmk Linux 2.x using GNU tools 
+            *  openbsd.gmk OpenBSD using GNU tools. 
             *  openstep.mak Openstep 4.2 on NeXTstep (BSD 4.3). 
             *  sunos55.gmak Sun Solaris 5.5 using GNU tools 
             *  sunos55.mak Sun Solaris 5.5 native 
