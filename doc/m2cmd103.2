@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd103.2,v 2.6 2005-03-20 15:59:25 jon Exp $
+.Id $Id: m2cmd103.2,v 2.7 2005-03-20 23:43:29 jon Exp $
 .Im MicroEmacs command|essential
 .ds C0 "(\fB\*ez\fR)\ \&
 .ds C1 "(\fB\*(cX\*cc\fR)\ \&
@@ -22,15 +22,11 @@ save-buffers-exit-emacs \- Exit the editor prompt user to write changes
 .na
 .I n
 \fBquick-exit\fR \*(C0
-[
-.I exitCode
-]
+[\|\fIexitCode\fR\|]
 .br
 .I n
 \fBsave-buffers-exit-emacs\fR \*(C1
-[
-.I exitCode
-]
+[\|\fIexitCode\fR\|]
 .ad
 .SH DESCRIPTION
 .B quick-exit
@@ -41,23 +37,26 @@ changed dictionaries, killing any running commands and exits the editor.
 operates a \fBquick-exit\fR only prompts the user before saving any files.
 .PP
 The numeric argument is defined as a bit-mask as follows:
-.IP "\fC1\fR"
+.IP "\fC0x00\fR"
+A zero numeric argument then the editor is closed down and any unsaved buffers
+are lost. 
+.IP "\fC0x01\fR"
 Prompting the user before saving any files, writes out all changed  buffers to
 the files they were read from. Saves all  changed  dictionaries,  killing  any
 running   commands   and   exits  the   editor.   This  bit  is   ignored   on
 \fBquick-exit\fR.
-.IP "\fC2\fR"
+.IP "\fC0x02\fR"
 Writes  out all  changed  buffers to the files they were read from,  saves all
 changed  dictionaries, killing any running commands and exits the editor. 
 The  behavior is modified by flags  \fC8\fR and  \fC16\fR.  This bit is always
 applied irrespective of the numeric argument. 
-.IP "\fC4\fR"
+.IP "\fC0x04\fR"
 Define the exit code \fIexitCode\fR from \*(mS, the default when omitted is 0.
-.IP "\fC8\fR"
+.IP "\fC0x08\fR"
 Discard  changed  buffers  (except the  history and  registry)  and delete any
 backup  files   associated   with  the  edited   buffer(s).  Only  valid  with
 \fBquick-exit\fR.
-.IP "\fC16\fR"
+.IP "\fC0x10\fR"
 Discard  changed  buffers  (except the history and registry) and create a auto
 save  file(s)  with  the  changes  from  unsaved   buffers.  Only  valid  with
 \fBquick-exit\fR.
