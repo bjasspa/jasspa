@@ -343,42 +343,6 @@ static meUByte iconBits[] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 #endif
 };
-
-#define ME_KP_COUNT   16
-#define ME_KP_FLAG    0x80
-#define ME_KP_MASK    0x7f
-#define ME_BIND_FLAG  0x40
-#define ME_BIND_COUNT 3
-#define ME_BIND_MASK  0x3f
-meUByte TTextkey_lut [256] =
-{
-  0,  0,  0,  0,  0,  0,  0,  0,  SKEY_backspace,  SKEY_tab,  0,  0,  0, SKEY_return,  0,  0,
-  SKEY_f11,SKEY_f12,  0,  SKEY_pause,  ME_KP_FLAG|ME_BIND_FLAG|2,  0,  0,  0,  0,  0,  0, SKEY_esc,  0,  0,  0,  0,
-  SKEY_tab,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  SKEY_home,SKEY_left,SKEY_up,SKEY_right,SKEY_down,SKEY_page_up,SKEY_page_down,SKEY_end,0,0,0,0,0,0,0,0,
-  0,  0,  0,SKEY_insert,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,SKEY_tab,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, ME_KP_FLAG|ME_BIND_FLAG|1,
-  ME_KP_FLAG|5,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, ME_KP_FLAG|15,  0,  0,
-  0,  0,  0,  0,  0,ME_KP_FLAG|7,ME_KP_FLAG|4,ME_KP_FLAG|8,ME_KP_FLAG|6,ME_KP_FLAG|2,ME_KP_FLAG|9,ME_KP_FLAG|3,ME_KP_FLAG|1,ME_KP_FLAG|5,ME_KP_FLAG|0,ME_KP_FLAG|10,
-  0,0,0,0,0,0,0,0,0,0,ME_KP_FLAG|12,ME_KP_FLAG|14,0,ME_KP_FLAG|13,ME_KP_FLAG|10, ME_KP_FLAG|11,
-  ME_KP_FLAG|0,ME_KP_FLAG|1,ME_KP_FLAG|2,ME_KP_FLAG|3,ME_KP_FLAG|4,ME_KP_FLAG|5,ME_KP_FLAG|6,ME_KP_FLAG|7,ME_KP_FLAG|8,ME_KP_FLAG|9,0,0,0,0,SKEY_f1,SKEY_f2,
-  SKEY_f3,SKEY_f4,SKEY_f5,SKEY_f6,SKEY_f7,SKEY_f8,SKEY_f9,SKEY_f10,SKEY_f11,SKEY_f12,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,ME_KP_FLAG|13,ME_KP_FLAG|11,ME_KP_FLAG|12,ME_KP_FLAG|7,0,ME_KP_FLAG|9,0,0,0,ME_KP_FLAG|1,  0,
-  ME_KP_FLAG|3,  0,  0,  0,  0, ME_KP_FLAG|ME_BIND_FLAG|0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,SKEY_delete
-};	/* Extended Keyboard lookup table */
-
-meUShort NumLockLookUpOn[ME_KP_COUNT]=
-{ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '/', '*', '-', '+', ME_SPECIAL|SKEY_return } ;
-meUShort NumLockLookUpOff[ME_KP_COUNT]=
-{   ME_SPECIAL|SKEY_kp_insert, ME_SPECIAL|SKEY_kp_end, ME_SPECIAL|SKEY_kp_down, ME_SPECIAL|SKEY_kp_page_down,
-    ME_SPECIAL|SKEY_kp_left, ME_SPECIAL|SKEY_kp_begin, ME_SPECIAL|SKEY_kp_right, ME_SPECIAL|SKEY_kp_home,
-    ME_SPECIAL|SKEY_kp_up, ME_SPECIAL|SKEY_kp_page_up, ME_SPECIAL|SKEY_kp_delete,
-    '/', '*', '-', '+', ME_SPECIAL|SKEY_return
-} ;
-meUShort bindKeyLookUp[ME_BIND_COUNT]={ SKEY_caps_lock, SKEY_num_lock, SKEY_scroll_lock } ;
 #else  /* _XTERM */
 #define meStdin 0
 #endif /* _XTERM */
@@ -1392,66 +1356,285 @@ meXEventHandler(void)
             XLookupString(&event.xkey,keyStr,20,&keySym,NULL);
             /* Map Mod2 which is ALT-GR onto A-C */
 #if (defined _SUNOS)
-            /* SunOS mapped to modifier key 2 */
-            if (ss & 0x10)
-                ss = (ss & ~0x10) | 0xc;
-#else
+            /* SunOS Alt-Gr mapped to modifier key 2 */
+            /* SunOS <> mapped tp modifier key 4 */
+            if (ss & Mod4Mask|Mod2Mask)
+            {
+                ss &= ~(Mod4Mask|Mod2Mask);
+                ss |= ControlMask | Mod1Mask;
+            }
+#endif
 #if (defined _LINUX)
             /* Linux mapped to modifier key 3 */
-            if (ss & 0x20)
-                ss = (ss & ~0x20) | 0xc;
+            if (ss & Mod3Mask)
+                ss = (ss & ~Mod3Mask) | ControlMask | Mod1Mask;
 #endif
-#endif
-#if 0
-            keyStr[19] = '\0' ;
-            printf("got key %x, ss=%x [%s]\n",(unsigned int) keySym, ss, keyStr) ;
-#endif
+             
+            /* keyStr[19] = '\0' ;
+               printf("got key %x, ss=%x [%s]\n",(unsigned int) keySym, ss, keyStr) ;*/
+            /* printf("got key %x, ss=%x \n",(unsigned int) keySym, ss) ;*/
             if(keySym > 0xff)
             {
-                keySym = TTextkey_lut[keySym & 0xff] ;
-                if(keySym == 0)
-                    break ;
-                /* Cope with the num lock state on the key pad */
-                if((keySym & ME_KP_FLAG) == 0)
-                    ii = (ME_SPECIAL | keySym | ((ss & 0x01) << 8) | ((ss & 0x0C) << 7)) ;
-                else if((keySym & ME_BIND_FLAG) == 0)
+                switch (keySym)
                 {
-                    if(ss & 0x10)
-                        ii = (NumLockLookUpOff[keySym & ME_KP_MASK] | ((ss & 0x0C) << 7)) ;
-                    else
-                        ii = (NumLockLookUpOn[keySym & ME_KP_MASK] | ((ss & 0x0C) << 7)) ;
-                    /* only add the shift modifier if its a special key */
-                    if(ii & ME_SPECIAL)
-                        ii |= ((ss & 0x01) << 8) ;
+                case XK_BackSpace:      ii = SKEY_backspace; goto special_key;
+                case XK_Tab:            ii = SKEY_tab; goto special_key;
+                case XK_Linefeed:       ii = SKEY_linefeed; goto special_key;
+                case XK_Clear:          ii = SKEY_clear; goto special_key;
+                case XK_Return:         ii = SKEY_return; goto special_key;
+                    /* Pause, hold */
+                case XK_Pause:          ii = SKEY_pause; goto special_key;
+                case XK_Scroll_Lock:    ii = SKEY_scroll_lock; goto special_key;
+                case XK_Sys_Req:        ii = SKEY_sys_req; goto special_key;
+                case XK_Escape:         ii = SKEY_esc; goto special_key;
+                    /* Delete, rubout */ 
+                case XK_Delete:         ii = SKEY_delete; goto special_key;
+                    
+                    /* Cursor control & motion */
+
+                case XK_Home:           ii = SKEY_home; goto special_key;
+                    /* Move left, left arrow */
+                case XK_Left:           ii = SKEY_left; goto special_key;
+                    /* Move up, up arrow */
+                case XK_Up:             ii = SKEY_up; goto special_key;
+                    /* Move right, right arrow */
+                case XK_Right:          ii = SKEY_right; goto special_key;
+                    /* Move down, down arrow */
+                case XK_Down:           ii = SKEY_down; goto special_key;       
+                    /* Prior, previous */
+                    /* XK_Prior*/
+                case XK_Page_Up:        ii = SKEY_page_up; goto special_key;
+                    /* XK_Next  */
+                case XK_Page_Down:      ii = SKEY_page_down; goto special_key;
+                    /* EOL */
+                case XK_End:            ii = SKEY_end; goto special_key;
+                    /* BOL */                    
+                case XK_Begin:          ii = SKEY_home; goto special_key;
+
+                    /* Misc Functions */
+                    
+                    /* Select, mark */
+                case XK_Select:         ii = SKEY_select; goto special_key;
+                case XK_Print:          ii = SKEY_print; goto special_key;
+                    /* Execute, run, do */
+                case XK_Execute:        ii = SKEY_execute; goto special_key;
+                    /* Insert, insert here */
+                case XK_Insert:         ii = SKEY_insert; goto special_key;
+                    /* Undo, oops */
+                case XK_Undo:           ii = SKEY_undo; goto special_key;
+                    /* redo, again */
+                case XK_Redo:           ii = SKEY_redo; goto special_key;
+                case XK_Menu:           ii = SKEY_menu; goto special_key;
+                    /* Find, search */
+                case XK_Find:           ii = SKEY_find; goto special_key;
+                    /* Cancel, stop, abort, exit */
+                case XK_Cancel:         ii = SKEY_cancel; goto special_key;
+                    /* Help */
+                case XK_Help:           ii = SKEY_help; goto special_key;
+                case XK_Break:          ii = SKEY_break; goto special_key;
+                    /* Character set switch */
+                    /* case XK_Mode_switch:*/
+                    /* Alias for mode_switch */
+                    /* case XK_script_switch:*/
+                case XK_Num_Lock:       ii = SKEY_num_lock; goto special_bound;
+                    
+                    /* Keypad Functions, keypad numbers cleverly chosen to map to ascii */
+                    
+                case XK_KP_Space:       ii = SKEY_space; goto special_key;
+                case XK_KP_Tab:         ii = SKEY_tab; goto special_key;
+                    /* enter */
+                case XK_KP_Enter:       ii = SKEY_return; goto special_key;   
+                    /* PF1, KP_A, ... */
+                case XK_KP_F1:          ii = SKEY_f1; goto special_key;
+                case XK_KP_F2:          ii = SKEY_f2; goto special_key;
+                case XK_KP_F3:          ii = SKEY_f3; goto special_key;
+                case XK_KP_F4:          ii = SKEY_f4; goto special_key;
+                
+                case XK_KP_Home:        ii = SKEY_kp_home; goto special_key;
+                case XK_KP_Left:        ii = SKEY_kp_left; goto special_key;
+                case XK_KP_Up:          ii = SKEY_kp_up; goto special_key;
+                case XK_KP_Right:       ii = SKEY_kp_right; goto special_key;
+                case XK_KP_Down:        ii = SKEY_kp_down; goto special_key;
+                    /*  case XK_KP_Prior:       ii = SKEY_home;  goto special_key;*/
+                case XK_KP_Page_Up:     ii = SKEY_kp_page_up; goto special_key;
+                    /* case XK_KP_Next:        ii = SKEY_end; goto special_key;*/
+                case XK_KP_Page_Down:   ii = SKEY_kp_page_down; goto special_key;
+                case XK_KP_End:         ii = SKEY_kp_end; goto special_key;
+                case XK_KP_Begin:       ii = SKEY_kp_begin; goto special_key;
+                case XK_KP_Insert:      ii = SKEY_kp_insert; goto special_key;
+                case XK_KP_Delete:      ii = SKEY_kp_delete; goto special_key;
+                    /* equals */
+                case XK_KP_Equal:       ii = '='; goto done_key;
+                case XK_KP_Multiply:    ii = '*'; goto done_key;
+                case XK_KP_Add:         ii = '+'; goto done_key;
+                    /* separator, often comma */
+                case XK_KP_Separator:   ii = ','; goto done_key;
+                case XK_KP_Subtract:    ii = '-'; goto done_key;
+                case XK_KP_Decimal:     ii = '.'; goto done_key;
+                case XK_KP_Divide:      ii = '/'; goto done_key;
+                    
+                case XK_KP_0:           ii = '0'; goto done_key;
+                case XK_KP_1:           ii = '1'; goto done_key;
+                case XK_KP_2:           ii = '2'; goto done_key;
+                case XK_KP_3:           ii = '3'; goto done_key;
+                case XK_KP_4:           ii = '4'; goto done_key;
+                case XK_KP_5:           ii = '5'; goto done_key;
+                case XK_KP_6:           ii = '6'; goto done_key;
+                case XK_KP_7:           ii = '7'; goto done_key;
+                case XK_KP_8:           ii = '8'; goto done_key;
+                case XK_KP_9:           ii = '9'; goto done_key;
+                    
+                    /* Auxilliary Functions; note the duplicate definitions
+                     * for left and right function keys; Sun keyboards and a
+                     * few other manufactures have such function key groups on
+                     * the left and/or right sides of the keyboard. We've not
+                     * found a keyboard with more than 35 function keys total. */
+                    
+                case XK_F1:             ii = SKEY_f1; goto special_key;
+                case XK_F2:             ii = SKEY_f2; goto special_key;
+                case XK_F3:             ii = SKEY_f3; goto special_key;
+                case XK_F4:             ii = SKEY_f4; goto special_key;
+                case XK_F5:             ii = SKEY_f5; goto special_key;
+                case XK_F6:             ii = SKEY_f6; goto special_key;
+                case XK_F7:             ii = SKEY_f7; goto special_key;
+                case XK_F8:             ii = SKEY_f8; goto special_key;
+                case XK_F9:             ii = SKEY_f9; goto special_key;
+                case XK_F10:            ii = SKEY_f10; goto special_key;
+                case XK_F11:            ii = SKEY_f11; goto special_key;
+                case XK_F12:            ii = SKEY_f12; goto special_key;
+                case XK_F13:            ii = SKEY_f13; goto special_key;
+                case XK_F14:            ii = SKEY_f14; goto special_key;
+                case XK_F15:            ii = SKEY_f15; goto special_key;
+                case XK_F16:            ii = SKEY_f16; goto special_key;
+                case XK_F17:            ii = SKEY_f17; goto special_key;
+                case XK_F18:            ii = SKEY_f18; goto special_key;
+                case XK_F19:            ii = SKEY_f19; goto special_key;
+                case XK_F20:            ii = SKEY_f20; goto special_key;
+                case XK_F21:            ii = SKEY_f21; goto special_key;
+                case XK_F22:            ii = SKEY_f22; goto special_key;
+                case XK_F23:            ii = SKEY_f23; goto special_key;
+                case XK_F24:            ii = SKEY_f24; goto special_key;
+                case XK_F25:            ii = SKEY_f25; goto special_key;
+                case XK_F26:            ii = SKEY_f26; goto special_key;
+                case XK_F27:            ii = SKEY_f27; goto special_key;
+                case XK_F28:            ii = SKEY_f28; goto special_key;
+                case XK_F29:            ii = SKEY_f29; goto special_key;
+                case XK_F30:            ii = SKEY_f30; goto special_key;
+                case XK_F31:            ii = SKEY_f31; goto special_key;
+                case XK_F32:            ii = SKEY_f32; goto special_key;
+                case XK_F33:            ii = SKEY_f33; goto special_key;
+                case XK_F34:            ii = SKEY_f34; goto special_key;
+                case XK_F35:            ii = SKEY_f35; goto special_key;
+                    
+                    /* Modifiers */
+                    
+                    /* Left shift */
+                case XK_Shift_L:        ii = SKEY_shift_left; goto special_bound;
+                    /* Right shift */
+                case XK_Shift_R:        ii = SKEY_shift_right; goto special_bound;    
+                    /* Left control */
+                case XK_Control_L:      ii = SKEY_ctrl_left;  goto special_bound;
+                    /* Right control */
+                case XK_Control_R:      ii = SKEY_ctrl_right;  goto special_bound;
+                    /* Caps lock */
+                case XK_Caps_Lock:      ii = SKEY_caps_lock; goto special_bound;
+                    /* Shift lock */
+                case XK_Shift_Lock:     ii = SKEY_shift_lock; goto special_bound;
+                    /* Left meta */
+                case XK_Meta_L:         ii = SKEY_meta_left; goto special_bound;
+                    /* Right meta */
+                case XK_Meta_R:         ii = SKEY_meta_right; goto special_bound;
+                    /* Left alt */
+                case XK_Alt_L:          ii = SKEY_alt_left; goto special_bound;
+                    /* Right alt */
+                case XK_Alt_R:          ii = SKEY_alt_left; goto special_bound;
+                    /* Left super */
+                    /* case XK_Super_L:*/
+                    /* Right super */
+                    /* case XK_Super_R:*/
+                    /* Left hyper */
+                    /* case XK_Hyper_L:*/
+                    /* Right hyper */
+                    /* case XK_Hyper_R:*/
+                    
+                    /* ISO keys */
+#ifdef XK_ISO_Left_Tab
+                    /* Back-tab */
+                case XK_ISO_Left_Tab:  ii = SKEY_tab | ME_SHIFT; goto special_key;
+#endif
+                default:
+                    /*  printf ("This is a default %d (0x%04x)\n", ii, ii);*/
+                    ii = keySym & 0xff;
+                    goto done_key;
                 }
-                else
+                goto done_key;
+special_key:
+                ii |= ME_SPECIAL; /*bindKeyLookUp[ss & ME_BIND_MASK];*/
+                
+                /* Only add the shift mask if it is special */
+                if (ShiftMask & ss)
+                    ii |= ME_SHIFT;
+done_key:
+                if (ControlMask & ss)
+                    ii |= ME_CONTROL;
+                if (Mod1Mask & ss)
+                    ii |= ME_ALT;
+                
+                /* printf ("Adding ff key to buffer %d(0x%04x)\n", ii, ii);*/
+                addKeyToBuffer(ii) ;
+                break;
+                
+                /* Keys that are tested for a binding */
+special_bound:
+                ii |= ME_SPECIAL;
+                
+                /* Only add the shift mask if it is special */
+                if (ShiftMask & ss)
+                    ii |= ME_SHIFT;
+/*done_bound: Not used */
+                if (ControlMask & ss)
+                    ii |= ME_CONTROL;
+                if (Mod1Mask & ss)
+                    ii |= ME_ALT;
+                
+                /* Key bound */
+                /* printf ("Testing ff/bound key to buffer %d(0x%04x)\n", ii, ii);*/
                 {
-                    meUInt arg;
-                    ii = (ME_SPECIAL | bindKeyLookUp[keySym & ME_BIND_MASK] | ((ss & 0x01) << 8) | ((ss & 0x0C) << 7)) ;
-                    if (decode_key(ii,&arg) == -1)  /* Key bound ?? */
+                    meUInt arg;         /* Decode key argument */
+                    if (decode_key(ii,&arg) == -1)
                         break ;
                 }
+                /* printf ("Adding ff/bound key to buffer %d(0x%04x)\n", ii, ii);*/
+                addKeyToBuffer(ii) ;
+                break;
             }
             else
             {
                 keySym &= 0xff ;
-                if(ss & 0x0C)
+                if(ss & (ControlMask|Mod1Mask))
                 {
                     keySym = toUpper(keySym) ;
-                    if(((ss & 0x0C) != 4) ||
+                    if(((ss & ControlMask) == 0) ||
                        ((keySym < 'A') || (keySym > '_')))
                     {
                         keySym = toLower(keySym) ;
-                        ii = keySym | ((ss & 0x0C) << 7) ;
+                        ii = keySym;
+                        if (ss & ControlMask)
+                            ii |= ME_CONTROL;
+                        if (ss & Mod1Mask)
+                            ii |= ME_ALT;
                     }
                     else
                         ii = keySym-'@' ;
+                        if (ss & Mod1Mask)
+                            ii |= ME_ALT;
                 }
                 else
                     ii = keySym ;
             }
+            /* printf ("Adding 00 key to buffer %d(0x%04x)\n", ii, ii);*/
             addKeyToBuffer(ii) ;
-            break ;
+            break;
         }
 #ifdef _CLIPBRD
     case SelectionClear:
