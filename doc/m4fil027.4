@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil027.4,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m4fil027.4,v 2.6 2004-03-23 20:50:56 jon Exp $
 .Im MicroEmacs macro;function;miscellaneous
 .so me.tni
 .TH &stat 4
@@ -25,8 +25,11 @@ Returns the absolute file name, corrects  relative  paths and symbolic  links,
 i.e. on unix if the  filename is a symbolic  link it returns the file name the
 link points to (recursive), otherwise returns the file name.
 .IP \fBd\fR
-Returns the file's  modification time stamp. The value returned is an integer,
-larger values indicate a later time.
+Returns the file's  modification time stamp as an integer, larger values indicate a later time.
+.IP \fBm\fR
+Returns  the  file's  modification  time stamp as a string,  the format of the
+string is the same as
+.Ht $time 5 .
 .IP \fBr\fR
 Returns a non-zero value if the user has permission to read the given file.
 .IP \fBs\fR

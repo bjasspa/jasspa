@@ -16,7 +16,7 @@ define-macro ftp
         ; if this is a toolbar window move to the next normal window
         !force next-window
     !endif
-    ftp-create-layout
+    @# ftp-create-layout
     popup-window "*ftp-files*"
     !if &seq $buffer-fname ""
         screen-update
@@ -104,30 +104,26 @@ define-macro ftp-connect
             !endif
         !endif
     !endif
-    ; setup the local *files* directory
-    !if .toolbar.open
-        !force toolbar-make-tool-visible "*files*"
-    !endif
-    !force 0 popup-window "*files*"
-    find-buffer "*files*"
-    !if &not &and &seq #l0 $buffer-fname &seq .fhook-dirlst.file-process :file-process
-        read-file #l0
-        !if &not &seq .fhook-dirlst.file-process :file-process
-            ; old buffer with the wrong processing - refresh
-            !force 0 delete-buffer $buffer-bname
-            find-file #l0
+    !if @#
+        ; setup the local *files* directory
+        !force 0 popup-window "*files*"
+        find-buffer "*files*"
+        !if &not &and &seq #l0 $buffer-fname &seq .fhook-dirlst.file-process :file-process
+            read-file #l0
+            !if &not &seq .fhook-dirlst.file-process :file-process
+                ; old buffer with the wrong processing - refresh
+                !force 0 delete-buffer $buffer-bname
+                find-file #l0
+            !endif
+            change-buffer-name "*files*"
         !endif
-        change-buffer-name "*files*"
+        !if &not &band $window-flags 0x1000
+            buffer-bind-create "bio" "delete" "" file-browser-close
+        !endif
+        buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
     !endif
-    !if &not &band $window-flags 0x1000
-        buffer-bind-create "bio" "delete" "" file-browser-close
-    !endif
-    buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
     goto-position "\x81"
     ; setup the ftp *ftp-files* directory
-    !if .toolbar.open
-        !force toolbar-make-tool-visible "*ftp-files*"
-    !endif
     !force 0 popup-window "*ftp-files*"
     !if &not $status
         !if &seq $buffer-bname "*files*"

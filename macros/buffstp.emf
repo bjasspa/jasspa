@@ -33,7 +33,7 @@
 ;           to be done by using cmode buffer mode (only add to .setup-mask).
 ;         1 Special internal flag indicating that hilighting is used
 ;           for reformatting, i.e. make readable 
-;         # special flag used to indicate commenting is supported
+;         # special flag used to indicate commenting is supported (set at runtime)
 ;
 ;    The following flags can be used by individual buffer hooks (see hkhtml.emf)
 ;         c, l, q, r, v, y & z

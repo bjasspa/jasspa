@@ -1474,5 +1474,5 @@ define-macro cvs
             goto-position "\x81"
         !endif
     !endif
-    file-browser-init
+    @# file-browser-init
 !emacro
