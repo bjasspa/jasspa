@@ -4,10 +4,37 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <040324.0028>
+>  Last Modified : <040326.2112>
 >
 
 7th Release - March 2004
+
+    [040326] Release wrapped - public release tag is "20040301" for executable
+             and macros.
+
+    [040326] Support for MAC O/S Darwin image.  Console only (no build machine
+             available for X-11 version).
+
+    [040326] Introduction of UPX on Windows and DOS executables for ne only.
+
+    [040326] Support  for MS-DOS  long name under  DJGPP v2.0. For version 2.0
+             then the DJGPP  functions  must be invoked rather than the MS-DOS
+             BIOS calls otherwise the modified short name is returned. DJGPPv1
+             is still supported original definitions maintained.
+
+    [040326] Added  "filetype"  macro to  determine  the file type of  MS-DOS,
+             Windows or UNIX.
+    
+    [040322] $mouse  variables  configured under console modes to allow pseudo
+             mouse operations to be performed.
+
+    [040322] Fixed the win32s  build and  emain.h  definitions.  Mouse was not
+             supported   under   win32s   through   incorrect    configuration
+             definition.
+
+    [040322] Key  bindings  for the file  browser.  ENTER now  handled  on the
+             reserved  fields  to sort.  BACKSPACE  now  moves up a  directory
+             level.
 
     [040322] Changed the interface to cvs, ftp and file-browser command so that
              if a  numeric  argument  of 0 is given  then the  directory  tree

@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20040326.2011>
+# Last Modified: <20040327.1623>
 #
 ##############################################################################
 
@@ -452,7 +452,7 @@ $(MEHTMZIP): me.hts
 	$(MKDIR) htm
 	$(MKDIR) htm/me
 	cd htm; $(HTS2HTML) -l .htm ../me.hts
-	cd htm; $(ZIP) mehtm me.htm me/*
+	cd htm; $(ZIP) -r mehtm me.htm me
 	$(CP) htm/mehtm.zip $@
 	$(RMDIR) htm
 clean::
@@ -513,7 +513,7 @@ me.hts: me.sm me.0 me.lbn me.tni forward.lbn logo.png
 		   -tMacro-Dev:MacroGlossary	\
 		   -tGlossary:Glossary		\
 		   me.sm me.0
-	$(HTS) -a $@ -E $(MANLOG) -s me -b logo.gif
+	$(HTS) -a $@ -E $(MANLOG) -s me/logo -b logo.png
 clean::
 	$(RM) me.hts	
 # Build Windows Help File.
