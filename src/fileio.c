@@ -1,7 +1,7 @@
 /*
  *	SCCS:		%W%		%G%		%U%
  *
- *	Last Modified :	<010124.1613>
+ *	Last Modified :	<010214.2301>
  * 
  *****************************************************************************
  * 
@@ -1248,7 +1248,7 @@ createBackupName(uint8 *filename, uint8 *fn, uint8 backl, int flag)
                                           backupSubFrom,backupSubTo) ;
             createBackupNameStrcpySub(t,s,backupSubCount,backupSubFrom,backupSubTo) ;
         }
-#ifdef _WIN32
+#ifdef _DRV_CHAR
         /* ensure the path has no ':' in it - breaks every thing, change to a / */
         while((t=meStrchr(t,_DRV_CHAR)) != NULL)
             *t++ = DIR_CHAR ;

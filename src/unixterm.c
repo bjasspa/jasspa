@@ -5,7 +5,7 @@
  *  Synopsis      : Unix X-Term and Termcap support routines
  *  Created By    : Steven Phillips
  *  Created       : 1993
- *  Last Modified : <010119.1616>
+ *  Last Modified : <010121.1430>
  *
  *  Description
  *    This implementation of unix support currently only supports Unix v5 (_USG),
@@ -2566,7 +2566,7 @@ TTahead(void)
         {
             changeScreenWidth(TRUE,TTnewWid); /* Change width */
             changeScreenDepth(TRUE,TTnewHig); /* Change depth */
-	    alarmState &= ~meALARM_WINSIZE ;
+            alarmState &= ~meALARM_WINSIZE ;
         }
         if(TTnoKeys)
             return TTnoKeys ;
