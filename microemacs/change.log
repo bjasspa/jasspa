@@ -4,8 +4,27 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <050118.2338>
+>  Last Modified : <050124.2216>
 >
+    
+    [050123] Fixed a crash  caused by too many  closed  fences, the  recursive
+             nature of the  findfence()  function  triggers  a stack  crash at
+             around 22000 on windows. Set limit to 256 nested fences.
+    
+    [050122] Fixed  "dir"  mode loss on a  directory  re-read,  this  caused a
+             number of side effects  including loss of  highlighting  and user
+             prompt to reload the directory when it had changed.
+        
+    [050119] Removed the "sub-key"  argument  from all registry  related calls
+             ("&reg" and  "set-registry"). The registry calls used to comprise
+             two  arguments  "root" and  "sub-key",  the  "sub-key"  is really
+             redundant  and the same effect may be achieved by a simple string
+             concatenation of the "sub-key" to the "root". 
+
+    [050119] Added "my-*hook-always" macro checks in the buffer hook switching
+             to permit  global  file hooks to be defined,  this  allows a file
+             hook to operate on all  buffers.  "my-*hook-always"  is  executed
+             after the language file hooks of "*hook-XXX" and "my-*hook-XXX". 
 
     [050116] Added "TODO" highlighting rule for Makefile comments.
 
@@ -281,7 +300,7 @@
 
     [041023] Extended  the  buffer  setup for the  indent  mechanism.  May now
              specify the default buffer indent-width and tabsize in the buffer
-             setup dialogue.
+             setup dialog.
 
     [041022] Revised  indentation  implementation.  The  templates  now define
              indent  width  independent  rules. The  indent  commend  'indent'
@@ -1529,7 +1548,7 @@ Experimental Release - January 2002
     [001010] Added new "-k" and "-u"  command-line  options and  improved "-s"
              option.
 
-    [000922] Added GUI for tag dialogue for tags generation.
+    [000922] Added GUI for tag dialog for tags generation.
 
     [000922] Recursive tags support (i.e. nested directory tag traversal).
 
@@ -1903,7 +1922,7 @@ Minor Patch - October 1998
     [971231] Initial Directory-Tree support.
 
     [971231] First  implementation  of the On Screen  Display  (OSD) menus and
-             dialogues.
+             dialogs.
 
     [971231] Horizontal split window support.
 
