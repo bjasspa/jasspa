@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd116.2,v 2.7 2005-01-15 16:14:44 jon Exp $
+.Id $Id: m2cmd116.2,v 2.8 2005-01-15 16:58:54 jon Exp $
 .Im MicroEmacs command|search
 .ds C0 "(\fB\*(cXs\fR)\ \&
 .ds C1 "(\fB\*(cXr\fR)\ \&
@@ -53,11 +53,11 @@ The \fIn\fRth occurrence of the \fIstring\fR is located.
 .IP "\fBn < 0\fR"
 The first occurrence of the \fIstring\fR is located in the next \fIn\fR lines.
 .PP
-.B search-forward
-does not search through text that is hidden with
+.B search-forward 
+does not search through text that is hidden with 
 .Ht narrow-buffer 2 .
-Where a search through hidden regions is required then
-.Ht narrow-search-forward 3
+Where a search through hidden regions is required then 
+.Ht narrow-search-forward 3 
 should be used instead.
 .PP
 .B search-backward

@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil013.4,v 2.6 2004-12-10 00:57:34 bill Exp $
+.Id $Id: m4fil013.4,v 2.7 2005-01-15 16:58:54 jon Exp $
 .Im MicroEmacs macro;directive|miscellaneousOperators
 .so me.tni
 .TH !bell 4
@@ -17,25 +17,25 @@
 .fi
 .ad
 .SH DESCRIPTION
-\fB!bell\fR  gives a  warning  (audible  or  visual)  to  alert  the user of a
+\fB!bell\fR  provides  a warning  (audible  or  visual) to alert the user of a
 problem. \fB!bell\fR honors the
 .Ht quiet 2m
 mode, as such if  \fBquiet\fR  mode is  disabled an audible  warning is given,
 otherwise  a  visual  warning  is  given  to the  user  (usually  the  message
-"\fI[BELL]\fR" in the bottom left hand corner).
+"\fI[BELL]\fR" in the bottom left hand corner of the message line).
 .PP
-The  optional  numerical  argument  \fIn\fR  can  be  used  to  over-ride  the
-current setting of the \fBquite\fR, a value of \fC0\fR specifies a quite bell,
-\fC2\fR an audible one, when  omitted the default is \fC1\fR for  honoring the
-quite mode.
+The optional  numerical  argument  \fIn\fR  over-rides the current  setting of
+\fBquite\fR,  a value of \fC0\fR  specifies  a quite bell,  \fC2\fR an audible
+one, when omitted the default is \fC1\fR  honoring the setting of  \fBquite\fR
+mode.
 .PP
 \fB!bell\fR is generally used in conjunction with
 .Hl !abort !abort 4 ,
 the !bell function warning the user and the !abort function to quit the macro.
 .SH EXAMPLE
-The  following  example  checks for incoming mail and is taken from  mail.emf.
-If any mail has  arrived  an  audible  warning  is  assured  by  toggling  the
-\fBquiet\fR mode.
+The  following  macro  example  checks  for  incoming  mail and is taken  from
+\fCmail.emf\fR.  If any mail has  arrived  an  audible  warning  is assured by
+toggling the \fBquiet\fR mode.
 .Me $emf-scheme
 .CS
 ;
