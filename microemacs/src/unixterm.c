@@ -5,7 +5,7 @@
  *  Synopsis      : Unix X-Term and Termcap support routines
  *  Created By    : Steven Phillips
  *  Created       : 1993
- *  Last Modified : <011215.1511>
+ *  Last Modified : <011217.1312>
  *
  *  Description
  *    This implementation of unix support currently only supports Unix v5 (_USG),
@@ -1227,6 +1227,8 @@ meXEventHandler(void)
                         len += meStrlen(killp->data) ;
                         killp = killp->next;
                     }
+                    if((meSystemCfg & meSYSTEM_NOEMPTYANK) && (len == 0))
+                        len++ ;
                     if((dataLen <= len) &&
                        ((ss = malloc(len+1)) != NULL))
                     {
@@ -1245,6 +1247,8 @@ meXEventHandler(void)
                                 *ss++ = cc ;
                             killp = killp->next ;
                         }
+                        if((meSystemCfg & meSYSTEM_NOEMPTYANK) && (ss == data))
+                            *ss++ = ' ' ;
                         *ss = '\0' ;
                         reply.property = event.xselectionrequest.property ;
                         XChangeProperty(mecm.xdisplay,reply.requestor,reply.property,reply.target,
@@ -2178,14 +2182,16 @@ waitForEvent(void)
                     /* Found this test can go wrong in some strange case,
                      * which is a real bummer as me now dies! as a fix, and I
                      * know its a bit of a bodge, only die is this happens 3
-                     * times on the trot */
+                     * times on the trot
+                     */
                     if(lost++ == 2)
                     {
                         /* If there's nothing to read, yet select flags
                          * meStdin as triggered then we've lost the input -
                          * Die... Unfortunately we must be very careful on
                          * what we do, we cannot write out to the x-window
-                         * cause its gone, but meDie takes care of this. */
+                         * cause its gone, but meDie takes care of this
+                         */
                         meDie() ;
                     }
                 }

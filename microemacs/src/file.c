@@ -10,7 +10,7 @@
 *
 *	Author:			Danial Lawrence
 *
-*	Creation Date:		14/05/86 12:37		<011026.2339>
+*	Creation Date:		14/05/86 12:37		<011209.1334>
 *
 *	Modification date:	%G% : %U%
 *
@@ -356,10 +356,10 @@ set_dirs(void)
     static uint8 lpath[] = "/usr/local/microemacs" ;
 #endif
 #endif    
+    int ll ;
     uint8 *s1 ;
 #ifdef _UNIX
     uint8 *s2 ;
-    int ll ;
 #endif
     
     s1 = meGetenv("HOME");                      /* Get home directory */
@@ -367,6 +367,9 @@ set_dirs(void)
     {
         homedir = meStrdup(s1) ;
         fileNameConvertDirChar(homedir) ;
+        ll = strlen(homedir) - 1 ;
+        if(homedir[ll] == DIR_CHAR)
+            homedir[ll] = '\0' ;
     }
     else
         homedir = NULL ;			/* Set to NULL */

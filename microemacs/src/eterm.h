@@ -1,6 +1,6 @@
 /* -*- c -*- ****************************************************************
  *
- *			Copyright 1994-2000 JASSPA.
+ *			Copyright 1994-2001 JASSPA.
  *			      All Rights Reserved
  *
  *  System        : MicroEmacs Jasspa Distribution
@@ -8,7 +8,7 @@
  *  Object Name   : eterm.h
  *  Created By    : Steven Phillips and Jon Green
  *  Create Date   : Some time in 1994
- *  Last Modified : <20011215.1333>
+ *  Last Modified : <20011217.1302>
  *
  *  Description	  : Terminal I/O definitions.
  *
@@ -18,7 +18,7 @@
  *
  ****************************************************************************
  *
- * Copyright (c) 1994-2000 JASSPA.
+ * Copyright (c) 1994-2001 JASSPA.
  *
  * The MicroEmacs Jasspa distribution can be copied and distributed freely for
  * any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be

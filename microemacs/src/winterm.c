@@ -1688,7 +1688,8 @@ WinKillToClipboard (void)
     uint8 cc;                           /* Local character pointer */
     uint8 *dd;                          /* Pointer to the kill data */
     int killSize = 0;                   /* Number of bytes in kill buffer */
-
+    int noEmpty ;
+    
     /* Determine the size of the data in the kill buffer.
      * Make sure that \r\n are appended to the end of each
      * line. */
@@ -1701,13 +1702,17 @@ WinKillToClipboard (void)
                     killSize++; /* Add 1 for the '\r' */
         }
     }
+    if((noEmpty = ((meSystemCfg & meSYSTEM_NOEMPTYANK) && (killSize == 0))) != 0)
+        killSize++ ;
 
     /* Create global buffer for the data */
     hmem = GlobalAlloc (GMEM_MOVEABLE, killSize + 1);
     bufp = GlobalLock (hmem);
 
     /* Copy the data into the buffer */
-    if (klhead != NULL)
+    if(noEmpty)
+        *bufp++ = ' ';
+    else if(klhead != NULL)
     {
         for (killp = klhead->kill; killp != NULL; killp = killp->next)
         {
