@@ -1,11 +1,32 @@
-#_____________________________-!-Makefile-!-________________________________
+# -!- makefile -!-
+#
+# JASSPA MicroEmacs - www.jasspa.com
+# makefile - Make file for Windows using Microsoft MSVC v6.0 development kit.
+#
+# Copyright (C) 2001-2002 JASSPA (www.jasspa.com)
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation; either version 2 of the License, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+# more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+##############################################################################
 #
 # Make file for MicroEmacs icon file using the Microsoft MSCV 2.0/4.0
 # development kit.
 #
 # Author      : Jon Green
 # Created     : 22nd February 1997
-# Last Edited : <991022.0041>
+# Last Edited : <020102.1247>
 #
 # History     : JG  220297 Original  Constructed from emacssrc
 #
@@ -113,7 +134,7 @@ install:: $(MEICONS)$(EXE)
 
 # Using ms-dos "del". Dumb program so only one deletion item per command !!
 spotless:: clean
-		$(RM) *.??~
+		- $(RM) *.??~
 clean::
 		- $(RM) *.pch
 		- $(RM) *.o

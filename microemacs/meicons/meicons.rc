@@ -1,39 +1,45 @@
-/*********************************-*- cmode -*-*****************************
+/* -*- c -*-
  *
- *			Copyright 1997 Jon Green.
- *			    All Rights Reserved
+ * JASSPA MicroEmacs - www.jasspa.com
+ * meicons.rc - Resource file for meicons.
  *
+ * Copyright (C) 1997-2002 JASSPA (www.jasspa.com)
  *
- *  System        : MicroEmacs
- *  Module        : MicroEmacs ICON File.
- *  Object Name   : $RCSfile: meicons.rc,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2001-05-29 14:32:27 $
- *  Author        : $Author: jon $
- *  Created       : 22nd February 1997
- *  Last Modified : <110898.1940>
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  Description	  : This is a simple file used as a respository for
- *                  MicroEMACS Icons. It does nothing.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:        22nd February 1997
+ * Synopsis:       Resource file for meicons.
+ * Author:         Jon Green
  * 
- *  Notes         : Icons were created in Microsoft Developer environment
- *                  Version 2.0. Icons have generally be created using the 
- *                  "empty.ico" file as a template. Text added as:-
+ * Description:    This is a simple file used as a respository for
+ *                 MicroEMACS Icons. It does nothing.
+ * 
+ * Notes:          Icons were created in Microsoft Developer environment
+ *                 Version 2.0. Icons have generally be created using the 
+ *                 "empty.ico" file as a template. Text added as:-
  * 
  *                     32x32 : Times New Roman. 12pt Bold
  *                     16x16 : Terminal          6pt Regular
  * 
- *                  The 'c', 'h' and 'e' icons (which are a bit better than
- *                  most of the others) were created in Misrosft Word Art
- *                  using School Book font and imported into MS paint, shrunk
- *                  and finally imported into the deveoper environment to
- *                  create the icon. Not recommended.
- * 
- *  History
- *
- *  $Log: not supported by cvs2svn $
- *
- ****************************************************************************/
+ *                 The 'c', 'h' and 'e' icons (which are a bit better than
+ *                 most of the others) were created in Misrosft Word Art
+ *                 using School Book font and imported into MS paint, shrunk
+ *                 and finally imported into the deveoper environment to
+ *                 create the icon. Not recommended.
+ */
 //
 //Microsoft Visual C++ generated resource script.
 //

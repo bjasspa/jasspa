@@ -1,36 +1,31 @@
-/****************************************************************************
+/* -*- c -*-
  *
- *			Copyright 1997 Jon Green.
- *			    All Rights Reserved
+ * JASSPA MicroEmacs - www.jasspa.com
+ * meicons.c - Main entry point.
  *
+ * Originally written by Jon Green
+ * Copyright (C) 1997-2002 JASSPA (www.jasspa.com)
  *
- *  System        : MicroEmacs
- *  Module        : MicroEmacs ICON File.
- *  Object Name   : $RCSfile: meicons.c,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2001-05-29 14:32:27 $
- *  Author        : $Author: jon $
- *  Last Modified : <220297.0956>
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  Description	  : This is a simple file used as a respository for
- *                  MicroEMACS Icons. It does nothing.
- *  Notes
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
  *
- *  History
- *
- *  $Log: not supported by cvs2svn $
- *
- ****************************************************************************
- *
- *  Copyright (c) 1997 Jon Green.
- *
- *  All Rights Reserved.
- *
- *  This Document may not, in whole or in part, be copied,
- *  photocopied, reproduced, translated, or reduced to any
- *  electronic medium or machine readable form without prior
- *  written consent from Jon Green.
- ****************************************************************************/
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     Jon Green (JASSPA)
+ * Synopsis:    Main entry point.
+ * Description: This is a simple file used as a respository for
+ *              MicroEMACS Icons. It does nothing.
+ */
 
 #include <stdlib.h>                     /* Standard library definitions  */
 #define WIN32_LEAN_AND_MEAN
