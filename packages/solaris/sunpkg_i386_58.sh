@@ -24,8 +24,8 @@ if [ ! -f ${METREE} ] ; then
     fi
 fi
 if [ ! -f me.1 ] ; then
-    if [ -f ${TOPDIR}/release/www/me.1 ] ; then
-        cp ${TOPDIR}/release/www/me.1 .
+    if [ -f ${TOPDIR}/release/www/me.1.gz ] ; then
+        gunzip -c ${TOPDIR}/release/www/me.1.gz > me.1
     fi
 fi
 if [ ! -f ${MEBIN} ] ; then
