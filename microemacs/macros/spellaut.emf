@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Feb 27 10:24:59 1999
-;  Last Modified : <000719.0012>
+;  Last Modified : <001124.0019>
 ;
 ;  Description
 ;
@@ -228,15 +228,3 @@ define-macro auto-spell
     !endif
 !emacro
 
-; setup the auto-spell
-0 define-macro auto-spell-init
-    ; dont do anything if the current language is default
-    !if &not &seq %language "Default"
-        0 buffer-bind-unbound-key auto-spell      "f5"
-        buffer-bind-unbound-key auto-spell-buffer "S-f5"
-        buffer-bind-unbound-key auto-spell-reset  "f6"
-        !if &reg "/history" "spell/autospell" "0"
-            1 auto-spell
-        !endif
-    !endif
-!emacro

@@ -12,7 +12,11 @@
 ;
 ;  Copyright (c) 1999 JASSPA
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-!if &band .hilight.flags 0x02
+; buffer-setup flags
+set-variable #l0 &reg "/history" "fhook/f90" "bhinx"
+set-variable #l1 "ebhimntux"
+
+!if &and &sin "h" #l0 &band .hilight.flags 0x02 
     !if &not &exist .hilight.f90
         set-variable .hilight.f90 &pinc .hilight.next 1
     !endif
@@ -107,23 +111,26 @@ define-macro fhook-f90
     !if &not @#
         ; Is this a f77 or other fortran file ??
         !if &seq #l1 "f90"
-            etfinsrt "f90"
+            etfinsrt "f90" .fhook-f90.setup
         !else
-            etfinsrt "f"
+            etfinsrt "f" .fhook-f90.setup
         !endif
     !endif
-    1 buffer-mode "time"
-    1 buffer-mode "indent"
-    buffer-abbrev-file "f90"
     set-variable $buffer-mask "luh1"
-    !if &band .hilight.flags 0x02
+    buffer-modes-init .fhook-f90.setup
+    !if &and &sin "h" .fhook-f90.setup &band .hilight.flags 0x02 
         set-variable $buffer-hilight .hilight.f90
+    !endif
+    !if &sin "b" .fhook-f90.setup
+        buffer-abbrev-file "f90"
     !endif
     ; execute user extensions if enabled
     !if &exist my-fhook-f90
         my-fhook-f90
     !endif
 !emacro
+set-variable .fhook-f90.setup #l0
+set-variable .fhook-f90.setup-mask #l1
 
 ml-write "[Fortran file hook loaded]"
 

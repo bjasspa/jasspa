@@ -1,10 +1,15 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;       Scheme and (probably!) Lisp File Hook
 ;
 ;       Created by Pedro Gomes 99-06-15
 ;
 ;   Last Modified : <991125.1029>
-;
-!if &band .hilight.flags 0x02
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; buffer-setup flags
+set-variable #l0 &reg "/history" "fhook/scheme" "hix"
+set-variable #l1 "ehimtux"
+
+!if &and &sin "h" #l0 &band .hilight.flags 0x02 
     !if &not &exist .hilight.scheme
         set-variable .hilight.scheme &pinc .hilight.next 1
     !endif
@@ -23,10 +28,9 @@
 !endif
 
 define-macro fhook-scheme
-    1 buffer-mode "time"
-    1 buffer-mode "indent"
     set-variable $buffer-mask "luh1"
-    !if &band .hilight.flags 0x02
+    buffer-modes-init .fhook-scheme.setup
+    !if &and &sin "h" .fhook-scheme.setup &band .hilight.flags 0x02 
         set-variable $buffer-hilight .hilight.scheme
     !endif
     ; execute user extensions if enabled
@@ -34,6 +38,8 @@ define-macro fhook-scheme
         my-fhook-scheme
     !endif
 !emacro
+set-variable .fhook-scheme.setup #l0
+set-variable .fhook-scheme.setup-mask #l1
 
 ml-write "[Scheme file hook loaded]"
 

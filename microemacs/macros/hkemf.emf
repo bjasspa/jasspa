@@ -1,19 +1,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; emf hook - This file is invoked when a MicroEmacs macro file is loaded.
 ;
-; Last Modified : <000623.2120>
+; Last Modified : <001203.1708>
 ; Copyright (c) 1999 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; buffer-setup flags
+set-variable #l0 &reg "/history" "fhook/emf" "abfhnopx"
+set-variable #l1 "abefhimnoptux"
 set-char-mask "2" "-$&#!%:@."
 
 !if &not &exist .hilight.emf
     set-variable .hilight.emf &pinc .hilight.next 1
-    ; set up the osd tool menu & help dialog
-    set-variable .osd.emf-help &pinc .osd.next 1
-    set-variable .osd.emf-tool &pinc .osd.next 1
 !endif
-
-!if &band .hilight.flags 0x02
+!if &and &sin "h" #l0 &band .hilight.flags 0x02 
     0 hilight .hilight.emf 0                        $global-scheme
     !if &band .hilight.flags 0x04
         hilight .hilight.emf 1  "define-help\\s +\\w+"  .scheme.function
@@ -38,21 +37,22 @@ set-char-mask "2" "-$&#!%:@."
         hilight .hilight.emf 1 "0[xX][[:xdigit:]]+" .scheme.constant
     !endif
 !endif
-
-0 indent  .hilight.emf 0 10
-indent .hilight.emf N "define-macro" 4
-indent .hilight.emf n "!if" 4
-indent .hilight.emf s "!eli" -4
-indent .hilight.emf s "!els" -4
-indent .hilight.emf o "!end" -4
-indent .hilight.emf n "!whi" 4
-indent .hilight.emf o "!don" -4
-indent .hilight.emf n "!rep" 4
-indent .hilight.emf o "!until" -4
-indent .hilight.emf o "!ema" -4
-indent .hilight.emf e "\"" "\"" "\\"
-indent .hilight.emf i ";"
-indent .hilight.emf f "*" 0
+!if &sin "a" #l0
+    0 indent  .hilight.emf 0 10
+    indent .hilight.emf N "define-macro" 4
+    indent .hilight.emf n "!if" 4
+    indent .hilight.emf s "!eli" -4
+    indent .hilight.emf s "!els" -4
+    indent .hilight.emf o "!end" -4
+    indent .hilight.emf n "!whi" 4
+    indent .hilight.emf o "!don" -4
+    indent .hilight.emf n "!rep" 4
+    indent .hilight.emf o "!until" -4
+    indent .hilight.emf o "!ema" -4
+    indent .hilight.emf e "\"" "\"" "\\"
+    indent .hilight.emf i ";"
+    indent .hilight.emf f "*" 0
+!endif
 
 define-macro emf-comment-line
     !while &gre &pdec @# 1 0
@@ -107,67 +107,82 @@ define-macro emf-quote-command
     @# insert-string @cg
 !emacro
 
-osd .osd.emf-tool 0  "b"
-osd .osd.emf-tool 1  ""  "Emf tool &help    esc h"   .osd.emf-help osd
-osd .osd.emf-tool 2  ""  "&Restyle region   A-C-i"   f restyle-region
-osd .osd.emf-tool 3  ""  "Complete co&mmand esc esc" f emf-expand-abbrev
-osd .osd.emf-tool 4  ""  "&Quote command    A-q"     f emf-quote-command
-osd .osd.emf-tool 5  "-"
-osd .osd.emf-tool 6  ""  "&Comment line     C-c C-c" f emf-comment-line
-osd .osd.emf-tool 7  ""  "&Uncomment line   C-c C-d" f emf-uncomment-line
-osd .osd.emf-tool 11 "-"
-osd .osd.emf-tool 18 "i" "Create &tags file"         f "generate-tags-file emftags"
-0 define-macro osd-ohook-emf
-    osd 7 1 "Md" "Emf &Tools" .osd.emf-tool
-    osd 7 2 "-"
-!emacro
-0 define-macro osd-chook-emf
-    osd 7 1  "D"
-    osd 7 2  "D"
-!emacro
-
-osd .osd.emf-help 0  "batcdH" 9 3 99 .scheme.osd-title "Emf Mode Help"
-osd .osd.emf-help 3  "" 
-osd .osd.emf-help 4  ""  "    esc h   - View this help page"
-osd .osd.emf-help 5  "" 
-osd .osd.emf-help 7  ""  "    C-c C-c - Comment out current line"
-osd .osd.emf-help 8  ""  "    C-c C-d - Uncomment current line"
-osd .osd.emf-help 9  "" 
-osd .osd.emf-help 10 ""  "    esc esc - Complete command"
-osd .osd.emf-help 11 ""  "    A-q     - Quote command"
-osd .osd.emf-help 12 ""  "    A-C-i   - Restyle region"
-osd .osd.emf-help 13 "" 
-osd .osd.emf-help 17 ""  " Abbreviation file is set to emf.abr "
-osd .osd.emf-help 18 "" 
-osd .osd.emf-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
+!if &sin "o" #l0
+    !if &not &exist .osd.emf-tool
+        set-variable .osd.emf-tool &pinc .osd.next 1
+    !endif
+    osd .osd.emf-tool 0  "b"
+    osd .osd.emf-tool 1  ""  "Emf tool &help    esc h"   .osd.emf-help osd
+    osd .osd.emf-tool 2  ""  "&Restyle region   A-C-i"   f restyle-region
+    osd .osd.emf-tool 3  ""  "Complete co&mmand esc esc" f emf-expand-abbrev
+    osd .osd.emf-tool 4  ""  "&Quote command    A-q"     f emf-quote-command
+    osd .osd.emf-tool 5  "-"
+    osd .osd.emf-tool 6  ""  "&Comment line     C-c C-c" f emf-comment-line
+    osd .osd.emf-tool 7  ""  "&Uncomment line   C-c C-d" f emf-uncomment-line
+    osd .osd.emf-tool 11 "-"
+    osd .osd.emf-tool 18 "i" "Create &tags file"         f "generate-tags-file emftags"
+    0 define-macro osd-ohook-emf
+        osd 7 1 "Md" "Emf &Tools" .osd.emf-tool
+        osd 7 2 "-"
+    !emacro
+    0 define-macro osd-chook-emf
+        osd 7 1  "D"
+        osd 7 2  "D"
+    !emacro
+!endif
+!if &sin "p" #l0
+    !if &not &exist .osd.emf-help
+        set-variable .osd.emf-help &pinc .osd.next 1
+    !endif
+    osd .osd.emf-help 0  "batcdH" 9 3 99 .scheme.osd-title "Emf Mode Help"
+    osd .osd.emf-help 3  "" 
+    osd .osd.emf-help 4  ""  "    esc h   - View this help page"
+    osd .osd.emf-help 5  "" 
+    osd .osd.emf-help 7  ""  "    C-c C-c - Comment out current line"
+    osd .osd.emf-help 8  ""  "    C-c C-d - Uncomment current line"
+    osd .osd.emf-help 9  "" 
+    osd .osd.emf-help 10 ""  "    esc esc - Complete command"
+    osd .osd.emf-help 11 ""  "    A-q     - Quote command"
+    osd .osd.emf-help 12 ""  "    A-C-i   - Restyle region"
+    osd .osd.emf-help 13 "" 
+    osd .osd.emf-help 17 ""  " Abbreviation file is set to emf.abr "
+    osd .osd.emf-help 18 "" 
+    osd .osd.emf-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
+!endif
 
 define-macro fhook-emf
     ; if arg is 0 this is a new file so add template 
     !if &not @#
-        etfinsrt "emf"
+        etfinsrt "emf" .fhook-emf.setup
     !endif
     set-variable $buffer-mask "luh12"
-    !if &band .hilight.flags 0x02
+    buffer-modes-init .fhook-emf.setup
+    !if &and &sin "h" .fhook-emf.setup &band .hilight.flags 0x02 
         set-variable $buffer-hilight .hilight.emf
     !endif
-    set-variable $buffer-indent .hilight.emf
-    1 buffer-mode "time"
-    1 buffer-mode "indent"
-    buffer-abbrev-file "emf"
+    !if &sin "a" .fhook-emf.setup
+        set-variable $buffer-indent .hilight.emf
+    !endif
+    !if &sin "b" .fhook-emf.setup
+        buffer-abbrev-file "emf"
+    !endif
+    fold-init .fhook-emf.setup
+    ; Bind macros
+    !if &sin "p" .fhook-emf.setup 
+        .osd.emf-help buffer-bind-key osd "esc h"
+    !endif
+    buffer-bind-key emf-quote-command "A-q"
     buffer-bind-unbound-key emf-comment-line "C-c C-c"
     buffer-bind-unbound-key emf-uncomment-line "C-c C-d"
     buffer-bind-unbound-key emf-quote-command "C-c C-q"
-    buffer-bind-key emf-quote-command "A-q"
     buffer-bind-unbound-key restyle-region "A-C-i"
-    .osd.emf-help buffer-bind-key osd "esc h"
-    ; setup emf buffer folding support
-    buffer-bind-unbound-key fold-current "f2"
-    buffer-bind-unbound-key fold-all     "f3"
     ; execute user extensions if enabled
     !if &exist my-fhook-emf
         my-fhook-emf
     !endif
 !emacro
+set-variable .fhook-emf.setup #l0
+set-variable .fhook-emf.setup-mask #l1
 
 ; setup emf variables
 set-variable .fhook-emf.fold-open  "^0? ?define-macro"

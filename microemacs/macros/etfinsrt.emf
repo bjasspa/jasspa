@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
 ;  Created       : Mon Dec 15 14:06:31 1997
-;  Last Modified : <000719.0012>
+;  Last Modified : <001124.1026>
 ;
 ;  Description
 ;      etfinsrt "etf-name"
@@ -9,10 +9,24 @@
 ;
 ;  Notes
 ;
+;    Command-line:   etfinsrt <type> [buffer-setup-flags]
+;
+;    The <type> is typically the fhook label, i.e. emf or c etc, the template
+;        file <type>.etf is found and inserted.
+;    The optional [buffer-setup-flags] are the current buffer type setup flags
+;        which can be set to disable the header insertion (flag 'n').
+;
 ;  History
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 0 define-macro etfinsrt
+    !force set-variable #l0 @2
+    !if $status
+        !if &not &sin "n" #l0
+            ; header insertion has been disabled - do nothing 
+            !return
+        !endif
+    !endif
     ; Insert the template file
     !force insert-file &find @1 ".etf"
     !if &not $status

@@ -912,7 +912,7 @@ indentInsert(void)
 #endif
 
 int
-meLineSetIndent(int curInd, int newInd)
+meLineSetIndent(int curInd, int newInd, int undo)
 {
     register int ss, curOff ;
     if((ss=bchange()) != TRUE)               /* Check we can change the buffer */
@@ -920,7 +920,7 @@ meLineSetIndent(int curInd, int newInd)
     curOff = curwp->w_doto ;
     curwp->w_doto = 0 ;
     curOff -= curInd ;
-    ldelete(curInd,6) ;
+    ldelete(curInd,(undo) ? 6:0) ;
     if(meModeTest(curbp->b_mode,MDTAB))
         ss = 0 ;
     else
@@ -933,7 +933,7 @@ meLineSetIndent(int curInd, int newInd)
     ss += newInd ;
     curOff += ss ;
 #if MEUNDO
-    if(meModeTest(curbp->b_mode,MDUNDO))
+    if(undo && meModeTest(curbp->b_mode,MDUNDO))
     {
         meUndoAddReplaceEnd(ss) ;
         curbp->fUndo->doto = ss ;
@@ -1004,7 +1004,7 @@ meNewline(int f, int n)
         if(f)
         {
             f = 0 ;
-            justify(-1) ;
+            justify(-1,-1) ;
         }
 #endif
     }
@@ -2351,7 +2351,7 @@ use_contcomm:
     curwp->w_doto = curPos ;
     if(curInd == ind)
         return TRUE ;
-    return meLineSetIndent(curOff,ind) ;
+    return meLineSetIndent(curOff,ind,1) ;
 }
 
 int
@@ -2379,7 +2379,7 @@ cinsert(void)
             curwp->w_doto = doto ;
             if((newInd = getccol() - 3) < 0)
                 newInd = 0 ;
-            if(meLineSetIndent(doto,newInd) != TRUE)
+            if(meLineSetIndent(doto,newInd,1) != TRUE)
                 return FALSE ;
             str = commentCont ;
             while(*str != '\0')

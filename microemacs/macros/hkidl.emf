@@ -10,12 +10,13 @@
 ;                  hilighting of OMG's IDL. Restyle and folding
 ;                  are enabled.
 ;
-;  History
-;
 ;  Copyright (c) 1999 JASSPA
-;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-!if &band .hilight.flags 0x02
+; buffer-setup flags
+set-variable #l0 &reg "/history" "fhook/idl" "afhnx"
+set-variable #l1 "aefhimntux"
+
+!if &and &sin "h" #l0 &band .hilight.flags 0x02 
     !if &not &exist .hilight.idl
         set-variable .hilight.idl &pinc .hilight.next 1
     !endif
@@ -130,34 +131,39 @@ set-variable $c-contcomm " * "
 define-macro fhook-idl
     ; if arg is 0 this is a new file so add template
     !if &not @#
-        etfinsrt "idl"
+        etfinsrt "idl" .fhook-idl.setup
     !endif
-    1 buffer-mode "time"
-    1 buffer-mode "cmode"
-    buffer-abbrev-file "idl"
     set-variable $buffer-mask "luh1"
-    ; Set up the hilight mode
-    !if &band .hilight.flags 0x02
+    buffer-modes-init .fhook-idl.setup
+    !if &and &sin "h" .fhook-idl.setup &band .hilight.flags 0x02 
         set-variable $buffer-hilight .hilight.idl
     !endif
+    !if &sin "a" .fhook-idl.setup
+        1 buffer-mode "cmode"
+    !endif
+    !if &sin "b" .fhook-idl.setup
+        buffer-abbrev-file "idl"
+    !endif
+    fold-init .fhook-idl.setup
     ; Bind macros
-    .osd.idl-help buffer-bind-key osd  "esc h"
+    !if &sin "p" .fhook-idl.setup 
+        .osd.idl-help buffer-bind-key osd  "esc h"
+    !endif
     buffer-bind-unbound-key c-start-comment    "esc C-c"
     buffer-bind-unbound-key idl-comment-line   "C-c C-c"
     buffer-bind-unbound-key idl-uncomment-line "C-c C-d"
     buffer-bind-unbound-key idl-comm-to-end    "C-c C-e"
-    buffer-bind-key c-insert-tab       "A-tab"
+    buffer-bind-key c-insert-tab               "A-tab"
     buffer-bind-unbound-key restyle-region     "A-C-i"
-    buffer-bind-key c-box              "esc q"
-    buffer-bind-key c-box              "esc o"
-    ; Set up the folds for 'C' and C++
-    buffer-bind-unbound-key fold-current "f2"
-    buffer-bind-unbound-key fold-all     "f3"
+    buffer-bind-key c-box                      "esc q"
+    buffer-bind-key c-box                      "esc o"
     ; execute user extensions if enabled
     !if &exist my-fhook-idl
         my-fhook-idl
     !endif
 !emacro
+set-variable .fhook-idl.setup #l0
+set-variable .fhook-idl.setup-mask #l1
 
 set-variable .fhook-idl.fold-open  "^{"
 set-variable .fhook-idl.fold-close "^}"

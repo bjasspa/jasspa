@@ -1,11 +1,16 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;       Python Language hook
 ;
 ;       Created by Pedro Gomes 99-06-09
 ;
 ;   Last Modified : <991125.1029>
-;
-!if &band .hilight.flags 0x02
-    !if &not &exist .hilight.python "ERROR"
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; buffer-setup flags
+set-variable #l0 &reg "/history" "fhook/python" "hix"
+set-variable #l1 "ehimtux"
+
+!if &and &sin "h" #l0 &band .hilight.flags 0x02 
+    !if &not &exist .hilight.python
         set-variable .hilight.python &pinc .hilight.next 1
     !endif
     
@@ -89,10 +94,9 @@
 !endif
 
 define-macro fhook-python
-    1 buffer-mode "time"
-    1 buffer-mode "indent"
     set-variable $buffer-mask "luh1"
-    !if &band .hilight.flags 0x02
+    buffer-modes-init .fhook-python.setup
+    !if &and &sin "h" .fhook-python.setup &band .hilight.flags 0x02 
         set-variable $buffer-hilight .hilight.python
     !endif
     ; execute user extensions if enabled
@@ -100,6 +104,8 @@ define-macro fhook-python
         my-fhook-python
     !endif
 !emacro
+set-variable .fhook-python.setup #l0
+set-variable .fhook-python.setup-mask #l1
 
 ml-write "[Python file hook loaded]"
 

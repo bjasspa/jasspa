@@ -1128,7 +1128,7 @@ input_expand:
             {
                 uint8 fname[FILEBUF], *base ;
                 
-                pathNameCorrect(buf,fname,&base) ;
+                pathNameCorrect(buf,PATHNAME_PARTIAL,fname,&base) ;
                 meStrcpy(buf,fname) ;
                 ipos = ilen = meStrlen(buf) ;
                 /* if current buff is xxx/yyy/ then pathNameCorrect will

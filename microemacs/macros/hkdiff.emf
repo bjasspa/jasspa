@@ -56,15 +56,17 @@ define-macro fhook-diff
     ; Set up the buffer modes
     -1 buffer-mode "time"
 
-    ; Work out what kind of diff utility that we have.
-    ; Note that if %diff-com is not defined then regular
-    ; diff hilighting is selected.
-    !if &sin " --context" %diff-com
-        set-variable $buffer-hilight .hilight.gdiff
-    !elif &sin " -c" %diff-com
-        set-variable $buffer-hilight .hilight.gdiff
-    !else
-        set-variable $buffer-hilight .hilight.diff
+    !if &band .hilight.flags 0x02
+        ; Work out what kind of diff utility that we have.
+        ; Note that if %diff-com is not defined then regular
+        ; diff hilighting is selected.
+        !if &sin " --context" %diff-com
+            set-variable $buffer-hilight .hilight.gdiff
+        !elif &sin " -c" %diff-com
+            set-variable $buffer-hilight .hilight.gdiff
+        !else
+            set-variable $buffer-hilight .hilight.diff
+        !endif
     !endif
     ; execute user extensions if defined
     !if &exist my-fhook-diff

@@ -12,11 +12,14 @@
 ;
 ;  Copyright (c) 1999 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-!if &band .hilight.flags 0x02
+; buffer-setup flags
+set-variable #l0 &reg "/history" "fhook/sql" "hix"
+set-variable #l1 "ehimtux"
+
+!if &and &sin "h" #l0 &band .hilight.flags 0x02 
     !if &not &exist .hilight.sql
         set-variable .hilight.sql &pinc .hilight.next 1
     !endif
-    
     0 hilight .hilight.sql 3 50                $global-scheme
     hilight .hilight.sql 4 "<[[:alpha:]]" ">" "" .scheme.keyword
     hilight .hilight.sql 20 "/\\*" "*/" ""     .scheme.comment
@@ -346,15 +349,9 @@
 !endif
 
 define-macro fhook-sql
-    ; if arg is 0 this is a new file so add template
-;    !if &not @#
-;        etfinsrt "sql"
-;    !endif
-    1 buffer-mode "time"
-    1 buffer-mode "indent"
-;    buffer-abbrev-file "sql"
     set-variable $buffer-mask "luh1"
-    !if &band .hilight.flags 0x02
+    buffer-modes-init .fhook-sql.setup
+    !if &and &sin "h" .fhook-sql.setup &band .hilight.flags 0x02 
         set-variable $buffer-hilight .hilight.sql
     !endif
     ; execute user extensions if enabled
@@ -362,6 +359,8 @@ define-macro fhook-sql
         my-fhook-sql
     !endif
 !emacro
+set-variable .fhook-sql.setup #l0
+set-variable .fhook-sql.setup-mask #l1
 
 ml-write "[SQL file hook loaded]"
 

@@ -27,6 +27,10 @@
 ;
 ;  Copyright (c) 1998-2000 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; buffer-setup flags
+set-variable #l0 &reg "/history" "fhook/latex" "fhinopsx"
+set-variable #l1 "efhijmnopstuwx"
+
 !if &not &exist .osd.latex-help
     ; set up the osd tool menu & help dialog
     set-variable .osd.latex-help  &pinc .osd.next 1
@@ -52,14 +56,29 @@
     set-variable %latex-compile &cond &seq %latex-compile "ERROR" "latex -interaction=nonstopmode" %latex-compile
     set-variable %latex-view    &cond &seq %latex-view    "ERROR" "xdvi"  %latex-view
 !endif
-
-; hilight-latex-common <hilightScheme> <schemeIdentifier>
-; 
-; Take all of the common objects that are used in the various hilighting
-; schemes and apply them to the current hilighting format.
-;
-0 define-macro hilight-latex-common
-    !if &band .hilight.flags 0x02
+    
+!if &and &sin "h" #l0 &band .hilight.flags 0x02 
+    !if &not &exist .hilight.latex
+        set-variable .hilight.latex &pinc .hilight.next 1
+        set-variable .hilight.latexs &pinc .hilight.next 1
+        set-variable .hilight.latexb &pinc .hilight.next 1
+        set-variable .hilight.latext &pinc .hilight.next 1
+        set-variable .hilight.latexh &pinc .hilight.next 1
+        set-variable .hilight.latexi &pinc .hilight.next 1
+        set-variable .hilight.latexm &pinc .hilight.next 1
+        set-variable .hilight.latexbi &pinc .hilight.next 1
+        set-variable .hilight.latexbt &pinc .hilight.next 1
+        set-variable .hilight.latexib &pinc .hilight.next 1
+        set-variable .hilight.latexit &pinc .hilight.next 1
+        set-variable .hilight.latextb &pinc .hilight.next 1
+        set-variable .hilight.latexti &pinc .hilight.next 1
+    !endif
+    ; hilight-latex-common <hilightScheme> <schemeIdentifier>
+    ; 
+    ; Take all of the common objects that are used in the various hilighting
+    ; schemes and apply them to the current hilighting format.
+    ;
+    0 define-macro hilight-latex-common
         ; Get the arguments into the local registers for speed.
         set-variable #l1 @1
         set-variable #l2 @2
@@ -112,7 +131,7 @@
         hilight #l1 64 "\\\\MF\\}\\W"     "MF"                    .scheme.bold
         hilight #l1 64 "\\\\AmSLaTeX\\}\\W" "AmSLaTeX"            .scheme.bold
         
-;        hilight #l1 64 "\\\\TeX\\}[^\\]" "TeX"                     .scheme.bold
+        ;        hilight #l1 64 "\\\\TeX\\}[^\\]" "TeX"                     .scheme.bold
         hilight #l1 64 "\\\\dvipdfm\\\\" "dvipdfm"                 .scheme.bold
         ; character quoting
         hilight #l1 64 "\\$\\(.\\)\\$" "\\1"                       #l2
@@ -138,25 +157,7 @@
         ; use this. Uncomment to enable.
         ; hilight #l1 0x44 "|" "" "|" "" ""               .scheme.string
         hilight #l1 64 "\\\\\\\\$" ""                              #l2
-    !endif
-!emacro
-    
-!if &band .hilight.flags 0x02
-    !if &not &exist .hilight.latex
-        set-variable .hilight.latex &pinc .hilight.next 1
-        set-variable .hilight.latexs &pinc .hilight.next 1
-        set-variable .hilight.latexb &pinc .hilight.next 1
-        set-variable .hilight.latext &pinc .hilight.next 1
-        set-variable .hilight.latexh &pinc .hilight.next 1
-        set-variable .hilight.latexi &pinc .hilight.next 1
-        set-variable .hilight.latexm &pinc .hilight.next 1
-        set-variable .hilight.latexbi &pinc .hilight.next 1
-        set-variable .hilight.latexbt &pinc .hilight.next 1
-        set-variable .hilight.latexib &pinc .hilight.next 1
-        set-variable .hilight.latexit &pinc .hilight.next 1
-        set-variable .hilight.latextb &pinc .hilight.next 1
-        set-variable .hilight.latexti &pinc .hilight.next 1
-    !endif
+    !emacro
     
     0 hilight .hilight.latex 0                                     $global-scheme
     hilight .hilight.latex 2 "^%"                                  .scheme.comment
@@ -177,7 +178,7 @@
     hilight .hilight.latex 0 "\\\\textcolor"                       .scheme.operator
     
     ;; simulation hilighting
-    set-variable #l0 &rig $box-chars 10
+    set-variable #l2 &rig $box-chars 10
     0 hilight .hilight.latexs 0                                    $global-scheme ; Was 2 10
     ; Common hilighting components
     hilight-latex-common                          .hilight.latexs  $global-scheme
@@ -201,8 +202,8 @@
     ; link start
     hilight .hilight.latexs 0xc0 "\\\\index{" ""  .hilight.latexh  $global-scheme
     ;Lines
-    hilight .hilight.latexs 64 "\\\\newpage" &spr "%n<<Page Break>>%n" 32 #l0 32 #l0 .scheme.italic
-    hilight .hilight.latexs 64 "\\\\hline" &spr "%n" 78 #l0        .scheme.italic
+    hilight .hilight.latexs 64 "\\\\newpage" &spr "%n<<Page Break>>%n" 32 #l2 32 #l2 .scheme.italic
+    hilight .hilight.latexs 64 "\\\\hline" &spr "%n" 78 #l2        .scheme.italic
     ; Begin and End
     hilight .hilight.latexs 0x44 "\\\\begin{" "|" "}" "ˆ" ""       .scheme.italic
     hilight .hilight.latexs 0x44 "\\\\end{" "ˆ" "}" "|" ""         .scheme.italic
@@ -319,6 +320,9 @@
             set-variable $buffer-hilight .hilight.latex
             -1 buffer-mode "view"
         !endif
+    !emacro
+    ; redefine to free memory
+    0 define-macro hilight-latex-common
     !emacro
 !endif
 ;
@@ -735,55 +739,59 @@ define-macro latex-popup
 
 ;; osd Tools ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-osd .osd.latex-tool 0  "b"
-osd .osd.latex-tool 1  ""   "LaTeX Tool &Help   esc h"   .osd.latex-help osd
-osd .osd.latex-tool 2  ""   "&Goto Ref Label    C-c r"   f latex-ref-goto-label
-osd .osd.latex-tool 3  ""   "&Return to Ref     C-c C-r" f latex-ref-go-back
-osd .osd.latex-tool 4  ""   "List &Sections     f7"      f latex-list-section
-osd .osd.latex-tool 5  ""   "List &Labels       f8"      f latex-list-label
-osd .osd.latex-tool 6  "-"
-osd .osd.latex-tool 7  "Md" "&Insert Token      C-6"     .osd.latex-popup
-osd .osd.latex-tool 8  ""   "Com&pile Buffer"            f latex-compile
-osd .osd.latex-tool 9  ""   "&View Buffer"               f latex-view
-osd .osd.latex-tool 10 "-"
-osd .osd.latex-tool 11 ""   "&Comment Line      C-c C-c" f latex-comment-line
-osd .osd.latex-tool 12 ""   "&Uncomment Line    C-c C-d" f 
-osd .osd.latex-tool 13 "-"
-osd .osd.latex-tool 14 ""   "Toggle hilighting C-c C-h"  f latex-swap-hilight
-osd .osd.latex-tool 15 "i"  "Create &Tags File"          f "exec-me \"\\\"@textags\\\"\""
-; Add hook to load the OSD latex tools menu.
-0 define-macro osd-ohook-latex
-    osd 7 1 "Md" "LaTeX &Tools" .osd.latex-tool
-    osd 7 2 "-"
-    osd 4 15 "Md" "&LaTex Token" .osd.latex-popup
-!emacro
-; Add hook to remove the OSD latex tools menu.
-0 define-macro osd-chook-latex
-    osd 7 1  "D"
-    osd 7 2  "D"
-    osd 4 15 "D"
-!emacro
+!if &sin "o" #l0 
+    osd .osd.latex-tool 0  "b"
+    osd .osd.latex-tool 1  ""   "LaTeX Tool &Help   esc h"   .osd.latex-help osd
+    osd .osd.latex-tool 2  ""   "&Goto Ref Label    C-c r"   f latex-ref-goto-label
+    osd .osd.latex-tool 3  ""   "&Return to Ref     C-c C-r" f latex-ref-go-back
+    osd .osd.latex-tool 4  ""   "List &Sections     f7"      f latex-list-section
+    osd .osd.latex-tool 5  ""   "List &Labels       f8"      f latex-list-label
+    osd .osd.latex-tool 6  "-"
+    osd .osd.latex-tool 7  "Md" "&Insert Token      C-6"     .osd.latex-popup
+    osd .osd.latex-tool 8  ""   "Com&pile Buffer"            f latex-compile
+    osd .osd.latex-tool 9  ""   "&View Buffer"               f latex-view
+    osd .osd.latex-tool 10 "-"
+    osd .osd.latex-tool 11 ""   "&Comment Line      C-c C-c" f latex-comment-line
+    osd .osd.latex-tool 12 ""   "&Uncomment Line    C-c C-d" f 
+    osd .osd.latex-tool 13 "-"
+    osd .osd.latex-tool 14 ""   "Toggle hilighting C-c C-h"  f latex-swap-hilight
+    osd .osd.latex-tool 15 "i"  "Create &Tags File"          f "exec-me \"\\\"@textags\\\"\""
+    ; Add hook to load the OSD latex tools menu.
+    0 define-macro osd-ohook-latex
+        osd 7 1 "Md" "LaTeX &Tools" .osd.latex-tool
+        osd 7 2 "-"
+        osd 4 15 "Md" "&LaTex Token" .osd.latex-popup
+    !emacro
+    ; Add hook to remove the OSD latex tools menu.
+    0 define-macro osd-chook-latex
+        osd 7 1  "D"
+        osd 7 2  "D"
+        osd 4 15 "D"
+    !emacro
+!endif
 
-osd .osd.latex-help 0  "batcdH" 9 3 99 .scheme.osd-title "LaTeX Mode Help" 
-osd .osd.latex-help 3  "" 
-osd .osd.latex-help 4  ""  "    esc h   - View this help page"
-osd .osd.latex-help 5  "" 
-osd .osd.latex-help 6  ""  "    C-c r   - Find current reference's label"
-osd .osd.latex-help 7  ""  "    C-c C-r - Return back to current reference"
-osd .osd.latex-help 8  "" 
-osd .osd.latex-help 9  ""  "    f7      - Goto section (Given 0 arg to rebuild  "
-osd .osd.latex-help 10 ""  "              completion list)"
-osd .osd.latex-help 11 ""  "    f8      - Goto label (Given 0 arg to rebuild  "
-osd .osd.latex-help 12 ""  "              completion list)"
-osd .osd.latex-help 13 "" 
-osd .osd.latex-help 14 ""  "    C-6     - Insert LaTeX token"
-osd .osd.latex-help 15 "" 
-osd .osd.latex-help 16 ""  "    C-c C-c - Comment out current line"
-osd .osd.latex-help 17 ""  "    C-c C-d - Uncomment current line"
-osd .osd.latex-help 18 "" 
-osd .osd.latex-help 19 ""  "    C-c C-h - Toggle simulated hilighting"
-osd .osd.latex-help 98 "" 
-osd .osd.latex-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
+!if &sin "p" #l0 
+    osd .osd.latex-help 0  "batcdH" 9 3 99 .scheme.osd-title "LaTeX Mode Help" 
+    osd .osd.latex-help 3  "" 
+    osd .osd.latex-help 4  ""  "    esc h   - View this help page"
+    osd .osd.latex-help 5  "" 
+    osd .osd.latex-help 6  ""  "    C-c r   - Find current reference's label"
+    osd .osd.latex-help 7  ""  "    C-c C-r - Return back to current reference"
+    osd .osd.latex-help 8  "" 
+    osd .osd.latex-help 9  ""  "    f7      - Goto section (Given 0 arg to rebuild  "
+    osd .osd.latex-help 10 ""  "              completion list)"
+    osd .osd.latex-help 11 ""  "    f8      - Goto label (Given 0 arg to rebuild  "
+    osd .osd.latex-help 12 ""  "              completion list)"
+    osd .osd.latex-help 13 "" 
+    osd .osd.latex-help 14 ""  "    C-6     - Insert LaTeX token"
+    osd .osd.latex-help 15 "" 
+    osd .osd.latex-help 16 ""  "    C-c C-c - Comment out current line"
+    osd .osd.latex-help 17 ""  "    C-c C-d - Uncomment current line"
+    osd .osd.latex-help 18 "" 
+    osd .osd.latex-help 19 ""  "    C-c C-h - Toggle simulated hilighting"
+    osd .osd.latex-help 98 "" 
+    osd .osd.latex-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
+!endif
 ;
 ; Delete hook. This cleans up after the buffer has been closed.
 ;
@@ -816,15 +824,18 @@ osd .osd.latex-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void
 define-macro fhook-latex
     ; if arg is 0 this is a new file so add template 
     !if &not @#
-        etfinsrt "latex"
+        etfinsrt "latex" .fhook-latex.setup
     !endif
-    1 buffer-mode "time"
-    1 buffer-mode "indent"
-    !if &band .hilight.flags 0x02
+    buffer-modes-init .fhook-latex.setup
+    !if &and &sin "h" .fhook-latex.setup &band .hilight.flags 0x02 
         set-variable $buffer-hilight .hilight.latex
         buffer-bind-unbound-key latex-swap-hilight "C-c C-h"
     !endif
-    
+    fold-init .fhook-latex.setup
+    auto-spell-init .fhook-latex.setup
+    !if &sin "p" .fhook-latex.setup 
+        .osd.latex-help buffer-bind-key osd  "esc h"
+    !endif
     ; Rebind the paragraph movement keys. 
     buffer-bind-key latex-para               "esc o"
     buffer-bind-key latex-para               "esc q"
@@ -838,25 +849,24 @@ define-macro fhook-latex
     buffer-bind-unbound-key latex-list-label     "f8"
     buffer-bind-unbound-key latex-comment-line   "C-c C-c"
     buffer-bind-unbound-key latex-uncomment-line "C-c C-d"
-    .osd.latex-help buffer-bind-key osd  "esc h"
-    ; setup latex folds
-    buffer-bind-unbound-key fold-current "f2"
-    buffer-bind-unbound-key fold-all     "f3"
-    auto-spell-init
+    ; Set up the default constants
+    set-variable :fill-mode "L"
+    set-variable :fill-col $fill-col
     ; execute user extensions if enabled
     !if &exist my-fhook-latex
         my-fhook-latex
     !endif
-    ; Set up the default constants
-    set-variable :fill-mode "L"
-    set-variable :fill-col $fill-col
 !emacro
+set-variable .fhook-latex.setup #l0
+set-variable .fhook-latex.setup-mask #l1
 
-; Set up the folding tokens for LaTeX
-set-variable .fhook-latex.fold-open  "\\\\chapter\\|\\\\section\\|\\\\subsection"
-set-variable .fhook-latex.fold-close "\\\\chapter\\|\\\\section\\|\\\\subsection\\|\\\\end{document}"
-set-variable .fhook-latex.fold-mopen "1"
-set-variable .fhook-latex.fold-mnext "-1"
+!if &sin "f" #l0 
+    ; Set up the folding tokens for LaTeX
+    set-variable .fhook-latex.fold-open  "\\\\chapter\\|\\\\section\\|\\\\subsection"
+    set-variable .fhook-latex.fold-close "\\\\chapter\\|\\\\section\\|\\\\subsection\\|\\\\end{document}"
+    set-variable .fhook-latex.fold-mopen "1"
+    set-variable .fhook-latex.fold-mnext "-1"
+!endif
 
 ml-write "[LaTeX file hook loaded]"
 

@@ -1,21 +1,32 @@
 ;   Highlight mode NROFF
 ;
-;   Last Modified : <001022.1555>
+;   Last Modified : <001204.2332>
 ;
 ; Copyright (c) 1993-2000 JASSPA
 ;
 ; Note that this file contains some JASSPA extensions for their Nroff
 ; documentation.
-; 
+set-variable #l0 &reg "/history" "fhook/nroff" "bfhijnopswx"
+set-variable #l1 "befhijmnopstuwx"
+
 !if &not &exist .osd.nroff-help
     ; set up the osd tool menu & help dialog
     set-variable .osd.nroff-help &pinc .osd.next 1
     set-variable .osd.nroff-tool &pinc .osd.next 1
 !endif
 
-; hilight-nroff-common; Common hilighting modifiers
-0 define-macro hilight-nroff-common
-    !if &band .hilight.flags 0x02
+
+!if &and &sin "h" #l0 &band .hilight.flags 0x02 
+    !if &not &exist .hilight.nroff
+        set-variable .hilight.nroff &pinc .hilight.next 1
+        set-variable .hilight.roffR &pinc .hilight.next 1
+        set-variable .hilight.roffB &pinc .hilight.next 1
+        set-variable .hilight.roffI &pinc .hilight.next 1
+        set-variable .hilight.roffC &pinc .hilight.next 1
+        set-variable .hilight.roffM &pinc .hilight.next 1
+    !endif
+    ; hilight-nroff-common; Common hilighting modifiers
+    0 define-macro hilight-nroff-common
         ; Get the arguments into the local registers for speed.
         set-variable #l1 @1
         set-variable #l2 @2
@@ -32,17 +43,7 @@
         hilight #l1 0x040 "\\\\s[-+][[:digit:]]" "" #l2
         hilight #l1 0     "\\\\\\*\\w"              .scheme.variable
         hilight #l1 0     "\\\\\\*(\\w\\w"          .scheme.variable
-!emacro
-
-!if &band .hilight.flags 0x02
-    !if &not &exist .hilight.nroff
-        set-variable .hilight.nroff &pinc .hilight.next 1
-        set-variable .hilight.roffR &pinc .hilight.next 1
-        set-variable .hilight.roffB &pinc .hilight.next 1
-        set-variable .hilight.roffI &pinc .hilight.next 1
-        set-variable .hilight.roffC &pinc .hilight.next 1
-        set-variable .hilight.roffM &pinc .hilight.next 1
-    !endif
+    !emacro
     0 hilight  .hilight.nroff 0                        $global-scheme
     hilight .hilight.nroff 0   "\\\\s0"                .scheme.variable
     hilight .hilight.nroff 0   "\\\\s[-+][[:digit:]]"  .scheme.variable
@@ -216,6 +217,9 @@
             set-variable $buffer-hilight .hilight.nroff
             -1 buffer-mode "view"
         !endif
+    !emacro
+    ; redefine to free memory
+    0 define-macro hilight-nroff-common
     !emacro
 !endif
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -623,106 +627,116 @@ define-macro tex2nr
 
 define-macro-file hkman aman
 
-osd .osd.nroff-tool  0 "b"
-osd .osd.nroff-tool  1 ""  "Nroff tool &help   esc h" .osd.nroff-help osd
-osd .osd.nroff-tool  2 ""  "&Fill paragraph    esc q" f nroff-para
-osd .osd.nroff-tool  3 ""  "&Add Padding       C-c &" f nroff-add-padding
-osd .osd.nroff-tool  4 ""  "Remove &Padding    C-x &" f nroff-remove-padding
-osd .osd.nroff-tool  5 "-"
-osd .osd.nroff-tool  6 ""  "Change to &Bold    C-c C-b" f nroff-bold
-osd .osd.nroff-tool  7 ""  "Change to &Courier C-c C-c" f nroff-mono
-osd .osd.nroff-tool  8 ""  "Change to &Italic  C-c C-i" f nroff-italic
-osd .osd.nroff-tool  9 ""  "Change to &Roman   C-c C-r" f nroff-roman
-osd .osd.nroff-tool 10 "-"
-osd .osd.nroff-tool 11 ""  "R&egion to Bold    C-c b"   f nroff-bold-region
-osd .osd.nroff-tool 11 ""  "Re&gion to Courier C-c c"   f nroff-mono-region
-osd .osd.nroff-tool 12 ""  "Regi&on to Italic  C-c i"   f nroff-italic-region
-osd .osd.nroff-tool 13 "-"
-osd .osd.nroff-tool 14 ""  "Toggle hilighting  C-c C-h" f nroff-swap-hilight
-osd .osd.nroff-tool 15 ""  "Convert Tex to Nroff"     f tex2nr
-osd .osd.nroff-tool 16 "i" "Create &tags file"        f "generate-tags-file ntags"
-; Add hook to load the OSD Nroff tools menu.
-0 define-macro osd-ohook-nroff
-    osd 7 1 "Md" "Nroff &Tools" .osd.nroff-tool
-    osd 7 2 "-"
-!emacro
-; Add hook to remove the OSD Nroff tools menu.
-0 define-macro osd-chook-nroff
-    osd 7 1  "D"
-    osd 7 2  "D"
-!emacro
+!if &sin "o" #l0 
+    osd .osd.nroff-tool  0 "b"
+    osd .osd.nroff-tool  1 ""  "Nroff tool &help   esc h" .osd.nroff-help osd
+    osd .osd.nroff-tool  2 ""  "&Fill paragraph    esc q" f nroff-para
+    osd .osd.nroff-tool  3 ""  "&Add Padding       C-c &" f nroff-add-padding
+    osd .osd.nroff-tool  4 ""  "Remove &Padding    C-x &" f nroff-remove-padding
+    osd .osd.nroff-tool  5 "-"
+    osd .osd.nroff-tool  6 ""  "Change to &Bold    C-c C-b" f nroff-bold
+    osd .osd.nroff-tool  7 ""  "Change to &Courier C-c C-c" f nroff-mono
+    osd .osd.nroff-tool  8 ""  "Change to &Italic  C-c C-i" f nroff-italic
+    osd .osd.nroff-tool  9 ""  "Change to &Roman   C-c C-r" f nroff-roman
+    osd .osd.nroff-tool 10 "-"
+    osd .osd.nroff-tool 11 ""  "R&egion to Bold    C-c b"   f nroff-bold-region
+    osd .osd.nroff-tool 11 ""  "Re&gion to Courier C-c c"   f nroff-mono-region
+    osd .osd.nroff-tool 12 ""  "Regi&on to Italic  C-c i"   f nroff-italic-region
+    osd .osd.nroff-tool 13 "-"
+    osd .osd.nroff-tool 14 ""  "Toggle hilighting  C-c C-h" f nroff-swap-hilight
+    osd .osd.nroff-tool 15 ""  "Convert Tex to Nroff"     f tex2nr
+    osd .osd.nroff-tool 16 "i" "Create &tags file"        f "generate-tags-file ntags"
+    ; Add hook to load the OSD Nroff tools menu.
+    0 define-macro osd-ohook-nroff
+        osd 7 1 "Md" "Nroff &Tools" .osd.nroff-tool
+        osd 7 2 "-"
+    !emacro
+    ; Add hook to remove the OSD Nroff tools menu.
+    0 define-macro osd-chook-nroff
+        osd 7 1  "D"
+        osd 7 2  "D"
+    !emacro
+!endif
 
-osd .osd.nroff-help  0 "batcdH" 9 3 99 .scheme.osd-title "Nroff Mode Help"
-osd .osd.nroff-help  1 "" 
-osd .osd.nroff-help  2 ""  "    esc h   - View this help page"
-osd .osd.nroff-help  3 "" 
-osd .osd.nroff-help  4 ""  "    C-c C-b - Insert bold font change"
-osd .osd.nroff-help  5 ""  "    C-c C-c - Insert courier font change"
-osd .osd.nroff-help  6 ""  "    C-c C-i - Insert italic font change"
-osd .osd.nroff-help  7 ""  "    C-c C-r - Insert roman font change"
-osd .osd.nroff-help  8 "" 
-osd .osd.nroff-help  9 ""  "    C-c b   - Change region to bold font"
-osd .osd.nroff-help  9 ""  "    C-c c   - Change region to courier font  "
-osd .osd.nroff-help 10 ""  "    C-c i   - Change region to italic font"
-osd .osd.nroff-help 11 "" 
-osd .osd.nroff-help 12 ""  "    esc o"
-osd .osd.nroff-help 13 ""  "    esc q   - Reformat paragraph"
-osd .osd.nroff-help 14 ""  "    C-c \\&   - Add padding"
-osd .osd.nroff-help 15 ""  "    C-x \\&   - Remove padding"
-osd .osd.nroff-help 16 ""  "    A-C-i   - Restyle region"
-osd .osd.nroff-help 17 "" 
-osd .osd.nroff-help 18 ""  "    C-c C-h - Toggle simulated hilighting"
-osd .osd.nroff-help 96 "" 
-osd .osd.nroff-help 97 ""  " Abbreviation file is set to nroff.abr "
-osd .osd.nroff-help 98 "" 
-osd .osd.nroff-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
+!if &sin "p" #l0 
+    osd .osd.nroff-help  0 "batcdH" 9 3 99 .scheme.osd-title "Nroff Mode Help"
+    osd .osd.nroff-help  1 "" 
+    osd .osd.nroff-help  2 ""  "    esc h   - View this help page"
+    osd .osd.nroff-help  3 "" 
+    osd .osd.nroff-help  4 ""  "    C-c C-b - Insert bold font change"
+    osd .osd.nroff-help  5 ""  "    C-c C-c - Insert courier font change"
+    osd .osd.nroff-help  6 ""  "    C-c C-i - Insert italic font change"
+    osd .osd.nroff-help  7 ""  "    C-c C-r - Insert roman font change"
+    osd .osd.nroff-help  8 "" 
+    osd .osd.nroff-help  9 ""  "    C-c b   - Change region to bold font"
+    osd .osd.nroff-help  9 ""  "    C-c c   - Change region to courier font  "
+    osd .osd.nroff-help 10 ""  "    C-c i   - Change region to italic font"
+    osd .osd.nroff-help 11 "" 
+    osd .osd.nroff-help 12 ""  "    esc o"
+    osd .osd.nroff-help 13 ""  "    esc q   - Reformat paragraph"
+    osd .osd.nroff-help 14 ""  "    C-c \\&   - Add padding"
+    osd .osd.nroff-help 15 ""  "    C-x \\&   - Remove padding"
+    osd .osd.nroff-help 16 ""  "    A-C-i   - Restyle region"
+    osd .osd.nroff-help 17 "" 
+    osd .osd.nroff-help 18 ""  "    C-c C-h - Toggle simulated hilighting"
+    osd .osd.nroff-help 96 "" 
+    osd .osd.nroff-help 97 ""  " Abbreviation file is set to nroff.abr "
+    osd .osd.nroff-help 98 "" 
+    osd .osd.nroff-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
+!endif
 
-0 define-macro bhook-nroff
-    set-variable .timestamp $timestamp
-    set-variable $timestamp "%Y/%M/%D %h:%m:%s"
-!emacro
-0 define-macro ehook-nroff
-    set-variable $timestamp .bhook-nroff.timestamp
-!emacro
+!if &sin "x" #l0
+    ; only define the b & e hooks if time mode is enabled
+    0 define-macro bhook-nroff
+        set-variable .timestamp $timestamp
+        set-variable $timestamp "%Y/%M/%D %h:%m:%s"
+    !emacro
+    0 define-macro ehook-nroff
+        set-variable $timestamp .bhook-nroff.timestamp
+    !emacro
+!endif
 
 define-macro fhook-nroff
     ; if arg is 0 this is a new file so add template 
     !if &not @#
-        etfinsrt "nroff"
+        etfinsrt "nroff" .fhook-nroff.setup
     !endif
-    1 buffer-mode "indent"
-    1 buffer-mode "wrap"
-    1 buffer-mode "time"
-    1 buffer-mode "justify"
-    !if &band .hilight.flags 0x02
+    buffer-modes-init .fhook-nroff.setup
+    !if &sin "b" .fhook-nroff.setup
+        buffer-abbrev-file "nroff"
+    !endif
+    !if &and &sin "h" .fhook-nroff.setup &band .hilight.flags 0x02 
         set-variable $buffer-hilight .hilight.nroff
         buffer-bind-unbound-key nroff-swap-hilight   "C-c C-h"
     !endif
-    buffer-abbrev-file "nroff"
+    fold-init .fhook-nroff.setup
+    auto-spell-init .fhook-nroff.setup
+    ; Bind macros
+    !if &sin "p" .fhook-nroff.setup 
+        .osd.nroff-help buffer-bind-key osd "esc h"
+    !endif
+    buffer-bind-key nroff-para "esc o"
+    buffer-bind-key nroff-para "esc q"
+    buffer-bind-key nroff-prev "C-c C-p"
     buffer-bind-unbound-key nroff-size           "C-c C-s"
     buffer-bind-unbound-key nroff-roman          "C-c C-r"
     buffer-bind-unbound-key nroff-bold           "C-c C-b"
     buffer-bind-unbound-key nroff-italic         "C-c C-i"
     buffer-bind-unbound-key nroff-mono           "C-c C-c"
-    buffer-bind-key nroff-para           "esc o"
-    buffer-bind-key nroff-para           "esc q"
     buffer-bind-unbound-key nroff-bold-region    "C-c b"
     buffer-bind-unbound-key nroff-mono-region    "C-c c"
     buffer-bind-unbound-key nroff-italic-region  "C-c i"
     buffer-bind-unbound-key nroff-add-padding    "C-c &"
     buffer-bind-unbound-key nroff-remove-padding "C-x &"
-    buffer-bind-key nroff-prev           "C-c C-p"
-    .osd.nroff-help buffer-bind-key osd  "esc h"
     set-variable %usr1mode "off"
-    ; setup emf folds
-    buffer-bind-unbound-key fold-current "f2"
-    buffer-bind-unbound-key fold-all     "f3"
-    auto-spell-init
     ; execute user extensions if enabled
     !if &exist my-fhook-nroff
         my-fhook-nroff
     !endif
 !emacro
+
+set-variable .fhook-nroff.setup #l0
+set-variable .fhook-nroff.setup-mask #l1
 
 ; setup nroff file folding and spell word adjuster
 set-variable .fhook-nroff.fold-open  "^\.S[SH]"

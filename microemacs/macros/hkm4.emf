@@ -8,9 +8,12 @@
 ;
 ;  Copyright (c) 1999 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-set-char-mask "2" "-."
+; buffer-setup flags
+set-variable #l0 &reg "/history" "fhook/m4" "hinx"
+set-variable #l1 "ehimntux"
+;set-char-mask "2" "-."
 
-!if &band .hilight.flags 0x02
+!if &and &sin "h" #l0 &band .hilight.flags 0x02 
     !if &not &exist .hilight.m4
         set-variable .hilight.m4 &pinc .hilight.next 1
     !endif
@@ -77,13 +80,11 @@ set-char-mask "2" "-."
 define-macro fhook-m4
     ; if arg is 0 this is a new file so add template 
     !if &not @#
-        etfinsrt "m4"
+        etfinsrt "m4" .fhook-m4.setup
     !endif
-    1 buffer-mode "time"
-    1 buffer-mode "indent"
     set-variable $buffer-mask "luh1"
-    ; Set up the hilight mode
-    !if &band .hilight.flags 0x02
+    buffer-modes-init .fhook-m4.setup
+    !if &and &sin "h" .fhook-m4.setup &band .hilight.flags 0x02 
         set-variable $buffer-hilight .hilight.m4
     !endif
     ; execute user extensions if enabled
@@ -91,6 +92,8 @@ define-macro fhook-m4
         my-fhook-m4
     !endif
 !emacro
+set-variable .fhook-m4.setup #l0
+set-variable .fhook-m4.setup-mask #l1
 
 ml-write "[m4 file hook loaded]"
 

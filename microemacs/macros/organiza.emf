@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Jul 26 14:36:36 1997
-;  Last Modified : <000719.0012>
+;  Last Modified : <001110.2235>
 ;
 ;  Description   : cal calendar macro
 ;
@@ -356,7 +356,6 @@ osd .osd.orga-o 660 "f" " "
         set-variable .org.addr "0"
         set-variable .org.iaddr &cond &gre .org.iaddr -1 0 -1
     !endif
-    ml-write #l0
     set-variable #l2 &lget .org.addr-reg .org.addr-ffld 
     !repeat
         set-variable #l3 .org.addr

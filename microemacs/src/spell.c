@@ -126,7 +126,6 @@ static int           longestPrefixChange=0 ;
 static int           longestSuffixRemove=0 ;
 static meDICTIONARY *dictHead=NULL ;
 static meDICTIONARY *dictIgnr=NULL ;
-static meDICTWORD   *lastIgnr=NULL ;
 static meDICTWORD   *wordCurr=NULL ;
 static int           caseFlags=0 ;
 static int           hyphenCheck=1 ;
@@ -298,8 +297,6 @@ dictionaryAddWord(meDICTIONARY *dict, meDICTWORD *wrd)
     meWordSetAddr(nent,off) ;
     dict->dUsed += len ;
     (dict->noWords)++ ;
-    if(dict == dictIgnr)
-        lastIgnr = nent ;
     return TRUE ;
 }
 
@@ -834,7 +831,6 @@ deleteDict(int f, int n)
         if(dictIgnr != NULL)
         {
             freeDictionary(dictIgnr) ;
-            lastIgnr = NULL ;
             dictIgnr = NULL ;
         }
         if(!(n & 0x02))

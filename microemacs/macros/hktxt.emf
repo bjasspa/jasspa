@@ -4,18 +4,15 @@
 ;  Created       : Mon Mar 20 22:46:08 2000
 ;  Last Modified : <000719.0012>
 ;
-;  Description
+;  Description   : text file hook
 ;
-;  Notes
+;  Comment       : See docmacro.emf for documentation
 ;
-;  History
-;
-;  Copyright (c) 2000 Samsung (SERI) Ltd.
+;  Copyright (c) 2000 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
-; setup useful Documentation fuctions to auto-load docmacros
-;
-define-macro-file docmacro doc-bhook-body doc-ehook-body doc-fhook-body
+; buffer-setup flags
+set-variable #l0 &reg "/history" "fhook/txt" "ijpsw"
+set-variable #l1 "efhijmnpstuwx"
 
 ;
 ; Set up for documentation mode.
@@ -29,62 +26,19 @@ define-macro ehook-txt
 !emacro
 
 define-macro fhook-txt
-    ; if arg is 0 this is a new file so add template 
-    !if &not @#
-        etfinsrt "txt"
-    !endif
-    
-    ; Load the default document fhook
-    doc-fhook-body
-    
-    ; Over-ride any special text modes
-    !if @#
-        ; Search for additional modes in a -!- text -!-
-        ;
-        ; -!- text; fill-column: <digit> -!-
-        ;
-        ;
-        beginning-of-buffer
-        !force -20 regex-forward "-[*!]-[ \t]*text[ \t]*"
-        !if $status
-            ; Search for fill-column: <var>;
-            !force -1 regex-forward "fill-column[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;]"
-            !if $status
-                set-variable :fill-col @s1
-                beginning-of-line
-            !endif
-            ; Add any others in here.
-            ; Search for fill-mode: <string>
-            !force -1 regex-forward "fill-mode[ \t]*:[ \t]*\\([a-zA-Z]+\\)[ \t]*[-;]"            
-            !if $status
-                set-variable #l0 @s1
-                !if &iseq #l0 "left"
-                    set-variable :fill-mode "L"
-                !elif &iseq #l0 "none"
-                    set-variable :fill-mode "n"
-                !elif &iseq #l0 "right"
-                    set-variable :fill-mode "R"
-                !elif &iseq #l0 "full"
-                    set-variable :fill-mode "B"
-                !elif &iseq #l0 "both"
-                    set-variable :fill-mode "B"
-                !elif &iseq #l0 "center"
-                    set-variable :fill-mode "C"
-                !endif
-                beginning-of-line
-            !endif
-
-            ; Back to the start of the buffer
-            beginning-of-buffer
-        !endif
-    !endif
-    
+    ; use the document fhook in docmacro
+    @# doc-fhook-body "txt" "text"
     ; execute user extensions if enabled
     ml-write "[esc h - for Text mode help]"
     !if &exist my-fhook-txt
         my-fhook-txt
     !endif
 !emacro
+set-variable .fhook-txt.setup #l0
+set-variable .fhook-txt.setup-mask #l1
+
+; load docmacro.emf passing the doc setup flags
+execute-file "docmacro" "txt"
 
 ml-write "[Txt file hook loaded]"
 

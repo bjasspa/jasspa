@@ -1,13 +1,17 @@
-;       Imakefile hook
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  Imakefile hook
 ;
-;   Last Modified : <991125.1029>
-;
-!if &band .hilight.flags 0x02
+;  Last Modified : <991125.1029>
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; buffer-setup flags
+set-variable #l0 &reg "/history" "fhook/imake" "hinTx"
+set-variable #l1 "ehimntux"
+
+!if &and &sin "h" #l0 &band .hilight.flags 0x02 
     !if &not &exist .hilight.imake
         set-variable .hilight.imake &pinc .hilight.next 1
     !endif
-    
-    ; Make file highlighting
+    ; Imakefile file highlighting
     0 hilight  .hilight.imake 2  50             $global-scheme
     hilight .hilight.imake 0  ":"               .scheme.variable       
     hilight .hilight.imake 4  "\"" "\"" "\\"    .scheme.string
@@ -63,16 +67,13 @@ define-macro imake-uncomment-line
 define-macro fhook-imake
     ; if arg is 0 this is a new file so add template 
     !if &not @#
-        etfinsrt "imake"
+        etfinsrt "imake" .fhook-imake.setup
     !endif
     set-variable $buffer-mask "luh1"
-    !if &band .hilight.flags 0x02
+    buffer-modes-init .fhook-imake.setup
+    !if &and &sin "h" .fhook-imake.setup &band .hilight.flags 0x02 
         set-variable $buffer-hilight .hilight.imake
     !endif
-    ; Normal tabs please !!!
-    -1 buffer-mode "tab"
-    1 buffer-mode "indent"
-    1 buffer-mode "time"
     buffer-bind-unbound-key imake-comment-line   "C-c C-c"
     buffer-bind-unbound-key imake-uncomment-line "C-c C-d"
     ; execute user extensions if enabled
@@ -80,6 +81,8 @@ define-macro fhook-imake
         my-fhook-imake
     !endif
 !emacro
+set-variable .fhook-imake.setup #l0
+set-variable .fhook-imake.setup-mask #l1
 
 ml-write "[Imakemake file hook loaded]"
 

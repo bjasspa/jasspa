@@ -831,13 +831,14 @@ wrapWord(int f, int n)
 #endif
     }    
     if(meModeTest(curwp->w_bufp->b_mode,MDJUST))
-        justify(-1) ;
+        justify(-1,-1) ;
     
     curwp->w_doto = llength(curwp->w_dotp) - off ;
     return cnt ;
 }
 
 
+#if 0
 /* 
  * removeTabs
  * This is a helper function for fillPara. It strips out the tabs in the 
@@ -885,6 +886,7 @@ removeTabs (uint8 *iptr, int logUndo)
         *iptr = '\0';                   /* Terminate the string */
     return (ilength);                   /* Return the string length */
 }
+#endif
 
 static int
 countGaps(void)
@@ -970,8 +972,8 @@ getBestGap(void)
  * margin is assumed to be done).
  * 
  * leftMargin is a instruction from fillPara() to inform justify where it's
- * left margin is. justify() determines it's own left margin if passed a 
- * -ve value. 
+ * left margin is. justify() determines it's own left margin and tabMode if
+ * passed a -ve values. 
  * 
  * This is required for the bulleted "* " or "a) " and "ii -  " type
  * indentation where a leading space must not be altered.
@@ -981,13 +983,14 @@ getBestGap(void)
  * it is not true for any other invocation. 
  */
 int
-justify (int leftMargin)
+justify(int leftMargin, int leftDoto)
 {
-    unsigned short  len, doto, ss ;
+    unsigned short  len, doto, ndoto, ss ;
     unsigned short  odoto;              /* Starting doto backup */
     unsigned char   cc ;
     char            jmode;              /* Justification mode */
     int             undoMode;           /* Undo operation */
+    int             col ;               /* left indent with tab expansion */
     
     /* Save old context */
     odoto = curwp->w_doto;
@@ -1020,12 +1023,53 @@ justify (int leftMargin)
     if((len == 0) || (strchr ("bcr", jmode) == NULL))
         goto finished;
     
+    if(leftDoto < 0)
+    {
+	/* move to the left hand margin */
+	curwp->w_doto = 0 ;
+	while(((cc = lgetc(curwp->w_dotp,curwp->w_doto)) != '\0') &&
+	      ((cc == ' ') || (cc == '\t')))
+	    curwp->w_doto++ ;
+	doto = curwp->w_doto ;
+	col = getccol() ;
+	if(leftMargin < 0)
+	    leftMargin = col ;
+    }
+    else
+    {
+	doto = leftDoto ;
+	curwp->w_doto = doto ;
+	col = leftMargin ;
+    }
+    /* If we have been invoked from any unknown source then check for
+     * and trash any TABs on the rest of the line */
+    while((cc=lgetc(curwp->w_dotp,curwp->w_doto)) != '\0')
+    {
+	if (cc == TAB)
+	{
+	    /* Get expansion width of TAB */ 
+	    int jj = next_tab_pos(getccol());
+	    /* Replace the TAB with equivelent SPACE's */
+	    ldelete (1L,undoMode);
+	    linsert (jj, ' ');
+#if MEUNDO
+	    if (undoMode)
+		meUndoAddInsChars(jj) ;
+#endif
+	}
+	curwp->w_doto++ ;
+    }
+    len = llength(curwp->w_dotp) - doto + leftMargin ;
+#if 0
     /* If we have been invoked from any unknown source then trash the 
      * TABs. We cannot justify correctly with TABs in the line. 
      * (Well we could but I cannot be bothered).
      * An unknown source is one which does not know where it's left margin
      * is supposed to be (i.e. anywhere but fillPara() !!).
-     * Make sure doto is at the end of the line to convert all TABs */
+     * Make sure doto is at the end of the line to convert all TABs.
+     * store where the left margin used them and restore at end */
+    if(tabMode < 0)
+	tabMode = (lgetc(curwp->w_dotp,0) == TAB) ;
     if (leftMargin < 0)
     {
         curwp->w_doto = llength(curwp->w_dotp);
@@ -1036,35 +1080,20 @@ justify (int leftMargin)
     /* Count the leading white space */
     for (doto = 0; lgetc(curwp->w_dotp,doto) == ' '; doto++)
         /* NULL */;
+#endif
     
     /* If there is leading white space and we are justifying centre
      * or right then delete the white space. */
     if(jmode != 'b')
     {
-        if (doto > 0)                   /* Anything to do ?? */
-        {
-            curwp->w_doto = 0 ;         /* Start of line */
-            ldelete(doto,undoMode) ;  /* Delete leading white space */
-            len -= doto ;               /* Reset length */
-        }
-        
         /* Centre and right justification are pretty similar. For
          * right justification we insert "fillcol-linelen" spaces.
          * For centre justification we insert "fillcol-linelen/2"
          * spaces. */
-        
-        ss = fillcol - len ;
-        if (ss > 0)
-        {
-            if(jmode == 'c')        /* Centre ?? */
-                ss >>= 1 ;          /* Yes - insert 1/2 the amount */
-            curwp->w_doto = 0 ;
-            linsert(ss, ' ');
-#if MEUNDO
-            if (undoMode)
-                meUndoAddInsChars(ss) ;
-#endif
-        }
+        len = fillcol - len ;
+	if(jmode == 'c')                /* Centre ?? */
+	    len >>= 1 ;                 /* Yes - indent 1/2 the amount */
+	leftMargin += len ;
     }
     /* Both left and right margin justification. */
     else if(len < (unsigned short) fillcol)
@@ -1072,8 +1101,6 @@ justify (int leftMargin)
         int gaps ;			/* The number of gaps in the line */
         
         ss = fillcol - len ;
-        if (leftMargin > 0)             /* fillPara() hint at left margin */
-            doto = leftMargin;          /* yes - use this, not our doto */
         curwp->w_doto = doto ;	        /* Save doto position */
         gaps = countGaps() ;	        /* Get number of gaps */
         
@@ -1106,6 +1133,24 @@ justify (int leftMargin)
             } while(ss) ;
         }
     }
+
+    /* Set the left margin for center and right modes,
+     * and change the left margin back to tabs */
+#if 0
+    if((doto != ndoto) || tabMode)
+    {
+	/* force the tab mode depending on whether a tab was found */
+	int tmode;
+	tmode = (meModeTest(curbp->b_mode,MDTAB) == 0) ;
+	if(tabMode ^ tmode)
+	    meModeToggle(curbp->b_mode,MDTAB) ;
+	meLineSetIndent(doto,ndoto,undoMode) ;
+	if(tabMode ^ tmode)
+	    meModeToggle(curbp->b_mode,MDTAB) ;
+    }
+#endif
+    if(col != leftMargin)
+	meLineSetIndent(doto,leftMargin,undoMode) ;
 finished:
     
     /* Restore context - return the new line length */
@@ -1317,10 +1362,13 @@ fillPara(int f, int n)
     uint8 wbuf[NSTRING];	        /* buffer for current word	*/
     int c;			        /* current char durring scan	*/
     int clength;		        /* position on line during fill	*/
-    int newlength;		        /* tentative new line length	*/
+    int ccol;				/* position on line during fill	*/
+    int newcol;			        /* tentative new line length	*/
     int wordlen;		        /* length of current word	*/
-    int32 ilength;			/* Initial line length          */
+    int ilength;			/* Initial line length          */
+    int icol;				/* Initial line columns         */
     register int fillState;             /* State of the fill            */
+    int fdoto;                          /* The left doto for 1st line   */
 
 #if MEUNDO
     UNDOND *undoNd ;
@@ -1458,6 +1506,7 @@ noIndent:
         
         setAnchor (TRUE, ANCHOR_COMPUTE);/* Remember paragraph positions */
         
+	fdoto = curwp->w_doto ;
         /* Get the initial string from the start of the paragraph.
          * lookahead() modifies the current doto value. */
         if (((fillState & (FILL_INDENT|FILL_BOTH|FILL_LEFT)) > FILL_INDENT) &&
@@ -1466,30 +1515,26 @@ noIndent:
             fillmode = ofillmode;
             return (ABORT);
         }
+	/* if lookahead has found a new left indent position, this position
+	 * must be passed to justify so justify ignores the text to the left
+	 * of this indent point */
+	if(fdoto == curwp->w_doto)
+	    fdoto = -1 ;
+	else
+	    fdoto = curwp->w_doto ;
         
-#if MEUNDO
         ilength = curwp->w_doto;
+#if MEUNDO
         curwp->w_doto = 0;
         meUndoAddReplaceBgn(eopline,0) ;
         undoNd = curbp->fUndo ;
         curwp->w_doto = (uint16) ilength;
         paralen = 0 ;
 #endif
-        /* First remove any leading TAB characters.
-         * 
-         * If we are performing a centre, right or no justification then
-         * strip out any leading white space characters */
-        ilength = removeTabs (ibuf, 0);   /* Strip out leading TABs */
-        if ((fillState & (FILL_MARGIN|FILL_CENTRE|FILL_RIGHT|FILL_NONE)) &&
-            (ilength > 0))
-        {
-            /* Centre or Right justification - remove leading spaces */
-            curwp->w_doto = 0;
-            ldelete(ilength,0);
-            ilength = 0;
-        }
+        /* Get the indentation column, this is the real left indentation position */
+	icol = getccol() ;
         
-        /* Reset to initial settings.
+	/* Reset to initial settings.
          * Modes are:-
          * 
          *     ~EOP    - Not at end of paragraph
@@ -1498,6 +1543,7 @@ noIndent:
          *      FIRST  - This is the first word
          */
         clength = ilength;              /* Character length is leader length */
+        ccol = icol;
         wordlen = 0;                    /* No word is present */
  
         fillState = ((fillState & ~(FILL_EOP|FILL_FORCE|FILL_DOT)) |
@@ -1530,10 +1576,10 @@ noIndent:
             {
                 /* at a word break with a word waiting */
                 /* calculate tantitive new length with word added */
-                newlength = clength + 1 + wordlen;
+                newcol = ccol + 1 + wordlen;
                 if (fillState & FILL_DOT)
-                    newlength += filleoslen-1 ;
-                if ((newlength <= fillcol) || (fillState & FILL_LINE))
+                    newcol += filleoslen-1 ;
+                if ((newcol <= fillcol) || (fillState & FILL_LINE))
                 {
                     /* add word to current line */
                     if ((fillState & FILL_FIRST) == 0)
@@ -1542,11 +1588,13 @@ noIndent:
                         {
                             linsert(filleoslen, ' ') ; /* the space */
                             clength += filleoslen ;
+                            ccol += filleoslen ;
                         }
                         else
                         {
                             linsert(1, ' '); /* the space */
                             ++clength;
+			    ++ccol;
                         }
                     }
                     fillState &= ~(FILL_FIRST|FILL_DOT);
@@ -1556,7 +1604,11 @@ noIndent:
                     if (fillState & FILL_JUSTIFY)
                     {
                         lnewline();
-                        clength = justify (ilength);
+                        clength = justify (icol,fdoto);
+			/* reset the indent offset as following lines will not
+                         * have the bullet text to the left of the indent
+                         * column */
+			fdoto = -1 ;
                     }
                     else
                     {
@@ -1566,14 +1618,17 @@ noIndent:
 #if MEUNDO
                     paralen += clength + 1;
 #endif
-                    lsinsert(0, ibuf);
+		    meLineSetIndent(0,icol,0) ;
+/* ZZZ                   lsinsert(0, ibuf);*/
                     clength = (int) ilength;
+                    ccol = (int) icol;
                     fillState &= ~FILL_DOT;
                 }
                 
                 /* and add the word in either case */
                 lsinsert(wordlen, wbuf);
                 clength += wordlen;
+                ccol += wordlen;
                 if (meStrchr(filleos,wbuf[wordlen-1]) != NULL)
                     fillState |= FILL_DOT;
                 wordlen = 0;
@@ -1584,7 +1639,8 @@ noIndent:
                 if (fillState & FILL_JUSTIFY)
                 {
                     lnewline();
-                    clength = justify (ilength);
+                    clength = justify (icol,fdoto);
+		    fdoto = -1 ;
                 }
                 else
                 {
@@ -1595,6 +1651,7 @@ noIndent:
                 paralen += clength + 1;
 #endif
                 /* Turn off dot marker and forced line */
+                ccol = 0;
                 clength = 0;
                 if ((fillState & FILL_EOP) == 0)
                     fillState = ((fillState & ~(FILL_DOT|FILL_FORCE)) |

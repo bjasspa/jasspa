@@ -4,7 +4,11 @@
 ; Last Modified : <991125.1028>
 ; Copyright (c) 1999 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-!if &band .hilight.flags 0x02
+; buffer-setup flags
+set-variable #l0 &reg "/history" "fhook/bibtex" "fhinsx"
+set-variable #l1 "efhimnstux"
+
+!if &and &sin "h" #l0 &band .hilight.flags 0x02 
     !if &not &exist .hilight.bibtex
         set-variable .hilight.bibtex  &pinc .hilight.next 1
         set-variable .hilight.bibtexs &pinc .hilight.next 1
@@ -37,23 +41,23 @@
 define-macro fhook-bibtex
     ; if arg is 0 this is a new file so add template 
     !if &not @#
-        etfinsrt "bibtex"
+        etfinsrt "bibtex" .fhook-bibtex.setup
     !endif
-    1 buffer-mode "time"
-    1 buffer-mode "indent"
-    !if &band .hilight.flags 0x02
+    buffer-modes-init .fhook-bibtex.setup
+    !if &and &sin "h" .fhook-bibtex.setup &band .hilight.flags 0x02 
         set-variable $buffer-hilight .hilight.bibtex
         buffer-bind-key bibtex-swap-hilight   "C-c C-h"
     !endif
-    ; setup latex folds
-    buffer-bind-unbound-key fold-current "f2"
-    buffer-bind-unbound-key fold-all     "f3"
-    auto-spell-init
+    fold-init .fhook-bibtex.setup
+    auto-spell-init .fhook-bibtex.setup
     ; execute user extensions if enabled
     !if &exist my-fhook-bibtex
         my-fhook-bibtex
     !endif
 !emacro
+set-variable .fhook-bibtex.setup #l0
+set-variable .fhook-bibtex.setup-mask #l1
+
 set-variable .fhook-bibtex.fold-open  "^@"
 set-variable .fhook-bibtex.fold-close "^@"
 set-variable .fhook-bibtex.fold-mopen "1"

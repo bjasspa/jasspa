@@ -103,7 +103,6 @@ typedef struct DIRNODE {
 } DIRNODE;
 
 static DIRNODE  *dirlist;                /* Directory list root */
-static DIRNODE  *curDirNode;             /* Current dir node */
 static LINE     *curDirLine;             /* Current dir node */
 
 
@@ -840,8 +839,6 @@ directoryTree(int f, int n)
     dn = dnode ;
     while((dn->lname != NULL) && (dn->child != NULL))
         dn = dn->child ;
-    if(n & LDO_SELECT)
-        curDirNode = dnode ;            /* Assign current directory node */
     
     /* If the users has asked for a toggle then work out
      * whether this is an open or close */

@@ -10,7 +10,7 @@
  *
  *  Author:         Danial Lawrence
  *
- *  Creation Date:      14/05/86 12:37      <001010.2248>
+ *  Creation Date:      14/05/86 12:37      <001210.0918>
  *
  *  Modification date:  %G% : %U%
  *
@@ -1047,7 +1047,7 @@ found_ulcvar:
                         *mm = '\0' ;
                         getFilePath(curbp->b_fname,buff) ;
                         meStrcat(buff,vvalue) ;
-                        pathNameCorrect(buff,resultStr,NULL) ;
+                        pathNameCorrect(buff,PATHNAME_COMPLETE,resultStr,NULL) ;
                         getDirectoryList(resultStr,&fileNames) ;
                     }
                 }

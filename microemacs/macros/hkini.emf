@@ -1,3 +1,4 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
 ; Last Modified:    <991125.1029>
 ;
@@ -9,12 +10,15 @@
 ;
 ; Usage:            .ini - Microsoft Windows initialisation files
 ;                   .hpj - Microsoft help project files.
-;
-!if &band .hilight.flags 0x02
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; buffer-setup flags
+set-variable #l0 &reg "/history" "fhook/ini" "fhix"
+set-variable #l1 "efhimtux"
+
+!if &and &sin "h" #l0 &band .hilight.flags 0x02 
     !if &not &exist .hilight.ini
         set-variable .hilight.ini &pinc .hilight.next 1
     !endif
-    
     0 hilight  .hilight.ini 0                     .scheme.keyword
     hilight .hilight.ini 0     "/"             $global-scheme
     hilight .hilight.ini 2     "="             $global-scheme
@@ -29,21 +33,21 @@
     hilight .hilight.ini 1     "LOCAL"         .scheme.variable
     hilight .hilight.ini 1     "CURRENT"       .scheme.variable
 !endif
+
 define-macro fhook-ini
     set-variable $buffer-mask "luh1"
-    !if &band .hilight.flags 0x02
+    buffer-modes-init .fhook-ini.setup
+    !if &and &sin "h" .fhook-ini.setup &band .hilight.flags 0x02 
         set-variable $buffer-hilight .hilight.ini
     !endif
-    1 buffer-mode "time"
-    1 buffer-mode "indent"
-    ; setup folds
-    buffer-bind-unbound-key fold-current "f2"
-    buffer-bind-unbound-key fold-all     "f3"
+    fold-init .fhook-ini.setup
     ; execute user extensions if enabled
     !if &exist my-fhook-ini
         my-fhook-ini
     !endif
 !emacro
+set-variable .fhook-ini.setup #l0
+set-variable .fhook-ini.setup-mask #l1
 
 ; setup ini file folding
 set-variable .fhook-ini.fold-open  "^\\["

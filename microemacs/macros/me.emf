@@ -1,6 +1,6 @@
 ;  Startup file for MicroEmacs '99 JASSPA Distribution
 ;
-;  Last Modified :  <001010.1212>
+;  Last Modified :  <001208.1245>
 ;  Copyright (c) 1999 JASSPA
 ;
 ; If mename isn't set or registry file isn't found then set it to guest
@@ -33,22 +33,22 @@
 define-macro-file format clean sort-lines-ignore-case tabs-to-spaces paragraph-to-line delete-indentation restyle-region restyle-buffer ifill-paragraph
 define-macro-file abbrev expand-abbrev-handle spell-complete-word iso-accents-mode iso-accents-expand
 define-macro-file misc symbol check-line-length alarm time compare-windows-exact display-white-chars
+define-macro-file search replace-all-string query-replace-all-string replace-all-pairs line-scheme
 define-macro-file tools compile grep rgrep which diff diff-changes execute-tool uniq reread-file
-define-macro-file search replace-all-string query-replace-all-string replace-all-pairs
 define-macro-file spell spell-word spell-buffer spell-edit-word find-word
-define-macro-file spellaut auto-spell-init auto-spell auto-spell-reset
+define-macro-file buffinit buffer-modes-init auto-spell-init fold-init
 define-macro-file games Metris Patience Triangle Mahjongg Match-It
 define-macro-file mail mail mail-check stop-mail-check
 define-macro-file fileopen osd-file-open osd-get-file
 define-macro-file hkinfo info info-on info-goto-link
 define-macro-file zfile find-zfile zfile-setup
-define-macro-file fold fold-current fold-all
 define-macro-file gentags generate-tags-file
 define-macro-file schemosd scheme-editor
+define-macro-file printstp print-setup
+define-macro-file buffstp buffer-setup
 define-macro-file fattrib file-attrib
 define-macro-file hkdir file-browser
 define-macro-file organize organizer
-define-macro-file printstp print-setup
 define-macro-file hkhtml fhook-hts
 define-macro-file user user-setup
 define-macro-file etfinsrt

@@ -12,10 +12,12 @@
 ;
 ;  Copyright (c) 1999 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-!if &band .hilight.flags 0x02
-    ;
+; buffer-setup flags
+set-variable #l0 &reg "/history" "fhook/mhg" "fhinx"
+set-variable #l1 "efhimntux"
+
+!if &and &sin "h" #l0 &band .hilight.flags 0x02 
     ; Hi-light M-HEG Mode
-    ;
     !if &not &exist .hilight.mhg
         set-variable .hilight.mhg &pinc .hilight.next 1
     !endif
@@ -44,25 +46,21 @@
 define-macro fhook-mhg
     ; Insert the header.
     !if &not @#
-        !force etfinsrt "mhg"
+        !force etfinsrt "mhg" .fhook-mhg.setup
     !endif
-
-    1 buffer-mode "time"
-    1 buffer-mode "indent"
     set-variable $buffer-mask "luh1"
-
-    ; Set up the hilight mode
-    !if &band .hilight.flags 0x02
+    buffer-modes-init .fhook-mhg.setup
+    !if &and &sin "h" .fhook-mhg.setup &band .hilight.flags 0x02 
         set-variable $buffer-hilight .hilight.mhg
     !endif
-    ; Set up the folds
-    buffer-bind-unbound-key fold-current "f2"
-    buffer-bind-unbound-key fold-all     "f3"
+    fold-init .fhook-mhg.setup
     ; execute user extensions if enabled
     !if &exist my-fhook-mhg
         my-fhook-mhg
     !endif
 !emacro
+set-variable .fhook-mhg.setup #l0
+set-variable .fhook-mhg.setup-mask #l1
 
 ; Set up the folds for 'mheg'
 set-variable .fhook-mhg.fold-open  "^{"

@@ -4,9 +4,12 @@
 ; Last Modified : <000408.0754>
 ; Copyright (c) 1999 - 2000 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; buffer-setup flags
+set-variable #l0 &reg "/history" "fhook/ehf" "hijmwx"
+set-variable #l1 "ehijstuwx"
 set-char-mask "2" "-$&#!%:@."
 
-!if &band .hilight.flags 0x01
+!if &and &sin "h" #l0 &band .hilight.flags 0x01
     !if &not &exist .hilight.ehfA
         set-variable .hilight.ehfA &pinc .hilight.next 1
         set-variable .hilight.ehfB &pinc .hilight.next 1
@@ -277,12 +280,13 @@ set-char-mask "2" "-$&#!%:@."
 
 define-macro fhook-ehf
     set-variable $buffer-mask "luh12"
-    !if &band .hilight.flags 0x01
+    buffer-modes-init .fhook-ehf.setup
+    !if &and &sin "h" .fhook-ehf.setup &band .hilight.flags 0x01
         set-variable $buffer-hilight .hilight.ehfA
     !endif
+    auto-spell-init .fhook-ehf.setup
     ; Hyperlink with the mouse.
     set-variable :mouse-word-select ehf-process-link
-    1 buffer-mode "magic"
     !if &seq $buffer-bname "*help*"
         ; Hyperlink with the <RETURN> key
         0 buffer-bind-key ehf-process-link "return"
@@ -290,12 +294,13 @@ define-macro fhook-ehf
         buffer-bind-key ehf-forward-link   "tab"
         buffer-bind-key ehf-backward-link  "S-tab"
     !endif
-    auto-spell-init
     ; execute user extensions if enabled
     !if &exist my-fhook-ehf
         my-fhook-ehf
     !endif
 !emacro
+set-variable .fhook-ehf.setup #l0
+set-variable .fhook-ehf.setup-mask #l1
 
 ; load in user extensions if found
 !force execute-file "myehf"

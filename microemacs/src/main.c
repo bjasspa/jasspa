@@ -1792,11 +1792,11 @@ missing_arg:
 void
 _meAssert (char *file, int line)
 {
-    char buf [MAXBUF];                  /* String buffer */
+    uint8 buf[MAXBUF];                  /* String buffer */
     uint8 cc;                           /* Character input */
 
     /* Put out the string */
-    sprintf (buf,
+    sprintf ((char *) buf,
              "!! ASSERT FAILED %s:%d !! - <S>ave. <Q>uit. <C>ontinue",
              file, line);
     mlwrite (MWABORT, buf);

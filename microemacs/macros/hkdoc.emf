@@ -7,120 +7,14 @@
 ;
 ;       Last Modified   : <000420.0756>
 ;
-;       Comment         : The document hook is trivial, however bind text
-;                         control macros to keys to control the formatting
-;                         of paragraphs.
-;       History         :
-;                         Jon 21/11/97 - Added formatting for pseudo code
-;                                        documents.
+;       Comment         : See docmacro.emf for documentation
 ;
-; The Document template undersatnds magic tokens as follows:-
-;
-; -!- Document -!-
-;
-;     Read as a sectioned document. Uses a simple hilighting scheme
-;     such that the following is recognised:-
-;
-;     1.1 Title        - Whole line hilighted in yellow
-;     a) Text          - Bullets are hilighted.
-;     * Text           - Bullets are hilighted.
-;     "Text"           - Quoted text is hilighted.
-;
-;
-; SECTIONED DOCUMENT.
-;
-; Define using a magic string: -!- document -!-
-; Hilights the following items
-;
-; n.n.n
-;         Section headers, All lines commencing with a n.XX sequence which
-;         assumes a numbered section. e.g.
-;
-;         2.0 Scheduler
-;
-; Appendix
-;         Section headers. Assumes this is an Appendix. All lines commencing
-;         with "Appendix are assumed to be headers. e.g.
-;
-;         Appendix A - Data structures
-; >
-;         All lines commencing with '>' are assumed to be a comment.
-;         Typically used at the head of the document. e.g.
-;
-;         > -!- document; sectioned; pseudo-code -!-
-;         >
-;         > Author:       My Self
-;         > Created:      11/11/97
-;         > Modified:     <211197.1003>
-;         > Location:     /xx/yy/zz.doc
-; *
-;         All lines commencing with '*' are assumed to be bullet lists. Bullet
-;         is hilighted. e.g.
-;
-;         * Bullet item
-;
-; A) 1)
-;         All lines commencing with [a-zA-Z]) or [0-9]) are assumed to be
-;         minor sections. The section number is hilighted. e.g:
-;
-;         a) text
-;         1) text
-;
-; 'xx' "yy"
-;         All text in single or double quotes is hilighted, assumed to be
-;         literal text. e.g.
-;
-;         This is a "double quote" or 'a' single quote.
-; ____
-;         Lines commencing with '_' (underscore) are hilighted to the end.
-;         typically used as demarkation breaks or for section underlining
-;         e.g.
-;
-;
-;         text.....
-;         ________________________________________________________________
-;
-;         Add a nice big line to separate sections
-;
+; Copyright (c) 2000 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
-; setup useful Documentation fuctions to auto-load docmacros
-;
-define-macro-file docmacro doc-bhook-body doc-ehook-body doc-fhook-body
+; buffer-setup flags
+set-variable #l0 &reg "/history" "fhook/doc" "fhijnpswx"
+set-variable #l1 "efhijmnpstuwx"
 
-!if &band .hilight.flags 0x02
-    !if &not &exist .hilight.doc
-        set-variable .hilight.doc  &pinc .hilight.next 1
-        set-variable .hilight.doc1 &pinc .hilight.next 1
-    !endif
-
-    ; Define the hilighting. Note that we use a look back so that
-    ; we can process the inserted schemes if necessary. Ordinarily
-    ; we do not need it. This will only hurt branch tokens, as there
-    ; are none below then there is no adverse effect.
-    0 hilight  .hilight.doc 2 100                               $global-scheme
-    hilight .hilight.doc 0x20 "*\\}[ \t]+\\w"                   .scheme.no1
-    hilight .hilight.doc 0x21 "\\w)"                            .scheme.no1
-    hilight .hilight.doc 1 "\\*[A-Za-z_]+\\*"                   .scheme.bold
-    hilight .hilight.doc 1 "<[A-Za-z_]+>"                       .scheme.italic
-    hilight .hilight.doc 1 "_[A-Za-z0-9]+_"                     .scheme.under
-    hilight .hilight.doc 0 "^\\s *\\[\\w*\\]"                   .scheme.no1
-    hilight .hilight.doc 0x22 "[0-9]\\.[0-9.]*[ \t]+\\w"        .scheme.header
-    hilight .hilight.doc 0x804 "\"" "\"" "\\"                   .scheme.string
-    hilight .hilight.doc 0x804 "`" "'" ""                       .scheme.no1
-    hilight .hilight.doc 0    "'.'"                             .scheme.quote
-    hilight .hilight.doc 0    "'\\\\.'"                         .scheme.quote
-    hilight .hilight.doc 0x22 "^[ \t]*Appendix [[:alpha:]]"     .scheme.header
-    hilight .hilight.doc 0x22 "_\\W"                            .scheme.comment
-    hilight .hilight.doc 0x22 ">"                               .scheme.comment
-    hilight .hilight.doc 0x80 "^[ \t]+@" .hilight.doc1          .scheme.no2
-    ; @ block
-    0 hilight .hilight.doc1 0                                   .scheme.no2
-    hilight   .hilight.doc1 0x80 "^[ \t]*\n" .hilight.doc       $global-scheme
-    hilight   .hilight.doc1 0x80 "^\n"       .hilight.doc       $global-scheme
-!endif
-
-;
 ; Set up for documentation mode.
 ;
 define-macro bhook-doc
@@ -132,153 +26,19 @@ define-macro ehook-doc
 !emacro
 
 define-macro fhook-doc
-    ; if arg is 0 this is a new file so add template
-    !if &not @#
-        etfinsrt "doc"
-    !endif
-
-    ; Load the default document fhook
-    doc-fhook-body
-
-    ; Over-ride any special document modes
-    !if @#
-        ; Search for additional modes in a -!- document -!-
-        ;
-        ; -!- Document; fill-column: <digit> -!-
-        ;
-        ;
-        beginning-of-buffer
-        !force -20 regex-forward "-[*!]-[ \t]*document[ \t]*"
-        !if $status
-            ; Search for fill-column: <var>;
-            !force -1 regex-forward "fill-column[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;]"
-            !if $status
-                set-variable :fill-col @s1
-                beginning-of-line
-            !endif
-            ; Search for fill-mode: <string>
-            !force -1 regex-forward "fill-mode[ \t]*:[ \t]*\\([a-zA-Z]+\\)[ \t]*[-;]"            
-            !if $status
-                set-variable #l0 @s1
-                !if &iseq #l0 "left"
-                    set-variable :fill-mode "L"
-                !elif &iseq #l0 "none"
-                    set-variable :fill-mode "n"
-                !elif &iseq #l0 "right"
-                    set-variable :fill-mode "R"
-                !elif &iseq #l0 "full"
-                    set-variable :fill-mode "B"
-                !elif &iseq #l0 "both"
-                    set-variable :fill-mode "B"
-                !elif &iseq #l0 "center"
-                    set-variable :fill-mode "C"
-                !endif
-                beginning-of-line
-            !endif
-            ; Add any others in here.
-
-            ; Back to the start of the buffer
-            beginning-of-buffer
-        !endif
-    !endif
-
-    ; Assign the hilighting variable
-    set-variable $buffer-hilight .hilight.doc
-
-    ; setup emf buffer folding support
-    buffer-bind-unbound-key fold-current "f2"
-    buffer-bind-unbound-key fold-all     "f3"
+    ; use the document fhook in docmacro
+    @# doc-fhook-body "doc" "document"
     ml-write "[esc h - for Documentation mode help]"
     ; execute user extensions if enabled
     !if &exist my-fhook-doc
         my-fhook-doc
     !endif
 !emacro
+set-variable .fhook-doc.setup #l0
+set-variable .fhook-doc.setup-mask #l1
 
-; Define the folding definitions.
-set-variable .fhook-doc.fold-open  "^[ \t]*\\(Appendix[ \t]+[A-Z][0-9.]*\\|[0-9]\\.[0-9.]*\\)[ \t]+\\w"
-set-variable .fhook-doc.fold-close "^[ \t]*\\(Appendix[ \t]+[A-Z][0-9.]*\\|[0-9]\\.[0-9.]*\\)[ \t]+\\w"
-set-variable .fhook-doc.fold-mopen "1"
-set-variable .fhook-doc.fold-mnext "-1"
-
-; Allow inserts into the documentation mode. You may add to the
-; available inserts by adding to your mydoc.emf file
-
-; Allow MicroEmacs Macro .emf inserts
-; Force the ".emf" scheme to be loaded into the context of the document
-; scheme. We delimit the .emf scheme with a pair of markers ">emf>" and
-; ">doc>"
-;
-; Force the hilighting mode to load if not already loaded.
-!if &seq .hilight.emf "ERROR"
-    !force execute-file "hkemf"
-!endif
-; If the hilighting mode is loaded then modify it.
-!if &not &seq .hilight.emf "ERROR"
-    hilight .hilight.doc 0xc0 "^>emf>" ">emf>" .hilight.emf .scheme.hide
-    hilight .hilight.emf 0xc0 "^>doc>" ">doc>" .hilight.doc .scheme.hide
-!endif
-
-; Allow Pseudo Code inserts
-; Force the ".pseudo" scheme to be loaded into the context of the document
-; scheme. We delimit the .emf scheme with a pair of markers ">pseudo>" and
-; ">doc>"
-;
-; Force the hilighting mode to load if not already loaded.
-!if &seq .hilight.pseudo "ERROR"
-    !force execute-file "hkpseudo"
-!endif
-; If the hilighting mode is loaded then modify it.
-!if &not &seq .hilight.pseudo "ERROR"
-    hilight .hilight.doc 0xc0 "^>pseudo>" ">pseudo>" .hilight.pseudo .scheme.hide
-    hilight .hilight.pseudo 0xc0 "^>doc>" ">doc>"    .hilight.doc .scheme.hide
-!endif
-
-; Allow BNF inserts
-; Force the ".bnf" scheme to be loaded into the context of the document
-; scheme. We delimit the .emf scheme with a pair of markers ">bnf>" and
-; ">doc>"
-;
-; Force the hilighting mode to load if not already loaded.
-!if &seq .hilight.bnf "ERROR"
-    !force execute-file "hkbnf"
-!endif
-; If the hilighting mode is loaded then modify it.
-!if &not &seq .hilight.bnf "ERROR"
-    hilight .hilight.doc 0xc0 "^>bnf>" ">bnf>"   .hilight.bnf .scheme.hide
-    hilight .hilight.bnf 0xc0 "^>doc>" ">doc>"   .hilight.doc .scheme.hide
-!endif
-
-; Allow C Code inserts
-; Force the ".c" scheme to be loaded into the context of the document
-; scheme. We delimit the .emf scheme with a pair of markers ">c>" and
-; ">doc>"
-;
-; Force the hilighting mode to load if not already loaded.
-!if &seq .hilight.c "ERROR"
-    !force execute-file "hkc"
-!endif
-; If the hilighting mode is loaded then modify it.
-!if &not &seq .hilight.c "ERROR"
-    hilight .hilight.doc 0xc0 "^>c>" ">c>"     .hilight.c   .scheme.hide
-    hilight .hilight.c   0xc0 "^>doc>" ">doc>" .hilight.doc .scheme.hide
-!endif
-
-; Allow C++ Code inserts
-; Force the ".cpp" scheme to be loaded into the context of the document
-; scheme. We delimit the .emf scheme with a pair of markers ">cpp>" and
-; ">doc>"
-;
-; Force the hilighting mode to load if not already loaded.
-!if &seq .hilight.cpp "ERROR"
-    !force execute-file "hkcpp"
-!endif
-; If the hilighting mode is loaded then modify it.
-!if &not &seq .hilight.cpp "ERROR"
-    hilight .hilight.doc 0xc0 "^>cpp>" ">cpp>"     .hilight.cpp .scheme.hide
-    hilight .hilight.doc 0xc0 "^>c\\+\\+>" ">c++>" .hilight.cpp .scheme.hide
-    hilight .hilight.cpp 0xc0 "^>doc>" ">doc>"     .hilight.doc .scheme.hide
-!endif
+; load docmacro.emf passing the doc setup flags
+execute-file "docmacro" "doc"
 
 ml-write "[Document file hook loaded]"
 
