@@ -3,7 +3,8 @@
 ; Copyright (C) 1999-2004 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
-; Synopsis:   Samba hook - invoked when a Samba script file is loaded.
+; Synopsis:   Samba hook - invoked when a Samba script file is loaded,
+;                          typically "smb.conf.
 ; Author:     Jon Green
 ;
 define-macro fhook-samba
