@@ -7,12 +7,12 @@
 %  System        : MicroEmacs
 %  Module        : user Manual
 %  Object Name   : $RCSfile: jasspame.tex,v $
-%  Revision      : $Revision: 1.6 $
-%  Date          : $Date: 2005-03-12 21:16:54 $
+%  Revision      : $Revision: 1.7 $
+%  Date          : $Date: 2005-03-13 21:14:26 $
 %  Author        : $Author: jon $
 %  Created By    : Jon Green
 %  Created       : Mon Oct 25 21:36:13 2004
-%  Last Modified : <050312.2111>
+%  Last Modified : <050313.2108>
 %
 %  Description
 %
@@ -35,8 +35,8 @@
 \documentclass[11pt,a4paper,pdftex]{article}
 % Bring in the CVS information.
 \def\CVS$#1: #2 ${\expandafter\def\csname CVS#1\endcsname{#2}}
-\CVS$Revision: 1.6 $ % or any CVS keyword
-\CVS$Date: 2005-03-12 21:16:54 $
+\CVS$Revision: 1.7 $ % or any CVS keyword
+\CVS$Date: 2005-03-13 21:14:26 $
 
 \usepackage{ifthen}                     % Conditional processing.
 
@@ -165,7 +165,7 @@
 
 %% Save the header image in a box
 \newsavebox\HeaderImage
-\savebox\HeaderImage{\includegraphics[keepaspectratio,height=0.5in]{logo}}
+\savebox\HeaderImage{\includegraphics[keepaspectratio,height=24pt]{logo}}
 % Redefine the header and footer for an alternative style.
 \renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
 \fancyhf{}          % Delete the current header and footer
@@ -212,7 +212,7 @@
 \definecolor{CodeColor}{rgb}{0.95,0.95,0.95}
 \newcommand{\CodeInsert}[1]{%
 \vspace{3pt}
-\colorbox{CodeColor}{\parbox{\textwidth}{\texttt{#1}}}
+\colorbox{CodeColor}{\parbox{\textwidth-6pt}{\texttt{#1}}}
 \vspace{3pt}
 }
 \newcommand{\CodeInsertW}[2]{%
@@ -288,7 +288,8 @@ JASSPA.
   \end{tabular}
 \end{table}
 
-Typeset with the TexLive 2004 \LaTeX\ Documentation System under Sun Solaris 9.
+Typeset with the TexLive 2004 \LaTeX\ Documentation System under Sun Solaris
+9.
 
 \vspace{0.5in}
 
@@ -420,7 +421,8 @@ export PATH}
   For HP-UX then the package may be installed via SAM, but is easier to
   install using the command line:
 
-\CodeInsert{/usr/sbin/swinstall -s `pwd`/jasspa-mepkg-hpux-pa-10.20-\textit{yyyymmdd}.depot jasspa-me}
+\CodeInsert{/usr/sbin/swinstall -s
+`pwd`/jasspa-mepkg-hpux-pa-10.20-\textit{yyyymmdd}.depot jasspa-me}
 
   The package is installed in \texttt{/opt/jasspa}. The executable is
   automatically added to the shell profile environment. The user should log
@@ -436,7 +438,7 @@ export PATH}
   Microsoft Windows environments 95/98/NT/2K/XP use an \textit{Install Shield}
   package installation which may be used to add and remove the package. The
   software is installed into \texttt{c:$\backslash$Program
-  Files\-$\backslash$JASSPA\-$\backslash$MicroEmacs}.
+  Files\-$\backslash$JASSPA\-$\backslash$Micro\-Emacs}.
 
   Unpack the \textit{zip} file, run \textbf{setup.exe} and follow the
   installation procedure.
@@ -480,8 +482,8 @@ gunzip -c /\textit{path-to}/jasspa-metree-\textit{yyyymmdd}.tar.gz | tar xvf -\n
 mv jasspa .jasspa}
 
   Add downloaded spelling dictionaries by unpacking them into the
-  \texttt{$\sim$/.jasspa/spell} subdirectory. Install the binary into your local
-  binary directory - we assume \texttt{$\sim$/bin} e.g.
+  \texttt{$\sim$/.jasspa/spell} subdirectory. Install the binary into your
+  local binary directory - we assume \texttt{$\sim$/bin} e.g.
 
 \CodeInsert{cd $\sim$/bin\newline
 gunzip -c /\textit{path-to}/jasspa-me-linux-2.\textit{x}-\textit{yyyymmdd}.gz > me\newline
@@ -816,8 +818,8 @@ c:> build}
       highlighted in an error color.
 
       \item \textbf{Scroll Bars} generally \textbf{Wide with Splitter} is
-      preferred in desktop environments. A wide scroll bar is two characters 
-      wide, the \textit{splitter} is a control point to split the window with 
+      preferred in desktop environments. A wide scroll bar is two characters
+      wide, the \textit{splitter} is a control point to split the window with
       the mouse.
 
       \item \textbf{Horizontal Scroll} defines the behavior of horizontal
@@ -1028,7 +1030,8 @@ c:> build}
   then MicroEmacs automatically detects the directory and enables support. If
   cygwin has been installed in a different location then this should be
   defined to MicroEmacs in \textbf{\textit{username}.emf} using the variable
-  \texttt{\%cygwin-path} as follows, correcting for your installation location:
+  \texttt{\%cygwin-path} as follows, correcting for your installation
+  location:
 
   \CodeInsert{set-variable \%cygwin-path "c:/cygwin"}
 
@@ -1038,10 +1041,10 @@ c:> build}
   In this chapter we introduce the basic information that you need to control
   MicroEmacs. MicroEmacs is equipped with a wealth of features and it is
   virtually impossible to describe each and every one in detail. For the new
-  user then MicroEmacs is sometimes incorrectly perceived as difficult, there is
-  a minimal set of commands which are required to drive the editor
-  effectively, once mastered then you will find that MicroEmacs provides a fast and
-  effective platform for handling text.
+  user then MicroEmacs is sometimes incorrectly perceived as difficult, there
+  is a minimal set of commands which are required to drive the editor
+  effectively, once mastered then you will find that MicroEmacs provides a
+  fast and effective platform for handling text.
 
 \subsection{Getting Started}
 
@@ -1154,7 +1157,8 @@ c:> build}
     \textbf{autosv} & when enabled performs periodic auto-save backup of
     changes.\\
 
-    \textbf{exact} & when enabled makes searching and replace case sensitive.\\
+    \textbf{exact} & when enabled makes searching and replace case
+    sensitive.\\
 
     \textbf{fence} & when enabled performs automatic fence matching i.e.
     \texttt{(..)} pairs.\\
@@ -1170,8 +1174,8 @@ c:> build}
 
     \textbf{quiet} & when enabled disables audio beep on an error.\\
 
-    \textbf{tab} & when enabled spaces are used instead of literal \texttt{TAB}
-    characters.\\
+    \textbf{tab} & when enabled spaces are used instead of literal
+    \texttt{TAB} characters.\\
 
     \textbf{time} & when enabled files are automatically time stamped with
     the edit time.\\
@@ -1428,8 +1432,9 @@ c:> build}
       \item Use the cursor keys to move to the end of the region.
     \end{itemize}
 
-    \item \textbf{Using the Keyboard -- Mircosoft Shift Region method} this is 
-      only if Microsoft Shift region is enabled in \textit{User Setup}.
+    \item \textbf{Using the Keyboard -- Mircosoft Shift Region method} this is
+    only if Microsoft Shift region is enabled in \textit{User Setup}.
+
     \begin{itemize}
       \item Use the cursor keys to move to the start of the region.
       \item Hold down the shift key whilst moving the cursor keys, a region
@@ -1480,8 +1485,8 @@ c:> build}
   from editing mistakes. \textit{undo} is by default enabled and is changed by
   the \textbf{undo} mode. The undo information remains valid until a save
   operation is performed when it is discarded. The undo may be retained
-  between saves by enabling the user option \textit{User Setup::General::Keep
-  Undo}.
+  between saves by enabling the user option \textit{User
+  Setup::\-General::\-Keep Undo}.
 
   \begin{longtable}{ll@{\ --\ }l}
     \endhead
@@ -1709,7 +1714,7 @@ c:> build}
         Yanks the last selected region of text from the \textit{yank buffer}
         or \textit{clipboard} and inserts at the current mouse position. The
         behavior and button binding may be changed in \textit{User
-        Setup::Mouse}.
+        Setup::\-Mouse}.
 
         If the preferred behavior is for the text to be inserted at the cursor
         position rather than the mouse position then change the middle mouse
@@ -1741,8 +1746,8 @@ c:> build}
         Scroll Bar & Left Mouse\newline \textit{splitter select} &
 
         If the window splitter option is enabled in \textit{User
-        Setup::Platform::Scroll bars} then selecting the splitter at the top
-        of the scroll bar causes the window to be split into two.\\ \hline
+        Setup::\-Platform::\-Scroll bars} then selecting the splitter at the
+        top of the scroll bar causes the window to be split into two.\\ \hline
 
         Mode Line \newline \textit{Buffer} &
         Left Mouse\newline \textit{drag motion} &
@@ -1759,14 +1764,15 @@ c:> build}
         Mode Line & Left Mouse\newline \textit{splitter select} &
 
         If the window splitter option is enabled in \textit{User
-        Setup::Platform::Scroll bars} then selecting the splitter at the left
-        of the mode bar causes the window to be split into two.\\ \hline
+        Setup::\-Platform::\-Scroll bars} then selecting the splitter at the
+        left of the mode bar causes the window to be split into two.\\ \hline
 
         Mode Line \newline \textit{Toolbar} & Right Mouse &
 
         Only valid when the \textbf{toolbar} is enabled (\textit{User
-        Setup::Platform::Enable Toolbar}). A Pop-up menu appears to control
-        the toolbar. The menu allows the toolbar content to be configured.\\
+        Setup::\-Platform::\-Enable Toolbar}). A Pop-up menu appears to
+        control the toolbar. The menu allows the toolbar content to be
+        configured.\\
 
       \end{longtable}
     \end{small}
