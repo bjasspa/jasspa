@@ -59,7 +59,7 @@ set-variable .fhook-php.item-list-r5 "Func \ecB\\1\ecA"
         hilight .hilight.php       0x80 "<\\?php"  .hilight.phpscript .scheme.prepro
         hilight .hilight.php       0xa0 "#\\?php"  .hilight.phpscript .scheme.prepro
         hilight .hilight.php       0xa0 "//\\?php" .hilight.phpscript .scheme.prepro
-        hilight .hilight.php       0xa0 "}$"       .hilight.phpscript $global-scheme
+        hilight .hilight.php      0x180 "}$"       .hilight.phpscript $global-scheme
         hilight .hilight.phptag    0x80 "<\\?"     .hilight.phpscript .scheme.prepro
         hilight .hilight.phptag    0x80 "<\\?php"  .hilight.phpscript .scheme.prepro
         hilight .hilight.phpscript 0x80 "\\?>" 0   .scheme.prepro
@@ -71,13 +71,18 @@ set-variable .fhook-php.item-list-r5 "Func \ecB\\1\ecA"
         indent .hilight.phptag t "<\\?php" .indent.phpscript
         indent .hilight.phptag t "^[\t ]*#\\?php" .indent.phpscript
         indent .hilight.phptag t "^[\t ]*//\\?php" .indent.phpscript
-        indent .hilight.phptag t "^[\t ]*}$" .indent.phpscript
+        indent .hilight.phptag t "^}$"     .indent.phpscript
         indent .hilight.phptag t "\\?>"    .hilight.php
+        indent .hilight.phptag e "'" "'" "\\"
+        indent .hilight.phptag e "`" "`" "\\"
+        indent .hilight.phptag e "\"" "\"" "\\"
         
-        indent .hilight.php x "^<\\?"    0 .indent.phpscript
         indent .hilight.php x "^<\\?php" 0 .indent.phpscript
-        indent .hilight.php x ".<\\?php" t .indent.phpscript
+        indent .hilight.php x "<\\?"     t .indent.phpscript
         indent .hilight.phpscript w "\\?>" -t 0
+        ; picking up the </script> seems wrong, but the look-back phptag can incorrectly
+        ; identify javascript as php, this limits the damage (hopefully)
+        indent .hilight.phpscript w "</script>" -t 0
     !endif
 !endif
 
