@@ -89,15 +89,15 @@ extern meUByte    TTbreakFlag ;         /* Break outstanding on input   */
 extern meUByte    TTbreakCnt ;          /* Number breaks outsanding     */
 extern meUByte    TTallKeys;            /* Report all keys              */
 
-extern meUShort   TTgetc APRAM((void)) ;
-extern void       TThandleBlink APRAM((int initFlag)) ;
-extern void       TTmove APRAM((int r, int c)) ;
+extern meUShort   TTgetc(void) ;
+extern void       TThandleBlink(int initFlag) ;
+extern void       TTmove(int r, int c) ;
 #define TTinflush()   (TTahead(),TTlastKeyIdx=TTnextKeyIdx,TTnoKeys=0)
-extern void       addKeyToBuffer APRAM((meUShort cc)) ;
+extern void       addKeyToBuffer(meUShort cc) ;
 #if MEOPT_CALLBACK
-extern void       doIdlePickEvent APRAM((void)) ;
+extern void       doIdlePickEvent(void) ;
 #endif
-extern void       setAlarm APRAM((meInt absTime, meInt offTime)) ;
+extern void       setAlarm(meInt absTime, meInt offTime) ;
 
 #ifdef _UNIX
 

@@ -755,7 +755,7 @@ TTsleep(int msec, int intable)
 int
 TTahead(void)
 {
-    extern int kbhit APRAM((void)) ;
+    extern int kbhit(void) ;
     
     while(kbhit() != 0)
         TTgetkeyc() ;

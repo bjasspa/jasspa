@@ -1,46 +1,32 @@
-/* -*- C -*- ****************************************************************
+/* -*- c -*-
  *
- *  			Copyright 2002 JASSPA.
- *			      All Rights Reserved
+ * JASSPA MicroEmacs - www.jasspa.com
+ * eopt.h - &opt optional functionality labels.
  *
+ * Copyright (C) 2002 JASSPA (www.jasspa.com)
  *
- *  System        : 
- *  Module        : 
- *  Object Name   : $RCSfile: eopt.h,v $
- *  Revision      : $Revision: 2.2 $
- *  Date          : $Date: 2002-04-29 19:57:18 $
- *  Author        : $Author: jon $
- *  Created By    : Steven Phillips
- *  Created       : Sat Jan 19 00:45:54 2002
- *  Last Modified : <020315.1033>
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  Description	
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
  *
- *  Notes
- *
- *  History
- *	
- *  $Log: not supported by cvs2svn $
- *  Revision 1.1  2002/03/01 21:54:26  Phillips
- *  Major changes to create NanoEmacs!
- *  Made macro getting of keys for binding very strict, no superfluous chars allowed
- *  Changed mlwrite so that when aborting and no !force is used it will write message even with a MWEXCEL
- *  Made printing optionally quiet for JST insert printing
- *  Minor changes to scroll commands to abort when at the top or bottom
- *  Small change to numerical interface to suspend-emacs
- *
- *
- ****************************************************************************
- *
- *  Copyright (c) 2002 JASSPA.
- * 
- *  All Rights Reserved.
- * 
- * This  document  may  not, in  whole  or in  part, be  copied,  photocopied,
- * reproduced,  translated,  or  reduced to any  electronic  medium or machine
- * readable form without prior written consent from JASSPA.
- *
- ****************************************************************************/
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     Sat Jan 19 2002
+ * Synopsis:    &opt optional functionality labels.
+ * Authors:     Steve Phillips
+ * Description:
+ *      Creates an meOptionList string defining all optional components
+ *      enabled in the current build.
+ */
 
 #ifndef __EOPT_H
 #define __EOPT_H

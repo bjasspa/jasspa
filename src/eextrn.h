@@ -29,129 +29,120 @@
  *     exeternally used functions have also been added.
  */
 
-#if	!(defined __ABBREVC) || (defined _ANSI_C)		/* abbrev.c externals */
+/* abbrev.c externals */
 #if MEOPT_ABBREV
-extern	int	bufferAbbrev APRAM((int f, int n));
-extern	int	globalAbbrev APRAM((int f, int n));
-extern	int	expandAbbrev APRAM((int f, int n));
+extern	int	bufferAbbrev(int f, int n);
+extern	int	globalAbbrev(int f, int n);
+extern	int	expandAbbrev(int f, int n);
 #else
 #define bufferAbbrev notAvailable
 #define globalAbbrev notAvailable
 #define expandAbbrev notAvailable
 #endif
-#endif
-/*
- * basic.c
- */
-#if	!(defined __BASICC) || (defined _ANSI_C)		/* basic.c externals */
-extern	int	windowGotoBol APRAM((int f, int n));
-extern	int	windowGotoEol APRAM((int f, int n));
-extern	int	meErrorEob APRAM((void)) ;
-extern	int	meErrorBob APRAM((void)) ;
-extern	int	meWindowBackwardChar APRAM((register meWindow *wp, register int n)) ;
-extern	int	meWindowForwardChar APRAM((register meWindow *wp, register int n)) ;
-extern	int	windowBackwardChar APRAM((int f, int n));
-extern	int	windowForwardChar APRAM((int f, int n));
-extern	meUByte meWindowGetChar APRAM((meWindow *wp)) ;
-extern	int	windowGotoLine APRAM((int f, int n));
+
+/* basic.c externals */
+extern	int	windowGotoBol(int f, int n);
+extern	int	windowGotoEol(int f, int n);
+extern	int	meErrorEob(void) ;
+extern	int	meErrorBob(void) ;
+extern	int	meWindowBackwardChar(register meWindow *wp, register int n) ;
+extern	int	meWindowForwardChar(register meWindow *wp, register int n) ;
+extern	int	windowBackwardChar(int f, int n);
+extern	int	windowForwardChar(int f, int n);
+extern	meUByte meWindowGetChar(meWindow *wp) ;
+extern	int	windowGotoLine(int f, int n);
 #if MEOPT_NARROW
-extern	int	windowGotoAbsLine APRAM((meInt line)) ;
+extern	int	windowGotoAbsLine(meInt line) ;
 #else
 #define windowGotoAbsLine(l) windowGotoLine(1,l)
 #endif
-extern	int	windowGotoBob APRAM((int f, int n));
-extern	int	windowGotoEob APRAM((int f, int n));
-extern	int	windowForwardLine APRAM((int f, int n));
-extern	int	windowBackwardLine APRAM((int f, int n));
+extern	int	windowGotoBob(int f, int n);
+extern	int	windowGotoEob(int f, int n);
+extern	int	windowForwardLine(int f, int n);
+extern	int	windowBackwardLine(int f, int n);
 #if	MEOPT_WORDPRO
-extern	int	windowBackwardParagraph APRAM((int f, int n));
-extern	int	windowForwardParagraph APRAM((int f, int n));
+extern	int	windowBackwardParagraph(int f, int n);
+extern	int	windowForwardParagraph(int f, int n);
 #else
 #define windowBackwardParagraph notAvailable
 #define windowForwardParagraph notAvailable
 #endif
-extern	int	windowSetMark APRAM((int f, int n));
-extern	int	windowSwapDotAndMark APRAM((int f, int n));
-extern	void	meBufferStoreLocation APRAM((meLine *lp, meUShort lo, meInt ln)) ;
-extern	void	meBufferUpdateLocation APRAM((meBuffer *bp, meUInt noLines, meUShort newOff)) ;
-#endif
-/*
- * bind.c
- */
-#if !(defined __BINDC) || (defined _ANSI_C)		/* bind.c externals */
-extern  meUInt  cmdHashFunc APRAM((register meUByte *cmdName)) ;
-extern  meUShort  meGetKeyFromString APRAM((meUByte **tp)) ;
-extern  meUShort  meGetKey APRAM((int flag)) ;
-extern  int     meGetStringFromChar APRAM((meUShort cc, meUByte *d)) ;
-extern	void	meGetStringFromKey APRAM((meUShort cc, meUByte *seq));
-extern	int     decode_fncname APRAM((meUByte *fname, int silent));
-extern	int	bindkey APRAM((meUByte *prom, int f, int n, meUShort *lclNoBinds,
-                               meBind **lclBinds)) ;
-extern	int	unbindkey APRAM((meUByte *prom, int n, meUShort *lclNoBinds,
-                                 meBind **lclBinds)) ;
-extern	int	globalBindKey APRAM((int f, int n));
-extern	int	globalUnbindKey APRAM((int f, int n));
+extern	int	windowSetMark(int f, int n);
+extern	int	windowSwapDotAndMark(int f, int n);
+extern	void	meBufferStoreLocation(meLine *lp, meUShort lo, meInt ln) ;
+extern	void	meBufferUpdateLocation(meBuffer *bp, meUInt noLines, meUShort newOff) ;
+
+/* bind.c externals */
+extern  meUInt  cmdHashFunc(register meUByte *cmdName) ;
+extern  meUShort  meGetKeyFromString(meUByte **tp) ;
+extern  meUShort  meGetKey(int flag) ;
+extern  int     meGetStringFromChar(meUShort cc, meUByte *d) ;
+extern	void	meGetStringFromKey(meUShort cc, meUByte *seq);
+extern	int     decode_fncname(meUByte *fname, int silent);
+extern	int	bindkey(meUByte *prom, int f, int n, meUShort *lclNoBinds,
+                               meBind **lclBinds) ;
+extern	int	unbindkey(meUByte *prom, int n, meUShort *lclNoBinds,
+                                 meBind **lclBinds) ;
+extern	int	globalBindKey(int f, int n);
+extern	int	globalUnbindKey(int f, int n);
 #if MEOPT_LOCALBIND
-extern	int	bufferBindKey APRAM((int f, int n));
-extern	int	bufferUnbindKey APRAM((int f, int n));
-extern	int	mlBind APRAM((int f, int n));
-extern	int	mlUnbind APRAM((int f, int n));
+extern	int	bufferBindKey(int f, int n);
+extern	int	bufferUnbindKey(int f, int n);
+extern	int	mlBind(int f, int n);
+extern	int	mlUnbind(int f, int n);
 #else
 #define bufferBindKey notAvailable
 #define bufferUnbindKey notAvailable
 #define mlBind notAvailable
 #define mlUnbind notAvailable
 #endif
-extern	int	descBindings APRAM((int f, int n));
-extern	int	descKey APRAM((int f,int n));
+extern	int	descBindings(int f, int n);
+extern	int	descKey(int f,int n);
 #if MEOPT_EXTENDED
-extern	int	listCommands APRAM((int f, int n));
-extern	int	commandApropos APRAM((int f, int n));
-extern  void    charMaskTblInit APRAM((void));
-extern	int	setCharMask APRAM((int f, int n));
+extern	int	listCommands(int f, int n);
+extern	int	commandApropos(int f, int n);
+extern  void    charMaskTblInit(void);
+extern	int	setCharMask(int f, int n);
 #else
 #define listCommands notAvailable
 #define commandApropos notAvailable
 #define setCharMask notAvailable
 #endif
-#endif
-/*
- * buffer.c
- */
-#if !(defined __BUFFERC) || (defined _ANSI_C)		/* buffer.c externals */
-extern  int     getBufferName APRAM((meUByte *prompt, int opt, int defH, meUByte *buf)) ;
+
+/* buffer.c externals */
+extern  int     getBufferName(meUByte *prompt, int opt, int defH, meUByte *buf) ;
 #if MEOPT_FILEHOOK
-extern int      addFileHook APRAM((int f, int n)) ;
+extern int      addFileHook(int f, int n) ;
 #else
 #define addFileHook notAvailable
 #endif
 #if MEOPT_EXTENDED
-extern	int	nextWndFindBuf APRAM((int f, int n));
+extern	int	nextWndFindBuf(int f, int n);
 #else
 #define nextWndFindBuf notAvailable
 #endif
-extern	int	findBuffer APRAM((int f, int n));
-extern	int	nextBuffer APRAM((int f, int n));
-extern	int	swbuffer APRAM((meWindow *wp, meBuffer *bp));
-extern	int	delBuffer APRAM((int f, int n));
-extern	int	delSomeBuffers APRAM((int f, int n));
-extern  meBuffer *replacebuffer APRAM((meBuffer *oldbuf)) ;
-extern	int	HideBuffer APRAM((meBuffer *bp)) ;
-extern  void    linkBuffer APRAM((meBuffer *bp)) ;
-extern  void    unlinkBuffer APRAM((meBuffer *bp)) ;
-extern	int	zotbuf APRAM((meBuffer *bp, int silent));
-extern	int	changeBufName APRAM((int f,int n));
-extern	int	adjustMode APRAM((meBuffer *bp, int nn));
-extern	int	bufferMode APRAM((int f, int n));
-extern	int	globalMode APRAM((int f, int n));
-extern	int	namedBufferMode APRAM((int f, int n));
-extern  int     addLine APRAM((register meLine *ilp, meUByte *text)) ;
+extern	int	findBuffer(int f, int n);
+extern	int	nextBuffer(int f, int n);
+extern	int	swbuffer(meWindow *wp, meBuffer *bp);
+extern	int	delBuffer(int f, int n);
+extern	int	delSomeBuffers(int f, int n);
+extern  meBuffer *replacebuffer(meBuffer *oldbuf) ;
+extern	int	HideBuffer(meBuffer *bp) ;
+extern  void    linkBuffer(meBuffer *bp) ;
+extern  void    unlinkBuffer(meBuffer *bp) ;
+extern	int	zotbuf(meBuffer *bp, int silent);
+extern	int	changeBufName(int f,int n);
+extern	int	adjustMode(meBuffer *bp, int nn);
+extern	int	bufferMode(int f, int n);
+extern	int	globalMode(int f, int n);
+extern	int	namedBufferMode(int f, int n);
+extern  int     addLine(register meLine *ilp, meUByte *text) ;
 #define addLineToBob(bp,text) (bp->lineCount += addLine(bp->dotLine,text))
 #define addLineToEob(bp,text) (bp->lineCount += addLine(bp->baseLine,text))
-extern	int	listBuffers APRAM((int f, int n));
-extern  int     bufferNeedSaving APRAM((meBuffer *bp)) ;
-extern	int	anyChangedBuffer APRAM((void));
-extern  meBuffer *createBuffer APRAM((register meUByte *bname)) ;
+extern	int	listBuffers(int f, int n);
+extern  int     bufferNeedSaving(meBuffer *bp) ;
+extern	int	anyChangedBuffer(void);
+extern  meBuffer *createBuffer(register meUByte *bname) ;
 #define BFND_CREAT  0x01
 #define BFND_BINARY 0x02
 #define BFND_CRYPT  0x04
@@ -159,58 +150,49 @@ extern  meBuffer *createBuffer APRAM((register meUByte *bname)) ;
 #define BFND_MKNAM  0x10
 #define BFND_CLEAR  0x20
 
-extern	meBuffer *bfind APRAM((meUByte *bname, int cflag));
-extern	void    resetBufferWindows APRAM((meBuffer *bp)) ;
-extern	int	bclear APRAM((meBuffer *bp));
-extern  int     getBufferInfo APRAM((meInt *,meInt *,meInt *,meInt *)) ;
-#endif
-/*
- * crypt.c
- */
-#if !(defined __CRYPTC) || (defined _ANSI_C)				/* crypt.c externals */
+extern	meBuffer *bfind(meUByte *bname, int cflag);
+extern	void    resetBufferWindows(meBuffer *bp) ;
+extern	int	bclear(meBuffer *bp);
+extern  int     getBufferInfo(meInt *,meInt *,meInt *,meInt *) ;
+
+/* crypt.c externals */
 #if MEOPT_CRYPT
-extern  int	setBufferCryptKey APRAM((meBuffer *bp, meUByte *key)) ;
-extern	int	setCryptKey APRAM((int f, int n));
-extern	int	meCrypt APRAM((meUByte *bptr, meUInt len));
+extern  int	setBufferCryptKey(meBuffer *bp, meUByte *key) ;
+extern	int	setCryptKey(int f, int n);
+extern	int	meCrypt(meUByte *bptr, meUInt len);
 #else
 #define setCryptKey notAvailable
 #define meCrypt notAvailable
 #endif
-#endif
-/*
- * dir.c        - Directory handling
- */
-#if !(defined __DIRLISTC) || (defined _ANSI_C)		/* dirlist.c externals */
+
+/* dirlist.c externals */
 #if MEOPT_DIRLIST
-extern int directoryTree APRAM((int f, int n));
+extern int directoryTree(int f, int n);
 #else
 #define directoryTree notAvailable
 #endif
-#endif
-/*
- * display.c
- */
-#if !(defined __DISPLAYC) || (defined _ANSI_C)		/* display.c externals */
+
+/* display.c externals */
 #if MEOPT_COLOR
-extern  int	addColor APRAM((int f, int n)) ;
-extern	int	addColorScheme APRAM((int f, int n));
+extern  int	addColor(int f, int n) ;
+extern	int	addColorScheme(int f, int n);
 #else
 #define addColor notAvailable
 #define addColorScheme notAvailable
 #endif
-extern  int     convertUserScheme APRAM((int n, int defaultScheme));
-extern  meUByte assessModeLine APRAM((meUByte *ml)) ;
-extern  void    windCurLineOffsetEval APRAM((meWindow *wp)) ;
-extern  void    reframe APRAM((meWindow *wp)) ;
-extern  void    updCursor APRAM((register meWindow *wp)) ;
-extern  int     renderLine APRAM((meUByte *s, int len, int wid));
-extern	int	screenUpdate APRAM((int f, int n));
-extern	int	update APRAM((int force));
-extern	void	updone APRAM((meWindow *wp));
-extern	void	updall APRAM((meWindow *wp));
+extern  int     convertUserScheme(int n, int defaultScheme);
+extern  meUByte assessModeLine(meUByte *ml) ;
+extern  void    windCurLineOffsetEval(meWindow *wp) ;
+extern  void    reframe(meWindow *wp) ;
+extern  void    updCursor(register meWindow *wp) ;
+extern  int     renderLine(meUByte *s, int len, int wid);
+extern	int	screenUpdate(int f, int n);
+extern	int	update(int force);
+extern	void	updone(meWindow *wp);
+extern	void	updall(meWindow *wp);
 #if MEOPT_EXTENDED
-extern	int     showCursor APRAM((int f, int n)) ;
-extern	int     showRegion APRAM((int f, int n)) ;
+extern	int     showCursor(int f, int n) ;
+extern	int     showRegion(int f, int n) ;
 #else
 #define showCursor notAvailable
 #define showRegion notAvailable
@@ -221,21 +203,21 @@ extern	int     showRegion APRAM((int f, int n)) ;
 #if MEOPT_POKE
 #define POKE_COLORS   0x04      /* The fore & back args are color strings */
 #endif
-extern  void    pokeScreen APRAM((int flags, int row, int col, meUByte *scheme, meUByte *str)) ;
+extern  void    pokeScreen(int flags, int row, int col, meUByte *scheme, meUByte *str) ;
 #if MEOPT_POKE
-extern	int	screenPoke APRAM((int f, int n)) ;
+extern	int	screenPoke(int f, int n) ;
 #else
 #define screenPoke notAvailable
 #endif
-extern  void    menuline APRAM((int flag));
+extern  void    menuline(int flag);
 
-extern  int     renderLine APRAM((meUByte *s1, int len, int wid)) ;
+extern  int     renderLine(meUByte *s1, int len, int wid) ;
 
 /* Virtual video interfaces */
-extern  int     meVideoAttach  APRAM ((meVideo *vvptr, meWindow *wp));
-extern  void    meVideoDetach  APRAM ((meWindow *wp));
+extern  int     meVideoAttach(meVideo *vvptr, meWindow *wp);
+extern  void    meVideoDetach(meWindow *wp);
 
-extern  int     doRedrawEvent APRAM ((void));
+extern  int     doRedrawEvent(void);
 
 #define MWCURSOR   0x001
 #define MWSPEC     0x002
@@ -247,136 +229,122 @@ extern  int     doRedrawEvent APRAM ((void));
 #define MWUSEMLCOL 0x080
 #define MWERASE    0x100
 
-extern  int     mlwrite APRAM((int flags, meUByte *fmt, ...)) ;
-#endif
-/*
- * eval.c
- */
-#if !(defined __EVALC) || (defined _ANSI_C)		/* eval.c externals */
-extern  int     regexStrCmp APRAM((meUByte *str, meUByte *reg, int exact)) ;
-extern	meUByte  *gtfun APRAM((meUByte *fname));
-extern  meUByte  *getUsrLclCmdVar APRAM((meUByte *vname, register meVarList *varList)) ;
+extern  int     mlwrite(int flags, meUByte *fmt, ...) ;
+
+/* eval.c externals */
+extern  int     regexStrCmp(meUByte *str, meUByte *reg, int exact) ;
+extern	meUByte  *gtfun(meUByte *fname);
+extern  meUByte  *getUsrLclCmdVar(meUByte *vname, register meVarList *varList) ;
 #define getUsrVar(vname) getUsrLclCmdVar(vname,&usrVarList)
-extern	meVariable *SetUsrLclCmdVar APRAM((meUByte *vname, meUByte *vvalue,
-                                           register meVarList *varList)) ;
-extern	int	setVar APRAM((meUByte *vname, meUByte *vvalue, meRegister *regs)) ;
-extern	int	setVariable APRAM((int f, int n));
-extern	int	unsetVariable APRAM((int f, int n));
-extern	meUByte *meItoa APRAM((int i));
-extern	meUByte *getval APRAM((meUByte *token));
-extern	int	descVariable APRAM((int f, int n));
+extern	meVariable *SetUsrLclCmdVar(meUByte *vname, meUByte *vvalue,
+                                           register meVarList *varList) ;
+extern	int	setVar(meUByte *vname, meUByte *vvalue, meRegister *regs) ;
+extern	int	setVariable(int f, int n);
+extern	int	unsetVariable(int f, int n);
+extern	meUByte *meItoa(int i);
+extern	meUByte *getval(meUByte *token);
+extern	int	descVariable(int f, int n);
 #if MEOPT_EXTENDED
-extern	int	listVariables APRAM((int f, int n));
+extern	int	listVariables(int f, int n);
 #else
 #define listVariables notAvailable
 #endif
-#endif
-/*
- * exec.c
- */
-#if !(defined __EXECC) || (defined _ANSI_C)		/* exec.c externals */
-extern	int	mePushRegisters APRAM((int flags));
-extern	int	mePopRegisters APRAM((int flags));
-extern  int     biChopFindString APRAM((register meUByte *ss, register int len, 
-                                        register meUByte **tbl, register int size)) ;
-extern	int	execFunc APRAM((int index, int f, int n)) ;
-extern  void    execFuncHidden APRAM((int keyCode, int index, meUInt arg)) ;
+
+/* exec.c externals */
+extern	int	mePushRegisters(int flags);
+extern	int	mePopRegisters(int flags);
+extern  int     biChopFindString(register meUByte *ss, register int len, 
+                                        register meUByte **tbl, register int size) ;
+extern	int	execFunc(int index, int f, int n) ;
+extern  void    execFuncHidden(int keyCode, int index, meUInt arg) ;
 #define meEBF_ARG_GIVEN   0x01
 #define meEBF_HIDDEN      0x02
-extern  void    execBufferFunc APRAM((meBuffer *bp, int index, int flags, int n)) ;
-extern  int     lineExec APRAM((int f, int n, meUByte *cmdstr));
+extern  void    execBufferFunc(meBuffer *bp, int index, int flags, int n) ;
+extern  int     lineExec(int f, int n, meUByte *cmdstr);
 /* Note  tok (the destination token string) must be meTOKENBUF_SIZE_MAX in size, 
  * returning a string no bigger than meBUF_SIZE_MAX with the \0 */
-extern	meUByte  *token APRAM((meUByte *src, meUByte *tok));
-extern	int	macarg APRAM((meUByte *tok));
-extern  int     meGetString APRAM((meUByte *prompt, int option, int defnum,
-                               meUByte *buffer, int size));
-extern	int	storemac APRAM((int f, int n));
-extern	int	dofile APRAM((meUByte *fname, int f, int n));
-extern	int	execCommand APRAM((int f, int n));
-extern	int	execLine APRAM((int f, int n));
-extern	int	execBuffer APRAM((int f, int n));
-extern	int	execFile APRAM((int f, int n));
-extern	int	startup APRAM((meUByte *sfname));
-#endif
-/*
- * file.c
- */
-#if !(defined __FILEC) || (defined _ANSI_C)		/* file.c externals */
-extern  int fnamecmp APRAM((meUByte *f1, meUByte *f2)) ;
+extern	meUByte  *token(meUByte *src, meUByte *tok);
+extern	int	macarg(meUByte *tok);
+extern  int     meGetString(meUByte *prompt, int option, int defnum,
+                               meUByte *buffer, int size);
+extern	int	storemac(int f, int n);
+extern	int	dofile(meUByte *fname, int f, int n);
+extern	int	execCommand(int f, int n);
+extern	int	execLine(int f, int n);
+extern	int	execBuffer(int f, int n);
+extern	int	execFile(int f, int n);
+extern	int	startup(meUByte *sfname);
+
+/* file.c externals */
+extern  int fnamecmp(meUByte *f1, meUByte *f2) ;
 #define meFILETYPE_NASTY      0
 #define meFILETYPE_REGULAR    1
 #define meFILETYPE_DIRECTORY  2
 #define meFILETYPE_NOTEXIST   3
 #define meFILETYPE_HTTP       4
 #define meFILETYPE_FTP        5
-extern  int getFileStats APRAM((meUByte *file, int flag, meStat *stats, meUByte *lname)) ;
-extern  void set_dirs APRAM((void)) ;
+extern  int getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname) ;
+extern  void set_dirs(void) ;
 #define meFL_CHECKDOT    0x01
 #define meFL_USESRCHPATH 0x02
 #define meFL_USEPATH     0x04
 #define meFL_EXEC        0x08
-extern	int fileLookup APRAM((meUByte *fname, meUByte *ext, meUByte flags, meUByte *outName)) ;
-extern	int executableLookup APRAM((meUByte *fname, meUByte *outName)) ;
-extern  int bufferOutOfDate APRAM((meBuffer *bp)) ;
-extern	meUByte *gwd APRAM((meUByte drive));
-extern  meUByte *getFileBaseName APRAM((meUByte *fname)) ;
-extern  void  getFilePath APRAM((meUByte *fname, meUByte *path)) ;
-extern  int inputFileName APRAM((meUByte *prompt, meUByte *fn, int corFlag));
-extern	int ifile APRAM((meBuffer *bp, meUByte *fname, meUInt flags));
-extern	int insFile APRAM((int f, int n));
-extern  int findFileList APRAM((meUByte *seed, int bflag, meInt lineno)) ;
-extern  int findSwapFileList APRAM((meUByte *seed, int bflag, meInt lineno)) ;
-extern	int findFile APRAM((int f, int n));
-extern	int readFile APRAM((int f, int n));
-extern	int viewFile APRAM((int f, int n));
-extern  void freeFileList APRAM((int noStr, meUByte **files)) ;
+extern	int fileLookup(meUByte *fname, meUByte *ext, meUByte flags, meUByte *outName) ;
+extern	int executableLookup(meUByte *fname, meUByte *outName) ;
+extern  int bufferOutOfDate(meBuffer *bp) ;
+extern	meUByte *gwd(meUByte drive);
+extern  meUByte *getFileBaseName(meUByte *fname) ;
+extern  void  getFilePath(meUByte *fname, meUByte *path) ;
+extern  int inputFileName(meUByte *prompt, meUByte *fn, int corFlag);
+extern	int ifile(meBuffer *bp, meUByte *fname, meUInt flags);
+extern	int insFile(int f, int n);
+extern  int findFileList(meUByte *seed, int bflag, meInt lineno) ;
+extern  int findSwapFileList(meUByte *seed, int bflag, meInt lineno) ;
+extern	int findFile(int f, int n);
+extern	int readFile(int f, int n);
+extern	int viewFile(int f, int n);
+extern  void freeFileList(int noStr, meUByte **files) ;
 #if MEOPT_CRYPT
-extern	int	resetkey APRAM((meBuffer *bp));
+extern	int	resetkey(meBuffer *bp);
 #endif
-extern	int	readin APRAM((meBuffer *, meUByte *fname));
-extern	meUByte   makename APRAM((meUByte *bname, meUByte *fname));
-extern  void    autowriteout APRAM((register meBuffer *bp)) ;
-extern  void    autowriteremove APRAM((meBuffer *bp)) ;
+extern	int	readin(meBuffer *, meUByte *fname);
+extern	meUByte   makename(meUByte *bname, meUByte *fname);
+extern  void    autowriteout(register meBuffer *bp) ;
+extern  void    autowriteremove(meBuffer *bp) ;
 #if MEOPT_EXTENDED
-extern	int     nextWndFindFile APRAM((int f, int n));
-extern	int     fileOp APRAM((int f, int n));
-extern	int	appendBuffer APRAM((int f, int n));
+extern	int     nextWndFindFile(int f, int n);
+extern	int     fileOp(int f, int n);
+extern	int	appendBuffer(int f, int n);
 #else
 #define nextWndFindFile notAvailable
 #define fileOp notAvailable
 #define appendBuffer notAvailable
 #endif
-extern	int	writeBuffer APRAM((int f, int n));
-extern	int	saveBuffer APRAM((int f, int n));
-extern  int     writeOut APRAM((register meBuffer *bp, meUInt flags, meUByte *fn)) ;
-extern	int	writeout APRAM((meBuffer *bp, int flags, meUByte *fn));
-extern	int     saveSomeBuffers APRAM((int f, int n)) ;
-extern	void	resetBufferNames APRAM((meBuffer *bp, meUByte *fname));
-extern	int	changeFileName APRAM((int f, int n));
-extern	int	changeDir APRAM((int f, int n));
+extern	int	writeBuffer(int f, int n);
+extern	int	saveBuffer(int f, int n);
+extern  int     writeOut(register meBuffer *bp, meUInt flags, meUByte *fn) ;
+extern	int	writeout(meBuffer *bp, int flags, meUByte *fn);
+extern	int     saveSomeBuffers(int f, int n) ;
+extern	void	resetBufferNames(meBuffer *bp, meUByte *fname);
+extern	int	changeFileName(int f, int n);
+extern	int	changeDir(int f, int n);
 #ifdef _CONVDIR_CHAR
-extern  void    fileNameConvertDirChar APRAM((meUByte *fname)) ;
+extern  void    fileNameConvertDirChar(meUByte *fname) ;
 #else
 #define fileNameConvertDirChar(ff)
 #endif
 #define PATHNAME_COMPLETE 0
 #define PATHNAME_PARTIAL  1
-extern  void    pathNameCorrect APRAM((meUByte *oldName, int nameType, 
-                                       meUByte *newName, meUByte **baseName)) ;
+extern  void    pathNameCorrect(meUByte *oldName, int nameType, 
+                                       meUByte *newName, meUByte **baseName) ;
 #ifdef _WIN32
-extern  void    fileNameCorrect APRAM((meUByte *oldName, meUByte *newName, meUByte **baseName)) ;
+extern  void    fileNameCorrect(meUByte *oldName, meUByte *newName, meUByte **baseName) ;
 #else
 #define fileNameCorrect(o,n,b) pathNameCorrect(o,PATHNAME_COMPLETE,n,b)
 #endif
-extern  void    getDirectoryList APRAM((meUByte *pathName, meDirList *dirList)) ;
+extern  void    getDirectoryList(meUByte *pathName, meDirList *dirList) ;
 
-#endif
-
-/*
- * fileio.c
- */
-#if !(defined __FILEIOC) || (defined _ANSI_C)		/* fileio.c externals */
+/* fileio.c externals */
 #define meRWFLAG_FMOD      0x0000ffff
 #define meRWFLAG_SILENT    0x00010000
 #define meRWFLAG_READ      0x00020000
@@ -394,33 +362,30 @@ extern  void    getDirectoryList APRAM((meUByte *pathName, meDirList *dirList)) 
 #define meRWFLAG_FTPCLOSE  0x10000000
 #define meRWFLAG_NOCONSOLE 0x20000000
 
-extern int      ffReadFile APRAM((meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp)) ;
+extern int      ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp) ;
 #define meBACKUP_CREATE_PATH 0x0001
-extern int      createBackupName APRAM((meUByte *filename, meUByte *fn, meUByte backl, int flag)) ;
+extern int      createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag) ;
 
 
-extern int      ffWriteFileOpen APRAM((meUByte *fname, meUInt flags, meBuffer *bp)) ;
-extern int      ffWriteFileWrite APRAM((register int len, 
-                                        register meUByte *buff, int eolFlag)) ;
-extern int      ffWriteFileClose APRAM((meUByte *fname, meUInt flags, meBuffer *bp)) ;
-extern int      ffWriteFile APRAM((meUByte *fname, meUInt flags, meBuffer *bp)) ;
-extern int	ffFileOp APRAM((meUByte *sfname, meUByte *dfname, meUInt dFlags)) ;
-#endif
-/*
- * frame.c
- */
-#if !(defined __FRAMEC) || (defined _ANSI_C)		/* frame.c externals */
-extern	int     meFrameChangeWidth APRAM((meFrame *frame, int ww));
-extern	int     meFrameChangeDepth APRAM((meFrame *frame, int hh));
-extern	int	frameChangeDepth APRAM((int f, int n));
-extern	int	frameChangeWidth APRAM((int f, int n));
-extern	meFrame *meFrameInit APRAM((meFrame *sibling)) ;
-extern	int     meFrameInitWindow APRAM((meFrame *frame, meBuffer *buffer)) ;
+extern int      ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp) ;
+extern int      ffWriteFileWrite(register int len, 
+                                        register meUByte *buff, int eolFlag) ;
+extern int      ffWriteFileClose(meUByte *fname, meUInt flags, meBuffer *bp) ;
+extern int      ffWriteFile(meUByte *fname, meUInt flags, meBuffer *bp) ;
+extern int	ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags) ;
+
+/* frame.c externals */
+extern	int     meFrameChangeWidth(meFrame *frame, int ww);
+extern	int     meFrameChangeDepth(meFrame *frame, int hh);
+extern	int	frameChangeDepth(int f, int n);
+extern	int	frameChangeWidth(int f, int n);
+extern	meFrame *meFrameInit(meFrame *sibling) ;
+extern	int     meFrameInitWindow(meFrame *frame, meBuffer *buffer) ;
 #if MEOPT_FRAME
-extern	int	meFrameDelete APRAM((meFrame *frame, int flags));
-extern	int	frameCreate APRAM((int f, int n));
-extern	int	frameDelete APRAM((int f, int n));
-extern	int	frameNext APRAM((int f, int n));
+extern	int	meFrameDelete(meFrame *frame, int flags);
+extern	int	frameCreate(int f, int n);
+extern	int	frameDelete(int f, int n);
+extern	int	frameNext(int f, int n);
 
 #define meFrameLoopBegin()                                                   \
 do {                                                                         \
@@ -451,28 +416,24 @@ if( cond ) break
 
 #endif
 
-#endif
-/*
- * input.c
- */
-#if !(defined __INPUTC) || (defined _ANSI_C)		/* input.c externals */
+/* input.c externals */
 #define mlCR_LOWER_CASE     0x01
 #define mlCR_QUIT_ON_USER   0x02
 #define mlCR_UPDATE_ON_USER 0x04
 #define mlCR_CURSOR_IN_MAIN 0x08
 #define mlCR_QUOTE_CHAR     0x10
 #define mlCR_ALPHANUM_CHAR  0x20
-extern	int     mlCharReply APRAM((meUByte *prompt, int mask, meUByte *validList, meUByte *helpStr)) ;
-extern	int	mlyesno APRAM((meUByte *prompt));
-extern	void	mlDisp APRAM((meUByte *prompt, meUByte *buf, meUByte *cont, int cpos)) ;
-extern	int	getexecCommand APRAM((void));
+extern	int     mlCharReply(meUByte *prompt, int mask, meUByte *validList, meUByte *helpStr) ;
+extern	int	mlyesno(meUByte *prompt);
+extern	void	mlDisp(meUByte *prompt, meUByte *buf, meUByte *cont, int cpos) ;
+extern	int	getexecCommand(void);
 #define meGETKEY_SILENT     0x01
 #define meGETKEY_SINGLE     0x02
 #define meGETKEY_COMMAND    0x04
-extern	meUShort  meGetKeyFromUser APRAM((int f, int n, int flag));
-extern  int     createBuffList APRAM((meUByte ***listPtr, int noHidden)) ;
-extern  int     createCommList APRAM((meUByte ***listPtr, int noHidden)) ;
-extern  int     createVarList  APRAM((meUByte ***listPtr)) ;
+extern	meUShort  meGetKeyFromUser(int f, int n, int flag);
+extern  int     createBuffList(meUByte ***listPtr, int noHidden) ;
+extern  int     createCommList(meUByte ***listPtr, int noHidden) ;
+extern  int     createVarList(meUByte ***listPtr) ;
 #define MLBUFFER     0x00001		/* entering a buffer name	     */
 #define MLCOMMAND    0x00002		/* entering a command		     */
 #define MLFILE       0x00004		/* entering a filename		     */
@@ -517,102 +478,84 @@ extern  int     createVarList  APRAM((meUByte ***listPtr)) ;
  */
 extern meUByte **mlgsStrList ;
 extern int mlgsStrListSize ;
-extern int meGetStringFromUser APRAM((meUByte *prompt, int option, int defnum, meUByte *buf, int nbuf)) ;
-#endif
-/*
- * hilight.c
- */
-#if !(defined __HILIGHTC) || (defined _ANSI_C)		/* hilight.c externals */
-extern	void	mlerase APRAM((int flag));
+extern int meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int nbuf) ;
+
+/* hilight.c externals */
+extern	void	mlerase(int flag);
 #if MEOPT_HILIGHT
-extern	int	indent APRAM((int f, int n));
-extern	int	hilight APRAM((int f, int n));
-extern  void    hilightCurLineOffsetEval APRAM((meWindow *wp)) ;
-extern  int     indentLine APRAM((void)) ;
-extern  meUShort hilightLine APRAM((meVideoLine *vp1)) ;
-extern  void    hilightLookBack APRAM((meWindow *)) ;
+extern	int	indent(int f, int n);
+extern	int	hilight(int f, int n);
+extern  void    hilightCurLineOffsetEval(meWindow *wp) ;
+extern  int     indentLine(void) ;
+extern  meUShort hilightLine(meVideoLine *vp1) ;
+extern  void    hilightLookBack(meWindow *) ;
 #else
 #define indent notAvailable
 #define hilight notAvailable
 #endif
-#endif
-/*
- * history.c
- */
-#if !(defined __HISTORYC) || (defined _ANSI_C)		/* history.c externals */
-extern  void    initHistory APRAM((void)) ;
-extern  int     setupHistory APRAM((int option, meUByte **numPtr, meUByte ***list)) ;
-extern  void    addHistory APRAM((int option, meUByte *str)) ;
+
+/* history.c externals */
+extern  void    initHistory(void) ;
+extern  int     setupHistory(int option, meUByte **numPtr, meUByte ***list) ;
+extern  void    addHistory(int option, meUByte *str) ;
 #if MEOPT_REGISTRY
-extern  int     readHistory APRAM((int f, int n)) ;
-extern  int     saveHistory APRAM((int f, int n)) ;
+extern  int     readHistory(int f, int n) ;
+extern  int     saveHistory(int f, int n) ;
 #else
 #define readHistory notAvailable
 #define saveHistory notAvailable
 #endif
-#endif
-/*
- * isearch.c
- */
-#if !(defined __ISEARCHC) || (defined _ANSI_C)		/* isearch.c externals */
+
+/* isearch.c externals */
 #if MEOPT_ISEARCH
-extern	int	isearchBack APRAM((int f, int n));
-extern	int	isearchForw APRAM((int f, int n));
+extern	int	isearchBack(int f, int n);
+extern	int	isearchForw(int f, int n);
 #else
 #define isearchBack notAvailable
 #define isearchForw notAvailable
 #endif
-#endif
-/*
-** key.c
-*/
-#if !(defined __KEYC) || (defined _ANSI_C)			/* key.c externals */
-extern  void    count_key_table APRAM((void)) ;
-extern  int     decode_key APRAM((register meUShort code, meUInt *arg)) ;
-extern  int     delete_key APRAM((register meUShort code)) ;
-extern  int	insert_key APRAM((register meUShort code, meUShort index, meUInt arg)) ;
-#endif
-/*
- * line.c
- */
-#if !(defined __LINEC) || (defined _ANSI_C)		/* line.c externals */
-extern	meLine    *lalloc APRAM((int used));
-extern	int	bchange APRAM((void));
-extern	void	lchange APRAM((int flag));
-extern	int	insSpace APRAM((int f, int n));
-extern	int	insTab APRAM((int f, int n));
-extern  void	lunmarkBuffer APRAM((meBuffer *bp, meLine *lp, meLine *nlp));
-extern  meUByte  *lmakespace APRAM((int n));
-extern	int	linsert APRAM((int n, int c));
-extern	int	lsinsert  APRAM((int n, meUByte *cp));
-extern	int	lnewline APRAM((void));
-extern	int	mldelete APRAM((meInt n, meUByte *kstring));
-extern	int	ldelete APRAM((meInt n, int kflag));
-extern	int	ldelnewline APRAM((void));
-extern	int	ksave APRAM((void));
-extern	meUByte  *kaddblock APRAM((meInt count));
-extern	int	yankfrom APRAM((struct meKill *pklist));
-extern	int	yank APRAM((int f, int n));
-extern	int	reyank APRAM((int f, int n));
-extern  void    freeLineLoop APRAM((meLine *lp, int flag)) ;
-#endif
-/*
- * maro.c
- */
-#if !(defined __MACROC) || (defined _ANSI_C)		/* macro.c externals */
-extern	int	macroDefine APRAM((int f, int n));
-extern	int	macroFileDefine APRAM((int f, int n));
+
+/* key.c externals */
+extern  void    count_key_table(void) ;
+extern  int     decode_key(register meUShort code, meUInt *arg) ;
+extern  int     delete_key(register meUShort code) ;
+extern  int	insert_key(register meUShort code, meUShort index, meUInt arg) ;
+
+/* line.c externals */
+extern	meLine    *lalloc(int used);
+extern	int	bchange(void);
+extern	void	lchange(int flag);
+extern	int	insSpace(int f, int n);
+extern	int	insTab(int f, int n);
+extern  void	lunmarkBuffer(meBuffer *bp, meLine *lp, meLine *nlp);
+extern  meUByte  *lmakespace(int n);
+extern	int	linsert(int n, int c);
+extern	int	lsinsert(int n, meUByte *cp);
+extern	int	lnewline(void);
+extern	int	mldelete(meInt n, meUByte *kstring);
+extern	int	ldelete(meInt n, int kflag);
+extern	int	ldelnewline(void);
+extern	int	ksave(void);
+extern	meUByte  *kaddblock(meInt count);
+extern	int	yankfrom(struct meKill *pklist);
+extern	int	yank(int f, int n);
+extern	int	reyank(int f, int n);
+extern  void    freeLineLoop(meLine *lp, int flag) ;
+
+/* macro.c externals */
+extern	int	macroDefine(int f, int n);
+extern	int	macroFileDefine(int f, int n);
 #if MEOPT_EXTENDED
-extern	int	macroHelpDefine APRAM((int f, int n));
-extern  void    helpBufferReset APRAM((meBuffer *bp));
-extern	int	help APRAM((int f, int n));
-extern	int	helpItem APRAM((int f, int n));
-extern  int	helpCommand APRAM((int f, int n)) ;
-extern  int	helpVariable APRAM((int f, int n)) ;
-extern  int     nameKbdMacro APRAM((int f, int n)) ;
-extern	int	macroQuery APRAM((int f, int n));
-extern  meMacro *userGetMacro APRAM((meUByte *buf, int len)) ;
-extern  int     insMacro APRAM((int f, int n)) ;
+extern	int	macroHelpDefine(int f, int n);
+extern  void    helpBufferReset(meBuffer *bp);
+extern	int	help(int f, int n);
+extern	int	helpItem(int f, int n);
+extern  int	helpCommand(int f, int n) ;
+extern  int	helpVariable(int f, int n) ;
+extern  int     nameKbdMacro(int f, int n) ;
+extern	int	macroQuery(int f, int n);
+extern  meMacro *userGetMacro(meUByte *buf, int len) ;
+extern  int     insMacro(int f, int n) ;
 #else
 #define macroHelpDefine notAvailable
 #define help notAvailable
@@ -623,106 +566,92 @@ extern  int     insMacro APRAM((int f, int n)) ;
 #define macroQuery notAvailable
 #define insMacro notAvailable
 #endif
-extern	int	startKbdMacro APRAM((int f, int n));
-extern	int	endKbdMacro APRAM((int f, int n));
-extern	int	execKbdMacro APRAM((int f, int n));
-extern	int	stringExec APRAM((int f, int n, meUByte *macro)) ;
-extern	int	execString APRAM((int f, int n));
-#endif /* __MACROC */
-/*
- * main.c
- */
-#if !(defined __MAINC) || (defined _ANSI_C)		/* main.c externals */
-/*extern	void	edinit APRAM((char *bname)); */
-extern  int     insertChar APRAM((register int c, register int n)) ;
-extern  void    doOneKey APRAM((void)) ;
-extern	int	execute APRAM((int c, int f, int n));
-extern	int	meAbout APRAM((int f, int n));
-extern	int	exitEmacs APRAM((int f, int n));
-extern	int	quickExit APRAM((int f, int n));
-extern  int     promptSaveAll APRAM((int f, int n)) ;
-extern	int	saveExitEmacs APRAM((int f, int n));
-extern	int	ctrlg APRAM((int f, int n));
-extern	int	notAvailable APRAM((int f, int n));
-extern  int     noMarkSet APRAM((void)) ;
-extern	int	rdonly APRAM((void));
-extern	int     voidFunc APRAM((int f, int n)) ;
-extern	int	resterr APRAM((void));
-extern	int	prefixFunc APRAM((int f, int n));
-extern	int	uniArgument APRAM((int f, int n));
-extern  void    mesetup APRAM((int argc, char *argv[]));
+extern	int	startKbdMacro(int f, int n);
+extern	int	endKbdMacro(int f, int n);
+extern	int	execKbdMacro(int f, int n);
+extern	int	stringExec(int f, int n, meUByte *macro) ;
+extern	int	execString(int f, int n);
+
+/* main.c externals */
+extern  int     insertChar(register int c, register int n) ;
+extern  void    doOneKey(void) ;
+extern	int	execute(int c, int f, int n);
+extern	int	meAbout(int f, int n);
+extern	int	exitEmacs(int f, int n);
+extern	int	quickExit(int f, int n);
+extern  int     promptSaveAll(int f, int n) ;
+extern	int	saveExitEmacs(int f, int n);
+extern	int	ctrlg(int f, int n);
+extern	int	notAvailable(int f, int n);
+extern  int     noMarkSet(void) ;
+extern	int	rdonly(void);
+extern	int     voidFunc(int f, int n) ;
+extern	int	resterr(void);
+extern	int	prefixFunc(int f, int n);
+extern	int	uniArgument(int f, int n);
+extern  void    mesetup(int argc, char *argv[]);
 #if (defined _UNIX) || (defined _WIN32)
-extern  int     meDie APRAM((void)) ;
+extern  int     meDie(void) ;
 #endif
-extern  void    autoSaveHandler APRAM((void)) ;
+extern  void    autoSaveHandler(void) ;
 #if MEOPT_EXTENDED
-extern	int     commandWait APRAM((int f, int n)) ;
+extern	int     commandWait(int f, int n) ;
 #else
 #define commandWait notAvailable
 #endif
 
 #ifndef NDEBUG
-extern  void    _meAssert APRAM((char *file, int line));
+extern  void    _meAssert(char *file, int line);
 #define meAssert(x) while(!(x)){_meAssert(__FILE__,__LINE__);break;}
 #else
 #define meAssert(x) /* Nothing (x) */
 #endif
-#endif
-/*
- * narrow.c
- */
-#if !(defined __NARROWC) || (defined _ANSI_C)		/* narrow.c externals */
+
+/* narrow.c externals */
 #if MEOPT_NARROW
-extern void createNarrow APRAM((meBuffer *bp, meLine *slp, meLine *elp, meInt sln, meInt eln, meUShort name)) ;
-extern void delSingleNarrow APRAM((meBuffer *bp, int useDot)) ;
-extern void removeNarrow APRAM((meBuffer *bp, register meNarrow *nrrw, int useDot)) ;
-extern void unnarrowBuffer APRAM((meBuffer *bp)) ;
-extern void redoNarrowInfo APRAM((meBuffer *bp)) ;
-extern int  narrowBuffer APRAM((int f, int n)) ;
+extern void createNarrow(meBuffer *bp, meLine *slp, meLine *elp, meInt sln, meInt eln, meUShort name) ;
+extern void delSingleNarrow(meBuffer *bp, int useDot) ;
+extern void removeNarrow(meBuffer *bp, register meNarrow *nrrw, int useDot) ;
+extern void unnarrowBuffer(meBuffer *bp) ;
+extern void redoNarrowInfo(meBuffer *bp) ;
+extern int  narrowBuffer(int f, int n) ;
 #else
 #define narrowBuffer notAvailable
 #endif
-#endif
-/*
- * next.c
- */
-#if !(defined __NEXTC) || (defined _ANSI_C)		/* next.c externals */
+
+/* next.c externals */
 #if MEOPT_FILENEXT
-extern int      getNextLine APRAM((int f, int n)) ;
-extern int      addNextLine APRAM((int f, int n)) ;
+extern int      getNextLine(int f, int n) ;
+extern int      addNextLine(int f, int n) ;
 #else
 #define getNextLine notAvailable
 #define addNextLine notAvailable
 #endif
 #if MEOPT_RCS
-extern int      rcsFilePresent APRAM((meUByte *fname)) ;
-extern int      doRcsCommand APRAM((meUByte *fname, register meUByte *comStr)) ;
-extern int      rcsCiCoFile APRAM((int f, int n)) ;
+extern int      rcsFilePresent(meUByte *fname) ;
+extern int      doRcsCommand(meUByte *fname, register meUByte *comStr) ;
+extern int      rcsCiCoFile(int f, int n) ;
 #else
 #define rcsCiCoFile notAvailable
 #endif
 #if (defined _XTERM) || (defined _DOS) || (defined _WIN32)
-extern int      changeFont APRAM((int f, int n));
+extern int      changeFont(int f, int n);
 #else
 #define changeFont notAvailable
 #endif
-#endif
 
-/*
- * osd.c
- */
-#if !(defined __OSDC) || (defined _ANSI_C)              /* osd.c externals */
+/* osd.c externals */
 #if MEOPT_OSD
-extern void     osdStoreAll APRAM((void)) ;
-extern void     osdRestoreAll APRAM((int)) ;
-extern void     osdDisp APRAM((meUByte *buf, meUByte *cont, int cpos)) ;
-extern int      osdMouseContextChange APRAM((int leftPick)) ;
-extern int      osdMainMenuCheckKey APRAM((int cc)) ;
-extern int      osd APRAM((int f, int n));
-extern void     osdMainMenuUpdate APRAM((int force)) ;
+extern void     osdStoreAll(void) ;
+extern void     osdRestoreAll(int) ;
+extern void     osdDisp(meUByte *buf, meUByte *cont, int cpos) ;
+extern int      osdMouseContextChange(int leftPick) ;
+extern int      osdMainMenuCheckKey(int cc) ;
+extern int      osd(int f, int n);
+extern void     osdMainMenuUpdate(int force) ;
 #if MEOPT_LOCALBIND
-extern	int	osdBindKey APRAM((int f, int n));
-extern	int	osdUnbindKey APRAM((int f, int n));
+extern	int	osdBindKey(int f, int n);
+extern	int	osdUnbindKey(int f, int n);
 #else
 #define osdBindKey notAvailable
 #define osdUnbindKey notAvailable
@@ -732,18 +661,15 @@ extern	int	osdUnbindKey APRAM((int f, int n));
 #define osdBindKey notAvailable
 #define osdUnbindKey notAvailable
 #endif
-#endif
-/*
- * print.c
- */
-#if !(defined __PRINTC) || (defined _ANSI_C)              /* print.c externals */
+
+/* print.c externals */
 #if MEOPT_PRINT
-extern  int     printColor APRAM ((int f, int n));
-extern  int     printScheme APRAM ((int f, int n));
-extern	int	printBuffer APRAM((int f, int n)) ;
-extern	int	printRegion APRAM((int f, int n)) ;
+extern  int     printColor(int f, int n);
+extern  int     printScheme(int f, int n);
+extern	int	printBuffer(int f, int n) ;
+extern	int	printRegion(int f, int n) ;
 #ifdef _WIN32
-extern  int     WinPrint APRAM((meUByte *name, meLine *phead));
+extern  int     WinPrint(meUByte *name, meLine *phead);
 #endif /* _WIN32 */
 #else
 #define printColor notAvailable
@@ -751,123 +677,113 @@ extern  int     WinPrint APRAM((meUByte *name, meLine *phead));
 #define printBuffer notAvailable
 #define printRegion notAvailable
 #endif /* PRINT */
-#endif
-/*
- * random.c
- */
-#if !(defined __RANDOMC) || (defined _ANSI_C)		/* random.c externals */
-extern  void   *meMalloc APRAM((size_t s)) ;
-extern  void   *meRealloc APRAM((void *, size_t s)) ;
-extern  int     stricmp APRAM((const char *str1, const char *str2)) ;
-extern  int     strnicmp APRAM((const char *str1, const char *str2, size_t)) ;
-extern  int     stridif APRAM((const char *str1, const char *str2)) ;
-extern  void    sortStrings APRAM((int noStr, meUByte **strs, int offset, meIFuncSS cmpFunc)) ;
-extern  int     sortLines APRAM((int f, int n)) ;
-extern	int	bufferInfo APRAM((int f, int n));
-extern	int	getcline APRAM((meWindow *wp));
-extern	int	getcol APRAM((meUByte *ss, int off));
+
+/* random.c externals */
+extern  void   *meMalloc(size_t s) ;
+extern  void   *meRealloc(void *, size_t s) ;
+extern  int     stricmp(const char *str1, const char *str2) ;
+extern  int     strnicmp(const char *str1, const char *str2, size_t) ;
+extern  int     stridif(const char *str1, const char *str2) ;
+extern  void    sortStrings(int noStr, meUByte **strs, int offset, meIFuncSS cmpFunc) ;
+extern  int     sortLines(int f, int n) ;
+extern	int	bufferInfo(int f, int n);
+extern	int	getcline(meWindow *wp);
+extern	int	getcol(meUByte *ss, int off);
 #define getccol() getcol(frameCur->windowCur->dotLine->text,frameCur->windowCur->dotOffset)
-extern	int	setccol APRAM((int pos));
-extern	int	getcwcol APRAM((void));
-extern	int	setcwcol APRAM((int pos));
-extern	int	transChars APRAM((int f, int n));
-extern	int	transLines APRAM((int f, int n));
-extern	int	quoteKeyToChar APRAM((meUShort c)) ;
-extern	int	quote APRAM((int f, int n));
-extern	int	meTab APRAM((int f, int n));
-extern	int	meBacktab APRAM((int f, int n));
-extern	int	insLine APRAM((int f, int n));
-extern	int	meLineSetIndent APRAM((int curInd, int newInd, int undo));
-extern	int	meNewline APRAM((int f, int n));
-extern	int	deblank APRAM((int f, int n));
-extern	int	forwDelChar APRAM((int f, int n));
-extern	int	backDelChar APRAM((int f, int n));
-extern	int	killLine APRAM((int f, int n));
-extern	int	mlClear APRAM((int f, int n));
-extern	int	mlWrite APRAM((int f, int n));
-extern  void    makestrlow APRAM((meUByte *str));
+extern	int	setccol(int pos);
+extern	int	getcwcol(void);
+extern	int	setcwcol(int pos);
+extern	int	transChars(int f, int n);
+extern	int	transLines(int f, int n);
+extern	int	quoteKeyToChar(meUShort c) ;
+extern	int	quote(int f, int n);
+extern	int	meTab(int f, int n);
+extern	int	meBacktab(int f, int n);
+extern	int	insLine(int f, int n);
+extern	int	meLineSetIndent(int curInd, int newInd, int undo);
+extern	int	meNewline(int f, int n);
+extern	int	deblank(int f, int n);
+extern	int	forwDelChar(int f, int n);
+extern	int	backDelChar(int f, int n);
+extern	int	killLine(int f, int n);
+extern	int	mlClear(int f, int n);
+extern	int	mlWrite(int f, int n);
+extern  void    makestrlow(meUByte *str);
 #if MEOPT_CFENCE
-extern  meUByte   gotoFrstNonWhite APRAM((void)) ;
-extern  int     doCindent APRAM((int *inComment)) ;
-extern	int	cinsert APRAM((void));
-extern	int	gotoFence APRAM((int f, int n));
+extern  meUByte   gotoFrstNonWhite(void) ;
+extern  int     doCindent(int *inComment) ;
+extern	int	cinsert(void);
+extern	int	gotoFence(int f, int n);
 #else
 #define gotoFence notAvailable
 #endif
 #if MEOPT_WORDPRO
-extern  int	winsert APRAM((void)) ;
+extern  int	winsert(void) ;
 #endif
-extern	int	insString APRAM((int f, int n));
+extern	int	insString(int f, int n);
 
 #define meAM_ABSLINE  0x0100
 #define meAM_EXECBUFF 0x0101
 #define meAM_FRSTNRRW 0x0102
 #define meAM_FRSTPOS  0x4000
-extern  int     alphaMarkGet APRAM((meBuffer *bp, meUShort name)) ;
-extern  int     alphaMarkSet APRAM((meBuffer *bp, meUShort name, meLine *lp,
-                                    meUShort off, int silent)) ;
-extern	int	setAlphaMark APRAM((int f, int n));
-extern	int	gotoAlphaMark APRAM((int f, int n));
-extern  int     insFileName APRAM ((int f, int n)) ;
+extern  int     alphaMarkGet(meBuffer *bp, meUShort name) ;
+extern  int     alphaMarkSet(meBuffer *bp, meUShort name, meLine *lp,
+                                    meUShort off, int silent) ;
+extern	int	setAlphaMark(int f, int n);
+extern	int	gotoAlphaMark(int f, int n);
+extern  int     insFileName(int f, int n) ;
 #if MEOPT_EXTENDED
-extern  int     cmpBuffers APRAM ((int f, int n)) ;
+extern  int     cmpBuffers(int f, int n) ;
 #else
 #define cmpBuffers notAvailable
 #endif
 #if MEOPT_CALLBACK
-extern  int     createCallback APRAM ((int f, int n)) ;
-extern  void    callBackHandler APRAM((void)) ;
+extern  int     createCallback(int f, int n) ;
+extern  void    callBackHandler(void) ;
 #else
 #define createCallback notAvailable
 #endif
 #if MEOPT_MOUSE
-extern  int     setCursorToMouse APRAM ((int f, int n)) ;
+extern  int     setCursorToMouse(int f, int n) ;
 #else
 #define setCursorToMouse notAvailable
 #endif
-#endif
-/*
- * region.c
- */
-#if !(defined __REGIONC) || (defined _ANSI_C)		/* region.c externals */
-extern	int	getregion APRAM((meRegion *rp));
-extern	int	killRegion APRAM((int f, int n));
-extern	int	copyRegion APRAM((int f, int n));
-extern	int	lowerRegion APRAM((int f, int n));
-extern	int	upperRegion APRAM((int f, int n));
+
+/* region.c externals */
+extern	int	getregion(meRegion *rp);
+extern	int	killRegion(int f, int n);
+extern	int	copyRegion(int f, int n);
+extern	int	lowerRegion(int f, int n);
+extern	int	upperRegion(int f, int n);
 #if MEOPT_EXTENDED
-extern	int	killRectangle APRAM((int f, int n));
-extern	int	yankRectangle APRAM((int f, int n));
+extern	int	killRectangle(int f, int n);
+extern	int	yankRectangle(int f, int n);
 #else
 #define killRectangle notAvailable
 #define yankRectangle notAvailable
 #endif
-#endif
-/*
- * registry.c
- */
-#if !(defined __REGISTRYC) || (defined _ANSI_C)
-/* Command line prototyps */
+
+/* registry.c externals */
 #if MEOPT_REGISTRY
-extern int deleteRegistry APRAM((int f, int n));
-extern int findRegistry APRAM((int f, int n));
-extern int getRegistry APRAM((int f, int n));
-extern int listRegistry APRAM((int f, int n));
-extern int markRegistry APRAM((int f, int n));
-extern int readRegistry APRAM((int f, int n));
-extern int saveRegistry APRAM((int f, int n));
-extern int setRegistry APRAM((int f, int n));
+extern int deleteRegistry(int f, int n);
+extern int findRegistry(int f, int n);
+extern int getRegistry(int f, int n);
+extern int listRegistry(int f, int n);
+extern int markRegistry(int f, int n);
+extern int readRegistry(int f, int n);
+extern int saveRegistry(int f, int n);
+extern int setRegistry(int f, int n);
 
 /* API registry prototypes made available for export */
-extern meRegNode *regFind APRAM((meRegNode *root, meUByte *subkey));
+extern meRegNode *regFind(meRegNode *root, meUByte *subkey);
 #define regGetChild(reg) (reg->child)
 #define regGetNext(reg)  (reg->next)
-extern meRegNode *regRead APRAM((meUByte *rname, meUByte *fname, int mode));
-extern meRegNode *regSet APRAM((meRegNode *root, meUByte *subkey, meUByte *value));
-extern meRegNode *vregFind APRAM((meRegNode *root, meUByte *fmt, ...));
-extern int  regDelete APRAM((meRegNode *root));
-extern int  regSave APRAM((meRegNode *root, meUByte *fname));
-extern int  anyChangedRegistry APRAM((void));
+extern meRegNode *regRead(meUByte *rname, meUByte *fname, int mode);
+extern meRegNode *regSet(meRegNode *root, meUByte *subkey, meUByte *value);
+extern meRegNode *vregFind(meRegNode *root, meUByte *fmt, ...);
+extern int  regDelete(meRegNode *root);
+extern int  regSave(meRegNode *root, meUByte *fname);
+extern int  anyChangedRegistry(void);
 #define regGetName(reg)       (reg->name)
 #define regGetValue(reg)      (reg->value)
 #define regGetValueLen(reg)   (reg->len)
@@ -884,34 +800,28 @@ extern int  anyChangedRegistry APRAM((void));
 #define saveRegistry notAvailable
 #define setRegistry notAvailable
 #endif
-#endif
-/*
- * search.c
- */
-#if !(defined __SEARCHC) || (defined _ANSI_C)		/* search.c externals */
+
+/* search.c externals */
 #define meEXPAND_BACKSLASH 0x01
 #define meEXPAND_FFZERO    0x02
 #define meEXPAND_PRINTABLE 0x04
-extern  int     expandchar APRAM((int c, meUByte *d, int flags)) ;
-extern  int     expandexp APRAM((int slen, meUByte *s, int dlen, int doff,
-                                 meUByte *d, int cpos, int *opos, int flags)) ;
-extern	int	eq APRAM((int bc, int pc));
-extern	int	searchForw APRAM((int f, int n));
-extern	int	huntForw APRAM((int f, int n));
-extern	int	searchBack APRAM((int f, int n));
-extern	int	huntBack APRAM((int f, int n));
-extern	int	replaceStr APRAM((int f, int n));
-extern	int	queryReplaceStr APRAM((int f, int n));
-#endif
-/*
- * spawn.c
- */
-#if !(defined __SPAWNC) || (defined _ANSI_C)		/* spawn.c externals */
+extern  int     expandchar(int c, meUByte *d, int flags) ;
+extern  int     expandexp(int slen, meUByte *s, int dlen, int doff,
+                                 meUByte *d, int cpos, int *opos, int flags) ;
+extern	int	eq(int bc, int pc);
+extern	int	searchForw(int f, int n);
+extern	int	huntForw(int f, int n);
+extern	int	searchBack(int f, int n);
+extern	int	huntBack(int f, int n);
+extern	int	replaceStr(int f, int n);
+extern	int	queryReplaceStr(int f, int n);
+
+/* spawn.c externals */
 #ifdef _UNIX
-extern  void    __mkTempName APRAM((meUByte *buf, meUByte *name));
+extern  void    __mkTempName(meUByte *buf, meUByte *name);
 #define mkTempName(bb,nn,ee) __mkTempName((bb),(nn))
 #else
-extern  void    __mkTempName APRAM((meUByte *buf, meUByte *name, meUByte *ext));
+extern  void    __mkTempName(meUByte *buf, meUByte *name, meUByte *ext);
 #define mkTempName(bb,nn,ee) __mkTempName((bb),(nn),(ee))
 #endif
 #ifdef _WIN32
@@ -936,25 +846,25 @@ extern void mkTempCommName(meUByte *filename, meUByte *basename) ;
 #define LAUNCH_FILTER        0x0400
 #define LAUNCH_PIPE          0x0800
 #define LAUNCH_IPIPE         0x1000
-extern	int	meShell APRAM((int f, int n));
-extern	int	doShellCommand APRAM((meUByte *cmdstr)) ;
-extern	int	meShellCommand APRAM((int f, int n));
-extern  int     doPipeCommand APRAM((meUByte *comStr, meUByte *path, meUByte *bufName, 
-                                 int silent)) ;
-extern	int	pipeCommand APRAM((int f, int n));
+extern	int	meShell(int f, int n);
+extern	int	doShellCommand(meUByte *cmdstr) ;
+extern	int	meShellCommand(int f, int n);
+extern  int     doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, 
+                                 int silent) ;
+extern	int	pipeCommand(int f, int n);
 #if MEOPT_IPIPES
-extern  int     doIpipeCommand APRAM((meUByte *comStr, meUByte *path, meUByte *bufName, 
-                                  int silent)) ;
-extern	int	ipipeCommand  APRAM((int f, int n)) ;
-extern	int	ipipeWrite APRAM((int f, int n)) ;
-extern  void    ipipeRead APRAM((meIPipe *ipipe)) ;
-extern  int     ipipeSetSize APRAM((meWindow *wp, meBuffer *bp)) ;
-extern	void    ipipeRemove APRAM((meIPipe *ipipe)) ;
+extern  int     doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, 
+                                  int silent) ;
+extern	int	ipipeCommand(int f, int n) ;
+extern	int	ipipeWrite(int f, int n) ;
+extern  void    ipipeRead(meIPipe *ipipe) ;
+extern  int     ipipeSetSize(meWindow *wp, meBuffer *bp) ;
+extern	void    ipipeRemove(meIPipe *ipipe) ;
 #ifdef _UNIX
-extern  void    ipipeCheck APRAM((void)) ;
+extern  void    ipipeCheck(void) ;
 #endif
-extern	int	ipipeKill APRAM((int f, int n)) ;
-extern  int     anyActiveIpipe APRAM((void)) ;
+extern	int	ipipeKill(int f, int n) ;
+extern  int     anyActiveIpipe(void) ;
 #else
 #define ipipeWriteString voidFunc
 #define ipipeCommand  pipeCommand
@@ -965,9 +875,9 @@ extern  int     anyActiveIpipe APRAM((void)) ;
 #if MEOPT_EXTENDED
 #define FILTER_IN_FILE    "fltinp.~~~"
 #define FILTER_OUT_FILE   "fltout.~~~"
-extern	int	meFilter APRAM((int f, int n));
+extern	int	meFilter(int f, int n);
 #ifdef _UNIX
-extern	int	suspendEmacs APRAM((int f, int n));
+extern	int	suspendEmacs(int f, int n);
 #else
 #define suspendEmacs notAvailable
 #endif
@@ -989,19 +899,15 @@ extern	int	suspendEmacs APRAM((int f, int n));
 #define suspendEmacs notAvailable
 
 #endif /* MEOPT_SPAWN */
-#endif
 
-/*
- * spell.c
- */
-#if !(defined __SPELLC) || (defined _ANSI_C)			/* spell.c externals */
+/* spell.c externals */
 #if MEOPT_SPELL
-extern	int	dictionaryAdd APRAM((int f, int n));
-extern	int	spellRuleAdd APRAM((int f, int n));
-extern	int	dictionaryDelete APRAM((int f, int n));
-extern	int	dictionarySave APRAM((int f, int n));
-extern	int	spellWord APRAM((int f, int n));
-extern  int     anyChangedDictionary APRAM((void)) ;
+extern	int	dictionaryAdd(int f, int n);
+extern	int	spellRuleAdd(int f, int n);
+extern	int	dictionaryDelete(int f, int n);
+extern	int	dictionarySave(int f, int n);
+extern	int	spellWord(int f, int n);
+extern  int     anyChangedDictionary(void) ;
 #else
 #define dictionaryAdd notAvailable
 #define spellRuleAdd notAvailable
@@ -1009,92 +915,77 @@ extern  int     anyChangedDictionary APRAM((void)) ;
 #define dictionarySave notAvailable
 #define spellWord notAvailable
 #endif
-extern	void	findWordsInit APRAM((meUByte *mask));
-extern	meUByte  *findWordsNext APRAM((void));
-#endif
-/*
- * tag.c
- */
-#if !(defined __TAGC) || (defined _ANSI_C)			/* tag.c externals */
+extern	void	findWordsInit(meUByte *mask);
+extern	meUByte  *findWordsNext(void);
+
+/* tag.c externals */
 #if MEOPT_TAGS
-extern	int	findTag APRAM((int f, int n));
+extern	int	findTag(int f, int n);
 #else
 #define findTag notAvailable
 #endif
-#endif
-/*
- * termio.c
- */
-#if !(defined __TERMIOC) || (defined _ANSI_C)		/* termio.c externals */
-extern	void    TTdoBell APRAM((int)) ;
-extern	void    TTbell APRAM((void));
-extern  int     charListToShorts APRAM((meUShort *sl, meUByte *cl)) ;
-extern  int     keyListToShorts APRAM((meUShort *sl, meUByte *kl)) ;
-extern  void    translateKeyAdd APRAM((meTRANSKEY *tcapKeys, int count, int time,
-                                       meUShort *key, meUShort map)) ;
-extern	int	translateKey APRAM((int f, int n));
-extern  char   *meTParm APRAM((char *str, ...)) ;
-#endif
-/*
- * time.c
- */
-#if !(defined __TIMEC) || (defined _ANSI_C)		/* time.c externals */
-extern	int	set_timestamp APRAM((meBuffer *bp));
-#endif
-/*
- * undo.c
- */
-#if !(defined __UNDOC) || (defined _ANSI_C)		/* undo.c externals */
+
+/* termio.c externals */
+extern	void    TTdoBell(int) ;
+extern	void    TTbell(void);
+extern  int     charListToShorts(meUShort *sl, meUByte *cl) ;
+extern  int     keyListToShorts(meUShort *sl, meUByte *kl) ;
+extern  void    translateKeyAdd(meTRANSKEY *tcapKeys, int count, int time,
+                                       meUShort *key, meUShort map) ;
+extern	int	translateKey(int f, int n);
+extern  char   *meTParm(char *str, ...) ;
+
+/* time.c externals */
+extern	int	set_timestamp(meBuffer *bp);
+
+/* undo.c externals */
 #if MEOPT_UNDO
-extern  meUndoNode *meUndoCreateNode     APRAM((size_t size)) ;
-extern	void	meUndoAddInsChar     APRAM((void));
-extern	void	meUndoAddDelChar     APRAM((void));
-extern  void    meUndoAddRepChar     APRAM((void));
-extern	void	meUndoAddInsChars    APRAM((meInt numChars));
-extern	void	meUndoAddDelChars    APRAM((meInt numChars));
-extern	void	meUndoAddReplaceBgn  APRAM((meLine *elinep, meUShort elineo));
-extern	void	meUndoAddReplaceEnd  APRAM((meInt numChars));
-extern	void    meUndoAddReplace     APRAM((meUByte *dstr, meInt count)) ;
+extern  meUndoNode *meUndoCreateNode(size_t size) ;
+extern	void	meUndoAddInsChar(void);
+extern	void	meUndoAddDelChar(void);
+extern  void    meUndoAddRepChar(void);
+extern	void	meUndoAddInsChars(meInt numChars);
+extern	void	meUndoAddDelChars(meInt numChars);
+extern	void	meUndoAddReplaceBgn(meLine *elinep, meUShort elineo);
+extern	void	meUndoAddReplaceEnd(meInt numChars);
+extern	void    meUndoAddReplace(meUByte *dstr, meInt count) ;
 #if MEOPT_NARROW
-extern  void    meUndoAddUnnarrow    APRAM((meInt sln, meInt eln, meUShort name)) ;
-extern  void    meUndoAddNarrow      APRAM((meInt sln, meUShort name)) ;
+extern  void    meUndoAddUnnarrow(meInt sln, meInt eln, meUShort name) ;
+extern  void    meUndoAddNarrow(meInt sln, meUShort name) ;
 #endif
-extern	void	meUndoRemove         APRAM((meBuffer *bp)) ;
-extern	int	meUndo               APRAM((int f, int n));
+extern	void	meUndoRemove(meBuffer *bp) ;
+extern	int	meUndo(int f, int n);
 #else
 #define meUndo notAvailable
 #endif
-#endif
-/*
- * window.c
- */
-#if !(defined __WINDOWC) || (defined _ANSI_C)		/* window.c externals */
-extern  void    meWindowMakeCurrent APRAM((meWindow *wp)) ;
-extern  void    frameAddModeToWindows APRAM((int mode)) ;
-extern  void    meBufferAddModeToWindows APRAM((meBuffer *bp, int mode)) ;
-extern  void    meWindowFixTextSize APRAM((meWindow *wp));
-extern  void    meWindowFixScrollBars APRAM((meWindow *wp));
-extern  void    meWindowFixScrollBox APRAM((meWindow *wp));
-extern  int     frameSetupMenuLine  APRAM((int n));
-extern	int	windowRecenter APRAM((int f, int n));
-extern	int	windowGotoNext APRAM((int f, int n));
-extern	int	windowGotoPrevious APRAM((int f, int n));
-extern	int	windowScrollDown APRAM((int f, int n));
-extern  int     windowScrollLeft APRAM((int f, int n));
-extern  int     windowScrollRight APRAM((int f, int n));
-extern	int	windowScrollUp APRAM((int f, int n));
-extern	int	windowDeleteOthers APRAM((int f, int n));
-extern	int	windowDelete APRAM((int f, int n));
-extern	int	windowGrowDepth APRAM((int f, int n));
-extern	int	windowResizeDepth APRAM((int f, int n));
-extern	int	windowShrinkDepth APRAM((int f, int n));
-extern	int	windowSplitDepth APRAM((int f, int n));
-extern  int     frameResizeWindows APRAM((int f, int n));
+
+/* window.c externals */
+extern  void    meWindowMakeCurrent(meWindow *wp) ;
+extern  void    frameAddModeToWindows(int mode) ;
+extern  void    meBufferAddModeToWindows(meBuffer *bp, int mode) ;
+extern  void    meWindowFixTextSize(meWindow *wp);
+extern  void    meWindowFixScrollBars(meWindow *wp);
+extern  void    meWindowFixScrollBox(meWindow *wp);
+extern  int     frameSetupMenuLine(int n);
+extern	int	windowRecenter(int f, int n);
+extern	int	windowGotoNext(int f, int n);
+extern	int	windowGotoPrevious(int f, int n);
+extern	int	windowScrollDown(int f, int n);
+extern  int     windowScrollLeft(int f, int n);
+extern  int     windowScrollRight(int f, int n);
+extern	int	windowScrollUp(int f, int n);
+extern	int	windowDeleteOthers(int f, int n);
+extern	int	windowDelete(int f, int n);
+extern	int	windowGrowDepth(int f, int n);
+extern	int	windowResizeDepth(int f, int n);
+extern	int	windowShrinkDepth(int f, int n);
+extern	int	windowSplitDepth(int f, int n);
+extern  int     frameResizeWindows(int f, int n);
 #if MEOPT_HSPLIT
-extern	int	windowGrowWidth APRAM((int f, int n));
-extern	int	windowResizeWidth APRAM((int f, int n));
-extern	int	windowShrinkWidth APRAM((int f, int n));
-extern	int	windowSplitWidth APRAM((int f, int n));
+extern	int	windowGrowWidth(int f, int n);
+extern	int	windowResizeWidth(int f, int n);
+extern	int	windowShrinkWidth(int f, int n);
+extern	int	windowSplitWidth(int f, int n);
 #else
 #define windowGrowWidth notAvailable
 #define windowResizeWidth notAvailable
@@ -1102,14 +993,14 @@ extern	int	windowSplitWidth APRAM((int f, int n));
 #define windowSplitWidth notAvailable
 #endif
 #if MEOPT_POSITION
-extern	int	positionSet APRAM((int f, int n));
-extern	int	positionGoto APRAM((int f, int n));
+extern	int	positionSet(int f, int n);
+extern	int	positionGoto(int f, int n);
 #else
 #define positionSet notAvailable
 #define positionGoto notAvailable
 #endif
 #if MEOPT_MOUSE
-extern  int     windowSetScrollWithMouse APRAM((int f, int n));
+extern  int     windowSetScrollWithMouse(int f, int n);
 #else
 #define windowSetScrollWithMouse notAvailable
 #endif
@@ -1120,39 +1011,35 @@ extern  int     windowSetScrollWithMouse APRAM((int f, int n));
 #define WPOP_MKCURR 0x100
 #define WPOP_USESTR 0x200
 #define WPOP_EXIST  0x400
-extern	meWindow *meWindowPopup APRAM((meUByte *name, int flags, meBuffer **bufferReplaced));
-extern	int	windowPopup APRAM((int f, int n));
+extern	meWindow *meWindowPopup(meUByte *name, int flags, meBuffer **bufferReplaced);
+extern	int	windowPopup(int f, int n);
 #if MEOPT_EXTENDED
-extern	int	windowScrollNextUp APRAM((int f, int n));
-extern	int	windowScrollNextDown APRAM((int f, int n));
+extern	int	windowScrollNextUp(int f, int n);
+extern	int	windowScrollNextDown(int f, int n);
 #else
 #define windowScrollNextUp notAvailable
 #define windowScrollNextDown notAvailable
 #endif
-#endif
-/*
- * word.c
- */
-#if !(defined __WORDC) || (defined _ANSI_C)		/* word.c externals */
-extern	int	backWord APRAM((int f, int n));
-extern	int	forwWord APRAM((int f, int n));
-extern	int	upperWord APRAM((int f, int n));
-extern	int	lowerWord APRAM((int f, int n));
-extern	int	capWord APRAM((int f, int n));
-extern	int	forwDelWord APRAM((int f, int n));
-extern	int	backDelWord APRAM((int f, int n));
+
+/* word.c externals */
+extern	int	backWord(int f, int n);
+extern	int	forwWord(int f, int n);
+extern	int	upperWord(int f, int n);
+extern	int	lowerWord(int f, int n);
+extern	int	capWord(int f, int n);
+extern	int	forwDelWord(int f, int n);
+extern	int	backDelWord(int f, int n);
 #if MEOPT_WORDPRO
-extern	int	wrapWord APRAM((int f, int n));
-extern	int	justify	 APRAM((int leftMargin, int leftDoto));
-extern	int	fillPara APRAM((int f, int n));
-extern	int	killPara APRAM((int f, int n));
-extern	int	countWords APRAM((int f, int n));
+extern	int	wrapWord(int f, int n);
+extern	int	justify(int leftMargin, int leftDoto);
+extern	int	fillPara(int f, int n);
+extern	int	killPara(int f, int n);
+extern	int	countWords(int f, int n);
 #else
 #define wrapWord notAvailable
 #define fillPara notAvailable
 #define killPara notAvailable
 #define countWords notAvailable
-#endif
 #endif
 
 /* gettimeofday - Retreives the time of day to millisecond resolution
@@ -1388,31 +1275,31 @@ extern void exit(int i) ;
 /*
  * Terminal I/O file defintions
  */
-extern	char   *getenv APRAM((const char *));
+extern	char   *getenv(const char *);
 
-extern  void    free APRAM((void *block));
-extern  void   *malloc APRAM((size_t s));
-extern  void   *realloc APRAM((void *block, size_t s));
-extern	void   *memcpy APRAM((void *, const void *, size_t));
-extern	void   *memset APRAM((void *, int,    size_t));
+extern  void    free(void *block);
+extern  void   *malloc(size_t s);
+extern  void   *realloc(void *block, size_t s);
+extern	void   *memcpy(void *, const void *, size_t);
+extern	void   *memset(void *, int,    size_t);
 
-extern	size_t	strlen APRAM((const char *s));
-extern	int	strcmp APRAM((const char *s1, const char *s2));
-extern	char   *strcpy APRAM((char *s1, const char *s2));
-extern	char   *strcat APRAM((char *s1, const char *s2));
-extern	char   *strdup APRAM((const char *s1));
-extern	char   *strncpy APRAM((char *s1, const char *s2, size_t n));
-extern	int	strncmp APRAM((const char *s1, const char *s2, size_t n));
-extern	char   *strchr APRAM((const char *, int));
-extern	char   *strrchr APRAM((const char *, int));
-extern  long    strtol APRAM((const char*, char**, int));
-extern  int     abs APRAM((int));
-extern  int     system APRAM((const char*));
+extern	size_t	strlen(const char *s);
+extern	int	strcmp(const char *s1, const char *s2);
+extern	char   *strcpy(char *s1, const char *s2);
+extern	char   *strcat(char *s1, const char *s2);
+extern	char   *strdup(const char *s1);
+extern	char   *strncpy(char *s1, const char *s2, size_t n);
+extern	int	strncmp(const char *s1, const char *s2, size_t n);
+extern	char   *strchr(const char *, int);
+extern	char   *strrchr(const char *, int);
+extern  long    strtol(const char*, char**, int);
+extern  int     abs(int);
+extern  int     system(const char*);
 
 #ifdef _NOPUTENV
 #define meGetenv(s1)        ((void *) megetenv((const char *)(s1)))
-extern char    *megetenv APRAM((const char *s));
-extern int      putenv APRAM((const char *s));
+extern char    *megetenv(const char *s);
+extern int      putenv(const char *s);
 #else
 #define meGetenv(s1)        ((void *) getenv((const char *)(s1)))
 #endif

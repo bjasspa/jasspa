@@ -689,7 +689,6 @@ ipipeRead(meIPipe *ipipe)
 #endif
 
     if(meModeTest(bp->mode,MDWRAP))
-        /* maxOff = frameCur->width - 2 ;*/
         maxOff = ipipe->noCols ;
     else
         maxOff = meBUF_SIZE_MAX - 2 ;
