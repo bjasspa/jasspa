@@ -4705,17 +4705,19 @@ xdndSelectionNotify (XEvent *xevent, meFrame *frame)
 
                     if (buf == NULL)
                     {
-                        p = malloc (count);
+                        p = malloc (read+1);
                         if (p != NULL)
                         {
                             buf = p;
-                            memcpy (buf, s, count);
+                            memcpy (buf, s, read);
+                            buf[read] = '\0';
                         }
                     }
-                    else if ((p = realloc (buf, read)) != NULL)
+                    else if ((p = realloc (buf, read+1)) != NULL)
                     {
                         buf = p;
                         memcpy (&buf[oread], s, count);
+                        buf[read] = '\0';
                     }
                 }
 
@@ -4759,7 +4761,19 @@ xdndSelectionNotify (XEvent *xevent, meFrame *frame)
                         end = start;
                     }
                     else if (*end == '\0')
+                    {
+                        /* Sometimes the filename is not \r\n terminated,
+                         * push what has been received. */
+                        if (*start != '\0') 
+                        {
+                            /* Push the file ready for processing */
+                            xdndPushFile (frame, x, y, start);
+                            DEBUGOUT(("%s:%d: FILE: (%d,%d) %s\n",
+                                      __FILE__, __LINE__, x, y, start));
+                        }
+                        /* Finished */
                         break;
+                    }
                     else
                         end++;
                 }
