@@ -1104,7 +1104,7 @@ ffUrlFileOpen(meUByte *urlName, meUByte *user, meUByte *pass, meUInt rwflag)
         return meFALSE ;
     
     if(ss[0] == '\0')
-        ss = "/" ;
+        ss = (meUByte *) "/" ;
     /* is it a http: or ftp: */
     if(fftype == meURLTYPE_FTP)
         ii = ffFtpFileOpen(host,port,user,pass,ss,rwflag) ;
