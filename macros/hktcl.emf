@@ -366,8 +366,9 @@ set-variable .fhook-tcl.item-list-r8 "Nmsp \ecB\\1\ecA"
     indent .hilight.tcl e "\"" "\"" "\\"
     indent .hilight.tcl b "\\[" "]"
     indent .hilight.tcl b "(" ")"
-    indent .hilight.tcl c "\\\\\\s" 3/2t
-    indent .hilight.tcl i "#"  
+    indent .hilight.tcl c "\\\\\\s*$" 3/2t
+    indent .hilight.tcl i "^\\s*#"
+    indent .hilight.tcl i ";#"
 !endif
 
 buffer-init-fhook "tcl"
