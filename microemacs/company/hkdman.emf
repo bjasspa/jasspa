@@ -1,0 +1,95 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2004 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:        May 9 1998
+; Synopsis:       Man pages hook (does grotty string replaces)
+; Authors:        Jon Green & Steven Phillips
+; Description:    Nroff tools viewer.
+; Last Modified : <040205.2223>
+;
+!if &sequal .hilight.dman "ERROR"
+    set-variable .hilight.dman  &pinc .hilight.next 1
+    set-variable .hilight.dman1 &pinc .hilight.next 1
+    set-variable .hilight.dman4 &pinc .hilight.next 1
+    set-variable .hilight.dman7 &pinc .hilight.next 1
+!endif
+
+0 hilight .hilight.dman 0                 $global-scheme
+hilight   .hilight.dman 64  "\e\\[0m" ""  $global-scheme
+hilight   .hilight.dman 192 "\e\\[1m" ""  .hilight.dman1  .scheme.bold
+hilight   .hilight.dman 192 "\e\\[4m" ""  .hilight.dman4  .scheme.italic
+hilight   .hilight.dman 192 "\e\\[7m" ""  .hilight.dman7  .scheme.string
+hilight   .hilight.dman 34  "ERROR:"      .scheme.error
+hilight   .hilight.dman 34  "WARNING:"    .scheme.error
+hilight   .hilight.dman 34  "WARN:"       .scheme.error
+; Bold
+0 hilight .hilight.dman1 0                .scheme.bold
+hilight   .hilight.dman1 192 "\e\\[0m" "" .hilight.dman  $global-scheme
+hilight   .hilight.dman1 64  "\e\\[1m" "" .scheme.bold
+hilight   .hilight.dman1 192 "\e\\[4m" "" .hilight.dman4 .scheme.italic
+hilight   .hilight.dman1 192 "\e\\[7m" "" .hilight.dman7 .scheme.string
+hilight   .hilight.dman1 34  "ERROR:"     .scheme.error
+hilight   .hilight.dman1 34  "WARNING:"   .scheme.error
+; String
+0 hilight .hilight.dman4 0                .scheme.italic
+hilight   .hilight.dman4 192 "\e\\[0m" "" .hilight.dman  $global-scheme
+hilight   .hilight.dman4 192 "\e\\[1m" "" .hilight.dman1 .scheme.bold
+hilight   .hilight.dman4 64  "\e\\[4m" "" .scheme.italic
+hilight   .hilight.dman4 192 "\e\\[7m" "" .hilight.dman7 .scheme.string
+hilight   .hilight.dman4 34  "ERROR:"     .scheme.error
+hilight   .hilight.dman4 34  "WARNING:"   .scheme.error
+; Italic
+0 hilight .hilight.dman7 0                .scheme.string
+hilight   .hilight.dman7 192 "\e\\[0m" "" .hilight.dman  $global-scheme
+hilight   .hilight.dman7 192 "\e\\[1m" "" .hilight.dman1 .scheme.bold
+hilight   .hilight.dman7 192 "\e\\[4m" "" .hilight.dman4 .scheme.italic
+hilight   .hilight.dman7 64  "\e\\[7m" "" .scheme.string
+hilight   .hilight.dman7 34  "ERROR:"     .scheme.error
+hilight   .hilight.dman7 34  "WARNING:"   .scheme.error
+
+add-next-line "*dman*" ""
+add-next-line "*dman*" "ERROR: %f: %l:"
+add-next-line "*dman*" "WARN: %f: %l:"
+
+define-macro fhook-dman
+    beginning-of-buffer
+    !if &seq "droff : Processing" &lef @wl 18
+        -1 buffer-mode "view"
+        set-mark
+        forward-line
+        kill-region
+        -1 buffer-mode "edit"
+    !endif
+    set-variable $buffer-hilight .hilight.dman
+    1 buffer-mode "view"
+!emacro
+
+define-macro dman
+    1 pipe-shell-command &cat "droff -a -s " @ml "dMan on" "*dman*"
+    -1 buffer-mode "view"
+    set-mark
+    3 forward-line
+    kill-region
+    fhook-dman
+!emacro
+
+define-macro adman
+    !if &bmod "edit"
+        !if &iseq @mc1 "Save buffer first [y/n]? " "nNyY" "y"
+            save-buffer
+        !endif
+    !endif
+    1 pipe-shell-command &cat "droff -a -s " $buffer-fname "*dman*"
+    -1 buffer-mode "view"
+    set-mark
+    3 forward-line
+    kill-region
+    fhook-dman
+!emacro
+
+ml-write "[Dman file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "mydman"

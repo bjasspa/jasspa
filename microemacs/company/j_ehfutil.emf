@@ -1,0 +1,282 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : $Author: jon $
+;  Created By    : Steven Phillips
+;  Created       : Thu Jan 15 20:27:13 2004
+;  Last Modified : <040116.2042>
+;
+;  Description
+;
+;  Notes         : To use it, start up a new ME, execute the emf file and
+;                  run ehf-doc-test, following the prompts - easy.
+;
+;  History
+;
+;  Copyright (c) 2004 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro ehf-doc-test
+    set-variable #l0 @ml01 "Ehf file"
+    find-file #l0
+    set-variable #l2 $buffer-bname
+    set-variable #l1 @ml01 "evar.def source file"
+    find-file #l1
+    set-variable #l3 $buffer-bname
+    !force delete-buffer "*ehf-result*"
+    find-buffer "*ehf-result*"
+    insert-string "Undocumented Commands\n\n"
+    !force delete-buffer "*ehf-tmp*"
+    delete-other-windows
+    ml-write "[Extracting tags from ehf file]"
+    find-buffer #l2
+    beginning-of-buffer
+    !force regex-forward "^!.[2-5]"
+    !while $status
+        beginning-of-line
+        set-mark
+        forward-line
+        copy-region
+        find-buffer "*ehf-tmp*"
+        yank
+        find-buffer #l2
+        !force regex-forward "^!.[2-5]"
+    !done
+    ml-write "[Processing Commands]"
+    find-buffer "*ehf-tmp*"
+    set-variable $command-names ".*"
+    !while &not &seq &set #l4 $command-names ""
+        beginning-of-buffer
+        !force regex-forward &spr "^!.[23] %s$" #l4
+        !if $status
+            beginning-of-line
+            kill-line
+        !else
+            find-buffer "*ehf-result*"
+            insert-string &spr "    %s\n" #l4
+            find-buffer "*ehf-tmp*"
+        !endif
+    !done
+    find-buffer "*ehf-result*"
+    insert-string "\nDead Commands\n\n"
+    find-buffer "*ehf-tmp*"
+    beginning-of-buffer
+    !force regex-forward "^!.[23] "
+    !while $status
+        beginning-of-line
+        4 forward-delete-char
+        -1 yank
+        kill-line
+        find-buffer "*ehf-result*"
+        insert-string &spr "    %s" @y
+        find-buffer "*ehf-tmp*"
+        !force regex-forward "^!.[23] "
+    !done
+    ml-write "[Processing Modes]"
+    find-buffer "*ehf-result*"
+    insert-string "\nUndocumented Modes\n\n"
+    find-buffer "*ehf-tmp*"
+    set-variable $mode-names ".*"
+    !while &not &seq &set #l4 $mode-names ""
+        beginning-of-buffer
+        !force regex-forward &spr "^!.2m%s$" #l4
+        !if $status
+            beginning-of-line
+            kill-line
+        !else
+            find-buffer "*ehf-result*"
+            insert-string &spr "    %s\n" #l4
+            find-buffer "*ehf-tmp*"
+        !endif
+    !done
+    find-buffer "*ehf-result*"
+    insert-string "\nDead Modes\n\n"
+    find-buffer "*ehf-tmp*"
+    beginning-of-buffer
+    !force regex-forward "^!.2m"
+    !while $status
+        beginning-of-line
+        4 forward-delete-char
+        -1 yank
+        kill-line
+        find-buffer "*ehf-result*"
+        insert-string &spr "    %s" @y
+        find-buffer "*ehf-tmp*"
+        !force regex-forward "^!.2m"
+    !done
+    ml-write "[Processing Variables]"
+    find-buffer "*ehf-result*"
+    insert-string "\nUndocumented Variables\n\n"
+    find-buffer "*ehf-tmp*"
+    set-variable $variable-names ".*"
+    !while &not &seq &set #l4 $variable-names ""
+        beginning-of-buffer
+        !force regex-forward &spr "^!.5 \\%s$" #l4
+        !if $status
+            beginning-of-line
+            kill-line
+        !else
+            find-buffer "*ehf-result*"
+            insert-string &spr "    %s\n" #l4
+            find-buffer "*ehf-tmp*"
+        !endif
+    !done
+    find-buffer "*ehf-result*"
+    insert-string "\nDead Variables\n\n"
+    find-buffer "*ehf-tmp*"
+    beginning-of-buffer
+    !force regex-forward "^!.5 "
+    !while $status
+        beginning-of-line
+        4 forward-delete-char
+        -1 yank
+        kill-line
+        find-buffer "*ehf-result*"
+        insert-string &spr "    %s" @y
+        find-buffer "*ehf-tmp*"
+        !force regex-forward "^!.5 "
+    !done
+    ;DEFFUN (UFXSEQ,    "xse", DYNAMIC)
+    ml-write "[Processing Functions]"
+    find-buffer "*ehf-result*"
+    insert-string "\nUndocumented Functions\n\n"
+    find-buffer #l3
+    beginning-of-buffer
+    !force regex-forward "DEFFUN"
+    !while $status
+        !force regex-forward "\""
+        set-variable #l4 $window-col
+        !force regex-forward "\""
+        backward-char
+        set-variable #l4 &mid @wl #l4 &sub $window-col #l4
+        find-buffer "*ehf-tmp*"
+        beginning-of-buffer
+        !force regex-forward &spr "^!.4 &%s" #l4
+        !if $status
+            beginning-of-line
+            kill-line
+        !else
+            find-buffer "*ehf-result*"
+            insert-string &spr "    &%s\n" #l4
+        !endif
+        find-buffer #l3
+        !force regex-forward "DEFFUN"
+    !done
+    find-buffer "*ehf-result*"
+    insert-string "\nDead Functions\n\n"
+    find-buffer "*ehf-tmp*"
+    beginning-of-buffer
+    !force regex-forward "^!.4 &"
+    !while $status
+        beginning-of-line
+        4 forward-delete-char
+        -1 yank
+        kill-line
+        find-buffer "*ehf-result*"
+        insert-string &spr "    %s" @y
+        find-buffer "*ehf-tmp*"
+        !force regex-forward "^!.4 &"
+    !done
+    ;DEFDER (DRABORT,   "abo", 0x00)
+    ml-write "[Processing Directives]"
+    find-buffer "*ehf-result*"
+    insert-string "\nUndocumented Functions\n\n"
+    find-buffer #l3
+    beginning-of-buffer
+    !force regex-forward "DEFDER"
+    !while $status
+        !force regex-forward "\""
+        set-variable #l4 $window-col
+        !force regex-forward "\""
+        backward-char
+        set-variable #l4 &mid @wl #l4 &sub $window-col #l4
+        find-buffer "*ehf-tmp*"
+        beginning-of-buffer
+        !force regex-forward &spr "^!.4 !%s" #l4
+        !if $status
+            beginning-of-line
+            kill-line
+        !else
+            find-buffer "*ehf-result*"
+            insert-string &spr "    !%s\n" #l4
+        !endif
+        find-buffer #l3
+        !force regex-forward "DEFDER"
+    !done
+    find-buffer "*ehf-result*"
+    insert-string "\nDead Directives\n\n"
+    find-buffer "*ehf-tmp*"
+    beginning-of-buffer
+    !force regex-forward "^!.4 !"
+    !while $status
+        beginning-of-line
+        4 forward-delete-char
+        -1 yank
+        kill-line
+        find-buffer "*ehf-result*"
+        insert-string &spr "    %s" @y
+        find-buffer "*ehf-tmp*"
+        !force regex-forward "^!.4 !"
+    !done
+    ml-write "[Processing Interactive Variables]"
+    find-buffer "*ehf-result*"
+    insert-string "\nInteractive Variable List\n\n"
+    find-buffer "*ehf-tmp*"
+    beginning-of-buffer
+    !force regex-forward "^!.4 @"
+    !while $status
+        beginning-of-line
+        4 forward-delete-char
+        -1 yank
+        kill-line
+        find-buffer "*ehf-result*"
+        insert-string &spr "    %s" @y
+        find-buffer "*ehf-tmp*"
+        !force regex-forward "^!.4 @"
+    !done
+    ml-write "[Processing Unknown]"
+    find-buffer "*ehf-result*"
+    insert-string "\nUnknown List\n\n"
+    find-buffer "*ehf-tmp*"
+    beginning-of-buffer
+    !force regex-forward "^!"
+    !while $status
+        beginning-of-line
+        2 forward-delete-char
+        -1 yank
+        kill-line
+        find-buffer "*ehf-result*"
+        insert-string &spr "    %s" @y
+        find-buffer "*ehf-tmp*"
+        !force regex-forward "^!"
+    !done
+    delete-buffer "*ehf-tmp*"
+    find-buffer "*ehf-result*"
+    end-of-buffer
+    insert-string "\nScheme Hilight Issues\n\n"
+    find-buffer #l2
+    beginning-of-buffer
+    set-variable #l0 0
+    !force search-forward "\es[A-Z]"
+    !while $status
+        !if &seq &rig @s0 2 "A"
+            set-variable #l1 $window-line 
+            !if &not #l0
+                find-buffer "*ehf-result*"
+                insert-string &spr "    Missing start on line %d\n" #l1
+                find-buffer #l2
+            !endif
+            set-variable #l0 0
+        !else
+            !if #l0
+                find-buffer "*ehf-result*"
+                insert-string &spr "    Missing termination on line %d\n" #l1
+                find-buffer #l2
+            !endif
+            set-variable #l0 1
+            set-variable #l1 $window-line 
+        !endif
+        !force search-forward "\es[A-Z]"
+    !done
+    find-buffer "*ehf-result*"
+    beginning-of-buffer
+!emacro

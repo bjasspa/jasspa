@@ -1,0 +1,16 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2004 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:        Thu Feb 5 22:23:58 2004
+; Synopsis:       JASSPA company hook
+; Authors:        Jon Green & Steven Phillips
+; Description:    Company file for JASSPA
+; Last Modified : <040205.2226>
+;
+set-variable %company-name "JASSPA"
+;
+; Special File hooks
+define-macro-file j_ehfutil.emf ehf-doc-test
+define-macro-file hkman man
