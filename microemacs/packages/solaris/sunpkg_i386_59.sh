@@ -6,8 +6,8 @@ MKDIR=mkdir
 DIRECTORIES="company doc icons macros spelling src bin"
 SEARCH_PATH="/opt/jasspa/company:/opt/jasspa/macros:/opt/jasspa/spelling"
 BASEDIR=.
-METREE=jasspa-metree-20040701.tar.gz
-MEBIN=jasspa-me-sun-i386-59-20040701.gz
+METREE=jasspa-metree-20050219.tar.gz
+MEBIN=jasspa-me-sun-i386-59-20050219.gz
 BASEFILESET="${METREE} ${MEBIN}"
 
 #
@@ -72,11 +72,11 @@ echo "  pkgtrans -s /var/spool/pkg /tmp/jasspa-me"
 echo "  rm -rf ./jasspa-me"
 echo "  cd /tmp"
 echo "  rm -rf ./jasspapkg"
-echo "  zip -9 jasspa-mepkg-sun-i386-59-20040701.zip jasspa-me"
+echo "  zip -9 jasspa-mepkg-sun-i386-59-20050219.zip jasspa-me"
 echo "To test:-"
 echo "  mkdir jasspa"
 echo "  cd ./jasspa"
-echo "  unzip ../jasspa-mepkg-sun-i386-59-20040701.zip"
+echo "  unzip ../jasspa-mepkg-sun-i386-59-20050219.zip"
 echo "  pkgadd -d jasspa-me"
 echo "To subsequently remove"
 echo "  pkgrm jasspa-me"
