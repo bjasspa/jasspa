@@ -1,0 +1,33 @@
+Title:  reread-file
+Ref:    sub3
+Author: Thomas Hundt
+Date:   2000-03-14
+
+One  thing  I do a lot is  look at  logfiles  in ME.  It's  fast  loading  and
+searching  speed and  seemingly  limitless  capacity  (unlike vi ["window  too
+wide"] and Notepad) make it wonderful for this.  Naturally, as a power user, I
+want it all, and in this  case the  feature I need is an  ability  to reload a
+file. So I cooked up the following to reread a file:
+
+==== reread_file.emf start ===================================================
+
+;------------------------------------------------------------
+; reread-file: reload the current file (w/ safety prompt)
+;------------------------------------------------------------
+define-macro reread-file
+    set-variable #l1 $window-aline
+    set-variable #l2 $buffer-fname
+    !if &bmod "edit"
+        !if &iseq @mc1 "Buffer has been changed; reread anyway [y/n]? " "yYnN" "n"
+            !abort
+        !endif
+    !endif
+    0 delete-buffer $buffer-bname  ; force destroy (prompting user doesn't work in macro)
+    ml-write &spr "[Rereading %s]" #l2
+    read-file #l2
+    #l1 goto-line
+!emacro
+!force global-bind-key reread-file "C-x f"
+
+==== reread_file.emf end =====================================================
+

@@ -1,0 +1,43 @@
+Title:  Running the man utility from ME using the cygwin tools
+Ref:    sub16
+Author: Dr. Detlef Groth
+Date:   2001-08-13
+
+On win32  platforms  the use of man inside ME is disabled, if you have
+the  cygwin  tools  installed  you  can  write a  batchfile  like  the
+following (Versions of cygwin later than B20):
+
+==== man.bat start =================================================
+@echo off
+rem script to launch cygwin man utility from MicroEmacs
+set PATH=C:\cygwin\bin;%PATH%
+C:\cygwin\bin\man.exe -C /lib/man.conf %1 %2 %3 %4 %5
+==== man.bat end =================================================
+
+Now put man.bat  into your  executable  PATH.  Within your  <user.emf>
+enable the man page  processing  macros, do this by  defining  the man
+macros i.e.:-
+
+define-macro-file hkman man
+
+Close down the editor and restart, the manual pages may be invoked by
+
+    esc-x man
+
+Enter the manual page at the prompt. i.e.
+
+    Man On: fprintf
+    Man On: 3x cbreak
+
+NOTE:- The man.bat may be placed in your  MicroEmacs  directory  which
+       contains  me32.exe.  Within  Windows the shortcut  will execute
+       from this directory location and find the .bat file.
+
+       You can test that me32 can see the executable by using:-
+
+            esc-x which
+            Program Name: man
+
+        If the  executable  is  located  then  the path to the file is
+        displayed.  If the  executable  is not  found  then  move  the
+        man.bat file to a directory that appears on $PATH.

@@ -1,0 +1,21 @@
+Title:  Cygwin-Bash: Color ls inside ME
+Ref:    sub6
+Author: Detlef Groth
+Date:   2000-03-22
+
+It is nice to use the  BASH-command-processor  inside ME if  working  with the
+Win-OS. Here are some  hilighting-lines  to restore the  original 'ls --color'
+command which supports  special-hilighting  for  directories and  executables,
+depending on your ANSI-mode some modifications may be neccessary.
+
+Place this in your mycygnus.emf to get this loaded automatically.
+
+==== mycygnus.emf start ======================================================
+
+hilight .hilight.cygnus 0x40 "\e\\[0m"     ""                 .scheme.keyword
+hilight .hilight.cygnus 0x44 "\e\\[01;34m" "" "\e\\[0m" "" "" .scheme.bold
+hilight .hilight.cygnus 0x40 "\e\\[01;32m" ""                 .scheme.keyword
+hilight .hilight.cygnus 0x44 "\e\\[01;32m" "" "\e\\[0m" "" "" .scheme.italic
+
+==== mycygnus.emf end ========================================================
+

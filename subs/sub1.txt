@@ -1,0 +1,36 @@
+Title:  ME as download-monster
+Ref:    sub1
+Author: Dr. Detlef Groth
+Date:   2000-02-16
+
+Sometimes it is difficult to download  entire web pages full of  advertisement
+but with many  'next'-buttons.  Usually  other  download-programs  are failing
+here. With 11 lines of code ME (with URL-support) beats them all:
+
+Try find-file "http://www.itknowledge.com/reference/archive/1571690638/ch01/030-033.html"
+
+and run the download-next  macro defined below, if you are happy, press '!' to
+avoid  debugging and ME will fetch almost twenty pages, if they are containing
+the proper  'next'-links.  If something goes wrong just press "CTRL+G". If you
+can't work with the mouse later just press again "!" !!!!
+
+Happy fetching...
+
+==== download_next.emf start =================================================
+
+define-macro-file hkhtml html-show-buffer
+
+define-macro download-next
+    set-variable $debug 1 ; just for debugging
+    set-variable #l0 1
+    !while &less #l0 20 ; a loop for twenty pages
+        html-show-buffer
+        beginning-of-buffer
+        search-forward " lm[nN]ext le"
+        4 backward-char
+        0 html-process-link
+        set-variable #l0 &add #l0 1 ; incrementing by 1
+    !done
+!emacro
+
+==== download_next.emf end ===================================================
