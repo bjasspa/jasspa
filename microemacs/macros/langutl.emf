@@ -27,5 +27,4 @@
     add-dictionary &cat "lsdx" .spell.language
     add-dictionary &cat "lsdm" .spell.language
     add-dictionary &cat "lsdp" .spell.language
-    add-dictionary &reg "/history/spell" "default" $MENAME
 !emacro
