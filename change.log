@@ -4,8 +4,15 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <041027.0120>
+>  Last Modified : <041029.1143>
 >
+
+    [041028] Fixed. *find* buffer exhibits the same behavior as *grep* buffer.
+             i.e. the *find* buffer  remains on screen and a pop-up  window is
+             used to show the file.
+
+    [041028] Fixed.  *grep*  buffer  does not load  file  when  selected  with
+             <RETURN>.
 
     [041027] Spruced  up old  "apache.conf"  highlighting  rules  and added to
              release.
@@ -19,7 +26,7 @@
     [041023] Extended  the  buffer  setup for the  indent  mechanism.  May now
              specify the default buffer indent-width and tabsize in the buffer
              setup dialogue.
-    
+
     [041022] Revised  indentation  implementation.  The  templates  now define
              indent  width  independent  rules. The  indent  commend  'indent'
              parameter  may be defined as an absolute  indentation  or using a
@@ -31,7 +38,7 @@
              controls  the  global   indentation  size.  "$tabwidth"   renamed
              "$tab-width"  and  controls  the  display  size of a literal  TAB
              character.
-                    
+
              The indentation is now specified on a buffer basis, the variables
              "$buffer-indent-width"   and   "$buffer-tab-width"   define   the
              indentation and TAB width on a per buffer basis. These are seeded
@@ -43,15 +50,15 @@
              undesirable.
 
     [041022] Added HTTP highlighting to the text document template.
-    
+
     [041021] Enhanced Wiki language template.
 
     [041021] Added Windows CUA emulation mode.
-    
+
     [041019] Fixed insert binding for Nedit emulation mode
 
     [041019] Fixed perl highlighting rules. Using incorrect syntax.
-    
+
     [041016] Fixed UNIX make files for building NE in debug mode.
 
     [041016] Fixed termcap entry for ^@ key (C-space).  (Thanks to Bob Paddock
@@ -61,9 +68,9 @@
              to Bob Paddock)
 
     [041016] Added Ruby programming language support.
-    
+
     [041015] Corrected  problem with directory  listing  loosing  highlighting
-             (@mna problem). 
+             (@mna problem).
 
     [041014] Within OSD, fixed spelling mistake. Loose -> Lose
 
@@ -75,9 +82,9 @@
     [041009] Added Wiki language template
 
     [041003] Wheel mouse binding added as default.
-    
+
     [041003] Catch long lines from cut and paste, resolve crash.
-    
+
     [041002] Added X-Windows drag and drop support using xdnd.
 
     [040930] Added HTML, XML and SGML close bracket auto expansion.
