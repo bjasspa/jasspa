@@ -1187,7 +1187,8 @@ mlWrite(int f, int n)
 #if MEOPT_CFENCE
 
 /* List of fense id chars, close (or move backward) first then open */
-meUByte fenceString[] = "##/*)(}{][" ; /* */
+meUByte fenceString[] = "##/*><)(}{][" ; /* */
+#define meFENCE_BRACKET_OFFSET 6
 
 meUByte
 gotoFrstNonWhite(void)
@@ -1778,7 +1779,7 @@ findfence(meUByte ch, meUByte forwFlag)
                 if(findQuoteFence(cc,forwFlag) == meFALSE)
                     return -1 ;
             }
-            else if((ss = meStrchr(fenceString+4,cc)) != NULL)
+            else if((ss = meStrchr(fenceString+meFENCE_BRACKET_OFFSET,cc)) != NULL)
             {
                 int ii=ss-fenceString ;
                 
