@@ -364,8 +364,6 @@ bword(meUByte *buf, int *pos, int *len, int state)
  * Added continue string which is printed after buf.
  */
 
-#define    RESTSIZ        200    /* length of buf expand buffer      */
-
 /* prompt         prompt to be displayed      */
 /* buf            buffer to expand controls from */
 /* cont           continuing str to be displayed */
@@ -1363,26 +1361,39 @@ input_expand:
                     if((ii+jj) < ipos)
                         ipos = ii+jj ;
                 }
+                break ;
             }
-            else
+            /* no break - if not multi-line input then backward-line also cycles history */
+#if MEOPT_WORDPRO
+        case CK_GOBOP:    /* M-P : Got to previous in history list */
+#endif
+            if(!(option & MLNOHIST) && (numHist > 0))
             {
-                if(ff || !(option & (MLCOMMAND | MLFILE | MLBUFFER | MLVARBL | MLUSER)))
-                    goto mlgs_prevhist ;
-                if((strList != NULL) && !changed && gotPos)
+                if(onHist > numHist)
                 {
-                    if(fstPos == lstPos)
-                        contstr = compSole ;
-                    else
-                    {
-                        if(--curPos < fstPos)
-                            curPos = lstPos ;
-                        meStrncpy(buf+compOff,strList[curPos],nbuf-compOff) ;
-                        buf[nbuf-1] = '\0' ;
-                        ipos = ilen = meStrlen(buf) ;
-                    }
+                    /* if on current then save */
+                    meStrcpy(mlgsStoreBuf,buf) ;
+                    onHist = 0 ;
                 }
+                else
+                    ++onHist ;
+                if(onHist > numHist)
+                    meStrcpy(buf,mlgsStoreBuf) ;
+                else if(onHist == numHist)
+                {
+                    meStrcpy(prom+meStrlen(prompt),": ") ;
+                    defaultStr = NULL ;
+                    buf[0] = '\0' ;
+                }
+                else
+                {
+                    meStrncpy(buf,history[onHist],nbuf) ;
+                    buf[nbuf-1] = '\0' ;
+                }
+                ipos = ilen = meStrlen(buf) ;
+                changed=1 ;
             }
-            break ;
+            break;
             
         case CK_FORLIN: /* ^N - next match in complete list */
             if(frameCur->mlStatus & MLSTATUS_NINPUT)
@@ -1401,24 +1412,40 @@ input_expand:
                     while((--jj >= 0) && (ipos < ilen) && (buf[ipos] != meCHAR_NL))
                         ipos++ ;
                 }
+                break ;
             }
-            else
+            /* no break - if not multi-line input then forward-line also cycles history */
+#if MEOPT_WORDPRO
+        case CK_GOEOP:    /* M-N : Got to next in history list */
+#endif
+            /* Note the history list is reversed, ie 0 most recent,
+            ** (numHist-1) the oldest. However if numHist then its
+            ** the current one (wierd but easiest to implement
+            */
+            if(!(option & MLNOHIST) && (numHist > 0))
             {
-                if(ff || !(option & (MLCOMMAND | MLFILE | MLBUFFER | MLVARBL | MLUSER)))
-                    goto mlgs_nexthist ;
-                if((strList != NULL) && !changed && gotPos)
+                if(onHist > numHist)
+                    /* if on current then save */
+                    meStrcpy(mlgsStoreBuf,buf) ;
+                if(onHist == 0)
                 {
-                    if(fstPos == lstPos)
-                        contstr = compSole ;
-                    else
-                    {
-                        if(++curPos > lstPos)
-                            curPos = fstPos ;
-                        meStrncpy(buf+compOff,strList[curPos],nbuf-compOff) ;
-                        buf[nbuf-1] = '\0' ;
-                        ipos = ilen = meStrlen(buf) ;
-                    }
+                    onHist = numHist+1 ;
+                    meStrcpy(buf,mlgsStoreBuf) ;
                 }
+                else if(onHist > numHist)
+                {
+                    meStrcpy(prom+meStrlen(prompt),": ") ;
+                    defaultStr = NULL ;
+                    onHist = numHist ;
+                    buf[0] = '\0' ;
+                }
+                else
+                {
+                    meStrncpy(buf,history[--onHist],nbuf) ;
+                    buf[nbuf-1] = '\0' ;
+                }                    
+                ipos = ilen = meStrlen(buf) ;
+                changed=1 ;
             }
             break ;
             
@@ -1460,72 +1487,41 @@ input_expand:
             cont_flag = 0;
             break;
             
-#if MEOPT_WORDPRO
-        case CK_GOEOP:    /* M-N : Got to next in history list */
-#endif
-            /* Note the history list is reversed, ie 0 most recent,
-            ** (numHist-1) the oldest. However if numHist then its
-            ** the current one (wierd but easiest to implement
-            */
-mlgs_nexthist:
-            if(!(option & MLNOHIST) && (numHist > 0))
+#if MEOPT_EXTENDED
+        case CK_SCLNXT:    /* M-N : Got to next in completion list */
+            if((option & (MLCOMMAND | MLFILE | MLBUFFER | MLVARBL | MLUSER)) &&
+               (strList != NULL) && !changed && gotPos)
             {
-                if(onHist > numHist)
-                    /* if on current then save */
-                    meStrcpy(mlgsStoreBuf,buf) ;
-                if(onHist == 0)
-                {
-                    onHist = numHist+1 ;
-                    meStrcpy(buf,mlgsStoreBuf) ;
-                }
-                else if(onHist > numHist)
-                {
-                    meStrcpy(prom+meStrlen(prompt),": ") ;
-                    defaultStr = NULL ;
-                    onHist = numHist ;
-                    buf[0] = '\0' ;
-                }
+                if(fstPos == lstPos)
+                    contstr = compSole ;
                 else
                 {
-                    meStrncpy(buf,history[--onHist],nbuf) ;
+                    if(++curPos > lstPos)
+                        curPos = fstPos ;
+                    meStrncpy(buf+compOff,strList[curPos],nbuf-compOff) ;
                     buf[nbuf-1] = '\0' ;
-                }                    
-                ipos = ilen = meStrlen(buf) ;
-                changed=1 ;
+                    ipos = ilen = meStrlen(buf) ;
+                }
             }
             break;
             
-#if MEOPT_WORDPRO
-        case CK_GOBOP:    /* M-P : Got to previous in history list */
-#endif
-mlgs_prevhist:
-            if(!(option & MLNOHIST) && (numHist > 0))
+        case CK_SCLPRV:    /* M-N : Got to prev in completion list */
+            if((option & (MLCOMMAND | MLFILE | MLBUFFER | MLVARBL | MLUSER)) &&
+               (strList != NULL) && !changed && gotPos)
             {
-                if(onHist > numHist)
-                {
-                    /* if on current then save */
-                    meStrcpy(mlgsStoreBuf,buf) ;
-                    onHist = 0 ;
-                }
-                else
-                    ++onHist ;
-                if(onHist > numHist)
-                    meStrcpy(buf,mlgsStoreBuf) ;
-                else if(onHist == numHist)
-                {
-                    meStrcpy(prom+meStrlen(prompt),": ") ;
-                    defaultStr = NULL ;
-                    buf[0] = '\0' ;
-                }
+                if(fstPos == lstPos)
+                    contstr = compSole ;
                 else
                 {
-                    meStrncpy(buf,history[onHist],nbuf) ;
+                    if(--curPos < fstPos)
+                        curPos = lstPos ;
+                    meStrncpy(buf+compOff,strList[curPos],nbuf-compOff) ;
                     buf[nbuf-1] = '\0' ;
+                    ipos = ilen = meStrlen(buf) ;
                 }
-                ipos = ilen = meStrlen(buf) ;
-                changed=1 ;
             }
             break;
+#endif
             
         case CK_TRNCHR:
             /* ^T : Transpose the character before the cursor

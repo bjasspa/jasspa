@@ -33,6 +33,7 @@
 #else
 #define meBIND_MAX            384               /* max # of globally bound keys */
 #endif
+#define meLINE_BLOCK_SIZE     12                /* line block chunk size        */
 #define meWINDOW_MAX          64                /* # of windows MAXIMUM         */
 #define meSBUF_SIZE_MAX       128               /* # of bytes, string buffers   */
 #define meBUF_SIZE_MAX        1024              /* size of various inputs       */
@@ -112,6 +113,7 @@ typedef meUByte   meColor ;
 #define meFColorCheck(x)   (((x)>=noColors)       ? meCOLOR_FDEFAULT : (x))
 #define meBColorCheck(x)   (((x)>=noColors)       ? meCOLOR_BDEFAULT : (x))
 
+
 typedef meUInt  meStyle ;
 #define meSTYLE_NDEFAULT  0x00000100
 #define meSTYLE_RDEFAULT  0x00080001
@@ -152,10 +154,10 @@ typedef meUInt  meStyle ;
 typedef meUShort meScheme ;
 #define meSCHEME_NORMAL   0                     /* Normal style */
 #define meSCHEME_RNORMAL  1                     /* Reverse normal style */
-#define meSCHEME_CURRENT  2                     /* Current foreground colour */
-#define meSCHEME_RCURRENT 3                     /* Reverse current foreground colour */
-#define meSCHEME_SELECT   4                     /* Selected foreground colour */
-#define meSCHEME_RSELECT  5                     /* Reverse celected foreground colour */
+#define meSCHEME_CURRENT  2                     /* Current foreground colour */        
+#define meSCHEME_RCURRENT 3                     /* Reverse current foreground colour */        
+#define meSCHEME_SELECT   4                     /* Selected foreground colour */        
+#define meSCHEME_RSELECT  5                     /* Reverse celected foreground colour */        
 #define meSCHEME_CURSEL   6                     /* Current selected foreground color */
 #define meSCHEME_RCURSEL  7                     /* Reverse current selected foreground color */
 #define meSCHEME_STYLES   8                     /* Number of styles in a scheme */
@@ -182,12 +184,12 @@ typedef meUShort meScheme ;
 /* due to packing sizeof(meLine) can waste precious bytes, avoid this by
  * calculating the real size ourselves, see asserts in meInit which check
  * these values are correct */
-#define meMEMORY_BOUND       8                  /* the size memory is rounded up to */
 #if MEOPT_EXTENDED
 typedef meUShort meLineFlag ;                   /* In extended vers use 16 bits */
 #else
 typedef meUByte meLineFlag ;
 #endif
+
 typedef struct meLine
 {
     struct meLine     *next ;                   /* Link to the next line        */
@@ -198,8 +200,8 @@ typedef struct meLine
     meUByte            text[1] ;                /* A bunch of characters.       */
 } meLine ;
 
-#define meLINE_BLOCK_SIZE     12                /* line block chunk size        */
-#define meLINE_SIZE ((size_t)   (&(((meLine *)0)->text[1])))
+#define meMEMORY_BOUND          8               /* the size memory is rounded up to */
+#define meLINE_SIZE             ((size_t) (&(((meLine *) 0)->text[1])))
 #define meLineMallocSize(ll)    ((meLINE_SIZE + (meMEMORY_BOUND-1) + (ll)) & ~(meMEMORY_BOUND-1))
 
 #define meLINE_CHANGED          0x0001
@@ -236,20 +238,20 @@ typedef struct meLine
  * redisplay; although this is a bit of a compromise in terms of decoupling,
  * the full blown redisplay is just too expensive to run for every input
  * character.
- *
+ * 
  * The physical screen extents of the window are contained in frameColumn, frameRow,
  * width depth. These define the physical extremities of the window, within
- * those boundaries lie the message line, scroll bar and text area.
+ * those boundaries lie the message line, scroll bar and text area. 
  * The separate window extents appear to duplicate some of the existing values,
- * (which they do), however they do serve a purpose in that they decouple the
+ * (which they do), however they do serve a purpose in that they decouple the 
  * window tesselation and layout (i.e. where a window is positioned on the
- * screen) from having to have any knowledge about the exact format of the
- * contents of the window, thereby reducing maintenance of the tesselation
+ * screen) from having to have any knowledge about the exact format of the 
+ * contents of the window, thereby reducing maintenance of the tesselation 
  * code which is a bit of a mind bender at times.
- *
+ * 
  * Note that the "updateFlags" are at the top. We access these alot on the display
  * side. Positioned here ensures that they are available immediatly without
- * any indirect offset - just give that compiler a hand.
+ * any indirect offset - just give that compiler a hand. 
  */
 
 /*
@@ -260,7 +262,7 @@ typedef struct meLine
 #define meWINDOW_DEPTH_MIN  2           /* Minimum width of a window    */
 /*
  * meWindow structure updateFlag values.
- * Define states to the display drivers to update the screen.
+ * Define states to the display drivers to update the screen. 
  */
 #define WFFORCE       0x0001            /* Window needs forced reframe  */
 #define WFRESIZE      0x0002            /* Reset the width of lines.    */
@@ -281,7 +283,7 @@ typedef struct meLine
 #define WFSELDRAWN    0x10000           /* Editing within a line        */
 #define WFLOOKBK      0x20000           /* Check the hilight look-back  */
 /* Composite mode to force an update of the scroll box */
-#define WFSBOX        (WFSBUSHAFT|WFSBBOX|WFSBDSHAFT)
+#define WFSBOX        (WFSBUSHAFT|WFSBBOX|WFSBDSHAFT)    
 /* Composite mode to force update of the scroll bar */
 #define WFSBAR        (WFSBSPLIT|WFSBUP|WFSBDOWN|WFSBML|WFSBOX)
 
@@ -316,11 +318,11 @@ typedef struct meLine
 #define WMVBAR  0x100                   /* PUBLIC:  Window has a vertical bar    */
 #define WMHORIZ 0x200                   /* PRIVATE: This is a horizontal bar     */
 #define WMWIDE  0x400                   /* PRIVATE: Wide scroll-bar (internal)   */
-
+  
 /* The user interface mask for the scroll mode */
 #define WMUSER  (WMVWIDE|WMUP|WMDOWN|WMBOTTM|WMSCROL|WMRVBOX|WMHWIDE|WMSPLIT|WMVBAR)
 /*
- * Define the window character array. This is a fixed array of
+ * Define the window character array. This is a fixed array of 
  * characters which define the window components
  */
 /* Mode line */
@@ -386,7 +388,7 @@ typedef struct meLine
 #define WCLEN        58                  /* Number of characters             */
 
 /* The box chars BC=Box Chars, N=North, E=East, S=South, W=West,
- * So BCNS = Box Char which has lines from North & South to centre, i.e.
+ * So BCNS = Box Char which has lines from North & South to centre, i.e. 
  *           the vertical line |
  *    BCNESW = the + etc.
  */
@@ -512,7 +514,7 @@ typedef struct {
 
 /*
  * meAbbrev
- *
+ * 
  * structure to store info on an abbreviation file
  */
 typedef struct meAbbrev {
@@ -565,6 +567,7 @@ typedef struct meMacro {
 #define meMACRO_HIDE  meLINE_ANCHOR_AMARK       /* Hide the function            */
 #define meMACRO_EXEC  meLINE_ANCHOR_NARROW      /* Buffer is being executed     */
 #define meMACRO_FILE  meLINE_ANCHOR_OTHER       /* macro file define            */
+
 
 /* An alphabetic mark is as follows. Alphabetic marks are implemented as a
  * linked list of amark structures, with the head of the list being pointed to
@@ -694,7 +697,7 @@ typedef struct  meBuffer {
 #if MEOPT_UNDO
     struct meUndoNode *undoHead ;               /* First undo node              */
     struct meUndoNode *undoTail ;               /* Last undo node               */
-    meUInt             undoContFlag ;           /* Was the last undo this com'd?*/
+    meUInt             undoContFlag ;           /* Was the last undo this com'd?*/ 
 #endif
     meInt              autotime;                /* auto-save time for file      */
     meInt              vertScroll ;             /* Windows top line number      */
@@ -737,12 +740,14 @@ typedef struct  meBuffer {
 #endif
 } meBuffer ;
 
+
 #define BIFBLOW    0x01                         /* Buffer is to be blown away           */
 #define BIFLOAD    0x02                         /* Used on a reload to check tim        */
 #define BIFLOCK    0x04                         /* Used in ipipe to flag a lock         */
 #define BIFNAME    0x08                         /* The buffer name has a <?> extension  */
 #define BIFFILE    0x10                         /* The buffer is a file - used at creation only */
 #define BIFNODEL   0x20                         /* The buffer cannot be deleted         */
+
 
 /*
  * The starting position of a region, and the size of the region in
@@ -755,6 +760,7 @@ typedef struct  {
     meUShort           offset;                  /* Origin meLine offset.        */
 } meRegion ;
 
+
 /* structure for the table of initial key bindings */
 
 typedef struct meBind {
@@ -762,6 +768,7 @@ typedef struct meBind {
     meUShort           index ;
     meUInt             arg ;
 } meBind;
+
 
 /* The editor holds deleted text chunks in the meKillNode buffer. The
    kill buffer is logically a stream of ascii characters, however
@@ -822,6 +829,7 @@ typedef struct meKill {
     struct meKill     *next ;                   /* link to next list element, NULL if last */
 } meKill;
 
+
 /** list of recognized user functions */
 
 #define FUN_ARG1        0x01
@@ -872,20 +880,20 @@ typedef struct meKill {
 
 typedef struct meHilight {
     struct meHilight **list ;
-    meUByte           *table ;
+    meUByte           *table ; 
     meUByte           *close ;
     meUByte           *rtoken ;
     meUByte           *rclose ;
-    meUShort           type ;
+    meUShort           type ; 
     meScheme           scheme ;
-    meUByte            tknSttOff ;
-    meUByte            tknEndOff ;
-    meUByte            clsSttOff ;
-    meUByte            clsEndOff ;
-    meUByte            tknSttTst ;
-    meUByte            tknEndTst ;
-    meUByte            ordSize ;
-    meUByte            listSize ;
+    meUByte            tknSttOff ; 
+    meUByte            tknEndOff ; 
+    meUByte            clsSttOff ; 
+    meUByte            clsEndOff ; 
+    meUByte            tknSttTst ; 
+    meUByte            tknEndTst ; 
+    meUByte            ordSize ; 
+    meUByte            listSize ; 
     meUByte            ignore ;
     meUByte            token[1] ;
 } meHilight ;
@@ -912,11 +920,11 @@ typedef struct meHilight {
 typedef struct {
     meUShort           column;                  /* change column */
     meScheme           scheme;                  /* style index */
-} meSchemeSet;
+} meSchemeSet;    
 
 /*
- * Selection Highlighting
- * The selection highlighting buffer retains information about the
+ * Selection Highlighting 
+ * The selection highlighting buffer retains information about the 
  * selection highlighting for the current buffer. The current restriction
  * is that only one buffer may have selection hilighting enabled
  */
@@ -970,6 +978,7 @@ typedef struct  meVideoLine
 #endif
 } meVideoLine;
 
+
 /* Virtual Video Structure.
  * Provides the meVideoLine structure management for horizontal split
  * Windows. A single meVideo exists for each meVideoLine structure.
@@ -987,14 +996,14 @@ typedef struct meVideo
  * screen.
  *
  * The frame store is required primarily on windowing platforms such as
- * MS-Windows and X-Windows and allows the canvas to be regenerated
+ * MS-Windows and X-Windows and allows the canvas to be regenerated 
  * without recomputing the contents of the window when the windowing
  * sub-system requires the window (or parts of the window) to be refreshed.
- *
+ * 
  * Hence rather than EMACS generating new lines every time we render from
  * the Frame buffer which contains a representation of the screen. (Color +
  * ASCII text information).
- *
+ * 
  * Under MS-Windows we receive a WM_PAINT message. This message may be received
  * when we are in focus or not (e.g. a window placed over ours and moved
  * will cause a WM_PAINT messaage for the area of the screen which has
@@ -1006,6 +1015,7 @@ typedef struct
     meUByte           *text ;                   /* Text held on the line. */
     meScheme          *scheme ;                 /* index to the Style (fore + back + font) of each cell */
 } meFrameLine;                                  /* Line of screen text */
+
 
 #define meFRAME_HIDDEN     0x01
 #define meFRAME_NOT_FOCUS  0x02
@@ -1153,6 +1163,7 @@ typedef struct meUndoNarrow {
 #define meUNDO_LINE_SORT     0x08
 #define meUNDO_SPECIAL_MASK  0x7C
 
+
 #define meUndoIsReplace(uu)  (((uu)->type & (meUNDO_SPECIAL|meUNDO_REPLACE)) == meUNDO_REPLACE)
 #define meUndoIsSetEdit(uu)  (((uu)->type & meUNDO_SPECIAL_MASK) == (meUNDO_SPECIAL|meUNDO_SET_EDIT))
 #define meUndoIsNarrow(uu)   (((uu)->type & meUNDO_SPECIAL_MASK) == (meUNDO_SPECIAL|meUNDO_NARROW))
@@ -1174,6 +1185,7 @@ typedef struct meRegister {
     meUByte            reg[meREGISTER_MAX][meBUF_SIZE_MAX] ;
 } meRegister ;
 
+
 /* Note that the first part of meDirList structure must remain
  * the same as meNamesList as it is used for $file-names variable
  */
@@ -1193,7 +1205,7 @@ typedef struct {
     meUByte          **list ;
     meUByte           *mask ;
     int                curr ;
-} meNamesList ;
+} meNamesList ; 
 
 #if MEOPT_REGISTRY
 /*
@@ -1207,7 +1219,7 @@ typedef struct {
 /*
  * REG_HANDLE
  * Generates a registry ASCII handle which is overlayed into a
- * 32-bit integer. The handle is the lookup from the macro
+ * 32-bit integer. The handle is the lookup from the macro 
  * interface.
  */
 #define REG_HANDLE(a,b,c,d) ((((meUInt)(a))<<24)|(((meUInt)(b))<<16)| \
@@ -1244,3 +1256,5 @@ typedef struct meRegNode
 } meRegNode;
 
 #endif
+
+
