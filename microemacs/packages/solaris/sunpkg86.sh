@@ -7,7 +7,7 @@ DIRECTORIES="company doc icons macros spelling src bin"
 SEARCH_PATH="/opt/jasspa/company:/opt/jasspa/macros:/opt/jasspa/spelling"
 BASEDIR=.
 METREE=jasspa-metree-20040206.tar.gz
-MEBIN=jasspa-me-sun-sparc-56-20040206.gz
+MEBIN=jasspa-me-sun-i386-58-20040206.gz
 BASEFILESET="${METREE} ${MEBIN}"
 
 #
@@ -20,33 +20,6 @@ for FILE in $BASEFILESET ; do
         exit 1
     fi
 done
-### #
-### # Build me
-### #
-### if [ ! -f ${BASEDIR}/bin/me ] ; then
-###     if [ ! -f ${BASEDIR}/src/sunos56.${CCMAK} ] ; then
-###         gunzip -c mesrc.tar.gz | (cd ${BASEDIR}/src;  tar xvf - )
-###     fi
-###     MAKECDEFS="-D_SEARCH_PATH=\\"'"'"${SEARCH_PATH}\\"'"'
-###     (cd ${BASEDIR}/src; make -f sunos56.${CCMAK} MAKECDEFS=$MAKECDEFS mecw)
-###     cp ${BASEDIR}/src/mecw ${BASEDIR}/bin/me
-###     (cd ${BASEDIR}; rm -rf ./src)
-###     mkdir ${BASEDIR}/src
-### fi
-### #
-### # Build ne
-### #
-### if [ ! -f ${BASEDIR}/bin/ne ] ; then
-###     if [ ! -f ${BASEDIR}/src/sunos56.${CCMAK} ] ; then
-###         gunzip -c mesrc.tar.gz | (cd ${BASEDIR}/src;  tar xvf - )
-###     fi
-###     MAKECDEFS="-D_SEARCH_PATH=\\"'"'"${SEARCH_PATH}\\"'"'
-###     (cd ${BASEDIR}/src; make -f sunos56.${CCMAK} MAKECDEFS=$MAKECDEFS nec)
-###     cp ${BASEDIR}/src/nec ${BASEDIR}/bin/ne
-###     (cd ${BASEDIR}/src; make -f sunos56.${CCMAK} spotless)
-###     (cd ${BASEDIR}; rm -rf ./src)
-###     mkdir ${BASEDIR}/src
-### fi
 #
 # Unpack the tree
 #
@@ -69,9 +42,8 @@ find ${BASEDIR}/jasspa -print | pkgproto | sed -e "s/jon users/bin bin/g" >> pro
 #
 echo 'PKG="jasspa-me"' > pkginfo
 echo 'NAME="JASSPA MicroEmacs"' >> pkginfo
-echo 'ARCH="sparc"' >> pkginfo
+echo 'ARCH="i386"' >> pkginfo
 echo 'VERSION="04.02.06"'  >> pkginfo
-echo 'SUNW_PKGVERS="1.0"' >> pkginfo
 echo 'CATEGORY="application"' >> pkginfo
 echo 'VENDOR="www.jasspa.com"' >> pkginfo
 echo 'EMAIL="support@jasspa.com"' >> pkginfo
@@ -100,11 +72,11 @@ echo "  pkgtrans -s /var/spool/pkg /tmp/jasspa-me"
 echo "  rm -rf ./jasspa-me"
 echo "  cd /tmp"
 echo "  rm -rf ./jasspapkg"
-echo "  zip -9 jasspa-mepkg-sun-sparc-56-20040206.zip jasspa-me"
+echo "  zip -9 jasspa-mepkg-sun-i386-58-20040206.zip jasspa-me"
 echo "To test:-"
 echo "  mkdir jasspa"
 echo "  cd ./jasspa"
-echo "  unzip ../jasspa-mepkg-sun-sparc-56-20040206.zip"
+echo "  unzip ../jasspa-mepkg-sun-i386-58-20040206.zip"
 echo "  pkgadd -d jasspa-me"
 echo "To subsequently remove"
 echo "  pkgrm jasspa-me"
