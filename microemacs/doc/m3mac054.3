@@ -1,0 +1,36 @@
+.\" -*- nroff -*-
+.Id $Id: m3mac054.3,v 2.0 2001-05-14 19:54:23 jon Exp $
+.Im MicroEmacs command|insert
+.so me.tni
+.TH normal-tab 3
+.XI normal-tab - "Insert a normal tab"
+.SH NAME
+normal-tab \- Insert a normal tab
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B normal-tab
+.ad
+.SH DESCRIPTION
+.B normal-tab
+insert  a tab  into the  current  buffer  by  temporarily  disabling  any auto
+indentation schemes. The macro first disables any indentation rules by setting
+.Ht $buffer-indent 5
+to 0 and disabling the
+.Ht cmode 2m ,
+the command
+.Ht tab 2
+is then called with the given argument \fIn\fR. This means that the buffer's
+.Ht tab 2m
+mode  setting will be  respected,  i.e. whether a tab  character or spaces are
+inserted. The initial indentation rules are restored on exit.
+.SH NOTES
+\fBnormal-tab\fR is a macro implemented in \fCformat.emf\fR.
+.SH "SEE ALSO"
+.na
+.Ht tab 2 ,
+.Ht insert-tab 2 ,
+.Ht tab 2m .
+.ad
+.FH

@@ -1,0 +1,170 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1998 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m3osd000.3
+.\"  Created By    : Steven Phillips
+.\"  Created       : Sat Aug 22 09:00:06 1998
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1998 JASSPA.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m3osd010.3,v 2.0 2001-05-14 19:54:27 jon Exp $
+.Im MicroEmacs command|osd
+.so me.tni
+.TH buffer-setup 3
+.XI buffer-setup - "Configures the current buffer settings"
+.SH NAME
+buffer-setup \- Configures the current buffer settings
+.Me $a
+.SH SYNOPSIS
+.na
+.B buffer-setup
+.ad
+.SH DESCRIPTION
+\fBbuffer-setup\fR provides a dialog interface to configuring the setup of the
+current buffer's file type within \*(mS.  \fBuser-setup\fR may be invoked from
+the main \fIhelp\fR menu or directly from the command line using
+.Ht execute-named-command 2 .
+.PP
+The changes made to a configuration  in  \fBbuffer-setup\fR  are maintained in
+future \*(mS  sessions by storing them within the user's setup  registry file,
+"\fI<logname>\fR\fC.erf\fR".  Note that not all file types may be supported by
+\fBbuffer-setup\fR, if not the help menu item will not be available.
+.PP
+The  contents of the dialog  change,  depending  on the  features  the current
+buffer's file type  supports.  These  features are  implemented  and installed
+within the
+.Hl  "buffer's  file hook"  fileHooks  2 .
+The following buttons are always present at the bottom of the dialog:
+.IP "\fCSave\fR"
+Saves the changes made to the  configuration  back to the users registry file,
+i.e.  "\fI<Log-Name>\fR\fC.erf\fR"  but  does not  re-initialize  the  current
+buffer.  No  changes   made  will  effect  the  current   buffer   unless  the
+\fBCurrent\fR  button is pressed.  Buffers of the same type created  after the
+save may inherrit some of the changes.
+.IP "\fCCurrent\fR"
+Makes  the  current   buffer   reflect  the  changes  made,   dismissing   the
+\fBbuffer-setup\fR   dialog.  This  also   performs  the  above   '\fBSave\fR'
+operation. Some changes such as dialog creation changes, will only take effect
+when \*(mS is restarted.
+.IP "\fCExit\fR"
+Quits buffer-setup, if changes where not \fBSave\fRd or made  \fBCurrent\fR they
+will be lost.
+.PP
+Following is a list of configurable features which may be available:
+.IP "Create Help Page"
+Enables/disables  the  creation of a help page dialog for the tools  available
+for the current file type.
+.IP "Create Tools Menu"
+Enables/disables  the creation of a file type specific sub menu located within
+the main menu's \fBTools\fR sub-menu.
+.IP "Use Author Mode"
+For file types which have an automatic formatter/viewer  (currently only html)
+enabling  this will simply load the file enabling the source code to be viewed
+and edited. When disabled files of this type will be  automatically  processed
+giving a more readable 'formatted' representation. 
+.IP "Insert New Template"
+When  creating  a new  buffer/file  of this type, a default  template  will be
+inserted if this is enabled. When disabled the buffer will remain empty.
+.IP "Setup Hilighting"
+Creates and enables the token
+.Hl hilighting hilight 2
+for the current file type.
+.IP "Setup Auto Indent"
+Enables  automatic  formating  (indenting)  for the  current  file  type.  The
+indentation rules are either the built in 'C' indentation
+.Ht cmode 2m
+or created using the
+.Ht indent 2
+command. When enabled the
+.Ht tab 2m
+is still adhered to, but the
+.Ht indent 2m
+mode is ignored; when disabled the indent mode can be used.
+.IP "Setup Auto Spell"
+Enables the setting up of
+.Ht auto-spell 3 .
+When enabled the auto-spell key bindings are created and auto-spell is enabled
+if enabled within the user-setup dialog.
+.IP "Setup Folding"
+Enables the setting up of section
+.Hl folding fold-current 3 ,
+when enabled the folding key bindings are created.
+.IP "Add Abbreviations"
+Adds the file type's abbreviation file to the buffer using
+.Ht buffer-abbrev-file 2 
+.IP "Search Modes: Exact"
+Enables/disables the
+.Ht exact 2m
+mode over-riding the setting within the
+.Ht user-setup 3
+dialog. If this  setting is changed  the  setting  within  user-setup  will be
+ignored for the current file type.
+.IP "Search Modes: Magic"
+Enables/disables the
+.Ht magic 2m
+mode over-riding the setting within the
+.Ht user-setup 3
+dialog. If this  setting is changed  the  setting  within  user-setup  will be
+ignored for the current file type.
+.IP "Buffer Modes: Indent"
+Enables/disables the
+.Ht indent 2m
+mode. 
+.IP "Buffer Modes: Justify"
+Enables/disables the
+.Ht justify 2m
+mode. 
+.IP "Buffer Modes: Tab"
+Enables/disables the
+.Ht tab 2m
+mode over-riding the setting within the
+.Ht user-setup 3
+dialog. If this  setting is changed  the  setting  within  user-setup  will be
+ignored for the current file type.
+.IP "Buffer Modes: Time"
+Enables/disables the
+.Ht time 2m
+mode. 
+.IP "Buffer Modes: Undo"
+Enables/disables the
+.Ht undo 2m
+mode over-riding the setting within the
+.Ht user-setup 3
+dialog. If this  setting is changed  the  setting  within  user-setup  will be
+ignored for the current file type.
+.IP "Buffer Modes: Wrap"
+Enables/disables the
+.Ht wrap 2m
+mode. 
+.SH NOTES
+\fBbuffer-setup\fR is a macro using
+.Ht osd 2 ,
+defined in \fCbuffstp.emf\fR.
+.SH "SEE ALSO"
+.na
+.Ht user-setup 3 .
+.Hl "File Hooks" fileHooks 2 .
+.ad
+.FH

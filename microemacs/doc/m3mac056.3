@@ -1,0 +1,101 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			     Copyright 1999 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m3mac046.3
+.\"  Created By    : Jon Green
+.\"  Created       : Mon Jul 5 18:16:21 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1999 JASSPA.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m3mac056.3,v 2.0 2001-05-14 19:54:24 jon Exp $
+.Im MicroEmacs shell|command|scuts|osd
+.so me.tni
+.TH generate-tags-file 3
+.XI generate-tags-file - "Generate a tags file"
+.SH NAME
+generate-tags-file \- Generate a tags file
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B generate-tags-file
+[ "\fItag-command\fR" ]
+.ad
+.SH DESCRIPTION
+The  \fBgenerate-tags-file\fR  command  provides  an  interface  to  tag  file
+generation. Typically the "\fItag-command\fR" argument will not be required as
+the current buffer will automatically  configure  \fBgenerate-tags-file\fR  on
+how tags are  generated  for the  current  buffer's  file  type. See the notes
+below for more information on configuration. 
+.PP
+\fBgenerate-tags-file\fR  supports two  different  methods of tag  generation,
+firstly via a \*(mS macro file and secondly by an external shell command (such
+as
+.Hr ctags 1 ).
+It is generally configured in the current buffer's
+.Hl "setup hook" fileHooks 2 .
+.PP
+If a macro file is used a setup  dialog is opened if an argument of 0 is given
+to  \fBgenerate-tags\fR.  This dialog can be used to  configure  which type of
+tags are required and the starting directory (useful when using recursive tags
+over a source  tree). Note that not all tag types are  available  for all file
+types.
+.PP
+The generated tags file can then be used by the
+.Ht find-tag 2
+command.
+.SH NOTES
+\fBgenerate-tags-file\fR is a macro defined in file \fCgentags.emf\fR.
+.PP
+\fBgenerate-tags-file\fR can be configured in one of 2 ways:
+.RS
+.PP
+When a \*(mS macro file (such as  \fCctags.emf\fR)  is to be used, simply give
+the  name of the  macro  file to be run as the  "\fItag-command\fR"  argument.
+Alternatively set the variable \fB.\fR\fI<$buffer-fhook>\fR\fB.tags\fR to this
+name, e.g. for C files
+.Me $emf-scheme
+.CS
+    set-variable .fhook-c.tags "ctags"
+.CE
+.Me $ehf-scheme
+Note the "\fC.emf\fR" extension is assumed.
+.PP
+When an external shell command is to be used, set the \fItag-command\fR to the
+shell command-line prefixed with a '\fC!\fR' character, for example to use
+.Hr ctags 1
+try the following:
+.Me $emf-scheme
+.CS
+    set-variable .fhook-c.tags "!ctags *.c *h"
+.CE
+.Me $ehf-scheme
+Note that the generate-tags dialog is not available in this mode of execution.
+.RE 
+.SH "SEE ALSO"
+.na
+.Ht find-tag 2 .
+.ad
+.FH

@@ -1,0 +1,201 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			     Copyright 1999 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m3mac046.3
+.\"  Created By    : Jon Green
+.\"  Created       : Mon Jul 5 18:16:21 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1999 JASSPA.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m3mac057.3,v 2.0 2001-05-14 19:54:24 jon Exp $
+.Im MicroEmacs shell|command
+.so me.tni
+.TH cvs 3
+.XI cvs - "\*(mS CVS interface"
+.XI cvs-add - "\*(mS CVS interface - add file"
+.XI cvs-commit - "\*(mS CVS interface - commit changes"
+.XI cvs-diff - "\*(mS CVS interface - diff changes"
+.XI cvs-log - "\*(mS CVS interface - log changes"
+.XI cvs-remove - "\*(mS CVS interface - remove file"
+.XI cvs-resolve-conflicts - "\*(mS CVS interface - resolve conflicts"
+.XI cvs-state - "\*(mS CVS interface - list state of directory files"
+.XI cvs-update - "\*(mS CVS interface - update directory files"
+.SH NAME
+.Me "|cvs"
+cvs \- \*(mS CVS interface
+.br
+.Me "|cvs-add"
+cvs-add \- \*(mS CVS interface - add file
+.br
+.Me "|cvs-commit"
+cvs-commit \- \*(mS CVS interface - commit changes
+.br
+.Me "|cvs-diff"
+cvs-diff \- \*(mS CVS interface - diff changes
+.br
+.Me "|cvs-log"
+cvs-log \- \*(mS CVS interface - log changes
+.br
+.Me "|cvs-remove"
+cvs-remove \- \*(mS CVS interface - remove file
+.br
+.Me "|cvs-resolve-conflicts"
+cvs-resolve-conflicts \- \*(mS CVS interface - resolve conflicts
+.br
+.Me "|cvs-state"
+cvs-state \- \*(mS CVS interface - list state of directory files
+.br
+.Me "|cvs-update"
+cvs-update \- \*(mS CVS interface - update directory files
+.Me $a
+.SH SYNOPSIS
+.na
+.B cvs
+.sp
+.B cvs-add
+.br
+.B cvs-commit
+.br
+.B cvs-diff
+.br
+.B cvs-log
+.br
+.B cvs-remove
+.br
+.B cvs-resolve-conflicts
+.br
+.B cvs-state
+.br
+.B cvs-update
+.ad
+.SH DESCRIPTION
+The cvs and  sub-commands  provide  \*(mS  with an  interface  to 
+.Hr cvs 1 . 
+\fBCVS\fR is a version control system; using it, you can record the history of
+your source files. CVS is licensed under the GNU General Public License and is
+freely available on the internet, see documentation provided with CVS for more
+information on its features and use.
+.PP
+The \*(mS \fBcvs\fR command opens up a modified
+.Ht file-browser 3
+with an extra  "\fC*cvs-console*\fR"  window  underneath, the  "\fC*files*\fR"
+window has extra columns giving the CVS state,  revision and repository  date.
+The functionality of the file-browser is the same except for an additional CVS
+item in the mouse  context  mouse menu  (opened by  clicking  the right  mouse
+button in the  \fC*files*\fR  buffer). This menu item opens  another  sub-menu
+giving access to the following items:
+.IP "\fBUpdate files\fR"
+Updates the currently  selected files, files are selected by clicking the left
+button to the left of the required file name,  Multiple  files can be selected
+at once by 'dragging' a hilight region over the required  files. This runs the
+command "\fCcvs update <files>\fR".
+.IP "\fBCommit files\fR"
+Commits any changes  made to the  selected  files back to the CVS  repository.
+This runs the command "\fCcvs commit <files>\fR".
+.IP "\fBDiff files\fR"
+Displays any  differences  between the selected  files and the CVS  repository
+version in the \fI*cvs-console*\fR window. This runs the command
+\&"\fCcvs diff <files>\fR".
+.IP "\fBLog files\fR"
+Displays  the CVS  logs  for the  selected  files  in the  \fI*cvs-console*\fR
+window. This runs the command "\fCcvs log <files>\fR".
+.IP "\fBStatus files\fR"
+Displays   the  CVS   status   for   each  of  the   selected   files  in  the
+\fI*cvs-console*\fR window.
+This runs the command "\fCcvs status -v <files>\fR".
+.IP "\fBAdd files\fR"
+Adds the selected files to the CVS repository. Note this command only performs
+the local add, a CVS commit is required to make the addition  permanent.  This
+runs the command "\fCcvs add <files>\fR".
+.IP "\fBRemove files\fR"
+This command is deliberately not implemented as its far to dangerous!  Instead
+it  opens a  dialog  informing  the user to use the  \fBcvs-remove\fR  command
+instead.
+.IP "\fBGraphical diff\fR"
+This command opens a
+.Ht gdiff 3
+window showing the differences between the currently selected file and the CVS
+repository version. Note this command only works with a single file.
+.IP "\fBResolve conflicts\fR"
+This command can be used to resolve merge  conflicts  created by a CVS update.
+The command opens a
+.Ht gdiff 3
+window  showing the areas of conflict  allowing the user to select the correct
+version  and saving the  resultant  version  back to the local file. Note this
+command only works with a single file.
+.IP "\fBClear cvs console\fR"
+Clears the \fI*cvs-console*\fR buffer.
+.PP
+The  \fBcvs-add\fR  command adds the current  buffers file to the  repository.
+Note that this  command  only  performs  the local  addition,  a CVS commit is
+required to make the addition permanent.
+.PP
+The  \fBcvs-commit\fR command commits any changes made to the currently buffer's file
+(including addition) to the repository. The user is  prompted for a commit log
+message.
+.PP
+The \fBcvs-diff\fR command opens a
+.Ht gdiff 3
+window displaying the differences  between the current buffer's local file and
+repository version.
+.PP
+The \fBcvs-log\fR  command opens a \fI*cvs-log*\fR  window  displaying the CVS
+log of the current buffer's file.
+.PP
+The  \fBcvs-remove\fR  command  removes  the  current  buffer's  file from the
+repository  - PLEASE  NOTE THIS CAN LEAD TO LOST  DATA!!!  This  command  only
+performs  the  local  removal  and as it  deletes  the  buffer  and  file  the
+\fBcvs-commit\fR  command  cannot  be used to commit  the  removal  to the CVS
+repository. Instead the main \fBcvs\fR file-browser menu or
+.Hr cvs 1
+itself must be used. 
+.PP
+The  \fBcvs-resolve-conflicts\fR  command can be used to resolve any conflicts
+created by CVS when the current buffer's file was updated. The command opens a
+gdiff window  displaying  the areas of conflict,  the user can then select the
+correct version in each case and save the resultant new version over the local
+file.
+.PP
+The \fBcvs-state\fR command opens a \fI*cvs-state*\fR window listing the state
+of any file in the current directory which is not up-to-date. Note that unlike
+most cvs sub  commands  this  command  executes  over all files in the current
+buffer's file directory.
+.PP
+The  \fBcvs-update\fR  command updates all files in the current directory, the
+output  being  reported to a new  \fI*cvs-update*\fR  window. Note that unlike
+most cvs sub  commands  this  command  executes  over all files in the current
+buffer's file directory.
+.SH NOTES
+\fBcvs\fR and sub-commands are macros defined in file \fCcvs.emf\fR.
+.PP
+By default \fBcvs\fR filters out all files ignored by
+.Hr cvs 1 .
+This is configured by the variable  \fB.cvs.filter\fR,  setting this to 0 will
+disable the filtering.
+.SH "SEE ALSO"
+.na
+.Ht file-browser 3 .
+.ad
+.FH
