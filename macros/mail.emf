@@ -90,7 +90,7 @@ define-macro mail-check
         set-variable #l1 &rig $mode-line &cond &seq &mid $mode-line 2 1 "%" 4 3
         set-variable $mode-line &cat &cat &lef $mode-line 2 "-" #l1
     !endif
-    ml-clear
+    0 ml-write
     !return &seq #l0 "M"
 !emacro
 ;
