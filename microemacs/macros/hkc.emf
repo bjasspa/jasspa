@@ -22,7 +22,7 @@ define-macro fhook-c
 
 ; buffer-init variables
 set-variable .fhook-c.setup &reg "/history/fhook/c" "bdfghnopxlqv"
-set-variable .fhook-c.setup-mask "abdefghikmnoptuxclqrv"
+set-variable .fhook-c.setup-mask "abdefghikmnoptuxclqrvy"
 set-variable .fhook-c.tags "ctags"
 
 ; Comments
@@ -84,8 +84,8 @@ set-variable .fhook-c.collapse-mclose "1"
 set-variable .fhook-c.collapse-mnext "-1"
 
 ; Set up menu items for C mode.
-set-variable .fhook-c.setup-flags   "|c|l|q|r|v|"
-set-variable .fhook-c.setup-labels  "|JASSPA type highlighting|Doxygen highlighting|<stdint.h> hilighting|Brace highlighting|Bad C highlighting|"
+set-variable .fhook-c.setup-flags   "|c|l|q|r|v|y|"
+set-variable .fhook-c.setup-labels  "|JASSPA type highlighting|Doxygen highlighting|<stdint.h> hilighting|Brace highlighting|Bad C highlighting|GNU Indent Style (Set Indent Width=2)|"
 
 ; setup item-list
 set-variable .fhook-c.item-list-s1 "^\\(static[ \t]+\\|extern[ \t]+\\)?\\(const[ \t]+\\)?\\(union[ \t]+\\)?\\(struct[ \t]+\\)?\\(\\w+[\\* \\t]+\\)?\\(\\w+\\)[ \t]*("
@@ -420,8 +420,17 @@ set-variable .fhook-c.item-list-r6 "Clss \ecB\\1\ecA"
 
 !endif
 !if &sin "d" .fhook-c.setup
+    ; Allman style
     0 indent .hilight.c 12
     indent .hilight.c "u" " * "
+    !if &sin "y" .fhook-c.setup
+        ; Redefine for GNU Style C use t=2
+        indent .hilight.c "s" t
+        indent .hilight.c "b" t
+        indent .hilight.c "e" t
+        indent .hilight.c "a" -t
+        indent .hilight.c "w" 0
+    !endif        
 !endif
 ;
 ; setup useful C fuctions to auto-load cmacros

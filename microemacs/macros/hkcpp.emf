@@ -78,8 +78,8 @@ set-variable .fhook-cpp.command-kbind "|||||||||"
 set-variable .fhook-cpp.command-desc  "|Slashify region|Deslashify region||\HSet #define|\HUnset #define|Evaluate \H#'s|Evaluate #'s use \HNarrow|\HRemove # evaluation|"
 
 ; Set up menu items for C++ mode.
-set-variable .fhook-cpp.setup-flags   "|l|q|r|v|"
-set-variable .fhook-cpp.setup-labels  "|Doxygen highlighting|<stdint.h> hilighting|Brace highlighting|Bad C++ highlighting|"
+set-variable .fhook-cpp.setup-flags   "|l|q|r|v|y|"
+set-variable .fhook-cpp.setup-labels  "|Doxygen highlighting|<stdint.h> hilighting|Brace highlighting|Bad C++ highlighting|GNU Indent Style (Set Indent Width=2)|"
 
 ; Set up the collaspe for C++
 set-variable .fhook-cpp.collapse-open  "^{"
@@ -382,8 +382,17 @@ set-variable .fhook-cpp.item-list-r6 "Clss \ecB\\1\ecA"
     !endif
 !endif
 !if &sin "d" .fhook-cpp.setup
+    ; Allman Style
     0 indent .hilight.cpp 12
     indent .hilight.cpp "u" " * "
+    !if &sin "y" .fhook-cpp.setup
+        ; Redefine for GNU Style C++ use t=2
+        indent .hilight.cpp "s" t
+        indent .hilight.cpp "b" t
+        indent .hilight.cpp "e" t
+        indent .hilight.cpp "a" -t
+        indent .hilight.cpp "w" 0
+    !endif        
 !endif
 ;
 ; setup fuctions to auto-load from cmacros
