@@ -307,6 +307,7 @@ windowGotoLine(int f, int n)
             else
 #endif
                 nlno += frameCur->windowCur->dotLineNo ;
+            nlno++ ;
         }
         if(nlno <= 0)
         {
