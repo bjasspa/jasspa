@@ -6,7 +6,7 @@
 .\"  Created By    : Steven Phillips
 .\"  Created       : Sat Aug 22 09:00:06 1998
 .\"
-.Id $Id: m3osd000.3,v 2.13 2004-02-03 19:59:40 jon Exp $
+.Id $Id: m3osd000.3,v 2.14 2004-12-09 23:27:19 bill Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH user-setup 3
@@ -49,21 +49,16 @@ will be lost.
 .PP
 The following pages, which appear in the dialog, are defined as follows:-
 .SS "Start-up"
-.IP "\fCLog Name\fR"
-Sets the name of the current  user to setup, this can be set to any valid file
-base name (no  extension)  which need not be the current user. The rest of the
-\fBuser-setup\fR  entries are then initialized to the settings defined for the
-given user (or standard defaults if not defined).
-.IP "\fCDefault User\fR"
-The name or  profile  of the  current  user, the value is defined by the \*(mS
-variable
-.Ht $user-name 5 .
-This field may not be altered.
-.IP "\fCSetup Path\fR"
-The  location  of the user  defined  macro  files, the value is defined by the
-\*(mS variable
-.Ht $user-path 5 .
-This field may not be altered.
+.IP "\fCUser Name\fR"
+Documents  the user name  currently  being  configured,  this entry  cannot be
+changed in user-setup, see
+.Ht $user-name 5
+for help on changing the \*(mS user name.
+.IP "\fCUser Path\fR"
+Documents the location of the current user's \*(mS setup files, this entry  cannot be
+changed in user-setup, see
+.Ht $user-path 5
+for help on changing the user path.
 .IP "\fCSetup File\fR"
 Sets the personal  user setup macro file name which is executed at start-up. A
 user macro file should  contain all  personal  settings  such as preferred  key
@@ -78,15 +73,17 @@ company macro file should  contain all company wide standard  settings such as
 \fC%company-name\fR, No \fC.emf\fR extension is supplied. See
 .Hl "Setting Up a Company Profile" CompanyProfiles 2
 for more information.
-.IP "\fCEmulate\fR"
+.IP "\fCEmulation\fR"
 Sets an emulation mode which changes the behaviour on \*(mS to emulate another
 editor/program;  this  is  done by  executing  a macro  file at  start-up.  An
 emulation  macro file should  contain the macro code  required to simulate the
-environment  of the other editor. \*(mE is released with two emulation  modes,
-MicroEmacs v3.8 which executes macro file \fCmeme3_8.emf\fR (See
+environment of the other editor. \*(mE is released with four emulation  modes,
+GNU Emacs (see macro file  \fCmegnu.emf\fR),  CUA (Windows  style key bindings
+and interface, see \fCmecua.emf\fR),  MicroEmacs v3.8  (\fCmeme3_8.emf\fR) and
+NEdit  v5 which is at best a  demonstration  of what can be  achieved  via the
+emulation support (defined in \fCmenedit.emf\fR). See
 .Hl Compatibility Compatibility 2
-for more  information)  and NEdit v5 which is at best a demonstration  of what
-can be achieved, this executes macro file \fCmenedit.emf\fR.
+for more  information on emulation.
 .IP "\fCRebind Home Keys\fR"
 When  enabled the  following  key  bindings  are created to ease  frustration,
 particularly for MS users:
@@ -136,7 +133,10 @@ will be  added  to the  current  languages  personal  dictionary.  The name of
 dictionary is "\fClsdp\fR\fI<lang-id>\fR\fC.edf\fR" where "\fI<lang-id>\fR" is
 the 4 letter \*(mS  language name (e.g.  "\fCenus\fR"  for  American),  simply
 rename any existing personal dictionary to this new name.
-.IP "\fCAuto Spell\fR"
+.IP "\fCAuto Save Dictionaries\fR"
+Enables  auto-saving of any changed  dictionaries on exit. If this is disabled
+the user is prompted to save for each changed dictionary.
+.IP "\fCEnable Auto-Spell\fR"
 Enables Auto Spell Checking in file types which support this feature  (usually
 text based files such as
 .Ht txt 9
@@ -144,36 +144,38 @@ or
 .Ht nroff 9
 files etc). Auto spell detects word breaks as you type and checks the spelling
 of every  completed  word  hilighting  any erroneous  words in the error color
-scheme  (usually  red). The  feature can be manually  enabled and  disabled by
-invoking the
+scheme  (usually  red).  When  auto-spell  is  enable,  right  clicking  on an
+erroneous  word will add an extra  \fBAuto  Spell\fR  sub-menu  to the  opened
+context  menu, the  sub-menu  lists  suggested  corrections  and other  useful
+options; this menu can also be opened by executing the
+.Ht auto-spell-menu 3
+command (usually bound to  "\fCC-f7\fR").  The feature can be manually enabled
+and disabled by invoking the
 .Ht auto-spell 3
-command (usually bound to "\fCf5\fR").
-.IP "\fCAuto Save Dics\fR"
-Enables  auto-saving of any changed  dictionaries on exit. If this is disabled
-the user is prompted to save for each changed dictionary.
+command.
 .SS "General"
 .IP "\fCFull Name\fR"
 This should be set to the user's name and is used in a variety of places, e.g.
 by
 .Ht etfinsrt 3
 to set the "Created By" field in a template.
-.IP "\fCOrganizer\fR"
+.IP "\fCOrganizer File\fR"
 Sets the organizer file base name, defaults to the \fBLog  Name\fR. When
 notes and addresses are stored using
 .Ht organizer 3
 the file "\fI<Organizer>\fR\fC.eof\fR" is used.
-.IP "\fCAuto-Save Time\fR"
-Sets the length of time in seconds  between  buffer  auto-saves,  a setting of
-\fC0\fR or an empty string  disables  auto-saving.  The default setting is 300
-seconds or 5 minutes. This indirectly sets the
-.Ht auto-time 5
-variable and the
-.Ht autosv 2m
-global mode.
 .IP "\fCGlobal Modes\fR"
 Sets the initial state of the global
 .Ht quiet 2m
 mode. This indirectly executes
+.Ht global-mode 2
+to set the required modes.
+.IP "\fCSearch Modes\fR"
+Sets the initial state of the global search modes
+.Ht exact 2m
+and
+.Ht magic 2m .
+This indirectly executes
 .Ht global-mode 2
 to set the required modes.
 .IP "\fCBuffer Modes\fR"
@@ -198,15 +200,15 @@ settings, such as the
 hook which overrides the \fBtab\fR mode. This indirectly executes
 .Ht global-mode 2
 to set the required modes.
-.IP "\fCSearch Modes\fR"
-Sets the initial state of the global search modes
-.Ht exact 2m
-and
-.Ht magic 2m .
-This indirectly executes
-.Ht global-mode 2
-to set the required modes.
-.IP "\fCKeep Undo History\fR"
+.IP "\fCAuto-Save Time\fR"
+Sets the length of time in seconds  between  buffer  auto-saves,  a setting of
+\fC0\fR or an empty string  disables  auto-saving.  The default setting is 300
+seconds or 5 minutes. This indirectly sets the
+.Ht auto-time 5
+variable and the
+.Ht autosv 2m
+global mode.
+.IP "\fCKeep Undo\fR"
 If this is enabled the
 .Hl undo undo 2
 history is kept after a save allowing the
@@ -222,9 +224,25 @@ file name is prepended with a '\fC.\fR'. This  indirectly sets bit 0x100000 of
 the
 .Ht $system 5
 variable.
-.IP "\fCMain Menu\fR"
+.IP "\fCMain Menu - Enable\fR"
 Enables the top main menu bar.
-.IP "\fCAlt -> Main Menu\fR"
+.IP "\fCF-Type Buffer Sel\fR"
+When  enabled  the main  \fBFile\fR  menu's  \fBBuffer\fR  selection  sub-menu
+changes  from  being a  simple  complete  list of  buffers  to being a list of
+\fBFile Types\fR (as defined by the \fBFile Types\fR section below). Selecting
+one of these file types opens a further  sub-menu  listing all buffers of this
+type; this  option is useful  when the  current  session  of \*(mS has a large
+number of buffers. 
+.IP "\fCAlt Action - Esc Prfx\fR"
+If enabled the Alt key acts as a
+.Hl "prefix 1" prefix 2
+modifier  key when no direct  binding  exists. By default  '\fCA-n\fR'  is not
+bound, with this bit set the key is  inferred to '\fCesc  n\fR' which is bound
+to \fBforward-paragraph\fR.  Note that global, local and menu hot-key bindings
+override these. This indirectly sets bit 0x4000 of the
+.Ht $system 5
+variable.
+.IP "\fCAlt Action - Main Menu Hot-keys\fR"
 If enabled the main menu Alt hot-key  bindings are enabled.  These are dynamic
 bindings automatically  generated from the main menu. Typically the first item
 in the  main  menu is  "\fCFile\fR"  with a hot key of  '\fBF\fR',  with  this
@@ -232,21 +250,12 @@ enabled  '\fCA-f\fR'  will open this menu item. Note that global and local key
 bindings override these. This indirectly sets bit 0x2000 of the
 .Ht $system 5
 variable.
-.IP "\fCAlt -> Esc Prefx\fR"
-If enabled the Alt key acts as a
-.Hl "prefix 1" prefix 2
-modifier key. By default  '\fCA-n\fR'  is not bound, with this bit set the key
-is inferred to '\fCesc n\fR' which is bound to  \fBforward-paragraph\fR.  Note
-that global, local and menu hot-key  bindings  override these. This indirectly
-sets bit 0x4000 of the
-.Ht $system 5
-variable.
-.IP "\fCAbbrev Expansion\fR"
-Configures which expansion methods are enabled by default when the
+.IP "\fCAbbrev Setup\fR"
+Configures which abbreviation expansion methods are enabled by default when the
 .Ht expand-abbrev-handle 3
 is executed. \fBAccent\fR enables
 .Ht expand-iso-accents 3 ,
-\fBLookbk\fR enables
+\fBLookback\fR enables
 .Ht expand-look-back 3
 and \fBDict'n\fR enables
 .Ht expand-word 3 .
@@ -583,25 +592,19 @@ to view and change:-
 .IP "\fCButton\fR"
 The mouse  button,  \fCLeft\fR,  \fCRight\fR  or  \fCMiddle\fR  for the normal
 buttons and \fCWhell Up\fR or \fCWhell Down\fR for the pilot wheel events.
-.IP "\fCShift Pressed\fR"
+.IP "\fCModifier - Shift\fR"
 The action of the mouse can be  different  for every  modifier key setting, if
 this is enabled then the binding being modified is for the \fBButton\fR  being
 pressed with the \fBShift\fR key held down.
-.IP "\fCControl Pressed\fR"
+.IP "\fCModifier - Control\fR"
 If enabled then modifying the action when the \fBButton\fR is pressed with the
 \fBControl\fR key held down.
-.IP "\fCAlt Pressed\fR"
+.IP "\fCModifier - Alt\fR"
 If enabled then modifying the action when the \fBButton\fR is pressed with the
 \fBAlt\fR key held down.
 .PP
 The following two fields determine the  functionality of the button defined by
 the previous four fields:-
-.IP "\fCHandle Scroll\fR"
-When  enabled,  if the  button is  pressed  with the mouse on the main menu, a
-scroll bar or mode-line the standard  action is performed, such as opening the
-main menu or scrolling up or down the window etc. The \fBbound  To\fR  command
-is only called if the mouse is in a main window. If disabled, the
-\fBBound To\fR command is always called.
 .IP "\fCBound To\fR"
 The function to be performed.  The functions  available  depend on the type of
 button being bound, the following is a list of functions  available for normal
@@ -622,6 +625,14 @@ enclosed text is copied to the kill buffer using
 Note this behaviour is altered by the setting of
 .B "MS Shift Region"
 on the \fBStart-Up\fR page.
+.IP "\fCCopy Rectangle\fR"
+One corner of a rectangle is defined on the pick and the  diagonally  opposite
+corner is defined  when the button is dropped,  the text  enclosed  within the
+rectangle is copied to the kill buffer using
+.Ht copy-rectangle 3 .
+.IP "\fCKill Rectangle\fR"
+The same as \fCCopy Rectangle\fR except the text is killed using
+.Ht kill-rectangle 2 .
 .IP "\fCSelect Word\fR"
 Also executed from a double click bound to \fBDrag Region\fR,
 \fBSelect Word\fR copies the word under the mouse into the kill buffer using
@@ -634,6 +645,9 @@ movement.
 MicroSoft style Pan; while the mouse  button is  pressed  the  current  buffer
 pans  vertically  according to the mouse position  relative to the point where
 the button was pressed.
+.IP "\fCFind Buffer\fR"
+Opens a buffer  selection  dialog, the buffer  selected  is  displayed  in the
+window.
 .IP "\fCFind Tag\fR"
 Executes
 .Ht find-tag 2
@@ -664,20 +678,19 @@ Executes
 without  moving the cursor.  Note, to enable  this  functionality  some sanity
 checks have had to be removed, as a result it should not be misused as seeming
 bizarre things can occur.
-.IP "\fCFold current\fR"
-Toggles  the fold  status of the  current  block, only  applicable  in buffers
+.IP "\fCCollapse Current\fR"
+Toggles  the collapse  status of the  current  block, only  applicable  in buffers
 supporting
 .Ht collapse-current 3 ,
 such as c and emf files.
-.IP "\fCFold all\fR"
-Toggles  the fold  status of the whole  buffer,  opening or closing  all found
-blocks. Only  applicable  in buffers
-supporting
+.IP "\fCCollapse All\fR"
+Toggles the collapse  status of the whole buffer, opening or closing all found
+blocks. Only applicable in buffers supporting
 .Ht collapse-all 3 ,
 such as c and emf files.
-.IP "\fCMain menu\fR"
+.IP "\fCMain Menu\fR"
 Simply opens the main menu from any where on the screen.
-.IP "\fCMulti-Menu\fR"
+.IP "\fCContext Menu\fR"
 Opens a context  sensitive  menu  dependent on the position of the mouse, i.e.
 opens the main menu if over it, opens a  different  menu when  executed on the
 mode-line etc.
@@ -688,6 +701,12 @@ The Button is not bound.
 .IP "\fCScroll Up 1 Line\fR ...."
 Scrolls the current buffer by the specified amount.
 .RE
+.IP "\fCHandle Scroll Bars\fR"
+When  enabled,  if the  button is  pressed  with the mouse on the main menu, a
+scroll bar or mode-line the standard  action is performed, such as opening the
+main menu or scrolling up or down the window etc. The \fBbound  To\fR  command
+is only called if the mouse is in a main window. If disabled, the
+\fBBound To\fR command is always called.
 .IP "\fCDefaults\fR"
 Rests the mouse configuration to the default settings.
 .SS "File Types"
@@ -738,7 +757,7 @@ follows:-
 .IP "\fCTool Name\fR"
 Sets the  displayed  name of the tool. The tool name is used in the buttons in
 the top half of this dialog and in the \*(mS Main Tools Menu.
-.IP "\fCTool Command Line\fR"
+.IP "\fCCommand Line\fR"
 Sets the system command-line to be launched whenever the tool is executed, the
 following  special tokens may be used in the command-line which are substituted
 at execution:-
@@ -760,17 +779,13 @@ set to the empty string if the file name does not have an extension.
 Note   that   "\fB%ff\fR"   is   always   the  same  as   "\fB%fp%fn\fR"   and
 "\fB%fp%fb%fe\fR".  If any of these  tokens  are used, the tool  will  fail to
 execute if the current buffer does not have a file name.
-.IP "\fCSave Current Buffer\fR and \fCPrompt\fR"
-If the current buffer has been edited, enabling \fCSave Current Buffer\fR will
-automatically  save the  current  buffer  before  executing  the tool. This is
-particularly  useful when the tool operates on the current buffer's file (e.g.
-compiles the file). If  \fCPrompt\fR is also enabled the user will be prompted
-before the file is saved.
-.IP "\fCSave All Buffers\fR and \fCPrompt\fR"
-If \fCSave All Buffers\fR is enabled, all edited buffers will be automatically
-saved before executing the tool. This is particularly useful when the tool may
-operate on multiple files (e.g.  compilation of a project). If \fCPrompt\fR is
-also enabled the user will be prompted before each file is saved.
+.IP "\fCRun Concurrently\fR"
+If  enabled,  when  the tool is  executed  the  command  is  launched  and run
+concurrently,  allowing the user to continue working in \*(mS during the tools
+execution.  This option is not  available for all versions on \*(mS and forces
+the output to be captured. Enabling this option will force the use of command
+.Ht ipipe-shell-command 2
+to launch the tool.
 .IP "\fCCapture Output\fR"
 If enabled any output produced from the execution of the tool will be captured
 and  inserted  into a new  buffer.  When  enabled  the  following  two  items,
@@ -805,13 +820,17 @@ if \fCRun Concurrently\fR is enabled.
 .IP "\fCHide\fR"
 When  enabled the tool output  capture  buffer is hidden,  this option is only
 visible when \fCCapture Output\fR is enabled.
-.IP "\fCRun Concurrently\fR"
-If  enabled,  when  the tool is  executed  the  command  is  launched  and run
-concurrently,  allowing the user to continue working in \*(mS during the tools
-execution.  This option is not  available for all versions on \*(mS and forces
-the output to be captured. Enabling this option will force the use of command
-.Ht ipipe-shell-command 2
-to launch the tool.
+.IP "Current Buffer - \fCSave\fR and \fCPrompt Before Saving\fR"
+If the current buffer has been edited, enabling \fCSave Current Buffer\fR will
+automatically  save the  current  buffer  before  executing  the tool. This is
+particularly  useful when the tool operates on the current buffer's file (e.g.
+compiles the file). If  \fCPrompt\fR is also enabled the user will be prompted
+before the file is saved.
+.IP "All Buffers - \fCSave\fR and \fCPrompt Before Saving\fR"
+If \fCSave All Buffers\fR is enabled, all edited buffers will be automatically
+saved before executing the tool. This is particularly useful when the tool may
+operate on multiple files (e.g.  compilation of a project). If \fCPrompt\fR is
+also enabled the user will be prompted before each file is saved.
 .SS "E-Mail"
 \*(mE provides a simple E-Mail manager, see
 .Ht vm 3
