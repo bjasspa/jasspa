@@ -1902,9 +1902,18 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
     /* and read the stuff in */
 #ifdef _UNIX
     ret = meBufferInsertFile(bp,NULL,meRWFLAG_SILENT,0,0) ;
+    /* close the pipe and get exit status */
+    ws = (meWAIT_STATUS) pclose(ffrp) ;
+    if(WIFEXITED(ws))
+        systemRet = WEXITSTATUS(ws) ;
+    else
+        systemRet = -1 ;
 #else
     ret = meBufferInsertFile(bp,filnam,meRWFLAG_SILENT,0,0) ;
+    /* and get rid of the temporary file */
+    meUnlink(filnam);
 #endif
+    
     /* give it the path as a filename */
     bp->fileName = meStrdup(path) ;
     /* make this window in VIEW mode, update all mode lines */
@@ -1917,17 +1926,6 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
     if((flags & LAUNCH_SILENT) == 0)
         meWindowPopup(bp->name,WPOP_MKCURR,NULL) ;
 
-#ifdef _UNIX
-    /* close the pipe and get exit status */
-    ws = (meWAIT_STATUS) pclose(ffrp) ;
-    if(WIFEXITED(ws))
-        systemRet = WEXITSTATUS(ws) ;
-    else
-        systemRet = -1 ;
-#else
-    /* and get rid of the temporary file */
-    meUnlink(filnam);
-#endif
     meStrcpy(resultStr,meItoa(systemRet)) ;
     return ret ;
 }
