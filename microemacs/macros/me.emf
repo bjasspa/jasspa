@@ -64,6 +64,7 @@ define-macro-file buffstp buffer-setup buffer-help buffer-tool
 define-macro-file itemlist item-list item-list-close occur
 define-macro-file mail mail mail-check stop-mail-check
 define-macro-file fileopen osd-file-open osd-get-file
+define-macro-file spellaut auto-spell auto-spell-menu
 define-macro-file hkinfo info info-on info-goto-link
 define-macro-file osdmisc symbol indent-setup alarm
 define-macro-file pagefile page-file page-bfile
@@ -153,6 +154,8 @@ global-bind-key item-list                "f6"
 2 global-bind-key occur                  "S-f6"
 global-bind-key item-list-close          "esc f6"
 global-bind-key spell-buffer             "f7"
+0 global-bind-key auto-spell             "S-f7"
+global-bind-key auto-spell-menu          "C-f7"
 global-bind-key file-browser             "f10"
 global-bind-key ftp                      "S-f10"
 global-bind-key cvs                      "C-f10"
