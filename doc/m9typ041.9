@@ -1,0 +1,96 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1999-2005 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.\"  Created By    : Jon Green
+.\"  Created       : Sat Feb 6 14:22:09 1999
+.\"
+.Id $Id: m9typ041.9,v 1.1 2005-01-23 17:38:52 jon Exp $
+.Im MicroEmacs 
+.so me.tni
+.TH xml 9
+.XI xml - "Extensible Markup Language" filetype
+.XI xsl - "Extensible Stylesheet Language" filetype
+.XI xul - "XML User Interface Language" filetype
+.XI xml-forward-tag 3 "Find the next XML tag"
+.XI xml-backward-tag 3 "Find the previous XML tag"
+.XI xml-goto-matching-tag 3 "Find matching opening/closing XML tag"
+.XI xml-verify 3 "Verify syntax of XML file"
+.SH SYNOPSIS
+xml \- Extensible Markup Language File.
+.SH FILES
+.na
+.B hkxml.emf
+\- Extensible Markup Language file hook definition
+.ad
+.SH EXTENSIONS
+.na
+\fB.xml\fR \- Extensible Markup Language File.
+.br
+\fB.xsl\fR \- Extensible Stylesheet Language file.
+.br
+\fB.xul\fR \- XML User Interface Language file.
+.ad
+.SH "MAGIC STRINGS"
+.TP
+\fB<?xml>\fR
+.\"
+\*(mE recognizes the magic string on any of the first line of the file. The
+XML files may be extension-less and are still recognized.
+.SH DESCRIPTION
+The \fBxml\fR file type template  provides  simple  hilighting of XML files.
+.IP "\fBGeneral Editing\fR"
+On creating a new file, a new header is automatically included into the file.
+.Ht time 2m
+is by default enabled, allowing the modification time-stamp to be maintained in
+the header.
+.IP  \fBHilighting\fR
+The  hilighting  features allow  commands,  variables,  logical,  preprocessor
+definitions,   comments,   strings  and  characters  of  the  language  to  be
+differentiated and rendered in different colors.
+.IP "\fBEmbedded Languages\fR"
+Support is provided for embedded code fragments in Java and Visual Basic.
+.IP "\fBFolding and Information Hiding\fR"
+Generic  folding is enabled,  the folds occur about
+bracketed constructs \fB<...>\fR...\fB</...>\fR located on the left-hand margin.
+.Ht collapse-all 3
+(un)folds all regions in the file,
+.Ht collapse-current 3
+(un)folds the current region.
+.IP "\fBBuffer Commands\fR"
+.B xml-forward-tag 
+and 
+.B xml-backward-tag 
+are provided to advance to the next \fC<..>\fR tag in the buffer.
+.IP
+.B xml-goto-matching-tag
+finds the tag that matches the current tag.
+.IP 
+.B xml-verify
+verifies the syntax of the XML reporting tags that are not matched in addition
+to syntax errors in the tag attributes.
+.IP "\fBSpelling\fR"
+Buffer spell checking is XML aware.
+.IP "\fBCompletion\fR"
+Completion  is enabled,  \fC</\fR\fB\*e  \*e\fR will expand to the closing tag
+for the last tag that remains open.
+.IP "\fBShort Cuts\fR"
+The short cut keys used within the buffer are:-
+.IP
+\fB\*eh\fR \- Key binding help information.
+.br
+\fB\*cc \*cc\fR \- Comment out the current line.
+.br
+\fB\*cc \*cd\fR \- Uncomment the current line.
+.br
+\fB\*cc \*ce\fR \- Comment to the end of the line with hash (#).
+.br
+\fB\*cc \*co\fR \- Format a comment
+.SH BUGS
+None  reported.
+.SH "SEE ALSO"
+.na
+.Hl "Supported File Types" FileTypes -
+.ad
+.FH
