@@ -313,7 +313,7 @@ get_another_key:
             restoreUseMlBinds() ;
             return (status == meTRUE) ;
         }
-        c=mlfirst ;
+        c = mlfirst ;
         mlfirst = -1 ;
         break ;
 

@@ -1080,12 +1080,9 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
             mlgsDisp(prom,buf,contstr,ipos) ;
         contstr = NULL ;
 
-        /*
-        ** mlfirst  may be set by meShell. If both are unset, get a 
-        ** character from the user. 
-        */
-
-        if(mlfirst != -1)
+        /* mlfirst  may be set by meShell. If both are unset, get a 
+         * character from the user. */
+        if(mlfirst >= 0)
         {
             cc = mlfirst ;
             mlfirst = -1;
@@ -1167,12 +1164,27 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
             }
             break;
             
-        case CK_DOTAB:    /* ^I : Tab character */
-            if(frameCur->mlStatus & MLSTATUS_NINPUT)
+        case CK_DELTAB:
+#if MEOPT_OSD
+            if(frameCur->mlStatus & MLSTATUS_POSOSD)
             {
+                mlfirst = cc ;
+                cont_flag = 0;
+            }
+            else
+#endif
+                TTbell();
+            break;
+        
+        case CK_DOTAB:    /* ^I : Tab character */
+#if MEOPT_OSD
+            if(frameCur->mlStatus & MLSTATUS_POSOSD)
+            {
+                mlfirst = cc ;
                 cont_flag = 0;
                 break;
             }
+#endif
             cc = '\t' ;    /* ^I for search strings */
             if(!(option & (MLCOMMAND | MLFILE | MLBUFFER | MLVARBL | MLUSER)))
                 goto input_addexpand ;
@@ -1363,6 +1375,14 @@ input_expand:
                 }
                 break ;
             }
+#if MEOPT_OSD
+            if(frameCur->mlStatus & MLSTATUS_POSOSD)
+            {
+                mlfirst = cc ;
+                cont_flag = 0;
+                break ;
+            }
+#endif
             /* no break - if not multi-line input then backward-line also cycles history */
 #if MEOPT_WORDPRO
         case CK_GOBOP:    /* M-P : Got to previous in history list */
@@ -1414,6 +1434,14 @@ input_expand:
                 }
                 break ;
             }
+#if MEOPT_OSD
+            if(frameCur->mlStatus & MLSTATUS_POSOSD)
+            {
+                mlfirst = cc ;
+                cont_flag = 0;
+                break ;
+            }
+#endif
             /* no break - if not multi-line input then forward-line also cycles history */
 #if MEOPT_WORDPRO
         case CK_GOEOP:    /* M-N : Got to next in history list */
@@ -1679,14 +1707,6 @@ input_expand:
             }
             break;
             
-        case CK_SETMRK:
-            /*
-             * Do nothing - one day this will set the
-             * mark at the current cursor position.
-             */
-            TTbell();
-            break;
-            
         case CK_DELWBAK:
             /* Delete word backwards. If spaces before
              * the input position then delete those too.
@@ -1743,7 +1763,11 @@ input_expand:
                     mlHandleMouse(NULL,0,0) ;
             }
             /* a drop event */
-            else if(!(frameCur->mlStatus & MLSTATUS_POSOSD) && ((cc=mlHandleMouse(buf,nbuf,compOff)) != 0))
+            else if(
+#if MEOPT_OSD
+                    !(frameCur->mlStatus & MLSTATUS_POSOSD) && 
+#endif            
+                    ((cc=mlHandleMouse(buf,nbuf,compOff)) != 0))
             {
                 ipos = ilen = meStrlen(buf) ;
                 if(cc == 2)

@@ -3356,12 +3356,13 @@ osdDisplayFindNext (osdDISPLAY *md, int curCont, int dir, int canLoop, int depth
 }
 
 
-#define QUIT_MENU     1                 /* Iterate the menu */
-#define MOUSE_MENU    2                 /* Mouse was used to execute */
-#define EXECUTE_MENU  4                 /* Execute the menu item */
-#define OPEN_MENU     8                 /* Open the sub-menu */
-#define FOCUS_MENU   16                 /* Make this the current menu */
-#define ENTER_MENU   32                 /* Go into the sub-menu */
+#define meOSD_QUIT_MENU     1             /* Iterate the menu */
+#define meOSD_MOUSE_MENU    2             /* Mouse was used to execute */
+#define meOSD_EXECUTE_MENU  4             /* Execute the menu item */
+#define meOSD_OPEN_MENU     8             /* Open the sub-menu */
+#define meOSD_FOCUS_MENU   16             /* Make this the current menu */
+#define meOSD_ENTER_MENU   32             /* Go into the sub-menu */
+#define meOSD_KEY_MOVE     64             /* Current event was a key to change current item */
 
 static void
 osdDisplaySub(osdDISPLAY *md, int flags) ;
@@ -3402,7 +3403,7 @@ osdDisplayPush(int id, int flags)
     /* Position the menu */
     menuPosition(md,0);
         
-    if(flags & FOCUS_MENU)
+    if(flags & meOSD_FOCUS_MENU)
     {
         /* Make this the current display */
         osdCurMd = md ;
@@ -3414,17 +3415,28 @@ osdDisplayPush(int id, int flags)
             int ii ;
             if(!defItem)
                 defItem = rp->defItem ;
-            for(ii=0 ; ii<md->numContexts ; ii++)
+            for(ii=0 ; ii<osdCurChild->numContexts ; ii++)
             {
-                if((md->context[ii].menu->item == defItem) &&
-                   !(md->context[ii].menu->flags & MF_SEP))
+                if((osdCurChild->context[ii].menu->item == defItem) &&
+                   !(osdCurChild->context[ii].menu->flags & MF_SEP))
                 {
-                    md->curContext = ii ;
-                    break ;
+                    osdCurChild->curContext = ii ;
+                    /* if the default is an include select the child's default item */
+                    if(((osdCurChild->context[ii].menu->flags & MF_CHILD) == 0) ||
+                       ((osdCurChild->context[ii].child->display->flags & RF_DEFAULT) == 0))
+                    {
+                        /* if this is an entry force entry by loading a space key event */
+                        if(osdCurChild->context[ii].menu->flags & MF_ENTRY)
+                            mlfirst = ' ' ;
+                        break ;
+                    }
+                    osdCurChild = osdCurChild->context[ii].child->display ;
+                    defItem = osdCurChild->dialog->defItem ;
+                    ii = -1 ;
                 }
             }
         }
-        else if((flags & ENTER_MENU) && (md->curContext < 0))
+        else if((flags & meOSD_ENTER_MENU) && (md->curContext < 0))
             md->curContext = osdDisplayFindNext(md, -1, osdMOVE_LEFT, 1, 0);
     }
     /* Snapshot the region occupied by the menu. */
@@ -3556,7 +3568,7 @@ osdDisplaySub(osdDISPLAY *md, int flags)
     if(((index = md->curContext) == -1) ||
        ((mp = md->context [index].menu) == NULL) ||
        !(mp->flags & (MF_SUBMNU|MF_COMBO)) ||
-       ((mp->flags & MF_MANUAL) && !(flags & OPEN_MENU)))
+       ((mp->flags & MF_MANUAL) && !(flags & meOSD_OPEN_MENU)))
         return ;
     
     /* as this could be a child loop up to the parent */
@@ -3576,13 +3588,13 @@ osdDisplaySub(osdDISPLAY *md, int flags)
            ((md = osdDisplayPush(mp->argc,flags)) == NULL))
             return ;           
     }
-    else if(flags & FOCUS_MENU)
+    else if(flags & meOSD_FOCUS_MENU)
     {
         /* Make this the current display */
         osdNewMd = nmd->next ;
         osdNewChild = nmd->next ;
         osdNewMd->newContext = osdNewMd->curContext ;
-        if((flags & ENTER_MENU) && (osdNewMd->newContext < 0))
+        if((flags & meOSD_ENTER_MENU) && (osdNewMd->newContext < 0))
             osdNewMd->newContext = osdDisplayFindNext(osdNewMd, -1, osdMOVE_LEFT, 1, 0);
         osdDisplaySetNewFocus(0) ;
     }
@@ -3600,8 +3612,8 @@ osdDisplaySetNewFocus(int flags)
        (osdNewChild == osdCurChild) &&
        (osdNewChild->curContext == osdNewChild->newContext))
     {
-        if((osdNewChild->newContext < 0) || !(flags & OPEN_MENU) ||
-           ((osdNewMd->next != NULL) && !(flags & (ENTER_MENU|FOCUS_MENU))))
+        if((osdNewChild->newContext < 0) || !(flags & meOSD_OPEN_MENU) ||
+           ((osdNewMd->next != NULL) && !(flags & (meOSD_ENTER_MENU|meOSD_FOCUS_MENU))))
             return ;
     }
     else
@@ -3783,7 +3795,11 @@ osdDisplayMouseMove(osdDISPLAY *md)
 {
     meUByte oldAllKeys=TTallKeys ;
     meShort mmx, mmy ;
-    int cc ;
+    int cc, osdCursorState ;
+    
+    osdCursorState = cursorState ;
+    if(cursorState >= 0)
+        showCursor(meTRUE,-1-cursorState) ;
     
     /* Enable all mouse movements - important if we've come from meGetStringFromUser */
     TTallKeys = 1 ;
@@ -3803,6 +3819,8 @@ osdDisplayMouseMove(osdDISPLAY *md)
         }
     }
     /* Restore state */
+    if(osdCursorState != cursorState)
+        showCursor(meTRUE,osdCursorState-cursorState) ;
     TTallKeys = oldAllKeys ;
 }
 
@@ -4372,7 +4390,10 @@ osdDisplayTabMove(osdDISPLAY *md, int dir, int mustSel)
      * (going backwards just for ease) */
     for(ii=md->numContexts ; ii-- ; )
     {
-        if(((tt=md->context[ii].menu->tab) >= 0) && (tt != tab))
+        /* only allow tab to select the current tab item, ignore the rest */
+        if(((tt=md->context[ii].menu->tab) >= 0) && (tt != tab) &&
+           (((md->context[ii].menu->flags & MF_NBPAGE) == 0) ||
+            (md->context[ii].menu->argc == md->context[md->nbpContext].menu->argc)))
         {
             if(dir)
                 tt -= tab ;
@@ -4511,7 +4532,7 @@ osdDisplayKeyMove(int dir, int nn)
                 }
                 
                 if(md->next == NULL)
-                    osdDisplaySub(md,OPEN_MENU) ;
+                    osdDisplaySub(md,meOSD_OPEN_MENU) ;
                 if((md = md->next) == NULL)
                     return -1 ;
                 if((md->newContext=md->curContext) < 0)
@@ -4610,6 +4631,7 @@ osdDisplayRedraw(void)
     return 1 ;
 }
 
+#define _UNIX_CUR 1
 
 /*
  * menuInteraction
@@ -4623,47 +4645,60 @@ menuInteraction (int *retState)
     meUInt arg ;
     int state ;
     osdITEM *mp ;
-#ifdef _UNIX
-    int moveCursor ;
-#endif
 
     *retState = meFALSE ;
     
     /* Hide the cursor */
     osdCursorState = cursorState ;
-#ifdef _UNIX
-     if((moveCursor=((meSystemCfg & (meSYSTEM_CONSOLE|meSYSTEM_RGBCOLOR|
-                                     meSYSTEM_ANSICOLOR|meSYSTEM_FONTS)) == meSYSTEM_CONSOLE)))
-     {
-          /* if running on termcap with no color or fonts then move the cursor
-           * to the current item else the user will have no idea what the current item is */
-         showCursor(meFALSE,1) ;
-     }
-     else
-#endif
-         if(cursorState >= 0)
-             showCursor(meTRUE,-1-cursorState) ;
+    if(meSystemCfg & meSYSTEM_OSDCURSOR)
+    {
+        /* if running on termcap with no color or fonts then move the cursor
+         * to the current item else the user will have no idea what the current item is,
+         * This is now setup as part of a display scheme and a separate bit in the system var. */
+        showCursor(meFALSE,1) ;
+    }
+    else if(cursorState >= 0)
+        showCursor(meTRUE,-1-cursorState) ;
+    
     for(;;)
     {
-#ifdef _UNIX
-        if(moveCursor)
+        if((meSystemCfg & meSYSTEM_OSDCURSOR) && (osdCurChild->curContext >= 0))
         {
-            if (osdCurChild->curContext >= 0)
+            /* Get the screen position of the current item */
+            osdDISPLAY *md=osdCurChild ;
+            int xx, yy ;
+            
+            xx = md->x + md->context[md->curContext].x ;
+            yy = md->y + md->context[md->curContext].y ;
+            while (md != osdCurMd)
             {
-                /* Get the screen position of the current item */
-                int xx, yy ;
-                xx = osdCurChild->x + osdCurChild->context[osdCurChild->curContext].x ;
-                yy = osdCurChild->y + osdCurChild->context[osdCurChild->curContext].y ;
-                TTmove(yy,xx) ;
+                md = md->prev ;
+                xx += md->x + md->context[md->curContext].x ;
+                yy += md->y + md->context[md->curContext].y ;
+                if(md->context[md->curContext].menu->flags & MF_SCRLBOX)
+                {
+                    xx++ ;
+                    yy++ ;
+                }
             }
+            TTmove(yy,xx) ;
         }
-#endif
         TTflush() ;
         osdCol = -1 ;
         nit = 0 ;
         state = 0 ;
-        /* Get a command from the keyboard */
-        cc = meGetKeyFromUser(meFALSE,0,meGETKEY_SILENT);
+        
+        /* Get a key or mouse event, if mlfirst is not < 0 then we already
+         * have one to process (i.e. tab out of an entry, otherwise wait for
+         * an event from the user */
+        if(mlfirst >= 0)
+        {
+            cc = mlfirst ;
+            mlfirst = -1;
+        }
+        else
+            cc = meGetKeyFromUser(meFALSE,0,meGETKEY_SILENT);
+        
         /* handle and osd bindings first */
         if(osdCurMd->dialog->nobinds)
         {
@@ -4710,7 +4745,7 @@ menuInteraction (int *retState)
             nit = osdDisplayMouseLocate(1) ;
             if((nit == 1) && (osdNewChild->context[osdNewChild->newContext].menu->flags & MF_REPEAT))
             {
-                state = MOUSE_MENU|EXECUTE_MENU|OPEN_MENU ;
+                state = meOSD_MOUSE_MENU|meOSD_EXECUTE_MENU|meOSD_OPEN_MENU ;
                 /* Enable all mouse timed events */
                 TTallKeys = 2 ;
             }
@@ -4724,7 +4759,7 @@ menuInteraction (int *retState)
             nit = osdDisplayMouseLocate(0) ;
             if((nit == 1) && (osdNewChild->curContext == osdNewChild->newContext) &&
                (osdNewChild->context[osdNewChild->newContext].menu->flags & MF_REPEAT))
-                state = MOUSE_MENU|EXECUTE_MENU|OPEN_MENU ;
+                state = meOSD_MOUSE_MENU|meOSD_EXECUTE_MENU|meOSD_OPEN_MENU ;
             else
                 nit = 0 ;
             break ;
@@ -4756,7 +4791,7 @@ menuInteraction (int *retState)
                     osdDisplaySetNewFocus(0) ;
                 }
                 else
-                    state = QUIT_MENU ;
+                    state = meOSD_QUIT_MENU ;
                 break ;
             }
             /* no break */
@@ -4779,20 +4814,20 @@ menuInteraction (int *retState)
                     osdDisplaySetNewFocus(0) ;
                 }
                 else
-                    state = QUIT_MENU ;
+                    state = meOSD_QUIT_MENU ;
             }
             else if(nit == 1)
             {
                 /* selected item */
                 if(!(osdNewChild->context[osdNewChild->newContext].menu->flags & MF_REPEAT))
-                    state = MOUSE_MENU|EXECUTE_MENU|OPEN_MENU ;
+                    state = meOSD_MOUSE_MENU|meOSD_EXECUTE_MENU|meOSD_OPEN_MENU ;
             }
             else if(nit == 3)
             {
                 /* The kill title bar button */
                 if((osdNewMd->prev == NULL) ||
                    (osdNewMd->prev->flags & RF_DISABLE))
-                    state = QUIT_MENU ;
+                    state = meOSD_QUIT_MENU ;
                 else
                 {
                     osdNewMd = osdNewChild = osdNewMd->prev ; 
@@ -4815,7 +4850,7 @@ menuInteraction (int *retState)
                     osdNewChild = osdNewChild->context[osdNewChild->newContext].child->display ;
                 }
                 nit = 1 ;
-                state = EXECUTE_MENU|OPEN_MENU|FOCUS_MENU|ENTER_MENU;
+                state = meOSD_EXECUTE_MENU|meOSD_OPEN_MENU|meOSD_FOCUS_MENU|meOSD_ENTER_MENU;
             }
             break;
         
@@ -4841,27 +4876,36 @@ menuInteraction (int *retState)
             {
             case CK_GOBOF:                  /* M-< - beginning of buffer */
                 nit = osdDisplayKeyMove(osdMOVE_DOWN,-1) ;
+                state = meOSD_KEY_MOVE ;
                 break;
             case CK_GOEOF:                  /* M-< - end of buffer */
                 nit = osdDisplayKeyMove(osdMOVE_UP,-1) ;
+                state = meOSD_KEY_MOVE ;
                 break;
             case CK_FORCHR:                 /* ^F  - Forward character */
                 nit = osdDisplayKeyMove(osdMOVE_LEFT,n) ;
+                state = meOSD_KEY_MOVE ;
                 break;
             case CK_BAKCHR:                 /* ^B  - Previous charater */
                 nit = osdDisplayKeyMove(osdMOVE_RIGHT,n) ;
+                state = meOSD_KEY_MOVE ;
                 break;
             case CK_BAKLIN:                 /* C-p - Previous line */
                 nit = osdDisplayKeyMove(osdMOVE_UP,n) ;
+                state = meOSD_KEY_MOVE ;
                 break;
             case CK_FORLIN:                 /* C-n - Next line */
                 nit = osdDisplayKeyMove(osdMOVE_DOWN,n) ;
+                state = meOSD_KEY_MOVE ;
                 break;
             case CK_MOVUWND:                  /* M-N - Move menu up */
                 if(f == 0)
+                {
                     /* if scrolling by a page then assume its a page-up and
                      * we want to scroll a child dialog */
                     nit = osdDisplayKeyMove(osdMOVE_UP,0) ;
+                    state = meOSD_KEY_MOVE ;
+                }
                 else if(osdCurMd->flags & (RF_TITLE|RF_BOARDER))
                     /* Allow the menu to move if it has a title bar or a boarder
                      * This is different to hte mouse as for the mouse to be
@@ -4870,29 +4914,51 @@ menuInteraction (int *retState)
                 break ;
             case CK_MOVDWND:                  /* M-N - Move menu down */
                 if(f == 0)
+                {
                     nit = osdDisplayKeyMove(osdMOVE_DOWN,0) ;
+                    state = meOSD_KEY_MOVE ;
+                }
                 else if(osdCurMd->flags & (RF_TITLE|RF_BOARDER))
                     osdDisplayMove(osdCurMd,0,1) ;
                 break ;
             case CK_MOVLWND:                 /* M-N - Move menu left */
                 if(f == 0)
+                {
                     nit = osdDisplayKeyMove(osdMOVE_LEFT,0) ;
+                    state = meOSD_KEY_MOVE ;
+                }
                 else if(osdCurMd->flags & (RF_TITLE|RF_BOARDER))
                     osdDisplayMove(osdCurMd,-1,0) ;
                 break ;
             case CK_MOVRWND:                 /* M-N - Move menu right */
                 if(f == 0)
+                {
                     nit = osdDisplayKeyMove(osdMOVE_RIGHT,0) ;
+                    state = meOSD_KEY_MOVE ;
+                }
                 else if(osdCurMd->flags & (RF_TITLE|RF_BOARDER))
                     osdDisplayMove(osdCurMd,1,0) ;
                 break ;
             case CK_DELFOR:                 /* Del - Delete */
             case CK_ABTCMD:                 /* ^G  - Abort */
+                /* ZZZZ - only close current sub-menu if one is open,
+                 * otherwise follow through and close whole dialog */
+                if((osdCurMd->prev == NULL) ||
+                   (osdCurMd->prev->flags & RF_DISABLE))
+                    state = meOSD_QUIT_MENU ;
+                else
+                {
+                    osdNewMd = osdNewChild = osdCurMd->prev ; 
+                    nit = 1 ;
+                }
+                break;
+                
             case CK_QUIT:                   /* C-x C-c or A-f4 - quit */
             case CK_EXIT:                   /* exit */
-                state = QUIT_MENU;
+                state = meOSD_QUIT_MENU;
                 break;
             case CK_NEWLIN:                 /* ^M  - Return */
+execute_item:
                 if(osdCurChild->curContext >= 0)
                 {
                     osdNewChild = osdNewMd = osdCurMd ;
@@ -4904,15 +4970,17 @@ menuInteraction (int *retState)
                         osdNewChild = osdNewChild->context[osdNewChild->newContext].child->display ;
                     }
                     nit = 1 ;
-                    state = EXECUTE_MENU|OPEN_MENU|FOCUS_MENU|ENTER_MENU;
+                    state = meOSD_EXECUTE_MENU|meOSD_OPEN_MENU|meOSD_FOCUS_MENU|meOSD_ENTER_MENU;
                 }
                 break;
                 
             case CK_DOTAB:
                 nit = osdDisplayTabMove(osdCurChild,1,0) ;
+                state = meOSD_KEY_MOVE ;
                 break ;
             case CK_DELTAB:
                 nit = osdDisplayTabMove(osdCurChild,0,0) ;
+                state = meOSD_KEY_MOVE ;
                 break ;
                       
             case CK_RECENT:                 /* ^L  - Redraw the screen */
@@ -4920,17 +4988,19 @@ menuInteraction (int *retState)
                 update(meTRUE) ;
                 break;
             default:
-                if ((cc >= ' ') && (cc < 256))
+                if(cc == ' ')
+                    goto execute_item ;
+                else if ((cc > ' ') && (cc < 256))
                 {
                     if(osdCurChild->flags & RF_FRSTLET)
                         nit = osdDisplaySelectFirstLetter(cc,osdCurChild) ;
                     else if((nit = osdDisplaySelect(cc,osdCurMd)) != 0)
-                        state = EXECUTE_MENU|OPEN_MENU|FOCUS_MENU|ENTER_MENU ;
+                        state = meOSD_EXECUTE_MENU|meOSD_OPEN_MENU|meOSD_FOCUS_MENU|meOSD_ENTER_MENU ;
                 }
                 break;
             }
         }
-        if(state & QUIT_MENU)
+        if(state & meOSD_QUIT_MENU)
             break ;
         
         if(nit != 1)
@@ -4938,7 +5008,7 @@ menuInteraction (int *retState)
         
         mp = osdNewChild->context[osdNewChild->newContext].menu ;
         /* have we got something to execute?? */
-        if((state & EXECUTE_MENU) && !(mp->flags & (MF_SUBMNU|MF_COMBO)) && (mp->cmdIndex < 0))
+        if((state & meOSD_EXECUTE_MENU) && !(mp->flags & (MF_SUBMNU|MF_COMBO)) && (mp->cmdIndex < 0))
         {
             /* Hot keys can be used to reference other items to execute cause they
              * themselves are separaters so get the real thing to execute */
@@ -4977,7 +5047,8 @@ menuInteraction (int *retState)
             }
             osdNewChild->newContext = nit ;
         }
-        if((state & EXECUTE_MENU) && !(mp->flags & (MF_SUBMNU|MF_COMBO)))
+        if(!(mp->flags & (MF_SUBMNU|MF_COMBO)) &&
+           ((state & meOSD_EXECUTE_MENU) || ((state & meOSD_KEY_MOVE) && (mp->flags & (MF_ENTRY|MF_NBPAGE)))))
         {
             osdDISPLAY *nem, *nec ;
             osdCONTEXT *nep ;
@@ -5034,7 +5105,7 @@ menuInteraction (int *retState)
             osdDisplaySetNewFocus(state) ;
             osdNewMd = nem ;
             osdNewChild = nec ;
-            state &= MOUSE_MENU ;
+            state &= meOSD_MOUSE_MENU ;
             if(menuExecute(mp,osdCurChild->flags,-1) <= 0)
                 /* The function called failed - quit */
                 break ;
@@ -5059,13 +5130,13 @@ menuInteraction (int *retState)
             {
                 /* assign focus */
 #if MEOPT_MOUSE
-                if(state & MOUSE_MENU)
+                if(state & meOSD_MOUSE_MENU)
                     osdDisplayMouseLocate(0) ;
 #endif
                 osdDisplaySetNewFocus(0) ;
                 osdDisplayEvaluate () ;
             }
-            else if((state & MOUSE_MENU)
+            else if((state & meOSD_MOUSE_MENU)
 #if MEOPT_MOUSE
                     && (osdDisplayMouseLocate(0) == 1)
 #endif
@@ -5082,7 +5153,7 @@ menuInteraction (int *retState)
     if(osdCursorState != cursorState)
         showCursor(meTRUE,osdCursorState-cursorState) ;
     TTflush() ;
-    if (state & EXECUTE_MENU)
+    if (state & meOSD_EXECUTE_MENU)
         return mp ;
     return NULL ;
 }
@@ -5540,7 +5611,7 @@ osd (int f, int n)
     /* Argument supplied  - render the menu */
     /* Flag that we're in osd */
     TTallKeys = 1 ;                     /* Enable all keys */
-    if(osdDisplayPush(n,FOCUS_MENU) == NULL)
+    if(osdDisplayPush(n,meOSD_FOCUS_MENU) == NULL)
     {
         TTallKeys = oldAllKeys ;
         return meABORT ;
