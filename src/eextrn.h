@@ -1,7 +1,7 @@
 /****************************************************************************
  * External function definitions
  *
- * Last Modified:       <001002.1052>
+ * Last Modified:       <001012.1740>
  * 
  ****************************************************************************
  * 
@@ -782,10 +782,10 @@ extern	int	pipeCommand APRAM((int f, int n));
 extern  int     doIpipeCommand APRAM((uint8 *comStr, uint8 *path, uint8 *bufName, 
                                   int silent)) ;
 extern	int	ipipeCommand  APRAM((int f, int n)) ;
-extern	int	ipipeWriteString APRAM((int f, int n)) ;
-extern  void    ipipeRead APRAM((IPIPEBUF *ipipe)) ;
+extern	int	ipipeWrite APRAM((int f, int n)) ;
+extern  void    ipipeRead APRAM((meIPIPE *ipipe)) ;
 extern  int     ipipeSetSize APRAM((WINDOW *wp, BUFFER *bp)) ;
-extern	void    ipipeRemove APRAM((IPIPEBUF *ipipe)) ;
+extern	void    ipipeRemove APRAM((meIPIPE *ipipe)) ;
 #ifdef _UNIX
 extern  void    ipipeCheck APRAM((void)) ;
 #endif

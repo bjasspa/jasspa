@@ -29,7 +29,7 @@
 .\"
 .\"***************************************************************************
 .\"
-.Id $Id: m2cmd129.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Id $Id: m2cmd129.2,v 1.2 2000-10-21 17:09:56 jon Exp $
 .Im MicroEmacs command|print|hilight
 .so me.tni
 .TH print-color 2
@@ -45,6 +45,7 @@ print-scheme \- Create a new printer color and font scheme
 .Me $a
 .SH SYNOPSIS
 .na
+.I n
 .B print-color 
 "\fIcol-no\fR"
 "\fIred\fR"
@@ -76,7 +77,11 @@ table  contains  256  entries  indexed  by  \fIcol-no\fR  in the range  0-255.
 re-assignment,  the existing  color  definition is  over-written  with the new
 color definition.
 .PP
-print-scheme creates a new printer scheme which defines how schemes, used by
+If an argument  \fIn\fR of 0 is given to  \fBprint-color\fR  the printer color
+table is reset, removing all currently defined colors.  
+.PP
+\fBprint-scheme\fR  creates a new printer  scheme  which  defines how schemes,
+used by
 .Ht hilight 2
 when rendering a buffer's text, are to be printed. For example key words could
 be  printed  in bold or in blue  etc. It  takes an  identifying  index  number
@@ -95,6 +100,9 @@ is a bit mask where each bit is defined as follows:
 .br
 \fC0x10\fR Enable underlining.
 .RE
+.PP
+If an argument \fIn\fR of 0 is given to \fBprint-scheme\fR  the printer scheme
+table is reset, removing all currently defined printer schemes.
 .SH NOTES
 Printer schemes can be created and altered using the
 .Ht scheme-editor 3

@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m4fil027.4,v 1.1.1.1 2000-07-25 22:04:03 jon Exp $
+.Id $Id: m4fil027.4,v 1.2 2000-10-21 17:10:41 jon Exp $
 .Im MicroEmacs macro;function;miscellaneous
 .so me.tni
 .TH &stat 4
@@ -30,12 +30,16 @@ Returns the size of the file in bytes.
 .IP \fBt\fR
 Returns the type of the file, where values returned are
 .CS
-    0   File does not exist.
-    1   File is a regular file.
-    2   File is a directory.
-    3   File is a URL link (i.e. http://...).
-    4   File is a untouchable system file.
+    X   File does not exist.
+    R   File is a regular file.
+    D   File is a directory.
+    H   File is a http URL link (see note).
+    F   File is an ftp URL file (see note).
+    N   File is an untouchable system file.
 .CE 0
+.IP
+Note that a URL type is determined  from the file name, e.g.  http://...,  and
+its existence is not verified.
 .IP \fBw\fR
 Returns a non-zero value if the user has permission to write to the given file.
 .IP \fBx\fR

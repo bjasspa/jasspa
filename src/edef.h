@@ -1,7 +1,7 @@
 /*
  *	SCCS:		%W%		%G%		%U%
  *
- *	Last Modified :	<001002.1052>
+ *	Last Modified :	<001011.1802>
  *
  *	EDEF:		Global variable definitions for
  *			MicroEMACS 3.2
@@ -171,7 +171,7 @@ extern char    **meEnviron;             /* Our own environment */
 
 #ifdef _IPIPES
 /* Incremental pipe variables */
-extern IPIPEBUF *ipipes ;               /* list of all the current pipes*/
+extern meIPIPE  *ipipes ;               /* list of all the current pipes*/
 extern int       noIpipes ;             /* count of all the cur pipes   */
 #endif
 
@@ -610,7 +610,7 @@ char    **meEnviron = NULL;             /* Our own environment */
 #endif /* ((defined(_UNIX)) && (defined(_NOPUTENV))) */
 
 #ifdef _IPIPES
-IPIPEBUF *ipipes=NULL ;                 /* list of all the current pipes*/
+meIPIPE  *ipipes=NULL ;                 /* list of all the current pipes*/
 int       noIpipes=0 ;                  /* count of all the cur pipes   */
 #endif
 

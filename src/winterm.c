@@ -5,7 +5,7 @@
  * Synopsis      : Win32 platform support
  * Created By    : Jon Green
  * Created       : 21/12/1996
- * Last Modified : <000723.2004>
+ * Last Modified : <001013.0911>
  *
  * Description
  *
@@ -111,6 +111,7 @@
 #include "winterm.h"                    /* Windows terminal definitions */
 #include "wintermr.h"                   /* Windows resource file */
 
+#include <process.h>
 #ifdef _FULLDEBUG
 #include <crtdbg.h>
 #endif
@@ -273,6 +274,8 @@ static uint8 consoleColors[consoleNumColors*3] =
 } ;
 
 /* Function prototypes */
+static void
+WinTermCellResize (int x, int y) ;
 void
 WinTermResize (void);
 HANDLE
@@ -482,7 +485,7 @@ TTopenClientServer (void)
     /* If the server has not been created then create it now */
     if (serverHandle == INVALID_HANDLE_VALUE)
     {
-        IPIPEBUF *ipipe ;
+        meIPIPE *ipipe ;
         BUFFER *bp ;
         meMODE sglobMode ;
         uint8 fname [MAXBUF];
@@ -527,7 +530,7 @@ TTopenClientServer (void)
         meModeClear(globMode,MDWRAP) ;
         meModeClear(globMode,MDUNDO) ;
         if(((bp=bfind("*server*",BFND_CREAT)) == NULL) ||
-           ((ipipe = meMalloc(sizeof(IPIPEBUF))) == NULL))
+           ((ipipe = meMalloc(sizeof(meIPIPE))) == NULL))
         {
             CloseHandle (clientHandle);
             CloseHandle (serverHandle);
@@ -542,8 +545,11 @@ TTopenClientServer (void)
         ipipe->pid = 0 ;
         ipipe->rfd = serverHandle ;
         ipipe->outWfd = clientHandle ;
-        ipipe->hProcess = 0 ;
-        ipipe->dwProcessId = 0 ;
+        ipipe->process = 0 ;
+        ipipe->processId = 0 ;
+        ipipe->thread = NULL ;
+        ipipe->childActive = NULL ;
+        ipipe->threadContinue = NULL ;
         ipipes = ipipe ;
         noIpipes++ ;
         ipipe->bp = bp ;
@@ -597,7 +603,7 @@ TTkillClientServer (void)
 {
     if (serverHandle != INVALID_HANDLE_VALUE)
     {
-        IPIPEBUF *ipipe ;
+        meIPIPE *ipipe ;
         uint8 fname [MAXBUF];
 
         /* get the ipipe node */
@@ -990,24 +996,24 @@ meGetConsoleMessage(MSG *msg)
     }
     else if (ir.EventType == WINDOW_BUFFER_SIZE_EVENT)
     {
-        CONSOLE_SCREEN_BUFFER_INFO Console;
-
         /* in true MS style the console resize stuff is a complete pain! The
          * user can change the buffer size and we get the change, but this is
          * no use to us as we want window size changes. Instead we have to get
          * the current window size and change the screen size to that.
          */
+        CONSOLE_SCREEN_BUFFER_INFO Console;
+        COORD size ;
+        
         GetConsoleScreenBufferInfo(hOutput, &Console);
         /* this should be the window size, not the buffer size
          * as this needs the scroll-bar to use */
-        ConsoleSize.X = Console.srWindow.Right-Console.srWindow.Left+1;
-        ConsoleSize.Y = Console.srWindow.Bottom-Console.srWindow.Top+1;
+        size.X = Console.srWindow.Right-Console.srWindow.Left+1;
+        size.Y = Console.srWindow.Bottom-Console.srWindow.Top+1;
 
-        SetConsoleScreenBufferSize(hOutput, ConsoleSize);
+        SetConsoleScreenBufferSize(hOutput, size);
 
         /* Tell micro-emacs about it */
-        if (ttinitialised)
-            WinTermResize() ;
+        WinTermCellResize (size.X,size.Y) ;
     }
     else if (ir.EventType == FOCUS_EVENT)
     {
@@ -1825,6 +1831,50 @@ mkTempCommName(uint8 *filename, uint8 *basename)
     }
 }
 
+
+#ifdef _IPIPES
+#ifdef USE_BEGINTHREAD
+void
+childActiveThread(void *lpParam)
+#else
+DWORD WINAPI 
+childActiveThread(LPVOID lpParam)
+#endif
+{
+    meIPIPE *ipipe=(meIPIPE *) lpParam ;
+    DWORD bytesRead ;
+    uint8 buff[4] ;
+    
+    do {
+        /* wait for child process activity */
+        if((ReadFile(ipipe->rfd,buff,1,&bytesRead,NULL) != 0) &&
+           (bytesRead > 0))
+        {
+            ipipe->nextChar = buff[0]  ;
+            ipipe->flag |= IPIPE_NEXT_CHAR ;
+        }
+        else
+            ipipe->flag |= IPIPE_CHILD_EXIT ;
+        
+        /* flag the child is active! */
+        if(!SetEvent(ipipe->childActive))
+            break ;
+        
+        /* if there was a problem, the pipe is dead - exit */ 
+        if(ipipe->flag & IPIPE_CHILD_EXIT)
+            break ;
+        
+        /* wait for the main thread to read all available output and
+         * flag for us to start waiting again */
+    } while((WaitForSingleObject(ipipe->threadContinue,INFINITE) == WAIT_OBJECT_0) &&
+            !(ipipe->flag & IPIPE_CHILD_EXIT)) ;
+#ifndef USE_BEGINTHREAD
+    return 0 ;
+#endif
+}
+
+#endif
+
 /*
  * WinLaunchProgram
  * Launches an external program using the DOS shell.
@@ -1869,14 +1919,13 @@ mkTempCommName(uint8 *filename, uint8 *basename)
  * terminate safely. The stdin file is deleted once the command has been
  * executed.
  */
-#ifdef _IPIPES
-IPIPEBUF pipeInfo ;
-#endif
-
 int
-WinLaunchProgram (uint8 *cmd, int flags, uint8 *inFile, uint8 *outFile, int *sysRet)
+WinLaunchProgram (uint8 *cmd, int flags, uint8 *inFile, uint8 *outFile,
+#ifdef _IPIPES
+                  meIPIPE *ipipe,
+#endif
+                  int *sysRet)
 {
-
     static PROCESS_INFORMATION mePInfo = {0} ;
     static STARTUPINFO meSuInfo = {0} ;
     uint8  cmdLine[MAXBUF+102], *cp ;          /* Buffer for the command line */
@@ -2240,11 +2289,41 @@ WinLaunchProgram (uint8 *cmd, int flags, uint8 *inFile, uint8 *outFile, int *sys
         }
         else
         {
-            pipeInfo.pid = 1 ;
-            pipeInfo.rfd = outHdl ;
-            pipeInfo.outWfd = inHdl ;
-            pipeInfo.hProcess = mePInfo.hProcess ;
-            pipeInfo.dwProcessId = mePInfo.dwProcessId ;
+            ipipe->pid = 1 ;
+            ipipe->rfd = outHdl ;
+            ipipe->outWfd = inHdl ;
+            ipipe->process = mePInfo.hProcess ;
+            ipipe->processId = mePInfo.dwProcessId ;
+            
+            /* attempt to create a new thread to wait for activity,
+             * this is because windows pipes are crap and doing a Wait on
+             * them fails. so us poor programmers have to jump through lots
+             * of hoops just to make Bils crap usable, and what really hurts
+             * is that after doing so every non-programmer thinks Bills stuff
+             * is wonderful! Sometimes the world sucks.
+             * Set the childActive event to manual so we can do the global
+             * MsgWait and then after its Set do a SingleWait on each reset
+             * those that are set.
+             */
+            ipipe->childActive = NULL ;
+            ipipe->threadContinue = NULL ;
+#ifdef USE_BEGINTHREAD
+            {
+                unsigned long thread ;
+                if(((ipipe->childActive=CreateEvent(NULL, TRUE, FALSE, NULL)) != 0) &&
+                   ((ipipe->threadContinue=CreateEvent(NULL, FALSE, FALSE, NULL)) != 0) &&
+                   ((thread=_beginthread(childActiveThread,0,ipipe)) != -1))
+                    ipipe->thread = (HANDLE) thread ;
+                else
+                    ipipe->thread = NULL ;
+            }
+#else                
+            if(((ipipe->childActive=CreateEvent(NULL, TRUE, FALSE, NULL)) != 0) &&
+               ((ipipe->threadContinue=CreateEvent(NULL, FALSE, FALSE, NULL)) != 0))
+               ipipe->thread = CreateThread(NULL,0,childActiveThread,ipipe,0,&(ipipe->threadId)) ;
+            else
+                ipipe->thread = NULL ;
+#endif
         }
     }
     else
@@ -2273,10 +2352,37 @@ WinTermCellResize (int x, int y)
     RECT wRect;                         /* Window rectangle */
     RECT cRect;                         /* Client rectangle */
 
+    if ((x < 0) && (y < 0))             /* Wasting out time !! */
+        return;
+
     /* If in console mode, do nothing */
 #ifdef _WINCON
     if (meSystemCfg & meSYSTEM_CONSOLE)
-	return;
+    {
+        /* Always force the original console size upon the user - if ya wanna
+         * change the size, use the window mode! */
+        if(x <= 0)
+            x = eCellMetrics.cellX ;
+        if(y <= 0)
+            y = eCellMetrics.cellY ;
+
+        /* Must re-allocate the screen buffer if the size changed (can only happen via
+         * window properties */
+        if ((x != eCellMetrics.cellX) ||
+            (y != eCellMetrics.cellY))
+        {
+            /* Store the size of the screen */
+            eCellMetrics.cellX = x ;
+            eCellMetrics.cellY = y ;
+
+            /* Re-allocate memory for screen buffer */
+            if (ciScreenBuffer != NULL)
+                free (ciScreenBuffer) ;
+            ciScreenBuffer = (CHAR_INFO *)malloc (sizeof (CHAR_INFO) * x * y);
+            memset ((void *)ciScreenBuffer, 0, sizeof (CHAR_INFO) * x * y);
+        }
+        return ;
+    }
 #endif
 
     /* Get the current screen widths */
@@ -2284,9 +2390,6 @@ WinTermCellResize (int x, int y)
     GetClientRect (ttHwnd, &cRect);
 
     /* Compute the new window widths in terms of pixels */
-    if ((x < 0) && (y < 0))             /* Wasting out time !! */
-        return;
-
     /* Resize the x axis if requested.
      * Compute the desired window width, if a resize is requested. */
     if (x > 0)
@@ -2382,27 +2485,9 @@ WinTermResize (void)
     /* If in console mode... */
     if (meSystemCfg & meSYSTEM_CONSOLE)
     {
-        /* Always force the original console size upon the user - if ya wanna
-         * change the size, use the window mode! */
-        ncol = ConsoleSize.X;
-        nrow = ConsoleSize.Y;
-
-        /* Must re-allocate the screen buffer if the size changed (can only happen via
-         * window properties */
-        if ((ConsoleSize.X != eCellMetrics.cellX) ||
-            (ConsoleSize.Y != eCellMetrics.cellY))
-        {
-
-            /* Store the size of the screen */
-            eCellMetrics.cellX = ncol;
-            eCellMetrics.cellY = nrow;
-
-            /* Re-allocate memory for screen buffer */
-            if (ciScreenBuffer != NULL)
-                free (ciScreenBuffer);
-            ciScreenBuffer = (CHAR_INFO *)malloc (sizeof (CHAR_INFO) * nrow * ncol);
-            memset ((void *)ciScreenBuffer, 0, sizeof (CHAR_INFO) * nrow * ncol);
-        }
+        /* nothing to do for console version */
+        ncol = eCellMetrics.cellX ;
+        nrow = eCellMetrics.cellY ;
     }
     else
 #endif
@@ -3931,7 +4016,7 @@ meGetMessage (MSG *msg)
         static int hTableSize=0 ;
         int ii, jj ;
 #ifdef _IPIPES
-        IPIPEBUF *ipipe, *pp ;
+        meIPIPE *ipipe, *pp ;
         ii = noIpipes ;
 #else
         ii = 0 ;
@@ -3970,23 +4055,29 @@ meGetMessage (MSG *msg)
                 else
 #endif
                 {
-                    if((ipipe->pid > 0) &&
-                       (PeekNamedPipe(ipipe->rfd, (LPVOID) NULL, (DWORD) 0,
-                                      (LPDWORD) NULL, &doRead, (LPDWORD) NULL) == FALSE))
+                    if(ipipe->pid > 0)
                     {
-                        /* If peek failed, wipe our hands of it. Close the process */
-                        if(ipipe->pid > 0)
-                            CloseHandle(ipipe->hProcess);
-                        ipipe->pid = -4 ;
+                        if(ipipe->thread != NULL)
+                        {
+                            if((doRead = (WaitForSingleObject(ipipe->childActive,0) == WAIT_OBJECT_0)))
+                                ResetEvent(ipipe->childActive) ;
+                        }
+                        else if(PeekNamedPipe(ipipe->rfd, (LPVOID) NULL, (DWORD) 0,
+                                              (LPDWORD) NULL, &doRead, (LPDWORD) NULL) == FALSE)
+                        {
+                            /* If peek failed, wipe our hands of it. Close the process */
+                            CloseHandle(ipipe->process);
+                            ipipe->pid = -4 ;
+                        }
                     }
                     if((ipipe->pid < 0) || doRead)
                         ipipeRead(ipipe) ;
                     else if((platformId != VER_PLATFORM_WIN32_NT) &&
                             /* ipipe->bp->b_nwnd &&*/
-                            (!GetExitCodeProcess(ipipe->hProcess,&doRead) || (doRead != STILL_ACTIVE)))
+                            (!GetExitCodeProcess(ipipe->process,&doRead) || (doRead != STILL_ACTIVE)))
                     {
                         /* Win95 fails to spot the exit state some times, this fixes it */
-                        CloseHandle(ipipe->hProcess);
+                        CloseHandle(ipipe->process);
                         ipipe->pid = -4 ;
                         pp = ipipe ;
                     }
@@ -4009,7 +4100,12 @@ meGetMessage (MSG *msg)
 #ifdef _CLIENTSERVER
                 if(ipipe->pid > 0)
 #endif
-                    hTable[ii++] = ipipe->rfd ;
+                {
+                    if(ipipe->thread != NULL)
+                        hTable[ii++] = ipipe->childActive ;
+                    else
+                        hTable[ii++] = ipipe->rfd ;
+                }
                 ipipe = ipipe->next ;
             }
 #endif
@@ -4246,20 +4342,11 @@ TTstart (void)
          * as this needs the scroll-bar to use */
         ConsoleSize.X = Console.srWindow.Right-Console.srWindow.Left+1;
         ConsoleSize.Y = Console.srWindow.Bottom-Console.srWindow.Top+1;
-        TTmcol = ConsoleSize.X ;
-        TTmrow = ConsoleSize.Y ;
-
         /* now fix the window buffer size to this window size to
          * get rid of the horrid scroll bars! */
-        SetConsoleScreenBufferSize(hOutput, ConsoleSize);
-
-        /* And set current screen max row and column */
-        TTnrow = TTmrow - 1;
-        TTncol = TTmcol;
-
-        /* Allocate and clear screen buffer memory */
-        ciScreenBuffer = (CHAR_INFO *)malloc (sizeof (CHAR_INFO) * TTmrow * TTmcol);
-        memset (ciScreenBuffer, 0, sizeof (CHAR_INFO) * TTmrow * TTmcol);
+        SetConsoleScreenBufferSize(hOutput,ConsoleSize);
+        WinTermCellResize (ConsoleSize.X,ConsoleSize.Y) ;
+        WinTermResize () ;
 
         consolePaintArea.Right = consolePaintArea.Bottom = 0 ;
         consolePaintArea.Left = consolePaintArea.Top = (SHORT) 0x7fff ;

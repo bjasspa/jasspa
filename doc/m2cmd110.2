@@ -1,32 +1,153 @@
 .\" -*- nroff -*-
-.Id $Id: m2cmd110.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
-.Im MicroEmacs command|macrodevelop
+.Id $Id: m2cmd110.2,v 1.2 2000-10-21 17:09:51 jon Exp $
+.Im MicroEmacs command|cursor|macrodevelop
 .so me.tni
-.TH goto-window 2
-.XI goto-window - "Restore a saved window to the current window"
-.XI set-window - "Save the current window for restore"
+.TH set-position 2
+.XI set-position - "Store the current position"
+.XI goto-position - "Restore a stored position"
+.XI set-window - "Save the current window for restore (historic)"
+.XI goto-window - "Restore a saved window to the current window (historic)"
 .SH NAME
-.Me "|goto-window"
-goto-window \- Restore a saved window to the current window
+.Me "|set-position"
+set-position \- Store the current position
 .br
-.Me "|set-window"
-set-window \- Save the current window for restore
+.Me "|goto-position"
+goto-position \- Restore a stored position
 .Me $a
 .SH SYNOPSIS
 .na
-.B goto-window
+.I n
+.B set-position
+"\fIlabel\fR"
 .br
-.B set-window
+.I n
+.B goto-position
+"\fIlabel\fR"
 .ad
 .SH DESCRIPTION
-.B goto-window
-restores a previously saved window to being the current window.
+\fBset-position\fR   stores  current   window,  buffer  and  cursor   position
+information  against the given  '\fClabel\fR'.  \fBgoto-position\fR  takes the
+positional information stored against the given '\fClabel\fR' and restores the
+window, buffer and cursor positions from those previously \fBset\fR.
 .PP
-.B set-window
-saves  the  current  window  so that it can be  returned  to via the  command
-.BR goto-window .
+A call to  \fBset-position\fR  with the same label  over-writes  the  previous
+stored  information,  a  call  to  \fBgoto-position\fR   does  not  alter  the
+information and may be restored multiple times.
+.PP
+The numerical argument to \fBset-position\fR is used to define the information
+that is stored in the position item. The argument is intrepreted as a bitmask,
+flagging what information is to be stored. The bit mask is defined as follows:
+.IP \fC0x01\fR
+Store the current window.
+.IP \fC0x02\fR
+Store the current window's horizonal scroll (value of
+.Ht $window-x-scroll 5 ).
+.IP \fC0x04\fR
+Store the current window's current line horizonal scroll (value of
+.Ht $window-xcl-scroll 5 ).
+.IP \fC0x08\fR
+Store the current window's vertical scroll (value of
+.Ht $window-y-scroll 5 ).
+.IP \fC0x10\fR
+Store the current buffer.
+.IP \fC0x20\fR
+Store the current window's current line using an 
+.Hl "alpha mark" set-alpha-mark 2 .
+.IP \fC0x40\fR
+Store the current window's current line number (value of
+.Ht $window-line 5 ).
+.IP \fC0x80\fR
+Store the current window's current column offset (value of
+.Ht $window-col 5 ).
+.PP
+When \fIn\fR is not  specified, the default value is  \fC0x0bf\fR,  i.e. store
+all information required to return to the window, buffer and cursor position.
+.PP
+The  argument  supplied  to  \fBgoto-position\fR  similarly  interpreted  as a
+bitmask,  restoring the positional  information.  When the numerical  argument
+\fIn\fR  is  omitted  the same  default is used when  omitted on the store. On
+restoring a position, information stored during the call to \fBset-position\fR
+which is not  requested  in  corresponding  \fBgoto\fR  is ignored,  similarly
+information requested in a \fBgoto\fR which was not stored in the \fBset\fR is
+also ignored.
+.SH EXAMPLES
+The following example shows the typical use of these commands:
+.Me $emf-scheme
+.CS
+set-position "a"
+    .
+    .
+goto-position "a"
+.CE
+.Me $ehf-scheme
+The  following  example  stores the  current  position at the start of a macro
+sequence, if \fCmy-command\fR is not successful  (\fB$status\fR  equals 0) the
+original position is restored:
+.Me $emf-scheme
+.CS
+set-position "\\x80"
+!force my-command
+!if &equ $status 0
+    ; command failed, return to the original position
+    goto-position "\\x80"
+!endif
+.CE
+.Me $ehf-scheme
+Note '\fC\\x80\fR' is interpreted as the character with the \s-1ASCII\s0 value
+of 0x80 which is a non-alphanumeric  character, this is permitted in macros to
+avoid using alphanumerics.
+.PP
+The  following  example shows how the current  position can be restored  after
+re-reading a file:
+.Me $emf-scheme
+.CS
+0xce set-position
+read-file $buffer-fname @mna
+; a numeric argument of 0xce is not
+; required as this is the default
+goto-position
+.CE 0
+.Me $ehf-scheme
+.SH NOTES
+The  position  item may store and  restore the current  line by using an alpha
+mark  or the  line  number.  The  restrore  strategy  will  determine  what is
+required, as follows:-
+.PP
+The main  benefit from using an alpha mark is that the position is  maintained
+even when the buffer is edited, for example if the  position is stored at line
+10 and a line is  subsequently  inserted at the top of the buffer, if the line
+number  was used then it would  return  back to the 10th line which is the old
+9th line whereas if an alpha mark were used it would  correctly  return to the
+11th line, as expected.
+.PP
+The disadvantage  of using an alpha mark is that it is only associated
+with that buffer. In some cases a position  may need to be restored in another
+buffer  (e.g. when  re-reading  a buffer  the  original  buffer may be deleted
+first), in this situation the buffer line number must be used. 
+.PP
+Commands  \fBset-window\fR  and  \fBgoto-window\fR,  which  simple  stored and
+returned  to  the  current   window,  were  replaced  by   set-position   and
+goto-position in August 2000. The following macro  implementations  can be used
+as a replacement:
+.Me $emf-scheme
+.CS
+define-macro set-window
+    1 set-position "\\x80"
+!emacro
+
+define-macro goto-window
+    goto-position "\\x80"
+!emacro
+.CE 0
+.Me $ehf-scheme
 .SH "SEE ALSO"
 .na
-.Ht find-buffer 2 .
+.Ht set-alpha-mark 2 ,
+.Ht find-buffer 2 ,
+.Ht $window-x-scroll 5 ,
+.Ht $window-xcl-scroll 5 ,
+.Ht $window-y-scroll 5 ,
+.Ht $window-line 5 ,
+.Ht $window-col 5 .
 .ad
 .FH

@@ -7,10 +7,249 @@
     hilight .hilight.gdb 2 "Source file is more recent" .scheme.error
     hilight .hilight.gdb 2 "(dbx)"   .scheme.keyword
 !endif
-define-macro ipipe-break
-    ipipe-write "\CC"
-!emacro
 
+0 define-macro ipipe-write-prompt
+    goto-alpha-mark "I"
+    set-variable #l9 1
+    set-variable #l0 $buffer-bname
+    set-position "\x83"
+    set-variable #l1 @1
+    !if &not .ishell.mode
+        set-variable #l2 $window-col
+        !force -1 search-backward .ishell.prompt
+        !if $status
+            2 show-region
+            set-variable .ishell.mode $window-col
+            set-mark
+            end-of-line
+            kill-region
+            !force find-buffer &cat #l0 "-hist"
+            1 buffer-mode "hide"
+            !force find-buffer &cat #l0 "-cmd"
+            1 buffer-mode "hide"
+            beginning-of-buffer
+            yank
+            -1 yank
+            set-mark
+            end-of-buffer
+            kill-region
+            -1 yank
+            !force set-variable $window-col &sub #l2 .ishell.mode
+            goto-position "\x83"
+        !else
+            set-variable $window-col #l2
+        !endif
+    !endif
+    !if .ishell.mode
+        !force find-buffer &cat #l0 "-cmd"
+        !if &seq #l1 "\CJ"
+            ; execute the current line
+            set-variable #l3 @wl
+            !if &set #l1 &seq &lef #l3 1 "!"
+                ; implement the unix style !com...
+                !if &set #l4 &sin " " #l3
+                !elif &set #l4 &sin "\t" #l3
+                !else
+                    set-variable #l4 &add &len #l3 1
+                !endif
+                set-variable #l5 &mid #l3 1 &sub #l4 2
+                !if &seq #l5 "!"
+                    set-variable #l5 ""
+                !else
+                    str-to-regex #l5
+                !endif
+                !force find-buffer &cat #l0 "-hist"
+                end-of-buffer
+                backward-char
+                !force search-backward &cat "^" #l5
+                !if &not $status
+                    goto-position "\x83"
+                    set-variable #l6 @wl
+                    end-of-line
+                    insert-string &spr "\nError - event not found: %s\n%s" #l5 &lef #l6 .ishell.mode
+                    set-alpha-mark "I"
+                    set-variable .ishell.mode 0
+                    !return
+                !endif
+                set-variable #l3 &cat @wl &rig #l3 &sub #l4 1
+                goto-position "\x83"
+                end-of-line
+                insert-newline
+                set-position "\x83"
+            !endif
+            !if &band $system 0x100
+                !if &xis #l3 "[ \t]*[a-z]:\\([ \t].*\\)?"
+                    set-variable #l4 &slo &lef &trb #l3 1
+                    !if &exi &cat ":dir-" #l4
+                        set-variable #l4 &ind &cat ":dir-" #l4
+                    !else
+                        set-variable #l4 &cat #l4 ":"
+                    !endif
+                    goto-position "\x83"
+                    set-variable #l4 &stat "a" &cat $buffer-fname #l4
+                    !if &seq &stat "t" #l4 "D"
+                        set-variable #l5 $buffer-fname
+                        set-variable $buffer-fname #l4
+                        !force find-buffer &cat #l0 "-cmd"
+                        set-variable $buffer-fname #l5
+                        ; must set the old one as well - the starting path is not 
+                        ; automatically stored
+                        !if &seq &mid #l5 1 1 ":"
+                            set-variable &ind &cat ":dir-" &slo &lef #l5 1 #l5
+                        !endif
+                    !endif
+                !endif
+            !endif
+            set-variable #l2 #l3
+            !if &xse #l3 "[ \t]*cdd?\\([ \t].*\\)?"
+                set-variable #l4 &trb &rig #l3 &sin "d" #l3
+                goto-position "\x83"
+                set-variable #l4 &stat "a" &cat $buffer-fname #l4
+                !if &seq &stat "t" #l4 "D"
+                    set-variable #l5 $buffer-fname
+                    set-variable $buffer-fname #l4
+                    !force find-buffer &cat #l0 "-cmd"
+                    set-variable $buffer-fname #l5
+                    !if &band $system 0x100
+                        ; must set the old one as well - the starting path is not 
+                        ; automatically stored
+                        !if &seq &mid #l5 1 1 ":"
+                            set-variable &ind &cat ":dir-" &slo &lef #l5 1 #l5
+                        !endif
+                        !if &seq &mid #l4 1 1 ":"
+                            set-variable &ind &cat ":dir-" &slo &lef #l4 1 #l4
+                        !endif
+                        ; ensure '/' are '\\'
+                        var-str-sub #l4 "/" "\\"
+                        set-variable #l2 &cat "cd " #l4
+                        set-variable #l3 #l2
+                        !if &and &seq &mid #l4 1 1 ":" &not &seq &lef #l4 1 &lef #l5 1
+                            ; we're changing drives as well! force this as some shell
+                            ; use cdd to do this automatically - inconsistent
+                            set-variable #l3 &spr "%s\r\n%s" &lef #l4 2 #l3
+                        !endif
+                    !endif
+                !endif
+            !endif
+            !if &not &seq #l2 ""
+                !force find-buffer &cat #l0 "-hist"
+                end-of-buffer
+                insert-string #l2
+                forward-line
+            !endif
+            goto-position "\x83"
+            !if &not #l1
+                set-variable $window-col .ishell.mode
+                set-mark
+                end-of-line
+                kill-region
+                -1 yank
+            !endif
+            set-alpha-mark "I"
+            set-variable .ishell.mode 0
+            ipipe-write &spr "%s\r\n" #l3
+        !elif &seq #l1 "\CI"
+            ; tab filename completion
+            !if &sin @wc " \t\n"
+                set-variable #l1 $window-col
+                !force backward-char
+                !if &not &sin @wc " \t\n"
+                    !goto complete-file
+                !endif
+                set-variable $window-col #l1
+                set-variable #l2 ""
+            !else
+*complete-file
+                set-variable #l2 &rsin " " &lef @wl $window-col
+                !if &not &set #l1 &sin " " &rig @wl $window-col
+                    set-variable #l1 &len &rig @wl $window-col
+                !endif
+                set-variable #l1 &add $window-col #l1
+                set-variable #l2 &mid @wl #l2 &sub #l1 #l2
+                set-variable $window-col #l1
+            !endif
+            goto-position "\x83"
+            !if &band $system 0x100
+                ; on windows change '\' to '/'
+                var-str-sub #l2 "\\" "/"
+            !endif
+            set-variable #l3 &stat "a" &cat $buffer-fname #l2
+            !force !force set-variable #l4 @ml61 "Filename" #l3
+            !if &not $status
+                set-variable $window-col &add .ishell.mode #l1
+                set-alpha-mark "I"
+                !return
+            !endif
+            set-variable #l5 &rsin "/" #l3
+            !if &seq &lef #l3 #l5 &lef #l4 #l5
+                ; base path is the same, replace with original
+                set-variable #l4 &cat &lef #l2 &rsin "/" #l2 &rig #l4 #l5
+            !endif
+            !if &band $system 0x100
+                ; on windows change '/' to '\'
+                var-str-sub #l4 "/" "\\"
+            !endif
+            !force find-buffer &cat #l0 "-cmd"
+            &len #l2 backward-delete-char
+            -1 yank
+            insert-string #l4
+            !goto update-cmdline
+        !elif &sin #l1 "\CN\CP"
+            ; next/prev history
+            set-variable #l3 @wl
+            !force find-buffer &cat #l0 "-hist"
+            !if &seq @wc ""
+                set-variable .ishell.cmd #l3
+            !endif
+            !force !force execute-string #l1
+            set-variable #l3 @wl
+            !if &seq @wc ""
+                set-variable #l3 .ishell.cmd 
+            !endif
+            !force find-buffer &cat #l0 "-cmd"
+            beginning-of-buffer
+            insert-string #l3
+            set-mark
+            end-of-buffer
+            kill-region
+            -1 yank
+            !goto update-cmdline
+        !else
+            ; edit the current line
+            !if &seq #l1 "\CH"
+                !force !force backward-delete-char
+            !else
+                var-str-sub #l1 "\e" "\E"
+                !force !force execute-string #l1
+            !endif
+            set-variable #l9 $status
+*update-cmdline
+            !if &gre $window-line 1
+                beginning-of-buffer
+                end-of-line
+                set-variable #l9 0
+            !endif
+            set-variable #l2 $window-col
+            set-variable #l3 @wl
+            set-variable $window-col #l2
+            goto-position "\x83"
+            set-variable $window-col .ishell.mode
+            set-mark
+            end-of-line
+            kill-region
+            -1 yank
+            insert-string #l3
+            set-variable $window-col &add .ishell.mode #l2
+            ml-write ""
+            set-alpha-mark "I"
+        !endif
+    !else
+        ipipe-write #l1
+    !endif
+    !if &not #l9
+        !bell
+    !endif
+!emacro
 0 define-macro ipipe-minoutput
     set-variable #l2 @cck
     set-variable #l3 @cc
@@ -22,59 +261,68 @@ define-macro ipipe-break
         insert-string @cc
         !return
     !elif &les &len @cc 2
-        goto-alpha-mark "I"
-        ipipe-write @cc
+        set-variable #l1 @cc
     !elif &set #l0 &lfi "|tab|backward-delete-char|newline|" #l3
-        goto-alpha-mark "I"
-        ipipe-write &lget "|\t|\b|\CJ|" #l0
+        set-variable #l1 &lget "|\t|\b|\CJ|" #l0
     !elif &set #l0 &lfi "|backspace|" #l2
-        goto-alpha-mark "I"
-        ipipe-write &lget "|\b|" #l0
+        set-variable #l1 &lget "|\b|" #l0
     !elif &seq "quote-char" #l3
-        goto-alpha-mark "I"
         ml-write "Quote: "
-        ipipe-write @cqk
+        set-variable #l1 @cqk
     !else
 *exec-lbl
         !if &seq #l3 "ERROR"
             ml-write &spr "[Key not bound \"%s\"]" #l2
             !abort
-        !else
-            execute-line &spr "!nma %s %s" &cond @? @# "" #l3
         !endif
+        execute-line &spr "!nma %s %s" &cond @? @# "" #l3
+        !return
+    !endif
+    !if &exi .ishell.prompt
+        ipipe-write-prompt #l1
+    !else
+        goto-alpha-mark "I"
+        !if &band $system 0x100
+            var-str-sub #l1 "\n" "\r\n"
+        !endif
+        ipipe-write #l1
     !endif
 !emacro
 
 0 define-macro ipipe-output 
     set-variable #l2 @cck
     set-variable #l3 @cc
-    !if &les &len @cc 2
-        goto-alpha-mark "I"
-        ipipe-write @cc
-    !elif &and &band $system 0x100 &seq #l3 "newline" 
+    !if &les &len #l3 2
+        set-variable #l1 #l3
+;    !elif &and &band $system 0x100 &seq #l3 "newline" 
         ; For Windows we need a \r\n sequence - over-ride the default.
-        ipipe-write "\CM\CJ"
+;        set-variable #l1 "\CM\CJ"
     !elif &set #l0 &lfi "|tab|backward-delete-char|newline|beginning-of-line|backward-char|forward-delete-char|end-of-line|forward-char|kill-line|recenter|forward-line|backward-line|expand-abbrev|forward-word|backward-word|" #l3
-        goto-alpha-mark "I"
-        ipipe-write &lget "|\t|\b|\CJ|\CA|\CB|\CD|\CE|\CF|\CK|\CL|\CN|\CP|\e\e|\ef|\eb|" #l0
+        set-variable #l1 &lget "|\CI|\CH|\CJ|\CA|\CB|\CD|\CE|\CF|\CK|\CL|\CN|\CP|\e\e|\ef|\eb|" #l0
     !elif &set #l0 &lfi "|backspace|" #l2
-        goto-alpha-mark "I"
-        ipipe-write &lget "|\b|" #l0
+        set-variable #l1 &lget "|\b|" #l0
     !elif &seq "yank" #l3
-        goto-alpha-mark "I"
-        ipipe-write @y
+        set-variable #l1 @y
     !elif &seq "quote-char" #l3
-        goto-alpha-mark "I"
         ml-write "Quote: "
-        ipipe-write @cqk
+        set-variable #l1 @cqk
     !elif &and &seq "mouse-event" #l3 &sin "yank" &reg "history/mouse" #l2 ""
-        goto-alpha-mark "I"
-        ipipe-write @y
+        set-variable #l1 @y
     !elif &seq #l3 "ERROR"
         ml-write &spr "[Key not bound \"%s\"]" #l2
         !abort
     !else
         execute-line &spr "!nma %s %s" &cond @? @# "" #l3
+        !return
+    !endif
+    !if &exi .ishell.prompt
+        ipipe-write-prompt #l1
+    !else
+        goto-alpha-mark "I"
+        !if &band $system 0x100
+            var-str-sub #l1 "\n" "\r\n"
+        !endif
+        ipipe-write #l1
     !endif
 !emacro 
 
@@ -145,7 +393,7 @@ define-macro fhook-ipipe
     set-variable $buffer-mask "luh1"
     set-variable $buffer-fhook "fhook-ipipe"
     buffer-bind-key ipipe-kill "C-c C-k"
-    buffer-bind-key ipipe-break "C-c C-c"
+    2 buffer-bind-key ipipe-kill "C-c C-c"
     buffer-bind-key ipipe-rerun "C-return"
     buffer-bind-key ipipe-rerun "C-j"
     !if &seq $buffer-bname "*shell*"
@@ -209,6 +457,7 @@ define-macro ishell
     !endif
     popup-window "*shell*"
 !emacro
+set-variable .ishell.mode 0
 
 0 define-macro gdb-dbx-reset-line
     set-variable #l0 $buffer-bname

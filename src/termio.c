@@ -5,7 +5,7 @@
  *  Synopsis      : Generic terminal support routines
  *  Created By    : Steven Phillips
  *  Created       : 1993
- *  Last Modified : <000515.1344>
+ *  Last Modified : <001006.1813>
  *
  *  Description
  *     Many generic routines to support timers, key input and some output.
@@ -124,7 +124,9 @@ TTbell(void)
     if(kbdmode == PLAY)
     {
         kbdmode = STOP ;
-        mlwrite(0,(uint8 *)"Macro terminated by ringing the bell") ;
+        if(meRegCurr->force < 2)
+            /* a double !force says \CG is okay so don't complain */
+            mlwrite(0,(uint8 *)"Macro terminated by ringing the bell") ;
     }
     TTinflush() ;
     TTdoBell(1) ;

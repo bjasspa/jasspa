@@ -200,7 +200,7 @@ meShell(int f, int n)
     register char *cp;
 #endif
 #ifdef _WIN32
-    return (WinLaunchProgram (NULL, LAUNCH_SHELL, NULL, NULL, NULL));
+    return (WinLaunchProgram (NULL, LAUNCH_SHELL, NULL, NULL, NULL, NULL));
 #endif
 #ifdef _DOS
     TTclose();
@@ -281,7 +281,7 @@ doShellCommand(uint8 *cmdstr)
     cd = (meStrcmp(path,curdir) && (meChdir(path) != -1)) ;
 
 #ifdef _WIN32
-    ss = WinLaunchProgram(cmdstr,LAUNCH_SYSTEM, NULL, NULL, &systemRet) ;
+    ss = WinLaunchProgram(cmdstr,LAUNCH_SYSTEM, NULL, NULL, NULL, &systemRet) ;
 #else
 #ifdef _UNIX
     /* if no data is piped in then pipe in /dev/null */
@@ -340,43 +340,146 @@ meShellCommand(int f, int n)
 #ifdef _WIN32
 
 static BOOL CALLBACK
-closeChildConsole(HWND hwnd, long lipipe)
+ipipeFindChildWindow(HWND hwnd, long lipipe)
 {
     DWORD process ;
-    IPIPEBUF *ipipe = (IPIPEBUF *)(lipipe);
+    meIPIPE *ipipe = (meIPIPE *)(lipipe);
 
     GetWindowThreadProcessId (hwnd,&process);
-    if (process == ipipe->dwProcessId)
+    if (process == ipipe->processId)
     {
-        PostMessage(hwnd,WM_CLOSE,999,0) ;
-        ipipe->pid = -3 ;
+        ipipe->childWnd = hwnd ;
         return FALSE ;
     }
     /* keep looking */
     return TRUE ;
 }
+
+static HWND
+ipipeGetChildWindow(meIPIPE *ipipe)
+{
+    ipipe->childWnd = NULL ;
+    EnumWindows(ipipeFindChildWindow,(long) ipipe) ;
+    return ipipe->childWnd ;
+}
 #endif
 
+static void
+ipipeWriteString(meIPIPE *ipipe, int n, uint8 *str)
+{
+    while(n--)
+    {
+#ifdef _WIN32
+        DWORD written ;
+        WriteFile(ipipe->outWfd,str,meStrlen(str),&written,NULL) ;
+#else
+        write(ipipe->outWfd,str,meStrlen(str)) ;
+#endif
+    }
+}
 
 static void
-ipipeKillBuf(IPIPEBUF *ipipe)
+ipipeKillBuf(meIPIPE *ipipe, int type)
 {
 
     if(ipipe->pid > 0)
     {
+        if(type == 2)
+        {
+#ifdef _WIN32
+            {
+                /* on windows surprise surprise writing C-c to stdin does not work very
+                 * well, it does not have the same effect. There are a few extra things
+                 * we can do and hte combination of doing them all does seem to have
+                 * the right effect - but this may be very machine dependant.
+                 * 
+                 * One thing we can do is make the child process window have the 
+                 * current input focus and then send the key strokes down to it.
+                 * But to do this we must have a foreground window and we must attatch
+                 * the thread to the current thread so we can steal the current window.
+                 */
+                HWND  foreWnd, chldWnd ;
+                DWORD foreThread, chldThread ;
+                BOOL success=0 ;
+                
+                if(((foreWnd=GetForegroundWindow()) != NULL) &&
+                   ((chldWnd=ipipeGetChildWindow(ipipe)) != NULL))
+                {
+                    foreThread = GetWindowThreadProcessId(foreWnd,NULL) ;
+                    if((GetCurrentThreadId() == foreThread) || 
+                       !AttachThreadInput(GetCurrentThreadId(),foreThread,TRUE))
+                        foreThread = 0 ;
+                    
+                    chldThread = ipipe->processId ;
+                    if((GetCurrentThreadId() == chldThread) || 
+                       !AttachThreadInput(GetCurrentThreadId(),chldThread,TRUE))
+                        chldThread = 0;
+                    
+                    /* Set the fore window to the child */
+                    if((success=SetForegroundWindow(chldWnd)) != 0)
+                    {
+                        /* success, now we can start sending the string down */
+                        BYTE scanCodeCtrl, scanCodeC ;
+                        
+                        scanCodeCtrl = (BYTE) MapVirtualKey(VK_CONTROL, 0);
+                        scanCodeC = (BYTE) MapVirtualKey('C', 0);
+                        keybd_event(VK_CONTROL,scanCodeCtrl,0,0) ;
+                        keybd_event('C',scanCodeC,0,0) ;
+                        keybd_event('C',scanCodeC,KEYEVENTF_KEYUP,0) ;
+                        keybd_event(VK_CONTROL,scanCodeCtrl,KEYEVENTF_KEYUP,0) ;
+                        
+                        /* call halt here and let the other process get the keys -
+                         * the length of the sleep is a fine balance, too small and the
+                         * child process will not get the Ctrl-C, but if its to large the
+                         * user could press a key, entering a char or changing the state
+                         * of the Ctrl or Shift keys - these events should go to the original
+                         * foreWnd so that app will get very confused! So the sleep should
+                         * be as small as possible
+                         */
+                        Sleep(50) ;
+                        
+                        /* Swap back to the original fore window */
+                        SetForegroundWindow(foreWnd);
+                        
+                    }
+                    /* Detach the threads */
+                    if(foreThread)
+                        AttachThreadInput(GetCurrentThreadId(),foreThread,FALSE);
+                    if(chldThread)
+                        AttachThreadInput(GetCurrentThreadId(),chldThread,FALSE);
+                }
+            
+                /* one other thing we can do is to send a Ctrl-C event if we are trying
+                 * to write a C-c (0x03), but we will write the string as well */
+                GenerateConsoleCtrlEvent(CTRL_C_EVENT,ipipe->processId) ;
+                
+                /* if we've succeeded in sending the Ctrl-C keys and the event
+                 * then quit now - if they don't work, nothing will */
+                if(success)
+                    return ;
+            }
+#endif
+            /* send a control-C signal */
+            ipipeWriteString(ipipe,1,(uint8 *) "\x03") ;
+            return ;
+        }
 #ifdef _WIN32
         /* first try to kill by sending a CLOSE message to the console */
-        if(ipipe->dwProcessId != 0)
-            EnumWindows(closeChildConsole,(long) ipipe) ;
+        if((ipipe->processId != 0) &&
+           (ipipeGetChildWindow(ipipe) != NULL))
+        {
+            PostMessage(ipipe->childWnd,WM_CLOSE,999,0) ;
+            ipipe->pid = -3 ;
+        }
         if(ipipe->pid > 0)
         {
             /* cannot terminate via the console - we can only Terminate */
-            TerminateProcess(ipipe->hProcess,999) ;
+            TerminateProcess(ipipe->process,999) ;
             /* On windows theres no child signal, so flag as killed */
             ipipe->pid = -5 ;
         }
         /* Close the process */
-        CloseHandle(ipipe->hProcess);
+        CloseHandle(ipipe->process);
 #else
         kill(0-ipipe->pid,SIGKILL) ;
 #endif
@@ -386,7 +489,7 @@ ipipeKillBuf(IPIPEBUF *ipipe)
 int
 ipipeKill(int f, int n)
 {
-    IPIPEBUF *ipipe ;
+    meIPIPE *ipipe ;
 
     if(!meModeTest(curbp->b_mode,MDPIPE))
     {
@@ -396,24 +499,24 @@ ipipeKill(int f, int n)
     ipipe = ipipes ;
     while(ipipe->bp != curbp)
         ipipe = ipipe->next ;
-    ipipeKillBuf(ipipe) ;
+    ipipeKillBuf(ipipe,n) ;
     return TRUE ;
 }
 
 void
-ipipeRemove(IPIPEBUF *ipipe)
+ipipeRemove(meIPIPE *ipipe)
 {
 #ifndef _WIN32
     meSigHold() ;
 #endif
     if(ipipe->pid > 0)
-        ipipeKillBuf(ipipe) ;
+        ipipeKillBuf(ipipe,1) ;
 
     if(ipipe == ipipes)
         ipipes = ipipe->next ;
     else
     {
-        IPIPEBUF *pp ;
+        meIPIPE *pp ;
 
         pp = ipipes ;
             while(pp->next != ipipe)
@@ -427,6 +530,27 @@ ipipeRemove(IPIPEBUF *ipipe)
         meModeClear(ipipe->bp->b_mode,MDLOCK) ;
     }
 #ifdef _WIN32
+    /* if we're using a child activity thread the close it down */
+    if(ipipe->thread != NULL)
+    {
+        DWORD exitCode ;
+
+        if(GetExitCodeThread(ipipe->thread,&exitCode) && (exitCode == STILL_ACTIVE))
+        {
+            /* get the thread going again */
+            ipipe->flag |= IPIPE_CHILD_EXIT ;
+            SetEvent(ipipe->threadContinue) ;
+            if(WaitForSingleObject(ipipe->thread,200) != WAIT_OBJECT_0)
+                TerminateThread(ipipe->thread,0) ;
+	}
+#ifndef USE_BEGINTHREAD
+        CloseHandle (ipipe->thread);
+#endif
+    }
+    if(ipipe->threadContinue != NULL)
+        CloseHandle(ipipe->threadContinue) ;
+    if(ipipe->childActive != NULL)
+        CloseHandle(ipipe->childActive) ;
     CloseHandle(ipipe->rfd) ;
     CloseHandle(ipipe->outWfd) ;
 #else
@@ -441,7 +565,7 @@ ipipeRemove(IPIPEBUF *ipipe)
 #ifdef _WIN32
 
 static int
-readFromPipe(IPIPEBUF *ipipe, int nbytes, uint8 *buff)
+readFromPipe(meIPIPE *ipipe, int nbytes, uint8 *buff)
 {
     DWORD  bytesRead ;
 
@@ -460,6 +584,18 @@ readFromPipe(IPIPEBUF *ipipe, int nbytes, uint8 *buff)
         return (int) bytesRead ;
     }
 #endif
+    if(ipipe->flag & IPIPE_CHILD_EXIT)
+    {
+        CloseHandle(ipipe->process);
+        ipipe->pid = -4 ;
+        return ipipe->pid ;
+    }
+    if(ipipe->flag & IPIPE_NEXT_CHAR)
+    {
+        buff[0] = ipipe->nextChar ;
+        ipipe->flag &= ~IPIPE_NEXT_CHAR ;
+        return 1 ;
+    }        
     /* Must peek on a pipe cos if we try to read too many this will fail */
     if((PeekNamedPipe(ipipe->rfd, (LPVOID) NULL, (DWORD) 0,
                       (LPDWORD) NULL, &bytesRead, (LPDWORD) NULL) != TRUE) ||
@@ -483,7 +619,7 @@ readFromPipe(IPIPEBUF *ipipe, int nbytes, uint8 *buff)
 #include <netinet/in.h>
 
 static int
-readFromPipe(IPIPEBUF *ipipe, int nbytes, uint8 *buff)
+readFromPipe(meIPIPE *ipipe, int nbytes, uint8 *buff)
 {
     int ii ;
     if(ipipe->pid == 0)
@@ -551,10 +687,8 @@ do {                                                                         \
 } while(0)
 
 
-#define IPIPE_OVERWRITE  0x01
-
 void
-ipipeRead(IPIPEBUF *ipipe)
+ipipeRead(meIPIPE *ipipe)
 {
     BUFFER *bp=ipipe->bp ;
     LINE   *lp_old ;
@@ -972,8 +1106,15 @@ cant_handle_this:
         ipipe->rfd = ipipe->outWfd ;
 #endif
 #endif
+    
     if((ii=ipipe->pid) < 0)
         ipipeRemove(ipipe) ;
+#ifdef _WIN32
+    else if(ipipe->thread != NULL)
+        /* get the thread going again */
+        SetEvent(ipipe->threadContinue) ;
+#endif
+
 #if ((defined (_UNIX)) && (defined (_POSIX_SIGNALS)))
     /* as soon as the BLOCK of sigchld is removed, if the process has finished
      * while reading then it will get registered now, this fact has to be taken
@@ -983,6 +1124,7 @@ cant_handle_this:
      */
     meSigRelease() ;
 #endif
+    
     alphaMarkSet(bp,'I',bp->b_dotp,bp->b_doto,1) ;
     if(bp->ipipeFunc >= 0)
         /* If the process has ended the argument will be 0, else 1 */
@@ -992,37 +1134,30 @@ cant_handle_this:
 
 
 int
-ipipeWriteString(int f, int n)
+ipipeWrite(int f, int n)
 {
-    IPIPEBUF *ipipe ;
-    int       ss ;
-    uint8     buff[MAXBUF];	/* string to add */
+    int      ss ;
+    uint8    buff[MAXBUF];	/* string to add */
+    meIPIPE *ipipe ;
 
     if(!meModeTest(curbp->b_mode,MDPIPE))
         return mlwrite(MWABORT,(uint8 *)"[Not an ipipe-buffer]") ;
     /* ask for string to insert */
     if((ss=mlreply((uint8 *)"String", 0, 0, buff, MAXBUF)) != TRUE)
         return ss ;
-
+    
     ipipe = ipipes ;
     while(ipipe->bp != curbp)
         ipipe = ipipe->next ;
-    while(n--)
-    {
-#ifdef _WIN32
-        DWORD written ;
-        WriteFile(ipipe->outWfd,buff,meStrlen(buff),&written,NULL) ;
-#else
-        write(ipipe->outWfd,buff,meStrlen(buff)) ;
-#endif
-    }
+    ipipeWriteString(ipipe,n,buff) ;
+
     return TRUE ;
 }
 
 int
 ipipeSetSize(WINDOW *wp, BUFFER *bp)
 {
-    IPIPEBUF *ipipe ;
+    meIPIPE *ipipe ;
 
     ipipe = ipipes ;
     while(ipipe->bp != bp)
@@ -1246,16 +1381,16 @@ childSetupTty(void)
 int
 doIpipeCommand(uint8 *comStr, uint8 *path, uint8 *bufName, int flags)
 {
-    IPIPEBUF    *ipipe ;
-    BUFFER      *bp ;
-    uint8        line[MAXBUF] ;
-    int          cd ;
+    meIPIPE    *ipipe ;
+    BUFFER     *bp ;
+    uint8       line[MAXBUF] ;
+    int         cd ;
 #ifdef _UNIX
-    int          fds[2], outFds[2], ptyFp ;
-    int          pid;                   /* Child process identity */
+    int         fds[2], outFds[2], ptyFp ;
+    int         pid;                   /* Child process identity */
 #endif
 #ifdef _WIN32
-    int          rr ;
+    int         rr ;
 #endif
     /* get or create the command buffer */
     if(((bp=bfind(bufName,0)) != NULL) && meModeTest(bp->b_mode,MDPIPE))
@@ -1264,14 +1399,17 @@ doIpipeCommand(uint8 *comStr, uint8 *path, uint8 *bufName, int flags)
         if(mlyesno(line) != TRUE)
             return FALSE ;
     }
+    if((ipipe = meMalloc(sizeof(meIPIPE))) == NULL)
+        return FALSE ;
     cd = (meStrcmp(path,curdir) && (meChdir(path) != -1)) ;
 
 #ifdef _WIN32
     /* Launch the ipipe */
-    if((rr=WinLaunchProgram(comStr,(LAUNCH_IPIPE|flags), NULL, NULL, NULL)) != TRUE)
+    if((rr=WinLaunchProgram(comStr,(LAUNCH_IPIPE|flags), NULL, NULL, ipipe, NULL)) != TRUE)
     {
         if(cd)
             meChdir(curdir) ;
+        free(ipipe) ;
         if(rr == ABORT)
             /* returns ABORT when trying to IPIPE a DOS app on win95 (it doesn't work)
              * Try doPipe instead */
@@ -1514,30 +1652,15 @@ doIpipeCommand(uint8 *comStr, uint8 *path, uint8 *bufName, int flags)
 #endif
         exit(1) ;                       /* Should never get here unless we fail */
     }
-#endif /* _WIN32 */
-    if(cd)
-        meChdir(curdir) ;
-    if((ipipe = meMalloc(sizeof(IPIPEBUF))) == NULL)
-    {
-#ifdef _UNIX
-        meSigRelease ();
-#endif /*_UNIX */
-        return FALSE ;
-    }
-#ifdef _WIN32
-    {
-        extern IPIPEBUF pipeInfo ;
-        /* WinLaunch has a static IPIPEBUF in which it puts all
-         * the required info, copy it.
-         */
-        memcpy(ipipe,&pipeInfo,sizeof(IPIPEBUF)) ;
-    }
-#else
     ipipe->pid = pid ;
     ipipe->rfd = fds[0] ;
     ipipe->outWfd = outFds[1] ;
 #endif /* _WIN32 */
-    /* Link in hte ipipe */
+    
+    if(cd)
+        meChdir(curdir) ;
+    
+    /* Link in the ipipe */
     ipipe->next = ipipes ;
     ipipes = ipipe ;
     noIpipes++ ;
@@ -1708,7 +1831,7 @@ doPipeCommand(uint8 *comStr, uint8 *path, uint8 *bufName, int flags)
 #ifdef _WIN32
     {
         int ss ;
-        ss = WinLaunchProgram(comStr,(LAUNCH_PIPE|flags), NULL, filnam, NULL) ;
+        ss = WinLaunchProgram(comStr,(LAUNCH_PIPE|flags), NULL, filnam, NULL, NULL) ;
         if(cd)
             meChdir(curdir) ;
         if(ss == FALSE)
@@ -1863,7 +1986,7 @@ meFilter(int f, int n)
     s = TRUE;
 #endif
 #ifdef _WIN32
-    s = WinLaunchProgram(line,LAUNCH_FILTER,filnam1,filnam2,NULL);
+    s = WinLaunchProgram(line,LAUNCH_FILTER,filnam1,filnam2,NULL,NULL);
     sgarbf = TRUE;
 #endif
 #ifdef _UNIX

@@ -1,6 +1,6 @@
 ;   Highlight mode NROFF
 ;
-;   Last Modified : <000623.2120>
+;   Last Modified : <001018.0542>
 ;
 ; Copyright (c) 1993-2000 JASSPA
 ;
@@ -55,8 +55,10 @@
     hilight .hilight.nroff 0   "\\\\f3"                .scheme.variable
     hilight .hilight.nroff 0   "\\\\fC"                .scheme.variable
     hilight .hilight.nroff 0   "\\\\-"                 .scheme.variable
-    hilight .hilight.nroff 0   "\\\\&"                 .scheme.comment
-    hilight .hilight.nroff 0   "\\\\|"                 .scheme.comment
+    hilight .hilight.nroff 0   "\\\\&"                 .scheme.variable
+    hilight .hilight.nroff 0   "\\\\|"                 .scheme.variable
+    hilight .hilight.nroff 0   "\\\\\\\\"              .scheme.variable
+    hilight .hilight.nroff 0   "\\\\ "                 .scheme.variable
     hilight .hilight.nroff 0   "\\\\\\*\\w"            .scheme.variable
     hilight .hilight.nroff 0   "\\\\\\*(\\w\\w"        .scheme.variable
     hilight .hilight.nroff 0x200 "[.']"

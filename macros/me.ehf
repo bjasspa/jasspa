@@ -283,9 +283,13 @@ Miscellaneous Information
     lslmforward-word(2)le (cDesc fcA) Move the cursor to the next word 
     lslmgoto-line(2)le (cDesc gcA) Move the cursor to specified line 
     lslmgoto-matching-fence(2)le (cDesc C-fcA) Move the cursor to matching fence 
+    lslmgoto-position(2)le Restore a stored position 
+    lslmgoto-window(2)le Restore a saved window to the current window (historic) 
     lslmlist-commands(2)le (cDC-h ccA) List available commands 
     lslmlist-variables(2)le (cDC-h vcA) List defined variables 
     lslmrecenter(2)le (cDC-lcA) Recenter the window (refresh the screen) 
+    lslmset-position(2)le Store the current position 
+    lslmset-window(2)le Save the current window for restore (historic) 
     lslmuniversal-argument(2)le (cDC-ucA) Set the command argument count 
 
 
@@ -484,6 +488,7 @@ Miscellaneous Information
     lslmehftools(3f)le Generate a MicroEmacs help file 
     lslmemftags(3f)le Generate a MicroEmacs macro tags file 
     lslmgdiff(3f)le Command line graphical file difference 
+    lslmjavatags(3f)le Generate a C tags file from Java sources 
     lslmntags(3f)le Generate a nroff tags file 
     lslmprintall(3f)le Formatted print job 
     lslmtcltags(3f)le Generate a Tcl/Tk tags file 
@@ -563,6 +568,8 @@ Miscellaneous Information
     lslmhilight(2)le Manage the buffer hilighting schemes 
     lslmindent(2)le Manage the auto-indentation methods 
     lslmline-scheme-search(3)le Search and annotate the current buffer 
+    lslmprint-color(2)le Create a new printer color 
+    lslmprint-scheme(2)le Create a new printer color and font scheme 
     lslmrestyle-buffer(3)le Automatically reformat a buffer's indentation 
     lslmrestyle-region(3)le Automatically reformat a regions indentation 
     lslmscheme-editor(3)le Color Scheme Editor 
@@ -751,7 +758,7 @@ ehf-scheme
     lslmappend-buffer(2)le Write contents of buffer to end of named file 
     lslmchange-directory(2)le [cDC-x C-dcA] Change the current working directory 
     lslmchange-file-name(2)le (cDC-x ncA) Change the file name of the current buffer 
-    lslmcopy-file(2)le Load a file 
+    lslmcopy-file(2)le Copy, move or delete a file 
     lslmdirectory-tree(2)le Draw the file directory tree 
     lslmfile-attrib(3)le Set the current buffers system file attributes 
     lslmfile-browser(3)le (cDA-bcA) Browse the file system 
@@ -920,7 +927,8 @@ ehf-scheme
     lslmetfinsrt(3)le Insert template file into current buffer 
     lslmexecute-string(2)le Execute a string as a command 
     lslmfileHooks(2)le File Hooks 
-    lslmgoto-window(2)le Restore a saved window to the current window 
+    lslmgoto-position(2)le Restore a stored position 
+    lslmgoto-window(2)le Restore a saved window to the current window (historic) 
     lslmhilight(2)le Manage the buffer hilighting schemes 
     lslminsert-space(2)le Insert space(s) into current buffer 
     lslminsert-string(2)le Insert character string into current buffer 
@@ -935,9 +943,10 @@ ehf-scheme
     lslmscreen-poke(2)le Immediate write string to the screen 
     lslmscreen-update(2)le (cDredrawcA) Force screen update 
     lslmset-cursor-to-mouse(2)le Move the cursor to the current mouse position 
+    lslmset-position(2)le Store the current position 
     lslmset-scroll-with-mouse(2)le Scroll the window with the mouse 
     lslmset-variable(2)le (cDC-x vcA) Assign a new value to a variable 
-    lslmset-window(2)le Save the current window for restore 
+    lslmset-window(2)le Save the current window for restore (historic) 
     lslmshow-cursor(2)le Change the visibility of the cursor 
     lslmshut-down(3)le Editor exit callback command 
     lslmspell(2)le Spell checker service provider 
@@ -969,7 +978,7 @@ ehf-scheme
     lslm$mouse(5)le Mouse configuration variable 
     lslm$mouse-x(5)le Mouse X (horizontal) position 
     lslm$mouse-y(5)le Mouse Y (vertical) position 
-    lslm$platform(5)le MicroEmacs '00 host platform identifier 
+    lslm$platform(5)le MicroEmacs host platform identifier 
     lslm$progname(5)le Program file name 
     lslm$random(5)le Generate a random number 
     lslm$result(5)le Various command return values 
@@ -1118,6 +1127,7 @@ ehf-scheme
     lslm$rcs-co-com(5)le RCS (and SCCS) check out command 
     lslm$rcs-cou-com(5)le RCS (and SCCS) check out unlock command 
     lslm$rcs-file(5)le RCS (and SCCS) file name 
+    lslm$rcs-ue-com(5)le RCS (and SCCS) unedit file command 
     lslm$result(5)le Various command return values 
     lslm%compile-com(5)le Default system compile command line 
     lslm%cygnus-bin-path(5)le Cygwin BASH directory 
@@ -1231,9 +1241,10 @@ ehf-scheme
     Printing within MicroEmacs '00 is fairly restrictive, the following 
     commands are used in conjunction with the print facility. 
 
-    lslmhilight-print(2)le Define a hilighting print scheme 
     lslmprint-buffer(2)le Print buffer, with formatting 
+    lslmprint-color(2)le Create a new printer color 
     lslmprint-region(2)le Print region, with formatting 
+    lslmprint-scheme(2)le Create a new printer color and font scheme 
 
 !   Introduction to Variable Functions
 cEcEVARIABLE FUNCTIONS cEcA
@@ -1406,7 +1417,7 @@ ehf-scheme
     lslmappend-buffer(2)le Write contents of buffer to end of named file 
     lslmchange-directory(2)le [cDC-x C-dcA] Change the current working directory 
     lslmchange-file-name(2)le (cDC-x ncA) Change the file name of the current buffer 
-    lslmcopy-file(2)le Load a file 
+    lslmcopy-file(2)le Copy, move or delete a file 
     lslmdirectory-tree(2)le Draw the file directory tree 
     lslmfile-attrib(3)le Set the current buffers system file attributes 
     lslmfile-browser(3)le (cDA-bcA) Browse the file system 
@@ -1514,6 +1525,7 @@ ehf-scheme
     lslmpas(9)le Pascal File 
     lslmperl(9)le Practical Extraction and Report Language File 
     lslmpl(9)le Practical Extraction and Report Language File 
+    lslmpm(9)le Practical Extraction and Report Language File 
     lslmprofile(9)le Shell user profile 
     lslmpy(9)le Python Language File 
     lslmpython(9)le Python Language File 
@@ -1609,7 +1621,7 @@ ehf-scheme
     lslmcompare-windows(2)le Compare buffer windows, ignore whitespace 
     lslmcompare-windows-exact(3)le Compare buffer windows, with whitespace 
     lslmcompile(3)le Start a compilation process 
-    lslmcopy-file(2)le Load a file 
+    lslmcopy-file(2)le Copy, move or delete a file 
     lslmcopy-region(2)le (cDesc wcA) Copy a region of the buffer 
     lslmcount-words(2)le (cDesc C-ccA) Count the number of words in a region 
     lslmcreate-callback(2)le Create a timer callback 
@@ -1685,7 +1697,8 @@ ehf-scheme
     lslmgoto-alpha-mark(2)le (cDC-x acA) Move the cursor to a alpha marked location 
     lslmgoto-line(2)le (cDesc gcA) Move the cursor to specified line 
     lslmgoto-matching-fence(2)le (cDesc C-fcA) Move the cursor to matching fence 
-    lslmgoto-window(2)le Restore a saved window to the current window 
+    lslmgoto-position(2)le Restore a stored position 
+    lslmgoto-window(2)le Restore a saved window to the current window (historic) 
     lslmgrep(3)le Execute grep command 
     lslmgrow-window-horizontally(2)le Enlarge current window horizontally (relative) 
     lslmgrow-window-vertically(2)le (cDC-x zcA) Enlarge the current window (relative 
@@ -1695,7 +1708,6 @@ ehf-scheme
     lslmhelp-item(2)le (cDC-h C-icA) Help; item information 
     lslmhelp-variable(2)le (cDC-h C-vcA) Help; variable information 
     lslmhilight(2)le Manage the buffer hilighting schemes 
-    lslmhilight-print(2)le Define a hilighting print scheme 
     lslmhunt-backward(2)le (cDC-x C-hcA) Resume previous search in backward direction 
     lslmhunt-forward(2)le (cDC-x hcA) Resume previous search in forward direction 
     lslmifill-paragraph(3)le (cDesc qcA) Format a paragraph 
@@ -1764,7 +1776,9 @@ ehf-scheme
     lslmprefix(2)le Key prefix command 
     lslmprevious-window(2)le (cDC-x pcA) Move the cursor to the previous window 
     lslmprint-buffer(2)le Print buffer, with formatting 
+    lslmprint-color(2)le Create a new printer color 
     lslmprint-region(2)le Print region, with formatting 
+    lslmprint-scheme(2)le Create a new printer color and font scheme 
     lslmquery-replace-all-string(3)le Query replace string in a list of files 
     lslmquery-replace-string(2)le (cDesc C-rcA) Search and replace a string - with query 
     lslmquick-exit(2)le (cDesc zcA) Exit the editor writing changes 
@@ -1816,10 +1830,11 @@ ehf-scheme
     lslmset-encryption-key(2)le (cDesc ecA) Define the encryption key 
     lslmset-language(3)le Set the current language 
     lslmset-mark(2)le (cDesc spacecA) Set starting point of region 
+    lslmset-position(2)le Store the current position 
     lslmset-registry(2)le Modify a node value in the registry 
     lslmset-scroll-with-mouse(2)le Scroll the window with the mouse 
     lslmset-variable(2)le (cDC-x vcA) Assign a new value to a variable 
-    lslmset-window(2)le Save the current window for restore 
+    lslmset-window(2)le Save the current window for restore (historic) 
     lslmshell(2)le [cDC-x ccA] Create a new command processor or shell 
     lslmshell-command(2)le Perform an operating system command 
     lslmshow-cursor(2)le Change the visibility of the cursor 
@@ -1912,7 +1927,7 @@ ehf-scheme
     lslmchange-screen-width(2)le Change the number of columns on the screen 
     lslmcommand-apropos(2)le (cDC-h acA) List commands involving a concept 
     lslmcompare-windows(2)le Compare buffer windows, ignore whitespace 
-    lslmcopy-file(2)le Load a file 
+    lslmcopy-file(2)le Copy, move or delete a file 
     lslmcopy-region(2)le (cDesc wcA) Copy a region of the buffer 
     lslmcount-words(2)le (cDesc C-ccA) Count the number of words in a region 
     lslmcreate-callback(2)le Create a timer callback 
@@ -1967,7 +1982,8 @@ ehf-scheme
     lslmgoto-alpha-mark(2)le (cDC-x acA) Move the cursor to a alpha marked location 
     lslmgoto-line(2)le (cDesc gcA) Move the cursor to specified line 
     lslmgoto-matching-fence(2)le (cDesc C-fcA) Move the cursor to matching fence 
-    lslmgoto-window(2)le Restore a saved window to the current window 
+    lslmgoto-position(2)le Restore a stored position 
+    lslmgoto-window(2)le Restore a saved window to the current window (historic) 
     lslmgrow-window-horizontally(2)le Enlarge current window horizontally (relative) 
     lslmgrow-window-vertically(2)le (cDC-x zcA) Enlarge the current window (relative 
     change) 
@@ -1976,7 +1992,6 @@ ehf-scheme
     lslmhelp-item(2)le (cDC-h C-icA) Help; item information 
     lslmhelp-variable(2)le (cDC-h C-vcA) Help; variable information 
     lslmhilight(2)le Manage the buffer hilighting schemes 
-    lslmhilight-print(2)le Define a hilighting print scheme 
     lslmhunt-backward(2)le (cDC-x C-hcA) Resume previous search in backward direction 
     lslmhunt-forward(2)le (cDC-x hcA) Resume previous search in forward direction 
     lslmindent(2)le Manage the auto-indentation methods 
@@ -2025,7 +2040,9 @@ ehf-scheme
     lslmprefix(2)le Key prefix command 
     lslmprevious-window(2)le (cDC-x pcA) Move the cursor to the previous window 
     lslmprint-buffer(2)le Print buffer, with formatting 
+    lslmprint-color(2)le Create a new printer color 
     lslmprint-region(2)le Print region, with formatting 
+    lslmprint-scheme(2)le Create a new printer color and font scheme 
     lslmquery-replace-string(2)le (cDesc C-rcA) Search and replace a string - with query 
     lslmquick-exit(2)le (cDesc zcA) Exit the editor writing changes 
     lslmquote-char(2)le (cDC-qcA) Insert literal character 
@@ -2064,10 +2081,11 @@ ehf-scheme
     lslmset-cursor-to-mouse(2)le Move the cursor to the current mouse position 
     lslmset-encryption-key(2)le (cDesc ecA) Define the encryption key 
     lslmset-mark(2)le (cDesc spacecA) Set starting point of region 
+    lslmset-position(2)le Store the current position 
     lslmset-registry(2)le Modify a node value in the registry 
     lslmset-scroll-with-mouse(2)le Scroll the window with the mouse 
     lslmset-variable(2)le (cDC-x vcA) Assign a new value to a variable 
-    lslmset-window(2)le Save the current window for restore 
+    lslmset-window(2)le Save the current window for restore (historic) 
     lslmshell(2)le [cDC-x ccA] Create a new command processor or shell 
     lslmshell-command(2)le Perform an operating system command 
     lslmshow-cursor(2)le Change the visibility of the cursor 
@@ -2273,7 +2291,7 @@ ehf-scheme
     lslm$mouse-x(5)le Mouse X (horizontal) position 
     lslm$mouse-y(5)le Mouse Y (vertical) position 
     lslm$osd-scheme(5)le OSD color scheme 
-    lslm$platform(5)le MicroEmacs '00 host platform identifier 
+    lslm$platform(5)le MicroEmacs host platform identifier 
     lslm$progname(5)le Program file name 
     lslm$random(5)le Generate a random number 
     lslm$rcs-ci-com(5)le RCS (and SCCS) check in command 
@@ -2281,6 +2299,7 @@ ehf-scheme
     lslm$rcs-co-com(5)le RCS (and SCCS) check out command 
     lslm$rcs-cou-com(5)le RCS (and SCCS) check out unlock command 
     lslm$rcs-file(5)le RCS (and SCCS) file name 
+    lslm$rcs-ue-com(5)le RCS (and SCCS) unedit file command 
     lslm$recent-keys(5)le Recent key history 
     lslm$repeat-time(5)le Mouse time event repeat time 
     lslm$result(5)le Various command return values 
@@ -2572,7 +2591,7 @@ ehf-scheme
     lslm$mouse-x(5)le Mouse X (horizontal) position 
     lslm$mouse-y(5)le Mouse Y (vertical) position 
     lslm$osd-scheme(5)le OSD color scheme 
-    lslm$platform(5)le MicroEmacs '00 host platform identifier 
+    lslm$platform(5)le MicroEmacs host platform identifier 
     lslm$progname(5)le Program file name 
     lslm$random(5)le Generate a random number 
     lslm$rcs-ci-com(5)le RCS (and SCCS) check in command 
@@ -2580,6 +2599,7 @@ ehf-scheme
     lslm$rcs-co-com(5)le RCS (and SCCS) check out command 
     lslm$rcs-cou-com(5)le RCS (and SCCS) check out unlock command 
     lslm$rcs-file(5)le RCS (and SCCS) file name 
+    lslm$rcs-ue-com(5)le RCS (and SCCS) unedit file command 
     lslm$recent-keys(5)le Recent key history 
     lslm$repeat-time(5)le Mouse time event repeat time 
     lslm$result(5)le Various command return values 
@@ -2801,7 +2821,7 @@ ehf-scheme
     lslmcompare-windows(2)le Compare buffer windows, ignore whitespace 
     lslmcompare-windows-exact(3)le Compare buffer windows, with whitespace 
     lslmcompile(3)le Start a compilation process 
-    lslmcopy-file(2)le Load a file 
+    lslmcopy-file(2)le Copy, move or delete a file 
     lslmcopy-region(2)le (cDesc wcA) Copy a region of the buffer 
     lslmcount-words(2)le (cDesc C-ccA) Count the number of words in a region 
     lslmcpp(9)le C++ programming language 
@@ -2911,7 +2931,8 @@ ehf-scheme
     lslmgoto-alpha-mark(2)le (cDC-x acA) Move the cursor to a alpha marked location 
     lslmgoto-line(2)le (cDesc gcA) Move the cursor to specified line 
     lslmgoto-matching-fence(2)le (cDesc C-fcA) Move the cursor to matching fence 
-    lslmgoto-window(2)le Restore a saved window to the current window 
+    lslmgoto-position(2)le Restore a stored position 
+    lslmgoto-window(2)le Restore a saved window to the current window (historic) 
     lslmgrep(3)le Execute grep command 
     lslmgrow-window-horizontally(2)le Enlarge current window horizontally (relative) 
     lslmgrow-window-vertically(2)le (cDC-x zcA) Enlarge the current window (relative 
@@ -2923,7 +2944,6 @@ ehf-scheme
     lslmhelp-variable(2)le (cDC-h C-vcA) Help; variable information 
     lslmhide(2m)le Hide buffer 
     lslmhilight(2)le Manage the buffer hilighting schemes 
-    lslmhilight-print(2)le Define a hilighting print scheme 
     lslmhpj(9)le MS-Windows Help Project File 
     lslmhtm(9)le HyperText Markup Language File 
     lslmhtml(9)le HyperText Markup Language File 
@@ -2959,6 +2979,7 @@ ehf-scheme
     lslmiso-accents-mode(3)le ISO accent expansion short-cut mode 
     lslmjav(9)le Java programming language 
     lslmjava(9)le Java programming language 
+    lslmjavatags(3f)le Generate a C tags file from Java sources 
     lslmjustify(2m)le Justification Mode 
     lslmkbd-macro-query(2)le (cDC-x qcA) Query termination of keyboard macro 
     lslmkeyNames(2)le Key Binding Names 
@@ -3036,11 +3057,14 @@ ehf-scheme
     lslmpipe(2m)le Incremental Pipe running 
     lslmpipe-shell-command(2)le (cDesc @cA) Execute a single operating system command 
     lslmpl(9)le Practical Extraction and Report Language File 
+    lslmpm(9)le Practical Extraction and Report Language File 
     lslmpopup-window(2)le Pop-up a window on the screen 
     lslmprefix(2)le Key prefix command 
     lslmprevious-window(2)le (cDC-x pcA) Move the cursor to the previous window 
     lslmprint-buffer(2)le Print buffer, with formatting 
+    lslmprint-color(2)le Create a new printer color 
     lslmprint-region(2)le Print region, with formatting 
+    lslmprint-scheme(2)le Create a new printer color and font scheme 
     lslmprintall(3f)le Formatted print job 
     lslmprofile(9)le Shell user profile 
     lslmpy(9)le Python Language File 
@@ -3109,10 +3133,11 @@ ehf-scheme
     lslmset-encryption-key(2)le (cDesc ecA) Define the encryption key 
     lslmset-language(3)le Set the current language 
     lslmset-mark(2)le (cDesc spacecA) Set starting point of region 
+    lslmset-position(2)le Store the current position 
     lslmset-registry(2)le Modify a node value in the registry 
     lslmset-scroll-with-mouse(2)le Scroll the window with the mouse 
     lslmset-variable(2)le (cDC-x vcA) Assign a new value to a variable 
-    lslmset-window(2)le Save the current window for restore 
+    lslmset-window(2)le Save the current window for restore (historic) 
     lslmsh(9)le Bourne shell file 
     lslmshell(2)le [cDC-x ccA] Create a new command processor or shell 
     lslmshell-command(2)le Perform an operating system command 
@@ -3670,57 +3695,57 @@ ehf-scheme
     This page contains frequently asked questions submitted to JASSPA. 
 
     lsFAQs(0f)lmFAQsle - FAQ Contact information 
-    lsFAQs(0f)lmfaq00le - New functionality; what is useful to me as an old MicroEmacs user 
+    lsfaq00(0f)lmfaq00le - New functionality; what is useful to me as an old MicroEmacs user 
     ?? 
-    lsFAQs(0f)lmfaq01le - Languages; Are any foreign languages supported other than English 
+    lsfaq01(0f)lmfaq01le - Languages; Are any foreign languages supported other than English 
     ?? 
-    lsFAQs(0f)lmfaq02le - C++ is not default, C is - how do I change this ?? 
-    lsFAQs(0f)lmfaq03le - GNU Emacs; are there any GNU Emacs bindings. ? 
-    lsFAQs(0f)lmfaq04le - Icons are not displayed correctly in Microsoft Windows 
+    lsfaq02(0f)lmfaq02le - C++ is not default, C is - how do I change this ?? 
+    lsfaq03(0f)lmfaq03le - GNU Emacs; are there any GNU Emacs bindings. ? 
+    lsfaq04(0f)lmfaq04le - Icons are not displayed correctly in Microsoft Windows 
     environments !! 
-    lsFAQs(0f)lmfaq05le - ipipes not working on Microsoft Windows network drives ? 
-    lsFAQs(0f)lmfaq06le - Language not supported - will it be ?? 
-    lsFAQs(0f)lmfaq07le - Language file is incomplete 
-    lsFAQs(0f)lmfaq08le - Input locked up and not accepting keys; how do I unlock ? 
-    lsFAQs(0f)lmfaq09le - MicroEmacs Bindings; How do I get the original MicroEmacs bindings 
+    lsfaq05(0f)lmfaq05le - ipipes not working on Microsoft Windows network drives ? 
+    lsfaq06(0f)lmfaq06le - Language not supported - will it be ?? 
+    lsfaq07(0f)lmfaq07le - Language file is incomplete 
+    lsfaq08(0f)lmfaq08le - Input locked up and not accepting keys; how do I unlock ? 
+    lsfaq09(0f)lmfaq09le - MicroEmacs Bindings; How do I get the original MicroEmacs bindings 
     ? 
-    lsFAQs(0f)lmfaq10le - Microsoft Windows Locks up after killing an ipipe. 
-    lsFAQs(0f)lmfaq11le - Mouse support under Microsoft windows is strange !! 
-    lsFAQs(0f)lmfaq12le - Scroll bars too narrow !! 
-    lsFAQs(0f)lmfaq13le - Tab key; Why does the tab key not operate in some windows ?? 
-    lsFAQs(0f)lmfaq14le - Termcap; On a color terminal why is there no color ?? 
-    lsFAQs(0f)lmfaq15le - Termcap; Some of the keys do not work - how can I bind them ? 
-    lsFAQs(0f)lmfaq16le - Timestamp; Format incorrect, how can I change to MMDDYY.hhmm ? 
-    lsFAQs(0f)lmfaq17le - Windows; Component characters rendered incorrectly, how do I fix ? 
-    lsFAQs(0f)lmfaq18le - Windows Autosave and Backup files; are these potentially a problem 
+    lsfaq10(0f)lmfaq10le - Microsoft Windows Locks up after killing an ipipe. 
+    lsfaq11(0f)lmfaq11le - Mouse support under Microsoft windows is strange !! 
+    lsfaq12(0f)lmfaq12le - Scroll bars too narrow !! 
+    lsfaq13(0f)lmfaq13le - Tab key; Why does the tab key not operate in some windows ?? 
+    lsfaq14(0f)lmfaq14le - Termcap; On a color terminal why is there no color ?? 
+    lsfaq15(0f)lmfaq15le - Termcap; Some of the keys do not work - how can I bind them ? 
+    lsfaq16(0f)lmfaq16le - Timestamp; Format incorrect, how can I change to MMDDYY.hhmm ? 
+    lsfaq17(0f)lmfaq17le - Windows; Component characters rendered incorrectly, how do I fix ? 
+    lsfaq18(0f)lmfaq18le - Windows Autosave and Backup files; are these potentially a problem 
     ? 
-    lsFAQs(0f)lmfaq19le - Printing; Why in Windows does the output come out in a buffer ?? 
-    lsFAQs(0f)lmfaq20le - Printing; On Windows which font should I use ?? 
-    lsFAQs(0f)lmfaq21le - Printing; My printer is not supported ? 
-    lsFAQs(0f)lmfaq22le - Alt key maps to the Menu, how do I change ? 
-    lsFAQs(0f)lmfaq23le - me32.ini - Where does it go, how do I know it's being processed ?? 
-    lsFAQs(0f)lmfaq24le - Windows - Where is app850.fon ? 
-    lsFAQs(0f)lmfaq25le - Time; mode line is showing the date in DD/MM/YY format how do I 
+    lsfaq19(0f)lmfaq19le - Printing; Why in Windows does the output come out in a buffer ?? 
+    lsfaq20(0f)lmfaq20le - Printing; On Windows which font should I use ?? 
+    lsfaq21(0f)lmfaq21le - Printing; My printer is not supported ? 
+    lsfaq22(0f)lmfaq22le - Alt key maps to the Menu, how do I change ? 
+    lsfaq23(0f)lmfaq23le - me32.ini - Where does it go, how do I know it's being processed ?? 
+    lsfaq24(0f)lmfaq24le - Windows - Where is app850.fon ? 
+    lsfaq25(0f)lmfaq25le - Time; mode line is showing the date in DD/MM/YY format how do I 
     change ? 
-    lsFAQs(0f)lmfaq26le - C or C++ indentation and effects; how can I turn off ? 
-    lsFAQs(0f)lmfaq27le - fill-paragraph function does not fill ?? 
-    lsFAQs(0f)lmfaq28le - Key modifier which acts as the ESC key; what is it ? 
-    lsFAQs(0f)lmfaq29le - find-file start location; where is it ? 
-    lsFAQs(0f)lmfaq30le - Re-using a MicroEmacs session; how to ?? 
-    lsFAQs(0f)lmfaq31le - Microsoft Drag and Drop; is it supported ?? 
-    lsFAQs(0f)lmfaq32le - Cut and Paste to/from other applications; is it supported ?? 
-    lsFAQs(0f)lmfaq33le - Fonts; how can I change the font ?? 
-    lsFAQs(0f)lmfaq34le - Colors; how can I change screen colors ?? 
-    lsFAQs(0f)lmfaq35le - File Types; how do I interchange between UNIX, Windows and DOS 
+    lsfaq26(0f)lmfaq26le - C or C++ indentation and effects; how can I turn off ? 
+    lsfaq27(0f)lmfaq27le - fill-paragraph function does not fill ?? 
+    lsfaq28(0f)lmfaq28le - Key modifier which acts as the ESC key; what is it ? 
+    lsfaq29(0f)lmfaq29le - find-file start location; where is it ? 
+    lsfaq30(0f)lmfaq30le - Re-using a MicroEmacs session; how to ?? 
+    lsfaq31(0f)lmfaq31le - Microsoft Drag and Drop; is it supported ?? 
+    lsfaq32(0f)lmfaq32le - Cut and Paste to/from other applications; is it supported ?? 
+    lsfaq33(0f)lmfaq33le - Fonts; how can I change the font ?? 
+    lsfaq34(0f)lmfaq34le - Colors; how can I change screen colors ?? 
+    lsfaq35(0f)lmfaq35le - File Types; how do I interchange between UNIX, Windows and DOS 
     files ?? 
-    lsFAQs(0f)lmfaq36le - Non-English Languages; What font should I select ?? 
-    lsFAQs(0f)lmfaq37le - MicroEmacs '99; How do I up-grade from MicroEmacs'98 ?? 
-    lsFAQs(0f)lmfaq38le - Some keys on my foreign keyboard do not work properly, how do I 
+    lsfaq36(0f)lmfaq36le - Non-English Languages; What font should I select ?? 
+    lsfaq37(0f)lmfaq37le - MicroEmacs '99; How do I up-grade from MicroEmacs'98 ?? 
+    lsfaq38(0f)lmfaq38le - Some keys on my foreign keyboard do not work properly, how do I 
     get them working ?? 
-    lsFAQs(0f)lmfaq39le - Tabs; How to change the tab width ?? 
-    lsFAQs(0f)lmfaq40le - Windows/DOS; Where do I get grep/diff etc. ?? 
-    lsFAQs(0f)lmfaq41le - Home/End Keys; How do I change the default bindings ?? 
-    lsFAQs(0f)lmfaq42le - tags; How do I generate a MicroEmacs compatible tags file ?? 
+    lsfaq39(0f)lmfaq39le - Tabs; How to change the tab width ?? 
+    lsfaq40(0f)lmfaq40le - Windows/DOS; Where do I get grep/diff etc. ?? 
+    lsfaq41(0f)lmfaq41le - Home/End Keys; How do I change the default bindings ?? 
+    lsfaq42(0f)lmfaq42le - tags; How do I generate a MicroEmacs compatible tags file ?? 
 
 ! 0ffaq00
 cEcEQUESTION (00) cEcA
@@ -3958,7 +3983,7 @@ ehf-scheme
 cEcESEE ALSO cEcA
 
 
-    lsFAQs(0f)lmFAQ06le 
+    lsfaq06(0f)lmFAQ06le 
 
     lsFrequently Asked Questionslm[FAQ Index]le. 
 
@@ -5498,7 +5523,7 @@ $a
     lslm$global-scheme(5)le, lslm$buffer-scheme(5)le, lslm$ml-scheme(5)le. 
 
     The command takes an index number "cCschemeNumcA" and eight color values 
-    (defined by lslmadd-color(2)le) alternating between foreground and background 
+    (defined by cDadd-colorcA) alternating between foreground and background 
     colors. The 8 colors represent the 4 color paired states of foreground and 
     background that may appear in a text buffer. The paired states correspond 
     to current and selected lines (or permutations thereof). If an argument cCncA 
@@ -5534,9 +5559,9 @@ $a
         current selected region. Also used by cDosdcA for the current item's Hot 
         key. 
 
-    The following 8 arguments set up UNIX termcap fonts and are optional, any 
-    missing arguments are defaulted to 0. Each argument is a bitmask 
-    indicating which font should be enabled, where each bit is as follows: 
+    The following 8 arguments set up fonts and are optional, any missing 
+    arguments are defaulted to 0. Each argument is a bitmask indicating which 
+    font should be enabled, where each bit is as follows: 
 
         cB0x01cA Enable bold font. 
         cB0x02cA Enable italic font. 
@@ -8576,7 +8601,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmgoto-window(2)le, lslmgrow-window-vertically(2)le, lslmresize-window-vertically(2)le, 
+    lslmset-position(2)le, lslmgrow-window-vertically(2)le, lslmresize-window-vertically(2)le, 
     lslmsplit-window-horizontally(2)le, lslmsplit-window-vertically(2)le. 
 
 ! 2 backward-delete-tab
@@ -9858,6 +9883,8 @@ $a
         of cB4cA will jump to the next definition of the current tag or return the 
         message "cB[No more "<current>" tags]cA". 
 
+        The next tag is typically bound to cBM-C-tcA. 
+
     The cDtagscA file is, by default, assumed to reside in the current directory 
     of the currently viewed file. The user variable lslm%tag-option(5)le may be 
     specified with a value of 'cBrcA' (recursive) and 'cBccA' (continue) flags, which 
@@ -10499,6 +10526,12 @@ $a
             Disables hot-keys for the dialog. All text strings are copied 
             literally. This is useful for dialogs like the tags child dialog 
             as many tags have 'cB&cA's in them. 
+
+        cDBcA 
+            Makes the mouse right Button have the same behaviour as the left, 
+            by default the right mouse button simply closes the dialog. This 
+            is useful for some dialogs which are opened using the right mouse 
+            button. 
 
         cDfcA 
             Automatically uses the first letter of an item's test as the hot 
@@ -11553,7 +11586,7 @@ $a
 
 
     lslanguageTemplates(2)lmFile Language Templatesle, lslm$buffer-hilight(5)le, lslmadd-file-hook(2)le, 
-    lslmadd-color-scheme(2)le, lslmhilight-print(2)le, lslmindent(2)le, lslm$system(5)le, 
+    lslmadd-color-scheme(2)le, lslmprint-scheme(2)le, lslmindent(2)le, lslm$system(5)le, 
     lslmprint-buffer(2)le. 
 
 ! 2 hunt-forward
@@ -13055,8 +13088,8 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmgoto-window(2)le, lslmnext-window-find-buffer(2)le, lslmnext-window-find-file(2)le, 
-    lslmset-window(2)le. 
+    lslmnext-window-find-buffer(2)le, lslmnext-window-find-file(2)le, lslmset-position(2)le, 
+    lslmgoto-position(2)le. 
 
 ! 2 forward-word
 ! 2 backward-word
@@ -13316,8 +13349,8 @@ $a
 cEcESYNOPSIS cEcA
 
 
-    cDprint-buffercA 
-    cDprint-regioncA 
+    cCncA cDprint-buffercA 
+    cCncA cDprint-regioncA 
 
 
 cEcEDESCRIPTION cEcA
@@ -13326,12 +13359,111 @@ $a
     cDprint-buffercA and cDprint-regioncA print the current buffer or region, 
     respectively, using high-lighting where appropriate. The hilighting 
     assigned to a buffer is defined by the variable lslm$buffer-hilight(5)le the 
-    print format scheme is defined with lslmhilight-print(2)le. The lslanguageTemplates(2)lmLanguage 
-    Templatesle section describes how the printer formatting is setup. 
+    print scheme is defined with lslmprint-scheme(2)le, the lslmscheme-editor(3)le should 
+    be used to create printer schemes. 
 
-    The numerical argument cCncA determines the number of copies required. 
+    The printing is typically configured using lslmprint-setup(3)le, which can be 
+    found in the main menu under cDFile->Printer SetupcA. 
 
-    The printer is set up from the cDFile->Printer SetupcA menu. 
+    The numerical argument cCncA is generally used for macro development, it 
+    changes the default behaviour of these commands as follows: 
+
+    cD-2cA 
+        Configures the printer and, on win32 platforms, opens a Windows 
+        printing dialog box enabling the user to configure the printer, font 
+        and page layout. The configuration is stored in the "cB/printcA" registry. 
+
+    cD-1cA 
+        Configures the printer, the configuration is stored in the "cB/printcA" 
+        registry. 
+
+cDcA
+        Configures the printer and, on win32 platforms, opens a Windows 
+        printing dialog box enabling the user to configure the printer, font 
+        and page layout. The required printing is then performed. 
+
+cDcA
+        Configures the printer and performs the required printing. 
+
+
+cEPrinting Process cA
+
+
+    When either of these commands are executed the macro file cBprint.emfcA is 
+    executed to configure the printer (in a same vain as cBme.emfcA is executed to 
+    configure MicroEmacs for general usage). After the macro file has been 
+    executed the "cB/printcA" registry must contain the information required for 
+    printing. Following is a list of registry entries and their use: 
+
+    cDflagscA 
+
+    cDpaper-xcA 
+
+    cDpaper-ycA 
+
+    cDpage-xcA 
+
+    cDpage-ycA 
+
+    cDspecifier-xcA 
+
+    cDspecifier-ycA 
+
+    cDfont-facecA 
+
+    cDrowscA 
+
+    cDcolscA 
+
+    cDmtopcA 
+
+    cDmbottomcA 
+
+    cDmleftcA 
+
+    cDmrightcA 
+
+    cDheadercA 
+
+    cDfootercA 
+
+    cDportcA 
+
+    cDbuffercA 
+
+    cDfilecA 
+
+    cDstripcA 
+
+    cDdevicecA 
+
+    cDeofcA 
+
+    cDeolcA 
+
+    cDeopcA 
+
+    cDsofcA 
+
+    cDsolcA 
+
+    cDsopcA 
+
+    cDscontcA 
+
+    cDecontcA 
+
+    cDhsepcA 
+
+    cDvsepcA 
+
+    cDwsepcA 
+
+    cDxsepcA 
+
+    cDbg-colorcA 
+
+    cDcommand-linecA 
 
 
 cEPrinting Under Microsoft Windows Environments cA
@@ -13353,11 +13485,9 @@ $a
 cEcENOTES cEcA
 
 
-    If the current buffer has no specific hilight-print scheme then the 
-    default, hilight-print scheme cB0cA, is used. 
-
     The last printer configuration selected by the user is held in the 
-    registry file in the cChistorycA section. 
+    registry file "cBprint.erfcA" which is loaded into the cC/print-historycA registry 
+    section. This feature is implemented in the macro file cBprint.emfcA. 
 
 
 cEcEBUGS cEcA
@@ -13375,7 +13505,8 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmhilight(2)le, lslmhilight-print(2)le, lslmprintall(3f)le, lslm$buffer-hilight(5)le. 
+    lslmscheme-editor(3)le, lslmprint-scheme(2)le, lslmhilight(2)le, lslmprintall(3f)le, 
+    lslm$buffer-hilight(5)le. 
 
 ! 2 query-replace-string
 cEcENAME cEcA
@@ -13520,24 +13651,30 @@ $a
 
 
     MicroEmacs '00 RCS support command. The action of this command depends on 
-    the current buffer lslmview(2m)le mode state and the existence of an RCS file. 
+    the current buffer lslmview(2m)le mode state, the argument cCncA, and the existence 
+    of an RCS file. 
 
     cDview-mode ON; RCS file does not existcA 
         Removes buffer view mode to enable the user to edit the file. 
 
     cDview-mode ON; RCS file existscA 
-        MicroEmacs '00 attempts to check out the file using the command line 
-        given by the variable lslm$rcs-cou-com(5)le (co unlock). The file is then 
-        reloaded and the view mode status re-evaluated. 
+        MicroEmacs attempts to check out the file using the command line given 
+        by the variable lslm$rcs-cou-com(5)le (co unlock). The file is then reloaded 
+        and the view mode status re-evaluated. 
 
     cDview-mode OFF; RCS file does not existcA 
-        MicroEmacs '00 attempts to check-in the file into RCS for the first 
-        time using the command-line given by the variable lslm$rcs-cif-com(5)le (ci 
+        MicroEmacs attempts to check-in the file into RCS for the first time 
+        using the command-line given by the variable lslm$rcs-cif-com(5)le (ci 
         first). The file is then reload. 
 
     cDview-mode OFF; RCS file existscA 
-        MicroEmacs '00 attempts to check-in the file into RCS using the 
+        MicroEmacs attempts to check-in the file into RCS using the 
         command-line given by the variable lslm$rcs-ci-com(5)le. The file is then 
+        reload. 
+
+    cD-ve argument givencA 
+        MicroEmacs attempts to unedit any changes made to the file using the 
+        command-line given by the variable lslm$rcs-ue-com(5)le. The file is then 
         reload. 
 
 
@@ -13699,39 +13836,162 @@ $a
     lslmbuffer-mode(2)le, lslmquery-replace-string(2)le, lslmsearch-forward(2)le. 
     lsRegularExpressions(2)lmRegular Expressionsle 
 
-! 2 goto-window
+! 2 set-position
+! 2 goto-position
 ! 2 set-window
+! 2 goto-window
 cEcENAME cEcA
 
 
-|goto-window
-    goto-window - Restore a saved window to the current window 
-|set-window
-    set-window - Save the current window for restore 
+|set-position
+    set-position - Store the current position 
+|goto-position
+    goto-position - Restore a stored position 
 $a
 
 
 cEcESYNOPSIS cEcA
 
 
-    cDgoto-windowcA 
-    cDset-windowcA 
+    cCncA cDset-positioncA "cClabelcA" 
+    cCncA cDgoto-positioncA "cClabelcA" 
 
 
 cEcEDESCRIPTION cEcA
 
 
-    cDgoto-windowcA restores a previously saved window to being the current 
-    window. 
+    cDset-positioncA stores current window, buffer and cursor position information 
+    against the given 'cBlabelcA'. cDgoto-positioncA takes the positional information 
+    stored against the given 'cBlabelcA' and restores the window, buffer and 
+    cursor positions from those previously cDsetcA. 
 
-    cDset-windowcA saves the current window so that it can be returned to via the 
-    command cDgoto-windowcA. 
+    A call to cDset-positioncA with the same label over-writes the previous stored 
+    information, a call to cDgoto-positioncA does not alter the information and 
+    may be restored multiple times. 
 
+    The numerical argument to cDset-positioncA is used to define the information 
+    that is stored in the position item. The argument is intrepreted as a 
+    bitmask, flagging what information is to be stored. The bit mask is 
+    defined as follows: 
+
+    cB0x01cA 
+        Store the current window. 
+
+    cB0x02cA 
+        Store the current window's horizonal scroll (value of 
+        lslm$window-x-scroll(5)le). 
+
+    cB0x04cA 
+        Store the current window's current line horizonal scroll (value of 
+        lslm$window-xcl-scroll(5)le). 
+
+    cB0x08cA 
+        Store the current window's vertical scroll (value of 
+        lslm$window-y-scroll(5)le). 
+
+    cB0x10cA 
+        Store the current buffer. 
+
+    cB0x20cA 
+        Store the current window's current line using an lsset-alpha-mark(2)lmalpha markle. 
+
+    cB0x40cA 
+        Store the current window's current line number (value of 
+        lslm$window-line(5)le). 
+
+    cB0x80cA 
+        Store the current window's current column offset (value of 
+        lslm$window-col(5)le). 
+
+    When cCncA is not specified, the default value is cB0x0bfcA, i.e. store all 
+    information required to return to the window, buffer and cursor position. 
+
+    The argument supplied to cDgoto-positioncA similarly interpreted as a bitmask, 
+    restoring the positional information. When the numerical argument cCncA is 
+    omitted the same default is used when omitted on the store. On restoring a 
+    position, information stored during the call to cDset-positioncA which is not 
+    requested in corresponding cDgotocA is ignored, similarly information 
+    requested in a cDgotocA which was not stored in the cDsetcA is also ignored. 
+
+
+cEcEEXAMPLES cEcA
+
+
+    The following example shows the typical use of these commands: 
+sB
+        set-position "a" 
+            . 
+            . 
+        goto-position "a" 
+
+sA
+    The following example stores the current position at the start of a macro 
+    sequence, if cBmy-commandcA is not successful (cD$statuscA equals 0) the original 
+    position is restored: 
+sB
+        set-position "\x80" 
+        !force my-command 
+        !if &equ $status 0 
+            ; command failed, return to the original position 
+            goto-position "\x80" 
+        !endif 
+
+sA
+    Note 'cB\x80cA' is interpreted as the character with the ASCII value of 0x80 
+    which is a non-alphanumeric character, this is permitted in macros to 
+    avoid using alphanumerics. 
+
+    The following example shows how the current position can be restored after 
+    re-reading a file: 
+sB
+        0xce set-position 
+        read-file $buffer-fname @mna 
+        ; a numeric argument of 0xce is not 
+        ; required as this is the default 
+        goto-position 
+
+sA
+
+cEcENOTES cEcA
+
+
+    The position item may store and restore the current line by using an alpha 
+    mark or the line number. The restrore strategy will determine what is 
+    required, as follows:- 
+
+    The main benefit from using an alpha mark is that the position is 
+    maintained even when the buffer is edited, for example if the position is 
+    stored at line 10 and a line is subsequently inserted at the top of the 
+    buffer, if the line number was used then it would return back to the 10th 
+    line which is the old 9th line whereas if an alpha mark were used it would 
+    correctly return to the 11th line, as expected. 
+
+    The disadvantage of using an alpha mark is that it is only associated with 
+    that buffer. In some cases a position may need to be restored in another 
+    buffer (e.g. when re-reading a buffer the original buffer may be deleted 
+    first), in this situation the buffer line number must be used. 
+
+    Commands cDset-windowcA and cDgoto-windowcA, which simple stored and returned to 
+    the current window, were replaced by set-position and goto-position in 
+    August 2000. The following macro implementations can be used as a 
+    replacement: 
+sB
+        define-macro set-window 
+            1 set-position "\x80" 
+        !emacro 
+
+        define-macro goto-window 
+            goto-position "\x80" 
+        !emacro 
+
+sA
 
 cEcESEE ALSO cEcA
 
 
-    lslmfind-buffer(2)le. 
+    lslmset-alpha-mark(2)le, lslmfind-buffer(2)le, lslm$window-x-scroll(5)le, 
+    lslm$window-xcl-scroll(5)le, lslm$window-y-scroll(5)le, lslm$window-line(5)le, 
+    lslm$window-col(5)le. 
 
 ! 2 reyank
 cEcENAME cEcA
@@ -14232,16 +14492,16 @@ $a
     When writing macros to cut and paste using the mouse, care should be taken 
     to ensure that the window at the button release is the same is at the 
     button press. If this is not undertaken, undesired effects could result. 
-    The use of lslmset-window(2)le and lslmgoto-window(2)le are most usefully used with 
-    this command to restore existing window context. 
+    The use of lslmset-position(2)le and lslmgoto-position(2)le are most usefully used 
+    with this command to restore existing window context. 
 
 
 cEcESEE ALSO cEcA
 
 
     lslm$mouse-pos(5)le, lslm$mouse-x(5)le, lslm$mouse-y(5)le, lslm$window-mode-line(5)le, 
-    lslm$window-scroll-bar(5)le, lslmgoto-window(2)le, lslmset-scroll-with-mouse(2)le, 
-    lslmset-window(2)le. 
+    lslm$window-scroll-bar(5)le, lslmset-scroll-with-mouse(2)le, lslmset-position(2)le, 
+    lslmgoto-position(2)le. 
 
 ! 2 set-encryption-key
 cEcENAME cEcA
@@ -14752,91 +15012,71 @@ $a
     lslmnext-window-find-file(2)le, lslmresize-window-vertically(2)le, 
     lslmsplit-window-horizontally(2)le. 
 
-! 2 hilight-print
+! 2 print-color
+! 2 print-scheme
 cEcENAME cEcA
 
 
-    hilight-print - Define a hilighting print scheme 
+|print-color
+    print-color - Create a new printer color 
+|print-scheme
+    print-scheme - Create a new printer color and font scheme 
 $a
 
 
 cEcESYNOPSIS cEcA
 
 
-    cCncA cDhilight-printcA cCprintNumcA ["cCprintFormatcA" cCcolor1cA cCcolor2cA ... ] 
+    cCncA cDprint-colorcA "cCcol-nocA" "cCredcA" "cCgreencA" "cCbluecA" 
+    cCncA cDprint-schemecA "cCschemeNumcA" "cCforecA" "cCbackcA" "cCfont-maskcA" 
 
 
 cEcEDESCRIPTION cEcA
 
 
-    cDhilight-printcA defines the mapping of the screen hilighting to the printer, 
-    converting the screen hilighting information to a printer hilighting 
-    definition. The print hilighting is file format specific and is typically 
-    defined in the hook files cDhkcAcCxxxxcA.emf. 
+    cDprint-colorcA and cDprint-schemecA are similar to lslmadd-color(2)le and 
+    lslmadd-color-scheme(2)le except they configure MicroEmacs's printer scheme. 
 
-    The printer hilighting uses the hilighing number cCprintNumcA, as defined by 
-    lslmhilight(2)le as an identifier. cDhilight-printcA is called with a numerical 
-    argument cCncA of zero to initialize the printer. The cCprintFormatcA and cCcolorcA 
-    arguments are omitted. An initialization call MUST be made prior to 
-    binding the hilighting codes. 
+    cDprint-colorcA creates a new printer color and inserts it into the printer 
+    color table, where cCredcA, cCgreencA and cCbluecA are the color components and cCcol-nocA 
+    is the printer color index. The printer color table contains 256 entries 
+    indexed by cCcol-nocA in the range 0-255. cDprint-colorcA may also be used to 
+    modify an existing cCcol-nocA index by re-assignment, the existing color 
+    definition is over-written with the new color definition. 
 
-    cDhilight-printcA is invoked with no numerical argument to bind a hilighting 
-    scheme number to a printer format. cCprintNumcA identifies the printer 
-    hilighting scheme number. cCprintFormatcA identifies the rendering to appear 
-    on the printer, comprising single letters to identify the print typeface. 
-    Multiple print typeface`s may be defined, their effect is accumulative 
-    (i.e. cCboldcA and cCitaliccA is printed in a cCbold-italiccA font). The printer codes 
-    are defined as follows:- 
+    If an argument cCncA of 0 is given to cDprint-colorcA the printer color table is 
+    reset, removing all currently defined colors. 
 
-        cBbcA - Bold 
-        cBicA - Italic 
-        cBucA - Underline 
-        cBrcA - Reverse 
-        cBncA - Normal print (i.e. not hilighted). 
+    cDprint-schemecA creates a new printer scheme which defines how schemes, used 
+    by lslmhilight(2)le when rendering a buffer's text, are to be printed. For 
+    example key words could be printed in bold or in blue etc. It takes an 
+    identifying index number "cCschemeNumcA", two color values, "cCforecA" and "cCbackcA" 
+    (defined by cDprint-colorcA) and a font setting "cCfont-maskcA". The cCfont-maskcA is 
+    a bit mask where each bit is defined as follows: 
 
-    a cCbold-italiccA font would be defined as "cBbicA". The cCcolor1cA argument then 
-    'binds' the given printer format to the given cCcolor1cA lsadd-color(2)lmcolor schemele. One or 
-    more color schemes may be given, binding them all to the given printer 
-    format. 
+        cB0x01cA Enable bold font. 
+        cB0x02cA Enable italic font. 
+        cB0x04cA Enable light font. 
+        cB0x08cA Enable reverse font. 
+        cB0x10cA Enable underlining. 
 
-
-cEcEEXAMPLE cEcA
-
-
-    The following example is the default hilight print scheme, taken from 
-    scheme.emf, which can be used to print a variety of different file types 
-    including 'C' programming language files:- 
-sB
-        ; Create the default printing scheme 
-        ; Reset the hilighting printer format and define the color scheme bindings. 
-        0 hilight-print 0 
-        ; Programing 
-        hilight-print 0 "i"  .scheme.comment 
-        hilight-print 0 "b"  .scheme.prepro .scheme.type .scheme.operator .scheme.variable 
-        hilight-print 0 "bi" .scheme.quote .scheme.error .scheme.string .scheme.vstring 
-        ; Misc 
-        hilight-print 0 "i"  .scheme.italic .scheme.vitalic .scheme.under 
-        hilight-print 0 "b"  .scheme.no1 .scheme.no2  .scheme.header 
-        hilight-print 0 "b"  .scheme.file .scheme.dirslink .scheme.bold .scheme.vbold 
-        hilight-print 0 "bi" .scheme.link 
-
-sA
-    This prints all comments in italic text, pre-processor lines, types, 
-    operators and variables in bold and quoted text strings and errors in 
-    bold-italic. 
+    If an argument cCncA of 0 is given to cDprint-schemecA the printer scheme table is 
+    reset, removing all currently defined printer schemes. 
 
 
 cEcENOTES cEcA
 
 
-    When printing, if the current buffer has no specific hilight-print scheme 
-    then the default is used, which is hilight-print scheme cB0cA. 
+    Printer schemes can be created and altered using the lslmscheme-editor(3)le 
+    dialog, the created printer scheme can then the used directly in the 
+    lslmprint-setup(3)le dialog. Therefore direct use of these commands is largely 
+    redundant. 
 
 
 cEcESEE ALSO cEcA
 
 
-    lslmprint-buffer(2)le, lslmhilight(2)le, lslm$buffer-hilight(5)le. 
+    lslmscheme-editor(3)le, lslmprint-buffer(2)le, lslmhilight(2)le, lslm$buffer-hilight(5)le. 
 
 ! 2 suspend-emacs
 cEcENAME cEcA
@@ -16614,6 +16854,11 @@ $a
         Returns the full name, including path, of the given registry node in 
         the variable lslm$result(5)le. This does not alter the registry. 
 
+    cD!cA - Hide Value 
+        Hides the value of the given registry node, i.e. its value will not be 
+        displayed in the output of lslmlist-registry(2)le. Once set, this mode 
+        cannot be removed. 
+
     cDacA - Autosave 
         Automatically saves the registry when it is deleted or unloaded from 
         the registry. The user is not prompted for a save. 
@@ -16635,9 +16880,13 @@ $a
         The registry node is marked as a file root, the value must be set to 
         the registry file name. 
 
+    cDgcA - Get Modes 
+        Returns the list of modes currently set on the given registry node in 
+        the variable lslm$result(5)le. This does not alter the registry. 
+
     cDhcA - Hidden 
-        The registry node is created in the cCHiddencA state. (i.e. children will 
-        not be shown in lslmlist-registry(2)le output). 
+        The registry node is marked as cCHiddencA, i.e. its children will not be 
+        shown in lslmlist-registry(2)le output. 
 
     cDucA - Updated 
         Marks the registry as modified. The modified bit is removed when the 
@@ -16863,7 +17112,7 @@ $a
 cEcENAME cEcA
 
 
-    copy-file - Load a file 
+    copy-file - Copy, move or delete a file 
 $a
 
 
@@ -17373,10 +17622,10 @@ $a
         cDprevious-wordcA => lsforward-word(2)lmbackward-wordle 
         cDquote-charactercA => lsquote-char(2)lmquote-charle 
         cDredraw-displaycA => lsrecenter(2)lmrecenterle 
-        cDrestore-windowcA => lsgoto-window(2)lmgoto-windowle 
+        cDrestore-windowcA => lsset-position(2)lmgoto-positionle 
         cDreverse-incremental-searchcA => lsisearch-forward(2)lmisearch-backwardle 
         cDsave-filecA => lssave-buffer(2)lmsave-bufferle 
-        cDsave-windowcA => lsgoto-window(2)lmset-windowle 
+        cDsave-windowcA => lsset-position(2)lmset-positionle 
         cDscroll-next-downcA => lsscroll-next-window-down(2)lmscroll-next-window-downle 
         cDscroll-next-upcA => lsscroll-next-window-down(2)lmscroll-next-window-uple 
         cDsearch-reversecA => lssearch-forward(2)lmsearch-backwardle 
@@ -17762,7 +18011,6 @@ $a
 sB
         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
         ; 
-        ;  Author        : $Author$ 
         ;  Created By    : Steven Phillips 
         ;  Created       : Thu Jun 18 15:34:05 1998 
         ;  Last Modified : <230798.0854> 
@@ -18465,7 +18713,7 @@ ehf-scheme
     commands (note that they also affect lslmisearch-forward(2)le commands). 
 
     The symbols that have special meaning in magic mode are cB^cA, cB$cA, cB.cA, cB\|cA, cB*cA, cB[cA 
-    cB]cA, cB\(cA cB\)cA, and cB\cA. 
+    cB]cA, cB\(cA cB\)cA, cB\{cA cB\}cA and cB\cA. 
 
     The characters cB^cA and cB$cA fix the search pattern to the beginning and end of 
     line, respectively. The cB^cA character must appear at the beginning of the 
@@ -18525,6 +18773,12 @@ ehf-scheme
     previous character e.g. "cBca?rcA" matches "cBcrcA" and "cBcarcA", it will not match 
     "cBcaarcA". 
 
+    Where a previous item has a range of repetitions then the cB\{N,M\}cA syntax 
+    may be used to denote the minimum and maximum iterations of the previous 
+    item. Where a set quantity of repetitions is required then the simpler 
+    syntax of cB\{N\}cA may be used. i.e. "cBca\{2\}rcA" matches "cBcaarcA", "cBca\{2,3\}rcA" 
+    matches "cBcaarcA" and "cBcaaarcA". 
+
     The escape character cB\cA is for those times when you want to be in magic 
     mode, but also want to use a regular expression character to be just a 
     character. It turns off the special meaning of the character. So a search 
@@ -18553,23 +18807,30 @@ ehf-scheme
             Match any character except cB<NL>cA 
 
         cD*cA 
-            Match zero or more occurrences of the preceding character 
+            Match zero or more occurrences of the preceding item. 
 
         cD\|cA 
             Match either/or i.e. cBcar\|bikecA matches the work cBcarcA and matches 
             the word cBbikecA. 
 
         cD+cA 
-            Match one or more occurrences of the preceding character 
+            Match one or more occurrences of the preceding item. 
 
         cD?cA 
-            Match zero or one occurrences of the previous character 
+            Match zero or one occurrences of the preceeding item. 
 
         cD[]cA 
             Match a class of characters (cB[a-z]cA would be all alphabetics) 
 
         cD\cA 
             Take next literally 
+
+        cD\{cAcCNcAcD,cAcCMcAcD\}cA 
+            Match a minimum of cCNcA occurrences and maximum of cCMcA occurrences of 
+            the preceeding item. 
+
+        cD\{cAcCNcAcD\}cA 
+            Match a cCNcA occurrences of the preceeding item. 
 
         cD\(...\)cA 
             Delimit pattern to replicate in replace string. Max of 9 allowed. 
@@ -19442,11 +19703,13 @@ ehf-scheme
 cEAdding Hilighting definitions cA
 
 
-    File specific hilighting is defined within the body of the file and is 
-    executed once when the hook file is loaded, this occurs when the hook 
-    function is executed. During development of the hilighting code, it is 
-    usually necessary to lslmexecute-buffer(2)le the hook buffer to view the effects 
-    of any changes to the hilighting. 
+    File specific hilighting is used to pick out key words and tokens used 
+    within the file type, it greatly improves readability; the hilighting is 
+    also used for lsprint-buffer(2)lmprintingle. The hilighting is defined within the body of the 
+    file and is executed once when the hook file is loaded, this occurs when 
+    the hook function is executed. During development of the hilighting code, 
+    it is usually necessary to lsexecute-buffer(2)lmexecutele the hook buffer to view the effects of 
+    any changes to the hilighting. 
 
     The hilighting is defined using the command lslmhilight(2)le which requires a 
     hilighting identifier, used to identify the hilighting scheme. This 
@@ -19540,7 +19803,6 @@ ehf-scheme
 
         #-!- foo -!- ################################# 
         # 
-        #  Author        : $Author$ 
         #  Created By    : $USER_NAME$ 
         #  Created       : $ASCII_TIME$ 
         #  Last Modified : <160495.1521> 
@@ -19668,28 +19930,6 @@ ehf-scheme
         !emacro 
 
 sA
-
-cEPrinter Configuration cA
-
-
-    The rendering of the language specific file on the printer may be defined 
-    from the language specific file. The printer rendering relies on the 
-    buffer hilighting definitions and maps the hilighting colors to printing 
-    styles. The command lslmhilight-print(2)le assigns the hilighting mappings to a 
-    printer font type. The printer scheme uses the same identifier as the 
-    hilighting number. For the cCfoocA language file the printer scheme may be 
-    defined as follows:- 
-sB
-        0 hilight-print .hilight.foo 
-        hilight-print .hilight.foo "i"  .scheme.comment 
-        hilight-print .hilight.foo "b"  .scheme.keyword 
-        hilight-print .hilight.foo "bi" .scheme.string .scheme.quote 
-
-sA
-    Note that the first invocation of cChilight-printcA with an argument of zero 
-    resets the hilighting scheme. No entry is required in the cCfhookcA macro as 
-    the value of lslm$buffer-hilight(5)le is used. 
-
 
 cESetting Buffer Modes cA
 
@@ -19934,7 +20174,6 @@ ehf-scheme
 
         #-!- foo -!- ################################# 
         # 
-        #  Author        : $Author$ 
         #  Created By    : $USER_NAME$ 
         #  Created       : $ASCII_TIME$ 
         #  Last Modified : <160495.1521> 
@@ -19953,7 +20192,7 @@ ehf-scheme
 
 
     lslmadd-file-hook(2)le, lslmbuffer-abbrev-file(2)le, lslmetfinsrt(3)le, lslmexecute-buffer(2)le, 
-    lslmexpand-abbrev(2)le, lslmglobal-abbrev-file(2)le, lslmhilight(2)le, lslmhilight-print(2)le, 
+    lslmexpand-abbrev(2)le, lslmglobal-abbrev-file(2)le, lslmhilight(2)le, lslmscheme-editor(3)le, 
     lslmindent(2)le, lslmindent(2m)le, lslmrestyle-buffer(3)le, lslmrestyle-region(3)le, lslmtime(2m)le, 
     lslm$buffer-hilight(5)le, lslm$buffer-indent(5)le, lslmetf(8)le, lslmeaf(8)le, 
     lsfileHooks(2)lmFile Hooksle. 
@@ -21415,6 +21654,24 @@ ehf-scheme
         cB\SCcA 
             matches any character whose syntax is not cBCcA. 
 
+        cB\{N,M\}cA 
+            Matches an integer number of the previous item, where cBNcA and cBMcA are 
+            integer constants interpreted as follows:- 
+
+            cB\{N\}cA 
+                The preceeding item is matched exactly cBNcA times. 
+
+            cB\{N,\}cA 
+                The preceeding item is matched cBNcA or more times. 
+
+            cB\{N,M\}cA 
+                The preceeding item is matched at least cBNcA times, but no more 
+                than cBMcA times. 
+
+            cB\{,M\}cA 
+                The preceeding item is optional and is matched at most cBMcA 
+                times. 
+
     The constructs that pertain to words and syntax are controlled by the 
     setting of the syntax table. 
 
@@ -21459,6 +21716,36 @@ ehf-scheme
     controlled by the lslmexact(2m)le mode. When cCexactcA mode is enabled (default) the 
     then searches are case sensitive; disabled then case is ignored. The 
     lslmexact(2m)le mode is set on a per-buffer basis. 
+
+
+cEcENOTES cEcA
+
+
+    The search engine searches for the longest string that matches a given 
+    pattern, the longest pattern is sometimes the pattern that is not actually 
+    required. For instance, consider searching for an HTML bracket set. The 
+    simplest search is:- 
+
+        M-x search-forward "<.*>" 
+
+
+    Unfortunately, this pattern is not specific enough, given an HTML line:- 
+
+        <a href="www.jasspa.com">Jasspa Site</a> 
+
+
+    Then the pattern matched is actually the whole line as the cB.*cA matches 
+    everything to the last cB>cA, this is the longest string. To rectify the 
+    pattern then we must be more specific, the correct search pattern to use 
+    in this instance is:- 
+
+        M-x search-forward "<[^>]*>" 
+
+
+    In this case we match any character excluding the closing character, this 
+    guarantees that we always find the shortest string match. A search of our 
+    HTML line locates two separate instances of the regular expression cB<a 
+    href="www.jasspa.com">cA and cB</a>cA. 
 
 
 cEcESEE ALSO cEcA
@@ -21723,6 +22010,17 @@ $a
     cBrcA 
         Enables recursive mode, any sub-directory found within any given 
         directories will also be processed. 
+
+    cBvcA 
+        Add global variables to the tag file. (i.e. variables marked with 
+        cCexterncA). 
+
+    cBecA 
+        Add enumerated variables to the tag file (i.e. cCenumcA members). 
+
+    cBscA 
+        Add structure, type definitions and classes to the tag file (i.e. 
+        cCstuctcA, cCtypedefcA and cCclasscA). 
 
     The generated tags file includes cB#definecA and C++ class names. 
 
@@ -22173,6 +22471,97 @@ $a
 
     lslmfind-tag(2)le, lslmstart-up(3)le, lslmtex(9)le. 
 
+! 3fjavatags
+cEcENAME cEcA
+
+
+    javatags - Generate a C tags file from Java sources. 
+$a
+
+
+cEcESYNOPSIS cEcA
+
+
+    cDmecA "@javatags" [cC-v%tag-option=<flags>cA] [cCfilescA] 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    The start-up file cBjavatags.emfcA may be invoked from the command line to 
+    generate a cDtagscA file for java source files. 
+
+    Given a list of cCfilescA a tags file cBtagscA is generated in the current 
+    directory, which may be used by the lslmfind-tag(2)le command. This is a good 
+    alternative on Microsoft platforms where a utility such as cDctags(1)cA is not 
+    typically available to process Java files. If no cCfilescA are specified the 
+    default file list is "cB./cA", i.e. process the current directory. If a 
+    directory name is given (such as the default "cB./cA") all Java source files 
+    within the directory will be processed. 
+
+    The value of variable cD%tag-optioncA is used to control the tag generation 
+    process, its value cC<flags>cA can contain any number of the following flags: 
+
+    cBacA 
+        Append new tags to the existing tag file, note that if also using flag 
+        'cBmcA' multiple 'tags' to the same item may be created. 
+
+    cBmcA 
+        Enable multiple tags. This enables the existence of 2 tags with the 
+        same tag name, but typically with different locations. See help on 
+        lslmfind-tag(2)le for more information on multiple tag support. 
+
+    cBrcA 
+        Enables recursive mode, any sub-directory found within any given 
+        directories will also be processed. 
+
+    cBvcA 
+        Add global variables to the tag file. (i.e. variables marked with 
+        cCexterncA). 
+
+    cBscA 
+        Add classes definitions to the tag file (i.e. cCclasscA). 
+
+    The generated tags file includes cB#definecA and C++ class names. 
+
+
+cEcENOTES cEcA
+
+
+    This function is invoked from menu 
+
+        cDTools -> C Tools -> Create Tags FilecA 
+
+    when the user requests a tags file to be generated. 
+
+    The user setup file "cBmyjavatags.emfcA" is executed by javatags during 
+    start-up, this file can be used to over-ride any of the javatags 
+    configuration variables (see below). 
+
+    The following variables are set within "cBjavatags.emfcA" and are used to 
+    control the process:- 
+
+    cD%tag-optioncA 
+        Tags options flag, default value is "". See above for more 
+        information. 
+
+    cD%tag-filemaskcA 
+        A list of source file masks to be processed when a directory is given, 
+        default value is "cB:*.java:*.jav:cA". 
+
+    cD%tag-ignoredircA 
+        A list of directories to be ignored when recursive option is used, 
+        default value is "cB:SCCS/:CVS/:cA". 
+
+    These variables can be changed using the -v command-line option or via the 
+    "cBmyjavatags.emfcA" file 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmfind-tag(2)le, lslmstart-up(3)le, lslmjava(9)le. 
+
 ! 3 compile
 cEcENAME cEcA
 
@@ -22416,7 +22805,7 @@ $a
 cEcESYNOPSIS cEcA
 
 
-    cDcleancA 
+    cCncA cDcleancA 
 
 
 cEcEDESCRIPTION cEcA
@@ -22442,6 +22831,10 @@ $a
         Superfluous empty lines at the end of the buffer are removed, leaving 
         only one empty line. 
 
+    4) 
+        If argument cCncA is given (value is not used) multiple blank lines are 
+        reduced to a single blank line. 
+
 
 cEcEDIAGNOSTICS cEcA
 
@@ -22465,6 +22858,9 @@ $a
 
     b) 
         Search for: "[ ]+\t" Replace with: "\t" 
+
+    c) 
+        Search for: "\n\n\n" Replace with: "\n\n" 
 
 
 cEcESEE ALSO cEcA
@@ -26650,7 +27046,7 @@ $a
         generation keys present on foreign keyboards cannot be automatically 
         supported on Windows platforms. MicroEmacs must be informed of the 
         keyboard being used to correctly interpret the keys. If a required 
-        keyboard is not supported please see lsFAQs(0f)lmFAQ38le on how to setup the 
+        keyboard is not supported please see lsfaq38(0f)lmFAQ38le on how to setup the 
         keyboard. 
 
     cBLanguagecA 
@@ -27979,6 +28375,12 @@ $a
         and a new guess list is created. The user may elect to replace the 
         word, take one of the suggestions or re-edit the misspelled word. 
 
+    cDMeaningcA 
+        The meaning button provides a convenient interface to lslmdescribe-word(3)le 
+        for looking up the meaning of the current word. The cDInsertcA button 
+        within the describe-word dialog will replace the current word in the 
+        spell-buffer. 
+
     cDSuggestionscA 
         The suggestions entry contains a list of suggestions as to the correct 
         spelling of the word. The list is ranked in order of the best match, 
@@ -28147,7 +28549,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmosd(2)le, lslmspell(2)le, lslmuser-setup(3)le, lslm$find-words(5)le. 
+    lslmosd(2)le, lslmspell(2)le, lslmuser-setup(3)le, lslmdescribe-word(3)le, lslm$find-words(5)le. 
 
 ! 3 symbol
 cEcENAME cEcA
@@ -28291,14 +28693,15 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    cDscheme-editorcA is a color scheme editor that provides a dialog interface to 
-    configure the color schemes used by the editor. The color schemes may be 
-    created or modified within the scheme editor and then committed to the 
-    configuration files for general use. 
+    cDscheme-editorcA is a color and font scheme editor that provides a dialog 
+    interface to configure the display schemes used by the editor. The schemes 
+    may be created or modified within the scheme editor and then committed to 
+    the configuration files for general use. 
 
-    The color schemes are typically stored in the cBmacroscA directory and are 
-    executed as macro files at start up. The standard schemes are called 
-    cDschemecAcCXcAcD.emfcA. 
+    The editor can be used to create both screen and printer color/font 
+    schemes, they are typically stored in the cBmacroscA directory and are 
+    executed as macro files at start up or when printing. The standard screen 
+    schemes are called cBschemecAcCXcAcB.emfcA and printer ones cBprintcAcCXcAcB.emfcA. 
 
     The cDscheme-editorcA is displayed within a single dialog box, tab selections 
     at the top of the dialog box enable cDcolorcA and cDschemecA creation and/or 
@@ -28308,30 +28711,31 @@ $a
 
     cDFile NamecA 
         The name of the color scheme to be modified. This is the name of the 
-        cDschemecAcCXcAcD.emfcA file, omitting the file extension. The standard color 
-        schemes supplied with MicroEmacs '00 are:- 
+        cDschemecAcCXcAcD.emfcA file, omitting the file extension. See the cDFILEScA section 
+        below for a list of standard screen and printer scheme supplied with 
+        MicroEmacs '00. 
 
-                * cBschemedcA - Default white on black. 
-                * cBschemejcA - Black on cream. 
-                * cBschemevicA - GVim default color scheme 
-                * cBschemepdcA - Plain Black on Cream 
-                * cBschemeplcA - Plain White on Black 
-                * cBschemelcA - Black on grey. 
-                * cBschememdcA - Microsoft Developer Studio Colors. 
+    cDTypecA 
+        Defines whether the scheme is a screen or printer type. 
 
     cDDescriptioncA 
         An ASCII description of the color scheme, used to identify the color 
         scheme. 
 
     cDBuffer HilightcA 
-        Defines whether buffer hilighting should be enabled, when cCCompletely 
-        DisablecA all buffers are displayed character for character in the 
-        standard text scheme, this will ensure maximum update performance but 
-        some file formats such as the on-line help will become unreadable so 
-        this option is really selected. Similarly cCReformat OnlycA disables the 
-        majority of buffers, hilighting is only enabled when the file would be 
-        unreadable without it, such as the on-line help or man page files. The 
-        default cCFully EnabledcA setting enables all buffer hilighting. 
+        Available when scheme is a screen type. Defines whether buffer 
+        hilighting should be enabled, when cCCompletely DisablecA all buffers are 
+        displayed character for character in the standard text scheme, this 
+        will ensure maximum update performance but some file formats such as 
+        the on-line help will become unreadable so this option is really 
+        selected. Similarly cCReformat OnlycA disables the majority of buffers, 
+        hilighting is only enabled when the file would be unreadable without 
+        it, such as the on-line help or man page files. The default cCFully 
+        EnabledcA setting enables all buffer hilighting. 
+
+    cDPrint OptioncA 
+        Available when scheme is a printer type. Defines what components of a 
+        scheme is to be used when printing. 
 
 
 cEColors cA
@@ -28355,67 +28759,66 @@ $a
         The color entries allow the currently selected palette color entry to 
         be modified. The color values may be changed by direct numeric entry 
         (0..255) or via the ^/v controls; the color is committed to the 
-        pallette using the cDAddcA or cDChangecA button. 
+        palette using the cDAddcA or cDChangecA button. 
 
 
 cESchemes cA
 
 
-    The cDschemescA tab allows the color schemes to be edited. The left-hand side 
-    of the dialog contains a scrolling window of the available color palette 
-    (created from the cDColorscA tab). The right-hand side of the window shows the 
-    variants of the color scheme. 
+    The cDschemescA tab allows the schemes to be edited. The left-hand side of the 
+    dialog contains a scrolling window of the available color palette (created 
+    from the cDColorscA tab). The right-hand side of the window shows the variants 
+    of the scheme. 
 
     cDSelectioncA 
-        The cDselectioncA item provides a pull-down menu containing gross color 
-        scheme categories used by the editor. 
+        The cDselectioncA item provides a pull-down menu containing gross scheme 
+        categories used by the editor. 
 
     cDSchemecA 
-        A pull-down menu containing the color schemes of the selection, 
-        modifying this entry shows the variants of the scheme in the cDNormalcA, 
-        cDCurrentcA, cDSelectcA and cDSel-CurcA dialogs. 
+        A pull-down menu containing the schemes of the selection, modifying 
+        this entry shows the variants of the scheme in the cDNormalcA, cDCurrentcA, 
+        cDSelectcA and cDSel-CurcA dialogs. 
 
-    There are 4 variants of a single color scheme; each variant is comprised 
-    of a foreground and background color, additionally a cCTermcapcA hilighting 
-    classification may be assigned to the variant, which is used in the 
-    absence of (or in addition to) color. The variant of color displayed by a 
-    particular scheme depends upon the selection/current status of the text. 
-
-    cDNormalcA 
-        The normal color, when the text object is not selected or current 
-        (i.e. out of focus). 
-
-    cDCurrentcA 
-        The scheme color when the text object is current (i.e. in focus) 
-
-    cDSelectcA 
-        The scheme color when the text object is selected (i.e. by the mouse) 
-        and is not current. 
-
-    cDSel-CurcA 
-        The scheme color when the text object is selected and is current. 
-
-    The cCTermcapcA hilighting assignments are indicated by the alphabetic mode 
-    selection cBBILRUVcA, which are interpreted as follows:- 
+    There are 4 variants, or styles, for a single scheme; each style is 
+    comprised of a foreground and background color, and a row of toggle button 
+    to enable/disable fonts, defined as follows. 
 
         cBBcA - Bold. 
-        cBIcA - Italic (typically displayed as underline). 
+        cBIcA - Italic. 
         cBLcA - Light (typically not supported). 
         cBRcA - Reverse video (fore/back-ground swapped). 
         cBUcA - Underline. 
         cBVcA - Toggle reverse video when inverted. 
 
-    None, one or more of the cCTermcapcA modes may be applied to a single scheme 
-    variant. The last mode cDVcA needs a little more explanation; commands such as 
+    The last mode cDVcA needs a little more explanation; commands such as 
     lslmscreen-poke(2)le are able to invert the color scheme, i.e. use the fore 
     color for the background etc. Enabling this mode will toggle the reverse 
     video mode (cDRcA) when this feature is used. 
 
+    The style displayed by a particular scheme depends upon the 
+    selection/current status of the text: 
+
+    cDNormalcA 
+        The normal style, when the text object is not selected or current 
+        (i.e. out of focus). 
+
+    cDCurrentcA 
+        The style used when the text object is current (i.e. in focus) 
+
+    cDSelectcA 
+        The style used when the text object is selected (i.e. by the mouse) 
+        and is not current. 
+
+    cDSel-CurcA 
+        The style used when the text object is selected and is current. 
+
+    Note that a printer scheme only uses the Normal style. 
+
     Setting of the cDselectioncA and cDschemecA shows the current scheme in the 
     cDNormalcA, cDCurrentcA, cDSelectcA and cDSel-CurcA dialogs. New colors are assigned by 
-    selecting a color in the pallette area and making it current. The current 
+    selecting a color in the palette area and making it current. The current 
     color is applied by selecting the cDForecA / cDBackcA boxes of the scheme dialog. 
-    The assigned color is displayed in the text box cCThe big brown ...cA. 
+    The assigned color is displayed in the text box cCThe big brown fox...cA. 
 
 
 cEControls cA
@@ -28425,14 +28828,14 @@ $a
     configuration files. 
 
     cDCurrentcA 
-        Makes the changes to the pallette and schemes current, they are 
-        applied to the current editing session but are not committed to file. 
-        This allows the pallette changes to be used prior to commitment. Note 
-        that all modifications are lost if they are not saved and the editing 
+        Makes the changes to the palette and schemes current, they are applied 
+        to the current editing session but are not committed to file. This 
+        allows the palette changes to be used prior to commitment. Note that 
+        all modifications are lost if they are not saved and the editing 
         session is terminated. 
 
     cDSavecA 
-        Saves the color modifications to file, effectively making the changes 
+        Saves the scheme modifications to file, effectively making the changes 
         permanent. Note however that the scheme macro file will be saved in 
         the first directory in the lslm$search-path(5)le, regardless of the location 
         of the original. For network systems this typically means that the 
@@ -28449,12 +28852,21 @@ $a
 cEcEFILES cEcA
 
 
+    cBscheme.emfcA - Defines the standard scheme variables, including the 
+    available scheme list, and associated text. 
     cBschemed.emfcA - Default white on black color scheme. 
     cBschemej.emfcA - Black on cream color scheme. 
-    cBschemel.emfcA - Black on grey color scheme. 
-    cBschememd.emfcA - Microsoft Developer Studio color scheme. 
-    cBscheme.emfcA - Defines the standard color scheme variables and associated 
-    text. The print <=> scheme assignments are made in this file. 
+    cBschemevicA - Sandy shores. 
+    cBschemesfcA - Sherwood Forest. 
+    cBschemebhcA - Blue Hue. 
+    cBschemepdcA - Plain Black on Cream. 
+    cBschemeplcA - Plain White on Black. 
+    cBschemelcA - Black on grey. 
+    cBschememdcA - Microsoft Developer Studio Colors. 
+    cBprinters.emfcA - Defines the list of available printer schemes and drivers. 
+    cBprintdcA - Default plain print-out. 
+    cBprintfcA - Print using fonts. 
+    cBprintepccA - Print using Epson base colors and fonts. 
 
 
 cEcENOTES cEcA
@@ -28463,11 +28875,22 @@ $a
     cDscheme-editorcA is a macro that is implemented in file cBschemosd.emfcA. The 
     scheme editor uses lslmosd(2)le to create and manage the dialogs. 
 
+    Only the Normal scheme style is used by printer schemes. 
+
+    The setting of cDBuffer HilightcA can effect the way buffer hooks are load so 
+    changing from one scheme to another with differing Buffer Hilight settings 
+    may not fully work. This can be rectified by restart MicroEmacs with the 
+    new scheme as default. 
+
+    The current screen scheme can effect the printing due to the cDBuffercA 
+    cDHilightcA setting, e.g. if the screen scheme is set to completely disable 
+    hilighting then any print-out will also have no hilighting. 
+
 
 cEcESEE ALSO cEcA
 
 
-    lslmuser-setup(3)le, lslmadd-color(2)le, lslmadd-color-scheme(2)le, lslmosd(2)le. 
+    lslmuser-setup(3)le, lslmadd-color-scheme(2)le, lslmprint-scheme(2)le, lslmosd(2)le. 
 
 ! 3 MainMenu
 cEcENAME cEcA
@@ -29115,11 +29538,90 @@ $a
 
     cDdescribe-wordcA must be setup for each required language as follows: 
 
+    cD1)cA 
+        A command-line interface to a dictionary of the required language must 
+        be found. This could simply be a text file containing one word 
+        definition per line and using cDgrep(1)cA as the command-line interface. 
+        In this example the text file could take the following form: 
+
+            A () The first letter of the English... 
+            Aam (n.) A Dutch and German measure of liquids... 
+            Aardvark (n.) An edentate mammal... 
+            . 
+            . 
+
+
+        The cDgrepcA command-line interface required to look-up the word 
+        "cBaardvarkcA" would be: 
+
+            grep -i "^aardvark (" words.txt 
+
+
+        The output produced from this will be the single line giving the 
+        required definition. A second common interface would be executing an 
+        external dictionary program typically using a command-line option to 
+        specify the word to define, e.g.: 
+
+            mydict -d "aardvark" 
+
+
+    cD2)cA 
+        The MicroEmacs language name must be found, this can be done by first 
+        using lslmuser-setup(3)le or lslmspell-buffer(3)le to ensure that the current 
+        language is set the the require one and then running cDdescribe-wordcA. 
+        The command will probably fail, but before it does it will set the 
+        variable cB.describe-word.langcA, use the command lslmdescribe-variable(2)le to 
+        get the value of this variable, this value is the internal language 
+        name. For example, when the current language is cDAmericancA or cDAmerican 
+        (Ext)cA the language name is cBamericancA. 
+
+    cD3)cA 
+        To execute the command-line interface the variable 
+        cB.describe-word.cAcC<language>cAcB-commandcA must be set to the command-line 
+        required to obtain a word definition with the string "cB%scA" used in 
+        place of the word and "cB%%cA" using in place of a single "cB%cA". For the 
+        first example in cD(1)cA above the following would be required: 
+sB
+            set-variable .describe-word.american-command ... 
+                    ... "grep -i \"^%s (\" /tmp/words.txt" 
+
+sA
+        For the second example: 
+sB
+            set-variable .describe-word.american-command "mydict -d \"%s (\"" 
+
+sA
+    cD4)cA 
+        Only required for the second mode, for use with cDdescribe-wordcA's own 
+        GUI, the setting of another variable is required, the presence of this 
+        variable determines which mode is to be used. 
+
+        The variable cB.describe-word.cAcC<language>cAcB-searchcA must be set to a lsRegularExpressions(2)lmregex 
+        search patternle which will match the required definition(s) in the 
+        command out put, the first group ("cB\(...\)cA") must enclose the required 
+        definition, again "cB%scA" can be used in place of the word and "cB%%cA" for a 
+        single "cB%cA". cDdescribe-wordcA simply uses lslmregex-forward(3)le repeatedly to 
+        find all definitions of the current word, it then uses the value of 
+        the variable lslm@s1(4)le to get the individual definitions. For example for 
+        the first example the following is required: 
+sB
+            set-variable .describe-word.american-search  "^\(%s (.*\)\n" 
+
+sA
+        Note that the word being defined should be kept in the definition if 
+        possible as the lsadd-spell-rule(2)lmspell rulesle are used to look-up base words when a 
+        derivitive of a word is not found, therefore the word being defined 
+        may not be clear (e.g. cCdeactivatecA can be derived from cCactivatecA but 
+        their meanings are very different). Also long text lines are 
+        automatically wrapped by the GUI. 
+
+    The required variables should be added to the user setup file. 
+
 
 cEcESEE ALSO cEcA
 
 
-    lslmfind-file(2)le, lslmcrlf(2m)le, lslmctrlz(2m)le, lslm$buffer-fmod(5)le. 
+    lslmspell-buffer(3)le. 
 
 ! 4 &abs
 ! 4 &add
@@ -29915,10 +30417,10 @@ $a
 sB
         ; Merge the top two windows 
 
-        set-window  ;remember what window we are at 
-        1 next-window  ;go to the top window 
-        delete-window  ;merge it with the second window 
-        !force goto-window ;This will continue regardless 
+        push-position           ;remember where we are 
+        1 next-window           ;go to the top window 
+        delete-window           ;merge it with the second window 
+        !force pop-position     ;This will continue regardless 
         !if $status 
             ml-write "Call PASSED" 
         !else 
@@ -31800,12 +32302,16 @@ $a
     cDtcA 
         Returns the type of the file, where values returned are 
 
-            0   File does not exist. 
-            1   File is a regular file. 
-            2   File is a directory. 
-            3   File is a URL link (i.e. http://...). 
-            4   File is a untouchable system file. 
+            X   File does not exist. 
+            R   File is a regular file. 
+            D   File is a directory. 
+            H   File is a http URL link (see note). 
+            F   File is an ftp URL file (see note). 
+            N   File is an untouchable system file. 
 
+
+        Note that a URL type is determined from the file name, e.g. 
+        http://..., and its existence is not verified. 
 
     cDwcA 
         Returns a non-zero value if the user has permission to write to the 
@@ -34087,7 +34593,10 @@ $a
 cEcENAME cEcA
 
 
-    $platform - MicroEmacs '00 host platform identifier 
+|$platform
+    $platform - MicroEmacs host platform identifier 
+|%platform
+    %platform - MicroEmacs host platform type identifier 
 $a
 
 
@@ -34095,6 +34604,7 @@ $a
 
 
     cD$platformcA "cCstringcA"; Default is platform specific 
+    cD%platformcA "cCstringcA"; Default is platform specific 
 
 
 cEcEDESCRIPTION cEcA
@@ -34106,21 +34616,20 @@ $a
 
     Possible values are: 
 
+    "cDaixcA" 
+        All IBM AIX O/S. 
+
     "cDdoscA" 
         All IBM-PCs and compatibles running MS-DOS. 
 
-    "cDwin32cA" 
-        Microsoft Windows based systems including Windows 3.x (with Win32s), 
-        Windows '95 and NT. 
-
-    "cDirixcA" 
-        All Silicon Graphics (SGI) IRIX platforms 4.x, 5.x, 6.x. 
+    "cDfreebsdcA" 
+        All FreeBSD O/S. 
 
     "cDhpuxcA" 
         All Hewlett Packard's with HP-UX O/S. 
 
-    "cDunixwr1cA" 
-        PC based UNIX platform (Consensus and Unixware). 
+    "cDirixcA" 
+        All Silicon Graphics (SGI) IRIX platforms 4.x, 5.x, 6.x. 
 
     "cDlinuxcA" 
         All LINUX O/S. 
@@ -34128,13 +34637,24 @@ $a
     "cDsunoscA" 
         All Sun's with SUNOS O/S. 
 
-    "cDfreebsdcA" 
-        All FreeBSD O/S. 
+    "cDunixwr1cA" 
+        PC based UNIX platform (Consensus and Unixware). 
+
+    "cDwin32cA" 
+        Microsoft Windows based systems including Windows 3.x (with Win32s), 
+        Windows '95 and NT. 
 
     cD$platformcA is often used in cD.emfcA files to allow portability of macro files 
     across platforms, allowing macro files to perform platform specific 
     operations. lslm$system(5)le is also often used for this purpose as its value is 
     easier to assess. 
+
+    cD%platformcA is created at start-up when cBme.emfcA is executed, its value is 
+    identical to cD$platformcA except when the platform is a console in which case 
+    a 'cBccA' is appended to the $platform value, e.g. for MicroEmacs running a 
+    termcap version on LINUX the value will be "cBlinuxccA". The variable is used 
+    when the console and window based versions need to be distinguish, e.g. 
+    some of the lsuser-setup(3)lmuser-setuple settings. 
 
 
 cEcEEXAMPLE cEcA
@@ -34142,6 +34662,13 @@ $a
 
     The following example is taken from the cDme.emfcA file which uses the 
     cD$platformcA variable to load the platform specific initialization files. 
+sB
+        ; 
+        ; load in the platform specific stuff 
+        execute-file $platform 
+
+sA
+    This could be more explicitly done by: 
 sB
         ; 
         ; load in the platform specific stuff 
@@ -34156,19 +34683,12 @@ $a
         !endif 
 
 sA
-    This can be simplified to: 
-sB
-        ; 
-        ; load in the platform specific stuff 
-        execute-file $platform 
-
-sA
 
 cEcENOTES cEcA
 
 
-    This variable can not be set. Any attempt to set it will result in an 
-    error. 
+    The cD$platformcA variable can not be set. Any attempt to set it will result 
+    in an error. 
 
 
 cEcESEE ALSO cEcA
@@ -34232,6 +34752,7 @@ $a
 ! 5 $rcs-cif-com
 ! 5 $rcs-co-com
 ! 5 $rcs-cou-com
+! 5 $rcs-ue-com
 cEcENAME cEcA
 
 
@@ -34245,6 +34766,8 @@ $a
     $rcs-co-com - RCS (and SCCS) check out command 
 |$rcs-cou-com
     $rcs-cou-com - RCS (and SCCS) check out unlock command 
+|$rcs-ue-com
+    $rcs-ue-com - RCS (and SCCS) unedit file command 
 $a
 
 
@@ -34256,6 +34779,7 @@ $a
     cD$rcs-cif-comcA "cCstringcA"; Default is "" 
     cD$rcs-co-comcA "cCstringcA"; Default is "" 
     cD$rcs-cou-comcA "cCstringcA"; Default is "" 
+    cD$rcs-ue-comcA "cCstringcA"; Default is "" 
 
 
 cEcEDESCRIPTION cEcA
@@ -34300,14 +34824,19 @@ $a
         file name). If the RCS file does not exist then is simply toggles the 
         view mode, allowing editing. 
 
-        If the file is not in view mode MicroEmacs '00 attempts to check the 
-        file back into RCS using either cD$rcs-ci-comcA (if the RCS file already 
+        If the file is not in view mode MicroEmacs attempts to check the file 
+        back into RCS using either cD$rcs-ci-comcA (if the RCS file already 
         exists) or the the cD$rcs-cif-comcA (RCS cDCcAheck cDIcAn cDFcAirst cDCOMcAmand). The "cB%fcA" 
         is again used for the file name, the "cB%mcA" can also be used to get a 
         comment from the user at check in time which will be inserted (without 
         quotes) into the cD$rcs-ci-comcA command line. For example, one possible 
         cD$rcs-ci-comcA setting is "cBci -m\"%m\" %fcA" which uses the cDci(1)cA program 
         with the cD-mcA option to give a check in message. 
+
+    If cDrcs-filecA is given a -ve argument instead of checking in or out the 
+    current buffer's file it executes the command specified by cD$rcs-ue-comcA to 
+    unedit or abort any changes made to the file. After the command has been 
+    executed the file is reloaded. 
 
 
 cEcENOTES cEcA
@@ -34338,6 +34867,7 @@ $a
         set-variable $rcs-cou-com  "sccs edit %f" 
         set-variable $rcs-ci-com   "sccs delget -y\"%m\" %f" 
         set-variable $rcs-ci-com   "sccs create %f" 
+        set-variable $rcs-ue-com   "sccs unedit %f" 
 
 sA
 
@@ -34463,175 +34993,33 @@ $a
 cEcEEXAMPLE cEcA
 
 
-    cD$mouse-poscA is utilized by the mouse picking code, found in cBmouse.emfcA, an 
-    extract from that macro file is shown below which hilights the use of the 
-    variable. The extract shows how the mouse intersection is used to 
-    manipulate the size of the windows on the screen. 
+    The following macro can be used to print out the current position of the 
+    mouse, try binding the macro to the "cBmouse-movecA" key: 
 sB
-        ; 
-        ; grow-window 
-        ; Helper for the mouse on the window mode line, divider or corner. Grows the 
-        ; window with the mouse. 
-        ; 
-        0 define-macro mouse-grow-window 
-            set-variable #l0 &band %pick-mode 15 
-            !if &not &equ %mouse-y $mouse-y 
-                ; HANDLE: Vertical window growing 
-                !if &or &equ #l0 10 &equ #l0 2 
-                    ; If we move the window to the top then auto delete it. 
-                    !if &equ &sub $mouse-y &sub $window-mode-line $window-depth 0 
-                        ; Only delete if the split bar is enabled. 
-                        !if &band $scroll-bar 0x80 
-                            !force delete-window 
-                            !if $status 
-                                global-unbind-key &spr %mouse-mask "move" 
-                            !endif 
-                        !endif 
-                    ; ONLY grow the window if we are not at the bottom 
-                    !elif &les &add $window-mode-line 2 $screen-depth 
-                        ; Otherwise resize the window. 
-                        !force &sub $mouse-y $window-mode-line grow-window-vertically 
-                    !endif 
-                !elif &equ #l0 6 
-                    &mul &div $window-depth 2 &sub $mouse-y %box-pos scroll-down 
-                !endif 
-                set-variable %mouse-y $mouse-y 
-            !endif 
-            !if &not &equ %mouse-x $mouse-x 
-                ; HANDLE: Horizontal window growing. 
-                !if &or &equ #l0 10 &equ #l0 3 
-                    ; If we move the window to the left then delete the window. 
-                    !if &equ $mouse-x &sub $window-scroll-bar $window-width 
-                        ; Only delete if the split bar is enabled. 
-                        !if &band $scroll-bar 0x80 
-                            !force delete-window 
-                            !if $status 
-                                global-unbind-key &spr %mouse-mask "move" 
-                            !endif 
-                        !endif 
-                    ; ONLY grow the window if we are not at the right edge 
-                    !elif &not &equ &add &add $window-scroll-bar &band $scroll-bar 1 1 $screen-width 
-                        ; Otherwise resize the window. 
-                        !force &sub $mouse-x &cond &band %pick-mode 16 &add $window-scroll-bar 1 $window-scroll-bar grow-window-horizontally 
-                    !endif 
-                !endif 
-                set-variable %mouse-x $mouse-x 
-            !endif 
-        !emacro 
-
-        0 define-macro mouse-auto-pick-event 
-            set-variable #l0 &band %pick-mode 15 
-            !if &equ #l0 1 
-                ; Message line 
-                void 
+        define-macro print-mouse-position 
+            !force set-cursor-to-mouse 
+            set-variable #l0 &band $mouse-pos 15 
+            !if &equ #l0 0 
+                ml-write "Mouse in text window" 
+            !elif &equ #l0 1 
+                ml-write "Mouse on message line" 
             !elif &equ #l0 2 
-                ; ml-write "Mouse on Mode line " 
-                ; Check for mouse on position 0 of the mode line. If it is 
-                ; then construct a new horizontal window; otherwise we grow 
-                ; the window. We only do the window creation if the split 
-                ; is enabled. 
-                !if &and &band $scroll-bar 0x80 &equ %mouse-x &sub $window-scroll-bar $window-width 
-                    !force 1 split-window-horizontally 
-                    !if $status 
-                        ; Set to the minimum size and change the mode to a 
-                        ; horizontal re-size. 
-                        !force 4 resize-window-horizontally 
-                        set-variable %pick-mode &bor 3 &band $mouse-pos 0x30 
-                    !endif 
-                !endif 
-                ; Either case; always perform a window re-szie operation. 
-                ; The modified mode determines if this is vertical or 
-                ; horizontal. 
-                global-bind-key mouse-grow-window &spr %mouse-mask "move" 
-            !elif &equ #l0 3 
-                ; ml-write "Mouse on divider" 
-                global-bind-key mouse-grow-window &spr %mouse-mask "move" 
-            !elif &equ #l0 4 
-                ; ml-write "Mouse on split" 
-                ; Mouse on the buffer vertical divider. Split the window into two 
-                ; and then assume a 'grow window' with the new window. Force the 
-                ; mode to re-size operation. 
-                !force 1 split-window-vertically 
-                !if $status 
-                    !force 2 resize-window-vertically 
-                    set-variable %pick-mode &bor 2 &band $mouse-pos 0x30 
-                    global-bind-key mouse-grow-window &spr %mouse-mask "move" 
-                !endif 
-            !elif &equ #l0 5 
-                ; ml-write "Mouse on up-arrow" 
-                1 scroll-up 
-                1 global-bind-key scroll-up &spr %mouse-mask "time" 
-            !elif &equ #l0 6 
-                ; ml-write "Mouse on upper-shaft" 
-                scroll-up 
-                10 global-bind-key scroll-up &spr %mouse-mask "time" 
-            !elif &equ #l0 7 
-                ; ml-write "Mouse on box" 
-                1 set-scroll-with-mouse         ; Lock mouse position to scroller 
-                global-bind-key set-scroll-with-mouse &spr %mouse-mask "move" 
-            !elif &equ #l0 8 
-                ; ml-write "Mouse on lower shaft" 
-                scroll-down 
-                10 global-bind-key scroll-down &spr %mouse-mask "time" 
-            !elif &equ #l0 9 
-                ; ml-write "Mouse on down-arrow" 
-                1 scroll-down 
-                1 global-bind-key scroll-down &spr %mouse-mask "time" 
+                ml-write "Mouse on Mode line" 
+            !elif &and &gre #l0 2 &les #l0 10 
+                ml-write "Mouse on scroll bar" 
             !elif &equ #l0 10 
-                ; ml-write "Mouse on corner" 
-                global-bind-key mouse-grow-window &spr %mouse-mask "move" 
+                ml-write "Mouse on corner" 
             !elif &equ #l0 11 
-                ; ml-write "Mouse on Menu" 
-                0 osd 
-            !else 
-                ml-write "Mouse-pos ERROR !!" 
+                ml-write "Mouse on menu line" 
             !endif 
         !emacro 
 
-        0 define-macro mouse-event 
-            set-variable #l1 @cck 
-            set-variable %mouse-x $mouse-x 
-            set-variable %mouse-y $mouse-y 
-            ; force the unbind of the last pick time or move - do this on pick and drop as a safety mechanism 
-            !force global-unbind-key &spr %mouse-mask "time" 
-            !force global-unbind-key &spr %mouse-mask "move" 
-            ; must store the original window and cursor position 
-            !if   &set #l0 &sin "-pick" #l1 
-                set-window 
-                set-alpha-mark "T" 
-                set-cursor-to-mouse 
-                ; work out the mouse mask 
-                set-variable %pick-mode $mouse-pos 
-                set-variable %mouse-mask &cat &cat &lef #l1 #l0 "%s" &rig #l1 &add #l0 4 
-            !elif &set #l0 &sin "-drop" #l1 
-                set-cursor-to-mouse 
-            !else 
-                !return 
-            !endif 
-            !if &band %pick-mode 15 
-                ; Not in the text window 
-                !if &reg "/history" &cat "mouse/" &spr %mouse-mask "auto" "0" 
-                    ; do the scroll bar stuff 
-                    !if &sin "-pick" #l1 
-                        mouse-auto-pick-event 
-                    !else 
-                        goto-window 
-                    !endif 
-                    !return 
-                !endif 
-            !endif 
-            !if &not &seq &set #l0 &ind &cat ":" #l1 "ERROR" 
-                execute-line #l0 
-            !elif &not &seq &set #l0 &reg "/history" &cat "mouse/" #l1 "" "" 
-                execute-line #l0 
-            !else 
-                goto-window 
-                goto-alpha-mark "T" 
-                !force show-region 
-            !endif 
-        !emacro 
+        global-bind-key print-mouse-position mouse-move 
 
 sA
+    cD$mouse-poscA is utilized by the mouse picking code, found in macro file 
+    cBmouse.emfcA. 
+
 
 cEcESEE ALSO cEcA
 
@@ -35018,7 +35406,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmfind-tag(2)le, cDvi(1)cA, cDctags(1)cA. 
+    cDctags(1)cA, lslmctags(3f)le, lslmfind-tag(2)le, cDvi(1)cA. 
 
 ! 5 $timestamp
 cEcENAME cEcA
@@ -37953,13 +38341,10 @@ $a
          * 
          *  System        : 
          *  Module        : 
-         *  Object Name   : $RCSfile$ 
-         *  Revision      : $Revision$ 
-         *  Date          : $Date$ 
-         *  Author        : $Author$ 
+         *  Object Name   : m8fil001.8 
          *  Created By    : $USER_NAME$ 
          *  Created       : $ASCII_TIME$ 
-         *  Last Modified : <050798.1524> 
+         *  Last Modified : <000719.1013> 
          * 
          *  Description  
          * 
@@ -37967,8 +38352,6 @@ $a
          * 
          *  History 
          *  
-         *  $Log$ 
-         * 
          **************************************************************************** 
          * 
          *  Copyright (c) $YEAR$ $COMPANY_NAME$. 
@@ -38689,12 +39072,25 @@ $a
 
         Comments may be formatted using cBesc ocA, which reformats the comments 
         according to the current fill paragraph. If a comment commences with 
-        cB/***...cA then the comment is automatically formatted to a box. 
+        cB/***...cA then the comment is automatically formatted to a box. If the 
+        comment commentces with cB/**cA then the comment is assumed to be a cCJavacA 
+        cCDoccA comment. 
 
     cDTagscA 
         A C-tags file may be generated within the editor using the cDToolscA -> 
         cDC-ToolscA -> cDCreate Tag FilecA. lslmfind-tag(2)le takes the user to the file 
         using the tag information. 
+
+        On invoking the tag generator then the user is presented with a dialog 
+        box which specifies the generation option of the tags file. The base 
+        directory of the tags file search and tagging options may be specified 
+        to locate all of the definitions within the code space. 
+
+        The cDtagscA file is extremely useful where the user is dealing with 
+        inherited source code spread over multiple directories. Generation of 
+        a recursive tag file with all searching options enabled allows labels 
+        to be located extremely rapidly (certainly faster than IDE 
+        environments). 
 
     cDFolding and Information HidingcA 
         Generic folding is enabled within the C and C++ files. The folds occur 
@@ -39841,6 +40237,33 @@ $a
         current region. Note that folding does not operate on K&R style code, 
         with the trailing open brace. 
 
+    cDTagscA 
+        A c-tags file may be generated within the editor using the cDToolscA -> 
+        cDJava-ToolscA -> cDCreate Tag FilecA. lslmfind-tag(2)le takes the user to the file 
+        using the tag information. 
+
+        On invoking the tag generator then the user is presented with a dialog 
+        box which specifies the generation option of the tags file. The base 
+        directory of the tags file search and tagging options may be specified 
+        to locate all of the definitions within the code space. 
+
+        The cDtagscA file is extremely useful where the user is dealing with 
+        inherited source code spread over multiple directories. Generation of 
+        a recursive tag file with all searching options enabled allows labels 
+        to be located extremely rapidly (certainly faster than IDE 
+        environments). 
+
+    cDFolding and Information HidingcA 
+        Generic folding is enabled within the C and C++ files. The folds occur 
+        about braces cD{cA...cD}cA located on the left-hand margin. lslmfold-all(3)le 
+        (un)folds all regions in the file, lslmfold-current(3)le (un)folds the 
+        current region. Note that folding does not operate on K&R style code. 
+
+        The cDToolscA -> cDC-ToolscA menu allows cB#definecA's to be evaluated within the 
+        buffer. Where the state of a cB#ifcA is established to be false (using the 
+        cB#definecA information) then the disabled region of code is grayed out 
+        indicating which regions of the code are active. 
+
     cDWorking EnvironmentcA 
         lslmcompile(3)le may be invoked to rebuild the source, the user is prompted 
         to save any files. 
@@ -39870,9 +40293,9 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmc(9)le, ls$c-brace(5)lmc-brace(5)le, lslmcmode(2m)le, lslmcompile(3)le, lslmfind-tag(2)le, lslmfold-all(3)le, 
-    lslmfold-current(3)le, lslmrcs-file(2)le, lslmrestyle-buffer(3)le, lslmrestyle-region(3)le, 
-    lslmtime(2m)le. 
+    lslmc(9)le, ls$c-brace(5)lmc-brace(5)le, lslmcmode(2m)le, lslmcompile(3)le, lslmfind-tag(2)le, lslmjavatags(3f)le, 
+    lslmfind-tag(2)le, lslmfold-all(3)le, lslmfold-current(3)le, lslmrcs-file(2)le, lslmrestyle-buffer(3)le, 
+    lslmrestyle-region(3)le, lslmtime(2m)le. 
 
     lsMicroEmacs '00 - Supported File TypeslmSupported File Typesle 
 
@@ -40181,6 +40604,7 @@ $a
 
 ! 9 perl
 ! 9 pl
+! 9 pm
 cEcESYNOPSIS cEcA
 
 
@@ -40192,12 +40616,13 @@ $a
 
     cDhkperl.emfcA - Practical Extraction and Report Language file hook definition 
     cDperl.etfcA - Practical Extraction and Report Language header template file. 
+    cDperl.eafcA - Practical Extraction and Report Language abbreviation file. 
 
 
 cEcEEXTENSIONS cEcA
 
 
-    cD.plcA - Perl file 
+    cD.plcA, cD.pmcA - Perl file 
 
 
 cEcEMAGIC STRINGS cEcA
@@ -40208,28 +40633,67 @@ $a
         file used to locate the executable. The Perl files may be 
         extension-less and are still recognized. 
 
+    cD# -*- perl -*-cA 
+        MicroEmacs '00 recognizes the standard GNU Emacs magic string on the 
+        first line of the file. The Perl files may be extension-less and are 
+        still recognized. 
+
 
 cEcEDESCRIPTION cEcA
 
 
-    The cDperlcA file type template provides simple hilighting of Perl files, the 
-    template provides minimal hilighting. 
+    The cDperlcA file type template provides the hilighting, indentation and tools 
+    definitions for a perl file. 
 
-    File recognition is performed using the standard file extension cD.plcA, or by 
-    the magic string. 
+    File recognition is performed using the standard file extension cD.plcA, cD.pmcA 
+    or by the magic string. 
+
+    cDGeneral EditingcA 
+        On creating a new file, a new header is automatically included into 
+        the file. lslmtime(2m)le is by default enabled, allowing the modification 
+        time-stamp to be maintained in the header. 
+
+    cDHilightingcA 
+        The hilighting features allow commands, variables, logical, comments, 
+        strings and characters of the language to be differentiated and 
+        rendered in different colors. 
+
+    cDAuto LayoutcA 
+        The lsindent(2)lmindentation mechanismle is enabled which performs automatic layout 
+        of the text. lslmrestyle-region(3)le and lslmrestyle-buffer(3)le are available to 
+        reformat (re-layout) selected sections of the buffer, or the whole 
+        buffer, respectively. 
+
+    cDFolding and Information HidingcA 
+        Generic folding is enabled within perl files. The folds occur about 
+        cCsubcA...cD}cA located on the left-hand margin. lslmfold-all(3)le (un)folds all 
+        regions in the file, lslmfold-current(3)le (un)folds the current region. 
+
+    cDShort CutscA 
+        The short cut keys used within the buffer are:- 
+
+        cDC-c C-ccA - Comment out the current line. 
+        cDC-c C-dcA - Uncomment the current line. 
+        cDC-c esc esc cA- Command complete. 
+        cDA-C-icA - Restyle the current region. 
+        cDf2cA - (un)fold the current region 
+        cDf3cA - (un)fold all regions 
 
 
 cEcEBUGS cEcA
 
 
-    None reported. Template could probably benefit from some form of auto 
-    indentation. 
+    The flexibility of the perl language does cause some hilighting anomalies 
+    from time to time, typically with unbalanced quote characters. Most of the 
+    common exceptions have been caught, however there are a few syntax 
+    sequences that involve quotation marks that can cause problems. 
 
 
 cEcESEE ALSO cEcA
 
 
-    lslmindent(2)le, lslmrestyle-buffer(3)le, lslmrestyle-region(3)le. 
+    lslmfold-all(3)le, lslmfold-current(3)le, lslmindent(2)le, lslmrestyle-buffer(3)le, 
+    lslmrestyle-region(3)le, lslmtime(2m)le. 
 
     lsMicroEmacs '00 - Supported File TypeslmSupported File Typesle 
 

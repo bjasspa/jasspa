@@ -12,7 +12,7 @@
 *
 *	Creation Date:		17/10/91
 *
-*	Modification date:	%G%		<001002.1013>
+*	Modification date:	%G%		<001012.1740>
 *
 *	Current rev:		%I%
 *
@@ -146,7 +146,7 @@ DEFFUNC ("insert-string",		0x04, insString,	CK_INSSTR, __meFunc_INSSTR, &__meFun
 DEFFUNC ("insert-tab",			0x04, insTab,		CK_INSTAB, __meFunc_INSTAB, &__meFunc_IPIPKLL, &__meFunc_NXTBUF)
 DEFFUNC ("ipipe-kill",			0x42, ipipeKill,	CK_IPIPKLL, __meFunc_IPIPKLL, &__meFunc_IPIPCMD, 0)
 DEFFUNC ("ipipe-shell-command",		0x42, ipipeCommand,	CK_IPIPCMD, __meFunc_IPIPCMD, &__meFunc_IPIPWRT, &__meFunc_LSTVAR)
-DEFFUNC ("ipipe-write",			0x42, ipipeWriteString,	CK_IPIPWRT, __meFunc_IPIPWRT, &__meFunc_BISRCH, 0)
+DEFFUNC ("ipipe-write",			0x42, ipipeWrite,	CK_IPIPWRT, __meFunc_IPIPWRT, &__meFunc_BISRCH, 0)
 DEFFUNC ("isearch-backward",		0x00, isearchBack,	CK_BISRCH, __meFunc_BISRCH, &__meFunc_FISRCH, 0)
 DEFFUNC ("isearch-forward",		0x00, isearchForw,	CK_FISRCH, __meFunc_FISRCH, &__meFunc_MCRQURY, 0)
 DEFFUNC ("kbd-macro-query",		0x00, macroQuery,	CK_MCRQURY, __meFunc_MCRQURY, &__meFunc_KILEOL, 0)

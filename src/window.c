@@ -10,7 +10,7 @@
 *
 *       Author:                 Danial Lawrence
 *
-*       Creation Date:          10/05/91 08:27          <001002.1210>
+*       Creation Date:          10/05/91 08:27          <001005.1226>
 *
 *       Modification date:      %G% : %U%
 *
@@ -2098,7 +2098,14 @@ setPosition(int f, int n)		/* save ptr to current window */
     pos->flags = n ;
     
     if(n & mePOS_WINDOW)
+    {
         pos->window = curwp ;
+        /* store window dimentions so we can pick the best */
+        pos->winMinRow = curwp->firstRow ;
+        pos->winMinCol = curwp->firstCol ;
+        pos->winMaxRow = curwp->firstRow + curwp->numCols ;
+        pos->winMaxCol = curwp->firstCol + curwp->numRows ;
+    }
     if(n & mePOS_BUFFER)
         pos->buffer = curbp ;
     if(n & mePOS_LINEMRK)
@@ -2176,24 +2183,48 @@ gotoPosition(int f, int n)		/* restore the saved screen */
     else
         n &= pos->flags ;
     
-    if(ret && (n & mePOS_WINDOW))
+    if(n & mePOS_WINDOW)
     {
         /* find the window */
-        register WINDOW *wp;
-        wp = wheadp;
-        while (wp != NULL)
+        register WINDOW *wp, *bwp=NULL;
+        int off, boff ;
+        
+        if(wheadp->w_wndp == NULL)
+            bwp = wheadp ;
+        if(bwp == NULL)
         {
-            if(wp == pos->window)
+            wp = wheadp;
+            while (wp != NULL)
             {
-                makeCurWind(wp) ;
-                break ;
+                if(wp == pos->window)
+                {
+                    bwp = wp ;
+                    break ;
+                }
+                wp = wp->w_wndp;
             }
-            wp = wp->w_wndp;
         }
-        if(wp == NULL)
-            ret = FALSE ;
+        if(bwp == NULL)
+        {
+            wp = wheadp;
+            while (wp != NULL)
+            {
+                /* calculate how close this window matches the original */
+                off =     abs(((int) pos->winMinRow) - ((int) wp->firstRow)) +
+                          abs(((int) pos->winMinCol) - ((int) wp->firstCol)) +
+                          abs(((int) pos->winMaxRow) - ((int) (wp->firstRow + wp->numCols))) +
+                          abs(((int) pos->winMaxCol) - ((int) (wp->firstCol + wp->numRows))) ;
+                if((bwp == NULL) || (off < boff))
+                {
+                    bwp = wp ;
+                    boff = off ;
+                }
+                wp = wp->w_wndp;
+            }
+        }
+        makeCurWind(bwp) ;
     }
-    if(ret && (n & mePOS_BUFFER))
+    if(n & mePOS_BUFFER)
     {
         /* find the buffer */
         register BUFFER *bp;
@@ -2208,9 +2239,13 @@ gotoPosition(int f, int n)		/* restore the saved screen */
             bp = bp->b_bufp;
         }
         if(bp == NULL)
+        {
+            /* print the warning and ensure no other restoring takes place */
             ret = FALSE ;
+            n &= mePOS_WINDOW ;
+        }
     }
-    if(ret && (n & mePOS_LINEMRK))
+    if(n & mePOS_LINEMRK)
     {
         if((ret = alphaMarkGet(curbp,pos->line_amark)) == TRUE)
         {
@@ -2219,16 +2254,22 @@ gotoPosition(int f, int n)		/* restore the saved screen */
             curwp->w_doto = 0 ;
             curwp->w_flag |= WFMOVEL ;
         }
+        else
+            /* don't restore the offset or scrolls */
+            n &= (mePOS_WINDOW|mePOS_BUFFER) ;
     }
-    else if(ret && (n & mePOS_LINENO))
-        ret = gotoLine(1,pos->line_no+1) ;
+    else if((n & mePOS_LINENO) && ((ret = gotoLine(1,pos->line_no+1)) != TRUE))
+        /* don't restore the offset or scrolls */
+        n &= (mePOS_WINDOW|mePOS_BUFFER) ;
     
-    if(ret && (n & mePOS_LINEOFF))
+    if(n & mePOS_LINEOFF)
     {
         if(pos->w_doto > llength(curwp->w_dotp))
         {
             curwp->w_doto = llength(curwp->w_dotp) ;
             ret = FALSE ;
+            /* don't restore the x scrolls */
+            n &= (mePOS_WINDOW|mePOS_WINYSCRL|mePOS_BUFFER|mePOS_LINEMRK|mePOS_LINENO) ;
         }
         else
             curwp->w_doto = pos->w_doto ;
@@ -2270,7 +2311,8 @@ gotoPosition(int f, int n)		/* restore the saved screen */
         updCursor(curwp) ;
     
     if(!ret)
-        return mlwrite(MWCLEXEC|MWABORT,(uint8 *)"[Failed to restore position]");
+        return mlwrite(MWCLEXEC|MWABORT,(uint8 *)"[Failed to restore %sposition]",
+                       (n == 0) ? "":"part of ");
     return TRUE ;
 }
 

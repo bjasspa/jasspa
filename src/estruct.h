@@ -2,7 +2,7 @@
  * 
  *	SCCS:		%W%		%G%		%U%
  *
- *	Last Modified :	<001002.1044>
+ *	Last Modified :	<001012.1819>
  *
  *	ESTRUCT:	Structure and preprocesser defined for
  *			MicroEMACS 3.7
@@ -493,12 +493,16 @@ typedef	struct	mePOS {
     WINDOW         *window ;            /* Current window                            */
     struct BUFFER  *buffer ;            /* windows buffer                            */
     int32           topLineNo ;         /* windows top line number                   */
-    int32           line_no;            /* current line number                       */
-    uint16          line_amark;         /* Alpha mark to current line                */
-    uint16          w_scscroll;         /* cur horizontal scroll column              */
-    uint16          w_sscroll;          /* the horizontal scroll column              */
-    uint16          w_doto;             /* Byte offset for "."                       */
-    uint16          flags;              /* Whats stored bit mask                     */
+    int32           line_no ;           /* current line number                       */
+    uint16          winMinRow ;         /* Which window - store the co-ordinate      */
+    uint16          winMinCol ;         /* so we can restore to the best matching    */
+    uint16          winMaxRow ;         /* window on a goto - this greatly improves  */
+    uint16          winMaxCol ;         /* its use.                                  */
+    uint16          line_amark ;        /* Alpha mark to current line                */
+    uint16          w_scscroll ;        /* cur horizontal scroll column              */
+    uint16          w_sscroll ;         /* the horizontal scroll column              */
+    uint16          w_doto ;            /* Byte offset for "."                       */
+    uint16          flags ;             /* Whats stored bit mask                     */
     uint16          name ;		/* position name, (letter associated with it)*/
 } mePOS;
 #define mePOS_WINDOW    0x01
@@ -878,15 +882,26 @@ typedef struct
 #ifdef _IPIPES
 /* The following is structure required for unix ipipes */
 
-typedef struct IPIPEBUF {
+#define IPIPE_OVERWRITE   0x01
+#define IPIPE_NEXT_CHAR   0x02
+#define IPIPE_CHILD_EXIT  0x04
+
+typedef struct meIPIPE {
     BUFFER    *bp ;
-    struct IPIPEBUF *next ;
+    struct meIPIPE *next ;
     int        pid ;
 #ifdef _WIN32
     HANDLE     rfd ;
     HANDLE     outWfd ;
-    HANDLE     hProcess ;
-    DWORD      dwProcessId ;
+    HANDLE     process ;
+    DWORD      processId ;
+    HWND       childWnd ;
+    /* wait thread variables */
+    HANDLE     childActive ;
+    HANDLE     threadContinue ;
+    HANDLE     thread ;
+    DWORD      threadId ;
+    uint8      nextChar ;
 #else
     int        rfd ;
     int        outWfd ;
@@ -897,7 +912,7 @@ typedef struct IPIPEBUF {
     int16      strCol ;
     int16      curRow ;
     int16      flag ;
-} IPIPEBUF ;
+} meIPIPE ;
 
 #endif
 

@@ -12,7 +12,7 @@
 *
 *	Creation Date:		29/04/91 09:13
 *
-*	Modification date:	%G% : %U%	<000723.2038>
+*	Modification date:	%G% : %U%	<001011.1802>
 *
 *	Current rev:		%I%
 *
@@ -1644,7 +1644,7 @@ reframe(WINDOW *wp)
            (ap->line == wp->w_dotp) &&
            (ap->offs == wp->w_doto))
         {
-            IPIPEBUF *ipipe ;
+            meIPIPE *ipipe ;
 
             /* Yes we are at the right place, find the ipipe node */
             ipipe = ipipes ;
