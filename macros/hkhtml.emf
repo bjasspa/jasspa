@@ -155,6 +155,7 @@ set-variable .fhook-html.item-list-r4 "H4+  \ecB\\2\ecA"
     hilight .hilight.htmlT 1  "noresize"               .scheme.operator
     hilight .hilight.htmlT 1  "nowrap"                 .scheme.operator
     hilight .hilight.htmlT 1  "object"                 .scheme.operator
+    hilight .hilight.htmlT 0x200 "on"
     hilight .hilight.htmlT 1  "onabort"                .scheme.operator
     hilight .hilight.htmlT 1  "onafterupdate"          .scheme.operator
     hilight .hilight.htmlT 1  "onbeforeunload"         .scheme.operator
@@ -490,10 +491,26 @@ define-macro html-backward-tag
 ; n html-insert-tag <name>
 ; n is a bitwise flag where:
 ;      0x01  insert </<name>> end tag
+;      0x02  ignore the current region
 define-macro html-insert-tag
+    set-variable #l2 0
+    !if &not &band 0x02 @#
+        0 show-region
+        !if &equ &band $result 0x05 0x05
+            set-variable #l2 $result
+            3 show-region
+        !endif
+    !endif
     !force set-variable #l0 @1
     !if &not $status
         set-variable #l0 @ml "HTML Tag"
+    !endif
+    !if #l2
+        ; get the end of the current  region
+        &cond &band #l2 0x08 -2 2 show-region
+        set-variable #l3 $window-line
+        set-variable #l4 $window-col
+        &cond &band #l2 0x08 2 -2 show-region
     !endif
     set-position "\x81"
     !force forward-char
@@ -507,6 +524,24 @@ define-macro html-insert-tag
     !endif
     insert-string &spr "<%s>" #l0
     !if &band @# 1
+        !if #l2
+            !if &equ $window-line #l3
+                set-variable $window-col &add #l4 &add &len #l0 2
+            !else
+                set-variable $window-line #l3
+                set-variable $window-col #l4
+            !endif
+            set-position "\x81"
+            !force forward-char
+            !force html-backward-tag
+            !if &not $status
+                goto-position "\x81"
+            !elif &seq @wc "<"
+                !force html-forward-tag
+            !else
+                goto-position "\x81"
+            !endif
+        !endif
         set-variable #l1 $window-col
         insert-string &spr "</%s>" #l0
         set-variable $window-col #l1

@@ -12,7 +12,10 @@
 define-macro fhook-dirlst
     -1 buffer-mode "view"
     1 buffer-mode "magic"
-    !if &seq &lef $buffer-fname 6 "ftp://"
+    !if &seq $buffer-fname ""
+        ; toolbar creates an empty *files* buffer - ignore it
+        !return
+    !elif &seq &lef $buffer-fname 6 "ftp://"
         forward-line
         !if &iseq &lef @wl 5 "total" 
             forward-line

@@ -59,8 +59,9 @@
     set-variable #l2 &cond &band #l9 0x200 &mid $window-chars 27 1 &mid $box-chars 3 1
     set-variable #l3 &cond &band #l9 0x200 &mid $window-chars 31 1 &mid $box-chars 4 1
     !if &band 0x10000 #l9
-        set-variable #l8 &ind &spr ".%s.name" .toolbar-redraw.bt
-        !if &seq #l8 "ERROR"
+        !if &seq .toolbar-redraw.bt ""
+            set-variable #l8 "Default"
+        !elif &seq &set #l8 &ind &spr ".%s.name" .toolbar-redraw.bt "ERROR"
             set-variable #l8 &cat &sup &mid .toolbar-redraw.bt 6 1 &rig .toolbar-redraw.bt 7
         !endif
         set-variable #l1 &spr "%s %s" #l8 #l1
@@ -85,6 +86,7 @@
     !if .toolbar.disable
         @# screen-update
         !return
+    !elif &band .bc 0x003
     !elif &band $window-flags 0x1000
         ; don't update the tools if in a tool window, but we may need to update the mode lines
         !if &band .bc 0x80
@@ -148,11 +150,14 @@
         !if &not &band #l2 0x400
             !force 0 popup-window &lget .toolbar.tool-buff #l1
             !if $status
-                !if &not &exi :mouse-pick-all
+                !if &not &exi :tool-width
+                    ; this buffer has not been used by the toolbar before,
                     ; install dummy mouse handler to avoid modifying problems
+                    ; and ensure that the tool-cmd is called if required on create
                     set-variable :mouse-pick-all "toolbar-mouse-void"
                     set-variable :mouse-drop-all "toolbar-mouse-void"
                     1 buffer-mode "hide"
+                    !tjump &band #l2 0x001 3
                 !endif
                 !if &band #l2 .bc
                     0xdf set-position "\x85"
@@ -197,11 +202,6 @@
         set-variable .toolbar.tool-flag &lset .toolbar.tool-flag #l0 &bxor &lget .toolbar.tool-flag #l0 0x400
         set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x002
         find-buffer &lget .toolbar.tool-buff #l0
-        ; install dummy mouse handler to avoid modifying problems
-        set-variable :mouse-pick-all "toolbar-mouse-void"
-        set-variable :mouse-drop-all "toolbar-mouse-void"
-        1 buffer-mode "hide"
-        #l0 toolbar-redraw-mode
         goto-position "\x84"
     !endif
 !emacro
@@ -230,11 +230,7 @@
                 set-variable .toolbar.tool-flag &lset .toolbar.tool-flag #l2 &bxor &lget .toolbar.tool-flag #l2 0x400
                 set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x002
                 find-buffer &lget .toolbar.tool-buff #l2
-                ; install dummy mouse handler to avoid modifying problems
-                set-variable :mouse-pick-all "toolbar-mouse-void"
-                set-variable :mouse-drop-all "toolbar-mouse-void"
-                1 buffer-mode "hide"
-                #l2 toolbar-redraw-mode
+                1 goto-position "\x82"
                 ; fully handled this event, abort
                 !abort
             !endif
@@ -323,10 +319,6 @@ define-macro toolbar
                 !endif
                 set-variable $window-flags &cond &band #l1 0x100 0x103f &sub 0x103e &band #l2 1 
                 find-buffer &lget .toolbar.tool-buff #l0
-                ; install dummy mouse handler to avoid modifying problems
-                set-variable :mouse-pick-all "toolbar-mouse-void"
-                set-variable :mouse-drop-all "toolbar-mouse-void"
-                1 buffer-mode "hide"
                 set-variable #l8 &lset #l8 #l2 &lget .toolbar.tool-size #l0
                 set-variable #l6 &lset #l6 #l2 $buffer-bname
             !endif
