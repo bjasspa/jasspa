@@ -10,7 +10,9 @@
 ;
 define-macro osd-search
 !emacro
-!if &seq .osd.ftag "ERROR"
+!if &not &exi .osd.symbol
+    set-variable .osd.symbol  &pinc .osd.next 1
+    set-variable .osd.alarm   &pinc .osd.next 1
     set-variable .osd.ftag    &pinc .osd.next 1
     set-variable .osd.ftagc   &pinc .osd.next 1
     set-variable .osd.ftagl   &pinc .osd.next 1
@@ -37,9 +39,72 @@ define-macro osd-search
     ; indent-setup
     set-variable .osd.indstp &pinc .osd.next 1
 !endif
+;
+; symbol
+; Macro to print up the ascii table on screen using the poke and allowing
+; the user to select a code
+0 define-macro symbol-insert
+    insert-string &itoa @#
+!emacro
+
+osd .osd.symbol 0 "bnatcHsd" 2 3 75 0 -1 -1 620 .scheme.osd-title "Insert Symbol"
+osd .osd.symbol 1 ""
+osd .osd.symbol 2 "" "   D  X C   D  X C   D  X C   D  X C   D  X C   D  X C   D  X C   D  X C"
+osd .osd.symbol 3 ""
+
+set-variable #l0 255
+!repeat
+    set-variable #l1 &spr "%3d %2x %s" #l0 #l0 &itoa #l0
+    set-variable #l1 &spr "%s%n" #l1 &sub 8 &len #l1 " "
+    !if &equ &band #l0 7 7
+        osd .osd.symbol &add &mul #l0 2 11 "f"  #l1 #l0 symbol-insert
+    !else
+        osd .osd.symbol &add &mul #l0 2 11 "hf" #l1 #l0 symbol-insert
+    !endif
+    osd .osd.symbol &add &mul #l0 2 10 "hf" " "
+!until &not &pdec #l0 1
+!endif
+osd .osd.symbol 600 ""
+osd .osd.symbol 610 ""
+osd .osd.symbol 620 "BcfH" .scheme.osd-ebtt " Cancel " f void
+
+define-macro symbol
+    .osd.symbol osd
+!emacro
+
+0 define-macro indent-setup-exec
+    !if &equ @# 3
+        !return &not &bmod "tab"
+    !elif &equ @# 2
+        set-variable $result $buffer-indent-width
+    !elif &equ @# 1
+        set-variable $result $buffer-tab-width
+    !elif &equ @# -1
+        set-variable $buffer-tab-width @ml2 "" $buffer-tab-width
+    !elif &equ @# -2
+        set-variable $buffer-indent-width @ml2 "" $buffer-indent-width
+    !elif &equ @# -3
+        0 buffer-mode "tab"
+    !endif
+!emacro
+osd .osd.indstp  0 "batcdHs" 9 3 30 10 -1 -1 110 .scheme.osd-title "Indentation Setup"
+osd .osd.indstp 10 ""
+osd .osd.indstp 20 "Sfh" "  \HTab Width:    " 30
+osd .osd.indstp 30 "EtRxHf" .scheme.osd-entry "##########" 1 indent-setup-exec
+osd .osd.indstp 40 ""
+osd .osd.indstp 50 "Sfh" "  \HIndent Width: " 60
+osd .osd.indstp 60 "EtRxHf" .scheme.osd-entry "##########" 2 indent-setup-exec
+osd .osd.indstp 70 ""
+osd .osd.indstp 80 "fh" "  "
+osd .osd.indstp 90 "Cptfx" &spr "%s\} \HUse tab characters" .osd.checkbox-chars 3 indent-setup-exec
+osd .osd.indstp 100 ""
+osd .osd.indstp 110 "BtcfHh" .scheme.osd-ebtt " \HOkay "  f void
+define-macro indent-setup
+    .osd.indstp osd
+!emacro
+
 set-variable .osd.ftagw 32
 set-variable .osd.ftagd 16
-
 0 define-macro osd-find-tag-goto
     !if @?
         !if &seq $result .osd.tag-cur
@@ -137,7 +202,7 @@ set-variable .osd.ftagd 16
     set-variable :date #l3
     -1 find-buffer $buffer-bname
     find-buffer #l4
-    ml-clear
+    0 ml-write
 !emacro
 
 0 define-macro osd-find-tag-resize
@@ -805,33 +870,32 @@ osd .osd.gline 11 "BcfH"   .scheme.osd-ebtt " E\Hxit "    1 void
     .osd.gline osd
 !emacro
 
-0 define-macro indent-setup-exec
-    !if &equ @# 3
-        !return &not &bmod "tab"
-    !elif &equ @# 2
-        set-variable $result $buffer-indent-width
-    !elif &equ @# 1
-        set-variable $result $buffer-tab-width
-    !elif &equ @# -1
-        set-variable $buffer-tab-width @ml2 "" $buffer-tab-width
-    !elif &equ @# -2
-        set-variable $buffer-indent-width @ml2 "" $buffer-indent-width
-    !elif &equ @# -3
-        0 buffer-mode "tab"
+; alarm - Create a simple alarm
+define-macro alarm
+    set-variable .no &add .no 1
+    set-variable #l0 &cat ".alarm.a" .no
+    !force set-variable #l2 @3
+    !if &not $status
+        set-variable &ind #l0 @ml "Message"
+        set-variable #l1 @ml "Hours"
+        set-variable #l2 @ml "Minutes"
+    !else
+        set-variable &ind #l0 @1
+        set-variable #l1 @2
     !endif
+    set-variable #l1 &mul 60000 &add &mul 60 #l1 #l2
+    0 define-macro #l0
+        !bell
+        set-variable #l0 &add &len &ind @0 10
+        osd .osd.alarm 0 "bat" 9 3
+        osd .osd.alarm 1 ""
+        osd .osd.alarm 2 "c" "ALARM"
+        osd .osd.alarm 3 ""
+        osd .osd.alarm 4 "" &ind @0
+        osd .osd.alarm 5 ""
+        osd .osd.alarm 6 "Bcf" " OK " f void
+        .osd.alarm osd
+    !emacro
+    #l1 create-callback #l0
 !emacro
-osd .osd.indstp  0 "batcdHs" 9 3 30 10 -1 -1 110 .scheme.osd-title "Indentation Setup"
-osd .osd.indstp 10 ""
-osd .osd.indstp 20 "Sfh" "  \HTab Width:    " 30
-osd .osd.indstp 30 "EtRxHf" .scheme.osd-entry "##########" 1 indent-setup-exec
-osd .osd.indstp 40 ""
-osd .osd.indstp 50 "Sfh" "  \HIndent Width: " 60
-osd .osd.indstp 60 "EtRxHf" .scheme.osd-entry "##########" 2 indent-setup-exec
-osd .osd.indstp 70 ""
-osd .osd.indstp 80 "fh" "  "
-osd .osd.indstp 90 "Cptfx" &spr "%s\} \HUse tab characters" .osd.checkbox-chars 3 indent-setup-exec
-osd .osd.indstp 100 ""
-osd .osd.indstp 110 "BtcfHh" .scheme.osd-ebtt " \HOkay "  f void
-define-macro indent-setup
-    .osd.indstp osd
-!emacro
+set-variable .alarm.no 0
