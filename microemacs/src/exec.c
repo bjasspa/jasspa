@@ -395,7 +395,7 @@ fnctest(void)
         if(cmd == NULL)
         {
             count++;
-            mlwrite(MWWAIT,"cmdHash Error: [%s] should be in position %d", 
+            mlwrite(MWWAIT,(meUByte *) "cmdHash Error: [%s] should be in position %d", 
                     getCommandName(ii),key) ;
         }
     }
@@ -407,7 +407,7 @@ fnctest(void)
         if(meStrcmp(cmd->anext->name,cmd->name) < 0)
         {
             count++;
-            mlwrite(MWWAIT,"cmdHead Error: [%s] should be before [%s]", 
+            mlwrite(MWWAIT,(meUByte *) "cmdHead Error: [%s] should be before [%s]", 
                     cmd->anext->name,cmd->name) ;
         }
         cmd = cmd->anext ;
@@ -420,11 +420,11 @@ fnctest(void)
         {
             count++;
             meGetStringFromKey(ktp->code, outseq);
-            mlwrite(MWWAIT,"[%s] key out of place",outseq);
+            mlwrite(MWWAIT,(meUByte *) "[%s] key out of place",outseq);
         }
     
     if(count)
-        mlwrite(MWWAIT,"!test: %d Error(s) Detected",count);
+        mlwrite(MWWAIT,(meUByte *) "!test: %d Error(s) Detected",count);
     return (count);
 }
 #endif

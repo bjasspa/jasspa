@@ -2430,41 +2430,6 @@ _meChdir(meUByte *path)
 }
 #endif
 
-int
-changeDir(int f, int n)
-{
-    /*
-     * Change directory.
-     *
-     * Alain D D Williams, Sept 1986.
-     *
-     * Hacked by Tony Bamford to change relative filenames to absolute
-     * paths, Nov 1986.
-     * Completely hack by Steve Phillips to make it not to bloody
-     * dangerous.
-     * Done it by making any files loaded imediately absolute (only
-     * sane way of doing it) and disallowing operation if cant be done.
-     */
-#if (defined _UNIX) || (defined _DOS) || (defined _WIN32)
-    register int    s;
-    meUByte *dd, dname[meBUF_SIZE_MAX];		/* directory to change to   */
-
-    if((s = inputFileName((meUByte *)"Directory Name ",dname,1)) <= 0)
-        return(s);
-
-    if(meChdir(dname) == -1)
-        return mlwrite(MWABORT,(meUByte *)"directory %s: %s", dname, sys_errlist[errno]);
-    if((dd = meStrdup(dname)) != NULL)
-    {
-        meFree(curdir) ;
-        curdir = dd ;
-    }
-    return(meTRUE);
-#else
-    return mlwrite(MWABORT,(meUByte *)"Cant change directory as cant get absolute path") ;
-#endif
-}
-
 /************************ New file routines *****************************/
 #ifdef _CONVDIR_CHAR
 void

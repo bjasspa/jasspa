@@ -80,7 +80,6 @@ DEFFUNC ("buffer-unbind-key",		0x00, bufferUnbindKey,	CK_LCLUNBD, &__cmdArray[CK
 #endif
 DEFFUNC ("capitalize-word",		0x04, capWord,		CK_CAPWRD, &__cmdArray[CK_CAPWRD+1], 0)
 DEFFUNC ("change-buffer-name",		0x00, changeBufName,	CK_NAMBUF, &__cmdArray[CK_NAMBUF+1], 0)
-DEFFUNC ("change-directory",		0x00, changeDir,	CK_CHGDIR, &__cmdArray[CK_CHGDIR+1], 0)
 DEFFUNC ("change-file-name",		0x00, changeFileName,	CK_CHGFIL, &__cmdArray[CK_CHGFIL+1], 0)
 DEFFUNC ("change-font",                 0x00, changeFont,       CK_CHGFONT,&__cmdArray[CK_CHGFONT+1], 0)
 DEFFUNC ("change-frame-depth",		0x00, frameChangeDepth, CK_FRMDPTH, &__cmdArray[CK_FRMDPTH+1], 0)
@@ -249,7 +248,6 @@ DEFFUNC ("mark-registry",		0x42, markRegistry,	CK_MRKREGY, &__cmdArray[CK_MRKREG
 #if MEOPT_CMDHASH || MEOPT_LOCALBIND
 DEFFUNC ("ml-bind-key",			0x00, mlBind,		CK_MLBIND, &__cmdArray[CK_MLBIND+1], 0)
 #endif
-DEFFUNC ("ml-clear",			0x00, mlClear,		CK_CLRMSG, &__cmdArray[CK_CLRMSG+1], &__cmdArray[CK_PRTRGN])
 #if MEOPT_CMDHASH || MEOPT_LOCALBIND
 DEFFUNC ("ml-unbind-key",		0x00, mlUnbind,		CK_MLUNBD, &__cmdArray[CK_MLUNBD+1], 0)
 #endif

@@ -1148,14 +1148,6 @@ killLine(int f, int n)
 }
 
 
-/* ml-clear. This function simply clears the message line, mainly for macro usage */
-int
-mlClear(int f, int n)
-{
-    mlerase(0);
-    return(meTRUE);
-}
-
 /* ml-write. This function writes a string on the message line mainly for macro usage */
 int
 mlWrite(int f, int n)
@@ -1163,18 +1155,22 @@ mlWrite(int f, int n)
     register int status;
     meUByte buf[meBUF_SIZE_MAX];	/* buffer to recieve message into */
     
-    if ((status = meGetString((meUByte *)"Message", 0, 0, buf, meBUF_SIZE_MAX)) <= 0)
+    if(n == 0)
+        mlerase(0);
+    else if((status = meGetString((meUByte *)"Message", 0, 0, buf, meBUF_SIZE_MAX)) <= 0)
         return status ;
+    else
+    {
+        status = MWSPEC ;
+        if(n == -1)
+            status |= MWSTDOUTWRT ;
+        else if(n == -2)
+            status |= MWSTDERRWRT ;
+        mlwrite(status,buf);
     
-    status = MWSPEC ;
-    if(n == -1)
-        status |= MWSTDOUTWRT ;
-    else if(n == -2)
-        status |= MWSTDERRWRT ;
-    mlwrite(status,buf);
-    
-    if((f == meTRUE) && (n > 0))
-        TTsleep(n,0,NULL);
+        if((f == meTRUE) && (n > 0))
+            TTsleep(n,0,NULL);
+    }
     return meTRUE ;
 }
 
