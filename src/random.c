@@ -1172,9 +1172,15 @@ mlWrite(int f, int n)
     if ((status = meGetString((meUByte *)"Message", 0, 0, buf, meBUF_SIZE_MAX)) <= 0)
         return status ;
     
-    mlwrite(MWSPEC,buf);
+    status = MWSPEC ;
+    if(n == -1)
+        status |= MWSTDOUTWRT ;
+    else if(n == -2)
+        status |= MWSTDERRWRT ;
+    mlwrite(status,buf);
+    
     if((f == meTRUE) && (n > 0))
-        TTsleep(n,0);
+        TTsleep(n,0,NULL);
     return meTRUE ;
 }
 
@@ -1885,7 +1891,7 @@ gotoFence(int f, int n)
              * then move back
              */
             update(meFALSE);
-            TTsleep(matchlen,1) ;
+            TTsleep(matchlen,1,NULL) ;
             frameCur->windowCur->updateFlags |= WFMOVEL;
             if(frameCur->windowCur->vertScroll != oldtln)
                 /* the redraw has changed the top line - must do a major update */

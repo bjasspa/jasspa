@@ -626,11 +626,12 @@ meGidInGidList(gid_t gid)
 }
 
 static void
-waitForEvent(void)
+waitForEvent(int mode)
 {
     static int lost=0 ;
 #if MEOPT_IPIPES
     meIPipe *ipipe, *pp ;
+    int ipipeEvent ;
 #endif
     fd_set select_set;
     int pfd ;
@@ -652,17 +653,22 @@ waitForEvent(void)
 #endif
            (sgarbf == meTRUE))
             break ;
+        
         TTdieTest() ;
         FD_ZERO(&select_set);
         FD_SET(meStdin, &select_set);
         pfd = meStdin ;
 #if MEOPT_IPIPES
+        ipipeEvent = 0 ;
         ipipe = ipipes ;
         while(ipipe != NULL)
         {
             pp = ipipe->next ;
             if(ipipe->pid < 0)
+            {
                 ipipeRead(ipipe) ;
+                ipipeEvent = 1 ;
+            }
             else
             {
                 FD_SET(ipipe->rfd, &select_set);
@@ -671,6 +677,8 @@ waitForEvent(void)
             }
             ipipe = pp ;
         }
+        if(ipipeEvent && mode)
+            return ;
 #endif
         pfd++ ;
         if(select(pfd,&select_set,NULL,NULL,NULL) >= 0)
@@ -687,9 +695,12 @@ waitForEvent(void)
                     /* reset the lost */
                     lost = 0 ;
                     ipipeRead(ipipe) ;
+                    ipipeEvent = 1 ;
                 }
                 ipipe = pp ;
             }
+            if(ipipeEvent && mode)
+                return ;
 #endif
             if(FD_ISSET(meStdin,&select_set))
             {
@@ -1870,6 +1881,9 @@ meXEventHandler(void)
                 case XK_Meta_R:
                 case XK_Alt_L:
                 case XK_Alt_R:
+#ifdef XK_ISO_Level3_Shift
+                case XK_ISO_Level3_Shift:
+#endif
                     goto ignore_key;
                     
                     /* ISO keys */
@@ -2415,6 +2429,9 @@ TCAPstart(void)
 int
 TCAPopen(void)
 {
+    if(alarmState & meALARM_PIPED)
+        return meTRUE ;
+
 #ifdef _USG
     ntermio = otermio;
 
@@ -2517,6 +2534,9 @@ TCAPopen(void)
 int
 TCAPclose(void)
 {
+    if(alarmState & meALARM_PIPED)
+        return meTRUE ;
+    
     mlerase(MWERASE|MWCURSOR);
     TCAPschemeReset() ;
     
@@ -3564,7 +3584,7 @@ TTgetClipboard(void)
         XFlush(mecm.xdisplay) ;
         /* Wait for the returned value, alarmState bit will be set */
         while(!TTahead() && !(clipState & CLIP_RECEIVED))
-            waitForEvent() ;
+            waitForEvent(0) ;
         clipState &= ~(CLIP_RECEIVING|CLIP_RECEIVED) ;
         /* reset the increment clip size to zero (just incase there was an interuption) */
         meClipSize=0 ;
@@ -3671,27 +3691,42 @@ TTwaitForChar(void)
             frameCur = fc ;
         }
 #endif
-        waitForEvent() ;
+        waitForEvent(0) ;
     }
 }
 
 
 void
-TTsleep(int  msec, int  intable)
+TTsleep(int  msec, int  intable, meVarList *waitVarList)
 {
+    meUByte *ss ;
+    int sgarbfOld ;
+    
     if(intable && ((kbdmode == mePLAY) || (clexec == meTRUE)))
         return ;
 
-    /* Don't actually need the abs time as this will remain the next alarm */
-    timerSet(SLEEP_TIMER_ID,-1,msec);
+    if(msec >= 0)
+        /* Don't actually need the abs time as this will remain the next alarm */
+        timerSet(SLEEP_TIMER_ID,-1,msec);
+    else if(waitVarList != NULL)
+        timerKill(SLEEP_TIMER_ID) ;             /* Kill off the timer */
+    else
+        return ;
+    
+    sgarbfOld = sgarbf ;
+    sgarbf = meFALSE ;
     do
     {
         handleTimerExpired() ;
         if(intable && TTahead())
             break ;
-        waitForEvent() ;
+        if((waitVarList != NULL) &&
+           (((ss=getUsrLclCmdVar((meUByte *)"wait",waitVarList)) == errorm) || !meAtoi(ss)))
+            break ;
+        waitForEvent(1) ;
     } while(!isTimerExpired(SLEEP_TIMER_ID)) ;
     timerKill(SLEEP_TIMER_ID) ;             /* Kill off the timer */
+    sgarbf = sgarbfOld ;
 }
 
 #if MEOPT_TYPEAH

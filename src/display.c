@@ -2742,13 +2742,24 @@ mlwrite(int flags, meUByte *fmt, int arg)
         /* an mlwrite at this stage is fatal - usually a malloc failure,
          * print message and exit */
 #ifdef _WIN32
-        MessageBox(NULL,(char *) fmt,ME_FULLNAME " '" meVERSION,MB_OK);
+#ifdef _ME_WINDOW
+#ifdef _ME_CONSOLE
+        if(!(meSystemCfg & meSYSTEM_CONSOLE))
+#endif /* _ME_CONSOLE */
+            MessageBox(NULL,(char *) fmt,ME_FULLNAME " '" meVERSION,MB_OK);
+#ifdef _ME_CONSOLE
+        else
+#endif /* _ME_CONSOLE */
+#endif /* _ME_WINDOW */
+#ifdef _ME_CONSOLE
+            printf("%s\n",fmt) ;
+#endif /* _ME_CONSOLE */
 #else
         printf("%s\n",fmt) ;
 #endif
         meExit(1) ;
     }
-    if(alarmState & meALARM_PIPED)
+    if((alarmState & meALARM_PIPED_QUIET) && ((flags & MWSTDALLWRT) == 0))
         goto mlwrite_exit ;
     if(clexec && (flags & MWCLEXEC))
     {
@@ -2877,6 +2888,22 @@ mlwrite(int flags, meUByte *fmt, int arg)
         offset = mlwant - mlw ;
         mlwant = mlw ;
     }
+    if((alarmState & meALARM_PIPED) || (flags & MWSTDALLWRT))
+    {
+#ifdef _WIN32
+        HANDLE fp ;
+        int written ;
+        if(flags & MWSTDOUTWRT)
+            fp = GetStdHandle(STD_OUTPUT_HANDLE) ;
+        else
+            fp = GetStdHandle(STD_ERROR_HANDLE) ;
+        WriteFile(fp,mlwant,offset,&written,NULL) ;
+        WriteFile(fp,"\n",1,&written,NULL) ;
+#else        
+        fprintf((flags & MWSTDOUTWRT) ? stdout:stderr,"%s\n",mlwant) ;
+#endif
+        goto mlwrite_exit ;
+    }
     vp1 = frameCur->video.lineArray + frameCur->depth ;
     /* JDG End */
     /* SWP - changed the mlwrite when the string is to long for the ml line
@@ -2919,7 +2946,7 @@ mlwrite(int flags, meUByte *fmt, int arg)
          */
         meUByte oldMlStatus = frameCur->mlStatus ;
         frameCur->mlStatus = MLSTATUS_KEEP ;
-        TTsleep(2000,1)  ;
+        TTsleep(2000,1,NULL)  ;
         frameCur->mlStatus = oldMlStatus ;
     }
     else if((flags & MWWAIT) || (clexec && (flags & MWCLWAIT)))
@@ -3223,5 +3250,3 @@ meVideoAttach (meVideo *vvptr, meWindow *wp)
     vvptr->window = wp;
     return (meTRUE);
 }
-
-

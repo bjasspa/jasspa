@@ -899,16 +899,28 @@ TTaddColor(meColor index, meUByte r, meUByte g, meUByte b)
 }
 
 void
-TTsleep(int msec, int intable)
+TTsleep(int msec, int intable, meVarList *waitVarList)
 {
+    meUByte *ss ;
+    
     if(intable && ((kbdmode == mePLAY) || (clexec == meTRUE)))
         return ;
 
-    timerSet(SLEEP_TIMER_ID,-1,msec);
+    if(msec >= 0)
+        /* Don't actually need the abs time as this will remain the next alarm */
+        timerSet(SLEEP_TIMER_ID,-1,msec);
+    else if(waitVarList != NULL)
+        timerKill(SLEEP_TIMER_ID) ;             /* Kill off the timer */
+    else
+        return ;
+    
     do
     {
         handleTimerExpired() ;
         if(TTahead() && intable)                    /* Interruptable ?? */
+            break ;
+        if((waitVarList != NULL) &&
+           (((ss=getUsrLclCmdVar((meUByte *)"wait",waitVarList)) == errorm) || !meAtoi(ss)))
             break ;
     } while(!isTimerExpired(SLEEP_TIMER_ID)) ;
     timerKill(SLEEP_TIMER_ID) ;             /* Kill off the timer */
