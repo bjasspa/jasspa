@@ -10,7 +10,7 @@
  *
  *	Author:			Danial Lawrence.
  *
- *	Creation Date:		07/05/91 08:19		<010305.0749>
+ *	Creation Date:		07/05/91 08:19		<010806.0913>
  *
  *	Modification date:	%G% : %U%
  *
@@ -1126,10 +1126,15 @@ forwDelChar(int f, int n)
 int
 killLine(int f, int n)
 {
-    register LINE   *nextp;
-    register int     s ;
-    long chunk;
+    LINE *nextp;
+    int32 chunk;
+    int s, del ;
     
+    if(n == 0)
+        return TRUE ;
+    if((del=(n < 0)))
+        /* f must be true */
+        n = -n ;
     if((s=bchange()) != TRUE)               /* Check we can change the buffer */
         return s ;
     if(curwp->w_dotp == curbp->b_linep)
@@ -1143,12 +1148,7 @@ killLine(int f, int n)
                 (curwp->w_doto == 0) )                 /* whole line           */
             chunk++ ;
     }
-    else if (n == 0)
-    {
-        chunk = curwp->w_doto;
-        curwp->w_doto = 0;
-    }
-    else if (n > 0) 
+    else
     {
         chunk = llength(curwp->w_dotp)-curwp->w_doto+1;
         nextp = lforw(curwp->w_dotp);
@@ -1160,10 +1160,8 @@ killLine(int f, int n)
             nextp = lforw(nextp);
         }
     }
-    else
-        return mlwrite(MWABORT,(uint8 *)"neg kill");
     
-    return(ldelete(chunk,3));
+    return(ldelete(chunk,(del) ? 2:3));
 }
 
 

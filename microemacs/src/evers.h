@@ -1,7 +1,7 @@
 /*****************************************************************************
  *	SCCS:		%W%		%G%		%U%
  *
- *	Last Modified :	<010710.2322>
+ *	Last Modified :	<010804.2329>
  *
  *****************************************************************************
  * 
@@ -120,20 +120,23 @@
  ****************************************************************************/
 
 /* The name that appears every where */
-#define	ENAME		"MicroEmacs"
+#define	ENAME           "MicroEmacs"
 
 /* THESE MAY ONLY BE MODIFIED BY JASSPA THEY REPRESENT THE CURRENT 
  * RELEASE OF THE BUILD AND ARE USED AS A REFERENCE POINT WHEN
  * PROBLEMS OCCUR. THESE VALUES ARE NOT INTENDED TO REPRESENT 
  * THE BUILD DATE OF THE SOFTWARE AND MUST NOT BE MODIFIED AS SUCH */
-#define meCENTURY "20"                  /* Current century. Y2 complient :-) */
-#define meYEAR    "01"                  /* Current year */
-#define meMONTH   "07"                  /* Current month */
-#define meDAY     "10"                  /* Day of the month */
+#define meCENTURY       "20"          /* Current century. Y2 complient :-) */
+#define meYEAR          "01"          /* Current year */
+#define meMONTH         "08"          /* Current month */
+#define meDAY           "01"          /* Day of the month */
 
 /* Version information - Date of build */
-#define	meDATE                  meYEAR "/" meMONTH "/" meDAY 
+#define	meDATE          meYEAR "/" meMONTH "/" meDAY 
 /* Version information - Major version number is the year of build */
-#define	meVERSION               meYEAR 
+#define	meVERSION       meYEAR 
 /* Version information - Minor version number is the month of build */
-#define meVERSION_MINOR         meMONTH
+#define meVERSION_MINOR meMONTH
+/* Version information - Version as a numeric date code */
+#define meVERSION_CODE  meCENTURY meYEAR meMONTH meDAY 
+

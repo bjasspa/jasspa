@@ -2,7 +2,7 @@
  * 
  *	SCCS:		%W%		%G%		%U%
  *
- *	Last Modified :	<010521.1012>
+ *	Last Modified :	<010802.1811>
  *
  *	ESTRUCT:	Structure and preprocesser defined for
  *			MicroEMACS 3.7
@@ -998,19 +998,18 @@ typedef struct {
                              (((uint32)(c))<<8)|((uint32)(d)))
 
 /* Registry Open types */
-#define REGMODE_INTERNAL 0x001           /* Internal registry - hidden */
-#define REGMODE_HIDDEN   0x002           /* Node is hidden */
-#define REGMODE_FROOT    0x004           /* File root */
-#define REGMODE_CHANGE   0x008           /* Tree has changed */
-#define REGMODE_BACKUP   0x010           /* Perform a backup of the file */
-#define REGMODE_AUTO     0x020           /* Automatic save */
-#define REGMODE_DISCARD  0x040           /* Discardable entry (memory only) */
-#define REGMODE_MERGE    0x080           /* Merge a loaded registry */
-#define REGMODE_RELOAD   0x100           /* Reload existing registry */
-#define REGMODE_CREATE   0x200           /* Create if does not exist */
-#define REGMODE_QUERY    0x400           /* Query the current node */
-#define REGMODE_GETMODE  0x800           /* Return modes set in $result */
-#define REGMODE_STORE_MASK 0x07f         /* Bits actually worth storing */
+#define REGMODE_INTERNAL   0x001         /* Internal registry - hidden */
+#define REGMODE_HIDDEN     0x002         /* Node is hidden */
+#define REGMODE_FROOT      0x004         /* File root */
+#define REGMODE_CHANGE     0x008         /* Tree has changed */
+#define REGMODE_BACKUP     0x010         /* Perform a backup of the file */
+#define REGMODE_AUTO       0x020         /* Automatic save */
+#define REGMODE_MERGE      0x040         /* Merge a loaded registry */
+#define REGMODE_RELOAD     0x080         /* Reload existing registry */
+#define REGMODE_CREATE     0x100         /* Create if does not exist */
+#define REGMODE_QUERY      0x200         /* Query the current node */
+#define REGMODE_GETMODE    0x400         /* Return modes set in $result */
+#define REGMODE_STORE_MASK 0x03f         /* Bits actually worth storing */
 /*
  * RNODE
  * Data structure to hold a hierarchy node

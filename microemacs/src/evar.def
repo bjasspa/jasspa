@@ -1,7 +1,7 @@
 /*
  * Define the string name / internal variable name binding
  *
- * Last Modified:         <010314.2156>
+ * Last Modified:         <010804.2257>
  * 
  ****************************************************************************
  *
@@ -128,6 +128,7 @@ DEFVAR ("timestamp",           EVTIMSTMP)       /* Time stamp string */
 DEFVAR ("trunc-scheme",        EVTRNCSCHM)      /* Truncate colour  */
 #endif
 DEFVAR ("variable-names",      EVVNAMES)        /* variable names access variable */
+DEFVAR ("version",             EVVERSION)       /* ME version - the date code */
 DEFVAR ("window-acol",         EVABSCOL)        /* Absolute current column pos of cursor */
 DEFVAR ("window-aline",        EVABSLINE)       /* The Absolute current line # in file */
 DEFVAR ("window-chars",        EVWINCHRS)       /* Window character set */

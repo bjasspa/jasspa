@@ -10,7 +10,7 @@
 *
 *	Author:			Daniel Lawrence
 *
-*	Creation Date:		11/02/86 12:37		<010305.0801>
+*	Creation Date:		11/02/86 12:37		<010718.1250>
 *
 *	Modification date:	%G% : %U%
 *
@@ -349,10 +349,12 @@ charMaskTblInit(void)
         charMaskTbl2[ii] = 0x00 ;
         charCaseTbl[ii] = ii ;
     }
-    for(ii=128 ; ii<160 ; ii++)
 #ifdef _UNIX
+    /* 0xA0 is the No-Break SPace char - nothing is drawn! */
+    for(ii=128 ; ii<161 ; ii++)
         charMaskTbl1[ii] = 0x0A ;
 #else
+    for(ii=128 ; ii<160 ; ii++)
         charMaskTbl1[ii] = 0x3A ;
 #endif
     for( ; ii<256 ; ii++)

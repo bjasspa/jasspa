@@ -6,7 +6,7 @@
  *  Object Name   : ebind.def
  *  Date          : 12th June 1993
  *  Created By    : Steve Philips
- *  Last Modified : <010219.2048>
+ *  Last Modified : <010804.1624>
  *
  *  Description	
  *        Define the bindings to the keys
@@ -244,9 +244,7 @@
 	DEFBIND (ME_PREFIX3|('I'-'@'),	0, CK_HELPITM)
 	DEFBIND (ME_PREFIX3|('V'-'@'),	0, CK_HELPVAR)
 
-#if	APROP
 	DEFBIND (ME_PREFIX3|'a',	0, CK_APROPS)
-#endif
         DEFBIND (ME_PREFIX3|'b',	0, CK_DESCBIN)
 	DEFBIND (ME_PREFIX3|'c',	0, CK_LSTCOM)
 	DEFBIND (ME_PREFIX3|'d',	0, CK_DESCVAR)

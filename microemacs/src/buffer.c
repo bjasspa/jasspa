@@ -10,7 +10,7 @@
 *
 *       Author:                 Danial Lawrence
 *
-*       Creation Date:          14/05/86 12:37          <010305.0749>
+*       Creation Date:          14/05/86 12:37          <010802.1946>
 *
 *       Modification date:      %G% : %U%
 *
@@ -1204,7 +1204,7 @@ bufferNeedSaving(BUFFER *bp)
  * have been changed.
  */
 int
-anycb(void)
+anyChangedBuffer(void)
 {
     register BUFFER *bp;
     

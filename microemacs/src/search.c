@@ -12,7 +12,7 @@
  *
  *	Creation Date:		07/05/85 08:19		
  *
- *	Modification date:	<010605.0942>
+ *	Modification date:	<010730.2036>
  *
  *	Current rev:		10.1
  *
@@ -1808,7 +1808,7 @@ iscanner(uint8 *apat, int n, int flags, SCANNERPOS *sp)
     return scanner (((direct == FORWARD) ? apat : srchRPat),direct, beg_or_end, &n, sp);
 }
 
-#ifdef FREE_ALL_MEMORY
+#ifdef _ME_FREE_ALL_MEMORY
 void srchFreeMemory(void)
 {
 #if MAGIC

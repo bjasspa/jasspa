@@ -5,7 +5,7 @@
  *  Synopsis      : Internal registry support routines
  *  Created By    : Jon Green
  *  Created       : 26/03/1998
- *  Last Modified : <010605.0936>
+ *  Last Modified : <010802.1812>
  *
  *  Description
  *
@@ -558,11 +558,16 @@ vregFind (RNODE *sroot, uint8 *fmt)
 }
 
 
+/* Note the return value for this is:
+ * ABORT - there was a major failure (i.e. couldn't open the file)
+ * FALSE - user quit
+ * TRUE  - succeded
+ * this is used by the exit function which ignore the major failures
+ */
 static int
 regTestSave(RNODE *sroot, int flags)
 {
-    if(!(sroot->mode & REGMODE_FROOT) || !(sroot->mode & REGMODE_CHANGE) ||
-       (!(sroot->mode & REGMODE_AUTO) && (sroot->mode & REGMODE_DISCARD)))
+    if(!(sroot->mode & REGMODE_FROOT) || !(sroot->mode & REGMODE_CHANGE))
         return TRUE ;
     
     if((flags & 0x01) && !(sroot->mode & REGMODE_AUTO))
@@ -572,7 +577,10 @@ regTestSave(RNODE *sroot, int flags)
         meStrcpy(prompt,"Save registry ") ;
         meStrcat(prompt,(sroot->value != NULL) ? sroot->value:sroot->name) ;
         if((ret = mlyesno(prompt)) == ABORT)
-            return ctrlg(FALSE,1) ;
+        {
+            ctrlg(FALSE,1) ;
+            return FALSE ;
+        }
         if(ret == FALSE)
             return TRUE ;
     }
@@ -861,8 +869,13 @@ markRegistry (int f, int n)
 /*
  * saveRegistry
  * Save the registry to a file.
+ * 
+ * Note the return value for this is:
+ * ABORT - there was a major failure (i.e. couldn't open the file)
+ * FALSE - user quit
+ * TRUE  - succeded
+ * this is used by the exit function which ignore the major failures
  */
-
 int
 saveRegistry (int f, int n)
 {
@@ -886,7 +899,7 @@ saveRegistry (int f, int n)
     
     /* Get the input from the command line */
     if (meGetString((uint8 *)"Save registry root",0, 0, rootbuf, 128) == ABORT)
-        return ABORT;
+        return FALSE;
     
     /* Find the root */
     if ((rnp = regFind (&root, rootbuf)) == NULL)
@@ -899,8 +912,26 @@ saveRegistry (int f, int n)
     
     /* Get the filename */
     if(meGetString((uint8 *)"Registry file",MLFILECASE|MLFILECASE, 0, filebuf, FILEBUF) != TRUE)
-        return ABORT;
+        return FALSE ;
     return regSave (rnp, filebuf);
+}
+
+/* returns true if any registry node needs saving */
+int
+anyChangedRegistry(void)
+{
+    RNODE *rnp;
+    
+    rnp = root.chld ;
+    while (rnp != NULL)
+    {
+        /* we don't consider the history here */
+        if(meStrcmp(rnp->name,"history") &&
+           (rnp->mode & REGMODE_FROOT) && (rnp->mode & REGMODE_CHANGE))
+            return TRUE ;
+        rnp = rnp->sblg ;
+    }
+    return FALSE ;
 }
 
 /*
@@ -1121,7 +1152,7 @@ listRegistry (int f, int n)
     return TRUE;
 }
 
-#ifdef FREE_ALL_MEMORY
+#ifdef _ME_FREE_ALL_MEMORY
 void regFreeMemory(void)
 {
     rnodeDelete (root.chld);

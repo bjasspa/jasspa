@@ -5,7 +5,7 @@
  *  Synopsis      : Unix X-Term and Termcap support routines
  *  Created By    : Steven Phillips
  *  Created       : 1993
- *  Last Modified : <010612.0743>
+ *  Last Modified : <010806.2030>
  *
  *  Description
  *    This implementation of unix support currently only supports Unix v5 (_USG),
@@ -670,6 +670,16 @@ XTERMSpecialChar (int x, int y, uint8 cc)
         XDrawLine(mecm.xdisplay, mecm.xwindow, mecm.xgc, x + mecm.fhwidth, y, x + mecm.fhwidth, y + mecm.fdepth - 1);
         break;
 
+    case 0x1b:          /* Scroll box - vertical */
+        for (ii = (y+1) & ~1; ii < y+mecm.fdepth; ii += 2)
+            XDrawLine(mecm.xdisplay, mecm.xwindow, mecm.xgc, x, ii, x + mecm.fwidth - 1, ii);
+        break;
+        
+    case 0x1d:          /* Scroll box - horizontal */
+        for (ii = (x+1) & ~1; ii < x+mecm.fwidth; ii += 2)
+            XDrawLine(mecm.xdisplay, mecm.xwindow, mecm.xgc, ii, y, ii, y + mecm.fdepth - 1);
+        break;
+        
     case 0x1e:          /* Cursor Arrows / Up */
         points [0].x = x - 1 ;
         points [0].y = y + mecm.fdepth - 1 ;

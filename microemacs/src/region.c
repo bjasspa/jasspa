@@ -10,7 +10,7 @@
 *
 *	Author:			Danial Lawrence
 *
-*	Creation Date:		07/05/91 08:19		<000221.1110>
+*	Creation Date:		07/05/91 08:19		<010805.0021>
 *
 *	Modification date:	%G% : %U%
 *
@@ -118,6 +118,8 @@ killRegion(int f, int n)
 {
     REGION region;
     
+    if(n == 0)
+        return TRUE ;
     if(getregion(&region) != TRUE)
         return FALSE ;
     if(bchange() != TRUE)               /* Check we can change the buffer */
@@ -126,7 +128,7 @@ killRegion(int f, int n)
     curwp->w_doto   = region.offset;   
     curwp->line_no  = region.line_no;
     
-    return ldelete(region.size,3);
+    return ldelete(region.size,(n > 0) ? 3:2);
 }
 
 /*

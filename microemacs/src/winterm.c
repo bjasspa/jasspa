@@ -111,9 +111,6 @@
 #include "wintermr.h"                   /* Windows resource file */
 
 #include <process.h>
-#ifdef _FULLDEBUG
-#include <crtdbg.h>
-#endif
 
 /*FILE *logfp=NULL ;*/
 
@@ -1184,6 +1181,22 @@ WinSpecialChar (HDC hdc, CharMetrics *cm, int x, int y, uint8 cc, COLORREF fcol)
     case 0x19:          /* Line Drawing / Vertical Line | */
         MoveToEx (hdc, x + cm->midX, y, NULL);
         LineTo   (hdc, x + cm->midX, y + cm->sizeY + 1);
+        break;
+
+    case 0x1b:          /* Scroll box - vertical */
+        for (ii = (y+1) & ~1; ii < y + cm->sizeY; ii += 2)
+        {
+            MoveToEx (hdc, x, ii, NULL);
+            LineTo (hdc, x + cm->sizeX + 1, ii);
+        }
+        break;
+        
+    case 0x1d:          /* Scroll box - horizontal */
+        for (ii = (x+1) & ~1; ii < x + cm->sizeX; ii += 2)
+        {
+            MoveToEx (hdc, ii, y, NULL);
+            LineTo (hdc, ii, y + cm->sizeY + 1);
+        }
         break;
 
     case 0x1e:          /* Cursor Arrows / Up */
@@ -4285,7 +4298,7 @@ TTwaitForChar(void)
 
         /* Suspend until there is another message to process. */
         TTflush () ;                /* Make sure the screen is up-to-date */
-#ifdef _FULLDEBUG
+#ifdef _ME_FULL_DEBUG
         /* Do heap walk in idle time */
         _CrtCheckMemory();
 #endif
@@ -5106,11 +5119,10 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmd
     int  argc;                          /* Argument count */
 #endif
 
-#ifdef _FULLDEBUG
-#if _FULLDEBUG==1
+#ifdef _ME_FULL_DEBUG
     /* Enable heap checking on each allocate and free */
-    _CrtSetDbgFlag (_CRTDBG_ALLOC_MEM_DF);
-#endif
+    _CrtSetDbgFlag (_CRTDBG_ALLOC_MEM_DF|_CRTDBG_DELAY_FREE_MEM_DF|
+                    _CRTDBG_LEAK_CHECK_DF|_CRTDBG_DELAY_FREE_MEM_DF);
 #endif
 
 /*    if(logfp == NULL)*/
@@ -5669,15 +5681,17 @@ do_window_resize:
             clexec = savcle ;
             return FALSE ;
         }
-        else if (!((anycb() == FALSE)   /* All buffers clean.   */
+        else if ((anyChangedBuffer() == FALSE)
+#if SPELL
+                 || (anyChangedDictionary() != FALSE)
+#endif
+#if REGSTRY
+                 || (anyChangedRegistry() != FALSE)
+#endif
 #ifdef _IPIPES
-                   && ((ipipes == NULL)
-#ifdef _CLIENTSERVER
-                       || ((ipipes->pid == 0) && (ipipes->next == NULL))
+                 || (anyActiveIpipe() != FALSE)
 #endif
-                       )
-#endif
-                 ))
+                 )
         {
             /* Display the modeless Cancel dialog box and disable the
              * application window. */

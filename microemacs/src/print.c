@@ -5,7 +5,7 @@
  *  Synopsis      : Buffer printing routines
  *  Created By    : Jon Green & Steven Phillips
  *  Created       : 1996
- *  Last Modified : <010305.0749>
+ *  Last Modified : <010730.2036>
  *
  *  Description
  *     This file contains routines to format and print buffers
@@ -98,7 +98,7 @@ meSCHEME printCurrScheme=meSCHEME_INVALID ;
 
 #endif
 
-#ifdef FREE_ALL_MEMORY
+#ifdef _ME_FREE_ALL_MEMORY
 void
 printFreeMemory(void)
 {
