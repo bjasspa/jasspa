@@ -7,7 +7,7 @@
 #
 # Author      : Jon Green
 # Created     : 22nd February 1997
-# Last Edited : <020102.1446>
+# Last Edited : <020106.1035>
 #
 # History     : JG  220297 Original  Constructed from emacssrc
 #
@@ -32,7 +32,9 @@ CP	=	copy
 INSTALL	=	copy
 TAR	=	c:\cygwin\bin\tar
 GZIP	=	c:\cygwin\bin\gzip
-ZIP	=	c:\cygwin\bin\zip
+ZIP	=	c:\cygwin\bin\zip -9
+RELDIR	=	..\release
+DOS2UNIX=	c:\cygwin\bin\dos2unix -U
 #
 # Documentation components
 #
@@ -572,6 +574,10 @@ mehtm.zip: me.hts
 	$(RM) me\*.gif
 	$(RM) me\*.htm
 	$(HTS2HTML) -l .htm ..\me.hts
+	cd me
+	$(DOS2UNIX) *.htm
+	cd ..
+	$(DOS2UNIX) *.htm	
 	$(ZIP) mehtm me.htm me/*
 	$(CP) mehtm.zip ..
 	$(CD) ..
@@ -585,15 +591,44 @@ mehtml.tgz: me.hts
 	$(RM) me\*.gif
 	$(RM) me\*.html
 	$(HTS2HTML) -l .html ..\me.hts
+	$(CD) me
+	$(DOS2UNIX) -U *.html
+	$(CD) ..
+	$(DOS2UNIX) -U *.html
 	$(TAR) cvf mehtml.tar me.html me
 	$(GZIP) -9 mehtml.tar
 	$(CP) mehtml.tar.gz ..\mehtml.tgz
 	$(CD) ..
-	
-full:: mehtm.zip mehtml.tgz $(HLPS) me.ehf $(TXTS)
 
-install:: all full
+mewinhlp.zip: me.hlp
+	$(ZIP) mewinhlp me.hlp
+	
+full:: mehtm.zip mehtml.tgz mewinhlp.zip $(HLPS) me.ehf $(TXTS)
+
+release:: all full
+	- $(MKDIR) $(RELDIR)
+	$(DOS2UNIX) readme.txt faq.txt build.txt me.ehf
 	$(CP) readme.txt ..\src
+	$(CP) readme.txt ..\macros
+	$(CP) readme.txt $(RELDIR)
 	$(CP) faq.txt ..\src
+	$(CP) faq.txt ..\macros
+	$(CP) faq.txt $(RELDIR)
 	$(CP) build.txt ..\src
+	$(CP) build.txt ..\macros
+	$(CP) build.txt $(RELDIR)
 	$(CP) me.ehf ..\macros
+	$(CP) mehtml.tgz $(RELDIR)\mehtml.tar.gz
+	$(CP) mehtm.zip $(RELDIR)\mehtm.zip
+	$(GZIP) -9 -c  me.ehf > me.ehf.gz
+	$(ZIP) meehf.zip me.ehf
+	$(CP) me.ehf.gz $(RELDIR)
+	$(CP) mewinhlp.zip $(RELDIR)
+	$(CP) meehf.zip $(RELDIR)
+
+spotless::
+	$(RM) *.zip
+	$(RM) *.gz
+	$(RM) *.tgz
+	
+	
