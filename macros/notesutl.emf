@@ -1,17 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2000-2004 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Author        : $Author: bill $
-;  Created By    : Steven Phillips
-;  Created       : Tue Jan 11 23:59:11 2005
-;  Last Modified : <050112.0955>
+; Created:     Tue Jan 11 2005
+; Synopsis:    Hierarchical notes file import utils
+; Authors:     Steven Phillips
 ;
-;  Description
-;
-;  Notes
-;
-;  History
-;
-;  Copyright (c) 2005 PTC.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro notes-import-skwyrul
@@ -90,7 +85,7 @@ define-macro notes-import-skwyrul
     !repeat
         insert-string &spr "%n}\n" &dec #l1 1 " "
     !until &not #l1
-    insert-string &spr "\"id-next\" = \"%d\"\n" #l9
+    insert-string &spr "\"id-next\" = \"%d\"\n" &add #l9 1
     set-variable #l1 $window-line 
     set-variable #l0 @ml21 "Skwyrul data file (skwyrul_r.htm)" &rep #l0 "_l.htm" "_r.htm"
     insert-file #l0
