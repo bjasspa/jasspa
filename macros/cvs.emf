@@ -877,7 +877,7 @@ define-macro cvs-log-list
         set-variable $result &lget .values &mid .cvs.values &sub #l0 1 1
     !endif
 !emacro
-set-variable .cvs-osd-compare.values "|Local with Same CVS rev|Local with CVS HEAD|Local with another CVS rev|Local with another CVS date|Two different CVS revs|Two different CVS dates|"
+set-variable .cvs-osd-compare.values "|Local with Local BASE|Local BASE with CVS HEAD|Local with another CVS rev|Local with another CVS date|Two different CVS revs|Two different CVS dates|"
 
 0 define-macro cvs-osd-version-setup
     set-variable #l0 &sub &sin "v" .cvs.options 1
@@ -1142,7 +1142,7 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
                         set-variable #l8 &spr "%s -%s \"%s\"" #l8 #l4 &lget .cvs.revs &add 3 #l3
                     !endif
                 !elif &equ #l2 2
-                    set-variable #l8 &cat #l8 " -r HEAD"
+                    set-variable #l8 &cat #l8 " -r BASE -r HEAD"
                 !endif
             !elif &seq #l1 "Z"
                 !if #l2
