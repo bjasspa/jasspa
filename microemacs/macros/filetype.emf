@@ -1,0 +1,25 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2004 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Synopsis:    Dos to unix text file convertion routine.
+; Authors:     Steven Phillips
+;
+; Usage:
+;     me "@filetype" <files>
+;
+1 global-mode "auto"
+define-macro start-up
+    delete-other-windows
+    !while &not &seq $buffer-bname "*scratch*"
+        set-variable #l1 &rig $buffer-fname &sub &len $buffer-fname 59 
+        ml-write &spr "Processing [%s]" #l1
+        ; what type of file is it
+        set-variable #l0 &add &cond &bmod "crlf" 2 0 &cond &bmod "ctrlz" 2 1
+        find-buffer "*scratch*"
+        insert-string &spr "%s%n%s\n" #l1 &sub 60 &len #l1 " " &lget "|Unix|Strange|Windows|Dos|" #l0 
+        -1 find-buffer "*scratch*"
+        delete-buffer $buffer-bname
+    !done
+!emacro
