@@ -444,6 +444,64 @@ define-macro xml-collapse-tag
     0x34 narrow-buffer .scheme.fold-close &spr "%s<%s> ... </%s>" #l4 #l7 #l7
 !emacro
 
+0 define-macro xml-spell-word
+    ; simply skip any text in a <..> token - put a 5 line limit on it
+    set-variable #l0 $window-col
+    set-variable #l1 $window-line
+    -2 show-region
+    set-variable #l2 $window-col
+    !force -5 regex-backward "[<>]"
+    !if $status
+        set-variable #l3 @wc
+        set-variable $window-line #l1
+        set-variable $window-col #l0
+        !if &seq #l3 "<"
+            ; this is a <..> token, skip all if spelling buffer (@# != 0)
+            !if @#
+                !force search-forward ">"
+                set-variable .spell.check-word ""
+            !endif
+            !return
+        !endif
+    !endif
+    ; must redefine the region as the search blows it away
+    set-variable $window-col #l2
+    -3 show-region
+    set-variable $window-col #l0
+    3 show-region
+    !abort
+!emacro
+
+0 define-macro xml-pre-expand-abbrev
+    !if &not &seq &mid @wl &sub $window-col 2 2 "</"
+        !abort
+    !endif
+    set-position "\x81"
+    set-variable #l8 &bmod "magic"
+    1 buffer-mode "magic"
+    ml-write "[Looking for opening tag ...]"
+    2 backward-char
+    !repeat
+        !force search-backward "<"
+        !if &set #l2 $status
+            !force 3 xml-get-tag-info
+            !if &not $status
+                ; we could be in the middle of a quoted value, this is not verify - ignore
+            !elif &equ &set #l0 &lget #l9 1 6
+                goto-position "\x81"
+                insert-string &cat &lget #l9 6 ">"
+                &cond #l8 1 -1 buffer-mode "magic"
+                !return
+            !elif &equ #l0 7
+                !force !force 1 xml-goto-matching-tag-b
+                set-variable #l2 $status
+            !endif
+        !endif
+    !until &not #l2
+    &cond #l8 1 -1 buffer-mode "magic"
+    !abort
+!emacro
+
 ; n xml-find-tag "name"
 ; If n is 0 then the search starts at the top of the buffer
 define-macro xml-find-tag
@@ -545,7 +603,7 @@ define-macro xml-insert-attrib
     !if &not $status
         set-variable #l0 @ml "XML Attribute"
     !endif
-    0x13f set-position "\x81"
+    0x5bf set-position "\x81"
     !force xml-backward-tag
     !if &not &and $status &seq @wc "<"
         0x0bf goto-position "\x81"
@@ -580,7 +638,7 @@ define-macro xml-insert-attrib
         !endif
         -1 yank
     !endif
-    0x100 goto-position "\x81"
+    0x500 goto-position "\x81"
     !if &not $window-col
     !elif &not &seq &mid @wl &sub $window-col 1 1 " "
         insert-space
