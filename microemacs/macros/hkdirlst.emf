@@ -82,7 +82,7 @@ define-macro fhook-dirlst
     !endif
     dirlst-sort-list
     beginning-of-buffer
-    buffer-initialize
+    @# buffer-initialize "dirlst"
     set-variable :tag-count 0
     set-variable :mouse-pick-1 dirlst-mouse-pick-1
     set-variable :mouse-drop-1 dirlst-mouse-drop-1

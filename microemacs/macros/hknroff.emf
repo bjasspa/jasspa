@@ -8,11 +8,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro fhook-nroff
-    ; if arg is 0 this is a new file so add template 
-    !if &not @#
-        etfinsrt "nroff"
-    !endif
-    buffer-initialize
+    @# buffer-initialize "nroff"
     buffer-initialize-hooks
 !emacro
 

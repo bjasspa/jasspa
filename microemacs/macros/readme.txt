@@ -8,7 +8,7 @@ Installation(1)                   microemacs                    Installation(1)
 
 INSTALLATION 
      This page describes introductory  notes for the  installation and setup of
-     MicroEmacs '00. 
+     MicroEmacs '02. 
 
   Quick Install 
      The quickest way  to install MicroEmacs  without reading the  rest of this
@@ -31,12 +31,12 @@ INSTALLATION
           See Contact Information for full  contact information. A mail archive
           exists at:- 
 
-            http://www.egroups.com/list/jasspa/ 
+            http://groups.yahoo.com/group/jasspa/ 
 
           If you wish to  participate in the list  then you must first register
           by sending an empty mail message body to:- 
 
-            jasspa-subscribe@egroups.com 
+            jasspa-subscribe@yahoogroups.com 
 
           You  will  then  be  able  to  mail  any  questions  into  the group.
           Registration is  required  in  order to  prevent  spam  mailings from
@@ -49,10 +49,10 @@ INSTALLATION
           The Microsoft '95/'98/NT platforms may be installed using the Install
           Shield  installation  utility  and  do  not  require  the  components
           specified in later sections. 
-          me32inst.zip - '95/'98/NT Install Shield Installation 
+          jasspame.exe - '95/'98/NT Self Extracting Install Shield Installation
 
      Executable Source Code 
-          The source code release for MicroEmacs '00 contains makefiles (*.mak)
+          The source code release for MicroEmacs '02 contains makefiles (*.mak)
           for all supported  platforms. Microsoft  '95/'98/NT makefiles contain
           options at the top of the  makefile to enable/disable console and URL
           support. 
@@ -63,11 +63,10 @@ INSTALLATION
           medos.zip - DOS Executable 
           mewin32.zip - Windows 32' (95/98/NT) Executable 
           mewin32s.zip - Windows win32s (Win3.1/3.11) Executable 
-          meirix5.gz - Silicon Graphics Irix 5 Executable 
           meirix6.gz - Silicon Graphics Irix 6 Executable 
-          meaix34.gz - IBM's AIX 3.4 Executable 
-          mehpux9.gz - Hewlett Packard HP-UX 9 Executable 
+          meaix43.gz - IBM's AIX 4.3 Executable 
           mehpux10.gz - Hewlett Packard HP-UX 10 Executable 
+          mehpux11.gz - Hewlett Packard HP-UX 11 Executable 
           mesunos55.gz - Sun OS 5.5 Executable 
           mesunos56.gz - Sun OS 5.5 Executable 
           mesolx86.gz - Sun Solaris 2.6 Intel Platform Executable 
@@ -122,7 +121,7 @@ INSTALLATION
      Simply create a directory, down-load the files required (see list for each
      platform below) and extract  into this directory. From  a shell or command
      prompt, change to  the directory,  making it the  current one  (i.e. cd to
-     it), and run the  executable. MicroEmacs '00 should  open with the on-line
+     it), and run the  executable. MicroEmacs '02 should  open with the on-line
      help page visible. 
 
      On Windows based systems this can also be achieved by creating a short-cut
@@ -133,7 +132,7 @@ INSTALLATION
      executable to  somewhere in  your  PATH and  set the  environment variable
      MEPATH to point to this directory. 
 
-     MicroEmacs  '00  will  function  normally  in  this  environment,  but  in
+     MicroEmacs  '02  will  function  normally  in  this  environment,  but  in
      multi-user  environments  and  for  up-dating  purposes,  it  is  strongly
      recommended that a proper installation is used, see below. 
 
@@ -236,7 +235,7 @@ INSTALLATION
                directory structure  similar to  MS-DOS. Install  the helper DLL
                methnk16.dll  in   the  C:\WINDOWS\SHELL   directory.  Create  a
                me32.ini(8) file  in the  C:\WINDOWS  directory to  identify the
-               location of the MicroEmacs '00 components, this much the same as
+               location of the MicroEmacs '02 components, this much the same as
                the '95/'98  file,  change  the  directory  paths  to  suite the
                install base. 
 
@@ -315,7 +314,7 @@ INSTALLATION
                (in this case  icon number 23),  or may be  some other icon. The
                open  action  in  the   example  uses  the   -o  option  of  the
                client-server, which loads the  file into the current MicroEmacs
-               '00 session, alternatively the  -c option may  be used to retain
+               '02 session, alternatively the  -c option may  be used to retain
                the previous  context, or  no option  if a  new session  with no
                other files loaded is started. 
 
@@ -489,7 +488,7 @@ SEE ALSO
 
 COMPANY PROFILES 
      This section describes how  a company profile  should be incorporated into
-     MicroEmacs  '00.  A  company  profile  defines  a  set  of  extensions  to
+     MicroEmacs  '02.  A  company  profile  defines  a  set  of  extensions  to
      MicroEmacs which  encapsulate settings  which are  used on  a company wide
      basis. This  type  of configuration  is  typically used  with  a networked
      (shared) installation. The company profile would typically include:- 
@@ -501,7 +500,7 @@ COMPANY PROFILES
 
   Location Of The Company Information 
      It is suggested that  all of the company  extensions applied to MicroEmacs
-     '00 are  performed  in a  separate  directory location  which  shadows the
+     '02 are  performed  in a  separate  directory location  which  shadows the
      MicroEmacs standard macro file directory.  This enables the original files
      to be sourced if a  user does not want to  include the company files. This
      method  also  allows  MicroEmacs  to  be  updated  in  the  future, whilst
@@ -590,20 +589,20 @@ SEE ALSO
 
 USER PROFILES 
      This section  describes how  a  user profile  should be  incorporated into
-     MicroEmacs '00. A user  profile defines a set  of extensions to MicroEmacs
+     MicroEmacs '02. A user  profile defines a set  of extensions to MicroEmacs
      which encapsulates settings which are used by an individual user. 
 
      The user profile allows:- 
 
        *  Saving of the last session (history), allowing the next invocation of
-          MicroEmacs '00 to restore your previous session. 
+          MicroEmacs '02 to restore your previous session. 
        *  Personalized spelling dictionaries. 
-       *  Redefinition of MicroEmacs '00, allowing the editor to be tailored to
+       *  Redefinition of MicroEmacs '02, allowing the editor to be tailored to
           an  individual's  requirements.  Including  the  re-binding  of keys,
           modification of the screen colors. Definition of personal macros etc.
 
   Identification 
-     In order to identify a user  MicroEmacs '00 uses information in the system
+     In order to identify a user  MicroEmacs '02 uses information in the system
      to determine the name of  the user, and in  turn the configuration to use.
      On all  systems the  value  of the  environment variable  $MENAME(5) takes
      priority over any other means of  user identification. If this variable is

@@ -10,7 +10,7 @@
 
 define-macro fhook-txt
     ; use the document fhook in docmacro
-    @# doc-fhook-body "text"
+    @# doc-fhook-body "txt" "text"
 !emacro
 
 ; buffer-initialize variables

@@ -23,7 +23,7 @@ define-macro fhook-binary
         -1 buffer-mode "edit"
         beginning-of-buffer
     !endif
-    buffer-initialize
+    @# buffer-initialize "binary"
     buffer-initialize-hooks
 !emacro
 

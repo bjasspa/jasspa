@@ -114,7 +114,15 @@ define-macro-file fold fold-current fold-all
 !emacro
 
 0 define-macro buffer-initialize
+    set-variable $buffer-fhook &cat "fhook-" @1
     set-variable #l0 &ind &spr ".%s.setup" $buffer-fhook
+    !if &not @#
+        !if &sin "n" #l0
+            !force set-variable #l1 @2
+            set-variable #l1 &cond $status #l1 @1
+            etfinsrt #l1
+        !endif
+    !endif
     set-variable #l1 &ind &spr ".%s.command-flag"  $buffer-fhook
     set-variable #l2 &ind &spr ".%s.command-kbind" $buffer-fhook
     set-variable #l3 &ind &spr ".%s.command-nbind" $buffer-fhook

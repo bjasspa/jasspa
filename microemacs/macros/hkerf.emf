@@ -6,7 +6,7 @@
 
 define-macro fhook-erf
     set-variable $buffer-mask "luh1"
-    buffer-initialize
+    @# buffer-initialize "erf"
     buffer-initialize-hooks
 !emacro
 

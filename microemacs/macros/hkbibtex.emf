@@ -5,11 +5,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro fhook-bibtex
-    ; if arg is 0 this is a new file so add template 
-    !if &not @#
-        etfinsrt "bibtex"
-    !endif
-    buffer-initialize
+    @# buffer-initialize "bibtex"
     buffer-initialize-hooks
 !emacro
 

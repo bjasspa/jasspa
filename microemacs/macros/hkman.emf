@@ -5,7 +5,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro fhook-man
-    buffer-initialize
+    @# buffer-initialize "man"
     1 buffer-mode "view"
     set-variable :mouse-word-select man-process-link
     buffer-initialize-hooks

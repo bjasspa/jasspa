@@ -5,12 +5,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro fhook-java
-    ; if arg is 0 this is a new file so add template 
-    !if &not @#
-        etfinsrt "java"
-    !endif
     set-variable $buffer-mask "luh1"
-    buffer-initialize
+    @# buffer-initialize "java"
     buffer-initialize-hooks
 !emacro
 

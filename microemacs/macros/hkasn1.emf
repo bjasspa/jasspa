@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Jon Green
 ;  Created       : Thu Sep 10 12:41:38 1998
-;  Last Modified : <011123.0807>
+;  Last Modified : <011219.2333>
 ;
 ;  Description
 ;            Hilighting for ISO 7498 ASN.1. 
@@ -18,11 +18,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro fhook-asn1
-    ; if arg is 0 this is a new file so add template 
-    !if &not @#
-        etfinsrt "asn1"
-    !endif
-    buffer-initialize
+    @# buffer-initialize "asn1"
     buffer-initialize-hooks
 !emacro
 

@@ -396,7 +396,7 @@ define-macro comment-end
     !if $status
         &len @s1 backward-delete-char
         -1 yank
-        !jump -5
+        !jump -4
     !endif
     !if #l1
         set-variable $fill-col &sub $fill-col &len &lget #l9 5

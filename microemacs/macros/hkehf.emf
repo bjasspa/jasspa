@@ -7,7 +7,7 @@ set-char-mask "2" "-$&#!%:@."
 
 define-macro fhook-ehf
     set-variable $buffer-mask "luh12"
-    buffer-initialize
+    @# buffer-initialize "ehf"
     ; Hyperlink with the mouse.
     set-variable :mouse-word-select ehf-process-link
     !if &seq $buffer-bname "*help*"

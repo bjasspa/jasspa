@@ -9,7 +9,7 @@
 ;  Copyright (c) 1999-2001 JASSPA
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 define-macro fhook-texi
-    buffer-initialize
+    @# buffer-initialize "texi"
     buffer-initialize-hooks
 !emacro
 

@@ -11,17 +11,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro fhook-c
-    ; if arg is 0 this is a new file so add template 
-    !if &not @#
-        ; Is it an include h file or a c file?
-        !if &iseq &mid $buffer-bname &rsin "." $buffer-bname 1 "h"
-            etfinsrt "h"
-        !else
-            etfinsrt "c"
-        !endif
-    !endif
+    ; Is it an include h file or a c file?
+    set-variable #l0 &con &isin ".h" $buffer-bname "h" "c"
     set-variable $buffer-mask "luh1"
-    buffer-initialize
+    @# buffer-initialize "c" #l0
     buffer-initialize-hooks
 !emacro
 

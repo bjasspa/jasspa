@@ -1,12 +1,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;       Install Shield awk file hook
 ;
-;   Last Modified : <011123.0807>
+;   Last Modified : <011219.2326>
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro fhook-awk
     set-variable $buffer-mask "luh1"
-    buffer-initialize
+    @# buffer-initialize "awk"
     buffer-initialize-hooks
 !emacro
 

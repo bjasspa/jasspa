@@ -6,12 +6,8 @@
 set-char-mask "2" "-$&#!%:@."
 
 define-macro fhook-emf
-    ; if arg is 0 this is a new file so add template 
-    !if &not @#
-        etfinsrt "emf"
-    !endif
     set-variable $buffer-mask "luh12"
-    buffer-initialize
+    @# buffer-initialize "emf"
     buffer-initialize-hooks
 !emacro
 

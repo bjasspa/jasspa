@@ -5,12 +5,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro fhook-perl
-    ; if arg is 0 this is a new file so add template.
-    !if &not @#
-        etfinsrt "perl"
-    !endif
     set-variable $buffer-mask "luh1"
-    buffer-initialize
+    @# buffer-initialize "perl"
     buffer-initialize-hooks
 !emacro
 

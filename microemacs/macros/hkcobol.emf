@@ -7,12 +7,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro fhook-cobol
-    ; if arg is 0 this is a new file so add template
-    !if &not @#
-        etfinsrt "cobol"
-    !endif
     set-variable $buffer-mask "luh1"
-    buffer-initialize
+    @# buffer-initialize "cobol"
     buffer-initialize-hooks
 !emacro
 

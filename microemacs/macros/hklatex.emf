@@ -24,11 +24,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro fhook-latex
-    ; if arg is 0 this is a new file so add template 
-    !if &not @#
-        etfinsrt "latex"
-    !endif
-    buffer-initialize
+    @# buffer-initialize "latex"
     ; Set up the default constants
     set-variable :fill-mode "L"
     set-variable :fill-col $fill-col

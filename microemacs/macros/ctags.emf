@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : 1998
-;  Last Modified : <010805.0021>
+;  Last Modified : <011219.2036>
 ;
 ;  Description   : Command-line macro for creating a C tags file
 ;
@@ -53,6 +53,9 @@ set-char-mask "1" ":~"
         insert-string "$/"
     !endif
     next-window
+    ;!if &seq #l1 "minPt"
+    ;    set-variable $debug 1
+    ;!endif
 !emacro
 
 0 define-macro ctags-move-to-next
@@ -249,7 +252,7 @@ set-char-mask "1" ":~"
             backward-char
             set-alpha-mark "t"
             goto-matching-fence
-            ctags-move-to-next "[;,({]\\|\\w"
+            ctags-move-to-next "[;:,({]\\|\\w"
             !if &seq @s0 "("
                 !goto add-variable
             !elif &seq @s0 ","
@@ -263,7 +266,7 @@ set-char-mask "1" ":~"
                     ctags-add-tag
                     goto-alpha-mark "T"
                 !endif
-            !elif &not &seq @s0 "{"
+            !elif &not &sin @s0 ":{"
                 ; word char, this could be a K&R style function
                 ; quick sanity check by seeing if a '{' comes before a '('
                 ; this is not full proof but its better than nothing

@@ -4,7 +4,7 @@
 ;       Author        : Jon Green
 ;       Created       : 2nd November 1996
 ;
-;   Last Modified : <011123.0807>
+;   Last Modified : <011219.2326>
 ;
 ;       Comment       : This shell file has given me grief. It is difficult
 ;                       to know how much to hilight. At the moment it appears
@@ -26,7 +26,7 @@
 
 define-macro fhook-shell
     set-variable $buffer-mask "luh1"
-    buffer-initialize
+    @# buffer-initialize "shell"
     buffer-initialize-hooks
 !emacro
 

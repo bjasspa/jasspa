@@ -5,13 +5,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro fhook-yacc
-    ; if arg is 0 this is a new file so add template 
-    !if &not @#
-        ; Use c template for LEX & YACC
-        etfinsrt "c"
-    !endif
     set-variable $buffer-mask "luh1"
-    buffer-initialize
+    ; Use c template for LEX & YACC
+    @# buffer-initialize "yacc" "c"
     buffer-initialize-hooks
 !emacro
 

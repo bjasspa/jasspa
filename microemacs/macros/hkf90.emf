@@ -9,17 +9,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro fhook-f90
-    ; if arg is 0 this is a new file so add template
-    !if &not @#
-        ; Is this a f77 or other fortran file ??
-        !if &seq &mid $buffer-bname &rsin "." $buffer-bname 3 "f90"
-            etfinsrt "f90"
-        !else
-            etfinsrt "f"
-        !endif
-    !endif
+    ; Is this a f77 or other fortran file ??
+    set-variable #l0 &con &isin ".f90" $buffer-bname "f90" "f"
     set-variable $buffer-mask "luh1"
-    buffer-initialize
+    @# buffer-initialize "f90" #l0
     buffer-initialize-hooks
 !emacro
 

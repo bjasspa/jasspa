@@ -8,7 +8,7 @@
 
 define-macro fhook-m4
     set-variable $buffer-mask "luh1"
-    buffer-initialize
+    @# buffer-initialize "m4"
     buffer-initialize-hooks
 !emacro
 

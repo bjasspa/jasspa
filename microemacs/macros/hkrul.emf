@@ -6,11 +6,8 @@
 set-char-mask "3" "@"
 
 define-macro fhook-rul
-    !if &not @#
-        etfinsrt "rul"
-    !endif
     set-variable $buffer-mask "luh13"
-    buffer-initialize
+    @# buffer-initialize "rul"
     buffer-initialize-hooks
 !emacro
 set-variable .fhook-rul.setup &reg "/history" "fhook/rul" "bdfghnopx"

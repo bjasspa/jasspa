@@ -8,12 +8,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro fhook-mhg
-    ; Insert the header.
-    !if &not @#
-        !force etfinsrt "mhg" .fhook-mhg.setup
-    !endif
     set-variable $buffer-mask "luh1"
-    buffer-initialize
+    @# buffer-initialize "mhg"
     buffer-initialize-hooks
 !emacro
 
