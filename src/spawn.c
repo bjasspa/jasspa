@@ -1748,7 +1748,7 @@ ipipeCommand(int f, int n)
     register int  ss ;			/* Fast variable */
     uint8         lbuf[MAXBUF];		/* command line send to shell */
     uint8         nbuf[MAXBUF], *bn ;	/* buffer name */
-    uint8          pbuf[FILEBUF] ;
+    uint8         pbuf[FILEBUF] ;
 
     if(!(meSystemCfg & meSYSTEM_IPIPES))
     {
@@ -1783,7 +1783,7 @@ int
 doPipeCommand(uint8 *comStr, uint8 *path, uint8 *bufName, int flags)
 {
     register BUFFER *bp;	/* pointer to buffer to zot */
-    uint8 line[MAXBUF] ;                /* new com line with "> command" */
+    uint8 line[MAXBUF+256] ;    /* new com line with "> command" (+256 to allow for the >.... */
     int cd, ret ;
 #ifdef _DOS
     static int8 pipeStderr=0 ;
@@ -1928,8 +1928,8 @@ pipeCommand(int f, int n)
     uint8 nbuf[MAXBUF], *bn ;	/* buffer name */
     uint8 pbuf[MAXBUF] ;
 
-    /* get the command to pipe in (-14 cos need to append a string) */
-    if((ss=meGetString((uint8 *)"Pipe", 0, 0, line, MAXBUF-14)) != TRUE)
+    /* get the command to pipe in */
+    if((ss=meGetString((uint8 *)"Pipe", 0, 0, line, MAXBUF)) != TRUE)
         return ss ;
     if((n & 0x01) == 0)
     {
