@@ -302,6 +302,8 @@ set-variable #l2 &ind &spr ".hilight.%stag" #l0
     indent #l1 o "</tr>" -2
     indent #l1 n "<td" 3
     indent #l1 o "</td>" -2
+    indent #l1 n "<span" 3
+    indent #l1 o "</span>" -2
     indent #l1 n "<select" 3 
     indent #l1 o "</select>" -2 
     indent #l1 n "%>" -1
