@@ -1,6 +1,6 @@
 .\"*-*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1999-2004 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1999-2005 JASSPA (www.jasspa.com)
 .\"
 .\" Permission is granted to copy, distribute and/or modify this document
 .\" under the terms of the GNU Free Documentation License, Version 1.1
@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.24 2004-03-26 20:46:38 jon Exp $
+.Id $Id: me.nrs,v 2.25 2005-01-15 14:51:50 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -23,7 +23,7 @@
 .\" Next section (until .Ss) is for the osd-help contents page
 .Me "!   Contents"
 .Me "| home"
-.Me "MicroEmacs '04"
+.Me "MicroEmacs '05"
 .Me "|"
 .Me " "
 .Me "| osd-help(3)"
@@ -98,7 +98,7 @@
 .Me "    Registry"
 .Me "| Command Line Filters"
 .Me "    Command Line Filters"
-.Me "| MicroEmacs '04 - Games"
+.Me "| MicroEmacs '05 - Games"
 .Me "    Games"
 .Me "|"
 .Me " "
@@ -130,7 +130,7 @@
 .Me "    Compatibility"
 .Me "| Interfacing(2)"
 .Me "    Interfacing to external components"
-.Me "| MicroEmacs '04 - Supported File Types"
+.Me "| MicroEmacs '05 - Supported File Types"
 .Me "    Supported File Types"
 .Me "| Client-Server(2)"
 .Me "    Client-Server Interface"
