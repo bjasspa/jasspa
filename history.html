@@ -46,6 +46,7 @@
   <font size="+1" color="#ff0000">history&nbsp;&nbsp;</font>
   <font size="+1"><a href="down0201.html" style="COLOR: black">January 2002</a>&nbsp;&nbsp;</font>
   <font size="+1"><a href="down0212.html" style="COLOR: black">December 2002</a>&nbsp;&nbsp;</font>
+  <font size="+1"><a href="down0401.html" style="COLOR: black">January 2004</a>&nbsp;&nbsp;</font>
   <font size="+1"><a href="experimental.html" style="COLOR: black">experimental</a>&nbsp;&nbsp;</font>
   <font size="+1"><a href="spelling.html" style="COLOR: black">spelling dictionaries</a>&nbsp;&nbsp;</font>
   <font size="+1"><a href="contrib.html" style="COLOR: black">contributions</a>&nbsp;&nbsp;</font>
@@ -54,9 +55,21 @@
   <h2><img src="images/miniicon.gif" width="16" height="16"> <font color="#0000FF">
   Origins</font></h2>
 
+  <p><b>MicroEmacs</b> was originally written by Dave Conroy in late 1985 or
+  early 1986 for private use. Various people asked Dave for a copy of the
+  program and it was distributed without concern for copyrights or ownership
+  as was the custom of that era. Daniel Lawrence then obtained a copy of the
+  program and turned it into an editor for the masses, it is his work
+  that ultimately made MicroEmacs so popular. Daniel did a tremendous amount
+  of work, both adding features and supporting other platforms resulting in
+  the MicroEmacs v3.8 release on which JASSPA's MicroEmacs is based.
+
+  <p>The evolution of JASSPA's MicroEmacs starts here ...
+
   <p>This version of MicroEmacs is based on an early <i>MicroEmacs</i> release
-  of 3.8 in 1988, the origins of which are unknown, except to say it was
-  delivered on a unmarked 5 1/2&quot; floppy disk.
+  of 3.8 in 1988 by Daniel M. Lawrence, the origins of the exact source base
+  are unknown, except to say it was delivered on a unmarked 5 1/2&quot; floppy
+  disk.
 
   <p>The program was originally ported to a Motorola MVME147 UNIX box as an
   alternative to <b>vi</b>. Reliability of the program proved to be a problem as
@@ -94,6 +107,123 @@
 
   <h2><img src="images/miniicon.gif" width="16" height="16"> <font color="#0000FF">
   Development History</font></h2>
+  <h3>7th Release - January 2004</h3>
+  <ul>
+    <li>[040104] Macro execution speed-ups - Thanks Hops for analysis.</li>
+    <li>[040104] Code optimisations and extensions - Thanks Peter Smith.</li>
+    <li>[040104] Lua language template - Thanks Jeremy Cowgar.</li>
+    <li>[040104] SGML language template.</li>
+    <li>[040104] string-rectangle command added - Suggested by Salman.</li>
+    <li>[040104] C++ restyle fixes - Problems reported by Salman.</li>
+    <li>[031221] X-Window fixes - Thanks Jeremy Cowgar.</li>
+    <li>[031120] Added new hilight schemes "Lemon Jelly" and "Brownie".</li>
+    <li>[031120] CVS. Fixed several issues with the why the cvs dir list processed the missing and added files.</li>
+    <li>[031120] HTML Template. Improved indentation.</li>
+    <li>[031120] Toolbar. Added trunc-sheme reset to force a redraw if required.</li>
+    <li>[031120] Fixed the games to cope with the toolbar by closing it.</li>
+    <li>[031120] buffer.c. Changed the n arg to list buffer so user can select hidden or verbose etc. Added check after exec of ehook to catch nasties, not full proof but catches attempts to close toolbar etc.</li>
+    <li>[031120] Fixed a goto-line bug shown when using grep on a single lined file (like CVS/Root).</li>
+    <li>[031120] hilight.c. Changed indent line count to use the close so values of greater that 256 can be used.</li>
+    <li>[031120] input.c Added support for EOB &amp; BOB keys &amp; fixed fwd/bck word movement across lines.</li>
+    <li>[031026] Fixed -ve recenter bug found by Alexander Doktorovich.</li>
+    <li>[031026] Last commit to search fixed a &amp;xse failure on start-up, was not setting the internal flags correctly. Fix go a little messy as it should not affect the hunt commands.</li>
+    <li>[031026] Minor restyle.</li>
+    <li>[031026] Fixed a nasty buffer reload bug.</li>
+    <li>[031026] Fixed lookback hilight bug.</li>
+    <li>[031026] Fix for Sunos Xterm function keys.</li>
+    <li>[031026] Added support for a look-back indent scheme which can be used to get the correct indent scheme to use.</li>
+    <li>[031026] Fixed history line numbers (were one line out for non-current buffers).</li>
+    <li>[031026] Changed the mldelete to respect the scrollFlag setting, if smooth scroll enabled then delete text smoothly.</li>
+    <li>[031026] Fixed narrow lookback hilight bug.</li>
+    <li>[031026] Added ADA file hook - thanks to Gabriel Tabares-Barreiro.</li>
+    <li>[031026] Nroff template. Removed unused variable.</li>
+    <li>[031026] HTML Template. Major shake-up for HTML base files including major enhancements to indentation and current script auto-detection.</li>
+    <li>[031026] Toolbar. Added support for the new :chook current file type variable and got toolbar and buffer tool menu to call the update command (toolbar only on a C-l).</li>
+    <li>[031026] CVS. Fixed unix checkout path and implemented cvs remove.</li>
+    <li>[031026] Page-file. Fixed backward isearch blow out.</li>
+    <li>[031026] Perl Template. Updated the perl.eaf to &lt;FOLD&gt;.</li>
+    <li>[031026] Abbreviations. Added support for the new :chook current file type variable and added support for an INCLUDE tag.</li>
+    <li>[031026] Abbreviations. Improved the look-back abbrev to expand to one before if exec'd again.</li>
+    <li>[030917] HTML Template. Fixed a hilighting and indent problem caused by embedded script.</li>
+    <li>[030917] OSD. Changed OSD hot-key '&amp;' to new style '\H'. Changed user-setup dialog to use new Combo-box.</li>
+    <li>[030917] CVS. Major revamp of CVS support including an OSD dialog for each tool.</li>
+    <li>[030917] Changed the CHAR defines and add defines for the LEADER and TRAIL bytes used for special chars. Reimplemented OSD hot-keys to use \\H instead of &amp; and added new \\{ &amp; \\} to stop and start current item hilighting. Added support for C++ private public and protected token indentation. Added new Check-box chars to the extended chars (1,2,3,4,19 &amp; 20) and improved the drawing of some of the others Fixed windows 'close while minimised' test so only prompted if something has changed.</li>
+    <li>[030917] Fixed a build.bat not setting MAKE to nmake problem.</li>
+    <li>[030917] Added support for new Check-box chars in extended chars.</li>
+    <li>[030827] Added use default printer setting.</li>
+    <li>[030827] Page-file. Fixed header and added isearch support.</li>
+    <li>[030821] Rationalized the buffer sizes, increased the keyborad macro and search string buffer sizes. Removed the GNU regex code - not used or tested in years. Part one of Jon's XTerm key lookup fix to get the key pad working.</li>
+    <li>[030710] User setup. Updated osd calls due to the change in 'd' flag behaviour and changed the items with drop down menus to use the new combo-box.</li>
+    <li>[030710] ODS. Updated osd calls due to the change in 'd' flag behaviour.</li>
+    <li>[030710] Added new define for the number of history types and added new @h history variable.</li>
+    <li>[030710] Added support to @mn and @mna in the meGetKey routine</li>
+    <li>[030710] Added new undo type for line reordering undos, used by sort-lines and transpose-line.</li>
+    <li>[030710] Changed some define names to make them compatible. Changed the calls to meGetUserKey to meGetKey so a macro can give a list of keys Added new 0 argument which quits at the EOB rather than going to the top of the buffer etc (used in page-file isearch).</li>
+    <li>[030710] Changed the logic of the 'd' flag so that it disables the displaying of the item type, changed button rendering so that it adhers to this so a single char button can be created Added new 'O' combo box item type which is a mixture between an entry box and a sub-menu item.</li>
+    <li>[030710] Improved the special char drawing routines so that they remain inside the char space and triangles look good regardless of size.</li>
+    <li>[030710] Fixed a nasty bug to do with file hooks that load other files and the find-file command maniplating the buffHistNo incorrectly so the wrong buffer is shown - obscur!</li>
+    <li>[030625] Added macro release makefile.</li>
+    <li>[030625] MicroEmacs 3.8 compatibility. Fixed isearch emulation.</li>
+    <li>[030625] First revision of page-file.</li>
+    <li>[030625] CVS. Removed debug line.</li>
+    <li>[030610] Changed TAB and BELL to safer defines. Optimized the fill-para function so that it keeps one of the existing spaces between the words, this also help preserve the position of anchors.</li>
+    <li>[030610] Package making files for sunos.</li>
+    <li>[030608] Changed the mouse default behaviour to do a move yank.</li>
+    <li>[030608] Tools. Removed superfluous endif.</li>
+    <li>[030608] Toolbar. Only update the toolbar if its the top level command, i.e. the screen-update is not required due to spell-buffer (say).</li>
+    <li>[030608] MS-Shift region. Check for kill-rectangle and treat like we do the kill-region.</li>
+    <li>[030608] Added new -ve argument to insert-file which inserts only a section of the file. Optionised the file-op move command to try just moving the file first.</li>
+    <li>[030608] Changed the addLine function so it always flags the line as changed, this avoids some bizarre issues when macros delete an insert lines of text (best shown by the buffer-info toolbar tool).</li>
+    <li>[030608] Added new macro orientated buffer-info numeric argument. Fixed bug in the ignore white-space buffer compare.</li>
+    <li>[030608] Fixed default printer selection issues - not complete.</li>
+    <li>[030608] Fixed a minor debug build issue in undo.c.</li>
+    <li>[030608] Changed the history so it always removes any duplicate entries.</li>
+    <li>[030608] Added $window-eline and moved the aline into extended version.</li>
+    <li>[030608] Changing the addLine function to always set the changed flag meant all macros became hidden, use different bits.</li>
+    <li>[030608] Fixed a minor compile warnings.</li>
+    <li>[030608] Fixed buffer reload a file while displayed in another window problems.</li>
+    <li>[030519] Fixed minor compiler warning in search.c by removing pointless static initialisation.</li>
+    <li>[030519] Fixed poke over-writing cursor on win32 console.</li>
+    <li>[030516] C Template. Changed C #define evaluation to use new protected narrows.</li>
+    <li>[030516] Stopped the Organiser Find exit quitting the organiser itself.</li>
+    <li>[030516] VM Mail. Fixes from Tom Hundt fixes message separator problem.</li>
+    <li>[030516] Made dos redraw the cursor on a poke as well.</li>
+    <li>[030515] Organizer. Fixed bugs with creating new addresses and indexing etc.</li>
+    <li>[030515] Printer. Store the windows device information in the print-history as well.</li>
+    <li>[030514] JST Template. Fixed jst magic hook and added Imakefile one. Changed jst magic hook variable setting setup to use the new $result variable.</li>
+    <li>[030514] HTML Template. Changed html-fold -&gt; collapse, reported goto-matching-tag failure.</li>
+    <li>[030514] Buffer initialisation. Changed the fold-setup call so that it gets called if likely to be required - use the new buffer-fhook $result setting to help in determining this.</li>
+    <li>[030514] Folding. Changed the fold-setup so a setup string can be passed in rather than searching for one in the buffer, aimed at utilizing the new buffer-fhook $result setting.</li>
+    <li>[030514] Set $result to the magic fhook string so the fhook macro does not have to search for it again in buffer.c.</li>
+    <li>[030514] Fixed \xb bad regex bug.</li>
+    <li>[030513] Search. Added region line hilighting support.</li>
+    <li>[030513] Changed auto-spell hilighting scheme to a new spell-error scheme to avoid printing issues.</li>
+    <li>[030513] Removed old hkfold.emf fold implementation. Moved fold.emf to collapse.emf and added a real folding editor support macros to a new fold.emf, based loosely on fue.</li>
+    <li>[030513] Abbreviation, Changed copy-region call to not expand the narrows.</li>
+    <li>[030513] Latex Template. Added latex chars etc to the eaf file.</li>
+    <li>[030513] Search. Changed to handle the fold-open &amp; fold-close split.</li>
+    <li>[030513] OSD. Improved the Edit narrow commands to take advantage of the new protected narrow support.</li>
+    <li>[030513] Tools. Fixed dummy tool removal and changed position setting to use alpha mark.</li>
+    <li>[030513] VM Mail. Regex protected the boundary id string.</li>
+    <li>[030513] Utils. simplified the str-to-regex by using &amp;xrep.</li>
+    <li>[030513] User setup. Changed fold -&gt; collapse.</li>
+    <li>[030513] HTML Template. Fixed script indent problem, improved the fench matching and added close tag feature.</li>
+    <li>[030513] Buffer setup. Changed fold -&gt; collapse and added proper folding setup entries.</li>
+    <li>[030513] Commenting. Fixed silly \\x80 alpha char label bug.</li>
+    <li>[030513] File Dialogue. Added tab odering to dialog.</li>
+    <li>[030513] Folding all templates. Changed the function folding commands to collapse to avoid confusion with real folding.</li>
+    <li>[030513] XML Template, Added indent rules for &lt;? ... ?&gt;.</li>
+    <li>[030513] Mouse. Changed the column setting to use alpha marks.</li>
+    <li>[030513] Colour Schemes. Split the fold scheme into fold-close and fold-open.</li>
+    <li>[030512] Fixed display matching mench issue with poke screen hiding the cursor on Unix X. May need to be done on DOS as well.</li>
+    <li>[030512] Fixed horrid crash caused in search.c by buffer change in macro followed by query replace and toolbar up-date changing the regex variables.</li>
+    <li>[030512] Fixed fill-paragraph when no arg is given but at the beginning of para still move forward.</li>
+    <li>[030512] Fixed compiler warning in spawn.c.</li>
+    <li>[030512] Latest versions of build.txt, cygwin.txt, faq.txt and readme.txt.</li>
+    <li>[030512] Build fix for SUNOS.</li>
+    <li>[030512] Ipipe fix for SUNOS. Big return value change to get functions consistent - found that the return values of low level line functions where different to high level functions making the code hard to read and dangerous. Also needed a consistent triple value return (true false and error) so change meABORT to -1 across the board. changed the line flag implementation to be more flexible and variable in size so UE has a smaller memory usage and ME has line flags available. Improved the AMark setting and deleting. Added a Protected Line flag and vastly improved the narrowing. Renamed most function in line.c to make them more readable.</li>
+    <li>[030512] Big return value change to get functions consistent - found that the return values of low level line functions where different to high level functions making the code hard to read and dangerous. Also needed a consistent triple value return (true false and error) so change meABORT to -1 across the board.</li>
+  </ul>
   <h3>6th Release - December 2002</h3>
   <ul>
     <li>[021216] Removed .cvsignore from source release.</li>
@@ -666,6 +796,25 @@
     <li>Fire fighting to get a stable version.</li>
     <li>Expanded regular expression syntax.</li>
   </ul>
+
+  <h3>1998</h3>
+  <ul>
+    <li>Daniel M. Lawrence - Microemacs V3.8 distribution.</li>
+    <li>Daniel Lawrence turned MicroEmacs into an editor for the masses, it is
+    his work that ultimately made MicroEmacs so popular. Daniel did a
+    tremendous amount of work, both adding features and supporting other
+    platforms resulting in the MicroEmacs v3.8 release on which JASSPA's
+    MicroEmacs is based.</li>
+  </ul>
+
+  <h3>Late 1985/early 1986</h3>
+  <ul>
+    <li>Dave Conroy, the original author, first developed the original code
+    base for private use. Various people asked Dave for a copy of the program
+    and it was distributed without concern for copyrights or ownership as was
+    the custom of that era.</li>
+  </ul>
+
   <h2><img src="images/miniicon.gif" width="16" height="16"> <font color="#0000FF">
   Work In Progress or Planned</font></h2>
   <p>Development  of  JASSPA's MicroEmacs  is an  on-going  process,  follows  is a list  of work
@@ -682,24 +831,24 @@
       <td align=center bgcolor="#0000FF"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif" size="4">Description</font></td>
     </tr>
     <tr>
+      <td align=center bgcolor="#0080ff"><font  color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">January 2004</font></td>
+      <td bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">7th Major Release</font></td>
+    </tr>
+    <tr>
       <td align=center bgcolor="#0080ff"><font  color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">December 2002</font></td>
       <td bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">6th Major Release</font></td>
-
     </tr>
     <tr>
       <td align=center bgcolor="#0080ff"><font  color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">January 2002</font></td>
       <td bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">5th Major Release - First under GPL</font></td>
-
     </tr>
     <tr>
       <td align=center bgcolor="#0080ff"><font  color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">August 2001</font></td>
       <td bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">4th Major Release</font></td>
-
     </tr>
     <tr>
       <td align=center bgcolor="#0080ff"><font  color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">July 2001</font></td>
       <td bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">3rd Major Release</font></td>
-
     </tr>
     <tr>
       <td align=center bgcolor="#0080ff"><font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif">March 2000</font></td>
@@ -723,6 +872,6 @@
     </tr>
   </table></center>
 
-  <p><font size="-2"><i>Copyright &copy; 2000-2002 Jasspa</i></font></p>
+  <p><font size="-2"><i>Copyright &copy; 2000-2004 Jasspa</i></font></p>
   </body>
 </html>
