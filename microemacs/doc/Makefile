@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20040327.1623>
+# Last Modified: <20041210.0037>
 #
 ##############################################################################
 
@@ -47,7 +47,7 @@ CMD2_000=	$(DOCDIR)m2cmd000.2 $(DOCDIR)m2cmd001.2 $(DOCDIR)m2cmd002.2\
 		$(DOCDIR)m2cmd009.2
 CMD2_010=	$(DOCDIR)m2cmd010.2 $(DOCDIR)m2cmd011.2 $(DOCDIR)m2cmd012.2\
 		$(DOCDIR)m2cmd013.2 $(DOCDIR)m2cmd014.2 $(DOCDIR)m2cmd015.2\
-		$(DOCDIR)m2cmd016.2 $(DOCDIR)m2cmd017.2 $(DOCDIR)m2cmd018.2\
+		$(DOCDIR)m2cmd017.2 $(DOCDIR)m2cmd018.2\
 		$(DOCDIR)m2cmd019.2
 CMD2_020=	$(DOCDIR)m2cmd020.2 $(DOCDIR)m2cmd021.2 $(DOCDIR)m2cmd022.2\
 		$(DOCDIR)m2cmd023.2 $(DOCDIR)m2cmd024.2 $(DOCDIR)m2cmd025.2\
