@@ -47,8 +47,8 @@
  * _ME_WIN32_FULL_DEBUG - Enables Windows debugging
  * _ME_FREE_ALL_MEMORY  - Frees all memory before exiting
  */
-#define _ME_WIN32_FULL_DEBUG
-#define _ME_FREE_ALL_MEMORY
+/*#define _ME_WIN32_FULL_DEBUG*/
+/*#define _ME_FREE_ALL_MEMORY*/
 
 /* These next define is platform specific, but as all supported 
  * platforms use these and all future ones should I've put them here
