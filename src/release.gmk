@@ -33,10 +33,13 @@
 #
 ##############################################################################
 #
-RM	= rm -f
-TAR	= tar
-ZIP	= zip
-INSTALL	= install
+RM	= /usr/bin/rm -f
+TAR	= /usr/bin/tar
+ZIP	= /usr/bin/zip
+FIND	= /usr/bin/find
+GREP	= /usr/bin/grep
+UNIQ	= /usr/bin/uniq
+INSTALL	= /usr/bin/install
 INSTDIR	= ../release
 
 OBJS	= mesrc.zip	mesrc.tar.gz	meicons.tar.gz
@@ -47,9 +50,10 @@ mesrc.zip: .ziplist
 	cat .ziplist | zip -q -9 mesrc.zip '-@'
 mesrc.tar.gz: .ziplist
 	tar cf - -T .ziplist | gzip -9 -c > $@
-meicons.tar.gz: me.xpm mini-me.xpm
+meicons.tar.gz: me.xpm mini-me.xpm me.l.pm me.m.pm me.t.pm
 	$(RM) .xpmlist
-	find . -type f -name "*.xpm" -print > .xpmlist
+	$(FIND) . -type f -name "*.xpm" -print > .xpmlist
+	$(FIND) . -type f -name "*.pm" -print >> .xpmlist
 	tar cf - -T .xpmlist | gzip -9 -c > $@
 	$(RM) .xpmlist
 
@@ -62,8 +66,8 @@ release: $(OBJS)
 	$(RM)  $(OBJS)
 	dos2unix -U *.def *.[ch] *.mak *.txt *.gmk build COPYING *.xpm
 	unix2dos -D build.bat *.rc
-	find . -depth -type f -print | grep -v -i ".*/cvs.*" | grep -v -i ".*\.o.*" | grep -v -i "\.ziplist" | grep -v -i ".*/release\.gmk"  > $@.tmp
-	sort $@.tmp | grep -v -i ".*\.tar\.gz" | grep -v -i ".*\.zip" | grep -v -i ".*\.exe" | uniq > $@
+	$(FIND) . -depth -type f -print | $(GREP) -v -i ".*/cvs.*" | $(GREP) -v -i ".*\.o.*" | $(GREP) -v -i "\.ziplist" | $(GREP) -v -i ".*/release\.gmk"  > $@.tmp
+	sort $@.tmp | $(GREP) -v -i ".*\.tar\.gz" | $(GREP) -v -i ".*\.zip" | $(GREP) -v -i ".*\.exe" | $(UNIQ) > $@
 	$(RM) $@.tmp
 
 clean:
