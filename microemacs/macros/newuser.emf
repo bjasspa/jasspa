@@ -171,7 +171,11 @@ define-macro newuser
     ; Attempt to create a new sub-directory in this directory.
 *check-login-home-subdir
     ; Set up a new directory.in "<homedir>/.jasspa"
-    set-variable #l9 &spr "%s/%s" .newuser.login-home ".jasspa"
+    !if &seq &lef .newuser.login-home 1 "/"
+        set-variable #l9 &spr "%s%s" .newuser.login-home ".jasspa"
+    !else
+        set-variable #l9 &spr "%s/%s" .newuser.login-home ".jasspa"
+    !endif
     insert-string &spr "Checking for existance of directory \"%s\" [" #l9
     -1 recenter
     2 screen-update
