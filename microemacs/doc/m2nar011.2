@@ -1,0 +1,147 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.\"  Created By    : Jon Green
+.\"  Created       : Fri Jan 9 00:04:42 2004
+.\"
+.Id $Id: m2nar011.2,v 2.1 2005-02-13 00:50:47 jon Exp $
+.Im MicroEmacs 
+.so me.tni
+.TH macroDebugging 4
+.XI macroDebugging - "Macro Debugging - A Crash Course"
+.SH "MACRO DEBUGGING"
+In  writing  new  macros  then  you  need to debug  them,  there  are  various
+strategies as follows:-
+.SS "Tracing"
+The simplest  method is to add  debugging  information  that is printed on the
+message line that traces the execution  sequence as it progresses  through the
+macro. 
+.PP
+Use 
+.Ht ml-write 2 
+to print out values as you go, use
+.Me $emf-scheme
+.CS   
+1000 ml-write &spr "Got here, value [%s]" #l1
+.CE 
+.Me $ehf-scheme
+to  see the  values.  The  integer  argument is a delay in  milliseconds,  the
+command above will print the message and then wait 1 second before  continuing
+with execution. The wait allows you to see the message.
+.PP
+Once the macro is debugged then delete or comment out the trace messages.
+.SS "Debugger"
+The macro  debugger  is a built in  debugger  that allows the macro  execution
+sequence to be traced and debugged. The debugger is operation is controlled by
+the variable 
+.Ht $debug 5 
+by default the value is \fC0\fR  which  disables  the  debugger.  The debugger
+displays  the next  command  to execute in the  message  line and the user may
+single step through the macro and interrogate the variables. 
+.PP
+Use the  \fB$debug\fR  variable  for  interactive  debugging.  The best way is
+to insert the following  line  somewhere  BEFORE the problem  occurs where the
+macro needs to be debugged:
+.Me $emf-scheme
+.CS   
+set-variable $debug 1
+.CE 
+.Me $ehf-scheme
+As soon as this  variable is set then it drops the user into debug mode. If we
+applied this to our tutorial example then we would define it as:
+.Me $emf-scheme
+.CS   
+define-macro write-region
+    set-variable $debug 1       ; Enable debugger
+    copy-region
+    set-variable #l0 $buffer-fname
+    set-position "\\x88"
+    !force delete-buffer "*write-region-tmp*"
+    find-buffer "*write-region-tmp*"
+    yank
+    set-variable $buffer-fname #l0
+    !force set-variable #l1 @1
+    !if $status
+        !force !force @# write-buffer #l1 @mna
+    !else
+        !force !force @# write-buffer @mna
+    !endif
+    !if &not $status
+        !force delete-buffer $buffer-bname
+        goto-position "\\x88"
+        !abort
+    !endif        
+    delete-buffer $buffer-bname
+    goto-position "\\x88"
+!emacro
+.CE 
+so as soon as we  execute  \fBwrite-region\fR  then we drop into  debug  mode.
+The mode line appears as follows:-
+.CS
+macro-name:position:number [line] ?
+.CE
+where   \fBmacro-name\fR   is  the  name  of  the  macro  that  is  executing,
+\fBposition\fR is the line from the start of the macro definition.  \fBline\fR
+is the macro line that is being executed. i.e.
+.CS
+display-matching-fenc:22:0 [4 show region] ?
+.CE
+At the prompt the commands that are available are:-
+.IP \fC?\fR
+Help, display the debugger commands.
+.IP \fC^G\fR
+Abort the macro.  Immediately  terminates the macro sequence, the state of the
+buffers is  undefined  and leaves the  windows in the state when the macro was
+aborted.
+.IP \fC^L\fR
+Redraws  the  current  screen.
+.IP \fC!\fR
+Continues macro execution the value of $debug is set to 0. Execution continues
+without user interaction up until the next \fB$debug\fR change.
+.IP \fCs\fR 
+Single  steps  through the macro, if another  macro is invoked then  debugging
+with continue in the new sub-macro.
+.IP \fCv\fR
+Display the value of a variable. The user is prompted for a variable  value to
+show, once entered, the value of the variable is displayed.
+.IP \fIany\fR
+Any  other key will step onto the next  instruction,  unlike  \fIstep\fR  then
+any macros that are invoked are not debugged.
+.LP
+See the 
+.Ht $debug 5
+help page for more  information.
+.PP
+It is important  that you SAVE ALL YOUR WORK before  starting to debug macros.
+It is possible to sometimes crash the editor up while developing macros, prior
+to the January  2005 build then the  following  example of infinite  recursion
+would destroy the editor:
+.Me $emf-scheme
+.CS   
+define-macro Test
+    Test
+!emacro
+.CE 
+.Me $ehf-scheme
+This macro nesting is now caught the nesting is limited to 20 calling macros.
+.PP
+For everyday  macros that the typical user will write \*(mS will be robust and
+is not likely to result in any damage. If you start  writing  macros  with for
+deeply nested macro hooks from the core of \*(mS (i.e. ipipe  callbacks)  then
+deleting buffers under the editor will cause stability  problems when mistakes
+are  made.  For  performance  reasons  it is not  possible  to  check  for all
+permutations  of every  command that could be issued that may possibly  change
+the state of the  editor and then  recover.  Provided  that the calls are used
+within their calling remit then no ill effects will be observed.
+.SH "SEE ALSO" 
+.na
+.nf
+.Ht $debug 5 ,
+.Hl "Macro Glossary" MacroGlossary -
+.Hl "MicroEmacs Macro Language at a Glance." macroOverview 4 
+.Hl "Writing MicroEmacs Macros" macroWriting 4
+.fi
+.ad
+.FH

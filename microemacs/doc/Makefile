@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20050206.1848>
+# Last Modified: <20050212.2000>
 #
 ##############################################################################
 
@@ -115,6 +115,7 @@ NAR2_000=	$(DOCDIR)m2nar000.2 $(DOCDIR)m2nar001.2	$(DOCDIR)m2nar002.2 \
 		$(DOCDIR)m2nar003.2 $(DOCDIR)m2nar004.2 $(DOCDIR)m2nar005.2 \
 		$(DOCDIR)m2nar006.2 $(DOCDIR)m2nar007.2 $(DOCDIR)m2nar008.2 \
 		$(DOCDIR)m2nar009.2
+NAR2_010=	$(DOCDIR)m2nar010.2 $(DOCDIR)m2nar011.2 $(DOCDIR)m2nar012.2
 #
 MOD2_000=	$(DOCDIR)m2mod000.2 $(DOCDIR)m2mod001.2 \
 		$(DOCDIR)m2mod003.2 $(DOCDIR)m2mod004.2 $(DOCDIR)m2mod005.2\
@@ -266,7 +267,7 @@ TEMPSMS	=	cmd2_000.sm	cmd2_010.sm	cmd2_020.sm	cmd2_030.sm \
 		cmd2_080.sm	cmd2_090.sm	cmd2_100.sm	cmd2_110.sm \
 		cmd2_120.sm	cmd2_130.sm	cmd2_140.sm	cmd2_150.sm \
 		cmd2_160.sm	cmd2_200.sm \
-		nar2_000.sm \
+		nar2_000.sm	nar2_010.sm \
 		mod2_000.sm	mod2_010.sm	mod2_020.sm	mod2_030.sm \
 		mac3_000.sm	mac3_010.sm	mac3_020.sm	mac3_030.sm \
 		mac3_040.sm	mac3_050.sm	mac3_060.sm	mac3_070.sm \
@@ -454,6 +455,8 @@ typ9_040.sm:	$(FIL9_040)
 # Narratives
 nar2_000.sm:	$(NAR2_000)
 	$(SUPERMAN) -o $@ $(NAR2_000)
+nar2_010.sm:	$(NAR2_010)
+	$(SUPERMAN) -o $@ $(NAR2_010)
 # Superman file
 me.sm: $(TEMPSMS) $(TNIS) $(MAN1)
 	$(SUPERMAN) -o $@ $(TNIS) $(MAN1) $(TEMPSMS)
