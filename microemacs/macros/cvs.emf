@@ -24,7 +24,7 @@
 !endif
 
 set-variable .cvs.names   "|Add|Checkout|Commit|Diff|Graphical Diff|Log|Remove|State|Status|Tag|Update|Annotate|Resolve Conflicts|"
-set-variable .cvs.cmds    "|add|checkout|commit|diff|gdiff|log|remove|-nq update|status|tag|update|annotate|res-conf|"
+set-variable .cvs.cmds    "|add|checkout|commit|diff|gdiff|log|remove|-n update|status|tag|update|annotate|res-conf|"
 set-variable .cvs.flags   "|kAS*|DfvRP*|mZRS*|OZRScw|OSs|ZR|*|ZSR|ZR|tZRbrF*|ZSdRPC*|vZR|Ss|"
 set-variable .cvs.schemes "|0|0|0|0|0|0|0|0|0|0|0|0|0|"
 set-variable .cvs.options "mDftvOZkdRAPCcwbrF"
@@ -42,6 +42,9 @@ set-variable .cvs.message ""
 set-variable .cvs.com &trb &reg "/history" &cat $platform "/cvs/com" "cvs"
 !if &set #l0 &reg "/history" "/cvs/z" "0"
     set-variable .cvs.com &spr "%s -z%d" .cvs.com #l0
+!endif
+!if &reg "/history" "/cvs/q" "0"
+    set-variable .cvs.com &spr "%s -q" .cvs.com
 !endif
 set-variable .cvs.browse-mode &reg "/history" "cvs/browse-mode" "0"
 set-variable #l0 0
@@ -78,6 +81,7 @@ set-variable #l0 0
     ; scheme for the console which simply swaps to the different tool schemes
     0 hilight .hilight.cvscon 2 100 $global-scheme
     hilight .hilight.cvscon 0xc0 &spr "^>cvs-%d>" .hilight.cvsupd "" .hilight.cvsupd $global-scheme
+    hilight .hilight.cvsupd 0x40 &spr "^>cvs-%d>" .hilight.cvsupd "" $global-scheme
     
     ; fix the *files* buffer hilighting for cvs additions
     hilight .hilight.dirlst 0x012 "[0-9][0-9]:[0-9][0-9] [0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9] [0-9][0-9]:[0-9][0-9] \\{" .scheme.file
@@ -395,7 +399,13 @@ define-macro cvs-log-list
     !if &xseq @wl "[?ACLMRU][ *].+"
         set-variable #l0 $window-col
         set-variable $window-col 1
-        set-variable @wc &cond &seq @wc " " "*" " "
+        !if &seq @wc " "
+            set-variable @wc "*"
+            set-variable :tag-count &add :tag-count 1
+        !else
+            set-variable @wc " "
+            set-variable :tag-count &sub :tag-count 1
+        !endif
         set-variable $window-col #l0
         forward-line
     !else
@@ -486,6 +496,41 @@ define-macro cvs-log-list
     !return #l4
 !emacro
 
+0 define-macro cvs-exec-state-ipipe
+    end-of-buffer
+    1 buffer-mode "magic"
+    !force search-backward "^cvs update: warning: \\(.*\\) was lost"
+    !while $status
+        set-variable #l1 @s1
+        set-variable #l2 $window-line
+        str-to-regex #l1
+        end-of-buffer
+        !force search-backward &spr "^U %s$" #l1
+        !if $status
+            set-variable @wc "L"
+            set-variable $window-line #l2
+            set-mark
+            forward-line
+            -1 kill-region
+        !else
+            set-variable $window-line #l2
+        !endif
+        !force search-backward "^cvs update: warning: \\(.*\\) was lost"
+    !done
+    beginning-of-buffer
+    !force replace-string "^cvs update: Updating " "cvs-state: "
+    beginning-of-buffer
+    !force replace-string "^RCS file: .*\n" ""
+    beginning-of-buffer
+    !force replace-string "^retrieving revision [0-9.]+\n" ""
+    beginning-of-buffer
+    !force replace-string "^Merging differences between [0-9.]+ and [0-9.]+ into .*\n" ""
+    beginning-of-buffer
+    !force replace-string "^rcsmerge: warning: conflicts during merge\n" ""
+    beginning-of-buffer
+    !force replace-string "^cvs update: conflicts found in .*\n" ""
+!emacro
+
 0 define-macro cvs-exec-cmd-complete
     set-position "\x87"
     set-variable #l4 ""
@@ -498,6 +543,9 @@ define-macro cvs-log-list
         !return
     !endif
     set-variable :cvs-complete-done 1
+    !if &seq $buffer-bname "*cvs-state*"
+        !force cvs-exec-state-ipipe
+    !endif
     !if &exi :lock
         set-variable #l0 :lock
     !else
@@ -540,12 +588,20 @@ define-macro cvs-log-list
         !if &gre $window-line 1
             insert-newline
         !endif
-        !if &lget .cvs.schemes #l0
-            set-variable $buffer-hilight .hilight.cvscon
-            insert-string &spr ">cvs-%d>" &lget .cvs.schemes #l0
-        !endif
         yank
         -1 yank
+        !if &lget .cvs.schemes #l0
+            exchange-point-and-mark
+            !repeat
+                beginning-of-line
+                insert-string &spr ">cvs-%d>" &lget .cvs.schemes #l0
+                !force 104 forward-line
+                !if $status
+                    !force 4 backward-line
+                !endif
+            !until &not $status
+            set-variable $buffer-hilight .hilight.cvscon
+        !endif
         !if #l3
             -1 find-buffer #l1
             -1 find-buffer "*cvs-console*"
@@ -568,14 +624,14 @@ define-macro cvs-log-list
             !else
                 dirlst-tag-remove
             !endif
-            ; this odd line ensures the screen is redrawn if this is called via a callback.
-            ;set-variable #l2 1
-            set-variable $trunc-scheme $trunc-scheme
         !endif
         unset-variable .cvs.refresh
     !endif
     !force goto-position "\x87"
-    500 ml-write &spr "[CVS %s command complete]" &lget .cvs.names #l0
+    ; this odd line ensures the screen is redrawn if this is called via a callback.
+    set-variable $trunc-scheme $trunc-scheme
+;    screen-update
+;    500 ml-write &spr "[CVS %s command complete]" &lget .cvs.names #l0
 !emacro
 
 0 define-macro cvs-exec-cmd-ipipe
@@ -583,6 +639,9 @@ define-macro cvs-log-list
         set-variable :lock .cvs.lock
     !endif
     set-variable $buffer-dhook "cvs-exec-cmd-complete"
+    !if &seq $buffer-bname "*cvs-state*"
+        !force cvs-exec-state-ipipe
+    !endif
     !if &not @#
         set-variable .bname $buffer-bname
         1 create-callback "cvs-exec-cmd-complete"
@@ -856,7 +915,8 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
         !endif
         dirlst-tag-list
         goto-position "\x82"
-    !elif &set #l9 &seq $buffer-bname "*cvs-state*"
+    !elif &seq $buffer-bname "*cvs-state*"
+        set-variable #l9 2
         beginning-of-buffer
         1 buffer-mode "magic"
         set-variable .find-file.file-count 0
@@ -894,8 +954,13 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
             !abort
         !else
             ; check that all the selected files have been 'lost' (deleted locally) first
-            set-variable $window-line 5
-            !force regex-forward "^\\*.[^L]"
+            !if &equ #l9 2
+                set-variable $window-line 3
+                !force regex-forward "^[^L*\n]\\*"
+            !else
+                set-variable $window-line 5
+                !force regex-forward "^\\*.[^L\n]"
+            !endif
             !if $status
                 beginning-of-line
                 osd-dialog "CVS - Remove" "     All files to be removed must be deleted first!  " "  \HAbort  "
@@ -1171,6 +1236,7 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
             set-variable :mouse-drop-1 cvs-state-mouse-drop-1
             set-variable :mouse-pick-3 void
             set-variable :mouse-drop-3 cvs-state-mouse-drop-3
+            set-variable :tag-count 0
         !endif
     !endif
     !force goto-position "\x82"
@@ -1638,8 +1704,8 @@ define-macro cvs
 !emacro
 
 0 define-macro cvs-setup-checkbox
-    set-variable #l2 &cat "cvs/" &lget "|browse-mode|opt-R|opt-d|opt-P|" &abs @#
-    set-variable #l0 &lget "|0|1|0|0|" &abs @#
+    set-variable #l2 &cat "cvs/" &lget "|q|browse-mode|opt-R|opt-d|opt-P|" &abs @#
+    set-variable #l0 &lget "|0|0|1|0|0|" &abs @#
     set-variable #l0 &reg "/history" #l2 #l0
     !if &les @# 0
         set-variable #l0 &bxor #l0 1
@@ -1687,17 +1753,23 @@ osd .osd.cvsstp &inc #l2 1 "OtxmsfhHzR" #l2 .scheme.osd-entry 16 1 "" .osd.tmp c
 osd .osd.cvsstp &inc #l2 1 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 &sub #l2 1
 osd .osd.cvsstp &inc #l2 1 "" ""
 osd .osd.cvsstp &inc #l2 1 "fh" "    "
-osd .osd.cvsstp &inc #l2 1 "Cptfx" #l2 &cat .osd.checkbox-chars "\} Quick browser mode" 1 cvs-setup-checkbox
+osd .osd.cvsstp &inc #l2 1 "Cptfx" #l2 &cat .osd.checkbox-chars "\} \HQuieter CVS output" 1 cvs-setup-checkbox
+osd .osd.cvsstp &inc #l2 1 "" ""
+osd .osd.cvsstp &inc #l2 1 "" ""
+osd .osd.cvsstp &inc #l2 1 "" "  CVS File Browser"
+osd .osd.cvsstp &inc #l2 1 "" ""
+osd .osd.cvsstp &inc #l2 1 "fh" "    "
+osd .osd.cvsstp &inc #l2 1 "Cptfx" #l2 &cat .osd.checkbox-chars "\} Quick \Hbrowser mode" 2 cvs-setup-checkbox
 osd .osd.cvsstp &inc #l2 1 "" ""
 osd .osd.cvsstp &inc #l2 1 "" ""
 osd .osd.cvsstp &inc #l2 1 "" "  Tool Defaults"
 osd .osd.cvsstp &inc #l2 1 "" ""
 osd .osd.cvsstp &inc #l2 1 "fh" "    "
-osd .osd.cvsstp &inc #l2 1 "Cptfx" #l2 &cat .osd.checkbox-chars "\} \HRecurse into sub-directories" 2 cvs-setup-checkbox
+osd .osd.cvsstp &inc #l2 1 "Cptfx" #l2 &cat .osd.checkbox-chars "\} \HRecurse into sub-directories" 3 cvs-setup-checkbox
 osd .osd.cvsstp &inc #l2 1 "fh" "    "
-osd .osd.cvsstp &inc #l2 1 "Cptfx" #l2 &cat .osd.checkbox-chars "\} Check-out \Hmissing directories" 3 cvs-setup-checkbox
+osd .osd.cvsstp &inc #l2 1 "Cptfx" #l2 &cat .osd.checkbox-chars "\} Check-out \Hmissing directories" 4 cvs-setup-checkbox
 osd .osd.cvsstp &inc #l2 1 "fh" "    "
-osd .osd.cvsstp &inc #l2 1 "Cptfx" #l2 &cat .osd.checkbox-chars "\} \HPrune empty directories" 4 cvs-setup-checkbox
+osd .osd.cvsstp &inc #l2 1 "Cptfx" #l2 &cat .osd.checkbox-chars "\} \HPrune empty directories" 5 cvs-setup-checkbox
 osd .osd.cvsstp 2000 ""
 osd .osd.cvsstp 2010 ""
 osd .osd.cvsstp 2020 "BtcfHh" 2020 .scheme.osd-ebtt " \HOkay " f void
