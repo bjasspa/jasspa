@@ -69,6 +69,10 @@ BUILD
      -nu  Build a console  version with URL  support (Windows '95/'98/NT only),
           constructs the executable menu32.exe. 
 
+     -p <searchpath> 
+          Sets the default system  search path to  <searchpath>, the default is
+          /usr/local/microemacs. Sets the default system search path to 
+
      -S   Build spotless. Deletes all of the object files and any backup files,
           tag files etc. 
 
@@ -96,4 +100,19 @@ NOTES
      platforms. If  any new  platform ports  are performed  by individuals then
      please submit the  makefiles and any  source changes back  to JASSPA - see
      Contact Information. 
+
+  Search Path 
+     The default search path is defined as "/usr/local/microemacs" for all UNIX
+     type environments. Recently there has been  a move to use the "/usr/share"
+     directory. The search path may  be re-defined through the macro definition
+     "_SEARCH_PATH".  Change   the  C   pre-processor  to   include  the  macro
+     definition.  For  example,   to  use   "/usr/share/jasspa"  with  multiple
+     sub-directories for each of the components:- 
+
+       -D_SEARCH_PATH="\"/usr/share/jasspa/company:\ 
+       /usr/share/jasspa/macros:\ 
+       /usr/share/jasspa/spelling\"" 
+
+     Note due  to the  line  length then  the backslash  (\)  has been  used to
+     continue the lines. 
 
