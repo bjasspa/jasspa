@@ -278,6 +278,7 @@ static UINT mouseButs = 0;              /* State of the mouse buttons. */
 static int  mouseState =0;              /* State of the mouse. */
 /* bit button lookup - [0] = no keys, [1] = left, [2]=middle, [4] = right */
 static meUShort mouseKeys[8] = { 0, 1, 2, 0, 3, 0, 0, 0 } ;
+static meUByte mouseInFrame=0 ;
 
 #ifdef _ME_WINDOW
 #define mouseHide() ((mouseState & MOUSE_STATE_VISIBLE) ? (SetCursor(NULL),(mouseState &= ~MOUSE_STATE_VISIBLE)):0)
@@ -301,31 +302,39 @@ static LPCTSTR meCursorName[meCURSOR_COUNT]=
 #define mouseShow() 
 #endif /* _ME_WINDOW */
 
+
 /* Convert the mouse coordinates to cell space. Compute the fractional bits
  * which are 1/128ths. Because we lock the mouse into the window then cater
  * for the -ve case by ANDing with 0x8000.
  * Added console support
  */
 #define __winMousePosUpdate(lpos)                                            \
+    mouseInFrame = 1 ;                                                       \
     if (LOWORD(lpos) & 0x8000)        /* Dirty check for -ve */              \
-        mouse_X = 0, mouse_dX = 0;                                           \
+        mouse_X = 0, mouse_dX = mouseInFrame = 0;                            \
     else                                                                     \
     {                                                                        \
         mouse_X = clientToCol (LOWORD(lpos));                                \
         mouse_dX = ((((LOWORD(lpos)) - colToClient(mouse_X)) << 8) /         \
                     eCellMetrics.cell.sizeX);                                \
         if (mouse_X > frameCur->width)                                       \
+        {                                                                    \
             mouse_X = frameCur->width;                                       \
+            mouseInFrame = 0 ;                                               \
+        }                                                                    \
     }                                                                        \
     if (HIWORD(lpos) & 0x8000)        /* Dirty check for -ve */              \
-        mouse_Y = 0, mouse_dY = 0;                                           \
+        mouse_Y = 0, mouse_dY = mouseInFrame = 0;                            \
     else                                                                     \
     {                                                                        \
         mouse_Y = clientToRow (HIWORD(lpos));                                \
         mouse_dY = ((((HIWORD(lpos)) - rowToClient(mouse_Y)) << 8) /         \
                     eCellMetrics.cell.sizeY);                                \
         if (mouse_Y > frameCur->depth)                                       \
+        {                                                                    \
             mouse_Y = frameCur->depth;                                       \
+            mouseInFrame = 0 ;                                               \
+        }                                                                    \
     }
 
 #ifdef _ME_CONSOLE
@@ -2791,7 +2800,12 @@ WinMouse(HWND hwnd, UINT message, UINT wParam, LONG lParam)
             /* Convert the mouse coordinates to cell space. Compute
              * the fractional bits which are 1/128ths */
             mousePosUpdate(lParam) ;
-
+            /* if the mouse is not in the client area and no button is
+             * currently pressed then we don't handle this event, the default
+             * handler should to pass on NC events  */
+            if(!mouseInFrame && !mouseButs)
+                return meFALSE ;
+            
             /* Check for a mouse-move key */
             cc = ME_SPECIAL | ttmodif | (SKEY_mouse_move+mouseKeys[mouseState&MOUSE_STATE_BUTTONS]) ;
             /* Are we after all movements or mouse-move bound ?? */
@@ -2834,10 +2848,17 @@ WinMouse(HWND hwnd, UINT message, UINT wParam, LONG lParam)
         {
             int mouseCode, ii ;
 
-            /* fprintf(logfp,"Mouse button %x %08x %08x\n",message, wParam, lParam) ;*/
-            /* fflush(logfp) ;*/
-            mouseButs = wParam ;
             mousePosUpdate(lParam) ;
+            /* if the mouse is not in the client area and no other button is
+             * currently pressed then we don't handle this event, the default
+             * handler should to pass on NC events  */
+            if(!mouseInFrame && !mouseButs)
+                return meFALSE ;
+            
+            mouseButs = wParam ;
+            
+            /* fprintf(logfp,"Mouse button %x %08x %08x - %d %d\n",message,wParam,lParam,mouse_X,mouse_Y) ;*/
+            /* fflush(logfp) ;*/
             mouseCode = 0;
             if (wParam & MK_LBUTTON)
                 mouseCode |= MOUSE_STATE_LEFT;
@@ -2910,10 +2931,10 @@ WinMouse(HWND hwnd, UINT message, UINT wParam, LONG lParam)
         }
 #endif
     default:
-        return (meFALSE);
+        return meFALSE ;
     }
 
-    return (meTRUE);
+    return meTRUE ;
 }
 #endif
 
@@ -4441,7 +4462,7 @@ TTwaitForChar(void)
         _CrtCheckMemory();
 #endif
         meGetMessage(&msg);         /* Suspend for a message */
-
+        
         /* Closing down the system */
         if (msg.message == WM_CLOSE)
             WinExit (0);
@@ -4694,9 +4715,13 @@ TTstart (void)
         consolePaintArea.Right = consolePaintArea.Bottom = 0 ;
         consolePaintArea.Left = consolePaintArea.Top = (SHORT) 0x7fff ;
 
+#if MEOPT_MOUSE
         /* we always have a mouse under NT */
         /*        mexist = GetNumberOfConsoleMouseButtons(&nbuttons);*/
-
+        /* the mouse is always in the frame when we get a mouse event */
+        mouseInFrame = 1 ;
+#endif
+        
         /* save the original console mode to restore on exit */
         GetConsoleMode(hInput, &OldConsoleMode);
 
@@ -5967,7 +5992,12 @@ meFrameKillFocus(meFrame *frame)
 LONG APIENTRY
 MainWndProc (HWND hWnd, UINT message, UINT wParam, LONG lParam)
 {
+    static LONG setCursorLastLParam ;
     meFrame *frame ;
+    
+    /* static int msgCount=0 ;*/
+    /* fprintf(logfp,"%05d Got message %x %x %x\n",msgCount++,message, wParam, lParam) ;*/
+    /* fflush(logfp) ;*/
     
     switch (message)
     {
@@ -5994,20 +6024,16 @@ MainWndProc (HWND hWnd, UINT message, UINT wParam, LONG lParam)
         /* If we have not got the focus or this is not the main window cursor
          * then we dont handle it, use the default Proc handle
         * This must be done whether MEOPT_MOUSE is enabled or not */
+        if((lParam & 0xffff) != 0x01)
         {
-            static LONG lstLParam=-1 ;
-
-            if((lParam & 0xffff) != 0x01)
-            {
-                lstLParam = -1 ;
-                goto unhandled_message ;
-            }
-            if(lParam != lstLParam)
-            {
-                lstLParam = lParam ;
-                SetCursor(meCursors[meCurCursor]) ;
-                mouseState |= MOUSE_STATE_VISIBLE ;
-            }
+            setCursorLastLParam = -1 ;
+            goto unhandled_message ;
+        }
+        if(lParam != setCursorLastLParam)
+        {
+            setCursorLastLParam = lParam ;
+            SetCursor(meCursors[meCurCursor]) ;
+            mouseState |= MOUSE_STATE_VISIBLE ;
         }
         break ;
         
@@ -6170,6 +6196,22 @@ MainWndProc (HWND hWnd, UINT message, UINT wParam, LONG lParam)
             case SIZE_RESTORED:
                 meFrameGetWinMaximized(frame) = 0; /* Release the minimised state */
 do_window_resize:
+                if(HIWORD(lParam) == 0)
+                {
+                    RECT wRect;                         /* Window rectangle */
+                    RECT cRect;                         /* Client rectangle */
+        
+                    /* Get the current sizes */
+                    GetWindowRect(hWnd, &wRect);
+                    GetClientRect(hWnd, &cRect);
+        
+                    /* Change the position of the window and get the new client area. */
+                    SetWindowPos (hWnd, NULL, wRect.left, wRect.top,
+                                  wRect.right - wRect.left,
+                                  wRect.bottom - wRect.top - cRect.bottom,
+                                  SWP_NOZORDER);
+                    break ;
+                }
                 meFrameResizeWindow(frame) ;
             case SIZE_MINIMIZED:            /* Minimized - ignore this case
                                              * Do not re-size the screen */
@@ -6309,6 +6351,13 @@ do_window_resize:
         }
         goto unhandled_message;         /* Assume unhandled */
 
+    case WM_NCMOUSEMOVE:
+        /* The mouse is in the non-client area, therefore the cursor may have changed,
+         * reset the last lParam to force a reset of the cursor when it re-enters the
+         * client area */
+        setCursorLastLParam = -1 ;
+        goto unhandled_message ;
+    
     default:
 unhandled_message:
         /* fprintf(logfp,"Unhandled message %x %x %x\n",message, wParam, lParam) ;*/
