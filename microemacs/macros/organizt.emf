@@ -201,7 +201,7 @@ osd .osd.orgt 260 ""
 osd .osd.orgt 300 "c" "Address Book"
 osd .osd.orgt 310 ""
 osd .osd.orgt 312 "hf" "              "
-osd .osd.orgt 315 "Cfxp" "^[ *] Use extended address book" 0x100 org-setup-aflag-check
+osd .osd.orgt 315 "Cfxpt" &cat .osd.checkbox-chars "\} Use extended address book" 0x100 org-setup-aflag-check
 osd .osd.orgt 320 ""
 osd .osd.orgt 330 "BtcfHxh" .scheme.osd-ebtt " Import from file " f org-address-import
 osd .osd.orgt 340 "BtcfHx"  .scheme.osd-ebtt " Export to file " f org-address-export
@@ -210,15 +210,15 @@ osd .osd.orgt 355 ""
 osd .osd.orgt 360 "c" "Default Address Find Settings"
 osd .osd.orgt 365 ""
 osd .osd.orgt 370 "hf" "              "
-osd .osd.orgt 380 "hCfxp" "^[ *] \HWhole" 1 org-setup-aflag-check
+osd .osd.orgt 380 "Cfxpth" &cat .osd.checkbox-chars "\} \HWhole" 1 org-setup-aflag-check
 osd .osd.orgt 390 "hf" "  "
-osd .osd.orgt 400 "hCfxp" "^[ *] S\Htart" 2 org-setup-aflag-check
+osd .osd.orgt 400 "Cfxpth" &cat .osd.checkbox-chars "\} S\Htart" 2 org-setup-aflag-check
 osd .osd.orgt 410 "hf" "  "
-osd .osd.orgt 420 "Cfxp"  "^[ *] \HAny Part" 4 org-setup-aflag-check
+osd .osd.orgt 420 "Cfxpt"  &cat .osd.checkbox-chars "\} \HAny Part" 4 org-setup-aflag-check
 osd .osd.orgt 430 "hf" "              "
-osd .osd.orgt 440 "Cfxp"  "^[ *] \HCase insensitive" 0x10 org-setup-aflag-check
+osd .osd.orgt 440 "Cfxpt"  &cat .osd.checkbox-chars "\} \HCase insensitive" 0x10 org-setup-aflag-check
 osd .osd.orgt 450 "hf" "              "
-osd .osd.orgt 460 "Cfxp"  "^[ *] \HMagic mode" 0x20 org-setup-aflag-check
+osd .osd.orgt 460 "Cfxpt"  &cat .osd.checkbox-chars "\} \HMagic mode" 0x20 org-setup-aflag-check
 osd .osd.orgt 600 "" 
 osd .osd.orgt 605 "" 
 osd .osd.orgt 610 "BtxhcfH" .scheme.osd-ebtt " \HSave " f organizer-save
