@@ -1567,7 +1567,6 @@ meXEventHandler(void)
                     ii = keySym & 0xff;
                     goto done_key;
                 }
-                goto done_key;
 special_key:
                 ii |= ME_SPECIAL; /*bindKeyLookUp[ss & ME_BIND_MASK];*/
                 
