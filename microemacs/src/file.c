@@ -493,7 +493,7 @@ set_dirs(meUByte *argv)
         int ii;
         
         s1 = meGetenv ("MEUSERPATH") ;
-        if (s1 != NULL)
+        if ((s1 != NULL) && (*s1 != '\0'))
         {
             /* Use $MEUSERPATH as the home directory */
             meStrcpy(loghome, s1) ;
@@ -646,6 +646,10 @@ set_dirs(meUByte *argv)
                 s1 = meGetenv ("MENAME") ;
                 if ((s1 == NULL) || (*s1 == '\0'))
                     s1 = loginName ;
+                if ((s1 == NULL) || (*s1 == '\0'))
+                    s1 = meGetenv ("LOGNAME") ;
+                if ((s1 == NULL) || (*s1 == '\0'))
+                    s1 = meGetenv ("USER") ;
                 if ((s1 == NULL) || (*s1 == '\0'))
                     s1 = "default" ;       /* For default user */
                 
