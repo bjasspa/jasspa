@@ -2,8 +2,8 @@
 #  System        : MicroEmacs
 #  Module        : Package File.
 #  Object Name   : $RCSfile: loc_depot_10.psf,v $
-#  Revision      : $Revision: 1.1 $
-#  Date          : $Date: 2003-08-17 14:08:02 $
+#  Revision      : $Revision: 1.2 $
+#  Date          : $Date: 2003-08-17 15:09:47 $
 #  Author        : $Author: jon $
 #  Created By    : Jon Green
 #  Created       : Sun Aug 17 12:58:23 2003
@@ -23,7 +23,7 @@ product
     revision 2002.12
     #
     architecture S700/800_HPUX_10
-    machine_type 9000/[78]*:*
+    machine_type 9000/[78]*
     os_name HP-UX
     os_release ?.10.*
     os_version *
