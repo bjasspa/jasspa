@@ -1,0 +1,63 @@
+##############################################################################
+#
+#  			Copyright 2003 Jon Green.
+#			      All Rights Reserved
+#
+#
+#  System        : 
+#  Module        : 
+#  Object Name   : $RCSfile: makefile_old,v $
+#  Revision      : $Revision: 1.1.1.1 $
+#  Date          : $Date: 2003-03-18 00:53:39 $
+#  Author        : $Author: jon $
+#  Created By    : <unknown>
+#  Created       : Tue Mar 18 00:04:48 2003
+#  Last Modified : <030318.0039>
+#
+#  Description	
+#
+#  Notes
+#
+#  History
+#	
+#  $Log: not supported by cvs2svn $
+#
+##############################################################################
+#
+#  Copyright (c) 2003 Jon Green.
+# 
+#  All Rights Reserved.
+# 
+#  This  document  may  not, in  whole  or in  part, be  copied,  photocopied,
+#  reproduced,  translated,  or  reduced to any  electronic  medium or machine
+#  readable form without prior written consent from Jon Green.
+#
+##############################################################################
+
+# Set up the defaults for the environment.
+RM = rm -f
+CC = gcc $(CFLAGS)
+LD = gcc
+CFLAGS	= -O3 -I. -DTSDUMP_PLATFORM_SUNOS
+LDFLAGS = -O3
+
+SRC	=	scrubit.c
+OBJ	=	$(SRC:.c=.o)
+TARGET	=	scrubit
+
+all:	$(TARGET)
+
+scrubit:	$(OBJ)
+	$(LD) $(LDFLAGS) -o $@ $(OBJ) 
+
+clean:	
+	$(RM) ${TARGET} 
+	$(RM) *.o
+
+spotless: clean
+	$(RM) *~
+	$(RM) core
+	$(RM) tags
+			
+
+
