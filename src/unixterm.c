@@ -5,7 +5,7 @@
  *  Synopsis      : Unix X-Term and Termcap support routines
  *  Created By    : Steven Phillips
  *  Created       : 1993
- *  Last Modified : <011215.1331>
+ *  Last Modified : <011215.1511>
  *
  *  Description
  *    This implementation of unix support currently only supports Unix v5 (_USG),
@@ -1407,7 +1407,7 @@ int
 TCAPstart(void)
 {
     char *p ;
-    char tcbuf[1024];
+    char tcbuf[4096];                   /* Jon 2001/12/15 increase for cygwin terminal */
     char *tv_stype;
     char err_str[72];
     int  ii ;
