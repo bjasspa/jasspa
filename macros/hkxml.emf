@@ -1,0 +1,98 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : $Author: jon $
+;  Created By    : Jon Green
+;  Created       : Wed Mar 14 22:48:42 2001
+;  Last Modified : <010314.2356>
+;
+;  Description   : XML hilighting.
+;
+;  Notes
+;
+;  History
+;
+;  Jon 01/03/14 Original
+; 
+;               First XML hook, simple hilighting based on the HTML. Differs
+;               from HTML in that we only hilight the keyword at the start
+;               of a token. The remaining arguments are not hilighted.
+;               This makes it a little easier to read.
+;
+;               Not sure about the VB or java - do not use them myself.
+;
+;  Copyright (c) 2001 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro fhook-xml
+    set-variable #l0 &mid $buffer-bname &rsin "." $buffer-bname 3
+    set-variable $buffer-mask "luh1"
+    buffer-initialize
+    ; execute user extensions if enabled
+    !if &exi my-fhook-xml
+        my-fhook-xml
+    !endif
+!emacro
+
+; buffer-initialize variables
+set-variable .fhook-xml.setup &reg "/history" "fhook/xml" "cdhiopsx"
+set-variable .fhook-xml.setup-mask "acdehikmopstux"
+set-variable .fhook-xml.comment  "|<!--|-->|--|"
+
+!if &and &sin "h" .fhook-xml.setup &band .hilight.flags 0x02 
+    !if &not &exist .hilight.xml
+        set-variable .hilight.xml   &pinc .hilight.next 1
+        set-variable .hilight.xmlT  &pinc .hilight.next 1
+    !endif
+    0 hilight .hilight.xml 3 200                        $global-scheme
+    hilight .hilight.xml 0x80 "<[\\t ]*[-/a-zA-Z0-9_]+" .hilight.xmlT .scheme.keyword
+    hilight .hilight.xml 0x80 "<?%[-/.:a-zA-Z0-9_]+"    .hilight.xmlT .scheme.keyword
+    hilight .hilight.xml 0x80 "<![^-][-/.:a-zA-Z0-9_]+" .hilight.xmlT .scheme.keyword
+     hilight .hilight.xml 4 "<!--" "-->" ""             .scheme.comment
+     hilight .hilight.xml 0 "&\\w\\w;"                  .scheme.operator
+     hilight .hilight.xml 0 "&\\w\\w\\w;"               .scheme.operator
+     hilight .hilight.xml 0 "&\\w\\w\\w\\w;"            .scheme.operator
+     hilight .hilight.xml 0x804 "\"" "\"" "\\"          .scheme.string
+    
+    0 hilight .hilight.xmlT 0                           $global-scheme
+    hilight .hilight.xmlT 4  "\"" "\"" "\\"             .scheme.string
+    hilight .hilight.xmlT 0x80 "/?>" .hilight.xml       .scheme.keyword
+    
+    !force exec-file "hkvb"
+    !if $status
+        hilight .hilight.xml  0x80 "<%" .hilight.vb     .scheme.prepro
+        hilight .hilight.xmlT 0x80 "<%" .hilight.vb     .scheme.prepro
+        hilight .hilight.vb    0x90 "%>" 0              .scheme.prepro
+        hilight .hilight.xml  0x80 "<script\\s +language=VBScript[^>]*>" .hilight.vb .scheme.prepro
+        hilight .hilight.vb    0x80 "</script>" 0       .scheme.prepro
+        ;    indent .hilight.vb b "<" ">"
+    !endif
+    !force exec-file "hkjava"
+    !if $status
+        hilight .hilight.xml 0x80 "<script\\s +language=javascript[^>]*>" .hilight.java .scheme.prepro
+        hilight .hilight.xml 0x80 "<script\\s +language=\"javascript\"[^>]*>" .hilight.java .scheme.prepro
+        hilight .hilight.java 0x80 "</script>" 0        .scheme.prepro
+        hilight .hilight.java 0x80 "</SCRIPT>" 0        .scheme.prepro
+    !endif
+!endif
+
+!if &sin "d" .fhook-xml.setup
+    !if &not &exist .hilight.xml
+        set-variable .hilight.xml   &pinc .hilight.next 1
+    !endif
+    ; Define the indentation tokens. XML is well defined so there are
+    ; always opening and closing brackets.
+    0 indent .hilight.xml 1 20 
+    indent .hilight.xml e "\"" "\"" "\\"
+    indent .hilight.xml b "<!--" "-->"
+    indent .hilight.xml n "<[^/!]" 2 
+    indent .hilight.xml o "</"    -2 
+    indent .hilight.xml o "/>"    -2 
+!endif
+
+
+ml-write "[XML file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "myxml"
+
+

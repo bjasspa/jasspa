@@ -175,6 +175,7 @@ add-file-hook "Imakefile imakefile"                           fhook-imake
 add-file-hook ".sh .ksh .csh .login .cshrc .profile .tcshrc"  fhook-shell
 add-file-hook ".ini .hpj .reg .rgy"                           fhook-ini
 add-file-hook ".htm .html .asp .htp .hts"                     fhook-html  
+add-file-hook ".xml"                                          fhook-xml
 add-file-hook ".bas .cls"                                     fhook-vb
 add-file-hook ".cmd .bat .btm"                                fhook-dos
 add-file-hook ".tcl .tk"                                      fhook-tcl
@@ -232,6 +233,7 @@ add-file-hook ".diff .dif *diff*"                             fhook-diff
 -1 add-file-hook "-!-[ \t]*asmx86.*-!-"          fhook-asmx86 ; -!- asmx86 -!-
 -1 add-file-hook "-!-[ \t]*text.*-!-"            fhook-txt    ; -!- text -!-
 -1 add-file-hook "-!-[ \t]*msvb.*-!-"            fhook-vb     ; -!- msvb -!-
+-1 add-file-hook "<?[Xx][Mm][lL]"                fhook-xml    ; <?xml version="1.0" standalone="no"?>
 ; Initialize the top menu line
 osd 0  0  "asM" 0 0 -1 0 0 0 osd-main
 osd 0  5   "fh" " "
