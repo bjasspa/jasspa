@@ -2754,7 +2754,7 @@ XTERMsetFont(char *fontName)
     XFontStruct *font ;
 
     if (fontName == NULL)
-        fontName = "-*-fixed-medium-r-normal--15-*-*-*-c-90-iso8859-1";
+        fontName = "-*-fixed-medium-r-normal--15-*-*-*-c-90-*";
 
     /* Load the basic font into the server */
     if((font=XLoadQueryFont(mecm.xdisplay,fontName)) == NULL)
