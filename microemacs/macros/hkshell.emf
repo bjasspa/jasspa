@@ -43,7 +43,7 @@ set-variable .fhook-shell.comment "|#||#|# | #||"
     !endif
     
     ; Make file highlighting
-    0 hilight .hilight.shell 0                     $global-scheme
+    0 hilight .hilight.shell 2 50                  $global-scheme
     ; Strings and things
     hilight .hilight.shell 0x804 "'" "'" ""        .scheme.quote
     hilight .hilight.shell 0x880 "\"" .hilight.shellS .scheme.string

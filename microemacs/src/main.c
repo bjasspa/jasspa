@@ -55,12 +55,6 @@
 #ifdef _UNIX
 #include <fcntl.h>
 #include <sys/wait.h>
-
-/* Password entry retrieval */
-#ifdef _UNIX
-#include <pwd.h>
-#endif
-
 #endif
 #endif
 #include <assert.h>

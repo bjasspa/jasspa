@@ -11,16 +11,16 @@ INSTALLATION
      MicroEmacs '04. 
 
   Quick Install 
-     The quickest  way to  install MicroEmacs  for testing  without reading the
-     rest of this document is to:- 
+     The quickest way  to install MicroEmacs  without reading the  rest of this
+     document is to:- 
 
-       *  Create a new directory i.e. jasspa. 
+       *  Create a new directory i.e. me or microemacs. 
        *  Unpack the macros archive into this directory. 
+       *  Unpack any spelling dictionaries into this directory. 
        *  Unpack the executable into this directory. 
        *  Run me from this directory. 
 
-     On starting,  you will  be prompted  for a  default directory,  accept the
-     defaults. Use the mouse and configure the user from the menu bar:- 
+     On starting, use the mouse and configure the user from the menu bar:- 
 
        Help->User Setup 
 
@@ -53,9 +53,9 @@ INSTALLATION
 
      Executable Source Code 
           The source code release for MicroEmacs '04 contains makefiles (*.mak)
-          for all  supported  platforms.  Microsoft  '95/'98/NT/2K/XP makefiles
-          contain options at the top  of the makefile to enable/disable console
-          and URL support. 
+          for all supported  platforms. Microsoft  '95/'98/NT makefiles contain
+          options at the top of the  makefile to enable/disable console and URL
+          support. 
           mesrc.zip - Source code for all platforms 
           mesrc.tar.gz - Source code 
 
@@ -72,9 +72,6 @@ INSTALLATION
           mesolx86.gz - Sun Solaris 2.6 Intel Platform Executable 
           melinux20.gz - Linux 2.0.0 Executable 
           mefreebsd.gz - Free BSD Executable 
-          mepenbsd.gz - Open BSD Executable 
-          meosf1.gz - OSF1 Executable 
-          mezaraus.gz - Zauraus Palm Executable 
 
      Help File Images (all platforms) 
           mewinhlp.zip - Windows Help file 
@@ -124,328 +121,362 @@ INSTALLATION
           reason for this naming is to  allow the executables to be unpacked in
           the same directory and not be confused with each other. 
 
-  Installation Directories 
-     The suggested installation structure for all platforms is defined as:- 
-
-                 jasspa 
-                 / | \ 
-                /  |  \ 
-               /   |   \ 
-        spelling macros company 
-
-     This directory structure is suggested to facilitate upgrades in the future
-     and  to  keep  user  data  separate  from  the  system  macros. MicroEmacs
-     understands this directory structure. 
-
-     The directory structures are defined as: 
-
-     macros 
-          The standard macro distribution, as supplied by JASSPA. 
-
-     spelling 
-          Spelling dictionaries. 
-
-     company 
-          Company wide local definitions for the local site. This directory may
-          be omitted if  not applicable.  Header templates  (.etf are typically
-          copied from the macro directory to the company directory and modified
-          for the local site. 
-
-     The search order is defined as root, company, macros, spelling. 
-
-  UNIX Installation (System Wide) 
-     A  system  wide  installation  on  UNIX  for  multiple  users  adheres  to
-     conventional package installation methods. 
-
-     Distribution Components Required: 
-     me<unix>.gz 
-     memacros.tar.gz 
-     <spelling>.gz 
-     html.tar.gz (optional) 
-
-     Installation: 
-     It is recommended  that the  macro files are  placed in  a standard shared
-     system directory. The standard  directory locations searched by MicroEmacs
-     are defined on a per-platform basis,  only one of the directory locates is
-     selected, as follows: 
-
-                                   HP-UX     SunOS      AIX      Cygwin 
-                              IRIX     UnixWare   ***BSD    Linux      NeXT 
-       /opt/jasspa:             y    y    y    y    y    y    n    n    n 
-       /usr/share/jasspa:       y    y    y    y    y    y    y    n    n 
-       /usr/local/jasspa:       y    y    y    y    y    y    y    y    y 
-       /usr/local/share/jasspa: n    n    n    n    y    n    n    n    n 
-
-       *  Create the directory /usr/local/jasspa. 
-       *  Create the sub-directory /usr/local/jasspa/macros. Unpack and install
-          the memacros.tar.gz into this directory 
-       *  If spelling  dictionaries  are  required  then  create  the directory
-          /usr/local/jasspa/spelling. Unpack and install the spelling into this
-          directory. 
-       *  If the  standard icons  are  required for  Gnome,  KDE or  some other
-          window manager then  create the sub-directory /usr/local/jasspa/icons
-          and unpack and install the icons into the new directory. 
-       *  Unpack (or build) the executable and place in "/usr/local/bin" 
-
-     The executable may now be run by all  users. If the macros are placed in a
-     non-standard   directory   location    then   the   environment   variable
-     MEINSTALLPATH(5) to define the root jasspa tree. 
-
-     For csh(1) users execute a "rehash" command and then me(1) can be executed
-     from the command line. 
-
-     By default  a X-Windows  terminal is  displayed, ensure  that $DISPLAY and
-     $TERM are  correctly  configured.  To execute  a  terminal  emulation then
-     execute me  with  the -n  option  i.e. "me   -n".  Note that  this  is not
-     required if you are using a vt100 emulation. 
-
-     When MicroEmacs is executed  the local directory  ~/.jasspa is created for
-     the user settings. The  user home directory may  be changed by setting the
-     environment variable $MEPATH(5). 
-
-  UNIX Installation (Single User) 
-     Where the user is  not permitted to install  3rd party applications in the
-     system directories then MicroEmacs may be installed locally as follows:- 
-
-       *  Create the directory ~/.jasspa. 
-       *  Create the  sub-directory  ~.jasspa/macros.  Unpack  and  install the
-          memacros.tar.gz into this directory 
-       *  If spelling  dictionaries  are  required  then  create  the directory
-          ~/.jasspa/spelling.  Unpack  and  install   the  spelling  into  this
-          directory. 
-       *  If the  standard icons  are  required for  Gnome,  KDE or  some other
-          window manager  then  create  the  sub-directory  ~/.jasspa/icons and
-          unpack and install the icons into the new directory. 
-       *  The user files will be placed  in the ~/.jasspa directory by default.
-          To   keep   the    user   macros   separate    then   the   directory
-          ~/.jasspa/$LOGNAME may be  created and  will identified  as the users
-          home directory. 
-       *  Unpack (or build) the executable and place in "~/bin" 
-
-     MicroEmacs may be executed  after it has been  re-hashed (depending on the
-     shell). 
-
-  DOS Installation 
-     MS-DOS has no concept  of a standard  installation directory. The location
-     of the  MicroEmacs  macros  is  generally  determined  from  the directory
-     location of the executable. 
-
-     Executable: 
-     Compiled with DJGPP V1.0 
-
-     Distribution components required: 
-          medos.zip 
-          memacros.zip 
-          <spelling>.zip 
-
-          mewinhlp.zip if you are using windows 3.1/3.11 
-
-     Recommended installed components: 
-          grep - Version of grep (djgpp recommended) 
-          make - Version of make (djgpp recommended) 
-          diff - Version of diff (djgpp recommended) 
-
-     Installation: 
-     This installation relies on the executable position. 
-
-       *  Create the directory c:\jasspa (or other location) 
-       *  Create the  sub-directory  c:\jasspa\macros. Unpack  and  install the
-          memacros.zip into this directory 
-       *  If spelling  dictionaries  are  required  then  create  the directory
-          c:\jasspa\spelling.  Unpack  and  install   the  spelling  into  this
-          directory. 
-       *  Unzip the  executable  and  place  it in  the  jasspa  root directory
-          c:\jasspa. 
-       *  Edit "c:\autoexec.bat" and add the following lines:- 
-
-           SET PATH=%PATH%;c:\jasspa 
-
-       *  Reboot the system. 
-       *  MicroEmacs may be run from the command line using me. 
-
-     Graphics Cards: 
-     MicroEmacs may  be configured  to the  text modes  of your  graphics card.
-     Refer to  you graphics  card DOS  text  modes to  identify the  text modes
-     supported by your  monitor. The text  mode number may  be entered into the
-     user monitor configuration, defined in Help->User Setup. 
-
-     Running DOS Version From Windows (3.x) 
-          The MS-DOS version  of MicroEmacs may  be executed from  a .pif file.
-          Use the pif  editor to create  a new .pif  file to launch MicroEmacs.
-          The size of the  DOS window may be  configured from the command line,
-          set the terminal size using one of the following command lines:- 
-
-                me -c -v$TERM=E80x50        - 80 x 50 window 
-                me -c -v$TERM=E80x25        - 80 x 25 window. 
-
-          We usually  add the  -c option  so that  MicroEmacs is  executed with
-          history information. This may be omitted if required. 
-
-  Microsoft Windows 3.1/3.11 
-     Executable: 
-     Compiled with Microsoft Developer 2.0 
-
-     Helper DLL: 
-     Under  Win32s  a  helper  DLL  methnk16.dll  is  required  to  perform the
-     pipe-shell-command(2) in  a synchronous  manner. This  should be installed
-     into the C:\WINDOWS\SHELL directory. This (rather inelegantly) gets around
-     the problems  of  spawning  a process  under  win32s  due to  a  number of
-     Microsoft bugs in the operating system.  Note: that on a spawn operation a
-     MS-DOS window is visible, this  is due to the  nature of the command shell
-     on this  platform  which  has  a  tendency to  prompt  the  user  at every
-     opportunity, hence a  certain amount of  interaction (which is  out of our
-     control) is necessary. 
-
-     The helper DLL is compiled with a 16-bit Windows compiler - MSVC 1.5. 
-
-     Distribution components required: 
-
-          mewin32s.zip 
-          memacros.zip 
-          mewinhlp.zip 
-          <spelling>.zip 
-
-     Recommended installed components: 
-
-          4dos - command shell (giving stderr redirection) 
-          grep - Version of grep (GNU port of grep recommended) 
-          diff - Version of diff (GNU port of grep recommended) 
-          make - use nmake or GNU port of make. 
-
-          Ifwin32s is  a  requirement on  this  platform, typically  taken from
-          pw1118.exe which freely available on the Internet. 
-
-     Installation: 
-     This version of Windows  does not have a  install directory as '95/'98 and
-     it is expected  that the  MS-DOS version  will coexist.  No Install Shield
-     installation is  provided.  Install in  a  directory structure  similar to
-     MS-DOS.  Install  the  helper  DLL  methnk16.dll  in  the C:\WINDOWS\SHELL
-     directory. Create  a  me32.ini(8)  file  in  the  C:\WINDOWS  directory to
-     identify the location of the MicroEmacs '04 components, this much the same
-     as the '95/'98 file, change the directory paths to suite the install base.
-
-     Support Status: 
-     The win32s release has not been  used with vengeance, although no specific
-     problems have been reported with this release. 
-
-  Windows '95/'98/NT/2K/XP 
-     Executable: 
-
-          Compiled with Microsoft Developer 6.x 
-
-     Install Shield 
-
-          An Install Shield  version of MicroEmacs  is available which includes
-          all of the distribution components. 
-
-     Distribution components required: 
-
-          mewin32.zip 
-          memacros.zip 
-          <spelling>.zip 
-          mewinhlp.zip (optional) 
-
-     Recommended installed components: 
-
-          grep - Version of grep (GNU port of grep recommended) 
-          diff - Version of diff (GNU port of grep recommended) 
-          make - use nmake or GNU port of make. 
-
-          A good source of UNIX native tools is 
-
-          http://unxutils.sourceforge.net/ - for native windows grep, diff, zip
-          etc. 
-          http://www.cygwin.com - for a shell environment. 
-
-     Installation: 
-
-       *  Create the  directory "c:\Program Files\Jasspa\MicroEmacs"  (or other
-          location) 
-       *  Create  the  sub-directory c:\Program Files\Jasspa\MicroEmacs\macros.
-          Unpack and install the memacros.zip into this directory 
-       *  If spelling  dictionaries  are  required  then  create  the directory
-          c:\Program Files\Jasspa\MicroEmacs\spelling. Unpack  and  install the
-          spelling into this directory. 
-       *  Unzip     the     executable      components     into     "C:\Program
-          Files\Jasspa\MicroEmacs" 
-       *  Create a short cut to MicroEmacs for the Desktop 
-
-          Right click on the desk top 
-
-          => New 
-          => Short 
-          => Command Line: "c:\Program Files\Jasspa\MicroEmacs\me.exe -c" 
-          => Short Cut Name: "MicroEmacs" 
-
-          MicroEmacs may be executed from the shortcut. 
-
-     Open  Actions  Microsoft  Windows  95/98/NT  provide  short  cut  actions,
-     assigning an open action to  a file. The short  cuts may be installed from
-     the Install  Shield  installation,  but  may  alternatively  be explicitly
-     defined by editing the registry file with regedit(1). 
-
-     A file open action in the registry is bound to the file file extension, to
-     bind a  file extension  .foo  to the  editor  then the  following registry
-     entries should be defined:- 
-
-       [HKEY_CLASSES_ROOT\.foo] 
-       "MicroEmacs_foo" 
-       [HKEY_CLASSES_ROOT\MicroEmacs_foo\DefaultIcon] 
-       "C:\Program File\JASSPA\MicroEmacs\meicons,23" 
-       [HKEY_CLASSES_ROOT\MicroEmacs_foo\Shell\open] 
-       "&Open" 
-       [HKEY_CLASSES_ROOT\MicroEmacs_foo\Shell\open\command] 
-       "C:\Program File\JASSPA\MicroEmacs\me32.exe -o "%1"" 
-
-     In the previous example the DefaultIcon  entry is the icon assigned to the
-     file. This may be an icon taken from meicons.exe (in this case icon number
-     23), or may be some other icon. The open action in the example uses the -o
-     option of  the  client-server,  which  loads  the  file  into  the current
-     MicroEmacs '04 session, alternatively the -c  option may be used to retain
-     the previous context, or  no option if  a new session  with no other files
-     loaded is started. 
-
-     A generic open for ALL files may be defined using a wild-card, this may be
-     used to place a  MicroEmacs edit entry in  the right-click pop-up menu, as
-     follows:- 
-
-       [HKEY_CLASSES_ROOT\*\shell] 
-       [HKEY_CLASSES_ROOT\*\shell\MicroEmacs] 
-       "&MicroEmacs" 
-       [HKEY_CLASSES_ROOT\*\shell\MicroEmacs\command] 
-       "C:\Program File\JASSPA\MicroEmacs\me32.exe -o "%1"" 
-
-ORGANIZING A LOCAL USER PROFILE 
+  Quick Start Guild For All Platforms 
+     Simply create a directory, down-load the files required (see list for each
+     platform below) and extract  into this directory. From  a shell or command
+     prompt, change to  the directory,  making it the  current one  (i.e. cd to
+     it), and run the  executable. MicroEmacs '04 should  open with the on-line
+     help page visible. 
+
+     On Windows based systems this can also be achieved by creating a short-cut
+     and setting the Working Directory in Properties to this path. 
+
+     To enable MicroEmacs  to be  run from  any directory,  simply include this
+     directory  in  you  PATH  environment  variable.  Alternatively,  copy the
+     executable to  somewhere in  your  PATH and  set the  environment variable
+     MEPATH to point to this directory. 
+
+     MicroEmacs  '04  will  function  normally  in  this  environment,  but  in
+     multi-user  environments  and  for  up-dating  purposes,  it  is  strongly
+     recommended that a proper installation is used, see below. 
+
+  Installation 
+     DOS 
+
+          Executable: 
+               Compiled with DJGPP V1.0 
+
+          Distribution components required: 
+               medos.zip 
+               memacros.zip 
+               <spelling>.zip 
+
+               mewinhlp.zip if you are using windows 3.1/3.11 
+
+          Recommended installed components: 
+               4dos - Command shell (giving stderr redirection). 
+               grep - Version of grep (djgpp recommended) 
+               make - Version of make (djgpp recommended) 
+               diff - Version of diff (djgpp recommended) 
+
+          Installation: 
+               Create the directory c:\me (or other location) 
+
+               Unzip the MicroEmacs components into c:\me 
+
+               Edit "c:\autoexec.bat" and add the following lines:- 
+
+                 SET MENAME=<name> 
+                 SET PATH=%PATH%;c:\me 
+                 SET MEPATH="c:\me" 
+
+               Reboot the system. 
+
+                    MicroEmacs may be run from the command line using 
+
+                 me 
+
+          Graphics Cards: 
+               MicroEmacs may be configured to  the text modes of your graphics
+               card. Refer to you graphics card  DOS text modes to identify the
+               text modes supported by  your monitor. The  text mode number may
+               be entered  into  the  user  monitor  configuration,  defined in
+               Help->User Setup. 
+
+          Running From Windows (3.x) 
+               The DOS version of MicroEmacs may  be executed from a .pif file.
+               Use  the  pif  editor  to  create  a  new  .pif  file  to launch
+               MicroEmacs. The size  of the  DOS window may  be configured from
+               the command  line,  set  the  terminal  size  using  one  of the
+               following command lines:- 
+
+                 me -c -v$TERM=E80x50        - 80 x 50 window 
+                 me -c -v$TERM=E80x25        - 80 x 25 window. 
+
+               We usually add the -c option so that MicroEmacs is executed with
+               history information. This may be omitted if required. 
+
+     Windows 3.1/3.11 
+
+          Executable: 
+               Compiled with Microsoft Developer 2.0 
+
+          Helper DLL: 
+               Under Win32s a  helper DLL  methnk16.dll is  required to perform
+               the pipe-shell-command(2) in  a synchronous  manner. This should
+               be installed into  the C:\WINDOWS\SHELL  directory. This (rather
+               inelegantly) gets  around  the  problems of  spawning  a process
+               under win32s due to a number  of Microsoft bugs in the operating
+               system. Note:  that  on a  spawn  operation a  MS-DOS  window is
+               visible, this is due to the  nature of the command shell on this
+               platform which  has  a  tendency  to prompt  the  user  at every
+               opportunity, hence a certain amount of interaction (which is out
+               of our control) is necessary. 
+
+               The helper DLL is compiled with a 16-bit Windows compiler - MSVC
+               1.5. 
+
+          Distribution components required: 
+               mewin32s.zip 
+               memacros.zip 
+               mewinhlp.zip 
+               <spelling>.zip 
+
+          Recommended installed components: 
+               4dos - command shell (giving stderr redirection) 
+               grep - Version of grep (GNU port of grep recommended) 
+               diff - Version of diff (GNU port of grep recommended) 
+               make - use nmake or GNU port of make. 
+
+          win32s 
+               win32s is a  requirement on this  platform, typically taken from
+               pw1118.exe which freely available on the Internet. 
+
+          Installation: 
+               This version  of Windows  does not  have a  install directory as
+               '95/'98 and it is expected that the MS-DOS version will coexist.
+               No  Install  Shield  installation  is  provided.  Install  in  a
+               directory structure  similar to  MS-DOS. Install  the helper DLL
+               methnk16.dll  in   the  C:\WINDOWS\SHELL   directory.  Create  a
+               me32.ini(8) file  in the  C:\WINDOWS  directory to  identify the
+               location of the MicroEmacs '04 components, this much the same as
+               the '95/'98  file,  change  the  directory  paths  to  suite the
+               install base. 
+
+          Support Status: 
+               The win32s release has not been used with vengeance, although no
+               specific problems have been reported with this release. 
+
+     Windows '95/'98/NT/2K/XP 
+
+          Executable: 
+               Compiled with Microsoft Developer 6.x 
+
+          Install Shield 
+               An Install  Shield  version  of  MicroEmacs  is  available which
+               includes all of the distribution components. 
+
+          Distribution components required: 
+               mewin32.zip 
+               memacros.zip 
+               <spelling>.zip 
+               mewinhlp.zip (optional) 
+
+          Recommended installed components: 
+               grep - Version of grep (GNU port of grep recommended) 
+               diff - Version of diff (GNU port of grep recommended) 
+               make - use nmake or GNU port of make. 
+
+               A good source of UNIX native tools is 
+
+               http://unxutils.sourceforge.net/  -  for  native  windows  grep,
+               diff, zip etc. 
+               http://www.cygwin.com - for a shell environment. 
+
+          Installation: 
+               Create  the  directory  "C:\Program Files\Jasspa\MicroEmacs" (or
+               other location) 
+
+               Unzip    the    MicroEmacs     components    into    "C:\Program
+               Files\Jasspa\MicroEmacs" 
+
+               Create the file "c:\windows\me32.ini" or "c:\WINNT\me32.ini" and
+               add the following lines:- 
+
+                 [Defaults] 
+                 mepath=C:\Program Files\Jasspa\MicroEmacs 
+                 userPath=C:\Program Files\Jasspa\MicroEmacs 
+
+               Create a short cut to MicroEmacs for the Desktop 
+
+               Right click on the desk top 
+
+                 => New 
+                 => Short 
+                 => Command Line: "c:\Program Files\Jasspa\MicroEmacs\me.exe -c"
+                 => Short Cut Name: "MicroEmacs" 
+
+               MicroEmacs may be executed from the shortcut. 
+
+          Open Actions 
+               Microsoft Windows 95/98/NT provide  short cut actions, assigning
+               an open action to  a file. The short  cuts may be installed from
+               the Install  Shieled  installation,  but  may  alternativelly be
+               explictly defined by editing the registry file with regedit(1). 
+
+               A file open  action in  the registry is  bound to  the file file
+               extension, to bind a file extension  .foo to the editor then the
+               following registry entries should be defined:- 
+
+                 [HKEY_CLASSES_ROOT\.foo] 
+                 "MicroEmacs_foo" 
+                 [HKEY_CLASSES_ROOT\MicroEmacs_foo\DefaultIcon] 
+                 "C:\Program File\JASSPA\MicroEmacs\meicons,23" 
+                 [HKEY_CLASSES_ROOT\MicroEmacs_foo\Shell\open] 
+                 "&Open" 
+                 [HKEY_CLASSES_ROOT\MicroEmacs_foo\Shell\open\command] 
+                 "C:\Program File\JASSPA\MicroEmacs\me32.exe -o "%1"" 
+
+               In  the  previous  exaple  the  DefaultIcon  entry  is  the icon
+               assigned to the file. This may be an icon taken from meicons.exe
+               (in this case  icon number 23),  or may be  some other icon. The
+               open  action  in  the   example  uses  the   -o  option  of  the
+               client-server, which loads the  file into the current MicroEmacs
+               '04 session, alternatively the  -c option may  be used to retain
+               the previous  context, or  no option  if a  new session  with no
+               other files loaded is started. 
+
+               A generic open  for ALL files  may be defined  using a wildcard,
+               this may  be  used  to  place a  MicroEmacs  edit  entry  in the
+               right-click popup menu, as follows:- 
+
+                 [HKEY_CLASSES_ROOT\*\shell] 
+                 [HKEY_CLASSES_ROOT\*\shell\MicroEmacs] 
+                 "&MicroEmacs" 
+                 [HKEY_CLASSES_ROOT\*\shell\MicroEmacs\command] 
+                 "C:\Program File\JASSPA\MicroEmacs\me32.exe -o "%1"" 
+
+     UNIX 
+
+          Executable: 
+               Compiled with native compilers. 
+
+          Distribution Components Required: 
+               me<unix>.gz 
+               memacros.tar.gz 
+               <spelling>.gz 
+               html.tar.gz (optional) 
+
+          Installation: 
+               It is  recommended  that  all files  are  placed  in /usr/local,
+               although they may be installed locally. 
+
+               Unpack the executable and placed in "/usr/local/bin" 
+
+               Create the  new  directory  "/usr/local/microemacs",  unpack and
+               install the memacros.tar.gz into this directory. 
+
+               For csh(1) users execute  a "rehash" command  and then me(1) can
+               be executed from the command line. 
+
+               By  default  a  X-Windows  terminal  is  displayed,  ensure that
+               $DISPLAY  and  $TERM  are  correctly  configured.  To  execute a
+               terminal emulation then execute  me with the  -n option i.e. "me
+               -n". Note that  this is  not required if  you are  using a vt100
+               emulation. 
+
+  Organizing a local user profile 
      MicroEmacs uses local  user configuration profiles  to store user specific
      information.  The  user  information  may  be  stored  in  the  MicroEmacs
-     directory, or  more  typically  in  a users  private  directory.  On login
-     systems  then  the  user  name  and  user  private  directory  location is
-     automatically determined from the system. 
+     directory, or more typically in a users private directory. The environment
+     variable $MENAME is typically used to determine the identity of the user. 
 
-     The user name identified by MicroEmacs  is $user-name(5) this value may be
-     set or re-defined using the environment variable $MENAME(5). On MS-DOS and
-     early windows systems  where there is  no user login  then then $MENAME(5)
-     may be defined in the environment. 
+     The location  of  the  user  profile will  depend  upon  your installation
+     configuration. 
 
-     The location  of  the  user  information depends  upon  your  platform and
-     installation configuration. The private directory identified by MicroEmacs
-     is $user-path(5) this location may  be changed by defining the environment
-     variable $MEUSERPATH(5). 
+     Single Machine 
+          For a  single  user  machine  it  is  typically  easiest  to  use the
+          installed MicroEmacs directory where  user specific files are placed.
+          This method, although  not recommended,  is simple as  all files that
+          are executed are in the same location. The $MEPATH is not changed. 
 
-     Microsoft Windows users may use  the me32.ini(8) file to define MicroEmacs
-     configuration path and name information. 
+     UNIX The UNIX environment is  fairly easy and operates  as most other UNIX
+          applications. The user should create  a MicroEmacs directory in their
+          home  directory  for  their  own  local  configuration.  Assigning  a
+          suitable name such  as "microemacs", or  if the file  is to be hidden
+          ".microemacs". 
+
+          The $MEPATH environment  variable of  the user should  be modified to
+          include  the  users   MicroEmacs  path  BEFORE   the  default  macros
+          MicroEmacs path i.e. 
+
+          Ksh/Zsh: 
+               export MEPATH=$HOME/microemacs:/usr/local/bin 
+
+          Csh/Bash: 
+               setenv MEPATH $HOME/microemacs:/usr/local/bin 
+
+          Where $HOME is defined as "/usr/<name>" (typically by default). 
+
+     DOS/Windows 
+          DOS and Windows are  a little more tricky  as numerous directories at
+          the root level are more than  a little annoying. It is suggested that
+          the user directory  is created  as a sub-directory  of the MicroEmacs
+          directory. i.e. 
+
+               "c:\me\<user>" for DOS 
+
+          or   "c:\Program Files\Jasspa\MicroEmacs\<user>" for Windows 
+
+          The $MEPATH  environment variable  (see  me32.ini(8) for  Windows) is
+          modified  to  include  the   user  component  before  the  MicroEmacs
+          component where $MEPATH is defined i.e. 
+
+            SET MEPATH=c:\me\<user>;c:\me 
+
+          where <user> is the user name (or $MENAME). 
+
+  Alternative Directory Configurations 
+     Numerous other configurations exist to  organize the macro directories, to
+     take the  directory  organization  to  the extreme  then  it  is sometimes
+     easiest to  keep all  of  the macro  components separate.  An installation
+     layout which encompasses different macro directories for:- 
+
+       *  User profiles - 1 per user. 
+       *  Shared company profiles - 1 per organization. 
+       *  MicroEmacs macros which are updated from time to time. 
+
+     The configuration on different systems may be defined as follows:- 
+
+     UNIX The shared files are placed in /usr/local 
+
+            /usr 
+               \ 
+              local 
+                 \ 
+              microemacs   - Spelling + standard macros 
+                   \ 
+                 company   - Company specific files 
+
+          The user profile is stored in the users directory 
+
+            /usr 
+              \ 
+            <name> 
+                \ 
+             microemacs    - User specific files 
+
+          The user should configure the $MEPATH as: 
+
+            MEPATH=$(HOME)/microemacs:/usr/local/microemacs/company:/usr/local/microemacs
+
+     DOS/WINDOWS 
+          For DOS and MS-Windows  environments, bearing in  mind the problem of
+          the root directory, then it is easier  to use the "me" directory as a
+          place holder for  a number of  sub-directories, using a configuration
+          such as:- 
+
+                        c: 
+                        | 
+                        me      - Place holder directory 
+                      / | \ 
+                    /   |   \ 
+               <name> macros company 
+
+          The user should configure the $MEPATH as:- 
+
+            SET MEPATH=c:\me\<name>;c:\me\company;c:\me\macros 
 
   User Profile Files 
      Files contained in the user profiles typically include:- 
 
-     <name>.emf - The users start up profile - <user>.emf. 
+     <name>.emf - The users start up profile. 
      <name>.edf - The users spelling dictionary. 
      <name>.erf - The users registry configuration file. 
 
-     These files  are  automatically  set  up by  MicroEmacs.  These  files are
-     established from  the  menu  "Help->User  Setup".  The  "Setup  Path" item
-     defines the location  of the files,  but must be  MANUALLY included in the
-     $MEPATH environment. 
+     These files are established  from the menu  "Help->User Setup". The "Setup
+     Path" item  defines  the  location  of the  files,  but  must  be MANUALLY
+     included in the $MEPATH environment. 
 
   Company Profiles 
      Company profiles  include standard  files and  extensions to  the standard
@@ -456,9 +487,11 @@ ORGANIZING A LOCAL USER PROFILE
      the standard header  template used  in the  files. Files  in the "company"
      directory would over-ride the standard template files. 
 
+     The company  directory  should be  added  to  the $MEPATH  after  the user
+     profile and before the MicroEmacs standard macro directory. 
+
 SEE ALSO 
-     $user-name(5), $user-path(5), $MEINSTALLPATH(5), $MENAME(5), $MENAME(5),
-     $MEPATH(5), $MEUSERPATH(5), Company Profiles, File Hooks, File Language
+     $MENAME(5), $MEPATH(5), Company Profiles, File Hooks, File Language
      Templates, User Profiles. 
 
 USER PROFILES 
@@ -469,14 +502,11 @@ USER PROFILES
      The user profile allows:- 
 
        *  Saving of the last session (history), allowing the next invocation of
-          MicroEmacs '04  to restore  your previous  session. The  -c option to
-          me(1) restores a previous sessions buffers to the same state prior to
-          exiting the editor. 
+          MicroEmacs '04 to restore your previous session. 
        *  Personalized spelling dictionaries. 
-       *  Redefinition of MicroEmacs  '04 operation, allowing  the editor to be
-          tailored to an individual's requirements. Including the re-binding of
-          keys, modification  of  the  screen  colors.  Definition  of personal
-          macros etc. 
+       *  Redefinition of MicroEmacs '04, allowing the editor to be tailored to
+          an  individual's  requirements.  Including  the  re-binding  of keys,
+          modification of the screen colors. Definition of personal macros etc.
 
   Identification 
      In order to identify a user  MicroEmacs '04 uses information in the system
@@ -484,18 +514,18 @@ USER PROFILES
      On all  systems the  value  of the  environment variable  $MENAME(5) takes
      priority over any other means of  user identification. If this variable is
      not defined  then  the  host  system  typically  provides  a  mechanism to
-     determine the current  user. MS-DOS and  Microsoft Windows systems present
-     problems where a login prompt is not used. 
+     determine the current user. DOS and Windows systems present problems where
+     a login prompt is not supplied. 
 
      Each of the supported platforms are now described. 
 
-     UNIX The login name  is determined  from the /etc/passwd  file and defines
-          $user-name(5). The  environment  variable $MENAME(5)  may  be defined
-          alter the default user configuration file name. 
+     UNIX The environment variable $LOGNAME  is defined. This  is the user name
+          used by the system. 
 
-     DOS  MS-DOS typically has no  concept of the user  name. The user name may
-          be defined in the autoexec.bat file, choose a name of 8 characters or
-          less, i.e. to fix the user name to fred then add the following line:-
+     DOS  MS-DOS typically  has no  concept  of the  user  name. The  user name
+          should be  defined  in the  autoexec.bat  file,  choose a  name  of 8
+          characters or less, i.e.  to fix the  user name to  fred then add the
+          following line:- 
 
             SET MENAME=fred 
 
@@ -503,88 +533,121 @@ USER PROFILES
           (see the next step, there is another change to autoexec.bat). 
 
      Microsoft Windows 
-          Microsoft windows environments  may, or may  not, have login enabled.
-          If login is enabled then $user-name(5) is set to the login user name.
-          The login name may be  overridden by setting the environment variable
-          $MENAME(5) this may  be performed  in the environment  or through the
-          me32.ini(8) file. 
+          Microsoft windows environments may, or may not, have logging enabled.
+          If you have to  log into your system  then a login identification has
+          been supplied  and  will  be recognized  by  MicroEmacs,  setting the
+          environment variable $MENAME(5) to this value. 
 
-  Shared Platforms 
-     Platforms may share the same set of configuration files. Consider a system
-     which may boot under MS-DOS, Windows  '98, NT and Linux. Provided that the
-     macro files are located on a file system that may be mounted by all of the
-     other operating  systems  and the  $MEUSERPATH(5)  and $MEPATH(5)  are set
-     appropriately  to  point  to  the  users  private  MicroEmacs  and  system
-     directories, then a  single set  of macro files  may be  shared across all
-     platforms. 
+          If login is not enabled then  the me32.ini(8) file may be modified to
+          provide a  default login  name. To  add  the user  fred then  add the
+          following lines to the ini file:- 
+
+            [guest] 
+            MENAME=fred 
+
+          If login  is  subsequently enabled  on  the system  then  these lines
+          should be removed.  These lines  force the user  identification to be
+          fred. 
+
+          The above  technique may  be used  within the  windows environment to
+          modify your login  name. Assuming  that the  system administrator has
+          assigned fred a user  login name of fwhite,  and fred requires all of
+          his configuration files to  be the same name  as his UNIX login which
+          is fred. Then fred may force his  user name to fred from the me32.ini
+          file as follows:- 
+
+            [fwhite] 
+            MENAME=fred 
+
+          Once fred has  entered MicroEmacs  he will  adopt his  new login name
+          which will be used to identify his  own files etc. The action of this
+          statement is  to  force the  environment  variable $MENAME  to  a new
+          value. Any other environment variables may be forced in this way i.e.
+          $HOSTNAME is a  good candidate here  as the me32.ini  is local to the
+          machine. 
+
+     Shared Platforms 
+          Platforms may share the  same set of  configuration files. Consider a
+          system which  may  boot  under  MS-DOS, Windows  '98,  NT  and Linux.
+          Provided that the macro  files are located on  a file system that may
+          be mounted by all  of the other operating  systems and the $MEPATH is
+          set appropriately, then a single set of MicroEmacs macro files may be
+          shared across all platforms. 
 
   Personal MicroEmacs Directory 
      The private user profile is stored  in a separate directory. The directory
-     that MicroEmacs uses is  typically automatically created  at start up, but
-     may be created manually by the user. If the directory is to be placed in a
-     special location  then the  $MEUSERPATH(5) environment  variable should be
-     defined and set to point at this directory location. 
+     that MicroEmacs uses must be created  by the user, create the directory in
+     your local file system. In addition, the MicroEmacs search path $MEPATH(5)
+     should be modified to include your new MicroEmacs personal directory. 
 
-     UNIX In the UNIX environment then the local directory is typically created
-          in the users home directory obtained from the /etc/passwd file and is
-          called  ~/.jasspa.  MicroEmacs  will   automatically  look  for  this
-          directory and  set  the  $user-path(5) variable  to  this  value. The
-          location  may  be  overridden  by  setting  the  environment variable
-          $MEUSERPATH(5) to reference a different directory location. 
+     UNIX Create  in  your  local  directory,  typically  called  microemacs or
+          .microemacs (if it is to be hidden). 
+
+          Add/modify  the  $MEPATH(5)  environment  variable  to  include  your
+          personal directory in your .login,  .chsrc or .profile file, the file
+          and exact syntax  will depend upon  your shell. For  a Korn shell the
+          following line would be added to the .profile file:- 
+
+            export MEPATH=$HOME/.microemacs:/usr/local/microemacs 
+
+          Where $HOME is assumed  to be the users  login home directory, or use
+          the directory location of your new directory. 
 
      DOS  For MS-DOS environments, there is  typically no user directory, it is
           suggested that  the  user  directory  is  created  in  the MicroEmacs
           directory, use the $MENAME defined in the previous step i.e. 
 
-            mkdir c:\jasspa\fred 
+            mkdir c:\me\fred 
 
-          Change  or  add  the   environment  variable  $MEUSERPATH(5)  in  the
-          autoexec.bat to include the new directory i.e. 
+          Change  the  $MEPATH(5)  in  the  autoexec.bat  to  include  the  new
+          directory i.e. 
 
-            SET MEUSERPATH=c:\jasspa\fred 
+            SET MEPATH=c:\me\fred;c:\me 
 
      Windows 
-          In Microsoft Windows environment  using Explorer 4.0  or later then a
-          user application data directory exists ($APPDATA) and MicroEmacs will
-          create a directory jasspa in  this directory location to hold private
-          data. If there  is no such  data area then  all user configuration is
-          stored in  the  executable  directory  location  (or  a sub-directory
-          called $user-name(5)). 
+          Windows environments,  the  me32.ini(8)  userPath  entry  defines the
+          location of the  user profile directories,  within the Install Shield
+          installation, the me32.ini is typically defined as:- 
 
-          The user data  area $user-path(5) may  be modified by  creating a new
-          directory and  setting  the  environment  variable  $MEUSERPATH(5) to
-          point to this new directory location.  The location be specified by a
-          meuserpath entry  in  the me32.ini(8)  file  rather than  setting the
-          environment variable $MEUSERPATH(5). 
+            userPath=C:\Program Files\JASSPA\MicroEmacs 
+
+          Create your MicroEmacs personal directory in this folder, the name of
+          the folder should be  your login name or  $MENAME, depending upon how
+          your name is identified. 
 
   Creating Your Profile 
-     On starting MicroEmacs for the first  time then the user is guided through
-     the configuration file setup to create any local configuration files. Once
-     set up then MicroEmacs may be configured using the user-setup(3) dialog:- 
+     Once you have created a new directory to store your user profile, create a
+     default profile  for  yourself  from  MicroEmacs  using  the user-setup(3)
+     dialog:- 
 
        Help => User Setup 
+
+     Fill in the entries  in the dialog,  and ensure that  Save is depressed on
+     exit to write the files. 
+
+     The dictionaries often  present difficulties  the first time,  a prompt to
+     save the dictionary requires  the full pathname and  the name of the file,
+     the pathname  is  the  path  to  your  personal  folder,  the  filename is
+     typically your username.edf. Once the file  is created you will not have a
+     problem in the future. 
 
   The User Profile 
      Files created in the user directory include:- 
 
-       *  Setup  registry  and  previous  session  history  $user-name.erf (see
-          erf(8)). This  stores the  user-setup settings  and the  context from
-          previous edit sessions. 
-       *  Users start-up  file $user-name.emf  (see emf(8)).  This is typically
-          referred to as  "user.emf" in  the documentation and  means the users
-          private MicroEmacs  macro file.  The user  may make  local changes to
-          MicroEmacs in  this  file, this  may  include definition  of  new key
-          bindings, defining new  hook functions  etc. You  should override the
+       *  Setup  registry  and  previous   session  history  username.erf,  see
+          erf(8)). This  stores the  user-setup settings  and also  the context
+          from your previous edit session. 
+       *  Users start-up file username.emf, see  emf(8) the user may make local
+          changes to  MicroEmacs in  this file,  this may  include changing key
+          bindings, defining new  hook functions etc.  You should over-ride the
           standard MicroEmacs  settings  from  your start-up  file  rather than
           modifying the standard MicroEmacs files. 
-       *  Personal  spelling  dictionary  lsdplang.edf  (see  edf(8)). Multiple
-          spelling dictionaries  may  be created,  one  for each  language. Any
-          words that are added  to the spelling dictionary  are stored in these
-          files. 
+       *  Personal spelling  dictionary  username.edf,  see  edf(8).  This file
+          contains your  personal spelling  modifications,  any words  that are
+          added to the spelling dictionary are added to this file. 
 
-     In addition to the above, if  new private macro files are constructed then
-     they should be  added to  this directory  (if they  are not  global to the
-     company). 
+     In addition to the above,  if new file hooks  are defined then they should
+     be added to this directory (if they are not global to the company). 
 
 EXAMPLE 
      The following are examples of some individuals start-up files:- 
@@ -667,6 +730,11 @@ EXAMPLE
            !if &not &seq $platform "win32" 
                ; Small bold font is better for me. 
                change-font "-*-clean-medium-r-*-*-*-130-*-*-*-*-*-*" 
+               ; Small non-bold font. 
+               ; change-font "-misc-fixed-medium-r-normal--13-*-*-*-c-70-iso8859-1"
+               ; Change the size of the screen 
+               82 change-frame-width 
+               50 change-frame-depth 
            !endif 
        !endif 
        ; Change the default diff command-line for GNU diff utility all platforms
@@ -694,9 +762,8 @@ EXAMPLE
        ml-write "Configured to Jon's requirements" 
 
 SEE ALSO 
-     user-setup(3), $search-path(5), $user-name(5), $user-path(5),
-     $MEINSTALLPATH(5), $MENAME(5), $MEPATH(5), $MEUSERPATH(5), me32.ini(8),
-     Company Profiles, File Hooks, File Language Templates, Installation. 
+     $MEPATH(5), $MENAME(5), user-setup(3), Company Profiles, File Hooks, File
+     Language Templates, Installation. 
 
 COMPANY PROFILES 
      This section describes how  a company profile  should be incorporated into
@@ -716,10 +783,39 @@ COMPANY PROFILES
      MicroEmacs standard macro file directory.  This enables the original files
      to be sourced if a  user does not want to  include the company files. This
      method  also  allows  MicroEmacs  to  be  updated  in  the  future, whilst
-     retaining the company files. 
+     retaining the  company files.  For  our example,  we  shall use  a company
+     called JASSPA,  you  should replace  references  to jasspa  with  your own
+     company name. The steps involved are laid out as follows:- 
 
-     The company  files  are  generally  placed  in  the  company sub-directory
-     described in the installation notes. 
+     Create a new company directory 
+          You may  skip  this step  if  you are  going  to modify  the standard
+          installation. 
+
+          Create a new directory to hold the company information. i.e. 
+
+               /usr/local/microemacs/jasspa - UNIX 
+               c:\Program Files\JASSPA\MicroEmacs\jasspa - Microsoft 
+
+          Modify the $MEPATH(5)  of the (of  all users) to  include the company
+          directory on the search path i.e. 
+
+          UNIX Users edit their local $MEPATH or a base $MEPATH is added to the
+               system .login or .profile scripts. 
+
+                    MEPATH=/usr/local/microemacs 
+                    MEPATH=/usr/local/microemacs/jasspa:$MEPATH 
+
+          Microsoft Windows Platforms 
+               Edit the me32.ini  file and  modify the mepath  entry to reflect
+               the location of the company directory:- 
+
+                    mepath=C:\Prog....\Mic...\macros\jasspa;C:\Prog...\Mic...\macros
+
+          DOS Platforms 
+               Edit the  autoexec.bat  file and  modify  MEPATH to  include the
+               company directory location. 
+
+                    SET MEPATH=c:\me\jasspa;c:\me 
 
   Content Of The Company Information 
 
@@ -767,6 +863,6 @@ COMPANY PROFILES
                See File Hooks and File Language Templates. 
 
 SEE ALSO 
-     $MEINSTALLPATH(5), $MENAME(5), $MEPATH(5), File Hooks, File Language
-     Templates, Installation, user-setup(3), User Profiles. 
+     $MENAME(5), $MEPATH(5), File Hooks, File Language Templates, Installation,
+     user-setup(3), User Profiles. 
 
